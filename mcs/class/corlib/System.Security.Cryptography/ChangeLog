@@ -1,12 +1,20 @@
-2003-01-31  David Sheldon      <dave-mono@earth.li>
+2004-02-04  Sebastien Pouliot  <spouliot@videotron.ca>
 
-  *  FromBase64Transform.cs: Removed needless catch and rethrow.
+	* CryptoStream.cs: New implementation - should fix all known issues
+	with the class (Read/WriteByte, reading by non-multiple of the
+	block size, using Stream.Length and Stream.Position ...).
+	* SymmetricAlgorithm.cs: Return an empty array when there's nothing
+	to return (required for CryptoStream to work).
 
-2003-01-31  David Sheldon      <dave-mono@earth.li>
+2004-01-31  David Sheldon      <dave-mono@earth.li>
 
-  * FromBase64Transform.cs: Fixes to what happens if a character in the
-   input stream is not in the lookup table. IndexOutOfRangeException was 
-   wrong.
+	* FromBase64Transform.cs: Removed needless catch and rethrow.
+
+2004-01-31  David Sheldon      <dave-mono@earth.li>
+
+	* FromBase64Transform.cs: Fixes to what happens if a character in the
+	input stream is not in the lookup table. IndexOutOfRangeException was 
+	wrong.
 
 2003-12-15  Sebastien Pouliot  <spouliot@videotron.ca>
 

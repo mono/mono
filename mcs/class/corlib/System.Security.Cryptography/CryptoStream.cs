@@ -3,297 +3,341 @@
 //
 // Authors:
 //	Thomas Neidhart (tome@sbox.tugraz.at)
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot (sebastien@ximian.com)
 //
 // Portions (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
+// (C) 2004 Novell (http://www.novell.com)
 //
 
 using System;
+using System.Globalization;
 using System.IO;
 using System.Runtime.InteropServices;
 
 namespace System.Security.Cryptography {
 
-public class CryptoStream : Stream {
-	private Stream _stream;
-	private ICryptoTransform _transform;
-	private CryptoStreamMode _mode;
-	private byte[] workingBlock;
-	private byte[] partialBlock;
-	private int workPos;
-	private bool disposed;
-	private bool _flushedFinalBlock;
-	private int blockSize;
-	private int partialCount;
+	public class CryptoStream : Stream {
+		private Stream _stream;
+		private ICryptoTransform _transform;
+		private CryptoStreamMode _mode;
+		private byte[] _previousBlock;
+		private byte[] _currentBlock;
+		private bool _disposed;
+		private bool _flushedFinalBlock;
+		private int _blockSize;
+		private int _partialCount;
+		private bool _endOfStream;
 	
-	public CryptoStream (Stream stream, ICryptoTransform transform, CryptoStreamMode mode)
-	{
-		if ((mode == CryptoStreamMode.Read) && (!stream.CanRead))
-			throw new ArgumentException ("Can't read on stream");
-		if ((mode == CryptoStreamMode.Write) && (!stream.CanWrite))
-			throw new ArgumentException ("Can't write on stream");
-		_stream = stream;
-		_transform = transform;
-		_mode = mode;
-		disposed = false;
-		if (transform != null) {
-			if (mode == CryptoStreamMode.Read)
-				blockSize = transform.InputBlockSize;
-			else if (mode == CryptoStreamMode.Write)
-				blockSize = transform.OutputBlockSize;
-			workingBlock = new byte [blockSize];
-			partialBlock = new byte [blockSize];
-		}
-		workPos = 0;
-	}
-
-	~CryptoStream () 
-	{
-		Dispose (false);
-	}
+		private byte[] _waitingBlock;
+		private int _waitingCount;
 	
-	public override bool CanRead {
-		get { return (_mode == CryptoStreamMode.Read); }
-	}
-
-	public override bool CanSeek {
-		get { return false; }
-	}
-
-	public override bool CanWrite {
-		get { return (_mode == CryptoStreamMode.Write); }
-	}
+		private byte[] _transformedBlock;
+		private int _transformedPos;
+		private int _transformedCount;
 	
-	public override long Length {
-		get {
-			throw new NotSupportedException ("Length property not supported by CryptoStream");
-		}
-	}
-
-	public override long Position {
-		get {
-			throw new NotSupportedException ("Position property not supported by CryptoStream");
-		}
-		set {
-			throw new NotSupportedException ("Position property not supported by CryptoStream");
-		}
-	}
-
-	public void Clear () 
-	{
-		Dispose (true);
-	}
-
-	// LAMESPEC: A CryptoStream can be close in read mode
-	public override void Close () 
-	{
-		// only flush in write mode (bugzilla 46143)
-		if ((!_flushedFinalBlock) && (_mode == CryptoStreamMode.Write))
-			FlushFinalBlock ();
-
-		if (_stream != null)
-			_stream.Close ();
-	}
-
-	private int ReadBlock (byte[] buffer, int offset, byte[] workspace) 
-	{
-		int readen = _stream.Read (workspace, 0, workspace.Length);
-		if (_stream.Position == _stream.Length) {
-			// last block
-			byte[] input = _transform.TransformFinalBlock (workspace, 0, readen);
-			Array.Copy (input, 0, buffer, offset, input.Length);
-			// zeroize this last block
-			Array.Clear (input, 0, input.Length);
-			// return past blocks + last block size
-			return input.Length;
-		} 
-		return _transform.TransformBlock (workspace, 0, workspace.Length, buffer, offset);
-	}
-
-	private int ReadBlocks (byte[] buffer, int offset, int numBlock) 
-	{
-		int result = 0;
-		// if supported do a single transform, if not iterate for each block
-		// but only if numBlock > 1 as we don't want to re-allocate memory for 1 block
-		if ((numBlock > 1) && (_transform.CanTransformMultipleBlocks)) {
-			int size = numBlock * blockSize;
-			byte[] multiBlocks = new byte [size];
-			result = ReadBlock (buffer, offset, multiBlocks);
-			// zeroize data
-			Array.Clear (multiBlocks, 0, size);
-		}
-		else {
-			for (int i=0; i < numBlock; i++) {
-				int written = ReadBlock (buffer, offset, workingBlock);
-				result += written;
-				offset += written;
+		private byte[] _workingBlock;
+		private int _workingCount;
+		
+		public CryptoStream (Stream stream, ICryptoTransform transform, CryptoStreamMode mode)
+		{
+			if ((mode == CryptoStreamMode.Read) && (!stream.CanRead)) {
+				throw new ArgumentException (
+					Locale.GetText ("Can't read on stream"));
+			}
+			if ((mode == CryptoStreamMode.Write) && (!stream.CanWrite)) {
+				throw new ArgumentException (
+					Locale.GetText ("Can't write on stream"));
+			}
+			_stream = stream;
+			_transform = transform;
+			_mode = mode;
+			_disposed = false;
+			if (transform != null) {
+				if (mode == CryptoStreamMode.Read)
+					_blockSize = transform.InputBlockSize;
+				else if (mode == CryptoStreamMode.Write)
+					_blockSize = transform.OutputBlockSize;
+				_workingBlock = new byte [_blockSize];
+				_currentBlock = new byte [_blockSize];
 			}
 		}
-		return result;
-	}
-
-	public override int Read ([In,Out] byte[] buffer, int offset, int count)
-	{
-		if (_mode != CryptoStreamMode.Read)
-			throw new NotSupportedException ("not in Read mode");
-		if (offset < 0) 
-			throw new ArgumentOutOfRangeException ("offset", "negative");
-		if (count < 0)
-			throw new ArgumentOutOfRangeException ("count", "negative");
-		if (offset + count > buffer.Length)
-			throw new ArgumentException ("(offset+count)", "buffer overflow");
-
-		// reached end of stream ?
-		if (_stream.Position == _stream.Length)
-			return 0;
-
-		int result = 0;
-		int bufferPos = offset;
-
-		// is there a previous partial block to complete ?
-		if (partialCount > 0) {
-			// if yes, the copy this (already decrypted) block
-			int remainder = (blockSize - partialCount);
-			Array.Copy (partialBlock, partialCount, buffer, bufferPos, remainder);
-			// zeroize the partial block
-			Array.Clear (partialBlock, 0, blockSize);
-			bufferPos += remainder;
-			count -= remainder;
+	
+		~CryptoStream () 
+		{
+			Dispose (false);
 		}
 		
-		// read all complete blocks
-		int written = ReadBlocks (buffer, bufferPos, (count / blockSize));
-		bufferPos += written;
-		result += written;
-		
-		// is there a partial block ?
-		partialCount = (count % blockSize);
-		if (partialCount > 0) {
-			// if yes we must read the process the next entire block
-			ReadBlocks (partialBlock, 0, 1);
-			result += partialCount;
-			// return a copy of the first part (as requested)
-			Array.Copy (partialBlock, 0, buffer, bufferPos, partialCount);
-			// and keep the partial block for "possible" next read (no zeroize)
+		public override bool CanRead {
+			get { return (_mode == CryptoStreamMode.Read); }
 		}
-
-		return result;
-	}
-
-	public override void Write (byte[] buffer, int offset, int count)
-	{
-		if (_mode != CryptoStreamMode.Write)
-			throw new NotSupportedException ("not in Write mode");
-		if (offset < 0) 
-			throw new ArgumentOutOfRangeException ("offset", "negative");
-		if (count < 0)
-			throw new ArgumentOutOfRangeException ("count", "negative");
-		if (offset + count > buffer.Length)
-			throw new ArgumentException ("(offset+count)", "buffer overflow");
-
-		int bufferPos = offset;
-		while (count > 0) {
-			if (workPos == blockSize) {
-				workPos = 0;
-				// use partial block to avoid (re)allocation
-				_transform.TransformBlock (workingBlock, 0, blockSize, partialBlock, 0);
-				_stream.Write (partialBlock, 0, partialBlock.Length);
+	
+		public override bool CanSeek {
+			get { return false; }
+		}
+	
+		public override bool CanWrite {
+			get { return (_mode == CryptoStreamMode.Write); }
+		}
+		
+		public override long Length {
+			get { throw new NotSupportedException ("Length"); }
+		}
+	
+		public override long Position {
+			get { throw new NotSupportedException ("Position"); }
+			set { throw new NotSupportedException ("Position"); }
+		}
+	
+		public void Clear () 
+		{
+			Dispose (true);
+			GC.SuppressFinalize (this); // not called in Stream.Dispose
+		}
+	
+		// LAMESPEC: A CryptoStream can be close in read mode
+		public override void Close () 
+		{
+			// only flush in write mode (bugzilla 46143)
+			if ((!_flushedFinalBlock) && (_mode == CryptoStreamMode.Write))
+				FlushFinalBlock ();
+	
+			if (_stream != null)
+				_stream.Close ();
+		}
+	
+		public override int Read ([In,Out] byte[] buffer, int offset, int count)
+		{
+			if (_mode != CryptoStreamMode.Read) {
+				throw new NotSupportedException (
+					Locale.GetText ("not in Read mode"));
 			}
-
-// FIXME: this was supposed to be an optimization but it's not always working
-/*			if (_transform.CanTransformMultipleBlocks) {
-				// transform all except the last block (which may be the last block
-				// of the stream and require TransformFinalBlock)
-				int numBlock = ((workPos + count) / blockSize);
-				if (((workPos + count) % blockSize) == 0) // partial block ?
-					numBlock--; // no then reduce
-				int multiSize = (numBlock * blockSize);
-				if (numBlock > 0) {
-					byte[] multiBlocks = new byte [multiSize];
-					_transform.TransformBlock (buffer, offset, multiSize, multiBlocks, 0);
-					_stream.Write (multiBlocks, 0, multiSize); 
-					// copy last block into partialBlock
-					workPos = count - multiSize;
-					Array.Copy (buffer, offset + multiSize, workingBlock, 0, workPos);
+			if (offset < 0) {
+				throw new ArgumentOutOfRangeException ("offset", 
+					Locale.GetText ("negative"));
+			}
+			if (count < 0) {
+				throw new ArgumentOutOfRangeException ("count",
+					Locale.GetText ("negative"));
+			}
+			// yes - buffer.Length will throw a NullReferenceException if buffer is null
+			// but by doing so we match MS implementation
+			if (offset + count > buffer.Length) {
+				throw new ArgumentException ("(offset+count)", 
+					Locale.GetText ("buffer overflow"));
+			}
+			// for some strange reason Object_disposedException isn't throw
+			// instead we get a ArgumentNullException (probably from an internal method)
+			if (_workingBlock == null) {
+				throw new ArgumentNullException (
+					Locale.GetText ("object _disposed"));
+			}
+	
+			int result = 0;
+			if ((count == 0) || ((_transformedPos == _transformedCount) && (_endOfStream)))
+				return result;
+	
+			if (_waitingBlock == null) {
+				_transformedBlock = new byte [_blockSize << 2];
+				_transformedPos = 0;
+				_transformedCount = 0;
+				_waitingBlock = new byte [_blockSize];
+				_waitingCount = _stream.Read (_waitingBlock, 0, _waitingBlock.Length);
+			}
+			
+			while (count > 0) {
+				// transformed but not yet returned
+				int length = (_transformedCount - _transformedPos);
+	
+				// need more data - at least one full block must be available if we haven't reach the end of the stream
+				if (length < _blockSize) {
+					int transformed = 0;
+	
+					// load a new block
+					_workingCount = _stream.Read (_workingBlock, 0, _workingBlock.Length);
+					_endOfStream = (_workingCount < _blockSize);
+	
+					if (!_endOfStream) {
+						// transform the waiting block
+						transformed = _transform.TransformBlock (_waitingBlock, 0, _waitingBlock.Length, _transformedBlock, _transformedCount);
+	
+						// transfer temporary to waiting
+						Buffer.BlockCopy (_workingBlock, 0, _waitingBlock, 0, _workingCount);
+						_waitingCount = _workingCount;
+					}
+					else {
+						if (_workingCount > 0) {
+							// transform the waiting block
+							transformed = _transform.TransformBlock (_waitingBlock, 0, _waitingBlock.Length, _transformedBlock, _transformedCount);
+	
+							// transfer temporary to waiting
+							Buffer.BlockCopy (_workingBlock, 0, _waitingBlock, 0, _workingCount);
+							_waitingCount = _workingCount;
+	
+							length += transformed;
+							_transformedCount += transformed;
+						}
+						byte[] input = _transform.TransformFinalBlock (_waitingBlock, 0, _waitingCount);
+						transformed = input.Length;
+						Array.Copy (input, 0, _transformedBlock, _transformedCount, input.Length);
+						// zeroize this last block
+						Array.Clear (input, 0, input.Length);
+					}
+	
+					length += transformed;
+					_transformedCount += transformed;
+				}
+				// compaction
+				if (_transformedPos > _blockSize) {
+					Buffer.BlockCopy (_transformedBlock, _transformedPos, _transformedBlock, 0, length);
+					_transformedCount -= _transformedPos;
+					_transformedPos = 0;
+				}
+	
+				length = ((count < length) ? count : length);
+				Buffer.BlockCopy (_transformedBlock, _transformedPos, buffer, offset, length);
+				_transformedPos += length;
+	
+				result += length;
+				offset += length;
+				count -= length;
+	
+				// there may not be enough data in the stream for a 
+				// complete block
+				if ((length != _blockSize) || (_endOfStream)) {
+					count = 0;	// no more data can be read
+				}
+			}
+			
+			return result;
+		}
+	
+		public override void Write (byte[] buffer, int offset, int count)
+		{
+			if (_mode != CryptoStreamMode.Write) {
+				throw new NotSupportedException (
+					Locale.GetText ("not in Write mode"));
+			}
+			if (offset < 0) { 
+				throw new ArgumentOutOfRangeException ("offset", 
+					Locale.GetText ("negative"));
+			}
+			if (count < 0) {
+				throw new ArgumentOutOfRangeException ("count", 
+					Locale.GetText ("negative"));
+			}
+			if (offset + count > buffer.Length) {
+				throw new ArgumentException ("(offset+count)", 
+					Locale.GetText ("buffer overflow"));
+			}
+	
+			// partial block (in progress)
+			if ((_partialCount > 0) && (_partialCount != _blockSize)) {
+				int remainder = _blockSize - _partialCount;
+				remainder = ((count < remainder) ? count : remainder);
+				Buffer.BlockCopy (buffer, offset, _workingBlock, _partialCount, remainder);
+				_partialCount += remainder;
+				offset += remainder;
+				count -= remainder;
+			}
+	
+			int bufferPos = offset;
+			while (count > 0) {
+				if (_partialCount == _blockSize) {
+					_partialCount = 0;
+					// use partial block to avoid (re)allocation
+					_transform.TransformBlock (_workingBlock, 0, _blockSize, _currentBlock, 0);
+					_stream.Write (_currentBlock, 0, _currentBlock.Length);
+				}
+	
+				if (_transform.CanTransformMultipleBlocks) {
+					// transform all except the last block (which may be the last block
+					// of the stream and require TransformFinalBlock)
+					int numBlock = ((_partialCount + count) / _blockSize);
+					if (((_partialCount + count) % _blockSize) == 0) // partial block ?
+						numBlock--; // no then reduce
+					int multiSize = (numBlock * _blockSize);
+					if (numBlock > 0) {
+						byte[] multiBlocks = new byte [multiSize];
+						_transform.TransformBlock (buffer, offset, multiSize, multiBlocks, 0);
+						_stream.Write (multiBlocks, 0, multiSize); 
+						// copy last block into _currentBlock
+						_partialCount = count - multiSize;
+						Array.Copy (buffer, offset + multiSize, _workingBlock, 0, _partialCount);
+					}
+					else {
+						Array.Copy (buffer, offset, _workingBlock, _partialCount, count);
+						_partialCount += count;
+					}
+					count = 0; // the last block, if any, is in _workingBlock
 				}
 				else {
-					Array.Copy (buffer, offset, workingBlock, workPos, count);
-					workPos += count;
+					int len = Math.Min (_blockSize - _partialCount, count);
+					Array.Copy (buffer, bufferPos, _workingBlock, _partialCount, len);
+					bufferPos += len;
+					_partialCount += len;
+					count -= len;
+					// here block may be full, but we wont TransformBlock it until next iteration
+					// so that the last block will be called in FlushFinalBlock using TransformFinalBlock
 				}
-				count = 0; // the last block, if any, is in workingBlock
 			}
-			else {*/
-				int len = Math.Min (blockSize - workPos, count);
-				Array.Copy (buffer, bufferPos, workingBlock, workPos, len);
-				bufferPos += len;
-				workPos += len;
-				count -= len;
-				// here block may be full, but we wont TransformBlock it until next iteration
-				// so that the last block will be called in FlushFinalBlock using TransformFinalBlock
-//			}
 		}
-	}
-
-	public override void Flush ()
-	{
-		if (_stream != null)
-			_stream.Flush ();
-	}
-
-	public void FlushFinalBlock ()
-	{
-		if (_flushedFinalBlock)
-			throw new NotSupportedException ("This method cannot be called twice.");
-
-		if (_mode != CryptoStreamMode.Write)
-			throw new NotSupportedException ("cannot flush a non-writeable CryptoStream");
-
-		_flushedFinalBlock = true;
-		byte[] finalBuffer = _transform.TransformFinalBlock (workingBlock, 0, workPos);
-		if (_stream != null) {
-			_stream.Write (finalBuffer, 0, finalBuffer.Length);
-			_stream.Flush ();
-		}
-		// zeroize
-		Array.Clear (finalBuffer, 0, finalBuffer.Length);
-	}
-
-	public override long Seek (long offset, SeekOrigin origin)
-	{
-		throw new NotSupportedException ("cannot Seek a CryptoStream");
-	}
 	
-	// LAMESPEC: Exception NotSupportedException not documented
-	public override void SetLength (long value)
-	{
-		throw new NotSupportedException ("cannot SetLength a CryptoStream");
-	}
-
-	protected virtual void Dispose (bool disposing) 
-	{
-		if (!disposed) {
-			try {
-				disposed = true;
+		public override void Flush ()
+		{
+			if (_stream != null)
+				_stream.Flush ();
+		}
+	
+		public void FlushFinalBlock ()
+		{
+			if (_flushedFinalBlock) {
+				throw new NotSupportedException (
+					Locale.GetText ("This method cannot be called twice."));
+			}
+			if (_mode != CryptoStreamMode.Write) {
+				throw new NotSupportedException (
+					Locale.GetText ("cannot flush a non-writeable CryptoStream"));
+			}
+	
+			_flushedFinalBlock = true;
+			byte[] finalBuffer = _transform.TransformFinalBlock (_workingBlock, 0, _partialCount);
+			if (_stream != null) {
+				_stream.Write (finalBuffer, 0, finalBuffer.Length);
+				_stream.Flush ();
+			}
+			// zeroize
+			Array.Clear (finalBuffer, 0, finalBuffer.Length);
+		}
+	
+		public override long Seek (long offset, SeekOrigin origin)
+		{
+			throw new NotSupportedException ("Seek");
+		}
+		
+		// LAMESPEC: Exception NotSupportedException not documented
+		public override void SetLength (long value)
+		{
+			throw new NotSupportedException ("SetLength");
+		}
+	
+		protected virtual void Dispose (bool disposing) 
+		{
+			if (!_disposed) {
+				_disposed = true;
 				// always cleared for security reason
-				if (workingBlock != null)
-					Array.Clear (workingBlock, 0, workingBlock.Length);
-				if (partialBlock != null)
-					Array.Clear (partialBlock, 0, partialBlock.Length);
+				if (_workingBlock != null)
+					Array.Clear (_workingBlock, 0, _workingBlock.Length);
+				if (_currentBlock != null)
+					Array.Clear (_currentBlock, 0, _currentBlock.Length);
+				if (_previousBlock != null)
+					Array.Clear (_previousBlock, 0, _previousBlock.Length);
 				if (disposing) {
-					if (_stream != null)
-						_stream.Close (); // should be Dispose
 					_stream = null;
-					workingBlock = null;
-					partialBlock = null;
+					_workingBlock = null;
+					_currentBlock = null;
+					_previousBlock = null;
 				}
-			}
-			finally {
-//				base.Dispose ();
-				GC.SuppressFinalize (this); // not called in Stream.Dispose
 			}
 		}
 	}
-	
-} // CryptoStream
-	
-} // System.Security.Cryptography
+}

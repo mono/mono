@@ -298,7 +298,7 @@ namespace System.Security.Cryptography {
 				return data;
 			}
 			else
-				return res;
+				return new byte [0];
 		}
 
 		public virtual byte [] TransformFinalBlock (byte [] inputBuffer, int inputOffset, int inputCount) 
