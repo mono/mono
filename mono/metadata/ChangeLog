@@ -1,3 +1,8 @@
+2004-03-25  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* icall.c: added Kill_internal icall.
+	* process.[ch]: added Kill_internal icall.
+
 2004-03-25  Martin Baulig  <martin@ximian.com>
 
 	* class.h (MonoStats): Added `generic_instance_count',

@@ -1,3 +1,12 @@
+2004-03-25  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* daemon-messages.h: added kill structs.
+
+	* daemon.c: implemented process_process_kill.
+	* handles-private.h:  define process_process_kill.
+	* handles.c: implemented _wapi_handle_process_kill.
+	* processes.[ch]: implemented TerminateProcess.
+
 2004-03-25  Bernie Solomon  <bernard@ugsolutions.com>
 
 	* daemon.c (rem_fd): On solaris you seem to get an
