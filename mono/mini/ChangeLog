@@ -1,3 +1,8 @@
+2005-01-18  Geoff Norton  <gnorton@customerdna.com>
+
+	* jit-icalls.c (mono_llmult_ovf): Fix other overflow conditions to
+	be detected.  Fixes #59296.
+
 2005-01-18  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini-amd64.c (mono_arch_output_basic_block): Remove some assertions
