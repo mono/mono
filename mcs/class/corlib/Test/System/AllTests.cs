@@ -24,12 +24,16 @@ namespace MonoTests.System {
                                 suite.AddTest(SByteTest.Suite);
                                 suite.AddTest(Int16Test.Suite);
                                 suite.AddTest(Int32Test.Suite);
+
+				//TODO: enable Int64 test when ready
                                 //suite.AddTest(Int64Test.Suite);
-                                suite.AddTest(UInt16Test.Suite);
+
+				suite.AddTest(UInt16Test.Suite);
                                 suite.AddTest(UInt32Test.Suite);
                                 suite.AddTest(UInt64Test.Suite);
                                 suite.AddTest(RandomTest.Suite);
-                                return suite;
+                                suite.AddTest(ResolveEventArgsTest.Suite);
+				return suite;
                         }
                 }
         }
