@@ -94,7 +94,7 @@ namespace System.IO {
                         // HOWEVER, the MS implementation returns the rest of the string if no \r and/or \n is found
                         // in the string
 
-			if (nextChar == source.Length)
+			if (nextChar >= source.Length)
 				return null;
 
 			int nextCR = source.IndexOf( '\r', nextChar );
