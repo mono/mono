@@ -998,7 +998,7 @@ namespace System.CodeDom.Compiler {
 							typeof (CodeEntryPointMethod)
 						};
 
-			public IComparer Default {
+			public static IComparer Default {
 				get { return instance; }
 			}
 			
