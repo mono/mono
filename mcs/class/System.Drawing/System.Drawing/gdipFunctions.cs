@@ -1546,7 +1546,8 @@ namespace System.Drawing
 		static internal extern Status GdipLoadImageFromDelegate_linux ( StreamGetBytesDelegate getBytes, StreamPutBytesDelegate putBytes, 
 							StreamSeekDelegate doSeek, StreamCloseDelegate close, StreamSizeDelegate size, out IntPtr image);
 		[DllImport("gdiplus.dll")]
-		static internal extern Status GdipSaveImageToDelegate_linux ( IntPtr image, StreamPutBytesDelegate putBytes, ref Guid encoderClsID, IntPtr encoderParameters );
+		static internal extern Status GdipSaveImageToDelegate_linux ( IntPtr image, StreamGetBytesDelegate getBytes, StreamPutBytesDelegate putBytes, 
+			StreamSeekDelegate doSeek, StreamCloseDelegate close, StreamSizeDelegate size, ref Guid encoderClsID, IntPtr encoderParameters );
 		
 #endregion      
 	}               

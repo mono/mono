@@ -370,10 +370,12 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 		if (Environment.OSVersion.Platform == (PlatformID) 128) {
 			GDIPlus.GdiPlusStreamHelper sh = new GDIPlus.GdiPlusStreamHelper (stream);
 			if (encoderParams == null) {
-				st = GDIPlus.GdipSaveImageToDelegate_linux (nativeObject, sh.PutBytesDelegate, ref guid, IntPtr.Zero);
+				st = GDIPlus.GdipSaveImageToDelegate_linux (nativeObject, sh.GetBytesDelegate, sh.PutBytesDelegate,
+						sh.SeekDelegate, sh.CloseDelegate, sh.SizeDelegate, ref guid, IntPtr.Zero);
 			} else {
 				IntPtr nativeEncoderParams = encoderParams.ToNativePtr ();
-				st = GDIPlus.GdipSaveImageToDelegate_linux (nativeObject, sh.PutBytesDelegate, ref guid, nativeEncoderParams);
+				st = GDIPlus.GdipSaveImageToDelegate_linux (nativeObject, sh.GetBytesDelegate, sh.PutBytesDelegate,
+						sh.SeekDelegate, sh.CloseDelegate, sh.SizeDelegate, ref guid, nativeEncoderParams);
 				Marshal.FreeHGlobal (nativeEncoderParams);
 			}
 		} else {
