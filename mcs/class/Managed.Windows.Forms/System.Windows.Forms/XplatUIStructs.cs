@@ -658,5 +658,28 @@ namespace System.Windows.Forms {
 		XK_KP_8			= 0xffb8,
 		XK_KP_9			= 0xffb9
 	}
+
+        internal enum DeadKeys {
+                XK_dead_grave           = 0xfe50,
+                XK_dead_acute           = 0xfe51,
+                XK_dead_circumflex      = 0xfe52,
+                XK_dead_tilde           = 0xfe53,
+                XK_dead_macron          = 0xfe54,
+                XK_dead_breve           = 0xfe55,
+                XK_dead_abovedot        = 0xfe56,
+                XK_dead_diaeresis       = 0xfe57,
+                XK_dead_abovering       = 0xfe58,
+                XK_dead_doubleacute     = 0xfe59,
+                XK_dead_caron           = 0xfe5a,
+                XK_dead_cedilla         = 0xfe5b,
+                XK_dead_ogonek          = 0xfe5c,
+                XK_dead_iota            = 0xfe5d,
+                XK_dead_voiced_sound    = 0xfe5e,
+                XK_dead_semivoiced_sound  = 0xfe5f,
+                XK_dead_belowdot        = 0xfe60,
+                XK_dead_hook            = 0xfe61,
+                XK_dead_horn            = 0xfe62
+
+        }
 }
 

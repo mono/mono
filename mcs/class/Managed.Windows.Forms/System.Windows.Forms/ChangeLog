@@ -1,3 +1,8 @@
+2004-12-16  Jackson Harper  <jackson@ximain.com>
+
+	* XplatUIStruct.cs: Add enum for dead keys
+	* X11Keyboard.cs: Map and unmap dead keys.
+
 2004-12-16  Jackson Harper  <jackson@ximian.com>
 
 	* X11Keyboard.cs: Detect and use the num lock mask.

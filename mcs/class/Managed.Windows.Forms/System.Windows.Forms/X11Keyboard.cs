@@ -206,7 +206,13 @@ namespace System.Windows.Forms {
 			buffer = String.Empty;
 			if (res == 0) {
 				int dead_char = MapDeadKeySym (keysym);
-				// TODO: deal with dead chars
+				if (dead_char != 0) {
+					byte [] bytes = new byte [1];
+					bytes [0] = (byte) dead_char;
+					Encoding encoding = Encoding.GetEncoding (layout.CodePage);
+					buffer = new string (encoding.GetChars (bytes));
+					res = -1;
+				}
 			} else {
 				// Shift + arrow, shift + home, ....
 				// X returns a char for it, but windows doesn't
@@ -570,6 +576,40 @@ namespace System.Windows.Forms {
 		// TODO
 		private int MapDeadKeySym (int val)
 		{
+			switch (val) {
+			case (int) DeadKeys.XK_dead_tilde :
+			case 0x1000FE7E : // Xfree's Dtilde
+				return '~';
+			case (int) DeadKeys.XK_dead_acute :
+			case 0x1000FE27 : // Xfree's XK_Dacute_accent
+				return 0xb4;
+			case (int) DeadKeys.XK_dead_circumflex:
+			case 0x1000FE5E : // Xfree's XK_.Dcircumflex_accent
+				return '^';
+			case (int) DeadKeys.XK_dead_grave :
+			case 0x1000FE60 : // Xfree's XK_.Dgrave_accent
+				return '`';
+			case (int) DeadKeys.XK_dead_diaeresis :
+			case 0x1000FE22 : // Xfree's XK_.Ddiaeresis
+				return 0xa8;
+			case (int) DeadKeys.XK_dead_cedilla :
+				return 0xb8;
+			case (int) DeadKeys.XK_dead_macron :
+				return '-';
+			case (int) DeadKeys.XK_dead_breve :
+				return 0xa2;
+			case (int) DeadKeys.XK_dead_abovedot :
+				return 0xff;
+			case (int) DeadKeys.XK_dead_abovering :
+				return '0';
+			case (int) DeadKeys.XK_dead_doubleacute :
+				return 0xbd;
+			case (int) DeadKeys.XK_dead_caron :
+				return 0xb7;
+			case (int) DeadKeys.XK_dead_ogonek :
+				return 0xb2;
+			}
+
 			return 0;
 		}
 
