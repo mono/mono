@@ -569,13 +569,42 @@ namespace Mono.CSharp
 			// <summary>
 			//   Merges a child branching.
 			// </summary>
-			public void MergeResult (MyBitVector new_params, MyBitVector new_locals,
-						Reachability new_reachability)
+			public UsageVector MergeChild (FlowBranching branching)
 			{
-				Report.Debug (2, "  MERGING RESULT", this, IsDirty,
-					      new_params, new_locals, new_reachability, Type);
+				UsageVector result = branching.Merge ();
 
-				reachability = new_reachability;
+				Report.Debug (2, "  MERGING RESULT", this, IsDirty,
+					      result.ParameterVector, result.LocalVector,
+					      result.Reachability, Type);
+
+				reachability = result.Reachability;
+
+				if (branching.Type == BranchingType.LoopBlock) {
+					bool may_leave_loop = reachability.MayBreak;
+					reachability.ResetBreaks ();
+
+					if (branching.Infinite && !may_leave_loop) {
+						if (reachability.Returns == FlowReturns.Sometimes) {
+							// If we're an infinite loop and do not break,
+							// the code after the loop can never be reached.
+							// However, if we may return from the loop,
+							// then we do always return (or stay in the
+							// loop forever).
+							reachability.SetReturns ();
+						}
+
+						reachability.SetBarrier ();
+					} else {
+						if (reachability.Returns == FlowReturns.Always) {
+							// We're either finite or we may leave the loop.
+							reachability.SetReturnsSometimes ();
+						}
+					}
+				} else if (branching.Type == BranchingType.Switch)
+					reachability.ResetBreaks ();
+
+				Report.Debug (2, "  MERGING CHILDREN DONE", parameters, locals,
+					      reachability, branching.Infinite);
 
 				//
 				// We've now either reached the point after the branching or we will
@@ -590,18 +619,20 @@ namespace Mono.CSharp
 					Report.Error (163, Location,
 						      "Control cannot fall through from one " +
 						      "case label to another");
-					return;
+					return result;
 				}
 
-				if (new_locals != null)
-					locals.Or (new_locals);
+				if (result.LocalVector != null)
+					locals.Or (result.LocalVector);
 
-				if (new_params != null)
-					parameters.Or (new_params);
+				if (result.ParameterVector != null)
+					parameters.Or (result.ParameterVector);
 
 				Report.Debug (2, "  MERGING RESULT DONE", this);
 
 				IsDirty = true;
+
+				return result;
 			}
 
 			protected void MergeFinally (FlowBranching branching, UsageVector f_origins,
@@ -868,6 +899,9 @@ namespace Mono.CSharp
 
 		protected UsageVector Merge (UsageVector sibling_list)
 		{
+			if (sibling_list.Next == null)
+				return sibling_list;
+
 			MyBitVector locals = null;
 			MyBitVector parameters = null;
 
@@ -944,32 +978,6 @@ namespace Mono.CSharp
 			if (reachability == null)
 				reachability = Reachability.Never ();
 
-			Report.Debug (2, "  MERGING CHILDREN #1  ", Type, reachability,
-				      Infinite, reachability.MayBreak);
-
-			if (Type == BranchingType.LoopBlock) {
-				bool may_leave_loop = reachability.MayBreak;
-				reachability.ResetBreaks ();
-
-				if (Infinite && !may_leave_loop) {
-					if (reachability.Returns == FlowReturns.Sometimes) {
-						// If we're an infinite loop and do not break, the code
-						// after the loop can never be reached.  However, if we
-						// may return from the loop, then we do always return
-						// (or stay in the loop forever).
-						reachability.SetReturns ();
-					}
-
-					reachability.SetBarrier ();
-				} else {
-					if (reachability.Returns == FlowReturns.Always) {
-						// We're either finite or we may leave the loop.
-						reachability.SetReturnsSometimes ();
-					}
-				}
-			} else if (Type == BranchingType.Switch)
-				reachability.ResetBreaks ();
-
 			Report.Debug (2, "  MERGING CHILDREN DONE", parameters, locals,
 				      reachability, Infinite);
 
@@ -983,10 +991,7 @@ namespace Mono.CSharp
 		// </summary>
 		public Reachability MergeChild (FlowBranching child)
 		{
-			UsageVector result = child.Merge ();
-
-			CurrentUsageVector.MergeResult (
-				result.ParameterVector, result.LocalVector, result.Reachability);
+			UsageVector result = CurrentUsageVector.MergeChild (child);
 
 			Report.Debug (4, "  MERGE CHILD", Location, child, CurrentUsageVector,
 				      result.Reachability);
@@ -1005,9 +1010,7 @@ namespace Mono.CSharp
 			UsageVector vector = new UsageVector (
 				SiblingType.Conditional, null, Location, param_map.Length, local_map.Length);
 
-			UsageVector result = Merge ();
-			vector.MergeResult (result.ParameterVector, result.LocalVector,
-					    result.Reachability);
+			UsageVector result = vector.MergeChild (this);
 
 			Report.Debug (4, "MERGE TOP BLOCK", Location, vector, result.Reachability);
 

@@ -1,5 +1,13 @@
 2003-12-11  Martin Baulig  <martin@ximian.com>
 
+	* flowanalysis.cs (UsageVector.MergeResult): Renamed this back to
+	`MergeChild()', also just take the `FlowBranching' as argument;
+	call Merge() on it and return the result.
+	(FlowBranching.Merge): We don't need to do anything if we just
+	have one sibling.
+
+2003-12-11  Martin Baulig  <martin@ximian.com>
+
 	* flowanalysis.cs: Use a list of `UsageVector's instead of storing
 	them in an `ArrayList' to reduce memory usage.  Thanks to Ben
 	Maurer for this idea.
