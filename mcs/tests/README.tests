@@ -15,7 +15,7 @@ Test cases listed by Category:
 
 * Indexers and Properties
 
-  test-148.cs
+  test-148.cs test-166.cs
 
 * Events and Delegates
 
@@ -142,6 +142,10 @@ Virtual functions in delegate creation expressions.
 test-165.cs
 -----------
 Enums in array creation expression.
+
+test-166.cs
+-----------
+Using property from interface which is inherited multiple times.
 
 verify-1.cs
 -----------
