@@ -1,4 +1,4 @@
-LIBRARY = corlib.dll
+LIBRARY = ../lib/corlib.dll
 
 LIB_LIST = unix.args
 LIB_FLAGS = --unsafe --nostdlib

@@ -1,6 +1,6 @@
-LIBRARY = System.Drawing.dll
+LIBRARY = ../lib/System.Drawing.dll
 
 LIB_LIST = list.unix
-LIB_FLAGS = -r mscorlib
+LIB_FLAGS = -r corlib -r System
 
 include ../library.make
