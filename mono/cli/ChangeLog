@@ -1,3 +1,7 @@
+Mon Jul 30 20:05:23 CEST 2001 Paolo Molaro <lupus@ximian.com>
+
+	* cli.h, loader.c: usa a char *name field in MonoMethod instead
+	of the name_idx token.
 
 Fri Jul 27 20:51:47 CEST 2001 Paolo Molaro <lupus@ximian.com>
 

@@ -1,3 +1,8 @@
+
+Mon Jul 30 20:11:01 CEST 2001 Paolo Molaro <lupus@ximian.com>
+
+	* metadata.h, metadata.c: decode exception clauses when parsing method header.
+
 2001-07-27  Dietmar Maurer  <dietmar@ximian.com>
 
 	* metadata.c (mono_metadata_free_type): added check for type !=

@@ -1,3 +1,8 @@
+Mon Jul 30 20:08:37 CEST 2001 Paolo Molaro <lupus@ximian.com>
+
+	* dis-cil.c, dis-cil.h, main.c: changes to disassemble also
+	the information about try/catch/finally blocks.
+
 2001-07-27  Dietmar Maurer  <dietmar@ximian.com>
 
 	* get.c (dis_stringify_type): return "void" if !type
