@@ -1,3 +1,6 @@
+2002-06-18  Dietmar Maurer  <dietmar@ximian.com>
+
+	* exception.c (ves_icall_get_frame_info): impl.
 
 Tue Jun 18 10:21:19 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
