@@ -1,3 +1,14 @@
+Sun Jul 15 17:40:47 CEST 2001 Paolo Molaro <lupus@ximian.com>
+
+	* metadata.h, cil-coff.h: protect against multiple inclusion.
+	Added some new structures to hold information decoded from metadata:
+	MonoType, MonoParam, MonoArray, MonoMethod, MonoMethodSignature
+	and relevant decoding/free functions.
+	* metadata.c: implement decoding functions. Add warning for out of bounds
+	index in mono_metadata_locate(). Implement mono_get_method () to retreive
+	all the info about a method signature and invocation. Remove check on
+	uninitialized local var in parse_mh() and fix memory leak.
+
 2001-07-12  Miguel de Icaza  <miguel@ximian.com>
 
 	* metadata.h: More macros.
