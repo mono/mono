@@ -102,7 +102,7 @@ namespace System.Web.Compilation
 			int token;
 			string id;
 			TagAttributes attributes;
-			TagType tagtype;
+			TagType tagtype = TagType.Text;
 			StringBuilder text =  new StringBuilder ();
 
 			while ((token = tokenizer.get_token ()) != Token.EOF) {
@@ -137,6 +137,10 @@ namespace System.Web.Compilation
 					else
 						OnTagParsed (tagtype, id, attributes);
 
+					continue;
+				}
+
+				if (tokenizer.Value.Trim () == "" && tagtype == TagType.Directive) {
 					continue;
 				}
 
