@@ -1,3 +1,7 @@
+2004-07-09  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* aot.c : quick cygwin build fix. mkdir() with two args does not exist.
+
 2004-07-08  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini.c (handle_stack_args): Remove some more debugging code.
