@@ -1,9 +1,12 @@
 // System.Reflection.Binder
 //
-// Sean MacIsaac (macisaac@ximian.com)
-// Paolo Molaro (lupus@ximian.com)
+// Authors:
+// 	Sean MacIsaac (macisaac@ximian.com)
+// 	Paolo Molaro (lupus@ximian.com)
+//	Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
-// (C) Ximian, Inc. 2001 - 2002
+// (C) Ximian, Inc. 2001 - 2003
+// (c) Copyright 2004 Novell, Inc. (http://www.novell.com)
 
 using System.Globalization;
 using System.Runtime.InteropServices;
@@ -314,27 +317,181 @@ namespace System.Reflection
 					throw new ArgumentException ("No properties provided", "match");
 
 				bool haveRet = (returnType != null);
-				bool haveIndexes = (indexes != null && indexes.Length > 0);
+				int idxlen = (indexes != null) ? indexes.Length : 0;
 				PropertyInfo result = null;
-				foreach (PropertyInfo m in match) {
-					ParameterInfo[] args = m.GetIndexParameters ();
-					if (haveIndexes && args.Length != indexes.Length)
+				int i;
+				int best_score = Int32.MaxValue;
+				int fail_score = Int32.MaxValue;
+				int level = 0;
+				
+				for (i = match.Length - 1; i >= 0; i--) {
+					PropertyInfo p = match [i];
+					ParameterInfo[] args = p.GetIndexParameters ();
+					if (idxlen > 0 && idxlen != args.Length)
 						continue;
 
-					if (haveRet && !check_type (m.PropertyType, returnType))
+					if (haveRet && !check_type (p.PropertyType, returnType))
 						continue;
 
-					if (haveIndexes != !check_arguments (indexes, args))
-						continue;
+					int score = Int32.MaxValue;
+					if (idxlen > 0) {
+						score = check_arguments_with_score (indexes, args);
+						if (score == -1)
+							continue;
+					}
 
-					if (result != null)
-						throw new AmbiguousMatchException ();
+					int new_level = GetDerivedLevel (p.DeclaringType);
+					if (result != null) {
+						if (best_score < score)
+							continue;
 
-					result = m;
+						if (best_score == score) {
+							if (level == new_level) {
+								// Keep searching. May be there's something
+								// better for us.
+								fail_score = score;
+								continue;
+							}
+
+							if (level > new_level)
+								continue;
+						}
+					}
+
+					result = p;
+					best_score = score;
+					level = new_level;
 				}
 
+				if (fail_score <= best_score)
+					throw new AmbiguousMatchException ();
+
 				return result;
+			}
+
+			static int check_arguments_with_score (Type [] types, ParameterInfo [] args)
+			{
+				int worst = -1;
+
+				for (int i = 0; i < types.Length; ++i) {
+					int res = check_type_with_score (types [i], args [i].ParameterType);
+					if (res == -1)
+						return -1;
+
+					if (worst < res)
+						worst = res;
+				}
+
+				return worst;
+			}
+
+			// 0 -> same type
+			// 1 -> to == Enum
+			// 2 -> value type that don't lose data
+			// 3 -> to == IsAssignableFrom
+			// 4 -> to == object
+			static int check_type_with_score (Type from, Type to)
+			{
+				if (from == to)
+					return 0;
+
+				if (to == typeof (object))
+					return 4;
+
+				TypeCode fromt = Type.GetTypeCode (from);
+				TypeCode tot = Type.GetTypeCode (to);
+
+				switch (fromt) {
+				case TypeCode.Char:
+					switch (tot) {
+					case TypeCode.UInt16:
+						return 0;
+
+					case TypeCode.UInt32:
+					case TypeCode.Int32:
+					case TypeCode.UInt64:
+					case TypeCode.Int64:
+					case TypeCode.Single:
+					case TypeCode.Double:
+						return 2;
+					}
+					return -1;
+				case TypeCode.Byte:
+					switch (tot) {
+					case TypeCode.Char:
+					case TypeCode.UInt16:
+					case TypeCode.Int16:
+					case TypeCode.UInt32:
+					case TypeCode.Int32:
+					case TypeCode.UInt64:
+					case TypeCode.Int64:
+					case TypeCode.Single:
+					case TypeCode.Double:
+						return 2;
+					}
+					return (from.IsEnum && to == typeof (Enum)) ? 1 : -1;
+				case TypeCode.SByte:
+					switch (tot) {
+					case TypeCode.Int16:
+					case TypeCode.Int32:
+					case TypeCode.Int64:
+					case TypeCode.Single:
+					case TypeCode.Double:
+						return 2;
+					}
+					return (from.IsEnum && to == typeof (Enum)) ? 1 : -1;
+				case TypeCode.UInt16:
+					switch (tot) {
+					case TypeCode.UInt32:
+					case TypeCode.Int32:
+					case TypeCode.UInt64:
+					case TypeCode.Int64:
+					case TypeCode.Single:
+					case TypeCode.Double:
+						return 2;
+					}
+					return (from.IsEnum && to == typeof (Enum)) ? 1 : -1;
+				case TypeCode.Int16:
+					switch (tot) {
+					case TypeCode.Int32:
+					case TypeCode.Int64:
+					case TypeCode.Single:
+					case TypeCode.Double:
+						return 2;
+					}
+					return (from.IsEnum && to == typeof (Enum)) ? 1 : -1;
+				case TypeCode.UInt32:
+					switch (tot) {
+					case TypeCode.UInt64:
+					case TypeCode.Int64:
+					case TypeCode.Single:
+					case TypeCode.Double:
+						return 2;
+					}
+					return (from.IsEnum && to == typeof (Enum)) ? 1 : -1;
+				case TypeCode.Int32:
+					switch (tot) {
+					case TypeCode.Int64:
+					case TypeCode.Single:
+					case TypeCode.Double:
+						return 2;
+					}
+					return (from.IsEnum && to == typeof (Enum)) ? 1 : -1;
+				case TypeCode.UInt64:
+				case TypeCode.Int64:
+					switch (tot) {
+					case TypeCode.Single:
+					case TypeCode.Double:
+						return 2;
+					}
+					return (from.IsEnum && to == typeof (Enum)) ? 1 : -1;
+				case TypeCode.Single:
+					return tot == TypeCode.Double ? 2 : -1;
+				default:
+					return (to.IsAssignableFrom (from)) ? 3 : -1;
+				}
 			}
 		}
 	}
 }
+
