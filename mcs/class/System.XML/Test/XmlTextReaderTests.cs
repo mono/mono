@@ -44,6 +44,7 @@ namespace MonoTests.System.Xml
 			Assert (xmlReader.Read ());
 			Assert (xmlReader.ReadState == ReadState.Interactive);
 			Assert (!xmlReader.EOF);
+			AssertNodeValues (xmlReader, nodeType, depth, isEmptyElement, name, prefix, localName, namespaceURI, value, attributeCount);
 		}
 
 		private void AssertNodeValues (
@@ -58,65 +59,25 @@ namespace MonoTests.System.Xml
 			string value,
 			int attributeCount)
 		{
-			Assert (xmlReader.NodeType == nodeType);
-			Assert (xmlReader.Depth == depth);
-			Assert (xmlReader.IsEmptyElement == isEmptyElement);
+			AssertEquals ("NodeType", nodeType, xmlReader.NodeType);
+			AssertEquals ("Depth", depth, xmlReader.Depth);
+			AssertEquals ("IsEmptyElement", isEmptyElement, xmlReader.IsEmptyElement);
 
-			Assert (
-				String.Format (
-					"name was {0}, expected {1}",
-					xmlReader.Name,
-					name),
-				xmlReader.Name == name);
+			AssertEquals ("name", name, xmlReader.Name);
 
-			Assert (
-				String.Format (
-					"prefix was {0}, expected {1}",
-					xmlReader.Prefix,
-					prefix),
-				xmlReader.Prefix == prefix);
+			AssertEquals ("prefix", prefix, xmlReader.Prefix);
 
-			Assert (
-				String.Format (
-					"localName was {0}, expected {1}",
-					xmlReader.LocalName,
-					localName),
-				xmlReader.LocalName == localName);
+			AssertEquals ("localName", localName, xmlReader.LocalName);
 
-			Assert (
-				String.Format (
-					"namespaceURI was {0}, expected {1}",
-					xmlReader.NamespaceURI,
-					namespaceURI),
-				xmlReader.NamespaceURI == namespaceURI);
+			AssertEquals ("namespaceURI", namespaceURI, xmlReader.NamespaceURI);
 
-			Assert (
-				String.Format (
-					"hasValue was {0}, expected {1}",
-					xmlReader.HasValue,
-					(value != String.Empty)),				
-				xmlReader.HasValue == (value != String.Empty));
+			AssertEquals ("hasValue", (value != String.Empty), xmlReader.HasValue);
 
-			Assert (
-				String.Format (
-					"value was {0}, expected {1}",
-					xmlReader.Value,
-					value),
-				xmlReader.Value == value);
+			AssertEquals ("Value", value, xmlReader.Value);
 
-			Assert (
-				String.Format (
-					"hasAttributes was {0}, expected {1}",
-					xmlReader.HasAttributes,
-					(attributeCount > 0)),
-				xmlReader.HasAttributes == (attributeCount > 0));
+			AssertEquals ("hasAttributes", attributeCount > 0, xmlReader.HasAttributes);
 
-			Assert (
-				String.Format (
-					"attributeCount was {0}, expected {1}",
-					xmlReader.AttributeCount,
-					attributeCount),
-				xmlReader.AttributeCount == attributeCount);
+			AssertEquals ("attributeCount", attributeCount, xmlReader.AttributeCount);
 		}
 
 		private void AssertAttribute (
@@ -127,12 +88,7 @@ namespace MonoTests.System.Xml
 			string namespaceURI,
 			string value)
 		{
-			Assert (
-				String.Format (
-					"value was {0}, expected {1}",
-					xmlReader[name],
-					value),
-				xmlReader[name] == value);
+			AssertEquals ("value", value, xmlReader [name]);
 
 			Assert (xmlReader.GetAttribute (name) == value);
 
@@ -1797,9 +1753,15 @@ namespace MonoTests.System.Xml
 			XmlTextReader xmlReader = new XmlTextReader(ms, XmlNodeType.Element, ctx);
 			AssertNode(xmlReader, XmlNodeType.Element, 0, false, "foo", "", "foo", "", "", 0);
 
-			AssertNode(xmlReader, XmlNodeType.Element, 1, false, "foo", "", "foo", "NSURI", "", 1);
+			AssertNode(xmlReader, XmlNodeType.Element, 1, false, "bar", "", "bar", "NSURI", "", 1);
 
-			AssertNode(xmlReader, XmlNodeType.Text, 2, false, "", "", "", "", "TEXT NODE", 0);
+			AssertNode(xmlReader, XmlNodeType.Text, 2, false, "", "", "", "NSURI", "TEXT NODE", 0);
+
+			AssertNode(xmlReader, XmlNodeType.EndElement, 1, false, "bar", "", "bar", "NSURI", "", 0);
+
+			AssertNode(xmlReader, XmlNodeType.EndElement, 0, false, "foo", "", "foo", "", "", 0);
+
+			AssertEndDocument (xmlReader);
 		}
 	}
 }
