@@ -1,3 +1,8 @@
+2004-11-07  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* PosixEnvironment.cs : csc build fix. see bug #69195.
+	* PosixStream.cs : csc build fix. see bug #69196.
+
 2004-11-05  Jonathan Pryor  <jonpryor@vt.edu>
 
 	* PosixConvert.cs: New file; conversion functions for Mono.Posix types.

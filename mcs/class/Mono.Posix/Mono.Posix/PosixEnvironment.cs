@@ -49,7 +49,7 @@ namespace Mono.Posix {
 			get {
 				StringBuilder buf = new StringBuilder (8);
 				int r = 0;
-				Error e;
+				Error e = (Error) 0;
 				do {
 					buf.Capacity *= 2;
 					r = Syscall.gethostname (buf);

@@ -55,12 +55,14 @@ namespace Mono.Posix {
 			long offset = Syscall.lseek (fileDescriptor, 0, SeekFlags.SEEK_CUR);
 			if (offset != -1)
 				canSeek = true;
-			long read = Syscall.read (fileDescriptor, null, 0);
-			if (read != -1)
-				canRead = true;
-			long write = Syscall.write (fileDescriptor, null, 0);
-			if (write != -1)
-				canWrite = true;  
+			unsafe {
+				long read = Syscall.read (fileDescriptor, null, 0);
+				if (read != -1)
+					canRead = true;
+				long write = Syscall.write (fileDescriptor, null, 0);
+				if (write != -1)
+					canWrite = true;  
+			}
 		}
 
 		private void AssertNotDisposed ()
