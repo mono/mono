@@ -1,3 +1,10 @@
+2004-08-07  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ConfigurationElement.cs,
+	  ConfigurationProperty.cs,
+	  ConfigurationPropertyCollection.cs,
+	  ConfigurationValidationAttribute.cs : use XML_DEP.
+
 2004-08-06  Duncan Mak  <duncan@ximian.com>
 
 	* ConfigurationElement.cs: Added stubs.

@@ -27,6 +27,7 @@
 //
 
 #if NET_2_0
+#if XML_DEP
 using System;
 
 namespace System.Configuration
@@ -40,4 +41,5 @@ namespace System.Configuration
                 protected abstract bool Validate (ConfigurationProperty property, object value);
         }
 }
+#endif
 #endif
