@@ -25,7 +25,7 @@ public class Outline {
 		this.o = new IndentedTextWriter (output, "    ");
 	}
 
-	public void OutlineType ()
+	public void OutlineType (BindingFlags flags)
         {
 		o.Write (GetTypeVisibility (t));
 		o.Write (" ");
@@ -70,7 +70,7 @@ public class Outline {
 			return;
 		}
 		
-		foreach (ConstructorInfo ci in t.GetConstructors ()) {
+		foreach (ConstructorInfo ci in t.GetConstructors (flags)) {
 			OutlineConstructor (ci);
 			
 			o.WriteLine ();
@@ -78,7 +78,7 @@ public class Outline {
 		
 		o.WriteLine ();
 		
-		foreach (MethodInfo m in Comparer.Sort (t.GetMethods ())) {
+		foreach (MethodInfo m in Comparer.Sort (t.GetMethods (flags))) {
 			if ((m.Attributes & MethodAttributes.SpecialName) != 0)
 				continue;
 			
@@ -89,7 +89,7 @@ public class Outline {
 		
 		o.WriteLine ();
 		
-		foreach (PropertyInfo pi in Comparer.Sort (t.GetProperties ())) {
+		foreach (PropertyInfo pi in Comparer.Sort (t.GetProperties (flags))) {
 			OutlineProperty (pi);
 			
 			o.WriteLine ();
@@ -97,7 +97,7 @@ public class Outline {
 		
 		o.WriteLine ();
 		
-		foreach (EventInfo ei in Comparer.Sort (t.GetEvents ())) {
+		foreach (EventInfo ei in Comparer.Sort (t.GetEvents (flags))) {
 			OutlineEvent (ei);
 			
 			o.WriteLine ();

@@ -16,6 +16,10 @@ using System.IO;
 
 class MonoP {
 	static string assembly;
+	static BindingFlags default_flags = 
+		BindingFlags.Instance |
+		BindingFlags.Static |
+		BindingFlags.Public;
 	
 	// very common namespaces, all in corlib
 	static readonly string [] v_common_ns = {
@@ -158,6 +162,11 @@ class MonoP {
 			return;
 		}
 
+		if (args [i] == "--private" || args [i] == "-p") {
+				default_flags |= BindingFlags.NonPublic;
+				i++;
+		}
+
 		if (args.Length < i+1){
 			Console.WriteLine ("Usage is: monop [-r:Assembly] [class-name]");
 			return;
@@ -207,7 +216,7 @@ class MonoP {
 		// This gets us nice buffering
 		//
 		StreamWriter sw = new StreamWriter (Console.OpenStandardOutput (), Console.Out.Encoding);
-		new Outline (t, sw).OutlineType ();
+		new Outline (t, sw).OutlineType (default_flags);
 		sw.Flush ();
 	}
 }
