@@ -997,8 +997,10 @@ namespace Mono.CSharp
 				if (c == '('){
 					s = s.Substring (1);
 					bool val = pp_expr (ref s);
-					if (s.Length > 0 && s [0] == ')')
+					if (s.Length > 0 && s [0] == ')'){
+						s = s.Substring (1);
 						return val;
+					}
 					Error_InvalidDirective ();
 					return false;
 				}
@@ -1104,7 +1106,9 @@ namespace Mono.CSharp
 			s = s.Trim ();
 			int len = s.Length;
 			if (len > 0){
-				if (s [0] == '|'){
+				char c = s [0];
+				
+				if (c == '|'){
 					if (len > 2 && s [1] == '|'){
 						s = s.Substring (2);
 						return va || pp_and (ref s);
@@ -1112,10 +1116,7 @@ namespace Mono.CSharp
 						Error_InvalidDirective ();
 						return false;
 					}
-				} else {
-					Error_InvalidDirective ();
-					return false;
-				}
+				} 
 			}
 
 			return va;
@@ -1124,6 +1125,11 @@ namespace Mono.CSharp
 		bool eval (string s)
 		{
 			bool v = pp_expr (ref s);
+			s = s.Trim ();
+			if (s.Length != 0){
+				Error_InvalidDirective ();
+				return false;
+			}
 
 			return v;
 		}
