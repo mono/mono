@@ -1397,6 +1397,9 @@ namespace System.Data {
 			XmlAttribute attr = null;
 			ArrayList atts = new ArrayList ();
 
+			attr = doc.CreateAttribute ("", "xmlns", xmlNSURI);
+			atts.Add (attr);
+
 			nsmgr.AddNamespace ("xs", XmlSchema.Namespace);
 			nsmgr.AddNamespace (XmlConstants.MsdataPrefix, XmlConstants.MsdataNamespace);
 			if (Namespace != "") {
