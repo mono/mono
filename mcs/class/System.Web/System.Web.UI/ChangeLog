@@ -1,6 +1,6 @@
 2004-01-14  Jackson Harper <jackson@ximian.com>
 
-	* OutputCache.cs: Add all the outputcache attribute error
+	* TemplateParser.cs: Add all the outputcache attribute error
 	messages.
 	
 2004-01-13  Jackson Harper <jackson@ximian.com>
