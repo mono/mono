@@ -1,4 +1,4 @@
-// NamingFlags.cs
+// EventDoc.cs
 // John Barnette (jbarn@httcb.net)
 // 
 // Copyright (c) 2002 John Barnette
@@ -21,12 +21,18 @@ using System;
 
 namespace Mono.Doc.Core
 {
-	[Flags]
-	public enum NamingFlags
+	public class EventDoc : AbstractDoc
 	{
-		None              = 1,
-		FullName          = 2,
-		TypeSpecifier     = 4,
-		ForceMethodParams = 8
+		private string data = null;
+
+		public EventDoc() : base()
+		{
+		}
+
+		public string Data
+		{
+			get { return data;  }
+			set { data = value; }
+		}
 	}
 }

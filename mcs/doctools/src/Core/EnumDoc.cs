@@ -1,4 +1,4 @@
-// NamingFlags.cs
+// EnumDoc.cs
 // John Barnette (jbarn@httcb.net)
 // 
 // Copyright (c) 2002 John Barnette
@@ -21,12 +21,18 @@ using System;
 
 namespace Mono.Doc.Core
 {
-	[Flags]
-	public enum NamingFlags
+	public class EnumDoc : AbstractTypeDoc
 	{
-		None              = 1,
-		FullName          = 2,
-		TypeSpecifier     = 4,
-		ForceMethodParams = 8
+		private EnumMember[] members = null;
+		
+		public EnumDoc() : base()
+		{
+		}
+
+		public EnumMember[] Members
+		{
+			get { return members;  }
+			set { members = value; }
+		}
 	}
 }

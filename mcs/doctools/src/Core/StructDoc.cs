@@ -1,4 +1,4 @@
-// NamingFlags.cs
+// StructDoc.cs
 // John Barnette (jbarn@httcb.net)
 // 
 // Copyright (c) 2002 John Barnette
@@ -21,12 +21,10 @@ using System;
 
 namespace Mono.Doc.Core
 {
-	[Flags]
-	public enum NamingFlags
+	public class StructDoc : AbstractClassStructDoc
 	{
-		None              = 1,
-		FullName          = 2,
-		TypeSpecifier     = 4,
-		ForceMethodParams = 8
+		public StructDoc() : base()
+		{
+		}
 	}
 }

@@ -1,4 +1,4 @@
-// NamingFlags.cs
+// ParameterDoc.cs
 // John Barnette (jbarn@httcb.net)
 // 
 // Copyright (c) 2002 John Barnette
@@ -21,12 +21,31 @@ using System;
 
 namespace Mono.Doc.Core
 {
-	[Flags]
-	public enum NamingFlags
+	public class ParameterDoc
 	{
-		None              = 1,
-		FullName          = 2,
-		TypeSpecifier     = 4,
-		ForceMethodParams = 8
+		private string name        = null;
+		private string description = null;
+
+		public ParameterDoc()
+		{
+		}
+
+		public ParameterDoc(string pName, string pDescription)
+		{
+			name        = pName;
+			description = pDescription;
+		}
+
+		public string Name
+		{
+			get { return name;  }
+			set { name = value; }
+		}
+
+		public string Description
+		{
+			get { return description;  }
+			set { description = value; }
+		}
 	}
 }

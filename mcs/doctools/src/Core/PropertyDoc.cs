@@ -1,4 +1,4 @@
-// NamingFlags.cs
+// PropertyDoc.cs
 // John Barnette (jbarn@httcb.net)
 // 
 // Copyright (c) 2002 John Barnette
@@ -21,12 +21,25 @@ using System;
 
 namespace Mono.Doc.Core
 {
-	[Flags]
-	public enum NamingFlags
+	public class PropertyDoc : AbstractDoc
 	{
-		None              = 1,
-		FullName          = 2,
-		TypeSpecifier     = 4,
-		ForceMethodParams = 8
+		private string         propertyValue = null;
+		private ExceptionDoc[] exceptions    = null;
+
+		public PropertyDoc() : base()
+		{
+		}
+
+		public string Value
+		{
+			get { return propertyValue;  }
+			set { propertyValue = value; }
+		}
+
+		public ExceptionDoc[] Exceptions
+		{
+			get { return exceptions;  }
+			set { exceptions = value; }
+		}
 	}
 }

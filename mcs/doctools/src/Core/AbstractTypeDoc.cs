@@ -1,4 +1,4 @@
-// NamingFlags.cs
+// AbstractTypeDoc.cs
 // John Barnette (jbarn@httcb.net)
 // 
 // Copyright (c) 2002 John Barnette
@@ -21,12 +21,18 @@ using System;
 
 namespace Mono.Doc.Core
 {
-	[Flags]
-	public enum NamingFlags
+	public abstract class AbstractTypeDoc : AbstractDoc
 	{
-		None              = 1,
-		FullName          = 2,
-		TypeSpecifier     = 4,
-		ForceMethodParams = 8
+		protected string assembly = null;
+
+		public AbstractTypeDoc() : base()
+		{
+		}
+
+		public string Assembly
+		{
+			get { return assembly;  }
+			set { assembly = value; }
+		}
 	}
 }

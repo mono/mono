@@ -1,4 +1,4 @@
-// NamingFlags.cs
+// ExceptionDoc.cs
 // John Barnette (jbarn@httcb.net)
 // 
 // Copyright (c) 2002 John Barnette
@@ -21,12 +21,31 @@ using System;
 
 namespace Mono.Doc.Core
 {
-	[Flags]
-	public enum NamingFlags
+	public class ExceptionDoc
 	{
-		None              = 1,
-		FullName          = 2,
-		TypeSpecifier     = 4,
-		ForceMethodParams = 8
+		private string cref = null;
+		private string description = null;
+
+		public ExceptionDoc()
+		{
+		}
+
+		public ExceptionDoc(string pCref, string pDescription)
+		{
+			cref = pCref;
+			description = pDescription;
+		}
+
+		public string Cref
+		{
+			get { return cref;  }
+			set { cref = value; }
+		}
+
+		public string Description
+		{
+			get { return description;  }
+			set { description = value; }
+		}
 	}
 }

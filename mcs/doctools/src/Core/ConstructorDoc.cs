@@ -1,4 +1,4 @@
-// NamingFlags.cs
+// ConstructorDoc.cs
 // John Barnette (jbarn@httcb.net)
 // 
 // Copyright (c) 2002 John Barnette
@@ -21,12 +21,25 @@ using System;
 
 namespace Mono.Doc.Core
 {
-	[Flags]
-	public enum NamingFlags
+	public class ConstructorDoc : AbstractDoc
 	{
-		None              = 1,
-		FullName          = 2,
-		TypeSpecifier     = 4,
-		ForceMethodParams = 8
+		public ExceptionDoc[] exceptions = null;
+		public ParameterDoc[] parameters = null;
+
+		public ConstructorDoc() : base()
+		{
+		}
+
+		public ExceptionDoc[] Exceptions
+		{
+			get { return exceptions;  }
+			set { exceptions = value; }
+		}
+
+		public ParameterDoc[] Parameters
+		{
+			get { return parameters;  }
+			set { parameters = value; }
+		}
 	}
 }
