@@ -27,6 +27,7 @@ namespace System.Reflection.Emit {
 	private ConstructorBuilder[] ctors;
 	private PropertyBuilder[] properties;
 	private FieldBuilder[] fields;
+	private EventBuilder[] events;
 	private CustomAttributeBuilder[] cattrs;
 	internal TypeBuilder[] subtypes;
 	private TypeAttributes attrs;
@@ -78,7 +79,15 @@ namespace System.Reflection.Emit {
 		}
 		public override Type DeclaringType {get {return null;}}
 		public override Type UnderlyingSystemType {
-			get {return null;}
+			get {
+				if (fields != null) {
+					foreach (FieldBuilder f in fields) {
+						if ((f.Attributes & FieldAttributes.Static) == 0)
+							return f.FieldType;
+					}
+				}
+				throw new InvalidOperationException ();
+			}
 		}
 
 		public override string FullName {
@@ -547,7 +556,17 @@ namespace System.Reflection.Emit {
 		}
 
 		public EventBuilder DefineEvent( string name, EventAttributes attributes, Type eventtype) {
-			throw new NotImplementedException ();
+			EventBuilder res = new EventBuilder (this, name, attributes, eventtype);
+			if (events != null) {
+				EventBuilder[] new_events = new EventBuilder [events.Length+1];
+				System.Array.Copy (events, new_events, events.Length);
+				new_events [events.Length] = res;
+				events = new_events;
+			} else {
+				events = new EventBuilder [1];
+				events [0] = res;
+			}
+			return res;
 		}
 
 		static int InitializedDataCount = 0;

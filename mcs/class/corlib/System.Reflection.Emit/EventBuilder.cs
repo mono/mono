@@ -17,21 +17,66 @@ using System.Runtime.InteropServices;
 
 namespace System.Reflection.Emit {
 	public sealed class EventBuilder {
-		public void AddOtherMethod( MethodBuilder mdBuilder) {
+		string name;
+		Type type;
+		TypeBuilder typeb;
+		CustomAttributeBuilder[] cattrs;
+		MethodBuilder add_method;
+		MethodBuilder remove_method;
+		MethodBuilder raise_method;
+		MethodBuilder[] other_methods;
+		EventAttributes attrs;
+		int table_idx;
+
+		internal EventBuilder (TypeBuilder tb, string eventName, EventAttributes eventAttrs, Type eventType) {
+			name = eventName;
+			attrs = eventAttrs;
+			type = eventType;
+			typeb = tb;
+			table_idx = get_next_table_index (0x14, true);
 		}
-		public EventToken GetEventToken() {
-			return new EventToken();
+
+		internal int get_next_table_index (int table, bool inc) {
+			return typeb.get_next_table_index (table, inc);
+		}
+
+		public void AddOtherMethod( MethodBuilder mdBuilder) {
+			if (other_methods != null) {
+				MethodBuilder[] newv = new MethodBuilder [other_methods.Length + 1];
+				other_methods.CopyTo (newv, 0);
+				other_methods = newv;
+			} else {
+				other_methods = new MethodBuilder [1];
+			}
+			other_methods [other_methods.Length - 1] = mdBuilder;
+		}
+		
+		public EventToken GetEventToken () {
+			return new EventToken (0x14000000 | table_idx);
 		}
 		public void SetAddOnMethod( MethodBuilder mdBuilder) {
+			add_method = mdBuilder;
 		}
 		public void SetRaiseMethod( MethodBuilder mdBuilder) {
+			raise_method = mdBuilder;
 		}
 		public void SetRemoveOnMethod( MethodBuilder mdBuilder) {
+			remove_method = mdBuilder;
 		}
 
 		public void SetCustomAttribute( CustomAttributeBuilder customBuilder) {
+			if (cattrs != null) {
+				CustomAttributeBuilder[] new_array = new CustomAttributeBuilder [cattrs.Length + 1];
+				cattrs.CopyTo (new_array, 0);
+				new_array [cattrs.Length] = customBuilder;
+				cattrs = new_array;
+			} else {
+				cattrs = new CustomAttributeBuilder [1];
+				cattrs [0] = customBuilder;
+			}
 		}
 		public void SetCustomAttribute( ConstructorInfo con, byte[] binaryAttribute) {
+			SetCustomAttribute (new CustomAttributeBuilder (con, binaryAttribute));
 		}
 
 
