@@ -622,8 +622,26 @@ type			: K_CLASS class_ref
                                 $$ = new TypeRef (ptr_type, base_type.FullName + '&');
                           }
 			| type K_PINNED
+                          {
+                                TypeRef type = (TypeRef) $1;
+                                type.Pinned = true;
+                          }
 			| type K_MODREQ OPEN_PARENS class_ref CLOSE_PARENS
+                          {
+                                TypeRef base_type = (TypeRef) $1;
+                                TypeRef class_ref = (TypeRef) $4;
+
+                                $$ = new CustomModifiedType (base_type.Type,
+                                        CustomModifier.modreq, (Class) class_ref.Type);
+                          }
 			| type K_MODOPT OPEN_PARENS class_ref CLOSE_PARENS
+                          {
+                                TypeRef base_type = (TypeRef) $1;
+                                TypeRef class_ref = (TypeRef) $4;
+
+                                $$ = new CustomModifiedType (base_type.Type,
+                                        CustomModifier.modopt, (Class) class_ref.Type);
+                          }
 			| K_METHOD call_conv type STAR OPEN_PARENS sig_args CLOSE_PARENS
 			| K_TYPEDREF
 			| K_CHAR
