@@ -34,8 +34,13 @@ namespace Mono.Xml
 			idList = new ArrayList ();
 			missingIDReferences = new ArrayList ();
 			XmlTextReader xtReader = reader as XmlTextReader;
-			if (xtReader != null)
+			if (xtReader != null) {
+#if DTD_HANDLE_EVENTS
+				if (validatingReader != null)
+					xtReader.ValidationEventHandler += new ValidationEventHandler (OnValidationEvent);
+#endif
 				resolver = xtReader.Resolver;
+			}
 			else
 				resolver = new XmlUrlResolver ();
 		}
@@ -279,6 +284,13 @@ namespace Mono.Xml
 				return false;
 		}
 
+		private void OnValidationEvent (object o, ValidationEventArgs e)
+		{
+//			if (validatingReader.HasValidationEvent)
+//				validatingReader.OnValidationEvent (this, e);
+			this.HandleError (e.Exception, e.Severity);
+		}
+
 		public override bool Read ()
 		{
 			if (currentTextValue != null)
@@ -359,6 +371,7 @@ namespace Mono.Xml
 			}
 
 			bool dontResetTextType = false;
+			DTDElementDeclaration elem = null;
 
 			switch (reader.NodeType) {
 			case XmlNodeType.XmlDeclaration:
@@ -402,6 +415,8 @@ namespace Mono.Xml
 				if (constructingTextValue != null) {
 					currentTextValue = constructingTextValue;
 					constructingTextValue = null;
+					if (isWhitespace)
+						ValidateWhitespaceNode ();
 					return true;
 				}
 				elementStack.Push (reader.Name);
@@ -421,8 +436,8 @@ namespace Mono.Xml
 						XmlSeverityType.Error);
 					currentAutomata = previousAutomata;
 				}
-				DTDElementDeclaration decl = DTD.ElementDecls [reader.Name];
-				if (decl == null) {
+				elem = DTD.ElementDecls [reader.Name];
+				if (elem == null) {
 					HandleError (String.Format ("Element {0} is not declared.", reader.Name),
 						XmlSeverityType.Error);
 					currentAutomata = previousAutomata;
@@ -430,8 +445,8 @@ namespace Mono.Xml
 
 				currentElement = Name;
 				automataStack.Push (currentAutomata);
-				if (decl != null)	// i.e. not invalid
-					currentAutomata = decl.ContentModel.GetAutomata ();
+				if (elem != null)	// i.e. not invalid
+					currentAutomata = elem.ContentModel.GetAutomata ();
 
 				DTDAttListDeclaration attList = dtd.AttListDecls [currentElement];
 				if (attList != null) {
@@ -465,8 +480,8 @@ namespace Mono.Xml
 				if (currentAutomata == null)
 					break;
 
-				decl = DTD.ElementDecls [reader.Name];
-				if (decl == null) {
+				elem = DTD.ElementDecls [reader.Name];
+				if (elem == null) {
 					HandleError (String.Format ("Element {0} is not declared.", reader.Name),
 						XmlSeverityType.Error);
 				}
@@ -504,7 +519,7 @@ namespace Mono.Xml
 				if (currentAutomata == null)
 					break;
 
-				DTDElementDeclaration elem = dtd.ElementDecls [elementStack.Peek () as string];
+				elem = dtd.ElementDecls [elementStack.Peek () as string];
 				// Here element should have been already validated, so
 				// if no matching declaration is found, simply ignore.
 				if (elem != null && !elem.IsMixedContent && !elem.IsAny) {
@@ -529,6 +544,7 @@ namespace Mono.Xml
 					constructingTextValue += reader.Value;
 					return ReadContent ();
 				}
+				ValidateWhitespaceNode ();
 				break;
 			case XmlNodeType.EntityReference:
 				if (validatingReader.EntityHandling == EntityHandling.ExpandEntities) {
@@ -542,21 +558,15 @@ namespace Mono.Xml
 			return true;
 		}
 
-		/*
-		private void SetupValidityIgnorantAttributes ()
+		private void ValidateWhitespaceNode ()
 		{
-			if (reader.MoveToFirstAttribute ()) {
-				// If it was invalid, simply add specified attributes.
-				do {
-					attributes.Add (reader.Name);
-					attributeLocalNames.Add (reader.Name, reader.LocalName);
-					attributeNamespaces.Add (reader.Name, reader.NamespaceURI);
-					attributeValues.Add (reader.Name, reader.Value);
-				} while (reader.MoveToNextAttribute ());
-				reader.MoveToElement ();
+			// VC Standalone Document Declaration (2.9)
+			if (this.isStandalone && DTD != null && elementStack.Count > 0) {
+				DTDElementDeclaration elem = DTD.ElementDecls [elementStack.Peek () as string];
+				if (elem != null && !elem.IsInternalSubset && !elem.IsMixedContent && !elem.IsAny && !elem.IsEmpty)
+					HandleError ("In standalone document, whitespace cannot appear in an element whose declaration explicitly contains child content model, not Mixed content.", XmlSeverityType.Error);
 			}
 		}
-		*/
 
 		private void HandleError (string message, XmlSeverityType severity)
 		{
@@ -573,11 +583,19 @@ namespace Mono.Xml
 				null,
 				BaseURI, 
 				null);
+			HandleError (ex, severity);
+		}
+
+		private void HandleError (XmlSchemaException ex, XmlSeverityType severity)
+		{
+			if (validatingReader != null &&
+				validatingReader.ValidationType == ValidationType.None)
+				return;
 
 			if (validatingReader != null)
 				this.validatingReader.OnValidationEvent (this,
 					new ValidationEventArgs (ex, ex.Message, severity));
-			else
+			else if (severity == XmlSeverityType.Error)
 				throw ex;
 		}
 
@@ -660,12 +678,32 @@ namespace Mono.Xml
 					else
 						normalized = attrValue;
 					DTDEntityDeclaration ent;
+
+					// Common process to get list value
+					string [] list = null;
+					switch (def.Datatype.TokenizedType) {
+					case XmlTokenizedType.IDREFS:
+					case XmlTokenizedType.ENTITIES:
+					case XmlTokenizedType.NMTOKENS:
+						try {
+							list = def.Datatype.ParseValue (normalized, NameTable, null) as string [];
+						} catch (Exception) {
+							HandleError ("Attribute value is invalid against its data type.", XmlSeverityType.Error);
+							list = new string [0];
+						}
+						break;
+					default:
+						try {
+							def.Datatype.ParseValue (normalized, NameTable, null);
+						} catch (Exception) {
+							HandleError ("Attribute value is invalid against its data type.", XmlSeverityType.Error);
+						}
+						break;
+					}
+
 					switch (def.Datatype.TokenizedType) {
 					case XmlTokenizedType.ID:
-						if (!XmlChar.IsName (normalized))
-							HandleError (String.Format ("ID attribute value must match the creation rule Name: {0}", attrValue),
-								XmlSeverityType.Error);
-						else if (this.idList.Contains (normalized)) {
+						if (this.idList.Contains (normalized)) {
 							HandleError (String.Format ("Node with ID {0} was already appeared.", attrValue),
 								XmlSeverityType.Error);
 						} else {
@@ -675,21 +713,15 @@ namespace Mono.Xml
 						}
 						break;
 					case XmlTokenizedType.IDREF:
-						if (!XmlChar.IsName (normalized))
-							HandleError (String.Format ("IDREF attribute value must match the creation rule Name: {0}", attrValue),
-								XmlSeverityType.Error);
 						if (!idList.Contains (normalized))
 							missingIDReferences.Add (normalized);
 						break;
 					case XmlTokenizedType.IDREFS:
-						string [] idrefs = def.Datatype.ParseValue (normalized, NameTable, null) as string [];
-						foreach (string idref in idrefs) {
-							string each = FilterNormalization (def.Name, idref);
-							if (!XmlChar.IsName (each))
-								HandleError (String.Format ("Each ID in IDREFS attribute value must match the creation rule Name: {0}", attrValue),
-									XmlSeverityType.Error);
-							if (!idList.Contains (each))
-								missingIDReferences.Add (each);
+						foreach (string idref in list) {
+							// FIXME: is this normalization required?
+//							string each = FilterNormalization (def.Name, idref);
+							if (!idList.Contains (idref))
+								missingIDReferences.Add (idref);
 						}
 						break;
 					case XmlTokenizedType.ENTITY:
@@ -700,8 +732,7 @@ namespace Mono.Xml
 							HandleError ("The entity specified by entity type value must be an unparsed entity. The entity definition has no NDATA in attribute: " + reader.Name + ".", XmlSeverityType.Error);
 						break;
 					case XmlTokenizedType.ENTITIES:
-						string [] entrefs = def.Datatype.ParseValue (normalized, NameTable, null) as string [];
-						foreach (string entref in entrefs) {
+						foreach (string entref in list) {
 							ent = dtd.EntityDecls [FilterNormalization (reader.Name, entref)];
 							if (ent == null)
 								HandleError ("Reference to undeclared entity was found in attribute: " + reader.Name + ".", XmlSeverityType.Error);
@@ -709,18 +740,8 @@ namespace Mono.Xml
 								HandleError ("The entity specified by ENTITIES type value must be an unparsed entity. The entity definition has no NDATA in attribute: " + reader.Name + ".", XmlSeverityType.Error);
 						}
 						break;
-					case XmlTokenizedType.NMTOKEN:
-						if (!XmlChar.IsNmToken (normalized))
-							HandleError (String.Format ("NMTOKEN attribute value must match the creation rule NMTOKEN. Name={0}", reader.Name),
-								XmlSeverityType.Error);
-						break;
-					case XmlTokenizedType.NMTOKENS:
-						string [] tokens = def.Datatype.ParseValue (normalized, NameTable, null) as string [];
-						foreach (string token in tokens)
-							if (!XmlChar.IsNmToken (FilterNormalization (def.Name, token)))
-								HandleError (String.Format ("Name Token in NMTOKENS attribute value must match the creation rule NMTOKEN. Name={0}", reader.Name),
-									XmlSeverityType.Error);
-						break;
+//					case XmlTokenizedType.NMTOKEN: nothing to do
+//					case XmlTokenizedType.NMTOKENS: nothing to do
 					}
 					if (isStandalone && !def.IsInternalSubset && attrValue != normalized)
 						HandleError ("In standalone document, attribute value characters must not be checked against external definition.", XmlSeverityType.Error);

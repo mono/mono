@@ -388,9 +388,9 @@ namespace System.Xml
 			}
 			if (has_peek && peek_char > 0) {
 				if (sb != null)
-					sb.Append ((char) peek_char);
+					sb.Append (ExpandSurrogateChar (peek_char));
 				else
-					return new StringReader (((char) peek_char) + reader.ReadToEnd ());
+					return new StringReader (ExpandSurrogateChar (peek_char) + reader.ReadToEnd ());
 			}
 			// As long as less memory consumptive...
 			if (sb != null)
@@ -1193,8 +1193,8 @@ namespace System.Xml
 
 		private int PeekChar ()
 		{
-			if (can_seek)
-				return reader.Peek ();
+//			if (can_seek)
+//				return reader.Peek ();
 
 			if (hasPeekChars)
 				return peekChars [peekCharsIndex];
@@ -1203,6 +1203,13 @@ namespace System.Xml
 				return peek_char;
 
 			peek_char = reader.Read ();
+			if (peek_char >= 0xD800 && peek_char <= 0xDBFF) {
+				int i = reader.Read ();
+				if (i >= 0xDC00 && i <= 0xDFFF)
+					peek_char += i;
+//				else
+//					peek_char = -1;
+			}
 			has_peek = true;
 			return peek_char;
 		}
@@ -1220,6 +1227,13 @@ namespace System.Xml
 				has_peek = false;
 			} else {
 				ch = reader.Read ();
+				if (ch >= 0xD800 && ch <= 0xDBFF) {
+					int i = reader.Read ();
+					if (i > 0xDC00 && i <= 0xDFFF)
+						ch += i;
+//					else
+//						ch = -1;
+				}
 			}
 
 			if (ch == '\n') {
@@ -1228,8 +1242,21 @@ namespace System.Xml
 			} else {
 				column++;
 			}
-			currentTag.Append ((char) ch);
+			if (ch < Char.MaxValue)
+				currentTag.Append ((char) ch);
+			else
+				currentTag.Append (ExpandSurrogateChar (ch));
 			return ch;
+		}
+
+		private string ExpandSurrogateChar (int ch)
+		{
+			if (ch < Char.MaxValue)
+				return ((char) peek_char).ToString ();
+			else {
+				char [] tmp = new char [] {(char) (ch / 0x10000 + 0xD800), (char) (ch % 0x10000 + 0xDC00)};
+				return tmp.ToString ();
+			}
 		}
 
 		// This should really keep track of some state so
@@ -1437,7 +1464,13 @@ namespace System.Xml
 		private void AppendNameChar (int ch)
 		{
 			CheckNameCapacity ();
-			nameBuffer [nameLength++] = (char)ch;
+			if (ch < Char.MaxValue)
+				nameBuffer [nameLength++] = (char) ch;
+			else {
+				nameBuffer [nameLength++] = (char) (ch / 0x10000 + 0xD800);
+				CheckNameCapacity ();
+				nameBuffer [nameLength++] = (char) (ch % 0x10000 + 0xDC00);
+			}
 		}
 
 		private void CheckNameCapacity ()
@@ -1457,8 +1490,10 @@ namespace System.Xml
 
 		private void AppendValueChar (int ch)
 		{
-			// FIXME: Handle surrogate pair correctly
-			valueBuffer.Append ((char)ch);
+			if (ch < Char.MaxValue)
+				valueBuffer.Append ((char) ch);
+			else
+				valueBuffer.Append (ExpandSurrogateChar (ch));
 		}
 
 		private string CreateValueString ()
@@ -1495,9 +1530,8 @@ namespace System.Xml
 				else
 					ch = ReadChar ();
 
-				if (normalization && XmlConstructs.IsInvalid (ch))
-					throw new XmlException (this as IXmlLineInfo,
-						"Not allowed character was found.");
+				if (normalization && XmlChar.IsInvalid (ch))
+					throw new XmlException (this, "Not allowed character was found.");
 				AppendValueChar (ch);
 
 				// Block "]]>"
@@ -1563,7 +1597,7 @@ namespace System.Xml
 						throw new XmlException (this as IXmlLineInfo,
 							String.Format (
 								"invalid hexadecimal digit: {0} (#x{1:X})",
-								(char)ch,
+								(char) ch,
 								ch));
 				}
 			} else {
@@ -1576,7 +1610,7 @@ namespace System.Xml
 						throw new XmlException (this as IXmlLineInfo,
 							String.Format (
 								"invalid decimal digit: {0} (#x{1:X})",
-								(char)ch,
+								(char) ch,
 								ch));
 				}
 			}
@@ -1584,7 +1618,7 @@ namespace System.Xml
 			ReadChar (); // ';'
 
 			// There is no way to save surrogate pairs...
-			if (normalization && value < 0xffff && !XmlConstructs.IsValid (value))
+			if (normalization && XmlChar.IsInvalid (value))
 				throw new XmlException (this as IXmlLineInfo,
 					"Referenced character was not allowed in XML.");
 			return value;
@@ -1764,7 +1798,7 @@ namespace System.Xml
 					if (PeekChar () == '#') {
 						ReadChar ();
 						ch = ReadCharacterReference ();
-						if (normalization && XmlConstructs.IsInvalid (ch))
+						if (normalization && XmlChar.IsInvalid (ch))
 							throw new XmlException (this as IXmlLineInfo,
 								"Not allowed character was found.");
 						AppendValueChar (ch);
@@ -1801,6 +1835,8 @@ namespace System.Xml
 						AppendValueChar (predefined);
 					break;
 				default:
+					if (normalization && XmlChar.IsInvalid (ch))
+						throw new XmlException (this, "Invalid character was found.");
 					AppendValueChar (ch);
 					break;
 				}
@@ -1847,7 +1883,9 @@ namespace System.Xml
 					break;
 				}
 
-				AppendValueChar ((char)ch);
+				if (normalization && XmlChar.IsInvalid (ch))
+					throw new XmlException (this, "Invalid character was found.");
+				AppendValueChar (ch);
 			}
 
 			SetProperties (
@@ -2052,11 +2090,11 @@ namespace System.Xml
 					break;
 				}
 
-				if (XmlConstructs.IsInvalid (ch))
+				if (XmlChar.IsInvalid (ch))
 					throw new XmlException (this as IXmlLineInfo,
 						"Not allowed character was found.");
 
-				AppendValueChar ((char)ch);
+				AppendValueChar (ch);
 			}
 
 			SetProperties (
@@ -2098,8 +2136,10 @@ namespace System.Xml
 //						ch = ReadChar ();
 					}
 				}
+				if (normalization && XmlChar.IsInvalid (ch))
+					throw new XmlException (this, "Invalid character was found.");
 
-				AppendValueChar ((char)ch);
+				AppendValueChar (ch);
 			}
 
 			SetProperties (
@@ -2423,7 +2463,7 @@ namespace System.Xml
 				c = ReadChar ();
 				if(c < 0) throw new XmlException (this as IXmlLineInfo,"Unexpected end of stream in ExternalID.");
 				if(c != quoteChar && !XmlChar.IsPubidChar (c))
-					throw new XmlException (this as IXmlLineInfo,"character '" + (char)c + "' not allowed for PUBLIC ID");
+					throw new XmlException (this as IXmlLineInfo,"character '" + (char) c + "' not allowed for PUBLIC ID");
 				if (c != quoteChar)
 					AppendValueChar (c);
 			}
@@ -2448,12 +2488,12 @@ namespace System.Xml
 		{
 			int ch = PeekChar ();
 			if(isNameToken) {
-				if (!XmlChar.IsNameChar ((char) ch))
-					throw new XmlException (this as IXmlLineInfo,String.Format ("a nmtoken did not start with a legal character {0} ({1})", ch, (char)ch));
+				if (!XmlChar.IsNameChar (ch))
+					throw new XmlException (this as IXmlLineInfo,String.Format ("a nmtoken did not start with a legal character {0} ({1})", ch, (char) ch));
 			}
 			else {
 				if (!XmlChar.IsFirstNameChar (ch))
-					throw new XmlException (this as IXmlLineInfo,String.Format ("a name did not start with a legal character {0} ({1})", ch, (char)ch));
+					throw new XmlException (this as IXmlLineInfo,String.Format ("a name did not start with a legal character {0} ({1})", ch, (char) ch));
 			}
 
 			nameLength = 0;
@@ -2477,9 +2517,9 @@ namespace System.Xml
 				throw new XmlException (this as IXmlLineInfo,
 					String.Format (
 						"expected '{0}' ({1:X}) but found '{2}' ({3:X})",
-						(char)expected,
+						(char) expected,
 						expected,
-						(char)ch,
+						(char) ch,
 						ch));
 			}
 		}
@@ -2605,7 +2645,13 @@ namespace System.Xml
 					Read ();
 					return i;
 				default:
-					buffer [bufIndex++] = (char) ReadChar ();
+					ReadChar ();
+					if (c < Char.MaxValue)
+						buffer [bufIndex++] = (char) c;
+					else {
+						buffer [bufIndex++] = (char) (c / 0x10000 + 0xD800);
+						buffer [bufIndex++] = (char) (c % 0x10000 + 0xDC00);
+					}
 					break;
 				}
 			}

@@ -29,7 +29,7 @@ namespace System.Xml
 		bool namespaces = true;
 		bool openAttribute = false;
 		bool attributeWrittenForElement = false;
-		Stack openElements = new Stack ();
+		ArrayList openElements = new ArrayList ();
 		Formatting formatting = Formatting.None;
 		int indentation = 2;
 		char indentChar = ' ';
@@ -66,7 +66,7 @@ namespace System.Xml
 			nullEncoding = (w.Encoding == null);
 			StreamWriter sw = w as StreamWriter;
 			if (sw != null)
-				baseStream = ((StreamWriter)w).BaseStream;
+				baseStream = sw.BaseStream;
 		}
 
 		public XmlTextWriter (Stream w,	Encoding encoding) : base ()
@@ -75,7 +75,7 @@ namespace System.Xml
 				nullEncoding = true;
 				this.w = new StreamWriter (w);
 			} else 
-				this.w = new StreamWriter(w, encoding);
+				this.w = new StreamWriter (w, encoding);
 			baseStream = w;
 		}
 
@@ -104,11 +104,11 @@ namespace System.Xml
 				if (openElements.Count == 0)
 					return false;
 				else
-					return (((XmlTextWriterOpenElement)openElements.Peek()).IndentingOverriden);
+					return ((XmlTextWriterOpenElement)openElements [openElements.Count - 1]).IndentingOverriden;
 			}
 			set {
 				if (openElements.Count > 0)
-					((XmlTextWriterOpenElement)openElements.Peek()).IndentingOverriden = value;
+					((XmlTextWriterOpenElement) openElements [openElements.Count - 1]).IndentingOverriden = value;
 			}
 		}
 
@@ -157,9 +157,8 @@ namespace System.Xml
 				string xmlLang = null;
 				int i;
 
-				for (i = 0; i < openElements.Count; i++) 
-				{
-					xmlLang = ((XmlTextWriterOpenElement)openElements.ToArray().GetValue(i)).XmlLang;
+				for (i = openElements.Count - 1; i >= 0; i--) {
+					xmlLang = ((XmlTextWriterOpenElement)openElements [i]).XmlLang;
 					if (xmlLang != null)
 						break;
 				}
@@ -173,9 +172,8 @@ namespace System.Xml
 				XmlSpace xmlSpace = XmlSpace.None;
 				int i;
 
-				for (i = 0; i < openElements.Count; i++) 
-				{
-					xmlSpace = ((XmlTextWriterOpenElement)openElements.ToArray().GetValue(i)).XmlSpace;
+				for (i = openElements.Count - 1; i >= 0; i--) {
+					xmlSpace = ((XmlTextWriterOpenElement)openElements [i]).XmlSpace;
 					if (xmlSpace != XmlSpace.None)
 						break;
 				}
@@ -455,14 +453,17 @@ namespace System.Xml
 			if (openXmlLang) {
 				w.Write (xmlLang);
 				openXmlLang = false;
-				((XmlTextWriterOpenElement)openElements.Peek()).XmlLang = xmlLang;
+				((XmlTextWriterOpenElement) openElements [openElements.Count - 1]).XmlLang = xmlLang;
 			}
 
 			if (openXmlSpace) 
 			{
-				w.Write (xmlSpace.ToString ().ToLower ());
+				if (xmlSpace == XmlSpace.Preserve)
+					w.Write ("preserve");
+				else if (xmlSpace == XmlSpace.Default)
+					w.Write ("default");
 				openXmlSpace = false;
-				((XmlTextWriterOpenElement)openElements.Peek()).XmlSpace = xmlSpace;
+				((XmlTextWriterOpenElement) openElements [openElements.Count - 1]).XmlSpace = xmlSpace;
 			}
 
 			w.Write (quoteChar);
@@ -518,7 +519,7 @@ namespace System.Xml
 					w.Write ('>');
 					w.Write (indentFormatting);
 					w.Write ("</");
-					XmlTextWriterOpenElement el = (XmlTextWriterOpenElement) openElements.Peek ();
+					XmlTextWriterOpenElement el = (XmlTextWriterOpenElement) openElements [openElements.Count - 1];
 					if (el.Prefix != String.Empty) {
 						w.Write (el.Prefix);
 						w.Write (':');
@@ -528,12 +529,13 @@ namespace System.Xml
 				} else
 					w.Write (" />");
 
-				openElements.Pop ();
+				openElements.RemoveAt (openElements.Count - 1);
 				openStartElement = false;
 			} else {
 				w.Write (indentFormatting);
 				w.Write ("</");
-				XmlTextWriterOpenElement el = (XmlTextWriterOpenElement) openElements.Pop ();
+				XmlTextWriterOpenElement el = (XmlTextWriterOpenElement) openElements [openElements.Count - 1];
+				openElements.RemoveAt (openElements.Count - 1);
 				if (el.Prefix != String.Empty) {
 					w.Write (el.Prefix);
 					w.Write (':');
@@ -797,7 +799,7 @@ namespace System.Xml
 			}
 			w.Write (localName);
 
-			openElements.Push (new XmlTextWriterOpenElement (prefix, localName));
+			openElements.Add (new XmlTextWriterOpenElement (prefix, localName));
 			ws = WriteState.Element;
 			openStartElement = true;
 			openElementNS = ns;

@@ -1,3 +1,21 @@
+2004-02-03  Atsushi Enomoto <atsushi@ximian.com>
+
+	* ChangeLog : Fixed incorrect description that should be written for
+	  DTDValidatingReader.cs but written for DTDReader.cs.
+	* DTDValidatingReader.cs : Fixes described in the last DTDReader fix.
+
+	* XmlChar.cs,
+	  XmlConstructs.cs : Made XmlChar and XmlConstructs equivalent and
+	  replaced XmlChar with XmlConstruts, renaming "XmlChar" to 
+	  "XmlCharCompact" and "XmlConstructs" to "XmlChar". 
+	  (XmlChar will be used for compact framework.)
+	* DTDReader.cs, XmlParserInput.cs, XmlTextReader.cs : 
+	  XmlChar related changes.  Support for surrogate pair.
+	  It cannot use TextReader's peek anymore (for surrogate pair).
+	  Character range check for PI value, attribute value, text
+	* XmlTextWriter.cs : Change openElements from Stack to ArrayList.
+	  (It calls ToArray() every time.)
+
 2004-02-03  Alon Gazit <along@mainsoft.com>
 	* XmlNamedNodeMap - now Item(int index) returns null for nodeList.Count
 	  instead of throwing ArgumentOutOfRangeException.
@@ -17,6 +35,7 @@
 	  - Compute replacement text on reading entity declarations.
 	  - Don't expand char references before getting literal entity value.
 	  - Check not allowed parameter entity inside internal subset.
+	* DTDValidatingReader.cs :
 	  - Added ValidateWhitespaceNode() to check whitespace's Validity
 	    Constraints on external elementdecl and standalone document.
 	  - When invalid data against its datatype was found, don't throw

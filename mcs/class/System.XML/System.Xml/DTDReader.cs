@@ -601,7 +601,7 @@ namespace System.Xml
 							AppendValueChar ('\'');
 						break;
 					default:
-						if (XmlConstructs.IsInvalid (c))
+						if (XmlChar.IsInvalid (c))
 							throw new XmlException (this as IXmlLineInfo, "Invalid character was used to define parameter entity.");
 						AppendValueChar (c);
 						break;
@@ -660,7 +660,7 @@ namespace System.Xml
 					if (value [i] == '#') {
 						i++;
 						ch = GetCharacterReference (decl, value, ref i, end);
-						if (XmlConstructs.IsInvalid (ch))
+						if (XmlChar.IsInvalid (ch))
 							throw new XmlException (this as IXmlLineInfo, "Invalid character was used to define parameter entity.");
 
 					} else {
@@ -672,7 +672,7 @@ namespace System.Xml
 						i = end;
 						break;
 					}
-					if (XmlConstructs.IsInvalid (ch))
+					if (XmlChar.IsInvalid (ch))
 						throw new XmlException (decl, "Invalid character was found in the entity declaration.");
 					AppendValueChar (ch);
 					break;
@@ -802,6 +802,7 @@ namespace System.Xml
 					decl.Resolve (this.DTD.Resolver);
 					ResolveExternalEntityReplacementText (decl);
 				} else {
+					// Unparsed entity.
 					decl.LiteralEntityValue = String.Empty;
 					decl.ReplacementText = String.Empty;
 				}
@@ -847,7 +848,7 @@ namespace System.Xml
 				case -1:
 					throw new XmlException ("unexpected end of stream.");
 				default:
-					if (this.normalization && XmlConstructs.IsInvalid (ch))
+					if (this.normalization && XmlChar.IsInvalid (ch))
 						throw new XmlException (this as IXmlLineInfo, "Invalid character was found in the entity declaration.");
 					AppendValueChar (ch);
 					break;
@@ -885,7 +886,7 @@ namespace System.Xml
 			TryExpandPERef ();
 			SkipWhitespace ();
 
-			while (XmlChar.IsNameChar ((char) PeekChar ())) {
+			while (XmlChar.IsNameChar (PeekChar ())) {
 				DTDAttributeDefinition def = ReadAttributeDefinition ();
 				// There must not be two or more ID attributes.
 				if (def.Datatype.TokenizedType == XmlTokenizedType.ID) {
@@ -1217,7 +1218,7 @@ namespace System.Xml
 				c = ReadChar ();
 				if(c < 0) throw new XmlException (this as IXmlLineInfo,"Unexpected end of stream in ExternalID.");
 				if(c != quoteChar && !XmlChar.IsPubidChar (c))
-					throw new XmlException (this as IXmlLineInfo,"character '" + (char)c + "' not allowed for PUBLIC ID");
+					throw new XmlException (this as IXmlLineInfo,"character '" + (char) c + "' not allowed for PUBLIC ID");
 				if (c != quoteChar)
 					AppendValueChar (c);
 			}
@@ -1242,12 +1243,12 @@ namespace System.Xml
 		{
 			int ch = PeekChar ();
 			if(isNameToken) {
-				if (!XmlChar.IsNameChar ((char) ch))
-					throw new XmlException (this as IXmlLineInfo,String.Format ("a nmtoken did not start with a legal character {0} ({1})", ch, (char)ch));
+				if (!XmlChar.IsNameChar (ch))
+					throw new XmlException (this as IXmlLineInfo,String.Format ("a nmtoken did not start with a legal character {0} ({1})", ch, (char) ch));
 			}
 			else {
 				if (!XmlChar.IsFirstNameChar (ch))
-					throw new XmlException (this as IXmlLineInfo,String.Format ("a name did not start with a legal character {0} ({1})", ch, (char)ch));
+					throw new XmlException (this as IXmlLineInfo,String.Format ("a name did not start with a legal character {0} ({1})", ch, (char) ch));
 			}
 
 			nameLength = 0;
@@ -1271,9 +1272,9 @@ namespace System.Xml
 				throw new XmlException (this as IXmlLineInfo,
 					String.Format (
 						"expected '{0}' ({1:X}) but found '{2}' ({3:X})",
-						(char)expected,
+						(char) expected,
 						expected,
-						(char)ch,
+						(char) ch,
 						ch));
 			}
 		}
@@ -1306,6 +1307,7 @@ namespace System.Xml
 			return skipped;
 		}
 
+		/*
 		private string Dereference (string unresolved, bool expandPredefined)
 		{
 			StringBuilder resolved = new StringBuilder();
@@ -1324,17 +1326,20 @@ namespace System.Xml
 					unresolved.Substring (next + 1, endPos - next - 1);
 				if(entityName [0] == '#') {
 					try {
-						char c;
+						int c;
 						// character entity
 						if(entityName [1] == 'x') {
 							// hexadecimal
-							c = (char) int.Parse ("0" + entityName.Substring (2),
+							c = int.Parse (entityName.Substring (2),
 								System.Globalization.NumberStyles.HexNumber);
 						} else {
 							// decimal
-							c = (char) int.Parse (entityName.Substring (1));
+							c = int.Parse (entityName.Substring (1));
 						}
-						resolved.Append (c);
+						if (c < Char.MaxValue)
+							resolved.Append ((char) c);
+						else
+							resolved.Append (ExpandSurrogateChar (c));
 					} catch (FormatException) {
 						throw new XmlException (this as IXmlLineInfo, "Invalid character entity reference was found.");
 					}
@@ -1357,6 +1362,7 @@ namespace System.Xml
 
 			return resolved.ToString();
 		}
+		*/
 
 		private int PeekChar ()
 		{
@@ -1368,13 +1374,21 @@ namespace System.Xml
 			return currentInput.ReadChar ();
 		}
 
+		private string ExpandSurrogateChar (int ch)
+		{
+			if (ch < Char.MaxValue)
+				return ((char) ch).ToString ();
+			else {
+				char [] tmp = new char [] {(char) (ch / 0x10000 + 0xD800), (char) (ch % 0x10000 + 0xDC00)};
+				return tmp.ToString ();
+			}
+		}
+
 		// The reader is positioned on the first character after
 		// the leading '<!--'.
 		private void ReadComment ()
 		{
 			currentInput.InitialState = false;
-
-//			ClearValueBuffer ();
 
 			while (PeekChar () != -1) {
 				int ch = ReadChar ();
@@ -1389,22 +1403,10 @@ namespace System.Xml
 					break;
 				}
 
-				if (XmlConstructs.IsInvalid (ch))
+				if (XmlChar.IsInvalid (ch))
 					throw new XmlException (this as IXmlLineInfo,
 						"Not allowed character was found.");
-
-//				AppendValueChar ((char)ch);
 			}
-
-			/*
-			SetProperties (
-				XmlNodeType.Comment, // nodeType
-				String.Empty, // name
-				false, // isEmptyElement
-				true, // clearAttributes
-				valueBuffer // value
-			);
-			*/
 		}
 
 		// The reader is positioned on the first character
@@ -1548,7 +1550,7 @@ namespace System.Xml
 						throw new XmlException (this as IXmlLineInfo,
 							String.Format (
 								"invalid hexadecimal digit: {0} (#x{1:X})",
-								(char)ch,
+								(char) ch,
 								ch));
 				}
 			} else {
@@ -1561,7 +1563,7 @@ namespace System.Xml
 						throw new XmlException (this as IXmlLineInfo,
 							String.Format (
 								"invalid decimal digit: {0} (#x{1:X})",
-								(char)ch,
+								(char) ch,
 								ch));
 				}
 			}
@@ -1569,7 +1571,7 @@ namespace System.Xml
 			ReadChar (); // ';'
 
 			// There is no way to save surrogate pairs...
-			if (value < 0xffff && !XmlConstructs.IsValid (value))
+			if (XmlChar.IsInvalid (value))
 				throw new XmlException (this as IXmlLineInfo,
 					"Referenced character was not allowed in XML.");
 			AppendValueChar (value);
@@ -1579,7 +1581,13 @@ namespace System.Xml
 		private void AppendNameChar (int ch)
 		{
 			CheckNameCapacity ();
-			nameBuffer [nameLength++] = (char)ch;
+			if (ch < Char.MaxValue)
+				nameBuffer [nameLength++] = (char) ch;
+			else {
+				nameBuffer [nameLength++] = (char) (ch / 0x10000 + 0xD800);
+				CheckNameCapacity ();
+				nameBuffer [nameLength++] = (char) (ch % 0x10000 + 0xDC00);
+			}
 		}
 
 		private void CheckNameCapacity ()
@@ -1599,7 +1607,10 @@ namespace System.Xml
 
 		private void AppendValueChar (int ch)
 		{
-			valueBuffer.Append ((char)ch);
+			if (ch < Char.MaxValue)
+				valueBuffer.Append ((char) ch);
+			else
+				valueBuffer.Append (ExpandSurrogateChar (ch));
 		}
 
 		private string CreateValueString ()

@@ -10,16 +10,21 @@
 
 namespace System.Xml
 {
-	internal class XmlChar
+	// Now, "XmlChar" and "XmlConstructs" are made as equivalent, so
+	// I dicided to rename XmlConstruts class as "XmlChar" and use it
+	// for default build.
+	// However, this class will be used for the future compact framework 
+	// (XmlConstruts class uses not a little memory).
+	internal class XmlCharCompact
 	{
-		internal static char [] WhitespaceChars = new char [] {' ', '\n', '\t', '\r'};
+		public static char [] WhitespaceChars = new char [] {' ', '\n', '\t', '\r'};
 
-		internal static bool IsWhitespace(int ch)
+		public static bool IsWhitespace (int ch)
 		{
 			return ch == 0x20 || ch == 0x9 || ch == 0xD || ch == 0xA;
 		}
 
-		internal static bool IsWhitespace (string str)
+		public static bool IsWhitespace (string str)
 		{
 			for (int i = 0; i < str.Length; i++)
 				if (!IsWhitespace (str [i])) return false;
@@ -27,7 +32,7 @@ namespace System.Xml
 			return true;
 		}
 
-		internal static bool IsFirstNameChar(int ch)
+		public static bool IsFirstNameChar (int ch)
 		{
 			bool result = false;
 
@@ -39,7 +44,36 @@ namespace System.Xml
 			return result;
 		}
 
-		internal static bool IsNameChar(int ch)
+		public static bool IsValid (int ch)
+		{
+			return !IsInvalid (ch);
+		}
+
+		public static bool IsInvalid (int ch)
+		{
+			switch (ch) {
+			case 9:
+			case 10:
+			case 13:
+				return false;
+			}
+			if (ch < 32)
+				return true;
+			if (ch < 0xD800)
+				return false;
+			if (ch < 0xE000)
+				return true;
+			if (ch < 0xFFFE)
+				return false;
+			if (ch < 0x10000)
+				return true;
+			if (ch < 0x110000)
+				return false;
+			else
+				return true;
+		}
+
+		public static bool IsNameChar (int ch)
 		{
 			bool result = false;
 
@@ -51,7 +85,7 @@ namespace System.Xml
 			return result;
 		}
 
-		internal static bool IsNCNameChar(int ch)
+		public static bool IsNCNameChar (int ch)
 		{
 			bool result = false;
 
@@ -63,7 +97,7 @@ namespace System.Xml
 			return result;
 		}
 
-		internal static bool IsName (string str)
+		public static bool IsName (string str)
 		{
 			if (str.Length == 0)
 				return false;
@@ -75,7 +109,7 @@ namespace System.Xml
 			return true;
 		}
 
-		internal static bool IsNCName (string str)
+		public static bool IsNCName (string str)
 		{
 			if (str.Length == 0)
 				return false;
@@ -87,7 +121,7 @@ namespace System.Xml
 			return true;
 		}
 
-		internal static bool IsNmToken (string str)
+		public static bool IsNmToken (string str)
 		{
 			if (str.Length == 0)
 				return false;
@@ -97,12 +131,12 @@ namespace System.Xml
 			return true;
 		}
 
-		internal static bool IsPubidChar(int ch)
+		public static bool IsPubidChar (int ch)
 		{
 			return (IsWhitespace(ch) && ch != '\t') | ('a' <= ch && ch <= 'z') | ('A' <= ch && ch <= 'Z') | ('0' <= ch && ch <= '9') | "-'()+,./:=?;!*#@$_%".IndexOf((char)ch) >= 0;
 		}
 
-		internal static bool IsPubid (string str)
+		public static bool IsPubid (string str)
 		{
 			foreach (char c in str)
 				if (!IsPubidChar (c))
@@ -120,7 +154,7 @@ namespace System.Xml
 		/// </summary>
 		/// <param name="ianaEncoding">The encoding to check.</param>
 		/// <returns></returns>
-		internal static bool IsValidIANAEncoding(String ianaEncoding) 
+		public static bool IsValidIANAEncoding (String ianaEncoding) 
 		{
 			if (ianaEncoding != null) 
 			{

@@ -77,13 +77,20 @@ namespace Mono.Xml.Native
 			if (peStored)
 				return peBuffer [0];
 
-			if (can_seek)
-				return reader.Peek ();
+//			if (can_seek)
+//				return reader.Peek ();
 
 			if (has_peek)
 				return peek_char;
 
 			peek_char = reader.Read ();
+			if (peek_char >= 0xD800 && peek_char <= 0xDBFF) {
+				int i = reader.Read ();
+				if (i >= 0xDC00 && i <= 0xDFFF)
+					peek_char += i;
+//				else
+//					peek_char = -1;
+			}
 			has_peek = true;
 			return peek_char;
 		}
@@ -105,6 +112,13 @@ namespace Mono.Xml.Native
 				has_peek = false;
 			} else {
 				ch = reader.Read ();
+				if (ch >= 0xD800 && ch <= 0xDBFF) {
+					int i = reader.Read ();
+					if (i > 0xDC00 && i <= 0xDFFF)
+						ch += i;
+//					else
+//						ch = -1;
+				}
 			}
 
 			if (ch == '\n') {

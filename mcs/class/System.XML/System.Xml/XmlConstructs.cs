@@ -10,8 +10,10 @@ namespace System.Xml
 	/// However, No surrogate support is included in this class.
 	/// This class is currently public. Make it internal after testing completes
 	/// </remarks>
-	internal class XmlConstructs
+	internal class XmlChar//XmlConstructs
 	{
+		internal static char [] WhitespaceChars = new char [] {' ', '\n', '\t', '\r'};
+
 		/** Character flags. */
 		internal static byte[] CHARS = new byte[1 << 16];
 
@@ -45,7 +47,7 @@ namespace System.Xml
 		/** NCName character mask. */
 		internal static int NCNAME = 0x80;
 	
-		static XmlConstructs()
+		static XmlChar()
 		{
 			//
 			// [2] Char ::= #x9 | #xA | #xD | [#x20-#xD7FF] |
@@ -309,7 +311,7 @@ namespace System.Xml
 			}
 		}
 
-		private XmlConstructs()
+		private XmlChar()
 		{
 		}
 
@@ -322,12 +324,14 @@ namespace System.Xml
 		/// <param name="c">The character to check.</param>
 		public static bool IsValid(char c) 
 		{
-			return c > 0 && ((int) c > 0xffff || ((CHARS[c] & VALID) != 0));
+			return c > 0 && ((CHARS[c] & VALID) != 0);
 		}
 
-		public static bool IsValid(int c) 
+		public static bool IsValid (int c) 
 		{
-			return c > 0 && ((int) c > 0xffff || (CHARS[c] & VALID) != 0);
+			if (c > 0xffff)
+				return c < 0x110000;
+			return c > 0 && ((CHARS[c] & VALID) != 0);
 		}
 
 		/// <summary>
@@ -379,12 +383,12 @@ namespace System.Xml
 		/// </summary>
 		/// <param name="c">The character to check.</param>
 		/// <returns></returns>
-		public static bool IsSpace(char c) 
+		public static bool IsWhitespace (char c) 
 		{
 			return (CHARS[c] & SPACE) != 0;
 		}
 
-		public static bool IsSpace(int c) 
+		public static bool IsWhitespace (int c) 
 		{
 			return c > 0 && c < CHARS.Length && (CHARS[c] & SPACE) != 0;
 		}
@@ -394,12 +398,12 @@ namespace System.Xml
 		/// character as defined by production [5] in the XML 1.0 specification.
 		/// </summary>
 		/// <param name="c">The character to check.</param>
-		public static bool IsNameStart(char c) 
+		public static bool IsFirstNameChar (char c) 
 		{
 			return (CHARS[c] & NAME_START) != 0;
 		} 
 
-		public static bool IsNameStart(int c) 
+		public static bool IsFirstNameChar (int c) 
 		{
 			return c > 0 && c < CHARS.Length && (CHARS[c] & NAME_START) != 0;
 		} 
@@ -409,12 +413,12 @@ namespace System.Xml
 		/// character as defined by production [4] in the XML 1.0 specification.
 		/// </summary>
 		/// <param name="c">The character to check.</param>
-		public static bool IsName(char c) 
+		public static bool IsNameChar(char c) 
 		{
 			return (CHARS[c] & NAME) != 0;
 		} 
 
-		public static bool IsName(int c) 
+		public static bool IsNameChar(int c) 
 		{
 			return c > 0 && c < CHARS.Length && (CHARS[c] & NAME) != 0;
 		} 
@@ -443,12 +447,12 @@ namespace System.Xml
 		/// </summary>
 		/// <param name="c"></param>
 		/// <returns></returns>
-		public static bool IsNCName(char c) 
+		public static bool IsNCNameChar(char c) 
 		{
 			return (CHARS[c] & NCNAME) != 0;
 		} 
 
-		public static bool IsNCName(int c) 
+		public static bool IsNCNameChar(int c) 
 		{
 			return c > 0 && c < CHARS.Length && (CHARS[c] & NCNAME) != 0;
 		} 
@@ -458,12 +462,12 @@ namespace System.Xml
 		/// character as defined by production [13] in the XML 1.0 specification.
 		/// </summary>
 		/// <param name="c">The character to check</param>
-		public static bool IsPubid(char c) 
+		public static bool IsPubidChar (char c) 
 		{
 			return (CHARS[c] & PUBID) != 0;
 		}
 
-		public static bool IsPubid(int c) 
+		public static bool IsPubidChar (int c) 
 		{
 			return c > 0 && c < CHARS.Length && (CHARS[c] & PUBID) != 0;
 		}
@@ -482,7 +486,7 @@ namespace System.Xml
 				return false;
 			}
 			char ch = name[0];
-			if( IsNameStart(ch) == false)
+			if( IsFirstNameChar (ch) == false)
 			{
 				err = new XmlException("The character '"+ch+"' cannot start a Name",null);
 				return false;
@@ -490,7 +494,7 @@ namespace System.Xml
 			for (int i = 1; i < name.Length; i++ ) 
 			{
 				ch = name[i];
-				if( IsName( ch ) == false )
+				if( IsNameChar (ch) == false )
 				{
 					err = new XmlException("The character '"+ch+"' is not allowed in a Name",null);
 					return false;
@@ -503,10 +507,10 @@ namespace System.Xml
 		{
 			if (name.Length == 0)
 				return 0;
-			if (!IsNameStart (name [0]))
+			if (!IsFirstNameChar (name [0]))
 				return 0;
 			for (int i=1; i<name.Length; i++)
-				if (!IsName (name [i]))
+				if (!IsNameChar (name [i]))
 					return i;
 			return -1;
 		}
@@ -533,7 +537,7 @@ namespace System.Xml
 			for (int i = 1; i < ncName.Length; i++ ) 
 			{
 				ch = ncName[i];
-				if( IsNCName( ch ) == false )
+				if( IsNCNameChar (ch) == false )
 				{
 					err = new XmlException("The character '"+ch+"' is not allowed in a NCName",null);
 					return false;
@@ -558,7 +562,7 @@ namespace System.Xml
 			for (int i = 0; i < nmtoken.Length; i++ ) 
 			{
 				char ch = nmtoken[i];
-				if(  ! IsName( ch ) )
+				if(  ! IsNameChar (ch) )
 				{
 					err = new XmlException("The character '"+ch+"' is not allowed in a NMTOKEN",null);
 					return false;
@@ -602,6 +606,66 @@ namespace System.Xml
 				}
 			}
 			return false;
+		}
+
+		public static bool IsName (string str)
+		{
+			if (str.Length == 0)
+				return false;
+			if (!IsFirstNameChar (str [0]))
+				return false;
+			foreach (char c in str)
+				if (!IsNameChar (c))
+					return false;
+			return true;
+		}
+
+		public static bool IsNCName (string str)
+		{
+			if (str.Length == 0)
+				return false;
+			if (!IsFirstNameChar (str [0]))
+				return false;
+			foreach (char c in str)
+				if (!IsNCNameChar (c))
+					return false;
+			return true;
+		}
+
+		public static bool IsNmToken (string str)
+		{
+			if (str.Length == 0)
+				return false;
+			foreach (char c in str)
+				if (!IsNameChar (c))
+					return false;
+			return true;
+		}
+
+		public static bool IsWhitespace (string str)
+		{
+			for (int i = 0; i < str.Length; i++)
+				if (!IsWhitespace (str [i])) return false;
+				
+			return true;
+		}
+
+		public static int GetPredefinedEntity (string name)
+		{
+			switch (name) {
+			case "amp":
+				return '&';
+			case "lt":
+				return '<';
+			case "gt":
+				return '>';
+			case "quot":
+				return '"';
+			case "apos":
+				return '\'';
+			default:
+				return -1;
+			}
 		}
 	}
 }
