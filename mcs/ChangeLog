@@ -1,3 +1,8 @@
+2002-12-15  Alp Toker  <alp@atoker.com>
+
+	* makefile.gnu: make sure mcs is in PATH, otherwise tell user to read
+	INSTALL.txt
+
 2002-12-10  Daniel Morgan <danmorg@sc.rr.com>
 
 	* makefile

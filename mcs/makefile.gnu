@@ -1,11 +1,18 @@
 DIRS=jay mcs class nunit monoresgen ilasm tools
 DIST=monocharge-`date -u +%Y%m%d`
+MCS = mcs
 
 #nant doesn't work yet
 
 default: all
 
 all:
+	if ! which $(MCS); then \
+		echo You must have a C\# compiler installed to continue.; \
+		echo This is typically provided by \'mono\'.; \
+		echo Read INSTALL.txt for details.; \
+		exit 1; \
+	fi;
 	for i in $(DIRS) ; do \
 		$(MAKE) -C $$i -f makefile.gnu $@ || exit 1; \
 	done
