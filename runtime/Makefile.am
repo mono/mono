@@ -21,6 +21,7 @@ assemblies_DATA =	\
 	Mono.Data.SybaseClient.dll				\
 	Mono.Data.TdsClient.dll					\
 	Mono.Data.Tds.dll					\
+	Mono.Data.DB2Client.dll					\
 	Mono.GetOptions.dll					\
 	Mono.PEToolkit.dll					\
 	NUnitCore_mono.dll					\
