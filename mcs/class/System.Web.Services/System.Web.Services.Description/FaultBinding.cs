@@ -38,7 +38,6 @@ namespace System.Web.Services.Description {
 		#region Fields
 
 		ServiceDescriptionFormatExtensionCollection extensions;
-		OperationBinding operationBinding;
 
 		#endregion // Fields
 
@@ -47,7 +46,6 @@ namespace System.Web.Services.Description {
 		public FaultBinding ()
 		{
 			extensions = new ServiceDescriptionFormatExtensionCollection (this);
-			operationBinding = null;
 		}
 		
 		#endregion // Constructors
@@ -60,14 +58,5 @@ namespace System.Web.Services.Description {
 		}
 	
 		#endregion // Properties
-
-		#region Methods
-
-		internal void SetParent (OperationBinding operationBinding)
-		{
-			this.operationBinding = operationBinding;
-		}
-
-		#endregion
 	}
 }

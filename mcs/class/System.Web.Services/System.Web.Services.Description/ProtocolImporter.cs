@@ -237,6 +237,26 @@ namespace System.Web.Services.Description {
 					}
 				}
 			}
+			
+			if (!found)
+			{
+				// Looks like MS.NET generates classes for all bindings if
+				// no services are present
+				
+				foreach (ImportInfo info in importInfo)
+				{
+					this.iinfo = info;
+					foreach (Binding b in info.ServiceDescription.Bindings)
+					{
+						this.binding = b;
+						this.service = null;
+						this.port = null;
+						if (!IsBindingSupported ()) continue;
+						found = true;
+						ImportPortBinding (true);
+					}
+				}
+			}
 
 			EndNamespace ();
 			
@@ -246,8 +266,12 @@ namespace System.Web.Services.Description {
 
 		void ImportPortBinding (bool multipleBindings)
 		{
-			if (multipleBindings) className = port.Name;
-			else className = service.Name;
+			if (port != null) {
+				if (multipleBindings) className = port.Name;
+				else className = service.Name;
+			}
+			else
+				className = binding.Name;
 			
 			className = classNames.AddUnique (CodeIdentifier.MakeValid (className), port);
 			className = className.Replace ("_x0020_", "");	// MS.NET seems to do this
@@ -259,10 +283,11 @@ namespace System.Web.Services.Description {
 
 				CodeTypeDeclaration codeClass = BeginClass ();
 				codeTypeDeclaration = codeClass;
-				AddCodeType (codeClass, port.Documentation);
+				if (port != null)
+					AddCodeType (codeClass, port.Documentation);
 				codeClass.Attributes = MemberAttributes.Public;
-				
-				if (service.Documentation != null && service.Documentation != "")
+			
+				if (service != null && service.Documentation != null && service.Documentation != "")
 					AddComments (codeClass, service.Documentation);
 
 				if (Style == ServiceDescriptionImportStyle.Client) {

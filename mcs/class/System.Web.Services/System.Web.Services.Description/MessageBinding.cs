@@ -54,7 +54,6 @@ namespace System.Web.Services.Description
 		
 		protected MessageBinding ()
 		{
-			operationBinding = new OperationBinding ();
 		}
 		
 		#endregion // Constructors
@@ -78,6 +77,11 @@ namespace System.Web.Services.Description
 //		[XmlIgnore]
 		public OperationBinding OperationBinding {
 			get { return operationBinding; }
+		}
+		
+		internal void SetParent (OperationBinding ob)
+		{
+			operationBinding = ob;
 		}
 
 		#endregion // Properties

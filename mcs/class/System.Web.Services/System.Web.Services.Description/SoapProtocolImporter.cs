@@ -107,10 +107,17 @@ namespace System.Web.Services.Description {
 			
 			CodeTypeDeclaration codeClass = new CodeTypeDeclaration (ClassName);
 			
-			string location = null;			
-			SoapAddressBinding sab = (SoapAddressBinding) Port.Extensions.Find (typeof(SoapAddressBinding));
-			if (sab != null) location = sab.Location;
-			string url = GetServiceUrl (location); 
+			string location = null;
+			string url = null;
+			
+			if (Port != null) {
+				SoapAddressBinding sab = (SoapAddressBinding) Port.Extensions.Find (typeof(SoapAddressBinding));
+				if (sab != null) location = sab.Location;
+				url = GetServiceUrl (location); 
+			}
+			
+			string namspace = (Port != null ? Port.Binding.Namespace : Binding.ServiceDescription.TargetNamespace);
+			string name = (Port != null ? Port.Name : Binding.Name);
 
 			if (Style == ServiceDescriptionImportStyle.Client) {
 				CodeTypeReference ctr = new CodeTypeReference ("System.Web.Services.Protocols.SoapHttpClientProtocol");
@@ -120,21 +127,23 @@ namespace System.Web.Services.Description {
 				CodeTypeReference ctr = new CodeTypeReference ("System.Web.Services.WebService");
 				codeClass.BaseTypes.Add (ctr);
 				CodeAttributeDeclaration attws = new CodeAttributeDeclaration ("System.Web.Services.WebServiceAttribute");
-				attws.Arguments.Add (GetArg ("Namespace", Port.Binding.Namespace));
+				attws.Arguments.Add (GetArg ("Namespace", namspace));
 				AddCustomAttribute (codeClass, attws, true);
 			}
 			
 			CodeAttributeDeclaration att = new CodeAttributeDeclaration ("System.Web.Services.WebServiceBinding");
-			att.Arguments.Add (GetArg ("Name", Port.Name));
-			att.Arguments.Add (GetArg ("Namespace", Port.Binding.Namespace));
+			att.Arguments.Add (GetArg ("Name", name));
+			att.Arguments.Add (GetArg ("Namespace", namspace));
 			AddCustomAttribute (codeClass, att, true);
 	
 			if (Style == ServiceDescriptionImportStyle.Client) {
 				CodeConstructor cc = new CodeConstructor ();
 				cc.Attributes = MemberAttributes.Public;
-				CodeExpression ce = new CodeFieldReferenceExpression (new CodeThisReferenceExpression(), "Url");
-				CodeAssignStatement cas = new CodeAssignStatement (ce, new CodePrimitiveExpression (url));
-				cc.Statements.Add (cas);
+				if (url != null) {
+					CodeExpression ce = new CodeFieldReferenceExpression (new CodeThisReferenceExpression(), "Url");
+					CodeAssignStatement cas = new CodeAssignStatement (ce, new CodePrimitiveExpression (url));
+					cc.Statements.Add (cas);
+				}
 				codeClass.Members.Add (cc);
 			}
 			

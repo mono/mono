@@ -1,3 +1,16 @@
+2004-09-01  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* BasicProfileChecker.cs: Some small fixes.
+	* FaultBinding.cs: Removed useless code.
+	* HttpSimpleProtocolImporter.cs, SoapProtocolImporter.cs: Take into account 
+	  that now we may be generating code for a binding which is not referenced
+	  by any port. In this case Port is null.
+	* MessageBinding.cs: Properly set the parent operation binding.
+	* OperationBinding.cs: When adding messages, set its parent property.
+	* ProtocolImporter.cs: Support generation of proxies for wsdl documents
+	  that do not have any Service entry. In this case, it now generates
+	  a proxy for every binding.
+
 2004-08-24  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* BasicProfileChecker.cs: Implemented more rules.

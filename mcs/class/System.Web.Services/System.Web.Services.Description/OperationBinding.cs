@@ -88,7 +88,11 @@ namespace System.Web.Services.Description {
 		[XmlElement ("input")]
 		public InputBinding Input {
 			get { return input; }
-			set { input = value; }
+			set {
+				input = value; 
+				if (input != null)
+					input.SetParent (this);
+			}
 		}
 
 #if !NET_2_0
@@ -102,7 +106,11 @@ namespace System.Web.Services.Description {
 		[XmlElement ("output")]
 		public OutputBinding Output {
 			get { return output; }
-			set { output= value; }
+			set {
+				output = value; 
+				if (output != null)
+					output.SetParent (this);
+			}
 		}
 
 		#endregion // Properties

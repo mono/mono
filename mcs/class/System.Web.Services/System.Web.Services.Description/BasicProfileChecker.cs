@@ -158,13 +158,19 @@ namespace System.Web.Services.Description
 					if (sbb.Parts == null) {
 						if (msg.Parts != null && msg.Parts.Count > 1)
 							ctx.ReportRuleViolation (value, BasicProfileRules.R2210);
+						if (msg.Parts.Count == 1)
+							portParts.Remove (msg.Parts[0]);
 					}
 					else {
-						foreach (string part in sbb.Parts) {
-							MessagePart mp = msg.FindPartByName (part);
-							portParts.Remove (mp);
-							if (!mp.DefinedByElement)
-								ctx.ReportRuleViolation (value, BasicProfileRules.R2204);
+						if (sbb.Parts.Length == 0 && msg.Parts.Count == 1) {
+							portParts.Remove (msg.Parts[0]);
+						} else {
+							foreach (string part in sbb.Parts) {
+								MessagePart mp = msg.FindPartByName (part);
+								portParts.Remove (mp);
+								if (!mp.DefinedByElement)
+									ctx.ReportRuleViolation (value, BasicProfileRules.R2204);
+							}
 						}
 					}
 				}

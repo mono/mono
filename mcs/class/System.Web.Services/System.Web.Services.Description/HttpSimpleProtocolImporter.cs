@@ -72,15 +72,20 @@ namespace System.Web.Services.Description
 			CodeTypeDeclaration codeClass = new CodeTypeDeclaration (ClassName);
 
 			string location = null;
-			HttpAddressBinding sab = (HttpAddressBinding) Port.Extensions.Find (typeof(HttpAddressBinding));
-			if (sab != null) location = sab.Location;
-			string url = GetServiceUrl (location); 
+			string url = null;
+			if (Port != null) {
+				HttpAddressBinding sab = (HttpAddressBinding) Port.Extensions.Find (typeof(HttpAddressBinding));
+				if (sab != null) location = sab.Location;
+				url = GetServiceUrl (location); 
+			}
 			
 			CodeConstructor cc = new CodeConstructor ();
 			cc.Attributes = MemberAttributes.Public;
-			CodeExpression ce = new CodeFieldReferenceExpression (new CodeThisReferenceExpression(), "Url");
-			CodeAssignStatement cas = new CodeAssignStatement (ce, new CodePrimitiveExpression (url));
-			cc.Statements.Add (cas);
+			if (url != null) {
+				CodeExpression ce = new CodeFieldReferenceExpression (new CodeThisReferenceExpression(), "Url");
+				CodeAssignStatement cas = new CodeAssignStatement (ce, new CodePrimitiveExpression (url));
+				cc.Statements.Add (cas);
+			}
 			codeClass.Members.Add (cc);
 			
 			memberIds = new CodeIdentifiers ();
