@@ -34,5 +34,22 @@ namespace System.Drawing
 			}
 		}
 
+		public static Brush Highlight {
+			get {
+				return new SolidBrush(Color.Blue);
+			}
+		}
+
+		public static Brush HighlightText {
+			get {
+				return new SolidBrush(Color.White);
+			}
+		}
+
+		public static Brush Window {
+			get {
+				return new SolidBrush(Color.White);
+			}
+		}
 	}
 }

@@ -1,3 +1,8 @@
+2003-03-01 Alexandre Pigolkine <pigolkine@gmx.de>
+	* SystemBrushes.cs
+			added stubs to compile SWF
+
+
 2003-02-21  Alexandre Pigolkine <pigolkine@gmx.de>
 	* Font.cs
 	* Graphics.cs
