@@ -4887,6 +4887,8 @@ protected override int parse ()
 		Report.Error(e.code, e.loc, e.Message);
 	}
 	catch (Exception e) {
+		if (Report.Stacktrace)
+			Console.WriteLine(e);
 		Report.Error (29999, lexer.Location, "Parsing error");
 	}
 

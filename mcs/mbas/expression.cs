@@ -3849,6 +3849,9 @@ namespace Mono.MonoBASIC {
 				newarglist.Add (a);
 			}
 
+			if (HasArrayParameter (pd) && arg_count == pd.Count - 1)
+				return newarglist;
+
 			for (int i = arg_count; i < pd.Count; i++) {
 				Expression e = pd.DefaultValue (i);
 				Argument a = new Argument (e, Argument.AType.Expression);

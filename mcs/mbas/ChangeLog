@@ -1,3 +1,7 @@
+2004-09-08 Bernie Solomon <bernard@ugsolutions.com>
+	* expression.cs: cope with ParamArray for no args
+	* mb-parser.jay: dump parsing exception with --stacktrace
+
 2004/08/19 Rafael Teixeira <rafaelteixeirabr@hotmail.com>
 	* mb-parser.jay : some changes just not to stumble in global attributes definitions in multiple-lines 
 		like we have in VS.NET generated AssemblyInfo.vb files. still need to really process that definitions like mcs does
