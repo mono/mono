@@ -255,7 +255,7 @@ namespace System.Xml.XPath
 				if (docContext.MoveToId (strArg))
 					rgNodes.Add (docContext.Clone ());
 			}
-			return new ArrayListIterator (iter, rgNodes);
+			return new EnumeratorIterator (iter, rgNodes.GetEnumerator ());
 		}
 		public override string Name { get { return "id"; }}
 	}

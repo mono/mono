@@ -1,5 +1,12 @@
 2003-07-26  Piers Haken	<piersh@friskit.com>
 
+	* Iterator.cs:
+	* DefaultContext.cs:
+		ArrayListIterator->EnumeratorIterator
+	* Expression.cs: add sorting support
+
+2003-07-26  Piers Haken	<piersh@friskit.com>
+
 	* Tokenizer.cs:
 	* Parser.jay:
 		move QName parsing into tokenizer

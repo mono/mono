@@ -465,6 +465,7 @@ namespace System.Xml.XPath
 		public override XPathNavigator Current { get { return _iterRight.Current; }}
 		public override int CurrentPosition { get { return _pos; }}
 	}
+
 	internal class PredicateIterator : BaseIterator
 	{
 		protected BaseIterator _iter;
@@ -515,33 +516,35 @@ namespace System.Xml.XPath
 		public override XPathNavigator Current { get { return _iter.Current; }}
 		public override int CurrentPosition { get { return _pos; }}
 	}
-	internal class ArrayListIterator : BaseIterator
+
+	internal class EnumeratorIterator : BaseIterator
 	{
-		protected ArrayList _rgNodes;
+		protected IEnumerator _enum;
 		protected int _pos;
 
-		public ArrayListIterator (BaseIterator iter, ArrayList rgNodes) : base (iter)
+		public EnumeratorIterator (BaseIterator iter, IEnumerator enumerator) : base (iter)
 		{
-			_rgNodes = rgNodes;
+			_enum = enumerator;
 		}
 
-		protected ArrayListIterator (ArrayListIterator other) : base (other)
+		protected EnumeratorIterator (EnumeratorIterator other) : base (other)
 		{
-			_rgNodes = other._rgNodes;
+			_enum = other._enum;
 			_pos = other._pos;
 		}
-		public override XPathNodeIterator Clone () { return new ArrayListIterator (this); }
+		public override XPathNodeIterator Clone () { return new EnumeratorIterator (this); }
 
 		public override bool MoveNext ()
 		{
-			if (_pos >= _rgNodes.Count)
+			if (!_enum.MoveNext ())
 				return false;
 			_pos++;
 			return true;
 		}
-		public override XPathNavigator Current { get { return (XPathNavigator) _rgNodes [_pos - 1]; }}
+		public override XPathNavigator Current { get { return (XPathNavigator) _enum.Current; }}
 		public override int CurrentPosition { get { return _pos; }}
 	}
+
 
 	internal class UnionIterator : BaseIterator
 	{
