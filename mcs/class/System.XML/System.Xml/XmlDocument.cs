@@ -60,7 +60,12 @@ namespace System.Xml
 
 		XmlDocument (XmlImplementation impl, XmlNameTable nt) : base (null)
 		{
-			nameTable = (nt != null) ? nt : implementation != null ? implementation.internalNameTable : new NameTable ();
+			if (impl == null)
+				implementation = new XmlImplementation ();
+			else
+				implementation = impl;
+
+			nameTable = (nt != null) ? nt : impl.InternalNameTable;
 			AddDefaultNameTableKeys ();
 			resolver = new XmlUrlResolver ();
 		}
@@ -422,11 +427,12 @@ namespace System.Xml
 			return new XmlDeclaration (version, encoding, standalone, this);
 		}
 
-		[MonoTODO]
 		// FIXME: Currently XmlAttributeCollection.SetNamedItem() does
 		// add to the identity table, but in fact I delayed identity
 		// check on GetIdenticalAttribute. To make such way complete,
 		// we have to use MultiMap, not Hashtable.
+		//
+		// Well, MS.NET is also fragile around ID.
 		public virtual XmlElement GetElementById (string elementId)
 		{
 			XmlAttribute attr = GetIdenticalAttribute (elementId);
