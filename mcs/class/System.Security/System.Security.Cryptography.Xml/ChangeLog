@@ -1,3 +1,9 @@
+2004-02-19  Tim Coleman <tim@timcoleman.com>
+	* SymmetricKeyWrap.cs:
+		Add AES Key Wrap
+	* EncryptedXml.cs:
+		Add calls to SymmetricKeyWrap
+
 2004-02-11  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Reference.cs: Added LoadInnerXml to transforms. Removed unused 

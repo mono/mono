@@ -9,6 +9,8 @@
 #if NET_1_2
 
 using System.Collections;
+using System.IO;
+using System.Security.Cryptography;
 using System.Security.Policy;
 using System.Text;
 using System.Xml;
@@ -112,10 +114,9 @@ namespace System.Security.Cryptography.Xml {
 			keyNameMapping.Clear ();
 		}
 
-		[MonoTODO]
 		public byte[] DecryptData (EncryptedData encryptedData, SymmetricAlgorithm symAlg)
 		{
-			throw new NotImplementedException ();
+			return Transform (encryptedData.CipherData.CipherValue, symAlg.CreateDecryptor ());
 		}
 
 		[MonoTODO]
@@ -133,7 +134,12 @@ namespace System.Security.Cryptography.Xml {
 		[MonoTODO]
 		public static byte[] DecryptKey (byte[] keyData, SymmetricAlgorithm symAlg)
 		{
-			throw new NotImplementedException ();
+			if (symAlg is TripleDES)
+				return SymmetricKeyWrap.TripleDESKeyWrapDecrypt (symAlg.Key, keyData);
+			if (symAlg is Rijndael)
+				return SymmetricKeyWrap.TripleDESKeyWrapDecrypt (symAlg.Key, keyData);
+
+			throw new CryptographicException ("The specified cryptographic transform is not supported.");
 		}
 
 		[MonoTODO]
@@ -142,33 +148,74 @@ namespace System.Security.Cryptography.Xml {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public byte[] EncryptData (XmlElement inputElement, SymmetricAlgorithm symAlg, bool content)
 		{
-			throw new NotImplementedException ();
+			if (content)
+				return Transform (Encoding.GetBytes (inputElement.InnerXml), symAlg.CreateEncryptor ());
+			else
+				return Transform (Encoding.GetBytes (inputElement.OuterXml), symAlg.CreateEncryptor ());
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Do we need to support more algorithms?")]
 		public static byte[] EncryptKey (byte[] keyData, SymmetricAlgorithm symAlg)
 		{
-			throw new NotImplementedException ();
+			if (symAlg is TripleDES)
+				return SymmetricKeyWrap.TripleDESKeyWrapEncrypt (symAlg.Key, keyData);
+			if (symAlg is Rijndael)
+				return SymmetricKeyWrap.AESKeyWrapEncrypt (symAlg.Key, keyData);
+
+			throw new CryptographicException ("The specified cryptographic transform is not supported.");
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Not sure what this is for.")]
 		public static byte[] EncryptKey (byte[] keyData, RSA rsa, bool fOAEP)
 		{
 			throw new NotImplementedException ();
 		}
 
+		private static SymmetricAlgorithm GetAlgorithm (string symAlgUri)
+		{
+			SymmetricAlgorithm symAlg = null;
+
+			switch (symAlgUri) {
+			case XmlEncAES128Url:
+				symAlg = SymmetricAlgorithm.Create ("Rijndael");
+				symAlg.KeySize = 128;
+				break;
+			case XmlEncAES192Url:
+				symAlg = SymmetricAlgorithm.Create ("Rijndael");
+				symAlg.KeySize = 192;
+				break;
+			case XmlEncAES256Url:
+				symAlg = SymmetricAlgorithm.Create ("Rijndael");
+				symAlg.KeySize = 256;
+				break;
+			case XmlEncDESUrl:
+				symAlg = SymmetricAlgorithm.Create ("DES");
+				break;
+			case XmlEncTripleDESUrl:
+				symAlg = SymmetricAlgorithm.Create ("TripleDES");
+				break;
+			default:
+				throw new ArgumentException ("symAlgUri");
+			}
+
+			return symAlg;
+		}
+
 		[MonoTODO]
 		public virtual byte[] GetDecryptionIV (EncryptedData encryptedData, string symAlgUri)
 		{
+			SymmetricAlgorithm symAlg = GetAlgorithm (symAlgUri);
+
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
 		public virtual SymmetricAlgorithm GetDecryptionKey (EncryptedData encryptedData, string symAlgUri)
 		{
+			SymmetricAlgorithm symAlg = GetAlgorithm (symAlgUri);
+
 			throw new NotImplementedException ();
 		}
 
@@ -187,6 +234,17 @@ namespace System.Security.Cryptography.Xml {
 		public static void ReplaceElement (XmlElement inputElement, EncryptedData encryptedData, bool content)
 		{
 			throw new NotImplementedException ();
+		}
+
+		private byte[] Transform (byte[] data, ICryptoTransform transform)
+		{
+			MemoryStream output = new MemoryStream ();
+			CryptoStream crypto = new CryptoStream (output, transform, CryptoStreamMode.Write);
+			crypto.Write (data, 0, data.Length);
+			crypto.Close ();
+			output.Close ();
+
+			return output.ToArray ();
 		}
 
 		#endregion // Methods
