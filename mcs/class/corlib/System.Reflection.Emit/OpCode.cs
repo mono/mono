@@ -44,6 +44,18 @@ namespace System.Reflection.Emit {
 		}
 
 
+		public override int GetHashCode ()
+		{
+			return Value;
+		}
+
+		public override bool Equals (Object obj)
+		{
+			if (obj == null || !(obj is OpCode))
+				return false;
+			OpCode v = (OpCode)obj;
+			return v.op1 == op1 && v.op2 == op2;
+		}
 
 		/// <summary>
 		/// </summary>

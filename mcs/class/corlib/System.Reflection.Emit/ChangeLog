@@ -1,4 +1,8 @@
 
+Thu Jun 5 12:36:34 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* OpCode.cs: implemented Equals/GetHashCode.
+
 Tue Jun 3 11:14:51 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
 	* ILGenerator.cs, OpCode.cs: optimize opcode space usage.
