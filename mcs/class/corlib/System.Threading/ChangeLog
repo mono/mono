@@ -1,5 +1,12 @@
 2004-06-15  Lluis Sanchez Gual  <lluis@ximian.com>
 
+	* Thread.cs: Added new fields to keep sync with MonoThread.
+	  Removed state changes in Sleep and Join. The state change is now done
+	  in the icall. For accessing to internal fields lock with synch_lock
+	  instead of this, which can be a source of deadlocks.
+
+2004-06-15  Lluis Sanchez Gual  <lluis@ximian.com>
+
 	* Timer.cs: Don't abort the thread if Dispose() is called from the runner
 	  thread.
 

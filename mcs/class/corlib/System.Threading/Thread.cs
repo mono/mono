@@ -68,6 +68,9 @@ namespace System.Threading
 		private IntPtr lock_data;
 		private IntPtr appdomain_refs;
 		private bool interruption_requested;
+		private IntPtr suspend_event;
+		private IntPtr resume_event;
+		private object synch_lock = new Object();
 		#endregion
 
 		private ThreadStart threadstart;
@@ -246,11 +249,7 @@ namespace System.Threading
 				throw new ArgumentException("Negative timeout");
 			}
 			Thread thread=CurrentThread;
-				
-			thread.set_state(ThreadState.WaitSleepJoin);
-				
 			Sleep_internal(millisecondsTimeout);
-			thread.clr_state(ThreadState.WaitSleepJoin);
 		}
 
 		public static void Sleep(TimeSpan timeout) {
@@ -262,10 +261,7 @@ namespace System.Threading
 			}
 
 			Thread thread=CurrentThread;
-				
-			thread.set_state(ThreadState.WaitSleepJoin);
 			Sleep_internal(ms);
-			thread.clr_state(ThreadState.WaitSleepJoin);
 		}
 
 		// Returns the system thread handle
@@ -330,7 +326,7 @@ namespace System.Threading
 		public CultureInfo CurrentUICulture {
 			get {
 				if (current_ui_culture == null) {
-					lock (this) {
+					lock (synch_lock) {
 						if(current_ui_culture==null) {
 							/* We don't
 							 * distinguish
@@ -415,7 +411,7 @@ namespace System.Threading
 			}
 			
 			set {
-				lock (this) {
+				lock (synch_lock) {
 					if(Name!=null) {
 						throw new InvalidOperationException ("Thread.Name can only be set once.");
 					}
@@ -469,9 +465,7 @@ namespace System.Threading
 			
 			Thread thread=CurrentThread;
 				
-			thread.set_state(ThreadState.WaitSleepJoin);
 			Join_internal(Timeout.Infinite, system_thread_handle);
-			thread.clr_state(ThreadState.WaitSleepJoin);
 		}
 
 		public bool Join(int millisecondsTimeout) {
@@ -483,13 +477,7 @@ namespace System.Threading
 			}
 
 			Thread thread=CurrentThread;
-				
-			thread.set_state(ThreadState.WaitSleepJoin);
-			bool ret=Join_internal(millisecondsTimeout,
-					       system_thread_handle);
-			thread.clr_state(ThreadState.WaitSleepJoin);
-
-			return(ret);
+			return Join_internal(millisecondsTimeout, system_thread_handle);
 		}
 
 		public bool Join(TimeSpan timeout) {
@@ -504,12 +492,7 @@ namespace System.Threading
 			}
 
 			Thread thread=CurrentThread;
-
-			thread.set_state(ThreadState.WaitSleepJoin);
-			bool ret=Join_internal(ms, system_thread_handle);
-			thread.clr_state(ThreadState.WaitSleepJoin);
-
-			return(ret);
+			return Join_internal(ms, system_thread_handle);
 		}
 
 #if NET_1_1
@@ -544,7 +527,7 @@ namespace System.Threading
 		private extern void Start_internal(IntPtr handle);
 		
 		public void Start() {
-			lock(this) {
+			lock(synch_lock) {
 				if((state & ThreadState.Unstarted) == 0) {
 					throw new ThreadStateException("Thread has already been started");
 				}
@@ -590,12 +573,12 @@ namespace System.Threading
 		}
 
 		private void set_state(ThreadState set) {
-			lock(this) {
+			lock(synch_lock) {
 				state |= set;
 			}
 		}
 		private void clr_state(ThreadState clr) {
-			lock(this) {
+			lock(synch_lock) {
 				state &= ~clr;
 			}
 		}
