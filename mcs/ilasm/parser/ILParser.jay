@@ -544,7 +544,7 @@ classDecl               : methodAll
 			| D_SIZE int32 
 			| D_PACK int32 
 			| exportHead OPEN_BRACE comtypeDecls CLOSE_BRACE 
-			| D_OVERRIDE typeSpec DOUBLE_COLON methodName K_WITH callConv type typeSpec DOUBLE_COLON methodName OPEN_PARENS sigArgs0 CLOSE_PARENS 
+			| D_OVERRIDE typeSpec DOUBLE_COLON methodName K_WITH callConv type_ref typeSpec DOUBLE_COLON methodName OPEN_PARENS sigArgs0 CLOSE_PARENS 
 			| languageDecl
 			;
 
@@ -803,7 +803,7 @@ methodAll		: methodHead methodDecls CLOSE_BRACE
 			;
 
 
-methAttr                : /* EMPTY */ 			{ $$ = MethAttr.Default; }
+methAttr                : /* EMPTY */ 			{ $$ = new MethAttr (); }
 			| methAttr K_STATIC		{ $$ = (MethAttr) $1 | MethAttr.Static; }
 			| methAttr K_PUBLIC 		{ $$ = (MethAttr) $1 | MethAttr.Public; }
 			| methAttr K_PRIVATE		{ $$ = (MethAttr) $1 | MethAttr.Private; }
@@ -1287,13 +1287,13 @@ typeSpec                : className
 			| type 
 			;
 
-callConv                : K_INSTANCE callConv	{ $$ = (CallConv) $1 | CallConv.Instance; }
-			| K_EXPLICIT callConv	{ $$ = (CallConv) $1 | CallConv.InstanceExplicit; }
-			| callKind 
+callConv                : /* EMPTY */		{ $$ = new CallConv (); }
+			| callConv K_INSTANCE 	{ $$ = (CallConv) $1 | CallConv.Instance; }
+			| callConv K_EXPLICIT 	{ $$ = (CallConv) $1 | CallConv.InstanceExplicit; }
+			| callConv callKind 	{ $$ = (CallConv) $1 | (CallConv) $2; }
 			;
 
-callKind                : /* EMPTY */ 		{ $$ = CallConv.Default; }
-			| K_DEFAULT		{ $$ = (CallConv) $1 | CallConv.Default; }
+callKind                : K_DEFAULT		{ $$ = (CallConv) $1 | CallConv.Default; }
 			| K_VARARG		{ $$ = (CallConv) $1 | CallConv.Vararg; }
 			| K_UNMANAGED K_CDECL 	{ $$ = (CallConv) $1 | CallConv.Cdecl; }
 			| K_UNMANAGED K_STDCALL { $$ = (CallConv) $1 | CallConv.Stdcall; }

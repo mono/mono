@@ -1,3 +1,8 @@
+2003-03-17 Jackson Harper <jackson@latitudegeo.com>
+
+	* ILParser.jay: Set CallConvs properly, use type_ref instead of type for
+	method overrides.
+
 2003-03-16 Jackson Harper <jackson@latitudegeo.com>
 
 	* ILParser.jay: .ctor and .cctor can also be method names.
