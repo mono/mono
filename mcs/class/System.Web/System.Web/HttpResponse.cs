@@ -920,10 +920,17 @@ namespace System.Web
 			_TextWriter.Write (buffer, index, count);
 		}
 
-		[MonoTODO()]
 		public static void RemoveOutputCacheItem (string path)
 		{
-			throw new NotImplementedException ();
+			if (path == null)
+				throw new ArgumentNullException ("path");
+			
+			if (!UrlUtils.IsRooted (path))
+				throw new ArgumentException ("Invalid path for HttpResponse.RemoveOutputCacheItem '" +
+					path + "'. An absolute virtual path is expected.");
+
+			Cache cache = HttpRuntime.Cache;
+			cache.Remove (path);
 		}
 
 		public void SetCookie (HttpCookie cookie)

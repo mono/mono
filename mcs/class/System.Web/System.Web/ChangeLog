@@ -1,5 +1,9 @@
 2004-01-04  Jackson Harper <jackson@ximian.com>
 
+	* HttpResponse.cs: Implement RemoveOutputCacheItem.
+	
+2004-01-04  Jackson Harper <jackson@ximian.com>
+
 	* HttpCachePolicy.cs: Add internal method to get the vary by custom string
 	* HttpCacheVaryByHeaders.cs: Add internal method to get the header names.
 	
