@@ -10,7 +10,7 @@ else
 SCARY_LIB=/lib:$(prefix)/lib /noconfig
 endif
 
-LIB_MCS_FLAGS = $(SCARY_LIB) /unsafe /r:$(corlib) /r:System.dll /nowarn:649 /nowarn:169
+LIB_MCS_FLAGS = $(SCARY_LIB) /unsafe /r:$(corlib) /r:System.dll 
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS)
 
 EXTRA_DISTFILES = \
