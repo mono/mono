@@ -1638,7 +1638,10 @@ method_ref		: call_conv type type_spec DOUBLE_COLON method_name
 			| call_conv type method_name 
 			  OPEN_PARENS type_list CLOSE_PARENS
                           {
-                                
+                                ArrayList arg_list = (ArrayList) $5;
+
+                                $$ = new GlobalMethodRef ((ITypeRef) $2, (string) $3,
+                                        (ITypeRef[]) arg_list.ToArray (typeof (ITypeRef)));
                           }
 			;
 
