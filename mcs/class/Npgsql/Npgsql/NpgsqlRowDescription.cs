@@ -65,7 +65,7 @@ namespace Npgsql
 
         private ArrayList	fields_data = new ArrayList();
 
-        private Hashtable fields_index = new Hashtable();
+        private ArrayList   fields_index = new ArrayList();
 
         private Int32 protocol_version;
 
@@ -109,7 +109,7 @@ namespace Npgsql
                     // Add field data to array.
                     fields_data.Add(fd);
 
-                    fields_index.Add(fd.name, i);
+                    fields_index.Add(fd.name);
                 }
             }
             else
@@ -137,7 +137,7 @@ namespace Npgsql
                     fd.format_code = (FormatCode)PGUtil.ReadInt16(input_stream, input_buffer);
 
                     fields_data.Add(fd);
-                    fields_index.Add(fd.name, i);
+                    fields_index.Add(fd.name);
                 }
 
             }
@@ -164,7 +164,20 @@ namespace Npgsql
 
         public Int16 FieldIndex(String fieldName)
         {
-            return (Int16) fields_index[fieldName];
+            Int16 result = 0;
+                       
+            foreach (String name in fields_index)
+            {
+                
+                if (name.Equals(fieldName))
+                {
+                    return result;
+                }
+                result++;
+            }
+            
+            return -1;            
+            
         }
 
     }
