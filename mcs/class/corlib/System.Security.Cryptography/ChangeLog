@@ -1,3 +1,8 @@
+2003-08-09  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* SymmetricAlgorithm.cs: Re-introduced Lluis patch for PaddingMode.None 
+	and PaddingMode.Zeros (not PaddingMode.PKCS7).
+
 2003-08-05  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* CryptoStream.cs: Closing bug #40689. The Write method was re-written.

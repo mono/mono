@@ -218,7 +218,8 @@ namespace System.Security.Cryptography {
 
 		private byte[] FinalEncrypt (byte [] inputBuffer, int inputOffset, int inputCount) 
 		{
-// FIXME: lluis ?	if (inputCount == 0) return new byte[0];
+			if ((inputCount == 0) && (algo.Padding != PaddingMode.PKCS7))
+				return new byte[0];
 
 			// are there still full block to process ?
 			int full = (inputCount / BlockSizeByte) * BlockSizeByte;
