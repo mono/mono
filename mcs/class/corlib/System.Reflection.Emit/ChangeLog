@@ -1,3 +1,8 @@
+2003-09-17  Martin Baulig  <martin@ximian.com>
+
+	* TypeBuilder.cs (TypeBuilder.CreateType): Don't append the type
+	parameters to the type name; ie. use `Stack' instead of `Stack<T>'.
+
 2003-09-06  Martin Baulig  <martin@ximian.com>
 
 	* TypeBuilder.cs (TypeBuilder.IsUnboundGenericParameter): Implemented.

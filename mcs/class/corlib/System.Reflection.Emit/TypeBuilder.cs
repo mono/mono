@@ -474,18 +474,6 @@ namespace System.Reflection.Emit {
 			/* handle nesting_type */
 			if (is_created)
 				throw not_after_created ();
-			if (generic_params != null) {
-				StringBuilder sb = new StringBuilder ("<");
-				for (int i = 0; i < generic_params.Length; i++) {
-					if (i > 0)
-						sb.Append (",");
-					sb.Append (generic_params [i].Name);
-				}
-				sb.Append (">");
-
-				tname = String.Concat (tname, sb.ToString ());
-				fullname = GetFullName ();
-			}
 			if (methods != null) {
 				foreach (MethodBuilder method in methods) {
 					method.fixup ();
