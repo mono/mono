@@ -53,7 +53,7 @@ namespace System.Data.OleDb
 			}
 		}
 
-		public string SqlState {
+		public string SQLState {
 			get {
 				return sqlState;
 			}
@@ -62,11 +62,17 @@ namespace System.Data.OleDb
 		#endregion
 
 		#region Methods
-
+		
 		[MonoTODO]
 		public override string ToString ()
 		{
-			throw new NotImplementedException ();
+			string toStr;
+                        String stackTrace;
+                        stackTrace = " <Stack Trace>";
+                        // FIXME: generate the correct SQL error string
+                        toStr = "OleDbError:" + errorMessage + stackTrace;
+                        return toStr;
+
 		}
 
 		#endregion

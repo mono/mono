@@ -10,11 +10,14 @@
 //
 
 using System.Collections;
+using System.ComponentModel;
 using System.Data;
 using System.Data.Common;
 
 namespace System.Data.OleDb
 {
+	[ListBindableAttribute ( false)]	
+
 	public sealed class OleDbErrorCollection : ICollection, IEnumerable
 	{
 		#region Fields
@@ -58,11 +61,21 @@ namespace System.Data.OleDb
 			list.Add ((object) error);
 		}
 		
-		[MonoTODO]
 		public void CopyTo (Array array, int index) 
 		{
-			((OleDbError[])(list.ToArray ())).CopyTo (array, index);
-			throw new NotImplementedException ();
+		        if (array == null)
+                                throw new ArgumentNullException("array");
+                                                                                                    
+                        if ((index < array.GetLowerBound (0)) || (index > array.GetUpperBound (0)))
+                                throw new ArgumentOutOfRangeException("index");
+                                                                                                    
+                        // is the check for IsFixedSize required?
+                        if ((array.IsFixedSize) || (index + this.Count > array.GetUpperBound (0)))
+                                throw new ArgumentException("array");
+                                                                                                    
+                        ((OleDbError[])(list.ToArray ())).CopyTo (array, index);
+                                                                                                    
+
 		}
 
 		public IEnumerator GetEnumerator ()
