@@ -479,6 +479,9 @@ namespace System {
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		internal static extern bool type_is_assignable_from (Type a, Type b);
 		
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		internal static extern bool type_is_instance (Type a, object b);
+		
 		public virtual bool IsSubclassOf (Type c)
 		{
 			if (c == null)
@@ -538,12 +541,8 @@ namespace System {
 			return type_is_assignable_from (this, c);
 		}
 
-		public virtual bool IsInstanceOfType (object o) {
-			if (o != null)
-				return IsAssignableFrom (o.GetType ());
-
-			return false;
-		}
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		public extern virtual bool IsInstanceOfType (object o);
 
 		public virtual int GetArrayRank ()
 		{

@@ -1,3 +1,10 @@
+2004-01-19  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* Type.cs: Added internal call for IsInstanceOfType. The old implementation
+	uses IsAssignableFrom(o.GetType()), which is not always valid for 
+	transparent proxies (because GetType will not return the type of the remote
+	object if its assembly is not present).
+
 2004-01-18  David Sheldon <dave-mono@earth.li>
 
   * FloatingPointFormatter.cs: Skip the decimal point if we have an 
