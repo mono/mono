@@ -117,7 +117,7 @@ namespace Commons.Xml.Relaxng
 			if (except != null) {
 				RdpNameClass exc = except.Compile (g);
 				if (FindInvalidType (exc, true))
-					throw new RelaxngException ("anyName except cannot have anyName children.");
+					throw new RelaxngException (except, "anyName except cannot have anyName children.");
 				return new RdpAnyNameExcept (exc);
 			} else
 				return RdpAnyName.Instance;
@@ -126,7 +126,7 @@ namespace Commons.Xml.Relaxng
 		internal override void CheckConstraints (bool rejectAnyName, bool rejectNsName) 
 		{
 			if (rejectAnyName)
-				throw new RelaxngException ("Not allowed anyName was found.");
+				throw new RelaxngException (this, "Not allowed anyName was found.");
 			if (except != null)
 				foreach (RelaxngNameClass nc in except.Names)
 					nc.CheckConstraints (true, rejectNsName);
@@ -165,7 +165,7 @@ namespace Commons.Xml.Relaxng
 			if (except != null) {
 				RdpNameClass exc = except.Compile (g);
 				if (FindInvalidType (exc, false))
-					throw new RelaxngException ("nsName except cannot have anyName nor nsName children.");
+					throw new RelaxngException (except, "nsName except cannot have anyName nor nsName children.");
 				return new RdpNsNameExcept (ns, exc);
 			} else {
 				return new RdpNsName (ns);
@@ -175,7 +175,7 @@ namespace Commons.Xml.Relaxng
 		internal override void CheckConstraints (bool rejectAnyName, bool rejectNsName) 
 		{
 			if (rejectNsName)
-				throw new RelaxngException ("Not allowed nsName was found.");
+				throw new RelaxngException (this, "Not allowed nsName was found.");
 			if (except != null)
 				foreach (RelaxngNameClass nc in except.Names)
 					nc.CheckConstraints (true, true);

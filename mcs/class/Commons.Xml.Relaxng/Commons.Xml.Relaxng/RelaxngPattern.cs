@@ -81,7 +81,7 @@ namespace Commons.Xml.Relaxng
 		{
 			// Flatten patterns into RdpGroup. See 4.12.
 			if (patterns.Count == 0)
-				throw new RelaxngException ("No pattern contents.");
+				throw new RelaxngException (this, "No pattern contents.");
 			RdpPattern p = ((RelaxngPattern) patterns [0]).Compile (g);
 			if (patterns.Count == 1)
 				return p;
@@ -111,7 +111,7 @@ namespace Commons.Xml.Relaxng
 		{
 			// Flatten patterns. See 4.12.
 			if (patterns.Count == 0)
-				throw new RelaxngException ("No pattern contents.");
+				throw new RelaxngException (this, "No pattern contents.");
 
 			RdpPattern p = ((RelaxngPattern) patterns [0]).Compile (g);
 			if (patterns.Count == 1)
@@ -227,7 +227,7 @@ namespace Commons.Xml.Relaxng
 		{
 			// Flatten patterns into RdpGroup. See 4.12.
 			if (patterns.Count == 0)
-				throw new RelaxngException ("No pattern contents.");
+				throw new RelaxngException (this, "No pattern contents.");
 			RdpPattern p = ((RelaxngPattern) patterns [0]).Compile (g);
 			if (patterns.Count == 1)
 				return p;
@@ -292,7 +292,7 @@ namespace Commons.Xml.Relaxng
 			grammar.CheckIncludeRecursion (Href);
 			grammar.IncludedUris.Add (Href, Href);
 			if (grammar.Resolver == null)
-				throw new RelaxngException ("To compile 'include' element, XmlResolver is required.");
+				throw new RelaxngException (this, "To compile 'include' element, XmlResolver is required.");
 			Uri uri = grammar.Resolver.ResolveUri (BaseUri != String.Empty ? new Uri (BaseUri) : null, Href);
 			XmlTextReader xtr = null;
 			RelaxngGrammar g = null;
@@ -305,7 +305,7 @@ namespace Commons.Xml.Relaxng
 				xtr.Close ();
 			}
 			if (g == null)
-				throw new RelaxngException ("Included syntax must start with \"grammar\" element.");
+				throw new RelaxngException (this, "Included syntax must start with \"grammar\" element.");
 			g.DataProvider = grammar.Provider;
 
 			// process recursive inclusions.
@@ -322,7 +322,7 @@ namespace Commons.Xml.Relaxng
 			// replace redifinitions into div.
 			// starts.
 			if (this.Starts.Count > 0 && g.Starts.Count == 0)
-				throw new RelaxngException ("When the included grammar does not contain start components, this include component must not contain start components.");
+				throw new RelaxngException (this, "When the included grammar does not contain start components, this include component must not contain start components.");
 			RelaxngGrammarContentList appliedStarts = (this.starts.Count > 0) ?
 				this.starts : g.Starts;
 
@@ -342,14 +342,16 @@ namespace Commons.Xml.Relaxng
 				div.Defines.Add (def);
 			}
 			foreach (RelaxngDefine def in g.Defines) {
-				originalDefs.Add (def.Name, def.Name);
-				if (overrides [def.Name] == null)
+				originalDefs [def.Name] = def.Name;
+				if (!overrides.ContainsKey (def.Name)) {
 					div.Defines.Add (def);
+				}
 				// else discard.
 			}
+
 			foreach (string name in overrides.Values)
-				if (!originalDefs.Contains (name))
-					throw new RelaxngException ("The include component must not contain define components whose name does not appear in the included grammar component.");
+				if (!originalDefs.ContainsKey (name))
+					throw new RelaxngException (this, "The include component must not contain define components whose name does not appear in the included grammar component.");
 
 			grammar.IncludedUris.Remove (Href);
 			return div;
@@ -709,7 +711,7 @@ namespace Commons.Xml.Relaxng
 			RdpPattern p = null;
 			if (this.except != null) {
 				if (except.Patterns.Count == 0)
-					throw new RelaxngException ("data except pattern have no children.");
+					throw new RelaxngException (this, "data except pattern have no children.");
 				p = except.Patterns [0].Compile (grammar);
 				for (int i=1; i<except.Patterns.Count; i++)
 					p = new RdpChoice (p,
@@ -893,13 +895,13 @@ namespace Commons.Xml.Relaxng
 			RdpName n = nc as RdpName;
 			if (n != null) {
 				if (n.NamespaceURI == xmlnsNS)
-					throw new RelaxngException ("cannot specify \"" + xmlnsNS + "\" for name of attribute.");
+					throw new RelaxngException (this, "cannot specify \"" + xmlnsNS + "\" for name of attribute.");
 				if (n.LocalName == "xmlns" && n.NamespaceURI == "")
-					throw new RelaxngException ("cannot specify \"xmlns\" inside empty ns context.");
+					throw new RelaxngException (this, "cannot specify \"xmlns\" inside empty ns context.");
 			} else {
 				RdpNsName nn = nc as RdpNsName;
 				if (nn.NamespaceURI == "http://www.w3.org/2000/xmlns")
-					throw new RelaxngException ("cannot specify \"" + xmlnsNS + "\" for name of attribute.");
+					throw new RelaxngException (this, "cannot specify \"" + xmlnsNS + "\" for name of attribute.");
 				RdpNsNameExcept x = nc as RdpNsNameExcept;
 				if (x != null)
 					checkInvalidAttrNameClass (x.ExceptNameClass);
@@ -1109,7 +1111,7 @@ namespace Commons.Xml.Relaxng
 			grammar.CheckIncludeRecursion (Href);
 			grammar.IncludedUris.Add (Href, Href);
 			if (grammar.Resolver == null)
-				throw new RelaxngException ("To compile 'include' element, XmlResolver is required.");
+				throw new RelaxngException (this, "To compile 'include' element, XmlResolver is required.");
 			Uri uri = grammar.Resolver.ResolveUri (BaseUri != String.Empty ? new Uri (BaseUri) : null, Href);
 			XmlTextReader xtr = null;
 			try {

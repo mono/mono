@@ -1,5 +1,16 @@
 2004-12-06  Atsushi Enomoto <atsushi@ximian.com>
 
+	* RelaxngNameClass.cs,
+	  RelaxngPattern.cs,
+	  RelaxngGrammar.cs :
+	  Added related grammar component location to error message.
+	  In RelaxngDefine, Compile() caused error on duplicate key on
+	  Hashtable.Add().
+	* RelaxngReader.cs : In GetStrippedAttribute(), use 
+	  GetAttribute(string,string).
+
+2004-12-06  Atsushi Enomoto <atsushi@ximian.com>
+
 	* RelaxngException.cs : don't store debug string. It was so harmful
 	  for performance.
 

@@ -155,6 +155,7 @@ namespace Commons.Xml.Relaxng
 		internal void CheckIncludeRecursion (string href)
 		{
 			if (this.includedUris [href] != null)
+				// FIXME: fill line info
 				throw new RelaxngException ("Include recursion found. href: " + href);
 			if (parentGrammar != null)
 				parentGrammar.CheckIncludeRecursion (href);
@@ -264,6 +265,7 @@ namespace Commons.Xml.Relaxng
 			case RelaxngPatternType.NotAllowed:
 				break;
 			default:
+				// FIXME: fill line info
 				throw new RelaxngException ("Start pattern contains an invalid content pattern.");
 			}
 		}
@@ -309,6 +311,7 @@ namespace Commons.Xml.Relaxng
 				RelaxngGrammar target = pref.TargetGrammar;
 				RdpPattern refPattern = pref.RefPattern;
 				if (refPattern == null)
+					// FIXME: fill line info
 					throw new RelaxngException ("No matching define found for " + pref.Name);
 
 				if (checkRecursionDepth == -1) {
@@ -318,6 +321,7 @@ namespace Commons.Xml.Relaxng
 					checkedDefs [p] = -2;
 				}
 				else if (depth == checkRecursionDepth)
+					// FIXME: fill line info
 					throw new RelaxngException (String.Format ("Detected illegal recursion. Ref name is {0}.", pref.Name));
 
 				break;
@@ -388,6 +392,7 @@ namespace Commons.Xml.Relaxng
 			foreach (RdpUnresolvedRef pref in this.unresolvedPatterns) {
 				RdpPattern defP = assembledDefs [pref.Name] as RdpPattern;
 				if (defP == null)
+					// FIXME: fill line info
 					throw new RelaxngException (String.Format ("Target definition was not found: {0}", pref.Name));
 				ArrayList al = refPatterns [defP] as ArrayList;
 				if (al == null) {
@@ -441,6 +446,7 @@ namespace Commons.Xml.Relaxng
 
 				RelaxngGrammar target = pref.TargetGrammar;
 				if (target == null)
+					// FIXME: fill line info
 					throw new RelaxngException ("Referenced definition was not found.");
 				RdpPattern defP = target.assembledDefs [pref.Name] as RdpPattern;
 				if (defP == null)
@@ -536,7 +542,7 @@ namespace Commons.Xml.Relaxng
 			// 3.assemble starts.
 			if (starts.Count == 0) {
 				if (ParentGrammar == null)
-					throw new RelaxngException ("grammar must have at least one start component.");
+					throw new RelaxngException (this, "grammar must have at least one start component.");
 			} else {
 				assembledStart = ((RelaxngStart)starts [0]).Pattern;
 				for (int i=1; i<starts.Count; i++) {
@@ -582,19 +588,19 @@ namespace Commons.Xml.Relaxng
 			switch (newCombine) {
 			case "interleave":
 				if (combine == "choice")
-					throw new RelaxngException ("\"combine\" was already specified \"choice\"");
+					throw new RelaxngException (this, "\"combine\" was already specified \"choice\"");
 				else
 					combine = "interleave";
 				break;
 			case "choice":
 				if (combine == "interleave")
-					throw new RelaxngException ("\"combine\" was already specified \"interleave\"");
+					throw new RelaxngException (this, "\"combine\" was already specified \"interleave\"");
 				else
 					combine = "choice";
 				break;
 			case null:
 				if (haveHead)
-					throw new RelaxngException (String.Format ("There was already \"{0}\" element without \"combine\" attribute.", targetSpec));
+					throw new RelaxngException (this, String.Format ("There was already \"{0}\" element without \"combine\" attribute.", targetSpec));
 				haveHead = true;
 				break;
 			}

@@ -40,18 +40,19 @@ namespace Commons.Xml.Relaxng
 	public class RelaxngReader : XmlDefaultReader
 	{
 		// static members.
-		static RelaxngPattern relaxngGrammar;
+		static RelaxngPattern grammarForRelaxng;
 		static XmlReader relaxngXmlReader;
 		static RelaxngReader ()
 		{
-//			relaxngXmlReader = new XmlTextReader ("relaxng.rng");
-//			relaxngGrammar = RelaxngPattern.Read (relaxngXmlReader);
+			relaxngXmlReader = new XmlTextReader (typeof (RelaxngReader).Assembly.GetManifestResourceStream ("relaxng.rng"));
+			grammarForRelaxng =
+				RelaxngPattern.Read (relaxngXmlReader);
 		}
 
 		public static string RelaxngNS = "http://relaxng.org/ns/structure/1.0";
-//		public static RelaxngPattern RelaxngGrammar {
-//			get { return relaxngGrammar; }
-//		}
+		public static RelaxngPattern GrammarForRelaxng {
+			get { return grammarForRelaxng; }
+		}
 
 
 		// fields
@@ -66,7 +67,7 @@ namespace Commons.Xml.Relaxng
 		}
 
 		public RelaxngReader (XmlReader reader, string ns)
-//			: base (reader == relaxngXmlReader ? reader : new RelaxngValidatingReader (reader, relaxngGrammar))
+//			: base (grammarForRelaxng == null ? reader : new RelaxngValidatingReader (reader, grammarForRelaxng))
 			: base (reader)
 		{
 			nsStack.Push (ns == null ? "" : ns);
@@ -233,15 +234,15 @@ namespace Commons.Xml.Relaxng
 
 		private string GetNameAttribute ()
 		{
-			string name = GetSpaceStrippedAttribute ("name");
+			string name = GetSpaceStrippedAttribute ("name", String.Empty);
 			if (name == null)
 				throw new RelaxngException ("Required attribute name is not found.");
 			return XmlConvert.VerifyNCName (name);
 		}
 
-		private string GetSpaceStrippedAttribute (string name)
+		private string GetSpaceStrippedAttribute (string name, string ns)
 		{
-			string v = GetAttribute (name);
+			string v = GetAttribute (name, ns);
 			return v != null ? v.Trim () : null;
 		}
 
@@ -251,7 +252,7 @@ namespace Commons.Xml.Relaxng
 			FillLocation (def);
 			expect ("define");
 			def.Name = GetNameAttribute ();
-			def.Combine = GetSpaceStrippedAttribute ("combine");
+			def.Combine = GetSpaceStrippedAttribute ("combine", String.Empty);
 
 			Read ();
 			while (NodeType == XmlNodeType.Element)
@@ -462,7 +463,7 @@ namespace Commons.Xml.Relaxng
 			FillLocation (i);
 			expect ("include");
 			i.NSContext = ContextNamespace;
-			string href = GetSpaceStrippedAttribute ("href");
+			string href = GetSpaceStrippedAttribute ("href", String.Empty);
 			if (href == null)
 				throw new RelaxngException ("Required attribute href was not found.");
 			XmlResolver res = resolver != null ? resolver : new XmlUrlResolver ();
@@ -586,7 +587,7 @@ namespace Commons.Xml.Relaxng
 						continue;
 					switch (LocalName) {
 					case "datatypeLibrary":
-					case  "name":
+					case "name":
 					case "ns":
 						break;
 					default:
@@ -596,10 +597,10 @@ namespace Commons.Xml.Relaxng
 				MoveToElement ();
 			}
 
-			string ns = GetSpaceStrippedAttribute ("ns");
+			string ns = GetSpaceStrippedAttribute ("ns", String.Empty);
 
 			// try to get name from attribute.
-			if (MoveToAttribute ("name")) {
+			if (MoveToAttribute ("name", String.Empty)) {
 //				attr.NameClass = resolvedName (XmlConvert.VerifyName (Value.Trim ()), false);
 				RelaxngName nc = new RelaxngName ();
 				string name = XmlConvert.VerifyName (Value.Trim ());
@@ -662,7 +663,7 @@ namespace Commons.Xml.Relaxng
 			RelaxngExternalRef r = new RelaxngExternalRef ();
 			FillLocation (r);
 			expect ("externalRef");
-			string href = GetSpaceStrippedAttribute ("href");
+			string href = GetSpaceStrippedAttribute ("href", String.Empty);
 			if (href == null)
 				throw new RelaxngException ("Required attribute href was not found.");
 			XmlResolver res = resolver != null ? resolver : new XmlUrlResolver ();
@@ -746,7 +747,7 @@ namespace Commons.Xml.Relaxng
 			FillLocation (data);
 
 			expect ("data");
-			data.Type = GetSpaceStrippedAttribute ("type");
+			data.Type = GetSpaceStrippedAttribute ("type", String.Empty);
 			if (data.Type == null)
 				throw new RelaxngException ("Attribute type is required.");
 			data.DatatypeLibrary = DatatypeLibrary;
@@ -809,7 +810,7 @@ namespace Commons.Xml.Relaxng
 				v.Type = "token";
 				v.DatatypeLibrary = "";
 			}
-//			v.Namespace = GetSpaceStrippedAttribute ("ns");
+//			v.Namespace = GetSpaceStrippedAttribute ("ns", String.Empty);
 			MoveToElement ();
 			if (IsEmptyElement) {
 				v.Value = String.Empty;
