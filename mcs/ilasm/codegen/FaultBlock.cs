@@ -29,7 +29,7 @@ namespace Mono.ILASM {
                 public PEAPI.HandlerBlock Resolve (CodeGen code_gen, MethodDef method)
                 {
                         PEAPI.CILLabel from = handler_block.GetFromLabel (code_gen, method);
-                        PEAPI.CILLabel to = handler_block.GetFromLabel (code_gen, method);
+                        PEAPI.CILLabel to = handler_block.GetToLabel (code_gen, method);
                         PEAPI.Fault fault = new PEAPI.Fault (from, to);
 
                         return fault;

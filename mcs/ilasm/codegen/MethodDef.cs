@@ -277,10 +277,18 @@ namespace Mono.ILASM {
                         /// probably only create the ones that need to be
                         LabelInfo[] label_info = new LabelInfo[label_table.Count];
                         label_table.Values.CopyTo (label_info, 0);
+                        int previous_pos = -1;
+                        LabelInfo previous_label = null;
                         Array.Sort (label_info);
 
-                        foreach (LabelInfo label in label_info)
-                                label.Define (cil.NewLabel ());
+                        foreach (LabelInfo label in label_info) {
+                                if (label.Pos == previous_pos)
+                                        label.Label = previous_label.Label;
+                                else
+                                        label.Define (cil.NewLabel ());
+                                previous_label = label;
+                                previous_pos = label.Pos;
+                        }
 
                         int label_pos = 0;
                         int next_label_pos = (label_info.Length > 0 ? label_info[0].Pos : -1);
@@ -289,9 +297,11 @@ namespace Mono.ILASM {
                                 IInstr instr = (IInstr) inst_list[i];
                                 if (next_label_pos == i) {
                                         cil.CodeLabel (label_info[label_pos].Label);
-                                        if (++label_pos < label_info.Length)
-                                                next_label_pos = label_info[label_pos].Pos;
-                                        else
+                                        if (label_pos < label_info.Length) {
+                                                while (next_label_pos == i && ++label_pos < label_info.Length)
+                                                        next_label_pos = label_info[label_pos].Pos;
+                                        }
+                                        if (label_pos >= label_info.Length)
                                                 next_label_pos = -1;
                                 }
                                 instr.Emit (code_gen, cil);

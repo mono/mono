@@ -1,3 +1,17 @@
+2003-05-24 Jackson Harper <jackson@latitudegeo.com>
+
+	* CatchBlock.cs: Remove typo causing to labels to be the same as
+	from labels.
+	* FaultBlock.cs: Remove typo causing to labels to be the same as
+	from labels.
+	* FilterBlock.cs: Remove typo causing to labels to be the same as
+	from labels.
+	* MethodDef.cs: Allow for multiple labels to point to the same
+	line. ie:
+	END_BLOCK:
+	PASS:
+	do stuff
+		
 2003-05-23 Jackson Harper <jackson@latitudegeo.com>
 
 	* CatchBlock.cs: New file - Initial implementation of a catch

@@ -32,7 +32,7 @@ namespace Mono.ILASM {
                 {
                         PEAPI.CILLabel label = method.GetLabelDef (this_label);
                         PEAPI.CILLabel from = handler_block.GetFromLabel (code_gen, method);
-                        PEAPI.CILLabel to = handler_block.GetFromLabel (code_gen, method);
+                        PEAPI.CILLabel to = handler_block.GetToLabel (code_gen, method);
                         PEAPI.Filter filter = new PEAPI.Filter (label, from, to);
 
                         return filter;
