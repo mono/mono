@@ -14,6 +14,11 @@ using System.Text;
 
 namespace System.Web.UI.WebControls {
 	public class QueryStringParameter : Parameter {
+
+		public QueryStringParameter () : base ()
+		{
+		}
+
 		protected QueryStringParameter (QueryStringParameter original) : base (original)
 		{
 			this.QueryStringField = original.QueryStringField;

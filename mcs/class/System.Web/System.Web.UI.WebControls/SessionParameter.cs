@@ -14,6 +14,11 @@ using System.Text;
 
 namespace System.Web.UI.WebControls {
 	public class SessionParameter : Parameter {
+
+		public SessionParameter () : base ()
+		{
+		}
+
 		protected SessionParameter (SessionParameter original) : base (original)
 		{
 			this.SessionField = original.SessionField;

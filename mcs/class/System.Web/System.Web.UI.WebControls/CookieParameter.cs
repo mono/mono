@@ -14,6 +14,11 @@ using System.Text;
 
 namespace System.Web.UI.WebControls {
 	public class CookieParameter : Parameter {
+
+		public CookieParameter () : base ()
+		{
+		}
+
 		protected CookieParameter (CookieParameter original) : base (original)
 		{
 			this.CookieName = original.CookieName;

@@ -15,6 +15,11 @@ using System.Data;
 
 namespace System.Web.UI.WebControls {
 	public class Parameter : ICloneable, IStateManager {
+
+		public Parameter () : base ()
+		{
+		}
+
 		protected Parameter (Parameter original)
 		{
 			this.DefaultValue = original.DefaultValue;
@@ -51,6 +56,8 @@ namespace System.Web.UI.WebControls {
 		
 		protected void OnParameterChanged ()
 		{
+			if (_owner != null)
+				_owner.CallOnParameterChanged ();
 		}
 		
 		protected virtual void LoadViewState (object savedState)
@@ -205,7 +212,28 @@ namespace System.Web.UI.WebControls {
 			get { return isTrackingViewState; }
 		}
 		
-	
+		private ParameterCollection _owner;
+
+		internal void SetOwnerCollection (ParameterCollection own)
+		{
+			_owner = own;
+		}
+
+		internal object ParameterValue {
+			get {
+				object param = ViewState["ParameterValue"];
+				//FIXME: need to do some null string checking magic with TreatEmptyStringAsNull here
+				if (param == null)
+				{
+					param = DefaultValue;
+					if (param == null)
+					{
+						return null;
+					}
+				}
+				return Convert.ChangeType (param, Type);
+			}
+		}
 	}
 }
 #endif

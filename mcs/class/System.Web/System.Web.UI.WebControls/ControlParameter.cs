@@ -14,6 +14,11 @@ using System.Text;
 
 namespace System.Web.UI.WebControls {
 	public class ControlParameter : Parameter {
+
+		public ControlParameter () : base ()
+		{
+		}
+
 		protected ControlParameter (ControlParameter original) : base (original)
 		{
 			this.ControlID = original.ControlID;

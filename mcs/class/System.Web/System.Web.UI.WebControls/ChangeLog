@@ -1,5 +1,17 @@
 2003-11-18  Todd Berman  <tberman@gentoo.org>
 
+	* ControlParameter.cs:
+	* CookieParameter.cs:
+	* FormParameter.cs:
+	* QueryStringParameter.cs:
+	* SessionParameter.cs: added public .ctor ()
+	* Parameter.cs: added public .ctor (), internal SetOwnerCollection
+	and handling, as well as internal ParameterValue for easy access.
+	NOTE: ParameterValue doesnt respect TreatEmptyStringAsNull yet.
+	* ParameterCollection.cs: implementation redux.
+
+2003-11-18  Todd Berman  <tberman@gentoo.org>
+
 	* ParameterCollection.cs: Implemented
 	* Parameter.cs: Added _owner, SetOwnerCollection and proper handling.
 	ToString () now matches asp.net

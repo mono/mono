@@ -14,6 +14,11 @@ using System.Text;
 
 namespace System.Web.UI.WebControls {
 	public class FormParameter : Parameter {
+
+		public FormParameter () : base ()
+		{
+		}
+
 		protected FormParameter (FormParameter original) : base (original)
 		{
 			this.FormField = original.FormField;
