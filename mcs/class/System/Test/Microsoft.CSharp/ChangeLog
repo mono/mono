@@ -1,3 +1,7 @@
 2002-11-06 Jackson Harper <jackson@latitudegeo.com>
 
+	* CompilerErrorTest.cs AllTests.cs: Added tests for the Microsoft.CSharp.CompilerError class
+
+2002-11-06 Jackson Harper <jackson@latitudegeo.com>
+
 	* AllTests.cs CompilerTest.cs: Added files
