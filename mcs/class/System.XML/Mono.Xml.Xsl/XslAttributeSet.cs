@@ -21,7 +21,7 @@ using Mono.Xml.Xsl.Operations;
 using QName = System.Xml.XmlQualifiedName;
 
 namespace Mono.Xml.Xsl {
-	public class XslAttributeSet : XslCompiledElement {
+	internal class XslAttributeSet : XslCompiledElement {
 		QName name;
 		// [QName]=>XslAttributeSet
 		ArrayList usedAttributeSets = new ArrayList ();

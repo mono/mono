@@ -10,7 +10,6 @@
 //
 
 using System;
-using System.CodeDom;
 using System.Collections;
 using System.Collections.Specialized;
 using System.Xml;
@@ -51,9 +50,13 @@ namespace Mono.Xml.Xsl
 		public override XPathResultType ReturnType {
 			get { return expr.ReturnType; }
 		}
+
+		public override bool RequireSorting {
+			get { return true; }
+		}
 	}
 
-	public class XslKey
+	internal class XslKey
 	{
 		QName name;
 		CompiledExpression usePattern;

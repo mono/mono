@@ -20,7 +20,7 @@ using Mono.Xml.XPath;
 using QName = System.Xml.XmlQualifiedName;
 
 namespace Mono.Xml.Xsl {
-	public class XslModedTemplateTable {
+	internal class XslModedTemplateTable {
 		
 		class TemplateWithPriority : IComparable {
 			public readonly double Priority;
@@ -126,7 +126,7 @@ namespace Mono.Xml.Xsl {
 		}
 	}
 
-	public class XslTemplateTable {
+	internal class XslTemplateTable {
 		// [QName mode]=>XslTemplateTable
 		Hashtable templateTables = new Hashtable ();
 		Hashtable namedTemplates = new Hashtable ();
@@ -212,7 +212,7 @@ namespace Mono.Xml.Xsl {
 		}
 	}
 
-	public class XslTemplate
+	internal class XslTemplate
 	{
 		XmlQualifiedName name;
 		Pattern match;
@@ -342,7 +342,7 @@ namespace Mono.Xml.Xsl {
 		}
 	}
 	
-	public class XslDefaultNodeTemplate : XslTemplate {
+	internal class XslDefaultNodeTemplate : XslTemplate {
 		QName mode;
 		
 		static XslDefaultNodeTemplate instance = new XslDefaultNodeTemplate (QName.Empty);
@@ -361,7 +361,7 @@ namespace Mono.Xml.Xsl {
 		}
 	}
 	
-	public class XslEmptyTemplate : XslTemplate {
+	internal class XslEmptyTemplate : XslTemplate {
 
 		static XslEmptyTemplate instance = new XslEmptyTemplate ();
 		XslEmptyTemplate () : base (null) {}
@@ -375,7 +375,7 @@ namespace Mono.Xml.Xsl {
 		}
 	}
 	
-	public class XslDefaultTextTemplate: XslTemplate {
+	internal class XslDefaultTextTemplate: XslTemplate {
 
 		static XslDefaultTextTemplate instance = new XslDefaultTextTemplate ();
 		XslDefaultTextTemplate () : base (null) {}

@@ -17,7 +17,7 @@ using System.Xml.Xsl;
 
 namespace Mono.Xml.Xsl {
 	internal class Debug {
-		[System.Diagnostics.Conditional("DEBUG")]
+		[System.Diagnostics.Conditional("_DEBUG")]
 		internal static void TraceContext(XPathNavigator context) {
 			string output = "(null)";
 			
@@ -46,13 +46,13 @@ namespace Mono.Xml.Xsl {
 				throw new Exception (message);
 		}
 
-		[System.Diagnostics.Conditional("DEBUG")]
+		[System.Diagnostics.Conditional("_DEBUG")]
 		internal static void WriteLine (object value)
 		{
 			Console.Error.WriteLine (value);
 		}
 
-		[System.Diagnostics.Conditional("DEBUG")]
+		[System.Diagnostics.Conditional("_DEBUG")]
 		internal static void WriteLine (string message)
 		{
 			Console.Error.WriteLine (message);

@@ -24,7 +24,7 @@ using QName = System.Xml.XmlQualifiedName;
 
 namespace Mono.Xml.Xsl {
 
-	public class XslStylesheet {
+	internal class XslStylesheet {
 		public const string XsltNamespace = "http://www.w3.org/1999/XSL/Transform";
 		public const string MSXsltNamespace = "urn:schemas-microsoft-com:xslt";
 		

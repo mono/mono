@@ -18,7 +18,7 @@ namespace Mono.Xml.Xsl {
 	/// Implementations for additional formats (e.g. XHTML) as well as custom 
 	/// implementations may be supported either.
 	/// </summary>
-	public abstract class Emitter {
+	internal abstract class Emitter {
 		public abstract void WriteStartDocument (Encoding encoding, StandaloneType standalone);		
 		public abstract void WriteEndDocument ();						
 		public abstract void WriteDocType (string type, string publicId, string systemId);

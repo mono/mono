@@ -27,7 +27,7 @@ using QName = System.Xml.XmlQualifiedName;
 
 namespace Mono.Xml.Xsl 
 {
-	public class CompiledStylesheet {
+	internal class CompiledStylesheet {
 		XslStylesheet style;
 		Hashtable globalVariables;
 		Hashtable attrSets;
@@ -82,7 +82,7 @@ namespace Mono.Xml.Xsl
 		}
 	}
 	
-	public class Compiler : IStaticXsltContext {
+	internal class Compiler : IStaticXsltContext {
 		public const string XsltNamespace = "http://www.w3.org/1999/XSL/Transform";
 			
 		ArrayList inputStack = new ArrayList ();
@@ -544,7 +544,7 @@ namespace Mono.Xml.Xsl
 		}
 	}
 	
-	public class VariableScope {
+	internal class VariableScope {
 		Hashtable variables;
 		VariableScope parent;
 		int nextSlot = 0;
@@ -599,7 +599,7 @@ namespace Mono.Xml.Xsl
 		}
 	}
 	
-	public class Sort {
+	internal class Sort {
 		string lang;
 		XmlDataType dataType;
 		XmlSortOrder order;
@@ -685,7 +685,7 @@ namespace Mono.Xml.Xsl
 		}
 	}
 	
-	public class ExpressionStore {
+	internal class ExpressionStore {
 		Hashtable exprToSorts;
 		
 		public void AddExpression (XPathExpression e, Compiler c)

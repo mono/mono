@@ -1,4 +1,15 @@
-2004-04-12  Atsushi Enomoto  <atsushi@ximian.com>
+2004-04-24  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Attribute.cs, Compiler.cs, Debug.cs, Emitter.cs, 
+	  MSXslScriptCompiler.cs, Outputter.cs, XslAttributeSet.cs,
+	  XslDecimalFormat.cs, XslKey.cs, XslStylesheet.cs, XslTemplate.cs,
+	  XslTransformProcessor.cs : Make extra classes internal.
+
+	* XslKey.cs : It should require sorting.
+	* Debug.cs : Just avoid debug output. Only who want to output should
+	  turn it on.
+
+2004-04-24  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* GenericOutputter.cs : Culture-independency fix. 
 	  Replaced StringCollection to ArrayList.

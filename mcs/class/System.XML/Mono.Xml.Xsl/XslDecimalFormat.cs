@@ -18,7 +18,7 @@ using System.Xml.Xsl;
 using QName = System.Xml.XmlQualifiedName;
 
 namespace Mono.Xml.Xsl {
-	public class XslDecimalFormat {
+	internal class XslDecimalFormat {
 		
 		NumberFormatInfo info = new NumberFormatInfo ();
 		char digit = '#', zeroDigit = '0', patternSeparator = ';';

@@ -14,7 +14,7 @@ namespace Mono.Xml.Xsl {
 	/// <summary>
 	/// XML attribute.
 	/// </summary>
-	public struct Attribute {
+	internal struct Attribute {
 		public string Prefix;
 		public string Namespace;
 		public string LocalName;

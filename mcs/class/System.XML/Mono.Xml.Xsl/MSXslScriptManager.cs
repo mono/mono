@@ -23,7 +23,7 @@ using System.Xml.Xsl;
 namespace Mono.Xml.Xsl {
 
 	[MonoTODO ("Correct evedence handling; test other than simple string case")]
-	public class MSXslScriptManager {
+	internal class MSXslScriptManager {
 		Hashtable scripts = new Hashtable ();
 		Evidence evidence;
 

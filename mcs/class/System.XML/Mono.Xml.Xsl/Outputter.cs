@@ -17,7 +17,7 @@ namespace Mono.Xml.Xsl {
 	/// Implementations of this class outputs result tree to an Emitter, which emits 
 	/// it further down to real consumers.
 	/// </summary>
-	public abstract class Outputter {
+	internal abstract class Outputter {
 		public abstract void WriteStartDocument ();		
 		public abstract void WriteEndDocument ();
 		
