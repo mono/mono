@@ -1,3 +1,13 @@
+2002-08-24  Martin Baulig  <martin@gnome.org>
+
+	* mono.c (main): The `--debug' argument now knows about a new
+	debugging format `mono' which will be used to display source lines
+	in backtraces.
+
+	* debug.h (MonoDebugFormat): Added a new MONO_DEBUG_FORMAT_MONO
+	which will be used when displaying backtraces.  It reads a new
+	binary symbol file.
+
 2002-08-23  Martin Baulig  <martin@gnome.org>
 
 	* jit.c (match_debug_method): Don't include runtime invoke methods
