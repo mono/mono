@@ -79,9 +79,7 @@ namespace System.Windows.Forms{
 				throw new NotImplementedException ();
 			}
 			set{
-				if (value == Shortcut.CtrlN){
-				  file_item.AddAccelerator("activate", new Gtk.AccelGroup(), 'N', Gdk.ModifierType.ControlMask, Gtk.AccelFlags.Visible);
-				}
+				ShortcutHelper.AddShortcutToWidget (file_item, new Gtk.AccelGroup(), Shortcut.CtrlN, "activate");
 			}
 		}
 		
