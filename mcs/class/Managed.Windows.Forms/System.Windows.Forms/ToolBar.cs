@@ -32,9 +32,12 @@
 // Copyright (C) Novell, Inc. 2004 (http://www.novell.com)
 //
 //
-// $Revision: 1.16 $
+// $Revision: 1.17 $
 // $Modtime: $
 // $Log: ToolBar.cs,v $
+// Revision 1.17  2004/10/26 09:33:42  ravindra
+// ToolBar should use the user specified button size, if there is any. Added a size_specified flag for the same.
+//
 // Revision 1.16  2004/10/14 11:14:05  ravindra
 // 	- Changed Redraw () to do a Refresh () always.
 // 	- Fixed the MouseMove event handling when mouse is pressed,
@@ -129,6 +132,7 @@ namespace System.Windows.Forms
 		internal ToolBarTextAlign	textAlignment;
 		internal bool			wrappable;        // flag to make the toolbar wrappable
 		internal bool			redraw;           // flag to force redrawing the control
+		private bool			size_specified;   // flag to know if button size is fixed.
 		internal ToolBarButton		currentButton; // the highlighted button
 		#endregion Instance Variables
 
@@ -182,6 +186,7 @@ namespace System.Windows.Forms
 			wrappable = true;
 			dock_style = DockStyle.Top;
 			redraw = true;
+			size_specified = false;
 			
 			// event handlers
 			this.MouseDown += new MouseEventHandler (ToolBar_MouseDown);
@@ -300,10 +305,9 @@ namespace System.Windows.Forms
 				if (buttonSize.Width == value.Width && buttonSize.Height == value.Height)
 					return;
 
-				if (value.Width > 0 && value.Height > 0) {
 					buttonSize = value;
+					size_specified = true;
 					Redraw (true);
-				}
 			}
 		}
 
@@ -476,6 +480,9 @@ namespace System.Windows.Forms
 			if (button.Style == ToolBarButtonStyle.Separator)
 				return new Rectangle (button.Location.X, button.Location.Y, 
 						      ThemeEngine.Current.ToolBarSeparatorWidth, this.ButtonSize.Height);
+
+			if (size_specified)
+				return new Rectangle (button.Location, this.ButtonSize);
 
 			SizeF sz = this.DeviceContext.MeasureString (button.Text, this.Font);
 			Size size = new Size ((int) Math.Ceiling (sz.Width), (int) Math.Ceiling (sz.Height));
