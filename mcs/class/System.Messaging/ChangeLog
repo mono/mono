@@ -1,3 +1,8 @@
+2004-09-10  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Makefile: Activate unit tests.
+	* System.Messaging_test.dll.sources: New. Source list for unit tests.
+
 2004-08-31  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
 	* System.Messaging.Design/QueuePathDialog.cs :Commented out some bits because it would not compile as it couldn't find System.Windows.Forms.Design
 
