@@ -96,7 +96,6 @@ namespace System.Data.SqlTypes
 
 		public SqlDecimal (byte bPrecision, byte bScale, bool fPositive, int[] bits) : this (bPrecision, bScale, fPositive, bits[0], bits[1], bits[2], bits[3]) { }
 
-		[MonoTODO]
 		public SqlDecimal (byte bPrecision, byte bScale, bool fPositive, int data1, int data2, int data3, int data4) 
 		{
 			this.precision = bPrecision;
@@ -112,10 +111,9 @@ namespace System.Data.SqlTypes
 			if (precision < scale)
 				throw new ArgumentException(Locale.GetText ("Invalid scale"));
 
-			// FIXME: What is the right message of Exception
 			if (this.ToDouble () > (Math.Pow (10, 38) - 1)  || 
 			    this.ToDouble () < -(Math.Pow (10, 38)))
-				throw new SqlTypeException ("Can't convert to SqlDecimal");
+				throw new SqlTypeException ("Can't convert to SqlDecimal, Out of range ");
 		}
 
 		#endregion
@@ -310,12 +308,10 @@ namespace System.Data.SqlTypes
 			return (x != y);
 		}
 
-		[MonoTODO]
 		public static SqlDecimal Parse (string s)
 		{
-			// FIXME: Huh, There must be better way to do this
 			if (s == null)
-				throw new ArgumentNullException ();
+				throw new ArgumentNullException (Locale.GetText ("string s"));
 			else 
 				return SqlDouble.Parse (s).ToSqlDecimal ();
 		}
@@ -328,10 +324,8 @@ namespace System.Data.SqlTypes
 			return new SqlDecimal (Math.Pow (n.ToDouble (), exp));
 		}
 
-		[MonoTODO]
 		public static SqlDecimal Round (SqlDecimal n, int position)
 		{
-			// FIXME: There must be better way to do this
 			if (n.IsNull)
 				throw new SqlNullValueException ();
 
