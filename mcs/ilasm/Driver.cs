@@ -25,7 +25,13 @@ namespace Mono.ILASM {
                 public static int Main (string[] args)
                 {
                         DriverMain driver = new DriverMain (args);
-                        driver.Run ();
+                        try {
+                                driver.Run ();
+                        } catch {
+                                Console.WriteLine ("Error while compiling.");
+                                return 1;
+                        }
+                        Console.Write ("Compilation succeeded");
                         return 0;
                 }
 
