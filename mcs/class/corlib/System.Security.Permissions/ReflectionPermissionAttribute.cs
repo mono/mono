@@ -19,7 +19,7 @@ namespace System.Security.Permissions
 	{
 		// Fields
 		private ReflectionPermissionFlag flags;
-		privat bool memberAccess;
+		private bool memberAccess;
 		private bool reflectionEmit;
 		private bool typeInfo;
 		
