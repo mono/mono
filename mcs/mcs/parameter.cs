@@ -89,6 +89,7 @@ namespace CIR {
 		public readonly Parameter [] FixedParameters;
 		public readonly Parameter    ArrayParameter;
 		string signature;
+		Type [] types;
 		
 		public Parameters (Parameter [] fixed_parameters, Parameter array_parameter)
 		{
@@ -136,11 +137,11 @@ namespace CIR {
 
 			int i = 0;
 			foreach (Parameter par in FixedParameters){
-				i++;
 				if (par.Name == name){
 					idx = i;
 					return par;
 				}
+				i++;
 			}
 
 			return null;
@@ -151,10 +152,12 @@ namespace CIR {
 		// </summary>
 		public Type [] GetParameterInfo (TypeContainer tc)
 		{
+			if (types != null)
+				return types;
+			
 			if (FixedParameters == null)
 				return null;
 			
-			Type [] types;
 			int extra = (ArrayParameter != null) ? 1 : 0;
 			int i = 0;
 			int pc = FixedParameters.Length + extra;

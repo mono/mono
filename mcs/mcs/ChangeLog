@@ -1,7 +1,13 @@
 2001-09-12  Miguel de Icaza  <miguel@ximian.com>
 
+	* parameter.cs (GetParameterInfo): Use a type cache to compute
+	things only once, and to reuse this information
+
 	* expression.cs (LocalVariableReference::Emit): Implement.
 	(OpcodeCast::Emit): fix.
+
+	(ParameterReference::Resolve): Implement.
+	(ParameterReference::Emit): Implement.
 
 	* cs-parser.jay: Fix bug introduced by Ravi, variable initializers
 	that are expressions need to stay as Expressions.

@@ -1275,12 +1275,15 @@ namespace CIR {
 
 		public VariableInfo VariableInfo {
 			get {
-				return (VariableInfo) Block.GetVariableInfo (Name);
+				return Block.GetVariableInfo (Name);
 			}
 		}
 		
 		public override Expression Resolve (TypeContainer tc)
 		{
+			VariableInfo vi = Block.GetVariableInfo (Name);
+
+			type = vi.VariableType;
 			return this;
 		}
 
@@ -1331,12 +1334,19 @@ namespace CIR {
 
 		public override Expression Resolve (TypeContainer tc)
 		{
-			// FIXME: Implement;
+			Type [] types = Pars.GetParameterInfo (tc);
+
+			type = types [Idx];
+			
 			return this;
 		}
 
 		public override void Emit (EmitContext ec)
 		{
+			if (Idx < 255)
+				ec.ig.Emit (OpCodes.Ldarg_S, Idx);
+			else
+				ec.ig.Emit (OpCodes.Ldarg, Idx);
 		}
 	}
 	
@@ -1415,6 +1425,7 @@ namespace CIR {
 		/// </summary>
 		static int Badness (Argument a, ParameterInfo pi)
 		{
+			Console.WriteLine ("Considering: " + pi.ParameterType + " and " + a.Expr.Type); 
 			if (pi.ParameterType == a.Expr.Type)
 				return 0;
 
@@ -1453,9 +1464,11 @@ namespace CIR {
 						x = Badness (a, pi [j]);
 
 						if (x < 0){
-							// FIXME: report nice error.
-						} else
-							badness += x;
+							badness = best_match;
+							continue;
+						}
+						
+						badness += x;
 					}
 
 					if (badness < best_match){
@@ -1509,8 +1522,6 @@ namespace CIR {
 				"Figure out error: Can not find a good function for this argument list");
 				return null;
 			}
-
-			Console.WriteLine ("Found a method! " + method);
 
 			return this;
 		}

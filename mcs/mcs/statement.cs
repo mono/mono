@@ -217,7 +217,9 @@ namespace CIR {
 	
 	public class VariableInfo {
 		public readonly string Type;
-		public LocalBuilder LocalBuilder ;
+		public LocalBuilder LocalBuilder;
+		public Type VariableType;
+		
 		int idx;
 		
 		public VariableInfo (string type)
@@ -236,6 +238,7 @@ namespace CIR {
 				idx = value;
 			}
 		}
+
 	}
 		
 	// <summary>
@@ -466,6 +469,7 @@ namespace CIR {
 					if (t == null)
 						continue;
 
+					vi.VariableType = t;
 					vi.LocalBuilder = ig.DeclareLocal (t);
 					vi.Idx = count++;
 				}

@@ -99,8 +99,10 @@ namespace CIR {
 
 		public void EmitExpression (Expression e)
 		{
-			e.Resolve (parent);
-			e.Emit (this);     
+			e = e.Resolve (parent);
+
+			if (e != null)
+				e.Emit (this);     
 		}
 		
 		public void EmitIf (If s)
@@ -201,20 +203,13 @@ namespace CIR {
 			CheckState = previous_state;
 		}
 
-		void EmitInvocation (Invocation inv)
-		{
-			inv.Resolve (parent);
-			inv.Emit (this);
-		}
-
 		void EmitStatementExpression (StatementExpression s)
 		{
 			Expression e = s.Expr;
 
-			Console.WriteLine ("Processing ExprStmt: " + e);
-
-			e.Resolve (parent);
-			e.Emit (this);
+			e = e.Resolve (parent);
+			if (e != null)
+				e.Emit (this);
 
 			Console.WriteLine ("TODO: Maybe we need a pop here?");
 		}
