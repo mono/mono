@@ -15,7 +15,7 @@ class Foo<T>
 
 class X
 {
-	void do_hello (string hello)
+	static void do_hello (string hello)
 	{
 		Console.WriteLine ("Hello: {0}", hello);
 	}
@@ -24,7 +24,6 @@ class X
 	{
 		Foo<string> foo = new Foo<string> ();
 		foo.MyEvent += new Test<string> (do_hello);
-		foo.MyEvent += new Test (do_hello);
-		foo.Hello ();
+		foo.Hello ("Boston");
 	}
 }
