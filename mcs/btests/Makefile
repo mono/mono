@@ -40,7 +40,7 @@ test-compiler-jit-ngtive_run
 TEST_TAG = mbas-positive
 
 test-compiler-jit-real:
-	@logpath=./logs ; \
+	@logpath=./logs ; mkdir -p $$logpath ; \
 	logfile="$$logpath/$(TEST_TAG).results"; \
 	rm -f *.exe $$logpath/$(TEST_TAG).results $$logpath/$(TEST_TAG)-*.log ; \
 	echo "********** Positive Tests ************" > $$logfile ; \
@@ -73,7 +73,7 @@ test-compiler-jit-real:
 
 test-compiler-jit-ngtive_compile: TEST_TAG = mbas-negative-compile
 test-compiler-jit-ngtive_compile: 
-	@logpath=./logs ; \
+	@logpath=./logs ; mkdir -p $$logpath; \
 	logfile="$$logpath/$(TEST_TAG).results"; \
 	rm -f *.exe $$logpath/$(TEST_TAG).results $$logpath/$(TEST_TAG)-*.log ; \
 	echo "********** Negative Compilation Tests ************" >> $$logfile; \
@@ -97,7 +97,7 @@ test-compiler-jit-ngtive_compile:
 
 test-compiler-jit-ngtive_run: TEST_TAG = mbas-negative-runtime
 test-compiler-jit-ngtive_run:
-	@logpath=./logs ; \
+	@logpath=./logs ; mkdir -p $$logpath; \
 	logfile="$$logpath/$(TEST_TAG).results"; \
 	rm -f *.exe $$logpath/$(TEST_TAG).results $$logpath/$(TEST_TAG)-*.log ; \
 	echo "****** Negative Execution Tests ********" >> $$logfile; \

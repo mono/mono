@@ -1,3 +1,6 @@
+2004-08-06  Jambunathan K  <kjambunathan@novell.com>
+	* Makefile: Added 'mkdir -p $$logpath'
+
 2004-08-05 Sachin Kumar <skumar1@novell.com>
 	* ConcatenationOperator.vb:
 	* ConcatenationOperatorC1.vb:
