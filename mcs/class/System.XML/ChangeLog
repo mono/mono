@@ -1,3 +1,8 @@
+2004-01-20  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Makefile : amd64 build complains /nowarn:0162. It should not, but
+	  now removing since it breaks the build.
+
 2004-01-18  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* System.Xml.dll.sources :
