@@ -17,8 +17,12 @@ namespace System.Diagnostics {
 
 	public abstract class TraceListener : MarshalByRefObject, IDisposable {
 
+		[ThreadStatic]
 		private int indentLevel = 0;
+
+		[ThreadStatic]
 		private int indentSize = 4;
+
 		private string name = null;
 		private bool needIndent = false;
 

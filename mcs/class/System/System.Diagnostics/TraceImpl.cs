@@ -24,34 +24,36 @@ namespace System.Diagnostics {
 			set {autoFlush = value;}
 		}
 
-		// FIXME: From MSDN: "This property is stored on 
-		// per-thread/pre-reqeust basis"
-		//
-		// What exactly does this mean?  Sure, we can mark it
-		// [ThreadStatic], which make a per-thread value, but what
-		// does this mean for each of the writers?  Do *they* need to
-		// store this as a thread-static value?
-		[MonoTODO, ThreadStatic]
+		[ThreadStatic]
 		private static int indentLevel = 0;
 
 		public static int IndentLevel {
 			get {return indentLevel;}
-			set {indentLevel = value;}
+			set {
+				indentLevel = value;
+
+				// Don't need to lock for threadsafety as 
+				// TraceListener.IndentLevel is [ThreadStatic]
+				foreach (TraceListener t in Listeners) {
+					t.IndentLevel = indentLevel;
+				}
+			}
 		}
 
-		// FIXME: From MSDN: "This property is stored on 
-		// per-thread/pre-reqeust basis"
-		//
-		// What exactly does this mean?  Sure, we can mark it
-		// [ThreadStatic], which makes a per-thread value, but what
-		// does this mean for each of the writers?  Do *they* need to
-		// store this as a thread-static value?
-		[MonoTODO, ThreadStatic]
+		[ThreadStatic]
 		private static int indentSize = 4;
 
 		public static int IndentSize {
 			get {return indentSize;}
-			set {indentSize = value;}
+			set {
+				indentSize = value;
+
+				// Don't need to lock for threadsafety as 
+				// TraceListener.IndentSize is [ThreadStatic]
+				foreach (TraceListener t in Listeners) {
+					t.IndentSize = indentSize;
+				}
+			}
 		}
 
 		private static TraceListenerCollection listeners = 

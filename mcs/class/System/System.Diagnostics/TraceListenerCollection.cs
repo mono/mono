@@ -43,12 +43,17 @@ namespace System.Diagnostics {
 
 		public TraceListener this [int index] {
 			get {return (TraceListener) listeners[index];}
-			set {listeners[index] = value;}
+			set {
+				InitializeListener (value);
+				listeners[index] = value;
+			}
 		}
 
 		object IList.this [int index] {
 			get {return listeners[index];}
-			set {((IList)this).Insert (index, value);}
+			set {
+				this[index] = (TraceListener) value;
+			}
 		}
 
 		bool ICollection.IsSynchronized {
@@ -69,16 +74,33 @@ namespace System.Diagnostics {
 
 		public int Add (TraceListener listener)
 		{
+			InitializeListener (listener);
 			return listeners.Add (listener);
+		}
+
+		private void InitializeListener (TraceListener listener)
+		{
+			listener.IndentLevel = TraceImpl.IndentLevel;
+			listener.IndentSize = TraceImpl.IndentSize;
+		}
+
+		private void InitializeRange (IList listeners)
+		{
+			int e = listeners.Count;
+			for (int i = 0; i != e; ++i)
+				InitializeListener (
+					(TraceListener) listeners[i]);
 		}
 
 		public void AddRange (TraceListener[] value)
 		{
+			InitializeRange (value);
 			listeners.AddRange (value);
 		}
 
 		public void AddRange (TraceListenerCollection value)
 		{
+			InitializeRange (value);
 			listeners.AddRange (value.listeners);
 		}
 
@@ -110,7 +132,7 @@ namespace System.Diagnostics {
 		int IList.Add (object value)
 		{
 			if (value is TraceListener)
-				return listeners.Add (value);
+				return Add ((TraceListener) value);
 			throw new NotSupportedException (Locale.GetText (
 				"You can only add TraceListener objects to the collection"));
 		}
@@ -132,7 +154,7 @@ namespace System.Diagnostics {
 		void IList.Insert (int index, object value)
 		{
 			if (value is TraceListener) {
-				listeners.Insert (index, value);
+				Insert (index, (TraceListener) value);
 				return;
 			}
 			throw new NotSupportedException (Locale.GetText (
@@ -152,6 +174,7 @@ namespace System.Diagnostics {
 
 		public void Insert (int index, TraceListener listener)
 		{
+			InitializeListener (listener);
 			listeners.Insert (index, listener);
 		}
 
