@@ -834,7 +834,7 @@ namespace Mono.CSharp
 
 				case "module":
 					target = Target.Module;
-					target_ext = ".dll";
+					target_ext = ".netmodule";
 					break;
 
 				default:

@@ -1,5 +1,15 @@
 2002-10-19  Miguel de Icaza  <miguel@ximian.com>
 
+	* driver.cs: Change the extension for modules to `netmodule'
+
+	* cs-parser.jay: Improved slightly the location tracking for
+	the debugger symbols.
+
+	* class.cs (Event.Define): Use Modifiers.FieldAttr on the
+	modifiers that were specified instead of the hardcoded value
+	(FamAndAssem).  This was basically ignoring the static modifier,
+	and others.  Fixes 32429.
+
 	* statement.cs (Switch.SimpleSwitchEmit): Simplified the code, and
 	fixed a bug in the process (32476)
 

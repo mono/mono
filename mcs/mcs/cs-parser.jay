@@ -3044,9 +3044,14 @@ while_statement
 
 do_statement
 	: DO embedded_statement 
-	  WHILE OPEN_PARENS boolean_expression CLOSE_PARENS SEMICOLON
+	  WHILE OPEN_PARENS {
+		oob_stack.Push (lexer.Location);
+	  }
+	  boolean_expression CLOSE_PARENS SEMICOLON
 	  {
-		$$ = new Do ((Statement) $2, (Expression) $5, lexer.Location);
+		Location l = (Location) oob_stack.Pop ();
+
+		$$ = new Do ((Statement) $2, (Expression) $6, l);
 	  }
 	;
 
