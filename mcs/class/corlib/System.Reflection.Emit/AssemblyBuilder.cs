@@ -59,6 +59,16 @@ namespace System.Reflection.Emit {
 			name = n.Name;
 			dir = directory;
 			this.access = (uint)access;
+
+			/* Set defaults from n */
+			if (n.CultureInfo != null) {
+				culture = n.CultureInfo.Name;
+			}
+			Version v = n.Version;
+			if (v != null) {
+				version = v.ToString ();
+			}
+
 			basic_init (this);
 		}
 
