@@ -1,3 +1,8 @@
+2002/06/14  Nick Drochak <ndrochak@gol.com>
+
+	* AllTests.cs: Disable ResourceReaderTest for now.  The class is not
+	ready yet.
+
 2002-05-22  Nick Drochak  <ndrochak@gol.com>
 
 	* ResourceReaderTest.cs: Fix path name to resource files (again).
