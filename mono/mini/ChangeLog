@@ -1,3 +1,8 @@
+2004-11-19  Geoff Norton  <gnorton@customerdna.com>
+
+	* mini-ppc.c: Call mono_type_get_underlying_type to unwrap generic
+	types before switching on type.  Fixes #69622.
+
 2004-11-19  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile.am (check-local): New.  Integrate into 'make check'.
