@@ -12,9 +12,11 @@
 using System.ComponentModel;
 using System.Data;
 using System.Data.Common;
+using System.EnterpriseServices;
 
 namespace System.Data.OleDb
 {
+	[DefaultEvent ("InfoMessage")]	
 	public sealed class OleDbConnection : Component, ICloneable, IDbConnection
 	{
 		#region Fields
@@ -43,7 +45,13 @@ namespace System.Data.OleDb
 		#endregion // Constructors
 
 		#region Properties
-
+		
+		[DataCategory ("Data")]
+		[DefaultValue ("")]
+		[DataSysDescriptionAttribute ("Information used to connect to a Data Source")]
+		[EditorAttribute ("Microsoft.VSDesigner.Data.ADO.Design.OleDbConnectionStringEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing )]
+		[RecommendedAsConfigurableAttribute (true)]
+		[RefreshPropertiesAttribute (RefreshProperties.All)]
 		public string ConnectionString {
 			get {
 				return connectionString;
@@ -53,12 +61,16 @@ namespace System.Data.OleDb
 			}
 		}
 
+		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
+		[DataSysDescriptionAttribute ("Current connection timeout value 'Connect TimeOut=X' in the ConnectionString")]
 		public int ConnectionTimeout {
 			get {
 				return connectionTimeout;
 			}
 		}
 
+		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
+                [DataSysDescriptionAttribute ("Current data source Catlog value, 'Initial Catalog=X' in the ConnectionString")]
 		public string Database { 
 			get {
 				if (gdaConnection != IntPtr.Zero
@@ -70,7 +82,9 @@ namespace System.Data.OleDb
 			}
 		}
 
-		public string DataSource {
+	        [DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
+                [DataSysDescriptionAttribute ("Current data source, 'Data Source=X' in the ConnectionString")]
+	 	public string DataSource {
 			get {
 				if (gdaConnection != IntPtr.Zero
 				    && libgda.gda_connection_is_open (gdaConnection)) {
@@ -81,6 +95,8 @@ namespace System.Data.OleDb
 			}
 		}
 
+		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
+                [DataSysDescriptionAttribute ("Current OLE DB provider progid, 'Provider=X' in the ConnectionString")]
 		public string Provider {
 			get {
 				if (gdaConnection != IntPtr.Zero
@@ -92,6 +108,9 @@ namespace System.Data.OleDb
 			}
 		}
 
+		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
+                [DataSysDescriptionAttribute ("Version of the product accessed by the OLE DB Provider")]
+		[BrowsableAttribute (false)]
 		public string ServerVersion {
 			get {
 				if (gdaConnection != IntPtr.Zero
@@ -103,6 +122,9 @@ namespace System.Data.OleDb
 			}
 		}
 
+		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
+                [DataSysDescriptionAttribute ("The ConnectionState indicating whether the connection is open or closed")]
+                [BrowsableAttribute (false)]
 		public ConnectionState State
 		{
 			get {
@@ -256,6 +278,12 @@ namespace System.Data.OleDb
 
 		[MonoTODO]
 		public static void ReleaseObjectPool ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public void EnlistDistributedTransaction (ITransaction transaction)
 		{
 			throw new NotImplementedException ();
 		}
