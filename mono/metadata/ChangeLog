@@ -1,4 +1,8 @@
 
+Thu Dec 20 15:20:35 CET 2001 Paolo Molaro <lupus@ximian.com>
+
+	* image.c: fopen (file, "rb") ("David Dawkins" <david@dawkins.st>).
+
 Tue Dec 18 18:50:00 CET 2001 Paolo Molaro <lupus@ximian.com>
 
 	* class.c: fix mono_array_element_size() for objects.
