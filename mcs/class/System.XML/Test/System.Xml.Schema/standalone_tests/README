@@ -1,0 +1,13 @@
+
+Small XML Schema test system::
+
+This is a small standalone test system using W3C XML Schema test collection.
+http://www.w3.org/2001/05/xmlschema-test-collection.html
+
+"make" will do what you need (downloading test archive, expanding,
+compiling test runner).
+
+"make test" will do the actual tests.
+
+Atsushi Eno <atsushi@ximian.com>
+
