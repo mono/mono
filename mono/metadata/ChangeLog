@@ -1,4 +1,17 @@
+2004-08-25  Martin Baulig  <martin@ximian.com>
 
+	* loader.c (mono_get_method_from_token): Abstract methods can also
+	be generic and thus have type parameters.
+
+	* metadata-internals.h
+	(MonoDynamicImage): Added `GPtrArray *gen_params'.
+
+	* reflection.c (mono_image_get_generic_param_info): Don't create a
+	metadata row, just add an entry to the `gen_params' array.
+	(build_compressed_metadata): Sort the `gen_params' array and then
+	actually create the metadata.
+
+2004-08-25  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* threadpool.c: remove unneeded 'if' around mono_monitor_enter.
 
