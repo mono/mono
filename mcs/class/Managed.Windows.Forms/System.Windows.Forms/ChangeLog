@@ -1,3 +1,9 @@
+2005-02-16  Peter Bartok  <pbartok@novell.com>
+
+	* TextBoxBase.cs: The previous method to enforce height yet remember
+	  the requested high was less than ideal, this is an attempt to do
+	  it better.
+
 2005-02-15  Jackson Harper  <jackson@ximian.com>
 
 	* BaseCollection.cs: Use property so we never access an

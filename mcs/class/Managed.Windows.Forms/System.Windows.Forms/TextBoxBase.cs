@@ -57,7 +57,7 @@ namespace System.Windows.Forms {
 		internal ScrollBars		scrollbars;
 		internal bool			grabbed;
 		internal bool			richtext;
-		internal Rectangle		text_bounds;
+		internal int			requested_height;
 
 		#if Debug
 		internal static bool	draw_lines = false;
@@ -83,7 +83,7 @@ namespace System.Windows.Forms {
 			word_wrap = true;
 			richtext = false;
 			document = new Document(this);
-			text_bounds = Rectangle.Empty;
+			requested_height = -1;
 
 			MouseDown += new MouseEventHandler(TextBoxBase_MouseDown);
 			MouseUp += new MouseEventHandler(TextBoxBase_MouseUp);
@@ -91,7 +91,6 @@ namespace System.Windows.Forms {
 			SizeChanged += new EventHandler(TextBoxBase_SizeChanged);
 			FontChanged += new EventHandler(TextBoxBase_FontOrColorChanged);
 			ForeColorChanged += new EventHandler(TextBoxBase_FontOrColorChanged);
-
 			
 			scrollbars = ScrollBars.None;
 
@@ -292,8 +291,9 @@ namespace System.Windows.Forms {
 					multiline = value;
 
 					// Make sure we update our size; the user may have already set the size before going to multiline
-					if (text_bounds != Rectangle.Empty) {
-						SetBoundsCore(text_bounds.X, text_bounds.Y, text_bounds.Width, text_bounds.Height, BoundsSpecified.All);
+					if (multiline && requested_height != -1) {
+						Height = requested_height;
+						requested_height = -1;
 					}
 
 					OnMultilineChanged(EventArgs.Empty);
@@ -677,11 +677,13 @@ namespace System.Windows.Forms {
 			if (!richtext) {
 				if (!multiline) {
 					if (height > PreferredHeight) {
-						text_bounds = new Rectangle(x, y, width, height);
-						text_bounds.Height = PreferredHeight;
+						requested_height = height;
+						height = PreferredHeight;
+						specified |= BoundsSpecified.Height;
 					}
 				}
 			}
+
 			base.SetBoundsCore (x, y, width, height, specified);
 		}
 
