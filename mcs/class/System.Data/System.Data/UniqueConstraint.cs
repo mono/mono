@@ -190,8 +190,10 @@ namespace System.Data {
 		internal void UpdatePrimaryKey ()
 		{
 			_isPrimaryKey = __isPrimaryKey;
-			//foreach (DataColumn Col in _dataColumns)
-			//	Col.SetUnique();
+			if (_dataColumns.Length == 1){
+				// use SetUnique - because updating Unique property causes loop
+				_dataColumns[0].SetUnique();
+			}
 			
 		}
 

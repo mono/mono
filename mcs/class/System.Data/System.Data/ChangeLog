@@ -1,3 +1,9 @@
+2004-04-29  Boris Kirzner <borisk@mainsoft.com>
+
+	* UniqueConstraint.cs : Constraint columns becaomes unique after adding constraint ifand only if 
+	constraint is defined on single column.
+
+
 2004-04-29  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DataRowCollection.cs : .NET 1.1 throws InvalidConstaintException,
