@@ -26,6 +26,7 @@ System.Collections/QueueTest.cs
 System.Collections/ReadOnlyCollectionBaseTest.cs
 System.Collections/SortedListTest.cs
 System.Collections/StackTest.cs
+System.Collections.Generic/StackTest.cs
 System/ConsoleTest.cs
 System/ConvertTest.cs
 System/DateTimeTest.cs

@@ -1,3 +1,7 @@
+2004-12-27  Ben Maurer  <bmaurer@ximian.com>
+
+	* corlib_test.dll.sources: Add s.col.gen.stack test
+
 2004-12-23  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* corlib.dll.sources: Removed System.Security.Cryptography/
