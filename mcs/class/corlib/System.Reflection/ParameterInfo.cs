@@ -4,6 +4,8 @@
 //
 // (C) 2001 Ximian, Inc.
 
+using System.Reflection.Emit;
+
 namespace System.Reflection
 {
 	[Serializable]
@@ -17,6 +19,14 @@ namespace System.Reflection
 		protected ParameterAttributes AttrsImpl;
 
 		protected ParameterInfo () {
+		}
+
+		internal ParameterInfo (ParameterBuilder pb, Type type, MemberInfo member) {
+			this.ClassImpl = type;
+			this.MemberImpl = member;
+			this.NameImpl = pb.Name;
+			this.PositionImpl = pb.Position;
+			this.AttrsImpl = (ParameterAttributes) pb.Attributes;
 		}
 		
 		public virtual Type ParameterType {
