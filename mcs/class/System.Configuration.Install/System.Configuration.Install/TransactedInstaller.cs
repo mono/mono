@@ -1,10 +1,11 @@
-// System.Configuration.Install.TransactedInstaller.cs
+// TransactedInstaller.cs
+//   System.Configuration.Install.TransactedInstaller class implementation
 //
 // Author:
-// 	Gert Driesen (drieseng@users.sourceforge.net)
+//    Muthu Kannan (t.manki@gmail.com)
 //
-// (C) Novell
-//
+// (C) 2005 Novell, Inc.  http://www.novell.com/
+// 
 
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -27,24 +28,64 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System;
 using System.Collections;
 
 namespace System.Configuration.Install
 {
-	public class TransactedInstaller : Installer
+
+public class TransactedInstaller : Installer {
+	// Constructors
+	public TransactedInstaller ()
 	{
-		public TransactedInstaller ()
-		{
+	}
+
+	// Methods
+	public override void Install (IDictionary state)
+	{
+		if (state == null)
+			throw new ArgumentException ("State saver cannot be null");
+
+		try {
+			Context.LogMessage ("Starting transacted installation.");
+			base.Install (state);
+		} catch (Exception e) {
+			try {
+				Context.LogMessage ("Errors occurred during installation -- starting rollback.");
+				Context.addToLog (e);
+				Rollback (state);
+			} catch (Exception rbke) {
+				Context.LogMessage ("Rollback failed.");
+				Context.addToLog (rbke);
+			}
+			Context.LogMessage ("Rollback phase completed.");
+			throw new Exception ("Transacted installation failed.", e);
 		}
 
-		[MonoTODO]
-		public override void Install (IDictionary savedState)
-		{
+		try {
+			Context.LogMessage ("Installation phasing completed successfully -- starting commit.");
+			Commit (state);
+		} catch (Exception e) {
+			Context.LogMessage ("Commit failed.");
+			Context.addToLog (e);
 		}
+		Context.LogMessage ("Commit phase completed.");
+	}
 
-		[MonoTODO]
-		public override void Uninstall (IDictionary savedState)
-		{
+	public override void Uninstall (IDictionary state)
+	{
+		Context.LogMessage ("Uninstallation started.");
+		try {
+			base.Uninstall (state);
+		} catch (Exception e) {
+			if (e is ArgumentException)
+				throw e;
+			Context.LogMessage ("Errors occurred during uninstallation.");
+			Context.addToLog (e);
+		} finally {
+			Context.LogMessage ("Uninstallation completed.");
 		}
 	}
+}
+
 }

@@ -1,3 +1,13 @@
+2005-03-24  Muthu Kannan  <t.manki@gmail.com>
+
+	* AssemblyInstallerTest.cs: New unit test.
+	* InstallContextTest.cs: Likewise.
+	* InstallerTest.cs: Likewise.
+	* InstallEventArgsTest.cs: Likewise.
+	* InstallerCollectionTest.cs: Likewise.
+	* TransactedInstallerTest.cs: Likewise.
+	* InstallerAssembly.cs: New.  Used by AssemblyInstallerTest.cs.
+
 2002-07-15  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* AllTests.cs: New file.

@@ -1,3 +1,9 @@
+2005-03-24  Muthu Kannan  <t.manki@gmail.com>
+
+	* Makefile (test-local): Create InstallerAssembly.dll for unit
+	tests.
+	* System.Configuration.Install_test.dll.sources: New file.
+
 2004-06-11  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* System.Configuration.Install.dll.sources: added

@@ -1,1 +1,6 @@
-System.Configuration.Install/FakeTest.cs
+System.Configuration.Install/InstallContextTest.cs
+System.Configuration.Install/InstallerCollectionTest.cs
+System.Configuration.Install/InstallEventArgsTest.cs
+System.Configuration.Install/InstallerTest.cs
+System.Configuration.Install/TransactedInstallerTest.cs
+System.Configuration.Install/AssemblyInstallerTest.cs

@@ -1,3 +1,12 @@
+2005-03-24  Muthu Kannan  <t.manki@gmail.com>
+
+	Near-complete implementation of System.Configuration.Install.
+	* Installer.cs: Implement.
+	* AssemblyInstaller.cs: Likewise.
+	* TransactedInstaller.cs: Likewise.
+	* InstallContext.cs: Likewise.
+	* InstallerCollection.cs: Likewise.
+
 2004-06-11  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* Installer.cs: use Type instead of string argument for
