@@ -1,3 +1,8 @@
+2004-04-07  Bernie Solomon  <bernard@ugsolutions.com>
+
+	* MethodBuilder.cs, TypeBuilder.cs: always have 
+	slot for generic_params for consistent offsets.
+
 2004-04-07  Martin Baulig  <martin@ximian.com>
 
 	* GenericTypeParameterBuilder.cs: New file.

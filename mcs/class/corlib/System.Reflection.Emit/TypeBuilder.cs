@@ -43,6 +43,8 @@ namespace System.Reflection.Emit {
 	private PackingSize packing_size;
 #if NET_1_2
 	private	GenericTypeParameterBuilder[] generic_params;
+#else
+        private Object generic_params; /* so offsets don't change */
 #endif
 	private RefEmitPermissionSet[] permissions;	
 	#endregion

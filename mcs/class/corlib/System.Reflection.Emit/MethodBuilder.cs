@@ -40,6 +40,8 @@ namespace System.Reflection.Emit {
 		private bool init_locals = true;
 #if NET_1_2
 		private	GenericTypeParameterBuilder[] generic_params;
+#else
+		private Object generic_params; /* so offsets are the same */
 #endif
 		private Type[] returnModReq;
 		private Type[] returnModOpt;
