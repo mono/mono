@@ -50,6 +50,21 @@ namespace System.Runtime.Remoting
 			DisposeServerObject();
 		}
 
+		public override ObjRef CreateObjRef (Type requestedType)
+		{
+			if (_objRef != null)
+			{
+				// Just update channel info. It may have changed.
+				_objRef.UpdateChannelInfo();
+				return _objRef;
+			}
+
+			if (requestedType == null) requestedType = _objectType;
+			_objRef = new ObjRef ();
+			_objRef.TypeInfo = new TypeInfo(requestedType);
+			_objRef.URI = _objectUri;
+			return _objRef;
+		}
 
 		public void AttachServerObject (MarshalByRefObject serverObject)
 		{

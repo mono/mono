@@ -13,7 +13,7 @@ using System.Runtime.Remoting.Lifetime;
 
 namespace System.Runtime.Remoting
 {
-	internal class Identity
+	internal abstract class Identity
 	{
 		// An Identity object holds remoting information about
 		// an object. It can be used to store client side information
@@ -29,21 +29,16 @@ namespace System.Runtime.Remoting
 		// Message sink to use to send a message to the remote server
 		protected IMessageSink _clientSink = null;
 
+		// The ObjRef 
+		protected ObjRef _objRef;
+
 		public Identity(string objectUri, Type objectType)
 		{
 			_objectUri = objectUri;
 			_objectType = objectType;
 		}
 
-		public ObjRef CreateObjRef (Type requestedType)
-		{
-			if (requestedType == null) requestedType = _objectType;
-
-			ObjRef res = new ObjRef ();
-			res.TypeInfo = new TypeInfo(requestedType);
-			res.URI = _objectUri;
-			return res;
-		}
+		public abstract ObjRef CreateObjRef (Type requestedType);
 
 		public bool IsFromThisAppDomain
 		{
@@ -75,8 +70,9 @@ namespace System.Runtime.Remoting
 	{
 		MarshalByRefObject _proxyObject;
 
-		public ClientIdentity (string objectUri, Type objectType): base (objectUri, objectType)
+		public ClientIdentity (string objectUri, ObjRef objRef): base (objectUri, Type.GetType (objRef.TypeInfo.TypeName,true))
 		{
+			_objRef = objRef;
 		}
 
 		public MarshalByRefObject ClientProxy
@@ -84,5 +80,10 @@ namespace System.Runtime.Remoting
 			get	{ return _proxyObject; }
 			set { _proxyObject = value; }
 		}	
+
+		public override ObjRef CreateObjRef (Type requestedType)
+		{
+			return _objRef;
+		}
 	}
 }

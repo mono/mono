@@ -1,3 +1,16 @@
+2003-02-07 Lluis Sanchez Gual <lluis@ideary.com>
+
+	* Identity.cs: Added ObjRef attribute, that holds the objref of the object.
+	  Removed implementation of CreateObjRef. Now it is implemented in the derived classes.
+	* ServerIdentity.cs: Added implementation of CreateObjRef.
+	* RemotingServices.cs: Changed implementation of GetRemoteObject and GetClientIdentity.
+	  Now they only have and ObjRef as input parameter. This is the objref received from
+	  the server. Unmarshal() also checks if the objref is for a well known object.
+	  In this case, a proxy is always created, but if not, it tries to get the real object.
+	* ObjRef.cs: Added some flags that have info for marshalling/unmarshalling.
+	  Changed behavior of IsPossibleToCAD. Now returns false. Returning true makes serialization 
+	  of this ObjRef to fail in the target AD. Added method UpdateChannelInfo.
+
 2003-02-04 Lluis Sanchez Gual <lluis@ideary.com>
 
 	* Identity.cs: created and identity class for each identity type. It is a more clear design.

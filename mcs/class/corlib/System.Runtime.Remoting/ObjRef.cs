@@ -25,26 +25,26 @@ namespace System.Runtime.Remoting {
 		string uri;
 		IRemotingTypeInfo typeInfo;
 		IEnvoyInfo envoyInfo;
-		[NonSerialized] bool marshalledValue = true;
+		int flags;
+
+		static int MarshalledObjectRef = 1;
+		static int WellKnowObjectRef = 2;
 		
 		public ObjRef ()
 		{
 			// no idea why this needs to be public
-			channel_info = new ChannelInfoStore ();
+
+			UpdateChannelInfo();
 		}
 
-		internal bool IsPossibleToCAD () {
-			// we should check if this obj ref belongs to a cross app context
-			return true;
-		}
-
-		internal ObjRef (ObjRef o) {
+		internal ObjRef (ObjRef o, bool unmarshalAsProxy) {
 			channel_info = o.channel_info;
 			uri = o.uri;
 	
 			typeInfo = o.typeInfo;
 			envoyInfo = o.envoyInfo;
-			marshalledValue = true;
+			flags = o.flags;
+			if (unmarshalAsProxy) flags |= MarshalledObjectRef;
 		}
 		
 		public ObjRef (MarshalByRefObject mbr, Type type)
@@ -64,7 +64,18 @@ namespace System.Runtime.Remoting {
 			if (!typeInfo.CanCastTo(mbr.GetType(), mbr))
 				throw new RemotingException ("The server object type cannot be cast to the requested type " + type.FullName + ".");
 
-			channel_info = new ChannelInfoStore ();
+			UpdateChannelInfo();
+		}
+
+		internal ObjRef (Type type, string url, object remoteChannelData)
+		{
+			uri = url;
+			typeInfo = new TypeInfo(type);
+
+			if (remoteChannelData != null)
+				channel_info = new ChannelInfoStore (remoteChannelData);
+
+			flags |= WellKnowObjectRef;
 		}
 
 		protected ObjRef (SerializationInfo si, StreamingContext sc)
@@ -72,7 +83,7 @@ namespace System.Runtime.Remoting {
 			SerializationInfoEnumerator en = si.GetEnumerator();
 			// Info to serialize: uri, objrefFlags, typeInfo, envoyInfo, channelInfo
 
-			marshalledValue = true;
+			bool marshalledValue = true;
 
 			while (en.MoveNext ()) {
 				switch (en.Name) {
@@ -99,12 +110,28 @@ namespace System.Runtime.Remoting {
 					if (status == 0)
 						marshalledValue = false;
 					break;
-				case "objrefFlags":		// FIXME: do something with this
+				case "objrefFlags":
+					flags = (int) en.Value;
 					break;
 				default:
 					throw new NotSupportedException ();
 				}
 			}
+			if (marshalledValue) flags |= MarshalledObjectRef;
+		}
+
+		internal bool IsPossibleToCAD () 
+		{
+			// we should check if this obj ref belongs to a cross app context.
+
+			// Return false. If not, serialization of this ObjRef will not work
+			// on the target AD.
+			return false;
+		}
+
+		public bool IsReferenceToWellKnow
+		{
+			get { return (flags & WellKnowObjectRef) > 0; }
 		}
 
 		public virtual IChannelInfo ChannelInfo {
@@ -154,13 +181,13 @@ namespace System.Runtime.Remoting {
 			si.AddValue ("typeInfo", typeInfo, typeof (IRemotingTypeInfo));
 			si.AddValue ("envoyInfo", envoyInfo, typeof (IEnvoyInfo));
 			si.AddValue ("channelInfo", channel_info, typeof(IChannelInfo));
-			si.AddValue ("objrefFlags", 0);
+			si.AddValue ("objrefFlags", flags);
 		}
 
 		public virtual object GetRealObject (StreamingContext sc)
 		{
-			if (marshalledValue)
-				return RemotingServices.GetRemoteObject(Type.GetType(typeInfo.TypeName), null, channel_info.ChannelData, uri);
+			if ((flags & MarshalledObjectRef) > 0)
+				return RemotingServices.Unmarshal (this);
 			else
 				return this;
 		}
@@ -180,12 +207,9 @@ namespace System.Runtime.Remoting {
 			return false;
 		}
 
-		internal object GetInternalObject () {
-			if (!marshalledValue)
-				return this;
-			else {
-				return RemotingServices.Unmarshal (this);
-			}
+		internal void UpdateChannelInfo()
+		{
+			channel_info = new ChannelInfoStore ();
 		}
 	}
 }
