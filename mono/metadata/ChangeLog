@@ -1,5 +1,7 @@
 2004-10-19    <vargaz@freemail.hu>
 
+	* marshal.c icall.c: Applied patch from Alexandre Rocha Lima e Marcondes  (alexandremarcondes@psl-pr.softwarelivre.org). Really fix 2.95 build.
+
 	* icall.c (ves_icall_InternalExecute): Fix build for gcc-2.95.
 
 2004-10-18    <vargaz@freemail.hu>
