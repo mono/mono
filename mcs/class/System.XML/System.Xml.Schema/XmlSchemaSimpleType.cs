@@ -78,7 +78,6 @@ namespace System.Xml.Schema
 		///				4.1 If restriction is chosen,the base type of restriction or elements
 		///				4.2 otherwise simple ur-type
 		/// </remarks>
-		[MonoTODO]
 		internal override int Compile(ValidationEventHandler h, XmlSchema schema)
 		{
 			// If this is already compiled this time, simply skip.
@@ -165,7 +164,6 @@ namespace System.Xml.Schema
 			return errorCount;
 		}
 		
-		[MonoTODO]
 		internal override int Validate(ValidationEventHandler h, XmlSchema schema)
 		{
 			// 3.14.6 Properties Correct.
@@ -187,19 +185,23 @@ namespace System.Xml.Schema
 			}
 			recursed = true;
 
-			errorCount += content.Validate (h, schema);
+			if (content != null)
+				errorCount += content.Validate (h, schema);
+
 			// BaseSchemaType property
-			this.baseSchemaTypeInternal = content.ActualBaseSchemaType;
+			BaseXmlSchemaTypeInternal = content.ActualBaseSchemaType as XmlSchemaType;
+			if (this.BaseXmlSchemaTypeInternal == null)
+				this.DatatypeInternal = content.ActualBaseSchemaType as XmlSchemaDatatype;
 
 			// Datatype property
-			XmlSchemaSimpleType simple = BaseSchemaType as XmlSchemaSimpleType;
+			XmlSchemaSimpleType simple = BaseXmlSchemaType as XmlSchemaSimpleType;
 			if (simple != null)
-				this.datatypeInternal = simple.Datatype;
-			else
-				this.datatypeInternal = BaseSchemaType as XmlSchemaDatatype;
+				this.DatatypeInternal = simple.Datatype;
+//			else
+//				DatatypeInternal = BaseSchemaType as XmlSchemaDatatype;
 
 			// 3.
-			XmlSchemaSimpleType baseSType = baseSchemaTypeInternal as XmlSchemaSimpleType;
+			XmlSchemaSimpleType baseSType = BaseXmlSchemaType as XmlSchemaSimpleType;
 			if (baseSType != null) {
 				if ((baseSType.FinalResolved & this.resolvedDerivedBy) != 0)
 					error (h, "Specified derivation is prohibited by the base simple type.");

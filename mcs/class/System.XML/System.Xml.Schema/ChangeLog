@@ -1,3 +1,24 @@
+2004-01-15  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlSchemaComplexContentExtension.cs,
+	  XmlSchemaSimpleContentExtension.cs,
+	  XmlSchemaSimpleContentExtension.cs,
+	  XmlSchemaSimpleContentRestriction.cs,
+	  XmlSchemaContent.cs : Added IsExtension. GetXXX() became nonvirtual.
+	* XmlSchemaType.cs : 
+	  - Added NET_1_2 BaseXmlSchemaType (other members are commented out).
+	  - Now BaseSchemaType redirects to new property BaseXmlSchemaType.
+	* XmlSchemaComplexType.cs :
+	  - Now it fully uses BaseXmlSchemaType above.
+	  - Since ValidateXXX() became too huge, I divided them into 
+	    CollectXXX() [spec 3.4.1] and ValidateXXX() [spec 3.4.3 / 3.4.6].
+	    Schema Components are contributed before constraint check.
+	  - Now ContentTypeParticle is distinguished from validating particle
+	    which is newly introduced as "ValidatableParticle" (only used in 
+	    XsdValidatingReader).
+	* XmlSchemaSimpleType.cs : Now it uses BaseXmlSchemaType.
+	  capitalized internal members a bit.
+
 2004-01-14  David Sheldon <dave-mono@earth.li>
 
         * XmlSchemaSimpleTypeRestriction: Convert pattern facets to be ORed, 

@@ -14,21 +14,15 @@ namespace System.Xml.Schema
 	/// </summary>
 	public abstract class XmlSchemaContent : XmlSchemaAnnotated
 	{
-		internal object actualBaseSchemaType;
+		private object actualBaseSchemaType;
 
 		protected XmlSchemaContent()
 		{}
 
-		internal object ActualBaseSchemaType
-		{
-			get { return actualBaseSchemaType; }
-		}
+		internal abstract bool IsExtension { get; }
 
 		internal abstract XmlQualifiedName GetBaseTypeName ();
 
-		internal virtual XmlSchemaParticle GetParticle ()
-		{
-			return null; // default for simple types
-		}
+		internal abstract XmlSchemaParticle GetParticle ();
 	}
 }

@@ -59,6 +59,11 @@ namespace System.Xml.Schema
 			set{ any = value; }
 		}
 
+		// internal properties
+		internal override bool IsExtension {
+			get { return false; }
+		}
+
 		/// <remarks>
 		/// 1. base must be present
 		/// </remarks>
@@ -145,7 +150,7 @@ namespace System.Xml.Schema
 			return particle;
 		}
 
-		internal override int Validate(ValidationEventHandler h, XmlSchema schema)
+		internal override int Validate (ValidationEventHandler h, XmlSchema schema)
 		{
 			return errorCount;
 		}

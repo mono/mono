@@ -25,6 +25,7 @@ namespace System.Xml.Schema
 		private XmlSchemaDerivationMethod block;
 		private XmlSchemaDerivationMethod blockResolved;
 		private XmlSchemaContentModel contentModel;
+		private XmlSchemaParticle validatableParticle;
 		private XmlSchemaParticle contentTypeParticle;
 		private bool isAbstract;
 		private bool isMixed;
@@ -44,9 +45,9 @@ namespace System.Xml.Schema
 					anyType = new XmlSchemaComplexType ();
 					anyType.Name = "";	// In MS.NET, it is not "anyType"
 					anyType.QNameInternal = XmlQualifiedName.Empty;	// Not xs:anyType as well.
-					anyType.contentTypeParticle = XmlSchemaAny.AnyTypeContent;
-//					anyType.baseSchemaTypeInternal = anyType;
-					anyType.datatypeInternal = XmlSchemaSimpleType.AnySimpleType;
+					anyType.validatableParticle = XmlSchemaAny.AnyTypeContent;
+					anyType.contentTypeParticle = anyType.validatableParticle;
+					anyType.DatatypeInternal = XmlSchemaSimpleType.AnySimpleType;
 					anyType.isMixed = true;
 				}
 				return anyType;
@@ -60,7 +61,8 @@ namespace System.Xml.Schema
 			attributes = new XmlSchemaObjectCollection();
 			block = XmlSchemaDerivationMethod.None;
 			attributeUses = new XmlSchemaObjectTable();
-			contentTypeParticle = XmlSchemaParticle.Empty;
+			validatableParticle = XmlSchemaParticle.Empty;
+			contentTypeParticle = validatableParticle;
 		}
 
 		#region Attributes
@@ -153,6 +155,11 @@ namespace System.Xml.Schema
 		}
 		#endregion
 
+		internal XmlSchemaParticle ValidatableParticle 
+		{
+			get{ return validatableParticle; }
+		}
+
 		/// <remarks>
 		/// 1. If ContentModel is present, neither particle nor Attributes nor AnyAttribute can be present.
 		/// 2. If particle is present, 
@@ -167,7 +174,7 @@ namespace System.Xml.Schema
 		///		4. block must be absent
 		///		
 		/// </remarks>
-		internal override int Compile(ValidationEventHandler h, XmlSchema schema)
+		internal override int Compile (ValidationEventHandler h, XmlSchema schema)
 		{
 			// If this is already compiled this time, simply skip.
 			if (this.IsComplied (schema.CompilationId))
@@ -283,24 +290,21 @@ namespace System.Xml.Schema
 							baseTypeName = sscr.BaseTypeName;
 							if (sscr.BaseType != null) {
 								sscr.BaseType.Compile (h, schema);
-								baseSchemaTypeInternal = sscr.BaseType;
+								BaseXmlSchemaTypeInternal = sscr.BaseType;
 							}
 						}
 					}
-					contentTypeParticle = XmlSchemaParticle.Empty;
 				}
 				else
 				{
 					XmlSchemaComplexContent cmodel = (XmlSchemaComplexContent) ContentModel;
 					XmlSchemaComplexContentExtension sccx = cmodel.Content as XmlSchemaComplexContentExtension;
 					if (sccx != null) {
-						contentTypeParticle = sccx.Particle;
 						baseTypeName = sccx.BaseTypeName;
 					}
 					else {
 						XmlSchemaComplexContentRestriction sccr = (XmlSchemaComplexContentRestriction) cmodel.Content;
 						if (sccr != null) {
-							contentTypeParticle = sccr.Particle;
 							baseTypeName = sccr.BaseTypeName;
 						}
 					}
@@ -328,7 +332,6 @@ namespace System.Xml.Schema
 					XmlSchemaSequence xss = (XmlSchemaSequence)Particle;
 					errorCount += xss.Compile(h,schema);
 				}
-				this.contentTypeParticle = Particle;
 
 				if(this.anyAttribute != null)
 				{
@@ -356,16 +359,193 @@ namespace System.Xml.Schema
 			return errorCount;
 		}
 
+		Guid CollectProcessId;
+
+		private void CollectSchemaComponent (ValidationEventHandler h, XmlSchema schema)
+		{
+			if (CollectProcessId == schema.CompilationId)
+				return;
+			// Below are already contributed by Compile():
+			// {name}, {namespace} => QualifiedName, QNameInternal
+			// {abstract} => ValidatedIsAbstract
+			// {prohibited substitutions} => BlockResolved
+			// {final} => FinalResolved
+			// {annotations} => Annotation (XmlSchemaAnnotated)
+
+			// Below are different properties depending on simpleContent | complexContent.
+			// {base type definition}
+			// {derivation method}
+			// {attribute uses} => AttributeUses (later)
+			// {attribute wildcard} => AttributeWildcard (later)
+			// {content type}
+
+
+			// {base type definition} => baseSchemaTypeInternal (later)
+			if (contentModel != null) {
+				BaseSchemaTypeName = contentModel.Content != null ? contentModel.Content.GetBaseTypeName () : XmlQualifiedName.Empty;
+
+				BaseXmlSchemaTypeInternal = schema.SchemaTypes [BaseSchemaTypeName] as XmlSchemaType;
+			}
+			// Resolve redefine.
+			if (this.isRedefineChild && BaseXmlSchemaType != null && this.QualifiedName == BaseSchemaTypeName) {
+				XmlSchemaType redType = (XmlSchemaType) redefinedObject;
+				if (redType == null)
+					error (h, "Redefinition base type was not found.");
+				else
+					BaseXmlSchemaTypeInternal = redType;
+			}
+
+			// {derivation method} => resolvedDerivedBy
+			if (contentModel != null && contentModel.Content != null) {
+				resolvedDerivedBy =
+					contentModel.Content.IsExtension ?
+					XmlSchemaDerivationMethod.Extension :
+					XmlSchemaDerivationMethod.Restriction;
+			}
+			else
+				resolvedDerivedBy = XmlSchemaDerivationMethod.Empty;
+
+
+			// {content type} => ContentType and ContentTypeParticle (later)
+			if (ContentModel != null) {
+				CollectContentTypeFromContentModel (h, schema);
+			} else
+				CollectContentTypeFromImmediateContent ();
+			contentTypeParticle = validatableParticle;//.GetParticleWithoutPointless ();
+
+			CollectProcessId = schema.CompilationId;
+		}
+
+		#region {content type}
+		private void CollectContentTypeFromImmediateContent ()
+		{
+			// leave resolvedDerivedBy as Empty
+			if (Particle != null)
+				validatableParticle = Particle;
+			if (validatableParticle == XmlSchemaParticle.Empty) {
+				// note that this covers "Particle == null" case
+				if (this.IsMixed)
+					resolvedContentType = XmlSchemaContentType.TextOnly;
+				else
+					resolvedContentType = XmlSchemaContentType.Empty;
+			} else {
+				if (this.IsMixed)
+					resolvedContentType = XmlSchemaContentType.Mixed;
+				else
+					resolvedContentType = XmlSchemaContentType.ElementOnly;
+			}
+		}
+
+		private void CollectContentTypeFromContentModel (ValidationEventHandler h, XmlSchema schema)
+		{
+			if (ContentModel.Content == null) {
+				// basically it is error. Recover by specifying empty content.
+				validatableParticle = XmlSchemaParticle.Empty;
+				resolvedContentType = XmlSchemaContentType.Empty;
+				return;
+			}
+
+			if (ContentModel.Content is XmlSchemaComplexContentExtension)
+				CollectContentTypeFromComplexExtension (h, schema);
+			if (ContentModel.Content is XmlSchemaComplexContentRestriction)
+				CollectContentTypeFromComplexRestriction ();
+		}
+
+		private void CollectContentTypeFromComplexExtension (ValidationEventHandler h, XmlSchema schema)
+		{
+			XmlSchemaComplexContentExtension cce = (XmlSchemaComplexContentExtension) ContentModel.Content;
+			XmlSchemaComplexType baseComplexType = this.BaseXmlSchemaType as XmlSchemaComplexType;
+			if (baseComplexType != null)
+				baseComplexType.CollectSchemaComponent (h ,schema);
+
+			// It must exist, but consider validation error case.
+			if (BaseSchemaTypeName == XmlSchemaComplexType.AnyTypeName)
+				baseComplexType = XmlSchemaComplexType.AnyType;
+
+			// On error case, it simple reject any contents
+			if (baseComplexType == null) {
+				validatableParticle = XmlSchemaParticle.Empty;
+				resolvedContentType = XmlSchemaContentType.Empty;
+				return;
+			}
+
+			// 3.4.2 complex content {content type}
+			if (cce.Particle == null || cce.Particle == XmlSchemaParticle.Empty) {
+				// - 2.1
+				if (baseComplexType == null) {
+					// Basically it is an error. Considering ValidationEventHandler.
+					validatableParticle = XmlSchemaParticle.Empty;
+					resolvedContentType = XmlSchemaContentType.Empty;
+				} else {
+					validatableParticle = baseComplexType.ContentTypeParticle;
+					resolvedContentType = baseComplexType.resolvedContentType;
+				}
+			} else if (baseComplexType.validatableParticle == XmlSchemaParticle.Empty
+				|| baseComplexType == XmlSchemaComplexType.AnyType) {
+				// - 2.2
+				validatableParticle = cce.Particle;
+				resolvedContentType = GetComplexContentType (contentModel);
+			} else {
+				// - 2.3 : create a new sequences that merges both contents.
+				XmlSchemaSequence seq = new XmlSchemaSequence ();
+				seq.Items.Add (baseComplexType.ContentTypeParticle);
+				seq.Items.Add (cce.Particle);
+				seq.Compile (h, schema);
+				seq.Validate (h, schema);
+				validatableParticle = seq;
+				resolvedContentType = GetComplexContentType (contentModel);
+			}
+			if (validatableParticle == null)
+				validatableParticle = XmlSchemaParticle.Empty;
+		}
+
+		private void CollectContentTypeFromComplexRestriction ()
+		{
+			XmlSchemaComplexContentRestriction ccr = (XmlSchemaComplexContentRestriction) ContentModel.Content;
+			// 3.4.2 complex content schema component {content type}
+			// - 1.1.1
+			bool isEmptyParticle = false;
+			if (ccr.Particle == null) 
+				isEmptyParticle = true;
+			else {
+				XmlSchemaGroupBase gb = ccr.Particle as XmlSchemaGroupBase;
+				if (gb != null) {
+					// - 1.1.2
+					if (!(gb is XmlSchemaChoice) && gb.Items.Count == 0)
+						isEmptyParticle = true;
+					// - 1.1.3
+					else if (gb is XmlSchemaChoice && gb.Items.Count == 0 && gb.ValidatedMinOccurs == 0)
+						isEmptyParticle = true;
+				}
+			}
+			if (isEmptyParticle) {
+				resolvedContentType = XmlSchemaContentType.Empty;
+				validatableParticle = XmlSchemaParticle.Empty;
+			} else {
+				// - 1.2.1
+				resolvedContentType = GetComplexContentType (contentModel);
+				// - 1.2.2
+				validatableParticle = ccr.Particle;
+			}
+		}
+
+		// 3.4.2 Complex Content Schema Component {content type} 1.2.1
+		private XmlSchemaContentType GetComplexContentType (XmlSchemaContentModel content)
+		{
+			if (this.IsMixed || ((XmlSchemaComplexContent) content).IsMixed)
+				return XmlSchemaContentType.Mixed;
+			else
+				return XmlSchemaContentType.ElementOnly;
+		}
+		#endregion
+
 		//
 		// We have to validate:
 		//
-		//	- Type Definition Properties Correct
-		//
-		// and it subsequently delegates:
-		//
-		//	- Derivation Valid (Extension)
-		//	- Derivation Valid (Restriction, Complex)
-		//	- Type Derivation OK (Complex)
+		//	- 3.4.3 Complex Type Definition Representation OK
+		//	- 3.4.6 Type Definition Properties Correct
+		//	- 3.4.6 Derivation Valid (Extension)
+		//	- 3.4.6 Derivation Valid (Restriction, Complex)
 		//
 		// There are many schema errata:
 		// http://www.w3.org/2001/05/xmlschema-errata#Errata1
@@ -374,9 +554,9 @@ namespace System.Xml.Schema
 		// E1-21 Derivation Valid (Restriction, Complex) 4.3.
 		// E1-17 Type Derivation OK (Complex) 2.1.
 		//
-		// And E1-38, E1-37, E1-30 and E1-27
+		// And E1-38, E1-37, E1-30, E1-27
 		//
-		internal override int Validate(ValidationEventHandler h, XmlSchema schema)
+		internal override int Validate (ValidationEventHandler h, XmlSchema schema)
 		{
 			if (IsValidated (schema.ValidationId))
 				return errorCount;
@@ -385,44 +565,22 @@ namespace System.Xml.Schema
 			// it may result in insufficient results.
 			ValidationId = schema.ValidationId;
 
+			CollectSchemaComponent (h, schema);
+
 			// 3.4.6: Properties Correct
-			// Term. 1 => 3.4.1
-			// Term. 2, 3 and 4 goes ValidateContentModel().
+			// Term. 1 => 3.4.1 already done by CollectSchemaComponent()
+			//	      except for {attribute uses} and {attribute wildcard}
+			// Term. 2, 3 and 4 goes to ValidateContentModel().
 			// Term. 5 follows in this method.
 			//
-			// 3.4.1:  Complex Type Definitions Properties Correct
-			// Schema component to CLR type property mapping:
-			// {derivation method} => resolvedDerivedBy
-			// {annotations} are as is.
-			// {name}, {namespace} => QualifiedName
-			// {final} and {prohibited substitutions} are Compile()d.
-			// {abstract} => ValidatedIsAbstract
-
-			// Below are different properties depending on simpleContent | complexContent.
-			// {base type definition} => BaseSchemaType (later)
-			// {attribute uses} => AttributeUses (later)
-			// {content type} => ContentType and ContentTypeParticle (later)
 			if (ContentModel != null)
 				ValidateContentModel (h, schema);
 			else {
-				// leave resolvedDerivedBy as Empty
 				if (Particle != null)
 					ValidateImmediateParticle (h, schema);
-				if (contentTypeParticle == null || contentTypeParticle == XmlSchemaParticle.Empty) {
-					// note that this covers "Particle == null" case
-					if (this.IsMixed)
-						resolvedContentType = XmlSchemaContentType.TextOnly;
-					else
-						resolvedContentType = XmlSchemaContentType.Empty;
-				} else {
-					if (this.IsMixed)
-						resolvedContentType = XmlSchemaContentType.Mixed;
-					else
-						resolvedContentType = XmlSchemaContentType.ElementOnly;
-				}
-				// ContentModel never has them.
 				ValidateImmediateAttributes (h, schema);
 			}
+
 			// Additional support for 3.8.6 All Group Limited
 			if (contentTypeParticle != null) {
 				XmlSchemaAll termAll = contentTypeParticle.ActualParticle as XmlSchemaAll;
@@ -430,18 +588,10 @@ namespace System.Xml.Schema
 					error (h, "Particle whose term is -all- and consists of complex type content particle must have maxOccurs = 1.");
 			}
 
-			// {content type} is going to be finished.
-			if (contentTypeParticle == null)
-				contentTypeParticle = XmlSchemaParticle.Empty;
 			contentTypeParticle.ValidateUniqueParticleAttribution (new XmlSchemaObjectTable (),
 				new ArrayList (), h, schema);
 			contentTypeParticle.ValidateUniqueTypeAttribution (
 				new XmlSchemaObjectTable (), h, schema);
-//			contentTypeParticle = contentTypeParticle.GetParticleithoutPointless ();
-
-			// FIXME: move to ValidateContentModel()
-			if (contentModel != null && contentModel is XmlSchemaSimpleContent)
-				resolvedContentType = GetContentType (true);
 
 			// 3.4.6 Properties Correct :: 5 (Two distinct ID attributes)
 			XmlSchemaAttribute idAttr = null;
@@ -466,9 +616,7 @@ namespace System.Xml.Schema
 
 		private void ValidateImmediateParticle (ValidationEventHandler h, XmlSchema schema)
 		{
-			// {content type} as a particle.
 			errorCount += particle.Validate (h, schema);
-			contentTypeParticle = Particle;
 			XmlSchemaGroupRef pgrp = Particle as XmlSchemaGroupRef;
 			if (pgrp != null) {
 				if (pgrp.TargetGroup != null)
@@ -490,6 +638,8 @@ namespace System.Xml.Schema
 
 		private void ValidateContentModel (ValidationEventHandler h, XmlSchema schema)
 		{
+			XmlSchemaType baseType = BaseXmlSchemaTypeInternal;
+
 			// Here we check 3.4.6 Properties Correct :: 2. and 3.
 			errorCount += contentModel.Validate (h, schema);
 			XmlSchemaComplexContentExtension cce = contentModel.Content as XmlSchemaComplexContentExtension;
@@ -500,45 +650,21 @@ namespace System.Xml.Schema
 			XmlSchemaAnyAttribute localAnyAttribute = null;
 			XmlSchemaAnyAttribute baseAnyAttribute = null;
 
-			XmlQualifiedName baseTypeName = null;
-			if (cce != null)
-				baseTypeName = cce.BaseTypeName;
-			else if (ccr != null)
-				baseTypeName = ccr.BaseTypeName;
-			else if (sce != null)
-				baseTypeName = sce.BaseTypeName;
-			else
-				baseTypeName = scr.BaseTypeName;
-
-			XmlSchemaType baseType = schema.SchemaTypes [baseTypeName] as XmlSchemaType;
-			// Resolve redefine.
-			if (this.isRedefineChild && baseType != null && this.QualifiedName == baseTypeName) {
-				baseType = (XmlSchemaType) redefinedObject;
-				if (baseType == null)
-					error (h, "Redefinition base type was not found.");
-				else
-					baseType.Validate (h, schema);
-			}
 			// 3.4.6 Properties Correct :: 3. Circular definition prohibited.
 			if (ValidateRecursionCheck ())
 				error (h, "Circular definition of schema types was found.");
 			if (baseType != null) {
 				baseType.Validate (h, schema);
 				// Fill "Datatype" property.
-				this.datatypeInternal = baseType.Datatype;
-			} else if (baseTypeName == XmlSchemaComplexType.AnyTypeName)
-				datatypeInternal = XmlSchemaSimpleType.AnySimpleType;
-			else if (baseTypeName.Namespace == XmlSchema.Namespace) {
-				datatypeInternal = XmlSchemaDatatype.FromName (baseTypeName);
+				this.DatatypeInternal = baseType.Datatype;
+			} else if (BaseSchemaTypeName == XmlSchemaComplexType.AnyTypeName)
+				DatatypeInternal = XmlSchemaSimpleType.AnySimpleType;
+			else if (BaseSchemaTypeName.Namespace == XmlSchema.Namespace) {
+				DatatypeInternal = XmlSchemaDatatype.FromName (BaseSchemaTypeName);
 			}
 
-			// {derivation method}
 			XmlSchemaComplexType baseComplexType = baseType as XmlSchemaComplexType;
 			XmlSchemaSimpleType baseSimpleType = baseType as XmlSchemaSimpleType;
-			if (cce != null || sce != null)
-				resolvedDerivedBy = XmlSchemaDerivationMethod.Extension;
-			else
-				resolvedDerivedBy = XmlSchemaDerivationMethod.Restriction;
 
 			// 3.4.6 Derivation Valid (common to Extension and Restriction, Complex) :: 1.
 			if (baseType != null && (baseType.FinalResolved & resolvedDerivedBy) != 0)
@@ -553,32 +679,35 @@ namespace System.Xml.Schema
 			if (cce != null || ccr != null) {
 				// 3.4.3 Complex Type Definition Representation OK :: 1.
 				// base
-				if (baseTypeName == XmlSchemaComplexType.AnyTypeName)
+				if (BaseSchemaTypeName == XmlSchemaComplexType.AnyTypeName)
 					baseComplexType = XmlSchemaComplexType.AnyType;
-				else if (baseTypeName.Namespace == XmlSchema.Namespace)
+				else if (BaseSchemaTypeName.Namespace == XmlSchema.Namespace)
 					error (h, "Referenced base schema type is XML Schema datatype.");
-				else if (baseComplexType == null && !schema.IsNamespaceAbsent (baseTypeName.Namespace))
-					error (h, "Referenced base schema type " + baseTypeName + " was not complex type or not found in the corresponding schema.");
+				else if (baseComplexType == null && !schema.IsNamespaceAbsent (BaseSchemaTypeName.Namespace))
+					error (h, "Referenced base schema type " + BaseSchemaTypeName + " was not complex type or not found in the corresponding schema.");
 			}
 			// Common to simpleContent 
 			else {
+				// ContentType of {content type}
+				resolvedContentType = XmlSchemaContentType.TextOnly;
+
 				// 3.4.3 Complex Type Definition Representation OK :: 1.
 				// base
-				if (baseTypeName == XmlSchemaComplexType.AnyTypeName)
+				if (BaseSchemaTypeName == XmlSchemaComplexType.AnyTypeName)
 					baseComplexType = XmlSchemaComplexType.AnyType;
 
 				if (baseComplexType != null && baseComplexType.ContentType != XmlSchemaContentType.TextOnly) {
-					error (h, "Base schema complex type of a simple content must be simple content type. Base type is " + baseTypeName);
-				} else if (sce == null && (baseSimpleType != null && baseTypeName.Namespace != XmlSchema.Namespace)) {
-					error (h, "If a simple content is not an extension, base schema type must be complex type. Base type is " + baseTypeName);
-				} else if (baseTypeName.Namespace == XmlSchema.Namespace) {
-					if (XmlSchemaDatatype.FromName (baseTypeName) == null)
-						error (h, "Invalid schema data type was specified: " + baseTypeName);
+					error (h, "Base schema complex type of a simple content must be simple content type. Base type is " + BaseSchemaTypeName);
+				} else if (sce == null && (baseSimpleType != null && BaseSchemaTypeName.Namespace != XmlSchema.Namespace)) {
+					error (h, "If a simple content is not an extension, base schema type must be complex type. Base type is " + BaseSchemaTypeName);
+				} else if (BaseSchemaTypeName.Namespace == XmlSchema.Namespace) {
+					if (XmlSchemaDatatype.FromName (BaseSchemaTypeName) == null)
+						error (h, "Invalid schema data type was specified: " + BaseSchemaTypeName);
 					// do nothing for particle.
 				}
 				// otherwise, it might be missing sub components.
-				else if (baseType == null && !schema.IsNamespaceAbsent (baseTypeName.Namespace))// && schema.Schemas [baseTypeName.Namespace] != null)
-					error (h, "Referenced base schema type " + baseTypeName + " was not found in the corresponding schema.");
+				else if (baseType == null && !schema.IsNamespaceAbsent (BaseSchemaTypeName.Namespace))// && schema.Schemas [baseTypeName.Namespace] != null)
+					error (h, "Referenced base schema type " + BaseSchemaTypeName + " was not found in the corresponding schema.");
 
 				// 3.4.3 Complex Type Definition Representation OK :: 2.
 				// Note that baseSimpleType is also allowed as to Errata E1-27 (http://www.w3.org/2001/05/xmlschema-errata)
@@ -601,35 +730,6 @@ namespace System.Xml.Schema
 
 			// complexType/complexContent/extension
 			if (cce != null) {
-				// 3.4.2 complex content {content type}
-				if (cce.Particle == null || cce.Particle == XmlSchemaParticle.Empty) {
-					// - 2.1
-					if (baseComplexType == null) {
-						// Basically it is an error. Considering ValidationEventHandler.
-						contentTypeParticle = XmlSchemaParticle.Empty;
-						resolvedContentType = XmlSchemaContentType.Empty;
-					} else {
-						contentTypeParticle = baseComplexType.ContentTypeParticle;
-						resolvedContentType = baseComplexType.resolvedContentType;
-					}
-				} else if (baseComplexType.ContentTypeParticle == XmlSchemaParticle.Empty
-					|| baseComplexType == XmlSchemaComplexType.AnyType) {
-					// - 2.2
-					contentTypeParticle = cce.Particle;
-					resolvedContentType = GetComplexContentType (contentModel);
-				} else {
-					// - 2.3 : create a new sequences that merges both contents.
-					XmlSchemaSequence seq = new XmlSchemaSequence ();
-					seq.Items.Add (baseComplexType.ContentTypeParticle);
-					seq.Items.Add (cce.Particle);
-					seq.Compile (h, schema);
-					seq.Validate (h, schema);
-					contentTypeParticle = seq;
-					resolvedContentType = GetComplexContentType (contentModel);
-				}
-				if (contentTypeParticle == null)
-					contentTypeParticle = XmlSchemaParticle.Empty;
-
 				// I don't think 3.4.6 Derivation Valid (Extension) :: 1.2
 				// is constraining anything here, since 3.4.2 {attribute uses}
 				// defines as to include base type's attribute uses.
@@ -657,34 +757,8 @@ namespace System.Xml.Schema
 				// For ValidationEventHandler.
 				if (baseComplexType == null)
 					baseComplexType = XmlSchemaComplexType.AnyType;
-
-				// 3.4.2 complex content schema component {content type}
-				// - 1.1.1
-				bool isEmptyParticle = false;
-				if (ccr.Particle == null) 
-					isEmptyParticle = true;
-				else {
+				if (ccr.Particle != null)
 					ccr.Particle.Validate (h, schema);
-
-					XmlSchemaGroupBase gb = ccr.Particle as XmlSchemaGroupBase;
-					if (gb != null) {
-						// - 1.1.2
-						if (!(gb is XmlSchemaChoice) && gb.Items.Count == 0)
-							isEmptyParticle = true;
-						// - 1.1.3
-						else if (gb is XmlSchemaChoice && gb.Items.Count == 0 && gb.ValidatedMinOccurs == 0)
-							isEmptyParticle = true;
-					}
-				}
-				if (isEmptyParticle) {
-					contentTypeParticle = XmlSchemaParticle.Empty;
-					resolvedContentType = XmlSchemaContentType.Empty;
-				} else {
-					// - 1.2.1
-					resolvedContentType = GetComplexContentType (contentModel);
-					// - 1.2.2
-					contentTypeParticle = ccr.Particle;
-				}
 
 				// attributes
 				localAnyAttribute = ccr.AnyAttribute;
@@ -761,46 +835,13 @@ namespace System.Xml.Schema
 			}
 			else
 				this.attributeWildcard = baseAnyAttribute;
-			this.baseSchemaTypeInternal = baseType;
-		}
-
-		// 3.4.2 Complex Content Schema Component {content type} 1.2.1
-		private XmlSchemaContentType GetComplexContentType (XmlSchemaContentModel content)
-		{
-			if (this.IsMixed || ((XmlSchemaComplexContent) content).IsMixed)
-				return XmlSchemaContentType.Mixed;
-			else
-				return XmlSchemaContentType.ElementOnly;
-		}
-
-		// It was formerly placed directly in ContentType property.
-		// I get it out, since ContentType is _post_ compilation property value.
-		private XmlSchemaContentType GetContentType (bool usePointlessCutParticle)
-		{
-			if (this.isMixed)
-				return XmlSchemaContentType.Mixed;
-			XmlSchemaComplexContent xcc = 
-				ContentModel as XmlSchemaComplexContent;
-			if (xcc != null && xcc.IsMixed)
-				return XmlSchemaContentType.Mixed;
-
-			XmlSchemaSimpleContent xsc = ContentModel as XmlSchemaSimpleContent;
-			if (xsc != null)
-				return XmlSchemaContentType.TextOnly;
-
-			XmlSchemaParticle p = usePointlessCutParticle ?
-				contentTypeParticle : Particle;
-
-			return p != XmlSchemaParticle.Empty ?
-				XmlSchemaContentType.ElementOnly :
-				XmlSchemaContentType.Empty;
 		}
 
 		// 3.4.6 Type Derivation OK (Complex)
 		internal void ValidateTypeDerivationOK (object b, ValidationEventHandler h, XmlSchema schema)
 		{
 			// AnyType derives from AnyType itself.
-			if (this == XmlSchemaComplexType.AnyType && BaseSchemaType == this)
+			if (this == XmlSchemaComplexType.AnyType && BaseXmlSchemaType == this)
 				return;
 
 			XmlSchemaType bst = b as XmlSchemaType;
@@ -808,20 +849,20 @@ namespace System.Xml.Schema
 				return;
 			if (bst != null && (resolvedDerivedBy & bst.FinalResolved) != 0) // 1.
 				error (h, "Derivation type " + resolvedDerivedBy + " is prohibited by the base type.");
-			if (BaseSchemaType == b) // 2.2
+			if (BaseXmlSchemaType == b) // 2.2
 				return;
-			if (BaseSchemaType == XmlSchemaComplexType.AnyType) { // 2.3.1
+			if (BaseXmlSchemaType == XmlSchemaComplexType.AnyType) { // 2.3.1
 				error (h, "Derived type's base schema type is anyType.");
 				return;
 			}
 			// 2.3.2.1
-			XmlSchemaComplexType dbct = BaseSchemaType as XmlSchemaComplexType;
+			XmlSchemaComplexType dbct = BaseXmlSchemaType as XmlSchemaComplexType;
 			if (dbct != null) {
 				dbct.ValidateTypeDerivationOK (b, h, schema);
 				return;
 			}
 			// 2.3.2.2
-			XmlSchemaSimpleType dbst = BaseSchemaType as XmlSchemaSimpleType;
+			XmlSchemaSimpleType dbst = BaseXmlSchemaType as XmlSchemaSimpleType;
 			if (dbst != null) {
 				dbst.ValidateTypeDerivationOK (b, h, schema, true);
 				return;
@@ -858,7 +899,8 @@ namespace System.Xml.Schema
 			// 1.4.2.2.1
 			if (baseComplexType.ContentType != XmlSchemaContentType.Empty) {
 				// 1.4.2.2.2.1
-				if (this.GetContentType (false) != baseComplexType.GetContentType (false))
+				if (this.ContentType != baseComplexType.ContentType)
+//				if (this.GetContentType (false) != baseComplexType.GetContentType (false))
 					error (h, "Base complex type has different content type " + baseComplexType.ContentType + ".");
 				// 1.4.2.2.2.2 => 3.9.6 Particle Valid (Extension)
 				else if (this.contentTypeParticle == null ||
@@ -887,25 +929,6 @@ namespace System.Xml.Schema
 				dt = st.Datatype;
 			if (dt != this.Datatype)
 				error (h, "To extend simple type, a complex type must have the same content type as the base type.");
-
-			/*
-			switch (resolvedContentType) {
-			case XmlSchemaContentType.Mixed:
-			case XmlSchemaContentType.TextOnly:
-				XmlSchemaSimpleType st = baseType as XmlSchemaSimpleType;
-				if ((st == null && Datatype != baseType) ||
-					(st != null && st.Datatype != Datatype))
-					goto case XmlSchemaContentType.ElementOnly;
-				if (st != null
-					&& (st.FinalResolved & XmlSchemaDerivationMethod.Extension) != 0)
-					error (h, "Extension is prohibited by the base type.");
-				break;
-			case XmlSchemaContentType.ElementOnly:
-			case XmlSchemaContentType.Empty:
-				error (h, "To extend simple type, a complex type must have the same content type as the base type.");
-				break;
-			}
-			*/
 		}
 
 		internal void ValidateDerivationValidRestriction (XmlSchemaComplexType baseType,

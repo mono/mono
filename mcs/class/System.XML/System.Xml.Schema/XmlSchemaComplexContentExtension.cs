@@ -59,6 +59,11 @@ namespace System.Xml.Schema
 			set{ any = value;}
 		}
 
+		// internal properties
+		internal override bool IsExtension {
+			get { return true; }
+		}
+
 		/// <remarks>
 		/// </remarks>
 		internal override int Compile(ValidationEventHandler h, XmlSchema schema)

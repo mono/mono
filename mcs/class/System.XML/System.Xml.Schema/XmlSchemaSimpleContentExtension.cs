@@ -49,6 +49,11 @@ namespace System.Xml.Schema
 			set{ any = value; }
 		}
 
+		// internal properties
+		internal override bool IsExtension {
+			get { return true; }
+		}
+
 		///<remarks>
 		/// 1. Base must be present and a QName
 		///</remarks>
@@ -104,6 +109,11 @@ namespace System.Xml.Schema
 		internal override XmlQualifiedName GetBaseTypeName ()
 		{
 			return baseTypeName;
+		}
+
+		internal override XmlSchemaParticle GetParticle ()
+		{
+			return null;
 		}
 
 		internal override int Validate(ValidationEventHandler h, XmlSchema schema)
