@@ -458,12 +458,12 @@ namespace Mono.CSharp.Debugger
 		int LexicalBlockTableOffset;
 		#endregion
 
-		int index;
 		int file_offset;
 		string name;
 		string full_name;
 		MethodIndexEntry index_entry;
 
+		public readonly int Index;
 		public readonly SourceFileEntry SourceFile;
 		public readonly LineNumberEntry[] LineNumbers;
 		public readonly int[] ParamTypeIndices;
@@ -493,7 +493,7 @@ namespace Mono.CSharp.Debugger
 		internal MethodEntry (MonoSymbolFile file, BinaryReader reader, int index)
 		{
 			this.SymbolFile = file;
-			this.index = index;
+			this.Index = index;
 			SourceFileIndex = reader.ReadInt32 ();
 			Token = reader.ReadInt32 ();
 			StartRow = reader.ReadInt32 ();
@@ -580,7 +580,7 @@ namespace Mono.CSharp.Debugger
 				      int namespace_id)
 		{
 			this.SymbolFile = file;
-			index = file.GetNextMethodIndex ();
+			Index = file.GetNextMethodIndex ();
 
 			Token = token;
 			SourceFileIndex = source.Index;
@@ -714,7 +714,7 @@ namespace Mono.CSharp.Debugger
 			bw.Write (NamespaceID);
 			bw.Write (LocalNamesAmbiguous ? 1 : 0);
 
-			return new MethodSourceEntry (index, file_offset, StartRow, EndRow);
+			return new MethodSourceEntry (Index, file_offset, StartRow, EndRow);
 		}
 
 		internal void WriteIndex (BinaryWriter bw)
@@ -725,7 +725,7 @@ namespace Mono.CSharp.Debugger
 		public override string ToString ()
 		{
 			return String.Format ("[Method {0}:{1}:{2}:{3}:{4} - {7}:{8}:{9}:{10} - {5} - {6}]",
-					      index, Token, SourceFileIndex, StartRow, EndRow,
+					      Index, Token, SourceFileIndex, StartRow, EndRow,
 					      SourceFile, FullName, ClassTypeIndex, NumParameters,
 					      NumLocals, NumLineNumbers);
 		}

@@ -1,3 +1,7 @@
+2003-08-05  Martin Baulig  <martin@ximian.com>
+
+	* MonoSymbolTable.cs (MethodEntry.Index): New public field.
+
 2003-06-27  Zoltan Varga  <vargaz@freemail.hu>
 
 	* MonoSymbolWriter.cs: Enable calling of DefineDocument multiple
