@@ -1,3 +1,7 @@
+2001-11-20  Ravi Pratap  <ravi@ximian.com>
+
+	* test-45.cs : Add for array initialization testing.
+
 2001-11-16  Miguel de Icaza  <miguel@ximian.com>
 
 	* test-34.cs: Improve this test to check if we are actually
