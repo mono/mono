@@ -1,3 +1,9 @@
+2004-05-06	Patrik Torstensson
+
+	* mini-x86.[c|h], inssel-x86.brg, cpu-pentium.md, mini.c: enabled
+	long reg allocation in any reg (not only eax:edx) and implemented 
+	long shl/shr ops in asm instead of helpers.
+
 2004-05-05  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini-sparc.h: Fix warnings.
