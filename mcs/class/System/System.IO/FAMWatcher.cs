@@ -183,7 +183,7 @@ namespace System.IO {
 				if (!data.IncludeSubdirs)
 					return;
 
-				foreach (FAMData fd in data.SubDirs) {
+				foreach (FAMData fd in data.SubDirs.Values) {
 					StopMonitoringDirectory (fd);
 					requests.Remove (fd.Request.ReqNum);
 				}

@@ -1,3 +1,7 @@
+2005-04-05  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* FAMWatcher.cs: Fix cast exception when disposing watchers.
+
 2005-03-30  Geoff Norton  <gnorton@customerdna.com>
 
 	* KeventWatcher.cs: Fix a file handle leak on raised events.
