@@ -67,10 +67,89 @@
 // UI64 |   X    X    X      X   X   X   X   X    X    X   X    X    X    X
 //
 
+using System.Security.Cryptography;
+
 namespace System {
   
 	public sealed class Convert {
 	
+		// ========== BASE 64 Conversions ========== //
+		// the BASE64 convert methods are using the Base64 converting methods
+		// from System.Security.Cryptography.ToBase64Transform and
+		// System.Security.Cryptography.FromBase64Transform
+		//
+		// should be changed to a stand-alone class Base64Encoder & Base64Decoder
+		
+		public static byte[] FromBase64CharArray(char[] inArray, int offset, int length)
+		{
+			if (inArray == null)
+				throw new ArgumentNullException();
+			
+			int len = inArray.Length;
+			if (len < 4 || len % 4 != 0)
+				throw new FormatException();
+				
+			byte[] inArr = new System.Text.UnicodeEncoding().GetBytes(inArray);
+			FromBase64Transform t = new FromBase64Transform();
+			
+			return t.TransformFinalBlock(inArr, 0, inArr.Length);
+		}
+		
+		public static byte[] FromBase64String(string s)
+		{
+			if (s == null)
+				throw new ArgumentNullException();
+			
+			char[] inArr = s.ToCharArray();
+
+			return FromBase64CharArray(inArr, 0, inArr.Length);
+		}
+		
+		public static int ToBase64CharArray(byte[] inArray, int offsetIn, int length, 
+		                                    char[] outArray, int offsetOut)
+		{
+			if (inArray == null || outArray == null)
+				throw new ArgumentNullException();
+			
+			if (offsetIn < 0 || length < 0 || offsetOut < 0 || (offsetIn + length) > inArray.Length)
+				throw new ArgumentOutOfRangeException();
+			
+			ToBase64Transform t = new ToBase64Transform();
+			byte[] outArr = t.TransformFinalBlock(inArray, offsetIn, length);
+			
+			char[] cOutArr = new System.Text.ASCIIEncoding().GetChars(outArr);
+			
+			if ((offsetOut + cOutArr.Length) > outArray.Length)
+				throw new ArgumentOutOfRangeException();
+			
+			Array.Copy(cOutArr, 0, outArray, offsetOut, cOutArr.Length);
+			
+			return cOutArr.Length;
+		}
+		
+		public static string ToBase64String(byte[] inArray)
+		{
+			if (inArray == null)
+				throw new ArgumentNullException();
+
+			return ToBase64String(inArray, 0, inArray.Length);
+		}
+		
+		public static string ToBase64String(byte[] inArray, int offset, int length)
+		{
+			if (inArray == null)
+				throw new ArgumentNullException();
+			
+			if (offset < 0 || length < 0 || (offset + length) > inArray.Length)
+				throw new ArgumentOutOfRangeException();
+			
+			// FIXME: change to stand alone Base64 Encoder class
+			ToBase64Transform t = new ToBase64Transform();
+			byte[] outArr = t.TransformFinalBlock(inArray, offset, length);
+			
+			return (new System.Text.ASCIIEncoding().GetString(outArr));
+		}
+		
 		// ========== Boolean Conversions ========== //
 	
 		public static bool ToBoolean (bool value) 

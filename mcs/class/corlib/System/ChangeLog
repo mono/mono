@@ -1,3 +1,9 @@
+2001-10-11  Thomas Neidhart <tome@sbox.tugraz.at>
+
+	* Convert.cs: Added methods for Base64 transforming
+	  just used the existing System.Security.Cryptography.ToBase64Transform,
+	  should be changed to use a stand-alone class, e.g. Base64Encoder
+	  
 2001-10-10  Derek Holden  <dholden@draper.com>
 
 	* IntegerFormatter.cs: Added. Implements ToString for all
