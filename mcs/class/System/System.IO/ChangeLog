@@ -1,3 +1,7 @@
+2003-07-09  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* IODescriptionAttribute.cs: Removed unneeded field
+
 2003-05-16  Dick Porter  <dick@ximian.com>
 
 	* MonoIO.cs: Implement GetTempPath

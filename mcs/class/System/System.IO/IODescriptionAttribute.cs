@@ -14,12 +14,6 @@ namespace System.IO {
 	[AttributeUsage (AttributeTargets.All)]
 	public class IODescriptionAttribute : DescriptionAttribute {
 
-		#region Fields
-
-		string description;
-
-		#endregion // Fields
-
 		#region Constructors
 
 		public IODescriptionAttribute (string description)
