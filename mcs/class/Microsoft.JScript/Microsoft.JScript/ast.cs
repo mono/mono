@@ -51,7 +51,7 @@ namespace Microsoft.JScript {
 		//
 		internal abstract bool Resolve (IdentificationTable context);
 
-		private bool InLoop {
+		internal bool InLoop {
 			get {
 				if (parent == null || parent is ScriptBlock)
 					return false;
@@ -62,8 +62,8 @@ namespace Microsoft.JScript {
 			}
 		}
 		
-		private bool InSwitch {
-			get {
+		internal bool InSwitch {
+			get { 
 				if (parent == null)
 					return false;
 				else if (parent is Switch)
