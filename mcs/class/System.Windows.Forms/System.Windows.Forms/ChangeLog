@@ -1,8 +1,12 @@
 2004-04-24  Todd Berman  <tberman@sevenl.net>
+
+	* Control.cs: Add handle checking in Control.Show ()
+
+2004-04-24  Todd Berman  <tberman@sevenl.net>
 	
-	* System.Windows.Forms/ContextMenu.cs:
-	* System.Windows.Forms/Menu.cs: Whitespace fixes.
-	* System.Windows.Forms/MenuItem.cs: fix the check for a null parent.
+	* ContextMenu.cs:
+	* Menu.cs: Whitespace fixes.
+	* MenuItem.cs: fix the check for a null parent.
 
 2004-04-23  Peter Bartok <pbartok@novell.com>
    * RadioButton.cs: Fixed window generation, now properly displays.

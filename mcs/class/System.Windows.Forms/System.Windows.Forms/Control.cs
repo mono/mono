@@ -2531,6 +2531,9 @@ namespace System.Windows.Forms
     		
     		public void Show () 
     		{
+			if (!IsHandleCreated)
+				CreateHandle ();
+			
 			Visible = true;
     		}
     		
