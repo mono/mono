@@ -46,7 +46,7 @@ namespace System.Windows.Forms {
 
 		protected override void OnTextChanged(EventArgs e)
 		{
-			TextBuffer.SetText(Text, Text.Length);
+			TextBuffer.SetText(Text);
 		}
 
 		[MonoTODO]
@@ -204,7 +204,7 @@ namespace System.Windows.Forms {
 				Gtk.TextIter start = new Gtk.TextIter ();
 				Gtk.TextIter end = new Gtk.TextIter ();
 		
-				if (TextBuffer.GetSelectionBounds(ref start, ref end))
+				if (TextBuffer.GetSelectionBounds(out start, out end))
 					selection = TextBuffer.GetText(start, end, true);
 					
 				return selection;
@@ -265,7 +265,7 @@ namespace System.Windows.Forms {
 
 		public void Clear()
 		{
-			TextBuffer.SetText("", 0);
+			TextBuffer.SetText("");
 		}
 		[MonoTODO]
 		public void ClearUndo()

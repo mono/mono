@@ -18,38 +18,28 @@ namespace System.Windows.Forms {
 	/// Represents a Windows RadioButton control.
 	///
 	/// </summary>
-	///	This doesn't work properly. The "else" statement never seems
-	///	to get invoked, causing the grouping to not work.
-	///
 	
-		class RadioButton : ButtonBase {
+	
+	public	class RadioButton : ButtonBase {
 
-        	private static bool initialized;
-  				private static Gtk.RadioButton first_radio_button;
+        	private static int initialized;
+  				static Gtk.RadioButton first_radio_button;
 			
-         public RadioButton()
-         {
-             initialized = false;
+         public RadioButton(){
+			
          }
  
-         private static Gtk.Widget MakeWidget() { 			
-				
-					if ( initialized == false ) {
-                 initialized = true;
-  							
+         internal override Gtk.Widget CreateWidget() { 			
+					initialized = initialized + 1;
+					if ( initialized == 1 ) {
                  first_radio_button = new Gtk.RadioButton(null, "");
              		return first_radio_button;
             } 
 					else {
-         		   	return Gtk.RadioButton.NewWithLabelFromWidget(first_radio_button, "");
+							return Gtk.RadioButton.NewWithLabelFromWidget(first_radio_button, "");
             }
         	}
 				
-				internal override Gtk.Widget CreateWidget() {
-						
-						return MakeWidget();
-				}
-
 				public override string Text {
 					get {
 		   					return ((Gtk.RadioButton)Widget).Label; 

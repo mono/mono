@@ -1,3 +1,10 @@
+2003-04-17	Joel Basson  <jstrike@mweb.co.za>	
+
+* ComboBox.cs
+* ColorDialog.cs
+* Improved functionality in RadioBox.cs
+* Fix some things that were broken with the update to gtk-sharp-0.8
+
 2003-03-17  Joel Basson  <jstrike@mweb.co.za>
 
 * FileDialog.cs
