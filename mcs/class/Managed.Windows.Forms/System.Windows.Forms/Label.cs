@@ -31,9 +31,12 @@
 //	Daniel Carrera, dcarrera@math.toronto.edu (stubbed out)
 //
 //
-// $Revision: 1.8 $
+// $Revision: 1.9 $
 // $Modtime: $
 // $Log: Label.cs,v $
+// Revision 1.9  2004/08/11 18:54:11  pbartok
+// - Forcing redraw on resize
+//
 // Revision 1.8  2004/08/10 15:24:35  jackson
 // Let Control handle buffering.
 //
@@ -96,7 +99,9 @@ namespace System.Windows.Forms
 
 			AutoSizeChanged = null;
     			TextAlignChanged = null;
-    		}
+
+			SetStyle (ControlStyles.ResizeRedraw, true);
+		}
 
 		#region Public Properties
 
