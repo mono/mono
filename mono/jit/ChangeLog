@@ -1,3 +1,11 @@
+
+Tue Sep 24 11:34:02 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* jit.c: avoid including cil-coff.h (again). Optimize typeof (type).
+	Run finalize on domain cleanup.
+	* mono.c: call setlocale ().
+	* trampoline.c: clearer error message for invalid trampoline.
+
 2002-09-21  Martin Baulig  <martin@gnome.org>
 
 	* debug.c (MonoDebuggerSymbolFileTable): Use an actual typedef for this
