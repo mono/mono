@@ -1,3 +1,9 @@
+2002-02-10  Nick Drochak  <ndrochak@gol.com>
+
+	* AllTests.cs: Add Int64Test to the Suite
+	* Int64Test.cs: Change static member to instance member. This was
+	causing NUnitConsole some grief.  Should be instance member anyway.
+
 2002-02-09  Nick Drochak  <ndrochak@gol.com>
 
 	* ByteTest.cs:

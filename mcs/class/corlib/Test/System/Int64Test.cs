@@ -35,7 +35,7 @@ public class Int64Test : TestCase
 	                                  "-9223372036854775808", "(9,223,372,036,854,775,808.00)", "-922,337,203,685,477,580,800.00 %", "8000000000000000"};
 	private string[] ResultsNfi2 = {"$9,223,372,036,854,775,807.00000", "9223372036854775807", "9.22337e+018", "9223372036854775807.00000",
 	                                  "9.2234e+18", "9,223,372,036,854,775,807.00000", "922,337,203,685,477,580,700.00000 %", "7fffffffffffffff"};
-    private static long[] vals
+    private long[] vals
         = { 0, Int64.MaxValue, Int64.MinValue,
               1L, 12L, 123L, 1234L, -123L, 
               1234567890123456L, 6543210987654321L };
@@ -57,6 +57,7 @@ public class Int64Test : TestCase
     private NumberFormatInfo Nfi = NumberFormatInfo.InvariantInfo;
     private NumberFormatInfo NfiUser;
 
+    public Int64Test() : base("MonoTests.System.Int64Test") {}
     public Int64Test(string name) : base(name) {}
 
     public static ITest Suite 
@@ -220,7 +221,7 @@ public class Int64Test : TestCase
 			Fail("Should raise a System.OverflowException");
 		}
 		catch (Exception e) {
-			Assert(typeof(System.OverflowException) == e.GetType());
+			Assert(typeof(OverflowException) == e.GetType());
 		}
 		try {
 			double OverInt = (double)Int64.MaxValue + 1;
