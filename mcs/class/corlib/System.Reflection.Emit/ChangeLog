@@ -1,3 +1,7 @@
+2003-05-30  Zoltan Varga  <vargaz@freemail.hu>
+
+	* TypeBuilder.cs: Implement DefineTypeInitializer.
+
 2003-05-21  Zoltan Varga  <vargaz@freemail.hu>
 
 	* ModuleBuilder.cs: 

@@ -442,12 +442,8 @@ namespace System.Reflection.Emit {
 			return res;
 		}
 
-		[MonoTODO]
 		public ConstructorBuilder DefineTypeInitializer() {
-			if (is_created)
-				throw not_after_created ();
-
-			throw new NotImplementedException ();
+			return DefineConstructor (MethodAttributes.Public | MethodAttributes.Static | MethodAttributes.SpecialName | MethodAttributes.RTSpecialName, CallingConventions.Standard, null);
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
