@@ -1,3 +1,12 @@
+2002-06-12  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Page.cs:
+	(GetPostBackClient):
+	(RegisterRequiresPostBack): don't throw NotImplementedException to
+	keep going.
+	(ProcessRequest): set the current page as the Page property for *all*
+	the controls, not just the direct children of the page.
+
 2002-06-11  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Control.cs:

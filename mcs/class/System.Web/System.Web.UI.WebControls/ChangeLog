@@ -1,3 +1,13 @@
+2002-06-12  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Button.cs:
+	(AddAttributesToRender): fixed (classic) stack overflow.
+
+	* CheckBox.cs: mono-stylized.
+	(AutoPostBack): fixed stack overflow.
+	(Render): fixed alignment issues. Also set the For attribute always
+	for the label.
+
 2002-06-11  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* AdRotator.cs: GetData does not work as it should, but now it returns

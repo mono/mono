@@ -158,7 +158,7 @@ namespace System.Web.UI.WebControls
 				writer.AddAttribute(System.Web.UI.HtmlTextWriterAttribute.Onclick, Utils.GetClientValidatedEvent(Page));
 				writer.AddAttribute("language", "javascript");
 			}
-			AddAttributesToRender(writer);
+			base.AddAttributesToRender(writer);
 		}
 
 		protected override void RenderContents(HtmlTextWriter writer)

@@ -278,7 +278,9 @@ public class Page : TemplateControl, IHttpHandler
 	[MonoTODO]
 	public string GetPostBackClientEvent (Control control, string argument)
 	{
-		throw new NotImplementedException ();
+		// Don't throw the exception. keep going
+		//throw new NotImplementedException ();
+		return "";
 	}
 
 	[MonoTODO]
@@ -363,6 +365,16 @@ public class Page : TemplateControl, IHttpHandler
 		InvokeEventMethod ("Page_Load", sender, e);
 	}
 
+	private void SetPage (ControlCollection col)
+	{
+		if (col.Count == 0)
+			return;
+		foreach (Control ctrl in col){
+			ctrl.Page = this;
+			SetPage (ctrl.Controls);
+		}
+	}
+
 	public void ProcessRequest (HttpContext context)
 	{
 		FrameworkInitialize ();
@@ -388,6 +400,8 @@ public class Page : TemplateControl, IHttpHandler
 			// Assing Control.Page here. Controls should do the same before 
 			// rendering their children
 			ctrl.Page = this;
+			SetPage (ctrl.Controls);
+			//
 			ctrl.RenderControl (output);
 		}
 	}
@@ -430,7 +444,8 @@ public class Page : TemplateControl, IHttpHandler
 	[MonoTODO]
 	public void RegisterRequiresPostBack (Control control)
 	{
-		throw new NotImplementedException ();
+		// Don't throw the exception. keep going
+		//throw new NotImplementedException ();
 	}
 
 	[MonoTODO]
