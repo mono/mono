@@ -9,6 +9,7 @@
 
 using System;
 using Mono.Math;
+using Mono.Math.Prime;
 using Mono.Math.Prime.Generator;
 using NUnit.Framework;
 
@@ -41,6 +42,12 @@ namespace MonoTests.Mono.Math {
 
 			return ret;
 			
+		}
+
+		public override Prime.PrimalityTest PrimalityTest {
+			get {
+				return new Prime.PrimalityTest (PrimalityTests.SmallPrimeSppTest);
+			}
 		}
 
 		protected override bool IsPrimeAcceptable (BigInteger bi, object Context)

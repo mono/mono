@@ -1,3 +1,12 @@
+2004-02-13  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* PrimeTestingTest.cs: Added well known (and tested) primes from 
+	RFC 2412 (http://www.faqs.org/rfcs/rfc2412.html) as suggested by
+	Pieter Philippaerts (#51229).
+	* SearchGeneratorTest.cs: Modified so this still use the (previous)
+	SmallPrimeSppTest primality test - because RM doesn't work for
+	small primes.
+
 2004-02-09  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* ArithmeticBigTest.cs: 
