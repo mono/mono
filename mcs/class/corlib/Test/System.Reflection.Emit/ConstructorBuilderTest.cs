@@ -8,12 +8,13 @@
 // TODO:
 //  - implement 'Signature' (what the hell it does???) and test it
 //  - implement Equals and test it
-//  - AddDeclarativeSecurity
 
 using System;
 using System.Threading;
 using System.Reflection;
 using System.Reflection.Emit;
+using System.Security;
+using System.Security.Permissions;
 
 using NUnit.Framework;
 
@@ -27,6 +28,8 @@ public class ConstructorBuilderTest : Assertion
 
 	private ModuleBuilder module;
 
+	private static int typeIndexer = 0;
+
 	[SetUp]
 	protected void SetUp () {
 		AssemblyName assemblyName = new AssemblyName();
@@ -38,8 +41,13 @@ public class ConstructorBuilderTest : Assertion
 
 		module = assembly.DefineDynamicModule("module1");
 		
-		genClass = module.DefineType("class1", 
+		genClass = module.DefineType(genTypeName (), 
 									 TypeAttributes.Public);
+	}
+
+	// Return a unique type name
+	private string genTypeName () {
+		return "class" + (typeIndexer ++);
 	}
 
 	public void TestAttributes () {
@@ -120,7 +128,7 @@ public class ConstructorBuilderTest : Assertion
 	}
 
 	public void TestDefineParameter () {
-		TypeBuilder tb = module.DefineType ("class7", TypeAttributes.Public);
+		TypeBuilder tb = module.DefineType (genTypeName (), TypeAttributes.Public);
 		ConstructorBuilder cb = tb.DefineConstructor (
 			 0, 0, new Type [2] { typeof(int), typeof(int) });
 
@@ -184,7 +192,7 @@ public class ConstructorBuilderTest : Assertion
 					  MethodImplAttributes.OPTIL);
 
 		// Can not be called on a created type
-		TypeBuilder tb = module.DefineType ("class14", TypeAttributes.Public);
+		TypeBuilder tb = module.DefineType (genTypeName (), TypeAttributes.Public);
 		ConstructorBuilder cb2 = tb.DefineConstructor (
 			 0, 0, new Type [0]);
 
@@ -208,7 +216,7 @@ public class ConstructorBuilderTest : Assertion
 	}
 
 	public void TestGetParameters () {
-		TypeBuilder tb = module.DefineType ("class16", TypeAttributes.Public);
+		TypeBuilder tb = module.DefineType (genTypeName (), TypeAttributes.Public);
 		ConstructorBuilder cb = tb.DefineConstructor (
 			 0, 0, new Type [1] {typeof(int)});
 		cb.GetILGenerator ().Emit (OpCodes.Ret);
@@ -230,7 +238,7 @@ public class ConstructorBuilderTest : Assertion
 	}
 
 	public void TestGetToken () {
-		TypeBuilder tb = module.DefineType ("class17", TypeAttributes.Public);
+		TypeBuilder tb = module.DefineType (genTypeName (), TypeAttributes.Public);
 		ConstructorBuilder cb = tb.DefineConstructor (
 			 0, 0, new Type [1] {typeof(void)});
 
@@ -268,7 +276,7 @@ public class ConstructorBuilderTest : Assertion
 	}
 
 	public void TestSetCustomAttribute () {
-		TypeBuilder tb = module.DefineType ("class21", TypeAttributes.Public);
+		TypeBuilder tb = module.DefineType (genTypeName (), TypeAttributes.Public);
 		ConstructorBuilder cb = tb.DefineConstructor (
 			 0, 0, 
 			new Type [1] {typeof(int)});
@@ -303,6 +311,59 @@ public class ConstructorBuilderTest : Assertion
 			Fail ();
 		} catch (ArgumentNullException) {
 		}
+	}
+
+	// Same as in MethodBuilderTest
+	[Test]
+	[ExpectedException (typeof (InvalidOperationException))]
+	public void TestAddDeclarativeSecurityAlreadyCreated () {
+		ConstructorBuilder cb = genClass.DefineConstructor (
+			 MethodAttributes.Public, 0, new Type [0]);
+		ILGenerator ilgen = cb.GetILGenerator ();
+		ilgen.Emit (OpCodes.Ret);
+		genClass.CreateType ();
+
+		PermissionSet set = new PermissionSet (PermissionState.Unrestricted);
+		cb.AddDeclarativeSecurity (SecurityAction.Demand, set);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentNullException))]
+	public void TestAddDeclarativeSecurityNullPermissionSet () {
+		ConstructorBuilder cb = genClass.DefineConstructor (
+			 MethodAttributes.Public, 0, new Type [0]);
+		cb.AddDeclarativeSecurity (SecurityAction.Demand, null);
+	}
+
+	[Test]
+	public void TestAddDeclarativeSecurityInvalidAction () {
+		ConstructorBuilder cb = genClass.DefineConstructor (
+			 MethodAttributes.Public, 0, new Type [0]);
+
+		SecurityAction[] actions = new SecurityAction [] { 
+			SecurityAction.RequestMinimum,
+			SecurityAction.RequestOptional,
+			SecurityAction.RequestRefuse };
+		PermissionSet set = new PermissionSet (PermissionState.Unrestricted);
+
+		foreach (SecurityAction action in actions) {
+			try {
+				cb.AddDeclarativeSecurity (action, set);
+				Fail ();
+			}
+			catch (ArgumentException) {
+			}
+		}
+	}
+
+	[Test]
+	[ExpectedException (typeof (InvalidOperationException))]
+	public void TestAddDeclarativeSecurityDuplicateAction () {
+		ConstructorBuilder cb = genClass.DefineConstructor (
+			 MethodAttributes.Public, 0, new Type [0]);
+		PermissionSet set = new PermissionSet (PermissionState.Unrestricted);
+		cb.AddDeclarativeSecurity (SecurityAction.Demand, set);
+		cb.AddDeclarativeSecurity (SecurityAction.Demand, set);
 	}
 }
 }

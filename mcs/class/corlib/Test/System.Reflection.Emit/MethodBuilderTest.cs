@@ -8,13 +8,14 @@
 // TODO:
 //  - implement 'Signature' (what the hell it does???) and test it
 //  - implement Equals and test it
-//  - AddDeclarativeSecurity
 
 using System;
 using System.Threading;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Runtime.CompilerServices;
+using System.Security;
+using System.Security.Permissions;
 
 using NUnit.Framework;
 
@@ -39,15 +40,22 @@ public class MethodBuilderTest : Assertion
 
 		module = assembly.DefineDynamicModule("module1");
 		
-		genClass = module.DefineType("class1", 
+		genClass = module.DefineType(genTypeName (), 
 									 TypeAttributes.Public);
 	}
 
 	static int methodIndexer = 0;
 
+	static int typeIndexer = 0;
+
 	// Return a unique method name
 	private string genMethodName () {
 		return "m" + (methodIndexer ++);
+	}
+
+	// Return a unique type name
+	private string genTypeName () {
+		return "class" + (typeIndexer ++);
 	}
 
 	public void TestAttributes () {
@@ -185,7 +193,7 @@ public class MethodBuilderTest : Assertion
 		}
 
 		// Can not be called on a created type
-		TypeBuilder tb = module.DefineType ("class6", TypeAttributes.Public);
+		TypeBuilder tb = module.DefineType (genTypeName (), TypeAttributes.Public);
 		MethodBuilder mb2 = tb.DefineMethod (
 			genMethodName (), 0, typeof (void), new Type [0]);
 		ILGenerator ilgen = mb2.GetILGenerator ();
@@ -200,7 +208,7 @@ public class MethodBuilderTest : Assertion
 	}
 
 	public void TestDefineParameter () {
-		TypeBuilder tb = module.DefineType ("class7", TypeAttributes.Public);
+		TypeBuilder tb = module.DefineType (genTypeName (), TypeAttributes.Public);
 		MethodBuilder mb = tb.DefineMethod (
 			genMethodName (), 0, typeof (void), 
 			new Type [2] { typeof(int), typeof(int) });
@@ -275,7 +283,7 @@ public class MethodBuilderTest : Assertion
 	}
 
 	public void TestMethodImplementationFlags () {
-		TypeBuilder tb = module.DefineType ("class14", TypeAttributes.Public);
+		TypeBuilder tb = module.DefineType (genTypeName (), TypeAttributes.Public);
 		MethodBuilder mb = tb.DefineMethod (
 			genMethodName (), 0, typeof (void), new Type [0]);
 
@@ -310,7 +318,7 @@ public class MethodBuilderTest : Assertion
 	}
 
 	public void TestGetParameters () {
-		TypeBuilder tb = module.DefineType ("class16", TypeAttributes.Public);
+		TypeBuilder tb = module.DefineType (genTypeName (), TypeAttributes.Public);
 		MethodBuilder mb = tb.DefineMethod (
 			genMethodName (), 0, typeof (void), new Type [1] {typeof(void)});
 
@@ -331,7 +339,7 @@ public class MethodBuilderTest : Assertion
 	}
 
 	public void TestGetToken () {
-		TypeBuilder tb = module.DefineType ("class17", TypeAttributes.Public);
+		TypeBuilder tb = module.DefineType (genTypeName (), TypeAttributes.Public);
 		MethodBuilder mb = tb.DefineMethod (
 			genMethodName (), 0, typeof (void), new Type [1] {typeof(void)});
 
@@ -387,7 +395,7 @@ public class MethodBuilderTest : Assertion
 	}
 
 	public void TestSetCustomAttribute () {
-		TypeBuilder tb = module.DefineType ("class21", TypeAttributes.Public);
+		TypeBuilder tb = module.DefineType (genTypeName (), TypeAttributes.Public);
 		string name = genMethodName ();
 		MethodBuilder mb = tb.DefineMethod (
 			name, MethodAttributes.Public, typeof (void), 
@@ -432,6 +440,62 @@ public class MethodBuilderTest : Assertion
 			Fail ();
 		} catch (ArgumentNullException) {
 		}
+	}
+
+	[Test]
+	[ExpectedException (typeof (InvalidOperationException))]
+	public void TestAddDeclarativeSecurityAlreadyCreated () {
+		MethodBuilder mb = genClass.DefineMethod (
+			genMethodName (), MethodAttributes.Public, typeof (void),
+			new Type [0]);
+		ILGenerator ilgen = mb.GetILGenerator ();
+		ilgen.Emit (OpCodes.Ret);
+		genClass.CreateType ();
+
+		PermissionSet set = new PermissionSet (PermissionState.Unrestricted);
+		mb.AddDeclarativeSecurity (SecurityAction.Demand, set);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentNullException))]
+	public void TestAddDeclarativeSecurityNullPermissionSet () {
+		MethodBuilder mb = genClass.DefineMethod (
+			genMethodName (), MethodAttributes.Public, typeof (void), 
+			new Type [0]);
+		mb.AddDeclarativeSecurity (SecurityAction.Demand, null);
+	}
+
+	[Test]
+	public void TestAddDeclarativeSecurityInvalidAction () {
+		MethodBuilder mb = genClass.DefineMethod (
+			genMethodName (), MethodAttributes.Public, typeof (void), 
+			new Type [0]);
+
+		SecurityAction[] actions = new SecurityAction [] { 
+			SecurityAction.RequestMinimum,
+			SecurityAction.RequestOptional,
+			SecurityAction.RequestRefuse };
+		PermissionSet set = new PermissionSet (PermissionState.Unrestricted);
+
+		foreach (SecurityAction action in actions) {
+			try {
+				mb.AddDeclarativeSecurity (action, set);
+				Fail ();
+			}
+			catch (ArgumentException) {
+			}
+		}
+	}
+
+	[Test]
+	[ExpectedException (typeof (InvalidOperationException))]
+	public void TestAddDeclarativeSecurityDuplicateAction () {
+		MethodBuilder mb = genClass.DefineMethod (
+			genMethodName (), MethodAttributes.Public, typeof (void), 
+			new Type [0]);
+		PermissionSet set = new PermissionSet (PermissionState.Unrestricted);
+		mb.AddDeclarativeSecurity (SecurityAction.Demand, set);
+		mb.AddDeclarativeSecurity (SecurityAction.Demand, set);
 	}
 }
 }
