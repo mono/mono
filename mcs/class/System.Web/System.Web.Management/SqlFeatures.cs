@@ -29,12 +29,13 @@
 #if NET_2_0
 namespace System.Web.Management
 {
+        [Flags, Serializable]
         public enum SqlFeatures
         {
                 None = 0,
                 Membership = 1,
                 Profile = 2,
-                Rolemanager = 4,
+                RoleManager = 4,
                 SiteCounters = 8,
                 Personalization = 16,
                 SqlWebEventProvider = 32,

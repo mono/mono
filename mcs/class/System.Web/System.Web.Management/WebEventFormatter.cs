@@ -32,6 +32,10 @@ namespace System.Web.Management
         public class WebEventFormatter
         {
                 int indentation_level, tab_size;
+
+                internal WebEventFormatter ()
+                {
+                }
                 
                 public int IndentationLevel {
 

@@ -34,6 +34,10 @@ namespace System.Web.Management
 {
         public class RuleFiringRecord
         {
+                internal RuleFiringRecord ()
+                {
+                }
+                
                 public DateTime LastFired {
                         get {
                                 throw new NotImplementedException ();

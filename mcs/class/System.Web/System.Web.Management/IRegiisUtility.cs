@@ -1,5 +1,5 @@
 //
-// System.Web.Management.IRegisiisUtility.cs
+// System.Web.Management.IRegiisUtility.cs
 //
 // Authors:
 //	Duncan Mak (duncan@ximian.com)
@@ -32,7 +32,7 @@ using System.Runtime.InteropServices;
 #if NET_2_0
 namespace System.Web.Management
 {
-        public interface IRegisiisUtility
+        public interface IRegiisUtility
         {
                 void ProtectedConfigAction (
                         long actionToPerform,

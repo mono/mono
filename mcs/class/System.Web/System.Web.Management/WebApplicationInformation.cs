@@ -35,6 +35,10 @@ namespace System.Web.Management
         public class WebApplicationInformation
         {
                 string application_domain, application_path, application_virtual_path, machine_name, trust_level;
+
+                internal WebApplicationInformation ()
+                {
+                }
                 
                 public string ApplicationDomain {
                         get {
