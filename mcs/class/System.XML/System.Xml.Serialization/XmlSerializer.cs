@@ -142,7 +142,7 @@ namespace System.Xml.Serialization {
 		}
 
 		[MonoTODO]
-		protected virtual XmlSerializationReader CreateWriter ()
+		protected virtual XmlSerializationWriter CreateWriter ()
 		{
 			throw new NotImplementedException ();
 		}
