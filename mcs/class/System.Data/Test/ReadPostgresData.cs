@@ -18,6 +18,51 @@ using System.Diagnostics;
 
 namespace LearnToCreateSqlDataReader
 {
+	sealed public class PostgresHelper {
+
+		public static object OidTypeToSystem (int oid, string value) {
+			object obj = null;
+
+			switch(oid) {
+			case 1023: // varchar
+				Console.WriteLine("oid 1023 varchar ==> String found");
+				obj = (object) String.Copy(value); // String
+				break;
+			case 25: // text
+				Console.WriteLine("oid 25 text ==> String found");
+				obj = (object) String.Copy(value); // String
+				break;
+			case 18: // char
+				Console.WriteLine("oid 18 char ==> String found");
+				obj = (object) String.Copy(value); // String
+				break;
+			case 16: // bool
+				Console.WriteLine("oid 16 bool ==> Boolean found");
+				obj = (object) Boolean.Parse(value);
+				break;
+			case 21: // int2
+				Console.WriteLine("oid 21 int2 ==> Int16 found");
+				obj = (object) Int16.Parse(value);
+				break;
+			case 23: // int4
+				Console.WriteLine("oid 23 int4 ==> Int32 found");
+				obj = (object) Int32.Parse(value);
+				break;
+			case 20: // int8
+				Console.WriteLine("oid 20 int8 ==> Int64 found");
+				obj = (object) Int64.Parse(value);
+				break;
+			default:
+				Console.WriteLine("OidTypeToSystem Not Done Yet: oid: " +
+					oid + " Value: " + value);
+				break;
+
+			}
+
+			return obj;
+		}
+	}
+
 	sealed public class PostgresLibrary {
 
 		public enum ConnStatusType {
@@ -234,10 +279,15 @@ namespace LearnToCreateSqlDataReader
 						oid = PostgresLibrary.
 							PQftype(pgResult, fieldIndex);
 
+						Console.WriteLine("Data Type oid: " + oid);
+
 						int definedSize;
 						// get defined size of column
 						definedSize = PostgresLibrary.
 							PQfsize(pgResult, fieldIndex);
+
+						Console.WriteLine("definedSize: " +
+							definedSize);
 					}
 
 					// for each row and column, get the data value
@@ -257,8 +307,9 @@ namespace LearnToCreateSqlDataReader
 										row, col);
 
 							Console.WriteLine("Row: " + row +
-									" Col: " + col +
-									" " + value);
+									" Col: " + col);
+							Console.WriteLine("Value: " +
+									value);
 
 							int columnIsNull;
 							// is column NULL?
@@ -266,10 +317,18 @@ namespace LearnToCreateSqlDataReader
 								PQgetisnull(pgResult,
 									row, col);
 
+							Console.WriteLine("Data is " + 
+								(columnIsNull == 0 ? "NOT NULL" : "NULL"));
+
+
 							int actualLength;
+							// get Actual Length
 							actualLength = PostgresLibrary.
 								PQgetlength(pgResult,
 									row, col);
+
+							Console.WriteLine("Actual Length: " +
+								actualLength);
 						}
 					}
 
@@ -277,7 +336,144 @@ namespace LearnToCreateSqlDataReader
 					PostgresLibrary.PQclear (pgResult);
 				}
 				else {
-					// display connection error				
+					// display execution error				
+					errorMessage = PostgresLibrary.
+						PQresStatus(execStatus);
+
+					errorMessage += " " + PostgresLibrary.
+						PQresultErrorMessage(pgResult);
+
+					Console.WriteLine(errorMessage);
+				}
+
+				// close database conneciton
+				PostgresLibrary.PQfinish(pgConn);
+
+			}
+			else {
+				errorMessage = PostgresLibrary.
+					PQerrorMessage (pgConn);
+				errorMessage += ": Could not connect to database.";
+				Console.WriteLine(errorMessage);
+			}	
+			
+		}
+
+		public static object ExecuteScalar(string sql) {
+			object obj = null; // return
+
+			int nRow;
+			int nCol;
+
+			String errorMessage;
+
+			IntPtr pgConn;
+			String sConnInfo;
+			PostgresLibrary.ConnStatusType connStatus;
+
+			String sQuery;
+			IntPtr pgResult;
+
+			sConnInfo = "host=localhost dbname=test user=danmorg password=viewsonic";
+			
+			sQuery = sql;
+		
+			pgConn = PostgresLibrary.PQconnectdb (sConnInfo);
+
+			connStatus = PostgresLibrary.PQstatus (pgConn);
+			if(connStatus == 
+				PostgresLibrary.
+				ConnStatusType.CONNECTION_OK) {
+
+				Console.WriteLine("CONNECTION_OK");
+
+				pgResult = PostgresLibrary.PQexec(pgConn, sQuery);
+
+				PostgresLibrary.ExecStatusType execStatus;
+
+				execStatus = PostgresLibrary.
+					PQresultStatus (pgResult);
+
+				if(execStatus == 
+					PostgresLibrary.
+					ExecStatusType.PGRES_TUPLES_OK) {
+
+					Console.WriteLine("PGRES_TUPLES_OK");
+					
+					int nRows = PostgresLibrary.
+						PQntuples(pgResult);
+					Console.WriteLine("Rows: " + nRows);
+
+					int nFields = PostgresLibrary.
+						PQnfields(pgResult);
+					Console.WriteLine("Columns: " + nFields);
+					if(nRows > 0 && nFields > 0) {
+						nRow = 0;
+						nCol = 0;
+
+						// get column name
+						String fieldName;
+						fieldName = PostgresLibrary.
+							PQfname(pgResult, nCol);
+
+						Console.WriteLine("Field " + 
+							nCol + ": " +
+							fieldName);
+
+						int oid;
+						
+						// get PostgreSQL data type (OID)
+						oid = PostgresLibrary.
+							PQftype(pgResult, nCol);
+
+						Console.WriteLine("Data Type oid: " + oid);
+
+						int definedSize;
+						// get defined size of column
+						definedSize = PostgresLibrary.
+							PQfsize(pgResult, nCol);
+
+						Console.WriteLine("DefinedSize: " + 
+							definedSize);
+
+						String value;
+						// get data value
+						value = PostgresLibrary.
+							PQgetvalue(
+							pgResult,
+							nRow, nCol);
+                                                
+						Console.WriteLine("Row: " + nRow +
+							" Col: " + nCol);
+						Console.WriteLine("Value: " + value);
+
+						int columnIsNull;
+						// is column NULL?
+						columnIsNull = PostgresLibrary.
+							PQgetisnull(pgResult,
+							nRow, nCol);
+
+						Console.WriteLine("Data is " + 
+							(columnIsNull == 0 ? "NOT NULL" : "NULL"));
+
+						int actualLength;
+						// get Actual Length
+						actualLength = PostgresLibrary.
+							PQgetlength(pgResult,
+							nRow, nCol);
+
+						Console.WriteLine("Actual Length: " +
+							actualLength);
+						
+						obj = PostgresHelper.
+							OidTypeToSystem (oid, value);
+					}
+
+					// close result set
+					PostgresLibrary.PQclear (pgResult);
+				}
+				else {
+					// display execution error				
 					errorMessage = PostgresLibrary.
 						PQresStatus(execStatus);
 
@@ -297,7 +493,29 @@ namespace LearnToCreateSqlDataReader
 				errorMessage += ": Could not connect to database.";
 				Console.WriteLine(errorMessage);
 			}
-		
+			
+			return obj;
+		}
+
+		static void TestExecuteScalar() {
+			String selectStatement;
+
+			try {
+				selectStatement = 
+					"select count(*) " +
+					"from sometable";
+				Int64 myCount = (Int64) ExecuteScalar(selectStatement);
+				Console.WriteLine("Count: " + myCount);
+
+				selectStatement = 
+					"select max(tdesc) " +
+					"from sometable";			
+				string myMax = (string) ExecuteScalar(selectStatement);
+				Console.WriteLine("Max: " + myMax);
+			}
+			catch(Exception e) {
+				Console.WriteLine(e);
+			}                        
 			
 		}
 
@@ -305,6 +523,8 @@ namespace LearnToCreateSqlDataReader
 		static void Main(string[] args)
 		{
 			Test();
+
+			TestExecuteScalar();
 		}
 	}
 }

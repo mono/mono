@@ -95,7 +95,6 @@ namespace System.Data.SqlClient
 			return new SqlParameter ();
 		}
 
-		[MonoTODO]
 		public int ExecuteNonQuery ()
 		{	
 			IntPtr pgResult; // PGresult
@@ -125,13 +124,12 @@ namespace System.Data.SqlClient
 			{
 				rowsAffectedString = PostgresLibrary.
 					PQcmdTuples (pgResult);
-#if DEBUG_SqlCommand
-				Console.WriteLine("rowsAffectedString: " + 
-						rowsAffectedString);
-#endif // DEBUG_SqlCommand
+
 				if(rowsAffectedString != null)
 					if(rowsAffectedString.Equals("") == false)
 						rowsAffected = int.Parse(rowsAffectedString);
+
+				PostgresLibrary.PQclear (pgResult);
 			}
 			else
 			{
@@ -147,19 +145,7 @@ namespace System.Data.SqlClient
 						  errorMessage, 0, "",
 						  conn.DataSource, "SqlCommand", 0);
 			}
-#if DEBUG_SqlCommand			
-			String cmdStatus;
-			cmdStatus = PostgresLibrary.
-				PQcmdStatus(pgResult);
-
-			Console.WriteLine("*** Command Status: " +
-				cmdStatus);
-#endif // DEBUG_SqlCommand
-			PostgresLibrary.PQclear (pgResult);
 			
-			// FIXME: get number of rows
-			// affected for INSERT, UPDATE, or DELETE
-			// any other, return -1 (such as, CREATE TABLE)
 			return rowsAffected;
 		}
 		
@@ -191,7 +177,98 @@ namespace System.Data.SqlClient
 		[MonoTODO]
 		public object ExecuteScalar ()
 		{
-			throw new NotImplementedException ();
+			IntPtr pgResult; // PGresult
+			ExecStatusType execStatus;	
+			object obj = null; // return
+			int nRow = 0; // first row
+			int nCol = 0; // first column
+			String value;
+			int nRows;
+			int nFields;
+
+			if(conn.State != ConnectionState.Open)
+				throw new InvalidOperationException(
+					"ConnnectionState is not Open");
+
+			// FIXME: PQexec blocks 
+			// while PQsendQuery is non-blocking
+			// which is better to use?
+			// int PQsendQuery(PGconn *conn,
+			//        const char *query);
+
+			// execute SQL command
+			// uses internal property to get the PGConn IntPtr
+			pgResult = PostgresLibrary.
+				PQexec (conn.PostgresConnection, sql);
+
+			execStatus = PostgresLibrary.
+				PQresultStatus (pgResult);
+			
+			if(execStatus == ExecStatusType.PGRES_TUPLES_OK) {
+				nRows = PostgresLibrary.
+					PQntuples(pgResult);
+
+				nFields = PostgresLibrary.
+					PQnfields(pgResult);
+
+				if(nRows > 0 && nFields > 0) {
+
+					// get column name
+					//String fieldName;
+					//fieldName = PostgresLibrary.
+					//	PQfname(pgResult, nCol);
+
+					int oid;
+					// get PostgreSQL data type (OID)
+					oid = PostgresLibrary.
+						PQftype(pgResult, nCol);
+
+					int definedSize;
+					// get defined size of column
+					definedSize = PostgresLibrary.
+						PQfsize(pgResult, nCol);
+
+					// get data value
+					value = PostgresLibrary.
+						PQgetvalue(
+						pgResult,
+						nRow, nCol);
+
+					int columnIsNull;
+					// is column NULL?
+					columnIsNull = PostgresLibrary.
+						PQgetisnull(pgResult,
+						nRow, nCol);
+
+					int actualLength;
+					// get Actual Length
+					actualLength = PostgresLibrary.
+						PQgetlength(pgResult,
+						nRow, nCol);
+						
+					obj = PostgresHelper.
+						OidTypeToSystem (oid, value);
+				}
+
+				// close result set
+				PostgresLibrary.PQclear (pgResult);
+
+			}
+			else {
+				String errorMessage;
+				
+				errorMessage = PostgresLibrary.
+					PQresStatus(execStatus);
+
+				errorMessage += " " + PostgresLibrary.
+					PQresultErrorMessage(pgResult);
+				
+				throw new SqlException(0, 0,
+					errorMessage, 0, "",
+					conn.DataSource, "SqlCommand", 0);
+			}
+					
+			return obj;
 		}
 
 		[MonoTODO]

@@ -55,6 +55,41 @@ namespace System.Data.SqlClient
 		PGRES_FATAL_ERROR
 	}
 
+	sealed internal class PostgresHelper {
+
+		public static object OidTypeToSystem (int oid, String value) {
+			object obj = null;
+
+			// FIXME: more types need 
+			//        to be converted 
+			//        from PostgreSQL oid type
+			//        to .NET System.<type>
+
+			switch(oid) {
+			case 1023: // varchar
+			case 25: // text
+			case 18: // char
+				obj = (object) value; // String
+				break;
+			case 16: // bool
+				obj = (object) Boolean.Parse(value);
+				break;
+			case 21: // int2
+				obj = (object) Int16.Parse(value);
+				break;
+			case 23: // int4
+				obj = (object) Int32.Parse(value);
+				break;
+			case 20: // int8
+				obj = (object) Int64.Parse(value);
+				break;
+			}
+
+			return obj;
+		}
+
+	}
+
 	sealed internal class PostgresLibrary
 	{
 		#region PInvoke Functions

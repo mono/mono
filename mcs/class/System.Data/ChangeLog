@@ -1,3 +1,28 @@
+2002-05-02  Daniel Morgan <danmorg@sc.rr.com>
+
+	* System.Data.SqlClient/PostgresLibrary.cs: included new 
+	internal class that will be a helper class in using
+	PostgreSQL.  PostgresLibrary is used for the 
+	pinvoke methods to the PostgreSQL Client
+	native C library libpq while the class PostgresHelper 
+	is used for	wrapper or helper methods.  It currently only
+	has one static method OidTypeToSystem in converting
+	PostgreSQL types to .NET System.<type>s, such as,
+	a PostgreSQL int8 becomes a .NET System.Int64.
+	Only a few types have been added, such as, int2,
+	int4, int8, varchar, text, bool, and char.  Other types
+	will come later.
+	
+	* System.Data.SqlClient/SqlCommand.cs: implemented
+	method ExecuteScalar which allows us to do aggregate
+	functions, such as, count, avg, min, max, and sum.  We
+	also are able to retrieve the result, convert it to the .NET type
+	as an object.  The user of the returned object must explicitly cast.
+	
+	* Test/ReadPostgresData.cs: updated sample
+	to help us learn to retrieve data in System.Data.SqlClient
+	classes
+
 2002-05-01  Daniel Morgan <danmorg@sc.rr.com>
 
 	* System.Data.build: added /nowarn: nnnn arguments 
