@@ -1,3 +1,13 @@
+2003-10-24  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* AsymmetricDecryptionKey.cs: Change to license and line-ends.
+	* PasswordOption.cs: Inversed SendNone and SendHashed because they had
+	the wrong values (corcompare)
+	* Signature.cs: Stub completed.
+	* SignedXml.cs: Added interface IXmlElement and missing virtual to 
+	CheckSignature (corcompare)
+	* XmlSignature.cs: Removed license from header.
+
 2003-10-22  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* KeyIdentifier.cs: Completed implementation.
