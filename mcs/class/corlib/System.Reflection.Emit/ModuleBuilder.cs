@@ -202,7 +202,7 @@ namespace System.Reflection.Emit {
 		}
 
 		private TypeBuilder DefineType (string name, TypeAttributes attr, Type parent, Type[] interfaces, PackingSize packsize, int typesize) {
-			TypeBuilder res = new TypeBuilder (this, name, attr, parent, interfaces, packsize, typesize);
+			TypeBuilder res = new TypeBuilder (this, name, attr, parent, interfaces, packsize, typesize, null);
 			if (types != null) {
 				TypeBuilder[] new_types = new TypeBuilder [types.Length + 1];
 				System.Array.Copy (types, new_types, types.Length);

@@ -61,12 +61,13 @@ namespace System.Reflection.Emit {
 			setup_internal_class (this);
 		}
 
-		internal TypeBuilder (ModuleBuilder mb, string name, TypeAttributes attr, Type parent, Type[] interfaces, PackingSize packing_size, int type_size) {
+		internal TypeBuilder (ModuleBuilder mb, string name, TypeAttributes attr, Type parent, Type[] interfaces, PackingSize packing_size, int type_size, Type nesting_type) {
 			int sep_index;
 			this.parent = parent;
 			this.attrs = attr;
 			this.class_size = type_size;
 			this.packing_size = packing_size;
+			this.nesting_type = nesting_type;
 			sep_index = name.LastIndexOf('.');
 			if (sep_index != -1) {
 				this.tname = name.Substring (sep_index + 1);
@@ -223,8 +224,7 @@ namespace System.Reflection.Emit {
 					if (iface == null)
 						throw new ArgumentNullException ("interfaces");
 
-			TypeBuilder res = new TypeBuilder (pmodule, name, attr, parent, interfaces, packsize, typesize);
-			res.nesting_type = this;
+			TypeBuilder res = new TypeBuilder (pmodule, name, attr, parent, interfaces, packsize, typesize, this);
 			res.fullname = res.GetFullName ();
 			pmodule.RegisterTypeName (res, res.fullname);
 			if (subtypes != null) {

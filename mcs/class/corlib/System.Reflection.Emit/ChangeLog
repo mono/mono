@@ -1,3 +1,9 @@
+
+Tue Apr 15 13:50:41 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* ModuleBuilder.cs, TypeBuilder.cs: set nesting_type before
+	calling setup_internal_class ().
+
 2003-03-27  Zoltan Varga  <vargaz@freemail.hu>
 
 	* AssemblyBuilder.cs: Added 'access' member, which is needed by the
