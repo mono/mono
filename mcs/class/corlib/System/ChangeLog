@@ -1,3 +1,8 @@
+
+Thu Jul 17 15:23:17 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* Guid.cs: faster ToString ().
+
 2003-07-15  Pedro Martínez Juliá  <yoros@wanadoo.es>
 
 	* FloatingPointFormatter.cs: Few changes for get working Rotor

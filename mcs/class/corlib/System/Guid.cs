@@ -9,6 +9,7 @@
 
 using System.Globalization;
 using System.Security.Cryptography;
+using System.Text;
 
 namespace System {
 
@@ -559,47 +560,53 @@ public struct Guid  : IFormattable, IComparable  {
 
 	private string BaseToString(bool h, bool p, bool b)
 	{
-		string res = "";
+		StringBuilder res = new StringBuilder (40);
 		
 		if (p) {
-			res += "(";
-		}
-		else if (b) {
-			res += "{";
+			res.Append ('(');
+		} else if (b) {
+			res.Append ('{');
 		}
 	
-		res += _timeLow.ToString ("x8");
+		res.Append (_timeLow.ToString ("x8"));
 		if (h) {
-			res += "-";
+			res.Append ('-');
 		}
-		res += _timeMid.ToString ("x4");
+		res.Append (_timeMid.ToString ("x4"));
 		if (h) {
-			res += "-";
+			res.Append ('-');
 		}
-		res += _timeHighAndVersion.ToString ("x4");
+		res.Append (_timeHighAndVersion.ToString ("x4"));
 		if (h) {
-			res += "-";
+			res.Append ('-');
 		}
-		res += _clockSeqHiAndReserved.ToString ("x2");
-		res += _clockSeqLow.ToString ("x2");
+		res.Append ((char)('0' + ((_clockSeqHiAndReserved >> 4) & 0xf)));
+		res.Append ((char)('0' + (_clockSeqHiAndReserved & 0xf)));
+		res.Append ((char)('0' + ((_clockSeqLow >> 4) & 0xf)));
+		res.Append ((char)('0' + (_clockSeqLow & 0xf)));
 		if (h) {
-			res += "-";
+			res.Append ('-');
 		}
-		res += _node0.ToString ("x2");
-		res += _node1.ToString ("x2");
-		res += _node2.ToString ("x2");
-		res += _node3.ToString ("x2");
-		res += _node4.ToString ("x2");
-		res += _node5.ToString ("x2");
+		res.Append ((char)('0' + ((_node0 >> 4) & 0xf)));
+		res.Append ((char)('0' + (_node0 & 0xf)));
+		res.Append ((char)('0' + ((_node1 >> 4) & 0xf)));
+		res.Append ((char)('0' + (_node1 & 0xf)));
+		res.Append ((char)('0' + ((_node2 >> 4) & 0xf)));
+		res.Append ((char)('0' + (_node2 & 0xf)));
+		res.Append ((char)('0' + ((_node3 >> 4) & 0xf)));
+		res.Append ((char)('0' + (_node3 & 0xf)));
+		res.Append ((char)('0' + ((_node4 >> 4) & 0xf)));
+		res.Append ((char)('0' + (_node4 & 0xf)));
+		res.Append ((char)('0' + ((_node5 >> 4) & 0xf)));
+		res.Append ((char)('0' + (_node5 & 0xf)));
 
 		if (p) {
-			res += ")";
-		}
-		else if (b) {
-			res += "}";
+			res.Append (')');
+		} else if (b) {
+			res.Append ('}');
 		}
 	
-		return res;
+		return res.ToString ();
 	}
 
 	public override string ToString ()
