@@ -1,3 +1,11 @@
+2003-08-20  Duncan Mak  <duncan@ximian.com>
+
+	* Hashtable.cs (PutImpl): Fix my previous checkin, see details
+	posted on bug #47692.
+
+	I really hope I don't mess up this time, because, if I do again,
+	it will be really embarrassing.
+
 2003-08-17  Duncan Mak  <duncan@ximian.com>
 
 	* Hashtable.cs (PutImpl): Patch from Luca Barbieri <lb@lb.ods.org>.

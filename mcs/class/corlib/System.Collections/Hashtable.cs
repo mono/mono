@@ -598,12 +598,12 @@ namespace System.Collections {
 
 				if (freeIndx == -1
 				    && entry.key == KeyMarker.Removed
-				    && (entry.hashMix & CHAIN_MARKER)== 0)
+				    && (entry.hashMix & CHAIN_MARKER) != 0)
 					freeIndx = indx;
 
 				if (entry.key == null ||
 				    (entry.key == KeyMarker.Removed
-				     && (entry.hashMix & CHAIN_MARKER)!= 0)) {
+				     && (entry.hashMix & CHAIN_MARKER) == 0)) {
 
 					if (freeIndx == -1)
 						freeIndx = indx;
