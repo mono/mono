@@ -1,3 +1,8 @@
+2004-11-29 Sanjay Gupta <gsanjay@novell.com>
+
+	* DataControlField.cs:
+	* DataControlFieldCell.cs: Initial implementation.
+
 2004-11-26 Lluis Sanchez Gual <lluis@novell.com>
 
 	* TreeNodeBindingCollection.cs: Implemented.
