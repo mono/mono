@@ -41,7 +41,23 @@ SOURCES = \
 	MainMenu.cs	\
 	Shortcut.cs	\
 	PictureBoxSizeMode.cs	\
-	ScrollableControl.cs
+	ScrollableControl.cs \
+	StatusBar.cs \
+	StatusBarPanelBorderStyle.cs \
+	StatusBarPanel.cs \
+	StatusBarDrawItemEventArgs.cs \
+	StatusBarPanelClickEventArgs.cs \
+	StatusBarPanelStyle.cs \
+	StatusBarDrawItemEventHandler.cs \
+	StatusBarPanelClickEventHandler.cs \
+	StatusBarPanelAutoSize.cs \
+	StatusBarPanelCollection.cs \
+	DrawItemEventArgs.cs \
+	MouseEventArgs.cs \
+	DrawItemState.cs \
+	MouseButtons.cs \
+	DockStyle.cs \
+	LayoutEventArgs.cs 
 
 all: demo.exe Demo2.exe
 

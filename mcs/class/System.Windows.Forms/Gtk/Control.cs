@@ -5,6 +5,7 @@
 //   Miguel de Icaza (miguel@ximian.com)
 //   Rachel Hestilow (hestilow@ximian.com)
 //   Joel Basson  (jstrike@mweb.co.za)
+//   Philip Van Hoof (me@freax.org)
 // (C) 2002 Ximian, Inc
 //
 
@@ -381,8 +382,37 @@ namespace System.Windows.Forms {
 				rightToLeft = value;
 			}
 		}
+		
+		[MonoTODO]
+		protected virtual void OnLayout(LayoutEventArgs e)
+		{
+			
+		}
 
+		[MonoTODO]
+		protected virtual void OnMouseDown(MouseEventArgs e)
+		{
+		}
 
+		[MonoTODO]
+		protected virtual void OnResize(EventArgs e)
+		{
+		}
 
+		[MonoTODO]
+		protected virtual void OnHandleDestroyed(EventArgs e)
+		{
+		}
+
+		[MonoTODO]
+		public virtual Font Font {
+
+			get { throw new NotImplementedException(); }
+			set { throw new NotImplementedException(); }
+		}
+
+		protected virtual Size DefaultSize {
+			get { return new Size ( 100, 100 ); }
+		}
 	}
 }
