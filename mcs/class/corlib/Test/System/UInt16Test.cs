@@ -81,7 +81,7 @@ public class UInt16Test : Assertion
 		Assert(MyUInt16_1.CompareTo((UInt16)(42)) == 0);
 		Assert(MyUInt16_2.CompareTo(MyUInt16_3) < 0);
 		try {
-			MyUInt16_2.CompareTo(100);
+			MyUInt16_2.CompareTo((object)100);
 			Fail("Should raise a System.ArgumentException");
 		}
 		catch (Exception e) {
@@ -92,8 +92,8 @@ public class UInt16Test : Assertion
 	public void TestEquals()
 	{
 		Assert(MyUInt16_1.Equals(MyUInt16_1));
-		Assert(MyUInt16_1.Equals((UInt16)(42)));
-		Assert(MyUInt16_1.Equals((SByte)(42)) == false);
+		Assert(MyUInt16_1.Equals((object)(UInt16)(42)));
+		Assert(MyUInt16_1.Equals((object)(SByte)(42)) == false);
 		Assert(MyUInt16_1.Equals(MyUInt16_2) == false);
 	}
 	

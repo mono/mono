@@ -120,10 +120,10 @@ public class Int64Test : Assertion
 	{
 		Assert(MyInt64_3.CompareTo(MyInt64_2) > 0);
 		Assert(MyInt64_2.CompareTo(MyInt64_2) == 0);
-		Assert(MyInt64_1.CompareTo((Int64)(-42)) == 0);
+		Assert(MyInt64_1.CompareTo((object)(Int64)(-42)) == 0);
 		Assert(MyInt64_2.CompareTo(MyInt64_3) < 0);
 		try {
-			MyInt64_2.CompareTo((Int16)100);
+			MyInt64_2.CompareTo((object)(Int16)100);
 			Fail("Should raise a System.ArgumentException");
 		}
 		catch (Exception e) {
@@ -134,8 +134,8 @@ public class Int64Test : Assertion
 	public void TestEquals()
 	{
 		Assert(MyInt64_1.Equals(MyInt64_1));
-		Assert(MyInt64_1.Equals((Int64)(-42)));
-		Assert(MyInt64_1.Equals((SByte)(-42)) == false);
+		Assert(MyInt64_1.Equals((object)(Int64)(-42)));
+		Assert(MyInt64_1.Equals((object)(SByte)(-42)) == false);
 		Assert(MyInt64_1.Equals(MyInt64_2) == false);
 	}
 	

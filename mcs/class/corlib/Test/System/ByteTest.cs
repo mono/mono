@@ -98,10 +98,10 @@ public class ByteTest : Assertion
 	{
 		Assert(MyByte3.CompareTo(MyByte2) > 0);
 		Assert(MyByte2.CompareTo(MyByte2) == 0);
-		Assert(MyByte1.CompareTo((Byte)42) == 0);
+		Assert(MyByte1.CompareTo((object)(Byte)42) == 0);
 		Assert(MyByte2.CompareTo(MyByte3) < 0);
 		try {
-			MyByte2.CompareTo(100);
+			MyByte2.CompareTo((object)100);
 			Fail("Should raise a System.ArgumentException");
 		}
 		catch (Exception e) {
@@ -112,8 +112,8 @@ public class ByteTest : Assertion
 	public void TestEquals()
 	{
 		Assert(MyByte1.Equals(MyByte1));
-		Assert(MyByte1.Equals((Byte)42));
-		Assert(MyByte1.Equals((Int16)42) == false);
+		Assert(MyByte1.Equals((object)(Byte)42));
+		Assert(MyByte1.Equals((object)(Int16)42) == false);
 		Assert(MyByte1.Equals(MyByte2) == false);
 	}
 	

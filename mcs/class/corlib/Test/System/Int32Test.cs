@@ -79,10 +79,10 @@ public class Int32Test : Assertion
 	{
 		Assert("MyInt32_3.CompareTo(MyInt32_2) > 0", MyInt32_3.CompareTo(MyInt32_2) > 0);
 		Assert("MyInt32_2.CompareTo(MyInt32_2) == 0", MyInt32_2.CompareTo(MyInt32_2) == 0);
-		Assert("MyInt32_1.CompareTo((Int32)(-42)) == 0", MyInt32_1.CompareTo((Int32)(-42)) == 0);
+		Assert("MyInt32_1.CompareTo((Int32)(-42)) == 0", MyInt32_1.CompareTo((object)(Int32)(-42)) == 0);
 		Assert("MyInt32_2.CompareTo(MyInt32_3) < 0", MyInt32_2.CompareTo(MyInt32_3) < 0);
 		try {
-			MyInt32_2.CompareTo((Int16)100);
+			MyInt32_2.CompareTo((object)(Int16)100);
 			Fail("Should raise a System.ArgumentException");
 		}
 		catch (Exception e) {
@@ -94,7 +94,7 @@ public class Int32Test : Assertion
 	{
 		Assert ("#B01", MyInt32_1.Equals (MyInt32_1));
 		Assert ("#B02", MyInt32_1.Equals ((Int32)(-42)));
-		Assert ("#B03", MyInt32_1.Equals ((SByte)(-42)) == false);
+		Assert ("#B03", MyInt32_1.Equals ((object)(SByte)(-42)) == false);
 		Assert ("#B04", MyInt32_1.Equals (MyInt32_2) == false);
 	}
 	

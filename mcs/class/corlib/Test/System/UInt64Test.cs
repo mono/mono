@@ -85,7 +85,7 @@ public class UInt64Test : Assertion
 		Assert(MyUInt64_1.CompareTo((UInt64)(42)) == 0);
 		Assert(MyUInt64_2.CompareTo(MyUInt64_3) < 0);
 		try {
-			MyUInt64_2.CompareTo((Int16)100);
+			MyUInt64_2.CompareTo((object)(Int16)100);
 			Fail("Should raise a System.ArgumentException");
 		}
 		catch (Exception e) {
@@ -96,8 +96,8 @@ public class UInt64Test : Assertion
 	public void TestEquals()
 	{
 		Assert(MyUInt64_1.Equals(MyUInt64_1));
-		Assert(MyUInt64_1.Equals((UInt64)(42)));
-		Assert(MyUInt64_1.Equals((SByte)(42)) == false);
+		Assert(MyUInt64_1.Equals((object)(UInt64)(42)));
+		Assert(MyUInt64_1.Equals((object)(SByte)(42)) == false);
 		Assert(MyUInt64_1.Equals(MyUInt64_2) == false);
 	}
 	

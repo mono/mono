@@ -101,7 +101,7 @@ public class UInt32Test : Assertion
 			Assert (typeof (FormatException) == e.GetType ());
 		}
 		try {
-			MyUInt32_2.CompareTo((Int16)100);
+			MyUInt32_2.CompareTo((object)(Int16)100);
 			Fail("Should raise a System.ArgumentException");
 		}
 		catch (Exception e) {
@@ -112,8 +112,8 @@ public class UInt32Test : Assertion
 	public void TestEquals()
 	{
 		Assert(MyUInt32_1.Equals(MyUInt32_1));
-		Assert(MyUInt32_1.Equals((UInt32)(42)));
-		Assert(MyUInt32_1.Equals((SByte)(42)) == false);
+		Assert(MyUInt32_1.Equals((object)(UInt32)(42)));
+		Assert(MyUInt32_1.Equals((object)(SByte)(42)) == false);
 		Assert(MyUInt32_1.Equals(MyUInt32_2) == false);
 	}
 	

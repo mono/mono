@@ -69,7 +69,7 @@ public class Int16Test : Assertion
 		Assert(MyInt16_1.CompareTo((Int16)(-42)) == 0);
 		Assert(MyInt16_2.CompareTo(MyInt16_3) < 0);
 		try {
-			MyInt16_2.CompareTo(100);
+			MyInt16_2.CompareTo((object)100);
 			Fail("Should raise a System.ArgumentException");
 		}
 		catch (Exception e) {
@@ -80,8 +80,8 @@ public class Int16Test : Assertion
 	public void TestEquals()
 	{
 		Assert(MyInt16_1.Equals(MyInt16_1));
-		Assert(MyInt16_1.Equals((Int16)(-42)));
-		Assert(MyInt16_1.Equals((SByte)(-42)) == false);
+		Assert(MyInt16_1.Equals((object)(Int16)(-42)));
+		Assert(MyInt16_1.Equals((object)(SByte)(-42)) == false);
 		Assert(MyInt16_1.Equals(MyInt16_2) == false);
 	}
 	
