@@ -19,9 +19,10 @@ namespace Mono.Tools
 	public class Driver
 	{
 
-		private string libdir = InternalLibdir ();
+		private string libdir = InternalLibdir () + Path.DirectorySeparatorChar;
 		private string gac_path = GetGacPath ();
 		private string package_name = String.Empty;
+		string installed_gac;
 		
 		public static int Main (string[] args)
 		{
@@ -48,9 +49,12 @@ namespace Mono.Tools
 				args = stripped;
 			}
 
+			installed_gac = gac_path;
 			if (args.Length >= 2 && (args[args.Length - 2] == "/root" || args[args.Length - 2] == "-root" || args[args.Length - 2] == "--root")) {
 				gac_path = Path.Combine (Path.Combine (args[args.Length - 1], "mono"), "gac");
 				gac_path += Path.DirectorySeparatorChar;
+				libdir = Path.Combine (args[args.Length - 1], "mono");
+				libdir += Path.DirectorySeparatorChar;
 
 				string[] stripped = new string[args.Length - 2];				Array.Copy (args, 0, stripped, 0, args.Length - 2);
 				args = stripped;
@@ -301,6 +305,7 @@ namespace Mono.Tools
 				"_" + GetStringToken (an.GetPublicKeyToken ());
 
 			string fullPath = String.Format ("{0}{3}{1}{3}{2}{3}", gac_path, an.Name, version_token, Path.DirectorySeparatorChar);
+			string linkPath = String.Format ("{0}{3}{1}{3}{2}{3}", installed_gac, an.Name, version_token, Path.DirectorySeparatorChar);
 
 			if (File.Exists (fullPath + an.Name + ".dll") && force == false) {
 				Hashtable assemInfo = GetAssemblyInfo (fullPath + "__AssemblyInfo__");
@@ -324,7 +329,7 @@ namespace Mono.Tools
 						Directory.CreateDirectory (libdir + package_name);
 					} catch {}
 					
-					Mono.Posix.Syscall.symlink (fullPath + an.Name + ".dll", libdir + package_name + Path.DirectorySeparatorChar + Path.GetFileName (args[0]));
+					Mono.Posix.Syscall.symlink (linkPath + an.Name + ".dll", libdir + package_name + Path.DirectorySeparatorChar + Path.GetFileName (args[0]));
 				} else {
 					File.Copy (args[0], libdir + package_name + Path.DirectorySeparatorChar + Path.GetFileName (args[0]));
 				}
