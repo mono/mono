@@ -74,6 +74,8 @@ System.IO/BinaryWriterTest.cs
 System.IO/BufferedStreamTest.cs
 System.IO/DirectoryTest.cs
 System.IO/FileTest.cs
+System.IO/FileInfoTest.cs
+System.IO/DirectoryInfoTest.cs
 System.IO/FileStreamTest.cs
 System.IO/MemoryStreamTest.cs
 System.IO/PathTest.cs
