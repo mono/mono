@@ -35,6 +35,7 @@ namespace Microsoft.JScript {
 	public sealed class Plus : BinaryOp {
 
 		public Plus ()
+			: base (null, null, JSToken.Plus)
 		{
 		}
 

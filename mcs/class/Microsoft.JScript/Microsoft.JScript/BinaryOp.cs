@@ -31,5 +31,12 @@ namespace Microsoft.JScript {
 	public abstract class BinaryOp : Exp {
 		internal AST left, right;
 		internal JSToken op;
+
+		protected BinaryOp (AST left, AST right, JSToken op)
+		{
+			this.left = left;
+			this.right = right;
+			this.op = op;
+		}
 	}
 }

@@ -35,8 +35,8 @@ namespace Microsoft.JScript {
 	public sealed class NumericBinary : BinaryOp {
 
 		public NumericBinary (int operatorTok)
+			: base (null, null, (JSToken) operatorTok)
 		{			
-			op = (JSToken) operatorTok;
 		}
 
 		public object EvaluateNumericBinary (object v1, object v2)

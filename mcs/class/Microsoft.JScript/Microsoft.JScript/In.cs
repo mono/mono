@@ -34,6 +34,11 @@ namespace Microsoft.JScript {
 
 	public sealed class In : BinaryOp {
 
+		internal In ()
+			: base (null, null, (JSToken) 0)
+		{
+		}
+
 		public static bool JScriptIn (object v1, object v2)
 		{
 			return false;

@@ -37,20 +37,13 @@ namespace Microsoft.JScript {
 	public class Equality : BinaryOp {
 
 		internal Equality (AST parent, AST left, AST right, JSToken op)
+			: base (left, right, op)
 		{
-			this.left = left;
-			this.right = right;
-			this.op = op;
-		}
-
-		public Equality (Context context, AST oper1, AST oper2, JSToken operatorTok)
-		{
-			throw new NotImplementedException ();
 		}
 
 		public Equality (int i)
+			: base (null, null, (JSToken) i)
 		{
-			op = (JSToken) i;
 		}
 
 		public bool EvaluateEquality (object v1, object v2)

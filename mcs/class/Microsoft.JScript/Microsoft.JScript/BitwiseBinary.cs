@@ -35,16 +35,9 @@ namespace Microsoft.JScript {
 	public sealed class BitwiseBinary : BinaryOp {
 
 		public BitwiseBinary (int operatorTok)
+			: base (null, null, (JSToken) operatorTok)
 		{
-			op = (JSToken) operatorTok;
-		} 
-
-		public BitwiseBinary (Context context, AST operand1, AST operand2,
-				      JSToken operatorTok)
-		{
-			throw new NotImplementedException ();
 		}
-
 
 		public object EvaluateBitwiseBinary (object v1, object v2)
 		{

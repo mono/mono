@@ -38,16 +38,14 @@ namespace Microsoft.JScript {
 	public class Relational : BinaryOp {
 
 		internal Relational (AST parent, AST left, AST right, JSToken op)
+			: base (left, right, op)
 		{
 			this.parent = parent;
-			this.left = left;
-			this.right = right;
-			this.op = op;
 		}
 		
 		public Relational (int operatorTok)
-		{
-			op = (JSToken) operatorTok;
+			: base (null, null, (JSToken) operatorTok)
+		{		
 		}
 
 		public double EvaluateRelational (object v1, object v2)

@@ -34,6 +34,11 @@ namespace Microsoft.JScript {
 
 	public class StrictEquality : BinaryOp {
 
+		internal StrictEquality ()
+			: base (null, null, JSToken.StrictEqual)
+		{
+		}
+
 		public static bool JScriptStrictEquals (object v1, object v2)
 		{
 			throw new NotImplementedException ();

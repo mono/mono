@@ -1,3 +1,11 @@
+2004-11-07  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
+
+	* BinaryOp.cs: added constructor for instantiating derived classes.
+	* BitwiseBinary.cs, Equality.cs, In.cs, InstanceOf.cs,
+	NumericBinary.cs, Plus.cs, Relational.cs, StrictEquality.cs,
+	expression.cs (classes Binary, Assign): use inherited constructor. 
+	* BitwiseBinary.cs, Equality.cs: deleted public constructor which carried the context.	
+
 2004-10-25  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
 
 	* StringObject.cs: add value field
