@@ -6,12 +6,13 @@
  * Maintainer: gvaish@iitk.ac.in
  * Contact: <my_scripts2001@yahoo.com>, <gvaish@iitk.ac.in>
  * Implementation: yes
- * Status:  ??%
+ * Status:  100%
  *
  * (C) Gaurav Vaish (2002)
  */
 
 using System;
+using System.Collections;
 using System.Web;
 using System.Web.UI;
 
@@ -20,10 +21,156 @@ namespace System.Web.UI.WebControls
 	public sealed class TableCellCollection: IList, ICollection, IEnumerable
 	{
 		private TableRow owner;
-		
-		public TableCellCollection(TableRow owner)
+
+		internal TableCellCollection(TableRow owner)
 		{
+			if(owner == null)
+			{
+				throw new ArgumentNullException();
+			}
 			this.owner = owner;
+		}
+
+		public int Count
+		{
+			get
+			{
+				return owner.Controls.Count;
+			}
+		}
+		
+		public bool IsReadOnly
+		{
+			get
+			{
+				return false;
+			}
+		}
+		
+		public bool IsSynchronized
+		{
+			get
+			{
+				return false;				
+			}
+		}
+		
+		public TableCell this[int index]
+		{
+			get
+			{
+				return (TableCell)owner.Controls[index];
+			}
+		}
+		
+		public object SyncRoot
+		{
+			get
+			{
+				return this;
+			}
+		}
+		
+		public int Add(TableCell cell)
+		{
+			AddAt(-1, cell);
+			return owner.Controls.Count;
+		}
+		
+		public void AddAt(int index, TableCell cell)
+		{
+			owner.Controls.AddAt(index, cell);
+		}
+		
+		public void AddRange(TableCell[] cells)
+		{
+			foreach(TableCell cell in cells)
+			{
+				Add(cell);
+			}
+		}
+		
+		public void Clear()
+		{
+			if(owner.HasControls())
+			{
+				owner.Controls.Clear();
+			}
+		}
+		
+		public void CopyTo(Array array, int index)
+		{
+			foreach(object cell in this)
+			{
+				array.SetValue(cell, index++);
+			}
+		}
+		
+		public int GetCellIndex(TableCell cell)
+		{
+			if(!owner.HasControls())
+			{
+				return -1;
+			}
+			return owner.Controls.IndexOf(cell);
+		}
+		
+		public IEnumerator GetEnumerator()
+		{
+			return owner.Controls.GetEnumerator();
+		}
+		
+		public void Remove(TableCell cell)
+		{
+			owner.Controls.Remove(cell);
+		}
+		
+		public void RemoveAt(int index)
+		{
+			owner.Controls.RemoveAt(index);
+		}
+		
+		private void IList.Add(object o)
+		{
+			Add((TableCell)o);
+		}
+		
+		private bool IList.Contains(object o)
+		{
+			return owner.Controls.Contains((TableCell)o);
+		}
+		
+		private int IList.IndexOf(object o)
+		{
+			return owner.Controls.IndexOf((TableCell)o);
+		}
+		
+		private void IList.Insert(int index, object o)
+		{
+			onwer.Controls.Insert(index, (TableCell)o);
+		}
+		
+		private void IList.Remove(object o)
+		{
+			onwer.Controls.Remove((TableCell)o);
+		}
+		
+		private bool IList.IsFixedSize()
+		{
+			return false;
+		}
+		
+		private object IList.this[int index]
+		{
+			get
+			{
+				return this[index];
+			}
+			set
+			{
+				RemoveAt(index);
+				AddAt(index, (TableCell)value);
+			}
 		}
 	}
 }

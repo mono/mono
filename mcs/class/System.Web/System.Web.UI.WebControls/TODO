@@ -1,10 +1,15 @@
 All Classes, Interfaces, Structures, Delegates and Enumerations
 
 
-<LEGENDS>
+**: Attributes may have to be supplied to the classes. Some of the
+    attributes include DefaultPropertyAttribute, ToolboxItemAttribute,
+    ParseChildrenAttribute (to be added to System.Web.UI) etc. Currently, I
+    have not taken care of these aspects. They are to be handled later on.
+
+<legends>
 *: Completed
 &: Work in progress. See <item-name>.cs file for maintainer's name
-</LEGENDS>
+</legends>
 
 * AdCreatedEventArgs
 * AdRotator
@@ -78,14 +83,14 @@ RequiredFieldValidator
 SelectedDatesCollection
 * ServerValidateEventArgs
 * Style
-Table
-TableCell
-TableCellCollection
-TableCellControlBuilder
+* Table
+* TableCell
+* TableCellCollection
+* TableCellControlBuilder
 TableHeaderCell
 TableItemStyle
-TableRow
-TableRowCollection
+* TableRow
+* TableRowCollection
 TableStyle
 TargetConverter
 TemplateColumn
