@@ -75,13 +75,15 @@ namespace System.Collections {
 				throw new ArgumentException ();
 			}
 			
+			int contents_length = contents.Length;
+			int length_from_head = contents_length - head;
 			// copy the contents of the circular array
 			Array.Copy (contents, head, array, index,
-				    Math.Max (count, capacity - head));
-			if (count > capacity - head)
+				    Math.Min (count, length_from_head));
+			if (count >  length_from_head)
 				Array.Copy (contents, 0, array, 
-					    index + capacity - head,
-					    count - (capacity - head));
+					    index + length_from_head,
+					    count - length_from_head);
 		}
 
 		// from IEnumerable
@@ -155,9 +157,9 @@ namespace System.Collections {
 
 		public virtual void Enqueue (object obj) {
 			modCount++;
-			if (count == capacity) 
+			if (count == contents.Length) 
 				grow ();
-			contents[(head + count) % capacity] = obj;
+			contents[(head + count) % contents.Length] = obj;
 			count++;
 		}
 
@@ -190,7 +192,7 @@ namespace System.Collections {
 
 		private void grow () {
 			int newCapacity = (int) Math.Ceiling
-				(capacity * growFactor);
+				(contents.Length * growFactor);
 			object[] newContents = new object[newCapacity];
 			CopyTo (newContents, 0);
 			contents = newContents;
@@ -311,7 +313,7 @@ namespace System.Collections {
 					    || current < 0
 					    || current >= queue.count)
 						throw new InvalidOperationException ();
-					return queue.contents[(queue.head + current) % queue.capacity];
+					return queue.contents[(queue.head + current) % queue.contents.Length];
 				}
 			}
 
@@ -320,7 +322,7 @@ namespace System.Collections {
 					throw new InvalidOperationException ();
 				}
 
-				if (current >= queue.count) {
+				if (current >= queue.count - 1) {
 					return false;
 				} else {
 					current++;

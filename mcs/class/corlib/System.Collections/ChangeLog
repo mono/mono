@@ -1,3 +1,9 @@
+2002-06-25   Nick Drochak  <ndrochak@gol.com>
+
+	* Queue.cs (CopyTo): Fix logic for copying the circular array.
+	(Enqueue): Use actual length of array to determine when to grow
+	(QueueEnumerator) Fixed Current to use array length, not capacity, and
+	fixed off-by-one errror in MoveNext().
 
 Tue Jun 4 13:08:43 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
