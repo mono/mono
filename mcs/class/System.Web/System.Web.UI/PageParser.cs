@@ -8,6 +8,7 @@
 //
 using System;
 using System.Collections;
+using System.Collections.Specialized;
 using System.Globalization;
 using System.Text;
 using System.Web;
@@ -30,6 +31,7 @@ namespace System.Web.UI
 		string uiculture;
 		string errorPage;
 		bool validateRequest;
+		string clientTarget;
 		Type baseType = typeof (Page);
 
 		public PageParser ()
@@ -191,10 +193,21 @@ namespace System.Web.UI
 			
 			errorPage = GetString (atts, "ErrorPage", null);
 			validateRequest = GetBool (atts, "ValidateRequest", PagesConfig.ValidateRequest);
+			clientTarget = GetString (atts, "ClientTarget", null);
+			if (clientTarget != null) {
+				NameValueCollection coll;
+				coll = (NameValueCollection) Context.GetConfig ("system.web/clientTarget");
+				if (coll == null || coll [clientTarget] == null) {
+					ThrowParseException (String.Format (
+							"ClientTarget '{0}' is an invalid alias. See the " +
+							"documentation for <clientTarget> config. section.",
+							clientTarget));
+				}
+				clientTarget = (string) coll [clientTarget];
+			}
 
 			// Ignored by now
 			GetString (atts, "Buffer", null);
-			GetString (atts, "ClientTarget", null);
 			GetString (atts, "EnableViewStateMac", null);
 			GetString (atts, "SmartNavigation", null);
 
@@ -275,6 +288,10 @@ namespace System.Web.UI
 
 		internal bool ValidateRequest {
 			get { return validateRequest; }
+		}
+
+		internal string ClientTarget {
+			get { return clientTarget; }
 		}
 	}
 }

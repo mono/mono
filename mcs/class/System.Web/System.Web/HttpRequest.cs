@@ -66,6 +66,7 @@ namespace System.Web {
 		private bool rewritten;
 		Stream userFilter;
 		HttpRequestStream requestFilter;
+		string clientTarget;
 #if NET_1_1
 		bool validateCookies;
 		bool validateForm;
@@ -1196,6 +1197,16 @@ namespace System.Web {
 			headers.MakeReadWrite ();
 			headers [name] = value;
 			headers.MakeReadOnly ();
+		}
+
+		internal string ClientTarget {
+			get { return clientTarget; }
+			set {
+				if (value != clientTarget) {
+					clientTarget = value;
+					_browser = null;
+				}
+			}
 		}
 
 #if NET_1_1

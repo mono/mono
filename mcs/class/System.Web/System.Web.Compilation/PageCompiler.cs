@@ -28,6 +28,21 @@ namespace System.Web.Compilation
 			this.pageParser = pageParser;
 		}
 
+		protected override void CreateConstructor (CodeStatementCollection localVars,
+							CodeStatementCollection trueStmt)
+		{
+			if (pageParser.ClientTarget != null) {
+				CodeExpression prop;
+				prop = new CodePropertyReferenceExpression (thisRef, "ClientTarget");
+				CodeExpression ct = new CodePrimitiveExpression (pageParser.ClientTarget);
+				if (localVars == null)
+					localVars = new CodeStatementCollection ();
+				localVars.Add (new CodeAssignStatement (prop, ct));
+			}
+
+			base.CreateConstructor (localVars, trueStmt);
+		}
+		
 		protected override void AddInterfaces () 
 		{
 			base.AddInterfaces ();

@@ -5,7 +5,7 @@
 //	Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
 // (C) 2002 Ximian, Inc (http://www.ximian.com)
-// (C) 2003 Novell, Inc (http://www.novell.com)
+// (C) 2003,2004 Novell, Inc (http://www.novell.com)
 //
 
 namespace System.Web.Configuration
@@ -26,7 +26,10 @@ namespace System.Web.Configuration
 
 		public static HttpCapabilitiesBase GetConfigCapabilities (string configKey, HttpRequest request)
 		{
-			string ua = request.UserAgent;
+			string ua = request.ClientTarget;
+			if (ua == null)
+				ua = request.UserAgent;
+
 			HttpBrowserCapabilities bcap = new HttpBrowserCapabilities ();
 			bcap.capabilities = CapabilitiesLoader.GetCapabilities (ua);
 			bcap.Init ();

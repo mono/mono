@@ -61,6 +61,7 @@ public class Page : TemplateControl, IHttpHandler
 	bool handleViewState;
 	string viewStateUserKey;
 	NameValueCollection _requestValueCollection;
+	string clientTarget;
 
 	[EditorBrowsable (EditorBrowsableState.Never)]
 	protected const string postEventArgumentID = "__EVENTARGUMENT";
@@ -103,14 +104,17 @@ public class Page : TemplateControl, IHttpHandler
 		get { return _context.Cache; }
 	}
 
-	[MonoTODO]
 	[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 	[Browsable (false), DefaultValue ("")]
 	[WebSysDescription ("Value do override the automatic browser detection and force the page to use the specified browser.")]
 	public string ClientTarget
 	{
-		get { throw new NotImplementedException (); }
-		set { throw new NotImplementedException (); }
+		get { return (clientTarget == null) ? "" : clientTarget; }
+		set {
+			clientTarget = value;
+			if (value == "")
+				clientTarget = null;
+		}
 	}
 
 	[EditorBrowsable (EditorBrowsableState.Never)]
@@ -669,6 +673,9 @@ public class Page : TemplateControl, IHttpHandler
 	public void ProcessRequest (HttpContext context)
 	{
 		_context = context;
+		if (clientTarget != null)
+			Request.ClientTarget = clientTarget;
+
 		WireupAutomaticEvents ();
 		//-- Control execution lifecycle in the docs
 

@@ -1,3 +1,8 @@
+2004-06-04  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* PageCompiler.cs: override CreateConstructor to add assignment for
+	ClientTarget.
+	
 2004-06-03  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* TemplateControlCompiler.cs: use CodeDelegateCreateExpression instead

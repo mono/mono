@@ -1,3 +1,7 @@
+2004-06-04  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpCapabilitiesBase.cs: ClientTarget takes precedence over UserAgent.
+
 2004-06-02  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* WebConfigurationSettings.cs: when the virtual path is not /, don't
