@@ -1,3 +1,7 @@
+2004-04-28 Sanjay Gupta <gsanjay@novell.com>
+	
+	Modified files from dos2unix format.
+
 2004-04-27 Ravindra <rkumar@novell.com>
 
 	* ImageAttributes.cs: Implemented SetWrapMode(WrapMode) method.
