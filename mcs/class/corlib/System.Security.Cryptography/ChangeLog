@@ -1,10 +1,21 @@
+2003-06-11  Sebastien Pouliot <spouliot@motus.com>
+
+	* DSACryptoServiceProvider.cs: Refactored from orginal by splitting 
+	much core functionalities into DSAManaged. 
+	* RSACryptoServiceProvider.cs: Refactored from orginal by splitting 
+	much core functionalities into RSAManaged. 
+	* RSAPKCS1SignatureDeformatter.cs: Updated to use the new PKCS#1 API.
+	Now works with any hash algorithm (which OID is defined in machine.config)
+	* RSAPKCS1SignatureFormatter.cs: Updated to use the new PKCS#1 API.
+	Now works with any hash algorithm (which OID is defined in machine.config)
+
 2003-06-09  Sebastien Pouliot <spouliot@motus.com>
 
 	* CryptoConfig.cs: Now support OID in machine.config.
 	* DSACryptoServiceProvider.cs: Changed USE_VERSION_1_0 for NET_1_0.
 	* KeySizes.cs: Changed USE_VERSION_1_0 for NET_1_0.
 	* MD5CryptoServiceProvider.cs: Changed USE_VERSION_1_0 for NET_1_0.
-	* RNGCryptoServiceProvider.cs: Changed USE_VERSION_
+	* RNGCryptoServiceProvider.cs: Changed USE_VERSION_1_0 for NET_1_0.
 
 2003-05-12  Sebastien Pouliot  <spouliot@videotron.ca>
 

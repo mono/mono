@@ -1,15 +1,12 @@
 //
 // RSACryptoServiceProvider.cs: Handles an RSA implementation.
 //
-// Author:
+// Authors:
 //	Sebastien Pouliot (spouliot@motus.com)
 //	Ben Maurer (bmaurer@users.sf.net)
 //
-// (C) 2002 Motus Technologies Inc. (http://www.motus.com)
+// (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
 // Portions (C) 2003 Ben Maurer
-//
-// Key generation translated from Bouncy Castle JCE (http://www.bouncycastle.org/)
-// See bouncycastle.txt for license.
 //
 
 using System;
@@ -25,18 +22,10 @@ namespace System.Security.Cryptography {
 		private CspParameters cspParams;
 	
 		private bool privateKeyExportable = true; 
-		private bool keypairGenerated = false;
 		private bool persistKey = false;
 		private bool m_disposed = false;
-	
-		private BigInteger d;
-		private BigInteger p;
-		private BigInteger q;
-		private BigInteger dp;
-		private BigInteger dq;
-		private BigInteger qInv;
-		private BigInteger n;		// modulus
-		private BigInteger e;
+
+		private RSAManaged rsa;
 	
 		public RSACryptoServiceProvider ()
 		{
@@ -88,62 +77,14 @@ namespace System.Security.Cryptography {
 			// Microsoft RSA CSP can do between 384 and 16384 bits keypair
 			LegalKeySizesValue = new KeySizes [1];
 			LegalKeySizesValue [0] = new KeySizes (384, 16384, 8);
-			KeySize = dwKeySize;
+			base.KeySize = dwKeySize;
+
+			rsa = new RSAManaged (KeySize);
 		}
 	
-		private void GenerateKeyPair () 
+		~RSACryptoServiceProvider () 
 		{
-			// p and q values should have a length of half the strength in bits
-			int pbitlength = ((KeySize + 1) >> 1);
-			int qbitlength = (KeySize - pbitlength);
-			const uint uint_e = 17;
-			e = uint_e; // fixed
-	
-			// generate p, prime and (p-1) relatively prime to e
-			for (;;) {
-				p = BigInteger.genPseudoPrime (pbitlength);
-				if (p % uint_e != 1)
-					break;
-			}
-			// generate a modulus of the required length
-			for (;;) {
-				// generate q, prime and (q-1) relatively prime to e,
-				// and not equal to p
-				for (;;) {
-					q = BigInteger.genPseudoPrime (qbitlength);
-					if ((q % uint_e != 1) && (p != q))
-						break;
-				}
-	
-				// calculate the modulus
-				n = p * q;
-				if (n.bitCount () == KeySize)
-					break;
-	
-				// if we get here our primes aren't big enough, make the largest
-				// of the two p and try again
-				if (p < q)
-					p = q;
-			}
-	
-			BigInteger pSub1 = (p - 1);
-			BigInteger qSub1 = (q - 1);
-			BigInteger phi = pSub1 * qSub1;
-	
-			// calculate the private exponent
-			d = e.modInverse (phi);
-	
-			// calculate the CRT factors
-			dp = d % pSub1;
-			dq = d % qSub1;
-			qInv = q.modInverse (p);
-	
-			keypairGenerated = true;
-		}
-	
-		// Zeroize private key
-		~RSACryptoServiceProvider() 
-		{
+			// Zeroize private key
 			Dispose (false);
 		}
 	
@@ -152,7 +93,12 @@ namespace System.Security.Cryptography {
 		}
 	
 		public override int KeySize {
-			get { return n.bitCount(); }
+			get { 
+				if (rsa == null)
+				      return KeySizeValue; 
+				else
+				      return rsa.KeySize;
+			}
 		}
 	
 		[MonoTODO("Persistance")]
@@ -168,13 +114,13 @@ namespace System.Security.Cryptography {
 		public byte[] Decrypt (byte[] rgb, bool fOAEP) 
 		{
 			// choose between OAEP or PKCS#1 v.1.5 padding
-			if (fOAEP) {
-				SHA1 sha1 = SHA1.Create ();
-				return PKCS1.Decrypt_OAEP (this, sha1, null);
-			}
-			else {
-				return PKCS1.Decrypt_v15 (this, rgb);
-			}
+			AsymmetricKeyExchangeDeformatter def = null;
+			if (fOAEP)
+				def = new RSAOAEPKeyExchangeDeformatter (rsa);
+			else
+				def = new RSAPKCS1KeyExchangeDeformatter (rsa);
+
+			return def.DecryptKeyExchange (rgb);
 		}
 	
 		// NOTE: Unlike MS we need this method
@@ -184,27 +130,19 @@ namespace System.Security.Cryptography {
 		// Using this method to decrypt data IS dangerous (and very slow).
 		public override byte[] DecryptValue (byte[] rgb) 
 		{
-			// it would be stupid to decrypt data with a newly
-			// generated keypair - so we return false
-			if (!keypairGenerated)
-				return null;
-	
-			BigInteger input = new BigInteger (rgb);
-			BigInteger output = input.modPow (d, n);
-			return output.getBytes ();
+			return rsa.DecryptValue (rgb);
 		}
 	
 		public byte[] Encrypt (byte[] rgb, bool fOAEP) 
 		{
-			RandomNumberGenerator rng = RandomNumberGenerator.Create ();
 			// choose between OAEP or PKCS#1 v.1.5 padding
-			if (fOAEP) {
-				SHA1 sha1 = SHA1.Create ();
-				return PKCS1.Encrypt_OAEP (this, sha1, rng, rgb);
-			}
-			else {
-				return PKCS1.Encrypt_v15 (this, rng, rgb) ;
-			}
+			AsymmetricKeyExchangeFormatter fmt = null;
+			if (fOAEP)
+				fmt = new RSAOAEPKeyExchangeFormatter (rsa);
+			else
+				fmt = new RSAPKCS1KeyExchangeFormatter (rsa);
+
+			return fmt.CreateKeyExchange (rgb);
 		}
 	
 		// NOTE: Unlike MS we need this method
@@ -214,68 +152,27 @@ namespace System.Security.Cryptography {
 		// Using this method to encrypt data IS dangerous (and very slow).
 		public override byte[] EncryptValue (byte[] rgb) 
 		{
-			if (!keypairGenerated)
-				GenerateKeyPair ();
-	
-			// TODO: With CRT
-			// without CRT
-			BigInteger input = new BigInteger (rgb);
-			BigInteger output = input.modPow (e, n);
-			return output.getBytes ();
+			return rsa.EncryptValue (rgb);
 		}
 	
 		public override RSAParameters ExportParameters (bool includePrivateParameters) 
 		{
 			if ((includePrivateParameters) && (!privateKeyExportable))
 				throw new CryptographicException ("cannot export private key");
-			if (!keypairGenerated)
-				GenerateKeyPair ();
-	
-			RSAParameters param = new RSAParameters();
-			param.Exponent = e.getBytes ();
-			param.Modulus = n.getBytes ();
-			if (includePrivateParameters) {
-				param.D = d.getBytes ();
-				param.DP = dp.getBytes ();
-				param.DQ = dq.getBytes ();
-				param.InverseQ = qInv.getBytes ();
-				param.P = p.getBytes ();
-				param.Q = q.getBytes ();
-			}
-			return param;
+
+			return rsa.ExportParameters (includePrivateParameters);
 		}
 	
 		public override void ImportParameters (RSAParameters parameters) 
 		{
-			// if missing "mandatory" parameters
-			if ((parameters.Exponent == null) || (parameters.Modulus == null))
-				throw new CryptographicException ();
-	
-			e = new BigInteger (parameters.Exponent);
-			n = new BigInteger (parameters.Modulus);
-			// only if the private key is present
-			if (parameters.D != null)
-				d = new BigInteger (parameters.D);
-			if (parameters.DP != null)
-				dp = new BigInteger (parameters.DP);
-			if (parameters.DQ != null)
-				dq = new BigInteger (parameters.DQ);
-			if (parameters.InverseQ != null)
-				qInv = new BigInteger (parameters.InverseQ);
-			if (parameters.P != null)
-				p = new BigInteger (parameters.P);
-			if (parameters.Q != null)
-				q = new BigInteger (parameters.Q);
-			
-			// we now have a keypair
-			keypairGenerated = true;
+			rsa.ImportParameters (parameters);
 		}
 	
 		private HashAlgorithm GetHash (object halg) 
 		{
 			if (halg == null)
-				throw new ArgumentNullException ();
-	
+				throw new ArgumentNullException ("halg");
+
 			HashAlgorithm hash = null;
 			if (halg is String)
 				hash = HashAlgorithm.Create ((String)halg);
@@ -284,94 +181,89 @@ namespace System.Security.Cryptography {
 			else if (halg is Type)
 				hash = (HashAlgorithm) Activator.CreateInstance ((Type)halg);
 			else
-				throw new ArgumentException ();
-	
+				throw new ArgumentException ("halg");
+
 			return hash;
 		}
 	
+		// NOTE: this method can work with ANY configured (OID in machine.config) 
+		// HashAlgorithm descendant
 		public byte[] SignData (byte[] buffer, object halg) 
 		{
 			return SignData (buffer, 0, buffer.Length, halg);
 		}
 	
+		// NOTE: this method can work with ANY configured (OID in machine.config) 
+		// HashAlgorithm descendant
 		public byte[] SignData (Stream inputStream, object halg) 
 		{
 			HashAlgorithm hash = GetHash (halg);
 			byte[] toBeSigned = hash.ComputeHash (inputStream);
-	
-			string oid = CryptoConfig.MapNameToOID (hash.ToString ());
-			return SignHash (toBeSigned, oid);
+			return PKCS1.Sign_v15 (this, hash, toBeSigned);
 		}
 	
+		// NOTE: this method can work with ANY configured (OID in machine.config) 
+		// HashAlgorithm descendant
 		public byte[] SignData (byte[] buffer, int offset, int count, object halg) 
 		{
 			HashAlgorithm hash = GetHash (halg);
 			byte[] toBeSigned = hash.ComputeHash (buffer, offset, count);
-			string oid = CryptoConfig.MapNameToOID (hash.ToString ());
-			return SignHash (toBeSigned, oid);
+			return PKCS1.Sign_v15 (this, hash, toBeSigned);
 		}
 	
-		private void ValidateHash (string oid, int length) 
+		private string GetHashNameFromOID (string oid) 
 		{
-			if (oid == "1.3.14.3.2.26") {
-				if (length != 20)
-					throw new CryptographicException ("wrong hash size for SHA1");
+			switch (oid) {
+				case "1.3.14.3.2.26":
+					return "SHA1";
+				case "1.2.840.113549.2.5":
+					return "MD5";
+				default:
+					throw new NotSupportedException (oid + " is an unsupported hash algorithm for RSA signing");
 			}
-			else if (oid == "1.2.840.113549.2.5") {
-				if (length != 16)
-					throw new CryptographicException ("wrong hash size for MD5");
-			}
-			else
-				throw new NotSupportedException (oid + " is an unsupported hash algorithm for RSA signing");
 		}
-	
+
+		// LAMESPEC: str is not the hash name but an OID
+		// NOTE: this method is LIMITED to SHA1 and MD5 like the MS framework 1.0 
+		// and 1.1 because there's no mathod to get a hash algorithm from an OID. 
+		// However there's no such limit when using the [De]Formatter class.
 		public byte[] SignHash (byte[] rgbHash, string str) 
 		{
 			if (rgbHash == null)
-				throw new ArgumentNullException ();
+				throw new ArgumentNullException ("rgbHash");
 	
-			if (!keypairGenerated)
-				GenerateKeyPair ();
-	
-			ValidateHash (str, rgbHash.Length);
-	
-			return PKCS1.Sign_v15 (this, str, rgbHash);
+			HashAlgorithm hash = HashAlgorithm.Create (GetHashNameFromOID (str));
+			return PKCS1.Sign_v15 (this, hash, rgbHash);
 		}
-	
+
+		// NOTE: this method can work with ANY configured (OID in machine.config) 
+		// HashAlgorithm descendant
 		public bool VerifyData (byte[] buffer, object halg, byte[] signature) 
 		{
 			HashAlgorithm hash = GetHash (halg);
 			byte[] toBeVerified = hash.ComputeHash (buffer);
-			string oid = CryptoConfig.MapNameToOID (hash.ToString ());
-			return VerifyHash (toBeVerified, oid, signature);
+			return PKCS1.Verify_v15 (this, hash, toBeVerified, signature);
 		}
 	
+		// LAMESPEC: str is not the hash name but an OID
+		// NOTE: this method is LIMITED to SHA1 and MD5 like the MS framework 1.0 
+		// and 1.1 because there's no mathod to get a hash algorithm from an OID. 
+		// However there's no such limit when using the [De]Formatter class.
 		public bool VerifyHash (byte[] rgbHash, string str, byte[] rgbSignature) 
 		{
-			if ((rgbHash == null) || (rgbSignature == null))
-				throw new ArgumentNullException ();
+			if (rgbHash == null) 
+				throw new ArgumentNullException ("rgbHash");
+			if (rgbSignature == null)
+				throw new ArgumentNullException ("rgbSignature");
 	
-			// it would be stupid to verify a signature with a newly
-			// generated keypair - so we return false
-			if (!keypairGenerated)
-				return false;
-	
-			ValidateHash (str, rgbHash.Length);
-	
-			return PKCS1.Verify_v15 (this, str, rgbHash, rgbSignature);
+			HashAlgorithm hash = HashAlgorithm.Create (GetHashNameFromOID (str));
+			return PKCS1.Verify_v15 (this, hash, rgbHash, rgbSignature);
 		}
 	
-		[MonoTODO()]
 		protected override void Dispose (bool disposing) 
 		{
-			if (!m_disposed) {
-				// TODO: always zeroize private key
-				if(disposing) {
-					// TODO: Dispose managed resources
-				}
-	         
-				// TODO: Dispose unmanaged resources
-			}
+			if (rsa != null)
+				rsa.Clear ();
 			// call base class 
 			// no need as they all are abstract before us
 			m_disposed = true;

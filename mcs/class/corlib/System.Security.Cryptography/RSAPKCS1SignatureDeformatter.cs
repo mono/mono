@@ -17,10 +17,7 @@ namespace System.Security.Cryptography {
 		private RSA rsa;
 		private string hashName;
 	
-		public RSAPKCS1SignatureDeformatter () 
-		{
-			rsa = null;
-		}
+		public RSAPKCS1SignatureDeformatter () {}
 	
 		public RSAPKCS1SignatureDeformatter (AsymmetricAlgorithm key) 
 		{
@@ -38,18 +35,21 @@ namespace System.Security.Cryptography {
 		{
 			if (key != null)
 				rsa = (RSA)key;
-			// here null is accepted with an ArgumentNullException!
+			// here null is accepted without an ArgumentNullException!
 		}
 	
 		public override bool VerifySignature (byte[] rgbHash, byte[] rgbSignature) 
 		{
-			if ((rsa == null) || (hashName == null))
-				throw new CryptographicUnexpectedOperationException ();
-			if ((rgbHash == null) || (rgbSignature == null))
-				throw new ArgumentNullException ();
-	
-			string oid = CryptoConfig.MapNameToOID (hashName);
-			return PKCS1.Verify_v15 (rsa, oid, rgbHash, rgbSignature);
+			if (rsa == null)
+				throw new CryptographicUnexpectedOperationException ("missing key");
+			if (hashName == null)
+				throw new CryptographicUnexpectedOperationException ("missing hash algorithm");
+			if (rgbHash == null)
+				throw new ArgumentNullException ("rgbHash");
+			if (rgbSignature == null)
+				throw new ArgumentNullException ("rgbSignature");
+
+			return PKCS1.Verify_v15 (rsa, HashAlgorithm.Create (hashName), rgbHash, rgbSignature);
 		}
 	}
 }
