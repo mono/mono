@@ -121,6 +121,7 @@ Microsoft.Web.Services.Security.X509/X509Certificate.cs
 Microsoft.Web.Services.Security.X509/X509CertificateCollection.cs
 Microsoft.Web.Services.Security.X509/X509CertificateStore.cs
 Microsoft.Web.Services.Xml/IXmlElement.cs
-Microsoft.Web.Services.Xml/OpenElement.cs
 Microsoft.Web.Services.Xml/OpenAttributeElement.cs
+Microsoft.Web.Services.Xml/OpenElement.cs
+Microsoft.Web.Services.Xml/OpenElementElement.cs
 Microsoft.Web.Services.Xml/QualifiedName.cs
