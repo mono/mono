@@ -1,5 +1,9 @@
 2004-05-03  Jackson Harper  <jackson@ximian.com>
 
+	* assembly.c: This line was committed accidently and is unneeded.
+	
+2004-05-03  Jackson Harper  <jackson@ximian.com>
+
 	* icall.c: Add new icall for Assembly::LoadWithPartialName
 	* assembly.c/.h: new function that probes the GAC to load partial
 	assembly names by Paolo Molaro.
