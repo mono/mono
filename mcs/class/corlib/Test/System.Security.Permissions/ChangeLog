@@ -1,3 +1,8 @@
+2003-06-29  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* ReflectionPermissionAttributeTest.cs: New.
+	* ReflectionPermissionTest.cs: New.
+
 2003-06-29  Nick Drochak <ndrochak@gol.com>
 
 	* FileIOPermissionAttributeTest.cs: Don't use windows path name.
