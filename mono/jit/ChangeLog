@@ -1,3 +1,7 @@
+2002-03-19  Dietmar Maurer  <dietmar@ximian.com>
+
+	* delegate.c (async_invoke_thread): initial support for BeginInvoke/EndInvoke
+
 2002-03-18  Dietmar Maurer  <dietmar@ximian.com>
 
 	* x86.brg: impl. lreg: XOR (lreg, lreg)

@@ -1,3 +1,7 @@
+2002-03-19  Dietmar Maurer  <dietmar@ximian.com>
+
+	* threads.c (Sleep): bug fix: 1ms == 1000000ns
+
 2002-03-19  Dan Lewis <dihlewis@yahoo.co.uk>
 
 	* io.h, io.c, events.c, mutexes.c, semaphores.c, sockets.c,
