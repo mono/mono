@@ -838,7 +838,7 @@ namespace Mono.CSharp {
 			this.loc = loc;
 		}
 
-		public override TypeExpr DoResolveAsTypeStep (EmitContext ec)
+		protected override TypeExpr DoResolveAsTypeStep (EmitContext ec)
 		{
 			type = type_parameter.Type;
 
@@ -1182,7 +1182,7 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		public override TypeExpr DoResolveAsTypeStep (EmitContext ec)
+		protected override TypeExpr DoResolveAsTypeStep (EmitContext ec)
 		{
 			if (!ResolveConstructedType (ec))
 				return null;

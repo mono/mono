@@ -1,5 +1,9 @@
 2004-11-18  Martin Baulig  <martin@ximian.com>
 
+	* ecore.cs (TypeExpr.DoResolveAsTypeStep): Make this protected.
+
+2004-11-18  Martin Baulig  <martin@ximian.com>
+
 	* generic.cs (Constraints.Resolve): Take an `EmitContext' instead
 	of a `DeclSpace'.  If one of our constraints is a `ConstructedType',
 	call ResolveConstructedType() on it to resolve it without checking

@@ -8981,7 +8981,7 @@ namespace Mono.CSharp {
 			loc = l;
 		}
 
-		public override TypeExpr DoResolveAsTypeStep (EmitContext ec)
+		protected override TypeExpr DoResolveAsTypeStep (EmitContext ec)
 		{
 			TypeExpr lexpr = left.ResolveAsTypeTerminal (ec);
 			if (lexpr == null)

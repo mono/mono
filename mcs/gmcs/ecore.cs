@@ -2373,7 +2373,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public abstract TypeExpr DoResolveAsTypeStep (EmitContext ec);
+		protected abstract TypeExpr DoResolveAsTypeStep (EmitContext ec);
 
 		public abstract string Name {
 			get;
@@ -2416,7 +2416,7 @@ namespace Mono.CSharp {
 			loc = l;
 		}
 
-		public override TypeExpr DoResolveAsTypeStep (EmitContext ec)
+		protected override TypeExpr DoResolveAsTypeStep (EmitContext ec)
 		{
 			return this;
 		}
@@ -2447,7 +2447,7 @@ namespace Mono.CSharp {
 			this.name = name;
 		}
 
-		public override TypeExpr DoResolveAsTypeStep (EmitContext ec)
+		protected override TypeExpr DoResolveAsTypeStep (EmitContext ec)
 		{
 			if (type == null) {
 				TypeExpr texpr = RootContext.LookupType (
@@ -2505,7 +2505,7 @@ namespace Mono.CSharp {
 			get { return name; }
 		}
 
-		public override TypeExpr DoResolveAsTypeStep (EmitContext ec)
+		protected override TypeExpr DoResolveAsTypeStep (EmitContext ec)
 		{
 			texpr = alias.ResolveAsType (ec);
 			if (texpr == null)
