@@ -1,3 +1,7 @@
+2004-12-28  Jonathan Pryor  <jonpryor@vt.edu>
+
+	* Mono.Posix.dll.sources: Add UnixDriveInfo and UnixPath.
+
 2004-11-22  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile (CLEAN_FILES): Clean up make-map.exe and the duplicated

@@ -33,7 +33,7 @@ using Mono.Unix;
 
 namespace Mono.Unix {
 
-	public class UnixSymbolicLinkInfo : UnixFileSystemInfo
+	public sealed class UnixSymbolicLinkInfo : UnixFileSystemInfo
 	{
 		public UnixSymbolicLinkInfo (string path)
 			: base (path)
@@ -45,17 +45,74 @@ namespace Mono.Unix {
 		{
 		}
 
+		public override string Name {
+			get {return UnixPath.GetFileName (FullPath);}
+		}
+
+		// maximum number of bytes read from the symbolic link
+		public static readonly int ContentsLength = 1024;
+
+		public UnixFileSystemInfo Contents {
+			get {
+				return UnixFileSystemInfo.Create (ContentsPath);
+			}
+		}
+
+		public string ContentsPath {
+			get {
+				return ReadLink ();
+			}
+		}
+
+		public bool HasContents {
+			get {
+				return TryReadLink () != null;
+			}
+		}
+
+		public void CreateSymbolicLinkTo (string path)
+		{
+			int r = Syscall.symlink (path, OriginalPath);
+			UnixMarshal.ThrowExceptionForLastErrorIf (r);
+		}
+
+		public void CreateSymbolicLinkTo (UnixFileSystemInfo path)
+		{
+			int r = Syscall.symlink (path.FullName, OriginalPath);
+			UnixMarshal.ThrowExceptionForLastErrorIf (r);
+		}
+
 		public override void Delete ()
 		{
-			int r = Syscall.unlink (Path);
+			int r = Syscall.unlink (FullPath);
 			UnixMarshal.ThrowExceptionForLastErrorIf (r);
 			base.Refresh ();
 		}
 
 		public override void SetOwner (uint owner, uint group)
 		{
-			int r = Syscall.lchown (Path, owner, group);
+			int r = Syscall.lchown (FullPath, owner, group);
 			UnixMarshal.ThrowExceptionForLastErrorIf (r);
+		}
+
+		// TODO: Should ReadLink be in UnixSymbolicLinkInfo?
+		private string ReadLink ()
+		{
+			string r = TryReadLink ();
+			if (r == null)
+				UnixMarshal.ThrowExceptionForLastError ();
+			return r;
+		}
+
+		private string TryReadLink ()
+		{
+			// Who came up with readlink(2)?  There doesn't seem to be a way to
+			// properly handle it.
+			StringBuilder sb = new StringBuilder (ContentsLength+1);
+			int r = Syscall.readlink (FullPath, sb, (ulong) ContentsLength);
+			if (r == -1)
+				return null;
+			return sb.ToString().Substring (0, r);
 		}
 	}
 }

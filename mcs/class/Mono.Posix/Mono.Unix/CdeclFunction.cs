@@ -46,7 +46,7 @@ namespace Mono.Unix {
 	//
 	// Then call the Invoke method with the appropriate number of arguments:
 	//
-	// 		printf.Invoke (new object[]{"hello, %s\n", "world!"});
+	//    printf.Invoke (new object[]{"hello, %s\n", "world!"});
 	//
 	// In the background a P/Invoke definition for the method with the
 	// requested argument types will be generated and invoked, invoking the
@@ -54,15 +54,19 @@ namespace Mono.Unix {
 	// calls with the same argument list do not generate new code, speeding up
 	// the call sequence.
 	//
-	// Invoking Cdecl functions is not portable across all platforms.  In
-	// particular, AMD64 requires that the caller set EAX to the number of
-	// floating point arguments passed in the SSE registers.  This is only
-	// required for variable argument/stdarg functions; consequently, Mono's JIT
-	// doesn't set EAX properly which can lead to failures.  See:
+	// Invoking Cdecl functions is not guaranteed to be portable across all 
+	// platforms.  For example, AMD64 requires that the caller set EAX to the 
+	// number of floating point arguments passed in the SSE registers.  This 
+	// is only required for variable argument/cdecl functions; consequently, 
+	// the overload technique used by this class wouldn't normally work.  
+	// Mono's AMD64 JIT works around this by always setting EAX on P/Invoke
+	// invocations, allowing CdeclFunction to work properly, but it will not
+	// necessarily always work.  See also: 
 	//
 	//     http://lwn.net/Articles/5201/?format=printable
 	//
-	// Consequently, Cdecl functions should be avoided on most platforms.
+	// Due to potential portability issues, cdecl functions should be avoided 
+	// on most platforms.
 	//
 	// This class is intended to be thread-safe.
 	public sealed class CdeclFunction

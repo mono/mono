@@ -173,7 +173,7 @@ namespace Mono.Unix {
 
 		public static UnixStream Open (string path, FileMode mode)
 		{
-			OpenFlags flags = ToOpenFlags (mode, FileAccess.ReadWrite);
+			OpenFlags flags = UnixConvert.ToOpenFlags (mode, FileAccess.ReadWrite);
 			int fd = Syscall.open (path, flags);
 			if (fd < 0)
 				UnixMarshal.ThrowExceptionForLastError ();
@@ -182,7 +182,7 @@ namespace Mono.Unix {
 
 		public static UnixStream Open (string path, FileMode mode, FileAccess access)
 		{
-			OpenFlags flags = ToOpenFlags (mode, access);
+			OpenFlags flags = UnixConvert.ToOpenFlags (mode, access);
 			int fd = Syscall.open (path, flags);
 			if (fd < 0)
 				UnixMarshal.ThrowExceptionForLastError ();
@@ -191,7 +191,7 @@ namespace Mono.Unix {
 
 		public static UnixStream Open (string path, FileMode mode, FileAccess access, FilePermissions perms)
 		{
-			OpenFlags flags = ToOpenFlags (mode, access);
+			OpenFlags flags = UnixConvert.ToOpenFlags (mode, access);
 			int fd = Syscall.open (path, flags, perms);
 			if (fd < 0)
 				UnixMarshal.ThrowExceptionForLastError ();
@@ -254,54 +254,6 @@ namespace Mono.Unix {
 			uint gid = UnixGroup.GetGroupId (group);
 
 			SetLinkOwner (path, uid, gid);
-		}
-
-		public static OpenFlags ToOpenFlags (FileMode mode, FileAccess access)
-		{
-			OpenFlags flags = 0;
-			switch (mode) {
-			case FileMode.CreateNew:
-				flags = OpenFlags.O_CREAT | OpenFlags.O_EXCL;
-				break;
-			case FileMode.Create:
-				flags = OpenFlags.O_CREAT | OpenFlags.O_TRUNC;
-				break;
-			case FileMode.Open:
-				// do nothing
-				break;
-			case FileMode.OpenOrCreate:
-				flags = OpenFlags.O_CREAT;
-				break;
-			case FileMode.Truncate:
-				flags = OpenFlags.O_TRUNC;
-				break;
-			case FileMode.Append:
-				flags = OpenFlags.O_APPEND;
-				break;
-			default:
-				throw new ArgumentException (Locale.GetText ("Unsupported mode value"), "mode");
-			}
-
-			// Is O_LARGEFILE supported?
-			int _v;
-			if (UnixConvert.TryFromOpenFlags (OpenFlags.O_LARGEFILE, out _v))
-				flags |= OpenFlags.O_LARGEFILE;
-
-			switch (access) {
-			case FileAccess.Read:
-				flags |= OpenFlags.O_RDONLY;
-				break;
-			case FileAccess.Write:
-				flags |= OpenFlags.O_WRONLY;
-				break;
-			case FileAccess.ReadWrite:
-				flags |= OpenFlags.O_RDWR;
-				break;
-			default:
-				throw new ArgumentException (Locale.GetText ("Unsupported access value"), "access");
-			}
-
-			return flags;
 		}
 
 		public static void AdviseNormalAccess (int fd, long offset, long len)

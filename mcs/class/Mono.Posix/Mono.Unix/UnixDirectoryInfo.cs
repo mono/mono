@@ -35,7 +35,7 @@ using Mono.Unix;
 
 namespace Mono.Unix {
 
-	public class UnixDirectoryInfo : UnixFileSystemInfo
+	public sealed class UnixDirectoryInfo : UnixFileSystemInfo
 	{
 		public UnixDirectoryInfo (string path)
 			: base (path)
@@ -47,9 +47,36 @@ namespace Mono.Unix {
 		{
 		}
 
+		public override string Name {
+			get {
+				string r = UnixPath.GetFileName (FullPath);
+				if (r == null || r == "")
+					return FullPath;
+				return r;
+			}
+		}
+
+		public UnixDirectoryInfo Parent {
+			get {
+				string dirname = UnixPath.GetDirectoryName (FullPath);
+				if (dirname == null)
+					return null;
+				return new UnixDirectoryInfo (dirname);
+			}
+		}
+
+		public UnixDirectoryInfo Root {
+			get {
+				string root = UnixPath.GetPathRoot (FullPath);
+				if (root == null)
+					return null;
+				return new UnixDirectoryInfo (root);
+			}
+		}
+
 		public void Create (FilePermissions mode)
 		{
-			int r = Syscall.mkdir (Path, mode);
+			int r = Syscall.mkdir (FullPath, mode);
 			UnixMarshal.ThrowExceptionForLastErrorIf (r);
 			base.Refresh ();
 		}
@@ -76,14 +103,14 @@ namespace Mono.Unix {
 						e.Delete ();
 				}
 			}
-			int r = Syscall.rmdir (Path);
+			int r = Syscall.rmdir (FullPath);
 			UnixMarshal.ThrowExceptionForLastErrorIf (r);
 			base.Refresh ();
 		}
 
 		public Dirent[] GetEntries ()
 		{
-			IntPtr dirp = Syscall.opendir (Path);
+			IntPtr dirp = Syscall.opendir (FullPath);
 			if (dirp == IntPtr.Zero)
 				UnixMarshal.ThrowExceptionForLastError ();
 
@@ -123,7 +150,7 @@ namespace Mono.Unix {
 
 		public Dirent[] GetEntries (Regex regex)
 		{
-			IntPtr dirp = Syscall.opendir (Path);
+			IntPtr dirp = Syscall.opendir (FullPath);
 			if (dirp == IntPtr.Zero)
 				UnixMarshal.ThrowExceptionForLastError ();
 

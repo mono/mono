@@ -10,7 +10,9 @@
 ./Mono.Unix/UnixConvert.cs
 ./Mono.Unix/UnixDirectory.cs
 ./Mono.Unix/UnixDirectoryInfo.cs
+./Mono.Unix/UnixDriveInfo.cs
 ./Mono.Unix/UnixEnvironment.cs
+./Mono.Unix/UnixEndPoint.cs
 ./Mono.Unix/UnixFile.cs
 ./Mono.Unix/UnixFileInfo.cs
 ./Mono.Unix/UnixFileSystemInfo.cs
@@ -18,12 +20,12 @@
 ./Mono.Unix/UnixGroupInfo.cs
 ./Mono.Unix/UnixIOException.cs
 ./Mono.Unix/UnixMarshal.cs
+./Mono.Unix/UnixPath.cs
 ./Mono.Unix/UnixProcess.cs
 ./Mono.Unix/UnixStream.cs
 ./Mono.Unix/UnixSymbolicLinkInfo.cs
 ./Mono.Unix/UnixUser.cs
 ./Mono.Unix/UnixUserInfo.cs
-./Mono.Unix/UnixEndPoint.cs
 ./Mono.Posix/Catalog.cs
 ./Mono.Posix/PeerCred.cs
 ./Mono.Posix/Syscall.cs

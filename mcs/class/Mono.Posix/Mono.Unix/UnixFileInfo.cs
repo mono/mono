@@ -33,7 +33,7 @@ using Mono.Unix;
 
 namespace Mono.Unix {
 
-	public class UnixFileInfo : UnixFileSystemInfo
+	public sealed class UnixFileInfo : UnixFileSystemInfo
 	{
 		public UnixFileInfo (string path)
 			: base (path)
@@ -45,9 +45,21 @@ namespace Mono.Unix {
 		{
 		}
 
+		public override string Name {
+			get {return UnixPath.GetFileName (FullPath);}
+		}
+
+		public string DirectoryName {
+			get {return UnixPath.GetDirectoryName (FullPath);}
+		}
+
+		public UnixDirectoryInfo Directory {
+			get {return new UnixDirectoryInfo (DirectoryName);}
+		}
+
 		public override void Delete ()
 		{
-			int r = Syscall.unlink (Path);
+			int r = Syscall.unlink (FullPath);
 			UnixMarshal.ThrowExceptionForLastErrorIf (r);
 			base.Refresh ();
 		}
@@ -62,7 +74,7 @@ namespace Mono.Unix {
 
 		public UnixStream Create (FilePermissions mode)
 		{
-			int fd = Syscall.creat (Path, mode);
+			int fd = Syscall.creat (FullPath, mode);
 			if (fd < 0)
 				UnixMarshal.ThrowExceptionForLastError ();
 			base.Refresh ();
@@ -71,7 +83,7 @@ namespace Mono.Unix {
 
 		public UnixStream Open (OpenFlags flags)
 		{
-			int fd = Syscall.open (Path, flags);
+			int fd = Syscall.open (FullPath, flags);
 			if (fd < 0)
 				UnixMarshal.ThrowExceptionForLastError ();
 			return new UnixStream (fd);
@@ -79,7 +91,7 @@ namespace Mono.Unix {
 
 		public UnixStream Open (OpenFlags flags, FilePermissions mode)
 		{
-			int fd = Syscall.open (Path, flags, mode);
+			int fd = Syscall.open (FullPath, flags, mode);
 			if (fd < 0)
 				UnixMarshal.ThrowExceptionForLastError ();
 			return new UnixStream (fd);
@@ -87,8 +99,8 @@ namespace Mono.Unix {
 
 		public UnixStream Open (FileMode mode)
 		{
-			OpenFlags flags = ToOpenFlags (mode, FileAccess.ReadWrite);
-			int fd = Syscall.open (Path, flags);
+			OpenFlags flags = UnixConvert.ToOpenFlags (mode, FileAccess.ReadWrite);
+			int fd = Syscall.open (FullPath, flags);
 			if (fd < 0)
 				UnixMarshal.ThrowExceptionForLastError ();
 			return new UnixStream (fd);
@@ -96,8 +108,8 @@ namespace Mono.Unix {
 
 		public UnixStream Open (FileMode mode, FileAccess access)
 		{
-			OpenFlags flags = ToOpenFlags (mode, access);
-			int fd = Syscall.open (Path, flags);
+			OpenFlags flags = UnixConvert.ToOpenFlags (mode, access);
+			int fd = Syscall.open (FullPath, flags);
 			if (fd < 0)
 				UnixMarshal.ThrowExceptionForLastError ();
 			return new UnixStream (fd);
@@ -105,8 +117,8 @@ namespace Mono.Unix {
 
 		public UnixStream Open (FileMode mode, FileAccess access, FilePermissions perms)
 		{
-			OpenFlags flags = ToOpenFlags (mode, access);
-			int fd = Syscall.open (Path, flags, perms);
+			OpenFlags flags = UnixConvert.ToOpenFlags (mode, access);
+			int fd = Syscall.open (FullPath, flags, perms);
 			if (fd < 0)
 				UnixMarshal.ThrowExceptionForLastError ();
 			return new UnixStream (fd);
@@ -120,55 +132,6 @@ namespace Mono.Unix {
 		public UnixStream OpenWrite ()
 		{
 			return Open (FileMode.OpenOrCreate, FileAccess.Write);
-		}
-
-		public static OpenFlags ToOpenFlags (FileMode mode, FileAccess access)
-		{
-			OpenFlags flags = 0;
-			switch (mode) {
-			case FileMode.CreateNew:
-				flags = OpenFlags.O_CREAT | OpenFlags.O_EXCL;
-				break;
-			case FileMode.Create:
-				flags = OpenFlags.O_CREAT | OpenFlags.O_TRUNC;
-				break;
-			case FileMode.Open:
-				// do nothing
-				break;
-			case FileMode.OpenOrCreate:
-				flags = OpenFlags.O_CREAT;
-				break;
-			case FileMode.Truncate:
-				flags = OpenFlags.O_TRUNC;
-				break;
-			case FileMode.Append:
-				flags = OpenFlags.O_APPEND;
-				break;
-			default:
-				throw new ArgumentOutOfRangeException ("mode", mode, 
-						Locale.GetText ("Unsupported mode value"));
-			}
-
-			int _ignored;
-			if (UnixConvert.TryFromOpenFlags (OpenFlags.O_LARGEFILE, out _ignored))
-				flags |= OpenFlags.O_LARGEFILE;
-
-			switch (access) {
-			case FileAccess.Read:
-				flags |= OpenFlags.O_RDONLY;
-				break;
-			case FileAccess.Write:
-				flags |= OpenFlags.O_WRONLY;
-				break;
-			case FileAccess.ReadWrite:
-				flags |= OpenFlags.O_RDWR;
-				break;
-			default:
-				throw new ArgumentOutOfRangeException ("access", access,
-						Locale.GetText ("Unsupported access value"));
-			}
-
-			return flags;
 		}
 	}
 }

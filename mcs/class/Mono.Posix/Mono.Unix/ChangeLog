@@ -1,5 +1,31 @@
 2004-12-28  Jonathan Pryor <jonpryor@vt.edu>
 
+	* CdeclFunctions.cs: Correct the comments for AMD64
+	* UnixDirectoryInfo.cs: override Name; add Parent & Root properties; 
+	  Correct Path usage (s/Path/FullPath/g).
+	* UnixDriveInfo.cs: Added.  Based on .NET 2.0 System.IO.DriveInfo docs,
+	  provides statvfs(2) and getfsfile(3) information about a mounted volume.
+	  GetDrives() wraps getfsent(3), thus parsing /etc/fstab.
+	* UnixFile.cs: Use UnixConver.ToOpenFlags, deleting the local version.
+	* UnixFileInfo.cs: Use UnixConver.ToOpenFlags, deleting the local version;
+	  override Name; add DirectoryName and Directory properties; 
+	* UnixFileSystemInfo.cs: Make more .NET-like, using FullPath and
+	  OriginalPath protected members, abstract Name property; Add
+	  CreateSymbolicLink; Remove ReadLink (it's now 
+	  UnixSymbolicLinkInfo.Contents); Use lstat(2) for Create(string), so we
+	  properly detect Symbolic Links.
+	* UnixPath.cs: Added; Path manipulation utility functions.
+	* UnixSymbolicLinkInfo.cs: 
+	  - Seal the class; 
+	  - override new abstract member Name; 
+	  - rename ReadLink to ContentsPath (and Contents) properties 
+	    (why "Contents"?  Because readlink(2) says "readlink places the 
+	    contents of the symbolic link in the buffer...")
+	  - Add CreateSymbolicLinkTo(), which creates a symlink to the specified
+	    "normal" file
+
+2004-12-28  Jonathan Pryor <jonpryor@vt.edu>
+
 	* Stdlib.cs: Add syslog(3) to XPrintfFunctions; Add additional printf(3) 
 	  and fprintf(3) overload which properly escape the format string 
 	  (by using "%s" as the format for the user-supplied message).

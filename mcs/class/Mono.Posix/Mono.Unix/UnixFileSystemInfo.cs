@@ -36,25 +36,34 @@ namespace Mono.Unix {
 	public abstract class UnixFileSystemInfo
 	{
 		private Stat stat;
-		private string path;
+		private string fullPath;
+		private string originalPath;
 		private bool valid = false;
 
 		protected UnixFileSystemInfo (string path)
 		{
-			this.path = path;
+			UnixPath.CheckPath (path);
+			this.originalPath = path;
+			this.fullPath = UnixPath.GetFullPath (path);
 			Refresh (true);
 		}
 
 		internal UnixFileSystemInfo (String path, Stat stat)
 		{
-			this.path = path;
+			this.originalPath = path;
+			this.fullPath = UnixPath.GetFullPath (path);
 			this.stat = stat;
 			this.valid = true;
 		}
 
-		protected string Path {
-			get {return path;}
-			set {path = value;}
+		protected string FullPath {
+			get {return fullPath;}
+			set {fullPath = value;}
+		}
+
+		protected string OriginalPath {
+			get {return originalPath;}
+			set {originalPath = value;}
 		}
 
 		private void AssertValid ()
@@ -64,9 +73,15 @@ namespace Mono.Unix {
 				throw new InvalidOperationException ("Path doesn't exist!");
 		}
 
+		public virtual string FullName {
+			get {return FullPath;}
+		}
+
+		public abstract string Name {get;}
+
 		public bool Exists {
 			get {
-				int r = Syscall.access (path, AccessMode.F_OK);
+				int r = Syscall.access (FullPath, AccessMode.F_OK);
 				if (r == 0)
 					return true;
 				return false;
@@ -192,8 +207,15 @@ namespace Mono.Unix {
 
 		public bool CanAccess (AccessMode mode)
 		{
-			int r = Syscall.access (path, mode);
+			int r = Syscall.access (FullPath, mode);
 			return r == 0;
+		}
+
+		public UnixSymbolicLinkInfo CreateSymbolicLink (string path)
+		{
+			int r = Syscall.symlink (FullName, path);
+			UnixMarshal.ThrowExceptionForLastErrorIf (r);
+			return new UnixSymbolicLinkInfo (path);
 		}
 
 		public abstract void Delete ();
@@ -201,33 +223,13 @@ namespace Mono.Unix {
 		public long GetConfigurationValue (PathConf name)
 		{
 			Syscall.SetLastError ((Error) 0);
-			long r = Syscall.pathconf (Path, name);
+			long r = Syscall.pathconf (FullPath, name);
 			if (r == -1 && Syscall.GetLastError() != (Error) 0)
 				UnixMarshal.ThrowExceptionForLastError ();
 			return r;
 		}
 
-		// TODO: Should ReadLink be in UnixSymbolicLinkInfo?
-		public string ReadLink ()
-		{
-			string r = TryReadLink ();
-			if (r == null)
-				UnixMarshal.ThrowExceptionForLastError ();
-			return r;
-		}
-
-		public string TryReadLink ()
-		{
-			// Who came up with readlink(2)?  There doesn't seem to be a way to
-			// properly handle it.
-			StringBuilder sb = new StringBuilder (512);
-			int r = Syscall.readlink (path, sb);
-			if (r == -1)
-				return null;
-			return sb.ToString().Substring (0, r);
-		}
-
-		public new void Refresh ()
+		public void Refresh ()
 		{
 			Refresh (true);
 		}
@@ -236,7 +238,7 @@ namespace Mono.Unix {
 		{
 			if (valid && !force)
 				return;
-			int r = Syscall.stat (path, out this.stat);
+			int r = Syscall.lstat (FullPath, out this.stat);
 			valid = r == 0;
 		}
 
@@ -244,20 +246,20 @@ namespace Mono.Unix {
 		{
 			int r;
 			do {
-				r = Syscall.truncate (path, length);
+				r = Syscall.truncate (FullPath, length);
 			}	while (UnixMarshal.ShouldRetrySyscall (r));
 			UnixMarshal.ThrowExceptionForLastErrorIf (r);
 		}
 
 		public void SetPermissions (FilePermissions perms)
 		{
-			int r = Syscall.chmod (path, perms);
+			int r = Syscall.chmod (FullPath, perms);
 			UnixMarshal.ThrowExceptionForLastErrorIf (r);
 		}
 
 		public virtual void SetOwner (uint owner, uint group)
 		{
-			int r = Syscall.chown (path, owner, group);
+			int r = Syscall.chown (FullPath, owner, group);
 			UnixMarshal.ThrowExceptionForLastErrorIf (r);
 		}
 
@@ -281,12 +283,15 @@ namespace Mono.Unix {
 
 		public override string ToString ()
 		{
-			return path;
+			return FullPath;
 		}
 
 		internal static UnixFileSystemInfo Create (string path)
 		{
-			Stat stat = UnixFile.GetFileStatus (path);
+			Stat stat;
+			int r = Syscall.lstat (path, out stat);
+			UnixMarshal.ThrowExceptionForLastErrorIf (r);
+
 			if (IsType (stat.st_mode, FilePermissions.S_IFDIR))
 				return new UnixDirectoryInfo (path, stat);
 			else if (IsType (stat.st_mode, FilePermissions.S_IFLNK))
