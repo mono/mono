@@ -27,9 +27,12 @@
 //
 //
 //
-// $Revision: 1.1 $
+// $Revision: 1.2 $
 // $Modtime: $
 // $Log: HScrollBar.cs,v $
+// Revision 1.2  2004/08/23 20:10:03  jordi
+// fixes properties and methods
+//
 // Revision 1.1  2004/07/13 15:33:46  jordi
 // vertical and hort. classes commit
 //
@@ -42,7 +45,6 @@ namespace System.Windows.Forms
 	
 	public class HScrollBar : ScrollBar 
 	{
-
 		public HScrollBar() 
 		{			
 			vert = false; 
@@ -50,6 +52,10 @@ namespace System.Windows.Forms
 
 		protected override  Size DefaultSize {
 			get { return new Size (80,13); }
+		}
+
+		protected override CreateParams CreateParams {
+			get { return base.CreateParams; }
 		}
 	}
 }

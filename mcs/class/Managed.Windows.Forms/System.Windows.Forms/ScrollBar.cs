@@ -26,9 +26,12 @@
 //	Jordi Mas i Hernandez	jordi@ximian.com
 //
 //
-// $Revision: 1.11 $
+// $Revision: 1.12 $
 // $Modtime: $
 // $Log: ScrollBar.cs,v $
+// Revision 1.12  2004/08/23 20:10:03  jordi
+// fixes properties and methods
+//
 // Revision 1.11  2004/08/22 19:34:22  jackson
 // Update the position through the Value property so the OnValueChanged event is raised.
 //
@@ -96,7 +99,7 @@ namespace System.Windows.Forms
 		private int thumb_pixel_click_move;			
 		private int thumb_size = 0;		
 		private const int thumb_min_size = 8;
-		protected bool vert;
+		internal bool vert;
 				
 		public event ScrollEventHandler Scroll;
 		public event EventHandler ValueChanged;				

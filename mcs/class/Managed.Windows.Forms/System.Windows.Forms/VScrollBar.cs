@@ -27,9 +27,12 @@
 //
 //
 //
-// $Revision: 1.1 $
+// $Revision: 1.2 $
 // $Modtime: $
 // $Log: VScrollBar.cs,v $
+// Revision 1.2  2004/08/23 20:10:03  jordi
+// fixes properties and methods
+//
 // Revision 1.1  2004/07/13 15:33:46  jordi
 // vertical and hort. classes commit
 //
@@ -42,13 +45,33 @@ namespace System.Windows.Forms
 
 	public class VScrollBar : ScrollBar 
 	{
+		public new event EventHandler RightToLeftChanged;
+
 		public VScrollBar()
 		{			
 			vert = true;
 		}
-		
+
+		public override RightToLeft RightToLeft {
+			get { return base.RightToLeft; }
+			set {
+				if (RightToLeft == value)
+					return;
+
+				RightToLeft = value;
+
+				if (RightToLeftChanged != null)
+					RightToLeftChanged (this, EventArgs.Empty);
+
+			}
+		}
+
 		protected override Size DefaultSize {
 			get { return new Size (13,80); }
 		}	
+
+		protected override CreateParams CreateParams {
+			get { return base.CreateParams; }
+		}		
 	}
 }

@@ -30,9 +30,12 @@
 // Copyright (C) Novell Inc., 2004
 //
 //
-// $Revision: 1.12 $
+// $Revision: 1.13 $
 // $Modtime: $
 // $Log: TrackBar.cs,v $
+// Revision 1.13  2004/08/23 20:10:03  jordi
+// fixes properties and methods
+//
 // Revision 1.12  2004/08/21 20:21:48  pbartok
 // - Replaced direct XplatUI calls with their Control counterpart
 //
@@ -81,6 +84,8 @@ using System.Timers;
 
 namespace System.Windows.Forms
 {	
+
+	[DefaultEvent ("Scroll")]
 	public class TrackBar : Control, ISupportInitialize
 	{
 		private int minimum;
@@ -106,6 +111,7 @@ namespace System.Windows.Forms
 		public new event EventHandler ImeModeChanged;
 		public new event EventHandler ForeColorChanged;
 		public new event EventHandler TextChanged;
+		public new event EventHandler BackgroundImageChanged;
 		#endregion // Events
 
 		public TrackBar ()
@@ -125,6 +131,7 @@ namespace System.Windows.Forms
 			SizeChanged += new System.EventHandler (OnResizeTB);
 			MouseDown += new MouseEventHandler (OnMouseDownTB); 
 			MouseUp += new MouseEventHandler (OnMouseUpTB); 
+			MouseMove += new MouseEventHandler (OnMouseMoveTB);
 			holdclick_timer.Elapsed += new ElapsedEventHandler (OnFirstClickTimer);
 
 			SetStyle (ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint, true);
@@ -133,6 +140,7 @@ namespace System.Windows.Forms
 
 		#region Public Properties
 
+		[DefaultValue (true)]
 		public bool AutoSize {
 			get { return autosize; }
 			set { autosize = value;}
@@ -141,7 +149,15 @@ namespace System.Windows.Forms
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public override Image BackgroundImage {
 			get { return base.BackgroundImage; }
-			set { base.BackgroundImage = value; }
+			set { 
+				if (base.BackgroundImage == value)
+					return;
+
+				if (BackgroundImageChanged != null)
+					BackgroundImageChanged (this, EventArgs.Empty);
+
+				base.BackgroundImage = value; 
+			}
 		}
 
 		protected override CreateParams CreateParams {
@@ -164,7 +180,7 @@ namespace System.Windows.Forms
 		protected override Size DefaultSize {
 			get { return new System.Drawing.Size (104, 42); }
 		}	
-
+		
 		[EditorBrowsable (EditorBrowsableState.Never)]	 
 		public override Font Font {
 			get { return base.Font;	}
@@ -185,6 +201,7 @@ namespace System.Windows.Forms
 			}
 		}		
 
+		[EditorBrowsable (EditorBrowsableState.Never)]	
 		public new ImeMode ImeMode {
 			get { return base.ImeMode; }
 			set {
@@ -196,7 +213,8 @@ namespace System.Windows.Forms
 					ImeModeChanged (this, EventArgs.Empty);
 			}
 		}
-
+		
+		[DefaultValue (5)]
 		public int LargeChange 
 		{
 			get { return largeChange; }
@@ -209,6 +227,8 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[DefaultValue (10)]
+		[RefreshProperties (RefreshProperties.All)]		
 		public int Maximum {
 			get { return maximum; }
 			set {
@@ -223,6 +243,8 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[DefaultValue (0)]
+		[RefreshProperties (RefreshProperties.All)]		
 		public int Minimum {
 			get { return minimum; }
 			set {
@@ -238,6 +260,8 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[DefaultValue (Orientation.Horizontal)]
+		[Localizable (true)]
 		public Orientation Orientation {
 			get { return orientation; }
 			set {
@@ -256,6 +280,7 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[DefaultValue (1)]
 		public int SmallChange {
 			get { return smallChange;}
 			set {
@@ -270,6 +295,7 @@ namespace System.Windows.Forms
 		}
 
 		[EditorBrowsable (EditorBrowsableState.Never)]
+		[Bindable (false)]
 		public override string Text {
 			get {	return base.Text; }			
 			set {
@@ -283,7 +309,7 @@ namespace System.Windows.Forms
 			}
 		}
 
-
+		[DefaultValue (1)]
 		public int TickFrequency {
 			get { return tickFrequency; }
 			set {
@@ -294,6 +320,7 @@ namespace System.Windows.Forms
 			}
 		}
 
+		[DefaultValue (TickStyle.BottomRight)]
 		public TickStyle TickStyle {
 			get { return tickStyle; }
 			set { 				
@@ -306,7 +333,9 @@ namespace System.Windows.Forms
 				}
 			}
 		}
-
+		
+		[DefaultValue (0)]
+		[Bindable (false)]
 		public int Value {
 			get { return position; }
 			set {
@@ -367,7 +396,8 @@ namespace System.Windows.Forms
 			CreateBuffers (Width, Height);
 			UpdatePos (Value, true);			
 		}
-
+	
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		protected override void OnMouseWheel (MouseEventArgs e)
 		{
 			if (!Enabled) return;
@@ -376,6 +406,8 @@ namespace System.Windows.Forms
 				SmallDecrement ();
 			else
 				SmallIncrement ();
+
+			base.OnMouseWheel (e);
     					
 		}
 
@@ -404,23 +436,12 @@ namespace System.Windows.Forms
 			return string.Format("System.Windows.Forms.Trackbar, Minimum: {0}, Maximum: {1}, Value: {2}",
 						Minimum, Maximum, Value);
 		}
-				
-			
+							
 
 		protected override void WndProc (ref Message m)
     		{
-			int clicks = 1;
-
 			switch ((Msg) m.Msg) {
-				
-				
-			case Msg.WM_MOUSEMOVE: 
-				OnMouseMoveTB  (new MouseEventArgs (FromParamToMouseButtons ((int) m.WParam.ToInt32()), 
-						clicks, 
-						LowOrder ((int) m.LParam.ToInt32 ()), HighOrder ((int) m.LParam.ToInt32 ()), 
-						0));
-				break;
-			
+	
 			case Msg.WM_PAINT: {				
 				PaintEventArgs	paint_event;
 
@@ -579,7 +600,7 @@ namespace System.Windows.Forms
 			}			
     		}
 
-    		private void OnMouseMoveTB (MouseEventArgs e)
+    		private void OnMouseMoveTB (object sender, MouseEventArgs e)
     		{    			
     			if (!Enabled) return;
     		
