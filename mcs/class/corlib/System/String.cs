@@ -28,7 +28,7 @@ using System.Globalization;
 
 namespace System {
 
-	public sealed class String : IComparible, ICloneable, IConvertible, IEnumerable {
+	public sealed class String : IComparable, ICloneable, IConvertible, IEnumerable {
 		public static readonly string Empty = "";
 		private char[] c_str;
 		private int length;
@@ -157,12 +157,6 @@ namespace System {
 			/*base.Finalize ();*/
 		}
 
-		protected override string MemberwiseClone ()
-		{
-			// FIXME: implement me
-			return null;
-		}
-
 		// Properties
 		public int Length {
 			get {
@@ -171,7 +165,7 @@ namespace System {
 		}
 
 		// FIXME: is this correct syntax??
-		public char Chars [int index] {
+		public char this [int index] {
 			get {
 				if (index > this.length)
 					throw new ArgumentOutOfRangeException ();
@@ -215,13 +209,16 @@ namespace System {
 				return false;
 		}
 
-		private static int BoyerMoore (char[] haystack, char[] needle, int startIndex, int count)
+		unsafe private static int BoyerMoore (char[] haystack, char[] needle, int startIndex, int count)
 		{
 			/* (hopefully) Unicode-safe Boyer-Moore implementation */
-			char skiptable[65536];  /* our unicode-safe skip-table */
-			char *he_ptr, *ne_ptr;  /* end-of-string pointers */
-			char *hc_ptr, *nc_ptr;  /* compare pointers */
-			char *h_ptr, *the_ptr;  /* haystack pointers */
+			char[] skiptable = new char[65536];  /* our unicode-safe skip-table */
+			char *he_ptr;
+			char *ne_ptr;  /* end-of-string pointers */
+			char *hc_ptr;
+			char *nc_ptr;  /* compare pointers */
+			char *h_ptr;
+			char *the_ptr;  /* haystack pointers */
 			uint h_len, n_len, n, i;
 
 			if (haystack == null || needle == null)
@@ -749,7 +746,8 @@ namespace System {
 			return null;
 		}
 
-		public CharEnumerator GetEnumerator ()
+		//public CharEnumerator GetEnumerator ()
+		public IEnumerator GetEnumerator ()
 		{
 			// FIXME: implement me
 			return null;
@@ -1614,16 +1612,17 @@ namespace System {
 
 			return Substring (begin, this.length - begin);
 		}
+
+		// Operators
+		public static bool operator ==(string a, string b)
+		{
+			return a == b;
+		}
+
+		public static bool operator !=(string a, string b)
+		{
+			return a != b;
+		}
 	}
 
-	// Operators
-	public static bool operator ==(string a, string b)
-	{
-		return a == b;
-	}
-
-	public static bool operator !=(string a, string b)
-	{
-		return a != b;
-	}
 }

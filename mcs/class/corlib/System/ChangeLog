@@ -1,3 +1,13 @@
+2001-07-15  Sean MacIsaac  <macisaac@ximian.com>
+
+	* String.cs: Spelling error of IComparable, object's
+	MemberwiseClone cannot be overridden.  Made indexer valid for now,
+	but not sure what to do about this in the long run.  Seems to be a
+	couple bugs in csc.exe having to do with multiple pointer defs in
+	the same statement, and returning subclasses of a class in the
+	return type of an interface function implementation.  Also moved
+	operators inside of class definition.
+
 2001-07-14  Jeffrey Stedfast  <fejj@ximian.com>
 
 	* String.cs: A tom of compile fixes, although we still don't compile.
