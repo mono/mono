@@ -1,3 +1,15 @@
+2003-10-01 Jackson Harper <jackson@latitudegeo.com>
+	
+	* main.c: Fix visibility level names, when outputing pinvoke info
+	quote the module and method names, properties have specialname,
+	and rtspecialname flags	(nothing else), dis global methods and
+	fields FIXME: indentation issues.
+	* get.h: declare get_fieldref_signature
+	* get.c: Fix unsigned ints (not uint), single quote argument names
+	(this is kinda a hack, ildasm will only single quote arg names
+	that are ilasm keywords), remove fixme, we know what typedbyref
+	means, output fieldref signatures instead of their token value.
+	
 2003-09-19 Jackson Harper <jackson@latitudegeo.com>
 
 	* dis-cil.c: Output fault blocks, and filter blocks. If in a
