@@ -1,3 +1,7 @@
+2002-03-18  Miguel de Icaza  <miguel@ximian.com>
+
+	* sysmath.c: Avoid redefining existing names.
+
 2002-03-18  Dan Lewis <dihlewis@yahoo.co.uk>
 
 	* sysmath.c, sysmath.h, icall.c, Makefile.am: math routines now
