@@ -1,9 +1,19 @@
+2003-12-16  Zoltan Varga  <vargaz@freemail.hu>
+
+	* icall.c (ves_icall_System_Reflection_Assembly_GetManifestResourceInternal): Add support for loading resources from modules.
+	(ves_icall_System_Environment_get_HasShutdownStarted): New icall.
+
 2003-12-15  Bernie Solomon  <bernard@ugsolutions.com>
 
 	* reflection.c: move definition of swap_with_size
 	to before its first call
 
 2003-12-15  Zoltan Varga  <vargaz@freemail.hu>
+
+	* appdomain.c (mono_runtime_is_shutting_down): New public function.
+
+	* icall.c (ves_icall_System_Environment_get_HasShutdownStarted): New
+	icall.
 
 	* object.c: Fix warnings.
 
