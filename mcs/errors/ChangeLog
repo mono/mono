@@ -1,3 +1,9 @@
+2004-02-03 Marek Safar <marek.safar@seznam.cz>
+
+	* cs0102-{2,3,4,5}.cs,
+          cs0111-{3,4}.cs,
+          cs0547-2.cs: New error tests.
+
 2004-01-21 Marek Safar <marek.safar@seznam.cz>
 
 	* cs0102.cs,
