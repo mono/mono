@@ -1,3 +1,9 @@
+2002-05-05  Nick Drochak  <ndrochak@gol.com>
+
+	* StreamReader.cs: Throw exceptions where needed. Changed Null field to
+	use new internal class since null cannot be passed to constructor 
+	anymore. Also, fix a coule of small bugs.
+
 2002-05-03  Nick Drochak  <ndrochak@gol.com>
 
 	* MemoryStream.cs: Refrain from allocating array until the space is

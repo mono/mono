@@ -32,7 +32,13 @@ namespace System.IO {
 
 		private Stream internalStream;
 
-		public new static readonly StreamReader Null = new StreamReader((Stream)null);
+		[MonoTODO("Make Read methods return 0, etc.")]
+		internal class NullStreamReader : StreamReader {
+		}
+
+		public new static readonly StreamReader Null = (StreamReader)(new NullStreamReader());
+
+		internal StreamReader() {}
 
 		public StreamReader(Stream stream)
 			: this (stream, null, false, DefaultBufferSize) { }
@@ -66,6 +72,11 @@ namespace System.IO {
 		[MonoTODO]
 		public StreamReader(string path, Encoding encoding, bool detectEncodingFromByteOrderMarks, int bufferSize)
 		{
+			if (null == path)
+				throw new ArgumentNullException();
+			if (String.Empty == path)
+				throw new ArgumentException();
+
 			Stream stream = (Stream) File.OpenRead (path);
 			Initialize (stream, encoding, detectEncodingFromByteOrderMarks, bufferSize);
 		}
@@ -73,6 +84,11 @@ namespace System.IO {
 		[MonoTODO]
 		protected void Initialize (Stream stream, Encoding encoding, bool detectEncodingFromByteOrderMarks, int bufferSize)
 		{
+			if (null == stream)
+				throw new ArgumentNullException();
+			if (!stream.CanRead)
+				throw new ArgumentException("Cannot read stream");
+
 			internalStream = stream;
 
 			// use detect encoding flag
@@ -176,11 +192,11 @@ namespace System.IO {
 			if (dest_buffer == null)
 				throw new ArgumentException ();
 
-			if (index + count >= dest_buffer.Length)
-				throw new ArgumentException ();
-
 			if ((index < 0) || (count < 0))
 				throw new ArgumentOutOfRangeException ();
+
+			if (index + count > dest_buffer.Length)
+				throw new ArgumentException ();
 
 			int cchRead = 0;
 			while (count > 0)
@@ -236,7 +252,7 @@ namespace System.IO {
 			}
 
 			if (text.Length == 0)
-				return null;
+				return String.Empty;
 			return text.ToString ();
 		}
 	}
