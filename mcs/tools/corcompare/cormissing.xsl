@@ -23,17 +23,17 @@
 					<TABLE>
 						<TR>
 							<TD> <INPUT type="checkbox" ID="missing" onClick="selectMissing();" checked="1"/> </TD>
-							<TD> <IMG src="cm/missing.gif"/> </TD>
+							<TD> <IMG src="cm/sm.gif"/> </TD>
 							<TD> Missing </TD>
 						</TR>
 						<TR>
 							<TD> <INPUT type="checkbox" ID="todo" onClick="selectTodo();" checked="1"/> </TD>
-							<TD> <IMG src="cm/todo.gif"/> </TD>
+							<TD> <IMG src="cm/st.gif"/> </TD>
 							<TD> TODO </TD>
 						</TR>
 						<TR>
 							<TD> </TD>
-							<TD> <IMG src="cm/complete.gif"/> </TD>
+							<TD> <IMG src="cm/sc.gif"/> </TD>
 							<TD> Completed </TD>
 						</TR>
 					</TABLE>
@@ -58,7 +58,7 @@
 
 	<xsl:template match="assemblies/assembly">
 		<xsl:call-template name="ELEMENT">
-			<xsl:with-param name="type">assembly</xsl:with-param>
+			<xsl:with-param name="class">y</xsl:with-param>
 		</xsl:call-template>
 	</xsl:template>
 
@@ -72,7 +72,7 @@
 
 	<xsl:template match="namespaces/namespace">
 		<xsl:call-template name="ELEMENT">
-			<xsl:with-param name="type">namespace</xsl:with-param>
+			<xsl:with-param name="class">n</xsl:with-param>
 		</xsl:call-template>
 	</xsl:template>
 
@@ -86,7 +86,7 @@
 
 	<xsl:template match="classes/class">
 		<xsl:call-template name="ELEMENT">
-			<xsl:with-param name="type">class</xsl:with-param>
+			<xsl:with-param name="class">c</xsl:with-param>
 		</xsl:call-template>
 	</xsl:template>
 
@@ -100,7 +100,7 @@
 
 	<xsl:template match="structs/struct">
 		<xsl:call-template name="ELEMENT">
-			<xsl:with-param name="type">struct</xsl:with-param>
+			<xsl:with-param name="class">s</xsl:with-param>
 		</xsl:call-template>
 	</xsl:template>
 
@@ -114,7 +114,7 @@
 
 	<xsl:template match="delegates/delegate">
 		<xsl:call-template name="ELEMENT">
-			<xsl:with-param name="type">delegate</xsl:with-param>
+			<xsl:with-param name="class">d</xsl:with-param>
 		</xsl:call-template>
 	</xsl:template>
 
@@ -128,15 +128,14 @@
 
 	<xsl:template match="enumerations/enumeration">
 		<xsl:call-template name="ELEMENT">
-			<xsl:with-param name="type">enumeration</xsl:with-param>
-			<xsl:with-param name="image">enum</xsl:with-param>
+			<xsl:with-param name="class">en</xsl:with-param>
 		</xsl:call-template>
 	</xsl:template>
 
 
 	<!-- method -->
 	<xsl:template match="class/methods">
-		<DIV class="events">
+		<DIV class="ms">
 			<xsl:apply-templates select="method">
 				<xsl:sort select="@name"/>
 			</xsl:apply-templates>
@@ -145,14 +144,14 @@
 
 	<xsl:template match="methods/method">
 		<xsl:call-template name="ELEMENT">
-			<xsl:with-param name="type">method</xsl:with-param>
+			<xsl:with-param name="class">m</xsl:with-param>
 		</xsl:call-template>
 	</xsl:template>
 
 
 	<!-- property -->
 	<xsl:template match="class/properties">
-		<DIV class="properties">
+		<DIV class="ps">
 			<xsl:apply-templates select="property">
 				<xsl:sort select="@name"/>
 			</xsl:apply-templates>
@@ -161,14 +160,14 @@
 
 	<xsl:template match="properties/property">
 		<xsl:call-template name="ELEMENT">
-			<xsl:with-param name="type">property</xsl:with-param>
+			<xsl:with-param name="class">p</xsl:with-param>
 		</xsl:call-template>
 	</xsl:template>
 
 
 	<!-- event -->
 	<xsl:template match="class/events">
-		<DIV class="events">
+		<DIV class="es">
 			<xsl:apply-templates select="event">
 				<xsl:sort select="@name"/>
 			</xsl:apply-templates>
@@ -177,14 +176,14 @@
 
 	<xsl:template match="events/event">
 		<xsl:call-template name="ELEMENT">
-			<xsl:with-param name="type">event</xsl:with-param>
+			<xsl:with-param name="class">e</xsl:with-param>
 		</xsl:call-template>
 	</xsl:template>
 
 
 	<!-- constructor -->
 	<xsl:template match="class/constructors">
-		<DIV class="constructors">
+		<DIV class="xs">
 			<xsl:apply-templates select="constructor">
 				<xsl:sort select="@name"/>
 			</xsl:apply-templates>
@@ -193,15 +192,15 @@
 
 	<xsl:template match="constructors/constructor">
 		<xsl:call-template name="ELEMENT">
-			<xsl:with-param name="type">constructor</xsl:with-param>
-			<xsl:with-param name="image">method</xsl:with-param>
+			<xsl:with-param name="class">x</xsl:with-param>
+			<xsl:with-param name="image">m</xsl:with-param>
 		</xsl:call-template>
 	</xsl:template>
 
 
 	<!-- field -->
 	<xsl:template match="class/fields">
-		<DIV class="fields">
+		<DIV class="fs">
 			<xsl:apply-templates select="field">
 				<xsl:sort select="@name"/>
 			</xsl:apply-templates>
@@ -210,7 +209,7 @@
 
 	<xsl:template match="fields/field">
 		<xsl:call-template name="ELEMENT">
-			<xsl:with-param name="type">field</xsl:with-param>
+			<xsl:with-param name="class">f</xsl:with-param>
 		</xsl:call-template>
 	</xsl:template>
 
@@ -219,19 +218,33 @@
 	<!-- support templates -->
 
 	<xsl:template name="ELEMENT">
-		<xsl:param name="type"/>
-		<xsl:param name="image"></xsl:param>
-		<DIV class="{$type}">
+		<xsl:param name="class"/>
+		<xsl:param name="image"/>
+		<DIV>
+			<xsl:attribute name="class">
+				<xsl:value-of select="$class"/>
+				<xsl:if test="./node() and local-name() != 'assembly'">_</xsl:if>
+			</xsl:attribute>
 			<xsl:call-template name="toggle"/>
 			<xsl:if test="@status">
-				<img src="cm/{@status}.gif" name="status" class="toggle"/>
+				<xsl:choose>
+					<xsl:when test="@status = 'missing'">
+						<img src="cm/sm.gif" class="t"/>
+					</xsl:when>
+					<xsl:when test="@status = 'todo'">
+						<img src="cm/st.gif" class="t"/>
+					</xsl:when>
+					<xsl:when test="@status = 'complete'">
+						<img src="cm/sc.gif" class="t"/>
+					</xsl:when>
+				</xsl:choose>
 			</xsl:if>
 			<xsl:choose>
 				<xsl:when test="$image">
-					<img src="cm/{$image}.gif" class="toggle"/>
+					<img src="cm/{$image}.gif" class="t"/>
 				</xsl:when>
 				<xsl:otherwise>
-					<img src="cm/{$type}.gif" class="toggle"/>
+					<img src="cm/{$class}.gif" class="t"/>
 				</xsl:otherwise>
 			</xsl:choose>
 			<xsl:call-template name="name"/>
@@ -241,42 +254,43 @@
 	</xsl:template>
 
 	<xsl:template name="status">
-		<xsl:if test="(@complete and @complete!=0) or (@todo and @todo!=0) or (@missing and @missing!=0)">
-			<SPAN class="status">
-				<xsl:if test="@complete and @complete!=0">
-					<img src="cm/complete.gif"/>:
-				<xsl:value-of select="@complete"/>
-				</xsl:if>
+		<xsl:if test="@complete and @complete!=0">
+			<SPAN class="st">
+				<img src="cm/sc.gif"/>:
+				<xsl:value-of select="@complete"/>%
 			</SPAN>
-			<SPAN class="status">
-				<xsl:if test="@todo and @todo!=0">
-					<img src="cm/todo.gif"/>:
-					<xsl:value-of select="@todo"/>
-				</xsl:if>
+		</xsl:if>
+		<xsl:if test="@todo and @todo!=0">
+			<SPAN class="st">
+				<img src="cm/st.gif"/>:
+				<xsl:value-of select="@todo"/>
 			</SPAN>
-			<SPAN class="status">
-				<xsl:if test="@missing and @missing!=0">
-					<img src="cm/missing.gif"/>:
-					<xsl:value-of select="@missing"/>
-				</xsl:if>
+		</xsl:if>
+		<xsl:if test="@missing and @missing!=0">
+			<SPAN class="st">
+				<img src="cm/sm.gif"/>:
+				<xsl:value-of select="@missing"/>
 			</SPAN>
 		</xsl:if>
 	</xsl:template>
 
 	<xsl:template name="toggle">
 		<xsl:choose>
+			<xsl:when test="./node() and local-name() != 'assembly'">
+				<IMG src="cm/tp.gif" class="t"/>
+			</xsl:when>
 			<xsl:when test="./node()">
-				<IMG src="cm/toggle_minus.gif" class="toggle"/>
+				<IMG src="cm/tm.gif" class="t"/>
 			</xsl:when>
 			<xsl:otherwise>
-				<IMG src="cm/toggle_blank.gif" class=""/>
+				<IMG src="cm/tb.gif"/>
 			</xsl:otherwise>
 		</xsl:choose>
 	</xsl:template>
 
 	<xsl:template name="name">
 		<xsl:if test="@name">
-			<SPAN class="name"><xsl:value-of select="@name"/></SPAN>
+			<SPAN class="l"><xsl:value-of select="@name"/></SPAN>
 		</xsl:if>
 	</xsl:template>
 
