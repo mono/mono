@@ -2105,27 +2105,33 @@ namespace Mono.CSharp {
 				TypeContainer tc = TypeManager.LookupTypeContainer (type);
 
 				ArrayList fields = tc.Fields;
-				foreach (Field field in fields) {
-					if ((field.ModFlags & Modifiers.STATIC) != 0)
-						continue;
-					if ((field.ModFlags & Modifiers.PUBLIC) != 0)
-						++Count;
-					else
-						++CountNonPublic;
+				if (fields != null) {
+					foreach (Field field in fields) {
+						if ((field.ModFlags & Modifiers.STATIC) != 0)
+							continue;
+						if ((field.ModFlags & Modifiers.PUBLIC) != 0)
+							++Count;
+						else
+							++CountNonPublic;
+					}
 				}
 
 				Fields = new FieldInfo [Count];
 				NonPublicFields = new FieldInfo [CountNonPublic];
 
 				Count = CountNonPublic = 0;
-				foreach (Field field in fields) {
-					if ((field.ModFlags & Modifiers.STATIC) != 0)
-						continue;
-					if ((field.ModFlags & Modifiers.PUBLIC) != 0)
-						Fields [Count++] = field.FieldBuilder;
-					else
-						NonPublicFields [CountNonPublic++] = field.FieldBuilder;
+				if (fields != null) {
+					foreach (Field field in fields) {
+						if ((field.ModFlags & Modifiers.STATIC) != 0)
+							continue;
+						if ((field.ModFlags & Modifiers.PUBLIC) != 0)
+							Fields [Count++] = field.FieldBuilder;
+						else
+							NonPublicFields [CountNonPublic++] =
+								field.FieldBuilder;
+					}
 				}
+				
 			} else {
 				Fields = type.GetFields (BindingFlags.Instance|BindingFlags.Public);
 				Count = Fields.Length;
