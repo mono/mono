@@ -1,3 +1,6 @@
+2004-09-14 Umadevi S <sumadevi@novell.com>
+	* SqlAlreadyFilledException.cs, SqlNotFilledException.cs - Added these files
+
 2004-07-21 Umadevi S <sumadevi@novell.com>
 	* SqlInt16.cs, SqlInt32.cs, SqlInt64.cs - Added Modulus,CompareTo method from .NET2.0
 
