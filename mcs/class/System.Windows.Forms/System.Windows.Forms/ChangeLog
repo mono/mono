@@ -1,3 +1,13 @@
+2003-03-18 Alexandre Pigolkine <pigolkine@gmx.de>
+	* monowinehooks.c
+	* runwine
+			attempt to use LD_PRELOAD to override stubs in Wine
+	* monosem.c		implementation of pthread_cond*
+	* makefile
+	* monogc.c
+	* monostub.c
+		small changes to files
+
 2003-03-17 Alexandre Pigolkine <pigolkine@gmx.de>
 	* monogc.c
 	* makefile

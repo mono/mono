@@ -1,6 +1,6 @@
 CSC=mcs
 X11R6_INCLUDE=/usr/X11R6/include
-WINE_INCLUDE=/usr/local/include/wine
+WINE_INCLUDE=/usr/include/wine
 WINDOWS_INCLUDE=/usr/local/include/wine/windows
 WINE_LIB=/usr/lib/wine
 GLIB20_CFLAGS=`pkg-config --cflags glib-2.0` `pkg-config --cflags gmodule-2.0`
@@ -10,7 +10,7 @@ MONO_LIBS=`pkg-config --libs mono`
 COMPILE_OPTIONS=-g -O2 -Wall
 #COMPILE_OPTIONS=-gstabs+ -Wall
 
-all:	monostub.exe.so
+all:	monostub.exe.so monowinehooks.so
 # These are no longer built here:
 # 	System.Windows.Forms.dll NativeWindowTest.exe \
 # 	FormTest.exe Test.exe
@@ -23,8 +23,14 @@ monostub.exe.so: monostub.o monosem.o monogc.o monostub.exe.spec.o monostub.exe.
 	$(GLIB20_LIBS) $(MONO_LIBS) \
 	-lgc -lwine -lntdll.dll -lm -lpthread
 
+monowinehooks.so: monowinehooks.o
+	gcc -shared -W1,soname,monowinehooks.so -o monowinehooks.so monowinehooks.o -lc -ldl
+
+monowinehooks.o: monowinehooks.c
+	gcc -fPIC -I. -I$(WINE_INCLUDE) -I$(X11R6_INCLUDE) -rdynamic -g -c -Wall monowinehooks.c
+
 clean:
-	rm *.o monostub.exe.dbg.c monostub.exe.spec.c monostub.exe.so
+	rm *.o monostub.exe.dbg.c monostub.exe.spec.c monostub.exe.so monowinehooks.so
 
 monostub.o: monostub.c
 	gcc -c -I. -I$(WINE_INCLUDE) -I$(X11R6_INCLUDE) \

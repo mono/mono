@@ -182,9 +182,8 @@ int PASCAL WinMain (HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	}
 	free(CommandLine);
 
-	printf ("JIT cleanup is disabled\n");
-	//printf ("calling JIT cleanup\n");
-	//mono_jit_cleanup (domain);
+	printf ("calling JIT cleanup\n");
+	mono_jit_cleanup (domain);
 
 	return retval;
 }

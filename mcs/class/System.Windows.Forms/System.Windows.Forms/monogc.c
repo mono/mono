@@ -29,9 +29,9 @@ void InitGC ()
 
 GC_PTR GC_malloc (size_t lb)
 {
-	InitGC ();
 	GC_PTR (*gc_malloc)(size_t lb);
 	GC_PTR status = NULL;
+	InitGC ();
 	gc_malloc = GetProcAddress (moduleGC, "GC_malloc");
 
 	TRACE ("GC_malloc start\n");
@@ -43,9 +43,9 @@ GC_PTR GC_malloc (size_t lb)
 void GC_register_finalizer (GC_PTR obj, GC_finalization_proc fn, GC_PTR cd,
 		GC_finalization_proc *ofn, GC_PTR *ocd)
 {
-	InitGC ();
 	void (*gc_register_finalizer)(GC_PTR obj, GC_finalization_proc fn,
 			GC_PTR cd, GC_finalization_proc *ofn, GC_PTR *ocd);
+	InitGC ();
 	TRACE ("GC_register_finalizer\n");
 	gc_register_finalizer =
 		GetProcAddress (moduleGC, "GC_register_finalizer");
@@ -57,10 +57,10 @@ void GC_register_finalizer_no_order (GC_PTR obj, GC_finalization_proc fn,
 				     GC_PTR cd, GC_finalization_proc *ofn,
 				     GC_PTR *ocd)
 {
-	InitGC ();
 	void (*gc_register_finalizer_no_order)(GC_PTR obj,
 			GC_finalization_proc fn, GC_PTR cd,
 			GC_finalization_proc *ofn, GC_PTR *ocd);
+	InitGC ();
 	gc_register_finalizer_no_order =
 		GetProcAddress (moduleGC, "GC_register_finalizer");
 	TRACE ("GC_register_finalizer_no_order\n");
@@ -76,9 +76,9 @@ GC_PTR GC_debug_malloc (size_t size_in_bytes, GC_EXTRA_PARAMS)
 
 GC_PTR GC_malloc_atomic (size_t size_in_bytes)
 {
-	InitGC ();
 	GC_PTR (*gc_malloc_atomic)(size_t lb);
 	GC_PTR status = NULL;
+	InitGC ();
 	gc_malloc_atomic = GetProcAddress (moduleGC, "GC_malloc_atomic");
 
 	TRACE ("GC_malloc_atomic start\n");
@@ -89,9 +89,9 @@ GC_PTR GC_malloc_atomic (size_t size_in_bytes)
 
 GC_PTR GC_realloc (GC_PTR old_object, size_t new_size_in_bytes)
 {
-	InitGC ();
 	GC_PTR (*gc_realloc)(GC_PTR old_object, size_t new_size_in_bytes);
 	GC_PTR status = NULL;
+	InitGC ();
 	gc_realloc = GetProcAddress (moduleGC, "GC_realloc");
 
 	TRACE ("GC_realloc start\n");
@@ -102,9 +102,9 @@ GC_PTR GC_realloc (GC_PTR old_object, size_t new_size_in_bytes)
 
 GC_PTR GC_base (GC_PTR displaced_pointer)
 {
-	InitGC ();
 	GC_PTR (*gc_base)(GC_PTR displaced_pointer);
 	GC_PTR status = NULL;
+	InitGC ();
 
 	TRACE ("in GC_base\n");
 	gc_base = GetProcAddress (moduleGC, "GC_base");
@@ -116,8 +116,8 @@ GC_PTR GC_base (GC_PTR displaced_pointer)
 
 void GC_free (GC_PTR object_addr)
 {
-	InitGC ();
 	GC_PTR (*gc_free)(GC_PTR object_addr);
+	InitGC ();
 	TRACE ("GC_free start\n");
 	gc_free = GetProcAddress (moduleGC, "GC_free");
 	gc_free (object_addr);
@@ -126,8 +126,8 @@ void GC_free (GC_PTR object_addr)
 
 void GC_gcollect ()
 {
-	InitGC ();
 	GC_PTR (*gc_gcollect)();
+	InitGC ();
 	TRACE ("GC_gcollect start\n");
 	gc_gcollect = GetProcAddress (moduleGC, "GC_gcollect");
 	gc_gcollect ();
@@ -136,9 +136,9 @@ void GC_gcollect ()
 
 size_t GC_get_heap_size ()
 {
-	InitGC ();
 	size_t (*gc_get_heap_size)();
 	size_t status = 0;
+	InitGC ();
 
 	TRACE ("in GC_get_heap_size\n");
 	gc_get_heap_size = GetProcAddress (moduleGC, "GC_get_heap_size");
@@ -150,9 +150,9 @@ size_t GC_get_heap_size ()
 
 int GC_invoke_finalizers ()
 {
-	InitGC ();
 	int (*gc_invoke_finalizers)();
 	int status = 0;
+	InitGC ();
 
 	gc_invoke_finalizers = GetProcAddress (moduleGC, "GC_invoke_finalizers");
 	TRACE ("GC_invoke_finalizers start\n");
