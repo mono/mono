@@ -1,4 +1,8 @@
 
+Thu Jun 24 16:06:41 CEST 2004 Paolo Molaro <lupus@ximian.com>
+
+	* reflection.c, object-internals.h: save default value in params.
+
 2004-06-23 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* appdomain.c: for paths in PrivateBinPath that are absolute, there's
