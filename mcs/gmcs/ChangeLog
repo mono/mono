@@ -1,3 +1,37 @@
+2004-04-23  Miguel de Icaza  <miguel@ximian.com>
+
+	* convert.cs (ImplicitNumericConversion): 0 is also positive when
+	converting from 0L to ulong.  Fixes 57522.
+
+2004-04-22  Marek Safar  <marek.safar@seznam.cz>
+
+	* decl.cs (FindMemberToOverride): Fix wrong warning for case when
+        derived class hides via 'new' keyword field from base class (test-242.cs).
+        TODO: Handle this in the more general way.
+        
+	* class.cs (CheckBase): Ditto.
+
+2004-04-22  Marek Safar  <marek.safar@seznam.cz>
+
+	* decl.cs (caching_flags): New member for storing cached values
+	as bit flags.
+	(MemberCore.Flags): New enum where bit flags for caching_flags
+	are defined.
+	(MemberCore.cls_compliance): Moved to caching_flags.
+	(DeclSpace.Created): Moved to caching_flags.
+
+	* class.cs: Use caching_flags instead of DeclSpace.Created
+        
+2004-04-21  Miguel de Icaza  <miguel@ximian.com>
+
+	* ecore.cs (PropertyExpr.GetAccesor): Only perform the 1540 check
+	if we are only a derived class, not a nested class.
+	
+	* typemanager.cs: Same as above, but do this at the MemberLookup
+	level (used by field and methods, properties are handled in
+	PropertyExpr).   Allow for the qualified access if we are a nested
+	method. 
+
 2004-04-21  Marek Safar  <marek.safar@seznam.cz>
 
 	* class.cs: Refactoring.

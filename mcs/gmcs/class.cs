@@ -1971,11 +1971,11 @@ namespace Mono.CSharp {
 
 		public override void CloseType ()
 		{
-			if (Created)
+			if ((caching_flags & Flags.CloseTypeCreated) != 0)
 				return;
 			
 			try {
-					Created = true;
+				caching_flags |= Flags.CloseTypeCreated;
 					TypeBuilder.CreateType ();
 			} catch (TypeLoadException){
 				//
@@ -5078,7 +5078,7 @@ namespace Mono.CSharp {
 				return true;
 			}
 
-			PropertyInfo parent_property = null;
+			MemberInfo parent_member = null;
 			
 			//
 			// Explicit implementations do not have `parent' methods, however,
@@ -5086,11 +5086,13 @@ namespace Mono.CSharp {
 			// an incorrect warning in corlib.
 			//
 			if (! IsExplicitImpl) {
-				parent_property = (PropertyInfo) ((IMemberContainer)container).Parent.MemberCache.FindMemberToOverride (
+				parent_member = ((IMemberContainer)container).Parent.MemberCache.FindMemberToOverride (
 					container.TypeBuilder, Name, ParameterTypes, true);
 			}
 
-			if (parent_property != null) {
+			if (parent_member is PropertyInfo) {
+				PropertyInfo parent_property = (PropertyInfo)parent_member;
+
 				string name = parent_property.DeclaringType.Name + "." +
 					parent_property.Name;
 
@@ -5120,7 +5122,7 @@ namespace Mono.CSharp {
 						return false;
 					}
 				}
-			} else {
+			} else if (parent_member == null){
 				if ((ModFlags & Modifiers.NEW) != 0)
 					WarningNotHiding (container);
 

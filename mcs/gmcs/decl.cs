@@ -263,17 +263,19 @@ namespace Mono.CSharp {
 		/// </summary>
  		Attributes attributes;
 
- 		public enum ClsComplianceValue
- 		{
- 			Undetected,
- 			Yes,
- 			No	
- 		}
-
+		[Flags]
+		public enum Flags {
+			Obsolete_Undetected = 1,		// Obsolete attribute has not beed detected yet
+			Obsolete = 1 << 1,			// Type has obsolete attribute
+			ClsCompliance_Undetected = 1 << 2,	// CLS Compliance has not been detected yet
+			ClsCompliant = 1 << 3,			// Type is CLS Compliant
+			CloseTypeCreated = 1 << 4		// Tracks whether we have Closed the type
+		}
+  
 		/// <summary>
- 		/// Whether CLS compliance must be done on this type.
+		///   MemberCore flags at first detected then cached
  		/// </summary>
- 		protected ClsComplianceValue cls_compliance;
+		protected Flags caching_flags;
 
 		public MemberCore (MemberName name, Attributes attrs, Location loc)
 		{
@@ -281,7 +283,7 @@ namespace Mono.CSharp {
 			MemberName = name;
 			Location = loc;
 			attributes = attrs;
-			cls_compliance = ClsComplianceValue.Undetected;
+			caching_flags = Flags.Obsolete_Undetected | Flags.ClsCompliance_Undetected;
 		}
 
 		public abstract bool Define (TypeContainer parent);
@@ -338,20 +340,16 @@ namespace Mono.CSharp {
 		/// </summary>
 		public bool IsClsCompliaceRequired (DeclSpace container)
 		{
-			if (cls_compliance != ClsComplianceValue.Undetected)
-				return cls_compliance == ClsComplianceValue.Yes;
+			if ((caching_flags & Flags.ClsCompliance_Undetected) == 0)
+				return (caching_flags & Flags.ClsCompliant) != 0;
 
-			if (!IsExposedFromAssembly (container)) {
-				cls_compliance = ClsComplianceValue.No;
+			if (!IsExposedFromAssembly (container) || !GetClsCompliantAttributeValue (container)) {
+				caching_flags &= ~Flags.ClsCompliance_Undetected;
 				return false;
 			}
 
-			if (!GetClsCompliantAttributeValue (container)) {
-				cls_compliance = ClsComplianceValue.No;
-				return false;
-			}
-
-			cls_compliance = ClsComplianceValue.Yes;
+			caching_flags &= ~Flags.ClsCompliance_Undetected;
+			caching_flags |= Flags.ClsCompliant;
 			return true;
 		}
 
@@ -380,17 +378,11 @@ namespace Mono.CSharp {
 			if (OptAttributes != null) {
 				Attribute cls_attribute = OptAttributes.GetClsCompliantAttribute (ds);
 				if (cls_attribute != null) {
-					if (cls_attribute.GetClsCompliantAttributeValue (ds)) {
-						cls_compliance = ClsComplianceValue.Yes;
-						return true;
-					}
-					cls_compliance = ClsComplianceValue.No;
-					return false;
+					return cls_attribute.GetClsCompliantAttributeValue (ds);
 				}
 			}
 
-			cls_compliance = ds.GetClsCompliantAttributeValue ();
-			return cls_compliance == ClsComplianceValue.Yes;
+			return (ds.GetClsCompliantAttributeValue () & Flags.ClsCompliant) != 0;
 		}
 
 		/// <summary>
@@ -516,11 +508,6 @@ namespace Mono.CSharp {
 		/// </summary>
 		public TypeExpr CurrentType;
 
-		/// <summary>
-		///   This variable tracks whether we have Closed the type
-		/// </summary>
-		public bool Created = false;
-		
 		//
 		// This is the namespace in which this typecontainer
 		// was declared.  We use this to resolve names.
@@ -716,7 +703,7 @@ namespace Mono.CSharp {
 
 		public virtual void CloseType ()
 		{
-			if (!Created){
+			if ((caching_flags & Flags.CloseTypeCreated) == 0){
 				try {
 					TypeBuilder.CreateType ();
 				} catch {
@@ -731,7 +718,7 @@ namespace Mono.CSharp {
 					// Note that this still creates the type and
 					// it is possible to save it
 				}
-				Created = true;
+				caching_flags |= Flags.CloseTypeCreated;
 			}
 		}
 
@@ -1309,25 +1296,31 @@ namespace Mono.CSharp {
 		/// Goes through class hierarchy and get value of first CLSCompliantAttribute that found.
 		/// If no is attribute exists then return assembly CLSCompliantAttribute.
 		/// </summary>
-		public ClsComplianceValue GetClsCompliantAttributeValue ()
+		public Flags GetClsCompliantAttributeValue ()
 		{
-			if (cls_compliance != ClsComplianceValue.Undetected)
-				return cls_compliance;
+			if ((caching_flags & Flags.ClsCompliance_Undetected) == 0)
+				return caching_flags;
+
+			caching_flags &= ~Flags.ClsCompliance_Undetected;
 
 			if (OptAttributes != null) {
 				Attribute cls_attribute = OptAttributes.GetClsCompliantAttribute (this);
 				if (cls_attribute != null) {
-					cls_compliance = cls_attribute.GetClsCompliantAttributeValue (this) ? ClsComplianceValue.Yes : ClsComplianceValue.No;
-					return cls_compliance;
+					if (cls_attribute.GetClsCompliantAttributeValue (this)) {
+						caching_flags |= Flags.ClsCompliant;
+					}
+					return caching_flags;
 				}
 			}
 
 			if (parent == null) {
-				cls_compliance = CodeGen.Assembly.IsClsCompliant ? ClsComplianceValue.Yes : ClsComplianceValue.No;
-				return cls_compliance;
+				if (CodeGen.Assembly.IsClsCompliant)
+					caching_flags |= Flags.ClsCompliant;
+				return caching_flags;
 			}
 
-			return parent.GetClsCompliantAttributeValue ();
+			caching_flags |= (parent.GetClsCompliantAttributeValue () & Flags.ClsCompliant);
+			return caching_flags;
 		}
 
 
@@ -2258,21 +2251,56 @@ namespace Mono.CSharp {
 			for (int i = applicable.Count - 1; i >= 0; i--) {
 				CacheEntry entry = (CacheEntry) applicable [i];
 				
-				if ((entry.EntryType & (is_property ? EntryType.Property : EntryType.Method)) == 0)
+				if ((entry.EntryType & (is_property ? (EntryType.Property | EntryType.Field) : EntryType.Method)) == 0)
 					continue;
 
 				PropertyInfo pi = null;
 				MethodInfo mi = null;
-				Type [] cmpAttrs;
+				FieldInfo fi = null;
+				Type [] cmpAttrs = null;
 				
 				if (is_property) {
-					pi = (PropertyInfo) entry.Member;
-					cmpAttrs = TypeManager.GetArgumentTypes (pi);
+					if ((entry.EntryType & EntryType.Field) != 0) {
+						fi = (FieldInfo)entry.Member;
+
+						// TODO: For this case we ignore member type
+						//fb = TypeManager.GetField (fi);
+						//cmpAttrs = new Type[] { fb.MemberType };
+					} else {
+						pi = (PropertyInfo) entry.Member;
+						cmpAttrs = TypeManager.GetArgumentTypes (pi);
+					}
 				} else {
 					mi = (MethodInfo) entry.Member;
 					cmpAttrs = TypeManager.GetArgumentTypes (mi);
 				}
-				
+
+				if (fi != null) {
+					// TODO: Almost duplicate !
+					// Check visibility
+					switch (fi.Attributes & FieldAttributes.FieldAccessMask) {
+						case FieldAttributes.Private:
+							//
+							// A private method is Ok if we are a nested subtype.
+							// The spec actually is not very clear about this, see bug 52458.
+							//
+							if (invocationType != entry.Container.Type &
+								TypeManager.IsNestedChildOf (invocationType, entry.Container.Type))
+								continue;
+
+							break;
+						case FieldAttributes.FamANDAssem:
+						case FieldAttributes.Assembly:
+							//
+							// Check for assembly methods
+							//
+							if (mi.DeclaringType.Assembly != CodeGen.Assembly.Builder)
+								continue;
+							break;
+					}
+					return entry.Member;
+				}
+
 				//
 				// Check the arguments
 				//
