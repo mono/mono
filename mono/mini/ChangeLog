@@ -1,6 +1,7 @@
 2003-05-16  Dietmar Maurer  <dietmar@ximian.com>
 
 	* mini.c (mono_method_to_ir): inline LDFLD/STFLD wrappers
+	(mono_method_check_inlining): enable inlining of all kinds of wrappers
 
 2003-05-15  Lluis Sanchez Gual  <lluis@ideary.com>
 
