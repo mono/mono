@@ -20,8 +20,7 @@ using System.Collections;
 
 namespace System.Data.SqlClient {
 	[ListBindable (false)]
-	 [EditorAttribute ("Microsoft.VSDesigner.Data.Design.DataParametersEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing )]
-
+	[EditorAttribute ("Microsoft.VSDesigner.Data.Design.DataParametersEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing )]
 	public sealed class SqlParameterCollection : MarshalByRefObject, IDataParameterCollection, IList, ICollection, IEnumerable
 	{
 		#region Fields

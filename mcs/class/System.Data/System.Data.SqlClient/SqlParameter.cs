@@ -21,6 +21,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 
 namespace System.Data.SqlClient {
+	[TypeConverterAttribute ("System.Data.SqlClient.SqlParameterConverter, "+ Consts.AssemblySystem_Data)]
 	public sealed class SqlParameter : MarshalByRefObject, IDbDataParameter, IDataParameter, ICloneable
 	{
 		#region Fields
@@ -251,6 +252,7 @@ namespace System.Data.SqlClient {
 		[DataCategory ("Data")]
 		[DataSysDescription ("Value of the parameter.")]
 		[DefaultValue (null)]
+	        [TypeConverterAttribute ("System.ComponentModel.StringConverter, "+ Consts.AssemblySystem)]
 		public object Value {
 			get { return metaParameter.Value; }
 			set { 
