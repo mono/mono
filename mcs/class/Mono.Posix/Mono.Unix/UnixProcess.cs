@@ -35,7 +35,7 @@ namespace Mono.Unix {
 	{
 		private int pid;
 
-		private UnixProcess (int pid)
+		internal UnixProcess (int pid)
 		{
 			this.pid = pid;
 		}

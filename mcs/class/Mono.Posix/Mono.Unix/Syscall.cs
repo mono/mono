@@ -940,9 +940,11 @@ namespace Mono.Unix {
 		//
 		// Then update UnixStream.BeginRead to use the aio* functions.
 
+		#region <dirent.h> Declarations
 		//
 		// <dirent.h>
 		//
+		// TODO: scandir(3), alphasort(3), versionsort(3), getdirentries(3)
 
 		[DllImport (LIBC, SetLastError=true)]
 		public static extern IntPtr opendir (string name);
@@ -1031,9 +1033,11 @@ namespace Mono.Unix {
 
 		[DllImport (LIBC, SetLastError=true)]
 		public static extern int dirfd (IntPtr dir);
+		#endregion
 
+		#region <errno.h> Declarations
 		//
-		// <errno.h>
+		// <errno.h>  -- COMPLETE
 		//
 
 		public static Error GetLastError ()
@@ -1050,28 +1054,13 @@ namespace Mono.Unix {
 			int _error = UnixConvert.FromError (error);
 			SetLastError (_error);
 		}
+		#endregion
 
-		// strerror_r(3)
-		//    int strerror_r(int errnum, char *buf, size_t n);
-		[DllImport (LIBC, SetLastError=true, 
-				EntryPoint="Mono_Posix_Syscall_strerror_r")]
-		private static extern int sys_strerror_r (int errnum, 
-				[Out] StringBuilder buf, ulong n);
-
-		public static int strerror_r (Error errnum, StringBuilder buf, ulong n)
-		{
-			int e = UnixConvert.FromError (errnum);
-			return sys_strerror_r (e, buf, n);
-		}
-
-		public static int strerror_r (Error errnum, StringBuilder buf)
-		{
-			return strerror_r (errnum, buf, (ulong) buf.Capacity);
-		}
-
+		#region <fcntl.h> Declarations
 		//
-		// <fcntl.h>
+		// <fcntl.h> -- COMPLETE
 		//
+
 		[DllImport (MPH, SetLastError=true, 
 				EntryPoint="Mono_Posix_Syscall_fcntl")]
 		public static extern int fcntl (int fd, FcntlCommand cmd);
@@ -1088,10 +1077,14 @@ namespace Mono.Unix {
 				EntryPoint="Mono_Posix_Syscall_open")]
 		public static extern int open (string pathname, OpenFlags flags);
 
+		// open(2)
+		//    int open(const char *pathname, int flags, mode_t mode);
 		[DllImport (MPH, SetLastError=true, 
 				EntryPoint="Mono_Posix_Syscall_open_mode")]
 		public static extern int open (string pathname, OpenFlags flags, FilePermissions mode);
 
+		// creat(2)
+		//    int creat(const char *pathname, mode_t mode);
 		[DllImport (MPH, SetLastError=true, 
 				EntryPoint="Mono_Posix_Syscall_creat")]
 		public static extern int creat (string pathname, FilePermissions mode);
@@ -1108,10 +1101,13 @@ namespace Mono.Unix {
 		[DllImport (MPH, SetLastError=true, 
 				EntryPoint="Mono_Posix_Syscall_posix_fallocate")]
 		public static extern int posix_fallocate (int fd, long offset, long len);
+		#endregion
 
+		#region <grp.h> Declarations
 		//
 		// <grp.h>
 		//
+		// TODO: putgrent(3), fgetgrent_r(), getgrouplist(2), initgroups(3)
 
 		// setgroups(2)
 		//    int setgroups (size_t size, const gid_t *list);
@@ -1254,10 +1250,16 @@ namespace Mono.Unix {
 			CopyGroup (gr, ref group);
 			return gr;
 		}
+		#endregion
 
+		#region <pwd.h> Declarations
 		//
 		// <pwd.h>
 		//
+		// TODO: putpwent(3), fgetpwent_r()
+		//
+		// SKIPPING: getpw(3): it's dangerous.  Use getpwuid(3) instead.
+
 		private struct _Passwd
 		{
 			public IntPtr           pw_name;
@@ -1391,7 +1393,9 @@ namespace Mono.Unix {
 			CopyPasswd (pw, ref passwd);
 			return pw;
 		}
+		#endregion
 
+		#region <signal.h> Declarations
 		//
 		// <signal.h>
 		//
@@ -1434,7 +1438,9 @@ namespace Mono.Unix {
 		// TODO: sigsuspend(2)
 		// TODO: sigpending(2)
 
+		#endregion
 
+		#region <stdio.h> Declarations
 		//
 		// <stdio.h>
 		//
@@ -1462,6 +1468,9 @@ namespace Mono.Unix {
 			return UnixMarshal.PtrToString (r);
 		}
 
+		#endregion
+
+		#region <stdlib.h> Declarations
 		//
 		// <stdlib.h>
 		//
@@ -1471,6 +1480,34 @@ namespace Mono.Unix {
 		[DllImport (CRYPT, SetLastError=true)]
 		public static extern void setkey (string key);
 
+		#endregion
+
+		#region <string.h> Declarations
+		//
+		// <string.h>
+		//
+
+		// strerror_r(3)
+		//    int strerror_r(int errnum, char *buf, size_t n);
+		[DllImport (LIBC, SetLastError=true, 
+				EntryPoint="Mono_Posix_Syscall_strerror_r")]
+		private static extern int sys_strerror_r (int errnum, 
+				[Out] StringBuilder buf, ulong n);
+
+		public static int strerror_r (Error errnum, StringBuilder buf, ulong n)
+		{
+			int e = UnixConvert.FromError (errnum);
+			return sys_strerror_r (e, buf, n);
+		}
+
+		public static int strerror_r (Error errnum, StringBuilder buf)
+		{
+			return strerror_r (errnum, buf, (ulong) buf.Capacity);
+		}
+
+		#endregion
+
+		#region <sys/mman.h> Declarations
 		//
 		// <sys/mman.h>
 		//
@@ -1482,9 +1519,13 @@ namespace Mono.Unix {
 		public static extern int posix_madvise (IntPtr addr, ulong len, 
 			PosixMadviseAdvice advice);
 
+		#endregion
+
+		#region <sys/poll.h> Declarations
 		//
-		// <sys/poll.h>
+		// <sys/poll.h> -- COMPLETE
 		//
+
 		private struct _pollfd {
 			public int fd;
 			public short events;
@@ -1534,8 +1575,11 @@ namespace Mono.Unix {
 		// TODO: getrlimit(2)
 		// TODO: getrusage(2)
 
+		#endregion
+
+		#region <sys/sendfile.h> Declarations
 		//
-		// <sys/sendfile.h>
+		// <sys/sendfile.h> -- COMPLETE
 		//
 
 		[DllImport (MPH, SetLastError=true,
@@ -1543,8 +1587,11 @@ namespace Mono.Unix {
 		public static extern long sendfile (int out_fd, int in_fd, 
 				ref long offset, ulong count);
 
+		#endregion
+
+		#region <sys/stat.h> Declarations
 		//
-		// <sys/stat.h>
+		// <sys/stat.h>  -- COMPLETE
 		//
 		[DllImport (MPH, SetLastError=true, 
 				EntryPoint="Mono_Posix_Syscall_stat")]
@@ -1558,6 +1605,8 @@ namespace Mono.Unix {
 				EntryPoint="Mono_Posix_Syscall_lstat")]
 		public static extern int lstat (string file_name, out Stat buf);
 
+		// chmod(2)
+		//    int chmod(const char *path, mode_t mode);
 		[DllImport (LIBC, SetLastError=true, EntryPoint="chmod")]
 		private static extern int sys_chmod (string path, uint mode);
 
@@ -1567,6 +1616,8 @@ namespace Mono.Unix {
 			return sys_chmod (path, _mode);
 		}
 
+		// fchmod(2)
+		//    int chmod(int filedes, mode_t mode);
 		[DllImport (LIBC, SetLastError=true, EntryPoint="fchmod")]
 		private static extern int sys_fchmod (int filedes, uint mode);
 
@@ -1576,15 +1627,20 @@ namespace Mono.Unix {
 			return sys_fchmod (filedes, _mode);
 		}
 
+		// umask(2)
+		//    mode_t umask(mode_t mask);
 		[DllImport (LIBC, SetLastError=true, EntryPoint="umask")]
-		private static extern int sys_umask (uint mask);
+		private static extern uint sys_umask (uint mask);
 
-		public static int umask (FilePermissions mask)
+		public static FilePermissions umask (FilePermissions mask)
 		{
 			uint _mask = UnixConvert.FromFilePermissions (mask);
-			return sys_umask (_mask);
+			uint r = sys_umask (_mask);
+			return UnixConvert.ToFilePermissions (r);
 		}
 
+		// mkdir(2)
+		//    int mkdir(const char *pathname, mode_t mode);
 		[DllImport (LIBC, SetLastError=true, EntryPoint="mkdir")]
 		public static extern int sys_mkdir (string oldpath, uint mode);
 
@@ -1600,9 +1656,24 @@ namespace Mono.Unix {
 				EntryPoint="Mono_Posix_Syscall_mknod")]
 		public static extern int mknod (string pathname, FilePermissions mode, ulong dev);
 
+		// mkfifo(3)
+		//    int mkfifo(const char *pathname, mode_t mode);
+		[DllImport (LIBC, SetLastError=true, EntryPoint="mkfifo")]
+		private static extern int sys_mkfifo (string pathname, uint mode);
+
+		public static int mkfifo (string pathname, FilePermissions mode)
+		{
+			uint _mode = UnixConvert.FromFilePermissions (mode);
+			return sys_mkfifo (pathname, _mode);
+		}
+
+		#endregion
+
+		#region <sys/time.h> Declarations
 		//
 		// <sys/time.h>
 		//
+		// TODO: adjtime(), getitimer(2), setitimer(2), lutimes(), futimes()
 
 		[DllImport (MPH, SetLastError=true, 
 				EntryPoint="Mono_Posix_Syscall_gettimeofday")]
@@ -1639,6 +1710,12 @@ namespace Mono.Unix {
 			return settimeofday (ref tv, IntPtr.Zero);
 		}
 
+		[DllImport (MPH, SetLastError=true, 
+				EntryPoint="Mono_Posix_Syscall_utimes")]
+		public static extern int utimes (string filename, ref Timeval tvp);
+
+		#endregion
+
 		//
 		// <sys/timeb.h>
 		//
@@ -1651,6 +1728,7 @@ namespace Mono.Unix {
 
 		// TODO: times(2)
 
+		#region <sys/wait.h> Declarations
 		//
 		// <sys/wait.h>
 		//
@@ -1720,6 +1798,9 @@ namespace Mono.Unix {
 		// <termios.h>
 		//
 
+		#endregion
+
+		#region <time.h> Declarations
 		//
 		// <time.h>
 		//
@@ -1742,9 +1823,15 @@ namespace Mono.Unix {
 
 		// TODO: ulimit(3)
 
+		#endregion
+
+		#region <unistd.h> Declarations
 		//
 		// <unistd.h>
 		//
+		// TODO: euidaccess(), usleep(3), get_current_dir_name(), group_member(),
+		//       other TODOs listed below.
+
 		[DllImport (LIBC, SetLastError=true, EntryPoint="access")]
 		private static extern int sys_access (string pathname, int mode);
 
@@ -1828,7 +1915,7 @@ namespace Mono.Unix {
 		public static extern uint alarm (uint seconds);
 
 		[DllImport (LIBC, SetLastError=true)]
-		public static extern int sleep (uint seconds);
+		public static extern uint sleep (uint seconds);
 
 		[DllImport (LIBC, SetLastError=true)]
 		public static extern uint ualarm (uint usecs, uint interval);
@@ -1882,9 +1969,12 @@ namespace Mono.Unix {
 		public static extern int execve (string path, string[] argv, string[] envp);
 
 		[DllImport (LIBC, SetLastError=true)]
+		public static extern int fexecve (int fd, string[] argv, string[] envp);
+
+		[DllImport (LIBC, SetLastError=true)]
 		public static extern int execv (string path, string[] argv);
 
-		// TODO: execle, execl
+		// TODO: execle, execl, execlp
 		[DllImport (LIBC, SetLastError=true)]
 		public static extern int execvp (string path, string[] argv);
 
@@ -1916,6 +2006,11 @@ namespace Mono.Unix {
 		//    pid_t getpid(void);
 		[DllImport (LIBC, SetLastError=true)]
 		public static extern int getpid ();
+
+		// getppid(2)
+		//    pid_t getppid(void);
+		[DllImport (LIBC, SetLastError=true)]
+		public static extern int getppid ();
 
 		// setpgid(2)
 		//    int setpgid(pid_t pid, pid_t pgid);
@@ -2124,6 +2219,9 @@ namespace Mono.Unix {
 			return getlogin_r (name, (ulong) name.Capacity);
 		}
 
+		[DllImport (LIBC, SetLastError=true)]
+		public static extern int setlogin (string name);
+
 		// gethostname(2)
 		//    int gethostname(char *name, size_t len);
 		[DllImport (MPH, SetLastError=true,
@@ -2291,8 +2389,11 @@ namespace Mono.Unix {
 			swab ((IntPtr) from, (IntPtr) to, n);
 		}
 
+		#endregion
+
+		#region <utime.h> Declarations
 		//
-		// <utime.h>
+		// <utime.h>  -- COMPLETE
 		//
 
 		[DllImport (MPH, SetLastError=true, 
@@ -2307,10 +2408,7 @@ namespace Mono.Unix {
 		{
 			return utime (filename, IntPtr.Zero);
 		}
-
-		[DllImport (MPH, SetLastError=true, 
-				EntryPoint="Mono_Posix_Syscall_utimes")]
-		public static extern int utimes (string filename, ref Timeval tvp);
+		#endregion
 	}
 }
 

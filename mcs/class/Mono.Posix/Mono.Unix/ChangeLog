@@ -1,3 +1,26 @@
+2004-11-18  Jonathan Pryor <jonpryor@vt.edu>
+
+	* CdeclFunction.cs: Added.
+	* Stdlib.cs: Re-add printf(3) and fprintf(3).  They may not be portable (the
+	  jury is still out on that; the AMD64 SysV ABI looks like it should be
+	  portable to AMD64 to my eyes), but they will work on *some* platforms, so
+	  we should permit it.  The new implementation takes a page out of
+	  cocoa-sharp: use System.Reflection.Emit to generate a P/Invoke method at
+	  runtime to invoke printf(3) or fprintf(3).  This way, we can export a
+	  params signature to C# code, permitting natural usage such as:
+	      Stdlib.printf ("Hello, %s world! (%i)\n", "silly", 42);
+	* Syscall.cs: Mark which headers are complete, which functions still need
+	  wrapping (for headers which have anything done to them), add #region
+	  blocks for each header;
+	  export mkfifo(3), fexecve(), getppid(2), setlogin(); fix sleep(3) export.
+	* UnixEnvironment.cs: Export a friendly getppid(2) wrapper.
+	  GetParentProcessId isn't in UnixProcess as there's no way (that I know of)
+	  to get the Parent's Parent, so it can't be a class member, and exposing it
+	  as a static member of UnixProcess doesn't make sense to me, as it isn't
+	  general.  Added GetUserShells().
+	* UnixProcess.cs: Change constructor to internal, so it can be used from
+	  UnixEnvironment.
+
 2004-11-16  Jonathan Pryor <jonpryor@vt.edu>
 
 	* Stdlib.cs: Remove printf(3) and fprintf(3).  These are vararg/CDECL 

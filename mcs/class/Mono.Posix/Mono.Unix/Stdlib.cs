@@ -35,6 +35,23 @@ namespace Mono.Unix {
 
 	public delegate void sighandler_t (int value);
 
+	internal class XPrintfFunctions
+	{
+		internal delegate object XPrintf (object[] parameters);
+
+		internal static XPrintf printf;
+		internal static XPrintf fprintf;
+
+		static XPrintfFunctions ()
+		{
+			CdeclFunction _printf = new CdeclFunction ("libc", "printf", typeof(int));
+			printf = new XPrintf (_printf.Invoke);
+
+			CdeclFunction _fprintf = new CdeclFunction ("libc", "fprintf", typeof(int));
+			fprintf = new XPrintf (_fprintf.Invoke);
+		}
+	}
+
 	//
 	// Convention: Functions that are part of the C standard library go here.
 	//
@@ -107,6 +124,23 @@ namespace Mono.Unix {
 
 		[DllImport (LIBC, SetLastError=true)]
 		public static extern int fileno (IntPtr stream);
+
+		public static int printf (string format, params object[] parameters)
+		{
+			object[] _parameters = new object[checked(parameters.Length+1)];
+			_parameters [0] = format;
+			Array.Copy (parameters, 0, _parameters, 1, parameters.Length);
+			return (int) XPrintfFunctions.printf (_parameters);
+		}
+
+		public static int fprintf (IntPtr stream, string format, params object[] parameters)
+		{
+			object[] _parameters = new object[checked(parameters.Length+2)];
+			_parameters [0] = stream;
+			_parameters [1] = format;
+			Array.Copy (parameters, 0, _parameters, 2, parameters.Length);
+			return (int) XPrintfFunctions.fprintf (_parameters);
+		}
 
 		//
 		// <stdlib.h>

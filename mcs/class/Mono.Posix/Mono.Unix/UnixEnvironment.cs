@@ -27,6 +27,7 @@
 //
 
 using System;
+using System.Collections;
 using System.Text;
 using Mono.Unix;
 
@@ -123,6 +124,33 @@ namespace Mono.Unix {
 		{
 			int r = Syscall.setgroups (list);
 			UnixMarshal.ThrowExceptionForLastErrorIf (r);
+		}
+
+		public static int GetParentProcessId ()
+		{
+			return Syscall.getppid ();
+		}
+		
+		public static UnixProcess GetParentProcess ()
+		{
+			return new UnixProcess (GetParentProcessId ());
+		}
+
+		public static string[] GetUserShells ()
+		{
+			ArrayList shells = new ArrayList ();
+
+			try {
+				Syscall.setusershell ();
+				string shell;
+				while ((shell = Syscall.getusershell ()) != null)
+					shells.Add (shell);
+			}
+			finally {
+				Syscall.endusershell ();
+			}
+
+			return (string[]) shells.ToArray (typeof(string));
 		}
 	}
 }
