@@ -127,8 +127,6 @@ namespace MonoTests.System.Diagnostics {
                         frame3 = null;
                 }
                 
-                
-                
                 /// <summary>
                 ///   Tests whether getting file name works.
                 /// </summary>
@@ -228,8 +226,8 @@ namespace MonoTests.System.Diagnostics {
         /// </remarks>
 	[TestFixture]
         public class StackFrameTest3 : Assertion {
-                private StackFrame frame1;
-                private StackFrame frame2;
+                protected StackFrame frame1;
+                protected StackFrame frame2;
                 
 		[SetUp]
                 public void SetUp() {
@@ -240,6 +238,9 @@ namespace MonoTests.System.Diagnostics {
                 private void NestedSetUp() {
                         frame1 = new StackFrame(2);
                         frame2 = new StackFrame(1, true);
+			// Without this access of frame2 on the RHS, none of 
+			// the properties or methods seem to return any data ???
+			string s = frame2.GetFileName();
                 }
                 
 		[TearDown]
@@ -248,8 +249,6 @@ namespace MonoTests.System.Diagnostics {
                         frame2 = null;
                 }
                 
-                
-                
                 /// <summary>
                 ///   Tests whether getting file name works.
                 /// </summary>
@@ -257,7 +256,10 @@ namespace MonoTests.System.Diagnostics {
                         AssertNull("File name (1)",
                                    frame1.GetFileName());
                                      
-                        Assert("File name (2) " + frame2.GetFileName()
+                        AssertNotNull("File name (2) should not be null",
+                                   frame2.GetFileName());
+
+			Assert("File name (2) " + frame2.GetFileName()
                                         + " ends with StackFrameTest.cs",
                                frame2.GetFileName().EndsWith("StackFrameTest.cs"));
                 }
@@ -271,7 +273,7 @@ namespace MonoTests.System.Diagnostics {
                                      frame1.GetFileLineNumber());
                                      
                         AssertEquals("Line number (2)",
-                                     235,
+                                     236,
                                      frame2.GetFileLineNumber());
                 }
                 
