@@ -1,5 +1,17 @@
 2002-08-05  Martin Baulig  <martin@gnome.org>
 
+	* enum.cs (Enum.LookupEnumValue): Catch circular definitions.
+
+	* const.cs (Const.LookupConstantValue): Catch circular definitions.
+
+	* expression.cs (MemberAccess.DoResolve): Silently return if an
+	error has already been reported.
+
+	* ecore.cs (Expression.MemberLookupFinal): Silently return if an
+	error has already been reported.
+
+2002-08-05  Martin Baulig  <martin@gnome.org>
+
 	* statement.cs (UsageVector): Only initialize the `parameters'
 	vector if we actually have any "out" parameters.
 

@@ -5540,6 +5540,8 @@ namespace Mono.CSharp {
 			// it will fail to find any members at all
 			//
 
+			int errors = Report.Errors;
+			
 			Type expr_type = expr.Type;
 			if ((expr is TypeExpr) && (expr_type.IsSubclassOf (TypeManager.enum_type))){
 				
@@ -5561,10 +5563,14 @@ namespace Mono.CSharp {
 					      TypeManager.CSharpName (expr_type) + ")");
 				return null;
 			}
-			
+
 			member_lookup = MemberLookup (ec, expr_type, Identifier, loc);
 
 			if (member_lookup == null){
+				// Error has already been reported.
+				if (errors < Report.Errors)
+					return null;
+
 				//
 				// Try looking the member up from the same type, if we find
 				// it, we know that the error was due to limited visibility

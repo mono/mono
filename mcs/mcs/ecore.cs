@@ -429,10 +429,16 @@ namespace Mono.CSharp {
 		{
 			Expression e;
 
+			int errors = Report.Errors;
+
 			e = MemberLookup (ec, t, name, mt, bf, loc);
 
 			if (e != null)
 				return e;
+
+			// Error has already been reported.
+			if (errors < Report.Errors)
+				return null;
 			
 			e = MemberLookup (ec, t, name, AllMemberTypes,
 					  AllBindingFlags | BindingFlags.NonPublic, loc);
@@ -3353,6 +3359,8 @@ namespace Mono.CSharp {
 					
 					if (c != null) {
 						object o = c.LookupConstantValue (ec);
+						if (o == null)
+							return null;
 						object real_value = ((Constant)c.Expr).GetValue ();
 						return Constantify (real_value, fi.FieldType);
 					}

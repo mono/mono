@@ -33,6 +33,8 @@ namespace Mono.CSharp {
 		object ConstantValue = null;
 		Type type;
 
+		bool in_transit = false;
+
 		public const int AllowedModifiers =
 			Modifiers.NEW |
 			Modifiers.PUBLIC |
@@ -118,10 +120,23 @@ namespace Mono.CSharp {
 			if (ConstantValue != null)
 				return ConstantValue;
 
+			if (in_transit) {
+				Report.Error (110, Location,
+					      "The evaluation of the constant value for `" +
+					      Name + "' involves a circular definition.");
+				return null;
+			}
+
+			in_transit = true;
+			int errors = Report.Errors;
+
 			Expr = Expr.Resolve (ec);
 
+			in_transit = false;
+
 			if (Expr == null) {
-				Report.Error (150, Location, "A constant value is expected");
+				if (errors == Report.Errors)
+					Report.Error (150, Location, "A constant value is expected");
 				return null;
 			}
 

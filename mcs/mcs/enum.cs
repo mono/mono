@@ -34,6 +34,11 @@ namespace Mono.CSharp {
 		// This is for members that have been defined
 		//
 		Hashtable member_to_value;
+
+		//
+		// This is used to mark members we're currently defining
+		//
+		Hashtable in_transit;
 		
 		ArrayList field_builders;
 		
@@ -55,6 +60,7 @@ namespace Mono.CSharp {
 			ordered_enums = new ArrayList ();
 			member_to_location = new Hashtable ();
 			member_to_value = new Hashtable ();
+			in_transit = new Hashtable ();
 			field_builders = new ArrayList ();
 		}
 
@@ -272,6 +278,12 @@ namespace Mono.CSharp {
 			if (!defined_names.Contains (name))
 				return null;
 
+			if (in_transit.Contains (name)) {
+				Report.Error (110, loc, "The evaluation of the constant value for `" +
+					      Name + "." + name + "' involves a circular definition.");
+				return null;
+			}
+
 			//
 			// So if the above doesn't happen, we have a member that is undefined
 			// We now proceed to define it 
@@ -289,7 +301,11 @@ namespace Mono.CSharp {
 						string n = (string) ordered_enums [i];
 						Location m_loc = (Mono.CSharp.Location)
 							member_to_location [n];
+						in_transit.Add (name, true);
 						default_value = LookupEnumValue (ec, n, m_loc);
+						in_transit.Remove (name);
+						if (default_value == null)
+							return null;
 					}
 					
 					default_value = GetNextDefaultValue (default_value);
@@ -298,13 +314,13 @@ namespace Mono.CSharp {
 			} else {
 				bool old = ec.InEnumContext;
 				ec.InEnumContext = true;
+				in_transit.Add (name, true);
 				val = val.Resolve (ec);
+				in_transit.Remove (name);
 				ec.InEnumContext = old;
 				
-				if (val == null) {
-					Report.Error (-12, loc, "Definition is circular.");
+				if (val == null)
 					return null;
-				}
 
 				if (IsValidEnumConstant (val)) {
 					c = (Constant) val;
