@@ -1,3 +1,7 @@
+2002-05-20  Lawrence Pit  <loz@cable.a2000.nl>
+
+	* DateTime.cs: ToString () using "G" format specifier 
+
 2002-05-19  Martin Baulig  <martin@gnome.org>
 
 	* Convert.cs (FromBase64CharArray): Do correct exception handling.

@@ -1013,7 +1013,7 @@ namespace System
 		
 		public override string ToString ()
 		{
-			return ToString (null, null);
+			return ToString ("G", null);
 		}
 
 		public string ToString (IFormatProvider fp)
