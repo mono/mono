@@ -18,21 +18,33 @@ namespace Mono.Xml.Xsl {
 		public abstract void WriteStartDocument();		
 		public abstract void WriteEndDocument();
 		
-		public abstract void WriteStartElement(string localName, string nsURI);
+		public void WriteStartElement(string localName, string nsURI)
+		{
+			WriteStartElement (null, localName, nsURI);
+		}
+		
 		public abstract void WriteStartElement(string prefix, string localName, string nsURI);
 		public abstract void WriteEndElement();
 		
-		public abstract void WriteAttributeString(string localName, string value);
+		public void WriteAttributeString(string localName, string value)
+		{
+			WriteAttributeString ("", localName, "", value);
+		}
+		
 		public abstract void WriteAttributeString(string prefix, string localName, string nsURI, string value);
-		public virtual void WriteNamespaceDecl (string prefix, string nsUri)
+		public void WriteNamespaceDecl (string prefix, string nsUri)
 		{
 			if (prefix == String.Empty)
-				WriteAttributeString ("xmlns", nsUri);
+				WriteAttributeString ("", "xmlns", "", nsUri);
 			else
 				WriteAttributeString ("xmlns", prefix, null, nsUri);
 		}
 		
-		public abstract void WriteStartAttribute(string localName, string nsURI);
+		public void WriteStartAttribute(string localName, string nsURI)
+		{
+			WriteStartAttribute (null, localName, nsURI);
+		}
+		
 		public abstract void WriteStartAttribute(string prefix, string localName, string nsURI);
 		public abstract void WriteEndAttribute();		
 		

@@ -43,10 +43,6 @@ namespace Mono.Xml.Xsl {
 			_writer.WriteEndDocument();		
 		}
 
-		public override void WriteStartElement(string localName, string nsURI) {
-			_writer.WriteStartElement(localName, nsURI);
-		}
-
 		public override void WriteStartElement(string prefix, string localName, string nsURI) {
 			_writer.WriteStartElement(prefix, localName, nsURI);
 		}
@@ -55,16 +51,8 @@ namespace Mono.Xml.Xsl {
 			_writer.WriteEndElement();
 		}
 
-		public override void WriteAttributeString(string localName, string value) {
-			_writer.WriteAttributeString(localName, value);
-		}
-
 		public override void WriteAttributeString(string prefix, string localName, string nsURI, string value) {
 			_writer.WriteAttributeString(prefix, localName, nsURI, value);
-		}
-
-		public override void WriteStartAttribute(string localName, string nsURI) {
-			_writer.WriteStartAttribute(localName, nsURI);
 		}
 
 		public override void WriteStartAttribute(string prefix, string localName, string nsURI) {

@@ -26,17 +26,11 @@ namespace Mono.Xml.Xsl {
 		
 		public override void WriteEndDocument() {}
 
-		public override void WriteStartElement(string localName, string nsURI) {}
-
 		public override void WriteStartElement(string prefix, string localName, string nsURI) {}
 
 		public override void WriteEndElement() {}
 
-		public override void WriteAttributeString(string localName, string value) {}
-
 		public override void WriteAttributeString(string prefix, string localName, string nsURI, string value) {}
-
-		public override void WriteStartAttribute(string localName, string nsURI) {}
 
 		public override void WriteStartAttribute(string prefix, string localName, string nsURI) {}
 
