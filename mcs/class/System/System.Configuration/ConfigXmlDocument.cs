@@ -68,6 +68,7 @@ namespace System.Configuration
 			lineNumber = sourceReader.LineNumber;
 			string xml = sourceReader.ReadOuterXml();
 			reader = new XmlTextReader (new StringReader (xml), sourceReader.NameTable);
+			reader.MoveToContent ();
 			Load (reader);
 			reader.Close ();
 		}

@@ -1,3 +1,10 @@
+2002-10-08  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* ConfigXmlDocument.cs: move the reader for the section to the first
+	element.
+	
+	* ConfigurationSettings.cs: fixed hierarchical search for a handler. 
+
 2002-10-06  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* ConfigurationSettings.cs: reimplemented. It is now able to deliver

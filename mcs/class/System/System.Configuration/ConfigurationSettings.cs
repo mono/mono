@@ -137,7 +137,7 @@ namespace System.Configuration
 
 		public ConfigurationData (ConfigurationData parent)
 		{
-			this.parent = parent;
+			this.parent = (parent == this) ? null : parent;
 			factories = new Hashtable ();
 		}
 
@@ -155,30 +155,26 @@ namespace System.Configuration
 				MoveToNextElement (reader);
 				ReadSections (reader, null);
 			} finally {
-				if (reader == null)
+				if (reader != null)
 					reader.Close();
 			}
 
 			return true;
 		}
 
-		IConfigurationSectionHandler GetSectionHandler (string sectionName)
+		object GetHandler (string sectionName)
 		{
-			if (!factories.Contains (sectionName)) {
-				if (parent == null)
-					return null;
-
-				return parent.GetConfig (sectionName) as IConfigurationSectionHandler;
-			}
-			
 			object o = factories [sectionName];
-			if (o == removedMark)
+			if (o == null || o == removedMark) {
+				if (parent != null)
+					return parent.GetConfig (sectionName);
+
 				return null;
+			}
 
 			if (o is IConfigurationSectionHandler)
 				return (IConfigurationSectionHandler) o;
 
-			Type iconfig = typeof (IConfigurationSectionHandler);
 			string [] typeInfo = ((string) o).Split (',');
 			Type t;
 			
@@ -193,14 +189,17 @@ namespace System.Configuration
 			if (t == null)
 				throw new ConfigurationException ("Cannot get Type for " + o);
 
+			Type iconfig = typeof (IConfigurationSectionHandler);
 			if (!iconfig.IsAssignableFrom (t))
 				throw new ConfigurationException (sectionName + " does not implement " + iconfig);
 			
 			o = Activator.CreateInstance (t, true);
 			if (o == null)
 				throw new ConfigurationException ("Cannot get instance for " + t);
+
+			factories [sectionName] = o;
 			
-			return (IConfigurationSectionHandler) o;
+			return o;
 		}
 
 		//TODO: Should use XPath when it works properly for this.
@@ -235,17 +234,15 @@ namespace System.Configuration
 		
 		public object GetConfig (string sectionName)
 		{
-			IConfigurationSectionHandler handler = GetSectionHandler (sectionName);
-			if (handler == null)
-				return null;
-
-			factories [sectionName] = handler;
+			object handler = GetHandler (sectionName);
+			if (!(handler is IConfigurationSectionHandler))
+				return handler;
 
 			XmlDocument doc = GetDocumentForSection (sectionName);
 			if (doc == null)
 				throw new ConfigurationException ("Section not found: " + sectionName);
 
-			return handler.Create (null, null, doc);
+			return ((IConfigurationSectionHandler) handler).Create (null, null, doc);
 		}
 
 		private object LookForFactory (string key)
