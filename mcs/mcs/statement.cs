@@ -2850,6 +2850,7 @@ namespace Mono.CSharp {
 				Expression e = (Expression) p.Second;
 
 				vi.VariableInfo = null;
+				vi.ReadOnly = true;
 
 				//
 				// The rules for the possible declarators are pretty wise,

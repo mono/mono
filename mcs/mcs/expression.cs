@@ -826,6 +826,9 @@ namespace Mono.CSharp {
 			//
 			type = expr_type;
 			if (expr.eclass == ExprClass.Variable){
+				LocalVariableReference var = expr as LocalVariableReference;
+				if ((var != null) && var.IsReadOnly)
+					Error (1604, "cannot assign to `" + var.Name + "' because it is readonly");
 				if (IsIncrementableNumber (expr_type) ||
 				    expr_type == TypeManager.decimal_type){
 					return this;

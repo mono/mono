@@ -1,5 +1,12 @@
 2003-08-22  Martin Baulig  <martin@ximian.com>
 
+	* expression.cs (UnaryMutator.ResolveVariable): If the target is a
+	LocalVariableReference, ensure it's not read-only.  Fixes #47536.
+
+	* statement.cs (Fixed.DoResolve): Make all variables read-only.	
+
+2003-08-22  Martin Baulig  <martin@ximian.com>
+
 	* ecore.cs (FieldExpr.DoResolveLValue): Static read-only fields
 	can only be assigned in static constructors.  Fixes #47161.
 
