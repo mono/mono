@@ -1,4 +1,4 @@
-// Compiler options: -r:conv-lib.dll
+// Compiler options: -r:conv-dll.dll
 
 public class MainClass
 {

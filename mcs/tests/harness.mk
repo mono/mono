@@ -18,7 +18,7 @@ all-local $(STD_TARGETS:=-local):
         echo "*** $(CSCOMPILE) $$options -out:$*.$$ext $$f" > $$testlogfile ; \
 	if $(CSCOMPILE) $$options -out:$*.$$ext $$f >> $$testlogfile 2>&1 ; then \
 	  if test -f $*.exe; then \
-	    echo "*** $(TEST_RUNTIME) ./$*.exe" >> $$testlogfile ; \
+	    echo '*** $(TEST_RUNTIME) ./$*.exe' >> $$testlogfile ; \
 	      if $(TEST_RUNTIME) -O=-all ./$*.exe >> $$testlogfile 2>&1 ; then \
 		echo "PASS: $*" > $@ ; \
 	        rm -f $$testlogfile ; \
@@ -37,17 +37,4 @@ all-local $(STD_TARGETS:=-local):
 	cat $@; \
 	if test ! -f $$testlogfile ; then :; else cat $$testlogfile; fi
 
-# test ordering
-mtest-1-exe.res: mtest-1-dll.res
-prog-1.res: dll-1.res
-prog-2.res: dll-2.res
-conv-main.res: conv-lib.res
-vararg-exe.res: vararg-lib.res
-module-2.res: module-1.res
-module-3.res: module-1.res module-2.res
-ns.res: ns0.res
-gen-13-exe.res: gen-13-dll.res
-gen-17-exe.res: gen-17-dll.res
-gen-47-exe.res: gen-47-dll.res
-gen-99.res: gen-98.res
-pover-b.res: pover-a.res
+# test ordering dependencies will be pasted after this

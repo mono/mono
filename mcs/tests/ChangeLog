@@ -1,3 +1,22 @@
+2004-11-18  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile (TEST_ORDERING): New.  Lists multi-file tests that are
+	not handled by the %-exe/%-dll pattern.
+	(test-harness-run): Add test-ordering dependencies to
+	generated Makefile.
+	* harness.mk (%.res): Fix quoting error.
+	(test-ordering): Remove.
+	* conv-dll.cs, conv-exe.cs: Rename from conv-lib.cs, conv-main.cs.
+	* vararg-dll.cs: Rename from vararg-lib.cs.
+	* mtest-2-dll.cs, mtest-2-exe.cs: Rename from dll-1.cs and
+	prog-1.cs.
+	* mtest-3-dll.cs, mtest-3-exe.cs: Rename from dll-2.cs and 
+	prog-2.cs.
+	* mtest-4-dll.cs, mtest-4-exe.cs: Rename from ns0.cs and ns.cs.
+	* mtest-5-dll.cs, mtest-5-exe.cs: Rename from pover-a.cs and
+	pover-b.cs.
+	* gen-98-dll.cs, gen-98-exe.cs: Rename from gen-98.cs and gen-99.cs.
+
 2004-11-18  Martin Baulig  <martin@ximian.com>
 
 	* gen-102.cs: New test for #62909.

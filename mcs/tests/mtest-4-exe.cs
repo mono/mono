@@ -1,4 +1,4 @@
-// Compiler options: -r:ns0.dll
+// Compiler options: -r:mtest-4-dll.dll
 
 using Inner = Foo.Bar.Baz.Inner;
 public class Driver {

@@ -1,4 +1,4 @@
-// Compiler options: -r:dll-1.dll
+// Compiler options: -r:mtest-2-dll.dll
 
 namespace QtSamples
 {

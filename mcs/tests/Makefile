@@ -1,7 +1,7 @@
 #
 # use `run-test-local'
 #
-# *** make sure you add multi-file tests to harness.mk
+# *** make sure you add multi-file tests to TEST_ORDERING if necessary
 
 thisdir = tests
 SUBDIRS = 
@@ -25,7 +25,7 @@ USE_MCS_FLAGS :=
 # Martin Baulig will manually move them into TEST_SOURCES_common after merging the code into GMCS.
 # He may also move some to TEST_EXCLUDE_net_2_0 if some of the merges are inappropriate for GMCS.
 #
-NEW_TEST_SOURCES_common = test-294 test-304 test-305 test-306 test-307 pover-a pover-b
+NEW_TEST_SOURCES_common = test-294 test-304 test-305 test-306 test-307 mtest-5-dll mtest-5-exe
 
 #
 # Please do _not_ add any tests here - all new tests should go into NEW_TEST_SOURCES_common
@@ -71,12 +71,12 @@ TEST_SOURCES_common = \
 	2test-11 2test-12 2test-13 2test-14 \
 	unsafe-1 unsafe-2 unsafe-3 unsafe-5 unsafe-6 unsafe-7 unsafe-8 unsafe-9 unsafe-10 \
 	mtest-1-dll mtest-1-exe \
-	dll-1 prog-1 \
-	dll-2 prog-2 \
-	conv-lib conv-main \
-	vararg-lib vararg-exe \
+	mtest-2-dll mtest-2-exe \
+	mtest-3-dll mtest-3-exe \
+	mtest-4-dll mtest-4-exe \
+	conv-dll conv-exe \
+	vararg-dll vararg-exe \
 	module-1 module-2 module-3 \
-	ns0 ns \
 	a-call		a-capture5    a-instance	a-parameter2			\
 	a-capture10	a-capture6    a-nested-anon2  					\
 	a-capture1	a-capture7    a-nested-anon3    				\
@@ -89,18 +89,18 @@ TEST_EXCLUDES_common =
 TEST_SOURCES_default = $(NEW_TEST_SOURCES_common)
 
 TEST_SOURCES_net_2_0 = \
-	gen-13-dll gen-13-exe gen-17-dll gen-17-exe gen-31-dll gen-31-exe		\
-	gen-47-dll gen-47-exe	       \
-	gen-1   gen-2   gen-3   gen-4   gen-5   gen-6   gen-7   gen-8   gen-9   gen-10 \
-	gen-11  gen-12          gen-14  gen-15  gen-16          gen-18  gen-19  gen-20 \
-	gen-21  gen-22  gen-23  gen-24  gen-25  gen-26  gen-27  gen-28  gen-29  gen-30 \
-	        gen-32  gen-33  gen-34  gen-35  gen-36  gen-37  gen-38  gen-39  gen-40 \
-	gen-41  gen-42  gen-43  gen-44  gen-45  gen-46          gen-48  gen-49  gen-50 \
-	gen-51  gen-52  gen-53  gen-54  gen-55  gen-56          gen-58  gen-59  gen-60 \
-	gen-61  gen-62  gen-63  gen-64          gen-66  gen-67  gen-68  gen-69  gen-70 \
-	gen-71  gen-72  gen-73  gen-74  gen-75  gen-76  gen-77  gen-78  gen-79  gen-80 \
-	gen-81  gen-82  gen-83  gen-84  gen-85  gen-86  gen-87  gen-88  gen-89  gen-90 \
-	gen-91  gen-92  gen-93  gen-94  gen-95  gen-96  gen-97  gen-98  gen-99  gen-100 \
+	gen-13-dll gen-13-exe gen-17-dll gen-17-exe gen-31-dll gen-31-exe 		\
+	gen-47-dll gen-47-exe gen-98-dll gen-98-exe 					\
+	gen-1   gen-2   gen-3   gen-4   gen-5   gen-6   gen-7   gen-8   gen-9   gen-10  \
+	gen-11  gen-12          gen-14  gen-15  gen-16          gen-18  gen-19  gen-20  \
+	gen-21  gen-22  gen-23  gen-24  gen-25  gen-26  gen-27  gen-28  gen-29  gen-30  \
+	        gen-32  gen-33  gen-34  gen-35  gen-36  gen-37  gen-38  gen-39  gen-40  \
+	gen-41  gen-42  gen-43  gen-44  gen-45  gen-46          gen-48  gen-49  gen-50  \
+	gen-51  gen-52  gen-53  gen-54  gen-55  gen-56          gen-58  gen-59  gen-60  \
+	gen-61  gen-62  gen-63  gen-64          gen-66  gen-67  gen-68  gen-69  gen-70  \
+	gen-71  gen-72  gen-73  gen-74  gen-75  gen-76  gen-77  gen-78  gen-79  gen-80  \
+	gen-81  gen-82  gen-83  gen-84  gen-85  gen-86  gen-87  gen-88  gen-89  gen-90  \
+	gen-91  gen-92  gen-93  gen-94  gen-95  gen-96  gen-97                  gen-100 \
 	gen-101 gen-102
 
 TEST_EXCLUDES_net_2_0 =
@@ -117,6 +117,12 @@ TEST_SOURCES_win32 = test-50 test-67
 
 TEST_NOPASS = test-120 test-132 test-133 a-parameter4.cs 
 #	test-28 test-45 test-53 test-91 test-102 test-106 test-107 test-122 test-66 test-177
+
+# The test harness supports running the testcases in parallel.  However, we still need to
+# provide test-ordering rules to support multi-file testcases.  By default, any test named
+# 'foo-exe' requires that a test named 'foo-dll' be present, and they're run in the order: foo-dll, foo-exe
+# Additional test-orderings can be listed below.  Note that x:y says that 'x' should be run _after_ y
+TEST_ORDERING = module-2:module-1 module-3:module-1 module-3:module-2
 
 all-local install-local uninstall-local:
 
@@ -176,11 +182,15 @@ endif
 test-harness:
 	@$(MAKE) -s test-harness-run
 
+exe_tests := $(filter %-exe, $(TEST_SOURCES))
+
 test-harness-run:
 	@-rm -f $(TEST_TAG).log
 	@-rm -fr dir-$(TEST_TAG)
 	@mkdir dir-$(TEST_TAG)
 	@sed 's,@thisdir@,$(thisdir)/dir-$(TEST_TAG),' harness.mk > dir-$(TEST_TAG)/Makefile
+	@test -z "$(exe_tests)" || for i in ''$(exe_tests); do echo $$i | sed 's,\(.*\)-exe$$,\1-exe.res: \1-dll.res,' >> dir-$(TEST_TAG)/Makefile; done
+	@test -z "$(TEST_ORDERING)" || for i in ''$(TEST_ORDERING); do echo $$i.res | sed 's,:,.res: ,' >> dir-$(TEST_TAG)/Makefile; done
 	@echo 'Running $(TEST_TAG) tests with flags "$(TEST_RUNTIME)" ... '
 	@cd dir-$(TEST_TAG) ; \
 	$(MAKE) -s $(TEST_SOURCES:=.res) || failed="make " ; \

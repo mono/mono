@@ -1,4 +1,4 @@
-// Compiler options: /r:gen-98.dll
+// Compiler options: /r:gen-98-dll.dll
 public class Foo : IFoo
 {
 	void IFoo.Test<X> ()

@@ -1,4 +1,4 @@
-// Compiler options: -r:vararg-lib.dll
+// Compiler options: -r:vararg-dll.dll
 
 using System;
 

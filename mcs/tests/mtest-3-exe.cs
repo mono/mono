@@ -1,4 +1,4 @@
-// Compiler options: -r:dll-2.dll
+// Compiler options: -r:mtest-3-dll.dll
 
 using System;
 using System.Runtime.InteropServices;
