@@ -8,6 +8,7 @@
 //
 
 using System;
+using System.Text;
 
 namespace Microsoft.JScript {
 
@@ -17,6 +18,15 @@ namespace Microsoft.JScript {
 		internal string ReturnType;
 		internal FormalParameterList Params;
 		internal Block Body;
+
+		internal FunctionObject (string name,
+					 FormalParameterList p,
+					 Block body)
+		{
+			this.Name = name;
+			this.Params = p;
+			this.Body = body;
+		}
 	    
 		internal FunctionObject ()
 		{
@@ -26,7 +36,24 @@ namespace Microsoft.JScript {
 
 		public override string ToString ()
 		{
-			throw new NotImplementedException ();
+			StringBuilder sb = new StringBuilder ();
+
+			sb.Append ("function ");
+			sb.Append (Name + " ");
+			sb.Append ("(");
+
+			if (Params != null)
+				sb.Append (Params.ToString ());
+					
+			sb.Append (")");
+			sb.Append ("{");
+
+			if (Body != null)
+				sb.Append (Body.ToString ());
+
+			sb.Append ("}");
+
+			return sb.ToString ();		
 		}
 	}
 }

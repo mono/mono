@@ -16,7 +16,14 @@ namespace Microsoft.JScript {
 	public class FunctionDeclaration : AST {
 
 		internal FunctionObject Function;
-	
+
+		internal FunctionDeclaration (string name, 
+					      FormalParameterList p,
+					      Block body)
+		{
+			Function = new FunctionObject (name, p,body);
+		}
+
 		public static Closure JScriptFunctionDeclaration (RuntimeTypeHandle handle, string name, 
 								  string methodName, string [] formalParameters,
 								  JSLocalField [] fields, bool mustSaveStackLocals,

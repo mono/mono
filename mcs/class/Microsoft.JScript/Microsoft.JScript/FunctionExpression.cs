@@ -14,6 +14,14 @@ namespace Microsoft.JScript {
 
 		internal FunctionObject Function;
 
+		internal FunctionExpression (string name, 
+					     FormalParameterList p,
+					     Block body)
+		{
+			Function = new FunctionObject (name, p, body);
+		}
+						
+
 		internal FunctionExpression ()
 		{
 			Function = new FunctionObject ();
