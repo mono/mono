@@ -1,5 +1,7 @@
 2002-03-01  Dietmar Maurer  <dietmar@ximian.com>
 
+	* jit.c (MAKE_SPILLED_BI_ALU): remove unnecessary assertions
+
 	* emit-x86.c (arch_handle_exception): big fix - dont use
 	uninitialized next_bp
 	(arch_compile_method): make the jit thread save
