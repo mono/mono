@@ -1,3 +1,10 @@
+
+Thu Mar 28 12:32:00 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* loader.c: don't assert when a typeref can't be loaded, give
+	a chance to the runtime to trow an exception instead.
+	* loader.h: fix warning.
+
 2002-03-28  Dietmar Maurer  <dietmar@ximian.com>
 
 	* class.c (mono_class_proxy_vtable): added proxy support
