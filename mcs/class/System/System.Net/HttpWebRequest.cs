@@ -823,7 +823,7 @@ namespace System.Net
 			}
 
 			if (writeStream != null) {
-				writeStream.Close ();
+				writeStream.InternalClose ();
 				writeStream = null;
 			}
 

@@ -150,7 +150,8 @@ namespace System.Net
 			}
 
 			if (nread == 0) {
-				Console.WriteLine ("nread == 0");
+				Console.WriteLine ("nread == 0: may be the connection was closed?");
+				cnc.dataAvailable.Set ();
 				return;
 			}
 
@@ -203,7 +204,6 @@ namespace System.Net
 				stream.ReadBuffer = cnc.buffer;
 				stream.ReadBufferOffset = pos;
 				stream.ReadBufferSize = nread;
-				stream.CheckComplete ();
 			} else if (cnc.chunkStream == null) {
 				cnc.chunkStream = new ChunkStream (cnc.buffer, pos, nread, data.Headers);
 			} else {
@@ -214,6 +214,7 @@ namespace System.Net
 			cnc.prevStream = stream;
 			data.stream = stream;
 			data.request.SetResponseData (data);
+			stream.CheckComplete ();
 		}
 		
 		static void InitRead (object state)
@@ -344,7 +345,7 @@ namespace System.Net
 				prevStream.ReadAll ();
 				prevStream = null;
 			}
-				
+
 			if (!busy) {
 				busy = true;
 				Monitor.Exit (this);
@@ -367,13 +368,15 @@ namespace System.Net
 				Close ();
 			}
 
+			busy = false;
+			dataAvailable.Set ();
+
 			if (queue.Count > 0) {
 				HttpWebRequest request = (HttpWebRequest) queue [0];
 				queue.RemoveAt (0);
 				Monitor.Exit (this);
 				SendRequest (request);
 			} else {
-				busy = false;
 				Monitor.Exit (this);
 			}
 		}

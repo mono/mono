@@ -30,6 +30,7 @@ namespace System.Net
 		MemoryStream writeBuffer;
 		bool requestWritten;
 		byte [] headers;
+		bool disposed;
 
 		public WebConnectionStream (WebConnection cnc)
 		{
@@ -170,8 +171,8 @@ namespace System.Net
 				readBufferOffset += copy;
 				offset += copy;
 				size -= copy;
+				totalRead += copy;
 				if (size == 0 || totalRead >= contentLength) {
-					totalRead += copy;
 					result.SetCompleted (true, copy);
 					result.DoCallback ();
 					return result;
@@ -187,20 +188,18 @@ namespace System.Net
 		{
 			WebAsyncResult result = (WebAsyncResult) r;
 
-			int nbytes = -1;
-			if (result.IsCompleted) {
-				nbytes = result.NBytes;
-			} else {
-				nbytes = cnc.EndRead (result.InnerAsyncResult);
+			if (!result.IsCompleted) {
+				int nbytes = cnc.EndRead (result.InnerAsyncResult);
 				lock (this) {
 					pendingReads--;
 					if (pendingReads == 0)
 						pending.Set ();
 				}
 
-				nbytes += result.NBytes; // partially filled from the read buffer
-				result.SetCompleted (false, nbytes);
+				result.SetCompleted (false, nbytes + result.NBytes);
 				totalRead += nbytes;
+				if (nbytes == 0)
+					contentLength = totalRead;
 			}
 
 			if (totalRead >= contentLength && !nextReadCalled) {
@@ -208,7 +207,7 @@ namespace System.Net
 				cnc.NextRead ();
 			}
 
-			return nbytes;
+			return result.NBytes;
 		}
 		
 		public override IAsyncResult BeginWrite (byte [] buffer, int offset, int size,
@@ -300,12 +299,18 @@ namespace System.Net
 			cnc.dataAvailable.Set ();
 		}
 
+		internal void InternalClose ()
+		{
+			disposed = true;
+		}
+		
 		public override void Close ()
 		{
-			if (!allowBuffering)
+			if (isRead || !allowBuffering || disposed)
 				return;
 
-			// may be ReadAll is isRead?
+			disposed = true;
+
 			long length = request.ContentLength;
 			if (length != -1 && length > writeBuffer.Length)
 				throw new IOException ("Cannot close the stream until all bytes are written");

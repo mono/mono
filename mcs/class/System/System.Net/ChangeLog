@@ -1,3 +1,15 @@
+2003-06-12  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpWebRequest.cs: use InternalClose when we are not going to send the
+	rest of the request stream because of an error after sending the
+	headers.
+
+	* WebConnection.cs: check for completion after setting the response.
+	Enable reading in NextRead.
+
+	* WebConnectionStream.cs: re-fixed the count for partially buffered
+	reads. If the network stream returns 0 bytes, we're done.
+
 2003-06-11  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* WebClient.cs: implemented UploadFile. Fixed SetupRequest to set the
