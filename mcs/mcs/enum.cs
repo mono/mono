@@ -108,7 +108,6 @@ namespace CIR {
 		public void Emit (TypeContainer tc)
 		{
 			EmitContext ec = new EmitContext (tc, null, UnderlyingType, ModFlags);
-
 			int default_value = 0;
 
 			FieldAttributes attr = FieldAttributes.Public | FieldAttributes.Static
@@ -134,20 +133,25 @@ namespace CIR {
 				fb.SetConstant (default_value++);
 			}
 
-			if (OptAttributes != null) {
-				if (OptAttributes.AttributeSections != null) {
-					foreach (AttributeSection asec in OptAttributes.AttributeSections) {
-						if (asec.Attributes != null) {
-							foreach (Attribute a in asec.Attributes) {
-								CustomAttributeBuilder cb = a.Resolve (ec);
-								if (cb != null)
-									EnumBuilder.SetCustomAttribute (cb);
-							}
-						}
-					}
+			if (OptAttributes == null)
+				return;
+			
+			if (OptAttributes.AttributeSections == null)
+				return;
+			
+			foreach (AttributeSection asec in OptAttributes.AttributeSections) {
+				if (asec.Attributes == null)
+					continue;
+				
+				foreach (Attribute a in asec.Attributes) {
+					CustomAttributeBuilder cb = a.Resolve (ec);
+
+					if (cb == null)
+						continue;
+					
+					EnumBuilder.SetCustomAttribute (cb);
 				}
 			}
-			
 		}
 
 		public void CloseEnum ()

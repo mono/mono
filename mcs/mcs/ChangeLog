@@ -1,7 +1,10 @@
 2001-11-08  Miguel de Icaza  <miguel@ximian.com>
 
+	* ecore.cs: Remove dead code.
+
 	* class.cs (Property.Emit): More simplification.
-	
+	(Event.Emit): ditto.
+
 	Reworked to have less levels of indentation.
 	
 2001-11-08  Ravi Pratap  <ravi@ximian.com>

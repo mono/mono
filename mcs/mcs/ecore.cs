@@ -272,10 +272,6 @@ namespace CIR {
 		// </summary>
 		public static Expression Literalize (object v, Type t)
 		{
-			//Type t = fi.FieldType;
-			// object v = fi.GetValue (fi);
-			// Type t = v.GetType ();
-
 			if (t == TypeManager.int32_type)
 				return new IntLiteral ((int) v);
 			else if (t == TypeManager.uint32_type)

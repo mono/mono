@@ -2384,17 +2384,22 @@ namespace CIR {
 		{
 			EmitContext ec = new EmitContext (tc, null, EventType, ModFlags);
 
-			if (OptAttributes != null) {
-				if (OptAttributes.AttributeSections != null) {
-					foreach (AttributeSection asec in OptAttributes.AttributeSections) {
-						if (asec.Attributes != null) {
-							foreach (Attribute a in asec.Attributes) {
-								CustomAttributeBuilder cb = a.Resolve (ec);
-								if (cb != null)
-									EventBuilder.SetCustomAttribute (cb);
-							}
-						}
-					}
+			if (OptAttributes == null)
+				return;
+			
+			if (OptAttributes.AttributeSections == null)
+				return;
+			
+			foreach (AttributeSection asec in OptAttributes.AttributeSections) {
+				if (asec.Attributes == null)
+					continue;
+				
+				foreach (Attribute a in asec.Attributes) {
+					CustomAttributeBuilder cb = a.Resolve (ec);
+					if (cb == null)
+						continue;
+					
+					EventBuilder.SetCustomAttribute (cb);
 				}
 			}
 		}
