@@ -1,5 +1,11 @@
 2003-04-03  Martin Baulig  <martin@ximian.com>
 
+	* object.h (MonoThread): Added `gpointer stack_ptr'.
+
+	* threads.c (start_wrapper): Save the stack pointer in `stack_ptr'.
+
+2003-04-03  Martin Baulig  <martin@ximian.com>
+
 	* Makefile.am: It's called `cygpath -w', not `cygpath -m'.
 
 2003-04-03  Zoltan Varga  <vargaz@freemail.hu>
