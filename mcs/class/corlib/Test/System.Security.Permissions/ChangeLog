@@ -3,6 +3,11 @@
 	* IBuiltInPermissionTest.cs: New. Unit tests to check the result of 
 	the "somewhat undocumented" IBuiltInPermission.GetTokenIndex on all
 	permissions inside corlib.
+	* StrongNameIdentityPermissionTest.cs: New. Unit tests for 
+	StrongNameIdentityPermission.
+	* StrongNameIdentityPermissionAttributeTest.cs: Added unit test to 
+	check the behavior of using an invalid SecurityAction. Added tests
+	for CreatePermission. Converted existing tests to NUnit 2.2 format.
 	* UIPermissionTest.cs: New. Unit tests for UIPermission.
 	* UIPermissionAttributeTest.cs: Added unit tests to check the behavior
 	of using invalid enums for properties (no checks).
