@@ -17,12 +17,14 @@
 							<pattern>M/d/yyyy</pattern>
 						</dateFormat>
 					</dateFormatLength >
+				</dateFormats>
+				<timeFormats>
 					<timeFormatLength type="long">
 						<timeFormat>
 							<pattern>h:mm:ss tt</pattern>
 						</timeFormat>
 					</timeFormatLength>
-				</dateFormats>
+				</timeFormats>
 			</calendar>
 		</calendars>
 	</dates>

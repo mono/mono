@@ -1,24 +1,26 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <ldml>
 	<dates>
-		<calendar type="gregorian">
-			<am>AM</am>
-			<pm>PM</pm>
-			<dateFormats>
-				<dateFormatLength type="short">
-					<dateFormat >
-						<pattern>M/d/yyyy</pattern>
-					</dateFormat>
-				</dateFormatLength >
-			</dateFormats>
-			<timeFormats>
-				<timeFormatLength type="long">
-					<timeFormat >
-						<pattern>h:mm:ss tt</pattern>
-					</timeFormat>
-				</timeFormatLength >
-			</timeFormats>
-		</calendar>
+		<calendars>
+			<calendar type="gregorian">
+				<am>AM</am>
+				<pm>PM</pm>
+				<dateFormats>
+					<dateFormatLength type="short">
+						<dateFormat >
+							<pattern>M/d/yyyy</pattern>
+						</dateFormat>
+					</dateFormatLength >
+				</dateFormats>
+				<timeFormats>
+					<timeFormatLength type="long">
+						<timeFormat >
+							<pattern>h:mm:ss tt</pattern>
+						</timeFormat>
+					</timeFormatLength >
+				</timeFormats>
+			</calendar>
+		</calendars>
 	</dates>
   <numbers>
     <decimalFormats>
