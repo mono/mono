@@ -92,7 +92,7 @@ namespace Mono.Data.SybaseTypes {
 
 			if (precision < scale)
 				throw new ArgumentException ("Invalid scale");
-			if (this.ToDouble () > (Math.Pow (10, 38) -1) || this.ToDouble () < -(Math.Pow (10, 38)))
+			if (this.ToDouble () > (System.Math.Pow (10, 38) -1) || this.ToDouble () < -(System.Math.Pow (10, 38)))
 				throw new SybaseTypeException ("Can't convert to SybaseDecimal.");
 		}
 
@@ -287,15 +287,15 @@ namespace Mono.Data.SybaseTypes {
 		{
 			if (n.IsNull)
 				return SybaseDecimal.Null;
-			return new SybaseDecimal (Math.Pow (n.ToDouble (), exp));
+			return new SybaseDecimal (System.Math.Pow (n.ToDouble (), exp));
 		}
 
 		public static SybaseDecimal Round (SybaseDecimal n, int position)
 		{
 			if (n.IsNull)
 				throw new SybaseNullValueException ();
-			SybaseDecimal result = new SybaseDecimal (Math.Round ((double) (n.ToDouble () * Math.Pow (10, position))));
-			result = result / new SybaseDecimal (Math.Pow (10, position));
+			SybaseDecimal result = new SybaseDecimal (System.Math.Round ((double) (n.ToDouble () * System.Math.Pow (10, position))));
+			result = result / new SybaseDecimal (System.Math.Pow (10, position));
 			return result;
 		}
 
@@ -328,10 +328,10 @@ namespace Mono.Data.SybaseTypes {
 		{
 			// FIXME: This is the wrong way to do this
 			double d = (uint) this.Data [0];
-			d += ((uint) this.Data [1]) * Math.Pow (2, 32);
-			d += ((uint) this.Data [2]) * Math.Pow (2, 64);
-			d += ((uint) this.Data [3]) * Math.Pow (2, 96);
-			d /= Math.Pow (10, scale);
+			d += ((uint) this.Data [1]) * System.Math.Pow (2, 32);
+			d += ((uint) this.Data [2]) * System.Math.Pow (2, 64);
+			d += ((uint) this.Data [3]) * System.Math.Pow (2, 96);
+			d /= System.Math.Pow (10, scale);
 			return d;
 		}
 
@@ -469,7 +469,7 @@ namespace Mono.Data.SybaseTypes {
 			if (r >= 5)
 				lo += 1;
 		
-			while ((((double) hi) * Math.Pow (2, 64) + lo) - Math.Pow (10, prec) > 0)
+			while ((((double) hi) * System.Math.Pow (2, 64) + lo) - System.Math.Pow (10, prec) > 0)
 				prec += 1;
 
 			while ((prec + sc) > MaxScale) {
