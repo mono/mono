@@ -8,6 +8,7 @@
 //
 
 using System;
+using System.Runtime.CompilerServices;
 
 namespace System.Reflection {
 
@@ -21,6 +22,13 @@ namespace System.Reflection {
 		public override MemberTypes MemberType { get {return MemberTypes.Method;} }
 		public abstract Type ReturnType { get; }
 		public abstract ICustomAttributeProvider ReturnTypeCustomAttributes { get; } 
+
+#if GENERICS
+		public extern bool IsGenericMethodDefinition {
+			[MethodImplAttribute(MethodImplOptions.InternalCall)]
+			get;
+		}
+#endif
 	}
 
 }
