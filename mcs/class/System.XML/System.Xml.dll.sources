@@ -100,8 +100,6 @@ System.Xml/XmlEntityReference.cs
 System.Xml/XmlException.cs
 System.Xml/XmlFactory.cs
 System.Xml/XmlImplementation.cs
-System.Xml/XmlItemView.cs
-System.Xml/XmlItemViewCollection.cs
 System.Xml/XmlConvert.cs
 System.Xml/XmlLinkedNode.cs
 System.Xml/XmlNameTable.cs

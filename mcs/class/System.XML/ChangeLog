@@ -1,5 +1,10 @@
 2004-07-09  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* System.Xml.dll.sources: removed XmlItemView.cs and
+	  XmlItemViewCollection.cs (only in 1.2).
+
+2004-07-09  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* System.Xml.dll.sources: removed one of ImportContext.cs
 
 2004-07-08  Lluis Sanchez Gual <lluis@ximian.com>
