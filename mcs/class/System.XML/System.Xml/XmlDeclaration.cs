@@ -128,9 +128,9 @@ namespace System.Xml
 		}
 
 		// This code makes some loss, but you may understand a bit easily.
-		const string verMatch = "\\s*version\\s*=\\s*(\\'(?<ver>.*?)\\'|\\\"(?<ver>.*)\")";
-		const string encMatch = "\\s*encoding\\s*=\\s*(\\'(?<enc>.*?)\\'|\\\"(?<enc>.*)\")";
-		const string staMatch = "\\s*standalone\\s*=\\s*(\\'(?<sta>.*?)\\'|\\\"(?<sta>.*)\")";
+		const string verMatch = "\\s*version\\s*=\\s*(\\'(?<ver>.*?)\\'|\\\"(?<ver>.*?)\")";
+		const string encMatch = "\\s*encoding\\s*=\\s*(\\'(?<enc>.*?)\\'|\\\"(?<enc>.*?)\")";
+		const string staMatch = "\\s*standalone\\s*=\\s*(\\'(?<sta>.*?)\\'|\\\"(?<sta>.*?)\")";
 		const string allMatch = verMatch + "(" + encMatch + ")?(" + staMatch + ")?";
 	}
 }

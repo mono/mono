@@ -285,7 +285,7 @@ namespace System.Xml
 		}
 
 		[MonoTODO]
-		protected internal virtual XPathNavigator CreateNavigator (XmlNode node)
+		public XPathNavigator CreateNavigator (XmlNode node)
 		{
 			throw new NotImplementedException ();
 		}

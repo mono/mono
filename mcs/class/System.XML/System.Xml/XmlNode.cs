@@ -3,8 +3,10 @@
 //
 // Author:
 //   Kral Ferch <kral_ferch@hotmail.com>
+//   Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 //
 // (C) 2002 Kral Ferch
+// (C) 2002 Atsushi Enomoto
 //
 
 using System;
@@ -417,10 +419,11 @@ namespace System.Xml
 
 		public virtual XmlNode RemoveChild (XmlNode oldChild)
 		{
+			XmlDocument ownerDoc = (NodeType == XmlNodeType.Document) ? (XmlDocument)this : OwnerDocument;
 			if(oldChild.ParentNode != this)
 				throw new XmlException ("specified child is not child of this node.");
 
-			OwnerDocument.onNodeRemoving (oldChild, oldChild.ParentNode);
+			ownerDoc.onNodeRemoving (oldChild, oldChild.ParentNode);
 
 			if (NodeType == XmlNodeType.Document || NodeType == XmlNodeType.Element || NodeType == XmlNodeType.Attribute || NodeType == XmlNodeType.DocumentFragment) {
 				if (IsReadOnly)
@@ -442,7 +445,7 @@ namespace System.Xml
 					oldLinkedChild.NextLinkedSibling = null;
 				 }
 
-				OwnerDocument.onNodeRemoved (oldChild, oldChild.ParentNode);
+				ownerDoc.onNodeRemoved (oldChild, oldChild.ParentNode);
 				oldChild.parentNode = null;	// clear parent 'after' above logic.
 
 				return oldChild;

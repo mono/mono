@@ -1,3 +1,11 @@
+2002-12-01  Atsushi Enomoto  <ginga@kit.hi-ho.ne.jp>
+
+	* XmlNode.cs (RemoveChild):
+		bugfixed when XmlNode is Document OwnerDocument is null
+	* XmlDeclaration.cs (Value):
+		bugfixed regular expression pattern.
+	* XmlDocument.cs (CreateNavigator): bugfixed access modifier.
+
 2002-11-24  Duncan Mak  <duncan@ximian.com>
 
 	* XmlImplementation.cs (HasFeature): Fixed a typo. Thanks for
