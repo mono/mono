@@ -40,6 +40,9 @@ public class graphicsUI
 		
 		Rectangle rect4 = new Rectangle (0, 100, 75, 75);		
 		dc.FillPie (whiteBrush, rect4, 200, 30);
+                
+		Rectangle rect4a = new Rectangle (0, 100, 75, 75); 
+		dc.FillPie (whiteBrush, rect4a, 200, 400);
 
 		Rectangle rect5 = new Rectangle (200, 0, 75, 75);		
 		dc.FillPie (yellowBrush, rect5, 190, 300);
