@@ -1,3 +1,9 @@
+2001-08-24  Nick Drochak  <ndrochak@gol.com>
+	* NameObjectCollectionBase.cs: Add stub implementation
+	* common.src: Add NameObjectCollectionBase to the build
+	* NameValueCollection.cs: add 'override' to CopyTo().  Maybe
+		this code actually belongs in the superclass.
+
 2001-08-24  Miguel de Icaza  <miguel@ximian.com>
 
 	* common.src: Add NameValueCollection.cs to the build
