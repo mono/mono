@@ -83,6 +83,9 @@ class X {
 		if (v != 0)
 			return 20 + v;
 
+		// This was a compilation bug, error: 57522
+		ulong myulog = 0L;
+
 		Console.WriteLine ("Tests pass");
 		return 0;
 	}
