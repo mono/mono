@@ -16,7 +16,6 @@ enum.cs
 ecore.cs
 expression.cs
 flowanalysis.cs
-genericparser.cs
 iterators.cs
 literal.cs
 location.cs

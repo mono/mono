@@ -25,12 +25,11 @@ using System;
 namespace Mono.CSharp
 {
 	using System.Collections;
-	using Mono.Languages;
 
 	/// <summary>
 	///    The C# Parser
 	/// </summary>
-	public class CSharpParser : GenericParser {
+	public class CSharpParser {
 		NamespaceEntry  current_namespace;
 		TypeContainer   current_container;
 		TypeContainer	current_class;
@@ -78,6 +77,11 @@ namespace Mono.CSharp
 		/// Switch stack.
 		///
 		Stack switch_stack;
+
+		public bool yacc_verbose_flag;
+
+		// Name of the file we are parsing
+		public string name;
 
 		///
 		/// The current file.
@@ -1873,9 +1877,6 @@ indexer_declaration
 				       (int) $2, false, decl.param_list, (Attributes) $1,
 				       get_block, set_block, loc);
 
-		// Note that there is no equivalent of CheckDef for this case
-		// We shall handle this in semantic analysis
-		
 		current_container.AddIndexer (indexer);
 		
 		current_local_parameters = null;
@@ -2980,12 +2981,15 @@ class_declaration
 			current_class = part;
 		} else {
 			if ((mod_flags & Modifiers.STATIC) != 0) {
-				current_class = new StaticClass (current_namespace, current_container, name, mod_flags, 
-						(Attributes) $1, lexer.Location);
+				current_class = new StaticClass (
+					current_namespace, current_container, name,
+					mod_flags, (Attributes) $1, lexer.Location);
 			} else {
-				current_class = new Class (current_namespace, current_container, name, mod_flags, 
-						(Attributes) $1, lexer.Location);
+				current_class = new Class (
+					current_namespace, current_container, name,
+					mod_flags, (Attributes) $1, lexer.Location);
 			}
+
 			current_container = current_class;
 			RootContext.Tree.RecordDecl (name.GetName (false), current_class);
 		}
@@ -3085,8 +3089,8 @@ block
 		if (current_block == null || create_toplevel_block){
 			current_block = new ToplevelBlock (current_local_parameters, lexer.Location);
 		} else {
-			current_block = new Block (current_block, current_local_parameters,
-				lexer.Location, Location.Null);
+		current_block = new Block (current_block, current_local_parameters,
+					   lexer.Location, Location.Null);
 		}
 	  } 
 	  opt_statement_list CLOSE_BRACE 
@@ -4381,7 +4385,7 @@ public CSharpParser (SeekableStreamReader reader, SourceFile file, ArrayList def
 	lexer = new Tokenizer (reader, file, defines);
 }
 
-public override void parse ()
+public void parse ()
 {
 	try {
 		if (yacc_verbose_flag)

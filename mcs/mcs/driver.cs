@@ -18,7 +18,6 @@ namespace Mono.CSharp
 	using System.Text;
 	using System.Globalization;
 	using System.Diagnostics;
-	using Mono.Languages;
 
 	public enum Target {
 		Library, Exe, Module, WinExe
@@ -183,7 +182,7 @@ namespace Mono.CSharp
 			SeekableStreamReader reader = new SeekableStreamReader (input, encoding, using_default_encoder);
 				
 			parser = new CSharpParser (reader, file, defines);
-			parser.yacc_verbose = yacc_verbose;
+			parser.yacc_verbose_flag = yacc_verbose;
 			try {
 				parser.parse ();
 			} catch (Exception ex) {

@@ -1,3 +1,10 @@
+2004-09-14  Martin Baulig  <martin@ximian.com>
+
+	* cs-parser.jay (CSharpParser): Don't derive from GenericsParser.
+	(CSharpParser.yacc_verbose_flag): New public field.
+
+	* genericparser.cs: Removed.
+
 2004-09-14  Raja R Harinath  <rharinath@novell.com>
 
 	* cs-parser.jay (event_declaration): Re-enable cs0071 error.
