@@ -3950,7 +3950,8 @@ namespace Mono.CSharp {
 				}
 			}
 
-			method = OverloadResolve (ec, (MethodGroupExpr) this.expr, Arguments, loc);
+			MethodGroupExpr mg = (MethodGroupExpr) expr;
+			method = OverloadResolve (ec, mg, Arguments, loc);
 
 			if (method == null){
 				Error (-6,
@@ -3958,8 +3959,12 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			if (method is MethodInfo)
-				type = TypeManager.TypeToCoreType (((MethodInfo)method).ReturnType);
+			MethodInfo mi = method as MethodInfo;
+			if (mi != null) {
+				type = TypeManager.TypeToCoreType (mi.ReturnType);
+				if (!mi.IsStatic && (mg.InstanceExpression == null))
+					SimpleName.Error_ObjectRefRequired (ec, loc, mi.Name);
+			}
 
 			if (type.IsPointer){
 				if (!ec.InUnsafe){

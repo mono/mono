@@ -1,3 +1,9 @@
+2002-08-27  Martin Baulig  <martin@gnome.org>
+
+	* expression.cs (Invocation.DoResolve): If this is a static
+	method and we don't have an InstanceExpression, we must report
+	a CS0120.
+
 2002-08-25  Martin Baulig  <martin@gnome.org>
 
 	* expression.cs (Binary.ResolveOperator): Don't allow `!=' and
