@@ -1,5 +1,8 @@
 2004-03-29  Miguel de Icaza  <miguel@ximian.com>
 
+	* cs-tokenizer.cs: Do not require whitespace when a ( or " will do
+	in preprocessor directives.
+
 	* location.cs (LookupFile): Allow for the empty path.
 
 	* attribute.cs (DefinePInvokeMethod): Fix 56148;  I would like a

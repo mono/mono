@@ -1109,10 +1109,16 @@ namespace Mono.CSharp
 			// skip over white space
 			while ((c = getChar ()) != -1 && (c != '\n') && ((c == '\r') || (c == ' ') || (c == '\t')))
 				;
-				
+
+
 			while ((c != -1) && (c != '\n') && (c != ' ') && (c != '\t') && (c != '\r')){
-				static_cmd_arg.Append ((char) c);
-                                c = getChar ();
+				if (is_identifier_part_character ((char) c)){
+					static_cmd_arg.Append ((char) c);
+					c = getChar ();
+				} else {
+					putback (c);
+					break;
+				}
 			}
 
 			cmd = static_cmd_arg.ToString ();
