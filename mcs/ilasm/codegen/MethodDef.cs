@@ -176,8 +176,6 @@ namespace Mono.ILASM {
 
                         if (param_list != null) {
                                 int param_count = param_list.Count;
-                                //if (IsVararg)
-                                //       param_count--;
                                 param_array = new PEAPI.Param[param_count];
                                 int count = 0;
                                 ret_type.Resolve (code_gen);
@@ -212,8 +210,6 @@ namespace Mono.ILASM {
 
                         if (param_list != null) {
                                 int param_count = param_list.Count;
-                                if (IsVararg)
-                                        param_count--;
                                 param_array = new PEAPI.Param[param_count];
                                 int count = 0;
                                 ret_type.Resolve (code_gen);

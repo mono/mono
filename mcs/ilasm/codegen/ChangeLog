@@ -1,3 +1,8 @@
+2003-07-21 Jackson Harper <jackson@latitudegeo.com>
+
+	* MethodDef.cs: Do not decremint param count for vararg methods,
+	the ellipsis is needed later
+	
 2003-07-20 Jackson Harper <jackson@latitudegeo.com>
 
 	* GenericTypeInst.cs: New File - A type reference to an instance
