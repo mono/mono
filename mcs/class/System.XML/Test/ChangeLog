@@ -1,3 +1,8 @@
+2002-09-17  Kral Ferch <kral_ferch@hotmail.com>
+
+	* XPathNavigatorEvaluateTests.cs: Tests for string(), concat(),
+	starts-with(), and contains().
+	
 2002-09-12  Piers Haken <piersh@friskit.com>
 
 	* XPathNavigatorEvaluateTests.cs: enable string() tests.
