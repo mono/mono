@@ -1,3 +1,11 @@
+2004-09-28  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* object.c, object-internals.h: Implemented mono_release_type_locks,
+	which releases the cctor locks held by a thread.
+	* threads.c, threads.h: In thread_cleanup, release cctor locks held
+	by a thread. Added mono_thread_exit() method to be used to safely stop
+	a thread.
+
 2004-09-28  Raja R Harinath  <rharinath@novell.com>
 
 	* icall.c (ves_icall_System_Reflection_Assembly_GetModulesInternal): 
