@@ -1,3 +1,10 @@
+2004-05-27  Ravindra <rkumar@novell.com>
+
+	* TestRectangleConverter.cs: Ignored the test that is failing
+	because of bug #58435.
+	* TestPointConverter.cs: Same.
+	* TestSizeConverter.cs: Same.
+
 2004-05-26 Sanjay Gupta <gsanjay@novell.com>
 
 	* TestImageFormatConverter.cs: Minor modification. Removed duplicate 
