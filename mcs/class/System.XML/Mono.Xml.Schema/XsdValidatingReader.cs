@@ -228,44 +228,6 @@ namespace Mono.Xml.Schema
 			return o;
 		}
 		
-		private object ReadTypedValueCore ()
-		{
-			XsDatatype dt = SchemaType as XsDatatype;
-			SimpleType st = SchemaType as SimpleType;
-			if (st != null)
-				dt = st.Datatype;
-			if (dt == null)
-				return null;
-
-			switch (NodeType) {
-			case XmlNodeType.Element:
-				if (IsEmptyElement)
-					return null;
-
-				storedCharacters.Length = 0;
-				bool loop = true;
-				do {
-					Read ();
-					switch (NodeType) {
-					case XmlNodeType.SignificantWhitespace:
-					case XmlNodeType.Text:
-					case XmlNodeType.CDATA:
-						storedCharacters.Append (Value);
-						break;
-					case XmlNodeType.Comment:
-						break;
-					default:
-						loop = false;
-						break;
-					}
-				} while (loop && !EOF && ReadState == ReadState.Interactive);
-				return dt.ParseValue (storedCharacters.ToString (), NameTable, ParserContext.NamespaceManager);
-			case XmlNodeType.Attribute:
-				return dt.ParseValue (Value, NameTable, ParserContext.NamespaceManager);
-			}
-			return null;
-		}
-
 		// Public Overriden Properties
 
 		public override int AttributeCount {
