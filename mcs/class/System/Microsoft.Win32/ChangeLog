@@ -2,8 +2,8 @@
 
 	* UserPreferenceChangedEventArgs.cs 
 	* UserPreferenceChangingEventArgs.cs
-	(Category): Fixed typo. Patch from A. Nahr.
-	(A-Soft@A-SoftTech.com>.
+	(Category): Fixed typo. Patch from Andreas. Nahr.
+	(ClassDevelopment@A-SoftTech.com>.
 
 2003-04-17  Nick Drochak  <ndrochak@gol.com>
 
