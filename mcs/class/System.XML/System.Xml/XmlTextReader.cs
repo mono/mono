@@ -372,16 +372,20 @@ namespace System.Xml
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public override bool MoveToElement ()
 		{
-			throw new NotImplementedException ();
+			if (nodeType == XmlNodeType.Attribute) {
+				RestoreProperties ();
+				return true;
+			}
+
+			return false;
 		}
 
-		[MonoTODO]
 		public override bool MoveToFirstAttribute ()
 		{
-			throw new NotImplementedException ();
+			MoveToElement ();
+			return MoveToNextAttribute ();
 		}
 
 		public override bool MoveToNextAttribute ()
@@ -389,8 +393,10 @@ namespace System.Xml
 			if (attributes == null)
 				return false;
 
-			if (attributeEnumerator == null)
+			if (attributeEnumerator == null) {
+				SaveProperties ();
 				attributeEnumerator = attributes.GetEnumerator();
+			}
 
 			if (attributeEnumerator.MoveNext ()) {
 				string name = attributeEnumerator.Key as string;
@@ -494,6 +500,14 @@ namespace System.Xml
 		private string namespaceURI;
 		private bool isEmptyElement;
 		private string value;
+
+		private XmlNodeType saveNodeType;
+		private string saveName;
+		private string savePrefix;
+		private string saveLocalName;
+		private string saveNamespaceURI;
+		private bool saveIsEmptyElement;
+	
 		private Hashtable attributes;
 		private IDictionaryEnumerator attributeEnumerator;
 
@@ -529,6 +543,7 @@ namespace System.Xml
 			localName = string.Empty;
 			isEmptyElement = false;
 			value = String.Empty;
+
 			attributes = new Hashtable ();
 			attributeEnumerator = null;
 			
@@ -575,6 +590,28 @@ namespace System.Xml
 			}
 
 			namespaceURI = LookupNamespace (prefix);
+		}
+
+		private void SaveProperties ()
+		{
+			saveNodeType = nodeType;
+			saveName = name;
+			savePrefix = prefix;
+			saveLocalName = localName;
+			saveNamespaceURI = namespaceURI;
+			saveIsEmptyElement = isEmptyElement;
+			// An element's value is always String.Empty.
+		}
+
+		private void RestoreProperties ()
+		{
+			nodeType = saveNodeType;
+			name = saveName;
+			prefix = savePrefix;
+			localName = saveLocalName;
+			namespaceURI = saveNamespaceURI;
+			isEmptyElement = saveIsEmptyElement;
+			value = String.Empty;
 		}
 
 		private void AddAttribute (string name, string value)
