@@ -1,3 +1,9 @@
+2004-07-06  Dick Porter  <dick@ximian.com>
+
+	* io.c (file_setfiletime): Check for underflow when converting to
+	time_t values.  Set error codes when returning failure.  Fixes bug
+	60970.
+
 2004-07-05  Dick Porter  <dick@ximian.com>
 
 	* mutexes.c (mutex_ops_init): Make the named mutex mutex sharable.
