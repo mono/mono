@@ -1,5 +1,11 @@
 2003-06-09  Ville Palo <vi64pa@kolumbus.fi>
 
+	* FileStream.cs:
+	- removed unusefull bugfix (DirectoryNotFoundException)
+	- Flush before seek.
+	
+2003-06-09  Ville Palo <vi64pa@kolumbus.fi>
+
 	* FileStream.cs: Check buffer size before append/read -exceptios
 	
 2003-06-09  Ville Palo <vi64pa@kolumbus.fi>

@@ -117,9 +117,6 @@ namespace System.IO
 
 			MonoIOError error;
 
-  			if (!MonoIO.ExistsDirectory (Path.GetDirectoryName (name), out error))
-  				throw new DirectoryNotFoundException (Path.GetDirectoryName (name));
-
 			this.handle = MonoIO.Open (name, mode, access, share,
 						   out error);
 			if (handle == MonoIO.InvalidHandle) {
@@ -383,8 +380,11 @@ namespace System.IO
 			if(CanSeek == false) {
 				throw new NotSupportedException("The stream does not support seeking");
 			}
-			
+
 			lock(this) {
+
+				FlushBuffer ();
+
 				switch (origin) {
 				case SeekOrigin.End:
 					pos = Length + offset;
@@ -416,8 +416,6 @@ namespace System.IO
 					buf_offset = (int) (pos - buf_start);
 					return pos;
 				}
-
-				FlushBuffer ();
 
 				MonoIOError error;
 			
