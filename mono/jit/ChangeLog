@@ -1,3 +1,7 @@
+2001-10-01  Dietmar Maurer  <dietmar@ximian.com>
+
+	* interp.brg: the burm based interpreter: added the file as example.
+
 2001-09-27  Dietmar Maurer  <dietmar@ximian.com>
 
 	* x86.brg: cleanup
