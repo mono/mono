@@ -1,3 +1,13 @@
+2003-10-17  Zoltan Varga  <vargaz@freemail.hu>
+
+	* image.h (MonoAssemblyName): Add public_key and hash_alg fields.
+
+	* assembly.c (mono_assembly_open): Fill in public_key and hash_alg
+	fields.
+
+	* icall.c (ves_icall_System_Reflection_Assembly_FillName): Fill in
+	culture, hash_alg and public_key. Fixes #49555.
+
 2003-10-17  Martin Baulig  <martin@ximian.com>
 
 	* class.h (MonoGenericInst): Moved this declaration here and added
@@ -37,6 +47,7 @@
 	generic parameters, initialize `method->gen_params' and then set
 	the correct `type->data.generic_param' in all the parameters.
 
+>>>>>>> 1.1157
 2003-10-16  Zoltan Varga  <vargaz@freemail.hu>
 
 	* threads.c (mono_threads_get_default_stacksize): New function to 
