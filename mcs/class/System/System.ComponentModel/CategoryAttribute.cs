@@ -50,9 +50,9 @@ namespace System.ComponentModel {
 				lock (typeof (CategoryAttribute)){
 					if (action == null)
 						action = new CategoryAttribute ("Action");
-
-					return action;
 				}
+
+				return action;
 			}
 		}
 
@@ -64,9 +64,9 @@ namespace System.ComponentModel {
 				lock (typeof (CategoryAttribute)){
 					if (appearance == null)
 						appearance = new CategoryAttribute ("Appearance");
-
-					return appearance;
 				}
+
+				return appearance;
 			}
 		}
 
@@ -78,9 +78,9 @@ namespace System.ComponentModel {
 				lock (typeof (CategoryAttribute)){
 					if (behaviour == null)
 						behaviour = new CategoryAttribute ("Action");
-
-					return behaviour;
 				}
+
+				return behaviour;
 			}
 		}
 
@@ -92,9 +92,9 @@ namespace System.ComponentModel {
 				lock (typeof (CategoryAttribute)){
 					if (data == null)
 						data = new CategoryAttribute ("Data");
-
-					return data;
 				}
+
+				return data;
 			}
 		}
 
@@ -106,9 +106,9 @@ namespace System.ComponentModel {
 				lock (typeof (CategoryAttribute)){
 					if (def == null)
 						def = new CategoryAttribute ("Default");
-
-					return def;
 				}
+
+				return def;
 			}
 		}
 
@@ -120,9 +120,9 @@ namespace System.ComponentModel {
 				lock (typeof (CategoryAttribute)){
 					if (design == null)
 						design = new CategoryAttribute ("Design");
-
-					return design;
 				}
+
+				return design;
 			}
 		}
 
@@ -134,9 +134,9 @@ namespace System.ComponentModel {
 				lock (typeof (CategoryAttribute)){
 					if (drag_drop == null)
 						drag_drop = new CategoryAttribute ("Drag Drop");
-
-					return drag_drop;
 				}
+
+				return drag_drop;
 			}
 		}
 
@@ -148,9 +148,9 @@ namespace System.ComponentModel {
 				lock (typeof (CategoryAttribute)){
 					if (focus == null)
 						focus = new CategoryAttribute ("Focus");
-
-					return focus;
 				}
+
+				return focus;
 			}
 		}
 
@@ -162,9 +162,9 @@ namespace System.ComponentModel {
 				lock (typeof (CategoryAttribute)){
 					if (format == null)
 						format = new CategoryAttribute ("Format");
-
-					return format;
 				}
+
+				return format;
 			}
 		}
 
@@ -176,9 +176,9 @@ namespace System.ComponentModel {
 				lock (typeof (CategoryAttribute)){
 					if (key == null)
 						key = new CategoryAttribute ("Key");
-
-					return key;
 				}
+
+				return key;
 			}
 		}
 
@@ -190,9 +190,9 @@ namespace System.ComponentModel {
 				lock (typeof (CategoryAttribute)){
 					if (layout == null)
 						layout = new CategoryAttribute ("Layout");
-
-					return layout;
 				}
+
+				return layout;
 			}
 		}
 
@@ -204,9 +204,9 @@ namespace System.ComponentModel {
 				lock (typeof (CategoryAttribute)){
 					if (mouse == null)
 						mouse = new CategoryAttribute ("Mouse");
-
-					return mouse;
 				}
+
+				return mouse;
 			}
 		}
 
@@ -218,9 +218,9 @@ namespace System.ComponentModel {
 				lock (typeof (CategoryAttribute)){
 					if (window_style == null)
 						window_style = new CategoryAttribute ("Window Style");
-
-					return window_style;
 				}
+
+				return window_style;
 			}
 		}
 	}
