@@ -84,7 +84,7 @@ namespace System.Xml
 
 		private void Initialize (Stream stream)
 		{
-			buffer = new byte [1024];
+			buffer = new byte [64];
 			this.stream = stream;
 			enc = Encoding.UTF8; // Default to UTF8 if we can't guess it
 			bufLength = stream.Read (buffer, 0, buffer.Length);

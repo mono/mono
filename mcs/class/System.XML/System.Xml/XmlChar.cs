@@ -36,7 +36,7 @@ namespace System.Xml
 	// for default build.
 	// However, this class will be used for the future compact framework 
 	// (XmlConstruts class uses not a little memory).
-	internal class XmlCharCompact
+	internal class XmlChar
 	{
 		public static readonly char [] WhitespaceChars = new char [] {' ', '\n', '\t', '\r'};
 

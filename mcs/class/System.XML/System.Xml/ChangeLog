@@ -1,5 +1,13 @@
 2004-10-28  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlChar.cs, XmlConstructs.cs :
+	  Switched again, for reducing per-process memory consumption.
+	* XmlInputStream.cs :
+	  Just 64 bytes of buffer would be enough, for example like
+	  <?xml version="1.0" encoding="iso-8859-15" standalone="yes" ?>
+
+2004-10-28  Atsushi Enomoto <atsushi@ximian.com>
+
 	* IXmlDataEvidence.cs : disappeared.
 	* XmlConvertDateTimeSerializationMode.cs : incorrect filename. removed.
 	* XmlDateTimeSerializationMode.cs : added

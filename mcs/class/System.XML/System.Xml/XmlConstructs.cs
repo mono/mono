@@ -31,7 +31,7 @@ namespace System.Xml
 	/// However, No surrogate support is included in this class.
 	/// This class is currently public. Make it internal after testing completes
 	/// </remarks>
-	internal class XmlChar//XmlConstructs
+	internal class XmlConstructs
 	{
 		internal static readonly char [] WhitespaceChars = {' ', '\n', '\t', '\r'};
 
@@ -68,7 +68,7 @@ namespace System.Xml
 		/** NCName character mask. */
 		internal const int NCNAME = 0x80;
 	
-		static XmlChar()
+		static XmlConstructs ()
 		{
 			//
 			// [2] Char ::= #x9 | #xA | #xD | [#x20-#xD7FF] |
@@ -331,11 +331,6 @@ namespace System.Xml
 				}
 			}
 		}
-
-		private XmlChar()
-		{
-		}
-
 
 		//Static Methods
 
