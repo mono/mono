@@ -188,11 +188,21 @@ namespace System.IO
 			return null;
 		}
 
-		[MonoTODO]
 		public static string GetTempFileName ()
 		{
-			//TODO: Implement method
-			return string.Empty;
+			string path;
+			Random rnd;
+			int num;
+			rnd = new Random ();
+			num = rnd.Next ();
+			path = GetTempPath() + DirectorySeparatorChar + "tmp" + num.ToString("x");
+			while (File.Exists(path) || Directory.Exists(path)) {    
+				num = rnd.Next ();
+				path = GetTempPath() + DirectorySeparatorChar + "tmp" + num.ToString("x");
+			}
+			FileStream f = File.Create(path);
+			f.Close();
+			return path;
 		}
 
 		/// <summary>
