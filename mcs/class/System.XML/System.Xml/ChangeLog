@@ -1,3 +1,8 @@
+2004-10-28  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlDocument.cs : XPathEditableDocument looks broken. Just reverted
+	  to fix 2.0 corcompare.
+
 2004-10-26  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlTextReader.cs : Don't create attribute Value string on Read()
