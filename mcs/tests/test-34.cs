@@ -4,6 +4,16 @@
 //
 using System;
 
+public struct FancyInt {
+	public int value;
+
+	public FancyInt (int v)
+	{
+		value = v;
+	}
+	
+}
+
 public class Blah {
 	static int got;
 	
@@ -49,6 +59,17 @@ public class Blah {
 
 		return total;
 	}
+
+	static int AddFancy (params FancyInt [] vals)
+	{
+		int total = 0;
+		
+		for (int i = 0; i < vals.Length; i++)
+			total += vals [i].value;
+
+		return total;
+	}
+	
 	
 	public static int Main ()
 	{
@@ -84,7 +105,17 @@ public class Blah {
 
 		if (AddArray (arr2) != 3)
 			return 11;
-		
+
+		FancyInt f_one = new FancyInt (1);
+		FancyInt f_two = new FancyInt (2);
+
+		if (AddFancy (f_one) != 1)
+			return 12;
+
+		if (AddFancy (f_one, f_two) != 3)
+			return 13;
+
+		Console.WriteLine ("Test passes");
 		return  0;
 	}
 }
