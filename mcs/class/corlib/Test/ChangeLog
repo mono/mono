@@ -1,5 +1,24 @@
 2002-02-26  Martin Baulig  <martin@gnome.org>
 
+	* MartinTests.cs: New file. This contains all the tests which already
+	work on Linux.
+
+	* RunTests.cs: A small custom testrunner to run the tests on Linux.
+
+	* scan-tests.pl: Call this perl script with either MartinTests.cs or
+	AllTests.cs as argument and redirect the output the TheTests.cs - it'll
+	create a file which calls all the tests.
+
+	* TheTests.cs: This is automatically generated from scan-tests.pl but
+	needs some manual editing, so it's in CVS.
+
+	* corlib_test.build: In addition to the libraries, create an executable
+	called RunTests.exe which contains all the tests and the custom test
+	runner. You can run this executable on Windows to test things with
+	mscorlib or on Linux using the mono runtime.
+
+2002-02-26  Martin Baulig  <martin@gnome.org>
+
 	* */*.cs: added zero-args constructors for all the test classes.
 
 2002-02-21  Mark Crichton <crichton@gimp.org>

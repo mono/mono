@@ -31,6 +31,19 @@
 			</references>
 			<arg value="/nowarn:1595"/>
 		</csc>
+
+		<csc target="exe" output="RunTests.exe" debug="${debug}">
+			<sources>
+				<includes name="**/*.cs"/>
+				<excludes name="System/IntegerFormatterTest.cs"/>
+				<excludes name="System.Collections/StackTest.cs"/>
+				<excludes name="**/AllTests.cs"/>
+			</sources>
+			<references basedir="..\..\..\nunit">
+				<includes name="NUnitCore.dll"/>
+			</references>
+			<arg value="/nowarn:1595"/>
+		</csc>
 	</target>
 
 
