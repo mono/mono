@@ -1,9 +1,11 @@
-REM LineNo: 17
-REM ExpectedError: BC30637
-REM ErrorMessage: Assembly or Module attribute statements must precede any declaration in a file
+REM LineNo: 8
+REM ExpectedError: BC32015
+REM ErrorMessage: Assembly or Module expected.
 
 Imports System
 Imports System.Reflection
+
+<Assembly:AssemblyVersionAttribute("1.0"), AssemblyCulture("")>
 
 <AttributeUsage(AttributeTargets.All)> _
 Public Class AuthorAttribute 
@@ -13,8 +15,6 @@ Public Class AuthorAttribute
 		Me.Name=Name
 	End Sub	
 End Class
-
-<Assembly:AssemblyVersion("1.0")>
 
 Module Test
 	Sub Main()

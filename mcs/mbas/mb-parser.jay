@@ -364,6 +364,9 @@ namespace Mono.MonoBASIC
 				}
 			}
 		}
+
+		bool global_attrs_enabled = true;
+		bool expecting_global_attributes = false;
 %}
 
 %token EOF
@@ -618,13 +621,19 @@ compilation_unit
 	: logical_end_of_line
 	  opt_option_directives
 	  opt_imports_directives 
-	  opt_global_attributes
-	  opt_declarations 
+	  declarations 
 	  EOF
 	  {
-		$$=$5;
+		$$=$4;
 	  }
-	
+	|logical_end_of_line
+	  opt_option_directives
+	  opt_imports_directives 
+	  opt_attributes
+	  EOF
+	  {
+		/* ????? */ ;
+	  }
 	;
 	  
 opt_option_directives
@@ -701,24 +710,30 @@ option_compare_directive
 	  }
 	;
 
-opt_declarations
-	: /* empty */
-	| declarations
-	;
-
 declarations
 	: declaration
 	| declarations declaration
 	;
 	
 declaration
-	: namespace_declaration
-	| type_declaration
+	: declaration_qualifiers
+	  {
+	  	// FIXME: Need to check declaration qualifiers for multi-file compilation
+	  	// FIXME: Qualifiers cannot be applied to namespaces
+	  	global_attrs_enabled = false;
+	  }
+	  namespace_declaration
+	|declaration_qualifiers
+	  {
+		  // FIXME: Need to check declaration qualifiers for multi-file compilation
+		  global_attrs_enabled = false;
+	  }
+	  type_spec_declaration
 	  {
 		string name = "";
 		int mod_flags;
 
-		if ($1 is Class || $1 is Struct || $1 is Module ){
+		if ($2 is Class || $2 is Struct || $2 is Module ){
 			TypeContainer c = (TypeContainer) $1;
 			mod_flags = c.ModFlags;
 			name = c.Name;
@@ -802,93 +817,106 @@ opt_params
 	| OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS	{ $$ = $2; }
 	;
 
-attribute_modifier
-	: ASSEMBLY 
-	| MODULE
-	| identifier 
-	   { 
-	   	Report.Error (658, lexer.Location, "`" + (string)$1 + "' is an invalid attribute target");
-	   }
-	;
-
-global_attribute_list
-	: global_attribute
-	| global_attribute_list COMMA global_attribute
-	;
-
-global_attribute
-	: attribute_modifier COLON attribute
-	;
-
-global_attributes_definition
-	: attr_begin global_attribute_list attr_end
-	;
-
-global_attributes
-	: global_attributes_definition
-	| global_attributes global_attributes_definition 
-	| global_attributes end_of_stmt global_attributes_definition
-	;
-
-opt_global_attributes
-	: /* empty */
- 	| global_attributes end_of_stmt
-	;
-
 opt_attributes
  	: /* empty */
- 	| attributes 	{ $$ = $1; }
+ 	| attribute_sections 	{ $$ = $1; }
  	;
 
-attr_begin
-	: OP_LT
+attribute_sections
+	:  attribute_section
+	| attribute_sections attribute_section	{ $$ = $1; }
 	;
 
-attr_end
-	: OP_GT
-	;
-
-attributes
-	: attr_begin attribute_list attr_end
+attribute_section
+	: OP_LT attribute_list OP_GT opt_end_of_stmt
  	  {
- 		AttributeSection sect = new AttributeSection (null, (ArrayList) $2);
-		$$ = new Attributes (sect, lexer.Location);
+ 	  	$$ = null;
+		if ($2 != null) {
+	 	  	if (expecting_global_attributes ^ (bool) $4) {
+					Report.Error (32035, lexer.Location, "Use a line continuation after the attribute specifier to apply it to the following statement.");
+			} else {
+		 		AttributeSection sect = new AttributeSection (null, (ArrayList) $2);
+				$$ = new Attributes (sect, lexer.Location);
+			}
+		}
+
+		expecting_global_attributes = false;
  	  }
-	| attr_begin global_attribute_list attr_end logical_end_of_line
  	; 
+
+opt_end_of_stmt
+	: /* empty */ { $$ = false; }
+	| end_of_stmt	{ $$ = true; }
+	;
 
 attribute_list
  	: attribute 
  	  {
- 		ArrayList attrs = new ArrayList ();
- 		attrs.Add ($1);
-
+ 	  	ArrayList attrs = null;
+ 	  	if ($1 != null) {
+	 		attrs = new ArrayList ();
+ 			attrs.Add ($1);
+  		}
  		$$ = attrs;
-	       
  	  }	
  	| attribute_list COMMA attribute
  	  {
- 		ArrayList attrs = (ArrayList) $1;
- 		attrs.Add ($3);
+ 	  	ArrayList attrs = null;
+		
+ 	  	if ($3 != null) {
+	 		attrs = ($1 == null) ? new ArrayList () : (ArrayList) $1;
+ 			attrs.Add ($3);
+  		}
 
  		$$ = attrs;
  	  }	
  	;
 
 attribute 
- 	: attribute_name
- 	  {
+ 	:  namespace_or_type_name
+ 	   {
  		$$ = lexer.Location;
- 	  }
- 	  opt_attribute_arguments
- 	  {
- 		$$ = new Mono.MonoBASIC.Attribute ((string) $1, (ArrayList) $3, (Location) $2);
- 	  }	  
+ 	   }
+ 	   opt_attribute_arguments
+ 	   {
+ 	   	$$ = null;
+		
+ 	   	if (expecting_global_attributes)
+			Report.Error (32015, (Location) $2, "Expecting Assembly or Module attribute specifiers");
+		else
+	 		$$ = new Mono.MonoBASIC.Attribute ((string) $1, (ArrayList) $3, (Location) $2);
+ 	   }
+	  | attribute_target_specifier 
+	    {
+	    	$$ = lexer.Location;
+	    }
+	    COLON 
+	    namespace_or_type_name
+	   {
+		  $$ = lexer.Location;
+	   }
+	   opt_attribute_arguments
+	   {
+	   	if (!global_attrs_enabled) {
+			$$ = null;
+			Report.Error (30637, (Location) $2, "Global attribute statements must precede any declarations in a file");
+   		}
+  		else {
+			expecting_global_attributes = true;
+			$$ = new Mono.MonoBASIC.Attribute ((string) $4, (ArrayList) $6, (Location) $5);
+  		}
+	    }	
  	;
 
-attribute_name
-	: namespace_or_type_name 
+attribute_target_specifier
+	:  ASSEMBLY	{ $$ = "assembly"; }
+	| MODULE	{ $$ = "module"; }
+	| namespace_or_type_name
+	  { 
+		Report.Error (29999, lexer.Location, "`" + (string)$1 + "' is an invalid attribute modifier");
+	  }
 	;
+	
 			
 opt_attribute_arguments
 	: /* empty */ 	{ $$ = null; }
@@ -984,14 +1012,13 @@ namespace_declaration
 	  }
 	;
 
-type_declaration
+declaration_qualifiers
 	: opt_attributes 
 	  opt_modifiers 
 	  { 
 		current_attributes = (Attributes) $1; 
 	  	current_modifiers = (int) $2; 
 	  }	  
-	  type_spec_declaration
 	;
 
 type_spec_declaration

@@ -1,3 +1,8 @@
+2004-10-29  Jambunathan K  <kjambunathan@novell.com>
+	* errors/AttributesC8.vb: 
+	* errors/AttributesC7.vb: 
+	* errors/AttributesC3.vb: Newly added.
+
 2004-10-18  Jambunathan K  <kjambunathan@novell.com>
 	* Migrating mbas test cases from mcs/btests to mcs/mbas/Test
 	folder.
