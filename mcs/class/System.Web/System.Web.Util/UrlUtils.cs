@@ -290,24 +290,31 @@ namespace System.Web.Util
 			return baseDir;
 		}
 
-		public static string GetFile (string url)
+		static string GetFile (string url)
 		{
-			if(url == null)
+			if (url == null)
 				return null;
-			if(url.Length == 0)
-				return String.Empty;
-			url.Replace ('\\', '/');
 
-			string file = url;
-			int last = url.LastIndexOf ('/');
-			if (last > 0)
-				file = url.Substring (last);
-			return file;
+			if (url.Length == 0)
+				return String.Empty;
+
+			url = url.Replace ('\\', '/');
+
+			int last = url.LastIndexOf ('/') + 1;
+			if (last != 0) {
+				url = url.Substring (last);
+			}
+
+			return url;
 		}
 
 		public static string InsertSessionId (string id, string path)
 		{
-			return Reduce (GetDirectory (path) + "/(" + id + ")/" + GetFile (path));
+			string dir = GetDirectory (path);
+			if (!dir.EndsWith ("/"))
+				dir += "/";
+
+			return Reduce (GetDirectory (path) + "(" + id + ")/" + GetFile (path));
 		}
 
 		public static string GetSessionId (string path)
