@@ -190,9 +190,9 @@ namespace Mono.TypeReflector
 		// 					...
 		private int maxDepth = 3;
 
-    public TypeDisplayer ()
-    {
-    }
+		public TypeDisplayer ()
+		{
+		}
 
 		public int MaxDepth {
 			get {return maxDepth;}
@@ -448,8 +448,8 @@ namespace Mono.TypeReflector
 			return sb.ToString ();
 		}
 
-    protected static string GetTypeKeyword (Type type)
-    {
+		protected static string GetTypeKeyword (Type type)
+		{
 			string t = null;
 
 			if (type.IsClass)
@@ -463,13 +463,13 @@ namespace Mono.TypeReflector
 			else
 				t = "type";
 
-      return t;
-    }
+			return t;
+		}
 
-    protected static string GetTypeHeader (Type type)
-    {
-      return String.Format ("{0,-11}{1}", GetTypeKeyword (type), type.ToString());
-    }
+		protected static string GetTypeHeader (Type type)
+		{
+			return String.Format ("{0,-11}{1}", GetTypeKeyword (type), type.ToString());
+		}
 
 		public event TypeEventHandler         ReceiveTypes;
 		public event BaseTypeEventHandler     ReceiveBaseType;

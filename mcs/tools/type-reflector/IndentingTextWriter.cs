@@ -132,7 +132,7 @@ namespace Mono.TypeReflector
 	public class Indenter : IDisposable {
 
 		private IndentingTextWriter _writer;
-		// private int level;
+		private int level;
 
 		public Indenter (IndentingTextWriter writer) 
 			: this (writer, 1)
@@ -141,15 +141,16 @@ namespace Mono.TypeReflector
 
 		public Indenter (IndentingTextWriter writer, int level)
 		{
+			this.level = level;
 			_writer = writer;
-			// XXX: _writer.IndentLevel += level;
-			_writer.Indent ();
+			_writer.IndentLevel += level;
+			// _writer.Indent ();
 		}
 
 		public void Dispose ()
 		{
-			// XXX: _writer.IndentLevel -= level;
-			_writer.Unindent ();
+			_writer.IndentLevel -= level;
+			// _writer.Unindent ();
 			Trace.WriteLine (String.Format(
 				"** Disposing; indentlevel={0}", 
 				_writer.IndentLevel));

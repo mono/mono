@@ -145,7 +145,7 @@ namespace Mono.TypeReflector
 					else
 						Console.WriteLine ("Unable to find type `{0}'.", t);
 				} catch (Exception e) {
-					Console.WriteLine ("Unable to parse type `{0}': {1}.", t, e.ToString());
+					Console.WriteLine ("Unable to display type `{0}': {1}.", t, e.ToString());
 				}
 			}
 		}

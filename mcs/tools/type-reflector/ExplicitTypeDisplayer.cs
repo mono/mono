@@ -53,13 +53,17 @@ namespace Mono.TypeReflector
 			WriteLine ("ReflectedType={0}", mi.ReflectedType);
 			/*
 			 * Not liked by Constructors: on type MethodsEventHandler
+			 */
 			WriteLine ("GetCustomAttributes():");
 			using (Indenter n1 = GetIndenter()) {
-				object[] attrs = mi.GetCustomAttributes (true);
-				foreach (object a in attrs)
-					WriteLine (a);
+				try {
+					object[] attrs = mi.GetCustomAttributes (true);
+					foreach (object a in attrs)
+						WriteLine (a);
+				} catch (Exception e) {
+					WriteLine ("<unable to view custom attributes: {0}", e.Message);
+				}
 			}
-			 */
 		}
 
 		protected override void OnIndentedType (TypeEventArgs e)

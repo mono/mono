@@ -90,14 +90,12 @@ namespace Mono.TypeReflector
 				"Match type names against only the class name");
 			AddOption (matchNamespace,          "match-namespace",
 				"Match the type's namespace.");
-      /*
 			AddOption (matchBase,               "match-base",
 				"Match type names against the base class " + 
 				"name.\nMatching of the base name is " +
 				"identical to top-level type matches--it " +
 				"matches the namespace, class name, or full " +
 				"type name.");
-        */
 			/*
 			AddOption (matchReturnType,         "match-return-type",
 				"Match the return type of methods");
@@ -151,7 +149,7 @@ namespace Mono.TypeReflector
 			AddOption (defaultAssemblies, 
 				"Print the default search assemblies and exit.");
 			AddArgumentOption (maxDepth, "Specify how deep the verbose output tree should display output.\nDefault is 3.", "INTEGER");
-      AddOption (version, "Output version information and exit.");
+			AddOption (version, "Output version information and exit.");
 			AddHelpOption ();
 		}
 
@@ -293,11 +291,11 @@ namespace Mono.TypeReflector
 			}
 		}
 
-    public bool Version {
-      get {
-        return base.FoundOption (version);
-      }
-    }
+		public bool Version {
+			get {
+				return base.FoundOption (version);
+			}
+		}
 
 		public int MaxDepth {
 			get {
@@ -308,7 +306,7 @@ namespace Mono.TypeReflector
 					} catch {
 					}
 				}
-        // See VerboseTreeTypeDisplayer.maxDepth for reason behind '3'.
+				// See VerboseTreeTypeDisplayer.maxDepth for reason behind '3'.
 				return 3;
 			}
 		}

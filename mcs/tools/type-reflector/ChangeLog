@@ -1,0 +1,10 @@
+2002-09-03  Jonathan Pryor <jonpryor@vt.edu>
+	* ChangeLog: Added
+	* ConsoleOutput.cs: s/parse/display; makes more sense
+	* ExplicitTypeDisplayer.cs: Add additional output
+	* IndentingTextWriter.cs: Allow indenting to be specified
+	* ProgramOptions.cs: Allow more space for program options in output
+	* ReflectionTypeDisplayer.cs: Formatting changes
+	* TypeDisplayer.cs: Trivial formatting changes
+	* TypeReflectorOptions.cs: Re-enable program option, formatting changes
+

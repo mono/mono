@@ -328,11 +328,11 @@ namespace Mono.TypeReflector
 							o.LongForm, 
 							o.ArgumentDescription);
 					string fmt = null;
-					if (opt.Length < 20)
-						fmt = "{0,-20}{1}";
+					if (opt.Length < 30)
+						fmt = "{0,-30}{1}";
 					else
-						fmt = "{0,-20}\n{2,-20}{1}";
-					string d = new TextFormatter (20, 80, 2).Group (o.Description);
+						fmt = "{0,-30}\n{2,-30}{1}";
+					string d = new TextFormatter (30, 80, 2).Group (o.Description);
 					sb.Append (String.Format (fmt, opt, d, ""));
 					sb.Append ("\n");
 				}

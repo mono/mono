@@ -131,7 +131,7 @@ namespace Mono.TypeReflector
 					else if (rType.GetProperties().Length > 0) {
 						t = '+';
 						if (seen.IndexOf (r) == -1) {
-              t = '\\';
+							t = '\\';
 							seen.Add (r);
 							// We test IsSubclassOf to prevent infinite recursion.
 							ri.Subresults = new ArrayList ();
@@ -145,7 +145,7 @@ namespace Mono.TypeReflector
 					results.Add (ri);
 				}
 			}
-      results.Add (new ResultInfo (String.Format ("- ToString()={0}",
+			results.Add (new ResultInfo (String.Format ("- ToString()={0}",
 				instance.ToString())));
 		}
 
