@@ -122,15 +122,6 @@ sealed class Date {
 } // class Date
 
 public class CalendarTest : TestCase {
-	public CalendarTest() : base("System.Globalization.CalendarTest") {}
-	public CalendarTest(string name) : base(name) {}
-
-	public static ITest Suite {
-		get {
-			return new TestSuite(typeof(CalendarTest));
-		}
-	}
-
 	private Calendar[] acal;
 	private GregorianCalendar gcal;
 	private JulianCalendar jucal;

@@ -22,9 +22,6 @@ namespace MonoTests.System.Security.Cryptography {
 //	http://www.ietf.org/rfc/rfc2202.txt
 
 public class HMACSHA1Test : KeyedHashAlgorithmTest {
-	public HMACSHA1Test () : base ("System.Security.Cryptography.HMACSHA1 testsuite") {}
-	public HMACSHA1Test (string name) : base (name) {}
-
 	protected HMACSHA1 algo;
 
 	protected override void SetUp () 
@@ -33,12 +30,6 @@ public class HMACSHA1Test : KeyedHashAlgorithmTest {
 	}
 
 	protected override void TearDown () {}
-
-	public static new ITest Suite {
-		get { 
-			return new TestSuite (typeof (HMACSHA1Test)); 
-		}
-	}
 
 	public void TestInvariants () 
 	{

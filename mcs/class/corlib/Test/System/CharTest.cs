@@ -14,8 +14,7 @@ namespace MonoTests.System
 
 public class CharTest : TestCase
 {
-	public CharTest() : base ("MonoTests.System.CharTest testsuite") {}
-	public CharTest(string name) : base(name) {}
+	public CharTest() {}
 
 	protected override void SetUp() 
 	{
@@ -25,12 +24,6 @@ public class CharTest : TestCase
 	{
 	}
 
-	public static ITest Suite {
-		get { 
-			return new TestSuite(typeof(CharTest)); 
-		}
-	}
-    
 	public void TestCompareTo()
 	{
 		Char c1 = 'a';

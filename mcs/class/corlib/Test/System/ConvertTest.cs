@@ -15,8 +15,7 @@ namespace MonoTests.System
 {
 	public class ConvertTest : TestCase
 	{
-		public ConvertTest() : base ("MonoTests.System.ConvertTest testsuite") {}
-		public ConvertTest(string name) : base(name) {}
+		public ConvertTest() {}
 
 		bool boolTrue;
 		bool boolFalse;
@@ -65,12 +64,6 @@ namespace MonoTests.System
 			ci.NumberFormat.NumberDecimalDigits = 3;
 		}
 		protected override void TearDown() {}
-
-		public static ITest Suite {
-			get { 
-				return new TestSuite(typeof(ConvertTest)); 
-			}
-		}
 
 		public void TestChangeType() {
 			int iTest = 1;

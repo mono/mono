@@ -14,16 +14,6 @@ using System.Text;
 namespace MonoTests.System.IO {
 
 public class StringWriterTest : TestCase {
-	
-	public static ITest Suite {
-		get {
-			return new TestSuite(typeof(StringWriterTest));
-		}
-	}
-
-	public StringWriterTest() : base ("MonoTests.System.IO.StringWriterTest testcase") { }
-	public StringWriterTest( string name ): base(name) { }
-
 	public void TestConstructors() {
                 StringBuilder sb = new StringBuilder("Test String");
 

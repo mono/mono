@@ -16,21 +16,6 @@ namespace MonoTests.System.Runtime.Serialization
 {
 	public class FormatterServicesTests : TestCase
 	{
-		public static ITest Suite {
-			get {
-				return new TestSuite (typeof (FormatterServicesTests));
-			}
-		}
-
-		public FormatterServicesTests () :
-			base ("MonoTests.System.Runtime.Serialization.FormatterServicesTests testcase")
-		{
-		}
-
-		public FormatterServicesTests (string name) : base (name)
-		{
-		}
-
 		public void TestClass1 ()
 		{
 			DerivedClass1 derived = new DerivedClass1 ();

@@ -23,21 +23,12 @@ namespace MonoTests.System.Security.Cryptography {
 // on the abstract class but should be tested in ALL its descendants.
 public class SHA256Test : HashAlgorithmTest {
 
-	public SHA256Test () : base ("System.Security.Cryptography.SHA256 testsuite") {}
-	public SHA256Test (string name) : base (name) {}
-
 	protected override void SetUp () 
 	{
 		hash = SHA256.Create ();
 	}
 
 	protected override void TearDown () {}
-
-	public static new ITest Suite {
-		get { 
-			return new TestSuite (typeof (SHA256Test)); 
-		}
-	}
 
 	// test vectors from NIST FIPS 186-2
 

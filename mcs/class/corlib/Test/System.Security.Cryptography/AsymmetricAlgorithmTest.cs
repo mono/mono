@@ -15,20 +15,6 @@ namespace MonoTests.System.Security.Cryptography {
 
 	public class AsymmetricAlgorithmTest : TestCase {
 		private AsymmetricAlgorithm _algo;
-		
-		public AsymmetricAlgorithmTest() : base ("MonoTests.System.Security.Cryptography.AsymmetricAlgorithmTest testcase") {
-			_algo = null;
-		}
-		public AsymmetricAlgorithmTest(String name) : base(name) {
-			_algo = null;
-		}
-		
-		public static ITest Suite {
-			get {
-				return new TestSuite(typeof(AsymmetricAlgorithmTest));
-			}
-		}
-
 		protected override void SetUp() {
 			_algo = AsymmetricAlgorithm.Create();
 		}

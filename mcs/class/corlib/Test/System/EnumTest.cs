@@ -16,8 +16,7 @@ namespace MonoTests.System
 
 public class EnumTest : TestCase
 {
-	public EnumTest() : base ("MonoTests.System.EnumTest testsuite") {}
-	public EnumTest(string name) : base(name) {}
+	public EnumTest() {}
 
 	protected override void SetUp() 
 	{
@@ -25,12 +24,6 @@ public class EnumTest : TestCase
 
 	protected override void TearDown() 
 	{
-	}
-
-	public static ITest Suite {
-		get { 
-			return new TestSuite(typeof(EnumTest)); 
-		}
 	}
 
 	enum TestingEnum {This, Is, A, Test};

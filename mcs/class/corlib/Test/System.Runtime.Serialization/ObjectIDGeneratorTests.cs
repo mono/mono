@@ -22,15 +22,6 @@ namespace MonoTests.System.Runtime.Serialization
 		int obj2 = 42;		
 		long id;
 
-		public static ITest Suite {
-			get { return new TestSuite (typeof (ObjectIDGeneratorTests)); }
-		}
-		
-		public ObjectIDGeneratorTests (string name)
-			: base (name)
-		{
-		}
-
 		protected override void SetUp ()
 		{
 			generator = new ObjectIDGenerator ();

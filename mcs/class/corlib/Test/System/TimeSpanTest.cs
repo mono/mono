@@ -15,15 +15,7 @@ namespace MonoTests.System
 
 public class TimeSpanTest : TestCase
 {
-	public TimeSpanTest() : base ("MonoTests.System.TimeSpanTest testcase") {}
-        public TimeSpanTest (string name): base (name) {}
-
-	public static ITest Suite
-	{
-		get {
-			return new TestSuite (typeof(TimeSpanTest));
-		}
-	}
+	public TimeSpanTest() {}
 
 	public void TestCtors ()
 	{
@@ -189,7 +181,7 @@ public class TimeSpanTest : TestCase
 		AssertEquals ("A1", 77, new TimeSpan (77).GetHashCode ());
 	}
 
-	private void TestParseHelper (string s, bool expectFormat, bool expectOverflow, string expect)
+	private void ParseHelper (string s, bool expectFormat, bool expectOverflow, string expect)
 	{
 		bool formatException = false;
 		bool overflowException = false;
@@ -214,19 +206,19 @@ public class TimeSpanTest : TestCase
 
 	public void TestParse ()
 	{
-		TestParseHelper (" 13:45:15 ",false, false, "13:45:15");
-		TestParseHelper (" -1:2:3 ", false, false, "-01:02:03");
+		ParseHelper (" 13:45:15 ",false, false, "13:45:15");
+		ParseHelper (" -1:2:3 ", false, false, "-01:02:03");
 
-		TestParseHelper (" 25:0:0 ",false, true, "dontcare");
-		TestParseHelper ("aaa", true, false, "dontcare");
+		ParseHelper (" 25:0:0 ",false, true, "dontcare");
+		ParseHelper ("aaa", true, false, "dontcare");
 
-		TestParseHelper ("-21.23:59:59.9999999", false, false, "-21.23:59:59.9999999");
+		ParseHelper ("-21.23:59:59.9999999", false, false, "-21.23:59:59.9999999");
 
-		TestParseHelper ("100000000000000.1:1:1", false, true, "dontcare");
-		TestParseHelper ("24:60:60", false, true, "dontcare");
-		TestParseHelper ("0001:0002:0003.12     ", false, false, "01:02:03.1200000");
+		ParseHelper ("100000000000000.1:1:1", false, true, "dontcare");
+		ParseHelper ("24:60:60", false, true, "dontcare");
+		ParseHelper ("0001:0002:0003.12     ", false, false, "01:02:03.1200000");
 
-		TestParseHelper (" 1:2:3:12345678 ", true, false, "dontcare"); 
+		ParseHelper (" 1:2:3:12345678 ", true, false, "dontcare"); 
 	}
 
 	public void TestSubstract ()

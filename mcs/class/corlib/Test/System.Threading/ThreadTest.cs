@@ -14,21 +14,6 @@ namespace MonoTests.System.Threading
 {
 	public class ThreadTest : TestCase
 	{
-		public ThreadTest () : 
-			base ("MonoTests.System.Threading.ThreadTest testsuite") {}
-		
-		public ThreadTest (string name) : base (name) {}
-		
-		protected override void SetUp () {}
-		
-		public static ITest Suite
-		{
-			get 
-			{ 
-				return new TestSuite (typeof (ThreadTest)); 
-			}
-		}
-				
 		//Some Classes to test as threads
 		private class C1Test
 		{

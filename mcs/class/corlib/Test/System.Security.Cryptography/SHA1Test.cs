@@ -24,21 +24,12 @@ namespace MonoTests.System.Security.Cryptography
 // on the abstract class but should be tested in ALL its descendants.
 public class SHA1Test : HashAlgorithmTest 
 {
-	public SHA1Test () : base ("System.Security.Cryptography.SHA1 testsuite") {}
-	public SHA1Test (string name) : base (name) {}
-
 	protected override void SetUp () 
 	{
 		hash = SHA1.Create();
 	}
 
 	protected override void TearDown () {}
-
-	public static new ITest Suite {
-		get { 
-			return new TestSuite (typeof (SHA1Test)); 
-		}
-	}
 
 	public new void AssertEquals (string msg, byte[] array1, byte[] array2) 
 	{

@@ -44,16 +44,6 @@ namespace MonoTests.System.IO
 		static char DSC = Path.DirectorySeparatorChar;
 	     
 #if NUNIT
-		public static ITest Suite
-		{
-			get {
-				return new TestSuite (typeof (PathTest));
-			}
-		}
-
-		public PathTest () : base ("MonoTests.System.IO.PathTest testcase") { }
-		public PathTest (string name) : base (name) { }
-
 		protected override void SetUp ()
 		{
 #else

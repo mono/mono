@@ -1,8 +1,11 @@
+2002-12-21  Nick Drochak <ndrochak@gol.com>
+
+	* all: make tests build and run under nunit2
+
 2002-11-29  Eduardo Garcia Cebollero <kiwnix@yahoo.es>
 
 	* MutexTest.cs : New suite for Mutex.
 	
-
 2002-11-23  Eduardo Garcia Cebollero <kiwnix@yahoo.es>
 
 	* ThreadTest.cs : New suite for Thread.

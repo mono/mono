@@ -15,9 +15,6 @@ namespace MonoTests.System.Threading
 	public class MutexTest : TestCase 
 	{
 	
-		public MutexTest() : base ("MonoTests.System.Threading.MutexTest testsuite") {}
-		public MutexTest(string name) : base(name) {}
-		
 		//Auxiliary Classes (Future Threads)
 		private class ConcClass
 		{
@@ -82,14 +79,6 @@ namespace MonoTests.System.Threading
 		protected override void SetUp() {}
 
 		protected override void TearDown() {}
-
-		public static ITest Suite 
-		{
-			get 
-			{ 
-				return new TestSuite(typeof(MutexTest)); 
-			}
-		}
 
 		public void TestCtor1()
 		{

@@ -17,11 +17,6 @@ public class SecurityElementTest : TestCase
 {
 	SecurityElement elem;
 	
-        public SecurityElementTest () :
-                base ("[MonoTests.System.Security.SecurityElementTest]") {}
-
-        public SecurityElementTest (string name) : base (name) {}
-
         protected override void SetUp () 
         {
 		elem = CreateElement ();
@@ -52,13 +47,6 @@ public class SecurityElementTest : TestCase
 		
 		return elem;		
 	}
-
-        public static ITest Suite
-        {
-                get {
-                        return new TestSuite (typeof (SecurityElementTest));
-                }
-        }
 
         public void TestConstructors ()
         {

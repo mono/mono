@@ -13,37 +13,14 @@ using System.Reflection;
 using NUnit.Framework;
 
 namespace MonoTests.System.Diagnostics {
-        public class StackFrameTest {
-                private StackFrameTest() {}
-                public static ITest Suite 
-                { 
-                        get 
-                        {
-                                TestSuite suite =  new TestSuite();
-                                suite.AddTest(StackFrameTest1.Suite);
-                                suite.AddTest(StackFrameTest2.Suite);
-                                suite.AddTest(StackFrameTest3.Suite);
-                                return suite;
-                        }
-                }
-
         /// <summary>
         ///   Tests the case where StackFrame is created for specified file name and
         ///   location inside it.
         /// </summary>
-        private class StackFrameTest1 : TestCase {
-                public StackFrameTest1(string name) : base(name) {}
-                
+	[TestFixture]
+	public class StackFrameTest1 : TestCase {
                 private StackFrame frame1;
                 private StackFrame frame2;
-                
-                internal static ITest Suite 
-                { 
-                        get 
-                        {
-                                return  new TestSuite(typeof(StackFrameTest1));
-                        }
-                }
                 
                 protected override void SetUp() {
                         frame1 = new StackFrame("dir/someFile", 13, 45);
@@ -54,8 +31,6 @@ namespace MonoTests.System.Diagnostics {
                         frame1 = null;
                         frame2 = null;
                 }
-                
-                
                 
                 /// <summary>
                 ///   Tests whether getting file name works.
@@ -130,20 +105,11 @@ namespace MonoTests.System.Diagnostics {
         ///   What's the best way to do both types of tests with and without
         ///   debug information?
         /// </remarks>
-        private class StackFrameTest2 : TestCase {
-                public StackFrameTest2(string name) : base(name) {}
-                
+	[TestFixture]
+        public class StackFrameTest2 : TestCase {
                 private StackFrame frame1;
                 private StackFrame frame2;
                 private StackFrame frame3;
-                
-                internal static ITest Suite 
-                { 
-                        get 
-                        {
-                                return  new TestSuite(typeof(StackFrameTest2));
-                        }
-                }
                 
                 protected override void SetUp() {
                         frame1 = new StackFrame();
@@ -180,7 +146,7 @@ namespace MonoTests.System.Diagnostics {
                                      frame1.GetFileLineNumber());
                                      
                         AssertEquals("Line number (2)",
-                                     154,
+                                     116,
                                      frame2.GetFileLineNumber());
                                      
                         AssertEquals("Line number (3)",
@@ -253,19 +219,10 @@ namespace MonoTests.System.Diagnostics {
         ///   What's the best way to do both types of tests with and without
         ///   debug information?
         /// </remarks>
-        private class StackFrameTest3 : TestCase {
-                public StackFrameTest3(string name) : base(name) {}
-                
+	[TestFixture]
+        public class StackFrameTest3 : TestCase {
                 private StackFrame frame1;
                 private StackFrame frame2;
-                
-                internal static ITest Suite 
-                { 
-                        get 
-                        {
-                                return  new TestSuite(typeof(StackFrameTest3));
-                        }
-                }
                 
                 protected override void SetUp() {
                         // In order to get better test cases with stack traces
@@ -305,7 +262,7 @@ namespace MonoTests.System.Diagnostics {
                                      frame1.GetFileLineNumber());
                                      
                         AssertEquals("Line number (2)",
-                                     277,
+                                     230,
                                      frame2.GetFileLineNumber());
                 }
                 
@@ -329,11 +286,8 @@ namespace MonoTests.System.Diagnostics {
                 public void TestGetMethod() {
                         Assert("Method not null (1)", (frame1.GetMethod() != null));
 
-                        AssertEquals("Class declaring the method (1)",
-                                     typeof(NUnit.Framework.TestCase),
-                                     frame1.GetMethod().DeclaringType);
-                        AssertEquals("Method name (1)",
-                                     "RunBare",
+			AssertEquals("Method name (1)",
+                                     "InternalInvoke",
                                      frame1.GetMethod().Name);
                                      
                         Assert("Method not null (2)", (frame2.GetMethod() != null));
@@ -341,10 +295,10 @@ namespace MonoTests.System.Diagnostics {
                         AssertEquals("Class declaring the method (2)",
                                      this.GetType(),
                                      frame2.GetMethod().DeclaringType);
-                        AssertEquals("Method name (2)",
+                        
+			AssertEquals("Method name (2)",
                                      "SetUp",
                                      frame2.GetMethod().Name);
                 }
 	}
-        }
 }

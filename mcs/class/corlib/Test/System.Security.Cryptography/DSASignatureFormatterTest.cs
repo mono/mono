@@ -15,10 +15,6 @@ using System.Security.Cryptography;
 namespace MonoTests.System.Security.Cryptography {
 
 public class DSASignatureFormatterTest : TestCase {
-
-	public DSASignatureFormatterTest () : base ("System.Security.Cryptography.DSASignatureFormatter testsuite") {}
-	public DSASignatureFormatterTest (string name) : base (name) {}
-
 	protected DSASignatureFormatter fmt;
 	protected static DSA dsa;
 	protected static RSA rsa;
@@ -34,12 +30,6 @@ public class DSASignatureFormatterTest : TestCase {
 	}
 
 	protected override void TearDown () {}
-
-	public static ITest Suite {
-		get { 
-			return new TestSuite (typeof (DSASignatureFormatterTest)); 
-		}
-	}
 
 	public void TestConstructors () 
 	{

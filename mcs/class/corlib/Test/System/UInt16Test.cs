@@ -38,8 +38,7 @@ public class UInt16Test : TestCase
 
 	private NumberFormatInfo Nfi = NumberFormatInfo.InvariantInfo;
 	
-	public UInt16Test() : base ("MonoTests.System.UInt16Test testcase") {}
-	public UInt16Test(string name) : base(name) {}
+	public UInt16Test() {}
 
 	private CultureInfo old_culture;
 
@@ -59,12 +58,6 @@ public class UInt16Test : TestCase
 		Thread.CurrentThread.CurrentCulture = old_culture;
 	}
 
-	public static ITest Suite {
-		get { 
-			return new TestSuite(typeof(UInt16Test)); 
-		}
-	}
-    
 	public void TestMinMax()
 	{
 		

@@ -15,9 +15,6 @@ using System.Text;
 namespace MonoTests.System.Security.Cryptography {
 
 public class RijndaelTest : TestCase {
-	public RijndaelTest () : base ("System.Security.Cryptography.Rijndael testsuite") {}
-	public RijndaelTest (string name) : base(name) {}
-
 	protected Rijndael aes;
 
 	protected override void SetUp () 
@@ -26,12 +23,6 @@ public class RijndaelTest : TestCase {
 	}
 
 	protected override void TearDown () {}
-
-	public static ITest Suite {
-		get { 
-			return new TestSuite (typeof (RijndaelTest)); 
-		}
-	}
 
 	public void AssertEquals (string msg, byte[] array1, byte[] array2) 
 	{

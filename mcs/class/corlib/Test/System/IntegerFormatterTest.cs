@@ -24,20 +24,11 @@ public class IntegerFormatterTest : TestCase
 	private const int UINT64 = 3;
 	private int testType;
 
-	public IntegerFormatterTest () : 
-		base ("[MonoTests.System.IntegerFormatterTest]") {}
-
-	public IntegerFormatterTest (string name) : base (name) {}
+	public IntegerFormatterTest () {}
 
 	protected override void SetUp () {}
 	
 	protected override void TearDown() {}
-
-	public static ITest Suite {
-		get { 
-			return new TestSuite(typeof(IntegerFormatterTest)); 
-		}
-	}
 
 	public void TestStandard ()
 	{

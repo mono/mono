@@ -22,15 +22,6 @@ public class MemoryStreamTest : TestCase {
         private MemoryStream testStream;
         private byte[] testStreamData;
         
-	public MemoryStreamTest() : base ("MonoTests.System.IO.MemoryStream testcase") { }
-	public MemoryStreamTest( string name ): base(name) { }
-
-	public static ITest Suite {
-		get {
-			return new TestSuite(typeof(MemoryStreamTest));
-		}
-	}
-
 	protected override void SetUp() {
                 testStreamData = new byte[100];
 

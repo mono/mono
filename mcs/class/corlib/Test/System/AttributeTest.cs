@@ -74,14 +74,7 @@ internal class MyDerivedClass : MyClass {
 
 public class AttributeTest : TestCase {
 		
-	public AttributeTest () : base("MonoTests.System.AttributeTest testcase") {}
-	public AttributeTest (string name) : base(name) {}
-
-	public static ITest Suite {
-		get {
-			return new TestSuite(typeof(AttributeTest));
-		}
-	}
+	public AttributeTest () {}
 
 	public void TestIsDefined ()
 	{

@@ -13,19 +13,6 @@ using NUnit.Framework;
 namespace MonoTests.System.Security.Cryptography {
 
 	public class RC2Test : TestCase {
-		
-		public RC2Test() : base ("MonoTests.System.Security.Cryptography.RC2Test testcase") {
-		}
-
-		public RC2Test(String name) : base(name) {
-		}
-		
-		public static ITest Suite {
-			get {
-				return new TestSuite(typeof(RC2Test));
-			}
-		}
-
 		private void CheckECB(int effective_bits, byte[] key, byte[] pt, byte[] expected)
 		{
 			RC2 c = RC2.Create();

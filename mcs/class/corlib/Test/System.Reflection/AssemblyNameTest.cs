@@ -16,9 +16,28 @@ using System.Reflection;
 namespace MonoTests.System.Reflection {
 
 public class AssemblyNameTest : TestCase {
+	static public void AssertEqualsByteArrays (string msg, byte[] array1, byte[] array2) 
+	{
+		if ((array1 == null) && (array2 == null))
+			return;
+		if (array1 == null)
+			Fail (msg + " -> First array is NULL");
+		if (array2 == null)
+			Fail (msg + " -> Second array is NULL");
 
-	public AssemblyNameTest () : base ("System.Reflection.AssemblyName testsuite") {}
-	public AssemblyNameTest (string name) : base (name) {}
+		bool a = (array1.Length == array2.Length);
+		if (a) {
+			for (int i = 0; i < array1.Length; i++) {
+				if (array1 [i] != array2 [i]) {
+					a = false;
+					break;
+				}
+			}
+		}
+		msg += " -> Expected " + BitConverter.ToString (array1, 0);
+		msg += " is different than " + BitConverter.ToString (array2, 0);
+		Assert (msg, a);
+	}
 
 	private AssemblyName an;
 
@@ -29,16 +48,6 @@ public class AssemblyNameTest : TestCase {
 		0x9F, 0x2D, 0x9E, 0x56, 0x4F, 0x35, 0x5B, 0xBA, 0x06, 0x99, 0xEA, 0xC6, 0xB4, 0x48, 0x51, 0x17, 0x1E, 0xD1, 0x95, 0x84, 0x81, 0x18, 0xC0, 0xF1, 0x71, 0xDE, 0x44, 0x42, 0x02, 0x06, 0xAC, 0x0E, 0xA8, 0xE2, 0xF3, 0x1F, 0x96, 0x1F, 0xBE, 0xB6, 0x1F, 0xB5, 0x3E, 0xF6, 0x81, 0x05, 0x20, 0xFA, 0x2E, 0x40, 0x2E, 0x4D, 0xA0, 0x0E, 0xDA, 0x42, 0x9C, 0x05, 0xAA, 0x9E, 0xAF, 0x5C, 0xF7, 0x3A, 0x3F, 0xBB, 0x91, 0x73, 0x45, 0x27, 0xA8, 0xA2, 0x07, 0x4A, 0xEF, 0x59, 0x1E, 0x97, 0x9D, 0xE0, 0x30, 0x5A, 0x83, 0xCE, 0x1E, 0x57, 0x32, 0x89, 0x43, 0x41, 0x28, 0x7D, 0x14, 0x8D, 0x8B, 0x41, 0x1A, 0x56, 0x76, 0x43, 0xDB, 0x64, 0x86, 0x41, 0x64, 0x8D, 0x4C, 0x91, 0x83, 0x4E, 0xF5, 0x6C };
 
 	static byte[] token = { 0xFF, 0xEF, 0x94, 0x53, 0x67, 0x69, 0xDA, 0x06 };
-
-	protected override void SetUp () {}
-
-	protected override void TearDown () {}
-
-	public static ITest Suite {
-		get { 
-			return new TestSuite (typeof (AssemblyNameTest)); 
-		}
-	}
 
 	public void TestEmptyAssembly () 
 	{
@@ -63,8 +72,8 @@ public class AssemblyNameTest : TestCase {
 		AssertEquals ("Flags", AssemblyNameFlags.PublicKey, an.Flags);
 		// strangly it doesn't affect the KeyPair ?
 		AssertNull ("KeyPair", an.KeyPair);
-		AllTests.AssertEquals ("PublicKey", test, an.GetPublicKey ());
-		AllTests.AssertEquals ("PublicKeyToken", token, an.GetPublicKeyToken ());
+		AssertEqualsByteArrays ("PublicKey", test, an.GetPublicKey ());
+		AssertEqualsByteArrays ("PublicKeyToken", token, an.GetPublicKeyToken ());
 	}
 
 	public void TestPublicKeyToken () 
@@ -75,7 +84,7 @@ public class AssemblyNameTest : TestCase {
 		AssertEquals ("Flags", AssemblyNameFlags.None, an.Flags);
 		AssertNull ("KeyPair", an.KeyPair);
 		AssertNull ("PublicKey", an.GetPublicKey ());
-		AllTests.AssertEquals ("PublicKeyToken", token, an.GetPublicKeyToken ());
+		AssertEqualsByteArrays ("PublicKeyToken", token, an.GetPublicKeyToken ());
 	}
 
 	public void TestKeyPair () 

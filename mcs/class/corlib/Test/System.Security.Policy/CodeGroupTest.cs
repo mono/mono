@@ -18,22 +18,6 @@ namespace MonoTests.System.Security.Policy
 	public class CodeGroupTest : TestCase 
 	{
 		
-		public CodeGroupTest( string name ): base(name)
-		{
-		}
-		
-		public CodeGroupTest() : base("CodeGroupTest")
-		{
-		}
-
-		public static ITest Suite
-		{
-			get
-			{
-				return new TestSuite(typeof(CodeGroupTest));
-			}
-		}
-
 		protected override void SetUp()
 		{
 		}

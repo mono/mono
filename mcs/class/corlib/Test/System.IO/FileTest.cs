@@ -14,16 +14,6 @@ namespace MonoTests.System.IO
 {
 	public class FileTest : TestCase
 	{
-		public FileTest ()
-			: base ("System.IO.File testsuite")
-		{
-		}
-
-		public FileTest (string name)
-			: base (name)
-		{
-		}
-
 		protected override void SetUp ()
 		{
 		}
@@ -33,11 +23,6 @@ namespace MonoTests.System.IO
 		        File.Delete ("resources" + Path.DirectorySeparatorChar + "baz");
 		        File.Delete ("resources" + Path.DirectorySeparatorChar + "bar");
 		        File.Delete ("resources" + Path.DirectorySeparatorChar + "foo");
-		}
-
-		public static ITest Suite
-		{
-			get { return new TestSuite (typeof (FileTest)); }
 		}
 
 		public void TestExists ()

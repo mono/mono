@@ -26,9 +26,6 @@ namespace MonoTests.System.Security.Cryptography {
 //	http://www.ietf.org/rfc/rfc1750.txt
 
 public class RandomNumberGeneratorTest : TestCase {
-	public RandomNumberGeneratorTest () : base ("System.Security.Cryptography.RandomNumberGenerator testsuite") {}
-	public RandomNumberGeneratorTest (string name) : base (name) {}
-
 	protected RandomNumberGenerator rng;
 
 	protected override void SetUp () 
@@ -37,12 +34,6 @@ public class RandomNumberGeneratorTest : TestCase {
 	}
 
 	protected override void TearDown () {}
-
-	public static ITest Suite {
-		get { 
-			return new TestSuite (typeof (RandomNumberGeneratorTest)); 
-		}
-	}
 
 	public void AssertEquals (string msg, byte[] array1, byte[] array2) 
 	{

@@ -11,14 +11,7 @@ namespace MonoTests.System {
 
 public class RandomTest : TestCase
 {
-	public static ITest Suite {
-		get {
-			return new TestSuite(typeof(RandomTest));
-		}
-	}
-
-	public RandomTest() : base ("MonoTests.System.RandomTest testcase") {}
-        public RandomTest(string name): base(name){}
+	public RandomTest() {}
         public void TestDouble()
         {
                 Random r = new Random();

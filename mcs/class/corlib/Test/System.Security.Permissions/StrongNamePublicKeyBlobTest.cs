@@ -16,18 +16,9 @@ namespace MonoTests.System.Security.Permissions {
 
 public class StrongNamePublicKeyBlobTest : TestCase {
 
-	public StrongNamePublicKeyBlobTest () : base ("System.Security.Permissions.StrongNamePublicKeyBlob testsuite") {}
-	public StrongNamePublicKeyBlobTest (string name) : base (name) {}
-
 	protected override void SetUp () {}
 
 	protected override void TearDown () {}
-
-	public static ITest Suite {
-		get { 
-			return new TestSuite (typeof (StrongNamePublicKeyBlobTest)); 
-		}
-	}
 
 	static byte[] bad = { 0xB, 0xAD };
 	// should be a valid one (see StrongNameKeyPairTest.cs)

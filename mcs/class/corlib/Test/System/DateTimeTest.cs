@@ -29,15 +29,7 @@ public class DateTimeTest : TestCase
 		629197085770000000L	// 06 Nov 1994 - 08:49:37 
 	};
 
-	public DateTimeTest() : base ("MonoTests.System.DateTimeTest testcase") {}
-        public DateTimeTest (string name): base(name) {}
-
-	public static ITest Suite
-	{
-		get {
-			return new TestSuite (typeof (DateTimeTest));
-		}
-	}
+	public DateTimeTest() {}
 
 	protected override void SetUp() 
 	{

@@ -16,9 +16,6 @@ namespace MonoTests.System.Security.Cryptography {
 public class RSACryptoServiceProviderTest : TestCase {
 	protected RSA rsa;
 
-	public RSACryptoServiceProviderTest () : base ("System.Security.Cryptography.RSACryptoServiceProvider testsuite") {}
-	public RSACryptoServiceProviderTest (string name) : base (name) {}
-
 	private string sha1OID;
 
 	protected override void SetUp () 
@@ -27,12 +24,6 @@ public class RSACryptoServiceProviderTest : TestCase {
 	}
 
 	protected override void TearDown () {}
-
-	public static ITest Suite {
-		get { 
-			return new TestSuite (typeof (RSACryptoServiceProviderTest)); 
-		}
-	}
 
 	public void AssertEquals (string msg, byte[] array1, byte[] array2) 
 	{

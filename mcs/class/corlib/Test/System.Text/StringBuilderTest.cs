@@ -25,23 +25,14 @@ using System;
 
 namespace MonoTests.System.Text {
 
-public class StringBuilderTest : TestCase {
-
-		public static ITest Suite {
-			get {
-				return new TestSuite(typeof(StringBuilderTest));
-			}
-		}
-
-        public StringBuilderTest( string name ) : base(name) { }
-
+	public class StringBuilderTest : TestCase {
 
 		private StringBuilder sb;
 
 		public void TestConstructor1() 
 		{
 			// check the parameterless ctor
-            sb = new StringBuilder();
+			sb = new StringBuilder();
 			AssertEquals(String.Empty, sb.ToString());
 			AssertEquals(0, sb.Length);
 			AssertEquals(16, sb.Capacity);

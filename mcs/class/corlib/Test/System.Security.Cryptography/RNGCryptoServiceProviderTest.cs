@@ -16,19 +16,6 @@ namespace MonoTests.System.Security.Cryptography {
 	public class RNGCryptoServiceProviderTest : TestCase {
 		private RNGCryptoServiceProvider _algo;
 		
-		public RNGCryptoServiceProviderTest() : base ("MonoTests.System.Security.Cryptography.RNGCryptoServiceProviderTest testcase") {
-			_algo = null;
-		}
-		public RNGCryptoServiceProviderTest(String name) : base(name) {
-			_algo = null;
-		}
-		
-		public static ITest Suite {
-			get {
-				return new TestSuite(typeof(RNGCryptoServiceProviderTest));
-			}
-		}
-
 		protected override void SetUp() {
 			_algo = new RNGCryptoServiceProvider();
 		}

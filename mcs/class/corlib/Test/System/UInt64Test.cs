@@ -40,8 +40,7 @@ public class UInt64Test : TestCase
 
 	private NumberFormatInfo Nfi = NumberFormatInfo.InvariantInfo;
 	
-	public UInt64Test() : base ("MonoTests.System.UInt64Test testcase") {}
-	public UInt64Test(string name) : base(name) {}
+	public UInt64Test() {}
 
 	private CultureInfo old_culture;
 
@@ -62,12 +61,6 @@ public class UInt64Test : TestCase
 		Thread.CurrentThread.CurrentCulture = old_culture;
 	}
 
-	public static ITest Suite {
-		get { 
-			return new TestSuite(typeof(UInt64Test)); 
-		}
-	}
-    
 	public void TestMinMax()
 	{
 		

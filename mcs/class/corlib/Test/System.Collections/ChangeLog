@@ -1,3 +1,7 @@
+2002-12-21  Nick Drochak <ndrochak@gol.com>
+
+	* all: make tests build and run under nunit2
+
 2002-10-16  Nick Drochak  <ndrochak@gol.com>
 
 	* QueueTest.cs: Add test from tetsuo via Vladimir Vukicevic 

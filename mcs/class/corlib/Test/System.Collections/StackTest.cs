@@ -219,13 +219,6 @@ namespace MonoTests.System.Collections
                                 AssertEquals(arr[i], stackInt.Pop());
                 }
 
-                static void Main(string[] args)
-		{
-      			//
-			// TODO: Add code to start application here
-			//
-		}
-
                 protected override void SetUp()
                 {
                         stack1 = new Stack();
@@ -236,35 +229,5 @@ namespace MonoTests.System.Collections
                         for (int i = 0; i < 5; i++)
                                 stackInt.Push(i);
                 }
-
-                public static ITest Suite 
-                { 
-                        get 
-                        {
-                                TestSuite stackSuite = new TestSuite(); 
-                                
-                                stackSuite.AddTest(new StackTest("TestConstructor"));
-                                stackSuite.AddTest(new StackTest("TestICollectionConstructor"));
-                                stackSuite.AddTest(new StackTest("TestIntConstructor"));
-
-                                stackSuite.AddTest(new StackTest("TestCount"));
-                                stackSuite.AddTest(new StackTest("TestIsSyncronized"));
-                                stackSuite.AddTest(new StackTest("TestSyncRoot"));
-
-                                stackSuite.AddTest(new StackTest("TestGetEnumerator"));
-                                stackSuite.AddTest(new StackTest("TestClear"));
-                                stackSuite.AddTest(new StackTest("TestClone"));
-                                stackSuite.AddTest(new StackTest("TestContains"));
-                                stackSuite.AddTest(new StackTest("TestPushPeekPop"));
-                                stackSuite.AddTest(new StackTest("TestCopyTo"));
-                                stackSuite.AddTest(new StackTest("TestSyncronized"));
-                                stackSuite.AddTest(new StackTest("TestToArray"));
-
-                                return stackSuite;
-                        }
-                }
-
-		public StackTest() : base ("MonoTests.System.Collections.StackTest testcase") {}
-                public StackTest(string name): base(name) {}
         }
 }

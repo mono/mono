@@ -11,14 +11,7 @@ namespace MonoTests.System {
 
 public class ResolveEventArgsTest : TestCase
 {
-	public static ITest Suite {
-		get {
-			return new TestSuite(typeof(RandomTest));
-		}
-	}
-
-	public ResolveEventArgsTest() : base ("MonoTests.System.ResolveEventArgsTest testcase") {}
-        public ResolveEventArgsTest(string name): base(name){}
+	public ResolveEventArgsTest() {}
 
 	public void TestTheWholeThing()
         {

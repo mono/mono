@@ -22,22 +22,12 @@ namespace MonoTests.System.Security.Cryptography {
 // SHA512 is a abstract class - so most of the test included here wont be tested
 // on the abstract class but should be tested in ALL its descendants.
 public class SHA512Test : HashAlgorithmTest {
-
-	public SHA512Test () : base ("System.Security.Cryptography.SHA512 testsuite") {}
-	public SHA512Test (string name) : base (name) {}
-
 	protected override void SetUp () 
 	{
 		hash = SHA512.Create ();
 	}
 
 	protected override void TearDown () {}
-
-	public static new ITest Suite {
-		get { 
-			return new TestSuite (typeof (SHA512Test)); 
-		}
-	}
 
 	// test vectors from NIST FIPS 186-2
 

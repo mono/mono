@@ -17,21 +17,12 @@ namespace MonoTests.System.Security.Cryptography {
 // KeyedHashAlgorithm is a abstract class - so most of it's functionality wont
 // be tested here (but will be in its descendants).
 public class KeyedHashAlgorithmTest : HashAlgorithmTest {
-	public KeyedHashAlgorithmTest () : base ("System.Security.Cryptography.KeyedHashAlgorithm testsuite") {}
-	public KeyedHashAlgorithmTest (string name) : base(name) {}
-
 	protected override void SetUp () 
 	{
 		hash = KeyedHashAlgorithm.Create ();
 	}
 
 	protected override void TearDown () {}
-
-	public static new ITest Suite {
-		get { 
-			return new TestSuite (typeof (KeyedHashAlgorithmTest)); 
-		}
-	}
 
 	// Note: These tests will only be valid without a "machine.config" file
 	// or a "machine.config" file that do not modify the default algorithm

@@ -18,18 +18,6 @@ using System.Text;
 namespace MonoTests.System.Security.Cryptography {
 
 public class SymmetricAlgorithmTest : TestCase {
-
-public SymmetricAlgorithmTest () : base ("System.Security.Cryptography.SymmetricAlgorithm testsuite") {}
-public SymmetricAlgorithmTest (string name) : base(name) {}
-
-protected override void TearDown () {}
-
-public static ITest Suite {
-	get {
-		return new TestSuite (typeof (SymmetricAlgorithmTest));
-	}
-}
-
 public void AssertEquals (string msg, byte[] array1, byte[] array2)
 {
 	AllTests.AssertEquals (msg, array1, array2);

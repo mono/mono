@@ -11,14 +11,7 @@ namespace MonoTests.System
 {
 	public class ExceptionTest : TestCase
 	{
-		public ExceptionTest() : base ("MonoTests.System.ExceptionTest testsuite") {}
-		public ExceptionTest(string name) : base(name) {}
-		
-		public static ITest Suite {
-			get {
-				return new TestSuite(typeof(ExceptionTest));
-			}
-		}
+		public ExceptionTest() {}
 		
 		// This test makes sure that exceptions thrown on block boundaries are
 		// handled in the correct block. The meaning of the 'caught' variable is

@@ -22,22 +22,12 @@ namespace MonoTests.System.Security.Cryptography {
 // SHA384 is a abstract class - so most of the test included here wont be tested
 // on the abstract class but should be tested in ALL its descendants.
 public class SHA384Test : HashAlgorithmTest {
-
-	public SHA384Test () : base ("System.Security.Cryptography.SHA384 testsuite") {}
-	public SHA384Test (string name) : base (name) {}
-
 	protected override void SetUp () 
 	{
 		hash = SHA384.Create ();
 	}
 
 	protected override void TearDown () {}
-
-	public static new ITest Suite {
-		get { 
-			return new TestSuite (typeof (SHA384Test)); 
-		}
-	}
 
 	// test vectors from NIST FIPS 186-2
 

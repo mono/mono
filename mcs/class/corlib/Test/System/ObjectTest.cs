@@ -14,8 +14,7 @@ namespace MonoTests.System
 
 public class ObjectTest : TestCase
 {
-	public ObjectTest() : base ("MonoTests.System.ObjectTest testsuite") {}
-	public ObjectTest(string name) : base(name) {}
+	public ObjectTest() {}
 
 	protected override void SetUp() 
 	{
@@ -23,12 +22,6 @@ public class ObjectTest : TestCase
 
 	protected override void TearDown() 
 	{
-	}
-
-	public static ITest Suite {
-		get { 
-			return new TestSuite(typeof(ObjectTest)); 
-		}
 	}
 
 	public void TestCtor() {

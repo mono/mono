@@ -15,15 +15,7 @@ namespace MonoTests.System
 
 public class VersionTest : TestCase
 {
-	public VersionTest () : base ("MonoTests.System.VersionTest testcase") {}
-        public VersionTest (string name) : base (name) {}
-
-	public static ITest Suite {
-		get {
-			return new TestSuite (typeof (VersionTest));
-		}
-	}
-
+	public VersionTest () {}
 
 	public void TestCtors ()
 	{

@@ -13,22 +13,6 @@ namespace MonoTests.System.Security.Cryptography
 {
 	public class MD5Test : TestCase
 	{
-		public MD5Test () : base ("MonoTests.System.Security.Cryptography.MD5Test testsuite") {}
-		public MD5Test (string name) : base (name) {}
-
-		protected override void SetUp () 
-		{
-		}
-
-		protected override void TearDown () {}
-
-		public static ITest Suite
-		{
-			get { 
-				return new TestSuite (typeof (MD5Test)); 
-			}
-		}
-
 		public void TestComputeHashNull () 
 		{
 			byte [] dato_vacio = {};

@@ -19,21 +19,6 @@ namespace MonoTests.System.Security.Policy
 	public class EvidenceTest : TestCase 
 	{
 		
-		public EvidenceTest(string name): base(name)
-		{
-		}
-		
-		public EvidenceTest() : base("EvidenceTest")
-		{
-		}
-
-		public static ITest Suite
-		{
-			get {
-				return new TestSuite(typeof(EvidenceTest));
-			}
-		}
-
 		protected override void SetUp()
 		{
 		}

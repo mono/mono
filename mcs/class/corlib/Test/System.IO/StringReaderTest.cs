@@ -15,16 +15,6 @@ using System;
 namespace MonoTests.System.IO {
 
 public class StringReaderTest : TestCase {
-
-	public static ITest Suite {
-		get {
-			return new TestSuite(typeof(StringReaderTest));
-		}
-	}
-
-	public StringReaderTest() : base ("MonoTests.System.IO.StringReaderTest testcase") { }
-	public StringReaderTest( string name ): base(name) { }
-
 	public  void TestReadLine() {
 		string testme = "a\nb\nc\n";
 		StringReader sr = new StringReader (testme);

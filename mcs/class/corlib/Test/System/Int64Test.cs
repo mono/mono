@@ -60,13 +60,7 @@ public class Int64Test : TestCase
 	private NumberFormatInfo Nfi = NumberFormatInfo.InvariantInfo;
 	private NumberFormatInfo NfiUser;
 
-	public Int64Test() : base("MonoTests.System.Int64Test") {}
-	public Int64Test(string name) : base(name) {}
-
-	public static ITest Suite 
-	{
-		get { return new TestSuite(typeof(Int64Test)); }
-	}
+	public Int64Test() {}
 
 	private CultureInfo old_culture;
 

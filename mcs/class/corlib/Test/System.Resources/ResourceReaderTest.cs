@@ -22,16 +22,6 @@ namespace MonoTests.System.Resources {
 		private static string m_ResourceFile = "resources" + Path.DirectorySeparatorChar + "MyResources.resources";
 		private static string m_BadResourceFile = "resources" + Path.DirectorySeparatorChar + "Empty.resources";
 		
-		public ResourceReaderTest() : base ("MonoTests.System.Resources.ResourceReaderTest testcase") { }
-		public ResourceReaderTest(String name) : base(name) {
-		}
-		
-		public static ITest Suite {
-			get {
-				return new TestSuite(typeof(ResourceReaderTest));
-			}
-		}
-
 		protected override void SetUp() {
 		}
 

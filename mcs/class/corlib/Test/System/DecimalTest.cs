@@ -64,13 +64,7 @@ namespace MonoTests.System {
     /// </summary>
     public class DecimalTest : TestCase
     {
-	public DecimalTest() : base ("MonoTests.System.DecimalTest testcase") {}
-        public DecimalTest(string name) : base(name) {}
-
-        public static ITest Suite 
-        {
-            get { return new TestSuite(typeof(DecimalTest)); }
-        }
+	public DecimalTest() {}
 
         private const int negativeBitValue = unchecked ((int)0x80000000);
         private const int negativeScale4Value = unchecked ((int)0x80040000);
@@ -218,7 +212,7 @@ namespace MonoTests.System {
                 {
                     Fail(tab[i].d.ToString(tab[i].format, nfi) + " (format = '" + tab[i].format + "'): unexpected exception !");
                 }
-		catch (NUnit.Framework.AssertionFailedError e) {
+		catch (NUnit.Framework.AssertionException e) {
 			throw e;
 		}
 		catch (Exception e) {

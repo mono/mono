@@ -14,9 +14,6 @@ using System.Security.Cryptography;
 namespace MonoTests.System.Security.Cryptography {
 
 public class RSAPKCS1KeyExchangeDeformatterTest : TestCase {
-	public RSAPKCS1KeyExchangeDeformatterTest () : base ("System.Security.Cryptography.RSAPKCS1KeyExchangeDeformatter testsuite") {}
-	public RSAPKCS1KeyExchangeDeformatterTest (string name) : base (name) {}
-
 	protected static RSA key;
 
 	protected override void SetUp () 
@@ -31,12 +28,6 @@ public class RSAPKCS1KeyExchangeDeformatterTest : TestCase {
 	}
 
 	protected override void TearDown () {}
-
-	public static ITest Suite {
-		get { 
-			return new TestSuite (typeof (RSAPKCS1KeyExchangeDeformatterTest)); 
-		}
-	}
 
 	public void AssertEquals (string msg, byte[] array1, byte[] array2) 
 	{

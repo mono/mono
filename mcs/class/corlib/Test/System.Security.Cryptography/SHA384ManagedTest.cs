@@ -22,21 +22,12 @@ namespace MonoTests.System.Security.Cryptography {
 // same results (hence should run a common set of unit tests).
 public class SHA384ManagedTest : SHA384Test {
 
-	public SHA384ManagedTest () : base ("System.Security.Cryptography.SHA384Managed testsuite") {}
-	public SHA384ManagedTest (string name) : base (name) {}
-
 	protected override void SetUp () 
 	{
 		hash = new SHA384Managed ();
 	}
 
 	protected override void TearDown () {}
-
-	public static new ITest Suite {
-		get { 
-			return new TestSuite (typeof (SHA384ManagedTest)); 
-		}
-	}
 
 	public override void TestCreate () 
 	{

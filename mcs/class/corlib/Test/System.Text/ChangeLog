@@ -1,3 +1,7 @@
+2002-12-21  Nick Drochak <ndrochak@gol.com>
+
+	* all: make tests build and run under nunit2
+
 2002-12-12 Jackson Harper <jackson@latitudegeo.com>
 
 	* AllTests.cs: Comment out UTF8... test (it does not exist)

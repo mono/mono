@@ -15,14 +15,7 @@ namespace MonoTests.System
 
 public class CharEnumeratorTest : TestCase
 {
-	public CharEnumeratorTest () : base ("MonoTests.System.CharEnumeratorTest testcase") {}
-        public CharEnumeratorTest (string name) : base (name) {}
-
-	public static ITest Suite {
-		get {
-			return new TestSuite (typeof (CharEnumeratorTest));
-		}
-	}
+	public CharEnumeratorTest () {}
 
 	string _s;
 

@@ -18,10 +18,6 @@ namespace MonoTests.System.Collections {
 
 	public class QueueTest : TestCase {
 
-		public QueueTest () 
-			: base ("System.Collection.Queue testsuite") {}
-		public QueueTest (String name) : base (name) {}
-
 		protected Queue q1;
 		protected Queue q2;
 		protected Queue emptyQueue;
@@ -38,12 +34,6 @@ namespace MonoTests.System.Collections {
 			emptyQueue = new Queue ();
 		}
 
-		public static ITest Suite {
-			get {
-				return new TestSuite (typeof (QueueTest));
-			}
-		}
-		
 		public void TestConstructors () {
 			Assert (q1.Count == 100);
 			Assert (q2.Count == 50);

@@ -14,23 +14,24 @@ using System.IO;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
+using System.Globalization;
+using System.Threading;
 
 namespace MonoTests.System.Security.Cryptography.X509Certificates {
 
 public class X509CertificateTest : TestCase {
 
-public X509CertificateTest () : base ("System.Security.Cryptography.X509Certificates.X509Certificate testsuite") {}
-public X509CertificateTest (string name) : base(name) {}
+private CultureInfo oldcult;
+
+protected override void SetUp() {
+	oldcult = Thread.CurrentThread.CurrentCulture;
+	Thread.CurrentThread.CurrentCulture = new CultureInfo ("");
+}
+	
 
 protected override void TearDown () {
 	File.Delete("temp.cer");
 	File.Delete("temp.b64");
-}
-
-public static ITest Suite {
-	get {
-		return new TestSuite (typeof (X509CertificateTest));
-	}
 }
 
 public void AssertEquals (string msg, byte[] array1, byte[] array2)

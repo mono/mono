@@ -14,19 +14,7 @@ namespace MonoTests.System.IO
 {
 	public class BinaryReaderTest : TestCase
 	{
-		public BinaryReaderTest () : 
-			base ("MonoTests.System.IO.BinaryReaderTest testsuite") {}
-
-		public BinaryReaderTest (string name) : base (name) {}
-			
 		protected override void SetUp () { }
-		
-		public static ITest Suite
-		{
-			get { 
-				return new TestSuite (typeof (BinaryReaderTest)); 
-			}
-		}
 		
 		private string _codeFileName = "resources" + Path.DirectorySeparatorChar + "AFile.txt";
 			

@@ -15,14 +15,7 @@ namespace MonoTests.System
 
 public class GuidTest : TestCase
 {
-	public GuidTest () : base ("MonoTests.System.GuidTest testcase") {}
-        public GuidTest (string name) : base (name) {}
-
-	public static ITest Suite {
-		get {
-			return new TestSuite (typeof (GuidTest));
-		}
-	}
+	public GuidTest () {}
 
 	public void TestCtor1 ()
 	{

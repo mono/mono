@@ -16,9 +16,6 @@ namespace MonoTests.System.Security.Cryptography
 
 public class RSAPKCS1KeyExchangeFormatterTest : TestCase 
 {
-	public RSAPKCS1KeyExchangeFormatterTest () : base ("System.Security.Cryptography.RSAPKCS1KeyExchangeFormatter testsuite") {}
-	public RSAPKCS1KeyExchangeFormatterTest (string name) : base (name) {}
-
 	protected static RSA key;
 
 	protected override void SetUp () 
@@ -33,12 +30,6 @@ public class RSAPKCS1KeyExchangeFormatterTest : TestCase
 	}
 
 	protected override void TearDown () {}
-
-	public static ITest Suite {
-		get { 
-			return new TestSuite (typeof (RSAPKCS1KeyExchangeFormatterTest)); 
-		}
-	}
 
 	public void AssertEquals (string msg, byte[] array1, byte[] array2)
 	{

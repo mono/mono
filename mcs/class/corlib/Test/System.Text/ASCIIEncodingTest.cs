@@ -16,29 +16,6 @@ namespace MonoTests.System.Text {
 		private char[] testchars;
 		private byte[] testbytes;
 
-		public static ITest Suite {
-			get {
-				TestSuite suite = new TestSuite ();
-				suite.AddTest (new ASCIIEncodingTest ("TestGetBytes1"));
-				suite.AddTest (new ASCIIEncodingTest ("TestGetBytes2"));
-				suite.AddTest (new ASCIIEncodingTest ("TestGetBytes3"));
-				suite.AddTest (new ASCIIEncodingTest ("TestGetBytes4"));
-				suite.AddTest (new ASCIIEncodingTest ("TestGetBytes5"));
-				suite.AddTest (new ASCIIEncodingTest ("TestGetBytes6"));
-				suite.AddTest (new ASCIIEncodingTest ("TestGetChars1"));
-				suite.AddTest (new ASCIIEncodingTest ("TestGetChars2"));
-				suite.AddTest (new ASCIIEncodingTest ("TestGetChars3"));
-				suite.AddTest (new ASCIIEncodingTest ("TestGetChars4"));
-				suite.AddTest (new ASCIIEncodingTest ("TestGetString1"));
-				suite.AddTest (new ASCIIEncodingTest ("TestGetString2"));
-				suite.AddTest (new ASCIIEncodingTest ("TestDecoder"));
-				suite.AddTest (new ASCIIEncodingTest ("TestEncoder"));
-				return suite;
-			}
-		}
-
-        	public ASCIIEncodingTest (string name) : base (name) {}
-
 		protected override void SetUp ()
 		{
 			testchars = new char[4];

@@ -20,21 +20,12 @@ namespace MonoTests.System.Security.Cryptography
 public class HashAlgorithmTest : TestCase {
 	protected HashAlgorithm hash;
 
-	public HashAlgorithmTest () : base ("System.Security.Cryptography.HashAlgorithm testsuite") {}
-	public HashAlgorithmTest (string name) : base(name) {}
-
 	protected override void SetUp () 
 	{
 		hash = HashAlgorithm.Create ();
 	}
 
 	protected override void TearDown () {}
-
-	public static ITest Suite {
-		get { 
-			return new TestSuite (typeof (HashAlgorithmTest)); 
-		}
-	}
 
 	public void AssertEquals (string msg, byte[] array1, byte[] array2) 
 	{

@@ -110,21 +110,12 @@ public class RSATest : TestCase {
 
 	static string xmlPublic = "<RSAKeyValue><Modulus>u/gvCQaCzpwjOKwrnahx9zaNB+7UEEOkQNa28HRU9R+437qvA1wCq2HqSM7rb81Idu1SDWDh7EYZcZ2KW4uAf6+44KPfxzdyPua0t9k6JYTuamSdBglTdIg0skVFmDlO4KqxLXthpR9SeppB9sFof+JTcpjKKo9ZRvjl/Qkdvcs=</Modulus><Exponent>EQ==</Exponent></RSAKeyValue>";
 
-	public RSATest () : base ("System.Security.Cryptography.RSA testsuite") {}
-	public RSATest (string name) : base (name) {}
-
 	protected override void SetUp () 
 	{
 		rsa = new NonAbstractRSAForUnitTests ();
 	}
 
 	protected override void TearDown () {}
-
-	public static ITest Suite {
-		get { 
-			return new TestSuite (typeof (RSATest)); 
-		}
-	}
 
 	public void AssertEquals (string msg, byte[] array1, byte[] array2) 
 	{

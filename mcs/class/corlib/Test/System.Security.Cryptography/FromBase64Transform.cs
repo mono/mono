@@ -16,20 +16,6 @@ namespace MonoTests.System.Security.Cryptography {
 	public class FromBase64TransformTest : TestCase {
 		private FromBase64Transform _algo;
 
-		public FromBase64TransformTest() : base ("MonoTests.System.Security.Cryptography.FromBase64Transform testcase") {
-			_algo = null;
-		}
-		public FromBase64TransformTest(String name) : base(name)
-		{
-			_algo = null;
-		}
-		
-		public static ITest Suite {
-			get {
-				return new TestSuite(typeof(FromBase64TransformTest));
-			}
-		}
-
 		protected override void SetUp() {
 			_algo = new FromBase64Transform ();
 		}

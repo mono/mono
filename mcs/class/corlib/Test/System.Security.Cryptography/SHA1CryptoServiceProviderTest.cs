@@ -21,22 +21,12 @@ namespace MonoTests.System.Security.Cryptography {
 // we inherit from SHA1Test because all SHA1 implementation must return the 
 // same results (hence should run a common set of unit tests).
 public class SHA1CryptoServiceProviderTest : SHA1Test {
-	public SHA1CryptoServiceProviderTest () : base ("System.Security.Cryptography.SHA1CryptoServiceProvider testsuite") {}
-	public SHA1CryptoServiceProviderTest (string name) : base (name) {}
-
 	protected override void SetUp () 
 	{
 		hash = new SHA1CryptoServiceProvider ();
 	}
 
 	protected override void TearDown () {}
-
-	public static new ITest Suite 
-	{
-		get { 
-			return new TestSuite (typeof (SHA1CryptoServiceProviderTest)); 
-		}
-	}
 
 	public override void TestCreate () 
 	{

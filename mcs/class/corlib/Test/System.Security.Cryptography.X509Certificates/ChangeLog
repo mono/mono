@@ -1,3 +1,7 @@
+2002-12-21  Nick Drochak <ndrochak@gol.com>
+
+	* all: make tests build and run under nunit2
+
 2002-12-15  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* X509CertificateTest.cs: Uncommented the GetEffectiveDateString and 

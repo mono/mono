@@ -13,7 +13,7 @@ using NUnit.Framework;
 
 namespace MonoTests.System.Reflection {
 
-public class AllTests : TestCase {
+public class RTests : TestCase {
 
 	public AllTests (string name) : base (name) {}
 

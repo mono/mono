@@ -15,22 +15,12 @@ namespace MonoTests.System.IO
 
 public class StreamReaderTest : TestCase
 {
-	public StreamReaderTest() : 
-		base ("MonoTests.System.StreamReaderTest testsuite") {}
-	public StreamReaderTest(string name) : base(name) {}
-
-	protected override void SetUp() 
+ 	protected override void SetUp() 
 	{
 	}
 
 	protected override void TearDown() 
 	{
-	}
-
-	public static ITest Suite {
-		get { 
-			return new TestSuite(typeof(StreamReaderTest)); 
-		}
 	}
 
 	private string _codeFileName = "resources" + Path.DirectorySeparatorChar + "AFile.txt";

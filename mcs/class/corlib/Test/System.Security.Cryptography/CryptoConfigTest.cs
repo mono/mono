@@ -16,18 +16,9 @@ namespace MonoTests.System.Security.Cryptography
 
 public class CryptoConfigTest : TestCase 
 {
-	public CryptoConfigTest () : base ("System.Security.Cryptography.CryptoConfig testsuite") {}
-	public CryptoConfigTest (string name) : base (name) {}
-
 	protected override void SetUp () {}
 
 	protected override void TearDown () {}
-
-	public static ITest Suite {
-		get { 
-			return new TestSuite (typeof (CryptoConfigTest)); 
-		}
-	}
 
 	public void AssertEquals (string msg, byte[] array1, byte[] array2)
 	{

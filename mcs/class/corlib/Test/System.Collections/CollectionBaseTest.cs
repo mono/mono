@@ -18,9 +18,6 @@ namespace MonoTests.System.Collections
 
 public class CollectionBaseTest : TestCase 	
 {
-	public CollectionBaseTest () : base ("System.Collection.CollectionBase testsuite") {}
-	public CollectionBaseTest (String name) : base (name) {}
-
 	// We need a concrete class to test the abstract base class
 	public class ConcreteCollection : CollectionBase 
 	{
@@ -127,12 +124,6 @@ public class CollectionBaseTest : TestCase
 			this.onSetCompleteNewValue = (int) newValue;
 		}
 	}  // public class ConcreteCollection
-
-	public static ITest Suite {
-		get {
-			return new TestSuite (typeof(CollectionBaseTest));
-		}
-	}
 
 	// Check the count property
 	public void TestCount() {

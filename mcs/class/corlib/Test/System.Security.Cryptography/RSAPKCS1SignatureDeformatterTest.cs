@@ -14,19 +14,9 @@ using System.Security.Cryptography;
 namespace MonoTests.System.Security.Cryptography {
 
 public class RSAPKCS1SignatureDeformatterTest : TestCase {
-
-	public RSAPKCS1SignatureDeformatterTest () : base ("System.Security.Cryptography.RSAPKCS1SignatureDeformatter testsuite") {}
-	public RSAPKCS1SignatureDeformatterTest (string name) : base(name) {}
-
 	protected override void SetUp () {}
 
 	protected override void TearDown () {}
-
-	public static ITest Suite {
-		get {
-			return new TestSuite (typeof (RSAPKCS1SignatureDeformatterTest));
-		}
-	}
 
 	public void AssertEquals (string msg, byte[] array1, byte[] array2) 
 	{
@@ -285,7 +275,12 @@ public class RSAPKCS1SignatureDeformatterTest : TestCase {
 
 		// bad signature
 		md5Signature [0] = (byte) ~md5Signature [0];
-		Assert ("VerifySignature(MD5, badSign)", !fmt.VerifySignature (hash, md5Signature));
+		try {
+			fmt.VerifySignature (hash, md5Signature);
+			Fail("Should have caught bad signature");
+		} catch (Exception) {
+			// do nothing.  This is what we expect.
+		}
 
 		// wrong signature length
 		md5Signature = new byte [md5Signature.Length-1];

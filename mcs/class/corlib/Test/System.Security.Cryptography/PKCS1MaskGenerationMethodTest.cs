@@ -17,9 +17,6 @@ namespace MonoTests.System.Security.Cryptography
 
 public class PKCS1MaskGenerationMethodTest : TestCase 
 {
-	public PKCS1MaskGenerationMethodTest () : base ("System.Security.Cryptography.PKCS1MaskGenerationMethod testsuite") {}
-	public PKCS1MaskGenerationMethodTest (string name) : base(name) {}
-
 	protected PKCS1MaskGenerationMethod pkcs1;
 
 	protected override void SetUp () 
@@ -28,13 +25,6 @@ public class PKCS1MaskGenerationMethodTest : TestCase
 	}
 
 	protected override void TearDown () {}
-
-	public static ITest Suite 
-	{
-		get { 
-			return new TestSuite (typeof (PKCS1MaskGenerationMethodTest)); 
-		}
-	}
 
 	public void AssertEquals (string msg, byte[] array1, byte[] array2)
 	{

@@ -13,36 +13,8 @@ namespace MonoTests.System.Diagnostics
 {
 	public class DebugTest
 	{
-		private DebugTest()
-		{
-			
-		}
-		
-		public static ITest Suite
-		{
-			get
-			{
-				TestSuite suite = new TestSuite();
-				suite.AddTest(DebugTest1.Suite);
-				return suite;
-			}
-		}
-		
 		private class DebugTest1 : TestCase
 		{
-			public DebugTest1(string name) : base(name)
-			{
-				
-			}
-			
-			internal static ITest Suite
-			{
-				get
-				{
-					return new TestSuite(typeof(DebugTest1));
-				}
-			}
-			
 			protected override void SetUp()
 			{
 				Debug.Listeners.Add(new TextWriterTraceListener(Console.Error));	

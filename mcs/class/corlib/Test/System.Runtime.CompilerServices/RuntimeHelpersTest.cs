@@ -26,21 +26,6 @@ namespace MonoTests.System.Runtime.CompilerServices {
 			}
 		}
 
-		public RuntimeHelpersTest () : base ("MonoTests.System.Runtime.CompilerServices.RuntimeHelpers testcase") {}
-
-		public RuntimeHelpersTest (String name) : base (name) {}
-	  
-		protected override void SetUp ()
-		{
-		}
-
-		public static ITest Suite
-		{
-			get {
-				return new TestSuite(typeof(RuntimeHelpersTest));
-			}
-		}
-
 		public void TestOffsetToStringData () 
 		{
 			AssertEquals ("OffsetToStringData is not constant",

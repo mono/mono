@@ -15,10 +15,6 @@ using System.Security.Cryptography;
 namespace MonoTests.System.Security.Cryptography {
 
 public class SignatureDescriptionTest : TestCase {
-
-	public SignatureDescriptionTest () : base ("System.Security.Cryptography.SignatureDescription testsuite") {}
-	public SignatureDescriptionTest (string name) : base (name) {}
-
 	protected SignatureDescription sig;
 	protected static DSA dsa;
 	protected static RSA rsa;
@@ -34,12 +30,6 @@ public class SignatureDescriptionTest : TestCase {
 	}
 
 	protected override void TearDown () {}
-
-	public static ITest Suite {
-		get { 
-			return new TestSuite (typeof (SignatureDescriptionTest)); 
-		}
-	}
 
 	public void AssertEquals (string msg, byte[] array1, byte[] array2) 
 	{

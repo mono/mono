@@ -15,8 +15,7 @@ namespace MonoTests.System
 
 public class ArrayTest : TestCase
 {
-	public ArrayTest() : base ("MonoTests.System.ArrayTest testsuite") {}
-	public ArrayTest(string name) : base(name) {}
+	public ArrayTest() {}
 
 	protected override void SetUp() 
 	{
@@ -26,12 +25,6 @@ public class ArrayTest : TestCase
 	{
 	}
 
-	public static ITest Suite {
-		get { 
-			return new TestSuite(typeof(ArrayTest)); 
-		}
-	}
-    
 	public void TestIsFixedSize() {
 		char[] a1 = {'a'};
 		Assert("All arrays are fixed", a1.IsFixedSize);

@@ -33,8 +33,7 @@ public class Int16Test : TestCase
 	                                  "32767", "32,767.00000", "3,276,700.00000 %", "07fff"};
 	private NumberFormatInfo Nfi = NumberFormatInfo.InvariantInfo;
 	
-	public Int16Test() : base ("MonoTests.System.Int16Test testcase") {}
-	public Int16Test(string name) : base(name) {}
+	public Int16Test() {}
 
 	private CultureInfo old_culture;
 
@@ -55,12 +54,6 @@ public class Int16Test : TestCase
 		Thread.CurrentThread.CurrentCulture = old_culture;
 	}
 
-	public static ITest Suite {
-		get { 
-			return new TestSuite(typeof(Int16Test)); 
-		}
-	}
-    
 	public void TestMinMax()
 	{
 		

@@ -40,13 +40,7 @@ namespace MonoTests.System
     /// </summary>
     public class DecimalTest2 : TestCase
     {
-	public DecimalTest2() : base ("MonoTests.System.DecimalTest2 testcase") {}
-        public DecimalTest2(string name) : base(name) {}
-
-        public static ITest Suite 
-        {
-            get { return new TestSuite(typeof(DecimalTest2)); }
-        }
+	public DecimalTest2() {}
 
         private void ReportOpError(string msg, int i, int j, decimal d1, decimal d2, decimal d3, decimal d3b)
         {

@@ -42,18 +42,11 @@ public class DoubleTest : TestCase
 		1e-05
 	};
 
-	public DoubleTest () : base ("MonoTests.System.DoubleTests testcase") {}
-	public DoubleTest (string name) : base (name) {}
+	public DoubleTest () {}
 	
 
 	protected override void SetUp ()
 	{
-	}
-
-	public static ITest Suite {
-		get {
-			return new TestSuite (typeof (DoubleTest));
-		}
 	}
 
 	public void TestPublicFields ()

@@ -20,16 +20,6 @@ namespace MonoTests.System.Security.Permissions {
 
 	public class FileIOPermissionTest : TestCase {
 		
-		public FileIOPermissionTest() : base ("MonoTests.System.Security.Permissions.FileIOPermissionTest testcase") { }
-		public FileIOPermissionTest(String name) : base(name) {
-		}
-		
-		public static ITest Suite {
-			get {
-				return new TestSuite(typeof(FileIOPermissionTest));
-			}
-		}
-
 		string[] pathArrayGood;
 		string[] pathArrayBad;
 		FileIOPermission p;

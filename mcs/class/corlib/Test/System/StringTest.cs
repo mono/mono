@@ -15,17 +15,10 @@ namespace MonoTests.System
 
 public class StringTest : TestCase
 {
-	public StringTest() : base ("MonoTests.System.StringTest testcase") {}
-	public StringTest (string name) : base (name) {}
+	public StringTest() {}
 
 	protected override void SetUp ()
 	{
-	}
-
-	public static ITest Suite {
-		get {
-			return new TestSuite (typeof (StringTest));
-		}
 	}
 
 	public void TestLength ()

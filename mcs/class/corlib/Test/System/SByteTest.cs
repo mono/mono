@@ -36,19 +36,12 @@ public class SByteTest : TestCase
 					"127", "127.00000", "12,700.00000 %", "0007f"};
 	private NumberFormatInfo Nfi = NumberFormatInfo.InvariantInfo;
 	
-	public SByteTest() : base ("MonoTests.System.SByteTest testcase") {}
-	public SByteTest(string name) : base(name) {}
+	public SByteTest() {}
 
 	protected override void SetUp() 
 	{
 	}
 
-	public static ITest Suite {
-		get { 
-			return new TestSuite(typeof(SByteTest)); 
-		}
-	}
-    
 	public void TestMinMax()
 	{
 		AssertEquals(SByte.MinValue, MySByte2);

@@ -15,8 +15,7 @@ namespace MonoTests.System
 
 public class ConsoleTest : TestCase
 {
-	public ConsoleTest() : base ("MonoTests.System.ConsoleTest testsuite") {}
-	public ConsoleTest(string name) : base(name) {}
+	public ConsoleTest() {}
 
 	TextWriter _err;
 	TextReader _in;
@@ -33,12 +32,6 @@ public class ConsoleTest : TestCase
 		Console.SetError(_err);
 		Console.SetIn(_in);
 		Console.SetOut(_out);
-	}
-
-	public static ITest Suite {
-		get { 
-			return new TestSuite(typeof(ConsoleTest)); 
-		}
 	}
 
 	public void TestError() {

@@ -15,22 +15,12 @@ namespace MonoTests.System.IO
 
 public class StreamWriterTest : TestCase
 {
-	public StreamWriterTest() : 
-		base ("MonoTests.System.StreamWriterTest testsuite") {}
-	public StreamWriterTest(string name) : base(name) {}
-
 	protected override void SetUp() 
 	{
 	}
 
 	protected override void TearDown() 
 	{
-	}
-
-	public static ITest Suite {
-		get { 
-			return new TestSuite(typeof(StreamWriterTest)); 
-		}
 	}
 
 	private string _codeFileName = "StreamWriterTest.temp";

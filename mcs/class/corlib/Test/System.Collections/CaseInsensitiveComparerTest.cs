@@ -12,18 +12,6 @@ namespace MonoTests.System.Collections {
 
 	/// <summary>CaseInsensitiveComparer test suite.</summary>
 	public class CaseInsensitiveComparerTest : TestCase {
-		public static ITest Suite {
-			get {
-				return new TestSuite(typeof(CaseInsensitiveComparerTest));
-			}
-		}
-
-		public CaseInsensitiveComparerTest() : base ("MonoTests.System.Collections.CaseInsensitiveComparerTest testcase") {}
-
-		public CaseInsensitiveComparerTest(String name) : base(name)
-		{
-		}
-
 		protected override void SetUp ()
 		{
 		}

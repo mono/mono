@@ -19,12 +19,7 @@ namespace MonoTests.System
 // you are testing, e.g. CollectionBaseTest
 public class MulticastDelegateTest : TestCase {
 	
-	// there should be two constructors for your class.  The first one
-	// (without parameters) should set the name to something unique.
-	// Of course the name of the method is the same as the name of the
-	// class
-	public MulticastDelegateTest() : base ("System.MulticastDelegate") {}
-	public MulticastDelegateTest(string name) : base(name) {}
+	public MulticastDelegateTest() {}
 
 	// this method is run before each Test* method is called. You can put
 	// variable initialization, etc. here that is common to each test.
@@ -35,14 +30,6 @@ public class MulticastDelegateTest : TestCase {
 	// clean-up code, etc. here.  Whatever needs to be done after each test.
 	// Just leave the method empty if you don't need to use it.
 	protected override void TearDown() {}
-
-	// this property is required.  You need change the parameter for
-	// typeof() below to be your class.
-	public static ITest Suite {
-		get {
-			return new TestSuite(typeof(MulticastDelegateTest));
-		}
-	}
 
 	private delegate char MyDelegate( ref string s );
 

@@ -1,6 +1,6 @@
 VERSION=0.13.99
 
-DIRS=jay nant mcs class nunit monoresgen ilasm tools
+DIRS=jay nant mcs class nunit nunit20 monoresgen ilasm tools
 INSTALL= /usr/bin/install
 
 all: 
@@ -24,6 +24,7 @@ test:
 
 testwindows:
 	(cd nunit; make)
+	(cd nunit20; make)
 	(cd class; make test)
 
 clean:

@@ -20,18 +20,9 @@ namespace MonoTests.System.Security.Cryptography
 
 public class PasswordDeriveBytesTest : TestCase 
 {
-	public PasswordDeriveBytesTest () : base ("System.Security.Cryptography.PasswordDeriveBytes testsuite") {}
-	public PasswordDeriveBytesTest (string name) : base (name) {}
-
 	protected override void SetUp () {}
 
 	protected override void TearDown () {}
-
-	public static ITest Suite {
-		get { 
-			return new TestSuite (typeof (PasswordDeriveBytesTest)); 
-		}
-	}
 
 	public void AssertEquals (string msg, byte[] array1, byte[] array2)
 	{

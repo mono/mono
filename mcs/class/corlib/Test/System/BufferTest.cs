@@ -17,24 +17,13 @@ namespace MonoTests.System
 		byte [] byteArray  = new byte [SIZE];   // 8-bits unsigned integer array
 		float [] floatArray = new float [SIZE];
 		
-		public BufferTest ()
-			: base ("System.Buffer test") {}
-		
-		public BufferTest (string name)
-			: base (name) {}
+		public BufferTest () {}
 
 		protected override void SetUp () {}
 
 
 		protected override void TearDown () {}
 
-		public static ITest Suite {
-			get { 
-				return new TestSuite (typeof (BufferTest)); 
-			}
-		}
-
-			
 		public void TestBlockCopy ()
 		{
 			int SizeOfInt32 = 4;

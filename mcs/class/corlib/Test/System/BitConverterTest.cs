@@ -15,20 +15,11 @@ namespace MonoTests.System
 
 public class BitConverterTest : TestCase {
 	
-	public BitConverterTest () : base ("System.BitConverter testsuite") {}
-	public BitConverterTest (string name) : base(name) {}
+	public BitConverterTest () {}
 
 	protected override void SetUp () {}
 
 	protected override void TearDown() {}
-
-	// this property is required.  You need change the parameter for
-	// typeof() below to be your class.
-	public static ITest Suite {
-		get { 
-			return new TestSuite(typeof(BitConverterTest)); 
-		}
-	}
 
 	public void TestIsLittleEndian ()
 	{

@@ -15,19 +15,9 @@ using NUnit.Framework;
 
 namespace MonoTests.System.Collections {
 	public class ReadOnlyCollectionBaseTest : TestCase 	{
-		public ReadOnlyCollectionBaseTest () : base ("System.Collection.ReadOnlyCollectionBase testsuite") {}
-		public ReadOnlyCollectionBaseTest (String name) : base (name) {}
-
 		// We need a concrete class to test the abstract base class
 		public class ConcreteReadOnlyCollection : ReadOnlyCollectionBase 
 		{
-		}
-
-		public static ITest Suite 
-		{
-			get {
-				return new TestSuite (typeof(ReadOnlyCollectionBaseTest));
-			}
 		}
 
 		// Make sure that the Count is 0 for a new object

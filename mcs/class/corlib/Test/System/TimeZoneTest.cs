@@ -19,15 +19,7 @@ public class TimeZoneTest : TestCase
 {
 	private CultureInfo oldcult;
 
-	public TimeZoneTest() : base ("MonoTests.System.TimeZoneTest testcase") {}
-        public TimeZoneTest (string name): base(name) {}
-
-	public static ITest Suite
-	{
-		get {
-			return new TestSuite (typeof(TimeZoneTest));
-		}
-	}
+	public TimeZoneTest() {}
 
 	protected override void SetUp ()
 	{

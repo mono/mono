@@ -14,19 +14,9 @@ using System.Security.Cryptography;
 namespace MonoTests.System.Security.Cryptography {
 
 public class RSAPKCS1SignatureFormatterTest : TestCase {
-
-	public RSAPKCS1SignatureFormatterTest () : base ("System.Security.Cryptography.RSAPKCS1SignatureFormatter testsuite") {}
-	public RSAPKCS1SignatureFormatterTest (string name) : base(name) {}
-
 	protected override void SetUp () {}
 
 	protected override void TearDown () {}
-
-	public static ITest Suite {
-		get {
-			return new TestSuite (typeof (RSAPKCS1SignatureFormatterTest));
-		}
-	}
 
 	public void AssertEquals (string msg, byte[] array1, byte[] array2) 
 	{

@@ -12,59 +12,42 @@
 	</target>
 
 	<target name="assemblies">
-		<csc target="library" output="corlib_linux_test.dll" debug="${debug}">
-			<sources>
-				<includes name="**/*.cs"/>
-				<excludes name="System.Security.Policy/*.cs"/>
-			</sources>
-			<references basedir="..\..\..\nunit">
-				<includes name="NUnitCore_mono.dll"/>
-			</references>
-			<arg value="/r:..\..\lib\corlib.dll"/>
-			<arg value="/r:..\..\lib\System.dll"/>
-			<arg value="/nowarn:1595"/>
-			<arg value="/nostdlib"/> 	<!-- don't reference mscorlib -->
-			<arg value="/noconfig"/>	<!-- don't reference ms assemblies -->
-		</csc>
-
 		<csc target="library" output="corlib_test.dll" debug="${debug}">
 			<sources>
 				<includes name="**/*.cs"/>
+				<excludes name="**/AllTests.cs"/>
 			</sources>
-			<references basedir="..\..\..\nunit">
-				<includes name="NUnitCore.dll"/>
+			<references basedir="..\..\..\nunit20">
+				<includes name="NUnit.Framework.dll"/>
 			</references>
 			<arg value="/r:corlib_res.dll"/>
 			<arg value="/nowarn:1595"/>
+			<arg value="/nowarn:618"/>
+			<arg value="/nowarn:672"/>
 		</csc>
 
 		<csc target="library" output="corlib_reference.dll" debug="${debug}">
 			<sources>
 				<includes name="**/*.cs"/>
+				<excludes name="**/AllTests.cs"/>
 			</sources>
-			<references basedir="..\..\..\nunit">
-				<includes name="NUnitCore.dll"/>
+			<references basedir="..\..\..\nunit20">
+				<includes name="NUnit.Framework.dll"/>
 			</references>
 			<arg value="/nowarn:1595"/>
+			<arg value="/nowarn:618"/>
+			<arg value="/nowarn:672"/>
 		</csc>
-</target>
-
+	</target>
 
 	<target name="test" depends="assemblies">
-<!-- Do not run the unit tests with mono corlib on ms.net.  With all the icalls the results provide no useful info -->
-<!-- Change this to be "mint NUnitConsole" or "mono NUnitConsole" when those are ready to be run on Windows -->
-<!--		<exec program="..\..\..\nunit\NUnitConsole" commandline="MonoTests.AllTests,corlib_test.dll" failonerror="false"/> -->
-		<exec program="..\..\..\nunit\NUnitConsole" commandline="MonoTests.AllTests,corlib_reference.dll" failonerror="false"/>
+		<exec program="..\..\..\nunit20\nunit-console.exe" commandline="corlib_reference.dll" failonerror="false"/>
 	</target>
 
 	<target name="clean">
 		<delete file="corlib_test.dll" failonerror="false"/>
-		<delete file="corlib_linux_test.dll" failonerror="false"/>
-		<delete file="corlib_reference.dll" failonerror="false"/>
-
 		<delete file="corlib_test.pdb" failonerror="false"/>
-		<delete file="corlib_linux_test.pdb" failonerror="false"/>
+		<delete file="corlib_reference.dll" failonerror="false"/>
 		<delete file="corlib_reference.pdb" failonerror="false"/>
-		
 	</target>
 </project>

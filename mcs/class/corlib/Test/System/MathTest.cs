@@ -13,17 +13,10 @@ namespace MonoTests.System
 
 public class MathTest : TestCase {
 	
-	public MathTest() : base ("System.Math testsuite") {}
-	public MathTest(string name) : base(name) {}
+	public MathTest() {}
 
 	protected override void SetUp() {}
 	protected override void TearDown() {}
-
-	public static ITest Suite {
-		get { 
-			return new TestSuite(typeof(MathTest)); 
-		}
-	}
 
 	static double x = 0.1234;
 	static double y = 12.345;

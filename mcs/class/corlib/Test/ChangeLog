@@ -1,3 +1,8 @@
+2002-12-21  Nick Drochak <ndrochak@gol.com>
+
+	* corlib_test.build:
+	* makefile.gnu: build and run tests with nunit2
+
 2002-12-16  Sebastien Pouliot <spouliot@videotron.ca>
 
 	* corlib_linux_test.args: added StrongNamePublicKeyBlob and

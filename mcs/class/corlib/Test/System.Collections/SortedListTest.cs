@@ -22,9 +22,6 @@ namespace MonoTests.System.Collections {
 
 /// <summary>SortedList test.</summary>
 public class SortedListTest : TestCase {
-	public SortedListTest() : base ("MonoTests.System.SortedListTest testsuite") {}
-	public SortedListTest(string name) : base(name) {}
-
 	protected SortedList sl1;
 	protected SortedList sl2;
 	protected SortedList emptysl;
@@ -38,12 +35,6 @@ public class SortedListTest : TestCase {
 	{
 	}
 
-	public static ITest Suite {
-		get { 
-			return new TestSuite(typeof(SortedListTest)); 
-		}
-	}
-	
 	public void TestConstructor1() {
 		SortedList temp1 = new SortedList();
 		AssertNotNull("sl.constructor-1: returns null", temp1);

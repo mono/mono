@@ -38,8 +38,7 @@ public class ByteTest : TestCase
 
 	private NumberFormatInfo Nfi = NumberFormatInfo.InvariantInfo;
 	
-	public ByteTest() : base ("MonoTests.System.ByteTests testcase") {}
-	public ByteTest(string name) : base(name) {}
+	public ByteTest() {}
 
 	protected override void SetUp() {
 		int cdd = NumberFormatInfo.CurrentInfo.CurrencyDecimalDigits;
@@ -51,12 +50,6 @@ public class ByteTest : TestCase
         protected override void TearDown () {
 	}
 
-	public static ITest Suite {
-		get { 
-			return new TestSuite(typeof(ByteTest)); 
-		}
-	}
-    
 	public void TestMinMax()
 	{
 		AssertEquals(Byte.MinValue, MyByte2);

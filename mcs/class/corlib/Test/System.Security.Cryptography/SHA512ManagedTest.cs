@@ -21,22 +21,12 @@ namespace MonoTests.System.Security.Cryptography {
 // we inherit from SHA512Test because all SHA512 implementation must return the 
 // same results (hence should run a common set of unit tests).
 public class SHA512ManagedTest : SHA512Test {
-
-	public SHA512ManagedTest () : base ("System.Security.Cryptography.SHA512Managed testsuite") {}
-	public SHA512ManagedTest (string name) : base (name) {}
-
 	protected override void SetUp () 
 	{
 		hash = new SHA512Managed ();
 	}
 
 	protected override void TearDown () {}
-
-	public static new ITest Suite {
-		get { 
-			return new TestSuite (typeof (SHA512ManagedTest)); 
-		}
-	}
 
 	public override void TestCreate () 
 	{

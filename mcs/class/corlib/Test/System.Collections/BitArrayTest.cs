@@ -18,13 +18,6 @@ public class BitArrayTest : TestCase
   private BitArray op1;
   private BitArray op2;
 
-  public static ITest Suite
-  {
-    get {
-      return new TestSuite(typeof(BitArrayTest));
-    }
-  }
-
   private void verifyPattern(BitArray ba, bool[] pattern)
   {
     AssertEquals(ba.Length, pattern.Length);
@@ -32,9 +25,6 @@ public class BitArrayTest : TestCase
       AssertEquals(ba[i], pattern[i]);
   }
 
-  public BitArrayTest() : base ("MonoTests.System.Collections.BitArrayTest testcase") {}
-  public BitArrayTest( string name ) : base(name) { }	
-  
   protected override void SetUp()
   {
     testPattern = new bool[70];

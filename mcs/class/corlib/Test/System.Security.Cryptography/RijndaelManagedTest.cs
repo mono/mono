@@ -13,20 +13,6 @@ using NUnit.Framework;
 namespace MonoTests.System.Security.Cryptography {
 
 	public class RijndaelManagedTest : TestCase {
-		
-		public RijndaelManagedTest() : base ("MonoTests.System.Security.Cryptography.RijndaelManagedTst testcase") {
-		}
-
-		public RijndaelManagedTest(String name) : base(name) {
-		}
-		
-		public static ITest Suite {
-			get {
-				return new TestSuite(typeof(RijndaelManagedTest));
-			}
-		}
-
-
 		public void CheckCBC(ICryptoTransform encryptor, ICryptoTransform decryptor, 
 					   byte[] plaintext, byte[] expected) 
 		{

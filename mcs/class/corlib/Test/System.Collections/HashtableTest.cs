@@ -16,17 +16,8 @@ namespace MonoTests.System.Collections {
 
 
 /// <summary>Hashtable test.</summary>
+[TestFixture]
 public class HashtableTest : TestCase {
-	public static ITest Suite {
-		get {
-			TestSuite suite = new TestSuite();
-			
-			suite.AddTest(new TestSuite(typeof(HashtableTest)));
-			suite.AddTest(new TestSuite(typeof(HashtableTest2)));
-			return suite;
-		}
-	}
-	
 	public void TestCtor1() {
 		Hashtable h = new Hashtable();
 		AssertNotNull("No hash table", h);
@@ -471,9 +462,7 @@ public class HashtableTest : TestCase {
 	protected Hashtable ht;
 	private static Random rnd;
 	
-	public HashtableTest() : base ("MonoTests.System.Collections.HashtableTest testcase") {}
-	public HashtableTest(String name) : base(name) {}
-	
+	[SetUp]
 	protected override void SetUp() {
 		ht=new Hashtable();
 		rnd=new Random();
@@ -582,26 +571,17 @@ public class HashtableTest : TestCase {
 	}
 
 	
+	[TestFixture]
 	public class  HashtableTest2 : TestCase {
 
 		protected Hashtable ht;
 		private static Random rnd;
 		
-		public HashtableTest2 (String name) : base(name)
-		{
-		}
-		
+		[SetUp]
 		protected override void SetUp ()
 		{
 			ht=new Hashtable ();
 			rnd=new Random ();
-		}
-		
-		public static ITest Suite
-		{
-			get {
-				return new TestSuite (typeof(HashtableTest2));
-			}
 		}
 		
 		private void SetDefaultData ()

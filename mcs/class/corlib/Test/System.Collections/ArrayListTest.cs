@@ -17,21 +17,12 @@ namespace MonoTests.System.Collections {
 
 /// <summary>ArrayList test.</summary>
 public class ArrayListTest : TestCase {
-	public ArrayListTest() : base ("MonoTests.System.ArrayListTest testsuite") {}
-	public ArrayListTest(string name) : base(name) {}
-
 	protected override void SetUp() 
 	{
 	}
 
 	protected override void TearDown() 
 	{
-	}
-
-	public static ITest Suite {
-		get { 
-			return new TestSuite(typeof(ArrayListTest)); 
-		}
 	}
 
 	public void TestCtor() {

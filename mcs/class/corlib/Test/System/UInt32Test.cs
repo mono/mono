@@ -37,8 +37,7 @@ public class UInt32Test : TestCase
 					"4.295e+09", "4,294,967,295.00000", "429,496,729,500.00000 %", "ffffffff"};
 	private NumberFormatInfo Nfi = NumberFormatInfo.InvariantInfo;
 	
-	public UInt32Test() : base ("MonoTests.System.UInt32Test testcase") {}
-	public UInt32Test(string name) : base(name) {}
+	public UInt32Test() {}
 
 	private CultureInfo old_culture;
 
@@ -59,12 +58,6 @@ public class UInt32Test : TestCase
 		Thread.CurrentThread.CurrentCulture = old_culture;
 	}
 
-	public static ITest Suite {
-		get { 
-			return new TestSuite(typeof(UInt32Test)); 
-		}
-	}
-    
 	public void TestMinMax()
 	{
 		

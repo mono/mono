@@ -13,35 +13,14 @@ using System.Reflection;
 using NUnit.Framework;
 
 namespace MonoTests.System.Diagnostics {
-        public class StackTraceTest {
-                private StackTraceTest() {}
-                public static ITest Suite 
-                { 
-                        get 
-                        {
-                                TestSuite suite =  new TestSuite();
-                                suite.AddTest(StackTraceTest1.Suite);
-                                return suite;
-                        }
-                }
-
         /// <summary>
         ///   Tests the case where StackTrace is created for specified
         ///   stack frame.
         /// </summary>
-        private class StackTraceTest1 : TestCase {
-                public StackTraceTest1(string name) : base(name) {}
-                
+	[TestFixture]
+	public class StackTraceTest1 : TestCase {
                 private StackTrace trace;
                 private StackFrame frame;
-                
-                internal static ITest Suite 
-                { 
-                        get 
-                        {
-                                return  new TestSuite(typeof(StackTraceTest1));
-                        }
-                }
                 
                 protected override void SetUp() {
                         frame = new StackFrame("dir/someFile",
@@ -94,5 +73,4 @@ namespace MonoTests.System.Diagnostics {
                                      trace.GetFrame(0));
                 }                
 	}
-        }
 }
