@@ -434,6 +434,9 @@ namespace Mono.CSharp {
 					return o;
 			}
 
+			if (name.IndexOf ('.') > 0)
+				return null;
+
 			//
 			// Check using entries.
 			//

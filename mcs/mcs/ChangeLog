@@ -1,3 +1,10 @@
+2004-05-23  Martin Baulig  <martin@ximian.com>
+
+	* decl.cs (DeclSpace.FindType): Only check the `using' list if we
+	don't have any dots.  Fixes #52622, added cs0246-8.cs.
+
+	* namespace.cs (NamespaceEntry.Lookup): Likewise.
+
 2004-05-23  Marek Safar  <marek.safar@seznam.cz>
 
 	* class.cs (MemberBase.Define): Reuse MemberType member for 

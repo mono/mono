@@ -938,6 +938,9 @@ namespace Mono.CSharp {
 				if (t != null)
 					return t;
 
+				if (name.IndexOf ('.') > 0)
+					continue;
+
 				//
 				// Now check the using clause list
 				//
