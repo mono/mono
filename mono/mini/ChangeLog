@@ -1,5 +1,9 @@
 2004-12-19  Ben Maurer  <bmaurer@ximian.com>
 
+	* mini.c (ip_in_bb): new method.
+	(mono_method_to_ir): use this method rather than doing the hash
+	lookup ourselves.
+
 	* linear-scan.c (mono_linear_scan): When expiring actives, you
 	don't need to keep around variables that expire on this
 	instruction. This makes it so that:
