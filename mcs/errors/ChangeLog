@@ -1,3 +1,7 @@
+2005-04-05  Raja R Harinath  <rharinath@novell.com>
+
+	* cs0208-5.cs, cs0208-6.cs: New tests from #62232.
+
 2005-04-04  Raja R Harinath  <rharinath@novell.com>
 
 	* cs1521-2.cs: Change 'class' to a 'struct' to narrow down the

@@ -1,3 +1,11 @@
+2005-04-05  John Luke  <john.luke@gmail.com>
+	    Raja R Harinath  <rharinath@novell.com>
+
+	Fix #62232.
+	* typemanager.cs (IsUnmanagedType): Check non-public fields of a
+	struct too.  Return false quicker in a few cases.
+	(VerifyUnManaged): Use it.
+
 2005-04-05  Raja R Harinath  <rharinath@novell.com>
 
 	Fix #74041.
