@@ -1,5 +1,9 @@
 2002-10-01  Martin Baulig  <martin@gnome.org>
 
+	* debug.c: Don't create an .il file for the dynamic symbol file.
+
+2002-10-01  Martin Baulig  <martin@gnome.org>
+
 	* debug.c (MonoDebuggerInfo): Added mono_runtime_invoke().
 
 2002-09-27  Martin Baulig  <martin@gnome.org>
