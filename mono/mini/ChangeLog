@@ -1,3 +1,8 @@
+2004-05-17  Radek Doulik  <rodo@ximian.com>
+
+	* Makefile.am (common_sources): added abcremoval.h so it get
+	disted and daily mono packages on go-mono.com will build again
+
 2004-05-17  Massimiliano Mantione  <massi@ximian.com>
 
 	* abcremoval.c: Fixed coding style, added copyright header.
