@@ -1,3 +1,8 @@
+2004-04-22  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlEntityReference.cs : Added XPathNodeType (just for workaround).
+	  This should really fix bug #57248.
+
 2004-04-20  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlDocumentNavigator.cs : MoveToFirstChild() failed when there is

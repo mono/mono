@@ -8,6 +8,7 @@
 // (C) 2004 Novell inc.
 //
 using System;
+using System.Xml.XPath;
 using Mono.Xml;
 
 namespace System.Xml
@@ -50,6 +51,13 @@ namespace System.Xml
 				throw new XmlException ("entity reference cannot be set value.");
 			}
 		}
+
+		internal override XPathNodeType XPathNodeType {
+			get {
+				return XPathNodeType.Text;
+			}
+		}
+
 
 		// Methods
 		public override XmlNode CloneNode (bool deep)
