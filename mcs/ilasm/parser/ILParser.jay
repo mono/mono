@@ -1450,6 +1450,9 @@ method_decl		: D_EMITBYTE int32
 			| scope_block
 			| D_PARAM OPEN_BRACKET int32 CLOSE_BRACKET init_opt
 			| id COLON
+                          {
+                                codegen.CurrentMethodDef.AddLabel ((string) $1);
+                          }
 			| seh_block
 			| instr
 			| sec_decl
@@ -1510,7 +1513,7 @@ instr			: INSTR_NONE
 			| INSTR_I id /* Allow variable names */
 			| INSTR_I8 int64
                           {
-                                Console.WriteLine ($1);
+                                
                           }
 			| INSTR_R float64
                           {
@@ -1531,8 +1534,18 @@ instr			: INSTR_NONE
                           }
 			| INSTR_R OPEN_PARENS bytes CLOSE_PARENS
 			| INSTR_BRTARGET int32
+                          {
+                                
+                          }
 			| INSTR_BRTARGET id
+                          {
+                                codegen.CurrentMethodDef.AddInstr (new BranchInstr ((BranchOp) $1,
+                                        codegen.CurrentMethodDef, (string) $2));
+                          }
 			| INSTR_METHOD method_ref
+                          {
+                                
+                          }
 			| INSTR_FIELD type type_spec DOUBLE_COLON id
 			| INSTR_FIELD type id
 			| INSTR_TYPE type_spec

@@ -1,3 +1,7 @@
+2003-05-05 Jackson Harper <jackson@latitudegeo.com>
+
+	* ILParser.jay: Add labels to methods, add branching instructions.
+		
 2003-05-04 Jackson Harper <jackson@latitudegeo.com>
 
 	* ILParser.jay: Use new MiscInstr.ldstr for ldstr, add INSTR_Rs
