@@ -30,6 +30,7 @@ namespace System.Runtime.Remoting {
 			this.type = type;
 		}
 
+		[MonoTODO]
 		public ObjRef (SerializationInfo si, StreamingContext sc)
 		{
 			// FIXME: Implement.
@@ -37,11 +38,13 @@ namespace System.Runtime.Remoting {
 			// This encarnates the object from serialized data.
 		}
 
+		[MonoTODO]
 		public virtual void GetObjectData (SerializationInfo si, StreamingContext sc)
 		{
 			// FIXME:
 		}
 
+		[MonoTODO]
 		public virtual object GetRealObject (StreamingContext sc)
 		{
 			// FIXME:
@@ -49,6 +52,7 @@ namespace System.Runtime.Remoting {
 			return null;
 		}
 
+		[MonoTODO]
 		public bool IsFromThisAppDomain ()
 		{
 			// FIXME:
@@ -56,6 +60,7 @@ namespace System.Runtime.Remoting {
 			return true;
 		}
 
+		[MonoTODO]
 		public bool IsFromThisProcess ()
 		{
 			// FIXME:
