@@ -115,9 +115,8 @@ namespace System.Xml.Serialization
 		{
 			get
 			{
-				return  (type != null && type.IsValueType) ||
-						(sType == SchemaTypes.Primitive) ||
-					    (sType == SchemaTypes.Enum);
+				if (type != null) return type.IsValueType;
+				else return (sType == SchemaTypes.Primitive || sType == SchemaTypes.Enum);
 			}
 		}
 

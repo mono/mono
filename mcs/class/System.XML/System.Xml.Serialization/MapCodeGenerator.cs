@@ -174,6 +174,14 @@ namespace System.Xml.Serialization {
 
 			if (attinfo.MappedType != null)
 				ExportMapCode (attinfo.MappedType);
+
+			if (attinfo.TypeData.IsValueType && attinfo.IsOptionalValueType)
+			{
+				codeField = new CodeMemberField (typeof(bool), attinfo.Name + "Specified");
+				codeField.Attributes = MemberAttributes.Public;
+				codeClass.Members.Add (codeField);
+				GenerateSpecifierMember (codeField);
+			}
 		}
 
 		void AddElementFieldMember (CodeTypeDeclaration codeClass, XmlTypeMapMemberElement member, string defaultNamespace)

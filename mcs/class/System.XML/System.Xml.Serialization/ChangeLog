@@ -1,5 +1,11 @@
 2004-01-20  Lluis Sanchez Gual  <lluis@ximian.com>
 
+	* MapCodeGenerator.cs, XmlSchemaImporter.cs: Attributes are allways optional,
+	  so a 'specified' member has always to be generated.
+	* TypeData.cs: Fixed check for value type.
+
+2004-01-20  Lluis Sanchez Gual  <lluis@ximian.com>
+
 	* XmlSerializationReaderInterpreter.cs, XmlSerializationWriterInterpreter.cs,
 	  XmlTypeMapMember.cs, MapCodeGenerator.cs, SoapCodeExporter.cs, TypeData.cs,
 	  XmlCodeExporter.cs, XmlReflectionImporter.cs, XmlSchemaExporter.cs,

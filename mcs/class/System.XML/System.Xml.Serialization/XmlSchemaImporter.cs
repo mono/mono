@@ -433,8 +433,12 @@ namespace System.Xml.Serialization {
 					member.Namespace = ns;
 					member.Form = refAttr.Form;
 					member.TypeData = GetAttributeTypeData (typeQName, attr);
+					
 					if (refAttr.DefaultValue != null) 
 						member.DefaultValue = XmlCustomFormatter.FromXmlString (member.TypeData, refAttr.DefaultValue);
+					else if (member.TypeData.IsValueType)
+						member.IsOptionalValueType = true;
+						
 					if (member.TypeData.IsComplexType)
 						member.MappedType = GetTypeMapping (member.TypeData);
 					cmap.AddMember (member);
