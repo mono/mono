@@ -333,7 +333,8 @@ namespace System.Windows.Forms {
 		internal override void SetWindowBackground(IntPtr handle, Color color) {
 			uint	backcolor;
 
-			backcolor = ((uint)(color.ToArgb() & 0xff0000)>>16) | (uint)(color.ToArgb() & 0xff00) | (uint)((color.ToArgb() & 0xff) << 16);
+//			backcolor = ((uint)(color.ToArgb() & 0xff0000)>>16) | (uint)(color.ToArgb() & 0xff00) | (uint)((color.ToArgb() & 0xff) << 16);
+			backcolor = ((uint)(color.ToArgb() & 0xff0000)) | (uint)(color.ToArgb() & 0xff00) | (uint)((color.ToArgb() & 0xff) );
 			lock (this) {
 				XSetWindowBackground(DisplayHandle, handle, backcolor);
 			}
@@ -686,11 +687,17 @@ namespace System.Windows.Forms {
 				}
 
 				case XEventName.EnterNotify: {
+					if (xevent.CrossingEvent.mode != NotifyMode.NotifyNormal) {
+						return true;
+					}
 					msg.message=Msg.WM_MOUSE_ENTER;
 					break;
 				}
 
 				case XEventName.LeaveNotify: {
+					if (xevent.CrossingEvent.mode != NotifyMode.NotifyNormal) {
+						return true;
+					}
 					msg.message=Msg.WM_MOUSE_LEAVE;
 					break;
 				}
