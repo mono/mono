@@ -81,10 +81,44 @@ namespace System.Xml.Serialization {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public XmlMembersMapping ImportMembersMapping (XmlQualifiedName name)
 		{
-			throw new NotImplementedException ();
+			ClassMap cmap = new ClassMap ();
+			XmlSchemaElement elem = (XmlSchemaElement) schemas.Find (name, typeof (XmlSchemaElement));
+			if (elem == null) throw new InvalidOperationException ("Schema element '" + name + "' not found or not valid");
+
+			XmlSchemaComplexType stype;
+			if (elem.SchemaType != null)
+			{
+				stype = elem.SchemaType as XmlSchemaComplexType;
+			}
+			else
+			{
+				if (elem.SchemaTypeName.IsEmpty) return null;
+				if (elem.SchemaTypeName.Namespace == XmlSchema.Namespace) return null;
+				object type = schemas.Find (elem.SchemaTypeName, typeof (XmlSchemaComplexType));
+				if (type == null) throw new InvalidOperationException ("Schema type '" + elem.SchemaTypeName + "' not found");
+				stype = type as XmlSchemaComplexType;
+			}
+			
+			if (stype == null) 
+				throw new InvalidOperationException ("Schema element '" + name + "' not found or not valid");
+			
+			if (stype.Particle == null) 
+				return new XmlMembersMapping (name.Name, name.Namespace, true, new XmlMemberMapping [0]);
+			
+			XmlSchemaSequence seq = stype.Particle as XmlSchemaSequence;
+			if (seq == null) throw new InvalidOperationException ("Schema element '" + name + "' cannot be imported as XmlMembersMapping");
+
+			CodeIdentifiers classIds = new CodeIdentifiers ();
+			ImportParticleComplexContent (name, cmap, seq, classIds, false);
+
+			int n = 0;
+			XmlMemberMapping[] mapping = new XmlMemberMapping [cmap.AllMembers.Count];
+			foreach (XmlTypeMapMember mapMem in cmap.AllMembers)
+				mapping[n++] = new XmlMemberMapping (mapMem.Name, mapMem);
+				
+			return new XmlMembersMapping (name.Name, name.Namespace, true, mapping);
 		}
 
 		[MonoTODO]

@@ -121,7 +121,7 @@ namespace System.Xml.Serialization
 		{
 			foreach (XmlTypeMapElementInfo elem in ElementInfo)
 			{
-				if (elem.ElementName == "")		// Default AnyElementAttribute
+				if (elem.IsUnnamedAnyElement)		// Default AnyElementAttribute
 					return true;
 
 				if (elem.ElementName == name && elem.Namespace == ns)

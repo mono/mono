@@ -1,3 +1,13 @@
+2003-09-01  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* XmlSchemaImporter.cs: Implemented ImportMembersMapping.
+	* XmlTypeMapMemberElement.cs: Little fix.
+	* XmlTypeMapping.cs: Added AllElementInfos property in ClassMap.
+	* XmlCustomFormatter.cs: Added GenerateToXmlString and GenerateFromXmlString
+	  methods.
+	* SerializationCodeGenerator.cs, SerializationCodeGeneratorConfiguration.cs:
+	  Added.
+
 2003-08-29  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* SoapReflectionImporter.cs: Fixed construcion of XmlMemberMapping.

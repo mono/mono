@@ -126,7 +126,7 @@ namespace System.Xml.Serialization
 
 	internal class ClassMap: ObjectMap
 	{
-		Hashtable _elements;
+		Hashtable _elements = new Hashtable ();
 		ArrayList _elementMembers;
 		Hashtable _attributeMembers;
 		ArrayList _flatLists;
@@ -212,6 +212,12 @@ namespace System.Xml.Serialization
 			if (_elements == null) return null;
 			return (XmlTypeMapElementInfo)_elements[name + "/" + ns];
 		}
+		
+		public ICollection AllElementInfos
+		{
+			get { return _elements.Values; }
+		}
+		
 
 		public XmlTypeMapMember FindMember (string name)
 		{
@@ -250,7 +256,7 @@ namespace System.Xml.Serialization
 			get { return _allMembers; }
 		}
 
-		public ICollection FlatLists
+		public ArrayList FlatLists
 		{
 			get { return _flatLists; }
 		}
@@ -437,6 +443,11 @@ namespace System.Xml.Serialization
 		{
 			_members = members;
 			_isFlags = isFlags;
+		}
+		
+		public bool IsFlags
+		{
+			get { return _isFlags; }
 		}
 
 		public EnumMapMember[] Members
