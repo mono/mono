@@ -1,5 +1,9 @@
 2003-03-17  Zoltan Varga  <vargaz@freemail.hu>
 
+	* object.c (mono_class_vtable): fix warning.
+
+2003-03-17  Zoltan Varga  <vargaz@freemail.hu>	
+
 	* icall.c (ves_icall_type_is_subtype_of): Avoid vtable creation.
 
 	* reflection.c (mono_blob_entry_hash): Avoid reading uninitialized
