@@ -1,6 +1,6 @@
 2003-04-23  Sebastien Pouliot  <spouliot@videotron.ca>
 
-	* X509Certificate.cs: Fixed GetHashCode for null certificate 
+	* X509Certificate.cs: Fixed issues for null certificate 
 	(special case where object exists without any certificate)
 	which made PublisherTest fails.
 

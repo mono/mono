@@ -186,6 +186,10 @@ namespace System.Security.Cryptography.X509Certificates {
 			if (cert != null) {
 				byte[] raw = cert.GetRawCertData ();
 				if (raw != null) {
+					if (x509 == null)
+						return false;
+					if (x509.RawData == null)
+						return false;
 					if (raw.Length == x509.RawData.Length) {
 						for (int i = 0; i < raw.Length; i++) {
 							if (raw[i] != x509.RawData [i])
@@ -300,12 +304,12 @@ namespace System.Security.Cryptography.X509Certificates {
 	
 		public virtual byte[] GetRawCertData () 
 		{
-			return x509.RawData;
+			return ((x509 != null) ? x509.RawData : null);
 		}
 	
 		public virtual string GetRawCertDataString () 
 		{
-			return tostr (x509.RawData);
+			return ((x509 != null) ? tostr (x509.RawData) : null);
 		}
 	
 		public virtual byte[] GetSerialNumber () 
