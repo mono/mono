@@ -669,25 +669,46 @@ public class Page : TemplateControl, IHttpHandler
 
 	void InternalProcessRequest ()
 	{
+		Trace.Write ("aspx.page", "Begin Init");
 		InitRecursive (null);
+		Trace.Write ("aspx.page", "End Init");
+	      
 		renderingForm = false;	
 		if (IsPostBack) {
+			Trace.Write ("aspx.page", "Begin LoadViewState");
 			LoadPageViewState ();
+			Trace.Write ("aspx.page", "End LoadViewState");
+			Trace.Write ("aspx.page", "Begin ProcessPostData");
 			ProcessPostData (DeterminePostBackMode (), false);
+			Trace.Write ("aspx.page", "End ProcessPostData");
 		}
 
 		LoadRecursive ();
 		if (IsPostBack) {
+			Trace.Write ("aspx.page", "Begin ProcessPostData Second Try");
 			ProcessPostData (secondPostData, true);
+			Trace.Write ("aspx.page", "End ProcessPostData Second Try");
+			Trace.Write ("aspx.page", "Begin Raise ChangedEvents");
 			RaiseChangedEvents ();
+			Trace.Write ("aspx.page", "End Raise ChangedEvents");
+			Trace.Write ("aspx.page", "Begin Raise PostBackEvent");
 			RaisePostBackEvents ();
+			Trace.Write ("aspx.page", "End Raise PostBackEvent");
 		}
+		Trace.Write ("aspx.page", "Begin PreRender");
 		PreRenderRecursiveInternal ();
+		Trace.Write ("aspx.page", "End PreRender");
 
+		Trace.Write ("aspx.page", "Begin SaveViewState");
 		SavePageViewState ();
+		Trace.Write ("aspx.page", "End SaveViewState");
+		
 		//--
+		Trace.Write ("aspx.page", "Begin Render");
 		HtmlTextWriter output = new HtmlTextWriter (_context.Response.Output);
 		RenderControl (output);
+		Trace.Write ("aspx.page", "End Render");
+		
 		RenderTrace (output);
 		_context = null;
 		UnloadRecursive (true);

@@ -1,3 +1,7 @@
+2003-12-18  Jackson Harper <jackson@ximian.com>
+
+	* Page.cs: Write Trace info.
+	
 2003-12-18  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* LosFormatter.cs: new ctor for 1.1. The default ctor is public.
