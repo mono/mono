@@ -81,11 +81,6 @@ namespace System.Data {
 				return caseSensitive;
 			} 
 			set {
-				foreach (DataTable T in Tables) {
-					if (T.VirginCaseSensitive)
-						T.CaseSensitive = value;
-				}
-
 				caseSensitive = value; 
 				if (!caseSensitive) {
 					foreach (DataTable table in Tables) {
@@ -357,12 +352,14 @@ namespace System.Data {
 			//Copy.DefaultViewManager
 			//Copy.DesignMode
 			Copy.EnforceConstraints = EnforceConstraints;
-                       //  Cannot copy extended properties directly as the property does not have a set accessor
-                       Array tgtArray = Array.CreateInstance( typeof (object), ExtendedProperties.Count);
-                       ExtendedProperties.Keys.CopyTo (tgtArray, 0);
-                       for (int i=0; i < ExtendedProperties.Count; i++)
-                               Copy.ExtendedProperties.Add (tgtArray.GetValue (i), ExtendedProperties[tgtArray.GetValue (i)]);
-                        Copy.Locale = Locale;
+			if(ExtendedProperties.Count > 0) {
+				//  Cannot copy extended properties directly as the property does not have a set accessor
+                Array tgtArray = Array.CreateInstance( typeof (object), ExtendedProperties.Count);
+                ExtendedProperties.Keys.CopyTo (tgtArray, 0);
+                for (int i=0; i < ExtendedProperties.Count; i++)
+					Copy.ExtendedProperties.Add (tgtArray.GetValue (i), ExtendedProperties[tgtArray.GetValue (i)]);
+			}
+            Copy.Locale = Locale;
 			Copy.Namespace = Namespace;
 			Copy.Prefix = Prefix;			
 			//Copy.Site = Site; // FIXME : Not sure of this.

@@ -1,5 +1,11 @@
 2004-04-21  Boris Kirzner <borisk@mainsoft.com>
 
+	* DataSet.cs : 
+	  - CaseSensitive : Additional fix (removed unnesessary assignment).
+	  - CopyProperties : Do not try to copy ExtendedProperties if the collection is empty.
+
+2004-04-21  Boris Kirzner <borisk@mainsoft.com>
+
 	* DataTable.cs : Ensure that DataSet property is not null before using it in Clear().
 	  
 2004-04-20  Boris Kirzner <borisk@mainsoft.com>
