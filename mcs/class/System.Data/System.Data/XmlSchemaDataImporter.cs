@@ -249,6 +249,50 @@ el.ElementType != schemaAnyType)
 			}
 		}
 
+		private bool IsDataSetElement (XmlSchemaElement el)
+		{
+			if (schema.Elements.Count != 1)
+				return false;
+			if (!(el.SchemaType is XmlSchemaComplexType))
+				return false;
+			XmlSchemaComplexType ct = (XmlSchemaComplexType) el.SchemaType;
+			if (ct.AttributeUses.Count > 0)
+				return false;
+			XmlSchemaGroupBase gb = ct.ContentTypeParticle as XmlSchemaGroupBase;
+			if (gb == null || gb.Items.Count == 0)
+				return false;
+			foreach (XmlSchemaParticle p in gb.Items) {
+				if (ContainsColumn (p))
+					return false;
+			}
+			return true;
+		}
+
+		private bool ContainsColumn (XmlSchemaParticle p)
+		{
+			XmlSchemaElement el = p as XmlSchemaElement;
+			if (el != null) {
+				XmlSchemaComplexType ct = el.ElementType as XmlSchemaComplexType;
+				if (ct == null || ct == schemaAnyType)
+					return true; // column element
+				if (ct.AttributeUses.Count > 0)
+					return false; // table element
+				switch (ct.ContentType) {
+				case XmlSchemaContentType.Empty:
+				case XmlSchemaContentType.TextOnly:
+					return true; // column element
+				default:
+					return false; // table element
+				}
+			}
+			XmlSchemaGroupBase gb = p as XmlSchemaGroupBase;
+			for (int i = 0; i < gb.Items.Count; i++) {
+				if (ContainsColumn ((XmlSchemaParticle) gb.Items [i]))
+					return true;
+			}
+			return false;
+		}
+
 		private void ProcessGlobalElement (XmlSchemaElement el)
 		{
 			// If it is already registered (by resolving reference
@@ -278,20 +322,9 @@ el.ElementType != schemaAnyType)
 			if (! (el.ElementType is XmlSchemaComplexType && el.ElementType != schemaAnyType))
 				return;
 
-			// FIXME: It should be more simple. It is likely to occur when the type was not resulted in a DataTable
-
-			// Read the design notes for detail... it is very complicated.
-
-			if (globalElementCount == 1 && el.SchemaType is XmlSchemaComplexType) {
-				XmlSchemaComplexType ct = (XmlSchemaComplexType) el.SchemaType;
-				XmlSchemaGroupBase gb = ct.ContentTypeParticle as XmlSchemaGroupBase;
-				XmlSchemaElement cpElem = gb != null && gb.Items.Count > 0 ? gb.Items [0] as XmlSchemaElement : null;
-				XmlSchemaComplexType ct2 = cpElem != null ? cpElem.ElementType as XmlSchemaComplexType : null;
-				// What a complex condition!!!!!!!!!
-				if (ct2 != null && ct != schemaAnyType && ct.AttributeUses.Count == 0) {
-					ProcessDataSetElement (el);
-					return;
-				}
+			if (IsDataSetElement (el)) {
+				ProcessDataSetElement (el);
+				return;
 			}
 
 			// Register as a top-level element

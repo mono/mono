@@ -529,10 +529,21 @@ namespace System.Data {
 			if (reader == null)
 				return;
 #if true
-			XmlDataInferenceLoader.Infer (this, reader, XmlReadMode.InferSchema, false);
+			XmlDocument doc = new XmlDocument ();
+			doc.Load (reader);
+			InferXmlSchema (doc, nsArray);
 #else
 			XmlDataLoader Loader = new XmlDataLoader (this);
 			Loader.LoadData (reader, XmlReadMode.InferSchema);
+#endif
+		}
+
+		private void InferXmlSchema (XmlDocument doc, string [] nsArray)
+		{
+#if true
+			XmlDataInferenceLoader.Infer (this, doc, XmlReadMode.InferSchema, false);
+#else
+			XmlDataInferenceLoader.Infer (this, new XmlNodeReader (doc), XmlReadMode.InferSchema, false);
 #endif
 		}
 
@@ -676,7 +687,7 @@ namespace System.Data {
 			
 			// It should not write when there is no content to be written
 			bool shouldOutputContent = (mode != XmlWriteMode.DiffGram);
-			for (int n=0; n<tableCollection.Count && !shouldOutputContent; n++)
+			for (int n = 0; n < tableCollection.Count && !shouldOutputContent; n++)
 				shouldOutputContent = tableCollection [n].Rows.Count > 0;
 				
 			if (shouldOutputContent) {
@@ -701,6 +712,8 @@ namespace System.Data {
 			
 			if (mode == XmlWriteMode.DiffGram)
 				writer.WriteEndElement (); // diffgr:diffgram
+
+			writer.Flush ();
 		}
 
 		public void WriteXmlSchema (Stream stream)
@@ -902,7 +915,7 @@ namespace System.Data {
 					if (doc.DocumentElement != null)
 						break;
 				} while (!reader.EOF);
-				InferXmlSchema (new XmlNodeReader (doc), null);
+				InferXmlSchema (doc, null);
 				reader = new XmlNodeReader (doc);
 #endif
 				inferedSchema = true;
