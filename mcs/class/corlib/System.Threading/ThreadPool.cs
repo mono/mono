@@ -65,7 +65,7 @@ namespace System.Threading {
 		public static extern void GetMinThreads (out int workerThreads, out int completionPortThreads);
 			
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		public static extern void SetMinThreads (int workerThreads, int completionPortThreads);
+		public static extern bool SetMinThreads (int workerThreads, int completionPortThreads);
 			
 		public static bool QueueUserWorkItem (WaitCallback callback)
 		{

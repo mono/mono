@@ -627,7 +627,7 @@ namespace System.Threading
 
 		[CLSCompliant (false)]
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		extern public static byte VolatileRead (ref UIntPtr address);
+		extern public static UIntPtr VolatileRead (ref UIntPtr address);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		extern public static void VolatileWrite (ref byte address, byte value);

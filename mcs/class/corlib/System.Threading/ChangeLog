@@ -1,3 +1,8 @@
+2004-06-15  Gert Driesen <drieseng@users.sourceforge.net>
+
+	* Thread.cs: changed return type of VolatileRead to UIntPtr
+	* ThreadPool.cs: set return type of SetMinThreads to bool
+
 2004-06-15  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* Thread.cs: Added new fields to keep sync with MonoThread.
