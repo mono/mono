@@ -1,4 +1,19 @@
-2002-06-20  Alejandro Sánchez Acosta <raciel@es.gnu.org>
+2002-12-01  Alejandro Sánchez Acosta <raciel@es.gnu.org>
+
+	* PaintValueEventArgs.cs,
+	  ToolboxComponentsCreatingEventArgs.cs,
+	  PropertyValueItem.cs,
+	  ToolboxComponentsCreatingEventHandler.cs
+	  IDesignerHost.cs, 
+	  ToolboxItemCreatorCallback.cs, 
+	  ToolboxItem.cs, 
+	  ToolboxComponentsCreatedEventArgs.cs
+	  UITypeEditorEditStyle.cs, 
+	  IToolboxUser.cs 
+	  ToolboxComponentsCreatedEventHandler.cs
+	  CategoryNameCollection.cs : Added
+	
+2002-11-20  Alejandro Sánchez Acosta <raciel@es.gnu.org>
 
 	* IPropertyValueUIService.cs: Added
 
