@@ -3604,15 +3604,18 @@ namespace Mono.CSharp {
 			OptAttributes = attrs;
 		}
 
-		void DefineMethod (TypeContainer parent, Type iface_type, 
+		bool DefineMethod (TypeContainer parent, Type iface_type, 
 				   Type ret_type, string name,
 				   Type [] parameters, MethodAttributes attr, bool is_get)
 		{
 			MethodInfo implementing;
-
+			bool is_implementation;
+			
 			implementing = parent.IsInterfaceMethod (
 				iface_type, name, ret_type, parameters, false);
 
+			is_implementation = implementing != null;
+			
 			//
 			// Setting null inside this block will trigger a more
 			// verbose error reporting for missing interface implementations
@@ -3668,7 +3671,7 @@ namespace Mono.CSharp {
 			// clear implementing, as it is only used for explicit
 			// interface implementation
 			//
-			if (Name.IndexOf (".") == -1)
+			if (InterfaceType == null)
 				implementing = null;
 
 			if (is_get){
@@ -3682,9 +3685,6 @@ namespace Mono.CSharp {
 				if (implementing != null) 
 					parent.TypeBuilder.DefineMethodOverride (
 						GetBuilder, implementing);
-				
-				
-				PropertyBuilder.SetGetMethod (GetBuilder);
 			} else {
 				string meth_name = "set_" + IndexerName;
 
@@ -3696,9 +3696,9 @@ namespace Mono.CSharp {
 				if (implementing != null)
 					parent.TypeBuilder.DefineMethodOverride (
 						SetBuilder, implementing);
-					
-				PropertyBuilder.SetSetMethod (SetBuilder);
 			}
+
+			return is_implementation;
 		}
 			
 		public override bool Define (TypeContainer parent)
@@ -3752,14 +3752,14 @@ namespace Mono.CSharp {
 			if (IndexerName == null)
 				IndexerName = "Item";
 			
-			PropertyBuilder = parent.TypeBuilder.DefineProperty (
-				IndexerName, prop_attr, IndexerType, parameters);
-
 			MethodAttributes attr = Modifiers.MethodAttr (ModFlags);
+
+			bool is_implementing = false;
 			
 			if (Get != null){
-				DefineMethod (parent, iface_type, IndexerType, "get_" + IndexerName,
-					      parameters, attr, true);
+				is_implementing = DefineMethod (
+					parent, iface_type, IndexerType, "get_" + IndexerName,
+					parameters, attr, true);
                                 InternalParameters pi = new InternalParameters (parent, FormalParameters);
 				if (!TypeManager.RegisterMethod (GetBuilder, pi, parameters)) {
 					Report.Error (111, Location,
@@ -3804,7 +3804,7 @@ namespace Mono.CSharp {
 
 				Parameters set_formal_params = new Parameters (tmp, null, Location);
 				
-				DefineMethod (
+				is_implementing = DefineMethod (
 					parent, iface_type, TypeManager.void_type,
 					"set_" + IndexerName, set_pars, attr, false);
 
@@ -3849,7 +3849,22 @@ namespace Mono.CSharp {
 				}
 			}
 
-			TypeManager.RegisterProperty (PropertyBuilder, GetBuilder, SetBuilder);
+
+			//
+			// Only define the PropertyBuilder if we are not implementing
+			// an interface property.
+			//
+			if (!is_implementing){
+				PropertyBuilder = parent.TypeBuilder.DefineProperty (
+					IndexerName, prop_attr, IndexerType, parameters);
+				TypeManager.RegisterProperty (PropertyBuilder, GetBuilder, SetBuilder);
+
+				if (GetBuilder != null)
+					PropertyBuilder.SetGetMethod (GetBuilder);
+
+				if (SetBuilder != null)
+					PropertyBuilder.SetSetMethod (SetBuilder);
+			}
 
 			return true;
 		}

@@ -1,5 +1,20 @@
 2002-05-26  Miguel de Icaza  <miguel@ximian.com>
 
+	* class.cs (Indexer.Define); Correctly check if we are explicit
+	implementation (instead of checking the Name for a ".", we
+	directly look up if the InterfaceType was specified).
+
+	Delay the creation of the PropertyBuilder.
+
+	Only create the PropertyBuilder if we are not an explicit
+	interface implementation.   This means that explicit interface
+	implementation members do not participate in regular function
+	lookups, and hence fixes another major ambiguity problem in
+	overload resolution (that was the visible effect).
+
+	(DefineMethod): Return whether we are doing an interface
+	implementation. 
+	
 	* typemanager.cs: Temporary hack until we get attributes in
 	interfaces (Ravi is working on that) and we get IndexerName
 	support in interfaces.
