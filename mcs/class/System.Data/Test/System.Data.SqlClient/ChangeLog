@@ -1,3 +1,6 @@
+2004-09-24 Umadevi S <sumadevi@novell.com>
+	* SqlTransactionTest.cs -new file .unit testing for SqlTransaction
+
 2004-09-15  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* SqlClientPermissionTest.cs: New. Unit tests for SqlClientPermission.
