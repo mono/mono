@@ -4194,19 +4194,8 @@ namespace CIR {
 	}
 
 	public class New : ExpressionStatement {
-
-		public enum NType {
-			Object,
-			Array
-		};
-
-		public readonly NType     NewType;
 		public readonly ArrayList Arguments;
 		public readonly string    RequestedType;
-
-		// These are for the case when we have an array
-		public readonly string    Rank;
-		public readonly ArrayList Initializers;
 
 		Location Location;
 		MethodBase method = null;
@@ -4221,23 +4210,7 @@ namespace CIR {
 		{
 			RequestedType = requested_type;
 			Arguments = arguments;
-			NewType = NType.Object;
 			Location = loc;
-		}
-
-		public New (string requested_type, ArrayList exprs, string rank, ArrayList initializers, Location loc)
-		{
-			RequestedType = requested_type;
-			Rank          = rank;
-			Initializers  = initializers;
-			NewType       = NType.Array;
-			Location      = loc;
-
-			Arguments = new ArrayList ();
-
-			foreach (Expression e in exprs)
-				Arguments.Add (new Argument (e, Argument.AType.Expression));
-			
 		}
 
 		public Expression ValueTypeVariable {
@@ -4252,76 +4225,57 @@ namespace CIR {
 
 		public override Expression DoResolve (EmitContext ec)
 		{
-			if (NewType == NType.Object) {
-
-				type = ec.TypeContainer.LookupType (RequestedType, false);
-				
-				if (type == null)
+			type = ec.TypeContainer.LookupType (RequestedType, false);
+			
+			if (type == null)
+				return null;
+			
+			bool IsDelegate = TypeManager.IsDelegateType (type);
+			
+			if (IsDelegate)
+				return (new NewDelegate (type, Arguments, Location)).Resolve (ec);
+			
+			Expression ml;
+			
+			ml = MemberLookup (ec, type, ".ctor", false,
+					   MemberTypes.Constructor, AllBindingsFlags, Location);
+			
+			bool is_struct = false;
+			is_struct = type.IsSubclassOf (TypeManager.value_type);
+			
+			if (! (ml is MethodGroupExpr)){
+				if (!is_struct){
+					report118 (Location, ml, "method group");
 					return null;
-
-				bool IsDelegate = TypeManager.IsDelegateType (type);
-				
-				if (IsDelegate)
-					return (new NewDelegate (type, Arguments, Location)).Resolve (ec);
-				
-				Expression ml;
-				
-				ml = MemberLookup (ec, type, ".ctor", false,
-						   MemberTypes.Constructor, AllBindingsFlags, Location);
-				
-				bool is_struct = false;
-				is_struct = type.IsSubclassOf (TypeManager.value_type);
-				
-				if (! (ml is MethodGroupExpr)){
-					if (!is_struct){
-						report118 (Location, ml, "method group");
-						return null;
+				}
+			}
+			
+			if (ml != null) {
+				if (Arguments != null){
+					for (int i = Arguments.Count; i > 0;){
+						--i;
+						Argument a = (Argument) Arguments [i];
+						
+						if (!a.Resolve (ec))
+							return null;
 					}
 				}
 				
-				if (ml != null) {
-					if (Arguments != null){
-						for (int i = Arguments.Count; i > 0;){
-							--i;
-							Argument a = (Argument) Arguments [i];
-							
-							if (!a.Resolve (ec))
-								return null;
-						}
-					}
-					
-					method = Invocation.OverloadResolve (ec, (MethodGroupExpr) ml,
-									     Arguments, Location);
-				}
-
-				if (method == null && !is_struct) {
-					Error (-6, Location,
-					       "New invocation: Can not find a constructor for " +
-					       "this argument list");
-					return null;
-				}
-				
-				eclass = ExprClass.Value;
-				return this;
-				
+				method = Invocation.OverloadResolve (ec, (MethodGroupExpr) ml,
+								     Arguments, Location);
 			}
 			
-			if (NewType == NType.Array) {
-
-				type = ec.TypeContainer.LookupType (RequestedType, false);
-
-				if (TypeManager.IsBuiltinType (type))
-					return (new NewBuiltinArray (
-						    RequestedType, Rank, Arguments, Initializers, Location)).Resolve (ec);
-				else
-					return (new NewUserdefinedArray (
-						    RequestedType, Rank, Arguments, Initializers, Location)).Resolve (ec); 
-
+			if (method == null && !is_struct) {
+				Error (-6, Location,
+				       "New invocation: Can not find a constructor for " +
+				       "this argument list");
+				return null;
 			}
 			
-			return null;
+			eclass = ExprClass.Value;
+			return this;
 		}
-		
+
 		//
 		// This DoEmit can be invoked in two contexts:
 		//    * As a mechanism that will leave a value on the stack (new object)
@@ -4373,6 +4327,66 @@ namespace CIR {
 		}
 	}
 
+	// <summary>
+	//   Represents an array creation expression.
+	// </summary>
+	public class ArrayCreation : ExpressionStatement {
+		string RequestedType;
+		string Rank;
+		ArrayList Initializers;
+		Location loc;
+		ArrayList Arguments;
+		Expression Array;
+
+		public ArrayCreation (string requested_type, ArrayList exprs,
+				      string rank, ArrayList initializers, Location l)
+		{
+			RequestedType = requested_type;
+			Rank          = rank;
+			Initializers  = initializers;
+			loc           = l;
+
+			Arguments = new ArrayList ();
+
+			foreach (Expression e in exprs)
+				Arguments.Add (new Argument (e, Argument.AType.Expression));
+			
+		}
+		
+		public override Expression DoResolve (EmitContext ec)
+		{
+			type = ec.TypeContainer.LookupType (RequestedType, false);
+			
+			if (TypeManager.IsBuiltinType (type))
+				Array = new NewBuiltinArray (
+					RequestedType, Rank, Arguments, Initializers, loc)
+					.Resolve (ec);
+			else
+				Array = new NewUserdefinedArray (
+					RequestedType, Rank, Arguments, Initializers, loc)
+					.Resolve (ec);
+
+			if (Array == null)
+				return null;
+
+			type = Array.Type;
+			eclass = ExprClass.Value;
+
+			return this;
+		}
+
+		public override void Emit (EmitContext ec)
+		{
+			Array.Emit (ec);
+		}
+
+		public override void EmitStatement (EmitContext ec)
+		{
+			Emit (ec);
+			ec.ig.Emit (OpCodes.Pop);
+		}
+	}
+	
 	// 
 	// Class to create arrays out of built-in types
 	// 
@@ -4387,7 +4401,6 @@ namespace CIR {
 
 		MethodBase method = null;
 		Type array_element_type;
-
 		bool IsOneDimensional = false;
 
 		public NewBuiltinArray (string type, string rank, ArrayList args, ArrayList initializers, Location loc)
@@ -4505,7 +4518,6 @@ namespace CIR {
 				ec.ig.Emit (OpCodes.Newobj, (ConstructorInfo) method);
 			}
 		}
-		
 	}
 
 	//

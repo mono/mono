@@ -294,8 +294,7 @@ using_namespace_directive
 namespace_declaration
 	: NAMESPACE qualified_identifier 
 	  {
-		current_namespace = new Namespace (current_namespace, (string) $2);
-		tree.RecordNamespace ((string) $2, current_namespace);
+		current_namespace = tree.RecordNamespace (current_namespace, (string) $2);
 	  } 
 	  namespace_body opt_semicolon
 	  { 
@@ -1775,7 +1774,8 @@ array_creation_expression
 	  opt_rank_specifier
 	  opt_array_initializer
 	  {
-		$$ = new New ((string) $2, (ArrayList) $4, (string) $6, (ArrayList) $7, lexer.Location);
+		$$ = new ArrayCreation ((string) $2, (ArrayList) $4, (string) $6, (ArrayList) $7, 
+					lexer.Location);
 	  }
 	;
 
