@@ -47,7 +47,6 @@
 
 	* metadata-internals.h image.c: Add MonoImage->unbox_wrapper_cache.
 	
->>>>>>> .r37131
 2004-12-04  Martin Baulig  <martin@ximian.com>
 
 	* loader.c (mono_method_get_signature_full): New public function;
