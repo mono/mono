@@ -23,6 +23,10 @@
 //	Peter Bartok	pbartok@novell.com
 //
 // $Log: ButtonBase.cs,v $
+// Revision 1.4  2004/08/30 20:42:10  pbartok
+// - Made Redraw() and CheckRedraw() virtual
+// - Improved mouse up/down/move logic to properly track buttons
+//
 // Revision 1.3  2004/08/23 23:27:44  pbartok
 // - Finishing touches. Works now, just needs some optimizations.
 //
@@ -56,6 +60,7 @@ namespace System.Windows.Forms {
 		private bool			has_focus;
 		private bool			is_pressed;
 		private bool			is_entered;
+		private bool			needs_redraw;
 		StringFormat			text_format;
 		#endregion	// Local Variables
 
@@ -89,14 +94,15 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		internal bool CheckRedraw() {
+		internal virtual bool CheckRedraw() {
 			// FIXME - check if something has actually changed
-			Redraw();
+			needs_redraw = true;
+			Refresh();
 			return true;
 		}
 
 		[MonoTODO("Make the FillRectangle use a global brush instead of creating one every time")]
-		internal void Redraw() {
+		internal virtual void Redraw() {
 			ButtonState	state;
 			int		width;
 			int		height;
@@ -104,7 +110,7 @@ namespace System.Windows.Forms {
 			width = this.ClientSize.Width;
 			height = this.ClientSize.Height;
 
-			SolidBrush	sb = new SolidBrush(ThemeEngine.Current.ColorButtonFace);
+			SolidBrush	sb = new SolidBrush(this.BackColor);
 			this.DeviceContext.FillRectangle(sb, this.ClientRectangle);
 			sb.Dispose();
 
@@ -217,9 +223,9 @@ namespace System.Windows.Forms {
 
 				if (is_enabled) {
 					SolidBrush	b = new SolidBrush(ThemeEngine.Current.ColorButtonText);
-					this.DeviceContext.DrawString(text, this.Font, b, text_rect, text_format);
+					//this.DeviceContext.DrawString(text, this.Font, b, text_rect, text_format);
 				} else {
-					ThemeEngine.Current.DrawStringDisabled(this.DeviceContext, text, this.Font, ThemeEngine.Current.ColorButtonText, text_rect, text_format);
+					//ThemeEngine.Current.DrawStringDisabled(this.DeviceContext, text, this.Font, ThemeEngine.Current.ColorButtonText, text_rect, text_format);
 				}
 			}
 			Refresh();
@@ -480,6 +486,7 @@ namespace System.Windows.Forms {
 		protected override void OnMouseDown(MouseEventArgs mevent) {
 			if (is_enabled && (mevent.Button == MouseButtons.Left)) {
 				is_pressed = true;
+				this.Capture = true;
 				CheckRedraw();
 			}
 
@@ -487,31 +494,67 @@ namespace System.Windows.Forms {
 		}
 
 		protected override void OnMouseEnter(EventArgs e) {
+Console.WriteLine("have entered");
 			is_entered=true;
-			CheckRedraw();
+			if ((this.flat_style == FlatStyle.Flat) || (this.flat_style == FlatStyle.Popup)) {
+				CheckRedraw();
+			}
 			base.OnMouseEnter(e);
 		}
 
 		protected override void OnMouseLeave(EventArgs e) {
+Console.WriteLine("have left");
 			is_entered=false;
-			CheckRedraw();
+			if ((this.flat_style == FlatStyle.Flat) || (this.flat_style == FlatStyle.Popup)) {
+				CheckRedraw();
+			}
 			base.OnMouseLeave(e);
 		}
 
 		protected override void OnMouseMove(MouseEventArgs mevent) {
+			bool	inside = false;
+			bool	redraw = false;
+
+			if (mevent.X>=0 && mevent.Y>=0 && mevent.X<this.client_size.Width && mevent.Y<=this.client_size.Height) {
+				inside = true;
+			}
+
+			// If the button was pressed and we leave, release the button press and vice versa
+			if (this.Capture && (inside != is_pressed)) {
+				is_pressed = inside;
+				redraw = true;
+			}
+
+			if (is_entered != inside) {
+				is_entered = inside;
+				redraw = true;
+			}
+
+			if (redraw) {
+				CheckRedraw();
+			}
+
 			base.OnMouseMove(mevent);
 		}
 
 		protected override void OnMouseUp(MouseEventArgs mevent) {
-			if (is_pressed && mevent.Button == MouseButtons.Left) {
-				is_pressed = false;
-				CheckRedraw();
-				OnClick(EventArgs.Empty);
+			if (this.Capture && mevent.Button == MouseButtons.Left) {
+				this.Capture = false;
+				if (is_pressed) {
+					CheckRedraw();
+				}
+
+				if (mevent.X>=0 && mevent.Y>=0 && mevent.X<this.client_size.Width && mevent.Y<=this.client_size.Height) {
+					OnClick(EventArgs.Empty);
+				}
 			}
 			base.OnMouseUp(mevent);
 		}
 
 		protected override void OnPaint(PaintEventArgs pevent) {
+			if (needs_redraw) {
+				Redraw();
+			}
 			pevent.Graphics.DrawImage(this.ImageBuffer, pevent.ClipRectangle, pevent.ClipRectangle, GraphicsUnit.Pixel);
 			base.OnPaint(pevent);
 		}
