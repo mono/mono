@@ -1,4 +1,10 @@
 
+Fri Apr 12 18:30:29 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* object.h: add mono_object_domain() macro.
+	* reflection.c: handle typespecs.
+	* icall.c: MonoMethod::get_Name() implementation.
+
 Thu Apr 11 12:29:14 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* icall.c: String::GetHashCode() icall implementation.
