@@ -1,5 +1,6 @@
 #USE_SOURCE_RULES=1
-MCS = mono $(topdir)/mcs/mcs.exe
+RUNTIME = mono
+MCS = $(RUNTIME) $(topdir)/mcs/mcs.exe
 MCS_FLAGS = --target library --noconfig
 INSTALL = /usr/bin/install
 prefix = /usr
