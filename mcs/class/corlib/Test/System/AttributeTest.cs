@@ -4,6 +4,7 @@
 // Authors:
 // 	Duco Fijma (duco@lorentz.xs4all.nl)
 //	Gonzalo Paniagua (gonzalo@ximian.com)
+//	Gert Driesen (drieseng@users.sourceforge.net)
 //
 //	(C) 2002 Duco Fijma
 //	(c) 2004 Novell, Inc. (http://www.novell.com)
@@ -105,6 +106,7 @@ namespace MonoTests.System
 				i++;
 				AssertEquals ("A3", "MyDerivedClass", ((MyCustomAttribute) (Attribute.GetCustomAttribute (typeof(MyDerivedClass), typeof(MyCustomAttribute)))).Info);
 				i++;
+				Console.WriteLine ("A4a");
 				AssertNotNull ("A4a", Attribute.GetCustomAttribute (t, typeof(YourCustomAttribute)));
 				i++;
 				AssertEquals ("A4", 37, ((YourCustomAttribute) (Attribute.GetCustomAttribute (t, typeof(YourCustomAttribute)))).Value);
@@ -172,6 +174,140 @@ namespace MonoTests.System
 				AssertEquals (prop.Name, true, attrs.Length > 0);
 			}
 		}
-	}
 
+		[Test]
+		public void GetCustomAttributeOK ()
+		{
+			Attribute attribute = Attribute.GetCustomAttribute (typeof(ClassA),
+				typeof(DerivedTestCustomAttributeInherit));
+			AssertNotNull ("GetCustomAttributeNull", attribute);
+		}
+
+		[NUnit.Framework.Test]
+		[ExpectedException (typeof(AmbiguousMatchException))]
+		public void GetCustomAttributeAmbiguous ()
+		{
+			Attribute.GetCustomAttribute (typeof(ClassA), typeof(TestCustomAttribute));
+		}
+
+		[Test]
+		public void GetCustomAttributeNull ()
+		{
+			Attribute attribute = Attribute.GetCustomAttribute (typeof(ClassA),
+				typeof(DerivedTestCustomAttributeMultipleInherit));
+			AssertNull ("GetCustomAttributeNull", attribute);
+		}
+
+		[Test]
+		public void GetCustomAttributesTypeNoInherit ()
+		{
+			object[] attributes;
+
+			attributes = Attribute.GetCustomAttributes (typeof(ClassA), false);
+			AssertEquals ("GetCustomAttributesTypeNoInherit#1", 3, attributes.Length);
+
+			AssertEquals ("GetCustomAttributesTypeNoInherit#2", 1, GetAttributeCount (
+				attributes, typeof(TestCustomAttribute)));
+			AssertEquals ("GetCustomAttributesTypeNoInherit#3", 1, GetAttributeCount (
+				attributes, typeof(DerivedTestCustomAttributeMultiple)));
+			AssertEquals ("GetCustomAttributesTypeNoInherit#4", 1, GetAttributeCount (
+				attributes, typeof(DerivedTestCustomAttributeInherit)));
+
+			attributes = Attribute.GetCustomAttributes (typeof(ClassB), false);
+			AssertEquals ("GetCustomAttributesTypeNoInherit#5", 4, attributes.Length);
+
+			AssertEquals ("GetCustomAttributesTypeNoInherit#2", 1, GetAttributeCount (
+				attributes, typeof(TestCustomAttribute)));
+			AssertEquals ("GetCustomAttributesTypeNoInherit#3", 2, GetAttributeCount (
+				attributes, typeof(DerivedTestCustomAttributeMultiple)));
+			AssertEquals ("GetCustomAttributesTypeNoInherit#4", 1, GetAttributeCount (
+				attributes, typeof(DerivedTestCustomAttributeMultipleInherit)));
+		}
+
+		[Test]
+		public void GetCustomAttributesTypeInherit ()
+		{
+			object[] attributes;
+
+			attributes = Attribute.GetCustomAttributes (typeof(ClassA), true);
+
+			AssertEquals ("GetCustomAttributesTypeInherit#1", 3, attributes.Length);
+
+			AssertEquals ("GetCustomAttributesTypeInherit#2", 1, GetAttributeCount (
+				attributes, typeof(TestCustomAttribute)));
+			AssertEquals ("GetCustomAttributesTypeInherit#3", 1, GetAttributeCount (
+				attributes, typeof(DerivedTestCustomAttributeMultiple)));
+			AssertEquals ("GetCustomAttributesTypeInherit#4", 1, GetAttributeCount (
+				attributes, typeof(DerivedTestCustomAttributeInherit)));
+
+			attributes = Attribute.GetCustomAttributes (typeof(ClassB), true);
+			AssertEquals ("GetCustomAttributesTypeInherit#5", 5, attributes.Length);
+
+			AssertEquals ("GetCustomAttributesTypeInherit#6", 1, GetAttributeCount (
+				attributes, typeof(TestCustomAttribute)));
+			AssertEquals ("GetCustomAttributesTypeInherit#7", 2, GetAttributeCount (
+				attributes, typeof(DerivedTestCustomAttributeMultiple)));
+			AssertEquals ("GetCustomAttributesTypeInherit#8", 1, GetAttributeCount (
+				attributes, typeof(DerivedTestCustomAttributeInherit)));
+			AssertEquals ("GetCustomAttributesTypeInherit#9", 1, GetAttributeCount (
+				attributes, typeof(DerivedTestCustomAttributeMultipleInherit)));
+		}
+
+		private int GetAttributeCount (object[] attributes, Type attributeType)
+		{
+			int counter = 0;
+
+			foreach (Attribute attribute in attributes)
+			{
+				if (attribute.GetType () == attributeType)
+				{
+					counter++;
+				}
+			}
+
+			return counter;
+		}
+
+		[AttributeUsage (AttributeTargets.All, AllowMultiple = false, Inherited = true)]
+		private class TestCustomAttribute : Attribute
+		{
+		}
+
+		[AttributeUsage (AttributeTargets.All, AllowMultiple = true, Inherited = false)]
+		private class DerivedTestCustomAttributeMultiple : TestCustomAttribute
+		{
+		}
+
+		[AttributeUsage (AttributeTargets.All, AllowMultiple = false, Inherited = true)]
+		private class DerivedTestCustomAttributeInherit : TestCustomAttribute
+		{
+		}
+
+		[AttributeUsage (AttributeTargets.All, AllowMultiple = true, Inherited = true)]
+		private class DerivedTestCustomAttributeMultipleInherit : TestCustomAttribute
+		{
+		}
+
+		[TestCustomAttribute]
+		[DerivedTestCustomAttributeMultiple]
+		[DerivedTestCustomAttributeInherit]
+		private class ClassA
+		{
+		}
+
+		[TestCustomAttribute ()]
+		[DerivedTestCustomAttributeMultiple ()]
+		[DerivedTestCustomAttributeMultiple ()]
+		[DerivedTestCustomAttributeMultipleInherit ()]
+		private class ClassB : ClassA
+		{
+		}
+
+		[TestCustomAttribute ()]
+		[DerivedTestCustomAttributeMultiple ()]
+		[DerivedTestCustomAttributeMultipleInherit ()]
+		private class ClassC : ClassB
+		{
+		}
+	}
 }

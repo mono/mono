@@ -1,4 +1,9 @@
 2004-05-19  Gert Driesen (drieseng@users.sourceforge.net)
+	
+	* AttributeTest.cs: added tests for Inherited and
+	AllowMultiple
+
+2004-05-19  Gert Driesen (drieseng@users.sourceforge.net)
 
 	* AttributeTest.cs: formatting, and remove commented
 	code
