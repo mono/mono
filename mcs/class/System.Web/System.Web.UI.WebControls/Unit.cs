@@ -41,6 +41,7 @@ using System.Web.UI;
 namespace System.Web.UI.WebControls
 {
 	[TypeConverter(typeof(UnitConverter))]
+	[Serializable]
 	public struct Unit
 	{
 		public static readonly Unit Empty = new Unit();

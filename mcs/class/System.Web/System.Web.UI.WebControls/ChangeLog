@@ -1,3 +1,12 @@
+2004-12-10 Lluis Sanchez Gual <lluis@novell.com>
+
+	* Menu.cs: Implemented basic rendering. Added some missing properties.
+	* MenuItem.cs: Improved implementation of Depth.
+	* Unit.cs: Added serializable attribute.
+	* TreeView.cs: Moved GetScriptLiteral method to ClientScriptManager,
+	so it can be reused.
+	* Menu.js: New script to support he Menu control.
+
 2004-12-03 Lluis Sanchez Gual <lluis@novell.com>
 
 	* MenuEventArgs.cs: Changed to sealed.

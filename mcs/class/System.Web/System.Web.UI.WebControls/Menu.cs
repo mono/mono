@@ -89,6 +89,56 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[DefaultValue (Orientation.Vertical)]
+		public virtual Orientation Orientation {
+			get {
+				object o = ViewState ["Orientation"];
+				if (o != null) return (Orientation) o;
+				return Orientation.Vertical;
+			}
+			set {
+				ViewState["Orientation"] = value;
+			}
+		}
+
+		[DefaultValue (1)]
+		public virtual int StaticDisplayLevels {
+			get {
+				object o = ViewState ["StaticDisplayLevels"];
+				if (o != null) return (int)o;
+				return 1;
+			}
+			set {
+				if (value < 1) throw new ArgumentOutOfRangeException ();
+				ViewState["StaticDisplayLevels"] = value;
+			}
+		}
+
+		[DefaultValue ("16px")]
+		public Unit StaticSubMenuIndent {
+			get {
+				object o = ViewState ["StaticSubMenuIndent"];
+				if (o != null) return (Unit)o;
+				return new Unit (16);
+			}
+			set {
+				ViewState["StaticSubMenuIndent"] = value;
+			}
+		}
+
+		[DefaultValue (3)]
+		public virtual int MaximumDynamicDisplayLevels {
+			get {
+				object o = ViewState ["MaximumDynamicDisplayLevels"];
+				if (o != null) return (int)o;
+				return 3;
+			}
+			set {
+				if (value < 0) throw new ArgumentOutOfRangeException ();
+				ViewState["MaximumDynamicDisplayLevels"] = value;
+			}
+		}
+
 /*		[DefaultValue (true)]
 		public virtual bool DynamicEnableDefaultPopOutImage {
 			get {
@@ -218,7 +268,7 @@ namespace System.Web.UI.WebControls
 
 		protected override object SaveViewState()
 		{
-			object[] states = new object [2];
+			object[] states = new object [3];
 			states[0] = base.SaveViewState();
 			states[1] = (dataBindings == null ? null : ((IStateManager)dataBindings).SaveViewState());
 			states[2] = (items == null ? null : ((IStateManager)items).SaveViewState());
@@ -245,11 +295,150 @@ namespace System.Web.UI.WebControls
 				((IStateManager)Items).LoadViewState(states[9]);
 		}
 		
-		protected override void RenderContents (HtmlTextWriter writer)
+		protected override void OnPreRender (EventArgs e)
 		{
-			writer.WriteLine ("This is a menu");
+			base.OnPreRender (e);
+			
+			if (!Page.ClientScript.IsClientScriptIncludeRegistered (typeof(Menu), "Menu.js")) {
+				string url = Page.GetWebResourceUrl (typeof(Menu), "Menu.js");
+				Page.ClientScript.RegisterClientScriptInclude (typeof(Menu), "Menu.js", url);
+				
+				string cmenu = ClientID + "_data";
+				string script = string.Format ("var {0} = new Object ();\n", cmenu);
+				script += string.Format ("{0}.disappearAfter = {1};\n", cmenu, ClientScriptManager.GetScriptLiteral (DisappearAfter));
+				script += string.Format ("{0}.vertical = {1};\n", cmenu, ClientScriptManager.GetScriptLiteral (Orientation == Orientation.Vertical));
+				
+				Page.ClientScript.RegisterStartupScript (typeof(Menu), "", script, true);
+			}
+
+			if (dataBindings != null && dataBindings.Count > 0) {
+				bindings = new Hashtable ();
+				foreach (TreeNodeBinding bin in dataBindings) {
+					string key = GetBindingKey (bin.DataMember, bin.Depth);
+					bindings [key] = bin;
+				}
+			}
+			else
+				bindings = null;
 		}
 		
+		protected override void RenderContents (HtmlTextWriter writer)
+		{
+			ArrayList dynamicMenus = new ArrayList ();
+			
+			if (Orientation == Orientation.Horizontal) {
+				writer.AddAttribute ("cellpadding", "0");
+				writer.AddAttribute ("cellspacing", "0");
+				writer.AddStyleAttribute ("border-width", "0");
+				writer.RenderBeginTag (HtmlTextWriterTag.Table);
+				writer.RenderBeginTag (HtmlTextWriterTag.Tr);
+			}
+			
+			foreach (MenuItem item in Items) {
+				RenderMenuItem (writer, item, dynamicMenus);
+			}
+			
+			if (Orientation == Orientation.Horizontal) {
+				writer.RenderEndTag ();	// TR
+				writer.RenderEndTag ();	// TABLE
+			}
+			
+			for (int n=0; n<dynamicMenus.Count; n++) {
+				MenuItem item = (MenuItem) dynamicMenus [n];
+				writer.AddStyleAttribute ("display", "none");
+				writer.AddStyleAttribute ("visibility", "hidden");
+				writer.AddStyleAttribute ("position", "absolute");
+				writer.AddStyleAttribute ("left", "0px");
+				writer.AddStyleAttribute ("top", "0px");
+				writer.AddAttribute ("id", GetItemClientId (item, "s"));
+				writer.RenderBeginTag (HtmlTextWriterTag.Div);
+				
+				foreach (MenuItem mi in item.ChildItems) {
+					RenderMenuItem (writer, mi, dynamicMenus);
+				}
+				
+				writer.RenderEndTag ();	// DIV
+			}
+		}
+		
+		void RenderMenuItem (HtmlTextWriter writer, MenuItem item, ArrayList dynamicMenus)
+		{
+			bool displayChildren = (item.Depth + 1 < StaticDisplayLevels + MaximumDynamicDisplayLevels);
+			bool dynamicChildren = displayChildren && (item.Depth + 1 >= StaticDisplayLevels) && item.ChildItems.Count > 0;
+			bool isDynamicItem = item.Depth + 1 > StaticDisplayLevels;
+
+			if (Orientation == Orientation.Vertical) {
+				writer.AddAttribute ("cellpadding", "0");
+				writer.AddAttribute ("cellspacing", "0");
+				writer.AddStyleAttribute ("border-width", "0");
+				writer.RenderBeginTag (HtmlTextWriterTag.Table);
+				writer.RenderBeginTag (HtmlTextWriterTag.Tr);
+			}
+			
+			if (item.Depth > 0 && !isDynamicItem) {
+				for (int n=0; n<item.Depth; n++) {
+					writer.RenderBeginTag (HtmlTextWriterTag.Td);
+					writer.AddStyleAttribute ("width", StaticSubMenuIndent.ToString ());
+					writer.RenderBeginTag (HtmlTextWriterTag.Div);
+					writer.RenderEndTag ();	// DIV
+					writer.RenderEndTag ();	// TD
+				}
+			}
+			
+			writer.RenderBeginTag (HtmlTextWriterTag.Td);
+			
+			if (item.NavigateUrl != "") {
+				writer.AddAttribute ("href", item.NavigateUrl);
+				if (item.Target != null)
+					writer.AddAttribute ("target", item.Target);
+				writer.AddStyleAttribute ("text-decoration", "none");
+			}
+			else {
+				writer.AddAttribute ("href", GetClientEvent (item, "sel"));
+				writer.AddStyleAttribute ("text-decoration", "none");
+			}
+			
+			string parentId = item.Parent != null ? "'" + item.Parent.Path + "'" : "null";
+			if (dynamicChildren) {
+				writer.AddAttribute ("onmouseover", "javascript:Menu_OverItem ('" + ClientID + "', '" + item.Path + "', " + parentId + ")");
+				writer.AddAttribute ("onmouseout", "javascript:Menu_OutItem ('" + ClientID + "', '" + item.Path + "')");
+			} else if (isDynamicItem) {
+				writer.AddAttribute ("onmouseover", "javascript:Menu_OverLeafItem ('" + ClientID + "', " + parentId + ")");
+				writer.AddAttribute ("onmouseout", "javascript:Menu_OutItem ('" + ClientID + "', " + parentId + ")");
+			}
+			
+			writer.AddAttribute ("id", GetItemClientId (item, "i"));
+			writer.RenderBeginTag (HtmlTextWriterTag.A);
+			writer.Write (item.Text);
+			writer.RenderEndTag ();	// A
+			
+			writer.RenderEndTag ();	// TD
+			
+			if (Orientation == Orientation.Vertical) {
+				writer.RenderEndTag ();	// TR
+				writer.RenderEndTag ();	// TABLE
+			}
+			
+			if (displayChildren) {
+				if (dynamicChildren) {
+					dynamicMenus.Add (item);
+				} else {
+					foreach (MenuItem mi in item.ChildItems) {
+						RenderMenuItem (writer, mi, dynamicMenus);
+					}
+				}
+			}
+		}
+		
+		string GetItemClientId (MenuItem item, string sufix)
+		{
+			return ClientID + "_" + item.Path + sufix;
+		}
+							
+		string GetClientEvent (MenuItem item, string ev)
+		{
+			return Page.GetPostBackClientHyperlink (this, ev + "|" + item.Path);
+		}
 	}
 }
 

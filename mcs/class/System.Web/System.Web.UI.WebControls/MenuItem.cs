@@ -91,12 +91,8 @@ namespace System.Web.UI.WebControls
 		public int Depth {
 			get {
 				if (depth != -1) return depth;
-				depth = 0;
-				MenuItem nod = parent;
-				while (nod != null) {
-					depth++;
-					nod = nod.parent;
-				}
+				if (Parent == null) depth = 0;
+				else depth = Parent.Depth + 1;
 				return depth;
 			}
 		}
