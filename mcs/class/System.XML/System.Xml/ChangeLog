@@ -3,7 +3,7 @@
 	* XmlNamedNodeMap.cs (GetEnumerator): piggyback on the ArrayList implementation.
 	(GetNamedItem (string, string)): implemented.
 	(RemoveNamedItem): implemented.
-	(SetNamedItem): Added check for ReadOnly and matching OwnerDocuments.
+	(SetNamedItem): implemented.
 
 2002-03-12  Kral Ferch  <kral_ferch@hotmail.com>
 
