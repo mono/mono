@@ -1,4 +1,6 @@
 2001-08-22	John Barnette	<jbarn@httcb.net>
+	* StringDictionary.cs:
+		Initial working implementation.
 	* ListDictionary.cs:
 		Initial working implementation.
 

@@ -1,4 +1,5 @@
 BitVector32.cs
 ListDictionary.cs
 StringCollection.cs
+StringDictionary.cs
 StringEnumerator.cs
