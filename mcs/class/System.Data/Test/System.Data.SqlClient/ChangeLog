@@ -1,3 +1,6 @@
+2004-10-30 Umadevi S <sumadevi@novell.com>
+	* SqlDataAdapterTest.cs - Added testcase for nullguid
+
 2004-10-15 Umadevi S <sumadevi@novell.com>
 	* SqlDataReaderTest.cs: Added testcase for reading emptyntextfield
 

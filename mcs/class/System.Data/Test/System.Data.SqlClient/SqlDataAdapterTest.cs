@@ -93,8 +93,7 @@ namespace MonoTests.System.Data.SqlClient
 			string sql = "select * from Region;";
 			SqlCommand c = conn.CreateCommand();
 			c.CommandText = sql;
-			SqlDataReader dr =
-c.ExecuteReader(CommandBehavior.KeyInfo|CommandBehavior.SchemaOnly);
+			SqlDataReader dr = c.ExecuteReader(CommandBehavior.KeyInfo|CommandBehavior.SchemaOnly);
 			DataTable schema = dr.GetSchemaTable();
 			// check the schema details. 
 			/*foreach (DataColumn col in schema.Columns)
@@ -120,7 +119,39 @@ c.ExecuteReader(CommandBehavior.KeyInfo|CommandBehavior.SchemaOnly);
 
 	}
 
+	/**
+	This needs a errortable created as follows 
+	id uniqueidentifier,name char(10) , with values
+	Guid		name
+	{A12...}	NULL
+	NULL		bbbbbb
+	**/
+	[Test]
+	public void NullGuidTest() {
 
+                     	SqlDataAdapter da = new SqlDataAdapter();
+			da.SelectCommand = new SqlCommand();
+			da.SelectCommand.Connection = conn;
+			da.SelectCommand.CommandText += "select * from errortable";
+			DataSet ds = new DataSet();
+			try {
+				da.Fill(ds);
+			}
+			catch (Exception e) {
+	                        Assert.Fail("A#02 : Got an exception");
+        	                Console.WriteLine(e.StackTrace);
+                                                                                                 
+                	}
+                        finally { // try/catch is necessary to gracefully close connections^M
+                                                                                                    
+                        	CloseConnection ();
+                	}
+			// the bug 68804 - is that the fill hangs!
+			Assert.AreEqual("Done","Done");
+					
+	}
+ 
+	
 	
 	
     }
