@@ -28,6 +28,11 @@ namespace System.Threading
 		/* thread_id is only accessed from unmanaged code */
 		private int thread_id;
 		
+		/* start_notify is used by the runtime to signal that Start()
+		 * is ok to return
+		 */
+		private IntPtr start_notify;
+		
 		[MonoTODO]
 		public static Context CurrentContext {
 			get {
@@ -403,17 +408,20 @@ namespace System.Threading
 		private extern void Start_internal(IntPtr handle);
 		
 		public void Start() {
-			if((state & ThreadState.Unstarted) == 0) {
-				throw new ThreadStateException("Thread has already been started");
-			}
-
-			// Mark the thread state as Running (which is
-			// all bits cleared). Therefore just remove
-			// the Unstarted bit
-			clr_state(ThreadState.Unstarted);
+			lock(this) {
+				if((state & ThreadState.Unstarted) == 0) {
+					throw new ThreadStateException("Thread has already been started");
+				}
 				
-			// Launch this thread
-			Start_internal(system_thread_handle);
+				// Launch this thread
+				Start_internal(system_thread_handle);
+
+				// Mark the thread state as Running
+				// (which is all bits
+				// cleared). Therefore just remove the
+				// Unstarted bit
+				clr_state(ThreadState.Unstarted);
+			}
 		}
 
 		[MonoTODO]

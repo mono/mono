@@ -1,3 +1,8 @@
+2003-02-17  Dick Porter  <dick@ximian.com>
+
+	* Thread.cs: Added the Start semaphore field to the class.  Update
+	the thread state after Start() has returned, not before.
+
 2003-02-13  Zoltan Varga  <vargaz@freemail.hu>
 
 	* Thread.cs (Sleep): Timeout.Infinite is a value argument.
