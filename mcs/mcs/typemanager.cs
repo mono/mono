@@ -604,11 +604,6 @@ public class TypeManager {
 			return null;
 #endif
 		
-		//
-		// Optimization: ComposedCast will work with an existing type, and might already have the
-		// full name of the type, so the full system lookup can probably be avoided.
-		//
-		
 		string [] elements = name.Split ('.');
 		int count = elements.Length;
 
@@ -635,9 +630,12 @@ public class TypeManager {
 				return null;
 			
 			string newt = top_level_type + "+" + String.Join ("+", elements, n, count - n);
-			t = LookupTypeDirect (newt);
-			if (t != null)
-				types [newt] = t;
+			//Console.WriteLine ("Looking up: " + newt + " " + name);
+			t = LookupTypeReflection (newt);
+			if (t == null)
+				negative_hits [name] = true;
+			else
+				types [name] = t;
 			return t;
 		}
 

@@ -483,6 +483,8 @@ namespace Mono.CSharp {
 		{
 			if (type_resolve_ec == null)
 				type_resolve_ec = GetTypeResolveEmitContext (parent, loc);
+			type_resolve_ec.loc = loc;
+			type_resolve_ec.ContainerType = TypeBuilder;
 
 			Expression d = e.ResolveAsTypeTerminal (type_resolve_ec);
 			 

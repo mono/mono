@@ -1,6 +1,17 @@
 2003-04-20  Miguel de Icaza  <miguel@ximian.com>
 
-	* driver.cs: Use CodePage not WindowsCodePage.
+	* typemanager.cs (: 3-line patch that gives us some tasty 11%
+	speed increase.  First, use the negative_hits cache when we get a
+	negative.  Second, add the type with its full original name
+	instead of the new . and + encoded name (reflection uses + to
+	separate type from a nested type).  Use LookupTypeReflection
+	directly which bypasses the type->name hashtable (that we already
+	know does not contain the type.
+	
+	* decl.cs (DeclSpace.ResolveTypeExpr): track the
+	location/container type. 
+
+	* driver.cs: When passing utf8, use directly the UTF8Encoding.
 
 2003-04-19  Miguel de Icaza  <miguel@ximian.com>
 

@@ -1,3 +1,14 @@
+Large project:
+--------------
+
+	Drop FindMembers as our API and instead extract all the data
+	out of a type the first time into our own datastructures, and
+	use that to navigate and search the type instead of the
+	callback based FindMembers.	
+
+	Martin has some some of this work with his TypeHandle code
+	that we could use for this.
+
 Notes on memory allocation
 --------------------------
 
