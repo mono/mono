@@ -1305,8 +1305,8 @@ namespace Mono.CSharp
 		void PreProcessPragma (string arg)
 		{
 			const string warning = "warning";
-			const string w_disable = warning + " disable";
-			const string w_restore = warning + " restore";
+			const string w_disable = "warning disable";
+			const string w_restore = "warning restore";
 
 			if (arg == w_disable) {
 				Report.RegisterWarningRegion (Location).WarningDisable (line);
@@ -1336,7 +1336,7 @@ namespace Mono.CSharp
 			}
 
 			if (arg.StartsWith (warning)) {
-				Report.Warning (1634, 1, Location , "Expected disable or restore");
+				Report.Warning (1634, 1, Location, "Expected disable or restore");
 				return;
 			}
 		}
