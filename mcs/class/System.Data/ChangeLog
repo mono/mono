@@ -1,3 +1,11 @@
+2002-03-29  Rodrigo Moya <rodrigo@ximian.com>
+
+	* System.Data.Common/DbDataRecord.cs:
+	* System.Data.Common/DbEnumerator.cs:
+	* System.Data.Common/RowUpdatedEventArgs.cs:
+	* System.Data.Common/RowUpdatingEventArgs.cs:
+	* System.Data.Common/DbDataPermissionAttribute.cs: new skeletons.
+
 2002-03-28  Rodrigo Moya <rodrigo@ximian.com>
 
 	* System.Data.Common/DataTableMappingCollection.cs:
