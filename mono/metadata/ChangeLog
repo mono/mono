@@ -1,5 +1,13 @@
 2004-05-05  Zoltan Varga  <vargaz@freemail.hu>
 
+	* object.c (mono_class_compute_gc_descriptor): Fix warning.
+
+	* object.c (mono_runtime_invoke_array): Add an assert so null cannot be
+	passed when a valuetype is expected.
+
+	* object.c (mono_unhandled_exception): Only set the exit code if the
+	exception happens in the main thread. Fixes thread5.exe.
+
 	* appdomain.c (get_info_from_assembly_name): Fix infinite loop on
 	invalid names. Fixes #58047.
 
