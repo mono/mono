@@ -1,3 +1,11 @@
+2003-05-12  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* PKCS1MaskGenerationMethodTest.cs: Uncommented PKCS#1 v.2.1 vector 
+	unit test (will work on Mono but fails with MS implementation).
+	* RSAOAEPKeyExchangeDeformatterTest.cs: Updated tests vectors for
+	both Mono and MS (under Windows XP) generated OAEP results.
+	* RSAOAEPKeyExchangeFormatterTest.cs: Update exception handling.
+
 2003-04-17  Nick Drochak  <ndrochak@gol.com>
 
 	* DSATest.cs: Use nunit version 2 style to test throw.
