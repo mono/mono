@@ -1,4 +1,9 @@
 
+Wed Apr 30 10:53:09 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* reflection.c: fixed handling of enums in named arguments to custom
+	attributes (bug #42123).
+
 Tue Apr 29 19:15:10 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
 	* reflection.c: use the right array element type and handle
