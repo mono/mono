@@ -295,22 +295,12 @@ namespace Mono.AssemblyInfo
 				}
 			}
 
+			// No .cctor
 			ConstructorInfo [] ctors = type.GetConstructors (flags);
-			ConstructorInfo [] cctor = type.GetConstructors (BindingFlags.NonPublic |
-									 BindingFlags.Static);
 
-			ArrayList allctors = new ArrayList ();
-			if (ctors != null)
-				allctors.AddRange (ctors);
-
-			if (cctor != null)
-				allctors.AddRange (cctor);
-	
-			if (allctors.Count > 0) {
-				ConstructorInfo [] all;
-				all = (ConstructorInfo []) allctors.ToArray (typeof (ConstructorInfo));
-				Array.Sort (all, MethodBaseComparer.Default);
-				members.Add (new ConstructorData (document, nclass, all));
+			if (ctors.Length > 0) {
+				Array.Sort (ctors, MethodBaseComparer.Default);
+				members.Add (new ConstructorData (document, nclass, ctors));
 			}
 
 			PropertyInfo [] props = type.GetProperties (flags);

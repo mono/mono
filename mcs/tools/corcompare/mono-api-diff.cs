@@ -66,11 +66,9 @@ namespace Mono.AssemblyCompare
 		public int Warning;
 		public int WarningTotal;
 		public int ErrorTotal;
-		string name;
 
-		public Counters (string name)
+		public Counters ()
 		{
-			this.name = name;
 		}
 
 		public void AddPartialToPartial (Counters other)
@@ -135,7 +133,6 @@ namespace Mono.AssemblyCompare
 		public override string ToString ()
 		{
 			StringWriter sw = new StringWriter ();
-			sw.WriteLine ("name: {0}", name);
 			sw.WriteLine ("Present: {0}", Present);
 			sw.WriteLine ("PresentTotal: {0}", PresentTotal);
 			sw.WriteLine ("Missing: {0}", Missing);
@@ -160,7 +157,7 @@ namespace Mono.AssemblyCompare
 
 		public XMLData ()
 		{
-			counters = new Counters (GetType ().ToString ());
+			counters = new Counters ();
 		}
 
 		public virtual void LoadData (XmlNode node)
@@ -236,6 +233,7 @@ namespace Mono.AssemblyCompare
 
   			if (counters.WarningTotal > 0)
 				AddAttribute (node, "warning_total", counters.WarningTotal.ToString ());
+
 		}
 
 		protected void AddWarning (XmlNode parent, string fmt, params object [] args)
@@ -281,11 +279,12 @@ namespace Mono.AssemblyCompare
 			data = new ArrayList ();
 			foreach (XmlNode n in node.ChildNodes) {
 				string val = n.Attributes ["name"].Value;
-				if (CheckIfAdd (val))
+				if (CheckIfAdd (val)) {
 					data.Add (val);
 
-				if (n.HasChildNodes)
-					LoadExtraData (val, n.FirstChild);
+					if (n.HasChildNodes)
+						LoadExtraData (val, n.FirstChild);
+				}
 			}
 		}
 
@@ -401,6 +400,7 @@ namespace Mono.AssemblyCompare
 			CompareNamespaces (childA, assembly.namespaces);
 			if (assembly.attributes != null && assembly.attributes.IsTodo) {
 				counters.Todo++;
+				counters.TodoTotal++;
 				counters.ErrorTotal++;
 				AddAttribute (childA, "error", "todo");
 			}
@@ -874,45 +874,24 @@ namespace Mono.AssemblyCompare
 
 	abstract class XMLMember : XMLNameGroup
 	{
-		XMLAttributes attributes;
-		Hashtable attribs = new Hashtable ();
-
-		public override void CompareTo (XmlDocument doc, XmlNode parent, object other)
-		{
-			this.document = doc;
-			XMLMember mb = other as XMLMember;
-			XMLAttributes oa = (mb != null) ? mb.attributes : null;
-			if (attributes != null || oa != null) {
-				if (group == null)
-					group = doc.CreateElement (GroupName, null);
-
-				if (attributes == null)
-					attributes = new XMLAttributes ();
-
-				attributes.CompareTo (doc, group, oa);
-				counters.AddPartialToTotal (attributes.Counters);
-				if (oa != null && oa.IsTodo) {
-					counters.Todo++;
-					counters.TodoTotal++;
-					counters.ErrorTotal++;
-					AddAttribute (parent, "error", "todo");
-				}
-			}
-
-			base.CompareTo (doc, parent, other);
-		}
+		Hashtable attributeMap;
+		Hashtable access = new Hashtable ();
 
 		protected override void LoadExtraData (string name, XmlNode node)
 		{
 			XmlAttribute xatt = node.Attributes ["attrib"];
 			if (xatt != null)
-				attribs [name] = xatt.Value;
+				access [name] = xatt.Value;
 			
 			XmlNode orig = node;
 			while (node != null) {
 				if (node != null && node.Name == "attributes") {
-					attributes = new XMLAttributes ();
-					attributes.LoadData (node);
+					XMLAttributes a = new XMLAttributes ();
+					a.LoadData (node);
+					if (attributeMap == null)
+						attributeMap = new Hashtable ();
+
+					attributeMap [name] = a;
 					break;
 				}
 				node = node.NextSibling;
@@ -923,24 +902,47 @@ namespace Mono.AssemblyCompare
 
 		protected override void CompareToInner (string name, XmlNode parent, XMLNameGroup other)
 		{
-			if (attribs == null)
+			base.CompareToInner (name, parent, other);
+			XMLMember mb = other as XMLMember;
+			XMLAttributes att = null;
+			XMLAttributes oatt = null;
+			if (attributeMap != null)
+				att = attributeMap [name] as XMLAttributes;
+
+			if (mb != null && mb.attributeMap != null)
+				oatt = mb.attributeMap [name] as XMLAttributes;
+
+			if (att != null || oatt != null) {
+				if (att == null)
+					att = new XMLAttributes ();
+
+				att.CompareTo (document, group, oatt);
+				counters.AddPartialToTotal (att.Counters);
+				if (oatt != null && oatt.IsTodo) {
+					counters.Todo++;
+					counters.ErrorTotal++;
+					AddAttribute (parent, "error", "todo");
+				}
+			}
+
+			if (access == null)
 				return;
 
 			XMLMember member = (XMLMember) other;
-			string att = attribs [name] as string;
-			if (att == null)
+			string acc = access [name] as string;
+			if (acc == null)
 				return;
 
-			string oatt = null;
-			if (member.attribs != null)
-				oatt = member.attribs [name] as string;
+			string oacc = null;
+			if (member.access != null)
+				oacc = member.access [name] as string;
 
-			string attName = ConvertToString (Int32.Parse (att));
-			string otherAttName = "";
-			if (oatt != null)
-				otherAttName = ConvertToString (Int32.Parse (oatt));
+			string accName = ConvertToString (Int32.Parse (acc));
+			string oaccName = "";
+			if (oacc != null)
+				oaccName = ConvertToString (Int32.Parse (oacc));
 
-			AddWarning (parent, "Incorrect attributes: '{0}' != '{1}'", attName, otherAttName);
+			AddWarning (parent, "Incorrect attributes: '{0}' != '{1}'", accName, oaccName);
 		}
 
 		protected virtual string ConvertToString (int att)
@@ -968,6 +970,7 @@ namespace Mono.AssemblyCompare
 
 		protected override void CompareToInner (string name, XmlNode parent, XMLNameGroup other)
 		{
+			base.CompareToInner (name, parent, other);
 			if (fieldTypes == null)
 				return;
 
@@ -1008,15 +1011,19 @@ namespace Mono.AssemblyCompare
 
 			if (idx != null || oidx != null) {
 				XMLMethods m, om;
+				Counters copy = counters;
 
 				m = (idx == null) ? new XMLMethods () : (XMLMethods) methods [(int) idx];
 				om = (oidx == null) ? null : (XMLMethods) oprop.methods [(int) oidx];
 
 				m.CompareTo (document, parent, om);
+				counters = new Counters ();
+				counters.AddPartialToPartial (m.Counters);
+				AddCountersAttributes (parent);
+				counters = copy;
 				counters.AddPartialToPartial (m.Counters);
 			}
 
-			AddCountersAttributes (parent);
 			base.CompareToInner (name, parent, other);
 		}
 
@@ -1056,6 +1063,7 @@ namespace Mono.AssemblyCompare
 			AddCountersAttributes (parent);
 		}
 
+
 		protected override void LoadExtraData (string name, XmlNode node)
 		{
 			XmlAttribute xatt = node.Attributes ["eventtype"];
@@ -1071,6 +1079,7 @@ namespace Mono.AssemblyCompare
 
 		protected override void CompareToInner (string name, XmlNode parent, XMLNameGroup other)
 		{
+			base.CompareToInner (name, parent, other);
 			if (eventTypes == null)
 				return;
 
@@ -1117,6 +1126,7 @@ namespace Mono.AssemblyCompare
 
 		protected override void CompareToInner (string name, XmlNode parent, XMLNameGroup other)
 		{
+			base.CompareToInner (name, parent, other);
 			if (returnTypes == null)
 				return;
 

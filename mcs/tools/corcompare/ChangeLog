@@ -1,3 +1,9 @@
+2003-11-12  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* mono-api-diff.cs: fixed attribute handling for members. Fixed counts
+	for properties.
+	* mono-api-info.cs: don't output .cctor information.
+
 2003-11-11  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* mono-api-diff.cs: fixed nullref and add warning when class type do not
