@@ -1,3 +1,12 @@
+2004-07-13  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlWriter.cs : Added Create() stubs.
+	* XmlWriterSettings.cs : Added missing property setters.
+	* XmlValidatingReader.cs : added internal schemas setter.
+	* XmlTextReader.cs : added internal XmlReaderSettings property setter.
+	* XmlReader.cs :  Halfly implemented Create().
+	* DTDValidatingReader.cs : author information was missing.
+
 2004-07-11  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlConvertDateTimeOption.cs : it is NET_2_0.

@@ -153,6 +153,12 @@ namespace System.Xml
 			get { return parserContext.BaseURI; }
 		}
 
+		// for XmlReaderSettings.CloseInput support
+		internal bool CloseInput {
+			get { return closeInput; }
+			set { closeInput = value; }
+		}
+
 		public override int Depth
 		{
 			get {
@@ -321,7 +327,7 @@ namespace System.Xml
 			cursorToken.Clear ();
 			currentToken.Clear ();
 			attributeCount = 0;
-			if (reader != null)
+			if (closeInput && reader != null)
 				reader.Close ();
 		}
 
@@ -977,6 +983,7 @@ namespace System.Xml
 		private bool normalization = false;
 
 		private bool prohibitDtd = false;
+		private bool closeInput = true;
 
 		private void Init ()
 		{
@@ -1056,9 +1063,11 @@ namespace System.Xml
 
 			Init ();
 
+			reader = fragment;
+
 			switch (fragType) {
 			case XmlNodeType.Attribute:
-				fragment = new StringReader (fragment.ReadToEnd ().Replace ("\"", "&quot;"));
+				reader = new StringReader (fragment.ReadToEnd ().Replace ("\"", "&quot;"));
 				break;
 			case XmlNodeType.Element:
 				currentState = XmlNodeType.Element;
@@ -1069,9 +1078,29 @@ namespace System.Xml
 			default:
 				throw new XmlException (String.Format ("NodeType {0} is not allowed to create XmlTextReader.", fragType));
 			}
-
-			reader = fragment;
 		}
+
+#if NET_2_0
+		internal ConformanceLevel Conformance {
+			set {
+				if (value == ConformanceLevel.Fragment) {
+					currentState = XmlNodeType.Element;
+					allowMultipleRoot = true;
+				}
+			}
+		}
+
+		internal void AdjustLineInfoOffset (int lineNumberOffset, int linePositionOffset)
+		{
+			line += lineNumberOffset;
+			column += linePositionOffset;
+		}
+
+		internal void SetNameTable (XmlNameTable nameTable)
+		{
+			parserContext.NameTable = nameTable;
+		}
+#endif
 
 		// Use this method rather than setting the properties
 		// directly so that all the necessary properties can

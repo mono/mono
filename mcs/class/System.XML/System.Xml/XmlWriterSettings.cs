@@ -71,8 +71,6 @@ namespace System.Xml
 			omitXmlDeclaration = org.omitXmlDeclaration;
 		}
 
-		public event ValidationEventHandler ValidationEventHandler;
-
 		public XmlWriterSettings Clone ()
 		{
 			return new XmlWriterSettings (this);
@@ -114,36 +112,46 @@ namespace System.Xml
 			set { conformance = value; }
 		}
 
+		[MonoTODO]
 		public bool EncodeXmlBinary {
 			get { return encodeXmlBinary; }
+			set { encodeXmlBinary = value; }
 		}
 
+		[MonoTODO]
 		public Encoding Encoding {
 			get { return encoding; }
+			set { encoding = value; }
 		}
 
 		public bool Indent {
 			get { return indent; }
+			set { indent = value; }
 		}
 
 		public string IndentChars {
 			get { return indentChars; }
+			set { indentChars = value; }
 		}
 
 		public string NewLineChars {
 			get { return newLineChars; }
+			set { newLineChars = value; }
 		}
 
 		public bool NewLineOnAttributes {
 			get { return newLineOnAttributes; }
+			set { newLineOnAttributes = value; }
 		}
 
 		public bool NormalizeNewLines {
 			get { return normalizeNewLines; }
+			set { normalizeNewLines = value; }
 		}
 
 		public bool OmitXmlDeclaration {
 			get { return omitXmlDeclaration; }
+			set { omitXmlDeclaration = value; }
 		}
 	}
 }

@@ -31,6 +31,8 @@
 //
 
 using System;
+using System.IO;
+using System.Text;
 
 namespace System.Xml
 {
@@ -61,6 +63,61 @@ namespace System.Xml
 		public abstract void Close ();
 
 #if NET_2_0
+		[MonoTODO]
+		public static XmlWriter Create (Stream stream)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public static XmlWriter Create (string file)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public static XmlWriter Create (TextWriter writer)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public static XmlWriter Create (StringBuilder builder)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public static XmlWriter Create (Stream stream, XmlWriterSettings settings)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public static XmlWriter Create (string file, XmlWriterSettings settings)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public static XmlWriter Create (StringBuilder builder, XmlWriterSettings settings)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public static XmlWriter Create (TextWriter writer, XmlWriterSettings settings)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public static XmlWriter Create (XmlWriter writer, XmlWriterSettings settings)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
 		public virtual void Dispose ()
 		{
 			Close ();

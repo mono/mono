@@ -268,6 +268,11 @@ namespace System.Xml {
 			get { return schemas; }
 		}
 
+		internal void SetSchemas (XmlSchemaSet schemas)
+		{
+			this.schemas = schemas.SchemaCollection;
+		}
+
 		public object SchemaType {
 			get { return schemaInfo.SchemaType; }
 		}

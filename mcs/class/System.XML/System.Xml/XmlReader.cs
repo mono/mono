@@ -34,8 +34,8 @@
 using System.IO;
 using System.Security.Policy;
 using System.Text;
-
 using System.Xml.Schema; // only required for NET_2_0 (SchemaInfo)
+using Mono.Xml; // only required for NET_2_0 (XmlFilterReader)
 
 namespace System.Xml
 {
@@ -158,6 +158,135 @@ namespace System.Xml
 		#region Methods
 
 		public abstract void Close ();
+
+#if NET_2_0
+		public static XmlReader Create (Stream stream)
+		{
+			return Create (stream, null, null, new XmlUrlResolver (), null);
+		}
+
+		public static XmlReader Create (string url)
+		{
+			return Create (url, null);
+		}
+
+		public static XmlReader Create (TextReader reader)
+		{
+			return Create (reader, null, new XmlUrlResolver (), null);
+		}
+
+		public static XmlReader Create (string url, XmlReaderSettings settings)
+		{
+			return Create (url, new XmlUrlResolver (), settings);
+		}
+
+		public static XmlReader Create (XmlReader reader, XmlReaderSettings settings)
+		{
+			return Create (reader, new XmlUrlResolver (), settings);
+		}
+
+		[MonoTODO ("CheckCharacters, ConformanceLevel, IgnoreSchemaXXX etc.")]
+		public static XmlReader Create (XmlReader reader, XmlResolver resolver, XmlReaderSettings settings)
+		{
+			return CreateFilteredXmlReader (reader, resolver, settings);
+		}
+
+		[MonoTODO ("CheckCharacters, ConformanceLevel, IgnoreSchemaXXX etc.")]
+		public static XmlReader Create (string url, XmlResolver resolver, XmlReaderSettings settings)
+		{
+			return CreateCustomizedTextReader (new XmlTextReader (url), resolver, settings);
+		}
+
+		[MonoTODO ("CheckCharacters, ConformanceLevel, IgnoreSchemaXXX etc.")]
+		public static XmlReader Create (TextReader reader, string baseUri, XmlResolver resolver, XmlReaderSettings settings)
+		{
+			return CreateCustomizedTextReader (new XmlTextReader (baseUri, reader), resolver, settings);
+		}
+
+		[MonoTODO ("CheckCharacters, ConformanceLevel, IgnoreSchemaXXX etc.")]
+		public static XmlReader Create (Stream stream, string baseUri, Encoding encoding, XmlResolver resolver, XmlReaderSettings settings)
+		{
+			return CreateCustomizedTextReader (encoding == null ? new XmlTextReader (baseUri, stream) : new XmlTextReader (baseUri, new StreamReader (stream, encoding)), resolver, settings);
+		}
+
+		private static XmlReader CreateCustomizedTextReader (XmlTextReader reader, XmlResolver resolver, XmlReaderSettings settings)
+		{
+			reader.XmlResolver = resolver;
+
+			if (settings == null)
+				settings = new XmlReaderSettings ();
+
+			if (settings.ProhibitDtd)
+				reader.ProhibitDtd = true;
+			if (!settings.CheckCharacters)
+				throw new NotImplementedException ();
+			// I guess it might be changed in 2.0 RTM to set true
+			// as default, or just disappear. It goes against
+			// XmlTextReader's default usage and users will have 
+			// to close input manually (that's annoying). Moreover,
+			// MS XmlTextReader consumes text input more than 
+			// actually read and users can acquire those extra
+			// consumption by GetRemainder() that returns different
+			// TextReader.
+			reader.CloseInput = settings.CloseInput;
+
+			// I would like to support it in detail later;
+			// MSDN description looks source of confusion. We don't
+			// need examples, but precise list of how it works.
+			reader.Conformance = settings.ConformanceLevel;
+
+			reader.AdjustLineInfoOffset (settings.LineNumberOffset,
+				settings.LinePositionOffset);
+
+			// FIXME: maybe we had better create XmlParserContext.
+			if (settings.NameTable != null)
+				reader.SetNameTable (settings.NameTable);
+
+			return CreateFilteredXmlReader (reader, resolver, settings);
+		}
+
+		private static XmlReader CreateFilteredXmlReader (XmlReader reader, XmlResolver resolver, XmlReaderSettings settings)
+		{
+			reader = CreateValidatingXmlReader (reader, settings);
+
+			if (reader.Settings != null ||
+				settings.IgnoreComments ||
+				settings.IgnoreProcessingInstructions ||
+				settings.IgnoreWhitespace)
+				return new XmlFilterReader (reader, settings);
+			else {
+				reader.settings = settings;
+				return reader;
+			}
+		}
+
+		private static XmlReader CreateValidatingXmlReader (XmlReader reader, XmlReaderSettings settings)
+		{
+			XmlValidatingReader xvr = null;
+			if (settings.DtdValidate) {
+				xvr = new XmlValidatingReader (reader);
+				if (!settings.XsdValidate)
+					xvr.ValidationType = ValidationType.DTD;
+				 // otherwise .Auto by default.
+			} else if (settings.XsdValidate) {
+				xvr = new XmlValidatingReader (reader);
+				xvr.ValidationType = ValidationType.Schema;
+			}
+			if (xvr != null)
+				xvr.SetSchemas (settings.Schemas);
+
+			if (settings.IgnoreIdentityConstraints)
+				throw new NotImplementedException ();
+			if (!settings.IgnoreInlineSchema)
+				throw new NotImplementedException ();
+			if (!settings.IgnoreSchemaLocation)
+				throw new NotImplementedException ();
+			if (!settings.IgnoreValidationWarnings)
+				throw new NotImplementedException ();
+
+			return xvr != null ? xvr : reader;
+		}
+#endif
 
 #if NET_2_0
 		public virtual void Dispose ()

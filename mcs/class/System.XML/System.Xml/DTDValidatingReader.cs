@@ -1,3 +1,12 @@
+//
+// DTDValidatingReader.cs
+//
+// Author:
+//   Atsushi Enomoto  (ginga@kit.hi-ho.ne.jp)
+//
+// (C)2003 Atsushi Enomoto
+// (C)2004 Novell Inc.
+//
 
 //
 // Permission is hereby granted, free of charge, to any person obtaining
