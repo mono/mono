@@ -1,3 +1,7 @@
+2003-04-07  Nick Drochak <ndrochak@gol.com>
+
+	* codegen.cs: Be more verbose when we can't find the symbol writer dll.
+
 2003-04-07  Miguel de Icaza  <miguel@ximian.com>
 
 	* expression.cs (Indirection.EmitAssign): We were using the
