@@ -479,7 +479,7 @@ namespace System.Data.Odbc
 					case OdbcType.TinyInt:
 						short short_data=0;
 						ret=libodbc.SQLGetData(hstmt, ColIndex, OdbcType.TinyInt, ref short_data, 0, ref outsize);
-						DataValue=short_data;
+						DataValue=System.Convert.ToByte(short_data);
 						break;
 					case OdbcType.Int:
 						int int_data=0;
