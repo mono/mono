@@ -5202,12 +5202,17 @@ namespace Mono.CSharp {
 			}
 
 			//
-			// This checks the `ConditionalAttribute' on the method, and the
-			// ObsoleteAttribute
+			// This checks ObsoleteAttribute on the method and on the declaring type
+			//
+			ObsoleteAttribute oa = AttributeTester.GetMethodObsoleteAttribute (method);
+			if (oa != null)
+				AttributeTester.Report_ObsoleteMessage (oa, TypeManager.CSharpSignature (method), loc);
+
+
+			//
+			// This checks the `ConditionalAttribute' on the method
 			//
 			TypeManager.MethodFlags flags = TypeManager.GetMethodFlags (method, loc);
-			if ((flags & TypeManager.MethodFlags.IsObsoleteError) != 0)
-				return;
 			if ((flags & TypeManager.MethodFlags.ShouldIgnore) != 0)
 				return;
 			

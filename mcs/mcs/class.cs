@@ -2985,6 +2985,10 @@ namespace Mono.CSharp {
 			return new EmitContext (tc, ds, Location, ig, ReturnType, ModFlags, false);
 		}
 
+		public ObsoleteAttribute GetObsoleteAttribute ()
+		{
+			return GetObsoleteAttribute (ds);
+		}
 		#endregion
 	}
 
@@ -3116,13 +3120,13 @@ namespace Mono.CSharp {
 		}
 
 		//TODO: implement caching when it will be necessary
-		public virtual void CheckObsoleteAttribute (EmitContext ec, TypeContainer tc, Location loc)
+		public virtual void CheckObsoleteAttribute (TypeContainer tc, Location loc)
 		{
 			Constructor ctor = GetOverloadedConstructor (tc);
 			if (ctor == null)
 				return;
 
-			ObsoleteAttribute oa = ctor.GetObsoleteAttribute (ec);
+			ObsoleteAttribute oa = ctor.GetObsoleteAttribute (tc);
 			if (oa == null)
 				return;
 
@@ -3136,7 +3140,7 @@ namespace Mono.CSharp {
 		{
 		}
 
-		public override void CheckObsoleteAttribute(EmitContext ec, TypeContainer tc, Location loc) {
+		public override void CheckObsoleteAttribute(TypeContainer tc, Location loc) {
 			if (parent_constructor == null)
 				return;
 
@@ -3150,7 +3154,7 @@ namespace Mono.CSharp {
 				return;
 			}
 
-			base.CheckObsoleteAttribute (ec, type_ds, loc);
+			base.CheckObsoleteAttribute (type_ds, loc);
 		}
 
 	}
@@ -3382,7 +3386,7 @@ namespace Mono.CSharp {
 				}
 			}
 			if (Initializer != null) {
-				Initializer.CheckObsoleteAttribute (ec, container, Location);
+				Initializer.CheckObsoleteAttribute (container, Location);
 				Initializer.Emit (ec);
 			}
 			
@@ -3490,6 +3494,7 @@ namespace Mono.CSharp {
 		Block Block { get; }
 
 		EmitContext CreateEmitContext (TypeContainer tc, ILGenerator ig);
+		ObsoleteAttribute GetObsoleteAttribute ();
 	}
 
 	//
@@ -3545,8 +3550,6 @@ namespace Mono.CSharp {
 		// Attributes.
 		//
 		Attribute dllimport_attribute = null;
-		string obsolete = null;
-		bool obsolete_error = false;
 
 		public virtual bool ApplyAttributes (Attributes opt_attrs, bool is_method,
 						     EmitContext ec)
@@ -3558,9 +3561,6 @@ namespace Mono.CSharp {
 				Type attr_type = a.ResolveType (ec, true);
 				if (attr_type == TypeManager.conditional_attribute_type) {
 					if (!ApplyConditionalAttribute (a))
-						return false;
-				} else if (attr_type == TypeManager.obsolete_attribute_type) {
-					if (!ApplyObsoleteAttribute (a))
 						return false;
 				} else if (attr_type == TypeManager.dllimport_type) {
 					if (!is_method) {
@@ -3591,20 +3591,6 @@ namespace Mono.CSharp {
 			flags |= MethodAttributes.PinvokeImpl;
 			dllimport_attribute = a;
 			return true;
-		}
-
-		//
-		// Applies the `Obsolete' attribute to the method.
-		//
-		protected virtual bool ApplyObsoleteAttribute (Attribute a)
-		{
-			if (obsolete != null) {
-				Report.Error (579, method.Location, "Duplicate `Obsolete' attribute");
-				return false;
-			}
-
-			obsolete = a.Obsolete_GetObsoleteMessage (out obsolete_error);
-			return obsolete != null;
 		}
 
 		//
@@ -3702,18 +3688,6 @@ namespace Mono.CSharp {
 		public virtual TypeManager.MethodFlags GetMethodFlags (Location loc)
 		{
 			TypeManager.MethodFlags flags = 0;
-
-			if (obsolete != null) {
-				if (obsolete_error) {
-					Report.Error (619, loc, "Method `" + member.Name +
-						      "' is obsolete: `" + obsolete + "'");
-					return TypeManager.MethodFlags.IsObsoleteError;
-				} else
-					Report.Warning (618, loc, "Method `" + member.Name +
-							"' is obsolete: `" + obsolete + "'");
-
-				flags |= TypeManager.MethodFlags.IsObsolete;
-			}
 
 			if (ShouldIgnore (loc))
 				flags |= TypeManager.MethodFlags.ShouldIgnore;
@@ -3882,6 +3856,7 @@ namespace Mono.CSharp {
 			}
 
 			TypeManager.AddMethod (builder, this);
+			TypeManager.AddMethod2 (builder, method);
 
 			return true;
 		}
@@ -4888,6 +4863,10 @@ namespace Mono.CSharp {
 				return new EmitContext (tc, method.ds, method.Location, ig, ReturnType, method.ModFlags, false);
 			}
 
+			public ObsoleteAttribute GetObsoleteAttribute ()
+			{
+				return method.GetObsoleteAttribute (method.ds);
+			}
 			#endregion
 		}
 
@@ -5607,6 +5586,11 @@ namespace Mono.CSharp {
 			public EmitContext CreateEmitContext (TypeContainer tc, ILGenerator ig)
 			{
 				return new EmitContext (tc, method.ds, Location, ig, ReturnType, method.ModFlags, false);
+			}
+
+			public ObsoleteAttribute GetObsoleteAttribute ()
+			{
+				return method.GetObsoleteAttribute (method.ds);
 			}
 
 			public abstract string MethodName { get; }

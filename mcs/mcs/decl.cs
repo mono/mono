@@ -104,7 +104,7 @@ namespace Mono.CSharp {
 		/// <summary>
 		/// Returns instance of ObsoleteAttribute for this MemberCore
 		/// </summary>
-		public ObsoleteAttribute GetObsoleteAttribute (EmitContext ec)
+		public ObsoleteAttribute GetObsoleteAttribute (DeclSpace ds)
 		{
 			// ((flags & (Flags.Obsolete_Undetected | Flags.Obsolete)) == 0) is slower, but why ?
 			if ((caching_flags & Flags.Obsolete_Undetected) == 0 && (caching_flags & Flags.Obsolete) == 0) {
@@ -116,11 +116,15 @@ namespace Mono.CSharp {
 			if (OptAttributes == null)
 				return null;
 
+			// TODO: remove this allocation
+			EmitContext ec = new EmitContext (ds.Parent, ds, ds.Location,
+				null, null, ds.ModFlags, false);
+
 			Attribute obsolete_attr = OptAttributes.Search (TypeManager.obsolete_attribute_type, ec);
 			if (obsolete_attr == null)
 				return null;
 
-			ObsoleteAttribute obsolete = obsolete_attr.GetObsoleteAttribute (ec.DeclSpace);
+			ObsoleteAttribute obsolete = obsolete_attr.GetObsoleteAttribute (ds);
 			if (obsolete == null)
 				return null;
 

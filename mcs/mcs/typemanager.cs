@@ -238,6 +238,7 @@ public class TypeManager {
 	// </remarks>
 
 	static Hashtable builder_to_method;
+	static Hashtable builder_to_method_2;
 
 	// <remarks>
 	//  Contains all public types from referenced assemblies.
@@ -358,6 +359,7 @@ public class TypeManager {
 		
 		builder_to_declspace = new PtrHashtable ();
 		builder_to_method = new PtrHashtable ();
+		builder_to_method_2 = new PtrHashtable ();
 		method_arguments = new PtrHashtable ();
 		method_internal_params = new PtrHashtable ();
 		indexer_arguments = new PtrHashtable ();
@@ -455,9 +457,21 @@ public class TypeManager {
 		builder_to_declspace.Add (t, i);
 	}
 
+
+	[Obsolete("Will be removed very soon")]
 	public static void AddMethod (MethodBuilder builder, MethodData method)
 	{
 		builder_to_method.Add (builder, method);
+	}
+
+	public static void AddMethod2 (MethodBase builder, IMethodData method)
+	{
+		builder_to_method_2.Add (builder, method);
+	}
+
+	public static IMethodData GetMethod (MethodBase builder)
+	{
+		return (IMethodData) builder_to_method_2 [builder];
 	}
 
 	/// <summary>
@@ -2327,8 +2341,6 @@ public class TypeManager {
 
 	[Flags]
 	public enum MethodFlags {
-		IsObsolete = 1,
-		IsObsoleteError = 1 << 1,
 		ShouldIgnore = 1 << 2
 	}
 	
@@ -2359,23 +2371,6 @@ public class TypeManager {
 				continue;
 			}
 			System.Attribute a = (System.Attribute) ta;
-			if (a.TypeId == TypeManager.obsolete_attribute_type){
-				ObsoleteAttribute oa = (ObsoleteAttribute) a;
-
-				string method_desc = TypeManager.CSharpSignature (mb);
-
-				if (oa.IsError) {
-					Report.Error (619, loc, "Method `" + method_desc +
-						      "' is obsolete: `" + oa.Message + "'");
-					return MethodFlags.IsObsoleteError;
-				} else
-					Report.Warning (618, loc, "Method `" + method_desc +
-							"' is obsolete: `" + oa.Message + "'");
-
-				flags |= MethodFlags.IsObsolete;
-
-				continue;
-			}
 			
 			//
 			// Skip over conditional code.

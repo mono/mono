@@ -671,44 +671,6 @@ namespace Mono.CSharp {
 			return ((StringConstant) arg.Expr).Value;
 		}
 
-		//
-		// This pulls the obsolete message and error flag out of an Obsolete attribute
-		//
-		public string Obsolete_GetObsoleteMessage (out bool is_error)
-		{
-			is_error = false;
-			//
-			// So we have an Obsolete, pull the data out.
-			//
-			if (Arguments == null || Arguments [0] == null)
-				return "";
-
-			ArrayList pos_args = (ArrayList) Arguments [0];
-			if (pos_args.Count == 0)
-				return "";
-			else if (pos_args.Count > 2){
-				Error_AttributeConstructorMismatch ();
-				return null;
-			}
-
-			Argument arg = (Argument) pos_args [0];	
-			if (!(arg.Expr is StringConstant)){
-				Error_AttributeConstructorMismatch ();
-				return null;
-			}
-
-			if (pos_args.Count == 2){
-				Argument arg2 = (Argument) pos_args [1];
-				if (!(arg2.Expr is BoolConstant)){
-					Error_AttributeConstructorMismatch ();
-					return null;
-				}
-				is_error = ((BoolConstant) arg2.Expr).Value;
-			}
-
-			return ((StringConstant) arg.Expr).Value;
-		}
-
 		public string IndexerName_GetIndexerName (EmitContext ec)
 		{
 			if (Arguments == null || Arguments [0] == null){
@@ -1353,6 +1315,22 @@ namespace Mono.CSharp {
 				return IsClsCompliant (type.Assembly);
 
 			return ((CLSCompliantAttribute)CompliantAttribute[0]).IsCompliant;
+		}
+
+		/// <summary>
+		/// Returns instance of ObsoleteAttribute when method is obsolete
+		/// </summary>
+		public static ObsoleteAttribute GetMethodObsoleteAttribute (MethodBase mb)
+		{
+			IMethodData mc = TypeManager.GetMethod (mb);
+			if (mc != null) 
+				return mc.GetObsoleteAttribute ();
+
+			// TODO: remove after Constructor will be ready for IMethodData
+			if (mb.DeclaringType is TypeBuilder)
+				return null;
+
+			return GetMemberObsoleteAttribute (mb);
 		}
 
 		/// <summary>

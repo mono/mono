@@ -1,3 +1,12 @@
+2004-05-23  Marek Safar  <marek.safar@seznam.cz>
+
+	Fix bug #57835
+	* attribute.cs (AttributeTester.GetMethodObsoleteAttribute): Returns
+	instance of ObsoleteAttribute when symbol is obsolete.
+
+	* class.cs
+	(IMethodData): Extended interface for ObsoleteAttribute support.
+
 2004-05-22  Marek Safar  <marek.safar@seznam.cz>
 
 	* attribute.cs: Fix bug #55970
@@ -9,7 +18,7 @@
 	(GetObsoleteAttribute): New method. Creates the instance of
 	ObsoleteAttribute.
 	(AttributeTester.GetMemberObsoleteAttribute): Returns instance of
-	ObsoleteAttribute when method is obsolete.
+	ObsoleteAttribute when member is obsolete.
 	(AttributeTester.Report_ObsoleteMessage): Common method for
 	Obsolete error/warning reporting.
 
