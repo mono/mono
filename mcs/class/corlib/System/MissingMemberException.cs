@@ -56,5 +56,15 @@ namespace System {
 			info.AddValue ("MMMemberName", MemberName);
 			info.AddValue ("MMSignature", Signature);
 		}
+
+		public override string Message {
+			get {
+				if (ClassName == null)
+					return base.Message;
+				else
+					return "Member " + ClassName + "." + MemberName + " not found.";
+			}
+		}
+
 	}
 }

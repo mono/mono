@@ -32,6 +32,15 @@ namespace System
 			: base (className, methodName)
 		{
 		}
+
+		public override string Message {
+			get {
+				if (ClassName == null)
+					return base.Message;
+				else
+					return "Method " + ClassName + "." + MemberName + " not found.";
+			}
+		}
 	}
 }
 
