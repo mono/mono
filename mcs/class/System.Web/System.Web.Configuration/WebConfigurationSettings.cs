@@ -140,6 +140,9 @@ namespace System.Web.Configuration
 				return (ConfigurationData) fileToConfig [WebConfigurationSettings.MachineConfigPath];
 
 			string dir = UrlUtils.GetDirectory (filepath);
+			if (HttpRuntime.AppDomainAppVirtualPath.Length > dir.Length)
+				return  (ConfigurationData) fileToConfig [WebConfigurationSettings.MachineConfigPath];
+
 			ConfigurationData data = (ConfigurationData) fileToConfig [dir];
 			if (data != null)
 				return data;
