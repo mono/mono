@@ -146,6 +146,11 @@ compiler by default has references to the system assemblies.
 Makes the compiler ignore warnings specified in the comma-separeted
 list WARNLIST>
 .TP
+.I -optimize, -optimize+, -optimize-
+Controls whether to perform optimizations on the code.   -optimize and
+-optimize+ will turn on optimizations, -optimize- will turn it off.
+The default in mcs is to optimize+.
+.TP
 .I -out:FNAME, -o FNAME
 Names the output file to be generated.
 .TP
