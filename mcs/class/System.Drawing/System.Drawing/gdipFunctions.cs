@@ -169,8 +169,7 @@ namespace System.Drawing {
                 static internal extern  Status GdipFillPolygon2I (IntPtr graphics, IntPtr brush, Point [] points, int count);
                 [DllImport("gdiplus.dll")]
 		static internal extern Status GdipFillRectangle (IntPtr graphics, IntPtr brush, float x1, float y1, float x2, float y2);		
-		//FIXME: The encoding for string parameter this function is UNICODE
-		[DllImport("gdiplus.dll", CharSet=CharSet.Ansi)]
+		[DllImport("gdiplus.dll", CharSet=CharSet.Unicode)]
 		static internal extern Status GdipDrawString (IntPtr graphics, string text, int len, IntPtr font, ref RectangleF rc, IntPtr format, IntPtr brush);
 		[DllImport("gdiplus.dll")]
 		static internal extern Status GdipGetDC (IntPtr graphics, out int hdc);
@@ -668,7 +667,7 @@ namespace System.Drawing {
 		internal static extern Status GdipGetFontCollectionFamilyCount( IntPtr collection, out int found );
 		
 		[DllImport ("gdiplus.dll")]
-		internal static extern Status GdipGetFontCollectionFamilyList( IntPtr collection, int getCount, out IntPtr [] familyList, out int retCount );
+		internal static extern Status GdipGetFontCollectionFamilyList( IntPtr collection, int getCount, IntPtr dest, out int retCount );
 		//internal static extern Status GdipGetFontCollectionFamilyList( IntPtr collection, int getCount, [Out] FontFamily[] familyList, out int retCount );
 		
 		[DllImport ("gdiplus.dll")]
