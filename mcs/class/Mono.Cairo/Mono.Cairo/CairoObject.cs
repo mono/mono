@@ -15,7 +15,7 @@ using Mono.Cairo;
 
 namespace Mono.Cairo {
 
-	public class CairoObject
+        public class CairoObject
         {
                 IntPtr state;
 
@@ -38,7 +38,7 @@ namespace Mono.Cairo {
                 {
                         return Cairo.cairo_destroy (state);
                 }
-		
+                
                 public void Save ()
                 {
                         Cairo.cairo_save (state);
@@ -147,11 +147,11 @@ namespace Mono.Cairo {
                         Cairo.cairo_set_dash (state, dashes, ndash, offset);
                 }
 
-//              public CairoPatternObject Pattern {
-//                       set {
-//                              Cairo.cairo_set_pattern (state, value.Pointer);
-//                      }
-//              }
+                public CairoSurfaceObject Pattern {
+                        set {
+                                Cairo.cairo_set_pattern (state, value.Pointer);
+                        }
+                }
 
                 public double MiterLimit {
                         set {
@@ -182,12 +182,12 @@ namespace Mono.Cairo {
                 {
                         Cairo.cairo_new_path (state);
                 }
-		
+                
                 public void MoveTo (double x, double y)
                 {
                         Cairo.cairo_move_to (state, x, y);
                 }
-		
+                
                 public void LineTo (double x, double y)
                 {
                         Cairo.cairo_line_to (state, x, y);
@@ -222,7 +222,7 @@ namespace Mono.Cairo {
                 {
                         Cairo.cairo_rectangle (state, x, y, width, height);
                 }
-		
+                
                 public void ClosePath ()
                 {
                         Cairo.cairo_close_path (state);
