@@ -1,5 +1,8 @@
 2003-10-25  Zoltan Varga  <vargaz@freemail.hu>
 
+	* marshal.c (mono_marshal_get_native_wrapper): Add support for [Out]
+	marshalling of arrays. Fixes #50116.
+
 	* appdomain.c (ves_icall_System_AppDomain_InternalIsFinalizingForUnload): New icall.
 
 	* appdomain.c (unload_thread_main): Clear class->cached_vtable if it
