@@ -1,5 +1,5 @@
 /* Transport Security Layer (TLS)
- * Copyright (c) 2003 Carlos Guzmán Álvarez
+ * Copyright (c) 2003-2004 Carlos Guzman Alvarez
  * 
  * Permission is hereby granted, free of charge, to any person 
  * obtaining a copy of this software and associated documentation 
@@ -30,18 +30,17 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 {
 	internal class TlsClientKeyExchange : TlsHandshakeMessage
 	{
-		#region CONSTRUCTORS
+		#region Constructors
 
 		public TlsClientKeyExchange (TlsContext context) : 
 			base(context,
-				TlsHandshakeType.ClientKeyExchange, 
-				TlsContentType.Handshake)
+				TlsHandshakeType.ClientKeyExchange)
 		{
 		}
 
 		#endregion
 
-		#region PROTECTED_METHODS
+		#region Protected Methods
 
 		protected override void ProcessAsSsl3()
 		{
@@ -49,7 +48,7 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 			byte[] preMasterSecret = this.Context.Cipher.CreatePremasterSecret();
 
 			// Create a new RSA key
-			RSA rsa = this.Context.Cipher.CreateRSA();
+			RSA rsa = this.Context.Cipher.CertificateRSA();
 			
 			// Encrypt premaster_sercret
 			RSAPKCS1KeyExchangeFormatter formatter = new RSAPKCS1KeyExchangeFormatter(rsa);
@@ -74,7 +73,7 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 			byte[] preMasterSecret = this.Context.Cipher.CreatePremasterSecret();
 
 			// Create a new RSA key
-			RSA rsa = this.Context.Cipher.CreateRSA();
+			RSA rsa = this.Context.Cipher.CertificateRSA();
 			
 			// Encrypt premaster_sercret
 			RSAPKCS1KeyExchangeFormatter formatter = new RSAPKCS1KeyExchangeFormatter(rsa);

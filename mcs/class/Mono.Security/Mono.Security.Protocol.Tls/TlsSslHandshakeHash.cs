@@ -1,5 +1,5 @@
 /* Transport Security Layer (TLS)
- * Copyright (c) 2003 Carlos Guzmán Álvarez
+ * Copyright (c) 2003-2004 Carlos Guzman Alvarez
  * 
  * Permission is hereby granted, free of charge, to any person 
  * obtaining a copy of this software and associated documentation 
@@ -29,7 +29,7 @@ namespace Mono.Security.Protocol.Tls
 {
 	internal class TlsSslHandshakeHash : System.Security.Cryptography.HashAlgorithm
 	{
-		#region FIELDS
+		#region Fields
 
 		private HashAlgorithm	md5;
 		private HashAlgorithm	sha;
@@ -42,7 +42,7 @@ namespace Mono.Security.Protocol.Tls
 
 		#endregion
 
-		#region CONSTRUCTORS
+		#region Constructors
 
 		public TlsSslHandshakeHash(byte[] secret)
 		{
@@ -61,7 +61,7 @@ namespace Mono.Security.Protocol.Tls
 
 		#endregion
 
-		#region METHODS
+		#region Methods
 
 		public override void Initialize()
 		{
@@ -125,7 +125,7 @@ namespace Mono.Security.Protocol.Tls
 
 		#endregion
 
-		#region PRIVATE_METHODS
+		#region Private Methods
 
 		private void initializePad()
 		{

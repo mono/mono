@@ -1,5 +1,5 @@
 /* Transport Security Layer (TLS)
- * Copyright (c) 2003 Carlos Guzmán Álvarez
+ * Copyright (c) 2003-2004 Carlos Guzman Alvarez
  * 
  * Permission is hereby granted, free of charge, to any person 
  * obtaining a copy of this software and associated documentation 
@@ -25,11 +25,13 @@
 using System;
 using System.Security.Cryptography;
 
+using Mono.Security.Protocol.Tls;
+
 namespace Mono.Security.Cryptography
 {
 	internal class MD5SHA1 : HashAlgorithm
 	{
-		#region FIELDS
+		#region Fields
 
 		private HashAlgorithm	md5;
 		private HashAlgorithm	sha;
@@ -37,9 +39,9 @@ namespace Mono.Security.Cryptography
 
 		#endregion
 
-		#region CONSTRUCTORS
+		#region Constructors
 
-		public MD5SHA1()
+		public MD5SHA1() : base()
 		{
 			this.md5 = MD5.Create();
 			this.sha = SHA1.Create();
@@ -50,7 +52,7 @@ namespace Mono.Security.Cryptography
 
 		#endregion
 
-		#region METHODS
+		#region Methods
 
 		public override void Initialize()
 		{
@@ -97,8 +99,7 @@ namespace Mono.Security.Cryptography
 				throw new CryptographicUnexpectedOperationException ("missing key");
 			}
 
-			#warning "MD5SHA1 hash is not supported by .NET"
-			RSAPKCS1SignatureFormatter f = new RSAPKCS1SignatureFormatter(rsa);
+			RSASslSignatureFormatter f = new RSASslSignatureFormatter(rsa);
 			f.SetHashAlgorithm("MD5SHA1");
 
 			return f.CreateSignature(this.Hash);
@@ -115,8 +116,7 @@ namespace Mono.Security.Cryptography
 				throw new ArgumentNullException ("rgbSignature");
 			}
 
-			#warning "MD5SHA1 hash is not supported by .NET"
-			RSAPKCS1SignatureDeformatter d = new RSAPKCS1SignatureDeformatter(rsa);
+			RSASslSignatureDeformatter d = new RSASslSignatureDeformatter(rsa);
 			d.SetHashAlgorithm("MD5SHA1");
 
 			return d.VerifySignature(this.Hash, rgbSignature);

@@ -1,5 +1,5 @@
 /* Transport Security Layer (TLS)
- * Copyright (c) 2003 Carlos Guzmán Álvarez
+ * Copyright (c) 2003-2004 Carlos Guzman Alvarez
  * 
  * Permission is hereby granted, free of charge, to any person 
  * obtaining a copy of this software and associated documentation 
@@ -31,13 +31,13 @@ namespace Mono.Security.Protocol.Tls
 {
 	internal sealed class TlsCipherSuiteCollection : ArrayList
 	{
-		#region FIELDS
+		#region Fields
 
 		private SecurityProtocolType protocol;
 
 		#endregion
 
-		#region PROPERTIES
+		#region Properties
 
 		public CipherSuite this[string name] 
 		{
@@ -59,7 +59,7 @@ namespace Mono.Security.Protocol.Tls
 
 		#endregion
 
-		#region CONSTRUCTORS
+		#region Constructors
 
 		public TlsCipherSuiteCollection(SecurityProtocolType protocol) : base()
 		{
@@ -68,7 +68,7 @@ namespace Mono.Security.Protocol.Tls
 
 		#endregion
 
-		#region METHODS
+		#region Methods
 	
 		public bool Contains(string name)
 		{

@@ -1,5 +1,5 @@
 /* Transport Security Layer (TLS)
- * Copyright (c) 2003 Carlos Guzmán Álvarez
+ * Copyright (c) 2003-2004 Carlos Guzman Alvarez
  * 
  * Permission is hereby granted, free of charge, to any person 
  * obtaining a copy of this software and associated documentation 
@@ -23,6 +23,7 @@
  */
 
 using System;
+using System.Net;
 using System.Collections;
 using System.Text.RegularExpressions;
 using System.Security.Cryptography;
@@ -35,13 +36,13 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 {
 	internal class TlsServerCertificate : TlsHandshakeMessage
 	{
-		#region FIELDS
+		#region Fields
 
 		private X509CertificateCollection	certificates;
 		
 		#endregion
 
-		#region CONSTRUCTORS
+		#region Constructors
 
 		public TlsServerCertificate(TlsContext context, byte[] buffer) 
 			: base(context, TlsHandshakeType.Certificate, buffer)
@@ -50,17 +51,17 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 
 		#endregion
 
-		#region METHODS
+		#region Methods
 
-		public override void UpdateSession()
+		public override void Update()
 		{
-			base.UpdateSession();
+			base.Update();
 			this.Context.ServerSettings.Certificates = certificates;
 		}
 
 		#endregion
 
-		#region PROTECTED_METHODS
+		#region Protected Methods
 
 		protected override void ProcessAsSsl3()
 		{
@@ -84,29 +85,65 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 
 				if (certLength > 0)
 				{
-					// Read certificate
-					X509Certificate certificate = new X509Certificate(this.ReadBytes(certLength));
+					// Read certificate data
+					byte[] buffer = this.ReadBytes(certLength);
+
+					// Create a new X509 Certificate
+					X509Certificate certificate = new X509Certificate(buffer);
 					certificates.Add(certificate);
 
-					readed += certLength;
+					/*
+					System.Text.StringBuilder b = new System.Text.StringBuilder();
 
-					this.validateCertificate(certificate);
+					b.AppendFormat(
+							"\r\nCertificate {0} | Issuer name {1} | Self signed {2} ({3} bytes) \r\n",
+							certificates.Count,
+							certificate.IssuerName,
+							certificate.IsSelfSigned,
+							buffer.Length);
+
+					b.Append("Contents: \r\n");
+
+					int byteCount = 0;
+					for (int i = 0; i < buffer.Length; i++)
+					{
+						if (byteCount == 25)
+						{
+							byteCount = 0;
+							b.Append("\r\n");
+						}
+                        
+						b.AppendFormat("{0} ", buffer[i].ToString("x2"));
+
+						byteCount++;
+					}
+
+					System.Diagnostics.Trace.Write(b.ToString());
+					*/
+
+					readed += certLength;
 				}
 			}
+
+#warning Correct validation needs to be made using a certificate chain
+
+			// Restrict validation to the first certificate
+			this.validateCertificate(certificates[0]);
 		}
 
 		#endregion
 
-		#region  PRIVATE_METHODS
+		#region Private Methods
 
 		private void validateCertificate(X509Certificate certificate)
 		{
-			int[] certificateErrors = new int[0];
+			ArrayList errors = new ArrayList();
 
 			// 1 step : Validate dates
 			if (!certificate.IsCurrent)
 			{
-				#warning "Add error to the list"
+				// errors.Add(0x800B0101);
+				errors.Add(0x01);
 			}
 
 			// 2 step: Validate CA
@@ -123,11 +160,14 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 			// 4 step: Validate domain name
 			if (!this.checkDomainName(certificate.SubjectName))
 			{
-				#warning "Add error to the list"
+				// errors.Add(0x800B010F);
+				errors.Add(0x02);
 			}
 
-			if (certificateErrors.Length > 0)
+			if (errors.Count > 0)
 			{
+				int[] certificateErrors = (int[])errors.ToArray(typeof(int));
+
 				if (!this.Context.SslStream.RaiseServerCertificateValidation(
 					new X509Cert.X509Certificate(certificate.RawData), 
 					new int[]{}))
@@ -154,7 +194,27 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 				}
 			}
 
-			return (this.Context.ClientSettings.TargetHost == domainName);
+			if (domainName == String.Empty)
+			{
+				return false;
+			}
+			else
+			{
+				string targetHost = this.Context.ClientSettings.TargetHost;
+
+				// Check that the IP is correct
+				try
+				{
+					IPAddress	ipHost		= Dns.Resolve(targetHost).AddressList[0];
+					IPAddress	ipDomain	= Dns.Resolve(domainName).AddressList[0];
+
+					return (ipHost.Address == ipDomain.Address);
+				}
+				catch (Exception)
+				{
+					return false;
+				}
+			}
 		}
 
 		#endregion

@@ -25,75 +25,78 @@
 using System;
 using System.Security.Cryptography;
 
-using Mono.Security.X509;
-using Mono.Security.Protocol.Tls.Handshake;
-
 namespace Mono.Security.Protocol.Tls
 {
-	internal class TlsServerSettings
+	internal class RSASslSignatureDeformatter : AsymmetricSignatureDeformatter
 	{
 		#region Fields
 
-		private X509CertificateCollection	certificates;
-		private bool						serverKeyExchange;
-		private bool						certificateRequest;
-		private	TlsClientCertificateType[]	certificateTypes;
-		private string[]					distinguisedNames;
-		private RSAParameters				rsaParameters;
-		private byte[]						signedParams;		
-
-		#endregion
-
-		#region Properties
-		
-		public bool	ServerKeyExchange
-		{
-			get { return serverKeyExchange; }
-			set { serverKeyExchange = value; }
-		}
-
-		public RSAParameters RsaParameters
-		{
-			get { return rsaParameters; }
-			set { rsaParameters = value; }
-		}
-
-		public byte[] SignedParams
-		{
-			get { return signedParams; }
-			set { signedParams = value; }
-		}
-
-		public bool	CertificateRequest
-		{
-			get { return certificateRequest; }
-			set { certificateRequest = value; }
-		}
-		
-		public TlsClientCertificateType[] CertificateTypes
-		{
-			get { return certificateTypes; }
-			set { certificateTypes = value; }
-		}
-
-		public string[] DistinguisedNames
-		{
-			get { return distinguisedNames; }
-			set { distinguisedNames = value; }
-		}
-		
-		public X509CertificateCollection Certificates
-		{
-			get { return certificates; }
-			set { certificates = value; }
-		}
+		private RSA				key;
+		private HashAlgorithm	hash;
 
 		#endregion
 
 		#region Constructors
 
-		public TlsServerSettings()
+		public RSASslSignatureDeformatter()
 		{
+		}
+
+		public RSASslSignatureDeformatter(AsymmetricAlgorithm key)
+		{
+			this.SetKey(key);
+		}
+
+		#endregion
+
+		#region Methods
+
+		public override bool VerifySignature(
+			byte[] rgbHash,
+			byte[] rgbSignature)
+		{
+			if (key == null)
+			{
+				throw new CryptographicUnexpectedOperationException("The key is a null reference");
+			}
+			if (hash == null)
+			{
+				throw new CryptographicUnexpectedOperationException("The hash algorithm is a null reference.");
+			}
+			if (rgbHash == null)
+			{
+				throw new ArgumentNullException("The rgbHash parameter is a null reference.");
+			}
+
+			return Mono.Security.Cryptography.PKCS1.Verify_v15(
+				this.key,
+				this.hash,
+				rgbHash,
+				rgbSignature);
+		}
+
+		public override void SetHashAlgorithm(string strName)
+		{
+			switch (strName)
+			{
+				case "MD5SHA1":
+					this.hash = new Mono.Security.Cryptography.MD5SHA1();
+					break;
+
+				default:
+					this.hash = HashAlgorithm.Create(strName);
+					break;
+			}
+		}
+
+		public override void SetKey(AsymmetricAlgorithm key)
+		{
+			if (!(key is RSA))
+			{
+				throw new ArgumentException("Specfied key is not an RSA key");
+			}
+
+			this.key = key as RSA;
 		}
 
 		#endregion

@@ -1,5 +1,5 @@
 /* Transport Security Layer (TLS)
- * Copyright (c) 2003 Carlos Guzmán Álvarez
+ * Copyright (c) 2003-2004 Carlos Guzman Alvarez
  * 
  * Permission is hereby granted, free of charge, to any person 
  * obtaining a copy of this software and associated documentation 
@@ -30,7 +30,7 @@ namespace Mono.Security.Protocol.Tls
 {
 	internal class TlsStream : Stream
 	{
-		#region FIELDS
+		#region Fields
 
 		private bool				canRead;
 		private bool				canWrite;
@@ -38,7 +38,7 @@ namespace Mono.Security.Protocol.Tls
 
 		#endregion
 
-		#region PROPERTIES
+		#region Properties
 
 		public bool EOF
 		{
@@ -57,7 +57,7 @@ namespace Mono.Security.Protocol.Tls
 
 		#endregion
 
-		#region STREAM_PROPERTIES
+		#region Stream Properties
 
 		public override bool CanWrite
 		{
@@ -87,7 +87,7 @@ namespace Mono.Security.Protocol.Tls
 
 		#endregion
 
-		#region CONSTRUCTORS
+		#region Constructors
 
 		public TlsStream() : base()
 		{
@@ -105,7 +105,7 @@ namespace Mono.Security.Protocol.Tls
 
 		#endregion
 
-		#region SPECIFIC_READ_METHODS
+		#region Specific Read Methods
 
 		public new byte ReadByte()
 		{
@@ -150,7 +150,7 @@ namespace Mono.Security.Protocol.Tls
 
 		#endregion
 
-		#region SPECIFIC_WRITE_METHODS
+		#region Specific Write Methods
 
 		public void Write(byte value)
 		{
@@ -192,7 +192,7 @@ namespace Mono.Security.Protocol.Tls
 
 		#endregion
 
-		#region METHODS
+		#region Methods
 
 		public void Reset()
 		{
@@ -207,7 +207,7 @@ namespace Mono.Security.Protocol.Tls
 
 		#endregion
 
-		#region STREAM_METHODS
+		#region Stream Methods
 
 		public override void Flush()
 		{

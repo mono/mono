@@ -1,5 +1,5 @@
 /* Transport Security Layer (TLS)
- * Copyright (c) 2003 Carlos Guzmán Álvarez
+ * Copyright (c) 2003-2004 Carlos Guzman Alvarez
  * 
  * Permission is hereby granted, free of charge, to any person 
  * obtaining a copy of this software and associated documentation 
@@ -36,7 +36,7 @@ namespace Mono.Security.Protocol.Tls
 {
 	internal class TlsContext
 	{
-		#region FIELDS
+		#region Fields
 		
 		// SslClientStream that owns the context
 		private SslClientStream	sslStream;
@@ -96,7 +96,7 @@ namespace Mono.Security.Protocol.Tls
 
 		#endregion
 
-		#region PROPERTIES
+		#region Properties
 
 		public SslClientStream SslStream
 		{
@@ -254,7 +254,7 @@ namespace Mono.Security.Protocol.Tls
 
 		#endregion
 
-		#region CONSTRUCTORS
+		#region Constructors
 
 		public TlsContext(
 			SslClientStream sslStream,
@@ -277,7 +277,7 @@ namespace Mono.Security.Protocol.Tls
 
 		#endregion
 
-		#region METHODS
+		#region Methods
 		
 		public int GetUnixTime()
 		{

@@ -1,5 +1,5 @@
 /* Transport Security Layer (TLS)
- * Copyright (c) 2003 Carlos Guzmán Álvarez
+ * Copyright (c) 2003-2004 Carlos Guzman Alvarez
  * 
  * Permission is hereby granted, free of charge, to any person 
  * obtaining a copy of this software and associated documentation 
@@ -30,15 +30,16 @@ namespace Mono.Security.Protocol.Tls
 {
 	internal sealed class TlsClientSettings
 	{
-		#region FIELDS
+		#region Fields
 
 		private string						targetHost;
 		private X509CertificateCollection	certificates;
 		private SecurityCompressionType		compressionMethod;
+		private X509Certificate				clientCertificate;
 	
 		#endregion
 
-		#region PROPERTIES
+		#region Properties
 
 		public string TargetHost
 		{
@@ -64,10 +65,17 @@ namespace Mono.Security.Protocol.Tls
 				this.compressionMethod = value; 
 			}
 		}
+		
+		public X509Certificate ClientCertificate
+		{
+			get { return this.clientCertificate; }
+			set { this.clientCertificate = value; }
+		}
+
 
 		#endregion
 
-		#region CONSTRUCTORS
+		#region Constructors
 
 		public TlsClientSettings()
 		{

@@ -1,5 +1,5 @@
 /* Transport Security Layer (TLS)
- * Copyright (c) 2003 Carlos Guzmán Álvarez
+ * Copyright (c) 2003-2004 Carlos Guzman Alvarez
  * 
  * Permission is hereby granted, free of charge, to any person 
  * obtaining a copy of this software and associated documentation 
@@ -23,33 +23,34 @@
  */
 
 using System;
-using Mono.Security.Protocol.Tls;
 using System.Security.Cryptography.X509Certificates;
+
+using Mono.Security.Protocol.Tls;
 
 namespace Mono.Security.Protocol.Tls.Handshake.Client
 {
 	internal class TlsClientCertificate : TlsHandshakeMessage
 	{
-		#region CONSTRUCTORS
+		#region Constructors
 
 		public TlsClientCertificate(TlsContext context) 
-			: base(context, TlsHandshakeType.Certificate, TlsContentType.Handshake)
+			: base(context, TlsHandshakeType.Certificate)
 		{
 		}
 
 		#endregion
 
-		#region METHODS
+		#region Methods
 
-		public override void UpdateSession()
+		public override void Update()
 		{
-			base.UpdateSession();
+			base.Update();
 			this.Reset();
 		}
 
 		#endregion
 
-		#region PROTECTED_METHODS
+		#region Protected Methods
 
 		protected override void ProcessAsSsl3()
 		{
@@ -64,13 +65,24 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 				throw this.Context.CreateException("Client certificate requested by the server and no client certificate specified.");
 			}
 			
+			// Select a valid certificate
+			X509Certificate clientCert = this.Context.ClientSettings.Certificates[0];
+
+			/*
+			clientCert = this.Context.SslStream.RaiseClientCertificateSelection(
+							this.Context.ClientSettings.Certificates,
+							this.Context.ServerSettings.Certificates[0],
+							this.Context.ClientSettings.TargetHost,
+							null);
+			*/
+	
+			this.Context.ClientSettings.ClientCertificate = clientCert;
+
 			// Write client certificates information to a stream
 			TlsStream stream = new TlsStream();
-			foreach (X509Certificate cert in this.Context.ClientSettings.Certificates)
-			{
-				stream.WriteInt24(cert.GetRawCertData().Length);
-				stream.Write(cert.GetRawCertData());
-			}
+
+			stream.WriteInt24(clientCert.GetRawCertData().Length);
+			stream.Write(clientCert.GetRawCertData());
 
 			// Compose the message
 			this.WriteInt24((int)stream.Length);

@@ -1,5 +1,5 @@
 /* Transport Security Layer (TLS)
- * Copyright (c) 2003 Carlos Guzmán Álvarez
+ * Copyright (c) 2003-2004 Carlos Guzman Alvarez
  * 
  * Permission is hereby granted, free of charge, to any person 
  * obtaining a copy of this software and associated documentation 
@@ -30,7 +30,7 @@ namespace Mono.Security.Protocol.Tls.Alerts
 
 	public sealed class TlsWarningAlertEventArgs
 	{
-		#region FIELDS
+		#region Fields
 
 		private TlsAlertLevel		level;
 		private TlsAlertDescription description;
@@ -38,7 +38,7 @@ namespace Mono.Security.Protocol.Tls.Alerts
 
 		#endregion
 
-		#region PROPERTIES
+		#region Properties
 
 		public TlsAlertLevel Level
 		{
@@ -57,7 +57,7 @@ namespace Mono.Security.Protocol.Tls.Alerts
 
 		#endregion
 
-		#region CONSTRUCTORS
+		#region Constructors
 		
 		internal TlsWarningAlertEventArgs(TlsAlertLevel	level, TlsAlertDescription description)
 		{

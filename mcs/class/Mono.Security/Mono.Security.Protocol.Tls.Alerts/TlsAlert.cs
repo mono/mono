@@ -1,5 +1,5 @@
 /* Transport Security Layer (TLS)
- * Copyright (c) 2003 Carlos Guzmán Álvarez
+ * Copyright (c) 2003-2004 Carlos Guzman Alvarez
  * 
  * Permission is hereby granted, free of charge, to any person 
  * obtaining a copy of this software and associated documentation 
@@ -27,7 +27,7 @@ using Mono.Security.Protocol.Tls;
 
 namespace Mono.Security.Protocol.Tls.Alerts
 {
-	#region ENUMS
+	#region Enumerations
 
 	public enum TlsAlertLevel : byte
 	{
@@ -66,7 +66,7 @@ namespace Mono.Security.Protocol.Tls.Alerts
 	
 	internal abstract class TlsAlert : TlsStream
 	{
-		#region FIELDS
+		#region Fields
 
 		private TlsContext			context;
 		private TlsAlertLevel		level;
@@ -74,7 +74,7 @@ namespace Mono.Security.Protocol.Tls.Alerts
 
 		#endregion
 
-		#region PROPERTIES
+		#region Properties
 
 		public TlsContext Context
 		{
@@ -83,7 +83,7 @@ namespace Mono.Security.Protocol.Tls.Alerts
 
 		#endregion
 
-		#region CONSTRUCTORS
+		#region Constructors
 
 		public TlsAlert(TlsContext context,
 			TlsAlertLevel level,
@@ -98,13 +98,13 @@ namespace Mono.Security.Protocol.Tls.Alerts
 
 		#endregion
 
-		#region ABSTRACT_METHODS
+		#region Abstract Methods
 
-		public abstract void UpdateSession();
+		public abstract void Update();
 
 		#endregion
 
-		#region CONSTRUCTORS
+		#region Constructors
 
 		private void fill()
 		{
@@ -114,7 +114,7 @@ namespace Mono.Security.Protocol.Tls.Alerts
 
 		#endregion
 
-		#region STATIC_METHODS
+		#region Static Methods
 
 		internal static string GetAlertMessage(TlsAlertDescription description)
 		{

@@ -1,5 +1,5 @@
 /* Transport Security Layer (TLS)
- * Copyright (c) 2003 Carlos Guzmán Álvarez
+ * Copyright (c) 2003-2004 Carlos Guzman Alvarez
  * 
  * Permission is hereby granted, free of charge, to any person 
  * obtaining a copy of this software and associated documentation 
@@ -32,26 +32,26 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 {
 	internal class TlsClientCertificateVerify : TlsHandshakeMessage
 	{
-		#region CONSTRUCTORS
+		#region Constructors
 
 		public TlsClientCertificateVerify(TlsContext context) 
-			: base(context, TlsHandshakeType.Finished, TlsContentType.Handshake)
+			: base(context, TlsHandshakeType.Finished)
 		{
 		}
 
 		#endregion
 
-		#region METHODS
+		#region Methods
 
-		public override void UpdateSession()
+		public override void Update()
 		{
-			base.UpdateSession();
+			base.Update();
 			this.Reset();
 		}
 
 		#endregion
 
-		#region PROTECTED_METHODS
+		#region Protected Methods
 
 		protected override void ProcessAsSsl3()
 		{
@@ -60,26 +60,83 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 
 		protected override void ProcessAsTls1()
 		{
-			foreach (X509Certificate cert in this.Context.ClientSettings.Certificates)
+			AsymmetricAlgorithm privKey = this.Context.SslStream.RaisePrivateKeySelection(
+				this.Context.ClientSettings.ClientCertificate,
+				this.Context.ClientSettings.TargetHost);
+
+			// Compute handshake messages hash
+			MD5SHA1 hash = new MD5SHA1();
+			hash.ComputeHash(
+				this.Context.HandshakeMessages.ToArray(),
+				0,
+				(int)this.Context.HandshakeMessages.Length);
+
+			// RSAManaged of the selected ClientCertificate 
+			// (at this moment the first one)
+			RSA rsa = getClientCertRSA((RSA)privKey);
+
+			// Write message
+			Write(hash.CreateSignature(rsa));
+		}
+
+		#endregion
+
+		#region Private methods
+
+		private RSA getClientCertRSA(RSA privKey)
+		{
+			RSAParameters rsaParams		= new RSAParameters();
+			RSAParameters privateParams = privKey.ExportParameters(true);
+
+			// for RSA m_publickey contains 2 ASN.1 integers
+			// the modulus and the public exponent
+			ASN1 pubkey = new ASN1 (this.Context.ClientSettings.Certificates[0].GetPublicKey());
+			ASN1 modulus = pubkey [0];
+			if ((modulus == null) || (modulus.Tag != 0x02))
 			{
-				MD5SHA1					hash = new MD5SHA1();
-				X509.X509Certificate	c	 = new X509.X509Certificate(cert.GetRawCertData());
-				RSA						rsa	 = c.RSA;
-				RSAParameters			p	 = rsa.ExportParameters(false);
-				TlsStream				data = new TlsStream();
+				return null;
+			}
+			ASN1 exponent = pubkey [1];
+			if (exponent.Tag != 0x02)
+			{
+				return null;
+			}
 
-				data.Write(this.Context.RandomCS);
-				data.Write((short)p.Modulus.Length);
-				data.Write(p.Modulus);
-				data.Write((short)p.Exponent.Length);
-				data.Write(p.Exponent);
+			rsaParams.Modulus = this.getUnsignedBigInteger(modulus.Value);
+			rsaParams.Exponent = exponent.Value;
 
-				hash.ComputeHash(data.ToArray(), 0, (int)data.Length);
+			// Set private key parameters
+			rsaParams.D			= privateParams.D;
+			rsaParams.DP		= privateParams.DP;
+			rsaParams.DQ		= privateParams.DQ;
+			rsaParams.InverseQ	= privateParams.InverseQ;
+			rsaParams.P			= privateParams.P;
+			rsaParams.Q			= privateParams.Q;			
 
-				data.Reset();
+			// BUG: MS BCL 1.0 can't import a key which 
+			// isn't the same size as the one present in
+			// the container.
+			int keySize = (rsaParams.Modulus.Length << 3);
+			RSAManaged rsa = new RSAManaged(keySize);
+			rsa.ImportParameters (rsaParams);
 
-				// Write the signature
-				Write(hash.CreateSignature(rsa));
+			return (RSA)rsa;
+		}
+
+		private byte[] getUnsignedBigInteger(byte[] integer) 
+		{
+			if (integer [0] == 0x00) 
+			{
+				// this first byte is added so we're sure it's an unsigned integer
+				// however we can't feed it into RSAParameters or DSAParameters
+				int length = integer.Length - 1;
+				byte[] uinteger = new byte [length];
+				Array.Copy (integer, 1, uinteger, 0, length);
+				return uinteger;
+			}
+			else
+			{
+				return integer;
 			}
 		}
 

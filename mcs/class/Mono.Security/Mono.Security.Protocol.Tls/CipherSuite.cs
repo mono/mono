@@ -1,5 +1,5 @@
 /* Transport Security Layer (TLS)
- * Copyright (c) 2003 Carlos Guzmán Álvarez
+ * Copyright (c) 2003-2004 Carlos Guzman Alvarez
  * 
  * Permission is hereby granted, free of charge, to any person 
  * obtaining a copy of this software and associated documentation 
@@ -36,7 +36,7 @@ namespace Mono.Security.Protocol.Tls
 {
 	internal abstract class CipherSuite
 	{
-		#region FIELDS
+		#region Fields
 
 		private short					code;
 		private string					name;
@@ -61,7 +61,7 @@ namespace Mono.Security.Protocol.Tls
 			
 		#endregion
 
-		#region PROTECTED_PROPERTIES
+		#region Protected Properties
 
 		protected ICryptoTransform EncryptionCipher
 		{
@@ -85,7 +85,7 @@ namespace Mono.Security.Protocol.Tls
 
 		#endregion
 
-		#region PROPERTIES
+		#region Properties
 
 		public CipherAlgorithmType CipherAlgorithmType
 		{
@@ -196,7 +196,7 @@ namespace Mono.Security.Protocol.Tls
 
 		#endregion
 
-		#region CONSTRUCTORS
+		#region Constructors
 		
 		public CipherSuite(
 			short code, string name, CipherAlgorithmType cipherAlgorithmType, 
@@ -225,7 +225,7 @@ namespace Mono.Security.Protocol.Tls
 
 		#endregion
 
-		#region METHODS
+		#region Methods
 
 		public void InitializeCipher()
 		{
@@ -233,19 +233,13 @@ namespace Mono.Security.Protocol.Tls
 			this.createDecryptionCipher();
 		}
 
-		public RSA CreateRSA()
+		public RSA CertificateRSA()
 		{
-			RSA rsa;
-			if (this.Context.ServerSettings.ServerKeyExchange)
-			{
-				rsa = RSA.Create();
-				rsa.ImportParameters(this.Context.ServerSettings.RsaParameters);
-			}
-			else
-			{
-				rsa = this.Context.ServerSettings.Certificates[0].RSA;
-			}
-	
+			RSA rsaCert = this.Context.ServerSettings.Certificates[0].RSA;
+			RSA rsa		= new RSAManaged(rsaCert.KeySize);
+
+			rsa.ImportParameters(rsaCert.ExportParameters(false));
+
 			return rsa;
 		}
 
@@ -284,21 +278,24 @@ namespace Mono.Security.Protocol.Tls
 			if (this.CipherMode == CipherMode.CBC)
 			{
 				// Calculate padding_length
-				int fragmentLength	= fragment.Length + mac.Length + 1;
-				int paddingLength	= this.blockSize - fragmentLength % this.blockSize;
+				byte fragmentLength	= (byte)(fragment.Length + mac.Length + 1);
+				byte paddingLength	= (byte)(this.blockSize - fragmentLength % this.blockSize);
 				if (paddingLength == this.blockSize)
 				{
 					paddingLength = 0;
 				}
 
 				// Write padding length byte
+				byte[] padding = new byte[(paddingLength + 1)];				
 				for (int i = 0; i < (paddingLength + 1); i++)
 				{
-					cs.WriteByte((byte)paddingLength);
+					padding[i] = paddingLength;
 				}
+
+				cs.Write(padding, 0, padding.Length);
 			}
-			// cs.FlushFinalBlock();
-			cs.Close();			
+			cs.FlushFinalBlock();
+			cs.Close();
 
 			return ms.ToArray();
 		}
@@ -316,20 +313,8 @@ namespace Mono.Security.Protocol.Tls
 			if (this.CipherMode == CipherMode.CBC)
 			{
 				// Calculate padding_length
-				paddingLength = buffer[buffer.Length - 1];
-
-				/* Review this that is valid way for TLS1 but not for SSL3
-				for (int i = (buffer.Length - 1); i > (buffer.Length - (paddingLength + 1)); i--)
-				{
-					if (buffer[i] != paddingLength)
-					{
-						paddingLength = 0;
-						break;
-					}
-				}
-				*/
-
-				fragmentSize = (buffer.Length - (paddingLength + 1)) - this.HashSize;
+				paddingLength	= buffer[buffer.Length - 1];
+				fragmentSize	= (buffer.Length - (paddingLength + 1)) - this.HashSize;
 			}
 			else
 			{
@@ -345,7 +330,7 @@ namespace Mono.Security.Protocol.Tls
 
 		#endregion
 
-		#region ABSTRACT_METHODS
+		#region Abstract Methods
 
 		public abstract byte[] ComputeClientRecordMAC(TlsContentType contentType, byte[] fragment);
 
@@ -357,7 +342,7 @@ namespace Mono.Security.Protocol.Tls
 
 		#endregion
 
-		#region KEY_GENERATION_METODS
+		#region Key Generation Methods
 
 		public byte[] CreatePremasterSecret()
 		{
@@ -451,7 +436,7 @@ namespace Mono.Security.Protocol.Tls
 
 		#endregion
 
-		#region PRIVATE_METHODS
+		#region Private Methods
 
 		private void createEncryptionCipher()
 		{

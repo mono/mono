@@ -1,5 +1,5 @@
 /* Transport Security Layer (TLS)
- * Copyright (c) 2003 Carlos Guzmán Álvarez
+ * Copyright (c) 2003-2004 Carlos Guzman Alvarez
  * 
  * Permission is hereby granted, free of charge, to any person 
  * obtaining a copy of this software and associated documentation 
@@ -43,13 +43,13 @@ namespace Mono.Security.Protocol.Tls
 			}
 		}
 
-		#region PRIVATE_STATIC_METHODS
+		#region Private Static Methods
 
 		private static TlsCipherSuiteCollection GetTls1SupportedCiphers()
 		{
 			TlsCipherSuiteCollection scs = new TlsCipherSuiteCollection(SecurityProtocolType.Tls);
 
-			// Supported ciphers			
+			// Supported ciphers
 			scs.Add((0x00 << 0x08) | 0x35, "TLS_RSA_WITH_AES_256_CBC_SHA", CipherAlgorithmType.Rijndael, HashAlgorithmType.Sha1, ExchangeAlgorithmType.RsaSign, false, true, 32, 32, 256, 16, 16);
 			scs.Add((0x00 << 0x08) | 0x2F, "TLS_RSA_WITH_AES_128_CBC_SHA", CipherAlgorithmType.Rijndael, HashAlgorithmType.Sha1, ExchangeAlgorithmType.RsaSign, false, true, 16, 16, 128, 16, 16);
 			scs.Add((0x00 << 0x08) | 0x0A, "TLS_RSA_WITH_3DES_EDE_CBC_SHA", CipherAlgorithmType.TripleDes, HashAlgorithmType.Sha1, ExchangeAlgorithmType.RsaSign, false, true, 24, 24, 168, 8, 8);

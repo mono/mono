@@ -1,5 +1,5 @@
 /* Transport Security Layer (TLS)
- * Copyright (c) 2003 Carlos Guzmán Álvarez
+ * Copyright (c) 2003-2004 Carlos Guzman Alvarez
  * 
  * Permission is hereby granted, free of charge, to any person 
  * obtaining a copy of this software and associated documentation 
@@ -30,14 +30,14 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 {
 	internal class TlsServerCertificateRequest : TlsHandshakeMessage
 	{
-		#region FIELDS
+		#region Fields
 
 		private TlsClientCertificateType[]	certificateTypes;
 		private string[]					distinguisedNames;
 
 		#endregion
 
-		#region CONSTRUCTORS
+		#region Constructors
 
 		public TlsServerCertificateRequest(TlsContext context, byte[] buffer) 
 			: base(context, TlsHandshakeType.ServerHello, buffer)
@@ -46,11 +46,11 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 
 		#endregion
 
-		#region METHODS
+		#region Methods
 
-		public override void UpdateSession()
+		public override void Update()
 		{
-			base.UpdateSession();
+			base.Update();
 
 			this.Context.ServerSettings.CertificateTypes	= this.certificateTypes;
 			this.Context.ServerSettings.DistinguisedNames	= this.distinguisedNames;
@@ -59,7 +59,7 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 
 		#endregion
 
-		#region PROTECTED_METHODS
+		#region Protected Methods
 
 		protected override void ProcessAsSsl3()
 		{

@@ -1,5 +1,5 @@
 /* Transport Security Layer (TLS)
- * Copyright (c) 2003 Carlos Guzmán Álvarez
+ * Copyright (c) 2003-2004 Carlos Guzman Alvarez
  * 
  * Permission is hereby granted, free of charge, to any person 
  * obtaining a copy of this software and associated documentation 
@@ -37,7 +37,7 @@ namespace Mono.Security.Cryptography
 	*/
 	internal class HMAC : System.Security.Cryptography.KeyedHashAlgorithm
 	{
-		#region FIELDS
+		#region Fields
 
 		private HashAlgorithm	hash;
 		private bool			hashing;
@@ -47,7 +47,7 @@ namespace Mono.Security.Cryptography
 
 		#endregion
 
-		#region PROPERTIES
+		#region Properties
         
 		public override byte[] Key
 		{
@@ -75,12 +75,12 @@ namespace Mono.Security.Cryptography
 
 		#endregion
 
-		#region CONSTRUCTORS
+		#region Constructors
 
 		public HMAC()
 		{
 			// Create the hash
-			hash = HashAlgorithm.Create("MD5");
+			hash = MD5.Create();
 			// Set HashSizeValue
 			HashSizeValue = hash.HashSize;
 
@@ -91,7 +91,7 @@ namespace Mono.Security.Cryptography
 
 			KeyValue = (byte[])rgbKey.Clone();
 
-			initializePad();
+			this.Initialize();
 		}
 
 		public HMAC(string hashName, byte[] rgbKey)
@@ -115,12 +115,12 @@ namespace Mono.Security.Cryptography
 				KeyValue = (byte[])rgbKey.Clone();
 			}
 
-			initializePad();
+			this.Initialize();
 		}
 
 		#endregion
 
-		#region METHODS
+		#region Methods
 
 		public override void Initialize()
 		{
@@ -165,7 +165,7 @@ namespace Mono.Security.Cryptography
 
 		#endregion
 
-		#region PRIVATE_METHODS
+		#region Private Methods
 
 		private void initializePad()
 		{

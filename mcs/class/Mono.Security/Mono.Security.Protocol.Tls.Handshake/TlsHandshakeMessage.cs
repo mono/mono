@@ -1,5 +1,5 @@
 /* Transport Security Layer (TLS)
- * Copyright (c) 2003 Carlos Guzmán Álvarez
+ * Copyright (c) 2003-2004 Carlos Guzman Alvarez
  * 
  * Permission is hereby granted, free of charge, to any person 
  * obtaining a copy of this software and associated documentation 
@@ -29,7 +29,7 @@ namespace Mono.Security.Protocol.Tls.Handshake
 {
 	internal abstract class TlsHandshakeMessage : TlsStream
 	{
-		#region FIELDS
+		#region Fields
 
 		private TlsContext			context;
 		private TlsHandshakeType	handshakeType;
@@ -37,7 +37,7 @@ namespace Mono.Security.Protocol.Tls.Handshake
 
 		#endregion
 
-		#region PROPERTIES
+		#region Properties
 
 		public TlsContext Context
 		{
@@ -56,7 +56,14 @@ namespace Mono.Security.Protocol.Tls.Handshake
 
 		#endregion
 
-		#region CONSTRUCTORS
+		#region Constructors
+
+		public TlsHandshakeMessage(
+			TlsContext			context,
+			TlsHandshakeType	handshakeType) 
+			: this(context, handshakeType, TlsContentType.Handshake)
+		{
+		}
 
 		public TlsHandshakeMessage(
 			TlsContext			context,
@@ -85,7 +92,7 @@ namespace Mono.Security.Protocol.Tls.Handshake
 
 		#endregion
 
-		#region ABSTRACT_METHODS
+		#region Abstract Methods
 
 		protected abstract void ProcessAsTls1();
 
@@ -93,7 +100,7 @@ namespace Mono.Security.Protocol.Tls.Handshake
 
 		#endregion
 
-		#region METHODS
+		#region Methods
 
 		private void process()
 		{
@@ -109,7 +116,7 @@ namespace Mono.Security.Protocol.Tls.Handshake
 			}
 		}
 
-		public virtual void UpdateSession()
+		public virtual void Update()
 		{			
 			if (CanWrite)
 			{

@@ -1,5 +1,5 @@
 /* Transport Security Layer (TLS)
- * Copyright (c) 2003 Carlos Guzmán Álvarez
+ * Copyright (c) 2003-2004 Carlos Guzman Alvarez
  * 
  * Permission is hereby granted, free of charge, to any person 
  * obtaining a copy of this software and associated documentation 
@@ -36,7 +36,7 @@ namespace Mono.Security.Protocol.Tls.Alerts
 		{
 		}
 
-		public override void UpdateSession()
+		public override void Update()
 		{
 			this.Context.ConnectionEnd = true;
 		}	

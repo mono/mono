@@ -1,5 +1,5 @@
 /* Transport Security Layer (TLS)
- * Copyright (c) 2003 Carlos Guzmán Álvarez
+ * Copyright (c) 2003-2004 Carlos Guzman Alvarez
  * 
  * Permission is hereby granted, free of charge, to any person 
  * obtaining a copy of this software and associated documentation 
@@ -35,14 +35,14 @@ namespace Mono.Security.Protocol.Tls
 {
 	internal class TlsSslCipherSuite : CipherSuite
 	{
-		#region FIELDS
+		#region Fields
 
 		private byte[] pad1;
 		private byte[] pad2;
 
 		#endregion
 
-		#region CONSTRUCTORS
+		#region Constructors
 		
 		public TlsSslCipherSuite(
 			short code, string name, CipherAlgorithmType cipherAlgorithmType, 
@@ -71,7 +71,7 @@ namespace Mono.Security.Protocol.Tls
 
 		#endregion
 
-		#region MAC_GENERATION_METHOD
+		#region MAC Generation Methods
 
 		public override byte[] ComputeServerRecordMAC(TlsContentType contentType, byte[] fragment)
 		{
@@ -133,7 +133,7 @@ namespace Mono.Security.Protocol.Tls
 
 		#endregion
 
-		#region KEY_GENERATION_METODS
+		#region Key Generation Methods
 
 		public override void ComputeMasterSecret(byte[] preMasterSecret)
 		{
@@ -221,7 +221,7 @@ namespace Mono.Security.Protocol.Tls
 
 		#endregion
 
-		#region PRIVATE_METHODS
+		#region Private Methods
 
 		private byte[] prf(byte[] secret, string label, byte[] random)
 		{

@@ -1,5 +1,5 @@
 /* Transport Security Layer (TLS)
- * Copyright (c) 2003 Carlos Guzmán Álvarez
+ * Copyright (c) 2003-2004 Carlos Guzman Alvarez
  * 
  * Permission is hereby granted, free of charge, to any person 
  * obtaining a copy of this software and associated documentation 
@@ -31,26 +31,26 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 {
 	internal class TlsClientFinished : TlsHandshakeMessage
 	{
-		#region CONSTRUCTORS
+		#region Constructors
 
 		public TlsClientFinished(TlsContext context) 
-			: base(context, TlsHandshakeType.Finished,  TlsContentType.Handshake)
+			: base(context, TlsHandshakeType.Finished)
 		{
 		}
 
 		#endregion
 
-		#region METHODS
+		#region Methods
 
-		public override void UpdateSession()
+		public override void Update()
 		{
-			base.UpdateSession();
+			base.Update();
 			this.Reset();
 		}
 
 		#endregion
 
-		#region PROTECTED_METHODS
+		#region Protected Methods
 
 		protected override void ProcessAsSsl3()
 		{

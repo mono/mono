@@ -1,5 +1,5 @@
 /* Transport Security Layer (TLS)
- * Copyright (c) 2003 Carlos Guzmán Álvarez
+ * Copyright (c) 2003-2004 Carlos Guzman Alvarez
  * 
  * Permission is hereby granted, free of charge, to any person 
  * obtaining a copy of this software and associated documentation 
@@ -32,14 +32,14 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 {
 	internal class TlsServerKeyExchange : TlsHandshakeMessage
 	{
-		#region FIELDS
+		#region Fields
 
 		private RSAParameters	rsaParams;
 		private byte[]			signedParams;
 
 		#endregion
 
-		#region CONSTRUCTORS
+		#region Constructors
 
 		public TlsServerKeyExchange(TlsContext context, byte[] buffer)
 			: base(context, TlsHandshakeType.ServerKeyExchange, buffer)
@@ -49,11 +49,11 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 
 		#endregion
 
-		#region METHODS
+		#region Methods
 
-		public override void UpdateSession()
+		public override void Update()
 		{
-			base.UpdateSession();
+			base.Update();
 
 			this.Context.ServerSettings.ServerKeyExchange	= true;
 			this.Context.ServerSettings.RsaParameters		= this.rsaParams;
@@ -62,7 +62,7 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 
 		#endregion
 
-		#region PROTECTED_METHODS
+		#region Protected Methods
 
 		protected override void ProcessAsSsl3()
 		{
@@ -74,46 +74,44 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 			this.rsaParams = new RSAParameters();
 			
 			// Read modulus
-			rsaParams.Modulus	= this.ReadBytes(this.ReadInt16());
+			this.rsaParams.Modulus	= this.ReadBytes(this.ReadInt16());
 
 			// Read exponent
-			rsaParams.Exponent	= this.ReadBytes(this.ReadInt16());
+			this.rsaParams.Exponent	= this.ReadBytes(this.ReadInt16());
 
 			// Read signed params
-			signedParams		= this.ReadBytes(this.ReadInt16());
+			this.signedParams		= this.ReadBytes(this.ReadInt16());
 		}
 
 		#endregion
 
-		#region PRIVATE_METHODS
+		#region Private Methods
 
 		private void verifySignature()
 		{
 			MD5SHA1 hash = new MD5SHA1();
 
+			// Calculate size of server params
+			int size = rsaParams.Modulus.Length + rsaParams.Exponent.Length + 4;
+
 			// Create server params array
 			TlsStream stream = new TlsStream();
 
 			stream.Write(this.Context.RandomCS);
-			stream.Write(rsaParams.Modulus.Length);
-			stream.Write(rsaParams.Modulus);
-			stream.Write(rsaParams.Exponent.Length);
-			stream.Write(rsaParams.Exponent);
+			stream.Write(this.ToArray(), 0, size);
 
 			hash.ComputeHash(stream.ToArray());
 
 			stream.Reset();
-
-			// Verify Signature
-			X509Certificate certificate = this.Context.ServerSettings.Certificates[0];
-
-			RSA rsa = RSA.Create();
 			
-			rsa.KeySize = rsaParams.Modulus.Length << 3;
-			rsa.ImportParameters(rsaParams);
+			bool isValidSignature = hash.VerifySignature(
+				this.Context.Cipher.CertificateRSA(),
+				this.signedParams);
 
-			byte[] sign = hash.CreateSignature(rsa);
-			hash.VerifySignature(rsa, this.signedParams);
+			if (!isValidSignature)
+			{
+				throw this.Context.CreateException("Data was not signed with the server certificate.");
+			}
 		}
 
 		#endregion
