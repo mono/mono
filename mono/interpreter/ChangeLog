@@ -1,4 +1,8 @@
 
+Wed Jul 31 17:47:11 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* interp.c: simplified some more branch code.
+
 Wed Jul 31 16:50:42 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* interp.c: fixed indentation, simplified some code.
