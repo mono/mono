@@ -91,7 +91,8 @@ namespace System.IO {
 				if (mode == 2)
 					ok = FAMWatcher.GetInstance (out watcher);
 				else if (mode == 1)
-					ok = WindowsWatcher.GetInstance (out watcher);
+					ok = DefaultWatcher.GetInstance (out watcher);
+					//ok = WindowsWatcher.GetInstance (out watcher);
 
 				if (mode == 0 || !ok)
 					DefaultWatcher.GetInstance (out watcher);
@@ -420,7 +421,6 @@ namespace System.IO {
 
 		[IODescription("Occurs when a file/directory change matches the filter")]
 		public event FileSystemEventHandler Changed;
-
 
 		[IODescription("Occurs when a file/directory creation matches the filter")]
 		public event FileSystemEventHandler Created;

@@ -111,6 +111,7 @@ namespace System.IO {
 					StartMonitoringDirectory (data);
 					watches [fsw] = data;
 					requests [data.Request.ReqNum] = data;
+					stop = false;
 				}
 			}
 		}
