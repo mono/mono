@@ -1107,6 +1107,15 @@ namespace System.Windows.Forms
 				return text;
     			}
     			set {
+				/* We must update text first, it might have been changed
+				   in the UI by the user */
+    				if (!GetStyle(ControlStyles.CacheText) && IsHandleCreated){
+					int len = Win32.GetWindowTextLengthA(Handle);
+					StringBuilder sb = new StringBuilder(len+1);
+    					Win32.GetWindowTextA(Handle, sb, sb.Capacity);
+    					text = sb.ToString ();
+				}
+				
 				if (text != value){
     					text = value;
 	    
