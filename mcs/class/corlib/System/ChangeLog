@@ -1,3 +1,8 @@
+2004-06-15 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Environment.cs: use internalGetHome instead of getting "HOME" as
+	that variable may not be defined.
+
 2004-06-14  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* TimeSpan.cs: Fixed timespan with large values for hours or minutes

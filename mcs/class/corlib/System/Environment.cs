@@ -381,7 +381,7 @@ namespace System
 			// we can do this in managed code for non-Windows environments
 			string path = String.Empty;
 
-			string home = GetEnvironmentVariable ("HOME");
+			string home = internalGetHome ();
 
 			// http://freedesktop.org/Standards/basedir-spec/basedir-spec-0.6.html
 			string data = GetEnvironmentVariable ("XDG_DATA_HOME");
@@ -491,6 +491,9 @@ namespace System
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal extern static string internalGetGacPath ();
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		internal extern static string internalGetHome ();
 	}
 }
 
