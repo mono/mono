@@ -1,9 +1,10 @@
 //
 // Context.cs:
 //
-// Author: Cesar Octavio Lopez Nataren
+// Author: 
+//	Cesar Lopez Nataren (cesar@ciencias.unam.mx)
 //
-// (C) 2003, Cesar Octavio Lopez Nataren, <cesar@ciencias.unam.mx>
+// (C) 2003, Cesar Lopez Nataren
 //
 
 namespace Microsoft.JScript.Tmp
@@ -12,6 +13,13 @@ namespace Microsoft.JScript.Tmp
 
 	public class Context 
 	{
+		internal DocumentContext Document;
+
+		internal Context (string filename)
+		{
+			Document = new DocumentContext (filename);
+		}
+
 		public int EndColumn {
 			get { throw new NotImplementedException (); }
 		}

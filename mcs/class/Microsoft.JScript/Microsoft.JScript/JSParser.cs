@@ -13,15 +13,21 @@ namespace Microsoft.JScript.Tmp
 
 	public class JSParser
 	{
+		internal JScriptParser Parser;
+
 		public JSParser (Context context)
 		{
-			throw new NotImplementedException ();
+			JSScanner scanner = new JSScanner (context);
+			Parser = new JScriptParser (scanner.Lexer);
 		}
 
 
 		public ScriptBlock Parse ()
 		{
-			throw new NotImplementedException ();
+			ScriptBlock prog = new ScriptBlock ();
+
+			Parser.program (prog);
+			return prog;
 		}
 
 

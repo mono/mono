@@ -1,3 +1,13 @@
+2003-09-07 Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
+
+	* Context.cs: Added constructor and Document field.
+	* DocumentContext.cs: Added Name field.
+	* JSParser.cs: Integration of antlr's generated parser with
+	JSParser public API. ScriptBlock is now the principal data structure that
+	represents a Jscript .Net program.
+	* JSScanner.cs: Integration of antlr's generated lexer with
+	JSScanner public API.
+
 2003-07-27  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
 	* Added files StringLiteral.cs, CodeGenerator.cs and Print.cs.
 

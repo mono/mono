@@ -10,18 +10,21 @@
 namespace Microsoft.JScript.Tmp
 {
 	using System;
+	using System.IO;
 
 	public sealed class JSScanner
 	{
-		public JSScanner ()
-		{
-			throw new NotImplementedException ();
-		}
+		internal JScriptLexer Lexer;
 
+		public JSScanner ()
+		{}
 
 		public JSScanner (Context sourceContext)
 		{
-			throw new NotImplementedException ();
+			string filename = sourceContext.Document.Name;
+			StreamReader file = new StreamReader (filename);
+
+			Lexer = new JScriptLexer (file);
 		}
 
 

@@ -10,5 +10,12 @@
 namespace Microsoft.JScript.Tmp
 {
 	public class DocumentContext
-	{}
+	{
+		internal string Name;
+
+		internal DocumentContext (string filename)
+		{
+			Name = filename;
+		}
+	}
 }
