@@ -189,6 +189,8 @@ namespace Mono.CSharp {
 
 		public Block CurrentBlock;
 
+		public int CurrentFile;
+
 		/// <summary>
 		///   The location where we store the return value.
 		/// </summary>
@@ -263,6 +265,7 @@ namespace Mono.CSharp {
 			ReturnType = return_type;
 			IsConstructor = is_constructor;
 			CurrentBlock = null;
+			CurrentFile = 0;
 			
 			if (parent != null){
 				// Can only be null for the ResolveType contexts.
@@ -405,6 +408,9 @@ namespace Mono.CSharp {
 		{
 			bool has_ret = false;
 
+			if (!Location.IsNull (loc))
+				CurrentFile = loc.File;
+
 			if (block != null){
 				try {
 				int errors = Report.Errors;
@@ -477,12 +483,12 @@ namespace Mono.CSharp {
 		///   This is called immediately before emitting an IL opcode to tell the symbol
 		///   writer to which source line this opcode belongs.
 		/// </summary>
-		public void Mark (Location loc)
+		public void Mark (Location loc, bool check_file)
 		{
 			if ((CodeGen.SymbolWriter == null) || Location.IsNull (loc))
 				return;
 
-			if ((CurrentBlock != null) && (CurrentBlock.StartLocation.File != loc.File))
+			if (check_file && (CurrentFile != loc.File))
 				return;
 
 			ig.MarkSequencePoint (null, loc.Row, 0, 0, 0);

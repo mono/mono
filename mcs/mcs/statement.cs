@@ -40,7 +40,7 @@ namespace Mono.CSharp {
 		/// </summary>
 		public virtual bool Emit (EmitContext ec)
 		{
-			ec.Mark (loc);
+			ec.Mark (loc, true);
 			return DoEmit (ec);
 		}
 		
@@ -3149,6 +3149,7 @@ namespace Mono.CSharp {
 
 			bool emit_debug_info = (CodeGen.SymbolWriter != null);
 			bool is_lexical_block = !Implicit && (Parent != null);
+
 			if (emit_debug_info) {
 				if (is_lexical_block)
 					ec.ig.BeginScope ();
@@ -3166,9 +3167,9 @@ namespace Mono.CSharp {
 				}
 			}
 
-			ec.Mark (StartLocation);
+			ec.Mark (StartLocation, true);
 			bool retval = DoEmit (ec);
-			ec.Mark (EndLocation); 
+			ec.Mark (EndLocation, true); 
 
 			if (emit_debug_info && is_lexical_block)
 				ec.ig.EndScope ();
