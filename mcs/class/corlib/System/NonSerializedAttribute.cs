@@ -32,7 +32,7 @@
 
 namespace System
 {
-	[AttributeUsage (AttributeTargets.Field | AttributeTargets.Property)]
+	[AttributeUsage (AttributeTargets.Field)]
 	public sealed class NonSerializedAttribute : Attribute
 	{
 		public NonSerializedAttribute ()

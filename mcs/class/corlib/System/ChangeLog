@@ -1,3 +1,10 @@
+2005-02-10  Marek Safar  <marek.safar@seznam.cz>
+
+	* IServiceProvider.cs: Is not ComVisible.
+
+	* NonSerializedAttribute.cs: Fix AttributeUsage flags.
+
+	* Type.cs: Fix ClassInterface attribute.
 
 Tue Feb 8 19:26:47 CET 2005 Paolo Molaro <lupus@ximian.com>
 

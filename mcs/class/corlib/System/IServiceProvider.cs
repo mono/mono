@@ -34,7 +34,7 @@ using System.Runtime.InteropServices;
 
 namespace System
 {
-	[ComVisible (true)]
+	[ComVisible (false)]
 	public interface IServiceProvider
 	{
 		object GetService (Type serviceType);

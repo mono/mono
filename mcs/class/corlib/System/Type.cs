@@ -40,7 +40,7 @@ using System.Globalization;
 namespace System {
 
 	[Serializable]
-	[ClassInterface (ClassInterfaceType.AutoDual)]
+	[ClassInterface (ClassInterfaceType.None)]
 	public abstract class Type : MemberInfo, IReflect {
 		
 		internal RuntimeTypeHandle _impl;
