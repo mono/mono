@@ -1459,17 +1459,13 @@ namespace CIR {
 	}
 
 	public class SimpleName : Expression {
-		string name;
+		public readonly string Name;
+		public readonly Location Location;
 		
-		public SimpleName (string name)
+		public SimpleName (string name, Location l)
 		{
-			this.name = name;
-		}
-
-		public string Name {
-			get {
-				return name;
-			}
+			Name = name;
+			Location = l;
 		}
 
 		//
@@ -1484,7 +1480,7 @@ namespace CIR {
 				if (!fi.IsStatic){
 					r.Error (120,
 						 "An object reference is required " +
-						 "for the non-static field `"+name+"'");
+						 "for the non-static field `"+Name+"'");
 					return null;
 				}
 			} else if (e is MethodGroupExpr){
@@ -1499,7 +1495,7 @@ namespace CIR {
 					r.Error (120,
 						 "An object reference is required " +
 						 "for the non-static property access `"+
-						 name+"'");
+						 Name+"'");
 					return null;
 				}
 			}
@@ -1518,7 +1514,7 @@ namespace CIR {
 			Expression e;
 			Report r = tc.RootContext.Report;
 
-			e = MemberLookup (tc.RootContext, tc.TypeBuilder, name, true);
+			e = MemberLookup (tc.RootContext, tc.TypeBuilder, Name, true);
 			if (e != null){
 				if (e is TypeExpr)
 					return e;
@@ -1539,8 +1535,11 @@ namespace CIR {
 			// Do step 3 of the Simple Name resolution.
 			//
 			// FIXME: implement me.
-			
-			return this;
+
+			r.Error (103, Location, "The name `" + Name + "' does not exist in the class `" +
+				 tc.Name + "'");
+
+			return null;
 		}
 		
 		//
@@ -1551,8 +1550,8 @@ namespace CIR {
 		//
 		public override Expression Resolve (TypeContainer tc)
 		{
-			if (name.IndexOf (".") != -1)
-				return ResolveMemberAccess (tc, name);
+			if (Name.IndexOf (".") != -1)
+				return ResolveMemberAccess (tc, Name);
 			else
 				return ResolveSimpleName (tc);
 		}

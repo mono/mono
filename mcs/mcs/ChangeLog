@@ -1,5 +1,14 @@
 2001-09-20  Miguel de Icaza  <miguel@ximian.com>
 
+	* driver.cs (parse): Report error 2001 if we can not open the
+	source file.
+
+	* expression.cs (SimpleName::ResolveSimpleName): Error if we can
+	not resolve it.
+
+	* cs-parser.jay (QualifierIdentifier): Pass location to SimpleName
+	object. 
+
 	* statement.cs (Block::EmitMeta): Reuse the count across all the variables,
 	otherwise nested blocks end up with the same index.
 

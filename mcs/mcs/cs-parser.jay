@@ -1514,7 +1514,7 @@ primary_expression
 		string name = (string) $1;
 
 		$$ = null;
-		$$ = QualifiedIdentifier (name);
+		$$ = QualifiedIdentifier (name, lexer.Location);
 	  }
 	| parenthesized_expression
 	| member_access
@@ -2957,7 +2957,7 @@ Console.WriteLine ("Attempting: [" + left + "] " + name);
 	return null;
 }
 
-object QualifiedIdentifier (string name)
+object QualifiedIdentifier (string name, Location l)
 {
 	object o;
 
@@ -2967,7 +2967,7 @@ object QualifiedIdentifier (string name)
 		o = CompositeLookup (name);
 
 	if (o == null)
-		o = new SimpleName (name);
+		o = new SimpleName (name, l);
 
 	return o;
 }
