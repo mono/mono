@@ -1,3 +1,8 @@
+2002-09-20  Martin Baulig  <martin@gnome.org>
+
+	* debug.c (mono_debug_add_method): The `MonoDebugVarInfo' now includes
+	the size of the variable.
+
 2002-09-18  Dietmar Maurer  <dietmar@ximian.com>
 
 	* linear-scan.c (mono_analyze_liveness): we can save 30% of needed
