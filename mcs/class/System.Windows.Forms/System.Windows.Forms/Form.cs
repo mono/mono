@@ -1252,7 +1252,7 @@ namespace System.Windows.Forms {
 				OnWmInitMenuPopup (ref m);
 				break;
 			case Msg.WM_CTLCOLORLISTBOX:
-				ReflectMessage(m.LParam, ref m);
+				Control.ReflectMessage( m.LParam, ref m);
 				break;
 			default:
 				base.WndProc (ref m);
