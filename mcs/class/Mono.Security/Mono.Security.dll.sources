@@ -32,7 +32,6 @@
 ./Mono.Security.Cryptography/SymmetricTransform.cs
 ./Mono.Security.X509/ITrustAnchors.cs
 ./Mono.Security.X509/PKCS12.cs
-./Mono.Security.X509/TestAnchors.cs
 ./Mono.Security.X509/TrustAnchors.cs
 ./Mono.Security.X509/X501Name.cs
 ./Mono.Security.X509/X509Builder.cs
