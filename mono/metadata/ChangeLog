@@ -1,4 +1,9 @@
 
+Fri Jun 14 16:24:30 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* reflection.h, reflection.c: handle field and param marshal
+	information.
+
 Wed Jun 12 16:30:57 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* icall.c, marshal.c marshal.h: more Marshal class implementation.
