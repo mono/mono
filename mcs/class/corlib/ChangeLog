@@ -1,3 +1,8 @@
+2002-01-09  Nick Drochak  <ndrochak@gol.com>
+
+	* corlib.build: Exclude Security Attribute classes that need mcs
+	magic to get them to compile.
+
 2002-01-06  Duco Fijma <duco@lorentz.xs4all.nl>
 	* corlib.build: Removed <excludes> for System.Resources
 

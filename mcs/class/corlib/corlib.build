@@ -19,6 +19,7 @@
 				<includes name="**/*.cs"/>
 				<excludes name="Test/**"/>
 				<excludes name="Windows/**"/>
+				<excludes name="System.Security.Permissions/SecurityPermissionAttribute.cs"/>
 				<excludes name="System.PAL/IOperatingSystem.cs"/>
 			</sources>
 		</csc>
@@ -33,6 +34,7 @@
 				<includes name="**/*.cs"/>
 				<excludes name="Test/**"/>
 				<excludes name="Windows/**"/>
+				<excludes name="System.Security.Permissions/SecurityPermissionAttribute.cs"/>
 				<excludes name="System.PAL/IOperatingSystem.cs"/>
 				<excludes name="System/Object.cs" />
 				<excludes name="System/ValueType.cs" />
@@ -61,7 +63,7 @@
 				<excludes name="System/RuntimeTypeHandle.cs"/>
 				<excludes name="System.PAL/IOperatingSystem.cs"/>
 				<excludes name="System.Collections/Queue.cs"/>
-				<excludes name="System.Security/CodeAccessPermission.cs"/>
+				<excludes name="System.Security.Permissions/SecurityPermissionAttribute.cs"/>
 			</sources>
 		</csc>
 		<nant basedir="Test" target="build"/>
