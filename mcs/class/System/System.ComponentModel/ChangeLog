@@ -1,3 +1,7 @@
+2005-02-12  Geoff Norton  <gnorton@customerdna.com>
+
+	* CharConverter.cs: Implement the ability to convert from "".
+	
 2005-02-10  Geoff Norton  <gnorton@customerdna.com>
 
 	* CultureInfoConverter.cs: Implement converting from the 

@@ -45,9 +45,10 @@ namespace System.ComponentModel
 		{
 			if (value.GetType() == typeof (string)) {
 				string Test = (String) value;
-				if (Test.Length != 1)
-				// LAMESPEC: MS does throw FormatException here
-					throw new FormatException ("String has to be exactly one char long");
+				if (Test.Length > 1)
+					throw new FormatException ("String has to be less than or equal to one char long");
+				if (Test.Length == 0)
+					return (char)0x00;
 				return Test[0];
 			}
 			return base.ConvertFrom (context, culture, value);
