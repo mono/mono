@@ -1,3 +1,11 @@
+2002-05-26  Miguel de Icaza  <miguel@ximian.com>
+
+	* typemanager.cs (MemberLookup): When looking up members for
+	interfaces, the parent of an interface is the implicit
+	System.Object (so we succeed in searches of Object methods in an
+	interface method invocation.  Example:  IEnumerable x;  x.ToString
+	()) 
+
 2002-05-25  Miguel de Icaza  <miguel@ximian.com>
 
 	* class.cs (Event): Events should also register if they do

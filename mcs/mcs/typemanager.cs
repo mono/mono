@@ -1031,6 +1031,16 @@ public class TypeManager {
 	/// </summary>
 	public static Type [] GetInterfaces (Type t)
 	{
+		//
+		// The reason for catching the Array case is that Reflection.Emit
+		// will not return a TypeBuilder for Array types of TypeBuilder types,
+		// but will still throw an exception if we try to call GetInterfaces
+		// on the type.
+		//
+		// Since the array interfaces are always constant, we return those for
+		// the System.Array
+		//
+		
 		if (t.IsArray)
 			t = TypeManager.array_type;
 		
@@ -1057,11 +1067,12 @@ public class TypeManager {
 		//
 		do {
 			interfaces = GetInterfaces (t);
-			
-			for (int i = interfaces.Length; i > 0; ){
-				i--;
-				if (interfaces [i] == iface)
-					return true;
+
+			if (interfaces != null){
+				foreach (Type i in interfaces){
+					if (i == iface)
+						return true;
+				}
 			}
 			
 			t = t.BaseType;
@@ -1402,10 +1413,10 @@ public class TypeManager {
 				
 				//
 				// This happens with interfaces, they have a null
-				// basetype
+				// basetype.  Look members up in the Object class.
 				//
 				if (current_type == null)
-					searching = false;
+					current_type = TypeManager.object_type;
 			}
 			
 			if (mi == null)
