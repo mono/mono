@@ -164,7 +164,9 @@ namespace System.Data {
 
 		public void RemoveAt (int index) 
 		{
-			DataTable t = this[index];
+			if (( index < 0 ) || (index >=List.Count))
+				throw new ArgumentException("There is no row at position "+index+".");
+			DataTable t = this[index];	
 			CanRemove(t, true);
 			List.RemoveAt (index);
 			OnCollectionChanged (new CollectionChangeEventArgs (CollectionChangeAction.Remove, t));
@@ -229,6 +231,7 @@ namespace System.Data {
 		// if it is true throws an Exception, else return false.
 		private bool CanRemove(DataTable table, bool throwException)
 		{
+
 			// check if table is null reference
 			if (table == null)
 			{
@@ -236,7 +239,30 @@ namespace System.Data {
 					throw new ArgumentNullException("table");
 				return false;
 			}
-			
+
+			// check if the table doesnot belong to this collection
+			bool tableexists = true;
+			int tmp = IndexOf(table.TableName);
+                        // if we found a table with same name we have to check
+                        // that it is the same case.
+                        // indexof can return a table with different case letters.
+                        if (tmp != -1)
+			{
+				 if(table.TableName != this[tmp].TableName)
+					tableexists = false;
+			}
+			else
+				tableexists = false;
+
+			if (!tableexists)
+			{
+				if(throwException)
+                                        throw new ArgumentException("Table does not exist in collection");
+                                return false;
+
+			}		
+				
+						
 			// check if the table has the same DataSet as this collection.
 			if(table.DataSet != this.dataSet)
 			{
