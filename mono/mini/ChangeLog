@@ -1,4 +1,8 @@
 
+Fri Apr 23 14:20:40 EDT 2004 Paolo Molaro <lupus@ximian.com>
+
+	* exceptions-ppc.c: use the correct ip register on macosx.
+
 Thu Apr 22 13:23:16 EDT 2004 Paolo Molaro <lupus@ximian.com>
 
 	* exceptions.c, mini.c, mini-ppc.h: adapt code to macosx.
