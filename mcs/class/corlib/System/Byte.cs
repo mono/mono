@@ -60,7 +60,7 @@ namespace System {
 		public static byte Parse (string s, NumberStyles style, IFormatProvider fp)
 		{
 			// TODO: Implement me
-			return 0;
+			throw new NotImplementedException ();
 		}
 
 		public override string ToString ()
