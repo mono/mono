@@ -117,13 +117,7 @@ namespace Mono.Security.Protocol.Tls
 		{
 			switch (this.protocol)
 			{
-				case SecurityProtocolType.Ssl3:
-					return this.add(
-						new TlsSslCipherSuite(
-						code, name, cipherType, hashType, exchangeType, exportable, 
-						blockMode, keyMaterialSize, expandedKeyMaterialSize, 
-						effectiveKeyBytes, ivSize, blockSize));
-
+				case SecurityProtocolType.Default:
 				case SecurityProtocolType.Tls:
 					return this.add(
 						new TlsCipherSuite(
@@ -131,8 +125,16 @@ namespace Mono.Security.Protocol.Tls
 						blockMode, keyMaterialSize, expandedKeyMaterialSize, 
 						effectiveKeyBytes, ivSize, blockSize));
 
+				case SecurityProtocolType.Ssl3:
+					return this.add(
+						new TlsSslCipherSuite(
+						code, name, cipherType, hashType, exchangeType, exportable, 
+						blockMode, keyMaterialSize, expandedKeyMaterialSize, 
+						effectiveKeyBytes, ivSize, blockSize));
+
+				case SecurityProtocolType.Ssl2:
 				default:
-					throw new NotSupportedException();
+					throw new NotSupportedException("Unsupported security protocol type.");
 			}
 		}
 

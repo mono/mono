@@ -104,15 +104,20 @@ namespace Mono.Security.Protocol.Tls.Handshake
 
 		private void process()
 		{
-			switch (this.Context.Protocol)
+			switch (this.Context.SecurityProtocol)
 			{
+				case SecurityProtocolType.Tls:
+				case SecurityProtocolType.Default:
+					this.ProcessAsTls1();
+					break;
+
 				case SecurityProtocolType.Ssl3:
 					this.ProcessAsSsl3();
 					break;
 
-				case SecurityProtocolType.Tls:
-					this.ProcessAsTls1();
-					break;
+				case SecurityProtocolType.Ssl2:
+				default:
+					throw new NotSupportedException("Unsupported security protocol type");
 			}
 		}
 

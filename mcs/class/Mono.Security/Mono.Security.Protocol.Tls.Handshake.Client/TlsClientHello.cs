@@ -67,7 +67,7 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 		protected override void ProcessAsTls1()
 		{
 			// Client Version
-			this.Write((short)this.Context.Protocol);
+			this.Write(this.Context.Protocol);
 								
 			// Random bytes - Unix time + Radom bytes [28]
 			TlsStream clientRandom = new TlsStream();

@@ -1,5 +1,25 @@
 2004-02-17 Carlos Guzmán Álvarez  <carlosga@telefonica.net>
 
+	* Mono.Security.Protocol.Tls.Handshake.Client/TlsClientCertificate.cs:
+
+		- Raise the Client Certificate event.
+
+	* Mono.Security.Protocol.Tls/CipherSuite.cs:
+	* Mono.Security.Protocol.Tls/SslClientStream.cs:
+	* Mono.Security.Protocol.Tls/SecurityProtocolType.cs:
+	* Mono.Security.Protocol.Tls/TlsCipherSuite.cs:
+	* Mono.Security.Protocol.Tls/TlsCipherSuiteCollection.cs:
+	* Mono.Security.Protocol.Tls/TlsCipherSuiteFactory.cs:
+	* Mono.Security.Protocol.Tls/TlsContext.cs:
+	* Mono.Security.Protocol.Tls.Handshake/TlsHandshakeMessage.cs:
+	* Mono.Security.Protocol.Tls.Handshake.Client/TlsClientHello.cs:
+
+		- Change the SecurityProtocolType enum to mtch .NET 1.2 documentation definition.
+
+	* Mono.Security.Protocol.Tls/SslClientStream.cs:
+
+		- Impement SelectedClientCertificate and ServerCertificate properties.
+
  	* Mono.Security.Protocol.Tls/SslClientStream.cs:
 
         - Added changes for bring async methods to work ( Thanks to Sebastien Pouliot )

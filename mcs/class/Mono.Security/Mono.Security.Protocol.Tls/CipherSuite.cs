@@ -349,7 +349,7 @@ namespace Mono.Security.Protocol.Tls
 			TlsStream stream = new TlsStream();
 
 			// Write protocol version
-			stream.Write((short)this.Context.Protocol);
+			stream.Write(this.Context.Protocol);
 
 			// Generate random bytes
 			stream.Write(this.context.GetSecureRandomBytes(46));

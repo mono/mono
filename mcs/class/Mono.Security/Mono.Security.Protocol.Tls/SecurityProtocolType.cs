@@ -26,10 +26,12 @@ using System;
 
 namespace Mono.Security.Protocol.Tls
 {
-	public enum SecurityProtocolType : short
+	[Flags]
+	public enum SecurityProtocolType
 	{
-		Default = (0x03 << 8) | 0x01,
-		Ssl3	= (0x03 << 8) | 0x00,
-		Tls		= (0x03 << 8) | 0x01
+		Default = -1073741824,
+		Ssl2	= 12,
+		Ssl3	= 48,
+		Tls		= 192
 	}
 }

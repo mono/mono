@@ -32,14 +32,16 @@ namespace Mono.Security.Protocol.Tls
 		{
 			switch (protocol)
 			{
+				case SecurityProtocolType.Default:
+				case SecurityProtocolType.Tls:				
+					return TlsCipherSuiteFactory.GetTls1SupportedCiphers();
+
 				case SecurityProtocolType.Ssl3:
 					return TlsCipherSuiteFactory.GetSsl3SupportedCiphers();
 
-				case SecurityProtocolType.Tls:
-					return TlsCipherSuiteFactory.GetTls1SupportedCiphers();
-
+				case SecurityProtocolType.Ssl2:
 				default:
-					throw new NotSupportedException();
+					throw new NotSupportedException("Unsupported security protocol type");
 			}
 		}
 

@@ -60,7 +60,7 @@ namespace Mono.Security.Protocol.Tls
 
 			data.Write(this.Context.ReadSequenceNumber);
 			data.Write((byte)contentType);
-			data.Write((short)this.Context.Protocol);
+			data.Write(this.Context.Protocol);
 			data.Write((short)fragment.Length);
 			data.Write(fragment);
 
@@ -78,7 +78,7 @@ namespace Mono.Security.Protocol.Tls
 
 			data.Write(this.Context.WriteSequenceNumber);
 			data.Write((byte)contentType);
-			data.Write((short)this.Context.Protocol);
+			data.Write(this.Context.Protocol);
 			data.Write((short)fragment.Length);
 			data.Write(fragment);
 

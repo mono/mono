@@ -164,17 +164,29 @@ namespace Mono.Security.Protocol.Tls
 		
 		public SecurityProtocolType SecurityProtocol 
 		{
-			get { return this.context.Protocol; }
+			get { return this.context.SecurityProtocol; }
 		}
 		
 		public X509Certificate SelectedClientCertificate 
 		{
-			get { throw new NotImplementedException(); }
+			get { return this.context.ClientSettings.ClientCertificate; }
 		}
 
 		public X509Certificate ServerCertificate 
 		{
-			get { throw new NotImplementedException(); }
+			get 
+			{ 
+				if (!this.context.HandshakeFinished)
+				{
+					if (this.context.ServerSettings.Certificates != null &&
+						this.context.ServerSettings.Certificates.Count > 0)
+					{
+						return new X509Certificate(this.context.ServerSettings.Certificates[0].RawData);
+					}
+				}
+
+				return null;
+			}
 		} 
 
 		#endregion
@@ -630,9 +642,9 @@ namespace Mono.Security.Protocol.Tls
 				return null;
 			}
 
-			TlsContentType			contentType	= (TlsContentType)type;
-			SecurityProtocolType	protocol	= (SecurityProtocolType)this.ReadShort();
-			short					length		= this.ReadShort();
+			TlsContentType	contentType	= (TlsContentType)type;
+			short			protocol	= this.ReadShort();
+			short			length		= this.ReadShort();
 			
 			// Read Record data
 			int		received	= 0;
@@ -662,7 +674,6 @@ namespace Mono.Security.Protocol.Tls
 				{
 					message = this.decryptRecordFragment(
 						contentType, 
-						protocol,
 						message.ToArray());
 				}
 			}
@@ -808,7 +819,7 @@ namespace Mono.Security.Protocol.Tls
 
 				// Write tls message
 				record.Write((byte)contentType);
-				record.Write((short)this.context.Protocol);
+				record.Write(this.context.Protocol);
 				record.Write((short)fragment.Length);
 				record.Write(fragment);
 
@@ -848,9 +859,8 @@ namespace Mono.Security.Protocol.Tls
 		}
 
 		private TlsStream decryptRecordFragment(
-			TlsContentType			contentType, 
-			SecurityProtocolType	protocol,
-			byte[]					fragment)
+			TlsContentType	contentType, 
+			byte[]			fragment)
 		{
 			byte[]	dcrFragment	= null;
 			byte[]	dcrMAC		= null;
@@ -995,7 +1005,7 @@ namespace Mono.Security.Protocol.Tls
 		private void doHandshake()
 		{
 			// Obtain supported cipher suite collection
-			this.context.SupportedCiphers = TlsCipherSuiteFactory.GetSupportedCiphers(context.Protocol);
+			this.context.SupportedCiphers = TlsCipherSuiteFactory.GetSupportedCiphers(context.SecurityProtocol);
 
 			// Send client hello
 			this.sendRecord(TlsHandshakeType.ClientHello);

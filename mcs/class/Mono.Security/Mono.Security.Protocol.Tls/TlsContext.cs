@@ -42,7 +42,7 @@ namespace Mono.Security.Protocol.Tls
 		private SslClientStream	sslStream;
 
 		// Protocol version
-		private SecurityProtocolType protocol;
+		private SecurityProtocolType securityProtocol;
 
 		// Sesison ID
 		private byte[] sessionId;
@@ -90,9 +90,11 @@ namespace Mono.Security.Protocol.Tls
 		
 		#endregion
 
-		#region INTERNAL_CONSTANTS
+		#region Internal Constants
 
-		internal const short MAX_FRAGMENT_SIZE = 16384; // 2^14
+		internal const short MAX_FRAGMENT_SIZE	= 16384; // 2^14
+		internal const short TLS1_PROTOCOL_CODE = (0x03 << 8) | 0x01;
+		internal const short SSL3_PROTOCOL_CODE = (0x03 << 8) | 0x00;
 
 		#endregion
 
@@ -103,10 +105,30 @@ namespace Mono.Security.Protocol.Tls
 			get { return sslStream; }
 		}
 
-		public SecurityProtocolType Protocol
+		public SecurityProtocolType SecurityProtocol
 		{
-			get { return this.protocol; }
-			set { this.protocol = value; }
+			get { return this.securityProtocol; }
+			set { this.securityProtocol = value; }
+		}
+
+		public short Protocol
+		{
+			get 
+			{ 
+				switch (this.securityProtocol)
+				{
+					case SecurityProtocolType.Tls:
+					case SecurityProtocolType.Default:
+						return TLS1_PROTOCOL_CODE;
+
+					case SecurityProtocolType.Ssl3:
+						return SSL3_PROTOCOL_CODE;
+
+					case SecurityProtocolType.Ssl2:
+					default:
+						throw new NotSupportedException("Unsupported security protocol type");
+				}
+			}
 		}
 
 		public byte[] SessionId
@@ -257,13 +279,13 @@ namespace Mono.Security.Protocol.Tls
 		#region Constructors
 
 		public TlsContext(
-			SslClientStream sslStream,
-			SecurityProtocolType securityProtocolType,
-			string targetHost,
-			X509CertificateCollection clientCertificates)
+			SslClientStream				sslStream,
+			SecurityProtocolType		securityProtocolType,
+			string						targetHost,
+			X509CertificateCollection	clientCertificates)
 		{
 			this.sslStream			= sslStream;
-			this.protocol			= securityProtocolType;
+			this.securityProtocol	= securityProtocolType;
 			this.compressionMethod	= SecurityCompressionType.None;
 			this.serverSettings		= new TlsServerSettings();
 			this.clientSettings		= new TlsClientSettings();
@@ -317,7 +339,7 @@ namespace Mono.Security.Protocol.Tls
 			this.serverWriteIV	= null;
 
 			// Clear MAC keys if protocol is different than Ssl3
-			if (this.protocol != SecurityProtocolType.Ssl3)
+			if (this.securityProtocol != SecurityProtocolType.Ssl3)
 			{
 				this.clientWriteMAC = null;
 				this.serverWriteMAC = null;
