@@ -1,3 +1,8 @@
+
+Sat Jun 1 13:54:29 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* shmdel.c: use return instead of exit in main().
+
 2002-04-30  Dick Porter  <dick@ximian.com>
 
 	* shmdel.c:
