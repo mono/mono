@@ -98,6 +98,7 @@ class ClassWriter {
                 WriteStartNamespaceDecl ();
                 WriteStartClassDef (ClassName);
                 WriteStartConstructor (ClassName);
+
                 SetCalendar ();
                 SetMember ("EnglishName");
                 SetMember ("LCID");
@@ -106,7 +107,6 @@ class ClassWriter {
                 SetParent ();
                 SetMember ("ThreeLetterISOLanguageName");
                 SetMember ("TwoLetterISOLanguageName");
-
 
                 WriteEndConstructor ();
                 WriteEndClassDef ();
@@ -120,15 +120,6 @@ class ClassWriter {
                 get {
                         string culture =  document.SelectSingleNode ("/CultureInfo/@name").InnerText;
                         return String.Format ("MonoCulture__{0}", culture.Replace ("-", "_"));
-                }
-        }
-
-        public bool IsNeutral {
-                get {
-                        if (document.SelectSingleNode (String.Format ("/CultureInfo/Parent")) == null)
-                                return true;
-
-                        return false;
                 }
         }
 }
