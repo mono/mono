@@ -1,3 +1,8 @@
+2004-02-25  Jackson Harper <jackson@ximian.com>
+
+	* File.cs: Report the filename when deleting a file fails. Patch
+	by Gert Driesen. Fixes bug #54855.
+	
 2004-02-24  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* FileStream.cs: remove dangling ^Ms.
