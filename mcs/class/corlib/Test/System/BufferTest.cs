@@ -105,12 +105,39 @@ namespace MonoTests.System {
 		}
 
 		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void BlockCopy_SourceOffsetOverflow ()
+		{
+			byte[] src = new byte [8];
+			byte[] dest = new byte [8];
+			Buffer.BlockCopy (src, Int32.MaxValue, dest, 0, src.Length);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void BlockCopy_DestOffsetOverflow ()
+		{
+			byte[] src = new byte [8];
+			byte[] dest = new byte [8];
+			Buffer.BlockCopy (src, 0, dest, Int32.MaxValue, src.Length);
+		}
+
+		[Test]
 		[ExpectedException (typeof (ArgumentOutOfRangeException))]
 		public void BlockCopy_LengthNegative ()
 		{
 			byte[] src = new byte [8];
 			byte[] dest = new byte [8];
 			Buffer.BlockCopy (src, 0, dest, 0, -1);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void BlockCopy_LengthOverflow ()
+		{
+			byte[] src = new byte [8];
+			byte[] dest = new byte [8];
+			Buffer.BlockCopy (src, 0, dest, 0, Int32.MaxValue);
 		}
 
 		[Test]

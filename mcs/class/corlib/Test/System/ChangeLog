@@ -7,6 +7,7 @@
 	* BitConverterTest.cs: Added new tests for negative integers and 
 	integer overflow in To... methods. Added new boolean convertion
 	tests.
+	* BufferTest.cs: Added new tests for integer overflow in BlockCopy.
 
 2004-05-22  Sebastien Pouliot  <sebastien@ximian.com>
 
