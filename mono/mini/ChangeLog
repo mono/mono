@@ -1,5 +1,8 @@
 2005-03-31  Zoltan Varga  <vargaz@freemail.hu>
 
+	* mini-x86.c: If sigaltstack support is enabled, perform win32 style
+	stack touching.
+
 	* mini.h (mono_arch_sigctx_to_monoctx): New arch-specific function.
 
 	* mini.h (mono_arch_monoctx_to_sigctx): New arch-specific function.
