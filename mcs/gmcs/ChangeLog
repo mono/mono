@@ -1,3 +1,7 @@
+2004-04-29  Martin Baulig  <martin@ximian.com>
+
+	* Makefile (gmcs.exe): Set MONO_PATH to use `../class/lib/net_2_0'.
+
 2004-04-07  Martin Baulig  <martin@ximian.com>
 
 	* expression.cs (Binary.ResolveOperator): Added special case for
