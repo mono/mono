@@ -1,3 +1,7 @@
+2003-07-28  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* Mono.Security.dll.sources: Added missing SubjectAltNameExtension.cs
+
 2003-06-14  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* list.unix. Added SubjectAltNameExtension.cs
