@@ -1,3 +1,11 @@
+2004-11-29  Marek Safar  <marek.safar@seznam.cz>
+
+	Fix bug #49488
+
+	* assign.cs (Assign.DoResolve): Add error 1648, 1650 report.
+
+	* decl.cs (MemberCore.MemberName). Error 1648 in compiler.
+
 2004-11-26  Miguel de Icaza  <miguel@ximian.com>
 
 	* attribute.cs (Attribute.Resolve): Refine error reporting and

@@ -123,7 +123,8 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public readonly MemberName MemberName;
+                // Is not readonly because of IndexerName attribute
+		public MemberName MemberName;
 
 		/// <summary>
 		///   Modifier flags that the user specified in the source code
