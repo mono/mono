@@ -436,7 +436,7 @@ namespace Mono.MonoBASIC {
 
 		public static bool CheckAttribute (Attribute a, object element)
 		{
-			TypeContainer attr = TypeManager.LookupClass (a.Type);
+			//TypeContainer attr = TypeManager.LookupClass (a.Type);
 			AttributeTargets targets = a.GetAttributeUsage ().ValidOn;
 
 
@@ -735,8 +735,8 @@ namespace Mono.MonoBASIC {
 			CallingConvention cc = CallingConvention.Winapi;
 			CharSet charset = CharSet.Ansi;
 			bool preserve_sig = true;
-			bool exact_spelling = false;
-			bool set_last_err = false;
+			/*bool exact_spelling = false;
+			bool set_last_err = false;*/
 			string entry_point = null;
 
 			for (int i = 0; i < named_args.Count; i++) {
@@ -778,10 +778,10 @@ namespace Mono.MonoBASIC {
 							charset = (CharSet) c.GetValue ();
 						else if (member_name == "EntryPoint")
 							entry_point = (string) c.GetValue ();
-						else if (member_name == "SetLastError")
+						/*else if (member_name == "SetLastError")
 							set_last_err = (bool) c.GetValue ();
 						else if (member_name == "ExactSpelling")
-							exact_spelling = (bool) c.GetValue ();
+							exact_spelling = (bool) c.GetValue ();*/
 						else if (member_name == "PreserveSig")
 							preserve_sig = (bool) c.GetValue ();
 					} else { 

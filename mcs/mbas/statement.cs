@@ -424,8 +424,6 @@ namespace Mono.MonoBASIC {
 			// Inform whether we are infinite or not
 			//
 			if (expr is BoolConstant){
-				BoolConstant bc = (BoolConstant) expr;
-
 				ig.MarkLabel (ec.LoopBegin);
 				Statement.Emit (ec);
 				ig.Emit (OpCodes.Br, ec.LoopBegin);
@@ -3080,7 +3078,7 @@ namespace Mono.MonoBASIC {
 		/// </remarks>
 		public void EmitMeta (EmitContext ec, Block toplevel)
 		{
-			DeclSpace ds = ec.DeclSpace;
+			//DeclSpace ds = ec.DeclSpace;
 			ILGenerator ig = ec.ig;
 
 			if (!variables_initialized)
@@ -4107,7 +4105,7 @@ namespace Mono.MonoBASIC {
 			ig.Emit (OpCodes.Call, TypeManager.void_monitor_enter_object);
 
 			// try
-			Label end = ig.BeginExceptionBlock ();
+			//Label end = ig.BeginExceptionBlock ();
 			bool old_in_try = ec.InTry;
 			ec.InTry = true;
 			Label finish = ig.DefineLabel ();
@@ -4629,12 +4627,12 @@ namespace Mono.MonoBASIC {
 		protected override bool DoEmit (EmitContext ec)
 		{
 			ILGenerator ig = ec.ig;
-			Label end;
+			//Label end;
 			Label finish = ig.DefineLabel ();;
 			bool returns;
 
 			ec.TryCatchLevel++;
-			end = ig.BeginExceptionBlock ();
+			//end = ig.BeginExceptionBlock ();
 			bool old_in_try = ec.InTry;
 			ec.InTry = true;
 			returns = Block.Emit (ec);
@@ -4646,7 +4644,7 @@ namespace Mono.MonoBASIC {
 
 			bool old_in_catch = ec.InCatch;
 			ec.InCatch = true;
-			DeclSpace ds = ec.DeclSpace;
+			//DeclSpace ds = ec.DeclSpace;
 
 			foreach (Catch c in Specific){
 				VariableInfo vi;
@@ -5019,7 +5017,7 @@ namespace Mono.MonoBASIC {
 			if (!statement.Resolve (ec))
 				return false;
 
-			FlowReturns returns = ec.EndFlowBranching ();
+			//FlowReturns returns = ec.EndFlowBranching ();
 
 			return true;
 		}
@@ -5291,13 +5289,10 @@ namespace Mono.MonoBASIC {
 			// Protect the code in a try/finalize block, so that
 			// if the beast implement IDisposable, we get rid of it
 			//
-			Label l;
 			bool old_in_try = ec.InTry;
 
-			if (hm.is_disposable) {
-				l = ig.BeginExceptionBlock ();
+			if (hm.is_disposable)
 				ec.InTry = true;
-			}
 			
 			Label end_try = ig.DefineLabel ();
 			

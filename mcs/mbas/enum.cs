@@ -375,14 +375,10 @@ namespace Mono.MonoBASIC {
 		/// </summary>
 		public object LookupEnumValue (string name)
 		{
-			object default_value = null;
-			Constant c = null;
 			EnumMember em;
 
 			// first check whether the requested name is there
 			// in the member list of enum
-			bool found = false;
-
 
 			em = this [name];
 
@@ -412,10 +408,10 @@ namespace Mono.MonoBASIC {
 		{
 			if (TypeBuilder == null)
 				return false;
-			
+			/*
 			EmitContext ec = new EmitContext (parent, this, Location, null,
 							  UnderlyingType, ModFlags, false);
-			
+			*/
 			foreach (string name in ordered_enums) {
 				EnumMember em = this [name];
 				FieldBuilder fb = em.DefineMember ();

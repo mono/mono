@@ -1465,7 +1465,6 @@ sub_declaration
 						evt_target + " is not declared with WithEvents");
 			}
 		  } else if (handles_exp is BaseAccess) {
-				string evt_id = ((BaseAccess) $4).member;
 				Statement addhnd = (Statement) new AddHandler ((Expression) $4, 
 											DecomposeQI((string) $2, loc), 
 											loc);	
@@ -2478,8 +2477,6 @@ statement
 	    }
 	  | embedded_statement
 	    {
-		  Statement s = (Statement) $1;
-
 		  current_block.AddStatement ((Statement) $1);
 	    } 
 	  | labeled_statement 
@@ -2499,8 +2496,6 @@ statement
 	  /* | empty_statement */
 	  | with_statement 
 	    {
-		  Statement s = (Statement) $1;
-
 	      current_block.AddStatement ((Statement) $1);
 	    }	  
 	  ;	
@@ -3146,8 +3141,6 @@ if_statement
 pre_embedded_statement
 	: embedded_statement 
 	  {
-		Statement s = (Statement) $1;
-
 		current_block.AddStatement ((Statement) $1);
 	  } 
 	;	
@@ -3171,7 +3164,6 @@ else_pre_embedded_statement
         tmp_blocks.Push(bl); 
         
 	  	start_block();
-		Statement s = (Statement) $2;
 		current_block.AddStatement ((Statement) $2);
 	  } 
 	;	
@@ -3542,7 +3534,6 @@ constant_declarator
 		string varname = (string) vname.Name;
 		current_rank_specifiers = (ArrayList) vname.Rank;
 		object varinit = $3;
-		ArrayList a_dims = null;
 
 		if (varinit == null)
 			Report.Error (
@@ -4371,9 +4362,9 @@ assignment_expression
 	  }
 	| prefixed_unary_expression OP_EXP ASSIGN expression
 	  {
-		Location l = lexer.Location;
+		/*Location l = lexer.Location;
 
-		/* TODO: $$ = new CompoundAssign (
+		 TODO: $$ = new CompoundAssign (
 			Binary.Operator.ExclusiveOr, (Expression) $1, (Expression) $4, l); */
 	  }
 	| prefixed_unary_expression ASSIGN ADDRESSOF expression
@@ -4478,8 +4469,6 @@ pp_directive
 	  {
 	  	if(tokenizerController.IsAcceptingTokens) 
 	  	{
-	  		string id = ($2 as string);
-		
 		  	if(!($2 as string).ToLower().Equals("region"))
 				Report.Error (30205, lexer.Location, "Invalid Pre-processor directive");
 			else
@@ -4908,7 +4897,6 @@ public class VariableDeclaration {
 		
 	public static void FixupArrayTypes (ArrayList vars)
 	{
-		int varcount = 	vars.Count;
 		string dims;
 		
 		foreach (VariableDeclaration var in vars) {
@@ -5000,13 +4988,11 @@ void CheckAttributeTarget (string a)
 
 private void AddHandler (Block b, Expression evt_id, Expression handles_exp)
 {
-	Expression evt_target;
 	Location loc = lexer.Location;
 	
 	Statement addhnd = (Statement) new AddHandler (evt_id, 
 													handles_exp, 
 													loc);													
-													
 	b.AddStatement (addhnd);
 }
 
@@ -5021,7 +5007,6 @@ private void RaiseEvent (string evt_name, ArrayList args)
 
 private void RemoveHandler (Block b, Expression evt_definition, Expression handler_exp)
 {
-	Expression evt_target;
 	Location loc = lexer.Location;
 	
 	Statement rmhnd = (Statement) new RemoveHandler (evt_definition, 
@@ -5122,7 +5107,6 @@ protected override int parse ()
 	ifElseStateMachine = new IfElseStateMachine();
 	tokenizerController = new TokenizerController(lexer);
 	
-	StringBuilder value = new StringBuilder ();
 	try {
 		if (yacc_verbose_flag > 0)
 			yyparse (lexer, new yydebug.yyDebugSimple ());

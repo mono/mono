@@ -400,7 +400,7 @@ namespace Mono.MonoBASIC {
 		{
 			TypeContainer root = Tree.Types;
 			
-			ArrayList ifaces = root.Interfaces;
+			//ArrayList ifaces = root.Interfaces;
 
 			if (root.Enums != null)
 				foreach (Enum en in root.Enums)
@@ -809,7 +809,7 @@ namespace Mono.MonoBASIC {
 		static public FieldBuilder MakeStaticData (byte [] data)
 		{
 			FieldBuilder fb;
-			int size = data.Length;
+			//int size = data.Length;
 			
 			if (impl_details_class == null)
 				impl_details_class = CodeGen.ModuleBuilder.DefineType (

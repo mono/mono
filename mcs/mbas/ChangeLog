@@ -1,4 +1,18 @@
 2005-01-10 Anirban Bhattacharjee <banirban@novell.com>
+	* mb-parser.jay:
+	* class.cs:
+	* statement.cs:
+	* rootcontext.cs:
+	* mb-tokenizer.cs:
+	* decl.cs:
+	* expression.cs:
+	* attribute.cs:
+	* enum.cs:
+	* codegen.cs:
+		Removed warnings from all the above files which were showing up during make
+
+
+2005-01-10 Anirban Bhattacharjee <banirban@novell.com>
 	* mb-parser.jay: Check for the overloaded property  
 
 2005-01-10 Anirban Bhattacharjee <banirban@novell.com>

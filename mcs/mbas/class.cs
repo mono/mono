@@ -143,17 +143,18 @@ namespace Mono.MonoBASIC {
 		public TypeContainer (TypeContainer parent, string name, Attributes attrs, Location l)
 			: base (parent, name, attrs, l)
 		{
-			string n;
 			types = new ArrayList ();
+			
+			base_class_name = null;
 
+			/* string n;
+			  
 			if (parent == null)
 				n = "";
 			else
 				n = parent.Name;
 
-			base_class_name = null;
-			
-			//Console.WriteLine ("New class " + name + " inside " + n);
+			Console.WriteLine ("New class " + name + " inside " + n);*/
 		}
 
 		public AdditionResult AddConstant (Const constant)
@@ -536,7 +537,7 @@ namespace Mono.MonoBASIC {
 		public bool EmitFieldInitializers (EmitContext ec)
 		{
 			ArrayList fields;
-			ILGenerator ig = ec.ig;
+			//ILGenerator ig = ec.ig;
 			Expression instance_expr;
 			
 			if (ec.IsStatic){
@@ -1274,7 +1275,7 @@ namespace Mono.MonoBASIC {
 							continue;
 						if ((p.ModFlags & static_mask) != static_flags)
 							continue;
-
+						
 						MemberInfo pb = p.PropertyBuilder;
 
 						if (pb != null && filter (pb, criteria) == true)
@@ -1565,7 +1566,7 @@ namespace Mono.MonoBASIC {
 		{
 			const int vao = (Modifiers.VIRTUAL | Modifiers.ABSTRACT | Modifiers.OVERRIDE);
 			const int va = (Modifiers.VIRTUAL | Modifiers.ABSTRACT);
-			const int nv = (Modifiers.SHADOWS | Modifiers.VIRTUAL);
+			//const int nv = (Modifiers.SHADOWS | Modifiers.VIRTUAL);
 			bool ok = true;
 			string name = MakeName (n);
 			
@@ -1679,7 +1680,7 @@ namespace Mono.MonoBASIC {
 		// and return the new level.
 		static AccessLevel CheckAccessLevel (AccessLevel level, int flags)
 		{
-			AccessLevel old_level = level;
+			//AccessLevel old_level = level;
 
 			if ((flags & Modifiers.INTERNAL) != 0) {
 				if ((flags & Modifiers.PROTECTED) != 0) {
@@ -3799,7 +3800,7 @@ namespace Mono.MonoBASIC {
 			if ((ModFlags & Modifiers.READONLY) != 0)
 				retval = MemberType;
 
-			string report_name;
+			//string report_name;
 			MethodSignature base_ms;
 			
 			/*
@@ -3812,7 +3813,7 @@ namespace Mono.MonoBASIC {
 				base_name = TypeManager.IndexerPropertyName (container.TypeBuilder.BaseType);
 				base_ms = new MethodSignature (base_name, retval, ParameterTypes);
 			} else */ {
-				report_name = Name;
+				//report_name = Name;
 				ms = base_ms = new MethodSignature (Name, retval, ParameterTypes);
 			}
 
@@ -3838,7 +3839,6 @@ namespace Mono.MonoBASIC {
 				BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance,
 				MethodSignature.inheritable_property_signature_filter,
 				base_ms);
-
 
 			if (mi_instance.Count > 0)
 				mi = mi_instance;
@@ -3969,9 +3969,9 @@ namespace Mono.MonoBASIC {
 
 		public override bool Define (TypeContainer parent)
 		{
-			Type [] s_parameters=null;
+			/*Type [] s_parameters=null;
 			Parameter [] s_parms;
-			InternalParameters s_ip=null;
+			InternalParameters s_ip=null;*/
 			
 			if ((parent is Struct) && ((ModFlags & Modifiers.PROTECTED) != 0))
 				Report.Error (30435, Location,
@@ -4257,7 +4257,7 @@ namespace Mono.MonoBASIC {
 
 		public MethodBuilder Define (TypeContainer parent)
 		{
-			EventAttributes e_attr = EventAttributes.RTSpecialName | EventAttributes.SpecialName;
+			//EventAttributes e_attr = EventAttributes.RTSpecialName | EventAttributes.SpecialName;
 
 			Type [] parameter_types = new Type [1];
 			parameter_types [0] = parent_event.MemberType;
@@ -4356,8 +4356,9 @@ namespace Mono.MonoBASIC {
 
 			Parameter [] parms = new Parameter [1];
 			parms [0] = new Parameter (Type, /* was "value" */ this.Name, Parameter.Modifier.NONE, null);
-			InternalParameters ip = new InternalParameters (
+			/*InternalParameters ip = new InternalParameters (
 				parent, new Parameters (parms, null, Location)); 
+			*/
 
 			if (!CheckBase (parent))
 				return false;

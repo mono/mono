@@ -778,8 +778,8 @@ namespace Mono.MonoBASIC
 
 		private int DropComments()		
 		{
-			int d;
-			while (!IsEOL(d = getChar ()))
+			//int d;
+			while (!IsEOL(/*d =*/ getChar ()))
 				col++;
 
 			return Token.EOL;

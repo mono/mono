@@ -487,7 +487,7 @@ namespace Mono.MonoBASIC {
 		// </summary>
 		public void KillFlowBranching ()
 		{
-			FlowBranching cfb = (FlowBranching) FlowStack.Pop ();
+			/*FlowBranching cfb = (FlowBranching)*/ FlowStack.Pop ();
 		}
 
 		// <summary>

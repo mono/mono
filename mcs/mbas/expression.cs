@@ -505,7 +505,6 @@ namespace Mono.MonoBASIC {
 		public override void Emit (EmitContext ec)
 		{
 			ILGenerator ig = ec.ig;
-			Type expr_type = Expr.Type;
 			
 			switch (Oper) {
 			case Operator.UnaryPlus:
@@ -1471,8 +1470,6 @@ namespace Mono.MonoBASIC {
 			if (expr == null)
 				return null;
 
-			int errors = Report.Errors;
-
 			type = ec.DeclSpace.ResolveType (target_type, false, Location);
 
 			if (type == null)
@@ -1850,8 +1847,6 @@ namespace Mono.MonoBASIC {
 		Expression CheckShiftArguments (EmitContext ec)
 		{
 			Expression e;
-			Type l = left.Type;
-			Type r = right.Type;
 
 			e = ForceConversion (ec, right, TypeManager.int32_type);
 			if (e == null){
@@ -2440,7 +2435,7 @@ namespace Mono.MonoBASIC {
 		{
 			ILGenerator ig = ec.ig;
 			Type l = left.Type;
-			Type r = right.Type;
+			//Type r = right.Type;
 			OpCode opcode;
 
 			if (method != null) {
@@ -3246,9 +3241,8 @@ namespace Mono.MonoBASIC {
 			Applicability res = Applicability.Same;
 
 			for (int j = 0; j < argument_count; ++j) {
-				int x, y;
 				
-				Argument a = (Argument) args [j];
+				//Argument a = (Argument) args [j];
 
 				Type ct = candidate_pd.ParameterType (j);
 				Type bt = best_pd.ParameterType (j);
@@ -3484,7 +3478,7 @@ namespace Mono.MonoBASIC {
 		/// </summary>
 		static ConversionType IsApplicable (EmitContext ec, ArrayList arguments, MethodBase candidate, out bool expanded)
 		{
-			int arg_count, po_count;
+			int arg_count;
 			Type param_type;
 
 			expanded = false;
@@ -3693,9 +3687,7 @@ namespace Mono.MonoBASIC {
 		public static MethodBase OverloadResolve (EmitContext ec, MethodGroupExpr me,
 							  ref ArrayList Arguments, Location loc)
 		{
-			ArrayList afm = new ArrayList ();
 			MethodBase method = null;
-			Type current_type = null;
 			int argument_count;
 			ArrayList candidates = new ArrayList ();
 			Hashtable expanded_candidates = new Hashtable();
@@ -4973,7 +4965,6 @@ namespace Mono.MonoBASIC {
 			//
 			Expression array_type_expr;
 			array_type_expr = new ComposedCast (requested_base_type, array_qualifier.ToString (), loc);
-			string sss = array_qualifier.ToString ();
 			type = ec.DeclSpace.ResolveType (array_type_expr, false, loc);
 
 			if (type == null)
@@ -5677,7 +5668,7 @@ namespace Mono.MonoBASIC {
 					Const c = TypeManager.LookupConstant ((FieldBuilder) fi);
 					
 					if (c != null) {
-						object o = c.LookupConstantValue (ec);
+						//object o = c.LookupConstantValue (ec);
 						object real_value = ((Constant) c.Expr).GetValue ();
 
 						return Constantify (real_value, fi.FieldType);
@@ -6195,7 +6186,7 @@ namespace Mono.MonoBASIC {
 
 		public override Expression DoResolve (EmitContext ec)
 		{
-			ExprClass eclass = ea.Expr.eclass;
+			//ExprClass eclass = ea.Expr.eclass;
 
 #if false
 			// As long as the type is valid
