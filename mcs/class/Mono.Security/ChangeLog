@@ -1,3 +1,8 @@
+2003-09-01  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* Mono.Security.dll.sources: Added support for Authenticode(tm)
+	signatures.
+
 2003-07-30  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* Mono.Security.dll.sources: Added ExtendedKeyUsageExtension.cs 

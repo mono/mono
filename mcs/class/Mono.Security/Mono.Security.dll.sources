@@ -2,6 +2,9 @@
 ./Mono.Security/ASN1Convert.cs
 ./Mono.Security/PKCS7.cs
 ./Mono.Security/StrongName.cs
+./Mono.Security.Authenticode/AuthenticodeBase.cs
+./Mono.Security.Authenticode/AuthenticodeDeformatter.cs
+./Mono.Security.Authenticode/AuthenticodeFormatter.cs
 ./Mono.Security.Authenticode/SoftwarePublisherCertificate.cs
 ./Mono.Security.Authenticode/PrivateKey.cs
 ./Mono.Security.Cryptography/ARC4Managed.cs
@@ -9,10 +12,15 @@
 ./Mono.Security.Cryptography/MD2.cs
 ./Mono.Security.Cryptography/MD2Managed.cs
 ./Mono.Security.Cryptography/RC4.cs
+./Mono.Security.X509/ITrustAnchors.cs
+./Mono.Security.X509/TestAnchors.cs
+./Mono.Security.X509/TrustAnchors.cs
 ./Mono.Security.X509/X501Name.cs
 ./Mono.Security.X509/X509Builder.cs
 ./Mono.Security.X509/X509Certificate.cs
+./Mono.Security.X509/X509CertificateCollection.cs
 ./Mono.Security.X509/X509CertificateBuilder.cs
+./Mono.Security.X509/X509Chain.cs
 ./Mono.Security.X509/X509Extension.cs
 ./Mono.Security.X509/X509Extensions.cs
 ./Mono.Security.X509/X520Attributes.cs
