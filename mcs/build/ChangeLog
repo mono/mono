@@ -1,3 +1,8 @@
+2004-06-09  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* library.make: Added support to fully sign assemblies when doing a
+	"make install" (thanks to Jackson :-).
+
 2004-06-09  Raja R Harinath  <rharinath@novell.com>
 
 	Do away with stampfiles.

@@ -50,6 +50,7 @@ HAVE_VB_TESTS := $(wildcard $(btest_sourcefile))
 endif
 
 gacutil = $(topdir)/tools/gacutil/gacutil.exe
+sn = $(topdir)/tools/security/sn.exe
 
 PACKAGE = 1.0
 
@@ -57,16 +58,28 @@ ifeq ($(PROFILE), net_2_0)
 PACKAGE = 2.0
 endif
 
+ifndef NO_SIGN_ASSEMBLY
+sign = sign_assembly
+else
+sign = 
+endif
+
 all-local: $(the_lib)
 
-install-local: $(the_lib) $(gacutil)
-	$(RUNTIME) $(gacutil) /i $(the_lib) /f /root $(DESTDIR)$(prefix)/lib /package $(PACKAGE)
+install-local: $(the_lib) $(gacutil) $(sign)
+	$(RUNTIME)  $(gacutil) /i $(the_lib) /f /root $(DESTDIR)$(prefix)/lib /package $(PACKAGE)
 
 uninstall-local: $(gacutil)
 	$(RUNTIME) $(gacutil) /u `echo $(LIBRARY_NAME) | sed 's,.dll$,,'`
 
 $(gacutil):
 	cd $(topdir)/tools/gacutil && $(MAKE)
+
+$(sn):
+	cd $(topdir)/tools/security && $(MAKE) sn.exe || exit 1 ;
+
+sign_assembly: $(sn)
+	$(RUNTIME) $(sn) -q -R $(the_lib) $(topdir)/class/mono.snk
 
 clean-local:
 	-rm -f $(the_lib) $(makefrag) $(test_lib) \
