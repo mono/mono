@@ -69,7 +69,7 @@ namespace Mono.CSharp.Debugger
 			this.Offset = offset;
 		}
 
-		internal LineNumberEntry (ISourceLine line)
+		internal LineNumberEntry (SourceLine line)
 			: this (line.Row, line.Offset)
 		{ }
 

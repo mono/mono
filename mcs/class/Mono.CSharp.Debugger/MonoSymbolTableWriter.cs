@@ -47,7 +47,7 @@ namespace Mono.CSharp.Debugger
 			Hashtable sources = new Hashtable ();
 
 			ot.source_table_offset = (int) bw.BaseStream.Position;
-			foreach (ISourceFile source in symwriter.Sources) {
+			foreach (SourceFile source in symwriter.Sources) {
 				if (sources.ContainsKey (source))
 					continue;
 
@@ -66,7 +66,7 @@ namespace Mono.CSharp.Debugger
 			int address_table_size = 0;
 
 			ot.line_number_table_offset = (int) bw.BaseStream.Position;
-			foreach (ISourceMethod method in symwriter.Methods) {
+			foreach (SourceMethod method in symwriter.Methods) {
 				if (method.Start == null || method.Start.Row == 0)
 					continue;
 

@@ -20,7 +20,7 @@ using System.IO;
 	
 namespace Mono.CSharp.Debugger
 {
-	internal class SourceFile : ISourceFile
+	internal class SourceFile
 	{
 		private ArrayList _methods = new ArrayList ();
 		private string _file_name;
@@ -35,34 +35,32 @@ namespace Mono.CSharp.Debugger
 			return _file_name;
 		}
 
-		// interface ISourceFile
-
 		public string FileName {
 			get {
 				return _file_name;
 			}
 		}
 
-		public ISourceMethod[] Methods {
+		public SourceMethod[] Methods {
 			get {
-				ISourceMethod[] retval = new ISourceMethod [_methods.Count];
+				SourceMethod[] retval = new SourceMethod [_methods.Count];
 				_methods.CopyTo (retval);
 				return retval;
 			}
 		}
 
-		public void AddMethod (ISourceMethod method)
+		public void AddMethod (SourceMethod method)
 		{
 			_methods.Add (method);
 		}
 	}
 
-	internal class SourceBlock : ISourceBlock
+	internal class SourceBlock
 	{
 		static private int next_index;
 		private readonly int _index;
 
-		public SourceBlock (ISourceMethod method, ISourceLine start, ISourceLine end)
+		public SourceBlock (SourceMethod method, SourceLine start, SourceLine end)
 		{
 			this._method = method;
 			this._start = start;
@@ -70,7 +68,7 @@ namespace Mono.CSharp.Debugger
 			this._index = ++next_index;
 		}
 
-		internal SourceBlock (ISourceMethod method, int startOffset)
+		internal SourceBlock (SourceMethod method, int startOffset)
 		{
 			this._method = method;
 			this._start = new SourceLine (startOffset);
@@ -82,39 +80,39 @@ namespace Mono.CSharp.Debugger
 			return "SourceBlock #" + ID + " (" + Start + " - " + End + ")";
 		}
 
-		private readonly ISourceMethod _method;
+		private readonly SourceMethod _method;
 		private ArrayList _blocks = new ArrayList ();
-		internal ISourceLine _start;
-		internal ISourceLine _end;
+		internal SourceLine _start;
+		internal SourceLine _end;
 
 		private ArrayList _locals = new ArrayList ();
 
-		public ISourceMethod SourceMethod {
+		public SourceMethod SourceMethod {
 			get {
 				return _method;
 			}
 		}
 
-		public ISourceBlock[] Blocks {
+		public SourceBlock[] Blocks {
 			get {
-				ISourceBlock[] retval = new ISourceBlock [_blocks.Count];
+				SourceBlock[] retval = new SourceBlock [_blocks.Count];
 				_blocks.CopyTo (retval);
 				return retval;
 			}
 		}
 
-		public void AddBlock (ISourceBlock block)
+		public void AddBlock (SourceBlock block)
 		{
 			_blocks.Add (block);
 		}
 
-		public ISourceLine Start {
+		public SourceLine Start {
 			get {
 				return _start;
 			}
 		}
 
-		public ISourceLine End {
+		public SourceLine End {
 			get {
 				return _end;
 			}
@@ -126,21 +124,21 @@ namespace Mono.CSharp.Debugger
 			}
 		}
 
-		public ILocalVariable[] Locals {
+		public LocalVariable[] Locals {
 			get {
-				ILocalVariable[] retval = new ILocalVariable [_locals.Count];
+				LocalVariable[] retval = new LocalVariable [_locals.Count];
 				_locals.CopyTo (retval);
 				return retval;
 			}
 		}
 
-		public void AddLocal (ILocalVariable local)
+		public void AddLocal (LocalVariable local)
 		{
 			_locals.Add (local);
 		}
 	}
 
-	internal class SourceLine : ISourceLine
+	internal class SourceLine
 	{
 		public SourceLine (int row, int column)
 			: this (0, row, column)
@@ -170,7 +168,7 @@ namespace Mono.CSharp.Debugger
 		internal int _row;
 		internal int _column;
 
-		// interface ISourceLine
+		// interface SourceLine
 
 		public SourceOffsetType OffsetType {
 			get {
@@ -197,14 +195,14 @@ namespace Mono.CSharp.Debugger
 		}
 	}
 
-	internal class Variable : IVariable
+	internal class Variable
 	{
-		public Variable (string name, ITypeHandle handle, ISourceMethod method, int index)
+		public Variable (string name, ITypeHandle handle, SourceMethod method, int index)
 			: this (name, handle, method, index, null)
 		{ }
 
-		public Variable (string name, ITypeHandle handle, ISourceMethod method,
-				 int index, ISourceLine line)
+		public Variable (string name, ITypeHandle handle, SourceMethod method,
+				 int index, SourceLine line)
 		{
 			this._name = name;
 			this._handle = handle;
@@ -215,8 +213,8 @@ namespace Mono.CSharp.Debugger
 
 		private readonly string _name;
 		private readonly ITypeHandle _handle;
-		private readonly ISourceMethod _method;
-		private readonly ISourceLine _line;
+		private readonly SourceMethod _method;
+		private readonly SourceLine _line;
 		private readonly int _index;
 
 		// interface IVariable
@@ -227,7 +225,7 @@ namespace Mono.CSharp.Debugger
 			}
 		}
 
-		public ISourceMethod Method {
+		public SourceMethod Method {
 			get {
 				return _method;
 			}
@@ -245,17 +243,17 @@ namespace Mono.CSharp.Debugger
 			}
 		}
 
-		public ISourceLine Line {
+		public SourceLine Line {
 			get {
 				return _line;
 			}
 		}
 	}
 
-	internal class LocalVariable : Variable, ILocalVariable
+	internal class LocalVariable : Variable
 	{
-		public LocalVariable (string name, ITypeHandle handle, ISourceMethod method,
-				      int index, ISourceLine line)
+		public LocalVariable (string name, ITypeHandle handle, SourceMethod method,
+				      int index, SourceLine line)
 			: base (name, handle, method, index, line)
 		{ }
 
@@ -265,7 +263,7 @@ namespace Mono.CSharp.Debugger
 		}
 	}
 
-	internal class SourceMethod : ISourceMethod
+	internal class SourceMethod
 	{
 		private ArrayList _lines = new ArrayList ();
 		private ArrayList _blocks = new ArrayList ();
@@ -273,12 +271,12 @@ namespace Mono.CSharp.Debugger
 		private Stack _block_stack = new Stack ();
 
 		internal readonly MethodBase _method_base;
-		internal ISourceFile _source_file;
+		internal SourceFile _source_file;
 		internal int _token;
 
 		private SourceBlock _implicit_block;
 
-		public SourceMethod (MethodBase method_base, ISourceFile source_file)
+		public SourceMethod (MethodBase method_base, SourceFile source_file)
 			: this (method_base)
 		{
 			this._source_file = source_file;
@@ -291,7 +289,7 @@ namespace Mono.CSharp.Debugger
 			this._implicit_block = new SourceBlock (this, 0);
 		}
 
-		public void SetSourceRange (ISourceFile sourceFile,
+		public void SetSourceRange (SourceFile sourceFile,
 					    int startLine, int startColumn,
 					    int endLine, int endColumn)
 		{
@@ -301,7 +299,7 @@ namespace Mono.CSharp.Debugger
 		}
 
 
-		public void StartBlock (ISourceBlock block)
+		public void StartBlock (SourceBlock block)
 		{
 			_block_stack.Push (block);
 		}
@@ -312,7 +310,7 @@ namespace Mono.CSharp.Debugger
 			block._end = new SourceLine (endOffset);
 
 			if (_block_stack.Count > 0) {
-				ISourceBlock parent = (ISourceBlock) _block_stack.Peek ();
+				SourceBlock parent = (SourceBlock) _block_stack.Peek ();
 
 				parent.AddBlock (block);
 			} else
@@ -328,45 +326,43 @@ namespace Mono.CSharp.Debugger
 			((SourceLine) block.End)._offset = endOffset;
 		}
 
-		public ISourceBlock CurrentBlock {
+		public SourceBlock CurrentBlock {
 			get {
 				if (_block_stack.Count > 0)
-					return (ISourceBlock) _block_stack.Peek ();
+					return (SourceBlock) _block_stack.Peek ();
 				else
 					return _implicit_block;
 			}
 		}
 
-		// interface ISourceMethod
-
-		public ISourceLine[] Lines {
+		public SourceLine[] Lines {
 			get {
-				ISourceLine[] retval = new ISourceLine [_lines.Count];
+				SourceLine[] retval = new SourceLine [_lines.Count];
 				_lines.CopyTo (retval);
 				return retval;
 			}
 		}
 
-		public void AddLine (ISourceLine line)
+		public void AddLine (SourceLine line)
 		{
 			_lines.Add (line);
 		}
 
-		public ISourceBlock[] Blocks {
+		public SourceBlock[] Blocks {
 			get {
-				ISourceBlock[] retval = new ISourceBlock [_blocks.Count];
+				SourceBlock[] retval = new SourceBlock [_blocks.Count];
 				_blocks.CopyTo (retval);
 				return retval;
 			}
 		}
 
-		public ILocalVariable[] Locals {
+		public LocalVariable[] Locals {
 			get {
 				return _implicit_block.Locals;
 			}
 		}
 
-		public void AddLocal (ILocalVariable local)
+		public void AddLocal (LocalVariable local)
 		{
 			_implicit_block.AddLocal (local);
 		}
@@ -407,7 +403,7 @@ namespace Mono.CSharp.Debugger
 			}
 		}
 
-		public ISourceFile SourceFile {
+		public SourceFile SourceFile {
 			get {
 				return _source_file;
 			}
@@ -422,13 +418,13 @@ namespace Mono.CSharp.Debugger
 			}
 		}
 
-		public ISourceLine Start {
+		public SourceLine Start {
 			get {
 				return _implicit_block.Start;
 			}
 		}
 
-		public ISourceLine End {
+		public SourceLine End {
 			get {
 				return _implicit_block.End;
 			}
@@ -445,17 +441,17 @@ namespace Mono.CSharp.Debugger
 		protected Hashtable sources = null;
 		private ArrayList mbuilder_array = null;
 
-		internal ISourceMethod[] Methods {
+		internal SourceMethod[] Methods {
 			get {
-				ISourceMethod[] retval = new ISourceMethod [methods.Count];
+				SourceMethod[] retval = new SourceMethod [methods.Count];
 				methods.CopyTo (retval);
 				return retval;
 			}
 		}
 
-		internal ISourceFile[] Sources {
+		internal SourceFile[] Sources {
 			get {
-				ISourceFile[] retval = new ISourceFile [sources.Count];
+				SourceFile[] retval = new SourceFile [sources.Count];
 				sources.Values.CopyTo (retval, 0);
 				return retval;
 			}
@@ -645,7 +641,7 @@ namespace Mono.CSharp.Debugger
 			if (current_method == null)
 				return 0;
 
-			ISourceBlock block = new SourceBlock (current_method, startOffset);
+			SourceBlock block = new SourceBlock (current_method, startOffset);
 			current_method.StartBlock (block);
 
 			return block.ID;
