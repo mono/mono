@@ -698,7 +698,7 @@ namespace Mono.CSharp {
 		//
 		void DefineIndexers (TypeContainer parent)
 		{
-			string interface_indexer_name;
+			string interface_indexer_name = null;
 
 			foreach (InterfaceIndexer ii in defined_indexer){
 
