@@ -294,12 +294,12 @@ namespace Mono.Data.TdsClient {
 				throw new ArgumentException ("Password is null.  This may be a bug with blank passwords.");
 
 			if (!pooling)
-				tds = new Tds42 (dataSource, port, packetSize);
+				tds = new Tds42 (DataSource, port, PacketSize, ConnectionTimeout);
 			else {
 				pool = (TdsConnectionPool) pools[connectionString];
 				if (pool == null) {
 					lock (pools) {
-						pool = new TdsConnectionPool (dataSource, port, packetSize, minPoolSize, maxPoolSize);
+						pool = new TdsConnectionPool (dataSource, port, packetSize, ConnectionTimeout, minPoolSize, maxPoolSize);
 						pools[connectionString] = pool;
 					}
 				}

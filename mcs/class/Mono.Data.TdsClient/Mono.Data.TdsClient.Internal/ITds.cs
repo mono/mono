@@ -52,8 +52,13 @@ namespace Mono.Data.TdsClient.Internal {
 		void Cancel ();
 		bool Connect (TdsConnectionParameters connectionParameters);
 		void Disconnect ();
+
 		int ExecuteNonQuery (string sql);
+		int ExecuteNonQuery (string sql, int timeout);
+
 		void ExecuteQuery (string sql);
+		void ExecuteQuery (string sql, int timeout);
+
 		bool NextResult ();
 		bool NextRow ();
 		void SkipToEnd ();

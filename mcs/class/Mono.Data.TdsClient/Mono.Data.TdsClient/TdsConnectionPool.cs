@@ -23,6 +23,7 @@ namespace Mono.Data.TdsClient {
 		int minSize;
 		int packetSize;
 		int port;
+		int timeout;
 
 		string dataSource;
 
@@ -30,11 +31,12 @@ namespace Mono.Data.TdsClient {
 
 		#region Constructors
 
-		public TdsConnectionPool (string dataSource, int port, int packetSize, int minSize, int maxSize)
+		public TdsConnectionPool (string dataSource, int port, int packetSize, int timeout, int minSize, int maxSize)
 		{
 			this.dataSource = dataSource;
 			this.port = port;
 			this.packetSize = packetSize;
+			this.timeout = timeout;
 			this.minSize = minSize;
 			this.maxSize = maxSize;
 		}
@@ -115,7 +117,7 @@ namespace Mono.Data.TdsClient {
 			// make sure we have the minimum count (really only useful the first time)
 			lock (list) {
 				for (int i = Count; i < minSize; i += 1)
-					Add (new Tds42 (dataSource, port, packetSize));
+					Add (new Tds42 (dataSource, port, packetSize, timeout));
 			}
 
 			// Try to obtain a lock
@@ -124,7 +126,7 @@ namespace Mono.Data.TdsClient {
 					return (ITds) o;
 
 			if (Count < maxSize) {
-				Tds tds = new Tds42 (dataSource, port, packetSize);
+				Tds tds = new Tds42 (dataSource, port, packetSize, timeout);
 				Monitor.Enter (tds);
 				Add (tds);
 				return tds;

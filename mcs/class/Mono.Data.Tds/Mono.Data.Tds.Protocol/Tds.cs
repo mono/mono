@@ -12,9 +12,7 @@ using System.Collections;
 using System.ComponentModel;
 using System.Data;
 using System.Data.Common;
-using System.Data.SqlTypes;
 using System.Diagnostics;
-using System.Net;
 using System.Net.Sockets;
 using System.Text;
 
@@ -43,7 +41,6 @@ namespace Mono.Data.TdsClient.Internal {
 		TdsServerType serverType;
 		IsolationLevel isolationLevel;
 		bool autoCommit;
-                Socket socket = new Socket (AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 
 		bool doneProc;
 		TdsPacketRowResult currentRow = null;
@@ -59,10 +56,6 @@ namespace Mono.Data.TdsClient.Internal {
 		bool isDoneInProc;
 
 		ArrayList outputParameters = new ArrayList ();
-
-		static readonly object EventTdsErrorMessage = new object ();
-		static readonly object EventTdsInfoMessage = new object ();
-
 		TdsInternalErrorCollection messages = new TdsInternalErrorCollection ();
 
 		#endregion // Fields
@@ -135,40 +128,20 @@ namespace Mono.Data.TdsClient.Internal {
 
 		#region Events
 
-		public event TdsInternalErrorMessageEventHandler TdsErrorMessage {
-			add { Events.AddHandler (EventTdsErrorMessage, value); }
-			remove { Events.RemoveHandler (EventTdsErrorMessage, value); }
-		}
-
-		public event TdsInternalInfoMessageEventHandler TdsInfoMessage {
-			add { Events.AddHandler (EventTdsInfoMessage, value); }
-			remove { Events.RemoveHandler (EventTdsInfoMessage, value); }
-		}
+		public event TdsInternalErrorMessageEventHandler TdsErrorMessage;
+		public event TdsInternalInfoMessageEventHandler TdsInfoMessage;
 
 		#endregion // Events
 
 		#region Constructors
 
-		public Tds (string dataSource, int port, int packetSize, TdsVersion tdsVersion)
+		public Tds (string dataSource, int port, int packetSize, int timeout, TdsVersion tdsVersion)
 		{
 			this.tdsVersion = tdsVersion;
 			this.packetSize = packetSize;
 			this.dataSource = dataSource;
 
-			IPHostEntry hostEntry = Dns.Resolve (dataSource);
-			IPAddress[] addresses = hostEntry.AddressList;
-
-			IPEndPoint endPoint;
-
-			foreach (IPAddress address in addresses) {
-				endPoint = new IPEndPoint (address, port);
-				socket.Connect (endPoint);
-
-				if (socket.Connected)
-					break;
-			}
-	
-			comm = new TdsComm (socket, packetSize, tdsVersion);
+			comm = new TdsComm (dataSource, port, packetSize, timeout, tdsVersion);
 		}
 
 		#endregion // Constructors
@@ -184,10 +157,15 @@ namespace Mono.Data.TdsClient.Internal {
 					cancelsRequested += 1;
 				}
 			}	
-				
 		}
-		
+	
 		public abstract bool Connect (TdsConnectionParameters connectionParameters);
+
+		public static TdsTimeoutException CreateTimeoutException (string dataSource, string method)
+		{
+			string message = "Timeout expired. The timeout period elapsed prior to completion of the operation or the server is not responding.";
+			return new TdsTimeoutException (0, 0, message, -2, method, dataSource, "Mono TdsClient Data Provider", 0);
+		}
 
 		public void Disconnect ()
 		{
@@ -212,6 +190,11 @@ namespace Mono.Data.TdsClient.Internal {
 
 		public int ExecuteNonQuery (string sql)
 		{
+			return ExecuteNonQuery (sql, 0);
+		}
+
+		public int ExecuteNonQuery (string sql, int timeout)
+		{
 			TdsPacketResult result = null;
 			messages.Clear ();
 			doneProc = false;
@@ -221,6 +204,8 @@ namespace Mono.Data.TdsClient.Internal {
 				comm.Append (sql);
 				comm.SendPacket ();
 			}
+
+			CheckForData (timeout);
 
 			bool done = false;
 			while (!done) {
@@ -254,6 +239,11 @@ namespace Mono.Data.TdsClient.Internal {
 
 		public void ExecuteQuery (string sql)
 		{
+			ExecuteQuery (sql, 0);
+		}
+
+		public void ExecuteQuery (string sql, int timeout)
+		{
 			moreResults = true;
 			doneProc = false;
 			outputParameters.Clear ();
@@ -263,6 +253,8 @@ namespace Mono.Data.TdsClient.Internal {
 				comm.Append (sql);
 				comm.SendPacket ();
 			}
+
+			CheckForData (timeout);
 		}
 
 		public bool NextResult ()
@@ -331,6 +323,15 @@ namespace Mono.Data.TdsClient.Internal {
 
 		#region // Private Methods
 
+		[MonoTODO ("Is cancel enough, or do we need to drop the connection?")]
+		private void CheckForData (int timeout) 
+		{
+			if (timeout > 0 && !comm.Poll (timeout, SelectMode.SelectRead)) {
+				Cancel ();
+				throw CreateTimeoutException (dataSource, "CheckForData()");
+			}
+		}
+	
 		protected TdsInternalInfoMessageEventArgs CreateTdsInfoMessageEvent (TdsInternalErrorCollection errors)
 		{
 			return new TdsInternalInfoMessageEventArgs (errors);
@@ -563,7 +564,7 @@ namespace Mono.Data.TdsClient.Internal {
 		{
 			byte hasValue = comm.GetByte ();
 			if (hasValue == 0)
-				return SqlBinary.Null;
+				return null;
 			
 			comm.Skip (24);
 			int len = comm.GetTdsInt ();
@@ -571,7 +572,7 @@ namespace Mono.Data.TdsClient.Internal {
 			if (len < 0)
 				return null;
 
-			return new SqlBinary (comm.GetBytes (len, true));
+			return (comm.GetBytes (len, true));
 		}
 
 		private object GetIntValue (TdsColumnType type)
@@ -958,20 +959,18 @@ namespace Mono.Data.TdsClient.Internal {
 			return new TdsPacketResult (TdsPacketSubType.LoginAck);
 		}
 
-		protected void OnTdsErrorMessage (TdsInternalErrorMessageEventArgs value)
+		protected void OnTdsErrorMessage (TdsInternalErrorMessageEventArgs e)
 		{
-			TdsInternalErrorMessageEventHandler handler = (TdsInternalErrorMessageEventHandler) Events [EventTdsErrorMessage];
-			if (handler != null)
-				handler (this, value);
+			if (TdsErrorMessage != null)
+				TdsErrorMessage (this, e);
 		}
 
-		protected void OnTdsInfoMessage (TdsInternalInfoMessageEventArgs value)
+		protected void OnTdsInfoMessage (TdsInternalInfoMessageEventArgs e)
 		{
-			TdsInternalInfoMessageEventHandler handler = (TdsInternalInfoMessageEventHandler) Events [EventTdsInfoMessage];
-			if (handler != null)
-				handler (this, value);
+			if (TdsInfoMessage != null)
+				TdsInfoMessage (this, e);
 		}
-
+		
 		private void ProcessMessage (TdsPacketSubType subType)
 		{
 			GetSubPacketLength ();

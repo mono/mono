@@ -29,6 +29,7 @@ Mono.Data.TdsClient.Internal/TdsContext.cs
 Mono.Data.TdsClient.Internal/TdsEnvPacketSubType.cs
 Mono.Data.TdsClient.Internal/TdsInternalErrorMessageEventArgs.cs
 Mono.Data.TdsClient.Internal/TdsInternalErrorMessageEventHandler.cs
+Mono.Data.TdsClient.Internal/TdsInternalException.cs
 Mono.Data.TdsClient.Internal/TdsInternalInfoMessageEventArgs.cs
 Mono.Data.TdsClient.Internal/TdsInternalInfoMessageEventHandler.cs
 Mono.Data.TdsClient.Internal/TdsMessage.cs
@@ -47,6 +48,7 @@ Mono.Data.TdsClient.Internal/TdsPacketType.cs
 Mono.Data.TdsClient.Internal/TdsPacketUnknown.cs
 Mono.Data.TdsClient.Internal/TdsSchemaInfo.cs
 Mono.Data.TdsClient.Internal/TdsServerType.cs
+Mono.Data.TdsClient.Internal/TdsTimeoutException.cs
 Mono.Data.TdsClient.Internal/TdsVersion.cs
 Mono.Data.TdsClient.Internal/TODOAttribute.cs
 Mono.Data.TdsTypes/TdsBinary.cs

@@ -22,12 +22,12 @@ namespace Mono.Data.TdsClient.Internal {
 		#region Constructors
 
 		public Tds42 (string server, int port)
-			: this (server, port, 512)
+			: this (server, port, 512, 15)
 		{
 		}
 
-		public Tds42 (string server, int port, int packetSize)
-			: base (server, port, packetSize, Version)
+		public Tds42 (string server, int port, int packetSize, int timeout)
+			: base (server, port, packetSize, timeout, Version)
 		{
 		}
 

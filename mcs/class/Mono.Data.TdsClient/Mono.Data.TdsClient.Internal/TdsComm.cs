@@ -8,6 +8,7 @@
 //
 
 using System;
+using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
@@ -21,6 +22,10 @@ namespace Mono.Data.TdsClient.Internal {
 		int packetSize;
 		TdsPacketType packetType = TdsPacketType.None;
 		Encoding encoder;
+
+		string dataSource;
+		int commandTimeout;
+		int connectionTimeout;
 
 		byte[] outBuffer;
 		int outBufferLength;
@@ -38,28 +43,52 @@ namespace Mono.Data.TdsClient.Internal {
 		int packetsSent = 0;
 		int packetsReceived = 0;
 
+		Socket socket;
 		TdsVersion tdsVersion;
+
+		ManualResetEvent connected = new ManualResetEvent (false);
 		
 		#endregion // Fields
 		
 		#region Constructors
 		
-		public TdsComm (Socket socket, int packetSize, TdsVersion tdsVersion)
+		public TdsComm (string dataSource, int port, int packetSize, int timeout, TdsVersion tdsVersion)
 		{
 			this.packetSize = packetSize;
 			this.tdsVersion = tdsVersion;
+			this.dataSource = dataSource;
+			this.connectionTimeout = timeout;
 
 			outBuffer = new byte[packetSize];
 			inBuffer = new byte[packetSize];
 
 			outBufferLength = packetSize;
 			inBufferLength = packetSize;
+
+			socket = new Socket (AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+			IPHostEntry hostEntry = Dns.Resolve (dataSource);
+			IPEndPoint endPoint;
+			endPoint = new IPEndPoint (hostEntry.AddressList [0], port);
+
+			connected.Reset ();
+			IAsyncResult asyncResult = socket.BeginConnect (endPoint, new AsyncCallback (ConnectCallback), socket);
+
+			if (timeout > 0 && !connected.WaitOne (new TimeSpan (0, 0, timeout), true))
+				throw Tds.CreateTimeoutException (dataSource, "Open()");
+			else if (timeout > 0 && !connected.WaitOne ())
+				throw Tds.CreateTimeoutException (dataSource, "Open()");
+
 			stream = new NetworkStream (socket);
 		}
 		
 		#endregion // Constructors
 		
 		#region Properties
+
+		public int CommandTimeout {
+			get { return commandTimeout; }
+			set { commandTimeout = value; }
+		}
 
 		internal Encoding Encoder {
 			set { encoder = value; }
@@ -74,46 +103,13 @@ namespace Mono.Data.TdsClient.Internal {
 		
 		#region Methods
 
-		internal void ResizeOutBuf (int newSize)
-		{
-			if (newSize > outBufferLength) {
-				byte[] newBuf = new byte[newSize];
-				Array.Copy (outBuffer, 0, newBuf, 0, outBufferLength);
-				outBufferLength = newSize;
-				outBuffer = newBuf;
-			}
-		}
-		
-		public void StartPacket (TdsPacketType type)
-		{
-			if (type != TdsPacketType.Cancel && inBufferIndex != inBufferLength)
-			{
-				// SAfe It's ok to throw this exception so that we will know there
-				//      is a design flaw somewhere, but we should empty the buffer
-				//      however. Otherwise the connection will never close (e.g. if
-				//      SHOWPLAN_ALL is ON, a resultset will be returned by commit
-				//      or rollback and we will never get rid of it). It's true
-				//      that we should find a way to actually process these packets
-				//      but for now, just dump them (we have thrown an exception).
-				inBufferIndex = inBufferLength;
-			}
-
-			packetType = type;
-			nextOutBufferIndex = headerLength;
-		}
-
-		public bool SomeThreadIsBuildingPacket ()
-		{
-			return packetType != TdsPacketType.None;
-		}
-
 		public void Append (byte b)
 		{
 			if (nextOutBufferIndex == outBufferLength) {
 				SendPhysicalPacket (false);
 				nextOutBufferIndex = headerLength;
 			}
-			StoreByte (nextOutBufferIndex, b);
+			Store (nextOutBufferIndex, b);
 			nextOutBufferIndex++;
 		}	
 		
@@ -196,51 +192,14 @@ namespace Mono.Data.TdsClient.Internal {
 			}
 		}
 
-		public void SendPacket ()
+		private void ConnectCallback (IAsyncResult ar)
 		{
-			SendPhysicalPacket (true);
-			nextOutBufferIndex = 0;
-			packetType = TdsPacketType.None;
-		}
-		
-		private void StoreByte (int index, byte value)
-		{
-			outBuffer[index] = value;
-		}		
-
-		private void StoreShort (int index, short s)
-		{
-			outBuffer[index] = (byte) (((byte) (s >> 8)) & 0xff);
-			outBuffer[index + 1] = (byte) (((byte) (s >> 0)) & 0xff);
-		}
-
-		private void SendPhysicalPacket (bool isLastSegment)
-		{
-			if (nextOutBufferIndex > headerLength || packetType == TdsPacketType.Cancel) {
-				// packet type
-				StoreByte (0, (byte) packetType);
-				StoreByte (1, (byte) (isLastSegment ? 1 : 0));
-				StoreShort (2, (short) nextOutBufferIndex );
-				StoreByte (4, (byte) 0);
-				StoreByte (5, (byte) 0);
-				StoreByte (6, (byte) (tdsVersion == TdsVersion.tds70 ? 0x1 : 0x0));
-				StoreByte (7, (byte) 0);
-
-				stream.Write (outBuffer, 0, nextOutBufferIndex);
-				stream.Flush ();
-				packetsSent++;
+			Socket s = (Socket) ar.AsyncState;
+			if (Poll (s, connectionTimeout, SelectMode.SelectWrite)) {
+				socket.EndConnect (ar);
+				connected.Set ();
 			}
-		}
-		
-		public byte Peek ()
-		{
-			// If out of data, read another physical packet.
-			if (inBufferIndex >= inBufferLength)
-				GetPhysicalPacket ();
-
-			return inBuffer[inBufferIndex];
-		}
-
+                }
 
 		public byte GetByte ()
 		{
@@ -313,14 +272,6 @@ namespace Mono.Data.TdsClient.Internal {
 				return (encoder.GetString (result));
 			}
 		}
-
-		public void Skip (int i)
-		{
-			for ( ; i > 0; i--)
-				GetByte ();
-		}
-		// skip()
-
 
 		public int GetNetShort ()
 		{
@@ -402,6 +353,105 @@ namespace Mono.Data.TdsClient.Internal {
 			return hi | lo;
 			// return an int since we really want an _unsigned_
 		}		
+
+		public byte Peek ()
+		{
+			// If out of data, read another physical packet.
+			if (inBufferIndex >= inBufferLength)
+				GetPhysicalPacket ();
+
+			return inBuffer[inBufferIndex];
+		}
+
+		public bool Poll (int seconds, SelectMode selectMode)
+		{
+			return Poll (socket, seconds, selectMode);
+		}
+
+		private bool Poll (Socket s, int seconds, SelectMode selectMode)
+		{
+			long uSeconds = seconds * 1000000;
+			bool bState = false;
+
+			while (uSeconds > (long) Int32.MaxValue) {
+				bState = s.Poll (Int32.MaxValue, selectMode);
+				if (bState) 
+					return true;
+				uSeconds -= Int32.MaxValue;
+			}
+			return s.Poll ((int) uSeconds, selectMode);
+		}
+
+		internal void ResizeOutBuf (int newSize)
+		{
+			if (newSize > outBufferLength) {
+				byte[] newBuf = new byte [newSize];
+				Array.Copy (outBuffer, 0, newBuf, 0, outBufferLength);
+				outBufferLength = newSize;
+				outBuffer = newBuf;
+			}
+		}
+
+		public void SendPacket ()
+		{
+			SendPhysicalPacket (true);
+			nextOutBufferIndex = 0;
+			packetType = TdsPacketType.None;
+		}
+		
+		private void SendPhysicalPacket (bool isLastSegment)
+		{
+			if (nextOutBufferIndex > headerLength || packetType == TdsPacketType.Cancel) {
+				// packet type
+				Store (0, (byte) packetType);
+				Store (1, (byte) (isLastSegment ? 1 : 0));
+				Store (2, (short) nextOutBufferIndex );
+				Store (4, (byte) 0);
+				Store (5, (byte) 0);
+				Store (6, (byte) (tdsVersion == TdsVersion.tds70 ? 0x1 : 0x0));
+				Store (7, (byte) 0);
+
+				stream.Write (outBuffer, 0, nextOutBufferIndex);
+				stream.Flush ();
+				packetsSent++;
+			}
+		}
+		
+		public void Skip (int i)
+		{
+			for ( ; i > 0; i--)
+				GetByte ();
+		}
+
+		public void StartPacket (TdsPacketType type)
+		{
+			if (type != TdsPacketType.Cancel && inBufferIndex != inBufferLength)
+			{
+				// SAfe It's ok to throw this exception so that we will know there
+				//      is a design flaw somewhere, but we should empty the buffer
+				//      however. Otherwise the connection will never close (e.g. if
+				//      SHOWPLAN_ALL is ON, a resultset will be returned by commit
+				//      or rollback and we will never get rid of it). It's true
+				//      that we should find a way to actually process these packets
+				//      but for now, just dump them (we have thrown an exception).
+				inBufferIndex = inBufferLength;
+			}
+
+			packetType = type;
+			nextOutBufferIndex = headerLength;
+		}
+
+		private void Store (int index, byte value)
+		{
+			outBuffer[index] = value;
+		}		
+
+		private void Store (int index, short value)
+		{
+			outBuffer[index] = (byte) (((byte) (value >> 8)) & 0xff);
+			outBuffer[index + 1] = (byte) (((byte) (value >> 0)) & 0xff);
+		}
+
 		#endregion // Methods
 	}
 
