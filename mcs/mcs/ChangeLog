@@ -1,3 +1,7 @@
+2001-11-08  Miguel de Icaza  <miguel@ximian.com>
+
+	* class.cs: Reworked to have less levels of indentation.
+
 2001-11-08  Ravi Pratap  <ravi@ximian.com>
 
 	* class.cs (Property): Emit attributes.
