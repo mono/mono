@@ -278,6 +278,6 @@ namespace System
 		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		private static extern object CreateInstanceInternal (Type type);
+		internal static extern object CreateInstanceInternal (Type type);
 	}
 }
