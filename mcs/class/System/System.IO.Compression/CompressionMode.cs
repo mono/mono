@@ -11,7 +11,7 @@
 #if NET_2_0
 
 namespace System.IO.Compression {
-	enum CompressionMode {
+	public enum CompressionMode {
 		Decompress=0,	// Decompress the given stream.
 		Compress=1	// Compress the given stream.
 	};

@@ -180,7 +180,7 @@ namespace MonoTests.System.IO.Compression
 			byte [] data = {0xf3, 0x48, 0xcd, 0xc9, 0xc9, 0xe7, 0x02, 0x00 };
 			MemoryStream backing = new MemoryStream (data);
 			DeflateStream decompressing = new DeflateStream (backing, CompressionMode.Decompress);
-			decompressing.Length = 20;
+			decompressing.SetLength (20);
 		}
 
 		[Test]
@@ -189,7 +189,7 @@ namespace MonoTests.System.IO.Compression
 			byte [] data = {0xf3, 0x48, 0xcd, 0xc9, 0xc9, 0xe7, 0x02, 0x00 };
 			MemoryStream backing = new MemoryStream (data);
 			DeflateStream decompressing = new DeflateStream (backing, CompressionMode.Decompress);
-			int length = decompressing.Length;
+			long length = decompressing.Length;
 		}
 
 		[Test]
@@ -198,7 +198,7 @@ namespace MonoTests.System.IO.Compression
 			byte [] data = {0xf3, 0x48, 0xcd, 0xc9, 0xc9, 0xe7, 0x02, 0x00 };
 			MemoryStream backing = new MemoryStream (data);
 			DeflateStream decompressing = new DeflateStream (backing, CompressionMode.Decompress);
-			int position = decompressing.Position;
+			long position = decompressing.Position;
 		}
 	}
 }

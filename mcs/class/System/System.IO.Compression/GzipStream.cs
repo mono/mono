@@ -15,7 +15,7 @@ using System.Runtime.InteropServices;
 using System.Runtime.Remoting.Messaging;
 
 namespace System.IO.Compression {
-	class GzipStream : Stream
+	public class GzipStream : Stream
 	{
 		private DeflateStream deflateStream;
 

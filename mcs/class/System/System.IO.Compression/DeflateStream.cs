@@ -15,7 +15,7 @@ using System.Runtime.InteropServices;
 using System.Runtime.Remoting.Messaging;
 
 namespace System.IO.Compression {
-	class DeflateStream : Stream
+	public class DeflateStream : Stream
 	{
 		private Stream compressedStream;
 		private CompressionMode mode;

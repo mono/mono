@@ -1,3 +1,7 @@
+2004-12-03  Raja R Harinath  <rharinath@novell.com>
+
+	* DeflateStream.cs, GzipStream.cs, CompressionMode.cs: Make class public.
+
 2004-11-10  Martin Baulig  <martin@ximian.com>
 
 	* DeflateStream.cs, GzipStream.cs: `System.IO.Stream.Length' doesn't
