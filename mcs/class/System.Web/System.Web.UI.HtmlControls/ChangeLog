@@ -1,3 +1,9 @@
+2004-12-20  Lluis Sanchez Gual <lluis@novell.com>
+
+	* HtmlHead.cs: Implemented.
+	* HtmlHeadBuilder.cs: Implemented.
+	* HtmlTitle.cs: Implemented.
+
 2004-12-15 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HtmlForm.cs: MakeRelative() can be null. Thanks to Denis Gervaille.
