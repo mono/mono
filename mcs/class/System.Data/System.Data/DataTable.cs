@@ -75,8 +75,7 @@ namespace System.Data {
 			_primaryKey = null;
 			_site = null;
 			_rows = new DataRowCollection (this);
-			_locale = CultureInfo.CurrentCulture;
-
+			
 			//LAMESPEC: spec says 25 impl does 50
 			_minimumCapacity = 50;
 			
@@ -142,10 +141,22 @@ namespace System.Data {
 			OnRowDeleted (e);
 		}
 
+		internal void DeletingDataRow (DataRow dr, DataRowAction action) 
+		{
+			DataRowChangeEventArgs e = new DataRowChangeEventArgs (dr, action);
+			OnRowDeleting(e);
+		}
+
 		internal void ChangedDataRow (DataRow dr, DataRowAction action) 
 		{
 			DataRowChangeEventArgs e = new DataRowChangeEventArgs (dr, action);
 			OnRowChanged (e);
+		}
+
+		internal void ChangingDataRow (DataRow dr, DataRowAction action) 
+		{
+			DataRowChangeEventArgs e = new DataRowChangeEventArgs (dr, action);
+			OnRowChanging (e);
 		}
 
 		/// <summary>
@@ -234,7 +245,15 @@ namespace System.Data {
 		[Browsable (false)]
 		[DataSysDescription ("Returns whether the table has errors.")]
 		public bool HasErrors {
-			get { return _hasErrors; }
+			get { 
+				// we can not use the _hasError flag because we do not know when to turn it off!
+				for (int i = 0; i < _rows.Count; i++)
+				{
+					if (_rows[i].HasErrors)
+						return true;
+				}
+				return false;
+			}
 		}
 
 		/// <summary>
@@ -243,8 +262,21 @@ namespace System.Data {
 		/// </summary>
 		[DataSysDescription ("Indicates a locale under which to compare strings within the table.")]
 		public CultureInfo Locale {
-			get { return _locale; }
-			set { _locale = value; }
+			get { 
+				// if the locale is null, we check for the DataSet locale
+				// and if the DataSet is null we return the current culture.
+				// this way if DataSet locale is changed, only if there is no locale for 
+				// the DataTable it influece the Locale get;
+				if (_locale != null)
+					return _locale;
+				if (DataSet != null)
+					return DataSet.Locale;
+				return CultureInfo.CurrentCulture;
+			}
+			set { 
+				if (_locale == null || !_locale.Equals(value))
+					_locale = value; 
+			}
 		}
 
 		/// <summary>
@@ -396,9 +428,19 @@ namespace System.Data {
 		{
 			//FIXME: Do we need to validate anything here or
 			//try to catch any errors to deal with them?
-
-			foreach(DataRow myRow in _rows) {
+			
+			// we do not use foreach because if one of the rows is in Delete state
+			// it will be romeved from Rows and we get an exception.
+			DataRow myRow;
+			for (int i = 0; i < Rows.Count; )
+			{
+				myRow = Rows[i];
 				myRow.AcceptChanges();
+
+				// if the row state is Detached it meens that it was removed from row list (Rows)
+				// so we should not increase 'i'.
+				if (myRow.RowState != DataRowState.Detached)
+					i++;
 			}
 		}
 
@@ -427,9 +469,33 @@ namespace System.Data {
 			// TODO: thow an exception if any rows that 
 			//       have enforced child relations 
 			//       that would result in child rows being orphaned
+			// now we check if any ForeignKeyConstraint is referncing 'table'.
+			if (DataSet != null)
+			{
+				IEnumerator tableEnumerator = DataSet.Tables.GetEnumerator();
+			
+				// loop on all tables in dataset
+				while (tableEnumerator.MoveNext())
+				{
+					IEnumerator constraintEnumerator = ((DataTable) tableEnumerator.Current).Constraints.GetEnumerator();
+					// loop on all constrains in the current table
+					while (constraintEnumerator.MoveNext())
+					{
+						Object o = constraintEnumerator.Current;
+						// we only check ForeignKeyConstraint
+						if (o is ForeignKeyConstraint)
+						{
+							ForeignKeyConstraint fc = (ForeignKeyConstraint) o;
+							if(fc.RelatedTable == this && fc.Table.Rows.Count > 0)
+								throw new InvalidConstraintException("Cannot clear table " + fc.RelatedTable + " because ForeignKeyConstraint " + fc.ConstraintName + " enforces constraints and there are child rows in " + fc.Table);
+						}
+					}
+				}
+			}
+			
 			// TODO: throw a NotSupportedException if the DataTable is part
 			//       of a DataSet that is binded to an XmlDataDocument
-
+			
 			_rows.Clear ();
 		}
 
@@ -487,13 +553,12 @@ namespace System.Data {
 			DataTable Copy = new DataTable ();
 			CopyProperties (Copy);
 
+			// we can not simply copy the row values (NewRow [C.ColumnName] = Row [C.ColumnName])
+			// because if the row state is deleted we get an exception.
 			foreach (DataRow Row in Rows) {
 				DataRow NewRow = Copy.NewRow ();
-				NewRow.RowError = Row.RowError;
-				foreach (DataColumn C in Copy.Columns) {
-					NewRow [C.ColumnName] = Row [C.ColumnName];
-				}
 				Copy.Rows.Add (NewRow);
+				Row.CopyValuesToRow(NewRow);
 			}
 		       			
 			return Copy;
@@ -517,13 +582,22 @@ namespace System.Data {
 			Copy.Namespace = Namespace;
 			// Copy.ParentRelations
 			Copy.Prefix = Prefix;
-			//Copy.PrimaryKey = PrimaryKey;
 			Copy.Site = Site;
 			Copy.TableName = TableName;
 
 			// Copy columns
 			foreach (DataColumn Column in Columns) {
 				Copy.Columns.Add (CopyColumn (Column));				
+			}
+
+			// add primary key to the copy
+			if (PrimaryKey.Length > 0)
+			{
+				DataColumn[] pColumns = new DataColumn[PrimaryKey.Length];
+				for (int i = 0; i < pColumns.Length; i++)
+					pColumns[i] = Copy.Columns[PrimaryKey[i].ColumnName];
+
+				Copy.PrimaryKey = pColumns;
 			}
 
 		}
@@ -555,8 +629,7 @@ namespace System.Data {
 		[MonoTODO]
 		public DataTable GetChanges() 
 		{
-			//TODO:
-			return this;
+			return GetChanges(DataRowState.Added | DataRowState.Deleted | DataRowState.Modified);
 		}
 
 		/// <summary>
@@ -567,8 +640,21 @@ namespace System.Data {
 		[MonoTODO]	
 		public DataTable GetChanges(DataRowState rowStates) 
 		{
-			//TODO:
-			return this;
+			DataTable copyTable = null;
+
+			IEnumerator rowEnumerator = Rows.GetEnumerator();
+			while (rowEnumerator.MoveNext()) {
+				DataRow row = (DataRow)rowEnumerator.Current;
+				if (row.IsRowChanged(rowStates)) {
+					if (copyTable == null)
+						copyTable = Clone();
+					DataRow newRow = copyTable.NewRow();
+					copyTable.Rows.Add(newRow);
+					row.CopyValuesToRow(newRow);
+				}
+			}
+			 
+			return copyTable;
 		}
 
 		/// <summary>
@@ -577,7 +663,14 @@ namespace System.Data {
 		[MonoTODO]
 		public DataRow[] GetErrors () 
 		{
-			throw new NotImplementedException ();
+			ArrayList errors = new ArrayList();
+			for (int i = 0; i < _rows.Count; i++)
+			{
+				if (_rows[i].HasErrors)
+					errors.Add(_rows[i]);
+			}
+			
+			return (DataRow[]) errors.ToArray(typeof(DataRow));
 		}
 	
 		/// <summary>
@@ -617,6 +710,10 @@ namespace System.Data {
 		[MonoTODO]
 		public void ImportRow (DataRow row) 
 		{
+			DataRow newRow = NewRow();
+			Rows.Add(newRow);
+			row.CopyValuesToRow(newRow);
+			
 		}
 
 		/// <summary>
@@ -640,8 +737,32 @@ namespace System.Data {
 				if (fAcceptChanges)
 					row.AcceptChanges ();
 			}
-			else
-				throw new NotImplementedException ();
+			else {
+				bool hasPrimaryValues = true;
+				// initiate an array that has the values of the primary keys.
+				object[] keyValues = new object[PrimaryKey.Length];
+				for (int i = 0; i < keyValues.Length && hasPrimaryValues; i++)
+				{
+					if(PrimaryKey[i].Ordinal < values.Length)
+						keyValues[i] = values[PrimaryKey[i].Ordinal];
+					else
+						hasPrimaryValues = false;
+				}
+				
+				if (hasPrimaryValues){
+					// find the row in the table.
+					row = Rows.Find(keyValues);
+				}
+				
+				if (row == null)
+					row = Rows.Add (values);
+				else
+					row.ItemArray = values;
+				
+				if (fAcceptChanges)
+					row.AcceptChanges ();
+			}
+				
 			return row;
 		}
 
@@ -679,8 +800,6 @@ namespace System.Data {
 		[MonoTODO]
 		public void RejectChanges () 
 		{	
-			//foreach(DataRow myRow in _rows)
-			//{
 			for (int i = _rows.Count - 1; i >= 0; i--) {
 				DataRow row = _rows [i];
 				if (row.RowState != DataRowState.Unchanged)
@@ -694,6 +813,20 @@ namespace System.Data {
 		[MonoTODO]
 		public virtual void Reset () 
 		{
+			Clear();
+			while (ParentRelations.Count > 0)
+			{
+				if (dataSet.Relations.Contains(ParentRelations[ParentRelations.Count - 1].RelationName))
+					dataSet.Relations.Remove(ParentRelations[ParentRelations.Count - 1]);
+			}
+
+			while (ChildRelations.Count > 0)
+			{
+				if (dataSet.Relations.Contains(ChildRelations[ChildRelations.Count - 1].RelationName))
+					dataSet.Relations.Remove(ChildRelations[ChildRelations.Count - 1]);
+			}
+			Constraints.Clear();
+			Columns.Clear();
 		}
 
 		/// <summary>
@@ -717,7 +850,6 @@ namespace System.Data {
 
 			ArrayList List = new ArrayList ();
 			foreach (DataRow Row in Rows) {
-				
 				if (Expression.Test (Row))
 					List.Add (Row);
 			}
@@ -782,7 +914,10 @@ namespace System.Data {
 		{
 			//LAMESPEC: spec says concat the two. impl puts a 
 			//plus sign infront of DisplayExpression
-			return TableName + " + " + DisplayExpression;
+			string retVal = TableName;
+			if(DisplayExpression != null && DisplayExpression != "")
+				retVal += " + " + DisplayExpression;
+			return retVal;
 		}
 
 		

@@ -119,7 +119,12 @@ namespace System.Data {
 		public bool HasErrors {
 			[MonoTODO]
 			get {
-				throw new NotImplementedException ();
+				for (int i = 0; i < Tables.Count; i++)
+				{
+					if (Tables[i].HasErrors)
+						return true;
+				}
+				return false;
 			}
 		}
 
@@ -282,7 +287,11 @@ namespace System.Data {
 
 			foreach (DataTable Table in Tables) {
 				Copy.Tables.Add (Table.Clone ());
-			}	
+			}
+
+			//Copy Relationships between tables after existance of tables
+			//and setting properties correctly
+			CopyRelations(Copy);
 			
 			return Copy;
 		}
@@ -297,6 +306,10 @@ namespace System.Data {
 			foreach (DataTable Table in Tables) {				
 				Copy.Tables.Add (Table.Copy ());
 			}
+
+			//Copy Relationships between tables after existance of tables
+			//and setting properties correctly
+			CopyRelations(Copy);
 
 			return Copy;
 		}
@@ -314,11 +327,55 @@ namespace System.Data {
 			//Copy.HasErrors
 			//Copy.Locale = Locale;
 			Copy.Namespace = Namespace;
-			Copy.Prefix = Prefix;
-			//Copy.Relations = Relations;
+			Copy.Prefix = Prefix;			
 			//Copy.Site = Site;
 
 		}
+		
+		
+		private void CopyRelations (DataSet Copy)
+		{
+
+			//Creation of the relation contains some of the properties, and the constructor
+			//demands these values. instead changing the DataRelation constructor and behaviour the
+			//parameters are pre-configured and sent to the most general constructor
+
+			foreach (DataRelation MyRelation in this.Relations)
+			{
+				string pTable = MyRelation.ParentTable.TableName;
+				string cTable = MyRelation.ChildTable.TableName;
+				DataColumn[] P_DC = new DataColumn[MyRelation.ParentColumns.Length]; 
+				DataColumn[] C_DC = new DataColumn[MyRelation.ChildColumns.Length];
+				int i = 0;
+				foreach(DataColumn DC in MyRelation.ParentColumns)
+				{
+					P_DC[i]=Copy.Tables[pTable].Columns[DC.ColumnName];
+					i++;
+				}
+
+				i = 0;
+
+				foreach(DataColumn DC in MyRelation.ChildColumns)
+				{
+					C_DC[i]=Copy.Tables[cTable].Columns[DC.ColumnName];
+					i++;
+				}
+				
+
+				DataRelation cRel = new DataRelation(MyRelation.RelationName,P_DC,C_DC);
+				//cRel.ChildColumns = MyRelation.ChildColumns;
+				//cRel.ChildTable = MyRelation.ChildTable;
+				//cRel.ExtendedProperties = cRel.ExtendedProperties; 
+				//cRel.Nested = MyRelation.Nested;
+				//cRel.ParentColumns = MyRelation.ParentColumns;
+				//cRel.ParentTable = MyRelation.ParentTable;
+								
+				Copy.Relations.Add(cRel);
+			}
+		}
+
+		
+
 
 		public DataSet GetChanges()
 		{
@@ -433,7 +490,22 @@ namespace System.Data {
 
 		public virtual void Reset()
 		{
-			throw new NotImplementedException ();
+			IEnumerator constraintEnumerator;
+			// first we remove all ForeignKeyConstraints (if we will not do that
+			// we will get an exception when clearing the tables).
+			for (int i = 0; i < Tables.Count; i++)
+			{
+				ConstraintCollection cc = Tables[i].Constraints;
+				for (int j = 0; j < cc.Count; j++)
+				{
+					if (cc[j] is ForeignKeyConstraint)
+						cc.Remove(cc[j]);
+				}
+			}
+
+			Clear();
+			Relations.Clear();
+			Tables.Clear();
 		}
 
 		public void WriteXml(Stream stream)

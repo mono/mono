@@ -133,18 +133,22 @@ namespace System.Data
 			
 			foreach (DataRow row in this) {
 				
-				object primValue = row [primColumnName];
-				if (key == null) {
-					if (primValue == null)
-						return row;
-					else 
-						continue;
-				}
+				if (row.RowState != DataRowState.Deleted)
+				{
+					object primValue = row [primColumnName];
+					if (key == null) 
+					{
+						if (primValue == null)
+							return row;
+						else 
+							continue;
+					}
 				       
-				newKey = Convert.ChangeType (key, Type.GetTypeCode(primValue.GetType ()));
+					newKey = Convert.ChangeType (key, Type.GetTypeCode(primValue.GetType ()));
 
-				if (primValue.Equals (newKey))
-					return row;
+					if (primValue.Equals (newKey))
+						return row;
+				}
 			}
 						
 			// FIXME: is the correct value null?
@@ -170,28 +174,34 @@ namespace System.Data
 			
 			foreach (DataRow row in this) {
 				
-				bool eq = true;
-				for (int i = 0; i < keys.Length; i++) {
+				if (row.RowState != DataRowState.Deleted)
+				{
+					bool eq = true;
+					for (int i = 0; i < keys.Length; i++) 
+					{
 					
-					object primValue = row [primColumnNames [i]];
-					object keyValue = keys [i];
-					if (keyValue == null) {
-						if (primValue == null)
-							return row;
-						else 
-							continue;
-					}
+						object primValue = row [primColumnNames [i]];
+						object keyValue = keys [i];
+						if (keyValue == null) 
+						{
+							if (primValue == null)
+								return row;
+							else 
+								continue;
+						}
 								       
-					newKey = Convert.ChangeType (keyValue, Type.GetTypeCode(primValue.GetType ()));
+						newKey = Convert.ChangeType (keyValue, Type.GetTypeCode(primValue.GetType ()));
 
-					if (!primValue.Equals (newKey)) {
-						eq = false;
-						break;
-					}						
+						if (!primValue.Equals (newKey)) 
+						{
+							eq = false;
+							break;
+						}						
+					}
+
+					if (eq)
+						return row;
 				}
-
-				if (eq)
-					return row;
 			}
 						
 			// FIXME: is the correct value null?
@@ -217,13 +227,12 @@ namespace System.Data
 		/// </summary>
 		public void Remove (DataRow row) 
 		{
-			// FIXME: This is the way the MS.NET handles this kind of situation. Could be better, but what can you do.
-			if (row == null || list.IndexOf (row) == -1)
+			if (row == null)
 				throw new IndexOutOfRangeException ("The given datarow is not in the current DataRowCollection.");
-
-			list.Remove (row);
-			row.DetachRow ();
-			table.DeletedDataRow (row, DataRowAction.Delete);
+			int index = list.IndexOf(row);
+			if (index < 0)
+				throw new IndexOutOfRangeException ("The given datarow is not in the current DataRowCollection.");
+			RemoveAt(index);
 		}
 
 		/// <summary>
@@ -235,7 +244,10 @@ namespace System.Data
 				throw new IndexOutOfRangeException ("There is no row at position " + index + ".");
 
 			DataRow row = (DataRow)list [index];
-			list.RemoveAt (index);			
+			if (row.RowState != DataRowState.Deleted && row.RowState != DataRowState.Added)
+				row.Delete();
+			list.RemoveAt (index);
+			row.DetachRow();
 			table.DeletedDataRow (row, DataRowAction.Delete);
 		}
 

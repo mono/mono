@@ -76,43 +76,53 @@ namespace System.Data {
 				base.AddCore (relation);
 				if (relation.ChildTable.DataSet != this.dataSet || relation.ParentTable.DataSet != this.dataSet)
 					throw new DataException ();
-				List.Add (relation);
+				//List.Add (relation);
 				relation.SetDataSet (dataSet);
 				relation.ParentTable.ChildRelations.Add (relation);
 				relation.ChildTable.ParentRelations.Add (relation);
 				ForeignKeyConstraint foreignKeyConstraint = null;
-				if (relation.createConstraints) {
+				if (relation.createConstraints) 
+				{
 					foreignKeyConstraint = new ForeignKeyConstraint (relation.ParentColumns, relation.ChildColumns);
 					relation.ChildTable.Constraints.Add (foreignKeyConstraint);
-				}
-				UniqueConstraint uniqueConstraint = null;
-				foreach (object o in List) {
-					if (o is UniqueConstraint) {
-						UniqueConstraint uc = (UniqueConstraint) o;
-						if (uc.Columns.Length == relation.ParentColumns.Length) {
-							bool allColumnsEqual = true;
-							for (int columnCnt = 0; columnCnt < uc.Columns.Length; ++columnCnt) {
-								if (uc.Columns[columnCnt] != relation.ParentColumns[columnCnt]) {
-									allColumnsEqual = false;
+				
+					UniqueConstraint uniqueConstraint = null;
+					ConstraintCollection parentConstrains = relation.ParentTable.Constraints;
+					// find if the unique constraint already exists in the parent table.
+					foreach (Constraint o in parentConstrains) 
+					{
+						if (o is UniqueConstraint) 
+						{
+							UniqueConstraint uc = (UniqueConstraint) o;
+							if (uc.Columns.Length == relation.ParentColumns.Length) 
+							{
+								bool allColumnsEqual = true;
+								for (int columnCnt = 0; columnCnt < uc.Columns.Length; ++columnCnt) 
+								{
+									if (uc.Columns[columnCnt] != relation.ParentColumns[columnCnt]) 
+									{
+										allColumnsEqual = false;
+										break;
+									}
+								}
+								if (allColumnsEqual) 
+								{
+									uniqueConstraint = uc;
 									break;
 								}
 							}
-							if (allColumnsEqual) {
-								uniqueConstraint = uc;
-								break;
-							}
 						}
 					}
+					// if we did not find the unique constraint in the parent table.
+					// we generate new uniqueconastraint and add it to the parent table.
+					if (uniqueConstraint == null)
+					{
+						uniqueConstraint = new UniqueConstraint(relation.ParentColumns, false);
+						relation.ParentTable.Constraints.Add(uniqueConstraint);
+					}
+					relation.SetParentKeyConstraint (uniqueConstraint);
+					relation.SetChildKeyConstraint (foreignKeyConstraint);
 				}
-				// if we did not find the unique constraint in the parent table.
-				// we generate new uniqueconastraint and add it to the parent table.
-				if (uniqueConstraint == null)
-				{
-					uniqueConstraint = new UniqueConstraint(relation.ParentColumns, false);
-					relation.ParentTable.Constraints.Add(uniqueConstraint);
-				}
-				relation.SetParentKeyConstraint (uniqueConstraint);
-				relation.SetChildKeyConstraint (foreignKeyConstraint);
 			}
 
 			public override void AddRange (DataRelation[] relations)
@@ -122,16 +132,17 @@ namespace System.Data {
 
 			public override void Clear ()
 			{
-				base.Clear ();
+				for (int i = 0; i < Count; i++)
+					RemoveCore(this[i]);
+
+				base.Clear();
 			}
 
 			protected override void RemoveCore (DataRelation relation)
 			{
-				base.RemoveCore (relation);
 				relation.SetDataSet (null);
 				relation.ParentTable.ChildRelations.Remove (relation);
 				relation.ChildTable.ParentRelations.Remove (relation);
-				ForeignKeyConstraint foreignKeyConstraint = null;
 				relation.SetParentKeyConstraint (null);
 				relation.SetChildKeyConstraint (null);
 			}
@@ -467,7 +478,7 @@ namespace System.Data {
 
 		public void RemoveAt (int index)
 		{
-			List.RemoveAt (index);
+			Remove(this[index]);
 		}
 
 		[MonoTODO]

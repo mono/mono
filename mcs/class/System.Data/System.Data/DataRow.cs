@@ -51,14 +51,13 @@ namespace System.Data {
 			_table = builder.Table;
 
 			original = null; 
-			current = new object[_table.Columns.Count];
-			// initialize to DBNull.Value
-			for (int c = 0; c < _table.Columns.Count; c++) {
-				current[c] = DBNull.Value;
-			}
+			
 			proposed = new object[_table.Columns.Count];
-			Array.Copy (current, proposed, _table.Columns.Count);
-
+			for (int c = 0; c < _table.Columns.Count; c++) 
+			{
+				proposed[c] = DBNull.Value;
+			}
+			
 			columnErrors = new string[_table.Columns.Count];
 			rowError = String.Empty;
 
@@ -86,7 +85,15 @@ namespace System.Data {
 		public bool HasErrors {
 			[MonoTODO]
 			get {
-				throw new NotImplementedException ();
+				if (RowError != string.Empty)
+					return true;
+
+				for (int i= 0; i < columnErrors.Length; i++){
+					if (columnErrors[i] != null && columnErrors[i] != string.Empty)
+						return true;
+				}
+
+				return false;
 			}
 		}
 
@@ -107,7 +114,9 @@ namespace System.Data {
 		/// Gets or sets the data stored in specified DataColumn
 		/// </summary>
 		public object this[DataColumn column] {
-			get { return this[column, DataRowVersion.Default]; } 
+
+			get {
+				return this[column, DataRowVersion.Default];} 
 			set {
 				int columnIndex = _table.Columns.IndexOf (column);
 				if (columnIndex == -1)
@@ -128,6 +137,7 @@ namespace System.Data {
 					throw new DeletedRowInaccessibleException ();
 				DataColumn column = _table.Columns[columnIndex];
 				_table.ChangingDataColumn (this, column, value);
+				
 				
 				bool orginalEditing = editing;
 				if (!orginalEditing) BeginEdit ();
@@ -457,6 +467,7 @@ namespace System.Data {
 		[MonoTODO]
 		public void Delete () 
 		{
+			_table.DeletingDataRow(this, DataRowAction.Delete);
 			switch (rowState) {
 			case DataRowState.Added:
 				Table.Rows.Remove (this);
@@ -464,9 +475,103 @@ namespace System.Data {
 			case DataRowState.Deleted:
 				throw new DeletedRowInaccessibleException ();
 			default:
-				//TODO: Events, Constraints
+				// check what to do with child rows
+				CheckChildRows(DataRowAction.Delete);
 				rowState = DataRowState.Deleted;
 				break;
+			}
+			_table.DeletedDataRow(this, DataRowAction.Delete);
+		}
+
+		// check the child rows of this row before deleting the row.
+		private void CheckChildRows(DataRowAction action)
+		{
+			
+			// in this method we find the row that this row is in a reltion with them.
+			// in shortly we find all child rows of this row.
+			// then we function according to the DeleteRule of the foriegnkey.
+
+
+			// 1. find if this row is attached to dataset.
+			// 2. find if EnforceConstraints is true.
+			// 3. find if there are any constraint on the table that the row is in.
+			if (_table.DataSet != null && _table.DataSet.EnforceConstraints && _table.Constraints.Count > 0)
+			{
+				// loop on all relations of the dataset.
+				DataRelationCollection relCollection = _table.DataSet.Relations;
+				for (int i = 0; i < relCollection.Count; i++)
+				{
+					DataRelation rel = relCollection[i];
+					// we want only relations that their parent table is the table this row is in.
+					// that is because we interesting only in relations that the row is a parent of
+					// other rows.
+					if (rel.ParentTable == _table)
+					{
+						Rule rule;
+						if (action == DataRowAction.Delete)
+							rule = rel.ChildKeyConstraint.DeleteRule;
+						else
+							rule = rel.ChildKeyConstraint.UpdateRule;
+						
+						DataRow[] childRows = GetChildRows(rel);
+						switch (rule)
+						{
+							case Rule.Cascade:  // delete or change all relted rows.
+								if (childRows != null)
+								{
+									for (int j = 0; j < childRows.Length; j++)
+									{
+										// if action is delete we delte all child rows
+										if (action == DataRowAction.Delete)
+											childRows[j].Delete();
+										// if action is change we change the values in the child row
+										else if (action == DataRowAction.Change)
+										{
+											// change only the values in the key columns
+											// set the childcolumn value to the new parent row value
+											for (int k = 0; k < rel.ChildColumns.Length; k++)
+												childRows[j][rel.ChildColumns[k]] = this[rel.ParentColumns[k], DataRowVersion.Proposed];
+										}
+									}
+								}
+								break;
+							case Rule.None: // throw an exception if there are any child rows.
+								if (childRows != null)
+								{
+									string changeStr = "Cannot change this row because constraints are enforced on relation " + rel.RelationName +", and changing this row will strand child rows.";
+									string delStr = "Cannot delete this row because constraints are enforced on relation " + rel.RelationName +", and deleting this row will strand child rows.";
+									string message = action == DataRowAction.Delete ? delStr : changeStr;
+									throw new InvalidConstraintException(message);
+								}
+								break;
+							case Rule.SetDefault: // set the values in the child rows to the defult value of the columns.
+								if (childRows != null)
+								{
+									for (int j = 0; j < childRows.Length; j++)
+									{
+										DataRow child = childRows[j];
+										//set only the key columns to default
+										for (int k = 0; k < rel.ChildColumns.Length; k++)
+											child[rel.ChildColumns[k]] = rel.ChildColumns[k].DefaultValue;
+									}
+								}
+								break;
+							case Rule.SetNull: // set the values in the child row to null.
+								if (childRows != null)
+								{
+									for (int j = 0; j < childRows.Length; j++)
+									{
+										DataRow child = childRows[j];
+										// set only the key columns to DBNull
+										for (int k = 0; k < rel.ChildColumns.Length; k++)
+											child.SetNull(rel.ChildColumns[k]);
+									}
+								}
+								break;
+						}
+							
+					}
+				}
 			}
 		}
 
@@ -481,14 +586,18 @@ namespace System.Data {
 				return;
 			if (HasVersion (DataRowVersion.Proposed))
 			{
+				_table.ChangingDataRow(this, DataRowAction.Change);
 				if (rowState == DataRowState.Unchanged)
 					rowState = DataRowState.Modified;
 				
 				//Calling next method validates UniqueConstraints
 				//and ForeignKeys.
 				_table.Rows.ValidateDataRowInternal(this);
+				// check all child rows.
+				CheckChildRows(DataRowAction.Change);
 				current = proposed;
 				proposed = null;
+				_table.ChangedDataRow(this, DataRowAction.Change);
 			}
 		}
 
@@ -559,7 +668,10 @@ namespace System.Data {
 			if (columnIndex < 0 || columnIndex >= columnErrors.Length)
 				throw new IndexOutOfRangeException ();
 
-			return columnErrors[columnIndex];
+			string retVal = columnErrors[columnIndex];
+			if (retVal == null)
+				retVal = string.Empty;
+			return retVal;
 		}
 
 		/// <summary>
@@ -579,11 +691,11 @@ namespace System.Data {
 
 			for (int i = 0; i < columnErrors.Length; i += 1)
 			{
-				if (columnErrors[i] != String.Empty)
+				if (columnErrors[i] != null && columnErrors[i] != String.Empty)
 					dataColumns.Add (_table.Columns[i]);
 			}
 
-			return (DataColumn[])(dataColumns.ToArray ());
+			return (DataColumn[])(dataColumns.ToArray (typeof(DataColumn)));
 		}
 
 		/// <summary>
@@ -682,12 +794,22 @@ namespace System.Data {
 			switch (version)
 			{
 				case DataRowVersion.Default:
+					if (rowState == DataRowState.Deleted)
+						return false;
+					if (rowState == DataRowState.Detached)
+						return proposed != null;
 					return true;
 				case DataRowVersion.Proposed:
+					if (rowState == DataRowState.Deleted)
+						return false;
 					return (proposed != null);
 				case DataRowVersion.Current:
+					if (rowState == DataRowState.Deleted || rowState == DataRowState.Detached)
+						return false;
 					return (current != null);
 				case DataRowVersion.Original:
+					if (rowState == DataRowState.Detached)
+						return false;
 					return (original != null);
 			}
 			return false;
@@ -825,6 +947,7 @@ namespace System.Data {
 		//Copy all values of this DataaRow to the row parameter.
 		internal void CopyValuesToRow(DataRow row)
 		{
+						
 			if (row == null)
 				throw new ArgumentNullException("row");
 			if (row == this)
@@ -833,9 +956,10 @@ namespace System.Data {
 			DataColumnCollection columns = Table.Columns;
 			
 			for(int i = 0; i < columns.Count; i++){
+
 				string columnName = columns[i].ColumnName;
 				int index = row.Table.Columns.IndexOf(columnName);
-				//if a column withe the same name exists in bote rows copy the values
+				//if a column with the same name exists in both rows copy the values
 				if(index != -1) {
 					if (HasVersion(DataRowVersion.Original))
 					{
@@ -855,6 +979,10 @@ namespace System.Data {
 							row.proposed = new object[row.Table.Columns.Count];
 						row.proposed[index] = row.SetColumnValue(proposed[i], index);
 					}
+					
+					//Saving the current value as the column value
+					row[index] = row.current[index];
+					
 				}
 			}
 
@@ -872,21 +1000,26 @@ namespace System.Data {
 
 			if (args.Action == System.ComponentModel.CollectionChangeAction.Add)
 			{
-				object[] tmp = new object[current.Length + 1];
-				Array.Copy (current, tmp, current.Length);
-				tmp[tmp.Length - 1] = DBNull.Value;
-				current = tmp;
-
+				object[] tmp;
+				if (current != null)
+				{
+					tmp = new object[current.Length + 1];
+					Array.Copy (current, tmp, current.Length);
+					tmp[tmp.Length - 1] = DBNull.Value;
+					current = tmp;
+				}
 				if (proposed != null)
 				{
 					tmp = new object[proposed.Length + 1];
 					Array.Copy (proposed, tmp, proposed.Length);
+					tmp[tmp.Length - 1] = DBNull.Value;
 					proposed = tmp;
 				}
 				if(original != null)
 				{
 					tmp = new object[original.Length + 1];
 					Array.Copy (original, tmp, original.Length);
+					tmp[tmp.Length - 1] = DBNull.Value;
 					original = tmp;
 				}
 

@@ -186,10 +186,9 @@ namespace System.Data {
 		internal void UpdatePrimaryKey ()
 		{
 			_isPrimaryKey = __isPrimaryKey;
-			if (_isPrimaryKey) {
-				foreach (DataColumn Col in _dataColumns)
-					Col.SetUnique();
-			}
+			foreach (DataColumn Col in _dataColumns)
+				Col.SetUnique();
+			
 		}
 
 		internal static void SetAsPrimaryKey(ConstraintCollection collection, UniqueConstraint newPrimaryKey)
@@ -362,7 +361,6 @@ namespace System.Data {
 			DataTable tbl = _dataTable;
 
 			//TODO: Investigate other ways of speeding up the validation work below.
-			//FIXME: This only works when only one DataColumn has been specified.
 
 			//validate no duplicates exists.
 			//Only validate when there are at least 2 rows
@@ -372,31 +370,23 @@ namespace System.Data {
 				//original.
 				DataRow[] rows = new DataRow [tbl.Rows.Count];
 				tbl.Rows.CopyTo (rows, 0);
-				ArrayList clonedDataList = new ArrayList (rows);
-
-				ArrayList newDataList = new ArrayList();
-
-				//copy to array list only the column we are interested in.
-				foreach (DataRow row in clonedDataList) {
-					
-					object colvalue = row[this._dataColumns[0]];
-					if (colvalue == DBNull.Value)
-						newDataList.Add (null);
-					else
-						newDataList.Add (colvalue);
-				}
 				
-				//sort ArrayList and check adjacent values for duplicates.
-				newDataList.Sort ();
-
-				for (int i = 0 ; i < newDataList.Count - 1 ; i++) 
-					
-					if (newDataList [i] == null) {
-						if (newDataList [i+1] == null)
-							throw new InvalidConstraintException (String.Format ("Column '{0}' contains non-unique values", this._dataColumns[0]));
+				Array.Sort(rows, new RowsComparer(this));
+				for (int i = 0 ; i < rows.Length - 1 ; i++) 
+				{
+					bool match = true;
+					// check if the values in the constraints columns are equal
+					for (int j = 0; j < _dataColumns.Length; j++)
+					{
+						if (!rows[i][_dataColumns[j]].Equals(rows[i + 1][_dataColumns[j]]))
+						{
+							match = false;
+							break;
+						}	
 					}
-					else if (newDataList[i].Equals (newDataList[i+1])) 
-						throw new InvalidConstraintException (String.Format ("Column '{0}' contains non-unique values", this._dataColumns[0]));
+					if (match)
+						throw new InvalidConstraintException (String.Format ("Column '{0}' contains non-unique values", this._dataColumns[0]));					
+				}
 			}
 
 
@@ -421,34 +411,40 @@ namespace System.Data {
 
 			DataTable tbl = _dataTable;
 			bool isValid;
+			object[] rowVals = new object[_dataColumns.Length];
+			for (int i = 0; i < _dataColumns.Length; i++)
+			{
+				if(row.HasVersion(DataRowVersion.Proposed))
+					rowVals[i] = row[_dataColumns[i], DataRowVersion.Proposed];
+				else
+					rowVals[i] = row[_dataColumns[i], DataRowVersion.Current];
+			}
+			
 			foreach(DataRow compareRow in tbl.Rows)
 			{
-				isValid = false;
-				//skip if it is the same row to be validated
-				if(!row.Equals(compareRow))
+				if (compareRow.RowState != DataRowState.Deleted)
 				{
-					//FIXME: should we compare to compareRow[DataRowVersion.Current]?
-					//FIXME: We need to compare to all columns the constraint is set to.
-					object rowVal;
-					for (int i = 0; i < _dataColumns.Length; i++)
+					isValid = false;
+					//skip if it is the same row to be validated
+					if(!row.Equals(compareRow))
 					{
-						if(row.HasVersion(DataRowVersion.Proposed))
-							rowVal = row[_dataColumns[i], DataRowVersion.Proposed];
-						else
-							rowVal = row[_dataColumns[i], DataRowVersion.Current];
-						
-						// if the values in the row are not equal to the values of
-						// the original row from the table we can move to the next row.
-						if(!rowVal.Equals( compareRow[_dataColumns[i]]))
+						//FIXME: should we compare to compareRow[DataRowVersion.Current]?
+						//FIXME: We need to compare to all columns the constraint is set to.
+						for (int i = 0; i < _dataColumns.Length; i++)
 						{
-							isValid = true;
-							break;
+							// if the values in the row are not equal to the values of
+							// the original row from the table we can move to the next row.
+							if(!rowVals[i].Equals( compareRow[_dataColumns[i]]))
+							{
+								isValid = true;
+								break;
+							}
 						}
-					}
 				
-					if (!isValid)
-						throw new ConstraintException(GetErrorMessage(compareRow));
+						if (!isValid)
+							throw new ConstraintException(GetErrorMessage(compareRow));
 
+					}
 				}
 
 			}
@@ -469,7 +465,43 @@ namespace System.Data {
 			string colStr = sb.ToString();
 			return "Column '" + colStr + "' is constrained to be unique.  Value '" + valStr + "' is already present.";
 		}
+		
+		// generates a hash key for a given row based on the constraints columns.
+		internal int CalcHashValue(DataRow row)
+		{
+			object o;
+			int retVal = 0;
+			for (int i = 0; i < _dataColumns.Length; i++)
+			{
+				o = row[_dataColumns[i]];
+				if (o != null)
+					retVal += o.GetHashCode();
+			}
+			return retVal;
+		}
 
 		#endregion // Methods
+
+		private class RowsComparer : IComparer
+		{
+			private UniqueConstraint _uc;
+			
+			public RowsComparer(UniqueConstraint uc)
+			{
+				_uc = uc;
+			}
+
+			public int Compare(object o1, object o2)
+			{
+				DataRow row1 = (DataRow) o1;
+				DataRow row2 = (DataRow) o2;
+				int val1 = _uc.CalcHashValue(row1);
+				int val2 = _uc.CalcHashValue(row2);
+				
+				return val1 - val2;
+			}
+		}
 	}
+
+	
 }
