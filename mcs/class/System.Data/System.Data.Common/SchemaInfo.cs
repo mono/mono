@@ -22,6 +22,7 @@ namespace System.Data.Common {
 		int size;
 		byte precision;
 		byte scale;
+		Type fieldType;
 
 		#endregion // Fields
 
@@ -70,14 +71,19 @@ namespace System.Data.Common {
 			set { dataTypeName = value; }
 		}
 
-		public bool Nullable {
+		public bool AllowDBNull {
 			get { return nullable; }
 			set { nullable = value; }
 		}
 
-		public bool Writable {
+		public bool IsReadOnly {
 			get { return writable; }
 			set { writable = value; }
+		}
+
+		public Type FieldType {
+			get { return fieldType; }
+			set { fieldType = value; }
 		}
 		
 		#endregion // Properties
