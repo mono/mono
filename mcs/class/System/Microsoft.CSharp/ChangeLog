@@ -1,3 +1,11 @@
+2002-11-4 Jackson Harper <jackson@latitudegeo.com>
+
+	* Compiler: Added file
+
+2002-11-4 Jackson Harper <jackson@latitudegeo.com>
+
+	* CompilerError: Changed FileName property to the correct name 'SourceFile'
+
 2002-10-30 Jackson Harper <jackson@latitudegeo.com>
 
 	* CompilerError: Added class
