@@ -8,10 +8,6 @@
 
 	* IComparable.cs: Removed, it's in System.
 
-2004-07-16  Martin Baulig  <martin@ximian.com>
-
-	* Stack.cs, Queue.cs, List.cs: Use iterators.
-
 2004-07-12  Duncan Mak  <duncan@ximian.com>
 
 	* KeyNotFoundException.cs: Added.
