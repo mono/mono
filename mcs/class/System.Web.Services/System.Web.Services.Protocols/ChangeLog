@@ -1,5 +1,11 @@
 2004-01-21  Lluis Sanchez Gual <lluis@ximian.com>
 
+	* HttpSoapWebServiceHandler.cs, SoapHttpClientProtocol.cs: Do not use 
+	  indented format for requests and responses. SOAPAction header value
+	  must be quoted (fix by Yaacov Akiba Slama).
+	
+2004-01-21  Lluis Sanchez Gual <lluis@ximian.com>
+
 	* Methods.cs: Set the correct namespaces for Fault. This fixes bug #53117.
 	  Based on the fix by Eran Domb.
 

@@ -167,7 +167,7 @@ namespace System.Web.Services.Protocols {
 			WebRequest request = GetWebRequest (uri);
 			request.Method = "POST";
 			WebHeaderCollection headers = request.Headers;
-			headers.Add ("SOAPAction", message.Action);
+			headers.Add ("SOAPAction", "\"" + message.Action + "\"");
 			request.ContentType = message.ContentType + "; charset=utf-8";
 			return request;
 		}
@@ -184,7 +184,6 @@ namespace System.Web.Services.Protocols {
 
 				// What a waste of UTF8encoders, but it has to be thread safe.
 				XmlTextWriter xtw = new XmlTextWriter (s, new UTF8Encoding (false));
-				xtw.Formatting = Formatting.Indented;
 
 				WebServiceHelper.WriteSoapMessage (xtw, type_info, message.MethodStubInfo.Use, message.MethodStubInfo.RequestSerializer, message.Parameters, message.Headers);
 

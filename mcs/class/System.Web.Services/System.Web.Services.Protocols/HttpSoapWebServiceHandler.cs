@@ -239,7 +239,6 @@ namespace System.Web.Services.Protocols
 				
 				// What a waste of UTF8encoders, but it has to be thread safe.
 				XmlTextWriter xtw = new XmlTextWriter (outStream, new UTF8Encoding (false));
-				xtw.Formatting = Formatting.Indented;	// TODO: remove formatting when code is stable
 				
 				if (message.Exception == null)
 					WebServiceHelper.WriteSoapMessage (xtw, _typeStubInfo, methodInfo.Use, methodInfo.ResponseSerializer, message.OutParameters, message.Headers);
