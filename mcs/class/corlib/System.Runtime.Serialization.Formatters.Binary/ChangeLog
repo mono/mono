@@ -1,3 +1,8 @@
+2004-05-03  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* MessageFormatter.cs: In the all-are-primitive case, serialize Args, 
+	  not OutArgs.
+
 2004-04-28  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* MessageFormatter.cs: Serialize Args, not OutArgs, like in MS.NET.

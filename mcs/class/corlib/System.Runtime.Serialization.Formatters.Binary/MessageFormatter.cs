@@ -201,10 +201,10 @@ namespace System.Runtime.Serialization.Formatters.Binary
 
 			if (formatFlag == MethodFlags.PrimitiveArguments)
 			{
-				writer.Write ((uint)resp.OutArgCount);
-				for (int n=0; n<resp.OutArgCount; n++)
+				writer.Write ((uint)resp.ArgCount);
+				for (int n=0; n<resp.ArgCount; n++)
 				{
-					object val = resp.GetOutArg(n);
+					object val = resp.GetArg(n);
 					if (val != null) {
 						writer.Write (BinaryCommon.GetTypeCode (val.GetType()));
 						ObjectWriter.WritePrimitiveValue (writer, val);
