@@ -1,5 +1,12 @@
 2004-03-20  Martin Baulig  <martin@ximian.com>
 
+	* class.cs (MethodData.DeclaringType): New public property.
+	(MethodData.Define): Set DeclaringType here.
+	(Operator.Define): Use OperatorMethod.MethodData.DeclaringType
+	instead of OperatorMethodBuilder.DeclaringType.
+
+2004-03-20  Martin Baulig  <martin@ximian.com>
+
 	* cs-tokenizer.cs (xtoken): Return a special
 	Token.DEFAULT_OPEN_PARENS for "`default' followed by open parens".
 

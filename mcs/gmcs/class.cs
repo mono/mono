@@ -3337,6 +3337,7 @@ namespace Mono.CSharp {
 		protected MethodAttributes flags;
 		protected bool is_method;
 		protected string accessor_name;
+		protected Type declaring_type;
 
 		//
 		// It can either hold a string with the condition, or an arraylist of conditions.
@@ -3347,6 +3348,12 @@ namespace Mono.CSharp {
 		public MethodBuilder MethodBuilder {
 			get {
 				return builder;
+			}
+		}
+
+		public Type DeclaringType {
+			get {
+				return declaring_type;
 			}
 		}
 
@@ -3705,6 +3712,11 @@ namespace Mono.CSharp {
 				if (!GenericMethod.DefineType (ec, builder))
 					return false;
 			}
+
+			if (container.CurrentType != null)
+				declaring_type = container.CurrentType.ResolveType (ec);
+			else
+				declaring_type = container.TypeBuilder;
 
 			if ((modifiers & Modifiers.UNSAFE) != 0)
 				builder.InitLocals = false;
@@ -5431,7 +5443,7 @@ namespace Mono.CSharp {
 			OperatorMethodBuilder = OperatorMethod.MethodBuilder;
 
 			Type [] param_types = OperatorMethod.ParameterTypes;
-			Type declaring_type = OperatorMethodBuilder.DeclaringType;
+			Type declaring_type = OperatorMethod.MethodData.DeclaringType;
 			Type return_type = OperatorMethod.GetReturnType ();
 			Type first_arg_type = param_types [0];
 
