@@ -566,11 +566,18 @@ namespace System.Xml.Schema
 		private bool ValidateNonListValueWithFacets (string value, XmlNameTable nt)
 		{
 			// pattern
-			// TODO: Shouldn't patterns be treated as an OR?
+			// Patterns are the only facets that need to be checked on this
+			// type and its base types. We should probably separate them, then
+			// do base-type pattern validation.
 			if (this.patternFacetValues != null) {
+				bool matched = false;
 				for (int i = 0; i < this.patternFacetValues.Length; i++)
-					if (rexPatterns [i] != null && !rexPatterns [i].IsMatch (value))
-						return false;
+					if (rexPatterns [i] != null && rexPatterns [i].IsMatch (value)) {
+						matched = true;
+				                break;
+					}
+				if (!matched)
+					return false;
 			}
 			// enumeration
 			if (this.enumarationFacetValues != null) {

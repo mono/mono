@@ -1,5 +1,11 @@
 2004-01-14  David Sheldon <dave-mono@earth.li>
 
+        * XmlSchemaSimpleTypeRestriction: Convert pattern facets to be ORed, 
+          as per: http://www.w3.org/TR/xmlschema-2/#src-multiple-patterns
+          Fixes bug 52841
+
+2004-01-14  David Sheldon <dave-mono@earth.li>
+
         * BuiltInDatatype.cs:
 	   XsdAnySimpleType - Added Length that returns the string length. 
 	   XsdBase64Binary - Added Length, and used more direct, less fussy, 
