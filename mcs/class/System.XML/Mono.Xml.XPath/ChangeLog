@@ -1,3 +1,13 @@
+2004-07-28  Atsushi Enomoto <atsushi@ximian.com>
+
+	* Added XPathEditableDocument.cs.
+	  - XPathEditableDocument provides IXPathEditable.
+	  - XmlDocumentEditableNavigator implements XPathEditableNavigator
+	    that supports CreateAttributes(), AppendChild() and so on.
+
+	  It is nothing more than hack, and as an XPathEditableNavigator
+	  provider for XPathDocument, it will be replaced by something.
+
 2004-07-13  Atsushi Enomoto <atsushi@ximian.com>
 
 	* Added XPathNavigatorReader.cs.
