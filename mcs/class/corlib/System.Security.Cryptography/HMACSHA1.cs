@@ -4,12 +4,11 @@
 // Author:
 //	Sebastien Pouliot (spouliot@motus.com)
 //
-// (C) 2002 Motus Technologies Inc. (http://www.motus.com)
+// (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
 //
 
 using System;
 using System.IO;
-using System.Security.Cryptography;
 
 namespace System.Security.Cryptography {
 
@@ -47,7 +46,7 @@ internal class HMACAlgorithm {
 
 	private void CreateHash (string algoName) 
 	{
-		algo = (HashAlgorithm) CryptoConfig.CreateFromName (algoName);
+		algo = HashAlgorithm.Create (algoName);
 		hashName = algoName;
 	}
 
@@ -148,7 +147,7 @@ public class HMACSHA1: KeyedHashAlgorithm {
 	{
 		hmac = new HMACAlgorithm ("SHA1");
 		HashSizeValue = 160;
-		GenerateKey();
+		Key = KeyBuilder.Key (8);
 	}
 
 	public HMACSHA1 (byte[] rgbKey) 
@@ -181,15 +180,6 @@ public class HMACSHA1: KeyedHashAlgorithm {
 		if (hmac != null)
 			hmac.Dispose();
 		base.Dispose (disposing);
-	}
-
-	// generate a random 64 bits key
-	private void GenerateKey () 
-	{
-		KeyValue = new byte[8];
-		RandomNumberGenerator rng = RandomNumberGenerator.Create();
-		rng.GetBytes (KeyValue);
-		hmac.Key = KeyValue;
 	}
 
 	public override void Initialize ()

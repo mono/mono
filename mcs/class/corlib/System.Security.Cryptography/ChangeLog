@@ -1,3 +1,7 @@
+2003-01-18  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* HMACSHA1.cs: Now use KeyBuilder to build the default key.
+
 2003-01-12  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* MACTripleDES.cs: Now working (the problem was with my stream usage
