@@ -1,3 +1,7 @@
+2003-03-26  Aleksey Demakov <avd@openlinksw.com>
+
+	* socket-io.c: fixes bug #40310.
+
 2003-03-25  Zoltan Varga  <vargaz@freemail.hu>
 
 	* reflection.c (mono_reflection_parse_type): handle deeply nested
