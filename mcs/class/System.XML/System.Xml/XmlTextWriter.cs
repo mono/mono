@@ -69,10 +69,9 @@ namespace System.Xml
 		{
 			if (encoding == null) {
 				nullEncoding = true;
-				encoding = new UTF8Encoding ();
-			}
-
-			this.w = new StreamWriter(w, encoding);
+				this.w = new StreamWriter (w);
+			} else 
+				this.w = new StreamWriter(w, encoding);
 			baseStream = w;
 		}
 
