@@ -25,6 +25,7 @@ namespace MonoTests.System.Data.SqlTypes
 				suite.AddTest (new TestSuite (typeof (SqlInt16Test)));
 				suite.AddTest (new TestSuite (typeof (SqlInt32Test)));
 				suite.AddTest (new TestSuite (typeof (SqlInt64Test)));
+				suite.AddTest (new TestSuite (typeof (SqlSingleTest)));
 				return suite;
 			}
 		}

@@ -1,3 +1,12 @@
+2002-10-15  Rodrigo Moya <rodrigo@ximian.com>
+
+	* System.Data.SqlTypes/AllTests.cs: added new test.
+
+2002-10-15  Ville Palo <vi64pa@koti.soon.fi>
+
+	* System.Data.SqlTypes/SqlSingleTest.cs: added test suite for
+	SqlSingle.
+
 2002-10-15  Daniel Morgan <danmorg@sc.rr.com>
 
 	* SqlSharpCli.cs: get it to work with System.Data.OleDb 
