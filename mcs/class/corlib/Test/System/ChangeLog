@@ -1,3 +1,7 @@
+2002-09-08  Nick Drochak  <ndrochak@gol.com>
+
+	* DateTimeTest.cs: Disable test bug file it in bugzilla.
+
 2002-09-04  Jonathan Pryor <jonpryor@vt.edu>
 	* EnumTest.cs: 
 	  - Added additional "x" formatter test case to test most recent Enum.cs patch
