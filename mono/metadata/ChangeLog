@@ -1,4 +1,9 @@
 
+Mon Feb 25 15:51:51 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* reflection.c: set virtual and raw size of section correctly.
+	* threads.c: transfer domain information to newly created threads.
+
 Fri Feb 22 18:55:57 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	* class.c: when instancing a class in a domain, load the default
