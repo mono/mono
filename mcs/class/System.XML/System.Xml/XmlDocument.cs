@@ -153,6 +153,12 @@ namespace System.Xml
 			get { return XmlNodeType.Document; }
 		}
 
+		internal override XPathNodeType XPathNodeType {
+			get {
+				return XPathNodeType.Root;
+			}
+		}
+
 		public override XmlDocument OwnerDocument {
 			get { return null; }
 		}

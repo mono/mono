@@ -1,5 +1,218 @@
 2002-10-26  Piers Haken <piersh@friskit.com>
 
+	* XmlNode.cs: add virtual property XPathNodeType
+	* XmlAttribute.cs:
+	* XmlComment.cs:
+	* XmlDocument.cs:
+	* XmlElement.cs::
+	* XmlProcessingInstruction.cs:
+	* XmlSignificantWhitespace.cs:
+	* XmlText.cs:
+	* XmlWhitespace.cs: implement XPathNodeType property
+	* XmlDocumentNavigator.cs: use XPathNodeType property instead of switch
+
+2002-10-26  Piers Haken <piersh@friskit.com>
+
+	* XmlDocumentNavigator.cs: return invalid XPathNodeType (-1) for unknown node types.
+
+2002-10-23  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* XmlTextReader.cs: don't increment depth for entity references.
+
+2002-10-22  Tim Haynes <thaynes@openlinksw.com>
+
+	* - Fixed the duplication of xmlns:xx = yy when serializing the
+	XML for serialization
+	
+	Fixed the unnecessary parsing/serializing when adding assemblies
+	for serialization 
+
+	Avoided setting the XmlNode.InnerXml property
+	(as it's not implemented) 
+
+	Fixed the usage/implementation of
+	XmlElement.GetElementsByTagName()
+	
+2002-10-21  Duncan Mak  <duncan@ximian.com>
+
+	* XmlDocument.cs:
+	* XmlElement.cs:
+	* XmlNode.cs:
+	* XmlTextReader.cs: Implementation for XmlNode.InnerXml from
+	Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>.
+
+2002-10-18  Duncan Mak  <duncan@ximian.com>
+
+	* XmlDocument.cs: Applied a patch by Atsushi Enomoto
+	<ginga@kit.hi-ho.ne.jp>.
+
+2002-10-12  A.Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* XmlDocument.cs (ImportNode): Implemented
+
+2002-10-06  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* XmlDocument.cs: one more Load method implemented.
+	* XmlTextReader.cs: Depth now works.
+
+2002-09-22  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* XmlConvert.cs: IsInvalid is now internal.
+	* XmlNamespaceManager.cs: implemented RemoveNamespace
+	* XmlTextReader.cs: return BaseURI and Encoding from the parser.
+	* XmlTextWriter.cs: implemented WriteName and WriteNmToken.
+
+2002-09-19  Matt Hunter <mahunter@tconl.com>
+
+	* XmlElement.cs: Implementing SetAttributeNode(localName,namespaceURI)
+	* XmlAttributeCollection.cs: Implemented Append (XmlAttribute) 
+	  
+2002-09-19  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* XmlConvert.cs: finished implementation.
+	* XmlTextReader.cs: fixed #30239.
+	* XmlTextWriter.cs: fixed #30240.
+
+2002-09-15  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* XmlTextReader.cs: line and position begin with 1.
+
+2002-09-13  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* XmlException.cs: added a new internal constructor for IXmlLineInfo
+	and output line and position info in Message.
+
+	* XmlReader.cs: implemented missing bits.
+
+2002-09-12	Piers Haken <piersh@friksit.com>
+
+	* XmlDocumentNavigator.cs: implement MoveToId()
+
+2002-09-05  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* XmlTextWriter.cs: fixed bug #29886.
+
+2002-08-26  Ravi Pratap  <ravi@ximian.com>
+
+
+	* XmlAttribute.cs (InnerText): Implement getting this property.
+
+	* XmlNode.cs (InnerText): Ensure that we append only values of
+	text nodes.
+
+2002-08-26  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* XmlWriter.cs: made ws and namespaceManager protected. mcs has a bug
+	that allowed compiling this.
+	[ FIXME: filed bug #29435. mcs should have failed on this ]
+
+2002-08-25  Tim Coleman <tim@timcoleman.com>
+        * XmlNode.cs:
+                Change CreateNavigator to not be virtual.
+        * XmlElement.cs:
+                Add set_Prefix and InnerText accessors.
+        * XmlEntityReference.cs:
+                Add set_Value accessor.
+        * XmlTextWriter.cs:
+                Make objects which should be private private.
+        * XmlWriter.cs:
+                Remove WriteStartElementInternal abstract definition.
+        * XmlValidatingReader.cs:
+                New stubs added.
+
+2002-08-22  Jason Diamond <jason@injektilo.org>
+
+	* XmlAttributeCollection.cs, XmlElement.cs: Implementation of RemoveAll
+	and RemoveAllAttributes courtesy of Matt Hunter <xrkune@tconl.com>.
+
+2002-08-22  Jason Diamond <jason@injektilo.org>
+
+	* XmlElement.cs: Correction to previous GetElementsByTagName patch
+	courtesy of Matt Hunter <xrkune@tconl.com>.
+
+2002-08-22  Jason Diamond <jason@injektilo.org>
+
+	* XmlDocument.cs, XmlElement.cs: Added implementation of namepsace
+	qualified GetElementsByTagName courtesy of Matt Hunter 
+	<xrkune@tconl.com>.
+
+2002-08-19  Jason Diamond <jason@injektilo.org>
+
+	* XmlDocument.cs, XmlElement.cs: Added implementation of 
+	GetElementsByTagName courtesy of Matt Hunter <xrkune@tconl.com>.
+
+2002-08-16  Jason Diamond <jason@injektilo.org>
+
+	* XmlElement.cs: Fixed writing out qualified elements courtesy of
+	Marcus Bürgel <marcus.buergel@gmx.de>.
+
+2002-08-13  Tim Coleman <tim@timcoleman.com>
+	* XmlTextWriter.cs:
+		Partial implementation of WriteQualifiedName ().
+
+2002-08-07  Kral Ferch <kral_ferch@hotmail.com>
+	* XmlCharacterData.cs:  Implemented AppendData(), DeleteData(),
+		InsertData(), and ReplaceData().  These methods fire the
+		NodeChanging and NodeChanged events.
+		
+	* XmlDocument.cs:  Fixed bugs in onNodeChanged() and onNodeChanging().
+	
+	* XmlNode.cs:  AppendChild() fires NodeInserting and NodeInserted events.
+		RemoveAll() and RemoveChild() fire NodeRemoving and NodeRemoved events.
+	
+2002-08-03  Tim Coleman <tim@timcoleman.com>
+	* XmlNamespaceManager.cs:
+		.Net allows the empty namespace to be redefined
+		at a later point, but the current implementation
+		did not.  This fixes a hashtable conflict.
+
+2002-07-26  Tim Coleman <tim@timcoleman.com>
+	* XmlTextWriter.cs:
+		When given a textwriter, check to see if it has a
+		null encoding. This was being done for other inputs
+		than a textwriter.
+
+Wed Jul 24 13:16:19 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* XmlTextReader.cs: rough line/column support.
+
+2002-07-23  Duncan Mak  <duncan@ximian.com>
+
+	* XmlConvert.cs: Implement the ToDateTime method. ToDateTime
+	(string, string []) is particularly strange.
+
+	* XmlException.cs: Remember to call the base serialization
+	constructor.
+
+	* XmlNodeReader.cs: Keep a new variable to store the Depth. 
+
+2002-07-14  Jason Diamond  <jason@injektilo.org>
+
+	* XmlAttribute.cs: Removed ownerElement field since we can reuse 
+	parentNode field.
+
+	* XmlDocumentNavigator.cs: MoveToParent now moves to the OwnerElement
+	if the current node is an attribute.
+
+	* XmlElement.cs: SetAttributeNode now sets the new attribute's
+	owner element.
+
+2002-07-12  Jason Diamond  <jason@injektilo.org>
+
+	* XmlDocument.cs: If null was passed in for prefix or namespaceURI when
+	creating an element, use String.Empty instead.
+
+2002-07-12	Piers Haken <piersh@friksit.com>
+
+	* XmlAttributeCollection.cs: implement some ItemOf indexers
+	* XmlNamedNodeMap.cs: add internal 'Nodes' accessor for the nodeList field
+	* XmlNode.cs: SelectNodes: return empty XmlNodeList, not null
+
+2002-07-06  Ajay kumar Dwivedi <adwiv@yahoo.com>
+
+
+2002-10-26  Piers Haken <piersh@friskit.com>
+
 	* XmlDocumentNavigator.cs: return invalid XPathNodeType (-1) for unknown node types.
 
 2002-10-23  Gonzalo Paniagua Javier <gonzalo@ximian.com>

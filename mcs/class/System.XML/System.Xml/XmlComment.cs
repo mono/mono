@@ -8,6 +8,7 @@
 //
 
 using System;
+using System.Xml.XPath;
 
 namespace System.Xml
 {
@@ -36,6 +37,12 @@ namespace System.Xml
 			get { return XmlNodeType.Comment; }
 		}
 		
+		internal override XPathNodeType XPathNodeType {
+			get {
+				return XPathNodeType.Comment;
+			}
+		}
+
 		#endregion
 
 		#region Methods

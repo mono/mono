@@ -105,25 +105,7 @@ namespace System.Xml
 
 		public override XPathNodeType NodeType {
 			get {
-				switch (node.NodeType) {
-				case XmlNodeType.Document:
-					return XPathNodeType.Root;
-				case XmlNodeType.Element:
-					return XPathNodeType.Element;
-				case XmlNodeType.Attribute:
-					return XPathNodeType.Attribute;
-				case XmlNodeType.Text:
-					return XPathNodeType.Text;
-				case XmlNodeType.Whitespace:
-					return XPathNodeType.Whitespace;
-				case XmlNodeType.SignificantWhitespace:
-					return XPathNodeType.SignificantWhitespace;
-				case XmlNodeType.Comment:
-					return XPathNodeType.Comment;
-				case XmlNodeType.ProcessingInstruction:
-					return XPathNodeType.ProcessingInstruction;
-				}
-				return (XPathNodeType) (-1);
+				return node.XPathNodeType;
 			}
 		}
 
@@ -137,19 +119,13 @@ namespace System.Xml
 			get {
 				switch (NodeType) {
 				case XPathNodeType.Attribute:
-					return node.Value;
-				case XPathNodeType.Element:
-					return node.InnerText;
 				case XPathNodeType.Comment:
-					return node.Value;
 				case XPathNodeType.ProcessingInstruction:
-					return node.Value;
 				case XPathNodeType.Text:
-					return node.Value;
 				case XPathNodeType.Whitespace:
-					return node.Value;
 				case XPathNodeType.SignificantWhitespace:
 					return node.Value;
+				case XPathNodeType.Element:
 				case XPathNodeType.Root:
 					return node.InnerText;
 				}

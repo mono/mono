@@ -9,6 +9,7 @@
 
 using System;
 using System.Text;
+using System.Xml.XPath;
 
 namespace System.Xml
 {
@@ -104,6 +105,12 @@ namespace System.Xml
 		public override XmlNodeType NodeType {
 			get {
 				return XmlNodeType.Attribute;
+			}
+		}
+
+		internal override XPathNodeType XPathNodeType {
+			get {
+				return XPathNodeType.Attribute;
 			}
 		}
 

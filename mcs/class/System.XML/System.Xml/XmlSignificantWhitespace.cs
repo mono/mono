@@ -8,6 +8,7 @@
 //
 
 using System;
+using System.Xml.XPath;
 
 namespace System.Xml
 {
@@ -32,6 +33,12 @@ namespace System.Xml
 			get { return XmlNodeType.SignificantWhitespace; }
 		}
 
+		internal override XPathNodeType XPathNodeType {
+			get {
+				return XPathNodeType.SignificantWhitespace;
+			}
+		}
+		
 		public override string Value {
 			get { return Data; }
 			[MonoTODO]

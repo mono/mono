@@ -8,6 +8,7 @@
 //
 
 using System;
+using System.Xml.XPath;
 
 namespace System.Xml
 {
@@ -57,6 +58,12 @@ namespace System.Xml
 		public override XmlNodeType NodeType
 		{
 			get { return XmlNodeType.ProcessingInstruction; }
+		}
+
+		internal override XPathNodeType XPathNodeType {
+			get {
+				return XPathNodeType.ProcessingInstruction;
+			}
 		}
 		
 		public string Target

@@ -8,6 +8,7 @@
 //
 
 using System;
+using System.Xml.XPath;
 
 namespace System.Xml
 {
@@ -36,6 +37,12 @@ namespace System.Xml
 			get { return XmlNodeType.Text; }
 		}
 
+		internal override XPathNodeType XPathNodeType {
+			get {
+				return XPathNodeType.Text;
+			}
+		}
+		
 		public override string Value {
 			get { return Data; }
 			set { Data = value; }

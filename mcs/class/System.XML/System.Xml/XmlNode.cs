@@ -159,6 +159,12 @@ namespace System.Xml
 
 		public abstract XmlNodeType NodeType { get;	}
 
+		internal virtual XPathNodeType XPathNodeType {
+			get {
+				return (XPathNodeType) (-1);
+			}
+		}
+
 		public virtual string OuterXml {
 			get {
 				StringWriter sw = new StringWriter ();
