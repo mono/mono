@@ -2,68 +2,32 @@
 // System.Web.Caching
 //
 // Author:
-//   Patrik Torstensson (Patrik.Torstensson@labs2.com)
-// Changes:
+//   Patrik Torstensson
 //   Daniel Cazzulino [DHC] (dcazzulino@users.sf.net)
-//
-// (C) Copyright Patrik Torstensson, 2001
 //
 
 using System;
 using System.Collections;
 using System.Threading;
 
-namespace System.Web.Caching
-{
-	/// <summary>
-	/// Implements a cache for Web applications and other. The difference
-	/// from the MS.NET implementation is that we / support to use the Cache
-	/// object as cache in our applications.
-	/// </summary>
-	/// <remarks>
-	/// The Singleton cache is created per application domain, and it
-	/// remains valid as long as the application domain remains active. 
-	/// </remarks>
-	/// <example>
-	/// Usage of the singleton cache:
-	/// 
-	/// Cache objManager = Cache.SingletonCache;
-	/// 
-	/// String obj = "tobecached";
-	/// objManager.Add("kalle", obj);
-	/// </example>
-	public sealed class Cache : IEnumerable
-	{
-		// Declarations
+namespace System.Web.Caching {
+	public sealed class Cache : IEnumerable {
 
-		/// <summary>
-		/// Used in the absoluteExpiration parameter in an Insert
-		/// method call to indicate the item should never expire. This
-		/// field is read-only.
-		/// </summary>
 		public static readonly DateTime NoAbsoluteExpiration = DateTime.MaxValue;
-
-		/// <summary>
-		/// Used as the slidingExpiration parameter in an Insert method
-		/// call to disable sliding expirations. This field is read-only.
-		/// </summary>
 		public static readonly TimeSpan NoSlidingExpiration = TimeSpan.Zero;
 
 		// Helper objects
-		CacheExpires _objExpires;
+		private CacheExpires _objExpires;
 
 		// The data storage 
-		// Todo: Make a specialized storage for the cache entries?
-		// todo: allow system to replace the storage?
-		Hashtable _arrEntries;
-		ReaderWriterLock _lockEntries;
+		private Hashtable _arrEntries;
+		private ReaderWriterLock _lockEntries;
+		private int _nItems;
+		
+		static private TimeSpan _datetimeOneYear = TimeSpan.FromDays (365);
 
-		static TimeSpan _datetimeOneYear = TimeSpan.FromDays (365);
 
-		int _nItems; // Number of items in the cache
-
-		public Cache ()
-		{
+		public Cache () {
 			_nItems = 0;
 
 			_lockEntries = new ReaderWriterLock ();
@@ -79,9 +43,7 @@ namespace System.Web.Caching
 		/// <returns>
 		/// Returns IDictionaryEnumerator that contains all public items in the cache
 		/// </returns>
-
-		private IDictionaryEnumerator CreateEnumerator ()
-		{
+		private IDictionaryEnumerator CreateEnumerator () {
 			Hashtable objTable;
 
 			//Locking with -1 provides a non-expiring lock.
@@ -95,7 +57,7 @@ namespace System.Web.Caching
 						continue;
 
 					CacheEntry entry = (CacheEntry) objEntry.Value;
-					if (entry.TestFlag (CacheEntry.Flags.Public))
+					if (entry.IsPublic)
 						objTable.Add (objEntry.Key, entry.Item);
 				}
 			} finally {
@@ -105,31 +67,17 @@ namespace System.Web.Caching
 			return objTable.GetEnumerator ();
 		}
 
-		/// <summary>
-		/// Implementation of IEnumerable interface and calls the GetEnumerator that returns
-		/// IDictionaryEnumerator.
-		/// </summary>
-		IEnumerator IEnumerable.GetEnumerator ()
-		{
+
+		IEnumerator IEnumerable.GetEnumerator () {
 			return GetEnumerator ();
 		}
 
-		/// <summary>
-		/// Virtual override of the IEnumerable.GetEnumerator() method,
-		/// returns a specialized enumerator.
-		/// </summary>
-		public IDictionaryEnumerator GetEnumerator ()
-		{
+		public IDictionaryEnumerator GetEnumerator () {
 			return CreateEnumerator ();
 		}
 
-		/// <summary>
-		/// Touches a object in the cache. Used to update expire time and hit count.
-		/// </summary>
-		/// <param name="strKey">The identifier for the cache item to retrieve.</param>
-		internal void Touch(string strKey)
-		{
-			Get (strKey);
+		internal void Touch(string strKey) {
+			GetEntry (strKey);
 		}
 
 		/// <summary>
@@ -168,27 +116,24 @@ namespace System.Web.Caching
 		/// cache.
 		/// </param>
 		/// <returns>The Object item added to the Cache.</returns>
-		public object Add (string strKey,
-				   object objItem,
-				   CacheDependency objDependency,
-				   DateTime absolutExpiration,
-				   TimeSpan slidingExpiration,
-				   CacheItemPriority enumPriority,
-				   CacheItemRemovedCallback eventRemoveCallback)
-		{
+		public object Add (string strKey, object objItem, CacheDependency objDependency,
+							DateTime absolutExpiration, TimeSpan slidingExpiration, 
+							CacheItemPriority enumPriority, CacheItemRemovedCallback eventRemoveCallback) {
+			
 			return Add (strKey, objItem, objDependency, absolutExpiration,
-					slidingExpiration, enumPriority, eventRemoveCallback, true);
+				slidingExpiration, enumPriority, eventRemoveCallback, true, false);
 		}
 
 		private object Add (string strKey,
-				   object objItem,
-				   CacheDependency objDependency,
-				   DateTime absolutExpiration,
-				   TimeSpan slidingExpiration,
-				   CacheItemPriority enumPriority,
-				   CacheItemRemovedCallback eventRemoveCallback,
-				   bool pub)
-		{
+			object objItem,
+			CacheDependency objDependency,
+			DateTime absolutExpiration,
+			TimeSpan slidingExpiration,
+			CacheItemPriority enumPriority,
+			CacheItemRemovedCallback eventRemoveCallback,
+			bool pub,
+			bool overwrite) {
+
 			if (strKey == null)
 				throw new ArgumentNullException ("strKey");
 
@@ -199,34 +144,54 @@ namespace System.Web.Caching
 				throw new ArgumentOutOfRangeException ("slidingExpiration");
 
 			CacheEntry objEntry;
-			CacheEntry objNewEntry;
+			CacheEntry objOldEntry = null;
 
 			long longHitRange = 10000;
 
 			// todo: check decay and make up the minHit range
 
 			objEntry = new CacheEntry (this,
-						   strKey,
-						   objItem,
-						   objDependency,
-						   eventRemoveCallback,
-						   absolutExpiration,
-						   slidingExpiration,
-						   longHitRange,
-						   pub,
-						   enumPriority);
+										strKey,
+										objItem,
+										objDependency,
+										eventRemoveCallback,
+										absolutExpiration,
+										slidingExpiration,
+										longHitRange,
+										pub,
+										enumPriority);
 
 			Interlocked.Increment (ref _nItems);
 
+			_lockEntries.AcquireWriterLock (-1);
+			try {
+				if (_arrEntries.Contains (strKey)) {
+					if (overwrite)
+						objOldEntry = _arrEntries [strKey] as CacheEntry;
+					else
+						return null;
+				}
+				
+				objEntry.Hit ();
+				_arrEntries [strKey] = objEntry;
+			} finally {
+				_lockEntries.ReleaseLock ();
+			}
+
+			if (objOldEntry != null) {
+				if (objOldEntry.HasAbsoluteExpiration || objOldEntry.HasSlidingExpiration)
+					_objExpires.Remove (objOldEntry);
+
+				objOldEntry.Close (CacheItemRemovedReason.Removed);
+			}
+
 			// If we have any kind of expiration add into the CacheExpires class
-			if (objEntry.HasSlidingExpiration || objEntry.HasAbsoluteExpiration)
+			if (objEntry.HasSlidingExpiration || objEntry.HasAbsoluteExpiration) {
+				if (objEntry.HasSlidingExpiration)
+					objEntry.Expires = DateTime.Now.Ticks + objEntry.SlidingExpiration;
+
 				_objExpires.Add (objEntry);
-
-			// Check and get the new item..
-			objNewEntry = UpdateCache (strKey, objEntry, true, CacheItemRemovedReason.Removed);
-
-			if (objNewEntry == null)
-				return null;
+			}
 
 			return objEntry.Item;
 		}
@@ -238,15 +203,9 @@ namespace System.Web.Caching
 		/// </summary>
 		/// <param name="strKey">The cache key used to reference the item.</param>
 		/// <param name="objItem">The item to be added to the cache.</param>
-		public void Insert (string strKey, object objItem)
-		{
-			Add (strKey,
-			     objItem,
-			     null,
-			     NoAbsoluteExpiration,
-			     NoSlidingExpiration,
-			     CacheItemPriority.Default,
-			     null);
+		public void Insert (string strKey, object objItem) {
+			Add (strKey, objItem, null, NoAbsoluteExpiration, NoSlidingExpiration,
+				CacheItemPriority.Default, null, true, true);
 		}
 
 		/// <summary>
@@ -260,15 +219,9 @@ namespace System.Web.Caching
 		/// from the cache. If there are no dependencies, this paramter
 		/// contains a null reference.
 		/// </param>
-		public void Insert (string strKey, object objItem, CacheDependency objDependency)
-		{
-			Add (strKey,
-			     objItem,
-			     objDependency,
-			     NoAbsoluteExpiration,
-			     NoSlidingExpiration,
-			     CacheItemPriority.Default,
-			     null);
+		public void Insert (string strKey, object objItem, CacheDependency objDependency) {
+			Add (strKey, objItem, objDependency, NoAbsoluteExpiration, NoSlidingExpiration,
+				CacheItemPriority.Default, null, true, true);
 		}
 
 		/// <summary>
@@ -291,19 +244,11 @@ namespace System.Web.Caching
 		/// object expires and is removed from the cache 20 minutes after
 		/// it is last accessed.
 		/// </param>
-		public void Insert (string strKey,
-				    object objItem,
-				    CacheDependency objDependency,
-				    DateTime absolutExpiration,
-				    TimeSpan slidingExpiration)
-		{
-			Add (strKey,
-			     objItem,
-			     objDependency,
-			     absolutExpiration,
-			     slidingExpiration,
-			     CacheItemPriority.Default,
-			     null);
+		public void Insert (string strKey, object objItem, CacheDependency objDependency,
+							DateTime absolutExpiration, TimeSpan slidingExpiration) {
+
+			Add (strKey, objItem, objDependency, absolutExpiration, slidingExpiration, 
+				CacheItemPriority.Default, null, true, true);
 		}
 
 		/// <summary>
@@ -340,38 +285,22 @@ namespace System.Web.Caching
 		/// You can use this to notify applications when their objects
 		/// are deleted from the cache.
 		/// </param>
-		public void Insert (string strKey,
-				    object objItem,
-				    CacheDependency objDependency,
-				    DateTime absolutExpiration,
-				    TimeSpan slidingExpiration,
-				    CacheItemPriority enumPriority,
-				    CacheItemRemovedCallback eventRemoveCallback)
-		{
-			Add (strKey,
-			     objItem,
-			     objDependency,
-			     absolutExpiration,
-			     slidingExpiration,
-			     enumPriority,
-			     eventRemoveCallback);
+		public void Insert (string strKey, object objItem, CacheDependency objDependency,
+							DateTime absolutExpiration, TimeSpan slidingExpiration,
+							CacheItemPriority enumPriority, CacheItemRemovedCallback eventRemoveCallback) {
+
+			Add (strKey, objItem, objDependency, absolutExpiration, slidingExpiration, 
+				enumPriority, eventRemoveCallback, true, true);
 		}
 
-		internal void InsertPrivate (string strKey,
-				object objItem,
-				CacheDependency objDependency,
-				DateTime absolutExpiration,
-				TimeSpan slidingExpiration,
-				CacheItemPriority enumPriority,
-				CacheItemRemovedCallback eventRemoveCallback)
-		{
-			Add (strKey,
-			     objItem,
-			     objDependency,
-			     absolutExpiration,
-			     slidingExpiration,
-			     enumPriority,
-			     eventRemoveCallback, false);
+		// Called from other internal System.Web methods to add non-public objects into
+		// cache, like output cache etc
+		internal void InsertPrivate (string strKey, object objItem, CacheDependency objDependency,
+									DateTime absolutExpiration, TimeSpan slidingExpiration,
+									CacheItemPriority enumPriority, CacheItemRemovedCallback eventRemoveCallback) {
+
+			Add (strKey, objItem, objDependency, absolutExpiration, slidingExpiration, 
+				enumPriority, eventRemoveCallback, false, true);
 		}
 
 		/// <summary>
@@ -382,8 +311,7 @@ namespace System.Web.Caching
 		/// The item removed from the Cache. If the value in the key
 		/// parameter is not found, returns a null reference.
 		/// </returns>
-		public object Remove (string strKey)
-		{
+		public object Remove (string strKey) {
 			return Remove (strKey, CacheItemRemovedReason.Removed);
 		}
 
@@ -399,16 +327,30 @@ namespace System.Web.Caching
 		/// The item removed from the Cache. If the value in the key
 		/// parameter is not found, returns a null reference.
 		/// </returns>
-		internal object Remove (string strKey, CacheItemRemovedReason enumReason)
-		{
-			CacheEntry objEntry = UpdateCache (strKey, null, true, enumReason);
-			if (objEntry == null)
-				return null;
+		internal object Remove (string strKey, CacheItemRemovedReason enumReason) {
+			CacheEntry objEntry = null;
+
+			if (strKey == null)
+				throw new ArgumentNullException ("strKey");
+
+			_lockEntries.AcquireWriterLock (-1);
+			try {
+				objEntry = _arrEntries [strKey] as CacheEntry;
+				if (null == objEntry)
+					return null;
+
+				_arrEntries.Remove (strKey);
+			}
+			finally {
+				_lockEntries.ReleaseWriterLock ();
+			}
+
+			if (objEntry.HasAbsoluteExpiration || objEntry.HasSlidingExpiration)
+				_objExpires.Remove (objEntry);
+
+			objEntry.Close (enumReason);
 
 			Interlocked.Decrement (ref _nItems);
-
-			// Close the cache entry (calls the remove delegate)
-			objEntry.Close (enumReason);
 
 			return objEntry.Item;
 		}
@@ -418,9 +360,8 @@ namespace System.Web.Caching
 		/// </summary>
 		/// <param name="strKey">The identifier for the cache item to retrieve.</param>
 		/// <returns>The retrieved cache item, or a null reference.</returns>
-		public object Get (string strKey)
-		{
-			CacheEntry objEntry = UpdateCache (strKey, null, false, CacheItemRemovedReason.Expired);
+		public object Get (string strKey) {
+			CacheEntry objEntry = GetEntry (strKey);
 
 			if (objEntry == null)
 				return null;
@@ -428,120 +369,38 @@ namespace System.Web.Caching
 			return objEntry.Item;
 		}
 
-		internal CacheEntry GetEntry (string strKey)
-		{
-			CacheEntry objEntry = UpdateCache (strKey, null, false, CacheItemRemovedReason.Expired);
-
-			if (objEntry == null)
-				return null;
-
-			return objEntry;
-		}
-
-		/// <summary>
-		/// Internal method used for removing, updating and adding CacheEntries into the cache.
-		/// </summary>
-		/// <param name="strKey">The identifier for the cache item to modify</param>
-		/// <param name="objEntry">
-		/// CacheEntry to use for overwrite operation, if this
-		/// parameter is null and overwrite true the item is going to be
-		/// removed
-		/// </param>
-		/// <param name="boolOverwrite">
-		/// If true the objEntry parameter is used to overwrite the
-		/// strKey entry
-		/// </param>
-		/// <param name="enumReason">Reason why an item was removed</param>
-		/// <returns></returns>
-		private CacheEntry UpdateCache (string strKey,
-						CacheEntry objEntry,
-						bool boolOverwrite,
-						CacheItemRemovedReason enumReason)
-		{
+		internal CacheEntry GetEntry (string strKey) {
+			CacheEntry objEntry = null;
+			long ticksNow = DateTime.Now.Ticks;
+			
 			if (strKey == null)
 				throw new ArgumentNullException ("strKey");
 
-			long ticksNow = DateTime.Now.Ticks;
-			long ticksExpires = long.MaxValue;
-
-			bool boolGetItem = false;
-			bool boolExpiried = false;
-			bool boolWrite = false;
-			bool boolRemoved = false;
-
-			// Are we getting the item from the hashtable
-			if (boolOverwrite == false && strKey.Length > 0 && objEntry == null)
-				boolGetItem = true;
-
-			// TODO: Optimize this method, move out functionality outside the lock
 			_lockEntries.AcquireReaderLock (-1);
 			try {
-				if (boolGetItem) {
-					objEntry = (CacheEntry) _arrEntries [strKey];
-					if (objEntry == null)
-						return null;
-				}
-
-				if (objEntry != null) {
-					// Check if we have expired
-					if (objEntry.HasSlidingExpiration || objEntry.HasAbsoluteExpiration) {
-						if (objEntry.Expires < ticksNow) {
-							// We have expired, remove the item from the cache
-							boolWrite = true;
-							boolExpiried = true;
-						} 
-					} 
-				}
-
-				// Check if we going to modify the hashtable
-				if (boolWrite || (boolOverwrite && !boolExpiried)) {
-					// Upgrade our lock to write
-					Threading.LockCookie objCookie = _lockEntries.UpgradeToWriterLock (-1);
-					try {
-						// Check if we going to just modify an existing entry (or add)
-						if (boolOverwrite && objEntry != null) {
-							_arrEntries [strKey] = objEntry;
-						} else {
-							// We need to remove the item, fetch the item first
-							objEntry = (CacheEntry) _arrEntries [strKey];
-							if (objEntry != null)
-								_arrEntries.Remove (strKey);
-
-							boolRemoved = true;
-						}
-					} finally {
-						_lockEntries.DowngradeFromWriterLock (ref objCookie);
-					}
-				}
-
-				// If the entry haven't expired or been removed update the info
-				if (!boolExpiried && !boolRemoved) {
-					// Update that we got a hit
-					objEntry.Hits++;
-					if (objEntry.HasSlidingExpiration)
-						ticksExpires = ticksNow + objEntry.SlidingExpiration;
-				}
-			} finally {
-				_lockEntries.ReleaseLock ();
+				objEntry = _arrEntries [strKey] as CacheEntry;
+				if (null == objEntry)
+					return null;
+			}
+			finally {
+				_lockEntries.ReleaseReaderLock ();
 			}
 
-			// If the item was removed we need to remove it from the CacheExpired class also
-			if (boolRemoved) {
-				if (objEntry != null) {
-					if (objEntry.HasAbsoluteExpiration || objEntry.HasSlidingExpiration)
-						_objExpires.Remove (objEntry);
-					objEntry.Close (enumReason);
+			if (objEntry.HasSlidingExpiration || objEntry.HasAbsoluteExpiration) {
+				if (objEntry.Expires < ticksNow) {
+					Remove (strKey, CacheItemRemovedReason.Expired);
+					return null;
 				}
-				return null;
-			}
+			} 
 
-			// If we have sliding expiration and we have a correct hit, update the expiration manager
+			objEntry.Hit ();
 			if (objEntry.HasSlidingExpiration) {
+				long ticksExpires = ticksNow + objEntry.SlidingExpiration;
+
 				_objExpires.Update (objEntry, ticksExpires);
 				objEntry.Expires = ticksExpires;
 			}
 
-			// Return the cache entry
 			return objEntry;
 		}
 

@@ -68,9 +68,7 @@ namespace System.Web.Caching {
 				context.Response.StatusDescription = c.StatusDescription;
 				
 				app.CompleteRequest ();
-			} else if (c != null) {
-				context.Cache.Remove (key);
-			}
+			} 
 
 		leave:
 			HttpAsyncResult result = new HttpAsyncResult (cb,this);

@@ -2,10 +2,9 @@
 // System.Web.Caching.CacheDependency
 //
 // Authors:
-// 	Patrik Torstensson (Patrik.Torstensson@labs2.com)
+// 	Patrik Torstensson
 // 	Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
-// (C) Copyright Patrik Torstensson, 2001
 // (c) 2003 Ximian, Inc. (http://www.ximian.com)
 //
 using System;

@@ -2,10 +2,9 @@
 // System.Web.Caching
 //
 // Author:
-//   Patrik Torstensson (Patrik.Torstensson@labs2.com)
+//   Patrik Torstensson
 //
-// (C) Copyright Patrik Torstensson, 2001
-//
+
 namespace System.Web.Caching
 {
 	/// <summary>

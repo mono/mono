@@ -1,3 +1,20 @@
+2004-05-27	Patrik Torstensson <totte@hiddenpeaks.com>
+
+	* CacheEntry.cs,CacheExpires.cs,ExpiresBucket.cs,
+	  Cache.cs : Fixed deadlock issues, fixed
+	  items not correctly being flushed, fixed update
+	  of item when expiration has been updated more
+	  than 1 min (placed in wrong bucket), 
+	  fixed deadlock during cache callback when item 
+	  is removed due to expiriation.
+	  
+	  Rewrite of locking handling in Cache class, leading
+	  to better performance and less bugs.
+	  
+	  This rewrite is due to a number of bugs found
+	  during load and output caching (leading to memory 
+	  leaks and deadlocks)
+
 2004-05-16	Patrik Torstensson <totte@hiddenpeaks.com>
 
 	* ExpiresBucket.cs: Style changes plus;
