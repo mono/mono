@@ -279,7 +279,7 @@ namespace System.Data {
 		[DataSysDescription ("The expression used to compute the data-bound value of this row.")]	
 		[DefaultValue ("")]
 		public string DisplayExpression {
-			get { return "" + _displayExpression; }
+			get { return _displayExpression == null ? "" : _displayExpression; }
 			set { _displayExpression = value; }
 		}
 
@@ -356,7 +356,7 @@ namespace System.Data {
 		[DataCategory ("Data")]
 		[DataSysDescription ("Indicates the XML uri namespace for the elements contained in this table.")]
 		public string Namespace {
-			get { return "" + _nameSpace; }
+			get { return _nameSpace == null ? "" : _nameSpace; }
 			set { _nameSpace = value; }
 		}
 
@@ -381,7 +381,7 @@ namespace System.Data {
 		[DataSysDescription ("Indicates the Prefix of the namespace used for this table in XML representation.")]
 		[DefaultValue ("")]
 		public string Prefix {
-			get { return "" + _prefix; }
+			get { return _prefix == null ? "" : _prefix; }
 			set {
 				// Prefix cannot contain any special characters other than '_' and ':'
 				for (int i = 0; i < value.Length; i++) {
@@ -493,7 +493,7 @@ namespace System.Data {
 		[DefaultValue ("")]	
 		[RefreshProperties (RefreshProperties.All)]
 		public string TableName {
-			get { return "" + _tableName; }
+			get { return _tableName == null ? "" : _tableName; }
 			set { _tableName = value; }
 		}
 		
