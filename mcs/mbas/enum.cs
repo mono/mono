@@ -3,6 +3,7 @@
 //
 // Author: Miguel de Icaza (miguel@gnu.org)
 //         Ravi Pratap     (ravi@ximian.com)
+//         Anirban Bhattacharjee (banirban@novell.com)
 //
 // Licensed under the terms of the GNU GPL
 //
@@ -495,11 +496,10 @@ namespace Mono.MonoBASIC {
 				}
 			}
 
-			/*FieldAttributes attr = FieldAttributes.Public | FieldAttributes.Static
+			FieldAttributes attr = FieldAttributes.Public | FieldAttributes.Static
 					| FieldAttributes.Literal;
-			*/
-			FieldBuilder fb = TypeBuilder.DefineField (name, UnderlyingType, 
-									/*attr*/ Modifiers.FieldAttr (ModFlags));
+			
+			FieldBuilder fb = TypeBuilder.DefineField (name, TypeBuilder, attr);
 
 			try {
 				default_value = TypeManager.ChangeType (default_value, UnderlyingType);
@@ -541,15 +541,7 @@ namespace Mono.MonoBASIC {
 			
 			object default_value = 0;
 			
-			/*FieldAttributes attr = FieldAttributes.Public | FieldAttributes.Static
-				             | FieldAttributes.Literal;
-			*/
-			
 			foreach (string name in ordered_enums) {
-				//
-				// Have we already been defined, thanks to some cross-referencing ?
-				// 
-
 				if (member_to_value.Contains (name))
 					continue;
 				
@@ -560,21 +552,21 @@ namespace Mono.MonoBASIC {
 
 					if (default_value == null)
 						return true;
-
 				} else {
-					FieldBuilder fb = TypeBuilder.DefineField (
-						name, UnderlyingType, 
-							/*attr*/ Modifiers.FieldAttr (ModFlags));
-					
+					FieldAttributes attr = FieldAttributes.Public | FieldAttributes.Static
+						| FieldAttributes.Literal;
+			
+					FieldBuilder fb = TypeBuilder.DefineField (name, TypeBuilder, attr);
+
 					if (default_value == null) {
-					   Report.Error (30439, loc, "Enumerator value for '" + name + "' is too large to " +
-							      "fit in its type");
+						Report.Error (30439, loc, "Enumerator value for '" + name + "' is too large to " +
+							"fit in its type");
 						return false;
 					}
-					
-					try {
+
+					try	{
 						default_value = TypeManager.ChangeType (default_value, UnderlyingType);
-					} catch {
+					} catch	{
 						Error_ConstantValueCannotBeConverted (default_value, loc);
 						return false;
 					}
@@ -587,16 +579,15 @@ namespace Mono.MonoBASIC {
 						return false;
 
 					//
-					// Apply attributes on the enum member
+					// Now apply attributes
 					//
-					Attribute.ApplyAttributes (ec, fb, fb, (Attributes) member_to_attributes [name], loc);
+					Attribute.ApplyAttributes (ec, fb, fb, (Attributes) member_to_attributes [name], loc); 
 				}
 
 				default_value = GetNextDefaultValue (default_value);
 			}
 			
 			Attribute.ApplyAttributes (ec, TypeBuilder, this, OptAttributes, Location);
-
 			return true;
 		}
 		
