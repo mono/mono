@@ -1,3 +1,9 @@
+
+Wed Apr 14 17:46:22 CEST 2004 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c: avoid reusing the same MonoInst on multiple trees: this is
+	not allowed.
+
 2004-04-13  Miguel de Icaza  <miguel@ximian.com>
 
 	* inssel-x86.brg (reg): Add new rules for add, sub and mul that
