@@ -2,6 +2,7 @@
 
 	* x86/tramp.c: remove code to handle PInvoke because this is no
 	longer needed.
+	(mono_create_method_pointer): return method->addr for pinvoke methods
 
 Fri Jul 19 14:18:36 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
