@@ -424,16 +424,24 @@ namespace Mono.CSharp
 			output.WriteLine( ';' );
 		}
 
-		protected override void GenerateLinePragmaStart( CodeLinePragma linePragma )
+		protected override void GenerateLinePragmaStart (CodeLinePragma linePragma)
 		{
-			Output.Write( "<GenerateLinePragmaStart>" );
+			Output.WriteLine ();
+			Output.Write ("#line ");
+			Output.Write (linePragma.LineNumber);
+			Output.Write (" \"");
+			Output.Write (linePragma.FileName);
+			Output.Write ("\"");
+			Output.WriteLine ();
 		}
 
-		protected override void GenerateLinePragmaEnd( CodeLinePragma linePragma )
+		protected override void GenerateLinePragmaEnd (CodeLinePragma linePragma)
 		{
-			Output.Write( "<GenerateLinePragmaEnd>" );
+			Output.WriteLine ();
+			Output.WriteLine ("#line default");
 		}
 
+		[MonoTODO]
 		protected override void GenerateEvent( CodeMemberEvent eventRef, CodeTypeDeclaration declaration )
 		{
 			Output.Write( "<GenerateEvent>" );
