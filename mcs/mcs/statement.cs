@@ -1745,8 +1745,6 @@ namespace Mono.CSharp {
 		/// </remarks>
 		public void ResolveMeta (ToplevelBlock toplevel, EmitContext ec, InternalParameters ip)
 		{
-			ILGenerator ig = ec.ig;
-
 			bool old_unsafe = ec.InUnsafe;
 
 			// If some parent block was unsafe, we remain unsafe even if this block
@@ -2115,8 +2113,6 @@ namespace Mono.CSharp {
 
 		static int did = 0;
 		
-		int my_id = did++;
-
 			
 		public void RegisterCaptureContext (CaptureContext cc)
 		{
@@ -3882,7 +3878,7 @@ namespace Mono.CSharp {
 			ILGenerator ig = ec.ig;
 
 			int i = assign.Length;
-			foreach (DictionaryEntry e in var_list){
+			for (int ii = 0; ii < var_list.Count; ++ii){
 				Expression var = resolved_vars [--i];
 				Label skip = ig.DefineLabel ();
 
@@ -4284,7 +4280,6 @@ namespace Mono.CSharp {
 					return false;
 			}
 			ForeachHelperMethods hm = (ForeachHelperMethods) criteria;
-			EmitContext ec = hm.ec;
 
 			// Check whether GetEnumerator is public
 			if ((mi.Attributes & MethodAttributes.Public) != MethodAttributes.Public)

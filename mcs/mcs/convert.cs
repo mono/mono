@@ -644,7 +644,6 @@ namespace Mono.CSharp {
 					return false;
 
 				AnonymousMethod am = (AnonymousMethod) expr;
-				int errors = Report.Errors;
 
 				Expression conv = am.Compatible (ec, target_type, true);
 				if (conv != null)

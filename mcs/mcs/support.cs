@@ -108,8 +108,6 @@ namespace Mono.CSharp {
 
 		public Parameter.Modifier ParameterModifier (int pos)
 		{
-			int len = pi.Length;
-
 			if (last_arg_is_params && pos >= pi.Length - 1)
 				return Parameter.Modifier.PARAMS;
 			else if (is_varargs && pos >= pi.Length)

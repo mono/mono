@@ -3272,7 +3272,7 @@ namespace Mono.CSharp {
 			}
 
 			if (!AttributeTester.IsClsCompliant (MemberType)) {
-				if ((this is Property) || (this is Indexer))
+				if (this is PropertyBase)
 					Report.Error (3003, Location, "Type of `{0}' is not CLS-compliant",
 						      GetSignatureForError ());
 				else
@@ -4658,7 +4658,6 @@ namespace Mono.CSharp {
 			if (member is MethodCore)
 				((MethodCore) member).Parameters.LabelParameters (ec, MethodBuilder, loc);
 
-			SymbolWriter sw = CodeGen.SymbolWriter;
 			ToplevelBlock block = method.Block;
 			
 			//
@@ -6478,7 +6477,6 @@ namespace Mono.CSharp {
 				}
 
 				ILGenerator ig = method_data.MethodBuilder.GetILGenerator ();
-				EmitContext ec = CreateEmitContext (tc, ig);
 				FieldInfo field_info = (FieldInfo)method.FieldBuilder;
 
 				method_data.MethodBuilder.SetImplementationFlags (MethodImplAttributes.Synchronized);

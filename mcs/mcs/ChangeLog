@@ -1,3 +1,10 @@
+2004-12-09  Marek Safar  <marek.safar@seznam.cz>
+
+	* anonymous.cs, class.cs, convert.cs, doc.cs, support.cs: 
+	Reduced number of warnings.
+	
+	* class.cs (TypeContainer.VerifyClsCompliance): One if is enough.
+
 2004-12-08  Miguel de Icaza  <miguel@ximian.com>
 
 	* driver.cs: Removed message.
