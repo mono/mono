@@ -69,6 +69,16 @@ namespace Mono.MonoBASIC {
 				return imports_clauses.Values;
 			}
 		}
+		
+		public string[] GetNamespacesInScope(string currentNamespace)
+		{
+			ArrayList list = new ArrayList();
+			foreach(ImportsEntry ie in ImportsTable)
+				list.Add(ie.Name);
+			list.Add(currentNamespace);
+			return (string[])list.ToArray(typeof(string));
+			
+		}
 
 		public void ImportsWithAlias (string alias, string namespace_or_type, Location loc)
 		{

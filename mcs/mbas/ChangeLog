@@ -1,3 +1,6 @@
+2004/03/22  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
+	* ecore.cs : now it gets the correct list of namespaces in scope (either imported or current) Almost there for Bug #52067 
+
 2004-03-22 Anirban Bhattacharjee <banirban@novell.com>
 	* mb-parser.jay: One more negative scenario is addressed in const grammar
 

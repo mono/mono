@@ -3709,8 +3709,7 @@ namespace Mono.MonoBASIC {
 // #52067 - Start - Trying to solve
 
 			if (e == null) {
-				//TODO: Get Namespaces from SourceBeingCompiled
-				string[] NamespacesInScope = new string[] {"Microsoft.VisualBasic", ""};
+				string[] NamespacesInScope = RootContext.SourceBeingCompiled.GetNamespacesInScope(ec.DeclSpace.Namespace.Name);
 
 				foreach(Type type in TypeManager.GetPertinentStandardModules(NamespacesInScope)) {
 					e = MemberLookup(ec, type, Name, loc);
