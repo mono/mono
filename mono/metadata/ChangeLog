@@ -1,4 +1,8 @@
 
+Tue Jun 11 17:29:19 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* reflection.c: fix call convention.
+
 Tue Jun 11 16:52:19 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* reflection.h, reflection.c: mono_image_get_memberref_token()
