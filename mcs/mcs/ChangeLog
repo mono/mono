@@ -1,3 +1,9 @@
+2004-05-25  Martin Baulig  <martin@ximian.com>
+
+	* ecore.cs (Expression.CacheTemporaries): Make this virtual.
+	(FieldExpr, PropertyExpr): Override and implement
+	CacheTemporaries.  Fixes #52279.
+
 2004-05-25  Miguel de Icaza  <miguel@ximian.com>
 
 	* location.cs: In the new compiler listing a file twice is a
