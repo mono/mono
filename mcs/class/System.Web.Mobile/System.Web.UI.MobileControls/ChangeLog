@@ -1,4 +1,8 @@
 
+2003-01-13	Gaurav Vaish <gvaish_mono AT lycos.com>
+
+	* Label.cs               : The smallest class on this earth.
+
 2003-01-12	Gaurav Vaish <gvaish_mono AT lycos.com>
 
 	* MobileControl.cs       : Stub-ing completed. ;-)
