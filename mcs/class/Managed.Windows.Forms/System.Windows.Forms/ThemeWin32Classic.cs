@@ -26,9 +26,12 @@
 //
 //
 //
-// $Revision: 1.49 $
+// $Revision: 1.50 $
 // $Modtime: $
 // $Log: ThemeWin32Classic.cs,v $
+// Revision 1.50  2004/10/26 09:36:32  ravindra
+// Implemented DetailView drawing for ListView control and default values.
+//
 // Revision 1.49  2004/10/18 04:49:25  pbartok
 // - Added ToolTip drawing code
 //
@@ -837,26 +840,115 @@ namespace System.Windows.Forms
 		public override void DrawListView (Graphics dc, Rectangle clip_rectangle, ListView control)
 		{
 			Rectangle control_area = control.ClientRectangle;
+			bool details = (control.View == View.Details);
 
 			// Draw the border of the list view with a background
 			dc.FillRectangle (ResPool.GetSolidBrush (control.BackColor), control_area);
 			this.CPDrawBorderStyle (dc, control_area, control.BorderStyle);
-			if (control.View == View.Details)
+			if (details) {
 				dc.FillRectangle (ResPool.GetSolidBrush (SystemColors.Control),
-						  0, 0, control_area.Width, this.ColumnHeaderHeight);
+						  0, 0, control_area.Width, control.Font.Height);
+				if (control.Columns.Count > 0) {
+					foreach (ColumnHeader col in control.Columns) {
+						this.CPDrawButton (dc, col.Rect, ButtonState.Normal);
+						dc.DrawString (col.Text, control.Font,
+							       ResPool.GetSolidBrush (this.ColorButtonText),
+							       col.Rect, col.Format);
+					}
+				}
+				if (control.GridLines) {
+					// draw vertical gridlines
+					foreach (ColumnHeader col in control.Columns)
+						dc.DrawLine (this.ResPool.GetPen (this.ColorButtonFace),
+							     col.Rect.Right, col.Rect.Bottom,
+							     col.Rect.Right, control.TotalHeight);
+					// draw horizontal gridlines
+					foreach (ListViewItem item in control.Items)
+						dc.DrawLine (this.ResPool.GetPen (this.ColorButtonFace),
+							     item.EntireRect.Left, item.EntireRect.Bottom,
+							     control.TotalWidth, item.EntireRect.Bottom);
+				}
+			}
+
+			foreach (ListViewItem item in control.Items)
+				this.DrawListViewItem (dc, control, item);
+		}
+
+		// draws the ListViewItem of the given index
+		private void DrawListViewItem (Graphics dc, ListView control, ListViewItem item)
+		{
+			if (control.View == View.Details && control.Columns.Count > 0) {
+				// Item is drawn as a special case, as it is not just text
+				if (item.ImageIndex > -1 && control.SmallImageList != null)
+					dc.DrawImage (control.SmallImageList.Images [item.ImageIndex],
+						      item.IconRect);
+				if (item.Text != null && item.Text.Length > 0)
+					dc.DrawString (item.Text, item.Font,
+						       this.ResPool.GetSolidBrush (item.ForeColor),
+						       item.LabelRect, control.Columns[0].Format);
+
+				// draw subitems
+				ListViewItem.ListViewSubItemCollection subItems = item.SubItems;
+				int count = (control.Columns.Count < subItems.Count ? 
+					     control.Columns.Count : subItems.Count);
+				
+				if (count > 0) {
+					Rectangle sub_item_rect = Rectangle.Empty;
+					sub_item_rect.X = item.EntireRect.Right;
+					sub_item_rect.Y = item.EntireRect.Y;
+					sub_item_rect.Height = item.EntireRect.Height;
+
+					ListViewItem.ListViewSubItem subItem;
+					ColumnHeader col;
+
+					for (int index = 1; index < count; index++) {
+						subItem = subItems [index];
+						col = control.Columns [index];
+						sub_item_rect.Width = col.Wd;
+
+						if (item.UseItemStyleForSubItems) {
+							dc.FillRectangle (this.ResPool.GetSolidBrush (item.BackColor), sub_item_rect);
+							dc.DrawString (subItem.Text, item.Font, this.ResPool.GetSolidBrush (item.ForeColor), sub_item_rect, col.Format);
+						}
+						else {
+							dc.FillRectangle (this.ResPool.GetSolidBrush (subItem.BackColor), sub_item_rect);
+							dc.DrawString (subItem.Text, subItem.Font,
+								       this.ResPool.GetSolidBrush (subItem.ForeColor), sub_item_rect, col.Format);
+						}
+						sub_item_rect.X += col.Wd;
+					}
+				}
+			}
+			else if (control.View != View.Details) { // Not a detail view
+
+			}
+			else
+				return;
 		}
 
 		// Sizing
-		public override Size ListViewDefaultSize {
-			get {
-				return new Size (121, 97);
-			}
+		public override int CheckBoxWidth {
+			get { return 16; }
 		}
 
 		public override int ColumnHeaderHeight {
-			get {
-				return 16;
-			}
+			get { return 16; }
+		}
+
+		public override int DefaultColumnWidth {
+			get { return 60; }
+		}
+
+		public override int DetailViewSpacing {
+			get { return 22; }
+		}
+
+		public override int HorizontalSpacing {
+			get { return 10; }
+		}
+
+		public override Size ListViewDefaultSize {
+			get { return new Size (121, 97); }
 		}
 		#endregion	// ListView
 
@@ -1410,7 +1502,7 @@ namespace System.Windows.Forms
 		#region ToolBar
 		public  override void DrawToolBar (Graphics dc, Rectangle clip_rectangle, ToolBar control) {
 			StringFormat	format = new StringFormat ();
-
+			format.Trimming = StringTrimming.EllipsisWord;
 			if (control.textAlignment == ToolBarTextAlign.Underneath) {
 				format.LineAlignment = StringAlignment.Center;
 				format.Alignment = StringAlignment.Center;
