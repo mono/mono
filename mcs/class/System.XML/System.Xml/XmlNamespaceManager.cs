@@ -1,6 +1,5 @@
-// -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
 //
-// System.Xml.XmlNamespaceManager.cs
+// XmlNamespaceManager.cs
 //
 // Author:
 //   Jason Diamond (jason@injektilo.org)
@@ -14,123 +13,122 @@ namespace System.Xml
 {
 	public class XmlNamespaceManager : IEnumerable
 	{
-		private XmlNameTable _NameTable;
-		NamespaceScope _Top;
+		#region Fields
 
-		public XmlNamespaceManager(XmlNameTable nameTable)
+		private XmlNameTable nameTable;
+		private NamespaceScope currentScope;
+
+		#endregion
+
+		#region Constructor
+
+		public XmlNamespaceManager (XmlNameTable nameTable)
 		{
-			_NameTable = nameTable;
-			PushScope();
+			this.nameTable = nameTable;
+
+			nameTable.Add ("xmlns");
+			nameTable.Add ("xml");
+			nameTable.Add (String.Empty);
+			nameTable.Add ("http://www.w3.org/2000/xmlns/");
+			nameTable.Add ("http://www.w3.org/XML/1998/namespace");
+
+			PushScope ();
 		}
 
-		public virtual string DefaultNamespace
-		{
-			get
-			{
-				return LookupNamespace(String.Empty);
-			}
+		#endregion
+
+		#region Properties
+
+		public virtual string DefaultNamespace {
+			get { return LookupNamespace (String.Empty); }
 		}
 
-		public XmlNameTable NameTable
-		{
-			get
-			{
-				return _NameTable;
-			}
+		public XmlNameTable NameTable {
+			get { return nameTable; }
 		}
 
-		public virtual void AddNamespace(string prefix, string uri)
+		#endregion
+
+		#region Methods
+
+		public virtual void AddNamespace (string prefix, string uri)
 		{
 			if (prefix == null)
-			{
-				throw new ArgumentNullException("prefix", "Value cannot be null.");
-			}
+				throw new ArgumentNullException ("prefix", "Value cannot be null.");
 
 			if (uri == null)
-			{
-				throw new ArgumentNullException("uri", "Value cannot be null.");
-			}
+				throw new ArgumentNullException ("uri", "Value cannot be null.");
 
-			if (prefix.Length > 2 && prefix.Substring(0, 3).ToLower() == "xml")
-			{
-				throw new ArgumentException("Prefixes beginning with \"xml\" (regardless of whether the characters are uppercase, lowercase, or some combination thereof) are reserved for use by XML.", "prefix");
-			}
+			if (prefix.Length > 2 && prefix.Substring (0, 3).ToLower () == "xml")
+				throw new ArgumentException ("Prefixes beginning with \"xml\" (regardless of whether the characters are uppercase, lowercase, or some combination thereof) are reserved for use by XML.", "prefix");
 
-			if (_Top.Namespaces == null)
-			{
-				_Top.Namespaces = new Hashtable();
-			}
+			if (currentScope.Namespaces == null)
+				currentScope.Namespaces = new Hashtable ();
 
-			_Top.Namespaces.Add(prefix, uri);
+			currentScope.Namespaces.Add (nameTable.Add (prefix), nameTable.Add (uri));
 		}
 
-		public virtual IEnumerator GetEnumerator()
+		[MonoTODO]
+		public virtual IEnumerator GetEnumerator ()
 		{
-			// TODO: implement me.
-			throw new NotImplementedException();
+			throw new NotImplementedException ();
 		}
 
-		public virtual bool HasNamespace(string prefix)
+		public virtual bool HasNamespace (string prefix)
 		{
-			return _Top != null && _Top.Namespaces != null && _Top.Namespaces.Contains(prefix);
+			return currentScope != null && currentScope.Namespaces != null && currentScope.Namespaces.Contains (prefix);
 		}
 
-		public virtual string LookupNamespace(string prefix)
+		public virtual string LookupNamespace (string prefix)
 		{
-			NamespaceScope scope = _Top;
+			NamespaceScope scope = currentScope;
 
-			while (scope != null)
-			{
-				if (scope.Namespaces != null && scope.Namespaces.Contains(prefix))
-				{
+			while (scope != null) {
+				if (scope.Namespaces != null && scope.Namespaces.Contains (prefix))
 					return scope.Namespaces[prefix] as string;
-				}
-
 				scope = scope.Next;
 			}
 
-			switch (prefix)
-			{
-				case "xmlns":
-					return "http://www.w3.org/2000/xmlns/";
-				case "xml":
-					return "http://www.w3.org/XML/1998/namespace";
-				case "":
-					return String.Empty;
+			switch (prefix) {
+			case "xmlns":
+				return nameTable.Get ("http://www.w3.org/2000/xmlns/");
+			case "xml":
+				return nameTable.Get ("http://www.w3.org/XML/1998/namespace");
+			case "":
+				return nameTable.Get (String.Empty);
 			}
 
 			return null;
 		}
 
-		public virtual string LookupPrefix(string uri)
+		[MonoTODO]
+		public virtual string LookupPrefix (string uri)
 		{
-			// TODO: implement me.
-			throw new NotImplementedException();
+			throw new NotImplementedException ();
 		}
 
-		public virtual bool PopScope()
+		public virtual bool PopScope ()
 		{
-			if (_Top != null)
-			{
-				_Top = _Top.Next;
-				return true;
-			}
+			if (currentScope != null)
+				currentScope = currentScope.Next;
 
-			return false;
+			return currentScope != null;
 		}
 
-		public virtual void PushScope()
+		public virtual void PushScope ()
 		{
-			NamespaceScope newScope = new NamespaceScope();
-			newScope.Next = _Top;
-			_Top = newScope;
+			NamespaceScope newScope = new NamespaceScope ();
+			newScope.Next = currentScope;
+			currentScope = newScope;
 		}
 
-		public virtual void RemoveNamespace(string prefix, string uri)
+		[MonoTODO]
+		public virtual void RemoveNamespace (string prefix, string uri)
 		{
-			// TODO: implement me.
-			throw new NotImplementedException();
+			throw new NotImplementedException ();
 		}
+
+		#endregion
 	}
 
 	internal class NamespaceScope

@@ -1,15 +1,13 @@
-// -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
 //
-// System.Xml.Test.cs
+// XmlNamespaceManagerTests.cs
 //
 // Author:
 //   Jason Diamond (jason@injektilo.org)
 //
-// (C) 2001 Jason Diamond  http://injektilo.org/
+// (C) 2002 Jason Diamond  http://injektilo.org/
 //
 
 using System;
-using System.Diagnostics;
 using System.Xml;
 
 using NUnit.Framework;
@@ -18,71 +16,123 @@ namespace Ximian.Mono.Tests
 {
 	public class XmlNamespaceManagerTests : TestCase
 	{
-		public XmlNamespaceManagerTests() : base("Ximian.Mono.Tests.XmlNameSpaceManagerTests testsuite") { }
-		public XmlNamespaceManagerTests(string name) : base(name) { }
+		public XmlNamespaceManagerTests () : base ("Ximian.Mono.Tests.XmlNameSpaceManagerTests testsuite") { }
+		public XmlNamespaceManagerTests (string name) : base (name) { }
 
-		private XmlNamespaceManager _NamespaceManager;
+		private XmlNameTable nameTable;
+		private XmlNamespaceManager namespaceManager;
 
-		protected override void SetUp()
+		protected override void SetUp ()
 		{
-			XmlNameTable nameTable = new NameTable();
-			_NamespaceManager = new XmlNamespaceManager(nameTable);
+			nameTable = new NameTable ();
+			namespaceManager = new XmlNamespaceManager (nameTable);
 		}
 
-		public void TestNewNamespaceManager()
+		public void TestNewNamespaceManager ()
 		{
-			Assert(!_NamespaceManager.HasNamespace("xmlns"));
-			Assert(!_NamespaceManager.HasNamespace("xml"));
-			Assert(!_NamespaceManager.HasNamespace(String.Empty));
+			// make sure that you can call PopScope when there aren't any to pop.
+			Assert (!namespaceManager.PopScope ());
 
-			AssertEquals("http://www.w3.org/2000/xmlns/", _NamespaceManager.LookupNamespace("xmlns"));
-			AssertEquals("http://www.w3.org/XML/1998/namespace", _NamespaceManager.LookupNamespace("xml"));
-			AssertEquals(String.Empty, _NamespaceManager.LookupNamespace(String.Empty));
+			// the following strings should have been added to the name table by the
+			// namespace manager.
+			string xmlnsPrefix = nameTable.Get ("xmlns");
+			string xmlPrefix = nameTable.Get ("xml");
+			string stringEmpty = nameTable.Get (String.Empty);
+			string xmlnsNamespace = "http://www.w3.org/2000/xmlns/";
+			string xmlNamespace = "http://www.w3.org/XML/1998/namespace";
 
-			AssertNull(_NamespaceManager.LookupNamespace("foo"));
+			// none of them should be null.
+			AssertNotNull (xmlnsPrefix);
+			AssertNotNull (xmlPrefix);
+			AssertNotNull (stringEmpty);
+			AssertNotNull (xmlnsNamespace);
+			AssertNotNull (xmlNamespace);
+
+			// Microsoft's XmlNamespaceManager reports that these three
+			// namespaces aren't declared for some reason.
+			Assert (!namespaceManager.HasNamespace ("xmlns"));
+			Assert (!namespaceManager.HasNamespace ("xml"));
+			Assert (!namespaceManager.HasNamespace (String.Empty));
+
+			// these three namespaces are declared by default.
+			AssertEquals ("http://www.w3.org/2000/xmlns/", namespaceManager.LookupNamespace ("xmlns"));
+			AssertEquals ("http://www.w3.org/XML/1998/namespace", namespaceManager.LookupNamespace ("xml"));
+			AssertEquals (String.Empty, namespaceManager.LookupNamespace (String.Empty));
+
+			// the namespaces should be the same references found in the name table.
+			AssertSame (xmlnsNamespace, namespaceManager.LookupNamespace ("xmlns"));
+			AssertSame (xmlNamespace, namespaceManager.LookupNamespace ("xml"));
+			AssertSame (stringEmpty, namespaceManager.LookupNamespace (String.Empty));
+
+			// looking up undeclared namespaces should return null.
+			AssertNull (namespaceManager.LookupNamespace ("foo"));
 		}
 
-		public void TestAddNamespace()
+		public void TestAddNamespace ()
 		{
 			// add a new namespace.
-			_NamespaceManager.AddNamespace("foo", "http://foo/");
+			namespaceManager.AddNamespace ("foo", "http://foo/");
 			// make sure the new namespace is there.
-			Assert(_NamespaceManager.HasNamespace("foo"));
-			AssertEquals("http://foo/", _NamespaceManager.LookupNamespace("foo"));
+			Assert (namespaceManager.HasNamespace ("foo"));
+			AssertEquals ("http://foo/", namespaceManager.LookupNamespace ("foo"));
 		}
 
-		public void TestPushScope()
+		public void TestAddNamespaceWithNameTable ()
+		{
+			// add a known reference to the name table.
+			string fooNamespace = "http://foo/";
+			nameTable.Add(fooNamespace);
+
+			// create a new string with the same value but different address.
+			string fooNamespace2 = "http://";
+			fooNamespace2 += "foo/";
+
+			// the references must be different in order for this test to prove anything.
+			Assert (!Object.ReferenceEquals (fooNamespace, fooNamespace2));
+
+			// add the namespace with the reference that's not in the name table.
+			namespaceManager.AddNamespace ("foo", fooNamespace2);
+
+			// the returned reference should be the same one that's in the name table.
+			AssertSame (fooNamespace, namespaceManager.LookupNamespace ("foo"));
+		}
+
+		public void TestPushScope ()
 		{
 			// add a new namespace.
-			_NamespaceManager.AddNamespace("foo", "http://foo/");
+			namespaceManager.AddNamespace ("foo", "http://foo/");
 			// make sure the new namespace is there.
-			Assert(_NamespaceManager.HasNamespace("foo"));
-			AssertEquals("http://foo/", _NamespaceManager.LookupNamespace("foo"));
+			Assert (namespaceManager.HasNamespace ("foo"));
+			AssertEquals ("http://foo/", namespaceManager.LookupNamespace ("foo"));
 			// push a new scope.
-			_NamespaceManager.PushScope();
+			namespaceManager.PushScope ();
 			// add a new namespace.
-			_NamespaceManager.AddNamespace("bar", "http://bar/");
+			namespaceManager.AddNamespace ("bar", "http://bar/");
 			// make sure the old namespace is not in this new scope.
-			Assert(!_NamespaceManager.HasNamespace("foo"));
+			Assert (!namespaceManager.HasNamespace ("foo"));
 			// but we're still supposed to be able to lookup the old namespace.
-			AssertEquals("http://foo/", _NamespaceManager.LookupNamespace("foo"));
+			AssertEquals ("http://foo/", namespaceManager.LookupNamespace ("foo"));
 			// make sure the new namespace is there.
-			Assert(_NamespaceManager.HasNamespace("bar"));
-			AssertEquals("http://bar/", _NamespaceManager.LookupNamespace("bar"));
+			Assert (namespaceManager.HasNamespace ("bar"));
+			AssertEquals ("http://bar/", namespaceManager.LookupNamespace ("bar"));
 		}
 
-		public void TestPopScope()
+		public void TestPopScope ()
 		{
 			// add some namespaces and a scope.
-			TestPushScope();
+			TestPushScope ();
 			// pop the scope.
-			Assert(_NamespaceManager.PopScope());
+			Assert (namespaceManager.PopScope ());
 			// make sure the first namespace is still there.
-			Assert(_NamespaceManager.HasNamespace("foo"));
-			AssertEquals("http://foo/", _NamespaceManager.LookupNamespace("foo"));
+			Assert (namespaceManager.HasNamespace ("foo"));
+			AssertEquals ("http://foo/", namespaceManager.LookupNamespace ("foo"));
 			// make sure the second namespace is no longer there.
-			Assert(!_NamespaceManager.HasNamespace("bar"));
-			AssertNull(_NamespaceManager.LookupNamespace("bar"));
+			Assert (!namespaceManager.HasNamespace ("bar"));
+			AssertNull (namespaceManager.LookupNamespace ("bar"));
+			// make sure there are no more scopes to pop.
+			Assert (!namespaceManager.PopScope ());
+			// make sure that popping again doesn't cause an exception.
+			Assert (!namespaceManager.PopScope ());
 		}
 	}
 }

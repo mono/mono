@@ -1,3 +1,8 @@
+2002-03-02  Jason Diamond <jason@injektilo.org>
+
+	* XmlNamespaceManager.cs: Atomize prefixes and namespaces strings in 
+	the name table.
+
 2002-02-28  Jason Diamond <jason@injektilo.org>
 
 	* XmlDocument.cs, XmlNode.cs: Initial implementation of LoadXml 

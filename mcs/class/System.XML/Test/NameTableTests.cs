@@ -7,7 +7,6 @@
 //
 
 using System;
-using System.Diagnostics;
 using System.Xml;
 
 using NUnit.Framework;
@@ -33,8 +32,10 @@ namespace Ximian.Mono.Tests
 		//		
 		public void TestAdd1 ()
 		{
-			string testAdd =  table.Add ("add1");
-			AssertEquals ("add1", testAdd);
+			string add = "add1";
+			string testAdd = table.Add (add);
+			AssertEquals (add, testAdd);
+			AssertSame (add, testAdd);
 		}
 
 		//
@@ -54,9 +55,11 @@ namespace Ximian.Mono.Tests
 		//
 		public void TestGet1 ()
 		{
-			string testGet = table.Add ("get1");			
+			string get1 = "get1";
+			string testGet = table.Add (get1);			
 
-			AssertEquals (table.Get ("get1"), testGet);
+			AssertEquals (table.Get (get1), testGet);
+			AssertSame (get1, testGet );
 		}
 
 		//

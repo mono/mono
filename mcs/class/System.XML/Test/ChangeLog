@@ -1,3 +1,11 @@
+2002-03-02  Jason Diamond <jason@injektilo.org>
+
+	* XmlNamespaceManagerTests.cs: Make sure the XmlNamespaceManager 
+	is using its name table.
+
+	* NameTableTests.cs: Make sure NameTable is really returning the
+	same references.
+
 2002-02-28  Jason Diamond <jason@injektilo.org>
 
 	* XmlDocumentTests.cs: Tests for XmlDocument.LoadXml courtesy of
