@@ -1,5 +1,12 @@
 2004-08-08  Zoltan Varga  <vargaz@freemail.hu>
 
+	* mini.c (mono_method_to_ir): Set stack type of LOCALLOC correctly.
+
+	* inssel-amd64.brg inssel-x86.brg: Set dreg of LOCALLOC correctly. 
+	Fixes #62574.
+
+	* inssel-amd64.brg: Add some optimizations.
+
 	* mini-amd64.c (mono_arch_setup_jit_tls_data): Add tls offset detection
 	for gcc-3.4.
 
