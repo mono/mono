@@ -100,7 +100,7 @@ namespace System.Security {
 				return;
 
 			// skip frames until we get the caller (of our caller)
-			new PermissionSet (this).CasOnlyDemand (2);
+			new PermissionSet (this).CasOnlyDemand (3);
 		}
 
 		[MonoTODO ("Imperative mode isn't supported")]
@@ -355,7 +355,7 @@ namespace System.Security {
 			// 4. CheckAssert
 			if (frame.Assert != null) {
 				foreach (IPermission p in frame.Assert) {
-					if (!CheckAssert (p as CodeAccessPermission)) {
+					if (CheckAssert (p as CodeAccessPermission)) {
 						// FIXME: partial asserts
 						return true; // stop the stack walk
 					}

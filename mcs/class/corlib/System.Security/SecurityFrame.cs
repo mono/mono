@@ -148,6 +148,15 @@ namespace System.Security {
 			foreach (RuntimeSecurityFrame frame in stack) {
 				al.Add (new SecurityFrame (frame));
 			}
+			al.Reverse ();
+#if false
+			Console.WriteLine ("Stack Dump (skip {0})", skipFrames);
+			int i=1;
+			foreach (SecurityFrame f in al) {
+				Console.WriteLine ("\t{0}. {1}", i++, f.Method);
+			}
+			Console.WriteLine ("End Stack Dump");
+#endif
 			return al;
 		}
 	}

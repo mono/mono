@@ -216,7 +216,7 @@ namespace System.Security {
 			// - the permission set only contains non CAS permissions; or
 			// - security isn't enabled (applis only to CAS!)
 			if (!cas.IsEmpty () && SecurityManager.SecurityEnabled)
-				CasOnlyDemand (_declsec ? 4 : 2);
+				CasOnlyDemand (_declsec ? 5 : 3);
 		}
 
 		// The number of frames to skip depends on who's calling
