@@ -174,19 +174,23 @@ namespace System.Web.Services.Protocols
 		}
 
 #if NET_2_0
+		[System.Runtime.InteropServices.ComVisible(false)]
 		public string Lang {
 			get { return lang; }
 		}
 		
+		[System.Runtime.InteropServices.ComVisible(false)]
 		public string Role {
 			get { return role; }
 		}
 		
+		[System.Runtime.InteropServices.ComVisible(false)]
 		public SoapFaultSubcode Subcode {
 			get { return subcode; }
 		}
 		
 		// Same value as actor
+		[System.Runtime.InteropServices.ComVisible(false)]
 		public string Node {
 			get { return actor; }
 		}

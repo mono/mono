@@ -112,6 +112,7 @@ namespace System.Web.Services.Protocols {
 		[DefaultValue ("0")]
 		[SoapAttribute ("mustUnderstand", Namespace = "http://www.w3.org/2003/05/soap-envelope")]
 		[XmlAttribute ("mustUnderstand", Namespace = "http://www.w3.org/2003/05/soap-envelope")]
+		[System.Runtime.InteropServices.ComVisible(false)]
 		public string EncodedMustUnderstand12 {
 			get { return (MustUnderstand ? "1" : "0"); }
 			set {	
@@ -127,6 +128,7 @@ namespace System.Web.Services.Protocols {
 		[DefaultValue ("0")]
 		[SoapAttribute ("relay", Namespace = "http://www.w3.org/2003/05/soap-envelope")]
 		[XmlAttribute ("relay", Namespace = "http://www.w3.org/2003/05/soap-envelope")]
+		[System.Runtime.InteropServices.ComVisible(false)]
 		public string EncodedRelay
 		{
 			get { return (Relay ? "1" : "0"); }
@@ -142,6 +144,7 @@ namespace System.Web.Services.Protocols {
 		
 		[SoapIgnore]
 		[XmlIgnore]
+		[System.Runtime.InteropServices.ComVisible(false)]
 		public bool Relay {
 			get { return relay; }
 			set { relay = value; }
@@ -150,6 +153,7 @@ namespace System.Web.Services.Protocols {
 		[DefaultValue ("")]
 		[SoapAttribute ("role", Namespace = "http://www.w3.org/2003/05/soap-envelope")]
 		[XmlAttribute ("role", Namespace = "http://www.w3.org/2003/05/soap-envelope")]
+		[System.Runtime.InteropServices.ComVisible(false)]
 		public string Role {
 			get { return role; }
 			set { role = value; }

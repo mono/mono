@@ -30,7 +30,9 @@
 
 using System.Xml;
 
-namespace System.Web.Services.Protocols {
+namespace System.Web.Services.Protocols 
+{
+	[Serializable]
 	public class SoapHeaderException : SoapException {
 
 		#region Constructors

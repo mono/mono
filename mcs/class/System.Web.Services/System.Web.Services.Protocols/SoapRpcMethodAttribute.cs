@@ -101,6 +101,7 @@ namespace System.Web.Services.Protocols {
 		}
 		
 #if NET_2_0
+		[System.Runtime.InteropServices.ComVisible(false)]
 		public SoapBindingUse Use {
 			get { return use; }
 			set { use = value; }

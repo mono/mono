@@ -208,7 +208,7 @@ namespace System.Web.Services.Protocols {
 		}
 
 		[MonoTODO]
-		public static Hashtable GenerateXmlMappings (Type type, ArrayList mapping)
+		public static bool GenerateXmlMappings (Type type, ArrayList mapping)
 		{
 			throw new NotImplementedException ();
 		}

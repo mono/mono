@@ -36,6 +36,10 @@ namespace System.Web.Services.Protocols
 {
 	public sealed class Soap12FaultCodes
 	{
+		private Soap12FaultCodes ()
+		{
+		}
+		
 		public static readonly XmlQualifiedName DataEncodingUnknownFaultCode 
 			= new XmlQualifiedName ("DataEncodingUnknown", "http://www.w3.org/2003/05/soap-envelope");
 			

@@ -330,12 +330,15 @@ namespace System.Web.Services.Protocols
 #if NET_2_0
 
 		[MonoTODO ("Do something with this")]
+		[System.Runtime.InteropServices.ComVisible(false)]
+		[Obsolete]
 		public WsiClaims ConformanceClaims {
 			get { return conformanceClaims; }
 			set { conformanceClaims = value; }
 		}
 		
 		[MonoTODO ("Do something with this")]
+		[System.Runtime.InteropServices.ComVisible(false)]
 		public SoapProtocolVersion SoapVersion {
 			get { return soapVersion; }
 			set { soapVersion = value; }

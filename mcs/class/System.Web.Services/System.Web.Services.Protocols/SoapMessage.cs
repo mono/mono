@@ -150,9 +150,9 @@ namespace System.Web.Services.Protocols {
 #endif
 
 #if NET_2_0
+		[System.Runtime.InteropServices.ComVisible(false)]
 		public virtual SoapProtocolVersion SoapVersion {
 			get { return soapVersion; }
-			set { soapVersion = value; }
 		}
 #endif
  
