@@ -213,7 +213,6 @@ namespace System.Windows.Forms {
 				return;
 
 			UpdateArea ();
-			CreateBuffers (Width, Height);
 			CalcPanelSizes ();
 			Draw ();
 		}
