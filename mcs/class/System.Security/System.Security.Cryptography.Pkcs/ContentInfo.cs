@@ -30,7 +30,7 @@ namespace System.Security.Cryptography.Pkcs {
 		// constructors
 
 		public ContentInfo (byte[] content) 
-			: this (new Oid ("1.2.840.113549.1.7.1", "PKCS 7 Data"), content) {} 
+			: this (new Oid ("1.2.840.113549.1.7.1"), content) {} 
 
 		public ContentInfo (Oid oid, byte[] content) 
 		{
@@ -55,19 +55,25 @@ namespace System.Security.Cryptography.Pkcs {
 
 		// static methods
 
-		[MonoTODO]
+		[MonoTODO("Incomplete OID support")]
 		public static Oid GetContentType (byte[] encodedMessage)
 		{
 // FIXME: compatibility with fx 1.2.3400.0
 			if (encodedMessage == null)
 				throw new NullReferenceException ();
 //				throw new ArgumentNullException ("algorithm");
-
 			try {
-				return null;
+				PKCS7.ContentInfo ci = new PKCS7.ContentInfo (encodedMessage);
+				switch (ci.ContentType) {
+					// TODO - there are probably more - need testing
+					case PKCS7.signedData:
+						return new Oid (ci.ContentType);
+					default:
+						throw new CryptographicException ("Bad ASN1 - invalid OID");
+				}
 			}
 			catch (Exception e) {
-				throw new CryptographicException ("Bad ASN1", e);
+				throw new CryptographicException ("Bad ASN1 - invalid structure", e);
 			}
 		}
 	}

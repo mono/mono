@@ -1,3 +1,36 @@
+2003-12-07  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* ContentInfo.cs: Modified default Oid not to include description. 
+	Added basic support for static GetContentType.
+	* EnvelopedPkcs7.cs: New. Partial implementation of PKCS#7 envelopes
+	(encrypted data).
+	* KeyAgreeRecipientInfo.cs: New. Stub for key agreement informations.
+	Note that key agreement algorithms (DH) are absent from the framework.
+	* KeyTransRecipientInfo.cs: New. Implementation for key transport
+	informations. 
+	* Pkcs7Recipient.cs: New. Implementation of "recipients" - how it 
+	links to a X.509 certificate (issuer and serial key or subject key 
+	info).
+	* Pkcs7RecipientCollection.cs: New. Collection of Pkcs7Recipient.
+	* Pkcs7RecipientEnumerator.cs: New. Enumerator for Pkcs7Recipient.
+	* Pkcs7AttributeCollection.cs: New. Collection of Pkcs9Attributes.
+	* Pkcs7AttributeEnumerator.cs: New. Enumerator for Pkcs9Attributes.
+	* PublicKeyInfo.cs: New. Handle public key informations.
+	* RecipientInfoCollection.cs: New. Collection of RecipientInfo (and
+	inherited classes).
+	* RecipientInfoEnumerator.cs: New. Enumerator for RecipientInfo (and
+	inherited classes).
+	* SignedPkcs7.cs: New. Partial implementation of PKCS#7 signed
+	structures.
+	* SignerInfo.cs: New. Information (certificate and attributes) about 
+	the signer. Actual signature/verification stuff is missing.
+	* SignerInfoCollection.cs: New. Collection of SignerInfo.
+	* SignerInfoEnumarator.cs: New. Enumerator for SignerInfo.
+	* SubjectIdentifier.cs: New. Contains the type of identifier linking
+	to a subject.
+	* SubjectIdentifierOrKey.cs: New. Contains the subject's public key or
+	an information linking to a subject public key.
+
 2003-11-08  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* ContentInfo.cs: New. Class to encapsulate PKCS7 ContentInfo. Static 
