@@ -1,3 +1,6 @@
+2004-10-14 Umadevi S <sumadevi@novell.com>
+	* DataSetTest.cs : added testcase to check subclass clone
+
 2004-10-12  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DataSetTest.cs : now xs:schema contains xmlns="".

@@ -1138,6 +1138,7 @@ namespace MonoTests.System.Data
                         }
 		}
 
+	
 		[Test]
 		public void WriteNestedTableXml ()
 		{
@@ -1304,5 +1305,28 @@ namespace MonoTests.System.Data
                         Assertion.AssertEquals ("parent table rows should not exist!", 0, parent.Rows.Count);
                         Assertion.AssertEquals ("child table rows should not exist!", 0, child.Rows.Count);
                 }
+
+		[Test]
+		public void CloneSubClassTest()
+		{
+			MyDataSet ds1 = new MyDataSet();
+                        MyDataSet ds = (MyDataSet)(ds1.Clone());
+                     	AssertEquals("A#01",2,MyDataSet.count);
+		}
+		
         }
+
+
+	 public  class MyDataSet:DataSet {
+
+	     public static int count = 0;
+                                                                                                    
+             public MyDataSet() {
+
+                    count++;
+             }
+                                                                                                    
+         }
+	
+
 }
