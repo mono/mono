@@ -1,3 +1,10 @@
+
+Mon Jul 8 15:18:59 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* reflection.c, reflection.h: handle full assembly info in type name.
+	Handle Type arguments when loading custom attributes.
+	* icall.c: updated to use new mono_reflection_type_from_name () method.
+
 2002-07-07  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* loader.c:
