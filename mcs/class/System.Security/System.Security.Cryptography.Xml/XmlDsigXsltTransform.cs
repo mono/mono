@@ -85,12 +85,12 @@ public class XmlDsigXsltTransform : Transform {
 	[MonoTODO()]
 	public override void LoadInput (object obj) 
 	{
-		// possible input: Stream, XmlDocument, and XmlNodeList
 		XslTransform xsl = new XslTransform ();
+		XmlDocument doc = new XmlDocument ();
 		Stream stream = null;
 
+		// possible input: Stream, XmlDocument, and XmlNodeList
 		if (obj is Stream) {
-			XmlDocument doc = new XmlDocument ();
 			doc.Load (obj as Stream);
 			xsl.Load (doc);
 		}
@@ -99,13 +99,13 @@ public class XmlDsigXsltTransform : Transform {
 		}
 		else if (obj is XmlNodeList) {
 //			xnl = (XmlNodeList) obj;
-//			xsl.Load (obj);
+//			xsl.Load (obj a);
 		}
 
 		if (xnl != null) {
 			stream = new MemoryStream ();
 			// only possible output: Stream
-			xsl.Transform (xnl, null, stream);
+			xsl.Transform (doc, null, stream);
 		}
 
 		if (stream != null)

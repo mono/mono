@@ -1,3 +1,11 @@
+2002-11-28  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* TODOAttribute.cs: New. Still much to do ;-)
+	* XmlDsigXPathTransform.cs: Corrected to compile. Transform is non-
+	functionnal.
+	* XmlDsigXsltTransform.cs: Corrected to compile. Transform is non-
+	functionnal.
+
 2002-11-20  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* DataObject.cs: New. Complete implementation.

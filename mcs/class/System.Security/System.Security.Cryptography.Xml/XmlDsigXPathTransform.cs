@@ -1,5 +1,6 @@
 //
-// XmlDsigXPathTransform.cs - XmlDsigXPathTransform implementation for XML Signature
+// XmlDsigXPathTransform.cs - 
+//	XmlDsigXPathTransform implementation for XML Signature
 // http://www.w3.org/TR/1999/REC-xpath-19991116 
 //
 // Author:
@@ -8,6 +9,7 @@
 // (C) 2002 Motus Technologies Inc. (http://www.motus.com)
 //
 
+using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 using System.Xml;
@@ -60,7 +62,7 @@ public class XmlDsigXPathTransform : Transform {
 
 	public override object GetOutput () 
 	{
-		return xpathList;
+		return xpathNodes;
 	}
 
 	public override object GetOutput (Type type) 
@@ -89,13 +91,12 @@ public class XmlDsigXPathTransform : Transform {
 		}
 		else if (obj is XmlNodeList) {
 			xnl = (XmlNodeList) obj;
-			xsl.Load (obj);
 		}
 
 		if (xn != null) {
-			string xpath = xel.InnerXml;
+			string xpath = xn.InnerXml;
 			// only possible output: XmlNodeList
-			xpathNodes = doc.SelectNodes (xpath);
+			xpathNodes = xnl[0].SelectNodes (xpath);
 		}
 		else
 			xpathNodes = null;
