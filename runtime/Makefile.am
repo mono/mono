@@ -64,7 +64,9 @@ centum_nunit_tests = \
 	class/Commons.Xml.Relaxng \
 	class/Cscompmgd \
 	class/Microsoft.JScript \
+	class/Mono.Posix \
 	class/Mono.Security \
+	class/System \
 	class/System.Configuration.Install \
 	class/System.Runtime.Remoting \
 	class/System.Runtime.Serialization.Formatters.Soap \
