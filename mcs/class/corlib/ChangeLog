@@ -1,5 +1,10 @@
 2004-01-03  Sebastien Pouliot  <spouliot@videotron.ca>
 
+	* corlib_test.dll.sources: Added SecurityManager unit tests in
+	in System.Security namespace.
+
+2004-01-03  Sebastien Pouliot  <spouliot@videotron.ca>
+
 	* corlib.dll.sources: Added SiteMembershipCondition to 
 	System.Security.Policy namespace.
 	* corlib_test.dll.sources: Added Site and SiteMembershipCondition
