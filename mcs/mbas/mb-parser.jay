@@ -733,8 +733,8 @@ declaration
 		string name = "";
 		int mod_flags;
 
-		if ($2 is Class || $2 is Struct || $2 is Module ){
-			TypeContainer c = (TypeContainer) $1;
+		if ($3 is Class || $3 is Struct || $3 is Module ){
+			TypeContainer c = (TypeContainer) $3;
 			mod_flags = c.ModFlags;
 			name = c.Name;
 		} else
