@@ -81,6 +81,7 @@ namespace System.Windows.Forms {
 				Text = "FormParent";
 				this.Location = new Point(0, 0);
 				this.Dock = DockStyle.Fill;
+				this.is_visible = false;
 
 				MouseDown += new MouseEventHandler (OnMouseDownForm); 
 				MouseMove += new MouseEventHandler (OnMouseMoveForm); 
@@ -96,28 +97,12 @@ namespace System.Windows.Forms {
 					cp = base.CreateParams;
 
 					cp.Style = (int)(WindowStyles.WS_OVERLAPPEDWINDOW | 
-						WindowStyles.WS_VISIBLE | 
 						WindowStyles.WS_CLIPSIBLINGS | 
 						WindowStyles.WS_CLIPCHILDREN);
 
 					cp.Width = 250;
 					cp.Height = 250;
 
-#if later
-					if (this.IsHandleCreated) {
-						int	x;
-						int	y;
-						int	width;
-						int	height;
-						int	cwidth;
-						int	cheight;
-
-						XplatUI.GetWindowPos(this.window.Handle, out x, out y, out width, out height, out cwidth, out cheight);
-						UpdateBounds(x, y, width, height);
-						owner.UpdateBounds(x, y, width, height);
-					}
-
-#endif
 					return cp;
 				}
 			}
@@ -562,7 +547,7 @@ namespace System.Windows.Forms {
 				CreateControl();
 			}
 
-			XplatUI.SetModal(window.Handle, true);
+			XplatUI.SetModal(form_parent_window.window.Handle, true);
 
 			Show();
 
