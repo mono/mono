@@ -514,6 +514,10 @@ namespace System.Net
 					nbytes = nstream.EndRead (wr.InnerAsyncResult);
 
 				chunkStream.WriteAndReadBack (wr.Buffer, wr.Offset, wr.Size, ref nbytes);
+				if (nbytes == 0 && chunkStream.WantMore) {
+					nbytes = nstream.Read (wr.Buffer, wr.Offset, wr.Size);		
+					chunkStream.WriteAndReadBack (wr.Buffer, wr.Offset, wr.Size, ref nbytes);
+				}
 				return nbytes;
 			}
 

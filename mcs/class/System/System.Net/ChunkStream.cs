@@ -59,10 +59,11 @@ namespace System.Net
 
 		public int Read (byte [] buffer, int offset, int size)
 		{
+			long prevPosition = ms.Position;
 			ms.Position = readPosition;
 			int r = ms.Read (buffer, offset, size);
 			readPosition += r;
-			ms.Position = ms.Length;
+			ms.Position = prevPosition;
 			return r;
 		}
 
@@ -74,10 +75,16 @@ namespace System.Net
 		void InternalWrite (byte [] buffer, ref int offset, int size)
 		{
 			if (state == State.None) {
+				ms.Position = 0;
+				readPosition = 0;
 				state = GetChunkSize (buffer, ref offset, size);
 				if (state == State.None)
 					return;
 				
+				ms.SetLength (0);
+				if (ms.Capacity < chunkSize)
+					ms.Capacity = chunkSize;
+
 				saved.Length = 0;
 				sawCR = false;
 				gotit = false;
@@ -113,14 +120,6 @@ namespace System.Net
 
 		public bool WantMore {
 			get { return (chunkRead != chunkSize || chunkSize != 0); }
-		}
-		
-		public bool EOF {
-			get { return (Available == 0); }
-		}
-		
-		public int Available {
-			get { return (int) (ms.Length - readPosition); }
 		}
 		
 		State ReadBody (byte [] buffer, ref int offset, int size)
