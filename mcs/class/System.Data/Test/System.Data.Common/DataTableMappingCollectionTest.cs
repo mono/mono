@@ -215,7 +215,7 @@ namespace MonoTests.System.Data.Common
 			
 			tab1=DataTableMappingCollection.GetTableMappingBySchemaAction(tableMapCollection,"sourceData","dataSetData",MissingMappingAction.Passthrough);
 			eq=(tab1.DataSetTable.Equals("sourceData") && tab1.SourceTable.Equals("dataSetData"));
-			AssertEquals("test3",true,eq);
+			AssertEquals("test3",false, eq);
 			eq=tableMapCollection.Contains(tab1);
 			AssertEquals("test4",false,eq);
 			tab1=DataTableMappingCollection.GetTableMappingBySchemaAction(tableMapCollection,"sourceData","dataSetData",MissingMappingAction.Ignore);

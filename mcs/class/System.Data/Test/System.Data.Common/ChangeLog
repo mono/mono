@@ -1,3 +1,6 @@
+2004-06-10 Umadevi S <sumadevi@novell.com>
+	* Corrected GetTableMappingBySchemaAction for DataTableMappingCollectionTest
+
 2004-06-09 Umadevi S <sumadevi@novell.com>
 	* Correct Add, InserAt testcases for DataTableMappingCollection
 		
