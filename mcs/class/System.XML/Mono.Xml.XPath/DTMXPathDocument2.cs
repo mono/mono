@@ -42,8 +42,6 @@ namespace Mono.Xml.XPath
 		class DTMXPathDocument2 : IXPathNavigable
 	{
 
-#region ctor.
-
 		public DTMXPathDocument2 (XmlNameTable nameTable,
 			DTMXPathLinkedNode2 [] nodes,
 			DTMXPathAttributeNode2 [] attributes,
@@ -52,14 +50,6 @@ namespace Mono.Xml.XPath
 			string [] nonAtomicStringPool,
 			Hashtable idTable)
 		{
-			this.nameTable = nameTable;
-			this.nodes = nodes;
-			this.attributes = attributes;
-			this.namespaces = namespaces;
-			this.atomicStringPool = atomicStringPool;
-			this.nonAtomicStringPool = nonAtomicStringPool;
-			this.idTable = idTable;
-
 			root = new DTMXPathNavigator2 (this,
 				nameTable,
 				nodes,
@@ -70,37 +60,12 @@ namespace Mono.Xml.XPath
 				idTable);
 		}
 
-#endregion
-
-
-#region Methods
 		public XPathNavigator CreateNavigator ()
 		{
 			return root.Clone ();
 		}
 
-#endregion
-
-		readonly XmlNameTable nameTable;
-
-		// Root XPathNavigator.
-		readonly DTMXPathNavigator2 root;
-
-#region Immutable tree fields
-
-		readonly DTMXPathLinkedNode2 [] nodes;
-		readonly DTMXPathAttributeNode2 [] attributes;
-		readonly DTMXPathNamespaceNode2 [] namespaces;
-
-		// String pool
-		readonly string [] atomicStringPool;
-		readonly string [] nonAtomicStringPool;
-
-		// idTable [string value] -> int nodeId
-		readonly Hashtable idTable;
-
-#endregion
-
+		XPathNavigator root;
 	}
 }
 

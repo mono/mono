@@ -91,11 +91,12 @@ namespace Mono.Xml.XPath
 			this.nameTable = reader.NameTable;
 			nodeCapacity = defaultCapacity;
 			attributeCapacity = nodeCapacity;
+			nsCapacity = 10;
 			idTable = new Hashtable ();
 
 			nodes = new DTMXPathLinkedNode [nodeCapacity];
 			attributes = new DTMXPathAttributeNode [attributeCapacity];
-			namespaces = new DTMXPathNamespaceNode [0];
+			namespaces = new DTMXPathNamespaceNode [nsCapacity];
 
 			Compile ();
 		}
@@ -105,9 +106,9 @@ namespace Mono.Xml.XPath
 		XmlSpace xmlSpace;
 		XmlNameTable nameTable;
 		IXmlLineInfo lineInfo;
-		int nodeCapacity = 200;
-		int attributeCapacity = 200;
-		int nsCapacity = 10;
+		int nodeCapacity;
+		int attributeCapacity;
+		int nsCapacity;
 
 		// Linked Node
 		DTMXPathLinkedNode [] nodes;
@@ -124,17 +125,18 @@ namespace Mono.Xml.XPath
 		int nodeIndex;
 		int attributeIndex;
 		int nsIndex;
-		int parentForFirstChild;
 
 		// for attribute processing; should be reset per each element.
-		int firstAttributeIndex;
-		int lastNsIndexInCurrent;
+		bool hasAttributes;
+		bool hasLocalNs;
 		int attrIndexAtStart;
 		int nsIndexAtStart;
 
-		int prevSibling;
 		int lastNsInScope;
 		bool skipRead = false;
+
+		int [] parentStack = new int [10];
+		int parentStackIndex = 0;
 
 		public DTMXPathDocument CreateDocument ()
 		{
@@ -151,7 +153,7 @@ namespace Mono.Xml.XPath
 			// index 0 is dummy. No node (including Root) is assigned to this index
 			// So that we can easily compare index != 0 instead of index < 0.
 			// (Difference between jnz or jbe in 80x86.)
-			AddNode (0, 0, 0, 0, XPathNodeType.All, "", false, "", "", "", "", "", 0, 0, 0);
+			AddNode (0, 0, 0, XPathNodeType.All, "", false, "", "", "", "", "", 0, 0, 0);
 			nodeIndex++;
 			AddAttribute (0, null, null, null, null, 0, 0);
 			AddNsNode (0, null, null, 0);
@@ -159,11 +161,11 @@ namespace Mono.Xml.XPath
 			AddNsNode (1, "xml", XmlNamespaces.XML, 0);
 
 			// add root.
-			AddNode (0, 0, 0, -1, XPathNodeType.Root, xmlReader.BaseURI, false, "", "", "", "", "", 1, 0, 0);
+			AddNode (0, 0, 0, XPathNodeType.Root, xmlReader.BaseURI, false, "", "", "", "", "", 1, 0, 0);
 
 			this.nodeIndex = 1;
 			this.lastNsInScope = 1;
-			this.parentForFirstChild = nodeIndex;
+			parentStack [0] = nodeIndex;
 
 			while (!xmlReader.EOF)
 				Read ();
@@ -180,15 +182,9 @@ namespace Mono.Xml.XPath
 				if (!xmlReader.Read ())
 					return;
 			skipRead = false;
-			int parent = nodeIndex;
+			int parent = parentStack [parentStackIndex];
+			int prevSibling = nodeIndex;
 
-			if (nodes [nodeIndex].Depth >= xmlReader.Depth) {
-				// if not, then current node is parent.
-				while (xmlReader.Depth <= nodes [parent].Depth)
-					parent = nodes [parent].Parent;
-			}
-
-			prevSibling = nodeIndex;
 			switch (xmlReader.NodeType) {
 			case XmlNodeType.Element:
 			case XmlNodeType.CDATA:
@@ -196,17 +192,17 @@ namespace Mono.Xml.XPath
 			case XmlNodeType.Comment:
 			case XmlNodeType.Text:
 			case XmlNodeType.ProcessingInstruction:
-				if (parentForFirstChild >= 0)
+				if (parent == nodeIndex)
 					prevSibling = 0;
 				else
-					while (nodes [prevSibling].Depth != xmlReader.Depth)
+					while (nodes [prevSibling].Parent != parent)
 						prevSibling = nodes [prevSibling].Parent;
 
 				nodeIndex++;
 
 				if (prevSibling != 0)
 					nodes [prevSibling].NextSibling = nodeIndex;
-				if (parentForFirstChild >= 0)
+				if (parentStack [parentStackIndex] == nodeIndex - 1)
 					nodes [parent].FirstChild = nodeIndex;
 				break;
 			case XmlNodeType.Whitespace:
@@ -215,33 +211,31 @@ namespace Mono.Xml.XPath
 				else
 					goto default;
 			case XmlNodeType.EndElement:
-				parentForFirstChild = -1;
+				parentStackIndex--;
 				return;
 			default:
 				// No operations. Doctype, EntityReference, 
 				return;
 			}
 
-			parentForFirstChild = -1;	// Might be changed in ProcessElement().
-
 			string value = null;
-			XPathNodeType nodeType = xmlReader.NodeType == XmlNodeType.Whitespace ?
-				XPathNodeType.Whitespace : XPathNodeType.Text;
+			XPathNodeType nodeType = XPathNodeType.Text;
 
 			switch (xmlReader.NodeType) {
 			case XmlNodeType.Element:
 				ProcessElement (parent, prevSibling);
 				break;
-			case XmlNodeType.CDATA:
 			case XmlNodeType.SignificantWhitespace:
-			case XmlNodeType.Text:
+				nodeType = XPathNodeType.SignificantWhitespace;
+				goto case XmlNodeType.Text;
 			case XmlNodeType.Whitespace:
-				if (value == null)
-					skipRead = true;
+				nodeType = XPathNodeType.Whitespace;
+				goto case XmlNodeType.Text;
+			case XmlNodeType.CDATA:
+			case XmlNodeType.Text:
 				AddNode (parent,
 					0,
 					prevSibling,
-					xmlReader.Depth,
 					nodeType,
 					xmlReader.BaseURI,
 					xmlReader.IsEmptyElement,
@@ -253,10 +247,37 @@ namespace Mono.Xml.XPath
 					nsIndex,
 					lineInfo != null ? lineInfo.LineNumber : 0,
 					lineInfo != null ? lineInfo.LinePosition : 0);
-				// this code is tricky, but after ReadString() invokation,
-				// xmlReader is moved to next node!!
-				if (value == null)
-					nodes [nodeIndex].Value = xmlReader.ReadString ();
+				// this code is tricky, but after sequential
+				// Read() invokation, xmlReader is moved to
+				// next node.
+				if (value == null) {
+					bool loop = true;
+					value = String.Empty;
+					XPathNodeType type = XPathNodeType.Whitespace;
+					do {
+						switch (xmlReader.NodeType) {
+						case XmlNodeType.Text:
+						case XmlNodeType.CDATA:
+							type = XPathNodeType.Text;
+							goto case XmlNodeType.Whitespace;
+						case XmlNodeType.SignificantWhitespace:
+							if (type == XPathNodeType.Whitespace)
+								type = XPathNodeType.SignificantWhitespace;
+							goto case XmlNodeType.Whitespace;
+						case XmlNodeType.Whitespace:
+							if (xmlReader.NodeType != XmlNodeType.Whitespace || xmlSpace == XmlSpace.Preserve)
+								value += xmlReader.Value;
+							loop = xmlReader.Read ();
+							skipRead = true;
+							continue;
+						default:
+							loop = false;
+							break;
+						}
+					} while (loop);
+					nodes [nodeIndex].Value = value;
+					nodes [nodeIndex].NodeType = type;
+				}
 				break;
 			case XmlNodeType.Comment:
 				value = xmlReader.Value;
@@ -292,8 +313,8 @@ namespace Mono.Xml.XPath
 
 		private void PrepareStartElement (int previousSibling)
 		{
-			firstAttributeIndex = 0;
-			lastNsIndexInCurrent = 0;
+			hasAttributes = false;
+			hasLocalNs = false;
 			attrIndexAtStart = attributeIndex;
 			nsIndexAtStart = nsIndex;
 
@@ -309,7 +330,6 @@ namespace Mono.Xml.XPath
 			AddNode (parent,
 				0, // dummy:firstAttribute
 				previousSibling,
-				xmlReader.Depth,
 				XPathNodeType.Element,
 				xmlReader.BaseURI,
 				xmlReader.IsEmptyElement,
@@ -330,24 +350,33 @@ namespace Mono.Xml.XPath
 				nodes [nodeIndex].FirstAttribute = attrIndexAtStart + 1;
 			if (nsIndexAtStart != nsIndex) {
 				nodes [nodeIndex].FirstNamespace = nsIndex;
-				lastNsInScope = nsIndex;
+				if (!xmlReader.IsEmptyElement)
+					lastNsInScope = nsIndex;
 			}
 
-			if (!nodes [nodeIndex].IsEmptyElement)
-				parentForFirstChild = nodeIndex;
+			if (!nodes [nodeIndex].IsEmptyElement) {
+				parentStackIndex++;
+				if (parentStack.Length == parentStackIndex) {
+					int [] tmp = new int [parentStackIndex * 2];
+					Array.Copy (parentStack, tmp, parentStackIndex);
+					parentStack = tmp;
+				}
+				parentStack [parentStackIndex] = nodeIndex;
+			}
 		}
 
 		private void ProcessNamespace (string prefix, string ns)
 		{
-			nsIndex++;
+			int nextTmp = hasLocalNs ?
+				nsIndex : nodes [nodeIndex].FirstNamespace;
 
-			int nextTmp = lastNsIndexInCurrent == 0 ? nodes [nodeIndex].FirstNamespace : lastNsIndexInCurrent;
+			nsIndex++;
 
 			this.AddNsNode (nodeIndex,
 				prefix,
 				ns,
 				nextTmp);
-			lastNsIndexInCurrent = nsIndex;
+			hasLocalNs = true;
 		}
 
 		private void ProcessAttribute (string prefix, string localName, string ns, string value)
@@ -361,10 +390,10 @@ namespace Mono.Xml.XPath
 				value,
 				lineInfo != null ? lineInfo.LineNumber : 0,
 				lineInfo != null ? lineInfo.LinePosition : 0);
-			if (firstAttributeIndex == 0)
-				firstAttributeIndex = attributeIndex;
-			else
+			if (hasAttributes)
 				attributes [attributeIndex - 1].NextAttribute = attributeIndex;
+			else
+				hasAttributes = true;
 
 			// Identity infoset
 			if (validatingReader != null) {
@@ -403,7 +432,7 @@ namespace Mono.Xml.XPath
 		}
 
 		// Here followings are skipped: firstChild, nextSibling, 
-		public void AddNode (int parent, int firstAttribute, int previousSibling, int depth, XPathNodeType nodeType, string baseUri, bool isEmptyElement, string localName, string ns, string prefix, string value, string xmlLang, int namespaceNode, int lineNumber, int linePosition)
+		public void AddNode (int parent, int firstAttribute, int previousSibling, XPathNodeType nodeType, string baseUri, bool isEmptyElement, string localName, string ns, string prefix, string value, string xmlLang, int namespaceNode, int lineNumber, int linePosition)
 		{
 			if (nodes.Length < nodeIndex + 1) {
 				nodeCapacity *= 4;
@@ -418,7 +447,6 @@ namespace Mono.Xml.XPath
 			nodes [nodeIndex].FirstAttribute = firstAttribute;
 			nodes [nodeIndex].PreviousSibling = previousSibling;
 			nodes [nodeIndex].NextSibling = 0;	// dummy
-			nodes [nodeIndex].Depth = depth;
 			nodes [nodeIndex].NodeType = nodeType;
 			nodes [nodeIndex].BaseURI = baseUri;
 			nodes [nodeIndex].IsEmptyElement = isEmptyElement;

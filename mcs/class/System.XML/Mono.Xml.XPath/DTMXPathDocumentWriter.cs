@@ -48,19 +48,20 @@ namespace Mono.Xml.XPath
 			nameTable = nt == null ? new NameTable () : nt;
 			nodeCapacity = defaultCapacity;
 			attributeCapacity = nodeCapacity;
+			nsCapacity = 10;
 			idTable = new Hashtable ();
 
 			nodes = new DTMXPathLinkedNode [nodeCapacity];
 			attributes = new DTMXPathAttributeNode [attributeCapacity];
-			namespaces = new DTMXPathNamespaceNode [0];
+			namespaces = new DTMXPathNamespaceNode [nsCapacity];
 
 			Init ();
 		}
 		
 		XmlNameTable nameTable;
-		int nodeCapacity = 200;
-		int attributeCapacity = 200;
-		int nsCapacity = 10;
+		int nodeCapacity;
+		int attributeCapacity;
+		int nsCapacity;
 
 		// Linked Node
 		DTMXPathLinkedNode [] nodes;
@@ -77,19 +78,19 @@ namespace Mono.Xml.XPath
 		int nodeIndex;
 		int attributeIndex;
 		int nsIndex;
-		int parentForFirstChild;
+		int [] parentStack = new int [10];
+		int parentStackIndex = 0;
 
 		// for attribute processing; should be reset per each element.
-		int firstAttributeIndex;
-		int lastNsIndexInCurrent;
+		bool hasAttributes;
+		bool hasLocalNs;
 		int attrIndexAtStart;
 		int nsIndexAtStart;
 
-		int prevSibling;
 		int lastNsInScope;
 
 		// They are only used in Writer
-		int writerDepth;
+		int prevSibling;
 		WriteState state;
 		bool openNamespace;
 		bool isClosed;
@@ -111,7 +112,7 @@ namespace Mono.Xml.XPath
 			// index 0 is dummy. No node (including Root) is assigned to this index
 			// So that we can easily compare index != 0 instead of index < 0.
 			// (Difference between jnz or jbe in 80x86.)
-			AddNode (0, 0, 0, 0, XPathNodeType.All, "", false, "", "", "", "", "", 0, 0, 0);
+			AddNode (0, 0, 0, XPathNodeType.All, "", false, "", "", "", "", "", 0, 0, 0);
 			nodeIndex++;
 			AddAttribute (0, null, null, null, null, 0, 0);
 			AddNsNode (0, null, null, 0);
@@ -119,37 +120,28 @@ namespace Mono.Xml.XPath
 			AddNsNode (1, "xml", XmlNamespaces.XML, 0);
 
 			// add root.
-			AddNode (0, 0, 0, -1, XPathNodeType.Root, null, false, "", "", "", "", "", 1, 0, 0);
+			AddNode (0, 0, 0, XPathNodeType.Root, null, false, "", "", "", "", "", 1, 0, 0);
 
 			this.nodeIndex = 1;
 			this.lastNsInScope = 1;
-			this.parentForFirstChild = nodeIndex;
+			parentStack [0] = nodeIndex;
 
 			state = WriteState.Content;
 		}
 
 		private int GetParentIndex ()
 		{
-			if (parentForFirstChild >= 0)
-				return parentForFirstChild;
-
-			int parent = nodeIndex;
-			if (nodes [nodeIndex].Depth >= writerDepth) {
-				// if not, then current node is parent.
-				while (writerDepth <= nodes [parent].Depth)
-					parent = nodes [parent].Parent;
-			}
-			return parent;
+			return parentStack [parentStackIndex];
 		}
 
 		private int GetPreviousSiblingIndex ()
 		{
+			int parent = parentStack [parentStackIndex];
+			if (parent == nodeIndex)
+				return 0;
 			int prevSibling = nodeIndex;
-			if (parentForFirstChild >= 0)
-				prevSibling = 0;
-			else
-				while (nodes [prevSibling].Depth != writerDepth)
-					prevSibling = nodes [prevSibling].Parent;
+			while (nodes [prevSibling].Parent != parent)
+				prevSibling = nodes [prevSibling].Parent;
 			return prevSibling;
 		}
 
@@ -162,10 +154,8 @@ namespace Mono.Xml.XPath
 
 			if (prevSibling != 0)
 				nodes [prevSibling].NextSibling = nodeIndex;
-			if (parentForFirstChild >= 0)
+			if (parent == nodeIndex - 1)
 				nodes [parent].FirstChild = nodeIndex;
-
-			parentForFirstChild = -1;
 		}
 
 		private void CloseStartElement ()
@@ -177,11 +167,15 @@ namespace Mono.Xml.XPath
 				lastNsInScope = nsIndex;
 			}
 
-			if (!nodes [nodeIndex].IsEmptyElement)
-				parentForFirstChild = nodeIndex;
+			parentStackIndex++;
+			if (parentStack.Length == parentStackIndex) {
+				int [] tmp = new int [parentStackIndex * 2];
+				Array.Copy (parentStack, tmp, parentStackIndex);
+				parentStack = tmp;
+			}
+			parentStack [parentStackIndex] = nodeIndex;
 
 			state = WriteState.Content;
-			writerDepth++;
 		}
 
 		#region Adding Nodes
@@ -209,7 +203,7 @@ namespace Mono.Xml.XPath
 		}
 
 		// Here followings are skipped: firstChild, nextSibling, 
-		public void AddNode (int parent, int firstAttribute, int previousSibling, int depth, XPathNodeType nodeType, string baseUri, bool isEmptyElement, string localName, string ns, string prefix, string value, string xmlLang, int namespaceNode, int lineNumber, int linePosition)
+		public void AddNode (int parent, int firstAttribute, int previousSibling, XPathNodeType nodeType, string baseUri, bool isEmptyElement, string localName, string ns, string prefix, string value, string xmlLang, int namespaceNode, int lineNumber, int linePosition)
 		{
 			if (nodes.Length < nodeIndex + 1) {
 				nodeCapacity *= 4;
@@ -224,7 +218,6 @@ namespace Mono.Xml.XPath
 			nodes [nodeIndex].FirstAttribute = firstAttribute;
 			nodes [nodeIndex].PreviousSibling = previousSibling;
 			nodes [nodeIndex].NextSibling = 0;	// dummy
-			nodes [nodeIndex].Depth = depth;
 			nodes [nodeIndex].NodeType = nodeType;
 			nodes [nodeIndex].BaseURI = baseUri;
 			nodes [nodeIndex].IsEmptyElement = isEmptyElement;
@@ -326,12 +319,13 @@ namespace Mono.Xml.XPath
 			}
 
 			// When text after text, just add the value, and return.
-			if (nodes [nodeIndex].Depth == writerDepth) {
+			if (nodes [nodeIndex].Parent == parentStack [parentStackIndex]) {
 				switch (nodes [nodeIndex].NodeType) {
 				case XPathNodeType.Text:
 				case XPathNodeType.SignificantWhitespace:
-					nodes [nodeIndex].Value += data;
-					if (IsWhitespace (data))
+					string value = nodes [nodeIndex].Value + data;
+					nodes [nodeIndex].Value = value;
+					if (IsWhitespace (value))
 						nodes [nodeIndex].NodeType = XPathNodeType.SignificantWhitespace;
 					else
 						nodes [nodeIndex].NodeType = XPathNodeType.Text;
@@ -345,7 +339,6 @@ namespace Mono.Xml.XPath
 			AddNode (parent,
 				0, // attribute
 				prevSibling,
-				writerDepth,
 				XPathNodeType.Text,
 				null,
 				false,
@@ -384,7 +377,6 @@ namespace Mono.Xml.XPath
 			AddNode (parent,
 				0, // attribute
 				prevSibling,
-				writerDepth,
 				XPathNodeType.Comment,
 				null,
 				false,
@@ -408,7 +400,6 @@ namespace Mono.Xml.XPath
 			AddNode (parent,
 				0, // attribute
 				prevSibling,
-				writerDepth,
 				XPathNodeType.ProcessingInstruction,
 				null,
 				false,
@@ -432,7 +423,6 @@ namespace Mono.Xml.XPath
 			AddNode (parent,
 				0, // attribute
 				prevSibling,
-				writerDepth,
 				XPathNodeType.Whitespace,
 				null,
 				false,
@@ -489,7 +479,6 @@ namespace Mono.Xml.XPath
 			AddNode (parent,
 				0, // dummy:firstAttribute
 				previousSibling,
-				writerDepth,
 				XPathNodeType.Element,
 				null,
 				false,
@@ -505,8 +494,8 @@ namespace Mono.Xml.XPath
 
 		private void PrepareStartElement (int previousSibling)
 		{
-			firstAttributeIndex = 0;
-			lastNsIndexInCurrent = 0;
+			hasAttributes = false;
+			hasLocalNs = false;
 			attrIndexAtStart = attributeIndex;
 			nsIndexAtStart = nsIndex;
 
@@ -536,13 +525,11 @@ namespace Mono.Xml.XPath
 			default:
 				throw new InvalidOperationException ("Invalid state for writing EndElement: " + state);
 			}
-			parentForFirstChild = -1;
+			parentStackIndex--;
 			if (nodes [nodeIndex].NodeType == XPathNodeType.Element) {
 				if (!full)
 					nodes [nodeIndex].IsEmptyElement = true;
 			}
-
-			writerDepth--;
 		}
 
 		public override void WriteStartAttribute (string prefix, string localName, string ns)
@@ -559,15 +546,15 @@ namespace Mono.Xml.XPath
 
 		private void ProcessNamespace (string prefix, string ns)
 		{
-			nsIndex++;
+			int nextTmp = hasLocalNs ? nsIndex : nodes [nodeIndex].FirstNamespace;
 
-			int nextTmp = lastNsIndexInCurrent == 0 ? nodes [nodeIndex].FirstNamespace : lastNsIndexInCurrent;
+			nsIndex++;
 
 			this.AddNsNode (nodeIndex,
 				prefix,
 				ns,
 				nextTmp);
-			lastNsIndexInCurrent = nsIndex;
+			hasLocalNs = true;
 			openNamespace = true;
 		}
 
@@ -582,10 +569,10 @@ namespace Mono.Xml.XPath
 				value,
 				0,
 				0);
-			if (firstAttributeIndex == 0)
-				firstAttributeIndex = attributeIndex;
-			else
+			if (hasAttributes)
 				attributes [attributeIndex - 1].NextAttribute = attributeIndex;
+			else
+				hasAttributes = true;
 		}
 
 		public override void WriteEndAttribute ()

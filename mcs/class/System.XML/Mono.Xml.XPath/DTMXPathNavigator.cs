@@ -44,7 +44,6 @@ namespace Mono.Xml.XPath
 		class DTMXPathNavigator : XPathNavigator, IXmlLineInfo
 	{
 
-#region Copy of XPathDocument
 		public DTMXPathNavigator (DTMXPathDocument document,
 			XmlNameTable nameTable, 
 			DTMXPathLinkedNode [] nodes,
@@ -57,7 +56,6 @@ namespace Mono.Xml.XPath
 			this.namespaces = namespaces;
 			this.idTable = idTable;
 			this.nameTable = nameTable;
-
 			this.MoveToRoot ();
 			this.document = document;
 		}
@@ -87,11 +85,6 @@ namespace Mono.Xml.XPath
 
 		// ID table
 		Hashtable idTable;
-
-//		// Key table (considered xsd:keyref for XPath 2.0)
-//		Hashtable keyRefTable;	// [string key-name] -> idTable
-//					// idTable [string value] -> int nodeId
-#endregion
 
 		bool currentIsNode;
 		bool currentIsAttr;
@@ -226,20 +219,32 @@ namespace Mono.Xml.XPath
 					return nodes [currentNode].Value;
 				}
 
-				// Element
+				// Element - collect all content values
+				int iter = nodes [currentNode].FirstChild;
+				if (iter == 0)
+					return String.Empty;
+
 				if (valueBuilder == null)
 					valueBuilder = new StringBuilder ();
 				else
 					valueBuilder.Length = 0;
-				
-				int iter = nodes [currentNode].FirstChild;
-				int depth = nodes [currentNode].Depth;
-				while (iter < nodes.Length && nodes [iter].Depth > depth) {
+
+				int end = nodes [currentNode].NextSibling;
+				if (end == 0) {
+					int tmp = currentNode;
+					do {
+						tmp = nodes [tmp].Parent;
+						end = nodes [tmp].NextSibling;
+					} while (end == 0 && tmp != 0);
+					if (end == 0)
+						end = nodes.Length;
+				}
+
+				while (iter < end) {
 					switch (nodes [iter].NodeType) {
-					case XPathNodeType.Comment:
-					case XPathNodeType.ProcessingInstruction:
-						break;
-					default:
+					case XPathNodeType.Text:
+					case XPathNodeType.SignificantWhitespace:
+					case XPathNodeType.Whitespace:
 						valueBuilder.Append (nodes [iter].Value);
 						break;
 					}
@@ -592,37 +597,9 @@ namespace Mono.Xml.XPath
 		}
 
 #endregion
-
-		/*
-		public string DebugDump {
-			get {
-				StringBuilder sb = new StringBuilder ();
-
-				for (int i = 0; i < namespaces.Length; i++) {
-					DTMXPathNamespaceNode n = namespaces [i];
-					sb.AppendFormat ("{0}: {1},{2} {3}/{4}\n", i,
-						n.DeclaredElement, n.NextNamespace,
-						n.Name, n.Namespace);
-				}
-
-				for (int i=0; i<this.nodes.Length; i++) {
-					DTMXPathLinkedNode n = nodes [i];
-					sb.AppendFormat ("{0}: {1}:{2} {3} {4} {5} {6} {7}\n", new object [] {i, n.Prefix, n.LocalName, n.NamespaceURI, n.FirstNamespace, n.FirstAttribute, n.FirstChild, n.Parent});
-				}
-
-				for (int i=0; i<this.attributes.Length; i++) {
-					DTMXPathAttributeNode n = attributes [i];
-					sb.AppendFormat ("{0}: {1}:{2} {3} {4}\n", i, n.Prefix, n.LocalName, n.NamespaceURI, n.NextAttribute);
-				}
-
-				return sb.ToString ();
-			}
-		}
-		*/
-
 	}
 
-	internal class XmlNamespaces
+	class XmlNamespaces
 	{
 		public const string XML = "http://www.w3.org/XML/1998/namespace";
 		public const string XMLNS = "http://www.w3.org/2000/xmlns/";

@@ -42,56 +42,26 @@ namespace Mono.Xml.XPath
 		class DTMXPathDocument : IXPathNavigable
 	{
 
-#region ctor.
-
 		public DTMXPathDocument (XmlNameTable nameTable,
 			DTMXPathLinkedNode [] nodes,
 			DTMXPathAttributeNode [] attributes,
 			DTMXPathNamespaceNode [] namespaces,
 			Hashtable idTable)
 		{
-			this.nameTable = nameTable;
-			this.nodes = nodes;
-			this.attributes = attributes;
-			this.namespaces = namespaces;
-			this.idTable = idTable;
+			root = new DTMXPathNavigator (this,
+				nameTable,
+				nodes,
+				attributes,
+				namespaces,
+				idTable);
 		}
 
-#endregion
-
-
-#region Methods
 		public XPathNavigator CreateNavigator ()
 		{
-			if (root == null) {
-				root = new DTMXPathNavigator (this,
-					nameTable,
-					nodes,
-					attributes,
-					namespaces,
-					idTable);
-			}
 			return root.Clone ();
 		}
 
-#endregion
-
-		XmlNameTable nameTable;
-
-		// Root XPathNavigator.
-		DTMXPathNavigator root;
-
-#region Immutable tree fields
-
-		DTMXPathLinkedNode [] nodes = new DTMXPathLinkedNode [0];
-		DTMXPathAttributeNode [] attributes = new DTMXPathAttributeNode [0];
-		DTMXPathNamespaceNode [] namespaces = new DTMXPathNamespaceNode [0];
-
-		// idTable [string value] -> int nodeId
-		readonly Hashtable idTable;
-
-#endregion
-
+		XPathNavigator root;
 	}
 }
 

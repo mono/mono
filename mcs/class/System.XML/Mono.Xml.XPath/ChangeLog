@@ -1,3 +1,16 @@
+2004-03-22  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DTMXPathDocumentBuilder.cs,
+	  DTMXPathDocumentWriter.cs,
+	  DTMXPathNavigator.cs,
+	  DTMXPathNode.cs : updated to be equivalent to DTMXPathNavigator2.
+	* DTMXPathDocumentBuilder2.cs :
+	  String pool is now under index based management. For nonAtomicIndex
+	  string, don't try all the entries the pool holds. It causes
+	  significant performance loss for large documents.
+	* DTMXPathDocument.cs,
+	  DTMXPathDocument2.cs : removed unused fields (warning elimination).
+
 2004-03-16  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Pattern.cs : fixed incorrect optimization.
