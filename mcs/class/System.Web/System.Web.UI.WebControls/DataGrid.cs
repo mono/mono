@@ -1058,7 +1058,6 @@ namespace System.Web.UI.WebControls
 				if(props == null)
 				{
 					prop_type   = null;
-					cval = null;
 					PropertyInfo prop_item =  source.DataSource.GetType().GetProperty("Item",
 					          BindingFlags.Instance | BindingFlags.Static |
 					          BindingFlags.Public, null, null,
@@ -1088,7 +1087,7 @@ namespace System.Web.UI.WebControls
 							if(IsBindableType(prop_type))
 							{
 								b_col = new BoundColumn();
-								b_col.TrackViewState();
+								// b_col.TrackViewState();
 								b_col.HeaderText = "Item";
 								b_col.SortExpression = "Item";
 								b_col.DataField  = BoundColumn.thisExpr;
@@ -1103,27 +1102,27 @@ namespace System.Web.UI.WebControls
 				}
 				if(props != null && props.Count > 0)
 				{
-					IEnumerator p_en = props.GetEnumerator();
+					//IEnumerable p_en = props.GetEnumerator();
 					try
 					{
-						foreach(PropertyDescriptor current in p_en)
+						foreach(PropertyDescriptor current in props)
 						{
 							if(IsBindableType(current.PropertyType))
 							{
 								b_col = new BoundColumn();
-								b_col.TrackViewState();
+								// b_col.TrackViewState();
 								b_col.HeaderText     = current.Name;
 								b_col.SortExpression = current.Name;
 								b_col.DataField      = current.Name;
-								b_col.IsReadOnly     = current.IsReadOnly;
-								//b_col.SetOwner(this);
+								// b_col.IsReadOnly     = current.IsReadOnly;
+								// b_col.SetOwner(this);
 								retVal.Add(b_col);
 							}
 						}
 					} finally
 					{
-						if(p_en is IDisposable)
-							((IDisposable)p_en).Dispose();
+						if(props is IDisposable)
+							((IDisposable)props).Dispose();
 					}
 				}
 				if(retVal.Count > 0)
