@@ -1,3 +1,7 @@
+2004-08-26  Zoltan Varga  <vargaz@freemail.hu>
+
+	* TypeTest.cs: Add regression test for bug #63768.
+
 2004-08-19  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DateTimeTest.cs : added bugzilla 63376 test case.

@@ -155,6 +155,12 @@ namespace MonoTests.System
 			// Test overriding of properties when only the set accessor is overriden
 			AssertEquals ("#03", 1, typeof (Derived1).GetProperties ().Length);
 		}
+
+		[Test]
+		public void TestName () {
+			AssertEquals ("Void*", typeof (void*).Name);
+			AssertEquals ("Void**", typeof (void**).Name);
+		}
 	}
 }
 
