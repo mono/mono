@@ -83,7 +83,7 @@ namespace Mono.CSharp {
 			Type current_type = t;
 			
 			do {
-				MemberInfo [] mi;
+				MemberList mi;
 				
 				mi = TypeContainer.FindMembers (
 					current_type, MemberTypes.Method,
@@ -99,14 +99,10 @@ namespace Mono.CSharp {
 						searching = false;
 				}
 
-				if (mi == null)
+				if (mi.Count == 0)
 					continue;
 
-				int count = mi.Length;
-				if (count == 0)
-					continue;
-
-				if (count == 1 && !(mi [0] is MethodBase))
+				if (mi.Count == 1 && !(mi [0] is MethodBase))
 					searching = false;
 				else 
 					list = TypeManager.CopyNewMethods (list, mi);
@@ -448,12 +444,12 @@ namespace Mono.CSharp {
 			
 			Type [] args = TypeManager.GetArgumentTypes (mi);
 			ms = new MethodSignature (mi.Name, mi.ReturnType, args);
-			MemberInfo [] list = TypeContainer.FindMembers (
+			MemberList list = TypeContainer.FindMembers (
 				container.TypeBuilder.BaseType, MemberTypes.Method | MemberTypes.Property,
 				BindingFlags.Public | BindingFlags.Instance,
 				MethodSignature.method_signature_filter, ms);
 
-			if (list == null || list.Length == 0)
+			if (list.Count == 0)
 				return false;
 
 			DefineProxy (iface_type, (MethodInfo) list [0], mi, args);

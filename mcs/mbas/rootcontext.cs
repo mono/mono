@@ -602,6 +602,7 @@ namespace Mono.CSharp {
 		{
 			DeclSpace ds = (DeclSpace) root.GetDefinition (name);
 
+			ds.DefineMembers (root);
 			ds.Define (root);
 		}
 		
@@ -626,12 +627,12 @@ namespace Mono.CSharp {
 
 			if (attribute_types != null)
 				foreach (TypeContainer tc in attribute_types)
-					tc.Define (root);
+					tc.DefineMembers (root);
 			
 			if (interface_resolve_order != null){
 				foreach (Interface iface in interface_resolve_order)
 					if ((iface.ModFlags & Modifiers.NEW) == 0)
-						iface.Define (root);
+						iface.DefineMembers (root);
 					else
 						Report1530 (iface.Location);
 			}
@@ -648,7 +649,7 @@ namespace Mono.CSharp {
 						continue;
 
 					if ((tc.ModFlags & Modifiers.NEW) == 0)
-						tc.Define (root);
+						tc.DefineMembers (root);
 					else
 						Report1530 (tc.Location);
 				}
@@ -658,7 +659,7 @@ namespace Mono.CSharp {
 			if (delegates != null){
 				foreach (Delegate d in delegates)
 					if ((d.ModFlags & Modifiers.NEW) == 0)
-						d.Define (root);
+						d.DefineMembers (root);
 					else
 						Report1530 (d.Location);
 			}
@@ -667,9 +668,54 @@ namespace Mono.CSharp {
 			if (enums != null){
 				foreach (Enum en in enums)
 					if ((en.ModFlags & Modifiers.NEW) == 0)
-						en.Define (root);
+						en.DefineMembers (root);
 					else
 						Report1530 (en.Location);
+			}
+		}
+
+		static public void DefineTypes ()
+		{
+			TypeContainer root = Tree.Types;
+
+			if (attribute_types != null)
+				foreach (TypeContainer tc in attribute_types)
+					tc.Define (root);
+			
+			if (interface_resolve_order != null){
+				foreach (Interface iface in interface_resolve_order)
+					if ((iface.ModFlags & Modifiers.NEW) == 0)
+						iface.Define (root);
+			}
+
+
+			if (type_container_resolve_order != null){
+				foreach (TypeContainer tc in type_container_resolve_order) {
+					// When compiling corlib, these types have already been
+					// populated from BootCorlib_PopulateCoreTypes ().
+					if (!RootContext.StdLib &&
+					    ((tc.Name == "System.Object") ||
+					     (tc.Name == "System.Attribute") ||
+					     (tc.Name == "System.ValueType")))
+						continue;
+
+					if ((tc.ModFlags & Modifiers.NEW) == 0)
+						tc.Define (root);
+				}
+			}
+
+			ArrayList delegates = root.Delegates;
+			if (delegates != null){
+				foreach (Delegate d in delegates)
+					if ((d.ModFlags & Modifiers.NEW) == 0)
+						d.Define (root);
+			}
+
+			ArrayList enums = root.Enums;
+			if (enums != null){
+				foreach (Enum en in enums)
+					if ((en.ModFlags & Modifiers.NEW) == 0)
+						en.Define (root);
 			}
 		}
 
@@ -693,7 +739,7 @@ namespace Mono.CSharp {
 					Attribute.ApplyAttributes (temp_ec, ab, ab, attrs, attrs.Location);
 				}
 			}
-			
+
 			if (attribute_types != null)
 				foreach (TypeContainer tc in attribute_types)
 					tc.Emit ();

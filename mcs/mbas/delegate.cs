@@ -85,6 +85,11 @@ namespace Mono.CSharp {
 			return TypeBuilder;
 		}
 
+ 		public override bool DefineMembers (TypeContainer container)
+		{
+			return true;
+		}
+
  		public override bool Define (TypeContainer container)
 		{
 			MethodAttributes mattr;
@@ -452,7 +457,8 @@ namespace Mono.CSharp {
 		}
 		
 		// Hack around System.Reflection as found everywhere else
-		public MemberInfo [] FindMembers (MemberTypes mt, BindingFlags bf, MemberFilter filter, object criteria)
+		public override MemberList FindMembers (MemberTypes mt, BindingFlags bf,
+							MemberFilter filter, object criteria)
 		{
 			ArrayList members = new ArrayList ();
 
@@ -474,17 +480,15 @@ namespace Mono.CSharp {
 					members.Add (EndInvokeBuilder);
 			}
 
-			int count = members.Count;
-
-			if (count > 0) {
-				MemberInfo [] mi = new MemberInfo [count];
-				members.CopyTo (mi, 0);
-				return mi;
-			}
-
-			return null;
+			return new MemberList (members);
 		}
-		
+
+		public override MemberCache MemberCache {
+			get {
+				return null;
+			}
+		}
+
 		public void CloseDelegate ()
 		{
 			TypeBuilder.CreateType ();
@@ -562,7 +566,7 @@ namespace Mono.CSharp {
 			constructor_method = ((MethodGroupExpr) ml).Methods [0];
 			Argument a = (Argument) Arguments [0];
 			
-			if (!a.Resolve (ec, loc))
+			if (!a.ResolveMethodGroup (ec, Location))
 				return null;
 			
 			Expression e = a.Expr;
@@ -673,6 +677,31 @@ namespace Mono.CSharp {
 
 		public override Expression DoResolve (EmitContext ec)
 		{
+			if (InstanceExpr is EventExpr) {
+				
+				EventInfo ei = ((EventExpr) InstanceExpr).EventInfo;
+				
+				Expression ml = MemberLookup (
+					ec, ec.ContainerType, ei.Name,
+					MemberTypes.Event, AllBindingFlags | BindingFlags.DeclaredOnly, loc);
+
+				if (ml == null) {
+				        //
+					// If this is the case, then the Event does not belong 
+					// to this Type and so, according to the spec
+					// cannot be accessed directly
+					//
+					// Note that target will not appear as an EventExpr
+					// in the case it is being referenced within the same type container;
+					// it will appear as a FieldExpr in that case.
+					//
+					
+					Assign.error70 (ei, loc);
+					return null;
+				}
+			}
+			
+			
 			Type del_type = InstanceExpr.Type;
 			if (del_type == null)
 				return null;
@@ -687,13 +716,13 @@ namespace Mono.CSharp {
 			if (!Delegate.VerifyApplicability (ec, del_type, Arguments, loc))
 				return null;
 
-			Expression ml = Expression.MemberLookup (ec, del_type, "Invoke", loc);
-			if (!(ml is MethodGroupExpr)) {
+			Expression lookup = Expression.MemberLookup (ec, del_type, "Invoke", loc);
+			if (!(lookup is MethodGroupExpr)) {
 				Report.Error (-100, loc, "Internal error : could not find Invoke method!");
 				return null;
 			}
 			
-			method = ((MethodGroupExpr) ml).Methods [0];
+			method = ((MethodGroupExpr) lookup).Methods [0];
 			type = ((MethodInfo) method).ReturnType;
 			eclass = ExprClass.Value;
 			

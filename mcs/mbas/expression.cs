@@ -1434,10 +1434,7 @@ namespace Mono.CSharp {
 
 			int errors = Report.Errors;
 
-			bool old_state = ec.OnlyLookupTypes;
-			ec.OnlyLookupTypes = true;
-			target_type = target_type.Resolve (ec);
-			ec.OnlyLookupTypes = old_state;
+			target_type = target_type.Resolve (ec, ResolveFlags.Type);
 			
 			if (target_type == null){
 				if (errors == Report.Errors)
@@ -1445,11 +1442,6 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			if (target_type.eclass != ExprClass.Type){
-				target_type.Error118 ("class");
-				return null;
-			}
-			
 			type = target_type.Type;
 			eclass = ExprClass.Value;
 			
@@ -2026,6 +2018,14 @@ namespace Mono.CSharp {
 					//
 					return this;
 				}
+
+				//
+				// One of them is a valuetype, but the other one is not.
+				//
+				if (!l.IsValueType || !r.IsValueType) {
+					Error_OperatorCannotBeApplied ();
+					return null;
+				}
 			}
 
 			// Only perform numeric promotions on:
@@ -2151,6 +2151,7 @@ namespace Mono.CSharp {
 					type = l;
 					return this;
 				}
+				Error_OperatorCannotBeApplied ();
 				return null;
 			}
 			
@@ -2650,7 +2651,7 @@ namespace Mono.CSharp {
 	}
 	
 	/// <summary>
-	///   Implements the ternary conditiona operator (?:)
+	///   Implements the ternary conditional operator (?:)
 	/// </summary>
 	public class Conditional : Expression {
 		Expression expr, trueExpr, falseExpr;
@@ -2774,7 +2775,7 @@ namespace Mono.CSharp {
 	/// <summary>
 	///   Local variables
 	/// </summary>
-	public class LocalVariableReference : Expression, IAssignMethod, IMemoryLocation {
+	public class LocalVariableReference : Expression, IAssignMethod, IMemoryLocation, IVariable {
 		public readonly string Name;
 		public readonly Block Block;
 		VariableInfo variable_info;
@@ -2808,6 +2809,26 @@ namespace Mono.CSharp {
 			}
 		}
 
+		public bool IsAssigned (EmitContext ec, Location loc)
+		{
+			return VariableInfo.IsAssigned (ec, loc);
+		}
+
+		public bool IsFieldAssigned (EmitContext ec, string name, Location loc)
+		{
+			return VariableInfo.IsFieldAssigned (ec, name, loc);
+		}
+
+		public void SetAssigned (EmitContext ec)
+		{
+			VariableInfo.SetAssigned (ec);
+		}
+
+		public void SetFieldAssigned (EmitContext ec, string name)
+		{
+			VariableInfo.SetFieldAssigned (ec, name);
+		}
+
 		public bool IsReadOnly {
 			get {
 				if (variable_info == null) {
@@ -2829,13 +2850,8 @@ namespace Mono.CSharp {
 				return e;
 			}
 
-			if (!ec.IsVariableAssigned (vi)) {
-				Error (
-					165,
-					"Use of unassigned local variable `" + Name + "'");
-				ec.SetVariableAssigned (vi);
+			if (ec.DoFlowAnalysis && !IsAssigned (ec, loc))
 				return null;
-			}
 
 			type = vi.VariableType;
 			return this;
@@ -2845,7 +2861,8 @@ namespace Mono.CSharp {
 		{
 			VariableInfo vi = VariableInfo;
 
-			ec.SetVariableAssigned (vi);
+			if (ec.DoFlowAnalysis)
+				ec.SetVariableAssigned (vi);
 
 			Expression e = DoResolve (ec);
 
@@ -2853,9 +2870,7 @@ namespace Mono.CSharp {
 				return null;
 
 			if (is_readonly){
-				Error (
-					1604,
-					"cannot assign to `" + Name + "' because it is readonly");
+				Error (1604, "cannot assign to `" + Name + "' because it is readonly");
 				return null;
 			}
 			
@@ -2895,12 +2910,12 @@ namespace Mono.CSharp {
 	///   This represents a reference to a parameter in the intermediate
 	///   representation.
 	/// </summary>
-	public class ParameterReference : Expression, IAssignMethod, IMemoryLocation {
+	public class ParameterReference : Expression, IAssignMethod, IMemoryLocation, IVariable {
 		Parameters pars;
 		String name;
 		int idx;
 		public Parameter.Modifier mod;
-		public bool is_ref;
+		public bool is_ref, is_out;
 		
 		public ParameterReference (Parameters pars, int idx, string name, Location loc)
 		{
@@ -2909,6 +2924,49 @@ namespace Mono.CSharp {
 			this.name = name;
 			this.loc = loc;
 			eclass = ExprClass.Variable;
+		}
+
+		public bool IsAssigned (EmitContext ec, Location loc)
+		{
+			if (!is_out || !ec.DoFlowAnalysis)
+				return true;
+
+			if (!ec.CurrentBranching.IsParameterAssigned (idx)) {
+				Report.Error (165, loc,
+					      "Use of unassigned local variable `" + name + "'");
+				return false;
+			}
+
+			return true;
+		}
+
+		public bool IsFieldAssigned (EmitContext ec, string field_name, Location loc)
+		{
+			if (!is_out || !ec.DoFlowAnalysis)
+				return true;
+
+			if (ec.CurrentBranching.IsParameterAssigned (idx))
+				return true;
+
+			if (!ec.CurrentBranching.IsParameterAssigned (idx, field_name)) {
+				Report.Error (170, loc,
+					      "Use of possibly unassigned field `" + field_name + "'");
+				return false;
+			}
+
+			return true;
+		}
+
+		public void SetAssigned (EmitContext ec)
+		{
+			if (is_out && ec.DoFlowAnalysis)
+				ec.CurrentBranching.SetParameterAssigned (idx);
+		}
+
+		public void SetFieldAssigned (EmitContext ec, string field_name)
+		{
+			if (is_out && ec.DoFlowAnalysis)
+				ec.CurrentBranching.SetParameterAssigned (idx, field_name);
 		}
 
 		//
@@ -2927,14 +2985,11 @@ namespace Mono.CSharp {
 		{
 			type = pars.GetParameterInfo (ec.DeclSpace, idx, out mod);
 			is_ref = (mod & Parameter.Modifier.ISBYREF) != 0;
+			is_out = (mod & Parameter.Modifier.OUT) != 0;
 			eclass = ExprClass.Variable;
 
-			if (((mod & (Parameter.Modifier.OUT)) != 0) && !ec.IsParameterAssigned (idx)) {
-				Error (
-					165,
-					"Use of unassigned local variable `" + name + "'");
+			if (is_out && ec.DoFlowAnalysis && !IsAssigned (ec, loc))
 				return null;
-			}
 
 			return this;
 		}
@@ -2943,9 +2998,10 @@ namespace Mono.CSharp {
 		{
 			type = pars.GetParameterInfo (ec.DeclSpace, idx, out mod);
 			is_ref = (mod & Parameter.Modifier.ISBYREF) != 0;
+			is_out = (mod & Parameter.Modifier.OUT) != 0;
 			eclass = ExprClass.Variable;
 
-			if ((mod & Parameter.Modifier.OUT) != 0)
+			if (is_out && ec.DoFlowAnalysis)
 				ec.SetParameterAssigned (idx);
 
 			return this;
@@ -3094,6 +3150,17 @@ namespace Mono.CSharp {
 				(a.ArgType == AType.Out ? "out " : "")) +
 				TypeManager.CSharpName (a.Expr.Type);
 		}
+
+		public bool ResolveMethodGroup (EmitContext ec, Location loc)
+		{
+			// FIXME: csc doesn't report any error if you try to use `ref' or
+			//        `out' in a delegate creation expression.
+			Expr = Expr.Resolve (ec, ResolveFlags.VariableOrValue | ResolveFlags.MethodGroup);
+			if (Expr == null)
+				return false;
+
+			return true;
+		}
 		
 		public bool Resolve (EmitContext ec, Location loc)
 		{
@@ -3111,15 +3178,8 @@ namespace Mono.CSharp {
 			if (Expr == null)
 				return false;
 
-			if (ArgType == AType.Expression){
-				if ((Expr.eclass == ExprClass.Type) && (Expr is TypeExpr)) {
-					Report.Error (118, loc, "Expression denotes a `type' " +
-						      "where a `variable or value' was expected");
-					return false;
-				}
-
+			if (ArgType == AType.Expression)
 				return true;
-			}
 
 			if (Expr.eclass != ExprClass.Variable){
 				//
@@ -3861,7 +3921,7 @@ namespace Mono.CSharp {
 			if (expr is BaseAccess)
 				is_base = true;
 
-			expr = expr.Resolve (ec);
+			expr = expr.Resolve (ec, ResolveFlags.VariableOrValue | ResolveFlags.MethodGroup);
 			if (expr == null)
 				return null;
 
@@ -3877,7 +3937,7 @@ namespace Mono.CSharp {
 			}
 
 			if (!(expr is MethodGroupExpr)){
-				expr.Error118 ("method group");
+				expr.Error118 (ResolveFlags.MethodGroup);
 				return null;
 			}
 
@@ -3891,7 +3951,8 @@ namespace Mono.CSharp {
 				}
 			}
 
-			method = OverloadResolve (ec, (MethodGroupExpr) this.expr, Arguments, loc);
+			MethodGroupExpr mg = (MethodGroupExpr) expr;
+			method = OverloadResolve (ec, mg, Arguments, loc);
 
 			if (method == null){
 				Error (-6,
@@ -3899,8 +3960,12 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			if (method is MethodInfo)
-				type = TypeManager.TypeToCoreType (((MethodInfo)method).ReturnType);
+			MethodInfo mi = method as MethodInfo;
+			if (mi != null) {
+				type = TypeManager.TypeToCoreType (mi.ReturnType);
+				if (!mi.IsStatic && !mg.IsExplicitImpl && (mg.InstanceExpression == null))
+					SimpleName.Error_ObjectRefRequired (ec, loc, mi.Name);
+			}
 
 			if (type.IsPointer){
 				if (!ec.InUnsafe){
@@ -5069,11 +5134,48 @@ namespace Mono.CSharp {
 	/// <summary>
 	///   Represents the `this' construct
 	/// </summary>
-	public class This : Expression, IAssignMethod, IMemoryLocation {
+	public class This : Expression, IAssignMethod, IMemoryLocation, IVariable {
+
+		Block block;
+		VariableInfo vi;
 		
+		public This (Block block, Location loc)
+		{
+			this.loc = loc;
+			this.block = block;
+		}
+
 		public This (Location loc)
 		{
 			this.loc = loc;
+		}
+
+		public bool IsAssigned (EmitContext ec, Location loc)
+		{
+			if (vi == null)
+				return true;
+
+			return vi.IsAssigned (ec, loc);
+		}
+
+		public bool IsFieldAssigned (EmitContext ec, string field_name, Location loc)
+		{
+			if (vi == null)
+				return true;
+
+			return vi.IsFieldAssigned (ec, field_name, loc);
+		}
+
+		public void SetAssigned (EmitContext ec)
+		{
+			if (vi != null)
+				vi.SetAssigned (ec);
+		}
+
+		public void SetFieldAssigned (EmitContext ec, string field_name)
+		{	
+			if (vi != null)
+				vi.SetFieldAssigned (ec, field_name);
 		}
 
 		public override Expression DoResolve (EmitContext ec)
@@ -5082,17 +5184,23 @@ namespace Mono.CSharp {
 			type = ec.ContainerType;
 
 			if (ec.IsStatic){
-				Error (26,
-					      "Keyword this not valid in static code");
+				Error (26, "Keyword this not valid in static code");
 				return null;
 			}
-			
+
+			if (block != null)
+				vi = block.ThisVariable;
+
 			return this;
 		}
 
 		override public Expression DoResolveLValue (EmitContext ec, Expression right_side)
 		{
 			DoResolve (ec);
+
+			VariableInfo vi = ec.CurrentBlock.ThisVariable;
+			if (vi != null)
+				vi.SetAssigned (ec);
 			
 			if (ec.TypeContainer is Class){
 				Error (1604, "Cannot assign to `this'");
@@ -5214,7 +5322,7 @@ namespace Mono.CSharp {
 	/// <summary>
 	///   Implements the member access expression
 	/// </summary>
-	public class MemberAccess : Expression {
+	public class MemberAccess : Expression, ITypeExpression {
 		public readonly string Identifier;
 		Expression expr;
 		Expression member_lookup;
@@ -5261,57 +5369,20 @@ namespace Mono.CSharp {
 							      Expression left, Location loc,
 							      Expression left_original)
 		{
-			//
-			// Method Groups
-			//
-			if (member_lookup is MethodGroupExpr){
-				MethodGroupExpr mg = (MethodGroupExpr) member_lookup;
+			bool left_is_type, left_is_explicit;
 
-				//
-				// Type.MethodGroup
-				//
-				if (left is TypeExpr){
-					if (!mg.RemoveInstanceMethods ()){
-						SimpleName.Error_ObjectRefRequired (loc, mg.Methods [0].Name); 
-						return null;
-					}
+			// If `left' is null, then we're called from SimpleNameResolve and this is
+			// a member in the currently defining class.
+			if (left == null) {
+				left_is_type = ec.IsStatic || ec.IsFieldInitializer;
+				left_is_explicit = false;
 
-					return member_lookup;
-				}
-
-				//
-				// Instance.MethodGroup
-				//
-				if (IdenticalNameAndTypeName (ec, left_original, loc)){
-					if (mg.RemoveInstanceMethods ())
-						return member_lookup;
-				}
-				
-				if (!mg.RemoveStaticMethods ()){
-					error176 (loc, mg.Methods [0].Name);
-					return null;
-				} 
-				
-				mg.InstanceExpression = left;
-				return member_lookup;
-#if ORIGINAL
-				if (!mg.RemoveStaticMethods ()){
-					if (IdenticalNameAndTypeName (ec, left_original, loc)){
-						if (!mg.RemoveInstanceMethods ()){
-							SimpleName.Error_ObjectRefRequired (loc, mg.Methods [0].Name);
-							return null;
-						}
-						return member_lookup;
-					}
-					
-					error176 (loc, mg.Methods [0].Name);
-					return null;
-				}
-				
-				mg.InstanceExpression = left;
-					
-				return member_lookup;
-#endif
+				// Implicitly default to `this' unless we're static.
+				if (!ec.IsStatic && !ec.IsFieldInitializer && !ec.InEnumContext)
+					left = ec.This;
+			} else {
+				left_is_type = left is TypeExpr;
+				left_is_explicit = true;
 			}
 
 			if (member_lookup is FieldExpr){
@@ -5358,7 +5429,7 @@ namespace Mono.CSharp {
 					
 					Expression exp = Constantify (o, t);
 
-					if (!(left is TypeExpr)) {
+					if (left_is_explicit && !left_is_type) {
 						error176 (loc, fe.FieldInfo.Name);
 						return null;
 					}
@@ -5369,65 +5440,6 @@ namespace Mono.CSharp {
 				if (fi.FieldType.IsPointer && !ec.InUnsafe){
 					UnsafeError (loc);
 					return null;
-				}
-				
-				if (left is TypeExpr){
-					// and refers to a type name or an 
-					if (!fe.FieldInfo.IsStatic){
-						error176 (loc, fe.FieldInfo.Name);
-						return null;
-					}
-					return member_lookup;
-				} else {
-					if (fe.FieldInfo.IsStatic){
-						if (IdenticalNameAndTypeName (ec, left_original, loc))
-							return member_lookup;
-
-						error176 (loc, fe.FieldInfo.Name);
-						return null;
-					}
-
-					//
-					// Since we can not check for instance objects in SimpleName,
-					// becaue of the rule that allows types and variables to share
-					// the name (as long as they can be de-ambiguated later, see 
-					// IdenticalNameAndTypeName), we have to check whether left 
-					// is an instance variable in a static context
-					//
-
-					if (ec.IsStatic && left is FieldExpr){
-						FieldExpr fexp = (FieldExpr) left;
-
-						if (!fexp.FieldInfo.IsStatic){
-							SimpleName.Error_ObjectRefRequired (loc, fexp.FieldInfo.Name);
-							return null;
-						}
-					}
-					fe.InstanceExpression = left;
-
-					return fe;
-				}
-			}
-
-			if (member_lookup is PropertyExpr){
-				PropertyExpr pe = (PropertyExpr) member_lookup;
-
-				if (left is TypeExpr){
-					if (!pe.IsStatic){
-						SimpleName.Error_ObjectRefRequired (loc, pe.PropertyInfo.Name);
-						return null;
-					}
-					return pe;
-				} else {
-					if (pe.IsStatic){
-						if (IdenticalNameAndTypeName (ec, left_original, loc))
-							return member_lookup;
-						error176 (loc, pe.PropertyInfo.Name);
-						return null;
-					}
-					pe.InstanceExpression = left;
-					
-					return pe;
 				}
 			}
 
@@ -5440,12 +5452,8 @@ namespace Mono.CSharp {
 				// a FieldExpr
 				//
 
-				Expression ml = MemberLookup (
-					ec, ec.ContainerType, ee.EventInfo.Name, MemberTypes.Event,
-					AllBindingFlags | BindingFlags.DeclaredOnly, loc);
-
-				if (ml != null) {
-					MemberInfo mi = GetFieldFromEvent ((EventExpr) ml);
+				if (ee.EventInfo.DeclaringType == ec.ContainerType) {
+					MemberInfo mi = GetFieldFromEvent (ee);
 
 					if (mi == null) {
 						//
@@ -5457,40 +5465,73 @@ namespace Mono.CSharp {
 						return null;
 					}
 
-					ml = ExprClassFromMemberInfo (ec, mi, loc);
+					Expression ml = ExprClassFromMemberInfo (ec, mi, loc);
 					
 					if (ml == null) {
 						Report.Error (-200, loc, "Internal error!!");
 						return null;
 					}
+					
 					return ResolveMemberAccess (ec, ml, left, loc, left_original);
 				}
+			}
+			
+			if (member_lookup is IMemberExpr) {
+				IMemberExpr me = (IMemberExpr) member_lookup;
 
-				if (left is TypeExpr) {
-					if (!ee.IsStatic) {
-						SimpleName.Error_ObjectRefRequired (loc, ee.EventInfo.Name);
+				if (left_is_type){
+					MethodGroupExpr mg = me as MethodGroupExpr;
+					if ((mg != null) && left_is_explicit && left.Type.IsInterface)
+						mg.IsExplicitImpl = left_is_explicit;
+
+					if (!me.IsStatic){
+						if (IdenticalNameAndTypeName (ec, left_original, loc))
+							return member_lookup;
+
+						SimpleName.Error_ObjectRefRequired (ec, loc, me.Name);
 						return null;
 					}
-
-					return ee;
 
 				} else {
-					if (ee.IsStatic) {
+					if (!me.IsInstance){
 						if (IdenticalNameAndTypeName (ec, left_original, loc))
-							return ee;
-						    
-						error176 (loc, ee.EventInfo.Name);
-						return null;
+							return member_lookup;
+
+						if (left_is_explicit) {
+							error176 (loc, me.Name);
+							return null;
+						}
 					}
 
-					ee.InstanceExpression = left;
+					//
+					// Since we can not check for instance objects in SimpleName,
+					// becaue of the rule that allows types and variables to share
+					// the name (as long as they can be de-ambiguated later, see 
+					// IdenticalNameAndTypeName), we have to check whether left 
+					// is an instance variable in a static context
+					//
+					// However, if the left-hand value is explicitly given, then
+					// it is already our instance expression, so we aren't in
+					// static context.
+					//
 
-					return ee;
+					if (ec.IsStatic && !left_is_explicit && left is IMemberExpr){
+						IMemberExpr mexp = (IMemberExpr) left;
+
+						if (!mexp.IsStatic){
+							SimpleName.Error_ObjectRefRequired (ec, loc, mexp.Name);
+							return null;
+						}
+					}
+
+					me.InstanceExpression = left;
 				}
+
+				return member_lookup;
 			}
 
 			if (member_lookup is TypeExpr){
-				member_lookup.Resolve (ec);
+				member_lookup.Resolve (ec, ResolveFlags.Type);
 				return member_lookup;
 			}
 			
@@ -5500,16 +5541,19 @@ namespace Mono.CSharp {
 			return null;
 		}
 		
-		public override Expression DoResolve (EmitContext ec)
+		public Expression DoResolve (EmitContext ec, Expression right_side, ResolveFlags flags)
 		{
 			if (type != null)
 				throw new Exception ();
 			//
-			// We are the sole users of ResolveWithSimpleName (ie, the only
-			// ones that can cope with it)
+			// Resolve the expression with flow analysis turned off, we'll do the definite
+			// assignment checks later.  This is because we don't know yet what the expression
+			// will resolve to - it may resolve to a FieldExpr and in this case we must do the
+			// definite assignment check on the actual field and not on the whole struct.
 			//
+
 			Expression original = expr;
-			expr = expr.ResolveWithSimpleName (ec);
+			expr = expr.Resolve (ec, flags | ResolveFlags.DisableFlowAnalysis);
 
 			if (expr == null)
 				return null;
@@ -5519,7 +5563,7 @@ namespace Mono.CSharp {
 				
 				Expression new_expr = new SimpleName (child_expr.Name + "." + Identifier, loc);
 
-				return new_expr.ResolveWithSimpleName (ec);
+				return new_expr.Resolve (ec, flags);
 			}
 					
 			//
@@ -5549,9 +5593,8 @@ namespace Mono.CSharp {
 			}
 
 			if (expr_type.IsPointer){
-				Error (23,
-					      "The `.' operator can not be applied to pointer operands (" +
-					      TypeManager.CSharpName (expr_type) + ")");
+				Error (23, "The `.' operator can not be applied to pointer operands (" +
+				       TypeManager.CSharpName (expr_type) + ")");
 				return null;
 			}
 
@@ -5567,18 +5610,78 @@ namespace Mono.CSharp {
 				// it, we know that the error was due to limited visibility
 				//
 				object lookup = TypeManager.MemberLookup (
-					expr_type, expr_type, AllMemberTypes, AllBindingFlags, Identifier);
+					expr_type, expr_type, AllMemberTypes, AllBindingFlags |
+					BindingFlags.NonPublic, Identifier);
 				if (lookup == null)
 					Error (117, "`" + expr_type + "' does not contain a " +
-						      "definition for `" + Identifier + "'");
-				else
+					       "definition for `" + Identifier + "'");
+				else if ((expr_type != ec.ContainerType) &&
+					 ec.ContainerType.IsSubclassOf (expr_type)){
+
+					// Although a derived class can access protected members of
+					// its base class it cannot do so through an instance of the
+					// base class (CS1540).  If the expr_type is a parent of the
+					// ec.ContainerType and the lookup succeeds with the latter one,
+					// then we are in this situation.
+
+					lookup = TypeManager.MemberLookup (
+						ec.ContainerType, ec.ContainerType, AllMemberTypes,
+						AllBindingFlags, Identifier);
+
+					if (lookup != null)
+						Error (1540, "Cannot access protected member `" +
+						       expr_type + "." + Identifier + "' " +
+						       "via a qualifier of type `" +
+						       TypeManager.CSharpName (expr_type) + "'; the " +
+						       "qualifier must be of type `" +
+						       TypeManager.CSharpName (ec.ContainerType) + "' " +
+						       "(or derived from it)");
+					else
+						Error (122, "`" + expr_type + "." + Identifier + "' " +
+						       "is inaccessible because of its protection level");
+				} else
 					Error (122, "`" + expr_type + "." + Identifier + "' " +
-						      "is inaccessible because of its protection level");
+					       "is inaccessible because of its protection level");
 					      
 				return null;
 			}
 
-			return ResolveMemberAccess (ec, member_lookup, expr, loc, original);
+			if (member_lookup is TypeExpr){
+				member_lookup.Resolve (ec, ResolveFlags.Type);
+				return member_lookup;
+			} else if ((flags & ResolveFlags.MaskExprClass) == ResolveFlags.Type)
+				return null;
+			
+			member_lookup = ResolveMemberAccess (ec, member_lookup, expr, loc, original);
+			if (member_lookup == null)
+				return null;
+
+			// The following DoResolve/DoResolveLValue will do the definite assignment
+			// check.
+
+			if (right_side != null)
+				member_lookup = member_lookup.DoResolveLValue (ec, right_side);
+			else
+				member_lookup = member_lookup.DoResolve (ec);
+
+			return member_lookup;
+		}
+
+		public override Expression DoResolve (EmitContext ec)
+		{
+			return DoResolve (ec, null, ResolveFlags.VariableOrValue |
+					  ResolveFlags.SimpleName | ResolveFlags.Type);
+		}
+
+		public override Expression DoResolveLValue (EmitContext ec, Expression right_side)
+		{
+			return DoResolve (ec, right_side, ResolveFlags.VariableOrValue |
+					  ResolveFlags.SimpleName | ResolveFlags.Type);
+		}
+
+		public Expression DoResolveType (EmitContext ec)
+		{
+			return DoResolve (ec, null, ResolveFlags.Type);
 		}
 
 		public override void Emit (EmitContext ec)
@@ -6320,7 +6423,8 @@ namespace Mono.CSharp {
 				return null;
 			}
 			
-			member_lookup = MemberLookup (ec, base_type, member, loc);
+			member_lookup = MemberLookup (ec, base_type, base_type, member,
+						      AllMemberTypes, AllBindingFlags, loc);
 			if (member_lookup == null) {
 				Error (117,
 					      TypeManager.CSharpName (base_type) + " does not " +
@@ -6376,7 +6480,8 @@ namespace Mono.CSharp {
 				return null;
 			}
 			
-			member_lookup = MemberLookup (ec, base_type, "get_Item", MemberTypes.Method, AllBindingFlags, loc);
+			member_lookup = MemberLookup (ec, base_type, base_type, "get_Item",
+						      MemberTypes.Method, AllBindingFlags, loc);
 			if (member_lookup == null)
 				return null;
 
@@ -6476,7 +6581,7 @@ namespace Mono.CSharp {
 	//   the type specification, we just use this to construct the type
 	//   one bit at a time.
 	// </summary>
-	public class ComposedCast : Expression {
+	public class ComposedCast : Expression, ITypeExpression {
 		Expression left;
 		string dim;
 		
@@ -6487,17 +6592,12 @@ namespace Mono.CSharp {
 			loc = l;
 		}
 
-		public override Expression DoResolve (EmitContext ec)
+		public Expression DoResolveType (EmitContext ec)
 		{
-			left = left.Resolve (ec);
+			left = left.Resolve (ec, ResolveFlags.Type);
 			if (left == null)
 				return null;
 
-			if (left.eclass != ExprClass.Type){
-				left.Error118 ("type");
-				return null;
-			}
-			
 			type = RootContext.LookupType (
 				ec.DeclSpace, left.Type.FullName + dim, false, loc);
 			if (type == null)
@@ -6516,6 +6616,11 @@ namespace Mono.CSharp {
 			
 			eclass = ExprClass.Type;
 			return this;
+		}
+
+		public override Expression DoResolve (EmitContext ec)
+		{
+			return DoResolveType (ec);
 		}
 
 		public override void Emit (EmitContext ec)

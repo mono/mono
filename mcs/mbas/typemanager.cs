@@ -9,8 +9,6 @@
 // (C) 2001 Ximian, Inc (http://www.ximian.com)
 //
 //
-#define CACHE
-
 using System;
 using System.Globalization;
 using System.Collections;
@@ -179,10 +177,7 @@ public class TypeManager {
 	// </remarks>
 	static ArrayList user_types;
 
-	// <remarks>
-	//   Keeps a mapping between TypeBuilders and their TypeContainers
-	// </remarks>
-	static PtrHashtable builder_to_container;
+	static PtrHashtable builder_to_declspace;
 
 	// <remarks>
 	//   Tracks the interfaces implemented by typebuilders.  We only
@@ -207,20 +202,6 @@ public class TypeManager {
 	//   method_internal_params should be kept?
 	// <remarks>
 	static Hashtable method_internal_params;
-
-	static PtrHashtable builder_to_interface;
-
-	// <remarks>
-	//  Keeps track of delegate types
-	// </remarks>
-
-	static Hashtable builder_to_delegate;
-
-	// <remarks>
-	//  Keeps track of enum types
-	// </remarks>
-
-	static Hashtable builder_to_enum;
 
 	// <remarks>
 	//  Keeps track of attribute types
@@ -288,24 +269,24 @@ public class TypeManager {
 	//
 	static void InitExpressionTypes ()
 	{
-		system_object_expr  = new TypeExpression ("System.Object");
-		system_string_expr  = new TypeExpression ("System.String");
-		system_boolean_expr = new TypeExpression ("System.Boolean");
-		system_decimal_expr = new TypeExpression ("System.Decimal");
-		system_single_expr  = new TypeExpression ("System.Single");
-		system_double_expr  = new TypeExpression ("System.Double");
-		system_sbyte_expr   = new TypeExpression ("System.SByte");
-		system_byte_expr    = new TypeExpression ("System.Byte");
-		system_int16_expr   = new TypeExpression ("System.Int16");
-		system_uint16_expr  = new TypeExpression ("System.UInt16");
-		system_int32_expr   = new TypeExpression ("System.Int32");
-		system_uint32_expr  = new TypeExpression ("System.UInt32");
-		system_int64_expr   = new TypeExpression ("System.Int64");
-		system_uint64_expr  = new TypeExpression ("System.UInt64");
-		system_char_expr    = new TypeExpression ("System.Char");
-		system_void_expr    = new TypeExpression ("System.Void");
-		system_asynccallback_expr = new TypeExpression ("System.AsyncCallback");
-		system_iasyncresult_expr = new TypeExpression ("System.IAsyncResult");
+		system_object_expr  = new TypeLookupExpression ("System.Object");
+		system_string_expr  = new TypeLookupExpression ("System.String");
+		system_boolean_expr = new TypeLookupExpression ("System.Boolean");
+		system_decimal_expr = new TypeLookupExpression ("System.Decimal");
+		system_single_expr  = new TypeLookupExpression ("System.Single");
+		system_double_expr  = new TypeLookupExpression ("System.Double");
+		system_sbyte_expr   = new TypeLookupExpression ("System.SByte");
+		system_byte_expr    = new TypeLookupExpression ("System.Byte");
+		system_int16_expr   = new TypeLookupExpression ("System.Int16");
+		system_uint16_expr  = new TypeLookupExpression ("System.UInt16");
+		system_int32_expr   = new TypeLookupExpression ("System.Int32");
+		system_uint32_expr  = new TypeLookupExpression ("System.UInt32");
+		system_int64_expr   = new TypeLookupExpression ("System.Int64");
+		system_uint64_expr  = new TypeLookupExpression ("System.UInt64");
+		system_char_expr    = new TypeLookupExpression ("System.Char");
+		system_void_expr    = new TypeLookupExpression ("System.Void");
+		system_asynccallback_expr = new TypeLookupExpression ("System.AsyncCallback");
+		system_iasyncresult_expr = new TypeLookupExpression ("System.IAsyncResult");
 	}
 	
 	static TypeManager ()
@@ -317,15 +298,12 @@ public class TypeManager {
 		types = new Hashtable ();
 		typecontainers = new Hashtable ();
 		
-		builder_to_interface = new PtrHashtable ();
-		builder_to_delegate = new PtrHashtable ();
-		builder_to_enum  = new PtrHashtable ();
+		builder_to_declspace = new PtrHashtable ();
 		builder_to_attr = new PtrHashtable ();
 		builder_to_method = new PtrHashtable ();
 		method_arguments = new PtrHashtable ();
 		method_internal_params = new PtrHashtable ();
 		indexer_arguments = new PtrHashtable ();
-		builder_to_container = new PtrHashtable ();
 		builder_to_ifaces = new PtrHashtable ();
 		
 		NoTypes = new Type [0];
@@ -340,7 +318,7 @@ public class TypeManager {
 			types.Add (name, t);
 		} catch {
 			Type prev = (Type) types [name];
-			TypeContainer tc = (TypeContainer) builder_to_container [prev];
+			TypeContainer tc = builder_to_declspace [prev] as TypeContainer;
 
 			if (tc != null){
 				//
@@ -350,7 +328,7 @@ public class TypeManager {
 				return;
 			}
 
-			tc = (TypeContainer) builder_to_container [t];
+			tc = builder_to_declspace [t] as TypeContainer;
 			
 			Report.Warning (
 				1595, "The type `" + name + "' is defined in an existing assembly;"+
@@ -377,7 +355,7 @@ public class TypeManager {
 	
 	public static void AddUserType (string name, TypeBuilder t, TypeContainer tc, Type [] ifaces)
 	{
-		builder_to_container.Add (t, tc);
+		builder_to_declspace.Add (t, tc);
 		typecontainers.Add (name, tc);
 		AddUserType (name, t, ifaces);
 	}
@@ -385,19 +363,19 @@ public class TypeManager {
 	public static void AddDelegateType (string name, TypeBuilder t, Delegate del)
 	{
 		types.Add (name, t);
-		builder_to_delegate.Add (t, del);
+		builder_to_declspace.Add (t, del);
 	}
 	
 	public static void AddEnumType (string name, TypeBuilder t, Enum en)
 	{
 		types.Add (name, t);
-		builder_to_enum.Add (t, en);
+		builder_to_declspace.Add (t, en);
 	}
 
 	public static void AddUserInterface (string name, TypeBuilder t, Interface i, Type [] ifaces)
 	{
 		AddUserType (name, t, ifaces);
-		builder_to_interface.Add (t, i);
+		builder_to_declspace.Add (t, i);
 	}
 
 	public static void AddMethod (MethodBuilder builder, MethodData method)
@@ -416,22 +394,33 @@ public class TypeManager {
 	/// </summary>
 	public static TypeContainer LookupTypeContainer (Type t)
 	{
-		return (TypeContainer) builder_to_container [t];
+		return builder_to_declspace [t] as TypeContainer;
+	}
+
+	public static IMemberContainer LookupMemberContainer (Type t)
+	{
+		if (t is TypeBuilder) {
+			IMemberContainer container = builder_to_declspace [t] as IMemberContainer;
+			if (container != null)
+				return container;
+		}
+
+		return TypeHandle.GetTypeHandle (t);
 	}
 
 	public static Interface LookupInterface (Type t)
 	{
-		return (Interface) builder_to_interface [t];
+		return builder_to_declspace [t] as Interface;
 	}
 
 	public static Delegate LookupDelegate (Type t)
 	{
-		return (Delegate) builder_to_delegate [t];
+		return builder_to_declspace [t] as Delegate;
 	}
 
 	public static Enum LookupEnum (Type t)
 	{
-		return (Enum) builder_to_enum [t];
+		return builder_to_declspace [t] as Enum;
 	}
 	
 	public static TypeContainer LookupAttr (Type t)
@@ -582,21 +571,26 @@ public class TypeManager {
 	/// </summary>
 	static MethodInfo GetMethod (Type t, string name, Type [] args)
 	{
-		MemberInfo [] mi;
+		MemberList list;
 		Signature sig;
 
 		sig.name = name;
 		sig.args = args;
 		
-		mi = FindMembers (
-			t, MemberTypes.Method,
-			instance_and_static | BindingFlags.Public, signature_filter, sig);
-		if (mi == null || mi.Length == 0 || !(mi [0] is MethodInfo)){
+		list = FindMembers (t, MemberTypes.Method, instance_and_static | BindingFlags.Public,
+				    signature_filter, sig);
+		if (list.Count == 0) {
 			Report.Error (-19, "Can not find the core function `" + name + "'");
 			return null;
 		}
 
-		return (MethodInfo) mi [0];
+		MethodInfo mi = list [0] as MethodInfo;
+		if (mi == null) {
+			Report.Error (-19, "Can not find the core function `" + name + "'");
+			return null;
+		}
+
+		return mi;
 	}
 
 	/// <summary>
@@ -604,20 +598,27 @@ public class TypeManager {
 	/// </summary>
 	static ConstructorInfo GetConstructor (Type t, Type [] args)
 	{
-		MemberInfo [] mi;
+		MemberList list;
 		Signature sig;
 
 		sig.name = ".ctor";
 		sig.args = args;
 		
-		mi = FindMembers (t, MemberTypes.Constructor,
-				  instance_and_static | BindingFlags.Public | BindingFlags.DeclaredOnly, signature_filter, sig);
-		if (mi == null || mi.Length == 0 || !(mi [0] is ConstructorInfo)){
+		list = FindMembers (t, MemberTypes.Constructor,
+				    instance_and_static | BindingFlags.Public | BindingFlags.DeclaredOnly,
+				    signature_filter, sig);
+		if (list.Count == 0){
 			Report.Error (-19, "Can not find the core constructor for type `" + t.Name + "'");
 			return null;
 		}
 
-		return (ConstructorInfo) mi [0];
+		ConstructorInfo ci = list [0] as ConstructorInfo;
+		if (ci == null){
+			Report.Error (-19, "Can not find the core constructor for type `" + t.Name + "'");
+			return null;
+		}
+
+		return ci;
 	}
 
 	public static void InitEnumUnderlyingTypes ()
@@ -850,87 +851,132 @@ public class TypeManager {
 
 	const BindingFlags instance_and_static = BindingFlags.Static | BindingFlags.Instance;
 
-	//
-	// FIXME: This can be optimized easily.  speedup by having a single builder mapping
-	//
-	public static MemberInfo [] FindMembers (Type t, MemberTypes mt, BindingFlags bf,
-						 MemberFilter filter, object criteria)
+	static Hashtable type_hash = new Hashtable ();
+
+	/// <remarks>
+	///   This is the "old", non-cache based FindMembers() function.  We cannot use
+	///   the cache here because there is no member name argument.
+	/// </remarks>
+	public static MemberList FindMembers (Type t, MemberTypes mt, BindingFlags bf,
+					      MemberFilter filter, object criteria)
 	{
+		DeclSpace decl = (DeclSpace) builder_to_declspace [t];
+
+		//
+		// `builder_to_declspace' contains all dynamic types.
+		//
+		if (decl != null) {
+			MemberList list;
+			Timer.StartTimer (TimerType.FindMembers);
+			list = decl.FindMembers (mt, bf, filter, criteria);
+			Timer.StopTimer (TimerType.FindMembers);
+			return list;
+		}
+
 		//
 		// We have to take care of arrays specially, because GetType on
 		// a TypeBuilder array will return a Type, not a TypeBuilder,
 		// and we can not call FindMembers on this type.
 		//
 		if (t.IsSubclassOf (TypeManager.array_type))
-			return TypeManager.array_type.FindMembers (mt, bf, filter, criteria);
-		
-		if (!(t is TypeBuilder)){
-			//
-			// Since FindMembers will not lookup both static and instance
-			// members, we emulate this behaviour here.
-			//
-			if ((bf & instance_and_static) == instance_and_static){
-				MemberInfo [] i_members = t.FindMembers (
-					mt, bf & ~BindingFlags.Static, filter, criteria);
+			return new MemberList (TypeManager.array_type.FindMembers (mt, bf, filter, criteria));
 
-				int i_len = i_members.Length;
-				if (i_len == 1){
-					MemberInfo one = i_members [0];
+		//
+		// Since FindMembers will not lookup both static and instance
+		// members, we emulate this behaviour here.
+		//
+		if ((bf & instance_and_static) == instance_and_static){
+			MemberInfo [] i_members = t.FindMembers (
+				mt, bf & ~BindingFlags.Static, filter, criteria);
 
-					//
-					// If any of these are present, we are done!
-					//
-					if ((one is Type) || (one is EventInfo) || (one is FieldInfo))
-						return i_members;
-				}
-				
-				MemberInfo [] s_members = t.FindMembers (
-					mt, bf & ~BindingFlags.Instance, filter, criteria);
+			int i_len = i_members.Length;
+			if (i_len == 1){
+				MemberInfo one = i_members [0];
 
-				int s_len = s_members.Length;
-				if (i_len > 0 || s_len > 0){
-					MemberInfo [] both = new MemberInfo [i_len + s_len];
-
-					i_members.CopyTo (both, 0);
-					s_members.CopyTo (both, i_len);
-
-					return both;
-				} else {
-					if (i_len > 0)
-						return i_members;
-					else
-						return s_members;
-				}
+				//
+				// If any of these are present, we are done!
+				//
+				if ((one is Type) || (one is EventInfo) || (one is FieldInfo))
+					return new MemberList (i_members);
 			}
-		        return t.FindMembers (mt, bf, filter, criteria);
+				
+			MemberInfo [] s_members = t.FindMembers (
+				mt, bf & ~BindingFlags.Instance, filter, criteria);
+
+			int s_len = s_members.Length;
+			if (i_len > 0 || s_len > 0)
+				return new MemberList (i_members, s_members);
+			else {
+				if (i_len > 0)
+					return new MemberList (i_members);
+				else
+					return new MemberList (s_members);
+			}
+		}
+
+		return new MemberList (t.FindMembers (mt, bf, filter, criteria));
+	}
+
+
+	/// <summary>
+	///   This method is only called from within MemberLookup.  It tries to use the member
+	///   cache if possible and falls back to the normal FindMembers if not.  The `used_cache'
+	///   flag tells the caller whether we used the cache or not.  If we used the cache, then
+	///   our return value will already contain all inherited members and the caller don't need
+	///   to check base classes and interfaces anymore.
+	/// </summary>
+	private static MemberList MemberLookup_FindMembers (Type t, MemberTypes mt, BindingFlags bf,
+							    string name, out bool used_cache)
+	{
+		//
+		// We have to take care of arrays specially, because GetType on
+		// a TypeBuilder array will return a Type, not a TypeBuilder,
+		// and we can not call FindMembers on this type.
+		//
+		if (t.IsSubclassOf (TypeManager.array_type)) {
+			used_cache = true;
+			return TypeHandle.ArrayType.MemberCache.FindMembers (
+				mt, bf, name, FilterWithClosure_delegate, null);
 		}
 
 		//
-		// FIXME: We should not have builder_to_blah everywhere,
-		// we should just have a builder_to_findmemberizable
-		// and have them implement a new ICanFindMembers interface
+		// If this is a dynamic type, it's always in the `builder_to_declspace' hash table
+		// and we can ask the DeclSpace for the MemberCache.
 		//
-		Enum e = (Enum) builder_to_enum [t];
+		if (t is TypeBuilder) {
+			DeclSpace decl = (DeclSpace) builder_to_declspace [t];
+			MemberCache cache = decl.MemberCache;
 
-		if (e != null)
-		        return e.FindMembers (mt, bf, filter, criteria);
-		
-		Delegate del = (Delegate) builder_to_delegate [t];
+			//
+			// If this DeclSpace has a MemberCache, use it.
+			//
 
-		if (del != null)
-		        return del.FindMembers (mt, bf, filter, criteria);
+			if (cache != null) {
+				used_cache = true;
+				return cache.FindMembers (
+					mt, bf, name, FilterWithClosure_delegate, null);
+			}
 
-		Interface iface = (Interface) builder_to_interface [t];
+			// If there is no MemberCache, we need to use the "normal" FindMembers.
 
-		if (iface != null) 
-		        return iface.FindMembers (mt, bf, filter, criteria);
-		
-		TypeContainer tc = (TypeContainer) builder_to_container [t];
+			MemberList list;
+			Timer.StartTimer (TimerType.FindMembers);
+			list = decl.FindMembers (mt, bf | BindingFlags.DeclaredOnly,
+						 FilterWithClosure_delegate, name);
+			Timer.StopTimer (TimerType.FindMembers);
+			used_cache = false;
+			return list;
+		}
 
-		if (tc != null)
-			return tc.FindMembers (mt, bf, filter, criteria);
+		//
+		// This call will always succeed.  There is exactly one TypeHandle instance per
+		// type, TypeHandle.GetTypeHandle() will either return it or create a new one
+		// if it didn't already exist.
+		//
+		TypeHandle handle = TypeHandle.GetTypeHandle (t);
 
-		return null;
+		used_cache = true;
+		return handle.MemberCache.FindMembers (mt, bf, name, FilterWithClosure_delegate, null);
 	}
 
 	public static bool IsBuiltinType (Type t)
@@ -970,12 +1016,28 @@ public class TypeManager {
 	
 	public static bool IsInterfaceType (Type t)
 	{
-		Interface iface = (Interface) builder_to_interface [t];
+		Interface iface = builder_to_declspace [t] as Interface;
 
 		if (iface != null)
 			return true;
 		else
 			return false;
+	}
+
+	//
+	// Checks whether `type' is a subclass or nested child of `parent'.
+	//
+	public static bool IsSubclassOrNestedChildOf (Type type, Type parent)
+	{
+		do {
+			if ((type == parent) || type.IsSubclassOf (parent))
+				return true;
+
+			// Handle nested types.
+			type = type.DeclaringType;
+		} while (type != null);
+
+		return false;
 	}
 
 	/// <summary>
@@ -1632,7 +1694,7 @@ public class TypeManager {
 	//
 	// The name is assumed to be the same.
 	//
-	public static ArrayList CopyNewMethods (ArrayList target_list, MemberInfo [] new_members)
+	public static ArrayList CopyNewMethods (ArrayList target_list, MemberList new_members)
 	{
 		if (target_list == null){
 			target_list = new ArrayList ();
@@ -1740,6 +1802,7 @@ public class TypeManager {
 	//
 	static Type     closure_invocation_type;
 	static Type     closure_queried_type;
+	static Type     closure_start_type;
 
 	//
 	// The assembly that defines the type is that is calling us
@@ -1757,8 +1820,12 @@ public class TypeManager {
 		// fields. 
 		//
 
-		if (m.Name != closure_name)
-			return false;
+		if ((filter_criteria != null) && (m.Name != (string) filter_criteria))
+				return false;
+
+		if ((closure_start_type == closure_invocation_type) &&
+		    (m.DeclaringType == closure_invocation_type))
+			return true;
 
 		//
 		// Ugly: we need to find out the type of `m', and depending
@@ -1769,7 +1836,7 @@ public class TypeManager {
 			MethodAttributes ma = mb.Attributes & MethodAttributes.MemberAccessMask;
 
 			if (ma == MethodAttributes.Private)
-				return closure_private_ok;
+				return closure_private_ok || (closure_invocation_type == m.DeclaringType);
 
 			//
 			// FamAndAssem requires that we not only derivate, but we are on the
@@ -1780,7 +1847,34 @@ public class TypeManager {
 					return false;
 			}
 
-			// FamORAssem, Family and Public:
+			// Assembly and FamORAssem succeed if we're in the same assembly.
+			if ((ma == MethodAttributes.Assembly) || (ma == MethodAttributes.FamORAssem)){
+				if (closure_invocation_assembly == mb.DeclaringType.Assembly)
+					return true;
+			}
+
+			// We already know that we aren't in the same assembly.
+			if (ma == MethodAttributes.Assembly)
+				return false;
+
+			// Family and FamANDAssem require that we derive.
+			if ((ma == MethodAttributes.Family) || (ma == MethodAttributes.FamANDAssem)){
+				if (closure_invocation_type == null)
+					return false;
+
+				if (!IsSubclassOrNestedChildOf (closure_invocation_type, mb.DeclaringType))
+					return false;
+
+				// Although a derived class can access protected members of its base class
+				// it cannot do so through an instance of the base class (CS1540).
+				if ((closure_invocation_type != closure_start_type) &&
+				    closure_invocation_type.IsSubclassOf (closure_start_type))
+					return false;
+
+				return true;
+			}
+
+			// Public.
 			return true;
 		}
 
@@ -1789,7 +1883,7 @@ public class TypeManager {
 			FieldAttributes fa = fi.Attributes & FieldAttributes.FieldAccessMask;
 
 			if (fa == FieldAttributes.Private)
-				return closure_private_ok;
+				return closure_private_ok || (closure_invocation_type == m.DeclaringType);
 
 			//
 			// FamAndAssem requires that we not only derivate, but we are on the
@@ -1799,7 +1893,35 @@ public class TypeManager {
 				if (closure_invocation_assembly != fi.DeclaringType.Assembly)
 					return false;
 			}
-			// FamORAssem, Family and Public:
+
+			// Assembly and FamORAssem succeed if we're in the same assembly.
+			if ((fa == FieldAttributes.Assembly) || (fa == FieldAttributes.FamORAssem)){
+				if (closure_invocation_assembly == fi.DeclaringType.Assembly)
+					return true;
+			}
+
+			// We already know that we aren't in the same assembly.
+			if (fa == FieldAttributes.Assembly)
+				return false;
+
+			// Family and FamANDAssem require that we derive.
+			if ((fa == FieldAttributes.Family) || (fa == FieldAttributes.FamANDAssem)){
+				if (closure_invocation_type == null)
+					return false;
+
+				if (!IsSubclassOrNestedChildOf (closure_invocation_type, fi.DeclaringType))
+					return false;
+
+				// Although a derived class can access protected members of its base class
+				// it cannot do so through an instance of the base class (CS1540).
+				if ((closure_invocation_type != closure_start_type) &&
+				    closure_invocation_type.IsSubclassOf (closure_start_type))
+					return false;
+
+				return true;
+			}
+
+			// Public.
 			return true;
 		}
 
@@ -1810,7 +1932,7 @@ public class TypeManager {
 	}
 
 	static MemberFilter FilterWithClosure_delegate = new MemberFilter (FilterWithClosure);
-	
+
 	//
 	// Looks up a member called `name' in the `queried_type'.  This lookup
 	// is done by code that is contained in the definition for `invocation_type'.
@@ -1823,6 +1945,19 @@ public class TypeManager {
 	public static MemberInfo [] MemberLookup (Type invocation_type, Type queried_type, 
 						  MemberTypes mt, BindingFlags original_bf, string name)
 	{
+		Timer.StartTimer (TimerType.MemberLookup);
+
+		MemberInfo[] retval = RealMemberLookup (invocation_type, queried_type,
+							mt, original_bf, name);
+
+		Timer.StopTimer (TimerType.MemberLookup);
+
+		return retval;
+	}
+
+	static MemberInfo [] RealMemberLookup (Type invocation_type, Type queried_type, 
+					       MemberTypes mt, BindingFlags original_bf, string name)
+	{
 		BindingFlags bf = original_bf;
 		
 		ArrayList method_list = null;
@@ -1830,10 +1965,12 @@ public class TypeManager {
 		bool searching = (original_bf & BindingFlags.DeclaredOnly) == 0;
 		bool private_ok;
 		bool always_ok_flag = false;
+		bool skip_iface_check = true, used_cache = false;
 
 		closure_name = name;
 		closure_invocation_type = invocation_type;
 		closure_invocation_assembly = invocation_type != null ? invocation_type.Assembly : null;
+		closure_start_type = queried_type;
 
 		//
 		// If we are a nested class, we always have access to our container
@@ -1855,7 +1992,7 @@ public class TypeManager {
 		}
 		
 		do {
-			MemberInfo [] mi;
+			MemberList list;
 
 			//
 			// `NonPublic' is lame, because it includes both protected and
@@ -1868,10 +2005,10 @@ public class TypeManager {
 			//
 			if (invocation_type != null){
 				if (invocation_type == current_type){
-					private_ok = true;
+					private_ok = (bf & BindingFlags.NonPublic) != 0;
 				} else
 					private_ok = always_ok_flag;
-				
+
 				if (private_ok || invocation_type.IsSubclassOf (current_type))
 					bf = original_bf | BindingFlags.NonPublic;
 			} else {
@@ -1881,11 +2018,27 @@ public class TypeManager {
 
 			closure_private_ok = private_ok;
 			closure_queried_type = current_type;
-			
-			mi = TypeManager.FindMembers (
-				current_type, mt, bf | BindingFlags.DeclaredOnly,
-				FilterWithClosure_delegate, name);
-			
+
+			Timer.StopTimer (TimerType.MemberLookup);
+
+			list = MemberLookup_FindMembers (current_type, mt, bf, name, out used_cache);
+
+			Timer.StartTimer (TimerType.MemberLookup);
+
+			//
+			// When queried for an interface type, the cache will automatically check all
+			// inherited members, so we don't need to do this here.  However, this only
+			// works if we already used the cache in the first iteration of this loop.
+			//
+			// If we used the cache in any further iteration, we can still terminate the
+			// loop since the cache always looks in all parent classes.
+			//
+
+			if (used_cache)
+				searching = false;
+			else
+				skip_iface_check = false;
+
 			if (current_type == TypeManager.object_type)
 				searching = false;
 			else {
@@ -1899,12 +2052,7 @@ public class TypeManager {
 					current_type = TypeManager.object_type;
 			}
 			
-			if (mi == null)
-				continue;
-			
-			int count = mi.Length;
-			
-			if (count == 0)
+			if (list.Count == 0)
 				continue;
 			
 			//
@@ -1912,29 +2060,36 @@ public class TypeManager {
 			// searches, which means that our above FindMembers will
 			// return two copies of the same.
 			//
-			if (count == 1 && !(mi [0] is MethodBase)){
-				return mi;
+			if (list.Count == 1 && !(list [0] is MethodBase)){
+				return (MemberInfo []) list;
 			}
 
 			//
 			// Multiple properties: we query those just to find out the indexer
 			// name
 			//
-			if (mi [0] is PropertyInfo)
-				return mi;
+			if (list [0] is PropertyInfo)
+				return (MemberInfo []) list;
 
 			//
 			// We found methods, turn the search into "method scan"
 			// mode.
 			//
 			
-			method_list = CopyNewMethods (method_list, mi);
+			method_list = CopyNewMethods (method_list, list);
 			mt &= (MemberTypes.Method | MemberTypes.Constructor);
 		} while (searching);
 
 		if (method_list != null && method_list.Count > 0)
 			return (MemberInfo []) method_list.ToArray (typeof (MemberInfo));
-	
+
+		//
+		// This happens if we already used the cache in the first iteration, in this case
+		// the cache already looked in all interfaces.
+		//
+		if (skip_iface_check)
+			return null;
+
 		//
 		// Interfaces do not list members they inherit, so we have to
 		// scan those.
@@ -1961,6 +2116,136 @@ public class TypeManager {
 	}
 #endregion
 	
+}
+
+/// <summary>
+///   There is exactly one instance of this class per type.
+/// </summary>
+public sealed class TypeHandle : IMemberContainer {
+	public readonly TypeHandle BaseType;
+
+	readonly int id = ++next_id;
+	static int next_id = 0;
+
+	/// <summary>
+	///   Lookup a TypeHandle instance for the given type.  If the type doesn't have
+	///   a TypeHandle yet, a new instance of it is created.  This static method
+	///   ensures that we'll only have one TypeHandle instance per type.
+	/// </summary>
+	public static TypeHandle GetTypeHandle (Type t)
+	{
+		TypeHandle handle = (TypeHandle) type_hash [t];
+		if (handle != null)
+			return handle;
+
+		handle = new TypeHandle (t);
+		type_hash.Add (t, handle);
+		return handle;
+	}
+
+	/// <summary>
+	///   Returns the TypeHandle for TypeManager.object_type.
+	/// </summary>
+	public static IMemberContainer ObjectType {
+		get {
+			if (object_type != null)
+				return object_type;
+
+			object_type = GetTypeHandle (TypeManager.object_type);
+
+			return object_type;
+		}
+	}
+
+	/// <summary>
+	///   Returns the TypeHandle for TypeManager.array_type.
+	/// </summary>
+	public static IMemberContainer ArrayType {
+		get {
+			if (array_type != null)
+				return array_type;
+
+			array_type = GetTypeHandle (TypeManager.array_type);
+
+			return array_type;
+		}
+	}
+
+	private static PtrHashtable type_hash = new PtrHashtable ();
+
+	private static TypeHandle object_type = null;
+	private static TypeHandle array_type = null;
+
+	private Type type;
+	private bool is_interface;
+	private MemberCache member_cache;
+
+	private TypeHandle (Type type)
+	{
+		this.type = type;
+		if (type.BaseType != null)
+			BaseType = GetTypeHandle (type.BaseType);
+		else if ((type != TypeManager.object_type) && (type != typeof (object)))
+			is_interface = true;
+		this.member_cache = new MemberCache (this);
+	}
+
+	// IMemberContainer methods
+
+	public string Name {
+		get {
+			return type.FullName;
+		}
+	}
+
+	public Type Type {
+		get {
+			return type;
+		}
+	}
+
+	public IMemberContainer Parent {
+		get {
+			return BaseType;
+		}
+	}
+
+	public bool IsInterface {
+		get {
+			return is_interface;
+		}
+	}
+
+	public MemberList GetMembers (MemberTypes mt, BindingFlags bf)
+	{
+		if (mt == MemberTypes.Event)
+			return new MemberList (type.GetEvents (bf | BindingFlags.DeclaredOnly));
+		else
+			return new MemberList (type.FindMembers (mt, bf | BindingFlags.DeclaredOnly,
+								 null, null));
+	}
+
+	// IMemberFinder methods
+
+	public MemberList FindMembers (MemberTypes mt, BindingFlags bf, string name,
+				       MemberFilter filter, object criteria)
+	{
+		return member_cache.FindMembers (mt, bf, name, filter, criteria);
+	}
+
+	public MemberCache MemberCache {
+		get {
+			return member_cache;
+		}
+	}
+
+	public override string ToString ()
+	{
+		if (BaseType != null)
+			return "TypeHandle (" + id + "," + Name + " : " + BaseType + ")";
+		else
+			return "TypeHandle (" + id + "," + Name + ")";
+	}
 }
 
 }

@@ -366,6 +366,11 @@ namespace Mono.CSharp {
 			
 			return default_value;
 		}
+
+		public override bool DefineMembers (TypeContainer parent)
+		{
+			return true;
+		}
 		
 		public override bool Define (TypeContainer parent)
 		{
@@ -438,10 +443,10 @@ namespace Mono.CSharp {
 		}
 		
 		//
-		// Hack around System.Reflection as found everywhere else
+		// IMemberFinder
 		//
-		public MemberInfo [] FindMembers (MemberTypes mt, BindingFlags bf,
-						  MemberFilter filter, object criteria)
+		public override MemberList FindMembers (MemberTypes mt, BindingFlags bf,
+							MemberFilter filter, object criteria)
 		{
 			ArrayList members = new ArrayList ();
 
@@ -451,15 +456,13 @@ namespace Mono.CSharp {
 						members.Add (fb);
 			}
 
-			int count = members.Count;
+			return new MemberList (members);
+		}
 
-			if (count > 0) {
-				MemberInfo [] mi = new MemberInfo [count];
-				members.CopyTo (mi, 0);
-				return mi;
+		public override MemberCache MemberCache {
+			get {
+				return null;
 			}
-
-			return null;
 		}
 
 		public ArrayList ValueNames {

@@ -1,3 +1,4 @@
+
 //
 // class.cs: Class and Struct handlers
 //
@@ -9,7 +10,7 @@
 // (C) 2001, 2002 Ximian, Inc (http://www.ximian.com)
 //
 //
-
+#define CACHE
 using System;
 using System.Collections;
 using System.Reflection;
@@ -22,7 +23,7 @@ namespace Mono.CSharp {
 	/// <summary>
 	///   This is the base class for structs and classes.  
 	/// </summary>
-	public class TypeContainer : DeclSpace {
+	public class TypeContainer : DeclSpace, IMemberContainer {
 		// Holds a list of classes and structures
 		ArrayList types;
 
@@ -106,6 +107,10 @@ namespace Mono.CSharp {
 
 		// The interfaces we implement.
 		Type [] ifaces;
+
+		// The parent member container and our member cache
+		IMemberContainer parent_container;
+		MemberCache member_cache;
 		
 		//
 		// The indexer name for this class
@@ -294,7 +299,7 @@ namespace Mono.CSharp {
 			
 			fields.Add (field);
 			
-			if (field.Initializer != null){
+			if (field.HasInitializer){
 				if ((field.ModFlags & Modifiers.STATIC) != 0){
 					if (initialized_static_fields == null)
 						initialized_static_fields = new ArrayList ();
@@ -518,16 +523,11 @@ namespace Mono.CSharp {
 
 			if (fields == null)
 				return true;
-			
-			foreach (Field f in fields){
-				Object init = f.Initializer;
 
-				Expression e;
-				if (init is Expression)
-					e = (Expression) init;
-				else {
-					e = new ArrayCreation (f.Type, "", (ArrayList)init, f.Location);
-				}
+			foreach (Field f in fields){
+				Expression e = f.GetInitializerExpression (ec);
+				if (e == null)
+					return false;
 
 				Location l = f.Location;
 				FieldExpr fe = new FieldExpr (f.FieldBuilder, l);
@@ -544,7 +544,7 @@ namespace Mono.CSharp {
 					throw new Exception ("Assign.Resolve returned a non ExpressionStatement");
 				}
 			}
-			
+
 			return true;
 		}
 		
@@ -557,8 +557,10 @@ namespace Mono.CSharp {
 			int mods = 0;
 
 			c = new Constructor (Basename, Parameters.EmptyReadOnlyParameters,
-					     new ConstructorBaseInitializer (null, new Location (-1)),
-					     new Location (-1));
+					     new ConstructorBaseInitializer (
+						     null, Parameters.EmptyReadOnlyParameters,
+						     Location.Null),
+					     Location.Null);
 			
 			if (is_static)
 				mods = Modifiers.STATIC;
@@ -958,14 +960,14 @@ namespace Mono.CSharp {
 		/// <summary>
 		///   Populates our TypeBuilder with fields and methods
 		/// </summary>
-		public override bool Define (TypeContainer parent)
+		public override bool DefineMembers (TypeContainer parent)
 		{
 			MemberInfo [] defined_names = null;
 
 			if (interface_order != null){
 				foreach (Interface iface in interface_order)
 					if ((iface.ModFlags & Modifiers.NEW) == 0)
-						iface.Define (this);
+						iface.DefineMembers (this);
 					else
 						Report1530 (iface.Location);
 			}
@@ -979,7 +981,7 @@ namespace Mono.CSharp {
 				//
 				ptype = TypeBuilder.BaseType;
 				if (ptype != null){
-					defined_names = FindMembers (
+					defined_names = (MemberInfo []) FindMembers (
 						ptype, MemberTypes.All & ~MemberTypes.Constructor,
 						BindingFlags.Public | BindingFlags.Instance |
 						BindingFlags.Static, null, null);
@@ -1052,6 +1054,24 @@ namespace Mono.CSharp {
 			if (delegates != null)
 				DefineMembers (delegates, defined_names);
 
+#if CACHE
+			if (TypeBuilder.BaseType != null)
+				parent_container = TypeManager.LookupMemberContainer (TypeBuilder.BaseType);
+
+			member_cache = new MemberCache (this);
+#endif
+
+			return true;
+		}
+
+		public override bool Define (TypeContainer parent)
+		{
+			if (interface_order != null){
+				foreach (Interface iface in interface_order)
+					if ((iface.ModFlags & Modifiers.NEW) == 0)
+						iface.Define (this);
+			}
+
 			return true;
 		}
 
@@ -1100,11 +1120,35 @@ namespace Mono.CSharp {
 		//
 		// Since the whole process is a no-op, it is fine to check for null here.
 		//
-		public MemberInfo [] FindMembers (MemberTypes mt, BindingFlags bf,
-						  MemberFilter filter, object criteria)
+		public override MemberList FindMembers (MemberTypes mt, BindingFlags bf,
+							MemberFilter filter, object criteria)
 		{
 			ArrayList members = new ArrayList ();
-			bool priv = (bf & BindingFlags.NonPublic) != 0;
+
+			int modflags = 0;
+			if ((bf & BindingFlags.Public) != 0)
+				modflags |= Modifiers.PUBLIC | Modifiers.PROTECTED |
+					Modifiers.INTERNAL;
+			if ((bf & BindingFlags.NonPublic) != 0)
+				modflags |= Modifiers.PRIVATE;
+
+			int static_mask = 0, static_flags = 0;
+			switch (bf & (BindingFlags.Static | BindingFlags.Instance)) {
+			case BindingFlags.Static:
+				static_mask = static_flags = Modifiers.STATIC;
+				break;
+
+			case BindingFlags.Instance:
+				static_mask = Modifiers.STATIC;
+				static_flags = 0;
+				break;
+
+			default:
+				static_mask = static_flags = 0;
+				break;
+			}
+
+			Timer.StartTimer (TimerType.TcFindMembers);
 
 			if (filter == null)
 				filter = accepting_filter; 
@@ -1112,9 +1156,10 @@ namespace Mono.CSharp {
 			if ((mt & MemberTypes.Field) != 0) {
 				if (fields != null) {
 					foreach (Field f in fields) {
-						if ((f.ModFlags & Modifiers.PRIVATE) != 0)
-							if (!priv)
-								continue;
+						if ((f.ModFlags & modflags) == 0)
+							continue;
+						if ((f.ModFlags & static_mask) != static_flags)
+							continue;
 
 						FieldBuilder fb = f.FieldBuilder;
 						if (fb != null && filter (fb, criteria) == true)
@@ -1124,10 +1169,11 @@ namespace Mono.CSharp {
 
 				if (constants != null) {
 					foreach (Const con in constants) {
-						if ((con.ModFlags & Modifiers.PRIVATE) != 0)
-							if (!priv)
-								continue;
-						
+						if ((con.ModFlags & modflags) == 0)
+							continue;
+						if ((con.ModFlags & static_mask) != static_flags)
+							continue;
+
 						FieldBuilder fb = con.FieldBuilder;
 						if (fb != null && filter (fb, criteria) == true)
 							members.Add (fb);
@@ -1138,9 +1184,10 @@ namespace Mono.CSharp {
 			if ((mt & MemberTypes.Method) != 0) {
 				if (methods != null) {
 					foreach (Method m in methods) {
-						if ((m.ModFlags & Modifiers.PRIVATE) != 0)
-							if (!priv)
-								continue;
+						if ((m.ModFlags & modflags) == 0)
+							continue;
+						if ((m.ModFlags & static_mask) != static_flags)
+							continue;
 						
 						MethodBuilder mb = m.MethodBuilder;
 
@@ -1151,9 +1198,10 @@ namespace Mono.CSharp {
 
 				if (operators != null){
 					foreach (Operator o in operators) {
-						if ((o.ModFlags & Modifiers.PRIVATE) != 0)
-							if (!priv)
-								continue;
+						if ((o.ModFlags & modflags) == 0)
+							continue;
+						if ((o.ModFlags & static_mask) != static_flags)
+							continue;
 						
 						MethodBuilder ob = o.OperatorMethodBuilder;
 						if (ob != null && filter (ob, criteria) == true)
@@ -1163,9 +1211,10 @@ namespace Mono.CSharp {
 
 				if (properties != null){
 					foreach (Property p in properties){
-						if ((p.ModFlags & Modifiers.PRIVATE) != 0)
-							if (!priv)
-								continue;
+						if ((p.ModFlags & modflags) == 0)
+							continue;
+						if ((p.ModFlags & static_mask) != static_flags)
+							continue;
 						
 						MethodBuilder b;
 
@@ -1178,14 +1227,34 @@ namespace Mono.CSharp {
 							members.Add (b);
 					}
 				}
+
+				if (indexers != null){
+					foreach (Indexer ix in indexers){
+						if ((ix.ModFlags & modflags) == 0)
+							continue;
+						if ((ix.ModFlags & static_mask) != static_flags)
+							continue;
+						
+						MethodBuilder b;
+
+						b = ix.GetBuilder;
+						if (b != null && filter (b, criteria) == true)
+							members.Add (b);
+
+						b = ix.SetBuilder;
+						if (b != null && filter (b, criteria) == true)
+							members.Add (b);
+					}
+				}
 			}
 
 			if ((mt & MemberTypes.Event) != 0) {
 				if (events != null)
 				        foreach (Event e in events) {
-						if ((e.ModFlags & Modifiers.PRIVATE) != 0)
-							if (!priv)
-								continue;
+						if ((e.ModFlags & modflags) == 0)
+							continue;
+						if ((e.ModFlags & static_mask) != static_flags)
+							continue;
 
 						MemberInfo eb = e.EventBuilder;
 						if (eb != null && filter (eb, criteria) == true)
@@ -1196,9 +1265,10 @@ namespace Mono.CSharp {
 			if ((mt & MemberTypes.Property) != 0){
 				if (properties != null)
 					foreach (Property p in properties) {
-						if ((p.ModFlags & Modifiers.PRIVATE) != 0)
-							if (!priv)
-								continue;
+						if ((p.ModFlags & modflags) == 0)
+							continue;
+						if ((p.ModFlags & static_mask) != static_flags)
+							continue;
 
 						MemberInfo pb = p.PropertyBuilder;
 						if (pb != null && filter (pb, criteria) == true) {
@@ -1208,9 +1278,10 @@ namespace Mono.CSharp {
 
 				if (indexers != null)
 					foreach (Indexer ix in indexers) {
-						if ((ix.ModFlags & Modifiers.PRIVATE) != 0)
-							if (!priv)
-								continue;
+						if ((ix.ModFlags & modflags) == 0)
+							continue;
+						if ((ix.ModFlags & static_mask) != static_flags)
+							continue;
 
 						MemberInfo ib = ix.PropertyBuilder;
 						if (ib != null && filter (ib, criteria) == true) {
@@ -1222,8 +1293,10 @@ namespace Mono.CSharp {
 			if ((mt & MemberTypes.NestedType) != 0) {
 				if (types != null){
 					foreach (TypeContainer t in types) {
-						TypeBuilder tb = t.TypeBuilder;
+						if ((t.ModFlags & modflags) == 0)
+							continue;
 
+						TypeBuilder tb = t.TypeBuilder;
 						if (tb != null && (filter (tb, criteria) == true))
 								members.Add (tb);
 					}
@@ -1231,8 +1304,10 @@ namespace Mono.CSharp {
 
 				if (enums != null){
 					foreach (Enum en in enums){
-						TypeBuilder tb = en.TypeBuilder;
+						if ((en.ModFlags & modflags) == 0)
+							continue;
 
+						TypeBuilder tb = en.TypeBuilder;
 						if (tb != null && (filter (tb, criteria) == true))
 							members.Add (tb);
 					}
@@ -1240,8 +1315,21 @@ namespace Mono.CSharp {
 				
 				if (delegates != null){
 					foreach (Delegate d in delegates){
+						if ((d.ModFlags & modflags) == 0)
+							continue;
+
 						TypeBuilder tb = d.TypeBuilder;
-						
+						if (tb != null && (filter (tb, criteria) == true))
+							members.Add (tb);
+					}
+				}
+
+				if (interfaces != null){
+					foreach (Interface iface in interfaces){
+						if ((iface.ModFlags & modflags) == 0)
+							continue;
+
+						TypeBuilder tb = iface.TypeBuilder;
 						if (tb != null && (filter (tb, criteria) == true))
 							members.Add (tb);
 					}
@@ -1249,17 +1337,16 @@ namespace Mono.CSharp {
 			}
 
 			if ((mt & MemberTypes.Constructor) != 0){
-				if (instance_constructors != null){
+				if (((bf & BindingFlags.Instance) != 0) && (instance_constructors != null)){
 					foreach (Constructor c in instance_constructors){
 						ConstructorBuilder cb = c.ConstructorBuilder;
-
 						if (cb != null)
 							if (filter (cb, criteria) == true)
 								members.Add (cb);
 					}
 				}
 
-				if (default_static_constructor != null){
+				if (((bf & BindingFlags.Static) != 0) && (default_static_constructor != null)){
 					ConstructorBuilder cb =
 						default_static_constructor.ConstructorBuilder;
 					
@@ -1273,34 +1360,30 @@ namespace Mono.CSharp {
 			// Lookup members in parent if requested.
 			//
 			if (((bf & BindingFlags.DeclaredOnly) == 0) && (TypeBuilder.BaseType != null)) {
-				MemberInfo [] mi;
-
-				mi = FindMembers (TypeBuilder.BaseType, mt, bf, filter, criteria);
-				if (mi != null)
-					members.AddRange (mi);
-			}
-			
-			int count = members.Count;
-			if (count > 0){
-				MemberInfo [] mi = new MemberInfo [count];
-				members.CopyTo (mi);
-				return mi;
+				MemberList list = FindMembers (TypeBuilder.BaseType, mt, bf, filter, criteria);
+				members.AddRange (list);
 			}
 
-			return null;
+			Timer.StopTimer (TimerType.TcFindMembers);
+
+			return new MemberList (members);
 		}
 
-		
+		public override MemberCache MemberCache {
+			get {
+				return member_cache;
+			}
+		}
 
-		public static MemberInfo [] FindMembers (Type t, MemberTypes mt, BindingFlags bf,
-							 MemberFilter filter, object criteria)
+		public static MemberList FindMembers (Type t, MemberTypes mt, BindingFlags bf,
+						      MemberFilter filter, object criteria)
 		{
 			TypeContainer tc = TypeManager.LookupTypeContainer (t);
 
 			if (tc != null)
 				return tc.FindMembers (mt, bf, filter, criteria);
 			else
-				return t.FindMembers (mt, bf, filter, criteria);
+				return new MemberList (t.FindMembers (mt, bf, filter, criteria));
 		}
 
 		//
@@ -1699,6 +1782,45 @@ namespace Mono.CSharp {
 		{
 			Report.Error (539, loc, "Explicit implementation: `" + name + "' is not a member of the interface");
 		}
+
+		//
+		// IMemberContainer
+		//
+
+		string IMemberContainer.Name {
+			get {
+				return Name;
+			}
+		}
+
+		Type IMemberContainer.Type {
+			get {
+				return TypeBuilder;
+			}
+		}
+
+		IMemberContainer IMemberContainer.Parent {
+			get {
+				return parent_container;
+			}
+		}
+
+		MemberCache IMemberContainer.MemberCache {
+			get {
+				return member_cache;
+			}
+		}
+
+		bool IMemberContainer.IsInterface {
+			get {
+				return false;
+			}
+		}
+
+		MemberList IMemberContainer.GetMembers (MemberTypes mt, BindingFlags bf)
+		{
+			return FindMembers (mt, bf | BindingFlags.DeclaredOnly, null, null);
+		}
 	}
 
 	public class Class : TypeContainer {
@@ -2004,7 +2126,7 @@ namespace Mono.CSharp {
 
 			MethodSignature ms = new MethodSignature (Name, null, ParameterTypes);
 			if (!IsOperator) {
-				MemberInfo [] mi_this;
+				MemberList mi_this;
 
 				mi_this = TypeContainer.FindMembers (
 					parent.TypeBuilder, MemberTypes.Method,
@@ -2013,7 +2135,7 @@ namespace Mono.CSharp {
 					BindingFlags.DeclaredOnly,
 					MethodSignature.method_signature_filter, ms);
 
-				if (mi_this != null && mi_this.Length > 0) {
+				if (mi_this.Count > 0) {
 					Report.Error (111, Location, "Class `" + parent.Name + "' " +
 						      "already defines a member called `" + Name + "' " +
 						      "with the same parameter types");
@@ -2029,7 +2151,7 @@ namespace Mono.CSharp {
 
 			// ptype is only null for System.Object while compiling corlib.
 			if (ptype != null){
-				MemberInfo [] mi, mi_static, mi_instance;
+				MemberList mi, mi_static, mi_instance;
 
 				mi_static = TypeContainer.FindMembers (
 					ptype, MemberTypes.Method,
@@ -2042,14 +2164,14 @@ namespace Mono.CSharp {
 					MethodSignature.inheritable_method_signature_filter,
 					ms);
 
-				if (mi_instance != null && mi_instance.Length > 0){
+				if (mi_instance.Count > 0){
 					mi = mi_instance;
-				} else if (mi_static != null && mi_static.Length > 0)
+				} else if (mi_static.Count > 0)
 					mi = mi_static;
 				else
 					mi = null;
 
-				if (mi != null && mi.Length > 0){
+				if (mi != null && mi.Count > 0){
 					parent_method = (MethodInfo) mi [0];
 					string name = parent_method.DeclaringType.Name + "." +
 						parent_method.Name;
@@ -2141,12 +2263,15 @@ namespace Mono.CSharp {
 	public abstract class ConstructorInitializer {
 		ArrayList argument_list;
 		ConstructorInfo parent_constructor;
-		Location location;
+		Parameters parameters;
+		Location loc;
 		
-		public ConstructorInitializer (ArrayList argument_list, Location location)
+		public ConstructorInitializer (ArrayList argument_list, Parameters parameters,
+					       Location loc)
 		{
 			this.argument_list = argument_list;
-			this.location = location;
+			this.parameters = parameters;
+			this.loc = loc;
 		}
 
 		public ArrayList Arguments {
@@ -2159,13 +2284,17 @@ namespace Mono.CSharp {
 		{
 			Expression parent_constructor_group;
 			Type t;
-			
+
+			ec.CurrentBlock = new Block (null, true, parameters);
+
 			if (argument_list != null){
 				foreach (Argument a in argument_list){
-					if (!a.Resolve (ec, location))
+					if (!a.Resolve (ec, loc))
 						return false;
 				}
 			}
+
+			ec.CurrentBlock = null;
 
 			if (this is ConstructorBaseInitializer) {
 				if (ec.ContainerType.BaseType == null)
@@ -2173,30 +2302,30 @@ namespace Mono.CSharp {
 
 				t = ec.ContainerType.BaseType;
 				if (ec.ContainerType.IsValueType) {
-					Report.Error (522, location,
+					Report.Error (522, loc,
 						"structs cannot call base class constructors");
 					return false;
 				}
 			} else
 				t = ec.ContainerType;
-			
+
 			parent_constructor_group = Expression.MemberLookup (
-				ec, t, ".ctor", 
+				ec, t, t, ".ctor", 
 				MemberTypes.Constructor,
 				BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly,
-				location);
+				loc);
 			
 			if (parent_constructor_group == null){
-				Report.Error (1501, location,
+				Report.Error (1501, loc,
 				       "Can not find a constructor for this argument list");
 				return false;
 			}
 			
 			parent_constructor = (ConstructorInfo) Invocation.OverloadResolve (ec, 
-				(MethodGroupExpr) parent_constructor_group, argument_list, location);
+				(MethodGroupExpr) parent_constructor_group, argument_list, loc);
 			
 			if (parent_constructor == null){
-				Report.Error (1501, location,
+				Report.Error (1501, loc,
 				       "Can not find a constructor for this argument list");
 				return false;
 			}
@@ -2216,13 +2345,15 @@ namespace Mono.CSharp {
 	}
 
 	public class ConstructorBaseInitializer : ConstructorInitializer {
-		public ConstructorBaseInitializer (ArrayList argument_list, Location l) : base (argument_list, l)
+		public ConstructorBaseInitializer (ArrayList argument_list, Parameters pars, Location l) :
+			base (argument_list, pars, l)
 		{
 		}
 	}
 
 	public class ConstructorThisInitializer : ConstructorInitializer {
-		public ConstructorThisInitializer (ArrayList argument_list, Location l) : base (argument_list, l)
+		public ConstructorThisInitializer (ArrayList argument_list, Parameters pars, Location l) :
+			base (argument_list, pars, l)
 		{
 		}
 	}
@@ -2291,7 +2422,19 @@ namespace Mono.CSharp {
 						"constructors");
 					return false;
 				}
-				ca |= MethodAttributes.Public | MethodAttributes.HideBySig;
+				ca |= MethodAttributes.HideBySig;
+
+				if ((ModFlags & Modifiers.PRIVATE) != 0)
+					ca |= MethodAttributes.Private;
+				else if ((ModFlags & Modifiers.PROTECTED) != 0){
+					if ((ModFlags & Modifiers.INTERNAL) != 0)
+						ca |= MethodAttributes.FamORAssem;
+					else 
+						ca |= MethodAttributes.Family;
+				} else if ((ModFlags & Modifiers.INTERNAL) != 0)
+					ca |= MethodAttributes.Assembly;
+				else
+					ca |= MethodAttributes.Public;
 			}
 
 			ConstructorBuilder = parent.TypeBuilder.DefineConstructor (
@@ -2322,7 +2465,8 @@ namespace Mono.CSharp {
 
 			if ((ModFlags & Modifiers.STATIC) == 0){
 				if (parent is Class && Initializer == null)
-					Initializer = new ConstructorBaseInitializer (null, parent.Location);
+					Initializer = new ConstructorBaseInitializer (
+						null, Parameters.EmptyReadOnlyParameters, parent.Location);
 
 
 				//
@@ -2351,6 +2495,12 @@ namespace Mono.CSharp {
 				parent.EmitFieldInitializers (ec);
 
 			Attribute.ApplyAttributes (ec, ConstructorBuilder, this, OptAttributes, Location);
+
+			// If this is a non-static `struct' constructor and doesn't have any
+			// initializer, it must initialize all of the struct's fields.
+			if ((parent is Struct) && ((ModFlags & Modifiers.STATIC) == 0) &&
+			    (Initializer == null))
+				Block.AddThisVariable (parent, Location);
 
 			ec.EmitTopBlock (Block, ParameterInfo, Location);
 		}
@@ -2831,7 +2981,7 @@ namespace Mono.CSharp {
 			
 			if (ec.ContainerType.BaseType != null) {
 				Expression member_lookup = Expression.MemberLookup (
-					ec, ec.ContainerType.BaseType, "Finalize",
+					ec, ec.ContainerType.BaseType, ec.ContainerType.BaseType, "Finalize",
 					MemberTypes.Method, Expression.AllBindingFlags, Location);
 
 				if (member_lookup != null){
@@ -3014,7 +3164,6 @@ namespace Mono.CSharp {
 	// their common bits.  This is also used to flag usage of the field
 	//
 	abstract public class FieldBase : MemberBase {
-		public readonly Object Initializer;
 		public FieldBuilder  FieldBuilder;
 		public Status status;
 
@@ -3028,7 +3177,45 @@ namespace Mono.CSharp {
 				     object init, Attributes attrs, Location loc)
 			: base (type, mod, allowed_mod, name, attrs, loc)
 		{
-			Initializer = init;
+			this.init = init;
+		}
+
+		//
+		// Whether this field has an initializer.
+		//
+		public bool HasInitializer {
+			get {
+				return init != null;
+			}
+		}
+
+		// Private.
+		readonly Object init;
+		Expression init_expr;
+		bool init_expr_initialized = false;
+
+		//
+		// Resolves and returns the field initializer.
+		//
+		public Expression GetInitializerExpression (EmitContext ec)
+		{
+			if (init_expr_initialized)
+				return init_expr;
+
+			Expression e;
+			if (init is Expression)
+				e = (Expression) init;
+			else
+				e = new ArrayCreation (Type, "", (ArrayList)init, Location);
+
+			ec.IsFieldInitializer = true;
+			e = e.DoResolve (ec);
+			ec.IsFieldInitializer = false;
+
+			init_expr = e;
+			init_expr_initialized = true;
+
+			return init_expr;
 		}
 	}
 
@@ -3079,9 +3266,7 @@ namespace Mono.CSharp {
 
 				// ptype is only null for System.Object while compiling corlib.
 				if (ptype != null){
-					MemberInfo [] mi;
-					
-					mi = TypeContainer.FindMembers (
+					TypeContainer.FindMembers (
 						ptype, MemberTypes.Method,
 						BindingFlags.Public |
 						BindingFlags.Static | BindingFlags.Instance,
@@ -3186,7 +3371,7 @@ namespace Mono.CSharp {
 				return false;
 
 			MethodSignature ms = new MethodSignature (Name, null, ParameterTypes);
-			MemberInfo [] props_this;
+			MemberList props_this;
 
 			props_this = TypeContainer.FindMembers (
 				parent.TypeBuilder, MemberTypes.Property,
@@ -3195,7 +3380,7 @@ namespace Mono.CSharp {
 				BindingFlags.DeclaredOnly,
 				MethodSignature.method_signature_filter, ms);
 
-			if (props_this != null && props_this.Length > 0) {
+			if (props_this.Count > 0) {
 				Report.Error (111, Location, "Class `" + parent.Name + "' " +
 					      "already defines a member called `" + Name + "' " +
 					      "with the same parameter types");
@@ -3205,13 +3390,13 @@ namespace Mono.CSharp {
 			//
 			// Find properties with the same name on the base class
 			//
-			MemberInfo [] props;
-			MemberInfo [] props_static = TypeContainer.FindMembers (
+			MemberList props;
+			MemberList props_static = TypeContainer.FindMembers (
 				parent.TypeBuilder.BaseType, MemberTypes.Property,
 				BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static,
 				MethodSignature.inheritable_property_signature_filter, ms);
 
-			MemberInfo [] props_instance = TypeContainer.FindMembers (
+			MemberList props_instance = TypeContainer.FindMembers (
 				parent.TypeBuilder.BaseType, MemberTypes.Property,
 				BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance,
 				MethodSignature.inheritable_property_signature_filter,
@@ -3220,16 +3405,16 @@ namespace Mono.CSharp {
 			//
 			// Find if we have anything
 			//
-			if (props_static != null && props_static.Length > 0)
+			if (props_static.Count > 0)
 				props = props_static;
-			else if (props_instance != null && props_instance.Length > 0)
+			else if (props_instance.Count > 0)
 				props = props_instance;
 			else
 				props = null;
 
 			//
 			// If we have something on the base.
-			if (props != null && props.Length > 0){
+			if (props != null && props.Count > 0){
 				PropertyInfo pi = (PropertyInfo) props [0];
 
 				MethodInfo inherited_get = TypeManager.GetPropertyGetter (pi);

@@ -93,11 +93,11 @@ namespace Mono.CSharp {
 			Type ptype = parent.TypeBuilder.BaseType;
 
 			if (ptype != null) {
-				MemberInfo [] mi = TypeContainer.FindMembers (
+				MemberList list = TypeContainer.FindMembers (
 					ptype, MemberTypes.Field, BindingFlags.Public,
 					Type.FilterName, Name);
 				
-				if (mi == null || mi.Length == 0)
+				if (list.Count == 0)
 					if ((ModFlags & Modifiers.NEW) != 0)
 						WarningNotHiding (parent);
 

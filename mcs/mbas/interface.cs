@@ -7,7 +7,7 @@
 //
 // (C) 2001 Ximian, Inc (http://www.ximian.com)
 //
-
+#define CACHE
 using System.Collections;
 using System;
 using System.IO;
@@ -19,7 +19,7 @@ namespace Mono.CSharp {
 	/// <summary>
 	///   Interfaces
 	/// </summary>
-	public class Interface : DeclSpace {
+	public class Interface : DeclSpace, IMemberContainer {
 		const MethodAttributes interface_method_attributes =
 			MethodAttributes.Public |
 			MethodAttributes.Abstract |
@@ -49,6 +49,9 @@ namespace Mono.CSharp {
 		Attributes OptAttributes;
 
 		public string IndexerName;
+
+		IMemberContainer parent_container;
+		MemberCache member_cache;
 
 		// These will happen after the semantic analysis
 		
@@ -236,7 +239,8 @@ namespace Mono.CSharp {
 		}
 
 		// Hack around System.Reflection as found everywhere else
-		public MemberInfo [] FindMembers (MemberTypes mt, BindingFlags bf, MemberFilter filter, object criteria)
+		public override MemberList FindMembers (MemberTypes mt, BindingFlags bf,
+							MemberFilter filter, object criteria)
 		{
 			ArrayList members = new ArrayList ();
 
@@ -259,26 +263,21 @@ namespace Mono.CSharp {
 			}
 
 			if (((bf & BindingFlags.DeclaredOnly) == 0) && (TypeBuilder.BaseType != null)) {
-				MemberInfo [] parent_mi;
+				MemberList parent_mi;
 				
 				parent_mi = TypeContainer.FindMembers (
 					TypeBuilder.BaseType, mt, bf, filter, criteria);
 
-				if (parent_mi != null)
-					members.AddRange (parent_mi);
-			}
-			
-			// The rest of the cases, if any, are unhandled at present.
-
-			int count = members.Count;
-
-			if (count > 0) {
-				MemberInfo [] mi = new MemberInfo [count];
-				members.CopyTo (mi, 0);
-				return mi;
+				members.AddRange (parent_mi);
 			}
 
-			return null;
+			return new MemberList (members);
+		}
+
+		public override MemberCache MemberCache {
+			get {
+				return member_cache;
+			}
 		}
 
 		//
@@ -758,7 +757,7 @@ namespace Mono.CSharp {
 
 			TypeManager.AddUserInterface (Name, TypeBuilder, this, ifaces);
 			InTransit = false;
-			
+
 			return TypeBuilder;
 		}
 
@@ -799,7 +798,7 @@ namespace Mono.CSharp {
 		/// <summary>
 		///   Performs semantic analysis, and then generates the IL interfaces
 		/// </summary>
-		public override bool Define (TypeContainer parent)
+		public override bool DefineMembers (TypeContainer parent)
 		{
 			if (!SemanticAnalysis ())
 				return false;
@@ -826,7 +825,28 @@ namespace Mono.CSharp {
 				if (cb != null)
 					TypeBuilder.SetCustomAttribute (cb);
  			}
-			
+
+#if CACHE
+			if (TypeBuilder.BaseType != null)
+				parent_container = TypeManager.LookupMemberContainer (TypeBuilder.BaseType);
+
+			member_cache = new MemberCache (this);
+#endif
+
+			return true;
+		}
+
+		/// <summary>
+		///   Applies all the attributes.
+		/// </summary>
+		public override bool Define (TypeContainer parent)
+		{
+			if (OptAttributes != null) {
+				EmitContext ec = new EmitContext (parent, this, Location, null, null,
+								  ModFlags, false);
+				Attribute.ApplyAttributes (ec, TypeBuilder, this, OptAttributes, Location);
+			}
+
 			return true;
 		}
 
@@ -863,6 +883,61 @@ namespace Mono.CSharp {
 			return cb;
 		}
 
+		//
+		// IMemberContainer
+		//
+
+		string IMemberContainer.Name {
+			get {
+				return Name;
+			}
+		}
+
+		Type IMemberContainer.Type {
+			get {
+				return TypeBuilder;
+			}
+		}
+
+		IMemberContainer IMemberContainer.Parent {
+			get {
+				return parent_container;
+			}
+		}
+
+		MemberCache IMemberContainer.MemberCache {
+			get {
+				return member_cache;
+			}
+		}
+
+		bool IMemberContainer.IsInterface {
+			get {
+				return true;
+			}
+		}
+
+		MemberList IMemberContainer.GetMembers (MemberTypes mt, BindingFlags bf)
+		{
+			// Interfaces only contain instance members.
+			if ((bf & BindingFlags.Instance) == 0)
+				return MemberList.Empty;
+			if ((bf & BindingFlags.Public) == 0)
+				return MemberList.Empty;
+
+			ArrayList members = new ArrayList ();
+
+			if ((mt & MemberTypes.Method) != 0)
+				members.AddRange (method_builders);
+
+			if ((mt & MemberTypes.Property) != 0)
+				members.AddRange (property_builders);
+
+			if ((mt & MemberTypes.Event) != 0)
+				members.AddRange (event_builders);
+
+			return new MemberList (members);
+		}
 	}
 
 	public class InterfaceMemberBase {

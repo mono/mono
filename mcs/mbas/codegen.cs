@@ -65,41 +65,49 @@ namespace Mono.CSharp {
 		//
 		// This routine initializes the Mono runtime SymbolWriter.
 		//
-		static void InitMonoSymbolWriter (string basename, string[] debug_args)
+		static bool InitMonoSymbolWriter (string basename, string output_file,
+						  string[] debug_args)
 		{
-			string symbol_output = basename + "-debug.s";
+			string symbol_output = basename + ".dbg";
 
 			Type itype = SymbolWriter.GetType ();
 			if (itype == null)
-				return;
+				return false;
 
-			Type[] arg_types = new Type [2];
+			Type[] arg_types = new Type [3];
 			arg_types [0] = typeof (string);
-			arg_types [1] = typeof (string[]);
+			arg_types [1] = typeof (string);
+			arg_types [2] = typeof (string[]);
 
 			MethodInfo initialize = itype.GetMethod ("Initialize", arg_types);
 			if (initialize == null)
-				return;
+				return false;
 
-			object[] args = new object [2];
-			args [0] = symbol_output;
-			args [1] = debug_args;
+			object[] args = new object [3];
+			args [0] = output_file;
+			args [1] = symbol_output;
+			args [2] = debug_args;
 
 			initialize.Invoke (SymbolWriter, args);
+			return true;
 		}
 
 		//
 		// Initializes the symbol writer
 		//
-		static void InitializeSymbolWriter (string basename, string[] args)
+		static void InitializeSymbolWriter (string basename, string output_file,
+						    string[] args)
 		{
 			SymbolWriter = ModuleBuilder.GetSymWriter ();
 
 			//
 			// If we got an ISymbolWriter instance, initialize it.
 			//
-			if (SymbolWriter == null)
+			if (SymbolWriter == null) {
+				Report.Error (
+					-18, "Cannot find any symbol writer");
 				return;
+			}
 			
 			//
 			// Due to lacking documentation about the first argument of the
@@ -115,7 +123,9 @@ namespace Mono.CSharp {
 			
 			switch (sym_type.Name){
 			case "MonoSymbolWriter":
-				InitMonoSymbolWriter (basename, args);
+				if (!InitMonoSymbolWriter (basename, output_file, args))
+					Report.Error (
+						-18, "Cannot initialize the symbol writer");
 				break;
 
 			default:
@@ -151,8 +161,17 @@ namespace Mono.CSharp {
 			ModuleBuilder = AssemblyBuilder.DefineDynamicModule (
 				Basename (name), Basename (output), want_debugging_support);
 
-			if (want_debugging_support)
-				InitializeSymbolWriter (an.Name, debug_args);
+			if (want_debugging_support) {
+				int pos = output.LastIndexOf (".");
+
+				string basename;
+				if (pos > 0)
+					basename = output.Substring (0, pos);
+				else
+					basename = output;
+
+				InitializeSymbolWriter (basename, output, debug_args);
+			}
 		}
 
 		static public void Save (string name)
@@ -211,6 +230,11 @@ namespace Mono.CSharp {
 		///   Whether we are emitting code inside a static or instance method
 		/// </summary>
 		public bool IsStatic;
+
+		/// <summary>
+		///   Whether we are emitting a field initializer
+		/// </summary>
+		public bool IsFieldInitializer;
 
 		/// <summary>
 		///   The value that is allowed to be returned or NULL if there is no
@@ -290,13 +314,6 @@ namespace Mono.CSharp {
 		public Location loc;
 
 		/// <summary>
-		///   Used to "flag" the resolution process to only lookup types,
-		///   and nothing else.  This is an out-of-band communication
-		///   path to SimpleName from the cast operation.
-		/// </summary>
-		public bool OnlyLookupTypes;
-
-		/// <summary>
 		///   Used to flag that it is ok to define types recursively, as the
 		///   expressions are being evaluated as part of the type lookup
 		///   during the type resolution process
@@ -332,10 +349,12 @@ namespace Mono.CSharp {
 			
 			if (parent != null){
 				// Can only be null for the ResolveType contexts.
-			ContainerType = parent.TypeBuilder;
-			InUnsafe = ((parent.ModFlags | code_flags) & Modifiers.UNSAFE) != 0;
+				ContainerType = parent.TypeBuilder;
+				if (parent.UnsafeContext)
+					InUnsafe = true;
+				else
+					InUnsafe = (code_flags & Modifiers.UNSAFE) != 0;
 			}
-			OnlyLookupTypes = false;
 			loc = l;
 
 			FlowStack = new Stack ();
@@ -623,8 +642,14 @@ namespace Mono.CSharp {
 		public Expression my_this;
 		public Expression This {
 			get {
-				if (my_this == null)
-					my_this = new This (loc).Resolve (this);
+				if (my_this == null) {
+					if (CurrentBlock != null)
+						my_this = new This (CurrentBlock, loc);
+					else
+						my_this = new This (loc);
+
+					my_this = my_this.Resolve (this);
+				}
 
 				return my_this;
 			}

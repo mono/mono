@@ -123,6 +123,18 @@ namespace Mono.CSharp {
 			Warning (code, Location.Null, text);
 		}
 
+		static public void Warning (int code, int level, string text)
+		{
+			if (RootContext.WarningLevel >= level)
+				Warning (code, Location.Null, text);
+		}
+
+		static public void Warning (int code, int level, Location l, string text)
+		{
+			if (RootContext.WarningLevel >= level)
+				Warning (code, l, text);
+		}
+
 		static public void Error (int code, string text)
 		{
 			string msg = String.Format ("error CS{0:0000}: {1}", code, text);
@@ -184,12 +196,34 @@ namespace Mono.CSharp {
 						sb.Append (",");
 					if (arg == null)
 						sb.Append ("null");
+					else if (arg is ICollection)
+						sb.Append (PrintCollection ((ICollection) arg));
 					else
 						sb.Append (arg);
 				}
 			}
 
 			Console.WriteLine (sb.ToString ());
+		}
+
+		static public string PrintCollection (ICollection collection)
+		{
+			StringBuilder sb = new StringBuilder ();
+
+			sb.Append (collection.GetType ());
+			sb.Append ("(");
+
+			bool first = true;
+			foreach (object o in collection) {
+				if (first)
+					first = false;
+				else
+					sb.Append (",");
+				sb.Append (o);
+			}
+
+			sb.Append (")");
+			return sb.ToString ();
 		}
 	}
 
@@ -224,6 +258,102 @@ namespace Mono.CSharp {
 			Console.WriteLine (error);
 		}
 	}
+
+	public enum TimerType {
+		FindMembers	= 0,
+		TcFindMembers	= 1,
+		MemberLookup	= 2,
+		CachedLookup	= 3,
+		CacheInit	= 4,
+		MiscTimer	= 5,
+		CountTimers	= 6
+	}
+
+	public enum CounterType {
+		FindMembers	= 0,
+		MemberCache	= 1,
+		MiscCounter	= 2,
+		CountCounters	= 3
+	}
+
+	public class Timer
+	{
+		static DateTime[] timer_start;
+		static TimeSpan[] timers;
+		static long[] timer_counters;
+		static long[] counters;
+
+		static Timer ()
+		{
+			timer_start = new DateTime [(int) TimerType.CountTimers];
+			timers = new TimeSpan [(int) TimerType.CountTimers];
+			timer_counters = new long [(int) TimerType.CountTimers];
+			counters = new long [(int) CounterType.CountCounters];
+
+			for (int i = 0; i < (int) TimerType.CountTimers; i++) {
+				timer_start [i] = DateTime.Now;
+				timers [i] = TimeSpan.Zero;
+			}
+		}
+
+		[Conditional("TIMER")]
+		static public void IncrementCounter (CounterType which)
+		{
+			++counters [(int) which];
+		}
+
+		[Conditional("TIMER")]
+		static public void StartTimer (TimerType which)
+		{
+			timer_start [(int) which] = DateTime.Now;
+		}
+
+		[Conditional("TIMER")]
+		static public void StopTimer (TimerType which)
+		{
+			timers [(int) which] += DateTime.Now - timer_start [(int) which];
+			++timer_counters [(int) which];
+		}
+
+		[Conditional("TIMER")]
+		static public void ShowTimers ()
+		{
+			ShowTimer (TimerType.FindMembers, "- FindMembers timer");
+			ShowTimer (TimerType.TcFindMembers, "- TypeContainer.FindMembers timer");
+			ShowTimer (TimerType.MemberLookup, "- MemberLookup timer");
+			ShowTimer (TimerType.CachedLookup, "- CachedLookup timer");
+			ShowTimer (TimerType.CacheInit, "- Cache init");
+			ShowTimer (TimerType.MiscTimer, "- Misc timer");
+
+			ShowCounter (CounterType.FindMembers, "- Find members");
+			ShowCounter (CounterType.MemberCache, "- Member cache");
+			ShowCounter (CounterType.MiscCounter, "- Misc counter");
+		}
+
+		static public void ShowCounter (CounterType which, string msg)
+		{
+			Console.WriteLine ("{0} {1}", counters [(int) which], msg);
+		}
+
+		static public void ShowTimer (TimerType which, string msg)
+		{
+			Console.WriteLine (
+				"[{0:00}:{1:000}] {2} (used {3} times)",
+				(int) timers [(int) which].TotalSeconds,
+				timers [(int) which].Milliseconds, msg,
+				timer_counters [(int) which]);
+		}
+	}
+
+	public class InternalErrorException : Exception {
+		public InternalErrorException ()
+			: base ("Internal error")
+		{
+		}
+
+		public InternalErrorException (string message)
+			: base (message)
+		{
+		}
+	}
 }
-
-

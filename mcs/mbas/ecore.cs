@@ -36,6 +36,34 @@ namespace Mono.CSharp {
 		Nothing, 
 	}
 
+	/// <remarks>
+	///   This is used to tell Resolve in which types of expressions we're
+	///   interested.
+	/// </remarks>
+	[Flags]
+	public enum ResolveFlags {
+		// Returns Value, Variable, PropertyAccess, EventAccess or IndexerAccess.
+		VariableOrValue		= 1,
+
+		// Returns a type expression.
+		Type			= 2,
+
+		// Returns a method group.
+		MethodGroup		= 4,
+
+		// Allows SimpleNames to be returned.
+		// This is used by MemberAccess to construct long names that can not be
+		// partially resolved (namespace-qualified names for example).
+		SimpleName		= 8,
+
+		// Mask of all the expression class flags.
+		MaskExprClass		= 15,
+
+		// Disable control flow analysis while resolving the expression.
+		// This is used when resolving the instance expression of a field expression.
+		DisableFlowAnalysis	= 16
+	}
+
 	//
 	// This is just as a hint to AddressOf of what will be done with the
 	// address.
@@ -62,6 +90,89 @@ namespace Mono.CSharp {
 		///   reporting, and should have no other side effects. 
 		/// </summary>
 		void AddressOf (EmitContext ec, AddressOp mode);
+	}
+
+	/// <summary>
+	///   This interface is implemented by variables
+	/// </summary>
+	public interface IVariable {
+		/// <summary>
+		///   Checks whether the variable has already been assigned at
+		///   the current position of the method's control flow and
+		///   reports an appropriate error message if not.
+		///
+		///   If the variable is a struct, then this call checks whether
+		///   all of its fields (including all private ones) have been
+		///   assigned.
+		/// </summary>
+		bool IsAssigned (EmitContext ec, Location loc);
+
+		/// <summary>
+		///   Checks whether field `name' in this struct has been assigned.
+		/// </summary>
+		bool IsFieldAssigned (EmitContext ec, string name, Location loc);
+
+		/// <summary>
+		///   Tells the flow analysis code that the variable has already
+		///   been assigned at the current code position.
+		///
+		///   If the variable is a struct, this call marks all its fields
+		///   (including private fields) as being assigned.
+		/// </summary>
+		void SetAssigned (EmitContext ec);
+
+		/// <summary>
+		///   Tells the flow analysis code that field `name' in this struct
+		///   has already been assigned atthe current code position.
+		/// </summary>
+		void SetFieldAssigned (EmitContext ec, string name);
+	}
+
+	/// <summary>
+	///   This interface denotes an expression which evaluates to a member
+	///   of a struct or a class.
+	/// </summary>
+	public interface IMemberExpr
+	{
+		/// <summary>
+		///   The name of this member.
+		/// </summary>
+		string Name {
+			get;
+		}
+
+		/// <summary>
+		///   Whether this is an instance member.
+		/// </summary>
+		bool IsInstance {
+			get;
+		}
+
+		/// <summary>
+		///   Whether this is a static member.
+		/// </summary>
+		bool IsStatic {
+			get;
+		}
+
+		/// <summary>
+		///   The instance expression associated with this member, if it's a
+		///   non-static member.
+		/// </summary>
+		Expression InstanceExpression {
+			get; set;
+		}
+	}
+
+	/// <summary>
+	///   Expression which resolves to a type.
+	/// </summary>
+	public interface ITypeExpression
+	{
+		/// <summary>
+		///   Resolve the expression, but only lookup types.
+		/// </summary>
+		Expression DoResolveType (EmitContext ec);
 	}
 
 	/// <remarks>
@@ -93,7 +204,7 @@ namespace Mono.CSharp {
 		/// </summary>
 		public void Error (int error, string s)
 		{
-			if (Location.IsNull (loc))
+			if (!Location.IsNull (loc))
 				Report.Error (error, loc, s);
 			else
 				Report.Error (error, s);
@@ -102,15 +213,19 @@ namespace Mono.CSharp {
 		/// <summary>
 		///   Utility wrapper routine for Warning, just to beautify the code
 		/// </summary>
-		protected void Warning (int warning, string s)
+		public void Warning (int warning, string s)
 		{
-			if (Location.IsNull (loc))
+			if (!Location.IsNull (loc))
 				Report.Warning (warning, loc, s);
 			else
 				Report.Warning (warning, s);
 		}
 
-		protected void Warning (int warning, int level, string s)
+		/// <summary>
+		///   Utility wrapper routine for Warning, only prints the warning if
+		///   warnings of level `level' are enabled.
+		/// </summary>
+		public void Warning (int warning, int level, string s)
 		{
 			if (level <= RootContext.WarningLevel)
 				Warning (warning, s);
@@ -165,72 +280,110 @@ namespace Mono.CSharp {
 		///   Currently Resolve wraps DoResolve to perform sanity
 		///   checking and assertion checking on what we expect from Resolve.
 		/// </remarks>
-		public Expression Resolve (EmitContext ec)
+		public Expression Resolve (EmitContext ec, ResolveFlags flags)
 		{
-			Expression e = DoResolve (ec);
+			// Are we doing a types-only search ?
+			if ((flags & ResolveFlags.MaskExprClass) == ResolveFlags.Type) {
+				ITypeExpression type_expr = this as ITypeExpression;
 
-			if (e != null){
-
-				if (e is SimpleName){
-					SimpleName s = (SimpleName) e;
-
-					Report.Error (
-						      103, loc,
-						      "The name `" + s.Name + "' could not be found in `" +
-						      ec.DeclSpace.Name + "'");
+				if (type_expr == null)
 					return null;
-				}
-				
-				if (e.eclass == ExprClass.Invalid)
-					throw new Exception ("Expression " + e.GetType () +
-							     " ExprClass is Invalid after resolve");
 
-				if (e.eclass != ExprClass.MethodGroup)
-					if (e.type == null)
-						throw new Exception (
-							"Expression " + e.GetType () +
-							" did not set its type after Resolve\n" +
-							"called from: " + this.GetType ());
+				return type_expr.DoResolveType (ec);
 			}
 
-			return e;
-		}
+			bool old_do_flow_analysis = ec.DoFlowAnalysis;
+			if ((flags & ResolveFlags.DisableFlowAnalysis) != 0)
+				ec.DoFlowAnalysis = false;
 
-		/// <summary>
-		///   Performs expression resolution and semantic analysis, but
-		///   allows SimpleNames to be returned.
-		/// </summary>
-		///
-		/// <remarks>
-		///   This is used by MemberAccess to construct long names that can not be
-		///   partially resolved (namespace-qualified names for example).
-		/// </remarks>
-		public Expression ResolveWithSimpleName (EmitContext ec)
-		{
 			Expression e;
-
 			if (this is SimpleName)
 				e = ((SimpleName) this).DoResolveAllowStatic (ec);
 			else 
 				e = DoResolve (ec);
 
-			if (e != null){
-				if (e is SimpleName)
-					return e;
+			ec.DoFlowAnalysis = old_do_flow_analysis;
 
-				if (e.eclass == ExprClass.Invalid)
-					throw new Exception ("Expression " + e +
-							     " ExprClass is Invalid after resolve");
+			if (e == null)
+				return null;
 
-				if (e.eclass != ExprClass.MethodGroup)
-					if (e.type == null)
-						throw new Exception ("Expression " + e +
-								     " did not set its type after Resolve");
+			if (e is SimpleName){
+				SimpleName s = (SimpleName) e;
+
+				if ((flags & ResolveFlags.SimpleName) == 0) {
+
+					object lookup = TypeManager.MemberLookup (
+						ec.ContainerType, ec.ContainerType, AllMemberTypes,
+						AllBindingFlags | BindingFlags.NonPublic, s.Name);
+					if (lookup != null)
+						Error (122, "`" + s.Name + "' " +
+						       "is inaccessible because of its protection level");
+					else
+						Error (103, "The name `" + s.Name + "' could not be " +
+						       "found in `" + ec.DeclSpace.Name + "'");
+					return null;
+				}
+
+				return s;
 			}
+
+			if ((e is TypeExpr) || (e is ComposedCast)) {
+				if ((flags & ResolveFlags.Type) == 0) {
+					e.Error118 (flags);
+					return null;
+				}
+
+				return e;
+			}
+
+			switch (e.eclass) {
+			case ExprClass.Type:
+				if ((flags & ResolveFlags.VariableOrValue) == 0) {
+					e.Error118 (flags);
+					return null;
+				}
+				break;
+
+			case ExprClass.MethodGroup:
+				if ((flags & ResolveFlags.MethodGroup) == 0) {
+					((MethodGroupExpr) e).ReportUsageError ();
+					return null;
+				}
+				break;
+
+			case ExprClass.Value:
+			case ExprClass.Variable:
+			case ExprClass.PropertyAccess:
+			case ExprClass.EventAccess:
+			case ExprClass.IndexerAccess:
+				if ((flags & ResolveFlags.VariableOrValue) == 0) {
+					e.Error118 (flags);
+					return null;
+				}
+				break;
+
+			default:
+				throw new Exception ("Expression " + e.GetType () +
+						     " ExprClass is Invalid after resolve");
+			}
+
+			if (e.type == null)
+				throw new Exception (
+					"Expression " + e.GetType () +
+					" did not set its type after Resolve\n" +
+					"called from: " + this.GetType ());
 
 			return e;
 		}
-		
+
+		/// <summary>
+		///   Resolves an expression and performs semantic analysis on it.
+		/// </summary>
+		public Expression Resolve (EmitContext ec)
+		{
+			return Resolve (ec, ResolveFlags.VariableOrValue);
+		}
+
 		/// <summary>
 		///   Resolves an expression for LValue assignment
 		/// </summary>
@@ -258,10 +411,14 @@ namespace Mono.CSharp {
 					throw new Exception ("Expression " + e +
 							     " ExprClass is Invalid after resolve");
 
-				if (e.eclass != ExprClass.MethodGroup)
-					if (e.type == null)
-						throw new Exception ("Expression " + e +
-								     " did not set its type after Resolve");
+				if (e.eclass == ExprClass.MethodGroup) {
+					((MethodGroupExpr) e).ReportUsageError ();
+					return null;
+				}
+
+				if (e.type == null)
+					throw new Exception ("Expression " + e +
+							     " did not set its type after Resolve");
 			}
 
 			return e;
@@ -387,7 +544,23 @@ namespace Mono.CSharp {
 		public static Expression MemberLookup (EmitContext ec, Type t, string name,
 						       MemberTypes mt, BindingFlags bf, Location loc)
 		{
-			MemberInfo [] mi = TypeManager.MemberLookup (ec.ContainerType, t, mt, bf, name);
+			return MemberLookup (ec, ec.ContainerType, t, name, mt, bf, loc);
+		}
+
+		//
+		// Lookup type `t' for code in class `invocation_type'.  Note that it's important
+		// to set `invocation_type' correctly since this method also checks whether the
+		// invoking class is allowed to access the member in class `t'.  When you want to
+		// explicitly do a lookup in the base class, you must set both `t' and `invocation_type'
+		// to the base class (although a derived class can access protected members of its base
+		// class it cannot do so through an instance of the base class (error CS1540)).
+		// 
+
+		public static Expression MemberLookup (EmitContext ec, Type invocation_type, Type t,
+						       string name, MemberTypes mt, BindingFlags bf,
+						       Location loc)
+		{
+			MemberInfo [] mi = TypeManager.MemberLookup (invocation_type, t, mt, bf, name);
 
 			if (mi == null)
 				return null;
@@ -418,12 +591,14 @@ namespace Mono.CSharp {
 
 		public static Expression MemberLookup (EmitContext ec, Type t, string name, Location loc)
 		{
-			return MemberLookup (ec, t, name, AllMemberTypes, AllBindingFlags, loc);
+			return MemberLookup (ec, ec.ContainerType, t, name,
+					     AllMemberTypes, AllBindingFlags, loc);
 		}
 
 		public static Expression MethodLookup (EmitContext ec, Type t, string name, Location loc)
 		{
-			return MemberLookup (ec, t, name, MemberTypes.Method, AllBindingFlags, loc);
+			return MemberLookup (ec, ec.ContainerType, t, name,
+					     MemberTypes.Method, AllBindingFlags, loc);
 		}
 
 		/// <summary>
@@ -445,7 +620,7 @@ namespace Mono.CSharp {
 
 			int errors = Report.Errors;
 
-			e = MemberLookup (ec, t, name, mt, bf, loc);
+			e = MemberLookup (ec, ec.ContainerType, t, name, mt, bf, loc);
 
 			if (e != null)
 				return e;
@@ -880,6 +1055,9 @@ namespace Mono.CSharp {
 		public static bool StandardConversionExists (Expression expr, Type target_type)
 		{
 			Type expr_type = expr.Type;
+
+			if (expr_type == TypeManager.void_type)
+				return false;
 			
 			if (expr_type == target_type)
 				return true;
@@ -1042,6 +1220,7 @@ namespace Mono.CSharp {
 				if (i.Value == 0)
 					return true;
 			}
+
 			return false;
 		}
 
@@ -2177,6 +2356,42 @@ namespace Mono.CSharp {
 			       "' where a `" + expected + "' was expected");
 		}
 
+		public void Error118 (ResolveFlags flags)
+		{
+			ArrayList valid = new ArrayList (10);
+
+			if ((flags & ResolveFlags.VariableOrValue) != 0) {
+				valid.Add ("variable");
+				valid.Add ("value");
+			}
+
+			if ((flags & ResolveFlags.Type) != 0)
+				valid.Add ("type");
+
+			if ((flags & ResolveFlags.MethodGroup) != 0)
+				valid.Add ("method group");
+
+			if ((flags & ResolveFlags.SimpleName) != 0)
+				valid.Add ("simple name");
+
+			if (valid.Count == 0)
+				valid.Add ("unknown");
+
+			StringBuilder sb = new StringBuilder ();
+			for (int i = 0; i < valid.Count; i++) {
+				if (i > 0)
+					sb.Append (", ");
+				else if (i == valid.Count)
+					sb.Append (" or ");
+				sb.Append (valid [i]);
+			}
+
+			string kind = ExprClassName (eclass);
+
+			Error (119, "Expression denotes a `" + kind + "' where " +
+			       "a `" + sb.ToString () + "' was expected");
+		}
+		
 		static void Error_ConstantValueCannotBeConverted (Location l, string val, Type t)
 		{
 			Report.Error (31, l, "Constant value `" + val + "' cannot be converted to " +
@@ -3156,7 +3371,7 @@ namespace Mono.CSharp {
 	///   The downside of this is that we might be hitting `LookupType' too many
 	///   times with this scheme.
 	/// </remarks>
-	public class SimpleName : Expression {
+	public class SimpleName : Expression, ITypeExpression {
 		public readonly string Name;
 		
 		public SimpleName (string name, Location l)
@@ -3165,43 +3380,31 @@ namespace Mono.CSharp {
 			loc = l;
 		}
 
-		public static void Error_ObjectRefRequired (Location l, string name)
+		public static void Error_ObjectRefRequired (EmitContext ec, Location l, string name)
 		{
-			Report.Error (
-				120, l,
-				"An object reference is required " +
-				"for the non-static field `"+name+"'");
+			if (ec.IsFieldInitializer)
+				Report.Error (
+					236, l,
+					"A field initializer cannot reference the non-static field, " +
+					"method or property `"+name+"'");
+			else
+				Report.Error (
+					120, l,
+					"An object reference is required " +
+					"for the non-static field `"+name+"'");
 		}
 		
 		//
 		// Checks whether we are trying to access an instance
 		// property, method or field from a static body.
 		//
-		Expression MemberStaticCheck (Expression e)
+		Expression MemberStaticCheck (EmitContext ec, Expression e)
 		{
-			if (e is FieldExpr){
-				FieldInfo fi = ((FieldExpr) e).FieldInfo;
+			if (e is IMemberExpr){
+				IMemberExpr member = (IMemberExpr) e;
 				
-				if (!fi.IsStatic){
-					Error_ObjectRefRequired (loc, Name);
-					return null;
-				}
-			} else if (e is MethodGroupExpr){
-				MethodGroupExpr mg = (MethodGroupExpr) e;
-
-				if (!mg.RemoveInstanceMethods ()){
-					Error_ObjectRefRequired (loc, mg.Methods [0].Name);
-					return null;
-				}
-				return e;
-			} else if (e is PropertyExpr){
-				if (!((PropertyExpr) e).IsStatic){
-					Error_ObjectRefRequired (loc, Name);
-					return null;
-				}
-			} else if (e is EventExpr) {
-				if (!((EventExpr) e).IsStatic) {
-					Error_ObjectRefRequired (loc, Name);
+				if (!member.IsStatic){
+					Error_ObjectRefRequired (ec, loc, Name);
 					return null;
 				}
 			}
@@ -3223,6 +3426,47 @@ namespace Mono.CSharp {
 		public Expression DoResolveAllowStatic (EmitContext ec)
 		{
 			return SimpleNameResolve (ec, null, true);
+		}
+
+		public Expression DoResolveType (EmitContext ec)
+		{
+			//
+			// Stage 3: Lookup symbol in the various namespaces. 
+			//
+			DeclSpace ds = ec.DeclSpace;
+			Type t;
+			string alias_value;
+
+			if ((t = RootContext.LookupType (ds, Name, true, loc)) != null)
+				return new TypeExpr (t, loc);
+				
+			//
+			// Stage 2 part b: Lookup up if we are an alias to a type
+			// or a namespace.
+			//
+			// Since we are cheating: we only do the Alias lookup for
+			// namespaces if the name does not include any dots in it
+			//
+				
+			alias_value = ec.DeclSpace.LookupAlias (Name);
+				
+			if (Name.IndexOf ('.') == -1 && alias_value != null) {
+				if ((t = RootContext.LookupType (ds, alias_value, true, loc)) != null)
+					return new TypeExpr (t, loc);
+					
+				// we have alias value, but it isn't Type, so try if it's namespace
+				return new SimpleName (alias_value, loc);
+			}
+				
+			if (ec.ResolvingTypeTree){
+				Type dt = ec.DeclSpace.FindType (Name);
+				if (dt != null)
+					return new TypeExpr (dt, loc);
+			}
+
+			// No match, maybe our parent can compose us
+			// into something meaningful.
+			return this;
 		}
 
 		/// <remarks>
@@ -3249,243 +3493,103 @@ namespace Mono.CSharp {
 			//
 			// Stage 1: Performed by the parser (binding to locals or parameters).
 			//
-			if (!ec.OnlyLookupTypes){
-				Block current_block = ec.CurrentBlock;
-				if (current_block != null && current_block.IsVariableDefined (Name)){
-					LocalVariableReference var;
+			Block current_block = ec.CurrentBlock;
+			if (current_block != null && current_block.IsVariableDefined (Name)){
+				LocalVariableReference var;
+
+				var = new LocalVariableReference (ec.CurrentBlock, Name, loc);
+
+				if (right_side != null)
+					return var.ResolveLValue (ec, right_side);
+				else
+					return var.Resolve (ec);
+			}
+
+			if (current_block != null){
+				int idx = -1;
+				Parameter par = null;
+				Parameters pars = current_block.Parameters;
+				if (pars != null)
+					par = pars.GetParameterByName (Name, out idx);
+
+				if (par != null) {
+					ParameterReference param;
 					
-					var = new LocalVariableReference (ec.CurrentBlock, Name, loc);
+					param = new ParameterReference (pars, idx, Name, loc);
 
 					if (right_side != null)
-						return var.ResolveLValue (ec, right_side);
+						return param.ResolveLValue (ec, right_side);
 					else
-						return var.Resolve (ec);
+						return param.Resolve (ec);
 				}
-			
-				//
-				// Stage 2: Lookup members 
-				//
-
-				//
-				// For enums, the TypeBuilder is not ec.DeclSpace.TypeBuilder
-				// Hence we have two different cases
-				//
-
-				DeclSpace lookup_ds = ec.DeclSpace;
-				do {
-					if (lookup_ds.TypeBuilder == null)
-						break;
-
-					e = MemberLookup (ec, lookup_ds.TypeBuilder, Name, loc);
-					if (e != null)
-						break;
-
-					//
-					// Classes/structs keep looking, enums break
-					//
-					if (lookup_ds is TypeContainer)
-						lookup_ds = ((TypeContainer) lookup_ds).Parent;
-					else
-						break;
-				} while (lookup_ds != null);
-				
-				if (e == null && ec.ContainerType != null)
-					e = MemberLookup (ec, ec.ContainerType, Name, loc);
 			}
 
-			// Continuation of stage 2
-			if (e == null){
-				//
-				// Stage 3: Lookup symbol in the various namespaces. 
-				//
-				DeclSpace ds = ec.DeclSpace;
-				Type t;
-				string alias_value;
-
-				if ((t = RootContext.LookupType (ds, Name, true, loc)) != null)
-					return new TypeExpr (t, loc);
-				
-				//
-				// Stage 2 part b: Lookup up if we are an alias to a type
-				// or a namespace.
-				//
-				// Since we are cheating: we only do the Alias lookup for
-				// namespaces if the name does not include any dots in it
-				//
-				
-				alias_value = ec.DeclSpace.LookupAlias (Name);
-				
-				if (Name.IndexOf ('.') == -1 && alias_value != null) {
-					if ((t = RootContext.LookupType (ds, alias_value, true, loc))
-					    != null)
-						return new TypeExpr (t, loc);
-					
-				// we have alias value, but it isn't Type, so try if it's namespace
-					return new SimpleName (alias_value, loc);
-				}
-				
-				if (ec.ResolvingTypeTree){
-					Type dt = ec.DeclSpace.FindType (Name);
-					if (dt != null)
-						return new TypeExpr (dt, loc);
-				}
-				
-				// No match, maybe our parent can compose us
-				// into something meaningful.
-				return this;
-			}
-			
 			//
-			// Stage 2 continues here. 
-			// 
+			// Stage 2: Lookup members 
+			//
+
+			//
+			// For enums, the TypeBuilder is not ec.DeclSpace.TypeBuilder
+			// Hence we have two different cases
+			//
+
+			DeclSpace lookup_ds = ec.DeclSpace;
+			do {
+				if (lookup_ds.TypeBuilder == null)
+					break;
+
+				e = MemberLookup (ec, lookup_ds.TypeBuilder, Name, loc);
+				if (e != null)
+					break;
+
+				//
+				// Classes/structs keep looking, enums break
+				//
+				if (lookup_ds is TypeContainer)
+					lookup_ds = ((TypeContainer) lookup_ds).Parent;
+				else
+					break;
+			} while (lookup_ds != null);
+				
+			if (e == null && ec.ContainerType != null)
+				e = MemberLookup (ec, ec.ContainerType, Name, loc);
+
+			if (e == null)
+				return DoResolveType (ec);
+
 			if (e is TypeExpr)
 				return e;
 
-			if (ec.OnlyLookupTypes)
-				return null;
-			
-			if (e is FieldExpr){
-				FieldExpr fe = (FieldExpr) e;
-				FieldInfo fi = fe.FieldInfo;
+			if (e is IMemberExpr) {
+				e = MemberAccess.ResolveMemberAccess (ec, e, null, loc, this);
+				if (e == null)
+					return null;
 
-				if (fi.FieldType.IsPointer && !ec.InUnsafe){
-					UnsafeError (loc);
-				}
-				
-				if (ec.IsStatic){
-					if (!allow_static && !fi.IsStatic){
-						Error_ObjectRefRequired (loc, Name);
-						return null;
-					}
-				} else {
-					// If we are not in static code and this
-					// field is not static, set the instance to `this'.
+				IMemberExpr me = e as IMemberExpr;
+				if (me == null)
+					return e;
 
-					if (!fi.IsStatic)
-						fe.InstanceExpression = ec.This;
-				}
+				// This fails if ResolveMemberAccess() was unable to decide whether
+				// it's a field or a type of the same name.
+				if (!me.IsStatic && (me.InstanceExpression == null))
+					return e;
 
-				
-				if (fi is FieldBuilder) {
-					Const c = TypeManager.LookupConstant ((FieldBuilder) fi);
-					
-					if (c != null) {
-						object o = c.LookupConstantValue (ec);
-						if (o == null)
-							return null;
-						object real_value = ((Constant)c.Expr).GetValue ();
-						return Constantify (real_value, fi.FieldType);
-					}
-				}
+				if (right_side != null)
+					e = e.DoResolveLValue (ec, right_side);
+				else
+					e = e.DoResolve (ec);
 
-				if (fi.IsLiteral) {
-					Type t = fi.FieldType;
-					Type decl_type = fi.DeclaringType;
-					object o;
-
-					if (fi is FieldBuilder)
-						o = TypeManager.GetValue ((FieldBuilder) fi);
-					else
-						o = fi.GetValue (fi);
-					
-					if (decl_type.IsSubclassOf (TypeManager.enum_type)) {
-						Expression enum_member = MemberLookup (
-							ec, decl_type, "value__", MemberTypes.Field,
-							AllBindingFlags, loc); 
-
-						Enum en = TypeManager.LookupEnum (decl_type);
-
-						Constant c;
-						if (en != null)
-							c = Constantify (o, en.UnderlyingType);
-						else 
-							c = Constantify (o, enum_member.Type);
-						
-						return new EnumConstant (c, decl_type);
-					}
-					
-					Expression exp = Constantify (o, t);
-				}
-					
-				return e;
+				return e;				
 			}
 
-			if (e is PropertyExpr) {
-				PropertyExpr pe = (PropertyExpr) e;
-
-				if (ec.IsStatic){
-					if (allow_static)
-						return e;
-
-					return MemberStaticCheck (e);
-				} else {
-					// If we are not in static code and this
-					// field is not static, set the instance to `this'.
-
-					if (!pe.IsStatic)
-						pe.InstanceExpression = ec.This;
-				}
-
-				return e;
-			}
-
-			if (e is EventExpr) {
-				//
-				// If the event is local to this class, we transform ourselves into
-				// a FieldExpr
-				//
-				EventExpr ee = (EventExpr) e;
-
-				Expression ml = MemberLookup (
-					ec, ec.ContainerType, ee.EventInfo.Name,
-					MemberTypes.Event, AllBindingFlags | BindingFlags.DeclaredOnly, loc);
-
-				if (ml != null) {
-					MemberInfo mi = GetFieldFromEvent ((EventExpr) ml);
-
-					if (mi == null) {
-						//
-						// If this happens, then we have an event with its own
-						// accessors and private field etc so there's no need
-						// to transform ourselves : we should instead flag an error
-						//
-						Assign.error70 (ee.EventInfo, loc);
-						return null;
-					}
-
-					ml = ExprClassFromMemberInfo (ec, mi, loc);
-					
-					if (ml == null) {
-						Report.Error (-200, loc, "Internal error!!");
-						return null;
-					}
-
-					Expression instance_expr;
-					
-					FieldInfo fi = ((FieldExpr) ml).FieldInfo;
-
-					if (fi.IsStatic)
-						instance_expr = null;
-					else {
-						instance_expr = ec.This;
-						instance_expr = instance_expr.Resolve (ec);
-					} 
-					
-					return MemberAccess.ResolveMemberAccess (ec, ml, instance_expr, loc, null);
-				}
-			}
-				
-			
-			if (ec.IsStatic){
+			if (ec.IsStatic || ec.IsFieldInitializer){
 				if (allow_static)
 					return e;
 
-				return MemberStaticCheck (e);
+				return MemberStaticCheck (ec, e);
 			} else
 				return e;
 		}
-
-		
 		
 		public override void Emit (EmitContext ec)
 		{
@@ -3508,12 +3612,17 @@ namespace Mono.CSharp {
 	/// <summary>
 	///   Fully resolved expression that evaluates to a type
 	/// </summary>
-	public class TypeExpr : Expression {
+	public class TypeExpr : Expression, ITypeExpression {
 		public TypeExpr (Type t, Location l)
 		{
 			Type = t;
 			eclass = ExprClass.Type;
 			loc = l;
+		}
+
+		public virtual Expression DoResolveType (EmitContext ec)
+		{
+			return this;
 		}
 
 		override public Expression DoResolve (EmitContext ec)
@@ -3525,31 +3634,41 @@ namespace Mono.CSharp {
 		{
 			throw new Exception ("Should never be called");
 		}
+
+		public override string ToString ()
+		{
+			return Type.ToString ();
+		}
 	}
 
 	/// <summary>
 	///   Used to create types from a fully qualified name.  These are just used
-	///   by the parser to setup the core types.  A TypeExpression is always
+	///   by the parser to setup the core types.  A TypeLookupExpression is always
 	///   classified as a type.
 	/// </summary>
-	public class TypeExpression : TypeExpr {
+	public class TypeLookupExpression : TypeExpr {
 		string name;
 		
-		public TypeExpression (string name) : base (null, Location.Null)
+		public TypeLookupExpression (string name) : base (null, Location.Null)
 		{
 			this.name = name;
 		}
 
-		public override Expression DoResolve (EmitContext ec)
+		public override Expression DoResolveType (EmitContext ec)
 		{
 			if (type == null)
 				type = RootContext.LookupType (ec.DeclSpace, name, false, Location.Null);
 			return this;
 		}
 
+		public override Expression DoResolve (EmitContext ec)
+		{
+			return DoResolveType (ec);
+		}
+
 		public override void Emit (EmitContext ec)
 		{
-			throw new Exception ("Should never be called");			
+			throw new Exception ("Should never be called");
 		}
 
 		public override string ToString ()
@@ -3563,9 +3682,10 @@ namespace Mono.CSharp {
 	///  
 	///   This is a fully resolved expression that evaluates to a type
 	/// </summary>
-	public class MethodGroupExpr : Expression {
+	public class MethodGroupExpr : Expression, IMemberExpr {
 		public MethodBase [] Methods;
 		Expression instance_expression = null;
+		bool is_explicit_impl = false;
 		
 		public MethodGroupExpr (MemberInfo [] mi, Location l)
 		{
@@ -3606,6 +3726,42 @@ namespace Mono.CSharp {
 
 			set {
 				instance_expression = value;
+			}
+		}
+
+		public bool IsExplicitImpl {
+			get {
+				return is_explicit_impl;
+			}
+
+			set {
+				is_explicit_impl = value;
+			}
+		}
+
+		public string Name {
+			get {
+				return Methods [0].Name;
+			}
+		}
+
+		public bool IsInstance {
+			get {
+				foreach (MethodBase mb in Methods)
+					if (!mb.IsStatic)
+						return true;
+
+				return false;
+			}
+		}
+
+		public bool IsStatic {
+			get {
+				foreach (MethodBase mb in Methods)
+					if (mb.IsStatic)
+						return true;
+
+				return false;
 			}
 		}
 		
@@ -3665,9 +3821,9 @@ namespace Mono.CSharp {
 	/// <summary>
 	///   Fully resolved expression that evaluates to a Field
 	/// </summary>
-	public class FieldExpr : Expression, IAssignMethod, IMemoryLocation {
+	public class FieldExpr : Expression, IAssignMethod, IMemoryLocation, IMemberExpr {
 		public readonly FieldInfo FieldInfo;
-		public Expression InstanceExpression;
+		Expression instance_expr;
 		
 		public FieldExpr (FieldInfo fi, Location l)
 		{
@@ -3677,19 +3833,56 @@ namespace Mono.CSharp {
 			loc = l;
 		}
 
+		public string Name {
+			get {
+				return FieldInfo.Name;
+			}
+		}
+
+		public bool IsInstance {
+			get {
+				return !FieldInfo.IsStatic;
+			}
+		}
+
+		public bool IsStatic {
+			get {
+				return FieldInfo.IsStatic;
+			}
+		}
+
+		public Expression InstanceExpression {
+			get {
+				return instance_expr;
+			}
+
+			set {
+				instance_expr = value;
+			}
+		}
+
 		override public Expression DoResolve (EmitContext ec)
 		{
 			if (!FieldInfo.IsStatic){
-				if (InstanceExpression == null){
+				if (instance_expr == null){
 					throw new Exception ("non-static FieldExpr without instance var\n" +
 							     "You have to assign the Instance variable\n" +
 							     "Of the FieldExpr to set this\n");
 				}
 
-				InstanceExpression = InstanceExpression.Resolve (ec);
-				if (InstanceExpression == null)
+				// Resolve the field's instance expression while flow analysis is turned
+				// off: when accessing a field "a.b", we must check whether the field
+				// "a.b" is initialized, not whether the whole struct "a" is initialized.
+				instance_expr = instance_expr.Resolve (ec, ResolveFlags.VariableOrValue |
+								       ResolveFlags.DisableFlowAnalysis);
+				if (instance_expr == null)
 					return null;
 			}
+
+			// If the instance expression is a local variable or parameter.
+			IVariable var = instance_expr as IVariable;
+			if ((var != null) && !var.IsFieldAssigned (ec, FieldInfo.Name, loc))
+				return null;
 
 			return this;
 		}
@@ -3710,6 +3903,10 @@ namespace Mono.CSharp {
 		
 		override public Expression DoResolveLValue (EmitContext ec, Expression right_side)
 		{
+			IVariable var = instance_expr as IVariable;
+			if (var != null)
+				var.SetFieldAssigned (ec, FieldInfo.Name);
+
 			Expression e = DoResolve (ec);
 
 			if (e == null)
@@ -3734,7 +3931,7 @@ namespace Mono.CSharp {
 		{
 			ILGenerator ig = ec.ig;
 			bool is_volatile = false;
-				
+
 			if (FieldInfo is FieldBuilder){
 				FieldBase f = TypeManager.GetField (FieldInfo);
 
@@ -3750,23 +3947,23 @@ namespace Mono.CSharp {
 				
 				ig.Emit (OpCodes.Ldsfld, FieldInfo);
 			} else {
-				if (InstanceExpression.Type.IsValueType){
+				if (instance_expr.Type.IsValueType){
 					IMemoryLocation ml;
 					LocalTemporary tempo = null;
 					
-					if (!(InstanceExpression is IMemoryLocation)){
+					if (!(instance_expr is IMemoryLocation)){
 						tempo = new LocalTemporary (
-							ec, InstanceExpression.Type);
+							ec, instance_expr.Type);
 
 						InstanceExpression.Emit (ec);
 						tempo.Store (ec);
 						ml = tempo;
 					} else
-						ml = (IMemoryLocation) InstanceExpression;
+						ml = (IMemoryLocation) instance_expr;
 
 					ml.AddressOf (ec, AddressOp.Load);
 				} else 
-					InstanceExpression.Emit (ec);
+					instance_expr.Emit (ec);
 
 				if (is_volatile)
 					ig.Emit (OpCodes.Volatile);
@@ -3788,7 +3985,7 @@ namespace Mono.CSharp {
 			}
 			
 			if (!is_static){
-				Expression instance = InstanceExpression;
+				Expression instance = instance_expr;
 
 				if (instance.Type.IsValueType){
 					if (instance is IMemoryLocation){
@@ -3864,10 +4061,10 @@ namespace Mono.CSharp {
 			if (FieldInfo.IsStatic)
 				ig.Emit (OpCodes.Ldsflda, FieldInfo);
 			else {
-				if (InstanceExpression is IMemoryLocation)
-					((IMemoryLocation)InstanceExpression).AddressOf (ec, AddressOp.LoadStore);
+				if (instance_expr is IMemoryLocation)
+					((IMemoryLocation)instance_expr).AddressOf (ec, AddressOp.LoadStore);
 				else
-					InstanceExpression.Emit (ec);
+					instance_expr.Emit (ec);
 				ig.Emit (OpCodes.Ldflda, FieldInfo);
 			}
 		}
@@ -3880,19 +4077,19 @@ namespace Mono.CSharp {
 	///   This is not an LValue because we need to re-write the expression, we
 	///   can not take data from the stack and store it.  
 	/// </summary>
-	public class PropertyExpr : ExpressionStatement, IAssignMethod {
+	public class PropertyExpr : ExpressionStatement, IAssignMethod, IMemberExpr {
 		public readonly PropertyInfo PropertyInfo;
-		public readonly bool IsStatic;
 		public bool IsBase;
 		MethodInfo [] Accessors;
+		bool is_static;
 		
 		Expression instance_expr;
-		
+
 		public PropertyExpr (PropertyInfo pi, Location l)
 		{
 			PropertyInfo = pi;
 			eclass = ExprClass.PropertyAccess;
-			IsStatic = false;
+			is_static = false;
 			loc = l;
 			Accessors = TypeManager.GetAccessors (pi);
 
@@ -3900,7 +4097,7 @@ namespace Mono.CSharp {
 				foreach (MethodInfo mi in Accessors){
 					if (mi != null)
 						if (mi.IsStatic)
-							IsStatic = true;
+							is_static = true;
 				}
 			else
 				Accessors = new MethodInfo [2];
@@ -3908,6 +4105,24 @@ namespace Mono.CSharp {
 			type = TypeManager.TypeToCoreType (pi.PropertyType);
 		}
 
+		public string Name {
+			get {
+				return PropertyInfo.Name;
+			}
+		}
+
+		public bool IsInstance {
+			get {
+				return !is_static;
+			}
+		}
+
+		public bool IsStatic {
+			get {
+				return is_static;
+			}
+		}
+		
 		//
 		// The instance expression associated with this expression
 		//
@@ -3943,7 +4158,18 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			type = PropertyInfo.PropertyType;
+			return this;
+		}
+
+		override public Expression DoResolveLValue (EmitContext ec, Expression right_side)
+		{
+			if (!PropertyInfo.CanWrite){
+				Report.Error (154, loc, 
+					      "The property `" + PropertyInfo.Name +
+					      "' can not be used in " +
+					      "this context because it lacks a set accessor");
+				return null;
+			}
 
 			return this;
 		}
@@ -3995,12 +4221,11 @@ namespace Mono.CSharp {
 	/// <summary>
 	///   Fully resolved expression that evaluates to an Event
 	/// </summary>
-	public class EventExpr : Expression {
+	public class EventExpr : Expression, IMemberExpr {
 		public readonly EventInfo EventInfo;
-		public Expression InstanceExpression;
+		public Expression instance_expr;
 
-		public readonly bool IsStatic;
-
+		bool is_static;
 		MethodInfo add_accessor, remove_accessor;
 		
 		public EventExpr (EventInfo ei, Location loc)
@@ -4013,12 +4238,40 @@ namespace Mono.CSharp {
 			remove_accessor = TypeManager.GetRemoveMethod (ei);
 			
 			if (add_accessor.IsStatic || remove_accessor.IsStatic)
-					IsStatic = true;
+				is_static = true;
 
 			if (EventInfo is MyEventBuilder)
 				type = ((MyEventBuilder) EventInfo).EventType;
 			else
 				type = EventInfo.EventHandlerType;
+		}
+
+		public string Name {
+			get {
+				return EventInfo.Name;
+			}
+		}
+
+		public bool IsInstance {
+			get {
+				return !is_static;
+			}
+		}
+
+		public bool IsStatic {
+			get {
+				return is_static;
+			}
+		}
+
+		public Expression InstanceExpression {
+			get {
+				return instance_expr;
+			}
+
+			set {
+				instance_expr = value;
+			}
 		}
 
 		public override Expression DoResolve (EmitContext ec)
@@ -4043,10 +4296,10 @@ namespace Mono.CSharp {
 			
 			if (((Binary) source).Oper == Binary.Operator.Addition)
 				Invocation.EmitCall (
-					ec, false, IsStatic, InstanceExpression, add_accessor, args, loc);
+					ec, false, IsStatic, instance_expr, add_accessor, args, loc);
 			else
 				Invocation.EmitCall (
-					ec, false, IsStatic, InstanceExpression, remove_accessor, args, loc);
+					ec, false, IsStatic, instance_expr, remove_accessor, args, loc);
 		}
 	}
 }	
