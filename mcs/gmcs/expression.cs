@@ -2384,8 +2384,18 @@ namespace Mono.CSharp {
 					
 					// try to fold it in on the left
 					if (left is StringConcat) {
-						((StringConcat) left).Append (ec, right);
-						return left.Resolve (ec);
+
+						//
+						// We have to test here for not-null, since we can be doubly-resolved
+						// take care of not appending twice
+						//
+						if (type == null){
+							type = TypeManager.string_type;
+							((StringConcat) left).Append (ec, right);
+							return left.Resolve (ec);
+						} else {
+							return left;
+						}
 					}
 
 					// Otherwise, start a new concat expression
@@ -4025,6 +4035,24 @@ namespace Mono.CSharp {
 
 			if (ArgType == AType.Expression)
 				return true;
+			else {
+				//
+				// Catch errors where fields of a MarshalByRefObject are passed as ref or out
+				// This is only allowed for `this'
+				//
+				FieldExpr fe = Expr as FieldExpr;
+				if (fe != null && !fe.IsStatic){
+					Expression instance = fe.InstanceExpression;
+
+					if (instance.GetType () != typeof (This)){
+						if (fe.InstanceExpression.Type.IsSubclassOf (TypeManager.mbr_type)){
+							Report.Error (197, loc,
+								      "Can not pass a type that derives from MarshalByRefObject with out or ref");
+							return false;
+						}
+					}
+				}
+			}
 
 			if (Expr.eclass != ExprClass.Variable){
 				//

@@ -1,3 +1,41 @@
+2004-04-11  Miguel de Icaza  <miguel@ximian.com>
+
+	* expression.cs (Argument.Resolve): Check if fields passed as ref
+	or out are contained in a MarshalByRefObject.
+
+	* typemanager.cs, rootcontext.cs: Add System.Marshalbyrefobject as
+	another compiler type.
+
+2004-04-06 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* class.cs (Indexer.Define): use the new name checking method.
+	Also, return false on an error.
+	* cs-tokenizer.cs (IsValidIdentifier): Checks for a valid identifier.
+	(is_identifier_[start/part]_character): make static.
+
+2004-04-10  Miguel de Icaza  <miguel@ximian.com>
+
+	* expression.cs (Binary.ResolveOperator): Do no append strings
+	twice: since we can be invoked more than once (array evaluation)
+	on the same concatenation, take care of this here.  Based on a fix
+	from Ben (bug #56454)
+
+2004-04-08  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* codegen.cs: Fix another case where CS1548 must be reported (when 
+	delay-sign isn't specified and no private is available #56564). Fix
+	loading	the ECMA "key" to delay-sign an assembly. Report a CS1548 
+	error when MCS is used on the MS runtime and we need to delay-sign 
+	(which seems unsupported by AssemblyBuilder - see #56621).
+
+2004-04-08  Marek Safar  <marek.safar@seznam.cz>
+
+	* typemanager.cs (TypeManager.TypeToCoreType): Handle IntPtr too.
+	(TypeManager.ComputeNamespaces): Faster implementation for
+	Microsoft runtime.
+
+	* compiler.csproj: Updated AssemblyName to mcs.
+
 2004-05-11  Jackson Harper  <jackson@ximian.com>
 
 	* Makefile: Preserve MONO_PATH

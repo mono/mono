@@ -89,6 +89,7 @@ public class TypeManager {
 	static public Type cls_compliant_attribute_type;
 	static public Type typed_reference_type;
 	static public Type arg_iterator_type;
+	static public Type mbr_type;
 
 	//
 	// An empty array of types
@@ -801,14 +802,16 @@ public class TypeManager {
 				}
 			}
 		} else {
-			foreach (Assembly a in assemblies){
-				foreach (Type t in a.GetTypes ()){
+			Hashtable cache = new Hashtable ();
+			cache.Add ("", null);
+			foreach (Assembly a in assemblies) {
+				foreach (Type t in a.GetExportedTypes ()) {
 					string ns = t.Namespace;
-
-					// t.Namespace returns null for <PrivateImplDetails>
-					if (ns == ""|| ns == null)
+					if (ns == null || cache.Contains (ns))
 						continue;
+
 					Namespace.LookupNamespace (ns, true);
+					cache.Add (ns, null);
 				}
 			}
 		}
@@ -1115,6 +1118,7 @@ public class TypeManager {
 		in_attribute_type    = CoreLookupType ("System.Runtime.InteropServices.InAttribute");
 		typed_reference_type = CoreLookupType ("System.TypedReference");
 		arg_iterator_type    = CoreLookupType ("System.ArgIterator");
+		mbr_type             = CoreLookupType ("System.MarshalByRefObject");
 
 		//
 		// Sigh. Remove this before the release.  Wonder what versions of Mono
@@ -2444,6 +2448,8 @@ public class TypeManager {
 				return TypeManager.object_type;
 			if (t == typeof (System.Type))
 				return TypeManager.type_type;
+			if (t == typeof (System.IntPtr))
+				return TypeManager.intptr_type;
 			return t;
 		}
 	}
