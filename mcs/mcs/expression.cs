@@ -5012,9 +5012,11 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			if ((method.Attributes & MethodAttributes.SpecialName) != 0){
-				if (TypeManager.IsSpecialMethod (method))
-					Report.Error (571, loc, method.Name + ": can not call operator or accessor");
+			if ((method.Attributes & MethodAttributes.SpecialName) != 0) {
+				if (TypeManager.LookupDeclSpace (method.DeclaringType) != null || TypeManager.IsSpecialMethod (method)) {
+					Report.Error (571, loc, TypeManager.CSharpSignature (method) + ": can not call operator or accessor");
+					return null;
+				}
 			}
 
 			eclass = ExprClass.Value;

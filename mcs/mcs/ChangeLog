@@ -1,3 +1,10 @@
+2004-09-15  Marek Safar  <marek.safar@seznam.cz>
+
+	Fixed bug #59980, #64224
+	* expression.cs (Invocation.DoResolve): Fixed error CS0571 test.
+
+	* typemanager.cs (IsSpecialMethod): Simplified
+
 2004-09-14  Marek Safar  <marek.safar@seznam.cz>
 
 	* decl.cs (MemberCore.Emit): Resuscitated VerifyObsoleteAttribute
