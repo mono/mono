@@ -1,3 +1,8 @@
+2003-12-03  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HtmlSelect.cs: with the new LosFormatter, we get array types right, so
+	remove the code used to workaround that.
+
 2003-12-01  Jackson Harper <jackson@ximian.com>
 
 	* HtmlControl.cs: Fix disabled property. Patch by Alon Gazit
