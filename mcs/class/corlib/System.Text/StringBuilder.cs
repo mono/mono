@@ -64,7 +64,7 @@ namespace System.Text {
 			// if the length is not zero, then we have to copy some characters
 			if (sLength > 0) {
 				// Copy the correct number of characters into the internal array
-				value.CopyTo (0, sString, 0, sLength);
+				value.CopyTo (startIndex, sString, 0, sLength);
 			}
 		}
 

@@ -1,3 +1,6 @@
+2002-12-01  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* StringBuilder.cs: fixed constructor. Thanks to marcusU for reporting.
 
 Tue Nov 19 13:03:27 CET 2002 Paolo Molaro <lupus@ximian.com>
 
