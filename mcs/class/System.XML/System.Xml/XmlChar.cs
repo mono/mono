@@ -41,6 +41,11 @@ namespace System.Xml
 			return result;
 		}
 
+		internal static bool IsPubidChar(int ch)
+		{
+			return IsWhitespace(ch) | ('a' <= ch && ch <= 'z') | ('A' <= ch && ch <= 'Z') | ('0' <= ch && ch <= '9') | "-'()+,./:=?;!*#@$_%".IndexOf((char)ch) >= 0;
+		}
+
 		private static byte[] firstNamePages =
 		{
 			0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x00,

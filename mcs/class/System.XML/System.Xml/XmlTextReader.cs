@@ -13,6 +13,8 @@
 //   instructions, and comments are OK.
 //
 //   It barfs on DOCTYPE declarations.
+//     => No barfing, but parsing is incomplete.
+//        DTD nodes are not still created.
 //
 //   There's also no checking being done for either well-formedness
 //   or validity.
@@ -811,8 +813,6 @@ namespace System.Xml
 					break;
 				}
 			}
-
-//			return (PeekChar () != -1);
 			return this.ReadState != ReadState.EndOfFile;
 		}
 
@@ -1192,19 +1192,17 @@ namespace System.Xml
 			switch (ch)
 			{
 			case '-':
-				Expect ('-');
-				Expect ('-');
+				Expect ("--");
 				ReadComment ();
 				break;
 			case '[':
 				ReadChar ();
-				Expect ('C');
-				Expect ('D');
-				Expect ('A');
-				Expect ('T');
-				Expect ('A');
-				Expect ('[');
+				Expect ("CDATA[");
 				ReadCDATA ();
+				break;
+			case 'D':
+				Expect ("DOCTYPE");
+				ReadDoctypeDecl ();
 				break;
 			}
 		}
@@ -1274,6 +1272,208 @@ namespace System.Xml
 			);
 		}
 
+		// The reader is positioned on the first character after
+		// the leading '<!DOCTYPE'.
+		private void ReadDoctypeDecl ()
+		{
+			string doctypeName = null;
+			string publicId = String.Empty;
+			string systemId = String.Empty;
+			string internalSubset = String.Empty;
+
+			SkipWhitespace();
+			doctypeName = ReadName();
+			SkipWhitespace();
+			xmlBuffer.Length = 0;
+			switch(PeekChar())
+			{
+			case 'S':
+				systemId = ReadSystemLiteral();
+				break;
+			case 'P':
+/*
+				Expect("PUBLIC");
+				SkipWhitespace();
+				int quoteChar = ReadChar();
+				int c = 0;
+				while(c != quoteChar)
+				{
+					c = ReadChar();
+					if(c < 0)
+						throw new XmlException("Unexpected end of stream in ExternalID.");
+					if(c != quoteChar)
+					{
+						if(XmlChar.IsPubidChar(c)) xmlBuffer.Append((char)c);
+						else
+							throw new XmlException("character '" + (char)c + "' not allowed for PUBLIC ID");
+					}
+				}
+				publicId = xmlBuffer.ToString();
+				*/
+				publicId = ReadPubidLiteral();
+				SkipWhitespace();
+				systemId = ReadSystemLiteral();
+				break;
+			}
+			SkipWhitespace();
+
+
+			if(PeekChar() == '[')
+			{
+				// read markupdecl etc. or end of decl
+				ReadChar();
+				saveToXmlBuffer = true;
+				do
+				{
+					ReadDTDInternalSubset();
+				} while(nodeType != XmlNodeType.None);
+				xmlBuffer.Remove(xmlBuffer.Length -1, 1);	// cut off ']'
+				saveToXmlBuffer = false;
+			}
+			// end of DOCTYPE decl.
+			SkipWhitespace();
+			Expect('>');
+
+			internalSubset = xmlBuffer.ToString();
+
+			// set properties for <!DOCTYPE> node
+			SetProperties (
+				XmlNodeType.DocumentType, // nodeType
+				doctypeName, // name
+				false, // isEmptyElement
+				internalSubset, // value
+				true // clearAttributes
+				);
+		}
+
+		// Read any one of following:
+		//   elementdecl, AttlistDecl, EntityDecl, NotationDecl,
+		//   PI, Comment, Parameter Entity, or doctype termination char(']')
+		//
+		// returns a node of some nodeType or null, setting nodeType.
+		//	 (if None then ']' was found.)
+		private void ReadDTDInternalSubset()
+		{
+			SkipWhitespace();
+			switch(ReadChar())
+			{
+			case ']':
+				nodeType = XmlNodeType.None;
+				break;
+			case '%':
+				string peName = ReadName();
+				Expect(';');
+				nodeType = XmlNodeType.EntityReference;	// It's chating a bit;-)
+				break;
+			case '<':
+				switch(ReadChar())
+				{
+				case '?':
+					ReadProcessingInstruction();
+					break;
+				case '!':
+					switch(ReadChar())
+					{
+					case '-':
+						Expect('-');
+						ReadComment();
+						break;
+					case 'E':
+						switch(ReadChar())
+						{
+						case 'N':
+							Expect("TITY");
+							ReadEntityDecl();
+							break;
+						case 'L':
+							Expect("EMENT");
+							ReadElementDecl();
+							break;
+						default:
+							throw new XmlException("Syntax Error after '<!E' (ELEMENT or ENTITY must be found)");
+						}
+						break;
+					case 'A':
+						Expect("TTLIST");
+						ReadAttListDecl();
+						break;
+					case 'N':
+						Expect("OTATION");
+						ReadNotationDecl();
+						break;
+					default:
+						throw new XmlException("Syntax Error after '<!' characters.");
+					}
+					break;
+				default:
+					throw new XmlException("Syntax Error after '<' character.");
+				}
+				break;
+			default:
+				throw new XmlException("Syntax Error inside doctypedecl markup.");
+			}
+		}
+
+		// The reader is positioned on the head of the name.
+		private void ReadElementDecl()
+		{
+			while(ReadChar() != '>');
+		}
+
+		private void ReadEntityDecl()
+		{
+			while(ReadChar() != '>');
+		}
+
+		private void ReadAttListDecl()
+		{
+			while(ReadChar() != '>');
+		}
+
+		private void ReadNotationDecl()
+		{
+			while(ReadChar() != '>');
+		}
+		
+		// The reader is positioned on the first 'S' of "SYSTEM".
+		private string ReadSystemLiteral ()
+		{
+			Expect("SYSTEM");
+			SkipWhitespace();
+			int quoteChar = ReadChar();	// apos or quot
+			xmlBuffer.Length = 0;
+			saveToXmlBuffer = true;
+			int c = 0;
+			while(c != quoteChar)
+			{
+				c = ReadChar();
+				if(c < 0) throw new XmlException("Unexpected end of stream in ExternalID.");
+			}
+			saveToXmlBuffer = false;
+			xmlBuffer.Remove(xmlBuffer.Length-1, 1);	// cut quoteChar
+			return xmlBuffer.ToString();
+		}
+
+		private string ReadPubidLiteral()
+		{
+			Expect("PUBLIC");
+			SkipWhitespace();
+			int quoteChar = ReadChar();
+			xmlBuffer.Length = 0;
+			saveToXmlBuffer = true;
+			int c = 0;
+			while(c != quoteChar)
+			{
+				c = ReadChar();
+				if(c < 0) throw new XmlException("Unexpected end of stream in ExternalID.");
+				if(c != quoteChar && !XmlChar.IsPubidChar(c))
+					throw new XmlException("character '" + (char)c + "' not allowed for PUBLIC ID");
+			}
+			xmlBuffer.Remove(xmlBuffer.Length-1, 1);	// cut quoteChar
+			saveToXmlBuffer = false;
+			return xmlBuffer.ToString();
+		}
+
 		// The reader is positioned on the first character
 		// of the name.
 		private string ReadName ()
@@ -1307,6 +1507,13 @@ namespace System.Xml
 						(char)ch,
 						ch));
 			}
+		}
+
+		private void Expect (string expected)
+		{
+			int len = expected.Length;
+			for(int i=0; i< len; i++)
+				Expect(expected[i]);
 		}
 
 		// Does not consume the first non-whitespace character.
