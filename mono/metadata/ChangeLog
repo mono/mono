@@ -1,4 +1,9 @@
 
+2003-01-09  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* icall.c: applied fix from Zoltan Varga that fixes Type.IsPrimitive
+	for reference types.
+
 Wed Jan 8 20:11:46 CET 2003 Paolo Molaro <lupus@ximian.com>
 
 	* loader.c: fixed off by one error in loaded parameter names.
