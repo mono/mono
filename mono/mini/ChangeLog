@@ -1,3 +1,18 @@
+2003-10-24  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini.c: Update after appdomain changes.
+
+	* mini.c (mono_jit_compile_method_inner): Allways compile native
+	method wrappers in the root domain, since there can only be one
+	instance of them, whose address is stored in method->info.
+
+2003-10-16  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini.c (mono_runtime_install_handlers): Get rid of the MONO_VALGRIND
+	environment variable. Instead detect automatically whenever running
+	under valgrind using the magic macro RUNNING_ON_VALGRIND from
+	valgrind.h.
+
 2003-10-16  Miguel de Icaza  <miguel@ximian.com>
 
 	* trace.c, trace.h: New files that implement the new trace option
