@@ -13,7 +13,7 @@ endif
 if PLATFORM_WIN32
 plat_bindir = $(shell cygpath -m $(libdir))
 mono_one_instdir = $(shell cygpath -m $(libdir))/mono/1.0
-monO_two_instdir = $(shell cygpath -m $(libdir))/mono/2.0
+mono_two_instdir = $(shell cygpath -m $(libdir))/mono/2.0
 else
 plat_bindir = $(bindir)
 mono_one_instdir = $(libdir)/mono/1.0
