@@ -1,4 +1,9 @@
 
+Fri Sep 6 16:08:44 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* debug-helpers.c: break infinite loop (found and fixed by
+	Holger Arnold <harnold@gmx.de>).
+
 Thu Sep 5 18:50:54 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* icall.c: target may be null in create_delegate.
