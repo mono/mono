@@ -662,6 +662,7 @@ namespace System.Xml.XPath
 		}
 	}
 
+#if false
 	internal class SlashIterator : BaseIterator
 	{
 		protected BaseIterator _iterLeft;
@@ -705,6 +706,111 @@ namespace System.Xml.XPath
 		}
 		public override int CurrentPosition { get { return _pos; }}
 	}
+#else
+	internal class SlashIterator : BaseIterator
+	{
+		protected BaseIterator _iterLeft;
+		protected BaseIterator _iterRight;
+		protected NodeSet _expr;
+		protected int _pos;
+		Stack _iterStack;
+		bool _finished;
+		BaseIterator _nextIterRight;
+
+		public SlashIterator (BaseIterator iter, NodeSet expr) : base (iter)
+		{
+			_iterLeft = iter;
+			_expr = expr;
+		}
+
+		protected SlashIterator (SlashIterator other) : base (other)
+		{
+			_iterLeft = (BaseIterator) other._iterLeft.Clone ();
+			if (other._iterRight != null)
+				_iterRight = (BaseIterator) other._iterRight.Clone ();
+			_expr = other._expr;
+			_pos = other._pos;
+			if (other._iterStack != null)
+				_iterStack = other._iterStack.Clone () as Stack;
+			_finished = other._finished;
+			_nextIterRight = other._nextIterRight;
+		}
+		public override XPathNodeIterator Clone () { return new SlashIterator (this); }
+
+		public override bool MoveNext ()
+		{
+			if (_finished)
+				return false;
+
+			if (_iterRight == null) {
+				if (!_iterLeft.MoveNext ())
+					return false;
+				_iterRight = _expr.EvaluateNodeSet (_iterLeft);
+				_iterStack = new Stack ();
+			}
+
+			while (true) {
+				while (!_iterRight.MoveNext ()) {
+					if (_iterStack.Count > 0) {
+						_iterRight = _iterStack.Pop () as BaseIterator;
+						break;
+					} else if (_nextIterRight != null) {
+						_iterRight = _nextIterRight;
+						_nextIterRight = null;
+						break;
+					} else if (!_iterLeft.MoveNext ()) {
+						_finished = true;
+						return false;
+					}
+					else
+						_iterRight = _expr.EvaluateNodeSet (_iterLeft);
+				}
+				bool loop = true;
+				while (loop) {
+					loop = false;
+					if (_nextIterRight == null) {
+						bool noMoreNext = false;
+						while (_nextIterRight == null || !_nextIterRight.MoveNext ()) {
+							if(_iterLeft.MoveNext ())
+								_nextIterRight = _expr.EvaluateNodeSet (_iterLeft);
+							else {
+								noMoreNext = true;
+								break;
+							}
+						}
+						if (noMoreNext)
+							_nextIterRight = null; // FIXME: More efficient code. Maybe making noMoreNext class scope would be better.
+					}
+					if (_nextIterRight != null) {
+						switch (_iterRight.Current.ComparePosition (_nextIterRight.Current)) {
+						case XmlNodeOrder.After:
+							_iterStack.Push (_iterRight);
+							_iterRight = _nextIterRight;
+							_nextIterRight = null;
+							break;
+						case XmlNodeOrder.Same:
+							if (!_nextIterRight.MoveNext ())
+								_nextIterRight = null;
+							loop = true;
+							break;
+						}
+					}
+				}
+				_pos ++;
+				return true;
+			}
+		}
+		public override XPathNavigator Current { 
+			get { 
+				if (_iterRight == null) return null;
+				
+				return _iterRight.Current;
+			}
+		}
+		public override int CurrentPosition { get { return _pos; }}
+	}
+
+#endif
 
 	internal class PredicateIterator : BaseIterator
 	{

@@ -1,3 +1,8 @@
+2003-11-09  Atsushi Enomoto  <ginga@kit.hi-ho.ne.jp>
+
+	* Iterator.cs : Fixed SlashIterator that might return nodes 1)in
+	  inconsistent order, and 2)may return duplicate result nodes.
+
 2003-11-06 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* Iterator.cs: (AxisIterator.ComparablePosition): Remove. Let
