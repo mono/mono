@@ -1,3 +1,8 @@
+2002-04-28  Duncan Mak  <duncan@ximian.com>
+
+	* CollectionChangeAction.cs: Changed enum layout to fit the MS
+	implementation. Please use EnumCheck!
+
 2002-04-28  Rodrigo Moya <rodrigo@ximian.com>
 
 	* CollectionChangeAction.cs: new enumeration.

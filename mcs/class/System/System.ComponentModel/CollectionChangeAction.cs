@@ -14,7 +14,7 @@ namespace System.ComponentModel
 	/// </summary>
 	public enum CollectionChangeAction {
 		Add = 1,
-		Refresh = 2,
-		Remove = 3
+		Remove = 2,
+		Refresh = 3
 	}
 }
