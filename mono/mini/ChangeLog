@@ -1,3 +1,8 @@
+2004-10-22    <vargaz@freemail.hu>
+
+	* aot.c (mono_compile_assembly): Disable AOT for methods containing calls to methods of
+	constructed types. Fixes #68136.
+
 2004-10-21  Martin Baulig  <martin@ximian.com>
 
 	* exceptions-x86.c (throw_exception): Call mono_debugger_throw_exception();
