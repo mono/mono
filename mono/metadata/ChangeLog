@@ -1,3 +1,8 @@
+2004-11-11  Zoltan Varga  <vargaz@freemail.hu>
+
+	* icall.c (ves_icall_Type_GetField): Support BFLAGS_IgnoreCase. Fixes
+	#69365.
+
 2004-11-09 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* icall.c: use memmove in BlockCopyInternal when the source and
