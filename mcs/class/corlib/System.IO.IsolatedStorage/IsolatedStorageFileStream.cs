@@ -54,7 +54,7 @@ namespace System.IO.IsolatedStorage {
 				// i.e. the result would always be mscorlib.dll. So we need to do 
 				// a small stack walk to find who's calling the constructor
 
-				StackFrame sf = new StackFrame (2); // skip self and constructor
+				StackFrame sf = new StackFrame (3); // skip self and constructor
 				isf = IsolatedStorageFile.GetStore (IsolatedStorageScope.User | IsolatedStorageScope.Domain | IsolatedStorageScope.Assembly,
 					IsolatedStorageFile.GetDomainIdentityFromEvidence (AppDomain.CurrentDomain.Evidence), 
 					IsolatedStorageFile.GetAssemblyIdentityFromEvidence (sf.GetMethod ().ReflectedType.Assembly.Evidence));
@@ -81,42 +81,44 @@ namespace System.IO.IsolatedStorage {
 		}
 
 		public IsolatedStorageFileStream (string path, FileMode mode)
-			: base (CreateIsolatedPath (null, path), mode, (mode == FileMode.Append ? FileAccess.Write : FileAccess.ReadWrite), FileShare.Read, DefaultBufferSize, false, true)
+			: this (path, mode, (mode == FileMode.Append ? FileAccess.Write : FileAccess.ReadWrite), FileShare.Read, DefaultBufferSize, null)
 		{
 		}	
 
 		public IsolatedStorageFileStream (string path, FileMode mode, FileAccess access)
-			: base (CreateIsolatedPath (null, path), mode, access, access == FileAccess.Write ? FileShare.None : FileShare.Read, DefaultBufferSize, false, true)
+			: this (path, mode, access, access == FileAccess.Write ? FileShare.None : FileShare.Read, DefaultBufferSize, null)
 		{
 		}
 
 		public IsolatedStorageFileStream (string path, FileMode mode, FileAccess access, FileShare share)
-			: base (CreateIsolatedPath (null, path), mode, access, share, DefaultBufferSize, false, true)
+			: this (path, mode, access, share, DefaultBufferSize, null)
 		{
 		}
 
 		public IsolatedStorageFileStream (string path, FileMode mode, FileAccess access, FileShare share, int bufferSize)
-			: base (CreateIsolatedPath (null, path), mode, access, share, bufferSize, false, true)
+			: this (path, mode, access, share, bufferSize, null)
 		{
 		}
 
+		// FIXME: Further limit the assertion when imperative Assert is implemented
+		[FileIOPermission (SecurityAction.Assert, Unrestricted = true)]
 		public IsolatedStorageFileStream (string path, FileMode mode, FileAccess access, FileShare share, int bufferSize, IsolatedStorageFile isf)
 			: base (CreateIsolatedPath (isf, path), mode, access, share, bufferSize, false, true)
 		{
 		}
 
 		public IsolatedStorageFileStream (string path, FileMode mode, FileAccess access, FileShare share, IsolatedStorageFile isf)
-			: base (CreateIsolatedPath (isf, path), mode, access, share, DefaultBufferSize, false, true)
+			: this (path, mode, access, share, DefaultBufferSize, isf)
 		{
 		}
 
 		public IsolatedStorageFileStream (string path, FileMode mode, FileAccess access, IsolatedStorageFile isf)
-			: base (CreateIsolatedPath (isf, path), mode, access, access == FileAccess.Write ? FileShare.None : FileShare.Read, DefaultBufferSize, false, true)
+			: this (path, mode, access, access == FileAccess.Write ? FileShare.None : FileShare.Read, DefaultBufferSize, isf)
 		{
 		}
 
 		public IsolatedStorageFileStream (string path, FileMode mode, IsolatedStorageFile isf)
-			: base (CreateIsolatedPath (isf, path), mode, (mode == FileMode.Append ? FileAccess.Write : FileAccess.ReadWrite), FileShare.Read, DefaultBufferSize, false, true)
+			: this (path, mode, (mode == FileMode.Append ? FileAccess.Write : FileAccess.ReadWrite), FileShare.Read, DefaultBufferSize, isf)
 		{
 		}
 
@@ -134,6 +136,7 @@ namespace System.IO.IsolatedStorage {
 
 #if NET_2_0
 		public override SafeFileHandle SafeFileHandle {
+			[SecurityPermission (SecurityAction.LinkDemand, UnmanagedCode = true)]
 			get {
 				throw new IsolatedStorageException (
 					Locale.GetText ("Information is restricted"));
@@ -143,6 +146,7 @@ namespace System.IO.IsolatedStorage {
 		[Obsolete ("Use SafeFileHandle - once available")]
 #endif
 		public override IntPtr Handle {
+			[SecurityPermission (SecurityAction.LinkDemand, UnmanagedCode = true)]
 			get {
 				throw new IsolatedStorageException (
 					Locale.GetText ("Information is restricted"));

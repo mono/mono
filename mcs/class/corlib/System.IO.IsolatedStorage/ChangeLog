@@ -1,3 +1,14 @@
+2005-03-24  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* IsolatedStorageFile.cs: Added an assert for unrestricted file access
+	to the class. This is "ok" as the user cannot control the base path 
+	for isolated storage but will be updated to be more "precise" when
+	imperative assert are supported in the runtime.
+	* IsolatedStorageFileStream.cs: Changed constructors so the assert
+	for unrestricted file access is limited to constructors (not the whole
+	class). Added LinkDemand for UnmanagedCode to get Handle and 
+	SafeFileHandle (2.0) properties.
+
 2005-03-17  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* IsolatedStorageScope.cs: Add missing BOOTSTRAP_NET_2_0 to new enum 

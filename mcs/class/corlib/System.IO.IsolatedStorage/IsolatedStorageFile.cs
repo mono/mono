@@ -43,6 +43,10 @@ namespace System.IO.IsolatedStorage {
 
 	// This is a terribly named class.  It doesn't actually represent a file as
 	// much as a directory
+
+
+	// FIXME: Further limit the assertion when imperative Assert is implemented
+	[FileIOPermission (SecurityAction.Assert, Unrestricted = true)]
 	public sealed class IsolatedStorageFile : IsolatedStorage, IDisposable {
 
 		public static IEnumerator GetEnumerator (IsolatedStorageScope scope)
