@@ -184,10 +184,6 @@ class MonoP {
 			}
 		}
 
-		if (assembly != null){
-			Console.WriteLine ("Did not find type in assembly");
-		}
-		
 		if (t == null) {
 			foreach (string assm in common_assemblies) {
 				try {
