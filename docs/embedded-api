@@ -5,7 +5,9 @@
 
 	This document describes how to embed the Mono runtime in your
 	application, and how to invoke CIL methods from C, and how to
-	invoke C code from CIL.
+	invoke C code from CIL. Both the JIT and interpreter can be
+	embedded in very similar ways so most of what is described
+	here can be used in either case.
 
 * Embedding the runtime.
 
@@ -27,6 +29,12 @@
 
 		pkg-config --cflags --libs mono
 
+	is used to get the flags for the JIT runtime and
+
+		pkg-config --cflags --libs mint
+
+	for the interpreted runtime.
+
 	Like this:
 
 		gcc sample.c `pkg-config --cflags --libs mono`
@@ -39,11 +47,21 @@
 
 ** Initializing the Mono runtime
 
-	To initialize the runtime, call mono_jit_init, like this:
+	To initialize the JIT runtime, call mono_jit_init, like this:
+
+		#include <mono/mini/jit.h>
 
 		MonoDomain *domain;
 
 		domain = mono_jit_init ("domain-name");
+
+	For the interpreted runtime use mono_interp_init instead:
+
+		#include <mono/interpreter/embed.h>
+
+		MonoDomain *domain;
+
+		domain = mono_interp_init ("domain-name");
 
 	That will return a MonoDomain where your code will be
 	executed.  You can create multiple domains.  Each domain is
@@ -70,6 +88,10 @@
 
 		retval = mono_jit_exec (domain, assembly, argc - 1, argv + 1);
 
+	or when using the interpreter use:
+
+		retval = mono_interp_exec (domain, assembly, argc - 1, argv + 1);
+
 	If you want to invoke a different method, look at the
 	`Invoking Methods in the CIL universe' section later on.
 
@@ -79,6 +101,10 @@
 	domains that were created, use this function:
 
 		mono_jit_cleanup (domain);
+
+	Or in the case of the interpreted runtime use:
+
+		mono_interp_cleanup (domain);
 
 ** Applications that use threads.
 
@@ -183,6 +209,9 @@
 	methods, a MonoObject* for object instances and a pointer to
 	the value type for value types.
 
+	These functions can be used in both the JIT and the interpreted
+	environments.
+
 	The params array contains the arguments to the method with the
 	same convention: MonoObject* pointers for object instances and
 	pointers to the value type otherwise. The _invoke_array
@@ -236,7 +265,7 @@
 
 * Samples
 
-	See the sample programs inmono/sample/embed for examples of
+	See the sample programs in mono/sample/embed for examples of
 	embedding the Mono runtime in your application.
 
 
