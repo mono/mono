@@ -647,7 +647,7 @@ namespace Mono.CSharp {
 				Type container_type = containing_ds.TypeBuilder;
 				Type current_type = container_type;
 
-				while (current_type != null) {
+				while (current_type != null && current_type != TypeManager.object_type) {
 					string pre = current_type.FullName;
 
 					t = LookupInterfaceOrClass (pre, name, out error);

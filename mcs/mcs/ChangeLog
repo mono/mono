@@ -1,3 +1,17 @@
+2003-12-12 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* decl.cs: Do not check System.Object for nested types,
+	since we know it does not have any. Big bang for buck:
+
+	BEFORE:
+	   Run 1:   8.35 seconds
+	   Run 2:   8.32 seconds
+	   corlib:  17.99 seconds
+	AFTER:
+	   Run 1:   8.17 seconds
+	   Run 2:   8.17 seconds
+	   corlib:  17.39 seconds
+
 2003-12-11 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* class.cs (FindMembers): Allocate arraylists on demand. Most of the
