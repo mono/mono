@@ -1,3 +1,7 @@
+2003-05-16  Aleksey Ryabchuk <ryabchuk@yahoo.com>
+	* DomainUpDown.cs : changes to OnTextBoxKeyDown
+	* UpDownBase.cs : added impl. to BackColor and BackgroundImage
+
 2003-05-12  Aleksey Ryabchuk <ryabchuk@yahoo.com>
 	* Control.cs : ResizeRedraw, removed some unused code
 	* DomainUpDown.cs : 

@@ -139,26 +139,15 @@ namespace System.Windows.Forms {
 		#region Public Properties
 		// Gets or sets the background color for the control
 		public override Color BackColor {
-			get {
-				return base.BackColor;
-				//FIXME:
-			}
-			set {
-				//FIXME:
-				base.BackColor = value;
-			}
+			get {	return EditBox_.BackColor; }
+			set {   EditBox_.BackColor = value;}
 		}
 
 		// Gets or sets the background image displayed in the control
+		[EditorBrowsable (EditorBrowsableState.Never)]	 
 		public override Image BackgroundImage {
-			get {
-				//FIXME:
-				return base.BackgroundImage;
-			}
-			set {
-				//FIXME:
-				base.BackgroundImage = value;
-			}
+			get {	return base.BackgroundImage; }
+			set {	base.BackgroundImage = value;}
 		}
 
 		// Gets or sets the border style for the up-down control

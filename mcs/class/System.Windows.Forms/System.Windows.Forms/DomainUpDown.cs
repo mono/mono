@@ -9,6 +9,7 @@
 //
 using System.Collections;
 using System.ComponentModel;
+using System.Globalization;
 
 namespace System.Windows.Forms {
 
@@ -73,11 +74,14 @@ namespace System.Windows.Forms {
 
 		[MonoTODO]
 		protected override void OnTextBoxKeyDown(object source, KeyEventArgs e)
-		{	// needs to be improved to work with different languages
+		{
 			if ( ReadOnly ) {
-				string upper = e.KeyCode.ToString ( );
-				if ( upper.Length <= 1 ) {
-					string lower = upper.ToLower( );
+				char symbol = System.Convert.ToChar( (int)e.KeyCode );
+				
+				if ( Char.IsLetterOrDigit ( symbol ) ) {
+					string lower = Char.ToLower ( symbol ).ToString ( );
+					string upper = Char.ToUpper ( symbol ).ToString ( );
+
 					foreach ( object item in Items ) {
 						string sitem = item.ToString ( );
 						if ( sitem.StartsWith ( upper ) || sitem.StartsWith ( lower ) ) {
