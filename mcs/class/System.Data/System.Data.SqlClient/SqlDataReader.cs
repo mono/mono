@@ -399,6 +399,7 @@ namespace System.Data.SqlClient {
 				}
 
 				row ["ColumnOrdinal"] = schema.ColumnOrdinal;
+				row ["ColumnSize"] = schema.ColumnSize;
 				row ["AllowDBNull"] = schema.AllowDBNull;
 				row ["IsReadOnly"] = schema.IsReadOnly;
 				row ["IsIdentity"] = schema.IsIdentity;

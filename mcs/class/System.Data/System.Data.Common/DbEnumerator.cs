@@ -68,6 +68,7 @@ namespace System.Data.Common {
 				columnSchema.AllowDBNull = (bool) row ["AllowDBNull"];
 				columnSchema.ColumnName = row ["ColumnName"].ToString ();
 				columnSchema.ColumnOrdinal = (int) row ["ColumnOrdinal"];
+				columnSchema.ColumnSize = (int) row ["ColumnSize"];
 				columnSchema.DataTypeName = reader.GetDataTypeName (index);
 				columnSchema.FieldType = reader.GetFieldType (index);
 				columnSchema.IsReadOnly = (bool) row ["IsReadOnly"];
