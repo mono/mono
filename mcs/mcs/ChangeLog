@@ -1,3 +1,11 @@
+2004-04-28  Jackson Harper  <jackson@ximian.com>
+
+	* driver.cs: Attempt to load referenced assemblies from the
+	GAC. This is the quick and dirty version of this method that
+	doesnt take into account versions and just takes the first
+	canidate found. Will be good enough for now as we will not have more
+	then one version installed into the GAC until I update this method.
+
 2004-04-28  Martin Baulig  <martin@ximian.com>
 
 	* typemanager.cs (TypeManager.CheckStructCycles): New public
@@ -93,6 +101,7 @@
 	for a named field or property, implicity convert it to the correct
 	type.
 
+>>>>>>> 1.1450
 2004-04-27  Raja R Harinath  <rharinath@novell.com>
 
 	* statement.cs (Block.Block): Implicit blocks share
