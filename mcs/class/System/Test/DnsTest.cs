@@ -46,11 +46,21 @@ public class DnsTest: TestCase {
         public void TestAsyncGetHostByName(){
                 IAsyncResult r;
                 r = Dns.BeginGetHostByName(site1Name, new AsyncCallback(Callback), null);
+                
+		IAsyncResult async = Dns.BeginGetHostByName (site1Name, null, null);
+		IPHostEntry entry = Dns.EndGetHostByName (async);                
+		SubTestValidIPHostEntry(entry);
+		AssertEquals ("#1", "www.go-mono.com", entry.HostName);
         }
         
         public void TestAsyncResolve() {
                 IAsyncResult r;
                 r = Dns.BeginResolve(site1Name, new AsyncCallback(Callback), null);
+
+		IAsyncResult async = Dns.BeginResolve (site1Dot, null, null);
+		IPHostEntry entry = Dns.EndResolve (async);                
+		SubTestValidIPHostEntry(entry);
+		AssertEquals ("#1", "129.250.184.233", entry.HostName);
         }
         
         public void TestGetHostName() {

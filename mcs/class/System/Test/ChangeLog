@@ -1,3 +1,7 @@
+2002/05/14  Lawrence Pit  <loz@cable.a2000.nl>
+
+	* Dnstest.cs: added test for asynchronous methods
+	
 2002/05/09  Lawrence Pit  <loz@cable.a2000.nl>
 
 	* AllTests.cs: added System.AllTests
