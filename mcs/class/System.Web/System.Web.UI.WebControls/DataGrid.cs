@@ -1091,8 +1091,8 @@ namespace System.Web.UI.WebControls
 								b_col.TrackViewState();
 								b_col.HeaderText = "Item";
 								b_col.SortExpression = "Item";
-								b_col.DataField  = b_col.thisExpr;
-								b_col.SetOwner(this);
+								b_col.DataField  = BoundColumn.thisExpr;
+								//b_col.SetOwner(this);
 								retVal.Add(b_col);
 							} else
 							{
@@ -1116,7 +1116,7 @@ namespace System.Web.UI.WebControls
 								b_col.SortExpression = current.Name;
 								b_col.DataField      = current.Name;
 								b_col.IsReadOnly     = current.IsReadOnly;
-								b_col.SetOwner(this);
+								//b_col.SetOwner(this);
 								retVal.Add(b_col);
 							}
 						}
