@@ -453,7 +453,7 @@ namespace System {
 		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		private extern Assembly LoadAssembly (AssemblyName assemblyRef, Evidence securityEvidence);
+		private extern Assembly LoadAssembly (string assemblyRef, Evidence securityEvidence);
 
 		public Assembly Load (AssemblyName assemblyRef)
 		{
@@ -465,7 +465,7 @@ namespace System {
 			if (assemblyRef == null)
 				throw new ArgumentNullException ("assemblyRef");
 
-			return LoadAssembly (assemblyRef, assemblySecurity);
+			return LoadAssembly (assemblyRef.FullName, assemblySecurity);
 		}
 
 		public Assembly Load (string assemblyString)
@@ -473,10 +473,7 @@ namespace System {
 			if (assemblyString == null)
 				throw new ArgumentNullException ("assemblyString");
 				
-			AssemblyName an = new AssemblyName ();
-			an.Name = assemblyString;
-			
-			return Load (an, new Evidence ());			
+			return LoadAssembly (assemblyString, new Evidence ());			
 		}
 
 		public Assembly Load (string assemblyString, Evidence assemblySecurity)
@@ -484,10 +481,7 @@ namespace System {
 			if (assemblyString == null)
 				throw new ArgumentNullException ("assemblyString");
 				
-			AssemblyName an = new AssemblyName ();
-			an.Name = assemblyString;
-			
-			return Load (an, assemblySecurity);			
+			return LoadAssembly (assemblyString, assemblySecurity);			
 		}
 
 		public Assembly Load (byte[] rawAssembly)

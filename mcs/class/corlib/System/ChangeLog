@@ -1,3 +1,10 @@
+2004-01-12  Zoltan Varga  <vargaz@freemail.hu>
+
+	* AppDomain.cs (LoadAssembly): Pass the assembly name as a string to
+	the runtime, so it can take into account the Culture etc.
+
+	* Environment.cs: Bump corlib version number.
+	
 2004-01-12  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* MonoType.cs: GetMethods renamed to GetMethodsByName. It takes a
