@@ -1,5 +1,10 @@
 2005-03-13  Martin Baulig  <martin@ximian.com>
 
+	* expression.cs (Binary.ResolveOperator): For `==' and `!=', allow
+	comparing arbitrary types with the null literal.
+
+2005-03-13  Martin Baulig  <martin@ximian.com>
+
 	* generic.cs (Nullable.LiftedBinaryOperator): Add support for the
 	boolean operators '&&', '||', '&' and '|'.
 	(Nullable.OperatorTrueOrFalse): New public class.

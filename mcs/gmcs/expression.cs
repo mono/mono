@@ -2396,6 +2396,15 @@ namespace Mono.CSharp {
 					return this;
 				}
 
+				bool left_is_null = left is NullLiteral;
+				bool right_is_null = right is NullLiteral;
+				if (left_is_null || right_is_null) {
+					if (oper == Operator.Equality)
+						return new BoolLiteral (left_is_null == right_is_null);
+					else
+						return new BoolLiteral (left_is_null != right_is_null);
+				}
+
 				//
 				// operator != (object a, object b)
 				// operator == (object a, object b)
