@@ -399,8 +399,12 @@ namespace System
 			if (assemblyRef == null)
 				throw new ArgumentNullException ("assemblyRef");
 
-			if (assemblyRef.Name == null || assemblyRef.Name.Length == 0)
-				throw new ArgumentException (Locale.GetText ("assemblyRef.Name cannot be empty."), "assemblyRef");
+			if (assemblyRef.Name == null || assemblyRef.Name.Length == 0) {
+				if (assemblyRef.CodeBase != null)
+					return Assembly.LoadFrom (assemblyRef.CodeBase, assemblySecurity);
+				else
+					throw new ArgumentException (Locale.GetText ("assemblyRef.Name cannot be empty."), "assemblyRef");
+			}
 
 			return LoadAssembly (assemblyRef.FullName, assemblySecurity);
 		}
