@@ -21,6 +21,7 @@ System.Drawing/StringDigitSubstitute.cs
 System.Drawing/StringFormatFlags.cs
 System.Drawing/StringTrimming.cs
 System.Drawing/StringUnit.cs
+System.Drawing/SystemColors.cs
 System.Drawing/ContentAlignment.cs
 System.Drawing/FontStyle.cs
 System.Drawing.Drawing2D/Enums.cs
