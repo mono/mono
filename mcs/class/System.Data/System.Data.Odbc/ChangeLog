@@ -1,3 +1,8 @@
+2004-06-16  Sureshkumar T (tsureshkumar@novell.com)
+	* OdbcDataReader.cs: Added GetValue support for Sql Binary type to return byte array.
+			     Implemented GetBytes method.
+	* libodbc.cs	   : Added enums, constants & imports for above fix.
+
 2004-06-13  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* OdbcDataReader.cs: changed GetData method to return IDataReader

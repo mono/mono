@@ -53,6 +53,12 @@ namespace System.Data.Odbc
 		ReturnValue=5
 	}
 
+        internal enum OdbcLengthIndicator : short
+        {
+                NoTotal         = -4,
+                NullData        = -1
+        }
+
 	[StructLayout(LayoutKind.Sequential)]
 	internal struct OdbcTimestamp
 	{
@@ -69,6 +75,11 @@ namespace System.Data.Odbc
 //	sealed internal class libodbc
 	internal class libodbc
 	{
+                #region global constants
+                internal static string          SQLSTATE_RIGHT_TRUNC    = "01004";
+                internal static char            C_NULL                  = '\0';
+                #endregion
+
 		internal static OdbcInputOutputDirection ConvertParameterDirection(
 			ParameterDirection dir)
 		{
@@ -186,6 +197,13 @@ namespace System.Data.Odbc
 		[DllImport("odbc32")]
 		internal static extern OdbcReturn SQLSetDescField(IntPtr DescriptorHandle,
 			short RecNumber, short FieldIdentifier, byte[] Value, int BufLen);
+                        
+		[DllImport("odbc32")]
+		internal static extern OdbcReturn SQLGetDiagRec (OdbcHandleType HandleType,
+							   IntPtr Handle, ushort RecordNumber,
+							   byte [] Sqlstate, ref int NativeError,
+							   byte [] MessageText, short BufferLength,
+							   ref short TextLength);
 		
 
 	}

@@ -13,6 +13,7 @@ using System.Collections;
 using System.ComponentModel;
 using System.Data;
 using System.Data.Common;
+using System.Text;
 
 namespace System.Data.Odbc
 {
@@ -142,6 +143,22 @@ namespace System.Data.Odbc
 			}
 			return cols[ordinal];
 		}
+
+                private string GetSQLState (IntPtr hstmt, ushort recNo) 
+                {
+                        OdbcReturn ret = OdbcReturn.Error;
+                        short bufLength=256, txtLength=0;
+                        int nativeError = 1;
+                        string sqlState = "", sqlMsg = "";
+                        byte [] msgtxtBuffer = new byte [bufLength];
+                        byte [] sqlStateBuffer = new byte [bufLength];
+                        ret = libodbc.SQLGetDiagRec (OdbcHandleType.Stmt, hstmt, recNo,
+                                            sqlStateBuffer, ref nativeError, msgtxtBuffer, 
+                                            bufLength, ref txtLength);
+                        sqlState = Encoding.Default.GetString (sqlStateBuffer).Replace (
+                                                        (char) 0, ' ').Trim ();
+                        return sqlState;
+                }
 	
 		public void Close ()
 		{
@@ -174,10 +191,54 @@ namespace System.Data.Odbc
 			return (byte) Convert.ToByte(GetValue(ordinal));
 		}
 
-		[MonoTODO]
 		public long GetBytes (int ordinal, long dataIndex, byte[] buffer, int bufferIndex, int length)
 		{
-			throw new NotImplementedException ();
+                        OdbcReturn ret = OdbcReturn.Error;
+                        bool copyBuffer = false;
+                        int returnVal = 0, outsize = 0;
+                        byte [] tbuff = new byte [length+1];
+
+                        length = buffer == null ? 0 : length;
+                        ret=libodbc.SQLGetData (hstmt, (ushort) (ordinal+1), OdbcType.Binary, tbuff, length, 
+                                        ref outsize);
+
+                        if (ret == OdbcReturn.NoData)
+                                return 0;
+
+                        if ( (ret != OdbcReturn.Success) && (ret != OdbcReturn.SuccessWithInfo)) 
+                                throw new OdbcException (new OdbcError ("SQLGetData", OdbcHandleType.Stmt, hstmt));
+
+                        if (buffer == null)
+                                return outsize; //if buffer is null,return length of the field
+                        
+                        if (ret == OdbcReturn.SuccessWithInfo) {
+                                if (outsize == (int) OdbcLengthIndicator.NoTotal)
+                                        copyBuffer = true;
+                                else if (outsize == (int) OdbcLengthIndicator.NullData) {
+                                        copyBuffer = false;
+                                        returnVal = -1;
+                                } else {
+                                        string sqlstate = GetSQLState (hstmt, 1);
+                                        //SQLState: String Data, Right truncated
+                                        if (sqlstate != libodbc.SQLSTATE_RIGHT_TRUNC) 
+                                                throw new OdbcException (new OdbcError ("SQLGetData",
+                                                                OdbcHandleType.Stmt, hstmt));
+                                        copyBuffer = true;
+                                }
+                        } else {
+                                copyBuffer = outsize == -1 ? false : true;
+                                returnVal = outsize;
+                        }
+
+                        if (copyBuffer) {
+                                int i = 0;
+                                while (tbuff [i] != libodbc.C_NULL) {
+                                        buffer [bufferIndex + i] = tbuff [i];
+                                        i++;
+                                }
+                                returnVal = i;
+                        }
+                        return returnVal;
 		}
 		
 		[MonoTODO]
@@ -446,6 +507,14 @@ namespace System.Data.Odbc
 							DataValue=new DateTime(ts_data.year,ts_data.month,ts_data.day,ts_data.hour,
 								ts_data.minute,ts_data.second,Convert.ToInt32(ts_data.fraction));
 						break;
+                                        case OdbcType.Binary :
+                                        case OdbcType.Image :
+                                                bufsize = col.MaxLength + 1;
+                                                buffer = new byte [bufsize];
+                                                long read = GetBytes (ColIndex, 0, buffer, 0, bufsize);
+                                                ret = OdbcReturn.Success;
+                                                DataValue = buffer;
+                                                break;
 					default:
 						//Console.WriteLine("Fetching unsupported data type as string: "+col.OdbcType.ToString());
 						bufsize=255;
