@@ -30,6 +30,7 @@ namespace MonoTests.System.IO
 
 		protected override void TearDown ()
 		{
+		        File.Delete ("resources" + Path.DirectorySeparatorChar + "baz");
 		}
 
 		public static ITest Suite
@@ -39,40 +40,54 @@ namespace MonoTests.System.IO
 
 		public void TestExists ()
 		{
-			Assert ("File filetest/test should exist", File.Exists ("filetest/test"));
+			Assert ("File resources" + Path.DirectorySeparatorChar + "AFile.txt should exist", File.Exists ("resources" + Path.DirectorySeparatorChar + "AFile.txt"));
+                        Assert ("File resources" + Path.DirectorySeparatorChar + "doesnotexist should not exist", !File.Exists ("resources" + Path.DirectorySeparatorChar + "doesnotexist"));
 		}
 
 		public void TestCreate ()
 		{
-			File.Create ("filetest/foo");
-			Assert ("File should exist", File.Exists ("filetest/foo"));
+			FileStream stream = File.Create ("resources" + Path.DirectorySeparatorChar + "foo");
+			Assert ("File should exist", File.Exists ("resources" + Path.DirectorySeparatorChar + "foo"));
+			stream.Close ();
 		}
 
 		public void TestCopy ()
 		{
-			File.Copy ("filetest/foo", "filetest/bar", false);
-			Assert ("File foo should exist", File.Exists ("filetest/foo"));
-			Assert ("File bar should exist", File.Exists ("filetest/bar"));
+			File.Copy ("resources" + Path.DirectorySeparatorChar + "AFile.txt", "resources" + Path.DirectorySeparatorChar + "bar", false);
+			Assert ("File AFile.txt should still exist", File.Exists ("resources" + Path.DirectorySeparatorChar + "AFile.txt"));
+			Assert ("File bar should exist after File.Copy", File.Exists ("resources" + Path.DirectorySeparatorChar + "bar"));
 		}
 		
 		public void TestDelete ()
 		{
-			File.Delete ("filetest/foo");
-			Assert ("File should not exist", !File.Exists ("filetest/foo"));
+                        Assert ("File resources" + Path.DirectorySeparatorChar + "foo should exist for TestDelete to succeed", File.Exists ("resources" + Path.DirectorySeparatorChar + "foo"));
+                        try {
+                                File.Delete ("resources" + Path.DirectorySeparatorChar + "foo");
+                        } catch (Exception e) {
+                                Fail ("Unable to delete resources" + Path.DirectorySeparatorChar + "foo: e=" + e.ToString());
+                        }
+			Assert ("File resources" + Path.DirectorySeparatorChar + "foo should not exist after File.Delete", !File.Exists ("resources" + Path.DirectorySeparatorChar + "foo"));
 		}
 
 		public void TestMove ()
 		{
-			Assert ("File filetest/bar should exist", File.Exists ("filetest/bar"));
-			File.Move ("filetest/bar", "filetest/baz");
-			Assert ("File filetest/bar should not exist", !File.Exists ("filetest/bar"));
-			Assert ("File filetest/baz should exist", File.Exists ("filetest/baz"));
+			Assert ("File resources" + Path.DirectorySeparatorChar + "bar should exist", File.Exists ("resources" + Path.DirectorySeparatorChar + "bar"));
+			File.Move ("resources" + Path.DirectorySeparatorChar + "bar", "resources" + Path.DirectorySeparatorChar + "baz");
+			Assert ("File resources" + Path.DirectorySeparatorChar + "bar should not exist", !File.Exists ("resources" + Path.DirectorySeparatorChar + "bar"));
+			Assert ("File resources" + Path.DirectorySeparatorChar + "baz should exist", File.Exists ("resources" + Path.DirectorySeparatorChar + "baz"));
 		}
 
 		public void TestOpen ()
 		{
+                        try {
+                                FileStream stream = File.Open ("resources" + Path.DirectorySeparatorChar + "AFile.txt", FileMode.Open);
+                        } catch (Exception e) {
+                                Fail ("Unable to open resources" + Path.DirectorySeparatorChar + "AFile.txt: e=" + e.ToString());
+                        }
+
+                        /* Exception tests */
 			try {
-				FileStream stream = File.Open("filedoesnotexist", FileMode.Open);
+				FileStream stream = File.Open ("filedoesnotexist", FileMode.Open);
 				Fail ("File 'filedoesnotexist' should not exist");
 			} catch (FileNotFoundException) {
 				// do nothing, this is what we expect

@@ -1,3 +1,9 @@
+2002/05/08  Nick Drochak <ndrochak@gol.com>
+
+	* FileTest.cs: Use "resources" directory and use OS friendly
+	directory separator characters.  This makes the tests run correctly
+	against MS.NET, but not yet in mono on Linux.
+
 2002-05-08  Nick Drochak  <ndrochak@gol.com>
 
 	* StreamWriter.cs: Wrap a try-catch around block of code to find out
