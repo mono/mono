@@ -12,7 +12,7 @@ using System.Runtime.Remoting.Messaging;
 
 namespace System.Runtime.Remoting.Activation
 {
-	public class RemoteActivator: MarshalByRefObject, IActivator
+	internal class RemoteActivator: MarshalByRefObject, IActivator
 	{
 		public IConstructionReturnMessage Activate (IConstructionCallMessage msg)
 		{

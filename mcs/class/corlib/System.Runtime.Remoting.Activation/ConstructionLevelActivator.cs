@@ -12,7 +12,7 @@ using System.Runtime.Remoting.Messaging;
 namespace System.Runtime.Remoting.Activation
 {
 	[Serializable]
-	public class ConstructionLevelActivator: IActivator
+	internal class ConstructionLevelActivator: IActivator
 	{
 		IActivator _next;
 

@@ -1,3 +1,9 @@
+2003-08-14  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* AppDomainLevelActivator.cs, ConstructionLevelActivator.cs,
+	  ContextLevelActivator.cs, RemoteActivationAttribute.cs,
+	  RemoteActivator.cs: Changed class from public to internal.
+	
 2003-03-21  Lluis Sanchez Gual <lluis@ideary.com>
 
 	* ActivationServices.cs: Added the method Activate that performs the forwards the

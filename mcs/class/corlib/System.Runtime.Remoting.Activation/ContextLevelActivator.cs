@@ -13,7 +13,7 @@ using System.Runtime.Remoting.Contexts;
 namespace System.Runtime.Remoting.Activation
 {
 	[Serializable]
-	public class ContextLevelActivator: IActivator
+	internal class ContextLevelActivator: IActivator
 	{
 		IActivator _next;
 

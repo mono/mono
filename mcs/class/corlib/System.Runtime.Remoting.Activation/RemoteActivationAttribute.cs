@@ -13,7 +13,7 @@ using System.Collections;
 
 namespace System.Runtime.Remoting.Activation
 {
-	public class RemoteActivationAttribute: Attribute, IContextAttribute
+	internal class RemoteActivationAttribute: Attribute, IContextAttribute
 	{
 		// This activation attribute is used when creating a client activated
 		// CBO in the server. This attribute will enforce the creation of

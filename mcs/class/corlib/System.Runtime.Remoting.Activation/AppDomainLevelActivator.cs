@@ -11,7 +11,7 @@ using System.Runtime.Remoting.Messaging;
 
 namespace System.Runtime.Remoting.Activation
 {
-	public class AppDomainLevelActivator: IActivator
+	internal class AppDomainLevelActivator: IActivator
 	{
 		string _activationUrl;
 		IActivator _next;
