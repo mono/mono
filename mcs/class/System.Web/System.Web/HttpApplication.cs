@@ -608,21 +608,19 @@ namespace System.Web
 							}
 
 							// Check if request flow is to be stopped
-							if (_app._CompleteRequest)
+							if (_app._Context.Error != null || _app._CompleteRequest) {
 								_currentStateIdx = _endStateIdx;
-
-							// Get next state handler
-							if (_currentStateIdx < _endStateIdx) {
+							} else if (_currentStateIdx < _endStateIdx) {
+								// Get next state handler
 								_currentStateIdx++;
-								handler = _handlers [_currentStateIdx];
-
-								_countSteps++;
-								lasterror = ExecuteState (handler,
-											  ref ready_sync);
-
-								if (ready_sync) 
-									_countSyncSteps++;
 							}
+
+							handler = _handlers [_currentStateIdx];
+							_countSteps++;
+							lasterror = ExecuteState (handler, ref ready_sync);
+							if (ready_sync) 
+								_countSyncSteps++;
+
 						} while (ready_sync && _currentStateIdx < _endStateIdx);
 
 						if (null != lasterror)

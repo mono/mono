@@ -1,3 +1,10 @@
+2003-02-13  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpApplication.cs: only execute the EndRequest step on error
+	condition or request marked as completed. This prevent page events from
+	being called when, for example, the url authorization module forbids
+	the request.
+
 2003-02-12  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpRequest.cs: implemented the indexer.
