@@ -19,7 +19,8 @@ namespace System.Data.Odbc
 	public sealed class OdbcException : SystemException 
 	{
 		OdbcErrorCollection col;
-
+
+
 		internal OdbcException(OdbcError Error) : base (Error.Message)
 		{
 			col=new OdbcErrorCollection();
@@ -51,7 +52,8 @@ namespace System.Data.Odbc
 			}
 		}
 
-		public override string Message 	{
+
+		public override string Message 	{
 			get { 
 				
 				return  col[0].Message;

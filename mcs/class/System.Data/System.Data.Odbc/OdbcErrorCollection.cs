@@ -65,7 +65,7 @@ namespace System.Data.Odbc
 			list.Add ((object) error);
 		}
 		
-		public void CopyTo (Array array, int index) 
+		public void CopyTo (Array array, int index)
 		{
 			if (array == null)
 				throw new ArgumentNullException("array");		

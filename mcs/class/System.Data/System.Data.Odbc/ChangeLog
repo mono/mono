@@ -1,4 +1,10 @@
 2004-05-09  Gert Driesen (drieseng@users.sourceforge.net)
+	* OdbcError.cs: 
+	* OdbcErrorCollection.cs:
+	* OdbcException.cs: fixed linefeeds to DOS to match other
+	sources in System.Data.Odbc
+
+2004-05-09  Gert Driesen (drieseng@users.sourceforge.net)
 	* OdbcCommand.cs: No longer use OdbcConnection.Datareader, in order 
 	to fix signature of OdbcConnection
 	* OdbcDataReader.cs: No longer use ODbcConnection.Datareader, in 
@@ -11,7 +17,7 @@
 	internal
 
 2004-05-09  Gert Driesen (drieseng@users.sourceforge.net)
-	* OdbcCommand: fixed linefeeds to DOS to match other sources
+	* OdbcCommand.cs: fixed linefeeds to DOS to match other sources
 	in System.Data.Odbc
 
 2004-05-09  Gert Driesen (drieseng@users.sourceforge.net)
