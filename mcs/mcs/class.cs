@@ -33,7 +33,7 @@ namespace Mono.CSharp {
 		ArrayList delegates;
 		
 		// Holds the list of constructors
-		ArrayList constructors;
+		ArrayList instance_constructors;
 
 		// Holds the list of fields
 		ArrayList fields;
@@ -212,16 +212,17 @@ namespace Mono.CSharp {
 			if (c.Name != Basename) 
 				return AdditionResult.NotAConstructor;
 
-			if (constructors == null)
-				constructors = new ArrayList ();
-
-			constructors.Add (c);
-
 			bool is_static = (c.ModFlags & Modifiers.STATIC) != 0;
 			
 			if (is_static)
 				have_static_constructor = true;
-
+			else {
+				if (instance_constructors == null)
+					instance_constructors = new ArrayList ();
+				
+				instance_constructors.Add (c);
+			}
+			
 			if (c.IsDefault ()) {
 				if (is_static)
 					default_static_constructor = c;
@@ -390,9 +391,9 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public ArrayList Constructors {
+		public ArrayList InstanceConstructors {
 			get {
-				return constructors;
+				return instance_constructors;
 			}
 		}
 
@@ -472,7 +473,7 @@ namespace Mono.CSharp {
 		{
 			ArrayList fields;
 			ILGenerator ig = ec.ig;
-			
+
 			if (is_static)
 				fields = initialized_static_fields;
 			else
@@ -1039,9 +1040,11 @@ namespace Mono.CSharp {
 			if (fields != null)
 				DefineMembers (fields, defined_names);
 
-			if (this is Class && constructors == null){
-				if (default_constructor == null) 
-					DefineDefaultConstructor (false);
+			if (this is Class){
+				if (instance_constructors == null){
+					if (default_constructor == null) 
+						DefineDefaultConstructor (false);
+				}
 
 				if (initialized_static_fields != null &&
 				    default_static_constructor == null)
@@ -1066,9 +1069,12 @@ namespace Mono.CSharp {
 			//
 			// Constructors are not in the defined_names array
 			//
-			if (constructors != null)
-				DefineMembers (constructors, null);
-
+			if (instance_constructors != null)
+				DefineMembers (instance_constructors, null);
+		
+			if (default_static_constructor != null)
+				default_static_constructor.Define (this);
+			
 			if (methods != null)
 				DefineMembers (methods, null);
 
@@ -1251,13 +1257,21 @@ namespace Mono.CSharp {
 			}
 
 			if ((mt & MemberTypes.Constructor) != 0){
-				if (Constructors != null){
-					foreach (Constructor c in Constructors){
+				if (instance_constructors != null){
+					foreach (Constructor c in instance_constructors){
 						ConstructorBuilder cb = c.ConstructorBuilder;
 
 						if (filter (cb, criteria) == true)
 							members.Add (cb);
 					}
+				}
+
+				if (default_static_constructor != null){
+					ConstructorBuilder cb =
+						default_static_constructor.ConstructorBuilder;
+					
+					if (filter (cb, criteria) == true)
+						members.Add (cb);
 				}
 			}
 
@@ -1459,10 +1473,12 @@ namespace Mono.CSharp {
 		/// </summary>
 		public void Emit ()
 		{
-//			Console.WriteLine ("Emitting code for: " + TypeBuilder.FullName);
-			if (constructors != null)
-				foreach (Constructor c in constructors)
+			if (instance_constructors != null)
+				foreach (Constructor c in instance_constructors)
 					c.Emit (this);
+
+			if (default_static_constructor != null)
+				default_static_constructor.Emit (this);
 			
 			if (methods != null)
 				foreach (Method m in methods)
@@ -1511,9 +1527,12 @@ namespace Mono.CSharp {
 					Created = true;
 					TypeBuilder.CreateType ();
 				}
-			} catch (TypeLoadException e){
-				Report.Warning (-20, "Exception while creating class: " + TypeBuilder.Name);
-				Console.WriteLine (e.Message);
+			} catch (TypeLoadException){
+				//
+				// This is fine, the code still created the type
+				//
+//				Report.Warning (-20, "Exception while creating class: " + TypeBuilder.Name);
+//				Console.WriteLine (e.Message);
 			}
 			
 			if (Enums != null)
@@ -2188,14 +2207,20 @@ namespace Mono.CSharp {
 			if (Name == "Finalize" && type_return_type == TypeManager.void_type){
 				Label end = ig.BeginExceptionBlock ();
 				Label finish = ig.DefineLabel ();
-				
+				bool old_in_try = ec.InTry;
+				ec.InTry = true;
 				ec.EmitTopBlock (Block, Location);
 				ig.Emit (OpCodes.Leave, finish);
-				ig.BeginFinallyBlock ();
+				ec.InTry = old_in_try;
 
+				bool old_in_finally = ec.InFinally;
+				ec.InFinally = true;
+				ig.BeginFinallyBlock ();
 //				throw new Exception ("IMPLEMENT BASE ACCESS!");
+				// DONT FORGET TO SET THE EC VARIABLES.
 				Console.WriteLine ("Implement base access here");
 
+				ec.InFinally = old_in_finally;
 				ig.EndExceptionBlock ();
 			} else
 				ec.EmitTopBlock (Block, Location);
@@ -2384,9 +2409,10 @@ namespace Mono.CSharp {
 			// Classes can have base initializers and instance field initializers.
 			//
 			if (parent is Class){
-				if ((ModFlags & Modifiers.STATIC) == 0)
+				if ((ModFlags & Modifiers.STATIC) == 0){
 					Initializer.Emit (ec);
-				parent.EmitFieldInitializers (ec, false);
+					parent.EmitFieldInitializers (ec, false);
+				}
 			}
 			
 			if ((ModFlags & Modifiers.STATIC) != 0)

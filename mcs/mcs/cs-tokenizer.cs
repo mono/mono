@@ -280,7 +280,6 @@ namespace Mono.CSharp
 
 		int is_punct (char c, ref bool doread)
 		{
-			int idx = "{}[](),:;~+-*/%&|^!=<>?".IndexOf (c);
 			int d;
 			int t;
 

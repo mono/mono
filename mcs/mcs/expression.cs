@@ -2340,7 +2340,7 @@ namespace Mono.CSharp {
 				ig.Emit (OpCodes.Ldind_R8);
 			else if (type == TypeManager.byte_type)
 				ig.Emit (OpCodes.Ldind_U1);
-			else if (type == TypeManager.sbyte_type)
+			else if (type == TypeManager.sbyte_type || type == TypeManager.bool_type)
 				ig.Emit (OpCodes.Ldind_I1);
 			else if (type == TypeManager.intptr_type)
 				ig.Emit (OpCodes.Ldind_I);
@@ -2378,7 +2378,8 @@ namespace Mono.CSharp {
 					ig.Emit (OpCodes.Stind_R4);
 				else if (type == TypeManager.double_type)
 					ig.Emit (OpCodes.Stind_R8);
-				else if (type == TypeManager.byte_type || type == TypeManager.sbyte_type)
+				else if (type == TypeManager.byte_type || type == TypeManager.sbyte_type ||
+					type == TypeManager.bool_type)
 					ig.Emit (OpCodes.Stind_I1);
 				else if (type == TypeManager.intptr_type)
 					ig.Emit (OpCodes.Stind_I);
@@ -3897,11 +3898,19 @@ namespace Mono.CSharp {
 				if (v is EnumConstant)
 					v = ((EnumConstant) v).Child;
 
-				if (underlying_type == TypeManager.int64_type ||
-				    underlying_type == TypeManager.uint64_type){
+				if (underlying_type == TypeManager.int64_type){
 					long val = 0;
 					if (!(v is Expression))
 						val = (long) v;
+
+				        for (int j = 0; j < factor; ++j) {
+						data [idx + j] = (byte) (val & 0xFF);
+						val = (val >> 8);
+					}
+				} else if (underlying_type == TypeManager.uint64_type){
+					ulong val = 0;
+					if (!(v is Expression))
+						val = (ulong) v;
 
 				        for (int j = 0; j < factor; ++j) {
 						data [idx + j] = (byte) (val & 0xFF);
@@ -3946,6 +3955,24 @@ namespace Mono.CSharp {
 					data [idx] = (byte) (val & 0xff);
 					data [idx+1] = (byte) (val >> 8);
 
+				} else if (underlying_type == TypeManager.short_type){
+					int val = (int) 0;
+
+					if (!(v is Expression))
+						v = (int) ((short) v);
+					
+					data [idx] = (byte) (val & 0xff);
+					data [idx+1] = (byte) (val >> 8);
+
+				} else if (underlying_type == TypeManager.ushort_type){
+					int val = (int) 0;
+
+					if (!(v is Expression))
+						v = (int) ((ushort) v);
+					
+					data [idx] = (byte) (val & 0xff);
+					data [idx+1] = (byte) (val >> 8);
+
 				} else if (underlying_type == TypeManager.int32_type) {
 					int val = 0;
 					
@@ -3956,6 +3983,30 @@ namespace Mono.CSharp {
 					data [idx+1] = (byte) ((val >> 8) & 0xff);
 					data [idx+2] = (byte) ((val >> 16) & 0xff);
 					data [idx+3] = (byte) (val >> 24);
+				} else if (underlying_type == TypeManager.uint32_type) {
+					uint val = 0;
+					
+					if (!(v is Expression))
+						val = (uint) v;
+					
+					data [idx]   = (byte) (val & 0xff);
+					data [idx+1] = (byte) ((val >> 8) & 0xff);
+					data [idx+2] = (byte) ((val >> 16) & 0xff);
+					data [idx+3] = (byte) (val >> 24);
+				} else if (underlying_type == TypeManager.sbyte_type) {
+					sbyte val = 0;
+					
+					if (!(v is Expression))
+						val = (sbyte) v;
+					
+					data [idx] = (byte) val;
+				} else if (underlying_type == TypeManager.byte_type) {
+					byte val = 0;
+					
+					if (!(v is Expression))
+						val = (byte) v;
+					
+					data [idx] = (byte) val;
 				} else
 					throw new Exception ("Unrecognized type in MakeByteBlob");
 
@@ -4953,7 +5004,7 @@ namespace Mono.CSharp {
 		/// </summary>
 		static public void EmitLoadOpcode (ILGenerator ig, Type type)
 		{
-			if (type == TypeManager.byte_type)
+			if (type == TypeManager.byte_type || type == TypeManager.bool_type)
 				ig.Emit (OpCodes.Ldelem_I1);
 			else if (type == TypeManager.sbyte_type)
 				ig.Emit (OpCodes.Ldelem_U1);
@@ -4987,7 +5038,8 @@ namespace Mono.CSharp {
 		/// </summary>
 		static public void EmitStoreOpcode (ILGenerator ig, Type t)
 		{
-			if (t == TypeManager.byte_type || t == TypeManager.sbyte_type)
+			if (t == TypeManager.byte_type || t == TypeManager.sbyte_type ||
+			    t == TypeManager.bool_type)
 				ig.Emit (OpCodes.Stelem_I1);
 			else if (t == TypeManager.short_type || t == TypeManager.ushort_type)
 				ig.Emit (OpCodes.Stelem_I2);

@@ -1,3 +1,27 @@
+2001-12-29  Miguel de Icaza  <miguel@ximian.com>
+
+	* expression.cs (ParameterReference.EmitAssign, Emit): handle
+	bools as bytes.
+
+	(ArrayAccess.EmitLoadOpcode): Handle bool type here.
+	(ArrayAccess.EmitStoreOpcode): ditto.
+
+	* cs-tokenizer.cs (is_punct): Eliminated empty computation.
+
+	* expression.cs (MakeByteBlob): Complete all the missing types
+	(uint, short, ushort, byte, sbyte)
+
+	* class.cs: Only init instance field initializers on instance
+	constructors. 
+
+	Rename `constructors' to instance_constructors. 
+
+	(TypeContainer.AddConstructor): Only add constructors to the list
+	if it is not static.
+
+	Make sure that we handle default_static_constructor independently
+	everywhere where we handle instance_constructors
+
 2001-12-28  Miguel de Icaza  <miguel@ximian.com>
 
 	* class.cs: Do not lookup or create a base initializer for a

@@ -1490,8 +1490,11 @@ namespace Mono.CSharp {
 
 			// try
 			Label end = ig.BeginExceptionBlock ();
+			bool old_in_try = ec.InTry;
+			ec.InTry = true;
 			Label finish = ig.DefineLabel ();
 			Statement.Emit (ec);
+			ec.InTry = old_in_try;
 			// ig.Emit (OpCodes.Leave, finish);
 
 			ig.MarkLabel (finish);
@@ -1708,6 +1711,8 @@ namespace Mono.CSharp {
 			}
 			
 			i = 0;
+			bool old_in_try = ec.InTry;
+			ec.InTry = true;
 			foreach (DictionaryEntry e in var_list){
 				LocalVariableReference var = (LocalVariableReference) e.Key;
 				Expression expr = (Expression) e.Value;
@@ -1726,7 +1731,10 @@ namespace Mono.CSharp {
 
 			}
 			Statement.Emit (ec);
-			
+			ec.InTry = old_in_try;
+
+			bool old_in_finally = ec.InFinally;
+			ec.InFinally = true;
 			var_list.Reverse ();
 			foreach (DictionaryEntry e in var_list){
 				LocalVariableReference var = (LocalVariableReference) e.Key;
@@ -1742,6 +1750,7 @@ namespace Mono.CSharp {
 				ig.MarkLabel (skip);
 				ig.EndExceptionBlock ();
 			}
+			ec.InFinally = old_in_finally;
 
 			return false;
 		}
@@ -1770,16 +1779,21 @@ namespace Mono.CSharp {
 				expr.Emit (ec);
 			ig.Emit (OpCodes.Stloc, local_copy);
 
+			bool old_in_try = ec.InTry;
+			ec.InTry = true;
 			ig.BeginExceptionBlock ();
 			Statement.Emit (ec);
-
+			ec.InTry = old_in_try;
+			
 			Label skip = ig.DefineLabel ();
+			bool old_in_finally = ec.InFinally;
 			ig.BeginFinallyBlock ();
 			ig.Emit (OpCodes.Ldloc, local_copy);
 			ig.Emit (OpCodes.Brfalse, skip);
 			ig.Emit (OpCodes.Ldloc, local_copy);
 			ig.Emit (OpCodes.Callvirt, TypeManager.void_dispose_void);
 			ig.MarkLabel (skip);
+			ec.InFinally = old_in_finally;
 			ig.EndExceptionBlock ();
 
 			return false;
@@ -1941,6 +1955,9 @@ namespace Mono.CSharp {
 			// if the beast implement IDisposable, we get rid of it
 			//
 			Label l = ig.BeginExceptionBlock ();
+			bool old_in_try = ec.InTry;
+			ec.InTry = true;
+			
 			Label end_try = ig.DefineLabel ();
 			
 			ig.MarkLabel (ec.LoopBegin);
@@ -1953,7 +1970,8 @@ namespace Mono.CSharp {
 			statement.Emit (ec);
 			ig.Emit (OpCodes.Br, ec.LoopBegin);
 			ig.MarkLabel (end_try);
-
+			ec.InTry = old_in_try;
+			
 			// The runtime provides this for us.
 			// ig.Emit (OpCodes.Leave, end);
 
@@ -1961,8 +1979,10 @@ namespace Mono.CSharp {
 			// Now the finally block
 			//
 			Label end_finally = ig.DefineLabel ();
-			
+			bool old_in_finally = ec.InFinally;
+			ec.InFinally = true;
 			ig.BeginFinallyBlock ();
+			
 			ig.Emit (OpCodes.Ldloc, enumerator);
 			ig.Emit (OpCodes.Isinst, TypeManager.idisposable_type);
 			ig.Emit (OpCodes.Stloc, disposable);
@@ -1971,6 +1991,7 @@ namespace Mono.CSharp {
 			ig.Emit (OpCodes.Ldloc, disposable);
 			ig.Emit (OpCodes.Callvirt, TypeManager.void_dispose_void);
 			ig.MarkLabel (end_finally);
+			ec.InFinally = old_in_finally;
 
 			// The runtime generates this anyways.
 			// ig.Emit (OpCodes.Endfinally);
