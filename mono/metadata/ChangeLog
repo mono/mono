@@ -1,3 +1,10 @@
+2004-05-14  Zoltan Varga  <vargaz@freemail.hu>
+
+	* icall.c (ves_icall_System_Reflection_Assembly_load_with_partial_name): Fix warning.
+
+	* appdomain.c (MONO_CORLIB_VERSION): Bump corlib version.
+
+	* icall.c: Optimize Buffer.BlockCopy.
 
 2004-05-14  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
