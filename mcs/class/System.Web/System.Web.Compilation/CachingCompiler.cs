@@ -32,6 +32,7 @@ using System;
 using System.CodeDom.Compiler;
 using System.Collections;
 using System.Collections.Specialized;
+using System.IO;
 using System.Reflection;
 using System.Web.UI;
 using System.Web.Caching;
@@ -139,7 +140,14 @@ namespace System.Web.Compilation
 				ICodeCompiler compiler = provider.CreateCompiler ();
 				CompilerParameters options = GetOptions (assemblies);
 				results = compiler.CompileAssemblyFromFile (options, file);
-				string [] deps = (string []) assemblies.ToArray (typeof (string));
+				ArrayList realdeps = new ArrayList (assemblies.Count);
+				for (int i = assemblies.Count - 1; i >= 0; i--) {
+					string current = (string) assemblies [i];
+					if (Path.IsPathRooted (current))
+						realdeps.Add (current);
+				}
+
+				string [] deps = (string []) realdeps.ToArray (typeof (string));
 				cache.Insert (cachePrefix + key, results, new CacheDependency (deps));
 			}
 
