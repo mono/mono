@@ -669,9 +669,7 @@ variable_declarator
 variable_initializer
 	: expression
 	  {
-		ArrayList list = new ArrayList ();
-		list.Add ($1);
-		$$ = list;
+		$$ = $$;
 	  }
 	| array_initializer
 	{
@@ -2975,6 +2973,7 @@ Block declare_local_variables (string type, ArrayList variable_declarators)
 			assign = new Assign (new LocalVariableReference (implicit_block, decl.identifier), expr);
 			implicit_block.AddStatement (new StatementExpression (assign));
 		} else {
+			Console.WriteLine ("Not handling Array initializers yet");
 		}
 	}
 			

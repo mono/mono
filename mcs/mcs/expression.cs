@@ -454,13 +454,14 @@ namespace CIR {
 	// </summary>
 	public class OpcodeCast : EmptyCast {
 		OpCode op, op2;
+		bool second_valid;
 		
 		public OpcodeCast (Expression child, Type return_type, OpCode op)
 			: base (child, return_type)
 			
 		{
 			this.op = op;
-			this.op2 = OpCodes.Nop;
+			second_valid = false;
 		}
 
 		public OpcodeCast (Expression child, Type return_type, OpCode op, OpCode op2)
@@ -469,6 +470,7 @@ namespace CIR {
 		{
 			this.op = op;
 			this.op2 = op2;
+			second_valid = true;
 		}
 
 		public override Expression Resolve (TypeContainer tc)
@@ -483,8 +485,8 @@ namespace CIR {
 		{
 			base.Emit (ec);
 			ec.ig.Emit (op);
-			
-			if (!op2.Equals (OpCodes.Nop))
+
+			if (second_valid)
 				ec.ig.Emit (op2);
 		}			
 		
@@ -991,10 +993,8 @@ namespace CIR {
 				break;
 
 			default:
-				Console.WriteLine ("EmitBranchable called for non-EmitBranchable operator: "
-						   + oper.ToString ());
-				opcode = OpCodes.Nop;
-				break;
+				throw new Exception ("EmitBranchable called on non-EmitBranchable operator: "
+						     + oper.ToString ());
 			}
 
 			ec.ig.Emit (opcode, target);
@@ -1118,9 +1118,8 @@ namespace CIR {
 				break;
 
 			default:
-				Console.WriteLine ("This should not happen: Operator = " + oper.ToString ());
-				opcode = OpCodes.Nop;
-				break;
+				throw new Exception ("This should not happen: Operator = "
+						     + oper.ToString ());
 			}
 
 			ec.ig.Emit (opcode);
@@ -1287,7 +1286,34 @@ namespace CIR {
 
 		public override void Emit (EmitContext ec)
 		{
-			Console.WriteLine ("Internal compiler error, LocalVariableReference should not be emitted");
+			VariableInfo vi = VariableInfo;
+			ILGenerator ig = ec.ig;
+			int idx = vi.Idx;
+			
+			switch (idx){
+			case 0:
+				ig.Emit (OpCodes.Ldloc_0);
+				break;
+				
+			case 1:
+				ig.Emit (OpCodes.Ldloc_1);
+				break;
+
+			case 2:
+				ig.Emit (OpCodes.Ldloc_2);
+				break;
+
+			case 3:
+				ig.Emit (OpCodes.Ldloc_3);
+				break;
+
+			default:
+				if (idx < 255)
+					ig.Emit (OpCodes.Ldloc_S, idx);
+				else
+					ig.Emit (OpCodes.Ldloc, idx);
+				break;
+			}
 		}
 	}
 

@@ -370,7 +370,6 @@ namespace CIR
 			if (target == Target.Exe || target == Target.WinExe){
 				MethodInfo ep = context.EntryPoint;
 
-				Console.WriteLine ("Setting entry point!");
 				if (ep == null){
 					context.Report.Error (5001, "Program " + output_file +
 							      " does not have an entry point defined");

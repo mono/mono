@@ -1,5 +1,11 @@
 2001-09-12  Miguel de Icaza  <miguel@ximian.com>
 
+	* expression.cs (LocalVariableReference::Emit): Implement.
+	(OpcodeCast::Emit): fix.
+
+	* cs-parser.jay: Fix bug introduced by Ravi, variable initializers
+	that are expressions need to stay as Expressions.
+
 	* typemanager.cs (CSharpName): Returns the C# name of a type if
 	possible. 
 

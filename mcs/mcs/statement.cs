@@ -358,8 +358,9 @@ namespace CIR {
 				return (VariableInfo) temp;
 			}
 
-			if (Parent != null)
+			if (Parent != null){
 				return Parent.GetVariableInfo (name);
+			}
 
 			return null;
 		}
@@ -370,6 +371,7 @@ namespace CIR {
 
 			if (vi != null)
 				return vi.Type;
+
 			return null;
 		}
 
@@ -379,7 +381,6 @@ namespace CIR {
 		// </summary>
 		public bool IsVariableDefined (string name)
 		{
-			Console.WriteLine ("Trying to figure if [" + name + "] is defined");
 			return GetVariableType (name) != null;
 		}
 
