@@ -3272,7 +3272,12 @@ namespace Mono.CSharp {
 			}
 
 			if (!AttributeTester.IsClsCompliant (MemberType)) {
-				Report.Error (3002, Location, "Return type of '{0}' is not CLS-compliant", GetSignatureForError ());
+				if ((this is Property) || (this is Indexer))
+					Report.Error (3003, Location, "Type of `{0}' is not CLS-compliant",
+						      GetSignatureForError ());
+				else
+					Report.Error (3002, Location, "Return type of '{0}' is not CLS-compliant",
+						      GetSignatureForError ());
 			}
 
 			AttributeTester.AreParametersCompliant (Parameters.FixedParameters, Location);
