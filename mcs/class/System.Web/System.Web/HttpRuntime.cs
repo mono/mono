@@ -175,8 +175,9 @@ namespace System.Web {
 
 		[MonoTODO ("FormatResourceString (string, string, string)")]
 		internal static string FormatResourceString (string key, string arg0, string type) {
-			// String.Format (string, object, object);
-			throw new NotImplementedException ();
+			// By now give some useful info
+			return String.Format ("{0}: {1} {2}", key, arg0, type);
+			//throw new NotImplementedException ();
 		}
 
 		[MonoTODO ("FormatResourceString (string, string, string, string)")]
@@ -200,7 +201,9 @@ namespace System.Web {
 
 		[MonoTODO ("GetResourceStringFromResourceManager (string)")]
 		private string GetResourceStringFromResourceManager (string key) {
-			throw new NotImplementedException ();
+			// Keep going
+			return "String returned by HttpRuntime.GetResourceStringFromResourceManager";
+			//throw new NotImplementedException ();
 		}
 
 		[MonoTODO ("Get Application path from the appdomain object")]
