@@ -35,6 +35,7 @@ namespace MonoTests.System {
                                 suite.AddTest(RandomTest.Suite);
                                 suite.AddTest(ResolveEventArgsTest.Suite);
 				suite.AddTest(StringTest.Suite);
+				suite.AddTest(BooleanTest.Suite);
 				return suite;
                         }
                 }

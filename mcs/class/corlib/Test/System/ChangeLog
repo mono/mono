@@ -70,3 +70,8 @@
 
 	* SByteTest.cs: Add messages to Assert()'s so we can tell where the tests fail.
 
+2002-02-21  Bob Doan  <bdoan@sicompos.com>
+
+	* BooleanTest.cs: Added New test suite
+	* AllTests.cs: Added new Boolean test to suite.
+
