@@ -49,9 +49,13 @@ namespace System
 		// IList interface
 		object IList.this [int index] {
 			get {
+				if (unchecked ((uint) index) >= unchecked ((uint) Length))
+					throw new ArgumentOutOfRangeException ("index");
 				return GetValueImpl (index);
 			} 
 			set {
+				if (unchecked ((uint) index) >= unchecked ((uint) Length))
+					throw new ArgumentOutOfRangeException ("index");
 				SetValueImpl (value, index);
 			}
 		}
@@ -126,9 +130,11 @@ namespace System
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern void SetValue (object value, int[] idxs);
 
+		/* CAUTION! No bounds checking! */
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		internal extern object GetValueImpl (int pos);
 
+		/* CAUTION! No bounds checking! */
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		internal extern void SetValueImpl (object value, int pos);
 
