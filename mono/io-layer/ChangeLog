@@ -1,3 +1,12 @@
+2004-07-14  Dick Porter  <dick@ximian.com>
+
+	* wait.c (test_and_own): When not waiting for all handles to
+	become signalled, only own and return the lowest.  All the
+	documentation suggests that the old way was correct, but
+	experimentation shows it actually works like this.  Patch by
+	Sébastien Robitaille
+	(sebastien.robitaille@croesus.com), fixes bug 61511.
+
 2004-07-09  Ben Maurer  <bmaurer@ximian.com>
 
 	* threads.c: register roots for gc
