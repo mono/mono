@@ -852,7 +852,8 @@ namespace System.Web.Configuration
 						ThrowException ("Unrecognized attribute in <configSections>.", reader);
 
 					MoveToNextElement (reader);
-					ReadSections (reader, null);
+					if (reader.Depth > depth)
+						ReadSections (reader, null);
 				} else if (name == "location") {
 					if (isLocation)
 						ThrowException ("<location> inside <location>", reader);
