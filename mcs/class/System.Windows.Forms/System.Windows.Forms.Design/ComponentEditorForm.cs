@@ -22,7 +22,7 @@ namespace System.Windows.Forms.Design {
 		}
 
 		[MonoTODO]
-		protected virtual void OnSelChangeSelector(EventArgs e){
+		protected virtual void OnSelChangeSelector(object source, EventArgs e){
 		}
 
 		[MonoTODO]
