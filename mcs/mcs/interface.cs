@@ -354,12 +354,9 @@ namespace Mono.CSharp {
 					Console.WriteLine ("Implement the type definition for params");
 			}
 
-			EmitContext ec = new EmitContext (parent, decl_space, Location, null,
-							  return_type, ModFlags, false);
-
-			if (im.OptAttributes != null)
-				Attribute.ApplyAttributes (ec, mb, im, im.OptAttributes);
-		}
+                        im.Builder = mb;
+                        
+                }
 
 		//
 		// Populates the properties in the interface
@@ -435,14 +432,9 @@ namespace Mono.CSharp {
 				}
 			}
 
-			EmitContext ec = new EmitContext (parent, decl_space, Location, null,
-							  null, ModFlags, false);
-
-			if (ip.OptAttributes != null)
-				Attribute.ApplyAttributes (ec, pb, ip, ip.OptAttributes);
-
 			TypeManager.RegisterProperty (pb, get, set);
 			property_builders.Add (pb);
+                        ip.Builder = pb;
 		}
 
 		//
@@ -505,15 +497,10 @@ namespace Mono.CSharp {
 				return;
 			}
 
-			EmitContext ec = new EmitContext (parent, decl_space, Location, null,
-							  null, ModFlags, false);
-
-
-			if (ie.OptAttributes != null)
-				Attribute.ApplyAttributes (ec, eb, ie, ie.OptAttributes);
-
 			TypeManager.RegisterEvent (eb, add, remove);
 			event_builders.Add (eb);
+
+                        ie.Builder = eb;
 		}
 
 		//
@@ -629,10 +616,9 @@ namespace Mono.CSharp {
 				set_item.DefineParameter (i + 1, ParameterAttributes.None, "value");
 			}
 
-			if (ii.OptAttributes != null)
-				Attribute.ApplyAttributes (ec, pb, ii, ii.OptAttributes);
-
 			property_builders.Add (pb);
+
+                        ii.Builder = pb;
 		}
 
 		/// <summary>
@@ -892,6 +878,37 @@ namespace Mono.CSharp {
 								  ModFlags, false);
 				Attribute.ApplyAttributes (ec, TypeBuilder, this, OptAttributes);
 			}
+
+                        // Now emit attributes for each interface member
+                        if (defined_method != null) {
+                                foreach (InterfaceMethod im in defined_method) {
+                                        EmitContext ec = new EmitContext (tc, this, Location, null,
+                                                                          im.ReturnType.Type, ModFlags, false);
+                                        
+                                        if (im.OptAttributes != null)
+                                        	Attribute.ApplyAttributes (ec, im.Builder, im, im.OptAttributes);
+                                }      
+                        }
+
+                        if (defined_properties != null) {
+                                foreach (InterfaceProperty ip in defined_properties) {
+                                        EmitContext ec = new EmitContext (tc, this, Location, null,
+                                                                          null, ModFlags, false);
+                                        
+                                        if (ip.OptAttributes != null)
+                                        	Attribute.ApplyAttributes (ec, ip.Builder, ip, ip.OptAttributes);
+                                }
+                        }
+
+                        if (defined_events != null) {
+                                foreach (InterfaceEvent ie in defined_events) {
+                                        EmitContext ec = new EmitContext (tc, this, Location, null,
+                                                                          null, ModFlags, false);
+                                        
+                                        if (ie.OptAttributes != null)
+                                        	Attribute.ApplyAttributes (ec, ie.Builder, ie, ie.OptAttributes);
+                                }
+                        }
                 }
 
 		public static CustomAttributeBuilder EmitDefaultMemberAttr (TypeContainer parent,
@@ -1002,6 +1019,7 @@ namespace Mono.CSharp {
 		public readonly bool HasGet;
 		public readonly Location Location;
 		public Expression Type;
+                public PropertyBuilder Builder;
 		
 		public InterfaceProperty (Expression type, string name,
 					  bool is_new, bool has_get, bool has_set,
@@ -1018,7 +1036,8 @@ namespace Mono.CSharp {
 	public class InterfaceEvent : InterfaceMemberBase {
 		public readonly Location Location;
 		public Expression Type;
-		
+                public MyEventBuilder Builder;
+                
 		public InterfaceEvent (Expression type, string name, bool is_new, Attributes attrs,
 				       Location loc)
 			: base (name, is_new, attrs)
@@ -1032,7 +1051,8 @@ namespace Mono.CSharp {
 		public Expression ReturnType;
 		public readonly Parameters Parameters;
 		public readonly Location Location;
-		
+                public MethodBuilder Builder;
+                
 		public InterfaceMethod (Expression return_type, string name, bool is_new, Parameters args,
 					Attributes attrs, Location l)
 			: base (name, is_new, attrs)
@@ -1071,6 +1091,7 @@ namespace Mono.CSharp {
 		public readonly Parameters Parameters;
 		public readonly Location Location;
 		public Expression Type;
+                public PropertyBuilder Builder;
 		
 		public InterfaceIndexer (Expression type, Parameters args, bool do_get, bool do_set,
 					 bool is_new, Attributes attrs, Location loc)
