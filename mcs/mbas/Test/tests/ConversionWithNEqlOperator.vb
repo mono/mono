@@ -10,6 +10,6 @@ Module ExpressionOperator1
 	a += 1
 	if a <> b Then
 		Throw New Exception ("# <> operators: Failed")
-	Else if
+	End If
     End Sub
 End Module
