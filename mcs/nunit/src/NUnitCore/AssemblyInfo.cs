@@ -30,7 +30,7 @@ using System.Runtime.CompilerServices;
 // You can specify all the value or you can default the Revision and Build Numbers 
 // by using the '*' as shown below:
 
-[assembly:AssemblyVersion("1.10.*")]
+[assembly:AssemblyVersion("1.11.*")]
 
 //
 // In order to sign your assembly you must specify a key to use. Refer to the 
@@ -51,5 +51,5 @@ using System.Runtime.CompilerServices;
 //       documentation for more information on this.
 //
 [assembly: AssemblyDelaySign(false)]
-//[assembly: AssemblyKeyFile(@"..\..\..\..\NUnit.key")]
+[assembly: AssemblyKeyFile(@"..\..\..\..\NUnit.key")]
 [assembly: AssemblyKeyName("")]
