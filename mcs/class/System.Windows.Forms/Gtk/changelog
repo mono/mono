@@ -1,0 +1,13 @@
+2002-8-7  DennisHayes <dennish@raytek.com>
+
+*  Started changelog
+
+2002-8-7  DennisHayes <dennish@raytek.com>
+Check in for  Remco de Jong <rdj@rdj.cg.nu>
+
+* HorizontalAlignment.cs
+* ProgressBar.cs
+* ScrollBars.cs
+* TextBox.cs
+* TextBoxBase.cs
+* added new files with some functinality
