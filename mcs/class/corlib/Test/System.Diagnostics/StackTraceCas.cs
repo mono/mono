@@ -68,8 +68,10 @@ namespace MonoCasTests.System.Diagnostics {
 		}
 
 		[Test]
+#if NET_2_0
 		[PermissionSet (SecurityAction.Deny, Unrestricted = true)]
-#if !NET_2_0
+#else
+		[ReflectionPermission (SecurityAction.Deny, TypeInformation = true)]
 		[ExpectedException (typeof (SecurityException))]
 #endif
 		public void StackTrace_DefaultConstructor ()
@@ -79,8 +81,10 @@ namespace MonoCasTests.System.Diagnostics {
 		}
 
 		[Test]
+#if NET_2_0
 		[PermissionSet (SecurityAction.Deny, Unrestricted = true)]
-#if !NET_2_0
+#else
+		[ReflectionPermission (SecurityAction.Deny, TypeInformation = true)]
 		[ExpectedException (typeof (SecurityException))]
 #endif
 		public void StackTrace_BoolConstructor ()
@@ -90,8 +94,10 @@ namespace MonoCasTests.System.Diagnostics {
 		}
 
 		[Test]
+#if NET_2_0
 		[PermissionSet (SecurityAction.Deny, Unrestricted = true)]
-#if !NET_2_0
+#else
+		[ReflectionPermission (SecurityAction.Deny, TypeInformation = true)]
 		[ExpectedException (typeof (SecurityException))]
 #endif
 		public void StackTrace_IntConstructor ()
@@ -101,8 +107,10 @@ namespace MonoCasTests.System.Diagnostics {
 		}
 
 		[Test]
+#if NET_2_0
 		[PermissionSet (SecurityAction.Deny, Unrestricted = true)]
-#if !NET_2_0
+#else
+		[ReflectionPermission (SecurityAction.Deny, TypeInformation = true)]
 		[ExpectedException (typeof (SecurityException))]
 #endif
 		public void StackTrace_IntBoolConstructor ()
@@ -144,8 +152,10 @@ namespace MonoCasTests.System.Diagnostics {
 		}
 
 		[Test]
+#if NET_2_0
 		[PermissionSet (SecurityAction.Deny, Unrestricted = true)]
-#if !NET_2_0
+#else
+		[ReflectionPermission (SecurityAction.Deny, TypeInformation = true)]
 		[ExpectedException (typeof (SecurityException))]
 #endif
 		public void StackTrace_StackFrameConstructor ()
@@ -155,8 +165,10 @@ namespace MonoCasTests.System.Diagnostics {
 		}
 
 		[Test]
+#if NET_2_0
 		[PermissionSet (SecurityAction.Deny, Unrestricted = true)]
-#if !NET_2_0
+#else
+		[ReflectionPermission (SecurityAction.Deny, TypeInformation = true)]
 		[ExpectedException (typeof (SecurityException))]
 #endif
 		[Category ("NotWorking")]
