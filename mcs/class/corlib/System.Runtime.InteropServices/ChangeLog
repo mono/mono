@@ -1,3 +1,8 @@
+2004-09-24  Zoltan Varga  <vargaz@freemail.hu>
+
+	* DllImportAttribute.cs: Reorder fields and mark this class as visible
+	to the runtime.
+
 2004-09-08  Marek Safar  <marek.safar@seznam.cz>
 
 	* Marshal.cs: Class is static in NET_2_0.

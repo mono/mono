@@ -37,22 +37,24 @@ namespace System.Runtime.InteropServices {
 
 	[AttributeUsage (AttributeTargets.Method, Inherited=false)]
 	public sealed class DllImportAttribute: Attribute {
+		#region Sync with reflection.h
 		public CallingConvention CallingConvention;
 		public CharSet CharSet;
+		private string Dll;
 		public string EntryPoint;
 		public bool ExactSpelling;
 		public bool PreserveSig;
 		public bool SetLastError;
 
-#if (NET_1_1)
-
+#if NET_1_1
 		public bool BestFitMapping;
 		public bool ThrowOnUnmappableChar;
-
+#else
+		private bool BestFitMapping;
+		private bool ThrowOnUnmappableChar;
 #endif
+		#endregion
 
-		private string Dll;
-		
 		public string Value {
 			get {return Dll;}
 		}
