@@ -13,13 +13,12 @@ wsdl \- Mono's Web Service Proxy Generator
 [options] [path | url]
 .SH DESCRIPTION
 .I wsdl
-is a tool for generating proxy classes that can be used to access to
-web services.  The tool reads a WSDL document from the provided path
-or url, and downloads referenced schemas or other WSDL documents if
-needed.
+is a tool for generating proxy classes that can be used to access to web services.
+The tool reads a WSDL document from the provided path or url, and downloads
+referenced schemas or other WSDL documents if needed.
 .PP
-This tool is used to target the 1.x API, for targetting the 2.x API,
-please use the wsdl2 tool.
+This tool is used to target the 2.x API, for targetting the 1.x API,
+please use the wsdl tool.
 .PP
 .SH OPTIONS
 The following options are available:
@@ -77,4 +76,4 @@ Lluis Sanchez Gual (lluis@ximian.com)
 wsdl is released under the terms of the GNU GPL.
 .PP
 .SH SEE ALSO
-disco(1), soapsuds(1), mono(1), mcs(1), wsdl2(1)
+disco(1), soapsuds(1), mono(1), mcs(1), wsdl(1)
