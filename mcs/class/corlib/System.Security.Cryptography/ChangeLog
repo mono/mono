@@ -1,3 +1,8 @@
+2003-06-22  Sebastien Pouliot <spouliot@motus.com>
+
+	* DSACryptoServiceProvider.cs: Added UseMachineKeyStore property (1.1).
+	* RSACryptoServiceProvider.cs: Added UseMachineKeyStore property (1.1).
+
 2003-06-11  Sebastien Pouliot <spouliot@motus.com>
 
 	* DSACryptoServiceProvider.cs: Refactored from orginal by splitting 

@@ -68,6 +68,10 @@ namespace System.Security.Cryptography {
 		{
 			if (p == null) {
 				cspParams = new CspParameters ();
+#if ! NET_1_0
+				if (useMachineKeyStore)
+					cspParams.Flags |= CspProviderFlags.UseMachineKeyStore;
+#endif
 				// TODO: set default values (for keypair persistance)
 			}
 			else
@@ -81,6 +85,16 @@ namespace System.Security.Cryptography {
 
 			rsa = new RSAManaged (KeySize);
 		}
+
+#if ! NET_1_0
+		private static bool useMachineKeyStore = false;
+
+		[MonoTODO("Related to persistance")]
+		public static bool UseMachineKeyStore {
+			get { return useMachineKeyStore; }
+			set { useMachineKeyStore = value; }
+		}
+#endif
 	
 		~RSACryptoServiceProvider () 
 		{

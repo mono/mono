@@ -23,6 +23,7 @@ namespace System.Security.Cryptography {
 #else
 	public sealed class DSACryptoServiceProvider : DSA {
 #endif
+
 		private CspParameters cspParams;
 
 		private bool privateKeyExportable = true;
@@ -50,14 +51,17 @@ namespace System.Security.Cryptography {
 		[MonoTODO("Persistance")]
 		public DSACryptoServiceProvider (int dwKeySize, CspParameters parameters)
 		{
-			cspParams = new CspParameters ();
 			if (parameters == null) {
+				cspParams = new CspParameters ();
+#if ! NET_1_0
+				if (useMachineKeyStore)
+					cspParams.Flags |= CspProviderFlags.UseMachineKeyStore;
+#endif
 				// TODO: set default values (for keypair persistance)
 			}
 			else {
 				cspParams = parameters;
 				// FIXME: We'll need this to support some kind of persistance
-				throw new NotSupportedException ("CspParameters not supported");
 			}
 			LegalKeySizesValue = new KeySizes [1];
 			LegalKeySizesValue [0] = new KeySizes (512, 1024, 64);
@@ -99,6 +103,16 @@ namespace System.Security.Cryptography {
 					throw new NotSupportedException ("CspParameters not supported");
 			}
 		}
+
+#if ! NET_1_0
+		private static bool useMachineKeyStore = false;
+
+		[MonoTODO("Related to persistance")]
+		public static bool UseMachineKeyStore {
+			get { return useMachineKeyStore; }
+			set { useMachineKeyStore = value; }
+		}
+#endif
 
 		public override DSAParameters ExportParameters (bool includePrivateParameters) 
 		{
