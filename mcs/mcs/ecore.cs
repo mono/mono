@@ -1801,7 +1801,7 @@ namespace Mono.CSharp {
 		/// <summary>
 		///   Performs the explicit numeric conversions
 		/// </summary>
-		static Expression ConvertNumericExplicit (EmitContext ec, Expression expr, Type target_type)
+		static Expression ConvertNumericExplicit (EmitContext ec, Expression expr, Type target_type, Location loc)
 		{
 			Type expr_type = expr.Type;
 
@@ -1815,8 +1815,13 @@ namespace Mono.CSharp {
 			if (TypeManager.IsEnumType (real_target_type))
 				real_target_type = TypeManager.EnumToUnderlying (real_target_type);
 
-			if (StandardConversionExists (expr, real_target_type))
- 				return new EmptyCast (expr, target_type);
+			if (StandardConversionExists (expr, real_target_type)){
+ 				Expression ce = ConvertImplicitStandard (ec, expr, real_target_type, loc);
+
+				if (real_target_type != target_type)
+					return new EmptyCast (ce, target_type);
+				return ce;
+			}
 			
 			if (expr_type == TypeManager.sbyte_type){
 				//
@@ -2218,7 +2223,7 @@ namespace Mono.CSharp {
 			if (ne != null)
 				return ne;
 
-			ne = ConvertNumericExplicit (ec, expr, target_type);
+			ne = ConvertNumericExplicit (ec, expr, target_type, loc);
 			if (ne != null)
 				return ne;
 
@@ -2249,7 +2254,7 @@ namespace Mono.CSharp {
 				if (t != null)
 					return t;
 				
-				return ConvertNumericExplicit (ec, e, target_type);
+				return ConvertNumericExplicit (ec, e, target_type, loc);
 			}
 			
 			ne = ConvertReferenceExplicit (expr, target_type);
@@ -2288,7 +2293,7 @@ namespace Mono.CSharp {
 						if (ci != null)
 							return ci;
 
-						ce = ConvertNumericExplicit (ec, e, target_type);
+						ce = ConvertNumericExplicit (ec, e, target_type, loc);
 						if (ce != null)
 							return ce;
 						//
@@ -2320,7 +2325,7 @@ namespace Mono.CSharp {
 			if (ne != null)
 				return ne;
 
-			ne = ConvertNumericExplicit (ec, expr, target_type);
+			ne = ConvertNumericExplicit (ec, expr, target_type, l);
 			if (ne != null)
 				return ne;
 
