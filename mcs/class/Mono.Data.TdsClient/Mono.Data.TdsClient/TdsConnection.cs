@@ -157,6 +157,12 @@ namespace Mono.Data.TdsClient {
 			this.state = ConnectionState.Closed;
 		}
 
+		[MonoTODO]
+		protected override void Dispose (bool disposing)
+		{
+			Close ();
+		}
+
 		public TdsCommand CreateCommand ()
 		{
 			return (new TdsCommand (null, this, transaction));
@@ -242,6 +248,9 @@ namespace Mono.Data.TdsClient {
 				case ';' :
 					if (!inDQuote && !inQuote) {
 						value = sb.ToString ();
+						parameters [name.ToUpper ().Trim ()] = value.Trim ();
+						name = String.Empty;
+						value = String.Empty;
 						sb = new StringBuilder ();
 					}
 					else
@@ -259,11 +268,6 @@ namespace Mono.Data.TdsClient {
 					sb.Append (c);
 					break;
 				}
-				if (value != String.Empty) {
-					parameters [name.ToUpper ().Trim ()] = value.Trim ();
-					name = String.Empty;
-					value = String.Empty;
-				} 
 			}
 
 			if (this.ConnectionString == null)

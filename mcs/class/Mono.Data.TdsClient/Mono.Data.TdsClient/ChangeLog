@@ -1,3 +1,18 @@
+2002-10-24  Tim Coleman (tim@timcoleman.com)
+	* TdsDataAdapter.cs:
+	* TdsRowUpdatedEventArgs.cs:
+	* TdsRowUpdatedEventHandler.cs:
+	* TdsRowUpdatingEventArgs.cs:
+	* TdsRowUpdatingEventHandler.cs:
+		New classes added.
+	* TdsCommand.cs:
+		Implemented the ExecuteReader ()
+		method
+	* TdsConnection.cs:
+		Added Dispose (), fixed connection parameter bug
+	* TdsDataReader.cs:
+		Implemented many methods
+
 2002-10-23  Tim Coleman (tim@timcoleman.com)
 	* TdsCommand.cs: 
 		Change ExecuteReader call

@@ -23,6 +23,7 @@ namespace Mono.Data.TdsClient {
 		TdsConnection connection;
 		TdsParameterCollection parameters;
 		TdsTransaction transaction;
+		bool readerIsOpen = false;
 
 		#endregion // Fields
 
@@ -101,6 +102,10 @@ namespace Mono.Data.TdsClient {
 			get { return parameters; }
 		}
 
+		internal ITds Tds {
+			get { return connection.Tds; }
+		}
+
 		public TdsTransaction Transaction {
 			get { return transaction; }
 			set { transaction = value; }
@@ -155,7 +160,8 @@ namespace Mono.Data.TdsClient {
 			if (commandText == String.Empty || commandText == null)
 				throw new TdsException ("The command text is not set.");
 			connection.Tds.ExecuteQuery (FormatQuery (commandText, commandType));
-			return null;
+
+			return new TdsDataReader (this);
 		}
 
 		[MonoTODO]
