@@ -1,5 +1,10 @@
 2003-07-23  Lluis Sanchez Gual  <lluis@ximian.com>
 
+	* SerializationTest.cs: Fixed delegate invocation. Didn't compile
+	  on windows.
+
+2003-07-23  Lluis Sanchez Gual  <lluis@ximian.com>
+
 	* SerializationTest.cs: Added.
 
 2002-12-21  Nick Drochak <ndrochak@gol.com>

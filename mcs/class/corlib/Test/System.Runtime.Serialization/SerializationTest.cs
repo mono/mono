@@ -75,6 +75,7 @@ namespace MonoTests.System.Runtime.Serialization
 			calls = new IMessage[originalMsgData.Length];
 			resps = new IMessage[originalMsgData.Length];
 
+
 			for (int n=0; n<originalMsgData.Length; n++)
 			{
 				calls[n] = (IMessage) f.Deserialize (ms);
@@ -193,8 +194,7 @@ namespace MonoTests.System.Runtime.Serialization
 			results[7] = new object[] { res };
 
 			if (messages != null) prx.SetTestMessage (messages[8]);
-			object[] d; 
-			string c = "hi";
+
 			SimpleClass b = new SimpleClass ('H');
 			res = mt.SomeMethod (123456, b);
 			results[8] = new object[] { res, b };
@@ -313,6 +313,11 @@ namespace MonoTests.System.Runtime.Serialization
 			return value.Equals (val.value) && label == val.label;
 		}
 
+		public override int GetHashCode ()
+		{
+			return base.GetHashCode ();
+		}
+
 		public ListItem next;
 		public ListValue value;
 		public string label;
@@ -335,6 +340,11 @@ namespace MonoTests.System.Runtime.Serialization
 			SerializationTest.AssertEquals ("ListValue.color", color, val.color);
 			point.CheckEquals (val.point);
 		}
+
+		public override int GetHashCode ()
+		{
+			return base.GetHashCode ();
+		}
 	}
 
 	public struct Point
@@ -352,6 +362,11 @@ namespace MonoTests.System.Runtime.Serialization
 		{
 			SerializationTest.AssertEquals ("Point.x", x, p.x);
 			SerializationTest.AssertEquals ("Point.y", y, p.y);
+		}
+
+		public override int GetHashCode ()
+		{
+			return base.GetHashCode ();
 		}
 	}
 
@@ -566,22 +581,22 @@ namespace MonoTests.System.Runtime.Serialization
 				SerializationTest.EqualsArray ("SomeValues._simplesJagged", _simplesJagged[i], obj._simplesJagged[i]);
 
 			int acum = 0;
-			SerializationTest.AssertEquals ("SomeValues._sampleDelegate", _sampleDelegate.Invoke ("hi", this, ref acum), _int);
-			SerializationTest.AssertEquals ("SomeValues._sampleDelegate_bis", _sampleDelegate.Invoke ("hi", this, ref acum), obj._sampleDelegate.Invoke ("hi", this, ref acum));
+			SerializationTest.AssertEquals ("SomeValues._sampleDelegate", _sampleDelegate ("hi", this, ref acum), _int);
+			SerializationTest.AssertEquals ("SomeValues._sampleDelegate_bis", _sampleDelegate ("hi", this, ref acum), obj._sampleDelegate ("hi", this, ref acum));
 
-			SerializationTest.AssertEquals ("SomeValues._sampleDelegate2", _sampleDelegate2.Invoke ("hi", this, ref acum), (int)_simples[0].val);
-			SerializationTest.AssertEquals ("SomeValues._sampleDelegate2_bis", _sampleDelegate2.Invoke ("hi", this, ref acum), obj._sampleDelegate2.Invoke ("hi", this, ref acum));
+			SerializationTest.AssertEquals ("SomeValues._sampleDelegate2", _sampleDelegate2 ("hi", this, ref acum), (int)_simples[0].val);
+			SerializationTest.AssertEquals ("SomeValues._sampleDelegate2_bis", _sampleDelegate2 ("hi", this, ref acum), obj._sampleDelegate2 ("hi", this, ref acum));
 
-			SerializationTest.AssertEquals ("SomeValues._sampleDelegate3", _sampleDelegate3.Invoke ("hi", this, ref acum), (int)'x');
-			SerializationTest.AssertEquals ("SomeValues._sampleDelegate3_bis", _sampleDelegate3.Invoke ("hi", this, ref acum), obj._sampleDelegate3.Invoke ("hi", this, ref acum));
+			SerializationTest.AssertEquals ("SomeValues._sampleDelegate3", _sampleDelegate3 ("hi", this, ref acum), (int)'x');
+			SerializationTest.AssertEquals ("SomeValues._sampleDelegate3_bis", _sampleDelegate3 ("hi", this, ref acum), obj._sampleDelegate3 ("hi", this, ref acum));
 
-			SerializationTest.AssertEquals ("SomeValues._sampleDelegateStatic", _sampleDelegateStatic.Invoke ("hi", this, ref acum), 99);
-			SerializationTest.AssertEquals ("SomeValues._sampleDelegateStatic_bis", _sampleDelegateStatic.Invoke ("hi", this, ref acum), obj._sampleDelegateStatic.Invoke ("hi", this, ref acum));
+			SerializationTest.AssertEquals ("SomeValues._sampleDelegateStatic", _sampleDelegateStatic ("hi", this, ref acum), 99);
+			SerializationTest.AssertEquals ("SomeValues._sampleDelegateStatic_bis", _sampleDelegateStatic ("hi", this, ref acum), obj._sampleDelegateStatic ("hi", this, ref acum));
 
 			int acum1 = 0;
 			int acum2 = 0;
-			_sampleDelegateCombined.Invoke ("hi", this, ref acum1);
-			obj._sampleDelegateCombined.Invoke ("hi", this, ref acum2);
+			_sampleDelegateCombined ("hi", this, ref acum1);
+			obj._sampleDelegateCombined ("hi", this, ref acum2);
 
 			SerializationTest.AssertEquals ("_sampleDelegateCombined", acum1, _int + (int)_simples[0].val + (int)'x' + 99);
 			SerializationTest.AssertEquals ("_sampleDelegateCombined_bis", acum1, acum2);
