@@ -1017,7 +1017,7 @@ namespace Mono.CSharp
 
 				Report.Error (177, loc, "The out parameter `" +
 					      var.Name + "' must be " +
-					      "assigned before control leave the current method.");
+					      "assigned before control leaves the current method.");
 			}
 		}
 
