@@ -1,9 +1,5 @@
-thisdir = dlls
-SUBDIRS = 
+thisdir = mbas/Test/tests
+include ../../../build/rules.make
 
 include ../test-mbas.make
-
-
-
-
 

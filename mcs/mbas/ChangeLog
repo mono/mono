@@ -1,5 +1,10 @@
 2004-11-25  Raja R Harinath  <rharinath@novell.com>
 
+	* Makefile (SUBDIRS): Just list Test.
+	(mb-parser.cs): Depend on jay/skeleton.cs.
+
+2004-11-25  Raja R Harinath  <rharinath@novell.com>
+
 	Update to changes in jay/skeleton.cs.
 	* genericparser.cs (yacc_verbose_flag): Change to 'int'.
 	* mb-parser.jay (parse): Update to changes.

@@ -1,3 +1,12 @@
+2004-11-25  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile: New.
+	* test-mbas.make (thisdir): Remove.
+	(COMPILER): Use $(BASCOMPILE).
+	(run-test-local): Quote arguments.
+	* test-mbas.pl ($Runtime): Don't try to auto-detect.
+	* errors/Makefile, misc/Makefile, tests/Makefile, dlls/Makefile: Update.
+
 2004-11-22  Jambunathan K  <kjambunathan@novell.com>
 	* EnumD.vb: New positive test case.
 

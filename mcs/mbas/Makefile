@@ -1,5 +1,5 @@
 thisdir = mbas
-SUBDIRS = Test/misc Test/tests Test/errors
+SUBDIRS = Test
 include ../build/rules.make
 
 PROGRAM = mbas.exe
@@ -16,7 +16,7 @@ CONSOLIDATED_TEST_RESULTS_FILE = TestResults.log
 
 include ../build/executable.make
 
-mb-parser.cs: mb-parser.jay
+mb-parser.cs: mb-parser.jay $(topdir)/jay/skeleton.cs
 	$(topdir)/jay/jay -ctv <$(topdir)/jay/skeleton.cs $< >$@
 
 consolidate-test-results:

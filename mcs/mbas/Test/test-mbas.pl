@@ -231,24 +231,6 @@ if(!$result || $PrintHelp) {
     exit 1;
 }
 
-
-if(!$Runtime) {
-    if($Compiler =~ /mbas/) {
-	$Runtime = "mono";
-    }
-    elsif($Compiler =~ /vbc/) {
-	$Runtime = "";
-    }
-}
-elsif($Runtime =~ /dotnet/) {
-    $Runtime = "";
-}
-elsif($Runtime =~ /mono/) {
-    $Runtime = "mono";
-}
-else {
-    $Runtime = "mono";
-}
 # Build the list of tests to run
 
 open(TEST_RESULTS_FILE, ">$TestResultsFile");
@@ -269,7 +251,7 @@ while(defined ($vbFile = glob($FilePattern))) {
 	    if($Execute == 1) {
 		$VBExeFile = $VBFile;
 		$VBExeFile =~ s/\.vb$/\.exe/;
-		$RunCmd = $Runtime . " " . $VBExeFile;
+		$RunCmd = "$Runtime ./$VBExeFile";
 		$RetVal = Command($RunCmd);
 		LogResults($RetVal, "EXECUTION");
 	    } 
