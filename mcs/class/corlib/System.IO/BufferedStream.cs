@@ -65,7 +65,8 @@ namespace System.IO {
 
 		public override void Flush() {
 			if (m_buffer_reading) {
-				m_stream.Position = Position;
+				if (CanSeek)
+					m_stream.Position = Position;
 			} else {
 				m_stream.Write(m_buffer, 0, m_buffer_pos);
 			}

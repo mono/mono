@@ -1,3 +1,7 @@
+2002-11-21  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* BufferedStream.cs: applied patch from <carlosga@telefonica.net> that
+	fixes Flush ().
 
 Tue Nov 19 13:01:22 CET 2002 Paolo Molaro <lupus@ximian.com>
 
