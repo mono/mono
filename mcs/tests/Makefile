@@ -104,28 +104,30 @@ test-compiler-jit: multi test-compiler-jit-real
 TEST_TAG = mcs
 
 test-compiler-jit-real:
-	@rm -f *.exe $(TEST_TAG)-*.log ; \
+	@rm -f *.exe $(TEST_TAG).log $(TEST_TAG)-*.log ; \
+	logfile="$(TEST_TAG).log" ; \
 	echo 'Running $(TEST_TAG) tests with flags "$(TEST_RUNTIME)" ... ' ; \
 	for i in $(TEST_SOURCES) ; do \
-	    logfile="$(TEST_TAG)-$$i.log" ; \
-	    rm -f $$logfile ; \
+	    testlogfile="$(TEST_TAG)-$$i.log" ; \
 	    echo -n "$$i: "; \
-	    echo "*** $$i compilation" > $$logfile ; \
-	    if $(INTERNAL_MCS) $$i.cs >> $$logfile 2>&1 ; then \
+	    echo "*** $$i compilation" > $$testlogfile ; \
+	    if $(INTERNAL_MCS) $$i.cs >> $$testlogfile 2>&1 ; then \
 		: ; \
 	    else \
-		echo "FAIL: $$i compilation" >> $$logfile ; \
-	        echo FAILED COMPILATION ; \
+		echo "Exit code: $$?" >> $$testlogfile ; \
 		failed="$$failed $$i" ; \
+		echo "FAIL: $$i: compilation" >> $$logfile ; \
+	        echo FAILED COMPILATION ; cat $$testlogfile ; \
 	    fi ; \
-	    echo "*** $$i execution" >> $$logfile ; \
-	    if $(TEST_RUNTIME) ./$$i.exe >> $$logfile 2>&1 ; then \
-	        rm -f $$logfile ; \
-	        echo OK ; \
+	    echo "*** $$i execution" >> $$testlogfile ; \
+	    if $(TEST_RUNTIME) ./$$i.exe >> $$testlogfile 2>&1 ; then \
+		echo "PASS: $$i" >> $$logfile ; \
+	        echo OK ; rm -f $$testlogfile ; \
 	    else \
-		echo "FAIL: $$i execution" >> $$logfile ; \
-	        echo FAILED ; \
+		echo "Exit code: $$?" >> $$testlogfile ; \
 		failed="$$failed $$i" ; \
+		echo "FAIL: $$i" >> $$logfile ; \
+	        echo FAILED ; cat $$testlogfile ; \
 	    fi ; \
 	done ; \
 	if test -z "$$failed"; then :; else echo "Failing tests: $$failed"; exit 1; fi
