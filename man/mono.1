@@ -141,6 +141,10 @@ Directories are separated by the platform path separator (colons on unix). Examp
 If this variable is set, it disables the Windows I/O Emulation layer,
 and handles (files, events, mutexes, pipes) will not be shared across
 processes.  This option is only available on Unix.
+.TP
+.I "MONO_CFG_DIR"
+If set, this variable overrides the default system configuration directory
+($PREFIX/etc). It's used to locate machine.config file.
 .SH FILES
 On Unix assemblies are loaded from the installation lib directory.  If you set
 `prefix' to /usr, the assemblies will be located in /usr/lib.  On
