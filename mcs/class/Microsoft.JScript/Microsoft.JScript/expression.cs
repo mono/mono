@@ -589,8 +589,10 @@ namespace Microsoft.JScript {
 					member_exp.Emit (ec);
 					EmitBuiltInArgs (ec);
 					EmitInvoke (ec);
-				} else if (binding is MethodBuilder)
+				} else if (binding is MethodBuilder) {
 					emit_func_call ((MethodBuilder) binding, ec);
+					return;
+				}
 
 				if (no_effect)
 					ec.ig.Emit (OpCodes.Pop);
@@ -711,7 +713,15 @@ namespace Microsoft.JScript {
 			args.Emit (ec);
 
 			ig.Emit (OpCodes.Call, mb);
+
+			if (!return_void (mb) && no_effect)
+				ig.Emit (OpCodes.Pop);
  		}
+
+		bool return_void (MethodBuilder mb)
+		{
+			return mb.ReturnType == typeof (void);
+		}
 
 		void EmitBuiltInArgs (EmitContext ec)
 		{

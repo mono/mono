@@ -1,3 +1,8 @@
+2004-11-08  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
+
+	* expression.cs (emit_func_call): pop if function's return type is
+	non-void and has no effect. 
+
 2004-11-07  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
 
 	* BinaryOp.cs: added constructor for instantiating derived classes.
