@@ -739,8 +739,16 @@ namespace System.Net.Sockets
 				throw new SocketException (error);
 			}
 			
-			return(new Socket(this.AddressFamily, this.SocketType,
-					  this.ProtocolType, sock));
+			Socket accepted = new Socket(this.AddressFamily,
+						     this.SocketType,
+						     this.ProtocolType, sock);
+
+			// The MS runtime (really the OS, we suspect)
+			// sets newly accepted sockets to have the
+			// same Blocking status as the listening
+			// socket
+			accepted.Blocking = this.Blocking;
+			return(accepted);
 		}
 
 		public IAsyncResult BeginAccept(AsyncCallback callback,
