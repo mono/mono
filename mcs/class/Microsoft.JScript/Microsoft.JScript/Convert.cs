@@ -141,17 +141,47 @@ namespace Microsoft.JScript {
 		}
 
 
+		internal static string ToString (object obj)
+		{
+			return Convert.ToString (obj, true);
+		}
+
 		public static string ToString (object value, bool explicitOK)
 		{
 			IConvertible ic = value as IConvertible;
 			TypeCode tc = Convert.GetTypeCode (value, ic);
 
 			switch (tc) {
+			case TypeCode.DBNull:
+				return "null";
+
 			case TypeCode.String:
 			case TypeCode.Double:
 				return ic.ToString (null);
+
+			case TypeCode.Object:
+				if (value is ArrayObject)
+					return ArrayPrototype.toString (value);
+				else if (value is BooleanObject)
+					return BooleanPrototype.toString (value);
+				else if (value is DateObject)
+					return DatePrototype.toString (value);
+				else if (value is ErrorObject)
+					return ErrorPrototype.toString (value);
+				else if (value is FunctionObject)
+					return FunctionPrototype.toString (value);
+				else if (value is NumberObject)
+					return NumberPrototype.toString (value, 10);
+				else if (value is ObjectPrototype)
+					return ObjectPrototype.toString (value);
+				else if (value is RegExpObject)
+					return RegExpPrototype.toString (value);
+				else if (value is StringObject)
+					return StringPrototype.toString (value);
+				throw new NotImplementedException ();
+			default:
+				throw new NotImplementedException ();
 			}
-			throw new NotImplementedException ();
 		}
 
 

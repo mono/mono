@@ -1,5 +1,7 @@
 2005-01-06  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
 
+	* Convert.cs: add ToString overload and implement.
+
 	* JSFieldInfo.cs, JSLocalField.cs: Add conditional NET_2_0 or BOOTSTRAP_NET_2_0 's
 	Mono_GetGenericFieldDefinition.
 
