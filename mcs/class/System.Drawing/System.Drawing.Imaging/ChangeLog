@@ -1,3 +1,7 @@
+2004-02-25 Jordi Mas i Hernadez <jordi@ximian.com>
+
+	* ColorMatrix.cs: rewritten to be able to marshall it properly
+	
 2004-12-27  Zoltan Varga  <vargaz@freemail.hu>
 
 	* ImageCodecInfo.cs: Fix marshalling of arrays on amd64.

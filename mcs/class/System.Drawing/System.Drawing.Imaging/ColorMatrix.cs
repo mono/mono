@@ -1,16 +1,6 @@
 //
-// System.Drawing.Imaging.ColorMatrix.cs
-//
-// Authors:
-//   Everaldo Canuto (everaldo.canuto@bol.com.br)
-//   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
-//   Dennis Hayes (dennish@raytek.com)
-//
-// (C) 2002 Ximian, Inc.  http://www.ximian.com
-//
-
-//
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright 2002 Ximian, Inc.  http://www.ximian.com
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -19,10 +9,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -31,174 +21,347 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+//
+// Authors:
+//   Jordi Mas i Hernandez (jordi@ximian.com)
+// 
+// Partially based on work by:
+//	
+//   Everaldo Canuto (everaldo.canuto@bol.com.br)
+//   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
+//   Dennis Hayes (dennish@raytek.com)
+//   
+
 
 using System;
 
-namespace System.Drawing.Imaging {
-
-	public sealed class ColorMatrix {
-
-		private float[] colors;
+namespace System.Drawing.Imaging
+{
+	public sealed class ColorMatrix
+	{
+		private float color00;
+		private float color01;
+		private float color02;
+		private float color03;
+		private float color04;
+		private float color10;
+		private float color11;
+		private float color12;
+		private float color13;
+		private float color14;
+		private float color20;
+		private float color21;
+		private float color22;
+		private float color23;
+		private float color24;
+		private float color30;
+		private float color31;
+		private float color32;
+		private float color33;
+		private float color34;
+		private float color40;
+		private float color41;
+		private float color42;
+		private float color43;
+		private float color44;
 
 		// constructors
-		public ColorMatrix() 
+		public ColorMatrix ()
 		{
-			colors = new float[25];
-			// Set identity matrix by default
-			colors[0]  = 1;
-			colors[6]  = 1;
-			colors[12] = 1;
-			colors[18] = 1;
-			colors[24] = 1;
+			color01 = color02 = color03 = color04 = 0;
+			color10 = color12 = color13 = color14 = 0;
+			color20 = color21 = color23 = color24 = 0;
+			color30 = color31 = color32 = color34 = 0;
+			color40 = color41 = color42 = color43 = 0;
+			color00 = color11 = color22 = color33 = color44 = 1;
 		}
-		
+
 		[CLSCompliant(false)]
-		public ColorMatrix(float[][] newColorMatrix)
-		{
-			colors = new float[25];
-			for (int x = 0; x < 5; x++) {
-				for (int y = 0; y < 5; y++) {
-					colors[x * 5 + y] = newColorMatrix[x][y];
-				}
-			}
+		public ColorMatrix (float[][] matrix)
+		{			
+			color00 = matrix [0][1];
+			color01 = matrix [0][1];
+			color02 = matrix [0][2];
+			color03 = matrix [0][3];
+			color04 = matrix [0][4];
+			color10 = matrix [1][0];
+			color11 = matrix [1][1];
+			color12 = matrix [1][2];
+			color13 = matrix [1][3];
+			color14 = matrix [1][4];
+			color20 = matrix [2][0];
+			color21 = matrix [2][1];
+			color22 = matrix [2][2];
+			color23 = matrix [2][3];
+			color24 = matrix [2][4];
+			color30 = matrix [3][0];
+			color31 = matrix [3][1];
+			color32 = matrix [3][2];
+			color33 = matrix [3][3];
+			color34 = matrix [3][4];
+			color40 = matrix [4][0];
+			color41 = matrix [4][1];
+			color42 = matrix [4][2];
+			color43 = matrix [4][3];
+			color44 = matrix [4][4];						
 		}
-		
+
 		// properties
 		public float this[int row, int column] {
-			get { return colors[row * 5 + column]; }
-			set { colors[row * 5 + column] = value; }
+			get {  
+				switch (row) {
+				case 0:	{
+					switch (column) {
+					case 0: return color00;
+					case 1: return color01;
+					case 2: return color02;
+					case 3: return color03;
+					case 4: return color04;
+					default: break;
+					}
+					break;
+				}
+				case 1:	{
+					switch (column) {
+					case 0: return color10;
+					case 1: return color11;
+					case 2: return color12;
+					case 3: return color13;
+					case 4: return color14;
+					default: break;						
+					}
+					break;
+				}
+				case 2:	{
+					switch (column) {
+					case 0: return color20;
+					case 1: return color21;
+					case 2: return color22;
+					case 3: return color23;
+					case 4: return color24;
+					default: break;						
+					}
+					break;
+				}
+				case 3:	{
+					switch (column) {
+					case 0: return color30;
+					case 1: return color31;
+					case 2: return color32;
+					case 3: return color33;
+					case 4: return color34;
+					default: break;		
+					}
+					break;
+				}
+				case 4:	{
+					switch (column) {
+					case 0: return color40;
+					case 1: return color41;
+					case 2: return color42;
+					case 3: return color43;
+					case 4: return color44;
+					default: break;							
+					}
+					break;
+				}
+				default:
+					break;
+				}
+			
+				throw new IndexOutOfRangeException ("Index was outside the bounds of the array");
+			}
+			
+			set {  
+				switch (row) {
+				case 0:	{
+					switch (column) {
+					case 0: color00 = value; return;
+					case 1: color01 = value; return;
+					case 2: color02 = value; return;
+					case 3: color03 = value; return;
+					case 4: color04 = value; return;
+					default: break;
+					}
+					break;
+				}
+				case 1:	{
+					switch (column) {
+					case 0: color10 = value; return;
+					case 1: color11 = value; return;
+					case 2: color12 = value; return;
+					case 3: color13 = value; return;
+					case 4: color14 = value; return;
+					default: break;						
+					}
+					break;
+				}
+				case 2:	{
+					switch (column) {
+					case 0: color20 = value; return;
+					case 1: color21 = value; return;
+					case 2: color22 = value; return;
+					case 3: color23 = value; return;
+					case 4: color24 = value; return;
+					default: break;						
+					}
+					break;
+				}
+				case 3:	{
+					switch (column) {
+					case 0: color30 = value; return;
+					case 1: color31 = value; return;
+					case 2: color32 = value; return;
+					case 3: color33 = value; return;
+					case 4: color34 = value; return;
+					default: break;		
+					}
+					break;
+				}
+				case 4:	{
+					switch (column) {
+					case 0: color40 = value; return;
+					case 1: color41 = value; return;
+					case 2: color42 = value; return;
+					case 3: color43 = value; return;
+					case 4: color44 = value; return;
+					default: break;							
+					}
+					break;
+				}
+				default:
+					break;
+				}
+			
+				throw new IndexOutOfRangeException ("Index was outside the bounds of the array");
+			}			
 		}
-		
+
 
 		public float Matrix00 {
-			get { return colors[0]; }
-			set { colors[0] = value; }
+			get { return color00; }
+			set { color00 = value; }
 		}
 
 		public float Matrix01 {
-			get { return colors[1]; }
-			set { colors[1] = value; }
+			get { return color01; }
+			set { color01 = value; }
 		}
 
 		public float Matrix02 {
-			get { return colors[2]; }
-			set { colors[2] = value; }
+			get { return color02; }
+			set { color02 = value; }
 		}
 
 		public float Matrix03 {
-			get { return colors[3]; }
-			set { colors[3] = value; }
+			get { return color03; }
+			set { color03 = value; }
 		}
 
 		public float Matrix04 {
-			get { return colors[4]; }
-			set { colors[4] = value; }
+			get { return color04; }
+			set { color04 = value; }
 		}
 
-
 		public float Matrix10 {
-			get { return colors[5]; }
-			set { colors[5] = value; }
+			get { return color10; }
+			set { color10 = value; }
 		}
 
 		public float Matrix11 {
-			get { return colors[6]; }
-			set { colors[6] = value; }
+			get { return color11; }
+			set { color11 = value; }
 		}
 
 		public float Matrix12 {
-			get { return colors[7]; }
-			set { colors[7] = value; }
+			get { return color12; }
+			set { color12 = value; }
 		}
 
 		public float Matrix13 {
-			get { return colors[8]; }
-			set { colors[8] = value; }
+			get { return color13; }
+			set { color13 = value; }
 		}
 
 		public float Matrix14 {
-			get { return colors[9]; }
-			set { colors[9] = value; }
+			get { return color14; }
+			set { color14 = value; }
 		}
 
-
 		public float Matrix20 {
-			get { return colors[10]; }
-			set { colors[10] = value; }
+			get { return color20; }
+			set { color20 = value; }
 		}
 
 		public float Matrix21 {
-			get { return colors[11]; }
-			set { colors[11] = value; }
+			get { return color21; }
+			set { color21 = value; }
 		}
 
 		public float Matrix22 {
-			get { return colors[12]; }
-			set { colors[12] = value; }
+			get { return color22; }
+			set { color22 = value; }
 		}
 
 		public float Matrix23 {
-			get { return colors[13]; }
-			set { colors[13] = value; }
+			get { return color23; }
+			set { color23 = value; }
 		}
 
 		public float Matrix24 {
-			get { return colors[14]; }
-			set { colors[14] = value; }
+			get { return color24; }
+			set { color24 = value; }
 		}
 
-
 		public float Matrix30 {
-			get { return colors[15]; }
-			set { colors[15] = value; }
+			get { return color30; }
+			set { color30 = value; }
 		}
 
 		public float Matrix31 {
-			get { return colors[16]; }
-			set { colors[16] = value; }
+			get { return color31; }
+			set { color31 = value; }
 		}
 
 		public float Matrix32 {
-			get { return colors[17]; }
-			set { colors[17] = value; }
+			get { return color32; }
+			set { color32 = value; }
 		}
 
 		public float Matrix33 {
-			get { return colors[18]; }
-			set { colors[18] = value; }
+			get { return color33; }
+			set { color33 = value; }
 		}
 
 		public float Matrix34 {
-			get { return colors[19]; }
-			set { colors[19] = value; }
+			get { return color34; }
+			set { color34 = value; }
 		}
 
-
 		public float Matrix40 {
-			get { return colors[20]; }
-			set { colors[20] = value; }
+			get { return color40; }
+			set { color40 = value; }
 		}
 
 		public float Matrix41 {
-			get { return colors[21]; }
-			set { colors[21] = value; }
+			get { return color41; }
+			set { color41 = value; }
 		}
 
 		public float Matrix42 {
-			get { return colors[22]; }
-			set { colors[22] = value; }
+			get { return color42; }
+			set { color42 = value; }
 		}
 
 		public float Matrix43 {
-			get { return colors[23]; }
-			set { colors[23] = value; }
+			get { return color43; }
+			set { color43 = value; }
 		}
 
 		public float Matrix44 {
-			get { return colors[24]; }
-			set { colors[24] = value; }
+			get { return color44; }
+			set { color44 = value; }
 		}
 
 	}
-
 }
