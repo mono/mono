@@ -1,3 +1,10 @@
+2002-12-31  Martin Baulig  <martin@ximian.com>
+
+	* debug-mono-symfile.c: Completely rewrote the type section.
+	Instead of using individual malloc()ed fields, we use one big
+	continuous memory area and offsets into this area.
+	See the comments in the source code for details.
+
 2002-12-30  Martin Baulig  <martin@ximian.com>
 
 	* debug-mono-symfile.h (MonoDebugTypeInfo): Renamed to MonoDebugClassInfo.
