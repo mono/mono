@@ -90,11 +90,12 @@ namespace CIR
 		{
 			if (namespaces == null)
 				namespaces = new Hashtable ();
-
-			if (namespaces.ContainsKey (name))
-				return (Namespace) namespaces [name];
-									     
+												     
 			Namespace ns = new Namespace (parent, name);
+
+			if (namespaces.Contains (ns.Name))
+				return (Namespace) namespaces [ns.Name];
+			
 			namespaces.Add (ns.Name, ns);
 			return ns;
 		}

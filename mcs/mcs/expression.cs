@@ -3350,40 +3350,34 @@ namespace CIR {
 			ILGenerator ig = ec.ig;
 			int idx = vi.Idx;
 
-			bool ref_parameter = ec.RefOrOutParameter;
-			
 			vi.Used = true;
 
-			if (!ref_parameter) {
+			switch (idx){
+			case 0:
+				ig.Emit (OpCodes.Ldloc_0);
+				break;
 				
-				switch (idx){
-				case 0:
-					ig.Emit (OpCodes.Ldloc_0);
-					break;
-					
-				case 1:
-					ig.Emit (OpCodes.Ldloc_1);
-					break;
-					
-				case 2:
-					ig.Emit (OpCodes.Ldloc_2);
-					break;
-					
-				case 3:
-					ig.Emit (OpCodes.Ldloc_3);
-					break;
-					
-				default:
-					if (idx <= 255)
-						ig.Emit (OpCodes.Ldloc_S, (byte) idx);
-					else
-						ig.Emit (OpCodes.Ldloc, idx);
-					break;
-				}
-			} else 
-				AddressOf (ec);
+			case 1:
+				ig.Emit (OpCodes.Ldloc_1);
+				break;
+				
+			case 2:
+				ig.Emit (OpCodes.Ldloc_2);
+				break;
+				
+			case 3:
+				ig.Emit (OpCodes.Ldloc_3);
+				break;
+				
+			default:
+				if (idx <= 255)
+					ig.Emit (OpCodes.Ldloc_S, (byte) idx);
+				else
+					ig.Emit (OpCodes.Ldloc, idx);
+				break;
+			}
 		}
-
+		
 		public static void Store (ILGenerator ig, int idx)
 		{
 			switch (idx){
@@ -3564,11 +3558,7 @@ namespace CIR {
 
 		public void Emit (EmitContext ec)
 		{
-			if (ArgType == AType.Ref || ArgType == AType.Out)
-				ec.RefOrOutParameter = true;
-
 			expr.Emit (ec);
-			ec.RefOrOutParameter = false;
 		}
 	}
 

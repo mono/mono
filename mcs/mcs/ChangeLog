@@ -1,5 +1,19 @@
-2001-10-31  Ravi Pratap  <ravi@ximian.com>
+2001-11-01  Ravi Pratap  <ravi@ximian.com>
 
+	* tree.cs (RecordNamespace): Fix up to check for the correct key.
+
+	* cs-parser.jay (GetQualifiedIdentifier): New Helper method used in 
+	local_variable_type to extract the string corresponding to the type.
+
+	(local_variable_type): Fixup the action to use the new helper method.
+
+	* codegen.cs : Get rid of RefOrOutParameter, it's not the right way to 
+	go.
+
+	* expression.cs : Clean out code which uses the above.
+
+2001-10-31  Ravi Pratap  <ravi@ximian.com>
+	
 	* typemanager.cs (RegisterMethod): Check if we already have an existing key
 	and bale out if necessary by returning a false.
 

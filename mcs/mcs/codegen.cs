@@ -185,10 +185,5 @@ namespace CIR {
 		// 
 		public bool  InLoop;
 
-		//
-		// Whether we are currently emitting code for a ref/out parameter
-		//
-		public bool  RefOrOutParameter;
-		
 	}
 }

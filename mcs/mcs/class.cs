@@ -613,7 +613,7 @@ namespace CIR {
 
 			error = false;
 			name = MakeFQN (ns, name);
-			
+
 			t  = RootContext.TypeManager.LookupType (name);
 			if (t != null)
 				return t;
@@ -623,7 +623,7 @@ namespace CIR {
 			} else {
 				parent = (Struct) RootContext.Tree.Structs [name];
 			}
-			
+
 			if (parent != null){
 				t = parent.DefineType (builder);
 				if (t == null){
@@ -657,6 +657,16 @@ namespace CIR {
 			if (t != null) 
 				return t;
 
+			//
+			// Attempt to do a direct unqualified lookup
+			//
+			t = LookupInterfaceOrClass (builder, "", name, is_class, out error);
+			if (error)
+				return null;
+			
+			if (t != null)
+				return t;
+			
 			//
 			// Attempt to lookup the class on any of the `using'
 			// namespaces

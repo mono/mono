@@ -2437,16 +2437,16 @@ local_variable_type
 		// creeps up.  If you use qualified_identifier (which is all we need
 		// really) two shift/reduces appear.
 		// 
-		// So, instead we do a super trick: we just allow ($1) to be a 
-		// SimpleName Expression.
-		//
-		if (((Expression) $1) is SimpleName)
-			$$ = ((SimpleName) $1).Name + (string) $2;
-		else {
+
+		//  So we be a little smart :-)
+		Expression expr = (Expression) $1;  
+		if (!(expr is SimpleName) && !(expr is MemberAccess)) {
 			Location l = lexer.Location;
+			Console.WriteLine (((MemberAccess) $1).Identifier);
 			Report.Error (-1, l, "Invalid Type definition");
 			$$ = "System.Object";
 		}
+		$$ = GetQualifiedIdentifier (expr) + (string) $2;
 	  }
 	| builtin_types opt_rank_specifier
 	  {
@@ -3076,6 +3076,23 @@ Expression DecomposeQI (string name, Location l)
 		o = DecomposeQI (left, l);
 		return new MemberAccess (o, right, l);
 	}
+}
+
+// <summary>
+//  This method is used to get at the complete string representation of
+//  a fully-qualified type name, hiding inside a MemberAccess ;-)
+//  This is necessary because local_variable_type admits primary_expression
+//  as the type of the variable. So we do some extra checking
+// </summary>
+string GetQualifiedIdentifier (Expression expr)
+{
+	if (expr is SimpleName)
+		return ((SimpleName)expr).Name;
+	else if (expr is MemberAccess)
+		return GetQualifiedIdentifier (((MemberAccess)expr).Expr) + "." + ((MemberAccess) expr).Identifier;
+	else 
+		throw new Exception ("Expr has to be either SimpleName or MemberAccess !");
+	
 }
 
 Block declare_local_variables (string type, ArrayList variable_declarators)
