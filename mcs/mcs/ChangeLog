@@ -1,3 +1,7 @@
+2003-12-23 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* report.cs: Give line numbers and files if available.
+
 2003-12-20  Zoltan Varga  <vargaz@freemail.hu>
 
 	* driver.cs: Implement /addmodule.
