@@ -1,3 +1,7 @@
+2003-07-31  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* corlib_test.dll.sources: Added new CryptoStreamTest.cs
+
 2003-07-24  Peter Williams  <peter@newton.cx>
 
 	* Makefile: Boo-yah! Add corlib_plattest.dll, which is a
