@@ -716,7 +716,7 @@ namespace System.Drawing
 			GDIPlus.CheckStatus (status);
 		}
 
-		public void DrawRectangle (Pen pen, RectangleF rect)
+		internal void DrawRectangle (Pen pen, RectangleF rect)
 		{
 			DrawRectangle (pen, rect.Left, rect.Top, rect.Width, rect.Height);
 		}
