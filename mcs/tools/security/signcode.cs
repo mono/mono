@@ -2,9 +2,10 @@
 // SignCode.cs: secutil clone tool
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
+// (C) 2004 Novell (http://www.novell.com)
 //
 
 using System;
@@ -63,7 +64,7 @@ namespace Mono.Tools {
 		[STAThread]
 		static int Main(string[] args)
 		{
-			Header();
+			Header ();
 			if (args.Length < 1) {
 				Help ();
 				return 1;
@@ -111,11 +112,11 @@ namespace Mono.Tools {
 						af.Description = args [i++];
 						break;
 					case "-n":
-						af.URL = args [i++];
+						af.Url = new Uri (args [i++]);
 						break;
 					// timestamp options
 					case "-t":
-						af.TimestampURL = args [i++];
+						af.TimestampUrl = new Uri (args [i++]);
 						break;
 					case "-tr":
 						timestampRetry = Convert.ToInt32 (args [i++]);

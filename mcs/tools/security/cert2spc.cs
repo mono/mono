@@ -2,15 +2,15 @@
 // Cert2Spc.cs: cert2spc clone tool
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
+// (C) 2004 Novell (http://www.novell.com)
 //
 
 using System;
 using System.IO;
 using System.Reflection;
-//using System.Security.Cryptography.X509Certificates;
 
 using Mono.Security.Authenticode;
 using Mono.Security.X509;
@@ -47,10 +47,12 @@ class Cert2Spc {
 	// until we have real CRL support
 	static byte[] GetFile (string filename) 
 	{
-		FileStream fs = File.Open (filename, FileMode.Open, FileAccess.Read, FileShare.Read);
-		byte[] data = new byte [fs.Length];
-		fs.Read (data, 0, data.Length);
-		fs.Close ();
+		byte[] data = null;
+		using (FileStream fs = File.Open (filename, FileMode.Open, FileAccess.Read, FileShare.Read)) {
+			data = new byte [fs.Length];
+			fs.Read (data, 0, data.Length);
+			fs.Close ();
+		}
 		return data;
 	}
 
@@ -72,7 +74,7 @@ class Cert2Spc {
 					spc.Certificates.Add (new X509Certificate (GetFile (args[i])));
 					break;
 				case ".crl":
-					spc.CRLs.Add (GetFile (args[i]));
+					spc.Crls.Add (GetFile (args[i]));
 					break;
 				default:
 					error = "Unknown file extension : " + args[i];
@@ -80,10 +82,11 @@ class Cert2Spc {
 			}
 		}
 
-		FileStream fs = File.Open (output, FileMode.Create, FileAccess.Write);
-		byte[] data = spc.GetBytes ();
-		fs.Write (data, 0, data.Length);
-		fs.Close ();
+		using (FileStream fs = File.Open (output, FileMode.Create, FileAccess.Write)) {
+			byte[] data = spc.GetBytes ();
+			fs.Write (data, 0, data.Length);
+			fs.Close ();
+		}
 		return 0;
 	}
 
@@ -92,7 +95,7 @@ class Cert2Spc {
 	{
 		int result = 1;
 		try {
-			Header();
+			Header ();
 			result = Process (args);
 
 			if (error == null)

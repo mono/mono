@@ -196,20 +196,20 @@ namespace Mono.Tools {
 
 		static ArrayList LoadCRLs (string filename) 
 		{
-			X509CRL crl = null;
+			X509Crl crl = null;
 			ArrayList list = new ArrayList ();
 			switch (Path.GetExtension (filename).ToUpper ()) {
 				case ".P7B":
 				case ".SPC":
 					SoftwarePublisherCertificate spc = SoftwarePublisherCertificate.CreateFromFile (filename);
-					list.AddRange (spc.CRLs);
+					list.AddRange (spc.Crls);
 					spc = null;
 					break;
 				case ".CRL":
 					using (FileStream fs = File.OpenRead (filename)) {
 						byte[] data = new byte [fs.Length];
 						fs.Read (data, 0, data.Length);
-						crl = new X509CRL (data);
+						crl = new X509Crl (data);
 					}
 					list.Add (crl);
 					break;
@@ -234,7 +234,7 @@ namespace Mono.Tools {
 					break;
 				case ObjectType.CRL:
 					ArrayList list = LoadCRLs (file);
-					foreach (X509CRL crl in list) {
+					foreach (X509Crl crl in list) {
 						// TODO
 						throw new NotImplementedException ("Add CRL not yet supported");
 					}
