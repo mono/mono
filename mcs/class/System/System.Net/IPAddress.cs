@@ -35,9 +35,9 @@ namespace System.Net {
 		public static readonly IPAddress None = IPAddress.Parse ("255.255.255.255");
 
 #if NET_1_1
-		public static readonly IPAddress IPv6Any = IPAddress.Parse ("::");
-		public static readonly IPAddress IPv6Loopback = IPAddress.Parse ("::1");
-		public static readonly IPAddress IPv6None = IPAddress.Parse ("::");
+		public static readonly IPAddress IPv6Any = IPAddress.ParseIPV6 ("::");
+		public static readonly IPAddress IPv6Loopback = IPAddress.ParseIPV6 ("::1");
+		public static readonly IPAddress IPv6None = IPAddress.ParseIPV6 ("::");
 #endif
 
 		private static short SwapShort (short number)

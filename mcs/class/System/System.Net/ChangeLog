@@ -1,3 +1,8 @@
+2003-11-06  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* IPAddress.cs: prevent exceptions when trying to parse the static IPv6
+	addresses.
+
 2003-10-17  Pedro Martínez Juliá  <yoros@wanadoo.es>
 
 	* WebClient.cs: use Path.DirectorySeparator instead of "/" for
