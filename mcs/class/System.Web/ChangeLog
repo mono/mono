@@ -1,5 +1,9 @@
 2002-08-26  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* list: added new files in System.Web.Security
+
+2002-08-26  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* list: added HorizontalAlignConverter and VerticalAlignConverter.
 
 2002-08-05  Patrik Torstensson <ptorsten@hotmail.com>
