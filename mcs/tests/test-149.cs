@@ -70,14 +70,29 @@ public class Y : X
 
 public class Z : Y
 {
+	public delegate int SomeEventHandler();
+        public static event SomeEventHandler BuildStarted;
+
+	static int a ()
+	{
+		return 1;
+	}
 	public static int Main ()
 	{
 		Z z = new Z ();
 
 		int result = z.Test ();
 
-		Console.WriteLine ("TEST RESULT: " + result);
+		if (result != 0)
+			return result;
 
-		return result;
+         	if (BuildStarted != null) {
+             		BuildStarted();
+         	}
+		BuildStarted = new SomeEventHandler (a);
+		if (BuildStarted () != 1)
+			return 50; 
+
+		return 0;
 	}
 }
