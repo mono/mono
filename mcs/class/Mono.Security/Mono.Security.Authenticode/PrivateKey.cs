@@ -60,7 +60,7 @@ namespace Mono.Security.Authenticode {
 		private byte[] DeriveKey (byte[] salt, string password) 
 		{
 			byte[] pwd = Encoding.ASCII.GetBytes (password);
-			SHA1 sha1 = SHA1.Create ();
+			SHA1 sha1 = (SHA1)SHA1.Create ();
 			sha1.TransformBlock (salt, 0, salt.Length, salt, 0);
 			sha1.TransformFinalBlock (pwd, 0, pwd.Length);
 			byte[] key = new byte [16];
