@@ -1,5 +1,5 @@
 //
-// IntegerFormatterTest.cs - NUnit Test Cases for System.Net.IPAddress
+// IPAddressTest.cs - NUnit Test Cases for System.Net.IPAddress
 //
 // Author:
 //   Gonzalo Paniagua Javier (gonzalo@ximian.com)
@@ -98,40 +98,37 @@ public class IPAddressTest : TestCase
 			ip = IPAddress.Parse ("12.+1.1.4");
                         Fail("Should raise a FormatException #1");
 		} catch (FormatException) {
-			failure = true;
+		} catch (Exception e) {
+			Fail ("ParseWrong #1:" + e.ToString());
 		}
 
-		Assert ("ParseWrong #1", failure);
 
 		failure = false;
 		try {
 			ip = IPAddress.Parse ("12.1.-1.5");
                         Fail("Should raise a FormatException #2");
 		} catch (FormatException) {
-			failure = true;
+		} catch (Exception e) {
+			Fail ("ParseWrong #2:" + e.ToString());
 		}
-
-		Assert ("ParseWrong #2", failure);
 
 		failure = false;
 		try {
 			ip = IPAddress.Parse ("257.1.1.9");
-                        Fail("Should raise a OverFlowException #3");
-		} catch (OverflowException) {
-			failure = true;
+                        Fail("Should raise a FormatException #3");
+		} catch (FormatException) {
+		} catch (Exception e) {
+			Fail ("ParseWrong #3:" + e.ToString());
 		}
-
-		Assert ("ParseWrong #3", failure);
 
 		failure = false;
 		try {
 			ip = IPAddress.Parse (null);
                         Fail("Should raise a ArgumentNullException #1");
 		} catch (ArgumentNullException) {
-			failure = true;
+		} catch (Exception e) {
+			Fail ("ParseWrong #4:" + e.ToString());
 		}
-
-		Assert ("ParseWrong #4", failure);
 	}
 
 	public void TestNetworkHost ()

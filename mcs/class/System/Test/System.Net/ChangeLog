@@ -1,3 +1,8 @@
+2002-04-24  Nick Drochak  <ndrochak@gol.com>
+
+	* IPAddressTest.cs: Make test conform to MS behavior. Also, if wrong 
+	exception is thrown, let eveyone know which one.
+
 2002-04-23  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* IPAddressTest.cs: use BitConverter to set localhost, catch
