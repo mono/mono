@@ -3619,6 +3619,7 @@ namespace CIR {
 
 			Expression mg1, mg2;
 			MethodGroupExpr union;
+			MethodInfo mi;
 			
 			mg1 = MemberLookup (tc.RootContext, source.Type, "op_Implicit", false);
 			mg2 = MemberLookup (tc.RootContext, target, "op_Implicit", false);
@@ -3633,8 +3634,12 @@ namespace CIR {
 								     new Location ("FIXME", 1, 1));
 				
 				if (method != null) {
-					type = ((MethodInfo) method).ReturnType;
-					return this;
+					mi = (MethodInfo) method;
+
+					if (mi.ReturnType == target) {
+						type = mi.ReturnType;
+						return this;
+					}
 				}
 			}
 			
@@ -3652,11 +3657,15 @@ namespace CIR {
 								     new Location ("FIXME", 1, 1));
 				
 				if (method != null) {
-					type = ((MethodInfo) method).ReturnType;
-					return this;
+					mi = (MethodInfo) method;
+
+					if (mi.ReturnType == target) {
+						type = mi.ReturnType;
+						return this;
+					}
 				}
 			}
-			
+
 			return null;
 		}
 

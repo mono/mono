@@ -1,5 +1,9 @@
 2001-09-27  Ravi Pratap  <ravi@ximian.com>
 
+	* expression.cs (UserImplicitCast::Resolve): Fix bug.
+
+2001-09-27  Ravi Pratap  <ravi@ximian.com>
+
 	* class.cs (TypeContainer::AddConstructor): Fix a stupid bug
 	I had introduced long ago (what's new ?).
 
