@@ -113,17 +113,16 @@ test-unsafe-compiler-jit:
 	for i in $(UNSAFE_SOURCES) ; do \
 	    echo -n "$$i: "; \
 	    if $(INTERNAL_MCS) /unsafe $$i.cs >/dev/null ; then \
-	        true ; \
+		true ; \
 	    else \
-	        echo FAILED COMPILATION ; exit 1 \
+	        echo FAILED COMPILATION ; exit 1; \
 	    fi ; \
 	    if $(TEST_RUNTIME) ./$$i.exe >/dev/null ; then \
 	        echo OK ; \
 	    else \
-	        echo FAILED ; exit 1\
+	        echo FAILED ; exit 1; \
 	    fi ; \
 	done
-
 
 #
 # Tests that require separate compilation
