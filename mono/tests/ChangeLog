@@ -1,3 +1,7 @@
+2004-02-23  Zoltan Varga  <vargaz@freemail.hu>
+
+	* many-locals.cs: Add tests for locals with large stack frame offsets.
+
 2004-02-18  Zoltan Varga  <vargaz@freemail.hu>
 
 	* switch.cs: Add test for bug #54473.
