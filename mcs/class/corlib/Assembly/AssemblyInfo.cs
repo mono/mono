@@ -27,19 +27,20 @@ using System.Runtime.InteropServices;
 	[assembly: TypeLibVersion(1, 10)]
 #endif
 
-[assembly: AssemblyTitle("mscorlib.dll")]
+//[assembly: AssemblyTitle("mscorlib.dll")]
 [assembly: AssemblyDescription("mscorlib.dll")]
-[assembly: AssemblyConfiguration("Development version")]
-[assembly: AssemblyCompany("MONO development team")]
-[assembly: AssemblyProduct("MONO CLI")]
-[assembly: AssemblyCopyright("(c) 2003 Various Authors")]
+//[assembly: AssemblyConfiguration("Development version")]
+//[assembly: AssemblyCompany("MONO development team")]
+//[assembly: AssemblyProduct("MONO CLI")]
+//[assembly: AssemblyCopyright("(c) 2003 Various Authors")]
 
 [assembly: CLSCompliant(true)]
-[assembly: AssemblyDefaultAlias("mscorlib.dll")]
-[assembly: AssemblyInformationalVersion("0.0.0.1")]
+//[assembly: AssemblyDefaultAlias("mscorlib.dll")]
+//[assembly: AssemblyInformationalVersion("0.0.0.1")]
 [assembly: NeutralResourcesLanguage("en-US")]
 
 [assembly: AllowPartiallyTrustedCallers]
+[assembly: Guid("BED7F4EA-1A96-11D2-8F08-00A0C9A6186D")]
 
-//[assembly: AssemblyDelaySign(false)]
-//[assembly: AssemblyKeyFile("")]
+//[assembly: AssemblyDelaySign(true)]
+//[assembly: AssemblyKeyFile("../../EcmaKey.snk")]
