@@ -61,6 +61,13 @@ namespace System.Reflection {
 				return type;
 			}
 		}
+
+		public override string ToString () {
+			if (is_pinned)
+				return String.Format ("{0} ({1}) (pinned)", type, position);
+			else
+				return String.Format ("{0} ({1})", type, position);
+		}
 	}
 
 }

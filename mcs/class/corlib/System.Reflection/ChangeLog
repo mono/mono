@@ -1,5 +1,7 @@
 2005-01-19  Zoltan Varga  <vargaz@freemail.hu>
 
+	* LocalVariableInfo.cs: Add ToString method.
+
 	* ExceptionHandlingClause.cs: Implement this.
 
 2005-01-18  Zoltan Varga  <vargaz@freemail.hu>
