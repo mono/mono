@@ -11,7 +11,7 @@ namespace System.Data.OleDb.Test
 		{
 			OleDbCommand cmd;
 			
-			m_cnc = new OleDbConnection ("PostgreSQL");
+			m_cnc = new OleDbConnection ("Provider=PostgreSQL;Addr=127.0.0.1;Database=rodrigo");
 			m_cnc.Open ();
 
 			Console.WriteLine ("Connected to:");

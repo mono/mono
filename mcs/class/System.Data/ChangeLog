@@ -1,3 +1,16 @@
+2002-09-28  Vladimir Vukicevic  <vladimir@pobox.com>
+
+	* System.Data.OleDb/OleDbConnection.cs: Close
+	reader properly in call to ExecuteScalar().
+º
+2002-09-07  Rodrigo Moya <rodrigo@ximian.com>
+
+	* System.Data.OleDb/OleDbConnection.cs (Open): changed to use OleDb
+	connection strings, which are then converted to GDA connection
+	strings, instead of using directly GDA data source names.
+
+	* System.Data.OleDb/libgda.cs: added more needed functions.
+	
 2002-09-06  Franklin Wise <gracenote@earthlink.net>
 	
 	* System.Data/DataColumn.cs: More flushing out.
@@ -33,10 +46,6 @@
 	* System.Data/UniqueConstraint.cs: Implemented related PrimaryKey
 	helpers.
 
-	
-	
-	
-		
 2002-08-25  Rodrigo Moya <rodrigo@ximian.com>
 
 	* System.Data.OleDb/OleDbTransaction.cs (OleDbTransaction): manage

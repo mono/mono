@@ -230,12 +230,12 @@ namespace System.Data.OleDb
 		public int ExecuteNonQuery ()
 		{
 			if (connection == null)
-				throw new InvalidOperationException ();
+				throw new InvalidOperationException ("connection == null");
 			if (connection.State == ConnectionState.Closed)
-				throw new InvalidOperationException ();
+				throw new InvalidOperationException ("State == Closed");
 			// FIXME: a third check is mentioned in .NET docs
 			if (connection.DataReader != null)
-				throw new InvalidOperationException ();
+				throw new InvalidOperationException ("DataReader != null");
 
 			IntPtr gdaConnection = connection.GdaConnection;
 			IntPtr gdaParameterList = parameters.GdaParameterList;
@@ -263,9 +263,9 @@ namespace System.Data.OleDb
 			GdaList glist_node;
 
 			if (connection.State != ConnectionState.Open)
-				throw new InvalidOperationException ();
+				throw new InvalidOperationException ("State != Open");
 			if (connection.DataReader != null)
-				throw new InvalidOperationException ();
+				throw new InvalidOperationException ("DataReader != null");
 
 			this.behavior = behavior;
 
@@ -304,11 +304,20 @@ namespace System.Data.OleDb
 		public object ExecuteScalar ()
 		{
 			if (connection.DataReader != null)
-				throw new InvalidOperationException ();
+				throw new InvalidOperationException ("DataReader != null");
 			
 			SetupGdaCommand ();
 			OleDbDataReader reader = ExecuteReader ();
-			return reader.GetValue (0);
+			if (reader == null) {
+				return null;
+			}
+			if (!reader.Read ()) {
+				reader.Close ();
+				return null;
+			}
+			object o = reader.GetValue (0);
+			reader.Close ();
+			return o;
 		}
 
 		[MonoTODO]

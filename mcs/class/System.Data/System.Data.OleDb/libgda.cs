@@ -200,6 +200,11 @@ namespace System.Data.OleDb
 		public static extern IntPtr gda_client_open_connection (IntPtr client, string dsn, string username, string password);
 
 		[DllImport("gda-2")]
+		public static extern IntPtr gda_client_open_connection_from_string (IntPtr client,
+										    string provider,
+										    string cnc_string);
+
+		[DllImport("gda-2")]
 		public static extern bool gda_connection_is_open (IntPtr cnc);
 		
 		[DllImport("gda-2")]
