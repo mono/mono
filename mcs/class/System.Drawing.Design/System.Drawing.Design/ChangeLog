@@ -1,3 +1,7 @@
+2003-07-23  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* IconEditor.cs: Tiny fix to improve created image
+
 2003-07-21  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
 	* BitmapEditor.cs

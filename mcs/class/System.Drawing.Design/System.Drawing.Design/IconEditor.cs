@@ -100,12 +100,12 @@ namespace System.Drawing.Design
 		public override void PaintValue (PaintValueEventArgs e)
 		{
 			Graphics G = e.Graphics;
-			G.DrawRectangle (Pens.Black, e.Bounds);
 			if (e.Value != null)
 			{
 				Image I = (Image) e.Value;
 				G.DrawImage (I, e.Bounds);
 			}
+			G.DrawRectangle (Pens.Black, e.Bounds);
 		}
 	}
 }
