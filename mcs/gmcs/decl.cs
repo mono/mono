@@ -1554,6 +1554,8 @@ namespace Mono.CSharp {
 		{
 			MemberInfo [] members = type.GetMethods (bf);
 
+			Array.Reverse (members);
+
 			foreach (MethodBase member in members) {
 				string name = member.Name;
 
