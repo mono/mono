@@ -1,3 +1,7 @@
+2003-12-18  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* XPathNavigatorTests.cs : Added XPathDocumentMoveToId().
+
 2003-09-26  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* XPathNavigatorTests.cs : added SelectFromOrphan().

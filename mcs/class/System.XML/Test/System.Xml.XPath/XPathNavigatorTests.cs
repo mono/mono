@@ -10,6 +10,7 @@
 //
 
 using System;
+using System.IO;
 using System.Xml;
 using System.Xml.XPath;
 
@@ -230,6 +231,25 @@ namespace MonoTests.System.Xml
 			new_include = node2.SelectSingleNode ("/");
 			AssertEquals ("<child><grandchild><include id=\"new\" /></grandchild></child>",
 				new_include.OuterXml);
+		}
+
+		[Test]
+		public void XPathDocumentMoveToId ()
+		{
+			string dtd = "<!DOCTYPE root [<!ELEMENT root EMPTY><!ATTLIST root id ID #REQUIRED>]>";
+			string xml = dtd + "<root id='aaa'/>";
+			StringReader sr = new StringReader (xml);
+			XPathNavigator nav = new XPathDocument (sr).CreateNavigator ();
+			Assert ("ctor() from TextReader", nav.MoveToId ("aaa"));
+
+			XmlValidatingReader xvr = new XmlValidatingReader (xml, XmlNodeType.Document, null);
+			nav = new XPathDocument (xvr).CreateNavigator ();
+			Assert ("ctor() from XmlValidatingReader", nav.MoveToId ("aaa"));
+
+			// When it is XmlTextReader, XPathDocument fails.
+			XmlTextReader xtr = new XmlTextReader (xml, XmlNodeType.Document, null);
+			nav = new XPathDocument (xtr).CreateNavigator ();
+			Assert ("ctor() from XmlTextReader", !nav.MoveToId ("aaa"));
 		}
 	}
 }
