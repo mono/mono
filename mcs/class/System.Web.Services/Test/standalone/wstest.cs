@@ -102,10 +102,13 @@ public class Driver
 				
 			foreach (string prot in sd.Protocols)
 				clientHash [GetProxyFile (sd, prot)] = sd;
+				
+			clientHash [GetWsdlFile (sd)] = sd;
 		}
 			
 		Clean (clientHash, GetClientPath ());
 		Clean (clientHash, GetProxyPath ());
+		Clean (clientHash, GetWsdlPath ());
 	}
 	
 	static void Clean (Hashtable clientHash, string path)
@@ -161,30 +164,42 @@ public class Driver
 		ArrayList list = new ArrayList (client.References.Values);
 		foreach (DiscoveryReference re in list)
 		{
+			if (!(re is ContractReference)) continue;
+			
 			bool ignore = ignoreList.Contains (re.Url);
+			
 			ServiceData sd = FindService (re.Url);
-			if (sd != null)
+			
+			if (ignore)
 			{
-				if (ignore) RemoveService (re.Url);
+				if (sd != null) RemoveService (re.Url);
 				continue;
 			}
 			
-			if (ignore) continue;
-			
-			Console.Write ("Resolving " + re.Url + " ");
-			try
+			if (sd == null || !File.Exists (GetWsdlFile(sd)))
 			{
-				re.Resolve ();
-				Console.WriteLine ("OK");
-				
-				ServiceDescription doc = client.Documents [re.Url] as ServiceDescription;
-				if (doc != null)
-					services.services.Add (CreateServiceData (re, doc));
-			}
-			catch (Exception ex)
-			{
-				Console.WriteLine ("FAILED");
-				ReportError ("Error resolving: " + re.Url, ex.ToString ());
+				Console.Write ("Resolving " + re.Url + " ");
+				try
+				{
+					re.Resolve ();
+					Console.WriteLine ("OK");
+					
+					ServiceDescription doc = client.Documents [re.Url] as ServiceDescription;
+					if (doc != null && sd == null)
+					{
+						sd = CreateServiceData (re, doc);
+						services.services.Add (sd);
+					}
+					
+					string wsdlFile = GetWsdlFile (sd);
+					CreateFolderForFile (wsdlFile);
+					doc.Write (wsdlFile);
+				}
+				catch (Exception ex)
+				{
+					Console.WriteLine ("FAILED");
+					ReportError ("Error resolving: " + re.Url, ex.ToString ());
+				}
 			}
 		}
 	}
@@ -394,11 +409,13 @@ public class Driver
 	
 	static void BuildProxy (ServiceData fd, bool rebuild, ArrayList proxies)
 	{
-		string wsdl = fd.Wsdl;
+		string wsdl = GetWsdlFile (fd);
+		if (!File.Exists (wsdl)) 
+			return;
 		
 		if (fd.Protocols == null)
 		{
-			ReportError ("Client test '" + fd.Name + "': no protocols declared", null);
+			ReportError ("Client test '" + fd.Name + "': no protocols declared", "");
 			return;
 		}
 		
@@ -414,36 +431,40 @@ public class Driver
 
 			Console.Write (prot + " proxy for " + wsdl + "... ");
 			Process proc = new Process ();
+			proc.StartInfo.UseShellExecute = false;
 			proc.StartInfo.RedirectStandardOutput = true;
 			proc.StartInfo.RedirectStandardError = true;
 			proc.StartInfo.FileName = "wsdl";
-			proc.StartInfo.Arguments = "-out:" + pfile + " -nologo -namespace:" + ns + " -protocol:" + prot + " " + wsdl;
+			proc.StartInfo.Arguments = "/out:" + pfile + " /nologo /namespace:" + ns + " /protocol:" + prot + " " + wsdl;
 			proc.Start();
 			proc.WaitForExit ();
 			
 			if (proc.ExitCode != 0)
 			{
-				Console.WriteLine ("FAIL");
+				Console.WriteLine ("FAIL " + proc.ExitCode);
 				
 				string err = proc.StandardOutput.ReadToEnd ();
 				err += "\n" + proc.StandardError.ReadToEnd ();
 				
-				if (proc.ExitCode == 1) {
-					string fn = fd.Name + prot + "Proxy.cs";
-					fn = Path.Combine (GetErrorPath(), fn);
-					CreateFolderForFile (fn);
-					File.Move (pfile, fn);
-					
-					StreamWriter sw = new StreamWriter (fn, true);
-					sw.WriteLine ();
-					sw.WriteLine ("// " + fd.Wsdl);
-					sw.WriteLine ();
-					sw.Close ();
-					
+				if (File.Exists (pfile))
+				{
+					if (proc.ExitCode == 1) {
+						string fn = fd.Name + prot + "Proxy.cs";
+						fn = Path.Combine (GetErrorPath(), fn);
+						CreateFolderForFile (fn);
+						File.Move (pfile, fn);
+						
+						StreamWriter sw = new StreamWriter (fn, true);
+						sw.WriteLine ();
+						sw.WriteLine ("// " + fd.Wsdl);
+						sw.WriteLine ();
+						sw.Close ();
+						
+					}
+					else
+						File.Delete (pfile);
 				}
-				else
-					File.Delete (pfile);
-					
+				
 				ReportError ("Errors found while generating " + prot + " proxy for WSDL: " + wsdl, err);
 			}
 			else
@@ -517,6 +538,12 @@ public class Driver
 		return Path.Combine (GetClientPath(), sd.TestFile);
 	}
 	
+	static string GetWsdlFile (ServiceData fd)
+	{
+		string fn = Path.Combine (new Uri (fd.Wsdl).Host, fd.Name + ".wsdl");
+		return Path.Combine (GetWsdlPath(), fn);
+	}
+	
 	static void ReportError (string error, string detail)
 	{
 		string fn = Path.Combine (GetErrorPath(), "error.log");
@@ -543,6 +570,11 @@ public class Driver
 	static string GetErrorPath ()
 	{
 		return Path.Combine (basePath, "error");
+	}
+	
+	static string GetWsdlPath ()
+	{
+		return Path.Combine (basePath, "wsdlcache");
 	}
 	
 	static void CreateFolderForFile (string file)

@@ -1,3 +1,8 @@
+2004-01-14  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* wstest.cs: Wsdl documents are cached locally.
+	* services.xml: updated services.
+	
 2003-12-23  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* wstest.cs: Removed debug WriteLine.

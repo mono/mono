@@ -15,6 +15,8 @@ wstest.exe: wstest.cs
 	
 clean:
 	rm -f *.dll *.exe *~ *.pdb
+	rm -rf proxies
+	rm -rf wsdlcache
 	rm error/*
 
 proxies.dll:

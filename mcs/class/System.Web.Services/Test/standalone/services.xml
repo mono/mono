@@ -129,14 +129,6 @@
     <clientTest>false</clientTest>
   </service>
   <service>
-    <wsdl>http://www.transactionalweb.com/SOAP/geoserve.wsdl</wsdl>
-    <name>geoserveTest</name>
-    <protocols>
-      <protocol>Soap</protocol>
-    </protocols>
-    <clientTest>false</clientTest>
-  </service>
-  <service>
     <wsdl>http://www.hkwizard.com/WeatherService.asmx?wsdl</wsdl>
     <name>WeatherServiceTest</name>
     <protocols>
@@ -331,14 +323,6 @@
       <protocol>Soap</protocol>
       <protocol>HttpGet</protocol>
       <protocol>HttpPost</protocol>
-    </protocols>
-    <clientTest>false</clientTest>
-  </service>
-  <service>
-    <wsdl>http://www.cs.fsu.edu/~engelen/lu.wsdl</wsdl>
-    <name>luTest</name>
-    <protocols>
-      <protocol>Soap</protocol>
     </protocols>
     <clientTest>false</clientTest>
   </service>
@@ -2925,6 +2909,73 @@
     <serverType>Microsoft-IIS/5.0 # ASP.NET</serverType>
     <protocols>
       <protocol>Soap</protocol>
+    </protocols>
+    <clientTest>false</clientTest>
+  </service>
+  <service>
+    <wsdl>http://greg.froh.ca/fun/random_bushism/soap/?wsdl</wsdl>
+    <name>Test</name>
+    <serverType>Apache/1.3.29 (Unix) PHP/4.3.3 # PHP/4.3.3</serverType>
+    <protocols>
+      <protocol>Soap</protocol>
+    </protocols>
+    <clientTest>false</clientTest>
+  </service>
+  <service>
+    <wsdl>http://lokeuei.malaysiandevelopers.net/magnum4d/results.asmx?WSDL</wsdl>
+    <name>resultsTest</name>
+    <serverType>Microsoft-IIS/5.0 # ASP.NET</serverType>
+    <protocols>
+      <protocol>Soap</protocol>
+    </protocols>
+    <clientTest>false</clientTest>
+  </service>
+  <service>
+    <wsdl>http://www.geomonster.com/GeoServe.asmx?WSDL</wsdl>
+    <name>GeoServeTest</name>
+    <serverType>Microsoft-IIS/5.0 # ASP.NET</serverType>
+    <protocols>
+      <protocol>Soap</protocol>
+      <protocol>HttpGet</protocol>
+      <protocol>HttpPost</protocol>
+    </protocols>
+    <clientTest>false</clientTest>
+  </service>
+  <service>
+    <wsdl>http://nagraj.hopto.org/axis/services/ZenQuoteService?wsdl</wsdl>
+    <name>ZenQuoteServiceTest</name>
+    <serverType>Apache-Coyote/1.1 # </serverType>
+    <protocols>
+      <protocol>Soap</protocol>
+    </protocols>
+    <clientTest>false</clientTest>
+  </service>
+  <service>
+    <wsdl>http://www.ghettodriveby.com/soap/?wsdl</wsdl>
+    <name>Test2</name>
+    <serverType>Apache/1.3.29 (Unix) PHP/4.3.3 # PHP/4.3.3</serverType>
+    <protocols>
+      <protocol>Soap</protocol>
+    </protocols>
+    <clientTest>false</clientTest>
+  </service>
+  <service>
+    <wsdl>http://ocean.cse.ucsc.edu/soap/getCAWeather.wsdl</wsdl>
+    <name>getCAWeatherTest</name>
+    <serverType>Apache/2.0.46 (Unix) mod_ssl/2.0.46 OpenSSL/0.9.6g DAV/2 SOAP/1.1 Catacomb/0.9.1-dev # </serverType>
+    <protocols>
+      <protocol>Soap</protocol>
+    </protocols>
+    <clientTest>false</clientTest>
+  </service>
+  <service>
+    <wsdl>http://localhost:8080/foo.asmx?wsdl</wsdl>
+    <name>fooTest</name>
+    <serverType>Mono-XSP Server/0.6.99.0 128 # Mono</serverType>
+    <protocols>
+      <protocol>Soap</protocol>
+      <protocol>HttpGet</protocol>
+      <protocol>HttpPost</protocol>
     </protocols>
     <clientTest>false</clientTest>
   </service>
