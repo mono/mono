@@ -56,11 +56,13 @@ namespace System.Security.Policy {
 			if (url == null)
 				throw new ArgumentNullException ("url");
 			if (url.Length == 0)
-				throw new FormatException (Locale.GetText ("Empty Url"));
+				throw new FormatException (Locale.GetText ("Empty URL."));
 
 			string site = UrlToSite (url);
-			if (site == null)
-				throw new ArgumentException (Locale.GetText ("Invalid Url"), "url");
+			if (site == null) {
+				string msg = String.Format (Locale.GetText ("Invalid URL '{0}'."), url);
+				throw new ArgumentException (msg, "url");
+			}
 
                         return new Site (site);
                 }
@@ -158,10 +160,15 @@ namespace System.Security.Policy {
 				return null;
 
 			Uri uri = new Uri (url);
+#if NET_2_0
 			if (uri.Scheme == Uri.UriSchemeFile)
 				return null;
-
 			string site = uri.Host;
+#else
+			string site = uri.Host;
+			if (site == null)
+				site = uri.AbsoluteUri.ToUpper ();		// strange but true
+#endif
 			return IsValid (site) ? site : null;
 		}
         }
