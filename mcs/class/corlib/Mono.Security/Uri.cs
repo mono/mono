@@ -63,7 +63,7 @@ namespace Mono.Security {
 #else
 	public
 #endif
-	sealed class Uri {
+	class Uri {
 
 		// NOTES:
 		// o  scheme excludes the scheme delimiter
@@ -664,7 +664,6 @@ namespace Mono.Security {
 
 			int stage = 0;
 			int c = 0;
-			byte [] bytes = new byte [6];
 			do {
 				if (((index + 3) > pattern.Length) ||
 				    (pattern [index] != '%') || 

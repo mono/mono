@@ -1,3 +1,10 @@
+2004-09-16  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ASN1.cs: Fixed warning (l4) for unused variable.
+	* PKCS7.cs: Fixed warning (l4) for unused variable.
+	* Uri.cs: Fixed warning (l4) for unused variables. Remove sealed from
+	class to reduce number of warnings.
+
 2004-08-30  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Uri.cs: Copied from System.dll assembly and started adaptation for
