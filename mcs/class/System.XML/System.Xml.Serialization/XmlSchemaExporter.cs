@@ -38,10 +38,26 @@ namespace System.Xml.Serialization {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public void ExportMembersMapping (XmlMembersMapping xmlMembersMapping)
 		{
-			throw new NotImplementedException ();
+			exportedMaps = new Hashtable ();
+			XmlSchema schema = GetSchema (xmlMembersMapping.Namespace);
+
+			XmlSchemaElement selem = new XmlSchemaElement ();
+			selem.Name = xmlMembersMapping.ElementName;
+			schema.Items.Add (selem);
+
+			XmlSchemaComplexType stype = new XmlSchemaComplexType ();
+
+			XmlSchemaSequence particle;
+			XmlSchemaAnyAttribute anyAttribute;
+			ExportMembersMapSchema (schema, (ClassMap)xmlMembersMapping.ObjectMap, null, stype.Attributes, out particle, out anyAttribute);
+			stype.Particle = particle;
+			stype.AnyAttribute = anyAttribute;
+
+			selem.SchemaType = stype;
+
+			CompileSchemas ();
 		}
 
 		[MonoTODO]
@@ -60,20 +76,13 @@ namespace System.Xml.Serialization {
 			einfo.MappedType = xmlTypeMapping;
 			einfo.IsNullable = false;
 			AddSchemaElement (schema.Items, schema, einfo, false);
-			try
-			{
-				schema.Compile (null);
-			}
-			catch (Exception ex)
-			{
-				Console.WriteLine (ex);
-			}
+			CompileSchemas ();
 		}
 
 		void ExportClassSchema (XmlTypeMapping map)
 		{
 			if (IsMapExported (map)) return;
-			SetMapExporter (map);
+			SetMapExported (map);
 
 			XmlSchema schema = GetSchema (map.Namespace);
 			XmlSchemaComplexType stype = new XmlSchemaComplexType ();
@@ -84,7 +93,7 @@ namespace System.Xml.Serialization {
 				XmlSchemaComplexContent cstype = new XmlSchemaComplexContent ();
 				cstype.IsMixed = true;
 				XmlSchemaComplexContentExtension ext = new XmlSchemaComplexContentExtension ();
-				ext.BaseTypeName = new XmlQualifiedName (map.XmlType, map.Namespace);
+				ext.BaseTypeName = new XmlQualifiedName (map.BaseMap.XmlType, map.BaseMap.Namespace);
 				cstype.Content = ext;
 				stype.ContentModel = cstype;
 
@@ -93,6 +102,9 @@ namespace System.Xml.Serialization {
 				ExportMembersMapSchema (schema, (ClassMap)map.ObjectMap, map.BaseMap, ext.Attributes, out particle, out anyAttribute);
 				ext.Particle = particle;
 				ext.AnyAttribute = anyAttribute;
+
+				ImportNamespace (schema, map.BaseMap.Namespace);
+				ExportClassSchema (map.BaseMap);
 			}
 			else
 			{
@@ -213,7 +225,6 @@ namespace System.Xml.Serialization {
 			{
 				selem.MaxOccurs = 1;
 				selem.MinOccurs = einfo.IsNullable ? 1 : 0;
-				selem.IsNillable = einfo.IsNullable;
 				if (einfo.TypeData.Type.IsPrimitive && einfo.TypeData.Type != typeof(string) ||
 					einfo.TypeData.Type.IsEnum) 
 					selem.MinOccurs = 1;
@@ -224,6 +235,7 @@ namespace System.Xml.Serialization {
 
 			if (currentSchema == memberSchema)
 			{
+				if (isTypeMember) selem.IsNillable = einfo.IsNullable;
 				selem.Name = einfo.ElementName;
 				XmlQualifiedName typeName = new XmlQualifiedName (einfo.TypeData.XmlType, einfo.DataTypeNamespace);
 				switch (einfo.TypeData.SchemaType)
@@ -354,7 +366,7 @@ namespace System.Xml.Serialization {
 		void ExportEnumSchema (XmlTypeMapping map)
 		{
 			if (IsMapExported (map)) return;
-			SetMapExporter (map);
+			SetMapExported (map);
 
 			XmlSchema schema = GetSchema (map.Namespace);
 			XmlSchemaSimpleType stype = new XmlSchemaSimpleType ();
@@ -377,7 +389,7 @@ namespace System.Xml.Serialization {
 		void ExportArraySchema (XmlTypeMapping map)
 		{
 			if (IsMapExported (map)) return;
-			SetMapExporter (map);
+			SetMapExported (map);
 
 			XmlSchema schema = GetSchema (map.Namespace);
 			XmlSchemaComplexType stype = new XmlSchemaComplexType ();
@@ -400,10 +412,16 @@ namespace System.Xml.Serialization {
 			if (map.TypeData.Type == typeof(object)) return true;
 			return false;
 		}
-		
-		void SetMapExporter (XmlTypeMapping map)
+
+		void SetMapExported (XmlTypeMapping map)
 		{
 			exportedMaps.Add (map,map);
+		}
+
+		void CompileSchemas ()
+		{
+			foreach (XmlSchema sc in schemas)
+				sc.Compile (null);
 		}
 
 		XmlSchema GetSchema (string ns)

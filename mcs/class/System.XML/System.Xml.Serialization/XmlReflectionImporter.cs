@@ -171,13 +171,12 @@ namespace System.Xml.Serialization {
 		XmlTypeMapping ImportClassMapping (Type type, XmlRootAttribute root, string defaultNamespace)
 		{
 			TypeData typeData = TypeTranslator.GetTypeData (type);
-			XmlTypeMapping map = helper.GetRegisteredClrType (type, defaultNamespace);
+			XmlTypeMapping map = helper.GetRegisteredClrType (type, GetTypeNamespace (typeData, root, defaultNamespace));
 			if (map != null) return map;
 
 			map = CreateTypeMapping (typeData, root, null, defaultNamespace);
-			
-			helper.RegisterClrType (map, type, defaultNamespace);
-			helper.RegisterSchemaType (map, map.XmlType, defaultNamespace);
+			helper.RegisterClrType (map, type, map.Namespace);
+			helper.RegisterSchemaType (map, map.XmlType, map.Namespace);
 
 			ClassMap classMap = new ClassMap ();
 			map.ObjectMap = classMap;
@@ -207,7 +206,6 @@ namespace System.Xml.Serialization {
 
 				XmlTypeMapping derived = ImportTypeMapping (includedType, root, defaultNamespace);
 				map.DerivedTypes.Add (derived);
-				if (type != typeof (object)) derived.BaseMap = map;
 				map.DerivedTypes.AddRange (derived.DerivedTypes);
 			}
 
@@ -221,10 +219,45 @@ namespace System.Xml.Serialization {
 
 			if (typeData.Type != typeof(object))
 				ImportTypeMapping (typeof(object)).DerivedTypes.Add (map);
+
+			if (type.BaseType != null && type.BaseType != typeof(object))
+				map.BaseMap = ImportClassMapping (type.BaseType, root, defaultNamespace);
 			
 			return map;
 		}
 
+		string GetTypeNamespace (TypeData typeData, XmlRootAttribute root, string defaultNamespace)
+		{
+			string mapNamespace = defaultNamespace;
+
+			XmlAttributes atts = null;
+			if (!typeData.IsListType)
+			{
+				if (attributeOverrides != null)
+					atts = attributeOverrides[typeData.Type];
+			}
+
+			if (atts == null)
+				atts = new XmlAttributes (typeData.Type);
+
+   			if (atts.XmlRoot != null && root == null)
+   				root = atts.XmlRoot;
+
+   			if (atts.XmlType != null)
+   			{
+   				if (atts.XmlType.Namespace != null && atts.XmlType.Namespace != string.Empty)
+   					mapNamespace = atts.XmlType.Namespace;
+			}
+			
+			if (root != null)
+			{
+				if (root.Namespace != null && root.Namespace != String.Empty)
+					mapNamespace = root.Namespace;
+			}
+
+			if (mapNamespace == null) return "";
+			else return mapNamespace;
+		}
 
 		XmlTypeMapping ImportListMapping (Type type, XmlRootAttribute root, string defaultNamespace, XmlAttributes atts, int nestingLevel)
 		{
@@ -324,19 +357,19 @@ namespace System.Xml.Serialization {
 
 		XmlTypeMapping ImportXmlNodeMapping (Type type, XmlRootAttribute root, string defaultNamespace)
 		{
-			XmlTypeMapping map = helper.GetRegisteredClrType (type, defaultNamespace);
+			XmlTypeMapping map = helper.GetRegisteredClrType (type, GetTypeNamespace (TypeTranslator.GetTypeData (type), root, defaultNamespace));
 			if (map != null) return map;
 
 			// Registers the maps for XmlNode and XmlElement
 
 			XmlTypeMapping nodeMap = CreateTypeMapping (TypeTranslator.GetTypeData (typeof(XmlNode)), root, null, defaultNamespace);
-			helper.RegisterClrType (nodeMap, typeof(XmlNode), defaultNamespace);
+			helper.RegisterClrType (nodeMap, typeof(XmlNode), nodeMap.Namespace);
 
 			XmlTypeMapping elemMap = CreateTypeMapping (TypeTranslator.GetTypeData (typeof(XmlElement)), root, null, defaultNamespace);
-			helper.RegisterClrType (elemMap, typeof(XmlElement), defaultNamespace);
+			helper.RegisterClrType (elemMap, typeof(XmlElement), elemMap.Namespace);
 
 			XmlTypeMapping textMap = CreateTypeMapping (TypeTranslator.GetTypeData (typeof(XmlText)), root, null, defaultNamespace);
-			helper.RegisterClrType (elemMap, typeof(XmlText), defaultNamespace);
+			helper.RegisterClrType (elemMap, typeof(XmlText), textMap.Namespace);
 
 			XmlTypeMapping obmap = ImportTypeMapping (typeof(object));
 			obmap.DerivedTypes.Add (nodeMap);
@@ -345,24 +378,26 @@ namespace System.Xml.Serialization {
 			nodeMap.DerivedTypes.Add (elemMap);
 			nodeMap.DerivedTypes.Add (textMap);
 
-			return helper.GetRegisteredClrType (type, defaultNamespace);
+			return helper.GetRegisteredClrType (type, GetTypeNamespace (TypeTranslator.GetTypeData (type), root, defaultNamespace));
 		}
 
 		XmlTypeMapping ImportPrimitiveMapping (Type type, XmlRootAttribute root, string defaultNamespace)
 		{
-			XmlTypeMapping map = helper.GetRegisteredClrType (type, defaultNamespace);
+			TypeData typeData = TypeTranslator.GetTypeData (type);
+			XmlTypeMapping map = helper.GetRegisteredClrType (type, GetTypeNamespace (typeData, root, defaultNamespace));
 			if (map != null) return map;
-			map = CreateTypeMapping (TypeTranslator.GetTypeData (type), root, null, defaultNamespace);
-			helper.RegisterClrType (map, type, defaultNamespace);
+			map = CreateTypeMapping (typeData, root, null, defaultNamespace);
+			helper.RegisterClrType (map, type, map.Namespace);
 			return map;
 		}
 
 		XmlTypeMapping ImportEnumMapping (Type type, XmlRootAttribute root, string defaultNamespace)
 		{
-			XmlTypeMapping map = helper.GetRegisteredClrType (type, defaultNamespace);
+			TypeData typeData = TypeTranslator.GetTypeData (type);
+			XmlTypeMapping map = helper.GetRegisteredClrType (type, GetTypeNamespace (typeData, root, defaultNamespace));
 			if (map != null) return map;
-			map = CreateTypeMapping (TypeTranslator.GetTypeData (type), root, null, defaultNamespace);
-			helper.RegisterClrType (map, type, defaultNamespace);
+			map = CreateTypeMapping (typeData, root, null, defaultNamespace);
+			helper.RegisterClrType (map, type, map.Namespace);
 
 			string [] names = Enum.GetNames (type);
 			ArrayList members = new ArrayList();
@@ -385,10 +420,11 @@ namespace System.Xml.Serialization {
 
 		XmlTypeMapping ImportXmlSerializableMapping (Type type, XmlRootAttribute root, string defaultNamespace)
 		{
-			XmlTypeMapping map = helper.GetRegisteredClrType (type, defaultNamespace);
+			TypeData typeData = TypeTranslator.GetTypeData (type);
+			XmlTypeMapping map = helper.GetRegisteredClrType (type, GetTypeNamespace (typeData, root, defaultNamespace));
 			if (map != null) return map;
-			map = CreateTypeMapping (TypeTranslator.GetTypeData (type), root, null, defaultNamespace);
-			helper.RegisterClrType (map, type, defaultNamespace);
+			map = CreateTypeMapping (typeData, root, null, defaultNamespace);
+			helper.RegisterClrType (map, type, map.Namespace);
 			return map;
 		}
 

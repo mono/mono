@@ -420,6 +420,7 @@ namespace System.Xml.Serialization
 		string GetStringValue (XmlTypeMapping typeMap, TypeData type, object value)
 		{
 			if (type.SchemaType == SchemaTypes.Array) {
+				if (value == null) return null;
 				StringBuilder sb = new StringBuilder ();
 				WriteListContent (typeMap.TypeData, (ListMap)typeMap.ObjectMap, value, sb);
 				return sb.ToString ().Trim ();

@@ -1,3 +1,15 @@
+2003-07-15  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* SoapReflectionImporter.cs, XmlReflectionImporter.cs: Avoid generating two
+	  maps with the same name and namespace. To avoid this, maps must be registered
+	  using the real map namespace, not the default namespace (the namespace can
+	  change if the type has a XmlType or SoapType attribute).
+	* XmlArrayItemAttribute.cs: Set IsNullable to true by default.
+	* XmlSchemaExporter.cs: Implemented method ExportMembersMapping.
+	  Other small fixes.
+	* XmlSerializationWriterInterpreter.cs: GetStringValue: return null if the value
+	  is null.
+
 2003-07-14  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* SoapReflectionImporter.cs: Set the BaseMap property of map. Small fix.

@@ -148,11 +148,11 @@ namespace System.Xml.Serialization {
 			if (type == typeof (object)) defaultNamespace = XmlSchema.Namespace;
 
 			TypeData typeData = TypeTranslator.GetTypeData (type);
-			XmlTypeMapping map = helper.GetRegisteredClrType (type, defaultNamespace);
+			XmlTypeMapping map = helper.GetRegisteredClrType (type, GetTypeNamespace (typeData, defaultNamespace));
 			if (map != null) return map;
 
 			map = CreateTypeMapping (typeData, null, defaultNamespace);
-			helper.RegisterClrType (map, type, defaultNamespace);
+			helper.RegisterClrType (map, type, map.Namespace);
 			map.MultiReferenceType = true;
 
 			ClassMap classMap = new ClassMap ();
@@ -184,7 +184,6 @@ namespace System.Xml.Serialization {
 
 				XmlTypeMapping derived = ImportTypeMapping (includedType, defaultNamespace);
 				map.DerivedTypes.Add (derived);
-				if (type != typeof (object)) derived.BaseMap = map;
 				map.DerivedTypes.AddRange (derived.DerivedTypes);
 			}
 
@@ -199,9 +198,37 @@ namespace System.Xml.Serialization {
 			if (typeData.Type != typeof(object))
 				ImportTypeMapping (typeof(object)).DerivedTypes.Add (map);
 			
+			if (type.BaseType != null && type.BaseType != typeof(object))
+				map.BaseMap = ImportClassMapping (type.BaseType, defaultNamespace);
+
 			return map;
 		}
+		
+		string GetTypeNamespace (TypeData typeData, string defaultNamespace)
+		{
+			string membersNamespace = defaultNamespace;
 
+			SoapAttributes atts = null;
+
+			if (!typeData.IsListType)
+			{
+				if (attributeOverrides != null)
+					atts = attributeOverrides[typeData.Type];
+			}
+
+			if (atts == null)
+				atts = new SoapAttributes (typeData.Type);
+
+			if (atts.SoapType != null)
+			{
+				if (atts.SoapType.Namespace != null && atts.SoapType.Namespace != string.Empty)
+					membersNamespace = atts.SoapType.Namespace;
+			}
+
+			if (membersNamespace == null) return "";
+			else return membersNamespace;
+		}
+		
 		XmlTypeMapping ImportListMapping (Type type, string defaultNamespace)
 		{
 			TypeData typeData = TypeTranslator.GetTypeData (type);
@@ -239,20 +266,22 @@ namespace System.Xml.Serialization {
 		
 		XmlTypeMapping ImportPrimitiveMapping (Type type, string defaultNamespace)
 		{
-			XmlTypeMapping map = helper.GetRegisteredClrType (type, defaultNamespace);
+			TypeData typeData = TypeTranslator.GetTypeData (type);
+			XmlTypeMapping map = helper.GetRegisteredClrType (type, GetTypeNamespace (typeData, defaultNamespace));
 			if (map != null) return map;
-			map = CreateTypeMapping (TypeTranslator.GetTypeData (type), null, defaultNamespace);
-			helper.RegisterClrType (map, type, defaultNamespace);
+			map = CreateTypeMapping (typeData, null, defaultNamespace);
+			helper.RegisterClrType (map, type, map.Namespace);
 			return map;
 		}
 
 
 		XmlTypeMapping ImportEnumMapping (Type type, string defaultNamespace)
 		{
-			XmlTypeMapping map = helper.GetRegisteredClrType (type, defaultNamespace);
+			TypeData typeData = TypeTranslator.GetTypeData (type);
+			XmlTypeMapping map = helper.GetRegisteredClrType (type, GetTypeNamespace (typeData, defaultNamespace));
 			if (map != null) return map;
-			map = CreateTypeMapping (TypeTranslator.GetTypeData (type), null, defaultNamespace);
-			helper.RegisterClrType (map, type, defaultNamespace);
+			map = CreateTypeMapping (typeData, null, defaultNamespace);
+			helper.RegisterClrType (map, type, map.Namespace);
 
 			string [] names = Enum.GetNames (type);
 			EnumMap.EnumMapMember[] members = new EnumMap.EnumMapMember[names.Length];

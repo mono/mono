@@ -23,7 +23,7 @@ namespace System.Xml.Serialization
 		private string elementName;
 		private XmlSchemaForm form;
 		private string ns;
-		private bool isNullable;
+		private bool isNullable = true;
 		private int nestingLevel;
 		private Type type;
 		private int order;
