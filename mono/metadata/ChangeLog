@@ -1,3 +1,7 @@
+2004-09-24  Martin Baulig  <martin@ximian.com>
+
+	* icall.c (ves_icall_Type_GetGenericParameterConstraints): New interncall.
+
 2004-09-23 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* appdomain.c:
