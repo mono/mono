@@ -1,0 +1,89 @@
+//
+// System.Data.Odbc.OdbcPermission
+//
+// Author:
+//   Umadevi S (sumadevi@novell.com)
+//
+// Copyright (C) Novell Inc, 2004
+//
+
+using System.Data;
+using System.Data.Common;
+using System.Security;
+using System.Security.Permissions;
+
+namespace System.Data.Odbc
+{
+	[Serializable]
+	public sealed class OdbcPermission : DBDataPermission
+	{
+		#region Constructors
+
+		[MonoTODO]
+		public OdbcPermission () : base (PermissionState.None)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public OdbcPermission (PermissionState state)
+			: base (state)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public OdbcPermission (PermissionState state, bool allowBlankPassword)
+			: base (state, allowBlankPassword, true)
+		{
+			throw new NotImplementedException ();
+		}
+
+		#endregion
+
+		#region Properties
+
+		public string Provider {
+			[MonoTODO]
+			get { throw new NotImplementedException (); }
+			[MonoTODO]
+			set { throw new NotImplementedException (); }
+		}
+
+		#endregion
+
+		#region Methods
+
+		[MonoTODO]
+		public override IPermission Copy ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public override void FromXml (SecurityElement securityElement)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public override IPermission Intersect (IPermission target)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public override SecurityElement ToXml ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public override IPermission Union (IPermission target)
+		{
+			throw new NotImplementedException ();
+		}
+
+		#endregion
+	}
+}

@@ -1,3 +1,6 @@
+2004-05-14 Umadevi S (sumadevi@novell.com)
+	* Added classes OdbcPermission.cs, OdbcPermissionAttribute.cs - with stubs
+
 2004-05-09  Gert Driesen (drieseng@users.sourceforge.net)
 	* OdbcException.cs : removed ErrorCode property, fixing signature
 	* OdbcErrorCollection.cs : added internal ctor, reduced 
