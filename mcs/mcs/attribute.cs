@@ -1082,7 +1082,10 @@ namespace Mono.CSharp {
 				for (int i = 0; i < field_info_arr.Length; i++) {
 					switch (field_info_arr [i].Name) {
 						case "BestFitMapping":
-							throw new NotImplementedException ();
+							Report.Error (-1, Location,
+								      "There is no way to set the ThrowOnUnmappableChar " +
+								      "property with Reflection");
+							return null;
 						case "CallingConvention":
 							cc = (CallingConvention) field_values_arr [i];
 							break;
@@ -1102,7 +1105,11 @@ namespace Mono.CSharp {
 							char_set_extra |= 0x40;
 							break;
 						case "ThrowOnUnmappableChar":
-							throw new NotImplementedException ();
+							Report.Error (-1, Location,
+								      "There is no way to set the ThrowOnUnmappableChar " +
+								      "property with Reflection");
+							return null;
+							
 						default: 
 							throw new InternalErrorException (field_info_arr [i].ToString ());
 					}
