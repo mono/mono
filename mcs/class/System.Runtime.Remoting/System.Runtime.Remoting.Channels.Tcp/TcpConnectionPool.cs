@@ -32,12 +32,21 @@ namespace System.Runtime.Remoting.Channels.Tcp
 		static int _maxOpenConnections = 50;
 		static int _keepAliveSeconds = 15;
 
+		static Thread _poolThread;
+
 		static TcpConnectionPool()
 		{
 			// This thread will close unused connections
-			Thread t = new Thread (new ThreadStart (ConnectionCollector));
-			t.Start();
-			t.IsBackground = true;
+			_poolThread = new Thread (new ThreadStart (ConnectionCollector));
+			_poolThread.Start();
+			_poolThread.IsBackground = true;
+		}
+
+		public static void Shutdown ()
+		{
+			// FIXME: this should not be needed when background threads work.
+			if (_poolThread != null)
+				_poolThread.Abort();
 		}
 
 		public static int MaxOpenConnections

@@ -27,11 +27,12 @@ namespace System.Runtime.Remoting.Channels.Tcp
 		TcpListener listener;
 		TcpServerTransportSink sink;
 		ChannelDataStore channel_data;
+		int _maxConcurrentConnections = 100;
+		ArrayList _activeConnections = new ArrayList();
 		
 		void Init (IServerChannelSinkProvider serverSinkProvider) 
 		{
 			if (serverSinkProvider == null) {
-				// FIXME: change soap for binary
 				serverSinkProvider = new BinaryServerFormatterSinkProvider ();
 			}
 
@@ -137,12 +138,41 @@ namespace System.Runtime.Remoting.Channels.Tcp
 
 		void WaitForConnections ()
 		{
-			while (true) 
+			try
 			{
-				TcpClient client = listener.AcceptTcpClient ();
+				while (true) 
+				{
+					TcpClient client = listener.AcceptTcpClient ();
+					CreateListenerConnection (client);
+				}
+			}
+			catch
+			{}
+		}
 
-				ClientConnection reader = new ClientConnection (client, sink);
-				ThreadPool.QueueUserWorkItem ( new WaitCallback( reader.ProcessMessages));
+		internal void CreateListenerConnection (TcpClient client)
+		{
+			lock (_activeConnections)
+			{
+				if (_activeConnections.Count >= _maxConcurrentConnections)
+					Monitor.Wait (_activeConnections);
+
+				if (server_thread == null) return;	// Server was stopped while waiting
+
+				ClientConnection reader = new ClientConnection (this, client, sink);
+				Thread thread = new Thread (new ThreadStart (reader.ProcessMessages));
+				thread.Start();
+				thread.IsBackground = true;
+				_activeConnections.Add (thread);
+			}
+		}
+
+		internal void ReleaseConnection (Thread thread)
+		{
+			lock (_activeConnections)
+			{
+				_activeConnections.Remove (thread);
+				Monitor.Pulse (_activeConnections);
 			}
 		}
 		
@@ -164,10 +194,19 @@ namespace System.Runtime.Remoting.Channels.Tcp
 
 		public void StopListening (object data)
 		{
-			if (server_thread != null) {
+			if (server_thread == null) return;
+
+			lock (_activeConnections)
+			{
 				server_thread.Abort ();
 				server_thread = null;
 				listener.Stop ();
+
+				foreach (Thread thread in _activeConnections)
+					thread.Abort();
+
+				_activeConnections.Clear();
+				Monitor.PulseAll (_activeConnections);
 			}
 		}
 	}
@@ -177,11 +216,13 @@ namespace System.Runtime.Remoting.Channels.Tcp
 		TcpClient _client;
 		TcpServerTransportSink _sink;
 		Stream _stream;
+		TcpServerChannel _serverChannel;
 
 		byte[] _buffer = new byte[TcpMessageIO.DefaultStreamBufferSize];
 
-		public ClientConnection (TcpClient client, TcpServerTransportSink sink)
+		public ClientConnection (TcpServerChannel serverChannel, TcpClient client, TcpServerTransportSink sink)
 		{
+			_serverChannel = serverChannel;
 			_client = client;
 			_sink = sink;
 		}
@@ -196,28 +237,34 @@ namespace System.Runtime.Remoting.Channels.Tcp
 			get { return _buffer; }
 		}
 
-		public void ProcessMessages(object data)
+		public void ProcessMessages()
 		{
 			_stream = _client.GetStream();
 
-			bool end = false;
-			while (!end)
+			try
 			{
-				MessageType type = TcpMessageIO.ReceiveMessageType (_stream);
-
-				switch (type)
+				bool end = false;
+				while (!end)
 				{
-					case MessageType.MethodMessage:
-						_sink.InternalProcessMessage (this);
-						break;
+					MessageType type = TcpMessageIO.ReceiveMessageType (_stream);
 
-					case MessageType.CancelSignal:
-						end = true;
-						break;
+					switch (type)
+					{
+						case MessageType.MethodMessage:
+							_sink.InternalProcessMessage (this);
+							break;
+
+						case MessageType.CancelSignal:
+							end = true;
+							break;
+					}
 				}
 			}
+			catch
+			{}
 
 			_stream.Close();
+			_serverChannel.ReleaseConnection (Thread.CurrentThread);
 		}
 	}
 }

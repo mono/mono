@@ -1,5 +1,11 @@
 2002-12-29  Lluis Sanchez Gual <lluis@ideary.com>
 
+	* TcpServerChannel.cs: Changed management of listener threads.
+	* TcpConnectionPool.cs: Add shutdown method.
+	* TcpChannel.cs: Corrected shutdown method.
+
+2002-12-29  Lluis Sanchez Gual <lluis@ideary.com>
+
 	* TcpServerChannel.cs: Changed default formatter sink to BinaryFormatterSink
 	* TcpMessageIO.cs: warning corrected.
 	* TcpConnectionPool.cs: changed default value of MaxOpenConnections.

@@ -68,12 +68,13 @@ namespace System.Runtime.Remoting.Channels.Tcp
 
 		public void StartListening (object data)
 		{
-			if (_serverChannel != null) _serverChannel.StartListening(data);
+			if (_serverChannel != null) _serverChannel.StartListening (data);
 		}
 		
 		public void StopListening (object data)
 		{
 			if (_serverChannel != null) _serverChannel.StopListening(data);
+			TcpConnectionPool.Shutdown ();
 		}
 
 		public string[] GetUrlsForUri (string uri)
