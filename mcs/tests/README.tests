@@ -35,7 +35,7 @@ Test cases listed by Category:
 
 * Invocation and Casts
 
-  test-153.cs test-163.c test-207.cs test-210.cs
+  test-153.cs test-163.c test-207.cs test-210.cs test-211.cs
 
 * Flow Analysis
 
@@ -349,6 +349,11 @@ test-210.cs
 -----------
 
 Cast something to a delegate and then invoke it; bug #46923.
+
+test-211.cs
+-----------
+
+Multiple casts.
 
 verify-1.cs
 -----------
