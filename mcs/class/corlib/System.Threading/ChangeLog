@@ -1,3 +1,7 @@
+2004-06-24  Dick Porter  <dick@ximian.com>
+
+	* Mutex.cs: Implement the createdNew parameter
+
 2004-06-15  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* Thread.cs: changed return type of VolatileRead to UIntPtr

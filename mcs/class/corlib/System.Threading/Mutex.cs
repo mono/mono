@@ -42,27 +42,37 @@ namespace System.Threading
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private static extern IntPtr  CreateMutex_internal(
 		                                         bool initiallyOwned,
-		                                         string name);
+		                                         string name,
+							 out bool created);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private static extern void ReleaseMutex_internal(IntPtr handle);
 
 		public Mutex() {
-			Handle=CreateMutex_internal(false,null);
+			bool created;
+			
+			Handle=CreateMutex_internal(false, null, out created);
 		}
 		
 		public Mutex(bool initiallyOwned) {
-			Handle=CreateMutex_internal(initiallyOwned,null);
+			bool created;
+			
+			Handle=CreateMutex_internal(initiallyOwned, null,
+						    out created);
 		}
 
-		public Mutex(bool initiallyOwned, string name) {				
-			Handle=CreateMutex_internal(initiallyOwned,name);	
+		public Mutex(bool initiallyOwned, string name) {
+			bool created;
+			
+			Handle=CreateMutex_internal(initiallyOwned, name,
+						    out created);
 		}
 	
 
-		public Mutex(bool initiallyOwned, string name, out bool gotOwnership) {
-			Handle=CreateMutex_internal(initiallyOwned,name);
-			gotOwnership=false;
+		public Mutex(bool initiallyOwned, string name,
+			     out bool createdNew) {
+			Handle=CreateMutex_internal(initiallyOwned, name,
+						    out createdNew);
 		}
 	
 		public void ReleaseMutex() {
