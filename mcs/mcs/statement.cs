@@ -3356,6 +3356,7 @@ namespace Mono.CSharp {
 					if (cv == null)
 						continue;
 
+					ec.CurrentBlock = this;
 					Expression e = cv.Resolve (ec);
 					if (e == null)
 						continue;
