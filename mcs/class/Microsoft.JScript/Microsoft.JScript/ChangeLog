@@ -1,5 +1,8 @@
 2004-10-11  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
 
+	* GlobalObject.cs: ported encodeURI, encodeURIComponent,
+	decodeURI, decodeURIComponent from Rhino's codebase. Added methods encode and decode.
+	
 	* expression.cs (Call.Emit): implement IsConstructorProperty.
 
 2004-10-06  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
