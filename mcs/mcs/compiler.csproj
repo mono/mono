@@ -68,6 +68,11 @@
                     Name = "System"
                     AssemblyName = "System"
                 />
+                <Reference
+                    Name = "System.XML"
+                    AssemblyName = "System.XML"
+                    HintPath = "..\..\..\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.XML.dll"
+                />
             </References>
         </Build>
         <Files>
@@ -145,6 +150,11 @@
                 />
                 <File
                     RelPath = "delegate.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "doc.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
