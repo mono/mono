@@ -1,3 +1,8 @@
+2003-10-08  Gaurav Vaish <gvaish_mono AT lycos.com>
+
+	* CompositeControl.cs  : Completed
+	* Login.cs             : Initial implementation.
+
 2004-09-01 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Xml.cs: fixed get_DocumentContent (it was returning "" always!) and
