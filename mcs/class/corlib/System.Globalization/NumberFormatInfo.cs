@@ -382,13 +382,18 @@ namespace System.Globalization {
 			}
 			
 			set {
-				if (value == null || value.Length == 0) 
+				if (value == null) 
 					throw new ArgumentNullException
 					("The value specified for the property is a null reference");
 				
 				if (isReadOnly)
 					throw new InvalidOperationException
 					("The current instance is read-only and a set operation was attempted");
+				
+				if (value.Length == 0) {
+					currencyGroupSizes = new int [0];
+					return;
+				}
 				
 				// All elements except last need to be in range 1 - 9, last can be 0.
 				int last = value.Length - 1;
@@ -607,7 +612,7 @@ namespace System.Globalization {
 			}
 			
 			set {
-				if (value == null || value.Length == 0) 
+				if (value == null) 
 					throw new ArgumentNullException
 					("The value specified for the property is a null reference");
 				
@@ -615,6 +620,10 @@ namespace System.Globalization {
 					throw new InvalidOperationException
 					("The current instance is read-only and a set operation was attempted");
 				
+				if (value.Length == 0) {
+					numberGroupSizes = new int [0];
+					return;
+				}
 				// All elements except last need to be in range 1 - 9, last can be 0.
 				int last = value.Length - 1;
 
@@ -713,7 +722,7 @@ namespace System.Globalization {
 			}
 			
 			set {
-				if (value == null || value.Length == 0) 
+				if (value == null) 
 					throw new ArgumentNullException
 					("The value specified for the property is a null reference");
 				
@@ -721,8 +730,14 @@ namespace System.Globalization {
 					throw new InvalidOperationException
 					("The current instance is read-only and a set operation was attempted");
 				
-if (this == CultureInfo.CurrentCulture.NumberFormat)
-throw new Exception ("HERE the value was modified");
+				if (this == CultureInfo.CurrentCulture.NumberFormat)
+					throw new Exception ("HERE the value was modified");
+				
+				if (value.Length == 0) {
+					percentGroupSizes = new int [0];
+					return;
+				}
+
 				// All elements except last need to be in range 1 - 9, last can be 0.
 				int last = value.Length - 1;
 
