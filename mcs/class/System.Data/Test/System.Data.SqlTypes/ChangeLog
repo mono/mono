@@ -1,5 +1,9 @@
 2003-06-02  Ville Palo <vi64pa@kolumbus.fi>
 
+	* SqlStringTest.cs: exception tests to nunit2
+	
+2003-06-02  Ville Palo <vi64pa@kolumbus.fi>
+
 	* SqlStringTest.cs: added one exception test. And some exception tests
 	to nunit2
 	

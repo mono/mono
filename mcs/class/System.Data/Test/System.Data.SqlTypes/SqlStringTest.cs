@@ -341,6 +341,104 @@ namespace MonoTests.System.Data.SqlTypes
                         }
                 }
                       
+		[Test]
+		[ExpectedException(typeof (FormatException))]
+		public void ConversionBoolFormatException1 ()
+		{
+			bool test = Test1.ToSqlBoolean ().Value;                              
+		}
+
+		[Test]
+		[ExpectedException(typeof (FormatException))]
+		public void ConversionByteFormatException ()
+		{
+			byte test = Test1.ToSqlByte ().Value;
+		}
+
+		[Test]
+		[ExpectedException(typeof (FormatException))]
+		public void ConversionDecimalFormatException1 ()
+		{
+			Decimal d = Test1.ToSqlDecimal ().Value;
+		}
+
+		[Test]
+		[ExpectedException(typeof (FormatException))]
+		public void ConversionDecimalFormatException2 ()
+		{
+                        SqlString String9E300 = new SqlString ("9E+300");
+			SqlDecimal test = String9E300.ToSqlDecimal ();
+		}
+
+		[Test]
+		[ExpectedException(typeof (FormatException))]
+		public void ConversionGuidFormatException ()
+		{
+                        SqlString String9E300 = new SqlString ("9E+300");
+			SqlGuid test = String9E300.ToSqlGuid ();
+		}
+
+		[Test]
+		[ExpectedException(typeof (FormatException))]
+		public void ConversionInt16FormatException ()
+		{
+                        SqlString String9E300 = new SqlString ("9E+300");
+			SqlInt16 test = String9E300.ToSqlInt16().Value;
+		}
+
+		[Test]
+		[ExpectedException(typeof (FormatException))]
+		public void ConversionInt32FormatException1 ()
+		{
+                        SqlString String9E300 = new SqlString ("9E+300");
+			SqlInt32 test = String9E300.ToSqlInt32 ().Value;
+		}
+
+		[Test]
+		[ExpectedException(typeof (FormatException))]
+		public void ConversionInt32FormatException2 ()
+		{
+			SqlInt32 test = Test1.ToSqlInt32 ().Value;
+		}
+
+		[Test]
+		[ExpectedException(typeof (FormatException))]
+		public void ConversionInt64FormatException ()
+		{
+                        SqlString String9E300 = new SqlString ("9E+300");
+			SqlInt64 test = String9E300.ToSqlInt64 ().Value;
+		}
+
+		[Test]
+		[ExpectedException(typeof (FormatException))]
+		public void ConversionIntMoneyFormatException2 ()
+		{
+                        SqlString String9E300 = new SqlString ("9E+300");
+			SqlMoney test = String9E300.ToSqlMoney ().Value;
+		}
+
+		[Test]
+		[ExpectedException(typeof(OverflowException))]
+		public void ConversionByteOverflowException ()
+		{
+			SqlByte b = (new SqlString ("2500")).ToSqlByte ();
+		}
+
+		[Test]
+		[ExpectedException(typeof(OverflowException))]
+		public void ConversionDoubleOverflowException ()
+		{
+			SqlDouble test = (new SqlString ("4e400")).ToSqlDouble ();
+		}
+
+		[Test]
+		[ExpectedException(typeof(OverflowException))]
+		public void ConversionSingleOverflowException ()
+		{
+                        SqlString String9E300 = new SqlString ("9E+300");
+			SqlSingle test = String9E300.ToSqlSingle().Value;
+		}
+
 		[Test]          
                 public void Conversions()
                 {
@@ -348,15 +446,7 @@ namespace MonoTests.System.Data.SqlTypes
                         SqlString String250 = new SqlString ("250");
                         SqlString String9E300 = new SqlString ("9E+300");
 
-                        // ToSqlBoolean ()
-        
-                        try {
-                                bool test = Test1.ToSqlBoolean ().Value;                              
-                                Fail ("#01");
-                        } catch (Exception e) {
-                                AssertEquals ("#01.5", typeof (FormatException), e.GetType());                                                                
-                        }
-                        
+                        // ToSqlBoolean ()                                
                         Assert ("#O02", (new SqlString("1")).ToSqlBoolean ().Value);
                         Assert ("#O03", !(new SqlString("0")).ToSqlBoolean ().Value);
                         Assert ("#O04", (new SqlString("True")).ToSqlBoolean ().Value);
@@ -364,118 +454,37 @@ namespace MonoTests.System.Data.SqlTypes
                         Assert ("#O06", SqlString.Null.ToSqlBoolean ().IsNull);
 
                         // ToSqlByte ()
-                        try {
-                                byte test = Test1.ToSqlByte ().Value;
-                                Fail ("#07");
-                        } catch (Exception e) {
-                                AssertEquals ("#O07.5", typeof (FormatException), e.GetType());    
-                        }
-
                         AssertEquals ("#O08", (byte)250, String250.ToSqlByte ().Value);    
-                        try {
-                                SqlByte b = (byte)(new SqlString ("2500")).ToSqlByte ();
-                                Fail ("#O09");
-                        } catch (Exception e) {
-                                AssertEquals ("#O10", typeof (OverflowException), e.GetType ());
-                        }
 
                         // ToSqlDateTime
                         AssertEquals ("#O11", 10, 
                                       (new SqlString ("2002-10-10")).ToSqlDateTime ().Value.Day);
                         
                         // ToSqlDecimal ()
-                        try {
-                                AssertEquals ("#O13", (decimal)250, Test1.ToSqlDecimal ().Value);
-                                Fail ("#O14");
-                        } catch (Exception e) {
-                                AssertEquals ("#O15", typeof (FormatException), e.GetType ());
-                        }
-
                         AssertEquals ("#O16", (decimal)250, String250.ToSqlDecimal ().Value);
-
-                        try {
-                                SqlDecimal test = String9E300.ToSqlDecimal ().Value;
-                                Fail ("#O17");
-                        } catch (Exception e) {
-                                AssertEquals ("#O18", typeof (FormatException), e.GetType ());
-                        }      
 
                         // ToSqlDouble
                         AssertEquals ("#O19", (SqlDouble)9E+300, String9E300.ToSqlDouble ());
-
-                        try {
-                                SqlDouble test = (new SqlString ("4e400")).ToSqlDouble ();
-                                Fail ("#O20");
-                        } catch (Exception e) {
-                                AssertEquals ("#O21", typeof (OverflowException), e.GetType ());
-                        }
 
                         // ToSqlGuid
                         SqlString TestGuid = new SqlString("11111111-1111-1111-1111-111111111111");
                         AssertEquals ("#O22", new SqlGuid("11111111-1111-1111-1111-111111111111"), TestGuid.ToSqlGuid ());
 
-                        try {
-                                SqlGuid test = String9E300.ToSqlGuid ();
-                        } catch (Exception e) {
-                                AssertEquals ("#O23", typeof (FormatException), e.GetType ());
-                        }
-                        
                         // ToSqlInt16 ()
                         AssertEquals ("#O24", (short)250, String250.ToSqlInt16 ().Value);
-
-                        try {
-                                SqlInt16 test = String9E300.ToSqlInt16().Value;
-                                Fail ("#O25");
-                        } catch (Exception e) {
-                                AssertEquals ("#O26", typeof (FormatException), e.GetType ());
-                        }        
 
                         // ToSqlInt32 ()
                         AssertEquals ("#O27", (int)250, String250.ToSqlInt32 ().Value);
 
-                        try {
-                                SqlInt32 test = String9E300.ToSqlInt32 ().Value;
-                                Fail ("#O28");
-                        } catch (Exception e) { 
-                                AssertEquals ("#O29", typeof (FormatException), e.GetType ());
-                        }
-
-                        try {
-                                SqlInt32 test = Test1.ToSqlInt32 ().Value;
-                                Fail ("#O30");
-                        } catch (Exception e) { 
-                                AssertEquals ("#O31", typeof (FormatException), e.GetType ());
-                        }
-
                         // ToSqlInt64 ()
                         AssertEquals ("#O32", (long)250, String250.ToSqlInt64 ().Value);
-
-                        try {        
-                                SqlInt64 test = String9E300.ToSqlInt64 ().Value;
-                                Fail ("#O33");
-                        } catch (Exception e) {
-                                AssertEquals ("#O34", typeof (FormatException), e.GetType ());
-                        }        
 
                         // ToSqlMoney ()
                         AssertEquals ("#O35", (decimal)250, String250.ToSqlMoney ().Value);
 
-                        try {
-                                SqlMoney test = String9E300.ToSqlMoney ().Value;
-                                Fail ("#O36");
-                        } catch (Exception e) {
-                                AssertEquals ("#O37", typeof (FormatException), e.GetType ());
-                        }        
 
                         // ToSqlSingle ()
                         AssertEquals ("#O38", (float)250, String250.ToSqlSingle ().Value);
-
-                        try {
-                                SqlSingle test = String9E300.ToSqlSingle().Value;
-                                Fail ("#O39");
-                        } catch (Exception e) {
-                                AssertEquals ("#O40", typeof (OverflowException), e.GetType ());
-                        }        
 
                         // ToString ()
                         AssertEquals ("#O41", "First TestString", Test1.ToString ());
