@@ -2530,7 +2530,7 @@ namespace Mono.CSharp {
 		public void Emit (EmitContext ec)
 		{
 			if (parent_constructor != null){
-				ec.Mark (loc);
+				ec.Mark (loc, false);
 				if (ec.IsStatic)
 					Invocation.EmitCall (ec, true, true, null, parent_constructor, argument_list, loc);
 				else
