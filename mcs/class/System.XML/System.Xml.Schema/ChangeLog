@@ -1,5 +1,11 @@
 2004-11-18  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlSchemaException.cs : added .ctor(string).
+	* XmlSchemaInferenceException.cs : use base.ctor(string).
+	* XmlSchemaValidationException.cs : It is 2.0 class. Added some .ctor()
+
+2004-11-18  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlSchemaCollection.cs : obsolete.
 	* XmlSchemaInference.cs :
 	  Fixed typo in enum. It is still MonoTODO. Reformatted code a bit.

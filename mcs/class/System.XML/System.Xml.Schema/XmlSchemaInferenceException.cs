@@ -45,7 +45,7 @@ namespace System.Xml.Schema
 		}
 
 		public XmlSchemaInferenceException (string message)
-			: base (message, null)
+			: base (message)
 		{
 		}
 

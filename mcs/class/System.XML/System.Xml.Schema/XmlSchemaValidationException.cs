@@ -27,6 +27,9 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+
+#if NET_2_0
+
 using System;
 using System.Globalization;
 using System.Runtime.Serialization;
@@ -37,8 +40,23 @@ namespace System.Xml.Schema
 	[Serializable]
 	public class XmlSchemaValidationException : XmlSchemaException
 	{
+		protected XmlSchemaValidationException ()
+			: base ()
+		{
+		}
+
+		protected XmlSchemaValidationException (string message)
+			: base (message)
+		{
+		}
+
 		protected XmlSchemaValidationException (SerializationInfo info, StreamingContext context)
 			: base (info, context)
+		{
+		}
+
+		public XmlSchemaValidationException (string message, Exception innerException, int lineNumber, int linePosition)
+			: base (message, lineNumber, linePosition, null, null, innerException)
 		{
 		}
 
@@ -67,3 +85,5 @@ namespace System.Xml.Schema
 
 	}
 }
+
+#endif
