@@ -1,4 +1,9 @@
 
+Sat Feb 8 17:03:16 CET 2003 Paolo Molaro <lupus@ximian.com>
+
+	* statement.cs: don't clear the pinned var when the fixed statement
+	returns from the method (fixes bug#37752).
+
 Sat Feb 8 12:58:06 CET 2003 Paolo Molaro <lupus@ximian.com>
 
 	* typemanager.cs: fix from mathpup@mylinuxisp.com (Marcus Urban) 
