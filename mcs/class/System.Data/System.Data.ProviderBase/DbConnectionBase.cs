@@ -43,6 +43,7 @@ namespace System.Data.ProviderBase {
 		DbConnectionFactory connectionFactory;
 		DbConnectionString connectionOptions;
 		string connectionString;
+                bool disposed = false;
 		
 		#endregion // Fields
 
@@ -157,10 +158,18 @@ namespace System.Data.ProviderBase {
 			return (DbCommand) ConnectionFactory.ProviderFactory.CreateCommand ();
 		}
 
-		[MonoTODO]
 		protected override void Dispose (bool disposing)
 		{
-			throw new NotImplementedException ();
+                        if (!disposed) { 
+                                try {
+                                        if (disposing) {
+                                                // do necessary clean up
+                                        }
+                                        disposed = true;
+                                } finally {
+                                        base.Dispose (disposing);
+                                }
+			}
 		}
 
 		[MonoTODO]

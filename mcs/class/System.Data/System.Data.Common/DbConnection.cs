@@ -39,6 +39,11 @@ using System.EnterpriseServices;
 namespace System.Data.Common {
 	public abstract class DbConnection : Component, IDbConnection, IDisposable
 	{
+
+                #region Fields
+                bool disposed = false;
+                #endregion //Fields
+                
 		#region Constructors
 
 		protected DbConnection ()
@@ -81,6 +86,23 @@ namespace System.Data.Common {
 		{
 			return CreateDbCommand ();
 		}
+
+                protected override void Dispose (bool disposing)
+		{
+                        if (!disposed) { 
+                                try {
+                                        if (disposing) {
+                                                // unmanaged cleanup
+                                        }
+
+                                        disposed = true;
+                                } finally {
+                                        base.Dispose (disposing);
+                                }
+                                
+			}
+		}
+
 
 		protected abstract DbCommand CreateDbCommand ();
 

@@ -1,3 +1,7 @@
+2005-02-02  Sureshkumar T  <tsureshkumar@novell.com>
+
+	* DbConnectionBase.cs: Implement Dispose Pattern
+
 2004-11-24  Sureshkumar T  <tsureshkumar@novell.com>
 
 	* DbParameterCollectionBase.cs: Class name changed according to
