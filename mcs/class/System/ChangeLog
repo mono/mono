@@ -2,6 +2,7 @@
 
 	* Makefile (EXTRA_DISTFILES): Oops, NUnit.Prefs is not
 	a distable file.
+	(EXTRA_DISTFILES): A few more.
 
 2003-07-17  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 

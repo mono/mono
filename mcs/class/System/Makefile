@@ -21,9 +21,7 @@ LIB_MCS_FLAGS = $(SCARY_LIB) /r:System.Xml.dll /r:$(corlib)
 EXTRA_DISTFILES = \
 	System.Text.RegularExpressions/notes.txt	\
 	System.ComponentModel.Design/Changelog		\
-	Test/test-config-file				\
-	Test/argument.txt				\
-	Test/foo
+	Test/test-config-file
 
 
 include ../../build/library.make
