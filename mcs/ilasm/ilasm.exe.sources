@@ -54,6 +54,7 @@ codegen/GenericTypeInst.cs
 codegen/TypeSpecMethodRef.cs
 codegen/TypeSpecFieldRef.cs
 codegen/ModifiableType.cs
+codegen/Sentinel.cs
 parser/ScannerAdapter.cs
 scanner/ILReader.cs
 scanner/ILSyntaxError.cs
