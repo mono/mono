@@ -298,6 +298,7 @@ System.Data.SqlClient/SqlRowUpdatingEventArgs.cs
 System.Data.SqlClient/SqlRowUpdatingEventHandler.cs
 System.Data.SqlClient/SqlTransaction.cs
 System.Data.SqlClient/SqlXmlTextReader.cs
+System.Data.SqlClient/SQLDebugging.cs
 System.Data/XmlDataLoader.cs
 System.Data/XmlSchemaMapper.cs
 System.Data/XmlSchemaDataImporter.cs

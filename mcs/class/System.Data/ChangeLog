@@ -1,4 +1,7 @@
 2004-05-14 Umadevi S <sumadevi@novell.com>
+        * System.Data.dll.sources : Added SQLDebugging.cs
+
+2004-05-14 Umadevi S <sumadevi@novell.com>
 	* System.Data.dll.sources : Added OdbcParameterConverter.cs
 
 2004-05-14 Umadevi S <sumadevi@novell.com>
