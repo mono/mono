@@ -6,6 +6,7 @@
 using PEAPI;
 using System;
 using System.Collections;
+using System.Globalization;
 
 namespace Mono.ILASM {
 
@@ -92,7 +93,6 @@ namespace Mono.ILASM {
 %token INSTR_TOK
 %token INSTR_SWITCH
 %token INSTR_PHI
-
 
 
 
@@ -1099,39 +1099,39 @@ init_opt		: /* EMPTY */
 
 field_init		: K_FLOAT32 OPEN_PARENS float64 CLOSE_PARENS
                           {
-                                $$ = new FloatConst ((float) $3);
+                                $$ = new FloatConst (Convert.ToSingle ($3));
                           }
 			| K_FLOAT64 OPEN_PARENS float64 CLOSE_PARENS
                           {
-                                $$ = new DoubleConst ((double) $3);
+                                $$ = new DoubleConst (Convert.ToDouble ($3));
                           }
 			| K_FLOAT32 OPEN_PARENS int64 CLOSE_PARENS
                           {
-                                $$ = new FloatConst ((float) $3);
+                                $$ = new FloatConst (Convert.ToSingle ($3));
                           }
 			| K_FLOAT64 OPEN_PARENS int64 CLOSE_PARENS
                           {
-                                $$ = new DoubleConst ((float) $3);
+                                $$ = new DoubleConst (Convert.ToDouble (3));
                           }
 			| K_INT64 OPEN_PARENS int64 CLOSE_PARENS
                           {
-                                $$ = new IntConst ((long) $3);
+                                $$ = new IntConst (Convert.ToInt64 ($3));
                           }
 			| K_INT32 OPEN_PARENS int64 CLOSE_PARENS
                           {
-                                $$ = new IntConst ((int) $3);
+                                $$ = new IntConst (Convert.ToUInt32 ($3));
                           }
 			| K_INT16 OPEN_PARENS int64 CLOSE_PARENS
                           {
-                                $$ = new IntConst ((short) $3);
+                                $$ = new IntConst (Convert.ToUInt16 ($3));
                           }
 			| K_CHAR OPEN_PARENS int64 CLOSE_PARENS
                           {
-                                $$ = new CharConst ((char) $3);
+                                $$ = new CharConst (Convert.ToChar ($3));
                           }
 			| K_INT8 OPEN_PARENS int64 CLOSE_PARENS
                           {
-                                $$ = new IntConst ((sbyte) $3);
+                                $$ = new IntConst (Convert.ToByte ($3));
                           }
 			| K_BOOL OPEN_PARENS truefalse CLOSE_PARENS
                           {
@@ -1210,7 +1210,7 @@ dataitem		: K_CHAR STAR OPEN_PARENS comp_qstring CLOSE_PARENS
 			| K_BYTEARRAY OPEN_PARENS bytes CLOSE_PARENS
                           {
                                 // ******** THIS IS NOT IN THE SPECIFICATION ******** //
-                                $$ = new ByteArrConst ((byte[]) $4);
+                                $$ = new ByteArrConst ((byte[]) $3);
                           }
 			| K_FLOAT32 OPEN_PARENS float64 CLOSE_PARENS repeat_opt
                           {
@@ -1504,11 +1504,15 @@ instr			: INSTR_NONE
 			| INSTR_VAR int32
 			| INSTR_I int32
                           {
-                                codegen.CurrentMethodDef.AddInstr (new
-                                        IntInstr ((IntOp) $1, (int) $2));
+                           //     Console.WriteLine ((Int64) $2);
+                           //     codegen.CurrentMethodDef.AddInstr (new
+                           //             IntInstr ((IntOp) $1, (int) $2));
                           }
 			| INSTR_I id /* Allow variable names */
 			| INSTR_I8 int64
+                          {
+                                Console.WriteLine ($1);
+                          }
 			| INSTR_R float64
 			| INSTR_R int64
 			| INSTR_R OPEN_PARENS bytes CLOSE_PARENS
@@ -1517,8 +1521,6 @@ instr			: INSTR_NONE
 			| INSTR_METHOD method_ref
 			| INSTR_FIELD type type_spec DOUBLE_COLON id
 			| INSTR_FIELD type id
-			| INSTR_TYPE K_FIELD type type_spec DOUBLE_COLON id 			// ****** ADDED
-			| INSTR_TYPE K_FIELD type id						// ****** ADDED
 			| INSTR_TYPE type_spec
 			| INSTR_STRING comp_qstring
                           {
@@ -1797,16 +1799,32 @@ float64			: FLOAT64
 			;
 
 hexbyte			: HEXBYTE
-                        | INT32                                 // ******** ADDED
-                        | ID                                    // ******** ADDED
+                        | INT32         { $$ = Convert.ToByte ($1); }
+                        | ID
+                          {
+                                $$ = Byte.Parse ((string) $1, NumberStyles.HexNumber);
+                          }
 			;
 
-bytes 			: /* EMPTY */
+bytes 			: /* EMPTY */   { $$ = new byte[0]; }
 			| hexbytes
+                          {
+                                ArrayList byte_list = (ArrayList) $1;
+                                $$ = byte_list.ToArray (typeof (byte));
+                          }
 			;
 
 hexbytes		: hexbyte
+                          {
+                                ArrayList byte_list = new ArrayList ();
+                                byte_list.Add (Convert.ToByte ($1));
+                                $$ = byte_list;
+                          }
 			| hexbytes hexbyte
+                          {
+                                ArrayList byte_list = (ArrayList) $1;
+                                byte_list.Add (Convert.ToByte ($2));
+                          }
 			;
 
 truefalse		: K_TRUE
