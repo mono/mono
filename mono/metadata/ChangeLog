@@ -1,4 +1,9 @@
 
+Thu Jun 20 19:24:32 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* reflection.c: break out of the loop.
+	* image.c: special case corlib.
+
 Thu Jun 20 16:43:29 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* reflection.c: add all the custom attrs at the end to ensure the
