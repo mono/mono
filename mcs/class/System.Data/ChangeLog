@@ -1,0 +1,4 @@
+2002-02-10  Christopher Podurgiel <cpodurgiel@msn.com>
+	
+	* Removed *.cs from System.Data as the correct files are in mcs/class/System.Data/System.Data
+	* Updated all Enums, Interfaces, and Delegates in System.Data

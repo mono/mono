@@ -2,7 +2,7 @@
 
 <!-- NAnt build file for System.Data.dll -->
 
-<project name="System" default="build">
+<project name="System.Data" default="build">
 	<property name="debug" value="false"/>
 
 	<target name="build">
@@ -17,5 +17,8 @@
 				<includes name="../lib/corlib.dll"/>
 			</references>
 		</csc>
+	</target>
+	<target name="clean">
+		<delete file="../lib/System.Data.dll" failonerror="false"/>
 	</target>
 </project>
