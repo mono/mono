@@ -347,7 +347,7 @@ namespace System.IO
 
 			if (path == null || pattern == null)
 				throw new ArgumentNullException ();
-
+                        
 			if (path == "")
 				throw new ArgumentException ("The Path do not have a valid format");
 

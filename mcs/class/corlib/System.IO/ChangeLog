@@ -1,3 +1,13 @@
+2004-05-22  Duncan Mak  <duncan@ximian.com>
+
+	* Directory.cs: Reformat the whole file to use Unix line endings
+	for consistency.
+
+2004-05-22  Duncan Mak  <duncan@ximian.com>	
+
+	* Path.cs (GetPathRoot): Throw an ArgumentException if the path
+	argument is String.Empty.
+
 2004-05-20  Jackson Harper  <jackson@ximian.com>
 
 	* DirectoryInfo.cs: Create subdirectories correctly if more then
