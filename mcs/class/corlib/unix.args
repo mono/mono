@@ -481,6 +481,7 @@ System.Runtime.Remoting.Metadata/SoapTypeAttribute.cs
 System.Runtime.Remoting.Metadata/XmlFieldOrderOption.cs
 System.Runtime.Remoting.Proxies/RealProxy.cs
 System.Runtime.Remoting.Proxies/ProxyAttribute.cs
+System.Runtime.Remoting.Services/ITrackingHandler.cs
 System.Runtime.Serialization/IDeserializationCallback.cs
 System.Runtime.Serialization/IFormatter.cs
 System.Runtime.Serialization/IFormatterConverter.cs
@@ -513,6 +514,9 @@ System.Runtime.Serialization.Formatters/InternalParseTypeE.cs
 System.Runtime.Serialization.Formatters/InternalPrimitiveTypeE.cs
 System.Runtime.Serialization.Formatters/InternalSerializerTypeE.cs
 System.Runtime.Serialization.Formatters/ISoapMessage.cs
+System.Runtime.Serialization.Formatters/ServerFault.cs
+System.Runtime.Serialization.Formatters/SoapFault.cs
+System.Runtime.Serialization.Formatters/SoapMessage.cs
 System.Runtime.Serialization.Formatters.Binary/BinaryArrayTypeEnum.cs
 System.Security/CodeAccessPermission.cs
 System.Security/IEvidenceFactory.cs

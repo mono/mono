@@ -1,3 +1,7 @@
+2002-07-30  Duncan Mak  <duncan@ximian.com>
+
+	* LeaseState.cs: Fixed namespace.
+
 2002-07-29  Duncan Mak  <duncan@ximian.com>
 
 	* ILease.cs: Add the method part of the interface and renamed the

@@ -10,7 +10,7 @@
 // (C) 2001 Ximian, Inc.  http://www.ximian.com
 
 
-namespace System.Runtime.Remoting {
+namespace System.Runtime.Remoting.Lifetime {
 
 
 	/// <summary>
@@ -38,4 +38,4 @@ namespace System.Runtime.Remoting {
 		Expired = 4,
 	} // LeaseState
 
-} // System.Runtime.Remoting
+} // System.Runtime.Remoting.Lifetime

@@ -1,3 +1,9 @@
+2002-07-30  Duncan Mak  <duncan@ximian.com>
+
+	* ServerFault.cs: 
+	* SoapFault.cs: 
+	* SoapMessage.cs: Added missing classes.
+
 2002-01-21  David Dawkins <david@dawkins.st>
 
 	* IFieldInfo.cs : New file
