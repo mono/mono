@@ -190,8 +190,11 @@ namespace System.Windows.Forms {
 				if (selected_index != -1) 
 					Controls [selected_index].Visible = true;
 				ResumeLayout ();
-				
+
+				if (SelectedIndex != -1 && TabPages [SelectedIndex].Row != 1) 
+					DropRow (TabPages [selected_index].Row);
 				SizeTabs (Width);
+				
 				Refresh ();
 			}
 		}
@@ -505,7 +508,7 @@ namespace System.Windows.Forms {
 			foreach (TabPage page in TabPages) {
 				if (page.Row == row) {
 					page.Row = 1;
-				} else {
+				} else if (page.Row < row) {
 					page.Row++;
 				}
 			}
@@ -518,8 +521,6 @@ namespace System.Windows.Forms {
 			Size spacing = TabSpacing;
 			int size = item_size.Width + 2 + (spacing.Width * 2);
 			int xpos = 4 + (slider_pos * size);
-
-			CalcTabRows (row_width);
 
 			for (int i = 0; i < TabPages.Count; i++) {
 				TabPage page = TabPages [i];
@@ -625,10 +626,12 @@ namespace System.Windows.Forms {
 					throw new ArgumentException ("Cannot add " +
 						value.GetType ().Name + " to TabControl. " +
 						"Only TabPages can be directly added to TabControls.");
+				
 				base.Add (value);
-
-				if (Count == 0)
+				if (Count == 1)
 					owner.SelectedIndex = 0;
+				owner.CalcTabRows (owner.Width);
+				
 			}
 		}
 
