@@ -1,3 +1,13 @@
+2004-07-23  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* ServiceDescriptionImporter.cs: Fixed bug when getting documents from a
+	  reference.
+	* SoapProtocolImporter.cs: Create code exportes using the corrent generation
+	  options. Added final attribute to the generated methods (so generated
+	  methods are not virtual any more).
+	* WebServicesInteroperability.cs: Fixed bug when getting documents from a
+	  reference. Added check for Import elements.
+	
 2004-07-22  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* ProtocolImporter.cs: Added some internal properties needed for 2.0

@@ -60,7 +60,7 @@ namespace System.Web.Services.Description
 		public static bool CheckConformance (WsiClaims claims, WebReference webReference, BasicProfileViolationCollection violations)
 		{
 			ConformanceCheckContext ctx = new ConformanceCheckContext (webReference, violations);
-			return Check (claims, ctx, webReference.Documents);
+			return Check (claims, ctx, webReference.Documents.Values);
 		}
 		
 		static bool Check (WsiClaims claims, ConformanceCheckContext ctx, IEnumerable documents)
@@ -92,6 +92,10 @@ namespace System.Web.Services.Description
 			
 			checker.Check (ctx, sd);
 			CheckExtensions (ctx, checker, sd.Extensions);
+			
+			foreach (Import i in sd.Imports) {
+				checker.Check (ctx, i);
+			}
 			
 			foreach (Service s in sd.Services) {
 				checker.Check (ctx, s);

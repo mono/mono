@@ -213,7 +213,7 @@ namespace System.Web.Services.Description {
 		
 		internal void AddReference (WebReference reference)
 		{
-			foreach (object doc in reference.Documents)
+			foreach (object doc in reference.Documents.Values)
 			{
 				if (doc is ServiceDescription) {
 					ServiceDescription service = (ServiceDescription) doc;

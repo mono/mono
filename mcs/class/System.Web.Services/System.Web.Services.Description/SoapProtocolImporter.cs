@@ -137,12 +137,14 @@ namespace System.Web.Services.Description {
 #if NET_2_0
 			xmlImporter = new XmlSchemaImporter (LiteralSchemas, base.CodeGenerationOptions, base.CodeGenerator, base.ImportContext);
 			soapImporter = new SoapSchemaImporter (EncodedSchemas, base.CodeGenerationOptions, base.CodeGenerator, base.ImportContext);
+			xmlExporter = new XmlCodeExporter (CodeNamespace, null, base.CodeGenerator, base.CodeGenerationOptions, null);
+			soapExporter = new SoapCodeExporter (CodeNamespace, null, base.CodeGenerator, base.CodeGenerationOptions, null);
 #else
 			xmlImporter = new XmlSchemaImporter (LiteralSchemas, ClassNames);
 			soapImporter = new SoapSchemaImporter (EncodedSchemas, ClassNames);
-#endif
 			xmlExporter = new XmlCodeExporter (CodeNamespace, null);
 			soapExporter = new SoapCodeExporter (CodeNamespace, null);
+#endif
 		}
 
 		protected override void EndClass ()
@@ -305,9 +307,9 @@ namespace System.Web.Services.Description {
 			CodeMemberMethod method = new CodeMemberMethod ();
 			CodeMemberMethod methodBegin = new CodeMemberMethod ();
 			CodeMemberMethod methodEnd = new CodeMemberMethod ();
-			method.Attributes = MemberAttributes.Public;
-			methodBegin.Attributes = MemberAttributes.Public;
-			methodEnd.Attributes = MemberAttributes.Public;
+			method.Attributes = MemberAttributes.Public | MemberAttributes.Final;
+			methodBegin.Attributes = MemberAttributes.Public | MemberAttributes.Final;
+			methodEnd.Attributes = MemberAttributes.Public | MemberAttributes.Final;
 			
 			SoapBindingStyle style = soapOper.Style != SoapBindingStyle.Default ? soapOper.Style : soapBinding.Style;
 			
