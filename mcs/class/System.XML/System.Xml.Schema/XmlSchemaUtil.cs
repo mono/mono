@@ -489,12 +489,15 @@ namespace System.Xml.Schema
 						grp.AttributeGroupRecursionCheck = false;
 					}
 					if (grp.AnyAttributeUse != null) {
-						// FIXME: should validate wildcard subset validity. See spec 3.10.6
 						if (anyAttribute == null)
 							anyAttributeUse = grp.AnyAttributeUse;
 					}
 					foreach (DictionaryEntry entry in grp.AttributeUses) {
 						XmlSchemaAttribute attr = (XmlSchemaAttribute) entry.Value;
+#if BUGGY_MS_COMPLIANT
+						if (attr.Use == XmlSchemaUse.Prohibited)
+							continue;
+#endif
 						if (attr.RefName != null && attr.RefName != XmlQualifiedName.Empty)
 							AddToTable (attributesResolved, attr, attr.RefName, h);
 						else
@@ -504,6 +507,10 @@ namespace System.Xml.Schema
 					XmlSchemaAttribute attr = xsobj as XmlSchemaAttribute;
 					if (attr != null) {
 						errorCount += attr.Validate (h, schema);
+#if BUGGY_MS_COMPLIANT
+						if (attr.Use == XmlSchemaUse.Prohibited)
+							continue;
+#endif
 						if (attr.RefName != null && attr.RefName != XmlQualifiedName.Empty)
 							AddToTable (attributesResolved, attr, attr.RefName, h);
 						else

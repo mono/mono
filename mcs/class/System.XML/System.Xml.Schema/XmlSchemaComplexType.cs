@@ -45,10 +45,15 @@ namespace System.Xml.Schema
 					anyType = new XmlSchemaComplexType ();
 					anyType.Name = "";	// In MS.NET, it is not "anyType"
 					anyType.QNameInternal = XmlQualifiedName.Empty;	// Not xs:anyType as well.
+#if BUGGY_MS_COMPLIANT
+					anyType.validatableParticle = XmlSchemaParticle.Empty; // This code makes validator handles these schemas incorrectly: particlesIb001, mgM013, mgH014, ctE004, ctD004
+#else
 					anyType.validatableParticle = XmlSchemaAny.AnyTypeContent;
+#endif
 					anyType.contentTypeParticle = anyType.validatableParticle;
 					anyType.DatatypeInternal = XmlSchemaSimpleType.AnySimpleType;
 					anyType.isMixed = true;
+					anyType.resolvedContentType = XmlSchemaContentType.Mixed;
 				}
 				return anyType;
 			}
@@ -157,7 +162,6 @@ namespace System.Xml.Schema
 
 		internal XmlSchemaParticle ValidatableParticle 
 		{
-//			get{ return validatableParticle; }
 			get{ return contentTypeParticle; }
 		}
 
@@ -424,6 +428,11 @@ namespace System.Xml.Schema
 			// leave resolvedDerivedBy as Empty
 			if (Particle != null)
 				validatableParticle = Particle;
+			if (this == AnyType) {
+				resolvedContentType = XmlSchemaContentType.Mixed;
+				return;
+			}
+
 			if (validatableParticle == XmlSchemaParticle.Empty) {
 				// note that this covers "Particle == null" case
 				if (this.IsMixed)
@@ -806,6 +815,10 @@ namespace System.Xml.Schema
 
 					foreach (DictionaryEntry entry in baseComplexType.AttributeUses) {
 						XmlSchemaAttribute attr = (XmlSchemaAttribute) entry.Value;
+#if BUGGY_MS_COMPLIANT
+						if (attr.Use != XmlSchemaUse.Prohibited)
+							XmlSchemaUtil.AddToTable (attributeUses, attr, attr.QualifiedName, h);
+#endif
 						XmlSchemaUtil.AddToTable (attributeUses, attr, attr.QualifiedName, h);
 					}
 				}
@@ -993,6 +1006,8 @@ namespace System.Xml.Schema
 			}
 
 			// 5.
+			if (this == AnyType)
+				return;
 			if (contentTypeParticle == XmlSchemaParticle.Empty) {
 				// 5.1
 				if (ContentType != XmlSchemaContentType.Empty) {

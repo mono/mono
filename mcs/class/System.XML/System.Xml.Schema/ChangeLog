@@ -1,5 +1,13 @@
 2004-05-05  Atsushi Enomoto <atsushi@ximian.com>
 
+	* BuiltInDatatype.cs : added BUGGY_MS_COMPLIANT condition and that
+	  handles ms-compatible properties.
+	* XmlSchemaComplexType.cs : ditto for ContentTypeParticle of xs:anyType.
+	  Make sure ContentType for xs:anyType is Mixed.
+	* XmlSchemaUtil.cs : ditto for <xs:attribute use="prohibited" ..>
+
+2004-05-05  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlSchema.cs : Write() handles schema namespace for xmlserializer
 	  (it does not look to be handled inside xmlserializer).
 
