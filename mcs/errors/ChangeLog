@@ -1,5 +1,10 @@
 2002-12-01  Alejandro Sánchez Acosta  <raciel@es.gnu.org>
 
+	* cs0140.cs,
+	  cs0143.cs: New test.
+
+2002-12-01  Alejandro Sánchez Acosta  <raciel@es.gnu.org>
+
 	* cs0100.cs,
 	  cs0105.cs,
 	  cs0112.cs,
