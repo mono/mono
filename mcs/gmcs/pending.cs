@@ -467,6 +467,14 @@ namespace Mono.CSharp {
 				CallingConventions.Standard | CallingConventions.HasThis,
 				parent_method.ReturnType, args);
 
+			ParameterData pd = Invocation.GetParameterData (iface_method);
+			proxy.DefineParameter (0, ParameterAttributes.None, "");
+			for (int i = 0; i < pd.Count; i++) {
+				string name = pd.ParameterName (i);
+				ParameterAttributes attr = Parameter.GetParameterAttributes (pd.ParameterModifier (i));
+				ParameterBuilder pb = proxy.DefineParameter (i + 1, attr, name);
+			}
+
 			int top = args.Length;
 			ILGenerator ig = proxy.GetILGenerator ();
 

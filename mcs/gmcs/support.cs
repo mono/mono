@@ -95,6 +95,9 @@ namespace Mono.CSharp {
 
 		public string ParameterName (int pos)
 		{
+			if (gpd != null)
+				return gpd.ParameterName (pos);
+
 			if (last_arg_is_params && pos >= pi.Length - 1)
 				return pi [pi.Length - 1].Name;
 			else if (is_varargs && pos >= pi.Length)

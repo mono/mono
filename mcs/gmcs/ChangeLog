@@ -1,3 +1,13 @@
+2004-12-11  Martin Baulig  <martin@ximian.com>
+
+	* support.cs (ReflectionParameters.ParameterName): If we have a
+	`gpd', call `ParameterName' on it.
+
+	* parameter.cs (Parameter.GetParameterAttributes): New static method.
+
+	* pending.cs (PendingImplementation.DefineProxy): Call
+	DefineParameter() for all of the MethodBuilder's arguments.
+
 2004-12-09  Martin Baulig  <martin@ximian.com>
 
 	* doc.cs (DocUtil): Make this a static class.

@@ -236,6 +236,23 @@ namespace Mono.CSharp {
 				return ParameterAttributes.None;
 			}
 		}
+
+		public static ParameterAttributes GetParameterAttributes (Modifier mod)
+		{
+			int flags = ((int) mod) & ~((int) Parameter.Modifier.ISBYREF);
+			switch ((Modifier) flags) {
+			case Modifier.NONE:
+				return ParameterAttributes.None;
+			case Modifier.REF:
+				return ParameterAttributes.None;
+			case Modifier.OUT:
+				return ParameterAttributes.Out;
+			case Modifier.PARAMS:
+				return 0;
+			}
+				
+			return ParameterAttributes.None;
+		}
 		
 		public override AttributeTargets AttributeTargets {
 			get {
