@@ -1,3 +1,7 @@
+2003-04-05  Ville Palo <vi64pa@kolumbus.fi>
+
+	* DataTable.cs: Remove UniqueConstraints when adding new ones
+	
 2003-04-04  Ville Palo <vi64pa@kolumbus.fi>
 
 	* DataColumnCollection.cs: Little 'case sensitive' fix

@@ -314,18 +314,10 @@ namespace System.Data {
 				//clear Primary Key if value == null
 				if (null == value) {
 					
-					foreach (Constraint Cons in Constraints) {
-
-						if (Cons is UniqueConstraint) {
-							Constraints.Remove (Cons);
-							break;
-						}
-					}
-
-					UniqueConstraint.SetAsPrimaryKey(this.Constraints, null);
+					RemoveUniqueConstraints ();
 					return;
 				}
-			
+
 				//Does constraint exist for these columns
 				UniqueConstraint uc = UniqueConstraint.GetUniqueConstraintForColumnSet(
 					this.Constraints, (DataColumn[]) value);
@@ -334,6 +326,7 @@ namespace System.Data {
 				//create new unique primary key constraint
 				if (null == uc) {
 
+					RemoveUniqueConstraints ();						
 					
 					foreach (DataColumn Col in (DataColumn[]) value) {
 
@@ -944,6 +937,22 @@ namespace System.Data {
 		public event DataRowChangeEventHandler RowDeleting;
 		
 		#endregion // Events
+
+		/// <summary>
+		///  Removes all UniqueConstraints
+		/// </summary>
+		private void RemoveUniqueConstraints () 
+		{
+			foreach (Constraint Cons in Constraints) {
+				
+				if (Cons is UniqueConstraint) {
+					Constraints.Remove (Cons);
+					break;
+				}
+			}
+			
+			UniqueConstraint.SetAsPrimaryKey(this.Constraints, null);
+		}
 
 		// to parse the sort string for DataTable:Select(expression,sort)
 		// into sortable columns (think ORDER BY, 
