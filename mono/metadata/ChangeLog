@@ -1,5 +1,9 @@
 2004-12-15  Zoltan Varga  <vargaz@freemail.hu>
 
+	* assembly.c (mono_assembly_load_with_partial_name): Call 
+	mono_assembly_loaded before invoking the preload hooks. Fixes
+	#70564.
+
 	* object-internals.h (MonoThread): Change culture_info and 
 	ui_culture_info into an array.
 
