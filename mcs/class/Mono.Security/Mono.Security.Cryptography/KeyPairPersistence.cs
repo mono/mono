@@ -218,14 +218,16 @@ namespace Mono.Security.Cryptography {
 								_userPathExists = true;
 							}
 							catch (Exception e) {
-								throw new CryptographicException ("Could not create key store.", e);
+								string msg = Locale.GetText ("Could not create user key store '{0}'.");
+								throw new CryptographicException (String.Format (msg, _userPath), e);
 							}
 						}
 					}
 				}
 				// is it properly protected ?
 				if (!IsUserProtected (_userPath)) {
-					throw new CryptographicException ("Improperly protected key pairs.");
+					string msg = Locale.GetText ("Improperly protected user's key pairs in '{0}'.");
+					throw new CryptographicException (String.Format (msg, _userPath));
 				}
 				return _userPath;
 			}
@@ -248,14 +250,16 @@ namespace Mono.Security.Cryptography {
 								_machinePathExists = true;
 							}
 							catch (Exception e) {
-								throw new CryptographicException ("Could not create key store.", e);
+								string msg = Locale.GetText ("Could not create machine key store '{0}'.");
+								throw new CryptographicException (String.Format (msg, _machinePath), e);
 							}
 						}
 					}
 				}
 				// is it properly protected ?
 				if (!IsMachineProtected (_machinePath)) {
-					throw new CryptographicException ("Improperly protected key pairs.");
+					string msg = Locale.GetText ("Improperly protected machine's key pairs in '{0}'.");
+					throw new CryptographicException (String.Format (msg, _machinePath));
 				}
 				return _machinePath;
 			}
@@ -385,7 +389,10 @@ namespace Mono.Security.Cryptography {
 						// we don't want to trust the key container name as we don't control it
 						// anyway some characters may not be compatible with the file system
 						byte[] data = Encoding.UTF8.GetBytes (_params.KeyContainerName);
-						MD5 hash = MD5.Create ();	// faster than SHA1, same length as GUID
+						// Note: We use MD5 as it is faster than SHA1 and has the same length 
+						// as a GUID. Recent problems found in MD5 (like collisions) aren't a
+						// problem in this case.
+						MD5 hash = MD5.Create ();
 						byte[] result = hash.ComputeHash (data);
 						_container = new Guid (result).ToString ();
 					}

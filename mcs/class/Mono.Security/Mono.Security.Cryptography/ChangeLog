@@ -1,3 +1,8 @@
+2004-10-28  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* KeyPairPersistence.cs: Added localization for exceptions messages.
+	Also added more details (type and path) when an exception is thrown.
+
 2004-09-29  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* RSAManaged.cs: In synch with corlib. KeySize is now always a 
