@@ -1,3 +1,11 @@
+2004-04-28  Zoltan Varga  <vargaz@freemail.hu>
+
+	* pinvoke2.cs libtest.c: New tests for long fields inside structs.
+
+2004-04-26  Zoltan Varga  <vargaz@freemail.hu>
+
+	* Makefile.am test-driver: Disable some failing tests.
+
 2004-04-19  Zoltan Varga  <vargaz@freemail.hu>
 
 	* pinvoke3.cs libtest.c: Add test for string marshalling in delegates.
