@@ -1195,7 +1195,7 @@ namespace Mono.CSharp {
 			int num_args;
 
 			SimpleName sn = new SimpleName (name, loc);
-			TypeExpr resolved = sn.ResolveAsTypeTerminal (ec);
+			TypeExpr resolved = sn.ResolveAsTypeTerminal (ec, true);
 			if ((resolved == null) || (resolved.Type == null)) {
 				Report.Error (246, loc,
 					      "The type or namespace name `{0}<...>' "+
