@@ -769,7 +769,8 @@ namespace Mono.CSharp
 				return true;
 				
 			case "--debug": case "-g":
-				want_debugging_support = true;
+				if (Environment.OSVersion.Platform.ToString () == "Unix")
+					want_debugging_support = true;
 				return true;
 				
 			case "--debug-args":
@@ -929,7 +930,8 @@ namespace Mono.CSharp
 				
 			case "/debug":
 			case "/debug+":
-				want_debugging_support = true;
+				if (Environment.OSVersion.Platform.ToString () == "Unix")
+					want_debugging_support = true;
 				return true;
 
 			case "/checked":
