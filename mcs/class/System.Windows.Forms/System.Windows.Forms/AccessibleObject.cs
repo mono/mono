@@ -21,7 +21,7 @@ namespace System.Windows.Forms {
 	/// Provides information that accessibility applications use to adjust an application's UI for users with impairments.
 	/// </summary>
 	[MonoTODO]
-	public class AccessibleObject : MarshalByRefObject, IReflect, IAccessible, UnsafeNativeMethods.IEnumVariant {
+	public class AccessibleObject : MarshalByRefObject, IReflect, IAccessible{
 		private string defaultAction;
 		private string description;
 		private string help;
@@ -338,7 +338,7 @@ namespace System.Windows.Forms {
 		void IAccessible.set_accValue(object childID, string newValue) {
 			//FIXME:
 		}
-
+#if false
 		#region Implementation of UnsafeNativeMethods.IEnumVariant
 
 		[MonoTODO]
@@ -364,7 +364,7 @@ namespace System.Windows.Forms {
 		{
 			throw new NotImplementedException ();
 		}
-
+#endif
 		#endregion Implementation of UnsafeNativeMethods.IEnumVariant
 	}
 
