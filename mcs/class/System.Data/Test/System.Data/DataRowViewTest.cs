@@ -132,7 +132,7 @@ namespace MonoTests.System.Data
 
 		[Test]
 		[ExpectedException (typeof (RowNotInTableException))]
-		[NUnit.Framework.Category ("NotWorking")]
+//		[NUnit.Framework.Category ("NotWorking")]
 		public void ItemException ()
 		{
 			DataTable dt = new DataTable ("table");
@@ -142,7 +142,7 @@ namespace MonoTests.System.Data
 			DataRowView drv = dv.AddNew ();
 			drv.Row ["col"] = "test";
 			drv.Row.CancelEdit ();
-			AssertEquals ("AddNew", false, drv ["col"]);
+			object o = drv ["col"];
 		}
 	}
 }

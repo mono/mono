@@ -204,7 +204,6 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
-//		[NUnit.Framework.Category ("NotDotNet")]
 		public void AddNew_2 ()
 		{
 			dataView.AllowNew = true;
@@ -369,6 +368,29 @@ namespace MonoTests.System.Data
 			DataView TestView = new DataView (dataTable);
 			TestView.Dispose (); // Close the table
 			TestView.Delete (0);
+		}
+
+		[Test]
+		public void ListChangeOnSetItem ()
+		{
+			DataTable dt = new DataTable ("table");
+			dt.Columns.Add ("col1");
+			dt.Columns.Add ("col2");
+			dt.Columns.Add ("col3");
+			dt.Rows.Add (new object [] {1, 2, 3});
+			dt.AcceptChanges ();
+			DataView dv = new DataView (dt);
+			dv.ListChanged += new ListChangedEventHandler (OnChange);
+			dv [0] ["col1"] = 4;
+		}
+
+		ListChangedEventArgs ListChangeArgOnSetItem;
+
+		public void OnChange (object o, ListChangedEventArgs e)
+		{
+			if (ListChangeArgOnSetItem != null)
+				throw new Exception ("The event is already fired.");
+			ListChangeArgOnSetItem = e;
 		}
 	}
 }

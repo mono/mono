@@ -1,3 +1,8 @@
+2005-01-27  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DataViewTest.cs : added test for ListChanged.
+	* DataRowViewTest.cs : (ItemException) fixed test. It is now working.
+
 2005-01-25  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DataTableTest.cs : finally run-test-ondotnet passes (i.e.
