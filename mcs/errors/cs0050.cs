@@ -1,10 +1,16 @@
 // cs0050.cs: Inconsistent accessibility. Return type less accessible than method.
-// Line: 7
+// Line: 13
 
 using System;
 
-class Foo {
-	public static Foo Bar () {
+class X {
+	public X ()
+	{
+	}
+}
+
+public class Foo {
+	public static X Bar () {
 		return new Foo ();
 	}
 
