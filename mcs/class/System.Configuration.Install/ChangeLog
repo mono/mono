@@ -1,3 +1,8 @@
+2002-12-01  Alejandro Sánchez Acosta  <raciel@es.gnu.org>
+
+	* list.unix: Changed
+	* makefile.gnu: Add assembly to compile.
+
 2002-07-22  Tim Coleman <tim@timcoleman.com>
 	* list.unix:
 	* makefile.gnu:
