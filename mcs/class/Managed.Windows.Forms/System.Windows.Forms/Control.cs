@@ -29,9 +29,12 @@
 //	Jaak Simm		jaaksimm@firm.ee
 //	John Sohn		jsohn@columbus.rr.com
 //
-// $Revision: 1.14 $
+// $Revision: 1.15 $
 // $Modtime: $
 // $Log: Control.cs,v $
+// Revision 1.15  2004/08/10 15:08:05  jackson
+// Control will now handle the buffering code, so each control does not have to implement this.
+//
 // Revision 1.14  2004/08/09 22:11:25  pbartok
 // - Added incomplete dock layout code
 // - Added support for mouse wheel
@@ -129,6 +132,10 @@ namespace System.Windows.Forms
 		internal BindingContext		binding_context;	// TODO
 		internal RightToLeft		right_to_left;		// drawing direction for control
 		internal int			layout_suspended;
+
+		private Graphics dc_mem;
+		private Bitmap bmp_mem;
+
 		#endregion	// Local Variables
 
 		#region Private Classes
@@ -1022,6 +1029,25 @@ namespace System.Windows.Forms
 		}
 
 		#endregion	// Public Instance Properties
+
+		internal Graphics DeviceContext {
+			get { return dc_mem; }
+		}
+
+		internal Bitmap ImageBuffer {
+			get { return bmp_mem; }
+		}
+
+		internal void CreateBuffers (int width, int height)
+		{
+			if (dc_mem != null)
+				dc_mem.Dispose ();
+			if (bmp_mem != null)
+				bmp_mem.Dispose ();
+
+			bmp_mem = new Bitmap (width, height, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+			dc_mem = Graphics.FromImage (bmp_mem);
+		}
 
 		#region	Protected Instance Properties
 		protected virtual CreateParams CreateParams {
