@@ -13,7 +13,7 @@ using System.Runtime.CompilerServices;
 #if NET_1_2
 namespace System
 {
-	public struct Nullable<T> : IComparable<Nullable<T>>
+	public struct Nullable<T>
 	{
 		T value;
 		bool has_value;
@@ -45,20 +45,6 @@ namespace System
 				return value;
 			else
 				return def_value;
-		}
-
-		public int CompareTo (Nullable<T> other)
-		{
-			if (!has_value && other.has_value)
-				return -1;
-			else if (has_value && !other.has_value)
-				return 1;
-			else if (!has_value && !other.has_value)
-				return 0;
-			else if (value == other.value)
-				return 0;
-			else
-				return 1;
 		}
 	}
 }
