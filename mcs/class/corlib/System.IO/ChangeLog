@@ -1,3 +1,7 @@
+2004-06-24  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* StreamReader.cs: In DiscardBufferedData(), reset the mayBlock flag.
+
 2004-06-21  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* FileStream.cs :

@@ -283,6 +283,7 @@ namespace System.IO {
 		public void DiscardBufferedData ()
 		{
 			pos = decoded_count = 0;
+			mayBlock = false;
 		}
 		
 		// the buffer is empty, fill it again
