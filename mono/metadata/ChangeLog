@@ -1,3 +1,9 @@
+2003-09-19  Martin Baulig  <martin@ximian.com>
+
+	* reflection.c (mono_reflection_define_generic_parameter): Don't
+	allocate `klass->methods', set `klass->flags' to
+	TYPE_ATTRIBUTE_INTERFACE, not TYPE_ATTRIBUTE_ABSTRACT.
+
 2003-09-18  Martin Baulig  <martin@ximian.com>
 
 	* class.c (mono_class_init): Don't create `class->methods' if it's
