@@ -1,3 +1,14 @@
+2001-08-08  Miguel de Icaza  <miguel@ximian.com>
+
+	* class.cs (TypeContainer::TypeAttr): Virtualize.
+	(Class::TypeAttr): Return attributes suitable for this bad boy.
+	(Struct::TypeAttr): ditto.
+	Handle nested classes.
+	(TypeContainer::) Remove all the type visiting code, it is now
+	replaced with the rootcontext.cs code
+
+	* rootcontext.cs (GetClassBases): Added support for structs. 
+
 2001-08-06  Miguel de Icaza  <miguel@ximian.com>
 
 	* interface.cs, statement.cs, class.cs, parameter.cs,

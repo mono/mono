@@ -43,9 +43,11 @@ namespace CIR {
 		Report report;
 
 		//
-		// The `System.Object' type, as it is used so often.
+		// The `System.Object' and `System.ValueType' types, as they
+		// are used often
 		//
 		Type object_type;
+		Type value_type;
 
 		//
 		// Whether we are being linked against the standard libraries.
@@ -61,6 +63,7 @@ namespace CIR {
 			report = new Report ();
 
 			object_type = System.Type.GetType ("System.Object");
+			value_type = System.Type.GetType ("System.ValueType");
 		}
 
 		public TypeManager TypeManager {
@@ -224,7 +227,7 @@ namespace CIR {
 		//
 		// Returns the type for an interface or a class
 		//
-		Type GetInterfaceOrClass (string name)
+		Type GetInterfaceOrClass (string name, bool is_class)
 		{
 			Type t = type_manager.LookupType (name);
 			Class parent;
@@ -238,7 +241,7 @@ namespace CIR {
 				return null;
 			}
 
-			t = CreateClass ((Class) parent);
+			t = CreateType ((Class) parent, is_class);
 			if (t == null){
 				report.Error (146, "Class definition is circular: `"+name+"'");
 				return null;
@@ -249,7 +252,7 @@ namespace CIR {
 
 		//
 		// This function computes the Base class and also the
-		// list of interfaces that the class @c implements.
+		// list of interfaces that the class or struct @c implements.
 		//
 		// The return value is an array (might be null) of
 		// interfaces implemented (as Types).
@@ -257,20 +260,34 @@ namespace CIR {
 		// The @parent argument is set to the parent object or null
 		// if this is `System.Object'. 
 		//
-		Type [] GetClassBases (Class c, out Type parent, out bool error)
+		Type [] GetClassBases (TypeContainer tc, bool is_class, out Type parent, out bool error)
 		{
-			ArrayList bases = c.Bases;
+			ArrayList bases = tc.Bases;
 			int count;
 			int start, j, i;
 			
 			error = false;
-			parent = null;
+
+			if (is_class)
+				parent = null;
+			else
+				parent = value_type;
 
 			if (bases == null){
-				if (stdlib)
-					parent = object_type;
-				else if (c.Name != "System.Object")
-					parent = object_type;
+				if (is_class){
+					if (stdlib)
+						parent = object_type;
+					else if (tc.Name != "System.Object")
+						parent = object_type;
+				} else {
+					//
+					// If we are compiling our runtime,
+					// and we are defining ValueType, then our
+					// parent is `System.Object'.
+					//
+					if (!stdlib && tc. Name == "System.ValueType")
+						parent = object_type;
+				}
 
 				return null;
 			}
@@ -281,46 +298,46 @@ namespace CIR {
 			count = bases.Count;
 			Debug.Assert (count > 0);
 
-			string name = (string) bases [0];
-			Type first = GetInterfaceOrClass (name);
+			if (is_class){
+				string name = (string) bases [0];
+				Type first = GetInterfaceOrClass (name, is_class);
 
-			if (first == null){
-				Console.WriteLine ("Handle Struct miguel!");
-				return null;
-			}
-			
-			if (first.IsClass){
-				parent = first;
-				start = 1;
+				if (first.IsClass){
+					parent = first;
+					start = 1;
+				} else {
+					parent = object_type;
+					start = 0;
+				}
 			} else {
-				parent = object_type;
 				start = 0;
 			}
 
-			//
-			// No interfaces
-			//
-			if (count == 1)
-				return null;
-				
 			Type [] ifaces = new Type [count-start];
 			
 			for (i = start, j = 0; i < count; i++, j++){
-				name = (string) bases [i];
-				Type t = GetInterfaceOrClass (name);
+				string name = (string) bases [i];
+				Type t = GetInterfaceOrClass (name, is_class);
 
 				if (t == null){
 					error = true;
 					return null;
 				}
 
+				if (is_class == false && !t.IsInterface){
+					report.Error (527, "In Struct `"+tc.Name+"', type `"+
+						      name+"' is not an interface");
+					error = true;
+					return null;
+				}
+				
 				if (t.IsSealed) {
 					string detail = "";
 					
 					if (t.IsValueType)
 						detail = " (a class can not inherit from a struct)";
 							
-					report.Error (509, "class `"+c.Name+
+					report.Error (509, "class `"+tc.Name+
 						      "': Cannot inherit from sealed class `"+
 						      bases [i]+"'"+detail);
 					error = true;
@@ -329,7 +346,7 @@ namespace CIR {
 
 				if (t.IsClass) {
 					if (parent != null){
-						report.Error (527, "In Class `"+c.Name+"', type `"+
+						report.Error (527, "In Class `"+tc.Name+"', type `"+
 							      name+"' is not an interface");
 						error = true;
 						return null;
@@ -343,12 +360,12 @@ namespace CIR {
 		}
 
 		// <remarks>
-		//   Creates the TypeBuilder for the class @c.  
+		//   Creates the TypeBuilder for the TypeContainer @tc (a Class or a Struct)
 		// </remarks>
 		//
-		TypeBuilder CreateClass (Class c)
+		TypeBuilder CreateType (TypeContainer tc, bool is_class)
 		{
-			TypeBuilder tb = c.Definition;
+			TypeBuilder tb = tc.Definition;
 			Type parent;
 			Type [] ifaces;
 			bool error;
@@ -357,34 +374,27 @@ namespace CIR {
 			if (tb != null)
 				return tb;
 
-			if (c.InTransit)
+			if (tc.InTransit)
 				return null;
-			c.InTransit = true;
+			tc.InTransit = true;
 
-			name = c.Name;
+			name = tc.Name;
 
-			ifaces = GetClassBases (c, out parent, out error);
+			ifaces = GetClassBases (tc, is_class, out parent, out error); 
 
 			if (error)
 				return null;
 
 			tb = mb.DefineType (name,
-					    c.TypeAttr | TypeAttributes.Class,
+					    tc.TypeAttr | TypeAttributes.Class,
 					    parent,
 					    ifaces);
-			c.Definition = tb;
+
+			tc.Definition = tb;
 			type_manager.AddUserType (name, tb);
-			c.InTransit = false;
+			tc.InTransit = false;
 			
 			return tb;
-		}
-
-		TypeBuilder CreateStruct (Struct s)
-		{
-			// FIXME: I should really just reuse the code above.
-			// 
-
-			return null;
 		}
 
 		// <remarks>
@@ -417,13 +427,13 @@ namespace CIR {
 			structs = tree.Structs;
 			if (structs != null){
 				foreach (DictionaryEntry de in structs)
-					CreateStruct ((Struct) de.Value);
+					CreateType ((Struct) de.Value, false);
 			}
 
 			classes = tree.Classes;
 			if (classes != null){
 				foreach (DictionaryEntry de in classes)
-					CreateClass ((Class) de.Value);
+					CreateType ((Class) de.Value, true);
 			}
 		}
 			

@@ -1,10 +1,25 @@
-Known problems:
+* Namespaces.
 
-Can not parse try {} catch {}
+	Currently the code can not resolve identifiers in other
+	namespaces.
+
+	namespace A {
+		class X : B {
+		}
+	}
+
+	namespace A {
+		class B {
+		}
+	}
+
+* Known problems:
+
+  Can not parse try {} catch {}
 
 	Have not figured out why.
 
-Cast expressions
+  Cast expressions
 
 	They should should use:
 

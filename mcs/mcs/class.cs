@@ -301,25 +301,27 @@ namespace CIR {
 			}
 		}
 		
-		public int ResolveParents (Tree root)
-		{
-			if (Bases == null){
-				base_class_name = "System.Object";
-				return 0;
+		//
+		// The Toplevel is `root_types' which is a containerfor all
+		// types defined, hence the non-obviios parent.parent.
+		//
+		// If we were not tracking Namespaces we could remove this.
+		//
+		bool IsTopLevel {
+			get {
+				if (parent != null){
+					if (parent.parent == null)
+						return true;
+				}
+
+				return false;
 			}
-			
-			if (type_bases.Count == 0){
-				base_class_name = "System.Object";
-				return 0;
-			}
-			
-			return 0;
 		}
 
 		// <summary>
 		//   Returns the TypeAttributes for this TypeContainer
 		// </summary>
-		public TypeAttributes TypeAttr {
+		public virtual TypeAttributes TypeAttr {
 			get {
 				TypeAttributes x = 0;
 
@@ -331,8 +333,11 @@ namespace CIR {
 				//
 				// FIXME: figure out what `internal' means in the context of class/structs
 				//
-				if ((mod_flags & Modifiers.PRIVATE) == 0)
+				if ((mod_flags & Modifiers.PUBLIC) != 0)
 					x |= TypeAttributes.Public;
+
+				if ((mod_flags & Modifiers.PRIVATE) != 0)
+					x |= TypeAttributes.NotPublic;
 				
 				if ((mod_flags & Modifiers.ABSTRACT) != 0)
 					x |= TypeAttributes.Abstract;
@@ -340,130 +345,14 @@ namespace CIR {
 				if ((mod_flags & Modifiers.SEALED) != 0)
 					x |= TypeAttributes.Sealed;
 
+				if (!IsTopLevel){
+					if ((mod_flags & Modifiers.PUBLIC) != 0)
+						x |= TypeAttributes.NestedPublic;
+					else
+						x |= TypeAttributes.NestedPrivate;
+				}
 				return x;
 			}
-		}
-		
-		public delegate void VisitContainer (TypeContainer container, object cback_data);
-
-		void VisitTypesAt (TypeContainer root, VisitContainer visit, object cback)
-		{
-			if (root == null)
-				return;
-			
-			foreach (DictionaryEntry de in root.Types){
-				TypeContainer type = (TypeContainer) de.Value;
-
-				visit (type, cback);
-				VisitTypesAt (type, visit, cback);
-			}
-		}
-
-		// <summary>
-		//   Use this method to visit all the types in a type container.
-		//   You can use cback to pass arbitrary data to your callback.
-		// </summary>
-		public void VisitTypes (VisitContainer visit, object cback)
-		{
-			foreach (DictionaryEntry de in types){
-				TypeContainer type = (TypeContainer) de.Value;
-
-				VisitTypesAt (type, visit, cback);
-			}
-			
-		}
-
-		internal class VisitExpressions_Lambda {
-			VisitExpressionRoot vb;
-			object user_data;
-
-			void walk_arguments (ArrayList args)
-			{
-				if (args == null)
-					return;
-				
-				int top = args.Count;
-
-				for (int i = 0; i < top; i++){
-					Argument arg = (Argument) args [i];
-
-					vb (arg.Expr, user_data);
-				}
-			}
-
-			void walk_block (Block b)
-			{
-			}
-			
-			void walk_constructor (Constructor c)
-			{
-				ConstructorInitializer init = c.Initializer;
-				
-				if (init != null && init.Arguments != null)
-					walk_arguments (init.Arguments);
-
-				walk_block (c.Block);
-			}
-
-			void walk_properties (Property p)
-			{
-			}
-
-			void walk_method (Method m)
-			{
-			}
-				
-			void type_walker_1 (TypeContainer type, object cback)
-			{
-				if (type.Fields != null){
-					foreach (DictionaryEntry de in type.Fields){
-						Field f = (Field) de.Value;
-						
-						if (f.Initializer != null){
-							if (f.Initializer is Expression)
-								vb ((Expression) f.Initializer, user_data);
-						}
-					}
-				}
-
-				if (type.Constructors != null){
-					foreach (DictionaryEntry de in type.Constructors)
-						walk_constructor ((Constructor) de.Value);
-				}
-
-				if (type.Properties != null){
-					foreach (DictionaryEntry de in type.Properties)
-						walk_properties ((Property) de.Value);
-				}
-
-				if (type.MethodGroups != null){
-					foreach (DictionaryEntry de in type.MethodGroups){
-						Hashtable methods = ((MethodGroup) de.Value).Methods;
-						foreach (Method m in methods)
-							walk_method (m);
-					}
-				}
-			}
-
-			
-			internal VisitExpressions_Lambda (TypeContainer tc,
-							  VisitExpressionRoot vb,
-							  object user_data)
-			{
-				this.vb = vb;
-				this.user_data = user_data;
-
-				tc.VisitTypes (new VisitContainer (type_walker_1), null);
-			}
-		}
-		
-		public delegate void VisitExpressionRoot (Expression e, object cback);
-		// <summary>
-		//   Use this method to visit all the code blocks in a TypeContainer
-		// </summary>
-		public void VisitExpressionRoots (VisitExpressionRoot vb, object cback)
-		{
-			VisitExpressions_Lambda l = new VisitExpressions_Lambda (this, vb, cback);
 		}
 	}
 
@@ -492,6 +381,16 @@ namespace CIR {
 			
 			this.mod_flags = Modifiers.Check (AllowedModifiers, mod, accmods);
 		}
+
+		//
+		// FIXME: How do we deal with the user specifying a different
+		// layout?
+		//
+		public override TypeAttributes TypeAttr {
+			get {
+				return base.TypeAttr | TypeAttributes.AutoLayout;
+			}
+		}
 	}
 
 	public class Struct : TypeContainer {
@@ -518,6 +417,20 @@ namespace CIR {
 			this.mod_flags = Modifiers.Check (AllowedModifiers, mod, accmods);
 
 			this.mod_flags |= Modifiers.SEALED;
+		}
+
+		//
+		// FIXME: Allow the user to specify a different set of attributes
+		// in some cases (Sealed for example is mandatory for a class,
+		// but what SequentialLayout can be changed
+		//
+		public override TypeAttributes TypeAttr {
+			get {
+				return base.TypeAttr |
+					TypeAttributes.SequentialLayout |
+					TypeAttributes.Sealed |
+					TypeAttributes.BeforeFieldInit;
+			}
 		}
 	}
 
