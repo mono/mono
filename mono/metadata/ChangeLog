@@ -1,5 +1,7 @@
 2003-09-08  Zoltan Varga  <vargaz@freemail.hu>
 
+	* reflection.c icall.c: Fixed warnings.
+
 	* image.c (load_class_names): Use a temporary hash table to hold the
 	namespaces in order to avoid doing many string comparisons.
 
