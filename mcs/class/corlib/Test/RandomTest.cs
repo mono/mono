@@ -12,7 +12,7 @@ public class RandomTest : TestCase
         public RandomTest(string name): base(name){}
         public void TestDouble()
         {
-                Random r;
+                Random r = new Random();
                 int i;
                 double c=0;
                 for (i=0; i<20; i++) c+=r.NextDouble();
@@ -21,7 +21,8 @@ public class RandomTest : TestCase
         }
         public void TestSeed()
         {
-                Random r(42), r2(42);
+                Random r = new Random(42);
+                Random r2 = new Random(42);
                 int i;
                 double c=0, c2=0;
                 for (i=0; i<20; i++)
@@ -33,7 +34,7 @@ public class RandomTest : TestCase
         }
         public void TestNext()
         {
-                Random r;
+                Random r = new Random();
                 int i;
                 long c;
                 for (i=0; i<20; i++)
@@ -44,7 +45,7 @@ public class RandomTest : TestCase
         }
         public void TestNextMax()
         {
-                Random r;
+                Random r = new Random();
                 int i;
                 long c;
                 for (i=0; i<20; i++)
@@ -55,7 +56,7 @@ public class RandomTest : TestCase
         }
         public void TestNextMinMax()
         {
-                Random r;
+                Random r = new Random();
                 int i;
                 long c;
                 for (i=0; i<20; i++)
