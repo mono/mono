@@ -2517,7 +2517,7 @@ public class TypeManager {
 	{
 		MethodFlags flags = 0;
 
-		if (mb.HasGenericParameters)
+		if (mb.Mono_IsInflatedMethod)
 			mb = mb.GetGenericMethodDefinition ();
 
 		if (mb.DeclaringType is TypeBuilder){

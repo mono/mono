@@ -48,14 +48,12 @@ namespace Mono.CSharp {
 			if (count < 0)
 				return;
 
-			if (method.HasGenericParameters) {
+			if (method.Mono_IsInflatedMethod) {
 				MethodInfo generic = method.GetGenericMethodDefinition ();
-				if (generic != method) {
-					gpd = Invocation.GetParameterData (generic);
+				gpd = Invocation.GetParameterData (generic);
 
-					last_arg_is_params = gpd.HasArrayParameter;
-					return;
-				}
+				last_arg_is_params = gpd.HasArrayParameter;
+				return;
 			}
 
 			attrs = pi [count].GetCustomAttributes (TypeManager.param_array_type, true);
