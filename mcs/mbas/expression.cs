@@ -2205,7 +2205,6 @@ namespace Mono.MonoBASIC {
 					}
 					return ResolveOperator(ec);
 				}
-
 				//
 				// operator != (object a, object b)
 				// operator == (object a, object b)
@@ -2255,6 +2254,24 @@ namespace Mono.MonoBASIC {
 					return null;
 				}
 			}
+			if (oper == Operator.LogicalOr || oper == Operator.LogicalAnd){
+				if (l != TypeManager.bool_type && r == TypeManager.bool_type){
+					left = ConvertImplicit(ec, left, r, loc);
+					if (left == null) {
+						Error_OperatorCannotBeApplied (loc, OperName(oper), l, r);
+						return null;
+					}
+					return ResolveOperator(ec);
+				} else if (r != TypeManager.bool_type && l == TypeManager.bool_type) {
+					right = ConvertImplicit(ec, right, l, loc);
+					if (right == null) {
+						Error_OperatorCannotBeApplied (loc, OperName(oper), l, r);
+						return null;
+					}
+					return ResolveOperator(ec);
+				}
+	}
+
 
 			// Only perform numeric promotions on:
 			// +, -, *, /, %, &, |, ^, ==, !=, <, >, <=, >=

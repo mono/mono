@@ -1,3 +1,6 @@
+2005-02-22 Manjula GHM <mmanjula@novell.com>
+	*expression.cs: Handle Bool w.r.t Logical operators 
+
 2005-02-21 Manjula GHM <mmanjula@novell.com>
 	*expression.cs: Handle  all cases of relational Operators w.r.t String types 
 
