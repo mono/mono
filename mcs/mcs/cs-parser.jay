@@ -2981,7 +2981,7 @@ switch_sections
 switch_section
 	: switch_labels
 	  {
-		current_block = new Block (current_block);
+		current_block = new Block (current_block, lexer.Location, lexer.Location);
 	  }
  	  statement_list 
 	  {

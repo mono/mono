@@ -574,8 +574,11 @@ namespace Mono.CSharp {
 
 			if (ec.CurrentBranching.InTryBlock ())
 				ec.CurrentBranching.AddFinallyVector (vector);
+			else
+				vector.CheckOutParameters (ec.CurrentBranching);
 
 			vector.Returns = FlowReturns.ALWAYS;
+			vector.Breaks = FlowReturns.ALWAYS;
 			return true;
 		}
 		
@@ -749,8 +752,7 @@ namespace Mono.CSharp {
 
 		public override bool Resolve (EmitContext ec)
 		{
-			ec.CurrentBranching.CurrentUsageVector.Returns = FlowReturns.UNREACHABLE;
-			ec.CurrentBranching.CurrentUsageVector.Breaks = FlowReturns.ALWAYS;
+			ec.CurrentBranching.CurrentUsageVector.Breaks = FlowReturns.UNREACHABLE;
 			return true;
 		}
 
@@ -816,8 +818,7 @@ namespace Mono.CSharp {
 
 			label = sl.ILLabelCode;
 
-			ec.CurrentBranching.CurrentUsageVector.Returns = FlowReturns.UNREACHABLE;
-			ec.CurrentBranching.CurrentUsageVector.Breaks = FlowReturns.ALWAYS;
+			ec.CurrentBranching.CurrentUsageVector.Breaks = FlowReturns.UNREACHABLE;
 			return true;
 		}
 
@@ -865,7 +866,7 @@ namespace Mono.CSharp {
 				}
 			}
 
-			ec.CurrentBranching.CurrentUsageVector.Returns = FlowReturns.EXCEPTION;
+			ec.CurrentBranching.CurrentUsageVector.Breaks = FlowReturns.EXCEPTION;
 			return true;
 		}
 			
@@ -1344,6 +1345,8 @@ namespace Mono.CSharp {
 					locals = new MyBitVector (parent.locals, CountLocals);
 					if (num_params > 0)
 						parameters = new MyBitVector (parent.parameters, num_params);
+					real_returns = parent.Returns;
+					real_breaks = parent.Breaks;
 				} else {
 					locals = new MyBitVector (null, CountLocals);
 					if (num_params > 0)
@@ -1452,6 +1455,33 @@ namespace Mono.CSharp {
 				}
 			}
 
+			public bool AlwaysBreaks {
+				get {
+					return (Breaks == FlowReturns.ALWAYS) ||
+						(Breaks == FlowReturns.EXCEPTION) ||
+						(Breaks == FlowReturns.UNREACHABLE);
+				}
+			}
+
+			public bool MayBreak {
+				get {
+					return Breaks != FlowReturns.NEVER;
+				}
+			}
+
+			public bool AlwaysReturns {
+				get {
+					return Returns == FlowReturns.ALWAYS;
+				}
+			}
+
+			public bool MayReturn {
+				get {
+					return (Returns == FlowReturns.SOMETIMES) ||
+						(Returns == FlowReturns.ALWAYS);
+				}
+			}
+
 			// <summary>
 			//   Merge a child branching.
 			// </summary>
@@ -1463,12 +1493,12 @@ namespace Mono.CSharp {
 				FlowReturns new_returns = FlowReturns.NEVER;
 				FlowReturns new_breaks = FlowReturns.NEVER;
 				bool new_returns_set = false, new_breaks_set = false;
-				bool breaks;
 
-				Report.Debug (1, "MERGING CHILDREN", branching, this);
+				Report.Debug (2, "MERGING CHILDREN", branching, branching.Type,
+					      this, children.Count);
 
 				foreach (UsageVector child in children) {
-					Report.Debug (1, "  MERGING CHILD", child, child.is_finally);
+					Report.Debug (2, "  MERGING CHILD", child, child.is_finally);
 
 					if (!child.is_finally) {
 						// If Returns is already set, perform an
@@ -1488,19 +1518,7 @@ namespace Mono.CSharp {
 						} else
 							new_breaks = AndFlowReturns (
 								new_breaks, child.Breaks);
-
-						// Check whether control may reach the end of this sibling.
-						// This happens unless we either always return or always break.
-						if ((child.Returns == FlowReturns.EXCEPTION) ||
-						    (child.Returns == FlowReturns.ALWAYS) ||
-						    ((branching.Type != FlowBranchingType.SWITCH_SECTION) &&
-						     (branching.Type != FlowBranchingType.LOOP_BLOCK) &&
-						     (child.Breaks == FlowReturns.ALWAYS)))
-							breaks = true;
-						else
-							breaks = false;
-					} else
-						breaks = false;
+					}
 
 					// Ignore unreachable children.
 					if (child.Returns == FlowReturns.UNREACHABLE)
@@ -1545,37 +1563,50 @@ namespace Mono.CSharp {
 						if (new_locals == null)
 							new_locals = locals.Clone ();
 						new_locals.Or (child.locals);
-					} else if (!breaks) {
-						if (new_locals != null)
-							new_locals.And (child.locals);
-						else {
+
+						if (parameters != null) {
+							if (new_params == null)
+								new_params = parameters.Clone ();
+							new_params.Or (child.parameters);
+						}
+
+					} else {
+						if (!child.AlwaysReturns && !child.AlwaysBreaks) {
+							if (new_locals != null)
+								new_locals.And (child.locals);
+							else {
+								new_locals = locals.Clone ();
+								new_locals.Or (child.locals);
+							}
+						} else if (children.Count == 1) {
 							new_locals = locals.Clone ();
 							new_locals.Or (child.locals);
 						}
-					}
 
-					// An `out' parameter must be assigned in all branches which do
-					// not always throw an exception.
-					if (!child.is_finally && (child.Returns != FlowReturns.EXCEPTION)) {
+						// An `out' parameter must be assigned in all branches which do
+						// not always throw an exception.
 						if (parameters != null) {
-							if (new_params != null)
-								new_params.And (child.parameters);
-							else {
+							if (child.Breaks != FlowReturns.EXCEPTION) {
+								if (new_params != null)
+									new_params.And (child.parameters);
+								else {
+									new_params = parameters.Clone ();
+									new_params.Or (child.parameters);
+								}
+							} else if (children.Count == 1) {
 								new_params = parameters.Clone ();
 								new_params.Or (child.parameters);
 							}
 						}
 					}
-
-					// If we always return, check whether all `out' parameters have
-					// been assigned.
-					if ((child.Returns == FlowReturns.ALWAYS) && (child.parameters != null)) {
-						branching.CheckOutParameters (
-							child.parameters, branching.Location);
-					}
 				}
 
 				Returns = new_returns;
+				if ((branching.Type == FlowBranchingType.BLOCK) ||
+				    (branching.Type == FlowBranchingType.EXCEPTION) ||
+				    (new_breaks == FlowReturns.UNREACHABLE) ||
+				    (new_breaks == FlowReturns.EXCEPTION))
+					Breaks = new_breaks;
 
 				//
 				// We've now either reached the point after the branching or we will
@@ -1586,45 +1617,28 @@ namespace Mono.CSharp {
 				// we need to look at (see above).
 				//
 
-				bool or_locals = (Returns == FlowReturns.NEVER) ||
-					(Returns == FlowReturns.SOMETIMES);
-				if ((branching.Type != FlowBranchingType.SWITCH_SECTION) &&
-				    (branching.Type != FlowBranchingType.LOOP_BLOCK))
-					or_locals &= ((Breaks == FlowReturns.NEVER) ||
-						      (Breaks == FlowReturns.SOMETIMES));
+				if (((new_breaks != FlowReturns.ALWAYS) &&
+				     (new_breaks != FlowReturns.EXCEPTION) &&
+				     (new_breaks != FlowReturns.UNREACHABLE)) ||
+				    (children.Count == 1)) {
+					if (new_locals != null)
+						locals.Or (new_locals);
 
-				if ((new_locals != null) && or_locals) {
-					locals.Or (new_locals);
+					if (new_params != null)
+						parameters.Or (new_params);
 				}
 
-				if ((new_params != null) && (Breaks == FlowReturns.NEVER))
-					parameters.Or (new_params);
+				Report.Debug (2, "MERGING CHILDREN DONE", branching.Type,
+					      new_params, new_locals, new_returns, new_breaks, this);
 
-				//
-				// If we may have returned (this only happens if there was a reachable
-				// `return' statement in one of the branches), then we may return to our
-				// parent block before reaching the end of the block, so set `Breaks'.
-				//
-				if ((Returns != FlowReturns.NEVER) && (Returns != FlowReturns.SOMETIMES)) {
-					// real_breaks = Returns;
-					// breaks_set = true;
-				} else if (branching.Type == FlowBranchingType.BLOCK) {
-					//
-					// If this is not a loop or switch block, `break' actually breaks.
-					//
-
-					if (!breaks_set) {
-						Breaks = new_breaks;
-						breaks_set = true;
-					} else
-						Breaks = AndFlowReturns (Breaks, new_breaks);
+				if (branching.Type == FlowBranchingType.SWITCH_SECTION) {
+					if ((new_breaks != FlowReturns.ALWAYS) &&
+					    (new_breaks != FlowReturns.EXCEPTION) &&
+					    (new_breaks != FlowReturns.UNREACHABLE))
+						Report.Error (163, branching.Location,
+							      "Control cannot fall through from one " +
+							      "case label to another");
 				}
-
-				if (new_returns == FlowReturns.EXCEPTION)
-					Breaks = FlowReturns.UNREACHABLE;
-
-				Report.Debug (1, "MERGING CHILDREN DONE", new_params, new_locals,
-					      new_returns, new_breaks, this);
 
 				return new_returns;
 			}
@@ -1690,6 +1704,12 @@ namespace Mono.CSharp {
 				is_finally = true;
 
 				Report.Debug (1, "MERGING FINALLY ORIGIN DONE", this);
+			}
+
+			public void CheckOutParameters (FlowBranching branching)
+			{
+				if (parameters != null)
+					branching.CheckOutParameters (parameters, branching.Location);
 			}
 
 			// <summary>
@@ -1938,17 +1958,21 @@ namespace Mono.CSharp {
 
 			UsageVector vector = new UsageVector (null, num_params, Block.CountVariables);
 
+			Report.Debug (1, "MERGING TOP BLOCK", Location, vector);
+
 			vector.MergeChildren (this, Siblings);
 
 			Siblings.Clear ();
 			Siblings.Add (vector);
 
-			Report.Debug (1, "MERGING TOP BLOCK", vector);
+			Report.Debug (1, "MERGING TOP BLOCK DONE", Location, vector);
 
-			if (vector.Returns != FlowReturns.EXCEPTION)
-				CheckOutParameters (CurrentUsageVector.Parameters, Location);
-
-			return vector.Returns;
+			if (vector.Breaks != FlowReturns.EXCEPTION) {
+				if (!vector.AlwaysBreaks)
+					CheckOutParameters (CurrentUsageVector.Parameters, Location);
+				return vector.AlwaysBreaks ? FlowReturns.ALWAYS : vector.Returns;
+			} else
+				return FlowReturns.EXCEPTION;
 		}
 
 		public bool InTryBlock ()
@@ -1976,7 +2000,7 @@ namespace Mono.CSharp {
 
 		public bool IsVariableAssigned (VariableInfo vi)
 		{
-			if (CurrentUsageVector.Breaks == FlowReturns.UNREACHABLE)
+			if (CurrentUsageVector.AlwaysBreaks)
 				return true;
 			else
 				return CurrentUsageVector [vi, 0];
@@ -1984,7 +2008,7 @@ namespace Mono.CSharp {
 
 		public bool IsVariableAssigned (VariableInfo vi, int field_idx)
 		{
-			if (CurrentUsageVector.Breaks == FlowReturns.UNREACHABLE)
+			if (CurrentUsageVector.AlwaysBreaks)
 				return true;
 			else
 				return CurrentUsageVector [vi, field_idx];
@@ -1992,7 +2016,7 @@ namespace Mono.CSharp {
 
 		public void SetVariableAssigned (VariableInfo vi)
 		{
-			if (CurrentUsageVector.Breaks == FlowReturns.UNREACHABLE)
+			if (CurrentUsageVector.AlwaysBreaks)
 				return;
 
 			CurrentUsageVector [vi, 0] = true;
@@ -2000,7 +2024,7 @@ namespace Mono.CSharp {
 
 		public void SetVariableAssigned (VariableInfo vi, int field_idx)
 		{
-			if (CurrentUsageVector.Breaks == FlowReturns.UNREACHABLE)
+			if (CurrentUsageVector.AlwaysBreaks)
 				return;
 
 			CurrentUsageVector [vi, field_idx] = true;
@@ -2048,7 +2072,7 @@ namespace Mono.CSharp {
 			if (param_map [number] == 0)
 				return;
 
-			if (CurrentUsageVector.Breaks == FlowReturns.NEVER)
+			if (!CurrentUsageVector.AlwaysBreaks)
 				CurrentUsageVector [param_map [number]] = true;
 		}
 
@@ -2061,7 +2085,7 @@ namespace Mono.CSharp {
 
 			int field_idx = struct_params [number] [field_name];
 
-			if (CurrentUsageVector.Breaks == FlowReturns.NEVER)
+			if (!CurrentUsageVector.AlwaysBreaks)
 				CurrentUsageVector [index + field_idx] = true;
 		}
 
@@ -2909,7 +2933,7 @@ namespace Mono.CSharp {
 			ec.CurrentBlock = this;
 			ec.StartFlowBranching (this);
 
-			Report.Debug (1, "RESOLVE BLOCK", StartLocation);
+			Report.Debug (1, "RESOLVE BLOCK", StartLocation, ec.CurrentBranching);
 
 			if (!variables_initialized)
 				UpdateVariableInfo (ec);
@@ -2919,7 +2943,7 @@ namespace Mono.CSharp {
 					ok = false;
 			}
 
-			Report.Debug (1, "RESOLVE BLOCK DONE", StartLocation);
+			Report.Debug (1, "RESOLVE BLOCK DONE", StartLocation, ec.CurrentBranching);
 
 			FlowReturns returns = ec.EndFlowBranching ();
 			ec.CurrentBlock = prev_block;
@@ -3762,6 +3786,10 @@ namespace Mono.CSharp {
 					return false;
 			}
 
+
+			if (!got_default)
+				ec.CurrentBranching.CreateSibling ();
+
 			ec.EndFlowBranching ();
 			ec.Switch = old_switch;
 
@@ -4299,10 +4327,8 @@ namespace Mono.CSharp {
 
 				FlowBranching.UsageVector current = ec.CurrentBranching.CurrentUsageVector;
 
-				if ((current.Returns == FlowReturns.NEVER) ||
-				    (current.Returns == FlowReturns.SOMETIMES)) {
+				if (!current.AlwaysReturns && !current.AlwaysBreaks)
 					vector.AndLocals (current);
-				}
 			}
 
 			Report.Debug (1, "END OF CATCH BLOCKS", ec.CurrentBranching);
@@ -4321,10 +4347,8 @@ namespace Mono.CSharp {
 
 				FlowBranching.UsageVector current = ec.CurrentBranching.CurrentUsageVector;
 
-				if ((current.Returns == FlowReturns.NEVER) ||
-				    (current.Returns == FlowReturns.SOMETIMES)) {
+				if (!current.AlwaysReturns && !current.AlwaysBreaks)
 					vector.AndLocals (current);
-				}
 			}
 
 			Report.Debug (1, "END OF GENERAL CATCH BLOCKS", ec.CurrentBranching);

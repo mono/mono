@@ -1,3 +1,8 @@
+2002-10-06  Martin Baulig  <martin@gnome.org>
+
+	* statement.cs: Reworked the flow analysis code a bit to make it
+	usable for dead code elimination.
+
 2002-10-06  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* cs-parser.jay: allow empty source files. Fixes bug #31781.
