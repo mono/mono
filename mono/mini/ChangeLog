@@ -1,3 +1,10 @@
+2005-03-13  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini.h mini.c tramp-*.c: Move common trampoline code to mini.c.
+
+	* mini-x86.h mini-x86.c mini-amd64.h mini-amd64.c: Get rid of the
+	tramp_init functions as they are no longer needed.
+
 2005-03-12  Zoltan Varga  <vargaz@freemail.hu>
 
 	* tramp-amd64.c (mono_amd64_tramp_init): Fix typo.
