@@ -971,7 +971,7 @@ namespace System
 							for (k = num_parsed; k > 3; k--)
 								millisecond /= 10;
 						} else {
-							for (k = num_parsed; k <= 3; k++) {
+							for (k = num_parsed; k < 3; k++) {
 								millisecond *= 10;
 							}
 						}
