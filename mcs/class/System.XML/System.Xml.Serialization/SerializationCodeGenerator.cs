@@ -277,7 +277,7 @@ namespace System.Xml.Serialization
 			
 			InitHooks ();
 			
-			if (!_config.GenerateAsInternal)
+			if (_config == null || !_config.GenerateAsInternal)
 				WriteLine ("public class " + writerClassName + " : XmlSerializationWriter");
 			else
 				WriteLine ("internal class " + writerClassName + " : XmlSerializationWriter");
@@ -1064,7 +1064,7 @@ namespace System.Xml.Serialization
 		
 		public void GenerateReader (string readerClassName, ArrayList maps)
 		{
-			if (!_config.GenerateAsInternal)
+			if (_config == null || !_config.GenerateAsInternal)
 				WriteLine ("public class " + readerClassName + " : XmlSerializationReader");
 			else
 				WriteLine ("internal class " + readerClassName + " : XmlSerializationReader");
