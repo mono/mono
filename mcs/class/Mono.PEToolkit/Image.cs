@@ -150,10 +150,10 @@ namespace Mono.PEToolkit {
 			coffHdr.Write (writer);
 			peHdr.Write (writer);
 		
-			/*
-			int pos = reader.BaseStream.Position;
-			ReadSections();
 			
+			WriteSections (writer);
+			
+			/*
 			if (this.IsCLI) {
 				
 				reader.BaseStream.Position = RVAToVA(peHdr.CLIHdrDir.virtAddr);
@@ -165,7 +165,6 @@ namespace Mono.PEToolkit {
 				
 			}
 			*/
-			
 		}
 
 		/// <summary>
@@ -182,6 +181,13 @@ namespace Mono.PEToolkit {
 				Section sect = new Section();
 				sect.Read(reader);
 				sections [sect.Name] = sect;
+			}
+		}
+
+		protected void WriteSections (BinaryWriter writer)
+		{
+			foreach (Section section in sections.Values) {
+				section.Write (writer);
 			}
 		}
 
