@@ -7,12 +7,10 @@
 // (C) Bob Smith
 //
 
-namespace System.Web
-{
-        public enum HttpCacheRevalidation
-        {
-                AllCaches,
-                None,
-                ProxyCaches
-        }
+namespace System.Web {
+   public enum HttpCacheRevalidation {
+      AllCaches,
+      None,
+      ProxyCaches
+   }
 }

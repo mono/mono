@@ -7,12 +7,8 @@
 using System;
 
 namespace System.Web {
-
-   public class HttpCachePolicy {
-      public HttpCachePolicy() {
-         //
-         // TODO: Add constructor logic here
-         //
+   public sealed class HttpCachePolicy {
+      internal HttpCachePolicy() {
       }
    }
 }

@@ -134,7 +134,7 @@ namespace System.Web {
          throw new NotImplementedException();
       }
 
-      new public string ToString() {
+      virtual new public string ToString() {
          return ToString(false);
       }
    }

@@ -11,7 +11,7 @@ using System.Text;
 using System.Globalization;
 
 namespace System.Web {
-   public class HttpResponse {
+   public sealed class HttpResponse {
       // Chunked encoding static helpers
       private static byte [] s_arrChunkSuffix = { 10, 13 };
       private static byte [] s_arrChunkEnd = { 10 , 13 };
@@ -50,7 +50,7 @@ namespace System.Web {
       private HttpWorkerRequest _WorkerRequest;
 
       [MonoTODO("Verify that this really works")]
-      internal HttpResponse(TextWriter output) {
+      public HttpResponse(TextWriter output) {
          _bBuffering = true;
          _bFlushing = false;
          _bHeadersSent = false;
@@ -459,7 +459,7 @@ namespace System.Web {
          }
       }
 
-      public void AppendHeader(int iIndex, string value) {
+      internal void AppendHeader(int iIndex, string value) {
          if (_bHeadersSent) {
             throw new System.Web.HttpException("Headers has been sent to the client");
          }

@@ -10,7 +10,7 @@ using System.Collections.Specialized;
 
 namespace System.Web {
    [MonoTODO()]
-   public class HttpClientCertificate : NameObjectCollectionBase {
+   public class HttpClientCertificate : NameValueCollection {
       private HttpContext _Context;
       private byte [] _BinaryIssuer;
       private int _CertEncoding;
@@ -137,6 +137,11 @@ namespace System.Web {
          get {
             return ValidUntil;
          }
+      }
+
+      [MonoTODO()]
+      public override string Get(string s) {
+         throw new NotImplementedException();
       }
    }
 }

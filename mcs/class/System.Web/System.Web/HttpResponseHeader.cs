@@ -7,7 +7,7 @@
 using System;
 
 namespace System.Web {
-   public class HttpResponseHeader {
+   internal class HttpResponseHeader {
       private string _sHeader;
       private string _sValue;
       private int _iKnowHeaderId;
@@ -22,7 +22,7 @@ namespace System.Web {
          _sValue = value;
       }
 
-      public string Name {
+      internal string Name {
          get {
             if (null == _sHeader) {
                return HttpWorkerRequest.GetKnownResponseHeaderName(_iKnowHeaderId);
@@ -32,7 +32,7 @@ namespace System.Web {
          }
       }
 
-      public string Value {
+      internal string Value {
          get {
             return _sValue;
          }

@@ -7,13 +7,11 @@
 // (C) Bob Smith
 //
 
-namespace System.Web
-{
-        public enum HttpCacheability
-        {
-		NoCache,
-                Private,
-                Public,
-                Server
-        }
+namespace System.Web {
+   public enum HttpCacheability {
+      NoCache,
+      Private,
+      Public,
+      Server
+   }
 }

@@ -62,7 +62,7 @@ namespace System.Web {
       }
 
       [MonoTODO("Save the data into a web dataset directly...")]
-      public void Write(string category, string msg, Exception error, bool Warning) {
+      private void Write(string category, string msg, Exception error, bool Warning) {
          throw new NotImplementedException();
       }
    }

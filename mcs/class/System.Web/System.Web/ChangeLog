@@ -1,3 +1,18 @@
+2002-04-12  Patrik Torstensson <patrik.torstensson@labs2.com>
+
+	* HttpApplication.cs: Minor updates
+	* HttpApplicationState.cs: Ready.
+	* HttpClientCertificate.cs: Signature updates
+	* HttpValueCollection.cs: ready
+	* HttpStaticObjectsCollection.cs: ready
+	* HttpResponseHeader.cs: made internal only
+	* HttpResponse.cs: Signature updates
+	* HttpPostedFile.cs: ready
+	* HttpCacheVaryByHeaders.cs: ready (except communication to policy)
+	* HttpCacheVaryByParams.cs: ready (except communication to policy)
+	
+	System.Web is now over 60% ready.. 
+
 2002-04-11  Patrik Torstensson <patrik.torstensson@labs2.com>
 
 	* HttpException.cs: 95% ready, only windows dependent code left
