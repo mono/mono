@@ -1,3 +1,7 @@
+2004-05-19  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* PKCS7.cs: In sync with Mono.Security.dll version.
+
 2004-05-18  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* ASN1Convert.cs: In sync with Mono.Security.dll version.
