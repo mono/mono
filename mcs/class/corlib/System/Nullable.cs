@@ -202,7 +202,10 @@ namespace System
 
 		public override string ToString ()
 		{
-			return value.ToString ();
+			if (has_value)
+				return value.ToString ();
+			else
+				return "";
 		}
 
 		public static implicit operator Nullable<T> (T value)

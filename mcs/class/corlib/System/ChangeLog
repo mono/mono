@@ -1,3 +1,8 @@
+2005-03-10  Martin Baulig  <martin@ximian.com>
+
+	* Nullable.cs (Nullable<T>.ToString): Return an empty string if
+	we're null.
+
 2005-03-09  Zoltan Varga  <vargaz@freemail.hu>
 
 	* Activator.cs MonoType.cs: Applied patch from Carlos Alberto Cortez
