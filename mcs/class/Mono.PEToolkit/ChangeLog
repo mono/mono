@@ -2,6 +2,7 @@
 
 	* makefile.gnu (all): Give this dependencies
 	so that we don't rebuild every time.
+	(all): Take two.
 
 2003-02-22 Jackson Harper <jackson@latitudegeo.com>
 
