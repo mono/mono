@@ -1,3 +1,12 @@
+2003-04-08  Miguel de Icaza  <miguel@ximian.com>
+
+	* assign.cs (Assign.Emit): If we are dealing with a compound
+	assignment expression, we should use the code path that stores the
+	intermediate result in a temporary value.  This fixes #40903.
+
+	*expression.cs (Indirection.ToString): Provide ToString method for
+	debugging. 
+	
 2003-04-08  Zoltan Varga  <vargaz@freemail.hu>
 
         * class.cs: Null out fields holding references to Block objects so

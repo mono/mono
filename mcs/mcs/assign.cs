@@ -392,15 +392,21 @@ namespace Mono.CSharp {
 				return;
 			}
 
+			bool use_temporaries = false;
+			
 			//
 			// FIXME! We need a way to "probe" if the process can
 			// just use `dup' to propagate the result
 			// 
 			IAssignMethod am = (IAssignMethod) target;
-
+			
 			if (this is CompoundAssign){
 				am.CacheTemporaries (ec);
+				use_temporaries = true;
 			}
+
+			if (!is_statement)
+				use_temporaries = true;
 
 			Expression temp_source;
 			if (embedded != null) {
@@ -414,20 +420,27 @@ namespace Mono.CSharp {
 			} else
 				temp_source = source;
 
-			if (is_statement)
-				am.EmitAssign (ec, temp_source);
-			else {
+			if (use_temporaries){
+				//
+				// Doing this for every path is too expensive
+				// I wonder if we can work around this and have a less
+				// expensive path
+				//
 				LocalTemporary tempo;
-
+				
 				tempo = new LocalTemporary (ec, source.Type);
-
+				
 				temp_source.Emit (ec);
 				tempo.Store (ec);
 				am.EmitAssign (ec, tempo);
-				tempo.Emit (ec);
+				if (!is_statement)
+					tempo.Emit (ec);
+				
 				tempo.Release (ec);
+			} else {
+				am.EmitAssign (ec, temp_source);
 			}
-
+				
 			if (embedded != null) {
 				if (temp != null)
 					temp.Release (ec);

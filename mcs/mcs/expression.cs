@@ -632,7 +632,7 @@ namespace Mono.CSharp {
 					temporary.Store (ec);
 					have_temporary = true;
 				}
-			} else
+			} else 
 				expr.Emit (ec);
 
 			source.Emit (ec);
@@ -665,6 +665,11 @@ namespace Mono.CSharp {
 		public new void CacheTemporaries (EmitContext ec)
 		{
 			temporary = new LocalTemporary (ec, type);
+		}
+
+		public override string ToString ()
+		{
+			return "*(" + expr + ")";
 		}
 	}
 	
