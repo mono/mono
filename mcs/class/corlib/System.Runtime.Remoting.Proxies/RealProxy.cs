@@ -9,18 +9,25 @@
 
 using System;
 using System.Runtime.Remoting.Messaging;
+using System.Runtime.CompilerServices;
+
 
 namespace System.Runtime.Remoting.Proxies
 {
-
+	internal class TransparentProxy {
+		public RealProxy _rp;
+	}
+	
 	public abstract class RealProxy {
+
+		Type class_to_proxy;
 
 		RealProxy () {
 			throw new NotImplementedException ();
 		}
 
 		RealProxy (Type classToProxy) {
-			throw new NotImplementedException ();
+			this.class_to_proxy = classToProxy;
 		}
 
 		RealProxy (Type classToProxy, IntPtr stub, object stubData) {
@@ -29,9 +36,20 @@ namespace System.Runtime.Remoting.Proxies
 
 		public abstract IMessage Invoke (IMessage msg);
 
-		public virtual object GetTransparentProxy () {
-			throw new NotImplementedException ();
+		/* this is called from unmanaged code */
+		internal static object PrivateInvoke (RealProxy rp, IMessage msg, out Exception exc,
+						      out object [] out_args)
+		{
+			IMethodReturnMessage res_msg = (IMethodReturnMessage)rp.Invoke (msg);
+
+			exc = res_msg.Exception;
+			out_args = res_msg.OutArgs;
+			return res_msg.ReturnValue;
 		}
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		public extern virtual object GetTransparentProxy ();
+		
 	}
 
 }

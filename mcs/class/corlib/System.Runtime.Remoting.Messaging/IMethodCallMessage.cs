@@ -1,5 +1,5 @@
 //
-// System.Runtime.Remoting.Messaging.IMethodCallMessage..cs
+// System.Runtime.Remoting.Messaging.IMethodCallMessage.cs
 //
 // Author:
 //   Dietmar Maurer (dietmar@ximian.com)

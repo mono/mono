@@ -24,7 +24,7 @@ namespace System.Runtime.Remoting.Messaging {
 			get;
 		}
 
-		LogicalCallContext LogicalCalLContext {
+		LogicalCallContext LogicalCallContext {
 			get;
 		}
 
