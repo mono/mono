@@ -85,30 +85,6 @@ namespace Commons.Xml.Relaxng.Rnc
 			}
 		}
 
-		/*
-		private RelaxngElementBase ApplyAnnotations (string annotation, RelaxngElementBase element)
-		{
-			// Do nothing as yet for annotation.
-			return element;
-		}
-		*/
-
-		/*
-		private RelaxngPatternList ApplyAnnotationsGroup (string annotation, RelaxngPatternList elements)
-		{
-			// Do nothing as yet for annotation.
-			return elements;
-		}
-		*/
-
-		/*
-		private RelaxngNameClassList ApplyAnnotationsChoice (string annotation, RelaxngNameClassList elements)
-		{
-			// Do nothing as yet for annotation.
-			return elements;
-		}
-		*/
-
 		private XmlQualifiedName SplitQName (XmlNamespaceManager nsmgr, string name)
 		{
 			int colon = name.IndexOf (':');
@@ -116,25 +92,8 @@ namespace Commons.Xml.Relaxng.Rnc
 				return new XmlQualifiedName (name, String.Empty);
 			string local = name.Substring (colon + 1);
 			string prefix = name.Substring (0, colon);
-			return new XmlQualifiedName (local, nsmgr.LookupNamespace (prefix));
+			return new XmlQualifiedName (local, nsmgr.LookupNamespace (nsmgr.NameTable.Get (prefix)));
 		}
-		/*
-		private RelaxngPatternList ConcatList (RelaxngPatternList listL, RelaxngPatternList listR)
-		{
-			RelaxngPatternList ret = listL;
-			if (ret != null) {
-				foreach (RelaxngPattern p in listR)
-					ret.Add (p);
-			} else {
-				ret = new RelaxngPatternList ();
-				foreach (RelaxngPattern p in listL)
-					ret.Add (p);
-				foreach (RelaxngPattern p in listR)
-					ret.Add (p);
-			}
-			return ret;
-		}
-		*/
 
 		private void FillElementDefaultNS (RelaxngNameClass nc)
 		{

@@ -1,3 +1,8 @@
+2004-06-07  Atsushi Enomoto <atsushi@ximian.com>
+
+	* RncParser.jay : removed unused code. Fixed LookupNamespace() to 
+	  pass atomized name always.
+
 2004-05-31  Atsushi Enomoto <atsushi@ximian.com>
 
 	* RncParser.jay : now error output is disabled.
