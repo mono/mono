@@ -401,7 +401,10 @@ namespace FirebirdSql.Data.Common
 			{
 				for	(int i = 0;	i <	this.Fields.Count; i++)
 				{
-					this.Fields[i].ArrayHandle = null;
+					if (this.Fields[i].IsArray())
+					{
+						this.Fields[i].ArrayHandle = null;
+					}
 				}
 			}
 		}
