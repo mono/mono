@@ -1,3 +1,8 @@
+2004-04-14  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* WindowsIdentity.cs: Implemented IDeserializationCallback and 
+	ISerializable interfaces.
+
 2004-04-13  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* WindowsIdentity.cs: Implemented for both Windows and Linux. Fix bug

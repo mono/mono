@@ -27,6 +27,7 @@ namespace System.Security.Principal {
 		private WindowsAccountType _account;
 		private bool _authenticated;
 		private string _name;
+		private SerializationInfo _info;
 
 		static private IntPtr invalidWindows = IntPtr.Zero;
 		// that seems to be the value used for (at least) AIX and MacOSX
@@ -80,9 +81,9 @@ namespace System.Security.Principal {
 			SetToken (token);
 		}
 
-		[MonoTODO]
 		public WindowsIdentity (SerializationInfo info, StreamingContext context)
 		{
+			_info = info;
 		}
 #endif
 
@@ -173,16 +174,36 @@ namespace System.Security.Principal {
 			get { return _token; }
 		}
 
-		[MonoTODO]
 		void IDeserializationCallback.OnDeserialization (object sender)
 		{
-			throw new NotImplementedException ();
+			_token = (IntPtr) _info.GetValue ("m_userToken", typeof (IntPtr));
+			// can't trust this alone - we must validate the token
+			_name = _info.GetString ("m_name");
+			if (_name != null) {
+				// validate token by comparing names
+				string name = GetTokenName (_token);
+				if (name != _name)
+					throw new SerializationException ("Token-Name mismatch.");
+			}
+			else {
+				// validate token by getting name
+				_name = GetTokenName (_token);
+				if ((_name == String.Empty) || (_name == null))
+					throw new SerializationException ("Token doesn't match a user.");
+			}
+			_type = _info.GetString ("m_type");
+			_account = (WindowsAccountType) _info.GetValue ("m_acctType", typeof (WindowsAccountType));
+			_authenticated = _info.GetBoolean ("m_isAuthenticated");
 		}
 #if !NET_1_0
-		[MonoTODO]
 		void ISerializable.GetObjectData (SerializationInfo info, StreamingContext context) 
 		{
-			throw new NotImplementedException ();
+			info.AddValue ("m_userToken", _token);
+			// can be null when not resolved
+			info.AddValue ("m_name", _name);
+			info.AddValue ("m_type", _type);
+			info.AddValue ("m_acctType", _account);
+			info.AddValue ("m_isAuthenticated", _authenticated);
 		}
 #endif
 		private static bool IsPosix {
