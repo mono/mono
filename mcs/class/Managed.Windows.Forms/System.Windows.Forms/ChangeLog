@@ -1,3 +1,8 @@
+2005-02-17  Peter Bartok  <pbartok@novell.com>
+
+	* UpDownBase.cs: Fixed typo, compilation errors
+	* DomainUpDown.cs: Fixed attribute value
+
 2005-02-16  Miguel de Icaza  <miguel@novell.com>
 
 	* UpDownBase.cs: Attach entry events.

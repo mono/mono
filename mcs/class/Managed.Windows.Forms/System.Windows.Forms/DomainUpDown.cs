@@ -198,7 +198,7 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		[DesignerSerializationVisibility(DesignerSerializationVisibility.Item)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		[Browsable(false)]
 		public object SelectedItem {
 			get {

@@ -257,10 +257,10 @@ namespace System.Windows.Forms {
 			entry.LostFocus += new EventHandler (EntryOnLostFocus);
 			entry.TextChanged += new EventHandler (OnTextBoxTextChanged);
 			entry.KeyDown += new KeyEventHandler (OnTextBoxKeyDown);
-			entry.KeyPress += new KeyEventHandler (OnTextBoxKeyPress);
+			entry.KeyPress += new KeyPressEventHandler (OnTextBoxKeyPress);
 			entry.LostFocus += new EventHandler (OnTextBoxLostFocus);
 			entry.Resize += new EventHandler (OnTextBoxResize);
-			entry.TexrChanged += new EventHandler (OnTextBoxTextChanged);
+			entry.TextChanged += new EventHandler (OnTextBoxTextChanged);
 			
 			entry.ReadOnly = false;
 			Controls.Add (entry);
@@ -387,27 +387,27 @@ namespace System.Windows.Forms {
 		//
 		protected virtual void OnTextBoxKeyDown (object source, KeyEventArgs e)
 		{
-			this.KeyDown (e);
+			OnKeyDown(e);
 		}
 		
 		protected virtual void OnTextBoxKeyPress (object source, KeyPressEventArgs e)
 		{
-			this.KeyPress (e);
+			OnKeyPress (e);
 		}
 
 		protected virtual void OnTextBoxLostFocus (object source, EventArgs e)
 		{
-			this.LostFocus (e);
+			OnLostFocus (e);
 		}
 
 		protected virtual void OnTextBoxResize (object source, EventArgs e)
 		{
-			this.Resize (e);
+			OnResize (e);
 		}
 
 		protected virtual void OnTextBoxTextChanged (object source, EventArgs e)
 		{
-			this.TextChanged (e);
+			OnTextChanged (e);
 #if false
 			if (changing_text)
 				return;
