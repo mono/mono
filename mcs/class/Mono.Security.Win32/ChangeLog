@@ -1,0 +1,7 @@
+2003-02-05  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* Mono.Security.Win32.build: New. NAnt build file. As this 
+	  assembly works only on Windows there are no makefile.gnu.
+	* README: New. Describe how to use (and not to use) this
+	  assembly.
+

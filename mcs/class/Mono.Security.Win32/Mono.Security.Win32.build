@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<!-- NAnt build file for Mono.Security.Win32.dll -->
+
+<project name="Mono.Security.Win32" default="build">
+	<property name="debug" value="true"/>
+	<property name="verbose" value="true"/>
+
+	<target name="build">
+		<csc target="library" output="../lib/Mono.Security.Win32.dll" debug="${debug}">
+			<arg value="/nowarn:1595"/>
+			<arg value="/nowarn:0649"/> <!-- field never assigned to -->
+			<arg value="/nowarn:0169"/> <!-- field never used -->
+			<arg value="/nowarn:0679"/> <!-- internal may be overriden -->
+			<arg value="/unsafe"/>
+
+			<sources>
+				<includes name="**/*.cs"/>
+				<excludes name="Test/**"/>
+			</sources>
+		</csc>
+	</target>
+
+	<target name="test" depends="build">
+		<nant basedir="Test" target="test"/>
+	</target>
+
+	<target name="clean">
+		<delete file="../lib/Mono.Security.Win32.dll" failonerror="false"/>
+		<delete file="../lib/Mono.Security.Win32.pdb" failonerror="false"/>
+		<delete file="Test/Mono.Security.Win32.dll" failonerror="false"/>
+		<nant basedir="Test" target="clean"/>
+	</target>
+</project>

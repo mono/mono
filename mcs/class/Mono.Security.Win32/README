@@ -1,0 +1,42 @@
+NOTE: This assembly ONLY works under the Windows operating system.
+
+All classes inside this assembly should NEVER be used directly by any 
+application. This also means you should never link this assembly with
+others assemblies.
+
+In order to use theses cryptographic implementations you must change your
+machine.config file to redirect default implementation to the one provided
+in this assembly.
+
+Example:	This example will replace the default RandomNumberGenerator
+		implementation (the one used for generating keys and IV) by 
+		one using CryptoAPI. Note that there may be multiple entries
+		to modify for a default implementation (like 3 for RNG).
+
+</configuration>
+
+	... other config stuff ...
+
+	<mscorlib>
+		<cryptographySettings>
+			<cryptoNameMapping>
+				<cryptoClasses>
+					<cryptoClass CapiRNG="Mono.Security.Cryptography.RNGCryptoServiceProvider, Mono.Security.Win32, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null"/>
+				</cryptoClasses>
+				<nameEntry name="RandomNumberGenerator" class="CapiRNG" />
+				<nameEntry name="System.Security.Cryptography.RandomNumberGenerator" class="CapiRNG" />
+				<nameEntry name="System.Security.Cryptography.RNGCryptoServiceProvider" class="CapiRNG"/>
+			</cryptoNameMapping>
+		</cryptographySettings>
+	</mscorlib>
+</configuration>
+
+
+Note:	the whole <mscorlib> section can be missing from your machine.config
+	file.
+
+
+Sebastien Pouliot
+Security Architect, Motus Technologies, http://www.motus.com/
+work: spouliot@motus.com
+home: spouliot@videotron.ca
