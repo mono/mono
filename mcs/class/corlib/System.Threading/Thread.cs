@@ -157,7 +157,16 @@ namespace System.Threading
 		}
 		
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		public extern static void ResetAbort();
+		public extern static void ResetAbort_internal();
+
+		static void ResetAbort()
+		{
+			Thread thread=CurrentThread;
+
+			thread.clr_state(ThreadState.AbortRequested);
+			ResetAbort_internal();
+		}
+		
 
 		public static void SetData(LocalDataStoreSlot slot,
 					   object data) {
@@ -272,12 +281,10 @@ namespace System.Threading
 
 		public bool IsAlive {
 			get {
-				// LAMESPEC: is a Stopped or Suspended
-				// thread dead?
 				ThreadState curstate=state;
 				
 				if((curstate & ThreadState.Aborted) != 0 ||
-				   (curstate & ThreadState.AbortRequested) != 0 ||
+				   (curstate & ThreadState.Stopped) != 0 ||
 				   (curstate & ThreadState.Unstarted) != 0) {
 					return(false);
 				} else {
@@ -333,12 +340,19 @@ namespace System.Threading
 			}
 		}
 
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		public extern void Abort_internal (object stateInfo);
+
 		public void Abort() {
-			Abort (null);
+			set_state(ThreadState.AbortRequested);
+			Abort_internal (null);
 		}
 
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		public extern void Abort (object stateInfo);
+		public void Abort(object stateInfo) {
+			set_state(ThreadState.AbortRequested);
+			Abort_internal(stateInfo);
+		}
+		
 
 		[MonoTODO]
 		public void Interrupt() {

@@ -1,3 +1,8 @@
+2003-03-18  Dick Porter  <dick@ximian.com>
+
+	* Thread.cs: Keep the thread state updated in all the places that
+	require it.  (Suspend, Resume and Interrupt not handled yet)
+
 2003-03-03  Lluis Sanchez Gual <lluis@ideary.com>
 
 	* Thread.cs: Changed implementation of CurrentContext, adapted to the changes
