@@ -1,3 +1,7 @@
+2003-12-23  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* ConstructionResponse.cs: Added constructor for exception response.
+
 2003-12-22  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* MethodCall.cs: Do not try to resolve the method in the serialization

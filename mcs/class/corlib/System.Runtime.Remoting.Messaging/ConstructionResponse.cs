@@ -26,6 +26,10 @@ namespace System.Runtime.Remoting.Messaging
 		{
 		}
 
+		internal ConstructionResponse (Exception e, IMethodCallMessage msg): base (e, msg)
+		{
+		}
+		
 		internal ConstructionResponse (SerializationInfo info, StreamingContext context): base (info, context)
 		{
 		}
