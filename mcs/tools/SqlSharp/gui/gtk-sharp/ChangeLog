@@ -1,3 +1,12 @@
+2003-02-16  Daniel Morgan <danmorg@sc.rr.com>
+
+	* sqlsharpgtk.cs: fixes to get data
+	from an Oracle 8i database via
+	Mono's System.Data.OracleClient.  It
+	can only output the results to the TextView
+	because the Oracle provider does not have
+	a data adapter yet.
+
 2003-01-26  Daniel Morgan <danmorg@sc.rr.com>
 
 	* sqlsharpgtk.cs: added support for providers:

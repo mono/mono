@@ -331,9 +331,9 @@ namespace Mono.Data.SqlSharp.Gui.GtkSharp
 			providerList.Add (new DbProvider (
 				"ORACLE",
 				"Oracle",
-				"Mono.Data.OracleClient",
-				"Mono.Data.OracleClient.OracleConnection",
-				"Mono.Data.OracleClient.OracleDataAdapter",
+				"System.Data.OracleClient",
+				"System.Data.OracleClient.OracleConnection",
+				"System.Data.OracleClient.OracleDataAdapter",
 				false ));
 		}
 		
@@ -1448,20 +1448,11 @@ namespace Mono.Data.SqlSharp.Gui.GtkSharp
 		bool OpenExternalProvider() 
 		{
 			bool success = false;
-			string msg;
-
-			string providerKey = dbProvider.Key;
-			switch (providerKey.ToUpper ()) {
-			case "ORACLE":
-				msg = "Error: Provider not currently supported.";
-				Error(msg);
-				break;
-			default:
-				success = LoadExternalProvider (
+			
+			success = LoadExternalProvider (
 					dbProvider.Assembly,
 					dbProvider.ConnectionClass);
-				break;
-			}
+						
 			return success;
 		}
 
