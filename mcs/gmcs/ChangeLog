@@ -1,3 +1,139 @@
+2003-08-26  Martin Baulig  <martin@ximian.com>
+
+	* ecore.cs (SimpleName.SimpleNameResolve): Look for members before
+	resolving aliases; fixes #47927.
+
+2003-08-26  Martin Baulig  <martin@ximian.com>
+
+	* statement.cs (Using.DoResolve): This is internally emitting a
+	try/finally clause, so we need to set ec.NeedExplicitReturn if we
+	do not always return.  Fixes #47681.
+
+2003-08-26  Martin Baulig  <martin@ximian.com>
+
+	* decl.cs (MemberCore): Moved WarningNotHiding(),
+	Error_CannotChangeAccessModifiers() and CheckMethodAgainstBase()
+	into MemberBase.
+	(AdditionResult): Make this nested in DeclSpace.
+	(DeclSpace.ctor): The .ctor now takes an additional NamespaceEntry
+	argument; call NamespaceEntry.Define() unless we're nested in a
+	class or struct.
+
+	* namespace.cs (Namespace.DefineName): New public function.  This
+	is called from DeclSpace's .ctor to add 
+	(Namespace.Lookup): Include DeclSpaces in the lookup.
+
+	* class.cs (Operator): Derive from MemberBase, not MemberCore.
+
+	* const.cs (Const): Derive from MemberBase, not MemberCore.	
+
+2003-08-25  Martin Baulig  <martin@ximian.com>
+
+	* convert.cs (Convert.ExplicitReferenceConversion): When
+	converting from an interface type to a class, unbox if the target
+	type is a struct type.  Fixes #47822.
+
+2003-08-24  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* typemanager.cs: fixed the values of MethodFlags. Closes #47855 and
+	#47854.
+
+2003-08-22  Martin Baulig  <martin@ximian.com>
+
+	* class.cs (TypeManager.DefineType): When defining a nested type,
+	call DefineType() on our parent; fixes #47801.
+
+2003-08-22  Martin Baulig  <martin@ximian.com>
+
+	* class.cs (MethodData.Define): While checking if a method is an
+	interface implementation, improve the test a bit more to fix #47654.
+
+2003-08-22  Martin Baulig  <martin@ximian.com>
+
+	* expression.cs (Probe.DoResolve): Check whether `expr' resolved
+	correctly; fixes #47722.
+
+2003-08-22  Martin Baulig  <martin@ximian.com>
+
+	* expression.cs (UnaryMutator.ResolveVariable): If the target is a
+	LocalVariableReference, ensure it's not read-only.  Fixes #47536.
+
+	* statement.cs (Fixed.DoResolve): Make all variables read-only.	
+
+2003-08-22  Martin Baulig  <martin@ximian.com>
+
+	* ecore.cs (FieldExpr.DoResolveLValue): Static read-only fields
+	can only be assigned in static constructors.  Fixes #47161.
+
+2003-08-22  Martin Baulig  <martin@ximian.com>
+
+	Rewrote and improved the flow analysis code.
+
+	* flowbranching.cs (FlowBranching): Make this class abstract.
+	(FlowBranching.CreateBranching): New static function to create a
+	new flow branching.
+	(FlowBranchingBlock, FlowBranchingException): New classes.
+	(FlowBranching.UsageVector.Type): New public readonly field.
+	(FlowBranching.UsageVector.Breaks): Removed the setter.
+	(FlowBranching.UsageVector.Returns): Removed the setter.
+	(FlowBranching.UsageVector): Added Break(), Return(),
+	NeverReachable() and Throw() methods to modify the reachability.
+	(FlowBranching.UsageVector.MergeChildren): Removed, this is now
+	done by FlowBranching.Merge().
+	(FlowBranching.UsageVector.MergeChild): New method; merges the
+	merge result into the current vector.
+	(FlowBranching.Merge): New abstract method to merge a branching.
+
+2003-08-12  Martin Baulig  <martin@ximian.com>
+
+	* expression.cs (Indirection.CacheTemporaries): Create the
+	LocalTemporary with the pointer type, not its element type.
+
+2003-08-10  Miguel de Icaza  <miguel@ximian.com>
+
+	* cs-parser.jay: FIRST_KEYWORD, LAST_KEYWORD: used to know if a
+	token was a keyword or not.
+
+	Add `error' options where an IDENTIFIER was expected;  Provide
+	CheckToken and CheckIdentifierToken convenience error reporting
+	functions. 
+
+	Do not use `DeclSpace.Namespace', use `DeclSpace.NamespaceEntry'.
+
+	* decl.cs: Rename `NamespaceEntry Namespace' public field into
+	NameSpaceEntry NameSpaceEntry.
+
+	(LookupInterfaceOrClass): Avoid creating a full qualified name
+	from namespace and name: avoid doing lookups when we know the
+	namespace is non-existant.   Use new Tree.LookupByNamespace which
+	looks up DeclSpaces based on their namespace, name pair.
+
+	* driver.cs: Provide a new `parser verbose' to display the
+	exception thrown during parsing.  This is turned off by default
+	now, so the output of a failure from mcs is more graceful.
+
+	* namespace.cs: Track all the namespaces defined in a hashtable
+	for quick lookup.
+	
+	(IsNamespace): New method
+
+2003-08-09  Miguel de Icaza  <miguel@ximian.com>
+
+	* namespace.cs: Remove redundant call;  Avoid using MakeFQN when
+	we know that we need to concatenate (full typename can never be
+	null). 
+
+	* class.cs: ditto.
+
+	* statement.cs: Use a bitfield;  Do not initialize to null things
+	which are done by the constructor by default.
+
+	* cs-parser.jay: bug fix, parameter was 4, not 3.
+
+	* expression.cs: Just use the property;
+
+	* statement.cs: No need for GetVariableInfo method.
+
 2003-08-08  Martin Baulig  <martin@ximian.com>
 
 	* flowanalysis.cs (FlowReturns): This is now nested in the

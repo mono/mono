@@ -49,8 +49,9 @@ namespace Mono.CSharp {
 			Modifiers.INTERNAL |
 			Modifiers.PRIVATE;
 
-		public Enum (TypeContainer parent, Expression type, int mod_flags, string name, Attributes attrs, Location l)
-			: base (parent, name, l)
+		public Enum (NamespaceEntry ns, TypeContainer parent, Expression type, int mod_flags,
+			     string name, Attributes attrs, Location l)
+			: base (ns, parent, name, l)
 		{
 			this.BaseType = type;
 			ModFlags = Modifiers.Check (AllowedModifiers, mod_flags,

@@ -98,6 +98,7 @@ namespace Mono.CSharp
 /*
  *These are the C# keywords
  */
+%token FIRST_KEYWORD
 %token ABSTRACT	
 %token AS
 %token ADD
@@ -186,6 +187,8 @@ namespace Mono.CSharp
 /* C# keywords which are not really keywords */
 %token GET           "get"
 %token SET           "set"
+
+%left LAST_KEYWORD
 
 /* C# single character operators/punctuation. */
 %token OPEN_BRACE    "{"
@@ -310,7 +313,10 @@ using_alias_directive
 	: USING IDENTIFIER ASSIGN 
 	  namespace_or_type_name SEMICOLON
 	  {
-		  current_namespace.UsingAlias ((string) $2, (string) $4, lexer.Location);
+		  current_namespace.UsingAlias ((string) $2, (Expression) $4, lexer.Location);
+	  }
+	| USING error {
+		CheckIdentifierToken (yyToken);
 	  }
 	;
 
@@ -341,7 +347,7 @@ namespace_declaration
 					+ " Expected class, delegate, enum, interface, or struct");
 		}
 
-		current_namespace = RootContext.Tree.RecordNamespace (current_namespace, file, (string) $3);
+		current_namespace = RootContext.Tree.RecordNamespace (current_namespace, file, (string) $3, lexer.Location);
 	} 
 	  namespace_body opt_semicolon
 	  { 
@@ -433,10 +439,10 @@ type_declaration
 //
 // Enable this when we have handled all errors, because this acts as a generic fallback
 //
-	| error {
-		Console.WriteLine ("Token=" + yyToken);
-		Report.Error (1518, lexer.Location, "Expected class, struct, interface, enum or delegate");
-	  }
+//	| error {
+//		Console.WriteLine ("Token=" + yyToken);
+//		Report.Error (1518, lexer.Location, "Expected class, struct, interface, enum or delegate");
+//	  }
 	;
 
 //
@@ -670,10 +676,9 @@ struct_declaration
 		Struct new_struct;
 		string full_struct_name = MakeName ((string) $4);
 
-		new_struct = new Struct (current_container, full_struct_name, (int) $2, 
-					 (Attributes) $1, lexer.Location);
+		new_struct = new Struct (current_namespace, current_container, full_struct_name,
+					 (int) $2, (Attributes) $1, lexer.Location);
 		current_container = new_struct;
-		current_container.Namespace = current_namespace;
 		RootContext.Tree.RecordDecl (full_struct_name, new_struct);
 	  }
 	  opt_class_base
@@ -688,6 +693,9 @@ struct_declaration
 		current_container = current_container.Parent;
 		CheckDef (current_container.AddStruct (new_struct), new_struct.Name, new_struct.Location);
 		$$ = new_struct;
+	  }
+	| opt_attributes opt_modifiers STRUCT error {
+		CheckIdentifierToken (yyToken);
 	  }
 	;
 
@@ -975,6 +983,13 @@ fixed_parameter
 	  {
 		$$ = new Parameter ((Expression) $3, (string) $4, (Parameter.Modifier) $2, (Attributes) $1);
 	  }
+	| opt_attributes
+	  opt_parameter_modifier
+	  type
+	  error {
+		CheckIdentifierToken (yyToken);
+		$$ = null;
+	  }
 	;
 
 opt_parameter_modifier
@@ -992,6 +1007,10 @@ parameter_array
 	  { 
 		$$ = new Parameter ((Expression) $3, (string) $4, Parameter.Modifier.PARAMS, (Attributes) $1);
 		note ("type must be a single-dimension array type"); 
+	  }
+	| opt_attributes PARAMS type error {
+		CheckIdentifierToken (yyToken);
+		$$ = null;
 	  }
 	;
 
@@ -1121,14 +1140,13 @@ interface_declaration
 		Interface new_interface;
 		string full_interface_name = MakeName ((string) $4);
 
-		new_interface = new Interface (current_container, full_interface_name, (int) $2, 
-					       (Attributes) $1, lexer.Location);
+		new_interface = new Interface (current_namespace, current_container, full_interface_name,
+					       (int) $2, (Attributes) $1, lexer.Location);
 		if (current_interface != null) {
 			Location l = lexer.Location;
 			Report.Error (-2, l, "Internal compiler error: interface inside interface");
 		}
 		current_interface = new_interface;
-		new_interface.Namespace = current_namespace;
 		RootContext.Tree.RecordDecl (full_interface_name, new_interface);
 	  }
 	  opt_interface_base
@@ -1142,6 +1160,9 @@ interface_declaration
 		current_interface = null;
 		CheckDef (current_container.AddInterface (new_interface), 
 			  new_interface.Name, new_interface.Location);
+	  }
+	| opt_attributes opt_modifiers INTERFACE error {
+		CheckIdentifierToken (yyToken);
 	  }
 	;
 
@@ -1252,6 +1273,12 @@ interface_property_declaration
 					    (gs & 1) == 1, (gs & 2) == 2, (Attributes) $1,
 					    lexer.Location);
 	  }
+	| opt_attributes
+	  opt_new
+	  type error {
+		CheckIdentifierToken (yyToken);
+		$$ = null;
+	  }
 	;
 
 interface_accesors
@@ -1268,6 +1295,10 @@ interface_event_declaration
 	  {
 		$$ = new InterfaceEvent ((Expression) $4, (string) $5, (bool) $2, (Attributes) $1,
 					 lexer.Location);
+	  }
+	| opt_attributes opt_new EVENT type error {
+		CheckIdentifierToken (yyToken);
+		$$ = null;
 	  }
 	;
 
@@ -1726,8 +1757,8 @@ enum_declaration
 		Location enum_location = lexer.Location;
 
 		string full_name = MakeName ((string) $4);
-		Enum e = new Enum (current_container, (Expression) $5, (int) $2, full_name, 
-				   (Attributes) $1, enum_location);
+		Enum e = new Enum (current_namespace, current_container, (Expression) $5, (int) $2,
+				   full_name, (Attributes) $1, enum_location);
 		
 		foreach (VariableDeclaration ev in (ArrayList) $6) {
 			Location loc = (Location) ev.Location;
@@ -1737,8 +1768,6 @@ enum_declaration
 						   loc, ev.OptAttributes),
 				  ev.identifier, loc);
 		}
-
-		e.Namespace = current_namespace;
 
 		CheckDef (current_container.AddEnum (e), full_name, enum_location);
 		RootContext.Tree.RecordDecl (full_name, e);
@@ -1806,11 +1835,10 @@ delegate_declaration
 	  SEMICOLON
 	  {
 		Location l = lexer.Location;
-		Delegate del = new Delegate (current_container, (Expression) $4, (int) $2, 
-		                             MakeName ((string) $5), (Parameters) $7, 
+		Delegate del = new Delegate (current_namespace, current_container, (Expression) $4,
+					     (int) $2, MakeName ((string) $5), (Parameters) $7, 
 					     (Attributes) $1, l);
 		  
-		del.Namespace = current_namespace;
 		CheckDef (current_container.AddDelegate (del), del.Name, l);
 	  }	
 	| opt_attributes
@@ -1823,11 +1851,10 @@ delegate_declaration
 	  {
 		Location l = lexer.Location;
 		Delegate del = new Delegate (
-			current_container,
+			current_namespace, current_container,
 			TypeManager.system_void_expr, (int) $2, MakeName ((string) $5), 
 			(Parameters) $7, (Attributes) $1, l);
 
-		del.Namespace = current_namespace;
 		CheckDef (current_container.AddDelegate (del), del.Name, l);
 	  }
 	;
@@ -2146,6 +2173,9 @@ argument_list
 		list.Add ($3);
 		$$ = list;
 	  }
+	| argument_list error {
+		CheckToken (1026, yyToken, ", or ) expected");
+	  }
 	;
 
 argument
@@ -2414,7 +2444,7 @@ anonymous_method_expression
 			Report.Error (-213, lexer.Location, "Anonymous methods are only supported in V2");
 			$$ = null;
 		} else 
-			$$ = new AnonymousMethod ((Parameters) $2, (Block) $3, lexer.Location);
+			$$ = new AnonymousMethod ((Parameters) $2, (Block) $4, lexer.Location);
 		current_local_parameters = (Parameters) oob_stack.Pop ();
 	  }
 	;
@@ -2795,10 +2825,9 @@ class_declaration
 
 		name = MakeName ((string) $4);
 
-		new_class = new Class (current_container, name, (int) $2, 
+		new_class = new Class (current_namespace, current_container, name, (int) $2, 
 				       (Attributes) $1, lexer.Location);
 		current_container = new_class;
-		current_container.Namespace = current_namespace;
 		RootContext.Tree.RecordDecl (name, new_class);
 	  }
 	  opt_type_parameter_list
@@ -3975,7 +4004,7 @@ void Error_ExpectingTypeName (Location l, Expression expr)
 string 
 MakeName (string class_name)
 {
-	string ns = current_namespace.Name;
+	string ns = current_namespace.FullName;
 	string container_name = current_container.Name;
 
 	if (container_name == ""){
@@ -3992,13 +4021,13 @@ MakeName (string class_name)
 //   in the current declaration space
 // </summary>
 void 
-CheckDef (AdditionResult result, string name, Location l)
+CheckDef (DeclSpace.AdditionResult result, string name, Location l)
 {
-	if (result == AdditionResult.Success)
+	if (result == DeclSpace.AdditionResult.Success)
 		return;
 
 	switch (result){
-	case AdditionResult.NameExists:
+	case DeclSpace.AdditionResult.NameExists:
 		Report.Error (102, l, "The container `" + current_container.Name + 
 				 "' already contains a definition for `"+
 				 name + "'");
@@ -4009,22 +4038,22 @@ CheckDef (AdditionResult result, string name, Location l)
 		// This is handled only for static Constructors, because
 		// in reality we handle these by the semantic analysis later
 		//
- 	case AdditionResult.MethodExists:
+ 	case DeclSpace.AdditionResult.MethodExists:
   		Report.Error (
 			111, l, "Class `"+current_container.Name+
   			"' already defines a member called '" + 
   			name + "' with the same parameter types (more than one default constructor)");
   		break;
 
-	case AdditionResult.EnclosingClash:
+	case DeclSpace.AdditionResult.EnclosingClash:
 		Report.Error (542, l, "Member names cannot be the same as their enclosing type");
 		break;
 		
-	case AdditionResult.NotAConstructor:
+	case DeclSpace.AdditionResult.NotAConstructor:
 		Report.Error (1520, l, "Class, struct, or interface method must have a return type");
 		break;
 
-	case AdditionResult.Error:
+	case DeclSpace.AdditionResult.Error:
 		// Error has already been reported.
 		break;
 	}
@@ -4035,7 +4064,7 @@ CheckDef (bool result, string name, Location l)
 {
 	if (result)
 		return;
-	CheckDef (AdditionResult.NameExists, name, l);
+	CheckDef (DeclSpace.AdditionResult.NameExists, name, l);
 }
 
 Expression DecomposeQI (string name, Location loc)
@@ -4228,11 +4257,11 @@ public Tokenizer Lexer {
 
 public CSharpParser (SeekableStreamReader reader, SourceFile file, ArrayList defines)
 {
-	current_namespace = new NamespaceEntry (null, file, null);
+	current_namespace = new NamespaceEntry (null, file, null, Location.Null);
 	this.name = file.Name;
 	this.file = file;
 	current_container = RootContext.Tree.Types;
-	current_container.Namespace = current_namespace;
+	current_container.NamespaceEntry = current_namespace;
 	oob_stack = new Stack ();
 	switch_stack = new Stack ();
 
@@ -4252,9 +4281,25 @@ public void parse ()
 		// Please do not remove this, it is used during debugging
 		// of the grammar
 		//
-		Report.Error (-25, lexer.Location, ": Parsing error ");
 		Console.WriteLine (e);
+		Report.Error (-25, lexer.Location, "Parsing error");
+		if (Driver.parser_verbose)
+			Console.WriteLine (e);
 	}
+}
+
+void CheckToken (int error, int yyToken, string msg)
+{
+	if (yyToken >= Token.FIRST_KEYWORD && yyToken <= Token.LAST_KEYWORD){
+		Report.Error (error, lexer.Location, String.Format ("{0}: `{1}' is a keyword", msg, yyName [yyToken].ToLower ()));
+		return;
+	}		
+	Report.Error (error, lexer.Location, msg);
+}
+
+void CheckIdentifierToken (int yyToken)
+{
+	CheckToken (1041, yyToken, "Identifier expected");
 }
 
 /* end end end */

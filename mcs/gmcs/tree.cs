@@ -45,12 +45,14 @@ namespace Mono.CSharp
 		
 		public Tree ()
 		{
-			root_types = new TypeContainer (null, "", new Location (-1));
+			root_types = new TypeContainer (null, null, "", new Location (-1));
 
 			decls = new Hashtable ();
 			namespaces = new Hashtable ();
 		}
 
+		DoubleHash decl_ns_name = new DoubleHash ();
+		
 		public void RecordDecl (string name, DeclSpace ds)
 		{
 			if (decls.Contains (name)){
@@ -62,24 +64,40 @@ namespace Mono.CSharp
 					other.Location, "(Location of symbol related to previous error)");
 				return;
 			}
+
+			int p = name.LastIndexOf ('.');
+			if (p == -1)
+				decl_ns_name.Insert ("", name, ds);
+			else {
+				decl_ns_name.Insert (name.Substring (0, p), name.Substring (p+1), ds);
+			}
+
 			decls.Add (name, ds);
 		}
-		
-		public NamespaceEntry RecordNamespace (NamespaceEntry parent, SourceFile file, string name)
+
+		public DeclSpace LookupByNamespace (string ns, string name)
 		{
-			NamespaceEntry ns = new NamespaceEntry (parent, file, name);
+			object res;
+			
+			decl_ns_name.Lookup (ns, name, out res);
+			return (DeclSpace) res;
+		}
+		
+		public NamespaceEntry RecordNamespace (NamespaceEntry parent, SourceFile file, string name, Location loc)
+		{
+			NamespaceEntry ns = new NamespaceEntry (parent, file, name, loc);
 
 			if (namespaces.Contains (file)){
 				Hashtable ns_ns = (Hashtable) namespaces [file];
 
-				if (ns_ns.Contains (ns.Name))
-					return (NamespaceEntry) ns_ns [ns.Name];
-				ns_ns.Add (ns.Name, ns);
+				if (ns_ns.Contains (ns.FullName))
+					return (NamespaceEntry) ns_ns [ns.FullName];
+				ns_ns.Add (ns.FullName, ns);
 			} else {
 				Hashtable new_table = new Hashtable ();
 				namespaces [file] = new_table;
 
-				new_table.Add (ns.Name, ns);
+				new_table.Add (ns.FullName, ns);
 			}
 
 			return ns;

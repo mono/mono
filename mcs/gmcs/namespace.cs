@@ -16,11 +16,13 @@ namespace Mono.CSharp {
 	/// </summary>
 	public class Namespace {
 		static ArrayList all_namespaces = new ArrayList ();
+		static Hashtable namespaces_map = new Hashtable ();
 		
 		Namespace parent;
 		string name, fullname;
 		ArrayList entries;
 		Hashtable namespaces;
+		Hashtable defined_names;
 
 		/// <summary>
 		///   Constructor Takes the current namespace and the
@@ -41,10 +43,19 @@ namespace Mono.CSharp {
 
 			entries = new ArrayList ();
 			namespaces = new Hashtable ();
+			defined_names = new Hashtable ();
 
 			all_namespaces.Add (this);
+			if (namespaces_map.Contains (fullname))
+				return;
+			namespaces_map [fullname] = true;
 		}
 
+		public static bool IsNamespace (string name)
+		{
+			return namespaces_map [name] != null;
+		}
+		
 		public static Namespace Root = new Namespace (null, "");
 
 		public Namespace GetNamespace (string name, bool create)
@@ -80,11 +91,22 @@ namespace Mono.CSharp {
 
 		public object Lookup (DeclSpace ds, string name)
 		{
+			object o = Lookup (name);
+
+			Type t;
+			DeclSpace tdecl = o as DeclSpace;
+			if (tdecl != null) {
+				t = tdecl.DefineType ();
+
+				if ((ds == null) || ds.CheckAccessLevel (t))
+					return t;
+			}
+
 			Namespace ns = GetNamespace (name, false);
 			if (ns != null)
 				return ns;
 
-			Type t = TypeManager.LookupType (DeclSpace.MakeFQN (fullname, name));
+			t = TypeManager.LookupType (DeclSpace.MakeFQN (fullname, name));
 			if ((t == null) || ((ds != null) && !ds.CheckAccessLevel (t)))
 				return null;
 
@@ -94,6 +116,16 @@ namespace Mono.CSharp {
 		public void AddNamespaceEntry (NamespaceEntry entry)
 		{
 			entries.Add (entry);
+		}
+
+		public void DefineName (string name, object o)
+		{
+			defined_names.Add (name, o);
+		}
+
+		public object Lookup (string name)
+		{
+			return defined_names [name];
 		}
 
 		static public ArrayList UserDefinedNamespaces {
@@ -188,7 +220,6 @@ namespace Mono.CSharp {
 
 				Namespace curr_ns = NamespaceEntry.NS;
 				while ((curr_ns != null) && (resolved_ns == null)) {
-					string full_name = DeclSpace.MakeFQN (curr_ns.Name, Name);
 					resolved_ns = curr_ns.GetNamespace (Name, false);
 
 					if (resolved_ns == null)
@@ -239,11 +270,11 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public NamespaceEntry (NamespaceEntry parent, SourceFile file, string name)
-			: this (parent, file, name, false)
+		public NamespaceEntry (NamespaceEntry parent, SourceFile file, string name, Location loc)
+			: this (parent, file, name, false, loc)
 		{ }
 
-		protected NamespaceEntry (NamespaceEntry parent, SourceFile file, string name, bool is_implicit)
+		protected NamespaceEntry (NamespaceEntry parent, SourceFile file, string name, bool is_implicit, Location loc)
 		{
 			this.parent = parent;
 			this.file = file;
@@ -259,20 +290,17 @@ namespace Mono.CSharp {
 			ns.AddNamespaceEntry (this);
 
 			if ((parent != null) && (parent.NS != ns.Parent))
-				implicit_parent = new NamespaceEntry (parent, file, ns.Parent.Name, true);
+				implicit_parent = new NamespaceEntry (parent, file, ns.Parent.Name, true, loc);
 			else
 				implicit_parent = parent;
+
+			this.FullName = ns.Name;
 		}
 
 		static int next_id = 0;
+		public readonly string FullName;
 		public readonly int ID;
 		public readonly bool IsImplicit;
-
-		public string Name {
-			get {
-				return ns.Name;
-			}
-		}
 
 		public Namespace NS {
 			get {
@@ -292,6 +320,11 @@ namespace Mono.CSharp {
 			}
 		}
 
+		public void DefineName (string name, object o)
+		{
+			ns.DefineName (name, o);
+		}
+
 		/// <summary>
 		///   Records a new namespace for resolving name references
 		/// </summary>
@@ -302,7 +335,7 @@ namespace Mono.CSharp {
 				return;
 			}
 
-			if (ns == Name)
+			if (ns == FullName)
 				return;
 			
 			if (using_clauses == null)
@@ -383,7 +416,7 @@ namespace Mono.CSharp {
 				if (ns != null)
 					return ns.Lookup (ds, last);
 
-				Type nested = TypeManager.LookupType (DeclSpace.MakeFQN (((Type) o).Name, last));
+				Type nested = TypeManager.LookupType ((((Type) o).Name + "." + last));
 				if ((nested == null) || ((ds != null) && !ds.CheckAccessLevel (nested)))
 					return null;
 
@@ -559,7 +592,7 @@ namespace Mono.CSharp {
 			if (NS == Namespace.Root)
 				return "NamespaceEntry (<root>)";
 			else
-				return String.Format ("NamespaceEntry ({0},{1},{2})", Name, IsImplicit, ID);
+				return String.Format ("NamespaceEntry ({0},{1},{2})", FullName, IsImplicit, ID);
 		}
 	}
 }

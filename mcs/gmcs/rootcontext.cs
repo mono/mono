@@ -466,7 +466,7 @@ namespace Mono.CSharp {
 			//
 			// Try in the current namespace and all its implicit parents
 			//
-			for (NamespaceEntry ns = ds.Namespace; ns != null; ns = ns.ImplicitParent) {
+			for (NamespaceEntry ns = ds.NamespaceEntry; ns != null; ns = ns.ImplicitParent) {
 				object result = ns.Lookup (ds, name, loc);
 				if (result == null)
 					continue;
@@ -705,7 +705,7 @@ namespace Mono.CSharp {
 			//
 			if (global_attributes.Count > 0){
 				AssemblyBuilder ab = CodeGen.AssemblyBuilder;
-				TypeContainer dummy = new TypeContainer (null, "", new Location (-1));
+				TypeContainer dummy = new TypeContainer (null, null, "", new Location (-1));
 				EmitContext temp_ec = new EmitContext (
 					dummy, Mono.CSharp.Location.Null, null, null, 0, false);
 			
@@ -713,7 +713,7 @@ namespace Mono.CSharp {
 					NamespaceEntry ns = (NamespaceEntry) de.Key;
 					Attributes attrs = (Attributes) de.Value;
 					
-					dummy.Namespace = ns;
+					dummy.NamespaceEntry = ns;
 					Attribute.ApplyAttributes (temp_ec, ab, ab, attrs);
 				}
 			}
@@ -813,7 +813,7 @@ namespace Mono.CSharp {
 		//
 		static public void AddGlobalAttributeSection (TypeContainer container, AttributeSection attr)
 		{
-			NamespaceEntry ns = container.Namespace;
+			NamespaceEntry ns = container.NamespaceEntry;
 			Attributes a = (Attributes) global_attributes [ns];
 
 			if (a == null)

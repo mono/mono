@@ -328,4 +328,42 @@ namespace Mono.CSharp {
 			return buffer [pos++];
 		}
 	}
+
+	public class DoubleHash {
+		Hashtable l = new Hashtable ();
+		
+		public DoubleHash ()
+		{
+		}
+
+		public bool Lookup (object a, object b, out object res)
+		{
+			object r = l [a];
+			if (r == null){
+				res = null;
+				return false;
+			}
+			Hashtable ht = (Hashtable) r;
+			if (ht.Contains (b)){
+				res = ht [b];
+				return true;
+			}
+			res = null;
+			return false;
+		}
+
+		public void Insert (object a, object b, object value)
+		{
+			Hashtable ht;
+			object r = l [a];
+			if (r == null){
+				ht = new Hashtable ();
+				l [a] = ht;
+				ht [b] = value;
+				return;
+			}
+			ht = (Hashtable) r;
+			ht [b] = value;
+		}
+	}
 }

@@ -60,7 +60,7 @@ namespace Mono.CSharp {
 
 		public void OpenMethod (TypeContainer parent, MethodBase method, Location start, Location end)
 		{
-			int ns_id = parent.Namespace.SymbolFileID;
+			int ns_id = parent.NamespaceEntry.SymbolFileID;
 			open_method.Invoke (symwriter, new object[] {
 				start.SymbolDocument, start.Row, 0, end.Row, 0, method, ns_id });
 		}

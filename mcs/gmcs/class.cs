@@ -134,8 +134,8 @@ namespace Mono.CSharp {
 		//
 		public string IndexerName;
 
-		public TypeContainer (TypeContainer parent, string name, Location l)
-			: base (parent, name, l)
+		public TypeContainer (NamespaceEntry ns, TypeContainer parent, string name, Location l)
+			: base (ns, parent, name, l)
 		{
 			string n;
 			types = new ArrayList ();
@@ -810,7 +810,6 @@ namespace Mono.CSharp {
 
 			TypeAttributes type_attributes = TypeAttr;
 
-			// if (parent_builder is ModuleBuilder) {
 			if (IsTopLevel){
 				if (TypeManager.NamespaceClash (Name, Location))
 					return null;
@@ -820,7 +819,7 @@ namespace Mono.CSharp {
 					Name, type_attributes, parent, ifaces);
 				
 			} else {
-				TypeBuilder builder = Parent.TypeBuilder;
+				TypeBuilder builder = Parent.DefineType ();
 				TypeBuilder = builder.DefineNestedType (
 					Basename, type_attributes, parent, ifaces);
 			}
@@ -905,7 +904,7 @@ namespace Mono.CSharp {
 				if (idx < 0){
 					if (RootContext.WarningLevel >= 4){
 						if ((mc.ModFlags & Modifiers.NEW) != 0)
-							Warning_KewywordNewNotRequired (mc.Location, mc);
+							Warning_KeywordNewNotRequired (mc.Location, mc);
 					}
 				} else if (mc is MethodCore)
 					((MethodCore) mc).OverridesSomething = true;
@@ -1049,7 +1048,7 @@ namespace Mono.CSharp {
 				Type ptype = null;
 				Type t = pclass.TypeBuilder.BaseType;
 				while ((t != null) && (ptype == null)) {
-					pname = MakeFQN (t.FullName, Basename);
+					pname = t.FullName + "." + Basename;
 					ptype = RootContext.LookupType (this, pname, true, Location.Null);
 					t = t.BaseType;
 				}
@@ -1644,7 +1643,7 @@ namespace Mono.CSharp {
 				mi.ReflectedType.Name + "." + mi.Name + "'");
 		}
 
-		public void Warning_KewywordNewNotRequired (Location l, MemberCore mc)
+		public void Warning_KeywordNewNotRequired (Location l, MemberCore mc)
 		{
 			Report.Warning (
 				109, l, "The member " + MakeName (mc.Name) + " does not hide an " +
@@ -2113,8 +2112,8 @@ namespace Mono.CSharp {
 			Modifiers.SEALED |
 			Modifiers.UNSAFE;
 
-		public Class (TypeContainer parent, string name, int mod, Attributes attrs, Location l)
-			: base (parent, name, l)
+		public Class (NamespaceEntry ns, TypeContainer parent, string name, int mod, Attributes attrs, Location l)
+			: base (ns, parent, name, l)
 		{
 			int accmods;
 
@@ -2150,8 +2149,8 @@ namespace Mono.CSharp {
 			Modifiers.UNSAFE    |
 			Modifiers.PRIVATE;
 
-		public Struct (TypeContainer parent, string name, int mod, Attributes attrs, Location l)
-			: base (parent, name, l)
+		public Struct (NamespaceEntry ns, TypeContainer parent, string name, int mod, Attributes attrs, Location l)
+			: base (ns, parent, name, l)
 		{
 			int accmods;
 			
@@ -2199,7 +2198,7 @@ namespace Mono.CSharp {
 
 		public MethodCore (Expression type, int mod, int allowed_mod, string name,
 				   Attributes attrs, Parameters parameters, Location loc)
-			: base (type, mod, allowed_mod, name, attrs, loc)
+			: base (type, mod, allowed_mod, Modifiers.PRIVATE, name, attrs, loc)
 		{
 			Parameters = parameters;
 		}
@@ -3210,14 +3209,21 @@ namespace Mono.CSharp {
 						Modifiers.Error_InvalidModifier (Location, "public, virtual or abstract");
 						implementing = null;
 					}
-				} else {
-					//
-					// If this is an interface method implementation,
-					// check for public accessibility
-					//
-					if ((flags & MethodAttributes.MemberAccessMask) != MethodAttributes.Public){
-						if (TypeManager.IsInterfaceType (implementing.DeclaringType))
-							implementing = null;
+				} else if ((flags & MethodAttributes.MemberAccessMask) != MethodAttributes.Public){
+					if (TypeManager.IsInterfaceType (implementing.DeclaringType)){
+						//
+						// If this is an interface method implementation,
+						// check for public accessibility
+						//
+						implementing = null;
+					} else if ((flags & MethodAttributes.MemberAccessMask) == MethodAttributes.Private){
+						// We may never be private.
+						implementing = null;
+					} else if ((modifiers & Modifiers.OVERRIDE) == 0){
+						//
+						// We may be protected if we're overriding something.
+						//
+						implementing = null;
 					}
 				} 
 					
@@ -3492,12 +3498,12 @@ namespace Mono.CSharp {
 		//
 		// The constructor is only exposed to our children
 		//
-		protected MemberBase (Expression type, int mod, int allowed_mod, string name,
+		protected MemberBase (Expression type, int mod, int allowed_mod, int def_mod, string name,
 				      Attributes attrs, Location loc)
 			: base (name, loc)
 		{
 			Type = type;
-			ModFlags = Modifiers.Check (allowed_mod, mod, Modifiers.PRIVATE, loc);
+			ModFlags = Modifiers.Check (allowed_mod, mod, def_mod, loc);
 			OptAttributes = attrs;
 		}
 
@@ -3513,6 +3519,153 @@ namespace Mono.CSharp {
 				}
 			}
 			return true;
+		}
+
+		protected void WarningNotHiding (TypeContainer parent)
+		{
+			Report.Warning (
+				109, Location,
+				"The member " + parent.MakeName (Name) + " does not hide an " +
+				"inherited member.  The keyword new is not required");
+							   
+		}
+
+		void Error_CannotChangeAccessModifiers (TypeContainer parent, MethodInfo parent_method,
+							string name)
+		{
+			//
+			// FIXME: report the old/new permissions?
+			//
+			Report.Error (
+				507, Location, parent.MakeName (Name) +
+				": can't change the access modifiers when overriding inherited " +
+				"member `" + name + "'");
+		}
+		
+		//
+		// Performs various checks on the MethodInfo `mb' regarding the modifier flags
+		// that have been defined.
+		//
+		// `name' is the user visible name for reporting errors (this is used to
+		// provide the right name regarding method names and properties)
+		//
+		protected bool CheckMethodAgainstBase (TypeContainer parent, MethodAttributes my_attrs,
+						       MethodInfo mb, string name)
+		{
+			bool ok = true;
+			
+			if ((ModFlags & Modifiers.OVERRIDE) != 0){
+				if (!(mb.IsAbstract || mb.IsVirtual)){
+					Report.Error (
+						506, Location, parent.MakeName (Name) +
+						": cannot override inherited member `" +
+						name + "' because it is not " +
+						"virtual, abstract or override");
+					ok = false;
+				}
+				
+				// Now we check that the overriden method is not final
+				
+				if (mb.IsFinal) {
+					// This happens when implementing interface methods.
+					if (mb.IsHideBySig && mb.IsVirtual) {
+						Report.Error (
+							506, Location, parent.MakeName (Name) +
+							": cannot override inherited member `" +
+							name + "' because it is not " +
+							"virtual, abstract or override");
+					} else
+						Report.Error (239, Location, parent.MakeName (Name) + " : cannot " +
+							      "override inherited member `" + name +
+							      "' because it is sealed.");
+					ok = false;
+				}
+				//
+				// Check that the permissions are not being changed
+				//
+				MethodAttributes thisp = my_attrs & MethodAttributes.MemberAccessMask;
+				MethodAttributes parentp = mb.Attributes & MethodAttributes.MemberAccessMask;
+
+				//
+				// special case for "protected internal"
+				//
+
+				if ((parentp & MethodAttributes.FamORAssem) == MethodAttributes.FamORAssem){
+					//
+					// when overriding protected internal, the method can be declared
+					// protected internal only within the same assembly
+					//
+
+					if ((thisp & MethodAttributes.FamORAssem) == MethodAttributes.FamORAssem){
+						if (parent.TypeBuilder.Assembly != mb.DeclaringType.Assembly){
+							//
+							// assemblies differ - report an error
+							//
+							
+							Error_CannotChangeAccessModifiers (parent, mb, name);
+						    ok = false;
+						} else if (thisp != parentp) {
+							//
+							// same assembly, but other attributes differ - report an error
+							//
+							
+							Error_CannotChangeAccessModifiers (parent, mb, name);
+							ok = false;
+						};
+					} else if ((thisp & MethodAttributes.Family) != MethodAttributes.Family) {
+						//
+						// if it's not "protected internal", it must be "protected"
+						//
+
+						Error_CannotChangeAccessModifiers (parent, mb, name);
+						ok = false;
+					} else if (parent.TypeBuilder.Assembly == mb.DeclaringType.Assembly) {
+						//
+						// protected within the same assembly - an error
+						//
+						Error_CannotChangeAccessModifiers (parent, mb, name);
+						ok = false;
+					} else if ((thisp & ~(MethodAttributes.Family | MethodAttributes.FamORAssem)) != 
+						   (parentp & ~(MethodAttributes.Family | MethodAttributes.FamORAssem))) {
+						//
+						// protected ok, but other attributes differ - report an error
+						//
+						Error_CannotChangeAccessModifiers (parent, mb, name);
+						ok = false;
+					}
+				} else {
+					if (thisp != parentp){
+						Error_CannotChangeAccessModifiers (parent, mb, name);
+						ok = false;
+					}
+				}
+			}
+
+			if (mb.IsVirtual || mb.IsAbstract){
+				if ((ModFlags & (Modifiers.NEW | Modifiers.OVERRIDE)) == 0){
+					if (Name != "Finalize"){
+						Report.Warning (
+							114, 2, Location, parent.MakeName (Name) + 
+							" hides inherited member `" + name +
+							"'.  To make the current member override that " +
+							"implementation, add the override keyword, " +
+							"otherwise use the new keyword");
+						ModFlags |= Modifiers.NEW;
+					}
+				}
+			} else {
+				if ((ModFlags & (Modifiers.NEW | Modifiers.OVERRIDE)) == 0){
+					if (Name != "Finalize"){
+						Report.Warning (
+							108, 1, Location, "The keyword new is required on " +
+							parent.MakeName (Name) + " because it hides " +
+							"inherited member `" + name + "'");
+						ModFlags |= Modifiers.NEW;
+					}
+				}
+			}
+
+			return ok;
 		}
 
 		protected virtual bool CheckParameters (TypeContainer container, Type [] parameters)
@@ -3654,7 +3807,7 @@ namespace Mono.CSharp {
 		//
 		protected FieldBase (Expression type, int mod, int allowed_mod, string name,
 				     object init, Attributes attrs, Location loc)
-			: base (type, mod, allowed_mod, name, attrs, loc)
+			: base (type, mod, allowed_mod, Modifiers.PRIVATE, name, attrs, loc)
 		{
 			this.init = init;
 		}
@@ -4605,7 +4758,7 @@ namespace Mono.CSharp {
 		}
 	}
 
-	public class Operator : MemberCore {
+	public class Operator : MemberBase {
 
 		const int AllowedModifiers =
 			Modifiers.PUBLIC |
@@ -4660,27 +4813,24 @@ namespace Mono.CSharp {
 		public readonly Expression FirstArgType, SecondArgType;
 		public readonly string FirstArgName, SecondArgName;
 		public Block           Block;
-		public Attributes      OptAttributes;
 		public MethodBuilder   OperatorMethodBuilder;
 		
 		public string MethodName;
 		public Method OperatorMethod;
 
-		public Operator (OpType type, Expression ret_type, int flags,
+		public Operator (OpType type, Expression ret_type, int mod_flags,
 				 Expression arg1type, string arg1name,
 				 Expression arg2type, string arg2name,
 				 Block block, Attributes attrs, Location loc)
-			: base ("", loc)
+			: base (ret_type, mod_flags, AllowedModifiers, Modifiers.PUBLIC, "", attrs, loc)
 		{
 			OperatorType = type;
 			ReturnType = ret_type;
-			ModFlags = Modifiers.Check (AllowedModifiers, flags, Modifiers.PUBLIC, loc);
 			FirstArgType = arg1type;
 			FirstArgName = arg1name;
 			SecondArgType = arg2type;
 			SecondArgName = arg2name;
 			Block = block;
-			OptAttributes = attrs;
 		}
 
 		string Prototype (TypeContainer container)

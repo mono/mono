@@ -700,7 +700,7 @@ namespace Mono.CSharp {
 
 		public new void CacheTemporaries (EmitContext ec)
 		{
-			temporary = new LocalTemporary (ec, type);
+			temporary = new LocalTemporary (ec, expr.Type);
 		}
 
 		public override string ToString ()
@@ -826,6 +826,9 @@ namespace Mono.CSharp {
 			//
 			type = expr_type;
 			if (expr.eclass == ExprClass.Variable){
+				LocalVariableReference var = expr as LocalVariableReference;
+				if ((var != null) && var.IsReadOnly)
+					Error (1604, "cannot assign to `" + var.Name + "' because it is readonly");
 				if (IsIncrementableNumber (expr_type) ||
 				    expr_type == TypeManager.decimal_type){
 					return this;
@@ -1087,6 +1090,8 @@ namespace Mono.CSharp {
 				return null;
 
 			expr = expr.Resolve (ec);
+			if (expr == null)
+				return null;
 			
 			return this;
 		}
@@ -3505,7 +3510,6 @@ namespace Mono.CSharp {
 		public readonly string Name;
 		public readonly Block Block;
 		LocalInfo local_info;
-		VariableInfo variable_info;
 		bool is_readonly;
 		
 		public LocalVariableReference (Block block, string name, Location l)
@@ -3527,7 +3531,7 @@ namespace Mono.CSharp {
 		}
 
 		public VariableInfo VariableInfo {
-			get { return variable_info; }
+			get { return local_info.VariableInfo; }
 		}
 
 		public bool IsReadOnly {
@@ -3543,8 +3547,11 @@ namespace Mono.CSharp {
 				is_readonly = local_info.ReadOnly;
 			}
 
-			variable_info = Block.GetVariableInfo (local_info);
 			type = local_info.VariableType;
+#if false
+			if (ec.InAnonymousMethod)
+				Block.LiftVariable (local_info);
+#endif
 		}
 		
 		public override Expression DoResolve (EmitContext ec)
@@ -3558,6 +3565,7 @@ namespace Mono.CSharp {
 				return e;
 			}
 
+			VariableInfo variable_info = local_info.VariableInfo; 
 			if ((variable_info != null) && !variable_info.IsAssigned (ec, loc))
 				return null;
 
@@ -3571,6 +3579,7 @@ namespace Mono.CSharp {
 		{
 			DoResolveBase (ec);
 
+			VariableInfo variable_info = local_info.VariableInfo; 
 			if (variable_info != null)
 				variable_info.SetAssigned (ec);
 
@@ -6299,7 +6308,7 @@ namespace Mono.CSharp {
 			}
 
 			if ((block != null) && (block.ThisVariable != null))
-				variable_info = block.GetVariableInfo (block.ThisVariable);
+				variable_info = block.ThisVariable.VariableInfo;
 
 			return true;
 		}

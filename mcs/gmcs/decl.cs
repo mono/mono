@@ -43,153 +43,6 @@ namespace Mono.CSharp {
 			Location = loc;
 		}
 
-		protected void WarningNotHiding (TypeContainer parent)
-		{
-			Report.Warning (
-				109, Location,
-				"The member " + parent.MakeName (Name) + " does not hide an " +
-				"inherited member.  The keyword new is not required");
-							   
-		}
-
-		void Error_CannotChangeAccessModifiers (TypeContainer parent, MethodInfo parent_method,
-							string name)
-		{
-			//
-			// FIXME: report the old/new permissions?
-			//
-			Report.Error (
-				507, Location, parent.MakeName (Name) +
-				": can't change the access modifiers when overriding inherited " +
-				"member `" + name + "'");
-		}
-		
-		//
-		// Performs various checks on the MethodInfo `mb' regarding the modifier flags
-		// that have been defined.
-		//
-		// `name' is the user visible name for reporting errors (this is used to
-		// provide the right name regarding method names and properties)
-		//
-		protected bool CheckMethodAgainstBase (TypeContainer parent, MethodAttributes my_attrs,
-						       MethodInfo mb, string name)
-		{
-			bool ok = true;
-			
-			if ((ModFlags & Modifiers.OVERRIDE) != 0){
-				if (!(mb.IsAbstract || mb.IsVirtual)){
-					Report.Error (
-						506, Location, parent.MakeName (Name) +
-						": cannot override inherited member `" +
-						name + "' because it is not " +
-						"virtual, abstract or override");
-					ok = false;
-				}
-				
-				// Now we check that the overriden method is not final
-				
-				if (mb.IsFinal) {
-					// This happens when implementing interface methods.
-					if (mb.IsHideBySig && mb.IsVirtual) {
-						Report.Error (
-							506, Location, parent.MakeName (Name) +
-							": cannot override inherited member `" +
-							name + "' because it is not " +
-							"virtual, abstract or override");
-					} else
-						Report.Error (239, Location, parent.MakeName (Name) + " : cannot " +
-							      "override inherited member `" + name +
-							      "' because it is sealed.");
-					ok = false;
-				}
-				//
-				// Check that the permissions are not being changed
-				//
-				MethodAttributes thisp = my_attrs & MethodAttributes.MemberAccessMask;
-				MethodAttributes parentp = mb.Attributes & MethodAttributes.MemberAccessMask;
-
-				//
-				// special case for "protected internal"
-				//
-
-				if ((parentp & MethodAttributes.FamORAssem) == MethodAttributes.FamORAssem){
-					//
-					// when overriding protected internal, the method can be declared
-					// protected internal only within the same assembly
-					//
-
-					if ((thisp & MethodAttributes.FamORAssem) == MethodAttributes.FamORAssem){
-						if (parent.TypeBuilder.Assembly != mb.DeclaringType.Assembly){
-							//
-							// assemblies differ - report an error
-							//
-							
-							Error_CannotChangeAccessModifiers (parent, mb, name);
-						    ok = false;
-						} else if (thisp != parentp) {
-							//
-							// same assembly, but other attributes differ - report an error
-							//
-							
-							Error_CannotChangeAccessModifiers (parent, mb, name);
-							ok = false;
-						};
-					} else if ((thisp & MethodAttributes.Family) != MethodAttributes.Family) {
-						//
-						// if it's not "protected internal", it must be "protected"
-						//
-
-						Error_CannotChangeAccessModifiers (parent, mb, name);
-						ok = false;
-					} else if (parent.TypeBuilder.Assembly == mb.DeclaringType.Assembly) {
-						//
-						// protected within the same assembly - an error
-						//
-						Error_CannotChangeAccessModifiers (parent, mb, name);
-						ok = false;
-					} else if ((thisp & ~(MethodAttributes.Family | MethodAttributes.FamORAssem)) != 
-						   (parentp & ~(MethodAttributes.Family | MethodAttributes.FamORAssem))) {
-						//
-						// protected ok, but other attributes differ - report an error
-						//
-						Error_CannotChangeAccessModifiers (parent, mb, name);
-						ok = false;
-					}
-				} else {
-					if (thisp != parentp){
-						Error_CannotChangeAccessModifiers (parent, mb, name);
-						ok = false;
-					}
-				}
-			}
-
-			if (mb.IsVirtual || mb.IsAbstract){
-				if ((ModFlags & (Modifiers.NEW | Modifiers.OVERRIDE)) == 0){
-					if (Name != "Finalize"){
-						Report.Warning (
-							114, 2, Location, parent.MakeName (Name) + 
-							" hides inherited member `" + name +
-							"'.  To make the current member override that " +
-							"implementation, add the override keyword, " +
-							"otherwise use the new keyword");
-						ModFlags |= Modifiers.NEW;
-					}
-				}
-			} else {
-				if ((ModFlags & (Modifiers.NEW | Modifiers.OVERRIDE)) == 0){
-					if (Name != "Finalize"){
-						Report.Warning (
-							108, 1, Location, "The keyword new is required on " +
-							parent.MakeName (Name) + " because it hides " +
-							"inherited member `" + name + "'");
-						ModFlags |= Modifiers.NEW;
-					}
-				}
-			}
-
-			return ok;
-		}
-
 		public abstract bool Define (TypeContainer parent);
 
 		// 
@@ -211,10 +64,59 @@ namespace Mono.CSharp {
 		}
 	}
 
-	//
-	// FIXME: This is temporary outside DeclSpace, because I have to fix a bug
-	// in MCS that makes it fail the lookup for the enum
-	//
+	/// <summary>
+	///   Base class for structs, classes, enumerations and interfaces.  
+	/// </summary>
+	/// <remarks>
+	///   They all create new declaration spaces.  This
+	///   provides the common foundation for managing those name
+	///   spaces.
+	/// </remarks>
+	public abstract class DeclSpace : MemberCore {
+		/// <summary>
+		///   this points to the actual definition that is being
+		///   created with System.Reflection.Emit
+		/// </summary>
+		public TypeBuilder TypeBuilder;
+
+		/// <summary>
+		///   This variable tracks whether we have Closed the type
+		/// </summary>
+		public bool Created = false;
+		
+		//
+		// This is the namespace in which this typecontainer
+		// was declared.  We use this to resolve names.
+		//
+		public NamespaceEntry NamespaceEntry;
+
+		public Hashtable Cache = new Hashtable ();
+		
+		public string Basename;
+		
+		/// <summary>
+		///   defined_names is used for toplevel objects
+		/// </summary>
+		protected Hashtable defined_names;
+
+		//
+		// Whether we are Generic
+		//
+		public bool IsGeneric;
+
+		TypeContainer parent;
+
+		public DeclSpace (NamespaceEntry ns, TypeContainer parent, string name, Location l)
+			: base (name, l)
+		{
+			NamespaceEntry = ns;
+			Basename = name.Substring (1 + name.LastIndexOf ('.'));
+			defined_names = new Hashtable ();
+			this.parent = parent;
+
+			if ((NamespaceEntry != null) && (parent == RootContext.Tree.Types))
+				NamespaceEntry.DefineName (Basename, this);
+		}
 
 		/// <summary>
 		///   The result value from adding an declaration into
@@ -259,62 +161,6 @@ namespace Mono.CSharp {
 			///   Some other error.
 			/// </summary>
 			Error
-		}
-
-	/// <summary>
-	///   Base class for structs, classes, enumerations and interfaces.  
-	/// </summary>
-	/// <remarks>
-	///   They all create new declaration spaces.  This
-	///   provides the common foundation for managing those name
-	///   spaces.
-	/// </remarks>
-	public abstract class DeclSpace : MemberCore {
-		/// <summary>
-		///   this points to the actual definition that is being
-		///   created with System.Reflection.Emit
-		/// </summary>
-		public TypeBuilder TypeBuilder;
-
-		/// <summary>
-		///   This variable tracks whether we have Closed the type
-		/// </summary>
-		public bool Created = false;
-		
-		//
-		// This is the namespace in which this typecontainer
-		// was declared.  We use this to resolve names.
-		//
-		public NamespaceEntry Namespace;
-
-		public Hashtable Cache = new Hashtable ();
-		
-		public string Basename;
-		
-		/// <summary>
-		///   defined_names is used for toplevel objects
-		/// </summary>
-		protected Hashtable defined_names;
-
-		//
-		// Whether we are Generic
-		//
-		public bool IsGeneric;
-		
-		TypeContainer parent;
-
-		public DeclSpace (TypeContainer parent, string name, Location l)
-			: base (name, l)
-		{
-			Basename = name.Substring (1 + name.LastIndexOf ('.'));
-			defined_names = new Hashtable ();
-			this.parent = parent;
-
-			//
-			// We are generic if our parent is generic
-			//
-			if (parent != null)
-				IsGeneric = parent.IsGeneric;
 		}
 
 		/// <summary>
@@ -388,8 +234,8 @@ namespace Mono.CSharp {
 		/// </summary>
 		public string LookupAlias (string name)
 		{
-			if (Namespace != null)
-				return Namespace.LookupAlias (name);
+			if (NamespaceEntry != null)
+				return NamespaceEntry.LookupAlias (name);
 			else
 				return null;
 		}
@@ -618,27 +464,49 @@ namespace Mono.CSharp {
 			return false;
 		}
 		
-		
+		static DoubleHash dh = new DoubleHash ();
+
 		Type LookupInterfaceOrClass (string ns, string name, out bool error)
 		{
 			DeclSpace parent;
 			Type t;
-
+			object r;
+			
 			error = false;
 
-			name = MakeFQN (ns, name);
-
-			t  = TypeManager.LookupType (name);
+			if (dh.Lookup (ns, name, out r))
+				t = (Type) r;
+			else {
+				if (ns != ""){
+					if (Namespace.IsNamespace (ns)){
+						string fullname = (ns != "") ? ns + "." + name : name;
+						t = TypeManager.LookupType (fullname);
+					} else
+						t = null;
+				} else
+					t = TypeManager.LookupType (name);
+			}
+			
 			if (t != null)
 				return t;
 
-			parent = (DeclSpace) RootContext.Tree.Decls [name];
+			//
+			// In case we are fed a composite name, normalize it.
+			//
+			int p = name.LastIndexOf ('.');
+			if (p != -1){
+				ns = MakeFQN (ns, name.Substring (0, p));
+				name = name.Substring (p+1);
+			}
+			
+			parent = RootContext.Tree.LookupByNamespace (ns, name);
 			if (parent == null)
 				return null;
-			
+
 			t = parent.DefineType ();
+			dh.Insert (ns, name, t);
 			if (t == null){
-				Report.Error (146, Location, "Class definition is circular: `"+name+"'");
+				Report.Error (146, Location, "Class definition is circular: `" + MakeFQN (ns, name) + "'");
 				error = true;
 				return null;
 			}
@@ -697,8 +565,8 @@ namespace Mono.CSharp {
 			//
 			// Attempt to lookup the class on our namespace and all it's implicit parents
 			//
-			for (NamespaceEntry ns = Namespace; ns != null; ns = ns.ImplicitParent) {
-				t = LookupInterfaceOrClass (ns.Name, name, out error);
+			for (NamespaceEntry ns = NamespaceEntry; ns != null; ns = ns.ImplicitParent) {
+				t = LookupInterfaceOrClass (ns.FullName, name, out error);
 				if (error)
 					return null;
 				
@@ -721,9 +589,9 @@ namespace Mono.CSharp {
 			// namespaces
 			//
 
-			for (NamespaceEntry ns = Namespace; ns != null; ns = ns.Parent){
+			for (NamespaceEntry ns = NamespaceEntry; ns != null; ns = ns.Parent){
 
-				t = LookupInterfaceOrClass (ns.Name, name, out error);
+				t = LookupInterfaceOrClass (ns.FullName, name, out error);
 				if (error)
 					return null;
 
