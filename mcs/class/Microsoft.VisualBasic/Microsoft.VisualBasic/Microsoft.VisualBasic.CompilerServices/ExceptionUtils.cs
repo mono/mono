@@ -369,8 +369,7 @@ namespace Microsoft.VisualBasic.CompilerServices {
 
 		public static Exception VbMakeException(Exception ex, int hr)
 		{
-			//TODO: convert
-			//Information.Err().SetUnmappedError(hr);
+			Information.Err().SetUnmappedError(hr);
 			return ex;
 		}
 
@@ -381,17 +380,15 @@ namespace Microsoft.VisualBasic.CompilerServices {
 		 * @return java.lang.Exception
 		 */
 
-		//TODO: convert
 		public static Exception VbMakeExceptionEx(int number, string msg) {
-			//ClrBoolean bool = new ClrBoolean();
-			bool Bool = false; //new ClrBoolean();
+			bool Bool = false; 
 			Exception exp;
 		
 			exp = ExceptionUtils.BuildException(number, msg, ref Bool);
-				//TODO: convert
-				// if (bool.getValue() == ClrBoolean.True)
-				//     Information.Err().SetUnmappedError(number);
-				return exp;
+			if(Bool == true)
+				Information.Err().SetUnmappedError(number);
+
+			return exp;
 		}
 
 	}

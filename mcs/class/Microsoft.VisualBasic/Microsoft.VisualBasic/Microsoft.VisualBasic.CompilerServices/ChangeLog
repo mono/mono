@@ -1,3 +1,6 @@
+2004-06-15  Jambunathan K  <kjambunathan@novell.com>
+	* ExceptionUtils.cs: Trivial changes
+
 2004-06-10  Jambunathan K <kjambunathan@novell.com>
 	* ProjectData.cs: Remerged from Mainsoft's codebase
 
