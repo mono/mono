@@ -1,0 +1,4 @@
+2002-10-22  Nick Drochak  <ndrochak@gol.com>
+
+	* DataColumnTest.cs: Remove compiler warnings and use caught exception
+	to report useful info.

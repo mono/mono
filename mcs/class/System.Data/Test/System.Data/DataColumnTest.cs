@@ -55,7 +55,7 @@ namespace MonoTests.System.Data
 			catch (AssertionFailedError exc) {throw  exc;}
 			catch (Exception exc)
 			{
-				Assertion.Fail("DataColumnNull. Wrong exception type.");
+				Assertion.Fail("DataColumnNull. Wrong exception type. Got:" + exc);
 			}
 
 		}
@@ -79,7 +79,7 @@ namespace MonoTests.System.Data
 			catch (AssertionFailedError exc) {throw  exc;}
 			catch (Exception exc)
 			{
-				Assertion.Fail("DataColumnNull. Wrong exception type.");
+				Assertion.Fail("DataColumnNull. Wrong exception type. Got:" + exc);
 			}
 			
 
@@ -117,7 +117,7 @@ namespace MonoTests.System.Data
 			catch (AssertionFailedError exc) {throw  exc;}
 			catch (Exception exc)
 			{
-				Assertion.Fail("ExprAutoInc. Wrong exception type.");
+				Assertion.Fail("ExprAutoInc. Wrong exception type. Got:" + exc);
 			}
 
 
