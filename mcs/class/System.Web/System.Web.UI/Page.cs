@@ -84,6 +84,11 @@ public class Page : TemplateControl, IHttpHandler
 	[EditorBrowsable (EditorBrowsableState.Never)]
 	protected const string postEventSourceID = "__EVENTTARGET";
 
+#if NET_2_0
+	private const string callbackArgumentID = "__CALLBACKARGUMENT";
+	private const string callbackSourceID = "__CALLBACKTARGET";
+#endif
+
 	#region Constructor
 	public Page ()
 	{
@@ -515,16 +520,16 @@ public class Page : TemplateControl, IHttpHandler
 		writer.WriteLine ();
 		writer.WriteLine ("<script language=\"javascript\">");
 		writer.WriteLine ("<!--");
-		writer.WriteLine ("\tfunction __doPostBack(eventTarget, eventArgument) {");
 
 		if (Request.Browser.Browser == ("Netscape") && Request.Browser.MajorVersion == 4)
-			writer.WriteLine ("\t\tvar theform = document.{0};", formUniqueID);
+			writer.WriteLine ("\tvar theForm = document.{0};", formUniqueID);
 		else
-			writer.WriteLine ("\t\tvar theform = document.getElementById ('{0}');", formUniqueID);
+			writer.WriteLine ("\tvar theForm = document.getElementById ('{0}');", formUniqueID);
 
-		writer.WriteLine ("\t\ttheform.{0}.value = eventTarget;", postEventSourceID);
-		writer.WriteLine ("\t\ttheform.{0}.value = eventArgument;", postEventArgumentID);
-		writer.WriteLine ("\t\ttheform.submit();");
+		writer.WriteLine ("\tfunction __doPostBack(eventTarget, eventArgument) {");
+		writer.WriteLine ("\t\ttheForm.{0}.value = eventTarget;", postEventSourceID);
+		writer.WriteLine ("\t\ttheForm.{0}.value = eventArgument;", postEventArgumentID);
+		writer.WriteLine ("\t\ttheForm.submit();");
 		writer.WriteLine ("\t}");
 		writer.WriteLine ("// -->");
 		writer.WriteLine ("</script>");
@@ -703,6 +708,17 @@ public class Page : TemplateControl, IHttpHandler
 			RaisePostBackEvents ();
 			Trace.Write ("aspx.page", "End Raise PostBackEvent");
 		}
+		
+#if NET_2_0
+		if (IsCallback) {
+			string result = ProcessCallbackData ();
+			HtmlTextWriter callbackOutput = new HtmlTextWriter (_context.Response.Output);
+			callbackOutput.Write (result);
+			callbackOutput.Flush ();
+			return;
+		}
+#endif
+		
 		Trace.Write ("aspx.page", "Begin PreRender");
 		PreRenderRecursiveInternal ();
 		Trace.Write ("aspx.page", "End PreRender");
@@ -988,6 +1004,37 @@ public class Page : TemplateControl, IHttpHandler
 		return XPathBinder.Select (CurrentDataItem, xpathexpression);
 	}
 	
+	public string GetCallbackEventReference (Control control, string argument, string clientCallback, string context)
+	{
+		return GetCallbackEventReference (control, argument, clientCallback, context, null);
+	}
+	
+	public string GetCallbackEventReference (Control control, string argument, string clientCallback, string context, string clientErrorCallback)
+	{
+		if (!ClientScript.IsClientScriptIncludeRegistered (typeof(Page), "callback"))
+			ClientScript.RegisterClientScriptInclude (typeof(Page), "callback", GetWebResourceUrl (typeof(Page), "callback.js"));
+		
+		return string.Format ("WebForm_DoCallback ('{0}', {1}, {2}, {3}, {4})", control.UniqueID, argument, clientCallback, context, clientErrorCallback);
+	}
+	
+	public bool IsCallback {
+		get { return _requestValueCollection != null && _requestValueCollection [callbackArgumentID] != null; }
+	}
+	
+	string ProcessCallbackData ()
+	{
+		string callbackTarget = _requestValueCollection [callbackSourceID];
+		if (callbackTarget == null || callbackTarget.Length == 0)
+			throw new HttpException ("Callback target not provided.");
+
+		ICallbackEventHandler target = FindControl (callbackTarget) as ICallbackEventHandler;
+		if (target == null)
+			throw new HttpException (string.Format ("Invalid callback target '{0}'.", callbackTarget));
+
+		string callbackArgument = _requestValueCollection [callbackArgumentID];
+		return target.RaiseCallbackEvent (callbackArgument);
+	}
+
 	#endif
 }
 }

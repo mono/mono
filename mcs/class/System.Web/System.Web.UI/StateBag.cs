@@ -266,5 +266,14 @@ namespace System.Web.UI
 		bool IDictionary.IsReadOnly {
 			get { return false; }
 		}
+		
+#if NET_2_0
+		public void SetDirty ()
+		{
+			foreach (string key in bag.Keys)
+				SetItemDirty (key, true);
+		}
+#endif
+
 	}
 }

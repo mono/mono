@@ -1,3 +1,10 @@
+2004-12-02 Lluis Sanchez Gual <lluis@novell.com>
+
+	* Page.cs: Added support for callback events. Moved theform variable
+	outside the __doPostBack function, so it can be used by other
+	scripts.
+	* StateBag.cs: Implemented SetDirty().
+
 2004-11-30 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Control.cs: when saving "Visible" into the ViewState, save the value
