@@ -8,9 +8,9 @@ using System;
 namespace System.Drawing.Printing 
 {
 	public enum Duplex {
-		Defaultl,
-		Horizontal,
-		Simplex,
-		Vertical
+		Default = -1,
+		Horizontal = 3,
+		Simplex = 1,
+		Vertical = 2
 	}
 }
