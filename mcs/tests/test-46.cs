@@ -5,7 +5,7 @@ using System;
 
 class X {
 	static int cast_int (object o) { return (int) o; }
-	static uint cast_uint (object o) { Console.WriteLine ("X"); return (uint) o; }
+	static uint cast_uint (object o) { return (uint) o; }
 	static short cast_short (object o) { return (short) o; }
 	static char cast_char (object o) { return (char) o; }
 	static ushort cast_ushort (object o) { return (ushort) o; }

@@ -1,6 +1,10 @@
 2001-11-22  Miguel de Icaza  <miguel@ximian.com>
 
-	* ecore.cs (UnboxCast): new class used to unbox value types.
+	* ecore.cs (Expression.TryImplicitIntConversion): Wrap the result
+	implicit int literal conversion in an empty cast so that we
+	propagate the right type upstream.
+
+	(UnboxCast): new class used to unbox value types.
 	(Expression.ConvertExplicit): Add explicit type conversions done
 	by unboxing.
 

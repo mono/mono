@@ -1054,18 +1054,16 @@ namespace Mono.CSharp {
 				return expr;
 
 			if (target_type == null)
-				Console.WriteLine ("NULL");
+				throw new Exception ("Target type is null");
 
 			e = ImplicitNumericConversion (ec, expr, target_type, loc);
 			if (e != null)
 				return e;
 
-			Console.WriteLine ("HIT 2");
 			e = ImplicitReferenceConversion (expr, target_type);
 			if (e != null)
 				return e;
 
-			Console.WriteLine ("HIT 3");
 			e = ImplicitUserConversion (ec, expr, target_type, loc);
 			if (e != null)
 				return e;
@@ -1128,23 +1126,23 @@ namespace Mono.CSharp {
 			
 			if (target_type == TypeManager.sbyte_type){
 				if (value >= SByte.MinValue && value <= SByte.MaxValue)
-					return il;
+					return new EmptyCast (il, target_type);
 			} else if (target_type == TypeManager.byte_type){
 				if (Byte.MinValue >= 0 && value <= Byte.MaxValue)
-					return il;
+					return new EmptyCast (il, target_type);
 			} else if (target_type == TypeManager.short_type){
 				if (value >= Int16.MinValue && value <= Int16.MaxValue)
-					return il;
+					return new EmptyCast (il, target_type);
 			} else if (target_type == TypeManager.ushort_type){
 				if (value >= UInt16.MinValue && value <= UInt16.MaxValue)
-					return il;
+					return new EmptyCast (il, target_type);
 			} else if (target_type == TypeManager.uint32_type){
 				//
 				// we can optimize this case: a positive int32
 				// always fits on a uint32
 				//
 				if (value >= 0)
-					return il;
+					return new EmptyCast (il, target_type);
 			} else if (target_type == TypeManager.uint64_type){
 				//
 				// we can optimize this case: a positive int32
