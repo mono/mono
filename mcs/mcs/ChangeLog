@@ -1,5 +1,9 @@
 2004-03-11  Miguel de Icaza  <miguel@ximian.com>
 
+	* statement.cs (Switch.SimpleSwitchEmit): Deal with default labels
+	that are in the middle of the statements, not only at the end.
+	Fixes #54987
+
 	* class.cs (TypeContainer.AddField): No longer set the
 	`HaveStaticConstructor' flag, now we call it
 	`UserDefineStaticConstructor' to diferentiate the slightly
