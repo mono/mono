@@ -297,7 +297,7 @@ namespace MonoTests.Microsoft.VisualBasic
 		public void TestException ()
 		{
 			Collection c;
-			bool CaughtException = false;
+			bool caughtException = false;
 
 			c = new Collection();
 
@@ -307,17 +307,17 @@ namespace MonoTests.Microsoft.VisualBasic
 			}
 			catch (Exception e) {
 				AssertEquals("#E01", typeof(IndexOutOfRangeException), e.GetType());
-				CaughtException = true;
+				caughtException = true;
 			}
 
-			AssertEquals("#E02", true, CaughtException);
+			AssertEquals("#E02", true, caughtException);
                 
 			c.Add("Baseball", "Base", null, null);
 			c.Add("Football", "Foot", null, null);
 			c.Add("Basketball", "Basket", null, null);
 			c.Add("Volleyball", "Volley", null, null);
 
-			CaughtException = false;
+			caughtException = false;
 
 			try {
 				// only 4 elements
@@ -325,12 +325,12 @@ namespace MonoTests.Microsoft.VisualBasic
 			}
 			catch (Exception e) {
 				AssertEquals("#E03", typeof(IndexOutOfRangeException), e.GetType());
-				CaughtException = true;
+				caughtException = true;
 			}
 
-			AssertEquals("#E04", true, CaughtException);
+			AssertEquals("#E04", true, caughtException);
             
-			CaughtException = false;
+			caughtException = false;
 			
 			try {
 				// Collection class is 1-based
@@ -338,12 +338,12 @@ namespace MonoTests.Microsoft.VisualBasic
 			}
 			catch (Exception e) {
 				AssertEquals("#E05", typeof(IndexOutOfRangeException), e.GetType());
-				CaughtException = true;
+				caughtException = true;
 			}
 
-			AssertEquals("#E06", true, CaughtException);
+			AssertEquals("#E06", true, caughtException);
             
-			CaughtException = false;
+			caughtException = false;
 			
 			try {
 				// no member with Key == "Kick"
@@ -355,12 +355,12 @@ namespace MonoTests.Microsoft.VisualBasic
 				// here, but MS throws ArgumentException
 				// AssertEquals("#E07", typeof(IndexOutOfRangeException), e.GetType());
 				AssertEquals("#E07", typeof(ArgumentException), e.GetType());
-				CaughtException = true;
+				caughtException = true;
 			}
 
-			AssertEquals("#E08", true, CaughtException);
+			AssertEquals("#E08", true, caughtException);
          
-			CaughtException = false;
+			caughtException = false;
 			
 			try {
 				// Even though Indexer is an object, really it's a string
@@ -368,12 +368,12 @@ namespace MonoTests.Microsoft.VisualBasic
 			}
 			catch (Exception e) {
 				AssertEquals("#E09", typeof(ArgumentException), e.GetType());
-				CaughtException = true;
+				caughtException = true;
 			}
 
-			AssertEquals("#E10", true, CaughtException);
+			AssertEquals("#E10", true, caughtException);
          
-			CaughtException = false;
+			caughtException = false;
 			
 			try {
 				// can't specify both Before and After
@@ -381,12 +381,12 @@ namespace MonoTests.Microsoft.VisualBasic
 			}
 			catch (Exception e) {
 				AssertEquals("#E11", typeof(ArgumentException), e.GetType());
-				CaughtException = true;
+				caughtException = true;
 			}
 
-			AssertEquals("#E12", true, CaughtException);
+			AssertEquals("#E12", true, caughtException);
          
-			CaughtException = false;
+			caughtException = false;
 			
 			try {
 				// Key "Foot" already exists
@@ -394,12 +394,12 @@ namespace MonoTests.Microsoft.VisualBasic
 			}
 			catch (Exception e) {
 				AssertEquals("#E13", typeof(ArgumentException), e.GetType());
-				CaughtException = true;
+				caughtException = true;
 			}
 
-			AssertEquals("#E14", true, CaughtException);
+			AssertEquals("#E14", true, caughtException);
 
-			CaughtException = false;
+			caughtException = false;
 			
 			try {
 				// Even though Before is object, it's really a string
@@ -407,12 +407,12 @@ namespace MonoTests.Microsoft.VisualBasic
 			}
 			catch (Exception e) {
 				AssertEquals("#E15", typeof(InvalidCastException), e.GetType());
-				CaughtException = true;
+				caughtException = true;
 			}
 
-			AssertEquals("#E16", true, CaughtException);
+			AssertEquals("#E16", true, caughtException);
         
-			CaughtException = false;
+			caughtException = false;
 			
 			try {
 				// Even though After is object, it's really a string
@@ -420,12 +420,12 @@ namespace MonoTests.Microsoft.VisualBasic
 			}
 			catch (Exception e) {
 				AssertEquals("#E17", typeof(InvalidCastException), e.GetType());
-				CaughtException = true;
+				caughtException = true;
 			}
 
-			AssertEquals("#E18", true, CaughtException);
+			AssertEquals("#E18", true, caughtException);
         
-			CaughtException = false;
+			caughtException = false;
 			
 			try {
 				// have to pass a legitimate value to remove
@@ -433,12 +433,12 @@ namespace MonoTests.Microsoft.VisualBasic
 			}
 			catch (Exception e) {
 				AssertEquals("#E19", typeof(ArgumentException), e.GetType());
-				CaughtException = true;
+				caughtException = true;
 			}
 
-			AssertEquals("#E20", true, CaughtException);
+			AssertEquals("#E20", true, caughtException);
         
-			CaughtException = false;
+			caughtException = false;
 			
 			try {
 				// no Key "Golf" exists
@@ -446,12 +446,12 @@ namespace MonoTests.Microsoft.VisualBasic
 			}
 			catch (Exception e) {
 				AssertEquals("#E21", typeof(ArgumentException), e.GetType());
-				CaughtException = true;
+				caughtException = true;
 			}
 
-			AssertEquals("#E22", true, CaughtException);
+			AssertEquals("#E22", true, caughtException);
         
-			CaughtException = false;
+			caughtException = false;
 			
 			try {
 				// no Index 10 exists
@@ -459,12 +459,12 @@ namespace MonoTests.Microsoft.VisualBasic
 			}
 			catch (Exception e) {
 				AssertEquals("#E23", typeof(IndexOutOfRangeException), e.GetType());
-				CaughtException = true;
+				caughtException = true;
 			}
 
-			AssertEquals("#E24", true, CaughtException);
+			AssertEquals("#E24", true, caughtException);
         
-			CaughtException = false;
+			caughtException = false;
 			
 			try {
 				IEnumerator e = c.GetEnumerator();
@@ -478,12 +478,12 @@ namespace MonoTests.Microsoft.VisualBasic
 				// but MS throws IndexOutOfRangeException
 				// AssertEquals("#E25", typeof(InvalidOperationException), e.GetType());
 				AssertEquals("#E25", typeof(IndexOutOfRangeException), e.GetType());
-				CaughtException = true;
+				caughtException = true;
 			}
 
-			AssertEquals("#E26", true, CaughtException);
+			AssertEquals("#E26", true, caughtException);
         
-			CaughtException = false;
+			caughtException = false;
 			
 			try {
 				IEnumerator e = c.GetEnumerator();
@@ -498,15 +498,15 @@ namespace MonoTests.Microsoft.VisualBasic
 				// FIXME
 				// On-line help says this should throw an error. MS doesn't.
 				AssertEquals("#E27", typeof(InvalidOperationException), e.GetType());
-				CaughtException = true;
+				caughtException = true;
 			}
 
 			// FIXME
 			// What to do about this?  MS doesn't throw an error
-			// AssertEquals("#E28", true, CaughtException);
-			AssertEquals("#E28", false, CaughtException);
+			// AssertEquals("#E28", true, caughtException);
+			AssertEquals("#E28", false, caughtException);
         
-			CaughtException = false;
+			caughtException = false;
 			
 			try {
 				IEnumerator e = c.GetEnumerator();
@@ -521,15 +521,15 @@ namespace MonoTests.Microsoft.VisualBasic
 				// FIXME
 				// On-line help says this should throw an error.  MS doesn't.
 				AssertEquals("#E29", typeof(InvalidOperationException), e.GetType());
-				CaughtException = true;
+				caughtException = true;
 			}
 
 			// FIXME
 			// What to do about this?  MS doesn't throw an error
-			// AssertEquals("#E30", true, CaughtException);
-			AssertEquals("#E30", false, CaughtException);
+			// AssertEquals("#E30", true, caughtException);
+			AssertEquals("#E30", false, caughtException);
 
-			CaughtException = false;
+			caughtException = false;
 		}
 	}
 }

@@ -24,6 +24,7 @@ namespace MonoTests
 				TestSuite suite = new TestSuite();
 				suite.AddTest (Microsoft.VisualBasic.CollectionTest.Suite);
 				suite.AddTest (Microsoft.VisualBasic.ConversionTest.Suite);
+				suite.AddTest (Microsoft.VisualBasic.DateAndTimeTest.Suite);
 				
 				return suite;
 			}
