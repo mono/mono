@@ -1,3 +1,9 @@
+2001-09-08  Dietmar Maurer  <dietmar@ximian.com>
+
+	* monoburg.c (emit_header): added some convenient macros
+
+	* monoburg.y (optcfunc): allow arbitrary cost functions
+
 2001-09-06  Dietmar Maurer  <dietmar@ximian.com>
 
 	* monoburg.c (emit_header): use macros to access the tree (like in iburg)
