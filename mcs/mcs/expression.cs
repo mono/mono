@@ -2859,10 +2859,10 @@ namespace Mono.CSharp {
 		public override Expression DoResolve (EmitContext ec)
 		{
 			VariableInfo vi = VariableInfo;
-
-			if (Block.IsConstant (Name)) {
-				Expression e = Block.GetConstantExpression (Name);
-
+			Expression e;
+			
+			e = Block.GetConstantExpression (Name);
+			if (e != null) {
 				vi.Used = true;
 				return e;
 			}
