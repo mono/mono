@@ -1,3 +1,8 @@
+2004-09-18  John Luke  <john.luke@gmail.com>
+
+	* outline.cs: add const = value; for const fields (Ben's idea)
+	detect ParamArrayAttribute for parameters
+
 2004-09-03  John Luke  <john.luke@gmail.com>
 	
 	* monop.cs: report CLSCompliant for assemblies
