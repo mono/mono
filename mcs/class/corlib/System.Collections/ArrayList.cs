@@ -24,6 +24,14 @@ namespace System.Collections {
 			if (null == c)
 				throw new ArgumentNullException();
 
+			//Emulate MS.NET behavior. Throw RankException when passed a
+			// multi-dimensional Array.
+			Array arr = c as Array;
+			if (null != arr && arr.Rank > 1){
+				throw new RankException();
+			}
+
+
 			dataArray = new object [c.Count];
 			this.capacity = c.Count;
 			foreach (object o in c) {
@@ -54,7 +62,6 @@ namespace System.Collections {
 		{
 			if (list == null)
 				throw new ArgumentNullException ();
-			
 			return new ArrayList (list.ToArray (), list.Count, list.Capacity,
 					      list.IsFixedSize, true, list.IsSynchronized);
 		}

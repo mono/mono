@@ -1,3 +1,7 @@
+2002-05-05  Nick Drochak  <ndrochak@gol.com>
+
+	* ArrayList.cs: Throw RankException when constructing from a 
+	multi-dimensional array. Confirmed behavior from MS.NET
 
 Thu May 2 15:18:11 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
