@@ -41,7 +41,6 @@ namespace System.Runtime.Remoting.Channels.Http
 
 	internal sealed class HttpServer
 	{
-		public int port;
 		private TcpListener listener=null;
 		private const int nTimeOut = 1000;
 		

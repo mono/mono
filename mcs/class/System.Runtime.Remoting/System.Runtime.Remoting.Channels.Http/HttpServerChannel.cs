@@ -50,13 +50,11 @@ namespace System.Runtime.Remoting.Channels.Http
 		private IServerChannelSink         _sinkChain = null;
 
 		private bool _wantsToListen = true;
-		private bool _bHooked = false; // has anyone hooked into the channel?       
         
         
 		private TcpListener _tcpListener;
 		private Thread      _listenerThread;
 		private bool        _bListening = false; // are we listening at the moment?
-		private Exception   _startListeningException = null; // if an exception happens on the listener thread when attempting
 		//   to start listening, that will get set here.
 		private AutoResetEvent  _waitForStartListening = new AutoResetEvent(false);
 

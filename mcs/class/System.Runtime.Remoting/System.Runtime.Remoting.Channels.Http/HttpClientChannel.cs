@@ -34,11 +34,6 @@ namespace System.Runtime.Remoting.Channels.Http
 		private const String ProxyNameKey = "proxyname";
 		private const String ProxyPortKey = "proxyport";
 
-		// If above keys get modified be sure to modify, the KeySet property on this
-		// class.
-		private static ICollection s_keySet = null;
-        
-    
 		// Settings
 		private int    _channelPriority = 1;  // channel priority
 		private String _channelName = "http"; // channel name
@@ -286,7 +281,7 @@ namespace System.Runtime.Remoting.Channels.Http
 
 		// settings
 		private bool _useChunked = false; 
-		private bool _useKeepAlive = true;
+//		private bool _useKeepAlive = true;
 
 		internal HttpClientTransportSink(HttpClientChannel channel, String channelURI) : base()
 		{
@@ -517,7 +512,7 @@ namespace System.Runtime.Remoting.Channels.Http
 			//request.Expect = "100-Continue";
 			
 			//This caused us some troubles with the HttpWebResponse class
-			//maybe its fixed now.
+			//maybe its fixed now. TODO
 			//request.KeepAlive = _useKeepAlive;
 			request.KeepAlive = false;;
 			

@@ -27,23 +27,20 @@ namespace System.Runtime.Remoting.Channels.Http
 
 			int Pos;
 			ObjectURI = null;
+			string ChannelURI = null;
 			
 
 			if(StartsWithHttp(URL))
 			{
 				Pos = URL.IndexOf("/",7);
+				if(Pos >= 0) 
+				{
+					ObjectURI = URL.Substring(Pos);
+					ChannelURI = URL.Substring(0, Pos);
+				}
+				else ChannelURI = URL;
 			}
-			else
-			{
-				Pos = URL.IndexOf("/",0);
-			}
-
-			if(Pos >= 0)
-			{
-				ObjectURI = URL.Substring(Pos + 1);
-				return URL.Substring(0,Pos);
-			}
-			return URL;
+			return ChannelURI;
 			
 		}
 

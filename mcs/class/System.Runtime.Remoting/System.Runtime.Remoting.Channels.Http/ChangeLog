@@ -1,3 +1,8 @@
+2003-09-17  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* HttpHelper.cs: Fixed bug #48468. Patch by Jean-Marc Andre.
+	* HttpClientChannel.cs HttpServer.cs HttpServerChannel.cs: Fixed some warnings.
+
 2003-08-22  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* HttpClientChannel.cs: Changed text for user-agent header (removed references
