@@ -443,6 +443,7 @@ namespace System.Data.SqlClient {
 			return xmlReader;
 		}
 
+		[MonoTODO ("Include offset from SqlParameter for binary/string types.")]
 		static string FormatParameter (SqlParameter parameter)
 		{
 			if (parameter.Value == null)

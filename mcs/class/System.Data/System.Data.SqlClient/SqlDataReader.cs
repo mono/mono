@@ -24,21 +24,16 @@ namespace System.Data.SqlClient {
 	{
 		#region Fields
 
+		SqlCommand command;
+		ArrayList dataTypeNames;
 		bool disposed = false;
-
 		int fieldCount;
 		bool isClosed;
-		bool moreResults;
 		bool isSelect;
-
+		bool moreResults;
 		int resultsRead;
 		int rowsRead;
-
-		SqlCommand command;
 		DataTable schemaTable;
-
-		ArrayList dataTypeNames;
-		ArrayList dataTypes;
 
 		#endregion // Fields
 
@@ -47,18 +42,16 @@ namespace System.Data.SqlClient {
 		internal SqlDataReader (SqlCommand command)
 		{
 			this.command = command;
-
 			schemaTable = ConstructSchemaTable ();
 			resultsRead = 0;
 			fieldCount = 0;
 			isClosed = false;
 			isSelect = (command.CommandText.Trim ().ToUpper ().StartsWith ("SELECT"));
 			command.Tds.RecordsAffected = 0;
-
 			NextResult ();
 		}
 
-		#endregion
+		#endregion // Constructors
 
 		#region Properties
 
@@ -173,16 +166,18 @@ namespace System.Data.SqlClient {
 			return ((byte []) value).Length - dataIndex;
 		}
 
-		[MonoTODO ("Implement GetChar")]
 		public char GetChar (int i)
 		{
-			throw new NotImplementedException ();
+			object value = GetValue (i);
+			if (!(value is char))
+				throw new InvalidCastException ();
+			return (char) value;
 		}
 
 		public long GetChars (int i, long dataIndex, char[] buffer, int bufferIndex, int length)
 		{
 			object value = GetValue (i);
-			if (!(value is char []))
+			if (!(value is char[]))
 				throw new InvalidCastException ();
 			Array.Copy ((char []) value, (int) dataIndex, buffer, bufferIndex, length);
 			return ((char []) value).Length - dataIndex;
@@ -210,22 +205,9 @@ namespace System.Data.SqlClient {
 		public decimal GetDecimal (int i)
 		{
 			object value = GetValue (i);
-			if (!(value is TdsBigDecimal))
+			if (!(value is decimal))
 				throw new InvalidCastException ();
-			int[] bits = ((TdsBigDecimal) value).Data;
-			if (bits[3] != 0)
-				throw new OverflowException ();
-			byte scale = ((TdsBigDecimal) value).Scale;
-			bool isNegative = ((TdsBigDecimal) value).IsNegative;
-			return new Decimal (bits[0], bits[1], bits[2], isNegative, scale);
-		}
-
-		private TdsBigDecimal GetDecimalImpl (int i)
-		{
-			object value = GetValue (i);
-			if (!(value is TdsBigDecimal))
-				throw new InvalidCastException ();
-			return (TdsBigDecimal) value;
+			return (decimal) value;
 		}
 
 		public double GetDouble (int i)
@@ -286,7 +268,6 @@ namespace System.Data.SqlClient {
 			return (string) schemaTable.Rows[i]["ColumnName"];
 		}
 
-		[MonoTODO ("Make sure that ordinal is in fact zero-based.")]
 		public int GetOrdinal (string name)
 		{
 			foreach (DataRow schemaRow in schemaTable.Rows)
@@ -309,7 +290,6 @@ namespace System.Data.SqlClient {
 			fieldCount = 0;
 
 			dataTypeNames = new ArrayList ();
-			dataTypes = new ArrayList ();
 
 			foreach (TdsSchemaInfo schema in command.Tds.Schema) {
 				DataRow row = schemaTable.NewRow ();
@@ -347,7 +327,6 @@ namespace System.Data.SqlClient {
 						row ["IsLong"] = true;
 						break;
 					case TdsColumnType.Text :
-						dataTypes.Add (typeof (string));
 						dataTypeNames.Add ("text");
 						row ["ProviderType"] = (int) SqlDbType.Text;
 						row ["DataType"] = typeof (string);
@@ -501,137 +480,191 @@ namespace System.Data.SqlClient {
 
 		public SqlBoolean GetSqlBoolean (int i) 
 		{
-			object value = GetValue (i);
-			if (value == null)
-				return SqlBoolean.Null;
-			if (!(value is bool))
+			object value = GetSqlValue (i);
+			if (!(value is SqlBoolean))
 				throw new InvalidCastException ();
-			return (bool) value;
+			return (SqlBoolean) value;
 		}
 
 		public SqlByte GetSqlByte (int i)
 		{
-			object value = GetValue (i);
-			if (value == null)
-				return SqlByte.Null;
-			if (!(value is byte))
+			object value = GetSqlValue (i);
+			if (!(value is SqlByte))
 				throw new InvalidCastException ();
-			return (byte) value;
+			return (SqlByte) value;
 		}
 
 		public SqlDateTime GetSqlDateTime (int i)
 		{
-			object value = GetValue (i);
-			if (value == null)
-				return SqlDateTime.Null;
-			if (!(value is DateTime))
+			object value = GetSqlValue (i);
+			if (!(value is SqlDateTime))
 				throw new InvalidCastException ();
-			return (DateTime) value;
+			return (SqlDateTime) value;
 		}
 
 		public SqlDecimal GetSqlDecimal (int i)
 		{
-			object value = GetValue (i);
-			if (value == null)
-				return SqlDecimal.Null;
-			if (!(value is TdsBigDecimal))
+			object value = GetSqlValue (i);
+			if (!(value is SqlDecimal))
 				throw new InvalidCastException ();
-			return SqlDecimal.FromTdsBigDecimal ((TdsBigDecimal) value);
+			return (SqlDecimal) value;
 		}
 
 		public SqlDouble GetSqlDouble (int i)
 		{
-			object value = GetValue (i);
-			if (value == null)
-				return SqlDouble.Null;
-			if (!(value is double))
+			object value = GetSqlValue (i);
+			if (!(value is SqlDouble))
 				throw new InvalidCastException ();
-			return (double) value;
+			return (SqlDouble) value;
 		}
 
 		public SqlGuid GetSqlGuid (int i)
 		{
-			object value = GetValue (i);
-			if (value == null)
-				return SqlGuid.Null;
-			if (!(value is Guid))
+			object value = GetSqlValue (i);
+			if (!(value is SqlGuid))
 				throw new InvalidCastException ();
-			return (Guid) value;
+			return (SqlGuid) value;
 		}
 
 		public SqlInt16 GetSqlInt16 (int i)
 		{
-			object value = GetValue (i);
-			if (value == null)
-				return SqlInt16.Null;
-			if (!(value is short))
+			object value = GetSqlValue (i);
+			if (!(value is SqlInt16))
 				throw new InvalidCastException ();
-			return (short) value;
+			return (SqlInt16) value;
 		}
 
 		public SqlInt32 GetSqlInt32 (int i)
 		{
-			object value = GetValue (i);
-			if (value == null)
-				return SqlInt32.Null;
-			if (!(value is int))
+			object value = GetSqlValue (i);
+			if (!(value is SqlInt32))
 				throw new InvalidCastException ();
-			return (int) value;
+			return (SqlInt32) value;
 		}
 
 		public SqlInt64 GetSqlInt64 (int i)
 		{
-			object value = GetValue (i);
-			if (value == null)
-				return SqlInt64.Null;
-			if (!(value is long))
+			object value = GetSqlValue (i);
+			if (!(value is SqlInt64))
 				throw new InvalidCastException ();
-			return (long) value;
+			return (SqlInt64) value;
 		}
 
 		public SqlMoney GetSqlMoney (int i)
 		{
-			object value = GetValue (i);
-			if (value == null)
-				return SqlMoney.Null;
-			if (!(value is TdsBigDecimal))
+			object value = GetSqlValue (i);
+			if (!(value is SqlMoney))
 				throw new InvalidCastException ();
-			return (SqlMoney) (SqlDecimal) value;
+			return (SqlMoney) value;
 		}
 
 		public SqlSingle GetSqlSingle (int i)
 		{
-			object value = GetValue (i);
-			if (value == null)
-				return SqlSingle.Null;
-			if (!(value is float))
+			object value = GetSqlValue (i);
+			if (!(value is SqlSingle))
 				throw new InvalidCastException ();
-			return (float) value;
+			return (SqlSingle) value;
 		}
 
 		public SqlString GetSqlString (int i)
 		{
-			object value = GetValue (i);
-			if (value == null)
-				return SqlString.Null;
-			if (!(value is string))
+			object value = GetSqlValue (i);
+			if (!(value is SqlString))
 				throw new InvalidCastException ();
-			return (string) value;
+			return (SqlString) value;
 		}
 
-		[MonoTODO ("Implement GetSqlValue")]
+		[MonoTODO ("Implement TdsBigDecimal conversion.  SqlDbType.Real fails tests?")]
 		public object GetSqlValue (int i)
 		{
+			SqlDbType type = (SqlDbType) (schemaTable.Rows [i]["ProviderType"]);
 			object value = GetValue (i);
-			if (value == null)
-				return DBNull.Value; 
-			throw new NotImplementedException ();
+
+			switch (type) {
+			case SqlDbType.BigInt:
+				if (value == null)
+					return SqlInt64.Null;
+				return (SqlInt64) ((long) value);
+			case SqlDbType.Binary:
+			case SqlDbType.Image:
+			case SqlDbType.VarBinary:
+			case SqlDbType.Timestamp:
+				if (value == null)
+					return SqlBinary.Null;
+				return (SqlBinary) ((byte[]) value);
+			case SqlDbType.Bit:
+				if (value == null)
+					return SqlBoolean.Null;
+				return (SqlBoolean) ((bool) value);
+			case SqlDbType.Char:
+			case SqlDbType.NChar:
+			case SqlDbType.NText:
+			case SqlDbType.NVarChar:
+			case SqlDbType.Text:
+			case SqlDbType.VarChar:
+				if (value == null)
+					return SqlString.Null;
+				return (SqlString) ((string) value);
+			case SqlDbType.DateTime:
+			case SqlDbType.SmallDateTime:
+				if (value == null)
+					return SqlDateTime.Null;
+				return (SqlDateTime) ((DateTime) value);
+			case SqlDbType.Decimal:
+				if (value == null)
+					return SqlDecimal.Null;
+				if (value is TdsBigDecimal)
+					return SqlDecimal.FromTdsBigDecimal ((TdsBigDecimal) value);
+				return (SqlDecimal) ((decimal) value);
+			case SqlDbType.Float:
+				if (value == null)
+					return SqlDouble.Null;
+				return (SqlDouble) ((double) value);
+			case SqlDbType.Int:
+				if (value == null)
+					return SqlInt32.Null;
+				return (SqlInt32) ((int) value);
+			case SqlDbType.Money:
+			case SqlDbType.SmallMoney:
+				if (value == null)
+					return SqlMoney.Null;
+				return (SqlMoney) ((decimal) value);
+			case SqlDbType.Real:
+				if (value == null)
+					return SqlSingle.Null;
+				return (SqlSingle) ((float) value);
+			case SqlDbType.UniqueIdentifier:
+				if (value == null)
+					return SqlGuid.Null;
+				return (SqlGuid) ((Guid) value);
+			case SqlDbType.SmallInt:
+				if (value == null)
+					return SqlInt16.Null;
+				return (SqlInt16) ((short) value);
+			case SqlDbType.TinyInt:
+				if (value == null)
+					return SqlByte.Null;
+				return (SqlByte) ((byte) value);
+			}
+
+			throw new InvalidOperationException ("The type of this column is unknown.");
 		}
 
-		[MonoTODO ("Implement GetSqlValues")]
 		public int GetSqlValues (object[] values)
 		{
-			throw new NotImplementedException ();
+			int count = 0;
+			int columnCount = schemaTable.Rows.Count;
+			int arrayCount = values.Length;
+
+			if (arrayCount > columnCount)
+				count = columnCount;
+			else
+				count = arrayCount;
+
+			for (int i = 0; i < count; i += 1) 
+				values [i] = GetSqlValue (i);
+
+			return count;
 		}
 
 		public string GetString (int i)
@@ -644,7 +677,7 @@ namespace System.Data.SqlClient {
 
 		public object GetValue (int i)
 		{
-			return command.Tds.ColumnValues[i];
+			return command.Tds.ColumnValues [i];
 		}
 
 		public int GetValues (object[] values)
