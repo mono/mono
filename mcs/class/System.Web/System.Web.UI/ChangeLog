@@ -1,3 +1,7 @@
+2003-08-01  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* PartialCachingControl.cs: is not abstract
+
 2003-08-01  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* SimpleHandlerFactory.cs: implemented GetHandler.

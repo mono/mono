@@ -12,7 +12,7 @@ using System.ComponentModel;
 
 namespace System.Web.UI
 {
-	public abstract class PartialCachingControl : BasePartialCachingControl
+	public class PartialCachingControl : BasePartialCachingControl
 	{
 
 		private Type controlType;
