@@ -948,7 +948,7 @@ namespace System {
 
 		private static void ParseFormatSpecifier (string str, ref int ptr, out int n, out int width, out bool left_align, out string format) {
 			// parses format specifier of form:
-			//   N,[[-]M][:F]}
+			//   N,[\ +[-]M][:F]}
 			//
 			// where:
 
@@ -962,7 +962,14 @@ namespace System {
 				// M = width (non-negative integer)
 
 				if (str[ptr] == ',') {
-					left_align = (str[++ ptr] == '-');
+					// White space between ',' and number or sign.
+					int start = ++ptr;
+					while (Char.IsWhiteSpace (str [ptr]))
+						++ptr;
+
+					format = str.Substring (start, ptr - start);
+
+					left_align = (str [ptr] == '-');
 					if (left_align)
 						++ ptr;
 
@@ -973,6 +980,7 @@ namespace System {
 				else {
 					width = 0;
 					left_align = false;
+					format = "";
 				}
 
 				// F = argument format (string)
@@ -982,7 +990,7 @@ namespace System {
 					while (str[ptr] != '}')
 						++ ptr;
 
-					format = str.Substring (start, ptr - start);
+					format += str.Substring (start, ptr - start);
 				}
 				else
 					format = null;

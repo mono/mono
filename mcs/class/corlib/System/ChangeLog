@@ -1,3 +1,9 @@
+2002-08-01  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* String.cs:
+	(FormatSpecifier): allow white space between the comman and the width
+	specifier.
+
 2002-07-22  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Int32.cs:
