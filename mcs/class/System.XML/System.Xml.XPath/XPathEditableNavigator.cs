@@ -87,6 +87,12 @@ namespace System.Xml.XPath
 			xw.Close ();
 		}
 
+		[MonoTODO]
+		protected void BuildSubTree (XmlReader reader, XmlWriter writer, bool useValidity)
+		{
+			throw new NotImplementedException ();
+		}
+
 		public virtual void CreateAttribute (string prefix, string localName, string namespaceURI, string value)
 		{
 			using (XmlWriter w = CreateAttributes ()) {

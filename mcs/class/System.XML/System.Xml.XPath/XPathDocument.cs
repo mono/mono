@@ -42,6 +42,7 @@ using Mono.Xml.XPath;
 namespace System.Xml.XPath
 {
 #if NET_2_0
+	[XmlSchemaProvider ("GetSchema")]
 	public class XPathDocument : IXPathNavigable, IXPathEditable,
 		IChangeTracking, IRevertibleChangeTracking, IXmlSerializable
 #else
@@ -72,6 +73,11 @@ namespace System.Xml.XPath
 
 		public XPathDocument (string uri) 
 			: this (uri, XmlSpace.None, true)
+		{
+		}
+
+		public XPathDocument (string uri, bool acceptChangesOnLoad) 
+			: this (uri, XmlSpace.None, acceptChangesOnLoad)
 		{
 		}
 
@@ -297,6 +303,12 @@ namespace System.Xml.XPath
 
 		[MonoTODO]
 		public virtual XmlSchema GetSchema ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public static XmlQualifiedName GetXPathDocumentSchema (XmlSchemaSet schemas)
 		{
 			throw new NotImplementedException ();
 		}

@@ -1,3 +1,9 @@
+2004-07-26  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XPathDocument.cs : added missing && not-likely-to-be-removed members.
+	* XPathEditableNavigator.cs : added BuildSubTree().
+	* XPathException.cs : added missing methods. Hide Message in NET_2_0.
+
 2004-07-23  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XPathNodeIterator.cs : implemented 2.0 GetEnumerator().
