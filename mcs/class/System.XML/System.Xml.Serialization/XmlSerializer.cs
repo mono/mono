@@ -26,7 +26,7 @@ namespace System.Xml.Serialization {
 
 		#region Fields
 
-		Type type;
+		Type xsertype;
 		XmlAttributeOverrides overrides;
 		Type[] extraTypes;
 		XmlRootAttribute rootAttribute;
@@ -102,7 +102,7 @@ namespace System.Xml.Serialization {
 				}
 			}
 			
-			this.type = type;
+			this.xsertype = type;
 			this.overrides = overrides;
 			this.extraTypes = (extraTypes == null ? new Type[0] : extraTypes);
 		
@@ -237,11 +237,19 @@ namespace System.Xml.Serialization {
 
 		public void Serialize (XmlWriter writer, object o, XmlSerializerNamespaces namespaces)
 		{	
-			Type objType = o.GetType ();
+			Type objType = xsertype;//o.GetType ();
+
+			if (IsInbuiltType(objType)) 
+			{
+				writer.WriteStartDocument ();
+				SerializeBuiltIn (writer, o);
+				writer.WriteEndDocument();
+				return;
+			}
+
 			string rootName = objType.Name;
 			string rootNs = String.Empty;
 			string rootPrefix = String.Empty;
-			bool isBuiltIn = IsInbuiltType (objType);
 
 			if (namespaces == null)
 				namespaces = new XmlSerializerNamespaces ();
@@ -253,13 +261,6 @@ namespace System.Xml.Serialization {
 
 			XmlSerializerNamespaces nss = new XmlSerializerNamespaces ();
 			XmlQualifiedName[] qnames;
-
-			if (isBuiltIn) {
-				writer.WriteStartDocument ();
-				SerializeBuiltIn (writer, o);
-				writer.WriteEndDocument ();
-				return;
-			}
 			
 			writer.WriteStartDocument ();
 			object [] memberObj = (object []) typeTable [objType];
@@ -328,16 +329,43 @@ namespace System.Xml.Serialization {
 		private void SerializeBuiltIn (XmlWriter writer, object o)
 		{
 			TypeData td = TypeTranslator.GetTypeData (o.GetType ());
-			writer.WriteElementString (td.ElementName, o.ToString ());
+			writer.WriteStartElement  (td.ElementName);
+			WriteBuiltinValue(writer,o);
+			writer.WriteEndElement();
+		}
+
+		private void WriteNilAttribute(XmlWriter writer)
+		{
+			writer.WriteAttributeString("nil",XmlSchema.InstanceNamespace, "true");
+		}
+
+		private void WriteBuiltinValue(XmlWriter writer, object o)
+		{
+			if(o == null) 
+				WriteNilAttribute(writer);
+			else
+				writer.WriteString (GetXmlValue(o));
 		}
 
 		private void SerializeMembers (XmlWriter writer, object o, bool isRoot)
 		{
+			if(o == null)
+			{
+				WriteNilAttribute(writer);
+				return;
+			}
+
 			Type objType = o.GetType ();
+			
+			if (IsInbuiltType(objType)) 
+			{
+				SerializeBuiltIn (writer, o);
+				return;
+			}
+
 			XmlAttributes nsAttributes = (XmlAttributes) ((object[]) typeTable [objType])[1];
 			ArrayList attributes = (ArrayList) ((object[]) typeTable [objType])[2];
 			ArrayList elements = (ArrayList) ((object[]) typeTable [objType])[3];
-
 
 			if (!isRoot && nsAttributes != null) {
 				MemberInfo member = nsAttributes.MemberInfo;
@@ -447,33 +475,47 @@ namespace System.Xml.Serialization {
 		[MonoTODO ("Remove FIXMEs")]
 		private void WriteElement (XmlWriter writer, XmlAttributes attrs, string name, string ns, Type type, Object value)
 		{
-			if (IsInbuiltType (type)) {
-				string xmlValue = GetXmlValue (value);
-				if (xmlValue != String.Empty && xmlValue != null)
-					writer.WriteElementString (name, ns,  xmlValue);
-			}
-			else if (attrs.XmlText != null && value != null) {
-				if (type == typeof (object[])) {
-					// FIXME
+			//IF the element has XmlText Attribute, the name of the member is not serialized;
+			if (attrs.XmlText != null && value != null) 
+			{
+				if (type == typeof (object[])) 
+				{
+					foreach(object obj in (object[]) value)
+						writer.WriteRaw(""+obj);
 				}
-				else if (type == typeof (string[])) {
-					// FIXME
+				else if (type == typeof (string[])) 
+				{
+					foreach(string str in (string[]) value)
+						writer.WriteRaw(str);
 				}
-				else if (type == typeof (XmlNode)) {
+				else if (type == typeof (XmlNode)) 
+				{
 					((XmlNode) value).WriteTo (writer);
 				}
-				else if (type == typeof (XmlNode[])) {
+				else if (type == typeof (XmlNode[])) 
+				{
 					XmlNode[] nodes = (XmlNode[]) value;
 					foreach (XmlNode node in nodes)
 						node.WriteTo (writer);
 				}
+				return;
 			}
-			else if (type.IsArray && value != null) {
-				writer.WriteStartElement (name, ns);
+
+			//If not text, serialize as an element
+			
+			//Start the element tag
+			writer.WriteStartElement  (name, ns);
+			
+			if (IsInbuiltType (type)) 
+			{
+				WriteBuiltinValue(writer,value);
+			}
+			else if (type.IsArray && value != null) 
+			{
 				SerializeArray (writer, value);
-				writer.WriteEndElement ();
 			}
-			else if (value is ICollection) {
+			else if (value is ICollection) 
+			{
 				BindingFlags flags = BindingFlags.Public | BindingFlags.Instance;
 
 				//Find a non indexer Count Property with return type of int
@@ -482,11 +524,14 @@ namespace System.Xml.Serialization {
 				int count = (int) countInfo.GetValue (value, null);
 
 				if (count > 0) 
-					for (int i = 0; i < count; i++) {
+					for (int i = 0; i < count; i++) 
+					{
 						object itemValue = itemInfo.GetValue (value, new object[1] {i});
+						Type   itemType  = itemInfo.PropertyType;
 
-						if (itemValue != null) {
-							string itemName = attrs.GetElementName (itemValue.GetType (), name);
+						if (itemValue != null) 
+						{
+							string itemName = attrs.GetElementName (itemValue.GetType (), TypeTranslator.GetTypeData(itemType).ElementName);
 							string itemNs = attrs.GetElementNamespace (itemValue.GetType ());
 
 							writer.WriteStartElement (itemName, itemNs);
@@ -495,28 +540,58 @@ namespace System.Xml.Serialization {
 						}
 					}
 			}
-			else if (value is IEnumerable) {
+			else if (value is IEnumerable) 
+			{
 				// FIXME
 			}
-			else if (type.IsEnum) {
+			else if (type.IsEnum) 
+			{
 				// FIXME
 			}
-			else if (value != null) { //Complex Type?
-				string itemName = attrs.GetElementName (value.GetType (), name);
-				string itemNs = attrs.GetElementNamespace (value.GetType ());
-				writer.WriteStartElement (itemName, itemNs);
+			else
+			{ //Complex Type
 				SerializeMembers (writer, value, false);
-				writer.WriteEndElement ();
 			}
-			else {
-				// FIXME
-			}
+
+			// Close the Element
+			writer.WriteEndElement();
 		}
 
+		//Does not take care of any array specific Xml Attributes
 		[MonoTODO]
 		private void SerializeArray (XmlWriter writer, object o)
 		{
-			throw new NotImplementedException ();
+			Array arr = (o as Array);
+			if(arr == null || arr.Rank != 1)
+				throw new ApplicationException("Expected a single dimension Array, Got "+ o);
+
+			Type arrayType = arr.GetType().GetElementType();
+			string arrayTypeName = TypeTranslator.GetTypeData(arrayType).ElementName;
+			
+			TypeData td = TypeTranslator.GetTypeData (arrayType);
+			writer.WriteStartElement (td.ElementName);
+			Console.WriteLine(td.ElementName);
+			//Special Treatment for Byte array
+			if(arrayType.Equals(typeof(byte)))
+			{
+				WriteBuiltinValue(writer,o);
+			}
+			else
+			{
+				for(int i=0; i< arr.Length; i++)
+				{
+					object value = arr.GetValue(i);
+					if (IsInbuiltType (arrayType)) 
+					{
+						WriteBuiltinValue(writer, value);
+					}
+					else
+					{
+						SerializeMembers(writer, value, false);
+					}
+				}
+			}
+			writer.WriteEndElement();
 		}
 
 		/// <summary>
@@ -795,8 +870,9 @@ namespace System.Xml.Serialization {
 		{
 			if (value == null)
 				return null;
-
-			if (value is Enum) {
+			#region enum type
+			if (value is Enum) 
+			{
 				Type type = value.GetType ();
 				
 				if (typeTable.ContainsKey (type)) {
@@ -835,8 +911,41 @@ namespace System.Xml.Serialization {
 				else
 					throw new Exception ("Unknown Enumeration");
 			}
-			if (value is bool)
-				return (bool) value ? "true" : "false";
+			#endregion
+			if (value is byte[])
+				return XmlCustomFormatter.FromByteArrayHex((byte[])value);
+			if (value is Guid)
+				return XmlConvert.ToString((Guid)value);
+			if(value is DateTime)
+				return XmlConvert.ToString((DateTime)value);
+			if(value is TimeSpan)
+				return XmlConvert.ToString((TimeSpan)value);
+			if(value is bool)
+				return XmlConvert.ToString((bool)value);
+			if(value is byte)
+				return XmlConvert.ToString((byte)value);
+			if(value is char)
+				return XmlCustomFormatter.FromChar((char)value);
+			if(value is decimal)
+				return XmlConvert.ToString((decimal)value);
+			if(value is double)
+				return XmlConvert.ToString((double)value);
+			if(value is short)
+				return XmlConvert.ToString((short)value);
+			if(value is int)
+				return XmlConvert.ToString((int)value);
+			if(value is long)
+				return XmlConvert.ToString((long)value);
+			if(value is sbyte)
+				return XmlConvert.ToString((sbyte)value);
+			if(value is float)
+				return XmlConvert.ToString((float)value);
+			if(value is ushort)
+				return XmlConvert.ToString((ushort)value);
+			if(value is uint)
+				return XmlConvert.ToString((uint)value);
+			if(value is ulong)
+				return XmlConvert.ToString((ulong)value);
 			if (value is XmlQualifiedName) {
 				if (((XmlQualifiedName) value).IsEmpty)
 					return null;

@@ -32,6 +32,11 @@ namespace System.Xml.Serialization
 			primitives.Add (typeof (Guid), "guid");
 			primitives.Add (typeof (Decimal), "decimal");
 			primitives.Add (typeof (XmlQualifiedName), "QName");
+			primitives.Add (typeof (string), "string");
+			primitives.Add (typeof (byte), "unsignedByte");
+			primitives.Add (typeof (sbyte), "byte");
+			primitives.Add (typeof (char), "char");
+			primitives.Add (typeof (object), "anyType");
 		}
 
 		private TypeTranslator ()

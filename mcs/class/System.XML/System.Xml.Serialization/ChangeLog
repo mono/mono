@@ -1,3 +1,7 @@
+2003-01-16  Ajay kumar Dwivedi <adwiv@yahoo.com>
+	* XmlSerializer.cs: Array serialization for 1D arrays works
+	* TypeTranslator: Added for translations`
+
 2002-09-19  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* XmlCustomFormatter.cs: finished.
