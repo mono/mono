@@ -1,3 +1,10 @@
+2005-01-25  Dick Porter  <dick@ximian.com>
+
+	* icall.c (ves_icall_System_CurrentTimeZone_GetTimeZoneData): Make
+	the check for mktime() support actually test the mktime() return
+	value.  "Fixes" bug 71682, though the output is still different to
+	MS.
+
 2005-01-25  Martin Baulig  <martin@ximian.com>
 
 	* class.c (mono_class_is_assignable_from): Make this work for
