@@ -142,7 +142,7 @@ namespace MonoTests.System.Security.Cryptography {
 			try {
 				// no key
 				fmt.VerifySignature (hash, shaSignature);
-				Fail ("VerifySignature(?) no key - Expected CryptographicUnexpectedOperationException but none");
+				Fail ("VerifySHA1SignatureWithNullKey - Expected CryptographicUnexpectedOperationException but none");
 			}
 			catch (CryptographicUnexpectedOperationException) {
 				// this was expected
@@ -151,7 +151,7 @@ namespace MonoTests.System.Security.Cryptography {
 				// this wasn't expected - but that's the result from framework 1.1
 			}
 			catch (Exception e) {
-				Fail ("VerifySignature(?) no key - Expected CryptographicUnexpectedOperationException but got: " + e.ToString ());
+				Fail ("VerifySHA1SignatureWithNullKey - Expected CryptographicUnexpectedOperationException but got: " + e.ToString ());
 			}
 		}
 
@@ -244,13 +244,26 @@ namespace MonoTests.System.Security.Cryptography {
 		}
 
 		[Test]
-		[ExpectedException (typeof (CryptographicUnexpectedOperationException))]
+// v.1.0	[ExpectedException (typeof (CryptographicUnexpectedOperationException))]
+// v.1.1	[ExpectedException (typeof (NullReferenceException))]
 		public void VerifySignatureHashNoKey ()
 		{
 			RSAPKCS1SignatureDeformatter fmt = new RSAPKCS1SignatureDeformatter ();
 			HashAlgorithm hash = hash = SHA1.Create ();
-			// no key
-			fmt.VerifySignature (hash, shaSignature);
+			try {
+				// no key
+				fmt.VerifySignature (hash, shaSignature);
+				Fail ("VerifySignatureHashNoKey - Expected CryptographicUnexpectedOperationException but none");
+			}
+			catch (CryptographicUnexpectedOperationException) {
+				// this was expected
+			}
+			catch (NullReferenceException) {
+				// this wasn't expected - but that's the result from framework 1.1
+			}
+			catch (Exception e) {
+				Fail ("VerifySignatureHashNoKey - Expected CryptographicUnexpectedOperationException but got: " + e.ToString ());
+			}
 		}
 
 		[Test]
@@ -270,14 +283,27 @@ namespace MonoTests.System.Security.Cryptography {
 		}
 
 		[Test]
-		[ExpectedException (typeof (CryptographicUnexpectedOperationException))]
+// v.1.0	[ExpectedException (typeof (CryptographicUnexpectedOperationException))]
+// v.1.1	[ExpectedException (typeof (NullReferenceException))]
 		public void VerifySignatureSHA1HashBadSignatureLength () 
 		{
 			RSAPKCS1SignatureDeformatter fmt = GetDefaultDeformatter ("SHA1");
 			// wrong signature length
 			byte[] badSignature = new byte [shaSignature.Length-1];
 			HashAlgorithm hash = SHA1.Create ();
-			Assert ("VerifySignature(SHA1, badSign)", !fmt.VerifySignature (hash, badSignature));
+			try {
+				fmt.VerifySignature (hash, badSignature);
+				Fail ("VerifySignatureSHA1HashBadSignatureLength - Expected CryptographicUnexpectedOperationException but none");
+			}
+			catch (CryptographicUnexpectedOperationException) {
+				// this was expected
+			}
+			catch (NullReferenceException) {
+				// this wasn't expected - but that's the result from framework 1.1
+			}
+			catch (Exception e) {
+				Fail ("VerifySignatureSHA1HashBadSignatureLength - Expected CryptographicUnexpectedOperationException but got: " + e.ToString ());
+			}
 		}
 
 		[Test]
@@ -295,7 +321,8 @@ namespace MonoTests.System.Security.Cryptography {
 		}
 
 		[Test]
-		[ExpectedException (typeof (CryptographicUnexpectedOperationException))]
+// v.1.0	[ExpectedException (typeof (CryptographicUnexpectedOperationException))]
+// v.1.1	[ExpectedException (typeof (NullReferenceException))]
 		public void VerifyBadSignatureMD5Hash () 
 		{
 			RSAPKCS1SignatureDeformatter fmt = GetDefaultDeformatter ("MD5");
@@ -304,18 +331,43 @@ namespace MonoTests.System.Security.Cryptography {
 			Array.Copy (md5Signature, 0, badSignature, 0, badSignature.Length);
 			badSignature[0] = (byte) ~md5Signature [0];
 			HashAlgorithm hash = MD5.Create ();
-			fmt.VerifySignature (hash, md5Signature);
+			try {
+				fmt.VerifySignature (hash, md5Signature);
+				Fail ("VerifyBadSignatureMD5Hash - Expected CryptographicUnexpectedOperationException but none");
+			}
+			catch (CryptographicUnexpectedOperationException) {
+				// this was expected
+			}
+			catch (NullReferenceException) {
+				// this wasn't expected - but that's the result from framework 1.1
+			}
+			catch (Exception e) {
+				Fail ("VerifyBadSignatureMD5Hash - Expected CryptographicUnexpectedOperationException but got: " + e.ToString ());
+			}
 		}
 
 		[Test]
-		[ExpectedException (typeof (CryptographicUnexpectedOperationException))]
+// v.1.0	[ExpectedException (typeof (CryptographicUnexpectedOperationException))]
+// v.1.1	[ExpectedException (typeof (NullReferenceException))]
 		public void VerifySignatureMD5HashBadSignatureLength () 
 		{
 			RSAPKCS1SignatureDeformatter fmt = GetDefaultDeformatter ("MD5");
 			// wrong signature length
 			byte[] badSignature = new byte [md5Signature.Length-1];
 			HashAlgorithm hash = MD5.Create ();
-			Assert ("VerifySignature(MD5, badSign)", !fmt.VerifySignature (hash, md5Signature));
+			try {
+				fmt.VerifySignature (hash, md5Signature);
+				Fail ("VerifySignatureMD5HashBadSignatureLength - Expected CryptographicUnexpectedOperationException but none");
+			}
+			catch (CryptographicUnexpectedOperationException) {
+				// this was expected
+			}
+			catch (NullReferenceException) {
+				// this wasn't expected - but that's the result from framework 1.1
+			}
+			catch (Exception e) {
+				Fail ("VerifySignatureMD5HashBadSignatureLength - Expected CryptographicUnexpectedOperationException but got: " + e.ToString ());
+			}
 		}
 	}
 }

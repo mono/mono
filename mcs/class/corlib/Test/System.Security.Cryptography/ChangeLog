@@ -1,3 +1,10 @@
+2003-05-29  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* PKCS1MaskGenerationMethodTest.cs: Added [Ignore] to vector test
+	(as it's result isn't valid on both framework 1.0 and 1.1).
+	* RSAPKCS1SignatureDeformatter.cs: Splitting the test for NUnit2
+	cloned the previous error into many more tests. Hopefully fixed.
+
 2003-05-28  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* RSAPKCS1SignatureDeformatter.cs: Fixed (well I hope so) a test
