@@ -1,3 +1,9 @@
+2004-12-06  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini-sparc.c: Zero out localled-ed memory.
+
+	* iltests.il: Add tests for zeroing out localloc-ed memory.
+
 2004-12-04  Martin Baulig  <martin@ximian.com>
 
 	* mini.c (mono_method_to_ir): In CEE_CALLVIRT, use the new
