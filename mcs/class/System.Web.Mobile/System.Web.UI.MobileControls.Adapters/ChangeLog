@@ -1,4 +1,8 @@
 
+2003-10-08	Gaurav Vaish <gvaish_mono AT lycos.com>
+
+	* HtmlCalendarAdapter.cs: Initial implmentation.
+
 2003-09-29	Gaurav Vaish <gvaish_mono AT lycos.com>
 
 	* HtmlMobileTextWriter.cs
