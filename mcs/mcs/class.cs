@@ -537,16 +537,19 @@ namespace CIR {
 			Constructor c;
 			int mods = 0;
 
-			c = new Constructor (Name, new Parameters (null, null),
+			c = new Constructor (Basename, new Parameters (null, null),
 					     new ConstructorBaseInitializer (null, new Location (-1)),
 					     new Location (-1));
+			
 			AddConstructor (c);
+			
 			c.Block = new Block (null);
 			
 			if (is_static)
 				mods = Modifiers.STATIC;
 
-			c.ModFlags = mods;	
+			c.ModFlags = mods;
+
 		}
 
 		public void ReportStructInitializedInstanceError ()
@@ -594,6 +597,282 @@ namespace CIR {
 			else
 				return mb.MethodHandle.ToString ();
 		}
+
+
+		public static string MakeFQN (string nsn, string name)
+		{
+			string prefix = (nsn == "" ? "" : nsn + ".");
+
+			return prefix + name;
+		}
+		       
+		Type LookupInterfaceOrClass (object builder, string ns, string name, bool is_class, out bool error)
+		{
+			TypeContainer parent;
+			Type t;
+
+			error = false;
+			name = MakeFQN (ns, name);
+			
+			t  = RootContext.TypeManager.LookupType (name);
+			if (t != null)
+				return t;
+
+			if (is_class){
+				parent = (Class) RootContext.Tree.Classes [name];
+			} else {
+				parent = (Struct) RootContext.Tree.Structs [name];
+			}
+			
+			if (parent != null){
+				t = parent.DefineType (builder);
+				if (t == null){
+					Report.Error (146, "Class definition is circular: `"+name+"'");
+					error = true;
+					return null;
+				}
+
+				return t;
+			}
+
+			return null;
+		}
+		
+		//
+		// returns the type for an interface or a class, this will recursively
+		// try to define the types that it depends on.
+		//
+		Type GetInterfaceOrClass (object builder, string name, bool is_class)
+		{
+			Type t;
+			bool error;
+
+			//
+			// Attempt to lookup the class on our namespace
+			//
+			t = LookupInterfaceOrClass (builder, Namespace.Name, name, is_class, out error);
+			if (error)
+				return null;
+			
+			if (t != null) 
+				return t;
+
+			//
+			// Attempt to lookup the class on any of the `using'
+			// namespaces
+			//
+
+			for (Namespace ns = Namespace; ns != null; ns = ns.Parent){
+				ArrayList using_list = ns.UsingTable;
+				
+				if (using_list == null)
+					continue;
+
+				foreach (string n in using_list){
+					t = LookupInterfaceOrClass (builder, n, name, is_class, out error);
+					if (error)
+						return null;
+
+					if (t != null)
+						return t;
+				}
+				
+			}
+			Report.Error (246, "Can not find type `"+name+"'");
+			return null;
+		}
+
+		//
+		// This function computes the Base class and also the
+		// list of interfaces that the class or struct @c implements.
+		//
+		// The return value is an array (might be null) of
+		// interfaces implemented (as Types).
+		//
+		// The @parent argument is set to the parent object or null
+		// if this is `System.Object'. 
+		//
+		Type [] GetClassBases (object builder, bool is_class, out Type parent, out bool error)
+		{
+			ArrayList bases = Bases;
+			int count;
+			int start, j, i;
+			
+			error = false;
+
+			if (is_class)
+				parent = null;
+			else
+				parent = TypeManager.value_type;
+
+			if (bases == null){
+				if (is_class){
+					if (RootContext.StdLib)
+						parent = TypeManager.object_type;
+					else if (Name != "System.Object")
+						parent = TypeManager.object_type;
+				} else {
+					//
+					// If we are compiling our runtime,
+					// and we are defining ValueType, then our
+					// parent is `System.Object'.
+					//
+					if (!RootContext.StdLib && Name == "System.ValueType")
+						parent = TypeManager.object_type;
+				}
+
+				return null;
+			}
+
+			//
+			// Bases should be null if there are no bases at all
+			//
+			count = bases.Count;
+
+			if (is_class){
+				string name = (string) bases [0];
+				Type first = GetInterfaceOrClass (builder, name, is_class);
+
+				if (first == null){
+					error = true;
+					return null;
+				}
+				
+				if (first.IsClass){
+					parent = first;
+					start = 1;
+				} else {
+					parent = TypeManager.object_type;
+					start = 0;
+				}
+			} else {
+				start = 0;
+			}
+
+			Type [] ifaces = new Type [count-start];
+			
+			for (i = start, j = 0; i < count; i++, j++){
+				string name = (string) bases [i];
+				Type t = GetInterfaceOrClass (builder, name, is_class);
+				
+				if (t == null){
+					error = true;
+					return null;
+				}
+
+				if (is_class == false && !t.IsInterface){
+					Report.Error (527, "In Struct `" + Name + "', type `"+
+						      name +"' is not an interface");
+					error = true;
+					return null;
+				}
+				
+				if (t.IsSealed) {
+					string detail = "";
+					
+					if (t.IsValueType)
+						detail = " (a class can not inherit from a struct)";
+							
+					Report.Error (509, "class `"+ Name +
+						      "': Cannot inherit from sealed class `"+
+						      bases [i]+"'"+detail);
+					error = true;
+					return null;
+				}
+
+				if (t.IsClass) {
+					if (parent != null){
+						Report.Error (527, "In Class `" + Name + "', type `"+
+							      name+"' is not an interface");
+						error = true;
+						return null;
+					}
+				}
+				
+				ifaces [j] = t;
+			}
+
+			return ifaces;
+		}
+		
+		//
+		// Defines the type in the appropriate ModuleBuilder or TypeBuilder.
+		//
+		public TypeBuilder DefineType (object parent_builder)
+		{
+			Type parent;
+			Type [] ifaces;
+			bool error;
+			bool is_class;
+			
+			if (InTransit)
+				return null;
+			
+			InTransit = true;
+			
+			if (this is Class)
+				is_class = true;
+			else
+				is_class = false;
+			
+			ifaces = GetClassBases (parent_builder, is_class, out parent, out error); 
+			
+			if (error)
+				return null;
+			
+			if (parent_builder is ModuleBuilder) {
+				ModuleBuilder builder = (ModuleBuilder) parent_builder;
+				
+				//
+				// Structs with no fields need to have a ".size 1"
+				// appended
+				//
+				if (!is_class && Fields == null)
+					TypeBuilder = builder.DefineType (Name,
+									  TypeAttr,
+									  parent, 
+									  PackingSize.Unspecified, 1);
+				else
+				//
+				// classes or structs with fields
+				//
+					TypeBuilder = builder.DefineType (Name,
+									  TypeAttr,
+									  parent,
+									  ifaces);
+
+			} else {
+				TypeBuilder builder = (TypeBuilder) parent_builder;
+				
+				//
+				// Structs with no fields need to have a ".size 1"
+				// appended
+				//
+				if (!is_class && Fields == null)
+					TypeBuilder = builder.DefineNestedType (Name,
+										TypeAttr,
+										parent, 
+										PackingSize.Unspecified);
+				else
+				//
+				// classes or structs with fields
+				//
+					TypeBuilder = builder.DefineNestedType (Name,
+										TypeAttr,
+										parent,
+										ifaces);
+			}
+
+			RootContext.TypeManager.AddUserType (Name, TypeBuilder, this);
+
+			if (Types != null) {
+				foreach (TypeContainer tc in Types)
+					tc.DefineType (TypeBuilder);
+			}
+			
+			InTransit = false;
+			return TypeBuilder;
+		}
 		
 		//
 		// Populates our TypeBuilder with fields and methods
@@ -610,7 +889,7 @@ namespace CIR {
 					f.Define (this);
 			} 
 
-			if (this is Class){
+			if (this is Class && constructors == null){
 				if (default_constructor == null) 
 					DefineDefaultConstructor (false);
 
@@ -712,6 +991,11 @@ namespace CIR {
 			if (Delegates != null) {
 				foreach (Delegate d in Delegates)
 					d.Define (this);
+			}
+			
+			if (Types != null) {
+				foreach (TypeContainer tc in Types)
+					tc.Populate ();
 			}
 		}
 
@@ -1003,6 +1287,19 @@ namespace CIR {
 
 			if (pending_implementations != null)
 				VerifyPendingMethods ();
+
+			if (types != null)
+				foreach (TypeContainer tc in types)
+					tc.Emit ();
+			
+		}
+
+		public void CloseType ()
+		{
+			TypeBuilder.CreateType ();
+			
+			foreach (TypeContainer tc in Types)
+				tc.CloseType ();
 		}
 
 		string MakeName (string n)
@@ -1575,7 +1872,8 @@ namespace CIR {
 		//
 		public bool IsDefault ()
 		{
-			return  (Parameters == null ? true : Parameters.Empty) &&
+			return  (Parameters.FixedParameters == null ? true : Parameters.Empty) &&
+				(Parameters.ArrayParameter == null ? true : Parameters.Empty) &&
 				(Initializer is ConstructorBaseInitializer) &&
 				(Initializer.Arguments == null);
 		}

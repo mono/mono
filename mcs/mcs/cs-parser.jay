@@ -916,7 +916,7 @@ interface_declaration
 		Interface new_interface;
 		string full_interface_name = MakeName ((string) $4);
 
-		new_interface = new Interface (current_container, full_interface_name, (int) $2, 
+		new_interface = new Interface (rc, current_container, full_interface_name, (int) $2, 
 					       (Attributes) $1, lexer.Location);
 		if (current_interface != null) {
 			Location l = lexer.Location;

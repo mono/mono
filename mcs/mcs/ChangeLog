@@ -1,3 +1,61 @@
+2001-10-11  Ravi Pratap  <ravi@ximian.com>
+
+	* class.cs (TypeContainer::DefineType): Method to actually do the business of
+	defining the type in the Modulebuilder or Typebuilder. This is to take
+	care of nested types which need to be defined on the TypeBuilder using
+	DefineNestedMethod.
+
+	(TypeContainer::GetClassBases): Implement. Essentially the code from the 
+	methods in RootContext, only ported to be part of TypeContainer.
+
+	(TypeContainer::GetInterfaceOrClass): Ditto.
+
+	(TypeContainer::LookupInterfaceOrClass, ::MakeFQN): Ditto.
+
+	* interface.cs (Interface::DefineInterface): New method. Does exactly
+	what RootContext.CreateInterface did earlier, only it takes care of nested types 
+	too.
+
+	(Interface::GetInterfaces): Move from RootContext here and port.
+
+	(Interface::GetInterfaceByName): Same here.
+
+	* rootcontext.cs (ResolveTree): Re-write.
+
+	(PopulateTypes): Re-write.
+
+	* class.cs (TypeContainer::Populate): Populate nested types too.
+	(TypeContainer::Emit): Emit nested members too.
+
+	* typemanager.cs (AddUserType): Do not make use of the FullName property,
+	instead just use the name argument passed in as it is already fully
+	qualified.
+
+	(FindMembers): Check in the Builders to TypeContainer mapping instead of the name
+	to TypeContainer mapping to see if a type is user-defined.
+
+	* class.cs (TypeContainer::CloseType): Implement. 
+
+	(TypeContainer::DefineDefaultConstructor): Use Basename, not Name while creating
+	the default constructor.
+	
+	(TypeContainer::Populate): Fix minor bug which led to creating default constructors
+	twice.
+
+	(Constructor::IsDefault): Fix up logic to determine if it is the default constructor
+
+	* interface.cs (CloseType): Create the type here.
+	
+	* rootcontext.cs (CloseTypes): Re-write to recursively close types by running through
+	the hierarchy.
+
+	Remove all the methods which are now in TypeContainer.
+
+2001-10-10  Ravi Pratap  <ravi@ximian.com>
+
+	* delegate.cs (Define): Re-write bits to define the delegate
+	correctly.
+
 2001-10-10  Miguel de Icaza  <miguel@ximian.com>
 
 	* makefile: Renamed the compiler to `mcs.exe' instead of compiler.exe

@@ -84,139 +84,6 @@ namespace CIR {
 			}
 		}
 
-		//
-		// Returns the Type that represents the interface whose name
-		// is `name'.
-		//
-		
-		Type GetInterfaceTypeByName (string name)
-		{
-			Interface parent;
-			Type t = TypeManager.LookupType (name);
-
-			if (t != null) {
-
-				if (t.IsInterface)
-					return t;
-				
-				string cause;
-				
-				if (t.IsValueType)
-					cause = "is a struct";
-				else if (t.IsClass) 
-					cause = "is a class";
-				else
-					cause = "Should not happen.";
-
-				Report.Error (527, "`"+name+"' " + cause + ", need an interface instead");
-				
-				return null;
-			}
-
-			parent = (Interface) tree.Interfaces [name];
-			if (parent == null){
-				string cause = "is undefined";
-				
-				if (tree.Classes [name] != null)
-					cause = "is a class";
-				else if (tree.Structs [name] != null)
-					cause = "is a struct";
-				
-				Report.Error (527, "`"+name+"' " + cause + ", need an interface instead");
-				return null;
-			}
-
-			t = CreateInterface ((Interface) parent);
-			if (t == null){
-				Report.Error (529,
-					      "Inherited interface `"+name+"' is circular");
-				return null;
-			}
-
-			return t;
-		}
-		
-		//
-		// Returns the list of interfaces that this interface implements
-		// Or null if it does not implement any interface.
-		//
-		// Sets the error boolean accoringly.
-		//
-		Type [] GetInterfaceBases (Interface iface, out bool error)
-		{
-			ArrayList bases = iface.Bases;
-			Type [] tbases;
-			int i;
-
-			error = false;
-			if (bases == null)
-				return null;
-			
-			tbases = new Type [bases.Count];
-			i = 0;
-
-			foreach (string name in iface.Bases){
-				Type t;
-
-				t = GetInterfaceTypeByName (name);
-				if (t == null){
-					error = true;
-					return null;
-				}
-				
-				tbases [i++] = t;
-			}
-
-			return tbases;
-		}
-		
-		//
-		// Creates the Interface @iface using the ModuleBuilder
-		//
-		// TODO:
-		//   Rework the way we recurse, because for recursive
-		//   definitions of interfaces (A:B and B:A) we report the
-		//   error twice, rather than once.  
-		//
-		TypeBuilder CreateInterface (Interface iface)
-		{
-			TypeBuilder tb = iface.TypeBuilder;
-			Type [] ifaces;
-			string name;
-			bool error;
-
-			if (tb != null)
-				return tb;
-			
-			if (iface.InTransit)
-				return null;
-			
-			iface.InTransit = true;
-
-			name = iface.Name;
-
-			ifaces = GetInterfaceBases (iface, out error);
-
-			if (error)
-				return null;
-
-			tb = mb.DefineType (name,
-					    TypeAttributes.Interface |
-					    iface.InterfaceAttr |
-					    TypeAttributes.Abstract,
-					    null,   // Parent Type
-					    ifaces);
-			iface.TypeBuilder = tb;
-
-			interface_resolve_order.Add (iface);
-			
-			TypeManager.AddUserInterface (name, tb, iface);
-
-			iface.InTransit = false;
-
-			return tb;
-		}
-
 		string MakeFQN (string nsn, string name)
 		{
 			string prefix = (nsn == "" ? "" : nsn + ".");
@@ -224,252 +91,6 @@ namespace CIR {
 			return prefix + name;
 		}
 		       
-		Type LookupInterfaceOrClass (string ns, string name, bool is_class, out bool error)
-		{
-			TypeContainer parent;
-			Type t;
-
-			error = false;
-			name = MakeFQN (ns, name);
-			
-			t  = TypeManager.LookupType (name);
-			if (t != null)
-				return t;
-
-			if (is_class){
-				parent = (Class) tree.Classes [name];
-			} else {
-				parent = (Struct) tree.Structs [name];
-			}
-
-			if (parent != null){
-				t = CreateType (parent, is_class);
-				if (t == null){
-					Report.Error (146, "Class definition is circular: `"+name+"'");
-					error = true;
-					return null;
-				}
-
-				return t;
-			}
-
-			return null;
-		}
-		
-		//
-		// returns the type for an interface or a class, this will recursively
-		// try to define the types that it depends on.
-		//
-		Type GetInterfaceOrClass (TypeContainer tc, string name, bool is_class)
-		{
-			Type t;
-			bool error;
-
-			//
-			// Attempt to lookup the class on our namespace
-			//
-			t = LookupInterfaceOrClass (tc.Namespace.Name, name, is_class, out error);
-			if (error)
-				return null;
-			
-			if (t != null) 
-				return t;
-
-			//
-			// Attempt to lookup the class on any of the `using'
-			// namespaces
-			//
-
-			for (Namespace ns = tc.Namespace; ns != null; ns = ns.Parent){
-				ArrayList using_list = ns.UsingTable;
-
-				if (using_list == null)
-					continue;
-
-				foreach (string n in using_list){
-					t = LookupInterfaceOrClass (n, name, is_class, out error);
-					if (error)
-						return null;
-
-					if (t != null)
-						return t;
-				}
-				
-			}
-			Report.Error (246, "Can not find type `"+name+"'");
-			return null;
-		}
-
-		//
-		// This function computes the Base class and also the
-		// list of interfaces that the class or struct @c implements.
-		//
-		// The return value is an array (might be null) of
-		// interfaces implemented (as Types).
-		//
-		// The @parent argument is set to the parent object or null
-		// if this is `System.Object'. 
-		//
-		Type [] GetClassBases (TypeContainer tc, bool is_class, out Type parent, out bool error)
-		{
-			ArrayList bases = tc.Bases;
-			int count;
-			int start, j, i;
-			
-			error = false;
-
-			if (is_class)
-				parent = null;
-			else
-				parent = TypeManager.value_type;
-
-			if (bases == null){
-				if (is_class){
-					if (stdlib)
-						parent = TypeManager.object_type;
-					else if (tc.Name != "System.Object")
-						parent = TypeManager.object_type;
-				} else {
-					//
-					// If we are compiling our runtime,
-					// and we are defining ValueType, then our
-					// parent is `System.Object'.
-					//
-					if (!stdlib && tc. Name == "System.ValueType")
-						parent = TypeManager.object_type;
-				}
-
-				return null;
-			}
-
-			//
-			// Bases should be null if there are no bases at all
-			//
-			count = bases.Count;
-			Debug.Assert (count > 0);
-
-			if (is_class){
-				string name = (string) bases [0];
-				Type first = GetInterfaceOrClass (tc, name, is_class);
-
-				if (first == null){
-					error = true;
-					return null;
-				}
-				
-				if (first.IsClass){
-					parent = first;
-					start = 1;
-				} else {
-					parent = TypeManager.object_type;
-					start = 0;
-				}
-			} else {
-				start = 0;
-			}
-
-			Type [] ifaces = new Type [count-start];
-			
-			for (i = start, j = 0; i < count; i++, j++){
-				string name = (string) bases [i];
-				Type t = GetInterfaceOrClass (tc, name, is_class);
-
-				if (t == null){
-					error = true;
-					return null;
-				}
-
-				if (is_class == false && !t.IsInterface){
-					Report.Error (527, "In Struct `"+tc.Name+"', type `"+
-						      name+"' is not an interface");
-					error = true;
-					return null;
-				}
-				
-				if (t.IsSealed) {
-					string detail = "";
-					
-					if (t.IsValueType)
-						detail = " (a class can not inherit from a struct)";
-							
-					Report.Error (509, "class `"+tc.Name+
-						      "': Cannot inherit from sealed class `"+
-						      bases [i]+"'"+detail);
-					error = true;
-					return null;
-				}
-
-				if (t.IsClass) {
-					if (parent != null){
-						Report.Error (527, "In Class `"+tc.Name+"', type `"+
-							      name+"' is not an interface");
-						error = true;
-						return null;
-					}
-				}
-				
-				ifaces [j] = t;
-			}
-
-			return ifaces;
-		}
-
-		// <remarks>
-		//   Creates the TypeBuilder for the TypeContainer @tc (a Class or a Struct)
-		// </remarks>
-		//
-		TypeBuilder CreateType (TypeContainer tc, bool is_class)
-		{
-			TypeBuilder tb = tc.TypeBuilder;
-			Type parent;
-			Type [] ifaces;
-			bool error;
-			string name;
-			
-			if (tb != null)
-				return tb;
-
-			if (tc.InTransit)
-				return null;
-			tc.InTransit = true;
-
-			name = tc.Name;
-
-			ifaces = GetClassBases (tc, is_class, out parent, out error); 
-
-			if (error)
-				return null;
-
-			type_container_resolve_order.Add (tc);
-
-			//
-			// Structs with no fields need to have a ".size 1"
-			// appended
-			//
-			if (!is_class && tc.Fields == null)
-				tb = mb.DefineType(
-					name,
-					tc.TypeAttr,
-					parent, 
-					PackingSize.Unspecified, 1);
-			else
-				//
-				// classes or structs with fields
-				//
-				tb = mb.DefineType (
-					name,
-					tc.TypeAttr,
-					parent,
-					ifaces);
-			
-			tc.TypeBuilder = tb;
-
-			TypeManager.AddUserType (name, tb, tc);
-			tc.InTransit = false;
-			
-			return tb;
-		}
-
 		// <remarks>
 		//   This function is used to resolve the hierarchy tree.
 		//   It processes interfaces, structs and classes in that order.
@@ -479,39 +100,34 @@ namespace CIR {
 		// </remarks>
 		public void ResolveTree ()
 		{
-			Hashtable ifaces, classes, structs;
-
-			type_container_resolve_order = new ArrayList ();
-			
 			//
 			// Interfaces are processed first, as classes and
 			// structs might inherit from an object or implement
 			// a set of interfaces, we need to be able to tell
 			// them appart by just using the TypeManager.
 			//
-			ifaces = tree.Interfaces;
+
+			TypeContainer root = Tree.Types;
+
+			ArrayList ifaces = root.Interfaces;
 			if (ifaces != null){
 				interface_resolve_order = new ArrayList ();
 				
-				foreach (DictionaryEntry de in ifaces)
-					CreateInterface ((Interface) de.Value);
+				foreach (Interface i in ifaces) {
+					Type t = i.DefineInterface (mb);
+					if (t != null)
+						interface_resolve_order.Add (i);
+				}
+			}
+						
+			type_container_resolve_order = new ArrayList ();
+			
+			foreach (TypeContainer tc in root.Types) {
+				Type t = tc.DefineType (mb);
+				if (t != null)
+					type_container_resolve_order.Add (tc);
 			}
 
-			//
-			// Process structs and classes next.  Our code assumes
-			// this order (just for error reporting purposes).
-			//
-			structs = tree.Structs;
-			if (structs != null){
-				foreach (DictionaryEntry de in structs)
-					CreateType ((Struct) de.Value, false);
-			}
-
-			classes = tree.Classes;
-			if (classes != null){
-				foreach (DictionaryEntry de in classes)
-					CreateType ((Class) de.Value, true);
-			}
 		}
 			
 		// <summary>
@@ -526,16 +142,19 @@ namespace CIR {
 		// </remarks>
 		public void CloseTypes ()
 		{
-			foreach (TypeBuilder t in TypeManager.UserTypes){
-				try {
-					t.CreateType ();
-				} catch (Exception e){
-					Console.WriteLine ("Caught Exception while creating type for " + t);
-					Console.WriteLine (e);
-				}
-			}
-		}
+			TypeContainer root = Tree.Types;
+			
+			ArrayList ifaces = root.Interfaces;
 
+			if (ifaces != null)
+				foreach (Interface i in ifaces) 
+					i.CloseType ();
+			
+			foreach (TypeContainer tc in root.Types)
+				tc.CloseType ();
+			
+		}
+		
 		//
 		// Public function used to locate types, this can only
 		// be used after the ResolveTree function has been invoked.
@@ -545,7 +164,7 @@ namespace CIR {
 		public Type LookupType (TypeContainer tc, string name, bool silent)
 		{
 			Type t;
-
+			
 			t = TypeManager.LookupType (MakeFQN (tc.Namespace.Name, name));
 			if (t != null)
 				return t;
@@ -570,6 +189,11 @@ namespace CIR {
 				}
 			}
 
+			// For the case the type we are looking for is nested within this one.
+			t = TypeManager.LookupType (tc.Name + "." + name);
+			if (t != null)
+				return t;
+			
 			if (!silent)
 				Report.Error (246, "Cannot find type `"+name+"'");
 			
@@ -618,23 +242,10 @@ namespace CIR {
 
 		public void EmitCode ()
 		{
-			Hashtable classes, structs;
+			if (type_container_resolve_order != null)
+				foreach (TypeContainer tc in type_container_resolve_order)
+					tc.Emit ();
 			
-			if ((classes = tree.Classes) != null){
-				foreach (DictionaryEntry de in classes){
-					TypeContainer tc = (TypeContainer) de.Value;
-
-					tc.Emit ();
-				}
-			}
-
-			if ((structs = tree.Structs) != null){
-				foreach (DictionaryEntry de in structs){
-					TypeContainer tc = (TypeContainer) de.Value;
-
-					tc.Emit ();
-				}
-			}
 		}
 		
 		// <summary>

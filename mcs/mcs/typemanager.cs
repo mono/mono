@@ -106,7 +106,7 @@ public class TypeManager {
 	
 	public void AddUserType (string name, TypeBuilder t)
 	{
-		types.Add (t.FullName, t);
+		types.Add (name, t);
 		user_types.Add (t);
 	}
 
@@ -114,7 +114,7 @@ public class TypeManager {
 	{
 		AddUserType (name, t);
 		builder_to_container.Add (t, tc);
-		typecontainers.Add (t.FullName, tc);
+		typecontainers.Add (name, tc);
 	}
 
 	public void AddUserInterface (string name, TypeBuilder t, Interface i)
@@ -293,8 +293,8 @@ public class TypeManager {
 	{
 		TypeContainer tc;
 		
-		tc = (TypeContainer) typecontainers [t.FullName];
-
+		tc = (TypeContainer) builder_to_container [t];
+		
 		if (tc == null)
 			return t.FindMembers (mt, bf, filter, criteria);
 		else 

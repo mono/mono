@@ -16,14 +16,16 @@ using System.Reflection.Emit;
 
 namespace CIR {
 	
-	public class Delegate : DeclSpace {
+	public class Delegate {
 
-		public string name;
+		public string Name;
 		public string type;
 		public int    mod_flags;
 		public Parameters Parameters;
 		public Attributes OptAttributes;
 		public TypeBuilder DelegateBuilder;
+
+		Location loc;
 
 		const int AllowedModifiers =
 			Modifiers.NEW |
@@ -33,26 +35,32 @@ namespace CIR {
 			Modifiers.PRIVATE;
 
 		public Delegate (string type, int mod_flags, string name, Parameters param_list,
-				 Attributes attrs, Location l) : base (name, l)
+				 Attributes attrs, Location loc)
 		{
-			this.name       = name;
+			this.Name       = name;
 			this.type       = type;
 			this.mod_flags  = Modifiers.Check (AllowedModifiers, mod_flags, Modifiers.PUBLIC);
 			Parameters      = param_list;
 			OptAttributes   = attrs;
+			this.loc        = loc;
 		}
 
 		public void Define (TypeContainer parent)
 		{
-			TypeAttributes attr = Modifiers.TypeAttr (ModFlags, parent);
-
+			TypeAttributes attr;
+			
+			if (parent.IsTopLevel)
+				attr = TypeAttributes.NestedPublic | TypeAttributes.Class;
+			else
+				attr = TypeAttributes.Public | TypeAttributes.Class;
+			
 			Type t = parent.LookupType (type, false);
 			Type [] param_types = Parameters.GetParameterInfo (parent);
 			Type base_type = System.Type.GetType ("System.MulticastDelegate");
 
-			DelegateBuilder = parent.TypeBuilder.DefineNestedType (name, attr, base_type);
+			DelegateBuilder = parent.TypeBuilder.DefineNestedType (Name, attr, base_type);
 
-			// FIXME : Need to figure out how to proceed from here. 
+			//DelegateBuilder.CreateType ();
 
 		}
 		

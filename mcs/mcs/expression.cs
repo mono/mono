@@ -3982,7 +3982,7 @@ namespace CIR {
 					return null;
 				
 				Expression ml;
-				
+
 				ml = MemberLookup (ec, type, ".ctor", false,
 						   MemberTypes.Constructor, AllBindingsFlags);
 				
@@ -4012,7 +4012,7 @@ namespace CIR {
 					       "New invocation: Can not find a constructor for this argument list");
 					return null;
 				}
-
+				
 				eclass = ExprClass.Value;
 				return this;
 			}

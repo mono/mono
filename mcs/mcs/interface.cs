@@ -44,6 +44,8 @@ namespace CIR {
 		TypeContainer parent;
 
 		Attributes OptAttributes;
+
+		public readonly RootContext RootContext;
 		
 		// These will happen after the semantic analysis
 		
@@ -60,13 +62,14 @@ namespace CIR {
 			Modifiers.INTERNAL |
 			Modifiers.PRIVATE;
 
-		public Interface (TypeContainer parent, string name, int mod, Attributes attrs, Location l)
+		public Interface (RootContext rc, TypeContainer parent, string name, int mod, Attributes attrs, Location l)
 			: base (name, l)
 		{
 			this.mod_flags = Modifiers.Check (AllowedModifiers, mod, Modifiers.PUBLIC);
 			this.parent = parent;
 			OptAttributes = attrs;
-
+			RootContext = rc;
+			
 			method_builders = new ArrayList ();
 		}
 
@@ -439,6 +442,143 @@ namespace CIR {
 			return true;
 		}
 
+		//
+		// Returns the Type that represents the interface whose name
+		// is `name'.
+		//
+		
+		Type GetInterfaceTypeByName (object builder, string name)
+		{
+			Interface parent;
+			Type t = RootContext.TypeManager.LookupType (name);
+			
+			if (t != null) {
+
+				if (t.IsInterface)
+					return t;
+				
+				string cause;
+				
+				if (t.IsValueType)
+					cause = "is a struct";
+				else if (t.IsClass) 
+					cause = "is a class";
+				else
+					cause = "Should not happen.";
+
+				Report.Error (527, "`"+name+"' " + cause + ", need an interface instead");
+				
+				return null;
+			}
+
+			Tree tree = RootContext.Tree;
+			parent = (Interface) tree.Interfaces [name];
+			if (parent == null){
+				string cause = "is undefined";
+				
+				if (tree.Classes [name] != null)
+					cause = "is a class";
+				else if (tree.Structs [name] != null)
+					cause = "is a struct";
+				
+				Report.Error (527, "`"+name+"' " + cause + ", need an interface instead");
+				return null;
+			}
+			
+			t = parent.DefineInterface (builder);
+			if (t == null){
+				Report.Error (529,
+					      "Inherited interface `"+name+"' is circular");
+				return null;
+			}
+
+			return t;
+		}
+		
+		//
+		// Returns the list of interfaces that this interface implements
+		// Or null if it does not implement any interface.
+		//
+		// Sets the error boolean accoringly.
+		//
+		Type [] GetInterfaceBases (object builder, out bool error)
+		{
+			Type [] tbases;
+			int i;
+
+			error = false;
+			if (Bases == null)
+				return null;
+			
+			tbases = new Type [Bases.Count];
+			i = 0;
+
+			foreach (string name in Bases){
+				Type t;
+				
+				t = GetInterfaceTypeByName (builder, name);
+				if (t == null){
+					error = true;
+					return null;
+				}
+				
+				tbases [i++] = t;
+			}
+			
+			return tbases;
+		}
+		
+		//
+		// <summary>
+		//  Defines the Interface in the appropriate ModuleBuilder or TypeBuilder
+		// </summary>
+		// TODO:
+		//   Rework the way we recurse, because for recursive
+		//   definitions of interfaces (A:B and B:A) we report the
+		//   error twice, rather than once.  
+		
+		public TypeBuilder DefineInterface (object parent_builder)
+		{
+			Type [] ifaces;
+			bool error;
+
+			if (InTransit)
+				return null;
+			
+			InTransit = true;
+			
+			ifaces = GetInterfaceBases (parent_builder, out error);
+
+			if (error)
+				return null;
+
+			if (parent_builder is ModuleBuilder) {
+				ModuleBuilder builder = (ModuleBuilder) parent_builder;
+				
+				TypeBuilder = builder.DefineType (Name,
+								  TypeAttributes.Interface |
+								  InterfaceAttr |
+								  TypeAttributes.Abstract,
+								  null,   // Parent Type
+								  ifaces);
+			} else {
+				TypeBuilder builder = (TypeBuilder) parent_builder;
+
+				TypeBuilder = builder.DefineNestedType (Name,
+									TypeAttributes.Interface |
+									InterfaceAttr |
+									TypeAttributes.Abstract,
+									null,   // Parent Type
+									ifaces);
+			}
+			
+			RootContext.TypeManager.AddUserInterface (Name, TypeBuilder, this);
+			
+			InTransit = false;
+			
+			return TypeBuilder;
+		}
+		
 		// <summary>
 		//   Performs semantic analysis, and then generates the IL interfaces
 		// </summary>
@@ -465,6 +605,12 @@ namespace CIR {
 				foreach (InterfaceIndexer ii in defined_indexer)
 					PopulateIndexer (ii);
 		}
+
+		public void CloseType ()
+		{
+			TypeBuilder.CreateType ();
+		}
+		
 	}
 
 	public class InterfaceMemberBase {
