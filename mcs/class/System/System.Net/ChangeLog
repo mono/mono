@@ -1,3 +1,9 @@
+2004-01-24  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* HttpWebRequest.cs: When retrying a POST request after an authentication
+	failure, resend the body. This fixes bug #51841.
+	* WebConnectionStream.cs: Added properties for getting what's been written.
+
 2004-02-12  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpWebRequest.cs: don't send 'Expect: 100-continue' for 1.0 version.

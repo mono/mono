@@ -62,6 +62,8 @@ namespace System.Net
 		int redirects;
 		bool expectContinue;
 		bool authCompleted;
+		byte[] bodyBuffer;
+		int bodyBufferLength;
 		
 		// Constructors
 		
@@ -853,6 +855,15 @@ namespace System.Net
 			SendRequestHeaders ();
 
 			haveRequest = true;
+			
+			if (bodyBuffer != null) {
+				// The body has been written and buffered. The request "user"
+				// won't write it again, so we must do it.
+				writeStream.Write (bodyBuffer, 0, bodyBufferLength);
+				bodyBuffer = null;
+				writeStream.Close ();
+			}
+
 			if (asyncWrite != null) {
 				asyncWrite.SetCompleted (false, stream);
 				asyncWrite.DoCallback ();
@@ -932,8 +943,19 @@ namespace System.Net
 				code  = webResponse.StatusCode;
 				if (!authCompleted && ((code == HttpStatusCode.Unauthorized && credentials != null) ||
 							code == HttpStatusCode.ProxyAuthenticationRequired)) {
-					if (CheckAuthorization (webResponse, code))
-						return true;
+					if (CheckAuthorization (webResponse, code)) {
+						// Keep the written body, so it can be rewritten in the retry
+						if (allowBuffering) {
+							bodyBuffer = writeStream.WriteBuffer;
+							bodyBufferLength = writeStream.WriteBufferLength;
+							return true;
+						}
+						
+						writeStream.InternalClose ();
+						writeStream = null;
+						webResponse = null;
+						throw new WebException ("This request requires buffering of data for authentication or redirection to be sucessful.");
+					}
 				}
 
 				if ((int) code >= 400) {

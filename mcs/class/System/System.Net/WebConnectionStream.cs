@@ -67,6 +67,14 @@ namespace System.Net
 			set { readBufferSize = value; }
 		}
 		
+		internal byte[] WriteBuffer {
+			get { return writeBuffer.GetBuffer (); }
+		}
+
+		internal int WriteBufferLength {
+			get { return (int) writeBuffer.Length; }
+		}
+
 		internal void CheckComplete ()
 		{
 			if (!nextReadCalled && readBufferSize - readBufferOffset == contentLength) {
