@@ -1346,7 +1346,7 @@ namespace System.Drawing {
 		    if (bufsz > 0) {
 		      try {
 			bytesRead = stream.Read (managedBuf, 0, bufsz);
-		      } catch (IOException ex) {
+		      } catch (IOException) {
 			return -1;
 		      }
 			
