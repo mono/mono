@@ -4,17 +4,11 @@
 //
 // Author: Marcin Szczepanski (marcins@zipworld.com.au)
 //
-// TODO: Implement the AppendFormat methods.  Wasn't sure how
-// best to do this at this early stage, might want to see
-// how the String class and the IFormatProvider / IFormattable interfaces
-// pan out first.
-//  
 // TODO: Make sure the coding complies to the ECMA draft, there's some
 // variable names that probably don't (like sString)
 //
 namespace System.Text {
 	
-	[MonoTODO ("Implement AppendFormat methods and IFormatProvider, IFormattable")]
 	[Serializable]
 	public sealed class StringBuilder {
 
@@ -89,10 +83,9 @@ namespace System.Text {
 	
 		public StringBuilder( string value, int capacity) : this(value, 0, value.Length, capacity) {}
 	
-		[MonoTODO]
 		public int MaxCapacity {
 			get {
-				// TODO: Need to look at the memory of the system to return a useful value here
+				// MS runtime always returns Int32.MaxValue.
 				return sMaxCapacity;
 			}
 		}
