@@ -1,4 +1,9 @@
 
+Wed Feb 23 18:54:26 CET 2005 Paolo Molaro <lupus@ximian.com>
+
+	* reflection.c: properly flag a Type argument to a
+	named custom attr value (bug #72248).
+
 Wed Feb 23 18:32:35 CET 2005 Paolo Molaro <lupus@ximian.com>
 
 	* reflection.c: reduce code duplication in named custom
