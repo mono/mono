@@ -184,11 +184,19 @@ namespace System.Web.Mail {
 			FileInfo file = new FileInfo (rbp.Path);
 			MailHeader header = new MailHeader ();
 			header.ContentLocation = rbp.Path;
-			header.ContentType = String.Format ("application/octet-stream");
-			if (rbp.Name != null)
-				header.Data.Add ("Content-ID", rbp.Name);
+			header.ContentType = String.Format (MimeTypes.GetMimeType (file.Name) + "; name=\"{0}\"",file.Name);
+			//If content id and ContentLocation both are present
+			//in mime header of a mail, than RelatedBodyPart of mail
+			//doesnt show up in a machine other than from which mail
+			//was sent, and hence only one of them is inserted in 
+			//header. Need to check how the things go when another 
+			//body part refers the content with the content id specified
+			/*if (rbp.Name != null)
+				header.Data.Add ("Content-ID", "<"+rbp.Name+">");*/
+				
+			header.ContentTransferEncoding = "Base64";
+			header.ContentDisposition = String.Format( "inline; filename=\"{0}\"" , file.Name );
 			
-			header.ContentTransferEncoding = "BASE64";
 			smtp.WriteHeader (header);
 			FileStream rbpStream = new FileStream (file.FullName, FileMode.Open);
 			IAttachmentEncoder rbpEncoder = new Base64AttachmentEncoder ();
@@ -217,8 +225,7 @@ namespace System.Web.Mail {
 		MailHeader aHeader = new MailHeader();
 		
 		aHeader.ContentType = 
-		    String.Format( "application/octet-stream; name=\"{0}\"", 
-				   fileInfo.Name  );
+		    String.Format (MimeTypes.GetMimeType (fileInfo.Name) + "; name=\"{0}\"",fileInfo.Name);
 		
 		aHeader.ContentDisposition = 
 		    String.Format( "attachment; filename=\"{0}\"" , fileInfo.Name );

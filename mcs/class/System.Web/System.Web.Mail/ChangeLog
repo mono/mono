@@ -1,3 +1,9 @@
+2004-08-27  Sanjay Gupta <gsanjay@novell.com>
+	
+	* MailMessageWrapper.cs: Added a comment to add Date header.
+	* SmtpClient.cs: Updated functionality to add RelatedBodyPart to
+	MIME message.
+
 2004-08-26  Sanjay Gupta <gsanjay@novell.com>
 
 	* SmtpClient.cs: Added functionality to add RelatedBodyPart to 

@@ -163,7 +163,13 @@ namespace System.Web.Mail {
 		header.ContentTransferEncoding = "8bit";
 	    }
 
-	    
+	    // Add Date header, we were missing earlier 27/08/04
+	    // RFC822 requires date to be in format Fri, 27 Aug 2004 20:13:20 +0530
+	    //DateTime.Now gives in format 8/27/2004 8:13:00 PM
+	    // Need to explore further dateTime formats available or do we need
+	    // to write a function to convert.
+		//header.Data.Add ("Date", DateTime.Now.ToString()); 
+
 	    // Add the custom headers
 	    foreach( string key in message.Headers.Keys )
 		header.Data[ key ] = (string)this.message.Headers[ key ];
