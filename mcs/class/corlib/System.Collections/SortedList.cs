@@ -373,15 +373,15 @@ namespace System.Collections {
 
 		public virtual int IndexOfValue (object value)
 		{
-                        if (inUse == 0)
-                                return -1;
-                        
-                        for (int i = 0; i < inUse; i ++) {
-                                Slot current = this.table [i];
+			if (inUse == 0)
+				return -1;
 
-                                if (Equals (current.value, value))
+			for (int i = 0; i < inUse; i ++) {
+				Slot current = this.table [i];
+
+				if (Equals (value, current.value))
 					return i;
-                        }
+			}
 
 			return -1;
 		}

@@ -204,7 +204,7 @@ namespace System.Collections {
 					}
 			} else {
 					for (int i = 0; i < count; i++) {
-						if (contents[i].Equals(obj))
+						if (obj.Equals (contents[i]))
 							return true; 
 					}
 			}

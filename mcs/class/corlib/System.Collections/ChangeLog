@@ -1,3 +1,7 @@
+2005-02-19  Kazuki Oikawa  <kazuki@panicode.com>
+
+	* SortedList.cs, Stack.cs: Reverse the order in the Equals calls.
+
 2004-12-21  Ben Maurer  <bmaurer@ximian.com>
 
 	* Hashtable.cs (get_Item): duplicate Find here, as we can
