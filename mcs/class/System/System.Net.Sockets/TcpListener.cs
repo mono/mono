@@ -85,7 +85,7 @@ namespace System.Net.Sockets
 		/// <summary>
 		/// The local end point
 		/// </summary>
-		public EndPoint LocalEndPoint
+		public EndPoint LocalEndpoint
 		{
 			get { return server.LocalEndPoint; }
 		}

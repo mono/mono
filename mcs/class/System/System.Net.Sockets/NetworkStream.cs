@@ -16,6 +16,7 @@ namespace System.Net.Sockets
 		Socket socket;
 		bool owns_socket;
 		bool readable, writeable;
+		bool disposed = false;
 		
 		public NetworkStream (Socket socket)
 			: this (socket, FileAccess.ReadWrite, false)
@@ -72,7 +73,11 @@ namespace System.Net.Sockets
 
 		public virtual bool DataAvailable {
 			get {
-				return socket.Available > 0;
+				try {
+					return socket.Available > 0;
+				} finally {
+					CheckDisposed ();
+				}
 			}
 		}
 
@@ -124,45 +129,50 @@ namespace System.Net.Sockets
 		public override IAsyncResult BeginRead (byte [] buffer, int offset, int size,
 							AsyncCallback callback, object state)
 		{
-			IAsyncResult retval;
-			
-			if (buffer == null)
-				throw new ArgumentNullException ();
-			if (socket == null)
-				throw new ObjectDisposedException ("socket");
-			int len = buffer.Length;
-			if (offset >= len || size != len)
-				throw new ArgumentOutOfRangeException ();
-
 			try {
-				retval = socket.BeginReceive (buffer, offset, size, 0, callback, state);
-			} catch {
-				throw new IOException ("BeginReceive failure");
-			}
+				IAsyncResult retval;
 
-			return retval;
+				if (buffer == null)
+					throw new ArgumentNullException ();
+				int len = buffer.Length;
+				if (offset >= len || size != len)
+					throw new ArgumentOutOfRangeException ();
+
+				try {
+					retval = socket.BeginReceive (buffer, offset, size, 0, callback, state);
+				} catch {
+					throw new IOException ("BeginReceive failure");
+				}
+
+				return retval;
+			} finally {		
+				CheckDisposed ();				
+			}
 		}
 
 		public override IAsyncResult BeginWrite (byte [] buffer, int offset, int size,
 							AsyncCallback callback, object state)
 		{
-			IAsyncResult retval;
-			
-			if (buffer == null)
-				throw new ArgumentNullException ();
-			if (socket == null)
-				throw new ObjectDisposedException ("socket");
-			int len = buffer.Length;
-			if (len < size)
-				throw new ArgumentException ();
-
 			try {
-				retval = socket.BeginSend (buffer, offset, size, 0, callback, state);
-			} catch {
-				throw new IOException ("BeginWrite failure");
-			}
+				IAsyncResult retval;
 
-			return retval;
+				if (buffer == null)
+					throw new ArgumentNullException ();
+
+				int len = buffer.Length;
+				if (len < size)
+					throw new ArgumentException ();
+
+				try {
+					retval = socket.BeginSend (buffer, offset, size, 0, callback, state);
+				} catch {
+					throw new IOException ("BeginWrite failure");
+				}
+
+				return retval;
+			} finally {
+				CheckDisposed ();
+			}
 		}
 
 		~NetworkStream ()
@@ -172,45 +182,55 @@ namespace System.Net.Sockets
 		
 		public override void Close ()
 		{
-			Dispose (true);
+			((IDisposable) this).Dispose ();
 		}
 
 		protected virtual void Dispose (bool disposing)
 		{
-			if (owns_socket)
-				if (socket != null)
-					socket.Close ();
+			if (disposed) 
+				return;
+			disposed = true;
+			
+			if (owns_socket) {
+				Socket s = socket;
+				if (s != null)
+					s.Close ();
+			}
 			socket = null;
 		}
 
 		public override int EndRead (IAsyncResult ar)
 		{
-			int res;
-			
-			if (ar == null)
-				throw new ArgumentNullException ();
-			if (socket == null)
-				throw new ObjectDisposedException ("socket");
-
 			try {
-				res = socket.EndReceive (ar);
-			} catch {
-				throw new IOException ("EndRead failure");
+				int res;
+
+				if (ar == null)
+					throw new ArgumentNullException ();
+
+				try {
+					res = socket.EndReceive (ar);
+				} catch {
+					throw new IOException ("EndRead failure");
+				}
+				return res;
+			} finally {
+				CheckDisposed ();
 			}
-			return res;
 		}
 
 		public override void EndWrite (IAsyncResult ar)
 		{
-			if (ar == null)
-				throw new ArgumentNullException ();
-			if (socket == null)
-				throw new ObjectDisposedException ("socket");
+			try {			
+				if (ar == null)
+					throw new ArgumentNullException ();
 
-			try {
-				socket.EndSend (ar);
-			} catch {
-				throw new IOException ("EndWrite failure");
+				try {
+					socket.EndSend (ar);
+				} catch {
+					throw new IOException ("EndWrite failure");
+				}
+			} finally {
+				CheckDisposed ();
 			}
 		}
 
@@ -222,23 +242,28 @@ namespace System.Net.Sockets
 		void IDisposable.Dispose ()
 		{
 			Dispose (true);
+			GC.SuppressFinalize (this);
 		}
 
 		public override int Read (byte [] buffer, int offset, int size)
 		{
-			int res;
-					
-			if (buffer == null)
-				throw new ArgumentNullException ();
-			if (buffer.Length < size)
-				throw new ArgumentException ();
-
 			try {
-				res = socket.Receive (buffer, offset, size, 0);
-			} catch {
-				throw new IOException ("Read failure");
+				int res;
+
+				if (buffer == null)
+					throw new ArgumentNullException ();
+				if (buffer.Length < size)
+					throw new ArgumentException ();
+
+				try {
+					res = socket.Receive (buffer, offset, size, 0);
+				} catch {
+					throw new IOException ("Read failure");
+				}
+				return res;
+			} finally { 
+				CheckDisposed ();
 			}
-			return res;
 		}
 
 		public override long Seek (long offset, SeekOrigin origin)
@@ -257,16 +282,26 @@ namespace System.Net.Sockets
 
 		public override void Write (byte [] buffer, int offset, int size)
 		{
-			if (buffer == null)
-				throw new ArgumentNullException ();
-			if (buffer.Length < size)
-				throw new ArgumentException ();
 			try {
-				socket.Send (buffer, offset, size, 0);
-			} catch {
-				throw new IOException ("Write failure"); 
+				if (buffer == null)
+					throw new ArgumentNullException ();
+				if (buffer.Length < size)
+					throw new ArgumentException ();
+				try {
+					socket.Send (buffer, offset, size, 0);
+				} catch {
+					throw new IOException ("Write failure"); 
+				}
+			} finally {
+				CheckDisposed ();
 			}
 		}
+		
+		private void CheckDisposed ()
+		{
+			if (disposed)
+				throw new ObjectDisposedException (GetType().FullName);
+		}		
 	     
 	}
 }

@@ -227,7 +227,7 @@ namespace System.Net.Sockets
 		/// </summary>
 		public void Close ()
 		{
-			Dispose();
+			((IDisposable) this).Dispose ();
 		}
 		
 		/// <summary>
@@ -273,23 +273,20 @@ namespace System.Net.Sockets
 		[MonoTODO]
 		public void Connect (string hostname, int port)
 		{
-			try {
-				IPHostEntry host = Dns.GetHostByName(hostname);
-				/* TODO: This will connect to the first IP address returned
-				from GetHostByName.  Is that right? */
-				Connect(new IPEndPoint(host.AddressList[0], port));
-			} finally {
-				CheckDisposed ();
-			}
+			CheckDisposed ();
+			IPHostEntry host = Dns.GetHostByName(hostname);
+			/* TODO: This will connect to the first IP address returned
+			from GetHostByName.  Is that right? */
+			Connect(new IPEndPoint(host.AddressList[0], port));
 		}
 		
 		/// <summary>
 		/// Gets rid of all managed resources
 		/// </summary>
-		public void Dispose()
+		void IDisposable.Dispose ()
 		{
-			Dispose(true);
-			GC.SuppressFinalize(this);
+			Dispose (true);
+			GC.SuppressFinalize (this);
 		}
 
 		/// <summary>
@@ -312,8 +309,8 @@ namespace System.Net.Sockets
 				s.Close();
 				active = false;
 				s = null;
-				client = null;
 			}
+			client = null;
 		}
 		
 		/// <summary>
@@ -321,7 +318,7 @@ namespace System.Net.Sockets
 		/// </summary>
 		~TcpClient ()
 		{
-			Dispose(false);
+			Dispose (false);
 		}
 		
 		/// <returns>A NetworkStream object connected to the

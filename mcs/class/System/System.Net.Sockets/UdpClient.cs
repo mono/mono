@@ -28,9 +28,7 @@ namespace System.Net.Sockets
 
 		public UdpClient (int port)
 		{
-			if (port < IPEndPoint.MinPort || port > IPEndPoint.MaxPort)
-				throw new ArgumentException ("Invalid port");
-
+			// IPEndPoint throws ArgumentException when port is invalid
 			localEP = new IPEndPoint (IPAddress.Any, port);
 			InitSocket ();
 		}
@@ -69,7 +67,7 @@ namespace System.Net.Sockets
 #region Close
 		public void Close ()
 		{
-			this.Dispose ();	
+			((IDisposable) this).Dispose ();	
 		}
 #endregion
 #region Connect
@@ -94,7 +92,7 @@ namespace System.Net.Sockets
 		}
 #endregion
 #region Multicast methods
-		public void DropMulticastGroup(IPAddress multicastAddr)
+		public void DropMulticastGroup (IPAddress multicastAddr)
 		{
 			try {
 				socket.SetSocketOption (SocketOptionLevel.IP, SocketOptionName.DropMembership,
@@ -104,7 +102,7 @@ namespace System.Net.Sockets
 			}
 		}
 
-		public void JoinMulticastGroup(IPAddress multicastAddr)
+		public void JoinMulticastGroup (IPAddress multicastAddr)
 		{
 			try {
 				socket.SetSocketOption (SocketOptionLevel.IP, SocketOptionName.AddMembership,
@@ -114,10 +112,10 @@ namespace System.Net.Sockets
 			}
 		}
 
-		public void JoinMulticastGroup(IPAddress multicastAddr, int timeToLive)
+		public void JoinMulticastGroup (IPAddress multicastAddr, int timeToLive)
 		{
+			JoinMulticastGroup (multicastAddr);
 			try {
-				JoinMulticastGroup (multicastAddr);
 				socket.SetSocketOption (SocketOptionLevel.IP, SocketOptionName.MulticastTimeToLive,
 							timeToLive);
 			} finally {
@@ -232,7 +230,7 @@ namespace System.Net.Sockets
 */
 
 #region Disposing
-		public void Dispose()
+		void IDisposable.Dispose ()
 		{
 			Dispose (true);
 			GC.SuppressFinalize (this);

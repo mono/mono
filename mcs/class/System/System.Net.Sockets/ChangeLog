@@ -1,6 +1,7 @@
 2002-05-17  Lawrence Pit <loz@cable.a2000.nl>
-	* UdpClient.cs and TcpClient.cs: modified disposable routines, added
-	checks for disposed state.
+ 	* TcpListener.cs: Renamed LocalEndPoint to LocalEndpoint
+	* NetworkStream.cs, UdpClient.cs and TcpClient.cs: modified disposable 
+	routines, added	checks for disposed state.
 	* UdpClient.cs: commented out GetHashCode and Equals as it's not
 	overriden in ms.net implementation.
 
