@@ -1,3 +1,16 @@
+2003-06-20  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* CodeCompiler.cs: Nearly completely implemented
+	* CodeDomProvider.cs: Added missing Attribute, restyled according to style guidelines
+	* CodeGenerator.cs: Fixed visibilies, added missing members, implemented members, stubbed out missing member, restyled according to style guidelines
+	* CodeParser.cs: Added and implemented (ok no real implementation needed ;)
+	* CompilerErrorCollection.cs: Removed unneeded MonoTODOs, restyled according to style guidelines
+	* CompilerParameters.cs: Fixed wrong properties, Added Initializers, restyled according to style guidelines
+	* CompilerResults.cs: Added Evidence property, added initial values
+	* Executor.cs: Added and partially implemented (should probably be used by CodeCompiler)
+	
+	* CompilerOptions.cs: Deleted this file (such a class does not exist)
+	
 2003-05-16  Dick Porter  <dick@ximian.com>
 
 	* TempFileCollection.cs: Implement

@@ -1,5 +1,5 @@
 //
-// System.CodeDom.Compiler CodeDomProvider Class implementation
+// System.CodeDom.Compiler.CodeDomProvider.cs
 //
 // Author:
 //   Daniel Stodden (stodden@in.tum.de)
@@ -12,9 +12,8 @@ using System.IO;
 
 namespace System.CodeDom.Compiler
 {
-	[ToolboxItem("")]
-	public abstract class CodeDomProvider
-		: Component
+	[ToolboxItem (""), DesignerCategory ("Component")]
+	public abstract class CodeDomProvider : Component
 	{
 		//
 		// Constructors
@@ -45,12 +44,12 @@ namespace System.CodeDom.Compiler
 
 		public abstract ICodeGenerator CreateGenerator();
 		
-		public virtual ICodeGenerator CreateGenerator( string fileName )
+		public virtual ICodeGenerator CreateGenerator (string fileName)
 		{
 			return CreateGenerator();
 		}
 
-		public virtual ICodeGenerator CreateGenerator( TextWriter output )
+		public virtual ICodeGenerator CreateGenerator (TextWriter output)
 		{
 			return CreateGenerator();
 		}
@@ -60,7 +59,7 @@ namespace System.CodeDom.Compiler
 			return null;
 		}
 
-		public virtual TypeConverter GetConverter( Type type )
+		public virtual TypeConverter GetConverter (Type type)
 		{
 			return TypeDescriptor.GetConverter (type);
 		}

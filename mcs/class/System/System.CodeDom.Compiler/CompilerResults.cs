@@ -1,11 +1,14 @@
 //
-// System.CodeDom.Compiler CompilerResults Class implementation
+// System.CodeDom.Compiler.CompilerResults.cs
 //
-// Author:
+// Authors:
 //   Daniel Stodden (stodden@in.tum.de)
+//   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //
 // (C) 2002 Ximian, Inc.
 //
+
+using System.Security.Policy;
 
 namespace System.CodeDom.Compiler
 {
@@ -15,16 +18,19 @@ namespace System.CodeDom.Compiler
 	public class CompilerResults
 	{
 		private Assembly compiledAssembly;
-		private CompilerErrorCollection errors;
-		private int nativeCompilerReturnValue;
-		private StringCollection output;
+		private CompilerErrorCollection errors = new CompilerErrorCollection ();
+		#if (NET_1_1)
+			private Evidence evidence;
+		#endif
+		private int nativeCompilerReturnValue = 0;
+		private StringCollection output = new StringCollection ();
 		private string pathToAssembly;
 		private TempFileCollection tempFiles;
 		
 		//
 		// Constructors
 		//
-		public CompilerResults( TempFileCollection tempFiles )
+		public CompilerResults (TempFileCollection tempFiles)
 		{
 			this.tempFiles = tempFiles;
 		}
@@ -43,11 +49,22 @@ namespace System.CodeDom.Compiler
 
 		public CompilerErrorCollection Errors {
 			get {
-				if ( errors == null )
+				if (errors == null)
 					errors = new CompilerErrorCollection();
 				return errors;
 			}
 		}
+
+		#if (NET_1_1)
+		public Evidence Evidence {
+			get {
+				return evidence;
+			}
+			set {
+				evidence = value;
+			}
+		}
+		#endif
 
 		public int NativeCompilerReturnValue {
 			get {
@@ -60,7 +77,7 @@ namespace System.CodeDom.Compiler
 
 		public StringCollection Output {
 			get {
-				if ( output == null )
+				if (output == null)
 					output = new StringCollection();
 				return output;
 			}

@@ -1,19 +1,18 @@
 //
-// System.CodeDom.Compiler CompilerErrorCollection Class implementation
+// System.CodeDom.Compiler.CompilerErrorCollection.cs
 //
 // Authors:
-// 	Daniel Stodden (stodden@in.tum.de)
-//	Gonzalo Paniagua Javier (gonzalo@ximian.com)
+//   Daniel Stodden (stodden@in.tum.de)
+//   Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
 // (C) 2002 Ximian, Inc. (http://www.ximian.com)
 //
 using System.Collections;
 namespace System.CodeDom.Compiler
 {
-	[MonoTODO]
+	[Serializable ()]
 	public class CompilerErrorCollection : CollectionBase
 	{
-		[MonoTODO]
 		public CompilerErrorCollection ()
 		{
 		}
@@ -68,14 +67,12 @@ namespace System.CodeDom.Compiler
 			InnerList.Remove(value);
 		}
 
-		public CompilerError this [int index]
-		{
+		public CompilerError this [int index] {
 			get { return (CompilerError) InnerList[index]; }
 			set { InnerList[index]=value; }
 		}
 
-		public bool HasErrors
-		{
+		public bool HasErrors {
 			get {
 				foreach (CompilerError error in InnerList)
 					if (!error.IsWarning) return true;
@@ -83,8 +80,7 @@ namespace System.CodeDom.Compiler
 			}
 		}
 
-		public bool HasWarnings
-		{
+		public bool HasWarnings {
 			get {
 				foreach (CompilerError error in InnerList)
 					if (error.IsWarning) return true;

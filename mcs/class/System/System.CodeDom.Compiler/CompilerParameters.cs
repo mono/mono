@@ -1,30 +1,37 @@
 //
-// System.CodeDom.Compiler CompilerParameters Class implementation
+// System.CodeDom.Compiler.CompilerParameters.cs
 //
-// Author:
+// Authors:
 //   Daniel Stodden (stodden@in.tum.de)
+//   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //
 // (C) 2002 Ximian, Inc.
 //
 
 using System.Collections.Specialized;
+using System.Security.Policy;
+using System.Runtime.InteropServices;
 
 namespace System.CodeDom.Compiler
 {
+	[ComVisible (false)]
 	public class CompilerParameters
 	{
-		private CompilerOptions compilerOptions;
-		private bool generateExecutables;
-		private bool generateInMemory;
-		private bool includeDebugInformation;
+		private string compilerOptions;
+		#if (NET_1_1)
+			private Evidence evidence;
+		#endif
+		private bool generateExecutable = false;
+		private bool generateInMemory = false;
+		private bool includeDebugInformation = false;
 		private string mainClass;
 		private string outputAssembly;
 		private StringCollection referencedAssemblies;
 		private TempFileCollection tempFiles;
-		private bool treatWarningsAsErrors;
-		private IntPtr userToken;
-		private int warningLevel;
-		private string win32Resources;
+		private bool treatWarningsAsErrors = false;
+		private IntPtr userToken = IntPtr.Zero;
+		private int warningLevel = -1;
+		private string win32Resource;
 
 		//
 		// Constructors
@@ -33,32 +40,31 @@ namespace System.CodeDom.Compiler
 		{
 		}
 		
-		public CompilerParameters( string[] assemblyNames )
+		public CompilerParameters (string[] assemblyNames)
 		{
-			referencedAssemblies=new StringCollection();
-			referencedAssemblies.AddRange(assemblyNames);
+			referencedAssemblies = new StringCollection();
+			referencedAssemblies.AddRange (assemblyNames);
 		}
 
-		public CompilerParameters( string[] assemblyNames, string output )
+		public CompilerParameters (string[] assemblyNames, string output)
 		{
-			referencedAssemblies=new StringCollection();
-			referencedAssemblies.AddRange(assemblyNames);
-			outputAssembly=output;
+			referencedAssemblies = new StringCollection();
+			referencedAssemblies.AddRange (assemblyNames);
+			outputAssembly = output;
 		}
 
-		public CompilerParameters( string[] assemblyNames, string output, bool includeDebugInfo )
+		public CompilerParameters (string[] assemblyNames, string output, bool includeDebugInfo)
 		{
-			referencedAssemblies=new StringCollection();
-			referencedAssemblies.AddRange(assemblyNames);
-			outputAssembly=output;
-			includeDebugInformation=includeDebugInfo;
+			referencedAssemblies = new StringCollection();
+			referencedAssemblies.AddRange (assemblyNames);
+			outputAssembly = output;
+			includeDebugInformation = includeDebugInfo;
 		}
 
-		
 		//
 		// Properties
 		//
-		public CompilerOptions CompilerOptions {
+		public string CompilerOptions {
 			get {
 				return compilerOptions;
 			}
@@ -67,12 +73,23 @@ namespace System.CodeDom.Compiler
 			}
 		}
 
-		public bool GenerateExecutables {
+		#if (NET_1_1)
+		public Evidence Evidence {
 			get {
-				return generateExecutables;
+				return evidence;
 			}
 			set {
-				generateExecutables = value;
+				evidence = value;
+			}
+		}
+		#endif
+
+		public bool GenerateExecutable {
+			get {
+				return generateExecutable;
+			}
+			set {
+				generateExecutable = value;
 			}
 		}
 
@@ -157,13 +174,13 @@ namespace System.CodeDom.Compiler
 			}
 		}
 		
-		public string Win32Resources {
+		public string Win32Resource {
 			get {
-				return win32Resources;
+				return win32Resource;
 			}
 			set {
-				win32Resources = value;
+				win32Resource = value;
 			}
 		}
 	}
-};
+}
