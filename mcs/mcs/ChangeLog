@@ -1,13 +1,17 @@
 2002-08-03  Martin Baulig  <martin@gnome.org>
 
+	* interface.cs (Interface.GetInterfaceBases): Check whether all
+	base interfaces are at least as accessible than the current one.
+
 	* class.cs (TypeContainer.GetClassBases): Check whether base types
 	are at least as accessible than the current type.
 	(TypeContainer.AsAccessible): Implemented and made non-static.
-	(MemberBase.CheckParameters): Report a CS0051 if
-	TypeContainer.AsAccessible returns false.
+	(MemberBase.CheckParameters): Report errors if the accessibility
+	checks fail.
 
 	* delegate.cs (Delegate.Delegate): The default visibility is
 	internal for top-level types and private for nested types.
+	(Delegate.Define): Report errors if the accessibility checks fail.
 
 	* enum.cs (Enum.Enum): The default visibility is internal for
 	top-level types and private for nested types.

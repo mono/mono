@@ -142,16 +142,26 @@ namespace Mono.CSharp {
 
 			// Check accessibility
 			foreach (Type partype in param_types)
-				if (!container.AsAccessible (partype, ModFlags))
+				if (!container.AsAccessible (partype, ModFlags)) {
+					Report.Error (59, Location,
+						      "Inconsistent accessibility: parameter type `" +
+						      TypeManager.CSharpName (partype) + "` is less " +
+						      "accessible than delegate `" + Name + "'");
 					return false;
+				}
 			
  			ReturnType = ResolveTypeExpr (ReturnType, false, Location);
    			ret_type = ReturnType.Type;
 			if (ret_type == null)
 				return false;
 
-			if (!container.AsAccessible (ret_type, ModFlags))
+			if (!container.AsAccessible (ret_type, ModFlags)) {
+				Report.Error (58, Location,
+					      "Inconsistent accessibility: return type `" +
+					      TypeManager.CSharpName (ret_type) + "` is less " +
+					      "accessible than delegate `" + Name + "'");
 				return false;
+			}
 
 			//
 			// We don't have to check any others because they are all

@@ -689,7 +689,14 @@ namespace Mono.CSharp {
 					error = true;
 					return null;
 				}
-				
+
+				if (!Parent.AsAccessible (t, ModFlags))
+					Report.Error (61, Location,
+						      "Inconsistent accessibility: base interface `" +
+						      TypeManager.CSharpName (t) + "' is less " +
+						      "accessible than interface `" +
+						      Name + "'");
+
 				tbases [i++] = t;
 			}
 			

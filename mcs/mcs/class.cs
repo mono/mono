@@ -714,14 +714,6 @@ namespace Mono.CSharp {
 					}
 				}
 
-				if (!AsAccessible (t, ModFlags))
-					Report.Error (60, Location,
-						      "Inconsistent accessibility: base class `" +
-						      TypeManager.CSharpName (parent) + "' is less " +
-						      "accessible than class `" +
-						      Name + "'");
-
-				
 				ifaces [j] = t;
 			}
 
@@ -2869,15 +2861,23 @@ namespace Mono.CSharp {
 			bool error = false;
 
 			foreach (Type partype in parameters){
-				if (!parent.AsAccessible (partype, ModFlags)) {
+				if (partype.IsPointer && !UnsafeOK (parent))
+					error = true;
+
+				if (parent.AsAccessible (partype, ModFlags))
+					continue;
+
+				if (this is Indexer)
+					Report.Error (55, Location,
+						      "Inconsistent accessibility: parameter type `" +
+						      TypeManager.CSharpName (partype) + "' is less " +
+						      "accessible than indexer `" + Name + "'");
+				else
 					Report.Error (51, Location,
 						      "Inconsistent accessibility: parameter type `" +
 						      TypeManager.CSharpName (partype) + "' is less " +
 						      "accessible than method `" + Name + "'");
-					error = true;
-				}
-				if (partype.IsPointer && !UnsafeOK (parent))
-					error = true;
+				error = true;
 			}
 
 			return !error;
@@ -2899,8 +2899,29 @@ namespace Mono.CSharp {
 				return false;
 
 			// verify accessibility
-			if (!parent.AsAccessible (MemberType, ModFlags))
+			if (!parent.AsAccessible (MemberType, ModFlags)) {
+				if (this is Property)
+					Report.Error (53, Location,
+						      "Inconsistent accessibility: property type `" +
+						      TypeManager.CSharpName (MemberType) + "' is less " +
+						      "accessible than property `" + Name + "'");
+				else if (this is Indexer)
+					Report.Error (54, Location,
+						      "Inconsistent accessibility: indexer return type `" +
+						      TypeManager.CSharpName (MemberType) + "' is less " +
+						      "accessible than indexer `" + Name + "'");
+				else if (this is Method)
+					Report.Error (50, Location,
+						      "Inconsistent accessibility: return type `" +
+						      TypeManager.CSharpName (MemberType) + "' is less " +
+						      "accessible than method `" + Name + "'");
+				else
+					Report.Error (52, Location,
+						      "Inconsistent accessibility: field type `" +
+						      TypeManager.CSharpName (MemberType) + "' is less " +
+						      "accessible than field `" + Name + "'");
 				return false;
+			}
 
 			if (MemberType.IsPointer && !UnsafeOK (parent))
 				return false;
@@ -2993,8 +3014,13 @@ namespace Mono.CSharp {
 			if (t == null)
 				return false;
 
-			if (!parent.AsAccessible (t, ModFlags))
+			if (!parent.AsAccessible (t, ModFlags)) {
+				Report.Error (52, Location,
+					      "Inconsistent accessibility: field type `" +
+					      TypeManager.CSharpName (t) + "' is less " +
+					      "accessible than field `" + Name + "'");
 				return false;
+			}
 
 			if (t.IsPointer && !UnsafeOK (parent))
 				return false;
