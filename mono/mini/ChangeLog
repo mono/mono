@@ -1,3 +1,11 @@
+
+Fri Nov 19 17:34:21 CET 2004 Paolo Molaro <lupus@ximian.com>
+
+	* mini-ppc.c, cpu-g4.md: set to zero the memory allocated
+	with localloc if needed. Throe arithmetric exception in
+	div an rem if needed. Implement ovf checks in OP_LCONV_TO_OVF_I.
+	Adapted from a patch by Geoff Norton  <gnorton@customerdna.com>.
+
 2004-11-19  Geoff Norton  <gnorton@customerdna.com>
 
 	* mini-ppc.c: Call mono_type_get_underlying_type to unwrap generic
@@ -4222,6 +4230,7 @@ Mon Apr 7 16:31:34 CEST 2003 Paolo Molaro <lupus@ximian.com>
 	belongs.
 
 	* mini.pc.in: Call this package `mini' for the moment.
+
 
 
 
