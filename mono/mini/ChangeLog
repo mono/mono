@@ -1,3 +1,8 @@
+2004-10-15  Zoltan Varga  <vargaz@freemail.hu>
+
+	* trace.c (mono_trace_eval): Use mono_method_desc_full_match. Fixes
+	#68388.
+
 2004-10-11  Martin Baulig  <martin@ximian.com>
 
 	* mini.c (mono_method_to_ir): If we're a generic method, get the
