@@ -1,5 +1,8 @@
 2004-10-25  Zoltan Varga  <vargaz@freemail.hu>
 
+	* image.c: Avoid overwriting values in the loaded_images_hash when an
+	assembly is loaded multiple times. Fixes #61152.
+
 	* metadata.c (mono_metadata_parse_type_full): Fix parsing of custom
 	modifiers.
 	
