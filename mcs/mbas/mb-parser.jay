@@ -575,6 +575,12 @@ imports_term
 	  }
 	;
 
+opt_params
+	: /* empty */	{ $$ = Parameters.EmptyReadOnlyParameters; }
+	| OPEN_PARENS CLOSE_PARENS	{ $$ = Parameters.EmptyReadOnlyParameters; }
+	| OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS	{ $$ = $2; }
+	;
+	
 opt_attributes
 	: /* empty */
 	| attribute_sections 	{ $$ = $1; }
@@ -1041,7 +1047,7 @@ must_override_declaration
 	;
 	
 must_override_sub_declaration
-	: MUSTOVERRIDE SUB identifier OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS EOL
+	: MUSTOVERRIDE SUB identifier opt_params EOL
 	  {	
 	  	if (current_container is Module)
 	  		Report.Error (433, "Methods in a Module cannot be declared 'MustOverride'.");
@@ -1052,22 +1058,21 @@ must_override_sub_declaration
 	  	current_modifiers |= Modifiers.ABSTRACT;
 	  			  	
 	  	Method method = new Method (TypeManager.system_void_expr, (int) current_modifiers, (string) $3,
-					    (Parameters) $5, null, null, lexer.Location);
+					    (Parameters) $4, null, null, lexer.Location);
 					    
 		if (!(current_container is Class))
 			Report.Error (9999, "THIS SHOULD NEVER HAPPEN!");		
 			
-		// FIXME ASAP: This will crash the compiler at resolution time			
 		$$ = method; 			    
 	  }
 	;
 
 	
 must_override_func_declaration
-	: MUSTOVERRIDE FUNCTION identifier opt_type_character OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS opt_type_with_ranks EOL
+	: MUSTOVERRIDE FUNCTION identifier opt_type_character opt_params opt_type_with_ranks EOL
 	  {	
-		Expression ftype = ($8 == null) ? (($4 == null) ? TypeManager.	
-			system_object_expr : (Expression) $4 ) : (Expression) $8;
+		Expression ftype = ($6 == null) ? (($4 == null) ? TypeManager.	
+			system_object_expr : (Expression) $4 ) : (Expression) $6;
 
 	  	if (current_container is Module)
 	  		Report.Error (433, "Methods in a Module cannot be declared 'MustOverride'.");
@@ -1078,7 +1083,7 @@ must_override_func_declaration
 		current_modifiers |= Modifiers.ABSTRACT;
 			  			  	
 	  	Method method = new Method ((Expression) ftype, (int) current_modifiers, 
-						(string) $3,(Parameters) $6, null, null, 
+						(string) $3,(Parameters) $5, null, null, 
 						lexer.Location);
 					    
 		if (!(current_container is Class))
@@ -1089,15 +1094,15 @@ must_override_func_declaration
 	;
 	
 sub_declaration
-	: SUB identifier OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS opt_evt_handler opt_implement_clause EOL
+	: SUB identifier opt_params opt_evt_handler opt_implement_clause EOL
 	  { 
-	  	current_local_parameters = (Parameters) $4;
+	  	current_local_parameters = (Parameters) $3;
 		start_block(); 
 
 		// Structure members are Public by default			
 		if ((current_container is Struct) && (current_modifiers == 0))
 			current_modifiers = Modifiers.PUBLIC;		
-			
+
 		member_location = lexer.Location;
 	  }
 	  opt_statement_list 
@@ -1105,12 +1110,12 @@ sub_declaration
 	  {
 		Method method = new Method (TypeManager.system_void_expr, (int) current_modifiers, (string) $2,
 					    (Parameters) current_local_parameters, (Attributes) current_attributes, 
-					    (Expression) $7, member_location);
+					    (Expression) $5, member_location);
 	
 		method.Block = (Block) end_block();
 		$$ = method;
 
-		if ($6 != null) { 
+		if ($4 != null) { 
 			// we have an event handler to take care of 
 
 			string evt_def = ((MemberAccess)$6).ToString();
@@ -1123,7 +1128,7 @@ sub_declaration
 					if (p.Name == evt_target) {
 						Location loc = lexer.Location;
 
-						Statement addhnd = (Statement) new AddHandler ((Expression) $6, 
+						Statement addhnd = (Statement) new AddHandler ((Expression) $4, 
 											DecomposeQI((string) $2, loc), 
 											DecomposeQI(evt_target, loc), loc);
 
@@ -1144,13 +1149,13 @@ sub_declaration
 	
 func_declaration
 	: FUNCTION identifier opt_type_character
-	  OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS opt_type_with_ranks opt_implement_clause EOL
+	  opt_params opt_type_with_ranks opt_implement_clause EOL
 	  { 
-	  	current_local_parameters = (Parameters) $5;
+	  	current_local_parameters = (Parameters) $4;
 	  	member_location = lexer.Location;
 		start_block(); 
 				
-		Expression ftype = ($7 == null) ? (($3 == null) ? TypeManager.system_object_expr : (Expression) $3 ) : (Expression) $7;
+		Expression ftype = ($5 == null) ? (($3 == null) ? TypeManager.system_object_expr : (Expression) $3 ) : (Expression) $5;
 
 		// Structure members are Public by default			
 		if ((current_container is Struct) && (current_modifiers == 0))
@@ -1164,11 +1169,11 @@ func_declaration
 	  opt_statement_list
 	  END FUNCTION EOL
 	  {
-		Expression ftype = ($7 == null) ? (($3 == null) ? TypeManager.system_object_expr : (Expression) $3 ) : (Expression) $7;
+		Expression ftype = ($5 == null) ? (($3 == null) ? TypeManager.system_object_expr : (Expression) $3 ) : (Expression) $5;
 
 		Method method = new Method ((Expression) ftype, (int) current_modifiers, (string) $2,
 					    (Parameters) current_local_parameters, (Attributes) current_attributes,/* (Attributes) currx ent_attributes,  */
-					    (Expression) $8, member_location);
+					    (Expression) $6, member_location);
 		method.Block = end_block();
 		$$ = method;
 	  }	  
@@ -1255,7 +1260,7 @@ event_declaration
 		CheckDef (current_container.AddEvent (e), e.Name, e.Location);
 
 	  }
-	| EVENT identifier opt_event_params EOL
+	| EVENT identifier opt_params EOL
 	  {
 		string delName = (string) $2;
 		delName = delName + "EventHandler";
@@ -1274,12 +1279,6 @@ event_declaration
 
 		CheckDef (current_container.AddEvent (e), e.Name, e.Location);
 	  }
-	;
-	
-opt_event_params
-	: /* empty */	{ $$ = Parameters.EmptyReadOnlyParameters; }
-	| OPEN_PARENS CLOSE_PARENS	{ $$ = Parameters.EmptyReadOnlyParameters; }
-	| OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS	{ $$ = $2; }
 	;
 	
 enum_declaration
@@ -1888,14 +1887,14 @@ opt_empty_parens
 	;	
 
 constructor_declaration
-	: SUB NEW OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS EOL
+	: SUB NEW opt_params EOL
 	  {
-	  	current_local_parameters = (Parameters) $4;
+	  	current_local_parameters = (Parameters) $3;
 	  	start_block();
 		oob_stack.Push (lexer.Location);
 
 		Location l = (Location) oob_stack.Pop ();
-		$$ = new Constructor ((string) "New", (Parameters) $4, (ConstructorInitializer) null, l);
+		$$ = new Constructor ((string) "New", (Parameters) $3, (ConstructorInitializer) null, l);
 		$1 = $$;
 	  }
 	  opt_statement_list
@@ -1976,7 +1975,7 @@ fixed_parameter
 	  	Expression ptype;
 	  	
 	  	if (opt_parm && ($7 == null))
-	  		Report.Error (999, "Optional parameters must have a default value");
+	  		Report.Error (30812, "Optional parameters must have a default value");
 	  	
 	  	if (opt_parm) {
 	  		if ((pm & Parameter.Modifier.REF) !=0)
