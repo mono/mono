@@ -1,3 +1,8 @@
+2003-12-12  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Path.cs: GetTempPath () ends with DirectorySeparatorChar. Fixes bug
+	#52056.
+
 2003-12-06  Ravindra  <rkumar@novell.com>
 	*MonoIO.cs: Added a new exception case. It is thrown 
 	when a directory creation is attempted with a name that

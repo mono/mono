@@ -214,7 +214,7 @@ namespace System.IO
 			do {
 				num = rnd.Next ();
 				num++;
-				path = GetTempPath() + DirectorySeparatorChar + "tmp" + num.ToString("x");
+				path = Path.Combine (GetTempPath(), "tmp" + num.ToString("x"));
 
 				try {
 					f = new FileStream (path, FileMode.CreateNew);
@@ -231,7 +231,11 @@ namespace System.IO
 		/// </summary>
 		public static string GetTempPath ()
 		{
-			return get_temp_path ();
+			string p = get_temp_path ();
+			if (p.Length > 0 && p [p.Length - 1] != DirectorySeparatorChar)
+				return p + DirectorySeparatorChar;
+
+			return p;
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
