@@ -24,9 +24,12 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.1 $
+// $Revision: 1.2 $
 // $Modtime: $
 // $Log: CheckBox.cs,v $
+// Revision 1.2  2004/08/30 15:44:20  pbartok
+// - Updated to fix broken build. Not complete yet.
+//
 // Revision 1.1  2004/07/09 05:21:25  pbartok
 // - Initial check-in
 //
@@ -34,37 +37,211 @@
 
 // NOT COMPLETE
 
-namespace System.Windows.Forms {
-	public class CreateParams {
-		#region Public Constructors
-		#endregion	// Public Constructors
-
-		#region Public Instance Properties
-		#endregion	// Public Instance Properties
-
-		#region Public Instance Methods
-		#endregion	// Public Instance Methods
-	}
-}
-//
-// System.Windows.Forms.CheckBox.cs
-//
-// Author:
-//   stubbed out by Jaak Simm (jaaksimm@firm.ee)
-//   Dennis Hayes (dennish@Raytek.com)
-//
-// (C) Ximian, Inc., 2002
-//
-
+using System;
 using System.Drawing;
 
 namespace System.Windows.Forms {
+	public class CheckBox : ButtonBase {
+		private Appearance		appearance;
+		private bool			auto_check;
+		private ContentAlignment	check_alignment;
+		private ContentAlignment	text_alignment;
+		private CheckState		check_state;
+		private bool			three_state;
 
-	/// <summary>
-	/// Represents a Windows check box.
-	/// </summary>
+		#region Public Constructors
+		public CheckBox() {
+			appearance = Appearance.Normal;
+			auto_check = true;
+			check_alignment = ContentAlignment.MiddleLeft;
+		}
+		#endregion	// Public Constructors
 
-	[MonoTODO]
+		#region Public Instance Properties
+		public Appearance Appearance {
+			get {
+				return appearance;
+			}
+
+			set {
+				if (value != appearance) {
+					value = appearance;
+					if (AppearanceChanged != null) {
+						AppearanceChanged(this, EventArgs.Empty);
+					}
+				}
+			}
+		}
+
+		public bool AutoCheck {
+			get {
+				return auto_check;
+			}
+
+			set {
+				auto_check = value;
+			}
+		}
+
+		public ContentAlignment CheckAlign {
+			get {
+				return check_alignment;
+			}
+
+			set {
+				if (value != check_alignment) {
+					check_alignment = value;
+
+					Redraw();
+				}
+			}
+		}
+
+		public bool Checked {
+			get {
+				if (check_state != CheckState.Unchecked) {
+					return true;
+				}
+				return false;
+			}
+
+			set {
+				if (value && (check_state != CheckState.Checked)) {
+					check_state = CheckState.Checked;
+					Redraw();
+					OnCheckedChanged(EventArgs.Empty);
+				} else if (!value && (check_state != CheckState.Unchecked)) {
+					check_state = CheckState.Unchecked;
+					Redraw();
+					OnCheckedChanged(EventArgs.Empty);
+				}
+			}
+		}
+
+		public CheckState CheckState {
+			get {
+				return check_state;
+			}
+
+			set {
+				if (value != check_state) {
+					bool	was_checked = (check_state != CheckState.Unchecked);
+
+					check_state = value;
+
+					if (was_checked != (check_state != CheckState.Unchecked)) {
+						OnCheckedChanged(EventArgs.Empty);
+					}
+
+					OnCheckStateChanged(EventArgs.Empty);
+					Redraw();
+				}
+			}
+		}
+
+		public override ContentAlignment TextAlign {
+			get {
+				return text_alignment;
+			}
+
+			set {
+				if (value != text_alignment) {
+					text_alignment = value;
+					Redraw();
+				}
+			}
+		}
+
+
+		public bool ThreeState {
+			get {
+				return three_state;
+			}
+
+			set {
+				three_state = value;
+			}
+		}
+		#endregion	// Public Instance Properties
+
+		#region Protected Instance Properties
+		protected override CreateParams CreateParams {
+			get {
+				return base.CreateParams;
+			}
+		}
+
+		protected override Size DefaultSize {
+			get {
+				return new Size(104, 24);
+			}
+		}
+		#endregion	// Protected Instance Properties
+
+		#region Public Instance Methods
+		public override string ToString() {
+			if (CheckState == CheckState.Unchecked) {
+				return "CheckBox (unchecked)";
+			} else if (CheckState == CheckState.Checked) {
+				return "CheckBox (checked)";
+			} else {
+				return "CheckBox (state indeterminate)";
+			}
+		}
+		#endregion	// Public Instance Methods
+
+		#region Protected Instance Methods
+		protected override AccessibleObject CreateAccessibilityInstance() {
+			return base.CreateAccessibilityInstance ();
+		}
+
+		protected virtual void OnAppearanceChanged(EventArgs e) {
+			if (AppearanceChanged != null) {
+				AppearanceChanged(this, e);
+			}
+		}
+
+		protected virtual void OnCheckedChanged(EventArgs e) {
+Console.WriteLine("Checked changed");
+			if (CheckedChanged != null) {
+				CheckedChanged(this, e);
+			}
+		}
+
+		protected virtual void OnCheckStateChanged(EventArgs e) {
+Console.WriteLine("CheckState changed");
+			if (CheckStateChanged != null) {
+				CheckStateChanged(this, e);
+			}
+		}
+
+		protected override void OnClick(EventArgs e) {
+Console.WriteLine("Got click");
+			base.OnClick (e);
+		}
+
+		protected override void OnHandleCreated(EventArgs e) {
+			base.OnHandleCreated (e);
+		}
+
+		protected override void OnMouseUp(MouseEventArgs e) {
+			base.OnMouseUp (e);
+		}
+
+		protected override bool ProcessMnemonic(char charCode) {
+			return base.ProcessMnemonic (charCode);
+		}
+
+		#endregion	// Protected Instance Methods
+
+		#region Events
+		public event EventHandler	AppearanceChanged;
+		public event EventHandler	CheckedChanged;
+		public event EventHandler	CheckStateChanged;
+		#endregion	// Events
+	}
+}
+#if not
 	public class CheckBox : ButtonBase {
 
 		// private fields
@@ -122,33 +299,7 @@ namespace System.Windows.Forms {
 		}
 		
 		// --- CheckBox Properties ---
-		public Appearance Appearance {
-			get { return appearance; }
-			set { appearance=value; }
-		}
-		
-		public bool AutoCheck {
-			get { return autoCheck; }
-			set { autoCheck = value; }
-		}
-		
-		public ContentAlignment CheckAlign {
-			get { return checkAlign; }
-			set {
-				checkAlign=value;
-				UpdateCheckbox();
-			}
-		}
-		
-		public bool Checked {
-			get { return _checked; }
-			set { 
-				if( _checked != value) {
-					CheckState = (value) ? CheckState.Checked : CheckState.Unchecked;
-				}
-			}
-		}
-		
+	
 		public CheckState CheckState {
 			get { return checkState; }
 			set { 
@@ -557,3 +708,4 @@ namespace System.Windows.Forms {
 
 
 }
+#endif
