@@ -1,3 +1,9 @@
+2004-12-27  Alp Toker <alp@atoker.com>
+
+	* SqlSharpCli.cs: Math and Mono.Math clash. Refer to System.Math directly to
+	unbreak the build. Another approach would be to move the using System
+	statement within the namespace block. Both have caveats.
+
 2004-12-26  Daniel Morgan <danielmorgan@verizon.net>
 
 	* SqlSharpCli.cs: change formatting style from vs.net default

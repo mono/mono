@@ -172,7 +172,7 @@ namespace Mono.Data.SqlSharp {
 					if (hdrLen > 32)
 						hdrLen = 32;
 
-					hdrLen = Math.Max (hdrLen, columnSize);
+					hdrLen = System.Math.Max (hdrLen, columnSize);
 
 					line.Append (columnHeader);
 					if (columnHeader.Length < hdrLen) {
@@ -267,7 +267,7 @@ namespace Mono.Data.SqlSharp {
 						if (hdrLen > 32)
 							hdrLen = 32;
 
-						columnSize = Math.Max (colhdr.Length, columnSize);
+						columnSize = System.Math.Max (colhdr.Length, columnSize);
 
 						dataValue = "";
 						dataLen = 0;
@@ -293,7 +293,7 @@ namespace Mono.Data.SqlSharp {
 							if (dataValue.Equals(""))
 								dataLen = 0;
 						}
-						columnSize = Math.Max (columnSize, dataLen);
+						columnSize = System.Math.Max (columnSize, dataLen);
 					
 						if (dataLen < columnSize) {
 							switch (dataType) {
