@@ -1,3 +1,10 @@
+2004-09-01 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* AspGenerator.cs: handle builders that need to process inner text
+	with tags.
+
+	* Location.cs: added setters for the properties.
+
 2004-08-02  Duncan Mak  <duncan@ximian.com>
 
 	* BuildProviderResultFlags.cs: 	
