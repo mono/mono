@@ -117,15 +117,6 @@ namespace System.Xml.Schema
 
 		public static XmlParserContext GetParserContext (XmlReader reader)
 		{
-			XmlTextReader xtr = reader as XmlTextReader;
-			if (xtr != null)
-				return xtr.GetInternalParserContext ();
-			XmlNodeReader xnr = reader as XmlNodeReader;
-			if (xnr != null)
-				return xnr.GetInternalParserContext ();
-			XmlValidatingReader xvr = reader as XmlValidatingReader;
-			if (xvr != null)
-				return xvr.GetInternalParserContext ();
 			IHasXmlParserContext xctx = reader as IHasXmlParserContext;
 			if (xctx != null)
 				return xctx.ParserContext;

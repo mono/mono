@@ -1,5 +1,11 @@
 2004-10-29  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlSchemaComplexType.cs : added LocalElements, with the description
+	  why it can never be correct implementation.
+	* XmlSchemaUtil.cs : use IHasXmlParserContext.
+
+2004-10-29  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlSchemaSimpleTypeUnion.cs : Added 2.0 BaseMemberTypes property 
 	  (this property name is also ambiguous and should be changed too.)
 

@@ -179,6 +179,27 @@ namespace System.Xml.Schema
 		{
 			get{ return attributeWildcard; }
 		}
+
+#if NET_2_0
+		[XmlIgnore]
+		// LAMESPEC: This property is based on the premise that
+		// every particle has a unique name, but actually particles
+		// can be like:
+		// <sequence>
+		//  <element name='foo'/>
+		//  <element name='foo'>
+		//    <annotation>
+		//      <documentation>blah</documentation>
+		//    </annotation>
+		//  </element>
+		// </sequence>
+		//
+		// So with this signature this property can never be correct.
+		public XmlSchemaObjectTable LocalElements {
+			get { throw new NotImplementedException (); }
+		}
+#endif
+
 		#endregion
 
 		internal XmlSchemaParticle ValidatableParticle 
