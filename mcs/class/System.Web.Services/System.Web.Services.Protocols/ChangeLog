@@ -1,3 +1,12 @@
+2003-12-15  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* HttpSoapWebServiceHandler.cs: Added check for valid SOAPAction header.
+	  Fixed bug when routing style is RequestElement.
+	  Removed GetMethodFromAction. This is done now in the type stub.
+	  Other minor fixes.
+	* Methods.cs, WebServiceHelper.cs: Faults are always serialized using 
+	  literal format. Removed unneded code.
+	
 2003-12-12  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* Methods.cs: Added special handling for RPC format.

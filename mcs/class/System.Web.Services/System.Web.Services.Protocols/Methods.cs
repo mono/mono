@@ -306,13 +306,13 @@ namespace System.Web.Services.Protocols {
 	{
 		Hashtable[] header_serializers = new Hashtable [3];
 		Hashtable[] header_serializers_byname = new Hashtable [3];
+		Hashtable methods_byaction = new Hashtable (); 
 
 		// Precomputed
 		internal SoapParameterStyle      ParameterStyle;
 		internal SoapServiceRoutingStyle RoutingStyle;
 		internal SoapBindingUse          Use;
-		internal int                     faultSerializerLitId = -1;
-		internal int                     faultSerializerEncId = -1;
+		internal int                     faultSerializerId = -1;
 		internal SoapExtensionRuntimeConfig[][] SoapExtensions;
 		internal SoapBindingStyle SoapBindingStyle;
 		internal XmlReflectionImporter 	xmlImporter;
@@ -389,27 +389,19 @@ namespace System.Web.Services.Protocols {
 			else
 				res = new SoapMethodStubInfo (parent, lmi, ats[0], xmlImporter, soapImporter);
 				
-			if (faultSerializerEncId == -1 && res.Use == SoapBindingUse.Encoded)
-			{
-				SoapReflectionImporter ri = new SoapReflectionImporter ();
-				XmlTypeMapping tm = ri.ImportTypeMapping (typeof(Fault));
-				faultSerializerEncId = RegisterSerializer (tm);
-			}
-			else if (faultSerializerLitId == -1 && res.Use == SoapBindingUse.Literal)
+			if (faultSerializerId == -1)
 			{
 				XmlReflectionImporter ri = new XmlReflectionImporter ();
 				XmlTypeMapping tm = ri.ImportTypeMapping (typeof(Fault));
-				faultSerializerLitId = RegisterSerializer (tm);
+				faultSerializerId = RegisterSerializer (tm);
 			}
+			methods_byaction [res.Action] = res;
 			return res;
 		}
 		
-		public XmlSerializer GetFaultSerializer (SoapBindingUse use)
+		public XmlSerializer GetFaultSerializer ()
 		{
-			if (use == SoapBindingUse.Literal)
-				return GetSerializer (faultSerializerLitId);
-			else
-				return GetSerializer (faultSerializerEncId);
+			return GetSerializer (faultSerializerId);
 		}
 		
 		internal void RegisterHeaderType (Type type, SoapBindingUse use)
@@ -455,5 +447,10 @@ namespace System.Web.Services.Protocols {
 				
 			return GetSerializer ((int) table [qname]);
 		}		
+		
+		public SoapMethodStubInfo GetMethodForSoapAction (string name)
+		{
+			return (SoapMethodStubInfo) methods_byaction [name.Trim ('"',' ')];
+		}
 	}
 }

@@ -15,6 +15,7 @@ using System.Text;
 using System.IO;
 using System.Reflection;
 using System.Xml.Serialization;
+using System.Web.Services.Description;
 
 namespace System.Web.Services.Protocols
 {
@@ -78,7 +79,8 @@ namespace System.Web.Services.Protocols
 				{
 					soapAction = request.Headers ["SOAPAction"];
 					if (soapAction == null) throw new SoapException ("Missing SOAPAction header", SoapException.ClientFaultCode);
-					methodInfo = GetMethodFromAction (soapAction);
+					methodInfo = _typeStubInfo.GetMethodForSoapAction (soapAction);
+					if (methodInfo == null) throw new SoapException ("Server did not recognize the value of HTTP header SOAPAction: " + soapAction, SoapException.ClientFaultCode);
 					message.MethodStubInfo = methodInfo;
 				}
 
@@ -96,29 +98,31 @@ namespace System.Web.Services.Protocols
 				if (_typeStubInfo.RoutingStyle == SoapServiceRoutingStyle.RequestElement)
 				{
 					MemoryStream mstream;
+					byte[] buffer = null;
 
 					if (stream.CanSeek)
 					{
-						byte[] buffer = new byte [stream.Length];
+						buffer = new byte [stream.Length];
 						for (int n=0; n<stream.Length;)
 							n += stream.Read (buffer, n, (int)stream.Length-n);
 						mstream = new MemoryStream (buffer);
 					}
 					else
 					{
-						byte[] buffer = new byte [500];
+						buffer = new byte [500];
 						mstream = new MemoryStream ();
 					
 						int len;
 						while ((len = stream.Read (buffer, 0, 500)) > 0)
 							mstream.Write (buffer, 0, len);
 						mstream.Position = 0;
+						buffer = mstream.ToArray ();
 					}
 
-					soapAction = ReadActionFromRequestElement (new MemoryStream (mstream.GetBuffer ()), encoding);
+					soapAction = ReadActionFromRequestElement (new MemoryStream (buffer), encoding);
 
 					stream = mstream;
-					methodInfo = GetMethodFromAction (soapAction);
+					methodInfo = (SoapMethodStubInfo) _typeStubInfo.GetMethod (soapAction);
 					message.MethodStubInfo = methodInfo;
 				}
 
@@ -150,7 +154,6 @@ namespace System.Web.Services.Protocols
 				}
 				catch (Exception ex)
 				{
-					Console.WriteLine (ex);
 					throw new SoapException ("Could not deserialize Soap message", SoapException.ClientFaultCode, ex);
 				}
 
@@ -165,14 +168,6 @@ namespace System.Web.Services.Protocols
 
 				return message;
 			}
-		}
-
-		SoapMethodStubInfo GetMethodFromAction (string soapAction)
-		{
-			soapAction = soapAction.Trim ('"',' ');
-			int i = soapAction.LastIndexOf ('/');
-			string methodName = soapAction.Substring (i + 1);
-			return (SoapMethodStubInfo) _typeStubInfo.GetMethod (methodName);
 		}
 
 		string ReadActionFromRequestElement (Stream stream, Encoding encoding)
@@ -191,8 +186,7 @@ namespace System.Web.Services.Protocols
 				xmlReader.ReadStartElement ("Body", WebServiceHelper.SoapEnvelopeNamespace);
 				xmlReader.MoveToContent ();
 
-				if (xmlReader.NamespaceURI.EndsWith ("/")) return xmlReader.NamespaceURI + xmlReader.LocalName;
-				else return xmlReader.NamespaceURI + "/" + xmlReader.LocalName;
+				return xmlReader.LocalName;
 			}
 			catch (Exception ex)
 			{
@@ -216,8 +210,9 @@ namespace System.Web.Services.Protocols
 			Stream outStream = null;
 			MemoryStream bufferStream = null;
 			Stream responseStream = response.OutputStream;
+			bool bufferResponse = (methodInfo == null || methodInfo.MethodAttribute.BufferResponse);
 			
-			if (methodInfo.MethodAttribute.BufferResponse)
+			if (bufferResponse)
 			{
 				bufferStream = new MemoryStream ();
 				outStream = bufferStream;
@@ -229,7 +224,7 @@ namespace System.Web.Services.Protocols
 			{
 				// While serializing, process extensions in reverse order
 
-				if (methodInfo.MethodAttribute.BufferResponse)
+				if (bufferResponse)
 				{
 					outStream = SoapExtension.ExecuteChainStream (_extensionChainHighPrio, outStream);
 					outStream = SoapExtension.ExecuteChainStream (_extensionChainMedPrio, outStream);
@@ -244,14 +239,13 @@ namespace System.Web.Services.Protocols
 				// What a waste of UTF8encoders, but it has to be thread safe.
 				XmlTextWriter xtw = new XmlTextWriter (outStream, new UTF8Encoding (false));
 				xtw.Formatting = Formatting.Indented;	// TODO: remove formatting when code is stable
-				System.Web.Services.Description.SoapBindingUse use = message.MethodStubInfo.Use;
-
+				
 				if (message.Exception == null)
-					WebServiceHelper.WriteSoapMessage (xtw, _typeStubInfo, use, message.MethodStubInfo.ResponseSerializer, message.OutParameters, message.Headers);
+					WebServiceHelper.WriteSoapMessage (xtw, _typeStubInfo, methodInfo.Use, methodInfo.ResponseSerializer, message.OutParameters, message.Headers);
 				else
-					WebServiceHelper.WriteSoapMessage (xtw, _typeStubInfo, use, _typeStubInfo.GetFaultSerializer(use), new Fault (message.Exception), null);
+					WebServiceHelper.WriteSoapMessage (xtw, _typeStubInfo, SoapBindingUse.Literal, _typeStubInfo.GetFaultSerializer(), new Fault (message.Exception), null);
 
-				if (methodInfo.MethodAttribute.BufferResponse)
+				if (bufferResponse)
 				{
 					message.SetStage (SoapMessageStage.AfterSerialize);
 					SoapExtension.ExecuteProcessMessage (_extensionChainLowPrio, message, true);
@@ -266,7 +260,7 @@ namespace System.Web.Services.Protocols
 			{
 				// If the response is buffered, we can discard the response and
 				// serialize a new Fault message as response.
-				if (methodInfo.MethodAttribute.BufferResponse) throw ex;
+				if (bufferResponse) throw ex;
 				
 				// If it is not buffered, we can't rollback what has been sent,
 				// so we can only close the connection and return.
@@ -276,7 +270,7 @@ namespace System.Web.Services.Protocols
 			
 			try
 			{
-				if (methodInfo.MethodAttribute.BufferResponse)
+				if (bufferResponse)
 					responseStream.Write (bufferStream.GetBuffer(), 0, (int) contentLength);
 			}
 			catch {}
