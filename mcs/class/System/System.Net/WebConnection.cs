@@ -131,7 +131,7 @@ namespace System.Net
 		{
 			try {
 				NetworkStream serverStream = new NetworkStream (socket, false);
-				if (request.RequestUri.Scheme == Uri.UriSchemeHttps) {
+				if (request.Address.Scheme == Uri.UriSchemeHttps) {
 					ssl = true;
 					if (!sslCheck) {
 						lock (typeof (WebConnection)) {
