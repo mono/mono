@@ -24,7 +24,6 @@ namespace MonoTests.System {
 				suite.AddTest (AttributeTest.Suite);
 				suite.AddTest (BitConverterTest.Suite);
 				suite.AddTest (BooleanTest.Suite);
-                                suite.AddTest (BugTest.Suite);
                                 suite.AddTest (ByteTest.Suite);
 				suite.AddTest (CharEnumeratorTest.Suite);
                                 suite.AddTest (CharTest.Suite);

@@ -1,3 +1,8 @@
+2002-06-01  Nick Drochak  <ndrochak@gol.com>
+
+	* BugTest.cs: Remove, bug fixed.  Yay!
+	* AllTests.cs: Remove BugTest from suite.
+
 2002-05-31  Nick Drochak  <ndrochak@gol.com>
 
 	* BugTest.cs: Small file to show NullReferenceException bug
