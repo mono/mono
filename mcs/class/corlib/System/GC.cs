@@ -34,11 +34,20 @@ using System.Runtime.CompilerServices;
 
 namespace System
 {
-	public sealed class GC
+	public
+#if NET_2_0
+	static
+#else
+	sealed
+#endif
+	class GC
 	{
+
+#if !NET_2_0
 		private GC ()
 		{
 		}
+#endif
 
 		// TODO: as long as we use Boehm leave 0...
 		public static int MaxGeneration {

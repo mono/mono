@@ -35,7 +35,13 @@ using System.Text;
 
 namespace System
 {
-	public sealed class Console
+	public
+#if NET_2_0
+	static
+#else
+	sealed
+#endif
+	class Console
 	{
 		private static TextWriter stdout;
 		private static TextWriter stderr;
@@ -75,9 +81,11 @@ namespace System
 			stdin = TextReader.Synchronized (stdin);
 		}
 
+#if !NET_2_0
 		private Console ()
 		{
 		}
+#endif
 
 		public static TextWriter Error {
 			get {

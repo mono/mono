@@ -1,3 +1,8 @@
+2004-09-08  Marek Safar  <marek.safar@seznam.cz>
+
+	* Console.cs,
+	* GC.cs: Class is static for NET_2_0.
+
 2004-09-07 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* Activator.cs: Make sure not to call .GetType on a
