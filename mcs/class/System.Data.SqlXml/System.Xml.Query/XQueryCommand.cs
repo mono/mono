@@ -45,13 +45,19 @@ namespace System.Xml.Query
 	public class XQueryCommand
 	{
 		// They are obtained via reflection
-		static Type xqueryParserType;
-		static MethodInfo parseMethod;
+		static Type implType;
+		static MethodInfo compileMethod;
+		static MethodInfo executeMethod;
 
 		static XQueryCommand ()
 		{
-			xqueryParserType = typeof (XPathNavigator).Assembly.GetType ("Mono.Xml.XQuery.Parser.XQueryParser");
-			parseMethod = xqueryParserType.GetMethod ("Parse");
+			implType = typeof (XPathNavigator).Assembly.GetType ("Mono.Xml.XQuery.XQueryCommandImpl");
+			compileMethod = implType.GetMethod ("Compile");
+			executeMethod = implType.GetMethod ("Execute");
+			if (compileMethod == null)
+				throw new InvalidOperationException ("Should not happen: XQueryCommandImpl.Compile() was not found.");
+			if (executeMethod == null)
+				throw new InvalidOperationException ("Should not happen: XQueryCommandImpl.Execute() was not found.");
 		}
 
 		#region Constructor
@@ -59,12 +65,12 @@ namespace System.Xml.Query
 		[MonoTODO]
 		public XQueryCommand ()
 		{
+			impl = Activator.CreateInstance (implType);
 		}
 
 		#endregion // Constructor
 
-		// obtained via MethodInfo.Invoke() == XQueryParser.Parse()
-		object queryModule;
+		object impl;
 
 		#region Methods
 
@@ -90,8 +96,7 @@ namespace System.Xml.Query
 		[MonoTODO]
 		public void Compile (TextReader query, Evidence evidence)
 		{
-			object o = Activator.CreateInstance (xqueryParserType);
-			this.queryModule = parseMethod.Invoke (o, new object [] {query, evidence});
+			compileMethod.Invoke (impl, new object [] {query, evidence});
 		}
 
 		// Execute
@@ -163,7 +168,7 @@ namespace System.Xml.Query
 			XmlResolver dataSources, 
 			XmlWriter results)
 		{
-			throw new NotImplementedException ();
+			Execute (new XPathDocument (XmlReader.Create (contextDocumentUri)), dataSources, results);
 		}
 
 		[MonoTODO]
@@ -172,7 +177,7 @@ namespace System.Xml.Query
 			XmlArgumentList args,
 			XmlWriter results)
 		{
-			throw new NotImplementedException ();
+			Execute (new XPathDocument (), dataSources, args, results);
 		}
 
 		[MonoTODO]
@@ -182,7 +187,7 @@ namespace System.Xml.Query
 			XmlArgumentList args,
 			XmlWriter results)
 		{
-			throw new NotImplementedException ();
+			Execute (contextDocument.CreateNavigator (), dataSources, args, results);
 		}
 
 		[MonoTODO]
@@ -192,7 +197,7 @@ namespace System.Xml.Query
 			XmlArgumentList args,
 			Stream results)
 		{
-			throw new NotImplementedException ();
+			Execute (new XPathDocument (XmlReader.Create (contextDocumentUri)), dataSources, args, XmlWriter.Create (results));
 		}
 
 		[MonoTODO]
@@ -202,7 +207,7 @@ namespace System.Xml.Query
 			XmlArgumentList args,
 			TextWriter results)
 		{
-			throw new NotImplementedException ();
+			Execute (new XPathDocument (XmlReader.Create (contextDocumentUri)), dataSources, args, XmlWriter.Create (results));
 		}
 
 		[MonoTODO]
@@ -212,15 +217,12 @@ namespace System.Xml.Query
 			XmlArgumentList args,
 			XmlWriter results)
 		{
-			throw new NotImplementedException ();
+			Execute (new XPathDocument (XmlReader.Create (contextDocumentUri)), dataSources, args, results);
 		}
 
-		// ExecuteView
-
-		[MonoTODO]
-		public void ExecuteView (IDbConnection connection, TextWriter results)
+		private void Execute (XPathNavigator context, XmlResolver ds, XmlArgumentList args, XmlWriter output)
 		{
-			throw new NotImplementedException ();
+			executeMethod.Invoke (impl, new object [] {context, ds, args, output});
 		}
 
 		#endregion // Methods
