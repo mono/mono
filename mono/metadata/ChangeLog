@@ -46,9 +46,6 @@ Thu May 23 18:44:37 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 2002-05-22  Martin Baulig  <martin@gnome.org>
 
-	* reflection.h (MonoArrayList): New typedef.
-	(MonoReflectionAssemblyBuilder): Added `table_indexes' and `methods'.
-
 	* debug-symfile.c (ves_icall_Debugger_MonoSymbolWriter_method_from_token):
 	The first argument is now a `MonoReflectionModuleBuilder *', the return
 	value is a `MonoReflectionModuleBuilder *'.  Use the AssemblyBuilder's
