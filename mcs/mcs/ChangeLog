@@ -1,3 +1,21 @@
+2004-07-30  Martin Baulig  <martin@ximian.com>
+
+	* Makefile (EXTRA_SOURCES): List the symbol writer's sources here.
+
+	* class.cs (SourceMethod): New public class, derive from the
+	symbol writer's ISourceMethod.
+	(Method): Use the new symbol writer API.
+
+	* codegen.cs (CodeGen.InitializeSymbolWriter): Take the filename
+	as argument and use the new symbol writer.
+
+	* location.cs
+	(SourceFile): Implement the symbol writer's ISourceFile.
+	(Location.SymbolDocument): Removed.
+	(Location.SourceFile): New public property.
+
+	* symbolwriter.cs: Use the new symbol writer API.
+
 2004-07-30  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile (install-local): Remove.  Functionality moved to

@@ -37,6 +37,8 @@ using System.Reflection.Emit;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
+using Mono.CompilerServices.SymbolWriter;
+
 namespace Mono.CSharp {
 
 	public enum Kind {
@@ -3117,6 +3119,71 @@ namespace Mono.CSharp {
 		}
 	}
 
+	public class SourceMethod : ISourceMethod
+	{
+		TypeContainer container;
+		MethodBase builder;
+
+		protected SourceMethod (TypeContainer container, MethodBase builder,
+					ISourceFile file, Location start, Location end)
+		{
+			this.container = container;
+			this.builder = builder;
+			
+			CodeGen.SymbolWriter.OpenMethod (
+				file, this, start.Row, 0, end.Row, 0);
+		}
+
+		public string Name {
+			get { return builder.Name; }
+		}
+
+		public int NamespaceID {
+			get { return container.NamespaceEntry.SymbolFileID; }
+		}
+
+		public int Token {
+			get {
+				if (builder is MethodBuilder)
+					return ((MethodBuilder) builder).GetToken ().Token;
+				else if (builder is ConstructorBuilder)
+					return ((ConstructorBuilder) builder).GetToken ().Token;
+				else
+					throw new NotSupportedException ();
+			}
+		}
+
+		public void CloseMethod ()
+		{
+			if (CodeGen.SymbolWriter != null)
+				CodeGen.SymbolWriter.CloseMethod ();
+		}
+
+		public static SourceMethod Create (TypeContainer parent,
+						   MethodBase builder, Block block)
+		{
+			if (CodeGen.SymbolWriter == null)
+				return null;
+			if (block == null)
+				return null;
+
+			Location start_loc = block.StartLocation;
+			if (Location.IsNull (start_loc))
+				return null;
+
+			Location end_loc = block.EndLocation;
+			if (Location.IsNull (end_loc))
+				return null;
+
+			ISourceFile file = start_loc.SourceFile;
+			if (file == null)
+				return null;
+
+			return new SourceMethod (
+				parent, builder, file, start_loc, end_loc);
+		}
+	}
+
 	public class Method : MethodCore, IIteratorContainer, IMethodData {
 		public MethodBuilder MethodBuilder;
 		public MethodData MethodData;
@@ -3940,17 +4007,8 @@ namespace Mono.CSharp {
 
 			Parameters.LabelParameters (ec, ConstructorBuilder, Location);
 			
-			SymbolWriter sw = CodeGen.SymbolWriter;
-			bool generate_debugging = false;
-
-			if ((sw != null) && (block != null) &&
-				!Location.IsNull (Location) &&
-				!Location.IsNull (block.EndLocation) &&
-				(Location.SymbolDocument != null)) {
-				sw.OpenMethod (Parent, ConstructorBuilder, Location, block.EndLocation);
-
-				generate_debugging = true;
-			}
+			SourceMethod source = SourceMethod.Create (
+				Parent, ConstructorBuilder, block);
 
 			//
 			// Classes can have base initializers and instance field initializers.
@@ -3985,8 +4043,8 @@ namespace Mono.CSharp {
 
 			ec.EmitTopBlock (block, ParameterInfo, Location);
 
-			if (generate_debugging)
-				sw.CloseMethod ();
+			if (source != null)
+				source.CloseMethod ();
 
 			base.Emit ();
 
@@ -4324,23 +4382,14 @@ namespace Mono.CSharp {
 			if (member is MethodCore)
 				((MethodCore) member).Parameters.LabelParameters (ec, MethodBuilder, loc);
 
-			SymbolWriter sw = CodeGen.SymbolWriter;
 			Block block = method.Block;
 			
 			//
 			// abstract or extern methods have no bodies
 			//
 			if ((modifiers & (Modifiers.ABSTRACT | Modifiers.EXTERN)) != 0){
-				if (block == null) {
-					if ((sw != null) && ((modifiers & Modifiers.EXTERN) != 0) &&
-					    !Location.IsNull (loc) &&
-					    (method.Location.SymbolDocument != null)) {
-						sw.OpenMethod (container, MethodBuilder, loc, loc);
-						sw.CloseMethod ();
-					}
-
+				if (block == null)
 					return;
-				}
 
 				//
 				// abstract or extern methods have no bodies.
@@ -4372,28 +4421,21 @@ namespace Mono.CSharp {
 				return;
 			}
 
+			SourceMethod source = SourceMethod.Create (
+				container, MethodBuilder, method.Block);
+
 			//
 			// Handle destructors specially
 			//
 			// FIXME: This code generates buggy code
 			//
-			if ((sw != null) && !Location.IsNull (loc) &&
-			    !Location.IsNull (block.EndLocation) &&
-			    (loc.SymbolDocument != null)) {
-				sw.OpenMethod (container, MethodBuilder, loc, block.EndLocation);
+			if (member is Destructor)
+				EmitDestructor (ec, block);
+			else
+				ec.EmitTopBlock (block, ParameterInfo, loc);
 
-				if (member is Destructor)
-					EmitDestructor (ec, block);
-				else
-					ec.EmitTopBlock (block, ParameterInfo, loc);
-
-				sw.CloseMethod ();
-			} else {
-				if (member is Destructor)
-					EmitDestructor (ec, block);
-				else
-					ec.EmitTopBlock (block, ParameterInfo, loc);
-			}
+			if (source != null)
+				source.CloseMethod ();
 		}
 
 		void EmitDestructor (EmitContext ec, Block block)

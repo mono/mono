@@ -10,7 +10,7 @@
 using System;
 using System.IO;
 using System.Collections;
-using System.Diagnostics.SymbolStore;
+using Mono.CompilerServices.SymbolWriter;
 
 namespace Mono.CSharp {
 	/// <summary>
@@ -20,11 +20,11 @@ namespace Mono.CSharp {
 	///   This is intentionally a class and not a struct since we need
 	///   to pass this by reference.
 	/// </remarks>
-	public sealed class SourceFile {
+	public sealed class SourceFile : ISourceFile {
 		public readonly string Name;
 		public readonly string Path;
 		public readonly int Index;
-		public ISymbolDocumentWriter SymbolDocument;
+		public SourceFileEntry SourceFileEntry;
 		public bool HasLineDirective;
 
 		public SourceFile (string name, string path, int index)
@@ -32,6 +32,16 @@ namespace Mono.CSharp {
 			this.Index = index;
 			this.Name = name;
 			this.Path = path;
+		}
+
+		SourceFileEntry ISourceFile.Entry {
+			get { return SourceFileEntry; }
+		}
+
+		public override string ToString ()
+		{
+			return String.Format ("SourceFile ({0}:{1}:{2}:{3})",
+					      Name, Path, Index, SourceFileEntry);
 		}
 	}
 
@@ -142,15 +152,14 @@ namespace Mono.CSharp {
 		}
 
 		// <remarks>
-		//   If we're compiling with debugging support, this is called between parsing and
-		//   code generation to register all the source files with the symbol writer.		//
+		//   If we're compiling with debugging support, this is called between parsing
+		//   and code generation to register all the source files with the
+		//   symbol writer.
 		// </remarks>
 		static public void DefineSymbolDocuments (SymbolWriter symwriter)
 		{
 			foreach (SourceFile file in source_list) {
-				if (file.HasLineDirective)
-					continue;
-				file.SymbolDocument = symwriter.DefineDocument (file.Path);
+				file.SourceFileEntry = symwriter.DefineDocument (file.Path);
 			}
 		}
 		
@@ -213,13 +222,12 @@ namespace Mono.CSharp {
 		// to the location's source file.
 		//
 		// If we don't have a symbol writer, this property is always null.
-		public ISymbolDocumentWriter SymbolDocument {
+		public SourceFile SourceFile {
 			get {
 				int index = token & source_mask;
 				if (index == 0)
 					return null;
-				SourceFile file = (SourceFile) source_list [index - 1];
-				return file.SymbolDocument;
+				return (SourceFile) source_list [index - 1];
 			}
 		}
 	}

@@ -4,6 +4,11 @@ include ../build/rules.make
 
 BUILT_SOURCES = cs-parser.cs
 
+EXTRA_SOURCES = \
+	$(topdir)/class/Mono.CSharp.Debugger/MonoSymbolFile.cs	\
+	$(topdir)/class/Mono.CSharp.Debugger/MonoSymbolTable.cs	\
+	$(topdir)/class/Mono.CSharp.Debugger/MonoSymbolWriter.cs
+
 EXTRA_DISTFILES = \
 	compiler.csproj		\
 	compiler.doc		\
@@ -68,3 +73,4 @@ PROFILER=default
 
 profile : mcs.exe
 	$(RUNTIME) --profile=$(PROFILER) ./mcs.exe $(USE_MCS_FLAGS) /target:exe /out:mcs2.exe $(BUILT_SOURCES) @$(response)
+
