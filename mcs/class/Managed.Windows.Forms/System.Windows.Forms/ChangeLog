@@ -1,3 +1,19 @@
+2005-02-25  Peter Bartok  <pbartok@novell.com>
+
+	* XplatUI.cs:
+	  - Added 'DriverDebug' define to allow tracing XplatUI API calls
+	  - Alphabetized Static Methods and Subclasses
+
+	* XplatUIX11.cs:
+	  - Added XException class to allow custom handling of X11 exceptions
+	  - Created custom X11 error handler, tied into XException class
+	  - Added support for MONO_XEXCEPTIONS env var to allow the user
+	    to either throw an exception on X errors or continue running
+	    after displaying the error
+	  - Added handling of DestroyNotify message
+	  - Added handler for CreateNotify message (still disabled)
+	  - Improved (tried to at least) Where method to provide file and lineno
+
 2005-02-25  Jackson Harper  <jackson@ximian.com>
 
 	* PropertyManager.cs: Implement editing features

@@ -24,17 +24,32 @@
 //
 //
 
+// NOTE:
+//	This driver understands the following environment variables: (Set the var to enable feature)
+//
+//	MONO_XEXCEPTIONS	= throw an exception when a X11 error is encountered;
+//				  by default a message is displayed but execution continues
+//
+//	MONO_XSYNC		= perform all X11 commands synchronous; this is slower but
+//				  helps in debugging errors
+//
+
 // NOT COMPLETE
 
+// define to log Window handles and relationships to stdout
+#undef DriverDebug
+
 using System;
-using System.Threading;
-using System.Drawing;
 using System.ComponentModel;
 using System.Collections;
 using System.Diagnostics;
-using System.Runtime.InteropServices;
+using System.Drawing;
 using System.Net;
 using System.Net.Sockets;
+using System.Reflection;
+using System.Runtime.InteropServices;
+using System.Text;
+using System.Threading;
 
 // Only do the poll when building with mono for now
 #if __MonoCS__
@@ -57,6 +72,8 @@ namespace System.Windows.Forms {
 		private static IntPtr		DefaultColormap;	// Colormap for screen
 		private static IntPtr		RootWindow;		// Handle of the root window for the screen/display
 		private static IntPtr		FosterParent;		// Container to hold child windows until their parent exists
+		private static XErrorHandler	ErrorHandler;		// Error handler delegate
+		private static bool		ErrorExceptions;	// Throw exceptions on X errors
 
 		// Communication
 		private static int		PostAtom;		// PostMessage atom
@@ -123,6 +140,7 @@ namespace System.Windows.Forms {
 									EventMask.FocusChangeMask |
 									EventMask.PointerMotionMask | 
 									EventMask.VisibilityChangeMask |
+									EventMask.SubstructureNotifyMask |
 									EventMask.StructureNotifyMask;
 		#endregion	// Local Variables
 
@@ -135,6 +153,8 @@ namespace System.Windows.Forms {
 			XlibLock = new object ();
 			MessageQueue = new XEventQueue ();
 			TimerList = new ArrayList ();
+
+			ErrorExceptions = false;
 
 			// X11 Initialization
 			SetDisplay(XOpenDisplay(IntPtr.Zero));
@@ -168,6 +188,45 @@ namespace System.Windows.Forms {
 		}
 		#endregion
 
+		#region XExceptionClass
+		internal class XException : ApplicationException {
+			IntPtr		Display;
+			IntPtr		ResourceID;
+			IntPtr		Serial;
+			XRequest	RequestCode;
+			byte		ErrorCode;
+			byte		MinorCode;
+
+			public XException(IntPtr Display, IntPtr ResourceID, IntPtr Serial, byte ErrorCode, XRequest RequestCode, byte MinorCode) {
+				this.Display = Display;
+				this.ResourceID = ResourceID;
+				this.Serial = Serial;
+				this.RequestCode = RequestCode;
+				this.ErrorCode = ErrorCode;
+				this.MinorCode = MinorCode;
+			}
+
+			public override string Message {
+				get {
+					return GetMessage(Display, ResourceID, Serial, ErrorCode, RequestCode, MinorCode);
+				}
+			}
+
+			public static string GetMessage(IntPtr Display, IntPtr ResourceID, IntPtr Serial, byte ErrorCode, XRequest RequestCode, byte MinorCode) {
+				StringBuilder	sb;
+				string		x_error_text;
+				string		error;
+
+				sb = new StringBuilder(160);
+				XGetErrorText(Display, ErrorCode, sb, sb.Capacity);
+				x_error_text = sb.ToString();
+
+				error = String.Format("\n  Error: {0}\n  Request:     {1:D} ({2})\n  Resource ID: 0x{3:x}\n  Serial:      {4}", x_error_text, RequestCode, RequestCode, ResourceID.ToInt32(), Serial);
+				return error;
+			}
+		}
+		#endregion	// XExceptionClass
+
 		#region Internal Methods
 		internal void SetDisplay(IntPtr display_handle) {
 			if (display_handle != IntPtr.Zero) {
@@ -188,6 +247,10 @@ namespace System.Windows.Forms {
 				// Debugging support
 				if (Environment.GetEnvironmentVariable ("MONO_XSYNC") != null) {
 					XSynchronize(DisplayHandle, true);
+				}
+
+				if (Environment.GetEnvironmentVariable ("MONO_XEXCEPTIONS") != null) {
+					ErrorExceptions = true;
 				}
 
 				// Generic X11 setup
@@ -252,14 +315,53 @@ namespace System.Windows.Forms {
 
 				// Grab atom changes off the root window to catch certain WM events
 				XSelectInput(DisplayHandle, RootWindow, EventMask.PropertyChangeMask);
+
+				// Handle any upcoming errors
+				ErrorHandler = new XErrorHandler(HandleError);
+				XSetErrorHandler(ErrorHandler);
 			} else {
 				throw new ArgumentNullException("Display", "Could not open display (X-Server required. Check you DISPLAY environment variable)");
 			}
 		}
 
 		internal static void Where() {
-			Console.WriteLine("Here: {0}", new StackTrace().ToString());
+			Console.WriteLine("Here: {0}\n", WhereString());
 		}
+
+		internal static string WhereString() {
+			StackTrace	stack;
+			StackFrame	frame;
+			string		newline;
+			string		unknown;
+			StringBuilder	sb;
+			MethodBase	method;
+
+			newline = String.Format("{0}\t {1} ", Environment.NewLine, Locale.GetText("at"));
+			unknown = Locale.GetText("<unknown method>");
+			sb = new StringBuilder();
+			stack = new StackTrace();
+
+			for (int i = 0; i < stack.FrameCount; i++) {
+				frame = stack.GetFrame(i);
+				sb.Append(newline);
+
+				method = frame.GetMethod();
+				if (method != null) {
+					#if not
+						sb.AppendFormat(frame.ToString());
+					#endif
+
+					if (frame.GetFileLineNumber() != 0) {
+						sb.AppendFormat("{0}.{1} () [{2}:{3}]", method.DeclaringType.FullName, method.Name, frame.GetFileName(), frame.GetFileLineNumber());
+					} else {
+						sb.AppendFormat("{0}.{1} ()", method.DeclaringType.FullName, method.Name);
+					}
+				} else { 
+					sb.Append(unknown);
+				}
+			}
+			return sb.ToString();
+ 		}
 		#endregion	// Internal Methods
 
 		#region Private Methods
@@ -642,6 +744,7 @@ namespace System.Windows.Forms {
 					case XEventName.MotionNotify:
 					case XEventName.EnterNotify:
 					case XEventName.LeaveNotify:
+					case XEventName.CreateNotify:
 					case XEventName.ConfigureNotify:
 					case XEventName.DestroyNotify:
 					case XEventName.FocusIn:
@@ -744,6 +847,14 @@ namespace System.Windows.Forms {
 			return Parent;
 		}
 
+		private int HandleError(IntPtr display, ref XErrorEvent error_event) {
+			if (ErrorExceptions) {
+				throw new XException(error_event.display, error_event.resourceid, error_event.serial, error_event.error_code, error_event.request_code, error_event.minor_code);
+			} else {
+				Console.WriteLine("X11 Error encountered: {0}{1}\n", XException.GetMessage(error_event.display, error_event.resourceid, error_event.serial, error_event.error_code, error_event.request_code, error_event.minor_code), WhereString());
+			}
+			return 0;
+		}
 		#endregion	// Private Methods
 
 		#region	Callbacks
@@ -780,7 +891,6 @@ namespace System.Windows.Forms {
 		}
 		#endregion	// Callbacks
 
-		// System information
 		#region Public Properties
 		internal override  Size CursorSize {
 			get {
@@ -1241,6 +1351,10 @@ namespace System.Windows.Forms {
 			hwnd.WholeWindow = WholeWindow;
 			hwnd.ClientWindow = ClientWindow;
 
+			#if DriverDebug
+				Console.WriteLine("Created window {0:X} / {1:X} parent {2:X}", ClientWindow.ToInt32(), WholeWindow.ToInt32(), hwnd.parent != null ? hwnd.parent.Handle.ToInt32() : 0);
+			#endif
+				       
 			lock (XlibLock) {
 				XSelectInput(DisplayHandle, hwnd.whole_window, SelectInputMask);
 				XSelectInput(DisplayHandle, hwnd.client_window, SelectInputMask);
@@ -1559,6 +1673,17 @@ namespace System.Windows.Forms {
 
 			hwnd = Hwnd.ObjectFromHandle(handle);
 
+			if (hwnd == null) {
+				#if DriverDebug
+					Console.WriteLine("window {0:X} already destroyed", handle.ToInt32());
+				#endif
+				return;
+			}
+
+			#if DriverDebug
+				Console.WriteLine("Destroying window {0:X}", handle.ToInt32());
+			#endif
+
 			lock (XlibLock) {
 				if (hwnd.client_window != IntPtr.Zero) {
 					XDestroyWindow(DisplayHandle, hwnd.client_window);
@@ -1707,12 +1832,21 @@ namespace System.Windows.Forms {
 			// FIXME - handle filtering
 
 			hwnd = Hwnd.GetObjectFromWindow(xevent.AnyEvent.window);
+
+			// Handle messages for windows that are already destroyed
+			if (hwnd == null) {
+				#if DriverDebug
+					Console.WriteLine("got message for non-existant window {0:X}", xevent.AnyEvent.window.ToInt32());
+				#endif
+				goto ProcessNextMessage;
+			}
+
 			if (hwnd.client_window == xevent.AnyEvent.window) {
 				client = true;
-//Console.WriteLine("Client message, sending to window {0:X}", msg.hwnd.ToInt32());
+				//Console.WriteLine("Client message, sending to window {0:X}", msg.hwnd.ToInt32());
 			} else {
 				client = false;
-//Console.WriteLine("Non-Client message, sending to window {0:X}", msg.hwnd.ToInt32());
+				//Console.WriteLine("Non-Client message, sending to window {0:X}", msg.hwnd.ToInt32());
 			}
 
 			msg.hwnd = hwnd.Handle;
@@ -1887,8 +2021,20 @@ namespace System.Windows.Forms {
 					break;
 				}
 
+				#if later
+				case XEventName.CreateNotify: {
+					if (client && (xevent.ConfigureEvent.xevent == xevent.ConfigureEvent.window)) {
+						msg.message = WM_CREATE;
+						// Set up CreateStruct
+					} else {
+						goto ProcessNextMessage;
+					}
+					break;
+				}
+				#endif
+
 				case XEventName.ConfigureNotify: {
-					if (!client) {
+					if (!client && (xevent.ConfigureEvent.xevent == xevent.ConfigureEvent.window)) {	// Ignore events for children (SubstructureNotify) and client areas
 						Rectangle rect;
 
 						if ((hwnd.x != xevent.ConfigureEvent.x) || (hwnd.y != xevent.ConfigureEvent.y) ||
@@ -1951,6 +2097,11 @@ namespace System.Windows.Forms {
 
 				case XEventName.DestroyNotify: {
 					msg.message=Msg.WM_DESTROY;
+
+					#if DriverDebug
+						Console.WriteLine("Got DestroyNotify on Window {0:X}", xevent.AnyEvent.window.ToInt32());
+					#endif
+					hwnd.Dispose();
 					break;
 				}
 
@@ -2441,6 +2592,9 @@ namespace System.Windows.Forms {
 			hwnd.parent = Hwnd.ObjectFromHandle(parent);
 
 			lock (XlibLock) {
+				#if DriverDebug
+					Console.WriteLine("Parent for window {0:X} / {1:X} = {2:X}", hwnd.ClientWindow.ToInt32(), hwnd.WholeWindow.ToInt32(), hwnd.parent != null ? hwnd.parent.Handle.ToInt32() : 0);
+				#endif
 				XReparentWindow(DisplayHandle, hwnd.whole_window, hwnd.parent.client_window, hwnd.x, hwnd.y);
 			}
 
@@ -2777,7 +2931,9 @@ namespace System.Windows.Forms {
 		}
 		#endregion	// Public Static Methods
 
+		#region Events
 		internal override event EventHandler Idle;
+		#endregion	// Events
 
 		#region X11 Imports
 		[DllImport ("libX11", EntryPoint="XOpenDisplay")]
@@ -3021,6 +3177,12 @@ namespace System.Windows.Forms {
 
 		[DllImport ("libX11", EntryPoint="XGetIconSizes")]
 		internal extern static int XGetIconSizes(IntPtr display, IntPtr window, out IntPtr size_list, out int count);
+
+		[DllImport ("libX11", EntryPoint="XSetErrorHandler")]
+		internal extern static IntPtr XSetErrorHandler(XErrorHandler error_handler);
+
+		[DllImport ("libX11", EntryPoint="XGetErrorText")]
+		internal extern static IntPtr XGetErrorText(IntPtr display, byte code, StringBuilder buffer, int length);
 		#endregion
 	}
 }
