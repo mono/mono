@@ -269,5 +269,12 @@ namespace MonoTests.System.Xml
 			Assert(doc.DocumentElement.FirstChild.OuterXml.IndexOf("xmlns:foo") > 0);
 		}
 
+		public void TestWriteToWithDifferentNamespaceAttributes()
+		{
+			XmlDocument doc = new XmlDocument();
+			doc.LoadXml("<root xmlns:foo='urn:dummy' xmlns:html='http://www.w3.org/1999/xhtml' html:style='font-size: 1em'></root>");
+			Assert(doc.OuterXml.IndexOf("xmlns:html=\"http://www.w3.org/1999/xhtml\"") > 0);
+		}
+
 	}
 }

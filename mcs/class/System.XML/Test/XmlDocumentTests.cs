@@ -848,5 +848,12 @@ namespace MonoTests.System.Xml
 			doc2 = (XmlDocument)doc.CloneNode (true);
 			AssertEquals ("DeepCopy", "foo", doc2.DocumentElement.Name);
 		}
+
+		public void TestOuterXmlWithDefaultXmlns ()
+		{
+			XmlDocument doc = new XmlDocument ();
+			doc.LoadXml ("<iq type=\"get\" id=\"ATECLIENT_1\"><query xmlns=\"jabber:iq:auth\"><username></username></query></iq>");
+			AssertEquals ("<iq type=\"get\" id=\"ATECLIENT_1\"><query xmlns=\"jabber:iq:auth\"><username /></query></iq>", doc.OuterXml);
+		}
 	}
 }
