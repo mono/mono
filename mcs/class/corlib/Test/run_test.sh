@@ -11,7 +11,6 @@ fi
 
 topdir=../../..
 NUNITCONSOLE=${topdir}/class/lib/NUnitConsole_mono.exe
-NUNIT_MONO_PATH=${topdir}/class/lib/:.
 
 for i in $@; do
 	MONO_PATH=../../../class/lib:. \

@@ -1,3 +1,14 @@
+2002-10-28  Gonzalo Paniagua Javier <gonzalo@gnome-db.org>
+
+	* AllTests.cs: removed System.Threading.AllTests. It does not exist.
+
+	* corlib_linux_test.args: added missing tests from s.s.c namespace.
+
+	* makefile.gnu: pass MONO_PATH correctly. Not sure if this does
+	anything because mono will load corlib from the installation dir.
+
+	* run_test.sh: NUNIT_MONO_PATH is not used.
+
 2002-10-25  Zoltan Varga  <vargaz@freemail.hu>
 
 	* corlib_linux_test.args AllTests.cs: Added beginnings of
