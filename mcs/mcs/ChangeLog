@@ -1,3 +1,11 @@
+2004-12-02  Marek Safar  <marek.safar@seznam.cz>
+
+	Fix bug #70102
+	* attribute.cs (Resolve): Improved implementation of params
+        attribute arguments.
+
+	* support.cs (ParameterData): Add HasParams to be faster.
+
 2004-12-02  Atsushi Enomoto  <atsushi@ximian.com>
 
 	all things are for /doc support:

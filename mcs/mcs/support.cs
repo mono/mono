@@ -21,6 +21,7 @@ namespace Mono.CSharp {
 	public interface ParameterData {
 		Type ParameterType (int pos);
 		int  Count { get; }
+		bool HasParams { get; }
 		string ParameterName (int pos);
 		string ParameterDesc (int pos);
 		Parameter.Modifier ParameterModifier (int pos);
@@ -130,6 +131,12 @@ namespace Mono.CSharp {
 				return is_varargs ? pi.Length + 1 : pi.Length;
 			}
 		}
+
+		public bool HasParams {
+			get {
+				return this.last_arg_is_params;
+			}
+		}
 		
 	}
 
@@ -156,6 +163,12 @@ namespace Mono.CSharp {
 		public int Count {
 			get {
 				return has_varargs ? count + 1 : count;
+			}
+		}
+
+		public bool HasParams {
+			get {
+				return Parameters.ArrayParameter != null;
 			}
 		}
 
