@@ -197,9 +197,18 @@ namespace System.IO
 			search = new SearchPattern (pattern);
 
 			find = MonoIO.FindFirstFile (Path.Combine (path , "*"), out stat);
-			if (find == MonoIO.InvalidHandle)
-				throw MonoIO.GetException ();	// DirectoryNotFoundException
+			if (find == MonoIO.InvalidHandle) {
+				switch (MonoIO.GetLastError ()) {
+				case MonoIOError.ERROR_FILE_NOT_FOUND:
+				case MonoIOError.ERROR_PATH_NOT_FOUND:
+					string message = String.Format ("Could not find a part of the path \"{0}\"", path);
+					throw new DirectoryNotFoundException (message);
 
+				default:
+					throw MonoIO.GetException (path);
+				}
+			}
+			
 			ArrayList entries = new ArrayList ();
 
 			while (true) {

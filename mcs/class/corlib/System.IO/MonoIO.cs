@@ -49,8 +49,7 @@ namespace System.IO
 				return new UnauthorizedAccessException (message);
 
 			default:
-				string name = Enum.GetName (typeof (MonoIOError), error);
-				message = String.Format ("Win32 IO operation returned {0} for \"{1}\"", name, path);
+				message = String.Format ("Win32 IO returned {0}", error);
 				return new IOException (message);
 			}
 		}

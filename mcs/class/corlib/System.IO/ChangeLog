@@ -1,3 +1,8 @@
+2002-03-28  Dan Lewis  <dihlewis@yahoo.co.uk>
+
+	* Directory.cs: Throws DirectoryNotFoundException.
+	* MonoIO.cs: Fixed to work around enum problem.
+
 2002-03-27  Dan Lewis  <dihlewis@yahoo.co.uk>
 
 	* StreamReader.cs: Implemented ReadLine() and ReadEnd().
