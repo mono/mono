@@ -1,5 +1,9 @@
 2002-11-4 Jackson Harper <jackson@latitudegeo.com>
 
+	* Compiler CompilerError: Fixed (C) in header
+	
+2002-11-4 Jackson Harper <jackson@latitudegeo.com>
+
 	* Compiler: Added file
 
 2002-11-4 Jackson Harper <jackson@latitudegeo.com>
