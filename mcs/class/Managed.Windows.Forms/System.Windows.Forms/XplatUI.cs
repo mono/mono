@@ -32,19 +32,6 @@ using System.Collections;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 
-//
-// Random architecture notes
-// We need
-// * windows
-//   - create
-//   - set location/size
-//   - define cursor
-//   - destroy
-//   - reparent?
-//   - show/hide
-// * Keyboard
-// * Mouse
-//
 
 /// X11 Version
 namespace System.Windows.Forms {
@@ -285,6 +272,34 @@ namespace System.Windows.Forms {
 
 		internal static bool CalculateWindowRect(IntPtr hWnd, ref Rectangle ClientRect, int Style, bool HasMenu, out Rectangle WindowRect) {
 			return driver.CalculateWindowRect(hWnd, ref ClientRect, Style, HasMenu, out WindowRect);
+		}
+
+		internal static void SetCursor(IntPtr hwnd, IntPtr cursor) {
+			driver.SetCursor(hwnd, cursor);
+		}
+
+		internal static void ShowCursor(bool show) {
+			driver.ShowCursor(show);
+		}
+
+		internal static void OverrideCursor(IntPtr cursor) {
+			driver.OverrideCursor(cursor);
+		}
+
+		internal static IntPtr DefineCursor(Bitmap bitmap, Bitmap mask, Color cursor_pixel, Color mask_pixel, int xHotSpot, int yHotSpot) {
+			return driver.DefineCursor(bitmap, mask, cursor_pixel, mask_pixel, xHotSpot, yHotSpot);
+		}
+
+		internal static IntPtr DefineStdCursor(StdCursor id) {
+			return driver.DefineStdCursor(id);
+		}
+
+		internal static void DestroyCursor(IntPtr cursor) {
+			driver.DestroyCursor(cursor);
+		}
+
+		internal static void GetCursorInfo(IntPtr cursor, out int width, out int height, out int hotspot_x, out int hotspot_y) {
+			driver.GetCursorInfo(cursor, out width, out height, out hotspot_x, out hotspot_y);
 		}
 
 		internal static void SetCursorPos(IntPtr handle, int x, int y) {

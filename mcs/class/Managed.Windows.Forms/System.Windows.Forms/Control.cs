@@ -73,7 +73,7 @@ namespace System.Windows.Forms
 		internal bool			layout_pending;		// true if our parent needs to re-layout us
 		internal object			control_tag;		// object that contains data about our control
 		internal int			mouse_clicks;		// Counter for mouse clicks
-
+		internal Cursor			cursor;			// Cursor for the window
 
 		// Visuals
 		internal Color			foreground_color;	// foreground color for control
@@ -498,6 +498,7 @@ namespace System.Windows.Forms
 			double_buffering = true;
 			mouse_clicks = 1;
 			tab_index = -1;
+			cursor = null;
 
 			control_style = ControlStyles.Selectable | ControlStyles.StandardClick | ControlStyles.StandardDoubleClick;
 
@@ -1149,23 +1150,53 @@ namespace System.Windows.Forms
 			}
 		}
 
-#if notdef
 		public virtual Cursor Cursor {
 			get {
-				throw new NotImplementedException();
+				if (cursor != null) {
+					return cursor;
+				}
+
+				if (parent != null) {
+					return parent.Cursor;
+				}
+
+				return Cursors.Default;
 			}
 
 			set {
-				throw new NotImplementedException();
+				if (cursor != value) {
+					Point	pt;
+
+					cursor = value;
+					
+					pt = Cursor.Position;
+					if (bounds.Contains(pt)) {
+						if (GetChildAtPoint(pt) == null) {
+							if (cursor != null) {
+								XplatUI.SetCursor(window.Handle, cursor.handle);
+							} else {
+								if (parent != null) {
+									XplatUI.SetCursor(window.Handle, parent.Cursor.handle);
+								} else {
+									XplatUI.SetCursor(window.Handle, Cursors.def.handle);
+								}
+							}
+						}
+					}
+
+					OnCursorChanged(EventArgs.Empty);
+				}
 			}
 		}
 
-		public ControlBidingsCollection DataBindings {
+#if not
+		public ControlBindingsCollection DataBindings {
 			get {
 				throw new NotImplementedException();
 			}
 		}
 #endif
+
 		public virtual Rectangle DisplayRectangle {
 			get {
 				return ClientRectangle;
@@ -2750,7 +2781,7 @@ namespace System.Windows.Forms
 						Invalidate();
 					}
 				}
-				break;
+				return;
 			}
 
 			case Msg.WM_PAINT: {				
@@ -2760,7 +2791,7 @@ namespace System.Windows.Forms
 				OnPaint(paint_event);
 				XplatUI.PaintEventEnd(Handle);
 				DefWndProc(ref m);	
-				break;
+				return;
 			}
 				
 			case Msg.WM_ERASEBKGND: {
@@ -2776,7 +2807,7 @@ namespace System.Windows.Forms
 					DefWndProc (ref m);	
 				}    					
     					
-				break;
+				return;
 			}
 
 			case Msg.WM_LBUTTONUP: {
@@ -2787,7 +2818,7 @@ namespace System.Windows.Forms
 				if (mouse_clicks > 1) {
 					mouse_clicks = 1;
 				}
-				break;
+				return;
 			}
 				
 			case Msg.WM_LBUTTONDOWN: {					
@@ -2795,7 +2826,7 @@ namespace System.Windows.Forms
 					mouse_clicks, LowOrder ((int) m.LParam.ToInt32 ()), HighOrder ((int) m.LParam.ToInt32 ()), 
 					0));
 					
-				break;
+				return;
 			}
 
 			case Msg.WM_LBUTTONDBLCLK: {
@@ -2804,7 +2835,7 @@ namespace System.Windows.Forms
 					mouse_clicks, LowOrder ((int) m.LParam.ToInt32 ()), HighOrder ((int) m.LParam.ToInt32 ()), 
 					0));
 
-				break;
+				return;
 			}
 
 			case Msg.WM_MBUTTONUP: {
@@ -2815,7 +2846,7 @@ namespace System.Windows.Forms
 				if (mouse_clicks > 1) {
 					mouse_clicks = 1;
 				}
-				break;
+				return;
 			}
 				
 			case Msg.WM_MBUTTONDOWN: {					
@@ -2823,7 +2854,7 @@ namespace System.Windows.Forms
 					mouse_clicks, LowOrder ((int) m.LParam.ToInt32 ()), HighOrder ((int) m.LParam.ToInt32 ()), 
 					0));
 					
-				break;
+				return;
 			}
 
 			case Msg.WM_MBUTTONDBLCLK: {
@@ -2831,7 +2862,7 @@ namespace System.Windows.Forms
 				OnMouseDown (new MouseEventArgs (FromParamToMouseButtons ((int) m.WParam.ToInt32()), 
 					mouse_clicks, LowOrder ((int) m.LParam.ToInt32 ()), HighOrder ((int) m.LParam.ToInt32 ()), 
 					0));
-				break;
+				return;
 			}
 
 			case Msg.WM_RBUTTONUP: {
@@ -2842,15 +2873,14 @@ namespace System.Windows.Forms
 				if (mouse_clicks > 1) {
 					mouse_clicks = 1;
 				}
-				break;
+				return;
 			}
 				
 			case Msg.WM_RBUTTONDOWN: {					
 				OnMouseDown (new MouseEventArgs (FromParamToMouseButtons ((int) m.WParam.ToInt32()), 
 					mouse_clicks, LowOrder ((int) m.LParam.ToInt32 ()), HighOrder ((int) m.LParam.ToInt32 ()), 
 					0));
-					
-				break;
+				return;
 			}
 
 			case Msg.WM_RBUTTONDBLCLK: {
@@ -2858,7 +2888,7 @@ namespace System.Windows.Forms
 				OnMouseDown (new MouseEventArgs (FromParamToMouseButtons ((int) m.WParam.ToInt32()), 
 					mouse_clicks, LowOrder ((int) m.LParam.ToInt32 ()), HighOrder ((int) m.LParam.ToInt32 ()), 
 					0));
-				break;
+				return;
 			}
 
 			case Msg.WM_MOUSEWHEEL: {				
@@ -2866,7 +2896,7 @@ namespace System.Windows.Forms
 				OnMouseWheel (new MouseEventArgs (FromParamToMouseButtons ((int) m.WParam.ToInt32()), 
 					mouse_clicks, LowOrder ((int) m.LParam.ToInt32 ()), HighOrder ((int) m.LParam.ToInt32 ()), 
 					HighOrder(m.WParam.ToInt32())));
-				break;
+				return;
 			}
 
 				
@@ -2875,7 +2905,7 @@ namespace System.Windows.Forms
 					mouse_clicks, 
 					LowOrder ((int) m.LParam.ToInt32 ()), HighOrder ((int) m.LParam.ToInt32 ()), 
 					0));
-				break;
+				return;
 			}
 
 			case Msg.WM_MOUSE_ENTER: {
@@ -2884,42 +2914,39 @@ namespace System.Windows.Forms
 				}
 				is_entered = true;
 				OnMouseEnter(EventArgs.Empty);
-				break;
+				return;
 			}
 
 			case Msg.WM_MOUSE_LEAVE: {
 				is_entered=false;
 				OnMouseLeave(EventArgs.Empty);
-				break;
+				return;
 			}
 
 			case Msg.WM_MOUSEHOVER:	{
 				OnMouseHover(EventArgs.Empty);
-				break;
+				return;
 			}
 			
 			case Msg.WM_KEYDOWN: {
 				if (!ProcessKeyMessage(ref m)) {
 					DefWndProc (ref m);
 				}
-
-				break;					
+				return;
 			}
 
 			case Msg.WM_KEYUP: {
 				if (!ProcessKeyMessage(ref m)) {
 					DefWndProc (ref m);
 				}
-
-				break;					
+				return;
 			}		
 
 			case Msg.WM_CHAR: {
 				if (!ProcessKeyMessage(ref m)) {
 					DefWndProc (ref m);
 				}
-
-				break;					
+				return;
 			}
 
 			case Msg.WM_HELP: {
@@ -2935,8 +2962,8 @@ namespace System.Windows.Forms
 					mouse_pos = Control.MousePosition;
 				}
 				OnHelpRequested(new HelpEventArgs(mouse_pos));
-
-				break;
+				m.Result = (IntPtr)1;
+				return;
 			}
 
 			case Msg.WM_KILLFOCUS: {
@@ -2950,7 +2977,7 @@ Console.WriteLine("Window {0} lost focus", this.Text);
 
 					if (e.Cancel) {
 						Focus();
-						break;
+						return;
 					}
 
 					OnValidated(EventArgs.Empty);
@@ -2958,7 +2985,7 @@ Console.WriteLine("Window {0} lost focus", this.Text);
 
 				this.has_focus = false;
 				OnLostFocus(EventArgs.Empty);
-				break;
+				return;
 			}
 
 			case Msg.WM_SETFOCUS: {
@@ -2966,7 +2993,7 @@ Console.WriteLine("Window {0} got focus", this.Text);
 				OnEnter(EventArgs.Empty);
 				this.has_focus = true;
 				OnGotFocus(EventArgs.Empty);
-				break;
+				return;
 			}
 				
 
@@ -2975,13 +3002,22 @@ Console.WriteLine("Window {0} got focus", this.Text);
 				
 #endif
 
+			case Msg.WM_SETCURSOR: {
+Console.WriteLine("Got WM_SETCURSOR, cursor is {0}", cursor);
+				if (cursor == null) {
+					DefWndProc(ref m);
+					return;
+				}
+
+				XplatUI.SetCursor(window.Handle, cursor.handle);
+				m.Result = (IntPtr)1;
+				return;
+			}
+
 			default:
 				DefWndProc(ref m);	
-				break;
+				return;
 			}
-			
-			
-			
 		}
 		#endregion	// Public Instance Methods
 

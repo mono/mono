@@ -131,14 +131,23 @@ namespace System.Windows.Forms {
 
 		internal abstract bool CalculateWindowRect(IntPtr hWnd, ref Rectangle ClientRect, int Style, bool HasMenu, out Rectangle WindowRect);
 
-		internal abstract void GetCursorPos(IntPtr handle, out int x, out int y);
-		internal abstract void SetCursorPos(IntPtr handle, int x, int y);
-		internal abstract void ScreenToClient(IntPtr handle, ref int x, ref int y);
-		internal abstract void ClientToScreen(IntPtr handle, ref int x, ref int y);
+		internal abstract void SetCursor(IntPtr hwnd, IntPtr cursor);
+		internal abstract void ShowCursor(bool show);
+		internal abstract void OverrideCursor(IntPtr cursor);
+		internal abstract IntPtr DefineCursor(Bitmap bitmap, Bitmap mask, Color cursor_pixel, Color mask_pixel, int xHotSpot, int yHotSpot);
+		internal abstract IntPtr DefineStdCursor(StdCursor id);
+		internal abstract void DestroyCursor(IntPtr cursor);
+		internal abstract void GetCursorInfo(IntPtr cursor, out int width, out int height, out int hotspot_x, out int hotspot_y);
 
-		internal abstract void GrabWindow(IntPtr hWnd, IntPtr ConfineToHwnd);
-		internal abstract void GrabInfo(out IntPtr hWnd, out bool GrabConfined, out Rectangle GrabArea);
-		internal abstract void ReleaseWindow(IntPtr hWnd);
+		internal abstract void GetCursorPos(IntPtr hwnd, out int x, out int y);
+		internal abstract void SetCursorPos(IntPtr hwnd, int x, int y);
+
+		internal abstract void ScreenToClient(IntPtr hwnd, ref int x, ref int y);
+		internal abstract void ClientToScreen(IntPtr hwnd, ref int x, ref int y);
+
+		internal abstract void GrabWindow(IntPtr hwnd, IntPtr ConfineToHwnd);
+		internal abstract void GrabInfo(out IntPtr hwnd, out bool GrabConfined, out Rectangle GrabArea);
+		internal abstract void ReleaseWindow(IntPtr hwnd);
 
 		internal abstract void SendAsyncMethod (AsyncMethodData method);
 		internal abstract void SetTimer (Timer timer);

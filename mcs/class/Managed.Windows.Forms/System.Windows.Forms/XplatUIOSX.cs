@@ -1016,6 +1016,41 @@ DEBUG THIS:
 		}
 
 		[MonoTODO]
+		internal override void SetCursor(IntPtr window, IntPtr cursor) {
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		internal override void ShowCursor(bool show) {
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		internal override void OverrideCursor(IntPtr cursor) {
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		internal override IntPtr DefineCursor(Bitmap bitmap, Bitmap mask, Color cursor_pixel, Color mask_pixel, int xHotSpot, int yHotSpot) {
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		internal override IntPtr DefineStdCursor(StdCursor id) {
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		internal override void DestroyCursor(IntPtr cursor) {
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		internal override void GetCursorInfo(IntPtr cursor, out int width, out int height, out int hotspot_x, out int hotspot_y) {
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
 		internal override void SetCursorPos(IntPtr handle, int x, int y) {
 			throw new NotImplementedException ();
 		}

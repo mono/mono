@@ -50,6 +50,7 @@ namespace System.Windows.Forms {
 		internal static Rectangle	grab_area;
 		internal static WndProc		wnd_proc;
 		internal static IntPtr		prev_mouse_hwnd;
+		internal static IntPtr		override_cursor;
 
 		internal static bool		themes_enabled;
 		private static Hashtable	handle_data;
@@ -225,22 +226,24 @@ namespace System.Windows.Forms {
 		}       
 
 		private enum LoadCursorType {
-			IDC_ARROW			=32512,
-			IDC_IBEAM			=32513,
-			IDC_WAIT			=32514,
-			IDC_CROSS			=32515,
-			IDC_UPARROW			=32516,
-			IDC_SIZE			=32640,
-			IDC_ICON			=32641,
-			IDC_SIZENWSE			=32642,
-			IDC_SIZENESW			=32643,
-			IDC_SIZEWE			=32644,
-			IDC_SIZENS			=32645,
-			IDC_SIZEALL			=32646,
-			IDC_NO				=32648,
-			IDC_HAND			=32649,
-			IDC_APPSTARTING			=32650,
-			IDC_HELP			=32651
+			First				= 32512,
+			IDC_ARROW			= 32512,
+			IDC_IBEAM			= 32513,
+			IDC_WAIT			= 32514,
+			IDC_CROSS			= 32515,
+			IDC_UPARROW			= 32516,
+			IDC_SIZE			= 32640,
+			IDC_ICON			= 32641,
+			IDC_SIZENWSE			= 32642,
+			IDC_SIZENESW			= 32643,
+			IDC_SIZEWE			= 32644,
+			IDC_SIZENS			= 32645,
+			IDC_SIZEALL			= 32646,
+			IDC_NO				= 32648,
+			IDC_HAND			= 32649,
+			IDC_APPSTARTING			= 32650,
+			IDC_HELP			= 32651,
+			Last				= 32651
 		}
 
 		[Flags]
@@ -323,6 +326,98 @@ namespace System.Windows.Forms {
 			SW_INVALIDATE			= 0x0002,
 			SW_ERASE			= 0x0004,
 			SW_SMOOTHSCROLL			= 0x0010
+		}
+
+		internal enum SystemMetrics {
+			SM_CXSCREEN			= 0,
+			SM_CYSCREEN             	= 1,
+			SM_CXVSCROLL            	= 2,
+			SM_CYHSCROLL            	= 3,
+			SM_CYCAPTION            	= 4,
+			SM_CXBORDER             	= 5,
+			SM_CYBORDER             	= 6,
+			SM_CXDLGFRAME           	= 7,
+			SM_CYDLGFRAME           	= 8,
+			SM_CYVTHUMB             	= 9,
+			SM_CXHTHUMB             	= 10,
+			SM_CXICON               	= 11,
+			SM_CYICON               	= 12,
+			SM_CXCURSOR             	= 13,
+			SM_CYCURSOR             	= 14,
+			SM_CYMENU               	= 15,
+			SM_CXFULLSCREEN         	= 16,
+			SM_CYFULLSCREEN         	= 17,
+			SM_CYKANJIWINDOW        	= 18,
+			SM_MOUSEPRESENT         	= 19,
+			SM_CYVSCROLL            	= 20,
+			SM_CXHSCROLL            	= 21,
+			SM_DEBUG                	= 22,
+			SM_SWAPBUTTON           	= 23,
+			SM_RESERVED1            	= 24,
+			SM_RESERVED2            	= 25,
+			SM_RESERVED3            	= 26,
+			SM_RESERVED4            	= 27,
+			SM_CXMIN                	= 28,
+			SM_CYMIN                	= 29,
+			SM_CXSIZE               	= 30,
+			SM_CYSIZE               	= 31,
+			SM_CXFRAME              	= 32,
+			SM_CYFRAME              	= 33,
+			SM_CXMINTRACK			= 34,
+			SM_CYMINTRACK           	= 35,
+			SM_CXDOUBLECLK          	= 36,
+			SM_CYDOUBLECLK          	= 37,
+			SM_CXICONSPACING        	= 38,
+			SM_CYICONSPACING        	= 39,
+			SM_MENUDROPALIGNMENT    	= 40,
+			SM_PENWINDOWS           	= 41,
+			SM_DBCSENABLED          	= 42,
+			SM_CMOUSEBUTTONS        	= 43,
+			SM_CXFIXEDFRAME			= SM_CXDLGFRAME,
+			SM_CYFIXEDFRAME			= SM_CYDLGFRAME,
+			SM_CXSIZEFRAME			= SM_CXFRAME,
+			SM_CYSIZEFRAME			= SM_CYFRAME,
+			SM_SECURE               	= 44,
+			SM_CXEDGE               	= 45,
+			SM_CYEDGE               	= 46,
+			SM_CXMINSPACING         	= 47,
+			SM_CYMINSPACING         	= 48,
+			SM_CXSMICON             	= 49,
+			SM_CYSMICON             	= 50,
+			SM_CYSMCAPTION          	= 51,
+			SM_CXSMSIZE             	= 52,
+			SM_CYSMSIZE             	= 53,
+			SM_CXMENUSIZE           	= 54,
+			SM_CYMENUSIZE           	= 55,
+			SM_ARRANGE              	= 56,
+			SM_CXMINIMIZED          	= 57,
+			SM_CYMINIMIZED          	= 58,
+			SM_CXMAXTRACK           	= 59,
+			SM_CYMAXTRACK           	= 60,
+			SM_CXMAXIMIZED          	= 61,
+			SM_CYMAXIMIZED          	= 62,
+			SM_NETWORK              	= 63,
+			SM_CLEANBOOT            	= 67,
+			SM_CXDRAG               	= 68,
+			SM_CYDRAG               	= 69,
+			SM_SHOWSOUNDS           	= 70,
+			SM_CXMENUCHECK          	= 71,
+			SM_CYMENUCHECK          	= 72,
+			SM_SLOWMACHINE          	= 73,
+			SM_MIDEASTENABLED       	= 74,
+			SM_MOUSEWHEELPRESENT    	= 75,
+			SM_XVIRTUALSCREEN       	= 76,
+			SM_YVIRTUALSCREEN       	= 77,
+			SM_CXVIRTUALSCREEN      	= 78,
+			SM_CYVIRTUALSCREEN      	= 79,
+			SM_CMONITORS            	= 80,
+			SM_SAMEDISPLAYFORMAT    	= 81,
+			SM_IMMENABLED           	= 82,
+			SM_CXFOCUSBORDER        	= 83,
+			SM_CYFOCUSBORDER        	= 84,
+			SM_TABLETPC             	= 86,
+			SM_MEDIACENTER          	= 87,
+			SM_CMETRICS             	= 88
 		}
 		#endregion
 
@@ -922,6 +1017,115 @@ namespace System.Windows.Forms {
 			return true;
 		}
 
+		internal override void SetCursor(IntPtr window, IntPtr cursor) {
+			if (override_cursor == IntPtr.Zero) {
+				Win32SetCursor(cursor);
+				return;
+			}
+			Win32SetCursor(override_cursor);
+		}
+
+		internal override void ShowCursor(bool show) {
+			Win32ShowCursor(show);
+		}
+
+		internal override void OverrideCursor(IntPtr cursor) {
+			override_cursor = cursor;
+		}
+
+		
+		internal override IntPtr DefineCursor(Bitmap bitmap, Bitmap mask, Color cursor_pixel, Color mask_pixel, int xHotSpot, int yHotSpot) {
+			IntPtr	cursor;
+			Bitmap	cursor_bitmap;
+			Bitmap	cursor_mask;
+			Byte[]	cursor_bits;
+			Byte[]	mask_bits;
+			Color	pixel;
+			int	width;
+			int	height;
+
+			// Win32 only allows creation cursors of a certain size
+			if ((bitmap.Width != Win32GetSystemMetrics(SystemMetrics.SM_CXCURSOR)) || (bitmap.Width != Win32GetSystemMetrics(SystemMetrics.SM_CXCURSOR))) {
+				cursor_bitmap = new Bitmap(bitmap, new Size(Win32GetSystemMetrics(SystemMetrics.SM_CXCURSOR), Win32GetSystemMetrics(SystemMetrics.SM_CXCURSOR)));
+				cursor_mask = new Bitmap(mask, new Size(Win32GetSystemMetrics(SystemMetrics.SM_CXCURSOR), Win32GetSystemMetrics(SystemMetrics.SM_CXCURSOR)));
+			} else {
+				cursor_bitmap = bitmap;
+				cursor_mask = mask;
+			}
+
+			width = cursor_bitmap.Width;
+			height = cursor_bitmap.Height;
+
+			cursor_bits = new Byte[(width / 8) * height];
+			mask_bits = new Byte[(width / 8) * height];
+
+			for (int y = 0; y < height; y++) {
+				for (int x = 0; x < width; x++) {
+					pixel = cursor_bitmap.GetPixel(x, y);
+
+					if (pixel == cursor_pixel) {
+						cursor_bits[y * width / 8 + x / 8] |= (byte)(0x80 >> (x % 8));
+					}
+
+					pixel = cursor_mask.GetPixel(x, y);
+
+					if (pixel == mask_pixel) {
+						mask_bits[y * width / 8 + x / 8] |= (byte)(0x80 >> (x % 8));
+					}
+				}
+			}
+
+			cursor = Win32CreateCursor(IntPtr.Zero, xHotSpot, yHotSpot, width, height, cursor_bits, mask_bits);
+
+			return cursor;
+		}
+
+		[MonoTODO("Define the missing cursors")]
+		internal override IntPtr DefineStdCursor(StdCursor id) {
+			switch(id) {
+				case StdCursor.AppStarting:	return Win32LoadCursor(IntPtr.Zero, LoadCursorType.IDC_APPSTARTING);
+				case StdCursor.Arrow:		return Win32LoadCursor(IntPtr.Zero, LoadCursorType.IDC_ARROW);
+				case StdCursor.Cross:		return Win32LoadCursor(IntPtr.Zero, LoadCursorType.IDC_CROSS);
+				case StdCursor.Default:		return Win32LoadCursor(IntPtr.Zero, LoadCursorType.IDC_ARROW);
+				case StdCursor.Hand:		return Win32LoadCursor(IntPtr.Zero, LoadCursorType.IDC_HAND);
+				case StdCursor.Help:		return Win32LoadCursor(IntPtr.Zero, LoadCursorType.IDC_HELP);
+				case StdCursor.HSplit:		return Win32LoadCursor(IntPtr.Zero, LoadCursorType.IDC_ARROW);		// FIXME
+				case StdCursor.IBeam:		return Win32LoadCursor(IntPtr.Zero, LoadCursorType.IDC_IBEAM);
+				case StdCursor.No:		return Win32LoadCursor(IntPtr.Zero, LoadCursorType.IDC_NO);
+				case StdCursor.NoMove2D:	return Win32LoadCursor(IntPtr.Zero, LoadCursorType.IDC_ARROW);		// FIXME
+				case StdCursor.NoMoveHoriz:	return Win32LoadCursor(IntPtr.Zero, LoadCursorType.IDC_ARROW);		// FIXME
+				case StdCursor.NoMoveVert:	return Win32LoadCursor(IntPtr.Zero, LoadCursorType.IDC_ARROW);		// FIXME
+				case StdCursor.PanEast:		return Win32LoadCursor(IntPtr.Zero, LoadCursorType.IDC_ARROW);		// FIXME
+				case StdCursor.PanNE:		return Win32LoadCursor(IntPtr.Zero, LoadCursorType.IDC_ARROW);		// FIXME
+				case StdCursor.PanNorth:	return Win32LoadCursor(IntPtr.Zero, LoadCursorType.IDC_ARROW);		// FIXME
+				case StdCursor.PanNW:		return Win32LoadCursor(IntPtr.Zero, LoadCursorType.IDC_ARROW);		// FIXME
+				case StdCursor.PanSE:		return Win32LoadCursor(IntPtr.Zero, LoadCursorType.IDC_ARROW);		// FIXME
+				case StdCursor.PanSouth:	return Win32LoadCursor(IntPtr.Zero, LoadCursorType.IDC_ARROW);		// FIXME
+				case StdCursor.PanSW:		return Win32LoadCursor(IntPtr.Zero, LoadCursorType.IDC_ARROW);		// FIXME
+				case StdCursor.PanWest:		return Win32LoadCursor(IntPtr.Zero, LoadCursorType.IDC_ARROW);		// FIXME
+				case StdCursor.SizeAll:		return Win32LoadCursor(IntPtr.Zero, LoadCursorType.IDC_SIZEALL);
+				case StdCursor.SizeNESW:	return Win32LoadCursor(IntPtr.Zero, LoadCursorType.IDC_SIZENESW);
+				case StdCursor.SizeNS:		return Win32LoadCursor(IntPtr.Zero, LoadCursorType.IDC_SIZENS);
+				case StdCursor.SizeNWSE:	return Win32LoadCursor(IntPtr.Zero, LoadCursorType.IDC_SIZENWSE);
+				case StdCursor.SizeWE:		return Win32LoadCursor(IntPtr.Zero, LoadCursorType.IDC_SIZEWE);
+				case StdCursor.UpArrow:		return Win32LoadCursor(IntPtr.Zero, LoadCursorType.IDC_UPARROW);
+				case StdCursor.VSplit:		return Win32LoadCursor(IntPtr.Zero, LoadCursorType.IDC_ARROW);		// FIXME
+				case StdCursor.WaitCursor:	return Win32LoadCursor(IntPtr.Zero, LoadCursorType.IDC_WAIT);
+			}
+			throw new NotImplementedException ();
+		}
+
+		internal override void DestroyCursor(IntPtr cursor) {
+			if ((cursor.ToInt32() < (int)LoadCursorType.First) || (cursor.ToInt32() > (int)LoadCursorType.Last)) {
+				Win32DestroyCursor(cursor);
+			}
+		}
+
+		[MonoTODO]
+		internal override void GetCursorInfo(IntPtr cursor, out int width, out int height, out int hotspot_x, out int hotspot_y) {
+			throw new NotImplementedException ();
+		}
+
 		internal override void SetCursorPos(IntPtr handle, int x, int y) {
 			Win32SetCursorPos(x, y);
 		}
@@ -1028,6 +1232,10 @@ namespace System.Windows.Forms {
 		}
 
 		internal override void SetFocus(IntPtr hwnd) {
+Control c = Control.ControlNativeWindow.ControlFromHandle(hwnd);
+if (c != null) {
+	Console.WriteLine("setting focus to window {0}", c.Text);
+}
 			Win32SetFocus(hwnd);
 		}
 
@@ -1151,6 +1359,18 @@ namespace System.Windows.Forms {
 
 		[DllImport ("user32.dll", EntryPoint="LoadCursorW", CharSet=CharSet.Unicode, CallingConvention=CallingConvention.StdCall)]
 		private extern static IntPtr Win32LoadCursor(IntPtr hInstance, LoadCursorType type);
+
+		[DllImport ("user32.dll", EntryPoint="ShowCursor", CallingConvention=CallingConvention.StdCall)]
+		private extern static IntPtr Win32ShowCursor(bool bShow);
+
+		[DllImport ("user32.dll", EntryPoint="SetCursor", CallingConvention=CallingConvention.StdCall)]
+		private extern static IntPtr Win32SetCursor(IntPtr hCursor);
+
+		[DllImport ("user32.dll", EntryPoint="CreateCursor", CallingConvention=CallingConvention.StdCall)]
+		private extern static IntPtr Win32CreateCursor(IntPtr hInstance, int xHotSpot, int yHotSpot, int nWidth, int nHeight, Byte[] pvANDPlane, Byte[] pvORPlane);
+
+		[DllImport ("user32.dll", EntryPoint="DestroyCursor", CallingConvention=CallingConvention.StdCall)]
+		private extern static bool Win32DestroyCursor(IntPtr hCursor);
 
 		[DllImport ("user32.dll", EntryPoint="DefWindowProcW", CharSet=CharSet.Unicode, CallingConvention=CallingConvention.StdCall)]
 		private extern static IntPtr Win32DefWindowProc(IntPtr hWnd, Msg Msg, IntPtr wParam, IntPtr lParam);
@@ -1307,6 +1527,9 @@ namespace System.Windows.Forms {
 
 		[DllImport ("user32.dll", EntryPoint="GetActiveWindow", CallingConvention=CallingConvention.StdCall)]
 		private extern static IntPtr Win32GetActiveWindow();
+
+		[DllImport ("user32.dll", EntryPoint="GetSystemMetrics", CallingConvention=CallingConvention.StdCall)]
+		private extern static int Win32GetSystemMetrics(SystemMetrics nIndex);
 		#endregion
 	}
 }

@@ -62,6 +62,7 @@ System.Windows.Forms/ConvertEventArgs.cs
 System.Windows.Forms/ConvertEventHandler.cs
 System.Windows.Forms/CreateParams.cs
 System.Windows.Forms/Cursor.cs
+System.Windows.Forms/Cursors.cs
 System.Windows.Forms/DataGrid.cs
 System.Windows.Forms/DataGridLineStyle.cs
 System.Windows.Forms/DataGridParentRowsLabelStyle.cs

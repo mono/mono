@@ -32,16 +32,29 @@ using System.Runtime.Serialization;
 
 namespace System.Windows.Forms {
 	public sealed class Cursor : IDisposable, ISerializable {
-		
+		#region Local Variables
+		internal IntPtr		handle;
+		internal Size		size;
+		#endregion	// Local Variables
+
 		#region Public Constructors
+		private Cursor() {
+		}
+
 		// This is supposed to take a Win32 handle
 		public Cursor(IntPtr handle) {
+			this.handle = handle;
 		}
 
 		public Cursor(System.IO.Stream stream) {
 		}
 
 		public Cursor(string fileName) {
+			Bitmap c = (Bitmap)Bitmap.FromFile("cursor.bmp");
+			Bitmap m = (Bitmap)Bitmap.FromFile("mask.bmp");
+
+			handle = XplatUI.DefineCursor(c, m, Color.FromArgb(0, 0, 0), Color.FromArgb(0, 0, 0), 16, 16);
+			size = new Size(c.Width, c.Height);
 		}
 
 		public Cursor(Type type, string resource) {
@@ -74,7 +87,16 @@ namespace System.Windows.Forms {
 				;
 			}
 		}
+#if not
+		public static Cursor Current {
+			get {
+				return IntPtr.Zero;
+			}
 
+			set {
+			}
+		}
+#endif
 		public static Point Position {
 			get {
 				int x;
@@ -91,7 +113,28 @@ namespace System.Windows.Forms {
 		#endregion	// Public Static Properties
 
 		#region Public Instance Properties
+		public IntPtr Handle {
+			get {
+				return handle;
+			}
+		}
+
+		public Size Size {
+			get {
+				return size;
+			}
+		}
 		#endregion	// Public Instance Properties
+
+		#region Public Static Methods
+		public static void Hide() {
+			XplatUI.ShowCursor(false);
+		}
+
+		public static void Show() {
+			XplatUI.ShowCursor(false);
+		}
+		#endregion	// Public Static Methods
 
 		#region Public Instance Methods
 		public void Dispose() {

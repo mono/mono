@@ -686,5 +686,68 @@ namespace System.Windows.Forms {
 		PM_REMOVE			= 0x00000001,
 		PM_NOYIELD			= 0x00000002
 	}
+
+	internal enum StdCursor {
+		Default				= 0,
+		AppStarting			= 1,
+		Arrow				= 2,
+		Cross				= 3,
+		Hand				= 4,
+		Help				= 5,
+		HSplit				= 6,
+		IBeam				= 7,
+		No				= 8,
+		NoMove2D			= 9,
+		NoMoveHoriz			= 10,
+		NoMoveVert			= 11,
+		PanEast				= 12,
+		PanNE				= 13,
+		PanNorth			= 14,
+		PanNW				= 15,
+		PanSE				= 16,
+		PanSouth			= 17,
+		PanSW				= 18,
+		PanWest				= 19,
+		SizeAll				= 20,
+		SizeNESW			= 21,
+		SizeNS				= 22,
+		SizeNWSE			= 23,
+		SizeWE				= 24,
+		UpArrow				= 25,
+		VSplit				= 26,
+		WaitCursor			= 27
+	}
+
+	internal enum HitTest {
+		HTERROR				= -2,
+		HTTRANSPARENT			= -1,
+		HTNOWHERE			= 0,
+		HTCLIENT			= 1,
+		HTCAPTION			= 2,
+		HTSYSMENU			= 3,
+		HTGROWBOX			= 4,
+		HTSIZE				= HTGROWBOX,
+		HTMENU				= 5,
+		HTHSCROLL			= 6,
+		HTVSCROLL			= 7,
+		HTMINBUTTON			= 8,
+		HTMAXBUTTON			= 9,
+		HTLEFT				= 10,
+		HTRIGHT				= 11,
+		HTTOP				= 12,
+		HTTOPLEFT			= 13,
+		HTTOPRIGHT			= 14,
+		HTBOTTOM			= 15,
+		HTBOTTOMLEFT			= 16,
+		HTBOTTOMRIGHT			= 17,
+		HTBORDER			= 18,
+		HTREDUCE			= HTMINBUTTON,
+		HTZOOM				= HTMAXBUTTON,
+		HTSIZEFIRST			= HTLEFT,
+		HTSIZELAST			= HTBOTTOMRIGHT,
+		HTOBJECT			= 19,
+		HTCLOSE				= 20,
+		HTHELP				= 21
+	}
 }
 

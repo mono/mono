@@ -110,6 +110,9 @@ namespace System.Windows.Forms {
 		internal static Hover		hover;
 		internal static bool		getmessage_ret;		// Return value for GetMessage function; 0 to terminate app
 		internal static IntPtr		focus_hwnd;		// the window that currently has keyboard focus
+		internal static IntPtr		override_cursor;	// The cursor overriding a standard cursor
+		internal static IntPtr		last_cursor;		// To avoid server roundtrips we cache the cursor to avoid re-setting the same
+		internal static IntPtr		last_window;		// To avoid server roundtrips we cache the cursor to avoid re-setting the same
 
 		internal static Caret		caret;			// To display a blinking caret
 
@@ -1339,6 +1342,8 @@ namespace System.Windows.Forms {
 				}
 
 				case XEventName.MotionNotify: {
+					NativeWindow.WndProc(msg.hwnd, Msg.WM_SETCURSOR, msg.hwnd, (IntPtr)HitTest.HTCLIENT);
+
 					msg.message = Msg.WM_MOUSEMOVE;
 					msg.wParam = GetMousewParam(0);
 					msg.lParam = (IntPtr) (xevent.MotionEvent.y << 16 | xevent.MotionEvent.x);
@@ -1652,6 +1657,157 @@ namespace System.Windows.Forms {
 		internal override bool CalculateWindowRect(IntPtr hWnd, ref Rectangle ClientRect, int Style, bool HasMenu, out Rectangle WindowRect) {
 			WindowRect = new Rectangle(ClientRect.Left, ClientRect.Top, ClientRect.Width, ClientRect.Height);
 			return true;
+		}
+
+		internal override void SetCursor(IntPtr window, IntPtr cursor) {
+			if (override_cursor == IntPtr.Zero) {
+				if ((last_window == window) && (last_cursor == cursor)) {
+					return;
+				}
+
+				last_cursor = cursor;
+				last_window = window;
+
+				XDefineCursor(DisplayHandle, window, cursor);
+				return;
+			}
+			XDefineCursor(DisplayHandle, window, override_cursor);
+		}
+
+		internal override void ShowCursor(bool show) {
+			;	// FIXME - X11 doesn't 'hide' the cursor. we could create an empty cursor
+		}
+
+		internal override void OverrideCursor(IntPtr cursor) {
+			override_cursor = cursor;
+		}
+
+		internal override IntPtr DefineCursor(Bitmap bitmap, Bitmap mask, Color cursor_pixel, Color mask_pixel, int xHotSpot, int yHotSpot) {
+			IntPtr	cursor;
+			Bitmap	cursor_bitmap;
+			Bitmap	cursor_mask;
+			Byte[]	cursor_bits;
+			Byte[]	mask_bits;
+			Color	c_pixel;
+			Color	m_pixel;
+			int	width;
+			int	height;
+			IntPtr	cursor_pixmap;
+			IntPtr	mask_pixmap;
+			XColor	fg;
+			XColor	bg;
+			bool	and;
+			bool	xor;
+
+			if (XQueryBestCursor(DisplayHandle, root_window, bitmap.Width, bitmap.Height, out width, out height) == 0) {
+				return IntPtr.Zero;
+			}
+
+			// Win32 only allows creation cursors of a certain size
+			if ((bitmap.Width != width) || (bitmap.Width != height)) {
+				cursor_bitmap = new Bitmap(bitmap, new Size(width, height));
+				cursor_mask = new Bitmap(mask, new Size(width, height));
+			} else {
+				cursor_bitmap = bitmap;
+				cursor_mask = mask;
+			}
+
+			width = cursor_bitmap.Width;
+			height = cursor_bitmap.Height;
+
+			cursor_bits = new Byte[(width / 8) * height];
+			mask_bits = new Byte[(width / 8) * height];
+
+			for (int y = 0; y < height; y++) {
+				for (int x = 0; x < width; x++) {
+					c_pixel = cursor_bitmap.GetPixel(x, y);
+					m_pixel = cursor_mask.GetPixel(x, y);
+
+					and = c_pixel == cursor_pixel;
+					xor = m_pixel == mask_pixel;
+
+					if (!and && !xor) {
+						// Black
+						// cursor_bits[y * width / 8 + x / 8] &= (byte)~((1 << (x % 8)));	// The bit already is 0
+						mask_bits[y * width / 8 + x / 8] |= (byte)(1 << (x % 8));
+					} else if (!and && xor) {
+						// White
+						cursor_bits[y * width / 8 + x / 8] |= (byte)(1 << (x % 8));
+						mask_bits[y * width / 8 + x / 8] |= (byte)(1 << (x % 8));
+					#if notneeded
+					} else if (and && !xor) {
+						// Screen
+					} else if (and && xor) {
+						// Inverse Screen
+
+						// X11 doesn't know the 'reverse screen' concept, so we'll treat them the same
+						// we want both to be 0 so nothing to be done
+						//cursor_bits[y * width / 8 + x / 8] &= (byte)~((1 << (x % 8)));
+						//mask_bits[y * width / 8 + x / 8] |= (byte)(01 << (x % 8));
+					#endif
+					}
+				}
+			}
+
+			cursor_pixmap = XCreatePixmapFromBitmapData(DisplayHandle, root_window, cursor_bits, width, height, (IntPtr)1, (IntPtr)0, 1);
+			mask_pixmap = XCreatePixmapFromBitmapData(DisplayHandle, root_window, mask_bits, width, height, (IntPtr)1, (IntPtr)0, 1);
+			fg = new XColor();
+			bg = new XColor();
+
+			fg.pixel = XWhitePixel(DisplayHandle, screen_num);
+			fg.red = (ushort)65535;
+			fg.green = (ushort)65535;
+			fg.blue = (ushort)65535;
+
+			bg.pixel = XBlackPixel(DisplayHandle, screen_num);
+
+			cursor = XCreatePixmapCursor(DisplayHandle, cursor_pixmap, mask_pixmap, ref fg, ref bg, xHotSpot, yHotSpot);
+
+			return cursor;
+		}
+
+		[MonoTODO("Define our own bitmaps for cursors to match Win32")]
+		internal override IntPtr DefineStdCursor(StdCursor id) {
+			switch(id) {
+				case StdCursor.AppStarting:	return XCreateFontCursor(DisplayHandle, CursorFontShape.XC_watch);
+				case StdCursor.Arrow:		return IntPtr.Zero;
+				case StdCursor.Cross:		return XCreateFontCursor(DisplayHandle, CursorFontShape.XC_crosshair);
+				case StdCursor.Default:		return IntPtr.Zero;
+				case StdCursor.Hand:		return XCreateFontCursor(DisplayHandle, CursorFontShape.XC_hand2);
+				case StdCursor.Help:		return XCreateFontCursor(DisplayHandle, CursorFontShape.XC_question_arrow);
+				case StdCursor.HSplit:		return XCreateFontCursor(DisplayHandle, CursorFontShape.XC_sb_h_double_arrow);
+				case StdCursor.IBeam:		return XCreateFontCursor(DisplayHandle, CursorFontShape.XC_xterm);
+				case StdCursor.No:		return XCreateFontCursor(DisplayHandle, CursorFontShape.XC_circle);
+				case StdCursor.NoMove2D:	return XCreateFontCursor(DisplayHandle, CursorFontShape.XC_fleur);
+				case StdCursor.NoMoveHoriz:	return XCreateFontCursor(DisplayHandle, CursorFontShape.XC_fleur);
+				case StdCursor.NoMoveVert:	return XCreateFontCursor(DisplayHandle, CursorFontShape.XC_fleur);
+				case StdCursor.PanEast:		return XCreateFontCursor(DisplayHandle, CursorFontShape.XC_fleur);
+				case StdCursor.PanNE:		return XCreateFontCursor(DisplayHandle, CursorFontShape.XC_fleur);
+				case StdCursor.PanNorth:	return XCreateFontCursor(DisplayHandle, CursorFontShape.XC_fleur);
+				case StdCursor.PanNW:		return XCreateFontCursor(DisplayHandle, CursorFontShape.XC_fleur);
+				case StdCursor.PanSE:		return XCreateFontCursor(DisplayHandle, CursorFontShape.XC_fleur);
+				case StdCursor.PanSouth:	return XCreateFontCursor(DisplayHandle, CursorFontShape.XC_fleur);
+				case StdCursor.PanSW:		return XCreateFontCursor(DisplayHandle, CursorFontShape.XC_fleur);
+				case StdCursor.PanWest:		return XCreateFontCursor(DisplayHandle, CursorFontShape.XC_sizing);
+				case StdCursor.SizeAll:		return XCreateFontCursor(DisplayHandle, CursorFontShape.XC_fleur);
+				case StdCursor.SizeNESW:	return XCreateFontCursor(DisplayHandle, CursorFontShape.XC_sizing);
+				case StdCursor.SizeNS:		return XCreateFontCursor(DisplayHandle, CursorFontShape.XC_fleur);
+				case StdCursor.SizeNWSE:	return XCreateFontCursor(DisplayHandle, CursorFontShape.XC_bottom_right_corner);
+				case StdCursor.SizeWE:		return XCreateFontCursor(DisplayHandle, CursorFontShape.XC_fleur);
+				case StdCursor.UpArrow:		return XCreateFontCursor(DisplayHandle, CursorFontShape.XC_center_ptr);
+				case StdCursor.VSplit:		return XCreateFontCursor(DisplayHandle, CursorFontShape.XC_sb_v_double_arrow);
+				case StdCursor.WaitCursor:	return XCreateFontCursor(DisplayHandle, CursorFontShape.XC_watch);
+				default:			return IntPtr.Zero;
+			}
+		}
+
+		internal override void DestroyCursor(IntPtr cursor) {
+			
+		}
+
+
+		internal override void GetCursorInfo(IntPtr cursor, out int width, out int height, out int hotspot_x, out int hotspot_y) {
+			throw new NotImplementedException ();
 		}
 
 		internal override void SetCursorPos(IntPtr handle, int x, int y) {
@@ -2157,6 +2313,27 @@ namespace System.Windows.Forms {
 
 		[DllImport ("libX11", EntryPoint="XIconifyWindow")]
 		internal extern static int XIconifyWindow(IntPtr display, IntPtr window, int screen_number);
+
+		[DllImport ("libX11", EntryPoint="XDefineCursor")]
+		internal extern static int XDefineCursor(IntPtr display, IntPtr window, IntPtr cursor);
+
+		[DllImport ("libX11", EntryPoint="XCreateFontCursor")]
+		internal extern static IntPtr XCreateFontCursor(IntPtr display, CursorFontShape shape);
+
+		[DllImport ("libX11", EntryPoint="XCreatePixmapCursor")]
+		internal extern static IntPtr XCreatePixmapCursor(IntPtr display, IntPtr source, IntPtr mask, ref XColor foreground_color, ref XColor background_color, int x_hot, int y_hot);
+
+		[DllImport ("libX11", EntryPoint="XCreatePixmapFromBitmapData")]
+		internal extern static IntPtr XCreatePixmapFromBitmapData(IntPtr display, IntPtr drawable, byte[] data, int width, int height, IntPtr fg, IntPtr bg, int depth);
+
+		[DllImport ("libX11", EntryPoint="XQueryBestCursor")]
+		internal extern static int XQueryBestCursor(IntPtr display, IntPtr drawable, int width, int height, out int best_width, out int best_height);
+
+		[DllImport ("libX11", EntryPoint="XWhitePixel")]
+		internal extern static IntPtr XWhitePixel(IntPtr display, int screen_no);
+
+		[DllImport ("libX11", EntryPoint="XBlackPixel")]
+		internal extern static IntPtr XBlackPixel(IntPtr display, int screen_no);
 		#endregion
 	}
 }
