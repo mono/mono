@@ -169,7 +169,7 @@ namespace System.Web.UI.WebControls
 			bool dirtyFlag = false;
 			short  tTabIndex = TabIndex;
 			Style s = (ControlStyleCreated ? ControlStyle : null);
-			if(TabIndex > 0)
+			if(TabIndex != 0)
 			{
 				if(!ViewState.IsItemDirty("TabIndex"))
 					dirtyFlag = true;
@@ -179,7 +179,7 @@ namespace System.Web.UI.WebControls
 			ri.RepeatLayout  = RepeatLayout;
 			ri.RepeatDirection = RepeatDirection;
 			ri.RenderRepeater(writer, this, s, this);
-			if(tTabIndex > 0)
+			if(tTabIndex != 0)
 			{
 				TabIndex = tTabIndex;
 			}

@@ -1,4 +1,7 @@
 2004-01-18 Alon Gazit <along@mainsoft.com>
+	* CheckBoxList.cs: fix problem with negative TabIndex (wasn't rendered).
+	
+2004-01-18 Alon Gazit <along@mainsoft.com>
 	* Style.cs: CopyFrom method shouldn't copy a value that is equal to Property default value.
 	* FontInfo.cs : CopyFrom method shouldn't copy a value that is equal to Property default value.	
 
