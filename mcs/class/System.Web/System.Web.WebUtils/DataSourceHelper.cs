@@ -18,7 +18,7 @@ namespace System.Web.UI.WebUtils
 {
 	internal class DataSourceHelper
 	{
-		public static IEnumerable ResolveDataSource(object source, string member)
+		public static IEnumerable GetResolvedDataSource(object source, string member)
 		{
 			if(source==null)
 				return null;
