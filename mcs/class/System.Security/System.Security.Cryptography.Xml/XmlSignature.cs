@@ -28,6 +28,7 @@ namespace System.Security.Cryptography.Xml {
 			public const string KeyInfo = "KeyInfo";
 			public const string KeyName = "KeyName";
 			public const string KeyValue = "KeyValue";
+			public const string Manifest = "Manifest";
 			public const string Object = "Object";
 			public const string Reference = "Reference";
 #if NET_1_0
@@ -74,6 +75,10 @@ namespace System.Security.Cryptography.Xml {
 			public const string XmlDsigEnvelopedSignatureTransform = "http://www.w3.org/2000/09/xmldsig#enveloped-signature";
 			public const string XmlDsigXPathTransform = "http://www.w3.org/TR/1999/REC-xpath-19991116";
 			public const string XmlDsigXsltTransform =  "http://www.w3.org/TR/1999/REC-xslt-19991116";
+		}
+
+		public class Uri {
+			public const string Manifest = "http://www.w3.org/2000/09/xmldsig#Manifest";
 		}
 
 		public const string NamespaceURI = "http://www.w3.org/2000/09/xmldsig#";
