@@ -1,3 +1,10 @@
+2004-07-30  Ben Maurer  <bmaurer@ximian.com>
+
+	* basic.cs: regression tests.
+
+	* inssel-x86.brg: Disable cmp BYTE PTR [eax], imm, it causes various
+	regressions.
+
 2004-07-30  Zoltan Varga  <vargaz@freemail.hu>
 
 	* basic.cs: Add a new test.
