@@ -22,8 +22,13 @@ namespace MonoTests.System.Collections.Specialized {
 			}
 		}
 		
-		public void TestToDo ()
+		public void TestGetValues ()
 		{
+			NameValueCollection col = new NameValueCollection ();
+			col.Add ("foo1", "bar1");
+			AssertEquals ("#1", null, col.GetValues (null));
+			AssertEquals ("#2", null, col.GetValues (""));
+			AssertEquals ("#3", null, col.GetValues ("NotExistent"));
 		}
 	}
 }

@@ -1,6 +1,7 @@
 2002-05-11  Lawrence Pit <loz@cable.a2000.nl>
 
 	* WebRequestTest.cs: added
+	* WebHeaderCollectionTest.cs: added
 
 2002-05-09  Lawrence Pit <loz@cable.a2000.nl>
 

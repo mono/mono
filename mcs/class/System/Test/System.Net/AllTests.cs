@@ -20,13 +20,14 @@ namespace MonoTests.System.Net {
                         get 
                         {
                                 TestSuite suite = new TestSuite ();
+                                suite.AddTest (CookieTest.Suite);
+                                suite.AddTest (CookieCollectionTest.Suite);
+                                //suite.AddTest (CookieContainerTest.Suite);
+                                suite.AddTest (CredentialCacheTest.Suite);
                                 suite.AddTest (IPAddressTest.Suite);
                                 suite.AddTest (IPEndPointTest.Suite);
                                 suite.AddTest (SocketPermissionTest.Suite);
-                                suite.AddTest (CookieTest.Suite);
-                                suite.AddTest (CookieCollectionTest.Suite);
-                                suite.AddTest (CredentialCacheTest.Suite);
-                                //suite.AddTest (CookieContainerTest.Suite);
+                                suite.AddTest (WebHeaderCollectionTest.Suite);
                                 suite.AddTest (WebRequestTest.Suite);
 				return suite;
                         }
