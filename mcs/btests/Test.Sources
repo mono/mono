@@ -127,8 +127,12 @@ ArrayA \
 ArrayB \
 ArrayC \
 ArrayD \
-EnumA
-
+EnumA \
+PropertyA \
+PropertyB \
+PropertyC \
+PropertyD \
+PropertyE                                                          
 
 # All negetive test cases which should
 # fail during compilation goes here
@@ -273,7 +277,11 @@ EnumC3 \
 EnumC4 \
 EnumC5 \
 EnumC6 \
-EnumC7 
+EnumC7 \
+PropertyC1 \
+PropertyC2 \
+PropertyC3 \
+PropertyC4 
 
 # All negetive test cases which should fail at
 # runtime goes here
