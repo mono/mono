@@ -1,4 +1,8 @@
-2004-07-23  zovarga  <vargaz@freemail.hu>
+2004-07-23 Zoltan Varga <vargaz@freemail.hu>
+
+	* inssel-long.brg: Implement CONV_I8/CONV_U8 in the backends.
+
+	* *-amd64*: Ongoing AMD64 work.
 
 	* mini-arch.h: Add AMD64 support.
 
