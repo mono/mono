@@ -265,7 +265,7 @@ namespace System.Reflection.Emit {
 			SetCustomAttribute (new CustomAttributeBuilder (con, binaryAttribute));
 		}
 
-#if BOOTSTRAP_NET_2_0//NET_2_0 | BOOTSTRAP_NET_2_0
+#if NET_2_0 || BOOTSTRAP_NET_2_0
 		public override Type[] GetGenericArguments ()
 		{
 			throw new NotImplementedException ();
