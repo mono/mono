@@ -247,7 +247,7 @@ namespace System.Reflection.Emit {
 			}
 		}
 
-		public Module Module {
+		public override Module Module {
 			get {
 				return module;
 			}
@@ -282,6 +282,12 @@ namespace System.Reflection.Emit {
 		public override ICustomAttributeProvider ReturnTypeCustomAttributes {
 			get {
 				throw new NotImplementedException ();
+			}
+		}
+
+		public override int MetadataToken {
+			get {
+				return 0;
 			}
 		}
 
