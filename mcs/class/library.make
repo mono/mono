@@ -1,7 +1,7 @@
 #USE_SOURCE_RULES=1
 RUNTIME = mono
 MCS = mcs
-MCS_FLAGS = --target library --noconfig
+MY_MCS_FLAGS = --target library --noconfig $(MCS_FLAGS)
 INSTALL = /usr/bin/install
 prefix = /usr
 
@@ -46,7 +46,7 @@ $(LIBRARY): makefile.gnu $(SOURCES) $(topdir)/class/library.make
 else
 $(LIBRARY): .response library-deps.stamp
 endif
-	MONO_PATH=$(MONO_PATH_PREFIX)$(MONO_PATH) $(MCS) $(MCS_FLAGS) -o $(LIBRARY) $(LIB_FLAGS) @.response
+	MONO_PATH=$(MONO_PATH_PREFIX)$(MONO_PATH) $(MCS) $(MY_MCS_FLAGS) -o $(LIBRARY) $(LIB_FLAGS) @.response
 
 install: all
 	mkdir -p $(prefix)/lib/

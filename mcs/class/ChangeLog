@@ -1,3 +1,7 @@
+2003-02-22  Martin Baulig  <martin@ximian.com>
+
+	* library.make: Pass `MCS_FLAGS' to MCS.
+
 2003-02-15  Zoltan Varga  <vargaz@freemail.hu>
 
 	* makefile.gnu (test): do not install .dbg files since mcs no longer
