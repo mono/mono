@@ -308,7 +308,7 @@ namespace Mono.CSharp {
 
 				if ((flags & ResolveFlags.SimpleName) == 0) {
 					MemberLookupFailed (ec, null, ec.ContainerType, s.Name,
-							    0, ec.DeclSpace.Name, loc);
+							    ec.DeclSpace.Name, loc);
 					return null;
 				}
 
@@ -395,7 +395,7 @@ namespace Mono.CSharp {
 				if (e is SimpleName){
 					SimpleName s = (SimpleName) e;
 					MemberLookupFailed (ec, null, ec.ContainerType, s.Name,
-							    0, ec.DeclSpace.Name, loc);
+							    ec.DeclSpace.Name, loc);
 					return null;
 				}
 
@@ -542,7 +542,7 @@ namespace Mono.CSharp {
 		public static Expression MemberLookup (EmitContext ec, Type queried_type, string name,
 						       MemberTypes mt, BindingFlags bf, Location loc)
 		{
-			return MemberLookup (ec, ec.ContainerType, null, queried_type, name, 0, mt, bf, loc);
+			return MemberLookup (ec, ec.ContainerType, null, queried_type, name, mt, bf, loc);
 		}
 
 		//
@@ -552,13 +552,11 @@ namespace Mono.CSharp {
 
 		public static Expression MemberLookup (EmitContext ec, Type container_type,
 						       Type qualifier_type, Type queried_type,
-						       string name, int num_type_arguments,
-						       MemberTypes mt, BindingFlags bf,
-						       Location loc)
+						       string name, MemberTypes mt,
+						       BindingFlags bf, Location loc)
 		{
-			MemberInfo [] mi = TypeManager.MemberLookup (container_type, qualifier_type,
-								     queried_type, num_type_arguments,
-								     mt, bf, name);
+			MemberInfo [] mi = TypeManager.MemberLookup (
+				container_type, qualifier_type,queried_type, mt, bf, name);
 
 			if (mi == null)
 				return null;
@@ -588,33 +586,24 @@ namespace Mono.CSharp {
 			BindingFlags.Instance;
 
 		public static Expression MemberLookup (EmitContext ec, Type queried_type,
-						       string name, int num_type_arguments,
-						       Location loc)
-		{
-			return MemberLookup (ec, ec.ContainerType, null, queried_type, name,
-					     num_type_arguments, AllMemberTypes, AllBindingFlags,
-					     loc);
-		}
-
-		public static Expression MemberLookup (EmitContext ec, Type queried_type,
 						       string name, Location loc)
 		{
 			return MemberLookup (ec, ec.ContainerType, null, queried_type, name,
-					     0, AllMemberTypes, AllBindingFlags, loc);
+					     AllMemberTypes, AllBindingFlags, loc);
 		}
 
 		public static Expression MemberLookup (EmitContext ec, Type qualifier_type,
 						       Type queried_type, string name, Location loc)
 		{
 			return MemberLookup (ec, ec.ContainerType, qualifier_type, queried_type,
-					     name, 0, AllMemberTypes, AllBindingFlags, loc);
+					     name, AllMemberTypes, AllBindingFlags, loc);
 		}
 
 		public static Expression MethodLookup (EmitContext ec, Type queried_type,
 						       string name, Location loc)
 		{
 			return MemberLookup (ec, ec.ContainerType, null, queried_type, name,
-					     0, MemberTypes.Method, AllBindingFlags, loc);
+					     MemberTypes.Method, AllBindingFlags, loc);
 		}
 
 		/// <summary>
@@ -625,24 +614,23 @@ namespace Mono.CSharp {
 		/// </summary>
 		public static Expression MemberLookupFinal (EmitContext ec, Type qualifier_type,
 							    Type queried_type, string name,
-							    int num_type_arguments, Location loc)
+							    Location loc)
 		{
 			return MemberLookupFinal (ec, qualifier_type, queried_type, name,
-						  num_type_arguments, AllMemberTypes,
-						  AllBindingFlags, loc);
+						  AllMemberTypes, AllBindingFlags, loc);
 		}
 
 		public static Expression MemberLookupFinal (EmitContext ec, Type qualifier_type,
 							    Type queried_type, string name,
-							    int num_type_arguments, MemberTypes mt,
-							    BindingFlags bf, Location loc)
+							    MemberTypes mt, BindingFlags bf,
+							    Location loc)
 		{
 			Expression e;
 
 			int errors = Report.Errors;
 
 			e = MemberLookup (ec, ec.ContainerType, qualifier_type, queried_type,
-					  name, num_type_arguments, mt, bf, loc);
+					  name, mt, bf, loc);
 
 			if (e != null)
 				return e;
@@ -652,17 +640,16 @@ namespace Mono.CSharp {
 				return null;
 
 			MemberLookupFailed (ec, qualifier_type, queried_type, name,
-					    num_type_arguments, null, loc);
+					    null, loc);
 			return null;
 		}
 
 		public static void MemberLookupFailed (EmitContext ec, Type qualifier_type,
 						       Type queried_type, string name,
-						       int num_type_arguments, string class_name,
-						       Location loc)
+						       string class_name, Location loc)
 		{
 			MemberInfo[] mi = TypeManager.MemberLookup (queried_type, null, queried_type,
-								    -1, AllMemberTypes, AllBindingFlags |
+								    AllMemberTypes, AllBindingFlags |
 								    BindingFlags.NonPublic, name);
 
 			if (mi == null) {
@@ -677,7 +664,7 @@ namespace Mono.CSharp {
 			}
 
 			if (TypeManager.MemberLookup (queried_type, null, queried_type,
-						      0, AllMemberTypes, AllBindingFlags |
+						      AllMemberTypes, AllBindingFlags |
 						      BindingFlags.NonPublic, name) == null) {
 				if ((mi.Length == 1) && (mi [0] is Type)) {
 					Type t = (Type) mi [0];
@@ -701,7 +688,7 @@ namespace Mono.CSharp {
 
 				mi = TypeManager.MemberLookup (
 					ec.ContainerType, ec.ContainerType, ec.ContainerType,
-					0, AllMemberTypes, AllBindingFlags, name);
+					AllMemberTypes, AllBindingFlags, name);
 
 				if (mi != null) {
 					Report.Error (
@@ -1950,7 +1937,6 @@ namespace Mono.CSharp {
 	/// </remarks>
 	public class SimpleName : Expression {
 		public string Name;
-		public int NumTypeArguments;
 
 		//
 		// If true, then we are a simple name, not composed with a ".
@@ -1967,14 +1953,6 @@ namespace Mono.CSharp {
 		public SimpleName (string name, Location l)
 		{
 			Name = name;
-			loc = l;
-			is_base = true;
-		}
-
-		public SimpleName (string name, int num_type_arguments, Location l)
-		{
-			Name = name;
-			NumTypeArguments = num_type_arguments;
 			loc = l;
 			is_base = true;
 		}
@@ -2049,7 +2027,7 @@ namespace Mono.CSharp {
 
 			if (ec.ResolvingTypeTree){
 				int errors = Report.Errors;
-				Type dt = ds.FindType (loc, Name, NumTypeArguments);
+				Type dt = ds.FindType (loc, Name);
 				
 				if (Report.Errors != errors)
 					return null;
@@ -2060,7 +2038,7 @@ namespace Mono.CSharp {
 				if (alias_value != null){
 					if (alias_value.IsType)
 						return alias_value.Type;
-					if ((t = RootContext.LookupType (ds, alias_value.Name, true, NumTypeArguments, loc)) != null)
+					if ((t = RootContext.LookupType (ds, alias_value.Name, true, loc)) != null)
 						return t;
 				}
 			}
@@ -2083,7 +2061,7 @@ namespace Mono.CSharp {
 			// or a namespace.
 			//
 
-			if ((t = RootContext.LookupType (ds, Name, true, NumTypeArguments, loc)) != null)
+			if ((t = RootContext.LookupType (ds, Name, true, loc)) != null)
 				return t;
 				
 			// No match, maybe our parent can compose us
@@ -2156,8 +2134,7 @@ namespace Mono.CSharp {
 				if (lookup_ds.TypeBuilder == null)
 					break;
 
-				e = MemberLookup (ec, lookup_ds.TypeBuilder,
-						  Name, NumTypeArguments, loc);
+				e = MemberLookup (ec, lookup_ds.TypeBuilder, Name, loc);
 				if (e != null)
 					break;
 
@@ -2165,8 +2142,7 @@ namespace Mono.CSharp {
 			} while (lookup_ds != null);
 
 			if (e == null && ec.ContainerType != null)
-				e = MemberLookup (ec, ec.ContainerType,
-						  Name, NumTypeArguments, loc);
+				e = MemberLookup (ec, ec.ContainerType, Name, loc);
 
 			if (e == null) {
 				//
@@ -3126,7 +3102,7 @@ namespace Mono.CSharp {
 
 			group = TypeManager.MemberLookup (
 				invocation_type, invocation_type, PropertyInfo.DeclaringType,
-				0, MemberTypes.Method, flags, accessor_name + "_" + PropertyInfo.Name);
+				MemberTypes.Method, flags, accessor_name + "_" + PropertyInfo.Name);
 
 			//
 			// The first method is the closest to us

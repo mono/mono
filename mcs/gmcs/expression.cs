@@ -5706,7 +5706,7 @@ namespace Mono.CSharp {
 				return this;
 			
 			Expression ml;
-			ml = MemberLookupFinal (ec, null, type, ".ctor", 0,
+			ml = MemberLookupFinal (ec, null, type, ".ctor",
 						MemberTypes.Constructor,
 						AllBindingFlags | BindingFlags.DeclaredOnly, loc);
 
@@ -6928,8 +6928,7 @@ namespace Mono.CSharp {
 	///   Implements the member access expression
 	/// </summary>
 	public class MemberAccess : Expression {
-		public readonly string Identifier;
-		public readonly int NumTypeArguments;
+		public string Identifier;
 		protected Expression expr;
 		
 		public MemberAccess (Expression expr, string id, Location l)
@@ -6937,13 +6936,6 @@ namespace Mono.CSharp {
 			this.expr = expr;
 			Identifier = id;
 			loc = l;
-		}
-
-		protected MemberAccess (Expression expr, string id, int num_type_args,
-					Location l)
-			: this (expr, id, l)
-		{
-			NumTypeArguments = num_type_args;
 		}
 
 		public Expression Expr {
@@ -7226,13 +7218,9 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			int real_num_type_args = NumTypeArguments +
-				TypeManager.GetNumberOfTypeArguments (expr_type);
-			
 			Expression member_lookup;
-			member_lookup = MemberLookupFinal (ec, expr_type, expr_type,
-							   Identifier, real_num_type_args,
-							   loc);
+			member_lookup = MemberLookupFinal (
+				ec, expr_type, expr_type, Identifier, loc);
 			if (member_lookup == null)
 				return null;
 
@@ -7285,7 +7273,7 @@ namespace Mono.CSharp {
 
 				if (full_expr.Expr is SimpleName) {
 					string full_name = String.Concat (((SimpleName) full_expr.Expr).Name, ".", fname);
-					Type fully_qualified = ec.DeclSpace.FindType (loc, full_name, 0);
+					Type fully_qualified = ec.DeclSpace.FindType (loc, full_name);
 					if (fully_qualified != null)
 						return new TypeExpression (fully_qualified, loc);
 				}
@@ -7314,13 +7302,9 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			int real_num_type_args = NumTypeArguments +
-				TypeManager.GetNumberOfTypeArguments (expr_type);
-			
 			Expression member_lookup;
-			member_lookup = MemberLookupFinal (ec, expr_type, expr_type,
-							   Identifier, real_num_type_args,
-							   loc);
+			member_lookup = MemberLookupFinal (
+				ec, expr_type, expr_type, Identifier, loc);
 			if (member_lookup == null)
 				return null;
 
@@ -7937,7 +7921,7 @@ namespace Mono.CSharp {
 			string p_name = TypeManager.IndexerPropertyName (lookup_type);
 
 			MemberInfo [] mi = TypeManager.MemberLookup (
-				caller_type, caller_type, lookup_type, 0, MemberTypes.Property,
+				caller_type, caller_type, lookup_type, MemberTypes.Property,
 				BindingFlags.Public | BindingFlags.Instance |
 				BindingFlags.DeclaredOnly, p_name);
 
@@ -8240,11 +8224,11 @@ namespace Mono.CSharp {
 			}
 			
 			member_lookup = MemberLookup (ec, ec.ContainerType, null, base_type,
-						      member, 0, AllMemberTypes,
-						      AllBindingFlags, loc);
+						      member, AllMemberTypes, AllBindingFlags,
+						      loc);
 			if (member_lookup == null) {
-				MemberLookupFailed (ec, base_type, base_type, member,
-						    0, null, loc);
+				MemberLookupFailed (
+					ec, base_type, base_type, member, null, loc);
 				return null;
 			}
 

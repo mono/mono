@@ -885,7 +885,7 @@ namespace Mono.CSharp {
 				}
 				
 				TypeBuilder = builder.DefineNestedType (
-					Basename, type_attributes, ptype, null);
+					MemberName.Basename, type_attributes, ptype, null);
 			}
 
 			TypeManager.AddUserType (Name, TypeBuilder, this, ifaces);
@@ -3105,7 +3105,7 @@ namespace Mono.CSharp {
 				t = ec.ContainerType;
 
 			parent_constructor_group = Expression.MemberLookup (
-				ec, t, null, t, ".ctor", 0, 
+				ec, t, null, t, ".ctor", 
 				MemberTypes.Constructor,
 				BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly,
 				loc);
@@ -3939,7 +3939,7 @@ namespace Mono.CSharp {
 			if (ec.ContainerType.BaseType != null) {
 				Expression member_lookup = Expression.MemberLookup (
 					ec, ec.ContainerType.BaseType, null, ec.ContainerType.BaseType,
-					"Finalize", 0, MemberTypes.Method, Expression.AllBindingFlags, Location);
+					"Finalize", MemberTypes.Method, Expression.AllBindingFlags, Location);
 
 				if (member_lookup != null){
 					MethodGroupExpr parent_destructor = ((MethodGroupExpr) member_lookup);

@@ -1375,8 +1375,7 @@ public class TypeManager {
 	///   to check base classes and interfaces anymore.
 	/// </summary>
 	private static MemberList MemberLookup_FindMembers (Type t, MemberTypes mt, BindingFlags bf,
-							    string name, int num_type_arguments,
-							    out bool used_cache)
+							    string name, out bool used_cache)
 	{
 		//
 		// We have to take care of arrays specially, because GetType on
@@ -1526,36 +1525,6 @@ public class TypeManager {
 			return ret;
 		} else
 			return t.GetGenericArguments ();
-	}
-
-	public static bool CheckGeneric (Type t, int num_type_arguments)
-	{
-		if (num_type_arguments < 0)
-			return true;
-
-		DeclSpace tc = LookupDeclSpace (t);
-
-		if (tc != null) {
-			if (!tc.IsGeneric)
-				return num_type_arguments == 0;
-
-			if (num_type_arguments == 0)
-				return false;
-
-			if (num_type_arguments != tc.CountTypeParameters)
-				return false;
-		} else {
-			if (!t.HasGenericArguments)
-				return num_type_arguments == 0;
-
-			if (num_type_arguments == 0)
-				return false;
-
-			if (num_type_arguments != t.GetGenericArguments ().Length)
-				return false;
-		}
-
-		return true;
 	}
 	
 	//
@@ -2630,7 +2599,6 @@ public class TypeManager {
 	//
 	static Type     closure_invocation_type;
 	static Type     closure_qualifier_type;
-	static int      closure_num_type_arguments;
 
 	//
 	// The assembly that defines the type is that is calling us
@@ -2655,9 +2623,6 @@ public class TypeManager {
 
 		if ((filter_criteria != null) && (m.Name != (string) filter_criteria))
 			return false;
-
-		if (m is Type)
-			return TypeManager.CheckGeneric ((Type) m, closure_num_type_arguments);
 
 		if (((closure_qualifier_type == null) || (closure_qualifier_type == closure_invocation_type)) &&
 		    (closure_invocation_type != null) && IsEqual (m.DeclaringType, closure_invocation_type))
@@ -2806,15 +2771,13 @@ public class TypeManager {
 	// that might return multiple matches.
 	//
 	public static MemberInfo [] MemberLookup (Type invocation_type, Type qualifier_type,
-						  Type queried_type, int num_type_arguments,
-						  MemberTypes mt, BindingFlags original_bf,
-						  string name)
+						  Type queried_type, MemberTypes mt,
+						  BindingFlags original_bf, string name)
 	{
 		Timer.StartTimer (TimerType.MemberLookup);
 
 		MemberInfo[] retval = RealMemberLookup (invocation_type, qualifier_type,
-							queried_type, num_type_arguments,
-							mt, original_bf, name);
+							queried_type, mt, original_bf, name);
 
 		Timer.StopTimer (TimerType.MemberLookup);
 
@@ -2822,9 +2785,8 @@ public class TypeManager {
 	}
 
 	static MemberInfo [] RealMemberLookup (Type invocation_type, Type qualifier_type,
-					       Type queried_type, int num_type_arguments,
-					       MemberTypes mt, BindingFlags original_bf,
-					       string name)
+					       Type queried_type, MemberTypes mt,
+					       BindingFlags original_bf, string name)
 	{
 		BindingFlags bf = original_bf;
 		
@@ -2837,8 +2799,6 @@ public class TypeManager {
 		closure_invocation_type = invocation_type;
 		closure_invocation_assembly = invocation_type != null ? invocation_type.Assembly : null;
 		closure_qualifier_type = qualifier_type;
-
-		closure_num_type_arguments = num_type_arguments;
 
 		//
 		// If we are a nested class, we always have access to our container
@@ -2883,8 +2843,8 @@ public class TypeManager {
 
 			Timer.StopTimer (TimerType.MemberLookup);
 
-			list = MemberLookup_FindMembers (current_type, mt, bf, name,
-							 num_type_arguments, out used_cache);
+			list = MemberLookup_FindMembers (
+				current_type, mt, bf, name, out used_cache);
 
 			Timer.StartTimer (TimerType.MemberLookup);
 
@@ -2982,8 +2942,7 @@ public class TypeManager {
 		foreach (TypeExpr itype in ifaces){
 			MemberInfo [] x;
 
-			x = MemberLookup (null, null, itype.Type, num_type_arguments,
-					  mt, bf, name);
+			x = MemberLookup (null, null, itype.Type, mt, bf, name);
 			if (x != null)
 				return x;
 		}

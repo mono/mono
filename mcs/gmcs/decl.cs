@@ -73,13 +73,15 @@ namespace Mono.CSharp {
 				return full_name;
 		}
 
-		public string GetTypeName ()
+		public string GetTypeName (bool full)
 		{
-			string full_name;
+			string suffix = "";
+			if (full && (TypeArguments != null))
+				suffix = "!" + TypeArguments.Count;
 			if (Left != null)
-				return Left.GetFullName () + "." + Name;
+				return Left.GetTypeName (full) + "." + Name + suffix;
 			else
-				return Name;
+				return Name + suffix;
 		}
 
 		public Expression GetTypeExpression (Location loc)
@@ -175,21 +177,31 @@ namespace Mono.CSharp {
 
 		public static readonly MemberName Null = new MemberName ("");
 
-		public string GetMemberName ()
-		{
-			string full_name;
-			if (TypeName != null)
-				return TypeName.GetFullName () + "." + Name;
-			else
-				return Name;
+		public string Basename {
+			get {
+				if (TypeParameters != null)
+					return Name + "!" + TypeParameters.Length;
+				else
+					return Name;
+			}
 		}
 
-		public static explicit operator string (MemberName name)
+		public string GetName (bool is_generic)
 		{
-			if (name.TypeName != null)
-				return name.TypeName + "." + name.Name;
+			string name = is_generic ? Basename : Name;
+			if (TypeName != null)
+				return TypeName.GetTypeName (is_generic) + "." + name;
 			else
-				return name.Name;
+				return name;
+		}
+
+		public int CountTypeParameters {
+			get {
+				if (TypeParameters != null)
+					return 0;
+				else
+					return TypeParameters.Length;
+			}
 		}
 
 		protected string PrintTypeParams ()
@@ -256,7 +268,7 @@ namespace Mono.CSharp {
 
 		public MemberCore (MemberName name, Attributes attrs, Location loc)
 		{
-			Name = (string) name;
+			Name = name.GetName (!(this is GenericMethod) && !(this is Method));
 			MemberName = name;
 			Location = loc;
 			attributes = attrs;
@@ -380,7 +392,7 @@ namespace Mono.CSharp {
 		public void RecordDecl ()
 		{
 			if ((NamespaceEntry != null) && (parent == RootContext.Tree.Types))
-				NamespaceEntry.DefineName (Basename, this);
+				NamespaceEntry.DefineName (MemberName.Basename, this);
 		}
 
 		/// <summary>
@@ -650,7 +662,7 @@ namespace Mono.CSharp {
 				return null;
 
 			if (e is SimpleName){
-				SimpleName s = new SimpleName (((SimpleName) e).Name, -1, loc);
+				SimpleName s = new SimpleName (((SimpleName) e).Name, loc);
 				d = s.ResolveAsTypeTerminal (type_resolve_ec);
 
 				if ((d == null) || (d.Type == null)) {
@@ -998,7 +1010,7 @@ namespace Mono.CSharp {
 		///   during the tree resolution process and potentially define
 		///   recursively the type
 		/// </remarks>
-		public Type FindType (Location loc, string name, int num_type_args)
+		public Type FindType (Location loc, string name)
 		{
 			Type t;
 			bool error;
@@ -1020,9 +1032,7 @@ namespace Mono.CSharp {
 					if (error)
 						return null;
 
-					if ((t != null) &&
-					    containing_ds.CheckAccessLevel (t) &&
-					    TypeManager.CheckGeneric (t, num_type_args))
+					if ((t != null) && containing_ds.CheckAccessLevel (t))
 						return t;
 
 					current_type = current_type.BaseType;
@@ -1038,7 +1048,7 @@ namespace Mono.CSharp {
 				if (error)
 					return null;
 
-				if ((t != null) && TypeManager.CheckGeneric (t, num_type_args))
+				if (t != null)
 					return t;
 			}
 			
@@ -1049,7 +1059,7 @@ namespace Mono.CSharp {
 			if (error)
 				return null;
 			
-			if ((t != null) && TypeManager.CheckGeneric (t, num_type_args))
+			if (t != null)
 				return t;
 			
 			//
@@ -1063,7 +1073,7 @@ namespace Mono.CSharp {
 				if (error)
 					return null;
 
-				if ((t != null) && TypeManager.CheckGeneric (t, num_type_args))
+				if (t != null)
 					return t;
 
 				//
@@ -1075,8 +1085,7 @@ namespace Mono.CSharp {
 					if (error)
 						return null;
 
-					if ((match != null) &&
-					    TypeManager.CheckGeneric (match, num_type_args)) {
+					if (match != null) {
 						if (t != null){
 							if (CheckAccessLevel (match)) {
 								Error_AmbiguousTypeReference (loc, name, t.FullName, match.FullName);
@@ -1088,7 +1097,7 @@ namespace Mono.CSharp {
 						t = match;
 					}
 				}
-				if ((t != null) && TypeManager.CheckGeneric (t, num_type_args))
+				if (t != null)
 					return t;
 			}
 

@@ -1,3 +1,29 @@
+2004-04-05  Martin Baulig  <martin@ximian.com>
+
+	* decl.cs (MemberCore): For generic classes, interfaces and
+	structs, `Name' now includes the number of type parameters
+	("Stack!1.Node!1").
+	(DeclSpace.FindType): Removed the `num_type_args' argument; we now
+	encode the number of type arguments in the type name.
+
+	* expression.cs (Expression.MemberLookup): Removed the
+	`num_type_args' argument; we now encode the number of type
+	arguments in the type name.
+
+	* ecore.cs (SimpleName): Encode the number of type arguments in
+	the type name itself.
+
+	* generic.cs (ConstructedType): Likewise.
+
+	* tree.cs (Tree.RecordDecl): Take a `string' instead of a
+	`MemberName'; we now include the number of type parameters in the
+	type name.
+
+	* typemanager.cs (TypeManager.CheckGeneric): Removed.
+	(TypeManager.MemberLookup): Removed the
+	`num_type_args' argument; we now encode the number of type
+	arguments in the type name.	
+
 2004-04-03  Martin Baulig  <martin@ximian.com>
 
 	* decl.cs (MemberCore.ctor): Take a MemberName instead of a sting.

@@ -429,7 +429,7 @@ namespace Mono.CSharp {
 		public ConstructedType (string name, TypeArguments args, Location l)
 		{
 			loc = l;
-			this.name = name;
+			this.name = name + "!" + args.Count;
 			this.args = args;
 
 			eclass = ExprClass.Type;
@@ -590,33 +590,12 @@ namespace Mono.CSharp {
 			Type t;
 			int num_args;
 
-			SimpleName sn = new SimpleName (name, args.Count, loc);
+			SimpleName sn = new SimpleName (name, loc);
 			TypeExpr resolved = sn.ResolveAsTypeTerminal (ec);
-			if (resolved == null) {
-				sn = new SimpleName (name, -1, loc);
-				resolved = sn.ResolveAsTypeTerminal (ec);
-				if ((resolved == null) || (resolved.Type == null)) {
-					Report.Error (246, loc,
-						      "The type or namespace name `{0}<...>' "+
-						      "could not be found", name);
-					return null;
-				}
-
-				t = resolved.Type;
-				num_args = TypeManager.GetNumberOfTypeArguments (t);
-
-				if (num_args == 0) {
-					Report.Error (308, loc,
-						      "The non-generic type `{0}' cannot " +
-						      "be used with type arguments.",
-						      TypeManager.CSharpName (t));
-					return null;
-				}
-
-				Report.Error (305, loc,
-					      "Using the generic type `{0}' " +
-					      "requires {1} type arguments",
-					      TypeManager.GetFullName (t), num_args);
+			if ((resolved == null) || (resolved.Type == null)) {
+				Report.Error (246, loc,
+					      "The type or namespace name `{0}<...>' "+
+					      "could not be found", name);
 				return null;
 			}
 
@@ -684,7 +663,14 @@ namespace Mono.CSharp {
 			else
 				current = new TypeExpression (ec.ContainerType, loc);
 
-			return new GenericMemberAccess (current, name, args, loc);
+			string basename;
+			int pos = name.LastIndexOf ('!');
+			if (pos >= 0)
+				basename = name.Substring (0, pos);
+			else
+				basename = name;
+
+			return new GenericMemberAccess (current, basename, args, loc);
 		}
 
 		public override bool CheckAccessLevel (DeclSpace ds)
@@ -807,8 +793,9 @@ namespace Mono.CSharp {
 		TypeArguments args;
 		bool has_outer_params;
 
-		public GenericMemberAccess (Expression expr, string id, TypeArguments args, Location loc)
-			: base (expr, id, args.Count, loc)
+		public GenericMemberAccess (Expression expr, string id, TypeArguments args,
+					    Location loc)
+			: base (expr, id, loc)
 		{
 			this.args = args;
 		}
@@ -838,23 +825,9 @@ namespace Mono.CSharp {
 			if (expr == null)
 				return null;
 
-			TypeExpr texpr = expr as TypeExpr;
-			if (texpr != null) {
-				Type t = texpr.ResolveType (ec);
-				if (t == null)
-					return null;
-
-				ConstructedType ctype = new ConstructedType (t, args, loc);
-				return ctype.DoResolve (ec);
-			}
-
 			MethodGroupExpr mg = expr as MethodGroupExpr;
-			if (mg == null) {
+			if (mg == null)
 				return expr;
-				Report.Error (-220, loc, "Member `{0}' has type arguments, but did " +
-					      "not resolve as a method group.", Identifier);
-				return null;
-			}
 
 			if (args.Resolve (ec) == false)
 				return null;
@@ -891,8 +864,7 @@ namespace Mono.CSharp {
 
 		public override Expression ResolveAsTypeStep (EmitContext ec)
 		{
-			if (!DoResolveBase (ec))
-				return null;
+			Identifier = Identifier + "!" + args.Count;
 
 			expr = base.ResolveAsTypeStep (ec);
 			if (expr == null)

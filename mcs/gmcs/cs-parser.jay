@@ -704,7 +704,7 @@ struct_declaration
 		new_struct = new Struct (current_namespace, current_container, full_struct_name,
 					 (int) $2, (Attributes) $1, lexer.Location);
 		current_container = new_struct;
-		RootContext.Tree.RecordDecl (full_struct_name, new_struct);
+		RootContext.Tree.RecordDecl (full_struct_name.GetName (true), new_struct);
 		lexer.ConstraintsParsing = true;
 	  }
 	  opt_class_base
@@ -1257,7 +1257,8 @@ interface_declaration
 		}
 		current_interface = new_interface;
 		current_container = new_interface;
-		RootContext.Tree.RecordDecl (full_interface_name, new_interface);
+		RootContext.Tree.RecordDecl (
+			full_interface_name.GetName (true), new_interface);
 		lexer.ConstraintsParsing = true;
 	  }
 	  opt_class_base
@@ -1909,8 +1910,9 @@ enum_declaration
 				  ev.identifier, loc);
 		}
 
-		CheckDef (current_container.AddEnum (e), (string) full_name, enum_location);
-		RootContext.Tree.RecordDecl (full_name, e);
+		string name = full_name.GetName (false);
+		CheckDef (current_container.AddEnum (e), name, enum_location);
+		RootContext.Tree.RecordDecl (name, e);
 
 	  }
 	;
@@ -2993,7 +2995,7 @@ class_declaration
 		new_class = new Class (current_namespace, current_container, name, (int) $2, 
 				       (Attributes) $1, lexer.Location);
 		current_container = new_class;
-		RootContext.Tree.RecordDecl (name, new_class);
+		RootContext.Tree.RecordDecl (name.GetName (true), new_class);
 
 		lexer.ConstraintsParsing = true;
 	  }
