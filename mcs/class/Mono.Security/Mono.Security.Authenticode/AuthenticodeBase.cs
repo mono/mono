@@ -2,9 +2,10 @@
 // AuthenticodeBase.cs: Authenticode signature base class
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot <sebastien@ximian.com>
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
+// (C) 2004 Novell (http://www.novell.com)
 //
 
 using System;
@@ -26,9 +27,11 @@ namespace Mono.Security.Authenticode {
 
 		public const string spcIndirectDataContext = "1.3.6.1.4.1.311.2.1.4";
 
-		protected byte[] rawData;
+		internal byte[] rawData;
 
-		public AuthenticodeBase () {}
+		public AuthenticodeBase ()
+		{
+		}
 
 		protected byte[] HashFile (string fileName, string hashName) 
 		{
@@ -38,25 +41,25 @@ namespace Mono.Security.Authenticode {
 			fs.Close ();
 
 			// MZ - DOS header
-			if (BitConverter.ToUInt16 (file, 0) != 0x5A4D)
+			if (BitConverterLE.ToUInt16 (file, 0) != 0x5A4D)
 				return null;
 
 			// find offset of PE header
-			int peOffset = BitConverter.ToInt32 (file, 60);
+			int peOffset = BitConverterLE.ToInt32 (file, 60);
 			if (peOffset > file.Length)
 				return null;
 
 			// PE - NT header
-			if (BitConverter.ToUInt16 (file, peOffset) != 0x4550)
+			if (BitConverterLE.ToUInt16 (file, peOffset) != 0x4550)
 				return null;
 
 			// IMAGE_DIRECTORY_ENTRY_SECURITY
-			int dirSecurityOffset = BitConverter.ToInt32 (file, peOffset + 152);
-			int dirSecuritySize = BitConverter.ToInt32 (file, peOffset + 156);
+			int dirSecurityOffset = BitConverterLE.ToInt32 (file, peOffset + 152);
+			int dirSecuritySize = BitConverterLE.ToInt32 (file, peOffset + 156);
 
 			if (dirSecuritySize > 8) {
 				rawData = new byte [dirSecuritySize - 8];
-				Array.Copy (file, dirSecurityOffset + 8, rawData, 0, rawData.Length);
+				Buffer.BlockCopy (file, dirSecurityOffset + 8, rawData, 0, rawData.Length);
 /* DEBUG 
 			FileStream debug = new FileStream (fileName + ".sig", FileMode.Create, FileAccess.Write);
 			debug.Write (rawData, 0, rawData.Length);

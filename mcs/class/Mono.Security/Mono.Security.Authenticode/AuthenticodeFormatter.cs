@@ -2,16 +2,17 @@
 // AuthenticodeFormatter.cs: Authenticode signature generator
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot <sebastien@ximian.com>
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
+// (C) 2004 Novell (http://www.novell.com)
 //
 
 using System;
 using System.Collections;
+using System.Globalization;
 using System.IO;
 using System.Security.Cryptography;
-//using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Net;
 
@@ -27,11 +28,11 @@ namespace Mono.Security.Authenticode {
 		private ArrayList crls;
 		private string hash;
 		private RSA rsa;
-		private string timestamp;
+		private Uri timestamp;
 		private ASN1 authenticode;
 		private PKCS7.SignedData pkcs7;
 		private string description;
-		private string url;
+		private Uri url;
 
 		public AuthenticodeFormatter () : base () 
 		{
@@ -50,7 +51,7 @@ namespace Mono.Security.Authenticode {
 			get { return certs; }
 		}
 
-		public ArrayList CRL {
+		public ArrayList Crl {
 			get { return crls; }
 		}
 
@@ -61,11 +62,18 @@ namespace Mono.Security.Authenticode {
 				return hash; 
 			}
 			set {
-				string h = value.ToUpper ();
-				if ((h == "MD5") || (hash == "SHA1"))
-					hash = value;
-				else
-					throw new ArgumentException ("Invalid Authenticode hash algorithm");
+				if (value == null)
+					throw new ArgumentNullException ("Hash");
+
+				string h = value.ToUpper (CultureInfo.InvariantCulture);
+				switch (h) {
+					case "MD5":
+					case "SHA1":
+						hash = h;
+						break;
+					default:
+						throw new ArgumentException ("Invalid Authenticode hash algorithm");
+				}
 			}
 		}
 
@@ -74,9 +82,9 @@ namespace Mono.Security.Authenticode {
 			set { rsa = value; }
 		}
 
-		public string TimestampURL {
+		public Uri TimestampUrl {
 			get { return timestamp; }
-			set { timestamp = value; } // URL
+			set { timestamp = value; }
 		}
 
 		public string Description {
@@ -84,15 +92,15 @@ namespace Mono.Security.Authenticode {
 			set { description = value; }
 		}
 
-		public string URL {
+		public Uri Url {
 			get { return url; }
-			set { url = value; } // URL
+			set { url = value; }
 		}
 
 		private ASN1 AlgorithmIdentifier (string oid) 
 		{
 			ASN1 ai = new ASN1 (0x30);
-			ai.Add (ASN1Convert.FromOID (oid));
+			ai.Add (ASN1Convert.FromOid (oid));
 			ai.Add (new ASN1 (0x05));	// NULL
 			return ai;
 		}
@@ -100,7 +108,7 @@ namespace Mono.Security.Authenticode {
 		private ASN1 Attribute (string oid, ASN1 value)
 		{
 			ASN1 attr = new ASN1 (0x30);
-			attr.Add (ASN1Convert.FromOID (oid));
+			attr.Add (ASN1Convert.FromOid (oid));
 			ASN1 aset = attr.Add (new ASN1 (0x31));
 			aset.Add (value);
 			return attr;
@@ -145,7 +153,7 @@ namespace Mono.Security.Authenticode {
 			string hashOid = CryptoConfig.MapNameToOID (hashAlgorithm);
 			ASN1 content = new ASN1 (0x30);
 			ASN1 c1 = content.Add (new ASN1 (0x30));
-			c1.Add (ASN1Convert.FromOID (spcPelmageData));
+			c1.Add (ASN1Convert.FromOid (spcPelmageData));
 			c1.Add (new ASN1 (0x30, obsolete));
 			ASN1 c2 = content.Add (new ASN1 (0x30));
 			c2.Add (AlgorithmIdentifier (hashOid));
@@ -158,9 +166,9 @@ namespace Mono.Security.Authenticode {
 
 			pkcs7.SignerInfo.Certificate = certs [0];
 			pkcs7.SignerInfo.Key = rsa;
-			pkcs7.SignerInfo.AuthenticatedAttributes.Add (Attribute (spcSpOpusInfo, Opus (description, url)));
-			pkcs7.SignerInfo.AuthenticatedAttributes.Add (Attribute (contentType, ASN1Convert.FromOID (spcIndirectDataContext)));
-			pkcs7.SignerInfo.AuthenticatedAttributes.Add (Attribute (spcStatementType, new ASN1 (0x30, ASN1Convert.FromOID (commercialCodeSigning).GetBytes ())));
+			pkcs7.SignerInfo.AuthenticatedAttributes.Add (Attribute (spcSpOpusInfo, Opus (description, url.ToString ())));
+			pkcs7.SignerInfo.AuthenticatedAttributes.Add (Attribute (contentType, ASN1Convert.FromOid (spcIndirectDataContext)));
+			pkcs7.SignerInfo.AuthenticatedAttributes.Add (Attribute (spcStatementType, new ASN1 (0x30, ASN1Convert.FromOid (commercialCodeSigning).GetBytes ())));
 
 			ASN1 temp = pkcs7.ASN1; // sign
 			return pkcs7.SignerInfo.Signature;
@@ -168,14 +176,14 @@ namespace Mono.Security.Authenticode {
 
 		public ASN1 TimestampRequest (byte[] signature) 
 		{
-			PKCS7.ContentInfo ci = new PKCS7.ContentInfo (PKCS7.data);
+			PKCS7.ContentInfo ci = new PKCS7.ContentInfo (PKCS7.Oid.data);
 			ci.Content.Add (new ASN1 (0x04, signature));
 			return PKCS7.AlgorithmIdentifier (timestampCountersignature, ci.ASN1);
 		}
 
-		public void ProcessTimestamp (byte[] tsres) 
+		public void ProcessTimestamp (byte[] response)
 		{
-			ASN1 ts = new ASN1 (Convert.FromBase64String (Encoding.ASCII.GetString (tsres)));
+			ASN1 ts = new ASN1 (Convert.FromBase64String (Encoding.ASCII.GetString (response)));
 			// first validate the received message
 			// TODO
 
@@ -214,7 +222,7 @@ namespace Mono.Security.Authenticode {
 
 			if (dirSecuritySize > 8) {
 				rawData = new byte [dirSecuritySize - 8];
-				Array.Copy (file, dirSecurityOffset + 8, rawData, 0, rawData.Length);
+				Buffer.BlockCopy (file, dirSecurityOffset + 8, rawData, 0, rawData.Length);
 			}
 			else
 				rawData = null;
@@ -242,7 +250,7 @@ namespace Mono.Security.Authenticode {
 				wc.Headers.Add ("Content-Type", "application/octet-stream");
 				wc.Headers.Add ("Accept", "application/octet-stream");
 				byte[] tsdata = Encoding.ASCII.GetBytes (Convert.ToBase64String (tsreq.GetBytes ()));
-				byte[] tsres = wc.UploadData (timestamp, tsdata);
+				byte[] tsres = wc.UploadData (timestamp.ToString (), tsdata);
 				ProcessTimestamp (tsres);
 			}
 			PKCS7.ContentInfo sign = new PKCS7.ContentInfo (signedData);

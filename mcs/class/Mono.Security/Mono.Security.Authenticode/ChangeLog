@@ -1,3 +1,12 @@
+2004-04-22  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* AuthenticodeBase.cs: FxCop-ized. CLS compliance. Also includes
+	endian fixes from Bernie Solomon.
+	* AuthenticodeDeformatter.cs: FxCop-ized. CLS compliance.
+	* AuthenticodeFormatter.cs: FxCop-ized. CLS compliance.
+	* PrivateKey.cs: Replaced Array.Copy with Buffer.BlockCopy.
+	* SoftwarePublisherCertificate.cs: FxCop-ized.
+
 2004-02-23  Sebastien Pouliot  <sebastien@ximian.com>	
 
 	* PrivateKey.cs: Adjusted to catch exceptions from CryptoConvert.

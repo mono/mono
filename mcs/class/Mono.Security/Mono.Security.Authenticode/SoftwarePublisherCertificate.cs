@@ -3,9 +3,10 @@
 //	- Software Publisher Certificates Implementation
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot <sebastien@ximian.com>
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
+// (C) 2004 Novell (http://www.novell.com)
 //
 
 using System;
@@ -24,14 +25,18 @@ namespace Mono.Security.Authenticode {
 		public SoftwarePublisherCertificate () 
 		{
 			pkcs7 = new PKCS7.SignedData ();
-			pkcs7.ContentInfo.ContentType = PKCS7.data;
+			pkcs7.ContentInfo.ContentType = PKCS7.Oid.data;
 		}
 
-		public SoftwarePublisherCertificate (byte[] spc) : this ()
+		public SoftwarePublisherCertificate (byte[] data) : this ()
 		{
-			PKCS7.ContentInfo ci = new PKCS7.ContentInfo (spc);
-			if (ci.ContentType != PKCS7.signedData)
+			if (data == null)
+				throw new ArgumentNullException ("data");
+
+			PKCS7.ContentInfo ci = new PKCS7.ContentInfo (data);
+			if (ci.ContentType != PKCS7.Oid.signedData)
 				throw new ArgumentException ("Unsupported ContentType");
+
 			pkcs7 = new PKCS7.SignedData (ci.Content);
 		}
 
@@ -39,23 +44,25 @@ namespace Mono.Security.Authenticode {
 			get { return pkcs7.Certificates; }
 		}
 
-		public ArrayList CRLs {
-			get { return pkcs7.CRLs; }
+		public ArrayList Crls {
+			get { return pkcs7.Crls; }
 		}
 
 		public byte[] GetBytes () 
 		{
-			PKCS7.ContentInfo ci = new PKCS7.ContentInfo (PKCS7.signedData);
+			PKCS7.ContentInfo ci = new PKCS7.ContentInfo (PKCS7.Oid.signedData);
 			ci.Content.Add (pkcs7.ASN1);
 			return ci.GetBytes ();
 		}
 
 		static public SoftwarePublisherCertificate CreateFromFile (string filename) 
 		{
-			FileStream fs = File.Open (filename, FileMode.Open, FileAccess.Read, FileShare.Read);
-			byte[] data = new byte [fs.Length];
-			fs.Read (data, 0, data.Length);
-			fs.Close ();
+			byte[] data = null;
+			using (FileStream fs = File.Open (filename, FileMode.Open, FileAccess.Read, FileShare.Read)) {
+				data = new byte [fs.Length];
+				fs.Read (data, 0, data.Length);
+				fs.Close ();
+			}
 			return new SoftwarePublisherCertificate (data);
 		}
 	}

@@ -2,9 +2,10 @@
 // PrivateKey.cs - Private Key (PVK) Format Implementation
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot <sebastien@ximian.com>
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
+// (C) 2004 Novell (http://www.novell.com)
 //
 
 using System;
@@ -64,7 +65,7 @@ namespace Mono.Security.Authenticode {
 			sha1.TransformBlock (salt, 0, salt.Length, salt, 0);
 			sha1.TransformFinalBlock (pwd, 0, pwd.Length);
 			byte[] key = new byte [16];
-			Array.Copy (sha1.Hash, 0, key, 0, 16);
+			Buffer.BlockCopy (sha1.Hash, 0, key, 0, 16);
 			sha1.Clear ();
 			Array.Clear (pwd, 0, pwd.Length);
 			return key;	
@@ -87,14 +88,14 @@ namespace Mono.Security.Authenticode {
 			// DWORD keylen
 			int keylen = BitConverter.ToInt32 (pvk, 20);
 			byte[] keypair = new byte [keylen];
-			Array.Copy (pvk, 24 + saltlen, keypair, 0, keylen);
+			Buffer.BlockCopy (pvk, 24 + saltlen, keypair, 0, keylen);
 			// read salt (if present)
 			if (saltlen > 0) {
 				if (password == null)
 					return false;
 
 				byte[] salt = new byte [saltlen];
-				Array.Copy (pvk, 24, salt, 0, saltlen);
+				Buffer.BlockCopy (pvk, 24, salt, 0, saltlen);
 				// first try with full (128) bits
 				byte[] key = DeriveKey (salt, password);
 				// decrypt in place and try this
@@ -109,7 +110,7 @@ namespace Mono.Security.Authenticode {
 				catch (CryptographicException) {
 					weak = true;
 					// second change using weak crypto
-					Array.Copy (pvk, 24 + saltlen, keypair, 0, keylen);
+					Buffer.BlockCopy (pvk, 24 + saltlen, keypair, 0, keylen);
 					// truncate the key to 40 bits
 					Array.Clear (key, 5, 11);
 					// decrypt
