@@ -2155,8 +2155,13 @@ namespace Mono.CSharp {
 		public readonly Type Type;
 
 		// <summary>
-		//   Number of bits a variable of this type consumes in the flow vector or zero
-		//   if this is not a struct type.
+		//   Total number of bits a variable of this type consumes in the flow vector.
+		// </summary>
+		public readonly int TotalLength;
+
+		// <summary>
+		//   Number of bits the simple fields of a variable of this type consume
+		//   in the flow vector.
 		// </summary>
 		public readonly int Length;
 
@@ -2165,8 +2170,12 @@ namespace Mono.CSharp {
 		// </summary>
 		public readonly int Offset;
 
-		protected readonly StructInfo struct_info;
+		// <summary>
+		//   If this is a struct, all fields which are structs theirselves.
+		// </summary>
+		public TypeInfo[] SubStructInfo;
 
+		protected readonly StructInfo struct_info;
 		private static Hashtable type_hash = new Hashtable ();
 
 		public static TypeInfo GetTypeInfo (Type type)
@@ -2196,8 +2205,14 @@ namespace Mono.CSharp {
 			this.Type = type;
 
 			struct_info = StructInfo.GetStructInfo (type);
-			if (struct_info != null)
-				Length = struct_info.CountTotal;
+			if (struct_info != null) {
+				Length = struct_info.Length;
+				TotalLength = struct_info.TotalLength;
+				SubStructInfo = struct_info.StructFields;
+			} else {
+				Length = 0;
+				TotalLength = 1;
+			}
 		}
 
 		private TypeInfo (TypeContainer tc)
@@ -2205,15 +2220,23 @@ namespace Mono.CSharp {
 			this.Type = tc.TypeBuilder;
 
 			struct_info = StructInfo.GetStructInfo (tc);
-			if (struct_info != null)
-				Length = struct_info.CountTotal;
+			if (struct_info != null) {
+				Length = struct_info.Length;
+				TotalLength = struct_info.TotalLength;
+				SubStructInfo = struct_info.StructFields;
+			} else {
+				Length = 0;
+				TotalLength = 1;
+			}
 		}
 
 		protected TypeInfo (StructInfo struct_info, int offset)
 		{
 			this.struct_info = struct_info;
 			this.Offset = offset;
-			this.Length = struct_info.CountTotal;
+			this.Length = struct_info.Length;
+			this.TotalLength = struct_info.TotalLength;
+			this.SubStructInfo = struct_info.StructFields;
 			this.Type = struct_info.Type;
 		}
 
@@ -2223,6 +2246,14 @@ namespace Mono.CSharp {
 				return 0;
 
 			return struct_info [name];
+		}
+
+		public TypeInfo GetSubStruct (string name)
+		{
+			if (struct_info == null)
+				return null;
+
+			return struct_info.GetStructField (name);
 		}
 
 		// <summary>
@@ -2235,20 +2266,8 @@ namespace Mono.CSharp {
 				return true;
 
 			bool ok = true;
-			for (int i = 0; i < struct_info.CountPublic; i++) {
+			for (int i = 0; i < struct_info.Count; i++) {
 				FieldInfo field = struct_info.Fields [i];
-
-				if (!branching.IsFieldAssigned (vi, field.Name)) {
-					Report.Error (171, loc,
-						      "Field `" + TypeManager.CSharpName (Type) +
-						      "." + field.Name + "' must be fully initialized " +
-						      "before control leaves the constructor");
-					ok = false;
-				}
-			}
-
-			for (int i = 0; i < struct_info.CountNonPublic; i++) {
-				FieldInfo field = struct_info.NonPublicFields [i];
 
 				if (!branching.IsFieldAssigned (vi, field.Name)) {
 					Report.Error (171, loc,
@@ -2264,18 +2283,19 @@ namespace Mono.CSharp {
 
 		public override string ToString ()
 		{
-			return String.Format ("TypeInfo ({0}:{1}:{2})", Type, Offset, Length);
+			return String.Format ("TypeInfo ({0}:{1}:{2}:{3})",
+					      Type, Offset, Length, TotalLength);
 		}
 
-		public class StructInfo {
+		protected class StructInfo {
 			public readonly Type Type;
 			public readonly FieldInfo[] Fields;
-			public readonly FieldInfo[] NonPublicFields;
 			public readonly TypeInfo[] StructFields;
+			public readonly int Count;
 			public readonly int CountPublic;
 			public readonly int CountNonPublic;
-			public readonly int CountTotal;
-			public readonly bool HasNonPublicFields;
+			public readonly int Length;
+			public readonly int TotalLength;
 			public readonly bool HasStructFields;
 
 			private static Hashtable field_type_hash = new Hashtable ();
@@ -2292,65 +2312,71 @@ namespace Mono.CSharp {
 					TypeContainer tc = TypeManager.LookupTypeContainer (type);
 
 					ArrayList fields = tc.Fields;
+
+					ArrayList public_fields = new ArrayList ();
+					ArrayList non_public_fields = new ArrayList ();
+
 					if (fields != null) {
 						foreach (Field field in fields) {
 							if ((field.ModFlags & Modifiers.STATIC) != 0)
 								continue;
 							if ((field.ModFlags & Modifiers.PUBLIC) != 0)
-								++CountPublic;
+								public_fields.Add (field.FieldBuilder);
 							else
-								++CountNonPublic;
+								non_public_fields.Add (field.FieldBuilder);
 						}
 					}
 
-					Fields = new FieldInfo [CountPublic];
-					NonPublicFields = new FieldInfo [CountNonPublic];
+					CountPublic = public_fields.Count;
+					CountNonPublic = non_public_fields.Count;
+					Count = CountPublic + CountNonPublic;
 
-					CountPublic = CountNonPublic = 0;
-					if (fields != null) {
-						foreach (Field field in fields) {
-							if ((field.ModFlags & Modifiers.STATIC) != 0)
-								continue;
-							if ((field.ModFlags & Modifiers.PUBLIC) != 0)
-								Fields [CountPublic++] = field.FieldBuilder;
-							else
-								NonPublicFields [CountNonPublic++] =
-									field.FieldBuilder;
-						}
-					}
+					Fields = new FieldInfo [Count];
+					public_fields.CopyTo (Fields, 0);
+					non_public_fields.CopyTo (Fields, CountPublic);
 				} else {
-					Fields = type.GetFields (BindingFlags.Instance|BindingFlags.Public);
-					CountPublic = Fields.Length;
+					FieldInfo[] public_fields = type.GetFields (
+						BindingFlags.Instance|BindingFlags.Public);
+					FieldInfo[] non_public_fields = type.GetFields (
+						BindingFlags.Instance|BindingFlags.NonPublic);
 
-					NonPublicFields = type.GetFields (BindingFlags.Instance|BindingFlags.NonPublic);
-					CountNonPublic = NonPublicFields.Length;
+					CountPublic = public_fields.Length;
+					CountNonPublic = non_public_fields.Length;
+					Count = CountPublic + CountNonPublic;
+
+					Fields = new FieldInfo [Count];
+					public_fields.CopyTo (Fields, 0);
+					non_public_fields.CopyTo (Fields, CountPublic);
 				}
 
-				CountTotal = 0;
 				struct_field_hash = new Hashtable ();
 				field_hash = new Hashtable ();
 
-				StructFields = new TypeInfo [CountPublic];
-				for (int i = 0; i < CountPublic; i++) {
+				Length = 0;
+				StructFields = new TypeInfo [Count];
+				StructInfo[] sinfo = new StructInfo [Count];
+
+				for (int i = 0; i < Count; i++) {
 					FieldInfo field = (FieldInfo) Fields [i];
 
-					field_hash.Add (field.Name, ++CountTotal);
-
-					StructInfo sinfo = GetStructInfo (field.FieldType);
-					if (sinfo == null)
-						continue;
-
-					HasStructFields = true;
-					StructFields [i] = new TypeInfo (sinfo, CountTotal);
-					struct_field_hash.Add (field.Name, StructFields [i]);
-					CountTotal += sinfo.CountTotal;
+					sinfo [i] = GetStructInfo (field.FieldType);
+					if (sinfo [i] == null)
+						field_hash.Add (field.Name, ++Length);
 				}
 
-				for (int i = 0; i < CountNonPublic; i++) {
-					FieldInfo field = (FieldInfo) NonPublicFields [i];
+				TotalLength = Length + 1;
+				for (int i = 0; i < Count; i++) {
+					FieldInfo field = (FieldInfo) Fields [i];
 
-					HasNonPublicFields = true;
-					field_hash.Add (field.Name, ++CountTotal);
+					if (sinfo [i] == null)
+						continue;
+
+					field_hash.Add (field.Name, TotalLength);
+
+					HasStructFields = true;
+					StructFields [i] = new TypeInfo (sinfo [i], TotalLength);
+					struct_field_hash.Add (field.Name, StructFields [i]);
+					TotalLength += sinfo [i].TotalLength;
 				}
 			}
 
@@ -2360,15 +2386,6 @@ namespace Mono.CSharp {
 						return (int) field_hash [name];
 					else
 						return 0;
-				}
-			}
-
-			public FieldInfo this [int index] {
-				get {
-					if (index >= Fields.Length)
-						return NonPublicFields [index - Fields.Length];
-					else
-						return Fields [index];
 				}
 			}
 
@@ -2437,13 +2454,46 @@ namespace Mono.CSharp {
 		public readonly LocalInfo LocalInfo;
 		public readonly int ParameterIndex;
 
+		readonly VariableInfo Parent;
+		VariableInfo[] sub_info;
+
 		protected VariableInfo (string name, Type type, int offset)
 		{
 			this.Name = name;
 			this.Offset = offset;
 			this.TypeInfo = TypeInfo.GetTypeInfo (type);
 
-			Length = TypeInfo.Length + 1;
+			Length = TypeInfo.TotalLength;
+
+			Initialize ();
+		}
+
+		protected VariableInfo (VariableInfo parent, TypeInfo type)
+		{
+			this.Name = parent.Name;
+			this.TypeInfo = type;
+			this.Offset = parent.Offset + type.Offset;
+			this.Parent = parent;
+			this.Length = type.TotalLength;
+
+			this.IsParameter = parent.IsParameter;
+			this.LocalInfo = parent.LocalInfo;
+			this.ParameterIndex = parent.ParameterIndex;
+
+			Initialize ();
+		}
+
+		protected void Initialize ()
+		{
+			TypeInfo[] sub_fields = TypeInfo.SubStructInfo;
+			if (sub_fields != null) {
+				sub_info = new VariableInfo [sub_fields.Length];
+				for (int i = 0; i < sub_fields.Length; i++) {
+					if (sub_fields [i] != null)
+						sub_info [i] = new VariableInfo (this, sub_fields [i]);
+				}
+			} else
+				sub_info = new VariableInfo [0];
 		}
 
 		public VariableInfo (LocalInfo local_info, int offset)
@@ -2481,10 +2531,25 @@ namespace Mono.CSharp {
 			if (vector [Offset])
 				return true;
 
+			for (VariableInfo parent = Parent; parent != null; parent = parent.Parent)
+				if (vector [parent.Offset])
+					return true;
+
 			// Ok, so each field must be assigned.
-			for (int i = 0; i < TypeInfo.Length; i++)
+			for (int i = 0; i < TypeInfo.Length; i++) {
 				if (!vector [Offset + i + 1])
 					return false;
+			}
+
+			// Ok, now check all fields which are structs.
+			for (int i = 0; i < sub_info.Length; i++) {
+				VariableInfo sinfo = sub_info [i];
+				if (sinfo == null)
+					continue;
+
+				if (!sinfo.IsAssigned (vector))
+					return false;
+			}
 
 			vector [Offset] = true;
 			return true;
@@ -2536,6 +2601,16 @@ namespace Mono.CSharp {
 				return;
 
 			vector [Offset + field_idx] = true;
+		}
+
+		public VariableInfo GetSubStruct (string name)
+		{
+			TypeInfo type = TypeInfo.GetSubStruct (name);
+
+			if (type == null)
+				return null;
+
+			return new VariableInfo (this, type);
 		}
 
 		public override string ToString ()

@@ -1,3 +1,12 @@
+2003-05-19  Martin Baulig  <martin@ximian.com>
+
+	* statement.cs (TypeInfo.StructInfo): Made this type protected.
+	(TypeInfo): Added support for structs having structs as fields.
+
+	* ecore.cs (FieldExpr): Implement IVariable.
+	(FieldExpr.DoResolve): Call VariableInfo.GetSubStruct() to get the
+	VariableInfo for the field.
+
 2003-05-18  Martin Baulig  <martin@ximian.com>
 
 	* expression.cs (This.DoResolve): Report a CS0027 if we're

@@ -3976,9 +3976,10 @@ namespace Mono.CSharp {
 	/// <summary>
 	///   Fully resolved expression that evaluates to a Field
 	/// </summary>
-	public class FieldExpr : Expression, IAssignMethod, IMemoryLocation, IMemberExpr {
+	public class FieldExpr : Expression, IAssignMethod, IMemoryLocation, IMemberExpr, IVariable {
 		public readonly FieldInfo FieldInfo;
 		Expression instance_expr;
+		VariableInfo variable_info;
 		
 		public FieldExpr (FieldInfo fi, Location l)
 		{
@@ -4022,6 +4023,12 @@ namespace Mono.CSharp {
 			}
 		}
 
+		public VariableInfo VariableInfo {
+			get {
+				return variable_info;
+			}
+		}
+
 		override public Expression DoResolve (EmitContext ec)
 		{
 			if (!FieldInfo.IsStatic){
@@ -4045,13 +4052,14 @@ namespace Mono.CSharp {
 
 			// If the instance expression is a local variable or parameter.
 			IVariable var = instance_expr as IVariable;
-			if (var == null)
+			if ((var == null) || (var.VariableInfo == null))
 				return this;
 
 			VariableInfo vi = var.VariableInfo;
-			if ((vi != null) && !vi.IsFieldAssigned (ec, FieldInfo.Name, loc))
+			if (!vi.IsFieldAssigned (ec, FieldInfo.Name, loc))
 				return null;
 
+			variable_info = vi.GetSubStruct (FieldInfo.Name);
 			return this;
 		}
 
