@@ -1,3 +1,7 @@
+2003-11-18  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* TypeInitializationException.cs: Added missing serialization constructor.
+
 2003-11-18  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* AppDomainSetup.cs: Don't add an extra '/' at the end of 

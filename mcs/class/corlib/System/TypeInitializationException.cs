@@ -22,6 +22,12 @@ namespace System {
 			this.type_name = type_name;
 		}
 
+		internal TypeInitializationException (SerializationInfo info, StreamingContext sc)
+		: base (info, sc)
+		{
+			type_name = info.GetString ("TypeName");
+		}
+		
 		// Properties
 		public string TypeName {
 			get {
