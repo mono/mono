@@ -105,7 +105,8 @@ namespace System.Reflection.Emit {
 	public class ILGenerator: Object {
 		private struct LabelFixup {
 			public int size;
-			public int pos;
+			public int pos;			// the location of the fixup
+			public int label_base;	// the base address for this fixup
 			public int label_idx;
 		};
 		static Type void_type = typeof (void);
@@ -395,6 +396,7 @@ namespace System.Reflection.Emit {
 			}
 			fixups [num_fixups].size = tlen;
 			fixups [num_fixups].pos = code_len;
+			fixups [num_fixups].label_base = code_len;
 			fixups [num_fixups].label_idx = label.label;
 			num_fixups++;
 			code_len += tlen;
@@ -405,6 +407,7 @@ namespace System.Reflection.Emit {
 			int count = labels.Length;
 			make_room (6 + count * 4);
 			ll_emit (opcode);
+			int switch_base = code_len + count*4;
 			emit_int (count);
 			if (num_fixups + count >= fixups.Length) {
 				LabelFixup[] newf = new LabelFixup [fixups.Length + count + 16];
@@ -414,6 +417,7 @@ namespace System.Reflection.Emit {
 			for (int i = 0; i < count; ++i) {
 				fixups [num_fixups].size = 4;
 				fixups [num_fixups].pos = code_len;
+				fixups [num_fixups].label_base = switch_base;
 				fixups [num_fixups].label_idx = labels [i].label;
 				num_fixups++;
 				code_len += 4;
@@ -584,7 +588,7 @@ namespace System.Reflection.Emit {
 		internal void label_fixup () {
 			int i;
 			for (i = 0; i < num_fixups; ++i) {
-				int diff = label_to_addr [fixups [i].label_idx] - fixups [i].pos;
+				int diff = label_to_addr [fixups [i].label_idx] - fixups [i].label_base;
 				if (fixups [i].size == 1) {
 					code [fixups [i].pos] = (byte)((sbyte) diff - 1);
 				} else {
