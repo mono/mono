@@ -24,6 +24,7 @@ namespace System.Collections {
 	                          IEnumerable, ICloneable {
 
 
+		[Serializable]
 		internal struct Slot {
 			internal Object key;
 			internal Object value;
