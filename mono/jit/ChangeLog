@@ -1,5 +1,10 @@
 2002-09-26  Martin Baulig  <martin@gnome.org>
 
+	* debug.c (debug_load_method_lines): Block SIGCHLD while running
+	monodis.
+
+2002-09-26  Martin Baulig  <martin@gnome.org>
+
 	* debug.c: Reworked the whole debugging stuff.  We have now one
 	single `mono_debug_handle' which keeps a hashtable of
 	`AssemblyDebugInfo's (which may have different debugging formats).
