@@ -1,0 +1,14 @@
+2005-02-14  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* cas1.cs: New. StrongNameIdentityPermission at class level;
+	* cas2.cs: New. StrongNameIdentityPermission on virtual method;
+	* cas3.cs: New. StrongNameIdentityPermission on interface method;
+	* cas.snk: New. StrongName keypair to sign cas#.cs test cases.
+	* Makefile: New. Makefile to build and execute tests.
+	* noncas1.cs: New. PrincipalPermission on class level (work);
+	* noncas2.cs: New. PrincipalPermission on class level (fail);
+	* noncas3.cs: New. PrincipalPermission at method level (work);
+	* noncas4.cs: New. PrincipalPermission at method level (fail);
+	* notused.cs: New. Inheritance demands on non-used class/methods and
+	to non-applicable targets (work).
+	* README: New. Instruction and details about the tests.
