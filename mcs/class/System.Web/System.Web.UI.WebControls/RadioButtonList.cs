@@ -218,6 +218,7 @@ namespace System.Web.UI.WebControls
 			button.Text = current.Text;
 			button.Attributes ["value"] = current.Value;
 			button.Checked = current.Selected;
+			button.Enabled = Enabled;
 			button.RenderControl (writer);
 		}
 

@@ -260,6 +260,7 @@ namespace System.Web.UI.WebControls
 			checkBoxRepeater.Text = Items[repeatIndex].Text;
 			checkBoxRepeater.TextAlign = TextAlign;
 			checkBoxRepeater.Checked = Items[repeatIndex].Selected;
+			checkBoxRepeater.Enabled = Enabled;
 			checkBoxRepeater.RenderControl(writer);
 		}
 	}

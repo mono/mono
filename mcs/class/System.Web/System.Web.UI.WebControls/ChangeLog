@@ -1,4 +1,10 @@
 2004-1-1 Alon Gazit <along@mainsoft.com>
+	* RadioButtonList.cs: update RenderItem() so that each RadioButton
+	is enabled or disabled like the RadioButtonList.
+	* CheckBoxList.cs: update RenderItem() so that each CheckBox
+	is enabled or disabled like the CheckBoxList. 	
+
+2004-1-1 Alon Gazit <along@mainsoft.com>
 	* DataGrid.cs: Fixed PrepareControlHierarchyForItem().
 	The Header or Footer Style shouldn't merge with the cells Style.	  	 
 	
