@@ -461,6 +461,7 @@ el.ElementType != schemaAnyType)
 				return;
 
 			DataTable table = new DataTable (tableName);
+			table.Namespace = el.QualifiedName.Namespace;
 			currentTable = new TableStructure (table);
 
 			dataset.Tables.Add (table);
@@ -709,6 +710,7 @@ el.ElementType != schemaAnyType)
 
 			DataTable dt = new DataTable ();
 			dt.TableName = elName;
+			dt.Namespace = el.QualifiedName.Namespace;
 			// reference key column to parent
 			DataColumn cc = new DataColumn ();
 			cc.ColumnName = parentName + "_Id";
