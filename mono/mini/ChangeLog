@@ -1,4 +1,8 @@
 
+Tue Aug 3 11:19:07 CEST 2004 Paolo Molaro <lupus@ximian.com>
+
+	* mini-ppc.c: reg allocator fix.
+
 Tue Aug 3 11:17:07 CEST 2004 Paolo Molaro <lupus@ximian.com>
 
 	* mini-ppc.c: make sure temp regs are not used for global reg
