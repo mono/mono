@@ -22,6 +22,7 @@ namespace System.Web.UI.WebControls
 {
 	[PersistChildrenAttribute(false)]
 	[ParseChildrenAttribute(true)]
+	[DefaultProperty("ID")]
 	public class WebControl : Control, IAttributeAccessor
 	{
 		//TODO: A list of private members may be incomplete

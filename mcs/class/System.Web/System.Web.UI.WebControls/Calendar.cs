@@ -27,6 +27,8 @@ namespace System.Web.UI.WebControls
 	[DefaultProperty("SelectedDate")]
 	//TODO: [Designer("??")]
 	//[DataBindingHandler("??")]
+	[PersistChildren(false)]
+	[ParseChildren(true)]
 	public class Calendar : WebControl, IPostBackEventHandler
 	{
 		//

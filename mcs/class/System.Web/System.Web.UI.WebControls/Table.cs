@@ -23,6 +23,7 @@ namespace System.Web.UI.WebControls
 	[DefaultProperty("Rows")]
 	//[Designer("??")]
 	[ParseChildren(true, "Rows")]
+	[PersistChildren(false)]
 	public class Table: WebControl
 	{
 		private TableRowCollection rows;

@@ -23,6 +23,7 @@ namespace System.Web.UI.WebControls
 	[ControlBuilder(typeof(HyperLinkControlBuilder))]
 	//[DataBindingHandler("??")]
 	[ParseChildren(false)]
+	[PersistChildren(false)]
 	[ToolboxData("<{0}:HyperLink runat=\"server\">HyperLink</{0}:HyperLink>")]
 	public class HyperLink: WebControl
 	{

@@ -18,6 +18,7 @@ using System.Web.UI;
 namespace System.Web.UI.WebControls
 {
 	[ControlBuilder(typeof(PlaceHolderControlBuilder))]
+	[DefaultProperty("ID")]
 	public class PlaceHolder : Control
 	{
 		public PlaceHolder(): base()

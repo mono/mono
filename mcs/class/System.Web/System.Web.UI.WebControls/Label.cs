@@ -20,9 +20,11 @@ namespace System.Web.UI.WebControls
 {
 	[DefaultProperty("Text")]
 	//[Designer("??")]
-	[ControlBuilder(typeof(LabelControlBuilder))]
+	//Currently mono does not handle Type in attributes
+	//[ControlBuilder(typeof(LabelControlBuilder))] 
 	//[DataBindingHandler("??")]
 	[ParseChildren(false)]
+	[PersistChildren(false)]
 	[ToolboxData("<{0}:Label runat=\"server\">Label</{0}:Label>")]
 	public class Label : WebControl
 	{

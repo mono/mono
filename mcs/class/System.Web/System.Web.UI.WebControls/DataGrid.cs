@@ -21,6 +21,10 @@ namespace System.Web.UI.WebControls
 {
 	//TODO: [Designer("??")]
 	//TODO: [Editor("??")]
+	[DefaultEvent("SelectedIndexChanged"]
+	[DefaultProperty("DataSource")]
+	[ParseChildren(true)]
+	[PersistChildren(false)]
 	public class DataGrid : BaseDataList, INamingContainer
 	{
 		public const string CancelCommandName       = "Cancel";

@@ -21,6 +21,7 @@ using System.Web.UI;
 
 namespace System.Web.UI.WebControls
 {
+	[DefaultProperty("DocumentSource")]
 	[PersistChildren(false)]
 	public class Xml : Control
 	{

@@ -21,6 +21,10 @@ using System.Web.UI;
 
 namespace System.Web.UI.WebControls
 {
+	[DefaultEvent("SelectedIndexChanged"]
+	[DefaultProperty("DataSource")]
+	[ParseChildren(true)]
+	[PersistChildren(false)]
 	[ValidationProperty("SelectedItem")]
 	public class ListBox : ListControl, IPostBackDataHandler
 	{

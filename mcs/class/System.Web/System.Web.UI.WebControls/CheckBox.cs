@@ -27,6 +27,8 @@ namespace System.Web.UI.WebControls
 	[DefaultProperty("Text")]
 	//[DataBindingHanlder("??")]
 	//[Designer("??")]
+	[PersistChildren(false)]
+	[ParseChildren(true)]
 	public class CheckBox : WebControl, IPostBackDataHandler
 	{
 		private static readonly object CheckedChangedEvent = new object();

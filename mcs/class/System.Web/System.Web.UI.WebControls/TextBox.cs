@@ -13,12 +13,18 @@
 
 using System;
 using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Globalization;
 using System.Web;
 using System.Web.UI;
 
 namespace System.Web.UI.WebControls
 {
+	[DefaultEvent("TextChanged")]
+	[DefaultProperty("Text")]
+	[ParseChildren(false)]
+	[PersistChildren(false)]
+	[ValidationProperty("Text")]
 	public class TextBox : WebControl, IPostBackDataHandler
 	{
 		private static readonly object TextChangedEvent = new object ();

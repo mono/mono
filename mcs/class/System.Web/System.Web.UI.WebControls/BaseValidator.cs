@@ -94,11 +94,11 @@ namespace System.Web.UI.WebControls
 		{
 			get
 			{
-				return Enabled;
+				return base.Enabled;
 			}
 			set
 			{
-				Enabled = value;
+				base.Enabled = value;
 			}
 		}
 
@@ -123,11 +123,11 @@ namespace System.Web.UI.WebControls
 		{
 			get
 			{
-				return ForeColor;
+				return base.ForeColor;
 			}
 			set
 			{
-				ForeColor = value;
+				base.ForeColor = value;
 			}
 		}
 
@@ -135,6 +135,9 @@ namespace System.Web.UI.WebControls
 		{
 			get
 			{
+				if (Enabled == false)
+					return true;
+
 				object o = ViewState["IsValid"];
 				if(o != null)
 				{
@@ -150,11 +153,11 @@ namespace System.Web.UI.WebControls
 
 		public static PropertyDescriptor GetValidationProperty(object component)
 		{
-			ValidationPropertyAttribute attrib = (ValidationPropertyAttribute)((TypeDescriptor.GetAttributes(component))[typeof(ValidationPropertyAttribute)]);
-			if(attrib != null && attrib.Name != null)
-			{
-				return (TypeDescriptor.GetProperties(component, null))[attrib.Name];
-			}
+			AttributeCollection coll = TypeDescriptor.GetAttributes (component);
+			Type type = typeof (ValidationPropertyAttribute);
+			ValidationPropertyAttribute attrib = (ValidationPropertyAttribute) coll [type];
+			if (attrib != null && attrib.Name != null)
+				return (TypeDescriptor.GetProperties (component)) [attrib.Name];
 			return null;
 		}
 
@@ -211,7 +214,7 @@ namespace System.Web.UI.WebControls
 			{
 				Enabled = true;
 			}
-			AddAttributesToRender(writer);
+			base.AddAttributesToRender(writer);
 			if(RenderUplevel)
 			{
 				if(ID == null)
@@ -283,9 +286,11 @@ namespace System.Web.UI.WebControls
 			}
 			if(EnableClientScript)
 			{
-				throw new NotImplementedException();
-				//TODO: I need to get the (Browser->Dom_version_major >= 4 &&
-				//                         Brower->Ecma_script_version >= 1.2)
+				// By now, return true
+				return true;
+				////throw new NotImplementedException();
+				////TODO: I need to get the (Browser->Dom_version_major >= 4 &&
+				////                         Brower->Ecma_script_version >= 1.2)
 			}
 			return false;
 		}
@@ -321,13 +326,13 @@ namespace System.Web.UI.WebControls
 
 		protected override void OnInit(EventArgs e)
 		{
-			OnInit(e);
+			base.OnInit(e);
 			Page.Validators.Add(this);
 		}
 
 		protected override void OnPreRender(EventArgs e)
 		{
-			OnPreRender(e);
+			base.OnPreRender(e);
 			isPreRenderCalled   = true;
 			isPropertiesChecked = false;
 			renderUplevel       = DetermineRenderUplevel();
@@ -343,13 +348,14 @@ namespace System.Web.UI.WebControls
 			{
 				Page.Validators.Remove(this);
 			}
-			OnUnload(e);
+			base.OnUnload(e);
 		}
 
 		[MonoTODO("What_do_I_have_to_do")]
 		protected void RegisterValidatorCommonScript()
 		{
-			throw new NotImplementedException();
+			// Keep going
+			//throw new NotImplementedException();
 		}
 
 		[MonoTODO("I_have_to_know_javascript_for_this_I_know_it_but_for_ALL_browsers_NO")]
