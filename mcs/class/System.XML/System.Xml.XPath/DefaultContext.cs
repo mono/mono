@@ -240,7 +240,7 @@ namespace System.Xml.XPath
 		public override XPathResultType [] ArgTypes { get { return new XPathResultType [] { XPathResultType.NodeSet }; }}
 		public override object TypesafeInvoke (XsltContext xsltContext, object[] args, XPathNavigator docContext)
 		{
-			return ((BaseIterator) args [0]).Count;
+			return (double) ((BaseIterator) args [0]).Count;
 		}
 		public override string Name { get { return "count"; }}
 	}

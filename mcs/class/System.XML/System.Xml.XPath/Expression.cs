@@ -298,14 +298,14 @@ namespace System.Xml.XPath
 
 		static XPathResultType GetReturnType (object obj)
 		{
-			if (obj is double)
-				return XPathResultType.Number;
 			if (obj is string)
 				return XPathResultType.String;
 			if (obj is bool)
 				return XPathResultType.Boolean;
 			if (obj is XPathNodeIterator)
 				return XPathResultType.NodeSet;
+			if (obj is double || obj is int)
+				return XPathResultType.Number;
 			throw new XPathException ("invalid node type: "+obj.GetType ().ToString ());
 		}
 		[MonoTODO]
@@ -327,7 +327,7 @@ namespace System.Xml.XPath
 			switch (type)
 			{
 				case XPathResultType.Number:
-					return (double) result;
+					return Convert.ToDouble (result);
 				case XPathResultType.Boolean:
 					return Convert.ToDouble ((bool) result);
 				case XPathResultType.NodeSet:
@@ -348,7 +348,7 @@ namespace System.Xml.XPath
 			switch (type)
 			{
 				case XPathResultType.Number:
-					return (string) XmlConvert.ToString ((double) result);	// TODO: spec? convert number to string
+					return (string) XmlConvert.ToString (Convert.ToDouble (result));	// TODO: spec? convert number to string
 				case XPathResultType.Boolean:
 					return ((bool) result) ? "true" : "false";
 				case XPathResultType.String:
@@ -375,7 +375,7 @@ namespace System.Xml.XPath
 			{
 				case XPathResultType.Number:
 				{
-					double num = (double) result;
+					double num = Convert.ToDouble (result);
 					return (num != 0.0 && num != -0.0 && num != Double.NaN);
 				}
 				case XPathResultType.Boolean:
