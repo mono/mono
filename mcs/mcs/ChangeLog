@@ -1,5 +1,6 @@
 2004-09-03  Raja R Harinath  <rharinath@novell.com>
 
+	Fix #61128.
 	* expression.cs (BetterConversion): Don't allow either conversion 
 	to be null.  Remove redundant implicit conversion test when 'q ==
 	null' -- when this function is invoked, we already know that the
