@@ -1,3 +1,7 @@
+2003-08-07  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* System.Xml.dll.sources: Add Mono.Xml/IHasXmlParserContext.cs.
+
 2003-07-28 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* System.Xml.dll.sources: Add new files
