@@ -1,5 +1,10 @@
 2004-03-26  Zoltan Varga  <vargaz@freemail.hu>
 
+	* inssel-sparc.brg: Add some optimizations.
+
+	* inssel-sparc.brg mini-sparc.c: Rework branch instructions to allow
+	future delay slot filling. Add support for varargs, tail calls and JMP.
+
 	* inssel.brg mini-ops.h mini.c: Use OP_REFANYTYPE instead of 
 	CEE_REFANYTYPE, since CEE_REFANYTYPE needs a prefix to be unique.
 
