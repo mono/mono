@@ -5,4 +5,3 @@ class TestClass {
         public TestClass(int value = 0) {
         }
 }
-

@@ -5,6 +5,3 @@ interface Interface {
         public struct Struct {
         }
 }
-
-
-

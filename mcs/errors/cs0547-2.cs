@@ -1,7 +1,7 @@
-// cs0547.cs: 'Property' : property or indexer cannot have void type// Line: 5
-interface Interface {
-        void Property { get; }
+// cs0547.cs: 'Value' : property cannot have void type
+// Line: 5
+
+interface PropertyInterface {
+        void Value { get; }
 }
-
-
 

@@ -2,9 +2,7 @@
 // Line: 5
 
 public interface Interface {
-        public Interface () {
+        public Interface ()
+        {
         }
 }
-
-
-

@@ -5,5 +5,3 @@ class PropertyClass {
         public int Value {
         }
 }
-
-

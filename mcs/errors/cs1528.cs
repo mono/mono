@@ -1,5 +1,6 @@
-// cs1528.cs: cant specify constructor arguments in declaration
-// Line:
+// cs1528.cs: Expected ; or = (cannot specify constructor arguments in declaration)
+// Line: 13
+
 class X {
 	X (int a)
 	{

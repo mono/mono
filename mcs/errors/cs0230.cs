@@ -1,6 +1,5 @@
-//
-// CS0230.cs: foreach statement must contain the type and the variable identifier
-//
+// CS0230.cs: Type and identifier are both required in a foreach statement
+// Lise: 12
 
 using System;
 

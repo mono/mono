@@ -1,5 +1,6 @@
-// cs0146.cs: circular class definition
-// Line: 6
+// cs0146.cs: Circular base class dependency involving 'B' and 'A'
+// Line: 7
+
 class A : B {
 }
 

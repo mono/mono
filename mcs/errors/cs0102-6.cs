@@ -1,17 +1,7 @@
-// CS0102: The container `Test' already contains a definition for `x'
-// Line: 10
-partial class Test
-{
-	int x;
-}
+// cs102.cs: The class 'X' already contains a definition for 'A'
+// Line: 6
 
-partial class Test
-{
-	int x;
-}
-
-class X
-{
-	static void Main ()
-	{ }
+class X {
+	const int A = 10;
+	int A () {}
 }
