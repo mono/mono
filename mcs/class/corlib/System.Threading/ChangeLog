@@ -1,3 +1,12 @@
+2003-04-09  Dick Porter  <dick@ximian.com>
+
+	* Thread.cs: Make sure a reference to the ThreadStart delegate is
+	held.  There's no telling how long it will be before
+	Thread.Start() is called, and GC might destroy the delegate.
+	Thread() and Start() need to be rewritten so that the runtime
+	creates the new thread when Start() is called, which will simplify
+	the code a great deal.
+
 2003-03-20  Miguel de Icaza  <miguel@ximian.com>
 
 	* Thread.cs (CurrentCuluture): use the invaraint culture instead

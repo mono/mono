@@ -213,10 +213,13 @@ namespace System.Threading
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern IntPtr Thread_internal(ThreadStart start);
 
+		private ThreadStart threadstart;
+		
 		public Thread(ThreadStart start) {
 			if(start==null) {
 				throw new ArgumentNullException("Null ThreadStart");
 			}
+			threadstart=start;
 
 			// This is a two-stage thread launch.  Thread_internal
 			// creates the new thread, but blocks it until
