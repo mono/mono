@@ -244,6 +244,7 @@ namespace System.Xml.Serialization {
 			
 			XmlTypeMapping map = new XmlTypeMapping (elementName, rootNamespace, typeData, defaultXmlType, typeNamespace);
 			map.IncludeInSchema = includeInSchema;
+			map.IsNullable = nullable;
 			relatedMaps.Add (map);
 			
 			return map;

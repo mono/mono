@@ -34,7 +34,7 @@ using System.Text;
 
 namespace System.Xml.Serialization 
 {
-	internal class SerializationSource 
+	internal abstract class SerializationSource 
 	{
 		Type[] includedTypes;
 		string namspace;
@@ -46,10 +46,8 @@ namespace System.Xml.Serialization
 			this.includedTypes = includedTypes;
 		}
 		
-		public override bool Equals (object o)
+		protected bool BaseEquals (SerializationSource other)
 		{
-			SerializationSource other = o as SerializationSource;
-			if (other == null) return false;
 			if (namspace != other.namspace) return false;
 			if (canBeGenerated != other.canBeGenerated) return false;
 			
@@ -103,7 +101,7 @@ namespace System.Xml.Serialization
 			if (rootHash != other.rootHash) return false;
 			if (attributeOverridesHash != other.attributeOverridesHash) return false;
 			
-			return base.Equals (o);
+			return base.BaseEquals (other);
 		}
 		
 		public override int GetHashCode ()
@@ -136,7 +134,7 @@ namespace System.Xml.Serialization
 			if (!type.Equals(other.type)) return false;
 			if (attributeOverridesHash != other.attributeOverridesHash) return false;
 			
-			return base.Equals (o);
+			return base.BaseEquals (other);
 		}
 		
 		public override int GetHashCode ()
@@ -180,7 +178,7 @@ namespace System.Xml.Serialization
 			if (hasWrapperElement != other.hasWrapperElement) return false;
 			if (membersHash != other.membersHash) return false;
 			
-			return base.Equals (o);
+			return base.BaseEquals (other);
 		}
 		
 		public override int GetHashCode ()

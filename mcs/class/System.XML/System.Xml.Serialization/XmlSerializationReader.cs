@@ -550,7 +550,6 @@ namespace System.Xml.Serialization
 				for (int n=0; n<count; n++)
 				{
 					Reader.MoveToContent ();
-					string refid = Reader.GetAttribute ("href");
 					string id;
 					object item = ReadReferencingElement (itemType, qn.Namespace, out id);
 					if (id == null) 

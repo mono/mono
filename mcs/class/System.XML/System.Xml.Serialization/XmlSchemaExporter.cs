@@ -454,7 +454,6 @@ namespace System.Xml.Serialization {
 			{
 				if (isTypeMember) selem.IsNillable = einfo.IsNullable;
 				selem.Name = einfo.ElementName;
-				XmlQualifiedName typeName = new XmlQualifiedName (einfo.TypeData.XmlType, einfo.DataTypeNamespace);
 
 				if (defaultValue != System.DBNull.Value)
 					selem.DefaultValue = XmlCustomFormatter.ToXmlString (einfo.TypeData, defaultValue);

@@ -441,7 +441,6 @@ namespace System.Xml.Serialization
 				memberValue = new object[] { memberValue };
 			}
 
-			bool canBeText = member.CanBeText;
 			Array elems = (Array) memberValue;
 			foreach (XmlNode elem in elems)
 			{

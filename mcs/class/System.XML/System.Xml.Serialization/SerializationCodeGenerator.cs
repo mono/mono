@@ -775,7 +775,6 @@ namespace System.Xml.Serialization
 	//							WriteLineUni ("}");
 									
 								bool first = true;
-								Type type = memberValue.GetType();
 								foreach (XmlTypeMapElementInfo elem in member.ElementInfo)
 								{
 									WriteLineInd ((first?"":"else ") + "if (" + memberValue + " is " + elem.TypeData.FullTypeName + ") {");

@@ -1,3 +1,12 @@
+2004-11-24  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* SerializationSource.cs: Made SerializationSource abstract, and
+	renamed Equals to BaseEquals to avoid missing GetHashCode warning
+	(it does not really make sense in this case).
+	* XmlSchemaExporter.cs, SerializationCodeGenerator.cs,
+	XmlReflectionImporter.cs, XmlSerializationWriterInterpreter.cs,
+	XmlSerializationReader.cs: Fixed warnings.
+
 2004-10-19  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlSerializationWriter.cs : When namespace is an empty string,
