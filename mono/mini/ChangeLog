@@ -1,4 +1,8 @@
 
+Thu Apr 22 13:23:16 EDT 2004 Paolo Molaro <lupus@ximian.com>
+
+	* exceptions.c, mini.c, mini-ppc.h: adapt code to macosx.
+
 Thu Apr 22 18:08:37 CEST 2004 Paolo Molaro <lupus@ximian.com>
 
 	* mini-ppc.c, cpu-g4.md: made the branch macros more flexible.
