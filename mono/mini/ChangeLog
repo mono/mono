@@ -1,5 +1,7 @@
 2004-02-24  Zoltan Varga  <vargaz@freemail.hu>
 
+	* basic-calls.cs: Fix compilation of tests.
+	
 	* mini.h mini.c tramp-x86.c mini-x86.c: Add mono_running_on_valgrind ()
 	helper function to cut back on the number of #ifdefs needed.
 
