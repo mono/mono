@@ -41,7 +41,7 @@ namespace System.Web.Security {
 				throw new HttpException ();
 		}
 		
-		public IRoleProvider this [string name] {
+		public new IRoleProvider this [string name] {
 			get { return (IRoleProvider) base [name]; }
 		}
 	}

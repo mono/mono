@@ -41,7 +41,7 @@ namespace System.Web.Security {
 				throw new HttpException ();
 		}
 		
-		public IMembershipProvider this [string name] {
+		public new IMembershipProvider this [string name] {
 			get { return (IMembershipProvider) base [name]; }
 		}
 	}
