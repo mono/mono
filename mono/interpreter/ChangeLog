@@ -1,3 +1,6 @@
+2002-02-04  Dietmar Maurer  <dietmar@ximian.com>
+
+	* interp.c (main): impl. __array_Address icall
 
 Fri Feb 1 16:03:53 CET 2002 Paolo Molaro <lupus@ximian.com>
 
