@@ -1,5 +1,9 @@
 2003-02-07  Martin Baulig  <martin@ximian.com>
 
+	* debug-mono-symfile.c (mono_debug_symfile_add_method): Ignore interncalls.
+
+2003-02-07  Martin Baulig  <martin@ximian.com>
+
 	* debug-mono-symfile.c: Reflected latest symwriter changes.
 	(mono_debug_create_mono_symbol_file): Removed.
 	(mono_debug_open_mono_symbol_file): Take an argument which
