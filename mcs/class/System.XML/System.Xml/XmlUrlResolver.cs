@@ -58,11 +58,21 @@ namespace System.Xml
 				WebClient wc = new WebClient ();
 				wc.Credentials = credential;
 				s = wc.OpenRead (absoluteUri.ToString ());
-				if (s.GetType ().IsSubclassOf (ofObjectToReturn))
-					return s;
-//				wc.Dispose ();
+
+				// Returned stream does not keep connection, so
+				// it should read up all the stream content.
+				MemoryStream ms = new MemoryStream ();
+				byte [] data = new byte [10000];
+				int length = 0;
+				do {
+					length = s.Read (data, 0, 10000);
+					if (length > 0)
+						ms.Write (data, 0, length);
+				} while (length == 10000);
+				s.Close ();
+				ms.Close ();
+				return new MemoryStream (ms.GetBuffer (), 0, (int) ms.Length);
 			}
-			return null;
 		}
 
 		public override Uri ResolveUri (Uri baseUri, string relativeUri)
@@ -76,12 +86,11 @@ namespace System.Xml
 					relativeUri.StartsWith ("file:"))
 					return new Uri (relativeUri);
 				else
+					// extraneous "/a" is required because current Uri stuff 
+					// seems ignorant of difference between "." and "./". 
+					// I'd be appleciate if it is fixed with better solution.
 					return new Uri (Path.GetFullPath (relativeUri));
-
-				// extraneous "/a" is required because current Uri stuff 
-				// seems ignorant of difference between "." and "./". 
-				// I'd be appleciate if it is fixed with better solution.
-//				return new Uri (new Uri (Path.GetFullPath ("./a")), EscapeRelativeUriBody (relativeUri));
+//					return new Uri (new Uri (Path.GetFullPath ("./a")), EscapeRelativeUriBody (relativeUri));
 			}
 
 			if (relativeUri == null)

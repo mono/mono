@@ -1,3 +1,8 @@
+2003-12-15  Atsushi Enomoto  <ginga@kit.hi-ho.ne.jp>
+
+	* XmlUrlResolver.cs : GetEntity() does not return direct network stream
+	  that may hold up connection. Now it reads up all the content stream.
+
 2003-12-12  Atsushi Enomoto  <ginga@kit.hi-ho.ne.jp>
 
 	* XmlAttributeCollection.cs,
