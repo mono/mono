@@ -15,7 +15,7 @@ namespace System.Text {
                 private static ASCIIEncoding ascii_encoding;
                 private static UnicodeEncoding big_endian_unicode;
                 private static UnicodeEncoding unicode_encoding;
-                private static Utf7_Encoding utf7_encoding;
+                private static UTF7Encoding utf7_encoding;
                 private static UTF8Encoding utf8_encoding;
 
                 private int codepage;
@@ -118,7 +118,7 @@ namespace System.Text {
                 public static Encoding UTF7 {
                         get {
                                 if (utf7_encoding == null) {
-                                        utf7_encoding = new Utf7_Encoding();
+                                        utf7_encoding = new UTF7Encoding();
                                 }
                                 return utf7_encoding;
                         }
