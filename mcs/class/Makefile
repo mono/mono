@@ -45,6 +45,7 @@ SUBDIRS = \
 	Commons.Xml.Relaxng		\
 	Mono.Directory.LDAP		\
 	Mono.Security.Win32		\
+	Novell.Directory.Ldap		\
 	System.DirectoryServices	\
 	System.Messaging	\
 	System.ServiceProcess \
