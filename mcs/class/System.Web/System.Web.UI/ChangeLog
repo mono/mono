@@ -1,3 +1,8 @@
+2005-03-09 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+ 	* Control.cs: in FindControl, throw if there's more than one control
+ 	with the same ID. Fixes bug #73479.
+ 
 2004-12-14 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* ControlCollection.cs: fix off-by-one and store a null at the end to

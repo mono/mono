@@ -498,20 +498,33 @@ namespace System.Web.UI
 			if (!HasControls ())
 				return null;
 
+			Control result = null;
 			foreach (Control c in Controls) {
-				if (String.Compare (id, c._userId, true) == 0)
-					return c;
+				if (String.Compare (id, c._userId, true) == 0) {
+					if (result != null && result != c) {
+						Console.WriteLine (c.GetHashCode ());
+						Console.WriteLine (result.GetHashCode ());
+						throw new HttpException ("1 Found more than one control with ID '" + id + "'");
+					}
+
+					result = c;
+					continue;
+				}
 
 				if ((c.stateMask & IS_NAMING_CONTAINER) == 0 && c.HasControls ()) {
 					Control child = c.LookForControlByName (id);
-					if (child != null)
-						return child;
+					if (child != null) {
+						if (result != null && result != child)
+							throw new HttpException ("2 Found more than one control with ID '" + id + "'");
+
+						result = child;
+					}
 				}
 			}
 
-			return null;
+			return result;
 		}
-		
+
                 protected virtual Control FindControl (string id, int pathOffset)
                 {
 			EnsureChildControls ();
