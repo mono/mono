@@ -29,9 +29,16 @@
 //     - DropDownMenu
 //     - Adding a button to two toolbars
 //
-// $Revision: 1.8 $
+// $Revision: 1.9 $
 // $Modtime: $
 // $Log: ToolBarButton.cs,v $
+// Revision 1.9  2004/10/14 11:10:47  ravindra
+// 	- Added an internal member 'inside' to handle mouse move
+// 	with mouse pressed ie mouse drag event.
+// 	- Changed 'Pressed' property to return true only when
+// 	'inside' and 'pressed' are both true.
+// 	- Some coding style love.
+//
 // Revision 1.8  2004/10/05 08:42:20  ravindra
 // Added an internal member dd_pressed to handle clicks on DropDown arrow.
 //
@@ -75,22 +82,23 @@ namespace System.Windows.Forms
 	{
 		#region instance variable
 		//private ContextMenu menu; //NotImplemented
-		internal bool dd_pressed = false; // flag to check for a mouse down on dropdown rect
 		private bool enabled = true;
-		private int imageIndex = -1;
+		private int image_index = -1;
 		private ToolBar parent;
-		private bool partialPush = false;
+		private bool partial_push = false;
 		private bool pushed = false;
 		private ToolBarButtonStyle style = ToolBarButtonStyle.PushButton;
 		private object tag;
 		private string text = "";
-		private string toolTip = "";
+		private string tooltip = "";
 		private bool visible = true;
 		private Point location = new Point (ThemeEngine.Current.ToolBarGripWidth,
 						    ThemeEngine.Current.ToolBarGripWidth);
-		private bool wrapper = false;
-		private bool hilight = false;
-		private bool pressed = false; // this is to check for mouse down on a button
+		internal bool dd_pressed = false; // to check for a mouse down on dropdown rect
+		internal bool hilight = false;    // to hilight buttons in flat style
+		internal bool inside = false;     // to handle the mouse move event with mouse pressed
+		internal bool wrapper = false;    // to mark a wrapping button
+		internal bool pressed = false;    // this is to check for mouse down on a button
 		#endregion
 
 		#region constructors
@@ -119,7 +127,12 @@ namespace System.Windows.Forms
 		}
 
 		internal bool Pressed {
-			get { return pressed; }
+			get {
+				if (pressed && inside)
+					return true;
+				else
+					return false;
+			}
 			set { pressed = value; }
 		}
 
@@ -164,15 +177,15 @@ namespace System.Windows.Forms
 		[Localizable (true)]
 		[TypeConverter (typeof (ImageIndexConverter))]
 		public int ImageIndex {
-			get { return imageIndex; }
+			get { return image_index; }
 			set {
 				if (value < -1)
 					throw new ArgumentException ("ImageIndex value must be above or equal to -1.");
 
-				if (value == imageIndex)
+				if (value == image_index)
 					return;
 
-				imageIndex = value;
+				image_index = value;
 				if (parent != null)
 					parent.Redraw (true);
 			}
@@ -185,12 +198,12 @@ namespace System.Windows.Forms
 
 		[DefaultValue (false)]
 		public bool PartialPush {
-			get { return partialPush; }
+			get { return partial_push; }
 			set {
-				if (value == partialPush)
+				if (value == partial_push)
 					return;
 
-				partialPush = value;
+				partial_push = value;
 				if (parent != null)
 					parent.Redraw (false);
 			}
@@ -262,8 +275,8 @@ namespace System.Windows.Forms
 		[DefaultValue (null)]
 		[Localizable (true)]
 		public string ToolTipText {
-			get { return toolTip; }
-			set { toolTip = value; }
+			get { return tooltip; }
+			set { tooltip = value; }
 		}
 
 		[DefaultValue (true)]
