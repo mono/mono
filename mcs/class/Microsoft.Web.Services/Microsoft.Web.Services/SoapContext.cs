@@ -30,7 +30,7 @@ namespace Microsoft.Web.Services {
 #else
 		private Uri actor = new Uri ("http://" + System.Net.Dns.GetHostName ());
 #endif
-		private Timestamp timestamp = new Timestamp ();
+		private Microsoft.Web.Services.Timestamp.Timestamp timestamp;
 		private Microsoft.Web.Services.Security.Security security;
 		private Hashtable table;
 		private DimeAttachmentCollection attachments;
@@ -49,8 +49,8 @@ namespace Microsoft.Web.Services {
 
 		internal SoapContext (SoapEnvelope env) 
 		{
-#if WSE1
 			timestamp = new Microsoft.Web.Services.Timestamp.Timestamp ();
+#if WSE1
 			table = new Hashtable ();
 
 			envelope = env;
