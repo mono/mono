@@ -7,6 +7,17 @@
 //
 // (C) 2002 Ximian, Inc
 //
+
+//public void add_Click(EventHandler value);
+//public void add_MouseDown(MouseEventHandler value);
+//public void add_MouseMove(MouseEventHandler value);
+//public void add_MouseUp(MouseEventHandler value);
+//public void add_Paint(PaintEventHandler value);
+//
+//protected virtual void OnValueChanged(EventArgs e);
+//public Font Font {get; set;}
+
+
 using System.Drawing;
 
 namespace System.Windows.Forms {
@@ -22,16 +33,16 @@ namespace System.Windows.Forms {
 		//  --- Constructor
 		//
 
-		[MonoTODO]
 		public ScrollBar()
 		{
-			throw new NotImplementedException ();
+			//
 		}
 
 		//
 		//  --- Public Properties
 		//
 
+		 //COMPACT FRAMEWORK
 		[MonoTODO]
 		public override Color BackColor {
 			get {
@@ -52,7 +63,8 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		[MonoTODO]
+		 //COMPACT FRAMEWORK
+		 [MonoTODO]
 		public override Color ForeColor {
 			get {
 				throw new NotImplementedException ();
@@ -72,8 +84,9 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		 //COMPACT FRAMEWORK
 		[MonoTODO]
-		public int LastChange {
+		public int LargeChange {
 			get {
 				throw new NotImplementedException ();
 			}
@@ -82,7 +95,8 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		[MonoTODO]
+		 //COMPACT FRAMEWORK
+		 [MonoTODO]
 		public int Maximum {
 			get {
 				throw new NotImplementedException ();
@@ -92,7 +106,8 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		[MonoTODO]
+		 //COMPACT FRAMEWORK
+		 [MonoTODO]
 		public int Minimum {
 			get {
 				throw new NotImplementedException ();
@@ -102,7 +117,8 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		[MonoTODO]
+		 //COMPACT FRAMEWORK
+		 [MonoTODO]
 		public int SmallChange {
 			get {
 				throw new NotImplementedException ();
@@ -112,7 +128,8 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		[MonoTODO]
+		 //COMPACT FRAMEWORK
+		 [MonoTODO]
 		public override string Text {
 			get {
 				throw new NotImplementedException ();
@@ -122,7 +139,8 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		[MonoTODO]
+		 //COMPACT FRAMEWORK
+		 [MonoTODO]
 		public int Value {
 			get {
 				throw new NotImplementedException ();
@@ -136,118 +154,8 @@ namespace System.Windows.Forms {
 		//  --- Public Methods
 		//
 
-		//inherited
-		//public IAsyncResult BeginInvoke(Delegate del)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//
-		//public IAsyncResult BeginInvoke(Delegate del, object[] objs)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//public virtual void Dispose()
-		//{
-		//	throw new NotImplementedException ();
-		//}
-
-		[MonoTODO]
-		public override bool Equals(object o)
-		{
-			throw new NotImplementedException ();
-		}
-
-		//public static bool Equals(object o1, object o2)
-		//{
-		//	throw new NotImplementedException ();
-		//}
+		//COMPACT FRAMEWORK
 		 [MonoTODO]
-		 public override int GetHashCode() {
-			 //FIXME add our proprities
-			 return base.GetHashCode();
-		 }
-		//
-		//public void Invalidate()
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//
-		//public void Invalidate(bool val)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//
-		//public void Invalidate(Rectangle rect)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//
-		//public void Invalidate(Region reg)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//
-		//public void Invalidate(Rectangle rect, bool val)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//
-		//public void Invalidate(Region reg, bool val)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//
-		//public object Invoke(Delegate del)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//
-		//public object Invoke(Delegate del, object[] objs)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//
-		//public void PerformLayout()
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//
-		//public void PerformLayout(Control ctl, string str)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//
-		//public void ResumeLayout()
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//
-		//public void ResumeLayout(bool val)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-
-		//public void Select()
-		//{
-		//	throw new NotImplementedException ();
-		//}
-
-		//public virtual void Select(bool val1, bool val2)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-
-		//public void SetBounds(int val1, int val2, int val3, int val4)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//
-		//public void SetBounds(int val1, int val2, int val3, int val4, BoundsSpecified bounds)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-
-		[MonoTODO]
 		public override string ToString()
 		{
 			throw new NotImplementedException ();
@@ -267,15 +175,8 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		[MonoTODO]
-		public event EventHandler ValueChanged {
-			add {
-				throw new NotImplementedException ();
-			}
-			remove {
-				throw new NotImplementedException ();
-			}
-		}
+		//Compact FrameWork
+		public event EventHandler ValueChanged;
 
 		//
 		//  --- Protected Properties
@@ -299,12 +200,7 @@ namespace System.Windows.Forms {
 		//  --- Protected Methods
 		//
 
-		//inherited
-		//protected override void Dispose(bool disposing)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-
+		 //COMPACT FRAMEWORK
 		[MonoTODO]
 		protected override void OnEnabledChanged(EventArgs e)
 		{
@@ -316,46 +212,5 @@ namespace System.Windows.Forms {
 		{
 			throw new NotImplementedException ();
 		}
-
-		//protected ContentAlignment RtlTranslateAlignment(ContentAlignment calign)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//
-		//HorizontalAlignment RtlTranslateAlignment(HorizontalAlignment halign)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//
-		//LeftRightAlignment RtlTranslateAlignment(LeftRightAlignment lralign)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-
-		//[MonoTODO]
-		//public virtual void Select(bool val1, bool val2)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//
-		//public void UpdateBounds()
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//
-		//public void UpdateBounds(int val1, int val2, int val3, int val4)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//
-		//public void UpdateBounds(int val1, int val2, int val3, int val4, int val5, int val6)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//
-		//public override void WndProc(ref Message m)
-		//{
-		//	throw new NotImplementedException ();
-		//}
 	 }
 }

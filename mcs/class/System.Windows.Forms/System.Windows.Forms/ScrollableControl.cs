@@ -7,7 +7,7 @@
 //   ScrollableControl.DockPaddingEdges stub added by Jaak Simm (jaaksimm@firm.ee)
 //	Dennis Hayes (dennish@raytek.com)
 //   WINELib implementation started by John Sohn (jsohn@columbus.rr.com)
-//
+//	CE Complete.
 // (C) 2002 Ximian, Inc
 //
 
@@ -146,147 +146,9 @@ namespace System.Windows.Forms {
 		}
 		
 
-		//[MonoTODO]
-		//public override ISite Site {
-		//	get {
-		//		throw new NotImplementedException ();
-		//	}
-		//	set {
-		//		throw new NotImplementedException ();
-		//	}
-		//}
-		//public IAsyncResult BeginInvoke(Delegate del)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//public IAsyncResult BeginInvoke(Delegate del, object[] objs)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//public void Dispose()
-		//{
-		//	throw new NotImplementedException ();
-		//}
-
-		//[MonoTODO]
-		//public override bool Equals (object o)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-
-		//public static bool Equals(object o1, object o2)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-
-		//[MonoTODO]
-		//public override int GetHashCode () {
-		//	//FIXME add our proprities
-		//	return base.GetHashCode ();
-		//}
-
-		//public void Invalidate()
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//public void Invalidate(bool val)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//public void Invalidate(Rectangle rect)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//public void Invalidate(Region reg)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//public void Invalidate(Rectangle rect, bool val)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//public void Invalidate(Region reg, bool val)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//public object Invoke(Delegate del)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//public object Invoke(Delegate del, object[] objs)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//public void PerformLayout()
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//public void PerformLayout(Control ctl, string str)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//public void ResumeLayout()
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//public void ResumeLayout(bool val)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//public void Scale(float val)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//public void Scale(float val1, float val2)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//public void Select()
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//public void Select(bool val1, bool val2)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//public void SetBounds(int val1, int val2, int val3, int val4)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//public void SetBounds(int val1, int val2, int val3, int val4, BoundsSpecified bounds)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//protected override void Dispose(bool disposing)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//ContentAlignment RtlTranslateAlignment(ContentAlignment calign)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//HorizontalAlignment RtlTranslateAlignment(HorizontalAlignment halign)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//LeftRightAlignment RtlTranslateAlignment(LeftRightAlignment lralign)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//protected void UpdateBounds()
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//protected void UpdateBounds(int val1, int val2, int val3, int val4)
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//protected void UpdateBounds(int val1, int val2, int val3, int val4, int val5, int val6)
-		//{
-		//	throw new NotImplementedException ();
-		//}
 		/// ScrollableControl.DockPaddingEdges
 		/// Determines the border padding for docked controls.
+		
 		public class DockPaddingEdges : ICloneable {
 			// --- Fields ---
 			int all;
