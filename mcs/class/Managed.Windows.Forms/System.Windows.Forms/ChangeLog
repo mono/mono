@@ -1,3 +1,8 @@
+2004-11-29  John BouAntoun <jba-mono@optusnet.com.au>
+
+	* MonthCalendar.cs: 
+	  - Fix NextMonthDate and PrevMonthDate click moving calendar
+
 2004-11-26  John BouAntoun <jba-mono@optusnet.com.au>
 
 	* MonthCalendar.cs: 

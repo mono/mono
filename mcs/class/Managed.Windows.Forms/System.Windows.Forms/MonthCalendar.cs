@@ -1285,14 +1285,11 @@ namespace System.Windows.Forms {
 				case HitArea.PrevMonthDate:
 					SetItemClick(hti);
 					this.SelectDate (clicked_date);
-					// move the month back one
-					current_month = current_month.AddMonths (-1);
 					this.OnDateSelected (new DateRangeEventArgs (SelectionStart, SelectionEnd));
 					break;
 				case HitArea.NextMonthDate:
 					SetItemClick(hti);
 					this.SelectDate (clicked_date);
-					current_month = current_month.AddMonths (-1);
 					this.OnDateSelected (new DateRangeEventArgs (SelectionStart, SelectionEnd));
 					break;
 				case HitArea.TitleMonth:
