@@ -183,7 +183,7 @@ dist-local: dist-default
 	for f in `cat $(sourcefile)` $(TEST_FILES) ; do \
 	  case $$f in \
 	  ../*) : ;; \
-	  *) dest=`dirname $(distdir)/$$f` ; $(MKINSTALLDIRS) $$dest && cp $$f $$dest || exit 1 ;; \
+	  *) dest=`dirname $(distdir)/$$f` ; $(MKINSTALLDIRS) $$dest && cp -p $$f $$dest || exit 1 ;; \
 	  esac ; done
 
 ifndef LIBRARY_COMPILE
@@ -203,7 +203,7 @@ LIBRARY_SNK = $(topdir)/class/mono.snk
 endif
 
 $(gacutil):
-	cd $(topdir)/gacutil && $(MAKE) PROFILE=default
+	cd $(topdir)/tools/gacutil && $(MAKE) PROFILE=default
 
 ifdef sn
 $(sn):

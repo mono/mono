@@ -1,3 +1,7 @@
+2004-11-25  Raja R Harinath  <rharinath@novell.com>
+
+	* library.make ($(gacutil)): Fix path.
+
 2004-11-23  Raja R Harinath  <rharinath@novell.com>
 
 	* executable.make (NO_INSTALL): New option.  Disables installation.
