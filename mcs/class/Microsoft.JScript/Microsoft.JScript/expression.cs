@@ -1155,6 +1155,8 @@ namespace Microsoft.JScript {
 				}
 			} else {
 				n = elems.Count;
+				if (num_of_args < 0)
+					num_of_args = n;
 				AST ast;
 				for (int j = 0; j < n && j < num_of_args; j++) {
 					ast = get_element (j);

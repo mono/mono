@@ -127,7 +127,11 @@ namespace Microsoft.JScript {
 		}
 
 		internal int NumOfArgs {
-			get { return func_obj.parameters.size; }
+			get { 
+				if (func_obj != null)
+					return func_obj.parameters.size;
+				return -1;
+			}
 		}
 
 		public  void Init (Block body, FormalParameterList p)
