@@ -441,7 +441,7 @@ namespace Mono.CSharp {
 
 			ParameterData invoke_pd = Invocation.GetParameterData (invoke_mb);
 
-			if (!mg.HasTypeArguments &&
+			if (!((MethodGroupExpr) ml).HasTypeArguments &&
 			    !Invocation.InferTypeArguments (ec, invoke_pd, ref mb))
 				return null;
 
@@ -740,7 +740,7 @@ namespace Mono.CSharp {
 		{
 				foreach (MethodInfo mi in mg.Methods){
 					delegate_method = Delegate.VerifyMethod (
-						ec, type, mg, mi, loc);
+						ec, type, mi, loc);
 
 					if (delegate_method != null)
 						break;
