@@ -1,3 +1,18 @@
+2004-04-27  Raja R Harinath  <rharinath@novell.com>
+
+	* statement.cs (Block.Block): Implicit blocks share
+	'child_variable_names' fields with parent blocks.
+	(Block.AddChildVariableNames): Remove.
+	(Block.AddVariable): Mark variable as "used by a child block" in
+	every surrounding block.
+	* ecore.cs (SimpleName.SimpleNameResolve): If the name has already
+	been used in a child block, complain about violation of "Invariant
+	meaning in blocks" rule.
+	* cs-parser.jay (declare_local_variables): Don't use
+	AddChildVariableNames.
+	(foreach_statement): Don't create an implicit block: 'foreach'
+	introduces a scope.
+
 2004-04-23  Miguel de Icaza  <miguel@ximian.com>
 
 	* convert.cs (ImplicitNumericConversion): 0 is also positive when
@@ -26,7 +41,7 @@
 
 	* ecore.cs (PropertyExpr.GetAccesor): Only perform the 1540 check
 	if we are only a derived class, not a nested class.
-	
+
 	* typemanager.cs: Same as above, but do this at the MemberLookup
 	level (used by field and methods, properties are handled in
 	PropertyExpr).   Allow for the qualified access if we are a nested
@@ -42,7 +57,7 @@
 	(PropertyBase.PropertyMethod): Implemented IMethodData interface
 	(Event): New inner classes for add/remove methods.
 	(Event.DelegateMethod): Implemented IMethodData interface.
-        
+
 	* cs-parser.jay: Pass DeclSpace to Event class for creation of valid
 	EmitContext (related to class.cs refactoring).
 
@@ -199,95 +214,95 @@
 2004-04-05  Marek Safar  <marek.safar@seznam.cz>
 
 	* attribute.cs (IsClsCompliant): Fixed problem with handling
-        all three states (compliant, not-compliant, undetected).
+	all three states (compliant, not-compliant, undetected).
 
 2004-03-30  Marek Safar  <marek.safar@seznam.cz>
 
 	* attribute.cs (Attribute): Location is now public.
-        (Resolve): Store resolved arguments (pos_values) in attribute class.
-        Attribute extractors (now GetClsCompliantAttributeValue) can reuse them.
-        (GetClsCompliantAttributeValue): New method that gets
-        CLSCompliantAttribute value.
-        (GetClsCompliantAttribute): Returns CLSCompliantAttribute for DeclSpace
-        if exists else null.
-        (AttributeTester): New class for CLS-Compliant verification routines.
-        
-	* class.cs (Emit): Add CLS-Compliant verification.
-        (Method.GetSignatureForError): Implemented.
-        (Constructor.GetSignatureForError): Implemented
-        (Constructor.HasCompliantArgs): Returns if constructor has
-        CLS-Compliant arguments.
-        (Constructor.Emit): Override.
-        (Construcor.IsIdentifierClsCompliant): New method; For constructors
-        is needed to test only parameters.
-        (FieldBase.GetSignatureForError): Implemented.
-        (TypeContainer): New member for storing base interfaces.
-        (TypeContainer.FindMembers): Search in base interfaces too.
-        
-        * codegen.cs (GetClsComplianceAttribute): New method that gets
-        assembly or module CLSCompliantAttribute value.
-        (ResolveClsCompliance): New method that resolve CLSCompliantAttribute
-        for assembly.
-        (ModuleClass.Emit): Add error 3012 test.
-        
-        * const.cs (Emit): Override and call base for CLS-Compliant tests.
-        
-        * decl.cs (ClsComplianceValue): New enum that holds CLS-Compliant
-        state for all decl types.
-        (MemberCore.Emit): Emit is now virtual and call VerifyClsCompliance
-        if CLS-Compliant tests are required.
-        (IsClsCompliaceRequired): New method. Analyze whether code
-        must be CLS-Compliant.
-        (IsExposedFromAssembly): New method. Returns true when MemberCore
-        is exposed from assembly.
-        (GetClsCompliantAttributeValue): New method. Resolve CLSCompliantAttribute
-        value or gets cached value.
-        (HasClsCompliantAttribute): New method. Returns true if MemberCore
-        is explicitly marked with CLSCompliantAttribute.
-        (IsIdentifierClsCompliant): New abstract method. This method is
-        used to testing error 3005.
-        (IsIdentifierAndParamClsCompliant): New method. Common helper method
-        for identifier and parameters CLS-Compliant testing.
-        (VerifyClsCompliance): New method. The main virtual method for
-        CLS-Compliant verifications.
-        (CheckAccessLevel): In one special case (System.Drawing) was TypeBuilder
-        null. I don't know why is null (too many public members !).
-        (GetClsCompliantAttributeValue). New method. Goes through class hierarchy
-        and get value of first CLSCompliantAttribute that found.
+	(Resolve): Store resolved arguments (pos_values) in attribute class.
+	Attribute extractors (now GetClsCompliantAttributeValue) can reuse them.
+	(GetClsCompliantAttributeValue): New method that gets
+	CLSCompliantAttribute value.
+	(GetClsCompliantAttribute): Returns CLSCompliantAttribute for DeclSpace
+	if exists else null.
+	(AttributeTester): New class for CLS-Compliant verification routines.
 
-        delegate.cs (Emit): Override and call base for CLS-Compliant tests.
-        (VerifyClsCompliance): Override and add extra tests.
-        
-        * driver.cs (CSCParseOption): New command line options (clscheck[+|-]).
-        clscheck- disable CLS-Compliant verification event if assembly is has
-        CLSCompliantAttribute(true).
-        
-        * enum.cs (Emit): Override and call base for CLS-Compliant tests.
-        ApllyAttribute is now called in emit section as in the other cases.
-        Possible future Emit integration.
-        (IsIdentifierClsCompliant): New override.
-        (VerifyClsCompliance): New override.
-        (GetEnumeratorName): Returns full enum name.
-        
-        * parameter.cs (GetSignatureForError): Implemented.
-        
-        * report.cs (WarningData): New struct for Warning message information.
-        (LocationOfPreviousError): New method.
-        (Warning): New method. Reports warning based on the warning table.
-        (Error_T): New method. Reports error based on the error table.
-        
-        * rootcontext.cs (EmitCode): Added new Emit(s) because CLS-Compliant
-        verifications are done here.
-        
-        * tree.cs (RecordDecl): Used new LocationOfPreviousError method.
-        
-        * typemanager.cs (cls_compliant_attribute_type): New member thath holds
-        CLSCompliantAttribute.
-        (all_imported_types): New member holds all imported types from other
-        assemblies.
-        (LoadAllImportedTypes): New method fills static table with exported types
-        from all referenced assemblies.
-        (Modules): New property returns all assembly modules.
+	* class.cs (Emit): Add CLS-Compliant verification.
+	(Method.GetSignatureForError): Implemented.
+	(Constructor.GetSignatureForError): Implemented
+	(Constructor.HasCompliantArgs): Returns if constructor has
+	CLS-Compliant arguments.
+	(Constructor.Emit): Override.
+	(Construcor.IsIdentifierClsCompliant): New method; For constructors
+	is needed to test only parameters.
+	(FieldBase.GetSignatureForError): Implemented.
+	(TypeContainer): New member for storing base interfaces.
+	(TypeContainer.FindMembers): Search in base interfaces too.
+
+	* codegen.cs (GetClsComplianceAttribute): New method that gets
+	assembly or module CLSCompliantAttribute value.
+	(ResolveClsCompliance): New method that resolve CLSCompliantAttribute
+	for assembly.
+	(ModuleClass.Emit): Add error 3012 test.
+
+	* const.cs (Emit): Override and call base for CLS-Compliant tests.
+
+	* decl.cs (ClsComplianceValue): New enum that holds CLS-Compliant
+	state for all decl types.
+	(MemberCore.Emit): Emit is now virtual and call VerifyClsCompliance
+	if CLS-Compliant tests are required.
+	(IsClsCompliaceRequired): New method. Analyze whether code
+	must be CLS-Compliant.
+	(IsExposedFromAssembly): New method. Returns true when MemberCore
+	is exposed from assembly.
+	(GetClsCompliantAttributeValue): New method. Resolve CLSCompliantAttribute
+	value or gets cached value.
+	(HasClsCompliantAttribute): New method. Returns true if MemberCore
+	is explicitly marked with CLSCompliantAttribute.
+	(IsIdentifierClsCompliant): New abstract method. This method is
+	used to testing error 3005.
+	(IsIdentifierAndParamClsCompliant): New method. Common helper method
+	for identifier and parameters CLS-Compliant testing.
+	(VerifyClsCompliance): New method. The main virtual method for
+	CLS-Compliant verifications.
+	(CheckAccessLevel): In one special case (System.Drawing) was TypeBuilder
+	null. I don't know why is null (too many public members !).
+	(GetClsCompliantAttributeValue). New method. Goes through class hierarchy
+	and get value of first CLSCompliantAttribute that found.
+
+	* delegate.cs (Emit): Override and call base for CLS-Compliant tests.
+	(VerifyClsCompliance): Override and add extra tests.
+
+	* driver.cs (CSCParseOption): New command line options (clscheck[+|-]).
+	clscheck- disable CLS-Compliant verification event if assembly is has
+	CLSCompliantAttribute(true).
+
+	* enum.cs (Emit): Override and call base for CLS-Compliant tests.
+	ApllyAttribute is now called in emit section as in the other cases.
+	Possible future Emit integration.
+	(IsIdentifierClsCompliant): New override.
+	(VerifyClsCompliance): New override.
+	(GetEnumeratorName): Returns full enum name.
+
+	* parameter.cs (GetSignatureForError): Implemented.
+
+	* report.cs (WarningData): New struct for Warning message information.
+	(LocationOfPreviousError): New method.
+	(Warning): New method. Reports warning based on the warning table.
+	(Error_T): New method. Reports error based on the error table.
+
+	* rootcontext.cs (EmitCode): Added new Emit(s) because CLS-Compliant
+	verifications are done here.
+
+	* tree.cs (RecordDecl): Used new LocationOfPreviousError method.
+
+	* typemanager.cs (cls_compliant_attribute_type): New member thath holds
+	CLSCompliantAttribute.
+	(all_imported_types): New member holds all imported types from other
+	assemblies.
+	(LoadAllImportedTypes): New method fills static table with exported types
+	from all referenced assemblies.
+	(Modules): New property returns all assembly modules.
 
 2004-03-30  Miguel de Icaza  <miguel@ximian.com>
 
@@ -352,7 +367,7 @@
 	the invocation type may not be a subclass of the tye of the item/
 	The type of the item must be a subclass of the invocation item.
 	/g
-	
+
 	Fixes bug #50820.
 
 2004-03-25  Sebastien Pouliot  <sebastien@ximian.com>
@@ -419,7 +434,7 @@
 	newarr
 	dup
 	// set 1
-	
+
 	// set 2
 
 	newarr
@@ -508,7 +523,7 @@
 
 	Also, it fixes bug 52458 which is that nested classes are not
 	taken into account when finding the base class member.
-	
+
 	Reviewed/Approved by Martin.
 
 2004-03-17  Martin Baulig  <martin@ximian.com>
@@ -563,7 +578,7 @@
  	positions and don't mix them with character offsets to the buffer.
 
 	Patch from Gustavo Giráldez
-	
+
 2004-03-15  Marek Safar  <marek.safar@seznam.cz>
 
 	* interface.cs (InterfaceSetGetBase): Removed double member
@@ -672,12 +687,12 @@
 
 	* expression.cs (Invocation.EmitCall): Miguel's last commit
 	caused a regression. If you had:
-	
+
 	    T t = null;
 	    t.Foo ();
 
 	In Foo the implict this would be null.
-	
+
 2004-02-27  Miguel de Icaza  <miguel@ximian.com>
 
 	* expression.cs (Invocation.EmitCall): If the method is not
@@ -719,12 +734,12 @@
 2004-02-25  Marek Safar  <marek.safar@seznam.cz>
 
 	* codegen.cs: Implemented attribute support for modules.
-        New AssemblyClass, ModuleClass and CommonAssemblyModulClass for
-        Assembly/Module functionality.
-        
-        * attribute.cs, class.cs, cs-parser.jay, delegate.cs, driver.cs, enum.cs
-        interface.cs, rootcontext.cs, statement.cs, typemanager.cs:
-        Updated dependencies on CodeGen.ModuleBuilder and CodeGen.AssemblyBuilder.
+	New AssemblyClass, ModuleClass and CommonAssemblyModulClass for
+	Assembly/Module functionality.
+
+	* attribute.cs, class.cs, cs-parser.jay, delegate.cs, driver.cs, enum.cs
+	interface.cs, rootcontext.cs, statement.cs, typemanager.cs:
+	Updated dependencies on CodeGen.ModuleBuilder and CodeGen.AssemblyBuilder.
 
 2004-02-16  Marek Safar  <marek.safar@seznam.cz>
 
@@ -741,7 +756,7 @@
 		public MyEnumerator GetEnumerator () {
 			return new MyEnumerator(this);
 		}
-	
+
 		IEnumerator IEnumerable.GetEnumerator () {
 			...
 		}
@@ -761,14 +776,14 @@
 
 	Would have the interface methods called, even if there were public impls of the
 	method. In a struct, this lead to invalid IL code.
-	
+
 2004-02-11  Marek Safar  <marek.safar@seznam.cz>
 
-        * const.cs: Const is now derived from FieldBase. Method EmitConstant name
+	* const.cs: Const is now derived from FieldBase. Method EmitConstant name
 	  renamed to Emit.
 
-        * delegate.cs (Define): Fixed crash when delegate type is undefined.
-        
+	* delegate.cs (Define): Fixed crash when delegate type is undefined.
+
 2004-02-11  Miguel de Icaza  <miguel@ximian.com>
 
 	* cs-parser.jay: Fix small regression: we were not testing V2
@@ -778,13 +793,13 @@
 
 2004-02-09  Marek Safar  <marek.safar@seznam.cz>
 
-        * decl.cs (GetSignatureForError): New virtual method to get full name
+	* decl.cs (GetSignatureForError): New virtual method to get full name
 	  for error messages.
-        
+
 	* attribute.cs (IAttributeSupport): New interface for attribute setting.
 	  Now it is possible to rewrite ApplyAttributes method to be less if/else.
 
-        * interface.cs : All InterfaceXXX classes are now derived from MemberCore.
+	* interface.cs : All InterfaceXXX classes are now derived from MemberCore.
 	  Duplicated members and code in these classes has been removed.
 	  Better encapsulation in these classes.
 
@@ -817,8 +832,8 @@
 2004-02-04  Marek Safar  <marek.safar@seznam.cz>
 
 	* class.cs, decl.cs: Fixed problem where IndexerName attribute was ignored
-        in the member name duplication tests. Property and operator name duplication
-        was missing too (error tests cs0102-{2,3,4,5}.cs, cs0111-{3,4}.cs).
+	in the member name duplication tests. Property and operator name duplication
+	was missing too (error tests cs0102-{2,3,4,5}.cs, cs0111-{3,4}.cs).
 
 2004-02-03  Marek Safar  <marek.safar@seznam.cz>
 
@@ -838,7 +853,7 @@
 
 	* interface.cs (Emit): Apply attributes on the get and set
 	accessors of properties and indexers too.
-	
+
 	* attribute.cs (ApplyAttributes): Modify accordingly to use the
 	right MethodBuilder when applying attributes to the get and set accessors.
 
@@ -861,7 +876,7 @@
 2004-01-23  Marek Safar  <marek.safar@seznam.cz>
 
 	* cs-parser.jay, class.cs (DefineDefaultConstructor): Fixed ModFlags
-        setting for default constructors.
+	setting for default constructors.
 	For default constructors are almost every time set wrong Modifier. The
 	generated IL code has been alright. But inside mcs this values was
 	wrong and this was reason why several of my CLS Compliance tests
@@ -901,18 +916,18 @@
 	assinged in a 'try'; fixes exception4.cs.
 
 2004-01-21  Marek Safar  <marek.safar@seznam.cz>
-        * class.cs : Implemented parameter-less constructor for TypeContainer
-        
-        * decl.cs: Attributes are now stored here. New property OptAttributes
-        
-        * delegate.cs, enum.cs, interface.cs: Removed attribute member.
-        
-        * rootcontext.cs, tree.cs: Now use parameter-less constructor of TypeContainer
+	* class.cs : Implemented parameter-less constructor for TypeContainer
+
+	* decl.cs: Attributes are now stored here. New property OptAttributes
+
+	* delegate.cs, enum.cs, interface.cs: Removed attribute member.
+
+	* rootcontext.cs, tree.cs: Now use parameter-less constructor of TypeContainer
 
 2004-01-21  Marek Safar  <marek.safar@seznam.cz>
 
 	* typemanager.cs (CSharpSignature): Now reports also inner class name.
-          (CSharpSignature): New method for indexer and property signature.
+	  (CSharpSignature): New method for indexer and property signature.
 
 2004-01-21  Marek Safar  <marek.safar@seznam.cz>
 
@@ -925,22 +940,22 @@
 2004-01-21  Marek Safar  <marek.safar@seznam.cz>
 
 	* cs-parser.jay: Fixed problem where the last assembly attribute
-          has been applied also to following declaration (class, struct, etc.)
-          
+	  has been applied also to following declaration (class, struct, etc.)
+	  
 2004-01-21  Marek Safar  <marek.safar@seznam.cz>
 
 	* class.cs: Added error CS0538, CS0539 reporting.
-        Fixed crash on Microsoft runtime when field type is void.
+	Fixed crash on Microsoft runtime when field type is void.
 
 	* cs-parser.jay: Added error CS0537 reporting.
 
 	* pending.cs: Added error CS0535 reporting.
-        Improved error report for errors CS0536, CS0534.
+	Improved error report for errors CS0536, CS0534.
 
 2004-01-20  Miguel de Icaza  <miguel@ximian.com>
 
 	Merge a few bits from the Anonymous Method MCS tree.
-	
+
 	* statement.cs (ToplevelBlock): New class for toplevel methods,
 	will hold anonymous methods, lifted variables.
 
@@ -1031,7 +1046,7 @@
 	Based on a fix from Benjamin Jemlich (pcgod@gmx.net)
 
 	Fixes: 52933
-	
+
 2004-01-16  Miguel de Icaza  <miguel@ximian.com>
 
 	* expression.cs (Binary.ResolveOperator): Perform an implicit
@@ -1048,7 +1063,7 @@
 	* ecore.cs (Expression.Resolve): Do not flag error 654
 	(Methodgroupd needs parenthesis) if running on the V2 compiler, as
 	we allow conversions from MethodGroups to delegate types now.
-	
+
 	* assign.cs (Assign.DoResolve): Do not flag errors on methodgroup
 	assignments in v2 either.
 
@@ -1060,7 +1075,7 @@
 	Applied patch from Benjamin Jemlich 
 
 	* expression.cs (UnaryMutator): Avoid leaking local variables. 
-	
+
 2004-01-09  Miguel de Icaza  <miguel@ximian.com>
 
 	* cs-tokenizer.cs (IsCastToken): Allow the various native types
@@ -1069,7 +1084,7 @@
 		(XXX) int.MEMBER ()
 
 	Fixed 49836 and all the other dups
-	
+
 2004-01-09  Zoltan Varga  <vargaz@freemail.hu>
 
 	* driver.cs: Implement /win32res and /win32icon.
@@ -1088,7 +1103,7 @@
 	initialization of events. 
 
 	* ecore.cs: Better report missing constructors.
-	
+
 	* expression.cs (Binary.ResolveOperator): My previous bug fix had
 	the error reporting done in the wrong place.  Fix.
 
@@ -1108,7 +1123,7 @@
 	Jemlich that fixes bug #52597, MCS was generating invalid code for
 	idisposable structs.   Thanks to Ben for following up with this
 	bug as well.
-	
+
 2004-01-06  Miguel de Icaza  <miguel@ximian.com>
 
 	* driver.cs: Allow assemblies without code to be generated, fixes
@@ -1131,7 +1146,7 @@
   CS0077
 
 2004-01-03 Todd Berman <tberman@gentoo.org>
-	
+
 	* ecore.cs, attribute.cs:
 	Applying fix from #52429.
 
@@ -1454,15 +1469,15 @@
 	* class.cs (FindMembers): Remove foreach's.
 
 	Bootstrap times:
-	
+
 	BEFORE
 		Run 1:   8.74 seconds
 		Run 2:   8.71 seconds
-	
+
 	AFTER
 		Run 1:   8.64 seconds
 		Run 2:   8.58 seconds
-	
+
 
 2003-12-08 Ben Maurer  <bmaurer@users.sourceforge.net>
 
@@ -1488,7 +1503,7 @@
 	9.25user 0.23system 0:10.28elapsed 92%CPU (0avgtext+0avgdata 0maxresident)k
 	9.34user 0.13system 0:10.23elapsed 92%CPU (0avgtext+0avgdata 0maxresident)k
 	Total memory allocated: 56397 KB
-	
+
 	AFTER
 	9.13user 0.09system 0:09.64elapsed 95%CPU (0avgtext+0avgdata 0maxresident)k
 	8.96user 0.24system 0:10.13elapsed 90%CPU (0avgtext+0avgdata 0maxresident)k
@@ -1509,11 +1524,11 @@
 	BEFORE
 		Run 1:   8.74 seconds
 		Run 2:   8.71 seconds
-	
+
 	AFTER
 		Run 1:   8.65 seconds
 		Run 2:   8.56 seconds
-	
+
 2003-12-08 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* Makefile: Add a new target `do-time' that does a quick and simple
@@ -1602,7 +1617,7 @@
 
 	* expression.cs: Apply fix from l_m@pacbell.net (Laurent Morichetti),  
 	which fixes bug 51347.  This time test it.
-	
+
 	* expression.cs: Make TypeOfVoid derive from TypeOf, so code in
 	attributes for example can not tell the difference between these.
 	The difference was only a syntax feature of the language. 
@@ -1622,12 +1637,12 @@
 
 	* expression.cs: Apply fix from l_m@pacbell.net (Laurent Morichetti),  
 	which fixes bug 51347.
-	
+
 2003-11-22  Miguel de Icaza  <miguel@ximian.com>
 
 	* driver.cs: Applied patch from gert.driesen@pandora.be (Gert Driesen) 
 	which fixes the -warnaserror command line option.
-	
+
 2003-11-21  Miguel de Icaza  <miguel@ximian.com>
 
 	* cfold.cs (DoNumericPromotions): During constant folding of
@@ -1647,7 +1662,7 @@
 	* driver.cs: Use corlib.dll or mscorlib.dll when looking up the
 	system directory. Also use the full file name so users can
 	libraries names mscorlib-o-tron.dll in a non system dir.
-	
+
 2003-11-10  Martin Baulig  <martin@ximian.com>
 
 	* typemanager.cs (TypeManager.ResolveExpressionTypes): Removed.
@@ -1790,7 +1805,7 @@
 
 	* typemanager.cs (TypeToCoreType): Add float and double this fixes
 	bug #49611
-	
+
 2003-10-09  Martin Baulig  <martin@ximian.com>
 
 	* class.cs (MethodCore): Added additional `DeclSpace ds' argument
@@ -2008,7 +2023,7 @@
 
 	* namespace.cs: Track all the namespaces defined in a hashtable
 	for quick lookup.
-	
+
 	(IsNamespace): New method
 
 2003-08-09  Miguel de Icaza  <miguel@ximian.com>
@@ -2063,7 +2078,7 @@
 
 	(Binary): remove method, argumetns, and DelegateOperator: when
 	dealing with methods, 
-	
+
 	* ecore.cs (EventExpr.EmitAddOrRemove): Update to new layout.
 
 	* statement.cs (Block): use bitfields for the three extra booleans
@@ -2121,7 +2136,7 @@
 	* statement.cs (Foreach): our variable is now stored as an
 	Expression;  During resolution, follow the protocol, dont just
 	assume it will return this.
-	
+
 2003-08-06  Martin Baulig  <martin@ximian.com>
 
 	* support.cs (SeekableStreamReader.cs): New public class.
@@ -2259,7 +2274,7 @@
 	which disallows Invoke to be directly called on a Delegate.
 
 	(Error_InvokeOnDelegate): Report error cs1533.
-	
+
 2003-07-25  Martin Baulig  <martin@ximian.com>
 
 	* expression.cs (Indexers.GetIndexersForType): Only look in the
@@ -2293,19 +2308,19 @@
 	not the define stage.
 
 	(Emit): Move attribute emission for interface members here.
-	
+
 2003-07-22  Ravi Pratap  <ravi@ximian.com>
 
 	* expression.cs (Invocation.OverloadResolve): Follow the spec more
 	closely: we eliminate methods in base types when we have an
 	applicable method in a top-level type.
 
-        Please see section 14.5.5.1 for an exact description of what goes
+	Please see section 14.5.5.1 for an exact description of what goes
 	on. 
 
 	This fixes bug #45127 and a host of other related to corlib compilation.
 
-        * ecore.cs (MethodGroupExpr.DeclaringType): The element in the
+	* ecore.cs (MethodGroupExpr.DeclaringType): The element in the
 	array is the method corresponding to the top-level type (this is
 	because of the changes made to icall.c) so we change this
 	accordingly.
@@ -2480,7 +2495,7 @@
 	* class.cs (Operator.Emit): Do not emit attributes here - it is
 	taken care of by the Method class that we delegate too. This takes
 	care of bug #45876.
-	
+
 2003-07-10  Martin Baulig  <martin@ximian.com>
 
 	* expression.cs (TypeOfVoid): New class.
@@ -2518,7 +2533,7 @@
 2003-07-07  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* namespace.cs: fixed compilation with csc. It's bugzilla #44302.
-	
+
 2003-07-07  Miguel de Icaza  <miguel@ximian.com>
 
 	* attribute.cs: And this test is onger needed.
@@ -2714,7 +2729,7 @@ Tue Jun 3 11:11:08 CEST 2003 Paolo Molaro <lupus@ximian.com>
 	underscores.
 
 	* cs-parser.jay: Update grammar to include anonymous methods.
-	
+
 	* anonymous.cs: new file.
 
 2003-05-27  Miguel de Icaza  <miguel@ximian.com>
@@ -2759,7 +2774,7 @@ Tue Jun 3 11:11:08 CEST 2003 Paolo Molaro <lupus@ximian.com>
 	* expression.cs (PointerArithmetic.Emit): If our operand is a
 	long, convert our constants to match the operand before
 	multiplying.  Convert to I type before adding.   Fixes 43670.
-	
+
 2003-05-14  Ravi Pratap  <ravi@ximian.com>
 
 	* enum.cs (ImplicitConversionExists) : Rename to
@@ -2811,16 +2826,16 @@ Tue Jun 3 11:11:08 CEST 2003 Paolo Molaro <lupus@ximian.com>
 	its own file.
 
 	Perform the following renames:
-	
+
 	StandardConversionExists -> ImplicitStandardConversionExists
 	ConvertImplicit -> ImplicitConversion
-        ConvertImplicitStandard -> ImplicitStandardConversion
-        TryImplicitIntConversion -> ImplicitIntConversion
-        ConvertImplicitRequired -> ImplicitConversionRequired
-        ConvertNumericExplicit -> ExplicitNumericConversion
-        ConvertReferenceExplicit -> ExplicitReferenceConversion
-        ConvertExplicit -> ExplicitConversion
-        ConvertExplicitStandard -> ExplicitStandardConversion
+	ConvertImplicitStandard -> ImplicitStandardConversion
+	TryImplicitIntConversion -> ImplicitIntConversion
+	ConvertImplicitRequired -> ImplicitConversionRequired
+	ConvertNumericExplicit -> ExplicitNumericConversion
+	ConvertReferenceExplicit -> ExplicitReferenceConversion
+	ConvertExplicit -> ExplicitConversion
+	ConvertExplicitStandard -> ExplicitStandardConversion
 
 2003-05-19  Martin Baulig  <martin@ximian.com>
 
@@ -2991,7 +3006,7 @@ Tue Jun 3 11:11:08 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
 	* iterators.cs: Propagate parameter values;  Store parameter
 	values in the proxy classes.
-	
+
 2003-05-04  Miguel de Icaza  <miguel@ximian.com>
 
 	* ecore.cs (FieldExpr): Fix an obvious bug.  static fields do not
@@ -2999,7 +3014,7 @@ Tue Jun 3 11:11:08 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
 	* cs-parser.jay (constructor_initializer): catch another error,
 	and display nice message.
-	
+
 	(field_declaration): catch void field declaration
 	to flag a better error. 
 
@@ -3103,11 +3118,11 @@ Tue Jun 3 11:11:08 CEST 2003 Paolo Molaro <lupus@ximian.com>
 	(which is out-of-line with the regular Resolve/Emit process for a
 	statement, as this is done ahead of time, but still gets a chance
 	to call constant resolve).
-	
+
 	(Block.Flags): new enum for adding a new flag.
 
 	(Block.EmitMeta): track the state of unchecked.
-	
+
 	(Unchecked): Set the "UnChecked" flags on any blocks we enclose,
 	to enable constant resolution to work there as well.
 
@@ -3119,7 +3134,7 @@ Tue Jun 3 11:11:08 CEST 2003 Paolo Molaro <lupus@ximian.com>
 2003-04-21  Miguel de Icaza  <miguel@ximian.com>
 
 	TODO: Test more than one conditional per method.
-	
+
 	* class.cs (Indexer.Define): Report the location where the user is
 	referencing the unsupported feature.
 
@@ -3130,7 +3145,7 @@ Tue Jun 3 11:11:08 CEST 2003 Paolo Molaro <lupus@ximian.com>
 	(Method): Implement the new IIteratorContainer interface.
 	(Method.SetYields): Implement the method by setting the ModFlags
 	to contain METHOD_YIELDS.
-	
+
 	* expression.cs (Unary.ResolveOperator): Use expr_type, not Expr,
 	which just got set to null.
 
@@ -3168,7 +3183,7 @@ Tue Jun 3 11:11:08 CEST 2003 Paolo Molaro <lupus@ximian.com>
 	front end.
 
 	(TypeManager.IsNamespace): Use binarysearch.
-	
+
 	* class.cs (AddClass, AddStruct, AddInterface, AddEvent,
 	AddDelegate): I did not quite use the new IsValid API properly: I
 	have to pass the short-name and the fullname.  I was passing only
@@ -3192,7 +3207,7 @@ Tue Jun 3 11:11:08 CEST 2003 Paolo Molaro <lupus@ximian.com>
 	separate type from a nested type).  Use LookupTypeReflection
 	directly which bypasses the type->name hashtable (that we already
 	know does not contain the type.
-	
+
 	* decl.cs (DeclSpace.ResolveTypeExpr): track the
 	location/container type. 
 
@@ -3232,7 +3247,7 @@ Tue Jun 3 11:11:08 CEST 2003 Paolo Molaro <lupus@ximian.com>
 	* decl.cs (DeclSpace.IsValid): IsValid takes the short name and
 	fullname.  Short name is used to compare against container name.
 	Fullname is used to check against defined namespace names.
-	
+
 	* class.cs (AddProperty, AddField, AddClass, AddStruct, AddEnum,
 	AddDelegate, AddEvent): Pass new parameter to DeclSpace.IsValid
 
@@ -3296,12 +3311,12 @@ Tue Jun 3 11:11:08 CEST 2003 Paolo Molaro <lupus@ximian.com>
 	we parse the input we have historically overloaded Resolve to
 	perform the Type lookups if a special flag is passed.  Now this is
 	eliminated and two methods take their place. 
-	
+
 	The differences in the two methods between xStep and xTerminal is
 	that xStep is involved in our current lookup system that uses
 	SimpleNames to compose a name, while xTerminal is used just to
 	catch the case where the simplename lookup failed.
-	
+
 2003-04-16  Miguel de Icaza  <miguel@ximian.com>
 
 	* expression.cs (ResolveMemberAccess): Remove redundant code.
@@ -3335,7 +3350,7 @@ Tue Jun 3 11:11:08 CEST 2003 Paolo Molaro <lupus@ximian.com>
 	SimpleName at the end) plus the rank composition "[]". 
 
 	Also fixes 35567
-	
+
 2003-04-10  Miguel de Icaza  <miguel@ximian.com>
 
 	* decl.cs (CheckAccessLevel): Implement the NestedPrivate rules
@@ -3407,13 +3422,13 @@ Tue Jun 3 11:11:08 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
 	*expression.cs (Indirection.ToString): Provide ToString method for
 	debugging. 
-	
+
 2003-04-08  Zoltan Varga  <vargaz@freemail.hu>
 
-        * class.cs: Null out fields holding references to Block objects so
-        they can be garbage collected.
+	* class.cs: Null out fields holding references to Block objects so
+	they can be garbage collected.
 
-        * expression.cs (OverloadResolve): Remove unused local.
+	* expression.cs (OverloadResolve): Remove unused local.
 
 2003-04-07  Martin Baulig  <martin@ximian.com>
 
@@ -3609,7 +3624,7 @@ Tue Jun 3 11:11:08 CEST 2003 Paolo Molaro <lupus@ximian.com>
 	semantics. 
 
 	Fixes bug 36505
-	
+
 2003-02-23  Martin Baulig  <martin@ximian.com>
 
 	* statement.cs (Block.Emit): Override this and set ec.CurrentBlock
@@ -3711,7 +3726,7 @@ Tue Jun 3 11:11:08 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
 	The goal here is to remove the dependency on EmptyCast.Peel ().
 	Killing it completely.
-	
+
 	The problem is that currently in a number of places where
 	constants are expected, we have to "probe" for an EmptyCast, and
 	Peel, which is not the correct thing to do, as this will be
@@ -3725,13 +3740,13 @@ Tue Jun 3 11:11:08 CEST 2003 Paolo Molaro <lupus@ximian.com>
 	the duplicate pattern where we were "peeling" emptycasts to check
 	whether they were constants.  Now constants will always be
 	constants.
-	
+
 	* ecore.cs: Use an enumconstant here instead of wrapping with
 	EmptyCast.  
 
 	* expression.cs (Cast.TryReduce): Ah, the tricky EnumConstant was
 	throwing me off.  By handling this we can get rid of a few hacks.
-	
+
 	* statement.cs (Switch): Removed Peel() code.
 
 2003-02-14  Miguel de Icaza  <miguel@ximian.com>
@@ -3875,7 +3890,7 @@ Sat Feb 8 12:58:06 CET 2003 Paolo Molaro <lupus@ximian.com>
 2003-02-01 Jackson Harper <jackson@latitudegeo.com>
 
 	* decl.cs: Check access levels when resolving types
-	
+
 2003-01-31 Jackson Harper <jackson@latitudegeo.com>
 
 	* statement.cs: Add parameters and locals set in catch blocks that might 
@@ -3884,7 +3899,7 @@ Sat Feb 8 12:58:06 CET 2003 Paolo Molaro <lupus@ximian.com>
 2003-01-29  Miguel de Icaza  <miguel@ximian.com>
 
 	* class.cs (Operator): Set the SpecialName flags for operators.
-	
+
 	* expression.cs (Invocation.DoResolve): Only block calls to
 	accessors and operators on SpecialName methods.
 
@@ -3894,15 +3909,15 @@ Sat Feb 8 12:58:06 CET 2003 Paolo Molaro <lupus@ximian.com>
 Tue Jan 28 17:30:57 CET 2003 Paolo Molaro <lupus@ximian.com>
 
 	* statement.cs: small memory and time optimization in FlowBranching.
-	
+
 2003-01-28  Pedro Mart  <yoros@wanadoo.es>
 
-        * expression.cs (IndexerAccess.DoResolveLValue): Resolve the same
-        problem that the last fix but in the other sid (Set).
+	* expression.cs (IndexerAccess.DoResolveLValue): Resolve the same
+	problem that the last fix but in the other sid (Set).
 
-        * expression.cs (IndexerAccess.DoResolve): Fix a problem with a null
-        access when there is no indexer in the hierarchy.
-	
+	* expression.cs (IndexerAccess.DoResolve): Fix a problem with a null
+	access when there is no indexer in the hierarchy.
+
 2003-01-27 Jackson Harper <jackson@latitudegeo.com>
 
 	* class.cs: Combine some if statements.
@@ -3924,7 +3939,7 @@ Tue Jan 28 17:30:57 CET 2003 Paolo Molaro <lupus@ximian.com>
 	We were only handling this in one case.
 
 	Improve the if situation there to not have negations.
-	
+
 	* class.cs (Field.Define): Turns out that we do not need to check
 	the unsafe bit on field definition, only on usage.  Remove the test.
 
@@ -3947,7 +3962,7 @@ Tue Jan 28 17:30:57 CET 2003 Paolo Molaro <lupus@ximian.com>
 2003-01-20  Duncan Mak  <duncan@ximian.com>
 
 	* AssemblyInfo.cs: Bump the version number to 0.19.
-	
+
 2003-01-20  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* cs-tokenizer.cs: little fixes to line numbering when #line is used.
@@ -3990,7 +4005,7 @@ Tue Jan 14 10:36:49 CET 2003 Paolo Molaro <lupus@ximian.com>
 2003-01-13 Jackson Harper <jackson@latitudegeo.com>
 
 	* cs-tokenizer.cs: Add Cleanup method, also fix #region error messages.
-	
+
 Sun Jan 12 19:58:42 CET 2003 Paolo Molaro <lupus@ximian.com>
 
 	* attribute.cs: only set GuidAttr to true when we have a
@@ -4011,10 +4026,10 @@ Sun Jan 12 19:58:42 CET 2003 Paolo Molaro <lupus@ximian.com>
 
 	* cs-parser.jay (fixed_statement): take a type instead of a
 	pointer_type, so we can produce a better error message later.
-	
+
 	* statement.cs (Fixed.Resolve): Flag types that are not pointers
 	as an error.  
-	
+
 	(For.DoEmit): Make inifinite loops have a
 	non-conditional branch back.
 
@@ -4113,14 +4128,14 @@ Tue Jan 7 18:23:44 CET 2003 Paolo Molaro <lupus@ximian.com>
 
 	* decl.cs: Added special case to allow overrides on "protected
 	internal" methods
-	
+
 2002-12-18  Ravi Pratap  <ravi@ximian.com>
 
 	* attribute.cs (Attributes.AddAttributeSection): Rename to this
 	since it makes much more sense.
 
 	(Attributes.ctor): Don't require a Location parameter.
-	
+
 	* rootcontext.cs (AddGlobalAttributeSection): Rename again.
 
 	* attribute.cs (ApplyAttributes): Remove extra Location parameters
@@ -4318,7 +4333,7 @@ Tue Dec 3 19:32:04 CET 2002 Paolo Molaro <lupus@ximian.com>
 	Another 3% is spend on wrapping `xtoken' in the `token' function.
 
 	Handle 0xa0 as whitespace (#34752)
-	
+
 2002-11-26  Miguel de Icaza  <miguel@ximian.com>
 
 	* typemanager.cs (IsCLRType): New routine to tell whether a type
@@ -4350,7 +4365,7 @@ Tue Dec 3 19:32:04 CET 2002 Paolo Molaro <lupus@ximian.com>
 	Do not short-circuit, because if we do, we
 	report errors (ie, #if false && true would produce an invalid
 	directive error);
-	
+
 
 2002-11-24  Martin Baulig  <martin@ximian.com>
 
@@ -4545,7 +4560,7 @@ Tue Dec 3 19:32:04 CET 2002 Paolo Molaro <lupus@ximian.com>
 	* attribute.cs (Attribute.Resolve): Catch the
 	NullReferenceException and report it since it isn't supposed to
 	happen. 
-	
+
 2002-11-12  Miguel de Icaza  <miguel@ximian.com>
 
 	* expression.cs (Binary.EmitBranchable): Also handle the cases for
@@ -4573,7 +4588,7 @@ Tue Dec 3 19:32:04 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	But a bogus return here to keep the semantics of the old code
 	until the Mono runtime is fixed.
-	
+
 	* pending.cs (GetMissingInterfaces): New method used to remove all
 	the interfaces that are already implemented by our parent
 	classes from the list of pending methods. 
@@ -4598,7 +4613,7 @@ Tue Dec 3 19:32:04 CET 2002 Paolo Molaro <lupus@ximian.com>
 	operators. 
 
 	* driver.cs: use error 5.
-	
+
 2002-11-02  Gonzalo Paniagua Javier <gonzalo@gnome-db.org>
 
 	* cs-parser.jay: simplified a rule and 5 SR conflicts dissapeared.
@@ -4617,7 +4632,7 @@ Tue Dec 3 19:32:04 CET 2002 Paolo Molaro <lupus@ximian.com>
 	IndexerAccess.DoResolve): ditto. 
 
 	(Invocation.DoResolve): ditto.
-	
+
 	(Invocation.FullMethodDesc): Improve the report string.
 
 	* statement.cs (Block): Eliminate IsVariableDefined as it is
@@ -4636,7 +4651,7 @@ Tue Dec 3 19:32:04 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	* expression.cs: Reverted last patch, that was wrong.  Is_ref is
 	not used to mean `ref' but `ref or out' in ParameterReference
-	
+
 	* delegate.cs (FullDelegateDesc): use ParameterDesc to get the
 	full type signature instead of calling TypeManger.CSharpName
 	ourselves. 
@@ -4675,7 +4690,7 @@ Tue Dec 3 19:32:04 CET 2002 Paolo Molaro <lupus@ximian.com>
 	* expression.cs (BaseAccess): Provide an DoResolveLValue method,
 	so we can call the children DoResolveLValue method (this will
 	properly signal errors on lvalue assignments to base properties)
-	
+
 	* ecore.cs (PropertyExpr.ResolveAccessors): If both setter and
 	getter are null, and we have a property info, we know that this
 	happened because the lookup failed, so we report an error 122 for
@@ -4754,7 +4769,7 @@ Tue Dec 3 19:32:04 CET 2002 Paolo Molaro <lupus@ximian.com>
 	Constructor requires an EmitContext.  The resolution process does
 	not happen here, but we need to compute the accessors before,
 	because the resolution does not always happen for properties.
-	
+
 	* typemanager.cs (RealMemberLookup): Set private_ok if we are a
 	subclass, before we did not update this flag, but we did update
 	bindingflags. 
@@ -4764,7 +4779,7 @@ Tue Dec 3 19:32:04 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	Notice that this broke the cs1540 detection, but that will require
 	more thinking. 
-	
+
 2002-10-22  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* class.cs:
@@ -4800,7 +4815,7 @@ Tue Dec 3 19:32:04 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 2002-10-20  Mark Crichton  <crichton@gimp.org>
 
-        * cfold.cs: Fixed compile blocker.  Really fixed it this time.
+	* cfold.cs: Fixed compile blocker.  Really fixed it this time.
 
 2002-10-20  Nick Drochak  <ndrochak@gol.com>
 
@@ -5003,12 +5018,12 @@ Tue Dec 3 19:32:04 CET 2002 Paolo Molaro <lupus@ximian.com>
 	(LookupType): We now also track the real type name, as sometimes
 	we can get a quey for the real type name from things like
 	ComposedCast.  This fixes bug 31422.
-	
+
 	* expression.cs (ComposedCast.Resolve): Since we are obtaining a
 	complete type fullname, it does not have to go through the type
 	resolution system to obtain the composed version of the type (for
 	obtaining arrays or pointers).
-	
+
 	(Conditional.Emit): Use the EmitBoolExpression to
 	generate nicer code, as requested by Paolo.
 
@@ -5370,7 +5385,7 @@ Tue Dec 3 19:32:04 CET 2002 Paolo Molaro <lupus@ximian.com>
 	* namespace.cs (UsingEntry): New struct to hold the name of the
 	using definition, the location where it is defined, and whether it
 	has been used in a successful type lookup.
-	
+
 	* rootcontext.cs (NamespaceLookup): Use UsingEntries instead of
 	strings.
 
@@ -5424,7 +5439,7 @@ Tue Dec 3 19:32:04 CET 2002 Paolo Molaro <lupus@ximian.com>
 	(ConvertNumericExplicit): Allow explicit conversions from
 	the underlying type to enum type. This precisely follows the spec
 	and closes a bug filed by Gonzalo.
-	
+
 2002-09-04  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* compiler.csproj:
@@ -6860,7 +6875,7 @@ Sat Jul 13 15:10:32 CEST 2002 Paolo Molaro <lupus@ximian.com>
 	* driver.cs (CSCParseOption): Finish the /r: and /lib: support.
 
 	(LoadAssembly): Do not add the dll if it is already specified
-	
+
 	(MainDriver): Add the System directory to the link path at the end,
 	after all the other -L arguments. 
 
@@ -6908,7 +6923,7 @@ Sat Jul 13 15:10:32 CEST 2002 Paolo Molaro <lupus@ximian.com>
 	private field.
 
 	* ecore.cs (GetFieldFromEvent): RE-write to use the above methods.
-	
+
 2002-07-10  Miguel de Icaza  <miguel@ximian.com>
 
 	* expression.cs (Binary.EmitBranchable): this routine emits the
@@ -6939,7 +6954,7 @@ Sat Jul 13 15:10:32 CEST 2002 Paolo Molaro <lupus@ximian.com>
 	always (Emit) instead of the Address of This.  Particularly
 	interesting when This is a value type, as we dont want the Emit
 	effect (which was to load the object).
-	
+
 2002-07-08  Miguel de Icaza  <miguel@ximian.com>
 
 	* attribute.cs: Pass the entry point to the DefinePInvokeMethod
@@ -7180,7 +7195,7 @@ Mon Jul 1 12:26:12 CEST 2002 Paolo Molaro <lupus@ximian.com>
 	not explicitly implementing a property from an interface.  Use the
 	correct name also for those properties (the same CSC uses,
 	although that is really not needed).
-	
+
 	(Property.Emit): Do not emit attributes for explicitly implemented
 	properties, as there is no TypeBuilder.
 
@@ -7213,12 +7228,12 @@ Fri Jun 21 13:37:57 CEST 2002 Paolo Molaro <lupus@ximian.com>
 	the interfaces and work around the lame differences between
 	System.Type and System.Reflection.Emit.TypeBuilder in the results
 	result for GetInterfaces.
-	
+
 	(ExpandInterfaces): Given an array of interface types, expand and
 	eliminate repeated ocurrences of an interface.  This expands in
 	context like: IA; IB : IA; IC : IA, IB; the interface "IC" to
 	be IA, IB, IC.
-	
+
 2002-06-21  Martin Baulig  <martin@gnome.org>
 
 	* typemanager.cs (TypeManager.EnumToUnderlying): It's now safe to call this function
@@ -7298,7 +7313,7 @@ Tue Jun 18 10:36:22 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* expression.cs (Unary.ResolveOperator): Use TypeManager
 	to resolve the type.
-	
+
 2002-06-13  Ravi Pratap  <ravi@ximian.com>
 
 	* cs-parser.jay (enum_member_declaration): Pass in the attributes
@@ -7314,7 +7329,7 @@ Tue Jun 18 10:36:22 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* typemanager.cs (TypeManager.VerifyUnManaged): Allow
 	address-of operator on both value types and pointers.
-	
+
 2002-06-10  Martin Baulig  <martin@gnome.org>
 
 	* interface.cs (Interface.PopulateIndexer): Add the indexer's
@@ -7354,7 +7369,7 @@ Tue Jun 18 10:36:22 CEST 2002 Paolo Molaro <lupus@ximian.com>
 	to handle the Accessor kind :-)
 
 	* class.cs (Property.Emit, Event.Emit): Apply attributes to the accessors
-	
+
 2002-06-08  Martin Baulig  <martin@gnome.org>
 
 	* expression.cs (Unary.TryReduceNegative): Added support for
@@ -7468,7 +7483,7 @@ Tue Jun 18 10:36:22 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	(DefineMethod): Return whether we are doing an interface
 	implementation. 
-	
+
 	* typemanager.cs: Temporary hack until we get attributes in
 	interfaces (Ravi is working on that) and we get IndexerName
 	support in interfaces.
@@ -7635,7 +7650,7 @@ Tue Jun 18 10:36:22 CEST 2002 Paolo Molaro <lupus@ximian.com>
 	avoid having side effects
 
 	(Assign.Emit): Call CacheTemporaries in the IAssignMethod.
-	
+
 	* ecore.cs (Expression.CacheTemporaries): Provide empty default
 	implementation.
 
@@ -7647,7 +7662,7 @@ Tue Jun 18 10:36:22 CEST 2002 Paolo Molaro <lupus@ximian.com>
 	(StoreFromPtr): Handle stobj as well.
 
 	* expression.cs (UnaryMutator): Share more code.
-	
+
 	* typemanager.cs (FindMembers): Thanks to Paolo for tracking this
 	down: I was not tracking the Filter function as well, which
 	was affecting the results of the cache.
@@ -7702,7 +7717,7 @@ Tue Jun 18 10:36:22 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	Do not allow instances of abstract classes or interfaces to be
 	created.
-	
+
 	* class.cs: (MethodSignature.InheritableMemberSignatureCompare):
 	We have to compare the assembly property here when dealing with
 	FamANDAssem and Assembly access modifiers, because we might be
@@ -7783,7 +7798,7 @@ Tue Jun 18 10:36:22 CEST 2002 Paolo Molaro <lupus@ximian.com>
 	* expression.cs (Invocation.MakeUnionSet): Optimization: Use two
 	nested foreach statements instead of for, and also break out of
 	the inner loop once a match is found.
-	
+
 	(Invocation.OverloadResolve): Use foreach, simplify the code. 
 
 2002-05-08  Miguel de Icaza  <miguel@ximian.com>
@@ -7828,7 +7843,7 @@ Wed May 8 11:50:31 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* parameter.cs (ParameterType): Make it a property for now although the
 	purpose really isn't anything immediate.
-	
+
 	* expression.cs (Is*Applicable): Do better checking on the parameter type
 	of a ref/out parameter. The ones from the system assemblies are already 
 	marked with the correct type so we don't need to do any correction.
@@ -7853,7 +7868,7 @@ Wed May 8 11:50:31 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	(EmitCode): Apply attributes within an EmitContext that represents
 	the container they were declared on.
-	
+
 	* cs-parser.jay: Track bases for structs.  How did I get this wrong?
 
 2002-05-06  Ravi Pratap  <ravi@ximian.com>
@@ -7920,7 +7935,7 @@ Wed May 8 11:50:31 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* ecore.cs (FieldExpr): Remove un-needed tests for null, since now
 	events are always registered FieldBuilders.
-	
+
 	* class.cs (FieldBase): New class shared by Fields 
 
 	* delegate.cs: If we are a toplevel delegate, use our full name.
@@ -7975,7 +7990,7 @@ Wed May 8 11:50:31 CEST 2002 Paolo Molaro <lupus@ximian.com>
 	byte b |= 1 + 2
 
 	From the spec:
-	
+
 	x op= y can be evaluated as x = (T) (x op y) (ie, an explicit cast
 	to the type of x) if y is implicitly convertible to the type of x,
 	and the operator is a builtin operator and the return type of the
@@ -7994,7 +8009,7 @@ Wed May 8 11:50:31 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	This code could go away when we move to a table driven model, but
 	i could not come up with a good plan last night.
-	
+
 2002-04-30  Lawrence Pit <loz@cable.a2000.nl>
 
 	* typemanager.cs (CSharpName): reimplementation using regex.
@@ -8012,7 +8027,7 @@ Wed May 8 11:50:31 CEST 2002 Paolo Molaro <lupus@ximian.com>
 	not catching sem errors in there.  The same process is needed
 	everywhere else. 
 	(Return, StatementExpression, For, While, Do, Throw, Lock): Implement Resolve
-	
+
 
 	(Statement.Warning_DeadCodeFound): Factorize code.
 	(While): Report dead code here too.
@@ -8026,7 +8041,7 @@ Wed May 8 11:50:31 CEST 2002 Paolo Molaro <lupus@ximian.com>
 	expression here.    
 	(MakeBoolean): New utility function that resolve, implicitly
 	converts to boolean and tags the expression. 
-	
+
 
 	(If, Do): Implement dead code elimination.
 	(While): Implement loop inversion
@@ -8054,7 +8069,7 @@ Wed May 8 11:50:31 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* support.cs: InternalParameters.ParameterDesc variable tmp initialized
 	with String.Empty.
-	
+
 2002-04-26  Ravi Pratap  <ravi@ximian.com>
 
 	* delegate.cs (Define): Fix extremely silly bug where I was
@@ -8096,7 +8111,7 @@ Wed May 8 11:50:31 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	(TypeContainer.MemberLookup): Implement using the
 	TypeManager.MemberLookup now. 
-	
+
 	* typemanager.cs: Make MemberLookup a function of the TypeManager,
 	and return MemberInfos, so that these can be used without an
 	EmitContext (what we had before).
@@ -8136,7 +8151,7 @@ Wed May 8 11:50:31 CEST 2002 Paolo Molaro <lupus@ximian.com>
 	* expression.cs (Argument.Type): Ensure that we return the correct
 	type when we have out or ref parameters [in which case we 
 	append a "&"].
-	
+
 2002-04-22  Miguel de Icaza  <miguel@ximian.com>
 
 	* class.cs (Property, Indexer): Allow extern modifier in there. 
@@ -8195,7 +8210,7 @@ Wed May 8 11:50:31 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	(TypeContainer.Targets): The default for attribute types is
 	AttributeTargets.All.
-	
+
 	* attribute.cs (ApplyAttributes): Registering the attribute type
 	is done elsewhere, not when we discover we have a Usage attribute.
 
@@ -8205,7 +8220,7 @@ Wed May 8 11:50:31 CEST 2002 Paolo Molaro <lupus@ximian.com>
 	and get rid of is_delegate parameter.
 
 	* everywhere : update.
-	
+
 2002-04-12  Ravi Pratap  <ravi@ximian.com>
 
 	* cs-parser.jay (compilation_unit): Revamp completely to use
@@ -8338,7 +8353,7 @@ Mon Apr  8 06:29:03  2002 Piers Haken <piersh@friskit.com>
 
 	* class.cs (Indexer.CheckBase): Only check if both parents are
 	non-null. 
-	
+
 	* cs-parser.jay (accessor_body): If empty, set to null.
 
 	* ecore.cs (SimpleName.SimpleNameResolve): We did not have the
@@ -8415,7 +8430,7 @@ Mon Apr  8 06:29:03  2002 Piers Haken <piersh@friskit.com>
 	(FindType): Moved LookupInterfaceOrClass here.  Moved the
 	LookupBaseClasses method that used to live in class.cs and
 	interface.cs here, and renamed to FindType.
-	
+
 	* delegate.cs: Implement DefineType.  Take advantage of the
 	refactored pattern for locating the parent builder without taking
 	the parent_builder argument (which we know does not work if we are
@@ -8458,8 +8473,8 @@ Mon Apr  8 06:29:03  2002 Piers Haken <piersh@friskit.com>
 				    implementing.DeclaringType.IsInterface)
 					flags |= MethodAttributes.Final;
 
-        I do not know what I was smoking when I used that.
-	
+	I do not know what I was smoking when I used that.
+
 
 	* cs-parser.jay, delegate.cs: Make Delegate be a DeclSpace, first
 	step into fixing the name resolution issues for delegates and
@@ -8688,7 +8703,7 @@ Tue Mar 26 21:14:36 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	* class.cs (Invocation.EmitArguments): Fix to emit arguments for
 	empty param arrays.
-	
+
 	* class.cs (Method.LabelParameters): Fix incorrect code path that
 	prevented the `ParamArrayAttribute' from being applied to the
 	params attribute.
@@ -8767,7 +8782,7 @@ Tue Mar 26 21:14:36 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	Nested interfaces need to be closed after their parents have been
 	created. 
-	
+
 	* interface.cs (InterfaceAttr): Put all the logic for computing
 	the interface attribute here. 
 
@@ -8778,7 +8793,7 @@ Tue Mar 26 21:14:36 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	* cs-parser.jay: rework foreach statement to work with the new
 	changes to the policy on SimpleNames.
-	
+
 	* report.cs: support Stacktrace on warnings as well.
 
 	* makefile: drop --unsafe and /unsafe from the compile.
@@ -8803,7 +8818,7 @@ Wed Mar 13 12:32:40 CET 2002 Paolo Molaro <lupus@ximian.com>
 	performing type lookups, instead of DoResolve, we could have a
 	ResolveType entry point, and only participating pieces of the
 	production (simplename, deref, array) would implement this. 
-	
+
 	* codegen.cs (EmitContext): New field OnlyLookupTypes used to
 	signal SimpleName to only resolve type names and not attempt to
 	resolve anything else.
@@ -8816,7 +8831,7 @@ Wed Mar 13 12:32:40 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	* cs-parser.jay: rework foreach statement to work with the new
 	changes to the policy on SimpleNames.
-	
+
 	* report.cs: support Stacktrace on warnings as well.
 
 	* makefile: drop --unsafe and /unsafe from the compile.
@@ -8881,13 +8896,13 @@ Wed Mar 13 12:32:40 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	(Resolve): Handle the case when we are parsing the special MarshalAs
 	attribute [we need to store the unmanaged type to use later]
-	
+
 	* typemanager.cs (marshal_as_attr_type): Built in type for the 
 	MarshalAs Attribute.
 
 	* attribute.cs (ApplyAttributes): Recognize the MarshalAs attribute 
 	on parameters and accordingly set the marshalling info.
-	
+
 2002-03-09  Miguel de Icaza  <miguel@ximian.com>
 
 	* class.cs: Optimizing slightly by removing redundant code after
@@ -8904,7 +8919,7 @@ Wed Mar 13 12:32:40 CET 2002 Paolo Molaro <lupus@ximian.com>
 	Enums since those are types too. 
 
 	* cs-parser.jay (enum_declaration): Record enums as we parse them.
-	
+
 	* enum.cs (DefineEnum): Return if the TypeBuilder has already been defined 
 	thanks to a call during the lookup process.
 
@@ -8956,7 +8971,7 @@ Wed Mar 13 12:32:40 CET 2002 Paolo Molaro <lupus@ximian.com>
 	for interfaces
 
 	* report.cs: Allow for --fatal to be used with --probe.
-	
+
 	* typemanager.cs (NoTypes): Move the definition for the empty Type
 	array here. 
 
@@ -8985,14 +9000,14 @@ Wed Mar 13 12:32:40 CET 2002 Paolo Molaro <lupus@ximian.com>
 2002-03-04  Miguel de Icaza  <miguel@ximian.com>
 
 	Constant Folding has been implemented now.
-	
+
 	* expression.cs (Unary.Reduce): Do not throw an exception, catch
 	the error instead on types that are not supported in one's
 	complement. 
 
 	* constant.cs (Constant and all children): New set of functions to
 	perform implict and explicit conversions.
-	
+
 	* ecore.cs (EnumConstant): Implement the new functions to perform
 	conversion by proxying to the child expression.
 
@@ -9014,7 +9029,7 @@ Wed Mar 13 12:32:40 CET 2002 Paolo Molaro <lupus@ximian.com>
 2002-03-01  Miguel de Icaza  <miguel@ximian.com>
 
 	* cfold.cs: New file, this file contains the constant folder.
-	
+
 	* ecore.cs (IMemoryLocation.AddressOf): Now takes an extra
 	argument to track whether we are using the resulting address to
 	load or store a value and provide better error messages. 
@@ -9166,7 +9181,7 @@ Wed Mar 13 12:32:40 CET 2002 Paolo Molaro <lupus@ximian.com>
 	handling.
 
 	Catch DirectoryNotFoundException when calling GetFiles.
-	
+
 	(SplitPathAndPattern): Used to split the input specification into
 	a path and a pattern that we can feed to Directory.GetFiles.
 
@@ -9192,12 +9207,12 @@ Wed Mar 13 12:32:40 CET 2002 Paolo Molaro <lupus@ximian.com>
 	(StackAlloc): Implement stackalloc keyword.
 
 	* cs-parser.jay: Add rule to parse stackalloc.
-	
+
 	* driver.cs: Handle /h, /help, /?
 
 	* expression.cs (MakeByteBlob): Removed the hacks we had in place
 	before we supported unsafe code.
-	
+
 	* makefile: add --unsafe to the self compilation of mcs.
 
 2002-02-20  Miguel de Icaza  <miguel@ximian.com>
@@ -9210,14 +9225,14 @@ Wed Mar 13 12:32:40 CET 2002 Paolo Molaro <lupus@ximian.com>
 	address of an array.
 
 	(ElementAccess): Implement array access for pointers
-	
+
 	* statement.cs (Fixed): Implement fixed statement for arrays, we
 	are missing one more case before we are done.
 
 	* expression.cs (Indirection): Implement EmitAssign and set the
 	ExprClass to Variable.  This allows pointer dereferences to be
 	treated as variables, and to have values assigned to them.
-	
+
 	* ecore.cs (Expression.StoreFromPtr): New utility function to
 	store values dereferencing.
 
@@ -9439,7 +9454,7 @@ Wed Mar 13 12:32:40 CET 2002 Paolo Molaro <lupus@ximian.com>
 	the rules for the special rule on Type/instances.  First check if
 	we have the same name, and if so, try that special static path
 	rather than the instance path.
-	
+
 2002-01-18  Miguel de Icaza  <miguel@ximian.com>
 
 	* cs-parser.jay: Emit 642 (warning: possible empty statement) for
@@ -9549,7 +9564,7 @@ Wed Mar 13 12:32:40 CET 2002 Paolo Molaro <lupus@ximian.com>
 	the object type, so we take care of that.
 
 	* expression.cs (FullMethodDesc): Also include the return type in descriptions.
-	
+
 	* support.cs (ParameterDesc): Fix minor bug which was causing params tags to be
 	added to non-params parameters :-)
 
@@ -9641,7 +9656,7 @@ Wed Mar 13 12:32:40 CET 2002 Paolo Molaro <lupus@ximian.com>
 	default_member_type which already exists.
 
 	* interface.cs, attribute.cs : Update accordingly.
-	
+
 2002-01-08  Miguel de Icaza  <miguel@ximian.com>
 
 	* typemanager.cs: Enable IndexerPropertyName again.  It does not
@@ -9692,7 +9707,7 @@ Wed Mar 13 12:32:40 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	* class.cs (Indexer): Implement explicit interface implementation
 	for indexers.
-	
+
 Sat Jan 5 16:08:23 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	* class.cs: make the default instance constructor public and hidebysig.
@@ -9735,7 +9750,7 @@ Sat Jan 5 16:08:23 CET 2002 Paolo Molaro <lupus@ximian.com>
 	is_base, this is used to determine whether the `call' or
 	`callvirt' opcode should be used.
 
-	
+
 	* delegate.cs: update EmitCall.
 
 	* class.cs (Method.Define): Set NewSlot for the cases where we are
@@ -9809,7 +9824,7 @@ Sat Jan 5 16:08:23 CET 2002 Paolo Molaro <lupus@ximian.com>
 	only.
 
 	(Goto): Finally implement this bad boy.
-	
+
 	* cs-parser.jay: Update to reflect new mechanism to implement
 	labels.
 
@@ -9866,7 +9881,7 @@ Sat Jan 5 16:08:23 CET 2002 Paolo Molaro <lupus@ximian.com>
 	Although we do this check for methods later on in the semantic
 	analysis, catching repeated default constructors is so easy that
 	we catch these here. 
-	
+
 	* expression.cs (Binary.DoNumericPromotions): Fix the uint64 type
 	promotions code.
 
@@ -9907,7 +9922,7 @@ Sat Jan 5 16:08:23 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	* decl.cs: CloseType is now an virtual method, the default
 	implementation just closes this type.
-	
+
 2001-12-28  Ravi Pratap  <ravi@ximian.com>
 
 	* attribute.cs (DefinePInvokeMethod): Set the implementation flags
@@ -9926,7 +9941,7 @@ Sat Jan 5 16:08:23 CET 2002 Paolo Molaro <lupus@ximian.com>
 	in overload resolution. 
 
 	More spec conformance.
-	
+
 2001-12-27  Miguel de Icaza  <miguel@ximian.com>
 
 	* driver.cs: Add --timestamp, to see where the compiler spends
@@ -9956,7 +9971,7 @@ Sat Jan 5 16:08:23 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	(Binary.Resolve): If types are reference types, then do a cast to
 	object on operators != and == of both arguments.
-	
+
 	* typemanager.cs (FindMembers): Extract instance and static
 	members if requested.
 
@@ -10146,7 +10161,7 @@ Sat Jan 5 16:08:23 CET 2002 Paolo Molaro <lupus@ximian.com>
 	* typemanager.cs : Use PtrHashtable for Delegate data hashtable etc.
 
 	* assign.cs : Get rid of EventIsLocal everywhere.
-	
+
 2001-12-23  Miguel de Icaza  <miguel@ximian.com>
 
 	* ecore.cs (ConvertIntLiteral): finished the implementation.
@@ -10173,7 +10188,7 @@ Sat Jan 5 16:08:23 CET 2002 Paolo Molaro <lupus@ximian.com>
 	resolve the types.  This is not really needed, but it helps debugging.
 
 	* statement.cs: report location.
-	
+
 	* cs-parser.jay: pass location to throw statement.
 
 	* driver.cs: Small bug fix.
@@ -10236,23 +10251,23 @@ Sat Jan 5 16:08:23 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	* statement.cs (SwitchLabel): define an ILLabel for each
 	SwitchLabel. 
-	
+
 	(Switch.CheckSwitch): If the value is a Literal, extract
 	the underlying literal.
-	
+
 	Also in the unused hashtable we had, add the SwitchLabel so we can
 	quickly look this value up.
 
 	* constant.cs: Implement a bunch of new constants.  Rewrite
 	Literal based on this.  Made changes everywhere to adapt to this.
-	
+
 	* expression.cs (Expression.MakeByteBlob): Optimize routine by
 	dereferencing array only once, and also copes with enumrations.
 
 	bytes are two bytes wide, not one.
 
 	(Cast): Perform constant conversions.
-	
+
 	* ecore.cs (TryImplicitIntConversion): Return literals instead of
 	wrappers to the literals here.
 
@@ -10369,12 +10384,12 @@ Sat Jan 5 16:08:23 CET 2002 Paolo Molaro <lupus@ximian.com>
 	(Interface.SemanticAnalysis): Use `this' instead of our parent to
 	resolve names.  Because we need to be resolve in our context, not
 	our parents.
-	
+
 	* driver.cs: Implement response files.
 
 	* class.cs (TypeContainer.DefineType): If we are defined, do not
 	redefine ourselves.
-	
+
 	(Event.Emit): Emit the code for add/remove handlers.
 	(Event.Define): Save the MethodBuilders for add/remove.
 
@@ -10382,10 +10397,10 @@ Sat Jan 5 16:08:23 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	* cs-parser.jay: Replaced use of DictionaryEntry for Pair because
 	DictionaryEntry requires the first argument to be non-null.  
-	
+
 	(enum_declaration): Compute full name for registering the
 	enumeration.
-	
+
 	(delegate_declaration): Instead of using
 	formal_parameter_list, use opt_formal_parameter_list as the list
 	can be empty.
@@ -10445,7 +10460,7 @@ Sat Jan 5 16:08:23 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	* cs-tokenizer.cs: Add support for defines.
 	Add support for #if, #elif, #else, #endif
-	
+
 	(eval_var): evaluates a variable.
 	(eval): stubbed for evaluating functions.
 
@@ -10464,7 +10479,7 @@ Sat Jan 5 16:08:23 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	(MemberCore.Define): New abstract method, we will be using this in
 	the warning reporting engine in Populate.
-	
+
 	(Operator.Define): Adjust to new MemberCore protocol. 
 
 	* const.cs (Const): This does not derive from Expression, it is a
@@ -10487,7 +10502,7 @@ Sat Jan 5 16:08:23 CET 2002 Paolo Molaro <lupus@ximian.com>
 	argument. 
 
 	* class.cs (Event.Define): The lookup can fail.
-	
+
 	* cs-tokenizer.cs: Begin implementation of pre-procesor. 
 
 	* expression.cs: Resolve the this instance before invoking the code.
@@ -10500,7 +10515,7 @@ Sat Jan 5 16:08:23 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	Note that this still does not handle the more complex rules of
 	casts. 
-	
+
 
 	* delegate.cs (Delegate.Populate): Register the delegage constructor builder here. 
 
@@ -10618,7 +10633,7 @@ Sat Jan 5 16:08:23 CET 2002 Paolo Molaro <lupus@ximian.com>
 2001-12-13  Miguel de Icaza  <miguel@ximian.com>
 
 	* class.cs (MakeKey): Kill routine.
-	
+
 	* class.cs (TypeContainer.Define): Correctly define explicit
 	method implementations (they require the full interface name plus
 	the method name).
@@ -10655,7 +10670,7 @@ Sat Jan 5 16:08:23 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	(TypeContainer.Define): Add support for explicit interface method
 	implementation. 
-	
+
 2001-12-12  Miguel de Icaza  <miguel@ximian.com>
 
 	* typemanager.cs: Keep track of the parameters here instead of
@@ -10692,7 +10707,7 @@ Sat Jan 5 16:08:23 CET 2002 Paolo Molaro <lupus@ximian.com>
 	* codegen.cs (EmitContext): ReturnValue, ReturnLabel: new
 	LocalBuilder to store the result of the function.  ReturnLabel is
 	the target where we jump.
-	
+
 
 2001-12-09  Radek Doulik  <rodo@ximian.com>
 
@@ -10731,7 +10746,7 @@ Sat Jan 5 16:08:23 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	(Parameter.ParameterType): The type of the parameter (base,
 	without ref/out applied).
-	
+
 	(Parameter.Resolve): Perform resolution here.
 	(Parameter.ExternalType): The full type (with ref/out applied).
 
@@ -10786,7 +10801,7 @@ Sat Jan 5 16:08:23 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	* attribute.cs (DefinePInvokeMethod): Implement as this is what is called
 	above to do the task of extracting information and defining the method.
-	
+
 2001-12-04  Ravi Pratap  <ravi@ximian.com>
 
 	* expression.cs (ArrayCreation::EmitStaticInitializers): Get rid
@@ -10813,12 +10828,12 @@ Sat Jan 5 16:08:23 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	* statement.cs (GotoDefault), cs-parser.jay: Implement `goto
 	default'.
-	
+
 	(Foreach.Emit): Foreach on arrays was not setting
 	up the loop variables (for break/continue).
 
 	(GotoCase): Semi-implented.
-	
+
 2001-12-03  Ravi Pratap  <ravi@ximian.com>
 
 	* attribute.cs (CheckAttribute): Handle system attributes by using
@@ -10912,10 +10927,10 @@ Sat Jan 5 16:08:23 CET 2002 Paolo Molaro <lupus@ximian.com>
 	* ecore.cs (FieldExpr.EmitAssign): Handle value types specially
 	(we need to load the address of the field here).  This fixes
 	test-22. 
-	
+
 	(FieldExpr.DoResolveLValue): Call the DoResolve
 	function to initialize the Instance expression.
-	
+
 	* statement.cs (Foreach.Emit): Fix the bug where we did not invoke
 	correctly the GetEnumerator operation on a value type.
 
@@ -11002,12 +11017,12 @@ Sat Jan 5 16:08:23 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	* statement.cs (Switch, SwitchSection, SwithLabel): Started work
 	on Switch statement.
-	
+
 2001-11-23  Ravi Pratap  <ravi@ximian.com>
 
 	* typemanager.cs (IsDelegateType, IsEnumType): Fix logic to determine
 	the same. 
-	
+
 	* expression.cs (ArrayCreation::CheckIndices): Get rid of the require_constant
 	parameter. Apparently, any expression is allowed. 
 
@@ -11051,7 +11066,7 @@ Sat Jan 5 16:08:23 CET 2002 Paolo Molaro <lupus@ximian.com>
 	Use the grammar productions from Rhys to handle casts (this is
 	not complete like Rhys syntax yet, we fail to handle that corner
 	case that C# has regarding (-x), but we will get there.
-	
+
 2001-11-22  Ravi Pratap  <ravi@ximian.com>
 
 	* class.cs (EmitFieldInitializer): Take care of the case when we have a
@@ -11227,7 +11242,7 @@ Sat Jan 5 16:08:23 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	* class.cs (Property::Define): Register property using TypeManager.RegisterProperty
 	Test 33 now passes again.
-	
+
 2001-11-15  Miguel de Icaza  <miguel@ximian.com>
 
 	* cs-parser.jay: Kill horrendous hack ($??? = lexer.Location) that
@@ -11283,7 +11298,7 @@ Sat Jan 5 16:08:23 CET 2002 Paolo Molaro <lupus@ximian.com>
 	(NewDelegate.DoResolve): Update for Argument.Resolve.
 
 	* class.cs (ConstructorInitializer.DoResolve): ditto.
-	
+
 	* attribute.cs (Attribute.Resolve): ditto.
 
 2001-11-13  Miguel de Icaza  <miguel@ximian.com>
@@ -11294,7 +11309,7 @@ Sat Jan 5 16:08:23 CET 2002 Paolo Molaro <lupus@ximian.com>
 	IAssignMethod instead. 
 
 	(LocalVariableReference): ditto.
-	
+
 	* ecore.cs (FieldExpr): Drop IStackStorage and implement
 	IAssignMethod instead. 
 
@@ -11455,13 +11470,13 @@ Sat Jan 5 16:08:23 CET 2002 Paolo Molaro <lupus@ximian.com>
 	(Event.Emit): ditto.
 
 	Reworked to have less levels of indentation.
-	
+
 2001-11-08  Ravi Pratap  <ravi@ximian.com>
 
 	* class.cs (Property): Emit attributes.
 
 	(Field): Ditto.
-	
+
 	(Event): Ditto.
 
 	(Indexer): Ditto.
@@ -11487,7 +11502,7 @@ Sat Jan 5 16:08:23 CET 2002 Paolo Molaro <lupus@ximian.com>
 2001-11-07  Ravi Pratap  <ravi@ximian.com>
 
 	* expression.cs (EvalConstantExpression): Move into ecore.cs
-	
+
 	* enum.cs (Enum): Rename some members and make them public and readonly
 	according to our convention.
 
@@ -11518,9 +11533,9 @@ Sat Jan 5 16:08:23 CET 2002 Paolo Molaro <lupus@ximian.com>
 	(MemberAccess:DoResolve): Do the literalizing of the FieldExpr here.
 
 	(Literalize): Revamp a bit to take two arguments.
-	
+
 	(EnumLiteral): New class which derives from Literal to wrap enum literals.
-	
+
 2001-11-06  Ravi Pratap  <ravi@ximian.com>
 
 	* cs-parser.jay (compilation_unit): Remove extra opt_attributes for now.
@@ -11579,7 +11594,7 @@ Sat Jan 5 16:08:23 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	(Expression.Reduce): New method used to perform constant folding
 	and CSE.  This is needed to support constant-expressions. 
-	
+
 	* statement.cs (Statement.EmitBoolExpression): Pass true and false
 	targets, and optimize for !x.
 
@@ -11616,9 +11631,9 @@ Sat Jan 5 16:08:23 CET 2002 Paolo Molaro <lupus@ximian.com>
 	(positional_argument_list, named_argument_list, named_argument): New rules
 
 	(attribute_arguments): Use the above so that we are more correct.
-	
+
 2001-11-02  Ravi Pratap  <ravi@ximian.com>
-	
+
 	* expression.cs (Invocation::IsParamsMethodApplicable): Implement
 	to perform all checks for a method with a params parameter.
 
@@ -11638,7 +11653,7 @@ Sat Jan 5 16:08:23 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	* cs-parser.jay (opt_attributes, attribute_section etc.): Modify to
 	use the new class names.
-	
+
 2001-11-01  Ravi Pratap  <ravi@ximian.com>
 
 	* class.cs (Method::Define): Complete definition for params types too
@@ -11663,7 +11678,7 @@ Sat Jan 5 16:08:23 CET 2002 Paolo Molaro <lupus@ximian.com>
 	* expression.cs : Clean out code which uses the above.
 
 2001-10-31  Ravi Pratap  <ravi@ximian.com>
-	
+
 	* typemanager.cs (RegisterMethod): Check if we already have an existing key
 	and bale out if necessary by returning a false.
 
@@ -11820,7 +11835,7 @@ Sat Jan 5 16:08:23 CET 2002 Paolo Molaro <lupus@ximian.com>
 	* expression.cs (New::DoResolve): Implement guts of array creation.
 
 	(New::FormLookupType): Rename to FormArrayType and modify ever so slightly.
-	
+
 2001-10-27  Miguel de Icaza  <miguel@ximian.com>
 
 	* expression.cs: Fix bug I introduced lsat night that broke
@@ -11828,9 +11843,9 @@ Sat Jan 5 16:08:23 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	(Expression.Resolve): Report a 246 error (can not resolve name)
 	if we find a SimpleName in the stream.
-	
+
 	(Expression.ResolveLValue): Ditto.
-	
+
 	(Expression.ResolveWithSimpleName): This function is a variant of
 	ResolveName, this one allows SimpleNames to be returned without a
 	warning.  The only consumer of SimpleNames is MemberAccess
@@ -11851,7 +11866,7 @@ Sat Jan 5 16:08:23 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	* typemanger.cs: Load methodinfos for Threading.Monitor.Enter and
 	Threading.Monitor.Exit 
-	
+
 2001-10-23  Miguel de Icaza  <miguel@ximian.com>
 
 	* expression.cs (IndexerAccess::DoResolveLValue): Set the
@@ -11867,7 +11882,7 @@ Sat Jan 5 16:08:23 CET 2002 Paolo Molaro <lupus@ximian.com>
 	and Properties for handling assignment.
 
 	(Assign::Emit): Simplify and reuse code. 
-	
+
 	* expression.cs (IndexerAccess, PropertyExpr): Implement
 	IAssignMethod, clean up old code. 
 
@@ -11901,7 +11916,7 @@ Sat Jan 5 16:08:23 CET 2002 Paolo Molaro <lupus@ximian.com>
 	* class.cs (Method::Define): For the case where we are implementing a method
 	inherited from an interface, we need to set the MethodAttributes.Final flag too. 
 	Also set MethodAttributes.NewSlot and MethodAttributes.HideBySig.
-	
+
 2001-10-21  Ravi Pratap  <ravi@ximian.com>
 
 	* interface.cs (FindMembers): Implement to work around S.R.E
@@ -11928,12 +11943,12 @@ Sat Jan 5 16:08:23 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	* assign.cs (Assign::Resolve): Resolve right hand side first, and
 	then pass this as a hint to ResolveLValue.
-	
+
 	* expression.cs (FieldExpr): Add Location information
 
 	(FieldExpr::LValueResolve): Report assignment to readonly
 	variable. 
-	
+
 	(Expression::ExprClassFromMemberInfo): Pass location information.
 
 	(Expression::ResolveLValue): Add new method that resolves an
@@ -11950,12 +11965,12 @@ Sat Jan 5 16:08:23 CET 2002 Paolo Molaro <lupus@ximian.com>
 	now is part of Expression.
 
 	(ElementAccess): Depending on the element access type
-	
+
 	* typemanager.cs: Add `indexer_name_type' as a Core type
 	(System.Runtime.CompilerServices.IndexerNameAttribute)
 
 	* statement.cs (Goto): Take a location.
-	
+
 2001-10-18  Ravi Pratap  <ravi@ximian.com>
 
 	* delegate.cs (Delegate::VerifyDelegate): New method to verify
@@ -12043,7 +12058,7 @@ Sat Jan 5 16:08:23 CET 2002 Paolo Molaro <lupus@ximian.com>
 	(Do::Emit): Track old being/end loops;  Set Begin loop, ack end loop
 	(Foreach::Emit): Track old being/end loops;  Set Begin loop, ack
 	end loop
-	
+
 	* codegen.cs (EmitContext::LoopEnd, EmitContext::LoopBegin): New
 	properties that track the label for the current loop (begin of the
 	loop and end of the loop).
@@ -12087,7 +12102,7 @@ Sat Jan 5 16:08:23 CET 2002 Paolo Molaro <lupus@ximian.com>
 	(ConvertReferenceExplicit): Implement array conversion.
 
 	(ExplicitReferenceConversionExists): New method to determine precisely that :-)
-	
+
 2001-10-12  Ravi Pratap  <ravi@ximian.com>
 
 	* cs-parser.jay (delegate_declaration): Store the fully qualified
@@ -12104,7 +12119,7 @@ Sat Jan 5 16:08:23 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	(Emit): Emit any code, if necessary. I am not sure about this really, but let's
 	see.
-	
+
 	(CloseDelegate): Finally creates the delegate.
 
 	* class.cs (TypeContainer::DefineType): Update to define delegates.
@@ -12146,7 +12161,7 @@ Sat Jan 5 16:08:23 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	* expression.cs (LValue::LValueResolve): New method in the
 	interface, used to perform a second resolution pass for LValues. 
-	
+
 	(This::DoResolve): Catch the use of this in static methods.
 
 	(This::LValueResolve): Implement.
@@ -12167,7 +12182,7 @@ Sat Jan 5 16:08:23 CET 2002 Paolo Molaro <lupus@ximian.com>
 	* codegen.cs (EmitContext::GetTemporaryStorage): Used to store
 	value types returned from functions when we need to invoke a
 	method on the sturcture.
-	
+
 
 2001-10-11  Ravi Pratap  <ravi@ximian.com>
 
@@ -12209,14 +12224,14 @@ Sat Jan 5 16:08:23 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	(TypeContainer::DefineDefaultConstructor): Use Basename, not Name while creating
 	the default constructor.
-	
+
 	(TypeContainer::Populate): Fix minor bug which led to creating default constructors
 	twice.
 
 	(Constructor::IsDefault): Fix up logic to determine if it is the default constructor
 
 	* interface.cs (CloseType): Create the type here.
-	
+
 	* rootcontext.cs (CloseTypes): Re-write to recursively close types by running through
 	the hierarchy.
 
@@ -12250,12 +12265,12 @@ Sat Jan 5 16:08:23 CET 2002 Paolo Molaro <lupus@ximian.com>
 	TypeContainer.
 
 	Replaced `l' and `location' for `loc', for consistency.
-	
+
 	(Error, Warning): Remove unneeded Tc argument.
 
 	* assign.cs, literal.cs, constant.cs: Update to new calling
 	convention. 
-	
+
 	* codegen.cs: EmitContext now contains a flag indicating whether
 	code is being generated in a static method or not.
 
@@ -12298,9 +12313,9 @@ Sat Jan 5 16:08:23 CET 2002 Paolo Molaro <lupus@ximian.com>
 	(local_variable_declaration): Use opt_rank_specifier instead of type_suffixes.
 
 	* expression.cs (ElementAccess): Implement the LValue interface too.
-	
+
 2001-10-06  Ravi Pratap  <ravi@ximian.com>
-	
+
 	* expression.cs (ConvertExplicitStandard): Add. Same as ConvertExplicit
 	except that user defined conversions are not included.
 
@@ -12322,7 +12337,7 @@ Sat Jan 5 16:08:23 CET 2002 Paolo Molaro <lupus@ximian.com>
 	corresponding code generation bits to the statement classes. 
 
 	Added support for try/catch/finalize and throw.
-	
+
 	* cs-parser.jay: Added support for try/catch/finalize.
 
 	* class.cs: Catch static methods having the flags override,
@@ -12451,7 +12466,7 @@ Sat Jan 5 16:08:23 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	(Unary::report23): Change name to error23 and make first argument a TypeContainer
 	as I was getting thoroughly confused between this and error19 :-)
-	
+
 	* expression.cs (Expression::ImplicitUserConversion): Re-write fully
 	(::FindMostEncompassedType): Implement.
 	(::FindMostEncompassingType): Implement.
@@ -12527,10 +12542,10 @@ Sat Jan 5 16:08:23 CET 2002 Paolo Molaro <lupus@ximian.com>
 2001-10-01  Ravi Pratap  <ravi@ximian.com>
 
 	*  expression.cs (Expression::ImplicitUserConversion): Use location
-        even in the case when we are examining True operators.
+	even in the case when we are examining True operators.
  
-        * class.cs (Operator::Define): Perform extensive checks to conform
-        with the rules for operator overloading in the spec.
+	* class.cs (Operator::Define): Perform extensive checks to conform
+	with the rules for operator overloading in the spec.
 
 	* expression.cs (Expression::ImplicitReferenceConversion): Implement
 	some of the other conversions mentioned in the spec.
@@ -12590,7 +12605,7 @@ Sat Jan 5 16:08:23 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	* cs-parser.jay: Pass location information for various new
 	constructs. 
-	
+
 	* delegate.cs (Delegate): take a location argument.
 
 	* driver.cs: Do not call EmitCode if there were problesm in the
@@ -12605,7 +12620,7 @@ Sat Jan 5 16:08:23 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	* rootcontext.cs: Provide better information about the location of
 	failure when CreateType fails.
-	
+
 2001-09-29  Miguel de Icaza  <miguel@ximian.com>
 
 	* rootcontext.cs (RootContext::PopulateTypes): Populates structs
@@ -12683,12 +12698,12 @@ Sat Jan 5 16:08:23 CET 2002 Paolo Molaro <lupus@ximian.com>
 		  convert from an Int to a Short use an OpcodeCast', not
 		  `To convert from an Int to a Short use the OpcodeCast on
 		  the variable 5' (which is what this patch was doing).
-	
+
 2001-09-28  Ravi Pratap  <ravi@ximian.com>
 
 	* expression.cs (Invocation::ConversionExists): Re-write to use
 	the conversion cache
-	
+
 	(Expression::ConvertImplicit): Automatic bailing out if level != 0. Also
 	cache all conversions done, not just user-defined ones.
 
@@ -12703,12 +12718,12 @@ Sat Jan 5 16:08:23 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	* expression.cs (ConvertImplicit): Use a cache for conversions
 	already found. Check level of recursion and bail out if necessary.
-	
+
 2001-09-28  Miguel de Icaza  <miguel@ximian.com>
 
 	* typemanager.cs (string_concat_string_string, string_concat_object_object):
 	Export standard methods that we expect for string operations.
-	
+
 	* statement.cs (Block::UsageWarning): Track usage of variables and
 	report the errors for not used variables.
 
@@ -12743,7 +12758,7 @@ Sat Jan 5 16:08:23 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	(UserImplicitCast::Resolve): Eliminate, objects of type
 	UserImplicitCast are born in a fully resolved state. 
-	
+
 	* typemanager.cs (InitCoreTypes): Init also value_type
 	(System.ValueType). 
 
@@ -12777,10 +12792,10 @@ Sat Jan 5 16:08:23 CET 2002 Paolo Molaro <lupus@ximian.com>
 	(ParameterReference::Emit, ::Store): same.
 
 	(FieldExpr::AddressOf): Implement.
-	
+
 	* typemanager.cs: TypeManager: made public variable instead of
 	property.
-	
+
 	* driver.cs: document --fatal.
 
 	* report.cs (ErrorMessage, WarningMessage): new names for the old
@@ -12820,7 +12835,7 @@ Sat Jan 5 16:08:23 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	(UserImplicitCast::CanConvert, ::Resolve): Update to take care of the case when 
 	we have to convert to bool types. Not complete yet.
-	
+
 2001-09-27  Miguel de Icaza  <miguel@ximian.com>
 
 	* typemanager.cs (TypeManager::CSharpName): support ushort.
@@ -12835,7 +12850,7 @@ Sat Jan 5 16:08:23 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	(Invocation::Emit): If InstanceExpression is null, then it means
 	that we perform a call on this.
-	
+
 2001-09-26  Miguel de Icaza  <miguel@ximian.com>
 
 	* expression.cs (Unary::Emit): Remove some dead code.
@@ -12861,7 +12876,7 @@ Sat Jan 5 16:08:23 CET 2002 Paolo Molaro <lupus@ximian.com>
 	* class.cs (Operator): Update the operator names to reflect the
 	ones that the spec expects (as we are just stringizing the
 	operator names).
-	
+
 	* expression.cs (Unary::ResolveOperator): Fix bug: Use
 	MethodInfo's ReturnType instead of LookupMethodByBuilder as the
 	previous usage did only work for our methods.
@@ -12877,7 +12892,7 @@ Sat Jan 5 16:08:23 CET 2002 Paolo Molaro <lupus@ximian.com>
 	(Binary::ResolveOperator): ditto.
 	(Invocation::ConversionExists): ditto.
 	(UserImplicitCast::Resolve): ditto.
-	
+
 2001-09-26  Ravi Pratap  <ravi@ximian.com>
 
 	* expression.cs (Unary::Emit and Binary::Emit): If we have an overloaded
@@ -12938,17 +12953,17 @@ Sat Jan 5 16:08:23 CET 2002 Paolo Molaro <lupus@ximian.com>
 	pass (Bytes) or the wrong argument will be selected.
 
 	* expression.cs (Unary::Emit): Emit code for -expr.
-	
+
 	(Unary::ResolveOperator): Handle `Substract' for non-constants
 	(substract from zero from the non-constants).
 	Deal with Doubles as well. 
-	
+
 	(Expression::ConvertImplicitRequired): New routine that reports an
 	error if no implicit conversion exists. 
 
 	(Invocation::OverloadResolve): Store the converted implicit
 	expressions if we make them
-	
+
 2001-09-24  Ravi Pratap  <ravi@ximian.com>
 
 	* class.cs (ConstructorInitializer): Take a Location argument.
@@ -12985,7 +13000,7 @@ Sat Jan 5 16:08:23 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	* expression.cs (Invocation::FullMethodDesc): New static method to return a string fully describing
 	a given method.
-	
+
 2001-09-21  Ravi Pratap  <ravi@ximian.com>
 
 	* expression.cs (Invocation::OverloadResolve): Re-write to conform more to the spec.
@@ -13017,10 +13032,10 @@ Sat Jan 5 16:08:23 CET 2002 Paolo Molaro <lupus@ximian.com>
 	(Unary::ResolveOperator): Implement ++, !, ~,
 
 	(Invocation::Emit): Deal with new Emit convetion.
-	
+
 	* All Expression derivatives: Updated their Emit method to return
 	whether they leave values on the stack or not.
-	
+
 	* codegen.cs (CodeGen::EmitStatement): Pop values left on the
 	stack for expressions that are statements. 
 
@@ -13030,7 +13045,7 @@ Sat Jan 5 16:08:23 CET 2002 Paolo Molaro <lupus@ximian.com>
 	LValue objects.
 	(LocalVariableReference, ParameterReference, FieldExpr): Implement
 	LValue interface.
-	
+
 	* assign.cs (Assign::Emit, Assign::Resolve): Use new LValue
 	interface for generating code, simplifies the code.
 
@@ -13190,7 +13205,7 @@ Sat Jan 5 16:08:23 CET 2002 Paolo Molaro <lupus@ximian.com>
 	* expression.cs (Binary::Emit): Comment out code path to emit method
 	invocation stuff for the case when we have a user defined operator. I am
 	just not able to get it right !
-	
+
 2001-09-17  Miguel de Icaza  <miguel@ximian.com>
 
 	* expression.cs (Expression::OverloadResolve): Drop TypeContainer
@@ -13220,7 +13235,7 @@ Sat Jan 5 16:08:23 CET 2002 Paolo Molaro <lupus@ximian.com>
 	default constructors if none was provided.
 
 	(ConstructorInitializer): Add methods Resolve and Emit. 
-	
+
 	* expression.cs: Cast to ConstructorInfo instead of MethodInfo
 
 2001-09-17  Ravi Pratap  <ravi@ximian.com>
@@ -13256,7 +13271,7 @@ Sat Jan 5 16:08:23 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	* expression.cs (Binary::Emit): Update to emit the appropriate code for
 	the case when we have a user-defined operator.
-	
+
 2001-09-17  Miguel de Icaza  <miguel@ximian.com>
 
 	* rootcontext.cs: Fix bug: tree.Namespaces might be null.
@@ -13312,7 +13327,7 @@ Sat Jan 5 16:08:23 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	* modifiers.cs (TypeAttr, MethodAttr, FieldAttr): Map protected internal to
 	FamORAssem, not FamANDAssem.
-	
+
 2001-09-14  Miguel de Icaza  <miguel@ximian.com>
 
 	* driver.cs: Added --parse option that only parses its input files
@@ -13353,7 +13368,7 @@ Sat Jan 5 16:08:23 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	* class.cs (TypeContainer::IsTopLevel): Re-write. root_types doesn't seem to be the parent
 	of top-level types as claimed.
-	
+
 2001-09-13  Miguel de Icaza  <miguel@ximian.com>
 
 	* expression.cs (MemberLookup): Fruitless attempt to lookup
@@ -13465,7 +13480,7 @@ Sat Jan 5 16:08:23 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	(OpcodeCast): New type for casts of types that are performed with
 	a sequence of bytecodes.
-	
+
 	(BoxedCast): New type used for casting value types into reference
 	types.  Emits a box opcode.
 
@@ -13475,7 +13490,7 @@ Sat Jan 5 16:08:23 CET 2002 Paolo Molaro <lupus@ximian.com>
 	(Binary::EmitBranchable): Optimization.
 
 	(Binary::Emit): Implement code emission for expressions.
-	
+
 	* typemanager.cs (TypeManager): Added two new core types: sbyte
 	and byte.
 
@@ -13516,7 +13531,7 @@ Sat Jan 5 16:08:23 CET 2002 Paolo Molaro <lupus@ximian.com>
  	(Indexer::Define): Ditto.
 	(Event::Define): Ditto.
 	(Property::Define): Ditto.
-	
+
 2001-09-10  Ravi Pratap  <ravi@ximian.com>
 
 	* class.cs (TypeContainer::Populate): Now define operators too. 
@@ -13540,7 +13555,7 @@ Sat Jan 5 16:08:23 CET 2002 Paolo Molaro <lupus@ximian.com>
 	(Indexer.GetMethodBuilder, .SetMethodBuilder): New members to hold the method builders
 	for the get and set accessors.
 	(Indexer::Define): Implement.
-	
+
 2001-09-09  Miguel de Icaza  <miguel@ximian.com>
 
 	* expression.cs (Binary::Resolve): Beginning of it.  I scratched
@@ -13597,7 +13612,7 @@ Sat Jan 5 16:08:23 CET 2002 Paolo Molaro <lupus@ximian.com>
 	(BaseAccess): New class for expressions of the type 'base access.'
 	(CheckedExpr, UnCheckedExpr): New classes for Checked and Unchecked expressions
 	respectively.
-	
+
 	* cs-parser.jay (element_access): Implement action.
 	(base_access): Implement actions.
 	(checked_expression, unchecked_expression): Implement.
@@ -13611,13 +13626,13 @@ Sat Jan 5 16:08:23 CET 2002 Paolo Molaro <lupus@ximian.com>
 	name and the specifiers.
 
 	* interface.cs (InterfaceAttr): New property to return the corresponding TypeAttributes
-	
+
 	* rootcontext.cs (CreateInterface): Use the InterfaceAttr property instead of 
 	making them all public ;-)
 
 	* cs-parser.jay (error): Remove entirely as we have an implementation in the base
 	class anyways.
-	
+
 2001-09-07  Miguel de Icaza  <miguel@ximian.com>
 
 	* expression.cs (ExprClassFromMemberInfo): Return FieldExpr and
@@ -13656,14 +13671,14 @@ Sat Jan 5 16:08:23 CET 2002 Paolo Molaro <lupus@ximian.com>
 	(event_declaration): Ditto.
 	(enum_declaration): Ditto.
 	(indexer_declaration): Ditto.
-	
+
 	* class.cs (Operator::Operator): Update constructor accordingly.
 	(Event::Event): Ditto.
 
 	* delegate.cs (Delegate::Delegate): Same here.
 
 	* enum.cs (Enum::Enum): Same here.
-	
+
 2001-09-05  Ravi Pratap  <ravi@ximian.com>
 
 	* cs-parser.jay (CheckAttributeTarget): Update to use the right error number.
@@ -13683,14 +13698,14 @@ Sat Jan 5 16:08:23 CET 2002 Paolo Molaro <lupus@ximian.com>
 	(parameter_array): Ditto.
 	(property_declaration): Ditto.
 	(destructor_declaration): Ditto.
-	
+
 	* class.cs (Struct::Struct): Update constructors accordingly.
 	(Class::Class): Ditto.
 	(Field::Field): Ditto.
 	(Method::Method): Ditto.
 	(Property::Property): Ditto.
 	(TypeContainer::OptAttribute): update property's return type.
-	
+
 	* interface.cs (Interface.opt_attributes): New member.
 	(Interface::Interface): Update to take the extra Attributes argument.
 
@@ -13747,14 +13762,14 @@ Sat Jan 5 16:08:23 CET 2002 Paolo Molaro <lupus@ximian.com>
 	a Type.
 
 	(Invocation::Resolve): Begin implementing resolution of invocations.
-	
+
 	* literal.cs (StringLiteral):  Implement Emit.
 
 2001-09-05  Ravi Pratap  <ravi@ximian.com>
 
 	* cs-parser.jay (error): Add new modifier because we are hiding an inherited
 	member.
-	
+
 2001-09-04  Ravi Pratap  <ravi@ximian.com>
 
 	* cs-parser.jay (attribute_arguments): Implement actions.
@@ -13774,7 +13789,7 @@ Sat Jan 5 16:08:23 CET 2002 Paolo Molaro <lupus@ximian.com>
 	(attribute_section): Modify production to use 2 different rules to 
 	achieve the same thing. 1 s/r conflict down !
 	Clean out commented, useless, non-reducing dimension_separator rules.
-	
+
 	* class.cs (TypeContainer.attributes): New member to hold list
 	of attributes for a type.
 	(Struct::Struct): Modify to take one more argument, the attribute list.
@@ -13782,7 +13797,7 @@ Sat Jan 5 16:08:23 CET 2002 Paolo Molaro <lupus@ximian.com>
 	(Field::Field): Ditto.
 	(Method::Method): Ditto.
 	(Property::Property): Ditto.
-	
+
 	* cs-parser.jay (struct_declaration): Update constructor call to
 	pass in the attributes too.
 	(class_declaration): Ditto.
@@ -13873,7 +13888,7 @@ Sat Jan 5 16:08:23 CET 2002 Paolo Molaro <lupus@ximian.com>
 	define all enumerations.
 
 	* enum.cs (Define): Implement.
-	
+
 2001-08-31  Ravi Pratap  <ravi@che.iitm.ac.in>
 
 	* cs-parser.jay (overloadable_operator): The semantic value is an
@@ -13915,7 +13930,7 @@ Sat Jan 5 16:08:23 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	* ../tests/try.cs : Fix. It's not 'finalize' my friend, it's 'finally' !
 	Hooray, try and catch statements parse fine !
-	
+
 2001-08-28  Ravi Pratap  <ravi@che.iitm.ac.in>
 
 	* statement.cs (Block::GetVariableType): Fix logic to extract the type
@@ -13991,7 +14006,7 @@ Sat Jan 5 16:08:23 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	* cs-parser.jay (array_creation_expression): Implement to call
 	the overloaded New constructor.
-	
+
 2001-08-26  Ravi Pratap  <ravi@che.iitm.ac.in>
 
 	* class.cs (TypeContainer::Constructors): Return member
@@ -14011,14 +14026,14 @@ Sat Jan 5 16:08:23 CET 2002 Paolo Molaro <lupus@ximian.com>
 	* codegen.cs, cs-parser.jay: Fixed the bug that stopped code
 	generation from working.     Also add some temporary debugging
 	code. 
-	
+
 2001-08-24  Miguel de Icaza  <miguel@ximian.com>
 
 	* codegen.cs: Lots of code generation pieces.  This is only the
 	beginning, will continue tomorrow with more touches of polish.  We
 	handle the fundamentals of if, while, do, for, return.  Others are
 	trickier and I need to start working on invocations soon.
-	
+
 	* gen-treedump.cs: Bug fix, use s.Increment here instead of
 	s.InitStatement. 
 
@@ -14066,7 +14081,7 @@ Sat Jan 5 16:08:23 CET 2002 Paolo Molaro <lupus@ximian.com>
 	(TypeContainer::EmitMethod):  New method.  Emits methods.
 
 	* expression.cs: Removed MethodGroup class from here.
-	
+
 	* parameter.cs (Parameters::GetCallingConvention): new method.
 
 2001-08-21  Miguel de Icaza  <miguel@ximian.com>
@@ -14077,7 +14092,7 @@ Sat Jan 5 16:08:23 CET 2002 Paolo Molaro <lupus@ximian.com>
 	(Constructor::CallingConvention): Returns the calling convention.
 	(Constructor::ParameterTypes): Returns the constructor parameter
 	types. 
-	
+
 	(TypeContainer::AddConstructor): Keep track of default constructor
 	and the default static constructor.
 
@@ -14097,7 +14112,7 @@ Sat Jan 5 16:08:23 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	(constructor_declarator): If there is no implicit `base' or
 	`this', then invoke the default parent constructor. 
-	
+
 	* modifiers.cs (MethodAttr): New static function maps a set of
 	modifiers flags into a MethodAttributes enum
 	(FieldAttr): renamed from `Map'.  So now we have FieldAttr,
@@ -14155,16 +14170,16 @@ Sat Jan 5 16:08:23 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	* rootcontext.cs (LookupType): New function.  Used to locate types 
 
-	
+
 2001-08-08  Miguel de Icaza  <miguel@ximian.com>
 
 	* rootcontext.cs: OH MY!  My trick works!   It is amazing how nice
 	this System.Reflection code is.  Kudos to Microsoft
-	
+
 	* typemanager.cs: Implement a type cache and avoid loading all
 	types at boot time.  Wrap in LookupType the internals.  This made
 	the compiler so much faster.  Wow.  I rule!
-	
+
 	* driver.cs: Make sure we always load mscorlib first (for
 	debugging purposes, nothing really important).
 
@@ -14208,7 +14223,7 @@ Sat Jan 5 16:08:23 CET 2002 Paolo Molaro <lupus@ximian.com>
 	(ResolveTree): Encapsulated all the tree resolution here.
 	(CreateClass, GetClassBases, GetInterfaceOrClass): Create class
 	types. 
-	
+
 	* driver.cs: Add support for --nostdlib, to avoid loading the
 	default assemblies.
 	(Main): Do not put tree resolution here. 
@@ -14223,7 +14238,7 @@ Sat Jan 5 16:08:23 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	* rootcontext.cs (CreateInterface): Handle the case where there
 	are no parent interfaces.
-	
+
 	(CloseTypes): Routine to flush types at the end.
 	(CreateInterface): Track types.
 	(GetInterfaces): Returns an array of Types from the list of
@@ -14232,7 +14247,7 @@ Sat Jan 5 16:08:23 CET 2002 Paolo Molaro <lupus@ximian.com>
 	* typemanager.c (AddUserType): Mechanism to track user types (puts
 	the type on the global type hash, and allows us to close it at the
 	end). 
-	
+
 2001-08-02  Miguel de Icaza  <miguel@ximian.com>
 
 	* tree.cs: Removed RecordType, added RecordClass, RecordStruct and
@@ -14263,7 +14278,7 @@ Sat Jan 5 16:08:23 CET 2002 Paolo Molaro <lupus@ximian.com>
 	(enum_body): Put an opt_comma here instead of putting it on
 	enum_body or enum_member_declarations so we can handle trailing
 	commas on enumeration members.  Gets rid of a shift/reduce.
-	
+
 	(type_list): Need a COMMA in the middle.
 
 	(indexer_declaration): Tell tokenizer to recognize get/set
@@ -14276,7 +14291,7 @@ Sat Jan 5 16:08:23 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	* cs-parser.jay: Add precendence rules for a number of operators
 	ot reduce the number of shift/reduce conflicts in the grammar.
-	
+
 2001-07-17  Miguel de Icaza  <miguel@ximian.com>
 
 	* tree.cs: moved IGenerator interface and renamed it to ITreeDump

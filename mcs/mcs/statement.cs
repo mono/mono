@@ -1181,6 +1181,14 @@ namespace Mono.CSharp {
 			this.loc = start;
 			this_id = id++;
 			statements = new ArrayList ();
+
+			if (parent != null && Implicit) {
+				if (parent.child_variable_names == null)
+					parent.child_variable_names = new Hashtable();
+				// share with parent
+				child_variable_names = parent.child_variable_names;
+			}
+				
 		}
 
 		public Block CreateSwitchBlock (Location start)
@@ -1305,28 +1313,6 @@ namespace Mono.CSharp {
 		}
 
 		// <summary>
-		//   Marks all variables from block @block and all its children as being
-		//   used in a child block.
-		// </summary>
-		public void AddChildVariableNames (Block block)
-		{
-			if (block.Variables != null) {
-				foreach (string name in block.Variables.Keys)
-					AddChildVariableName (name);
-			}
-
-			if (block.children != null) {
-				foreach (Block child in block.children)
-					AddChildVariableNames (child);
-			}
-
-			if (block.child_variable_names != null) {
-				foreach (string name in block.child_variable_names.Keys)
-					AddChildVariableName (name);
-			}
-		}
-
-		// <summary>
 		//   Checks whether a variable name has already been used in a child block.
 		// </summary>
 		public bool IsVariableNameUsedInChildBlock (string name)
@@ -1400,10 +1386,18 @@ namespace Mono.CSharp {
 					return null;
 				}
 			}
-			
+
 			vi = new LocalInfo (type, name, this, l);
 
 			variables.Add (name, vi);
+
+			// Mark 'name' as "used by a child block" in every surrounding block
+			Block cur = this;
+			while (cur != null && cur.Implicit) 
+				cur = cur.Parent;
+			if (cur != null)
+				for (Block par = cur.Parent; par != null; par = par.Parent)
+					par.AddChildVariableName (name);
 
 			if ((flags & Flags.VariablesInitialized) != 0)
 				throw new Exception ();
@@ -1711,7 +1705,7 @@ namespace Mono.CSharp {
 			ec.StartFlowBranching (this);
 
 			Report.Debug (4, "RESOLVE BLOCK", StartLocation, ec.CurrentBranching);
-			
+
 			bool unreachable = false, warning_shown = false;
 
 			int statement_count = statements.Count;

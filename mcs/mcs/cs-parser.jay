@@ -3460,7 +3460,7 @@ foreach_statement
 	  {
 		oob_stack.Push (current_block);
 
-		Block foreach_block = new Block (current_block, Block.Flags.Implicit);
+		Block foreach_block = new Block (current_block);
 		LocalVariableReference v = null;
 		Location l = lexer.Location;
 		LocalInfo vi;
@@ -4080,10 +4080,9 @@ Block declare_local_variables (Expression type, ArrayList variable_declarators, 
 	//
 	// int j = 1;  int k = j + 1;
 	//
-	if (current_block.Used) {
+	if (current_block.Used)
 		implicit_block = new Block (current_block, Block.Flags.Implicit, loc, Location.Null);
-		implicit_block.AddChildVariableNames (current_block);
-	} else
+	else
 		implicit_block = current_block;
 
 	foreach (VariableDeclaration decl in variable_declarators){
