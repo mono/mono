@@ -14,6 +14,7 @@
 //
 // To be included with Mono as a SQL query tool licensed under the GPL license.
 //
+//#define DEBUG
 
 namespace Mono.Data.SqlSharp.Gui.GtkSharp {
 	using System;
@@ -22,6 +23,7 @@ namespace Mono.Data.SqlSharp.Gui.GtkSharp {
 	using System.Data.Common;
 	using System.Data.Odbc;
 	using System.Data.OleDb;
+	using System.Data.SqlClient;
 	using System.Drawing;
 	using System.Text;
 	using System.IO;
@@ -158,6 +160,19 @@ namespace Mono.Data.SqlSharp.Gui.GtkSharp {
 				"Mono.Data.SqliteClient",
 				"Mono.Data.SqliteClient.SqliteConnection",
 				false ));
+			providerList.Add (new DbProvider(
+				"ORACLE",
+				"Oracle 8i/9i",
+				"System.Data.OracleClient",
+				"System.Data.OracleClient.OracleConnection",
+				false ));
+			providerList.Add (new DbProvider(
+				"SYBASE",
+				"Sybase",
+				"Mono.Data.SybaseClient",
+				"Mono.Data.SybaseClient.SybaseConnection",
+				false ));
+
 		}
 
 		public MenuBar CreateMenuBar() {
@@ -226,24 +241,20 @@ namespace Mono.Data.SqlSharp.Gui.GtkSharp {
 			string providerConnectionClass) {
 			
 			try {
-				Debug.WriteLine("Loading external provider...");
-				Console.Out.Flush();
-
+				SqlSharpGtk.DebugWriteLine ("Loading external provider...");
+				
 				Assembly ps = Assembly.Load(providerAssembly);
 				Type typ = ps.GetType(providerConnectionClass);
 				conn = (IDbConnection) Activator.CreateInstance(typ);
 								
-				Debug.WriteLine("External provider loaded.");
-				Console.Out.Flush();
+				SqlSharpGtk.DebugWriteLine ("External provider loaded.");
 			}
 			catch(Exception f) {
 				string errorMessage = String.Format(
 					"Error: unable to load the assembly of the provider: {1} because: {2}", 
 					providerAssembly,
 					f.Message);
-				Console.WriteLine(errorMessage);
-				Console.Out.Flush();
-				AppendText(buf, errorMessage);
+				Error (errorMessage);
 				return false;
 			}
 			return true;
@@ -271,9 +282,11 @@ namespace Mono.Data.SqlSharp.Gui.GtkSharp {
 			AppendText(buf, "Disconnecting...");
 			try {
 				conn.Close();
+				conn = null;
 			}
 			catch(Exception e) {
 				Console.WriteLine("Error: Unable to disconnect." + e.Message);
+				conn = null;
 				return;
 			}
 			AppendText(buf, "Disconnected.");
@@ -304,7 +317,7 @@ namespace Mono.Data.SqlSharp.Gui.GtkSharp {
 				return;
 			}
 
-			Error("get text from SQL editor...");
+			SqlSharpGtk.DebugWriteLine ("get text from SQL editor...");
 
 			// get text from SQL editor
 			try {
@@ -332,7 +345,7 @@ namespace Mono.Data.SqlSharp.Gui.GtkSharp {
 			
 
 			IDataReader reader = null;
-			Error("Executing SQL: " + sql);
+			SqlSharpGtk.DebugWriteLine ("Executing SQL: " + sql);
 
 			try {
 				reader = cmd.ExecuteReader();
@@ -718,39 +731,47 @@ namespace Mono.Data.SqlSharp.Gui.GtkSharp {
 			AppendText(buf, message);
 		}
 
-		bool OpenInternalProvider() {
+		bool OpenInternalProvider () {
 			string msg;
 
 			string providerKey = dbProvider.Key;
-			switch(providerKey.ToUpper()) {
+			switch (providerKey.ToUpper ()) {
+			case "SQLCLIENT":
+				try {
+					conn = new SqlConnection ();
+				}
+				catch (Exception e) {
+					msg = "Error: unable to create connection: " +
+						e.Message;
+					Error (msg);
+					return false;
+				}
+				break;
 			case "ODBC":
 				try {
-					conn = new OdbcConnection();
+					conn = new OdbcConnection ();
 				}
-				catch(Exception e) {
-					Console.WriteLine("Error: unable to create connection: " +
-						e.Message);
+				catch (Exception e) {
+					msg = "Error: unable to create connection: " +
+						e.Message;
+					Error (msg);
 					return false;
 				}
 				break;
 			case "OLEDB":
 				try {
-					conn = new OleDbConnection();
+					conn = new OleDbConnection ();
 				}
-				catch(Exception e) {
-					Console.WriteLine("Error: unable to create connection: " +
-						e.Message);
+				catch (Exception e) {
+					msg = "Error: unable to create connection: " +
+						e.Message;
+					Error (msg);
 					return false;
 				}
 				break;
-			case "SQLCLIENT":
-			case "ORACLE":
-				msg = "Error: Provider not currently supported.";
-				Error(msg);
-				return false;
 			default:
 				msg = "Error: provider not supported.";
-				Error(msg);
+				Error (msg);
 				return false;
 			}
 			return true;
@@ -761,14 +782,14 @@ namespace Mono.Data.SqlSharp.Gui.GtkSharp {
 			string msg;
 
 			string providerKey = dbProvider.Key;
-			switch(providerKey.ToUpper()) {
-			case "TDS":
+			switch (providerKey.ToUpper ()) {
 			case "SYBASE":
+			case "ORACLE":
 				msg = "Error: Provider not currently supported.";
 				Error(msg);
 				break;
 			default:
-				success = LoadExternalProvider(
+				success = LoadExternalProvider (
 					dbProvider.Assembly,
 					dbProvider.ConnectionClass);
 				break;
@@ -776,57 +797,63 @@ namespace Mono.Data.SqlSharp.Gui.GtkSharp {
 			return success;
 		}
 
-		public bool OpenDataSource() {
+		public bool OpenDataSource () {
 			string msg;
 			bool gotClass = false;
 			
 			msg = "Attempt to open connection...";
-			AppendText(buf, msg);
+			AppendText (buf, msg);
 
 			conn = null;
 
 			try {
-				if(dbProvider.InternalProvider == true) {
-					gotClass = OpenInternalProvider();
+				if (dbProvider.InternalProvider == true) {
+					gotClass = OpenInternalProvider ();
 				} 
 				else {
-					gotClass = OpenExternalProvider();
+					gotClass = OpenExternalProvider ();
 				}
 			}
-			catch(Exception e) {
+			catch (Exception e) {
 				msg = "Error: Unable to create Connection object. " + 
 					e.Message;
-				Error(msg);
+				Error (msg);
 				return false;
 			}
 
-			if(gotClass == false)
+			if (gotClass == false)
 				return false;
 
 			conn.ConnectionString = connectionString;
 			
 			try {
-				conn.Open();
-				if(conn.State == ConnectionState.Open)
-					AppendText(buf, "Open was successfull.");
+				conn.Open ();
+				if( conn.State == ConnectionState.Open)
+					AppendText (buf, "Open was successfull.");
 				else {
-					AppendText(buf, "Error: Open failed.");
+					AppendText (buf, "Error: Open failed.");
 					return false;
 				}
 			}
-			catch(Exception e) {
+			catch (Exception e) {
 				msg = "Error: Could not open data source: " + e.Message;
-				Error(msg);
+				Error (msg);
 				conn = null;
 			}
 			return true;
 		}
 
+		public static void DebugWriteLine (string text) {
+#if DEBUG
+			Console.WriteLine (text);
+			Console.Out.Flush ();
+#endif // DEBUG
+		}
+
 		public static int Main (string[] args) {
-			Debug.AutoFlush = true;
 
 			Application.Init ();
-			SqlSharpGtk sqlSharp = new SqlSharpGtk();
+			SqlSharpGtk sqlSharp = new SqlSharpGtk ();
 			Application.Run ();
 
 			return 0;

@@ -1,5 +1,15 @@
 2002-10-25  Daniel Morgan <danmorg@sc.rr.com>
 
+	* sqlsharpgtk.cs: add support for
+	SqlClient and TdsClient providers.  Added
+	DebugWriteLine() for debugging.  Misc. tweaks
+	
+	* LoginDialog.cs
+	* SqlEditorSharp.cs: use DebugWriteLine() for 
+    debug messages
+	
+2002-10-25  Daniel Morgan <danmorg@sc.rr.com>
+
 	* all of the files: modified made sure 
 	  licensing terms were the same
 	  for mcs tools being under the GPL license

@@ -8,7 +8,7 @@
 #
 
 # used for debugging
-DEBUG = /d:DEBUG
+DEBUG = -define:DEBUG
 # DEBUG =
 
 PROJECT = sqlsharpgtk.exe
@@ -30,7 +30,7 @@ MODULES = sqlsharpgtk.cs SqlEditorSharp.cs LoginDialog.cs DbProvider.cs DbProvid
 all : $(PROJECT)
 
 $(PROJECT) : $(MODULES)
-	$(CSHARPCOMPILER) -o $(PROJECT) $(MODULES) $(SQLSHARP_GTK_LIBS) $(DEBUG)
+	$(CSHARPCOMPILER) -o $(PROJECT) $(MODULES) $(SQLSHARP_GTK_LIBS) $(DEBUG) 
 
 clean:
 	rm *.exe

@@ -7,6 +7,7 @@
 //
 // To be included with Mono as a SQL query tool licensed under the GPL license.
 //
+//#define DEBUG
 
 namespace Mono.Data.SqlSharp.Gui.GtkSharp {
 	using System;
@@ -114,6 +115,7 @@ namespace Mono.Data.SqlSharp.Gui.GtkSharp {
 
 		void SetProviderSelection (int selected) {
 			sqlSharp.dbProvider = sqlSharp.providerList[selected];
+			SqlSharpGtk.DebugWriteLine ("provider: " + sqlSharp.dbProvider.Name);
 		}
 
 		void Connect_Action (object o, EventArgs args) {

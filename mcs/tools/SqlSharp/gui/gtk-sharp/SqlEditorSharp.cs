@@ -12,6 +12,7 @@
 // SqlEditorSharp falls under the GPL license and is included
 // in SQL# For GTK#.  SQL# For GTK# is a database query tool for Mono.
 //
+//#define DEBUG
 
 namespace SqlEditorSharp {
 
@@ -24,6 +25,7 @@ namespace SqlEditorSharp {
 	using System.Text;
 	using System.Runtime.InteropServices;
 	using System.Diagnostics;
+	using Mono.Data.SqlSharp.Gui.GtkSharp;
 
 	/// <summary> SqlEditor Class</summary>
 	/// <remarks>
@@ -155,12 +157,12 @@ namespace SqlEditorSharp {
 		// Private Methods
 
 		void OnTextChanged (object o, EventArgs args) {
-			Debug.WriteLine ("[[[[[ Syntax Hi-Light Text BEGIN ]]]]]");
+			SqlSharpGtk.DebugWriteLine ("[[[[[ Syntax Hi-Light Text BEGIN ]]]]]");
 
 			if (use_hi_lighting == true)
 				SyntaxHiLightText ();
 			
-			Debug.WriteLine ("[[[[[ Syntax Hi-Light Text END   ]]]]]\n");
+			SqlSharpGtk.DebugWriteLine ("[[[[[ Syntax Hi-Light Text END   ]]]]]\n");
 		}
 
 		void SyntaxHiLightText () {
@@ -187,7 +189,8 @@ namespace SqlEditorSharp {
 			sqlTextBuffer.GetIterAtOffset (out start_iter, 0);
 			char_count = sqlTextBuffer.CharCount;
 			sqlTextBuffer.GetIterAtOffset (out end_iter, char_count);
-			Debug.WriteLine ("char_count: " + char_count);
+			
+			SqlSharpGtk.DebugWriteLine ("char_count: " + char_count);
 			
 			/* since line is not same - redo all */
 			//if (line != line_last_changed) {
@@ -559,19 +562,19 @@ namespace SqlEditorSharp {
 				return false;
 
 #if DEBUG
-			Debug.WriteLine("IsTextSQL - " +
+			SqlSharpGtk.DebugWriteLine("IsTextSQL - " +
 				"begin: " + begin.ToString() +
 				" end: " + end.ToString() +
 				" text_len: " + text_len);
-			Debug.WriteLine("[TEXT BEGIN]");
-			Debug.WriteLine(text);
-			Debug.WriteLine("[TEXT END  ]");
+			SqlSharpGtk.DebugWriteLine("[TEXT BEGIN]");
+			SqlSharpGtk.DebugWriteLine(text);
+			SqlSharpGtk.DebugWriteLine("[TEXT END  ]");
 #endif // DEBUG
 
 			for (i = 0; sql_keywords[i] != String.Empty; i++) {
 				if(text_len == sql_keywords[i].Length) {
 			
-					Debug.WriteLine(
+					SqlSharpGtk.DebugWriteLine(
 						"Test length: " + text_len + 
 						" keyword: " + keyword);
 					
@@ -579,7 +582,7 @@ namespace SqlEditorSharp {
 						keyword = text.Substring (begin, text_len);
 					}
 					catch(ArgumentOutOfRangeException a) {
-						Console.WriteLine("Internal Error: SqlSharpGtk: text.Substring() ArgumentOutOfRange");
+						Console.WriteLine ("Internal Error: SqlSharpGtk: text.Substring() ArgumentOutOfRange");
 					}
 
 					keyword = keyword.ToUpper();
@@ -607,6 +610,8 @@ namespace SqlEditorSharp {
 
 		void DebugText (TextIter iter_start, TextIter iter_end,
 			string debugMessage) {
+
+#if DEBUG
 			string text = sqlTextBuffer.GetText (
 				iter_start, iter_end, false);
 			string msg = 
@@ -615,7 +620,8 @@ namespace SqlEditorSharp {
 				" (" +
 				text +
 				")";
-			Debug.WriteLine(msg);
+			SqlSharpGtk.DebugWriteLine(msg);
+#endif // DEBUG
 		}
 
 		static readonly string[] sql_keywords = 
