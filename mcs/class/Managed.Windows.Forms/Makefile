@@ -10,6 +10,5 @@ LIB_MCS_FLAGS = /unsafe \
 EXTRA_DISTFILES = \
 	README
 
-NO_TEST = yes
 
 include ../../build/library.make
