@@ -1,3 +1,7 @@
+2003-10-23 Carlos Guzmán Álvarez <carlosga@telefonica.net>
+
+	* Added partial implementation of SSL3 protocol ( not finished yet ) to the TLS sources.
+
 2003-10-20  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* Mono.Security.dll.sources: Removed AssemblyInfo.cs from build.
