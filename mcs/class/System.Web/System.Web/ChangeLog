@@ -1,4 +1,8 @@
 2004-1-1  Alon Gazit <along@mainsoft.com>
+	* HttpWriter.cs: add check in Write() in order to prevent
+	NullReferenceException.
+
+2004-1-1  Alon Gazit <along@mainsoft.com>
 	* HttpResponse.cs: implemented ExpiresAbsolute and Expires.
 
 2003-12-18  Jackson Harper <jackson@ximian.com>

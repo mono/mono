@@ -174,8 +174,11 @@ namespace System.Web
 
 		public override void Write (object obj)
 		{
-			_OutputHelper.Write (obj.ToString ());
-			CheckIfFlush ();
+			if (obj != null)
+			{
+				_OutputHelper.Write (obj.ToString ());
+				CheckIfFlush ();
+			}
 		}
 
 		public override void Write (string s)
