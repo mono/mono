@@ -96,10 +96,12 @@ namespace Microsoft.JScript
 			set { throw new NotImplementedException (); }
 		}
 
+		/*
 		public Object this [params Object [] pars] {
 			get { throw new NotImplementedException (); }
 			set { throw new NotImplementedException (); }
 		}
+		*/
 
 		public virtual Type UnderlyingSystemType {
 			get { throw new NotImplementedException (); }
