@@ -2,13 +2,13 @@
 // System.Diagnostics.PerformanceCounterPermissionAccess.cs
 //
 // Authors:
-//   Jonathan Pryor (jonpryor@vt.edu)
-//   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
+//	Jonathan Pryor (jonpryor@vt.edu)
+//	Andreas Nahr (ClassDevelopment@A-SoftTech.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2002
 // (C) 2003 Andreas Nahr
-//
-
+// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -30,17 +30,23 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
-using System.Diagnostics;
-
 namespace System.Diagnostics {
 
-	[Flags ()]
+	[Flags]
 	public enum PerformanceCounterPermissionAccess {
 		Administer=0x0E,
+		None=0x00,
+#if NET_2_0
+		[Obsolete ()]
+		Browse=0x02,
+		[Obsolete ()]
+		Instrument=0x06,
+		Read,
+		Write,
+#else
 		Browse=0x02,
 		Instrument=0x06,
-		None=0x00
+#endif
 	}
 }
 

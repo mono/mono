@@ -1,3 +1,18 @@
+2004-09-10  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* EventLogPermission.cs: Fixed initialization (TagNames and
+	PermissionAccessType).
+	* EventLogPermissionAccess.cs: Added new enums for NET_2_0 and added 
+	[Obsolete] to some existing elements.
+	* EventLogPermissionAttribute.cs: Added missing validation to property
+	MachineName. Fixed changes for NET_2_0.
+	* PerformanceCounterPermission.cs: Fixed initialization (TagNames and
+	PermissionAccessType).
+	* PerformanceCounterPermissionAccess.cs: Added new enums for NET_2_0
+	and added [Obsolete] to some existing elements.
+	* PerformanceCounterPermissionAttribute.cs: Added missing validations
+	to properties (Path, MachineName). Fixed changes for NET_2_0.
+
 2004-09-07  Dick Porter  <dick@ximian.com>
 
 	* Process.cs: Throw documented exceptions when getting stdin,

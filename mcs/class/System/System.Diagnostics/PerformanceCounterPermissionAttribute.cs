@@ -2,13 +2,13 @@
 // System.Diagnostics.PerformanceCounterPermissionAttribute.cs
 //
 // Authors:
-//   Jonathan Pryor (jonpryor@vt.edu)
-//   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
+//	Jonathan Pryor (jonpryor@vt.edu)
+//	Andreas Nahr (ClassDevelopment@A-SoftTech.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2002
 // (C) 2003 Andreas Nahr
-//
-
+// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -30,16 +30,12 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
-using System.Diagnostics;
 using System.Security;
 using System.Security.Permissions;
 
-namespace System.Diagnostics 
-{
+namespace System.Diagnostics {
 
-	[AttributeUsage(
-		AttributeTargets.Assembly |
+	[AttributeUsage (AttributeTargets.Assembly |
 		AttributeTargets.Class |
 		AttributeTargets.Struct |
 		AttributeTargets.Constructor |
@@ -47,8 +43,8 @@ namespace System.Diagnostics
 		AttributeTargets.Event, AllowMultiple=true,
 		Inherited=false)]
 	[Serializable]
-	public class PerformanceCounterPermissionAttribute : CodeAccessSecurityAttribute 
-	{
+	public class PerformanceCounterPermissionAttribute : CodeAccessSecurityAttribute {
+
 		private string categoryName;
 		private string machineName;
 		private PerformanceCounterPermissionAccess permissionAccess;
@@ -56,28 +52,35 @@ namespace System.Diagnostics
 		public PerformanceCounterPermissionAttribute (SecurityAction action) 
 			: base (action)
 		{
-			categoryName = "*";
-			machineName = ".";
+			categoryName = ResourcePermissionBase.Any;
+			machineName = ResourcePermissionBase.Local;
+#if NET_2_0
+			permissionAccess = PerformanceCounterPermissionAccess.Write;
+#else
 			permissionAccess = PerformanceCounterPermissionAccess.Browse;
+#endif
 		}
 
 		public string CategoryName {
-			get {return categoryName;}
-			set {categoryName = value;}
+			get { return categoryName; }
+			set {
+				if (value == null)
+					throw new ArgumentNullException ("CategoryName");
+				categoryName = value;
+			}
 		}
 
-		// May throw ArgumentException if computer name is invalid
 		public string MachineName {
-			get {return machineName;}
+			get { return machineName; }
 			set {
-				// TODO check machine name
+				ResourcePermissionBase.ValidateMachineName (value);
 				machineName = value;
 			}
 		}
 
 		public PerformanceCounterPermissionAccess PermissionAccess {
-			get {return permissionAccess;}
-			set {permissionAccess = value;}
+			get { return permissionAccess; }
+			set { permissionAccess = value; }
 		}
 
 		public override IPermission CreatePermission ()
@@ -85,7 +88,7 @@ namespace System.Diagnostics
 			if (base.Unrestricted) {
 				return new PerformanceCounterPermission (PermissionState.Unrestricted); 
 			}
-			return new PerformanceCounterPermission (PermissionAccess, MachineName, categoryName); 
+			return new PerformanceCounterPermission (permissionAccess, machineName, categoryName); 
 		}
 	}
 }

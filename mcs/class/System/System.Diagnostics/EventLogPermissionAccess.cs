@@ -2,11 +2,11 @@
 // System.Diagnostics.EventLogPermissionAccess.cs
 //
 // Authors:
-//   Jonathan Pryor (jonpryor@vt.edu)
+//	Jonathan Pryor (jonpryor@vt.edu)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2002 Jonathan Pryor
-//
-
+// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -28,17 +28,25 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
-using System.Diagnostics;
-
 namespace System.Diagnostics {
 
 	[Flags, Serializable]
 	public enum EventLogPermissionAccess {
 		None=0,
+#if NET_2_0
+		[Obsolete ()]
+		Browse=0x2,
+		[Obsolete ()]
+		Instrument=0x6,
+		[Obsolete ()]
+		Audit=0xA,
+		Write,
+		Administer,
+#else
 		Browse=0x2,
 		Instrument=0x6,
 		Audit=0xA,
+#endif
 	}
 }
 

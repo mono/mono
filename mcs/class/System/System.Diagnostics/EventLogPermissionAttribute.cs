@@ -2,13 +2,13 @@
 // System.Diagnostics.EventLogPermissionAttribute.cs
 //
 // Authors:
-//   Jonathan Pryor (jonpryor@vt.edu)
-//   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
+//	Jonathan Pryor (jonpryor@vt.edu)
+//	Andreas Nahr (ClassDevelopment@A-SoftTech.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2002
 // (C) 2003 Andreas Nahr
-//
-
+// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -30,52 +30,52 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
-using System.Diagnostics;
 using System.Security;
 using System.Security.Permissions;
 
-namespace System.Diagnostics 
-{
+namespace System.Diagnostics {
 
-	[AttributeUsage(
+	[AttributeUsage (
 		AttributeTargets.Assembly | AttributeTargets.Class |
 		AttributeTargets.Struct | AttributeTargets.Constructor |
 		AttributeTargets.Method | AttributeTargets.Event,
 		AllowMultiple=true, Inherited=false)]
 	[Serializable]
-	public class EventLogPermissionAttribute : CodeAccessSecurityAttribute 
-	{
+	public class EventLogPermissionAttribute : CodeAccessSecurityAttribute {
+
 		private string machineName;
 		private EventLogPermissionAccess permissionAccess;
 
-		public EventLogPermissionAttribute(SecurityAction action)
-			: base(action)
+		public EventLogPermissionAttribute (SecurityAction action)
+			: base (action)
 		{
-			machineName = ".";
+			machineName = ResourcePermissionBase.Local;
+#if NET_2_0
+			permissionAccess = EventLogPermissionAccess.Write;
+#else
 			permissionAccess = EventLogPermissionAccess.Browse;
+#endif
 		}
 
-		// May throw ArgumentException if computer name is invalid
 		public string MachineName {
-			get {return machineName;}
+			get { return machineName; }
 			set {
-				// TODO check machine name
+				ResourcePermissionBase.ValidateMachineName (value);
 				machineName = value;
 			}
 		}
 
 		public EventLogPermissionAccess PermissionAccess {
-			get {return permissionAccess;}
-			set {permissionAccess = value;}
+			get { return permissionAccess; }
+			set { permissionAccess = value; }
 		}
 
-		public override IPermission CreatePermission()
+		public override IPermission CreatePermission ()
 		{
 			if (base.Unrestricted) {
 				return new EventLogPermission (PermissionState.Unrestricted); 
 			}
-			return new EventLogPermission (PermissionAccess, MachineName); 
+			return new EventLogPermission (permissionAccess, machineName); 
 		}
 	}
 }

@@ -2,13 +2,13 @@
 // System.Diagnostics.EventLogPermission.cs
 //
 // Authors:
-//   Jonathan Pryor (jonpryor@vt.edu)
-//   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
+//	Jonathan Pryor (jonpryor@vt.edu)
+//	Andreas Nahr (ClassDevelopment@A-SoftTech.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2002 Jonathan Pryor
 // (C) 2003 Andreas Nahr
-//
-
+// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -30,24 +30,24 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
-using System.Diagnostics;
 using System.Security.Permissions;
 
 namespace System.Diagnostics {
 
 	[Serializable]
-	public sealed class EventLogPermission : ResourcePermissionBase
-	{
+	public sealed class EventLogPermission : ResourcePermissionBase {
 
-		public EventLogPermission()
+		public EventLogPermission ()
 		{
+			SetUp ();
 		}
 
 		public EventLogPermission (EventLogPermissionEntry[] permissionAccessEntries)
 		{
 			if (permissionAccessEntries == null)
-				throw new ArgumentNullException("permissionAccessEntries");
+				throw new ArgumentNullException ("permissionAccessEntries");
+
+			SetUp ();
 			foreach (EventLogPermissionEntry entry in permissionAccessEntries)
 				AddPermissionAccess (entry.CreateResourcePermissionBaseEntry ());
 		}
@@ -55,16 +55,26 @@ namespace System.Diagnostics {
 		public EventLogPermission (PermissionState state)
 			: base (state)
 		{
+			SetUp ();
 		}
 
 		public EventLogPermission (EventLogPermissionAccess permissionAccess, string machineName)
 		{
-			AddPermissionAccess (new EventLogPermissionEntry (permissionAccess, machineName).CreateResourcePermissionBaseEntry ());
+			SetUp ();
+			EventLogPermissionEntry elpe = new EventLogPermissionEntry (permissionAccess, machineName);
+			AddPermissionAccess (elpe.CreateResourcePermissionBaseEntry ());
 		}
 
 		public EventLogPermissionEntryCollection PermissionEntries {
-			get {return new EventLogPermissionEntryCollection (base.GetPermissionEntries()); }
+			get { return new EventLogPermissionEntryCollection (base.GetPermissionEntries ()); }
+		}
+
+		// private stuff
+
+		private void SetUp () 
+		{
+			TagNames = new string [1] { "Machine" };
+			PermissionAccessType = typeof (EventLogPermissionAccess);
 		}
 	}
 }
-
