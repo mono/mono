@@ -590,6 +590,13 @@ namespace System.Web
 			}
 		}
 	
+		internal TextWriter SetTextWriter (TextWriter w)
+		{
+			TextWriter prev = _TextWriter;
+			_TextWriter = w;
+			return prev;
+		}
+		
 		public void BinaryWrite (byte [] buffer)
 		{
 			OutputStream.Write (buffer, 0, buffer.Length);

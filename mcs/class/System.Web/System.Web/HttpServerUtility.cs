@@ -188,7 +188,9 @@ namespace System.Web
 											       request.RequestType,
 											       path,
 											       filePath);
+			TextWriter previous = null;
 			try {
+				previous = response.SetTextWriter (output);
 				if (!(handler is IHttpAsyncHandler)) {
 					handler.ProcessRequest (_Context);
 				} else {
@@ -200,6 +202,7 @@ namespace System.Web
 			} finally {
 				request.SetFilePath (oldFilePath);
 				request.QueryStringRaw = oldQuery;
+				response.SetTextWriter (previous);
 			}
 
 		}

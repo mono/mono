@@ -1,7 +1,13 @@
 2003-10-11  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
-	* System.Web/HttpApplicationFactory.cs: support for wiring up events
-	without parameters.
+	* HttpResponse.cs:
+	* HttpServerUtility.cs: change the response writer in Execute. Thanks
+	to Rich Alimi <rich@velvetsea.net> for noticing this.
+
+2003-10-11  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpApplicationFactory.cs: support for wiring up events without
+	parameters.
 
 2003-10-06  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
