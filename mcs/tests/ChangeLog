@@ -1,3 +1,13 @@
+2003-02-23  Martin Baulig  <martin@ximian.com>
+
+	When adding any tests here, please do also add them to the
+	README.tests !
+
+	The following tests are still missing:
+
+	test-176 test-177 test-179 test-180 test-181 test-182 test-183
+	test-184
+
 2003-02-15  Miguel de Icaza  <miguel@ximian.com>
 
 	* test-128.cs: Improved testl, reflects bug #37363 problems
