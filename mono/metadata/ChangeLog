@@ -1,5 +1,8 @@
 2003-08-29  Zoltan Varga  <vargaz@freemail.hu>
 
+	* marshal.c (mono_marshal_init): Make this callable multiple times
+	since it is hard to find a correct place to call it.
+
 	* object.c (mono_runtime_class_init): Execute static constructors in
 	the correct appdomain.
 
