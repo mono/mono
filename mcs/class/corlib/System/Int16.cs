@@ -11,7 +11,7 @@ using System.Globalization;
 
 namespace System {
 	
-	public struct Int16 : IComparable, IFormattable { //, IConvertible {
+	public struct Int16 : IComparable, IFormattable, IConvertible {
 
 		public const short MaxValue =  32767;
 		public const short MinValue = -32768;
@@ -149,6 +149,85 @@ namespace System {
 		public TypeCode GetTypeCode ()
 		{
 			return TypeCode.Int16;
+		}
+
+		public bool ToBoolean (IFormatProvider provider)
+		{
+			return System.Convert.ToBoolean (value);
+		}
+
+		public byte ToByte (IFormatProvider provider)
+		{
+			return System.Convert.ToByte (value);
+		}
+
+		public char ToChar (IFormatProvider provider)
+		{
+			return System.Convert.ToChar (value);
+		}
+
+		public DateTime ToDateTime (IFormatProvider provider)
+		{
+			return System.Convert.ToDateTime (value);
+		}
+
+		public decimal ToDecimal (IFormatProvider provider)
+		{
+			return System.Convert.ToDecimal (value);
+		}
+
+		public double ToDouble (IFormatProvider provider)
+		{
+			return System.Convert.ToDouble (value);
+		}
+
+		public short ToInt16 (IFormatProvider provider)
+		{
+			return System.Convert.ToInt16 (value);
+		}
+
+		public int ToInt32 (IFormatProvider provider)
+		{
+			return System.Convert.ToInt32 (value);
+		}
+
+		public long ToInt64 (IFormatProvider provider)
+		{
+			return System.Convert.ToInt64 (value);
+		}
+
+		[CLSCompliant (false)]
+		public sbyte ToSByte (IFormatProvider provider)
+		{
+			return System.Convert.ToSByte (value);
+		}
+		
+		public float ToSingle (IFormatProvider provider)
+		{
+			return System.Convert.ToSingle (value);
+		}
+
+		public object ToType (Type conversionType, IFormatProvider provider)
+		{
+			return System.Convert.ToType (value, conversionType, provider);
+		}
+
+		[CLSCompliant (false)]
+		public ushort ToUInt16 (IFormatProvider provider)
+		{
+			return System.Convert.ToUInt16 (value);
+		}
+
+		[CLSCompliant (false)]
+		public uint ToUInt32 (IFormatProvider provider)
+		{
+			return System.Convert.ToUInt32 (value);
+		}
+
+		[CLSCompliant (false)]
+		public ulong ToUInt64 (IFormatProvider provider)
+		{
+			return System.Convert.ToUInt64 (value);
 		}
 	}
 }

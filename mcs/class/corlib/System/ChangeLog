@@ -1,5 +1,12 @@
 2002-03-05  Duncan Mak  <duncan@ximian.com>
 
+	* Int16.cs: 
+	* Int32.cs:
+	* Int64.cs:
+	* Single.cs:
+	* UInt16.cs: 
+	* UInt32.cs: Implement the IConvertible interface.	
+
 	* CharEnumerator.cs: Renamed to variables to be clearer and
 	changed some of the tests to conform to the 1.0 spec.
 

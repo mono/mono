@@ -163,11 +163,9 @@ namespace System {
 		{
 			return System.Convert.ToChar (value);
 		}
-
-		[MonoTODO]
 		public DateTime ToDateTime (IFormatProvider provider)
 		{
-			throw new NotImplementedException ();
+			return System.Convert.ToDateTime (value);
 		}
 		public decimal  ToDecimal  (IFormatProvider provider)
 		{
@@ -199,11 +197,11 @@ namespace System {
 			return System.Convert.ToSingle (value);
 		}
 
-		[MonoTODO]
 		public object   ToType     (Type conversionType, IFormatProvider provider)
 		{
-			throw new NotImplementedException ();
+			return System.Convert.ToType (value, conversionType, provider);
 		}
+		
     		[CLSCompliant(false)]
 		public ushort   ToUInt16   (IFormatProvider provider)
 		{
