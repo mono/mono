@@ -1,3 +1,13 @@
+2001-11-16  Dietmar Maurer  <dietmar@ximian.com>
+
+	* x86.brg (STRING_ARG): impl. a way to marshal strings. This
+	will be extensible to handle all possible kinds of marshalling
+	requirements. 
+
+	* jit.c (map_call_type): added MB_TERM_CALL_VOID
+	(mono_analyze_stack): impl. LDELEMA, reimplemented CALL
+	instructions to handle this arguments more effectively.
+
 2001-11-15  Dietmar Maurer  <dietmar@ximian.com>
 
 	* Makefile.am (mono_SOURCES): renamed testjit to mono
