@@ -1,3 +1,10 @@
+2003-05-10  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* SignedXml.cs: Added property XmlResolver Resolver as per framework 1.1
+	documentation (no public declaration).
+	* Transform.cs: Added property XmlResolver Resolver as per framework 1.1
+	documentation (no public declaration).
+
 2003-03-03  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* DSAKeyValue.cs: Added patch from Atsushi Eno (to remove string

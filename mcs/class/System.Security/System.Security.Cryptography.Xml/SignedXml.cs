@@ -9,6 +9,7 @@
 
 using System.Collections;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Xml;
 
@@ -344,5 +345,15 @@ namespace System.Security.Cryptography.Xml {
 		{
 			signature.LoadXml (value);
 		}
+
+#if ! USE_VERSION_1_0
+		private XmlResolver xmlResolver;
+
+		[MonoTODO("property not (yet) used in class")]
+		[ComVisible(false)]
+		XmlResolver Resolver {
+			set { xmlResolver = value; }
+		}
+#endif
 	}
 }

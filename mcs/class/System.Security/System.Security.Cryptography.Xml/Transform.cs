@@ -7,6 +7,7 @@
 // (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
 //
 
+using System.Runtime.InteropServices;
 using System.Xml;
 
 namespace System.Security.Cryptography.Xml { 
@@ -47,5 +48,15 @@ namespace System.Security.Cryptography.Xml {
 		public abstract void LoadInnerXml (XmlNodeList nodeList);
 
 		public abstract void LoadInput (object obj);
+
+#if ! USE_VERSION_1_0
+		private XmlResolver xmlResolver;
+
+		[MonoTODO("property not (yet) used in derived classes")]
+		[ComVisible(false)]
+		XmlResolver Resolver {
+			set { xmlResolver = value; }
+		}
+#endif
 	}
 }
