@@ -1,3 +1,8 @@
+2003-08-11  Duncan Mak  <duncan@ximian.com>
+
+	* Environment.cs (Version): Return the same numbers as the MS
+	implementation.
+
 2003-08-10  Miguel de Icaza  <miguel@ximian.com>
 
 	* Array.cs: Applied patch from Thong (Tum) Nguyen;  Removed

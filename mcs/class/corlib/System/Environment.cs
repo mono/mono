@@ -221,10 +221,13 @@ namespace System
 		/// <summary>
 		/// Get the version of the common language runtime 
 		/// </summary>
-		[MonoTODO]
 		public static Version Version {
 			get {
-				return new Version();
+#if NET_1_1				    
+				return new Version (1, 1, 4322, 573);
+#else
+				return new Version (1, 0, 3705, 288);
+#endif
 			}
 		}
 
