@@ -43,13 +43,13 @@ res:
 	echo --target exe -o mcs2.exe $(COMPILER_SOURCES) > response
 
 dum: cs-parser.cs
-	$(TIME) ./mcs --fatal --target exe -o mcs2.exe $(COMPILER_SOURCES)
+	$(TIME) $(RUNTIME) ./mcs.exe --fatal --target exe -o mcs2.exe $(COMPILER_SOURCES)
 
 mcs2.exe: mcs.exe
-	$(TIME) ./mcs $(XFLAGS) --target exe -o mcs2.exe $(COMPILER_SOURCES)
+	$(TIME) $(RUNTIME) ./mcs.exe $(XFLAGS) --target exe -o mcs2.exe $(COMPILER_SOURCES)
 
 mcs3.exe: mcs2.exe
-	$(TIME) ./mcs2 --target exe -o mcs3.exe $(COMPILER_SOURCES)
+	$(TIME) $(RUNTIME) ./mcs2.exe --target exe -o mcs3.exe $(COMPILER_SOURCES)
 
 mcs-mono.exe: cs-parser.cs $(COMPILER_SOURCES) 
 	mono mcs.exe --timestamp -o mcs-mono.exe $(COMPILER_SOURCES) 
