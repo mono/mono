@@ -1,3 +1,7 @@
+2002-07-25  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* ProcessModelInfo.cs: fixed compilation.
+
 2002-07-25  Tim Coleman <tim@timcoleman.com>
 	* ProcessModelInfo.cs:
 		New class added

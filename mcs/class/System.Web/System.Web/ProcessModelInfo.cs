@@ -29,13 +29,13 @@ namespace System.Web {
 		public static ProcessInfo GetCurrentProcessInfo ()
 		{
 			HttpContext httpContext;
-			DateTime startTime;
-			TimeSpan age;
-			int processID;
-			int requestCount;
-			ProcessStatus status;
-			ProcessShutdownReason shutdownReason;
-			int peakMemoryUsed;
+			DateTime startTime = DateTime.Now;
+			TimeSpan age = TimeSpan.Zero;
+			int processID = 0;
+			int requestCount = 0;
+			ProcessStatus status = ProcessStatus.Terminated;
+			ProcessShutdownReason shutdownReason = ProcessShutdownReason.None;
+			int peakMemoryUsed = 0;
 
 			httpContext = HttpContext.Current;
 			return new ProcessInfo (startTime, age, processID, requestCount, status, shutdownReason, peakMemoryUsed);
