@@ -2864,7 +2864,7 @@ namespace Mono.CSharp {
 						Attribute.ApplyAttributes (ec, pb, p[i], attr);
 
 						if (par_attr == ParameterAttributes.Out){
-							if (attr.Contains (TypeManager.in_attribute_type))
+							if (attr.Contains (TypeManager.in_attribute_type, ec))
 								Report.Error (36, loc,
                                                                     "Can not use [In] attribute on out parameter");
 						}
@@ -3650,7 +3650,7 @@ namespace Mono.CSharp {
 
 		protected override bool VerifyClsCompliance (DeclSpace ds)
 		{
-			if (!base.VerifyClsCompliance (ds)) {
+			if (!base.VerifyClsCompliance (ds) || !IsExposedFromAssembly (ds)) {
 				return false;
 			}
 			
@@ -3770,7 +3770,7 @@ namespace Mono.CSharp {
 					continue;
 					
 				foreach (Attribute a in asec.Attributes) {
-					Type attr_type = a.ResolveType (ec);
+					Type attr_type = a.ResolveType (ec, true);
 					if (attr_type == TypeManager.conditional_attribute_type) {
 						if (!ApplyConditionalAttribute (a))
 							return false;
@@ -4645,7 +4645,7 @@ namespace Mono.CSharp {
 				return true;
 			}
 
-			if (IsInterface && HasClsCompliantAttribute (ds) && ds.IsClsCompliaceRequired (ds)) {
+			if (IsInterface && HasClsCompliantAttribute && ds.IsClsCompliaceRequired (ds)) {
 				Report.Error_T (3010, Location, GetSignatureForError ());
 			}
 			return false;
@@ -4844,12 +4844,13 @@ namespace Mono.CSharp {
 					if (!((vt == TypeManager.bool_type) ||
 					      (vt == TypeManager.sbyte_type) ||
 					      (vt == TypeManager.byte_type) ||
-					      (vt == TypeManager.short_type) ||    
+					      (vt == TypeManager.short_type) ||
 					      (vt == TypeManager.ushort_type) ||
-					      (vt == TypeManager.int32_type) ||    
+					      (vt == TypeManager.int32_type) ||
 					      (vt == TypeManager.uint32_type) ||    
-					      (vt == TypeManager.char_type) ||    
-					      (vt == TypeManager.float_type))){
+					      (vt == TypeManager.char_type) ||
+					      (vt == TypeManager.float_type) ||
+					      (!vt.IsValueType))){
 						Report.Error (
 							677, Location, container.MakeName (Name) +
 							" A volatile field can not be of type `" +

@@ -1,3 +1,45 @@
+2004-05-09  Miguel de Icaza  <miguel@ximian.com>
+
+	* expression.cs (Binary.DoNumericPromotions): 0 long constant can
+	be implicitly converted to ulong.
+	
+	* expression.cs: The logic for allowing operator &, | and ^ worked
+	was wrong, it worked before because we did not report an error in
+	an else branch.  Fixes 57895.
+
+	* class.cs: Applied patch from iain@mccoy.id.au Iain McCoy to
+	allow volatile fields to be reference types.
+
+2004-05-07  Miguel de Icaza  <miguel@ximian.com>
+
+	* driver.cs: Add support for /debug-
+
+2004-05-07  Raja R Harinath  <rharinath@novell.com>
+
+	* attribute.cs (Attribute.CheckAttributeType, Attribute.ResolveType): 
+	Add a 'complain' parameter to silence errors.
+	(Attribute.Resolve): Update to changes.  Put in sanity check to catch
+	silently overlooked type-resolutions.
+	(Attribute.ScanForIndexerName, Attribute.DefinePInvokeMethod): Update
+	to reflect changes.
+	(Attributes.Search): New function.
+	(Attributes.Contains, Attributes.GetClsCompliantAttribute): Use Search.
+	(Attributes.GetAttributeFullName): Remove hack.
+	* class.cs (MethodCore.LabelParameters, MethodData.ApplyAttributes): 
+	Update to reflect changes.
+	* codegen.cs (CommonAssemblyModulClass.GetClsCompliantAttribute):
+	Use Attributes.Search instead of nested loops.
+
+2004-05-07  Marek Safar  <marek.safar@seznam.cz>
+
+	* decl.cs:
+	(MemberCore.Flags): Extended for caching presence of CLSCompliantAttribute.
+	(MemberCore.VerifyClsCompliance): Implemented CS3019 error report.
+	(DeclSpace.GetClsCompliantAttributeValue): Returns simple bool.
+
+	* report.cs: (Report.Warning): Renamed to Warning_T because of
+	parameter collision.
+
 2004-05-05  Raja R Harinath  <rharinath@novell.com>
 
 	* expression.cs (MemberAccess.ResolveMemberAccess):

@@ -109,6 +109,7 @@ namespace Mono.CSharp {
 		{
 			switch (warn_no) {
 				case 3012: return new WarningData (1, "You must specify the CLSCompliant attribute on the assembly, not the module, to enable CLS compliance checking");
+				case 3019: return new WarningData (2, "CLS compliance checking will not be performed on '{0}' because it is private or internal");
 			}
 
 			throw new InternalErrorException (String.Format ("Wrong warning number '{0}'", warn_no));
@@ -222,7 +223,7 @@ namespace Mono.CSharp {
 		/// <summary>
 		/// Method reports warning message. Only one reason why exist Warning and Report methods is beter code readability.
 		/// </summary>
-		static public void Warning (int code, Location loc, params object[] args)
+		static public void Warning_T (int code, Location loc, params object[] args)
 		{
 			WarningData warning = GetWarningMsg (code);
 			if (warning.IsEnabled ())

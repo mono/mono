@@ -120,9 +120,9 @@ namespace Mono.CSharp {
 		}
 
 		/// <summary>
-                ///   Tries to resolve the type of the attribute. Flags an error if it can't.
+                ///   Tries to resolve the type of the attribute. Flags an error if it can't, and complain is true.
                 /// </summary>
-		private Type CheckAttributeType (EmitContext ec) {
+		private Type CheckAttributeType (EmitContext ec, bool complain) {
 			TypeExpr t1 = RootContext.LookupType (ec.DeclSpace, Name, true, Location);
 			// FIXME: Shouldn't do this for quoted attributes: [@A]
 			TypeExpr t2 = RootContext.LookupType (ec.DeclSpace, Name + "Attribute", true, Location);
@@ -153,16 +153,17 @@ namespace Mono.CSharp {
 				Report.Error (616, Location, err0616);
 				return null;
 			}
-			Report.Error (
-				246, Location, "Could not find attribute '" + Name + "' (are you" +
-				" missing a using directive or an assembly reference ?)");
+			if (complain)
+				Report.Error (
+					246, Location, "Could not find attribute '" + Name + "' (are you" +
+					" missing a using directive or an assembly reference ?)");
 			return null;
 		}
 
-		public Type ResolveType (EmitContext ec)
+		public Type ResolveType (EmitContext ec, bool complain)
 		{
 			if (Type == null)
-				Type = CheckAttributeType (ec);
+				Type = CheckAttributeType (ec, complain);
 			return Type;
 		}
 
@@ -211,9 +212,18 @@ namespace Mono.CSharp {
 		
 		public CustomAttributeBuilder Resolve (EmitContext ec)
 		{
-			ResolveType (ec);
-			if (Type == null)
+			Type oldType = Type;
+
+			// Sanity check.
+			Type = CheckAttributeType (ec, true);
+			if (oldType == null && Type == null)
 				return null;
+			if (oldType != null && oldType != Type) {
+				Report.Error (-6, Location,
+					      "Attribute {0} resolved to different types at different times: {1} vs. {2}",
+					      Name, oldType, Type);
+				return null;
+			}
 
 			bool MethodImplAttr = false;
 			bool MarshalAsAttr = false;
@@ -684,7 +694,7 @@ namespace Mono.CSharp {
 					continue;
 
 				foreach (Attribute a in asec.Attributes){
-					if (a.ResolveType (ec) == null)
+					if (a.ResolveType (ec, true) == null)
 						return null;
 
 					if (a.Type != TypeManager.indexer_name_type)
@@ -1027,7 +1037,7 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			ResolveType (ec);
+			ResolveType (ec, true);
 			if (Type == null)
 				return null;
 			
@@ -1202,45 +1212,26 @@ namespace Mono.CSharp {
 				AttributeSections.Add (a);
 		}
 
-		public bool Contains (Type t)
+		public Attribute Search (Type t, EmitContext ec)
 		{
 			foreach (AttributeSection attr_section in AttributeSections){
 				foreach (Attribute a in attr_section.Attributes){
-					if (a.Type == t)
-						return true;
+					if (a.ResolveType (ec, false) == t)
+						return a;
 				}
 			}
-                        
-			return false;
+			return null;
 		}
 
-		public Attribute GetClsCompliantAttribute (DeclSpace ds)
- 		{
- 			foreach (AttributeSection attr_section in AttributeSections) {
- 				foreach (Attribute a in attr_section.Attributes) {
-					// Unfortunately, we have also attributes that has not been resolved yet.
- 					// We need to simulate part of ApplyAttribute method.
- 					if (a.Type == null) {
- 						TypeExpr attr_type = RootContext.LookupType (ds, GetAttributeFullName (a.Name), true, a.Location);
- 						if (attr_type != null && attr_type.Type == TypeManager.cls_compliant_attribute_type)
- 							return a;
+		public bool Contains (Type t, EmitContext ec)
+		{
+                        return Search (t, ec) != null;
+		}
 
-						continue;
-					}
-
- 					if (a.Type == TypeManager.cls_compliant_attribute_type)
- 						return a;
- 				}
- 			}
- 			return null;
- 		}
-
-		public static string GetAttributeFullName (string name)
- 		{
- 			if (name.EndsWith ("Attribute"))
- 				return name;
- 			return name + "Attribute";
- 		}
+		public Attribute GetClsCompliantAttribute (EmitContext ec)
+		{
+			return Search (TypeManager.cls_compliant_attribute_type, ec);
+		}
  	}
 
 	public interface IAttributeSupport

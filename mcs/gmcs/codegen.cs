@@ -820,15 +820,11 @@ namespace Mono.CSharp {
 				Attributes attrs = (Attributes) de.Value;
 				temp_ec.TypeContainer.NamespaceEntry = ns;
 
-				foreach (AttributeSection attr_section in attrs.AttributeSections) {
-					foreach (Attribute a in attr_section.Attributes) {
-						TypeExpr attributeType = RootContext.LookupType (temp_ec.DeclSpace, Attributes.GetAttributeFullName (a.Name), true, Location.Null);
-						if (attributeType != null && attributeType.Type == TypeManager.cls_compliant_attribute_type) {
-							a.Resolve (temp_ec);
-							return a;
-						}
-					}
-				}
+				Attribute a = attrs.Search (TypeManager.cls_compliant_attribute_type, temp_ec);
+				if (a != null) {
+					a.Resolve (temp_ec);
+					return a;
+  				}
 			}
 			return null;
 		}
@@ -1015,7 +1011,7 @@ namespace Mono.CSharp {
 
 			Attribute a = GetClsCompliantAttribute ();
 			if (a != null) {
-				Report.Warning (3012, a.Location);
+				Report.Warning_T (3012, a.Location);
 			}
 
 			if (!m_module_is_unsafe)

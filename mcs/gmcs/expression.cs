@@ -2099,7 +2099,7 @@ namespace Mono.CSharp {
 						} else if (right is LongConstant){
 							long ll = ((LongConstant) right).Value;
 
-							if (ll > 0)
+							if (ll >= 0)
 								right = new ULongConstant ((ulong) ll);
 						} else {
 							e = Convert.ImplicitNumericConversion (ec, right, l, loc);
@@ -2728,13 +2728,16 @@ namespace Mono.CSharp {
 			    oper == Operator.BitwiseOr ||
 			    oper == Operator.ExclusiveOr){
 				if (l == r){
-					if (!((l == TypeManager.int32_type) ||
-					      (l == TypeManager.uint32_type) ||
-					      (l == TypeManager.short_type) ||
-					      (l == TypeManager.ushort_type) ||
-					      (l == TypeManager.int64_type) ||
-					      (l == TypeManager.uint64_type))){
+					if (((l == TypeManager.int32_type) ||
+					     (l == TypeManager.uint32_type) ||
+					     (l == TypeManager.short_type) ||
+					     (l == TypeManager.ushort_type) ||
+					     (l == TypeManager.int64_type) ||
+					     (l == TypeManager.uint64_type))){
 						type = l;
+					} else {
+						Error_OperatorCannotBeApplied ();
+						return null;
 					}
 				} else {
 					Error_OperatorCannotBeApplied ();
