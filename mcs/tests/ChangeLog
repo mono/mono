@@ -1,3 +1,7 @@
+2004-03-24  Ravi Pratap M  <ravi@ximian.com>
+
+	* test-235.cs: test for 47234.
+
 2004-03-22 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* test-234.cs: test for 25885.
