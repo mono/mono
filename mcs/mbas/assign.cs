@@ -336,7 +336,7 @@ namespace Mono.MonoBASIC {
 				}
 			}
 			
-			if (source is New && target_type.IsValueType){
+			if (source is New || target_type == TypeManager.object_type) {
 				if (source_type == TypeManager.object_type) {
 					Expression etmp = Mono.MonoBASIC.Parser.DecomposeQI (
 								"System.Runtime.CompilerServices.RuntimeHelpers.GetObjectValue",
@@ -347,10 +347,11 @@ namespace Mono.MonoBASIC {
 					source = e.Resolve (ec);
 					return this;
 				}
-
-				New n = (New) source;
-				n.ValueTypeVariable = target;
-				return n;
+				if (target_type.IsValueType) {
+					New n = (New) source;
+					n.ValueTypeVariable = target;
+					return n;
+				}
 			}
 
 			if (target.eclass != ExprClass.Variable && target.eclass != ExprClass.EventAccess){
