@@ -21,6 +21,7 @@ namespace Mono.Util.MonoDoc.Qt {
 		private ListView listview;
 		private QMenuBar menubar;
 		private QPopupMenu filemenu;
+		private QPopupMenu settingsmenu;
 		private QPopupMenu aboutmenu;
 
 		public static int Main (String[] args)
@@ -38,11 +39,16 @@ namespace Mono.Util.MonoDoc.Qt {
 			filemenu.InsertItem ("&Open", this, SLOT ("OpenFile ()"));
 			filemenu.InsertItem ("&Quit", qApp, SLOT ("Quit ()"));
 
+			settingsmenu = new QPopupMenu (null, "settingsmenu");
+			settingsmenu.InsertItem ("&Configure MonoDoc...", this,
+						 SLOT ("ConfigureMonoDoc ()"));
+
 			aboutmenu = new QPopupMenu (null, "helpmenu");
 			aboutmenu.InsertItem ("&About MonoDoc", this, SLOT ("AboutMonoDoc ()"));
 
 			menubar = new QMenuBar (this, "");
 			menubar.InsertItem ("&File", filemenu);
+			menubar.InsertItem ("&Settings", settingsmenu);
 			menubar.InsertItem ("&About", aboutmenu);
 
 			QSplitter split = new QSplitter (this);
@@ -63,9 +69,11 @@ namespace Mono.Util.MonoDoc.Qt {
 		public void OpenFile ()
 		{
 			string filename = QFileDialog.GetOpenFileName (Global.InitDir, "*.xml", this, "open", "Open Master File", "*.xml", true);
-			WriteInit (filename);
-			if (filename != null)
+
+			if (filename != null) {
+				WriteInit (filename);
 				Emit ("Load (String)", filename);
+			}
 		}
 
 		public void AboutMonoDoc ()
@@ -99,6 +107,12 @@ namespace Mono.Util.MonoDoc.Qt {
 			StreamWriter st = File.CreateText (Global.MonoDocDir+"/monodoc");
 			st.WriteLine (Global.InitDir);
 			st.Flush ();
+		}
+
+		public void ConfigureMonoDoc ()
+		{
+			OptionsDialog options = new OptionsDialog ();
+			options.Exec ();
 		}
 
 		private class ListView : QListView {
@@ -196,7 +210,7 @@ namespace Mono.Util.MonoDoc.Qt {
 
 			public ListItem (QListView parent, string text) : base (parent, text)
 			{
-				IsName = true;
+				IsNamespace = true;
 				SetPixmap (0, Global.IName);
 			}
 
@@ -331,6 +345,56 @@ namespace Mono.Util.MonoDoc.Qt {
 		public interface IEditForm {
 			void Sync ();
 			void Flush ();
+		}
+
+		private class OptionsDialog : QDialog {
+			QVBoxLayout dialogLayout;
+			QHBoxLayout mainLayout;
+			QHBoxLayout actionLayout;
+			QCheckBox openPrevMasterXml;
+			QPushButton ok;
+			QPushButton cancel;
+
+			OptionsDialog () : base ()
+			{
+				SetCaption ("Configure MonoDoc");
+
+				openPrevMasterXml = new QCheckBox (this);
+				openPrevMasterXml.SetText (
+					"Open previous Master.xml file upon startup");
+				ok = new QPushButton ("OK", this);
+				cancel = new QPushButton ("Cancel", this);
+
+				Connect (ok, QtSupport.SIGNAL("clicked()"), 
+					 this, QtSupport.SLOT("okClicked()"));
+				Connect (cancel, QtSupport.SIGNAL("clicked()"),
+					 this, SLOT("cancelClicked()"));
+			
+				dialogLayout = new QVBoxLayout (this);
+			
+				mainLayout = new QHBoxLayout (dialogLayout);
+				mainLayout.AddWidget (openPrevMasterXml);
+			
+				actionLayout = new QHBoxLayout (dialogLayout);
+				actionLayout.AddWidget (ok);
+				actionLayout.AddWidget (cancel);
+			}
+
+			public void cancelClicked ()
+			{
+				Reject ();
+			}
+
+			public void okClicked () 
+			{
+				Accept ();
+			}
+		
+			public bool openPreviousMasterXmlOnStartup {
+				get {
+					return openPrevMasterXml.IsOn ();
+				}
+			}
 		}
 	}
 }
