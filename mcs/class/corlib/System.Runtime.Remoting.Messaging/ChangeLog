@@ -1,3 +1,17 @@
+2003-07-25  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* ArgInfo.cs: Use Type.IsByRef to check if a parameter is a ref or
+	  out parameter.
+	* MethodCall.cs: Improved checking if the requested client type for the target
+	  object can be casted to the server type. Now not only checks type name,
+	  but also the type hierarchy and implemented interfaces. Also implemented
+	  method ToString().
+	* MethodResponse.cs: Imlemented ToString().
+	* ReturnMessage.cs: In the exception constructor, allow the request to be null.
+	  Implemented ToString().
+	* StackBuilderSink.cs: Check type of parameters before calling the target method.
+	  (a wrong type would make the runtime to crash).
+
 2003-07-23  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* MethodDictionary.cs: Fixed Add method. If the property is method

@@ -307,5 +307,31 @@ namespace System.Runtime.Remoting.Messaging {
 			get { return _targetIdentity; }
 			set { _targetIdentity = value; }
 		}
+
+		public override string ToString ()
+		{
+			string s = _typeName.Split(',')[0] + "." + _methodName + " (";
+			if (_exception != null)
+			{
+				s += "Exception\n)" + _exception;
+			}
+			else
+			{
+				if (_outArgs != null)
+				{
+					for (int n=0; n<_outArgs.Length; n++)
+					{
+						if (n>0) s+= ", ";
+						if (_outArgs[n] != null) s += _outArgs[n].GetType().Name + " ";
+						s += GetOutArgName (n);
+						if (_outArgs[n] != null) s += " = {" + _outArgs[n] + "}";
+						else s+=" = {null}";
+					}
+				}
+				s += ")";
+			}
+			return s;
+		}
+
 	}
 }

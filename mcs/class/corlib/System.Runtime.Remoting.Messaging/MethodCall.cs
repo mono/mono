@@ -265,20 +265,43 @@ namespace System.Runtime.Remoting.Messaging {
 			{
 				Type type = RemotingServices.GetServerTypeForUri (_uri);
 
-				int i = _typeName.IndexOf(",");
-				string clientTypeName = (i != -1) ? _typeName.Substring (0,i).Trim() : _typeName;
-
-				if (clientTypeName == type.FullName)
+				if (CanCastTo (_typeName, type))
 				{
 					BindingFlags bflags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
 					if (_methodSignature == null) _methodBase = type.GetMethod (_methodName, bflags);
 					else _methodBase = type.GetMethod (_methodName, bflags, null, _methodSignature, null);
 					return;
 				}
+				else
+					throw new RemotingException ("Cannot cast from client type '" + _typeName + "' to server type '" + type.FullName + "'");
 			}
 			_methodBase = RemotingServices.GetMethodBaseFromMethodMessage (this);
 		}
 
+		public bool CanCastTo (string clientType, Type serverType)
+		{
+			int i = clientType.IndexOf(",");
+			if (i != -1) clientType = clientType.Substring (0,i).Trim();
+
+			if (clientType == serverType.FullName) return true;
+
+ 			// base class hierarchy
+
+ 			Type baseType = serverType.BaseType;
+ 			while (baseType != null) {
+    			if (clientType == baseType.FullName) return true;
+       			baseType = baseType.BaseType;
+    		}
+
+ 			// Implemented interfaces
+
+ 			Type[] interfaces = serverType.GetInterfaces();
+ 			foreach (Type itype in interfaces)
+ 				if (clientType == itype.FullName) return true;
+     
+     		return false;
+		}
+		
 		[MonoTODO]
 		public void RootSetObjectData (SerializationInfo info, StreamingContext context)
 		{
@@ -289,6 +312,25 @@ namespace System.Runtime.Remoting.Messaging {
 		{
 			get { return _targetIdentity; }
 			set { _targetIdentity = value; }
+		}
+
+		public override string ToString ()
+		{
+			string s = _typeName.Split(',')[0] + "." + _methodName + " (";
+			Type[] ts = (Type[]) MethodSignature;
+			if (_args != null)
+			{
+				for (int n=0; n<_args.Length; n++)
+				{
+					if (n>0) s+= ", ";
+					if (_args[n] != null) s += _args[n].GetType().Name + " ";
+					s += GetArgName (n);
+					if (_args[n] != null) s += " = {" + _args[n] + "}";
+					else s+=" = {null}";
+				}
+			}
+			s += ")";
+			return s;
 		}
 	}
 }

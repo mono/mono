@@ -7,6 +7,7 @@
 //
 
 using System;
+using System.Reflection;
 
 namespace System.Runtime.Remoting.Messaging
 {
@@ -23,6 +24,8 @@ namespace System.Runtime.Remoting.Messaging
 
 		public IMessage SyncProcessMessage (IMessage msg)
 		{
+			CheckParameters (msg);
+
 			// Makes the real call to the object
 			return RemotingServices.InternalExecuteMessage (_target, (IMethodCallMessage)msg);
 		}
@@ -36,6 +39,27 @@ namespace System.Runtime.Remoting.Messaging
 		public IMessageSink NextSink 
 		{ 
 			get { return null; }
+		}
+
+		void CheckParameters (IMessage msg)
+		{
+			IMethodCallMessage mcm = (IMethodCallMessage) msg;
+			
+			MethodInfo mi = (MethodInfo) mcm.MethodBase;
+
+			ParameterInfo[] parameters = mi.GetParameters();
+			int narg = 0;
+
+			foreach (ParameterInfo pi in parameters)
+			{
+				object pval = mcm.GetArg (narg++);
+				Type pt = pi.ParameterType;
+				if (pt.IsByRef) pt = pt.GetElementType ();
+				
+				if (pval != null && !pt.IsInstanceOfType (pval))
+					throw new RemotingException ("Cannot cast argument of type '" + pval.GetType().AssemblyQualifiedName +
+						"' to type '" + pt.AssemblyQualifiedName + "'");
+			}
 		}
 	}
 }
