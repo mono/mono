@@ -1,4 +1,8 @@
 
+Fri Jul 19 14:23:46 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* monograph.c: simple stats on opcode size.
+
 Thu Mar 28 15:18:50 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	* monograph.c: some warning cleanups.
