@@ -224,10 +224,19 @@ namespace System.Security.Policy
 			SecurityElement e = new SecurityElement("CodeGroup");
 			e.AddAttribute("class", this.GetType().AssemblyQualifiedName);
 			e.AddAttribute("version", "1");
-			e.AddAttribute("Name", Name);
-			e.AddAttribute("Description", Description);
-			e.AddChild(MembershipCondition.ToXml());
-			e.AddChild(PolicyStatement.PermissionSet.ToXml());
+
+			if (null != Name)
+				e.AddAttribute("Name", Name);
+
+			if (null != Description)
+				e.AddAttribute("Description", Description);
+
+			if (null != MembershipCondition)
+				e.AddChild(MembershipCondition.ToXml());
+
+			if (null != PolicyStatement)
+				e.AddChild(PolicyStatement.PermissionSet.ToXml());
+
 			foreach (CodeGroup child in Children)
 				e.AddChild(child.ToXml());
 

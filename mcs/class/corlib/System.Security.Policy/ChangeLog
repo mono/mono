@@ -1,3 +1,11 @@
+2002-02-09  Nick Drochak  <ndrochak@gol.com>
+
+	* FileCodeGroup.cs: New file. All done except for GetHashCode and 
+	Resolve.
+	* CodeGroup.cs: Fix small bug in ToXml()
+	* Evidence.cs: Added method stub needed by FileCodeGroup.cs.  Added 
+	MonoTODO's too.
+
 2002-02-07  Nick Drochak  <ndrochak@gol.com>
 
 	* CodeGroup.cs: Went as far as I can for now.  Need to look at
