@@ -16,7 +16,7 @@ namespace System.Runtime.Remoting.Metadata.W3cXsd2001
 	[Serializable]
 	public sealed class SoapTime : ISoapXsd
 	{
-		static string[] _datetimeFormats = new string[]
+		static readonly string[] _datetimeFormats = new string[]
 		{
 			"HH:mm:ss",
 			"HH:mm:ss.f",

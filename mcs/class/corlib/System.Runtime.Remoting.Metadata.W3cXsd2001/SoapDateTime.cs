@@ -15,7 +15,7 @@ namespace System.Runtime.Remoting.Metadata.W3cXsd2001
 {
 	public sealed class SoapDateTime
 	{
-		static string[] _datetimeFormats = new string[] {
+		static readonly string[] _datetimeFormats = new string[] {
 		  "yyyy-MM-ddTHH:mm:ss",
 		  "yyyy-MM-ddTHH:mm:ss.f",
 		  "yyyy-MM-ddTHH:mm:ss.ff",

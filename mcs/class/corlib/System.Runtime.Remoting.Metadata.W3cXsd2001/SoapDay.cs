@@ -16,7 +16,7 @@ namespace System.Runtime.Remoting.Metadata.W3cXsd2001
 	[Serializable]
 	public sealed class SoapDay : ISoapXsd
 	{
-		static string[] _datetimeFormats = new string[]
+		static readonly string[] _datetimeFormats = new string[]
 		{
 			"---dd",
 			"---ddzzz"
