@@ -1457,7 +1457,7 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		protected override Size DefaultSize {
 			get {
-				throw new NotImplementedException ();
+				return new Size (100, 100);
 			}
 		}
 		[MonoTODO]

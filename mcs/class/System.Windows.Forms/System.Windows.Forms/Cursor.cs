@@ -106,7 +106,7 @@ namespace System.Windows.Forms {
 
 		public IntPtr CopyHandle() 
 		{
-			return Win32.CopyCursor ( Handle );
+			return Win32_WineLess.CopyCursor ( Handle );
 		}
 		
 		public void Dispose() 

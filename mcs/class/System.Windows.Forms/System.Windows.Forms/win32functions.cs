@@ -29,6 +29,7 @@
  */
 
 using System;
+using System.Threading;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -38,6 +39,42 @@ using System.Diagnostics;
 
 //namespace UtilityLibrary.Win32
 namespace System.Windows.Forms{
+
+	//
+	// The following methods have not been exposed by WineLib yet, 
+	// we move them here, so that errors are not displayed until
+	// we actually use these functions.
+	//
+	public class Win32_WineLess {
+		[DllImport("user32.dll", CharSet=CharSet.Ansi)]
+		internal static extern IntPtr CopyCursor ( IntPtr pcur );
+
+		[DllImport("user32.dll", CharSet=CharSet.Auto)]
+		internal static extern bool UpdateLayeredWindow(IntPtr hwnd, IntPtr hdcDst, ref POINT pptDst, ref SIZE psize, 
+			IntPtr hdcSrc, ref POINT pprSrc, Int32 crKey, ref BLENDFUNCTION pblend, UpdateLayeredWindowFlags dwFlags);
+
+		[DllImport("user32.dll", CharSet=CharSet.Auto)]
+		static internal extern int GetScrollBarInfo(IntPtr hWnd, SystemObject id, ref SCROLLBARINFO sbi);
+
+		[DllImport("comctl32.dll", EntryPoint="DllGetVersion")]
+		internal extern static int GetCommonControlDLLVersion(ref DLLVERSIONINFO dvi);
+
+		[DllImport ("comdlg32.dll",
+			 CallingConvention = CallingConvention.StdCall, 
+			 CharSet = CharSet.Ansi)]
+		internal static extern bool GetOpenFileName ( ref OPENFILENAME lpofn );
+
+		[DllImport ("comdlg32.dll",
+			 CallingConvention = CallingConvention.StdCall, 
+			 CharSet = CharSet.Ansi)]
+		internal static extern bool ChooseColor ( ref CHOOSECOLOR lpofn );
+
+		[DllImport ("comdlg32.dll",
+			 CallingConvention = CallingConvention.StdCall, 
+			 CharSet = CharSet.Ansi)]
+		internal static extern uint CommDlgExtendedError ( );
+	}
+	
 	/// <summary>
 	/// Windows API Functions
 	/// </summary>
@@ -334,18 +371,11 @@ namespace System.Windows.Forms{
 		[DllImport("user32.dll", CharSet=CharSet.Ansi)]
 		internal static extern int ShowCursor ( bool bShow );
 
-		[DllImport("user32.dll", CharSet=CharSet.Ansi)]
-		internal static extern IntPtr CopyCursor ( IntPtr pcur );
-
 		[DllImport("user32.dll", CharSet=CharSet.Auto)]
 		internal static extern IntPtr BeginPaint(IntPtr hWnd, ref PAINTSTRUCT ps);
 
 		[DllImport("user32.dll", CharSet=CharSet.Auto)]
 		internal static extern bool EndPaint(IntPtr hWnd, ref PAINTSTRUCT ps);
-
-		[DllImport("user32.dll", CharSet=CharSet.Auto)]
-		internal static extern bool UpdateLayeredWindow(IntPtr hwnd, IntPtr hdcDst, ref POINT pptDst, ref SIZE psize, 
-			IntPtr hdcSrc, ref POINT pprSrc, Int32 crKey, ref BLENDFUNCTION pblend, UpdateLayeredWindowFlags dwFlags);
 
 		[DllImport("user32.dll", CharSet=CharSet.Auto)]
 		internal static extern bool ClientToScreen(IntPtr hWnd, ref POINT pt);
@@ -467,9 +497,6 @@ namespace System.Windows.Forms{
 
 		[DllImport("user32.dll", CharSet=CharSet.Auto)]
 		static internal extern bool ValidateRect(IntPtr hWnd, IntPtr rc);
-
-		[DllImport("user32.dll", CharSet=CharSet.Auto)]
-		static internal extern int GetScrollBarInfo(IntPtr hWnd, SystemObject id, ref SCROLLBARINFO sbi);
 
 		[DllImport("user32.dll", CharSet=CharSet.Auto,EntryPoint="GetWindowLongA")]
 		static internal extern IntPtr GetWindowLong(IntPtr hWnd, GetWindowLongFlag flag);
@@ -606,9 +633,6 @@ namespace System.Windows.Forms{
 		[DllImport("comctl32.dll", CallingConvention = CallingConvention.StdCall)]
 		internal static extern bool InitCommonControls();
 
-		[DllImport("comctl32.dll", EntryPoint="DllGetVersion")]
-		internal extern static int GetCommonControlDLLVersion(ref DLLVERSIONINFO dvi);
-
 		[DllImport("comctl32.dll", CallingConvention = CallingConvention.StdCall)]
 		internal static extern IntPtr ImageList_Create(int width, int height, uint flags, int count, int grow);
 
@@ -682,10 +706,17 @@ namespace System.Windows.Forms{
 		static internal bool IsCommonCtrl6() 
 		{
 			DLLVERSIONINFO dllVersion = new DLLVERSIONINFO();
+
+			//
+			// Windows Forms using WineLib: XP theme drawing not available
+			//
+			if (Environment.GetEnvironmentVariable ("SWF") != null)
+				return false;
+				
 			// We are assummng here that anything greater or equal than 6
 			// will have the new XP theme drawing enable
 			dllVersion.cbSize = Marshal.SizeOf(typeof(DLLVERSIONINFO));
-			Win32.GetCommonControlDLLVersion(ref dllVersion);
+			Win32_WineLess.GetCommonControlDLLVersion(ref dllVersion);
 			return (dllVersion.dwMajorVersion >= 6);
 		}
 
@@ -1008,21 +1039,6 @@ namespace System.Windows.Forms{
 			 CharSet = CharSet.Auto)]
 		internal static extern bool GetCursorPos (ref POINT lpPoint);
 
-		[DllImport ("comdlg32.dll",
-			 CallingConvention = CallingConvention.StdCall, 
-			 CharSet = CharSet.Ansi)]
-		internal static extern bool GetOpenFileName ( ref OPENFILENAME lpofn );
-
-		[DllImport ("comdlg32.dll",
-			 CallingConvention = CallingConvention.StdCall, 
-			 CharSet = CharSet.Ansi)]
-		internal static extern bool ChooseColor ( ref CHOOSECOLOR lpofn );
-
-		[DllImport ("comdlg32.dll",
-			 CallingConvention = CallingConvention.StdCall, 
-			 CharSet = CharSet.Ansi)]
-		internal static extern uint CommDlgExtendedError ( );
-
 		#endregion
 
 		internal static void UpdateWindowStyle( IntPtr hwnd, int RemoveStyle, int AddStyle ) {
@@ -1198,6 +1214,11 @@ namespace System.Windows.Forms{
 			if (Environment.GetEnvironmentVariable ("PWD") == null){
 				RunningOnLinux = false;
 			}
+
+			//
+			// Tell System.Drawing to use the Wine function drawing.
+			//
+			Thread.GetDomain ().SetData ("Mono.Running.Windows.Forms", true);
 			
 			string new_mode = Environment.GetEnvironmentVariable ("SWF");
 			if (new_mode == null){

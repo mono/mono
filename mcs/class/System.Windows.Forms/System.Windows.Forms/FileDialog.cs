@@ -180,11 +180,11 @@ namespace System.Windows.Forms {
 
 			initOpenFileName ( ref opf );
 
-			bool res = Win32.GetOpenFileName ( ref opf );
+			bool res = Win32_WineLess.GetOpenFileName ( ref opf );
 			if ( res )
 				FileName = Win32.wine_get_unix_file_name(opf.lpstrFile);
 			else {
-				uint error = Win32.CommDlgExtendedError ( );
+				uint error = Win32_WineLess.CommDlgExtendedError ( );
 				if ( error != 0 ) {
 					string errorMes = string.Empty;
 					switch ( error ) {

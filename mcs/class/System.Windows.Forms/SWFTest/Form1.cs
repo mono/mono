@@ -113,9 +113,9 @@ namespace SWFTest
 			this.trackBar1 = new System.Windows.Forms.TrackBar();
 			this.progressBar1 = new System.Windows.Forms.ProgressBar();
 			this.richTextBox1 = new System.Windows.Forms.RichTextBox();
-			this.imageList1 = new System.Windows.Forms.ImageList(this.components);
+			//this.imageList1 = new System.Windows.Forms.ImageList(this.components);
 			this.helpProvider1 = new System.Windows.Forms.HelpProvider();
-			this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+			//this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
 			this.contextMenu2 = new System.Windows.Forms.ContextMenu();
 			this.notifyIcon1 = new System.Windows.Forms.NotifyIcon(this.components);
 			this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
@@ -295,6 +295,7 @@ namespace SWFTest
 			// 
 			this.notifyIcon1.Text = "notifyIcon1";
 			this.notifyIcon1.Visible = true;
+
 			// 
 			// saveFileDialog1
 			// 
