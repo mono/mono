@@ -180,6 +180,7 @@ System.Xml.Serialization/SoapReflectionImporter.cs
 System.Xml.Serialization/SoapTypeAttribute.cs
 System.Xml.Serialization/TypeData.cs
 System.Xml.Serialization/TypeMember.cs
+System.Xml.Serialization/TypeTableEntry.cs
 System.Xml.Serialization/TypeTranslator.cs
 System.Xml.Serialization/UnreferencedObjectEventArgs.cs
 System.Xml.Serialization/UnreferencedObjectEventHandler.cs

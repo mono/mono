@@ -16,6 +16,7 @@ namespace System.Xml.Serialization {
 
 		string defaultNamespace;
 		XmlAttributeOverrides attributeOverrides;
+		TypeTranslator typeTranslator =	new TypeTranslator ();
 
 		#region Constructors
 
@@ -85,7 +86,7 @@ namespace System.Xml.Serialization {
 								      " may not be serialized.");
 
 			XmlAttributes atts = new XmlAttributes (type);
-			TypeData data = TypeTranslator.GetTypeData (type);
+			TypeData data = typeTranslator.GetTypeData (type);
 			string elementName = data.ElementName;
 			string typeName = data.TypeName;
 			string typeFullName = data.FullTypeName;
@@ -112,7 +113,7 @@ namespace System.Xml.Serialization {
 			if (type == null)
 				throw new ArgumentNullException ("type");
 
-			TypeData data = TypeTranslator.GetTypeData (type);
+			TypeData data = typeTranslator.GetTypeData (type);
 			ImportTypeMapping (data, defaultNamespace);
 		}
 
