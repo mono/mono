@@ -1,3 +1,9 @@
+2004-06-05  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Binder.cs: don't crash when we have a 'null' argument Type array.
+	Allow it for non-value types. Fixed for both, methods and properties.
+	Closes bug #58846.
+
 2004-06-02  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Binder.cs: default score must be lower than fail_score or we'll get

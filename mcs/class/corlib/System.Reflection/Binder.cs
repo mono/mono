@@ -167,6 +167,10 @@ namespace System.Reflection
 			private static bool check_type (Type from, Type to) {
 				if (from == to)
 					return true;
+
+				if (from == null)
+					return !to.IsValueType;
+
 				TypeCode fromt = Type.GetTypeCode (from);
 				TypeCode tot = Type.GetTypeCode (to);
 
@@ -385,13 +389,16 @@ namespace System.Reflection
 				return worst;
 			}
 
-			// 0 -> same type
+			// 0 -> same type or null and !valuetype
 			// 1 -> to == Enum
 			// 2 -> value type that don't lose data
 			// 3 -> to == IsAssignableFrom
 			// 4 -> to == object
 			static int check_type_with_score (Type from, Type to)
 			{
+				if (from == null)
+					return to.IsValueType ? -1 : 0;
+
 				if (from == to)
 					return 0;
 
