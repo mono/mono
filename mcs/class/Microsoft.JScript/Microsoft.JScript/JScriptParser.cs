@@ -47,7 +47,7 @@ namespace Microsoft.JScript
 		public const int LITERAL_while = 25;
 		public const int LITERAL_for = 26;
 		public const int LITERAL_var = 27;
-		public const int LITERAL_in = 28;
+		public const int IN = 28;
 		public const int LITERAL_if = 29;
 		public const int LITERAL_else = 30;
 		public const int ASSIGN = 31;
@@ -74,7 +74,7 @@ namespace Microsoft.JScript
 		public const int GREATER_THAN = 52;
 		public const int LESS_EQ = 53;
 		public const int GREATER_EQ = 54;
-		public const int LITERAL_instanceof = 55;
+		public const int INSTANCE_OF = 55;
 		public const int EQ = 56;
 		public const int NEQ = 57;
 		public const int STRICT_EQ = 58;
@@ -1474,9 +1474,9 @@ _loop66_breakloop:			;
 						}
 						break;
 					}
-					case LITERAL_in:
+					case IN:
 					{
-						match(LITERAL_in);
+						match(IN);
 						expr(parent);
 						break;
 					}
@@ -1563,7 +1563,7 @@ _loop58_breakloop:			;
 			}
 			case COMMA:
 			case SEMI_COLON:
-			case LITERAL_in:
+			case IN:
 			case ASSIGN:
 			{
 				break;
@@ -1593,7 +1593,7 @@ _loop58_breakloop:			;
 			}
 			case COMMA:
 			case SEMI_COLON:
-			case LITERAL_in:
+			case IN:
 			{
 				if (0==inputState.guessing)
 				{
@@ -1892,7 +1892,7 @@ _loop58_breakloop:			;
 			case CLOSE_BRACE:
 			case COMMA:
 			case SEMI_COLON:
-			case LITERAL_in:
+			case IN:
 			case CLOSE_BRACKET:
 			{
 				if (0==inputState.guessing)
@@ -2137,7 +2137,7 @@ _loop58_breakloop:			;
 		case CLOSE_BRACE:
 		case COMMA:
 		case SEMI_COLON:
-		case LITERAL_in:
+		case IN:
 		case ASSIGN:
 		case CLOSE_BRACKET:
 		case INCREMENT:
@@ -2154,7 +2154,7 @@ _loop58_breakloop:			;
 		case GREATER_THAN:
 		case LESS_EQ:
 		case GREATER_EQ:
-		case LITERAL_instanceof:
+		case INSTANCE_OF:
 		case EQ:
 		case NEQ:
 		case STRICT_EQ:
@@ -2280,7 +2280,7 @@ _loop58_breakloop:			;
 		case CLOSE_BRACE:
 		case COMMA:
 		case SEMI_COLON:
-		case LITERAL_in:
+		case IN:
 		case ASSIGN:
 		case CLOSE_BRACKET:
 		case INCREMENT:
@@ -2297,7 +2297,7 @@ _loop58_breakloop:			;
 		case GREATER_THAN:
 		case LESS_EQ:
 		case GREATER_EQ:
-		case LITERAL_instanceof:
+		case INSTANCE_OF:
 		case EQ:
 		case NEQ:
 		case STRICT_EQ:
@@ -2404,7 +2404,7 @@ _loop86_breakloop:			;
 			case CLOSE_BRACE:
 			case COMMA:
 			case SEMI_COLON:
-			case LITERAL_in:
+			case IN:
 			case CLOSE_BRACKET:
 			case PLUS:
 			case MINUS:
@@ -2418,7 +2418,7 @@ _loop86_breakloop:			;
 			case GREATER_THAN:
 			case LESS_EQ:
 			case GREATER_EQ:
-			case LITERAL_instanceof:
+			case INSTANCE_OF:
 			case EQ:
 			case NEQ:
 			case STRICT_EQ:
@@ -2703,7 +2703,7 @@ _loop86_breakloop:			;
 			case CLOSE_BRACE:
 			case COMMA:
 			case SEMI_COLON:
-			case LITERAL_in:
+			case IN:
 			case CLOSE_BRACKET:
 			case PLUS:
 			case MINUS:
@@ -2714,7 +2714,7 @@ _loop86_breakloop:			;
 			case GREATER_THAN:
 			case LESS_EQ:
 			case GREATER_EQ:
-			case LITERAL_instanceof:
+			case INSTANCE_OF:
 			case EQ:
 			case NEQ:
 			case STRICT_EQ:
@@ -2828,7 +2828,7 @@ _loop86_breakloop:			;
 			case CLOSE_BRACE:
 			case COMMA:
 			case SEMI_COLON:
-			case LITERAL_in:
+			case IN:
 			case CLOSE_BRACKET:
 			case SHIFT_LEFT:
 			case SHIFT_RIGHT:
@@ -2837,7 +2837,7 @@ _loop86_breakloop:			;
 			case GREATER_THAN:
 			case LESS_EQ:
 			case GREATER_EQ:
-			case LITERAL_instanceof:
+			case INSTANCE_OF:
 			case EQ:
 			case NEQ:
 			case STRICT_EQ:
@@ -2927,13 +2927,13 @@ _loop86_breakloop:			;
 			case CLOSE_BRACE:
 			case COMMA:
 			case SEMI_COLON:
-			case LITERAL_in:
+			case IN:
 			case CLOSE_BRACKET:
 			case LESS_THAN:
 			case GREATER_THAN:
 			case LESS_EQ:
 			case GREATER_EQ:
-			case LITERAL_instanceof:
+			case INSTANCE_OF:
 			case EQ:
 			case NEQ:
 			case STRICT_EQ:
@@ -3039,13 +3039,7 @@ _loop86_breakloop:			;
 		
 		
 		{
-			switch ( LA(1) )
-			{
-			case LESS_THAN:
-			case GREATER_THAN:
-			case LESS_EQ:
-			case GREATER_EQ:
-			case LITERAL_instanceof:
+			if ((tokenSet_5_.member(LA(1))))
 			{
 				op=relational_op();
 				left=shift_expr(parent);
@@ -3061,33 +3055,14 @@ _loop86_breakloop:			;
 					
 						
 				}
-				break;
 			}
-			case CLOSE_PARENS:
-			case COLON:
-			case CLOSE_BRACE:
-			case COMMA:
-			case SEMI_COLON:
-			case LITERAL_in:
-			case CLOSE_BRACKET:
-			case EQ:
-			case NEQ:
-			case STRICT_EQ:
-			case STRICT_NEQ:
-			case BITWISE_AND:
-			case BITWISE_XOR:
-			case BITWISE_OR:
-			case LOGICAL_AND:
-			case LOGICAL_OR:
-			case INTERR:
-			{
-				break;
+			else if ((tokenSet_6_.member(LA(1)))) {
 			}
-			default:
+			else
 			{
 				throw new NoViableAltException(LT(1), getFilename());
 			}
-			 }
+			
 		}
 		return rel_aux;
 	}
@@ -3136,12 +3111,21 @@ _loop86_breakloop:			;
 			}
 			break;
 		}
-		case LITERAL_instanceof:
+		case INSTANCE_OF:
 		{
-			match(LITERAL_instanceof);
+			match(INSTANCE_OF);
 			if (0==inputState.guessing)
 			{
 				rel_op = JSToken.InstanceOf;
+			}
+			break;
+		}
+		case IN:
+		{
+			match(IN);
+			if (0==inputState.guessing)
+			{
+				rel_op = JSToken.In;
 			}
 			break;
 		}
@@ -3222,7 +3206,7 @@ _loop86_breakloop:			;
 			case CLOSE_BRACE:
 			case COMMA:
 			case SEMI_COLON:
-			case LITERAL_in:
+			case IN:
 			case CLOSE_BRACKET:
 			case BITWISE_AND:
 			case BITWISE_XOR:
@@ -3358,7 +3342,7 @@ _loop86_breakloop:			;
 			case CLOSE_BRACE:
 			case COMMA:
 			case SEMI_COLON:
-			case LITERAL_in:
+			case IN:
 			case CLOSE_BRACKET:
 			case BITWISE_XOR:
 			case BITWISE_OR:
@@ -3439,7 +3423,7 @@ _loop86_breakloop:			;
 			case CLOSE_BRACE:
 			case COMMA:
 			case SEMI_COLON:
-			case LITERAL_in:
+			case IN:
 			case CLOSE_BRACKET:
 			case BITWISE_OR:
 			case LOGICAL_AND:
@@ -3519,7 +3503,7 @@ _loop86_breakloop:			;
 			case CLOSE_BRACE:
 			case COMMA:
 			case SEMI_COLON:
-			case LITERAL_in:
+			case IN:
 			case CLOSE_BRACKET:
 			case LOGICAL_AND:
 			case LOGICAL_OR:
@@ -3598,7 +3582,7 @@ _loop86_breakloop:			;
 			case CLOSE_BRACE:
 			case COMMA:
 			case SEMI_COLON:
-			case LITERAL_in:
+			case IN:
 			case CLOSE_BRACKET:
 			case LOGICAL_OR:
 			case INTERR:
@@ -3676,7 +3660,7 @@ _loop86_breakloop:			;
 			case CLOSE_BRACE:
 			case COMMA:
 			case SEMI_COLON:
-			case LITERAL_in:
+			case IN:
 			case CLOSE_BRACKET:
 			case INTERR:
 			{
@@ -3698,7 +3682,7 @@ _loop86_breakloop:			;
 		match(OPEN_BRACE);
 		{
 			bool synPredMatched136 = false;
-			if (((tokenSet_5_.member(LA(1)))))
+			if (((tokenSet_7_.member(LA(1)))))
 			{
 				int _m136 = mark();
 				synPredMatched136 = true;
@@ -3740,7 +3724,7 @@ _loop86_breakloop:			;
 _loop138_breakloop:					;
 				}    // ( ... )*
 			}
-			else if ((tokenSet_6_.member(LA(1)))) {
+			else if ((tokenSet_8_.member(LA(1)))) {
 				{    // ( ... )*
 					for (;;)
 					{
@@ -3960,7 +3944,7 @@ _loop150_breakloop:					;
 		int _cnt144=0;
 		for (;;)
 		{
-			if ((tokenSet_5_.member(LA(1))))
+			if ((tokenSet_7_.member(LA(1))))
 			{
 				property_name();
 				match(COLON);
@@ -4181,16 +4165,28 @@ _loop144_breakloop:		;
 	public static readonly BitSet tokenSet_4_ = new BitSet(mk_tokenSet_4_());
 	private static long[] mk_tokenSet_5_()
 	{
-		long[] data = { 32L, 458752L, 0L, 0L};
+		long[] data = { 69805794492678144L, 0L};
 		return data;
 	}
 	public static readonly BitSet tokenSet_5_ = new BitSet(mk_tokenSet_5_());
 	private static long[] mk_tokenSet_6_()
 	{
-		long[] data = { 35137931916896L, 520192L, 0L, 0L};
+		long[] data = { -72057559409746560L, 3L, 0L, 0L};
 		return data;
 	}
 	public static readonly BitSet tokenSet_6_ = new BitSet(mk_tokenSet_6_());
+	private static long[] mk_tokenSet_7_()
+	{
+		long[] data = { 32L, 458752L, 0L, 0L};
+		return data;
+	}
+	public static readonly BitSet tokenSet_7_ = new BitSet(mk_tokenSet_7_());
+	private static long[] mk_tokenSet_8_()
+	{
+		long[] data = { 35137931916896L, 520192L, 0L, 0L};
+		return data;
+	}
+	public static readonly BitSet tokenSet_8_ = new BitSet(mk_tokenSet_8_());
 	
 }
 }

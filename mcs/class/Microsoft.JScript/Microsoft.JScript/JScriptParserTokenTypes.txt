@@ -24,7 +24,7 @@ LITERAL_do="do"=24
 LITERAL_while="while"=25
 LITERAL_for="for"=26
 LITERAL_var="var"=27
-LITERAL_in="in"=28
+IN="in"=28
 LITERAL_if="if"=29
 LITERAL_else="else"=30
 ASSIGN=31
@@ -51,7 +51,7 @@ LESS_THAN=51
 GREATER_THAN=52
 LESS_EQ=53
 GREATER_EQ=54
-LITERAL_instanceof="instanceof"=55
+INSTANCE_OF="instanceof"=55
 EQ=56
 NEQ=57
 STRICT_EQ=58

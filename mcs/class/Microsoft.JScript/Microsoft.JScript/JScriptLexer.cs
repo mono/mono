@@ -55,7 +55,7 @@ namespace Microsoft.JScript
 		public const int LITERAL_while = 25;
 		public const int LITERAL_for = 26;
 		public const int LITERAL_var = 27;
-		public const int LITERAL_in = 28;
+		public const int IN = 28;
 		public const int LITERAL_if = 29;
 		public const int LITERAL_else = 30;
 		public const int ASSIGN = 31;
@@ -82,7 +82,7 @@ namespace Microsoft.JScript
 		public const int GREATER_THAN = 52;
 		public const int LESS_EQ = 53;
 		public const int GREATER_EQ = 54;
-		public const int LITERAL_instanceof = 55;
+		public const int INSTANCE_OF = 55;
 		public const int EQ = 56;
 		public const int NEQ = 57;
 		public const int STRICT_EQ = 58;
