@@ -94,7 +94,8 @@ namespace System.Text {
 			_maxCapacity = maxCapacity;
 		}
 
-		public StringBuilder( string value ) : this(value, 0, value == null ? 0 : value.Length, value == null? 0 : value.Length) {
+		public StringBuilder( string value ) : this() {
+			Append (value);
 		}
 	
 		public StringBuilder( string value, int capacity) : this(value, 0, value.Length, capacity) {}
