@@ -1,5 +1,10 @@
 2003-10-03  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* ConfigurationSettings.cs: pass the file name we're reading as the
+	context.
+
+2003-10-03  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* ConfigurationSettings.cs: patch by Eric Lindvall (eric@5stops.com)
 	that improves performance by not reading the file more than once.
 

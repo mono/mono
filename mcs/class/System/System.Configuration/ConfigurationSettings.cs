@@ -348,7 +348,7 @@ namespace System.Configuration
 				return parentConfig;
 			}
 			
-			return ((IConfigurationSectionHandler) handler).Create (parentConfig, null, doc.DocumentElement);
+			return ((IConfigurationSectionHandler) handler).Create (parentConfig, fileName, doc.DocumentElement);
 		}
 
 		public object GetConfig (string sectionName)
