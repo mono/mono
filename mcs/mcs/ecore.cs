@@ -2857,8 +2857,16 @@ namespace Mono.CSharp {
 				
 				if (is_volatile)
 					ig.Emit (OpCodes.Volatile);
-				
-				ig.Emit (OpCodes.Ldfld, FieldInfo);
+
+				IFixedBuffer ff = AttributeTester.GetFixedBuffer (FieldInfo);
+				if (ff != null)
+				{
+					ig.Emit (OpCodes.Ldflda, FieldInfo);
+					ig.Emit (OpCodes.Ldflda, ff.Element);
+				}
+				else {
+					ig.Emit (OpCodes.Ldfld, FieldInfo);
+				}
 			}
 
 			if (leave_copy) {	

@@ -453,8 +453,12 @@ namespace Mono.CSharp {
 			// If we have a <PrivateImplementationDetails> class, close it
 			//
 			if (helper_classes != null){
-				foreach (TypeBuilder type_builder in helper_classes)
+				foreach (TypeBuilder type_builder in helper_classes) {
+#if NET_2_0
+					type_builder.SetCustomAttribute (TypeManager.compiler_generated_attr);
+#endif
 					type_builder.CreateType ();
+				}
 			}
 			
 			attribute_types = null;
@@ -468,10 +472,11 @@ namespace Mono.CSharp {
 		///   Used to register classes that need to be closed after all the
 		///   user defined classes
 		/// </summary>
-		public static void RegisterHelperClass (TypeBuilder helper_class)
+		public static void RegisterCompilerGeneratedType (TypeBuilder helper_class)
 		{
 			if (helper_classes == null)
 				helper_classes = new ArrayList ();
+
 			helper_classes.Add (helper_class);
 		}
 		
@@ -680,7 +685,7 @@ namespace Mono.CSharp {
                                         TypeAttributes.NotPublic,
                                         TypeManager.object_type);
                                 
-				RegisterHelperClass (impl_details_class);
+				RegisterCompilerGeneratedType (impl_details_class);
 			}
 
 			fb = impl_details_class.DefineInitializedData (

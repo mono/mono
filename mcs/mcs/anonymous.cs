@@ -557,7 +557,7 @@ namespace Mono.CSharp {
 
 		public void CloseTypes ()
 		{
-			RootContext.RegisterHelperClass (ScopeTypeBuilder);
+			RootContext.RegisterCompilerGeneratedType (ScopeTypeBuilder);
 			foreach (ScopeInfo si in children)
 				si.CloseTypes ();
 		}
