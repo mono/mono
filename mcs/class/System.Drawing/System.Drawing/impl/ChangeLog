@@ -1,0 +1,12 @@
+2003-04-26  Alexandre Pigolkine <pigolkine@gmx.de>
+	* ItfBitmap.cs
+	* ItfBrush.cs
+	* ItfFont.cs
+	* ItfGraphics.cs
+	* ItfIcon.cs
+	* ItfImage.cs
+	* ItfPen.cs
+	* ItfRegion.cs
+	* ItfSolidBrush.cs
+	* ItfTextureBrush.cs
+			first version of internal interfaces for virtual implementations
