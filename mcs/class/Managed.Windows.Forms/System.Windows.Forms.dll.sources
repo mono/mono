@@ -87,6 +87,8 @@ System.Windows.Forms/ScrollBar.cs
 System.Windows.Forms/ScrollBars.cs
 System.Windows.Forms/ScrollButton.cs
 System.Windows.Forms/StatusBar.cs
+System.Windows.Forms/StatusBarDrawItemEventArgs.cs
+System.Windows.Forms/StatusBarDrawItemEventHandler.cs
 System.Windows.Forms/StatusBarPanel.cs
 System.Windows.Forms/StatusBarPanelAutoSize.cs
 System.Windows.Forms/StatusBarPanelBorderStyle.cs
