@@ -1,7 +1,10 @@
 2003-11-06  Zoltan Varga  <vargaz@freemail.hu>
 
-	* AssemblyBuilder.cs (Save): Set 'created' flag.
+	* AssemblyBuilder.cs (.ctor): Initialize the 'dir' field to something
+	sensible.
 	
+	* AssemblyBuilder.cs (Save): Set 'created' flag.
+
 	* AssemblyBuilder.cs (get_next_table_index): Moved to ModuleBuilder,
 	since table indexes are per-module.
 

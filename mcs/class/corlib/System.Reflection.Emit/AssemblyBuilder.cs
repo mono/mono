@@ -59,7 +59,10 @@ namespace System.Reflection.Emit {
 		
 		internal AssemblyBuilder (AssemblyName n, string directory, AssemblyBuilderAccess access) {
 			name = n.Name;
-			dir = directory;
+			if (directory == null || directory == String.Empty)
+				dir = Directory.GetCurrentDirectory ();
+			else
+				dir = directory;
 			this.access = (uint)access;
 
 			/* Set defaults from n */
