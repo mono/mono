@@ -1,3 +1,8 @@
+2004-07-26 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* WebProxy.cs: fix scheme detection. Patch by Konstantin Triger
+	(kostat@mainsoft.com).
+
 2004-07-16 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpWebRequest.cs: detect changes in scheme or port when redirecting.
