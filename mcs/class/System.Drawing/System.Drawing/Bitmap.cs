@@ -7,7 +7,7 @@
 //   Alexandre Pigolkine (pigolkine@gmx.de)
 //   Christian Meyer (Christian.Meyer@cs.tum.edu)
 //   Miguel de Icaza (miguel@ximian.com)
-//	 Jordi Mas i Hernàdez (jmas@softcatala.org)
+//	 Jordi Mas i Hernandez (jmas@softcatala.org)
 //
 using System;
 using System.IO;
@@ -52,10 +52,12 @@ namespace System.Drawing {
 			raw_format = ImageFormat.Bmp;
 			image_size = new Size(width, height);
 			pixel_format = format;
-			int bpp = 32;
+			int bpp = GetPixelFormatSize (format);
 			int stride = ((bpp * width) / 8);
 			stride = (stride + 3) & ~3;
-			int bmp_size = stride * height;			
+			int bmp_size = stride * height;		
+			
+			Console.WriteLine("Bitmap.cs: stride:" + stride);	
 			
 			IntPtr bmp;
 			Status s = GDIPlus.GdipCreateBitmapFromScan0 (width, height, stride, PixelFormat.Format32bppArgb, IntPtr.Zero, 
@@ -131,11 +133,15 @@ namespace System.Drawing {
 			IntPtr bmp;			
 			Console.WriteLine ("Stride: {0} ", bd.Stride);
 			Console.WriteLine ("Scan0: {0:x}" , (long) bd.Scan0);
+			
 			Status s = GDIPlus.GdipCreateBitmapFromScan0 (bd.Width, bd.Height, bd.Stride, bd.PixelFormat, bd.Scan0, out bmp);
 			if (s != Status.Ok)
 				throw new ArgumentException ("Could not allocate the GdiPlus image: " + s);
+				
 			Console.WriteLine ("Image is {0}", bmp);
 			nativeObject = (IntPtr)bmp;
+			
+			setGDIPalette();
 		}
 		
 		public Bitmap (Stream stream, bool useIcm)
@@ -233,7 +239,7 @@ namespace System.Drawing {
 				throw new Exception ("Error calling GdipBitmapUnlockBits " +status);		
 
 			Bitmap bmpnew = new Bitmap (rect.Width, rect.Height,  PixelFormat, (IntPtr) bmp);
-       		return bmpnew;
+	       		return bmpnew;
 		}
 
 		public static Bitmap FromHicon (IntPtr hicon)	//TODO: Untested
@@ -300,7 +306,7 @@ namespace System.Drawing {
 				throw new Exception ("nativeObject is null");			
 			
 			IntPtr lfBuffer = Marshal.AllocHGlobal(Marshal.SizeOf(result));
-     		Marshal.StructureToPtr(result, lfBuffer, false);						
+     			Marshal.StructureToPtr(result, lfBuffer, false);						
      		
 			Status status = GDIPlus.GdipBitmapLockBits (nativeObject, ref rect, flags, format,  lfBuffer);
 			

@@ -45,5 +45,15 @@ namespace System.Drawing {
         	return result;
     	}
 	}
+	
+		
+	[StructLayout(LayoutKind.Sequential)]
+	internal struct GdiColorPalette
+	{
+   		internal int Flags;             // Palette flags
+    		internal int Count;             // Number of color entries    		
+		//internal int[] Entries;     		
+    	}
+
 }
 

@@ -8,7 +8,19 @@
 //    CxImage (c)  07/Aug/2001 <ing.davide.pizzolato@libero.it>
 //
 // (C) 2002/2003 Ximian, Inc.
-
+//
+// Useful documentation about bitmaps
+//
+//	http://msdn.microsoft.com/library/default.asp?url=/library/en-us/gdi/bitmaps_4v1h.asp
+//	http://www.csdn.net/Dev/Format/windows/Bmp.html
+//	http://www.fortunecity.com/skyscraper/windows/364/bmpffrmt.html
+//
+//	Header structure
+//		BITMAPFILEHEADER
+//		BITMAPINFOHEADER or BITMAPV4HEADER or BITMAPV5HEADER or BITMAPCOREHEADER 
+//		RGBQUADS or RGBTRIPLE (optional)
+//		Bitmap data
+//
 namespace System.Drawing.Imaging {
 
 	using System;
@@ -24,6 +36,15 @@ namespace System.Drawing.Imaging {
 		public ushort bfReserved2; 			// Reserved; must be set to zero.
 		public uint bfOffBits;   			// Specifies the byte offset from the BITMAPFILEHEADER
 		// structure to the actual bitmap data in the file.
+		
+		public void DumpHeader()
+		{
+			Console.WriteLine("bfType:" + bfType);
+			Console.WriteLine("bfSize:" +  bfSize);
+			Console.WriteLine("bfReserved1:" + bfReserved1);
+			Console.WriteLine("bfReserved2:" + bfReserved2);
+			Console.WriteLine("bfOffBits:" + bfOffBits);			
+		}
 	}
 
 	internal enum BitmapFileType : ushort {
@@ -38,23 +59,69 @@ namespace System.Drawing.Imaging {
 		BI_RLE4       = 2,
 		BI_BITFIELDS  = 3
 	}
-
 	
 	[StructLayout(LayoutKind.Sequential)]
-	internal struct BITMAPINFOHEADER_FLAT {
-		internal int      biSize;
-		internal int      biWidth;
-		internal int      biHeight;
-		internal short    biPlanes;
-		internal short    biBitCount;
-		internal int      biCompression;
-		internal int      biSizeImage;
-		internal int      biXPelsPerMeter;
-		internal int      biYPelsPerMeter;
-		internal int      biClrUsed;
-		internal int      biClrImportant;
-		[MarshalAs(System.Runtime.InteropServices.UnmanagedType.ByValArray, SizeConst=1024)]
-		internal byte[] bmiColors; 
+	internal struct CIEXYZ {
+		int 	ciexyzX; 
+		int	ciexyzY; 
+		int	ciexyzZ; 
+	}
+
+	[StructLayout(LayoutKind.Sequential)]
+	internal struct CIEXYZTRIPLE {			
+		CIEXYZ	ciexyzRed; 
+		CIEXYZ	ciexyzGreen; 
+  		CIEXYZ	ciexyzBlue; 
+	}
+	
+	/* OS/2 BMP Format */
+	[StructLayout(LayoutKind.Sequential)]
+	internal struct BITMAPCOREHEADER {
+		internal int	bcSize; 
+  		internal short	bcWidth; 
+		internal short bcHeight; 
+		internal short bcPlanes; 
+		internal short bcBitCount; 
+	}  
+	
+	/* Windows BMP formats */
+	[StructLayout(LayoutKind.Sequential)]
+	internal struct BITMAPINFOHEADER {
+		internal int		biSize;
+		internal int		biWidth;
+		internal int		biHeight;
+		internal short		biPlanes;
+		internal short		biBitCount;
+		internal int		biCompression;
+		internal int		biSizeImage;
+		internal int		biXPelsPerMeter;
+		internal int		biYPelsPerMeter;
+		internal int		biClrUsed;
+		internal int		biClrImportant;
+		
+		/* V4 */				
+		internal int		biRedMask; 
+		internal int		biGreenMask; 
+		internal int		biBlueMask; 
+		internal int		biAlphaMask; 
+		internal int		biCSType; 
+		internal CIEXYZTRIPLE	biEndpoints; 
+		internal int		biGammaRed; 
+		internal int		biGammaGreen; 
+		internal int		biGammaBlue; 
+		
+		/* V5 */		
+		internal int		biIntent; 
+		internal int		biProfileData; 
+		internal int		biProfileSize; 
+		internal int		biReserved; 	
+		
+		/* Variables not part of the struct*/
+		internal bool 		upsidedown;
+		internal bool		os2;
+		internal byte[]		bmiColors;	
+		
+		
 
 		static int WIDTHBYTES(int i) {
 			return ((i+31)&(~31))/8;  /* ULONG aligned ! */
@@ -69,7 +136,7 @@ namespace System.Drawing.Imaging {
 		}
 		
 		public int DibSizeImage() {
-			return biSizeImage == 0 ? DibWidthBytes() * biHeight : biSizeImage;
+			return biSizeImage == 0 ? DibWidthBytes() *  biHeight : biSizeImage;
 		}
 		
 		public int DibNumColors() {
@@ -81,6 +148,22 @@ namespace System.Drawing.Imaging {
 				biSizeImage = DibSizeImage();
 			if (biClrUsed == 0)
 				biClrUsed = DibNumColors();
+		}
+		
+		public void DumpHeader()
+		{									
+			Console.WriteLine("biSize " + biSize);
+			Console.WriteLine("biWidth " + biWidth); 
+			Console.WriteLine("biHeight " +  biHeight);
+			Console.WriteLine("biPlanes " + biPlanes);
+			Console.WriteLine("biBitCount " + biBitCount);
+			Console.WriteLine("biCompression " + biCompression);
+			Console.WriteLine("biSizeImage " + biSizeImage);
+			Console.WriteLine("biXPelsPerMeter " + biXPelsPerMeter);
+			Console.WriteLine("biYPelsPerMeter " + biYPelsPerMeter);
+			Console.WriteLine("biClrUsed " + biClrUsed);
+			Console.WriteLine("biClrImportant " + biClrImportant);
+			Console.WriteLine("colors: " + DibNumColors());
 		}
 	    
 		float HorizontalResolution {
@@ -101,20 +184,23 @@ namespace System.Drawing.Imaging {
 			biWidth = info.Width;
 			biHeight = info.Height;
 			biPlanes = 1;
-			biBitCount = (short)System.Drawing.Image.GetPixelFormatSize (info.PixelFormat);
+			biBitCount = (short) System.Drawing.Image.GetPixelFormatSize (info.PixelFormat);
 			biCompression = (int)BitmapCompression.BI_RGB;
-			biSizeImage = (int) info.Height * info.Width * Image.GetPixelFormatSize (info.PixelFormat) / 8;
+			biSizeImage =  info.Height * info.Stride;
 			biXPelsPerMeter = 0;
 			biYPelsPerMeter = 0;
 			biClrUsed = 0;
-			biClrImportant = 0;
-			
+			biClrImportant = 0;			
 		}
 	}
 
 	internal class BMPCodec {
 		
-		static  int BITMAPINFOHEADER_SIZE = 40;
+		static int BITMAPINFOHEADER_SIZE  =  40;
+		static int BITMAPINFOHEADER_V4_SIZE = 108;
+		static int BITMAPINFOHEADER_V5_SIZE = 124;
+		static int BITMAPFILEHEADER_SIZE = 14;		
+		static int BITMAPCOREHEADER_SIZE = 12;
 			
 		internal BMPCodec() {
 		}
@@ -155,40 +241,64 @@ namespace System.Drawing.Imaging {
 			bmfh.bfReserved1 = bs.ReadUInt16();
 			bmfh.bfReserved2 = bs.ReadUInt16();
 			bmfh.bfOffBits = bs.ReadUInt32();
+			
+			//bmfh.DumpHeader ();
 			return true;
 		}
 		
-		bool ReadInfoHeader (Stream stream, out BITMAPINFOHEADER_FLAT bmih) {
-			bmih = new BITMAPINFOHEADER_FLAT();
+		/* BITMAPINFOHEADER/BITMAPV4HEADER/BITMAPV5HEADER */
+		bool ReadInfoHeader (Stream stream, out BITMAPINFOHEADER bmih) {
+			bmih = new BITMAPINFOHEADER();
 			try {
 				BinaryReader bs = new BinaryReader(stream);
 				bmih.biSize = bs.ReadInt32();
-				bmih.biWidth = bs.ReadInt32();
-				bmih.biHeight = bs.ReadInt32();
-				bmih.biPlanes = bs.ReadInt16();
-				bmih.biBitCount = bs.ReadInt16();
-				bmih.biCompression = bs.ReadInt32();
-				bmih.biSizeImage = bs.ReadInt32();
-				bmih.biXPelsPerMeter = bs.ReadInt32();
-				bmih.biYPelsPerMeter = bs.ReadInt32();
-				bmih.biClrUsed = bs.ReadInt32();
-				bmih.biClrImportant = bs.ReadInt32();
 				
-				// Currently only BITMAPINFOHEADER
-				if (bmih.biSize != BITMAPINFOHEADER_SIZE) return false;
-				
-				bmih.FixBitmapInfo();
-
-				int numColors = bmih.DibNumColors();
-				int index = 0;
-				for (int i = 0; i < numColors; i++) {
-					bmih.bmiColors[index++] = (byte)stream.ReadByte();
-					bmih.bmiColors[index++] = (byte)stream.ReadByte();
-					bmih.bmiColors[index++] = (byte)stream.ReadByte();
-					bmih.bmiColors[index++] = (byte)stream.ReadByte();
+				if (bmih.biSize != BITMAPINFOHEADER_SIZE && bmih.biSize != BITMAPINFOHEADER_V4_SIZE &&
+					bmih.biSize != BITMAPINFOHEADER_V5_SIZE && bmih.biSize != BITMAPCOREHEADER_SIZE) 					
+					throw new Exception ("Invalid BITMAPINFOHEADER size");													
+					
+				if (bmih.biSize == BITMAPCOREHEADER_SIZE) { // OS/2 Format
+					
+					bmih.biWidth = bs.ReadInt16();
+					bmih.biHeight = bs.ReadInt16();
+					bmih.biPlanes = bs.ReadInt16();
+					bmih.biBitCount = bs.ReadInt16();
+					bmih.biCompression = 0;
+					bmih.biSizeImage = 0;
+					bmih.biXPelsPerMeter = 0;
+					bmih.biYPelsPerMeter = 0;
+					bmih.biClrUsed = 0;
+					bmih.biClrImportant = 0;				
+					bmih.os2 = true;
 				}
+				else {
+				
+					bmih.biWidth = bs.ReadInt32();
+					bmih.biHeight = bs.ReadInt32();
+					bmih.biPlanes = bs.ReadInt16();
+					bmih.biBitCount = bs.ReadInt16();
+					bmih.biCompression = bs.ReadInt32();
+					bmih.biSizeImage = bs.ReadInt32();
+					bmih.biXPelsPerMeter = bs.ReadInt32();
+					bmih.biYPelsPerMeter = bs.ReadInt32();
+					bmih.biClrUsed = bs.ReadInt32();
+					bmih.biClrImportant = bs.ReadInt32();				
+					bmih.os2 = false;
+				}
+				
+				if (bmih.biHeight < 0) {
+					bmih.upsidedown = false;
+					bmih.biHeight =  -bmih.biHeight;
+				}
+				else
+					bmih.upsidedown = true;
+				
+				//bmih.DumpHeader();							
+				bmih.FixBitmapInfo();									
+				
 			}
-			catch (Exception) {
+			catch (Exception e) {
+				Console.WriteLine("Exception: " + e.ToString());
 				return false;
 			}
 			return true;
@@ -201,100 +311,100 @@ namespace System.Drawing.Imaging {
 		}
 		
 		internal bool Decode (Image image, Stream stream, BitmapData info)
-		{							
-			if (stream.Length < 14 + BITMAPINFOHEADER_SIZE/* sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFOHEADER)*/)
-				return false;
+		{			
 			long startPosition = stream.Position;
 			
 			BITMAPFILEHEADER	bmfh;
-			BITMAPINFOHEADER_FLAT	bmih;
+			BITMAPINFOHEADER	bmih;
 			
 			if (!ReadFileHeader (stream, out bmfh))
-				return false;
-			if (!ReadInfoHeader (stream, out bmih))
-				return false;
+				return false;			
 			
+			if (!ReadInfoHeader (stream, out bmih))
+				return false;								
+			
+			if (bmih.biCompression != (uint)BitmapCompression.BI_RGB)
+				throw new Exception ("BmpCodec: The compression is not supported");
+				
+			/* Read RGB palette*/
 			Color[] colorEntries = new Color[bmih.DibNumColors()];
 			int index = 0;
-			for (int colorEntryIdx = 0; colorEntryIdx < colorEntries.Length; colorEntryIdx++) {
-				// FIXME: is alpha can be used here
-				colorEntries[colorEntryIdx] = Color.FromArgb(bmih.bmiColors[index+3], bmih.bmiColors[index+2], bmih.bmiColors[index+1], bmih.bmiColors[index]);
-				index += 4;
-				colorEntryIdx++;
+			byte r,g,b,a;
+			
+			if (bmih.os2){  // RGBTRIPLE
+				for (int colorEntryIdx = 0; colorEntryIdx < colorEntries.Length; colorEntryIdx++, index += 3) {				
+					b = (byte) stream.ReadByte();
+					g = (byte) stream.ReadByte();
+					r = (byte) stream.ReadByte();					
+					colorEntries[colorEntryIdx] = Color.FromArgb(r,g,b);							
+				}   								
 			}
-			image.Palette = new ColorPalette(1, colorEntries);
+			else { // RGBSquads
+				for (int colorEntryIdx = 0; colorEntryIdx < colorEntries.Length; colorEntryIdx++, index += 4) {				
+					b = (byte) stream.ReadByte();
+					g = (byte) stream.ReadByte();
+					r = (byte) stream.ReadByte();
+					a = (byte) stream.ReadByte();					
+					colorEntries[colorEntryIdx] = Color.FromArgb(a, r,g,b);							
+				}   								
+			}
+			
+			image.Palette = new ColorPalette(0, colorEntries);
 			image.SetRawFormat (System.Drawing.Imaging.ImageFormat.Bmp);
 			info.Width = bmih.biWidth;
 			info.Height = bmih.biHeight;
 			info.Stride = (int)bmih.DibWidthBytes();
+			
+			//Console.WriteLine ("Stride ->" + info.Stride + " width " + info.Width * bmih.biBitCount);				
 
 			switch (bmih.biBitCount) {
 			case 24:
-				Console.WriteLine ("BmpCodec: 24 bits bitmap", bmih.biSizeImage);
-				info.PixelFormat = PixelFormat.Format24bppRgb;
-				if (bmfh.bfOffBits != 0L)
-					stream.Seek (startPosition + bmfh.bfOffBits,SeekOrigin.Begin);
-
-				if (bmih.biCompression == (uint)BitmapCompression.BI_RGB) {
-					
-					IntPtr lfBuffer = Marshal.AllocHGlobal(bmih.biSizeImage);	
-					byte[] bt = new byte[info.Stride];					
-					int offset = (info.Height-1) * info.Stride;						
-					int baseadr = lfBuffer.ToInt32();
-										
-					//	DIB are stored upside down. That means that the uppest row which 
-					//	appears on the screen actually is the lowest row stored in the bitmap 					
-					while(offset>=0){									
-						stream.Read(bt, 0, info.Stride); 
-						Marshal.Copy (bt, 0, (IntPtr)( baseadr + offset), info.Stride);						
-						offset -= info.Stride;				
-					}										
-					
-					Console.WriteLine ("BmpCodec: 24 bits bitmap", bmih.biSizeImage);
-					info.Scan0 = lfBuffer;
-					info.Allocated=true;		
-			
-				} else {
-					//
-					// FIXME
-					// 
-					Console.WriteLine ("BmpCodec: The {0} compression is not supported", bmih.biCompression);
-				}
+				info.PixelFormat = PixelFormat.Format24bppRgb;				
 				break;
 			case 32:
-				info.PixelFormat = PixelFormat.Format32bppArgb;
-				Console.WriteLine ("BmpCodec: 32 bits bitmap", bmih.biSizeImage);
-				if (bmfh.bfOffBits != 0L)
-					stream.Seek (startPosition + bmfh.bfOffBits,SeekOrigin.Begin);
-				if (bmih.biCompression == (uint)BitmapCompression.BI_RGB) {
-					
-					IntPtr lfBuffer = Marshal.AllocHGlobal(bmih.biSizeImage);	
-					byte[] bt = new byte[info.Stride];					
-					int offset = (info.Height-1) * info.Stride;						
-					int baseadr = lfBuffer.ToInt32();
-										
-					//	DIB are stored upside down. That means that the uppest row which 
-					//	appears on the screen actually is the lowest row stored in the bitmap 					
-					while(offset>=0){									
-						stream.Read(bt, 0, info.Stride); 
-						Marshal.Copy (bt, 0, (IntPtr)( baseadr + offset), info.Stride);						
-						offset -= info.Stride;				
-					}													
-					
-					info.Scan0 = lfBuffer;
-					info.Allocated=true;						
-					
-				} else {
-					//
-					// FIXME
-					// 
-					Console.WriteLine ("BmpCodec: The {0} compression is not supported", bmih.biCompression);
-				}
+				info.PixelFormat = PixelFormat.Format32bppArgb;									
+				break;				
+			case 8:			
+				info.PixelFormat = PixelFormat.Format8bppIndexed;				
 				break;
+			case 4:			
+				info.PixelFormat = PixelFormat.Format4bppIndexed;				
+				break;				
+			
 			default:
 				throw new NotImplementedException(String.Format("This format is not yet supported : {0} bpp", bmih.biBitCount));
 			}
-
+			
+			if (bmfh.bfOffBits != 0L)
+				stream.Seek (startPosition + bmfh.bfOffBits,SeekOrigin.Begin);
+					
+			IntPtr lfBuffer = Marshal.AllocHGlobal(bmih.biSizeImage);	
+			byte[] bt = new byte[info.Stride];					
+			int offset = (info.Height-1) * info.Stride;						
+			int baseadr = lfBuffer.ToInt32();
+			
+			//	If the height is positive the DIB are stored upside down. That means that the uppest row 
+			//	which appears on the screen actually is the lowest row stored in the bitmap 					
+			//	if it is negative, if it stored in the way arround.			
+			if (bmih.upsidedown) {				
+				offset = (info.Height-1) * info.Stride;														
+				while(offset>=0){									
+					stream.Read(bt, 0, info.Stride); 
+					Marshal.Copy (bt, 0, (IntPtr)( baseadr + offset), info.Stride);						
+					offset -= info.Stride;				
+				}
+			}										
+			else {
+				offset = 0;
+				for (int lines = 0; lines < info.Height ; lines++){
+					stream.Read(bt, 0, info.Stride); 
+					Marshal.Copy (bt, 0, (IntPtr)( baseadr + offset), info.Stride);	
+					offset += info.Stride;
+				}										
+			}			
+			
+			info.Scan0 = lfBuffer;
+			info.Allocated = true;		
 			return true;
 		}
 
@@ -309,12 +419,14 @@ namespace System.Drawing.Imaging {
 		
 		internal bool Encode (Image image, Stream stream, BitmapData info)
 		{
+			Console.WriteLine ("***Encode! " + info.PixelFormat);			
+			
 			BITMAPFILEHEADER bmfh = new BITMAPFILEHEADER();
 			bmfh.bfReserved1 = bmfh.bfReserved2 = 0;
 			bmfh.bfType = (ushort)BitmapFileType.BFT_BITMAP;
-			bmfh.bfOffBits = (uint)(14 + BITMAPINFOHEADER_SIZE + image.Palette.Entries.Length * 4);
+			bmfh.bfOffBits = (uint)(BITMAPFILEHEADER_SIZE + BITMAPINFOHEADER_SIZE + image.Palette.Entries.Length * 4);
 			int line_size = info.Stride;
-			bmfh.bfSize = (uint)(bmfh.bfOffBits + info.Height * line_size);
+			bmfh.bfSize = (uint)(bmfh.bfOffBits + info.Height * line_size);			
 					     
 			BinaryWriter bw = new BinaryWriter(stream);
 			bw.Write(bmfh.bfType);
@@ -322,8 +434,9 @@ namespace System.Drawing.Imaging {
 			bw.Write(bmfh.bfReserved1);
 			bw.Write(bmfh.bfReserved2);
 			bw.Write(bmfh.bfOffBits);
+			//bmfh.DumpHeader();
 
-			BITMAPINFOHEADER_FLAT	bmih = new BITMAPINFOHEADER_FLAT();
+			BITMAPINFOHEADER bmih = new BITMAPINFOHEADER();
 			bmih.Initialize(info);
 			bw.Write(bmih.biSize);
 			bw.Write(bmih.biWidth);
@@ -336,32 +449,33 @@ namespace System.Drawing.Imaging {
 			bw.Write(bmih.biYPelsPerMeter);
 			bw.Write(bmih.biClrUsed);
 			bw.Write(bmih.biClrImportant);
-			Console.WriteLine ("FIXME: BmpCodec: Write palette here");
+			//bmih.DumpHeader();
 			
-			Console.WriteLine ("biWidth ->" + bmih.biWidth);
-			Console.WriteLine ("Height->" + bmih.biHeight);			
-			Console.WriteLine ("LineSize ->" + line_size);
-			Console.WriteLine ("Address ->" + info.Scan0.ToInt32());
-			Console.WriteLine ("Stride ->" + info.Stride);
-			Console.WriteLine ("Planes ->" + bmih.biPlanes);						
-
+			// Write palette on disk on BGR
+			Color[] colors  = image.Palette.Entries;											
+			for (int i = 0; i < colors.Length; i++) {
+				bw.Write(colors[i].B);
+				bw.Write(colors[i].G);
+				bw.Write(colors[i].R);
+				bw.Write(colors[i].A);
+			}				
+			
+			//Console.WriteLine("Colors written: " + image.Palette.Entries.Length);
+			
 			byte [] line_buffer = new byte [line_size];
 			int stride = info.Stride;
 			int offset = (info.Height-1) * stride;						
-			int baseadr = info.Scan0.ToInt32();
+			int baseadr = info.Scan0.ToInt32();			
 			
-			Console.WriteLine ("Offset ->" + offset);				
 			
-			//	DIB are stored upside down. That means that the uppest row which 
-			//	appears on the screen actually is the lowest row stored in the 
-			//	bitmap.							
+			//	We always store DIB upside down. That means that the uppest row which 
+			//	appears on the screen actually is the lowest row stored in the bitmap			
 			while(offset>=0){				
-				//FIXME: not an optimal way to specify starting address
-				//FIXME: Bitmaps are stored in DWORD alignments
 				Marshal.Copy ((IntPtr)( baseadr + offset), line_buffer, 0, line_size);
 				stream.Write(line_buffer, 0, line_size);
 				offset -= stride;					
 			}
+			
 			return true;
 		}
 	}

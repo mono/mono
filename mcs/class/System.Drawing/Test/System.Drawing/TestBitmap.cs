@@ -11,11 +11,12 @@ using System;
 using System.Drawing;
 using System.Drawing.Imaging;
 using NUnit.Framework;
+using System.IO;
 
 namespace MonoTests.System.Drawing{
 
 	[TestFixture]	
-	public class BitMapTest : Assertion {
+	public class TestBitmap : Assertion {
 		
 		[TearDown]
 		public void Clean() {}
@@ -41,23 +42,43 @@ namespace MonoTests.System.Drawing{
 			AssertEquals (Color.FromArgb(255,255,0,155), color2);			
 		}
 		
-		/* Get the right directory depending on the runtime*/
-		internal string getSubDir()
+		/* Get the output directory depending on the runtime and location*/
+		internal string getOutSubDir()
 		{				
-			string sRslt;			
+			string sSub, sRslt;			
 			
 			if (Environment.GetEnvironmentVariable("MSNet")==null)
-				sRslt = "mono/";
+				sSub = "mono/";
 			else
-				sRslt = "MSNet/";			
+				sSub = "MSNet/";			
+			
+			sRslt = Path.GetFullPath (sSub);
 				
+			if (Directory.Exists(sRslt) == 	false) 
+				sRslt = Path.GetFullPath ("Test/System.Drawing/") + sSub;				
+			
+			Console.WriteLine(sRslt);	
 			return sRslt;
 		}
 		
-		[Test]
+		/* Get the input directory depending on the runtime*/
+		internal string getInFile(string file)
+		{				
+			string sRslt;						
+			
+			sRslt = Path.GetFullPath (file);
+				
+			if (File.Exists(file)==false) 
+				sRslt = "Test/System.Drawing/" + file;				
+			
+			Console.WriteLine (sRslt);	
+			return sRslt;
+		}
+		
+		//[Test]
 		public void BitmapLoadAndSave() 
 		{				
-			string sOutFile = getSubDir() + "linerect.bmp";
+			string sOutFile =  getOutSubDir() + "linerect.bmp";
 						
 			// Save		
 			Bitmap	bmp = new Bitmap(100,100, PixelFormat.Format32bppRgb);						
@@ -82,11 +103,11 @@ namespace MonoTests.System.Drawing{
 			AssertEquals (Color.FromArgb(255,255,0,0), color);											
 		}
 
-		[Test]
+		//[Test]
 		public void MakeTransparent() 
 		{
-			string sInFile = "bitmaps/maketransparent.bmp";
-			string sOutFile =  getSubDir() + "transparent.bmp";
+			string sInFile =   getInFile("bitmaps/maketransparent.bmp");
+			string sOutFile =  getOutSubDir() + "transparent.bmp";
 						
 			Bitmap	bmp = new Bitmap(sInFile);
 			Console.WriteLine("Bitmap loaded OK", bmp != null);
@@ -100,11 +121,11 @@ namespace MonoTests.System.Drawing{
 			AssertEquals (Color.Black.B, color.B);										
 		}
 		
-		[Test]
+		//[Test]
 		public void Clone ()
 		{
-			string sInFile = "bitmaps/almogaver24bits.bmp";
-			string sOutFile =  getSubDir() + "clone24.bmp";			
+			string sInFile = getInFile ("bitmaps/almogaver24bits.bmp");
+			string sOutFile =  getOutSubDir() + "clone24.bmp";			
 			
 			Rectangle rect = new Rectangle(0,0,50,50);						
 			Bitmap	bmp = new Bitmap(sInFile);			

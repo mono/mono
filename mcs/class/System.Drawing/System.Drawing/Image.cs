@@ -253,6 +253,39 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 		fs.Flush();
 		fs.Close();
 	}
+	
+	internal void setGDIPalette() 
+	{
+		GdiColorPalette palette = new GdiColorPalette ();			
+		Color[] entries = colorPalette.Entries;
+		int entry = 0;			
+		int size = Marshal.SizeOf (palette) + (Marshal.SizeOf (entry) * entries.Length);			
+		IntPtr lfBuffer = Marshal.AllocHGlobal(size);			
+		
+		palette.Flags = colorPalette.Flags;
+		palette.Count = entries.Length;
+		    			
+		int[] values = new int[palette.Count];
+		
+		for (int i = 0; i < values.Length; i++) {
+			values[i] = entries[i].ToArgb(); 
+			//Console.Write("{0:X} ;", values[i]);			
+		}   			
+		
+		Console.WriteLine("pal size " + Marshal.SizeOf (palette) + " native " + NativeObject);			
+		
+		Marshal.StructureToPtr (palette, lfBuffer, false);	
+		Marshal.Copy (values, 0, (IntPtr) (lfBuffer.ToInt32() + Marshal.SizeOf (palette)), values.Length);						    			
+		
+		Status status = GDIPlus.GdipSetImagePalette (NativeObject, lfBuffer);			
+		
+		if (status != Status.Ok)
+			Console.WriteLine("Error calling GDIPlus.GdipSetImagePalette");			
+			
+		Marshal.FreeHGlobal (lfBuffer);           
+		
+		Console.WriteLine("GDIPlus.GdipSetImagePalette done");			
+	}
 
 	//public void Save(Stream stream, ImageCodecInfo encoder, EncoderParameters encoderParams);
 	//public void Save(string filename, ImageCodecInfo encoder, EncoderParameters encoderParams);
@@ -287,11 +320,13 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 	}
 	
 	public ColorPalette Palette {
-		get {
+		get {							
+			
 			return colorPalette;
 		}
 		set {
-			colorPalette = value;
+			colorPalette = value;		
+			
 		}
 	}
 	
