@@ -361,7 +361,7 @@ namespace System.Xml
 
 		public override void WriteCData (string text)
 		{
-			if (text.IndexOf("]]>") > 0)
+			if (text.IndexOf ("]]>") >= 0)
 				throw new ArgumentException ();
 
 			CheckState ();
@@ -414,6 +414,9 @@ namespace System.Xml
 		{
 			if (name == null || name.Trim (XmlChar.WhitespaceChars).Length == 0)
 				throw new ArgumentException ("Invalid DOCTYPE name", "name");
+
+			if (ws == WriteState.Prolog && formatting == Formatting.Indented)
+				w.WriteLine ();
 
 			w.Write ("<!DOCTYPE ");
 			w.Write (name);

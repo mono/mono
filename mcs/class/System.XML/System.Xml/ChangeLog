@@ -1,3 +1,8 @@
+2003-12-18  Atsushi Enomoto  <ginga@kit.hi-ho.ne.jp>
+
+	* XmlTextWriter.cs : Indentation between xmldecl and doctype.
+	* DTDValidatingReader.cs : AttList null reference fix.
+
 2003-12-16  Atsushi Enomoto  <ginga@kit.hi-ho.ne.jp>
 
 	* DTDValidatingReader.cs : Validity check and entity expansion were

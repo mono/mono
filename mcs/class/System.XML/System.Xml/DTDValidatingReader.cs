@@ -1002,9 +1002,11 @@ namespace Mono.Xml
 			get {
 				if (currentElement == null)
 					return null;
+				DTDAttListDeclaration decl =
+					DTD.AttListDecls [currentElement];
 				DTDAttributeDefinition def =
-					DTD.AttListDecls [currentElement] [currentAttribute];
-				return def.Datatype;
+					decl != null ? decl [currentAttribute] : null;
+				return def != null ? def.Datatype : null;
 			}
 		}
 
