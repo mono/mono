@@ -1,3 +1,10 @@
+2004-05-22  Todd Berman  <tberman@sevenl.net>
+
+	* corlib.dll.sources: added Mono/Runtime.cs
+	* Mono: added Mono directory back
+	* Mono/Runtime.cs: add back Runtime.cs, marked as internal, gnome#
+	needs it.
+
 2004-05-22  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* corlib_test.dll.sources: Added IntPtrTest and UIntPtrTest to the 
