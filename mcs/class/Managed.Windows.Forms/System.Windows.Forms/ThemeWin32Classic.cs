@@ -25,9 +25,12 @@
 //
 //
 //
-// $Revision: 1.18 $
+// $Revision: 1.19 $
 // $Modtime: $
 // $Log: ThemeWin32Classic.cs,v $
+// Revision 1.19  2004/08/12 20:29:01  jordi
+// Trackbar enhancement, fix mouse problems, highli thumb, etc
+//
 // Revision 1.18  2004/08/12 18:54:37  jackson
 // Handle owner draw status bars
 //
@@ -116,15 +119,19 @@ namespace System.Windows.Forms
 		static private Font default_font;
 
 		/* Cache */
-		static private SolidBrush label_br_fore_color;
-		static private SolidBrush label_br_back_color;		
-		static private HatchBrush br_scrollbar_backgr;
+		private SolidBrush label_br_fore_color;
+		private SolidBrush label_br_back_color;		
+		private HatchBrush br_scrollbar_backgr;
+		private HatchBrush br_trackbar_thumbhili;
+		private SolidBrush br_trackbarbg;
 
 		public ThemeWin32Classic ()
 		{
 			label_br_fore_color = null;
 			label_br_back_color = null;
 			br_scrollbar_backgr = null;
+			br_trackbarbg = null;
+			br_trackbar_thumbhili = null;
  
 			pen_ticks = new Pen (Color.Black);			
 			br_arrow = new SolidBrush (Color.Black);			
@@ -1131,232 +1138,300 @@ namespace System.Windows.Forms
 		*/
 
 		/* Vertical trackbar */
-		internal void DrawTrackBar_Vertical (Graphics dc, Rectangle area, ref Rectangle thumb_pos,
-			 ref Rectangle thumb_area, TickStyle style, int ticks, bool focused)
+		private void DrawTrackBar_Vertical (Graphics dc, Rectangle area, TrackBar tb,
+			ref Rectangle thumb_pos, ref Rectangle thumb_area,  Brush br_thumb,
+			float ticks, int value_pos, bool mouse_value)		
 		{			
-			/* Background */
-			dc.FillRectangle (br_buttonface, area);
-
-			if (focused)  {
-				dc.FillRectangle (br_focus, area.X, area.Y, area.Width - 1, 1);
-				dc.FillRectangle (br_focus, area.X, area.Y + area.Height - 1, area.Width - 1, 1);
-				dc.FillRectangle (br_focus, area.X, area.Y, 1, area.Height - 1);
-				dc.FillRectangle (br_focus, area.X + area.Width - 1, area.Y, 1, area.Height - 1);
-			}
-
-			int space_from_top = 8;
-			int space_from_bottom = 7;
-			int y = area.Y + space_from_top;
-			y += space_from_bottom;
-			int x = area.X;
-
-			switch (style) {
+			
+			Point toptick_startpoint = new Point ();
+			Point bottomtick_startpoint = new Point ();
+			Point channel_startpoint = new Point ();
+			float pixel_len;
+			float pixels_betweenticks;
+			const int space_from_right = 8;
+			const int space_from_left = 8;			
+			
+			switch (tb.TickStyle) 	{
 			case TickStyle.BottomRight:
 			case TickStyle.None:
-				x += 10;
+				channel_startpoint.Y = 8;
+				channel_startpoint.X = 9;
+				bottomtick_startpoint.Y = 13;
+				bottomtick_startpoint.X = 24;				
 				break;
 			case TickStyle.TopLeft:
-				x += (area.Width / 2);
+				channel_startpoint.Y = 8;
+				channel_startpoint.X = 19;
+				toptick_startpoint.Y = 13;
+				toptick_startpoint.X = 8;
 				break;
 			case TickStyle.Both:
-				x += 18;
+				channel_startpoint.Y = 8;
+				channel_startpoint.X = 18;	
+				bottomtick_startpoint.Y = 13;
+				bottomtick_startpoint.X = 32;				
+				toptick_startpoint.Y = 13;
+				toptick_startpoint.X = 8;				
 				break;
 			default:
 				break;
 			}
-
-			thumb_area.X = area.X + 2;
-			thumb_area.Y = area.Y + space_from_top;
-			thumb_area.Height = area.Height - space_from_top - space_from_bottom;
+			
+			thumb_area.X = area.X + channel_startpoint.X;
+			thumb_area.Y = area.Y + channel_startpoint.Y;
+			thumb_area.Height = area.Height - space_from_right - space_from_left;
 			thumb_area.Width = 4;
 
 			/* Draw channel */
-			dc.FillRectangle (br_buttonshadow, x, y,
-				1, area.Height - (y - area.Y) - space_from_bottom);
+			dc.FillRectangle (br_buttonshadow, channel_startpoint.X, channel_startpoint.Y,
+				1, thumb_area.Height);
+			
+			dc.FillRectangle (br_buttondkshadow, channel_startpoint.X + 1, channel_startpoint.Y,
+				1, thumb_area.Height);
 
-			dc.FillRectangle (br_buttondkshadow, x + 1, y,
-				1, area.Height - (y - area.Y) - space_from_bottom);
+			dc.FillRectangle (br_buttonhilight, channel_startpoint.X + 3, channel_startpoint.Y,
+				1, thumb_area.Height);
+			
+			/* Convert thumb position from mouse position to value*/
+			if (mouse_value) {
 
-			dc.FillRectangle (br_buttonhilight, x + 3, y,
-				1, area.Height - (y - area.Y) - space_from_bottom);
+				pixel_len = thumb_area.Height - 11;
+				pixels_betweenticks = pixel_len / (ticks);
+
+				if (value_pos >= channel_startpoint.Y)
+					value_pos = (int)(((float) (value_pos - channel_startpoint.Y)) / pixels_betweenticks);
+				else
+					value_pos = 0;			
+
+				if (value_pos + tb.Minimum > tb.Maximum)
+					value_pos = tb.Maximum - tb.Minimum;
+                                
+				tb.Value = value_pos + tb.Minimum;
+			}
+
+			pixel_len = thumb_area.Height - 11;
+			pixels_betweenticks = pixel_len / (tb.Maximum - tb.Minimum);
+			thumb_pos.Y = channel_startpoint.Y + (int) (pixels_betweenticks * (float) value_pos);
 			
 			/* Draw thumb fixed 10x22 size */
 			thumb_pos.Width = 10;
 			thumb_pos.Height = 22;
 
-			switch (style) {
+			switch (tb.TickStyle) 	{
 			case TickStyle.BottomRight:
 			case TickStyle.None:
-			{				
-				thumb_pos.X = area.X + 2;
-				dc.DrawLine (pen_buttonhilight, thumb_pos.X, thumb_pos.Y + 10, thumb_pos.X, thumb_pos.Y);
-				dc.DrawLine (pen_buttonhilight, thumb_pos.X, thumb_pos.Y, thumb_pos.X +16, thumb_pos.Y);
-				dc.DrawLine (pen_buttonhilight, thumb_pos.X  + 16, thumb_pos.Y, thumb_pos.X + 16 + 4, thumb_pos.Y + 4);
+			{
+				thumb_pos.X = channel_startpoint.X - 8;
 
-				dc.DrawLine (pen_buttonshadow, thumb_pos.X + 1, thumb_pos.Y + 9, thumb_pos.X +16, thumb_pos.Y  + 9);
-				dc.DrawLine (pen_buttonshadow, thumb_pos.X + 16, thumb_pos.Y  + 9, thumb_pos.X +16 + 4, thumb_pos.Y +9 - 4);
+				dc.DrawLine (pen_buttonhilight, thumb_pos.X, thumb_pos.Y, thumb_pos.X , thumb_pos.Y + 10);
+				dc.DrawLine (pen_buttonhilight, thumb_pos.X, thumb_pos.Y, thumb_pos.X + 16, thumb_pos.Y);
+				dc.DrawLine (pen_buttonhilight, thumb_pos.X + 16, thumb_pos.Y, thumb_pos.X + 16 + 4, thumb_pos.Y + 4);
+				
+				dc.DrawLine (pen_buttonshadow, thumb_pos.X +1, thumb_pos.Y + 9, thumb_pos.X +15, thumb_pos.Y  +9);
+				dc.DrawLine (pen_buttonshadow, thumb_pos.X + 16, thumb_pos.Y + 9, thumb_pos.X +16 + 4, thumb_pos.Y  +9 - 4);
 
-				dc.DrawLine (pen_buttondkshadow, thumb_pos.X, thumb_pos.Y  + 10 , thumb_pos.X  +16, thumb_pos.Y+10);
-				dc.DrawLine (pen_buttondkshadow, thumb_pos.X + 16, thumb_pos.Y + 10, thumb_pos.X +16 + 5, thumb_pos.Y +10 - 5);
+				dc.DrawLine (pen_buttondkshadow, thumb_pos.X, thumb_pos.Y  + 10, thumb_pos.X +16, thumb_pos.Y +10);
+				dc.DrawLine (pen_buttondkshadow, thumb_pos.X + 16, thumb_pos.Y  + 10, thumb_pos.X  +16 + 5, thumb_pos.Y +10 - 5);
 
-				dc.FillRectangle (br_buttonface, thumb_pos.X + 1, thumb_pos.Y + 1, 14, 8);
+				dc.FillRectangle (br_thumb, thumb_pos.X + 1, thumb_pos.Y + 1, 16, 8);
+				dc.FillRectangle (br_thumb, thumb_pos.X + 17, thumb_pos.Y + 2, 1, 6);
+				dc.FillRectangle (br_thumb, thumb_pos.X + 18, thumb_pos.Y + 3, 1, 4);
+				dc.FillRectangle (br_thumb, thumb_pos.X + 19, thumb_pos.Y + 4, 1, 2);
 
 				break;
 			}
 			case TickStyle.TopLeft:
 			{
-				thumb_pos.X = x - 10;
+				thumb_pos.X = channel_startpoint.X - 10;
 
-				dc.DrawLine (pen_buttonhilight, thumb_pos.X + 4, thumb_pos.Y, thumb_pos.X  + 4 + 16, thumb_pos.Y);
+				dc.DrawLine (pen_buttonhilight, thumb_pos.X + 4, thumb_pos.Y, thumb_pos.X + 4 + 16, thumb_pos.Y);
 				dc.DrawLine (pen_buttonhilight, thumb_pos.X + 4, thumb_pos.Y, thumb_pos.X, thumb_pos.Y + 4);
 
-				dc.DrawLine (pen_buttonshadow, thumb_pos.X + 4, thumb_pos.Y  + 9, thumb_pos.X + 4 + 16, thumb_pos.Y + 9);
-				dc.DrawLine (pen_buttonshadow, thumb_pos.X + 4, thumb_pos.Y + 9, thumb_pos.X, thumb_pos.Y + 5);
-				dc.DrawLine (pen_buttonshadow, thumb_pos.X + 19, thumb_pos.Y + 9, thumb_pos.X + 19 , thumb_pos.Y + 9);
+				dc.DrawLine (pen_buttonshadow, thumb_pos.X  + 4, thumb_pos.Y + 9, thumb_pos.X + 4 + 16 , thumb_pos.Y+ 9);
+				dc.DrawLine (pen_buttonshadow, thumb_pos.X + 4, thumb_pos.Y  + 9, thumb_pos.X, thumb_pos.Y + 5);
+				dc.DrawLine (pen_buttonshadow, thumb_pos.X  + 19, thumb_pos.Y + 9, thumb_pos.X  +19 , thumb_pos.Y+ 1);
 
-				dc.DrawLine (pen_buttondkshadow, thumb_pos.X + 4, thumb_pos.Y + 10, thumb_pos.X + 4 + 16, thumb_pos.Y + 10);
-				dc.DrawLine (pen_buttondkshadow, thumb_pos.X + 4, thumb_pos.Y + 10, thumb_pos.X -1, thumb_pos.Y  + 5);
-				dc.DrawLine (pen_buttondkshadow, thumb_pos.X + 20, thumb_pos.Y, thumb_pos.X  + 20, thumb_pos.Y + 10);
+				dc.DrawLine (pen_buttondkshadow, thumb_pos.X  + 4, thumb_pos.Y+ 10, thumb_pos.X  + 4 + 16, thumb_pos.Y+ 10);
+				dc.DrawLine (pen_buttondkshadow, thumb_pos.X  + 4, thumb_pos.Y + 10, thumb_pos.X  -1, thumb_pos.Y+ 5);
+				dc.DrawLine (pen_buttondkshadow, thumb_pos.X + 20, thumb_pos.Y, thumb_pos.X+ 20, thumb_pos.Y + 10);
 
-				dc.FillRectangle (br_buttonface, thumb_pos.X + 5, thumb_pos.Y + 1, 14, 8);
+				dc.FillRectangle (br_thumb, thumb_pos.X + 4, thumb_pos.Y + 1, 15, 8);
+				dc.FillRectangle (br_thumb, thumb_pos.X + 3, thumb_pos.Y + 2, 1, 6);
+				dc.FillRectangle (br_thumb, thumb_pos.X + 2, thumb_pos.Y + 3, 1, 4);
+				dc.FillRectangle (br_thumb, thumb_pos.X + 1, thumb_pos.Y + 4, 1, 2);
+
 				break;
 			}
 
 			case TickStyle.Both:
 			{
 				thumb_pos.X = area.X + 10;
-				dc.DrawLine (pen_buttonhilight, thumb_pos.X, thumb_pos.Y, thumb_pos.X , thumb_pos.Y + 9);
-				dc.DrawLine (pen_buttonhilight, thumb_pos.X, thumb_pos.Y, thumb_pos.X + 20, thumb_pos.Y);
+				dc.DrawLine (pen_buttonhilight, thumb_pos.X, thumb_pos.Y, thumb_pos.X, thumb_pos.Y + 9);
+				dc.DrawLine (pen_buttonhilight, thumb_pos.X, thumb_pos.Y, thumb_pos.X + 19, thumb_pos.Y);
 
-				dc.DrawLine (pen_buttonshadow, thumb_pos.X + 1, thumb_pos.Y  + 9, thumb_pos.X  + 20, thumb_pos.Y + 9);
-				dc.DrawLine (pen_buttonshadow, thumb_pos.X  + 20, thumb_pos.Y + 1, thumb_pos.X  + 20, thumb_pos.Y + 8);
+				dc.DrawLine (pen_buttonshadow, thumb_pos.X + 1, thumb_pos.Y + 9, thumb_pos.X+ 19, thumb_pos.Y  + 9);
+				dc.DrawLine (pen_buttonshadow, thumb_pos.X  + 10, thumb_pos.Y+ 1, thumb_pos.X + 19, thumb_pos.Y  + 8);
 
-				dc.DrawLine (pen_buttondkshadow, thumb_pos.X, thumb_pos.Y + 10, thumb_pos.X  + 21, thumb_pos.Y + 10);
-				dc.DrawLine (pen_buttondkshadow, thumb_pos.X + 21, thumb_pos.Y, thumb_pos.X + 21, thumb_pos.Y + 9);
+				dc.DrawLine (pen_buttondkshadow, thumb_pos.X, thumb_pos.Y + 10, thumb_pos.X+ 20, thumb_pos.Y  +10);
+				dc.DrawLine (pen_buttondkshadow, thumb_pos.X  + 20, thumb_pos.Y, thumb_pos.X  + 20, thumb_pos.Y+ 9);
 
-				dc.FillRectangle (br_buttonface, thumb_pos.X + 1, thumb_pos.Y + 1, 19, 8);
+				dc.FillRectangle (br_thumb, thumb_pos.X + 1, thumb_pos.Y + 1, 18, 8);
 
 				break;
 			}
+
 			default:
 				break;
 			}
-
+			
 			/* Draw ticks*/
-			if ((style & TickStyle.BottomRight) == TickStyle.BottomRight ||
-				((style & TickStyle.Both) == TickStyle.Both)) {
-
-				float pixel_len = thumb_area.Height - 10;
-				float ticks_to_draw = pixel_len / ticks;
-
-				if (ticks_to_draw < 0)
-					ticks_to_draw = 1;
-
-				for (float inc = 0; inc < pixel_len; inc += ticks_to_draw){
-					if (inc == 0 || (inc + ticks_to_draw) >= pixel_len)
-						dc.DrawLine (pen_ticks,  thumb_pos.X + 23, thumb_area.Y + space_from_bottom - 2 + inc,
-							thumb_pos.X + 26, thumb_area.Y + space_from_bottom - 2 + inc);
+			if ((tb.TickStyle & TickStyle.BottomRight) == TickStyle.BottomRight ||
+				((tb.TickStyle & TickStyle.Both) == TickStyle.Both)) {
+				
+				pixel_len = thumb_area.Height - 11;
+				pixels_betweenticks = pixel_len / ticks;
+				
+				for (float inc = 0; inc < (pixel_len + 1); inc += pixels_betweenticks) 
+				{
+					//Console.WriteLine ("{0} {1} {2}", pixel_len, inc, pixels_betweenticks );
+					if (inc == 0 || (inc +  pixels_betweenticks) >= pixel_len +1)
+						dc.DrawLine (pen_ticks, area.X + bottomtick_startpoint.X , area.Y + bottomtick_startpoint.Y  + inc, 
+							area.X + bottomtick_startpoint.X  + 3, area.Y + bottomtick_startpoint.Y + inc);
 					else
-						dc.DrawLine (pen_ticks,  thumb_pos.X + 23, thumb_area.Y + space_from_bottom - 2 + inc,
-							thumb_pos.X + 25, thumb_area.Y + space_from_bottom - 2 + inc);
-
+						dc.DrawLine (pen_ticks, area.X + bottomtick_startpoint.X, area.Y + bottomtick_startpoint.Y  + inc, 
+							area.X + bottomtick_startpoint.X  + 2, area.Y + bottomtick_startpoint.Y + inc);
 				}
 			}
 
-			if ((style & TickStyle.TopLeft) == TickStyle.TopLeft ||
-				((style & TickStyle.Both) == TickStyle.Both)) {
+			if ((tb.TickStyle & TickStyle.TopLeft) == TickStyle.TopLeft ||
+				((tb.TickStyle & TickStyle.Both) == TickStyle.Both)) {
 
-				float pixel_len = thumb_area.Height - 10;
-				float ticks_to_draw = pixel_len / ticks;
-
-				if (ticks_to_draw < 0)
-					ticks_to_draw = 1;
-
-				for (float inc = 0; inc < pixel_len; inc += ticks_to_draw)
-					if (inc == 0 || (inc + ticks_to_draw) >= pixel_len)
-						dc.DrawLine (pen_ticks, area.X + 4, thumb_area.Y + 5 + inc,  area.X + 8,  thumb_area.Y + 5 + inc);
+				pixel_len = thumb_area.Height - 11;
+				pixels_betweenticks = pixel_len / ticks;
+				
+				for (float inc = 0; inc < (pixel_len + 1); inc += pixels_betweenticks) 
+				{
+					//Console.WriteLine ("{0} {1} {2}", pixel_len, inc, pixels_betweenticks );
+					if (inc == 0 || (inc +  pixels_betweenticks) >= pixel_len +1)
+						dc.DrawLine (pen_ticks, area.X + toptick_startpoint.X  - 3 , area.Y + toptick_startpoint.Y + inc, 
+							area.X + toptick_startpoint.X, area.Y + toptick_startpoint.Y + inc);
 					else
-						dc.DrawLine (pen_ticks, area.X + 5, thumb_area.Y + 5 + inc,  area.X + 8,  thumb_area.Y + 5 + inc);
+						dc.DrawLine (pen_ticks, area.X + toptick_startpoint.X  - 2, area.Y + toptick_startpoint.Y + inc, 
+							area.X + toptick_startpoint.X, area.Y + toptick_startpoint.Y  + inc);
+				}			
 			}
-
 		}
 
-		/* Horizontal trackbar */
-		static internal void DrawTrackBar_Horitonzal (Graphics dc, Rectangle area, ref Rectangle thumb_pos,
-			 ref Rectangle thumb_area, TickStyle style, int ticks, bool focused)
-		{
-			/* Background */
-			dc.FillRectangle (br_buttonface, area);
-
-			if (focused)  {
-				dc.FillRectangle (br_focus, area.X, area.Y, area.Width - 1, 1);
-				dc.FillRectangle (br_focus, area.X, area.Y + area.Height - 1, area.Width - 1, 1);
-				dc.FillRectangle (br_focus, area.X, area.Y, 1, area.Height - 1);
-				dc.FillRectangle (br_focus, area.X + area.Width - 1, area.Y, 1, area.Height - 1);
-			}
-
-			int space_from_right = 8;
-			int space_from_left = 7;
-			int x = space_from_left;
-			int y = area.Y;
-
-			switch (style) {
+		/* 
+			Horizontal trackbar 
+		  
+		 	Does not matter the size of the control, Win32 always draws:
+		 		- Ticks starting from pixel 13, 8
+		 		- Channel starting at pos 8, 19 and ends at Width - 8
+		 		- Autosize makes always the control 40 pixels height
+		 		- Ticks are draw at (channel.Witdh - 10) / (Maximum - Minimum)
+				
+		*/
+		private void DrawTrackBar_Horizontal (Graphics dc, Rectangle area, TrackBar tb,
+			ref Rectangle thumb_pos, ref Rectangle thumb_area, Brush br_thumb,
+			float ticks, int value_pos, bool mouse_value)
+		{			
+			Point toptick_startpoint = new Point ();
+			Point bottomtick_startpoint = new Point ();
+			Point channel_startpoint = new Point ();
+			float pixel_len;
+			float pixels_betweenticks;
+			const int space_from_right = 8;
+			const int space_from_left = 8;		
+						
+			switch (tb.TickStyle) {
 			case TickStyle.BottomRight:
 			case TickStyle.None:
-				y += (area.Height / 4);
+				channel_startpoint.X = 8;
+				channel_startpoint.Y = 9;
+				bottomtick_startpoint.X = 13;
+				bottomtick_startpoint.Y = 24;				
 				break;
 			case TickStyle.TopLeft:
-				y += (area.Height / 2);
+				channel_startpoint.X = 8;
+				channel_startpoint.Y = 19;
+				toptick_startpoint.X = 13;
+				toptick_startpoint.Y = 8;
 				break;
 			case TickStyle.Both:
-				y += 18;
+				channel_startpoint.X = 8;
+				channel_startpoint.Y = 18;	
+				bottomtick_startpoint.X = 13;
+				bottomtick_startpoint.Y = 32;				
+				toptick_startpoint.X = 13;
+				toptick_startpoint.Y = 8;				
 				break;
 			default:
 				break;
 			}
-
-			thumb_area.X = area.X + space_from_left;
-			thumb_area.Y = area.Y + 2;
+						
+			thumb_area.X = area.X + channel_startpoint.X;
+			thumb_area.Y = area.Y + channel_startpoint.Y;
 			thumb_area.Width = area.Width - space_from_right - space_from_left;
 			thumb_area.Height = 4;
-
+			
 			/* Draw channel */
-			dc.FillRectangle (br_buttonshadow, x, y,
-				area.Width - (x - area.X) - space_from_right, 1);
+			dc.FillRectangle (br_buttonshadow, channel_startpoint.X, channel_startpoint.Y,
+				thumb_area.Width, 1);
+			
+			dc.FillRectangle (br_buttondkshadow, channel_startpoint.X, channel_startpoint.Y + 1,
+				thumb_area.Width, 1);
 
-			dc.FillRectangle (br_buttondkshadow, x, y + 1,
-				area.Width - (x - area.X) - space_from_right, 1);
+			dc.FillRectangle (br_buttonhilight, channel_startpoint.X, channel_startpoint.Y +3,
+				thumb_area.Width, 1);
 
-			dc.FillRectangle (br_buttonhilight, x, y + 3,
-				area.Width - (x - area.X) - space_from_right, 1);
+			/* Convert thumb position from mouse position to value*/
+			if (mouse_value) {
+				pixel_len = thumb_area.Width - 11;
+				pixels_betweenticks = pixel_len / (ticks);
 
+				if (value_pos >= channel_startpoint.X)
+					value_pos = (int)(((float) (value_pos - channel_startpoint.X)) / pixels_betweenticks);
+				else
+					value_pos = 0;				
 
+				if (value_pos + tb.Minimum > tb.Maximum)
+					value_pos = tb.Maximum - tb.Minimum;
+                                
+				tb.Value = value_pos + tb.Minimum;
+			}
+			
+			pixel_len = thumb_area.Width - 11;
+			pixels_betweenticks = pixel_len / (tb.Maximum - tb.Minimum);
+			thumb_pos.X = channel_startpoint.X + (int) (pixels_betweenticks * (float) value_pos);
+			
 			/* Draw thumb fixed 10x22 size */
 			thumb_pos.Width = 10;
 			thumb_pos.Height = 22;
 
-			switch (style) {
+			switch (tb.TickStyle) {
 			case TickStyle.BottomRight:
-			case TickStyle.None:
-			{
-				thumb_pos.Y = area.Y + 2;
+			case TickStyle.None: {
+				thumb_pos.Y = channel_startpoint.Y - 8;
+
 				dc.DrawLine (pen_buttonhilight, thumb_pos.X, thumb_pos.Y, thumb_pos.X + 10, thumb_pos.Y);
 				dc.DrawLine (pen_buttonhilight, thumb_pos.X, thumb_pos.Y, thumb_pos.X, thumb_pos.Y + 16);
 				dc.DrawLine (pen_buttonhilight, thumb_pos.X, thumb_pos.Y + 16, thumb_pos.X + 4, thumb_pos.Y + 16 + 4);
 
-				dc.DrawLine (pen_buttonshadow, thumb_pos.X + 9, thumb_pos.Y, thumb_pos.X +9, thumb_pos.Y +16);
+				dc.DrawLine (pen_buttonshadow, thumb_pos.X + 9, thumb_pos.Y + 1, thumb_pos.X +9, thumb_pos.Y +15);
 				dc.DrawLine (pen_buttonshadow, thumb_pos.X + 9, thumb_pos.Y + 16, thumb_pos.X +9 - 4, thumb_pos.Y +16 + 4);
 
 				dc.DrawLine (pen_buttondkshadow, thumb_pos.X + 10, thumb_pos.Y, thumb_pos.X +10, thumb_pos.Y +16);
 				dc.DrawLine (pen_buttondkshadow, thumb_pos.X + 10, thumb_pos.Y + 16, thumb_pos.X +10 - 5, thumb_pos.Y +16 + 5);
 
-				dc.FillRectangle (br_buttonface, thumb_pos.X + 1, thumb_pos.Y + 1, 9, 16);
-
+				dc.FillRectangle (br_thumb, thumb_pos.X + 1, thumb_pos.Y + 1, 8, 16);
+				dc.FillRectangle (br_thumb, thumb_pos.X + 2, thumb_pos.Y + 17, 6, 1);
+				dc.FillRectangle (br_thumb, thumb_pos.X + 3, thumb_pos.Y + 18, 4, 1);
+				dc.FillRectangle (br_thumb, thumb_pos.X + 4, thumb_pos.Y + 19, 2, 1);
 				break;
 			}
-			case TickStyle.TopLeft:
-			{
-				thumb_pos.Y = y - 10;
+			case TickStyle.TopLeft:	{
+				thumb_pos.Y = channel_startpoint.Y - 10;
 
 				dc.DrawLine (pen_buttonhilight, thumb_pos.X, thumb_pos.Y + 4, thumb_pos.X, thumb_pos.Y + 4 + 16);
 				dc.DrawLine (pen_buttonhilight, thumb_pos.X, thumb_pos.Y + 4, thumb_pos.X + 4, thumb_pos.Y);
@@ -1369,24 +1444,25 @@ namespace System.Windows.Forms
 				dc.DrawLine (pen_buttondkshadow, thumb_pos.X + 10, thumb_pos.Y + 4, thumb_pos.X + 5, thumb_pos.Y -1);
 				dc.DrawLine (pen_buttondkshadow, thumb_pos.X, thumb_pos.Y + 20, thumb_pos.X + 10, thumb_pos.Y + 20);
 
-				dc.FillRectangle (br_buttonface, thumb_pos.X + 1, thumb_pos.Y + 5, 8, 14);
-
+				dc.FillRectangle (br_thumb, thumb_pos.X + 1, thumb_pos.Y + 4, 8, 15);
+				dc.FillRectangle (br_thumb, thumb_pos.X + 2, thumb_pos.Y + 3, 6, 1);
+				dc.FillRectangle (br_thumb, thumb_pos.X + 3, thumb_pos.Y + 2, 4, 1);
+				dc.FillRectangle (br_thumb, thumb_pos.X + 4, thumb_pos.Y + 1, 2, 1);
 				break;
 			}
 
-			case TickStyle.Both:
-			{
+			case TickStyle.Both: {
 				thumb_pos.Y = area.Y + 10;
 				dc.DrawLine (pen_buttonhilight, thumb_pos.X, thumb_pos.Y, thumb_pos.X + 9, thumb_pos.Y);
-				dc.DrawLine (pen_buttonhilight, thumb_pos.X, thumb_pos.Y, thumb_pos.X, thumb_pos.Y + 20);
+				dc.DrawLine (pen_buttonhilight, thumb_pos.X, thumb_pos.Y, thumb_pos.X, thumb_pos.Y + 19);
 
-				dc.DrawLine (pen_buttonshadow, thumb_pos.X + 9, thumb_pos.Y + 1, thumb_pos.X + 9, thumb_pos.Y + 20);
-				dc.DrawLine (pen_buttonshadow, thumb_pos.X + 1, thumb_pos.Y + 20, thumb_pos.X + 8, thumb_pos.Y + 20);
+				dc.DrawLine (pen_buttonshadow, thumb_pos.X + 9, thumb_pos.Y + 1, thumb_pos.X + 9, thumb_pos.Y + 19);
+				dc.DrawLine (pen_buttonshadow, thumb_pos.X + 1, thumb_pos.Y + 10, thumb_pos.X + 8, thumb_pos.Y + 19);
 
-				dc.DrawLine (pen_buttondkshadow, thumb_pos.X + 10, thumb_pos.Y, thumb_pos.X +10, thumb_pos.Y + 21);
-				dc.DrawLine (pen_buttondkshadow, thumb_pos.X, thumb_pos.Y + 21, thumb_pos.X + 9, thumb_pos.Y + 21);
+				dc.DrawLine (pen_buttondkshadow, thumb_pos.X + 10, thumb_pos.Y, thumb_pos.X +10, thumb_pos.Y + 20);
+				dc.DrawLine (pen_buttondkshadow, thumb_pos.X, thumb_pos.Y + 20, thumb_pos.X + 9, thumb_pos.Y + 20);
 
-				dc.FillRectangle (br_buttonface, thumb_pos.X + 1, thumb_pos.Y + 1, 8, 19);
+				dc.FillRectangle (br_thumb, thumb_pos.X + 1, thumb_pos.Y + 1, 8, 18);
 
 				break;
 			}
@@ -1396,52 +1472,83 @@ namespace System.Windows.Forms
 			}
 
 			/* Draw ticks*/
-			if ((style & TickStyle.BottomRight) == TickStyle.BottomRight ||
-				((style & TickStyle.Both) == TickStyle.Both)) {
-
-				float pixel_len = thumb_area.Width - 10;
-				float ticks_to_draw = pixel_len / ticks;
-
-				if (ticks_to_draw < 0)
-					ticks_to_draw = 1;
-
-				for (float inc = 0; inc < pixel_len; inc += ticks_to_draw)
-					if (inc == 0 || (inc + ticks_to_draw) >= pixel_len)
-						dc.DrawLine (pen_ticks, thumb_area.X + space_from_left - 2 + inc, thumb_pos.Y + 25, thumb_area.X + space_from_left - 2 + inc, thumb_pos.Y + 28);
+			if ((tb.TickStyle & TickStyle.BottomRight) == TickStyle.BottomRight ||
+				((tb.TickStyle & TickStyle.Both) == TickStyle.Both)) {
+				
+				pixel_len = thumb_area.Width - 11;
+				pixels_betweenticks = pixel_len / ticks;
+				
+				for (float inc = 0; inc < (pixel_len + 1); inc += pixels_betweenticks) {
+					//Console.WriteLine ("{0} {1} {2}", pixel_len, inc, pixels_betweenticks );
+					if (inc == 0 || (inc +  pixels_betweenticks) >= pixel_len +1)
+						dc.DrawLine (pen_ticks, area.X + bottomtick_startpoint.X + inc , area.Y + bottomtick_startpoint.Y, 
+							area.X + bottomtick_startpoint.X + inc , area.Y + bottomtick_startpoint.Y + 3);
 					else
-						dc.DrawLine (pen_ticks, thumb_area.X + space_from_left - 2 + inc, thumb_pos.Y + 25, thumb_area.X + space_from_left - 2 + inc, thumb_pos.Y + 27);
-
+						dc.DrawLine (pen_ticks, area.X + bottomtick_startpoint.X + inc, area.Y + bottomtick_startpoint.Y, 
+							area.X + bottomtick_startpoint.X + inc, area.Y + bottomtick_startpoint.Y + 2);
+				}
 			}
 
-			if ((style & TickStyle.TopLeft) == TickStyle.TopLeft ||
-				((style & TickStyle.Both) == TickStyle.Both)) {
+			if ((tb.TickStyle & TickStyle.TopLeft) == TickStyle.TopLeft ||
+				((tb.TickStyle & TickStyle.Both) == TickStyle.Both)) {
 
-				float pixel_len = thumb_area.Width - 10;
-				float ticks_to_draw = pixel_len / ticks;
-
-				if (ticks_to_draw < 0)
-					ticks_to_draw = 1;
-
-				for (float inc = 0; inc < pixel_len; inc += ticks_to_draw)
-					if (inc == 0 || (inc + ticks_to_draw) >= pixel_len)
-						dc.DrawLine (pen_ticks, thumb_area.X + 5 + inc, area.Y + 5, thumb_area.X + 5 + inc, area.Y + 9);
+				pixel_len = thumb_area.Width - 11;
+				pixels_betweenticks = pixel_len / ticks;
+				
+				for (float inc = 0; inc < (pixel_len + 1); inc += pixels_betweenticks) {
+					//Console.WriteLine ("{0} {1} {2}", pixel_len, inc, pixels_betweenticks );
+					if (inc == 0 || (inc +  pixels_betweenticks) >= pixel_len +1)
+						dc.DrawLine (pen_ticks, area.X + toptick_startpoint.X + inc , area.Y + toptick_startpoint.Y - 3, 
+							area.X + toptick_startpoint.X + inc , area.Y + toptick_startpoint.Y);
 					else
-						dc.DrawLine (pen_ticks, thumb_area.X + 5 + inc, area.Y + 6, thumb_area.X + 5 + inc, area.Y + 8);
+						dc.DrawLine (pen_ticks, area.X + toptick_startpoint.X + inc, area.Y + toptick_startpoint.Y - 2, 
+							area.X + toptick_startpoint.X + inc, area.Y + toptick_startpoint.Y );
+					}			
 			}
 		}
 
+		public void DrawTrackBar (Graphics dc, Rectangle area, TrackBar tb,
+			ref Rectangle thumb_pos, ref Rectangle thumb_area,  bool highli_thumb,
+			float ticks, int value_pos, bool mouse_value)
 
-		public void DrawTrackBar (Graphics dc, Rectangle area, ref Rectangle thumb_pos,
-			 ref Rectangle thumb_area, TickStyle style, int ticks, Orientation orientation, bool focused)
 		{
-			if (orientation == Orientation.Vertical)
-				DrawTrackBar_Vertical (dc, area, ref thumb_pos, ref thumb_area,
-					style, ticks, focused);
-			else
-				DrawTrackBar_Horitonzal (dc, area, ref thumb_pos, ref thumb_area,
-					style, ticks, focused);
-		}
+			Brush br_thumb;			
 
+			if (highli_thumb == true) {
+				if (br_trackbar_thumbhili == null)
+					br_trackbar_thumbhili = new HatchBrush (HatchStyle.Percent50, ColorButtonHilight, ColorButtonFace);
+
+				br_thumb = (Brush) br_trackbar_thumbhili;
+			}
+			else
+				br_thumb = br_buttonface;
+
+			
+			/* Control Background */
+			if (tb.BackColor == DefaultControlBackColor)
+				dc.FillRectangle (br_buttonface, area);
+			else 	{
+				if (br_trackbarbg == null || br_trackbarbg.Color != tb.BackColor)
+					br_trackbarbg = new SolidBrush (tb.BackColor);
+
+				dc.FillRectangle (br_trackbarbg, area);
+			}
+
+			if (tb.Focused) {
+				dc.FillRectangle (br_focus, area.X, area.Y, area.Width - 1, 1);
+				dc.FillRectangle (br_focus, area.X, area.Y + area.Height - 1, area.Width - 1, 1);
+				dc.FillRectangle (br_focus, area.X, area.Y, 1, area.Height - 1);
+				dc.FillRectangle (br_focus, area.X + area.Width - 1, area.Y, 1, area.Height - 1);
+			}
+
+			if (tb.Orientation == Orientation.Vertical) 
+				DrawTrackBar_Vertical (dc, area, tb, ref thumb_pos, ref thumb_area,
+					br_thumb, ticks, value_pos, mouse_value);
+			
+			else
+				DrawTrackBar_Horizontal (dc, area, tb, ref thumb_pos, ref thumb_area,
+					br_thumb, ticks, value_pos, mouse_value);
+		}
 
 		public void DrawProgressBar (Graphics dc, Rectangle area,  Rectangle client_area,
 			int barpos_pixels, int block_width)

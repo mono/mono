@@ -24,17 +24,18 @@
 //		Jordi Mas i Hernandez, jordi@ximian.com
 //
 // TODO:
-//		- Draging the thumb does not behave exactly like in Win32
 //		- The AutoSize functionality seems quite broken for vertical controls in .Net 1.1. Not
 //		sure if we are implementing it the right way.
-//		- Vertical orientation still needs some work
 //
 // Copyright (C) Novell Inc., 2004
 //
 //
-// $Revision: 1.7 $
+// $Revision: 1.8 $
 // $Modtime: $
 // $Log: TrackBar.cs,v $
+// Revision 1.8  2004/08/12 20:29:01  jordi
+// Trackbar enhancement, fix mouse problems, highli thumb, etc
+//
 // Revision 1.7  2004/08/10 23:27:12  jordi
 // add missing methods, properties, and restructure to hide extra ones
 //
@@ -81,9 +82,8 @@ namespace System.Windows.Forms
 		private Rectangle paint_area = new Rectangle ();
 		private Rectangle thumb_pos = new Rectangle ();	 /* Current position and size of the thumb */
 		private Rectangle thumb_area = new Rectangle (); /* Area where the thumb can scroll */
-		private bool thumb_pressed = false;
-		private int thumb_pixel_click_move;
-		private float pixel_per_pos = 0;		
+		private bool thumb_pressed = false;		 
+		private int thumb_mouseclick;		
 
 		#region Events
 		public event EventHandler Scroll;
@@ -115,6 +115,7 @@ namespace System.Windows.Forms
 			set { autosize = value;}
 		}
 
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public override Image BackgroundImage {
 			get { return base.BackgroundImage; }
 			set { base.BackgroundImage = value; }
@@ -141,16 +142,17 @@ namespace System.Windows.Forms
 			get { return new System.Drawing.Size (104, 42); }
 		}	
 
+		[EditorBrowsable (EditorBrowsableState.Never)]	 
 		public override Font Font {
 			get { return base.Font;	}
 			set { base.Font = value; }
 		}
 
+		[EditorBrowsable (EditorBrowsableState.Never)]	
 		public override Color ForeColor {
 			get { return base.ForeColor; }
 			set { base.ForeColor = value; }
-		}
-		
+		}		
 
 		public int LargeChange {
 			get { return largeChange; }
@@ -198,7 +200,7 @@ namespace System.Windows.Forms
 				if (!Enum.IsDefined (typeof (Orientation), value))
 					throw new InvalidEnumArgumentException (string.Format("Enum argument value '{0}' is not valid for Orientation", value));
 
-				/* Orientation can be changed once the control has been created*/
+				/* Orientation can be changed once the control has been created */
 				if (orientation != value) {
 					orientation = value;
 				
@@ -223,7 +225,7 @@ namespace System.Windows.Forms
 			}
 		}
 
-
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public override string Text {
 			get {	return base.Text; }
 			set {	base.Text = value; }
@@ -252,7 +254,6 @@ namespace System.Windows.Forms
 				}
 			}
 		}
-
 
 		public int Value {
 			get { return position; }
@@ -303,23 +304,16 @@ namespace System.Windows.Forms
 		}
 
 		protected override void OnHandleCreated (EventArgs e)
-		{
+		{			
 			if (AutoSize)
 				if (Orientation == Orientation.Horizontal)
-					Size = new Size (Width, 45);
+					Size = new Size (Width, 40);
 				else
 					Size = new Size (50, Height);
 
 			UpdateArea ();
 			CreateBuffers (Width, Height);
-
-			UpdatePos (Value, true);
-			UpdatePixelPerPos ();
-
-			Draw ();
-			UpdatePos (Value, true);
-
-			
+			UpdatePos (Value, true);			
 		}
 
 		protected override void OnMouseWheel (MouseEventArgs e)
@@ -373,6 +367,13 @@ namespace System.Windows.Forms
 						0));
 					
 				break;
+
+			case Msg.WM_LBUTTONUP:
+				OnMouseUpTB (new MouseEventArgs (FromParamToMouseButtons ((int) m.WParam.ToInt32()), 
+					clicks, LowOrder ((int) m.LParam.ToInt32 ()), HighOrder ((int) m.LParam.ToInt32 ()), 
+					0));
+					
+				break;
 				
 			case Msg.WM_MOUSEMOVE: 
 				OnMouseMoveTB  (new MouseEventArgs (FromParamToMouseButtons ((int) m.WParam.ToInt32()), 
@@ -382,21 +383,24 @@ namespace System.Windows.Forms
 				break;
 
 			case Msg.WM_SIZE:
-				OnResize_TB ();
+				OnResizeTB ();
 				break;
 
-			case Msg.WM_PAINT: {
-				Rectangle	rect;
+			case Msg.WM_PAINT: {				
 				PaintEventArgs	paint_event;
 
 				paint_event = XplatUI.PaintEventStart (Handle);
-				OnPaint_TB (paint_event);
+				OnPaintTB (paint_event);
 				XplatUI.PaintEventEnd (Handle);
 				return;
-			}
+			}		
+
+			case Msg.WM_KEYDOWN: 
+				OnKeyDownTB (new KeyEventArgs ((Keys)m.WParam.ToInt32 ()));
+				return;			
 				
 			case Msg.WM_ERASEBKGND:
-				m.Result = (IntPtr)1; /* Disable background painting to avoid flickering */
+				m.Result = (IntPtr) 1; /* Disable background painting to avoid flickering */
 				return;
 				
 			default:
@@ -414,54 +418,22 @@ namespace System.Windows.Forms
 		{
 			paint_area.X = paint_area.Y = 0;
 			paint_area.Width = Width;
-			paint_area.Height = Height;
-
-			UpdatePixelPerPos ();
-			//Console.WriteLine ("UpdateArea: {0} {1} {2}", thumb_area.Width, thumb_pos.Width, pixel_per_pos);
-
+			paint_area.Height = Height;			
 		}
 
-		private void UpdateThumbPos (int pixel, bool update_value)
-    		{
-    			float new_pos = 0;
-    			//Console.WriteLine ("UpdateThumbPos: " + pixel  + " per " + pixel_per_pos);
+		private void UpdatePos (int newPos, bool update_trumbpos)
+		{
+			int old = position;
 
-    			if (orientation == Orientation.Horizontal) {
-
-				if (pixel < thumb_area.X)
-	    				thumb_pos.X = thumb_area.X;
-	    			else
-	    				if (pixel > thumb_area.X + thumb_area.Width - thumb_pos.Width)
-	    					thumb_pos.X = thumb_area.X +  thumb_area.Width - thumb_pos.Width;
-	    				else
-	    					thumb_pos.X = pixel;
-
-				new_pos = (float) (thumb_pos.X - thumb_area.X);
-				new_pos = new_pos / pixel_per_pos;
-
-			} else {
-
-				if (pixel < thumb_area.Y)
-	    				thumb_pos.Y = thumb_area.Y;
-	    			else
-	    				if (pixel > thumb_area.Y + thumb_area.Height - thumb_pos.Height)
-	    					thumb_pos.Y = thumb_area.Y +  thumb_area.Height - thumb_pos.Height;
-	    				else
-	    					thumb_pos.Y = pixel;
-
-				new_pos = (float) (thumb_pos.Y - thumb_area.Y);
-				new_pos = new_pos / pixel_per_pos;
-
-			}
-
-
-			//Console.WriteLine ("UpdateThumbPos: thumb_pos.Y {0} thumb_area.Y {1} pixel_per_pos {2}, new pos {3}, pixel {4}",
-			//	thumb_pos.Y, thumb_area.Y, pixel_per_pos, new_pos, pixel);
-
-			if (update_value)
-				UpdatePos ((int) new_pos, false);
-    		}
-
+			if (newPos < minimum)
+				Value = minimum;
+			else
+				if (newPos > maximum)
+				Value = maximum;
+			else
+				Value = newPos;    			
+		}
+		
 		private void LargeIncrement ()
     		{    			
 			UpdatePos (position + LargeChange, true);
@@ -489,58 +461,44 @@ namespace System.Windows.Forms
 			Refresh ();
 			OnScroll (new EventArgs ());	
     		}
-
-    		private void UpdatePixelPerPos ()
-    		{
-			pixel_per_pos = ((float)(thumb_area.Width)
-				/ (float) (1 + Maximum - Minimum));
-    		}
-
+    		
 		private void Draw ()
-		{
-			int ticks = (Maximum - Minimum)	/ tickFrequency;
-			
-			ThemeEngine.Current.DrawTrackBar (DeviceContext, paint_area, ref thumb_pos, ref thumb_area,
-				tickStyle, ticks, Orientation, Focused);
+		{					
+			float ticks = (Maximum - Minimum) / tickFrequency; /* N of ticks draw*/                        
+	
+			if (thumb_pressed)
+				ThemeEngine.Current.DrawTrackBar (DeviceContext, paint_area, this, 
+					ref thumb_pos, ref thumb_area, thumb_pressed, ticks, thumb_mouseclick, true);
+			else
+				ThemeEngine.Current.DrawTrackBar (DeviceContext, paint_area, this,
+					ref thumb_pos, ref thumb_area, thumb_pressed, ticks,  Value - Minimum, false);
+
+		}		
+
+		private void OnMouseUpTB (MouseEventArgs e)
+		{	
+			if (!Enabled) return;
+
+			if (thumb_pressed == true) {				
+				thumb_pressed = false;
+				XplatUI.ReleaseWindow (Handle);
+				Refresh ();
+			}
 		}
-
-		private void UpdatePos (int newPos, bool update_trumbpos)
-    		{
-    			int old = position;
-
-    			if (newPos < minimum)
-    				Value = minimum;
-    			else
-    				if (newPos > maximum)
-    					Value = maximum;
-    				else
-    					Value = newPos;
-
-    			if (orientation == Orientation.Horizontal) {
-				if (update_trumbpos)
-					UpdateThumbPos (thumb_area.X + (int)(((float)(Value - Minimum)) * pixel_per_pos), false);
-			}
-			else {
-				if (update_trumbpos)
-					UpdateThumbPos (thumb_area.Y + (int)(((float)(Value - Minimum)) * pixel_per_pos), false);
-			}
-    		}
 
 		private void OnMouseDownTB (MouseEventArgs e)
     		{
-    			if (!Enabled) return;
-    			
-    			//System.Console.WriteLine ("OnMouseDown" + thumb_pos);			
+    			if (!Enabled) return;			    			
     			
     			Point point = new Point (e.X, e.Y);
 
 			if (orientation == Orientation.Horizontal) {
-
+				
 				if (thumb_pos.Contains (point)) {
-					//XplatUI.GrabWindow (Handle);
+					XplatUI.GrabWindow (Handle);
 					thumb_pressed = true;
-					Refresh ();
-					thumb_pixel_click_move = e.X;
+					thumb_mouseclick = e.X;
+					Refresh ();					
 				}
 				else {
 					if (paint_area.Contains (point)) {
@@ -555,10 +513,11 @@ namespace System.Windows.Forms
 			}
 			else {
 				if (thumb_pos.Contains (point)) {
-					//XplatUI.GrabWindow (Handle);
+					XplatUI.GrabWindow (Handle);
 					thumb_pressed = true;
+					thumb_mouseclick = e.Y;
 					Refresh ();
-					thumb_pixel_click_move = e.Y;
+					
 				}
 				else {
 					if (paint_area.Contains (point)) {
@@ -581,44 +540,20 @@ namespace System.Windows.Forms
     			Point pnt = new Point (e.X, e.Y);
 
     			/* Moving the thumb */
-    			if (thumb_pos.Contains (pnt) && thumb_pressed) {
-
-    				//System.Console.WriteLine ("OnMouseMove " + thumb_pressed);
-				//XplatUI.GrabWindow (Handle);
-    				int pixel_pos;
-
+    			if ((thumb_pressed) &&  (paint_area.Contains (pnt))) {
+								 				
     				if (orientation == Orientation.Horizontal)
-    					pixel_pos = e.X - (thumb_pixel_click_move - thumb_pos.X);
+					thumb_mouseclick = e.X;					
     				else
-    					pixel_pos = e.Y - (thumb_pixel_click_move - thumb_pos.Y);
-
-    				UpdateThumbPos (pixel_pos, true);
-
-    				if (orientation == Orientation.Horizontal)
-    					thumb_pixel_click_move = e.X;
-    				else
-    					thumb_pixel_click_move = e.Y;
-
-    				OnScroll (new EventArgs ());
-
-				//System.Console.WriteLine ("OnMouseMove thumb "+ e.Y
-				//	+ " clickpos " + thumb_pixel_click_move   + " pos:" + thumb_pos.Y);
+					thumb_mouseclick = e.Y;
 
 				Refresh ();
+    				OnScroll (new EventArgs ());
 			}
-
-			if (!thumb_pos.Contains (pnt) && thumb_pressed) {
-				//XplatUI.ReleaseWindow (Handle);
-    				thumb_pressed = false;
-				Invalidate ();
-			}
-
     		}
 
-		private void OnResize_TB ()
+		private void OnResizeTB ()
     		{
-    			//Console.WriteLine ("OnResize");
-
     			if (Width <= 0 || Height <= 0)
     				return;
 
@@ -626,16 +561,35 @@ namespace System.Windows.Forms
 			CreateBuffers (Width, Height);
 		}		
 
-		private void OnPaint_TB (PaintEventArgs pevent)
+		private void OnPaintTB (PaintEventArgs pevent)
 		{		
 			if (Width <= 0 || Height <=  0 || Visible == false)
-    				return;
+    				return;		
 
 			/* Copies memory drawing buffer to screen*/
 			UpdateArea ();
 			Draw ();
 			pevent.Graphics.DrawImage (ImageBuffer, 0, 0);
 		}  
+
+		private void OnKeyDownTB (KeyEventArgs e) 
+		{			
+			switch (e.KeyCode) {			
+			case Keys.Up:
+			case Keys.Right:
+				SmallIncrement ();
+				break;
+
+			case Keys.Down:
+			case Keys.Left:
+				SmallDecrement ();
+				break;
+			
+			default:
+				break;
+			}
+		}
+
 
     		#endregion // Private Methods
 	}

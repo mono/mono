@@ -24,9 +24,12 @@
 //
 //
 //
-// $Revision: 1.8 $
+// $Revision: 1.9 $
 // $Modtime: $
 // $Log: ITheme.cs,v $
+// Revision 1.9  2004/08/12 20:29:01  jordi
+// Trackbar enhancement, fix mouse problems, highli thumb, etc
+//
 // Revision 1.8  2004/08/10 19:21:27  jordi
 // scrollbar enhancements and standarize on win colors defaults
 //
@@ -154,7 +157,7 @@ namespace System.Windows.Forms
 			StringFormat format);
 
 		/*
-			Methods that draw complex controls
+			Methods that draw complete controls			
 		*/
 
 		void DrawLabel (Graphics dc, Rectangle area, BorderStyle border_style, string text, 
@@ -167,8 +170,9 @@ namespace System.Windows.Forms
 			bool enabled, bool vertical);
 
 
-		void DrawTrackBar (Graphics dc, Rectangle area, ref Rectangle thumb_pos,
-			 ref Rectangle thumb_area, TickStyle style, int ticks, Orientation orientation, bool focused);
+		void DrawTrackBar (Graphics dc, Rectangle area, TrackBar tb,
+				ref Rectangle thumb_pos, ref Rectangle thumb_area, bool highli_thumb,
+				float ticks, int value_pos, bool mouse_value);
 
 		void DrawProgressBar (Graphics dc, Rectangle area,  Rectangle client_area,
 			int barpos_pixels, int block_width);		
