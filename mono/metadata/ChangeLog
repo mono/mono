@@ -1,3 +1,11 @@
+
+Wed Apr 3 17:56:22 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* assembly.c, image.h: for each MonoImage, record from wich assembly
+	it was loaded.
+	* reflection.h, icall.c: added System_Reflection_Assembly_GetTypes().
+	Make Type.Assembly work.
+
 2002-04-03  Dietmar Maurer  <dietmar@ximian.com>
 
 	* debug-symfile.h: use char* instead of gpointer to avoid
