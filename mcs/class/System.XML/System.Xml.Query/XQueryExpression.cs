@@ -541,10 +541,11 @@ namespace Mono.Xml.XQuery
 		}
 
 		public string Name {
-			get { throw new NotImplementedException (); }
+			get { return name; }
 		}
+
 		public ExprSequence NameExpr {
-			get { throw new NotImplementedException (); }
+			get { return nameExpr; }
 		}
 
 		// FIXME: can be optimized by checking all items in Expr

@@ -35,6 +35,7 @@ using System.Runtime.Serialization;
 
 namespace System.Xml.Query
 {
+	[Serializable]
 	public class XmlQueryException : SystemException
 	{
 		#region Constructors

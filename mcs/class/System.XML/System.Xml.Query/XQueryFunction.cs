@@ -302,7 +302,7 @@ namespace Mono.Xml.XPath2
 
 		public override object Invoke (XQueryContext context, object [] args)
 		{
-			throw new NotImplementedException ("Not supported");
+			throw new SystemException ("XQuery internal error: should not happen.");
 		}
 
 		public override XPathSequence Evaluate (XPathSequence iter, ExprSequence args)

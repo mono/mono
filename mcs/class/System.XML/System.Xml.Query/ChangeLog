@@ -1,5 +1,20 @@
 2004-08-31  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XPath2Expression.cs,
+	  XPathSequence.cs :
+	  Implemented GroupExpr.Evaluate() [union/intersect/except].
+	  Fixed incorrect iterator input for DescendantExpr.Evaluate().
+	  MinusExpr is (already) implemented not to be evaluated.
+	* XQueryExpression.cs :
+	  PI name and nameExpr could be implemented.
+	* XQueryFunction.cs :
+	  UserFunctionCallExpr.Invoke() should not be invoked.
+	* XQueryFunctionCliImpl.cs :
+	  Implemented count(), doc(). Halfly implemented trace().
+	* XmlQueryException.cs : Serializable.
+
+2004-08-31  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XPath2Expression.cs :
 	  Implemented the whole ComparisonExpr.Evaluate(). It now handles
 	  empty sequence expectedly.

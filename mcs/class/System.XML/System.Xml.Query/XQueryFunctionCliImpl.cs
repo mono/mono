@@ -36,6 +36,7 @@
 using System;
 using System.Collections;
 using System.Globalization;
+using System.IO;
 using System.Text.RegularExpressions;
 using System.Xml;
 using System.Xml.Query;
@@ -170,9 +171,26 @@ namespace Mono.Xml.XPath2
 		// Trace
 
 		[MonoTODO]
-		public static object FnTrace (object arg)
+		public static object FnTrace (XQueryContext ctx, object value, string label)
 		{
-			throw new NotImplementedException ();
+			if (value == null)
+				return new XPathEmptySequence (ctx);
+			XPathSequence seq = value as XPathSequence;
+			if (seq == null) {
+				IEnumerable list = value as IEnumerable;
+				if (list != null)
+					seq = new EnumeratorIterator (ctx, list);
+				else {
+					XPathAtomicValue av = value as XPathAtomicValue;
+					if (av == null)
+						av = new XPathAtomicValue (value,
+							XmlSchemaType.GetBuiltInType (
+								XPathAtomicValue.XmlTypeCodeFromRuntimeType (
+									value.GetType (), true)));
+					seq = new SingleItemIterator (av, ctx);
+				}
+			}
+			return new TracingIterator (seq, label);
 		}
 
 		// Numeric Operation
@@ -704,10 +722,21 @@ namespace Mono.Xml.XPath2
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
-		public static object FnCount (IEnumerable e)
+		public static int FnCount (IEnumerable e)
 		{
-			throw new NotImplementedException ();
+			if (e == null)
+				return 0;
+			XPathSequence seq = e as XPathSequence;
+			if (seq != null)
+				return seq.Count;
+			ICollection col = e as ICollection;
+			if (col != null)
+				return col.Count;
+			int count = 0;
+			IEnumerator en = e.GetEnumerator ();
+			while (en.MoveNext ())
+				count++;
+			return count;
 		}
 
 		[MonoTODO]
@@ -775,10 +804,21 @@ namespace Mono.Xml.XPath2
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
-		public static object FnDoc (XQueryContext ctx, string uri)
+		public static XPathNavigator FnDoc (XQueryContext ctx, string uri)
 		{
-			throw new NotImplementedException ();
+			XmlResolver res = ctx.ContextManager.ExtDocResolver;
+			string baseUriString = ctx.StaticContext.BaseUri;
+			Uri baseUri = null;
+			if (baseUriString != null && baseUriString != String.Empty)
+				baseUri = new Uri (baseUriString);
+			Uri relUri = res.ResolveUri (baseUri, uri);
+			Stream s = res.GetEntity (relUri, null, typeof (Stream)) as Stream;
+			try {
+				XPathDocument doc = new XPathDocument (new XmlValidatingReader (new XmlTextReader (s)), XmlSpace.Preserve);
+				return doc.CreateNavigator ();
+			} finally {
+				s.Close ();
+			}
 		}
 
 		public static IEnumerable FnCollection (XQueryContext ctx, string name)

@@ -1313,6 +1313,120 @@ EvaluateRemainingSingleItem (forLetClauses, singleBodies);
 		}
 	}
 
+	internal class GroupIterator : XPathSequence
+	{
+		GroupExpr expr;
+		XPathSequence lseq;
+		XPathSequence rseq;
+		bool started;
+		bool left;
+		bool leftFinished;
+		bool rightFinished;
+
+		public GroupIterator (XPathSequence iter, GroupExpr expr)
+			: base (iter.Context)
+		{
+			this.expr = expr;
+			left = true;
+			lseq = expr.Left.EvaluateOrdered (iter);
+			rseq = expr.Right.EvaluateOrdered (iter);
+		}
+
+		private GroupIterator (GroupIterator other)
+			: base (other)
+		{
+			this.expr = other.expr;
+			this.started = other.started;
+			this.left = other.left;
+			this.leftFinished = other.leftFinished;
+			this.rightFinished = other.rightFinished;
+			this.lseq = other.lseq.Clone ();
+			this.rseq = other.rseq.Clone ();
+		}
+
+		public override XPathSequence Clone ()
+		{
+			return new GroupIterator (this);
+		}
+
+		protected override bool MoveNextCore ()
+		{
+			if (leftFinished && rightFinished)
+				return false;
+			bool proceeded = false;
+			if (started) {
+				if (left) {
+					if (!leftFinished && lseq.MoveNext ())
+						proceeded = true;
+					else
+						leftFinished = true;
+				} else {
+					if (rightFinished && rseq.MoveNext ())
+						proceeded = true;
+					else
+						rightFinished = true;
+				}
+			} else {
+				started = true;
+				if (!lseq.MoveNext ()) {
+					leftFinished = true;
+					if (!rseq.MoveNext ()) {
+						rightFinished = true;
+						return false;
+					}
+					left = false;
+					return true;
+				}
+				proceeded = true;
+				if (!rseq.MoveNext ()) {
+					rightFinished = true;
+					return true;
+				}
+			}
+			if (!proceeded) {
+				if (expr.AggregationType == AggregationType.Intersect)
+					return false;
+				left = !leftFinished;
+				return !leftFinished || !rightFinished;
+			}
+
+			XPathNavigator lnav = lseq.Current as XPathNavigator;
+			XPathNavigator rnav = rseq.Current as XPathNavigator;
+			if (lnav == null || rnav == null)
+				throw new XmlQueryException ("XP0006: Evaluation against union, intersect, except expressions must result in nodes.");
+			XmlNodeOrder order = lnav.ComparePosition (rnav);
+			switch (order) {
+			case XmlNodeOrder.Same:
+				switch (expr.AggregationType) {
+				case AggregationType.Union:
+					left = false;
+					if (!lseq.MoveNext ())
+						leftFinished = true;
+					return true;
+				case AggregationType.Intersect:
+					return true;
+				case AggregationType.Except:
+				default:
+					return MoveNext ();
+				}
+			case XmlNodeOrder.Before:
+				left = true;
+				if (expr.AggregationType == AggregationType.Intersect)
+					return MoveNext ();
+				return true;
+			default: // After, Unknown
+				left = false;
+				if (expr.AggregationType == AggregationType.Intersect)
+					return MoveNext ();
+				return true;
+			}
+		}
+
+		public override XPathItem CurrentCore {
+			get { return left ? lseq.Current : rseq.Current; }
+		}
+	}
+
 	internal class AtomizingIterator : XPathSequence
 	{
 		XPathSequence iter;

@@ -1485,7 +1485,7 @@ namespace Mono.Xml.XPath2
 
 		public override XPathSequence Evaluate (XPathSequence iter)
 		{
-			throw new NotImplementedException ();
+			throw new SystemException ("XQuery internal error: should not happen.");
 		}
 #endregion
 	}
@@ -1528,17 +1528,7 @@ namespace Mono.Xml.XPath2
 		// only applicable against node-sets
 		public override XPathSequence Evaluate (XPathSequence iter)
 		{
-			XPathSequence lvalue = Left.EvaluateOrdered (iter);
-			XPathSequence rvalue = Right.EvaluateOrdered (iter);
-
-			/*
-			TBD (yield earlier node, skipping one of the same nodes)
-				- or -
-			TBD (yield earlier node, skipping non-intersection nodes)
-				- or -
-			TBD (yield earlier node, skipping both of the same nodes)
-			*/
-			throw new NotImplementedException ();
+			return new GroupIterator (iter, this);
 		}
 #endregion
 	}
@@ -1705,7 +1695,7 @@ namespace Mono.Xml.XPath2
 			if (!seq.MoveNext ())
 				return new XPathEmptySequence (iter.Context);
 			return new PathStepIterator (
-				new DescendantOrSelfIterator (iter.Current as XPathNavigator, iter.Context), this);
+				new DescendantOrSelfIterator (seq.Current as XPathNavigator, seq.Context), this);
 		}
 #endregion
 	}
