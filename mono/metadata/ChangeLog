@@ -1,3 +1,8 @@
+2004-05-29  Zoltan Varga  <vargaz@freemail.hu>
+
+	* object.c (mono_method_return_message_restore): Handle 
+	MONO_TYPE_OBJECT as well.
+
 2004-05-28  Jackson Harper  <jackson@ximian.com>
 
 	* reflection.c: The modified type encoding was causing build
