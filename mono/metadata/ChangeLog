@@ -5,6 +5,23 @@
 
 2004-03-09  Martin Baulig  <martin@ximian.com>
 
+	* class.h (MonoProperty, MonoEvent): Added `MonoClass *parent'.
+
+	* class.c (init_properties, init_events): Initialize the new
+	`parent' field.
+
+	* reflection.c (typebuilder_setup_properties): Likewise.
+	(typebuilder_setup_events): Likewise.
+
+	* reflection.h (MonoEventInfo): Replaced `parent with
+	`declaring_type' and `reflected_type'.
+
+	* icall.c (ves_icall_get_property_info): Distinguish between
+	declaring and reflected type.
+	(ves_icall_get_event_info): Likewise.
+
+2004-03-09  Martin Baulig  <martin@ximian.com>
+
 	* icall.c (ves_icall_Type_GetTypeCode): Added MONO_TYPE_GENERICINST.
 	(ves_icall_Type_GetField): Correctly set field->klass.
 
