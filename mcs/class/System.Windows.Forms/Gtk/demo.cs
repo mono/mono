@@ -76,7 +76,7 @@ namespace demo
 				pbox.Size = new Size(100, 100);
 				//
 				//Add you image name and path below
-				pbox.File = "/home/jstrike/Shared/7804.jpg";
+				//pbox.File = "/home/jstrike/Shared/7804.jpg";
 
           this.Controls.AddRange(new System.Windows.Forms.Control[] { 
 									this.button1,
