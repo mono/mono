@@ -1,3 +1,7 @@
+2003-09-13 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* XslLiteralElement.cs: reduce enumerator allocation.
+
 2003-08-30 Oleg Tkachenko <oleg@tkachenko.com>
 
 	* XslAttribute.cs: output is now done to TextOutputter, which outputs 
