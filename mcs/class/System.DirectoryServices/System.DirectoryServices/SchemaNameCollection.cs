@@ -42,10 +42,20 @@ namespace System.DirectoryServices
 	/// </summary>
 	public class SchemaNameCollection : IList, ICollection, IEnumerable
 	{
+		private SchemaNameCollection ()
+		{
+		}
+		
 		int IList.Add(object avalue)
 		{
 			throw new NotImplementedException();
 		}
+
+		int Add (string value)
+		{
+			throw new NotImplementedException();
+		}
+		
 		void IList.Clear()
 		{
 				throw new NotImplementedException();
