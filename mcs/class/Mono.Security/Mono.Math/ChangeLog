@@ -1,3 +1,8 @@
+2004-10-25  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* BigInteger.cs: Fix issue #68452 when Randomize was being called on a
+	0 BigInteger (i.e. BitCount == 0).
+
 2005-05-07  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* BigInteger.cs: Faster scan of smallPrimes in IsProbablePrime. 
