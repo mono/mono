@@ -13,6 +13,7 @@ System.Web/HttpWorkerRequest.cs
 System.Web/IHttpAsyncHandler.cs
 System.Web/IHttpHandler.cs
 System.Web/IHttpHandlerFactory.cs
+System.Web/IHttpMapPath.cs
 System.Web/IHttpModule.cs
 System.Web/ProcessShutdownReason.cs
 System.Web/ProcessStatus.cs
