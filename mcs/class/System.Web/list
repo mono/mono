@@ -158,14 +158,16 @@ System.Web.UI/BaseParser.cs
 System.Web.UI/BuildMethod.cs
 System.Web.UI/BuildTemplateMethod.cs
 System.Web.UI/CompiledTemplateBuilder.cs
+System.Web.UI/CodeBuilder.cs
+System.Web.UI/CodeRenderBuilder.cs
 System.Web.UI/ConstructorNeedsTagAttribute.cs
 System.Web.UI/Control.cs
-System.Web.UI/RootBuilder.cs
 System.Web.UI/ControlBuilderAttribute.cs
 System.Web.UI/ControlCollection.cs
 System.Web.UI/CssStyleCollection.cs
 System.Web.UI/DataBinder.cs
 System.Web.UI/DataBinding.cs
+System.Web.UI/DataBindingBuilder.cs
 System.Web.UI/DataBindingCollection.cs
 System.Web.UI/DataBindingHandlerAttribute.cs
 System.Web.UI/DataBoundLiteralControl.cs
@@ -200,6 +202,7 @@ System.Web.UI/PersistenceMode.cs
 System.Web.UI/PersistenceModeAttribute.cs
 System.Web.UI/PropertyConverter.cs
 System.Web.UI/RenderMethod.cs
+System.Web.UI/RootBuilder.cs
 System.Web.UI/SimpleHandlerFactory.cs
 System.Web.UI/SimpleWebHandlerParser.cs
 System.Web.UI/StateBag.cs
