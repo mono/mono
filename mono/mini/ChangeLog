@@ -1,3 +1,8 @@
+2004-10-21  Martin Baulig  <martin@ximian.com>
+
+	* exceptions-x86.c (throw_exception): Call mono_debugger_throw_exception();
+	if it returns true, unwind the stack to the call instruction.
+
 2004-10-21    <vargaz@freemail.hu>
 
 	* aot.c: Reorganize the AOT file format to avoid relocations. Fix warnings.
