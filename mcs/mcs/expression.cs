@@ -169,6 +169,12 @@ namespace Mono.CSharp {
 			}
 			else if (expr is LongConstant)
 				e = new LongConstant (-((LongConstant) expr).Value);
+			else if (expr is ULongConstant){
+				ulong value = ((ULongConstant) expr).Value;
+
+				if (value < 9223372036854775809)
+					return new LongConstant(-(long)value);
+			}
 			else if (expr is FloatConstant)
 				e = new FloatConstant (-((FloatConstant) expr).Value);
 			else if (expr is DoubleConstant)

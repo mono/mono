@@ -1,5 +1,10 @@
 2002-06-08  Martin Baulig  <martin@gnome.org>
 
+	* expression.cs (Unary.TryReduceNegative): Added support for
+	ULongConstants.
+
+2002-06-08  Martin Baulig  <martin@gnome.org>
+
 	* enum.cs (Enum.LookupEnumValue): Don't report an error if the
 	name can't be found in the `defined_names' - the caller will do a
 	MemberLookup in this case and thus find methods in System.Enum
