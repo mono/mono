@@ -2,12 +2,14 @@
 // X509Extension.cs: Base class for all X.509 extensions.
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
+// (C) 2004 Novell (http://www.novell.com)
 //
 
 using System;
+using System.Globalization;
 using System.Text;
 
 using Mono.Security;
@@ -20,7 +22,12 @@ namespace Mono.Security.X509 {
 	 *	extnValue   OCTET STRING  
 	 * }
 	 */
-	public class X509Extension {
+#if INSIDE_CORLIB
+	internal
+#else
+	public 
+#endif
+	class X509Extension {
 
 		protected string extnOid;
 		protected bool extnCritical;
@@ -37,7 +44,7 @@ namespace Mono.Security.X509 {
 				throw new ArgumentException ("Invalid X.509 extension");
 			if (asn1[0].Tag != 0x06)
 				throw new ArgumentException ("Invalid X.509 extension");
-			extnOid = ASN1Convert.ToOID (asn1 [0]);
+			extnOid = ASN1Convert.ToOid (asn1 [0]);
 			extnCritical = ((asn1[1].Tag == 0x01) && (asn1[1].Value[0] == 0xFF));
 			extnValue = asn1 [asn1.Count - 1]; // last element
 			Decode ();
@@ -49,20 +56,24 @@ namespace Mono.Security.X509 {
 				throw new ArgumentNullException ("extension");
 			if ((extension.Value.Tag != 0x04) || (extension.Value.Count != 0))
 				throw new ArgumentException ("Invalid extension");
-			extnOid = extension.OID;
+			extnOid = extension.Oid;
 			extnCritical = extension.Critical;
 			extnValue = extension.Value;
 			Decode ();
 		}
 
-		protected virtual void Decode () {}
+		protected virtual void Decode () 
+		{
+		}
 
-		protected virtual void Encode () {}
+		protected virtual void Encode ()
+		{
+		}
 
 		public ASN1 ASN1 {
 			get {
 				ASN1 extension = new ASN1 (0x30);
-				extension.Add (ASN1Convert.FromOID (extnOid));
+				extension.Add (ASN1Convert.FromOid (extnOid));
 				if (extnCritical)
 					extension.Add (new ASN1 (0x01, new byte [1] { 0x01 }));
 				ASN1 os = extension.Add (new ASN1 (0x04));
@@ -72,7 +83,7 @@ namespace Mono.Security.X509 {
 			}
 		}
 
-		public string OID {
+		public string Oid {
 			get { return extnOid; }
 		}
 
@@ -89,9 +100,38 @@ namespace Mono.Security.X509 {
 			get { return extnValue; }
 		}
 
+		public override bool Equals (object obj) 
+		{
+			if (obj == null)
+				return false;
+			
+			X509Extension ex = (obj as X509Extension);
+			if (ex == null)
+				return false;
+
+			if (extnCritical != ex.extnCritical)
+				return false;
+			if (extnOid != ex.extnOid)
+				return false;
+			if (extnValue.Length != ex.extnValue.Length)
+				return false;
+			
+                        for (int i=0; i < extnValue.Length; i++) {
+				if (extnValue [i] != ex.extnValue [i])
+					return false;
+			}
+			return true;
+		}
+
 		public byte[] GetBytes () 
 		{
 			return ASN1.GetBytes ();
+		}
+
+		public override int GetHashCode () 
+		{
+			// OID should be unique in a collection of extensions
+			return extnOid.GetHashCode ();
 		}
 
 		private void WriteLine (StringBuilder sb, int n, int pos) 
@@ -101,7 +141,7 @@ namespace Mono.Security.X509 {
 			StringBuilder preview = new StringBuilder ();
 			for (int j=0; j < 8; j++) {
 				if (j < n) {
-					sb.Append (value [p++].ToString ("X2"));
+					sb.Append (value [p++].ToString ("X2", CultureInfo.InvariantCulture));
 					sb.Append (" ");
 				}
 				else

@@ -15,6 +15,7 @@ namespace Mono.Security.X509 {
 	// commented flags aren't implemented in X509Chain
 
 	[Serializable]
+	[Flags]
 #if INSIDE_CORLIB
 	internal
 #else

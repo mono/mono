@@ -15,12 +15,19 @@ using Mono.Security.X509.Extensions;
 
 namespace Mono.Security.X509 {
 
-	public class X509StoreManager {
+#if INSIDE_CORLIB
+	internal
+#else
+	public 
+#endif
+	sealed class X509StoreManager {
 
 		static private X509Stores _userStore;
 		static private X509Stores _machineStore;
 
-		protected X509StoreManager () {}
+		private X509StoreManager ()
+		{
+		}
 
 		static public X509Stores CurrentUser {
 			get { 
@@ -39,11 +46,10 @@ namespace Mono.Security.X509 {
 		static public X509Stores LocalMachine {
 			get {
 				if (_machineStore == null) {
-					// FIXME: where should it be ?
 					string _machinePath = Path.Combine (
-						Environment.GetFolderPath (Environment.SpecialFolder.ApplicationData),
+						Environment.GetFolderPath (Environment.SpecialFolder.CommonApplicationData),
 						".mono");
-					_machinePath = Path.Combine (_machinePath, "machinecerts"); // FIXME
+					_machinePath = Path.Combine (_machinePath, "certs");
 
 					_machineStore = new X509Stores (_machinePath);
 				}
@@ -64,11 +70,11 @@ namespace Mono.Security.X509 {
 			}
 		}
 
-		static public ArrayList IntermediateCACRLs {
+		static public ArrayList IntermediateCACrls {
 			get { 
 				ArrayList intermediateCRLs = new ArrayList ();
-				intermediateCRLs.AddRange (CurrentUser.IntermediateCA.CRLs);
-				intermediateCRLs.AddRange (LocalMachine.IntermediateCA.CRLs);
+				intermediateCRLs.AddRange (CurrentUser.IntermediateCA.Crls);
+				intermediateCRLs.AddRange (LocalMachine.IntermediateCA.Crls);
 				return intermediateCRLs; 
 			}
 		}
@@ -82,11 +88,11 @@ namespace Mono.Security.X509 {
 			}
 		}
 
-		static public ArrayList TrustedRootCACRLs {
+		static public ArrayList TrustedRootCACrls {
 			get { 
 				ArrayList trustedCRLs = new ArrayList ();
-				trustedCRLs.AddRange (CurrentUser.TrustedRoot.CRLs);
-				trustedCRLs.AddRange (LocalMachine.TrustedRoot.CRLs);
+				trustedCRLs.AddRange (CurrentUser.TrustedRoot.Crls);
+				trustedCRLs.AddRange (LocalMachine.TrustedRoot.Crls);
 				return trustedCRLs; 
 			}
 		}

@@ -2,9 +2,10 @@
 // PKCS12.cs: PKCS 12 - Personal Information Exchange Syntax
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot <sebastien@ximian.com>
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
+// (C) 2004 Novell (http://www.novell.com)
 //
 // Key derivation translated from Bouncy Castle JCE (http://www.bouncycastle.org/)
 // See bouncycastle.txt for license.
@@ -269,7 +270,7 @@ namespace Mono.Security.X509 {
 			_version = version.Value [0];
 
 			PKCS7.ContentInfo authSafe = new PKCS7.ContentInfo (pfx [1]);
-			if (authSafe.ContentType != PKCS7.data)
+			if (authSafe.ContentType != PKCS7.Oid.data)
 				throw new ArgumentException ("invalid authenticated safe");
 
 			// now that we know it's a PKCS#12 file, check the (optional) MAC
@@ -283,7 +284,7 @@ namespace Mono.Security.X509 {
 				if (mac.Tag != 0x30)
 					throw new ArgumentException ("invalid MAC");
 				ASN1 macAlgorithm = mac [0];
-				string macOid = ASN1Convert.ToOID (macAlgorithm [0]);
+				string macOid = ASN1Convert.ToOid (macAlgorithm [0]);
 				if (macOid != "1.3.14.3.2.26")
 					throw new ArgumentException ("unsupported HMAC");
 				byte[] macValue = mac [1].Value;
@@ -311,7 +312,7 @@ namespace Mono.Security.X509 {
 			for (int i=0; i < authenticatedSafe.Count; i++) {
 				PKCS7.ContentInfo ci = new PKCS7.ContentInfo (authenticatedSafe [i]);
 				switch (ci.ContentType) {
-					case PKCS7.data:
+					case PKCS7.Oid.data:
 						// unencrypted (by PKCS#12)
 						ASN1 safeContents = new ASN1 (ci.Content [0].Value);
 						for (int j=0; j < safeContents.Count; j++) {
@@ -319,7 +320,7 @@ namespace Mono.Security.X509 {
 							ReadSafeBag (safeBag);
 						}
 						break;
-					case PKCS7.encryptedData:
+					case PKCS7.Oid.encryptedData:
 						// password encrypted
 						PKCS7.EncryptedData ed = new PKCS7.EncryptedData (ci.Content [0]);
 						ASN1 decrypted = new ASN1 (Decrypt (ed));
@@ -328,7 +329,7 @@ namespace Mono.Security.X509 {
 							ReadSafeBag (safeBag);
 						}
 						break;
-					case PKCS7.envelopedData:
+					case PKCS7.Oid.envelopedData:
 						// public key encrypted
 						throw new NotImplementedException ("public key encrypted");
 					default:
@@ -548,7 +549,7 @@ namespace Mono.Security.X509 {
 				throw new ArgumentException ("invalid safeBag id");
 
 			ASN1 bagValue = safeBag [1];
-			string oid = ASN1Convert.ToOID (bagId);
+			string oid = ASN1Convert.ToOid (bagId);
 			switch (oid) {
 				case keyBag:
 					// NEED UNIT TEST
@@ -615,7 +616,7 @@ namespace Mono.Security.X509 {
 			bagValue.Add (ci.ASN1);
 
 			ASN1 safeBag = new ASN1 (0x30);
-			safeBag.Add (ASN1Convert.FromOID (certBag));
+			safeBag.Add (ASN1Convert.FromOid (certBag));
 			safeBag.Add (bagValue);
 
 			return safeBag;
@@ -657,7 +658,7 @@ namespace Mono.Security.X509 {
 				seqParams.Add (ASN1Convert.FromInt32 (_iterations));
 
 				ASN1 seqPbe = new ASN1 (0x30);
-				seqPbe.Add (ASN1Convert.FromOID (pbeWithSHAAnd3KeyTripleDESCBC));
+				seqPbe.Add (ASN1Convert.FromOid (pbeWithSHAAnd3KeyTripleDESCBC));
 				seqPbe.Add (seqParams);
 
 				ASN1 certsSafeBag = new ASN1 (0x30);
@@ -669,7 +670,7 @@ namespace Mono.Security.X509 {
 				ASN1 encryptedCerts = new ASN1 (0x80, encrypted);
 
 				ASN1 seq = new ASN1 (0x30);
-				seq.Add (ASN1Convert.FromOID (PKCS7.data));
+				seq.Add (ASN1Convert.FromOid (PKCS7.Oid.data));
 				seq.Add (seqPbe);
 				seq.Add (encryptedCerts);
 
@@ -681,7 +682,7 @@ namespace Mono.Security.X509 {
 				ASN1 certsContent = new ASN1 (0xA0);
 				certsContent.Add (encData);
 
-				PKCS7.ContentInfo bag = new PKCS7.ContentInfo (PKCS7.encryptedData);
+				PKCS7.ContentInfo bag = new PKCS7.ContentInfo (PKCS7.Oid.encryptedData);
 				bag.Content = certsContent;
 				safeBagSequence.Add (bag.ASN1);
 			}
@@ -690,7 +691,7 @@ namespace Mono.Security.X509 {
 				ASN1 safeContents = new ASN1 (0x30);
 				foreach (AsymmetricAlgorithm key in _keyBags) {
 					ASN1 safeBag = new ASN1 (0x30);
-					safeBag.Add (ASN1Convert.FromOID (pkcs8ShroudedKeyBag));
+					safeBag.Add (ASN1Convert.FromOid (pkcs8ShroudedKeyBag));
 					ASN1 safeBagValue = new ASN1 (0xA0); 
 					safeBagValue.Add (Pkcs8ShroudedKeyBag (key));
 					safeBag.Add (safeBagValue);
@@ -700,7 +701,7 @@ namespace Mono.Security.X509 {
 				ASN1 content = new ASN1 (0xA0);
 				content.Add (new ASN1 (0x04, safeContents.GetBytes ()));
 				
-				PKCS7.ContentInfo keyBag = new PKCS7.ContentInfo (PKCS7.data);
+				PKCS7.ContentInfo keyBag = new PKCS7.ContentInfo (PKCS7.Oid.data);
 				keyBag.Content = content;
 				safeBagSequence.Add (keyBag.ASN1);
 			}
@@ -708,7 +709,7 @@ namespace Mono.Security.X509 {
 			ASN1 encapsulates = new ASN1 (0x04, safeBagSequence.GetBytes ());
 			ASN1 ci = new ASN1 (0xA0);
 			ci.Add (encapsulates);
-			PKCS7.ContentInfo authSafe = new PKCS7.ContentInfo (PKCS7.data);
+			PKCS7.ContentInfo authSafe = new PKCS7.ContentInfo (PKCS7.Oid.data);
 			authSafe.Content = ci;
 			
 			byte[] salt = new byte [20];
@@ -719,7 +720,7 @@ namespace Mono.Security.X509 {
 			if (macValue != null) {
 				// only for password based encryption
 				ASN1 oidSeq = new ASN1 (0x30);
-				oidSeq.Add (ASN1Convert.FromOID ("1.3.14.3.2.26"));	// SHA1
+				oidSeq.Add (ASN1Convert.FromOid ("1.3.14.3.2.26"));	// SHA1
 				oidSeq.Add (new ASN1 (0x05));
 
 				ASN1 mac = new ASN1 (0x30);

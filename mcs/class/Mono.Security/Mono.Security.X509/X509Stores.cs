@@ -15,7 +15,12 @@ using Mono.Security.X509.Extensions;
 
 namespace Mono.Security.X509 {
 
-	public class X509Stores {
+#if INSIDE_CORLIB
+	internal
+#else
+	public 
+#endif
+	class X509Stores {
 
 		private string _storePath;
 		private X509Store _personal;

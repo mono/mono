@@ -2,9 +2,10 @@
 // X509Certificates.cs: Handles X.509 certificates.
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
+// (C) 2004 Novell (http://www.novell.com) 
 //
 
 using System;
@@ -20,7 +21,12 @@ namespace Mono.Security.X509 {
 	// b.	ITU ASN.1 standards (free download)
 	//	http://www.itu.int/ITU-T/studygroups/com17/languages/
 
-	public class X509Certificate {
+#if INSIDE_CORLIB
+	internal
+#else
+	public 
+#endif
+	class X509Certificate {
 
 		private ASN1 decoder;
 
@@ -35,6 +41,7 @@ namespace Mono.Security.X509 {
 		private byte[] signature;
 		private string m_signaturealgo;
 		private byte[] m_signaturealgoparams;
+		private byte[] certhash;
 		
 		// from http://www.ietf.org/rfc/rfc2459.txt
 		//
@@ -62,7 +69,7 @@ namespace Mono.Security.X509 {
 
 		private byte[] issuerUniqueID;
 		private byte[] subjectUniqueID;
-		private X509Extensions extensions;
+		private X509ExtensionCollection extensions;
 
 		// that's were the real job is!
 		private void Parse (byte[] data) 
@@ -115,7 +122,7 @@ namespace Mono.Security.X509 {
 		
 				ASN1 algorithm = subjectPublicKeyInfo.Element (0, 0x30);
 				ASN1 algo = algorithm.Element (0, 0x06);
-				m_keyalgo = ASN1Convert.ToOID (algo);
+				m_keyalgo = ASN1Convert.ToOid (algo);
 				// parameters ANY DEFINED BY algorithm OPTIONAL
 				// so we dont ask for a specific (Element) type and return DER
 				ASN1 parameters = algorithm [1];
@@ -126,17 +133,17 @@ namespace Mono.Security.X509 {
 				// in the BITSTRING)
 				int n = subjectPublicKey.Length - 1;
 				m_publickey = new byte [n];
-				Array.Copy (subjectPublicKey.Value, 1, m_publickey, 0, n);
+				Buffer.BlockCopy (subjectPublicKey.Value, 1, m_publickey, 0, n);
 
 				// signature processing
 				byte[] bitstring = decoder [2].Value;
 				// first byte contains unused bits in first byte
 				signature = new byte [bitstring.Length - 1];
-				Array.Copy (bitstring, 1, signature, 0, signature.Length);
+				Buffer.BlockCopy (bitstring, 1, signature, 0, signature.Length);
 
 				algorithm = decoder [1];
 				algo = algorithm.Element (0, 0x06);
-				m_signaturealgo = ASN1Convert.ToOID (algo);
+				m_signaturealgo = ASN1Convert.ToOid (algo);
 				parameters = algorithm [1];
 				if (parameters != null)
 					m_signaturealgoparams = parameters.GetBytes ();
@@ -160,9 +167,9 @@ namespace Mono.Security.X509 {
 				// Certificate / TBSCertificate / Extensions
 				ASN1 extns = tbsCertificate.Element (tbs, 0xA3);
 				if ((extns != null) && (extns.Count == 1))
-					extensions = new X509Extensions (extns [0]);
+					extensions = new X509ExtensionCollection (extns [0]);
 				else
-					extensions = new X509Extensions (null);
+					extensions = new X509ExtensionCollection (null);
 
 				// keep a copy of the original data
 				m_encodedcert = (byte[]) data.Clone ();
@@ -187,7 +194,7 @@ namespace Mono.Security.X509 {
 				// however we can't feed it into RSAParameters or DSAParameters
 				int length = integer.Length - 1;
 				byte[] uinteger = new byte [length];
-				Array.Copy (integer, 1, uinteger, 0, length);
+				Buffer.BlockCopy (integer, 1, uinteger, 0, length);
 				return uinteger;
 			}
 			else
@@ -223,36 +230,36 @@ namespace Mono.Security.X509 {
 			}
 		}
 
-		public X509Extensions Extensions {
+		public X509ExtensionCollection Extensions {
 			get { return extensions; }
 		}
 
 		public byte[] Hash {
 			get {
-				HashAlgorithm hash = null;
-				switch (m_signaturealgo) {
-					case "1.2.840.113549.1.1.2":	// MD2 with RSA encryption 
-						// maybe someone installed MD2 ?
-						hash = HashAlgorithm.Create ("MD2");
-						break;
-					case "1.2.840.113549.1.1.4":	// MD5 with RSA encryption 
-						hash = MD5.Create ();
-						break;
-					case "1.2.840.113549.1.1.5":	// SHA-1 with RSA Encryption 
-					case "1.3.14.3.2.29":		// SHA1 with RSA signature 
-					case "1.2.840.10040.4.3":	// SHA1-1 with DSA
-						hash = SHA1.Create ();
-						break;
-					default:
+				if (certhash == null) {
+					HashAlgorithm hash = null;
+					switch (m_signaturealgo) {
+						case "1.2.840.113549.1.1.2":	// MD2 with RSA encryption 
+							// maybe someone installed MD2 ?
+							hash = HashAlgorithm.Create ("MD2");
+							break;
+						case "1.2.840.113549.1.1.4":	// MD5 with RSA encryption 
+							hash = MD5.Create ();
+							break;
+						case "1.2.840.113549.1.1.5":	// SHA-1 with RSA Encryption 
+						case "1.3.14.3.2.29":		// SHA1 with RSA signature 
+						case "1.2.840.10040.4.3":	// SHA1-1 with DSA
+							hash = SHA1.Create ();
+							break;
+						default:
+							return null;
+					}
+					if ((decoder == null) || (decoder.Count < 1))
 						return null;
-				}
-				try {
 					byte[] toBeSigned = decoder [0].GetBytes ();
-					return hash.ComputeHash (toBeSigned, 0, toBeSigned.Length);
+					certhash = hash.ComputeHash (toBeSigned, 0, toBeSigned.Length);
 				}
-				catch {
-					return null;
-				}
+				return (byte[]) certhash.Clone ();
 			}
 		}
 
@@ -265,11 +272,19 @@ namespace Mono.Security.X509 {
 		}
 
 		public virtual byte[] KeyAlgorithmParameters {
-			get { return m_keyalgoparams; }
+			get {
+				if (m_keyalgoparams == null)
+					return null;
+				return (byte[]) m_keyalgoparams.Clone (); 
+			}
 		}
 
 		public virtual byte[] PublicKey	{
-			get { return m_publickey; }
+			get { 
+				if (m_publickey == null)
+					return null;
+				return (byte[]) m_publickey.Clone ();
+			}
 		}
 
 		public virtual RSA RSA {
@@ -303,17 +318,25 @@ namespace Mono.Security.X509 {
 		}
 
 		public virtual byte[] SerialNumber {
-			get { return serialnumber; }
+			get { 
+				if (serialnumber == null)
+					return null;
+				return (byte[]) serialnumber.Clone (); 
+			}
 		}
 
 		public virtual byte[] Signature {
 			get { 
+				if (signature == null)
+					return null;
+
 				switch (m_signaturealgo) {
 					case "1.2.840.113549.1.1.2":	// MD2 with RSA encryption 
 					case "1.2.840.113549.1.1.4":	// MD5 with RSA encryption 
 					case "1.2.840.113549.1.1.5":	// SHA-1 with RSA Encryption 
 					case "1.3.14.3.2.29":		// SHA1 with RSA signature
-						return signature;
+						return (byte[]) signature.Clone ();
+
 					case "1.2.840.10040.4.3":	// SHA-1 with DSA
 						ASN1 sign = new ASN1 (signature);
 						if ((sign == null) || (sign.Count != 2))
@@ -322,9 +345,10 @@ namespace Mono.Security.X509 {
 						byte[] part1 = sign [0].Value;
 						byte[] part2 = sign [1].Value;
 						byte[] sig = new byte [40];
-						Array.Copy (part1, 0, sig, (20 - part1.Length), part1.Length);
-						Array.Copy (part2, 0, sig, (40 - part2.Length), part2.Length);
+						Buffer.BlockCopy (part1, 0, sig, (20 - part1.Length), part1.Length);
+						Buffer.BlockCopy (part2, 0, sig, (40 - part2.Length), part2.Length);
 						return sig;
+
 					default:
 						throw new CryptographicException ("Unsupported hash algorithm: " + m_signaturealgo);
 				}
@@ -336,7 +360,11 @@ namespace Mono.Security.X509 {
 		}
 
 		public virtual byte[] SignatureAlgorithmParameters {
-			get { return m_signaturealgoparams; }
+			get { 
+				if (m_signaturealgoparams == null)
+					return m_signaturealgoparams;
+				return (byte[]) m_signaturealgoparams.Clone ();
+			}
 		}
 
 		public virtual string SubjectName {
@@ -359,19 +387,12 @@ namespace Mono.Security.X509 {
 			get { return WasCurrent (DateTime.UtcNow); }
 		}
 
-		public bool WasCurrent (DateTime date) 
+		public bool WasCurrent (DateTime instant) 
 		{
-			return ((date > ValidFrom) && (date <= ValidUntil));
+			return ((instant > ValidFrom) && (instant <= ValidUntil));
 		}
 
-		private byte[] GetHash (string hashName) 
-		{
-			byte[] toBeSigned = decoder [0].GetBytes ();
-			HashAlgorithm ha = HashAlgorithm.Create (hashName);
-			return ha.ComputeHash (toBeSigned);
-		}
-
-		public bool VerifySignature (DSA dsa) 
+		internal bool VerifySignature (DSA dsa) 
 		{
 			// signatureOID is check by both this.Hash and this.Signature
 			DSASignatureDeformatter v = new DSASignatureDeformatter (dsa);
@@ -406,6 +427,9 @@ namespace Mono.Security.X509 {
 
 		public bool VerifySignature (AsymmetricAlgorithm aa) 
 		{
+			if (aa == null)
+				throw new ArgumentNullException ("aa");
+
 			if (aa is RSA)
 				return VerifySignature (aa as RSA);
 			else if (aa is DSA)

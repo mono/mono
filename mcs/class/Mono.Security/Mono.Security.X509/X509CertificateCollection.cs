@@ -13,9 +13,16 @@ using System.Collections;
 namespace Mono.Security.X509 {
 
 	[Serializable]
-	public class X509CertificateCollection : CollectionBase, IEnumerable {
+#if INSIDE_CORLIB
+	internal
+#else
+	public 
+#endif
+	class X509CertificateCollection : CollectionBase, IEnumerable {
 		
-		public X509CertificateCollection () {}
+		public X509CertificateCollection () 
+		{
+		}
 		
 		public X509CertificateCollection (X509Certificate [] value) 
 		{
@@ -175,4 +182,3 @@ namespace Mono.Security.X509 {
 		}		
 	}
 }
-

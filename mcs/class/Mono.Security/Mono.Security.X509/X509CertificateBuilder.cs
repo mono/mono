@@ -2,9 +2,11 @@
 // X509CertificateBuilder.cs: Handles building of X.509 certificates.
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot <sebastien@ximian.com>
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
+// (C) 2004 Novell (http://www.novell.com)
+//
 
 using System;
 using System.Security.Cryptography;
@@ -54,7 +56,7 @@ namespace Mono.Security.X509 {
 		private AsymmetricAlgorithm aa;
 		private byte[] issuerUniqueID;
 		private byte[] subjectUniqueID;
-		private X509Extensions extensions;
+		private X509ExtensionCollection extensions;
 
 		public X509CertificateBuilder () : this (3) {}
 	
@@ -63,7 +65,7 @@ namespace Mono.Security.X509 {
 			if (version > 3)
 				throw new ArgumentException ("Invalid certificate version");
 			this.version = version;
-			extensions = new X509Extensions ();
+			extensions = new X509ExtensionCollection ();
 		}
 
 		public byte Version {
@@ -101,17 +103,17 @@ namespace Mono.Security.X509 {
 			set { aa = value; }
 		}
 
-		public byte[] IssuerUniqueID {
+		public byte[] IssuerUniqueId {
 			get { return issuerUniqueID; }
 			set { issuerUniqueID = value; }
 		}
 
-		public byte[] SubjectUniqueID {
+		public byte[] SubjectUniqueId {
 			get { return subjectUniqueID; }
 			set { subjectUniqueID = value; }
 		}
 
-		public X509Extensions Extensions {
+		public X509ExtensionCollection Extensions {
 			get { return extensions; }
 		}
 
@@ -162,7 +164,7 @@ namespace Mono.Security.X509 {
 			ASN1 uid = new ASN1 (0x03);
 			// first byte in a BITSTRING is the number of unused bits in the first byte
 			byte[] v = new byte [id.Length + 1];
-			Array.Copy (id, 0, v, 1, id.Length);
+			Buffer.BlockCopy (id, 0, v, 1, id.Length);
 			uid.Value = v;
 			return uid.GetBytes ();
 		}

@@ -1,3 +1,27 @@
+2004-04-22  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* PKCS12.cs: FxCop-ized. CLS compliance.
+	* X501Name.cs: FxCop-ized.
+	* X509Builder.cs: FxCop-ized. Replaced Array.Copy with 
+	Buffer.BlockCopy.
+	* X509CRL.cs: FxCop-ized. Replaced Array.Copy with Buffer.BlockCopy.
+	* X509Certificate.cs: FxCop-ized. Replaced Array.Copy with 
+	Buffer.BlockCopy. Removed unused private method GetHash.
+	* X509CertificateBuilder.cs: Ajusted with changes. Replaced 
+	Array.Copy with Buffer.BlockCopy.
+	* X509CertificateCollection.cs: Added INSIDE_CORLIB as the class is
+	shared with corlib assembly.
+	* X509Chain.cs: FxCop-ized. Removed old ITrustAnchor support.
+	* X509ChainStatusFlags.cs: Added missing [Flags].
+	* X509Extension.cs: FxCop-ized. Added Equals, GetHashCode methods.
+	* X509Extensions.cs: FxCop-ized. Sealed class, renamed to 
+	X509ExtensionCollection and inherit from CollectionBase. Added missing
+	methods.
+	* X509Store.cs: FxCop-ized.
+	* X509StoreManager.cs: FxCop-ized. Sealed class.
+	* X509Stores.cs: Added INSIDE_CORLIB as the class is shared with 
+	corlib assembly.
+
 2004-04-02  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* X509Chain.cs: Fixed build for net_1_0 profile.

@@ -9,6 +9,7 @@
 
 using System;
 using System.Collections;
+using System.Globalization;
 using System.IO;
 using System.Text;
 
@@ -16,7 +17,12 @@ using Mono.Security.X509.Extensions;
 
 namespace Mono.Security.X509 {
 
-	public class X509Store {
+#if INSIDE_CORLIB
+	internal
+#else
+	public 
+#endif
+	class X509Store {
 
 		private string _storePath;
 		private X509CertificateCollection _certificates;
@@ -41,7 +47,7 @@ namespace Mono.Security.X509 {
 			}
 		}
 
-		public ArrayList CRLs {
+		public ArrayList Crls {
 			get {
 				// CRL aren't applicable to all stores
 				// but returning null is a little rude
@@ -49,7 +55,7 @@ namespace Mono.Security.X509 {
 					_crls = new ArrayList ();
 				}
 				if (_crls == null) {
-					_crls = BuildCRLsCollection (_storePath);
+					_crls = BuildCrlsCollection (_storePath);
 				}
 				return _crls; 
 			}
@@ -124,7 +130,7 @@ namespace Mono.Security.X509 {
 			StringBuilder sb = new StringBuilder (method);
 			sb.Append ("-");
 			foreach (byte b in name) {
-				sb.Append (b.ToString ("X2"));
+				sb.Append (b.ToString ("X2", CultureInfo.InvariantCulture));
 			}
 			sb.Append (".cer");
 
@@ -149,10 +155,10 @@ namespace Mono.Security.X509 {
 			return cert;
 		}
 
-		private X509CRL LoadCRL (string filename) 
+		private X509Crl LoadCrl (string filename) 
 		{
 			byte[] data = Load (filename);
-			X509CRL crl = new X509CRL (data);
+			X509Crl crl = new X509Crl (data);
 			return crl;
 		}
 
@@ -182,7 +188,7 @@ namespace Mono.Security.X509 {
 			return coll;
 		}
 
-		private ArrayList BuildCRLsCollection (string storeName) 
+		private ArrayList BuildCrlsCollection (string storeName) 
 		{
 			ArrayList list = new ArrayList ();
 			string path = Path.Combine (_storePath, storeName);
@@ -190,7 +196,7 @@ namespace Mono.Security.X509 {
 			if ((files != null) && (files.Length > 0)) {
 				foreach (string file in files) {
 					try {
-						X509CRL crl = LoadCRL (file);
+						X509Crl crl = LoadCrl (file);
 						list.Add (crl);
 					}
 					catch {

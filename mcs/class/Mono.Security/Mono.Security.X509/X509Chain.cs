@@ -13,13 +13,23 @@
 //
 
 using System;
+using System.Security;
+using System.Security.Permissions;
+
+#if !INSIDE_CORLIB
 using System.Net;
+#endif
 
 using Mono.Security.X509.Extensions;
 
 namespace Mono.Security.X509 {
 
-	public class X509Chain {
+#if INSIDE_CORLIB
+	internal
+#else
+	public 
+#endif
+	class X509Chain {
 
 		private X509CertificateCollection roots;
 		private X509CertificateCollection certs;
@@ -62,13 +72,11 @@ namespace Mono.Security.X509 {
 				if (roots == null) {
 					roots = new X509CertificateCollection ();
 					roots.AddRange (X509StoreManager.TrustedRootCertificates);
-					// TEMP (old method)
-					ITrustAnchors trust = (ITrustAnchors) new TrustAnchors ();
-					roots.AddRange (trust.Anchors);
 					return roots;
 				}
 				return roots;
 			}
+			[SecurityPermission (SecurityAction.Demand, Flags=SecurityPermissionFlag.ControlPolicy)]
 			set { roots = value; }
 		}
 
@@ -79,9 +87,9 @@ namespace Mono.Security.X509 {
 			certs.Add (x509);
 		}
 
-		public void LoadCertificates (X509CertificateCollection coll) 
+		public void LoadCertificates (X509CertificateCollection collection) 
 		{
-			certs.AddRange (coll);
+			certs.AddRange (collection);
 		}
 
 		public X509Certificate FindByIssuerName (string issuerName) 
@@ -177,7 +185,7 @@ namespace Mono.Security.X509 {
 
 			// TODO - we should check for CRITICAL but unknown extensions
 			// X509ChainStatusFlags.InvalidExtension
-#if !NET_1_0
+#if (!NET_1_0 && !INSIDE_CORLIB)
 			if (ServicePointManager.CheckCertificateRevocationList) {
 				// TODO - check revocation (CRL, OCSP ...)
 				// X509ChainStatusFlags.RevocationStatusUnknown

@@ -1,4 +1,15 @@
+//
+// X509Builder.cs: Abstract builder class for X509 objects
+//
+// Author:
+//	Sebastien Pouliot  <sebastien@ximian.com>
+//
+// (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
+// (C) 2004 Novell (http://www.novell.com) 
+//
+
 using System;
+using System.Globalization;
 using System.Security.Cryptography;
 
 using Mono.Security;
@@ -10,7 +21,7 @@ namespace Mono.Security.X509 {
 		private const string defaultHash = "SHA1";
 		private string hashName;
 
-		public X509Builder ()
+		protected X509Builder ()
 		{
 			hashName = defaultHash;
 		}
@@ -18,9 +29,9 @@ namespace Mono.Security.X509 {
 		protected abstract ASN1 ToBeSigned (string hashName);
 
 		// move to PKCS1
-		protected string GetOID (string hashName) 
+		protected string GetOid (string hashName) 
 		{
-			switch (hashName.ToLower ()) {
+			switch (hashName.ToLower (CultureInfo.InvariantCulture)) {
 				case "md2":
 					// md2withRSAEncryption (1 2 840 113549 1 1 2)
 					return "1.2.840.113549.1.1.2";
@@ -74,14 +85,14 @@ namespace Mono.Security.X509 {
 			builder.Add (PKCS7.AlgorithmIdentifier (hashoid));
 			// first byte of BITSTRING is the number of unused bits in the first byte
 			byte[] bitstring = new byte [signature.Length + 1];
-			Array.Copy (signature, 0, bitstring, 1, signature.Length);
+			Buffer.BlockCopy (signature, 0, bitstring, 1, signature.Length);
 			builder.Add (new ASN1 (0x03, bitstring));
 			return builder.GetBytes ();
 		}
 
 		public virtual byte[] Sign (RSA key)
 		{
-			string oid = GetOID (hashName);
+			string oid = GetOid (hashName);
 			ASN1 tbs = ToBeSigned (oid);
 			HashAlgorithm ha = HashAlgorithm.Create (hashName);
 			byte[] hash = ha.ComputeHash (tbs.GetBytes ());
@@ -108,9 +119,9 @@ namespace Mono.Security.X509 {
 
 			// split R and S
 			byte[] r = new byte [20];
-			Array.Copy (rs, 0, r, 0, 20);
+			Buffer.BlockCopy (rs, 0, r, 0, 20);
 			byte[] s = new byte [20];
-			Array.Copy (rs, 20, s, 0, 20);
+			Buffer.BlockCopy (rs, 20, s, 0, 20);
 			ASN1 signature = new ASN1 (0x30);
 			signature.Add (new ASN1 (0x02, r));
 			signature.Add (new ASN1 (0x02, s));
