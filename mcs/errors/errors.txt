@@ -68,3 +68,9 @@ numbers to match the Microsoft numbers:
 		using System.ComponentModel;
 		[DefaultValue (CollectionChangeAction.Add)]
 		class X { static void Main () {	} }
+
+-24     Unused `using' statement
+
+	Sample:
+		using System;
+		class X {} 
