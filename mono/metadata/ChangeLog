@@ -1,3 +1,10 @@
+
+Thu Apr 18 16:41:30 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* icall.c: remove MonoMethod_get_Name().
+	* reflection.c, reflection.h, verify: cache the method name in the MonoMethod
+	object.
+
 2002-04-17	Patrik Torstensson <patrik.torstensson@labs2.com>
 
 	* string-icalls.c: optimized a few methods.
