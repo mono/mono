@@ -1,3 +1,12 @@
+2003-08-04 Jackson Harper <jackson@latitudegeo.com>
+
+	* LabelInfo.cs: Move this type outside of MethodDef, because other
+	types use LabelInfos for label references now.
+	* BranchInstr.cs: Take a LabelInfo instead of information on a label.
+	* HandlerBlock.cs: Take a LabelInfo instead of information on a label.
+	* MethodDef.cs: Return LabelInfo from AddLabel methods. New method for
+	adding a reference to a label.
+	
 2003-08-02 Jackson Harper <jackson@latitudegeo.com>
 
 	* ExternMethodRef.cs: Remove top secret debugging code.

@@ -17,47 +17,6 @@ namespace Mono.ILASM {
 
         public class MethodDef {
 
-                protected class LabelInfo : IComparable {
-
-                        public readonly string Name;
-                        public readonly int Pos;
-			public readonly uint Offset;
-                        public PEAPI.CILLabel Label;
-			public bool UseOffset;
-
-                        public LabelInfo (string name, int pos, uint offset)
-                        {
-                                Name = name;
-                                Pos = pos;
-				Offset = offset;
-                                Label = null;
-				UseOffset = true;
-                        }
-
-			public LabelInfo (string name, int pos)
-			{
-				Name = name;
-				Pos = pos;
-				Label = null;
-				UseOffset = false;
-			}
-
-                        public void Define (PEAPI.CILLabel label)
-                        {
-                                Label = label;
-                        }
-
-                        public int CompareTo (object obj)
-                        {
-                                LabelInfo other = obj as LabelInfo;
-
-                                if(other != null)
-                                        return Pos.CompareTo(other.Pos);
-
-                                throw new ArgumentException ("object is not a LabelInfo");
-                        }
-                }
-
                 private PEAPI.MethAttr meth_attr;
                 private PEAPI.CallConv call_conv;
                 private PEAPI.ImplAttr impl_attr;
@@ -69,8 +28,8 @@ namespace Mono.ILASM {
                 private ArrayList inst_list;
                 private ArrayList customattr_list;
                 private Hashtable label_table;
+		private Hashtable labelref_table;
 		private ArrayList label_list;
-		private ArrayList offset_list;
                 private PEAPI.MethodDef methoddef;
                 private bool entry_point;
                 private bool is_resolved;
@@ -95,8 +54,8 @@ namespace Mono.ILASM {
                         inst_list = new ArrayList ();
                         customattr_list = new ArrayList ();
                         label_table = new Hashtable ();
+			labelref_table = new Hashtable ();
 			label_list = new ArrayList ();
-			offset_list = new ArrayList ();
                         local_list = new ArrayList ();
                         named_local_table = new Hashtable ();
                         named_param_table = new Hashtable ();
@@ -338,6 +297,10 @@ namespace Mono.ILASM {
                         Array.Sort (label_info);
 
                         foreach (LabelInfo label in label_info) {
+				if (label.UseOffset) {
+					label.Define (new PEAPI.CILLabel (label.Offset));
+					continue;
+				}
                                 if (label.Pos == previous_pos)
                                         label.Label = previous_label.Label;
                                 else
@@ -347,8 +310,14 @@ namespace Mono.ILASM {
                                 previous_pos = label.Pos;
                         }
 
-			foreach (LabelInfo label in offset_list) {
-				label.Define (new PEAPI.CILLabel (label.Offset));
+			// Set all the label refs
+			foreach (LabelInfo label in labelref_table.Values) {
+				LabelInfo def = (LabelInfo) label_table[label.Name];
+				if (def == null) {
+					Console.WriteLine ("Undefined Label:  " + label);
+					return;
+				}
+				label.Label = def.Label;
 			}
 
                         int label_pos = 0;
@@ -359,8 +328,11 @@ namespace Mono.ILASM {
                                 if (next_label_pos == i) {
                                         cil.CodeLabel (label_info[label_pos].Label);
                                         if (label_pos < label_info.Length) {
-                                                while (next_label_pos == i && ++label_pos < label_info.Length)
+                                                while (next_label_pos == i && ++label_pos < label_info.Length) {
+							if (label_info[label_pos].UseOffset)
+								cil.CodeLabel (label_info[label_pos].Label);
                                                        next_label_pos = label_info[label_pos].Pos;
+						}
                                         }
                                         if (label_pos >= label_info.Length)
                                                 next_label_pos = -1;
@@ -370,39 +342,44 @@ namespace Mono.ILASM {
 
                 }
 
-                public void AddLabel (string name)
+                public LabelInfo AddLabel (string name)
                 {
-                        LabelInfo label_info = new LabelInfo (name, inst_list.Count);
+                        LabelInfo label_info = (LabelInfo) label_table[name];
+			if (label_info != null)
+				return label_info;
+			label_info = new LabelInfo (name, inst_list.Count);
                         label_table.Add (name, label_info);
+			return label_info;
                 }
 
-		public void AddLabel (uint offset)
+		public LabelInfo AddLabelRef (string name)
 		{
-			LabelInfo label_info = new LabelInfo (null, -1, offset);
-			offset_list.Add (label_info);
+			LabelInfo label_info = (LabelInfo) label_table[name];
+			if (label_info != null)
+				return label_info;
+			label_info = (LabelInfo) labelref_table[name];
+			if (label_info != null)
+				return label_info;
+			label_info = new LabelInfo (name, -1);
+			labelref_table.Add (name, label_info);
+			return label_info;
 		}
 
-		public int AddLabel ()
+		public LabelInfo AddLabel (int offset)
+		{
+			// We go pos + 1 so this line is not counted
+			LabelInfo label_info = new LabelInfo (null, inst_list.Count+1, (uint) offset);
+			label_list.Add (label_info);
+			return label_info;
+		}
+
+		public LabelInfo AddLabel ()
 		{
 			int pos = inst_list.Count;
 			LabelInfo label_info = new LabelInfo (null, inst_list.Count);
 			label_list.Add (label_info);
-			return pos;
+			return label_info;
 		}
-
-                /// TODO: This whole process is kinda a hack.
-                public string RandomLabel ()
-                {
-			/*
-                        int rand = label_random.Next ();
-                        string name = rand.ToString ();
-                        LabelInfo label_info = new LabelInfo (name, inst_list.Count);
-
-                        label_table.Add (name, label_info);
-                        return name;
-			*/
-			return null;
-                }
 
                 public PEAPI.CILLabel GetLabelDef (string name)
                 {
@@ -415,15 +392,6 @@ namespace Mono.ILASM {
 		{
 			foreach (LabelInfo li in label_list) {
 				if (li.Pos == pos)
-					return li.Label;
-			}
-			return null;
-		}
-
-		public PEAPI.CILLabel GetLabelDef (uint offset)
-		{
-			foreach (LabelInfo li in offset_list) {
-				if (li.Offset == offset)
 					return li.Label;
 			}
 			return null;
