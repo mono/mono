@@ -1,3 +1,8 @@
+2004-11-29 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* DefaultWatcher.cs: make it work when the FileMask does not have
+	wildcards and we're watching a directory.
+
 2004-11-22  Ben Maurer  <bmaurer@ximian.com>
 
 	* DefaultWatcher.cs: Copy the hashtable when we scan for changes
