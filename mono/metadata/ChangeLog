@@ -1,4 +1,7 @@
-
+2004-07-27  Ben Maurer  <bmaurer@ximain.com>
+	
+	* marshal.c: actually cache stelem.ref wrappers.
+	
 Tue Jul 27 16:56:55 CEST 2004 Paolo Molaro <lupus@ximian.com>
 
 	* class.c, image.c, loader.c, cil-coff.h: lazily mmap the image 
