@@ -1,3 +1,8 @@
+2004-01-11  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* UserControl.cs: Added missing attribute, implemented method
+	* Page.cs: Added missing attribute, implemented method
+
 2004-01-10  Jackson Harper <jackson@ximian.com>
 
 	* Page.cs: Handle trace being enabled in the config file.

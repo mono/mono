@@ -29,7 +29,7 @@ using System.Web.Util;
 namespace System.Web.UI
 {
 
-// TODO FIXME missing the IRootDesigner Attribute
+[MonoTODO ("FIXME missing the IRootDesigner Attribute")]
 [DefaultEvent ("Load"), DesignerCategory ("ASPXCodeBehind")]
 [ToolboxItem (false)]
 [Designer ("System.Web.UI.Design.ControlDesigner, " + Consts.AssemblySystem_Design, typeof (IDesigner))]
@@ -304,6 +304,7 @@ public class Page : TemplateControl, IHttpHandler
 	}
 
 	[MonoTODO ("Use this when encrypting/decrypting ViewState")]
+	[Browsable (false)]
 	public string ViewStateUserKey {
 		get { return viewStateUserKey; }
 		set { viewStateUserKey = value; }
@@ -340,11 +341,10 @@ public class Page : TemplateControl, IHttpHandler
 		return new HtmlTextWriter (tw);
 	}
 
-	[MonoTODO]
 	[EditorBrowsable (EditorBrowsableState.Never)]
 	public void DesignerInitialize ()
 	{
-		throw new NotImplementedException ();
+		InitRecursive (null);
 	}
 
 	[EditorBrowsable (EditorBrowsableState.Advanced)]
