@@ -113,7 +113,7 @@ namespace Mono.Security.Protocol.Tls
 
 		internal short MaxFragmentSize
 		{
-			get { return (short)System.Math.Pow(2, 14); }
+			get { return (short)Math.Pow(2, 14); }
 		}
 
 		#endregion
@@ -122,7 +122,6 @@ namespace Mono.Security.Protocol.Tls
 
 		public TlsSession(TlsSessionSettings settings)
 		{
-			this.supportedCiphers	= TlsCipherSuiteCollection.GetSupportedCipherSuiteCollection();
 			this.settings			= settings;
 			this.context			= new TlsSessionContext();
 			this.sessionId			= new byte[0];
@@ -167,9 +166,12 @@ namespace Mono.Security.Protocol.Tls
 		{
 			try
 			{
-				this.context.Protocol	= settings.Protocol;
-				this.state				= TlsSessionState.OpeningSecure;
+				this.context.Protocol			= settings.Protocol;
+				this.context.CompressionMethod	= settings.CompressionMethod;
+				this.state						= TlsSessionState.OpeningSecure;
+				this.supportedCiphers			= TlsCipherSuiteFactory.GetSupportedCiphers(context.Protocol);
 				this.socket.DoHandshake();
+				this.state				= TlsSessionState.OpenSecure;
 			}
 			catch (TlsException ex)
 			{
