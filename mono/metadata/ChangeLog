@@ -1,4 +1,8 @@
 
+Sun Jan 5 11:57:09 CET 2003 Paolo Molaro <lupus@ximian.com>
+
+	* icall.c: allow a null this for constructors.
+
 Sat Jan 4 18:28:42 CET 2003 Paolo Molaro <lupus@ximian.com>
 
 	* icall.c: raise the proper exceptions if the arguments to the
