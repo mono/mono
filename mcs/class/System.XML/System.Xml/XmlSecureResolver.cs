@@ -28,19 +28,23 @@ namespace System.Xml
 			Zone zone = null;
 			Site site = null;
 
-			try {
-				url = new Url (securityUrl);
-			} catch (ArgumentException) {
-			}
+			if (securityUrl != null) {
+				try {
+					if (securityUrl.Length > 0)
+						url = new Url (securityUrl);
+				} catch (ArgumentException) {
+				}
 
-			try {
-				zone = Zone.CreateFromUrl (securityUrl);
-			} catch (ArgumentException) {
-			}
+				try {
+					zone = Zone.CreateFromUrl (securityUrl);
+				} catch (ArgumentException) {
+				}
 
-			try {
-				site = Site.CreateFromUrl (securityUrl);
-			} catch (ArgumentException) {
+				try {
+					if (securityUrl.Length > 0)
+						site = Site.CreateFromUrl (securityUrl);
+				} catch (ArgumentException) {
+				}
 			}
 
 			if (url != null)

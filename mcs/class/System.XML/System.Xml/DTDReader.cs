@@ -137,7 +137,7 @@ namespace System.Xml
 		private bool ProcessDTDSubset ()
 		{
 			SkipWhitespace ();
-			switch(PeekChar ())
+			switch(ReadChar ())
 			{
 			case -1:
 				return false;
@@ -145,7 +145,6 @@ namespace System.Xml
 				// It affects on entity references' well-formedness
 				if (this.parserInputStack.Count == 0)
 					DTD.InternalSubsetHasPEReference = true;
-				ReadChar ();
 				string peName = ReadName ();
 				Expect (';');
 				currentInput.InsertParameterEntityBuffer (" ");
@@ -161,7 +160,6 @@ namespace System.Xml
 						"Incorrectly nested parameter entity.");
 				break;
 			case '<':
-				ReadChar ();
 				int c = ReadChar ();
 				switch(c)
 				{
@@ -182,7 +180,7 @@ namespace System.Xml
 				if (dtdIncludeSect == 0)
 					throw new XmlException (this as IXmlLineInfo, "Unbalanced end of INCLUDE/IGNORE section.");
 				// End of inclusion
-				Expect ("]]>");
+				Expect ("]>");
 				dtdIncludeSect--;
 				SkipWhitespace ();
 //				return false;
@@ -254,13 +252,11 @@ namespace System.Xml
 				// conditional sections
 				SkipWhitespace ();
 				TryExpandPERef ();
-				SkipWhitespace ();
-				Expect ('I');
+				ExpectAfterWhitespace ('I');
 				switch (ReadChar ()) {
 				case 'N':
 					Expect ("CLUDE");
-					SkipWhitespace ();
-					Expect ('[');
+					ExpectAfterWhitespace ('[');
 					dtdIncludeSect++;
 					break;
 				case 'G':
@@ -277,8 +273,7 @@ namespace System.Xml
 		private void ReadIgnoreSect ()
 		{
 			bool skip = false;
-			SkipWhitespace ();
-			Expect ('[');
+			ExpectAfterWhitespace ('[');
 			int dtdIgnoreSect = 1;
 			while (dtdIgnoreSect > 0) {
 				switch (skip ? PeekChar () : ReadChar ()) {
@@ -319,8 +314,7 @@ namespace System.Xml
 			SkipWhitespace ();
 			// This expanding is only allowed as a non-validating parser.
 			TryExpandPERef ();
-			SkipWhitespace ();
-			Expect ('>');
+			ExpectAfterWhitespace ('>');
 			return decl;
 		}
 
@@ -329,19 +323,18 @@ namespace System.Xml
 		{
 			TryExpandPERef ();
 			SkipWhitespace ();
-			switch(PeekChar ())
+			switch(ReadChar ())
 			{
 			case 'E':
 				decl.IsEmpty = true;
-				Expect ("EMPTY");
+				Expect ("MPTY");
 				break;
 			case 'A':
 				decl.IsAny = true;
-				Expect ("ANY");
+				Expect ("NY");
 				break;
 			case '(':
 				DTDContentModel model = decl.ContentModel;
-				ReadChar ();
 				SkipWhitespace ();
 				TryExpandPERef ();
 				SkipWhitespace ();
@@ -478,8 +471,7 @@ namespace System.Xml
 						break;
 				}
 				while(true);
-				SkipWhitespace ();
-				Expect (')');
+				ExpectAfterWhitespace (')');
 			}
 			else {
 				TryExpandPERef ();
@@ -594,8 +586,7 @@ namespace System.Xml
 				decl.LiteralEntityValue = CreateValueString (); // currentTag.ToString (start, currentTag.Length - start - 1);
 				ClearValueBuffer ();
 			}
-			SkipWhitespace ();
-			Expect ('>');
+			ExpectAfterWhitespace ('>');
 			if (DTD.PEDecls [decl.Name] == null) {
                                 DTD.PEDecls.Add (decl.Name, decl);
 			}
@@ -676,8 +667,7 @@ namespace System.Xml
 			SkipWhitespace ();
 			// This expanding is only allowed as a non-validating parser.
 			TryExpandPERef ();
-			SkipWhitespace ();
-			Expect ('>');
+			ExpectAfterWhitespace ('>');
 			return decl;
 		}
 
@@ -763,8 +753,7 @@ namespace System.Xml
 			SkipWhitespace ();
 			// This expanding is only allowed as a non-validating parser.
 			TryExpandPERef ();
-			SkipWhitespace ();
-			Expect ('>');
+			ExpectAfterWhitespace ('>');
 			return decl;
 		}
 
@@ -853,8 +842,7 @@ namespace System.Xml
 			default:	// Enumerated Values
 				def.Datatype = XmlSchemaDatatype.FromName ("NMTOKEN");
 				TryExpandPERef ();
-				SkipWhitespace ();
-				Expect ('(');
+				ExpectAfterWhitespace ('(');
 				SkipWhitespace ();
 				def.EnumeratedAttributeDeclaration.Add (
 					def.Datatype.Normalize (ReadNmToken ()));	// enum value
@@ -1010,8 +998,7 @@ namespace System.Xml
 				throw new XmlException ("public or system declaration required for \"NOTATION\" declaration.");
 			// This expanding is only allowed as a non-validating parser.
 			TryExpandPERef ();
-			SkipWhitespace ();
-			Expect ('>');
+			ExpectAfterWhitespace ('>');
 			return decl;
 		}
 
@@ -1136,6 +1123,18 @@ namespace System.Xml
 			int len = expected.Length;
 			for(int i=0; i< len; i++)
 				Expect (expected[i]);
+		}
+
+		private void ExpectAfterWhitespace (char c)
+		{
+			while (true) {
+				int i = ReadChar ();
+				if (XmlChar.IsWhitespace (i))
+					continue;
+				if (c != i)
+					throw new XmlException (String.Join (String.Empty, new string [] {"Expected ", c.ToString (), ", but found " + (char) i, "[", i.ToString (), "]"}));
+				break;
+			}
 		}
 
 		// Does not consume the first non-whitespace character.
@@ -1301,8 +1300,7 @@ namespace System.Xml
 			// version decl
 			if (PeekChar () == 'v') {
 				Expect ("version");
-				SkipWhitespace ();
-				Expect ('=');
+				ExpectAfterWhitespace ('=');
 				SkipWhitespace ();
 				int quoteChar = ReadChar ();
 				char [] expect1_0 = new char [3];
@@ -1336,8 +1334,7 @@ namespace System.Xml
 
 			if (PeekChar () == 'e') {
 				Expect ("encoding");
-				SkipWhitespace ();
-				Expect ('=');
+				ExpectAfterWhitespace ('=');
 				SkipWhitespace ();
 				int quoteChar = ReadChar ();
 				switch (quoteChar) {
@@ -1503,7 +1500,8 @@ namespace System.Xml
 		{
 			Uri baseUri = null;
 			try {
-				baseUri = new Uri (DTD.BaseURI);
+				if (DTD.BaseURI != null && DTD.BaseURI.Length > 0)
+					baseUri = new Uri (DTD.BaseURI);
 			} catch (UriFormatException) {
 			}
 

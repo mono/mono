@@ -1,3 +1,10 @@
+2004-01-07  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DTDObjectModel.cs, DTDReader.cs, XmlSecureResolver.cs :
+	  avoiding obvious exception.
+	* DTDReader.cs, XmlTextReader.cs : Some optimization. 
+	  Avoided extraneous PeekChar() and reduced name string creation.
+
 2004-01-05  David Sheldon <dave-mono@earth.li>
   
   * XmlTextReader.cs: Fixed constructors taking string url to not

@@ -809,8 +809,13 @@ namespace System.Xml
 						Prefix = String.Empty;
 						LocalName = Name;
 					} else {
-						Prefix = Reader.NameTable.Add (Name.Substring (0, indexOfColon));
-						LocalName = Reader.NameTable.Add (Name.Substring (indexOfColon + 1));
+						// This improves speed by at least nearly 5%, but eats more memory at least nearly 0.3%
+						// However, this might be reverted if NameTable is got improved.
+						char [] nameArr = Name.ToCharArray ();
+						Prefix = Reader.NameTable.Add (nameArr, 0, indexOfColon);
+						LocalName = Reader.NameTable.Add (nameArr, indexOfColon + 1, nameArr.Length - indexOfColon - 1);
+//						Prefix = Reader.NameTable.Add (Name.Substring (0, indexOfColon));
+//						LocalName = Reader.NameTable.Add (Name.Substring (indexOfColon + 1));
 					}
 
 					// NamespaceURI
@@ -1061,7 +1066,7 @@ namespace System.Xml
 					XmlSpace.None);
 			}
 
-			if (url != null && url != String.Empty) {
+			if (url != null && url.Length > 0) {
 				Uri uri = null;
 				try {
 					uri = new Uri (url);
@@ -1380,8 +1385,7 @@ namespace System.Xml
 				throw new XmlException (this as IXmlLineInfo,String.Format ("unmatched closing element: expected {0} but found {1}", expected, name));
 			parserContext.PopScope ();
 
-			SkipWhitespace ();
-			Expect ('>');
+			ExpectAfterWhitespace ('>');
 
 			--depth;
 
@@ -1604,8 +1608,7 @@ namespace System.Xml
 				currentAttributeToken.LinePosition = column;
 
 				currentAttributeToken.Name = ReadName ();
-				SkipWhitespace ();
-				Expect ('=');
+				ExpectAfterWhitespace ('=');
 				SkipWhitespace ();
 				ReadAttributeValueTokens (-1);
 				attributeCount++;
@@ -1691,7 +1694,12 @@ namespace System.Xml
 			bool incrementToken = false;
 			bool isNewToken = true;
 			bool loop = true;
-			while (loop && PeekChar () != quoteChar) {
+			int ch = 0;
+			while (loop) {
+				ch = ReadChar ();
+				if (ch == quoteChar)
+					break;
+
 				if (incrementToken) {
 					IncrementAttributeValueToken ();
 					currentAttributeValueToken.LineNumber = line;
@@ -1699,8 +1707,6 @@ namespace System.Xml
 					incrementToken = false;
 					isNewToken = true;
 				}
-
-				int ch = ReadChar ();
 
 				switch (ch)
 				{
@@ -1762,8 +1768,6 @@ namespace System.Xml
 			}
 			currentAttributeToken.ValueTokenEndIndex = currentAttributeValue;
 
-			if (dummyQuoteChar < 0)
-				ReadChar (); // quoteChar
 		}
 
 		// The reader is positioned on the first character
@@ -1894,8 +1898,7 @@ namespace System.Xml
 			// version decl
 			if (PeekChar () == 'v') {
 				Expect ("version");
-				SkipWhitespace ();
-				Expect ('=');
+				ExpectAfterWhitespace ('=');
 				SkipWhitespace ();
 				int quoteChar = ReadChar ();
 				char [] expect1_0 = new char [3];
@@ -1929,8 +1932,7 @@ namespace System.Xml
 
 			if (PeekChar () == 'e') {
 				Expect ("encoding");
-				SkipWhitespace ();
-				Expect ('=');
+				ExpectAfterWhitespace ('=');
 				SkipWhitespace ();
 				int quoteChar = ReadChar ();
 				switch (quoteChar) {
@@ -2114,8 +2116,7 @@ namespace System.Xml
 				parserContext.InternalSubset = currentTag.ToString (startPos, endPos - startPos);
 			}
 			// end of DOCTYPE decl.
-			SkipWhitespace ();
-			Expect ('>');
+			ExpectAfterWhitespace ('>');
 
 			GenerateDTDObjectModel (doctypeName, publicId,
 				systemId, parserContext.InternalSubset,
@@ -2429,6 +2430,18 @@ namespace System.Xml
 			int len = expected.Length;
 			for(int i=0; i< len; i++)
 				Expect (expected[i]);
+		}
+
+		private void ExpectAfterWhitespace (char c)
+		{
+			while (true) {
+				int i = ReadChar ();
+				if (XmlChar.IsWhitespace (i))
+					continue;
+				if (c != i)
+					throw new XmlException (String.Join (String.Empty, new string [] {"Expected ", c.ToString (), ", but found " + (char) i, "[", i.ToString (), "]"}));
+				break;
+			}
 		}
 
 		// Does not consume the first non-whitespace character.
