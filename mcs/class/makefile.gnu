@@ -13,7 +13,7 @@ DIRS =	corlib				\
 	System.Web.Services		\
 	System.Runtime.Remoting		\
 	System.Runtime.Serialization.Formatters.Soap \
-	System.Configuration.Install 	\
+#	System.Configuration.Install 	\
 	Mono.CSharp.Debugger		\
 	Mono.Data.MySql			\
 	Mono.Data.PostgreSqlClient		\
