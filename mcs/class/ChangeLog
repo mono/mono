@@ -1,3 +1,8 @@
+2004-12-03  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile (basic_SUBDIRS): Add second-pass System, too.
+	(basic_files): Add System.Xml.dll.
+
 2004-12-02  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Makefile : now we need System.Xml.dll for basic bootstrapping.

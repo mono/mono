@@ -10,7 +10,7 @@ bootstrap_dirs := \
 	System					\
 	$(MONO_CSHARP_DEBUGGER)
 
-basic_SUBDIRS := corlib System System.XML
+basic_SUBDIRS := corlib System System.XML System
 net_1_1_bootstrap_SUBDIRS := $(bootstrap_dirs) Mono.Security
 net_2_0_bootstrap_SUBDIRS := $(bootstrap_dirs)
 
@@ -102,7 +102,7 @@ DISTFILES = \
 all-local $(STD_TARGETS:=-local):
 	@:
 
-basic_files = mcs.exe mscorlib.dll System.dll
+basic_files = mcs.exe mscorlib.dll System.dll System.Xml.dll
 
 DIST_PROFILE_DIRS = basic net_1_1_bootstrap default net_2_0_bootstrap net_2_0
 
