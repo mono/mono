@@ -1,0 +1,9 @@
+2003-11-07  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* AlgorithmIdentifierTest.cs: New. Unit tests for AlgorithmIdentifier.
+	* CryptographicAttributeTest.cs: New. Unit tests for CryptographicAttribute.
+	* Pkcs9AttributeTest.cs: New. Unit tests for Pkcs9Attribute (same as for 
+	CryptographicAttribute).
+	* Pkcs9DocumentDescriptionTest.cs: New. Unit tests for Pkcs9DocumentDescription.
+	* Pkcs9DocumentNameTest.cs: New. Unit tests for Pkcs9DocumentName.
+	* Pkcs9SigningTimeTest.cs: New. Unit tests for Pkcs9SigningTime.
