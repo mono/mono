@@ -483,12 +483,12 @@ namespace System.Windows.Forms
 
 		}
 
-		static public void DrawPopupMenu (Graphics dc, IntPtr hMenu, Rectangle rect)
+		static public void DrawPopupMenu (Graphics dc, IntPtr hMenu, Rectangle cliparea, Rectangle rect)
 		{
 			MENU menu = GetMenuFromID (hMenu);
 
 			dc.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush
-				(ThemeEngine.Current.ColorMenu), rect);
+				(ThemeEngine.Current.ColorMenu), cliparea);
 
 			/* Draw menu borders */
 			dc.DrawLine (ThemeEngine.Current.ResPool.GetPen (ThemeEngine.Current.ColorHilightText),
@@ -509,8 +509,10 @@ namespace System.Windows.Forms
 			dc.DrawLine (ThemeEngine.Current.ResPool.GetPen (ThemeEngine.Current.ColorButtonDkShadow),
 				rect.X , rect.Y + rect.Height, rect.X + rect.Width - 1, rect.Y + rect.Height);
 
-			for (int i = 0; i < menu.items.Count; i++) {
-				DrawMenuItem (dc, (MENUITEM) menu.items[i], menu.Height, false);
+			for (int i = 0; i < menu.items.Count; i++) 
+				if (cliparea.IntersectsWith (((MENUITEM) menu.items[i]).rect)) {
+					DrawMenuItem (dc, (MENUITEM) menu.items[i], menu.Height, false);
+				
 			}
 		}
 
@@ -580,7 +582,7 @@ namespace System.Windows.Forms
 		static public void SelectItem (TRACKER tracker, IntPtr hMenu, MENUITEM item, int pos, bool execute)
 		{
 			MENU menu = GetMenuFromID (hMenu);
-
+			
 			//Console.WriteLine ("Current: {0} select {1}", menu_parent.hCurrent, hMenu);
 			MENUITEM highlight_item = null;
 
@@ -603,7 +605,7 @@ namespace System.Windows.Forms
 				HideSubPopups (hMenu);
 				tracker.hCurrentMenu = hMenu;
 			}
-
+			
 			/* Unselect previous item*/
 			for (int i = 0; i < menu.items.Count; i++) {
 				MENUITEM it = (MENUITEM) menu.items[i];
@@ -611,11 +613,14 @@ namespace System.Windows.Forms
 				if ((it.fState & MF.MF_HILITE) == MF.MF_HILITE) {
 					it.fState = item.fState & ~MF.MF_HILITE;
 					menu.items[i] = it;
+					menu.Wnd.Invalidate (it.rect);
 				}
 			}
 
 			item.fState |= MF.MF_HILITE;
 			menu.items[pos] = item;
+			menu.Wnd.Invalidate (item.rect);
+
 			//Console.WriteLine ("SelectItem {0} {1} {2} {3}", item.item.Text, item.fState,
 			//	((MENUITEM)(menu.items[pos])).fState, pos);
 
@@ -757,7 +762,7 @@ namespace System.Windows.Forms
 						pnt = wnd.PointToScreen (pnt);
 
 						menu.SelectedItem = item;
-						wnd.Refresh ();
+						//wnd.Refresh ();
 						MenuAPI.TrackPopupMenu (hMenu, item.hSubMenu, pnt, true, null);
 					}
 					break;
@@ -787,7 +792,7 @@ namespace System.Windows.Forms
 							MenuAPI.DestroyMenu (tracker.hCurrentMenu);
 							tracker.hCurrentMenu = hMenu;
 
-							menu.Wnd.Refresh ();
+							//((PopUpWindow)wnd).UpdateMenu ();
 							MenuAPI.TrackPopupMenu (hMenu, item.hSubMenu, pnt, true, null);
 						}
 					}
@@ -836,6 +841,7 @@ namespace System.Windows.Forms
 		{
 			Capture = true;
 			Show ();
+			Refresh ();
 		}
 
 		public void Destroy ()
@@ -857,13 +863,11 @@ namespace System.Windows.Forms
 
 		private void OnPaintPUW (Object o, PaintEventArgs pevent)
 		{
-			//Console.WriteLine ("OnPaintPUW");
-
 			if (Width <= 0 || Height <=  0 || Visible == false)
     				return;
 
-			Draw ();
-			pevent.Graphics.DrawImage (ImageBuffer, 0, 0);
+			Draw (pevent.ClipRectangle);
+			pevent.Graphics.DrawImage (ImageBuffer, pevent.ClipRectangle, pevent.ClipRectangle, GraphicsUnit.Pixel);
 		}
 
 		private void OnMouseDownPUW (object sender, MouseEventArgs e)
@@ -903,8 +907,7 @@ namespace System.Windows.Forms
 			if (item != null) {
 
 				MenuAPI.MENU menu = MenuAPI.GetMenuFromID (hMenu);
-				MenuAPI.SelectItem (tracker, hMenu, item, pos, true);
-				Refresh ();
+				MenuAPI.SelectItem (tracker, hMenu, item, pos, true);				
 			} else {
 
 				if (tracker.menubar) {
@@ -934,9 +937,9 @@ namespace System.Windows.Forms
 		}
 
 
-		private void Draw ()
+		private void Draw (Rectangle clip)
 		{
-			MenuAPI.DrawPopupMenu  (DeviceContext, hMenu, ClientRectangle);
+			MenuAPI.DrawPopupMenu  (DeviceContext, hMenu, clip, ClientRectangle);
 		}
 	}
 
