@@ -1,3 +1,8 @@
+
+Tue Sep 25 16:54:54 CEST 2001 Paolo Molaro <lupus@ximian.com>
+
+	* DictionaryEntry.cs: added.
+
 2001-08-10  Dietmar Maurer  <dietmar@ximian.com>
 
 	* common.src: removed duplicate entries

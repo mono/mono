@@ -4,6 +4,7 @@ CaseInsensitiveComparer.cs
 CaseInsensitiveHashCodeProvider.cs
 CollectionBase.cs
 Comparer.cs
+DictionaryEntry.cs
 Hashtable.cs
 ICollection.cs
 IComparer.cs
