@@ -225,6 +225,8 @@ System.Data.SqlTypes/SqlTypeException.cs
 System.Data.SqlTypes/SqlUtcDateTime.cs
 System.Data.SqlTypes/SqlXmlReader.cs
 System.Data.SqlTypes/StorageState.cs
+System.Data.SqlTypes/SqlAlreadyFilledException.cs
+System.Data.SqlTypes/SqlNotFilledException.cs
 System.Data.Odbc/OdbcParameterConverter.cs
 System.Data.Odbc/OdbcCategoryAttribute.cs
 System.Data.Odbc/OdbcDescriptionAttribute.cs

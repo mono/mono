@@ -1,3 +1,7 @@
+2004-09-14 Umadevi S <sumadevi@novell.com>
+	* Added System.Data.SqlTypes/SqlNotFilledException.cs,System.Data.SqlTypes/
+	SqlAlreadyFilledException.cs to System.Data.dll.sources
+
 2004-09-13  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Makefile: Added /nowarn:618 when compiling unit test assembly to 
