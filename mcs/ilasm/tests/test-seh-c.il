@@ -37,6 +37,7 @@
                         newobj void [System]System.Uri::.ctor (string)
                         leave outer
                 } filter {
+                        pop
                         ldc.i4.1
                         endfilter
                 } {
@@ -44,7 +45,6 @@
                         stsfld int32 T::flt_caught
                         leave outer
                 }
-           
 
         outer:
                 ldsfld int32 T::exc_caught
