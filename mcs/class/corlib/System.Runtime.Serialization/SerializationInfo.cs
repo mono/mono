@@ -105,7 +105,7 @@ namespace System.Runtime.Serialization
                         			
 			SerializationEntry values = (SerializationEntry) serialized [name];
 
-			if (values.Value != null && values.Value.GetType() != type && !values.Value.GetType().IsSubclassOf (type))
+			if (values.Value != null && !type.IsAssignableFrom (values.Value.GetType()))
 				return converter.Convert (values.Value, type);
 			else
 				return values.Value;

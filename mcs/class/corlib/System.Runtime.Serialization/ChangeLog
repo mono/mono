@@ -1,3 +1,8 @@
+2003-10-21  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* SerializationInfo.cs: Fixed bug in GetValue. Use IsAssignableFrom instead
+	  of IsSubclass, since the type can be an interface.
+
 2003-10-18  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* FormatterServices.cs: In GetUninitializedObject methdod, reuse
@@ -177,5 +182,3 @@ Fri Nov 2 18:40:12 CET 2001 Paolo Molaro <lupus@ximian.com>
 	* IFormatterConverter.cs: New file.
 
 	* ISerializable.cs: New file.
-	
-
