@@ -26,9 +26,13 @@
 //
 //
 //
-// $Revision: 1.45 $
+// $Revision: 1.46 $
 // $Modtime: $
 // $Log: ThemeWin32Classic.cs,v $
+// Revision 1.46  2004/10/13 03:48:15  pbartok
+// - Removed all occurences of SystemColors and replaced them with the
+//   matching theme color
+//
 // Revision 1.45  2004/10/13 03:41:45  pbartok
 // - From John BouAntoun: Added an overload to CPDrawBorder3D to allow him
 //   using the function for flatstyle drawing
@@ -624,7 +628,7 @@ namespace System.Windows.Forms
 			} else if (checkbox.FlatStyle == FlatStyle.Flat || checkbox.FlatStyle == FlatStyle.Popup) {
 				dc.DrawString(checkbox.Text, checkbox.Font, SystemBrushes.ControlDark, inner_text_rectangle, text_format);
 			} else {
-				CPDrawStringDisabled(dc, checkbox.Text, checkbox.Font, SystemColors.ControlText, inner_text_rectangle, text_format);
+				CPDrawStringDisabled(dc, checkbox.Text, checkbox.Font, ColorButtonText, inner_text_rectangle, text_format);
 			}
 
 			if (checkbox.Focused) {
@@ -666,7 +670,7 @@ namespace System.Windows.Forms
 						ControlPaint.DrawBorder(graphics, checkbox_rectangle, checkbox.ForeColor, ButtonBorderStyle.Solid);
 					} else {
 						// draw sunken effect
-						CPDrawBorder3D (graphics, checkbox_rectangle, Border3DStyle.SunkenInner, Border3DSide.Bottom | Border3DSide.Right, this.ColorButtonFace);
+						CPDrawBorder3D (graphics, checkbox_rectangle, Border3DStyle.SunkenInner, Border3DSide.Bottom | Border3DSide.Right, ColorButtonFace);
 						// draw top left
 						graphics.DrawLine(ResPool.GetPen (ControlPaint.DarkDark (checkbox.BackColor)), checkbox_rectangle.X, checkbox_rectangle.Y, checkbox_rectangle.X, checkbox_rectangle.Y+checkbox_rectangle.Height);
 						graphics.DrawLine(ResPool.GetPen (ControlPaint.DarkDark (checkbox.BackColor)), checkbox_rectangle.X, checkbox_rectangle.Y, Math.Max(checkbox_rectangle.X + checkbox_rectangle.Width - 1, 0), checkbox_rectangle.Y);
@@ -687,7 +691,7 @@ namespace System.Windows.Forms
 				}	
 			
 				// draw disabled state,
-				ControlPaint.DrawBorder(graphics, checkbox_rectangle, SystemColors.ControlDark, ButtonBorderStyle.Solid);
+				ControlPaint.DrawBorder(graphics, checkbox_rectangle, ColorButtonShadow, ButtonBorderStyle.Solid);
 			}		
 			
 			/* Make sure we've got at least a line width of 1 */
@@ -887,7 +891,7 @@ namespace System.Windows.Forms
 			increment = block_width + space_betweenblocks;
 
 			/* Draw border */
-			CPDrawBorder3D (dc, progress_bar.paint_area, Border3DStyle.SunkenInner, Border3DSide.All, this.ColorButtonFace);
+			CPDrawBorder3D (dc, progress_bar.paint_area, Border3DStyle.SunkenInner, Border3DSide.All, ColorButtonFace);
 			
 			/* Draw Blocks */
 			while ((x - client_area.X) < barpos_pixels) {
@@ -1098,11 +1102,11 @@ namespace System.Windows.Forms
 			int	lineWidth;
 			
 			// win32 compat fill in the background of the knob
-			graphics.FillPie (ResPool.GetSolidBrush (SystemColors.Window), rectangle.X + 1, rectangle.Y + 1, rectangle.Width - 2, rectangle.Height - 2, 0, 359);
+			graphics.FillPie (ResPool.GetSolidBrush (this.ColorWindow), rectangle.X + 1, rectangle.Y + 1, rectangle.Width - 2, rectangle.Height - 2, 0, 359);
 			
 			// draw the outer flatstyle arcs
 			if (radio_button.FlatStyle == FlatStyle.Flat) {
-				graphics.DrawArc (ResPool.GetPen (SystemColors.ControlText), rectangle, 0, 359);
+				graphics.DrawArc (ResPool.GetPen (ColorButtonText), rectangle, 0, 359);
 			} else {
 				// must be a popup radio button
 				if (radio_button.is_entered) {
@@ -1312,7 +1316,7 @@ namespace System.Windows.Forms
 				Border3DStyle border_style = Border3DStyle.SunkenInner;
 				if (panel.BorderStyle == StatusBarPanelBorderStyle.Raised)
 					border_style = Border3DStyle.RaisedOuter;
-				CPDrawBorder3D(dc, area, border_style, Border3DSide.All, this.ColorButtonFace);
+				CPDrawBorder3D(dc, area, border_style, Border3DSide.All, ColorButtonFace);
 			}
 
 			if (panel.Style == StatusBarPanelStyle.OwnerDraw) {
@@ -1446,7 +1450,7 @@ namespace System.Windows.Forms
 					/* Draw the button frame, only if it is not a separator */
 					if (flat) { 
 						if (button.Pushed || button.Pressed) {
-							CPDrawBorder3D (dc, buttonArea, Border3DStyle.SunkenOuter, Border3DSide.All, this.ColorButtonFace);
+							CPDrawBorder3D (dc, buttonArea, Border3DStyle.SunkenOuter, Border3DSide.All, ColorButtonFace);
 						} else if (button.Hilight) {
 							dc.DrawRectangle (ResPool.GetPen (ColorButtonText), buttonArea);
 							if (! ddRect.IsEmpty) {
@@ -1459,19 +1463,19 @@ namespace System.Windows.Forms
 					else { // normal toolbar
 						if (button.Pushed || button.Pressed) {
 							CPDrawBorder3D (dc, buttonArea, Border3DStyle.SunkenInner,
-								Border3DSide.All, this.ColorButtonFace);
+								Border3DSide.All, ColorButtonFace);
 							if (! ddRect.IsEmpty) {
 								CPDrawBorder3D (dc, ddRect, Border3DStyle.SunkenInner,
-									Border3DSide.Left, this.ColorButtonFace);
+									Border3DSide.Left, ColorButtonFace);
 								buttonArea.Width -= this.ToolBarDropDownWidth;
 							}
 						}
 						else {
 							CPDrawBorder3D (dc, buttonArea, Border3DStyle.RaisedInner,
-								Border3DSide.All, this.ColorButtonFace);
+								Border3DSide.All, ColorButtonFace);
 							if (! ddRect.IsEmpty) {
 								CPDrawBorder3D (dc, ddRect, Border3DStyle.RaisedInner,
-									Border3DSide.Left, this.ColorButtonFace);
+									Border3DSide.Left, ColorButtonFace);
 								buttonArea.Width -= this.ToolBarDropDownWidth;
 							}
 						}
@@ -1528,8 +1532,7 @@ namespace System.Windows.Forms
 					if (button.Enabled)
 						dc.DrawString (button.Text, font, SystemBrushes.ControlText, txtRect, format);
 					else
-						CPDrawStringDisabled (dc, button.Text, font, SystemColors.ControlLightLight,
-							txtRect, format);
+						CPDrawStringDisabled (dc, button.Text, font, ColorButtonHilight, txtRect, format);
 				}
 
 				else if (button.PartialPush) {
@@ -1547,7 +1550,7 @@ namespace System.Windows.Forms
 					if (button.Enabled)
 						dc.DrawString (button.Text, font, SystemBrushes.ControlText, txtRect, format);
 					else
-						CPDrawStringDisabled (dc, button.Text, font, SystemColors.ControlLightLight,
+						CPDrawStringDisabled (dc, button.Text, font, ColorButtonHilight,
 							txtRect, format);
 				}
 
@@ -1560,13 +1563,13 @@ namespace System.Windows.Forms
 						else {
 							dc.FillRectangle (new SolidBrush (ColorGrayText), imgRect);
 							CPDrawBorder3D (dc, imgRect, Border3DStyle.SunkenOuter,
-								Border3DSide.Right | Border3DSide.Bottom, this.ColorButtonFace);
+								Border3DSide.Right | Border3DSide.Bottom, ColorButtonFace);
 						}
 					}
 					if (button.Enabled)
 						dc.DrawString (button.Text, font, SystemBrushes.ControlText, txtRect, format);
 					else
-						CPDrawStringDisabled (dc, button.Text, font, SystemColors.ControlLightLight,
+						CPDrawStringDisabled (dc, button.Text, font, ColorButtonHilight,
 							txtRect, format);
 				}
 
@@ -1579,13 +1582,13 @@ namespace System.Windows.Forms
 						else {
 							dc.FillRectangle (new SolidBrush (ColorGrayText), imgRect);
 							CPDrawBorder3D (dc, imgRect, Border3DStyle.SunkenOuter,
-								Border3DSide.Right | Border3DSide.Bottom, this.ColorButtonFace);
+								Border3DSide.Right | Border3DSide.Bottom, ColorButtonFace);
 						}
 					}
 					if (button.Enabled)
 						dc.DrawString (button.Text, font, SystemBrushes.ControlText, txtRect, format);
 					else
-						CPDrawStringDisabled (dc, button.Text, font, SystemColors.ControlLightLight,
+						CPDrawStringDisabled (dc, button.Text, font, ColorButtonHilight,
 							txtRect, format);
 				}
 				break;
@@ -1613,13 +1616,13 @@ namespace System.Windows.Forms
 					else {
 						dc.FillRectangle (new SolidBrush (ColorGrayText), imgRect);
 						CPDrawBorder3D (dc, imgRect, Border3DStyle.SunkenOuter,
-							Border3DSide.Right | Border3DSide.Bottom, this.ColorButtonFace);
+							Border3DSide.Right | Border3DSide.Bottom, ColorButtonFace);
 					}
 				}
 				if (button.Enabled)
 					dc.DrawString (button.Text, font, SystemBrushes.ControlText, txtRect, format);
 				else
-					CPDrawStringDisabled (dc, button.Text, font, SystemColors.ControlLightLight,
+					CPDrawStringDisabled (dc, button.Text, font, ColorButtonHilight,
 						txtRect, format);
 				break;
 			}
@@ -2147,7 +2150,7 @@ namespace System.Windows.Forms
 		}
 
 		public override void CPDrawBorder3D (Graphics graphics, Rectangle rectangle, Border3DStyle style, Border3DSide sides) {
-			CPDrawBorder3D(graphics, rectangle, style, sides, this.ColorButtonFace);
+			CPDrawBorder3D(graphics, rectangle, style, sides, ColorButtonFace);
 		}
 
 		private void CPDrawBorder3D (Graphics graphics, Rectangle rectangle, Border3DStyle style, Border3DSide sides, Color control_color) {
@@ -2314,8 +2317,8 @@ namespace System.Windows.Forms
 					pen.Dispose();
 					return;
 				} else {
-					pen=new Pen(SystemColors.ControlText, lineWidth);
-					DrawCaptionHelper(graphics, SystemColors.ControlText, pen, lineWidth, 0, captionRect, button);
+					pen=new Pen(ColorButtonText, lineWidth);
+					DrawCaptionHelper(graphics, ColorButtonText, pen, lineWidth, 0, captionRect, button);
 					pen.Dispose();
 					return;
 				}
@@ -2331,7 +2334,7 @@ namespace System.Windows.Forms
 					DrawCaptionHelper(graphics, ColorButtonShadow, SystemPens.ControlDark, lineWidth, 0, captionRect, button);
 					return;
 				} else {
-					DrawCaptionHelper(graphics, SystemColors.ControlText, SystemPens.ControlText, lineWidth, 0, captionRect, button);
+					DrawCaptionHelper(graphics, ColorButtonText, SystemPens.ControlText, lineWidth, 0, captionRect, button);
 					return;
 				}
 			}
@@ -2374,16 +2377,16 @@ namespace System.Windows.Forms
 			Rectangle		rect;
 
 			if ((state & ButtonState.Checked)!=0) {
-				graphics.FillRectangle(ResPool.GetHatchBrush (HatchStyle.Percent50, SystemColors.ControlLight, ColorButtonHilight),rectangle);				
+				graphics.FillRectangle(ResPool.GetHatchBrush (HatchStyle.Percent50, ColorButtonLight, ColorButtonHilight),rectangle);				
 			}
 
 			if ((state & ButtonState.Flat)!=0) {
 				ControlPaint.DrawBorder(graphics, rectangle, ColorButtonShadow, ButtonBorderStyle.Solid);
 			} else {
 				if ((state & (ButtonState.Pushed | ButtonState.Checked))!=0) {
-					CPDrawBorder3D(graphics, rectangle, Border3DStyle.Sunken, Border3DSide.Left | Border3DSide.Top | Border3DSide.Right | Border3DSide.Bottom, this.ColorButtonFace);
+					CPDrawBorder3D(graphics, rectangle, Border3DStyle.Sunken, Border3DSide.Left | Border3DSide.Top | Border3DSide.Right | Border3DSide.Bottom, ColorButtonFace);
 				} else {
-					CPDrawBorder3D(graphics, rectangle, Border3DStyle.Raised, Border3DSide.Left | Border3DSide.Top | Border3DSide.Right | Border3DSide.Bottom, this.ColorButtonFace);
+					CPDrawBorder3D(graphics, rectangle, Border3DStyle.Raised, Border3DSide.Left | Border3DSide.Top | Border3DSide.Right | Border3DSide.Bottom, ColorButtonFace);
 				}
 			}
 
@@ -3133,27 +3136,27 @@ namespace System.Windows.Forms
 				if ((State & DrawFrameControlStates.ButtonPush)!=0) {
 					/* Goes first, affects the background */
 					if ((State & DrawFrameControlStates.Checked)!=0) {
-						HatchBrush	hatchBrush=new HatchBrush(HatchStyle.Percent50, SystemColors.ControlLight, SystemColors.ControlLightLight);
+						HatchBrush	hatchBrush=new HatchBrush(HatchStyle.Percent50, ColorButtonLight, ColorButtonHilight);
 						graphics.FillRectangle(hatchBrush,rectangle);
 						hatchBrush.Dispose();
 					}
 
 					if ((State & DrawFrameControlStates.Pushed)!=0) {
-						CPDrawBorder3D(graphics, rectangle, Border3DStyle.Sunken, Border3DSide.Left | Border3DSide.Top | Border3DSide.Right | Border3DSide.Bottom, this.ColorButtonFace);
+						CPDrawBorder3D(graphics, rectangle, Border3DStyle.Sunken, Border3DSide.Left | Border3DSide.Top | Border3DSide.Right | Border3DSide.Bottom, ColorButtonFace);
 					} else if ((State & DrawFrameControlStates.Flat)!=0) {
 						ControlPaint.DrawBorder(graphics, rectangle, ColorButtonShadow, ButtonBorderStyle.Solid);
 					} else if ((State & DrawFrameControlStates.Inactive)!=0) {
 						/* Same as normal, it would seem */
-						CPDrawBorder3D(graphics, rectangle, Border3DStyle.Raised, Border3DSide.Left | Border3DSide.Top | Border3DSide.Right | Border3DSide.Bottom, this.ColorButtonFace);
+						CPDrawBorder3D(graphics, rectangle, Border3DStyle.Raised, Border3DSide.Left | Border3DSide.Top | Border3DSide.Right | Border3DSide.Bottom, ColorButtonFace);
 					} else {
-						CPDrawBorder3D(graphics, rectangle, Border3DStyle.Raised, Border3DSide.Left | Border3DSide.Top | Border3DSide.Right | Border3DSide.Bottom, this.ColorButtonFace);
+						CPDrawBorder3D(graphics, rectangle, Border3DStyle.Raised, Border3DSide.Left | Border3DSide.Top | Border3DSide.Right | Border3DSide.Bottom, ColorButtonFace);
 					}
 				} else if ((State & DrawFrameControlStates.ButtonRadio)!=0) {
 					Pen			penFatDark	= new Pen(ColorButtonShadow, 1);
-					Pen			penFatLight	= new Pen(SystemColors.ControlLight, 1);
+					Pen			penFatLight	= new Pen(ColorButtonLight, 1);
 					int			lineWidth;
 
-					graphics.FillPie (ResPool.GetSolidBrush (SystemColors.Window), rectangle.X + 1, rectangle.Y + 1, rectangle.Width - 2, rectangle.Height - 2, 0, 359);
+					graphics.FillPie (ResPool.GetSolidBrush (this.ColorWindow), rectangle.X + 1, rectangle.Y + 1, rectangle.Width - 2, rectangle.Height - 2, 0, 359);
 
 					graphics.DrawArc(penFatDark, rectangle.X+1, rectangle.Y+1, rectangle.Width-2, rectangle.Height-2, 135, 180);
 					graphics.DrawArc(penFatLight, rectangle.X+1, rectangle.Y+1, rectangle.Width-2, rectangle.Height-2, 315, 180);
@@ -3197,7 +3200,7 @@ namespace System.Windows.Forms
 					if ((State & DrawFrameControlStates.Flat)!=0) {
 						ControlPaint.DrawBorder(graphics, rectangle, ColorButtonShadow, ButtonBorderStyle.Solid);
 					} else {
-						CPDrawBorder3D(graphics, rectangle, Border3DStyle.Sunken, Border3DSide.Left | Border3DSide.Top | Border3DSide.Right | Border3DSide.Bottom, this.ColorButtonFace);
+						CPDrawBorder3D(graphics, rectangle, Border3DStyle.Sunken, Border3DSide.Left | Border3DSide.Top | Border3DSide.Right | Border3DSide.Bottom, ColorButtonFace);
 					}
 
 					/* Make sure we've got at least a line width of 1 */
