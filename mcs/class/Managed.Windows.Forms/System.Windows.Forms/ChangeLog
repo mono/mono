@@ -7,6 +7,17 @@
 
 2004-11-23  John BouAntoun <jba-mono@optusnet.com.au>
 
+	* ThemeWin32Classic.cs: 
+		- Fixed Drawing of today circle when showtodaycircle not set
+		- fixed drawing of first and last month in the grid (gay dates)
+	* MonthCalendar.cs:
+		- Fixed Drawing of today circle
+		- Fixed drawing of grady dates
+		- Fixed HitTest for today link when ShowToday set to false
+		- Fixed DefaultSize to obey ShowToday
+
+2004-11-23  John BouAntoun <jba-mono@optusnet.com.au>
+
 	* ThemeWin32Classic.cs: Fixed DrawMonthCalendar and private support methods
 	* System.Windows.Forms/Theme.cs
 	* MonthCalendar.cs: added for MonthCalendar
