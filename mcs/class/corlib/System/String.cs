@@ -986,6 +986,7 @@ namespace System
 			return Concat (s1, s2, s3);
 		}
 
+		[CLSCompliant(false)]
 		public static String Concat (Object obj1, Object obj2, Object obj3,
 					     Object obj4, __arglist)
 		{
