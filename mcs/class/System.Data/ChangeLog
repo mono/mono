@@ -1,3 +1,14 @@
+2002-05-11  Tim Coleman
+        * System.Data.SqlClient/SqlDataAdapter.cs:
+                some implementation of this class.  Note
+                that none of the functionality has been
+                tested yet, but I felt it should be checked
+                in at this point as it compiles.
+        * System.Data.SqlClient/SqlRowUpdatingEventArgs.cs:
+        * System.Data.SqlClient/SqlRowUpdatedEventArgs.cs:
+                Modified so that they will compile properly.
+                Needed to include SqlDataAdapter in the build.
+
 2002-05-11  Rodrigo Moya <rodrigo@ximian.com>
 
 	* System.Data/DataTable.cs (Clear): implemented.
