@@ -1,5 +1,15 @@
 2002-09-21  Martin Baulig  <martin@gnome.org>
 
+	* debug-mono-symfile.c: Largely reworked the symbol table format.
+	The symbol table is now incrementally updated each time a new
+	method is added.  We're now also using our own magic and version
+	so that you don't need to recompile all your classes if the
+	dynamic table changes.
+	(mono_debug_update_mono_symbol_file): Removed.
+	(mono_debug_symfile_add_method): New function to add a method.
+
+2002-09-21  Martin Baulig  <martin@gnome.org>
+
 	* icall.c
 	("System.Reflection.Assembly::MonoDebugger_GetLocalTypeFromSignature"):
 	New interncall.
