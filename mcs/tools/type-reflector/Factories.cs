@@ -11,6 +11,10 @@ using System.Collections;
 using System.Diagnostics;
 using System.Text;
 
+using Mono.TypeReflector.Displayers;
+using Mono.TypeReflector.Finders;
+using Mono.TypeReflector.Formatters;
+
 namespace Mono.TypeReflector
 {
 	public sealed class Factories

@@ -5,7 +5,7 @@ using System.ComponentModel;
 using System.Windows.Forms;
 using System.Data;
 
-namespace Mono.TypeReflector
+namespace Mono.TypeReflector.Displayers.Swf
 {
 	/// <summary>
 	/// Summary description for Form1.

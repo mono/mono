@@ -24,7 +24,7 @@ using Gtk;
 using GtkSharp;
 using System.Drawing;
 
-namespace Mono.TypeReflector.Displayers
+namespace Mono.TypeReflector.Displayers.Gtk
 {
 	delegate void OpenFileSuccess (string filename);
 

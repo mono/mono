@@ -22,7 +22,7 @@ using System.Drawing;
 using System.ComponentModel;
 using System.Windows.Forms;
 
-namespace Mono.TypeReflector
+namespace Mono.TypeReflector.Displayers.Swf
 {
 	class ReflectorTreeNode : TreeNode
 	{

@@ -6,7 +6,7 @@
 // (C) 2002 Jonathan Pryor
 //
 
-namespace Mono.TypeReflector
+namespace Mono.TypeReflector.Finders
 {
 	public delegate void NodeGrouper (NodeInfoCollection c, NodeInfo root, object extra);
 

@@ -1,3 +1,6 @@
+2003-01-10  Jonathan Pryor <jonpryor@vt.edu>
+	* GtkTypeDisplayer.cs: Moved to Mono.TypeReflector.Displayers.Gtk.
+
 2003-01-09  Jonathan Pryor <jonpryor@vt.edu>
 	* GtkTypeDisplayer.cs: Change name of OpenFileDialog class to
 	  OpenFileSelection.  OpenFileDialog is a System.Windows.Forms class, so

@@ -17,7 +17,10 @@ using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace Mono.TypeReflector
+using Mono.TypeReflector.Finders;
+using Mono.TypeReflector.Formatters;
+
+namespace Mono.TypeReflector.Displayers
 {
 	sealed class DisplayerComparer : IComparer
 	{

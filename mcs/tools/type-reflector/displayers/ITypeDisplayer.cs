@@ -10,7 +10,11 @@
 
 using System;
 
-namespace Mono.TypeReflector
+using Mono.TypeReflector;
+using Mono.TypeReflector.Finders;
+using Mono.TypeReflector.Formatters;
+
+namespace Mono.TypeReflector.Displayers
 {
 	public interface ITypeDisplayer
 	{

@@ -1,3 +1,29 @@
+2003-01-10  Jonathan Pryor <jonpryor@vt.edu>
+	- General: Namespace partitioning.  It was getting annoying (when using
+	  type-reflector to display itself) to have ~70 classes in a single
+	  namespace.  So I split up the classes into namespace according to
+	  function.  For example, Finders (ExplicitNodeFinder, ReflectionNodeFinder) 
+	  went into Mono.TypeReflector.Finders.
+	* CSharpNodeFormatter.cs: Moved into Mono.TypeReflector.Formatters.
+	* ConsoleTypeDisplayer.cs: Moved into Mono.TypeReflector.Displayers.
+	* DefaultNodeFormatter.cs: Moved into Mono.TypeReflector.Formatters.
+	* ExplicitNodeFormatter.cs: Moved into Mono.TypeReflector.Formatters.
+	* Factories.cs: Reference the appropriate namespaces.
+	* GroupingNodeFinder.cs: Moved into Mono.TypeReflector.Finders.
+	* INodeFinder.cs: Moved into Mono.TypeReflector.Finders.
+	* INodeFormatter.cs: Moved into Mono.TypeReflector.Formatters.
+	* ITypeDisplayer.cs: Moved into Mono.TypeReflector.Displayers.
+	* LanguageNodeFormatter.cs: Moved into Mono.TypeReflector.Formatters.
+	* Node.cs: Reference the appropriate namespaces.
+	* NodeFinder.cs: Moved into Mono.TypeReflector.Finders.
+	* NodeFormatter.cs: Moved into Mono.TypeReflector.Formatters.
+	* NodeGrouper.cs: Moved into Mono.TypeReflector.Finders.
+	* ReflectionNodeFinder.cs: Moved into Mono.TypeReflector.Finders.
+	* TypeDisplayer.cs: Moved into Mono.TypeReflector.Displayers.
+	* TypeReflectorApp.cs: Reference the appropriate namespaces.
+	* VBNodeFormatter.cs: Moved into Mono.TypeReflector.Formatters.
+	* type-refelctor.exe.config: Update type names.
+
 2003-01-09  Jonathan Pryor <jonpryor@vt.edu>
   - General: Do the most hackish thing I've ever thought of.  OK, perhaps not
     the *most*, but it must be up there...

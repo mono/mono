@@ -18,6 +18,10 @@ using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 
+using Mono.TypeReflector.Displayers;
+using Mono.TypeReflector.Finders;
+using Mono.TypeReflector.Formatters;
+
 namespace Mono.TypeReflector
 {
 	public class TypeReflectorApp

@@ -10,7 +10,7 @@ using System;
 using System.Diagnostics;
 using System.Reflection;
 
-namespace Mono.TypeReflector
+namespace Mono.TypeReflector.Finders
 {
 	public delegate void BaseTypeEventHandler (object sender, BaseTypeEventArgs e);
 	public delegate void TypeEventHandler (object sender, TypeEventArgs e);

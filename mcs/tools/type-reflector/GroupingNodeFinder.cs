@@ -12,7 +12,7 @@ using System.Collections;
 using System.Diagnostics;
 using System.Text;
 
-namespace Mono.TypeReflector
+namespace Mono.TypeReflector.Finders
 {
 	/**
 	 * GroupingNode is a decorator over INodeFinder that groups child nodes of
