@@ -1,5 +1,13 @@
 2004-03-25  Martin Baulig  <martin@ximian.com>
 
+	* mini.c (inflate_generic_field): Removed.
+	(mini_get_method): Removed, use mono_get_method_full(),
+	(mini_get_class): Removed, use mono_class_get_full().
+	(mono_method_to_ir): Pass our generic context to
+	mono_field_from_token().	
+
+2004-03-25  Martin Baulig  <martin@ximian.com>
+
 	* mini.c (mini_get_class): Take a `MonoGenericContext *' instead
 	of a `MonoMethod *'.
 	(mini_get_method): Take a `MonoGenericContext *' instead
