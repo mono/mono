@@ -12,6 +12,7 @@ using System.EnterpriseServices;
 namespace System.Web.Services {
 	[AttributeUsage(AttributeTargets.Method)]
 	public sealed class WebMethodAttribute : Attribute {
+
 		#region Fields
 
 		bool bufferResponse;
@@ -26,43 +27,34 @@ namespace System.Web.Services {
 		#region Constructors
 
 		public WebMethodAttribute ()
+			: this (false, TransactionOption.Disabled, 0, true)
 		{
-			bufferResponse = true;
-			cacheDuration = 0;
-			description = String.Empty;
-			enableSession = false;
-
-			messageName = String.Empty; // FIXME
-			transactionOption = TransactionOption.Disabled;
 		}
 
 		public WebMethodAttribute (bool enableSession)
-			: this ()
+			: this (enableSession, TransactionOption.Disabled, 0, true)
 		{
-			this.enableSession = enableSession;
 		}
 
 		public WebMethodAttribute (bool enableSession, TransactionOption transactionOption)
+			: this (enableSession, transactionOption, 0, true)
 		{
-			this.enableSession = enableSession;
-			this.transactionOption = transactionOption;
 		}
 
 		public WebMethodAttribute (bool enableSession, TransactionOption transactionOption, int cacheDuration)
-			: this ()
+			: this (enableSession, transactionOption, cacheDuration, true)
 		{
-			this.cacheDuration = cacheDuration;
-			this.enableSession = enableSession;
-			this.transactionOption = transactionOption;
 		}
 
 		public WebMethodAttribute (bool enableSession, TransactionOption transactionOption, int cacheDuration, bool bufferResponse)
-			: this ()
 		{
 			this.bufferResponse = bufferResponse;
 			this.cacheDuration = cacheDuration;
 			this.enableSession = enableSession;
 			this.transactionOption = transactionOption;
+
+			this.description = String.Empty;
+			this.messageName = String.Empty;
 		}
 		
 		#endregion // Constructors

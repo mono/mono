@@ -20,30 +20,23 @@ namespace System.Web.Services {
 		#endregion // Fields
 
 		#region Constructors
-
 		
 		public WebServiceBindingAttribute ()
+			: this (String.Empty, String.Empty, String.Empty)
 		{
-			location = String.Empty; // FIXME
-			name = String.Empty; // FIXME
-			ns = "http://tempuri.org/"; // .NET reference
 		}
 
 		public WebServiceBindingAttribute (string name)
-			: this ()
+			: this (name, String.Empty, String.Empty)
 		{
-			this.name = name;
 		}
 
 		public WebServiceBindingAttribute (string name, string ns)
-			: this ()
+			: this (name, ns, String.Empty)
 		{
-			this.name = name;
-			this.ns = ns;
 		}
 
 		public WebServiceBindingAttribute (string name, string ns, string location)
-			: this ()
 		{
 			this.name = name;
 			this.ns = ns;

@@ -26,9 +26,7 @@ namespace System.Web.Services {
 		public WebServiceAttribute ()
 		{
 			description = String.Empty;
-
-			name = String.Empty; // FIXME
-
+			name = String.Empty;
 			ns = DefaultNamespace;
 		}
 		
