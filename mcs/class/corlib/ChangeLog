@@ -1,3 +1,7 @@
+2004-04-09  Zoltan Varga  <vargaz@freemail.hu>
+
+	* corlib_test.dll.sources: Added System.Threading/TimerTest.cs.
+
 2004-04-08  Bernie Solomon  <bernard@ugsolutions.com>
 
 	* corlib.dll.sources: Added Mono.Security/BitConverterLE.cs
