@@ -1,4 +1,4 @@
-// -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
+// -*- Mode: C++; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
 //
 // System.String.cs
 //
@@ -25,7 +25,7 @@ using System;
 using System.Text;
 
 namespace System {
-	
+
 	public sealed class String : IComparable, IClonable, IConvertable, IEnumerable {
 		public static readonly string Empty = "";
 		private char c_str[];
@@ -917,26 +917,22 @@ namespace System {
 				throw new ArgumentOutOfRangeException ();
 
 			len = 0;
-			used = 0;
-			for (i = 0; i < value.Length; i++) {
-				if (i == startIndex) {
-					len = value[i].Length;
-					used = 1;
-				} else if (i > startIndex && used < count) {
-					len += separator.Length + value[i].Length;
-					used++;
-				}
+			for (i = startIndex, used = 0; used < count; i++, used++) {
+				if (i != startIndex)
+					len += separator.Length;
+
+				len += value[i].Length;
 			}
 
 			// We have no elements to join?
-			if (i == 0)
+			if (i == startIndex)
 				return this.Empty;
 
 			str = new string [len + 1];
 			for (i = 0; i < value[startIndex].Length; i++)
 				str[i] = value[startIndex][i];
 
-			used = 0;
+			used = 1;
 			for (j = startIndex + 1; used < count; j++, used++) {
 				int k;
 
