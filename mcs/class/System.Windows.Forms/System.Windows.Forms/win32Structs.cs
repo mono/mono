@@ -746,7 +746,26 @@ namespace System.Windows.Forms
 		public IntPtr    itemData; 
 	}
 
+	[StructLayout(LayoutKind.Sequential, CharSet=CharSet.Unicode)]
+	internal struct TOOLINFO {
+		internal uint	cbSize; 
+		internal uint 	uFlags; 
+		internal IntPtr	hwnd; 
+		internal uint	uId; 
+		internal RECT	rect; 
+		internal IntPtr hinst; 
+		internal string lpszText; 
+		internal IntPtr lParam;
+	}
 
+	[StructLayout(LayoutKind.Sequential, CharSet=CharSet.Auto)]
+	internal struct NM_UPDOWN
+	{
+		internal NMHDR   hdr;
+		internal int     iPos;
+		internal int     iDelta;
+	}
+	
 	//
 	//
 	//		[StructLayout(LayoutKind.Sequential)]
@@ -762,8 +781,6 @@ namespace System.Windows.Forms
 	//			LPCSTR lpszMenuName;
 	//			LPCSTR lpszClassName;
 	//		}
-	
-
 	
 }
 

@@ -4,6 +4,7 @@
 // Author:
 //   stubbed out by Paul Osman (paul.osman@sympatico.ca)
 //	Dennis Hayes (dennish@raytek.com)
+//	Alexandre Pigolkine (pigolkine@gxm.de)
 //
 // (C) 2002 Ximian, Inc
 //
@@ -16,6 +17,12 @@ namespace System.Windows.Forms {
 
     public class NumericUpDown : UpDownBase, ISupportInitialize {
 
+		private decimal Value_ = 0;
+    	private int DecimalPlaces_;
+    	private bool Hexadecimal_ = false;
+    	private decimal Increment_ = 1;
+    	private decimal Maximum_ = 100;
+    	private decimal Minimum_ = 0;
 		//
 		//  --- Constructor
 		//
@@ -26,7 +33,9 @@ namespace System.Windows.Forms {
 		}
 
 		public override void DownButton(){
-			//FIXME:
+			if( Value_ > Minimum_) {
+				Value = Math.Max(Value_ - Increment_, Minimum_);
+			}
 		}
 
 		//
@@ -36,40 +45,61 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public int DecimalPlaces  {
 			get {
-				throw new NotImplementedException ();
+				return DecimalPlaces_;
 			}
 			set {
 				//FIXME:
+				DecimalPlaces_ = value;
 			}
 		}
 
 		[MonoTODO]
 		public bool Hexadecimal  {
 			get {
-				throw new NotImplementedException ();
+				return Hexadecimal_;
 			}
 			set {
 				//FIXME:
+				Hexadecimal_ = value;
 			}
 		}
 
+		public decimal Increment {
+			get {
+				return Increment_;
+			} 
+			set {
+				Increment_ = value;
+			}
+		}
+		
 		[MonoTODO]
 		public decimal Maximum  {
 			get {
-				throw new NotImplementedException ();
+				return Maximum_;
 			}
 			set {
 				//FIXME:
+				if( Maximum_ != value) {
+					Maximum_ = value;
+					Minimum = Math.Min(Maximum_,Minimum_);
+					Value = Math.Min(Value_,Minimum_);
+				}
 			}
 		}
 
 		[MonoTODO]
 		public decimal Minimum  {
 			get {
-				throw new NotImplementedException ();
+				return Minimum_;
 			}
 			set {
 				//FIXME:
+				if( Minimum_ != value) {
+					Minimum_ = value;
+					Maximum = Math.Max(Maximum_,Minimum_);
+					Value = Math.Max(Value_,Minimum_);
+				}
 			}
 		}
 
@@ -77,10 +107,10 @@ namespace System.Windows.Forms {
 		public override string Text  {
 			//FIXME: just to get it to run
 			get {
-				return base.Text;
+				return Value_.ToString();
 			}
 			set {
-				base.Text = value;
+				Value = Decimal.Parse(value);
 			}
 		}
 
@@ -97,10 +127,14 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public decimal Value  {
 			get {
-				throw new NotImplementedException ();
+				return Value_;
 			}
 			set {
 				//FIXME:
+				if( Value_ != value) {
+					Value_ = value;
+					UpdateEditText();
+				}
 			}
 		}
 
@@ -118,7 +152,9 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public override void UpButton()
 		{
-			//FIXME:
+			if( Value_ != Maximum_) {
+				Value = Math.Min(Value_ + Increment_, Maximum_);
+			}
 		}
 
 		//
@@ -160,6 +196,7 @@ namespace System.Windows.Forms {
 		protected override void UpdateEditText() 
 		{
 			//FIXME:
+			base.Text = Value_.ToString();
 		}
 
 		[MonoTODO]

@@ -119,15 +119,19 @@ namespace System.Windows.Forms {
 				createParams.ExStyle = 0;
 				createParams.Param = 0;
   				
-				//if (parent != null)
-				//	createParams.Parent = parent.Handle;
-				//else 
-				createParams.Parent = (IntPtr) 0;
-	  
-				createParams.Style = (int) (WindowStyles.WS_OVERLAPPEDWINDOW);
+				createParams.Style = (int) (WindowStyles.WS_VISIBLE);
 				//test version with scroll bars.
 				//createParams.Style = (int) (WindowStyles.WS_OVERLAPPEDWINDOW | WindowStyles.WS_HSCROLL | WindowStyles.WS_VSCROLL);
-	  
+				
+				if (Parent != null) {
+					createParams.Parent = Parent.Handle;
+					createParams.Style |= (int) WindowStyles.WS_CHILD;
+				}
+				else {
+					createParams.Parent = (IntPtr) 0;
+					createParams.Style |= (int) WindowStyles.WS_OVERLAPPEDWINDOW;
+				}
+				
 				return createParams;			
 			}
 		}

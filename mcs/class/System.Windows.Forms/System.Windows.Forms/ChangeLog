@@ -1,3 +1,16 @@
+2003-03-26 Alexandre Pigolkine <pigolkine@gmx.de>
+	* NumericUpDown.cs
+	* ScrollableControl.cs
+	* UpDownBase.cs
+	* win32Structs.cs
+		implementation of NumericUpDown
+
+	* tooltip.cs
+	* win32Enums.cs
+	* win32functions.cs
+		implementation of ToolTip control class.
+		Aleksey Ryabchuk <ryabchuk@yahoo.com>
+
 2003-03-25 Alexandre Pigolkine <pigolkine@gmx.de>
 	* CheckedListBox.cs
 	* ListBox.cs

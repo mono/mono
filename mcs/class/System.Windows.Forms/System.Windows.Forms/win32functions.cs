@@ -51,6 +51,8 @@ namespace System.Windows.Forms{
 		internal const string REBARCLASSNAME = "ReBarWindow32";
 		internal const string PROGRESSBARCLASSNAME = "msctls_progress32";
 		internal const string SCROLLBAR = "SCROLLBAR";
+		internal const string TOOLTIPS_CLASS = "tooltips_class32";
+		
 		#endregion
 
 		#region CallBacks
@@ -689,6 +691,11 @@ namespace System.Windows.Forms{
 		{
 			return 0x0000FFFF & res;
 		}
+		
+		internal static int MAKELONG(int lo, int hi)
+		{
+			return (hi << 16) | (lo & 0x0000ffff);
+		}
 		#endregion
 
 		#region Mono win32 Fuinctions
@@ -816,7 +823,7 @@ namespace System.Windows.Forms{
 
 		[DllImport ("user32.dll", 
 			 CallingConvention = CallingConvention.StdCall,
-			 CharSet = CharSet.Auto)]
+			 CharSet = CharSet.Ansi)]
 		internal static extern bool SetWindowTextA (
 			IntPtr hWnd, string lpString);
 

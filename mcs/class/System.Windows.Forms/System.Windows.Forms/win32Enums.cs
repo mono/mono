@@ -753,6 +753,7 @@ namespace System.Windows.Forms{
 
 	#region ToolTip Flags
 	public enum ToolTipFlags {
+		TTF_IDISHWND            = 0x0001,
 		TTF_CENTERTIP           = 0x0002,
 		TTF_RTLREADING          = 0x0004,
 		TTF_SUBCLASS            = 0x0010,
@@ -2485,6 +2486,36 @@ namespace System.Windows.Forms{
 	}
 	#endregion
 
+	#region ToolTipControl Messages
+	internal enum ToolTipControlMessages
+	{
+		TTM_ACTIVATE            = (Msg.WM_USER + 1),
+		TTM_SETDELAYTIME	= (Msg.WM_USER + 3),
+		TTM_SETMAXTIPWIDTH      = (Msg.WM_USER + 24),
+		TTM_ADDTOOL		= (Msg.WM_USER + 50),
+		TTM_DELTOOL		= (Msg.WM_USER + 51),
+		TTM_UPDATETIPTEXT	= (Msg.WM_USER +57)
+
+	}
+	#endregion
+
+	#region ToolTipControl Styles
+	internal enum ToolTipControlStyles
+	{
+		TTS_ALWAYSTIP           = 0x01,
+		TTS_NOPREFIX            = 0x02
+	}
+	#endregion
+
+	#region ToolTipControlDelay Flags
+	internal enum ToolTipControlDelayFlags {
+		TTDT_AUTOMATIC          = 0,
+		TTDT_RESHOW             = 1,
+		TTDT_AUTOPOP            = 2,
+		TTDT_INITIAL            = 3
+	}
+	#endregion
+	
 	#region MonthCal Colors
 	internal enum MonthCalColors
 	{
@@ -2589,5 +2620,40 @@ namespace System.Windows.Forms{
 		ETO_GLYPH_INDEX     =0x0010,
 		ETO_RTLREADING      =0x0080,
 		ETO_IGNORELANGUAGE  =0x1000
+	}
+	
+	internal enum UpDownControlStyles : int {
+		UDS_WRAP           =0x0001,
+		UDS_SETBUDDYINT    =0x0002,
+		UDS_ALIGNRIGHT     =0x0004,
+		UDS_ALIGNLEFT      =0x0008,
+		UDS_AUTOBUDDY      =0x0010,
+		UDS_ARROWKEYS      =0x0020,
+		UDS_HORZ           =0x0040,
+		UDS_NOTHOUSANDS    =0x0080,
+		UDS_HOTTRACK       =0x0100
+	}
+	
+	internal enum UpDownControlMessages : int {
+		WM_USER            =  0x0400,
+		UDN_FIRST          =(0-721),
+		UDN_LAST           =(0-740),
+		UDN_DELTAPOS       =(UDN_FIRST-1),
+		UDM_SETRANGE       =(WM_USER+101),
+		UDM_GETRANGE       =(WM_USER+102),
+		UDM_SETPOS         =(WM_USER+103),
+		UDM_GETPOS         =(WM_USER+104),
+		UDM_SETBUDDY       =(WM_USER+105),
+		UDM_GETBUDDY       =(WM_USER+106),
+		UDM_SETACCEL       =(WM_USER+107),
+		UDM_GETACCEL       =(WM_USER+108),
+		UDM_SETBASE        =(WM_USER+109),
+		UDM_GETBASE        =(WM_USER+110),
+		UDM_SETRANGE32     =(WM_USER+111),
+		UDM_GETRANGE32     =(WM_USER+112),
+		//UDM_SETUNICODEFORMAT    =CCM_SETUNICODEFORMAT,
+		//UDM_GETUNICODEFORMAT    =CCM_GETUNICODEFORMAT,
+		UDM_SETPOS32       =(WM_USER+113),
+		UDM_GETPOS32       =(WM_USER+114)
 	}
 }

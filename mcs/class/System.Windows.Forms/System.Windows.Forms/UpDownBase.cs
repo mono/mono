@@ -5,14 +5,80 @@
 //	 stubbed out by Stefan Warnke (StefanW@POBox.com)
 //   Dennis Hayes (dennish@Raytek.com)
 //   Gianandrea Terzi (gianandrea.terzi@lario.com)
+//	 Alexandre Pigolkine (pigolkine@gxm.de)
 //
 // (C) Ximian, Inc., 2002
 //
 using System;
 using System.Drawing;
 using System.ComponentModel;
+using System.Runtime.InteropServices;
 
 namespace System.Windows.Forms {
+	internal class SpinnerControl : Control {
+		
+		public SpinnerControl() {
+			SubClassWndProc_ = true;
+		}
+		
+		protected override CreateParams CreateParams {
+			get {
+				if( Parent != null) {
+					CreateParams createParams = new CreateParams ();
+		
+					createParams.Caption = Text;
+					createParams.ClassName = "msctls_updown32";
+					createParams.X = Left;
+					createParams.Y = Top;
+					createParams.Width = Width;
+					createParams.Height = Height;
+					createParams.ClassStyle = 0;
+					createParams.ExStyle = 0;
+					createParams.Param = 0;
+					createParams.Parent = Parent.Handle;
+					createParams.Style = (int) (
+						WindowStyles.WS_CHILD | 
+						WindowStyles.WS_VISIBLE);
+					createParams.Style |= (int)(UpDownControlStyles.UDS_ALIGNRIGHT |
+					                            UpDownControlStyles.UDS_AUTOBUDDY );
+					return createParams;
+				}
+				return null;
+			}
+		}
+		
+		protected override void WndProc(ref Message m) { 
+			switch( m.Msg) 
+			{
+			case Msg.WM_NOTIFY:
+				NM_UPDOWN nmupdown = (NM_UPDOWN)Marshal.PtrToStructure ( m.LParam, typeof ( NM_UPDOWN ) );
+				// With default setup 
+				// NM_UPDOWN.iDelta < 0, then Up button pressed
+				// NM_UPDOWN.iDelta > 0, then Down button pressed
+				// CHECKME: do we need to call Up/Down Abs(delta) times ?
+				UpDownBase parentUpDown = Parent as UpDownBase;
+				if( parentUpDown != null) {
+					if( nmupdown.iDelta < 0) {
+						parentUpDown.UpButton();
+					}
+					else {
+						parentUpDown.DownButton();
+					}
+				}
+				else {
+					CallControlWndProc(ref m);
+				}
+				break;
+			case Msg.WM_HSCROLL:
+			case Msg.WM_VSCROLL:
+				CallControlWndProc(ref m);
+				break;
+			default:
+				base.WndProc(ref m);
+				break;
+			}
+		}
+	}
 
 	// <summary>
 	// </summary>
@@ -32,10 +98,19 @@ namespace System.Windows.Forms {
 			Up = 1
 		}
 
+		internal TextBox			EditBox_;
+		internal SpinnerControl		Spinner_;
+		private bool				UserEdit_;
 		/// --- Constructor ---
 		public UpDownBase()	
 		{
-			
+			UserEdit_ = false;
+			Win32.InitCommonControls();
+			EditBox_ = new TextBox();
+			EditBox_.Location = new System.Drawing.Point(0, 0);
+			Spinner_ = new SpinnerControl();
+			this.Controls.Add(EditBox_);
+			this.Controls.Add(Spinner_);
 		}
 
 		/// --- Destructor ---
@@ -156,6 +231,7 @@ namespace System.Windows.Forms {
 			}
 			set {
 				base.Text = value;
+				EditBox_.Text = value;
 			}
 		}
 
@@ -220,24 +296,7 @@ namespace System.Windows.Forms {
 		// Gets the required creation parameters when the control handle is created
 		protected override CreateParams CreateParams {
 			get {
-				CreateParams createParams = new CreateParams ();
-				window = new ControlNativeWindow (this);
-
-				createParams.Caption = Text;
-				createParams.ClassName = "UPDOWNBASE";
-				createParams.X = Left;
-				createParams.Y = Top;
-				createParams.Width = Width;
-				createParams.Height = Height;
-				createParams.ClassStyle = 0;
-				createParams.ExStyle = 0;
-				createParams.Param = 0;
-				//			createParams.Parent = Parent.Handle;
-				createParams.Style = (int) (
-					WindowStyles.WS_CHILD | 
-					WindowStyles.WS_VISIBLE);
-				window.CreateHandle (createParams);
-				return createParams;
+				return base.CreateParams;
 			}
 		}
 
@@ -251,10 +310,10 @@ namespace System.Windows.Forms {
 		// Gets or sets a value indicating whether a value has been entered by the user
 		protected bool UserEdit {
 			get {
-				throw new NotImplementedException ();
+				return UserEdit_;
 			}
 			set {
-				//FIXME:
+				UserEdit_ = true;
 			}
 		}
 		#endregion // Protected Properties
@@ -275,6 +334,7 @@ namespace System.Windows.Forms {
 		{
 			//FIXME:
 			base.OnHandleCreated(e);
+			EditBox_.Text = this.Text;
 		}
 
 		// Raises the Layout event
@@ -321,10 +381,10 @@ namespace System.Windows.Forms {
 		}
 		
 		// This member overrides Control.SetBoundsCore.
-		protected override void SetBoundsCore(int x, int y, int width, 
-			int height, BoundsSpecified specified)  {
-
-			//FIXME:
+		protected override void SetBoundsCore(int x, int y, int width, int height, BoundsSpecified specified)  {
+			//FIXME: use PreferredHeight ?
+			base.SetBoundsCore(x,y,width,height,specified);
+			EditBox_.Size = new System.Drawing.Size(width, height);
 		}
 
 		// When overridden in a derived class, updates the text displayed in the
@@ -341,8 +401,9 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 
 			//FIXME shoould this be (ref message m)??
-		protected virtual void WndProc(Message m) { // .NET V1.1 Beta
+		protected override void WndProc(ref Message m) { // .NET V1.1 Beta
 			//FIXME:
+			base.WndProc(ref m);
 		}
 		
 		[MonoTODO]
