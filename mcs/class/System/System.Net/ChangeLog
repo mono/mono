@@ -1,8 +1,20 @@
+2004-02-17  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpWebRequest.cs: on second and sucesive tries when authenticating,
+	don't use chunked encoding for POST, as we know the content length and
+	have the body. Nullify bodyBuffer always in CheckFinalStatus.
+
+	* WebAsyncResult.cs: added ChunkAsyncResult property. It holds the
+	IAsyncResult when writing CRLF at the end of a chunk.
+
+	* WebConnectionStream.cs: support sending chunked data.
+
 2004-01-24  Lluis Sanchez Gual <lluis@ximian.com>
 
-	* HttpWebRequest.cs: When retrying a POST request after an authentication
-	failure, resend the body. This fixes bug #51841.
-	* WebConnectionStream.cs: Added properties for getting what's been written.
+	* HttpWebRequest.cs: When retrying a POST request after an
+	authentication failure, resend the body. This fixes bug #51841.
+	* WebConnectionStream.cs: Added properties for getting what's been
+	written.
 
 2004-02-12  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 

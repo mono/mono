@@ -852,6 +852,12 @@ namespace System.Net
 				return;
 			
 			writeStream = stream;
+			if (bodyBuffer != null) {
+				webHeaders.RemoveInternal ("Transfer-Encoding");
+				contentLength = bodyBuffer.Length;
+				writeStream.SendChunked = false;
+			}
+			
 			SendRequestHeaders ();
 
 			haveRequest = true;
@@ -935,6 +941,7 @@ namespace System.Net
 				throw result.Exception;
 
 			Exception throwMe = result.Exception;
+			bodyBuffer = null;
 
 			HttpWebResponse resp = result.Response;
 			WebExceptionStatus protoError = WebExceptionStatus.ProtocolError;
@@ -954,7 +961,9 @@ namespace System.Net
 						writeStream.InternalClose ();
 						writeStream = null;
 						webResponse = null;
-						throw new WebException ("This request requires buffering of data for authentication or redirection to be sucessful.");
+						throw new WebException ("This request requires buffering " +
+									"of data for authentication or " +
+									"redirection to be sucessful.");
 					}
 				}
 

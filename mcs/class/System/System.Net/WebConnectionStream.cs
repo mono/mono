@@ -5,15 +5,18 @@
 //	Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
 // (C) 2003 Ximian, Inc (http://www.ximian.com)
+// (C) 2004 Novell, Inc (http://www.novell.com)
 //
 
 using System.IO;
+using System.Text;
 using System.Threading;
 
 namespace System.Net
 {
 	class WebConnectionStream : Stream
 	{
+		static byte [] crlf = new byte [] { 13, 10 };
 		bool isRead;
 		WebConnection cnc;
 		HttpWebRequest request;
@@ -24,6 +27,7 @@ namespace System.Net
 		int totalRead;
 		bool nextReadCalled;
 		int pendingReads;
+		int pendingWrites;
 		ManualResetEvent pending;
 		bool allowBuffering;
 		bool sendChunked;
@@ -31,6 +35,7 @@ namespace System.Net
 		bool requestWritten;
 		byte [] headers;
 		bool disposed;
+		bool headersSent;
 
 		public WebConnectionStream (WebConnection cnc)
 		{
@@ -53,6 +58,13 @@ namespace System.Net
 			sendChunked = request.SendChunked;
 			if (allowBuffering)
 				writeBuffer = new MemoryStream ();
+
+			if (sendChunked)
+				pending = new ManualResetEvent (true);
+		}
+
+		internal bool SendChunked {
+			set { sendChunked = value; }
 		}
 
 		internal byte [] ReadBuffer {
@@ -248,18 +260,35 @@ namespace System.Net
 			if (size < 0 || offset < 0 || length < offset || length - offset < size)
 				throw new ArgumentOutOfRangeException ();
 
+			lock (this) {
+				pendingWrites++;
+				pending.Reset ();
+			}
+
 			WebAsyncResult result = new WebAsyncResult (cb, state);
 			if (allowBuffering) {
 				writeBuffer.Write (buffer, offset, size);
-				result.SetCompleted (true, 0);
-				result.DoCallback ();
-			} else {
-				if (cb != null)
-					cb = new AsyncCallback (CallbackWrapper);
+			}
 
-				result.InnerAsyncResult = cnc.BeginWrite (buffer, offset, size, cb, result);
-				if (result.InnerAsyncResult == null)
-					throw new WebException ("Aborted");
+			AsyncCallback chunkcb = null;
+			if (sendChunked) {
+				WriteRequest ();
+				string cSize = String.Format ("{0:X}\r\n", size);
+				byte [] chunk = Encoding.ASCII.GetBytes (cSize);
+				chunkcb = new AsyncCallback (cnc.EndWrite);
+				result = new WebAsyncResult (null, result);
+				cnc.BeginWrite (chunk, 0, chunk.Length, chunkcb, result);
+			}
+
+			if (cb != null)
+				cb = new AsyncCallback (CallbackWrapper);
+
+			result.InnerAsyncResult = cnc.BeginWrite (buffer, offset, size, cb, result);
+			if (result.InnerAsyncResult == null)
+				throw new WebException ("Aborted");
+
+			if (sendChunked) {
+				result.ChunkAsyncResult = cnc.BeginWrite (crlf, 0, crlf.Length, null, null);
 			}
 
 			return result;
@@ -270,21 +299,31 @@ namespace System.Net
 			if (r == null)
 				throw new ArgumentNullException ("r");
 
-			if (allowBuffering)
+			if (allowBuffering && !sendChunked)
 				return;
 
 			WebAsyncResult result = r as WebAsyncResult;
 			if (result == null)
 				throw new ArgumentException ("Invalid IAsyncResult");
 
+			if (result.GotException)
+				throw result.Exception;
+
 			cnc.EndWrite (result.InnerAsyncResult);
-			return;
+			if (sendChunked)
+				cnc.EndWrite (result.ChunkAsyncResult);
+
+			lock (this) {
+				pendingWrites--;
+				if (pendingWrites == 0)
+					pending.Set ();
+			}
 		}
 		
 		public override void Write (byte [] buffer, int offset, int size)
 		{
 			if (isRead)
-				throw new NotSupportedException ("this stream does not allow writing");
+				throw new NotSupportedException ("This stream does not allow writing");
 
 			IAsyncResult res = BeginWrite (buffer, offset, size, null, null);
 			EndWrite (res);
@@ -296,9 +335,13 @@ namespace System.Net
 
 		internal void SetHeaders (byte [] buffer, int offset, int size)
 		{
-			if (!allowBuffering) {
+			if (headersSent)
+				return;
+
+			headersSent = true;
+			if (!allowBuffering || sendChunked) {
 				try {
-					Write (buffer, offset, size);
+					cnc.Write (buffer, offset, size);
 				} catch (IOException) {
 					if (cnc.Connected)
 						throw;
@@ -306,7 +349,7 @@ namespace System.Net
 					if (!cnc.TryReconnect ())
 						throw;
 
-					Write (buffer, offset, size);
+					cnc.Write (buffer, offset, size);
 				}
 			} else {
 				headers = new byte [size];
@@ -316,7 +359,16 @@ namespace System.Net
 
 		internal void WriteRequest ()
 		{
-			if (!allowBuffering || writeBuffer == null || requestWritten)
+			if (requestWritten)
+				return;
+
+			if (sendChunked) {
+				request.SendRequestHeaders ();
+				requestWritten = true;
+				return;
+			}
+
+			if (!allowBuffering || writeBuffer == null)
 				return;
 
 			byte [] bytes = writeBuffer.GetBuffer ();
@@ -356,6 +408,13 @@ namespace System.Net
 		
 		public override void Close ()
 		{
+			if (sendChunked) {
+				pending.WaitOne ();
+				byte [] chunk = Encoding.ASCII.GetBytes ("0\r\n\r\n");
+				cnc.Write (chunk, 0, chunk.Length);
+				return;
+			}
+
 			if (isRead || !allowBuffering || disposed)
 				return;
 
@@ -375,6 +434,7 @@ namespace System.Net
 
 			writeBuffer = new MemoryStream ();
 			requestWritten = false;
+			headersSent = false;
 		}
 		
 		public override long Seek (long a, SeekOrigin b)
