@@ -19,35 +19,34 @@ namespace Mono.Xml.XPath
 	public class DTMXPathDocumentBuilder
 	{
 		public DTMXPathDocumentBuilder (string url)
-			: this (url, XmlSpace.None, false, 400)
+			: this (url, XmlSpace.None, 400)
 		{
 		}
 
 		public DTMXPathDocumentBuilder (string url, XmlSpace space)
-			: this (url, space, false, 400)
+			: this (url, space, 400)
 		{
 		}
 
-		public DTMXPathDocumentBuilder (string url, XmlSpace space, bool supportID, int defaultCapacity)
-			: this (new XmlTextReader (url), space, supportID, defaultCapacity)
+		public DTMXPathDocumentBuilder (string url, XmlSpace space, int defaultCapacity)
+			: this (new XmlTextReader (url), space, defaultCapacity)
 		{
 		}
 
 		public DTMXPathDocumentBuilder (XmlReader reader)
-			: this (reader, XmlSpace.None, false, 400)
+			: this (reader, XmlSpace.None, 400)
 		{
 		}
 
 		public DTMXPathDocumentBuilder (XmlReader reader, XmlSpace space)
-			: this (reader, space, false, 400)
+			: this (reader, space, 400)
 		{
 		}
 
-		public DTMXPathDocumentBuilder (XmlReader reader, XmlSpace space, bool supportsID, int defaultCapacity)
+		public DTMXPathDocumentBuilder (XmlReader reader, XmlSpace space, int defaultCapacity)
 		{
 			this.xmlReader = reader;
-			if (supportsID)
-				this.validatingReader = reader as XmlValidatingReader;
+			this.validatingReader = reader as XmlValidatingReader;
 			lineInfo = reader as IXmlLineInfo;
 			this.xmlSpace = space;
 			this.nameTable = reader.NameTable;
@@ -274,7 +273,8 @@ namespace Mono.Xml.XPath
 							XmlSchemaDatatype dt = validatingReader.SchemaType as XmlSchemaDatatype;
 							if (dt == null) {
 								XmlSchemaType xsType = validatingReader.SchemaType as XmlSchemaType;
-								dt = xsType.Datatype;
+								if (xsType != null)
+									dt = xsType.Datatype;
 							}
 							if (dt != null && dt.TokenizedType == XmlTokenizedType.ID)
 								idTable.Add (xmlReader.Value, nodeIndex);

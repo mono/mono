@@ -1,3 +1,9 @@
+2003-12-18  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* DTMXPathDocumentBuilder.cs : Removed supportsID argument and always
+	  assumes to support IDs when specified XmlValidatingReader.
+	  Quick fix for NullReferenceException when type was null.
+
 2003-11-19  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* KeyPattern.cs : Matches() should iterate candidate keys to the end.
