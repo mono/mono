@@ -1,5 +1,12 @@
 2004-01-19  Zoltan Varga  <vargaz@freemail.hu>
 
+	* image.c (mono_image_addref): New public function.
+
+	* assembly.c: Call mono_image_addref.
+
+	* reflection.c (mono_module_get_object): Increase reference count of 
+	the image.
+
 	* loader.c (mono_lookup_pinvoke_call): Strip .dll from library names.
 	Fixes #22532.
 
