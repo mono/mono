@@ -77,9 +77,10 @@ namespace System.Windows.Forms {
 			XLookupString (ref xevent, IntPtr.Zero, 0, out keysym, IntPtr.Zero);
 			if (((int) keysym >= (int) MiscKeys.XK_ISO_Lock && 
 				(int) keysym <= (int) MiscKeys.XK_ISO_Last_Group_Lock) ||
-         			(int) keysym == (int) MiscKeys.XK_Mode_switch) {
-			        return;
-    			}
+				(int) keysym == (int) MiscKeys.XK_Mode_switch) {
+				UpdateKeyState (xevent);
+				return;
+			}
 
 			if ((xevent.KeyEvent.keycode >> 8) == 0x10)
 				xevent.KeyEvent.keycode = xevent.KeyEvent.keycode & 0xFF;
@@ -314,6 +315,23 @@ namespace System.Windows.Forms {
 						key_state_table [(int) vkey] |= 0x01;
 					}
 				}
+			}
+		}
+
+		private void UpdateKeyState (XEvent xevent)
+		{
+			int vkey = EventToVkey (xevent);
+
+			switch (xevent.type) {
+			case XEventName.KeyRelease:
+				key_state_table [(int) vkey] &= unchecked ((byte) ~0x80);
+				break;
+			case XEventName.KeyPress:
+				if ((key_state_table [(int) vkey] & 0x80) == 0) {
+					key_state_table [(int) vkey] ^= 0x01;
+				}
+				key_state_table [(int) vkey] |= 0x80;
+				break;
 			}
 		}
 

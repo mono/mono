@@ -1,3 +1,8 @@
+2005-02-09  Jackson Harper  <jackson@ximian.com>
+
+	* X11Keyboard.cs: We ignore some keys, but still need to set/reset
+	their keystate otherwise things like VK_MENU get stuck "on".
+
 2005-02-09  Kazuki Oikawa <kazuki@panicode.com>
 
 	* ListBox.cs: Fixes AddRange bug
