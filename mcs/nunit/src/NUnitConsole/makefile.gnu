@@ -8,6 +8,6 @@ PROGRAM_FLAGS =	\
 
 include ../../../class/executable.make
 
-MCSTOOL = ../../../mcs-tool
+MCS = mcs
 MCS_FLAGS = --target exe --noconfig
 

@@ -1,4 +1,4 @@
-MCSTOOL = ../mcs-tool
+MCS = mcs
 MCS_FLAGS = --debug --fatal --target exe
 
 COMMON_SOURCES = cs-parser.cs cs-tokenizer.cs tree.cs location.cs
@@ -35,7 +35,7 @@ TEST_TOKENIZER_SOURCES = test-token.cs $(COMMON_SOURCES)
 all: mcs.exe
 
 mcs.exe: $(COMPILER_SOURCES)
-	$(MCSTOOL) $(MCS_FLAGS) -o $@ $(COMPILER_SOURCES)
+	$(MCS) $(MCS_FLAGS) -o $@ $(COMPILER_SOURCES)
 
 cs-parser.cs: cs-parser.jay
 	../jay/jay -ctv < ../jay/skeleton.cs $^ > $@

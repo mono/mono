@@ -1,4 +1,4 @@
-MCSTOOL = ../mcs-tool
+MCS = mcs
 MCS_FLAGS = --target exe
 
 all: $(PROGRAM)
@@ -18,4 +18,4 @@ clean-exe:
 -include .makefrag-exe
 
 $(PROGRAM): .response-exe .makefrag-exe #program-deps
-	$(MCSTOOL) $(MCS_FLAGS) -o $(PROGRAM) $(PROGRAM_FLAGS) @.response-exe
+	$(MCS) $(MCS_FLAGS) -o $(PROGRAM) $(PROGRAM_FLAGS) @.response-exe

@@ -1,4 +1,4 @@
-MCSTOOL = ../../mcs-tool
+MCS = mcs
 MCS_FLAGS = --target library --noconfig
 
 all: $(LIBRARY)
@@ -18,4 +18,4 @@ clean:
 -include .makefrag
 
 $(LIBRARY): .response .makefrag #library-deps
-	$(MCSTOOL) $(MCS_FLAGS) -o $(LIBRARY) $(LIB_FLAGS) @.response
+	$(MCS) $(MCS_FLAGS) -o $(LIBRARY) $(LIB_FLAGS) @.response

@@ -1,4 +1,4 @@
-MCSTOOL = ../mcs-tool
+MCS = mcs
 
 DIRS =	corlib				\
 	System				\
