@@ -1,4 +1,8 @@
 
+Tue Sep 10 15:51:53 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* object.c: allow a constructor to be called again on an object.
+
 Tue Sep 10 11:58:46 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* class.h, class.c: move field layout code to it's own function and
