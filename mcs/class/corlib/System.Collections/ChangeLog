@@ -1,3 +1,8 @@
+2004-03-29  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* CollectionBase.cs: Renamed internal arraylist member to match MS.NET
+	  (to allow serialization interoperability).
+
 2004-03-18  David Sheldon <dave-mono@earth.li>
 
   * Hashtable.cs: Serialise/Deserialise to two arrays of 

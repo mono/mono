@@ -15,7 +15,7 @@ namespace System.Collections {
 	public abstract class CollectionBase : IList, ICollection, IEnumerable {
 
 		// private instance properties
-		private ArrayList myList;
+		private ArrayList list;
 		
 		// public instance properties
 		public int Count { get { return InnerList.Count; } }
@@ -38,11 +38,11 @@ namespace System.Collections {
 		
 		// Protected Instance Constructors
 		protected CollectionBase() { 
-			this.myList = new ArrayList();
+			this.list = new ArrayList();
 		}
 		
 		// Protected Instance Properties
-		protected ArrayList InnerList {get { return this.myList; } }
+		protected ArrayList InnerList {get { return this.list; } }
 		protected IList List {get { return this; } }
 		
 		// Protected Instance Methods
