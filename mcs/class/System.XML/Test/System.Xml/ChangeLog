@@ -1,3 +1,12 @@
+2003-10-05  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* XmlConvertTests.cs : patch by Jonathan Kessler. Added more test
+	  methods.
+	* XmlUrlResolverTests.cs : Renamed NullArgs to ResolveUriWithNullArgs,
+	  and added GetEntityWithNullArgs() (though it is uncommented).
+	* XmlReaderCommonTests.cs : Added XML Schema-mode XmlValidatingReader
+	  testing phase.
+
 2003-09-21  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* XmlTextReaderTests.cs : Oops, it was CRLF injected ;-)

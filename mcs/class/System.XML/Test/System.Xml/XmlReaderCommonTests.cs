@@ -152,8 +152,16 @@ namespace MonoTests.System.Xml
 			xtr = new XmlTextReader (new StringReader (xml));
 			method (xtr);
 
+			// DTD validation
 			xtr = new XmlTextReader (new StringReader (xml));
 			XmlValidatingReader xvr = new XmlValidatingReader (xtr);
+			xvr.ValidationType = ValidationType.DTD;
+			xvr.EntityHandling = EntityHandling.ExpandCharEntities;
+			method (xvr);
+
+			// XSD validation
+			xtr = new XmlTextReader (new StringReader (xml));
+			xvr = new XmlValidatingReader (xtr);
 			xvr.EntityHandling = EntityHandling.ExpandCharEntities;
 			method (xvr);
 
@@ -232,7 +240,7 @@ namespace MonoTests.System.Xml
 			// MS.NET XmlTextReader fails. Its Prefix returns null instead of "".
 			this.AssertNodeValues (reader, XmlNodeType.Text,
 				2, false, "", "", "", "", "", true, 1, true);
-			reader.MoveToElement ();
+			Assert (reader.MoveToElement ());
 			this.AssertNodeValues (reader, XmlNodeType.Element,
 				0, true, "root", "", "root", "", "", false, 1, true);
 		}

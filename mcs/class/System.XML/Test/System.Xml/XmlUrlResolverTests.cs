@@ -52,14 +52,18 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
-		public void NullArgs ()
+		[ExpectedException (typeof (NullReferenceException))]
+		public void ResolveUriWithNullArgs ()
 		{
-			try {
-				resolver.ResolveUri (null, null);
-				Fail ("Should be error (MS.NET throws ArgumentException here).");
-			} catch (Exception) {
-				// OK
-			}
+			resolver.ResolveUri (null, null);
+			Fail ("Should be error (MS.NET throws ArgumentException here).");
+		}
+
+//		[Test] Uncomment if you want to test.
+		public void GetEntityWithNullArgs ()
+		{
+			Uri uri = new Uri ("http://www.go-mono.com/index.rss");
+			resolver.GetEntity (uri, null, null);
 		}
 	}
 }
