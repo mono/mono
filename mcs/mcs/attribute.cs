@@ -341,9 +341,9 @@ namespace Mono.CSharp {
 			ParameterData pd = Invocation.GetParameterData (constructor);
 
 			int group_in_params_array = Int32.MaxValue;
-			if (pd.ParameterModifier (pd.Count-1) == Parameter.Modifier.PARAMS){
-				group_in_params_array = pd.Count-1;
-			}
+			int pc = pd.Count;
+			if (pc > 0 && pd.ParameterModifier (pc-1) == Parameter.Modifier.PARAMS)
+				group_in_params_array = pc-1;
 			
 			for (int j = 0; j < pos_arg_count; ++j) {
 				Argument a = (Argument) pos_args [j];
