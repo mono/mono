@@ -1,3 +1,7 @@
+2003-01-12  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
+	* changed test target in makefile work
+        * corrected authors list to include Marco
+
 2002-10-23  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
 	* merged many sources from mcs/mcs, to resync
 
@@ -53,14 +57,14 @@
 
 2002-06-15  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
 	* merged assign.cs, attribute.cs, enum.cs and namespace.cs from mcs/mcs, to resync
-	* namespace.cs needed some fixing, because CSharpParser isn¥t available
+	* namespace.cs needed some fixing, because CSharpParser isn≈Ωt available
 
 2002-06-15  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
 	* merged delegate.cs, ecore.cs, typemanager.cs and rootcontext.cs from mcs/mcs, to resolve expression.cs blues
 
 2002-06-15  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
 	* oops merged expression.cs from mcs/mcs is breaking my make
-	* driver.cs, assemblyinfo.cs wasn¥t ready for prime time (offending lines were commented out)
+	* driver.cs, assemblyinfo.cs wasn≈Ωt ready for prime time (offending lines were commented out)
 
 2002-06-15  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
 	* merged expression.cs from mcs/mcs
@@ -102,7 +106,7 @@
 		- old-fashioned comments syntax (REM Blah-Blah)
 
 2002-05-31  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
-	* modified mbas.ico to be a small version of mono¥s logo (see mcs\MonoIcon.png)
+	* modified mbas.ico to be a small version of mono≈Ωs logo (see mcs\MonoIcon.png)
 
 2002-05-31  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
 	* squashed some reduce/reduce conflicts out of mb-parser.jay
