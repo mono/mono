@@ -54,9 +54,9 @@ install: all
 	mkdir -p $(prefix)/bin/
 	$(INSTALL) -m 755 mbas.exe $(prefix)/bin/
 
-test:
+test: mbas.exe
 	mono mbas.exe --main WriteOK testmbas/WriteOK.vb
 
-test-gtk:
+test-gtk: mbas.exe
 	mono mbas.exe testmbas/gtk.vb -r gtk-sharp
 

@@ -1,3 +1,13 @@
+2003/02/22  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
+	* class.cs : As, per vbc, there is a rootnamespace now, --main wasn't working anymore, 
+				 because it was expecting a fully qualified class name. 
+				 We now also test the name passed prepended by the rootnamespace.
+	* class.cs : Corrected warning "The keyword new is required on `Mono.CSharp.Property.Emit'
+				 because it hides inherited member `PropertyBase.Emit'", by making it virtual
+				 in PropertyBase and override in Property.
+	* makefile.gnu : test and test-gtk targets now depend on mbas.exe
+				 
+
 2003/02/19  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
 	* mb-parser.jay : eliminated reduce/reduce conflict on duplicated rank_specifier rule
 	  by renaming the one using brackets to bracketed_rank_specifier

@@ -287,7 +287,9 @@ namespace Mono.Languages
 			return WhatToDoNext.GoAhead;
 		}
 
-		[Option("Specifies the Class or Module that contains Sub Main.It can also be a Class that inherits from System.Windows.Forms.Form.", 'm', "main")]
+		[Option(@"Specifies the Class or Module that contains Sub Main.
+			It can also be a Class that inherits from System.Windows.Forms.Form.",
+			'm', "main")]
 		public string main { set { RootContext.MainClass = value; } }
 
 		// TODO: handle VB.NET [+|-] boolean syntax
@@ -794,7 +796,7 @@ namespace Mono.Languages
 		      RootContext.RootNamespace =
 		          System.IO.Path.GetFileNameWithoutExtension(outputFileName);
 		    }
-		
+
 			if (!ParseAll()) // Phase 1
 				return;
 

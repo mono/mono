@@ -2383,7 +2383,10 @@ namespace Mono.CSharp {
 			if (Name == "Main" &&
 			    ((ModFlags & Modifiers.STATIC) != 0) && 
 			    (RootContext.MainClass == null ||
-			     RootContext.MainClass == parent.TypeBuilder.FullName)){
+			     RootContext.MainClass == parent.TypeBuilder.FullName ||
+			     (RootContext.RootNamespace != null &&
+				  RootContext.RootNamespace.Length > 0 &&
+				  (RootContext.RootNamespace + "." + RootContext.MainClass) == parent.TypeBuilder.FullName))) {
                                 if (IsEntryPoint (MethodBuilder, ParameterInfo)) {
                                         if (RootContext.EntryPoint == null) {
                                                 RootContext.EntryPoint = MethodBuilder;
@@ -3638,7 +3641,7 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		public void Emit (TypeContainer tc)
+		public virtual void Emit (TypeContainer tc)
 		{
 			//
 			// The PropertyBuilder can be null for explicit implementations, in that
@@ -3839,7 +3842,7 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		public void Emit (TypeContainer tc)
+		public override void Emit (TypeContainer tc)
 		{
 			base.Emit (tc);
 			
