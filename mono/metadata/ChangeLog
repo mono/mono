@@ -1,3 +1,9 @@
+
+Sat Jun 12 14:15:02 CEST 2004 Paolo Molaro <lupus@ximian.com>
+
+	* reflection.c, reflection.h: do not free custom attrs that are cached.
+	* icall.c: use braces to make code clearer.
+
 2004-06-11  Martin Baulig  <martin@ximian.com>
 
 	* class.h (MonoInflatedField): New type.
