@@ -1,3 +1,8 @@
+
+Thu Feb 21 19:30:29 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* icall.c: change type_is_subtype_of () signature.
+
 2002-02-21  Mark Crichton  <crichton@gimp.org>
 
         * rand.c, rand.h: Added random number generator for
