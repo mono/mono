@@ -29,9 +29,19 @@
 //	Jaak Simm		jaaksimm@firm.ee
 //	John Sohn		jsohn@columbus.rr.com
 //
-// $Revision: 1.20 $
+// $Revision: 1.21 $
 // $Modtime: $
 // $Log: Control.cs,v $
+// Revision 1.21  2004/08/11 18:59:45  pbartok
+// - Major cleanup of my SetBounds/SetBoundsCore/UpdateBounds mess
+//   (It seems that SetBounds is just a front for SetBoundsCore and
+//    SetBoundsCore updates the underlying window system and UpdateBounds is
+//    responsible for updating the variables associated with the Control and
+//    sending the events)
+// - Major cleanup of Size handling; we now have two sizes, client_size and
+//   bounds. Bounds defines the window with decorations, client_size without
+//   them.
+//
 // Revision 1.20  2004/08/11 15:13:32  pbartok
 // - Now properly reparents windows
 //
@@ -115,7 +125,7 @@ namespace System.Windows.Forms
         {
 		#region Local Variables
 		// Basic
-		internal Rectangle		bounds;			// bounding rectangle for control
+		internal Rectangle		bounds;			// bounding rectangle for control (client area + decorations)
 		internal object			creator_thread;		// thread that created the control
 		internal ControlNativeWindow	window;			// object for native window handle
 		internal string			name;			// for object naming
@@ -126,9 +136,8 @@ namespace System.Windows.Forms
 		internal bool			is_enabled;		// true if control is enabled (usable/not grayed out)
 		internal int			tab_index;		// position in tab order of siblings
 		internal bool			is_disposed;		// has the window already been disposed?
-		internal Size			window_size;		// size of the window (including decorations)
 		internal Size			client_size;		// size of the client area (window excluding decorations)
-		internal ControlStyles		control_style;		// win32-specific, style bits for control
+		internal ControlStyles		control_style;		// rather win32-specific, style bits for control
 
 		// Visuals
 		internal Color			foreground_color;	// foreground color for control
@@ -418,7 +427,6 @@ namespace System.Windows.Forms
 			controls = new Hashtable();
 			child_controls = CreateControlsInstance();
 			bounds = new Rectangle(0, 0, DefaultSize.Width, DefaultSize.Height);
-			window_size = new Size(DefaultSize.Width, DefaultSize.Height);
 			client_size = new Size(DefaultSize.Width, DefaultSize.Height);
 			prev_size = client_size;
 
@@ -620,7 +628,7 @@ namespace System.Windows.Forms
 			}
 
 			set {
-				SetBounds(value.Left, value.Top, value.Width, value.Height, BoundsSpecified.All);
+				SetBoundsCore(value.Left, value.Top, value.Width, value.Height, BoundsSpecified.All);
 			}
 		}
 
@@ -905,7 +913,7 @@ namespace System.Windows.Forms
 			}
 
 			set {
-				SetBounds(value, bounds.Y, bounds.Width, bounds.Height, BoundsSpecified.X);
+				SetBoundsCore(value, bounds.Y, bounds.Width, bounds.Height, BoundsSpecified.X);
 			}
 		}
 
@@ -915,7 +923,7 @@ namespace System.Windows.Forms
 			}
 
 			set {
-				SetBounds(bounds.X, value, bounds.Width, bounds.Height, BoundsSpecified.Y);
+				SetBoundsCore(bounds.X, value, bounds.Width, bounds.Height, BoundsSpecified.Y);
 			}
 		}
 
@@ -925,7 +933,7 @@ namespace System.Windows.Forms
 			}
 
 			set {
-				SetBounds(bounds.X, bounds.Y, value, bounds.Height, BoundsSpecified.Width);
+				SetBoundsCore(bounds.X, bounds.Y, value, bounds.Height, BoundsSpecified.Width);
 			}
 		}
 
@@ -935,7 +943,7 @@ namespace System.Windows.Forms
 			}
 
 			set {
-				SetBounds(bounds.X, bounds.Y, bounds.Width, value, BoundsSpecified.Height);
+				SetBoundsCore(bounds.X, bounds.Y, bounds.Width, value, BoundsSpecified.Height);
 			}
 		}
 
@@ -945,7 +953,7 @@ namespace System.Windows.Forms
 			}
 
 			set {
-				SetBounds(value.X, value.Y, bounds.Width, bounds.Height, BoundsSpecified.Location);
+				SetBoundsCore(value.X, value.Y, bounds.Width, bounds.Height, BoundsSpecified.Location);
 			}
 		}
 
@@ -955,7 +963,7 @@ namespace System.Windows.Forms
 			}
 
 			set {
-				SetBounds(bounds.X, bounds.Y, value.Width, value.Height, BoundsSpecified.Size);
+				SetBoundsCore(bounds.X, bounds.Y, value.Width, value.Height, BoundsSpecified.Size);
 			}
 		}
 		
@@ -1065,30 +1073,11 @@ namespace System.Windows.Forms
 		}
 
 		public void SetBounds(int x, int y, int width, int height) {
-			SetBounds(x, y, width, height, BoundsSpecified.All);
+			SetBoundsCore(x, y, width, height, BoundsSpecified.All);
 		}
 
-		public void SetBounds(int x, int y, int width, int height, BoundsSpecified bounds_specified) {
-			if ((bounds_specified & BoundsSpecified.X) != BoundsSpecified.X) {
-				x = Left;
-			}
-
-			if ((bounds_specified & BoundsSpecified.Y) != BoundsSpecified.Y) {
-				y = Top;
-			}
-
-			if ((bounds_specified & BoundsSpecified.Width)!= BoundsSpecified.Width) {
-				width = Width;
-			}
-
-			if ((bounds_specified & BoundsSpecified.Height) != BoundsSpecified.Height) {
-				height = Height;
-			}
-
-			if (IsHandleCreated) {
-				XplatUI.MoveWindow(Handle, x, y, width, height);
-			}
-			UpdateBounds(x, y, width, height);
+		public void SetBounds(int x, int y, int width, int height, BoundsSpecified specified) {
+			SetBoundsCore(x, y, width, height, specified);
 		}
 
 		public void Show() {
@@ -1128,15 +1117,22 @@ namespace System.Windows.Forms
 			int	width;
 			int	height;
 
+			if (!IsHandleCreated) {
+				CreateHandle();
+			}
+
 			XplatUI.GetWindowPos(this.Handle, out x, out y, out width, out height);
 			UpdateBounds(x, y, width, height);
 		}
 
 		protected void UpdateBounds(int x, int y, int width, int height) {
+			// UpdateBounds only seems to set our sizes and fire events but not update the GUI window to match
 			bool	moved	= false;
 			bool	resized	= false;
+			int	client_x_diff = this.bounds.Width-this.client_size.Width;
+			int	client_y_diff = this.bounds.Height-this.client_size.Height;
 
-			// Generate required notifications
+			// Needed to generate required notifications
 			if ((this.bounds.X!=x) || (this.bounds.Y!=y)) {
 				moved=true;
 			}
@@ -1150,11 +1146,9 @@ namespace System.Windows.Forms
 			bounds.Width=width;
 			bounds.Height=height;
 
-#if notdef
-			if (IsHandleCreated) {
-				XplatUI.SetWindowPos(Handle, bounds);
-			}
-#endif
+			// Update client rectangle as well
+			client_size.Width=width-client_x_diff;
+			client_size.Height=height-client_y_diff;
 
 			if (moved) {
 				OnLocationChanged(EventArgs.Empty);
@@ -1166,6 +1160,9 @@ namespace System.Windows.Forms
 		}
 
 		protected void UpdateBounds(int x, int y, int width, int height, int clientWidth, int clientHeight) {
+			this.client_size.Width=clientWidth;
+			this.client_size.Height=clientHeight;
+
 			UpdateBounds(x, y, width, height);
 		}
 
@@ -1228,6 +1225,7 @@ namespace System.Windows.Forms
 		public void PerformLayout(Control affectedControl, string affectedProperty) {
 			LayoutEventArgs levent = new LayoutEventArgs(affectedControl, affectedProperty);
 
+Console.WriteLine("Performing layout on control {0}", this);
 			if (layout_suspended>0) {
 				return;
 			}
@@ -1254,6 +1252,7 @@ namespace System.Windows.Forms
 
 						case DockStyle.Left: {
 							child.SetBounds(space.Left, space.Y, child.Width, space.Height);
+Console.WriteLine("DockStyle.Left: Moving control {0} to {1}:{2} {3}x{4}", this, space.Left, space.Y, child.Width, space.Height);
 							space.X+=child.Width;
 							space.Width-=child.Width;
 							break;
@@ -1261,6 +1260,7 @@ namespace System.Windows.Forms
 
 						case DockStyle.Top: {
 							child.SetBounds(space.Left, space.Y, space.Width, child.Height);
+Console.WriteLine("DockStyle.Top: Moving control {0} to {1}:{2} {3}x{4}", this, space.Left, space.Y, child.Width, space.Height);
 							space.Y+=child.Height;
 							space.Height-=child.Height;
 							break;
@@ -1268,17 +1268,20 @@ namespace System.Windows.Forms
 				
 						case DockStyle.Right: {
 							child.SetBounds(space.Right-child.Width, space.Y, child.Width, space.Height);
+Console.WriteLine("DockStyle.Right: Moving control {0} to {1}:{2} {3}x{4}", this, space.Left, space.Y, child.Width, space.Height);
 							space.Width-=child.Width;
 							break;
 						}
 
 						case DockStyle.Bottom: {
 							child.SetBounds(space.Left, space.Bottom-child.Height, space.Width, child.Height);
+Console.WriteLine("DockStyle.Bottom: Moving control {0} to {1}:{2} {3}x{4}", this, space.Left, space.Y, child.Width, space.Height);
 							space.Height-=child.Height;
 							break;
 						}
 
 						case DockStyle.Fill: {
+Console.WriteLine("DockStyle.Fill: Moving control {0} to {1}:{2} {3}x{4} (prev width/height: {5}x{6}", child, space.Left, space.Y, space.Width, space.Height, child.Width, child.Height);
 							child.SetBounds(space.Left, space.Top, space.Width, space.Height);
 							space.Width=0;
 							space.Height=0;
@@ -1484,8 +1487,13 @@ namespace System.Windows.Forms
 				}
 				
 				case Msg.WM_SIZE: {					
+					if (GetStyle(ControlStyles.ResizeRedraw)) {
+						Invalidate();
+					}
+
+					// Call UpdateBounds, the GUI already has the sizes
 					UpdateBounds (bounds.X, bounds.Y, LowOrder ((int) m.LParam.ToInt32 ()),
-						HighOrder ((int) m.LParam.ToInt32 ()));					
+						HighOrder ((int) m.LParam.ToInt32 ()));
 					
 					DefWndProc(ref m);	
 					break;				
@@ -1638,10 +1646,46 @@ namespace System.Windows.Forms
 			throw new NotImplementedException();
 		}
 
+		protected virtual void SetBoundsCore(int x, int y, int width, int height, BoundsSpecified specified) {
+			// SetBoundsCore updates the Win32 control itself. UpdateBounds updates the controls variables and fires events, I'm guessing - pdb
+			if ((specified & BoundsSpecified.X) != BoundsSpecified.X) {
+				x = Left;
+			}
+
+			if ((specified & BoundsSpecified.Y) != BoundsSpecified.Y) {
+				y = Top;
+			}
+
+			if ((specified & BoundsSpecified.Width)!= BoundsSpecified.Width) {
+				width = Width;
+			}
+
+			if ((specified & BoundsSpecified.Height) != BoundsSpecified.Height) {
+				height = Height;
+			}
+
+			if (IsHandleCreated) {
+				XplatUI.MoveWindow(Handle, x, y, width, height);
+			}
+
+			UpdateBounds(x, y, width, height);
+		}
+
 		protected virtual void SetClientSizeCore(int x, int y) {
-			bounds.Width=x;
-			bounds.Height=y;
-			XplatUI.MoveWindow(Handle, bounds.X, bounds.Y, bounds.Width, bounds.Height);
+			// Calculate the actual window size from the client size (it usually stays the same or grows)
+			Rectangle	ClientRect;
+			Rectangle	WindowRect;
+			CreateParams	cp;
+
+			ClientRect = new Rectangle(0, 0, x, y);
+			cp = this.CreateParams;
+
+			if (XplatUI.CalculateWindowRect(Handle, ref ClientRect, cp.Style, false, out WindowRect)==false) {
+				return;
+			}
+
+			this.client_size = new Size(x, y);
+			SetBoundsCore(bounds.X, bounds.Y, WindowRect.Width, WindowRect.Height, BoundsSpecified.Size);
 		}
 
 		protected void SetStyle(ControlStyles flag, bool value) {
@@ -1919,7 +1963,10 @@ namespace System.Windows.Forms
 
 		protected virtual void OnResize(EventArgs e) {
 			if (Resize!=null) Resize(this, e);
-			PerformLayout();
+
+			PerformLayout(this, "bounds");
+
+			// Do we need to let our parent regenerate it's layout thing since we resized?
 		}
 
 		protected virtual void OnRightToLeftChanged(EventArgs e) {
