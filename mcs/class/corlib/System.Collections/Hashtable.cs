@@ -34,7 +34,7 @@ namespace System.Collections {
 		[Serializable]
 		internal class KeyMarker: IObjectReference
 		{
-			public static KeyMarker Removed = new KeyMarker();
+			public readonly static KeyMarker Removed = new KeyMarker();
 			public object GetRealObject (StreamingContext context)
 			{ return KeyMarker.Removed; }
 		}
@@ -43,7 +43,7 @@ namespace System.Collections {
 		// Private data
 		//
 
-		private readonly static int CHAIN_MARKER  = ~Int32.MaxValue;
+		const int CHAIN_MARKER  = ~Int32.MaxValue;
 
 
 		private int inUse;
@@ -58,7 +58,7 @@ namespace System.Collections {
 		private IHashCodeProvider hcpRef;
 		private IComparer comparerRef;
 
-		private static int [] primeTbl = {
+		private static readonly int [] primeTbl = {
 			11,
 			19,
 			37,

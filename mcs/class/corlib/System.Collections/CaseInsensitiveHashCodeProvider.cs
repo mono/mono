@@ -16,8 +16,8 @@ namespace System.Collections {
 	[Serializable]
 	public class CaseInsensitiveHashCodeProvider : IHashCodeProvider {
 
-		private static CaseInsensitiveHashCodeProvider singleton = new CaseInsensitiveHashCodeProvider ();
-		private static CaseInsensitiveHashCodeProvider singletonInvariant = new CaseInsensitiveHashCodeProvider (true);
+		static readonly CaseInsensitiveHashCodeProvider singleton = new CaseInsensitiveHashCodeProvider ();
+		static readonly CaseInsensitiveHashCodeProvider singletonInvariant = new CaseInsensitiveHashCodeProvider (true);
 		
 		CultureInfo culture;
 
