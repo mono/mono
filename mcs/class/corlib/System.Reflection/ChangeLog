@@ -1,3 +1,7 @@
+2004-12-06  Zoltan Varga  <vargaz@freemail.hu>
+
+	* Assembly.cs: Add corlib_internal field.
+
 2004-11-30  Martin Baulig  <martin@ximian.com>
 
 	* MonoGenericInst.cs: Renamed to MonoGenericClass.cs and also
