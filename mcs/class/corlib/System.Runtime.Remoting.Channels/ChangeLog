@@ -1,3 +1,8 @@
+2004-07-02  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* ChannelServices.cs: In UnregisterChannel, look for registered channels
+	  using reference compares.
+
 2004-06-15  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* TransportHeaders.cs: added TODO for serialization

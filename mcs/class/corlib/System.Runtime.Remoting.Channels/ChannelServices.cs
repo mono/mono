@@ -428,14 +428,19 @@ namespace System.Runtime.Remoting.Channels
 				
 			lock (registeredChannels.SyncRoot)
 			{
-				if (!registeredChannels.Contains ((object) chnl))
-					throw new RemotingException ();
+				for (int n=0; n<registeredChannels.Count; n++) 
+				{
+					if (registeredChannels [n] == (object)chnl) {
+						registeredChannels.RemoveAt (n);
+						IChannelReceiver chnlReceiver = chnl as IChannelReceiver;
+						if(chnlReceiver != null)
+							chnlReceiver.StopListening(null);
+						return;
+					}
+				}
+				
+				throw new RemotingException ("Channel not registered");
 	
-				registeredChannels.Remove ((object) chnl);
-	
-				IChannelReceiver chnlReceiver = chnl as IChannelReceiver;
-				if(chnlReceiver != null)
-					chnlReceiver.StopListening(null);
 			}
 		}
 
