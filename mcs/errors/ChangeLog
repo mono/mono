@@ -1,3 +1,10 @@
+2004-11-03  Carlos Alberto Cortez <carlos@unixmexico.org>
+	* cs0273.cs: New
+	* cs0274.cs: New
+	* cs0276.cs: New
+	* cs0507-2.cs: New
+	* cs1644-2.cs: New
+
 2004-10-24 Marek Safar <marek.safar@seznam.cz>
 
 	* cs82??.cs: Renumber some 82xx errors.
