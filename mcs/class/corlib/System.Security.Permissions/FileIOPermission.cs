@@ -17,10 +17,11 @@ using System.IO;
 namespace System.Security.Permissions {
 
 	[SerializableAttribute()]
-	public sealed class FileIOPermission : CodeAccessPermission, IUnrestrictedPermission {
+	public sealed class FileIOPermission
+                : CodeAccessPermission, IBuiltInPermission, IUnrestrictedPermission {
 
 		private static char[] m_badCharacters = {'\"','<', '>', '|', '*', '?'};
-		private bool m_Unrestricted = false;
+		private bool m_Unrestricted = false;c
 		private Hashtable m_PathList = new Hashtable();
 		private FileIOPermissionAccess m_AllFilesAccess = FileIOPermissionAccess.NoAccess;
 		private FileIOPermissionAccess m_AllLocalFilesAccess = FileIOPermissionAccess.NoAccess;
