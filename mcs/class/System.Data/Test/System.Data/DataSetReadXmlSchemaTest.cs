@@ -556,6 +556,11 @@ namespace MonoTests.System.Data
 			AssertDataColumn ("id", dt.Columns [0], "global", true, false, 0, 1, "global", MappingType.Attribute, typeof (string), "er", String.Empty, -1, "urn:foo", 0, String.Empty, false, false);
 			AssertDataColumn ("id", dt.Columns [1], "uno_Id", false, true, 0, 1, "uno_Id", MappingType.Hidden, typeof (int), DBNull.Value, String.Empty, -1, "urn:foo", 1, String.Empty, false, true);
 
+			// Here "XmlSchemaComplexType.AttributeUses" does not 
+			// always return attribute uses in a certain order, thus
+			// here Columns indexer is accessed by name (actually
+			// MS.NET returns "global" in prior to "local" for
+			// Columns[0], even though "local" is defined in prior.
 			dt = ds.Tables [1];
 			AssertDataTable ("dos", dt, "des", 4, 0, 1, 0);
 			AssertDataColumn ("dos.child", dt.Columns ["local"], "local", true, false, 0, 1, "local", MappingType.Attribute, typeof (string), "san", String.Empty, -1, String.Empty, 1, String.Empty, false, false);
@@ -599,6 +604,21 @@ namespace MonoTests.System.Data
 			dt = ds.Tables [1];
 			AssertDataTable ("root", dt, "root", 1, 0, 0, 1);
 			AssertDataColumn ("elem", dt.Columns [0], "root_Id", false, true, 0, 1, "root_Id", MappingType.Hidden, typeof (int), DBNull.Value, String.Empty, -1, "http://xsdtesting", 0, String.Empty, false, true);
+
+			AssertDataRelation ("rel", ds.Relations [0], "root_e", true, new string [] {"root_Id"}, new string [] {"root_Id"}, true, true);
+		}
+
+		[Test]
+		public void TestSampleFileComplexTables3 ()
+		{
+			DataSet ds = new DataSet ();
+			ds.ReadXmlSchema ("Test/System.Data/schemas/test013.xsd");
+			AssertDataSet ("013", ds, "root", 1, 0);
+
+			DataTable dt = ds.Tables [0];
+			AssertDataTable ("root", dt, "e", 2, 0, 0, 0);
+			AssertDataColumn ("attr", dt.Columns [0], "a", true, false, 0, 1, "a", MappingType.Attribute, typeof (string), DBNull.Value, String.Empty, -1, String.Empty, 0, String.Empty, false, false);
+			AssertDataColumn ("simple", dt.Columns [1], "e_text", false, false, 0, 1, "e_text", MappingType.SimpleContent, typeof (decimal), DBNull.Value, String.Empty, -1, String.Empty, 0, String.Empty, false, false);
 		}
 
 		[Test]
@@ -633,6 +653,24 @@ namespace MonoTests.System.Data
 			AssertDataColumn ("fk", dt.Columns ["fk"], "fk", false, false, 0, 1, "fk", MappingType.Element, typeof (string), DBNull.Value, String.Empty, -1, String.Empty, 0, String.Empty, false, false);
 
 			AssertDataRelation ("rel", ds.Relations [0], "rel", true, new string [] {"pk"}, new string [] {"fk"}, false, false);
+		}
+
+		[Test]
+		public void RepeatableSimpleElement ()
+		{
+			DataSet ds = new DataSet ();
+			ds.ReadXmlSchema ("Test/System.Data/schemas/test012.xsd");
+			AssertDataSet ("012", ds, "NewDataSet", 2, 1);
+			DataTable dt = ds.Tables [0];
+			AssertDataTable ("parent", dt, "Foo", 1, 0, 0, 1);
+			AssertDataColumn ("key", dt.Columns [0], "Foo_Id", false, true, 0, 1, "Foo_Id", MappingType.Hidden, typeof (int), DBNull.Value, String.Empty, -1, String.Empty, 0, String.Empty, false, true);
+
+			dt = ds.Tables [1];
+			AssertDataTable ("repeated", dt, "Bar", 2, 0, 1, 0);
+			AssertDataColumn ("data", dt.Columns [0], "Bar_Column", false, false, 0, 1, "Bar_Column", MappingType.SimpleContent, typeof (string), DBNull.Value, String.Empty, -1, String.Empty, 0, String.Empty, false, false);
+			AssertDataColumn ("refkey", dt.Columns [1], "Foo_Id", true, false, 0, 1, "Foo_Id", MappingType.Hidden, typeof (int), DBNull.Value, String.Empty, -1, String.Empty, 0, String.Empty, false, false);
+
+			AssertDataRelation ("rel", ds.Relations [0], "Foo_Bar", true, new string [] {"Foo_Id"}, new string [] {"Foo_Id"}, true, true);
 		}
 	}
 }
