@@ -510,7 +510,6 @@ namespace System.Windows.Forms {
 				int match = 0;
 				int seq = 0;
 				int pkey = -1;
-				bool mismatch = false;
 				int key = min_keycode;
 
 				for (int keyc = min_keycode; keyc <= max_keycode; keyc++) {
@@ -546,7 +545,6 @@ namespace System.Windows.Forms {
 								seq++;
 							pkey = key;
 						} else {
-							mismatch = true;
 							score -= syms;
 						}
 					}
