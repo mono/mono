@@ -1,18 +1,14 @@
 2004-08-02  Duncan Mak  <duncan@ximian.com>
 
-	* AuthorizationRuleAction.cs:
-	* BuildProviderAppliesTo.cs:
-	* CustomErrorsMode.cs:
-	* MachineKeyValidation.cs:
-	* PagesEnableSessionState.cs:
-	* PagesToCountAction.cs:
-	* ProcessModelComAuthenticationLevel.cs:	
-	* ProcessModelComImpersonationLevel.cs:
-	* ProcessModelLogLevel.cs;
-	* SerializationMode.cs:
-	* TraceDisplayMode.cs: Added enumerations.
-
-	* IRemoteWebConfigarationHostServer.cs: Added interface.
+	* IAppManagerAppDomainFactory.cs:
+	* IApplicationHost.cs:
+	* IHttpWorkerRequestHandler.cs:
+	* IProcessHost.cs:
+	* IProcessHostFactoryHelper.cs:
+	* IProcessHostSupportFunction.cs:
+	* IProcessPingCallback.cs:
+	* IQueueHost.cs:
+	* IRegisteredObject.cs: Added interfaces.
 	
 2004-06-18  Gert Driesen <drieseng@users.sourceforge.net>
 
