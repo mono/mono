@@ -476,7 +476,13 @@ namespace System {
 				break;
 			    case 'D':
 			    case 'd':
-				retVal = value.ToString();
+				if (Enum.GetUnderlyingType (enumType) == typeof (ulong)) {
+					ulong ulongValue = Convert.ToUInt64 (value);
+					retVal = ulongValue.ToString ();
+				} else {
+					long longValue = Convert.ToInt64 (value);
+					retVal = longValue.ToString ();
+				}
 				break;
 			    case 'F':
 			    case 'f':

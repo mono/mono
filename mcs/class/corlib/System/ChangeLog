@@ -1,3 +1,8 @@
+2002-09-13  Nick Drochak  <ndrochak@gol.com>
+
+	* Enum.cs (Format): handle the "d" format for both signed and unsigned
+	underlying types.
+
 2002-09-12  Dick Porter  <dick@ximian.com>
 
 	* UIntPtr.cs: Remove the [StructLayout(LayoutKind.Auto)]
