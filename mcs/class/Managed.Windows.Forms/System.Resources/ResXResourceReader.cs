@@ -55,16 +55,7 @@ namespace System.Resources
 		
 		public ResXResourceReader (string fileName)
 		{
-			if (fileName == null)
-				throw new ArgumentException ("Path cannot be null.");
-			
-			if (String.Empty == fileName)
-				throw new ArgumentException("Empty path name is not legal.");
-
-			if (!System.IO.File.Exists (fileName)) 
-				throw new FileNotFoundException ("Could not find file " + Path.GetFullPath(fileName));
-
-			stream = new FileStream (fileName, FileMode.Open);
+			stream = File.OpenRead (fileName);
 			basic_setup ();
 		}
 
