@@ -78,7 +78,6 @@ System.Xml/IXPathNavigator.cs
 System.Xml/NameTable.cs
 System.Xml/ReadState.cs
 System.Xml/TODOAttribute.cs
-System.Xml/UpdateEventHandler.cs
 System.Xml/ValidationType.cs
 System.Xml/XmlEntity.cs
 System.Xml/WhitespaceHandling.cs
@@ -132,7 +131,6 @@ System.Xml/XmlSpace.cs
 System.Xml/XmlText.cs
 System.Xml/XmlTextReader.cs
 System.Xml/XmlTokenizedType.cs
-System.Xml/XmlUpdateEventArgs.cs
 System.Xml/XmlUrlResolver.cs
 System.Xml/XmlValidatingReader.cs
 System.Xml/XmlWhitespace.cs

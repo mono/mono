@@ -1,3 +1,8 @@
+2003-12-15  Atsushi Enomoto  <ginga@kit.hi-ho.ne.jp>
+
+	* System.Xml.dll.sources :
+	  removed UpdateEventHandler.cs and XmlUpdateEventArgs.cs to sqlxml.
+
 2003-12-14  Tim Coleman <tim@timcoleman.com>
 	* System.Xml.dll.sources :
 		Add files from new System.Xml.Query namespace.
