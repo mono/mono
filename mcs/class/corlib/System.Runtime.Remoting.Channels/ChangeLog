@@ -1,5 +1,10 @@
 2003-02-05  Lluis Sanchez Gual  <lluis@ideary.com>
 
+	* ChannelServices.cs: Added new constructor in ChannelInfoStore, that is used by
+	  ObjRef to create a ChannelInfoStore with user provided channel info.
+
+2003-02-05  Lluis Sanchez Gual  <lluis@ideary.com>
+
 	* CrossAppDomainChannel.cs: Corrected CADSerializer.DeserializeMessage. 
 	  Now it uses the method DeserializeMethodResponse to deserialize the message
 	  when the msg is provided.	  

@@ -22,6 +22,11 @@ namespace System.Runtime.Remoting.Channels
 		{
 			this.data = ChannelServices.GetCurrentChannelInfo ();
 		}
+
+		public ChannelInfoStore (object remoteChannelData)
+		{
+			this.data = new object[] { remoteChannelData };
+		}
 		
 		public object[] ChannelData {
 
