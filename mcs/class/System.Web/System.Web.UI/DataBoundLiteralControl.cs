@@ -9,10 +9,12 @@
 //
 
 using System;
+using System.ComponentModel;
 using System.Text;
 
 namespace System.Web.UI {
 
+	[ToolboxItem(false)]
 	public sealed class DataBoundLiteralControl : Control
 	{
 		private string [] staticLiterals;

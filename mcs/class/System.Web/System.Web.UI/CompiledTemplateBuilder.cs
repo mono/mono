@@ -11,7 +11,7 @@
 
 namespace System.Web.UI {
 
-public class CompiledTemplateBuilder : ITemplate
+public sealed class CompiledTemplateBuilder : ITemplate
 {
 	private BuildTemplateMethod templateMethod;
 
@@ -20,7 +20,7 @@ public class CompiledTemplateBuilder : ITemplate
 		this.templateMethod = templateMethod;
 	}
 
-	public virtual void InstantiateIn (Control ctrl)
+	public void InstantiateIn (Control ctrl)
 	{
 		templateMethod (ctrl);
 	}

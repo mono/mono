@@ -13,7 +13,7 @@ using System.Reflection;
 
 namespace System.Web.UI
 {
-	class CollectionBuilder : ControlBuilder
+	sealed class CollectionBuilder : ControlBuilder
 	{
 		Type elementType;
 

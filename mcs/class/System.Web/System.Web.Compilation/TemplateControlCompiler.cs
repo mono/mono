@@ -429,7 +429,7 @@ namespace System.Web.Compilation
 		{
 			CodeMethodReferenceExpression m = new CodeMethodReferenceExpression (thisRef, child.method.Name);
 			CodeMethodInvokeExpression expr = new CodeMethodInvokeExpression (m);
-			if (child.isProperty || parent.FChildrenAsProperties) {
+			if (child.isProperty || parent.ChildrenAsProperties) {
 				expr.Parameters.Add (new CodeFieldReferenceExpression (ctrlVar, child.TagName));
 				parent.method.Statements.Add (expr);
 				return;
@@ -634,7 +634,7 @@ namespace System.Web.Compilation
 
 					if (b is ControlBuilder) {
 						ControlBuilder child = (ControlBuilder) b;
-						CreateControlTree (child, inTemplate, builder.FChildrenAsProperties);
+						CreateControlTree (child, inTemplate, builder.ChildrenAsProperties);
 						AddChildCall (builder, child);
 						continue;
 					}

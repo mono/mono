@@ -30,8 +30,8 @@ namespace System.Web.UI {
 		string tagName;
 		string id;
 		internal IDictionary attribs;
-		protected int line;
-		protected string fileName;
+		internal int line;
+		internal string fileName;
 		bool childrenAsProperties;
 		bool isIParserAccessor = true;
 		bool hasAspCode;
@@ -74,11 +74,11 @@ namespace System.Web.UI {
 			get { return type; }
 		}
 
-		public bool FChildrenAsProperties {
+		protected bool FChildrenAsProperties {
 			get { return childrenAsProperties; }
 		}
 
-		public bool FIsNonParserAccessor {
+		protected bool FIsNonParserAccessor {
 			get { return !isIParserAccessor; }
 		}
 
@@ -95,13 +95,12 @@ namespace System.Web.UI {
 			get { return children; }
 		}
 
-		protected void SetControlType (Type t)
+		internal void SetControlType (Type t)
 		{
 			type = t;
 		}
 		
-		[MonoTODO]
-		public bool InDesigner {
+		protected bool InDesigner {
 			get { return false; }
 		}
 
@@ -138,6 +137,10 @@ namespace System.Web.UI {
 			}
 		}
 
+		internal bool ChildrenAsProperties {
+			get { return childrenAsProperties; }
+		}
+		
 		public virtual bool AllowWhitespaceLiterals ()
 		{
 			return true;

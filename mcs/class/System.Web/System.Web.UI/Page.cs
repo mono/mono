@@ -5,7 +5,7 @@
 //	Duncan Mak  (duncan@ximian.com)
 //	Gonzalo Paniagua (gonzalo@ximian.com)
 //
-// (C) 2002 Ximian, Inc. (http://www.ximian.com)
+// (C) 2002,2003 Ximian, Inc. (http://www.ximian.com)
 //
 
 using System;
@@ -69,12 +69,12 @@ public class Page : TemplateControl, IHttpHandler
 		get { return _context.Application; }
 	}
 
-	bool AspCompatMode
+	protected bool AspCompatMode
 	{
 		set { throw new NotImplementedException (); }
 	}
 
-	bool Buffer
+	protected bool Buffer
 	{
 		set { Response.BufferOutput = value; }
 	}
@@ -92,13 +92,13 @@ public class Page : TemplateControl, IHttpHandler
 	}
 
 	[MonoTODO]
-	int CodePage
+	protected int CodePage
 	{
 		set { throw new NotImplementedException (); }
 	}
 
 	[MonoTODO]
-	string ContentType
+	protected string ContentType
 	{
 		set { throw new NotImplementedException (); }
 	}
@@ -108,7 +108,7 @@ public class Page : TemplateControl, IHttpHandler
 		get { return _context; }
 	}
 
-	string Culture
+	protected string Culture
 	{
 		set { _culture = value; }
 	}
@@ -162,7 +162,7 @@ public class Page : TemplateControl, IHttpHandler
 	}
 
 	[MonoTODO]
-	int LCID {
+	protected int LCID {
 		set { throw new NotImplementedException (); }
 	}
 
@@ -176,7 +176,7 @@ public class Page : TemplateControl, IHttpHandler
 		get { return _context.Response; }
 	}
 
-	string ResponseEncoding
+	protected string ResponseEncoding
 	{
 		set { Response.ContentEncoding = Encoding.GetEncoding (value); }
 	}
@@ -204,22 +204,22 @@ public class Page : TemplateControl, IHttpHandler
 		get { return _trace; }
 	}
 
-	bool TraceEnabled
+	protected bool TraceEnabled
 	{
 		set { _traceEnabled = value; }
 	}
 
-	TraceMode TraceModeValue
+	protected TraceMode TraceModeValue
 	{
 		set { _traceModeValue = value; }
 	}
 
-	int TransactionMode
+	protected int TransactionMode
 	{
 		set { _transactionMode = value; }
 	}
 
-	string UICulture
+	protected string UICulture
 	{
 		set { _UICulture = value; }
 	}

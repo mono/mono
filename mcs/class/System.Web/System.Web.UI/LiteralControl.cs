@@ -8,10 +8,12 @@
 //
 
 using System;
+using System.ComponentModel;
 using System.Web;
 
 namespace System.Web.UI
 {
+	[ToolboxItem(false)]
         public class LiteralControl : Control
         {
                 private string _text = String.Empty;
