@@ -1,3 +1,16 @@
+2004-07-06  Martin Baulig  <martin@ximian.com>
+
+	* mono-debug.h: Increment version number to 44.
+
+	* mono-debug.c (mono_debug_add_wrapper): The second argument is
+	now a gpointer, rewrote this whole method.
+
+	* mono-debug-debugger.c (mono_debugger_add_wrapper): New
+	function.  Add information about the wrapper in a new "misc table".
+
+	* mono-debug-debugger.h (MonoDebuggerSymbolTable): Added fields
+	for the new misc table.
+
 2004-07-05  Zoltan Varga  <vargaz@freemail.hu>
 
 	* metadata-internals.h image.c: Add a cache for helper signatures.
