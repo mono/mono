@@ -19,6 +19,8 @@ namespace System.Web.UI
 	public sealed class PageParser : TemplateControlParser
 	{
 		bool enableSessionState = true;
+		bool trace;
+		TraceMode tracemode;
 		bool readonlySessionState;
 		string responseEncoding;
 		string contentType;
@@ -168,6 +170,22 @@ namespace System.Web.UI
 				}
 			}
 
+			trace = GetBool (atts, "Trace", false);
+
+			string tracemodes = GetString (atts, "TraceMode", null);
+			if (tracemodes != null) {
+				bool valid = true;
+				try {
+					tracemode = (TraceMode) Enum.Parse (typeof (TraceMode), tracemodes, false);
+				} catch {
+					valid = false;
+				}
+
+				if (!valid || tracemode == TraceMode.Default)
+					ThrowParseException ("The 'tracemode' attribute is case sensitive and must be " +
+							"one of the following values: SortByTime, SortByCategory.");
+			}
+			
 			// Ignored by now
 			GetString (atts, "Buffer", null);
 			GetString (atts, "ClientTarget", null);
@@ -203,6 +221,14 @@ namespace System.Web.UI
 		
 		internal bool ReadOnlySessionState {
 			get { return readonlySessionState; }
+		}
+
+		internal bool Trace {
+			get { return trace; } 
+		}
+
+		internal TraceMode TraceMode {
+			get { return tracemode; }
 		}
 		
 		internal override Type DefaultBaseType {

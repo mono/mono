@@ -1,5 +1,9 @@
 2003-12-15  Jackson Harper <jackson@ximian.com>
 
+	* PageParser.cs: Add Trace and Trace mode attributes.
+	
+2003-12-15  Jackson Harper <jackson@ximian.com>
+
 	* Page.cs: Use the context trace object.
 	
 2003-12-14  Alon Gazit <along@mainsoft.com>
