@@ -93,8 +93,10 @@ namespace System.Data {
 
 		private void LoadCurrent (XmlReader reader) 
 		{
-			if (reader.IsEmptyElement) return;
-			
+			if (reader.IsEmptyElement) {
+				reader.Skip ();
+				return;
+			}
 			reader.ReadStartElement ();		// Dataset root
 			reader.MoveToContent ();
 
@@ -122,8 +124,10 @@ namespace System.Data {
 
 		private void LoadBefore (XmlReader reader) 
 		{
-			if (reader.IsEmptyElement) return;
-			
+			if (reader.IsEmptyElement) {
+				reader.Skip ();
+				return;
+			}
 			reader.ReadStartElement ();
 			reader.MoveToContent ();
 
@@ -147,8 +151,10 @@ namespace System.Data {
 					   
 		private void LoadErrors (XmlReader reader) 
 		{
-			if (reader.IsEmptyElement) return;
-			
+			if (reader.IsEmptyElement) {
+				reader.Skip ();
+				return;
+			}
 			reader.ReadStartElement ();
 			reader.MoveToContent ();
 
@@ -184,8 +190,10 @@ namespace System.Data {
 
 		private void LoadColumns (DataTable Table, DataRow Row, XmlReader reader, DataRowVersion loadType) 
 		{
-			if (reader.IsEmptyElement) return;
-			
+			if (reader.IsEmptyElement) {
+				reader.Skip ();
+				return;
+			}
 			reader.ReadStartElement ();
 			reader.MoveToContent ();
 			
