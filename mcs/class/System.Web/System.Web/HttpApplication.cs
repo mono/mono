@@ -624,13 +624,17 @@ namespace System.Web
 									_countSyncSteps++;
 							}
 						} while (ready_sync && _currentStateIdx < _endStateIdx);
+
+						if (null != lasterror)
+							_app.HandleError (lasterror);
+
 					} finally {
 						_app.OnStateExecuteLeave ();
 					}
 				}
 
 				// Finish the request off..
-				if (_currentStateIdx == _endStateIdx) {
+				if (lasterror != null || _currentStateIdx == _endStateIdx) {
 					_app._asyncWebResult.Complete ((_countSyncSteps == _countSteps),
 								       null,
 								       null);

@@ -1,3 +1,8 @@
+2003-02-06  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpApplication.cs: display the error instead of hanging when we get
+	any error before the last step of the request.
+
 2003-02-04  Tim Haynes <thaynes@openlinksw.com>
 
 	* HttpApplicationFactory.cs: fixed HttpRuntime.Close() to decrement
