@@ -1,0 +1,10 @@
+2003-03-06  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* ASN1.cs: Updated ASN1 class (from corlib). This file will,
+	eventually, be automagically synched with corlib.
+	* ASN1Convert.cs: New. Helper class to convert from and to
+	ASN1 structures.
+	* PKCS7.cs: New. Basic implementation of CMS (Cryptographic 
+	Message Syntax Standard).
+ 
+
