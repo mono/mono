@@ -23,7 +23,7 @@ namespace System.Web.UI {
 		}
 
 		[MonoTODO]
-		public static object Eval (object container, string expression, string format)
+		public static string Eval (object container, string expression, string format)
 		{
 			throw new NotImplementedException ();
 		}
@@ -35,19 +35,19 @@ namespace System.Web.UI {
 		}
 
 		[MonoTODO]
-		public static object GetIndexedPropertyValue (object container, string expr, string format)
+		public static string GetIndexedPropertyValue (object container, string expr, string format)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public static string GetPropertyValue (object container, string propName)
+		public static object GetPropertyValue (object container, string propName)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public static string GetPropertyValue (object container, string propName, string format)
+		public static string  GetPropertyValue (object container, string propName, string format)
 		{
 			throw new NotImplementedException ();
 		}		

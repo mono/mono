@@ -1,3 +1,9 @@
+2002-05-24  Duncan Mak  <duncan@ximian.com>
+
+	* DataBinder.cs (Eval)
+	(GetIndexedPropertyValue)
+	(GetPropertyValue): Fixed return types.
+
 2002-05-21  Miguel de Icaza  <miguel@ximian.com>
 
 	* HtmlTextWriter.cs: Use this to change the member instances.
