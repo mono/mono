@@ -27,7 +27,7 @@ Test cases listed by Category:
 
 * Switch blocks
 
-  test-152.cs
+  test-152.cs verify-4.cs
 
 * Member Access & Simple Names
 
@@ -156,3 +156,8 @@ boundaries.
 verify-3.cs
 -----------
 Checks default add/remove method of static events.
+
+verify-4.cs
+-----------
+When there's an unreachable break in a switch section, it must not emit a jump out of
+the method.

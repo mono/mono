@@ -1,3 +1,7 @@
+2002-09-14  Martin Baulig  <martin@gnome.org>
+
+	* verify-4.cs: Added testcase from bug #29857.
+
 2002-09-12  Martin Baulig  <martin@gnome.org>
 
 	* test-40.cs: Removed the syntax errors from this test.
