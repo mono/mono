@@ -1,5 +1,10 @@
 2003-09-27 Ben Maurer  <bmaurer@users.sourceforge.net>
 
+	* Iterator.cs, Expression.cs, XPathNavigator.cs: In AxisIterator
+	use NameTable so we dont call strcmp.
+
+2003-09-27 Ben Maurer  <bmaurer@users.sourceforge.net>
+
 	* DefaultContext.cs (translate): translate ("abc", "c", "") = "ab"
 	not "abc".
 	* Iterator.cs, Expression.cs: All axes are

@@ -378,7 +378,7 @@ namespace System.Xml.XPath
 
 			Axes axis = (matchSelf) ? Axes.AncestorOrSelf : Axes.Ancestor;
 			XmlQualifiedName qname = new XmlQualifiedName (name, namespaceURI);
-			return SelectTest (new NodeNamespaceTest (axis, qname));
+			return SelectTest (new NodeNameTest (axis, qname, true));
 		}
 
 		public virtual XPathNodeIterator SelectChildren (XPathNodeType type)
@@ -395,7 +395,7 @@ namespace System.Xml.XPath
 
 			Axes axis = Axes.Child;
 			XmlQualifiedName qname = new XmlQualifiedName (name, namespaceURI);
-			return SelectTest (new NodeNamespaceTest (axis, qname));
+			return SelectTest (new NodeNameTest (axis, qname, true));
 		}
 
 		public virtual XPathNodeIterator SelectDescendants (XPathNodeType type, bool matchSelf)
@@ -414,7 +414,7 @@ namespace System.Xml.XPath
 
 			Axes axis = (matchSelf) ? Axes.DescendantOrSelf : Axes.Descendant;
 			XmlQualifiedName qname = new XmlQualifiedName (name, namespaceURI);
-			return SelectTest (new NodeNamespaceTest (axis, qname));
+			return SelectTest (new NodeNameTest (axis, qname, true));
 		}
 
 		internal XPathNodeIterator SelectTest (NodeTest test)

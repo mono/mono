@@ -1002,6 +1002,8 @@ namespace System.Xml.XPath
 			SimpleIterator iterAxis = _axis.Evaluate (iter);
 			return new AxisIterator (iterAxis, this);
 		}
+		
+		public abstract void GetInfo (out string name, out string ns, out XPathNodeType nodetype, XmlNamespaceManager nsm);
 	}
 
 	internal class NodeTypeTest : NodeTest
@@ -1072,6 +1074,13 @@ namespace System.Xml.XPath
 					return type == nodeType;
 			}
 		}
+		
+		public override void GetInfo (out string name, out string ns, out XPathNodeType nodetype, XmlNamespaceManager nsm)
+		{
+			name = _param;
+			ns = null;
+			nodetype = type;
+		}
 	}
 
 	internal class NodeNameTest : NodeTest
@@ -1085,6 +1094,12 @@ namespace System.Xml.XPath
 				resolvedName = true;
 			}
 			_name = name;
+		}
+		
+		public NodeNameTest (Axes axis, XmlQualifiedName name, bool resolvedName) : base (axis)
+		{
+			_name = name;
+			resolvedName = resolvedName;
 		}
 		public override String ToString () { return _axis.ToString () + "::" + _name.ToString (); }
 		
@@ -1122,36 +1137,25 @@ namespace System.Xml.XPath
 			// test the prefixes
 			return strURI1 == nav.NamespaceURI;
 		}
-	}
-
-	internal class NodeNamespaceTest : NodeTest
-	{
-		protected XmlQualifiedName _name;
-		public NodeNamespaceTest (Axes axis, XmlQualifiedName name) : base (axis)
-		{
-			_name = name;
-		}
-		public override String ToString () { return _axis.ToString () + "::" + _name.ToString (); }
-
-		public override bool Match (XmlNamespaceManager nsm, XPathNavigator nav)
+		
+		public override void GetInfo (out string name, out string ns, out XPathNodeType nodetype, XmlNamespaceManager nsm)
 		{
 			// must be the correct node type
-			if (nav.NodeType != _axis.NodeType)
-				return false;
-
-			if (_name.Name != "" &&
-				_name.Name != nav.LocalName)
-			{
-				return false;
+			nodetype = _axis.NodeType;
+			
+			if (_name.Name != "")
+				name = _name.Name;
+			else
+				name = null;
+			ns = "";
+			if (nsm != null && _name.Namespace != "") {
+				if (resolvedName)
+					ns = _name.Namespace;
+				else
+					ns = nsm.LookupNamespace (_name.Namespace);	// TODO: check to see if this returns null or ""
+				if (ns == null)
+					throw new XPathException ("Invalid namespace prefix: "+_name.Namespace);
 			}
-
-			if (_name.Namespace != "" &&
-				_name.Namespace != nav.NamespaceURI)
-			{
-				return false;
-			}
-
-			return true;
 		}
 	}
 

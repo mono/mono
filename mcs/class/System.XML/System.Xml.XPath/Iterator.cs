@@ -442,11 +442,20 @@ namespace System.Xml.XPath
 		protected SimpleIterator _iter;
 		protected NodeTest _test;
 		protected int _pos;
+			
+		string name, ns;
+		XPathNodeType matchType;
 
 		public AxisIterator (SimpleIterator iter, NodeTest test) : base (iter)
 		{
 			_iter = iter;
 			_test = test;
+			test.GetInfo (out name, out ns, out matchType, NamespaceManager);
+			if (name != null)
+				name = Current.NameTable.Add (name);
+
+			if (ns != null)
+				ns = Current.NameTable.Add (ns);
 		}
 
 		protected AxisIterator (AxisIterator other) : base (other)
@@ -454,6 +463,9 @@ namespace System.Xml.XPath
 			_iter = (SimpleIterator) other._iter.Clone ();
 			_test = other._test;
 			_pos = other._pos;
+			name = other.name;
+			ns = other.ns;
+			matchType = other.matchType;
 		}
 		public override XPathNodeIterator Clone () { return new AxisIterator (this); }
 
@@ -471,6 +483,18 @@ namespace System.Xml.XPath
 		}
 		public override XPathNavigator Current { get { return _iter.Current; }}
 		public override int CurrentPosition { get { return _pos; }}
+		
+		bool Match ()
+		{
+			if (Current.NodeType != matchType && matchType != XPathNodeType.All)
+				return false;
+			
+			if (ns == null)
+				return name == null || (object)name == (object)Current.LocalName;
+			else
+				return (object)ns == (object)Current.NamespaceURI &&
+					(name == null || (object)name == (object)Current.LocalName);
+		}
 	}
 
 	internal class SlashIterator : BaseIterator
