@@ -78,5 +78,24 @@ namespace System.Drawing.Imaging
 				stride = value;
 			}
 		}
+		
+		internal unsafe void swap_red_blue_bytes () 
+		{
+			byte *start = (byte *) (void *) this.Scan0;
+			int stride = this.Stride;
+			for (int line = 0; line < this.Height; line++){
+				// Exchange red <=> blue bytes
+//				fixed (byte *pbuf = start) {
+					byte* curByte = start;
+					for (int i = 0; i < this.Width; i++) {
+						byte t = *(curByte+2);
+						*(curByte+2) = *curByte;
+						*curByte = t;
+						curByte += 3;
+					}
+//				}
+				start += stride;
+			}
+		}
 	}
 }
