@@ -213,7 +213,7 @@ namespace Mono.CSharp
 				"   --timestamp        Displays time stamps of various compiler events\n" +
 				"   -unsafe[+|-]       Allows unsafe code\n" +
 				"   -warnaserror[+|-]  Treat warnings as errors\n" +
-				"   -warn:LEVEL        Sets warning level (the highest is 4, the default)\n" +
+				"   -warn:LEVEL        Sets warning level (the highest is 4, the default is 2)\n" +
 				"   -v                 Verbose parsing (for debugging the parser)\n" +
 				"   -2                 Enables experimental C# features\n" +
 				"\n" +
