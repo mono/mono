@@ -1,4 +1,8 @@
 
+Tue May 27 12:18:44 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* interp.c: update for mono_class_vtable() changes.
+
 Tue May 13 16:43:18 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
 	* interp.c: handle thread static fields.
