@@ -85,15 +85,7 @@ namespace System.Windows.Forms {
 				invalid = r;
 				return;
 			}
-
-			if (r.X < invalid.X)
-				invalid.X = r.X;
-			if (r.Y < invalid.Y)
-				invalid.Y = r.Y;
-			if (r.Height > invalid.Height)
-				invalid.Height = r.Height;
-			if (r.Width > invalid.Width)
-				invalid.Width = r.Width;
+			invalid = Rectangle.Union (invalid, r);
 		}
 
 		public void ClearInvalidArea ()
