@@ -3503,13 +3503,14 @@ namespace Mono.CSharp {
 			return false;
 		}
 
+		LocalBuilder local_copy;
 		bool EmitExpression (EmitContext ec)
 		{
 			//
 			// Make a copy of the expression and operate on that.
 			//
 			ILGenerator ig = ec.ig;
-			LocalBuilder local_copy = ig.DeclareLocal (expr_type);
+			local_copy = ig.DeclareLocal (expr_type);
 			if (conv != null)
 				conv.Emit (ec);
 			else
@@ -3519,18 +3520,49 @@ namespace Mono.CSharp {
 			ig.BeginExceptionBlock ();
 			Statement.Emit (ec);
 			
-			Label skip = ig.DefineLabel ();
-			ig.BeginFinallyBlock ();
-			ig.Emit (OpCodes.Ldloc, local_copy);
-			ig.Emit (OpCodes.Brfalse, skip);
-			ig.Emit (OpCodes.Ldloc, local_copy);
-			ig.Emit (OpCodes.Callvirt, TypeManager.void_dispose_void);
-			ig.MarkLabel (skip);
-			ig.EndExceptionBlock ();
+			EmitExpressionFinally (ec);
 
 			return false;
 		}
 		
+		void EmitExpressionFinally (EmitContext ec)
+		{
+			ILGenerator ig = ec.ig;
+			if (!local_copy.LocalType.IsValueType) {
+				Label skip = ig.DefineLabel ();
+				ig.Emit (OpCodes.Ldloc, local_copy);
+				ig.Emit (OpCodes.Brfalse, skip);
+				ig.Emit (OpCodes.Ldloc, local_copy);
+				ig.Emit (OpCodes.Callvirt, TypeManager.void_dispose_void);
+				ig.MarkLabel (skip);
+			} else {
+				Expression ml = Expression.MemberLookup(ec, TypeManager.idisposable_type, local_copy.LocalType, "Dispose", Mono.CSharp.Location.Null);
+
+				if (!(ml is MethodGroupExpr)) {
+					ig.Emit (OpCodes.Ldloc, local_copy);
+					ig.Emit (OpCodes.Box, local_copy.LocalType);
+					ig.Emit (OpCodes.Callvirt, TypeManager.void_dispose_void);
+				} else {
+					MethodInfo mi = null;
+
+					foreach (MethodInfo mk in ((MethodGroupExpr) ml).Methods) {
+						if (TypeManager.GetArgumentTypes (mk).Length == 0) {
+							mi = mk;
+							break;
+						}
+					}
+
+					if (mi == null) {
+						Report.Error(-100, Mono.CSharp.Location.Null, "Internal error: No Dispose method which takes 0 parameters.");
+						return;
+					}
+
+					ig.Emit (OpCodes.Ldloca, local_copy);
+					ig.Emit (OpCodes.Call, mi);
+				}
+			}
+		}
+			
 		public override bool Resolve (EmitContext ec)
 		{
 			if (expression_or_block is DictionaryEntry){
