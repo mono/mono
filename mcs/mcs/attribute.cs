@@ -664,7 +664,7 @@ namespace Mono.CSharp {
 		// Applies the attributes to the `builder'.
 		//
 		public static void ApplyAttributes (EmitContext ec, object builder, object kind,
-						    Attributes opt_attrs, Location loc)
+						    Attributes opt_attrs)
 		{
 			ArrayList emitted_attrs = new ArrayList ();
 			ArrayList emitted_targets = new ArrayList ();
@@ -688,6 +688,7 @@ namespace Mono.CSharp {
 					continue;
 				
 				foreach (Attribute a in asec.Attributes) {
+					Location loc = a.Location;
 					CustomAttributeBuilder cb = a.Resolve (ec);
 					attr_type = a.Type;
 
@@ -737,9 +738,18 @@ namespace Mono.CSharp {
 								UnmanagedMarshal.DefineUnmanagedMarshal (a.UnmanagedType);
 							
 							((ParameterBuilder) builder).SetMarshal (marshal);
-						} else 
-							((ParameterBuilder) builder).SetCustomAttribute (cb);
-						
+						} else { 
+
+							try {
+								((ParameterBuilder) builder).SetCustomAttribute (cb);
+							} catch (System.ArgumentException) {
+								Report.Warning (-24, loc,
+										"The Microsoft Runtime cannot set attributes \n" +
+										"on the return type of a method. Please use the \n" +
+										"Mono runtime instead.");
+							}
+
+						}
 					} else if (kind is Enum) {
 						((TypeBuilder) builder).SetCustomAttribute (cb); 
 
@@ -960,16 +970,15 @@ namespace Mono.CSharp {
 
 	public class Attributes {
 		public ArrayList AttributeSections;
-		public Location Location;
 
-		public Attributes (AttributeSection a, Location loc)
+		public Attributes (AttributeSection a)
 		{
 			AttributeSections = new ArrayList ();
 			AttributeSections.Add (a);
 
 		}
 
-		public void AddAttribute (AttributeSection a)
+		public void AddAttributeSection (AttributeSection a)
 		{
 			if (a != null && !AttributeSections.Contains (a))
 				AttributeSections.Add (a);

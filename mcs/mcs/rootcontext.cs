@@ -754,7 +754,7 @@ namespace Mono.CSharp {
 					Attributes attrs = (Attributes) de.Value;
 					
 					dummy.Namespace = ns;
-					Attribute.ApplyAttributes (temp_ec, ab, ab, attrs, attrs.Location);
+					Attribute.ApplyAttributes (temp_ec, ab, ab, attrs);
 				}
 			}
 
@@ -832,16 +832,15 @@ namespace Mono.CSharp {
 		// Adds a global attribute that was declared in `container', 
 		// the attribute is in `attr', and it was defined at `loc'
 		//
-		static public void AddGlobalAttribute (TypeContainer container,
-						       AttributeSection attr, Location loc)
+		static public void AddGlobalAttributeSection (TypeContainer container, AttributeSection attr)
 		{
 			Namespace ns = container.Namespace;
 			Attributes a = (Attributes) global_attributes [ns];
 
 			if (a == null)
-				global_attributes [ns] = new Attributes (attr, loc);
+				global_attributes [ns] = new Attributes (attr);
 			else
-				a.AddAttribute (attr);
+				a.AddAttributeSection (attr);
 		}
 	}
 }

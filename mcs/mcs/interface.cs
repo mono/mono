@@ -355,7 +355,7 @@ namespace Mono.CSharp {
 							  return_type, ModFlags, false);
 
 			if (im.OptAttributes != null)
-				Attribute.ApplyAttributes (ec, mb, im, im.OptAttributes, Location);
+				Attribute.ApplyAttributes (ec, mb, im, im.OptAttributes);
 		}
 
 		//
@@ -436,7 +436,7 @@ namespace Mono.CSharp {
 							  null, ModFlags, false);
 
 			if (ip.OptAttributes != null)
-				Attribute.ApplyAttributes (ec, pb, ip, ip.OptAttributes, Location);
+				Attribute.ApplyAttributes (ec, pb, ip, ip.OptAttributes);
 
 			TypeManager.RegisterProperty (pb, get, set);
 			property_builders.Add (pb);
@@ -507,7 +507,7 @@ namespace Mono.CSharp {
 
 
 			if (ie.OptAttributes != null)
-				Attribute.ApplyAttributes (ec, eb, ie, ie.OptAttributes, Location);
+				Attribute.ApplyAttributes (ec, eb, ie, ie.OptAttributes);
 
 			TypeManager.RegisterEvent (eb, add, remove);
 			event_builders.Add (eb);
@@ -627,7 +627,7 @@ namespace Mono.CSharp {
 			}
 
 			if (ii.OptAttributes != null)
-				Attribute.ApplyAttributes (ec, pb, ii, ii.OptAttributes, Location);
+				Attribute.ApplyAttributes (ec, pb, ii, ii.OptAttributes);
 
 			property_builders.Add (pb);
 		}
@@ -871,7 +871,7 @@ namespace Mono.CSharp {
 			if (OptAttributes != null) {
 				EmitContext ec = new EmitContext (parent, this, Location, null, null,
 								  ModFlags, false);
-				Attribute.ApplyAttributes (ec, TypeBuilder, this, OptAttributes, Location);
+				Attribute.ApplyAttributes (ec, TypeBuilder, this, OptAttributes);
 			}
 
 			return true;

@@ -514,7 +514,7 @@ namespace Mono.CSharp {
 			//
 			// Now apply attributes
 			//
-			Attribute.ApplyAttributes (ec, fb, fb, (Attributes) member_to_attributes [name], loc); 
+			Attribute.ApplyAttributes (ec, fb, fb, (Attributes) member_to_attributes [name]); 
 			
 			return default_value;
 		}
@@ -584,13 +584,13 @@ namespace Mono.CSharp {
 					//
 					// Apply attributes on the enum member
 					//
-					Attribute.ApplyAttributes (ec, fb, fb, (Attributes) member_to_attributes [name], loc);
+					Attribute.ApplyAttributes (ec, fb, fb, (Attributes) member_to_attributes [name]);
 				}
 
 				default_value = GetNextDefaultValue (default_value);
 			}
 			
-			Attribute.ApplyAttributes (ec, TypeBuilder, this, OptAttributes, Location);
+			Attribute.ApplyAttributes (ec, TypeBuilder, this, OptAttributes);
 
 			return true;
 		}

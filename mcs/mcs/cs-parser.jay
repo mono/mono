@@ -311,8 +311,7 @@ namespace_declaration
 		if (attrs != null) {
 			foreach (AttributeSection asec in attrs.AttributeSections)
 				if (asec.Target == "assembly")
-					RootContext.AddGlobalAttribute (
-						current_container, asec, lexer.Location);
+					RootContext.AddGlobalAttributeSection (current_container, asec);
 		}
 
 		current_namespace = RootContext.Tree.RecordNamespace (current_namespace, name, (string) $3);
@@ -425,10 +424,10 @@ attribute_sections
 		AttributeSection sect = (AttributeSection) $1;
 
 		if (sect.Target == "assembly") 
-			RootContext.AddGlobalAttribute (current_container, sect, lexer.Location);
+			RootContext.AddGlobalAttributeSection (current_container, sect);
 		
 
-		$$ = new Attributes ((AttributeSection) $1, lexer.Location);
+		$$ = new Attributes ((AttributeSection) $1);
           }
 	| attribute_sections attribute_section
 	  {
@@ -436,11 +435,11 @@ attribute_sections
 		AttributeSection sect = (AttributeSection) $2;
 
 		if (sect.Target == "assembly")
-			RootContext.AddGlobalAttribute (current_container, sect, lexer.Location);
+			RootContext.AddGlobalAttributeSection (current_container, sect);
 
 		if ($1 != null) {
 			attrs = (Attributes) $1;
-			attrs.AddAttribute (sect);
+			attrs.AddAttributeSection (sect);
 		}
 		
 		$$ = attrs;
