@@ -195,8 +195,8 @@ namespace System.Windows.Forms{
 		}
 		
 		#endregion
-
 		#region Uxtheme.dll functions
+#if USE_UXTHEME
 		[DllImport("uxtheme.dll")]
 		static public extern int SetWindowTheme(IntPtr hWnd, StringBuilder AppID, StringBuilder ClassID);
 		static public void DisableWindowsXPTheme(IntPtr hWnd) 
@@ -207,6 +207,7 @@ namespace System.Windows.Forms{
 			StringBuilder classIDs = new StringBuilder(" " , 1); 
 			Win32.SetWindowTheme(hWnd, applicationName, classIDs);
 		}
+#endif
 		#endregion
 	
 		#region user32.dll functions
@@ -452,10 +453,10 @@ namespace System.Windows.Forms{
 		[DllImport("user32.dll", CharSet=CharSet.Auto,EntryPoint="DefWindowProcA")]
 		static internal extern int DefWindowProc(IntPtr hWnd, int message, int wParam, int lParam);
 
-		[DllImport("user32.dll", CharSet=CharSet.Unicode,EntryPoint="DefMDIChildProcA")]
+		[DllImport("user32.dll", CharSet=CharSet.Ansi)]
 		static internal extern IntPtr DefMDIChildProc(IntPtr hWnd, Msg Msg, IntPtr wParam, IntPtr lParam);
 
-		[DllImport("user32.dll", CharSet=CharSet.Unicode,EntryPoint="DefFrameProcA")]
+		[DllImport("user32.dll", CharSet=CharSet.Ansi)]
 		static internal extern IntPtr DefFrameProc(IntPtr hWnd, IntPtr hWndMDIClient, Msg Msg, IntPtr wParam, IntPtr lParam);
 		
 		[DllImport("user32.dll", CharSet=CharSet.Auto,EntryPoint="LoadCursorA")]
@@ -741,14 +742,15 @@ namespace System.Windows.Forms{
 
 		[DllImport ("user32.dll", 
 			 CallingConvention = CallingConvention.StdCall,
-			 CharSet = CharSet.Ansi, EntryPoint = "CreateWindowExA")]
+			 CharSet = CharSet.Ansi)]
 		internal static extern IntPtr CreateWindowEx (
 			uint dwExStyle, string lpClassName, 
 			string lpWindowName, uint dwStyle, 
 			int x, int y, int nWidth, int nHeight,
 			IntPtr hWndParent, IntPtr hMenu, IntPtr hInstance,
-			[ MarshalAs( UnmanagedType.AsAny )]
-			object lpParam);
+/*			[ MarshalAs( UnmanagedType.AsAny )]
+			object lpParam);*/
+			IntPtr lpParam );
 
 		[DllImport ("user32.dll", 
 			 CallingConvention = CallingConvention.StdCall, 
@@ -891,7 +893,7 @@ namespace System.Windows.Forms{
 
 		[DllImport ("user32.dll", 
 			 CallingConvention = CallingConvention.StdCall, 
-			 CharSet = CharSet.Auto)]
+			 CharSet = CharSet.Ansi)]
 		internal static extern bool IsDialogMessage (
 			IntPtr hWnd, ref MSG mes);
 

@@ -102,7 +102,7 @@ namespace System.Windows.Forms {
 					cp.Caption,(uint) cp.Style,
 					cp.X, cp.Y, cp.Width, cp.Height,
 					(IntPtr) cp.Parent, (IntPtr) 0,
-					(IntPtr) 0, cp.Param);
+					(IntPtr) 0, /*cp.Param*/ IntPtr.Zero );
 
 				if (windowHandle != (IntPtr) 0) {
 					windowCollection.Add (windowHandle, this);
