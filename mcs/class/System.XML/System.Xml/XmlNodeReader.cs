@@ -941,82 +941,14 @@ namespace System.Xml
 		}
 
 #if NET_1_0
-		// Its traversal behavior is almost same as Read().
 		public override string ReadInnerXml ()
 		{
-			if (entityReader != null) {
-				if (entityReader.EOF) {
-					entityReader = entityReaderStack.Count > 0 ?
-						entityReaderStack.Pop () as XmlTextReader : null;
-					return ReadInnerXml ();
-				} else
-					return entityReader.ReadInnerXml ();
-			}
-
-			if (this.state != ReadState.Interactive)
-				return String.Empty;
-
-			XmlNode initial = current;
-			// Almost copied from XmlTextReader.
-			switch (NodeType) {
-			case XmlNodeType.Attribute:
-				return Value;
-			case XmlNodeType.Element:
-				if (IsEmptyElement)
-					return String.Empty;
-
-				int startDepth = depth;
-
-				bool loop = true;
-				do {
-					Read ();
-					if (NodeType ==XmlNodeType.None)
-						throw new XmlException ("unexpected end of xml.");
-					else if (NodeType == XmlNodeType.EndElement && depth == startDepth) {
-						loop = false;
-						Read ();
-					}
-				} while (loop);
-				return initial.InnerXml;
-			case XmlNodeType.None:
-				return String.Empty;
-			default:
-				Read ();
-				return String.Empty;
-			}
+			return ReadInnerXmlInternal ();
 		}
 
-		// Its traversal behavior is almost same as Read().
 		public override string ReadOuterXml ()
 		{
-			if (entityReader != null) {
-				if (entityReader.EOF) {
-					entityReader = entityReaderStack.Count > 0 ?
-						entityReaderStack.Pop () as XmlTextReader : null;
-					return ReadOuterXml ();
-				} else
-					return entityReader.ReadOuterXml ();
-			}
-
-			if (NodeType == XmlNodeType.EndElement)
-				return String.Empty;
-			XmlNode initial = current;
-
-			switch (NodeType) {
-			case XmlNodeType.Attribute:
-				return current.OuterXml;
-			case XmlNodeType.Element:
-				if (NodeType == XmlNodeType.Element && !IsEmptyElement)
-					ReadInnerXml ();
-				else
-					Read ();
-				return initial.OuterXml;
-			case XmlNodeType.None:
-				return String.Empty;
-			default:
-				Read ();
-				return String.Empty;
-			}
+			return ReadOuterXmlInternal ();
 		}
 #endif
 
