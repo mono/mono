@@ -202,13 +202,13 @@ namespace System.Data.OracleClient {
 			return new OracleParameter ();
 		}
 
-		private int ExecuteNonQueryInternal (OciStatementHandle statement)
+		private int ExecuteNonQueryInternal (OciStatementHandle statement, bool useAutoCommit)
 		{
 			if (preparedStatement == null)
 				statement.Prepare (CommandText);
 
 			BindParameters (statement);
-			statement.ExecuteNonQuery ();
+			statement.ExecuteNonQuery (useAutoCommit);
 
 			int rowsAffected = statement.GetAttributeInt32 (OciAttributeType.RowCount, ErrorHandle);
 		
@@ -220,13 +220,16 @@ namespace System.Data.OracleClient {
 			AssertConnectionIsOpen ();
 			AssertTransactionMatch ();
 			AssertCommandTextIsSet ();
+			bool useAutoCommit = false; 
 
 			if (Transaction != null)
 				Transaction.AttachToServiceContext ();
+			else
+				useAutoCommit = true;
 
 			OciStatementHandle statement = GetStatementHandle ();
 			try {
-				return ExecuteNonQueryInternal (statement);
+				return ExecuteNonQueryInternal (statement, useAutoCommit);
 			}
 			finally	{
 				SafeDisposeHandle (statement);
@@ -238,14 +241,17 @@ namespace System.Data.OracleClient {
 			AssertConnectionIsOpen ();
 			AssertTransactionMatch ();
 			AssertCommandTextIsSet ();
+			bool useAutoCommit = false; 
 
 			if (Transaction != null)
 				Transaction.AttachToServiceContext ();
+			else
+				useAutoCommit = true;
 
 			OciStatementHandle statement = GetStatementHandle ();
 
 			try {
-				int retval = ExecuteNonQueryInternal (statement);
+				int retval = ExecuteNonQueryInternal (statement, useAutoCommit);
 
 				OciRowIdDescriptor descriptor = (OciRowIdDescriptor) Environment.Allocate (OciHandleType.RowId);
 				descriptor.SetHandle (statement.GetAttributeIntPtr (OciAttributeType.RowId, ErrorHandle));
@@ -276,6 +282,7 @@ namespace System.Data.OracleClient {
 			AssertTransactionMatch ();
 			AssertCommandTextIsSet ();
 			AssertNoDataReader ();
+			bool hasRows = false;
 
 			if (Transaction != null) 
 				Transaction.AttachToServiceContext ();
@@ -289,9 +296,9 @@ namespace System.Data.OracleClient {
 					preparedStatement = null;	// OracleDataReader releases the statement handle
 
 				BindParameters (statement);
-				statement.ExecuteQuery ();
+				hasRows = statement.ExecuteQuery ();
 
-				rd = new OracleDataReader (this, statement);
+				rd = new OracleDataReader (this, statement, hasRows);
 			}
 			finally	{
 				if (statement != null && rd == null)

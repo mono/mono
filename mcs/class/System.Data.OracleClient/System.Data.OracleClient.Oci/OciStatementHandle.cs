@@ -123,19 +123,25 @@ namespace System.Data.OracleClient.Oci {
 
 		public bool ExecuteQuery ()
 		{
-			return Execute (false);
+			return Execute (false,false);
 		}
 
-		public bool ExecuteNonQuery ()
+		public bool ExecuteNonQuery (bool useAutoCommit)
 		{
-			return Execute (true);
+			return Execute (true, useAutoCommit);
 		}
 
-		public bool Execute (bool nonQuery)
+		public bool Execute (bool nonQuery, bool useAutoCommit)
 		{
 			int status = 0;
 			columnCount = 0;
 			moreResults = false;
+			int executeMode;
+
+			if( useAutoCommit)
+				executeMode = (int)OciExecuteMode.CommitOnSuccess;
+			else
+				executeMode = (int)OciExecuteMode.Default;
 
 			if (this.disposed) 
 			{
@@ -149,7 +155,7 @@ namespace System.Data.OracleClient.Oci {
 				0,
 				IntPtr.Zero,
 				IntPtr.Zero,
-				OciExecuteMode.Default);
+				(OciExecuteMode)executeMode);
 		
 			switch (status) {
 			case OciGlue.OCI_DEFAULT:

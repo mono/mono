@@ -54,6 +54,17 @@ namespace System.Data.OracleClient {
 			this.statementType = statement.GetStatementType ();
 		}
 
+	        internal OracleDataReader (OracleCommand command, OciStatementHandle statement, bool extHasRows )
+	        {
+        	    this.command = command;
+	            this.hasRows = extHasRows;
+	            this.isClosed = false;
+	            this.schemaTable = ConstructSchemaTable ();
+	            this.statement = statement;
+        	    this.statementType = statement.GetStatementType ();
+	        }
+
+
 		~OracleDataReader ()
 		{
 			Dispose (false);
@@ -414,6 +425,7 @@ namespace System.Data.OracleClient {
 		public bool Read ()
 		{
 			bool retval = statement.Fetch ();
+			hasRows = retval;
 			return retval;
 			//return command.StatementHandle.Fetch ();
 		}

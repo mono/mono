@@ -1,3 +1,12 @@
+2004-05-25  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* System.Data.OracleClient/OracleCommand.cs:
+	* System.Data.OracleClient/OracleDataReader.cs:
+	* System.Data.OracleClient.Oci/OciStatementHandle.cs: patch by Eduard
+	Nesiba that implements autocommit behavior for non query statement
+	which is out of transaction. In previous implementation changed rows
+	stayed locked until client disconnect and hasRows proper settings.
+
 2004-05-10	Joerg Rosenkranz <joergr@voelcker.com>
 
 	* System.Data.OracleClient.Oci/OciCalls.cs:
