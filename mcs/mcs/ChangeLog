@@ -1,3 +1,9 @@
+
+Tue Dec 3 19:32:04 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* pending.cs: remove the bogus return from GetMissingInterfaces()
+	(see the 2002-11-06 entry: the mono runtime is now fixed in cvs).
+
 2002-12-02  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* namespace.cs: avoid duplicated 'using xxx' being added to
