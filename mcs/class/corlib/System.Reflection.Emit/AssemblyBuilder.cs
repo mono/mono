@@ -569,15 +569,30 @@ namespace System.Reflection.Emit {
 				DefineVersionInfoResourceImpl (assemblyFileName);
 
 			if ((keyfile_name != null) && (keyfile_name != String.Empty)) {
-				using (FileStream fs = new FileStream (keyfile_name, FileMode.Open)) {
-					byte[] snkeypair = new byte [fs.Length];
-					fs.Read (snkeypair, 0, snkeypair.Length);
+				// the StrongName key file may be relative to (a) the compiled
+				// file or (b) to the output assembly. See bugzilla #55320
+				// http://bugzilla.ximian.com/show_bug.cgi?id=55320
 
-					// this will import public or private/public keys
-					RSA rsa = CryptoConvert.FromCapiKeyBlob (snkeypair);
-					// and export only the public part
-					sn = new Mono.Security.StrongName (rsa);
-					public_key = sn.PublicKey;
+				// (a) relative to the compiled file
+				string filename = Path.GetFullPath (keyfile_name);
+				bool exist = File.Exists (filename);
+				if ((!exist) && (AssemblyDir != null)) {
+					// (b) relative to the outputed assembly
+					filename = Path.GetFullPath (Path.Combine (AssemblyDir, keyfile_name));
+					exist = File.Exists (filename);
+				}
+
+				if (exist) {
+					using (FileStream fs = new FileStream (filename, FileMode.Open)) {
+						byte[] snkeypair = new byte [fs.Length];
+						fs.Read (snkeypair, 0, snkeypair.Length);
+
+						// this will import public or private/public keys
+						RSA rsa = CryptoConvert.FromCapiKeyBlob (snkeypair);
+						// and export only the public part
+						sn = new Mono.Security.StrongName (rsa);
+						public_key = sn.PublicKey;
+					}
 				}
 			}
 			

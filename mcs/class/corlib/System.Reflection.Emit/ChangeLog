@@ -1,3 +1,9 @@
+2004-03-09  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* AssemblyBuilder.cs: The strong name key file existance will now be
+	checked in the current compilation directory AND in the assembly
+	output directory. Fix bugzilla entry #55320.
+
 2004-02-23  Martin Baulig  <martin@ximian.com>
 
 	* MethodBuilder.cs (MethodBuilder.SetGenericMethodSignature):
