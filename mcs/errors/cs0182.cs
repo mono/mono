@@ -1,4 +1,4 @@
-// cs0182.cs :
+// cs0182.cs : An attribute argument must be a constant expression, typeof expression or array creation expression
 // Line : 10
 
 using System;
