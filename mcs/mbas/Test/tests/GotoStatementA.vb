@@ -6,7 +6,7 @@
 Module gotostmt
 	Sub Main()
 		Dim i as integer
-		goto a:
+		goto a
 			i = i + 1
 		a:
 			i = i + 1
