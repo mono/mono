@@ -95,7 +95,7 @@ $(monobins_DATA):
 	gmcs.exe)                d=gmcs				;; \
 	esac; \
 	f=$(mcs_topdir)/$$d/$@; \
-mcs	if test -f $$f; then :; else f=$(monobinsdir)/$@; fi ; \
+	if test -f $$f; then :; else f=$(monobinsdir)/$@; fi ; \
 	echo "cp -f $$f $(srcdir)"; \
 	cp -f $$f $(srcdir)
 
