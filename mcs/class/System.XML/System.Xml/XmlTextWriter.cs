@@ -488,8 +488,6 @@ openElements [openElementCount - 1]).IndentingOverriden;
 				throw new ArgumentException ("An XML comment cannot contain \"--\" inside.");
 			else if (text.IndexOf("--") > 0)
 				throw new ArgumentException ("An XML comment cannot end with \"-\".");
-			if (ws != WriteState.Content && formatting == Formatting.Indented)
-				w.WriteLine ();
 
 			CheckState ();
 			CloseStartElement ();

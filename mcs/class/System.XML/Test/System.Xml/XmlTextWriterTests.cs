@@ -1266,6 +1266,21 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
+		public void Indent2 ()
+		{
+			StringWriter sw = new StringWriter ();
+			XmlTextWriter xtw = new XmlTextWriter (sw);
+			xtw.Formatting = Formatting.Indented;
+			// sadly, this silly usage of this method is actually
+			// used in WriteNode() in MS.NET.
+			xtw.WriteProcessingInstruction ("xml",
+				"version=\"1.0\"");
+			xtw.WriteComment ("sample XML fragment");
+			AssertEquals (@"<?xml version=""1.0""?>
+<!--sample XML fragment-->", sw.ToString ().Replace ("\r\n", "\n"));
+		}
+
+		[Test]
 		public void CloseTwice ()
 		{
 			StringWriter sw = new StringWriter ();

@@ -1,3 +1,7 @@
+2005-01-11  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlTextWriter.cs : WriteComment() was outputting extraneous EOL.
+
 2004-12-26  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlReader.cs : ReadElementContentAsBinHex() was calling ..AsBase64().

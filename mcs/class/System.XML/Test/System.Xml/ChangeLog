@@ -1,3 +1,7 @@
+2005-01-11  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlTextWriterTests.cs : added Indent2() to test WriteComment EOL.
+
 2004-01-11  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlReaderCommonTests.cs :
