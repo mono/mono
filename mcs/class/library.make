@@ -18,4 +18,4 @@ clean:
 -include .makefrag
 
 $(LIBRARY): .response .makefrag #library-deps
-	$(MCS) $(MCS_FLAGS) -o $(LIBRARY) $(LIB_FLAGS) @.response
+	MONO_PATH=$(MONO_PATH_PREFIX)$(MONO_PATH) $(MCS) $(MCS_FLAGS) -o $(LIBRARY) $(LIB_FLAGS) @.response
