@@ -1,3 +1,7 @@
+2004-08-06  Geoff Norton <gnorton@customerdna.com>
+	
+	* filewatcher.c: If HAVE_KQUEUE return mode 3 to use the new kqueue watcher
+
 2004-08-05  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* appdomain.c: Bumped MONO_CORLIB_VERSION to 23. Added new icall
