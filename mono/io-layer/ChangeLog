@@ -1,3 +1,15 @@
+2004-09-24  Dick Porter  <dick@ximian.com>
+
+	* wapi-private.h: 
+	* sockets.c: 
+	* socket-private.h: 
+	* io.c: 
+	* io-private.h: 
+	* handles-private.h: Cope when a file descriptor is reused while
+	the handle that thought it owned it is still referenced, instead
+	of asserting.  Probably fixes bug 66479, though we've been unable
+	to reproduce it.
+
 2004-09-09  Dick Porter  <dick@ximian.com>
 
 	* error.c:
