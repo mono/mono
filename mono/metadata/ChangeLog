@@ -1,5 +1,8 @@
 2003-02-28  Zoltan Varga  <vargaz@freemail.hu>
 
+	* string-icalls.c: add error checking to string constructors according
+	to the MSDN docs.
+
 	* reflection.c: Emit types in the order their TypeBuilders were 
 	created. Previously, a new table index was assigned to each type before
 	the tables were emitted. This was wrong because the signature blob
