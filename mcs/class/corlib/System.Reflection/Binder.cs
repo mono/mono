@@ -202,10 +202,25 @@ namespace System.Reflection
 
 			public override MethodBase SelectMethod (BindingFlags bindingAttr, MethodBase[] match, Type[] types, ParameterModifier[] modifiers)
 			{
+				MethodBase m;
+				int i, j;
 				if (match == null)
 					throw new ArgumentNullException ("match");
-				foreach (MethodBase m in match) {
-					//Console.WriteLine ("Considering method: {0}", m);
+				/* first look for an exact match... */
+				for (i = 0; i < match.Length; ++i) {
+					m = match [i];
+					ParameterInfo[] args = m.GetParameters ();
+					if (args.Length != types.Length)
+						continue;
+					for (j = 0; j < types.Length; ++j) {
+						if (types [j] != args [j].ParameterType)
+							break;
+					}
+					if (j == types.Length)
+						return m;
+				}
+				for (i = 0; i < match.Length; ++i) {
+					m = match [i];
 					ParameterInfo[] args = m.GetParameters ();
 					if (args.Length != types.Length)
 						continue;

@@ -1,3 +1,8 @@
+
+Thu Jan 2 19:04:58 CET 2003 Paolo Molaro <lupus@ximian.com>
+
+	* Binder.cs: In SelectMethod() look for an exact match first.
+
 2003-01-01  Rachel Hestilow <hestilow@ximian.com>
 
 	* MonoField.cs (SetValue): Fix logic typo. Check that obj is
