@@ -1,3 +1,8 @@
+2003-03-04  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* CryptoConfigTest.cs: Added new tests for algorithms 
+	documented in book ".NET Framework Security".
+
 2003-02-03  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* PasswordDeriveBytesTest.cs: Added some new tests to complete 

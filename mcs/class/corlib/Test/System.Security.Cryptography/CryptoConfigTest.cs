@@ -29,7 +29,7 @@ public class CryptoConfigTest : TestCase
 	{
 		object o = CryptoConfig.CreateFromName (name);
 		if (objectname == null)
-			AssertNull(name, o);
+			AssertNull (name, o);
 		else
 			AssertEquals (name, o.ToString(), objectname);
 	}
@@ -124,8 +124,12 @@ public class CryptoConfigTest : TestCase
 		CreateFromName ("http://www.w3.org/2000/09/xmldsig#Object", null);
 		CreateFromName ("http://www.w3.org/2000/09/xmldsig#Manifest", null);
 		CreateFromName ("http://www.w3.org/2000/09/xmldsig#SignatureProperties", null);
-		// URL used in RetrievalMethod or Reference elements
-		CreateFromName ("http://www.w3.org/2000/09/xmldsig#X509Data", null);
+		// LAMESPEC: only documentated in ".NET Framework Security" book
+		CreateFromName ("http://www.w3.org/2000/09/xmldsig# X509Data", "System.Security.Cryptography.Xml.KeyInfoX509Data");
+		CreateFromName ("http://www.w3.org/2000/09/xmldsig# KeyName", "System.Security.Cryptography.Xml.KeyInfoName");
+		CreateFromName ("http://www.w3.org/2000/09/xmldsig# KeyValue/DSAKeyValue", "System.Security.Cryptography.Xml.DSAKeyValue");
+		CreateFromName ("http://www.w3.org/2000/09/xmldsig# KeyValue/RSAKeyValue", "System.Security.Cryptography.Xml.RSAKeyValue");
+		CreateFromName ("http://www.w3.org/2000/09/xmldsig# RetrievalMethod", "System.Security.Cryptography.Xml.KeyInfoRetrievalMethod");
 	}
 
 	// Tests created using "A Layer Man Guide to ASN.1" from RSA, page 19-20
@@ -250,6 +254,8 @@ public class CryptoConfigTest : TestCase
 //		MapNameToOID ("SHA-512", "2.16.840.1.101.3.4.3");
 		MapNameToOID ("System.Security.Cryptography.SHA512", "2.16.840.1.101.3.4.3");
 		MapNameToOID ("System.Security.Cryptography.SHA512Managed", "2.16.840.1.101.3.4.3");
+		// LAMESPEC: only documentated in ".NET Framework Security" book
+		MapNameToOID ("TripleDESKeyWrap", "1.2.840.113549.1.9.16.3.6");
 		// no OID defined ?
 		MapNameToOID ("RSA", null);
 		MapNameToOID ("System.Security.Cryptography.RSA", null);
