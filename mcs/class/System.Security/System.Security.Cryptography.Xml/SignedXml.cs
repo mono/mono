@@ -249,13 +249,6 @@ namespace System.Security.Cryptography.Xml {
 			return hash;
 		}
 
-/*		private byte[] ComputeHash (string hashAlgorithm) 
-		{
-			HashAlgorithm hash = GetHash (hashAlgorithm);
-			// get the hash of the C14N SignedInfo element
-			return hash.ComputeHash (SignedInfoTransformed ());
-		}
-*/
 		public bool CheckSignature () 
 		{
 			return (CheckSignatureInternal (null) != null);
