@@ -2,11 +2,15 @@ VERSION=0.13.99
 
 DIRS=jay nant mcs class nunit tools monoresgen
 
-all: linux
+all: 
+	if test x$(OS) = xWindows_NT; then make linux; else make -f makefile.gnu; fi
+
+install:
+	if test x$(OS) = xWindows_NT; then echo Can not install on Windows ; else make -f makefile.gnu install; fi
 
 windows:
 	for i in $(DIRS); do 			\
-		(cd $$i; make linux)		\
+		(cd $$i; make linux) || exit 1;	\
 	done
 
 linux:
