@@ -1,3 +1,8 @@
+2004-08-29 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* ArrayCreation (LookupType): If the type does not resolve 
+	to an array, give an error.
+
 2004-08-27  Marek Safar  <marek.safar@seznam.cz>
 
 	* statement.cs (Try.Resolve): Fixed bug #64222
