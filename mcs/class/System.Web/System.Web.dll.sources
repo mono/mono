@@ -153,15 +153,18 @@ System.Web.SessionState/SessionConfig.cs
 System.Web.SessionState/HttpSessionState.cs
 System.Web.SessionState/IReadOnlySessionState.cs
 System.Web.SessionState/IRequiresSessionState.cs
+System.Web.SessionState/IStateRuntime.cs
 System.Web.SessionState/SessionDictionary.cs
 System.Web.SessionState/SessionStateMode.cs
 System.Web.SessionState/SessionStateModule.cs
 System.Web.SessionState/SessionStateSectionHandler.cs
 System.Web.SessionState/ISessionHandler.cs
 System.Web.SessionState/SessionInProcHandler.cs
+System.Web.SessionState/StateRuntime.cs
 System.Web.UI/ApplicationFileParser.cs
 System.Web.UI/AttributeCollection.cs
 System.Web.UI/BaseParser.cs
+System.Web.UI/BasePartialCachingControl.cs
 System.Web.UI/BuildMethod.cs
 System.Web.UI/BuildTemplateMethod.cs
 System.Web.UI/CompiledTemplateBuilder.cs
@@ -178,7 +181,9 @@ System.Web.UI/DataBindingBuilder.cs
 System.Web.UI/DataBindingCollection.cs
 System.Web.UI/DataBindingHandlerAttribute.cs
 System.Web.UI/DataBoundLiteralControl.cs
+System.Web.UI/DesignerDataBoundLiteralControl.cs
 System.Web.UI/DesignTimeParseData.cs
+System.Web.UI/DesignTimeTemplateParser.cs
 System.Web.UI/EmptyControlCollection.cs
 System.Web.UI/HtmlControlPersistableAttribute.cs
 System.Web.UI/HtmlTextWriter.cs
@@ -207,6 +212,7 @@ System.Web.UI/ObjectTag.cs
 System.Web.UI/Pair.cs
 System.Web.UI/ParseChildrenAttribute.cs
 System.Web.UI/PartialCachingAttribute.cs
+System.Web.UI/PartialCachingControl.cs
 System.Web.UI/PersistChildrenAttribute.cs
 System.Web.UI/PersistenceMode.cs
 System.Web.UI/PersistenceModeAttribute.cs
@@ -217,6 +223,7 @@ System.Web.UI/SimpleHandlerFactory.cs
 System.Web.UI/SimpleWebHandlerParser.cs
 System.Web.UI/StateBag.cs
 System.Web.UI/StateItem.cs
+System.Web.UI/StaticPartialCachingControl.cs
 System.Web.UI/TagPrefixAttribute.cs
 System.Web.UI/TemplateContainerAttribute.cs
 System.Web.UI/TemplateControl.cs

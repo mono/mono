@@ -1,3 +1,7 @@
+2003-07-30  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* System.Web.dll.sources: added new files to System.Web.SessionState and System.Web.UI
+
 2003-07-25  Ravi Pratap  <ravi@ximian.com>
 
 	* everywhere: Remove uses of direct invocation of the 'Invoke'
