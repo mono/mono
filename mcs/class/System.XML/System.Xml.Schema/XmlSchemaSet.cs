@@ -261,20 +261,57 @@ namespace System.Xml.Schema
 		[MonoTODO ("Check exact behavior")]
 		public XmlSchema Remove (XmlSchema schema)
 		{
+			if (schema == null)
+				throw new ArgumentNullException ("schema");
+			ArrayList al = new ArrayList ();
+			al.AddRange (schemas);
+			if (!al.Contains (schema))
+				return null;
+			// FIXME: I have no idea why Remove() might throw
+			// XmlSchemaException, except for the case it compiles.
+			if (!schema.IsCompiled)
+				schema.Compile (handler, this, xmlResolver);
 			schemas.Remove (schema);
+			isCompiled = false;
+			ClearGlobalComponents ();
 			return schema;
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Check exact behavior")]
 		public bool RemoveRecursive (XmlSchema schema)
 		{
-			throw new NotImplementedException ();
+			if (schema == null)
+				throw new ArgumentNullException ("schema");
+			ArrayList al = new ArrayList ();
+			al.AddRange (schemas);
+			if (!al.Contains (schema))
+				return false;
+			al.Remove (schema);
+			schemas.Remove (schema);
+			ClearGlobalComponents ();
+			foreach (XmlSchema s in al) {
+				if (s.IsCompiled)
+					AddGlobalComponents (schema);
+			}
+			return true;
 		}
 
-		[MonoTODO]
 		public XmlSchema Reprocess (XmlSchema schema)
 		{
-			throw new NotImplementedException ();
+			if (schema == null)
+				throw new ArgumentNullException ("schema");
+			ArrayList al = new ArrayList ();
+			al.AddRange (schemas);
+			if (!al.Contains (schema))
+				throw new ArgumentException ("Target schema is not contained in the schema set.");
+			ClearGlobalComponents ();
+			foreach (XmlSchema s in al) {
+				if (schema == s)
+					schema.Compile (handler, this, xmlResolver);
+				if (s.IsCompiled)
+					AddGlobalComponents (schema);
+			}
+			return schema.IsCompiled ? schema : null;
 		}
 
 		public ICollection Schemas ()

@@ -139,6 +139,8 @@ namespace System.Xml.Schema
 			XsToken = BuildSchemaType ("token", "normalizedString");
 			XsLanguage = BuildSchemaType ("language", "token");
 			XsNMToken = BuildSchemaType ("NMTOKEN", "token");
+			XsName = BuildSchemaType ("Name", "token");
+			XsNCName = BuildSchemaType ("NCName", "Name");
 
 			XsID = BuildSchemaType ("ID", "NCName");
 			XsIDRef = BuildSchemaType ("IDREF", "NCName");
@@ -154,8 +156,8 @@ namespace System.Xml.Schema
 			XsNonNegativeInteger = BuildSchemaType ("nonNegativeInteger", "integer");
 			XsUnsignedLong = BuildSchemaType ("unsignedLong", "nonNegativeInteger");
 			XsUnsignedInt = BuildSchemaType ("unsignedInt", "unsignedLong");
-			XsUnsignedShort = BuildSchemaType ("unsignedShort ", "unsignedInt");
-			XsUnsignedByte = BuildSchemaType ("unsignedByte", "unsignedByte");
+			XsUnsignedShort = BuildSchemaType ("unsignedShort", "unsignedInt");
+			XsUnsignedByte = BuildSchemaType ("unsignedByte", "unsignedShort");
 			XsPositiveInteger = BuildSchemaType ("positiveInteger", "nonNegativeInteger");
 
 			// xdt:*
@@ -195,6 +197,7 @@ namespace System.Xml.Schema
 			if (baseName != null)
 				st.BaseXmlSchemaTypeInternal = XmlSchemaType. GetBuiltInSimpleType (new XmlQualifiedName (baseName, ns2));
 			st.DatatypeInternal = XmlSchemaDatatype.FromName (st.QualifiedName);
+			st.ValueConverter = XmlSchemaType.BuildConverter (st.TypeCode);
 			return st;
 		}
 #endif

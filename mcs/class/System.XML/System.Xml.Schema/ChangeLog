@@ -1,3 +1,10 @@
+2004-12-26  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlSchemaSet.cs : added Remove(), RemoveRecursive(), Reprocess().
+	* XmlValueConverter.cs : implemented almost all the feature.
+	* XmlSchemaSimpleType.cs : fixed some built-in types.
+	* XmlSchemaType.cs : added ValueConverter property.
+
 2004-12-22  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlSchema.cs : XmlResolver.ResolveUri() may return null.

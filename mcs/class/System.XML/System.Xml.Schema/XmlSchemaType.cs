@@ -42,10 +42,19 @@ namespace System.Xml.Schema
 	/// </summary>
 	public class XmlSchemaType : XmlSchemaAnnotated
 	{
+#if NET_2_0
+		static XmlValueConverter defaultConverter =
+			new XsdStringConverter (XmlTypeCode.None);
+#endif
+
 		private XmlSchemaDerivationMethod final;
 		private bool isMixed;
 		private string name;
 		bool recursed;
+
+#if NET_2_0
+		private XmlValueConverter converter;
+#endif
 
 		internal XmlQualifiedName BaseSchemaTypeName;
 		internal XmlSchemaType BaseXmlSchemaTypeInternal;
@@ -155,6 +164,19 @@ namespace System.Xml.Schema
 				return BaseXmlSchemaType.TypeCode;
 			}
 		}
+
+		[MonoTODO]
+		[XmlIgnore]
+		public XmlValueConverter ValueConverter {
+			get {
+				return converter != null ?
+					converter :
+					BaseXmlSchemaTypeInternal != null ?
+					BaseXmlSchemaTypeInternal.ValueConverter :
+					defaultConverter;
+			}
+			internal set { converter = value; }
+		}
 #endif
 		#endregion
 
@@ -172,6 +194,45 @@ namespace System.Xml.Schema
 			if (typecode == XmlTypeCode.Item)
 				return XmlSchemaComplexType.AnyType;
 			return GetBuiltInSimpleType (typecode);
+		}
+
+		internal static XmlValueConverter BuildConverter (
+			XmlTypeCode code)
+		{
+			switch (code) {
+			case XmlTypeCode.AnyAtomicType:
+				return new XsdAnyTypeConverter (code);
+			case XmlTypeCode.UntypedAtomic:
+			case XmlTypeCode.String:
+				return new XsdStringConverter (code);
+			case XmlTypeCode.Float:
+			case XmlTypeCode.Double:
+			case XmlTypeCode.Decimal:
+			case XmlTypeCode.Integer:
+				return new XsdNumericConverter (code);
+			case XmlTypeCode.Boolean:
+				return new XsdBooleanConverter (code);
+			case XmlTypeCode.QName:
+			case XmlTypeCode.Notation:
+			case XmlTypeCode.Duration:
+			case XmlTypeCode.DayTimeDuration:
+			case XmlTypeCode.YearMonthDuration:
+				return new XsdNonPermissiveConverter (code);
+			case XmlTypeCode.DateTime:
+			case XmlTypeCode.Date:
+			case XmlTypeCode.Time:
+			case XmlTypeCode.GYearMonth:
+			case XmlTypeCode.GYear:
+			case XmlTypeCode.GMonth:
+			case XmlTypeCode.GMonthDay:
+			case XmlTypeCode.GDay:
+				return new XsdDateTimeConverter (code);
+			case XmlTypeCode.AnyUri:
+			case XmlTypeCode.Base64Binary:
+			case XmlTypeCode.HexBinary:
+				return new XsdMiscBaseConverter (code);
+			}
+			return null;
 		}
 #endif
 
@@ -304,7 +365,7 @@ namespace System.Xml.Schema
 				return XmlSchemaSimpleType.XsUnsignedLong;
 			case "unsignedInt":
 				return XmlSchemaSimpleType.XsUnsignedInt;
-			case "unsingedShort":
+			case "unsignedShort":
 				return XmlSchemaSimpleType.XsUnsignedShort;
 			case "unsignedByte":
 				return XmlSchemaSimpleType.XsUnsignedByte;
@@ -434,10 +495,16 @@ namespace System.Xml.Schema
 			return null;
 		}
 
-		[MonoTODO]
 		public static bool IsDerivedFrom (XmlSchemaType derivedType, XmlSchemaType baseType, XmlSchemaDerivationMethod except)
 		{
-			throw new NotImplementedException ();
+			if (derivedType.BaseXmlSchemaType == null)
+				return false;
+			if ((derivedType.DerivedBy & except) != 0)
+				return false;
+			if (derivedType.BaseXmlSchemaType == baseType)
+				return true;
+			return IsDerivedFrom (derivedType.BaseXmlSchemaType,
+				baseType, except);
 		}
 #endif
 
