@@ -44,10 +44,6 @@ namespace System.Xml
 			this.linePosition = linePosition;
 		}
 
-		internal XmlException (string message, XmlInputSource inputSrc)
-		{
-		}
-
 		#endregion
 
 		#region Properties

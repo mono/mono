@@ -1,3 +1,10 @@
+2002-03-06  Jason Diamond  <jason@injektilo.org>
+
+	* XmlInputSource.cs, XmlNames_1_0.cs, XmlParse.cs: Removed files.
+	We already have a parser in XmlTextReader.
+
+	* XmlException.cs: Removed constructor accepting XmlInputSource.
+
 2002-03-06  Kral Ferch <kral_ferch@hotmail.com>
 
 	* XmlNode.cs: Rewrote this class from scratch with

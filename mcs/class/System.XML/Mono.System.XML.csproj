@@ -221,22 +221,12 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "System.Xml\XmlInputSource.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
                     RelPath = "System.Xml\XmlLinkedNode.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "System.Xml\XmlNamedNodeMap.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Xml\XmlNames_1_0.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -282,11 +272,6 @@
                 />
                 <File
                     RelPath = "System.Xml\XmlNodeType.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Xml\XmlParser.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
