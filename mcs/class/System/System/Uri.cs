@@ -347,7 +347,12 @@ namespace System
 			case UriPartial.Scheme : 
 				return scheme + GetSchemeDelimiter (scheme); 
 			case UriPartial.Authority :
-				return scheme + GetSchemeDelimiter (scheme) + host;
+				if (host == String.Empty ||
+				    scheme == Uri.UriSchemeMailto ||
+				    scheme == Uri.UriSchemeNews)
+					return String.Empty;
+				else
+					return scheme + GetSchemeDelimiter (scheme) + host;
 			case UriPartial.Path :
 				return scheme + GetSchemeDelimiter (scheme) + userinfo +
 				       (userinfo.Length > 0 ? "@" : String.Empty) + 

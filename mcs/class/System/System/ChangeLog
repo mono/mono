@@ -1,3 +1,7 @@
+2002-05-09  Lawrence Pit <loz@cable.a2000.nl>
+
+	* Uri.GetLeftPart fixed for mailto and news schemes.
+
 2002-05-05  Lawrence Pit <loz@cable.a2000.nl>
 
 	* UriBuilder.cs: Implemented.
