@@ -1,3 +1,7 @@
+2004-02-10  Francisco Figueiredo Jr. <fxjrlists@yahoo.com.br>
+	
+	* NpgsqlTypes/NpgsqlTypesHelper.cs: Added support for datetime and time datatypes with timezone data. Thanks Sami Kuhmonen (sami@iqs.fi).
+
 2004-01-15  Jackson Harper <jackson@ximian.com>
 
 	* NpgslTypes/NpgsqlTypesHelper.cs: Add StringFixedLength type.
