@@ -421,7 +421,13 @@ namespace Mono.WebServices
 				    break;
 
 				default:
-				    throw new Exception("Unknown option " + option);
+					if (argument.StartsWith ("/") && argument.IndexOfAny (Path.InvalidPathChars) == -1) {
+						hasURL = true;
+						url = argument;
+						break;
+					}
+					else
+					    throw new Exception("Unknown option " + option);
 			}
 		}
 		

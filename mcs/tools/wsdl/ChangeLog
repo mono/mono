@@ -1,3 +1,7 @@
+2004-08-24  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* MonoWSDL.cs, MonoWSDL2.cs: Handle files with absolute path names.
+
 2004-07-29  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* MonoWSDL2.cs: New wrapper for wsdl 2.0.
