@@ -2527,6 +2527,9 @@ namespace Mono.CSharp {
 			//
 
 			if (ec.IsConstructor){
+				if (IsStatic && !ec.IsStatic)
+					Report_AssignToReadonly (false);
+
 				if (ec.ContainerType == FieldInfo.DeclaringType)
 					return this;
 			}

@@ -1,5 +1,10 @@
 2003-08-22  Martin Baulig  <martin@ximian.com>
 
+	* ecore.cs (FieldExpr.DoResolveLValue): Static read-only fields
+	can only be assigned in static constructors.  Fixes #47161.
+
+2003-08-22  Martin Baulig  <martin@ximian.com>
+
 	Rewrote and improved the flow analysis code.
 
 	* flowbranching.cs (FlowBranching): Make this class abstract.
