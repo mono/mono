@@ -1,3 +1,9 @@
+2002-09-18  Martin Baulig  <martin@gnome.org>
+
+	* IMonoBinaryReader.cs: New interface.
+
+	* MonoSymbolTable.cs: Use IMonoBinaryReader instead of binary reader.
+
 2002-09-16  Martin Baulig  <martin@gnome.org>
 
 	* MonoSymbolTable.cs: Set version number to 20.

@@ -31,7 +31,7 @@ namespace Mono.CSharp.Debugger
 		public int line_number_table_size;
 		public int address_table_size;
 
-		public OffsetTable (BinaryReader reader)
+		public OffsetTable (IMonoBinaryReader reader)
 		{
 			total_file_size = reader.ReadInt32 ();
 			source_table_offset = reader.ReadInt32 ();
@@ -73,7 +73,7 @@ namespace Mono.CSharp.Debugger
 			: this (line.Row, line.Offset)
 		{ }
 
-		public LineNumberEntry (BinaryReader reader)
+		public LineNumberEntry (IMonoBinaryReader reader)
 		{
 			Row = reader.ReadInt32 ();
 			Offset = reader.ReadInt32 ();
@@ -103,7 +103,7 @@ namespace Mono.CSharp.Debugger
 			}
 		}
 
-		public MethodAddress (MethodEntry entry, BinaryReader reader)
+		public MethodAddress (MethodEntry entry, IMonoBinaryReader reader)
 		{
 			StartAddress = reader.ReadInt64 ();
 			EndAddress = reader.ReadInt64 ();
@@ -142,7 +142,7 @@ namespace Mono.CSharp.Debugger
 			}
 		}
 
-		public MethodEntry (BinaryReader reader, BinaryReader address_reader)
+		public MethodEntry (IMonoBinaryReader reader, IMonoBinaryReader address_reader)
 		{
 			Token = reader.ReadInt32 ();
 			StartRow = reader.ReadInt32 ();
@@ -155,17 +155,17 @@ namespace Mono.CSharp.Debugger
 			AddressTableSize = reader.ReadInt32 ();
 
 			if (SourceFileOffset != 0) {
-				long old_pos = reader.BaseStream.Position;
-				reader.BaseStream.Position = SourceFileOffset;
+				long old_pos = reader.Position;
+				reader.Position = SourceFileOffset;
 				SourceFile = reader.ReadString ();
-				reader.BaseStream.Position = old_pos;
+				reader.Position = old_pos;
 			}
 
 			// Console.WriteLine ("METHOD ENTRY: " + this);
 
 			if (LineNumberTableOffset != 0) {
-				long old_pos = reader.BaseStream.Position;
-				reader.BaseStream.Position = LineNumberTableOffset;
+				long old_pos = reader.Position;
+				reader.Position = LineNumberTableOffset;
 
 				LineNumbers = new LineNumberEntry [NumLineNumbers];
 
@@ -174,18 +174,18 @@ namespace Mono.CSharp.Debugger
 					// Console.WriteLine ("LINE: " + LineNumbers [i]);
 				}
 
-				reader.BaseStream.Position = old_pos;
+				reader.Position = old_pos;
 			}
 
 			if (AddressTableSize != 0) {
-				long old_pos = address_reader.BaseStream.Position;
-				address_reader.BaseStream.Position = AddressTableOffset;
+				long old_pos = address_reader.Position;
+				address_reader.Position = AddressTableOffset;
 				int is_valid = address_reader.ReadInt32 ();
 				if (is_valid != 0) {
 					Address = new MethodAddress (this, address_reader);
 					// Console.WriteLine ("ADDRESS: " + Address);
 				}
-				address_reader.BaseStream.Position = old_pos;
+				address_reader.Position = old_pos;
 			}
 		}
 
