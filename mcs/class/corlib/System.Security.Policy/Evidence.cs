@@ -34,6 +34,7 @@
 using System.Collections;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using System.Security.Permissions;
 using System.Security.Cryptography.X509Certificates;
 
@@ -125,6 +126,7 @@ namespace System.Security.Policy {
 		}
 
 #if NET_2_0
+		[ComVisible (false)]
 		public void Clear ()
 		{
 			hostEvidenceList.Clear ();
@@ -142,6 +144,7 @@ namespace System.Security.Policy {
 		}
 
 #if NET_2_0
+		[ComVisible (false)]
 		public override bool Equals (object obj)
 		{
 			if (obj == null)
@@ -194,6 +197,7 @@ namespace System.Security.Policy {
 		}
 
 #if NET_2_0
+		[ComVisible (false)]
 		public override int GetHashCode ()
 		{
 			// kind of long so we cache it
@@ -229,6 +233,7 @@ namespace System.Security.Policy {
 		}
 
 #if NET_2_0
+		[ComVisible (false)]
 		public void RemoveType (Type t)
 		{
 			for (int i = hostEvidenceList.Count; i >= 0; i--) {

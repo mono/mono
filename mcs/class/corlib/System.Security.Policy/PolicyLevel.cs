@@ -35,6 +35,7 @@ using System.Collections; // for IList
 using System.Globalization;
 using System.IO;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Security.Permissions;
 
 using Mono.Xml;
@@ -158,6 +159,7 @@ namespace System.Security.Policy {
 		}
 
 #if NET_2_0
+		[ComVisible (false)]
 		public PolicyLevelType Type {
 			get { return _type; }
 		}

@@ -1,5 +1,14 @@
 2004-11-26  Sebastien Pouliot  <sebastien@ximian.com>
 
+	* Evidence.cs:
+	* FileCodeGroup.cs:
+	* NetCodeGroup.cs:
+	* PolicyLevel.cs:
+	* PolicyStatement.cs:
+		Added ComVisible attributes to match 2.0 October Preview.
+
+2004-11-26  Sebastien Pouliot  <sebastien@ximian.com>
+
 	* Evidence.cs: Faster default evidence creation by using an internal
 	call to check for a possible Authenticode signature of the assembly.
 	Previously we had to make several I/O to verify this (quite rare)

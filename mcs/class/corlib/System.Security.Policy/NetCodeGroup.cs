@@ -30,6 +30,7 @@
 
 using System.Collections;
 using System.Globalization;
+using System.Runtime.InteropServices;
 
 namespace System.Security.Policy {
 
@@ -77,6 +78,7 @@ namespace System.Security.Policy {
 		}
 
 #if NET_2_0
+		[ComVisible (false)]
 		public CodeGroupGrantScope Scope {
 			get { return _scope; }
 			set { _scope = value; }

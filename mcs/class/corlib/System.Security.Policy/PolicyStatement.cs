@@ -28,6 +28,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Runtime.InteropServices;
 using System.Security.Permissions;
 
 namespace System.Security.Policy {
@@ -119,6 +120,7 @@ namespace System.Security.Policy {
 		}
 
 #if NET_2_0
+		[ComVisible (false)]
 		public override bool Equals (object obj)
 		{
 			if (obj == null)
@@ -130,6 +132,7 @@ namespace System.Security.Policy {
 			return (perms.Equals (obj) && (attrs == ps.attrs));
 		}
 
+		[ComVisible (false)]
 		public override int GetHashCode ()
 		{
 			// return same hash code if two PolicyStatement are equals

@@ -27,8 +27,9 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System.Security.Permissions;
 using System.Collections;
+using System.Runtime.InteropServices;
+using System.Security.Permissions;
 
 namespace System.Security.Policy {
 
@@ -123,6 +124,7 @@ namespace System.Security.Policy {
 		}
 
 #if NET_2_0
+		[ComVisible (false)]
 		public CodeGroupGrantScope Scope {
 			get { return _scope; }
 			set { _scope = value; }
