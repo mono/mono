@@ -36,6 +36,8 @@ using System.Runtime.InteropServices;
 
 namespace System.Runtime.CompilerServices
 {
+	[AttributeUsage (AttributeTargets.GenericParameter)]
+	[Serializable]
 	public sealed class NewConstraintAttribute : Attribute
 	{
 		public NewConstraintAttribute ()

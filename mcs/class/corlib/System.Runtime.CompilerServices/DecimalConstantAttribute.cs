@@ -42,7 +42,8 @@ namespace System.Runtime.CompilerServices {
 		int hi;
 		int mid;
 		int low;
-		
+
+		[CLSCompliant (false)]
 		public DecimalConstantAttribute (byte scale, byte sign, uint hi, uint mid, uint low)
 		{
 			this.scale = scale;
@@ -51,6 +52,17 @@ namespace System.Runtime.CompilerServices {
 			this.mid   = (int) mid;
 			this.low   = (int) low;
 		}
+
+#if NET_2_0
+		public DecimalConstantAttribute (byte scale, byte sign, int hi, int mid, int low)
+		{
+			this.scale = scale;
+			this.sign  = Convert.ToBoolean (sign);
+			this.hi    = hi;
+			this.mid   = mid;
+			this.low   = low;
+		}
+#endif
 
 		public Decimal Value {
 			get { return new Decimal (low, mid, hi, sign, scale); }

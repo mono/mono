@@ -41,6 +41,13 @@ namespace System.Runtime.CompilerServices {
 			relax = relaxations;
 		}
 
+#if NET_2_0
+		public CompilationRelaxationsAttribute (CompilationRelaxations relaxations)
+		{
+			relax = (int)relaxations;
+		}
+#endif
+
 		public int CompilationRelaxations {
 			get { return relax; }
 		}

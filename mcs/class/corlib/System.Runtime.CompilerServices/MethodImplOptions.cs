@@ -38,7 +38,10 @@ namespace System.Runtime.CompilerServices {
 
 	/// <summary>
 	/// </summary>
+#if NET_2_0
+#else
 	[Flags]
+#endif
 	public enum MethodImplOptions {
 
 		/// <summary>
