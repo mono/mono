@@ -1,2 +1,2 @@
 #!/bin/sh
-@bindir@/@mono_interp@ @bindir@/mcs.exe "$@"
+@bindir@/@mono_interp@ @bindir@/mbas.exe "$@"
