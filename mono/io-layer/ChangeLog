@@ -1,3 +1,8 @@
+2003-04-03  Martin Baulig  <martin@ximian.com>
+
+	* timed-thread.h (TimedThread): Added `suspended_sem',
+	`suspend_count' and `stack_ptr'.
+
 2003-03-28  Dick Porter  <dick@ximian.com>
 
 	* atomic.h: PPC support gratiously donated to the public domain
