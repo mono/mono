@@ -131,7 +131,7 @@ namespace System.Xml
 			get { return namespaceURI; }
 		}
 
-		[MonoTODO]
+		// Why is this override?
 		public override XmlNode NextSibling {
 			get { 
 				return base.NextSibling; 
@@ -144,7 +144,7 @@ namespace System.Xml
 			}
 		}
 
-		internal protected override XPathNodeType XPathNodeType {
+		internal override XPathNodeType XPathNodeType {
 			get {
 				return XPathNodeType.Element;
 			}

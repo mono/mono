@@ -65,7 +65,7 @@ namespace System.Xml
 			}
 		}
 
-		internal protected override XPathNodeType XPathNodeType {
+		internal override XPathNodeType XPathNodeType {
 			get { return XPathNodeType.Text; }
 		}
 

@@ -58,7 +58,7 @@ namespace System.Xml
 			get { return true; } // always read-only.
 		}
 
-		internal protected override XmlLinkedNode LastLinkedChild {
+		internal override XmlLinkedNode LastLinkedChild {
 			get { return lastChild; }
 
 			set { lastChild = value; }

@@ -126,7 +126,7 @@ namespace System.Xml
 			get { return false; }
 		}
 
-		internal protected override XmlLinkedNode LastLinkedChild {
+		internal override XmlLinkedNode LastLinkedChild {
 			get	{
 				return lastLinkedChild;
 			}
@@ -152,7 +152,7 @@ namespace System.Xml
 			get { return XmlNodeType.Document; }
 		}
 
-		internal protected override XPathNodeType XPathNodeType {
+		internal override XPathNodeType XPathNodeType {
 			get {
 				return XPathNodeType.Root;
 			}
@@ -167,7 +167,7 @@ namespace System.Xml
 			set { preserveWhitespace = value; }
 		}
 
-		internal protected override string XmlLang {
+		internal override string XmlLang {
 			get { return String.Empty; }
 		}
 
@@ -175,7 +175,7 @@ namespace System.Xml
 			set { resolver = value; }
 		}
 
-		internal protected override XmlSpace XmlSpace {
+		internal override XmlSpace XmlSpace {
 			get {
 				return XmlSpace.None;
 			}
@@ -233,10 +233,11 @@ namespace System.Xml
 			return new XmlComment (data, this);
 		}
 
-		[MonoTODO]
 		protected internal virtual XmlAttribute CreateDefaultAttribute (string prefix, string localName, string namespaceURI)
 		{
-			throw new NotImplementedException ();
+			XmlAttribute attr = CreateAttribute (prefix, localName, namespaceURI);
+			attr.isDefault = true;
+			return attr;
 		}
 
 		public virtual XmlDocumentFragment CreateDocumentFragment ()
@@ -283,10 +284,9 @@ namespace System.Xml
 			return new XmlEntityReference (name, this);
 		}
 
-		[MonoTODO]
-		internal protected virtual XPathNavigator CreateNavigator (XmlNode node)
+		internal virtual XPathNavigator CreateNavigator (XmlNode node)
 		{
-			throw new NotImplementedException ();
+			return new XmlDocumentNavigator (node);
 		}
 
 		public virtual XmlNode CreateNode (

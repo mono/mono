@@ -126,7 +126,7 @@ namespace System.Xml
 			}
 		}
 
-		internal protected override XPathNodeType XPathNodeType {
+		internal override XPathNodeType XPathNodeType {
 			get {
 				return XPathNodeType.Attribute;
 			}
@@ -199,11 +199,11 @@ namespace System.Xml
 			}
 		}
 
-		internal protected override string XmlLang {
+		internal override string XmlLang {
 			get { return OwnerElement.XmlLang; }
 		}
 
-		internal protected override XmlSpace XmlSpace {
+		internal override XmlSpace XmlSpace {
 			get { return OwnerElement.XmlSpace; }
 		}
 
@@ -245,7 +245,7 @@ namespace System.Xml
 
 		#endregion
 
-		internal protected override XmlLinkedNode LastLinkedChild {
+		internal override XmlLinkedNode LastLinkedChild {
 			get { return lastChild; }
 
 			set { lastChild = value; }

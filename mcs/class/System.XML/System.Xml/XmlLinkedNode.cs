@@ -66,7 +66,7 @@ namespace System.Xml
 		}
 
 		// copied this way from XmlElement
-		internal protected override XmlLinkedNode LastLinkedChild
+		internal override XmlLinkedNode LastLinkedChild
 		{
 			get { return lastLinkedChild; }
 			set { lastLinkedChild = value; }

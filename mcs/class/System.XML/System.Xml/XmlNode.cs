@@ -145,7 +145,7 @@ namespace System.Xml
 			get { return LastLinkedChild; }
 		}
 
-		internal protected virtual XmlLinkedNode LastLinkedChild {
+		internal virtual XmlLinkedNode LastLinkedChild {
 			get { return null; }
 			set { }
 		}
@@ -164,7 +164,7 @@ namespace System.Xml
 
 		public abstract XmlNodeType NodeType { get;	}
 
-		internal protected virtual XPathNodeType XPathNodeType {
+		internal virtual XPathNodeType XPathNodeType {
 			get {
 				return (XPathNodeType) (-1);
 			}
@@ -203,7 +203,7 @@ namespace System.Xml
 			set { throw new InvalidOperationException ("This node does not have a value"); }
 		}
 
-		internal protected virtual string XmlLang {
+		internal virtual string XmlLang {
 			get {
 				if(Attributes != null)
 					foreach(XmlAttribute attr in Attributes)
@@ -213,7 +213,7 @@ namespace System.Xml
 			}
 		}
 
-		internal protected virtual XmlSpace XmlSpace {
+		internal virtual XmlSpace XmlSpace {
 			get {
 				if(Attributes != null) {
 					foreach(XmlAttribute attr in Attributes) {
@@ -251,7 +251,9 @@ namespace System.Xml
 		[MonoTODO]
 		public XPathNavigator CreateNavigator ()
 		{
-			return new XmlDocumentNavigator (this);
+			XmlDocument document = this.NodeType == XmlNodeType.Document ?
+				this as XmlDocument : this.ownerDocument;
+			return document.CreateNavigator (this);
 		}
 
 		public IEnumerator GetEnumerator ()

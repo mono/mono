@@ -1,3 +1,13 @@
+2003-05-24  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* XmlAttribute.cs, XmlCharacterData.cs, XmlComment.cs, XmlDocument.cs,
+	  XmlDocumentFragment.cs, XmlElement.cs, XmlEntity.cs, XmlLinkedNode.cs,
+	  XmlNode.cs, XmlNotation.cs, XmlProcessingInstruction.cs, XmlReader.cs,
+	  XmlSignificantWhitespace.cs, XmlText.cs, XmlWhitespace.cs:
+	  Reverted the recent accessibility mistake (5/16).
+	* XmlDocument.cs, XmlNode.cs : moved actual CreateNavigator() logic 
+	  from XmlNode to XmlDocument.
+
 2003-05-18  Lluis Sanchez Gual <lluis@ideary.com>
 
 	* XmlQualifiedName.cs : Fixed bug in equality operator.

@@ -355,7 +355,7 @@ namespace System.Xml
 
 		public abstract string ReadString ();
 
-		internal protected string ReadStringInternal ()
+		internal string ReadStringInternal ()
 		{
 			if (readStringBuffer == null)
 				readStringBuffer = new StringBuilder ();
