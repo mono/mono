@@ -1,3 +1,19 @@
+2005-02-14  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Makefile.mstest : removed old file.
+	* XmlNormalizer.cs,
+	  cleanup-output.pl,
+	  Makefile :
+	  Added make distclean.
+	  Added normalization support using Andrew Skiba's xmlnorm.
+
+	  Updated ExpectedResults archive as to be normalized in sync with
+	  this patch (the archive was renamed.)
+
+2005-02-11  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* catalog.diff : eliminated mixed line ending
+
 2005-02-10  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Makefile : clean more.

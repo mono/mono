@@ -1,7 +1,4 @@
 #
-# IMPORTANT: this test runner is right now incompatible with existing 
-# test runner (xslttest.exe).
-#
 # "make" prepares automated download and build for both existing xslttest
 # and MainSoft tests.
 #
@@ -13,23 +10,29 @@
 #
 
 RUNTIME = mono
-MCS_RUNTIME =
-MCS = mcs
+CSCOMPILE = mcs
 TESTS = testsuite/TESTS/Xalan_Conformance_Tests/whitespace/whitespace35.xsl
+TARGET_RESULTS = Results
 MSTEST_RESULTS = testsuite/TESTS/ExpectedResults
 TEST_ARCHIVE = xslt-testsuite-03.ZIP
-XSLTTEST_RESULTS_ARCHIVE = mono-xslttest-ExpectedResults.zip
-MSTEST_RESULTS_ARCHIVE = mono-xslttest-ExpectedResults.zip
+XSLTTEST_RESULTS_ARCHIVE = xslttest-reference-output.zip
+MSTEST_RESULTS_ARCHIVE = mono-xslttest-ExpectedResults-20050214.zip
 
 all : xslttest.exe alltest.exe
 
 xslttest.exe : xslttest.cs $(TESTS) $(XSLTTEST_RESULTS)
-	$(MCS_RUNTIME) $(MCS) xslttest.cs
+	$(CSCOMPILE) xslttest.cs
+
+xmlnorm.exe : XmlNormalizer.cs
+	$(CSCOMPILE) XmlNormalizer.cs -out:xmlnorm.exe
 
 alltest.exe : alltest.cs $(TESTS) $(MSTEST_RESULTS)
-	$(MCS_RUNTIME) $(MCS) alltest.cs
+	$(CSCOMPILE) alltest.cs
 
+# WARNING: It removes catalog.xml. If you want to keep catalog.xml, comment
+# "rm" and "patch" lines out.
 $(TESTS) : $(TEST_ARCHIVE) simplify.xsl
+	rm -f testsuite/TESTS/catalog.xml
 	unzip -n $(TEST_ARCHIVE)
 	patch testsuite/TESTS/catalog.xml catalog.diff
 	xsltproc simplify.xsl testsuite/TESTS/catalog.xml > testsuite/TESTS/catalog-out.xml
@@ -51,28 +54,34 @@ $(MSTEST_RESULTS_ARCHIVE) :
 
 run-test : run-test-xslt run-test-ms
 
-run-test-xslt :
+run-test-xslt : xslttest.exe
 	$(RUNTIME) xslttest.exe --report:TestResult.xml --xml --details --outall
 
-run-test-ms :
-	$(RUNTIME) alltest.exe Results
-	diff -r -q testsuite/TESTS/ExpectedResults testsuite/TESTS/Results > diffreport.txt
+run-test-ms : alltest.exe xmlnorm.exe
+	$(RUNTIME) alltest.exe $(TARGET_RESULTS)
+	$(RUNTIME) xmlnorm.exe -s testsuite/TESTS/$(TARGET_RESULTS) testsuite/TESTS/norm-tmp
+	rm -rf testsuite/TESTS/$(TARGET_RESULTS)
+	mv testsuite/TESTS/norm-tmp testsuite/TESTS/$(TARGET_RESULTS)
+	diff -r -q testsuite/TESTS/ExpectedResults testsuite/TESTS/$(TARGET_RESULTS) > diffreport.txt
 
-clean : clean-original clean-ms
+clean : clean-xslttest clean-mstest
 
-clean-original :
-	find testsuite/TESTS -name *.out > output.lst
-	perl cleanup-output.pl
-	rm xslttest.exe TestResult.xml
+clean-xslttest :
+	if (test -e testsuite) then \
+		find testsuite/TESTS -name *.out > output.lst; \
+		perl cleanup-output.pl; \
+	fi
+	rm -f xslttest.exe TestResult.xml output.lst
 
-clean-ms :
+clean-mstest :
 	rm -rf testsuite/TESTS/Reports
-	rm diffreport.txt alltest.exe
+	rm -f diffreport.txt alltest.exe xmlnorm.exe
 
 # Be careful to use it!
 distclean :
+	make clean
 	rm -rf testsuite
-	rm diffreport.txt alltest.exe $(TEST_ARCHIVE) $(XSLTTEST_RESULTS_ARCHIVE) $(MSTEST_RESULTS_ARCHIVE)
+	rm $(TEST_ARCHIVE) $(XSLTTEST_RESULTS_ARCHIVE) $(MSTEST_RESULTS_ARCHIVE)
 
 create-reference-output : clean-original xslttest.exe
 	./xslttest.exe --generate
