@@ -835,6 +835,7 @@ namespace System.Windows.Forms
 			get {
 				CreateParams cp = base.CreateParams;									
 				cp.Style = unchecked ((int)(WindowStyles.WS_POPUP | WindowStyles.WS_VISIBLE));
+				cp.ExStyle |= (int)WindowStyles.WS_EX_TOOLWINDOW;
 				return cp;
 			}
 		}
