@@ -5097,6 +5097,34 @@ namespace Mono.CSharp {
 			return true;
 		}
 
+		public static bool InferTypeArguments (EmitContext ec, ParameterData apd,
+						       ref MethodBase method)
+		{
+			if (!TypeManager.IsGenericMethod (method))
+				return true;
+
+			ParameterData pd = GetParameterData (method);
+			if (apd.Count != pd.Count)
+				return false;
+
+			Type[] method_args = method.GetGenericParameters ();
+			Type[] infered_types = new Type [method_args.Length];
+
+			Type[] param_types = new Type [pd.Count];
+			Type[] arg_types = new Type [pd.Count];
+
+			for (int i = 0; i < apd.Count; i++) {
+				param_types [i] = pd.ParameterType (i);
+				arg_types [i] = apd.ParameterType (i);
+			}
+
+			if (!InferTypeArguments (param_types, arg_types, ref infered_types))
+				return false;
+
+			method = method.BindGenericParameters (infered_types);
+			return true;
+		}
+
 		public override Expression DoResolve (EmitContext ec)
 		{
 			//

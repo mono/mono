@@ -380,13 +380,10 @@ namespace Mono.CSharp {
 		///  Verifies whether the method in question is compatible with the delegate
 		///  Returns the method itself if okay and null if not.
 		/// </summary>
-		public static MethodBase VerifyMethod (EmitContext ec, Type delegate_type, MethodBase mb,
+		public static MethodBase VerifyMethod (EmitContext ec, Type delegate_type,
+						       MethodGroupExpr mg, MethodBase mb,
 						       Location loc)
 		{
-			ParameterData pd = Invocation.GetParameterData (mb);
-
-			int pd_count = pd.Count;
-
 			Expression ml = Expression.MemberLookup (
 				ec, delegate_type, "Invoke", loc);
 
@@ -396,8 +393,14 @@ namespace Mono.CSharp {
 			}
 
 			MethodBase invoke_mb = ((MethodGroupExpr) ml).Methods [0];
-
 			ParameterData invoke_pd = Invocation.GetParameterData (invoke_mb);
+
+			if (!mg.HasTypeArguments &&
+			    !Invocation.InferTypeArguments (ec, invoke_pd, ref mb))
+				return null;
+
+			ParameterData pd = Invocation.GetParameterData (mb);
+			int pd_count = pd.Count;
 
 			if (invoke_pd.Count != pd_count)
 				return null;
@@ -608,10 +611,11 @@ namespace Mono.CSharp {
 		{
 			string method_desc;
 
+			MethodBase candidate = mg.Methods [0];
 			if (mg.Methods.Length > 1)
-				method_desc = mg.Methods [0].Name;
+				method_desc = candidate.Name;
 			else
-				method_desc = Invocation.FullMethodDesc (mg.Methods [0]);
+				method_desc = Invocation.FullMethodDesc (candidate);
 
 			Expression invoke_method = Expression.MemberLookup (
 				ec, type, "Invoke", MemberTypes.Method,
@@ -620,8 +624,16 @@ namespace Mono.CSharp {
  			ParameterData param = Invocation.GetParameterData (method);
 			string delegate_desc = Delegate.FullDelegateDesc (type, method, param);
 
-			Report.Error (123, loc, "Method '" + method_desc + "' does not " +
-				      "match delegate '" + delegate_desc + "'");
+			if (!mg.HasTypeArguments &&
+			    !Invocation.InferTypeArguments (ec, param, ref candidate))
+				Report.Error (411, loc, "The type arguments for " +
+					      "method `{0}' cannot be infered from " +
+					      "the usage. Try specifying the type " +
+					      "arguments explicitly.", method_desc);
+			else
+				Report.Error (123, loc, "Method '{0}' does not " +
+					      "match delegate '{1}'", method_desc,
+					      delegate_desc);
 		}
 
 		public override void Emit (EmitContext ec)
@@ -657,7 +669,8 @@ namespace Mono.CSharp {
 		protected Expression ResolveMethodGroupExpr (EmitContext ec, MethodGroupExpr mg)
 		{
 				foreach (MethodInfo mi in mg.Methods){
-					delegate_method  = Delegate.VerifyMethod (ec, type, mi, loc);
+					delegate_method = Delegate.VerifyMethod (
+						ec, type, mg, mi, loc);
 
 					if (delegate_method != null)
 						break;

@@ -1,5 +1,13 @@
 2004-03-29  Martin Baulig  <martin@ximian.com>
 
+	* delegate.cs (Delegate.VerifyMethod): Infer type arguments.
+
+	* expression.cs (Invocation.InferTypeArguments): Added overloaded
+	public version which takes a `ParameterData pd' instead of an
+	`ArrayList args'.
+
+2004-03-29  Martin Baulig  <martin@ximian.com>
+
 	* typemanager.cs (TypeManager.IsGenericMethod): Take a MethodBase,
 	not a MethodInfo.	
 
