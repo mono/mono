@@ -1,4 +1,8 @@
 
+Mon Apr 8 17:15:04 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* main.c: removed unneeded runtime invoke support.
+
 Thu Mar 28 16:52:11 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	* dis-cil.c, dump.c, get.c, main.c, util.h: spring warning cleanup.
