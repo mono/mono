@@ -1,3 +1,8 @@
+2004-10-05 Anirban Bhattacharjee <banirban@novell.com>
+	* Interaction.cs:
+	* Strings.cs :
+		Few important fixes
+
 2004-07-22  Jambunathan K  <kjambunathan@novell.com>
 
 	* Constants.cs: Fixed definitions of vbCr, vbLf, vbCrLf and

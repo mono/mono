@@ -352,7 +352,7 @@ namespace Microsoft.VisualBasic {
 			string [] args = Environment.GetCommandLineArgs ();
 
 			if (args != null && args.Length > 1) {
-				return string.Join (" ", args, 2, args.Length - 1);
+				return string.Join (" ", args, 1, args.Length - 1);
 			} else {
 				return "";
 			}
