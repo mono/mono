@@ -1,3 +1,8 @@
+2004-01-08  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XsdValidatingReader.cs : Fixed in reflection to 
+	  XmlSchemaObjectTableGetEnumerator.Value change.
+
 2004-01-08  Nick Drochak <ndrochak@ieee.org>
 
 	* XsdParticleValidationState.cs: Remove unreachable code.

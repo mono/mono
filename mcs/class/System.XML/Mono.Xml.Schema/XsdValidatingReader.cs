@@ -126,7 +126,6 @@ namespace Mono.Xml.Schema
 					else
 						return SourceReaderSchemaType;
 				case XmlNodeType.Attribute:
-					// TODO: Default attribute support
 					XmlSchemaComplexType ct = context.ActualType as XmlSchemaComplexType;
 					if (ct != null) {
 						XmlSchemaAttribute attdef = ct.AttributeUses [CurrentQName] as XmlSchemaAttribute;
@@ -937,7 +936,8 @@ namespace Mono.Xml.Schema
 			// Collect default attributes.
 			// 4.
 			// FIXME: FixedValue check maybe extraneous.
-			foreach (XmlSchemaAttribute attr in cType.AttributeUses) {
+			foreach (DictionaryEntry entry in cType.AttributeUses) {
+				XmlSchemaAttribute attr = (XmlSchemaAttribute) entry.Value;
 				if (reader [attr.QualifiedName.Name, attr.QualifiedName.Namespace] == null) {
 					if (attr.ValidatedUse == XmlSchemaUse.Required && 
 						attr.ValidatedFixedValue == null)
@@ -985,9 +985,11 @@ namespace Mono.Xml.Schema
 			if (cType.AttributeWildcard.ProcessContents == XmlSchemaContentProcessing.Skip)
 				return cType.AttributeWildcard;
 			foreach (XmlSchema schema in schemas) {
-				foreach (XmlSchemaAttribute attr in schema.Attributes)
+				foreach (DictionaryEntry entry in schema.Attributes) {
+					XmlSchemaAttribute attr = (XmlSchemaAttribute) entry.Value;
 					if (attr.QualifiedName == qname)
 						return attr;
+				}
 			}
 			if (cType.AttributeWildcard.ProcessContents == XmlSchemaContentProcessing.Lax)
 				return cType.AttributeWildcard;
