@@ -97,6 +97,10 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "ChangeLog"
+                    BuildAction = "None"
+                />
+                <File
                     RelPath = "class.cs"
                     SubType = "Code"
                     BuildAction = "Compile"

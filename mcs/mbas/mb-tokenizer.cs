@@ -34,6 +34,8 @@ namespace Mono.MonoBASIC
 		public int current_token;
 		bool handle_get_set = false;
 
+		public int ExpandedTabsSize = 4; 
+
 		public string location {
 			get {
 				string det;
@@ -291,10 +293,10 @@ namespace Mono.MonoBASIC
 			doread = false;
 
 			switch (c){
-			case '[':
-				return Token.OPEN_BRACKET;
-			case ']':
-				return Token.CLOSE_BRACKET;
+//			case '[':
+//				return Token.OPEN_BRACKET;
+//			case ']':
+//				return Token.CLOSE_BRACKET;
 			case '(':
 				return Token.OPEN_PARENS;
 			case ')':
@@ -649,19 +651,78 @@ namespace Mono.MonoBASIC
 		{
 			return val;
 		}
-		
+
+		private bool IsEOL(int currentChar)
+		{
+			if (currentChar ==  0x0D)
+			{
+				if (peekChar() ==  0x0A) // if it is a CR-LF pair consume LF also
+					getChar();
+
+				return true;
+			}
+			return (currentChar ==  -1 || currentChar ==  0x0A || currentChar ==  0x2028 || currentChar ==  0x2029);
+		}
+
+		private int DropComments()		
+		{
+			int d;
+			while (!IsEOL(d = getChar ()))
+				col++;
+			line++;
+			ref_line++;
+			col = 0;
+
+			return Token.EOL;
+		}	
+			
 		public int token ()
 		{
-			current_token = xtoken ();
-			if (current_token == 0) 
-				return Token.EOF;
+			int lastToken = current_token;
+			do
+			{
+				current_token = xtoken ();
+				if (current_token == 0) 
+					return Token.EOF;
+				if (current_token == Token.REM)
+					current_token = DropComments();
+			} while (lastToken == Token.EOL && current_token == Token.EOL);
+
 			return current_token;
 		}
-		
+
+		private string GetIdentifier()
+		{
+			int c = getChar();
+			if (is_identifier_start_character ((char) c))
+				return GetIdentifier(c);
+			else
+				return null;
+		}
+
+		private string GetIdentifier(int c)
+		{
+			System.Text.StringBuilder id = new System.Text.StringBuilder ();
+
+			id.Append ((char) c);
+				
+			while ((c = peekChar ()) != -1) 
+			{
+				if (is_identifier_part_character ((char) c))
+				{
+					id.Append ((char)getChar ());
+					col++;
+				} 
+				else 
+					break;
+			}
+
+			return id.ToString ();
+		}
+
 		public int xtoken ()
 		{
 			int t;
-			bool allow_keyword_as_ident = false;
 			bool doread = false;
 			int c;
 
@@ -669,20 +730,11 @@ namespace Mono.MonoBASIC
 			for (;(c = getChar ()) != -1; col++) {
 			
 				// Handle line comments.
-				if (c == '\''){
-					int d = getChar ();
-					while ((d = getChar ()) != -1 && (d != '\n'))
-						col++;
-					line++;
-					ref_line++;
-					col = 0;
-					if (current_token == Token.EOL) // if last token was also EOL keep skipping
-						continue;
-					return Token.EOL;
-				}
+				if (c == '\'')
+					return Token.REM;
 
 				// Handle EOL.
-				if (c == '\n')
+				if (IsEOL(c))
 				{
 					line++;
 					ref_line++;
@@ -692,33 +744,29 @@ namespace Mono.MonoBASIC
 					return Token.EOL;
 				}
 				
-				// Handle identifiers
-				if (is_identifier_start_character ((char) c)){
-					System.Text.StringBuilder id = new System.Text.StringBuilder ();
-					string ids;
-					
-					id.Append ((char) c);
-					
-					while ((c = peekChar ()) != -1) {
-						if (is_identifier_part_character ((char) c)){
-							id.Append ((char)getChar ());
-							col++;
-						} else 
-							break;
-					}
-					
-					ids = id.ToString ();
-
-					if (!is_keyword (ids) || allow_keyword_as_ident) {
-						val = ids;
-						return Token.IDENTIFIER;
-					}
-
-					// true, false and null are in the hash anyway.
-					return getKeyword (ids);
-
+				// Handle escaped identifiers
+				if (c == '[')
+				{
+					if ((val = GetIdentifier()) == null)
+						break;
+					if ((c = getChar()) != ']')
+						break;
+					return Token.IDENTIFIER;
 				}
 
+				// Handle unescaped identifiers
+				if (is_identifier_start_character ((char) c))
+				{
+					string id;
+					if ((id = GetIdentifier(c)) == null)
+						break;
+					if (is_keyword(id))
+						return getKeyword(id);
+					val = id;
+					return Token.IDENTIFIER;
+				}
+
+				// handle numeric literals
 				if (c == '.'){
 					if (Char.IsDigit ((char) peekChar ()))
 						return is_number (c);
@@ -728,7 +776,7 @@ namespace Mono.MonoBASIC
 				if (Char.IsDigit ((char) c))
 					return is_number (c);
 
-				/* For now, ignore pre-processor commands */
+				/* For now, limited support for pre-processor commands */
 				if (col == 1 && c == '#'){
 					System.Text.StringBuilder s = new System.Text.StringBuilder ();
 					
@@ -764,11 +812,12 @@ namespace Mono.MonoBASIC
 					return t;
 				}
 				
+				// Treat string literals
 				if (c == '"'){
 					System.Text.StringBuilder s = new System.Text.StringBuilder ();
 
 					while ((c = getChar ()) != -1){
-						if (c == '"'){
+						if (c == '"'){ // TODO: treat double-doublequotes
 							val = s.ToString ();
 							return Token.LITERAL_STRING;
 						}
@@ -780,18 +829,16 @@ namespace Mono.MonoBASIC
 					}
 				}
 			
-				// white space
-				if (c == ' ' || c == '\t' || c == '\f' || c == '\v' || c == '\r'){
-					if (c == '\t')
-						col = (((col + 8) / 8) * 8) - 1;
-					
+				// expand tabs for location and ignore it as whitespace
+				if (c == '\t')
+				{
+					col = (((col + ExpandedTabsSize) / ExpandedTabsSize) * ExpandedTabsSize) - 1;
 					continue;
 				}
 
-				if (c == '@'){
-					allow_keyword_as_ident = true;
+				// white space
+				if (c == ' ' || c == '\f' || c == '\v')
 					continue;
-				}
 
 				error_details = ((char)c).ToString ();
 				

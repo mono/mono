@@ -1,4 +1,10 @@
 2002-05-31  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
+	* class Mono.MonoBASIC.Tokenizer now handles 
+		- all valid line-terminators (CR, LF, CRLF, LS and PS)
+		- escaped identifiers (like [Integer])
+		- old-fashioned comments syntax (REM Blah-Blah)
+
+2002-05-31  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
 	* modified mbas.ico to be a small version of mono´s logo (see mcs\MonoIcon.png)
 
 2002-05-31  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
