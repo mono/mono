@@ -269,11 +269,11 @@ namespace Mono.Data.SybaseClient {
 			if (connectionString == null)
 				throw new InvalidOperationException ("Connection string has not been initialized.");
 			if (!pooling)
-				tds = new Tds50 (dataSource, port, packetSize);
+				tds = new Tds50 (DataSource, port, PacketSize, ConnectionTimeout);
 			else {
 				pool = (SybaseConnectionPool) SybaseConnectionPools [connectionString];
 				if (pool == null) {
-					pool = new SybaseConnectionPool (dataSource, port, packetSize, minPoolSize, maxPoolSize);
+					pool = new SybaseConnectionPool (dataSource, port, packetSize, ConnectionTimeout, minPoolSize, maxPoolSize);
 					SybaseConnectionPools [connectionString] = pool;
 				}
 				tds = pool.AllocateConnection ();
