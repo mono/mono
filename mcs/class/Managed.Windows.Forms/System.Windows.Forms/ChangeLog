@@ -1,3 +1,7 @@
+2004-12-27  Jordi Mas i Hernandez <jordi@ximian.com>
+
+	* ComboBox.cs: Complete DropDownList implementation, fixes.
+
 2004-12-26  Jordi Mas i Hernandez <jordi@ximian.com>
 
 	* ThemeWin32Classic, Theme.cs: ComboBox drawing methods

@@ -80,6 +80,7 @@ namespace System.Windows.Forms
 			public ComboBoxItem (int index)
 			{
 				Index = index;
+
 			}
 		}
 
@@ -103,7 +104,8 @@ namespace System.Windows.Forms
 			/* Events */
 			MouseDown += new MouseEventHandler (OnMouseDownCB);
 			MouseUp += new MouseEventHandler (OnMouseUpCB);
-
+			
+			Console.WriteLine ("ComboBox is still an on going effort. Only ComboBoxStyle.DropDownList is implemented");
 		}
 
 		#region Events
@@ -263,20 +265,37 @@ namespace System.Windows.Forms
 		public override int SelectedIndex {
 			get { return selected_index; }
 			set {
+				if (value < -2 || value >= Items.Count)
+					throw new ArgumentOutOfRangeException ("Index of out range");
+
 				if (selected_index == value)
 					return;
 
     				selected_index = value;
+    				OnSelectedIndexChanged  (new EventArgs ());
+    				Refresh ();
 			}
 		}
 
 		public object SelectedItem {
-			get { return selected_item; }
+			get {
+				if (selected_index !=-1 && Items.Count > 0)
+					return Items[selected_index];
+				else
+					return null;
+				}
 			set {
 				if (selected_item == value)
 					return;
 
-    				selected_item = value;
+    				int index = Items.IndexOf (value);
+
+				if (index == -1)
+					return;
+
+				selected_index = index;
+				OnSelectedItemChanged  (new EventArgs ());
+				Refresh ();
 			}
 		}
 		
@@ -403,12 +422,17 @@ namespace System.Windows.Forms
 				DrawItem (this, e);
 
 			if ((e.State & DrawItemState.Selected) == DrawItemState.Selected) {
+
 				e.Graphics.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush
 					(ThemeEngine.Current.ColorHilight), e.Bounds);
 
 				e.Graphics.DrawString (Items[e.Index].ToString (), e.Font,
 					ThemeEngine.Current.ResPool.GetSolidBrush (ThemeEngine.Current.ColorHilightText),
 					e.Bounds, string_format);
+
+				// It seems to be a bug in CPDrawFocusRectangle
+				//ThemeEngine.Current.CPDrawFocusRectangle (e.Graphics, e.Bounds,
+				//	ThemeEngine.Current.ColorHilightText, BackColor);
 			}
 			else {
 				e.Graphics.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush
@@ -478,12 +502,11 @@ namespace System.Windows.Forms
 		protected virtual void OnSelectedItemChanged (EventArgs e)
 		{
 
-
 		}
 
 		protected override void OnSelectedValueChanged (EventArgs e)
 		{
-
+			base.OnSelectedValueChanged (e);
 		}
 
 		protected virtual void OnSelectionChangeCommitted (EventArgs e)
@@ -559,6 +582,12 @@ namespace System.Windows.Forms
 
 		#region Private Methods
 
+		internal void ButtonReleased ()
+		{
+			combobox_info.button_status = ButtonState.Normal;
+			Invalidate (combobox_info.button_rect);
+		}
+
 		// Calcs the text area size
 		internal void CalcTextArea ()
 		{
@@ -576,7 +605,7 @@ namespace System.Windows.Forms
 			}
 		}
 
-		internal void CreateListBoxPopUp ()
+		private void CreateListBoxPopUp ()
 		{
 			listbox_popup = new ListBoxPopUp (this);
 			listbox_popup.Location = PointToScreen (new Point (ClientRectangle.X, ClientRectangle.Y + ClientRectangle.Height));
@@ -585,21 +614,31 @@ namespace System.Windows.Forms
 
 		internal void Draw (Rectangle clip)
 		{
-			// Fill edit area
-			DeviceContext.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (BackColor), ClientRectangle);
+			
+			// No edit control, we paint the edit are ourselfs
+			if (dropdown_style == ComboBoxStyle.DropDownList) {
+
+				if (selected_index != -1) {
+					
+					OnDrawItem (new DrawItemEventArgs (DeviceContext, Font, combobox_info.textarea_rect,
+								selected_index, DrawItemState.Selected,
+								ForeColor, BackColor));				
+				}
+				else
+					DeviceContext.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (BackColor), 
+						ClientRectangle);
+			}
 
 			if (CBoxInfo.show_button) {
-				Console.WriteLine ("Draw ButtonStatus {0}", combobox_info.button_status);
 				DeviceContext.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (ThemeEngine.Current.ColorButtonFace),
 					combobox_info.button_rect);
-										
+
 				ThemeEngine.Current.CPDrawComboButton (DeviceContext,
 					combobox_info.button_rect, combobox_info.button_status);
 			}
 
 			ThemeEngine.Current.DrawComboBoxDecorations (DeviceContext, this);
 		}
-
 
 		internal virtual void OnMouseDownCB (object sender, MouseEventArgs e)
     		{
@@ -621,12 +660,9 @@ namespace System.Windows.Forms
     					if (listbox_popup == null)
     						CreateListBoxPopUp ();
 
-					listbox_popup.CalcListBoxArea ();
-    					listbox_popup.Show ();
-					listbox_popup.Refresh ();
+    					listbox_popup.ShowWindow ();
     				}
 
-    				Console.WriteLine ("ComboBox.OnMouseDownCB clicked {0}", combobox_info.button_status);
     				Invalidate (combobox_info.button_rect);
     			}
     		}
@@ -643,7 +679,6 @@ namespace System.Windows.Forms
 
 		private void OnPaintCB (PaintEventArgs pevent)
 		{
-			Console.WriteLine ("OnPaintCB");
 			if (Width <= 0 || Height <=  0 || Visible == false || suspend_ctrlupdate == true)
     				return;
 
@@ -826,6 +861,7 @@ namespace System.Windows.Forms
 			private VScrollBar vscrollbar_ctrl;
 			private int top_item;			/* First item that we show the in the current page */
 			private int last_item;			/* Last visible item */
+			private int highlighted_item;		/* Item that is currently selected */
 			private Rectangle textarea_rect;	/* Rectangle of the drawable text area */
 
 
@@ -835,6 +871,7 @@ namespace System.Windows.Forms
 				need_vscrollbar = false;
 				top_item = 0;
 				last_item = 0;
+				highlighted_item = -1;
 
 				MouseDown += new MouseEventHandler (OnMouseDownPUW);
 				MouseMove += new MouseEventHandler (OnMouseMovePUW);
@@ -849,9 +886,8 @@ namespace System.Windows.Forms
 				vscrollbar_ctrl.SmallChange = 1;
 				vscrollbar_ctrl.LargeChange = 1;
 				vscrollbar_ctrl.Maximum = 0;
-				//vscrollbar_ctrl.ValueChanged += new EventHandler (VerticalScrollEvent);
+				vscrollbar_ctrl.ValueChanged += new EventHandler (VerticalScrollEvent);
 				vscrollbar_ctrl.Visible = false;
-
 			}
 
 			protected override CreateParams CreateParams
@@ -870,6 +906,7 @@ namespace System.Windows.Forms
 			protected override void CreateHandle ()
 			{
 				base.CreateHandle ();
+				Controls.Add (vscrollbar_ctrl);
 			}
 
 			// Calcs the listbox area
@@ -887,8 +924,10 @@ namespace System.Windows.Forms
 					height = owner.ItemHeight * owner.MaxDropDownItems;
 					need_vscrollbar = true;
 
-					vscrollbar_ctrl.Height = height - 2;
-					vscrollbar_ctrl.Location = new Point (width - vscrollbar_ctrl.Width - 2, 1);
+					vscrollbar_ctrl.Height = height - 1;
+					vscrollbar_ctrl.Location = new Point (width - vscrollbar_ctrl.Width - 1, 1);
+
+					vscrollbar_ctrl.Maximum = owner.Items.Count - owner.MaxDropDownItems;
 				}
 
 				if (vscrollbar_ctrl.Visible != need_vscrollbar)
@@ -907,13 +946,10 @@ namespace System.Windows.Forms
 					textarea_rect.Width -= vscrollbar_ctrl.Width;
 
 				last_item = LastVisibleItem ();
-				
 			}
 
 			private void Draw (Rectangle clip)
 			{
-				Console.WriteLine ("ListBoxPopUp.Draw top {0} last {1}", top_item, last_item);
-				
 				Rectangle cl = ClientRectangle;
 
 				if (owner.Items.Count > 0) {
@@ -928,8 +964,9 @@ namespace System.Windows.Forms
 
 						/* Draw item */
 						state = DrawItemState.None;
-						
-						Console.WriteLine ("ListBoxPopUp.DrawItem {0}", item_rect);
+
+						if (i  == highlighted_item)
+							state |= DrawItemState.Selected;
 
 						owner.OnDrawItem (new DrawItemEventArgs (DeviceContext, owner.Font, item_rect,
 							i, state, owner.ForeColor, owner.BackColor));
@@ -958,6 +995,21 @@ namespace System.Windows.Forms
 				return item_rect;
 			}
 
+			public void HideWindow ()
+			{
+				owner.ButtonReleased ();
+				Hide ();
+			}
+
+			private int IndexFromPointDisplayRectangle (int x, int y)
+			{
+	    			for (int i = top_item; i < last_item; i++) {
+					if (GetItemDisplayRectangle (i, top_item).Contains (x, y) == true)
+						return i;
+				}
+
+				return -1;
+			}
 
 			private int LastVisibleItem ()
 			{
@@ -977,8 +1029,16 @@ namespace System.Windows.Forms
 	    		{
 	    			/* Click outside the client area destroys the popup */
 	    			if (ClientRectangle.Contains (e.X, e.Y) == false) {
-	    				Hide ();
+	    				HideWindow ();
+	    				return;
 	    			}
+
+	    			/* Click on an element */
+	    			int index = IndexFromPointDisplayRectangle (e.X, e.Y);
+    				if (index == -1) return;
+
+				owner.SelectedIndex = index;
+				HideWindow ();
 			}
 
 			private void OnMouseUpPUW (object sender, MouseEventArgs e)
@@ -988,7 +1048,24 @@ namespace System.Windows.Forms
 
 			private void OnMouseMovePUW (object sender, MouseEventArgs e)
 			{
+				Rectangle invalidate;
+				int index = IndexFromPointDisplayRectangle (e.X, e.Y);
 
+    				if (index == -1) return;
+
+    				/* Previous item */
+    				if (highlighted_item != -1) {
+					invalidate = GetItemDisplayRectangle (highlighted_item, top_item);
+	    				if (ClientRectangle.Contains (invalidate))
+	    					Invalidate (invalidate);
+	    			}
+
+    				highlighted_item = index;
+
+    				 /* Current item */
+    				invalidate = GetItemDisplayRectangle (highlighted_item, top_item);
+    				if (ClientRectangle.Contains (invalidate))
+    					Invalidate (invalidate);
 			}
 
 			private void OnPaintPUW (Object o, PaintEventArgs pevent)
@@ -1000,6 +1077,20 @@ namespace System.Windows.Forms
 				pevent.Graphics.DrawImage (ImageBuffer, pevent.ClipRectangle, pevent.ClipRectangle, GraphicsUnit.Pixel);
 			}
 
+			public void ShowWindow ()
+			{
+				CalcListBoxArea ();
+				Show ();
+				Refresh ();
+			}
+
+			// Value Changed
+			private void VerticalScrollEvent (object sender, EventArgs e)
+			{
+				top_item =  vscrollbar_ctrl.Value;
+				last_item = LastVisibleItem ();
+				Refresh ();
+			}
 
 			#endregion Private Methods
 		}
