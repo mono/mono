@@ -1,6 +1,10 @@
 
 2002-10-07     Gaurav Vaish <gvaish_mono@lycos.com>
 
+	* BaseDataListDesigner.cs : Initial implementation.
+
+2002-10-07     Gaurav Vaish <gvaish_mono@lycos.com>
+
 	* TableRowsCollectionEditor.cs
 	                          : Completed.
 	* TODO                    : Updated information.
