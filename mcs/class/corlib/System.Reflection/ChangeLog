@@ -1,3 +1,8 @@
+2004-12-16  Zoltan Varga  <vargaz@freemail.hu>
+
+	* CustomAttributeData.cs MethodBody.cs: Reenable some 2.0 code now that
+	the gmcs bugs blocking them are fixed.
+
 2004-12-08  Zoltan Varga  <vargaz@freemail.hu>
 
 	* Assembly.cs: Move corlib_internal field to AssemblyBuilder.

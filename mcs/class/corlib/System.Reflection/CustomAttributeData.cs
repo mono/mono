@@ -26,8 +26,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-// gmcs can't compile the ConstructorArguments property
-#if FIXME
 #if NET_2_0
 
 using System;
@@ -47,6 +45,7 @@ namespace System.Reflection {
 		}
 
 		[MonoTODO]
+		[CLSCompliant (false)]
 		public IList<CustomAttributeTypedArgument> ConstructorArguments {
 			get {
 				throw new NotImplementedException ();
@@ -54,6 +53,7 @@ namespace System.Reflection {
 		}
 
 		[MonoTODO]
+		[CLSCompliant (false)]
 		public IList<CustomAttributeNamedArgument> NamedArguments {
 			get {
 				throw new NotImplementedException ();
@@ -61,21 +61,25 @@ namespace System.Reflection {
 		}
 
 		[MonoTODO]
+		[CLSCompliant (false)]
 		public static IList<CustomAttributeData> GetCustomAttributes (Assembly yarget) {
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
+		[CLSCompliant (false)]
 		public static IList<CustomAttributeData> GetCustomAttributes (MemberInfo target) {
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
+		[CLSCompliant (false)]
 		public static IList<CustomAttributeData> GetCustomAttributes (Module target) {
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
+		[CLSCompliant (false)]
 		public static IList<CustomAttributeData> GetCustomAttributes (ParameterInfo target) {
 			throw new NotImplementedException ();
 		}
@@ -84,4 +88,4 @@ namespace System.Reflection {
 }
 
 #endif
-#endif
+
