@@ -29,6 +29,14 @@ public class Outline {
         {
 		OutlineAttributes ();
 		o.Write (GetTypeVisibility (t));
+		
+		if (t.IsClass && !t.IsSubclassOf (typeof (System.MulticastDelegate))) {
+			if (t.IsSealed)
+				o.Write (" sealed");
+			else if (t.IsAbstract)
+				o.Write (" abstract");
+		}
+		
 		o.Write (" ");
 		o.Write (GetTypeKind (t));
 		o.Write (" ");
