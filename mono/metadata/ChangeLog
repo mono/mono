@@ -1,3 +1,8 @@
+2003-01-24  Martin Baulig  <martin@ximian.com>
+
+	* threads.h (MonoThreadCallbacks): Pass the thread ID instead of
+	the MonoThread pointer.
+
 2003-01-21  Miguel de Icaza  <miguel@ximian.com>
 
 	* icall.c: Rename `PowImpl' to Pow.
