@@ -64,6 +64,7 @@ namespace Mono.ILASM {
                         int ch;
                         int peek;
                         bool is_real = false;
+                        bool dec_found = false;
 
                         NumberStyles nstyles = NumberStyles.AllowExponent | NumberStyles.AllowDecimalPoint |
                                 NumberStyles.AllowLeadingSign;
@@ -89,8 +90,10 @@ namespace Mono.ILASM {
 
                                         is_real = true;
                                 }
+                                if (ch == '.')
+                                        dec_found = true;
                                 if (!is_hex(peek) &&
-                                    !(peek == '.') && !is_e (peek) &&
+                                    !(peek == '.' && !dec_found) && !is_e (peek) &&
                                     !(is_sign (peek) && is_real)) {
                                         break;
                                 }
@@ -105,6 +108,11 @@ namespace Mono.ILASM {
                                         result.val = Byte.Parse (num, NumberStyles.HexNumber);
                                         return num;
                                 }
+                        }
+
+                        if (ch == '.') {
+                                num = num.Substring (0, num.Length-1);
+                                reader.Unread ('.');
                         }
 
                         try {

@@ -79,6 +79,19 @@ namespace Mono.ILASM {
 
                         while ((ch = reader.Read ()) != -1) {
 
+                                // Ellipsis
+                                if (ch == '.' && reader.Peek () == '.') {
+                                        reader.MarkLocation ();
+                                        int ch2 = reader.Read ();
+                                        if (reader.Peek () == '.') {
+                                                res = ILToken.Ellipsis;
+                                                reader.Read ();
+                                                break;
+                                        }
+                                        reader.Unread (ch2);
+                                        reader.RestoreLocation ();
+                                }
+
                                 if (ch == '.' || ch == '#') {
                                         next = reader.Peek ();
                                         if (ch == '.' && Char.IsDigit((char) next)) {
