@@ -17,8 +17,6 @@ namespace System.Xml.Schema
 	/// </summary>
 	public class XmlSchemaSimpleType : XmlSchemaType
 	{
-		static XmlSchemaSimpleType anySimpleType;
-
 		private XmlSchemaSimpleTypeContent content;
 		//compilation vars
 		internal bool islocal = true; // Assuming local means we have to specify islocal=false only in XmlSchema
@@ -149,6 +147,7 @@ namespace System.Xml.Schema
 				this.resolvedDerivedBy = XmlSchemaDerivationMethod.Union;
 				errorCount += ((XmlSchemaSimpleTypeUnion)Content).Compile(h,schema);
 			}
+
 			this.CompilationId = schema.CompilationId;
 			return errorCount;
 		}
@@ -189,7 +188,7 @@ namespace System.Xml.Schema
 			// 3.
 			XmlSchemaSimpleType baseSType = baseSchemaTypeInternal as XmlSchemaSimpleType;
 			if (baseSType != null) {
-				if ((baseSType.FinalResolved & this.DerivedBy) != 0)
+				if ((baseSType.FinalResolved & this.resolvedDerivedBy) != 0)
 					error (h, "Specified derivation is prohibited by the base simple type.");
 			}
 

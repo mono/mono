@@ -119,7 +119,7 @@ namespace System.Xml.Schema
 		}
 		public void CopyTo(XmlSchema[] array, int index)
 		{
-			throw new NotImplementedException ();
+			((ICollection) this).CopyTo (array, index);
 		}
 
 		public XmlSchemaCollectionEnumerator GetEnumerator()
@@ -128,10 +128,9 @@ namespace System.Xml.Schema
 		}
 		
 		// interface Methods
-		[MonoTODO]
 		void ICollection.CopyTo(Array array, int index)
 		{
-			throw new NotImplementedException ();
+			htable.Values.CopyTo (array, index);
 		}
 		bool ICollection.IsSynchronized
 		{

@@ -39,7 +39,12 @@ namespace System.Xml.Schema
 		StringBuilder sb = new StringBuilder ();
 		internal string Normalize (string s)
 		{
-			switch (Whitespace) {
+			return Normalize (s, Whitespace);
+		}
+
+		internal string Normalize (string s, XsdWhitespaceFacet whitespaceFacet)
+		{
+			switch (whitespaceFacet) {
 			case XsdWhitespaceFacet.Collapse:
 				string [] arr = s.Trim ().Split (wsChars);
 				foreach (string one in arr)
@@ -53,9 +58,19 @@ namespace System.Xml.Schema
 			case XsdWhitespaceFacet.Replace:
 				sb.Length = 0;
 				sb.Append (s);
+				for (int i = 0; i < sb.Length; i++)
+					switch (sb [i]) {
+					case '\r':
+					case '\n':
+					case '\t':
+						sb [i] = ' ';
+						break;
+					}
+				/*
 				sb.Replace ('\r', ' ');
 				sb.Replace ('\n', ' ');
 				sb.Replace ('\t', ' ');
+				*/
 				result = sb.ToString ();
 				sb.Length = 0;
 				return result;
@@ -74,8 +89,8 @@ namespace System.Xml.Schema
 		internal static XmlSchemaDatatype FromName (string localName)
 		{
 			switch (localName) {
-//			case "anyType":
-//				return datatypeAnySimpleType;
+			case "anySimpleType":
+				return datatypeAnySimpleType;
 			case "string":
 				return datatypeString;
 			case "normalizedString":
@@ -165,13 +180,12 @@ namespace System.Xml.Schema
 			case "gDay":
 				return datatypeGDay;
 			default:
-//				throw new NotImplementedException ("Unknown type: " + localName);
 				// Maybe invalid name was specified. In such cases, let processors handle them.
 				return null;
 			}
 		}
 
-//		private static XsdAnySimpleType datatypeAnySimpleType = new XsdAnySimpleType ();
+		private static XsdAnySimpleType datatypeAnySimpleType = new XsdAnySimpleType ();
 		private static XsdString datatypeString = new XsdString ();
 		private static XsdNormalizedString datatypeNormalizedString = new XsdNormalizedString ();
 		private static XsdToken datatypeToken = new XsdToken ();

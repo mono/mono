@@ -1,3 +1,13 @@
+2003-10-19  Atsushi Enomoto  <ginga@kit.hi-ho.ne.jp>
+
+	* BuiltInDatatype.cs : Implemented XsdHexBinary.Parse().
+	* XmlSchemaCollection.cs : Implemented CopyTo().
+	* XmlSchemaDatatype.cs : Added Normalize() with whitespace handling.
+	  Added support for anySimpleType.
+	* XmlSchemaSimpleType.cs : Type specification named as anyType should
+	  be mapped to anySimpleType.
+	* BUGS-MS.txt : Added more case note.
+
 2003-10-13  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* XmlSchema.cs: If the schema element is an empty element, skip it after

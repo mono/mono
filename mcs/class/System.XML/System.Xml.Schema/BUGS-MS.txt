@@ -118,3 +118,11 @@ BUGS in MS Implementation of XmlSchema:
 	from atomic type is not naturally allowed.
 
 	Related msxsdtest is elemT014.xsd.
+
+011. schema finalDefault with list and/or union
+
+	In xs:schema, finalDefault = (#all | List of (extension | restriction)),
+	but MS.NET failed to handle blockDefault='list' as an error.
+	(union as well.)
+
+	Related msxsdtest is stF034.xsd and stF036.xsd.

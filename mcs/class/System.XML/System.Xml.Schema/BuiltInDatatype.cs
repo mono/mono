@@ -75,10 +75,9 @@ namespace Mono.Xml.Schema
 			return Normalize (s);
 		}
 
-		internal object ParseListValue (string s,
-			XmlNameTable nameTable, XmlNamespaceManager nsmgr)
+		internal string [] ParseListValue (string s, XmlNameTable nameTable)
 		{
-			return this.Normalize (s).Split (whitespaceArray);
+			return this.Normalize (s, XsdWhitespaceFacet.Collapse).Split (whitespaceArray);
 		}
 	}
 
@@ -111,6 +110,7 @@ namespace Mono.Xml.Schema
 			get { return XsdOrderedFacet.False; }
 		}
 
+		/* Freeze their use now.
 		// Constraining Facets
 		public bool HasLengthFacet;
 		public bool HasMaxLengthFacet;
@@ -120,6 +120,7 @@ namespace Mono.Xml.Schema
 		public int MinLength;
 		public string Pattern;
 		public ICollection Enumeration;
+		*/
 	}
 
 	// xs:normalizedString
@@ -221,7 +222,7 @@ namespace Mono.Xml.Schema
 
 		public override object ParseValue (string value, XmlNameTable nt, XmlNamespaceManager nsmgr)
 		{
-			return ParseListValue (value, nt, nsmgr);
+			return ParseListValue (value, nt);
 		}
 	}
 
@@ -327,7 +328,7 @@ namespace Mono.Xml.Schema
 
 		public override object ParseValue (string value, XmlNameTable nt, XmlNamespaceManager nsmgr)
 		{
-			return ParseListValue (value, nt, nsmgr);
+			return ParseListValue (value, nt);
 		}
 	}
 
@@ -368,7 +369,7 @@ namespace Mono.Xml.Schema
 
 		public override object ParseValue (string value, XmlNameTable nt, XmlNamespaceManager nsmgr)
 		{
-			return ParseListValue (value, nt, nsmgr);
+			return ParseListValue (value, nt);
 		}
 	}
 
@@ -754,11 +755,10 @@ namespace Mono.Xml.Schema
 			get { return typeof (byte []); }
 		}
 
-		[MonoTODO]
 		public override object ParseValue (string s,
 			XmlNameTable nameTable, XmlNamespaceManager nsmgr)
 		{
-			throw new NotImplementedException ();
+			return XmlConvert.FromBinHexString (s);
 		}
 
 		// Fundamental Facets ... no need to override
