@@ -529,16 +529,15 @@ namespace Mono.Xml.Xsl
 	class XsltKey : XPathFunction 
 	{
 		Expression arg0, arg1;
-		IStaticXsltContext ctx;
-		XslKey key;
+		IStaticXsltContext staticContext;
 		
 		public XsltKey (FunctionArguments args, IStaticXsltContext ctx) : base (args)
 		{
+			staticContext = ctx;
 			if (args == null || args.Tail == null)
 				throw new XPathException ("key takes 2 args");
 			arg0 = args.Arg;
 			arg1 = args.Tail.Arg;
-			this.ctx = ctx;
 		}
 		public Expression KeyName { get { return arg0; } }
 		public Expression Field { get { return arg1; } }
@@ -550,61 +549,9 @@ namespace Mono.Xml.Xsl
 		
 		public override object Evaluate (BaseIterator iter)
 		{
-			QName name = XslNameUtil.FromString (arg0.EvaluateString (iter), this.ctx);
-			XsltCompiledContext ctx = iter.NamespaceManager as XsltCompiledContext;
-			if (key == null)
-				key = ctx.Processor.CompiledStyle.Style.FindKey (name);
-
-			ArrayList result = new ArrayList ();
-			object o = arg1.Evaluate (iter);
-			XPathNodeIterator it = o as XPathNodeIterator;
-			
-			if (it != null) {
-				while (it.MoveNext())
-					FindKeyMatch (ctx, it.Current.Value, result, iter.Current);
-			} else {
-				FindKeyMatch (ctx, XPathFunctions.ToString (o), result, iter.Current);
-			}
-			
-			return new ListIterator (result, (iter.NamespaceManager as XsltCompiledContext), true);
-		}
-		
-		void FindKeyMatch (XsltCompiledContext xsltContext, string value, ArrayList result, XPathNavigator context)
-		{
-			XPathNavigator searchDoc = context.Clone ();
-			searchDoc.MoveToRoot ();
-			if (key != null) {
-				XPathNodeIterator desc = searchDoc.SelectDescendants (XPathNodeType.All, true);
-
-				while (desc.MoveNext ()) {
-					if (key.Matches (desc.Current, xsltContext, value))
-						AddResult (result, desc.Current);
-					
-					if (desc.Current.MoveToFirstAttribute ()) {
-						do {
-							if (key.Matches (desc.Current, xsltContext, value))
-								AddResult (result, desc.Current);	
-						} while (desc.Current.MoveToNextAttribute ());
-						
-						desc.Current.MoveToParent ();
-					}
-				}
-			}
-		}
-
-		void AddResult (ArrayList result, XPathNavigator nav)
-		{
-			for (int i = 0; i < result.Count; i++) {
-				XmlNodeOrder docOrder = nav.ComparePosition (((XPathNavigator)result [i]));
-				if (docOrder == XmlNodeOrder.Same)
-					return;
-				
-				if (docOrder == XmlNodeOrder.Before) {
-					result.Insert(i, nav.Clone ());
-					return;
-				}
-			}
-			result.Add (nav.Clone ());
+			XsltCompiledContext ctx = iter.NamespaceManager
+				as XsltCompiledContext;
+			return ctx.EvaluateKey (staticContext, iter, arg0, arg1);
 		}
 	}
 	

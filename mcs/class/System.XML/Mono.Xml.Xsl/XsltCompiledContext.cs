@@ -49,8 +49,22 @@ namespace Mono.Xml.Xsl
 {
 	internal class XsltCompiledContext : XsltContext 
 	{
+		struct XsltContextInfo
+		{
+			public bool IsCData;
+			public bool PreserveWhitespace;
+			public string ElementPrefix;
+			public string ElementNamespace;
+		}
+
+		Hashtable keyNameCache = new Hashtable ();
+		Hashtable keyIndexTables = new Hashtable ();
+
 		XslTransformProcessor p;
-			
+		XsltContextInfo [] scopes = new XsltContextInfo [40];
+		int scopeAt = 0;
+		
+
 		public XslTransformProcessor Processor { get { return p; }}
 			
 		public XsltCompiledContext (XslTransformProcessor p) : base (new NameTable ())
@@ -60,6 +74,44 @@ namespace Mono.Xml.Xsl
 
 		public override string DefaultNamespace { get { return String.Empty; }}
 
+		public object EvaluateKey (IStaticXsltContext staticContext,
+			BaseIterator iter,
+			Expression nameExpr, Expression valueExpr)
+		{
+			QName name = GetKeyName (staticContext, iter, nameExpr);
+			KeyIndexTable table = GetIndexTable (name);
+			return table.Evaluate (iter, valueExpr);
+		}
+
+		private QName GetKeyName (IStaticXsltContext staticContext,
+			BaseIterator iter, Expression nameExpr)
+		{
+			QName name = null;
+			if (nameExpr.HasStaticValue) {
+				name = (QName) keyNameCache [nameExpr];
+				if (name == null) {
+					name = XslNameUtil.FromString (
+						nameExpr.EvaluateString (iter),
+						staticContext);
+					keyNameCache [nameExpr] = name;
+				}
+			}
+			else
+				name = XslNameUtil.FromString (
+					nameExpr.EvaluateString (iter), this);
+			return name;
+		}
+
+		private KeyIndexTable GetIndexTable (QName name)
+		{
+			KeyIndexTable table =
+				keyIndexTables [name] as KeyIndexTable;
+			if (table == null) {
+				table = new KeyIndexTable (this, p.CompiledStyle.Style.FindKey (name));
+				keyIndexTables [name] = table;
+			}
+			return table;
+		}
 
 		public override string LookupNamespace (string prefix)
 		{
@@ -198,17 +250,6 @@ namespace Mono.Xml.Xsl
 			get { return scopes [scopeAt].ElementNamespace; }
 			set { scopes [scopeAt].ElementNamespace = value; }
 		}
-
-		struct XsltContextInfo
-		{
-			public bool IsCData;
-			public bool PreserveWhitespace;
-			public string ElementPrefix;
-			public string ElementNamespace;
-		}
-		
-		XsltContextInfo [] scopes = new XsltContextInfo [40];
-		int scopeAt = 0;
 		
 		// precondition scopeAt == scopes.Length
 		void ExtendScope ()

@@ -1,5 +1,16 @@
 2005-03-14  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XslKey.cs,
+	  XsltCompiledContext.cs,
+	  XslFunctions.cs,
+	  XslTransformProcessor.cs : Now dynamic context key index table is 
+	  separate from XslKey static context. Added KeyIndexTable class and
+	  store it into XsltCompiledContext with hash name-table mapping.
+	  Cache map from statically-named key to index table.
+	  Use Hashtable for internal key cache instead of ArrayList.
+
+2005-03-14  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XslKey.cs : fixed node iteration on collecting key indices which
 	  could have resulted in an infinite loop.
 

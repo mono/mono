@@ -77,8 +77,8 @@ namespace Mono.Xml.Xsl
 		QName name;
 		CompiledExpression usePattern;
 		CompiledExpression matchPattern;
-		Hashtable map;
-		Hashtable mappedDocuments;
+//		Hashtable map;
+//		Hashtable mappedDocuments;
 
 		public XslKey (Compiler c)
 		{
@@ -98,17 +98,24 @@ namespace Mono.Xml.Xsl
 		public QName Name { get { return name; }}
 		internal CompiledExpression UsePattern { get { return usePattern; }}
 		internal CompiledExpression MatchPattern { get { return matchPattern; }}
+	}
 
-		internal void ClearKeyTable ()
+	// represents part of dynamic context that holds index table for a key
+	internal class KeyIndexTable
+	{
+		XsltCompiledContext ctx;
+		XslKey key;
+		Hashtable map;
+		Hashtable mappedDocuments;
+
+		public KeyIndexTable (XsltCompiledContext ctx, XslKey key)
 		{
-			if (map != null) {
-				map.Clear ();
-				map = null;
-			}
-			if (mappedDocuments != null) {
-				mappedDocuments.Clear ();
-				mappedDocuments = null;
-			}
+			this.ctx = ctx;
+			this.key = key;
+		}
+
+		public XslKey Key {
+			get { return key; }
 		}
 
 		private void CollectTable (XPathNavigator doc)
@@ -117,7 +124,7 @@ namespace Mono.Xml.Xsl
 			nav.MoveToRoot ();
 
 			do {
-				if (nav.Matches (MatchPattern))
+				if (nav.Matches (key.MatchPattern))
 					CollectIndex (nav);
 			} while (MoveNavigatorToNext (nav));
 		}
@@ -137,40 +144,40 @@ namespace Mono.Xml.Xsl
 		{
 			XPathNavigator target = nav.Clone ();
 			XPathNodeIterator iter;
-			switch (UsePattern.ReturnType) {
+			switch (key.UsePattern.ReturnType) {
 			case XPathResultType.NodeSet:
-				iter = nav.Select (UsePattern);
+				iter = nav.Select (key.UsePattern);
 				while (iter.MoveNext ())
 					AddIndex (iter.Current.Value, target);
 				break;
 			case XPathResultType.Any:
-				object o = nav.Evaluate (UsePattern);
+				object o = nav.Evaluate (key.UsePattern);
 				iter = o as XPathNodeIterator;
 				if (iter != null) {
 					while (iter.MoveNext ())
 						AddIndex (iter.Current.Value, target);
 				}
 				else
-					AddIndex (nav.EvaluateString (UsePattern, null, null), target);
+					AddIndex (nav.EvaluateString (key.UsePattern, null, null), target);
 				break;
 			default:
-				string key = nav.EvaluateString (UsePattern, null, null);
-				AddIndex (key, target);
+				string keyValue = nav.EvaluateString (key.UsePattern, null, null);
+				AddIndex (keyValue, target);
 				break;
 			}
 		}
 
 		private void AddIndex (string key, XPathNavigator target)
 		{
-			ArrayList al = map [key] as ArrayList;
+			Hashtable al = map [key] as Hashtable;
 			if (al == null) {
-				al = new ArrayList ();
+				al = new Hashtable ();
 				map [key] = al;
 			}
-			al.Add (target);
+			al [target] = target;
 		}
 
-		public bool Matches (XPathNavigator nav, XmlNamespaceManager nsmgr, string value)
+		public bool Matches (XPathNavigator nav, string value)
 		{
 			if (map == null) {
 				mappedDocuments = new Hashtable ();
@@ -178,20 +185,76 @@ namespace Mono.Xml.Xsl
 			}
 			if (!mappedDocuments.ContainsKey (nav.BaseURI)) {
 				mappedDocuments.Add (nav.BaseURI, nav.BaseURI);
-				MatchPattern.SetContext (nsmgr);
-				UsePattern.SetContext (nsmgr);
+				key.MatchPattern.SetContext (ctx);
+				key.UsePattern.SetContext (ctx);
 				CollectTable (nav);
-				MatchPattern.SetContext (null);
-				UsePattern.SetContext (null);
+				key.MatchPattern.SetContext (null);
+				key.UsePattern.SetContext (null);
 			}
 			
-			ArrayList al = map [value] as ArrayList;
+			Hashtable al = map [value] as Hashtable;
 			if (al == null)
 				return false;
-			for (int i = 0; i < al.Count; i++)
-				if (((XPathNavigator) al [i]).IsSamePosition (nav))
+			foreach (XPathNavigator i in al.Values)
+				if (i.IsSamePosition (nav))
 					return true;
 			return false;
+		}
+
+		// Invoked from XsltKey (XPathFunction)
+		public object Evaluate (BaseIterator iter,
+			Expression valueExpr)
+		{
+			ArrayList result = new ArrayList ();
+			object o = valueExpr.Evaluate (iter);
+			XPathNodeIterator it = o as XPathNodeIterator;
+			
+			if (it != null) {
+				while (it.MoveNext())
+					FindKeyMatch (it.Current.Value, result, iter.Current);
+			} else {
+				FindKeyMatch (XPathFunctions.ToString (o), result, iter.Current);
+			}
+			
+			return new ListIterator (result, (ctx), true);
+		}
+		
+		void FindKeyMatch (string value, ArrayList result, XPathNavigator context)
+		{
+			XPathNavigator searchDoc = context.Clone ();
+			searchDoc.MoveToRoot ();
+			if (key != null) {
+				XPathNodeIterator desc = searchDoc.SelectDescendants (XPathNodeType.All, true);
+
+				while (desc.MoveNext ()) {
+					if (Matches (desc.Current, value))
+						AddResult (result, desc.Current);
+					
+					if (!desc.Current.MoveToFirstAttribute ())
+						continue;
+					do {
+						if (Matches (desc.Current, value))
+							AddResult (result, desc.Current);	
+					} while (desc.Current.MoveToNextAttribute ());
+					
+					desc.Current.MoveToParent ();
+				}
+			}
+		}
+
+		void AddResult (ArrayList result, XPathNavigator nav)
+		{
+			for (int i = 0; i < result.Count; i++) {
+				XmlNodeOrder docOrder = nav.ComparePosition (((XPathNavigator)result [i]));
+				if (docOrder == XmlNodeOrder.Same)
+					return;
+				
+				if (docOrder == XmlNodeOrder.Before) {
+					result.Insert(i, nav.Clone ());
+					return;
+				}
+			}
+			result.Add (nav.Clone ());
 		}
 	}
 }

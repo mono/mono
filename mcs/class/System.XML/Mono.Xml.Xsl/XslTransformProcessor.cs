@@ -76,10 +76,6 @@ namespace Mono.Xml.Xsl {
 			this.outputStylesheetXmlns = true;
 			this.currentOutputUri = String.Empty;
 
-			// This is also done after the transformation, just for reuse after exception.
-			foreach (XslKey key in style.Keys.Values)
-				key.ClearKeyTable ();
-
 			XPathExpression exp = root.Compile (".");
 			PushNodeset (root.Select (exp, this.XPathContext));
 			
@@ -111,9 +107,6 @@ namespace Mono.Xml.Xsl {
 			this.PushOutput (outputtter);
 			this.ApplyTemplates (root.Select (exp, this.XPathContext), QName.Empty, null);
 			this.PopOutput ();
-
-			foreach (XslKey key in style.Keys.Values)
-				key.ClearKeyTable ();
 		}
 		
 		public CompiledStylesheet CompiledStyle { get { return compiledStyle; }}
