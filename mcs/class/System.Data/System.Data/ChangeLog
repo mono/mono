@@ -1,3 +1,13 @@
+2003-01-13  Ville Palo <vi64pa@koti.soon.fi>
+
+	* DataRowCollection.cs: Added IndexOutOfRangeException
+	* DataTableCollection.cs: Added OnCollectionChanging and 
+	OnCollectionChanged events.
+	* DataSet.cs: Many fixes. Implemented Clone () and Copy () -methods
+	* DataTable.cs: Implemented Copy () and Clone () methods.
+	* XmlDataLoader.cs: some fixes.
+	* XmlSchemaMapper.cs: comments.
+	
 2003-01-08  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* DataColumnPropertyDescriptor.cs: store columnIndex in the .ctor.

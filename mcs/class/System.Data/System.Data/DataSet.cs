@@ -202,12 +202,47 @@ namespace System.Data {
 
 		public virtual DataSet Clone()
 		{
-			throw new NotImplementedException ();
+			DataSet Copy = new DataSet ();
+			CopyProperties (Copy);
+
+			foreach (DataTable Table in Tables) {
+				Copy.Tables.Add (Table.Clone ());
+			}	
+			
+			return Copy;
 		}
 
+		// Copies both the structure and data for this DataSet.
 		public DataSet Copy()
 		{
-			throw new NotImplementedException ();
+			DataSet Copy = new DataSet ();
+			CopyProperties (Copy);
+
+			// Copy DatSet's tables
+			foreach (DataTable Table in Tables) {				
+				Copy.Tables.Add (Table.Copy ());
+			}
+
+			return Copy;
+		}
+
+		[MonoTODO]
+		private void CopyProperties (DataSet Copy)
+		{
+			Copy.CaseSensitive = CaseSensitive;
+			//Copy.Container = Container
+			Copy.DataSetName = DataSetName;
+			//Copy.DefaultViewManager
+			//Copy.DesignMode
+			Copy.EnforceConstraints = EnforceConstraints;
+			//Copy.ExtendedProperties 
+			//Copy.HasErrors
+			//Copy.Locale = Locale;
+			Copy.Namespace = Namespace;
+			Copy.Prefix = Prefix;
+			//Copy.Relations = Relations;
+			//Copy.Site = Site;
+
 		}
 
 		public DataSet GetChanges()
@@ -223,12 +258,16 @@ namespace System.Data {
 
 		public string GetXml()
 		{
-			return "Fish!";
+			StringWriter Writer = new StringWriter ();
+			WriteXml (Writer, XmlWriteMode.IgnoreSchema);
+			return Writer.ToString ();
 		}
 
 		public string GetXmlSchema()
 		{
-			throw new NotImplementedException ();
+			StringWriter Writer = new StringWriter ();
+			WriteXmlSchema (Writer);
+			return Writer.ToString ();
 		}
 
 		public virtual void RejectChanges()
@@ -269,7 +308,6 @@ namespace System.Data {
 		public void WriteXml(XmlWriter writer)
 		{
 			WriteXml( writer, XmlWriteMode.IgnoreSchema );
-			writer.Close ();
 		}
 
 		public void WriteXml(Stream stream, XmlWriteMode mode)
@@ -329,7 +367,6 @@ namespace System.Data {
 			writer.WriteEndElement();
 			
 			writer.WriteEndDocument();
-			writer.Close ();					
 		}
 
 		public void WriteXmlSchema(Stream stream)
@@ -363,7 +400,6 @@ namespace System.Data {
 			DoWriteXmlSchema( writer );
 			
 			writer.WriteEndDocument();
-			writer.Close ();
 		}
 
 		public void ReadXmlSchema(Stream stream)
@@ -388,7 +424,6 @@ namespace System.Data {
 		{
 			XmlSchemaMapper SchemaMapper = new XmlSchemaMapper (this);
 			SchemaMapper.Read (reader);
-			reader.Close ();
 		}
 
 		public XmlReadMode ReadXml (Stream stream)
@@ -409,9 +444,32 @@ namespace System.Data {
 		public XmlReadMode ReadXml (XmlReader r)
 		{
 			XmlDataLoader Loader = new XmlDataLoader (this);
-			XmlReadMode Result = Loader.LoadData (r);
-			r.Close ();
-			return Result;
+			// FIXME: somekinda exception?
+			if (!r.Read ())
+				return XmlReadMode.Auto; // FIXME
+
+			/*\
+			 *  If document is diffgram we will use diffgram
+			\*/
+			if (r.LocalName == "diffgram")
+				return ReadXml (r, XmlReadMode.DiffGram);
+
+			/*\
+			 *  If we already have a schema, or the document 
+			 *  contains an in-line schema, sets XmlReadMode to ReadSchema.
+		        \*/
+
+			// FIXME: is this always true: "if we have tables we have to have schema also"
+			if (DataSet.Tables.Count > 0)				
+				return ReadXml (r, XmlReadMode.ReadSchema);
+
+			/*\
+			 *  If we dont have a schema yet and document 
+			 *  contains no inline-schema  mode is XmlReadMode.InferSchema
+			\*/
+
+			return ReadXml (r, XmlReadMode.InferSchema);
+
 		}
 
 		public XmlReadMode ReadXml (Stream stream, XmlReadMode mode)
@@ -432,8 +490,19 @@ namespace System.Data {
 		[MonoTODO]
 		public XmlReadMode ReadXml (XmlReader reader, XmlReadMode mode)
 		{
-			XmlDataLoader Loader = new XmlDataLoader (this);
-			return Loader.LoadData (reader, mode);
+			XmlReadMode Result = XmlReadMode.Auto;
+
+			if (mode == XmlReadMode.DiffGram) {
+				XmlDiffLoader DiffLoader = new XmlDiffLoader (this);
+				DiffLoader.Load (reader);
+				Result =  XmlReadMode.DiffGram;
+			}
+			else {
+				XmlDataLoader Loader = new XmlDataLoader (this);
+				Result = Loader.LoadData (reader, mode);
+			}
+
+			return Result;
 		}
 
 		#endregion // Public Methods
@@ -495,13 +564,29 @@ namespace System.Data {
 			System.Collections.ArrayList atts;
 			System.Collections.ArrayList elements;
 			DataColumn simple = null;
-			
+
 			SplitColumns( table, out atts, out elements, out simple );
-			
+
 			foreach( DataRow row in table.Rows )
 			{
 				//sort out the namespacing
 				string nspc = table.Namespace.Length > 0 ? table.Namespace : Namespace;
+
+				// First check are all the rows null. If they are we just write empty element
+				bool AllNulls = true;
+				foreach (DataColumn dc in table.Columns) {
+				
+					if (row [dc.ColumnName] != DBNull.Value) {
+						AllNulls = false;
+						break;
+					} 
+				}
+
+				// If all of the columns were null, we have to write empty element
+				if (AllNulls) {
+					writer.WriteElementString (table.TableName, "");
+					continue;
+				}
 
 				WriteStartElement( writer, mode, nspc, table.Prefix, table.TableName );
 				
@@ -540,6 +625,7 @@ namespace System.Data {
 				
 				writer.WriteEndElement();
 			}
+
 		}
 		    
 		private void WriteStartElement( XmlWriter writer, XmlWriteMode mode, string nspc, string prefix, string name )

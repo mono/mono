@@ -69,6 +69,7 @@ namespace System.Data {
 		{
 			list.Add (table);
 			table.dataSet = dataSet;
+			OnCollectionChanged (new CollectionChangeEventArgs (CollectionChangeAction.Add, table));
 		}
 
 		public virtual DataTable Add (string name) 
@@ -118,6 +119,7 @@ namespace System.Data {
 		public void Remove (DataTable table) 
 		{
 			this.Remove (table.TableName);
+			OnCollectionChanged (new CollectionChangeEventArgs (CollectionChangeAction.Remove, table));
 		}
 
 		public void Remove (string name) 
@@ -128,6 +130,22 @@ namespace System.Data {
 		public void RemoveAt (int index) 
 		{
 			list.RemoveAt (index);
+		}
+
+		#endregion
+
+		#region Protected methods
+
+		protected internal virtual void OnCollectionChanging (CollectionChangeEventArgs Args)
+		{
+			if (CollectionChanging != null)
+				CollectionChanging (this, Args);
+		}
+
+		protected virtual void OnCollectionChanged (CollectionChangeEventArgs Args)
+		{
+			if (CollectionChanged != null)
+				CollectionChanged (this, Args);
 		}
 
 		#endregion

@@ -37,7 +37,12 @@ namespace System.Data
 		/// </summary>
 		public DataRow this[int index] 
 		{
-			get { return (DataRow) list[index]; }
+			get { 
+				if (index >= Count)
+					throw new IndexOutOfRangeException ("There is no row at position " + index + ".");
+
+				return (DataRow) list[index]; 
+			}
 		}
 
 		/// <summary>

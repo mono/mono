@@ -12,6 +12,8 @@
 //
 // (C) 2002 Ville Palo
 //
+// TODO: Relations
+//
 
 using System;
 using System.Data;
@@ -21,10 +23,6 @@ using System.Collections;
 using System.Globalization;
 
 namespace System.Data {
-
-        /*\
-	 *  There is so much TODO here that i dont bother to list them.
-	\*/
 
         internal class XmlSchemaMapper
 	{	

@@ -35,48 +35,12 @@ namespace System.Data {
 			DSet = set;
 		}
 
-		public XmlReadMode LoadData (XmlReader r)
-		{
-			// FIXME: somekinda exception?
-			if (!r.Read ())
-				return XmlReadMode.Auto; // FIXME
-
-			/*\
-			 *  If document is diffgram we will use diffgram
-			\*/
-			if (r.LocalName == "diffgram")
-				return LoadData (r, XmlReadMode.DiffGram);
-
-			/*\
-			 *  If we already have a schema, or the document 
-			 *  contains an in-line schema, sets XmlReadMode to ReadSchema.
-		        \*/
-
-			// FIXME: is this always true: "if we have tables we have to have schema also"
-			if (DSet.Tables.Count > 0)				
-				return LoadData (r, XmlReadMode.ReadSchema);
-
-			/*\
-			 *  If we dont have a schema yet and document 
-			 *  contains no inline-schema  mode is XmlReadMode.InferSchema
-			\*/
-
-			return LoadData (r, XmlReadMode.InferSchema);
-		}
-
 		public XmlReadMode LoadData (XmlReader reader, XmlReadMode mode)
 		{
 			XmlReadMode Result = XmlReadMode.Auto;
 
 			switch (mode) {
 
-			        case XmlReadMode.DiffGram:
-					Result = XmlReadMode.DiffGram;
-					ReadModeDiffGram (reader);
-					break;
-			        case XmlReadMode.Auto:
-					LoadData (reader);
-					break;
 			        case XmlReadMode.Fragment:
 					break;
 				case XmlReadMode.ReadSchema:
@@ -97,18 +61,6 @@ namespace System.Data {
 
 			return Result;
 		}
-
-		// These methods should be in their own class for example XmlDiffLoader. But for now, let them be here
-		#region diffgram-methods
-
-		// XmlReadMode.DiffGram
-		private void ReadModeDiffGram (XmlReader reader)
-		{
-			XmlDiffLoader DiffLoader = new XmlDiffLoader (DSet);
-			DiffLoader.Load (reader);
-		}
-
-		#endregion // diffgram-methods
 
 		#region reading
 
@@ -134,15 +86,16 @@ namespace System.Data {
 				if (reader.NodeType == XmlNodeType.Element) {
 					
 					string datatablename = reader.LocalName;
-					bool addTable = true;
 					DataTable table;
+					bool NewTable = false;
 
 					if (!DSet.Tables.Contains (datatablename)) {
 						table = new DataTable (reader.LocalName);
+						DSet.Tables.Add (table);
+						NewTable = true;
 					}
 					else {
 						table = DSet.Tables [datatablename];
-						addTable = false;
 					}
 
 					Hashtable rowValue = new Hashtable ();
@@ -153,7 +106,7 @@ namespace System.Data {
 						if (reader.NodeType == XmlNodeType.Element) {
 
 							string dataColumnName = reader.LocalName;
-							if (addTable)
+							if (NewTable)
 								table.Columns.Add (dataColumnName);
 
 							// FIXME: exception?
@@ -172,9 +125,6 @@ namespace System.Data {
 					}
 
 					table.Rows.Add (row);
-					
-					if (addTable)
-						DSet.Tables.Add (table);
 				}
 			}			
 		}

@@ -430,8 +430,9 @@ namespace System.Data {
 		[MonoTODO]
 		public virtual DataTable Clone()
 		{
-			//FIXME:
-			return this; //Don't know if this is correct
+			DataTable Copy = new DataTable ();			
+			CopyProperties (Copy);
+			return Copy;
 		}
 
 		/// <summary>
@@ -441,7 +442,7 @@ namespace System.Data {
 		
 		[MonoTODO]
 		public object Compute(string expression, string filter)
-		{
+		{			
 			//FIXME: //Do a real compute
 			object obj = "a";
 			return obj;
@@ -453,10 +454,49 @@ namespace System.Data {
 		[MonoTODO]	
 		public DataTable Copy()
 		{
-			//FIXME: Do a real copy
-			return this;
+			DataTable Copy = new DataTable ();
+
+
+			CopyProperties (Copy);
+
+			foreach (DataRow Row in Rows) {
+				DataRow NewRow = Copy.NewRow ();
+				NewRow.RowError = Row.RowError;
+				foreach (DataColumn C in Copy.Columns) {
+					NewRow [C.ColumnName] = Row [C.ColumnName];
+				}
+				Copy.Rows.Add (NewRow);
+			}
+		       			
+			return Copy;
 		}
 
+		[MonoTODO]
+		private void CopyProperties (DataTable Copy)
+		{
+			Copy.CaseSensitive = CaseSensitive;
+			// Copy.ChildRelations
+			// Copy.Constraints
+			// Copy.Container
+			// Copy.DefaultView
+			// Copy.DesignMode
+			Copy.DisplayExpression = DisplayExpression;
+			// Copy.ExtendedProperties
+			Copy.Locale = Locale;
+			Copy.MinimumCapacity = MinimumCapacity;
+			Copy.Namespace = Namespace;
+			// Copy.ParentRelations
+			Copy.Prefix = Prefix;
+			//Copy.PrimaryKey = PrimaryKey;
+			Copy.Site = Site;
+			Copy.TableName = TableName;
+
+			// Copy columns
+			foreach (DataColumn Column in Columns) {
+				Copy.Columns.Add (CopyColumn (Column));				
+			}
+
+		}
 		/// <summary>
 		/// Ends the initialization of a DataTable that is used 
 		/// on a form or used by another component. The 
@@ -783,6 +823,34 @@ namespace System.Data {
 				RowDeleting(this, e);
 			}
 		}
+
+		[MonoTODO]
+		private DataColumn CopyColumn (DataColumn Column)
+		{
+			DataColumn Copy = new DataColumn ();
+
+			// Copy all the properties of column
+			Copy.AllowDBNull = Column.AllowDBNull;
+			Copy.AutoIncrement = Column.AutoIncrement;
+			Copy.AutoIncrementSeed = Column.AutoIncrementSeed;
+			Copy.AutoIncrementStep = Column.AutoIncrementStep;
+			Copy.Caption = Column.Caption;
+			Copy.ColumnMapping = Column.ColumnMapping;
+			Copy.ColumnName = Column.ColumnName;
+			// Copy.Container
+			// Copy.DataType
+			// Copy.DefaultValue			
+			Copy.Expression = Column.Expression;
+			//Copy.ExtendedProperties
+			Copy.MaxLength = Column.MaxLength;
+			Copy.Namespace = Column.Namespace;
+			Copy.Prefix = Column.Prefix;
+			Copy.ReadOnly = Column.ReadOnly;
+			//Copy.Site
+			Copy.Unique = Column.Unique;
+			
+			return Copy;
+		}			
 
 		/// <summary>
 		/// Occurs when after a value has been changed for 
