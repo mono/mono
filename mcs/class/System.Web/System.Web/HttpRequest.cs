@@ -551,7 +551,7 @@ namespace System.Web {
 						for (; iCount != 40; iCount++) {
 							sHeaderValue = _WorkerRequest.GetKnownRequestHeader(iCount);
 							if (null != sHeaderValue && sHeaderValue.Length > 0) {
-								sHeaderName = _WorkerRequest.GetKnownRequestHeader(iCount);
+								sHeaderName = HttpWorkerRequest.GetKnownRequestHeaderName(iCount);
 								if (null != sHeaderName && sHeaderName.Length > 0) {
 									_oHeaders.Add(sHeaderName, sHeaderValue);
 								}

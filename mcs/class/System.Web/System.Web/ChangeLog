@@ -1,3 +1,8 @@
+2003-07-03  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpRequest.cs: fixed Headers property. It was getting known headers
+	values instead of known headers names.
+
 2003-07-01  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpApplication.cs: prevent nullref if an error happens before context
