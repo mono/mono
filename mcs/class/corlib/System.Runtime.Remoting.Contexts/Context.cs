@@ -12,6 +12,7 @@
 using System.Collections;
 using System.Threading;
 using System.Runtime.Remoting;
+using System.Runtime.Remoting.Proxies;
 using System.Runtime.Remoting.Activation;
 using System.Runtime.Remoting.Messaging;
 using System.Runtime.Remoting.Lifetime;
@@ -27,9 +28,6 @@ namespace System.Runtime.Remoting.Contexts {
 		// Default server context sink chain
 		static IMessageSink default_server_context_sink;
 
-		// Default client context sink chain
-		static IMessageSink default_client_context_sink;
-
 		// The sink chain that has to be used by all calls entering the context
 		IMessageSink server_context_sink_chain = null;
 
@@ -39,6 +37,9 @@ namespace System.Runtime.Remoting.Contexts {
 		ArrayList context_properties;
 		bool frozen;
 		static int global_count;
+
+		static DynamicPropertyCollection global_dynamic_properties;
+		DynamicPropertyCollection context_dynamic_properties;
 		
 		public Context ()
 		{
@@ -62,6 +63,78 @@ namespace System.Runtime.Remoting.Contexts {
 		{
 			get { return context_id == 0; }
 		}
+
+		public static bool RegisterDynamicProperty(IDynamicProperty prop, ContextBoundObject obj, Context ctx)
+		{
+			DynamicPropertyCollection col = GetDynamicPropertyCollection (obj, ctx);
+			return col.RegisterDynamicProperty (prop);
+		}
+
+		public static bool UnregisterDynamicProperty(string name, ContextBoundObject obj, Context ctx)
+		{
+			DynamicPropertyCollection col = GetDynamicPropertyCollection (obj, ctx);
+			return col.UnregisterDynamicProperty (name);
+		}
+		
+		static DynamicPropertyCollection GetDynamicPropertyCollection(ContextBoundObject obj, Context ctx)
+		{
+			if (ctx == null && obj != null)
+			{
+				if (RemotingServices.IsTransparentProxy(obj))
+				{
+					RealProxy rp = RemotingServices.GetRealProxy (obj);
+					return rp.ObjectIdentity.ClientDynamicProperties;
+				}
+				else
+					return obj.ObjectIdentity.ServerDynamicProperties;
+			}
+			else if (ctx != null && obj == null)
+			{
+				if (ctx.context_dynamic_properties == null) ctx.context_dynamic_properties = new DynamicPropertyCollection ();
+				return ctx.context_dynamic_properties;
+			}
+			else if (ctx == null && obj == null)
+			{
+				if (global_dynamic_properties == null) global_dynamic_properties = new DynamicPropertyCollection ();
+				return global_dynamic_properties;
+			}
+			else
+				throw new ArgumentException ("Either obj or ctx must be null");
+		}
+		
+		internal static void NotifyGlobalDynamicSinks  (bool start, IMessage req_msg, bool client_site, bool async)
+		{
+			if (global_dynamic_properties != null && global_dynamic_properties.HasProperties) 
+				global_dynamic_properties.NotifyMessage (start, req_msg, client_site, async);
+		}
+
+		internal static bool HasGlobalDynamicSinks
+		{
+			get { return (global_dynamic_properties != null && global_dynamic_properties.HasProperties); }
+		}
+
+		internal void NotifyDynamicSinks  (bool start, IMessage req_msg, bool client_site, bool async)
+		{
+			if (context_dynamic_properties != null && context_dynamic_properties.HasProperties) 
+				context_dynamic_properties.NotifyMessage (start, req_msg, client_site, async);
+		}
+
+		internal bool HasDynamicSinks
+		{
+			get { return (context_dynamic_properties != null && context_dynamic_properties.HasProperties); }
+		}
+
+		internal bool HasExitSinks
+		{
+			get
+			{
+				// Needs to go through the client context sink if there are custom
+				// client context or dynamic sinks.
+
+				return ( !(GetClientContextSinkChain() is ClientContextTerminatorSink) || HasDynamicSinks || HasGlobalDynamicSinks);
+			}
+		}
+
 
 		public virtual IContextProperty GetProperty (string name)
 		{
@@ -115,8 +188,9 @@ namespace System.Runtime.Remoting.Contexts {
 				server_context_sink_chain = default_server_context_sink;
 
 				if (context_properties != null) {
-					foreach (IContextProperty prop in context_properties) {
-						IContributeServerContextSink contributor = prop as IContributeServerContextSink;
+					// Enumerate in reverse order
+					for (int n = context_properties.Count-1; n>=0; n--) {
+						IContributeServerContextSink contributor = context_properties[n] as IContributeServerContextSink;
 						if (contributor != null)
 							server_context_sink_chain = contributor.GetServerContextSink (server_context_sink_chain);
 					}
@@ -129,10 +203,7 @@ namespace System.Runtime.Remoting.Contexts {
 		{
 			if (client_context_sink_chain == null)
 			{
-				if (default_client_context_sink == null)
-					default_client_context_sink = new ClientContextTerminatorSink();
-
-				client_context_sink_chain = default_client_context_sink;
+				client_context_sink_chain = new ClientContextTerminatorSink (this);
 
 				if (context_properties != null) {
 					foreach (IContextProperty prop in context_properties) {
@@ -153,8 +224,10 @@ namespace System.Runtime.Remoting.Contexts {
 
 			if (context_properties != null)
 			{
-				foreach (IContextProperty prop in context_properties)
+				// Contribute object sinks in reverse order
+				for (int n = context_properties.Count-1; n >= 0; n--)
 				{
+					IContextProperty prop = (IContextProperty) context_properties[n];
 					IContributeObjectSink contributor = prop as IContributeObjectSink;
 					if (contributor != null)
 						objectSink = contributor.GetObjectSink (obj, objectSink);
@@ -178,7 +251,6 @@ namespace System.Runtime.Remoting.Contexts {
 			return sink;
 		}
 
-		[MonoTODO("Notify dynamic sinks")]
 		internal static Context SwitchToContext (Context newContext)
 		{
 			return AppDomain.InternalSetContext (newContext);
@@ -205,6 +277,79 @@ namespace System.Runtime.Remoting.Contexts {
 					throw new RemotingException("A context property did not approve the candidate context for activating the object");
 
 			return newContext;
+		}
+	}
+
+	class DynamicPropertyCollection
+	{
+		ArrayList _properties = new ArrayList();
+
+		class DynamicPropertyReg
+		{
+			public IDynamicProperty Property;
+			public IDynamicMessageSink Sink;
+		}
+
+		public bool HasProperties
+		{
+			get { return _properties.Count > 0; }
+		}
+
+		public bool RegisterDynamicProperty(IDynamicProperty prop)
+		{
+			lock (this)
+			{
+				if (FindProperty (prop.Name) != -1) 
+					throw new InvalidOperationException ("Another property by this name already exists");
+
+				// Make a copy, do not interfere with threads running dynamic sinks
+				ArrayList newProps = new ArrayList (_properties);
+
+				DynamicPropertyReg reg = new DynamicPropertyReg();
+				reg.Property = prop;
+				IContributeDynamicSink contributor = prop as IContributeDynamicSink;
+				if (contributor != null) reg.Sink = contributor.GetDynamicSink ();
+				newProps.Add (reg);
+
+				_properties = newProps;
+
+				return true;	// When should be false?
+			}
+		}
+
+		public bool UnregisterDynamicProperty(string name)
+		{
+			lock (this)
+			{
+				int i = FindProperty (name);
+				if (i == -1) throw new RemotingException ("A property with the name " + name + " was not found");
+
+				_properties.RemoveAt (i);
+				return true;	// When should be false?
+			}
+		}
+
+		public void NotifyMessage (bool start, IMessage msg, bool client_site, bool async)
+		{
+			ArrayList props = _properties;
+			if (start)
+			{
+				foreach (DynamicPropertyReg reg in props)
+					if (reg.Sink != null) reg.Sink.ProcessMessageStart (msg, client_site, async);
+			}
+			else
+			{
+				foreach (DynamicPropertyReg reg in props)
+					if (reg.Sink != null) reg.Sink.ProcessMessageFinish (msg, client_site, async);
+			}
+		}
+
+		int FindProperty (string name)
+		{
+			for (int n=0; n<_properties.Count; n++)
+				if (((DynamicPropertyReg)_properties[n]).Property.Name == name)
+					return n;
+			return -1;
 		}
 	}
 }

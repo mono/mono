@@ -7,6 +7,7 @@
 //
 
 using System;
+using System.Threading;
 using System.Runtime.Remoting.Messaging;
 using System.Runtime.Remoting.Activation;
 using System.Runtime.Remoting.Channels;
@@ -19,30 +20,58 @@ namespace System.Runtime.Remoting.Contexts
 		{
 			ServerIdentity identity = (ServerIdentity) RemotingServices.GetMessageTargetIdentity (msg);
 
-			if (Threading.Thread.CurrentContext != identity.Context)
-			{
-				// Context switch needed
+			Context oldContext = null;
+			IMessage response;
 
-				Context oldContext = Context.SwitchToContext (identity.Context);
-				IMessage response = identity.Context.GetServerContextSinkChain().SyncProcessMessage (msg);
-				Context.SwitchToContext (oldContext);
-				return response;
+			if (Threading.Thread.CurrentContext != identity.Context)
+				oldContext = Context.SwitchToContext (identity.Context);
+
+			try
+			{
+				Context.NotifyGlobalDynamicSinks (true, msg, false, false);
+				Thread.CurrentContext.NotifyDynamicSinks (true, msg, false, false);
+
+				response = identity.Context.GetServerContextSinkChain().SyncProcessMessage (msg);
+
+				Context.NotifyGlobalDynamicSinks (false, msg, false, false);
+				Thread.CurrentContext.NotifyDynamicSinks (false, msg, false, false);
 			}
-			else
-				return identity.Context.GetServerContextSinkChain().SyncProcessMessage (msg);
+			catch (Exception ex)
+			{
+				response = new ReturnMessage (ex, (IMethodCallMessage)msg);
+			}
+			finally
+			{
+				if (oldContext != null)
+					Context.SwitchToContext (oldContext);
+			}
+			
+			return response;
 		}
 
 		public IMessageCtrl AsyncProcessMessage (IMessage msg, IMessageSink replySink)
 		{
 			ServerIdentity identity = (ServerIdentity) RemotingServices.GetMessageTargetIdentity (msg);
 			
+			Context oldContext = null;
 			if (Threading.Thread.CurrentContext != identity.Context)
+				oldContext = Context.SwitchToContext (identity.Context);
+
+			try
 			{
-				Context oldContext = Context.SwitchToContext (identity.Context);
-				replySink = new ContextRestoreSink (replySink, oldContext);
+				Context.NotifyGlobalDynamicSinks (true, msg, false, true);
+				Thread.CurrentContext.NotifyDynamicSinks (true, msg, false, false);
+				replySink = new ContextRestoreSink (replySink, oldContext, msg);
+				return identity.AsyncObjectProcessMessage (msg, replySink);
 			}
-			
-			return identity.AsyncObjectProcessMessage (msg, replySink);
+			catch
+			{
+				if (oldContext != null)
+					Context.SwitchToContext (oldContext);
+
+				// TODO: return an exception
+				return null;
+			}
 		}
 
 		public IMessageSink NextSink 
@@ -54,16 +83,31 @@ namespace System.Runtime.Remoting.Contexts
 		{
 			IMessageSink _next;
 			Context _context;
+			IMessage _call;
 
-			public ContextRestoreSink (IMessageSink next, Context context)
+			public ContextRestoreSink (IMessageSink next, Context context, IMessage call)
 			{
 				_next = next;
 				_context = context;
+				_call = call;
 			}
 
 			public IMessage SyncProcessMessage (IMessage msg)
 			{
-				Context.SwitchToContext (_context);
+				try
+				{
+					Context.NotifyGlobalDynamicSinks (false, msg, false, false);
+					Thread.CurrentContext.NotifyDynamicSinks (false, msg, false, false);
+				}
+				catch (Exception ex)
+				{
+					msg = new ReturnMessage (ex, (IMethodCallMessage)_call);
+				}
+				finally
+				{
+					if (_context != null)
+						Context.SwitchToContext (_context);
+				}
 				return _next.SyncProcessMessage (msg);
 			}
 

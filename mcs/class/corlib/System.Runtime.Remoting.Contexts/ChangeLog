@@ -1,6 +1,11 @@
+2003-03-20 Lluis Sanchez Gual <lluis@ideary.com>
+
+	* Context.cs: Implemented support for dynamic properties and dynamic message sinks.
+	* CrossContextChannel.cs: Added support for dynamic message sinks.
+	
 2003-03-03 Lluis Sanchez Gual <lluis@ideary.com>
 	
-	* Contexts.cs : Management of the default context moved to the runtime.
+	* Context.cs : Management of the default context moved to the runtime.
 	  Implemented creation of the client context, server context, object and envoy sinks.
 	  Added method for creating a new context.
 	* CrossContextChannel.cs : Removed check for construction messages. Now construction
