@@ -2,6 +2,8 @@
 
 	* NextPrimeFinder.cs: In sync with Mono.Security.dll version.
 	* PrimeGeneratorBase.cs: In sync with Mono.Security.dll version.
+	* SequentialSearchPrimeGeneratorBase.cs: In sync with 
+	Mono.Security.dll version.
 
 2004-02-13  Sebastien Pouliot  <sebastien@ximian.com>
 
