@@ -104,9 +104,11 @@ do-time : mcs.exe
 	@ echo -n "corlib:  "
 	@ rm -f ../class/lib/mscorlib.dll
 	@ (cd ../class/corlib ; make BOOTSTRAP_MCS="$(FRIENDLY_TIME) mono ../../mcs/mcs.exe" > /dev/null ) || (echo FAILED; exit 1)
-	
+
+PROFILER=default
+
 profile : mcs.exe
-	$(RUNTIME) --profile ./mcs.exe $(USE_MCS_FLAGS) /target:exe /out:mcs2.exe $(all_sources)
+	$(RUNTIME) --profile=$(PROFILER) ./mcs.exe $(USE_MCS_FLAGS) /target:exe /out:mcs2.exe $(all_sources)
 
 response:
 	echo $(all_sources) > res

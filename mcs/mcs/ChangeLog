@@ -1,3 +1,7 @@
+2003-12-27 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* Makefile: Allow custom profiler here.
+
 2003-12-26 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* typemanager.cs (LookupType):
