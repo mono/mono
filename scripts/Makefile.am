@@ -37,7 +37,7 @@ monoresgen: monoresgen.in
 	&& mv monoresgen.tmp monoresgen
 
 resgen: resgen.in
-        sed -e 's^\@bindir\@^$(bindir)^g' -e 's^\@mono_interp\@^$(MONO_INTERP)^g' -e's^\@plat_bindir\@^$(plat_bindir)^g' < $(srcdir)/resgen.in > resgen.tmp \
+	sed -e 's^\@bindir\@^$(bindir)^g' -e 's^\@mono_interp\@^$(MONO_INTERP)^g' -e's^\@plat_bindir\@^$(plat_bindir)^g' < $(srcdir)/resgen.in > resgen.tmp \
         && mv resgen.tmp resgen
 
 secutil: secutil.in
