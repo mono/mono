@@ -6,7 +6,7 @@
  * Maintainer: gvaish@iitk.ac.in
  * Contact: <my_scripts2001@yahoo.com>, <gvaish@iitk.ac.in>
  * Implementation: yes
- * Status:  95%
+ * Status:  100%
  * 
  * (C) Gaurav Vaish (2002)
  */
@@ -99,11 +99,35 @@ namespace System.Web.UI.WebControls
 			}
 		}
 		
-		[MonoTODO]
 		public override void InitializeCell(TableCell cell, int columnIndex, ListItemType itemType)
 		{
 			base.InitializeCell(cell, columnIndex, itemType);
-			//TODO: I have to read some documents.
+			
+			if (itemType == ListItemType.Header || itemType == ListItemType.Footer)
+				return;
+			
+			if (itemType == ListItemType.EditItem) {
+				cell.Controls.Add (MakeButton ("Update", UpdateText));
+				cell.Controls.Add (new LiteralControl (" "));
+				cell.Controls.Add (MakeButton ("Cancel", CancelText));
+			} else {
+				cell.Controls.Add (MakeButton ("Edit", EditText));
+			}
+		}
+		
+		Control MakeButton (string commandName, string text)
+		{
+			if (ButtonType == ButtonColumnType.LinkButton) {
+				DataGridLinkButton ret = new DataGridLinkButton ();
+				ret.CommandName = commandName;
+				ret.Text = text;
+				return ret;
+			} else {
+				Button ret = new Button ();
+				ret.CommandName = commandName;
+				ret.Text = text;
+				return ret;
+			}
 		}
 	}
 }
