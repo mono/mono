@@ -1314,7 +1314,7 @@ namespace System {
 
 			used = 0;
 			list = new ArrayList ();
-			for (index = 0, len = 0; index < this.length && used < maxCount-1; index += len + 1) {
+			for (index = 0, len = 0; index < this.length && used < maxCount; index += len + 1) {
 				len = splitme (separator, index);
 				len = len > -1 ? len : this.length - index;
 				if (len == 0) {
