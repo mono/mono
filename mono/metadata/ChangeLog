@@ -1,3 +1,8 @@
+
+Thu Feb 19 19:39:09 CET 2004 Paolo Molaro <lupus@ximian.com>
+
+	* object.c: fixed gc descriptor calculation for embedded valuetypes.
+
 2004-02-19  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* icall.c: added Socket.WSAIoctl icall.
