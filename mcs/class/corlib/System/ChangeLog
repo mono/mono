@@ -1,3 +1,8 @@
+
+Thu Apr 18 12:38:32 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* String.cs: some code speedups and restored GetTypeCode().
+
 2002-04-17	Patrik Torstensson <patrik.torstensson@labs2.com>
 
 	* String.cs: New implementation using internal calls.

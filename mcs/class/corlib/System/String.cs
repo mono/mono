@@ -169,8 +169,10 @@ namespace System {
 	    
 			if (null == (Object) str1 || null == (Object) str2)
 				return false;
+			if (str1.length != str2.length)
+				return false;
     
-			return (bool) (str1.CompareTo(str2) == 0);
+			return Compare(str1, 0, str2, 0, str1.length, false) == 0;
 		}
 
 		public static bool operator == (String str1, String str2) {
@@ -188,14 +190,16 @@ namespace System {
 			if (!(obj is String))
 				return false;
 
-			return (bool) (0 == CompareTo((String) obj));
+			return Compare (this, (String)obj, false) == 0;
 		}
 
 		public bool Equals(String value) {
 			if (null == value)
 				return false;
 
-			return (bool) (0 == CompareTo(value));
+			if (length != value.length)
+				return false;
+			return Compare (this, 0, value, 0, length, false) == 0;
 		}
 
 		[IndexerName("Chars")]
@@ -206,6 +210,10 @@ namespace System {
 
 		public Object Clone() {
 			return this;
+		}
+
+		public TypeCode GetTypeCode () {
+			return TypeCode.String;
 		}
 
 		public void CopyTo(int sindex, char[] dest, int dindex, int count) {
@@ -323,7 +331,7 @@ namespace System {
 			} else if (null == s2)
 				return 1;
 
-			return InternalCompare(s1, 0, s2, 0, Math.Max(s1.Length, s2.Length), inCase);
+			return InternalCompare(s1, 0, s2, 0, Math.Max(s1.length, s2.length), inCase);
 		}
 		
 		[MonoTODO()]
@@ -347,7 +355,7 @@ namespace System {
 			if (length < 0 || i1 < 0 || i2 < 0)
 				throw new ArgumentOutOfRangeException ();
 
-			if (i1 > s1.Length || i2 > s2.Length)
+			if (i1 > s1.length || i2 > s2.length)
 				throw new ArgumentOutOfRangeException ();
 
 			if (length == 0)
@@ -368,14 +376,14 @@ namespace System {
 			if (!(value is String))
 				throw new ArgumentException();
 
-			return String.Compare(this, (String) value);
+			return String.Compare(this, (String) value, false);
 		}
 
 		public int CompareTo(String str) {
 			if (null == str)
 				return 1;
 
-			return Compare(this, str);
+			return Compare(this, str, false);
 		}
 
 		public static int CompareOrdinal(String s1, String s2) {
@@ -387,7 +395,7 @@ namespace System {
 				return (s1 == null) ? -1 : 1;
 			}
 
-			return InternalCompare(s1, 0, s2, 0, Math.Max(s1.Length, s2.Length), false);
+			return InternalCompare(s1, 0, s2, 0, Math.Max(s1.length, s2.length), false);
 		}
 
 		public static int CompareOrdinal(String s1, int i1, String s2, int i2, int length) {
@@ -402,18 +410,18 @@ namespace System {
 			if (i1 < 0 || i2 < 0 || length < 0)
 				throw new ArgumentOutOfRangeException ();
 
-			if (i1 > s1.Length || i2 > s2.Length)
+			if (i1 > s1.length || i2 > s2.length)
 				throw new ArgumentOutOfRangeException ();
 
 			return InternalCompare(s1, i1, s2, i2, length, false);
 		}
 
 		public bool EndsWith(String value) {
-			if (value.Length > this.length) {
+			if (value.length > this.length) {
 				return false;
 			}
 
-			return (0 == Compare(this, Length - value.Length, value, 0, value.Length));
+			return (0 == Compare(this, length - value.length, value, 0, value.length));
 		}
 	
 		public int IndexOfAny(char [] arr) {
@@ -445,7 +453,7 @@ namespace System {
 		}
 
 		public int IndexOf(String value, int sindex) {
-			return IndexOf(value, sindex, value.Length - sindex);
+			return IndexOf(value, sindex, value.length - sindex);
 		}
 
 		public int IndexOf(char value, int sindex, int count) {
@@ -499,7 +507,7 @@ namespace System {
 			if (null == value) 
 				throw new ArgumentNullException();
 
-			return InternalLastIndexOf(value, this.length - 1, this.Length);
+			return InternalLastIndexOf(value, this.length - 1, this.length);
 		}
 
 		public int LastIndexOf(char value, int sindex){
@@ -514,7 +522,7 @@ namespace System {
 			if (count < 0 || sindex < 0)
 				throw new ArgumentOutOfRangeException ();
 
-			if (count > this.length || sindex > this.Length)
+			if (count > this.length || sindex > this.length)
 				throw new ArgumentOutOfRangeException ();
 
 			if (sindex == 0 && this.length == 0)
@@ -568,10 +576,10 @@ namespace System {
 		}
 
 		public bool StartsWith(String value) {
-			if (this.length < value.Length)
+			if (this.length < value.length)
 				return false;
 
-			return (0 == Compare(this, 0, value, 0 , value.Length));
+			return (0 == Compare(this, 0, value, 0 , value.length));
 		}
 	
     
@@ -645,7 +653,7 @@ namespace System {
 
 			int ptr = 0;
 			int start = ptr;
-			while (ptr < format.Length) {
+			while (ptr < format.length) {
 				char c = format[ptr ++];
 
 				if (c == '{') {
@@ -682,8 +690,8 @@ namespace System {
 
 					// pad formatted string and append to result
 
-					if (width > str.Length) {
-						string pad = new String (' ', width - str.Length);
+					if (width > str.length) {
+						string pad = new String (' ', width - str.length);
 
 						if (left_align) {
 							result.Append (str);
@@ -705,7 +713,7 @@ namespace System {
 				}
 			}
 
-			if (start < format.Length)
+			if (start < format.length)
 				result.Append (format.Substring (start));
 
 			return result.ToString ();
@@ -715,7 +723,7 @@ namespace System {
 			if (str == null)
 				throw new ArgumentNullException ();
 
-			int length = str.Length;
+			int length = str.length;
 
 			String tmp = InternalAllocateStr(length);
 			InternalStrcpy(tmp, 0, str);
@@ -765,10 +773,10 @@ namespace System {
 
 			if (null == s2) { return s1; }
 
-			String tmp = InternalAllocateStr(s1.Length + s2.Length);
+			String tmp = InternalAllocateStr(s1.length + s2.length);
             
 			InternalStrcpy(tmp, 0, s1);
-			InternalStrcpy(tmp, s1.Length, s2);
+			InternalStrcpy(tmp, s1.length, s2);
             
 			return tmp;
 		}
@@ -782,11 +790,11 @@ namespace System {
 			if (null == s2) { s2 = String.Empty; }
 			if (null == s3) { s3 = String.Empty; }
 
-			String tmp = InternalAllocateStr(s1.Length + s2.Length + s3.Length);
+			String tmp = InternalAllocateStr(s1.length + s2.length + s3.length);
 
 			InternalStrcpy(tmp, 0, s1);
-			InternalStrcpy(tmp, s1.Length, s2);
-			InternalStrcpy(tmp, s1.Length + s2.Length, s3);
+			InternalStrcpy(tmp, s1.length, s2);
+			InternalStrcpy(tmp, s1.length + s2.length, s3);
 
 			return tmp;
 		}
@@ -801,12 +809,12 @@ namespace System {
 			if (null == s3) { s3 = String.Empty; }
 			if (null == s4) { s4 = String.Empty; }
 
-			String tmp = InternalAllocateStr(s1.Length + s2.Length + s3.Length + s4.Length);
+			String tmp = InternalAllocateStr(s1.length + s2.length + s3.length + s4.length);
 
 			InternalStrcpy(tmp, 0, s1);
-			InternalStrcpy(tmp, s1.Length, s2);
-			InternalStrcpy(tmp, s1.Length + s2.Length, s3);
-			InternalStrcpy(tmp, s1.Length + s2.Length + s3.Length, s4);
+			InternalStrcpy(tmp, s1.length, s2);
+			InternalStrcpy(tmp, s1.length + s2.length, s3);
+			InternalStrcpy(tmp, s1.length + s2.length + s3.length, s4);
 
 			return tmp;
 		}
@@ -839,7 +847,7 @@ namespace System {
 			String tmp = InternalAllocateStr(len);
 			for (i = 0; i < strings.Length; i++) {
 				InternalStrcpy(tmp, currentpos, strings[i]);
-				currentpos += strings[i].Length;
+				currentpos += strings[i].length;
 			}
 
 			return tmp;
@@ -853,7 +861,7 @@ namespace System {
 
 			len = 0;
 			foreach (string value in values)
-				len += value != null ? value.Length : 0;
+				len += value != null ? value.length : 0;
 
 			if (len == 0)
 				return String.Empty;
@@ -866,7 +874,7 @@ namespace System {
 					continue;
 
 				InternalStrcpy(tmp, currentpos, values[i]);
-				currentpos += values[i].Length;
+				currentpos += values[i].length;
 			}	
 	
 			return tmp;
