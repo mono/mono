@@ -331,13 +331,10 @@ namespace System.Web.UI.WebControls
 					break;
 				case ValidationDataType.Double:
 					return ConvertDouble (text, type, ref convertedValue);
-					break;
 				case ValidationDataType.Date:
 					return ConvertDate (text, type, ref convertedValue);
-					break;
 				case  ValidationDataType.Currency:
 					return ConvertCurrency (text, type, ref convertedValue);
-					break;
 				}
 			} catch (Exception e) {
 				convertedValue = null;
