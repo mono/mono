@@ -160,6 +160,39 @@ namespace CIR {
 			Expression e = DoResolve (ec);
 
 			if (e != null){
+				if (e is SimpleName){
+					SimpleName s = (SimpleName) e;
+					
+					Report.Error (
+						103, s.Location,
+						"The name `" + s.Name + "' could not be found in `" +
+						ec.TypeContainer.Name + "'");
+					return null;
+				}
+				
+				if (e.ExprClass == ExprClass.Invalid)
+					throw new Exception ("Expression " + e +
+							     " ExprClass is Invalid after resolve");
+
+				if (e.ExprClass != ExprClass.MethodGroup)
+					if (e.type == null)
+						throw new Exception ("Expression " + e +
+								     " did not set its type after Resolve");
+			}
+
+			return e;
+		}
+
+		//
+		// Just like `Resolve' above, but this allows SimpleNames to be returned.
+		// This is used by MemberAccess to construct long names that can not be
+		// partially resolved (namespace-qualified names for example).
+		//
+		public Expression ResolveWithSimpleName (EmitContext ec)
+		{
+			Expression e = DoResolve (ec);
+
+			if (e != null){
 				if (e is SimpleName)
 					return e;
 
@@ -175,7 +208,7 @@ namespace CIR {
 
 			return e;
 		}
-
+		
 		//
 		// Currently ResolveLValue wraps DoResolveLValue to perform sanity
 		// checking and assertion checking on what we expect from Resolve
@@ -185,8 +218,15 @@ namespace CIR {
 			Expression e = DoResolveLValue (ec, right_side);
 
 			if (e != null){
-				if (e is SimpleName)
-					return e;
+				if (e is SimpleName){
+					SimpleName s = (SimpleName) e;
+					
+					Report.Error (
+						103, s.Location,
+						"The name `" + s.Name + "' could not be found in `" +
+						ec.TypeContainer.Name + "'");
+					return null;
+				}
 
 				if (e.ExprClass == ExprClass.Invalid)
 					throw new Exception ("Expression " + e +
@@ -4013,18 +4053,6 @@ namespace CIR {
 			if (expr == null)
 				return null;
 
-			//
-			// If SimpleNames make it here, it is an error
-			//
-			if (expr is SimpleName){
-				SimpleName s = (SimpleName) expr;
-				
-				Report.Error (246, s.Location,
-					      "The type or name `" + s.Name + "' could not be found, " +
-					      "maybe you are missing a using directive");
-				return null;
-			}
-			
 			if (!(expr is MethodGroupExpr)) {
 				Type expr_type = expr.Type;
 
@@ -4485,7 +4513,11 @@ namespace CIR {
 		
 		public override Expression DoResolve (EmitContext ec)
 		{
-			expr = expr.Resolve (ec);
+			//
+			// We are the sole users of ResolveWithSimpleName (ie, the only
+			// ones that can cope with it
+			//
+			expr = expr.ResolveWithSimpleName (ec);
 
 			if (expr == null)
 				return null;
@@ -4500,6 +4532,9 @@ namespace CIR {
 					
 			member_lookup = MemberLookup (ec, expr.Type, Identifier, false, loc);
 
+			if (member_lookup == null)
+				return null;
+			
 			//
 			// Method Groups
 			//
@@ -4571,7 +4606,7 @@ namespace CIR {
 				}
 			}
 			
-			Console.WriteLine ("Support for " + member_lookup + " is not present yet");
+			Console.WriteLine ("Support for [" + member_lookup + "] is not present yet");
 			Environment.Exit (0);
 			return null;
 		}

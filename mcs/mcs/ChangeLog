@@ -2,7 +2,16 @@
 
 	* expression.cs: Fix bug I introduced lsat night that broke
 	Delegates. 
+
+	(Expression.Resolve): Report a 246 error (can not resolve name)
+	if we find a SimpleName in the stream.
 	
+	(Expression.ResolveLValue): Ditto.
+	
+	(Expression.ResolveWithSimpleName): This function is a variant of
+	ResolveName, this one allows SimpleNames to be returned without a
+	warning.  The only consumer of SimpleNames is MemberAccess
+
 2001-10-26  Miguel de Icaza  <miguel@ximian.com>
 
 	* expression.cs (Invocation::DoResolve): Catch SimpleNames that

@@ -227,4 +227,9 @@
 	Notice how numbering of the arguments changes, as the { $$ =
 	lexer.Location } takes up a number
 
+* Method Names
 
+	Method names could be; `IFACE.NAME' in the method declaration,
+	stating that they implement a specific interface method.
+
+	We currently fail to parse it.
