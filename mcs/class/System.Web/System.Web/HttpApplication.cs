@@ -558,12 +558,11 @@ namespace System.Web {
 			}
 
 			internal void ExecuteNextAsync(Exception lasterror) {
-			//FIXME: something is wrong with this: the socket is closed before compilation finishes.
-			//	if (!Thread.CurrentThread.IsThreadPoolThread) {
-			//		ThreadPool.QueueUserWorkItem(_asynchandler, lasterror);
-			//	} else {
+				if (!Thread.CurrentThread.IsThreadPoolThread) {
+					ThreadPool.QueueUserWorkItem(_asynchandler, lasterror);
+				} else {
 					ExecuteNext(lasterror);
-			//	}
+				}
 			}
 
 			private void ExecuteNext(Exception lasterror) {
@@ -677,8 +676,11 @@ namespace System.Web {
 		#endregion
 
 		#region Constructor
-      public HttpApplication() {
-      }
+
+		public HttpApplication ()
+		{
+		}
+
 		#endregion
 
 		#region Methods
@@ -702,7 +704,8 @@ namespace System.Web {
 		}
 
 		[MonoTODO()]
-		internal void RecycleHandlers() {
+		internal void RecycleHandlers ()
+		{
 			// TODO: Recycle the created handlers (via factory?)
 		}
 

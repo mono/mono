@@ -1,3 +1,7 @@
+2002-10-27  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* list: added WebEncoding.cs
+
 2002-10-26  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* makefile.trace: used to build System.Web.dll with trace enabled.

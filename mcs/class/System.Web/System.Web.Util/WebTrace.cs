@@ -1,5 +1,5 @@
 //
-// System.Web.Utils.WebTrace
+// System.Web.Util.WebTrace
 //
 // Authors:
 //	Gonzalo Paniagua Javier (gonzalo@ximian.com)
@@ -10,7 +10,7 @@
 using System.Collections;
 using System.Diagnostics;
 
-namespace System.Web.Utils
+namespace System.Web.Util
 {
 	internal class WebTrace
 	{

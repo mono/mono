@@ -13,9 +13,46 @@ using System.IO;
 using System.Reflection;
 using System.Text;
 using System.Web.UI;
+using System.Web.Util;
 
+//TODO: should use private bin to store dlls (when AppDomain and Assembly.Load know about it?)
 namespace System.Web.Compilation
 {
+	class CompiledTypeData
+	{
+		string csFile;
+		string aspxFile;
+		Type type;
+		DateTime since;
+		//TODO: ArrayList fileDependencies;
+
+		public CompiledTypeData (string aspxFile, string csFile, Type type, DateTime since)
+		{
+			this.aspxFile = aspxFile;
+			this.csFile = csFile;
+			this.type = type;
+			this.since = since;
+
+		}
+
+		public bool IsNewer (DateTime dt)
+		{
+			return (dt > since);
+		}
+		
+		public Type Type
+		{
+			get { return type; }
+			set { type = value; }
+		}
+
+		public DateTime Since
+		{
+			get { return since; }
+			set { since = value; }
+		}
+	}
+	
 	class TemplateFactory
 	{
 		internal class PageBuilder
@@ -152,6 +189,10 @@ namespace System.Web.Compilation
 			}
 		}
 
+
+		static object compiling = new object ();
+		static Hashtable compiledTypes = new Hashtable ();
+		
 		internal static string CompilationOutputFileName (string fileName)
 		{
 			string name = "xsp_" + Path.GetFileName (fileName).Replace (".aspx", ".txt");
@@ -168,10 +209,63 @@ namespace System.Web.Compilation
 		{
 		}
 
-		internal static Type GetTypeFromSource (string fileName)
+		static Type AlreadyGotIt (string aspxFile, ref DateTime filedt)
 		{
-			PageBuilder builder = new PageBuilder (fileName);
-			return builder.Build ();
+			WebTrace.PushContext ("TemplateFactory.AlreadyGotIt");
+			WebTrace.WriteLine ("Start: {0}", aspxFile);
+			if (!compiledTypes.Contains (aspxFile)) {
+				WebTrace.WriteLine ("File {0} not already compiled", filedt);
+				WebTrace.PopContext ();
+				return null;
+			}
+
+			CompiledTypeData data = (CompiledTypeData) compiledTypes [aspxFile];
+			try {
+				filedt = File.GetLastWriteTime (aspxFile);
+			} catch {
+				WebTrace.WriteLine ("Error getting date for {0}", aspxFile);
+				WebTrace.PopContext ();
+				return null;
+			}
+			
+			if (data.IsNewer (filedt)) {
+				compiledTypes.Remove (aspxFile);
+				WebTrace.WriteLine ("aspx modified: {0}", filedt);
+				WebTrace.PopContext ();
+				return null;
+			}
+
+			WebTrace.WriteLine ("End: {0}", data.Type);
+			WebTrace.PopContext ();
+			return data.Type;
+		}
+
+		internal static Type GetTypeFromSource (string aspxFile, string csFile)
+		{
+			if (!File.Exists (csFile))
+				return null;
+
+			DateTime filedt = DateTime.Now;
+			Type type = AlreadyGotIt (aspxFile, ref filedt) as Type;
+			if (type != null)
+				return type;
+
+			PageBuilder builder = new PageBuilder (csFile);
+			lock (compiling) {
+				type = AlreadyGotIt (aspxFile, ref filedt) as Type;
+				if (type != null)
+					return type;
+				
+				type = builder.Build ();
+			}
+
+			if (type == null)
+				return null;
+
+			CompiledTypeData data = new CompiledTypeData (aspxFile, csFile, type, filedt);
+			compiledTypes.Add (aspxFile, data);
+
+			return type;
 		}
 	}
 }

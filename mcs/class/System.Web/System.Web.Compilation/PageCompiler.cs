@@ -9,6 +9,7 @@
 using System;
 using System.IO;
 using System.Web.UI;
+using System.Web.Util;
 
 namespace System.Web.Compilation
 {
@@ -24,8 +25,8 @@ namespace System.Web.Compilation
 		public static Type CompilePageType (PageParser pageParser)
 		{
 			string sourceFile = GenerateSourceFile (pageParser);
-			Console.WriteLine ("Compiling {0}", sourceFile);
-			return TemplateFactory.GetTypeFromSource (sourceFile);
+			WebTrace.WriteLine ("Compiling {0} ({1})", sourceFile, pageParser.InputFile);
+			return TemplateFactory.GetTypeFromSource (pageParser.InputFile, sourceFile);
 		}
 
 		private static string GenerateSourceFile (PageParser pageParser)
@@ -42,7 +43,7 @@ namespace System.Web.Compilation
 
 			//FIXME: should get Tmp dir for this application
 			string csName = Path.GetTempFileName () + ".cs";
-			Console.WriteLine ("Writing {0}", csName);
+			WebTrace.WriteLine ("Writing {0}", csName);
 			StreamWriter output = new StreamWriter (File.OpenWrite (csName));
 			output.Write (pageParser.Text);
 			output.Close ();

@@ -13,6 +13,7 @@ using System.Drawing;
 using System.IO;
 using System.Text;
 using System.Web.UI;
+using System.Web.Util;
 
 namespace System.Web.UI
 {
@@ -81,7 +82,7 @@ namespace System.Web.UI
 			if (input == null)
 				throw new ArgumentNullException ("input");
 
-			string real_input = Encoding.UTF8.GetString (Convert.FromBase64String (input));
+			string real_input = WebEncoding.Encoding.GetString (Convert.FromBase64String (input));
 			return DeserializeObject (real_input);
 		}
 
@@ -268,7 +269,7 @@ namespace System.Web.UI
 			StringBuilder builder = new StringBuilder ();
 			StringWriter writer = new StringWriter (builder);
 			SerializeObject (writer, value);
-			byte [] bytes = Encoding.UTF8.GetBytes (builder.ToString ());
+			byte [] bytes = WebEncoding.Encoding.GetBytes (builder.ToString ());
 			output.Write (Convert.ToBase64String (bytes));
 		}
 

@@ -13,6 +13,7 @@ using System.Globalization;
 using System.IO;
 using System.Text;
 using System.Threading;
+using System.Web.Util;
 
 namespace System.Web
 {
@@ -326,7 +327,7 @@ namespace System.Web
 		{
 			get {
 				if (_ContentEncoding == null)
-					_ContentEncoding = Encoding.UTF8;
+					_ContentEncoding = WebEncoding.Encoding;
 
 				return _ContentEncoding;
 			}

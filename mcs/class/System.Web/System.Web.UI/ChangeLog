@@ -1,3 +1,10 @@
+2002-10-27  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* LosFormatter.cs: Use WebEncoding.Encoding.
+
+	* Control.cs:
+	* Page.cs: fixed namespace.
+
 2002-10-24  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Page.cs: set the context in ProcessRequest. Added a few trace calls.

@@ -1,3 +1,10 @@
+2002-10-27  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* WebTrace.cs: fixed namespace.
+
+	* WebEncoding.cs: new class that holds the default encoding for
+	System.Web.
+
 2002-01-03  Nick Drochak  <ndrochak@gol.com>
 
 	* FileChangesMonitor.cs: remove redundant using statement; use int

@@ -21,7 +21,7 @@ namespace System.Web.Compilation
 		public static Type CompileIntoType (SimpleWebHandlerParser wService)
 		{
 			string sourceFile = GenerateSourceFile (wService);
-			Type type = TemplateFactory.GetTypeFromSource (sourceFile);
+			Type type = TemplateFactory.GetTypeFromSource (wService.PhysicalPath, sourceFile);
 			if (type.FullName != wService.ClassName)
 				throw new ApplicationException (String.Format (
 								"Class={0}, but the class compiled is {1}",

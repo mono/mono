@@ -7,6 +7,7 @@
 using System;
 using System.IO;
 using System.Text;
+using System.Web.Util;
 
 namespace System.Web
 {
@@ -29,7 +30,7 @@ namespace System.Web
 			_Response = Response;
 
 			_OutputStream = new MemoryStream (32768);
-			_OutputHelper = new StreamWriter (_OutputStream, Encoding.UTF8);
+			_OutputHelper = new StreamWriter (_OutputStream, WebEncoding.Encoding);
 			_ResponseStream = new HttpResponseStream (this);
 
 			Update ();

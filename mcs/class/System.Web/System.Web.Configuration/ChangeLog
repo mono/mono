@@ -1,3 +1,7 @@
+2002-10-27  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpHandlersSectionHandler.cs: more null checks.
+
 2002-10-08  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpHandlersSectionHandler.cs: made a couple of static methods be

@@ -14,6 +14,7 @@ using System.Collections.Specialized;
 using System.IO;
 using System.Text;
 using System.Web.Configuration;
+using System.Web.Util;
 
 namespace System.Web {
 	[MonoTODO("Review security in all path access function")]
@@ -603,7 +604,8 @@ namespace System.Web {
 		public NameValueCollection QueryString {
 			get {
 				if (_oQueryString == null) {
-					_oQueryString = new HttpValueCollection(QueryStringRaw, true, Encoding.UTF8);
+					_oQueryString = new HttpValueCollection(QueryStringRaw, true,
+										WebEncoding.Encoding);
 				}
 
 				return _oQueryString;

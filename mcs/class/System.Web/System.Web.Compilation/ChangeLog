@@ -1,3 +1,9 @@
+2002-10-27  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* PageCompiler.cs: tracing.
+	* TemplateFactory.cs: cache compiled types and tracing.
+	* WebServiceCompiler.cs: new parameter in GetTypeFromsource,
+
 2002-10-23  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* AspComponentFoundry.cs: fixed typo.

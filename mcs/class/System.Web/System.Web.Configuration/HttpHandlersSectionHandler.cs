@@ -38,7 +38,7 @@ namespace System.Web.Configuration
 				
 				string name = child.Name;
 				if (name == "clear") {
-					if (child.Attributes.Count != 0)
+					if (child.Attributes != null && child.Attributes.Count != 0)
 						HandlersUtil.ThrowException ("Unrecognized attribute", child);
 
 					mapper.Clear ();
@@ -60,7 +60,7 @@ namespace System.Web.Configuration
 
 				if (name == "add") {
 					string type = HandlersUtil.ExtractAttributeValue ("type", child);
-					if (child.Attributes.Count != 0)
+					if (child.Attributes != null && child.Attributes.Count != 0)
 						HandlersUtil.ThrowException ("Unrecognized attribute", child);
 
 					HandlerItem item = new HandlerItem (verb, path, type, validate);
@@ -69,7 +69,7 @@ namespace System.Web.Configuration
 				}
 
 				if (name == "remove") {
-					if (child.Attributes.Count != 0)
+					if (child.Attributes != null && child.Attributes.Count != 0)
 						HandlersUtil.ThrowException ("Unrecognized attribute", child);
 
 					if (validate && mapper.Remove (verb, path) == null)

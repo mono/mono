@@ -8,6 +8,7 @@ using System;
 using System.Collections.Specialized;
 using System.Runtime.Serialization;
 using System.Text;
+using System.Web.Util;
 
 namespace System.Web {
 
@@ -20,7 +21,7 @@ namespace System.Web {
       }
 
       internal HttpValueCollection(string sData) {
-         FillFromQueryString(sData, Encoding.UTF8);
+         FillFromQueryString(sData, WebEncoding.Encoding);
          IsReadOnly = true;
       }
 
@@ -74,7 +75,7 @@ namespace System.Web {
       }
 
       internal void FillFromHeaders(string sData) {
-         FillFromHeaders(sData, Encoding.UTF8);
+         FillFromHeaders(sData, WebEncoding.Encoding);
       }
 
       // String = test=aaa&kalle=nisse
@@ -100,11 +101,11 @@ namespace System.Web {
       }
 
       internal void FillFromQueryString(string sData) {
-         FillFromQueryString(sData, Encoding.UTF8);
+         FillFromQueryString(sData, WebEncoding.Encoding);
       }
 
       internal void FillFromCookieString(string sData) {
-         FillFromQueryString(sData, Encoding.UTF8);
+         FillFromQueryString(sData, WebEncoding.Encoding);
       }
 
       internal void MakeReadOnly() {

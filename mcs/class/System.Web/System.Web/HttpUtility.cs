@@ -12,6 +12,7 @@ using System.Collections;
 using System.Globalization;
 using System.IO;
 using System.Text;
+using System.Web.Util;
 
 namespace System.Web {
 	public sealed class HttpUtility {
@@ -326,7 +327,7 @@ namespace System.Web {
 	
 		public static string UrlDecode (string str) 
 		{
-			return UrlDecode(str, Encoding.UTF8);
+			return UrlDecode(str, WebEncoding.Encoding);
 		}
 	
 		private static char [] GetChars (ArrayList b, Encoding e)
@@ -483,7 +484,7 @@ namespace System.Web {
 
 		public static byte [] UrlDecodeToBytes (string str)
 		{
-			return UrlDecodeToBytes (str, Encoding.UTF8);
+			return UrlDecodeToBytes (str, WebEncoding.Encoding);
 		}
 
 		public static byte [] UrlDecodeToBytes (string str, Encoding e)
@@ -527,7 +528,7 @@ namespace System.Web {
 
 		public static string UrlEncode(string str) 
 		{
-			return UrlEncode(str, Encoding.UTF8);
+			return UrlEncode(str, WebEncoding.Encoding);
 		}
 	
 		public static string UrlEncode (string s, Encoding Enc) 
@@ -557,7 +558,7 @@ namespace System.Web {
 
 		public static byte [] UrlEncodeToBytes (string str)
 		{
-			return UrlEncodeToBytes (str, Encoding.UTF8);
+			return UrlEncodeToBytes (str, WebEncoding.Encoding);
 		}
 
 		public static byte [] UrlEncodeToBytes (string str, Encoding e)
