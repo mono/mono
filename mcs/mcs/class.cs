@@ -646,7 +646,7 @@ namespace Mono.CSharp {
 			Type b = TypeBuilder.BaseType;
 			int icount = 0;
 
-			if (false)
+#if DEBUG
 			{
 				Type x = TypeBuilder;
 
@@ -660,6 +660,7 @@ namespace Mono.CSharp {
 					x = x.BaseType;
 				}
 			}
+#endif
 					
 			icount = ifaces.Length;
 

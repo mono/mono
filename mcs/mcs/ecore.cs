@@ -479,8 +479,15 @@ namespace Mono.CSharp {
 
 				if (count == 0)
 					continue;
-				
+
+				//
+				// Events are returned by both `static' and `instance'
+				// searches, which means that our above FindMembers will
+				// return two copies of the same.
+				//
 				if (count == 1 && !(mi [0] is MethodBase))
+					return Expression.ExprClassFromMemberInfo (ec, mi [0], loc);
+				if (count == 2 && (mi [0] is EventInfo))
 					return Expression.ExprClassFromMemberInfo (ec, mi [0], loc);
 
 				//
@@ -3205,7 +3212,17 @@ namespace Mono.CSharp {
 		{
 			Methods = new MethodBase [l.Count];
 
-			l.CopyTo (Methods, 0);
+			try {
+				l.CopyTo (Methods, 0);
+			} catch {
+				foreach (MemberInfo m in l){
+					if (!(m is MethodBase)){
+						Console.WriteLine ("Name " + m.Name);
+						Console.WriteLine ("Found a: " + m.GetType ().FullName);
+					}
+				}
+				throw;
+			}
 			eclass = ExprClass.MethodGroup;
 		}
 		
