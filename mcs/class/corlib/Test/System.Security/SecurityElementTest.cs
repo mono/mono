@@ -138,6 +138,14 @@ namespace MonoTests.System.Security {
 		}
 
 		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void AddAttribute_Duplicate () 
+		{
+			elem.AddAttribute ("valid", "first time");
+			elem.AddAttribute ("valid", "second time");
+		}
+
+		[Test]
 		public void AddAttribute () 
 		{
 			elem.AddAttribute ("valid", "valid\'");
@@ -306,6 +314,16 @@ namespace MonoTests.System.Security {
 		{
 			elem.Text = null;
 			AssertNull ("Text", elem.Text);
+		}
+
+		[Test]
+		public void MultipleAttributes () 
+		{
+			SecurityElement se = new SecurityElement ("Multiple");
+			se.AddAttribute ("Attribute1", "One");
+			se.AddAttribute ("Attribute2", "Two");
+			string expected = String.Format ("<Multiple Attribute1=\"One\"{0}          Attribute2=\"Two\"/>{0}", Environment.NewLine);
+			AssertEquals ("ToString()", expected, se.ToString ());
 		}
 	}
 }
