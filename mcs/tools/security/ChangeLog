@@ -1,3 +1,11 @@
+2004-06-08  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* AssemblyInfo.cs: Updated version number for post beta 2.
+	* StrongNameManager.cs: Changed XML format to be compatible with
+	machine.config. Made token uppercase.
+	* sn.cs: Now load the token remapping configuration from 
+	machine.config. Fixed some errors in help.
+
 2004-05-28  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* AssemblyInfo.cs: Update version number for beta 2.

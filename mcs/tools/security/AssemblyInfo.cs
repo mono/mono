@@ -6,7 +6,7 @@ using System.Runtime.CompilerServices;
 [assembly: AssemblyCompany("Motus Technologies, Novell")]
 [assembly: AssemblyProduct("Mono Security Tools")]
 [assembly: AssemblyCopyright("Copyright 2002, 2003 Motus Technologies. Copyright 2004 Novell. BSD licensed.")]
-[assembly: AssemblyVersion("0.93.0.0")]
+[assembly: AssemblyVersion("0.95.99.0")]
 //[assembly: AssemblyConfiguration("")]
 //[assembly: AssemblyTrademark("")]
 //[assembly: AssemblyCulture("")]

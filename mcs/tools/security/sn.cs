@@ -43,17 +43,16 @@ namespace Mono.Tools {
 
 		static bool LoadConfig () 
 		{
-			string path = "strongnames.config";
-			PropertyInfo gac = typeof (System.Environment).GetProperty ("GacPath",
-					BindingFlags.Static|BindingFlags.NonPublic);
+			MethodInfo config = typeof (System.Environment).GetMethod ("GetMachineConfigPath",
+				BindingFlags.Static|BindingFlags.NonPublic);
 
-			if (gac != null) {
-				MethodInfo gac_getter = gac.GetGetMethod (true);
-				path = Path.Combine ((string) gac_getter.Invoke (null, null),
-						"strongnames.config");
+			if (config != null) {
+				string path = (string) config.Invoke (null, null);
+
+				StrongNameManager.LoadConfig (path);
+				return true;
 			}
 			
-			StrongNameManager.LoadConfig (path);
 			// default CSP
 			return false;
 		}
@@ -259,12 +258,12 @@ namespace Mono.Tools {
 					Console.WriteLine (" -k keypair.snk{0}\tCreate a new keypair in the specified file", Environment.NewLine);
 					Console.WriteLine (" -R assembly keypair.snk{0}\tResign the assembly with the specified StrongName key file", Environment.NewLine);
 					Console.WriteLine (" -Rc assembly container{0}\tResign the assembly with the specified CSP container", Environment.NewLine);
-					Console.WriteLine (" -t file{0}\tShow the public key from the specified file <1>", Environment.NewLine);
-					Console.WriteLine (" -tp file{0}\tShow the public key and pk token from the specified file <1>", Environment.NewLine);
+					Console.WriteLine (" -t file{0}\tShow the public key from the specified file", Environment.NewLine);
+					Console.WriteLine (" -tp file{0}\tShow the public key and pk token from the specified file", Environment.NewLine);
 					Console.WriteLine (" -T assembly{0}\tShow the public key from the specified assembly", Environment.NewLine);
 					Console.WriteLine (" -Tp assembly{0}\tShow the public key and pk token from the specified assembly", Environment.NewLine);
-					Console.WriteLine (" -V assembly{0}\tVerify the specified assembly signature", Environment.NewLine);
-					Console.WriteLine (" -Vf assembly{0}\tVerify the specified assembly signature (even if disabled).", Environment.NewLine);
+					Console.WriteLine (" -v assembly{0}\tVerify the specified assembly signature", Environment.NewLine);
+					Console.WriteLine (" -vf assembly{0}\tVerify the specified assembly signature (even if disabled).", Environment.NewLine);
 					break;
 				default:
 					Console.WriteLine ("Help options");
