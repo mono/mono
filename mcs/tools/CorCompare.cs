@@ -10,32 +10,12 @@ using System.Collections;
 using System.Text;
 using System.IO;
 
-namespace Mono.CorCompare
+namespace Mono.Util
 {
-	class XMLUtil{
-		public static string ToXML(
-			ArrayList list, 
-			string itemWrap,
-			string listWrap)
-		{
-			if (null == itemWrap){
-				throw new ArgumentNullException("itemWrap");
-			}
-			if (null == listWrap){
-				throw new ArgumentNullException("listWrap");
-			}
-			StringBuilder output = new StringBuilder();
-			output.Append("<"+listWrap+">");
-			foreach(object o in list){
-				output.Append("\n<"+itemWrap+">");
-				output.Append(o.ToString());
-				output.Append("</"+itemWrap+">");
-			}
-			output.Append("\n</"+listWrap+">");
-			return output.ToString();
-		}
-	}
 	class CorCompare {
+		// these types are in mono corlib, but not in the dll we are going to examine.
+		static string[] ghostTypes = {"System.Object", "System.ValueType", "System.Delegate"};
+
 		public static void Main(string[] args) {
 			if (args.Length < 1) {
 				Console.WriteLine ("Usage: CorCompare assembly_to_compare");
@@ -54,15 +34,42 @@ namespace Mono.CorCompare
 			Assembly msAsmbl = Assembly.GetAssembly(typeof (System.Object));
 			Type[] mscorlibTypes = msAsmbl.GetTypes();
 			Type[] monocorlibTypes;
-			monocorlibTypes = monoAsmbl.GetTypes();
 			ArrayList TypesList = new ArrayList();
-			foreach(Type subt in monocorlibTypes){
-				TypesList.Add(subt.FullName);
+
+			// load the classes we know should exist
+			foreach (string name in ghostTypes){
+				TypesList.Add(name);
 			}
+
+			// GetTypes() doesn't seem to like loading our dll, so use jujitsu
+			try {
+				monocorlibTypes = monoAsmbl.GetTypes();
+			}
+			catch(ReflectionTypeLoadException e) {
+				// the exception holds all the types in the dll anyway
+				// some are in Types and some are in the LoaderExceptions array
+				 monocorlibTypes = e.Types;
+				foreach(TypeLoadException loadException in e.LoaderExceptions){
+					TypesList.Add(loadException.TypeName);
+				}
+				//Console.WriteLine(e.ToString());
+				//return;
+			}
+
+			// whether GetTypes() worked or not, we will have _some_ types here
+			foreach(Type subt in monocorlibTypes){
+				if (null != subt) {
+					TypesList.Add(subt.FullName);
+				}
+			}
+
+			// going to use BinarySearch, so sort first
 			TypesList.Sort();
 			
 			ArrayList MissingTypes = new ArrayList();
 			bool foundit = false;
+
+			// make list of ms types not in mono
 			foreach(Type t in mscorlibTypes) {
 				if (t.IsPublic) {
 					foundit = (TypesList.BinarySearch(t.FullName) >= 0);
@@ -71,6 +78,9 @@ namespace Mono.CorCompare
 					}
 				}
 			}
+
+			// sort for easy reading
+			MissingTypes.Sort();
 			Console.WriteLine(XMLUtil.ToXML(MissingTypes, "Type", "MissingTypes"));
 		}
 	}

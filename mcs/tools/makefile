@@ -9,8 +9,8 @@ verifier.exe: verifier.cs
 	$(CSC) $(CSCFLAGS) verifier.cs
 
 CorCompare.exe: CorCompare.cs
-	$(CSC) $(CSCFLAGS) CorCompare.cs
-#	./CorCompare.exe ../class/lib/corlib_cmp.dll > ../../mono/status/cormissing.xml
+	$(CSC) $(CSCFLAGS) CorCompare.cs XMLUtil.cs
+	./CorCompare.exe ../class/lib/corlib_cmp.dll > ../../mono/status/cormissing.xml
 
 EnumCheck.exe:
 	$(CSC) $(CSCFLAGS) /out:EnumCheck.exe EnumCheck.cs
