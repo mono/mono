@@ -1,5 +1,9 @@
 2002-12-28  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
+	* XmlDocumentTests.cs : Test for bugzilla #34743 (whitespace handling)
+
+2002-12-28  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
 	* XmlDocumentTests.cs : Test for bugzilla #35308 (default ns output)
 	* XmlElementTests.cs : Test for output of attributes with different NS.
 

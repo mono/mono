@@ -855,5 +855,17 @@ namespace MonoTests.System.Xml
 			doc.LoadXml ("<iq type=\"get\" id=\"ATECLIENT_1\"><query xmlns=\"jabber:iq:auth\"><username></username></query></iq>");
 			AssertEquals ("<iq type=\"get\" id=\"ATECLIENT_1\"><query xmlns=\"jabber:iq:auth\"><username /></query></iq>", doc.OuterXml);
 		}
+
+		public void TestPreserveWhitespace ()
+		{
+			string input = 
+				"<?xml version=\"1.0\" encoding=\"utf-8\" ?><!-- --> <foo/>";
+
+			XmlDocument dom = new XmlDocument ();
+			XmlTextReader reader = new XmlTextReader (new StringReader (input));
+			dom.Load (reader);
+
+			AssertEquals (XmlNodeType.Element, dom.FirstChild.NextSibling.NextSibling.NodeType);
+		}
 	}
 }
