@@ -478,10 +478,10 @@ namespace MonoTests.System.IO
 
                 public void TestSeek ()
                 {
-			string path = TempFolder + Path.DirectorySeparatorChar + "TestSeek";
-			DeleteFile (path);
+					string path = TempFolder + Path.DirectorySeparatorChar + "TestSeek";
+					DeleteFile (path);
 
-			FileStream stream = new FileStream (path, FileMode.CreateNew, FileAccess.ReadWrite, FileShare.ReadWrite);
+					FileStream stream = new FileStream (path, FileMode.CreateNew, FileAccess.ReadWrite, FileShare.ReadWrite);
                 	stream.Write (new byte[] {1, 2, 3, 4, 5, 6, 7, 8 , 9, 10}, 0, 10);
                 	
                 	stream.Seek (5, SeekOrigin.End);
@@ -497,22 +497,37 @@ namespace MonoTests.System.IO
                 		AssertEquals ("test#03", typeof (IOException), e.GetType ());
                 	}
                 	
-                	stream.Seek (19, SeekOrigin.Begin);
-			AssertEquals ("test#04", -1, stream.ReadByte ());
+					stream.Seek (19, SeekOrigin.Begin);
+					AssertEquals ("test#04", -1, stream.ReadByte ());
 
-			stream.Seek (1, SeekOrigin.Begin);
-                	AssertEquals ("test#05", 2, stream.ReadByte ());
+					stream.Seek (1, SeekOrigin.Begin);
+					AssertEquals ("test#05", 2, stream.ReadByte ());
                 	
-			stream.Seek (3, SeekOrigin.Current);
-                	AssertEquals ("test#06", 6, stream.ReadByte ());
+					stream.Seek (3, SeekOrigin.Current);
+					AssertEquals ("test#06", 6, stream.ReadByte ());
 
-			stream.Seek (-2, SeekOrigin.Current);
-                	AssertEquals ("test#07", 5, stream.ReadByte ());
+					stream.Seek (-2, SeekOrigin.Current);
+					AssertEquals ("test#07", 5, stream.ReadByte ());
 
-			stream.Flush ();
-                	stream.Close ();
+					stream.Flush ();
 
-			DeleteFile (path);
+					// Test that seeks work correctly when seeking inside the buffer
+					stream.Seek (0, SeekOrigin.Begin);
+					stream.WriteByte (0);
+					stream.WriteByte (1);
+					stream.Seek (0, SeekOrigin.Begin);
+					byte[] buf = new byte [1];
+					buf [0] = 2;
+					stream.Write (buf, 0, 1);
+					stream.Write (buf, 0, 1);
+					stream.Flush ();
+					stream.Seek (0, SeekOrigin.Begin);
+					AssertEquals ("test#08", 2, stream.ReadByte ());
+					AssertEquals ("test#09", 2, stream.ReadByte ());
+
+					stream.Close ();
+
+					DeleteFile (path);
                 }
                 
                 public void TestClose ()
