@@ -1,7 +1,7 @@
 RUNTIME = mono
 topdir = ..
 MCS = $(RUNTIME) $(topdir)/mcs/mcs.exe
-CSFLAGS = --target exe
+CSFLAGS = --target exe -L ../class/lib
 LIBFLAGS = /r:PEAPI.dll
 INSTALL = /usr/bin/install
 prefix = /usr
