@@ -1,5 +1,10 @@
 2004-08-31  Sanjay Gupta <gsanjay@novell.com>
 
+	* System.Web.dll.sources: Added new delegates in System.Web.SessionState
+	 and System.Web.UI.
+
+2004-08-31  Sanjay Gupta <gsanjay@novell.com>
+
 	* System.Web.dll.sources: Added new interfaces in System.Web.SessionState
 	 and System.Web.UI.
 

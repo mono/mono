@@ -187,6 +187,7 @@ System.Web.SessionState/SessionId.cs
 System.Web.SessionState/SessionInProcHandler.cs
 System.Web.SessionState/SessionSQLServerHandler.cs
 System.Web.SessionState/SessionStateActionFlags.cs
+System.Web.SessionState/SessionStateItemExpireCallback.cs
 System.Web.SessionState/SessionStateMode.cs
 System.Web.SessionState/SessionStateModule.cs
 System.Web.SessionState/SessionStateSectionHandler.cs
@@ -441,6 +442,7 @@ System.Web.UI/Control.cs
 System.Web.UI/ControlBuilder.cs
 System.Web.UI/ControlBuilderAttribute.cs
 System.Web.UI/ControlCollection.cs
+System.Web.UI/ControlSkinProc.cs
 System.Web.UI/CssStyleCollection.cs
 System.Web.UI/DataBinder.cs
 System.Web.UI/DataBinding.cs
@@ -453,10 +455,13 @@ System.Web.UI/DataSourceCapabilities.cs
 System.Web.UI/DataSourceControl.cs
 System.Web.UI/DataSourceOperation.cs
 System.Web.UI/DataSourceView.cs
+System.Web.UI/DataSourceViewOperationCallback.cs
+System.Web.UI/DataSourceViewSelectCallback.cs
 System.Web.UI/DesignTimeParseData.cs
 System.Web.UI/DesignTimeTemplateParser.cs
 System.Web.UI/DesignerDataBoundLiteralControl.cs
 System.Web.UI/EmptyControlCollection.cs
+System.Web.UI/ExtractTemplateValuesMethod.cs
 System.Web.UI/HierarchicalDataSourceControl.cs
 System.Web.UI/HierarchicalDataSourceView.cs
 System.Web.UI/Html32TextWriter.cs
