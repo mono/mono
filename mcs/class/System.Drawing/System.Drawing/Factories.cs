@@ -72,9 +72,6 @@ internal class Factories {
 					Console.WriteLine("sysdrawconfig[\"Implementation\"] is null");
 				}
 			}
-			else {
-				Console.WriteLine("NameValueCollection is null");
-			}
 		}
 		FactoryClassNameBase = "System.Drawing." + implNamespace + ".";
 	}
