@@ -1,3 +1,12 @@
+2003-11-10  Martin Baulig  <martin@ximian.com>
+
+	* metadata.c
+	(mono_metadata_load_generic_params): Make this actually work.
+
+	* reflection.c (mono_reflection_bind_generic_parameters): If our
+	parent is a generic instance, pass all the `types' to it, no
+	matter whether it has the same number of type parameters or not.
+
 2003-11-10  Zoltan Varga  <vargaz@freemail.hu>
 
 	* assembly.c (mono_assembly_load_references): Move the image<->assembly
