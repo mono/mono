@@ -223,15 +223,13 @@ public class Int32Test : TestCase
 
 	public void TestCustomToString()
 	{
-		// FIXME: Not yet implemented.
-#if NOTYET
-		// culture sensitive?
-
 		int i = 123;
 
 		AssertEquals ("Custom format string 00000", "00123", i.ToString ("00000"));
 		AssertEquals ("Custom format string ####", "123", i.ToString ("####"));
-#endif
+		AssertEquals ("Custom format string ####", "0123", i.ToString ("0###"));
+		AssertEquals ("Custom format string ####", "0123", i.ToString ("#0###"));
+		AssertEquals ("Custom format string ####", "000123", i.ToString ("0#0###"));
 	}
 }
 

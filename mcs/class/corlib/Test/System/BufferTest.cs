@@ -51,19 +51,26 @@ namespace MonoTests.System
 		public void TestByteLength ()
 		{
 			int numBytes;	
-			bool errorThrown = false;
 			float [] floatArray = new float [10];
+			TestCase [] someArray = new TestCase [3];
 		
 			try {
 				Buffer.ByteLength (null);	
+				Fail ("TestByteLength: ArgumentNullException not thrown");
 			} catch (ArgumentNullException) {
-				errorThrown = true;
+				// do nothing, this is expected
+			} catch (Exception e) {
+				Fail ("Unexpected exception on Buffer.ByteLength (null):" + e);
 			}
-			Assert ("TestByteLength: ArgumentNullException not thrown", errorThrown);
 		
-			errorThrown = false;
-		
-			// FIXME: test the case when the ArgumentException is thrown.
+			try {
+				Buffer.ByteLength (someArray);	
+				Fail ("TestByteLength: ArgumentException not thrown");
+			} catch (ArgumentException) {
+				// do nothing, this is expected
+			} catch (Exception e) {
+				Fail ("Unexpected exception on Buffer.ByteLength (non primitive array):" + e);
+			}
 		
 			numBytes = Buffer.ByteLength (floatArray);
 			AssertEquals ("TestByteLength: wrong byteLength", 40, numBytes);
@@ -75,6 +82,7 @@ namespace MonoTests.System
 			bool errorThrown = false;
 			byteArray = new byte [10];
 			byteArray [5] = 8;
+			TestCase [] someArray = new TestCase [3];
 		
 			try {
 				Buffer.GetByte (null, 5);
@@ -105,7 +113,14 @@ namespace MonoTests.System
 		
 			errorThrown = false;
 		
-			// FIXME: test the case when the ArgumentException is thrown.
+			try {
+				Buffer.GetByte (someArray, 0);	
+				Fail ("TestGetByte: ArgumentException not thrown");
+			} catch (ArgumentException) {
+				// do nothing, this is expected
+			} catch (Exception e) {
+				Fail ("Unexpected exception on Buffer.GetByte (non primitive array):" + e);
+			}
 		
 			AssertEquals ("TestGetByte Error", (Byte)8, Buffer.GetByte (byteArray, 5));
 		}
@@ -114,6 +129,7 @@ namespace MonoTests.System
 		public void TestSetByte ()
 		{
 			bool errorThrown = false;
+			TestCase [] someArray = new TestCase [3];
 		
 			try {
 				Buffer.SetByte (null, 5, 12);
@@ -141,8 +157,15 @@ namespace MonoTests.System
 				errorThrown);
 			errorThrown = false;
 		
-			// FIXME: test the case when the ArgumentException is thrown
-			
+			try {
+				Buffer.SetByte (someArray, 0, 42);	
+				Fail ("TestSetByte: ArgumentException not thrown");
+			} catch (ArgumentException) {
+				// do nothing, this is expected
+			} catch (Exception e) {
+				Fail ("Unexpected exception on Buffer.SetByte (non primitive array):" + e);
+			}
+		
 			Buffer.SetByte (byteArray, 3, (byte) 10);
 			AssertEquals ("TestSetByte", (Byte)10, Buffer.GetByte (byteArray, 3));
 		}
