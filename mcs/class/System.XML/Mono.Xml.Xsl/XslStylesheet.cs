@@ -424,7 +424,7 @@ namespace Mono.Xml.Xsl {
 	}
 
 	
-	public enum XslDefaultValidation
+	internal enum XslDefaultValidation
 	{
 		Strict,
 		Lax,

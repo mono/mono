@@ -23,7 +23,7 @@ namespace Mono.Xml.Xsl
 {
 	using QName = System.Xml.XmlQualifiedName;
 
-	public enum OutputMethod {
+	internal enum OutputMethod {
 		XML,
 		HTML,
 		Text,
@@ -31,13 +31,13 @@ namespace Mono.Xml.Xsl
 		Unknown
 	}
 	
-	public enum StandaloneType {
+	internal enum StandaloneType {
 		NONE,
 		YES,
 		NO
         }
 	
-	public class XslOutput	// also usable for xsl:result-document
+	internal class XslOutput	// also usable for xsl:result-document
 	{
 		string uri;
 		QName customMethod;

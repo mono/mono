@@ -16,7 +16,7 @@ namespace Mono.Xml.Xsl {
 	/// <summary>
 	/// Outputter implementation for XML output method
 	/// </summary>
-	public class XmlOutputter : Outputter {
+	internal class XmlOutputter : Outputter {
 		private XmlWriter _writer;
 		private Hashtable _outputs;
 		private XslOutput _currentOutput;
