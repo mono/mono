@@ -1,3 +1,7 @@
+2004-10-29 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* ControlBuilder.cs: from HEAD.
+
 2004-10-01 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Control.cs: even if the control has no children the naming container
