@@ -1,6 +1,7 @@
 2001-08-22  Miguel de Icaza  <miguel@ximian.com>
 
-	* interp.c (ves_pinvoke_method): Typo fix.
+	* interp.c (usage): Add version information
+	(ves_pinvoke_method): Typo fix.
 
 Wed Aug 22 20:37:51 CEST 2001 Paolo Molaro <lupus@ximian.com>
 
