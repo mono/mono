@@ -1,3 +1,8 @@
+2004-06-23  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* ActivationTests.cs: New tests.
+	* BaseCalls.cs, CallSeq.cs: Use Assert instead of the deprecated Assertion.
+
 2004-05-03  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* AsyncCalls.cs, BaseCalls.cs, DelegateCalls.cs, ReflectionCalls.cs, 

@@ -24,7 +24,7 @@ using NUnit.Framework;
 
 namespace MonoTests.Remoting
 {
-	public abstract class BaseCallTest : Assertion
+	public abstract class BaseCallTest
 	{
 		IChannelSender chs;
 		string[] remoteUris;
@@ -234,12 +234,12 @@ namespace MonoTests.Remoting
 
 		public void RunTestSimple (IRemoteObject testerSurrogate)
 		{
-			AssertEquals ("ReturnValue", 130772 + remoteDomId, testerSurrogate.Simple ());
+			Assert.AreEqual (130772 + remoteDomId, testerSurrogate.Simple (), "ReturnValue");
 		}
 
 		public void RunTestPrimitiveParams (IRemoteObject testerSurrogate)
 		{
-			AssertEquals ("ReturnValue", "11-22-L-SG@"+remoteDomId, testerSurrogate.PrimitiveParams (11, 22, 'L', "SG"));
+			Assert.AreEqual ("11-22-L-SG@"+remoteDomId, testerSurrogate.PrimitiveParams (11, 22, 'L', "SG"), "ReturnValue");
 		}
 
 		public void RunTestPrimitiveParamsInOut (IRemoteObject testerSurrogate)
@@ -251,17 +251,17 @@ namespace MonoTests.Remoting
 
 			string res = testerSurrogate.PrimitiveParamsInOut (ref a1, out a2, ref b1, out b2, 9821, ref c1, out c2, ref d1, out d2);
 
-			AssertEquals ("ReturnValue", "9876543-82437.83-s-asdASDzxcZXC@" + remoteDomId, res);
+			Assert.AreEqual ("9876543-82437.83-s-asdASDzxcZXC@" + remoteDomId, res, "ReturnValue");
 
-			AssertEquals ("a2", 12345678, a2);
-			AssertEquals ("b2", 53455.345f, b2);
-			AssertEquals ("c2", 'g', c2);
-			AssertEquals ("d2", "sfARREG$5345DGDfgY7656gDFG>><<dasdasd", d2);
+			Assert.AreEqual (12345678, a2, "a2");
+			Assert.AreEqual (53455.345f, b2, "b2");
+			Assert.AreEqual ('g', c2, "c2");
+			Assert.AreEqual ("sfARREG$5345DGDfgY7656gDFG>><<dasdasd", d2, "d2");
 
-			AssertEquals ("a1", 65748392, a1);
-			AssertEquals ("b1", 98395.654f, b1);
-			AssertEquals ("c1", 'l', c1);
-			AssertEquals ("d1", "aasbasbdyhasbduybo234243", d1);
+			Assert.AreEqual (65748392, a1, "a1");
+			Assert.AreEqual (98395.654f, b1, "b1");
+			Assert.AreEqual ('l', c1, "c1");
+			Assert.AreEqual ("aasbasbdyhasbduybo234243", d1, "d1");
 		}
 
 		public void RunTestComplexParams (IRemoteObject testerSurrogate)
@@ -272,16 +272,16 @@ namespace MonoTests.Remoting
 
 			Complex r = testerSurrogate.ComplexParams (list, c, "third");
 
-			AssertNotNull ("ReturnValue is null", r);
-			AssertNotNull ("ReturnValue.Child is null", r.Child);
-			AssertNotNull ("ReturnValue.Child.Child is null", r.Child.Child);
+			Assert.IsNotNull (r, "ReturnValue is null");
+			Assert.IsNotNull (r.Child, "ReturnValue.Child is null");
+			Assert.IsNotNull (r.Child.Child, "ReturnValue.Child.Child is null");
 			
-			AssertEquals ("ReturnValue.Id", 33, r.Id);
-			AssertEquals ("ReturnValue.Name", "third@"+remoteDomId, r.Name);
-			AssertEquals ("ReturnValue.Child.Id", 22, r.Child.Id);
-			AssertEquals ("ReturnValue.Child.Name", "second", r.Child.Name);
-			AssertEquals ("ReturnValue.Child.Child.Id", 11, r.Child.Child.Id);
-			AssertEquals ("ReturnValue.Child.Child.Name", "first", r.Child.Child.Name);
+			Assert.AreEqual (33, r.Id, "ReturnValue.Id");
+			Assert.AreEqual ("third@"+remoteDomId, r.Name, "ReturnValue.Name");
+			Assert.AreEqual (22, r.Child.Id, "ReturnValue.Child.Id");
+			Assert.AreEqual ("second", r.Child.Name, "ReturnValue.Child.Name");
+			Assert.AreEqual (11, r.Child.Child.Id, "ReturnValue.Child.Child.Id");
+			Assert.AreEqual ("first", r.Child.Child.Name, "ReturnValue.Child.Child.Name");
 		}
 
 		public void RunTestComplexParamsInOut (IRemoteObject testerSurrogate)
@@ -297,31 +297,31 @@ namespace MonoTests.Remoting
 			Complex c;
 			Complex r = testerSurrogate.ComplexParamsInOut (ref list, out c, bytes, sb, "third");
 
-			AssertNotNull ("ReturnValue is null", r);
-			AssertNotNull ("c is null", c);
-			AssertNotNull ("list is null", list);
-			Assert ("Invalid list count", list.Count == 3);
-			AssertNotNull ("list[0] is null", list[0]);
-			AssertNotNull ("list[1] is null", list[1]);
-			AssertNotNull ("list[2] is null", list[2]);
-			AssertNotNull ("bytes is null", bytes);
-			AssertNotNull ("sb is null", sb);
+			Assert.IsNotNull (r, "ReturnValue is null");
+			Assert.IsNotNull (c, "c is null");
+			Assert.IsNotNull (list, "list is null");
+			Assert.IsTrue (list.Count == 3, "Invalid list count");
+			Assert.IsNotNull (list[0], "list[0] is null");
+			Assert.IsNotNull (list[1], "list[1] is null");
+			Assert.IsNotNull (list[2], "list[2] is null");
+			Assert.IsNotNull (bytes, "bytes is null");
+			Assert.IsNotNull (sb, "sb is null");
 			
-			AssertEquals ("ReturnValue.Id", 33, r.Id);
-			AssertEquals ("ReturnValue.Name", "third@"+remoteDomId, r.Name);
-			AssertEquals ("c.Id", 33, c.Id);
-			AssertEquals ("c.Name", "third@"+remoteDomId, c.Name);
+			Assert.AreEqual (33, r.Id, "ReturnValue.Id");
+			Assert.AreEqual ("third@"+remoteDomId, r.Name, "ReturnValue.Name");
+			Assert.AreEqual (33, c.Id, "c.Id");
+			Assert.AreEqual ("third@"+remoteDomId, c.Name, "c.Name");
 
-			AssertEquals ("list[2].Id", 33, ((Complex)list[2]).Id);
-			AssertEquals ("list[2].Name", "third@"+remoteDomId, ((Complex)list[2]).Name);
-			AssertEquals ("list[1].Id", 22, ((Complex)list[1]).Id);
-			AssertEquals ("list[1].Name", "second", ((Complex)list[1]).Name);
-			AssertEquals ("list[0].Id", 11, ((Complex)list[0]).Id);
-			AssertEquals ("list[0].Name", "first", ((Complex)list[0]).Name);
+			Assert.AreEqual (33, ((Complex)list[2]).Id, "list[2].Id");
+			Assert.AreEqual ("third@"+remoteDomId, ((Complex)list[2]).Name, "list[2].Name");
+			Assert.AreEqual (22, ((Complex)list[1]).Id, "list[1].Id");
+			Assert.AreEqual ("second", ((Complex)list[1]).Name, "list[1].Name");
+			Assert.AreEqual (11, ((Complex)list[0]).Id, "list[0].Id");
+			Assert.AreEqual ("first", ((Complex)list[0]).Name, "list[0].Name");
 			
-			AssertEquals ("sb", "hello from client and from server", sb.ToString ());
+			Assert.AreEqual ("hello from client and from server", sb.ToString (), "sb");
 			for (int n=0; n<100; n++) 
-				AssertEquals ("bytes["+n+"]", n+1, bytes[n]);
+				Assert.AreEqual (n+1, bytes[n], "bytes["+n+"]");
 		}
 		
 		public void RunTestProcessContextData (IRemoteObject testerSurrogate)
@@ -339,18 +339,18 @@ namespace MonoTests.Remoting
 			testerSurrogate.ProcessContextData ();
 			
 			cdata = CallContext.GetData ("clientData") as ContextData;
-			AssertNotNull ("clientData is null", cdata);
-			AssertEquals ("clientData.data", "hi from client", cdata.data);
-			AssertEquals ("clientData.id", 1123, cdata.id);
+			Assert.IsNotNull (cdata, "clientData is null");
+			Assert.AreEqual ("hi from client", cdata.data, "clientData.data");
+			Assert.AreEqual (1123, cdata.id, "clientData.id");
 			
 			cdata = CallContext.GetData ("serverData") as ContextData;
-			AssertNotNull ("serverData is null", cdata);
-			AssertEquals ("serverData.data", "hi from server", cdata.data);
-			AssertEquals ("serverData.id", 3211, cdata.id);
+			Assert.IsNotNull (cdata, "serverData is null");
+			Assert.AreEqual ("hi from server", cdata.data, "serverData.data");
+			Assert.AreEqual (3211, cdata.id, "serverData.id");
 			
 			string mdata = CallContext.GetData ("mustNotPass") as string;
-			AssertNotNull ("mustNotPass is null", mdata);
-			AssertEquals ("mustNotPass", "more data", mdata);
+			Assert.IsNotNull (mdata, "mustNotPass is null");
+			Assert.AreEqual ("more data", mdata, "mustNotPass");
 		}
 	}
 

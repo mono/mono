@@ -73,7 +73,7 @@ namespace MonoTests.Remoting
 
 			if (checkPos >= calls.Count)
 			{
-				if (!optional) Assertion.Fail ("[" + name + "] Call check failed. Expected call not made: \"" + msg + "\"");
+				if (!optional) Assert.Fail ("[" + name + "] Call check failed. Expected call not made: \"" + msg + "\"");
 				else return;
 			}
 
@@ -82,7 +82,7 @@ namespace MonoTests.Remoting
 			if (msg.Substring (3) != call.Substring (3))
 			{
 				if (optional) checkPos--;
-				else Assertion.Fail ("[" + name + "] Call check failed in step " + (checkPos+1) + ". Expected \"" + msg + "\" found \"" + call + "\"");
+				else Assert.Fail ("[" + name + "] Call check failed in step " + (checkPos+1) + ". Expected \"" + msg + "\" found \"" + call + "\"");
 			}
 		}
 
