@@ -1,3 +1,7 @@
+2003-10-12  Bernie Solomon  <bernard@ugsolutions.com>
+
+	* locales.c: use gint32 in non HAVE_ICU case
+
 2003-10-11  Martin Baulig  <martin@ximian.com>
 
 	* mono-debug.c (mono_debug_add_method): Added a workaround for
