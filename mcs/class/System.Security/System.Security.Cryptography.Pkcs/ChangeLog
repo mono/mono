@@ -1,3 +1,14 @@
+2005-01-17  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Pkcs9Attribute.cs: Fixed wrt unit tests.
+	* Pkcs9ContentType.cs: Completed public part. Internals are still
+	todo later.
+	* Pkcs9DocumentDescription.cs: Completed implementation.
+	* Pkcs9DocumentName.cs: Completed implementation.
+	* Pkcs9SigningTime.cs: Completed implementation.
+	* Pkcs9MessageDigest.cs: Completed public part. Internals are still
+	todo later.
+
 2004-09-04  Tim Coleman <tim@timcoleman.com>
 	* Pkcs9ContentType.cs Pkcs9MessageDigest.cs:
 		New classes for 2.0

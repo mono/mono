@@ -1,11 +1,12 @@
 //
 // Pkcs9MessageDigest.cs - System.Security.Cryptography.Pkcs.Pkcs9MessageDigest
 //
-// Author:
+// Authors:
 //	Tim Coleman (tim@timcoleman.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // Copyright (C) Tim Coleman, 2004
-// Copyright (C) 2004 Novell Inc. (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell Inc. (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -29,37 +30,59 @@
 
 #if NET_2_0
 
-using System;
-
 namespace System.Security.Cryptography.Pkcs {
 
-	public sealed class Pkcs9MessageDigest : Pkcs9Attribute 
-	{
-		#region Fields
+	[MonoTODO ("missing internals")]
+	public sealed class Pkcs9MessageDigest : Pkcs9Attribute {
 
-		const string oid = "1.2.840.113549.1.9.4";
-		const string name = "Message Digest";
-		byte[] messageDigest;
+		internal const string oid = "1.2.840.113549.1.9.4";
+		internal const string friendlyName = "Message Digest";
 
-		#endregion // Fields
+		private byte[] _messageDigest;
 
-		#region Constructors
+		// constructors
 
-		[MonoTODO ("encode for RawData using Mono.Security")]
 		public Pkcs9MessageDigest () 
-			: base (new Oid (oid, name), null)
 		{
+			// Pkcs9Attribute remove the "set" accessor on Oid :-(
+			(this as AsnEncodedData).Oid = new Oid (oid, friendlyName);
 		}
 
-		#endregion // Constructors
+		internal Pkcs9MessageDigest (byte[] messageDigest, bool encoded) 
+		{
+			if (messageDigest == null)
+				throw new ArgumentNullException ("messageDigest");
 
-		#region Properties
+			if (encoded) {
+				(this as AsnEncodedData).Oid = new Oid (oid, friendlyName);
+				RawData = messageDigest;
+				Decode (messageDigest);
+			} else {
+				(this as AsnEncodedData).Oid = new Oid (oid, friendlyName);
+				_messageDigest = (byte[]) _messageDigest.Clone ();
+				RawData = Encode ();
+			}
+		}
+
+		// properties
 
 		public byte[] MessageDigest {
-			get { return messageDigest; }
+			get { return _messageDigest; }
 		}
 
-		#endregion // Properties
+		// internal stuff
+
+		internal void Decode (byte[] attribute)
+		{
+			// TODO
+			_messageDigest = null;
+		}
+
+		internal byte[] Encode ()
+		{
+			// TODO
+			return null;
+		}
 	}
 }
 

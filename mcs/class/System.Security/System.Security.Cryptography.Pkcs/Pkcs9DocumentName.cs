@@ -5,7 +5,7 @@
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
-// Copyright (C) 2004 Novell Inc. (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell Inc. (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -29,38 +29,70 @@
 
 #if NET_2_0
 
-using System;
 using System.Text;
+
+using Mono.Security;
 
 namespace System.Security.Cryptography.Pkcs {
 
 	public sealed class Pkcs9DocumentName : Pkcs9Attribute	{
 
-		private const string oid = "1.3.6.1.4.1.311.88.2.1";
+		internal const string oid = "1.3.6.1.4.1.311.88.2.1";
+		internal const string friendlyName = null;
 
 		private string _name;
 
-		[MonoTODO ("encode for RawData using Mono.Security")]
 		public Pkcs9DocumentName () 
-			: base (new Oid (oid), null)
 		{
+			// Pkcs9Attribute remove the "set" accessor on Oid :-(
+			(this as AsnEncodedData).Oid = new Oid (oid, friendlyName);
 		}
 
-		[MonoTODO ("encode for RawData using Mono.Security")]
 		public Pkcs9DocumentName (string documentName) 
-			: base (new Oid (oid), Encoding.Unicode.GetBytes (documentName))
 		{
+			if (documentName == null)
+				throw new NullReferenceException ("documentName");
+// match MS			throw new ArgumentNullException ("documentName");
+
+			(this as AsnEncodedData).Oid = new Oid (oid, friendlyName);
 			_name = documentName;
+			RawData = Encode ();
 		}
 
-		[MonoTODO ("decode using Mono.Security")]
 		public Pkcs9DocumentName (byte[] encodedDocumentName)
-			: base (new Oid (oid), encodedDocumentName)
 		{
+			if (encodedDocumentName == null)
+				throw new ArgumentNullException ("encodedDocumentName");
+
+			(this as AsnEncodedData).Oid = new Oid (oid, friendlyName);
+			RawData = encodedDocumentName;
+			Decode (encodedDocumentName);
 		}
 
 		public string DocumentName {
 			get { return _name; }
+		}
+
+		// internal stuff
+
+		internal void Decode (byte[] attribute)
+		{
+			if (attribute [0] != 0x04)
+				return; // throw ?
+
+			ASN1 attr = new ASN1 (attribute);
+			byte[] str = attr.Value;
+			int length = str.Length;
+			if (str [length - 2] == 0x00)
+				length -= 2;	// zero-terminated (normal)
+			_name = Encoding.Unicode.GetString (str, 0, length);
+		}
+
+		internal byte[] Encode ()
+		{
+			// OCTETSTRING (0x04) Of the zero-terminated unicode string
+			ASN1 attr = new ASN1 (0x04, Encoding.Unicode.GetBytes (_name + (char)0));
+			return attr.GetBytes ();
 		}
 	}
 }

@@ -5,7 +5,7 @@
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
-// Copyright (C) 2004 Novell Inc. (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell Inc. (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -29,7 +29,6 @@
 
 #if NET_2_0
 
-using System;
 using System.Collections;
 
 namespace System.Security.Cryptography.Pkcs {
@@ -49,8 +48,11 @@ namespace System.Security.Cryptography.Pkcs {
 		}
 
 		public Pkcs9Attribute (Oid oid, byte[] encodedData) 
-			: base (oid, encodedData)
 		{
+			if (oid == null)
+				throw new ArgumentNullException ("oid");
+			base.Oid = oid;
+			RawData = encodedData;
 		}
 
 		public Pkcs9Attribute (string oid, byte[] encodedData)
@@ -58,6 +60,7 @@ namespace System.Security.Cryptography.Pkcs {
 		{
 		}
 
+		// this (sadly) removes the "set" accessor
 		public new Oid Oid {
 			get { return base.Oid; }
 		}

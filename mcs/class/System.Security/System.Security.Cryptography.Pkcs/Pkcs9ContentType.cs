@@ -1,11 +1,12 @@
 //
 // Pkcs9ContentType.cs - System.Security.Cryptography.Pkcs.Pkcs9ContentType
 //
-// Author:
+// Authors:
 //	Tim Coleman (tim@timcoleman.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // Copyright (C) Tim Coleman, 2004
-// Copyright (C) 2004 Novell Inc. (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell Inc. (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -29,38 +30,59 @@
 
 #if NET_2_0
 
-using System;
-using System.Security.Cryptography;
+namespace System.Security.Cryptography.Pkcs {
 
-namespace System.Security.Cryptography.Pkcs 
-{
-	public sealed class Pkcs9ContentType : Pkcs9Attribute 
-	{
-		#region Fields
+	[MonoTODO ("missing internals")]
+	public sealed class Pkcs9ContentType : Pkcs9Attribute {
 
-		const string oid = "1.2.840.113549.1.9.3";
-		const string name = "Content Type";
-		Oid contentType;
+		internal const string oid = "1.2.840.113549.1.9.3";
+		internal const string friendlyName = "Content Type";
 
-		#endregion // Fields
+		private Oid _contentType;
 
-		#region Constructors
+		// constructors
 
-		[MonoTODO ("encode for RawData using Mono.Security")]
 		public Pkcs9ContentType () 
-			: base (new Oid (oid, name), null)
 		{
+			// Pkcs9Attribute remove the "set" accessor on Oid :-(
+			(this as AsnEncodedData).Oid = new Oid (oid, friendlyName);
 		}
 
-		#endregion // Constructors
+		internal Pkcs9ContentType (string contentType) 
+		{
+			(this as AsnEncodedData).Oid = new Oid (oid, friendlyName);
+			_contentType = new Oid (contentType);
+			RawData = Encode ();
+		}
 
-		#region Properties
+		internal Pkcs9ContentType (byte[] encodedContentType) 
+		{
+			if (encodedContentType == null)
+				throw new ArgumentNullException ("encodedContentType");
+
+			(this as AsnEncodedData).Oid = new Oid (oid, friendlyName);
+			RawData = encodedContentType;
+			Decode (encodedContentType);
+		}
+
+		// properties
 
 		public Oid ContentType {
-			get { return contentType; }
+			get { return _contentType; }
 		}
 
-		#endregion // Properties
+		// internal stuff
+
+		internal void Decode (byte[] attribute)
+		{
+			_contentType = null;
+		}
+
+		// TODO
+		internal byte[] Encode ()
+		{
+			return null;
+		}
 	}
 }
 
