@@ -1,3 +1,8 @@
+2003-02-19  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* All: Corrected class indentation, minor fixes, added many MonoTODO (so class status
+	will reflect reality).
+
 2003-01-17  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* KeyInfo.cs: Changed some protected declaration to private.
