@@ -875,6 +875,10 @@ bounds			: bound
 			;
 
 bound			: /* EMPTY */
+                          {
+                                // This is shortref for no lowerbound or size
+                                $$ = new DictionaryEntry (TypeRef.Ellipsis, TypeRef.Ellipsis);
+                          }
 			| ELLIPSIS
                           {
                                 // No lower bound or size
