@@ -1,3 +1,14 @@
+
+Mon Nov 19 11:32:28 CET 2001 Paolo Molaro <lupus@ximian.com>
+
+	* main.c: remove arch_create_jit_trampoline().
+
+Thu Nov 15 17:42:03 CET 2001 Paolo Molaro <lupus@ximian.com>
+
+	* dump.c: decode more info in the constant table.
+	* get.c: show literals the same way ildasm does.
+	* main.c: decode literal values for fields.
+
 Fri Nov 2 19:04:21 CET 2001 Paolo Molaro <lupus@ximian.com>
 
 	* main.c, dump, dump.c: decode the customattr table.

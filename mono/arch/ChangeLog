@@ -1,4 +1,8 @@
 
+Thu Nov 15 17:41:01 CET 2001 Paolo Molaro <lupus@ximian.com>
+
+	* x86/tramp.c: handle enums with underlying type different from int32.
+
 Wed Nov 14 19:21:26 CET 2001 Paolo Molaro <lupus@ximian.com>
 
 	* x86/tramp.c: handle boolean as a return value.

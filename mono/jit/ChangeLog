@@ -1,3 +1,9 @@
+
+Mon Nov 19 11:36:22 CET 2001 Paolo Molaro <lupus@ximian.com>
+
+	* jit.c: use mono_install_trampoline (), instead of exporting
+	a function to a lower-level library.
+
 2001-11-16  Dietmar Maurer  <dietmar@ximian.com>
 
 	* x86.brg (STRING_ARG): impl. a way to marshal strings. This

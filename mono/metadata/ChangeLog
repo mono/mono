@@ -1,4 +1,28 @@
 
+Mon Nov 19 11:37:14 CET 2001 Paolo Molaro <lupus@ximian.com>
+
+	* class.c, class.h: add mono_install_trampoline() so that the runtime
+	can register a function to create a trampoline: removes the ugly
+	requirement that a runtime needed to export arch_create_jit_trampoline.
+	* object.h, object.c: added mono_install_handler() so that the runtime
+	can install an handler for exceptions generated in C code (with
+	mono_raise_exception()). Added C struct for System.Delegate.
+	* pedump.c: removed arch_create_jit_trampoline.
+	* reflection.c: some cleanups to allow registering user strings and
+	later getting a token for methodrefs and fieldrefs before the assembly
+	is built.
+	* row-indexes.h: updates and fixes from the new ECMA specs.
+
+Thu Nov 15 17:44:49 CET 2001 Paolo Molaro <lupus@ximian.com>
+
+	* class.h, class.c: add enum_basetype field to MonoClass.
+	* metadata.h, metadata.c: add mono_metadata_get_constant_index()
+	to get index in the constant table reated to a field, param or
+	property.
+	* reflection.h, reflection.c: handle constructors. Set public-key and
+	version number of the built assembly to 0.
+	* row-indexes.h: update from new ECMA spec.
+
 Wed Nov 14 19:26:06 CET 2001 Paolo Molaro <lupus@ximian.com>
 
 	* class.h, class.c: add a max_interface_id to MonoClass.
