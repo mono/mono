@@ -1,3 +1,10 @@
+2005-02-15  Peter Bartok  <pbartok@novell.com>
+
+	* Makefile: Removed resources as automatic target; to build
+	  .resource files 'make resources' must be invoked. This removes
+	  the libgdiplus installed requirement. Instead, the compiled files
+	  are checked in as well.
+
 2005-02-13  Peter Bartok  <pbartok@novell.com>
 
 	* System.Windows.Forms.dll.sources: Added SelectionRangeConverter.cs,

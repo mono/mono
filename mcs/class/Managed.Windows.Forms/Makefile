@@ -24,7 +24,9 @@ RESOURCES = \
 
 include ../../build/library.make
 
-$(the_lib): $(RESOURCES) SWF.csproj
+$(the_lib): SWF.csproj
+
+resources: $(RESOURCES)
 
 $(RESOURCES): %.resources: %.resx
 	$(RESGEN) $<
