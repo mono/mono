@@ -1860,11 +1860,11 @@ namespace Mono.CSharp {
 
 		public override void CloseType ()
 		{
-			if (Created)
+			if ((caching_flags & Flags.CloseTypeCreated) != 0)
 				return;
 			
 			try {
-				Created = true;
+				caching_flags |= Flags.CloseTypeCreated;
 				TypeBuilder.CreateType ();
 			} catch (TypeLoadException){
 				//
