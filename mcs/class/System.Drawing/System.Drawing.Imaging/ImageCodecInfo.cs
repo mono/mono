@@ -3,14 +3,11 @@
 //
 // Authors:
 //   Everaldo Canuto (everaldo.canuto@bol.com.br)
-<<<<<<< ImageCodecInfo.cs
 //   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //   Dennis Hayes (dennish@raytek.com)
-=======
 //   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //   Dennis Hayes (dennish@raytek.com)
 //   Jordi Mas i Hernandez (jordi@ximian.com)
->>>>>>> 1.10
 //
 // (C) 2002 Ximian, Inc.  http://www.ximian.com
 //
