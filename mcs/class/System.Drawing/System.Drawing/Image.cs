@@ -104,7 +104,6 @@ internal class InternalImageInfo : IDisposable {
 		int destinationPixelIncrement = (destPixelFormat == PixelFormat.Format32bppArgb) ? 1 : 0;
 
 		int destStride = (Image.GetPixelFormatSize(destPixelFormat) >> 3 ) * imageSize.Width;
-		Console.WriteLine ("Destination stride {0}", destStride);
 		byte[] temp = new byte [destStride * imageSize.Height];
 		fixed( byte *psrc = image, pbuf = temp) {
 			byte* curSrc = psrc;
