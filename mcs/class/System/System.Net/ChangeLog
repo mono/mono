@@ -1,3 +1,10 @@
+2003-05-29  Miguel de Icaza  <miguel@ximian.com>
+
+	* HttpWebRequest.cs (Close): Move the code that accumulates the
+	output to Close from Flush.  Flush could have been called in the
+	middle of the processing, and would have generated invalid results
+	(which it did).
+
 2003-05-23  Zoltan Varga  <vargaz@freemail.hu>
 
 	* Dns.cs (GetHostByAddress): Return the local host when called with

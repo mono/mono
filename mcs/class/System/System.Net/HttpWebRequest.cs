@@ -732,21 +732,8 @@ namespace System.Net
 
 			public override void Flush ()
 			{
-				if (AccumulateOutput == null){
+				if (AccumulateOutput == null)
 					base.Flush ();
-					return;
-				}
-				ArrayList output = AccumulateOutput;
-				AccumulateOutput = null;
-				long size = 0;
-				foreach (byte [] b in output)
-					size += b.Length;
-				WriteHeaders (size, true);
-				foreach (byte [] b in output)
-					base.Write (b, 0, b.Length);
-
-				AccumulateOutput = null;
-				base.Flush ();
 			}
 
 			protected override void Dispose (bool disposing)
@@ -774,8 +761,19 @@ namespace System.Net
 			public override void Close() 
 			{
 
-				if (AccumulateOutput != null)
-					Flush ();
+				if (AccumulateOutput != null){
+					ArrayList output = AccumulateOutput;
+					AccumulateOutput = null;
+					long size = 0;
+					foreach (byte [] b in output)
+						size += b.Length;
+					WriteHeaders (size, true);
+					foreach (byte [] b in output){
+						base.Write (b, 0, b.Length);
+					}
+					AccumulateOutput = null;
+					base.Flush ();
+				}
 					       
 				GC.SuppressFinalize (this);
 				Dispose (true);
