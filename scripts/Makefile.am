@@ -5,11 +5,11 @@ bin2dir = $(bindir)
 
 bin_SCRIPTS = \
 	al			\
+	caspol			\        
 	cert2spc		\
 	certmgr			\
 	chktrust		\
 	cilc			\
-	caspol			\
 	disco			\
 	dtd2xsd			\
 	gacutil			\
