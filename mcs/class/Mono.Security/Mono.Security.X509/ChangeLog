@@ -1,3 +1,7 @@
+2005-02-25  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* X501Name.cs: Added support for multiple entries in a same set.
+
 2005-01-11  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* X509Certificate.cs: Fixed NullReferenceException when asking for
