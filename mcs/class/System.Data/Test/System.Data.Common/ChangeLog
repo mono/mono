@@ -1,8 +1,12 @@
 2004-06-09 Umadevi S <sumadevi@novell.com>
-	* Corrected Remove method testcase
+	* Correct Add, InserAt testcases for DataTableMappingCollection
+		
+
+2004-06-09 Umadevi S <sumadevi@novell.com>
+	* Corrected Remove method testcase for DataColumnMappingCollection
 
 2004-06-08 Umadevi S <sumadevi@novell.com>
-	* Corrected the contains testcase to test for invalidcastexception
+	* Corrected the contains testcase to test for invalidcastexception for DataColumnMappingCollection
 
 2004-05-27 Umadevi S <sumadevi@novell.com>
 	* Added Classes DataColumnMappingCollectionTest and DataTableMappingCollectionTest

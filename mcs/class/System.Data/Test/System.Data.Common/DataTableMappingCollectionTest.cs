@@ -268,9 +268,9 @@ namespace MonoTests.System.Data.Common
 		public void Insert()
 		{
 			tableMapCollection.AddRange(tabs);
-			DataTableMapping mymap=new DataTableMapping("sourceAge","dataSetAge");
+			DataTableMapping mymap=new DataTableMapping("sourceTestAge","datatestSetAge");
 			tableMapCollection.Insert(3,mymap);
-			int ind=tableMapCollection.IndexOfDataSetTable("dataSetAge");
+			int ind=tableMapCollection.IndexOfDataSetTable("datatestSetAge");
 			AssertEquals("test1",3,ind);
 		}
 		
@@ -279,6 +279,7 @@ namespace MonoTests.System.Data.Common
 		{
 			tableMapCollection.AddRange(tabs);
 			DataTableMapping mymap=new DataTableMapping("sourceCustomers","dataSetCustomers");
+			tableMapCollection.Add(mymap);
 			tableMapCollection.Remove((Object)mymap);
 			bool eq=tableMapCollection.Contains((Object)mymap);
 			AssertEquals("test1",false,eq);
