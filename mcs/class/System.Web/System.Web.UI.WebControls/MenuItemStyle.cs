@@ -143,6 +143,19 @@ namespace System.Web.UI.WebControls
 				ViewState.Remove("VerticalPadding");
 			base.Reset();
 		}
+		
+		protected override void FillStyleAttributes (CssStyleCollection attributes, IUrlResolutionService urlResolver)
+		{
+			base.FillStyleAttributes (attributes, urlResolver);
+			if (IsSet (HORZ_PADD)) {
+				attributes.Add (HtmlTextWriterStyle.PaddingLeft, HorizontalPadding.ToString () + "px");
+				attributes.Add (HtmlTextWriterStyle.PaddingRight, HorizontalPadding.ToString () + "px");
+			}
+			if (IsSet (VERT_PADD)) {
+				attributes.Add (HtmlTextWriterStyle.PaddingTop, VerticalPadding.ToString () + "px");
+				attributes.Add (HtmlTextWriterStyle.PaddingBottom, VerticalPadding.ToString () + "px");
+			}
+		}
 	}
 }
 

@@ -1,3 +1,11 @@
+2004-12-20 Lluis Sanchez Gual <lluis@novell.com>
+
+	* Style.cs: Implemented RegisteredCssClass property. Added
+	CopyTextStylesFrom method, which copies styles that only apply to text.
+	* Menu.cs, Menu.js: Added hover style support. Define all menu styles
+	in the page stylesheet. Added support for ItemSpacing property.
+	* MenuItemStyle.cs: Implemented FillStyleAttributes method.
+	
 2004-12-17 Lluis Sanchez Gual <lluis@novell.com>
 
 	* Style.cs: Generate styles using a CssStyleCollection, so the code can

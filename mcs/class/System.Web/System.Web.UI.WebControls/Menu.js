@@ -4,9 +4,9 @@ function Menu_OverItem (menuId, itemId, parentId) {
 	var subm = getSubMenu (menuId, itemId);
 	if (subm.parentMenu == null && parentId != null)
 		subm.parentMenu = getSubMenu (menuId, parentId);
-	var item = getMenuItem (menuId, itemId);
 	
 	if (subm.firstShown != true) {
+		var item = getMenuItem (menuId, itemId);
 		var offx; var offy;
 		if (subm.parentMenu != null) {
 			offx = parseInt (subm.parentMenu.style.left);
@@ -27,23 +27,46 @@ function Menu_OverItem (menuId, itemId, parentId) {
 	
 	Menu_SetActive (menu, subm);
 	Menu_ShowMenu (subm);
+	if (parentId != null && menu.dynamicHover != null)
+		Menu_HilighItem (menuId, itemId, menu.dynamicHover);
+	else if (parentId == null && menu.staticHover != null)
+		Menu_HilighItem (menuId, itemId, menu.staticHover);
 }
 
-function Menu_OverLeafItem (menuId, parentId) {
+function Menu_OverDynamicLeafItem (menuId, itemId, parentId) {
 	var menu = getMenu (menuId);
 	var subm = getSubMenu (menuId, parentId);
 	Menu_SetActive (menu, subm);
 	Menu_ShowMenu (subm);
+	if (menu.dynamicHover != null)
+		Menu_HilighItem (menuId, itemId, menu.dynamicHover);
 }
 
-function Menu_OverStaticLeafItem (menuId) {
+function Menu_OverStaticLeafItem (menuId, itemId) {
 	var menu = getMenu (menuId);
 	Menu_SetActive (menu, null);
+	if (menu.dynamicHover != null)
+		Menu_HilighItem (menuId, itemId, menu.staticHover);
 }
 
-function Menu_OutItem (menuId, itemId) {
+function Menu_HilighItem (menuId, itemId, hoverClass)
+{
+	var item = getMenuItem (menuId, itemId);
+	if (item.normalClass == null)
+		item.normalClass = item.className;
+	item.className = item.normalClass + " " + hoverClass;
+}
+
+function Menu_OutItem (menuId, itemId, parentId) {
 	var menu = getMenu (menuId);
-	Menu_HideMenu (menu, getSubMenu (menuId, itemId), menu.disappearAfter);
+	var subm = getSubMenu (menuId, itemId);
+	if (subm == null && parentId != null)
+		subm = getSubMenu (menuId, parentId);
+	if (subm != null)
+		Menu_HideMenu (menu, subm, menu.disappearAfter);
+	var item = getMenuItem (menuId, itemId);
+	if (item != null && item.normalClass != null)
+		item.className = item.normalClass;
 }
 
 function Menu_SetActive (menu, subm) {

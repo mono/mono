@@ -49,6 +49,8 @@ namespace System.Web.UI.WebControls
 		MenuItemStyle staticMenuItemStyle;
 		MenuItemStyle staticMenuStyle;
 		MenuItemStyle staticSelectedStyle;
+		Style staticHoverStyle;
+		Style dynamicHoverStyle;
 
 		MenuItemStyleCollection levelMenuItemStyles;
 		MenuItemStyleCollection levelSelectedStyles;
@@ -411,6 +413,36 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[PersistenceMode (PersistenceMode.InnerProperty)]
+		[NotifyParentProperty (true)]
+		[DefaultValue (null)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
+		public virtual Style DynamicHoverStyle {
+			get {
+				if (dynamicHoverStyle == null) {
+					dynamicHoverStyle = new Style ();
+					if (IsTrackingViewState)
+						dynamicHoverStyle.TrackViewState();
+				}
+				return dynamicHoverStyle;
+			}
+		}
+		
+		[PersistenceMode (PersistenceMode.InnerProperty)]
+		[NotifyParentProperty (true)]
+		[DefaultValue (null)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
+		public virtual Style StaticHoverStyle {
+			get {
+				if (staticHoverStyle == null) {
+					staticHoverStyle = new Style ();
+					if (IsTrackingViewState)
+						staticHoverStyle.TrackViewState();
+				}
+				return staticHoverStyle;
+			}
+		}
+		
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public MenuItem SelectedItem {
@@ -535,11 +567,15 @@ namespace System.Web.UI.WebControls
 				staticMenuStyle.TrackViewState ();
 			if (staticSelectedStyle != null)
 				staticSelectedStyle.TrackViewState();
+			if (staticHoverStyle != null)
+				staticHoverStyle.TrackViewState();
+			if (dynamicHoverStyle != null)
+				dynamicHoverStyle.TrackViewState();
 		}
 
 		protected override object SaveViewState()
 		{
-			object[] states = new object [11];
+			object[] states = new object [13];
 			states[0] = base.SaveViewState ();
 			states[1] = dataBindings == null ? null : ((IStateManager)dataBindings).SaveViewState();
 			states[2] = items == null ? null : ((IStateManager)items).SaveViewState();
@@ -551,6 +587,8 @@ namespace System.Web.UI.WebControls
 			states[8] = (staticMenuItemStyle == null ? null : staticMenuItemStyle.SaveViewState());
 			states[9] = staticMenuStyle == null ? null : staticMenuStyle.SaveViewState();
 			states[10] = staticSelectedStyle == null ? null : staticSelectedStyle.SaveViewState();
+			states[11] = staticHoverStyle == null ? null : staticHoverStyle.SaveViewState();
+			states[12] = dynamicHoverStyle == null ? null : dynamicHoverStyle.SaveViewState();
 
 			for (int i = states.Length - 1; i >= 0; i--) {
 				if (states [i] != null)
@@ -588,6 +626,10 @@ namespace System.Web.UI.WebControls
 				staticMenuStyle.LoadViewState (states[9]);
 			if (states[10] != null)
 				staticSelectedStyle.LoadViewState (states[10]);
+			if (states[11] != null)
+				staticHoverStyle.LoadViewState (states[11]);
+			if (states[12] != null)
+				dynamicHoverStyle.LoadViewState (states[12]);
 		}
 		
 		protected override void OnPreRender (EventArgs e)
@@ -607,7 +649,43 @@ namespace System.Web.UI.WebControls
 				script += string.Format ("{0}.dho = {1};\n", cmenu, ClientScriptManager.GetScriptLiteral (DynamicHorizontalOffset));
 			if (DynamicVerticalOffset != 0)
 				script += string.Format ("{0}.dvo = {1};\n", cmenu, ClientScriptManager.GetScriptLiteral (DynamicVerticalOffset));
+				
+			// The order in which styles are defined matters when more than one class
+			// is assigned to an element
+			
+			if (dynamicMenuStyle != null)
+				RegisterItemStyle (dynamicMenuStyle);
+			if (staticMenuStyle != null)
+				RegisterItemStyle (staticMenuStyle);
+		
+			if (staticMenuItemStyle != null)
+				RegisterItemStyle (staticMenuItemStyle);
+			if (staticSelectedStyle != null)
+				RegisterItemStyle (staticSelectedStyle);
 
+			if (dynamicMenuItemStyle != null)
+				RegisterItemStyle (dynamicMenuItemStyle);
+			if (dynamicSelectedStyle != null)
+				RegisterItemStyle (dynamicSelectedStyle);
+
+			if (levelMenuItemStyles != null)
+				foreach (Style style in levelMenuItemStyles)
+					RegisterItemStyle (style);
+
+			if (levelSelectedStyles != null)
+				foreach (Style style in levelSelectedStyles)
+					RegisterItemStyle (style);
+			
+			if (dynamicHoverStyle != null)
+				RegisterItemStyle (dynamicHoverStyle);
+			if (staticHoverStyle != null)
+				RegisterItemStyle (staticHoverStyle);
+
+			if (staticHoverStyle != null)
+				script += string.Format ("{0}.staticHover = {1};\n", cmenu, ClientScriptManager.GetScriptLiteral (staticHoverStyle.RegisteredCssClass));
+			if (dynamicHoverStyle != null)
+				script += string.Format ("{0}.dynamicHover = {1};\n", cmenu, ClientScriptManager.GetScriptLiteral (dynamicHoverStyle.RegisteredCssClass));
+			
 			Page.ClientScript.RegisterStartupScript (typeof(Menu), ClientID, script, true);
 
 			if (dataBindings != null && dataBindings.Count > 0) {
@@ -619,6 +697,14 @@ namespace System.Web.UI.WebControls
 			}
 			else
 				bindings = null;
+		}
+		
+		void RegisterItemStyle (Style baseStyle)
+		{
+			Page.Header.StyleSheet.RegisterStyle (baseStyle, this);
+			Style ts = new Style ();
+			ts.CopyTextStylesFrom (baseStyle);
+			Page.Header.StyleSheet.CreateStyleRule (ts, "." + baseStyle.RegisteredCssClass + " A", this);
 		}
 		
 		protected override void RenderContents (HtmlTextWriter writer)
@@ -642,22 +728,35 @@ namespace System.Web.UI.WebControls
 			}
 		}
 		
-		void RenderMenu (HtmlTextWriter writer, ICollection items, bool vertical, ArrayList dynamicMenus, bool dynamic)
+		void RenderMenu (HtmlTextWriter writer, MenuItemCollection items, bool vertical, ArrayList dynamicMenus, bool dynamic)
 		{
-//			writer.AddAttribute ("border", "1");
 			writer.AddAttribute ("cellpadding", "0");
 			writer.AddAttribute ("cellspacing", "0");
-			writer.AddStyleAttribute ("border-width", "0");
 
 			if (dynamic && dynamicMenuStyle != null)
-				dynamicMenuStyle.AddAttributesToRender (writer);
+				writer.AddAttribute ("class", dynamicMenuStyle.RegisteredCssClass);
 			else if (!dynamic && staticMenuStyle != null)
-				staticMenuStyle.AddAttributesToRender (writer);
+				writer.AddAttribute ("class", staticMenuStyle.RegisteredCssClass);
 				
 			writer.RenderBeginTag (HtmlTextWriterTag.Table);
 			if (!vertical) writer.RenderBeginTag (HtmlTextWriterTag.Tr);
 			
-			foreach (MenuItem item in items) {
+			for (int n=0; n<items.Count; n++) {
+				MenuItem item = items [n];
+				if (n > 0) {
+					int itemSpacing = GetItemSpacing (item, dynamic);
+					if (itemSpacing != 0) {
+						if (vertical) {
+							writer.AddAttribute ("height", itemSpacing + "px");
+							writer.RenderBeginTag (HtmlTextWriterTag.Tr);
+							writer.RenderEndTag ();
+						} else {
+							writer.AddAttribute ("width", itemSpacing + "px");
+							writer.RenderBeginTag (HtmlTextWriterTag.Td);
+							writer.RenderEndTag ();
+						}
+					}
+				}
 				RenderMenuItem (writer, item, dynamicMenus);
 			}
 			
@@ -676,27 +775,49 @@ namespace System.Web.UI.WebControls
 			if (vertical)
 				writer.RenderBeginTag (HtmlTextWriterTag.Tr);
 			
+			Style itemStyle = null;
 			if (levelMenuItemStyles != null && item.Depth < levelMenuItemStyles.Count)
-				levelMenuItemStyles [item.Depth].AddAttributesToRender (writer);
+				itemStyle = levelMenuItemStyles [item.Depth];
 			else if (isDynamicItem) {
 				if (dynamicMenuItemStyle != null)
-					dynamicMenuItemStyle.AddAttributesToRender (writer);
+					itemStyle = dynamicMenuItemStyle;
 			} else {
 				if (staticMenuItemStyle != null)
-					staticMenuItemStyle.AddAttributesToRender (writer);
+					itemStyle = staticMenuItemStyle;
 			}
 			
+			Style selectedStyle = null;
 			if (item == SelectedItem) {
 				if (levelSelectedStyles != null && item.Depth < levelSelectedStyles.Count)
-					levelSelectedStyles [item.Depth].AddAttributesToRender (writer);
+					selectedStyle = levelSelectedStyles [item.Depth];
 				else if (isDynamicItem) {
 					if (dynamicSelectedStyle != null)
-						dynamicSelectedStyle.AddAttributesToRender (writer);
+						selectedStyle = dynamicSelectedStyle;
 				} else {
 					if (staticSelectedStyle != null)
-						staticSelectedStyle.AddAttributesToRender (writer);
+						selectedStyle = staticSelectedStyle;
 				}
 			}
+			
+			string cls = "";
+			if (itemStyle != null) cls += itemStyle.RegisteredCssClass + " ";
+			if (selectedStyle != null) cls += selectedStyle.RegisteredCssClass + " ";
+			if (cls != "")
+				writer.AddAttribute ("class", cls);
+			
+			string parentId = isDynamicItem ? "'" + item.Parent.Path + "'" : "null";
+			if (dynamicChildren) {
+				writer.AddAttribute ("onmouseover", string.Format ("javascript:Menu_OverItem ('{0}','{1}',{2})", ClientID, item.Path, parentId));
+				writer.AddAttribute ("onmouseout", string.Format ("javascript:Menu_OutItem ('{0}','{1}')", ClientID, item.Path));
+			} else if (isDynamicItem) {
+				writer.AddAttribute ("onmouseover", string.Format ("javascript:Menu_OverDynamicLeafItem ('{0}','{1}',{2})", ClientID, item.Path, parentId));
+				writer.AddAttribute ("onmouseout", string.Format ("javascript:Menu_OutItem ('{0}','{1}',{2})", ClientID, item.Path, parentId));
+			} else {
+				writer.AddAttribute ("onmouseover", string.Format ("javascript:Menu_OverStaticLeafItem ('{0}','{1}')", ClientID, item.Path));
+				writer.AddAttribute ("onmouseout", string.Format ("javascript:Menu_OutItem ('{0}','{1}')", ClientID, item.Path));
+			}
+			
+			writer.AddAttribute ("id", GetItemClientId (item, "i"));
 			
 			writer.RenderBeginTag (HtmlTextWriterTag.Td);
 
@@ -714,23 +835,9 @@ namespace System.Web.UI.WebControls
 			
 			// Menu item box
 			
-			string parentId = isDynamicItem ? "'" + item.Parent.Path + "'" : "null";
-			if (dynamicChildren) {
-				writer.AddAttribute ("onmouseover", string.Format ("javascript:Menu_OverItem ('{0}','{1}',{2})", ClientID, item.Path, parentId));
-				writer.AddAttribute ("onmouseout", string.Format ("javascript:Menu_OutItem ('{0}','{1}')", ClientID, item.Path));
-			} else if (isDynamicItem) {
-				writer.AddAttribute ("onmouseover", string.Format ("javascript:Menu_OverLeafItem ('{0}', {1})", ClientID, parentId));
-				writer.AddAttribute ("onmouseout", string.Format ("javascript:Menu_OutItem ('{0}', {1})", ClientID, parentId));
-			} else {
-				writer.AddAttribute ("onmouseover", string.Format ("javascript:Menu_OverStaticLeafItem ('{0}')", ClientID));
-			}
 			
-			writer.AddAttribute ("id", GetItemClientId (item, "i"));
-			
-//			writer.AddAttribute ("border", "1");
 			writer.AddAttribute ("cellpadding", "0");
 			writer.AddAttribute ("cellspacing", "0");
-			writer.AddStyleAttribute ("border-width", "0");
 			writer.AddAttribute ("width", "100%");
 			writer.RenderBeginTag (HtmlTextWriterTag.Table);
 			writer.RenderBeginTag (HtmlTextWriterTag.Tr);
@@ -828,6 +935,30 @@ namespace System.Web.UI.WebControls
 				}
 				writer.RenderEndTag ();	// TD
 			}
+		}
+		
+		int GetItemSpacing (MenuItem item, bool dynamic)
+		{
+			int itemSpacing;
+			
+			if (item.Selected) {
+				if (levelSelectedStyles != null && item.Depth < levelSelectedStyles.Count) {
+					itemSpacing = levelSelectedStyles [item.Depth].ItemSpacing;
+					if (itemSpacing != 0) return itemSpacing;
+				}
+				
+				if (dynamic) itemSpacing = DynamicSelectedStyle.ItemSpacing;
+				else itemSpacing = StaticSelectedStyle.ItemSpacing;
+				if (itemSpacing != 0) return itemSpacing;
+			}
+			
+			if (levelMenuItemStyles != null && item.Depth < levelMenuItemStyles.Count) {
+				itemSpacing = levelMenuItemStyles [item.Depth].ItemSpacing;
+				if (itemSpacing != 0) return itemSpacing;
+			}
+				
+			if (dynamic) return DynamicMenuItemStyle.ItemSpacing;
+			else return StaticMenuItemStyle.ItemSpacing;
 		}
 		
 		void RenderItemHref (HtmlTextWriter writer, MenuItem item)

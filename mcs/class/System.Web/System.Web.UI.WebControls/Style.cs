@@ -68,6 +68,10 @@ namespace System.Web.UI.WebControls
 		int  selectionBits;
 		bool selfStateBag;
 		bool marked;
+		
+#if NET_2_0
+		string regClass;
+#endif
 
 		private FontInfo font;
 
@@ -549,6 +553,12 @@ namespace System.Web.UI.WebControls
 			Set (bit);
 		}
 		
+		internal virtual void CopyTextStylesFrom (Style source)
+		{
+			if (source.IsSet (FORECOLOR)&& (source.ForeColor != Color.Empty))
+				ForeColor = source.ForeColor;
+		}
+		
 #if NET_2_0
 		public void SetDirty ()
 		{
@@ -556,6 +566,15 @@ namespace System.Web.UI.WebControls
 				Set (MARKED);
 			if (viewState != null)
 				viewState.SetDirty ();
+		}
+		
+		public string RegisteredCssClass {
+			get { return regClass; }
+		}
+		
+		internal void SetRegisteredCssClass (string name)
+		{
+			regClass = name;
 		}
 #endif
 	}
