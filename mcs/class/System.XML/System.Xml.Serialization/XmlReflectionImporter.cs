@@ -102,9 +102,9 @@ namespace System.Xml.Serialization {
 			return new XmlTypeMapping (elementName, nameSpc, typeFullName, typeName);
 		}
 
-		private void ImportTypeMapping (TypeData data, string ns)
+		private XmlTypeMapping ImportTypeMapping (TypeData data, string ns)
 		{
-			ImportTypeMapping (data.Type, null, ns);
+			return ImportTypeMapping (data.Type, null, ns);
 		}
 
 		public void IncludeType (Type type)
