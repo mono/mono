@@ -1,3 +1,7 @@
+2003-11-18  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* SynchronizationAttribute.cs: Implemented.
+
 2003-11-14  Miguel de Icaza  <miguel@ximian.com>
 
 	* ContextProperty.cs: Add implementaion bits.
