@@ -29,9 +29,13 @@
 //	Jaak Simm		jaaksimm@firm.ee
 //	John Sohn		jsohn@columbus.rr.com
 //
-// $Revision: 1.51 $
+// $Revision: 1.52 $
 // $Modtime: $
 // $Log: Control.cs,v $
+// Revision 1.52  2004/08/25 19:20:47  pbartok
+// - Control now properly passes the ambient background color to child
+//   controls
+//
 // Revision 1.51  2004/08/25 18:32:15  pbartok
 // - Fixed generation of MouseUp message
 //
@@ -616,6 +620,26 @@ namespace System.Windows.Forms
 		}
 		#endregion 	// Public Constructors
 
+		#region Internal Properties
+		#endregion	// Internal Properties
+
+		#region Internal Methods
+		internal static void SetChildColor(Control parent) {
+			Control	child;
+
+			for (int i=0; i < parent.child_controls.Count; i++) {
+				child=parent.child_controls[i];
+				if (child.IsHandleCreated) {
+					XplatUI.SetWindowBackground(child.window.Handle, child.BackColor);
+				}
+				if (child.child_controls.Count>0) {
+					SetChildColor(child);
+				}
+			}
+				
+		}
+		#endregion	// Internal Methods
+
 		#region Public Static Properties
 		public static Color DefaultBackColor {
 			get {
@@ -740,10 +764,14 @@ namespace System.Windows.Forms
 			}
 
 			set {
+				Control	child;
+
 				background_color=value;
 				if (this.IsHandleCreated) {
 					XplatUI.SetWindowBackground(this.window.Handle, value);
+					SetChildColor(this);
 				}
+
 				Refresh();
 			}
 		}
@@ -1701,10 +1729,16 @@ namespace System.Windows.Forms
 				case Msg.WM_ERASEBKGND:{					
 					if (GetStyle (ControlStyles.UserPaint)){						
 	    					PaintEventArgs eraseEventArgs = new PaintEventArgs (Graphics.FromHdc (m.WParam), new Rectangle (new Point (0,0),Size));
-		    				OnPaintBackground (eraseEventArgs);												
+		    				OnPaintBackground (eraseEventArgs);
 	    					m.Result = (IntPtr)1;
     					}	
     					else {
+#if notdef
+						SolidBrush	sb = new SolidBrush(this.BackColor);
+						this.DeviceContext.FillRectangle(sb, this.ClientRectangle);
+						sb.Dispose();
+#endif
+
     						m.Result = IntPtr.Zero;
     						DefWndProc (ref m);	
     					}    					
@@ -1835,6 +1869,8 @@ namespace System.Windows.Forms
 				}
 
 				creator_thread = Thread.CurrentThread;
+
+				XplatUI.SetWindowBackground(window.Handle, this.BackColor);
 
 				OnHandleCreated(EventArgs.Empty);
 			}
