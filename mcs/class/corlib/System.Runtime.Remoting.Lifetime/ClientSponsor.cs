@@ -16,7 +16,7 @@ namespace System.Runtime.Remoting.Lifetime {
 	public class ClientSponsor : MarshalByRefObject, ISponsor
 	{
 		TimeSpan renewal_time;
-		ArrayList registered_objects = new ArrayList ();
+		Hashtable registered_objects = new Hashtable ();
 
 		public ClientSponsor ()
 		{
@@ -40,7 +40,7 @@ namespace System.Runtime.Remoting.Lifetime {
 
 		public void Close ()
 		{
-			foreach (MarshalByRefObject obj in registered_objects)
+			foreach (MarshalByRefObject obj in registered_objects.Values)
 			{
 				ILease lease = obj.GetLifetimeService () as ILease;
 				lease.Unregister (this);
@@ -60,11 +60,11 @@ namespace System.Runtime.Remoting.Lifetime {
 
 		public bool Register (MarshalByRefObject obj)
 		{
-			if (registered_objects.Contains (obj)) return false;
+			if (registered_objects.ContainsKey (obj)) return false;
 			ILease lease = obj.GetLifetimeService () as ILease;
 			if (lease == null) return false;
 			lease.Register (this);
-			registered_objects.Add (obj);
+			registered_objects.Add (obj,obj);
 			return true;
 		}
 
@@ -75,7 +75,7 @@ namespace System.Runtime.Remoting.Lifetime {
 		       
 		public void Unregister (MarshalByRefObject obj)
 		{
-			if (!registered_objects.Contains (obj)) return;
+			if (!registered_objects.ContainsKey (obj)) return;
 			ILease lease = obj.GetLifetimeService () as ILease;
 			lease.Unregister (this);
 			registered_objects.Remove (obj);
