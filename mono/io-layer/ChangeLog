@@ -1,3 +1,8 @@
+
+Tue Apr 8 11:37:29 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* atomic.h: fix macosx build by "Urs C. Muff" <umuff@quark.com>.
+
 2003-04-03  Martin Baulig  <martin@ximian.com>
 
 	The following change is conditional to `WITH_INCLUDED_LIBGC'
