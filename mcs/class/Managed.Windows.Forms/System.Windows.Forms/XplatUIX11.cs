@@ -59,7 +59,10 @@ namespace System.Windows.Forms {
 
 		private static Hashtable	handle_data;
 		private Queue message_queue;
+
 		private ArrayList timer_list;
+		private Thread timer_thread;
+		private AutoResetEvent timer_wait;
 
 		private static readonly EventMask  SelectInputMask = EventMask.ButtonPressMask | 
 				EventMask.ButtonReleaseMask | 
@@ -111,7 +114,8 @@ namespace System.Windows.Forms {
 			ref_count=0;
 
 			message_queue = new Queue ();
-			timer_list = new ArrayList ();
+			ArrayList timers = new ArrayList ();
+			timer_list = ArrayList.Synchronized (timers);
 
 			// Now regular initialization
 			SetDisplay(XOpenDisplay(IntPtr.Zero));
@@ -553,22 +557,20 @@ namespace System.Windows.Forms {
 			return (IntPtr)result;
 		}
 
+                // The message_queue should be locked when this is called
 		private void UpdateMessageQueue ()
 		{
-			lock (timer_list) {
-				for (int i = 0; i < timer_list.Count; i++) {
-					Timer timer = (Timer) timer_list [i];
-					if (timer.Enabled && timer.Expires <= DateTime.Now) {
-						timer.FireTick ();
-						timer.Update ();
-					}
-				}
+			int pending;
+			lock (this) {
+				pending = XPending (DisplayHandle);
 			}
-
-			while (XPending (DisplayHandle) > 0) {
+			
+			while (pending > 0) {
 				XEvent xevent = new XEvent ();
 
-				XNextEvent (DisplayHandle, ref xevent);
+				lock (this) {
+					XNextEvent (DisplayHandle, ref xevent);
+				}
 
 				switch (xevent.type) {
 				case XEventName.Expose:
@@ -590,11 +592,16 @@ namespace System.Windows.Forms {
 					message_queue.Enqueue (xevent);
 					break;
 				}
+
+				lock (this) {
+					pending = XPending (DisplayHandle);
+				}
 			}
+
 		}
 
 		internal override bool GetMessage(ref MSG msg, IntPtr hWnd, int wFilterMin, int wFilterMax) {
-			XEvent	xevent = new XEvent();
+			XEvent	xevent;
 
 			lock (message_queue) {
 				if (message_queue.Count > 0) {
@@ -604,6 +611,7 @@ namespace System.Windows.Forms {
 					if (message_queue.Count > 0) {
 						xevent = (XEvent) message_queue.Dequeue ();
 					} else {
+						msg.hwnd= IntPtr.Zero;
 						msg.message = Msg.WM_ENTERIDLE;
 						return true;
 					}
@@ -770,7 +778,13 @@ namespace System.Windows.Forms {
 					}
 					break;
 				}
-				default: {
+
+                        case XEventName.TimerNotify: {
+                                xevent.TimerNotifyEvent.handler (this, EventArgs.Empty);
+                                break;
+                        }
+                                
+                        default: {
 					msg.message = Msg.WM_NULL;
 					break;
 				}
@@ -991,18 +1005,61 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		internal void TimerProc ()
+		{
+			while (true) {
+				int next_fire = -1;
+
+				ArrayList fire_list = new ArrayList ();
+				DateTime now = DateTime.Now;
+				for (int i = 0; i < timer_list.Count; i++) {
+					Timer timer = (Timer) timer_list [i];
+						
+					if (timer.Enabled && timer.Expires <= now) {
+						XEvent xevent = new XEvent ();
+						xevent.type = XEventName.TimerNotify;
+						xevent.AnyEvent.window = IntPtr.Zero;
+						xevent.TimerNotifyEvent.handler = new EventHandler (timer.TickHandler);
+
+						fire_list.Add (xevent);
+					}
+					int next = (int) (timer.Expires.AddMilliseconds (timer.Interval) - now).TotalMilliseconds;
+					if (i == 0 || next < next_fire)
+						next_fire = next;
+				}
+
+				// Everything is copied to a list and then to the queue so we
+				// don't lock the queue while calculating all the times
+				if (fire_list.Count > 0) {
+					lock (message_queue) {
+						foreach (object obj in fire_list) {
+							message_queue.Enqueue (obj);
+						}
+					}
+				}
+				if (next_fire < Timer.Minimum)
+					next_fire = Timer.Minimum;
+				timer_wait.WaitOne (next_fire, true);
+			}
+		}
+
 		internal override void SetTimer (Timer timer)
 		{
-			lock (timer_list) {
-				timer_list.Add (timer);
+			timer_list.Add (timer);
+
+			if (timer_thread == null) {
+				ThreadStart thread_start = new ThreadStart (TimerProc);	
+				timer_thread = new Thread (thread_start);
+				timer_thread.IsBackground = true;
+
+				timer_wait = new AutoResetEvent (true);
+				timer_thread.Start();
 			}
 		}
 
 		internal override void KillTimer (Timer timer)
 		{
-			lock (timer_list) {
-				timer_list.Remove (timer);
-			}
+			timer_list.Remove (timer);
 		}
 
 		// Santa's little helper

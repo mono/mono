@@ -23,9 +23,12 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.10 $
+// $Revision: 1.11 $
 // $Modtime: $
 // $Log: X11Structs.cs,v $
+// Revision 1.11  2004/09/14 00:13:29  jackson
+// Timers are now handled in a second thread and post messages into the main threads message queue. This makes timing much more consistent. Both win2K and XP have a minimum timer value of 15 milliseconds, so we now do this too.
+//
 // Revision 1.10  2004/09/13 21:18:32  pbartok
 // - Added Z-Ordering methods
 //
@@ -511,6 +514,12 @@ namespace System.Windows.Forms {
 	}
 
 	[StructLayout(LayoutKind.Sequential)]
+	internal struct XTimerNotifyEvent {
+		internal XEventName	type;
+		internal EventHandler	handler;
+	}
+
+	[StructLayout(LayoutKind.Sequential)]
 	internal struct XEventPad {
 		internal int pad0;
 		internal int pad1;
@@ -572,6 +581,7 @@ namespace System.Windows.Forms {
 		[ FieldOffset(0) ] internal XMappingEvent MappingEvent;
 		[ FieldOffset(0) ] internal XErrorEvent ErrorEvent;
 		[ FieldOffset(0) ] internal XKeymapEvent KeymapEvent;
+		[ FieldOffset(0) ] internal XTimerNotifyEvent TimerNotifyEvent;
 
 		//[MarshalAs(System.Runtime.InteropServices.UnmanagedType.ByValArray, SizeConst=24)]
 		//[ FieldOffset(0) ] internal int[] pad;
@@ -652,9 +662,11 @@ namespace System.Windows.Forms {
 		SelectionRequest        = 30,
 		SelectionNotify         = 31,
 		ColormapNotify          = 32,
-		ClientMessage           = 33,
-		MappingNotify           = 34,
-		LASTEvent               = 35
+		ClientMessage		= 33,
+		MappingNotify		= 34,
+		TimerNotify		= 100,
+
+		LASTEvent
 	}
 
 	internal enum XWindowAttribute {

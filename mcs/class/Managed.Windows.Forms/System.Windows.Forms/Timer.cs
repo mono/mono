@@ -36,6 +36,8 @@ namespace System.Windows.Forms {
 		private int interval = 100;
 		private DateTime expires;
 
+		internal static readonly int Minimum = 15;
+
 		public Timer ()
 		{
 			enabled = false;
@@ -69,7 +71,7 @@ namespace System.Windows.Forms {
 			set {
 				interval = value;
 				// Use AddTicks so we get some rounding
-				expires = DateTime.Now.AddMilliseconds (interval);
+				expires = DateTime.Now.AddMilliseconds (interval > Minimum ? interval : Minimum);
 			}
 		}
 
@@ -96,23 +98,22 @@ namespace System.Windows.Forms {
 			return base.ToString () + ", Interval: " + Interval;
 		}
 
-		internal void Update ()
+		internal void Update (DateTime update)
 		{
-			expires = DateTime.Now.AddMilliseconds (interval);
+			expires = update.AddMilliseconds (interval > Minimum ? interval : Minimum);
 		}
 
 		internal void FireTick ()
 		{
 			OnTick (EventArgs.Empty);
+			Update (DateTime.Now);
 		}
 
 
 		protected virtual void OnTick (EventArgs e)
 		{
-			lock (this) {
-				if (Tick != null)
-					Tick (this, e);
-			}
+			if (Tick != null)
+				Tick (this, e);
 		}
 
 		protected override void Dispose (bool disposing)
@@ -120,7 +121,10 @@ namespace System.Windows.Forms {
 			Enabled = false;
 		}
 
-		private void TickHandler (object sender, EventArgs e)
+		private bool has_last_fire = false;
+		private DateTime last_fire;
+
+		internal void TickHandler (object sender, EventArgs e)
 		{
 			OnTick (e);
 		}
