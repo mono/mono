@@ -23,9 +23,12 @@
 //		Jordi Mas i Hernandez	jordi@ximian.com
 //
 //
-// $Revision: 1.5 $
+// $Revision: 1.6 $
 // $Modtime: $
 // $Log: ProgressBar.cs,v $
+// Revision 1.6  2004/08/10 15:41:50  jackson
+// Allow control to handle buffering
+//
 // Revision 1.5  2004/07/26 17:42:03  jordi
 // Theme support
 //
@@ -64,8 +67,6 @@ namespace System.Windows.Forms
 		private int minimum;
 		private int step;
 		private int val;	
-		private Bitmap bmp_mem = null;
-		private Graphics dc_mem = null;				
 		private Rectangle paint_area = new Rectangle ();		
 		private Rectangle client_area = new Rectangle ();
 		#endregion	// Local Variables
@@ -204,9 +205,7 @@ namespace System.Windows.Forms
 			
 			UpdateAreas ();
 			
-			/* Area for double buffering */			
-			bmp_mem = new Bitmap (Width, Height, PixelFormat.Format32bppArgb);	
-			dc_mem = Graphics.FromImage (bmp_mem);								
+			CreateBuffers (Width, Height);							
     		}
 		
 		protected override void OnHandleCreated (EventArgs e) 
@@ -217,9 +216,8 @@ namespace System.Windows.Forms
 			
 			UpdateAreas ();
 			
-			bmp_mem = new Bitmap (Width, Height, PixelFormat.Format32bppArgb);	
-			dc_mem = Graphics.FromImage (bmp_mem);							
-			draw ();
+			CreateBuffers (Width, Height);						
+			Draw ();
 		}
 		
 		public override string ToString() 
@@ -237,7 +235,7 @@ namespace System.Windows.Forms
     			// None
     		}		
 		
-		private void draw ()
+		private void Draw ()
 		{	
 			int block_width, barpos_pixels;			
 			int steps = (Maximum - Minimum) / step;			
@@ -249,7 +247,7 @@ namespace System.Windows.Forms
 			//Console.WriteLine ("draw Max {0} Min {1} Value {2}", 
 			//	Maximum, Minimum, Value);
 					
-			ThemeEngine.Current.DrawProgressBar (dc_mem, paint_area, client_area, barpos_pixels,
+			ThemeEngine.Current.DrawProgressBar (DeviceContext, paint_area, client_area, barpos_pixels,
 				block_width);
 		}
 		
@@ -260,8 +258,8 @@ namespace System.Windows.Forms
     				return;
 										
 			/* Copies memory drawing buffer to screen*/		
-			draw();
-			pevent.Graphics.DrawImage (bmp_mem, 0, 0);			
+			Draw();
+			pevent.Graphics.DrawImage (ImageBuffer, 0, 0);			
 		}	
 	}
 }

@@ -26,9 +26,12 @@
 //	Jordi Mas i Hernandez	jordi@ximian.com
 //
 //
-// $Revision: 1.3 $
+// $Revision: 1.4 $
 // $Modtime: $
 // $Log: ScrollBar.cs,v $
+// Revision 1.4  2004/08/10 15:41:50  jackson
+// Allow control to handle buffering
+//
 // Revision 1.3  2004/07/27 15:29:40  jordi
 // fixes scrollbar events
 //
@@ -60,8 +63,6 @@ namespace System.Windows.Forms
 		private int scrollbutton_width;	          	    
 		private Rectangle paint_area = new Rectangle ();
 		private ScrollBars type;
-		private Bitmap bmp_mem = null;
-		private Graphics dc_mem = null;				
 		private Rectangle first_arrow_area = new Rectangle ();		// up or left
 		private Rectangle second_arrow_area = new Rectangle ();		// down or right		
 		private Rectangle thumb_pos = new Rectangle ();		
@@ -246,7 +247,7 @@ throw new NotImplementedException(); }
 		
 		private void draw()
 		{					
-			ThemeEngine.Current.DrawScrollBar (dc_mem, paint_area, thumb_pos,
+			ThemeEngine.Current.DrawScrollBar (DeviceContext, paint_area, thumb_pos,
 				ref first_arrow_area, ref second_arrow_area,
 				firstbutton_state, secondbutton_state, 
 				ref scrollbutton_width, ref scrollbutton_height,
@@ -305,11 +306,8 @@ throw new NotImplementedException(); }
 			paint_area.X = paint_area. Y = 0;
 			paint_area.Width = Width; 
 			paint_area.Height = Height;						
-			
-			/* Area for double buffering */
-			
-			bmp_mem = new Bitmap (Width, Height, PixelFormat.Format32bppArgb);	
-			dc_mem = Graphics.FromImage (bmp_mem);				
+
+			CreateBuffers (Width, Height);
 			
 			CalcThumbArea ();
 			UpdatePos (position, true);
@@ -327,11 +325,9 @@ throw new NotImplementedException(); }
 			
 			scrollbutton_height = 17;
 			scrollbutton_width = 17;
-						
-			/* Area for double buffering */
-			bmp_mem = new Bitmap (Width, Height, PixelFormat.Format32bppArgb);	
-			dc_mem = Graphics.FromImage (bmp_mem);				
-			
+
+			CreateBuffers (Width, Height);
+
 			//Console.WriteLine ("OnCreate: Width " + Width + " Height " +  Height);
 			CalcThumbArea ();
 			UpdatePos (Value, true);
@@ -346,7 +342,7 @@ throw new NotImplementedException(); }
 										
 			/* Copies memory drawing buffer to screen*/		
 			draw();
-			pevent.Graphics.DrawImage (bmp_mem, 0, 0);			
+			pevent.Graphics.DrawImage (ImageBuffer, 0, 0);			
 		}	
 		
 		/* Disable background painting to avoid flickering, since we do our painting*/
