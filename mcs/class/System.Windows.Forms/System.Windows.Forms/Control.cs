@@ -1048,10 +1048,14 @@
 					}
     			}
     			set {
-    				text = value;
-    
-    				if (IsHandleCreated)
-    					Win32.SetWindowTextA (Handle, value);
+				if ( text != value ) {
+    					text = value;
+	    
+    					if (IsHandleCreated)
+    						Win32.SetWindowTextA (Handle, value);
+
+					OnTextChanged ( EventArgs.Empty );
+				}
     			}
     		}
     		
@@ -2660,7 +2664,7 @@
 					CallControlWndProc(ref m);
 					break;
     			case Msg.WM_SETTEXT:
-    				OnTextChanged (eventArgs);
+    				//OnTextChanged (eventArgs);
 					CallControlWndProc(ref m);
 					break;
     			case Msg.WM_SETFONT:

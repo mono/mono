@@ -4,11 +4,12 @@
 // Author:
 //   stubbed out by Richard Baumann (biochem333@nyc.rr.com)
 //   Dennis Hayes (dennish@Raytek.com)
-//
+//   implemented by Aleksey Ryabchuk (ryabchuk@yahoo.com)
 // (C) Ximian, Inc., 2002
 //
 using System.Collections;
 using System.ComponentModel;
+
 namespace System.Windows.Forms {
 
 	// <summary>
@@ -17,108 +18,149 @@ namespace System.Windows.Forms {
 	public class DomainUpDown : UpDownBase {
 
 		
-		//  --- Constructors/Destructors
-		
+		DomainUpDownItemCollection items;
+		int selectedIndex;
+		bool sorted;
+		bool wrap;
+
 		[MonoTODO]
 		public DomainUpDown() : base()
 		{
+			selectedIndex = -1;
+			sorted = false;
+			wrap = false;
+			TextChanged += new EventHandler ( this.BuddyTextChanged );
 		}
 
 		
-		//  --- Public Methods
-		
-		[MonoTODO]
 		public override void DownButton()
 		{
-			throw new NotImplementedException ();
-		}
-		[MonoTODO]
-		public override string ToString()
-		{
-			//FIXME:
-			return base.ToString();
-		}
-		[MonoTODO]
-		public override void UpButton()
-		{
-			throw new NotImplementedException ();
+			int newIndex = SelectedIndex + 1;
+			if (  newIndex < Items.Count )
+				SelectedIndex = newIndex;
+			else if ( Wrap && Items.Count > 0)
+				SelectedIndex = 0;
+				
 		}
 
-		
-		//  --- Protected Methods
-		
+		public override string ToString()
+		{
+			return GetType( ).FullName.ToString( ) + ", Items.Count: " + Items.Count.ToString ( ) + 
+				", SelectedIndex: " + SelectedIndex;
+		}
+
+		public override void UpButton()
+		{
+			int newIndex = SelectedIndex - 1;
+			if ( newIndex > -1 && newIndex < Items.Count )
+				SelectedIndex = newIndex;
+			else if ( Wrap && Items.Count > 0 )
+				SelectedIndex = Items.Count - 1;
+		}
+
 		[MonoTODO]
 		protected override AccessibleObject CreateAccessibilityInstance()
 		{
 			//FIXME:
 			return base.CreateAccessibilityInstance();
 		}
-		//[MonoTODO]
-		//protected override void OnChanged(object source, EventArgs e)
-		//{
-		//	//This method is internal to the .NET framework.
-		//	if (Changed != null) {
-		//
-		//		Changed(this, e);
-		//	}
-		//}
-		[MonoTODO]
+
 		protected void OnSelectedItemChanged(object source, EventArgs e)
 		{
-			if (SelectedItemChanged != null) {
-
+			if (SelectedItemChanged != null) 
 				SelectedItemChanged(this, e);
-			}
 		}
+
 		[MonoTODO]
 		protected override void OnTextBoxKeyDown(object source, KeyEventArgs e)
 		{
-			throw new NotImplementedException ();
-			//if (TextBoxKeyDown != null) {
-			//	TextBoxKeyDown(this, e);
-			//}
-		}
-		[MonoTODO]
-		protected override void UpdateEditText()
-		{
-			throw new NotImplementedException ();
+			base.OnTextBoxKeyDown ( source, e );
 		}
 
-		//  --- Public Events
-		
+		protected override void UpdateEditText ( )
+		{
+			if ( SelectedIndex != -1 )
+				Text = Items [ SelectedIndex ].ToString ( );
+			else
+				Text = String.Empty;
+		}
+
 		public event EventHandler SelectedItemChanged;
 
-		
-		//  --- Public Properties
-		
-		[MonoTODO]
 		public DomainUpDown.DomainUpDownItemCollection Items {
-
-			get { throw new NotImplementedException (); }
+			get {
+				if ( items == null )
+					items = new DomainUpDownItemCollection ( this );
+				return items; 
+			}
 		}
-		[MonoTODO]
-		public int SelectedIndex{// default -1 {
 
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+		[MonoTODO]
+		public int SelectedIndex {
+			get { return selectedIndex; }
+			set {
+				if ( value < -1 || value >= Items.Count )
+					throw new ArgumentException ( ); // FIXME: message
+
+				if ( selectedIndex != value ) {
+					selectedIndex = value;
+					UpdateEditText ( );
+				}
+			}
 		}
-		[MonoTODO]
-		public object SelectedItem{ // default null {
 
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+		[MonoTODO]
+		public object SelectedItem {
+			get { 
+				if ( SelectedIndex == -1 )
+					return null;
+				return Items[ SelectedIndex ];
+			}
+			set {
+				SelectedIndex = Items.IndexOf ( value );
+			}
 		}
-		[MonoTODO]
-		public bool Sorted{ // default false {
 
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+		[MonoTODO]
+		public bool Sorted {
+			get { return sorted; }
+			set { 
+				if ( sorted != value ) {
+					object selectedItem = SelectedItem;
+					Items.Sort ( );
+					SelectedItem = selectedItem;
+				}
+			}
 		}
-		[MonoTODO]
-		public bool Wrap{ // default false {
 
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+		public bool Wrap { 
+			get { return wrap; }
+			set { wrap = value; }
+		}
+
+		private void itemAdded ( object item )
+		{
+		}
+
+		private void itemInserted ( int index, object item )
+		{
+		}
+
+		private void itemRemoved ( object item )
+		{
+		}
+
+		private void itemRemoved ( int index )
+		{
+		}
+
+		private void itemChanged ( int index )
+		{
+		}
+
+		private void BuddyTextChanged ( object sender, EventArgs e )
+		{
+			OnSelectedItemChanged ( this, EventArgs.Empty );
 		}
 
 		//System.Windows.Forms.DomainUpDown.DomainUpDownItemCollection
@@ -133,53 +175,46 @@ namespace System.Windows.Forms {
 		//</summary>
 		public class DomainUpDownItemCollection : ArrayList {
 
-			//
-			//  --- Constructors/Destructors
-			//
-			[MonoTODO]
-			internal DomainUpDownItemCollection(DomainUpDown owner) : base()
+			DomainUpDown owner;
+
+			internal DomainUpDownItemCollection( DomainUpDown owner )
 			{
-				
+				this.owner = owner;
 			}
 
-			
-			//  --- Public Methods
-			
-			[MonoTODO]
-			public override int Add(object value)
+			public override int Add( object value )
 			{
-				//FIXME:
-				return base.Add(value);
-			}
-			[MonoTODO]
-			public override void Insert(int index, object value)
-			{
-				//FIXME:
-				base.Insert(index, value);
-			}
-			[MonoTODO]
-			public override void Remove(object obj)
-			{
-				//FIXME:
-				base.Remove(obj);
-			}
-			[MonoTODO]
-			public override void RemoveAt(int index)
-			{
-				//FIXME:
-				base.RemoveAt(index);
+				int index =  base.Add ( value );
+				owner.itemAdded ( value );
+				return index;
 			}
 
-			
-			//  --- Public Properties
-					
-			public override object this[int index] {
+			public override void Insert( int index, object value )
+			{
+				base.Insert ( index, value );
+				owner.itemInserted ( index, value );
+			}
 
+			public override void Remove( object obj )
+			{
+				base.Remove ( obj );
+				owner.itemRemoved ( obj );
+			}
+
+			public override void RemoveAt( int index )
+			{
+				base.RemoveAt ( index );
+				owner.itemRemoved ( index );
+			}
+
+			public override object this[ int index ]
+			{
 				get {
-					throw new NotImplementedException ();
+					return base[index];
 				}
 				set {
-					//FIXME:
+					base[index] = value;
+					owner.itemChanged ( index );
 				}
 			}
 		}

@@ -8,6 +8,8 @@
 // (C) 2002 Ximian, Inc
 //
 
+using System.ComponentModel;
+
 namespace System.Windows.Forms {
 
 	// <summary>
@@ -16,13 +18,14 @@ namespace System.Windows.Forms {
 
      public class TextBox : TextBoxBase {
 
+		HorizontalAlignment textAlign;
 		//
 		//  --- Public Constructor
 		//
 		[MonoTODO]
 		public TextBox()
 		{
-			
+			textAlign = HorizontalAlignment.Left;
 		}
 		
 		//  --- Public Properties
@@ -72,15 +75,20 @@ namespace System.Windows.Forms {
 				//FIXME:
 			}
 		}
-		[MonoTODO]
+
 		public HorizontalAlignment TextAlign {
-			get
-			{
-				throw new NotImplementedException ();
-			}
-			set
-			{
-				//FIXME:
+			get { return textAlign;	}
+			set {
+				if ( !Enum.IsDefined ( typeof(HorizontalAlignment), value ) )
+					throw new InvalidEnumArgumentException( "TextAlign",
+						(int)value,
+						typeof(HorizontalAlignment));
+
+				if ( textAlign != value ) {
+					textAlign = value;
+
+					OnTextAlignChanged ( EventArgs.Empty );
+				}
 			}
 		}
 		
@@ -94,30 +102,17 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		protected override CreateParams CreateParams {
 			get {
-				if( Parent != null) {
-					CreateParams createParams = new CreateParams ();
-					if (window == null) {
-						window = new ControlNativeWindow (this);
-					}
+				CreateParams createParams = base.CreateParams;
 
-					createParams.Caption = Text;
-					createParams.ClassName = "EDIT";
-					createParams.X = Left;
-					createParams.Y = Top;
-					createParams.Width = Width;
-					createParams.Height = Height;
-					createParams.ClassStyle = 0;
-					createParams.ExStyle = (int)WindowExStyles.WS_EX_CLIENTEDGE;
-					createParams.Param = 0;
-					createParams.Parent = Parent.Handle;
-					createParams.Style = (int) (
-						WindowStyles.WS_CHILD | 
-						WindowStyles.WS_VISIBLE);
-					return createParams;
-				}
-				return null;
+				createParams.ClassName = "EDIT";
+				createParams.ExStyle = (int)WindowExStyles.WS_EX_CLIENTEDGE;
+				createParams.Style = (int) (
+					WindowStyles.WS_CHILD | 
+					WindowStyles.WS_VISIBLE) | TextAlignStyle;
+				return createParams;
 			}
 		}
+
 		 [MonoTODO]
 		 protected override ImeMode DefaultImeMode {
 			 get {
@@ -169,6 +164,25 @@ namespace System.Windows.Forms {
 		{
 			//FIXME:
 			base.WndProc(ref m);
+		}
+
+		private int TextAlignStyle
+		{
+			get {
+				int style = 0;
+				switch ( TextAlign ) {
+				case HorizontalAlignment.Left:
+					style = (int) EditControlStyles.ES_LEFT;
+				break;
+				case HorizontalAlignment.Center:
+					style = (int) EditControlStyles.ES_CENTER;
+				break;
+				case HorizontalAlignment.Right:
+					style = (int) EditControlStyles.ES_RIGHT;
+				break;
+				}
+				return style;
+			}
 		}
 	}
 }

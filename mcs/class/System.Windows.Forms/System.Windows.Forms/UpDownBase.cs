@@ -16,34 +16,43 @@ using System.Runtime.InteropServices;
 
 namespace System.Windows.Forms {
 	internal class SpinnerControl : Control {
-		
+		internal const int DEF_BUDDYBORDER = 2;
+		internal LeftRightAlignment updownAlign;
+
 		public SpinnerControl() {
 			SubClassWndProc_ = true;
+			updownAlign = LeftRightAlignment.Right;
 		}
 		
+		internal int AlignStyle {
+			get { return updownAlign == LeftRightAlignment.Right ? 
+				(int) UpDownControlStyles.UDS_ALIGNRIGHT : (int) UpDownControlStyles.UDS_ALIGNLEFT;
+			}
+		}
+
+
+		internal LeftRightAlignment UpDownAlign {
+			get {	return updownAlign; }
+			set {	
+				updownAlign = value;
+
+				if ( IsHandleCreated )
+					RecreateHandle ( );
+			}
+		}
+
 		protected override CreateParams CreateParams {
 			get {
-				if( Parent != null) {
-					CreateParams createParams = new CreateParams ();
-		
-					createParams.Caption = Text;
-					createParams.ClassName = "msctls_updown32";
-					createParams.X = Left;
-					createParams.Y = Top;
-					createParams.Width = Width;
-					createParams.Height = Height;
-					createParams.ClassStyle = 0;
-					createParams.ExStyle = 0;
-					createParams.Param = 0;
-					createParams.Parent = Parent.Handle;
-					createParams.Style = (int) (
-						WindowStyles.WS_CHILD | 
-						WindowStyles.WS_VISIBLE);
-					createParams.Style |= (int)(UpDownControlStyles.UDS_ALIGNRIGHT |
-					                            UpDownControlStyles.UDS_AUTOBUDDY );
-					return createParams;
-				}
-				return null;
+				CreateParams createParams = base.CreateParams;
+	
+				createParams.ClassName = "msctls_updown32";
+
+				createParams.Style = (int) (
+					WindowStyles.WS_CHILD | 
+					WindowStyles.WS_VISIBLE);
+
+				createParams.Style |= (int)( UpDownControlStyles.UDS_AUTOBUDDY ) | AlignStyle;
+				return createParams;
 			}
 		}
 		
@@ -98,15 +107,18 @@ namespace System.Windows.Forms {
 			Up = 1
 		}
 
-		internal TextBox			EditBox_;
-		internal SpinnerControl		Spinner_;
-		private bool				UserEdit_;
+		internal TextBox	EditBox_;
+		internal SpinnerControl	Spinner_;
+		private bool		UserEdit_;
+
 		/// --- Constructor ---
 		public UpDownBase()	
 		{
 			UserEdit_ = false;
 			Win32.InitCommonControls();
 			EditBox_ = new TextBox();
+			EditBox_.TextAlign = HorizontalAlignment.Left;
+			EditBox_.TextChanged += new System.EventHandler( this.EditBox_TextChanged );
 			EditBox_.Location = new System.Drawing.Point(0, 0);
 			Spinner_ = new SpinnerControl();
 			this.Controls.Add(EditBox_);
@@ -227,32 +239,50 @@ namespace System.Windows.Forms {
 		// Gets or sets the text displayed in the up-down control
 		public override string Text {
 			get {
-				return base.Text;
+				return EditBox_.Text;
 			}
 			set {
-				base.Text = value;
 				EditBox_.Text = value;
 			}
 		}
 
 		// Gets or sets the alignment of the text in the up-down control
 		public HorizontalAlignment TextAlign {
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				//FIXME:
+			get {	return EditBox_.TextAlign; }
+			set {	
+				EditBox_.TextAlign = value;
 			}
 		}
 
 		// Gets or sets the alignment of the up and down buttons on the 
 		// up-down control
 		public LeftRightAlignment UpDownAlign {
-			get {
-				throw new NotImplementedException ();
-			}
+			get {	return Spinner_.UpDownAlign; }
 			set {
-				//FIXME:
+				if ( !Enum.IsDefined ( typeof(LeftRightAlignment), value ) )
+					throw new InvalidEnumArgumentException( "UpDownAlign",
+						(int)value,
+						typeof(LeftRightAlignment));
+
+				if ( Spinner_.UpDownAlign != value ) {
+					Spinner_.UpDownAlign = value;
+					
+					if ( IsHandleCreated && Spinner_.IsHandleCreated ) {
+						RECT spinRect = new RECT ( );
+						Win32.GetWindowRect ( Spinner_.Handle, ref spinRect );
+
+						int SpinWidth = spinRect.right - spinRect.left;
+
+						if ( Spinner_.UpDownAlign == LeftRightAlignment.Left ) {
+							EditBox_.Left = SpinWidth - SpinnerControl.DEF_BUDDYBORDER;
+							EditBox_.Width = Width - SpinWidth;
+						}
+						else {
+							EditBox_.Left = 0;
+							EditBox_.Width = Width - SpinWidth;
+						}
+					}
+				}
 			}
 		}
 		#endregion // Public Properties
@@ -377,7 +407,7 @@ namespace System.Windows.Forms {
 		// Raises the TextChanged event.
 		protected virtual void OnTextBoxTextChanged(object source, EventArgs e) 
 		{
-			//FIXME:
+			OnTextChanged ( e );
 		}
 		
 		// This member overrides Control.SetBoundsCore.
@@ -410,7 +440,12 @@ namespace System.Windows.Forms {
 		protected override void Dispose(bool Disposing) { // .NET V1.1 Beta
 			base.Dispose(Disposing);
 		}
-		
+
+		private void EditBox_TextChanged ( object sender, EventArgs e )
+		{
+			OnTextBoxTextChanged ( EditBox_ , EventArgs.Empty );
+		}
+
 		#endregion // Protected Methods
 
 	}

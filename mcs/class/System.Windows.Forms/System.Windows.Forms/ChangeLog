@@ -1,3 +1,11 @@
+2003-05-02  Aleksey Ryabchuk <ryabchuk@yahoo.com>
+	* Control.cs : call OnTextChange
+	* UpdownBase.cs 
+	* DomainUpDown.cs : some more implementation
+	* TextBox.cs : TextAlign, use base.CreateParams
+	* TextBoxBase.cs : use base.CreateParams
+	* Win32enums.cs : styles for edit box
+
 2003-04-30  Aleksey Ryabchuk <ryabchuk@yahoo.com>
 	* TabControl.cs
 	* TabPage.cs : prevent pages from being added to the TabControl multiple times
