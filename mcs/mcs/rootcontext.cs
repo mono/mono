@@ -332,10 +332,6 @@ namespace Mono.CSharp {
 			// These are classes that depends on the core interfaces
 			//
 			string [] classes_second_stage = {
-				"System.String", "System.Enum",
-				"System.Array",  "System.MulticastDelegate",
-				"System.Delegate",
-
 				"System.Reflection.MemberInfo",
 				"System.Type",
 
@@ -357,6 +353,13 @@ namespace Mono.CSharp {
 				"System.Security.UnverifiableCodeAttribute",
 				"System.Runtime.CompilerServices.IndexerNameAttribute",
 			};
+
+			// We must store them here before calling BootstrapCorlib_ResolveDelegate.
+			TypeManager.string_type = BootstrapCorlib_ResolveClass (root, "System.String");
+			TypeManager.enum_type = BootstrapCorlib_ResolveClass (root, "System.Enum");
+			TypeManager.array_type = BootstrapCorlib_ResolveClass (root, "System.Array");
+			TypeManager.multicast_delegate_type = BootstrapCorlib_ResolveClass (root, "System.MulticastDelegate");
+			TypeManager.delegate_type = BootstrapCorlib_ResolveClass (root, "System.Delegate");
 			
 			foreach (string cname in classes_second_stage)
 				BootstrapCorlib_ResolveClass (root, cname);
