@@ -35,7 +35,8 @@ namespace System.Web.UI{
 public class HtmlTextWriter : System.IO.TextWriter {
 
 static HtmlTextWriter(){
-	HtmlTextWriter._tagKeyLookupTable = new Hashtable(97);
+	HtmlTextWriter._tagKeyLookupTable = new Hashtable(97,CaseInsensitiveHashCodeProvider.Default,
+							  CaseInsensitiveComparer.Default);
 	HtmlTextWriter._tagNameLookupArray = new TagInformation[97];
 	HtmlTextWriter.RegisterTag("", HtmlTextWriterTag.Unknown, TagType.Other);
 	HtmlTextWriter.RegisterTag("a", HtmlTextWriterTag.A, TagType.Inline);
@@ -135,7 +136,8 @@ static HtmlTextWriter(){
 	HtmlTextWriter.RegisterTag("wbr", HtmlTextWriterTag.Wbr, TagType.NonClosing);
 	HtmlTextWriter.RegisterTag("xml", HtmlTextWriterTag.Xml, TagType.Other);
 
-	HtmlTextWriter._attrKeyLookupTable = new Hashtable(40);
+	HtmlTextWriter._attrKeyLookupTable = new Hashtable(40,CaseInsensitiveHashCodeProvider.Default,
+							   CaseInsensitiveComparer.Default);
 	HtmlTextWriter._attrNameLookupArray = new AttributeInformation[40];
 	HtmlTextWriter.RegisterAttribute("accesskey", HtmlTextWriterAttribute.Accesskey, true);
 	HtmlTextWriter.RegisterAttribute("align", HtmlTextWriterAttribute.Align, false);
@@ -178,7 +180,8 @@ static HtmlTextWriter(){
 	HtmlTextWriter.RegisterAttribute("width", HtmlTextWriterAttribute.Width, false);
 	HtmlTextWriter.RegisterAttribute("wrap", HtmlTextWriterAttribute.Wrap, false);
 
-	HtmlTextWriter._styleKeyLookupTable = new Hashtable(14);
+	HtmlTextWriter._styleKeyLookupTable = new Hashtable(14,CaseInsensitiveHashCodeProvider.Default,
+								CaseInsensitiveComparer.Default);
 	HtmlTextWriter._styleNameLookupArray = new String[14];
 	HtmlTextWriter.RegisterStyle("background-color", HtmlTextWriterStyle.BackgroundColor);
 	HtmlTextWriter.RegisterStyle("background-image", HtmlTextWriterStyle.BackgroundImage);
@@ -335,7 +338,7 @@ public override void Flush(){
 
 protected HtmlTextWriterAttribute GetAttributeKey(string attrName){
 	if (attrName != null && attrName.Length > 0) {
-		object attr = HtmlTextWriter._attrKeyLookupTable[attrName.ToLower()];
+		object attr = HtmlTextWriter._attrKeyLookupTable[attrName];
 		if (attr != null)
 			return (HtmlTextWriterAttribute) attr;
 	}
@@ -350,7 +353,7 @@ protected string GetAttributeName(HtmlTextWriterAttribute attrKey){
 
 protected HtmlTextWriterStyle GetStyleKey(string styleName){
 	if (styleName != null && styleName.Length > 0) {
-		object style = HtmlTextWriter._styleKeyLookupTable[styleName.ToLower()];
+		object style = HtmlTextWriter._styleKeyLookupTable[styleName];
 		if (style != null)
 			return (HtmlTextWriterStyle) style;
 	}
@@ -365,7 +368,7 @@ protected string GetStyleName(HtmlTextWriterStyle styleKey){
 
 protected virtual HtmlTextWriterTag GetTagKey(string tagName){
 	if (tagName != null && tagName.Length > 0) {
-		object tag = HtmlTextWriter._tagKeyLookupTable[tagName.ToLower()];
+		object tag = HtmlTextWriter._tagKeyLookupTable[tagName];
 		if (tag != null)
 			return (HtmlTextWriterTag) tag;
 	}
