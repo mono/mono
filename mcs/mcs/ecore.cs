@@ -920,60 +920,35 @@ namespace Mono.CSharp {
 			return false;
 		}
 
-		static EmptyExpression priv_ice_EmptyExpr;
-		/// <summary>
-		///   Tells whether an implicit conversion exists from expr_type to
-		///   target_type
-		/// </summary>
-		public bool ImplicitConversionExists (EmitContext ec, Type expr_type, Type target_type,
-						      Location l)
-		{
-			if (MyEmptyExpr == null)
-				priv_ice_EmptyExpr = new EmptyExpression (expr_type);
-			else
-				priv_ice_EmptyExpr.SetType (expr_type);
-
-			return ConvertImplicit (ec, priv_ice_EmptyExpr, target_type, l) != null;
-		}
-
 		//
 		// Used internally by FindMostEncompassedType, this is used
 		// to avoid creating lots of objects in the tight loop inside
 		// FindMostEncompassedType
 		//
-		static EmptyExpression priv_fmet_source;
 		static EmptyExpression priv_fmet_param;
 		
 		/// <summary>
 		///  Finds "most encompassed type" according to the spec (13.4.2)
-		///  amongst the methods in the MethodGroupExpr which convert from a
-		///  type encompassing source_type
+		///  amongst the methods in the MethodGroupExpr
 		/// </summary>
-		static Type FindMostEncompassedType (MethodGroupExpr me, Type source_type)
+		static Type FindMostEncompassedType (ArrayList types)
 		{
 			Type best = null;
 
-			if (priv_fmet_param == null){
-				priv_fmet_param = new EmptyExpression (source_type);
-				priv_fmet_source = new EmptyExpression (source_type);
-			} else 
-				priv_fmet_source.SetType (source_type);
-			
-			for (int i = me.Methods.Length; i > 0; ) {
-				i--;
-
-				MethodBase mb = me.Methods [i];
-				ParameterData pd = Invocation.GetParameterData (mb);
-				Type param_type = pd.ParameterType (0);
-				priv_fmet_param.SetType (param_type);
-				
-				if (StandardConversionExists (priv_fmet_source, param_type)) {
-					if (best == null)
-						best = param_type;
+			if (priv_fmet_param == null)
+				priv_fmet_param = new EmptyExpression ();
 					
-					if (StandardConversionExists (priv_fmet_param, best))
-						best = param_type;
+			for (int i = 0; i < types.Count; ++i) {
+				Type t = (Type) types [i];
+				priv_fmet_param.SetType (t);
+				
+				if (best == null) {
+					best = t;
+					continue;
 				}
+				Console.WriteLine ("Candidate : " + t);
+				if (StandardConversionExists (priv_fmet_param, best))
+					best = t;
 			}
 
 			return best;
@@ -988,38 +963,158 @@ namespace Mono.CSharp {
 		
 		/// <summary>
 		///  Finds "most encompassing type" according to the spec (13.4.2)
-		///  amongst the methods in the MethodGroupExpr which convert to a
-		///  type encompassed by target_type
+		///  amongst the types in the given set
 		/// </summary>
-		static Type FindMostEncompassingType (MethodGroupExpr me, Type target)
+		static Type FindMostEncompassingType (ArrayList types)
 		{
 			Type best = null;
 
 			if (priv_fmee_ret == null)
-				priv_fmee_ret = new EmptyExpression (target);
+				priv_fmee_ret = new EmptyExpression ();
 			
+			for (int i = 0; i < types.Count; ++i ) {
+				
+				Type t = (Type) types [i];
+				priv_fmee_ret.SetType (best);
+
+				if (best == null) {
+					best = t;
+					continue;
+				}
+
+				Console.WriteLine ("Casdkalkds " + t);
+				if (StandardConversionExists (priv_fmee_ret, t))
+					best = t;
+			}
+			
+			return best;
+		}
+
+		//
+		// Used to avoid creating too many objects
+		//
+		static EmptyExpression priv_fms_expr;
+		
+		/// <summary>
+		///   Finds the most specific source Sx according to the rules of the spec (13.4.4)
+		///   by making use of FindMostEncomp* methods. Applies the correct rules separately
+		///   for explicit and implicit conversion operators.
+		/// </summary>
+		static public Type FindMostSpecificSource (MethodGroupExpr me, Type source_type,
+							   bool apply_explicit_conv_rules,
+							   Location loc)
+		{
+			ArrayList src_types_set = new ArrayList ();
+			
+			if (priv_fms_expr == null)
+				priv_fms_expr = new EmptyExpression ();
+			
+			//
+			// If any operator converts from S then Sx = S
+			//
+			for (int i = me.Methods.Length; i > 0; ) {
+				i--;
+
+				MethodBase mb = me.Methods [i];
+				ParameterData pd = Invocation.GetParameterData (mb);
+				Type param_type = pd.ParameterType (0);
+
+				if (param_type == source_type)
+					return param_type;
+
+				src_types_set.Add (param_type);
+			}
+			
+			//
+			// Explicit Conv rules
+			//
+			if (apply_explicit_conv_rules) {
+
+				ArrayList candidate_set = new ArrayList ();
+
+				for (int i = 0; i < src_types_set.Count; ++i) {
+					Type param_type = (Type) src_types_set [i];
+
+					priv_fms_expr.SetType (source_type);
+					
+					if (StandardConversionExists (priv_fms_expr, param_type))
+						candidate_set.Add (param_type);
+				}
+
+				if (candidate_set.Count != 0)
+					return FindMostEncompassedType (candidate_set);
+			}
+
+			//
+			// Final case
+			//
+			if (apply_explicit_conv_rules)
+				return FindMostEncompassingType (src_types_set);
+			else
+				return FindMostEncompassedType (src_types_set);
+		}
+
+		//
+		// Useful in avoiding proliferation of objects
+		//
+		static EmptyExpression priv_fmt_expr;
+		
+		/// <summary>
+		///  Finds the most specific target Tx according to section 13.4.4
+		/// </summary>
+		static public Type FindMostSpecificTarget (MethodGroupExpr me, Type target,
+							   bool apply_explicit_conv_rules,
+							   Location loc)
+		{
+			ArrayList tgt_types_set = new ArrayList ();
+			
+			if (priv_fmt_expr == null)
+				priv_fmt_expr = new EmptyExpression ();
+			
+			//
+			// If any operator converts to T then Tx = T
+			//
 			for (int i = me.Methods.Length; i > 0; ) {
 				i--;
 				
 				MethodInfo mi = (MethodInfo) me.Methods [i];
 				Type ret_type = mi.ReturnType;
 
-				priv_fmee_ret.SetType (ret_type);
-				if (StandardConversionExists (priv_fmee_ret, target)) {
-					if (best == null)
-						best = ret_type;
+				if (ret_type == target)
+					return ret_type;
 
-					if (!StandardConversionExists (priv_fmee_ret, best))
-						best = ret_type;
-				}
+				tgt_types_set.Add (ret_type);
+			}
+
+			//
+			// Explicit conv rules
+			//
+			if (apply_explicit_conv_rules) {
+
+				ArrayList candidate_set = new ArrayList ();
 				
+				for (int i = 0; i < tgt_types_set.Count; ++i) {
+					Type ret_type = (Type) tgt_types_set [i];
+					
+					priv_fmt_expr.SetType (ret_type);
+					
+					if (StandardConversionExists (priv_fmt_expr, target))
+						candidate_set.Add (ret_type);
+				}
+
+				if (candidate_set.Count != 0)
+					return FindMostEncompassingType (candidate_set);
 			}
 			
-			return best;
-
+			//
+			// Okay, final case !
+			//
+			if (apply_explicit_conv_rules)
+				return FindMostEncompassedType (tgt_types_set);
+			else
+				return FindMostEncompassingType (tgt_types_set);
 		}
 		
-
 		/// <summary>
 		///  User-defined Implicit conversions
 		/// </summary>
@@ -1061,26 +1156,6 @@ namespace Mono.CSharp {
 			else
 				op_name = "op_Implicit";
 			
-#if old
-			//
-			// FIXME: This whole process can be optimized to check if the
-			// return is non-null and make the union as we go.
-			//
-			mg1 = MethodLookup (ec, source_type, op_name, loc);
-
-			if (source_type.BaseType != null)
-				mg2 = MethodLookup (ec, source_type.BaseType, op_name, loc);
-			
-			mg3 = MemberLookup (ec, target_type, op_name, loc);
-
-			if (target.BaseType != null)
-				mg4 = MethodLookup (ec, target.BaseType, op_name, loc);
-
-			MethodGroupExpr union1 = Invocation.MakeUnionSet (mg1, mg2, loc);
-			MethodGroupExpr union2 = Invocation.MakeUnionSet (mg3, mg4, loc);
-
-			MethodGroupExpr union3 = Invocation.MakeUnionSet (union1, union2, loc);
-#else
 			MethodGroupExpr union3;
 			
 			mg1 = MethodLookup (ec, source_type, op_name, loc);
@@ -1101,6 +1176,7 @@ namespace Mono.CSharp {
 				else
 					union3 = (MethodGroupExpr) mg1;
 			}
+
 			if (target_type.BaseType != null)
 				mg1 = MethodLookup (ec, target_type.BaseType, op_name, loc);
 			
@@ -1110,20 +1186,17 @@ namespace Mono.CSharp {
 				else
 					union3 = (MethodGroupExpr) mg1;
 			}
-#endif
+
 			MethodGroupExpr union4 = null;
 
 			if (look_for_explicit) {
-
 				op_name = "op_Explicit";
-				
-				mg5 = MemberLookup (ec, source_type, op_name, loc);
 
+				mg5 = MemberLookup (ec, source_type, op_name, loc);
 				if (source_type.BaseType != null)
 					mg6 = MethodLookup (ec, source_type.BaseType, op_name, loc);
 				
 				mg7 = MemberLookup (ec, target_type, op_name, loc);
-				
 				if (target_type.BaseType != null)
 					mg8 = MethodLookup (ec, target_type.BaseType, op_name, loc);
 				
@@ -1153,11 +1226,11 @@ namespace Mono.CSharp {
 			
 			Type most_specific_source, most_specific_target;
 
-			most_specific_source = FindMostEncompassedType (union, source_type);
+			most_specific_source = FindMostSpecificSource (union, source_type, look_for_explicit, loc);
 			if (most_specific_source == null)
 				return null;
-			
-			most_specific_target = FindMostEncompassingType (union, target);
+
+			most_specific_target = FindMostSpecificTarget (union, target, look_for_explicit, loc);
 			if (most_specific_target == null) 
 				return null;
 			
@@ -1885,7 +1958,7 @@ namespace Mono.CSharp {
 		}
 
 		/// <summary>
-		///   Same as ConverExplicit, only it doesn't include user defined conversions
+		///   Same as ConvertExplicit, only it doesn't include user defined conversions
 		/// </summary>
 		static public Expression ConvertExplicitStandard (EmitContext ec, Expression expr,
 								  Type target_type, Location l)

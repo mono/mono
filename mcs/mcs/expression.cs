@@ -3220,7 +3220,6 @@ namespace Mono.CSharp {
 			}
 			
 			miset = new MemberInfo [length1 + length2 - common.Count];
-			
 			left_set.Methods.CopyTo (miset, 0);
 			
 			int k = 0;

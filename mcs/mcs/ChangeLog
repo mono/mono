@@ -1,3 +1,14 @@
+2002-05-06  Ravi Pratap  <ravi@ximian.com>
+
+	* ecore.cs (FindMostEncompassingType, FindMostEncompassedType):
+	Revamp completely - make much cleaner as we now operate only
+	on a set of Types.
+
+	(FindMostSpecificSource, FindMostSpecificTarget): New methods
+	to implement the logic detailed in the spec more correctly.
+
+	(UserDefinedConversion): Update accordingly.
+
 2002-05-06  Miguel de Icaza  <miguel@ximian.com>
 
 	* statement.cs: Return flow analysis information up.
