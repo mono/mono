@@ -10,20 +10,10 @@ using System.Collections;
 
 using NUnit.Framework;
 
-
-
 namespace MonoTests.System.Collections {
 
-
-/// <summary>ArrayList test.</summary>
-public class ArrayListTest : TestCase {
-	protected override void SetUp() 
-	{
-	}
-
-	protected override void TearDown() 
-	{
-	}
+[TestFixture]
+public class ArrayListTest : Assertion {
 
 	public void TestCtor() {
 		{
@@ -410,6 +400,24 @@ public class ArrayListTest : TestCase {
 		
 	}
 
+	[Test]
+	[ExpectedException (typeof (ArgumentException))]
+	public void BinarySearch_IndexOverflow () 
+	{
+		ArrayList al = new ArrayList ();
+		al.Add (this);
+		al.BinarySearch (Int32.MaxValue, 1, this, null);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentException))]
+	public void BinarySearch_CountOverflow () 
+	{
+		ArrayList al = new ArrayList ();
+		al.Add (this);
+		al.BinarySearch (1, Int32.MaxValue, this, null);
+	}
+
 	// TODO - BinarySearch with IComparer
 
 	public void TestClear() {
@@ -616,6 +624,33 @@ public class ArrayListTest : TestCase {
 		AssertEquals("Wrong CopyTo 9", (char)0, copy[9]);
 	}
 
+	[Test]
+	[ExpectedException (typeof (ArgumentException))]
+	public void CopyTo_IndexOverflow () 
+	{
+		ArrayList al = new ArrayList ();
+		al.Add (this);
+		al.CopyTo (Int32.MaxValue, new byte [2], 0, 0);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentException))]
+	public void CopyTo_ArrayIndexOverflow () 
+	{
+		ArrayList al = new ArrayList ();
+		al.Add (this);
+		al.CopyTo (0, new byte [2], Int32.MaxValue, 0);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentException))]
+	public void CopyTo_CountOverflow () 
+	{
+		ArrayList al = new ArrayList ();
+		al.Add (this);
+		al.CopyTo (0, new byte [2], 0, Int32.MaxValue);
+	}
+
 	public void TestFixedSize() {
 		{
 			bool errorThrown = false;
@@ -801,6 +836,24 @@ public class ArrayListTest : TestCase {
 		}
 	}
 
+	[Test]
+	[ExpectedException (typeof (ArgumentException))]
+	public void GetEnumerator_IndexOverflow () 
+	{
+		ArrayList al = new ArrayList ();
+		al.Add (this);
+		al.GetEnumerator (Int32.MaxValue, 0);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentException))]
+	public void GetEnumerator_CountOverflow () 
+	{
+		ArrayList al = new ArrayList ();
+		al.Add (this);
+		al.GetEnumerator (0, Int32.MaxValue);
+	}
+
 	public void TestGetRange() {
 		{
 			bool errorThrown = false;
@@ -855,6 +908,24 @@ public class ArrayListTest : TestCase {
 			AssertEquals("Munging 'a' should mess up 'b'",
 				     true, errorThrown);
 		}
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentException))]
+	public void GetRange_IndexOverflow () 
+	{
+		ArrayList al = new ArrayList ();
+		al.Add (this);
+		al.GetRange (Int32.MaxValue, 0);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentException))]
+	public void GetRange_CountOverflow () 
+	{
+		ArrayList al = new ArrayList ();
+		al.Add (this);
+		al.GetRange (0, Int32.MaxValue);
 	}
 
 	public void TestIndexOf() {
@@ -933,6 +1004,24 @@ public class ArrayListTest : TestCase {
 			AssertEquals("shouldn't find", -1, a.IndexOf('?'));
 			AssertEquals("shouldn't find", -1, a.IndexOf(3));
 		}
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentOutOfRangeException))]
+	public void IndexOf_StartIndexOverflow () 
+	{
+		ArrayList al = new ArrayList ();
+		al.Add (this);
+		al.IndexOf ('a', Int32.MaxValue, 1);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentOutOfRangeException))]
+	public void IndexOf_CountOverflow () 
+	{
+		ArrayList al = new ArrayList ();
+		al.Add (this);
+		al.IndexOf ('a', 1, Int32.MaxValue);
 	}
 
 	public void TestInsert() {
@@ -1159,6 +1248,24 @@ public class ArrayListTest : TestCase {
 		}
 	}
 
+	[Test]
+	[ExpectedException (typeof (ArgumentOutOfRangeException))]
+	public void LastIndexOf_StartIndexOverflow () 
+	{
+		ArrayList al = new ArrayList ();
+		al.Add (this);
+		al.LastIndexOf ('a', Int32.MaxValue, 1);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentOutOfRangeException))]
+	public void LastIndexOf_CountOverflow () 
+	{
+		ArrayList al = new ArrayList ();
+		al.Add (this);
+		al.LastIndexOf ('a', 1, Int32.MaxValue);
+	}
+
 	public void TestReadOnly() {
 		{
 			bool errorThrown = false;
@@ -1341,6 +1448,24 @@ public class ArrayListTest : TestCase {
 		}
 	}
 
+	[Test]
+	[ExpectedException (typeof (ArgumentException))]
+	public void RemoveRange_IndexOverflow () 
+	{
+		ArrayList al = new ArrayList ();
+		al.Add (this);
+		al.RemoveRange (Int32.MaxValue, 1);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentException))]
+	public void RemoveRange_CountOverflow () 
+	{
+		ArrayList al = new ArrayList ();
+		al.Add (this);
+		al.RemoveRange (1, Int32.MaxValue);
+	}
+
 	public void TestRepeat() {
 		{
 			bool errorThrown = false;
@@ -1432,6 +1557,24 @@ public class ArrayListTest : TestCase {
 		}
 	}
 
+	[Test]
+	[ExpectedException (typeof (ArgumentException))]
+	public void Reverse_IndexOverflow () 
+	{
+		ArrayList al = new ArrayList ();
+		al.Add (this);
+		al.Reverse (Int32.MaxValue, 1);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentException))]
+	public void Reverse_CountOverflow () 
+	{
+		ArrayList al = new ArrayList ();
+		al.Add (this);
+		al.Reverse (1, Int32.MaxValue);
+	}
+
 	public void TestSetRange() {
 		{
 			bool errorThrown = false;
@@ -1505,6 +1648,15 @@ public class ArrayListTest : TestCase {
 		}
 	}
 
+	[Test]
+	[ExpectedException (typeof (ArgumentOutOfRangeException))]
+	public void SetRange_Overflow () 
+	{
+		ArrayList al = new ArrayList ();
+		al.Add (this);
+		al.SetRange (Int32.MaxValue, new ArrayList ());
+	}
+
 	public void TestInsertRange_this() {
 		String[] s1 = {"this", "is", "a", "test"};
 		ArrayList al = new ArrayList(s1);
@@ -1556,6 +1708,24 @@ public class ArrayListTest : TestCase {
                 	AssertEquals ("Should be 32", 32, al1 [4]);
                 	AssertEquals ("Should be 33", 33, al1 [5]);
                 }
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentException))]
+	public void Sort_IndexOverflow () 
+	{
+		ArrayList al = new ArrayList ();
+		al.Add (this);
+		al.Sort (Int32.MaxValue, 1, null);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentException))]
+	public void Sort_CountOverflow () 
+	{
+		ArrayList al = new ArrayList ();
+		al.Add (this);
+		al.Sort (1, Int32.MaxValue, null);
 	}
 
 	// TODO - Sort with IComparers
