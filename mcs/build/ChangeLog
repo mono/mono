@@ -1,3 +1,8 @@
+2005-02-02  Raja R Harinath  <rharinath@novell.com>
+
+	* library.make (run-test-lib): Use $(LOCAL_TEST_HARNESS_FLAGS).
+	(run-test-ondotnet-lib): Use $(LOCAL_TEST_HARNESS_ONDOTNET_FLAGS).
+
 2005-02-01  Zoltan Varga  <vargaz@freemail.hu>
 
 	* library.make (run-test-lib): Exclude InetAccess tests.

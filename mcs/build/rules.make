@@ -138,9 +138,9 @@ dist-recursive: dist-local
 # The following target can be used like
 #
 #   dist-local: dist-default
-# 	... additional commands ...
+#	... additional commands ...
 #
-# Notes: 
+# Notes:
 #  1. we invert the test here to not end in an error if ChangeLog doesn't exist.
 #  2. we error out if we try to dist a nonexistant file.
 #  3. we pick up Makefile, makefile, or GNUmakefile.
