@@ -498,8 +498,8 @@ namespace System
 			unsafe {
 				if (c <= ((char)0x24cf))
 					return (char) to_lower_data_low [c];
-				if (c >= ((char)0xff41))
-					return (char) to_lower_data_high[c - 0xff41];
+				if (c >= ((char)0xff21))
+					return (char) to_lower_data_high[c - 0xff21];
 			}
 			return c;
 		}
@@ -522,7 +522,7 @@ namespace System
 		internal static char ToUpperInvariant (char c)
 		{
 			unsafe {
-				if (c <= ((char)0x24cf))
+				if (c <= ((char)0x24e9))
 					return (char) to_upper_data_low [c];
 				if (c >= ((char)0xff21))
 					return (char) to_upper_data_high [c - 0xff21];

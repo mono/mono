@@ -216,13 +216,13 @@ namespace System.Globalization {
 		// (enumerable enough).
 		public virtual char ToLower (char c)
 		{
-			if (ci == CultureInfo.InvariantCulture)
+			if (ci.LCID == 0x7F)
 				return Char.ToLowerInvariant (c);
 
 			switch ((int) c) {
 			case '\u0049': // Latin uppercase I
 				CultureInfo tmp = ci;
-				while (tmp.Parent != tmp && tmp.Parent != CultureInfo.InvariantCulture)
+				while (tmp.Parent != tmp && tmp.Parent.LCID != 0x7F)
 					tmp = tmp.Parent;
 				switch (tmp.LCID) {
 				case 44: // Azeri (az)
@@ -258,13 +258,13 @@ namespace System.Globalization {
 
 		public virtual char ToUpper (char c)
 		{
-			if (ci == CultureInfo.InvariantCulture)
+			if (ci.LCID == 0x7F)
 				return Char.ToUpperInvariant (c);
 
 			switch (c) {
 			case '\u0069': // Latin lowercase i
 				CultureInfo tmp = ci;
-				while (tmp.Parent != tmp && tmp.Parent != CultureInfo.InvariantCulture)
+				while (tmp.Parent != tmp && tmp.Parent.LCID != 0x7F)
 					tmp = tmp.Parent;
 				switch (tmp.LCID) {
 				case 44: // Azeri (az)

@@ -1,3 +1,8 @@
+2005-04-06  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* TextInfo.cs : To make new CultureInfo (127) as invariant, it should
+	  not compare object Equals() against InvariantCulture.
+
 2005-04-05  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* TextInfo.cs : Fixed ToTitleCase() so that

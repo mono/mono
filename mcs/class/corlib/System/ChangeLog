@@ -1,3 +1,7 @@
+2005-04-06  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Char.cs : ToUpper()/ToLower() comparison ranges were incorrect.
+
 2005-04-05  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* _AppDomain.cs: Add security checks to the interface. Declarative 
