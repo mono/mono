@@ -176,7 +176,6 @@ namespace System.Net
 					ServicePoint sp = (ServicePoint) e.Value;
 					if (sp.AvailableForRecycling) {
 						toRemove.Add (e.Key);
-						Console.WriteLine ("Reciclo: {0}", e.Key);
 					}
 				}
 				
