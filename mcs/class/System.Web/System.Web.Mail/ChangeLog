@@ -1,3 +1,7 @@
+2004-10-28 Sanjay Gupta <gsanjay@novell.com>
+
+	* SmtpClient.cs: Backported fix for bug 68829.
+	
 2004-08-30 Sanjay Gupta <gsanjay@novell.com>
 
 	* MailMessage.cs:

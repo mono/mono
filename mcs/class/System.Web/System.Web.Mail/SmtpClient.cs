@@ -157,6 +157,16 @@ namespace System.Web.Mail {
 #if NET_1_1
 		// Add all the custom headers to body part as specified in 
  		//Fields property of MailMessageWrapper
+		
+		//Remove fields specific for authenticating to SMTP server.
+                                                                                
+        	if (msg.Fields.Data ["http://schemas.microsoft.com/cdo/configuration/smtpauthenticate"] != null)
+            		msg.Fields.Data.Remove ("http://schemas.microsoft.com/cdo/configuration/smtpauthenticate");
+        	if (msg.Fields.Data ["http://schemas.microsoft.com/cdo/configuration/sendusername"] != null)
+            		msg.Fields.Data.Remove ("http://schemas.microsoft.com/cdo/configuration/sendusername");^M
+	        if (msg.Fields.Data ["http://schemas.microsoft.com/cdo/configuration/sendpassword"] != null)^M
+        	    	msg.Fields.Data.Remove ("http://schemas.microsoft.com/cdo/configuration/sendpassword");
+
  		partHeader.Data.Add(msg.Fields.Data);
 #endif
 		
