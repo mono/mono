@@ -197,7 +197,7 @@ namespace Commons.Xml.Relaxng.Rnc
 %token TwoGreaters ">>"
 
 %token LiteralSegment
-%token NCNameButKeyword
+%token NCName
 
 %token Documentation
 
@@ -1089,7 +1089,7 @@ AnnotationElementNotKeyword /* returns null */
 	: ForeignElementNameNotKeyword AnnotationAttributesContent
 	{
 		// do nothing
-//		$$ = Element ($1, $2);
+		$$ = $1;
 	}
 	;
 
@@ -1240,16 +1240,11 @@ Literal /* returns string */
 	;
 
 Identifier /* returns string */
-	: NCNameButKeyword
+	: NCName
 	{
 		$$ = (string) $1;
 	}
-	| BackSlash NCNameButKeyword
-	{
-		$$ = (string) $2;
-	}
-	/* extended */
-	| BackSlash Keyword
+	| BackSlash NCName
 	{
 		$$ = (string) $2;
 	}

@@ -1,3 +1,7 @@
+2005-03-28  Atsushi Enomoto <atsushi@ximian.com>
+
+	* Commons.Xml.Relaxnf.dll.sources : added XmlChar.cs
+
 2005-03-07  Atsushi Enomoto <atsushi@ximian.com>
 
 	* README :

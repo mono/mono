@@ -1,5 +1,14 @@
 2005-03-28  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlChar.cs : copied from system.xml.
+	* RncTokenizer.cs : check character validity.
+	  Handle \-prefixed keyword name more strictly.
+	  Simplify CName tokenization.
+	  Move location after successful advance().
+	* RncParser.jay : now there is no NCNameButKeyword.
+
+2005-03-28  Atsushi Enomoto <atsushi@ximian.com>
+
 	* RncTokenizer.cs : oops, so stupid hex computation.
 
 2005-03-28  Atsushi Enomoto <atsushi@ximian.com>

@@ -22,6 +22,7 @@ Commons.Xml.Relaxng.Derivative/Util.cs
 Commons.Xml.Relaxng.Inference/RelaxngInference.cs
 Commons.Xml.Relaxng.Rnc/RncTokenizer.cs
 Commons.Xml.Relaxng.Rnc/RncWriter.cs
+Commons.Xml.Relaxng.Rnc/XmlChar.cs
 Commons.Xml.Nvdl/NvdlBuiltInValidationProvider.cs
 Commons.Xml.Nvdl/NvdlCompileContext.cs
 Commons.Xml.Nvdl/NvdlConfig.cs

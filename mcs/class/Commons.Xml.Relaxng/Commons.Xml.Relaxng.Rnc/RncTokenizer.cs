@@ -50,8 +50,9 @@ namespace Commons.Xml.Relaxng.Rnc
 
 		int line = 1;
 		int column;
+		int savedLineNumber = 1;
+		int savedLinePosition;
 		bool nextIncrementLine;
-		string prefixName;
 
 		public RncTokenizer (TextReader source)
 		{
@@ -63,11 +64,11 @@ namespace Commons.Xml.Relaxng.Rnc
 		}
 
 		public int Line {
-			get { return line; }
+			get { return savedLineNumber; }
 		}
 
 		public int Column {
-			get { return column; }
+			get { return savedLinePosition; }
 		}
 
 		// jay interface implementation
@@ -79,10 +80,10 @@ namespace Commons.Xml.Relaxng.Rnc
 
 		public bool advance ()
 		{
-			if (prefixName != null)
-				throw new RelaxngException ("Invalid prefix was found.");
 			tokenValue = null;
-			currentToken = ParseToken ();
+			currentToken = ParseToken (false);
+			savedLineNumber = line;
+			savedLinePosition = column;
 			return currentToken != Token.EOF;
 		}
 
@@ -137,8 +138,6 @@ namespace Commons.Xml.Relaxng.Rnc
 				return ret;
 			ret = source.Read ();
 			switch (ret) {
-			case '\\':
-				return ret;
 			case 'x':
 				int tmp;
 				int xcount = 0;
@@ -158,7 +157,8 @@ namespace Commons.Xml.Relaxng.Rnc
 				peekChar = 0;
 				return ret;
 			}
-			throw new RelaxngException ("Invalidly escaped token.");
+			peekString = new string ((char) ret, 1);
+			return '\\';
 		}
 
 		private int PeekChar ()
@@ -245,6 +245,8 @@ namespace Commons.Xml.Relaxng.Rnc
 				default:
 					if (c < 0)
 						throw new RelaxngException ("Unterminated quoted literal.");
+					if (XmlChar.IsInvalid (c))
+						throw new RelaxngException ("Invalid character in literal.");
 					AppendNameChar (c, ref index);
 					break;
 				}
@@ -294,6 +296,8 @@ namespace Commons.Xml.Relaxng.Rnc
 				default:
 					if (c < 0)
 						throw new RelaxngException ("Unterminated triple-quoted literal.");
+					if (XmlChar.IsInvalid (c))
+						throw new RelaxngException ("Invalid character in literal.");
 					AppendNameChar (c, ref index);
 					break;
 				}
@@ -302,7 +306,7 @@ namespace Commons.Xml.Relaxng.Rnc
 			return new string (nameBuffer, 0, index);
 		}
 
-		private string ReadOneToken ()
+		private string ReadOneName ()
 		{
 			int index = 0;
 			bool loop = true;
@@ -318,12 +322,7 @@ namespace Commons.Xml.Relaxng.Rnc
 					loop = false;
 					break;
 				default:
-					if (!IsNCNameChar (c)) {
-						if (c == ':') {
-							if (prefixName != null)
-								throw new RelaxngException ("Invalid colon was found.");
-							prefixName = new string (nameBuffer, 0, index);
-						}
+					if (!XmlChar.IsNCNameChar (c)) {
 						loop = false;
 						break;
 					}
@@ -350,35 +349,7 @@ namespace Commons.Xml.Relaxng.Rnc
 			return s;
 		}
 
-		private bool IsNCNameChar (int c)
-		{
-			switch (c) {
-			case '=':
-			case ':':
-			case ',':
-			case '{':
-			case '}':
-			case '(':
-			case ')':
-			case '[':
-			case ']':
-			case '&':
-			case '|':
-			case '?':
-			case '*':
-			case '\\':
-			case '+':
-//			case '-':
-			case '>':
-			case '#':
-			case '\'':
-			case '\"':
-				return false;
-			}
-			return true;
-		}
-
-		private int ParseToken ()
+		private int ParseToken (bool backslashed)
 		{
 			SkipWhitespaces ();
 			int c = ReadChar ();
@@ -388,19 +359,6 @@ namespace Commons.Xml.Relaxng.Rnc
 				return Token.EOF;
 			case '=':
 				return Token.Equal;
-			case ':':
-				// return CName
-				if (prefixName == null)
-					throw new RelaxngException ("Invalid character ':' was found.");
-				if (PeekChar () == '*') {
-					ReadChar ();
-					tokenValue = prefixName;
-					prefixName = null;
-					return Token.NsName;
-				}
-				tokenValue = prefixName + ":" + ReadOneToken ();
-				prefixName = null;
-				return Token.CName;
 			case '~':
 				return Token.Tilde;
 			case ',':
@@ -433,7 +391,9 @@ namespace Commons.Xml.Relaxng.Rnc
 				// See also ':' for NsName
 				return Token.Asterisk;
 			case '\\':
-				return Token.BackSlash;
+				if (backslashed)
+					return Token.BackSlash;
+				return ParseToken (true);
 			case '+':
 				return Token.Plus;
 			case '-':
@@ -451,7 +411,7 @@ namespace Commons.Xml.Relaxng.Rnc
 //					throw new RelaxngException ("Invalid character after '#'.");
 				tokenValue = ReadLine ();
 //				return Token.Documentation;
-				return ParseToken ();
+				return ParseToken (false);
 			case '\'':
 			case '\"':
 				if (PeekChar () != c)
@@ -467,11 +427,24 @@ namespace Commons.Xml.Relaxng.Rnc
 				tokenValue = name;
 				return Token.LiteralSegment;
 			default:
+				if (!XmlChar.IsNCNameChar (c))
+					throw new RelaxngException ("Invalid NCName character.");
 				peekChar = c;
-				name = ReadOneToken ();
-				if (prefixName != null)
-					return ParseToken ();
+				name = ReadOneName ();
+				if (PeekChar () == ':') {
+					ReadChar ();
+					if (PeekChar () == '*') {
+						ReadChar ();
+						tokenValue = name;
+						return Token.NsName;
+					}
+					tokenValue = name + ":" + ReadOneName ();
+					return Token.CName;
+
+				}
 				tokenValue = name;
+				if (backslashed)
+					return Token.NCName;
 				switch (name) {
 				case "attribute":
 					isElement = false;
@@ -514,7 +487,7 @@ namespace Commons.Xml.Relaxng.Rnc
 				case "token":
 					return Token.KeywordToken;
 				default:
-					return Token.NCNameButKeyword;
+					return Token.NCName;
 				}
 			}
 		}
