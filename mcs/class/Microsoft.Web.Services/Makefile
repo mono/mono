@@ -38,11 +38,11 @@ test_pdb2 = $(patsubst %.dll,%.pdb,$(test_lib2))
 test_sourcefile = $(test_lib).sources
 test_sourcefile2 = $(test_lib2).sources
 test_response = $(depsdir)/$(test_lib).response
-test_response2 = $(depsdir)/a.response
+test_response2 = $(depsdir)/Microsoft.Web.Services.2_test.dll.response
 test_makefrag = $(depsdir)/$(test_lib).makefrag
-test_makefrag2 = $(depsdir)/a.makefrag
+test_makefrag2 = $(depsdir)/Microsoft.Web.Services.2_test.dll.makefrag
 test_stampfile = $(depsdir)/$(test_lib).stamp
-test_stampfile2 = $(depsdir)/a.stamp
+test_stampfile2 = $(depsdir)/Microsoft.Web.Services.2_test.dll.stamp
 test_flags = /r:$(the_lib) /r:$(topdir)/class/lib/NUnit.Framework.dll $(TEST_MCS_FLAGS)
 test_flags2 = /r:$(the_lib2) /r:$(topdir)/class/lib/NUnit.Framework.dll $(TEST_MCS_FLAGS)
 endif
