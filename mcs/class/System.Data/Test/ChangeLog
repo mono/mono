@@ -1,3 +1,20 @@
+2002-08-13  Daniel Morgan <danmorg@sc.rr.com>
+
+	* Test/SqlSharpCli.cs: modified
+	  - removed dependency on Mono.Data.MySql assembly and classes
+	    (if you still want to use Mono.Data.MySql, use \loadextprovider to load it).
+	  - added use of provider System.Data.OleDb classes; however, you must
+	    have a working libgda.
+	  - added dynamic loading of .NET Data Provider's assembly and Connection class
+	    which can be loaded via \loadextprovider
+	  - renamed providers: postgresclient to postgresql, oracleclient to oracle
+	  - add new command \exenonquery to execute non queries
+	  - add new command \exescalar to execute and return one row/one column of data
+	  - added beginnings of internal variables by adding new commands: \set, \unset, and
+	  \variable
+	  - add new command \r to reset (clear) the query buffer
+	  - if quiting, need to close database connection if still open  
+
 2002-08-12  Franklin Wise <gracenote@earthlink.net>
 	* NewFile: Added test for System.Data.UniqueConstraintTest.cs
 
@@ -9,7 +26,7 @@
 	of no tests
 
 	* Updated System.Data.AllTests.cs to include the new tests
-	
+
 2002-05-27  Tim Coleman <tim@timcoleman.com>
 	* TestSqlDataAdapter.cs: remove explicit opening of connection.
 	This should occur implicitly now.

@@ -14,7 +14,7 @@
 //                    visit http://www.go-mono.com/
 //
 // To build SqlSharpCli.cs:
-// $ mcs SqlSharpCli.cs -r System.Data.dll -r Mono.Data.MySql.dll
+// $ mcs SqlSharpCli.cs -r System.Data.dll
 //
 // To run with mono:
 // $ mono SqlSharpCli.exe
@@ -31,13 +31,17 @@
 // (C)Copyright 2002 Daniel Morgan
 //
 
-using Mono.Data.MySql;
+//using Mono.Data.MySql;
+using System.Data.OleDb;
 using System;
+using System.Collections;
 using System.Data;
 using System.Data.Common;
 using System.Data.SqlClient;
 using System.IO;
+using System.Runtime.Remoting;
 using System.Text;
+using System.Reflection;
 
 namespace Mono.Data.SqlSharp {
 	
@@ -45,13 +49,27 @@ namespace Mono.Data.SqlSharp {
 	public class SqlSharpCli {
 	
 		private IDbConnection conn = null;
-		private string provider = "POSTGRESCLIENT";
+
+		private string provider = "POSTGRESQL"; // name of internal provider
+		// {OleDb,SqlClient,MySql,Odbc,Oracle,PostgreSql} however, it
+		// can be set to LOADEXTPROVIDER to load an external provider
+		private string providerAssembly = ""; // filename of assembly
+		// for example: "Mono.Data.MySql"
+		private string providerConnectionClass = ""; // Connection class
+		// in the provider assembly that implements the IDbConnection 
+		// interface.  for example: "Mono.Data.MySql.MySqlConnection"
+
 		private StringBuilder build = null; // SQL string to build
+
 		private string connectionString = 
 			"host=localhost;dbname=test;user=postgres";
+
 		private string inputFilename = "";
 		private string outputFilename = "";
+
 		private bool silent = false;
+
+		private Hashtable internalVariables = new Hashtable();
 		
 		// DisplayResult - used to Read() display a result set
 		//                   called by DisplayData()
@@ -96,7 +114,7 @@ namespace Mono.Data.SqlSharp {
 				if(dataType.Equals("System.Boolean")) {
 					columnSize = 5;
 				}
-				if(provider.Equals("POSTGRESCLIENT"))
+				if(provider.Equals("POSTGRESQL"))
 					if(dataTypeName.Equals("text"))				
 						columnSize = 32; // text will be truncated to 32
 
@@ -152,7 +170,7 @@ namespace Mono.Data.SqlSharp {
 					if(dataType.Equals("System.Boolean")) {
 						columnSize = 5;
 					}
-					if(provider.Equals("POSTGRESCLIENT"))
+					if(provider.Equals("POSTGRESQL"))
 						if(dataTypeName.Equals("text"))				
 							columnSize = 32; // text will be truncated to 32
 												
@@ -238,21 +256,7 @@ namespace Mono.Data.SqlSharp {
 			IDbCommand cmd = null;
 			IDataReader reader = null;
 
-			// create a Command object based on the provider
-			switch(provider) {	
-			//case "OLEDB":
-			//	cmd = new OleDbCommand();
-			//	break;
-			case "MYSQL":
-				cmd = new MySqlCommand();
-				break;
-			case "POSTGRESCLIENT":
-				cmd = new SqlCommand();
-				break;
-			default:
-				Console.WriteLine("Error: PostgreSQL is only supported, and it through SqlClient.");
-				return;
-			}
+			cmd = conn.CreateCommand();
 
 			// set command properties
 			cmd.CommandType = CommandType.Text;
@@ -263,20 +267,79 @@ namespace Mono.Data.SqlSharp {
 				reader = cmd.ExecuteReader();
 				DisplayData(reader);
 				reader.Close();
-				//reader = null;
-				//cmd.Dispose();
-				//cmd = null;
+				reader = null;
 			}
 			catch(Exception e) {
 				Console.WriteLine("Exception Caught Executing SQL: " + e);
 				//if(reader != null) {
 				//	if(reader.IsClosed == false)
 				//		reader.Close();
-				//	reader = null;
+				reader = null;
 				//}
-				// cmd.Dispose();
-				//cmd = null;
 			}
+			finally {
+				// cmd.Dispose();
+				cmd = null;
+			}
+		}
+
+		// ExecuteSql - Execute the SQL Commands (no SELECTs)
+		public void ExecuteSqlNonQuery(string sql) {
+			
+			Console.WriteLine("Execute SQL Non Query: " + sql);
+
+			IDbCommand cmd = null;
+			int rowsAffected = -1;
+			
+			cmd = conn.CreateCommand();
+
+			// set command properties
+			cmd.CommandType = CommandType.Text;
+			cmd.CommandText = sql;
+			cmd.Connection = conn;
+
+			try {
+				rowsAffected = cmd.ExecuteNonQuery();
+				cmd = null;
+				Console.WriteLine("Rows affected: " + rowsAffected);
+			}
+			catch(Exception e) {
+				Console.WriteLine("Exception Caught Executing SQL: " + e);
+			}
+			finally {
+				// cmd.Dispose();
+				cmd = null;
+			}
+		}
+
+		public void ExecuteSqlScalar(string sql) {
+			Console.WriteLine("Execute SQL Non Query: " + sql);
+
+			IDbCommand cmd = null;
+			string retrievedValue = "";
+			
+			cmd = conn.CreateCommand();
+
+			// set command properties
+			cmd.CommandType = CommandType.Text;
+			cmd.CommandText = sql;
+			cmd.Connection = conn;
+
+			try {
+				retrievedValue = (string) cmd.ExecuteScalar().ToString();
+				Console.WriteLine("Retrieved value: " + retrievedValue);
+			}
+			catch(Exception e) {
+				Console.WriteLine("Exception Caught Executing SQL: " + e);
+			}
+			finally {
+				// cmd.Dispose();
+				cmd = null;
+			}
+		}
+
+		public void ExecuteSqlXml(string sql) {
+			Console.WriteLine("Error: Not implemented yet.");
 		}
 
 		// like ShowHelp - but only show at the beginning
@@ -287,7 +350,7 @@ namespace Mono.Data.SqlSharp {
 			Console.WriteLine(@"       \ConnectionString to set the ConnectionString");
 			Console.WriteLine(@"       \Provider to set the Provider:");
 			Console.WriteLine(@"                 {OleDb,SqlClient,MySql,Odbc,");
-			Console.WriteLine(@"                  OracleClient,PostgresClient}");
+			Console.WriteLine(@"                  Oracle,PostgreSql)");
 			Console.WriteLine(@"       \Open to open the connection");
 			Console.WriteLine(@"       \Close to close the connection");
 			Console.WriteLine(@"       \Execute to execute SQL command(s)/queries(s)");
@@ -303,15 +366,25 @@ namespace Mono.Data.SqlSharp {
 			Console.WriteLine(@"       \ConnectionString to set the ConnectionString");
 			Console.WriteLine(@"       \Provider to set the Provider:");
 			Console.WriteLine(@"                 {OleDb,SqlClient,MySql,Odbc,");
-			Console.WriteLine(@"                  OracleClient,PostgresClient}");
+			Console.WriteLine(@"                  Oracle,PostgreSql}");
 			Console.WriteLine(@"       \Open to open the connection");
 			Console.WriteLine(@"       \Close to close the connection");
 			Console.WriteLine(@"       \Execute to execute SQL command(s)/queries(s)");
+			Console.WriteLine(@"       \exenonquery execute an SQL non query (not a SELECT).");
+			Console.WriteLine(@"       \exescalar execute SQL to get a single row/single column result.");
 			Console.WriteLine(@"       \f FILENAME to read a batch of commands from");
 			Console.WriteLine(@"       \o FILENAME to read a batch of commands from");
 			Console.WriteLine(@"       \h to show this help.");
 			Console.WriteLine(@"       \defaults to show default variables.");
 			Console.WriteLine(@"       \s {TRUE, FALSE} to silent messages.");
+			Console.WriteLine(@"       \r reset (clear) the query buffer.");
+			Console.WriteLine(@"       \set NAME VALUE - set an internal variable.");
+			Console.WriteLine(@"       \unset NAME - remove an internal variable.");
+			Console.WriteLine(@"       \variable NAME - display the value of an internal variable.");
+			Console.WriteLine(@"       \loadprovider CLASS - load the provider" + 
+				"- use the complete name of its connection class.");
+			Console.WriteLine(@"       \loadextprovider ASSEMBLY CLASS - load the provider" + 
+				"- use the complete name of its assembly and its xxxConnection class.");
 			Console.WriteLine();
 		}
 
@@ -331,14 +404,17 @@ namespace Mono.Data.SqlSharp {
 			Console.WriteLine("Attempt to Open...");
 
 			switch(provider) {
-			//case "OLEDB":
-			//	conn = new OleDbConnection();
-			//	break;
-			case "MYSQL":
-				conn = new MySqlConnection();
+			case "OLEDB":
+				conn = new OleDbConnection();
 				break;
-			case "POSTGRESCLIENT":
+			//case "MYSQL":
+			//	conn = new MySqlConnection();
+			//	break;
+			case "POSTGRESQL":
 				conn = new SqlConnection();
+				break;
+			case "LOADEXTPROVIDER":
+				LoadExternalProvider();
 				break;
 			default:
 				Console.WriteLine("Error: Bad argument or provider not supported.");
@@ -360,16 +436,21 @@ namespace Mono.Data.SqlSharp {
 
 		// CloseDataSource - close the connection to the data source
 		public void CloseDataSource() {
-			Console.WriteLine("Attempt to Close...");
-
-			try {
-				conn.Close();
-				Console.WriteLine("Close was successfull.");
+			
+			if(conn != null) 
+			{
+				Console.WriteLine("Attempt to Close...");
+				try 
+				{
+					conn.Close();
+					Console.WriteLine("Close was successfull.");
+				}
+				catch(Exception e) 
+				{
+					Console.WriteLine("Exeception Caught Closing. " + e);
+				}
+				conn = null;
 			}
-			catch(Exception e) {
-				Console.WriteLine("Exeception Caught Closing. " + e);
-			}
-			conn = null;
 		}
 
 		// ChangeProvider - change the provider string variable
@@ -378,18 +459,19 @@ namespace Mono.Data.SqlSharp {
 			if(parms.Length == 2) {
 				string parm = parms[1].ToUpper();
 				switch(parm) {
-				case "ORACLECLIENT":
+				case "ORACLE":
 				case "ODBC":
 				case "GDA":
 					Console.WriteLine("Error: Provider not currently supported.");
 					break;
 				case "SQLCLIENT":
-					provider = "POSTGRESCLIENT";
+					provider = "POSTGRESQL";
 					Console.WriteLine("Warning: Currently, the SqlClient provider is the PostgreSQL provider.");
 					break;
-				//case "OLEDB":
-				case "MYSQL":
-				case "POSTGRESCLIENT":
+				
+				//case "MYSQL":
+				case "OLEDB":
+				case "POSTGRESQL":
 					provider = parm;
 					break;
 				default:
@@ -451,6 +533,123 @@ namespace Mono.Data.SqlSharp {
 				Console.WriteLine("Error: invalid parameter.");
 		}
 
+		public void SetInternalVariable(string[] parms) 
+		{
+			if(parms.Length < 2)
+			{
+				Console.WriteLine("Error: wrong number of parameters.");
+				return;
+			}
+			string parm = parms[1].ToUpper();
+			StringBuilder ps = new StringBuilder();
+			
+			for(int i = 2; i < parms.Length; i++)
+				ps.Append(parms[i]);
+
+			internalVariables[parm] = ps.ToString();
+		}
+
+		public void UnSetInternalVariable(string[] parms)
+		{
+			if(parms.Length != 2)
+			{
+				Console.WriteLine("Error: wrong number of parameters.");
+				return;
+			}
+			string parm = parms[1].ToUpper();
+
+			try 
+			{
+				internalVariables.Remove(parm);
+			}
+			catch(Exception e)
+			{
+				Console.WriteLine("Error: internal variable does not exist.");
+			}
+		}
+
+		public void ShowInternalVariable(string[] parms)
+		{
+			string internalVariableValue = "";
+
+			if(parms.Length != 2)
+			{
+				Console.WriteLine("Error: wrong number of parameters.");
+				return;
+			}
+						
+			string parm = parms[1].ToUpper();
+
+			if(GetInternalVariable(parm, out internalVariableValue) == true)
+				Console.WriteLine("Internal Variable - Name: " + 
+					parm + "  Value: " + internalVariableValue);
+		}
+
+		public bool GetInternalVariable(string name, out string sValue)
+		{
+			sValue = "";
+			bool valueReturned = false;
+
+			try 
+			{
+				if(internalVariables.ContainsKey(name) == true) {
+					sValue = (string) internalVariables[name];
+					valueReturned = true;
+				}
+				else
+					Console.WriteLine("Error: internal variable does not exist.");
+
+			}
+			catch(Exception e) {
+				Console.WriteLine("Error: internal variable does not exist.");
+			}
+			return valueReturned;
+		}
+
+		// to be used for loading .NET Data Providers that exist in
+		// the System.Data assembly, but are not explicitly handling
+		// in SQL#
+		public void LoadProvider(string[] parms) {
+			Console.WriteLine("Error: not implemented yet.");			
+		}
+
+		public void SetupExternalProvider(string[] parms) {
+			if(parms.Length != 3) {
+				Console.WriteLine("Error: Wrong number of parameters.");
+				return;
+			}
+			provider = "LOADEXTPROVIDER";
+			providerAssembly = parms[1];
+			providerConnectionClass = parms[2];
+		}
+
+		public void LoadExternalProvider() {
+			
+			// For example: for the MySQL provider in Mono.Data.MySql
+			//   \LoadExtProvider Mono.Data.MySql Mono.Data.MySql.MySqlConnection
+			//   \ConnectionString dbname=test
+			//   \open
+			//   insert into sometable (tid, tdesc, aint) values ('abc','def',12)
+			//   \exenonquery
+			//   \close
+			//   \quit
+
+			Console.WriteLine("Load the assembly of the provider...");
+			Console.Out.Flush();
+			Assembly ps = Assembly.Load(providerAssembly);
+
+			Console.WriteLine("Get Connection type of provider...");
+			Console.Out.Flush();
+			Type typ = ps.GetType(providerConnectionClass);
+
+			Console.WriteLine("Create new instance of provider Connection type...");
+			Console.Out.Flush();
+			conn = (IDbConnection) Activator.CreateInstance(typ);
+
+			Console.WriteLine("Connection object created.");
+			Console.Out.Flush();
+		}
+
 		public void OutputLine(string line) {
 			if(silent == false)
 				Console.WriteLine(line);
@@ -462,7 +661,8 @@ namespace Mono.Data.SqlSharp {
 		}
 
 		// HandleCommand - handle SqlSharpCli commands entered
-		public void HandleCommand(string entry) {
+		public void HandleCommand(string entry) 
+		{
 			
 			string[] parms;
 			
@@ -476,6 +676,13 @@ namespace Mono.Data.SqlSharp {
 				break;
 			case "\\CONNECTIONSTRING":
 				ChangeConnectionString(entry);
+				break;
+			case "\\LOADPROVIDER":
+				// TODO:
+				//SetupProvider(parms);
+				break;
+			case "\\LOADEXTPROVIDER":
+				SetupExternalProvider(parms);
 				break;
 			case "\\OPEN":
 				OpenDataSource();
@@ -502,6 +709,34 @@ namespace Mono.Data.SqlSharp {
 					build = null;
 				}
 				break;
+			case "\\EXENONQUERY":
+				if(conn == null)
+					Console.WriteLine("Error: connection is not Open.");
+				else if(conn.State == ConnectionState.Closed)
+					Console.WriteLine("Error: connection is not Open.");
+				else {
+					if(build == null)
+						Console.WriteLine("Error: SQL Buffer is empty.");
+					else {
+						ExecuteSqlNonQuery(build.ToString());
+					}
+					build = null;
+				}
+				break;
+			case "\\EXESCALAR":
+				if(conn == null)
+					Console.WriteLine("Error: connection is not Open.");
+				else if(conn.State == ConnectionState.Closed)
+					Console.WriteLine("Error: connection is not Open.");
+				else {
+					if(build == null)
+						Console.WriteLine("Error: SQL Buffer is empty.");
+					else {
+						ExecuteSqlScalar(build.ToString());
+					}
+					build = null;
+				}
+				break;
 			case "\\F":
 				// Batch Input File: \f FILENAME
 				SetupInputFile(parms);
@@ -517,11 +752,29 @@ namespace Mono.Data.SqlSharp {
 				ShowHelp();
 				break;
 			case "\\DEFAULTS":
+				// show the defaults for provider and connection strings
 				ShowDefaults();
 				break;
 			case "\\Q": 
 			case "\\QUIT":
 				// Quit
+				break;
+			case "\\R": 
+				// reset (clear) the query buffer
+				build = null;
+				break;
+			case "\\SET":
+				// sets internal variable
+				// \set name value
+				SetInternalVariable(parms);
+				break;
+			case "\\UNSET":
+				// deletes internal variable
+				// \unset name
+				UnSetInternalVariable(parms);
+				break;
+			case "\\VARIABLE":
+				ShowInternalVariable(parms);
 				break;
 			default:
 				// Error
@@ -611,6 +864,7 @@ namespace Mono.Data.SqlSharp {
 					build.Append(entry + " ");
 				}
 			}			
+			CloseDataSource();
 		}
 	}
 
