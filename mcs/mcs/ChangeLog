@@ -1,3 +1,12 @@
+2004-11-25  Miguel de Icaza  <miguel@ximian.com>
+
+	* class.cs (TypeContainer.GetClassBases): It is an error to have a
+	non-interface in the list of interfaces (at this point, either
+	parent was properly set, or a base class is being listed in the
+	interfaces section).
+
+	This flags error 1722, and resolves the crash from bug 69259.
+
 2004-11-25  Ben Maurer  <bmaurer@ximian.com>
 
 	* statement.cs (Using.EmitExpressionFinally): make this work right
