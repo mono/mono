@@ -1,3 +1,9 @@
+
+Tue Apr 9 13:12:09 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* MonoCustomAttrs.cs: return arrays of type Attribute[]
+	instead of object[].
+
 2002/04/09  Nick Drochak <ndrochak@gol.com>
 
 	* String.cs (Substring): Copy only non-null characters to the new

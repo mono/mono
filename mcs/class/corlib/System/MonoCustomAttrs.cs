@@ -32,18 +32,20 @@ namespace System {
 			object[] res = from_cache (obj);
 			// shortcut
 			if (res.Length == 1 && res[0].GetType () == attributeType)
-				return res;
+				return (object[])res.Clone ();
 			ArrayList a = new ArrayList ();
 			foreach (object attr in res) {
 				if (attributeType.Equals (attr.GetType ()))
 					a.Add (attr);
 			}
-			return a.ToArray ();
+			Attribute[] r = new Attribute [a.Count];
+			a.CopyTo (r);
+			return r;
 		}
 
 		internal static object[] GetCustomAttributes (ICustomAttributeProvider obj, bool inherit) {
 			// handle inherit
-			return from_cache (obj);
+			return (Object[])from_cache (obj).Clone ();
 		}
 		internal static bool IsDefined (ICustomAttributeProvider obj, Type attributeType, bool inherit) {
 			// handle inherit
