@@ -107,6 +107,21 @@ namespace System.Text.RegularExpressions {
 			get { return (Group)list[i]; }
 		}
 		
+		public Group this[string groupName] {
+			get {
+				foreach (object o in list) {
+					if (!(o is Match))
+						continue;
+
+					int index = ((Match) o).Regex.GroupNumberFromName (groupName);
+					if (index != -1)
+						return this [index];
+				}
+
+				return null;
+			}
+		}
+		
 		internal GroupCollection () {
 		}
 	}
