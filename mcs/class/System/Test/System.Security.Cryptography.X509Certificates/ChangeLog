@@ -1,0 +1,4 @@
+2004-06-05  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* X509CertificateCollectionTest.cs: New. Unit tests for 
+	X509CertificateCollection.
