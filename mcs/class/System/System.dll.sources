@@ -581,6 +581,7 @@ System.Net.Mime/DispositionTypeNames.cs
 System.Net.Mime/MediaTypeNames.cs
 System.Net.Mime/TransferEncoding.cs
 System.Security.Cryptography.X509Certificates/X509CertificateCollection.cs
+System.Security.Permissions/PermissionHelper.cs
 System.Security.Permissions/ResourcePermissionBase.cs
 System.Security.Permissions/ResourcePermissionBaseEntry.cs
 System.Text.RegularExpressions/arch.cs
