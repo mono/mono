@@ -32,6 +32,12 @@ namespace Mono.Xml.Xsl
 		Unknown
 	}
 	
+	public enum StandaloneType {
+		NONE,
+		YES,
+		NO
+        }
+	
 	public class XslOutput	// also usable for xsl:result-document
 	{
 		string uri;
@@ -40,7 +46,7 @@ namespace Mono.Xml.Xsl
 		string version;
 		Encoding encoding = System.Text.Encoding.UTF8;
 		bool omitXmlDeclaration;
-		string standalone;
+		StandaloneType standalone = StandaloneType.NONE;
 		string doctypePublic;
 		string doctypeSystem;
 		QName [] cdataSectionElements;
@@ -79,7 +85,7 @@ namespace Mono.Xml.Xsl
 			get { return omitXmlDeclaration; }
 		}
 
-		public string Standalone {
+		public StandaloneType Standalone {
 			get { return standalone; }
 		}
 
@@ -172,7 +178,9 @@ namespace Mono.Xml.Xsl
 
 			att = nav.GetAttribute ("standalone", "");
 			if (att != String.Empty)
-				this.standalone = att;
+				//TODO: Should we validate values?                
+				this.standalone = att == "yes" ? StandaloneType.YES : StandaloneType.NO;
+
 
 			att = nav.GetAttribute ("doctype-public", "");
 			if (att != String.Empty)

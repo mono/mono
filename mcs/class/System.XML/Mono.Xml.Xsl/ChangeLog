@@ -1,3 +1,17 @@
+2003-08-30 Oleg Tkachenko <oleg@tkachenko.com>
+
+	* New files: 
+	GenericOutputter.cs - generic Outputter implementation,
+	Attribute.cs - represents outputted attribute,
+	Emitter.cs - abstract output emitter,
+	TextEmitter.cs - text emitter,
+	XmlWriterEmitter.cs - emitter to XmlWriter.
+	* Checking of duplicating attributes is done in GenericOutputter.
+	* Namespace outputting logic is implemented in GenericOutputter.
+	* Outputter.cs: Writing namespace declarations is delegated to 
+	derived classes (GenericOutputter).
+	* XslOutput.cs: standalone flag is now 3-value enum (NONE, YES, NO).			
+	 
 2003-08-21 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* XslTransformProcessor.cs: evaluate variables at beginning

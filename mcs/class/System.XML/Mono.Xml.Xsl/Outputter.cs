@@ -12,7 +12,9 @@ using System;
 namespace Mono.Xml.Xsl {
 	/// <summary>
 	/// Abstract XSLT outputter. 
-	/// Implementations of this class outputs result tree according output method.
+	/// Transformation classes build result tree using only with this class API.
+	/// Implementations of this class outputs result tree to an Emitter, which emits 
+	/// it further down to real consumers.
 	/// </summary>
 	public abstract class Outputter {
 		public abstract void WriteStartDocument();		
@@ -32,19 +34,14 @@ namespace Mono.Xml.Xsl {
 		}
 		
 		public abstract void WriteAttributeString(string prefix, string localName, string nsURI, string value);
-		public void WriteNamespaceDecl (string prefix, string nsUri)
-		{
-			if (prefix == String.Empty)
-				WriteAttributeString ("", "xmlns", "", nsUri);
-			else
-				WriteAttributeString ("xmlns", prefix, null, nsUri);
-		}
+		public abstract void WriteNamespaceDecl (string prefix, string nsUri);		
 		
 		public void WriteStartAttribute(string localName, string nsURI)
 		{
 			WriteStartAttribute (null, localName, nsURI);
 		}
 		
+		//TODO: Seems like we can get rid of these two methods?
 		public abstract void WriteStartAttribute(string prefix, string localName, string nsURI);
 		public abstract void WriteEndAttribute();		
 		

@@ -28,7 +28,7 @@ namespace System.Xml.Xsl {
 
 		public override void Transform (XPathNavigator input, XsltArgumentList args, XmlWriter output, XmlResolver resolver)
 		{
-			Outputter outputter = new XmlOutputter(output, s.Outputs);
+			Outputter outputter = new GenericOutputter(output, s.Outputs);
 			bool wroteStartDocument = false;
 			if (output.WriteState == WriteState.Start) {
 				outputter.WriteStartDocument ();
@@ -40,22 +40,10 @@ namespace System.Xml.Xsl {
 		}
 
 		public override void Transform (XPathNavigator input, XsltArgumentList args, TextWriter output, XmlResolver resolver) {
-			XslOutput xslOutput = (XslOutput)s.Outputs[String.Empty];
-			switch (xslOutput.Method) {
-				case OutputMethod.Unknown: // TODO: handle xml vs html
-				case OutputMethod.XML:
-					XmlWriter w = new XmlTextWriter(output);
-					Transform(input, args, w, resolver);
-					w.Close ();
-					break;
-				case OutputMethod.HTML:
-					throw new NotImplementedException("HTML output method is not implemented yet.");
-				case OutputMethod.Text:
-					new XslTransformProcessor (s).Process (input, new TextOutputter(output, false), args, resolver);
-					break;
-				case OutputMethod.Custom:
-					throw new NotImplementedException("Custom output method is not implemented yet.");
-			}
+			Outputter outputter = new GenericOutputter(output, s.Outputs);			
+			outputter.WriteStartDocument();
+			new XslTransformProcessor (s).Process (input, outputter, args, resolver);
+			outputter.WriteEndDocument();			
 		}
 		
 		public override void Transform (XPathNavigator input, XsltArgumentList args, Stream output, XmlResolver resolver)

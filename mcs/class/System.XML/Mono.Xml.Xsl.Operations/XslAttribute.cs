@@ -14,6 +14,7 @@ using System.Collections;
 using System.Xml;
 using System.Xml.XPath;
 using System.Xml.Xsl;
+using System.IO;
 
 using QName = System.Xml.XmlQualifiedName;
 
@@ -53,13 +54,20 @@ namespace Mono.Xml.Xsl.Operations {
 			nm = calcName != null ? calcName : name.Evaluate (p);
 			nmsp = calcNs != null ? calcNs : ns != null ? ns.Evaluate (p) : null;
 			
-			if (nmsp != null)
-				p.Out.WriteStartAttribute (XslNameUtil.LocalNameOf (nm), nmsp);
-			else
+			if (nmsp == null)
 				throw new NotImplementedException ();
 
-			if (value != null) value.Evaluate (p);
-			p.Out.WriteEndAttribute ();
+			if (value == null)
+			    p.Out.WriteAttributeString("", XslNameUtil.LocalNameOf(nm), nmsp, "");
+			else {
+			    StringWriter sw = new StringWriter();
+			    Outputter outputter = new TextOutputter(sw, true);
+			    p.PushOutput(outputter);
+			    value.Evaluate (p);			    
+			    p.PopOutput();
+			    outputter.Done();			        
+                p.Out.WriteAttributeString("", XslNameUtil.LocalNameOf(nm), nmsp, sw.ToString());			                    			        
+			}						
 		}
 	}
 }

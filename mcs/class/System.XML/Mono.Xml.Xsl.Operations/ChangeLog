@@ -1,3 +1,9 @@
+2003-08-30 Oleg Tkachenko <oleg@tkachenko.com>
+
+	* XslAttribute.cs: output is now done to TextOutputter, which outputs 
+	to a StringWriter.
+	* XslVariable.cs: output is done to GenericOutputter.
+
 2003-08-21 Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* XslVariable.cs : use newly introduced XmlNodeWriter.ctor(false) to

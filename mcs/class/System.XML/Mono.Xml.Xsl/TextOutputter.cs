@@ -13,7 +13,7 @@ using System.IO;
 
 namespace Mono.Xml.Xsl {
 	/// <summary>
-	/// Outputter implementation for text output method
+	/// Outputter implementation for text output method.
 	/// </summary>
 	public class TextOutputter : Outputter {
 		private TextWriter _writer;
@@ -50,6 +50,8 @@ namespace Mono.Xml.Xsl {
 		public override void WriteEndAttribute() {
 			_inAttribute = false;
 		}
+
+		public override void WriteNamespaceDecl (string prefix, string nsUri) {}
 
 		public override void WriteComment(string text) {}
 

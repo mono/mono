@@ -1,3 +1,7 @@
+2003-08-30 Oleg Tkachenko <oleg@tkachenko.com>
+	* ManagedXslTransform.cs: Outputter/Emitter selection logic is moved 
+	to GenericOutputter.
+
 2003-08-21  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* XslTransform.cs: commented out Cleanup () because of bug #47776.
