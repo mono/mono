@@ -1,3 +1,7 @@
+2004-04-13  Atsushi Enomoto <atsushi@ximian.com>
+
+	* System.Data_test.dll.sources : added XmlDataDocumentTest2.cs.
+
 2004-04-05  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* System.Data.dll.sources: removed SqlConnectionPool.cs.

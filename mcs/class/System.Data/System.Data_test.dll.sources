@@ -12,6 +12,7 @@ System.Data.SqlTypes/SqlGuidTest.cs
 System.Data.SqlTypes/SqlDecimalTest.cs
 System.Data.SqlTypes/SqlStringTest.cs
 System.Xml/XmlDataDocumentTest.cs
+System.Xml/XmlDataDocumentTest2.cs
 System.Data/ConstraintCollectionTest.cs
 System.Data/ConstraintTest.cs
 System.Data/DataColumnCollectionTest.cs
