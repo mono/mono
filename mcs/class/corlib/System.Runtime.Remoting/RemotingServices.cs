@@ -159,8 +159,10 @@ namespace System.Runtime.Remoting
 				else
 					throw new ArgumentException ("The obj parameter is a proxy.");
 			}
-			else
+			else {
 				identity = obj.ObjectIdentity;
+				obj.ObjectIdentity = null;
+			}
 
 			if (identity == null || !identity.IsConnected)
 				return false;
@@ -360,16 +362,18 @@ namespace System.Runtime.Remoting
 		{
 			// TODO: use internal call for better performance
 			Identity ident = GetObjectIdentity((MarshalByRefObject)tp);
-			if (ident != null) return !ident.IsFromThisAppDomain;
-			else return false;
+			return ident is ClientIdentity;
 		}
 
 		public static bool IsObjectOutOfContext(object tp)
 		{
 			// TODO: use internal call for better performance
-			ServerIdentity ident = GetObjectIdentity((MarshalByRefObject)tp) as ServerIdentity;
-			if (ident != null) return ident.Context != System.Threading.Thread.CurrentContext;
-			else return false;
+			Identity ident = GetObjectIdentity((MarshalByRefObject)tp);
+			if (ident == null) return false;
+			
+			ServerIdentity sident = ident as ServerIdentity;
+			if (sident != null) return sident.Context != System.Threading.Thread.CurrentContext;
+			else return true;
 		}
 
 		public static bool IsOneWay(MethodBase method)
@@ -389,7 +393,14 @@ namespace System.Runtime.Remoting
 
 		public static void SetObjectUriForMarshal(MarshalByRefObject obj, string uri)
 		{
-			if (IsTransparentProxy (obj)) throw new RemotingException ("SetObjectUriForMarshal method should only be called for MarshalByRefObjects that exist in the current AppDomain.");
+			if (IsTransparentProxy (obj)) {
+				RealProxy proxy = RemotingServices.GetRealProxy(obj);
+				Identity identity = proxy.ObjectIdentity;
+
+				if (identity != null && !(identity is ServerIdentity) && !proxy.GetProxiedType().IsContextful)
+					throw new RemotingException ("SetObjectUriForMarshal method should only be called for MarshalByRefObjects that exist in the current AppDomain.");
+			}
+			
 			Marshal (obj, uri);
 		}
 
