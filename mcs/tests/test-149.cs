@@ -96,3 +96,17 @@ public class Z : Y
 		return 0;
 	}
 }
+
+//
+// This class is just to test a bug in mcs; where we used to fail
+// when accessing a static event, from an instance method.
+//
+public class Static {
+	public static event EventHandler Test;
+			
+	public void Fire()
+	{
+		if ( Test != null )
+			Test (null, null);
+	}
+}
