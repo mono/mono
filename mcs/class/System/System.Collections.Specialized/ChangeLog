@@ -1,3 +1,8 @@
+2004-03-23  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* ListDictionary.cs: mark ListEntry as serializable. Thanks to Jan
+	Jaros.
+
 2004-03-15  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* ProcessStringDictionary.cs: the same as StringDictionary, but

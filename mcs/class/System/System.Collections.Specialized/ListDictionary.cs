@@ -228,6 +228,7 @@ namespace System.Collections.Specialized
 		}
 		
 
+		[Serializable]
 		private class ListEntry
 		{
 			public object key = null;
