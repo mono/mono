@@ -68,6 +68,7 @@ namespace System.Drawing
 		[MonoTODO]
 		public void Dispose ()
 		{
+			implementation.Dispose ();
 		}
 
 		[MonoTODO]

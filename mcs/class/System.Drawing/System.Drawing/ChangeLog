@@ -1,3 +1,6 @@
+2003-08-03  Alexandre Pigolkine <pigolkine@gmx.de>
+	* Graphics.cs  delegate Dispose to implementation
+
 2003-08-01  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* FontConverter.cs: stub it out so that system.web compiles.
