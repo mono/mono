@@ -23,9 +23,12 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.11 $
+// $Revision: 1.12 $
 // $Modtime: $
 // $Log: XplatUIX11.cs,v $
+// Revision 1.12  2004/08/09 19:48:08  pbartok
+// - Fixed default sizing for child windows
+//
 // Revision 1.11  2004/08/09 18:56:55  pbartok
 // - Added generation of WM_DESTROY message
 // - Added handling of window manager induced shutdown
@@ -214,16 +217,16 @@ namespace System.Windows.Forms {
 			Height=cp.Height;
 			BorderWidth=0;
 
-			if (X<1) X=50;
-			if (Y<1) Y=50;
-			if (Width<1) Width=100;
-			if (Height<1) Height=100;
+			if (Width<1) Width=1;
+			if (Height<1) Height=1;
 
 			if (ParentHandle==IntPtr.Zero) {
 				if ((cp.Style & (int)WindowStyles.WS_CHILD)!=0) {
 					// We need to use our foster parent window until this poor child gets it's parent assigned
 					ParentHandle=FosterParent;
 				} else {
+					if (X<1) X=50;
+					if (Y<1) Y=50;
 					BorderWidth=4;
 					ParentHandle=XRootWindow(DisplayHandle, 0);
 				}
@@ -572,6 +575,14 @@ namespace System.Windows.Forms {
 			return Parent;
 		}
 
+		internal override void GrabWindow(IntPtr hWnd) {
+//			Win32SetCapture(hWnd);
+		}
+
+		internal override void ReleaseWindow(IntPtr hWnd) {
+//			Win32ReleaseCapture();
+		}
+
 		// Santa's little helper
 		static void Where() {
 			Console.WriteLine("Here: {0}", new StackTrace().ToString());
@@ -736,6 +747,9 @@ namespace System.Windows.Forms {
 
 		[DllImport ("libX11.so", EntryPoint="XSetWMProtocols")]
 		internal extern static int XSetWMProtocols(IntPtr display, IntPtr window, ref int protocols, int count);
+
+//		[DllImport ("libX11.so", EntryPoint="XSetWMProtocols")]
+//		internal extern static int XGrabPointer(IntPtr display, IntPtr window, bool owner_events, uint event_mask, int pointer_mode, int keyboard_mode, IntPtr confine_to, XplatUICursor cursor, uint timestamp);
 
 		// Drawing
 		[DllImport ("libX11.so", EntryPoint="XCreateGC")]
