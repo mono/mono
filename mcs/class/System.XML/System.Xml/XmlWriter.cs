@@ -94,7 +94,10 @@ namespace System.Xml
 			if ((prefix == "xmlns") || (localName == "xmlns")) 
 			{
 				if (prefix == "xmlns")
+				{
+					if (ns == string.Empty) throw new ArgumentException ("Cannot use a prefix with an empty namespace");
 					namespaceManager.AddNamespace (localName, ns);
+				}
 				else
 					namespaceManager.AddNamespace ("", ns);
 			}
