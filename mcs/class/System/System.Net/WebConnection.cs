@@ -148,6 +148,70 @@ namespace System.Net
 			}
 		}
 
+		bool CreateTunnel (HttpWebRequest request, Stream stream, out byte [] buffer)
+		{
+			StringBuilder sb = new StringBuilder ();
+			sb.Append ("CONNECT ");
+			sb.Append (request.Address.Host);
+			sb.Append (':');
+			sb.Append (request.Address.Port);
+			sb.Append (" HTTP/");
+			if (request.ServicePoint.ProtocolVersion == HttpVersion.Version11)
+				sb.Append ("1.1");
+			else
+				sb.Append ("1.0");
+
+			sb.Append ("\r\nHost: ");
+			sb.Append (request.Address.Authority);
+			if (request.Headers ["Proxy-Authorization"] != null) {
+				sb.Append ("\r\nProxy-Authorization: ");
+				sb.Append (request.Headers ["Proxy-Authorization"]);
+			}
+				
+			sb.Append ("\r\n\r\n");
+			byte [] connectBytes = Encoding.Default.GetBytes (sb.ToString ());
+			stream.Write (connectBytes, 0, connectBytes.Length);
+			return ReadHeaders (request, stream, out buffer);
+		}
+
+		bool ReadHeaders (HttpWebRequest request, Stream stream, out byte [] retBuffer)
+		{
+			retBuffer = null;
+
+			byte [] buffer = new byte [256];
+			MemoryStream ms = new MemoryStream ();
+			bool gotStatus = false;
+
+			while (true) {
+				int n = stream.Read (buffer, 0, 256);
+				ms.Write (buffer, 0, n);
+				int start = 0;
+				string str = null;
+				while (ReadLine (ms.GetBuffer (), ref start, (int) ms.Length, ref str)) {
+					if (str == null) {
+						if (ms.Length - start > 0) {
+							retBuffer = new byte [ms.Length - start];
+							Buffer.BlockCopy (ms.GetBuffer (), start, retBuffer, 0, retBuffer.Length);
+						}
+						return true;
+					}
+
+					if (gotStatus)
+						continue;
+
+					int spaceidx = str.IndexOf (' ');
+					if (spaceidx == -1)
+						throw new Exception ();
+
+					int resultCode = Int32.Parse (str.Substring (spaceidx + 1, 3));
+					if (resultCode != 200)
+						throw new Exception ();
+
+					gotStatus = true;
+				}
+			}
+		}
+
 		bool CreateStream (HttpWebRequest request)
 		{
 			try {
@@ -156,9 +220,16 @@ namespace System.Net
 					ssl = true;
 					EnsureSSLStreamAvailable ();
 					if (!reused || nstream == null || nstream.GetType () != sslStream) {
-						object[] args = new object [3] { serverStream,
+						byte [] buffer = null;
+						if (sPoint.UseConnect) {
+							bool ok = CreateTunnel (request, serverStream, out buffer);
+							if (!ok)
+								return false;
+						}
+
+						object[] args = new object [4] { serverStream,
 										request.ClientCertificates,
-										request };
+										request, buffer};
 						nstream = (Stream) Activator.CreateInstance (sslStream, args);
 					}
 					// we also need to set ServicePoint.Certificate 
