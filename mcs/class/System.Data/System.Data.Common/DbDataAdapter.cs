@@ -77,17 +77,30 @@ namespace System.Data.Common {
 		protected override void Dispose (bool disposing)
 		{
 			if (disposing) {
-				((IDbDataAdapter) this).SelectCommand = null;
-				((IDbDataAdapter) this).InsertCommand = null;
-				((IDbDataAdapter) this).UpdateCommand = null;
-				((IDbDataAdapter) this).DeleteCommand = null;
+				IDbDataAdapter da = (IDbDataAdapter) this;
+				if (da.SelectCommand != null) {
+					da.SelectCommand.Dispose();
+					da.SelectCommand = null;
+				}
+				if (da.InsertCommand != null) {
+					da.InsertCommand.Dispose();
+					da.InsertCommand = null;
+				}
+				if (da.UpdateCommand != null) {
+					da.UpdateCommand.Dispose();
+					da.UpdateCommand = null;
+				}
+				if (da.DeleteCommand != null) {
+					da.DeleteCommand.Dispose();
+					da.DeleteCommand = null;
+				}
 			}
 		}
 
-                public override int Fill (DataSet dataSet)
-                {
+		public override int Fill (DataSet dataSet)
+		{
 			return Fill (dataSet, 0, 0, DefaultSourceTableName, SelectCommand, CommandBehavior.Default);
-                }
+		}
 
 		public int Fill (DataTable dataTable) 
 		{
