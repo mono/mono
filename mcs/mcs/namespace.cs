@@ -254,7 +254,7 @@ namespace Mono.CSharp {
 
 				string alias = Alias.ToString ();
 				while ((curr_ns != null) && (resolved == null)) {
-					resolved = curr_ns.Lookup (null, alias, Location);
+					resolved = curr_ns.Lookup (null, alias, false, Location);
 
 					if (resolved == null)
 						curr_ns = curr_ns.Parent;
@@ -389,7 +389,7 @@ namespace Mono.CSharp {
 				return ((Type) resolved).FullName;
 		}
 
-		public object Lookup (DeclSpace ds, string name, Location loc)
+		public object Lookup (DeclSpace ds, string name, bool silent, Location loc)
 		{
 			object o;
 			Namespace ns;
@@ -402,7 +402,7 @@ namespace Mono.CSharp {
 				string first = name.Substring (0, pos);
 				string last = name.Substring (pos + 1);
 
-				o = Lookup (ds, first, loc);
+				o = Lookup (ds, first, silent, loc);
 				if (o == null)
 					return null;
 
@@ -445,7 +445,8 @@ namespace Mono.CSharp {
 				match = using_ns.Lookup (ds, name) as Type;
 				if (match != null){
 					if (t != null) {
-						DeclSpace.Error_AmbiguousTypeReference (loc, name, t, match);
+						if (!silent)
+							DeclSpace.Error_AmbiguousTypeReference (loc, name, t, match);
 						return null;
 					} else {
 						t = match;

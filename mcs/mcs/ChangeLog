@@ -1,3 +1,10 @@
+2004-05-26  Martin Baulig  <martin@ximian.com>
+
+	* namespace.cs (NamespaceEntry.Lookup): Added `bool silent'.
+
+	* rootcontext.cs (RootContext.NamespaceLookup): Added `bool silent'.
+	(RootContext.LookupType): Pass down the `silent' flag.
+
 2004-05-25  Martin Baulig  <martin@ximian.com>
 
 	* expression.cs
