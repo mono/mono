@@ -193,8 +193,6 @@ namespace System.Xml
 			set {
 				if (IsReadOnly)
 					throw new XmlException ("This node is readonly.");
-				if (!XmlChar.IsNCName (value))
-					throw new ArgumentException ("Specified name is not a valid NCName: " + value);
 				if (name.Prefix == "xmlns" && value != "xmlns")
 					throw new ArgumentException ("Cannot bind to the reserved namespace.");
 

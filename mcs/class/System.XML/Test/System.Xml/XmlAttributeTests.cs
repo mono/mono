@@ -316,5 +316,20 @@ namespace MonoTests.System.Xml
 			AssertEquals (XmlNodeType.Text, attr.ChildNodes [0].NodeType);
 			AssertEquals (String.Empty, attr.ChildNodes [0].Value);
 		}
+
+		[Test]
+		public void CrazyPrefix ()
+		{
+			XmlDocument doc = new XmlDocument ();
+			doc.AppendChild (doc.CreateElement ("foo"));
+			doc.DocumentElement.SetAttribute ("a", "urn:a", "attr");
+			XmlAttribute a = doc.DocumentElement.Attributes [0];
+			a.Prefix ="hoge:hoge:hoge";
+			// This test is nothing more than ****.
+			AssertEquals ("hoge:hoge:hoge", a.Prefix);
+			// The resulting string is not XML (so broken), so 
+			// it should not be tested.
+			// doc.Save (TextWriter.Null);
+		}
 	}
 }

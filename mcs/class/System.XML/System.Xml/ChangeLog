@@ -1,3 +1,8 @@
+2005-02-25  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlAttribute.cs : MS does not reject non-NCName prefix. Patch by
+	  Konstantin Triger.
+
 2005-02-24  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlTextWriter.cs : WriteString() should be valid when 
