@@ -1121,5 +1121,18 @@ namespace MonoTests.System.Xml
 
 			AssertEquals ("<?xml version='1.0' encoding='utf-16'?><foo xmlns='probe'><b><b2 /><b2 xmlns='' /></b></foo>", StringWriterText);
 		}
+
+		[Test]
+		public void DoOutputRemovalDefaultNSDeclaration ()
+		{
+			xtw.WriteStartElement ("docelem", "a-namespace");
+			
+			XmlDocument doc = new XmlDocument ();
+			doc.CreateElement ("hola").WriteTo (xtw);
+			// This means, WriteTo never passes null NamespaceURI argument to XmlWriter.
+			xtw.WriteEndElement ();
+
+			AssertEquals ("<docelem xmlns='a-namespace'><hola xmlns='' /></docelem>", StringWriterText);
+		}
 	}
 }
