@@ -1,4 +1,5 @@
 AssemblyInfo.cs
+ArgumentProcessorAttribute.cs
 AboutAttribute.cs
 AuthorAttribute.cs
 OptionAttribute.cs
