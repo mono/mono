@@ -745,16 +745,6 @@ namespace System.Runtime.InteropServices
 		}
 
 		[MonoTODO]
-		public static Delegate GetDelegateForFunctionPointer (IntPtr ptr, Type t) {
-			if (!t.IsSubclassOf (typeof (MulticastDelegate)) || (t == typeof (MulticastDelegate)))
-				throw new ArgumentException ("Type is not a delegate", "t");
-			if (ptr == IntPtr.Zero)
-				throw new ArgumentNullException ("ptr");
-
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
 		public static Exception GetExceptionForHR (int errorCode) {
 			throw new NotImplementedException ();
 		}
@@ -762,6 +752,18 @@ namespace System.Runtime.InteropServices
 		[MonoTODO]
 		public static Exception GetExceptionForHR (int errorCode, IntPtr errorInfo) {
 			throw new NotImplementedException ();
+		}
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		private static extern Delegate GetDelegateForFunctionPointerInternal (IntPtr ptr, Type t);
+
+		public static Delegate GetDelegateForFunctionPointer (IntPtr ptr, Type t) {
+			if (!t.IsSubclassOf (typeof (MulticastDelegate)) || (t == typeof (MulticastDelegate)))
+				throw new ArgumentException ("Type is not a delegate", "t");
+			if (ptr == IntPtr.Zero)
+				throw new ArgumentNullException ("ptr");
+
+			return GetDelegateForFunctionPointerInternal (ptr, t);
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
