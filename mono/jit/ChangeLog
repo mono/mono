@@ -1,3 +1,8 @@
+2002-05-20  Martin Baulig  <martin@gnome.org>
+
+	* debug.c (debug_load_method_lines): Check whether the assembly file
+	is newer than the IL file and recreate the IL file if necessary.
+
 2002-05-20  Miguel de Icaza  <miguel@ximian.com>
 
 	* mono.c Updated copyright years. 
