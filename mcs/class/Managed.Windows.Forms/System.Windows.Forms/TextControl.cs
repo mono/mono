@@ -473,7 +473,7 @@ namespace System.Windows.Forms {
 		#region Local Variables
 		private Line		document;
 		private int		lines;
-		private static Line	sentinel;
+		private Line		sentinel;
 		private Line		last_found;
 		private int		document_id;
 		private Random		random = new Random();
@@ -1147,6 +1147,8 @@ namespace System.Windows.Forms {
 			int	end;		// Last line to draw
 			string	s;		// String representing the current line
 			int	line_no;	//
+			Brush	hilight;
+			Brush	hilight_text;
 
 			// First, figure out from what line to what line we need to draw
 			start = GetLineByPixel(clip.Top - viewport_y, false).line_no;
@@ -1159,6 +1161,9 @@ namespace System.Windows.Forms {
 				DateTime	n = DateTime.Now;
 				Console.WriteLine("Started drawing: {0}s {1}ms", n.Second, n.Millisecond);
 			#endif
+
+			hilight = ThemeEngine.Current.ResPool.GetSolidBrush(ThemeEngine.Current.ColorHilight);
+			hilight_text = ThemeEngine.Current.ResPool.GetSolidBrush(ThemeEngine.Current.ColorHilightText);
 
 			while (line_no <= end) {
 				line = GetLine(line_no);
@@ -1173,8 +1178,8 @@ namespace System.Windows.Forms {
 						} else {
 							// we might have to draw our selection
 							if ((line_no != selection_start.line.line_no) && (line_no != selection_end.line.line_no)) {
-								g.FillRectangle(tag.color, tag.X + line.align_shift - viewport_x, line.Y + tag.shift - viewport_y, line.widths[tag.start + tag.length - 1], tag.height);
-								g.DrawString(s.Substring(tag.start-1, tag.length), tag.font, ThemeEngine.Current.ResPool.GetSolidBrush(owner.BackColor), tag.X + line.align_shift - viewport_x, line.Y + tag.shift  - viewport_y, StringFormat.GenericTypographic);
+								g.FillRectangle(hilight, tag.X + line.align_shift - viewport_x, line.Y + tag.shift - viewport_y, line.widths[tag.start + tag.length - 1], tag.height);
+								g.DrawString(s.Substring(tag.start-1, tag.length), tag.font, hilight_text, tag.X + line.align_shift - viewport_x, line.Y + tag.shift  - viewport_y, StringFormat.GenericTypographic);
 							} else {
 								bool	highlight;
 								bool	partial;
@@ -1190,8 +1195,8 @@ namespace System.Windows.Forms {
 									g.DrawString(s.Substring(tag.start - 1, selection_start.pos - tag.start + 1), tag.font, tag.color, tag.X + line.align_shift - viewport_x, line.Y + tag.shift  - viewport_y, StringFormat.GenericTypographic);
 
 									// Now the highlight
-									g.FillRectangle(tag.color, line.widths[selection_start.pos] + line.align_shift, line.Y + tag.shift - viewport_y, line.widths[selection_end.pos] - line.widths[selection_start.pos], tag.height);
-									g.DrawString(s.Substring(selection_start.pos, selection_end.pos - selection_start.pos), tag.font, ThemeEngine.Current.ResPool.GetSolidBrush(owner.BackColor), line.widths[selection_start.pos] + line.align_shift - viewport_x, line.Y + tag.shift - viewport_y, StringFormat.GenericTypographic);
+									g.FillRectangle(hilight, line.widths[selection_start.pos] + line.align_shift, line.Y + tag.shift - viewport_y, line.widths[selection_end.pos] - line.widths[selection_start.pos], tag.height);
+									g.DrawString(s.Substring(selection_start.pos, selection_end.pos - selection_start.pos), tag.font, hilight_text, line.widths[selection_start.pos] + line.align_shift - viewport_x, line.Y + tag.shift - viewport_y, StringFormat.GenericTypographic);
 
 									// And back to the regular
 									g.DrawString(s.Substring(selection_end.pos, tag.length - selection_end.pos), tag.font, tag.color, line.widths[selection_end.pos] + line.align_shift - viewport_x, line.Y + tag.shift - viewport_y, StringFormat.GenericTypographic);
@@ -1199,8 +1204,8 @@ namespace System.Windows.Forms {
 									partial = true;
 
 									// The highlighted part
-									g.FillRectangle(tag.color, line.widths[selection_start.pos] + line.align_shift, line.Y + tag.shift - viewport_y, line.widths[tag.start + tag.length - 1] - line.widths[selection_start.pos], tag.height);
-									g.DrawString(s.Substring(selection_start.pos, tag.length - selection_start.pos), tag.font, ThemeEngine.Current.ResPool.GetSolidBrush(owner.BackColor), line.widths[selection_start.pos] + line.align_shift - viewport_x, line.Y + tag.shift - viewport_y, StringFormat.GenericTypographic);
+									g.FillRectangle(hilight, line.widths[selection_start.pos] + line.align_shift, line.Y + tag.shift - viewport_y, line.widths[tag.start + tag.length - 1] - line.widths[selection_start.pos], tag.height);
+									g.DrawString(s.Substring(selection_start.pos, tag.length - selection_start.pos), tag.font, hilight_text, line.widths[selection_start.pos] + line.align_shift - viewport_x, line.Y + tag.shift - viewport_y, StringFormat.GenericTypographic);
 
 									// The regular part
 									g.DrawString(s.Substring(tag.start - 1, selection_start.pos - tag.start + 1), tag.font, tag.color, tag.X + line.align_shift - viewport_x, line.Y + tag.shift  - viewport_y, StringFormat.GenericTypographic);
@@ -1208,8 +1213,8 @@ namespace System.Windows.Forms {
 									partial = true;
 
 									// The highlighted part
-									g.FillRectangle(tag.color, tag.X + line.align_shift - viewport_x, line.Y + tag.shift - viewport_y, line.widths[selection_end.pos], tag.height);
-									g.DrawString(s.Substring(tag.start - 1, selection_end.pos - tag.start + 1), tag.font, ThemeEngine.Current.ResPool.GetSolidBrush(owner.BackColor), tag.X + line.align_shift - viewport_x, line.Y + tag.shift  - viewport_y, StringFormat.GenericTypographic);
+									g.FillRectangle(hilight, tag.X + line.align_shift - viewport_x, line.Y + tag.shift - viewport_y, line.widths[selection_end.pos], tag.height);
+									g.DrawString(s.Substring(tag.start - 1, selection_end.pos - tag.start + 1), tag.font, hilight_text, tag.X + line.align_shift - viewport_x, line.Y + tag.shift  - viewport_y, StringFormat.GenericTypographic);
 
 									// The regular part
 									g.DrawString(s.Substring(selection_end.pos, tag.length - selection_end.pos), tag.font, tag.color, line.widths[selection_end.pos] + line.align_shift - viewport_x, line.Y + tag.shift - viewport_y, StringFormat.GenericTypographic);
@@ -1229,8 +1234,8 @@ namespace System.Windows.Forms {
 
 								if (!partial) {
 									if (highlight) {
-										g.FillRectangle(tag.color, tag.X + line.align_shift - viewport_x, line.Y + tag.shift  - viewport_y, line.widths[tag.start + tag.length - 1], tag.height);
-										g.DrawString(s.Substring(tag.start-1, tag.length), tag.font, ThemeEngine.Current.ResPool.GetSolidBrush(owner.BackColor), tag.X + line.align_shift - viewport_x, line.Y + tag.shift  - viewport_y, StringFormat.GenericTypographic);
+										g.FillRectangle(hilight, tag.X + line.align_shift - viewport_x, line.Y + tag.shift  - viewport_y, line.widths[tag.start + tag.length - 1], tag.height);
+										g.DrawString(s.Substring(tag.start-1, tag.length), tag.font, hilight_text, tag.X + line.align_shift - viewport_x, line.Y + tag.shift  - viewport_y, StringFormat.GenericTypographic);
 									} else {
 										g.DrawString(s.Substring(tag.start-1, tag.length), tag.font, tag.color, tag.X + line.align_shift - viewport_x, line.Y + tag.shift  - viewport_y, StringFormat.GenericTypographic);
 									}

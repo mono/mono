@@ -1,5 +1,13 @@
 2005-01-18  Peter Bartok  <pbartok@novell.com>
 
+	* TextControl.cs: 
+	  - Sentinel is no longer static, each Document gets it's own, this 
+	    avoids locking or alternatively overwrite problems when more 
+	    than one text control is used simultaneously.
+	  - Switched to use Hilight and HilightText brushes for text selection
+
+2005-01-18  Peter Bartok  <pbartok@novell.com>
+
 	* Control.cs:
 	  - Hooked up the following events:
 		o ControlAdded
