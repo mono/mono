@@ -1,3 +1,8 @@
+2002-07-08  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Control.cs: fixed Visible property.
+	* Page.cs: fixed GetViewStateString.
+
 2002-07-05  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* System.Web.UI/Page.cs:

@@ -236,10 +236,16 @@ namespace System.Web.UI
                         }
                 }
                 public virtual bool Visible
-                { //TODO: Are children visible when parents are not?
+                {
                         get
                         {
-                                return _visible;
+				if (_visible == false)
+					return false;
+
+				if (_parent != null)
+					return _parent.Visible;
+
+                                return true;
                         }
                         set
                         {

@@ -356,7 +356,8 @@ public class Page : TemplateControl, IHttpHandler
 		}
 	}
 
-	private bool got_state = false;
+	private bool _got_state = false;
+	private int _random;
 	internal void OnFormRender (HtmlTextWriter writer, string formUniqueID)
 	{
 		if (_hasForm)
@@ -376,13 +377,13 @@ public class Page : TemplateControl, IHttpHandler
 		if (_context != null)
 			state_string.Append (_context.Request.QueryString.GetHashCode ());
 
-		int _random = 0;
-		if (!got_state) {
+		if (!_got_state) {
 			Random rnd = new Random ();
 			_random = rnd.Next ();
 			if (_random < 0)
 				_random = -_random;
 			_random++;
+			_got_state = true;
 		}
 
 		state_string.AppendFormat ("{0:X}", _random);
@@ -454,6 +455,7 @@ public class Page : TemplateControl, IHttpHandler
 			//-- Control execution lifecycle in the docs
 			OnInit (EventArgs.Empty);
 		}
+		_got_state = false;
 		_hasForm = false;
 		_context = context;
 		//LoadViewState ();
@@ -472,7 +474,6 @@ public class Page : TemplateControl, IHttpHandler
 		foreach (Control ctrl in Controls)
 			ctrl.RenderControl (output);
 
-		got_state = false;
 		//SavePageViewState ();
 	}
 
