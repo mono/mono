@@ -56,17 +56,17 @@ namespace System.Data.OleDb
 			}
 		}
 		
-		public IDataParameter this[int index]
+		object IList.this[int index]
 		{
 			get {
-				return (OleDbParameter) m_list[index];
+				return m_list[index];
 			}
 			set {
 				m_list[index] = value;
 			}
 		}
 
-		public object this[string name]
+		object IDataParameterCollection.this[string name]
 		{
 			[MonoTODO]
 			get {
@@ -139,9 +139,9 @@ namespace System.Data.OleDb
 		bool IDataParameterCollection.Contains (string value)
 		{
 			for (int i = 0; i < m_list.Count; i++) {
-				OleDbParameter parameter;
+				IDataParameter parameter;
 
-				parameter = (OleDbParameter) m_list[i];
+				parameter = (IDataParameter) m_list[i];
 				if (parameter.ParameterName == value)
 					return true;
 			}
@@ -166,7 +166,7 @@ namespace System.Data.OleDb
 
 		int IDataParameterCollection.IndexOf (string name)
 		{
-			return m_list.IndexOf ((object) this[name]);
+			return m_list.IndexOf (((IDataParameterCollection) this)[name]);
 		}
 
 		void IList.Insert (int index, object value)
@@ -186,7 +186,7 @@ namespace System.Data.OleDb
 
 		void IDataParameterCollection.RemoveAt (string name)
 		{
-			m_list.Remove ((object) this[name]);
+			m_list.Remove (((IDataParameterCollection) this)[name]);
 		}
 	}
 }
