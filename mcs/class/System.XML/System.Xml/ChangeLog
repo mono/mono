@@ -1,6 +1,8 @@
 2002-09-19  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* XmlConvert.cs: finished implementation.
+	* XmlTextReader.cs: fixed #30239.
+	* XmlTextWriter.cs: fixed #30240.
 
 2002-09-15  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 

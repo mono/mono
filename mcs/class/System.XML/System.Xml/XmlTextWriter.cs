@@ -297,10 +297,23 @@ namespace System.Xml
 			w.Write ("<!--{0}-->", text);
 		}
 
-		[MonoTODO]
 		public override void WriteDocType (string name, string pubid, string sysid, string subset)
 		{
-			throw new NotImplementedException ();
+			if (name == null || name.Trim ().Length == 0)
+				throw new ArgumentException ("Invalid DOCTYPE name", "name");
+
+			w.Write ("<!DOCTYPE ");
+			w.Write (name);
+			if (pubid != null) {
+				w.Write (String.Format (" PUBLIC {0}{1}{0} {0}{2}{0}", quoteChar, pubid, sysid));
+			} else if (sysid != null) {
+				w.Write (String.Format (" SYSTEM {0}{1}{0}", quoteChar, sysid));
+			}
+
+			if (subset != null)
+				w.Write ("[" + subset + "]");
+
+			w.Write('>');
 		}
 
 		public override void WriteEndAttribute ()

@@ -313,13 +313,9 @@ namespace System.Xml
 			readState = ReadState.Closed;
 		}
 
-		[MonoTODO]
 		public override string GetAttribute (int i)
 		{
-			if (i > attributes.Count)
-				throw new ArgumentOutOfRangeException ("i is smaller than AttributeCount");
-			else
-				throw new NotImplementedException ();
+			return orderedAttributes [i] as string;
 		}
 
 		public override string GetAttribute (string name)
