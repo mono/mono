@@ -35,7 +35,6 @@ using System.IO;
 using System.Text;
 #if NET_2_0
 using System.Xml.XPath;
-using MS.Internal.Xml;
 #endif
 
 namespace System.Xml

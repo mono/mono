@@ -1,3 +1,8 @@
+2004-08-23  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlReader.cs, XmlTextReader.cs, XmlWriter.cs :
+	  eliminate MS.Internal.Xml.* classes.
+
 2004-08-21  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlElement.cs : set_InnerText was removing children incompletely.

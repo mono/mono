@@ -37,9 +37,6 @@ using System.Security.Policy;
 using System.Text;
 using System.Xml.Schema; // only required for NET_2_0 (SchemaInfo)
 using Mono.Xml; // only required for NET_2_0
-#if NET_2_0
-using MS.Internal.Xml; // only required for NET_2_0
-#endif
 
 namespace System.Xml
 {

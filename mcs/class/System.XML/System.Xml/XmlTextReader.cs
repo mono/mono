@@ -46,9 +46,6 @@ using System.Security.Policy;
 using System.Text;
 using System.Xml.Schema;
 using Mono.Xml;
-#if NET_2_0
-using MS.Internal.Xml;
-#endif
 
 namespace System.Xml
 {
