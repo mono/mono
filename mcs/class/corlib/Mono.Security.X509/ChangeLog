@@ -1,3 +1,16 @@
+2003-10-12  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* ITrustAnchors.cs: Added from Mono.Security assembly to
+	support Authenticode in X509Certificate.CreateFromSignedFile
+	* TestAnchors.cs: Added from Mono.Security assembly to
+	support Authenticode in X509Certificate.CreateFromSignedFile
+	* TrustAnchors.cs: Added from Mono.Security assembly to
+	support Authenticode in X509Certificate.CreateFromSignedFile
+	* X509CertificateCollection.cs: Added from Mono.Security assembly to
+	support Authenticode in X509Certificate.CreateFromSignedFile
+	* X509Chain.cs: Added from Mono.Security assembly to
+	support Authenticode in X509Certificate.CreateFromSignedFile
+
 2003-05-16  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* X509Certificate.cs: Added support for "really" NULL key parameters
