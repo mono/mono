@@ -1,5 +1,9 @@
 2004-03-14 Ben Maurer  <bmaurer@users.sourceforge.net>
 
+	* monop.cs: You can type `monop string'
+
+2004-03-14 Ben Maurer  <bmaurer@users.sourceforge.net>
+
 	* monop.cs: show `static' when it applies. Static members
 	first. new sorting stuff.
 

@@ -14,6 +14,26 @@ using System.Collections;
 using System.CodeDom.Compiler;
 
 class MonoP {
+	// very common namespaces, all in corlib
+	static readonly string [] v_common_ns = {
+		"System",
+		"System.Collections",
+		"System.Reflection",
+		"System.Text",
+		"System.IO"
+	};
+	
+	static readonly string [] common_assemblies = {
+		"System.Xml.dll",
+		"System.Web.dll"
+	};
+	
+	static readonly string [] common_ns = {
+		"System.Xml",
+		"System.Web"
+	};
+	
+	static IndentedTextWriter o = new IndentedTextWriter (Console.Out, "    ");
 	static void Main (string [] args)
 	{
 		if (args.Length != 1) {
@@ -21,11 +41,44 @@ class MonoP {
 			return;
 		}
 		
-		IndentedTextWriter o = new IndentedTextWriter (Console.Out, "    ");
-		
 		string tname = args [0];
-		Type t = Type.GetType (tname);
+		Type t = Type.GetType (tname, false, true);
 		
+		if (t == null) {
+			// Try some very common ones, dont load anything
+			foreach (string ns in v_common_ns) {
+				t = Type.GetType (ns + "." + tname, false, true);
+				if (t != null)
+					goto found;
+			}
+		}
+		
+		if (t == null) {
+			foreach (string assm in common_assemblies) {
+				Assembly a = Assembly.Load (assm);
+				t = a.GetType (tname, false, true);
+				if (t != null)
+					goto found;
+				foreach (string ns in common_ns) {
+					t = a.GetType (ns + "." + tname, false, true);
+					if (t != null) {
+						Console.WriteLine ("(using class from {0})", ns);
+						goto found;
+					}
+				}
+			}
+		}
+		
+		if (t == null) {
+			Console.WriteLine ("Could not find {0}", tname);
+			return;
+		}
+	found:
+		PrintClass (t);
+	}
+	
+	static void PrintClass (Type t)
+	{
 		o.Write ("public class {0}", t.Name);
 		
 		Type [] interfaces = (Type []) Comparer.Sort (t.GetInterfaces ());
