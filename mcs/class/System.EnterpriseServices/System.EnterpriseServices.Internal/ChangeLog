@@ -1,5 +1,14 @@
 2004-05-13: Mike Kestner  <mkestner@ximian.com>
 
+	* AppDomainHelper.cs : stub
+	* AssemblyLocator.cs : stub
+	* ClrObjectFactory.cs : stub
+	* ComManagedImportUtil.cs : stub
+	* Publish.cs : stub
+	* SoapClientImport.cs : stub
+
+2004-05-13: Mike Kestner  <mkestner@ximian.com>
+
 	* IClrObjectFactory.cs : add guid.
 	* IComManagedImportUtil.cs : add guid.
 	* IComSoapPublisher.cs : add guid.
