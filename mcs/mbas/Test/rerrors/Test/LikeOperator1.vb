@@ -5,7 +5,7 @@ Imports System
 Imports Nunit.Framework
 
 <TestFixture> _
-Public Class SomeClass
+Public Class LikeOperator1
 
                 <Test, ExpectedException (GetType (System.Exception))> _
                 Public Sub TestForException ()

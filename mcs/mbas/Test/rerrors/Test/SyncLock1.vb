@@ -6,13 +6,12 @@ Imports System
 Imports Nunit.Framework
 
 <TestFixture> _
-Public Class ArgExcept
+Public Class SyncLock1
     Class C
         Private Shared count = 0
         Sub IncrementCount()
             SyncLock count = 0
                 count += 1
-                Console.WriteLine(count)
             End SyncLock
         End Sub
     End Class

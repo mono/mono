@@ -7,12 +7,11 @@ Imports System
 Imports Nunit.Framework
 
 <TestFixture> _
-Public Class InvaCast
+Public Class LoopStatements1
 
                 <Test, ExpectedException (GetType (System.InvalidCastException))> _ 
                 Public Sub TestForException ()
 	        Do While "Hello"
-        	Console.WriteLine("Hello World")
         	Loop
                 End Sub
 End Class

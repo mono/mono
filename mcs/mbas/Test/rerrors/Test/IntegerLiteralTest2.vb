@@ -5,7 +5,7 @@ Imports System
 Imports Nunit.Framework
 
 <TestFixture> _
-Public Class FlowOver
+Public Class IntegerLiteralTest2
 
                 <Test, ExpectedException (GetType (System.OverflowException))> _
                 Public Sub TestForException ()

@@ -5,11 +5,11 @@ Imports System
 Imports Nunit.Framework
 
 <TestFixture> _
-Public Class InvCast
+Public Class ConditionalStatements1
 
                 <Test, ExpectedException (GetType (System.InvalidCastException))> _
                 Public Sub TestForException ()
-      	if "String" Then
+ 	     	if "String" Then
 		throw new exception("#CSC2")
 	end If
                 End Sub

@@ -1,17 +1,17 @@
-'System.DivideByZeroException: Attempt to divide by Zero is not valid'
+'Expected: System.DivideByZeroException, divide by Zero is not valid'
                                                                                 
 Imports System
 Imports Nunit.Framework
                                                                                 
 <TestFixture> _
-Public Class ModByZero
+Public Class ArithmeticOperators2
                                                                                 
                 <Test, ExpectedException (GetType (DivideByZeroException))> _
                 Public Sub TestForMod ()
-                        Dim A As Integer
-                        A = 12.345
+                        Dim A1 As Integer
+                        A1 = 12.345
                         Dim Zero As Integer = 0
-                        A = A Mod 0
+                        A1 = A1 Mod 0
                                                                                 
                 End Sub
 

@@ -5,12 +5,12 @@ Imports System
 Imports Nunit.Framework
 
 <TestFixture> _
-Public Class NullRef
+Public Class LiteralNothing1
 
                 <Test, ExpectedException (GetType (System.NullReferenceException))> _
                 Public Sub TestForException ()
-			Dim a As String="Hello"
-			a=Nothing
+			Dim a2 As String="Hello"
+			a2=Nothing
 			Dim b As String=a.Substring(2)
                 End Sub
 End Class

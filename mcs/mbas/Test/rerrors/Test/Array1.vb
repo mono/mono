@@ -5,7 +5,7 @@ Imports System
 Imports Nunit.Framework
                                                                                 
 <TestFixture> _
-Public Class ArrayMismatch
+Public Class Array1
                                                                                 
                 <Test, ExpectedException (GetType (ArrayTypeMismatchException))> _
                 Public Sub TestMismatchException ()

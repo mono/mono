@@ -1,10 +1,10 @@
-' System.OverflowException: Arithmetic operation resulted in an overflow.
+'Expected: System.OverflowException: Arithmetic operation resulted in an overflow.
 
 Imports System
 Imports Nunit.Framework
 
 <TestFixture> _
-Public Class FlowOver
+Public Class AssignmentStatements3
 
                 <Test, ExpectedException (GetType (System.OverflowException))> _
                 Public Sub TestOverFlow ()

@@ -3,7 +3,7 @@ Imports System
 Imports Nunit.Framework
 
 <TestFixture> _
-Public Class InvCast
+Public Class LongLiteral1
 
                 <Test, ExpectedException (GetType (System.InvalidCastException))> _
                 Public Sub TestForException ()

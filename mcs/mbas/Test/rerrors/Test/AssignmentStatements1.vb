@@ -5,7 +5,7 @@ Imports System
 Imports Nunit.Framework
                                                                                 
 <TestFixture> _
-Public Class ArrayType
+Public Class AssignmentStatements1
                                                                                 
                 <Test, ExpectedException (GetType (System.ArrayTypeMismatchException))> _
                 Public Sub TestArrayTypeMismatch ()

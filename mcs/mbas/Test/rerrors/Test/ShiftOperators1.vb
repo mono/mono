@@ -9,7 +9,7 @@ Imports System
 Imports Nunit.Framework
 
 <TestFixture> _
-Public Class ShiftOperator
+Public Class ShiftOperators1
 
 
                 <Test, ExpectedException (GetType (System.InvalidCastException))> _

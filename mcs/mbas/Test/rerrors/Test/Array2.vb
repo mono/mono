@@ -1,10 +1,10 @@
-'System.FormatException  '
+'Expected: System.FormatException  '
                                                                                 
 Imports System
 Imports Nunit.Framework
                                                                                 
 <TestFixture> _
-Public Class ArrayFormat
+Public Class Array2
                                                                                 
                 <Test, ExpectedException (GetType (System.FormatException))> _
                 Public Sub TestArrayFormat ()

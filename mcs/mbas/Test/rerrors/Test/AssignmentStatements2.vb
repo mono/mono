@@ -4,13 +4,12 @@ Imports System
 Imports Nunit.Framework
                                                                                 
 <TestFixture> _
-Public Class FormatExcep
+Public Class AssignmentStatements2
 Inherits SystemException
                 <Test, ExpectedException (GetType (System.FormatException))> _
                 Public Sub TestForFormat ()
                         Dim a As Integer
                         a = "Hello"  + "World"
-                        Console.WriteLine(a)
                                                                                 
             End Sub
 End Class

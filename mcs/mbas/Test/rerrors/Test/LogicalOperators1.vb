@@ -5,7 +5,7 @@
 Imports System
 Imports Nunit.Framework
 <TestFixture> _
-Public Class InvCast
+Public Class LogicalOperators1
                 <Test, ExpectedException (GetType (System.InvalidCastException))> _ 
                 Public Sub TestForException ()
 	        Dim a1 As Boolean = True 

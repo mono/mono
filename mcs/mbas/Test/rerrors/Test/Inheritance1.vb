@@ -1,4 +1,4 @@
-'  Unhandled Exception: System.InvalidCastException: Specified cast is not valid. 
+' Expected: System.InvalidCastException: Specified cast is not valid. 
 
 Imports System
 Imports Nunit.Framework
@@ -10,7 +10,7 @@ Public Class C2
 End Class
 
 <TestFixture> _
-Public Class InvCast 
+Public Class Inheritance1 
                 <Test, ExpectedException (GetType (System.InvalidCastException))> _
                 Public Sub TestForException ()
         		Dim b As C2 = New C1()

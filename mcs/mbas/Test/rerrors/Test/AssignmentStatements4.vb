@@ -6,7 +6,7 @@ Imports System
 Imports Nunit.Framework
 
 <TestFixture> _
-Public Class InvcastEx
+Public Class AssignmentStatements4
 
                 <Test, ExpectedException (GetType (System.InvalidCastException))> _
                 Public Sub TestInvCastEx ()

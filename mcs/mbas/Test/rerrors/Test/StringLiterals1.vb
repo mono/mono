@@ -6,7 +6,7 @@
 Imports System
 Imports Nunit.Framework
 <TestFixture> _
-Public Class Invcast
+Public Class StringLiterals1
                 <Test, ExpectedException (GetType (System.InvalidCastException))> __
 		Public Sub TestForException ()
 			Dim a As String= "Hello"

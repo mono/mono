@@ -6,7 +6,7 @@ Imports System
 Imports Nunit.Framework
 
 <TestFixture> _
-Public Class SomeClass
+Public Class LocalVariables1
 
     Function f1() As Integer()
         f1(0) = 1
@@ -16,6 +16,6 @@ Public Class SomeClass
                 <Test, ExpectedException (GetType (System.Exception))> _
                 Public Sub TestForException ()
 	        Dim b() As Integer = f1()
-        	Console.WriteLine("{0}  {1}", b(0), b(1))
+        	'Console.WriteLine("{0}  {1}", b(0), b(1))
                 End Sub
 End Class

@@ -3,16 +3,14 @@ Imports System
 Imports Nunit.Framework
 
 <TestFixture> _
-Public Class Flowover
+Public Class DecimalLiteral1
 
                 <Test, ExpectedException (GetType (System.OverflowException))> _
                 Public Sub TestOverFlow ()
-		Try
-			Dim a As Decimal
-			a="Hello"
-		Catch e As Exception
-			Console.WriteLine(e.Message)
-		End Try
+
+			Dim a1 As Decimal
+			a1="Hello"
+
                 End Sub
 End Class
 

@@ -6,7 +6,7 @@ Imports System
 Imports Nunit.Framework
                                                                                 
 <TestFixture> _
-Public Class IndexOutOfRange
+Public Class Array3
                                                                                 
                 <Test, ExpectedException (GetType (System.IndexOutOfRangeException))> _
                 Public Sub TestindexOutOfRange ()
