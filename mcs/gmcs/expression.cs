@@ -7137,10 +7137,10 @@ namespace Mono.CSharp {
 					Const c = TypeManager.LookupConstant ((FieldBuilder) fi);
 					
 					if (c != null) {
-						object o = c.LookupConstantValue ();
-						if (o == null)
+						object o;
+						if (!c.LookupConstantValue (out o))
 							return null;
-						
+
 						object real_value = ((Constant) c.Expr).GetValue ();
 
 						return Constantify (real_value, fi.FieldType);
@@ -8473,6 +8473,11 @@ namespace Mono.CSharp {
 
 			if (ec.IsStatic){
 				Error (1511, "Keyword base is not allowed in static method");
+				return null;
+			}
+
+			if (ec.IsFieldInitializer){
+				Error (1512, "Keyword base is not available in the current context");
 				return null;
 			}
 			

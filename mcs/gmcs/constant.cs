@@ -1013,7 +1013,10 @@ namespace Mono.CSharp {
 		
 		public override void Emit (EmitContext ec)
 		{
-			ec.ig.Emit (OpCodes.Ldstr, Value);
+			if (Value == null)
+				ec.ig.Emit (OpCodes.Ldnull);
+			else
+				ec.ig.Emit (OpCodes.Ldstr, Value);
 		}
 	}
 

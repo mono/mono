@@ -3227,6 +3227,16 @@ namespace Mono.CSharp {
 		
 		override public Expression DoResolve (EmitContext ec)
 		{
+			if (getter != null){
+				if (TypeManager.GetArgumentTypes (getter).Length != 0){
+					Report.Error (
+						117, loc, "`{0}' does not contain a " +
+						"definition for `{1}'.", getter.DeclaringType,
+						Name);
+					return null;
+				}
+			}
+
 			if (getter == null){
 				//
 				// The following condition happens if the PropertyExpr was
@@ -3275,6 +3285,14 @@ namespace Mono.CSharp {
 					      "The property `" + PropertyInfo.Name +
 					      "' can not be used in " +
 					      "this context because it lacks a set accessor");
+				return null;
+			}
+
+			if (TypeManager.GetArgumentTypes (setter).Length != 1){
+				Report.Error (
+					117, loc, "`{0}' does not contain a " +
+					"definition for `{1}'.", getter.DeclaringType,
+					Name);
 				return null;
 			}
 

@@ -1,3 +1,86 @@
+2004-04-28  Martin Baulig  <martin@ximian.com>
+
+	* statement.cs (Block.LookupLabel): Also lookup in implicit child blocks.
+	(Block.AddLabel): Call DoLookupLabel() to only search in the
+	current block.
+
+2004-04-28  Martin Baulig  <martin@ximian.com>
+
+	* cfold.cs (ConstantFold.BinaryFold): Added special support for
+	comparing StringConstants and NullLiterals in Equality and Inequality.
+
+2004-04-28  Jackson Harper  <jackson@ximian.com>
+
+	* driver.cs: Attempt to load referenced assemblies from the
+	GAC. This is the quick and dirty version of this method that
+	doesnt take into account versions and just takes the first
+	canidate found. Will be good enough for now as we will not have more
+	then one version installed into the GAC until I update this method.
+
+2004-04-28  Martin Baulig  <martin@ximian.com>
+
+	* typemanager.cs (TypeManager.CheckStructCycles): New public
+	static method to check for cycles in the struct layout.
+
+	* rootcontext.cs (RootContext.PopulateTypes): Call
+	TypeManager.CheckStructCycles() for each TypeContainer.
+	[Note: We only need to visit each type once.]
+
+2004-04-28  Martin Baulig  <martin@ximian.com>
+
+	* constant.cs (StringConstant.Emit): Emit Ldnull if we're null.
+
+	* const.cs (Const.LookupConstantValue): Return a `bool' signalling
+	success and added `out object value'.  Use a `bool resolved' field
+	to check whether we've already been called rather than
+	`ConstantValue != null' since this breaks for NullLiterals.
+
+2004-04-28  Raja R Harinath  <rharinath@novell.com>
+
+	* driver.cs (Driver.MainDriver) [IsModuleOnly]: Open code the
+	setting of this flag, since the 'set' method may be non-public.
+
+2004-04-28  Raja R Harinath  <rharinath@novell.com>
+
+	* flowanalysis.cs (FlowBranchingException.LookupLabel): Add a null
+	check on current_vector.Block.
+
+2004-04-27  Martin Baulig  <martin@ximian.com>
+
+	* expression.cs (BaseAccess.CommonResolve): Don't allow `base' in
+	a field initializer.  Fixes #56459.
+
+2004-04-27  Martin Baulig  <martin@ximian.com>
+
+	* ecore.cs (PropertyExpr.DoResolve/DoResolveLValue): Check whether
+	we're not attempting to use an indexer.  Fixes #52154.
+
+2004-04-27  Martin Baulig  <martin@ximian.com>
+
+	* statement.cs (Return): Don't create a return label if we don't
+	need it; reverts my change from January 20th.  Thanks to Ben
+	Maurer for this.
+
+2004-04-27  Martin Baulig  <martin@ximian.com>
+
+	According to the spec, `goto' can only leave a nested scope, but
+	never enter it.
+
+	* statement.cs (Block.LookupLabel): Only lookup in the current
+	block, don't recurse into parent or child blocks.
+	(Block.AddLabel): Check in parent and child blocks, report
+	CS0140/CS0158 if we find a duplicate.
+	(Block): Removed this indexer for label lookups.
+	(Goto.Resolve): Call LookupLabel() on our current FlowBranching;
+	this already does the error reporting for us.
+
+	* flowanalysis.cs
+	(FlowBranching.UsageVector.Block): New public variable; may be null.
+	(FlowBranching.CreateSibling): Added `Block' argument.
+	(FlowBranching.LookupLabel): New public virtual method.  Lookup a
+	label for the target of a `goto' and check whether we're not
+	leaving a `finally'.
+
 2004-04-27  Martin Baulig  <martin@ximian.com>
 
 	* flowanalysis.cs (FlowBranching.UsageVector.MergeChild): If we're
@@ -29,6 +112,7 @@
 	for a named field or property, implicity convert it to the correct
 	type.
 
+>>>>>>> 1.1450
 2004-04-27  Raja R Harinath  <rharinath@novell.com>
 
 	* statement.cs (Block.Block): Implicit blocks share

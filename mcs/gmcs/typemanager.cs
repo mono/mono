@@ -1521,6 +1521,11 @@ public class TypeManager {
 			return false;
 	}
 
+	public static bool IsBuiltinType (TypeContainer tc)
+	{
+		return IsBuiltinType (tc.TypeBuilder);
+	}
+
 	//
 	// This is like IsBuiltinType, but lacks decimal_type, we should also clean up
 	// the pieces in the code where we use IsBuiltinType and special case decimal_type.
@@ -2149,6 +2154,57 @@ public class TypeManager {
 			return false;
 
 		indexer_arguments.Add (pb, args);
+
+		return true;
+	}
+
+	public static bool CheckStructCycles (TypeContainer tc, Hashtable seen)
+	{
+		Hashtable hash = new Hashtable ();
+		return CheckStructCycles (tc, seen, hash);
+	}
+
+	public static bool CheckStructCycles (TypeContainer tc, Hashtable seen,
+					      Hashtable hash)
+	{
+		if (!(tc is Struct) || IsBuiltinType (tc))
+			return true;
+
+		//
+		// `seen' contains all types we've already visited.
+		//
+		if (seen.Contains (tc))
+			return true;
+		seen.Add (tc, null);
+
+		//
+		// `hash' contains all types in the current path.
+		//
+		hash.Add (tc, null);
+
+		if (tc.Fields == null)
+			return true;
+
+		foreach (Field field in tc.Fields) {
+			if (field.FieldBuilder.IsStatic)
+				continue;
+
+			Type ftype = field.FieldBuilder.FieldType;
+			TypeContainer ftc = LookupTypeContainer (ftype);
+			if (ftc == null)
+				continue;
+
+			if (hash.Contains (ftc)) {
+				Report.Error (523, tc.Location,
+					      "Struct member `{0}.{1}' of type `{2}' " +
+					      "causes a cycle in the struct layout",
+					      tc.Name, field.Name, ftc.Name);
+				return false;
+			}
+
+			if (!CheckStructCycles (ftc, seen, hash))
+				return false;
+		}
 
 		return true;
 	}
