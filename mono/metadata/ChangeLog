@@ -1,3 +1,10 @@
+2004-04-06  Martin Baulig  <martin@ximian.com>
+
+	* row-indexes.h
+	(MONO_GENERICPARAM_DEPRECATED_CONSTRAINT): Removed.
+
+	* metadata.c (GenericParamSchema): Removed "DeprecatedConstraint".
+
 2004-04-06  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* process.c: quote the argument passed to the shell on windows.
