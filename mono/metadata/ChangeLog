@@ -1,4 +1,9 @@
 
+Mon Jun 17 16:32:56 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* class.h, class.c, reflection.c: handle ignorecase in GetType ().
+	Better signatures with vtable error dump.
+
 Mon Jun 17 16:13:35 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* reflection.c, reflection.h, icall.c: fixes for multiple-nested types.
