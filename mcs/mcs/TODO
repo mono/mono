@@ -1,3 +1,8 @@
+Error Reporting:
+----------------
+
+	* Make yyerror show a nice syntax error, instead of the current mess.
+
 Iterators
 ---------
 	* `yield' is no longer a keyword, it only has special
