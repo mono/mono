@@ -27,7 +27,12 @@ namespace System.Collections {
 			OnClearComplete();
 		}
 		public virtual void RemoveAt (int index) {
+			object objectToRemove;
+			objectToRemove = InnerList[index];
+			OnValidate(objectToRemove);
+			OnRemove(index, objectToRemove);
 			InnerList.RemoveAt(index);
+			OnRemoveComplete(index, objectToRemove);
 		}
 		
 		// Protected Instance Constructors

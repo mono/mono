@@ -1,4 +1,11 @@
 2001-11-04 Nick Drochak <ndrochak@gol.com>
+	* ArrayList.cs: Fixed "off by one" error when shifting left the array when
+	items are removed.
+
+	* CollectionBase.cs: Added OnValidate(), OnRemove() and OnRemoveComplete()
+	hook methods to the RemoveAt() method.
+
+2001-11-04 Nick Drochak <ndrochak@gol.com>
 	* ArrayList.cs: Added private enumerator class and make GetEnumerator()
 	methods return an instance of it.
 

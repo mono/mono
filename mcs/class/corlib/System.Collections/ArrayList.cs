@@ -128,7 +128,7 @@ namespace System.Collections {
 					}
 				} else {
 					int numelts = count - startIndex + numshift;
-					for (int i = startIndex; i < numelts; i++) {
+					for (int i = startIndex; i <= numelts; i++) {
 						dataArray[i] = dataArray[i - numshift];
 					}
 					for (int i = count + numshift; i < count; i++) {
