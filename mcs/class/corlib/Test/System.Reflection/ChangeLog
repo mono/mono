@@ -1,3 +1,9 @@
+2004-06-09  Gert Driesen <drieseng@users.sourceforge.net>
+
+	* AssemblyNameTests.cs: added tests for AssemblyName.FullName 
+	and serialization of AssemblyName, converted tests to use Assert
+	class
+
 2004-06-05  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* BinderTests.cs: added test for null type in the argument list.
