@@ -1,5 +1,9 @@
 2003-08-19 Ben Maurer  <bmaurer@users.sourceforge.net>
 
+	* XslNumber.cs: Initial support.
+
+2003-08-19 Ben Maurer  <bmaurer@users.sourceforge.net>
+
 	* XslCopyOf.cs, XslLiteralElement: Use namespace support in Outputter.
 
 2003-08-19 Ben Maurer  <bmaurer@users.sourceforge.net>
