@@ -4,7 +4,7 @@ include ../../build/rules.make
 
 LIBRARY = System.Web.dll
 LIB_MCS_FLAGS = \
-	/nowarn:0168 /nowarn:0162	\
+	/nowarn:649 /nowarn:169 	\
 	/r:$(corlib)	 		\
 	/r:System.dll 			\
 	/r:System.Drawing.dll 		\

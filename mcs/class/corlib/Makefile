@@ -13,6 +13,7 @@ else
 test_against = $(reslib)
 endif
 
+LOCAL_MCS_FLAGS = /nowarn:649 /nowarn:169
 corlib = $(topdir)/class/lib/corlib.dll
 testlib = corlib_test.dll
 cmplib = $(topdir)/class/lib/corlib_cmp.dll

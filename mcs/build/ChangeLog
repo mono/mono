@@ -1,3 +1,8 @@
+2003-08-03  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* config-default.make: the /nowarn arguments are now set on a per
+	library basis.
+
 2003-07-29  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* executable.make: install-local depends on the program too.

@@ -7,7 +7,8 @@ include ../../build/rules.make
 # cdeclCallback.dll should be manually copied to library folder
 
 LIBRARY = System.Drawing.dll
-LIB_MCS_FLAGS = /unsafe /define:DECLARE_CDECL_DELEGATES /r:$(corlib) /r:System.dll
+LIB_MCS_FLAGS = /unsafe /define:DECLARE_CDECL_DELEGATES /r:$(corlib) \
+		/r:System.dll /nowarn:649 /nowarn:169
 NO_TEST = yes
 
 include ../../build/library.make

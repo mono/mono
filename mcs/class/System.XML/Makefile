@@ -4,7 +4,7 @@ include ../../build/rules.make
 
 LIBRARY = System.Xml.dll
 
-LIB_MCS_FLAGS = /unsafe /r:$(corlib) /r:System.dll
+LIB_MCS_FLAGS = /unsafe /r:$(corlib) /r:System.dll /nowarn:649 /nowarn:169
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS)
 
 EXTRA_DISTFILES = \

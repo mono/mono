@@ -8,8 +8,7 @@
 
 RUNTIME_FLAGS = 
 TEST_HARNESS = $(topdir)/class/lib/nunit-console.exe
-MCS_FLAGS = $(PLATFORM_DEBUG_FLAGS) /nowarn:1595 /nowarn:0169 \
- /nowarn:0109 /nowarn:0067 /nowarn:0649 /nowarn:0679
+MCS_FLAGS = $(PLATFORM_DEBUG_FLAGS)
 LIBRARY_FLAGS = /noconfig
 CFLAGS = -g -O2
 INSTALL = /usr/bin/install

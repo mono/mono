@@ -12,7 +12,7 @@ endif
 
 LIBRARY = System.Data.dll
 LIB_MCS_FLAGS = \
-	/nowarn:0219 /nowarn:0168		\
+	/nowarn:649 /nowarn:169 /nowarn:219 /nowarn:168 \
 	/r:$(corlib)				\
 	/r:$(system)			 	\
 	/r:System.Xml.dll 			\
