@@ -175,10 +175,16 @@ namespace System.Web
 				if (loaded)
 					return;
 
-				string path = Path.GetDirectoryName (WebConfigurationSettings.MachineConfigPath);
-				path = Path.Combine (path, "browscap.ini");
+				string dir = Path.GetDirectoryName (WebConfigurationSettings.MachineConfigPath);
+				string filepath = Path.Combine (dir, "browscap.ini");
+				if (!File.Exists (filepath)) {
+					// try removing the trailing version directory
+					dir = Path.GetDirectoryName (dir);
+					filepath = Path.Combine (dir, "browscap.ini");
+				}
+
 				try {
-					LoadFile (path);
+					LoadFile (filepath);
 				} catch (Exception) { }
 
 				loaded = true;

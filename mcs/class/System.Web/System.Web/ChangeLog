@@ -1,5 +1,10 @@
 2005-02-22 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* CapabilitiesLoader.cs: fix the path, as machine.config is now in a
+	x.x/ directory below $PREFIX/etc/mono.
+
+2005-02-22 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* HttpRequest.cs: fail on unicode full-width '<' and '>' too. Fixes
 	a security report (http://secunia.com/advisories/14325) that wan't
 	reported to us before public disclosure.
