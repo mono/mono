@@ -26,9 +26,12 @@
 //	Jordi Mas i Hernandez	jordi@ximian.com
 //
 //
-// $Revision: 1.5 $
+// $Revision: 1.6 $
 // $Modtime: $
 // $Log: ScrollBar.cs,v $
+// Revision 1.6  2004/08/18 15:56:12  jordi
+// fixes to scrollbar: steps and multiple timers
+//
 // Revision 1.5  2004/08/10 19:21:27  jordi
 // scrollbar enhancements and standarize on win colors defaults
 //
@@ -97,6 +100,9 @@ namespace System.Windows.Forms
 //			RightToLeft = RightToLeft.No;
 			Scroll = null;
 			ValueChanged = null;			
+
+			holdclick_timer.Elapsed += new ElapsedEventHandler (OnHoldClickTimer);
+			firstclick_timer.Elapsed += new ElapsedEventHandler (OnFirstClickTimer);
 						
 			SetStyle (ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint, true);
 			SetStyle (ControlStyles.ResizeRedraw | ControlStyles.Opaque, true);
@@ -434,7 +440,6 @@ namespace System.Windows.Forms
     		private void OnFirstClickTimer (Object source, ElapsedEventArgs e)
 		{
 			firstclick_timer.Enabled = false;			
-			holdclick_timer.Elapsed += new ElapsedEventHandler (OnHoldClickTimer);
 		        holdclick_timer.Interval = 50;
 		        holdclick_timer.Enabled = true;		        
 		}			
@@ -452,9 +457,10 @@ namespace System.Windows.Forms
 				secondbutton_state = ButtonState.Normal;				
 				Refresh ();
 			}			
+
+			if (thumb_pressed == true) {/* && ((vert == true && thumb_pos.Contains (thumb_pos.X, e.Y))
+				|| (vert == false && thumb_pos.Contains (e.X, thumb_pos.Y))))  {*/
 			
-			if (thumb_pos.Contains (new Point (e.X, e.Y)) && thumb_pressed) {				    				
-    				
     				int pixel_pos;
     				
     				if (vert)
@@ -475,11 +481,6 @@ namespace System.Windows.Forms
 				Refresh ();
 			}						
 			
-			if (!thumb_pos.Contains (new Point (e.X, e.Y)) && thumb_pressed) {				
-    				thumb_pressed = false;				
-				Refresh ();
-			}
-			
     		}	    		
     		
     		protected override void OnMouseDown (MouseEventArgs e) 
@@ -499,7 +500,8 @@ namespace System.Windows.Forms
 			}
 			
 			if (thumb_pos.Contains (point)) {								
-				thumb_pressed = true;				
+				thumb_pressed = true;
+				XplatUI.GrabWindow (Handle);
 				Refresh ();
 				if (vert)
 					thumb_pixel_click_move = e.Y;
@@ -507,18 +509,17 @@ namespace System.Windows.Forms
 					thumb_pixel_click_move = e.X;
 			}			
 			else
-				if (thumb_area.Contains (point)) {								
-					
+				if (thumb_area.Contains (point)) {					
 					if (vert) {					
 						if (e.Y > thumb_pos.Y + thumb_pos.Height)
-							LargeIncrement();
+							LargeIncrement ();
 						else
-							LargeDecrement();
+							LargeDecrement ();
 					} else 	{
 						if (e.X > thumb_pos.X + thumb_pos.Width)
-							LargeIncrement();
+							LargeIncrement ();
 						else
-							LargeDecrement();
+							LargeDecrement ();
 					}							
 					
 				}			
@@ -528,56 +529,43 @@ namespace System.Windows.Forms
 			if ((((firstbutton_state & ButtonState.Pushed) == ButtonState.Pushed)
 			|| ((secondbutton_state & ButtonState.Pushed) == ButtonState.Pushed)) && 
 				firstclick_timer.Enabled == false) {			
-				//Console.WriteLine ("Activate Timer");
-				firstclick_timer.Elapsed += new ElapsedEventHandler (OnFirstClickTimer);
-		        	firstclick_timer.Interval = 400;
+				//Console.WriteLine ("Activate Timer");				
+		        	firstclick_timer.Interval = 200;
 		        	firstclick_timer.Enabled = true;
 		        	firstclick_timer.AutoReset = false;		        	
 			}  			
     		}
     		
-    		private void SmallIncrement()
-    		{
-			if (vert)
-				UpdateThumbPos (thumb_pos.Y + SmallChange, true);
-			else
-				UpdateThumbPos (thumb_pos.X + SmallChange, true);
+    		private void SmallIncrement ()
+    		{			
+			UpdatePos (Value + SmallChange, true);
 
 			Refresh ();				
 			fire_Scroll (new ScrollEventArgs (ScrollEventType.SmallIncrement, position));
 			fire_Scroll (new ScrollEventArgs (ScrollEventType.EndScroll, position));
     		}
     		
-    		private void SmallDecrement()
+    		private void SmallDecrement ()
     		{
-			if (vert)
-				UpdateThumbPos (thumb_pos.Y - SmallChange, true);
-			else
-				UpdateThumbPos (thumb_pos.X - SmallChange, true);		
-
+			UpdatePos (Value - SmallChange, true);
+			
 			Refresh ();				
 			fire_Scroll (new ScrollEventArgs (ScrollEventType.SmallDecrement, position));
 			fire_Scroll (new ScrollEventArgs (ScrollEventType.EndScroll, position));
     		}
     		
-    		private void LargeIncrement()
+    		private void LargeIncrement ()
     		{
-			if (vert)
-				UpdateThumbPos (thumb_pos.Y + LargeChange, true);
-			else
-				UpdateThumbPos (thumb_pos.X + LargeChange, true);
-				
+			UpdatePos (Value + LargeChange, true);
+
 			Refresh ();
 			fire_Scroll (new ScrollEventArgs (ScrollEventType.LargeIncrement, position));
 			fire_Scroll (new ScrollEventArgs (ScrollEventType.EndScroll, position));
     		}
     		
-    		private void LargeDecrement()
+    		private void LargeDecrement ()
     		{
-			if (vert)
-				UpdateThumbPos (thumb_pos.Y - LargeChange, true);
-			else
-				UpdateThumbPos (thumb_pos.X - LargeChange, true);		
+			UpdatePos (Value - LargeChange, true);
 				
 			Refresh ();
 			fire_Scroll (new ScrollEventArgs (ScrollEventType.LargeDecrement, position));
@@ -601,17 +589,17 @@ namespace System.Windows.Forms
 				holdclick_timer.Enabled = false;
 			}
 			
-			if (thumb_pos.Contains (new Point (e.X, e.Y))) {																
-				
+			if (thumb_pressed == true) {				
 				fire_Scroll (new ScrollEventArgs (ScrollEventType.ThumbPosition, position));
 				fire_Scroll (new ScrollEventArgs (ScrollEventType.EndScroll, position));
-				
+				XplatUI.ReleaseWindow (Handle);
 				thumb_pressed = false;				
 				Refresh ();
 			}
-    		}
+
+
+    		}    		
     		
-    		//TODO: Untested
     		protected override void OnKeyDown (KeyEventArgs key)
 		{
 			switch (key.KeyCode){
