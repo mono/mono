@@ -10,7 +10,8 @@ using System;
 
 namespace System.Runtime.Remoting.Lifetime {
 
-	public class LifetimeServices
+	//LAMESPEC: MS docs don't say that this class is sealed.
+	public sealed class LifetimeServices
 	{
 		[MonoTODO]
 		public LifetimeServices ()
