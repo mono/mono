@@ -94,3 +94,13 @@ the Microsoft C# compiler:
 
 -204	yield statement in something which is not a method-body,
 	accessor-body or operator-body
+
+-205    A method containing a yield statement is not IEnumerator.
+
+-206    Return statement not allowed inside iterators.
+
+-207    A parameter in an enumerator method contains out or ref
+
+-208    Yield statement appears inside finally clause
+
+-209    Yield statment appears in anonymous method.
