@@ -51,22 +51,6 @@ namespace System.Runtime.Remoting.Channels.Http
 
 	internal sealed class HttpServer
 	{
-		private TcpListener listener=null;
-		private const int nTimeOut = 1000;
-		
-		public HttpServer(int port)
-		{
-			try
-			{
-				listener = new TcpListener(port);
-			}
-			catch(NullReferenceException)
-			{
-				Console.WriteLine("The port is bound to another application");
-			}
-		}
-
-		
 		public static void ProcessRequest (object reqInfo)
 		{
 			if(reqInfo as RequestArguments == null)
