@@ -489,7 +489,8 @@ el.ElementType != schemaAnyType)
 			string name = rs.ExplicitName != null ? rs.ExplicitName : ptab.TableName + '_' + ctab.TableName;
 			DataRelation rel = new DataRelation (name, pcol, ccol, rs.CreateConstraint);
 			rel.Nested = rs.IsNested;
-//			rel.ParentTable.PrimaryKey = rel.ParentColumns;
+			if (rs.CreateConstraint)
+				rel.ParentTable.PrimaryKey = rel.ParentColumns;
 			return rel;
 		}
 

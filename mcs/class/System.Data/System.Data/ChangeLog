@@ -1,5 +1,10 @@
 2004-05-14  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XmlSchemaDataImporter.cs : When Creating constraints with related
+	  to DataRelation creation, also set PrimaryKey to the parent table.
+
+2004-05-14  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XmlSchemaDataImporter.cs : 
 	  Design change to add indirect table and relation structures.
 	  Support for "relation" annotation for local element.
