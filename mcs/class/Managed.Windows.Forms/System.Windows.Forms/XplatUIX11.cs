@@ -1022,6 +1022,7 @@ namespace System.Windows.Forms {
 						xevent.TimerNotifyEvent.handler = new EventHandler (timer.TickHandler);
 
 						fire_list.Add (xevent);
+						timer.Update (now);
 					}
 					int next = (int) (timer.Expires.AddMilliseconds (timer.Interval) - now).TotalMilliseconds;
 					if (i == 0 || next < next_fire)

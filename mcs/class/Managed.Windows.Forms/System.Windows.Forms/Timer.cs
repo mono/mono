@@ -106,7 +106,6 @@ namespace System.Windows.Forms {
 		internal void FireTick ()
 		{
 			OnTick (EventArgs.Empty);
-			Update (DateTime.Now);
 		}
 
 
