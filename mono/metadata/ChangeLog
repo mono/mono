@@ -1,3 +1,12 @@
+2005-01-17  Zoltan Varga  <vargaz@freemail.hu>
+
+	* marshal.c (mono_struct_delete_old): Do not free lpwstr fields.
+
+	* marshal.c: Rename emit_ptr_to_str_conv and its pair to 
+	emit_ptr_to_object_conv. 
+
+	* marshal.c (emit_ptr_to_object_conv): Add support for lpwstr->str
+	marshalling. Fixes #71352.
 
 Mon Jan 17 10:59:20 CET 2005 Paolo Molaro <lupus@ximian.com>
 
