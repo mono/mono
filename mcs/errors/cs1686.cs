@@ -1,3 +1,5 @@
+// Compiler options: -unsafe
+
 class X {
 	delegate void S ();
 
