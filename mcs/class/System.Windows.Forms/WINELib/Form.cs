@@ -18,6 +18,7 @@ using System.Collections;
 namespace System.Windows.Forms {
 
 	public class Form : ContainerControl  {
+
 		string caption;
 
 		public Form () : base ()
@@ -510,15 +511,15 @@ namespace System.Windows.Forms {
 
 		public void SetDesktopLocation (int x, int y)
 		{
-			Win32.SetWindowPos (window.Handle, (IntPtr) 0, 
+			Win32.SetWindowPos ((IntPtr) window.Handle, (IntPtr) 0, 
 					    x, y, 0, 0, 
-					    Win32.SWP_NOSIZE | 
-					    Win32.SWP_NOZORDER);
+					    (int) (Win32.SWP_NOSIZE | 
+					    Win32.SWP_NOZORDER));
 		}
 
-		public void Show ()
+		public new void Show ()
 		{
-			Win32.ShowWindow (window.Handle, Win32.SW_SHOW);
+			Win32.ShowWindow (window.Handle, (int) Win32.SW_SHOW);
 		}
 
 		[MonoTODO]
@@ -895,31 +896,31 @@ namespace System.Windows.Forms {
 
 			switch (m.Msg) {
 			case Win32.WM_CLOSE:
-				EventArgs e;
-				OnClosed (e);
+				EventArgs closeArgs;
+				OnClosed (closeArgs);
 				break;
 				//case ?:
 				//OnCreateControl()
 				//break;
 			case Win32.WM_FONTCHANGE:
-				EventArgs e;
-				OnFontChanged (e);
+				EventArgs fontChangedArgs;
+				OnFontChanged (fontChangedArgs);
 				break;
 			case Win32.WM_CREATE:
-				EventArgs e;
-				OnHandleCreated (e);
+				EventArgs handleCreatedArgs;
+				OnHandleCreated (handleCreatedArgs);
 				break;
 			case Win32.WM_DESTROY:
-				EventArgs e;
-				OnHandleDestroyed (e);
+				EventArgs destroyArgs;
+				OnHandleDestroyed (destroyArgs);
 				break;
 			case Win32.WM_INPUTLANGCHANGE:
-				InputLanguageChangedEventArgs e;
-				OnInputLanguageChanged (e);
+				InputLanguageChangedEventArgs ilChangedArgs;
+				OnInputLanguageChanged (ilChangedArgs);
 				break;
 			case Win32.WM_INPUTLANGCHANGEREQUEST:
-				InputLanguageChangingEventArgs e;
-				OnInputLanguagedChanging (e);
+				InputLanguageChangingEventArgs ilChangingArgs;
+				OnInputLanguagedChanging (ilChangingArgs);
 				break;
 				/*
 				  case Win32.WM_SHOWWINDOW:
@@ -934,38 +935,38 @@ namespace System.Windows.Forms {
 				// OnMaximumSizedChanged(EventArgs e)
 				//break;
 			case Win32.WM_MDIACTIVATE:
-				EventArgs e;
-				OnMdiChildActive (e);
+				EventArgs mdiActivateArgs;
+				OnMdiChildActive (mdiActivateArgs);
 				break;
 			case Win32.WM_EXITMENULOOP:
-				EventArgs e;
-				OnMenuComplete (e);
+				EventArgs menuCompleteArgs;
+				OnMenuComplete (menuCompleteArgs);
 				break;
 			case Win32.WM_ENTERMENULOOP:
-				EventArgs e;
-				OnMenuStart (e);
+				EventArgs enterMenuLoopArgs;
+				OnMenuStart (enterMenuLoopArgs);
 				break;
 				// case ?:
 				// OnMinimumSizeChanged(EventArgs e)
 				// break;
 			case Win32.WM_PAINT:
-				PaintEventArgs e;
-				OnPaint (e);
+				PaintEventArgs paintArgs;
+				OnPaint (paintArgs);
 				break;
 			case Win32.WM_SIZE:
-				EventArgs e;
-				OnResize (e);
+				EventArgs resizeArgs;
+				OnResize (resizeArgs);
 				break;
 				//case ?:
 				//OnStyleChanged(EventArgs e)
 				//break;
 			case Win32.WM_SETTEXT:
-				EventArgs e;
-				OnTextChanged (e);
+				EventArgs textChangedArgs;
+				OnTextChanged (textChangedArgs);
 				break;
 			case Win32.WM_SHOWWINDOW:
-				EventArgs e;
-				OnVisibleChanged (e);
+				EventArgs visibleChangedArgs;
+				OnVisibleChanged (visibleChangedArgs);
 				break;
 			}
 		}

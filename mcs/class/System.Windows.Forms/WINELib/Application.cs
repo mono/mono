@@ -18,6 +18,7 @@ using System.Threading;
 using System.Globalization;
 using System.Reflection;
 using System.Collections;
+using System.Runtime.CompilerServices;
 
 namespace System.Windows.Forms {
 
@@ -30,6 +31,9 @@ namespace System.Windows.Forms {
 
 	[MonoTODO]
 	public sealed class Application {
+
+		//[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		//extern static int GetInstance();
 
 		static private Form applicationForm;
 
@@ -180,9 +184,9 @@ namespace System.Windows.Forms {
 			int msg;
 			context.Show ();
 
-			while (Win32.GetMessageA (&msg, 0, 0, 0) != 0) {
-				Win32.TranslateMessage (&msg);
-				Win32.DispatchMessageA (&msg);
+			while (Win32.GetMessageA (ref msg, 0, 0, 0) != 0) {
+				Win32.TranslateMessage (ref msg);
+				Win32.DispatchMessageA (ref msg);
 			}
 		}
 		
@@ -191,6 +195,8 @@ namespace System.Windows.Forms {
 		public static event EventHandler Idle;
 		public static event ThreadExceptionEventHandler ThreadException;
 		public static event EventHandler ThreadExit;
+
+
 
 		// The WndProc is initialized in the monostub and calls the 
 		// WndProc defined here
@@ -212,8 +218,7 @@ namespace System.Windows.Forms {
 			
 			while (e.MoveNext()) {
 				IMessageFilter filter = 
-				        (IMessageFilter) e.Current;
-
+				    (IMessageFilter) e.Current;
 				if (filter.PreFilterMessage (ref message))
 					return message.Result;
 			}
@@ -221,8 +226,7 @@ namespace System.Windows.Forms {
 			if (applicationForm != null)
 				applicationForm.WndProc (ref message);
 
-			return Win32.DefWindowProcA (hWnd, msg, 
-						     wParam, lParam);
+			return message.Result;
 		}
 	}
 }

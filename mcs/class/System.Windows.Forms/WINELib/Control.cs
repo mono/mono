@@ -86,7 +86,7 @@ namespace System.Windows.Forms {
 			cp.ExStyle = 0;
 			cp.Param = 0;
 			cp.Param = 0;
-			cp.Style = Win32.WS_OVERLAPPEDWINDOW;
+			cp.Style = (int) Win32.WS_OVERLAPPEDWINDOW;
 
 			window.CreateHandle (cp);
 
@@ -403,15 +403,15 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		[MonoTODO]
- 		public static Font DefaultFont {
+		//[MonoTODO]
+ 		//public static Font DefaultFont {
 			// FIXME: get current system font from GenericSansSerif
 			//        call ArgumentException not called
-			get {
-				throw new NotImplementedException ();
+		//	get {
+		//		throw new NotImplementedException ();
 				//return (FontFamily.GenericSansSerif); 
-			}
-		}
+		//	}
+		//}
 		
 		public static Color DefaultForeColor {
 			get {
@@ -482,17 +482,17 @@ namespace System.Windows.Forms {
 		}
 		
 		[MonoTODO]
-		public virtual Font Font {
+		//public virtual Font Font {
 			// CHECKME:
-			get {
+		//	get {
 				//return font;
-				throw new NotImplementedException ();
-			}
-			set {
+		//		throw new NotImplementedException ();
+		//	}
+		//	set {
 				//font=value;
-				throw new NotImplementedException ();
-			}
-		}
+		//		throw new NotImplementedException ();
+		//	}
+		//}
 		
 		[MonoTODO]
 		protected int FontHeight {
@@ -946,10 +946,10 @@ namespace System.Windows.Forms {
 		}
 	
 		[MonoTODO]
-		public IContainerControl GetContainerControl () 
-		{
-			throw new NotImplementedException ();
-		}
+		//public IContainerControl GetContainerControl () 
+		//{
+		//	throw new NotImplementedException ();
+		//}
 		
 		[MonoTODO]
 		public Control GetNextControl (Control ctl, bool forward) 

@@ -1,3 +1,13 @@
+2002-8-20  John Sohn <jsohn@columbus.rr.com>
+	* Win32.cs: now uses correct Win32 imports and defs. Fixed file provded
+	by Dennis Hayes (dennish@raytek.com)
+	* Application.cs: fixed Win32 API calls
+	* Control.cs: commented out functions which broked build 
+	but are not currently implemented
+	* DrawItemEventHandler.cs: 
+	* MenuItem.cs: added empty classes that allows build to continue
+	without commenting out refernces to them in the source
+	* NativeWindow.cs: fixed Win32 API calls
 2002-8-19  John Sohn <jsohn@columbus.rr.com>
 	* monostart.c: fixed link from monostub WndProc to Application
 	class WndProc

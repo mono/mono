@@ -57,19 +57,20 @@ namespace System.Windows.Forms {
 
 		public virtual void CreateHandle (CreateParams cp) {
 			IntPtr createdHWnd = (IntPtr) 0;
+			Object lpParam;
 
-			windowHandle = Win32.CreateWindowExA (cp.ExStyle,
+			windowHandle = Win32.CreateWindowExA ((uint) cp.ExStyle,
 							      cp.ClassName,
 							      cp.Caption,
-							      cp.Style,
+							      (uint) cp.Style,
 							      cp.X,
 							      cp.Y,
 							      cp.Width,
 							      cp.Height,
-							      cp.Parent,
+							      (IntPtr) cp.Parent,
 							      (IntPtr) 0,
 							      (IntPtr) 0,
-							      null);
+							      ref lpParam);
 			
 			if (windowHandle != (IntPtr) 0)
 				windowCollection.Add (windowHandle, this);
