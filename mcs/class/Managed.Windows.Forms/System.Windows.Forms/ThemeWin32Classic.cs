@@ -25,9 +25,12 @@
 //
 //
 //
-// $Revision: 1.17 $
+// $Revision: 1.18 $
 // $Modtime: $
 // $Log: ThemeWin32Classic.cs,v $
+// Revision 1.18  2004/08/12 18:54:37  jackson
+// Handle owner draw status bars
+//
 // Revision 1.17  2004/08/11 01:31:35  jackson
 // Create Brushes as little as possible
 //
@@ -1502,7 +1505,7 @@ namespace System.Windows.Forms
 						area.Y + horz_border,
 						area.Width - SizeGripWidth - horz_border,
 						area.Height - horz_border);
-				DrawStatusBarPanel (dc, new_area, br_forecolor, panel);
+				DrawStatusBarPanel (dc, new_area, -1, br_forecolor, panel);
 			} else if (sb.ShowPanels) {
 				SolidBrush br_forecolor = GetControlForeBrush (sb.ForeColor);
 				int prev_x = area.X + horz_border;
@@ -1511,7 +1514,7 @@ namespace System.Windows.Forms
 					Rectangle pr = new Rectangle (prev_x, y,
 							sb.Panels [i].Width, area.Height);
 					prev_x += pr.Width + StatusBarHorzGapWidth;
-					DrawStatusBarPanel (dc, pr, br_forecolor, sb.Panels [i]);
+					DrawStatusBarPanel (dc, pr, i, br_forecolor, sb.Panels [i]);
 				}
 			}
 
@@ -1521,7 +1524,7 @@ namespace System.Windows.Forms
 		}
 
 
-		public void DrawStatusBarPanel (Graphics dc, Rectangle area,
+		public void DrawStatusBarPanel (Graphics dc, Rectangle area, int index,
 				SolidBrush br_forecolor, StatusBarPanel panel)
 		{
 			int border_size = 3; // this is actually const, even if the border style is none
@@ -1534,8 +1537,13 @@ namespace System.Windows.Forms
 				DrawBorder3D(dc, area, border_style, Border3DSide.All);
 			}
 
-			if (panel.Style == StatusBarPanelStyle.OwnerDraw)
-				throw new NotImplementedException ("OwnerDraw StatusPanels");
+			if (panel.Style == StatusBarPanelStyle.OwnerDraw) {
+                                StatusBarDrawItemEventArgs e = new StatusBarDrawItemEventArgs (
+                                        dc, panel.Parent.Font, area, index, DrawItemState.Default,
+                                        panel, panel.Parent.ForeColor, panel.Parent.BackColor);
+                                panel.Parent.OnDrawItemInternal (e);
+                                return;
+                        }
 
 			int left = area.Left;
 			if (panel.Icon != null) {
