@@ -172,5 +172,37 @@ namespace MonoTests.System.Xml.Xsl
 			t.Load (new XPathDocument (new StringReader (xsl)));
 			t.Transform (new XPathDocument (new XmlTextReader (new StringReader ("<root><foo attr='A'/><foo attr='B'/><foo attr='C'/></root>"))), null, sw);
 		}
+
+		[Test]
+		public void EvaluateEmptyVariableAsBoolean ()
+		{
+			string xsl = @"<xsl:stylesheet xmlns:xsl='http://www.w3.org/1999/XSL/Transform' version='1.0'>
+<xsl:template match='/'>
+<xsl:variable name='var'><empty /></xsl:variable>
+  <root><xsl:if test='$var'>true</xsl:if></root>
+</xsl:template>
+</xsl:stylesheet>";
+			XslTransform t = new XslTransform ();
+			t.Load (new XPathDocument (new StringReader (xsl)));
+			StringWriter sw = new StringWriter ();
+			t.Transform (
+				new XPathDocument (new StringReader ("<root/>")),
+				null,
+				sw);
+			Assert (sw.ToString ().IndexOf ("true") > 0);
+		}
+
+		[Test]
+		[ExpectedException (typeof (XsltCompileException))]
+		public void NotAllowedPatternAxis ()
+		{
+			string xsl = @"<xsl:stylesheet xmlns:xsl='http://www.w3.org/1999/XSL/Transform' version='1.0'>
+<xsl:template match='/descendant-or-self::node()/elem'>
+<ERROR/>
+</xsl:template>
+</xsl:stylesheet>";
+			new XslTransform ().Load (new XPathDocument (
+				new StringReader (xsl)));
+		}
 	}
 }

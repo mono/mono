@@ -1,5 +1,10 @@
 2004-03-22  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* Expression.cs : EvaluateBoolean() for RTF should check return true
+	  for empty elements. Fixed static analysis for RTF.
+
+2004-03-22  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* Parser.jay, Tokenizer.cs : Now they are used as common code base for
 	  XPath parser and XSLT pattern parser. Makefile now creates two
 	  set of sources of them. (This change takes effect on the next change).

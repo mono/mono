@@ -1,3 +1,8 @@
+2005-03-22  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XslTransformTests.cs : added test 1)that examines pattern sanity and
+	  2)that examines if empty element RTF is evaluated as true for bool.
+
 2005-02-28  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* MsxslScriptTests.cs,

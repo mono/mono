@@ -419,6 +419,10 @@ namespace System.Xml.XPath
 			get { return HasStaticValue ? XPathFunctions.ToBoolean (StaticValue) : false; }
 		}
 
+		public virtual XPathNavigator StaticValueAsNavigator {
+			get { return StaticValue as XPathNavigator; }
+		}
+
 		public abstract object Evaluate (BaseIterator iter);
 
 		public virtual BaseIterator EvaluateNodeSet (BaseIterator iter)
@@ -553,7 +557,7 @@ namespace System.Xml.XPath
 					return (iterResult != null && iterResult.MoveNext ());
 				}
 				case XPathResultType.Navigator:
-					return ((string) ((XPathNavigator) result).Value).Length != 0;
+					return (((XPathNavigator) result).HasChildren);
 				default:
 					throw new XPathException ("invalid node type");
 			}
@@ -700,13 +704,17 @@ namespace System.Xml.XPath
 			get {
 				if (!HasStaticValue)
 					return false;
+				if ((_left.ReturnType == XPathResultType.Navigator || _right.ReturnType == XPathResultType.Navigator) && _left.ReturnType == _right.ReturnType)
+					return (_left.StaticValueAsNavigator.IsSamePosition (
+					_right.StaticValueAsNavigator))
+					 == trueVal;
 				if (_left.ReturnType == XPathResultType.Boolean | _right.ReturnType == XPathResultType.Boolean)
 					return (_left.StaticValueAsBoolean == _right.StaticValueAsBoolean) == trueVal;
 				if (_left.ReturnType == XPathResultType.Number | _right.ReturnType == XPathResultType.Number)
 					return (_left.StaticValueAsNumber == _right.StaticValueAsNumber) == trueVal;
 				if (_left.ReturnType == XPathResultType.String | _right.ReturnType == XPathResultType.String)
 					return (_left.StaticValueAsString == _right.StaticValueAsString) == trueVal;
-				return _left.StaticValue == _right.StaticValue;
+				return _left.StaticValue == _right.StaticValue == trueVal;
 			}
 		}
 

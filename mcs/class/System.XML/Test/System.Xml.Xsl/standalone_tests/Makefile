@@ -9,7 +9,7 @@
 #	- For MainSoft test, it is "diffreport.txt"
 #
 
-RUNTIME = mono
+RUNTIME = mono --debug
 CSCOMPILE = mcs
 TESTS = testsuite/TESTS/Xalan_Conformance_Tests/whitespace/whitespace35.xsl
 TARGET_RESULTS = Results
@@ -65,7 +65,7 @@ run-test-xslt : xslttest.exe
 
 run-test-ms : alltest.exe xmlnorm.exe
 	$(RUNTIME) ./alltest.exe $(TARGET_RESULTS)
-	$(RUNTIME) ./xmlnorm.exe -s testsuite/TESTS/$(TARGET_RESULTS) testsuite/TESTS/norm-tmp
+	mono ./xmlnorm.exe -s testsuite/TESTS/$(TARGET_RESULTS) testsuite/TESTS/norm-tmp
 	rm -rf testsuite/TESTS/$(TARGET_RESULTS)
 	mv testsuite/TESTS/norm-tmp testsuite/TESTS/$(TARGET_RESULTS)
 	diff -r -q testsuite/TESTS/ExpectedResults testsuite/TESTS/$(TARGET_RESULTS) > diffreport.txt
