@@ -1046,6 +1046,15 @@ namespace Mono.CSharp {
 			}
 		}
 
+		public object GetValue (EmitContext ec, Constant c, Type target)
+		{
+			if (Convert.ImplicitConversionExists (ec, c, target))
+				return c.GetValue ();
+
+			Convert.Error_CannotImplicitConversion (Location, c.Type, target);
+			return null;
+		}
+		
 		public MethodBuilder DefinePInvokeMethod (EmitContext ec, TypeBuilder builder, string name,
 							  MethodAttributes flags, Type ret_type, Type [] param_types)
 		{
@@ -1125,21 +1134,29 @@ namespace Mono.CSharp {
 
 					if (a.Expr is Constant) {
 						Constant c = (Constant) a.Expr;
-						
-						if (member_name == "CallingConvention")
-							cc = (CallingConvention) c.GetValue ();
-						else if (member_name == "CharSet")
-							charset = (CharSet) c.GetValue ();
-						else if (member_name == "EntryPoint")
-							entry_point = (string) c.GetValue ();
-						else if (member_name == "SetLastError")
-							set_last_err = (bool) c.GetValue ();
+
+						try {
+							if (member_name == "CallingConvention"){
+								object val = GetValue (ec, c, typeof (CallingConvention));
+								if (val == null)
+									return null;
+								cc = (CallingConvention) val;
+							} else if (member_name == "CharSet"){
+								charset = (CharSet) c.GetValue ();
+							} else if (member_name == "EntryPoint")
+								entry_point = (string) c.GetValue ();
+							else if (member_name == "SetLastError")
+								set_last_err = (bool) c.GetValue ();
 #if FIXME
-						else if (member_name == "ExactSpelling")
-							exact_spelling = (bool) c.GetValue ();
+							else if (member_name == "ExactSpelling")
+								exact_spelling = (bool) c.GetValue ();
 #endif
-						else if (member_name == "PreserveSig")
-							preserve_sig = (bool) c.GetValue ();
+							else if (member_name == "PreserveSig")
+								preserve_sig = (bool) c.GetValue ();
+						} catch (InvalidCastException){
+							Error_InvalidNamedArgument (member_name);
+							Error_AttributeArgumentNotValid (Location);
+						}
 					} else { 
 						Error_AttributeArgumentNotValid (Location);
 						return null;
