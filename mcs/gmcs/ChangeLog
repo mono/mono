@@ -1,5 +1,10 @@
 2005-03-02  Martin Baulig  <martin@ximian.com>
 
+	* class.cs (TypeContainer.DoDefineMembers): We also need a default
+	static constructor in static classes.
+
+2005-03-02  Martin Baulig  <martin@ximian.com>
+
 	* generic.cs
 	(NullableType.Name, NullableType.FullName): Add a "?" to the name.
 	(Nullable.LiftedConversion): Added support for user-defined
