@@ -1,7 +1,8 @@
 //
-// System.Runtime.Remoting.Channels.CrossDomainChannel.cs
+// System.Runtime.Remoting.Channels.CrossAppDomainChannel.cs
 //
 // Author: Patrik Torstensson (totte_mono@yahoo.com)
+//         Lluis Sanchez Gual (lluis@ximian.com)
 //
 // 2003 (C) Copyright, Ximian, Inc.
 //
@@ -176,6 +177,7 @@ namespace System.Runtime.Remoting.Channels
 					arrRequest = reqMsgStream.GetBuffer();
 				}
 
+				object threadStatus = Thread.ResetDataStoreStatus ();
 				Context currentContext = Thread.CurrentContext;
 				AppDomain currentDomain = AppDomain.InternalSetDomainByID ( _domainID );
 
@@ -192,6 +194,7 @@ namespace System.Runtime.Remoting.Channels
 				{
 					AppDomain.InternalSetDomain (currentDomain);
 					AppDomain.InternalSetContext (currentContext);
+					Thread.RestoreDataStoreStatus (threadStatus);
 				}
 				
 				if (null != arrResponse) {
