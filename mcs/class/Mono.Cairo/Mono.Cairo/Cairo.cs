@@ -274,7 +274,7 @@ namespace Cairo {
                 [DllImport (CairoImp)]
                 public static extern Cairo.Status cairo_status (IntPtr cr);
 
-                [DllImport (CairoImp, EntryPoint="cairo_statu_string")]
+		[DllImport (CairoImp, EntryPoint="cairo_status_string")]
 		static extern IntPtr _cairo_status_string (IntPtr cr);
 
 		public static string cairo_status_string (IntPtr cr)
