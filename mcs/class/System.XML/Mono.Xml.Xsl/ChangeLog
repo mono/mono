@@ -1,3 +1,14 @@
+2004-03-07 Atsushi Enomoto <atsushi@ximian.com>
+
+	* MSXslScriptManager.cs : if extension namespace was not found in
+	  the script, just return null. Patch by Joshua Tauberer.
+
+2004-03-01 Atsushi Enomoto <atsushi@ximian.com>
+
+	* XslLiteralElement.cs : quick fix for ArgumentNullException which
+	  was because of the combination of non-namespaced instances and
+	  exclude-result-prefixes.
+
 2004-02-17 Atsushi Enomoto <atsushi@ximian.com>
 
 	* XsltCompiledContext.cs : Extracted XslFunctions and changed namespace

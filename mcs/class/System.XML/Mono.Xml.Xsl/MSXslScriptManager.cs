@@ -8,8 +8,6 @@
 // (C)2003 Atsushi Enomoto
 //
 using System;
-using System.CodeDom;
-using System.CodeDom.Compiler;
 using System.Diagnostics;
 using System.Collections;
 using System.Globalization;
@@ -24,7 +22,7 @@ using System.Xml.Xsl;
 
 namespace Mono.Xml.Xsl {
 
-	[MonoTODO ("Correct evedence handling; use JScript compiler in future versions; test other than simple string case")]
+	[MonoTODO ("Correct evedence handling; test other than simple string case")]
 	public class MSXslScriptManager {
 		Hashtable scripts = new Hashtable ();
 		Evidence evidence;
@@ -46,6 +44,8 @@ namespace Mono.Xml.Xsl {
 		
 		public object GetExtensionObject (string ns)
 		{
+			if (!scripts.ContainsKey (ns))
+				return null;
 			return Activator.CreateInstance ((Type) scripts [ns]);
 		}
 
