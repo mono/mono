@@ -1,3 +1,8 @@
+2002-05-15  Dietmar Maurer  <dietmar@ximian.com>
+
+	* object.c (mono_unhandled_exception): new function to handle
+	unhandled exceptions.
+	(mono_unhandled_exception): call the UnhandledException event.
 
 Wed May 15 15:59:55 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
