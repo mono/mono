@@ -1,3 +1,7 @@
+2004-12-12  Zoltan Varga  <vargaz@freemail.hu>
+
+	* XmlTextReader.cs: Work around a compiler bug in csc 2.0 beta 1.
+
 2004-12-09  Atsushi Enomoto <atsushi@ximian.com>
 
 	* DTDObjectModel.cs : implemented lightweight XmlSchema generator.

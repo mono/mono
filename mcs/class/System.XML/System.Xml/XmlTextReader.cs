@@ -1260,9 +1260,9 @@ namespace System.Xml
 							break;
 						}
 						break;
-					case '\r': goto case ' ';
-					case '\n': goto case ' ';
-					case '\t': goto case ' ';
+					case '\r':
+					case '\n':
+					case '\t':
 					case ' ':
 						if (whitespaceHandling == WhitespaceHandling.All ||
 							whitespaceHandling == WhitespaceHandling.Significant)
@@ -1853,7 +1853,14 @@ namespace System.Xml
 						goto default;
 					if (PeekChar () == '\n')
 						continue; // skip '\r'.
-					goto case '\n';
+					//
+					// The csc in MS.NET 2.0 beta 1 barfs on this goto, so work around that
+					//
+					//goto case '\n';
+					if (!normalization)
+						goto default;
+					ch = ' ';
+					goto default;					
 				case '\n':
 				case '\t':
 					// When Normalize = true, then replace
