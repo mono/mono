@@ -1,5 +1,9 @@
 2003-07-31 Ben Maurer  <bmaurer@users.sourceforge.net>
 
+	* XsltCompiledContext.cs: Implement more functions.
+
+2003-07-31 Ben Maurer  <bmaurer@users.sourceforge.net>
+
 	* Compiler.cs: Add support for key, utility function to parse
 	QName's from the XsltContext. Store keys in the CompiledStyle, not
 	in the Stylesheet.
