@@ -42,7 +42,7 @@ namespace System.IO.IsolatedStorage
 		{
 		}
 
-                protected static IsolatedStorageScope storage_scope;
+                private IsolatedStorageScope storage_scope;
 
 		// Properties
 		[MonoTODO ("Code Identity is CAS related")]

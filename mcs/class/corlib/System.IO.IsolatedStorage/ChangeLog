@@ -1,3 +1,7 @@
+2004-06-13  Gert Driesen <drieseng@users.sourceforge.net>
+
+	* IsolatedStorage.cs: really mark the storage_scope field private
+
 2004-06-09  Gert Dresen <drieseng@users.sourceforge.net>
 
 	* IsolatedStorage.cs: use private variable for holding scope,
