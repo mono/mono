@@ -47,39 +47,48 @@ namespace System.DirectoryServices
 	/// </remarks>
 	public class SearchResultCollection : MarshalByRefObject, ICollection, IEnumerable, IDisposable
 	{
-		protected ArrayList m_oKeys = new ArrayList();
-		protected Hashtable m_oValues = new Hashtable();
+		protected ArrayList sValues = new ArrayList();
 
-		internal PropertyCollection()
+
+		internal SearchResultCollection()
 		{
 		}
+		
 		public int Count
 		{
-			get{return m_oValues.Count;}
+			get{return sValues.Count;}
 		}
 
-		public bool IsSynchronized
+		bool ICollection.IsSynchronized
 		{
-			get{return m_oValues.IsSynchronized;}
+			get{return sValues.IsSynchronized;}
 		}
 
-		public object SyncRoot
+		object ICollection.SyncRoot
 		{
-			get{return m_oValues.SyncRoot;}
+			get{return sValues.SyncRoot;}
 		}
         
 		public void CopyTo(System.Array oArray, int iArrayIndex)
 		{
-			m_oValues.CopyTo(oArray, iArrayIndex);
+			sValues.CopyTo(oArray, iArrayIndex);
 		}
 
-
-		public void Add(object oKey, object oValue)
+		void ICollection.CopyTo(System.Array oArray, int iArrayIndex)
 		{
-			m_oKeys.Add(oKey);
-			m_oValues.Add(oKey, oValue);
+			sValues.CopyTo(oArray, iArrayIndex);
 		}
 
+		public void CopyTo(	SearchResult[] results,	int index)
+		{
+			CopyTo( (System.Array)results,index);
+		}
+
+		internal void Add(object oValue)
+		{
+			sValues.Add(oValue);
+		}
+/*
 		public bool IsFixedSize
 		{
 			get{return m_oKeys.IsFixedSize;}
@@ -121,43 +130,45 @@ namespace System.DirectoryServices
 			m_oValues.Remove(oKey);
 			m_oKeys.Remove(oKey);
 		}
-        
+       
 		public object this[object oKey]
 		{
 			get{return m_oValues[oKey];}
 			set{m_oValues[oKey] = value;}
 		}
+*/
+		bool Contains(object oValues)
+		{
+			return sValues.Contains(oValues);
+		}
 
-		public ICollection Values
+		public bool Contains(SearchResult result)
+		{
+			return Contains(result);
+		}
+
+		public SearchResult this[int index]
+		{
+			get{return (SearchResult)sValues[index];}
+		}
+
+/*		public ICollection Values
 		{
 			get{return m_oValues.Values;}
+		}
+*/
+		public int IndexOf (SearchResult result)
+		{
+			return sValues.IndexOf(result);
 		}
 
 		IEnumerator IEnumerable.GetEnumerator()
 		{
-			return m_oValues.GetEnumerator();
+			return sValues.GetEnumerator();
 		}
 
 		void IDisposable.Dispose ()
 		{
-		}
-
-		public  SearchResult  this[int index] 
-		{
-			get 
-			{
-				if(Contains(propertyName))
-				{
-					return (PropertyValueCollection)m_oValues[propertyName];
-				}
-				else
-				{
-					PropertyValueCollection _pValColl=new PropertyValueCollection();
-					Add((string)propertyName, (PropertyValueCollection)_pValColl);
-					return _pValColl;					
-				}
-//				throw new InvalidOperationException();
-			}
 		}
 
 	}

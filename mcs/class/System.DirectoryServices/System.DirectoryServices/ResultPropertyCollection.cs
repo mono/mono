@@ -53,21 +53,28 @@ namespace System.DirectoryServices
 	/// </remarks>
 	public class ResultPropertyCollection  : DictionaryBase
 	{
+/*		internal ResultPropertyCollection()
+		{
+			
+		}
+*/
 		public ResultPropertyValueCollection this[string key]
 		{
-			get {return (ResultPropertyValueCollection) this.Dictionary[key]; }
-
-			set { this.Dictionary[key] = value; } 
+			get {
+				return (ResultPropertyValueCollection) this.Dictionary[key.ToLower()];
+			}
+//			set { this.Dictionary[key] = value; } 
 		}
 		//add a ResultPropertyValueCollection based on key 
-		public void Add(string key, ResultPropertyValueCollection rpcoll) 
+		internal void Add(string key, ResultPropertyValueCollection rpcoll) 
 		{ 
-			this.Dictionary.Add(key, rpcoll); 
+			this.Dictionary.Add(key.ToLower(), rpcoll); 
 		} 
+		
 		//see if collection contains an entry corresponding to key
 		public bool Contains(string key)
 		{
-			return this.Dictionary.Contains(key);
+			return this.Dictionary.Contains(key.ToLower());
 		}
 		
 		public ICollection PropertyNames 

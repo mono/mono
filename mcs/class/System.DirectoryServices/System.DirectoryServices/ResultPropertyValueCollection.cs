@@ -50,7 +50,16 @@ namespace System.DirectoryServices
 	/// </remarks>
 	public class ResultPropertyValueCollection  : ReadOnlyCollectionBase
 	{
-		public ResultPropertyValueCollection (object[] components)
+		internal ResultPropertyValueCollection()
+		{
+		}
+
+		internal void Add (object component)
+		{
+			InnerList.Add (component);
+		}
+
+		internal void AddRange (object[] components)
 		{
 			InnerList.AddRange (components);
 		}

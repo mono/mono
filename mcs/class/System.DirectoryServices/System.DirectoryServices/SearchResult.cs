@@ -31,6 +31,8 @@
 //
 
 using System.ComponentModel;
+using Novell.Directory.Ldap;
+using System.Collections.Specialized;
 
 namespace System.DirectoryServices
 {
@@ -42,8 +44,100 @@ namespace System.DirectoryServices
 	{
 
 		private string _Path=null;
-		private Properties _Properties=null;
+		private ResultPropertyCollection _Properties=null;
+		private DirectoryEntry _Entry=null;
+		private StringCollection _PropsToLoad=null;
+		private bool ispropnull=true;
+		private PropertyCollection _Rproperties = null;
 
+		internal PropertyCollection Rproperties
+		{
+			get
+			{
+				return _Rproperties;
+			}
+		}
+
+		private void InitBlock()
+		{
+			_Properties=null;
+			_Entry=null;
+			_PropsToLoad=null;
+			ispropnull=true;
+			_Rproperties=null;
+		}
+
+		internal StringCollection PropsToLoad
+		{
+			get
+			{
+				if( _PropsToLoad != null )
+				{
+					return _PropsToLoad;
+				}
+				else
+					return null;
+			}
+		}
+		/// <summary>
+		/// Gets a ResultPropertyCollection of properties set on this object.
+		/// </summary>
+		/// <value>
+		/// A ResultPropertyCollection of properties set on this object.
+		/// </value>
+		/// <remarks>
+		/// This collection only contains properties that were explicitly 
+		/// requested through DirectorySearcher.PropertiesToLoad.
+		/// </remarks>
+		public ResultPropertyCollection Properties
+		{
+			get
+			{
+				if ( ispropnull )
+				{
+					_Properties= new ResultPropertyCollection();
+					System.Collections.IDictionaryEnumerator id = 
+						Rproperties.GetEnumerator();
+//						_Entry.Properties.GetEnumerator();
+					while(id.MoveNext())
+					{
+						string attribute=(string)id.Key;
+						LdapAttribute attr=null;
+							ResultPropertyValueCollection rpVal=
+								new ResultPropertyValueCollection();
+							if(Rproperties[attribute].Count==1)
+							{
+								String val = (String)Rproperties[attribute].Value;
+//							    Console.WriteLine("attribute:" + attribute + "value:" + val);
+								rpVal.Add(val);
+							}
+							else
+							{
+								Object[] vals=(Object [])Rproperties[attribute].Value;
+//								String[] aStrVals= new String[_Entry.Properties[attribute].Count];
+								rpVal.AddRange(vals);
+//							    Console.WriteLine("attribute1:" + attribute + "value:" +vals[0]);
+							}
+							_Properties.Add(attribute,rpVal);
+					}
+					ispropnull=false;
+				}
+				return _Properties;
+			}
+		}
+
+		internal SearchResult(DirectoryEntry entry)
+		{
+			InitBlock();
+			_Entry = entry;
+		}
+
+		internal SearchResult(DirectoryEntry entry, PropertyCollection props)
+		{
+			InitBlock();
+			_Entry = entry;
+			_Rproperties = props;
+		}
 		/// <summary>
 		/// Gets the path for this SearchResult.
 		/// </summary>
@@ -64,24 +158,6 @@ namespace System.DirectoryServices
 		}
 
 		/// <summary>
-		/// Gets a ResultPropertyCollection of properties set on this object.
-		/// </summary>
-		/// <value>
-		/// A ResultPropertyCollection of properties set on this object.
-		/// </value>
-		/// <remarks>
-		/// This collection only contains properties that were explicitly 
-		/// requested through DirectorySearcher.PropertiesToLoad.
-		/// </remarks>
-		public ResultPropertyCollection Properties 
-		{
-			get
-			{
-				return _Properties;
-			}
-		}
-
-		/// <summary>
 		/// Retrieves the DirectoryEntry that corresponds to the SearchResult, 
 		/// from the Active Directory hierarchy.
 		/// </summary>
@@ -95,6 +171,7 @@ namespace System.DirectoryServices
 		/// </remarks>
 		public DirectoryEntry GetDirectoryEntry()
 		{
+			return _Entry;
 		}
 
 	}

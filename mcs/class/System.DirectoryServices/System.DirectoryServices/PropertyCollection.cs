@@ -32,6 +32,7 @@
 
 using System;
 using System.Collections;
+using System.Globalization;
 
 namespace System.DirectoryServices
 {
@@ -43,6 +44,7 @@ namespace System.DirectoryServices
 		internal PropertyCollection()
 		{
 		}
+
 		public int Count
 		{
 			get{return m_oValues.Count;}
@@ -58,19 +60,19 @@ namespace System.DirectoryServices
 			get{return m_oValues.SyncRoot;}
 		}
         
-		void CopyTo(System.Array oArray, int iArrayIndex)
+		void ICopyTo(System.Array oArray, int iArrayIndex)
 		{
 			m_oValues.CopyTo(oArray, iArrayIndex);
 		}
 
 		void ICollection.CopyTo(System.Array oArray, int iArrayIndex)
 		{
-			CopyTo(oArray,iArrayIndex);
+			ICopyTo(oArray,iArrayIndex);
 		}
 
 		public void CopyTo(PropertyValueCollection[] array, int index)
 		{
-			CopyTo(array,index);
+			ICopyTo(array,index);
 		}
 
 		void Add(object oKey, object oValue)
@@ -109,20 +111,22 @@ namespace System.DirectoryServices
 			m_oKeys.Clear();
 		}
 
-		bool IDictionary.Contains(object oKey)
+		bool IContains(object oKey)
 		{
 			return m_oValues.Contains(oKey);
+		}
+		bool IDictionary.Contains(object oKey)
+		{
+			return IContains(oKey);
 		}
 
 		public bool Contains (string propertyName)
 		{
-			return m_oValues.Contains(propertyName);
+//			String tstr=new String(propertyName.ToCharArray());
+//			return IContains(tstr.ToLower());
+			return IContains(propertyName.ToLower());
 		}
 
-		public bool ContainsKey(object oKey)
-		{
-			return m_oValues.ContainsKey(oKey);
-		}
 
 		public IDictionaryEnumerator GetEnumerator()
 		{
@@ -157,12 +161,16 @@ namespace System.DirectoryServices
 			{
 				if(Contains(propertyName))
 				{
-					return (PropertyValueCollection)m_oValues[propertyName];
+//					String tstr=new String(propertyName.ToCharArray());
+//					return (PropertyValueCollection)m_oValues[tstr.ToLower()];
+					return (PropertyValueCollection)m_oValues[propertyName.ToLower()];
 				}
 				else
 				{
 					PropertyValueCollection _pValColl=new PropertyValueCollection();
-					Add((string)propertyName, (PropertyValueCollection)_pValColl);
+//					String tstr=new String(propertyName.ToCharArray());
+//					Add((string)tstr.ToLower(), (PropertyValueCollection)_pValColl);
+					Add((string)propertyName.ToLower(), (PropertyValueCollection)_pValColl);
 					return _pValColl;					
 				}
 //				throw new InvalidOperationException();
