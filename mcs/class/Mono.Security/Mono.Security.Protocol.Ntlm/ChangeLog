@@ -1,3 +1,8 @@
+2004-11-05  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* MessageBase.cs, Type1Message.cs, Type2Message.cs, Type3Message.cs:
+	Merge from HEAD - mostly endian issue and localization.
+
 2004-04-22  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* ChallengeResponse.cs: FxCop-ized. 

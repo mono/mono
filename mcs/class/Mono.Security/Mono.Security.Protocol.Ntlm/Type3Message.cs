@@ -5,15 +5,13 @@
 //	Sebastien Pouliot <sebastien@ximian.com>
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
-// (C) 2004 Novell (http://www.novell.com)
+// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 // References
 // a.	NTLM Authentication Scheme for HTTP, Ronald Tschalär
 //	http://www.innovation.ch/java/ntlm.html
 // b.	The NTLM Authentication Protocol, Copyright © 2003 Eric Glass
 //	http://davenport.sourceforge.net/ntlm.html
-//
-
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -85,8 +83,10 @@ namespace Mono.Security.Protocol.Ntlm {
 			set { 
 				if (value == null)
 					throw new ArgumentNullException ("Challenge");
-				if (value.Length != 8)
-					throw new ArgumentException ("Invalid Challenge Length");
+				if (value.Length != 8) {
+					string msg = Locale.GetText ("Invalid Challenge Length (should be 8 bytes).");
+					throw new ArgumentException (msg, "Challenge");
+				}
 				_challenge = (byte[]) value.Clone (); 
 			}
 		}
@@ -125,33 +125,35 @@ namespace Mono.Security.Protocol.Ntlm {
 		{
 			base.Decode (message);
 
-			if (BitConverter.ToUInt16 (message, 56) != message.Length)
-				throw new ArgumentException ("Invalid Type3 message length");
+			if (BitConverterLE.ToUInt16 (message, 56) != message.Length) {
+				string msg = Locale.GetText ("Invalid Type3 message length.");
+				throw new ArgumentException (msg, "message");
+			}
 
 			_password = null;
 
-			int dom_len = BitConverter.ToUInt16 (message, 28);
+			int dom_len = BitConverterLE.ToUInt16 (message, 28);
 			int dom_off = 64;
 			_domain = Encoding.Unicode.GetString (message, dom_off, dom_len);
 
-			int host_len = BitConverter.ToUInt16 (message, 44);
-			int host_off = BitConverter.ToUInt16 (message, 48);
+			int host_len = BitConverterLE.ToUInt16 (message, 44);
+			int host_off = BitConverterLE.ToUInt16 (message, 48);
 			_host = Encoding.Unicode.GetString (message, host_off, host_len);
 
-			int user_len = BitConverter.ToUInt16 (message, 36);
-			int user_off = BitConverter.ToUInt16 (message, 40);
+			int user_len = BitConverterLE.ToUInt16 (message, 36);
+			int user_off = BitConverterLE.ToUInt16 (message, 40);
 			_username = Encoding.Unicode.GetString (message, user_off, user_len);
 
 			_lm = new byte [24];
-			int lm_off = BitConverter.ToUInt16 (message, 16);
+			int lm_off = BitConverterLE.ToUInt16 (message, 16);
 			Buffer.BlockCopy (message, lm_off, _lm, 0, 24);
 			
 			_nt = new byte [24];
-			int nt_off = BitConverter.ToUInt16 (message, 24);
+			int nt_off = BitConverterLE.ToUInt16 (message, 24);
 			Buffer.BlockCopy (message, nt_off, _nt, 0, 24);
 
 			if (message.Length >= 64)
-				Flags = (NtlmFlags) BitConverter.ToUInt32 (message, 60);
+				Flags = (NtlmFlags) BitConverterLE.ToUInt32 (message, 60);
 		}
 
 		public override byte[] GetBytes () 

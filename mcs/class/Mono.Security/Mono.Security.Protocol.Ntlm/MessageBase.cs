@@ -3,17 +3,16 @@
 //	abstract class for all NTLM messages
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // Copyright (C) 2003 Motus Technologies Inc. (http://www.motus.com)
+// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 // References
 // a.	NTLM Authentication Scheme for HTTP, Ronald Tschalär
 //	http://www.innovation.ch/java/ntlm.html
 // b.	The NTLM Authentication Protocol, Copyright © 2003 Eric Glass
 //	http://davenport.sourceforge.net/ntlm.html
-//
-
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -36,6 +35,7 @@
 //
 
 using System;
+using System.Globalization;
 
 namespace Mono.Security.Protocol.Ntlm {
 
@@ -78,11 +78,15 @@ namespace Mono.Security.Protocol.Ntlm {
 			if (message == null)
 				throw new ArgumentNullException ("message");
 
-			if (message.Length < 12)
-				throw new ArgumentOutOfRangeException ("message", message.Length, "minimum is 12 bytes");
+			if (message.Length < 12) {
+				string msg = Locale.GetText ("Minimum message length is 12 bytes.");
+				throw new ArgumentOutOfRangeException ("message", message.Length, msg);
+			}
 
-			if (!CheckHeader (message))
-				throw new ArgumentException ("Invalid Type" + _type + " message");
+			if (!CheckHeader (message)) {
+				string msg = String.Format (Locale.GetText ("Invalid Type{0} message."), _type);
+				throw new ArgumentException (msg, "message");
+			}
 		}
 
 
@@ -92,7 +96,7 @@ namespace Mono.Security.Protocol.Ntlm {
 				if (message [i] != header [i])
 					return false;
 			}
-			return (BitConverter.ToUInt32 (message, 8) == _type);
+			return (BitConverterLE.ToUInt32 (message, 8) == _type);
 		}
 
 		public abstract byte[] GetBytes ();
