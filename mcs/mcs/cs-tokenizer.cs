@@ -50,7 +50,7 @@ namespace CIR
 
 	public class Tokenizer : yyParser.yyInput
 	{
-		StreamReader reader;
+		TextReader reader;
 		public string ref_name;
 		public int ref_line = 1;
 		public int line = 1;
@@ -242,10 +242,10 @@ namespace CIR
 			}
 		}
 		
-		public Tokenizer (System.IO.Stream input, string fname)
+		public Tokenizer (System.IO.TextReader input, string fname)
 		{
 			this.ref_name = fname;
-			reader = new System.IO.StreamReader (input);
+			reader = input;
 			putback_char = -1;
 
 			Location.Push (fname);

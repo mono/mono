@@ -17,6 +17,7 @@ namespace CIR
 	using System.IO;
 	using CIR;
 	using Generator;
+	using Mono.Languages;
 
 	/// <summary>
 	///    The compiler driver.
@@ -49,23 +50,22 @@ namespace CIR
 
 		bool parse_only = false;
 		
-		public int parse (string input_file)
+		public int parse (string inputFileName)
 		{
-			CSharpParser parser;
-			System.IO.Stream input;
+			GenericParser parser;
 			int errors;
 			
-			try {
-				input = System.IO.File.OpenRead (input_file);
-			} catch {
-				Report.Error (2001, "Source file '" + input_file + "' could not be opened");
+			// find a suitable parser
+			parser = GenericParser.GetSpecificParserFor(inputFileName);
+			if (parser == null) 			
+			{
+				Report.Error (2001, "Source file '" + inputFileName + "' could not be parsed");
 				return 1;
 			}
 
-			parser = new CSharpParser (context, input_file, input);
 			parser.yacc_verbose = yacc_verbose;
 			try {
-				errors = parser.parse ();
+				errors = parser.ParseFile(inputFileName, context);
 			} catch (Exception ex) {
 				Console.WriteLine (ex);
 				Console.WriteLine ("Compilation aborted");
@@ -301,13 +301,6 @@ namespace CIR
 					Usage ();
 					error_count++;
 					return;
-				}
-				
-				if (!arg.EndsWith (".cs")){
-						
-					error ("Do not know how to compile " + arg);
-					errors++;
-					continue;
 				}
 
 				if (first_source == null)

@@ -4,7 +4,7 @@ CSCFLAGS=/nologo /debug+ /debug:full  /optimize
 
 VERSION=0.13
 
-COMMON_SOURCES = cs-parser.cs cs-tokenizer.cs tree.cs  
+COMMON_SOURCES = cs-parser.cs cs-tokenizer.cs tree.cs location.cs
 
 COMPILER_SOURCES = \
 	assign.cs			\
@@ -37,6 +37,7 @@ TEST_TOKENIZER_SOURCES = test-token.cs $(COMMON_SOURCES)
 all: cs-parser.cs
 	$(CSC) $(CSCFLAGS) /target:exe /r:System.dll /out:mcs.exe $(COMPILER_SOURCES)
 	-rm compiler.exe
+	-rm mcs.pdb
 
 windows: all
 
@@ -86,4 +87,13 @@ try:
 	done
 
 clean:
-	rm -f mcs.exe cs-parser.cs y.output compiler.pdb *~ .*~
+	rm -f mcs.exe cs-parser.cs y.output mcs.pdb *~ .*~ mb-parser.cs mcs.log
+
+MBAS_SOURCES = mb-parser.cs mb-tokenizer.cs
+
+mbas: cs-parser.cs MonoBASIC.Parser.cs
+	$(CSC) $(CSCFLAGS) /target:exe /r:System.dll /out:mcs.exe $(COMPILER_SOURCES) $(MBAS_SOURCES)
+
+mb-parser.cs: mb-parser.jay
+	../jay/jay -ctv < ../jay/skeleton.cs mb-parser.jay > mb-parser.cs
+
