@@ -2815,7 +2815,7 @@ namespace System.Collections
 					int newLength;
 					object[] newData;
 					
-					newLength = _items.Length << 1;
+					newLength = (_items.Length > 0) ? _items.Length << 1 : 1;
 
 					while (newLength < _size + count) 
 					{

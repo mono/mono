@@ -1,3 +1,7 @@
+2004-06-14  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* ArrayList.cs: Avoid endless loop in Insert when the current size is 0.
+
 2004-06-08  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* ReadOnlyCollectionBase.cs: Renamed internal variable to make serialization 
