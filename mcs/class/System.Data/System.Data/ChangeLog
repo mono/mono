@@ -1,5 +1,14 @@
 2003-02-25  Alan Tam <Tam@SiuLung.com>
 
+	* DataRelation.cs: Added SetDataSet for DataSetRelationCollection to use.
+	* DataRelationCollection.cs: Implemented AddRange and Contains.
+	Implemented AddRange, Clear, List and RemoveCore for DataSetRelationColletion.
+	Implemented AddCore, List and RemoveCore for DataTableRelationCollection.
+	Reimplemented most Add methods to eliminate duplicated checks.
+	Centralized RelationName generation procedure in GetNextDefaultRelationName.
+
+2003-02-25  Alan Tam <Tam@SiuLung.com>
+
 	* DataColumn.cs: Fixed wrong storage representation of Expression
 	(using empty string instead of null) so that ToString() returns nothing.
 	* DataColumnCollection.cs: Reimplemented GetNextDefaultColumnName so that

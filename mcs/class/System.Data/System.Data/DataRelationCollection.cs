@@ -55,7 +55,6 @@ namespace System.Data {
 			/// <summary>
 			/// Gets the DataRelation object at the specified index.
 			/// </summary>
-			[MonoTODO]
 			public override DataRelation this [int index]
 			{
 				get {
@@ -72,13 +71,13 @@ namespace System.Data {
 			/// Performs verification on the table.
 			/// </summary>
 			/// <param name="relation">The relation to check.</param>
-			[MonoTODO]
 			protected override void AddCore (DataRelation relation)
 			{
 				base.AddCore (relation);
 				if (relation.ChildTable.DataSet != this.dataSet || relation.ParentTable.DataSet != this.dataSet)
 					throw new DataException ();
 				List.Add (relation);
+				relation.SetDataSet (dataSet);
 				relation.ParentTable.ChildRelations.Add (relation);
 				relation.ChildTable.ParentRelations.Add (relation);
 				ForeignKeyConstraint foreignKeyConstraint = null;
@@ -107,6 +106,33 @@ namespace System.Data {
 				}
 				relation.SetParentKeyConstraint (uniqueConstraint);
 				relation.SetChildKeyConstraint (foreignKeyConstraint);
+			}
+
+			public override void AddRange (DataRelation[] relations)
+			{
+				base.AddRange (relations);
+			}
+
+			public override void Clear ()
+			{
+				base.Clear ();
+			}
+
+			protected override void RemoveCore (DataRelation relation)
+			{
+				base.RemoveCore (relation);
+				relation.SetDataSet (null);
+				relation.ParentTable.ChildRelations.Remove (relation);
+				relation.ChildTable.ParentRelations.Remove (relation);
+				ForeignKeyConstraint foreignKeyConstraint = null;
+				relation.SetParentKeyConstraint (null);
+				relation.SetChildKeyConstraint (null);
+			}
+
+			protected override ArrayList List {
+				get {
+					return base.List;
+				}
 			}
 		}
 
@@ -140,7 +166,6 @@ namespace System.Data {
 			/// <summary>
 			/// Gets the DataRelation object at the specified index.
 			/// </summary>
-			[MonoTODO]
 			public override DataRelation this [int index]
 			{
 				get {
@@ -151,6 +176,34 @@ namespace System.Data {
 			protected override DataSet GetDataSet()
 			{
 				return dataTable.DataSet;
+			}
+
+			protected override void AddCore (DataRelation relation)
+			{
+				base.AddCore (relation);
+				GetDataSet ().Relations.Add(relation);
+			}
+
+			public override void AddRange (DataRelation[] relations)
+			{
+				base.AddRange (relations);
+			}
+
+			public override void Clear ()
+			{
+				base.Clear ();
+			}
+
+			protected override void RemoveCore (DataRelation relation)
+			{
+				base.RemoveCore (relation);
+				GetDataSet ().Relations.Remove (relation);
+			}
+
+			protected override ArrayList List {
+				get {
+					return base.List;
+				}
 			}
 		}
 
@@ -179,6 +232,15 @@ namespace System.Data {
 
 		
 		#region Add Methods
+		private string GetNextDefaultRelationName ()
+		{
+			string defRelationName = "Relation";
+			for (int index = 1; Contains (defRelationName); ++index) {
+				defRelationName = "Relation" + index;
+			}
+			return defRelationName;
+		}
+
 		/// <summary>
 		/// Adds a DataRelation to the DataRelationCollection.
 		/// </summary>
@@ -187,13 +249,9 @@ namespace System.Data {
 		public void Add(DataRelation relation)
 		{
 			this.AddCore (relation);
-			if(List != null)
-			{
-				//CollectionChangeEventArgs e = new CollectionChangeEventArgs(CollectionChangeAction.Add, this);
-				List.Add(relation);
-				//OnCollectionChanged(e);
-			}
-			return;
+			CollectionChangeEventArgs e = new CollectionChangeEventArgs(CollectionChangeAction.Add, this);
+			List.Add(relation);
+			OnCollectionChanged(e);
 		}
 
 		/// <summary>
@@ -205,32 +263,10 @@ namespace System.Data {
 		/// <param name="parentColumn">parent column of relation.</param>
 		/// <param name="childColumn">child column of relation.</param>
 		/// <returns>The created DataRelation.</returns>
-		[MonoTODO]
 		public virtual DataRelation Add(DataColumn parentColumn, DataColumn childColumn)
 		{	
-			if(parentColumn == null)
-			{
-				throw new ArgumentNullException("parentColumn");
-			}
-			else if( childColumn == null)
-			{
-				throw new ArgumentNullException("childColumn");
-			}
-
-			// FIXME: temporarily commented so we can compile
-			/*
-			if(parentColumn.Table.DataSet != childColumn.Table.DataSet)
-			{
-				throw new InvalidConstraintException("my ex");
-			}
-			*/
-			
-			DataRelation dataRelation = new DataRelation("Relation" + defaultNameIndex.ToString(), parentColumn, childColumn);
-			this.AddCore (dataRelation);
-			//CollectionChangeEventArgs e = new CollectionChangeEventArgs(CollectionChangeAction.Add, this);
-			List.Add(dataRelation);
-			//OnCollectionChanged(e);
-			defaultNameIndex++;
+			DataRelation dataRelation = new DataRelation(GetNextDefaultRelationName (), parentColumn, childColumn);
+			Add(dataRelation);
 			return dataRelation;
 		}
 
@@ -243,13 +279,10 @@ namespace System.Data {
 		/// <param name="parentColumns">An array of parent DataColumn objects.</param>
 		/// <param name="childColumns">An array of child DataColumn objects.</param>
 		/// <returns>The created DataRelation.</returns>
-		[MonoTODO]
 		public virtual DataRelation Add(DataColumn[] parentColumns, DataColumn[] childColumns)
 		{
-			DataRelation dataRelation = new DataRelation("Relation" + defaultNameIndex.ToString(), parentColumns, childColumns);
-			this.AddCore (dataRelation);
-			List.Add(dataRelation);
-			defaultNameIndex++;
+			DataRelation dataRelation = new DataRelation(GetNextDefaultRelationName (), parentColumns, childColumns);
+			Add(dataRelation);
 			return dataRelation;
 		}
 
@@ -264,19 +297,13 @@ namespace System.Data {
 		/// <param name="parentColumn">parent column of relation.</param>
 		/// <returns>The created DataRelation.</returns>
 		/// <returns></returns>
-		[MonoTODO]
 		public virtual DataRelation Add(string name, DataColumn parentColumn, DataColumn childColumn)
 		{
 			//If no name was supplied, give it a default name.
-			if ((name == null) || (name == ""))
-			{
-				name = "Relation" + defaultNameIndex.ToString();
-				defaultNameIndex++;
-			}
+			if (name == null || name == "") name = GetNextDefaultRelationName ();
 
 			DataRelation dataRelation = new DataRelation(name, parentColumn, childColumn);
-			this.AddCore (dataRelation);
-			List.Add(dataRelation);
+			Add(dataRelation);
 			return dataRelation;
 		}
 
@@ -287,19 +314,13 @@ namespace System.Data {
 		/// <param name="parentColumns">An array of parent DataColumn objects.</param>
 		/// <param name="childColumns">An array of child DataColumn objects.</param>
 		/// <returns>The created DataRelation.</returns>
-		[MonoTODO]
 		public virtual DataRelation Add(string name, DataColumn[] parentColumns, DataColumn[] childColumns)
 		{
 			//If no name was supplied, give it a default name.
-			if ((name == null) || (name == ""))
-			{
-				name = "Relation" + defaultNameIndex.ToString();
-				defaultNameIndex++;
-			}
+			if (name == null || name == "") name = GetNextDefaultRelationName ();
 
 			DataRelation dataRelation = new DataRelation(name, parentColumns, childColumns);
-			this.AddCore (dataRelation);
-			List.Add(dataRelation);
+			Add(dataRelation);
 			return dataRelation;
 		}
 
@@ -315,19 +336,13 @@ namespace System.Data {
 		/// <param name="childColumn">child column of relation.</param>
 		/// <param name="createConstraints">true to create constraints; otherwise false. (default is true)</param>
 		/// <returns>The created DataRelation.</returns>
-		[MonoTODO]
 		public virtual DataRelation Add(string name, DataColumn parentColumn, DataColumn childColumn, bool createConstraints)
 		{
 			//If no name was supplied, give it a default name.
-			if ((name == null) || (name == ""))
-			{
-				name = "Relation" + defaultNameIndex.ToString();
-				defaultNameIndex++;
-			}
+			if (name == null || name == "") name = GetNextDefaultRelationName ();
 
 			DataRelation dataRelation = new DataRelation(name, parentColumn, childColumn, createConstraints);
-			this.AddCore (dataRelation);
-			List.Add(dataRelation);
+			Add(dataRelation);
 			return dataRelation;
 		}
 
@@ -340,19 +355,13 @@ namespace System.Data {
 		/// <param name="childColumns">An array of child DataColumn objects.</param>
 		/// <param name="createConstraints">true to create a constraint; otherwise false.</param>
 		/// <returns>The created DataRelation.</returns>
-		[MonoTODO]
 		public virtual DataRelation Add(string name, DataColumn[] parentColumns, DataColumn[] childColumns, bool createConstraints)
 		{
 			//If no name was supplied, give it a default name.
-			if ((name == null) || (name == ""))
-			{
-				name = "Relation" + defaultNameIndex.ToString();
-				defaultNameIndex++;
-			}
+			if (name == null || name == "") name = GetNextDefaultRelationName ();
 
 			DataRelation dataRelation = new DataRelation(name, parentColumns, childColumns, createConstraints);
-			AddCore (dataRelation);
-			List.Add(dataRelation);
+			Add(dataRelation);
 			return dataRelation;
 		}
 		#endregion
@@ -385,22 +394,9 @@ namespace System.Data {
 		/// Copies the elements of the specified DataRelation array to the end of the collection.
 		/// </summary>
 		/// <param name="relations">The array of DataRelation objects to add to the collection.</param>
-		[MonoTODO]
 		public virtual void AddRange(DataRelation[] relations)
 		{
-			//TODO: Implement
-
-			DataSet dataSet = GetDataSet();
-
-			throw new NotImplementedException ();
-
-			/*
-			foreach(DataRelation dataRelation in relations)
-			{
-				
-			}
-			*/
-
+			foreach (DataRelation relation in relations) Add(relation);
 		}
 
 		[MonoTODO]
@@ -412,13 +408,12 @@ namespace System.Data {
 
 		public virtual void Clear()
 		{
-			throw new NotImplementedException ();
+			List.Clear();
 		}
 
-		[MonoTODO]
 		public virtual bool Contains(string name)
 		{
-			return false;
+			return IndexOf(name) != -1;
 		}
 
 		private CollectionChangeEventArgs CreateCollectionChangeEvent (CollectionChangeAction action)
@@ -452,7 +447,7 @@ namespace System.Data {
 
 		public void Remove (DataRelation relation)
 		{
-			// TODO: RemoveCore (relation);
+			RemoveCore (relation);
 			List.Remove (relation);
 			OnCollectionChanged (CreateCollectionChangeEvent (CollectionChangeAction.Remove));
 		}
@@ -470,7 +465,7 @@ namespace System.Data {
 		[MonoTODO]
 		protected virtual void RemoveCore(DataRelation relation)
 		{
-			throw new NotImplementedException ();
+			// TODO: What have to be done?
 		}
 
 		[ResDescriptionAttribute ("Occurs whenever this collection's membership changes.")]

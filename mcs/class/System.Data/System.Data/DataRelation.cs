@@ -160,6 +160,10 @@ namespace System.Data
 			parentKeyConstraint = uniqueConstraint;
 		}
 
+		internal void SetDataSet(DataSet ds) {
+			dataSet = ds;
+		}
+
 		public virtual DataTable ParentTable {
 			get {
 				return parentColumns[0].Table;
