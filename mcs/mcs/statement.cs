@@ -1541,7 +1541,11 @@ namespace Mono.CSharp {
 					// Here, `a' is initialized in line 3 and we must not look at
 					// line 5 since it always returns.
 					// 
-					if (!breaks) {
+					if (child.is_finally) {
+						if (new_locals == null)
+							new_locals = locals.Clone ();
+						new_locals.Or (child.locals);
+					} else if (!breaks) {
 						if (new_locals != null)
 							new_locals.And (child.locals);
 						else {
@@ -4301,6 +4305,8 @@ namespace Mono.CSharp {
 				}
 			}
 
+			Report.Debug (1, "END OF CATCH BLOCKS", ec.CurrentBranching);
+
 			if (General != null){
 				ec.CurrentBranching.CreateSibling ();
 				Report.Debug (1, "STARTED SIBLING FOR GENERAL", ec.CurrentBranching);
@@ -4321,10 +4327,12 @@ namespace Mono.CSharp {
 				}
 			}
 
-			ec.CurrentBranching.CreateSiblingForFinally ();
-			Report.Debug (1, "STARTED SIBLING FOR FINALLY", ec.CurrentBranching, vector);
+			Report.Debug (1, "END OF GENERAL CATCH BLOCKS", ec.CurrentBranching);
 
 			if (Fini != null) {
+				ec.CurrentBranching.CreateSiblingForFinally ();
+				Report.Debug (1, "STARTED SIBLING FOR FINALLY", ec.CurrentBranching, vector);
+
 				bool old_in_finally = ec.InFinally;
 				ec.InFinally = true;
 

@@ -1,5 +1,12 @@
 2002-10-04  Martin Baulig  <martin@gnome.org>
 
+	* statement.cs (FlowBranching.UsageVector.MergeChildren): Make
+	finally blocks actually work.
+	(Try.Resolve): We don't need to create a sibling for `finally' if
+	there is no finally block.
+
+2002-10-04  Martin Baulig  <martin@gnome.org>
+
 	* class.cs (Constructor.Define): The default accessibility for a
 	non-default constructor is private, not public.
 
