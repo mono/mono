@@ -258,7 +258,15 @@ _loop4_breakloop:			;
 			}
 			case LITERAL_function:
 			{
-				function_decl_or_expr();
+				stm=function_decl_or_expr();
+				if (0==inputState.guessing)
+				{
+					
+							  if (stm != null)
+								  elems.Add (stm);
+								  Console.WriteLine ("DEBUG:src_elem::Add (function)");
+						
+				}
 				break;
 			}
 			default:
@@ -379,11 +387,19 @@ _loop4_breakloop:			;
 		}
 	}
 	
-	public void function_decl_or_expr() //throws RecognitionException, TokenStreamException
+	public AST  function_decl_or_expr() //throws RecognitionException, TokenStreamException
 {
+		AST func;
 		
 		traceIn("function_decl_or_expr");
 		try { // debugging
+			Token  id = null;
+			
+				func = null;
+				bool is_func_exp = false;
+				FormalParameterList p = null;
+				Block body = null;
+			
 			
 			match(LITERAL_function);
 			{
@@ -391,11 +407,16 @@ _loop4_breakloop:			;
 				{
 				case IDENTIFIER:
 				{
+					id = LT(1);
 					match(IDENTIFIER);
 					break;
 				}
 				case OPEN_PARENS:
 				{
+					if (0==inputState.guessing)
+					{
+						is_func_exp = true;
+					}
 					break;
 				}
 				default:
@@ -405,11 +426,22 @@ _loop4_breakloop:			;
 				 }
 			}
 			match(OPEN_PARENS);
-			formal_param_list();
+			p=formal_param_list();
 			match(CLOSE_PARENS);
 			match(OPEN_BRACE);
-			function_body();
+			body=function_body();
 			match(CLOSE_BRACE);
+			if (0==inputState.guessing)
+			{
+				
+						if (is_func_exp)
+							func = new FunctionExpression (String.Empty,
+										       p, body);
+						else func = new FunctionDeclaration (id.getText (),
+										     p, body);
+					
+			}
+			return func;
 		}
 		finally
 		{ // debugging
@@ -417,18 +449,29 @@ _loop4_breakloop:			;
 		}
 	}
 	
-	public void formal_param_list() //throws RecognitionException, TokenStreamException
+	public FormalParameterList  formal_param_list() //throws RecognitionException, TokenStreamException
 {
+		FormalParameterList p;
 		
 		traceIn("formal_param_list");
 		try { // debugging
+			Token  i = null;
+			Token  g = null;
+			
+				p = new FormalParameterList ();
+			
 			
 			{
 				switch ( LA(1) )
 				{
 				case IDENTIFIER:
 				{
+					i = LT(1);
 					match(IDENTIFIER);
+					if (0==inputState.guessing)
+					{
+						p.Add (i.getText ());
+					}
 					break;
 				}
 				case CLOSE_PARENS:
@@ -448,7 +491,12 @@ _loop4_breakloop:			;
 					if ((LA(1)==COMMA))
 					{
 						match(COMMA);
+						g = LT(1);
 						match(IDENTIFIER);
+						if (0==inputState.guessing)
+						{
+							p.Add (g.getText ());
+						}
 					}
 					else
 					{
@@ -458,6 +506,7 @@ _loop4_breakloop:			;
 				}
 _loop12_breakloop:				;
 			}    // ( ... )*
+			return p;
 		}
 		finally
 		{ // debugging
@@ -465,13 +514,18 @@ _loop12_breakloop:				;
 		}
 	}
 	
-	public void function_body() //throws RecognitionException, TokenStreamException
+	public Block  function_body() //throws RecognitionException, TokenStreamException
 {
+		Block elems;
 		
 		traceIn("function_body");
 		try { // debugging
 			
-			source_elements(null);
+				elems = new Block ();
+			
+			
+			source_elements(elems);
+			return elems;
 		}
 		finally
 		{ // debugging
@@ -4036,13 +4090,6 @@ _loop135_breakloop:						;
 			case HEX_INTEGER_LITERAL:
 			{
 				numeric_literal();
-				if (0==inputState.guessing)
-				{
-					
-							  NumericUnary num = new NumericUnary (s.getText ());
-							  l = num;
-						
-				}
 				break;
 			}
 			default:

@@ -1,6 +1,7 @@
 2003-10-22  cesar lopez nataren <cesar@ciencias.unam.mx>
 
 	* jscript-lexer-parser.g: build tree for function decl or expr.
+
 	* FunctionDeclaration.cs: added internal constructor.
 
 	* FunctionExpression.cs: added internal constructor.
