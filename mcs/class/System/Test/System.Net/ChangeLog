@@ -1,3 +1,7 @@
+2003-07-14  Jerome Laban <jlaban@wanadoo.fr>
+
+	* IPAddressTest.cs: Added IPv6 addresses tests.
+
 2002-09-17  Nick Drochak  <ndrochak@gol.com>
 
 	* ServicePointManagerTest.cs: Convert Console.WriteLine() into a Fail()
