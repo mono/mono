@@ -4,10 +4,21 @@ Option Compare Text
 
 Imports System, IO = System.Console
 Imports Microsoft.VisualBasic.Information
+Imports Mono.GetOptions
+
+'<Assembly: AssemblyVersion("1.2.*")> 
+'<Assembly: AssemblyTitle("WriteOK - a test program for the MonoBASIC compiler")>
+'<Assembly: AssemblyCopyright("(c)2004 Rafael Teixeira")>
+'<Assembly: AssemblyDescription("Some logic and console outputting")>
+'<Assembly: Mono.About("Just a test program")>
+'<Assembly: Mono.GetOptions.Author("Rafael Teixeira")>
+
+Imports System.Reflection
+Imports System.Runtime.InteropServices
 
 Module WriteOK
 
-    Sub Main()
+    Sub Main(args as string())
 		Dim nodim as integer ' comment out to test explicit
 		
 		Dim octalLit as integer = &O177	
@@ -20,6 +31,8 @@ Module WriteOK
 		dim charLit as char = "?"c
 		
 		dim dateLit as date = #10/23/2003#
+
+		dim optionprocessor as new another.driver
 		
         REM Testing old-fashioned comments
         Console.WriteLine("OK!") ' Simple comments
@@ -59,7 +72,15 @@ Module WriteOK
 		else
 			Console.WriteLine("FAILED")
 		end if
+
+		optionprocessor.ProcessArgs(args)
+		if OptionProcessor.SayHo Then
+			Console.WriteLine("Ho!")
+		else
+			Console.WriteLine("un-Ho!")	
+		End If
     End Sub
+
 
 End Module
 
@@ -115,5 +136,24 @@ Module Test ' modified Jambunathan test for intermixed directives with labels
         #End If
      End Sub
 End Module
+
+Public class Driver 
+inherits Options
+
+		<[Option]("Say 'Ho!'")> _
+		public sayho as boolean = false
+
+		<[Option]("About this test program", "about")> _
+		overrides public function DoAbout() as WhatToDoNext 
+			mybase.DoHelp()
+			return WhatToDoNext.GoAhead
+		end function
+
+		<[Option](-1, "Say {it}", "say")> _
+		public function Say(it as string) as WhatToDoNext
+			console.writeline(it)
+			return WhatToDoNext.GoAhead
+		end function
+end class
  
 End Namespace

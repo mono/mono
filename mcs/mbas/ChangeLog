@@ -1,3 +1,7 @@
+2004/08/19 Rafael Teixeira <rafaelteixeirabr@hotmail.com>
+	* testmbas/WriteOk.vb : Use Mono.GetOptions from VB.NET
+	* Makefile : exercise new option processing in test program [make-run-local target]
+
 2004-08-26 Bernie Solomon <bernard@ugsolutions.com>
 	* mb-parser.jay: rework parsing of ParamArray parameters
 

@@ -17,7 +17,7 @@ include ../build/executable.make
 run-test-local: run-mbas-test
 
 run-mbas-test: testmbas/WriteOK.exe
-	$(TEST_RUNTIME) --debug testmbas/WriteOK.exe
+	$(TEST_RUNTIME) --debug testmbas/WriteOK.exe --sayho /about -say:this,that,those /say:what?
 
 mb-parser.cs: mb-parser.jay
 	$(topdir)/jay/jay -ctv <$(topdir)/jay/skeleton.cs $< >$@
