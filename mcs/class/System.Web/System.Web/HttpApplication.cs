@@ -216,6 +216,20 @@ namespace System.Web
 
 #endregion
 
+#region Recycle Helper 
+		class HandlerFactory 
+		{
+			public IHttpHandler Handler;
+			public IHttpHandlerFactory Factory;
+
+			public HandlerFactory (IHttpHandler handler, IHttpHandlerFactory factory) 
+			{
+				this.Handler = handler;
+				this.Factory = factory;
+			}
+		}
+#endregion
+
 #region State Machine 
 
 		interface IStateHandler
@@ -716,6 +730,7 @@ namespace System.Web
 		HttpSessionState _Session;
 		HttpApplicationState _appState;
 		string assemblyLocation;
+		ArrayList _recycleHandlers;
 
 		bool _InPreRequestResponseMode;
 #endregion
@@ -749,7 +764,15 @@ namespace System.Web
 			if (result is IHttpHandlerFactory) {
 				IHttpHandlerFactory factory = (IHttpHandlerFactory) result;
 				try {
-					return factory.GetHandler (context, type, file, path);
+					IHttpHandler ret = factory.GetHandler (context, type, file, path);
+					if (null != ret) {
+						if (null == _recycleHandlers)
+							_recycleHandlers = new ArrayList();
+						
+						_recycleHandlers.Add (new HandlerFactory (ret, factory));
+					}
+					
+					return ret;
 				} catch (DirectoryNotFoundException) {
 					throw new HttpException (404, "Cannot find '" + file + "'.");
 				} catch (FileNotFoundException) {
@@ -760,10 +783,13 @@ namespace System.Web
 			throw new HttpException ("Handler not found");
 		}
 
-		[MonoTODO()]
 		internal void RecycleHandlers ()
 		{
-			// TODO: Recycle the created handlers (via factory?)
+			if (null == _recycleHandlers)
+				return;
+
+			foreach (HandlerFactory item in _recycleHandlers) 
+				item.Factory.ReleaseHandler (item.Handler);
 		}
 
 		internal void InitModules ()

@@ -1,3 +1,8 @@
+2004-05-16	Patrik Torstensson <totte@hiddenpeaks.com>
+
+	* HttpRuntime (Init): Removed old todo
+	* HttApplication : Implemented IHttpHandlerFactory recycling
+	
 2004-04-28	Patrik Torstensson
 
 	* HttpApplicationState.cs: Performance, usage of ReaderWriter lock,

@@ -73,14 +73,12 @@ namespace System.Web {
 			return Activator.CreateInstance(type, true);
 		}
 
-		[MonoTODO()]
 		private void Init ()
 		{
 			try {
 				_cache = new Cache ();
 				timeoutManager = new TimeoutManager ();
 
-				// TODO: Load all app domain data
 				_endOfSendCallback = new HttpWorkerRequest.EndOfSendNotification(OnEndOfSend);
 				_handlerCallback = new AsyncCallback(OnHandlerReady);
 				_appDomainCallback = new WaitCallback(OnAppDomainUnload);
