@@ -331,7 +331,7 @@ namespace Mono.CSharp {
 
 			int errors = Report.Errors;
 			Expression d = e.ResolveAsTypeTerminal (type_resolve_ec);
-			
+
 			if (d == null || d.eclass != ExprClass.Type){
 				if (!silent && errors == Report.Errors){
 					Console.WriteLine ("Type is: " + e.GetType().ToString ());
@@ -759,7 +759,7 @@ namespace Mono.CSharp {
 		/// Called by the parser to configure the type_parameter_list for this
 		/// declaration space
 		///
-		public AdditionResult SetParameterInfo (ArrayList type_parameter_list, ArrayList constraints_list, Location loc)
+		public AdditionResult SetParameterInfo (ArrayList type_parameter_list, ArrayList constraints_list)
 		{
 			type_params = new TypeParameter [type_parameter_list.Count];
 
@@ -789,7 +789,8 @@ namespace Mono.CSharp {
 					}
 				}
 
-				type_params [i] = new TypeParameter (name, constraints, loc);
+				int idx = this is GenericMethod ? i + 1 : 0;
+				type_params [i] = new TypeParameter (name, idx, constraints, Location);
 
 				DefineName (name, type_params [i]);
 			}
@@ -805,12 +806,17 @@ namespace Mono.CSharp {
 
 		public TypeParameterExpr LookupGeneric (string name, Location loc)
 		{
-			foreach (TypeParameter type_param in TypeParameters) {
-				if (type_param.Name != name)
-					continue;
+			if (TypeParameters != null) {
+				foreach (TypeParameter type_param in TypeParameters) {
+					if (type_param.Name != name)
+						continue;
 
-				return new TypeParameterExpr (type_param, loc);
+					return new TypeParameterExpr (type_param, loc);
+				}
 			}
+
+			if (parent != null)
+				return parent.LookupGeneric (name, loc);
 
 			return null;
 		}

@@ -2312,6 +2312,7 @@ namespace Mono.CSharp {
 	public class Method : MethodCore, IIteratorContainer {
 		public MethodBuilder MethodBuilder;
 		public MethodData MethodData;
+		public readonly GenericMethod GenericMethod;
 
 		/// <summary>
 		///   Modifiers allowed in a class declaration
@@ -2337,6 +2338,13 @@ namespace Mono.CSharp {
 			       Parameters parameters, Attributes attrs, Location l)
 			: base (ds, return_type, mod, AllowedModifiers, name, attrs, parameters, l)
 		{ }
+
+		public Method (GenericMethod generic, Expression return_type, int mod, string name,
+			       Parameters parameters, Attributes attrs, Location l)
+			: base (generic, return_type, mod, AllowedModifiers, name, attrs, parameters, l)
+		{
+			GenericMethod = generic;
+		}
 
 		//
 		// Returns the `System.Type' for the ReturnType of this
@@ -2493,6 +2501,11 @@ namespace Mono.CSharp {
 		//
 		public override bool Define (TypeContainer container)
 		{
+			if (GenericMethod != null) {
+				if (!GenericMethod.Define (container))
+					return false;
+			}
+
 			if (!DoDefine (container))
 				return false;
 
@@ -2501,7 +2514,7 @@ namespace Mono.CSharp {
 
 			CallingConventions cc = GetCallingConvention (container is Class);
 
-			MethodData = new MethodData (container, this, null, MemberType,
+			MethodData = new MethodData (ds, this, null, MemberType,
 						     ParameterTypes, ParameterInfo, cc,
 						     OptAttributes, ModFlags, flags, true);
 

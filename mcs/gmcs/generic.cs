@@ -113,6 +113,7 @@ namespace Mono.CSharp {
 	//
 	public class TypeParameter {
 		string name;
+		int index;
 		Constraints constraints;
 		Location loc;
 		Type type;
@@ -122,6 +123,12 @@ namespace Mono.CSharp {
 			this.name = name;
 			this.constraints = constraints;
 			this.loc = loc;
+		}
+
+		public TypeParameter (string name, int index, Constraints constraints, Location loc)
+			: this (name, constraints, loc)
+		{
+			this.index = index;
 		}
 
 		public string Name {
@@ -158,10 +165,26 @@ namespace Mono.CSharp {
 
 		public Type Define (TypeBuilder tb)
 		{
+			if (index > 0)
+				throw new InvalidOperationException ();
+
 			if (constraints != null)
 				type = tb.DefineGenericParameter (name, constraints.Types);
 			else
 				type = tb.DefineGenericParameter (name, new Type [0]);
+
+			return type;
+		}
+
+		public Type DefineMethod (TypeBuilder tb)
+		{
+			if (index == 0)
+				throw new InvalidOperationException ();
+
+			if (constraints != null)
+				type = tb.DefineGenericParameter (name, index - 1, constraints.Types);
+			else
+				type = tb.DefineGenericParameter (name, index - 1, new Type [0]);
 
 			return type;
 		}
@@ -355,17 +378,7 @@ namespace Mono.CSharp {
 			if (resolved == null)
 				return null;
 
-			Type gt;
-			TypeBuilder tb = resolved.Type as TypeBuilder;
-			if (tb != null) {
-				TypeContainer tc = TypeManager.LookupTypeContainer (tb);
-
-				tb = tc.DefineType ();
-
-				gt = tb.GetGenericTypeDefinition ();
-			} else
-				gt = resolved.Type.GetGenericTypeDefinition ();
-
+			Type gt = resolved.Type.GetGenericTypeDefinition ();
 			gen_params = gt.GetGenericParameters ();
 			atypes = args.Arguments;
 
@@ -402,6 +415,43 @@ namespace Mono.CSharp {
 		public override string ToString ()
 		{
 			return full_name;
+		}
+	}
+
+	public class GenericMethod : DeclSpace
+	{
+		public GenericMethod (NamespaceEntry ns, TypeContainer parent, string name, Location l)
+			: base (ns, parent, name, l)
+		{ }
+
+		public override TypeBuilder DefineType ()
+		{
+			throw new Exception ();
+		}
+
+		public override bool Define (TypeContainer parent)
+		{
+			foreach (TypeParameter type_param in TypeParameters)
+				type_param.DefineMethod (parent.TypeBuilder);
+
+			return true;
+		}
+
+		public override bool DefineMembers (TypeContainer parent)
+		{
+			return true;
+		}
+
+		public override MemberList FindMembers (MemberTypes mt, BindingFlags bf,
+							MemberFilter filter, object criteria)
+		{
+			throw new Exception ();
+		}		
+
+		public override MemberCache MemberCache {
+			get {
+				throw new Exception ();
+			}
 		}
 	}
 }

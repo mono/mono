@@ -1,3 +1,24 @@
+2003-10-10  Martin Baulig  <martin@ximian.com>
+
+	* class.cs (Method): Added .ctor which takes a `GenericMethod'
+	instead of a `DeclSpace'.  This is used for generic methods.
+
+	* cs-parser.jay (method_header): Added support for generic
+	methods; create a `GenericMethod' instance and pass it to the
+	`Method's .ctor; it'll be used as the `DeclSpace' to lookup
+	parameters and locals.
+
+	* decl.cs (DeclSpace.SetParameterInfo): Removed Location argument
+	since we already have the location.  Check whether we're a generic
+	type declaration or a generic method and create the correct type
+	parameter.
+
+	* generic.cs (TypeParameter): Added .ctor which takes an
+	additional `int index' argument.  It is used for generic methods.
+	(TypeParameter.DefineMethod): New public method.
+	(GenericMethod): New public class; derives from DeclSpace and is
+	used for generic methods.	
+
 2003-10-09  Martin Baulig  <martin@ximian.com>
 
 	* class.cs (MethodCore): Added additional `DeclSpace ds' argument

@@ -901,12 +901,28 @@ method_header
 	  opt_modifiers
 	  type
 	  member_name
+	  opt_type_parameter_list
 	  OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS 
+	  opt_type_parameter_constraints_clauses
 	  {
-		Method method = new Method (current_container, (Expression) $3, (int) $2, (string) $4, 
-					    (Parameters) $6, (Attributes) $1, lexer.Location);
+		if ($9 != null && $5 == null)
+			Report.Error (-200, lexer.Location,
+				      "Type parameter constraints only valid if there is a type parameter list");
 
-		current_local_parameters = (Parameters) $6;
+		Method method;
+		GenericMethod generic = null;
+		if ($5 != null) {
+			generic = new GenericMethod (current_namespace, current_container,
+						     (string) $4, lexer.Location);
+
+			CheckDef (generic.SetParameterInfo ((ArrayList) $5, (ArrayList) $9), generic.Name, generic.Location);
+			method = new Method (generic, (Expression) $3, (int) $2, (string) $4,
+					     (Parameters) $7, (Attributes) $1, lexer.Location);
+		} else
+			method = new Method (current_container, (Expression) $3, (int) $2, (string) $4, 
+					     (Parameters) $7, (Attributes) $1, lexer.Location);
+
+		current_local_parameters = (Parameters) $7;
 
 		$$ = method;
 	  }
@@ -914,13 +930,32 @@ method_header
 	  opt_modifiers
 	  VOID
 	  member_name
+	  opt_type_parameter_list
 	  OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS 
+	  opt_type_parameter_constraints_clauses
 	  {
-		Method method = new Method (current_container, TypeManager.system_void_expr, (int) $2,
-					    (string) $4, (Parameters) $6, (Attributes) $1,
+		if ($9 != null && $5 == null)
+			Report.Error (-200, lexer.Location,
+				      "Type parameter constraints only valid if there is a type parameter list");
+
+		Method method;
+		GenericMethod generic = null;
+		if ($5 != null) {
+			generic = new GenericMethod (current_namespace, current_container,
+						     (string) $4, lexer.Location);
+
+			CheckDef (generic.SetParameterInfo ((ArrayList) $5, (ArrayList) $9), generic.Name, generic.Location);
+
+			method = new Method (generic, TypeManager.system_void_expr, (int) $2,
+					    (string) $4, (Parameters) $7, (Attributes) $1,
+					    lexer.Location);
+		} else
+			method = new Method (current_container, TypeManager.system_void_expr, (int) $2,
+					    (string) $4, (Parameters) $7, (Attributes) $1,
 					    lexer.Location);
 
-		current_local_parameters = (Parameters) $6;
+		current_local_parameters = (Parameters) $7;
+
 		$$ = method;
 	  }
 	;
@@ -2846,7 +2881,7 @@ class_declaration
 				      "Type parameter constraints only valid if there is a type parameter list");
 
 		if ($6 != null)
-			CheckDef (new_class.SetParameterInfo ((ArrayList) $6, (ArrayList) $8, new_class.Location), new_class.Name, new_class.Location);
+			CheckDef (new_class.SetParameterInfo ((ArrayList) $6, (ArrayList) $8), new_class.Name, new_class.Location);
 		if ($7 != null)
 			new_class.Bases = (ArrayList) $7;
 		current_container = current_container.Parent;
