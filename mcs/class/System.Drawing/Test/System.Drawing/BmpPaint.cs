@@ -14,12 +14,13 @@ using System.Drawing.Imaging;
 public class BmpPaint {
 	static public void CreateBitmap (string filename, ImageFormat imgFmt) 
 	{
-		Bitmap	bmp = new Bitmap(100,100, PixelFormat.Format24bppRgb);
+		Bitmap	bmp = new Bitmap(100,100, PixelFormat.Format8bppIndexed);
 		Console.WriteLine("Bitmap created OK {0}", bmp != null);
 		if( bmp != null) {
 			Console.WriteLine("Bitmap Pixelformat {0}", bmp.PixelFormat);
 		}
 		Graphics gr = Graphics.FromImage(bmp);
+		/*
 		Console.WriteLine("Graphics created OK {0}", gr != null);
 		if( gr != null) {
 			Pen p = new Pen(Color.Red, 2);
@@ -31,6 +32,7 @@ public class BmpPaint {
 		gr.Dispose();
 		bmp.Dispose();
 		Console.WriteLine("Bitmap stored to " + filename);
+		*/
 	}
 	
 	static public void PaintOnBitmap (string filename, string newname) 

@@ -1,3 +1,6 @@
+2004-05-12 Jordi Mas <jordi@ximan.com>
+	* TestBitmap.cs: added lockbitmap tests
+
 2004-05-07 Jordi Mas <jordi@ximan.com>
 	* TestBitmap.cs: added rotation tests
 

@@ -14,6 +14,7 @@ using NUnit.Framework;
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
+using System.Runtime.InteropServices;
 
 namespace MonoTests.System.Drawing{
 
@@ -250,6 +251,116 @@ namespace MonoTests.System.Drawing{
 			AssertEquals ("B1ECB17B5093E13D04FF55CFCF7763", RotateBmp (bmp, RotateFlipType.Rotate180FlipX));
 			AssertEquals ("71A173882C16755D86F4BC26532374", RotateBmp (bmp, RotateFlipType.Rotate270FlipX));
 
+		}
+		
+		public void LockBmp (PixelFormat fmt, PixelFormat fmtlock, string output, 
+			int lwidth , int lheight, ref string hash1, ref string hash2)
+		{			
+			int width = 100, height = 100, bbps, cur, pos;
+			Bitmap	bmp = new Bitmap (width, height, fmt);										
+			Graphics gr = Graphics.FromImage (bmp);			
+			byte[] hash;
+			Color clr;
+			byte[] btv = new byte[1];   						
+			int y, x, len = width * height * 4, index = 0;			
+			byte[] pixels = new byte [len];
+			hash1 = hash2 ="";
+			
+			bbps = Image.GetPixelFormatSize (fmt);			
+				 
+			Pen p = new Pen (Color.FromArgb (255, 100, 200, 250), 2);				
+			gr.DrawRectangle(p, 1.0F, 1.0F, 80.0F, 80.0F);				
+			
+			BitmapData bd = bmp.LockBits (new Rectangle (0, 0, lwidth, lheight), ImageLockMode.ReadOnly,  fmtlock);
+			
+			pos = bd.Scan0.ToInt32();			
+			for (y = 0; y < bd.Height; y++) {			
+				for (x = 0; x < bd.Width; x++) {
+					
+					/* Read the pixels*/
+					for (int bt =0; bt < bbps/8; bt++, index++) {
+						cur = pos;
+						cur+= y * bd.Stride;
+						cur+= x * bbps/8;					
+						cur+= bt;					
+						Marshal.Copy ((IntPtr)cur, btv, 0, 1);
+						pixels[index] = btv[0];
+						
+						/* Make change of all the colours = 250 to 10*/						
+						if (btv[0] == 250) {
+							btv[0] = 10;
+							Marshal.Copy (btv, 0, (IntPtr)cur, 1);
+						}
+					}
+				}
+			}					
+			
+			for (int i = index; i < len; i++)
+				pixels[index] = 0;
+		
+			hash = new MD5CryptoServiceProvider().ComputeHash (pixels);			
+			bmp.UnlockBits (bd);							
+						
+			hash1 = ByteArrayToString (hash);
+			
+			/* MD5 of the changed bitmap*/
+			for (y = 0, index = 0; y < height; y++) {
+				for (x = 0; x < width; x++) {				
+					clr = bmp.GetPixel (x,y);
+					pixels[index++] = clr.R; pixels[index++] = clr.G; pixels[index++]  = clr.B;	
+				}				
+			}
+			
+			hash = new MD5CryptoServiceProvider().ComputeHash (pixels);						
+			hash2 = ByteArrayToString (hash);
+			
+			/*bmp.Save (output, ImageFormat.Bmp);*/
+		}
+		/*
+			Tests the LockBitmap functions. Makes a hash of the block of pixels that it returns
+			firsts, changes them, and then using GetPixel does another check of the changes.
+			The results match the .Net framework
+		*/
+		[Test]
+		public void LockBitmap ()
+		{	
+			string hash = "";		
+			string hashchg = "";				
+							
+			/* Locks the whole bitmap*/			
+			LockBmp (PixelFormat.Format32bppArgb, PixelFormat.Format32bppArgb, "output32bppArgb.bmp", 100, 100, ref hash, ref hashchg);				
+			AssertEquals ("AF5BFD4E98D6708FF4C9982CC9C68F", hash);			
+			AssertEquals ("BBEE27DC85563CB58EE11E8951230F", hashchg);			
+			
+			LockBmp (PixelFormat.Format32bppPArgb, PixelFormat.Format32bppPArgb, "output32bppPArgb.bmp", 100, 100, ref hash, ref hashchg);			
+			AssertEquals ("AF5BFD4E98D6708FF4C9982CC9C68F", hash);			
+			AssertEquals ("BBEE27DC85563CB58EE11E8951230F", hashchg);			
+			
+			LockBmp (PixelFormat.Format32bppRgb, PixelFormat.Format32bppRgb, "output32bppRgb.bmp", 100, 100, ref hash, ref hashchg);
+			AssertEquals ("AF5BFD4E98D6708FF4C9982CC9C68F", hash);			
+			AssertEquals ("BBEE27DC85563CB58EE11E8951230F", hashchg);		
+			
+			LockBmp (PixelFormat.Format24bppRgb, PixelFormat.Format24bppRgb, "output24bppRgb.bmp", 100, 100, ref hash, ref hashchg);
+			AssertEquals ("A8A071D0B3A3743905B4E193A62769", hash);			
+			AssertEquals ("EEE846FA8F892339C64082DFF775CF", hashchg);					
+			
+			/* Locks a portion of the bitmap*/		
+			LockBmp (PixelFormat.Format32bppArgb, PixelFormat.Format32bppArgb, "output32bppArgb.bmp", 50, 50, ref hash, ref hashchg);				
+			AssertEquals ("C361FBFD82A4F3C278605AE9EC5385", hash);			
+			AssertEquals ("8C2C04B361E1D5875EE8ACF5073F4E", hashchg);			
+			
+			LockBmp (PixelFormat.Format32bppPArgb, PixelFormat.Format32bppPArgb, "output32bppPArgb.bmp", 50, 50, ref hash, ref hashchg);			
+			AssertEquals ("C361FBFD82A4F3C278605AE9EC5385", hash);			
+			AssertEquals ("8C2C04B361E1D5875EE8ACF5073F4E", hashchg);			
+		
+			LockBmp (PixelFormat.Format32bppRgb, PixelFormat.Format32bppRgb, "output32bppRgb.bmp", 50, 50, ref hash, ref hashchg);
+			AssertEquals ("C361FBFD82A4F3C278605AE9EC5385", hash);			
+			AssertEquals ("8C2C04B361E1D5875EE8ACF5073F4E", hashchg);			
+			
+			LockBmp (PixelFormat.Format24bppRgb, PixelFormat.Format24bppRgb, "output24bppRgb.bmp", 50, 50, ref hash, ref hashchg);
+			AssertEquals ("FFE86628478591D1A1EB30E894C34F", hash);			
+			AssertEquals ("8C2C04B361E1D5875EE8ACF5073F4E", hashchg);				
+						
 		}
 		
 	}
