@@ -15,6 +15,11 @@ namespace System.Xml.Schema
 		{
 		}
 
+		internal override Facet ThisFacet { 
+			get { return Facet.enumeration;}
+		}
+	
+
 		//<enumeration
 		//  id = ID
 		//  value = anySimpleType

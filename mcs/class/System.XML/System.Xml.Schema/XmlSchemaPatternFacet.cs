@@ -15,6 +15,11 @@ namespace System.Xml.Schema
 		public XmlSchemaPatternFacet()
 		{
 		}
+			
+		internal override Facet ThisFacet { 
+			get { return Facet.pattern;}
+		}
+	
 		//<pattern
 		//  id = ID
 		//  value = anySimpleType

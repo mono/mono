@@ -27,6 +27,14 @@ namespace System.Xml.Schema
 		private decimal minLengthFacet;
 		private decimal fractionDigitsFacet;
 		private decimal totalDigitsFacet;
+		private object maxInclusiveFacet ;
+		private object maxExclusiveFacet ;
+		private object minInclusiveFacet ;
+		private object minExclusiveFacet ;
+		private XmlSchemaFacet.Facet fixedFacets = XmlSchemaFacet.Facet.None; 
+		
+		
+		private static NumberStyles lengthStyle = NumberStyles.Integer;
 
 		public XmlSchemaSimpleTypeRestriction()
 		{
@@ -99,6 +107,13 @@ namespace System.Xml.Schema
 		/** Checks if this facet is valid on this restriction. Does not check that it has
 			* not been fixed in the baseType. That is done elsewhere.
 			*/
+		
+		private const XmlSchemaFacet.Facet listFacets =
+						 XmlSchemaFacet.Facet.length | XmlSchemaFacet.Facet.minLength |
+						 XmlSchemaFacet.Facet.maxLength | XmlSchemaFacet.Facet.pattern | 
+						 XmlSchemaFacet.Facet.enumeration | XmlSchemaFacet.Facet.whiteSpace; 
+ 
+		
 		private bool IsAllowedFacet(XmlSchemaFacet xsf) {
 		/* Must be called after this.ValidateActualType, as it uses actualBaseSchemaType */
 
@@ -116,12 +131,7 @@ namespace System.Xml.Schema
 				 }
 				 XmlSchemaSimpleTypeList stl = st as XmlSchemaSimpleTypeList;
 				 if (stl != null) {
-					 return (xsf is XmlSchemaLengthFacet || 
-									 xsf is XmlSchemaMaxLengthFacet ||
-									 xsf is XmlSchemaMinLengthFacet ||
-									 xsf is XmlSchemaPatternFacet ||
-									 xsf is XmlSchemaEnumerationFacet ||
-									 xsf is XmlSchemaWhiteSpaceFacet);
+					 return ((xsf.ThisFacet & listFacets) != 0);
 				 }
 
 				 XmlSchemaSimpleTypeUnion stu = st as XmlSchemaSimpleTypeUnion;
@@ -140,19 +150,45 @@ namespace System.Xml.Schema
 			return false;
 		}
 		
+		
+	
 		[MonoTODO]
 		internal override int Validate(ValidationEventHandler h, XmlSchema schema)
 		{
-			NumberStyles lengthStyle = NumberStyles.Integer;
 			
 			if (IsValidated (schema.ValidationId))
 				return errorCount;
 
 			this.ValidateActualType (baseType, baseTypeName, h, schema);
 
+			
+			lengthFacet = maxLengthFacet = minLengthFacet = fractionDigitsFacet = totalDigitsFacet = -1;
+			
+			XmlSchemaSimpleTypeRestriction baseSTR = null; 
+
+			if (actualBaseSchemaType is XmlSchemaSimpleType) {
+				XmlSchemaSimpleTypeContent st = ((XmlSchemaSimpleType)actualBaseSchemaType).Content as XmlSchemaSimpleTypeContent;
+				baseSTR = st as XmlSchemaSimpleTypeRestriction;
+			}
+			
+				
+			if (baseSTR != null) {
+				fixedFacets = baseSTR.fixedFacets;
+				lengthFacet = baseSTR.lengthFacet;
+				maxLengthFacet = baseSTR.maxLengthFacet;
+				minLengthFacet = baseSTR.minLengthFacet;
+				fractionDigitsFacet = baseSTR.fractionDigitsFacet;
+				totalDigitsFacet = baseSTR.totalDigitsFacet;
+				maxInclusiveFacet = baseSTR.maxInclusiveFacet;
+				maxExclusiveFacet = baseSTR.maxExclusiveFacet;
+				minInclusiveFacet = baseSTR.minInclusiveFacet;
+				minExclusiveFacet = baseSTR.minExclusiveFacet;
+			}
+			
 			enumarationFacetValues = patternFacetValues = null;
 			rexPatterns = null;
-			lengthFacet = maxLengthFacet = minLengthFacet = fractionDigitsFacet = totalDigitsFacet = -1;
+			
+			XmlSchemaFacet.Facet facetsDefined = XmlSchemaFacet.Facet.None; 
 
 			ArrayList enums = null;
 			ArrayList patterns = null;
@@ -161,10 +197,17 @@ namespace System.Xml.Schema
 				XmlSchemaFacet facet = facets[i] as XmlSchemaFacet;
 				if (facet != null) {
 					if (!IsAllowedFacet(facet)) {
-						facet.error(h, facet +" is not a valid facet for this type");
+						facet.error(h, facet.ThisFacet +" is not a valid facet for this type");
 						continue;
 					}
 				}
+				else {
+					// FIXME: Not an XmlSchemaFacet, should we complain here?
+					// Definately not worth seeing what sort of facet it is, as
+					// it isn't any of them.
+					continue;
+				}
+
 				
 				XmlSchemaEnumerationFacet ef = facets [i] as XmlSchemaEnumerationFacet;
 				if (ef != null) {
@@ -180,63 +223,55 @@ namespace System.Xml.Schema
 					patterns.Add (pf.Value);
 					continue;
 				}
-				XmlSchemaLengthFacet lf = facets [i] as XmlSchemaLengthFacet;
-				if (lf != null) {
-					try {
-						if (minLengthFacet >=0 || maxLengthFacet>=0) 
-							lf.error(h, "It is an error for both length and minLength or maxLength to be present.");
-						if (lengthFacet >= 0)
-							lf.error (h, "There already length facet exists.");
-						else {
-							lengthFacet = decimal.Parse (lf.Value.Trim (), lengthStyle);
-							if (lengthFacet < 0) 
-								lf.error(h, "The value '" + lengthFacet + "' is an invalid length");
-						}
-					} catch (Exception) { // FIXME: better catch ;-(
-						lf.error (h, "The value '" + lf.Value + "' is an invalid length facet specification");
-					}
+				
+				// Put this test here, as pattern and enumeration 
+				// can occur multiple times.
+				if ( (facetsDefined & facet.ThisFacet) !=0) {
+					facet.error (h, "This is a duplicate '" + facet.ThisFacet + "' facet.");
 					continue;
 				}
-				XmlSchemaMaxLengthFacet maxlf = facets [i] as XmlSchemaMaxLengthFacet;
-				if (maxlf != null) {
-					try {
-						if (lengthFacet >=0) 
-							maxlf.error(h, "It is an error for both length and minLength or maxLength to be present.");
-						if (maxLengthFacet >= 0)
-							maxlf.error (h, "There already maxLength facet exists.");
-						else {
-							maxLengthFacet = decimal.Parse (maxlf.Value.Trim (), lengthStyle);
-							if (maxLengthFacet < 0) 
-								maxlf.error(h, "The value '" + maxLengthFacet + "' is an invalid maxLength");
-							if (minLengthFacet >=0 && minLengthFacet > maxLengthFacet)
-								maxlf.error(h, "minLength is greater than maxLength.");
-						}
+				else {
+					facetsDefined |= facet.ThisFacet; 
+				}
 
+				
+				
 
-					} catch (Exception) { // FIXME: better catch ;-(
-						maxlf.error (h, "The value '" + maxlf.Value+ "' is an invalid maxLength facet specification");
-					}
-					continue;
+				
+				if (facet is XmlSchemaLengthFacet) {
+					checkLengthFacet((XmlSchemaLengthFacet)facet, facetsDefined, h);
 				}
-				XmlSchemaMinLengthFacet minlf = facets [i] as XmlSchemaMinLengthFacet;
-				if (minlf != null) {
-					try {
-						if (lengthFacet >=0) 
-							minlf.error(h, "It is an error for both length and minLength or maxLength to be present.");
-						if (minLengthFacet >= 0)
-							minlf.error (h, "There already minLength facet exists.");
-						else {
-							minLengthFacet = decimal.Parse (minlf.Value.Trim (), lengthStyle);
-							if (minLengthFacet < 0) 
-								minlf.error(h, "The value '" + minLengthFacet + "' is an invalid minLength");
-							if (maxLengthFacet >=0 && minLengthFacet > maxLengthFacet)
-								minlf.error(h, "minLength is greater than maxLength.");
-						}
-					} catch (Exception) { // FIXME: better catch ;-(
-						minlf.error (h, "The value '" + minlf.Value + "' is an invalid minLength facet specification");
-					}
-					continue;
+				else if (facet is XmlSchemaMaxLengthFacet) {
+					checkMaxLengthFacet((XmlSchemaMaxLengthFacet)facet, facetsDefined, h);
 				}
+				else if (facet is XmlSchemaMinLengthFacet) {
+					checkMinLengthFacet((XmlSchemaMinLengthFacet)facet, facetsDefined, h);
+				}
+				
+				else if (facet is XmlSchemaMinInclusiveFacet) {
+					checkMinMaxFacet((XmlSchemaMinInclusiveFacet)facet, ref minInclusiveFacet, h);
+				}
+				else if (facet is XmlSchemaMaxInclusiveFacet) {
+					checkMinMaxFacet((XmlSchemaMaxInclusiveFacet)facet, ref maxInclusiveFacet, h);
+				}
+				else if (facet is XmlSchemaMinExclusiveFacet) {
+					checkMinMaxFacet((XmlSchemaMinExclusiveFacet)facet, ref minExclusiveFacet, h);
+				}
+				else if (facet is XmlSchemaMaxExclusiveFacet) {
+					checkMinMaxFacet((XmlSchemaMaxExclusiveFacet)facet, ref maxExclusiveFacet, h);
+				}
+				else if (facet is XmlSchemaFractionDigitsFacet) {
+					checkFractionDigitsFacet((XmlSchemaFractionDigitsFacet)facet, h);
+				}
+				else if (facet is XmlSchemaTotalDigitsFacet) {
+					checkTotalDigitsFacet((XmlSchemaTotalDigitsFacet)facet, h);
+				}
+
+				if (facet.IsFixed) {
+					fixedFacets |= facet.ThisFacet;
+				}
+				
+			 
 			}
 			if (enums != null)
 				this.enumarationFacetValues = enums.ToArray (typeof (string)) as string [];
@@ -251,14 +286,232 @@ namespace System.Xml.Schema
 						error (h, "Invalid regular expression pattern was specified.", ex);
 					}
 				}
+				
+				
+			
 			}
 
 			ValidationId = schema.ValidationId;
+		 /* 
+				Console.WriteLine("Facets:\n defined\t{10}\n fixed\t{0}\n length\t{1}\n maxLen\t{2}\n minLen\t{3}\n " +
+													"frac\t{4}\n tot\t{5}\n maxI\t{6}\n maxE\t{7}\n minI\t{8}\n minE\t{9}\n", 
+						fixedFacets , 
+						lengthFacet, 
+						maxLengthFacet ,
+						minLengthFacet ,
+						fractionDigitsFacet ,
+						totalDigitsFacet ,
+						maxInclusiveFacet ,
+						maxExclusiveFacet ,
+						minInclusiveFacet ,
+						minExclusiveFacet , 
+						facetsDefined);
+*/
 			return errorCount;
+		}
+
+
+		private void checkTotalDigitsFacet (XmlSchemaTotalDigitsFacet totf, 
+																				ValidationEventHandler h) {
+			if (totf != null) {
+			/* totalDigits is the maximum number of digits in values of datatypes
+			 * ·derived· from decimal. The value of totalDigits ·must· be a
+			 * positiveInteger. */
+				try {
+					decimal newTotalDigits = decimal.Parse (totf.Value.Trim (), lengthStyle);
+					if (newTotalDigits <= 0) 
+						totf.error(h, String.Format("The value '{0}' is an invalid totalDigits value", newTotalDigits));
+					// Valid restriction
+					if ((totalDigitsFacet > 0) && (newTotalDigits > totalDigitsFacet)) {
+						totf.error(h, String.Format("The value '{0}' is not a valid restriction of the base totalDigits facet '{1}'", newTotalDigits, totalDigitsFacet));
+					}
+					totalDigitsFacet = newTotalDigits;
+				}
+				catch (FormatException ) {
+					totf.error(h, String.Format("The value '{0}' is an invalid totalDigits facet specification", totf.Value.Trim () ));
+				}
+			}
+		}
+
+		
+		private void checkFractionDigitsFacet (XmlSchemaFractionDigitsFacet fracf, 
+																					 ValidationEventHandler h) {
+
+			if (fracf != null) {
+				try {
+					decimal newFractionDigits = decimal.Parse (fracf.Value.Trim (), lengthStyle);
+					if (newFractionDigits< 0) 
+						fracf.error(h, String.Format("The value '{0}' is an invalid fractionDigits value", newFractionDigits));
+					
+					if ((fractionDigitsFacet >= 0) && (newFractionDigits > fractionDigitsFacet)) {
+						fracf.error(h, String.Format("The value '{0}' is not a valid restriction of the base fractionDigits facet '{1}'", newFractionDigits, fractionDigitsFacet));
+					}
+					fractionDigitsFacet = newFractionDigits;
+				}
+				catch (FormatException ) {
+					fracf.error(h, String.Format("The value '{0}' is an invalid fractionDigits facet specification", fracf.Value.Trim () ));
+				}
+			}
+
+		}
+ 
+		
+		private void checkMinMaxFacet(XmlSchemaFacet facet, 
+																		ref object baseFacet,
+																		ValidationEventHandler h) { 
+// Is it a valid instance of the base type.
+		 object newValue = ValidateValueWithDatatype(facet.Value);
+		 if (newValue != null) {
+// Is the base fixed - if so is it the same
+			 if (((fixedFacets & facet.ThisFacet) != 0)  && (baseFacet != null)){
+				 XsdAnySimpleType dt = getDatatype();
+				 if (dt.Compare (newValue, baseFacet) != XsdOrdering.Equal) {
+					 facet.error (h, 
+							 String.Format("{0} is not the same as fixed parent {1} facet.", 
+										 facet.Value, facet.ThisFacet));
+				 }
+			 }
+			 baseFacet = newValue;
+		 }
+		 else {
+			 facet.error(h, 
+					 String.Format("The value '{0}' is not valid against the base type.", facet.Value));
+		 }
+		}
+		
+		
+
+		private void checkLengthFacet(XmlSchemaLengthFacet lf,	
+																	XmlSchemaFacet.Facet facetsDefined, 
+																	ValidationEventHandler h) {
+				if (lf != null) {
+					try {
+					if ((facetsDefined & (XmlSchemaFacet.Facet.minLength | XmlSchemaFacet.Facet.maxLength)) != 0)  
+							lf.error(h, "It is an error for both length and minLength or maxLength to be present.");
+						else {
+							lengthFacet = decimal.Parse (lf.Value.Trim (), lengthStyle);
+						/* TODO: Check that it is between inherited max/min lengths */
+							if (lengthFacet < 0) 
+								lf.error(h, "The value '" + lengthFacet + "' is an invalid length");
+						}
+				} catch (FormatException) { // FIXME: better catch ;-(
+						lf.error (h, "The value '" + lf.Value + "' is an invalid length facet specification");
+					}
+				}
+		}
+
+		private void checkMaxLengthFacet(XmlSchemaMaxLengthFacet maxlf, 
+																		 XmlSchemaFacet.Facet facetsDefined,
+																		 ValidationEventHandler h) {
+				if (maxlf != null) {
+					try {
+					if ((facetsDefined & XmlSchemaFacet.Facet.length) != 0) 
+							maxlf.error(h, "It is an error for both length and minLength or maxLength to be present.");
+						else {
+						decimal newMaxLengthFacet = decimal.Parse (maxlf.Value.Trim (), lengthStyle);
+						
+						if (((fixedFacets & XmlSchemaFacet.Facet.maxLength)!=0) && (newMaxLengthFacet != maxLengthFacet)) 
+							maxlf.error(h, String.Format("The value '{0}' is not the same as the fixed value '{1}' on the base type", maxlf.Value.Trim (), maxLengthFacet));
+						if ((maxLengthFacet >0) && (newMaxLengthFacet > maxLengthFacet)) 
+							maxlf.error(h, String.Format("The value '{0}' is not a valid restriction of the value '{1}' on the base maxLength facet", maxlf.Value.Trim (), maxLengthFacet));
+						else
+							maxLengthFacet = newMaxLengthFacet;
+							if (maxLengthFacet < 0) 
+								maxlf.error(h, "The value '" + maxLengthFacet + "' is an invalid maxLength");
+							if (minLengthFacet >=0 && minLengthFacet > maxLengthFacet)
+								maxlf.error(h, "minLength is greater than maxLength.");
+						}
+
+				} catch (FormatException) { 
+						maxlf.error (h, "The value '" + maxlf.Value+ "' is an invalid maxLength facet specification");
+					}
+				}
+		}
+
+		private void checkMinLengthFacet(XmlSchemaMinLengthFacet minlf, 
+																		 XmlSchemaFacet.Facet facetsDefined,
+																		 ValidationEventHandler h) {
+				if (minlf != null) {
+					try {
+						if (lengthFacet >=0) 
+							minlf.error(h, "It is an error for both length and minLength or maxLength to be present.");
+						else {
+						decimal newMinLengthFacet = decimal.Parse (minlf.Value.Trim (), lengthStyle);
+						
+						if (((fixedFacets & XmlSchemaFacet.Facet.minLength)!=0) && (newMinLengthFacet != minLengthFacet)) 
+							minlf.error(h, String.Format("The value '{0}' is not the same as the fixed value '{1}' on the base type", minlf.Value.Trim (), minLengthFacet));
+						if (newMinLengthFacet < minLengthFacet) 
+							minlf.error(h, String.Format("The value '{0}' is not a valid restriction of the value '{1}' on the base minLength facet", minlf.Value.Trim (), minLengthFacet));
+						else
+							minLengthFacet = newMinLengthFacet;
+							if (minLengthFacet < 0) 
+								minlf.error(h, "The value '" + minLengthFacet + "' is an invalid minLength");
+							if (maxLengthFacet >=0 && minLengthFacet > maxLengthFacet)
+								minlf.error(h, "minLength is greater than maxLength.");
+						}
+				} catch (FormatException) {
+						minlf.error (h, "The value '" + minlf.Value + "' is an invalid minLength facet specification");
+					}
+				}
+			}
+
+
+		private XsdAnySimpleType getDatatype() {
+			XsdAnySimpleType ast = actualBaseSchemaType as XsdAnySimpleType;
+			if (ast != null) {
+				// Based directly on an xsd type 
+				return ast;
+			}
+			XmlSchemaSimpleTypeContent st = ((XmlSchemaSimpleType)actualBaseSchemaType).Content as XmlSchemaSimpleTypeContent;
+			
+			if (st is XmlSchemaSimpleTypeRestriction) {
+				return ((XmlSchemaSimpleTypeRestriction)st).getDatatype();
+			}
+			else if ((st is XmlSchemaSimpleTypeList) ||
+							 (st is XmlSchemaSimpleTypeUnion)) {
+				return null;
+			}
+			return null;
+		}
+
+		
+		private object ValidateValueWithDatatype(string value) {
+			XsdAnySimpleType dt = getDatatype();
+			object ret = null;
+			//		Console.WriteLine("DT: " + dt);
+			if (dt != null) {
+					try {
+					/* I think we can parse null here, as the types 
+					 * that use the nametable and nsmgr are ones that 
+					 * we don't need to parse here.
+					 */ 
+					ret = dt.ParseValue(value, null, null);
+				//	Console.WriteLine("Ret: " + ret);
+					// If we are based on something with facets, check that we are valid
+					if (actualBaseSchemaType is XmlSchemaSimpleType) {
+						XmlSchemaSimpleTypeContent st = ((XmlSchemaSimpleType)actualBaseSchemaType).Content as XmlSchemaSimpleTypeContent;
+						if (st is XmlSchemaSimpleTypeRestriction) {
+							if (((XmlSchemaSimpleTypeRestriction)st).ValidateValueWithFacets(value, null)) {
+								return ret;
+							} else {
+								return null;
+					}
+				}
+			}
+
+				}catch (Exception e) {
+					return null;
+				}
+			}
+			return ret;
 		}
 
 		internal bool ValidateValueWithFacets (string value, XmlNameTable nt)
 		{
+			/*
+			 * FIXME: Shouldn't this be recursing more? What if this is a 
+			 * restriction of a restriction of a list type?
+			 */
 			XmlSchemaSimpleType baseST = this.ActualBaseSchemaType as XmlSchemaSimpleType;
 			XmlSchemaSimpleTypeList listType = baseST != null ? baseST.Content as XmlSchemaSimpleTypeList : null;
 
@@ -306,6 +559,7 @@ namespace System.Xml.Schema
 			// : minLength
 			if (minLengthFacet >= 0 && list.Length < minLengthFacet)
 					return false;
+			
 			return true;
 		}
 
@@ -329,6 +583,12 @@ namespace System.Xml.Schema
 				if (!matched)
 					return false;
 			}
+			
+			// TODO: Need to skip length tests for 
+			// types derived from QName or NOTATION
+			// see errata: E2-36 Clarification
+			
+						
 			// numeric
 			// : length
 			if (lengthFacet >= 0 && value.Length != lengthFacet)
@@ -340,7 +600,64 @@ namespace System.Xml.Schema
 			if (minLengthFacet >= 0 && value.Length < minLengthFacet)
 					return false;
 
-			// TODO: fractionDigits and totalDigits
+			if ((totalDigitsFacet >=0) || (fractionDigitsFacet >=0)) {
+				String newValue = value.Trim(new Char [] { '+', '-', '0', '.' });
+				int fractionDigits = 0;
+				int totalDigits = newValue.Length;
+				int point = newValue.IndexOf(".");
+				if (point != -1) {
+					totalDigits -= 1;
+					fractionDigits = newValue.Length - point -1; 
+				} 
+				if ((totalDigitsFacet >=0) && (totalDigits > totalDigitsFacet)) 
+					return false;
+				if ((fractionDigitsFacet >=0) && (fractionDigits > fractionDigitsFacet)) 
+					return false;
+			}
+			
+			if ((maxInclusiveFacet != null) ||
+					(maxExclusiveFacet != null) ||
+					(minInclusiveFacet != null) ||
+					(minExclusiveFacet != null)) { 
+				XsdAnySimpleType dt = getDatatype ();
+				if (dt != null) {
+					object parsed;
+					try {
+						parsed = dt.ParseValue (value, nt, null);
+					} catch (OverflowException ) {
+						/* This appears to be what .NET does */
+						return false ;
+					} catch (FormatException ) {
+						/* This appears to be what .NET does */
+						return false ;
+					}
+					
+					if (maxInclusiveFacet != null) {
+						XsdOrdering result = dt.Compare (parsed, maxInclusiveFacet);
+						if ((result != XsdOrdering.LessThan) &&
+								(result != XsdOrdering.Equal)) 
+							return false;
+					}
+					if (maxExclusiveFacet != null) {
+					
+						XsdOrdering result = dt.Compare (parsed, maxExclusiveFacet);
+						if (result != XsdOrdering.LessThan) 
+							return false;
+					}
+					if (minInclusiveFacet != null) {
+						XsdOrdering result = dt.Compare (parsed, minInclusiveFacet);
+						if ((result != XsdOrdering.GreaterThan) &&
+								(result != XsdOrdering.Equal)) 
+							return false;
+					}
+					if (minExclusiveFacet != null) {
+						XsdOrdering result = dt.Compare (parsed, minExclusiveFacet);
+						if (result != XsdOrdering.GreaterThan) 
+							return false;
+					}
+
+				}
+			}
 
 			// all passed
 			return true;

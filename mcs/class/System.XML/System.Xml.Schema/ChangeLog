@@ -1,3 +1,31 @@
+2004-01-11  David Sheldon <dave-mono@earth.li>
+
+  * BuiltInDatatype.cs : Added XsdOrdering enum, and Compare methods
+   to the data-types. Changed AllowedFacets to be a bitfield.
+  
+  * XmlSchemaFacet.cs : Added Facet enumeration to represent bitfield.
+
+  * XmlSchemaEnumerationFacet.cs,
+    XmlSchemaFractionDigitsFacet.cs,
+    XmlSchemaLengthFacet.cs,
+    XmlSchemaMaxExclusiveFacet.cs,
+    XmlSchemaMaxInclusiveFacet.cs,
+    XmlSchemaMaxLengthFacet.cs,
+    XmlSchemaMinExclusiveFacet.cs,
+    XmlSchemaMinInclusiveFacet.cs,
+    XmlSchemaMinLengthFacet.cs,
+    XmlSchemaNumericFacet.cs,
+    XmlSchemaPatternFacet.cs,
+    XmlSchemaTotalDigitsFacet.cs,
+    XmlSchemaWhiteSpaceFacet.cs : Added ThisFacet Property to return facet type
+
+
+  * XmlSchemaSimpleTypeRestriction.cs: Inherited facets from base types,
+    checked which which were allowed on different types. Validated fixed
+    facets, duplicated facets and derivation by restriction. Added checking 
+    for min/max Inclusive/Exclusive, totalDigits and fractionDigits facets in 
+    validation.
+
 2004-01-08  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* BUGS-MS.txt : added list derivation and facet case.

@@ -15,6 +15,11 @@ namespace System.Xml.Schema
 		public XmlSchemaWhiteSpaceFacet()
 		{
 		}
+			
+		internal override Facet ThisFacet { 
+			get { return Facet.whiteSpace;}
+		}
+	
 		//	<whiteSpace
 		//	fixed = boolean : false
 		//	id = ID

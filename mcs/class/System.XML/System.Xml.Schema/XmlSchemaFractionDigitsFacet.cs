@@ -16,6 +16,10 @@ namespace System.Xml.Schema
 		{
 		}
 
+		internal override Facet ThisFacet { 
+			get { return Facet.fractionDigits;}
+		}
+
 		//<fractionDigits
 		//  fixed = boolean : false
 		//  id = ID

@@ -29,6 +29,14 @@ namespace Mono.Xml.Schema
 		Total
 	}
 
+	public enum XsdOrdering 
+	{
+		LessThan = -1,
+		Equal = 0,
+		GreaterThan = 1,
+		Indeterminate = 2
+	}
+	
 	public class XsdAnySimpleType : XmlSchemaDatatype
 	{
 		static XsdAnySimpleType instance;
@@ -81,64 +89,49 @@ namespace Mono.Xml.Schema
 			return this.Normalize (s, XsdWhitespaceFacet.Collapse).Split (whitespaceArray);
 		}
 		
-		internal virtual bool AllowsFacet(XmlSchemaFacet xsf)
-		{
+	
+
 			// Can you even use XsdAnySimpleType in a schema?
 			// -> Yes. See E1-22 of http://www.w3.org/2001/05/xmlschema-errata#Errata1 (somewhat paranoid ;-)
-			return true;
+		
+		internal bool AllowsFacet(XmlSchemaFacet xsf) {
+			return (AllowedFacets & xsf.ThisFacet)!=0;
 		}
 
 
+
+		internal virtual XsdOrdering Compare(object x, object y) {
+			return XsdOrdering.Indeterminate;
+			}
+		
+		// anySimpleType allows any facet
+		internal virtual XmlSchemaFacet.Facet AllowedFacets {
+			get { return XmlSchemaFacet.AllFacets ;}
+		}
 
 		/* Matches facets allowed on boolean type
 		 */
-		protected static bool BooleanAllowsFacet(XmlSchemaFacet xsf) 
-		{
-			if (xsf is XmlSchemaPatternFacet ||
-					xsf is XmlSchemaWhiteSpaceFacet ) {
-				return true;
-			}
-			return false;
-		}
+		protected const XmlSchemaFacet.Facet booleanAllowedFacets = 
+					 XmlSchemaFacet.Facet.pattern | XmlSchemaFacet.Facet.whiteSpace;
 
 		/* Matches facets allowed on decimal type. 
 		 */
-
-		protected static bool DecimalAllowsFacet(XmlSchemaFacet xsf) 
-		{
-			if (xsf is XmlSchemaPatternFacet ||
-					xsf is XmlSchemaEnumerationFacet ||
-					xsf is XmlSchemaWhiteSpaceFacet ||
-					xsf is XmlSchemaMaxInclusiveFacet ||
-					xsf is XmlSchemaMaxExclusiveFacet ||
-					xsf is XmlSchemaMinInclusiveFacet ||
-					xsf is XmlSchemaMinExclusiveFacet || 
-					xsf is XmlSchemaFractionDigitsFacet || 
-					xsf is XmlSchemaTotalDigitsFacet) {
-				return true;
-			}
-			return false;
-		}
-
+		protected const XmlSchemaFacet.Facet decimalAllowedFacets = 
+							XmlSchemaFacet.Facet.pattern | XmlSchemaFacet.Facet.enumeration | 
+							XmlSchemaFacet.Facet.whiteSpace | XmlSchemaFacet.Facet.maxInclusive | 
+							XmlSchemaFacet.Facet.minInclusive | XmlSchemaFacet.Facet.maxExclusive | 
+							XmlSchemaFacet.Facet.minExclusive | XmlSchemaFacet.Facet.fractionDigits | 
+							XmlSchemaFacet.Facet.totalDigits ;
 
 		/* Matches facets allowed on float, double, duration, dateTime, time, date,
 		 * gYearMonth, gYear, gMonthDay, gMonth, and gDay types
 		 */
 
-		protected static bool DurationAllowsFacet(XmlSchemaFacet xsf) 
-		{
-			if (xsf is XmlSchemaPatternFacet ||
-					xsf is XmlSchemaEnumerationFacet ||
-					xsf is XmlSchemaWhiteSpaceFacet ||
-					xsf is XmlSchemaMaxInclusiveFacet ||
-					xsf is XmlSchemaMaxExclusiveFacet ||
-					xsf is XmlSchemaMinInclusiveFacet ||
-					xsf is XmlSchemaMinExclusiveFacet ) {
-				return true;
-			}
-			return false;
-		}
-
+		protected const XmlSchemaFacet.Facet durationAllowedFacets = 
+							XmlSchemaFacet.Facet.pattern | XmlSchemaFacet.Facet.enumeration | 
+							XmlSchemaFacet.Facet.whiteSpace | XmlSchemaFacet.Facet.maxInclusive |
+							XmlSchemaFacet.Facet.minInclusive | XmlSchemaFacet.Facet.maxExclusive |
+							XmlSchemaFacet.Facet.minExclusive ;
 
 		/* Matches facet allowed on string, hexBinary, base64Binary,
 		 * anyURI, QName and NOTATION types 
@@ -146,18 +139,10 @@ namespace Mono.Xml.Schema
 		 * Also used on list types
 		 */
 
-		protected static bool StringAllowsFacet(XmlSchemaFacet xsf) 
-		{
-			if (xsf is XmlSchemaLengthFacet ||
-					xsf is XmlSchemaMinLengthFacet || 
-					xsf is XmlSchemaMaxLengthFacet ||
-					xsf is XmlSchemaPatternFacet ||
-					xsf is XmlSchemaEnumerationFacet ||
-					xsf is XmlSchemaWhiteSpaceFacet) {
-				return true;
-			}
-			return false;
-		}
+		protected const XmlSchemaFacet.Facet stringAllowedFacets = 
+						 XmlSchemaFacet.Facet.length | XmlSchemaFacet.Facet.minLength |
+						 XmlSchemaFacet.Facet.maxLength | XmlSchemaFacet.Facet.pattern | 
+						 XmlSchemaFacet.Facet.enumeration | XmlSchemaFacet.Facet.whiteSpace; 
 	}
 
 	// xs:string
@@ -165,6 +150,10 @@ namespace Mono.Xml.Schema
 	{
 		internal XsdString ()
 		{
+		}
+
+		internal override XmlSchemaFacet.Facet AllowedFacets {
+			get { return stringAllowedFacets; } 
 		}
 
 		public override XmlTokenizedType TokenizedType {
@@ -200,10 +189,6 @@ namespace Mono.Xml.Schema
 		public string Pattern;
 		public ICollection Enumeration;
 		*/
-		internal override bool AllowsFacet(XmlSchemaFacet xsf) 
-		{
-			return StringAllowsFacet(xsf);
-		}
 	
 	}
 
@@ -420,7 +405,6 @@ namespace Mono.Xml.Schema
 	public class XsdEntity : XsdName
 	{
 		internal XsdEntity ()
-
 		{
 		}
 
@@ -464,6 +448,10 @@ namespace Mono.Xml.Schema
 		{
 		}
 
+		internal override XmlSchemaFacet.Facet AllowedFacets {
+			get { return stringAllowedFacets; } 
+		}
+
 		public override XmlTokenizedType TokenizedType {
 			get { return XmlTokenizedType.NOTATION; }
 		}
@@ -503,10 +491,6 @@ namespace Mono.Xml.Schema
 		public ICollection Enumeration;
 
 
-		internal override bool AllowsFacet(XmlSchemaFacet xsf) 
-		{
-			return StringAllowsFacet(xsf);
-		}
 
 
 	}
@@ -517,6 +501,10 @@ namespace Mono.Xml.Schema
 		internal XsdDecimal ()
 		{
 			this.WhitespaceValue = XsdWhitespaceFacet.Collapse;
+		}
+
+		internal override XmlSchemaFacet.Facet AllowedFacets {
+			get { return decimalAllowedFacets; } 
 		}
 
 		public override XmlTokenizedType TokenizedType {
@@ -533,6 +521,23 @@ namespace Mono.Xml.Schema
 			return XmlConvert.ToDecimal (this.Normalize (s));
 		}
 
+	 
+		internal override XsdOrdering Compare(object x, object y) {
+			if ((x is Decimal) && (y is Decimal)) {
+				int ret = Decimal.Compare((Decimal)x, (Decimal)y);
+				if (ret < 0) { 
+					return XsdOrdering.LessThan;
+				}
+				else if (ret > 0) {
+					return XsdOrdering.GreaterThan;
+				}
+				else {
+					return XsdOrdering.Equal;
+				}
+			}
+			return XsdOrdering.Indeterminate;
+		}
+		
 		// Fundamental Facets
 		public override bool Bounded {
 			get { return false; }
@@ -558,10 +563,6 @@ namespace Mono.Xml.Schema
 		public ICollection Enumeration;
 		
 		
-		internal override bool AllowsFacet(XmlSchemaFacet xsf) 
-		{
-			return DecimalAllowsFacet(xsf);
-		}
 		
 		
 	}
@@ -586,6 +587,9 @@ namespace Mono.Xml.Schema
 				throw new FormatException ("Integer contains point number.");
 			return d;
 		}
+	 
+		
+	
 	}
 
 	// xs:Long
@@ -600,6 +604,21 @@ namespace Mono.Xml.Schema
 		{
 			return XmlConvert.ToInt64 (Normalize (s));
 		}
+		
+		internal override XsdOrdering Compare(object x, object y) {
+			if ((x is long) && (y is long)) {
+				if ((long)x==(long)y) {
+					return XsdOrdering.Equal;
+				}
+				else if ((long)x<(long)y) {
+					return XsdOrdering.LessThan;
+				}
+				else {
+					return XsdOrdering.GreaterThan;
+				}
+			}
+			return XsdOrdering.Indeterminate;
+		}
 	}
 
 	// xs:Int
@@ -613,6 +632,20 @@ namespace Mono.Xml.Schema
 			XmlNameTable nameTable, XmlNamespaceManager nsmgr)
 		{
 			return XmlConvert.ToInt32 (Normalize (s));
+		}
+		internal override XsdOrdering Compare(object x, object y) {
+			if ((x is int) && (y is int)) {
+				if ((int)x==(int)y) {
+					return XsdOrdering.Equal;
+				}
+				else if ((int)x<(int)y) {
+					return XsdOrdering.LessThan;
+				}
+				else {
+					return XsdOrdering.GreaterThan;
+				}
+			}
+			return XsdOrdering.Indeterminate;
 		}
 	}
 
@@ -629,6 +662,20 @@ namespace Mono.Xml.Schema
 		{
 			return XmlConvert.ToInt16 (Normalize (s));
 		}
+		internal override XsdOrdering Compare(object x, object y) {
+			if ((x is short) && (y is short)) {
+				if ((short)x==(short)y) {
+					return XsdOrdering.Equal;
+				}
+				else if ((short)x<(short)y) {
+					return XsdOrdering.LessThan;
+				}
+				else {
+					return XsdOrdering.GreaterThan;
+				}
+			}
+			return XsdOrdering.Indeterminate;
+		}
 	}
 
 	// xs:Byte
@@ -642,6 +689,20 @@ namespace Mono.Xml.Schema
 			XmlNameTable nameTable, XmlNamespaceManager nsmgr)
 		{
 			return XmlConvert.ToSByte (Normalize (s));
+		}
+		internal override XsdOrdering Compare(object x, object y) {
+			if ((x is sbyte) && (y is sbyte)) {
+				if ((sbyte)x==(sbyte)y) {
+					return XsdOrdering.Equal;
+				}
+				else if ((sbyte)x<(sbyte)y) {
+					return XsdOrdering.LessThan;
+				}
+				else {
+					return XsdOrdering.GreaterThan;
+				}
+			}
+			return XsdOrdering.Indeterminate;
 		}
 	}
 
@@ -674,6 +735,20 @@ namespace Mono.Xml.Schema
 		{
 			return XmlConvert.ToUInt64 (Normalize (s));
 		}
+		internal override XsdOrdering Compare(object x, object y) {
+			if ((x is ulong) && (y is ulong)) {
+				if ((ulong)x==(ulong)y) {
+					return XsdOrdering.Equal;
+				}
+				else if ((ulong)x<(ulong)y) {
+					return XsdOrdering.LessThan;
+				}
+				else {
+					return XsdOrdering.GreaterThan;
+				}
+			}
+			return XsdOrdering.Indeterminate;
+		}
 	}
 
 	// xs:unsignedInt
@@ -688,6 +763,20 @@ namespace Mono.Xml.Schema
 			XmlNameTable nameTable, XmlNamespaceManager nsmgr)
 		{
 			return XmlConvert.ToUInt32 (Normalize (s));
+		}
+		internal override XsdOrdering Compare(object x, object y) {
+			if ((x is uint) && (y is uint)) {
+				if ((uint)x==(uint)y) {
+					return XsdOrdering.Equal;
+				}
+				else if ((uint)x<(uint)y) {
+					return XsdOrdering.LessThan;
+				}
+				else {
+					return XsdOrdering.GreaterThan;
+				}
+			}
+			return XsdOrdering.Indeterminate;
 		}
 	}
 
@@ -705,6 +794,20 @@ namespace Mono.Xml.Schema
 		{
 			return XmlConvert.ToUInt16 (Normalize (s));
 		}
+		internal override XsdOrdering Compare(object x, object y) {
+			if ((x is ushort) && (y is ushort)) {
+				if ((ushort)x==(ushort)y) {
+					return XsdOrdering.Equal;
+				}
+				else if ((ushort)x<(ushort)y) {
+					return XsdOrdering.LessThan;
+				}
+				else {
+					return XsdOrdering.GreaterThan;
+				}
+			}
+			return XsdOrdering.Indeterminate;
+		}
 	}
 
 	// xs:unsignedByte
@@ -719,6 +822,20 @@ namespace Mono.Xml.Schema
 			XmlNameTable nameTable, XmlNamespaceManager nsmgr)
 		{
 			return XmlConvert.ToByte(Normalize (s));
+		}
+		internal override XsdOrdering Compare(object x, object y) {
+			if ((x is byte) && (y is byte)) {
+				if ((byte)x==(byte)y) {
+					return XsdOrdering.Equal;
+				}
+				else if ((byte)x<(byte)y) {
+					return XsdOrdering.LessThan;
+				}
+				else {
+					return XsdOrdering.GreaterThan;
+				}
+			}
+			return XsdOrdering.Indeterminate;
 		}
 	}
 
@@ -777,6 +894,10 @@ namespace Mono.Xml.Schema
 			this.WhitespaceValue = XsdWhitespaceFacet.Collapse;
 		}
     
+		internal override XmlSchemaFacet.Facet AllowedFacets {
+			get { return durationAllowedFacets; } 
+		}
+		
 		// Fundamental Facets
 		public override bool Bounded {
 			get { return true; }
@@ -800,11 +921,21 @@ namespace Mono.Xml.Schema
 		{
 			return XmlConvert.ToSingle (Normalize (s));
 		}
-		
-		internal override bool AllowsFacet(XmlSchemaFacet xsf) 
-		{
-			return DurationAllowsFacet(xsf);
+		internal override XsdOrdering Compare(object x, object y) {
+			if ((x is float) && (y is float)) {
+				if ((float)x==(float)y) {
+					return XsdOrdering.Equal;
+				}
+				else if ((float)x<(float)y) {
+					return XsdOrdering.LessThan;
+				}
+				else {
+					return XsdOrdering.GreaterThan;
+				}
 		}
+			return XsdOrdering.Indeterminate;
+		}
+		
 	}
 
 	// xs:double
@@ -815,6 +946,10 @@ namespace Mono.Xml.Schema
 			this.WhitespaceValue = XsdWhitespaceFacet.Collapse;
 		}
     
+		internal override XmlSchemaFacet.Facet AllowedFacets {
+			get { return durationAllowedFacets; } 
+		}
+		
 		// Fundamental Facets
 		public override bool Bounded {
 			get { return true; }
@@ -838,11 +973,21 @@ namespace Mono.Xml.Schema
 		{
 			return XmlConvert.ToDouble (Normalize (s));
 		}
-		
-		internal override bool AllowsFacet(XmlSchemaFacet xsf) 
-		{
-			return DurationAllowsFacet(xsf);
+		internal override XsdOrdering Compare(object x, object y) {
+			if ((x is double) && (y is double)) {
+				if ((double)x==(double)y) {
+					return XsdOrdering.Equal;
+				}
+				else if ((double)x<(double)y) {
+					return XsdOrdering.LessThan;
 		}
+				else {
+					return XsdOrdering.GreaterThan;
+				}
+			}
+			return XsdOrdering.Indeterminate;
+		}
+		
 	}
 
 	// xs:base64Binary
@@ -871,6 +1016,10 @@ namespace Mono.Xml.Schema
       this.WhitespaceValue = XsdWhitespaceFacet.Collapse;
 		}
 
+		internal override XmlSchemaFacet.Facet AllowedFacets {
+			get { return stringAllowedFacets; } 
+		}
+
 		public override XmlTokenizedType TokenizedType {
 			get { return XmlTokenizedType.None; }
 		}
@@ -885,10 +1034,6 @@ namespace Mono.Xml.Schema
 			return XmlConvert.FromBinHexString (Normalize (s));
 		}
 		
-		internal override bool AllowsFacet(XmlSchemaFacet xsf) 
-		{
-			return StringAllowsFacet(xsf);
-		}
 
 		// Fundamental Facets ... no need to override
 	}
@@ -935,6 +1080,10 @@ namespace Mono.Xml.Schema
       this.WhitespaceValue = XsdWhitespaceFacet.Collapse;
 		}
 
+		internal override XmlSchemaFacet.Facet AllowedFacets {
+			get { return booleanAllowedFacets; } 
+		}
+
 		public override XmlTokenizedType TokenizedType {
 			get { return XmlTokenizedType.CDATA; }
 		}
@@ -964,10 +1113,6 @@ namespace Mono.Xml.Schema
 		}
 		
 		
-		internal override bool AllowsFacet(XmlSchemaFacet xsf) 
-		{
-			return BooleanAllowsFacet(xsf);
-		}
 	}
 
 	// xs:anyURI
@@ -997,6 +1142,10 @@ namespace Mono.Xml.Schema
       this.WhitespaceValue = XsdWhitespaceFacet.Collapse;
 		}
 
+		internal override XmlSchemaFacet.Facet AllowedFacets {
+			get { return durationAllowedFacets; } 
+		}
+
 		public override XmlTokenizedType TokenizedType {
 			get { return XmlTokenizedType.CDATA; }
 		}
@@ -1011,6 +1160,29 @@ namespace Mono.Xml.Schema
 			return XmlConvert.ToTimeSpan (Normalize (s));
 		}
 
+		internal override XsdOrdering Compare(object x, object y) {
+			/* FIXME: This is really simple so far 
+			 *
+			 * In fact in order to do this correctly in XmlSchema, we cannot use TimeSpan as the base type
+			 * Though it turns out that MS .NET is a little broken in this regard too. Not doing comparisons 
+			 * correctly.
+			 */
+			if ((x is TimeSpan) && (y is TimeSpan)) {
+				int ret = TimeSpan.Compare((TimeSpan)x, (TimeSpan)y);
+				if (ret < 0) { 
+					return XsdOrdering.LessThan;
+				}
+				else if (ret > 0) {
+					return XsdOrdering.GreaterThan;
+				}
+				else {
+					return XsdOrdering.Equal;
+				}
+			}
+			return XsdOrdering.Indeterminate;
+		}
+
+		
 		// Fundamental Facets
 		public override bool Bounded {
 			get { return false; }
@@ -1023,14 +1195,8 @@ namespace Mono.Xml.Schema
 		}
 		public override XsdOrderedFacet Ordered {
 			get { return XsdOrderedFacet.Partial; }
-		}
 	 
-		internal override bool AllowsFacet(XmlSchemaFacet xsf) 
-		{
-			return DurationAllowsFacet(xsf);
 		}
-
-		
 	}
 
 	// xs:dateTime
@@ -1039,6 +1205,10 @@ namespace Mono.Xml.Schema
 		internal XsdDateTime ()
 		{
 			this.WhitespaceValue = XsdWhitespaceFacet.Collapse;
+		}
+
+		internal override XmlSchemaFacet.Facet AllowedFacets {
+			get { return durationAllowedFacets; } 
 		}
 
 		public override XmlTokenizedType TokenizedType {
@@ -1055,6 +1225,23 @@ namespace Mono.Xml.Schema
 			return XmlConvert.ToDateTime (Normalize (s));
 		}
 
+		internal override XsdOrdering Compare(object x, object y) {
+			/* Really simple so far */
+			if ((x is DateTime) && (y is DateTime)) {
+				int ret = DateTime.Compare((DateTime)x, (DateTime)y);
+				if (ret < 0) { 
+					return XsdOrdering.LessThan;
+				}
+				else if (ret > 0) {
+					return XsdOrdering.GreaterThan;
+				}
+				else {
+					return XsdOrdering.Equal;
+				}
+			}
+			return XsdOrdering.Indeterminate;
+		}
+
 		// Fundamental Facets
 		public override bool Bounded {
 			get { return false; }
@@ -1069,10 +1256,6 @@ namespace Mono.Xml.Schema
 			get { return XsdOrderedFacet.Partial; }
 		}
 		
-		internal override bool AllowsFacet(XmlSchemaFacet xsf) 
-		{
-			return DurationAllowsFacet(xsf);
-		}
 	}
 
 	// xs:date
@@ -1083,6 +1266,10 @@ namespace Mono.Xml.Schema
 			this.WhitespaceValue = XsdWhitespaceFacet.Collapse;
 		}
     
+		internal override XmlSchemaFacet.Facet AllowedFacets {
+			get { return durationAllowedFacets; } 
+		}
+		
 		public override XmlTokenizedType TokenizedType {
 			get { return XmlTokenizedType.CDATA; }
 		}
@@ -1097,15 +1284,27 @@ namespace Mono.Xml.Schema
 			return DateTime.ParseExact (Normalize (s), "yyyy-MM-dd", null);
 		}
 
+		internal override XsdOrdering Compare(object x, object y) {
+			/* Really simple so far */
+			if ((x is DateTime) && (y is DateTime)) {
+				int ret = DateTime.Compare((DateTime)x, (DateTime)y);
+				if (ret < 0) { 
+					return XsdOrdering.LessThan;
+				}
+				else if (ret > 0) {
+					return XsdOrdering.GreaterThan;
+				}
+				else {
+					return XsdOrdering.Equal;
+				}
+			}
+			return XsdOrdering.Indeterminate;
+		}
 		// Fundamental Facets ... no need to override except for Ordered.
 		public override XsdOrderedFacet Ordered {
 			get { return XsdOrderedFacet.Partial; }
 		}
 		
-		internal override bool AllowsFacet(XmlSchemaFacet xsf) 
-		{
-			return DurationAllowsFacet(xsf);
-		}
 	}
 
 	// xs:time
@@ -1143,6 +1342,10 @@ namespace Mono.Xml.Schema
 			this.WhitespaceValue = XsdWhitespaceFacet.Collapse;
 		}
 
+		internal override XmlSchemaFacet.Facet AllowedFacets {
+			get { return durationAllowedFacets; } 
+		}
+
 		public override XmlTokenizedType TokenizedType {
 			get { return XmlTokenizedType.CDATA; }
 		}
@@ -1157,15 +1360,27 @@ namespace Mono.Xml.Schema
 			return DateTime.ParseExact (Normalize (s), timeFormats, null, DateTimeStyles.None);
 		}
 
+		internal override XsdOrdering Compare(object x, object y) {
+			/* Really simple so far */
+			if ((x is DateTime) && (y is DateTime)) {
+				int ret = DateTime.Compare((DateTime)x, (DateTime)y);
+				if (ret < 0) { 
+					return XsdOrdering.LessThan;
+				}
+				else if (ret > 0) {
+					return XsdOrdering.GreaterThan;
+				}
+				else {
+					return XsdOrdering.Equal;
+				}
+			}
+			return XsdOrdering.Indeterminate;
+		}
 		// Fundamental Facets ... no need to override except for Ordered.
 		public override XsdOrderedFacet Ordered {
 			get { return XsdOrderedFacet.Partial; }
 		}
 		
-		internal override bool AllowsFacet(XmlSchemaFacet xsf) 
-		{
-			return DurationAllowsFacet(xsf);
-		}
 	}
 
 	// xs:gYearMonth
@@ -1176,6 +1391,10 @@ namespace Mono.Xml.Schema
 			this.WhitespaceValue = XsdWhitespaceFacet.Collapse;
 		}
     
+		internal override XmlSchemaFacet.Facet AllowedFacets {
+			get { return durationAllowedFacets; } 
+		}
+		
 		public override Type ValueType {
 			get { return typeof (DateTime); }
 		}
@@ -1186,9 +1405,21 @@ namespace Mono.Xml.Schema
 			return DateTime.ParseExact (Normalize (s), "yyyy-MM", null);
 		}
 		
-		internal override bool AllowsFacet(XmlSchemaFacet xsf) 
-		{
-			return DurationAllowsFacet(xsf);
+		internal override XsdOrdering Compare(object x, object y) {
+			/* Really simple so far */
+			if ((x is DateTime) && (y is DateTime)) {
+				int ret = DateTime.Compare((DateTime)x, (DateTime)y);
+				if (ret < 0) { 
+					return XsdOrdering.LessThan;
+				}
+				else if (ret > 0) {
+					return XsdOrdering.GreaterThan;
+				}
+				else {
+					return XsdOrdering.Equal;
+				}
+			}
+			return XsdOrdering.Indeterminate;
 		}
 	}
 
@@ -1200,6 +1431,10 @@ namespace Mono.Xml.Schema
 			this.WhitespaceValue = XsdWhitespaceFacet.Collapse;
 		}
     
+		internal override XmlSchemaFacet.Facet AllowedFacets {
+			get { return durationAllowedFacets; } 
+		}
+		
 		public override Type ValueType {
 			get { return typeof (DateTime); }
 		}
@@ -1210,9 +1445,21 @@ namespace Mono.Xml.Schema
 			return DateTime.ParseExact (Normalize (s), "--MM-dd", null);
 		}
 		
-		internal override bool AllowsFacet(XmlSchemaFacet xsf) 
-		{
-			return DurationAllowsFacet(xsf);
+		internal override XsdOrdering Compare(object x, object y) {
+			/* Really simple so far */
+			if ((x is DateTime) && (y is DateTime)) {
+				int ret = DateTime.Compare((DateTime)x, (DateTime)y);
+				if (ret < 0) { 
+					return XsdOrdering.LessThan;
+				}
+				else if (ret > 0) {
+					return XsdOrdering.GreaterThan;
+				}
+				else {
+					return XsdOrdering.Equal;
+				}
+			}
+			return XsdOrdering.Indeterminate;
 		}
 	}
 
@@ -1222,6 +1469,10 @@ namespace Mono.Xml.Schema
 		internal XsdGYear ()
 		{
 			this.WhitespaceValue = XsdWhitespaceFacet.Collapse;
+		}
+		
+		internal override XmlSchemaFacet.Facet AllowedFacets {
+			get { return durationAllowedFacets; } 
 		}
 		
     public override Type ValueType {
@@ -1236,9 +1487,21 @@ namespace Mono.Xml.Schema
 			return DateTime.ParseExact (Normalize(s), "yyyy", null);
 		}
 		
-		internal override bool AllowsFacet(XmlSchemaFacet xsf) 
-		{
-			return DurationAllowsFacet(xsf);
+		internal override XsdOrdering Compare(object x, object y) {
+			/* Really simple so far */
+			if ((x is DateTime) && (y is DateTime)) {
+				int ret = DateTime.Compare((DateTime)x, (DateTime)y);
+				if (ret < 0) { 
+					return XsdOrdering.LessThan;
+				}
+				else if (ret > 0) {
+					return XsdOrdering.GreaterThan;
+				}
+				else {
+					return XsdOrdering.Equal;
+				}
+			}
+			return XsdOrdering.Indeterminate;
 		}
 	}
 
@@ -1248,6 +1511,10 @@ namespace Mono.Xml.Schema
 		internal XsdGMonth ()
 		{
 			this.WhitespaceValue = XsdWhitespaceFacet.Collapse;
+		}
+		
+		internal override XmlSchemaFacet.Facet AllowedFacets {
+			get { return durationAllowedFacets; } 
 		}
 		
 		public override Type ValueType {
@@ -1260,9 +1527,21 @@ namespace Mono.Xml.Schema
 			return DateTime.ParseExact (Normalize(s), "--MM--", null);
 		}
 		
-		internal override bool AllowsFacet(XmlSchemaFacet xsf) 
-		{
-			return DurationAllowsFacet(xsf);
+		internal override XsdOrdering Compare(object x, object y) {
+			/* Really simple so far */
+			if ((x is DateTime) && (y is DateTime)) {
+				int ret = DateTime.Compare((DateTime)x, (DateTime)y);
+				if (ret < 0) { 
+					return XsdOrdering.LessThan;
+				}
+				else if (ret > 0) {
+					return XsdOrdering.GreaterThan;
+				}
+				else {
+					return XsdOrdering.Equal;
+				}
+			}
+			return XsdOrdering.Indeterminate;
 		}
 	}
 
@@ -1272,6 +1551,10 @@ namespace Mono.Xml.Schema
 		internal XsdGDay ()
 		{
 			this.WhitespaceValue = XsdWhitespaceFacet.Collapse;
+		}
+		
+		internal override XmlSchemaFacet.Facet AllowedFacets {
+			get { return durationAllowedFacets; } 
 		}
 		
 		public override Type ValueType {
@@ -1284,9 +1567,21 @@ namespace Mono.Xml.Schema
 			return DateTime.ParseExact (Normalize(s), "---dd", null);
 		}
 		
-		internal override bool AllowsFacet(XmlSchemaFacet xsf) 
-		{
-			return DurationAllowsFacet(xsf);
+		internal override XsdOrdering Compare(object x, object y) {
+			/* Really simple so far */
+			if ((x is DateTime) && (y is DateTime)) {
+				int ret = DateTime.Compare((DateTime)x, (DateTime)y);
+				if (ret < 0) { 
+					return XsdOrdering.LessThan;
+				}
+				else if (ret > 0) {
+					return XsdOrdering.GreaterThan;
+				}
+				else {
+					return XsdOrdering.Equal;
+				}
+			}
+			return XsdOrdering.Indeterminate;
 		}
 	}
 

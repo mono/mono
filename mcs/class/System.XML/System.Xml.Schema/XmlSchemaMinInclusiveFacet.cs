@@ -15,6 +15,11 @@ namespace System.Xml.Schema
 		public XmlSchemaMinInclusiveFacet()
 		{
 		}
+			
+		internal override Facet ThisFacet {
+			get { return Facet.minInclusive ;}
+		}
+
 		//<minInclusive
 		//  fixed = boolean : false
 		//  id = ID

@@ -15,6 +15,11 @@ namespace System.Xml.Schema
 		public XmlSchemaTotalDigitsFacet()
 		{
 		}
+			
+		internal override Facet ThisFacet { 
+			get { return Facet.totalDigits;}
+		}
+	
 		//<totalDigits
 		//  fixed = boolean : false
 		//  id = ID

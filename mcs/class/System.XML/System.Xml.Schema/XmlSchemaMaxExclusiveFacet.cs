@@ -16,6 +16,10 @@ namespace System.Xml.Schema
 		{
 		}
 
+		internal override Facet ThisFacet { 
+			get { return Facet.maxExclusive;}
+		}
+
 		//<maxExclusive
 		//  fixed = boolean : false
 		//  id = ID

@@ -16,6 +16,11 @@ namespace System.Xml.Schema
 		{
 		}
 
+		internal override Facet ThisFacet { 
+			get { return Facet.maxLength;}
+		}
+	
+
 		//<maxLength
 		//  fixed = boolean : false
 		//  id = ID
