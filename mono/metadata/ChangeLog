@@ -1,3 +1,7 @@
+2004-06-21  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* reflection.c: Load the assembly in mono_reflection_type_from_name,
+	if it was not loaded before. Fix parts of #60439.
 
 Mon Jun 21 16:04:43 CEST 2004 Paolo Molaro <lupus@ximian.com>
 
