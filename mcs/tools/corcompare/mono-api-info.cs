@@ -163,6 +163,9 @@ namespace Mono.AssemblyInfo
 				    t.IsNestedFamORAssem || t.IsNestedPrivate)
 					continue;
 
+				if (t.DeclaringType != null)
+					continue; // enforce !nested
+				
 				if (t.Namespace != currentNS) {
 					currentNS = t.Namespace;
 					ns = document.CreateElement ("namespace", null);
@@ -272,6 +275,8 @@ namespace Mono.AssemblyInfo
 				nclass.AppendChild (ifaces);
 				foreach (Type t in interfaces) {
 					XmlNode iface = document.CreateElement ("interface", null);
+					if (t == null)
+						Console.WriteLine (type);
 					AddAttribute (iface, "name", t.FullName);
 					ifaces.AppendChild (iface);
 				}
@@ -454,11 +459,13 @@ namespace Mono.AssemblyInfo
 		{
 			base.AddExtraData (p, member);
 			PropertyInfo prop = (PropertyInfo) member;
+			AddAttribute (p, "ptype", prop.PropertyType.FullName);
 			MethodInfo _get = prop.GetGetMethod ();
 			MethodInfo _set = prop.GetSetMethod ();
 			bool haveGet = (_get != null);
 			bool haveSet = (_set != null);
 			MethodInfo [] methods;
+
 			if (haveGet && haveSet) {
 				methods = new MethodInfo [] {_get, _set};
 			} else if (haveGet) {
@@ -469,6 +476,9 @@ namespace Mono.AssemblyInfo
 				//odd
 				return;
 			}
+
+			string parms = Parameters.GetSignature (methods [0].GetParameters ());
+			AddAttribute (p, "params", parms);
 
 			MethodData data = new MethodData (document, p, methods);
 			data.NoMemberAttributes = true;

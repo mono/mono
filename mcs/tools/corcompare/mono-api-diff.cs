@@ -44,7 +44,7 @@ namespace Mono.AssemblyCompare
 			try {
 				result.LoadData (node);
 			} catch (Exception e) {
-				Console.WriteLine ("Error loading {0}: {1}\n{2}", file, e.Message, e);
+				Console.Error.WriteLine ("Error loading {0}: {1}\n{2}", file, e.Message, e);
 				Environment.Exit (1);
 			}
 
@@ -183,6 +183,14 @@ namespace Mono.AssemblyCompare
 			node.Attributes.Append (attr);
 		}
 
+		protected void AddExtra (XmlNode node)
+		{
+			AddAttribute (node, "presence", "extra");
+			AddAttribute (node, "ok", "1");
+			AddAttribute (node, "ok_total", "1");
+			AddAttribute (node, "extra_total", "1");
+		}
+
 		public void AddCountersAttributes (XmlNode node)
 		{
   			if (counters.Missing > 0)
@@ -198,7 +206,7 @@ namespace Mono.AssemblyCompare
 				AddAttribute (node, "ok", counters.Ok.ToString ());
 
   			if (counters.Total > 0) {
-				int percent = (100 * counters.Present / counters.Total);
+				int percent = (100 * counters.Ok / counters.Total);
 				AddAttribute (node, "complete", percent.ToString ());
 			}
 
@@ -221,7 +229,7 @@ namespace Mono.AssemblyCompare
 				AddAttribute (node, "ok_total", counters.OkTotal.ToString ());
 
   			if (counters.AbsTotal > 0) {
-				int percent = (100 * counters.PresentTotal / counters.AbsTotal);
+				int percent = (100 * counters.OkTotal / counters.AbsTotal);
 				AddAttribute (node, "complete_total", percent.ToString ());
 			}
 
@@ -265,8 +273,8 @@ namespace Mono.AssemblyCompare
 	
 	abstract class XMLNameGroup : XMLData
 	{
-		protected ArrayList data;
 		protected XmlNode group;
+		protected Hashtable keys;
 
 		public override void LoadData (XmlNode node)
 		{
@@ -276,14 +284,14 @@ namespace Mono.AssemblyCompare
 			if (node.Name != GroupName)
 				throw new FormatException (String.Format ("Expecting <{0}>", GroupName));
 
-			data = new ArrayList ();
+			keys = new Hashtable ();
 			foreach (XmlNode n in node.ChildNodes) {
-				string val = n.Attributes ["name"].Value;
-				if (CheckIfAdd (val)) {
-					data.Add (val);
-
+				string name = n.Attributes ["name"].Value;
+				if (CheckIfAdd (name)) {
+					string key = GetNodeKey (name, n);
+					keys.Add (key, name);
 					if (n.HasChildNodes)
-						LoadExtraData (val, n.FirstChild);
+						LoadExtraData (key, n.FirstChild);
 				}
 			}
 		}
@@ -303,39 +311,40 @@ namespace Mono.AssemblyCompare
 			if (group == null)
 				group = doc.CreateElement (GroupName, null);
 
-			ArrayList odata = null;
-			if (other == null || ((XMLNameGroup) other).data == null) {
-				odata = new ArrayList (1);
-			} else {
-				odata = ((XMLNameGroup) other).data;
+			Hashtable okeys = null;
+			if (other != null && ((XMLNameGroup) other).keys != null) {
+				okeys = ((XMLNameGroup) other).keys;
 			}
 
-			int count = (data == null) ? 0 : data.Count;
 			XmlNode node = null;
-			for (int i = 0; i < count; i++) {
-				string name = data [i] as string;
-				node = doc.CreateElement (Name, null);
-				group.AppendChild (node);
-				AddAttribute (node, "name", name);
+			bool onull = (okeys == null);
+			if (keys != null) {
+				foreach (DictionaryEntry entry in keys) {
+					node = doc.CreateElement (Name, null);
+					group.AppendChild (node);
+					string key = (string) entry.Key;
+					string name = (string) entry.Value;
+					AddAttribute (node, "name", name);
 
-				int index = odata.IndexOf (name);
-				if (index == -1) {
-					AddAttribute (node, "presence", "missing");
-					counters.Missing++;
-				} else {
-					CompareToInner (name, node, (XMLNameGroup) other);
-					odata.RemoveAt (index);
-					counters.Present++;
+					if (!onull && HasKey (key, okeys)) {
+						CompareToInner (key, node, (XMLNameGroup) other);
+						okeys.Remove (key);
+						counters.Present++;
+					} else {
+						AddAttribute (node, "presence", "missing");
+						counters.Missing++;
+					}
 				}
 			}
 
-			count = odata.Count;
-			for (int i = 0; i < count; i++) {
-				node = doc.CreateElement (Name, null);
-				AddAttribute (node, "name", (string) odata [i]);
-				AddAttribute (node, "presence", "extra");
-				group.AppendChild (node);
-				counters.Extra++;
+			if (!onull && okeys.Count != 0) {
+				foreach (string value in okeys.Values) {
+					node = doc.CreateElement (Name, null);
+					AddAttribute (node, "name", (string) value);
+					AddAttribute (node, "presence", "extra");
+					group.AppendChild (node);
+					counters.Extra++;
+				}
 			}
 
 			if (group.HasChildNodes)
@@ -344,6 +353,16 @@ namespace Mono.AssemblyCompare
 
 		protected virtual void CompareToInner (string name, XmlNode node, XMLNameGroup other)
 		{
+		}
+
+		public virtual string GetNodeKey (string name, XmlNode node)
+		{
+			return name;
+		}
+
+		public virtual bool HasKey (string key, Hashtable other)
+		{
+			return other.ContainsKey (key);
 		}
 
 		public abstract string GroupName { get; }
@@ -449,7 +468,7 @@ namespace Mono.AssemblyCompare
 					node = document.CreateElement ("namespace", null);
 					newNS.Add (node);
 					AddAttribute (node, "name", n.Name);
-					AddAttribute (node, "presence", "extra");
+					AddExtra (node);
 					counters.ExtraTotal++;
 				}
 			}
@@ -562,7 +581,7 @@ namespace Mono.AssemblyCompare
 					node = document.CreateElement ("class", null);
 					newNodes.Add (node);
 					AddAttribute (node, "name", c.Name);
-					AddAttribute (node, "presence", "extra");
+					AddExtra (node);
 					counters.Extra++;
 					counters.ExtraTotal++;
 				}
@@ -757,7 +776,9 @@ namespace Mono.AssemblyCompare
 			}
 
 			if (nested != null || oclass.nested != null) {
-				CompareTypes (parent, oclass.nested);
+				XmlNode n = doc.CreateElement ("classes", null);
+				parent.AppendChild (n);
+				CompareTypes (n, oclass.nested);
 			}
 
 			AddCountersAttributes (parent);
@@ -772,7 +793,7 @@ namespace Mono.AssemblyCompare
 			for (int i = 0; i < count; i++) {
 				XMLClass xclass = nested [i];
 
-				node = document.CreateElement ("class", null);
+				node = document.CreateElement ("nestedclass", null);
 				newNodes.Add (node);
 				AddAttribute (node, "name", xclass.Name);
 				AddAttribute (node, "type", xclass.Type);
@@ -797,10 +818,10 @@ namespace Mono.AssemblyCompare
 					if (c == null || c.Name == "MonoTODOAttribute")
 						continue;
 
-					node = document.CreateElement ("class", null);
+					node = document.CreateElement ("nestedclass", null);
 					newNodes.Add (node);
 					AddAttribute (node, "name", c.Name);
-					AddAttribute (node, "presence", "extra");
+					AddExtra (node);
 					counters.Extra++;
 					counters.ExtraTotal++;
 				}
@@ -847,7 +868,17 @@ namespace Mono.AssemblyCompare
 
 			return true;
 		}
-		
+
+		public override string GetNodeKey (string name, XmlNode node)
+		{
+			int i = 0;
+			while (keys.ContainsKey (name)) {
+				name = String.Format ("{0}:{1}", name, i++);
+			}
+
+			return name;
+		}
+
 		public override string GroupName {
 			get { return "attributes"; }
 		}
@@ -1000,28 +1031,26 @@ namespace Mono.AssemblyCompare
 
 	class XMLProperties : XMLMember
 	{
-		ArrayList methods = new ArrayList ();
-		Hashtable map = new Hashtable ();
+		Hashtable nameToMethod = new Hashtable ();
 
 		protected override void CompareToInner (string name, XmlNode parent, XMLNameGroup other)
 		{
 			XMLProperties oprop = other as XMLProperties;
-			object idx = map [name];
-			object oidx = (oprop == null) ? null : oprop.map [name];
+			if (oprop != null) {
+				XMLMethods m = nameToMethod [name] as XMLMethods;
+				XMLMethods om = oprop.nameToMethod [name] as XMLMethods;
+				if (m != null || om != null) {
+					if (m == null)
+						m = new XMLMethods ();
 
-			if (idx != null || oidx != null) {
-				XMLMethods m, om;
-				Counters copy = counters;
-
-				m = (idx == null) ? new XMLMethods () : (XMLMethods) methods [(int) idx];
-				om = (oidx == null) ? null : (XMLMethods) oprop.methods [(int) oidx];
-
-				m.CompareTo (document, parent, om);
-				counters = new Counters ();
-				counters.AddPartialToPartial (m.Counters);
-				AddCountersAttributes (parent);
-				counters = copy;
-				counters.AddPartialToPartial (m.Counters);
+					Counters copy = counters;
+					m.CompareTo (document, parent, om);
+					counters = new Counters ();
+					counters.AddPartialToPartial (m.Counters);
+					AddCountersAttributes (parent);
+					counters = copy;
+					counters.AddPartialToPartial (m.Counters);
+				}
 			}
 
 			base.CompareToInner (name, parent, other);
@@ -1033,15 +1062,24 @@ namespace Mono.AssemblyCompare
 			while (node != null) {
 				if (node != null && node.Name == "methods") {
 					XMLMethods m = new XMLMethods ();
+					XmlNode parent = node.ParentNode;
+					string key = GetNodeKey (name, parent);
 					m.LoadData (node);
-					methods.Add (m);
-					map [name] = methods.Count - 1;
+					nameToMethod [key] = m;
 					break;
 				}
 				node = node.NextSibling;
 			}
 
 			base.LoadExtraData (name, orig);
+		}
+
+		public override string GetNodeKey (string name, XmlNode node)
+		{
+			XmlAttributeCollection atts = node.Attributes;
+			return String.Format ("{0}:{1}:{2}", atts ["name"].Value,
+							     atts ["ptype"].Value,
+							     atts  ["params"].Value);
 		}
 
 		public override string GroupName {
@@ -1062,7 +1100,6 @@ namespace Mono.AssemblyCompare
 			base.CompareTo (doc, parent, other);
 			AddCountersAttributes (parent);
 		}
-
 
 		protected override void LoadExtraData (string name, XmlNode node)
 		{

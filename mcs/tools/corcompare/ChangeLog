@@ -1,3 +1,11 @@
+2003-11-13  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* mono-api-diff.cs: ensure no nested type gets in as non-nested.
+	(May be a bug in MS?). Added ptype and params attributes for properties.
+
+	* mono-api-info.cs: fixed some cases where there's a name duplication
+	(multiple attributes, properties). Fixed completion counters.
+
 2003-11-12  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* mono-api-diff.cs: fixed attribute handling for members. Fixed counts
