@@ -470,7 +470,10 @@ namespace System {
 		
 		public virtual bool IsSubclassOf (Type c)
 		{
-			return type_is_subtype_of (this, c, false);
+			if (c == null)
+				throw new ArgumentNullException ("c");
+
+			return !Equals (c) && type_is_subtype_of (this, c, false);
 		}
 
 		public virtual Type[] FindInterfaces (TypeFilter filter, object filterCriteria)
