@@ -1,3 +1,7 @@
+2003-10-22  Dick Porter  <dick@ximian.com>
+
+	* DateTime.cs: Handle '-' as a date separator when parsing formats.
+
 2003-10-15  Zoltan Varga  <vargaz@freemail.hu>
 
 	* TypedReference.cs: Add new field used by the runtime.
