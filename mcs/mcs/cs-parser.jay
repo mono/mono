@@ -2422,13 +2422,13 @@ expression_statement
 	// because statement_expression is used for example in for_statement
 	//
 statement_expression
-	: invocation_expression		{ $$ = new StatementExpression ((Expression) $1); }
-	| object_creation_expression	{ $$ = new StatementExpression ((Expression) $1); }
-	| assignment_expression		{ $$ = new StatementExpression ((Expression) $1); }
-	| post_increment_expression	{ $$ = new StatementExpression ((Expression) $1); }
-	| post_decrement_expression	{ $$ = new StatementExpression ((Expression) $1); }
-	| pre_increment_expression	{ $$ = new StatementExpression ((Expression) $1); }
-	| pre_decrement_expression	{ $$ = new StatementExpression ((Expression) $1); }
+	: invocation_expression		{ $$ = new StatementExpression ((ExpressionStatement) $1); }
+	| object_creation_expression	{ $$ = new StatementExpression ((ExpressionStatement) $1); }
+	| assignment_expression		{ $$ = new StatementExpression ((ExpressionStatement) $1); }
+	| post_increment_expression	{ $$ = new StatementExpression ((ExpressionStatement) $1); }
+	| post_decrement_expression	{ $$ = new StatementExpression ((ExpressionStatement) $1); }
+	| pre_increment_expression	{ $$ = new StatementExpression ((ExpressionStatement) $1); }
+	| pre_decrement_expression	{ $$ = new StatementExpression ((ExpressionStatement) $1); }
 	;
 
 object_creation_expression
@@ -2608,7 +2608,8 @@ foreach_statement
 	  embedded_statement
 	  {
 		string temp_id = current_block.MakeInternalID ();
-		Expression assign_e, ma;
+		ExpressionStatement assign_e;
+		Expression ma;
 		Statement getcurrent;
 		Block foreach_block, child_block;
 

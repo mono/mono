@@ -79,10 +79,9 @@ namespace CIR {
 			return this;
 		}
 
-		public override bool Emit (EmitContext ec)
+		public override void Emit (EmitContext ec)
 		{
 			ec.ig.Emit (OpCodes.Ldnull);
-			return true;
 		}
 	}
 
@@ -106,13 +105,12 @@ namespace CIR {
 			return this;
 		}
 
-		public override bool Emit (EmitContext ec)
+		public override void Emit (EmitContext ec)
 		{
 			if (val)
 				ec.ig.Emit (OpCodes.Ldc_I4_1);
 			else
 				ec.ig.Emit (OpCodes.Ldc_I4_0);
-			return true;
 		}
 	}
 
@@ -136,10 +134,9 @@ namespace CIR {
 			return this;
 		}
 
-		public override bool Emit (EmitContext ec)
+		public override void Emit (EmitContext ec)
 		{
 			IntLiteral.EmitInt (ec.ig, c);
-			return true;
 		}
 	}
 
@@ -163,12 +160,11 @@ namespace CIR {
 			return this;
 		}
 
-		public override bool Emit (EmitContext ec)
+		public override void Emit (EmitContext ec)
 		{
 			ILGenerator ig = ec.ig;
 
 			EmitInt (ig, Value);
-			return true;
 		}
 
 		static public void EmitInt (ILGenerator ig, int i)
@@ -244,12 +240,11 @@ namespace CIR {
 			return this;
 		}
 
-		public override bool Emit (EmitContext ec)
+		public override void Emit (EmitContext ec)
 		{
 			ILGenerator ig = ec.ig;
 
 			IntLiteral.EmitInt (ig, unchecked ((int) Value));
-			return true;
 		}
 
 	}
@@ -274,12 +269,11 @@ namespace CIR {
 			return this;
 		}
 
-		public override bool Emit (EmitContext ec)
+		public override void Emit (EmitContext ec)
 		{
 			ILGenerator ig = ec.ig;
 
 			EmitLong (ig, Value);
-			return true;
 		}
 
 		static public void EmitLong (ILGenerator ig, long l)
@@ -311,10 +305,9 @@ namespace CIR {
 			return this;
 		}
 
-		public override bool Emit (EmitContext ec)
+		public override void Emit (EmitContext ec)
 		{
 			ec.ig.Emit (OpCodes.Ldc_R4, Value);
-			return true;
 		}
 	}
 
@@ -338,10 +331,9 @@ namespace CIR {
 			return this;
 		}
 
-		public override bool Emit (EmitContext ec)
+		public override void Emit (EmitContext ec)
 		{
 			ec.ig.Emit (OpCodes.Ldc_R8, Value);
-			return true;
 		}
 	}
 
@@ -365,7 +357,7 @@ namespace CIR {
 			return this;
 		}
 
-		public override bool Emit (EmitContext ec)
+		public override void Emit (EmitContext ec)
 		{
 			throw new Exception ("Implement me");
 		}
@@ -392,10 +384,9 @@ namespace CIR {
 			return this;
 		}
 
-		public override bool Emit (EmitContext ec)
+		public override void Emit (EmitContext ec)
 		{
 			ec.ig.Emit (OpCodes.Ldstr, s);
-			return true;
 		}
 	}
 }

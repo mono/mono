@@ -243,12 +243,17 @@ namespace CIR {
 
 		void EmitStatementExpression (StatementExpression s)
 		{
-			Expression e = s.Expr;
-
-			e = e.Resolve (parent);
-			if (e != null){
-				if (e.Emit (this))
+			ExpressionStatement e = s.Expr;
+			Expression ne;
+			
+			ne = e.Resolve (parent);
+			if (ne != null){
+				if (ne is ExpressionStatement)
+					((ExpressionStatement) ne).EmitStatement (this);
+				else {
+					ne.Emit (this);
 					ig.Emit (OpCodes.Pop);
+				}
 			}
 		}
 

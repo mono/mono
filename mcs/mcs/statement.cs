@@ -150,14 +150,14 @@ namespace CIR {
 	}
 	
 	public class StatementExpression : Statement {
-		Expression expr;
+		ExpressionStatement expr;
 		
-		public StatementExpression (Expression expr)
+		public StatementExpression (ExpressionStatement expr)
 		{
 			this.expr = expr;
 		}
 
-		public Expression Expr {
+		public ExpressionStatement Expr {
 			get {
 				return expr;
 			}

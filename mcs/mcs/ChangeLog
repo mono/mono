@@ -1,3 +1,21 @@
+2001-09-26  Miguel de Icaza  <miguel@ximian.com>
+
+	* assign.cs (Assign): Make it inherit from ExpressionStatement.
+
+	* expression.cs (ExpressionStatement): New base class used for
+	expressions that can appear in statements, so that we can provide
+	an alternate path to generate expression that do not leave a value
+	on the stack.
+
+	(Expression::Emit, and all the derivatives): We no longer return
+	whether a value is left on the stack or not.  Every expression
+	after being emitted leaves a single value on the stack.
+
+	* codegen.cs (EmitContext::EmitStatementExpression): Use the
+	facilties of ExpressionStatement if possible.
+
+	* cs-parser.jay: Update statement_expression.
+
 2001-09-25  Miguel de Icaza  <miguel@ximian.com>
 
 	* driver.cs: Change the wording of message

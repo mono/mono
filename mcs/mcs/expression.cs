@@ -6,6 +6,14 @@
 //
 // (C) 2001 Ximian, Inc.
 //
+//
+// Ideas:
+//   Maybe we should make Resolve be an instance method that just calls
+//   the virtual DoResolve function and checks conditions like the eclass
+//   and type being set if a non-null value is returned.  For robustness
+//   purposes.
+//
+
 namespace CIR {
 	using System.Collections;
 	using System.Diagnostics;
@@ -61,12 +69,48 @@ namespace CIR {
 			}
 		}
 
+		// <summary>
+		//   Performs semantic analysis on the Expression
+		// </summary>
+		//
+		// <remarks>
+		//   The Resolve method is invoked to perform the semantic analysis
+		//   on the node.
+		//
+		//   The return value is an expression (it can be the
+		//   same expression in some cases) or a new
+		//   expression that better represents this node.
+		//   
+		//   For example, optimizations of Unary (LiteralInt)
+		//   would return a new LiteralInt with a negated
+		//   value.
+		//   
+		//   If there is an error during semantic analysis,
+		//   then an error should
+	        //   be reported (using TypeContainer.RootContext.Report) and a null
+		//   value should be returned.
+		//   
+		//   There are two side effects expected from calling
+		//   Resolve(): the the field variable "eclass" should
+		//   be set to any value of the enumeration
+		//   `ExprClass' and the type variable should be set
+		//   to a valid type (this is the type of the
+		//   expression).
+		// </remarks>
+		
 		public abstract Expression Resolve (TypeContainer tc);
 
+		// <summary>
+		//   Emits the code for the expression
+		// </summary>
 		//
-		// Return value indicates whether a value is left on the stack or not
+		// <remarks>
+		// 
+		//   The Emit method is invoked to generate the code
+		//   for the expression.  
 		//
-		public abstract bool Emit (EmitContext ec);
+		// </remarks>
+		public abstract void Emit (EmitContext ec);
 		
 		// <summary>
 		//   Protected constructor.  Only derivate types should
@@ -483,6 +527,25 @@ namespace CIR {
 	}
 
 	// <summary>
+	//   This is just a base class for expressions that can
+	//   appear on statements (invocations, object creation,
+	//   assignments, post/pre increment and decrement).  The idea
+	//   being that they would support an extra Emition interface that
+	//   does not leave a result on the stack.
+	// </summary>
+
+	public abstract class ExpressionStatement : Expression {
+
+		// <summary>
+		//   Requests the expression to be emitted in a `statement'
+		//   context.  This means that no new value is left on the
+		//   stack after invoking this method (constrasted with
+		//   Emit that will always leave a value on the stack).
+		// </summary>
+		public abstract void EmitStatement (EmitContext ec);
+	}
+
+	// <summary>
 	//   This kind of cast is used to encapsulate the child
 	//   whose type is child.Type into an expression that is
 	//   reported to return "return_type".  This is used to encapsulate
@@ -513,9 +576,9 @@ namespace CIR {
 			return this;
 		}
 
-		public override bool Emit (EmitContext ec)
+		public override void Emit (EmitContext ec)
 		{
-			return child.Emit (ec);
+			child.Emit (ec);
 		}			
 	}
 
@@ -540,11 +603,10 @@ namespace CIR {
 			return this;
 		}
 
-		public override bool Emit (EmitContext ec)
+		public override void Emit (EmitContext ec)
 		{
 			base.Emit (ec);
 			ec.ig.Emit (OpCodes.Box, child.Type);
-			return true;
 		}
 	}
 	
@@ -583,20 +645,18 @@ namespace CIR {
 			return this;
 		}
 
-		public override bool Emit (EmitContext ec)
+		public override void Emit (EmitContext ec)
 		{
 			base.Emit (ec);
 			ec.ig.Emit (op);
 
 			if (second_valid)
 				ec.ig.Emit (op2);
-
-			return true;
 		}			
 		
 	}
 	
-	public class Unary : Expression {
+	public class Unary : ExpressionStatement {
 		public enum Operator {
 			Add, Subtract, Negate, BitComplement,
 			Indirection, AddressOf, PreIncrement,
@@ -904,7 +964,7 @@ namespace CIR {
 			return ResolveOperator (tc);
 		}
 
-		public override bool Emit (EmitContext ec)
+		public override void Emit (EmitContext ec)
 		{
 			ILGenerator ig = ec.ig;
 			Type expr_type = expr.Type;
@@ -921,8 +981,6 @@ namespace CIR {
 					ig.Emit (OpCodes.Call, (MethodInfo) method);
 				else
 					ig.Emit (OpCodes.Call, (ConstructorInfo) method);
-				
-				return true;
 			}
 			
 			switch (oper){
@@ -1003,13 +1061,18 @@ namespace CIR {
 				throw new Exception ("This should not happen: Operator = "
 						     + oper.ToString ());
 			}
-
-			//
-			// yes, we leave a value on the stack
-			//
-			return true;
 		}
-		
+
+		public override void EmitStatement (EmitContext ec)
+		{
+			//
+			// FIXME: we should rewrite this code to generate
+			// better code for ++ and -- as we know we wont need
+			// the values on the stack
+			//
+			Emit (ec);
+			ec.ig.Emit (OpCodes.Pop);
+		}
 	}
 	
 	public class Probe : Expression {
@@ -1053,9 +1116,8 @@ namespace CIR {
 			// return this;
 		}
 
-		public override bool Emit (EmitContext ec)
+		public override void Emit (EmitContext ec)
 		{
-			return true;
 		}
 	}
 	
@@ -1098,9 +1160,8 @@ namespace CIR {
 			throw new Exception ("FINISH ME");
 		}
 
-		public override bool Emit (EmitContext ec)
+		public override void Emit (EmitContext ec)
 		{
-			return true;
 		}
 	}
 
@@ -1544,7 +1605,7 @@ namespace CIR {
 			ec.ig.Emit (opcode, target);
 		}
 		
-		public override bool Emit (EmitContext ec)
+		public override void Emit (EmitContext ec)
 		{
 			ILGenerator ig = ec.ig;
 			Type l = left.Type;
@@ -1562,8 +1623,6 @@ namespace CIR {
 					ig.Emit (OpCodes.Call, (MethodInfo) method);
 				else
 					ig.Emit (OpCodes.Call, (ConstructorInfo) method);
-				
-				return true;
 			}
 			
 			left.Emit (ec);
@@ -1682,8 +1741,6 @@ namespace CIR {
 			}
 
 			ig.Emit (opcode);
-
-			return true;
 		}
 	}
 
@@ -1722,9 +1779,8 @@ namespace CIR {
 			// return this;
 		}
 
-		public override bool Emit (EmitContext ec)
+		public override void Emit (EmitContext ec)
 		{
-			return true;
 		}
 	}
 
@@ -1826,7 +1882,7 @@ namespace CIR {
 				return ResolveSimpleName (tc);
 		}
 
-		public override bool Emit (EmitContext ec)
+		public override void Emit (EmitContext ec)
 		{
 			throw new Exception ("SimpleNames should be gone from the tree");
 		}
@@ -1864,7 +1920,7 @@ namespace CIR {
 			return this;
 		}
 
-		public override bool Emit (EmitContext ec)
+		public override void Emit (EmitContext ec)
 		{
 			VariableInfo vi = VariableInfo;
 			ILGenerator ig = ec.ig;
@@ -1894,8 +1950,6 @@ namespace CIR {
 					ig.Emit (OpCodes.Ldloc, idx);
 				break;
 			}
-
-			return true;
 		}
 
 		public void Store (ILGenerator ig)
@@ -1952,14 +2006,12 @@ namespace CIR {
 			return this;
 		}
 
-		public override bool Emit (EmitContext ec)
+		public override void Emit (EmitContext ec)
 		{
 			if (Idx < 255)
 				ec.ig.Emit (OpCodes.Ldarg_S, Idx);
 			else
 				ec.ig.Emit (OpCodes.Ldarg, Idx);
-
-			return true;
 		}
 
 		public void Store (ILGenerator ig)
@@ -2008,16 +2060,16 @@ namespace CIR {
 			return expr != null;
 		}
 
-		public bool Emit (EmitContext ec)
+		public void Emit (EmitContext ec)
 		{
-			return expr.Emit (ec);
+			expr.Emit (ec);
 		}
 	}
 
 	// <summary>
 	//   Invocation of methods or delegates.
 	// </summary>
-	public class Invocation : Expression {
+	public class Invocation : ExpressionStatement {
 		public readonly ArrayList Arguments;
 		public readonly Location Location;
 		
@@ -2560,7 +2612,7 @@ namespace CIR {
 			}
 		}
 		
-		public override bool Emit (EmitContext ec)
+		public override void Emit (EmitContext ec)
 		{
 			bool is_static = method.IsStatic;
 
@@ -2588,19 +2640,23 @@ namespace CIR {
 				else
 					ec.ig.Emit (OpCodes.Callvirt, (ConstructorInfo) method);
 			}
+		}
 
+		public override void EmitStatement (EmitContext ec)
+		{
+			Emit (ec);
+
+			// 
+			// Pop the return value if there is one
+			//
 			if (method is MethodInfo){
-				return ((MethodInfo)method).ReturnType != TypeManager.void_type;
-			} else {
-				//
-				// Constructors do not leave any values on the stack
-				//
-				return false;
+				if (((MethodInfo)method).ReturnType != TypeManager.void_type)
+					ec.ig.Emit (OpCodes.Pop);
 			}
 		}
 	}
 
-	public class New : Expression {
+	public class New : ExpressionStatement {
 
 		public enum NType {
 			Object,
@@ -2677,11 +2733,16 @@ namespace CIR {
 			return this;
 		}
 
-		public override bool Emit (EmitContext ec)
+		public override void Emit (EmitContext ec)
 		{
 			Invocation.EmitArguments (ec, method, Arguments);
 			ec.ig.Emit (OpCodes.Newobj, (ConstructorInfo) method);
-			return true;
+		}
+
+		public override void EmitStatement (EmitContext ec)
+		{
+			Emit (ec);
+			ec.ig.Emit (OpCodes.Pop);
 		}
 	}
 
@@ -2700,10 +2761,9 @@ namespace CIR {
 			return this;
 		}
 
-		public override bool Emit (EmitContext ec)
+		public override void Emit (EmitContext ec)
 		{
 			ec.ig.Emit (OpCodes.Ldarg_0);
-			return true;
 		}
 
 		public void Store (ILGenerator ig)
@@ -2734,7 +2794,7 @@ namespace CIR {
 			return this;
 		}
 
-		public override bool Emit (EmitContext ec)
+		public override void Emit (EmitContext ec)
 		{
 			throw new Exception ("Implement me");
 			// FIXME: Implement.
@@ -2756,7 +2816,7 @@ namespace CIR {
 			// return this;
 		}
 
-		public override bool Emit (EmitContext ec)
+		public override void Emit (EmitContext ec)
 		{
 			throw new Exception ("Implement me");
 		}
@@ -2819,7 +2879,7 @@ namespace CIR {
 				return member_lookup;
 		}
 
-		public override bool Emit (EmitContext ec)
+		public override void Emit (EmitContext ec)
 		{
 			throw new Exception ("Implement me");
 		}
@@ -2847,7 +2907,7 @@ namespace CIR {
 			return this;
 		}
 
-		public override bool Emit (EmitContext ec)
+		public override void Emit (EmitContext ec)
 		{
 			throw new Exception ("Namespace expressions should never be emitted");
 		}
@@ -2868,7 +2928,7 @@ namespace CIR {
 			return this;
 		}
 
-		override public bool Emit (EmitContext ec)
+		override public void Emit (EmitContext ec)
 		{
 			throw new Exception ("Implement me");
 		}
@@ -2908,7 +2968,7 @@ namespace CIR {
 			return this;
 		}
 
-		override public bool Emit (EmitContext ec)
+		override public void Emit (EmitContext ec)
 		{
 			throw new Exception ("This should never be reached");
 		}
@@ -2932,7 +2992,7 @@ namespace CIR {
 			// return this;
 		}
 
-		public override bool Emit (EmitContext ec)
+		public override void Emit (EmitContext ec)
 		{
 			throw new Exception ("Unimplemented");
 		}
@@ -2969,7 +3029,7 @@ namespace CIR {
 			return this;
 		}
 
-		override public bool Emit (EmitContext ec)
+		override public void Emit (EmitContext ec)
 		{
 			ILGenerator ig = ec.ig;
 
@@ -2980,8 +3040,6 @@ namespace CIR {
 				
 				ig.Emit (OpCodes.Ldfld, FieldInfo);
 			}
-
-			return true;
 		}
 
 		public void Store (ILGenerator ig)
@@ -3021,7 +3079,7 @@ namespace CIR {
 			return this;
 		}
 
-		override public bool Emit (EmitContext ec)
+		override public void Emit (EmitContext ec)
 		{
 			// FIXME: Implement;
 			throw new Exception ("Unimplemented");
@@ -3046,7 +3104,7 @@ namespace CIR {
 			return this;
 		}
 
-		override public bool Emit (EmitContext ec)
+		override public void Emit (EmitContext ec)
 		{
 			throw new Exception ("Implement me");
 			// FIXME: Implement.
@@ -3074,18 +3132,13 @@ namespace CIR {
 			return this;
 		}
 
-		public override bool Emit (EmitContext ec)
+		public override void Emit (EmitContext ec)
 		{
 			bool last_check = ec.CheckState;
-			bool v;
 			
 			ec.CheckState = true;
-			
-			v = Expr.Emit (ec);
-
+			Expr.Emit (ec);
 			ec.CheckState = last_check;
-
-			return v;
 		}
 		
 	}
@@ -3111,18 +3164,13 @@ namespace CIR {
 			return this;
 		}
 
-		public override bool Emit (EmitContext ec)
+		public override void Emit (EmitContext ec)
 		{
 			bool last_check = ec.CheckState;
-			bool v;
 			
 			ec.CheckState = false;
-			
-			v = Expr.Emit (ec);
-
+			Expr.Emit (ec);
 			ec.CheckState = last_check;
-
-			return v;
 		}
 		
 	}
@@ -3145,7 +3193,7 @@ namespace CIR {
 			// return this;
 		}
 		
-		public override bool Emit (EmitContext ec)
+		public override void Emit (EmitContext ec)
 		{
 			// FIXME : Implement !
 			throw new Exception ("Unimplemented");
@@ -3179,7 +3227,7 @@ namespace CIR {
 			// return this;
 		}
 
-		public override bool Emit (EmitContext ec)
+		public override void Emit (EmitContext ec)
 		{
 			throw new Exception ("Unimplemented");
 		}
@@ -3233,7 +3281,7 @@ namespace CIR {
 				return null;
 		}
 		
-		public override bool Emit (EmitContext ec)
+		public override void Emit (EmitContext ec)
 		{
 			ILGenerator ig = ec.ig;
 			
@@ -3248,13 +3296,11 @@ namespace CIR {
 					ig.Emit (OpCodes.Call, (MethodInfo) method);
 				else
 					ig.Emit (OpCodes.Call, (ConstructorInfo) method);
-				
-				return true;
+
+				return;
 			}
 
-			return false;
-			
-
+			throw new Exception ("Implement me");
 		}
 
 	}

@@ -11,7 +11,7 @@ using System.Reflection;
 using System.Reflection.Emit;
 
 namespace CIR {
-	public class Assign : Expression {
+	public class Assign : ExpressionStatement {
 		Expression target, source;
 		Location l;
 		
@@ -67,8 +67,10 @@ namespace CIR {
 			return this;
 		}
 
-		public override bool Emit (EmitContext ec)
+		void Emit (EmitContext ec, bool is_statement)
 		{
+			ILGenerator ig = ec.ig;
+			
 			if (target.ExprClass == ExprClass.Variable){
 
 				//
@@ -78,12 +80,15 @@ namespace CIR {
 					FieldExpr fe = (FieldExpr) target;
 					
 					if (!fe.FieldInfo.IsStatic)
-						ec.ig.Emit (OpCodes.Ldarg_0);
+						ig.Emit (OpCodes.Ldarg_0);
 				}
-						    
+
 				source.Emit (ec);
 
-				((LValue) target).Store (ec.ig);
+				if (!is_statement)
+					ig.Emit (OpCodes.Dup);
+
+				((LValue) target).Store (ig);
 			} else if (target.ExprClass == ExprClass.PropertyAccess){
 				// FIXME
 				throw new Exception ("Can not assign to properties yet");
@@ -91,11 +96,20 @@ namespace CIR {
 				// FIXME
 				throw new Exception ("Can not assign to indexers yet");
 			}
+		}
+		
+		public override void Emit (EmitContext ec)
+		{
+			Emit (ec, false);
+		}
 
-			return false;
+		public override void EmitStatement (EmitContext ec)
+		{
+			Emit (ec, true);
 		}
 	}
 }
+
 
 
 
