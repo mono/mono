@@ -510,7 +510,6 @@ namespace Mono.CSharp {
 			if (ScopeTypeBuilder != null)
 				return;
 			
-			ILGenerator ig = ec.ig;
 			TypeBuilder container = ec.TypeContainer.TypeBuilder;
 
 			ScopeTypeBuilder = container.DefineNestedType (
@@ -591,7 +590,6 @@ namespace Mono.CSharp {
 				Hashtable captured_parameters = CaptureContext.captured_parameters;
 				
 				foreach (DictionaryEntry de in captured_parameters){
-					string name = (string) de.Key;
 					CapturedParameter cp = (CapturedParameter) de.Value;
 
 					ig.Emit (OpCodes.Ldloc, ScopeInstance);
@@ -601,6 +599,9 @@ namespace Mono.CSharp {
 			}
 			
 			if (ParentScope != null){
+				if (!ParentScope.inited)
+					ParentScope.EmitInitScope (ec);
+				
 				//
 				// Only emit initialization in our capturecontext world
 				//
@@ -692,9 +693,7 @@ namespace Mono.CSharp {
 		
 		public override string ToString ()
 		{
-			ToplevelBlock parent = ParentToplevel;
 			StringBuilder sb = new StringBuilder ();
-
 			sb.Append ("[");
 			DoPath (sb, this);
 			sb.Append ("]");
@@ -1012,8 +1011,13 @@ namespace Mono.CSharp {
 				cc.EmitParameterInstance (ec, name);
 				return;
 			}
-			Block invocation_block = ec.CurrentBlock;
+			
 			CapturedParameter par_info = (CapturedParameter) captured_parameters [name];
+			if (par_info != null){
+				// 
+				// FIXME: implementing this.
+				//
+			}
 			ILGenerator ig = ec.ig;
 
 			ScopeInfo si;
@@ -1046,6 +1050,11 @@ namespace Mono.CSharp {
 			}
 			EmitParameterInstance (ec, name);
 			CapturedParameter par_info = (CapturedParameter) captured_parameters [name];
+			if (par_info != null){
+				// 
+				// FIXME: implementing this.
+				//
+			}
 			ec.ig.Emit (OpCodes.Ldfld, par_info.FieldBuilder);
 		}
 

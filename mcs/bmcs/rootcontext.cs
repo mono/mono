@@ -40,7 +40,7 @@ namespace Mono.CSharp {
 		//
 		// Whether we are being linked against the standard libraries.
 		// This is only used to tell whether `System.Object' should
-		// have a parent or not.
+		// have a base class or not.
 		//
 		public static bool StdLib = true;
 
@@ -48,8 +48,8 @@ namespace Mono.CSharp {
 		// This keeps track of the order in which classes were defined
 		// so that we can poulate them in that order.
 		//
-		// Order is important, because we need to be able to tell by
-		// examining the parent's list of methods which ones are virtual
+		// Order is important, because we need to be able to tell, by
+		// examining the list of methods of the base class, which ones are virtual
 		// or abstract as well as the parent names (to implement new, 
 		// override).
 		//
@@ -64,7 +64,7 @@ namespace Mono.CSharp {
 		
 		static TypeBuilder impl_details_class;
 
-		public static int WarningLevel = 2;
+		public static int WarningLevel = 3;
 
 		public static Target Target = Target.Exe;
 		public static string TargetExt = ".exe";
@@ -391,6 +391,7 @@ namespace Mono.CSharp {
 				"System.Runtime.CompilerServices.IndexerNameAttribute",
 				"System.Runtime.CompilerServices.DecimalConstantAttribute",
 				"System.Runtime.InteropServices.InAttribute",
+				"System.Runtime.InteropServices.OutAttribute",
 				"System.Runtime.InteropServices.StructLayoutAttribute",
 				"System.Runtime.InteropServices.FieldOffsetAttribute",
 				"System.InvalidOperationException",
@@ -482,107 +483,6 @@ namespace Mono.CSharp {
 			helper_classes.Add (helper_class);
 		}
 		
-		//
-		// This idea is from Felix Arrese-Igor
-		//
-		// Returns : the implicit parent of a composite namespace string
-		//   eg. Implicit parent of A.B is A
-		//
-		static public string ImplicitParent (string ns)
-		{
-			int i = ns.LastIndexOf ('.');
-			if (i < 0)
-				return null;
-			
-			return ns.Substring (0, i);
-		}
-
-		static Type NamespaceLookup (DeclSpace ds, string name, int num_type_args, Location loc)
-		{
-			IAlias result = ds.NamespaceEntry.LookupNamespaceOrType (ds, name, loc);
-			if (result == null)
-				return null;
-
-			if (!result.IsType)
-				return null;
-
-			TypeExpr texpr = result.ResolveAsType (ds.EmitContext);
-			if (texpr == null)
-				return null;
-
-			return texpr.Type;
-		}
-		
-		static public Type LookupType (DeclSpace ds, string name, bool silent, Location loc)
-		{
-			return LookupType (ds, name, silent, 0, loc);
-		}
-
-		//
-		// Public function used to locate types, this can only
-		// be used after the ResolveTree function has been invoked.
-		//
-		// Returns: Type or null if they type can not be found.
-		//
-		// Come to think of it, this should be a DeclSpace
-		//
-		static public Type LookupType (DeclSpace ds, string name, bool silent,
-					       int num_type_params, Location loc)
-		{
-			Type t;
-
-			if (ds.Cache.Contains (name)){
-				t = (Type) ds.Cache [name];
-				if (t != null)
-					return t;
-			} else {
-				//
-				// For the case the type we are looking for is nested within this one
-				// or is in any base class
-				//
-				DeclSpace containing_ds = ds;
-				while (containing_ds != null){
-					Type current_type = containing_ds.TypeBuilder;
-					
-					while (current_type != null) {
-						//
-						// nested class
-						//
-						Type type = TypeManager.LookupType (current_type.FullName + "." + name);
-						if (type != null){
-							t = ds.ResolveNestedType (type, loc);
-							ds.Cache [name] = t;
-							return t;
-						}
-						
-						current_type = current_type.BaseType;
-					}
-					
-					containing_ds = containing_ds.Parent;
-				}
-				
-				t = NamespaceLookup (ds, name, num_type_params, loc);
-				if (!silent || t != null){
-					ds.Cache [name] = t;
-					return t;
-				}
-			}
-
-			if (!silent)
-				Report.Error (246, loc, "Cannot find type `"+name+"'");
-			
-			return null;
-		}
-
-		// <summary>
-		//   This is the silent version of LookupType, you can use this
-		//   to `probe' for a type
-		// </summary>
-		static public Type LookupType (TypeContainer tc, string name, Location loc)
-		{
-			return LookupType (tc, name, true, loc);
-		}
-
 		static void Report1530 (Location loc)
 		{
 			Report.Error (1530, loc, "Keyword new not allowed for namespace elements");

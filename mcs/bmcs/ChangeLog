@@ -1,3 +1,504 @@
+2005-02-02  Martin Baulig  <martin@ximian.com>
+
+	* delegate.cs (Delegate.DefineType): Report an internal error if
+	TypeManager.multicast_delegate_type is null.  See bug #72015 for
+	details.	
+
+2005-01-29  Miguel de Icaza  <miguel@novell.com>
+
+	* pending.cs: Produce better code (no nops produced by using Ldarg
+	+ value).
+	
+	* pending.cs (PendingImplementation.DefineProxy): It was not `arg
+	i - 1' it should be arg + 1.
+
+	Fixes bug #71819.
+	
+2005-01-26  Martin Baulig  <martin@ximian.com>
+
+	* cs-parser.jay (indexer_declarator): Don't report an error if we
+	have type parameters since we can be an explicit interface
+	implementation; fixes #71449.
+
+2005-01-26  Martin Baulig  <martin@ximian.com>
+
+	* class.cs (TypeContainer.AttributeTargets): Return the correct
+	AttributeTargets depending on our `Kind' instead of throwing an
+	exception; fixes #71632.
+
+2005-01-26  Martin Baulig  <martin@ximian.com>
+
+	* delegate.cs (Delegate.DefineType): Correctly define our type
+	parameters.  Fixes #71483.
+
+2005-01-25  Raja R Harinath  <rharinath@novell.com>
+
+	Fix #71602.
+	* expression.cs (MemberAccess.DoResolve): Don't complain with
+	cs0572 when the LHS of a member access has identical name and type
+	name.
+
+2005-01-25  Marek Safar  <marek.safar@seznam.cz>
+
+	Fix #71651, #71675
+	* attribute.cs (ExtractSecurityPermissionSet): Catch exceptions from
+	CreatePermission.
+	Create custom PermissionSet only for PermissionSetAttribute.
+
+2005-01-24  Marek Safar  <marek.safar@seznam.cz>
+
+	Fix #71649
+	* class.cs (StaticClass.DefineContainerMembers): Enable enums and
+	delegates in static class.
+
+2005-01-24  Martin Baulig  <martin@ximian.com>
+
+	* flowanalysis.cs (FlowBranching.UsageVector.MergeChild): If we're
+	merging an implicit block, just use its reachability.
+
+	* statement.cs (Block.Resolve): Make the unreachable code check
+	work wrt. implicit blocks; see test-337 from #63842.
+
+2005-01-21  Alp Toker  <alp@atoker.com>
+ 
+ 	* cs-parser.jay: destructor_declaration's container is PartialContainer
+ 	not Class when partial types are used, so use Kind prop instead of
+	'is'.
+	
+2005-01-22  Miguel de Icaza  <miguel@ximian.com>
+
+	* cs-parser.jay: Improve error reporting when an interface
+	declares new types.
+
+2005-01-20  Dick Porter  <dick@ximian.com>
+
+	* support.cs: SeekableStreamReader fix from Sandor Dobos
+	(dobos_s@ibcnet.hu) to cope with Position setting when multibyte
+	chars are read.  Fixes bug 70369.
+
+2005-01-20  Raja R Harinath  <rharinath@novell.com>
+
+	* cs-parser.jay (catch_clause): Simplify current_block handling
+	somewhat.
+
+2005-01-17  Miguel de Icaza  <miguel@ximian.com>
+
+	* convert.cs (ImplicitStandardConversionExists): Synchronize the
+	code with ImplicitStandardConversion to handle the implicit
+	conversion of method groups into valid delegate invocations. 
+
+	The problem is that in parameter handling we were using this code
+	path.  Fixes bug #64698
+
+2005-01-19  Raja R Harinath  <rharinath@novell.com>
+
+	* cs-parser.jay: Fix several infelicities.
+	- Avoid assigning to the parser value stack.  Code like 
+	  '$3 = null' is unclean.  Synthesize a value for the code block
+	  instead. 
+	- Avoid using oob_stack for storing location information.  Use ...
+	(_mark_): ... this.  New (empty) rule.  Saves the current location
+	in $$.
+	(foreach_statement): Avoid using oob_stack for current_block
+	handling.  Use technique used in for_statement and
+	using_statement.  Synthesize a value for the code block to store
+	additional intermediate information.
+
+2005-01-13  Miguel de Icaza  <miguel@ximian.com>
+
+	* ecore.cs (IsAccessorAccessible): Accessibility to private fields
+	of a different type is only allowed to private fields of a
+	containing type, not on fields of a base class.
+
+	See test-174.cs and error cs0122-9.cs
+
+2005-01-13  Raja R Harinath  <rharinath@novell.com>
+
+	Fix test-335.cs (bug #58126).
+	* cs-parser.jay (argument): Split out non-expression parts of the
+	rule into 'non_simple_argument'.
+	(invocation_expression): Support parenthesized invocations with
+	multiple arguments, and with single non-simple arguments.
+
+2005-01-13  Raja R Harinath  <rharinath@novell.com>
+
+	* cs-tokenizer.cs (xtoken): Reset 'comments_seen' in a couple more
+	places.
+
+2005-01-12  Raja R Harinath  <rharinath@novell.com>
+
+	Fix cs0038-1.cs, cs1640-6.cs.
+	* ecore.cs (Expression.Resolve): Remove special-case for
+	SimpleName in error-handling.
+	(Expression.almostMatchedMembers): Relax access permission to
+	protected.
+	(Expression.MemberLookupFailed): Handle duplicates in
+	almostMatchedMembers list.
+	(SimpleName.DoSimpleNameResolve): Catch CS0038 errors earlier.
+	* expression.cs (New.DoResolve): Report CS1540 for more cases.
+	* typemanager.cs (GetFullNameSignature): Use the MethodBase
+	overload if the passed in MemberInfo is a MethodBase.
+
+2005-01-25  Martin Baulig  <martin@ximian.com>
+
+	* doc.cs
+	(DocUtil.emptyParamList): Removed; use `Type.EmptyTypes' instead.
+
+2005-01-12  Marek Safar  <marek.safar@seznam.cz>
+
+	Fix #70749
+	* attribute.cs (ExtractSecurityPermissionSet): Don't report error
+	for non-CAS & merge permission sets properly.
+
+2005-01-11  Raja R Harinath  <rharinath@novell.com>
+
+	Improve standard-compliance of simple name and member access 
+	resolution.  Fixes bugs #52697, #57200, #67520, #69519.
+	* ecore.cs (FullNamedExpression): New abstract base class 
+	for Namespaces and TypeExpressions.
+	(ResolveFlags.SimpleName): Remove.
+	(SimpleName): Remove support for dotted names.
+	(SimpleName.ResolveAsTypeStep): Simplify.  Now just a wrapper to 
+	DeclSpace.FindType and DeclSpace.LookupType.
+	(SimpleName.DoSimpleNameResolve): Remove support for dotted names.
+	(Expression.ExprClassName): Make member function.
+	* expression.cs (MemberAccess.ResolveAsTypeStep): Support LHS being
+	a namespace.  Remove creation of dotted "SimpleName"s.
+	(MemberAccess.DoResolve): Likewise.
+	* decl.cs (DeclSpace.Cache): Make private.
+	(DeclSpace.LookupInterfaceOrClass): Return a FullNamedExpression.
+	(DeclSpace.FindType): Update.
+	(DeclSpace.LookupType): Move here from RootContext.  Return a 
+	FullNamedExpression.
+	* namespace.cs (Namespace): Derive from FullNamedExpression
+	so that it can be part of expression resolution.
+	(Namespace.Lookup): Return an FullNamedExpression.
+	(NamespaceEntry.LookupAlias): Lookup aliases only in current
+	namespace.
+	* rootcontext.cs (NamespaceLookup): Remove.
+	(LookupType): Move to DeclSpace.
+	* attribute.cs (CheckAttributeType): Update.
+	* doc.cs (FindDocumentedType): Remove allowAlias argument.
+	(FindDocumentedTypeNonArray): Likewise.
+
+2005-01-11  Raja R Harinath  <rharinath@novell.com>
+
+	Fix cs0509.cs, cs1632.cs.
+	* class.cs (TypeContainer.GetNormalBases): Don't assume !IsClass
+	is the same as IsInterface.
+	(TypeContainer.GetClassBases): Likewise.
+	* statement.cs (LabeledStatement.ig): New field.
+	(LabeledStatement.LabelTarget): Save ILGenerator which created the
+	label.
+	(LabeledStatement.DoEmit): Check that the label was created with
+	the same ILGenerator.
+
+2005-01-10  Marek Safar  <marek.safar@seznam.cz>
+
+	Fix #71058
+	* attribute.cs (GetMethodObsoleteAttribute): Need to transform
+	accessors to its properties.
+
+	* ecore.cs (PropertyExpr): Add AccessorTable to help track back
+	from accessors to property.
+	
+2005-01-10  Marek Safar  <marek.safar@seznam.cz>
+
+	Fix #70722
+	* class.cs (MethodCore.CheckBase): Test base method obsoleteness
+	only for overrides.
+	
+2005-01-08  Miguel de Icaza  <miguel@ximian.com>
+
+	* attribute.cs: Check for null and empty strings.  
+
+	I have lost another battle to Paolo.
+
+2005-01-07  Marek Safar  <marek.safar@seznam.cz>
+
+	Fix #70942
+	* class.cs (PropertyMethod): Set Parent field in ctors.
+	(SetMethod.InternalParameters): Add unsafe switch hack.
+	Override MarkForDuplicationCheck where it is appropriate.
+
+	* decl.cs (MemberCore.MarkForDuplicationCheck): New method.
+	It says whether container allows members with the same name.
+	Base default is no.
+	(DeclSpace.AddToContainer): Use MarkForDuplicationCheck.
+	Removed is_method parameter.
+
+2005-01-06  Duncan Mak  <duncan@ximian.com>
+
+	* cs-tokenizer.cs (xtoken): Redo the work for signaling CS1040
+	because the previous change led to incorrect reporting of CS1032
+	("Cannot define/undefine preprocessor symbols after first token in
+	file"). Instead of using `tokens_seen' as the only flag that
+	triggers CS1040, introduce `comments_seen'. This new flag is used
+	to signify having seen comments on the current line, so it is
+	unset after a newline.
+
+2005-01-06  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* doc.cs : When searching for a type, find nested type too.
+	  This fixes bug #71040.
+
+2005-01-06  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* doc.cs :
+	  - Warn missing member comment on those classes which also does not
+	    have doc comments. Fixed bug #71041.
+	  - Don't warn missing doc comment on default constructor.
+	    Fixed bug #71042.
+
+2005-01-06  Duncan Mak  <duncan@ximian.com>
+
+	* cs-tokenizer.cs (xtoken): After handling traditional C-style
+ 	comments, set `tokens_seen' to true. This allows us to detect
+ 	misplaced preprocessor directives (i.e. not at the beginning of
+ 	the a line, nor after whitespaces). In that case, report error
+ 	CS1040. This fixes bug #56460.
+
+	* cs-parser.jay (interface_member_declaration): Add checks for
+	IsExplicitImpl, and report CS0541 error if an interface member is
+	defined as an explicit interface declaration.
+
+2005-01-06  Marek Safar  <marek.safar@seznam.cz>
+
+	Fix #70817
+	* class.cs (PropertyMethod): Set Parent field in ctors.
+	(SetMethod.InternalParameters): Add unsafe switch hack.
+	
+	* decl.cs (MemberCore.Parent): Cannot be readonly.
+
+2005-01-06  Raja R Harinath  <rharinath@novell.com>
+
+	* decl.cs (DeclSpace.ResolveType): Remove.
+	(DeclSpace.ResolveBaseTypeExpr): Rename from ResolveTypeExpr.
+	Merge in code from ...
+	(DeclSpace.GetTypeResolvingEmitContext): ... here.  Remove.
+	* class.cs, enum.cs: Update to changes.
+
+2005-01-06  Miguel de Icaza  <miguel@ximian.com>
+
+	* anonymous.cs: Ensure that we init the scope of our parent if it
+	has not been initialized yet.
+
+2004-12-30  Duncan Mak  <duncan@ximian.com>
+
+	* typemanager.cs (TypeManager.CheckStructCycles): Don't crash here
+	if field.FieldBuilder is null. Fixes #70758.
+
+	* convert.cs: Fixed some typos and updated some of the comments.
+	(ImplicitStandardConversionExists):
+	(TryImplicitIntConversion): If `target_type' is an interface and
+	the type of `ic' implements this interface, return true or a new
+	BoxedCast instead of null. This fixes #70468.
+
+2004-12-29  Duncan Mak  <duncan@ximian.com>
+
+	* expression.cs (Argument.Emit): Check that Expr is
+	IMemoryLocation before casting to it, and report CS1510 otherwise.
+
+	This fixes #70402.
+
+2004-12-21  Ben Maurer  <bmaurer@ximian.com>
+
+	* statement.cs (Block.ThisVariable): remove the recursion here, to
+	make the --profile more sane.
+
+2004-12-17  Carlos Cortez <calberto.cortez@gmail.com>
+
+	* driver.cs: Patch to handle a xsp bug that prevents to reference an .exe
+	assembly, by JB Evain.
+
+2004-12-17  Raja R Harinath  <rharinath@novell.com>
+
+	* class.cs, decl.cs, ecore.cs, iterators.cs, pending.cs, 
+	  rootcontext.cs, typemanager.cs: Make nomenclature consistent.
+	"parent" refers to enclosing type/class.  "base" refers to superclass.
+
+2004-12-17  Raja R Harinath  <rharinath@novell.com>
+
+	* codegen.cs (CommonAssemblyModulClass.GetClsCompliantAttribute):
+	Ensure that we only have GlobalAttributes.
+	* attribute.cs (Attribute.Emit): Make non-virtual.
+	(GlobalAttribute.Emit): Remove.
+	(Attribute.Resolve): Make virtual.
+	(GlobalAttribute.Resolve): New.  Set Rootcontext.Tree.Types.NamespaceEntry.
+	(Attribute.GetConditionalAttributeValue): Take an EmitContext as
+	the argument. Don't create one.
+	(Attribute.GetObsoleteAttribute): Likewise.
+	(Attribute.GetClsCompliantAttributeValue): Likewise.
+	* class.cs, decl.cs: Update to changes.
+
+2004-12-17  Marek Safar  <marek.safar@seznam.cz>
+
+	* delegate.cs (NewDelegate.DoResolve): Add error 149 report.
+	
+	* ecore.cs (Expression.MemberLookupFailed): Fixed error 143.
+	
+	* statement.cs (Foreach.Resolve): Add error 186 report.
+
+2004-12-16  Marek Safar  <marek.safar@seznam.cz>
+
+	* expression.cs (Conditional.DoResolve): Add warning 429.
+	
+	* statement.cs (If.Resolve): Add warning 665.
+
+2004-12-16  Raja R Harinath  <rharinath@novell.com>
+
+	New invariant: RootContext.Tree.Types.NamespaceEntry == null
+	except when in the parser, and in GlobalAttribute.
+	* driver.cs (MainDriver): Reset	RootContext.Tree.Types.NamespaceEntry.
+	* attribute.cs (GlobalAttribute.CheckAttributeType): Reset
+	RootContext.Tree.Types.NamespaceEntry once work is done.
+	(GlobalAttribute.Emit): New.  Wrapper for Attribute.Emit, but sets
+	and resets RootContext.Tree.Types.NamespaceEntry.
+
+2004-12-15  Marek Safar  <marek.safar@seznam.cz>
+
+	* cs-parser.jay: Don't create a block for every variable.
+
+2004-12-14  Miguel de Icaza  <miguel@ximian.com>
+
+	* location.cs: Provide extra information.
+
+	* statement.cs: The instance is not `ldarg_0.THIS' when accessing
+	variables from the captured environment, it is the ldarg_0.
+
+2004-12-14  Marek Safar  <marek.safar@seznam.cz>
+
+	* cs-parser.jay: Changed warning level for 642 to 4 until Miguel
+	find a conclusion.
+	
+	* class.cs: Changed warning level for 169 to avoid developer
+	displeasure from warning flooding. It will be changed back when they
+	fix most of current BCL warnings.
+	
+	* RootContext.cs: Pushed default WarningLevel to 3.
+	
+	* statement.cs: Removed unused variable.
+
+2004-12-14  Marek Safar  <marek.safar@seznam.cz>
+
+	* class.cs (TypeContainer.GetClassBases): Add error 1521 report.
+	(TypeContainer.MethodModifiersValid): Refactored to use MemberCore.
+	Add error 502 report.
+	(StaticClass.DefineType): Add error 441 report.
+	(Class.AllowedModifiersProp): New virtual property as temporary
+	extension to AllowedModifiers.
+	(Class.DefineType): Add error 418 report. Moved ModFlags check here
+	to share implementation with StaticClass and don't call virtual
+	methods from ctor.
+	
+	* driver.cs (MainDriver): Add error 1558 test.
+
+	* parameter.cs (Parameter.ApplyAttributeBuilder): Add error 662
+	report. Moved error 36 test here.
+
+	* statement.cs (Throw.Resolve): Add error 724 report.
+
+	* typemanager.cs: Add out_attribute_type core type.
+	
+2004-12-13  Marek Safar  <marek.safar@seznam.cz>
+
+	* class.cs (TypeContainer.VerifyClsCompliance): Add error
+	3018 report.
+	(PropertyBase.VerifyClsCompliance): Add errror 3025 report.
+
+	* codegen.cs (ModuleClass.ApplyAttributeBuilder): Add error
+	3017 report.
+	
+	* decl.cs (MemberCore.VerifyClsCompliance): Add warning 3021.
+
+	* parameter.cs (ReturnParameter.ApplyAttributeBuilder): 
+	Add error 3023 report.
+	(Parameter.ApplyAttributeBuilder): Add error 3022 report.
+
+	* tree.cs (RootTypes.IsClsCompliaceRequired): Add fake
+	implementation.
+
+2004-12-12  John Luke  <john.luke@gmail.com>
+
+	* driver.cs (AddArgs): take -- into account when
+	adding arguments, fixes bug 65710 
+
+2004-12-12  Martin Baulig  <martin@ximian.com>
+
+	* expression.cs (Unary.TryReduceNegative): Added support for
+	SByteConstant and ByteConstant.
+	(Unary.Reduce): Check error values from TryReduceNegative().
+
+2004-12-10  Marek Safar  <marek.safar@seznam.cz>
+
+	* attributes.cs (Attribute.Resolve): Avoid multiple error report
+	and report exception as error 182.
+
+2004-12-10  Raja R Harinath  <rharinath@novell.com>
+
+	* driver.cs (Main): Fix message when there are warnings.
+
+2004-12-09  Miguel de Icaza  <miguel@ximian.com>
+
+	* delegate.cs: Fixed my fix from yesterday, sorry about that.
+
+2004-12-09  Marek Safar  <marek.safar@seznam.cz>
+
+	* anonymous.cs, class.cs, convert.cs, doc.cs, support.cs: 
+	Reduced number of warnings.
+	
+	* class.cs (TypeContainer.VerifyClsCompliance): One if is enough.
+
+2004-12-08  Miguel de Icaza  <miguel@ximian.com>
+
+	* driver.cs: Removed message.
+
+	* delegate.cs: Fix bug introduced in 1.1.x: 70219.
+
+2004-12-08    <vargaz@freemail.hu>
+
+	* cs-tokenizer.cs: Add workaround for NET 2.0 beta 1 csc bug.
+
+2004-12-08  Martin Baulig  <martin@ximian.com>
+
+	* class.cs (TypeContainer.VerifyClsCompliance): Report a CS3003
+	instead of a CS3002 for properties and indexer.
+
+2004-12-08  Martin Baulig  <martin@ximian.com>
+
+	* decl.cs (MemberName.ToString): Make this work again.
+
+2004-12-08  Marek Safar  <marek.safar@seznam.cz>
+
+	* attribute.cs (Resolve): Add error 591 detection.
+
+	* class.cs (FieldMember.Define): Add error 1547 detection.
+	(Indexer.Define): Add error 620 detection.
+	(Operator.Define): Add error 590 detection.
+
+	* ecore.cs: Missing argument for error 79.
+
+	* expression.cs (ComposedCast.DoResolveAsTypeStep): Add error 611
+	detection.
+
+2004-12-07  Marek Safar  <marek.safar@seznam.cz>
+
+	Fix #70106
+	* assign.cs.cs (Assign.DoResolve): Reports error 1648 for value types
+	only.
+
+2004-12-07  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* cs-parser.jay : handle doc comments on implicit/explicit operators.
+	  Some operator comments were suppressed.
+	* doc.cs : Implicit/explicit operator name in doc comments are like
+	  "op_Explicit(type)~returnType", so added suffix handling.
+
+2005-01-21  Alp Toker  <alp@atoker.com>
+
+	* cs-parser.jay: destructor_declaration's container is PartialContainer
+	not Class when partial types are used, so use Kind prop instead of 'is'.
+
 2004-12-12  Martin Baulig  <martin@ximian.com>
 
 	* expression.cs (Unary.TryReduceNegative): Added support for

@@ -170,13 +170,11 @@ namespace Mono.CSharp {
 
 				n.WriteTo (RootContext.Documentation.XmlCommentOutput);
 			}
-			else if (mc.IsExposedFromAssembly (ds) &&
-				// There are no warnings when the container also
-				// misses documentations.
-				(ds == null || ds.DocComment != null))
-			{
-				Report.Warning (1591, 4, mc.Location,
-					"Missing XML comment for publicly visible type or member '{0}'", mc.GetSignatureForError ());
+			else if (mc.IsExposedFromAssembly (ds)) {
+				Constructor c = mc as Constructor;
+				if (c == null || !c.IsDefault ())
+					Report.Warning (1591, 4, mc.Location,
+						"Missing XML comment for publicly visible type or member '{0}'", mc.GetSignatureForError ());
 			}
 		}
 
@@ -263,8 +261,7 @@ namespace Mono.CSharp {
 		// returns a full runtime type name from a name which might
 		// be C# specific type name.
 		//
-		private static Type FindDocumentedType (MemberCore mc,
-			string name, DeclSpace ds, bool allowAlias)
+		private static Type FindDocumentedType (MemberCore mc, string name, DeclSpace ds, string cref)
 		{
 			bool isArray = false;
 			string identifier = name;
@@ -275,15 +272,14 @@ namespace Mono.CSharp {
 					isArray = true;
 				}
 			}
-			Type t = FindDocumentedTypeNonArray (mc, identifier,
-				ds, allowAlias);
+			Type t = FindDocumentedTypeNonArray (mc, identifier, ds, cref);
 			if (t != null && isArray)
 				t = Array.CreateInstance (t, 0).GetType ();
 			return t;
 		}
 
-		private static Type FindDocumentedTypeNonArray (MemberCore mc,
-			string identifier, DeclSpace ds, bool allowAlias)
+		private static Type FindDocumentedTypeNonArray (MemberCore mc, 
+			string identifier, DeclSpace ds, string cref)
 		{
 			switch (identifier) {
 			case "int":
@@ -319,15 +315,23 @@ namespace Mono.CSharp {
 			case "void":
 				return typeof (void);
 			}
-			if (allowAlias) {
-				IAlias alias = ds.LookupAlias (identifier);
-				if (alias != null)
-					identifier = alias.Name;
+			FullNamedExpression e = ds.FindType (mc.Location, identifier);
+			if (e != null) {
+				if (!(e is TypeExpr))
+					return null;
+				return ((TypeExpr) e).ResolveType (ds.EmitContext);
 			}
-			Type t = ds.FindType (mc.Location, identifier);
-			if (t == null)
-				t = TypeManager.LookupTypeDirect (identifier);
-			return t;
+			int index = identifier.LastIndexOf ('.');
+			if (index < 0)
+				return null;
+			int warn;
+			Type parent = FindDocumentedType (mc, identifier.Substring (0, index), ds, cref);
+			if (parent == null)
+				return null;
+			return FindDocumentedMember (mc, parent,
+				identifier.Substring (index + 1),
+				Type.EmptyTypes,
+				ds, out warn, cref) as Type;
 		}
 
 		//
@@ -451,7 +455,7 @@ namespace Mono.CSharp {
 				((PropertyInfo) mi).PropertyType :
 				null;
 			if (returnTypeName != null) {
-				Type returnType = FindDocumentedType (mc, returnTypeName, ds, true);
+				Type returnType = FindDocumentedType (mc, returnTypeName, ds, cref);
 				if (returnType == null || returnType != expected) {
 					warningType = 1581;
 					Report.Warning (1581, 1, mc.Location, "Invalid return type in XML comment cref attribute '{0}'", cref);
@@ -460,8 +464,6 @@ namespace Mono.CSharp {
 			}
 			return mis [0];
 		}
-
-		private static Type [] emptyParamList = new Type [0];
 
 		//
 		// Processes "see" or "seealso" elements.
@@ -480,7 +482,6 @@ namespace Mono.CSharp {
 
 			string signature; // "x:" are stripped
 			string name; // method invokation "(...)" are removed
-			string identifiers; // array indexer "[]" are removed
 			string parameters; // method parameter list
 
 			// strip 'T:' 'M:' 'F:' 'P:' 'E:' etc.
@@ -527,13 +528,13 @@ namespace Mono.CSharp {
 			}
 
 			// check if parameters are valid
-			Type [] parameterTypes = emptyParamList;
+			Type [] parameterTypes = Type.EmptyTypes;
 			if (parameters.Length > 0) {
 				string [] paramList = parameters.Split (',');
 				ArrayList plist = new ArrayList ();
 				for (int i = 0; i < paramList.Length; i++) {
 					string paramTypeName = paramList [i].Trim (wsChars);
-					Type paramType = FindDocumentedType (mc, paramTypeName, ds, true);
+					Type paramType = FindDocumentedType (mc, paramTypeName, ds, cref);
 					if (paramType == null) {
 						Report.Warning (1580, 1, mc.Location, "Invalid type for parameter '{0}' in XML comment cref attribute '{1}'", i + 1, cref);
 						return;
@@ -553,7 +554,7 @@ namespace Mono.CSharp {
 				parameters = sb.ToString ();
 			}
 
-			Type type = FindDocumentedType (mc, name, ds, true);
+			Type type = FindDocumentedType (mc, name, ds, cref);
 			if (type != null) {
 				xref.SetAttribute ("cref", "T:" + type.FullName.Replace ("+", "."));
 				return; // a type
@@ -569,7 +570,7 @@ namespace Mono.CSharp {
 			if (period > 0) {
 				string typeName = name.Substring (0, period);
 				string memberName = name.Substring (period + 1);
-				type = FindDocumentedType (mc, typeName, ds, false);
+				type = FindDocumentedType (mc, typeName, ds, cref);
 				int warnResult;
 				if (type != null) {
 					MemberInfo mi = FindDocumentedMember (mc, type, memberName, parameterTypes, ds, out warnResult, cref);
@@ -648,7 +649,17 @@ namespace Mono.CSharp {
 				paramSpec += ")";
 
 			string name = mc is Constructor ? "#ctor" : mc.Name;
-			return String.Concat (mc.DocCommentHeader, ds.Name, ".", name, paramSpec);
+			string suffix = String.Empty;
+			Operator op = mc as Operator;
+			if (op != null) {
+				switch (op.OperatorType) {
+				case Operator.OpType.Implicit:
+				case Operator.OpType.Explicit:
+					suffix = "~" + op.OperatorMethodBuilder.ReturnType.FullName.Replace ('+', '.');
+					break;
+				}
+			}
+			return String.Concat (mc.DocCommentHeader, ds.Name, ".", name, paramSpec, suffix);
 		}
 
 		//
@@ -674,7 +685,6 @@ namespace Mono.CSharp {
 				paramTags [xname] = xname;
 			}
 			Parameter [] plist = mc.Parameters.FixedParameters;
-			Parameter parr = mc.Parameters.ArrayParameter;
 			if (plist != null) {
 				foreach (Parameter p in plist) {
 					if (paramTags.Count > 0 && paramTags [p.Name] == null)

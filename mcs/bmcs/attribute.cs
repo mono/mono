@@ -78,6 +78,8 @@ namespace Mono.CSharp {
 
 		public Type Type;
 		
+		bool resolve_error;
+
 		// Is non-null if type is AttributeUsageAttribute
 		AttributeUsageAttribute usage_attribute;
 
@@ -115,13 +117,18 @@ namespace Mono.CSharp {
 				      Name);
 		}
 
-		static void Error_AttributeArgumentNotValid (Location loc)
+		static void Error_AttributeArgumentNotValid (string extra, Location loc)
 		{
 			Report.Error (182, loc,
 				      "An attribute argument must be a constant expression, typeof " +
-				      "expression or array creation expression");
+				      "expression or array creation expression" + extra);
 		}
 
+		static void Error_AttributeArgumentNotValid (Location loc)
+		{
+			Error_AttributeArgumentNotValid ("", loc);
+		}
+		
 		static void Error_TypeParameterInAttribute (Location loc)
 		{
 			Report.Error (
@@ -154,14 +161,20 @@ namespace Mono.CSharp {
 		protected virtual Type CheckAttributeType (EmitContext ec)
 		{
 			string NameAttribute = Name + "Attribute";
-			Type t1 = ec.ResolvingTypeTree
+			FullNamedExpression n1 = ec.ResolvingTypeTree
 				? ec.DeclSpace.FindType (Location, Name)
-				: RootContext.LookupType (ec.DeclSpace, Name, true, Location);
+				: ec.DeclSpace.LookupType (Name, true, Location);
 
 			// FIXME: Shouldn't do this for quoted attributes: [@A]
-			Type t2 = ec.ResolvingTypeTree
+			FullNamedExpression n2 = ec.ResolvingTypeTree
 				? ec.DeclSpace.FindType (Location, NameAttribute)
-				: RootContext.LookupType (ec.DeclSpace, NameAttribute, true, Location);
+				: ec.DeclSpace.LookupType (NameAttribute, true, Location);
+
+			TypeExpr e1 = n1 == null ? null : n1 as TypeExpr;
+			TypeExpr e2 = n2 == null ? null : n2 as TypeExpr;			
+
+			Type t1 = e1 == null ? null : e1.ResolveType (ec);
+			Type t2 = e2 == null ? null : e2.ResolveType (ec);
 
 			String err0616 = null;
 			if (t1 != null && ! t1.IsSubclassOf (TypeManager.attribute_type)) {
@@ -193,6 +206,7 @@ namespace Mono.CSharp {
 				      "Could not find attribute '" + Name 
 				      + "' (are you missing a using directive or an assembly reference ?)");
 
+			resolve_error = true;
 			return null;
 		}
 
@@ -266,8 +280,13 @@ namespace Mono.CSharp {
 			return false;
 		}
 		
-		public CustomAttributeBuilder Resolve (EmitContext ec)
+		public virtual CustomAttributeBuilder Resolve (EmitContext ec)
 		{
+			if (resolve_error)
+				return null;
+
+			resolve_error = true;
+
 			Type oldType = Type;
 			
 			// Sanity check.
@@ -348,6 +367,10 @@ namespace Mono.CSharp {
 
 				if (DoCompares){
 					if (usage_attr) {
+						if ((int)val == 0) {
+							Report.Error (591, Location, "Invalid value for argument to 'System.AttributeUsage' attribute");
+							return null;
+						}
 						usage_attribute = new AttributeUsageAttribute ((AttributeTargets)val);
 					} else if (MethodImplAttr) {
 						this.ImplOptions = (MethodImplOptions) val;
@@ -563,13 +586,6 @@ namespace Mono.CSharp {
 				else
 					cb = new CustomAttributeBuilder (
 						(ConstructorInfo) constructor, pos_values);
-			} catch (NullReferenceException) {
-				// 
-				// Don't know what to do here
-				//
-				Report.Warning (
-				        -101, Location, "NullReferenceException while trying to create attribute." +
-                                        "Something's wrong!");
 			} catch (Exception e) {
 				//
 				// Sample:
@@ -577,10 +593,11 @@ namespace Mono.CSharp {
 				// [DefaultValue (CollectionChangeAction.Add)]
 				// class X { static void Main () {} }
 				//
-				Report.Warning (
-					-23, Location, "The compiler can not encode this attribute in .NET due to a bug in the .NET runtime. Try the Mono runtime. The exception was: " + e.Message);
+				Error_AttributeArgumentNotValid (Location);
+				return null;
 			}
 			
+			resolve_error = false;
 			return cb;
 		}
 
@@ -664,11 +681,10 @@ namespace Mono.CSharp {
 		/// </summary>
 		public string GetIndexerAttributeValue (EmitContext ec)
 		{
-			if (pos_values == null) {
+			if (pos_values == null)
 				// TODO: It is not neccessary to call whole Resolve (ApplyAttribute does it now) we need only ctor args.
 				// But because a lot of attribute class code must be rewritten will be better to wait...
 				Resolve (ec);
-			}
 			
 			return pos_values [0] as string;
 		}
@@ -676,15 +692,12 @@ namespace Mono.CSharp {
 		/// <summary>
 		/// Returns condition of ConditionalAttribute
 		/// </summary>
-		public string GetConditionalAttributeValue (DeclSpace ds)
+		public string GetConditionalAttributeValue (EmitContext ec)
 		{
-			if (pos_values == null) {
-				EmitContext ec = new EmitContext (ds, ds, Location, null, null, 0, false);
-
+			if (pos_values == null)
 				// TODO: It is not neccessary to call whole Resolve (ApplyAttribute does it now) we need only ctor args.
 				// But because a lot of attribute class code must be rewritten will be better to wait...
 				Resolve (ec);
-			}
 
 			// Some error occurred
 			if (pos_values [0] == null)
@@ -696,15 +709,12 @@ namespace Mono.CSharp {
 		/// <summary>
 		/// Creates the instance of ObsoleteAttribute from this attribute instance
 		/// </summary>
-		public ObsoleteAttribute GetObsoleteAttribute (DeclSpace ds)
+		public ObsoleteAttribute GetObsoleteAttribute (EmitContext ec)
 		{
-			if (pos_values == null) {
-				EmitContext ec = new EmitContext (ds, ds, Location, null, null, 0, false);
-
+			if (pos_values == null)
 				// TODO: It is not neccessary to call whole Resolve (ApplyAttribute does it now) we need only ctor args.
 				// But because a lot of attribute class code must be rewritten will be better to wait...
 				Resolve (ec);
-			}
 
 			// Some error occurred
 			if (pos_values == null)
@@ -724,15 +734,12 @@ namespace Mono.CSharp {
 		/// before ApplyAttribute. We need to resolve the arguments.
 		/// This situation occurs when class deps is differs from Emit order.  
 		/// </summary>
-		public bool GetClsCompliantAttributeValue (DeclSpace ds)
+		public bool GetClsCompliantAttributeValue (EmitContext ec)
 		{
-			if (pos_values == null) {
-				EmitContext ec = new EmitContext (ds, ds, Location, null, null, 0, false);
-
+			if (pos_values == null)
 				// TODO: It is not neccessary to call whole Resolve (ApplyAttribute does it now) we need only ctor args.
 				// But because a lot of attribute class code must be rewritten will be better to wait...
 				Resolve (ec);
-			}
 
 			// Some error occurred
 			if (pos_values [0] == null)
@@ -812,14 +819,19 @@ namespace Mono.CSharp {
 				}
 			}
 
-			IPermission perm = sa.CreatePermission ();
-			SecurityAction action;
+			IPermission perm;
+			try {
+				perm = sa.CreatePermission ();
+			}
+			catch (Exception e) {
+				Error_AttributeEmitError (String.Format ("{0} was thrown during attribute processing: {1}", e.GetType (), e.Message));
+				return;
+			}
+			SecurityAction action = GetSecurityActionValue ();
 
 			// IS is correct because for corlib we are using an instance from old corlib
-			if (perm is System.Security.CodeAccessPermission) {
-				action = GetSecurityActionValue ();
-			} else {
-				switch (GetSecurityActionValue ()) {
+			if (!(perm is System.Security.CodeAccessPermission)) {
+				switch (action) {
 					case SecurityAction.Demand:
 						action = (SecurityAction)13;
 						break;
@@ -829,18 +841,22 @@ namespace Mono.CSharp {
 					case SecurityAction.InheritanceDemand:
 						action = (SecurityAction)15;
 						break;
-					default:
-						Error_AttributeEmitError ("Invalid SecurityAction for non-Code Access Security permission");
-						return;
 				}
 			}
 
 			PermissionSet ps = (PermissionSet)permissions [action];
 			if (ps == null) {
-				ps = new PermissionSet (PermissionState.None);
+				if (sa is PermissionSetAttribute)
+					ps = new PermissionSet (sa.Unrestricted ? PermissionState.Unrestricted : PermissionState.None);
+				else
+					ps = new PermissionSet (PermissionState.None);
+
 				permissions.Add (action, ps);
+			} else if (!ps.IsUnrestricted () && sa.Unrestricted) {
+				ps = ps.Union (new PermissionSet (PermissionState.Unrestricted));
+				permissions [action] = ps;
 			}
-			ps.AddPermission (sa.CreatePermission ());
+			ps.AddPermission (perm);
 		}
 
 		object GetValue (object value)
@@ -1039,7 +1055,11 @@ namespace Mono.CSharp {
 				Error_AttributeArgumentNotValid (Location);
 				return null;
 			}
-
+			if (dll_name == null || dll_name == ""){
+				Error_AttributeArgumentNotValid (": DllImport requires a non-empty string", Location);
+				return null;
+			}
+			
 			// Now we process the named arguments
 			CallingConvention cc = CallingConvention.Winapi;
 			CharSet charset = CharSet.Ansi;
@@ -1196,12 +1216,40 @@ namespace Mono.CSharp {
 			// in effect where the attribute was used.  Since code elsewhere cannot assume
 			// that the NamespaceEntry is right, just overwrite it.
 			//
-			// FIXME: Check every place the NamespaceEntry of RootContext.Tree.Types is used
-			//        to ensure the right one is used.
-			if (ec.DeclSpace == RootContext.Tree.Types)
-				ec.DeclSpace.NamespaceEntry = ns;
+			// Precondition: RootContext.Tree.Types == null || RootContext.Tree.Types == ns.
+			//               The second case happens when we are recursively invoked from inside Emit.
 
-			return base.CheckAttributeType (ec);
+			NamespaceEntry old = null;
+			if (ec.DeclSpace == RootContext.Tree.Types) {
+				old = ec.DeclSpace.NamespaceEntry;
+				ec.DeclSpace.NamespaceEntry = ns;
+				if (old != null && old != ns)
+					throw new InternalErrorException (Location + " non-null NamespaceEntry " + old);
+			}
+
+			Type retval = base.CheckAttributeType (ec);
+
+			if (ec.DeclSpace == RootContext.Tree.Types)
+				ec.DeclSpace.NamespaceEntry = old;
+
+			return retval;
+		}
+
+		public override CustomAttributeBuilder Resolve (EmitContext ec)
+		{
+			if (ec.DeclSpace == RootContext.Tree.Types) {
+				NamespaceEntry old = ec.DeclSpace.NamespaceEntry;
+				ec.DeclSpace.NamespaceEntry = ns;
+				if (old != null)
+					throw new InternalErrorException (Location + " non-null NamespaceEntry " + old);
+			}
+
+			CustomAttributeBuilder retval = base.Resolve (ec);
+
+			if (ec.DeclSpace == RootContext.Tree.Types)
+				ec.DeclSpace.NamespaceEntry = null;
+
+			return retval;
 		}
 	}
 
@@ -1540,6 +1588,10 @@ namespace Mono.CSharp {
 			// compiler generated methods are not registered by AddMethod
 			if (mb.DeclaringType is TypeBuilder)
 				return null;
+
+			PropertyInfo pi = PropertyExpr.AccessorTable [mb] as PropertyInfo;
+			if (pi != null)
+				return GetMemberObsoleteAttribute (pi);
 
 			return GetMemberObsoleteAttribute (mb);
 		}

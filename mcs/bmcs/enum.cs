@@ -166,7 +166,7 @@ namespace Mono.CSharp {
 
 			EnumMember em = new EnumMember (this, expr, name, loc, opt_attrs);
 			em.DocComment = documentation;
-			if (!AddToContainer (em, false, name, ""))
+			if (!AddToContainer (em, name, ""))
 				return;
 
 
@@ -225,11 +225,11 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			TypeExpr texpr = ResolveTypeExpr (BaseType, Location);
-			if (texpr == null)
+			TypeExpr ute = ResolveBaseTypeExpr (BaseType, false, Location);
+			if (ute == null)
 				return null;
 
-			UnderlyingType = texpr.Type;
+			UnderlyingType = ute.Type;
 
 			if (UnderlyingType != TypeManager.int32_type &&
 			    UnderlyingType != TypeManager.uint32_type &&

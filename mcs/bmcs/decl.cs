@@ -112,7 +112,6 @@ namespace Mono.CSharp {
 
 		public string GetTypeName ()
 		{
-			string suffix = "";
 			if (Left != null)
 				return Left.GetTypeName () + "." +
 					MakeName (Name, TypeArguments);
@@ -218,7 +217,7 @@ namespace Mono.CSharp {
 		/// </summary>
 		public int ModFlags;
 
-		public readonly TypeContainer Parent;
+		public /*readonly*/ TypeContainer Parent;
 
 		/// <summary>
 		///   Location where this declaration happens
@@ -358,7 +357,7 @@ namespace Mono.CSharp {
 			if (obsolete_attr == null)
 				return null;
 
-			ObsoleteAttribute obsolete = obsolete_attr.GetObsoleteAttribute (ds);
+			ObsoleteAttribute obsolete = obsolete_attr.GetObsoleteAttribute (ds.EmitContext);
 			if (obsolete == null)
 				return null;
 
@@ -411,7 +410,7 @@ namespace Mono.CSharp {
 					TypeManager.cls_compliant_attribute_type, ds.EmitContext);
 				if (cls_attribute != null) {
 					caching_flags |= Flags.HasClsCompliantAttribute;
-					return cls_attribute.GetClsCompliantAttributeValue (ds);
+					return cls_attribute.GetClsCompliantAttributeValue (ds.EmitContext);
 				}
 			}
 			return ds.GetClsCompliantAttributeValue ();
@@ -427,6 +426,14 @@ namespace Mono.CSharp {
 		}
 
 		/// <summary>
+		/// It helps to handle error 102 & 111 detection
+		/// </summary>
+		public virtual bool MarkForDuplicationCheck ()
+		{
+			return false;
+		}
+
+		/// <summary>
 		/// The main virtual method for CLS-Compliant verifications.
 		/// The method returns true if member is CLS-Compliant and false if member is not
 		/// CLS-Compliant which means that CLS-Compliant tests are not necessary. A descendants override it
@@ -435,8 +442,11 @@ namespace Mono.CSharp {
 		protected virtual bool VerifyClsCompliance (DeclSpace ds)
 		{
 			if (!IsClsCompliaceRequired (ds)) {
-				if ((RootContext.WarningLevel >= 2) && HasClsCompliantAttribute && !IsExposedFromAssembly (ds)) {
-					Report.Warning (3019, Location, "CLS compliance checking will not be performed on '{0}' because it is private or internal", GetSignatureForError ());
+				if (HasClsCompliantAttribute && RootContext.WarningLevel >= 2) {
+					if (!IsExposedFromAssembly (ds))
+						Report.Warning (3019, Location, "CLS compliance checking will not be performed on '{0}' because it is private or internal", GetSignatureForError ());
+					if (!CodeGen.Assembly.IsClsCompliant)
+						Report.Warning (3021, Location, "'{0}' does not need a CLSCompliant attribute because the assembly does not have a CLSCompliant attribute", GetSignatureForError ());
 				}
 				return false;
 			}
@@ -515,7 +525,7 @@ namespace Mono.CSharp {
 		//
 		public NamespaceEntry NamespaceEntry;
 
-		public Hashtable Cache = new Hashtable ();
+		private Hashtable Cache = new Hashtable ();
 		
 		public string Basename;
 		
@@ -565,7 +575,7 @@ namespace Mono.CSharp {
 		/// <summary>
 		/// Adds the member to defined_names table. It tests for duplications and enclosing name conflicts
 		/// </summary>
-		protected bool AddToContainer (MemberCore symbol, bool is_method, string fullname, string basename)
+		protected bool AddToContainer (MemberCore symbol, string fullname, string basename)
 		{
 			if (basename == Basename && !(this is Interface)) {
 				if (symbol is TypeParameter)
@@ -581,26 +591,23 @@ namespace Mono.CSharp {
 
 			MemberCore mc = (MemberCore)defined_names [fullname];
 
-			if (is_method && (mc is MethodCore || mc is IMethodData)) {
-				symbol.caching_flags |= Flags.TestMethodDuplication;
-				mc.caching_flags |= Flags.TestMethodDuplication;
+			if (mc == null) {
+				defined_names.Add (fullname, symbol);
 				return true;
 			}
 
-			if (mc != null) {
-				if (symbol is TypeParameter)
-					Report.Error (692, symbol.Location, "Duplicate type parameter `{0}'", basename);
-				else {
-					Report.SymbolRelatedToPreviousError (mc);
-					Report.Error (102, symbol.Location,
-						      "The type '{0}' already contains a definition for '{1}'",
-						      GetSignatureForError (), basename);
-				}
-				return false;
-			}
+			if (symbol.MarkForDuplicationCheck () && mc.MarkForDuplicationCheck ())
+				return true;
 
-			defined_names.Add (fullname, symbol);
-			return true;
+			if (symbol is TypeParameter)
+				Report.Error (692, symbol.Location, "Duplicate type parameter `{0}'", basename);
+			else {
+				Report.SymbolRelatedToPreviousError (mc);
+				Report.Error (102, symbol.Location,
+					      "The type '{0}' already contains a definition for '{1}'",
+					      GetSignatureForError (), basename);
+			}
+			return false;
 		}
 
 		public void RecordDecl ()
@@ -633,17 +640,6 @@ namespace Mono.CSharp {
 			set {
 				in_transit = value;
 			}
-		}
-
-		/// <summary>
-		///   Looks up the alias for the name
-		/// </summary>
-		public IAlias LookupAlias (string name)
-		{
-			if (NamespaceEntry != null)
-				return NamespaceEntry.LookupAlias (name);
-			else
-				return null;
 		}
 		
 		// 
@@ -714,24 +710,17 @@ namespace Mono.CSharp {
 		}
 
 		EmitContext type_resolve_ec;
-		EmitContext GetTypeResolveEmitContext (TypeContainer parent, Location loc)
-		{
-			type_resolve_ec = new EmitContext (parent, this, loc, null, null, ModFlags, false);
-			type_resolve_ec.ResolvingTypeTree = true;
 
-			return type_resolve_ec;
-		}
-
-		public Type ResolveNestedType (Type t, Location loc)
+		public FullNamedExpression ResolveNestedType (FullNamedExpression t, Location loc)
 		{
-			TypeContainer tc = TypeManager.LookupTypeContainer (t);
+			TypeContainer tc = TypeManager.LookupTypeContainer (t.Type);
 			if ((tc != null) && tc.IsGeneric) {
 				if (!IsGeneric) {
-					int tnum = TypeManager.GetNumberOfTypeArguments (t);
+					int tnum = TypeManager.GetNumberOfTypeArguments (t.Type);
 					Report.Error (305, loc,
 						      "Using the generic type `{0}' " +
 						      "requires {1} type arguments",
-						      TypeManager.GetFullName (t), tnum);
+						      TypeManager.GetFullName (t.Type), tnum);
 					return null;
 				}
 
@@ -741,12 +730,8 @@ namespace Mono.CSharp {
 				else
 					args = TypeParameters;
 
-				TypeExpr ctype = new ConstructedType (t, args, loc);
-				ctype = ctype.ResolveAsTypeTerminal (ec);
-				if (ctype == null)
-					return null;
-
-				t = ctype.Type;
+				TypeExpr ctype = new ConstructedType (t.Type, args, loc);
+				return ctype.ResolveAsTypeTerminal (ec);
 			}
 
 			return t;
@@ -756,10 +741,19 @@ namespace Mono.CSharp {
 		//    Resolves the expression `e' for a type, and will recursively define
 		//    types.  This should only be used for resolving base types.
 		// </summary>
-		public TypeExpr ResolveTypeExpr (Expression e, Location loc)
+		public TypeExpr ResolveBaseTypeExpr (Expression e, bool silent, Location loc)
 		{
-			if (type_resolve_ec == null)
-				type_resolve_ec = GetTypeResolveEmitContext (Parent, loc);
+			if (type_resolve_ec == null) {
+				// FIXME: I think this should really be one of:
+				//
+				// a. type_resolve_ec = Parent.EmitContext;
+				// b. type_resolve_ec = new EmitContext (Parent, Parent, loc, null, null, ModFlags, false);
+				//
+				// However, if Parent == RootContext.Tree.Types, its NamespaceEntry will be null.
+				//
+				type_resolve_ec = new EmitContext (Parent, this, loc, null, null, ModFlags, false);
+				type_resolve_ec.ResolvingTypeTree = true;
+			}
 			type_resolve_ec.loc = loc;
 			if (this is GenericMethod)
 				type_resolve_ec.ContainerType = Parent.TypeBuilder;
@@ -987,16 +981,17 @@ namespace Mono.CSharp {
 			return tc.DefineType ();
 		}
 		
-		Type LookupInterfaceOrClass (string ns, string name, out bool error)
+		FullNamedExpression LookupInterfaceOrClass (string ns, string name, out bool error)
 		{
 			DeclSpace parent;
+			FullNamedExpression result;
 			Type t;
 			object r;
 			
 			error = false;
 
 			if (dh.Lookup (ns, name, out r))
-				return (Type) r;
+				return (FullNamedExpression) r;
 			else {
 				if (ns != ""){
 					if (Namespace.IsNamespace (ns)){
@@ -1009,8 +1004,23 @@ namespace Mono.CSharp {
 			}
 			
 			if (t != null) {
-				dh.Insert (ns, name, t);
-				return t;
+				result = new TypeExpression (t, Location.Null);
+				dh.Insert (ns, name, result);
+				return result;
+			}
+
+			if (ns != "" && Namespace.IsNamespace (ns)) {
+				result = Namespace.LookupNamespace (ns, false).Lookup (this, name, Location.Null);
+				if (result != null) {
+					dh.Insert (ns, name, result);
+					return result;
+				}
+			}
+
+			if (ns == "" && Namespace.IsNamespace (name)) {
+				result = Namespace.LookupNamespace (name, false);
+				dh.Insert (ns, name, result);
+				return result;
 			}
 
 			//
@@ -1021,7 +1031,10 @@ namespace Mono.CSharp {
 				ns = MakeFQN (ns, name.Substring (0, p));
 				name = name.Substring (p+1);
 			}
-			
+
+			if (ns.IndexOf ('+') != -1)
+				ns = ns.Replace ('+', '.');
+
 			parent = RootContext.Tree.LookupByNamespace (ns, name);
 			if (parent == null) {
 				dh.Insert (ns, name, null);
@@ -1034,8 +1047,9 @@ namespace Mono.CSharp {
 				return null;
 			}
 			
-			dh.Insert (ns, name, t);
-			return t;
+			result = new TypeExpression (t, Location.Null);
+			dh.Insert (ns, name, result);
+			return result;
 		}
 
 		public static void Error_AmbiguousTypeReference (Location loc, string name, string t1, string t2)
@@ -1048,7 +1062,7 @@ namespace Mono.CSharp {
 		public Type FindNestedType (Location loc, string name,
 					    out DeclSpace containing_ds)
 		{
-			Type t;
+			FullNamedExpression t;
 			bool error;
 
 			containing_ds = this;
@@ -1063,8 +1077,8 @@ namespace Mono.CSharp {
 					if (error)
 						return null;
 
-					if ((t != null) && containing_ds.CheckAccessLevel (t))
-						return t;
+					if ((t != null) && containing_ds.CheckAccessLevel (t.Type))
+						return t.Type;
 
 					current_type = current_type.BaseType;
 				}
@@ -1086,15 +1100,16 @@ namespace Mono.CSharp {
 		///   during the tree resolution process and potentially define
 		///   recursively the type
 		/// </remarks>
-		public Type FindType (Location loc, string name)
+		public FullNamedExpression FindType (Location loc, string name)
 		{
-			Type t;
+			FullNamedExpression t;
 			bool error;
 
 			//
 			// For the case the type we are looking for is nested within this one
 			// or is in any base class
 			//
+
 			DeclSpace containing_ds = this;
 
 			while (containing_ds != null){
@@ -1108,7 +1123,7 @@ namespace Mono.CSharp {
 					if (error)
 						return null;
 
-					if ((t != null) && containing_ds.CheckAccessLevel (t))
+					if ((t != null) && containing_ds.CheckAccessLevel (t.Type))
 						return ResolveNestedType (t, loc);
 
 					current_type = current_type.BaseType;
@@ -1155,34 +1170,27 @@ namespace Mono.CSharp {
 				if (name.IndexOf ('.') > 0)
 					continue;
 
-				IAlias alias_value = ns.LookupAlias (name);
-				if (alias_value != null) {
-					t = LookupInterfaceOrClass ("", alias_value.Name, out error);
-					if (error)
-						return null;
-
-					if (t != null)
-						return t;
-				}
+				t = ns.LookupAlias (name);
+				if (t != null)
+					return t;
 
 				//
 				// Now check the using clause list
 				//
-				Type match = null;
+				FullNamedExpression match = null;
 				foreach (Namespace using_ns in ns.GetUsingTable ()) {
 					match = LookupInterfaceOrClass (using_ns.Name, name, out error);
 					if (error)
 						return null;
 
-					if (match != null) {
-						if (t != null){
-							if (CheckAccessLevel (match)) {
-								Error_AmbiguousTypeReference (loc, name, t.FullName, match.FullName);
-								return null;
-							}
+					if ((match != null) && (match is TypeExpr)) {
+						Type matched = ((TypeExpr) match).Type;
+						if (!CheckAccessLevel (matched))
 							continue;
+						if (t != null){
+							Error_AmbiguousTypeReference (loc, name, t.FullName, match.FullName);
+							return null;
 						}
-						
 						t = match;
 					}
 				}
@@ -1192,6 +1200,76 @@ namespace Mono.CSharp {
 
 			//Report.Error (246, Location, "Can not find type `"+name+"'");
 			return null;
+		}
+
+		//
+		// Public function used to locate types, this can only
+		// be used after the ResolveTree function has been invoked.
+		//
+		// Returns: Type or null if they type can not be found.
+		//
+		// Come to think of it, this should be a DeclSpace
+		//
+		public FullNamedExpression LookupType (string name, bool silent, Location loc)
+		{
+			FullNamedExpression e;
+
+			if (Cache.Contains (name)) {
+				e = (FullNamedExpression) Cache [name];
+			} else {
+				//
+				// For the case the type we are looking for is nested within this one
+				// or is in any base class
+				//
+				DeclSpace containing_ds = this;
+				while (containing_ds != null){
+					
+					// if the member cache has been created, lets use it.
+					// the member cache is MUCH faster.
+					if (containing_ds.MemberCache != null) {
+						Type t = containing_ds.MemberCache.FindNestedType (name);
+						if (t == null) {
+							containing_ds = containing_ds.Parent;
+							continue;
+						}
+
+						e = new TypeExpression (t, Location.Null);
+						e = ResolveNestedType (e, Location.Null);
+						Cache [name] = e;
+						return e;
+					}
+					
+					// no member cache. Do it the hard way -- reflection
+					Type current_type = containing_ds.TypeBuilder;
+					
+					while (current_type != null &&
+					       current_type != TypeManager.object_type) {
+						//
+						// nested class
+						//
+						Type t = TypeManager.LookupType (current_type.FullName + "." + name);
+						if (t != null){
+							e = new TypeExpression (t, Location.Null);
+							e = ResolveNestedType (e, Location.Null);
+							Cache [name] = e;
+							return e;
+						}
+						
+						current_type = current_type.BaseType;
+					}
+					
+					containing_ds = containing_ds.Parent;
+				}
+				
+				e = NamespaceEntry.LookupNamespaceOrType (this, name, loc);
+				if (!silent || e != null)
+					Cache [name] = e;
+			}
+
+			if (e == null && !silent)
+				Report.Error (246, loc, "Cannot find type `"+name+"'");
+			
+			return e;
 		}
 
 		/// <remarks>
@@ -1240,7 +1318,7 @@ namespace Mono.CSharp {
 				Attribute cls_attribute = OptAttributes.Search (TypeManager.cls_compliant_attribute_type, ec);
 				if (cls_attribute != null) {
 					caching_flags |= Flags.HasClsCompliantAttribute;
-					if (cls_attribute.GetClsCompliantAttributeValue (this)) {
+					if (cls_attribute.GetClsCompliantAttributeValue (ec)) {
 						caching_flags |= Flags.ClsCompliantAttributeTrue;
 						return true;
 					}
@@ -1369,7 +1447,7 @@ namespace Mono.CSharp {
 				type_params [i] = new TypeParameter (Parent, name, constraints, Location);
 
 				string full_name = Name + "." + name;
-				AddToContainer (type_params [i], false, full_name, name);
+				AddToContainer (type_params [i], full_name, name);
 			}
 		}
 
@@ -1615,12 +1693,12 @@ namespace Mono.CSharp {
 		}
 
 		/// <summary>
-		///   Returns the IMemberContainer of the parent class or null if this
+		///   Returns the IMemberContainer of the base class or null if this
 		///   is an interface or TypeManger.object_type.
 		///   This is used when creating the member cache for a class to get all
-		///   members from the parent class.
+		///   members from the base class.
 		/// </summary>
-		MemberCache ParentCache {
+		MemberCache BaseCache {
 			get;
 		}
 
@@ -1682,10 +1760,10 @@ namespace Mono.CSharp {
 			Timer.IncrementCounter (CounterType.MemberCache);
 			Timer.StartTimer (TimerType.CacheInit);
 
-			// If we have a parent class (we have a parent class unless we're
+			// If we have a base class (we have a base class unless we're
 			// TypeManager.object_type), we deep-copy its MemberCache here.
-			if (Container.ParentCache != null)
-				member_hash = SetupCache (Container.ParentCache);
+			if (Container.BaseCache != null)
+				member_hash = SetupCache (Container.BaseCache);
 			else
 				member_hash = new Hashtable ();
 
@@ -1720,16 +1798,16 @@ namespace Mono.CSharp {
 		}
 
 		/// <summary>
-		///   Bootstrap this member cache by doing a deep-copy of our parent.
+		///   Bootstrap this member cache by doing a deep-copy of our base.
 		/// </summary>
-		Hashtable SetupCache (MemberCache parent)
+		Hashtable SetupCache (MemberCache base_class)
 		{
 			Hashtable hash = new Hashtable ();
 
-			if (parent == null)
+			if (base_class == null)
 				return hash;
 
-			IDictionaryEnumerator it = parent.member_hash.GetEnumerator ();
+			IDictionaryEnumerator it = base_class.member_hash.GetEnumerator ();
 			while (it.MoveNext ()) {
 				hash [it.Key] = ((ArrayList) it.Value).Clone ();
 			 }
@@ -1812,7 +1890,7 @@ namespace Mono.CSharp {
 				}
 
 				// When this method is called for the current class, the list will
-				// already contain all inherited members from our parent classes.
+				// already contain all inherited members from our base classes.
 				// We cannot add new members in front of the list since this'd be an
 				// expensive operation, that's why the list is sorted in reverse order
 				// (ie. members from the current class are coming last).
@@ -2055,9 +2133,9 @@ namespace Mono.CSharp {
 
 
 			// `applicable' is a list of all members with the given member name `name'
-			// in the current class and all its parent classes.  The list is sorted in
+			// in the current class and all its base classes.  The list is sorted in
 			// reverse order due to the way how the cache is initialy created (to speed
-			// things up, we're doing a deep-copy of our parent).
+			// things up, we're doing a deep-copy of our base).
 
 			for (int i = applicable.Count-1; i >= 0; i--) {
 				CacheEntry entry = (CacheEntry) applicable [i];
@@ -2106,6 +2184,22 @@ namespace Mono.CSharp {
 			MemberInfo [] copy = new MemberInfo [global.Count];
 			global.CopyTo (copy);
 			return copy;
+		}
+		
+		// find the nested type @name in @this.
+		public Type FindNestedType (string name)
+		{
+			ArrayList applicable = (ArrayList) member_hash [name];
+			if (applicable == null)
+				return null;
+			
+			for (int i = applicable.Count-1; i >= 0; i--) {
+				CacheEntry entry = (CacheEntry) applicable [i];
+				if ((entry.EntryType & EntryType.NestedType & EntryType.MaskType) != 0)
+					return (Type) entry.Member;
+			}
+			
+			return null;
 		}
 		
 		//

@@ -159,8 +159,6 @@ namespace Mono.CSharp {
 
 		public bool Resolve (EmitContext ec)
 		{
-			DeclSpace ds = ec.DeclSpace;
-
 			iface_constraints = new ArrayList ();
 			type_param_constraints = new ArrayList ();
 
@@ -686,7 +684,7 @@ namespace Mono.CSharp {
 			get { return Name; }
 		}
 
-		MemberCache IMemberContainer.ParentCache {
+		MemberCache IMemberContainer.BaseCache {
 			get { return null; }
 		}
 
@@ -837,6 +835,12 @@ namespace Mono.CSharp {
 			}
 		}
 
+		public override string FullName {
+			get {
+				return type_parameter.Name;
+			}
+		}
+
 		public TypeParameter TypeParameter {
 			get {
 				return type_parameter;
@@ -970,7 +974,6 @@ namespace Mono.CSharp {
 
 		public bool Resolve (EmitContext ec)
 		{
-			DeclSpace ds = ec.DeclSpace;
 			int count = args.Count;
 			bool ok = true;
 
@@ -1013,6 +1016,16 @@ namespace Mono.CSharp {
 			loc = l;
 
 			this.name = name;
+			full_name = name + "<" + args.ToString () + ">";
+		}
+
+		public ConstructedType (FullNamedExpression fname, TypeArguments args, Location l)
+		{
+			loc = l;
+			this.name = fname.FullName;
+			this.args = args;
+
+			eclass = ExprClass.Type;
 			full_name = name + "<" + args.ToString () + ">";
 		}
 
@@ -1350,6 +1363,11 @@ namespace Mono.CSharp {
 			return type == cobj.type;
 		}
 
+		public override int GetHashCode ()
+		{
+			return base.GetHashCode ();
+		}
+
 		public string Basename {
 			get {
 				int pos = name.LastIndexOf ('`');
@@ -1361,6 +1379,13 @@ namespace Mono.CSharp {
 		}
 
 		public override string Name {
+			get {
+				return full_name;
+			}
+		}
+
+
+		public override string FullName {
 			get {
 				return full_name;
 			}
@@ -1429,7 +1454,7 @@ namespace Mono.CSharp {
 
 		public override MemberCache MemberCache {
 			get {
-				throw new Exception ();
+				return null;
 			}
 		}
 
@@ -1673,9 +1698,6 @@ namespace Mono.CSharp {
 			}
 
 			if (a.IsGenericInstance && b.IsGenericInstance) {
-				Type at = a.GetGenericTypeDefinition ();
-				Type bt = b.GetGenericTypeDefinition ();
-
 				if (a.GetGenericTypeDefinition () != b.GetGenericTypeDefinition ())
 					return false;
 
@@ -1797,9 +1819,6 @@ namespace Mono.CSharp {
 			if (a.GetGenericTypeDefinition () != b.GetGenericTypeDefinition ())
 				return false;
 
-			Type[] aargs = GetTypeArguments (a);
-			Type[] bargs = GetTypeArguments (b);
-
 			return MayBecomeEqualGenericInstances (
 				GetTypeArguments (a), GetTypeArguments (b), class_infered, method_infered);
 		}
@@ -1810,7 +1829,6 @@ namespace Mono.CSharp {
 			if (aargs.Length != bargs.Length)
 				return false;
 
-			Type[] args = new Type [aargs.Length];
 			for (int i = 0; i < aargs.Length; i++) {
 				if (!MayBecomeEqualGenericTypes (aargs [i], bargs [i], class_infered, method_infered))
 					return false;

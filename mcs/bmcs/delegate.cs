@@ -90,6 +90,12 @@ namespace Mono.CSharp {
 			TypeAttributes attr = Modifiers.TypeAttr (ModFlags, IsTopLevel) |
 				TypeAttributes.Class | TypeAttributes.Sealed;
 
+			if (TypeManager.multicast_delegate_type == null)
+				Report.Error (-100, Location, "Internal error: delegate used before " +
+					      "System.MulticastDelegate is resolved.  This can only " +
+					      "happen during corlib compilation, when using a delegate " +
+					      "in any of the `core' classes.  See bug #72015 for details.");
+
 			if (IsTopLevel) {
 				if (TypeManager.NamespaceClash (Name, Location))
 					return null;
@@ -114,16 +120,19 @@ namespace Mono.CSharp {
 					param_names [i] = TypeParameters [i].Name;
 
 				GenericTypeParameterBuilder[] gen_params;
-				
 				gen_params = TypeBuilder.DefineGenericParameters (param_names);
 
-				for (int i = 0; i < gen_params.Length; i++)
-					TypeParameters [i].Define (gen_params [i]);
+				int offset = CountTypeParameters - CurrentTypeParameters.Length;
+				for (int i = offset; i < gen_params.Length; i++)
+					CurrentTypeParameters [i - offset].Define (gen_params [i]);
 
-				foreach (TypeParameter type_param in TypeParameters) {
-					if (!type_param.DefineType (ec))
+				foreach (TypeParameter type_param in CurrentTypeParameters) {
+					if (!type_param.Resolve (this))
 						return null;
 				}
+
+				for (int i = offset; i < gen_params.Length; i++)
+					CurrentTypeParameters [i - offset].DefineConstraints ();
 
 				TypeExpr current = new ConstructedType (Name, TypeParameters, Location);
 				current = current.ResolveAsTypeTerminal (ec);
@@ -848,7 +857,7 @@ namespace Mono.CSharp {
 				delegate_instance_expression = ec.GetThis (loc);
 
 			if (delegate_instance_expression != null && delegate_instance_expression.Type.IsValueType)
-				delegate_instance_expression = new BoxedCast (mg.InstanceExpression);
+				delegate_instance_expression = new BoxedCast (delegate_instance_expression);
 
 			method_group = mg;
 			eclass = ExprClass.Value;
@@ -926,7 +935,7 @@ namespace Mono.CSharp {
 			Type e_type = e.Type;
 
 			if (!TypeManager.IsDelegateType (e_type)) {
-				e.Error_UnexpectedKind ("method", loc);
+				Report.Error (149, loc, "Method name expected");
 				return null;
 			}
 

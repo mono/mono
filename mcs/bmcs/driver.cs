@@ -20,7 +20,6 @@ namespace Mono.CSharp
 	using System.Text;
 	using System.Globalization;
 	using System.Xml;
-	using System.Diagnostics;
 
 	public enum Target {
 		Library, Exe, Module, WinExe
@@ -63,7 +62,6 @@ namespace Mono.CSharp
 		static bool timestamps = false;
 		static bool pause = false;
 		static bool show_counters = false;
-		public static bool parser_verbose = false;
 		
 		//
 		// Whether to load the initial config file (what CSC.RSP has by default)
@@ -270,11 +268,9 @@ namespace Mono.CSharp
 			bool ok = MainDriver (args);
 			
 			if (ok && Report.Errors == 0) {
-				Console.Write("Compilation succeeded");
 				if (Report.Warnings > 0) {
-					Console.Write(" - {0} warning(s)", Report.Warnings);
+					Console.WriteLine ("Compilation succeeded - {0} warning(s)", Report.Warnings);
 				}
-				Console.WriteLine();
 				if (show_counters){
 					Console.WriteLine ("Counter1: " + counter1);
 					Console.WriteLine ("Counter2: " + counter2);
@@ -301,7 +297,7 @@ namespace Mono.CSharp
 					a = Assembly.LoadFrom (assembly);
 				} else {
 					string ass = assembly;
-					if (ass.EndsWith (".dll"))
+					if (ass.EndsWith (".dll") || ass.EndsWith (".exe"))
 						ass = assembly.Substring (0, assembly.Length - 4);
 					a = Assembly.Load (ass);
 				}
@@ -310,7 +306,7 @@ namespace Mono.CSharp
 			} catch (FileNotFoundException){
 				foreach (string dir in link_paths){
 					string full_path = Path.Combine (dir, assembly);
-					if (!assembly.EndsWith (".dll"))
+					if (!assembly.EndsWith (".dll") && !assembly.EndsWith (".exe"))
 						full_path += ".dll";
 
 					try {
@@ -1316,10 +1312,23 @@ namespace Mono.CSharp
 		static string [] AddArgs (string [] args, string [] extra_args)
 		{
 			string [] new_args;
-
 			new_args = new string [extra_args.Length + args.Length];
-			args.CopyTo (new_args, 0);
-			extra_args.CopyTo (new_args, args.Length);
+
+			// if args contains '--' we have to take that into account
+			// split args into first half and second half based on '--'
+			// and add the extra_args before --
+			int split_position = Array.IndexOf (args, "--");
+			if (split_position != -1)
+			{
+				Array.Copy (args, new_args, split_position);
+				extra_args.CopyTo (new_args, split_position);
+				Array.Copy (args, split_position, new_args, split_position + extra_args.Length, args.Length - split_position);
+			}
+			else
+			{
+				args.CopyTo (new_args, 0);
+				extra_args.CopyTo (new_args, args.Length);
+			}
 
 			return new_args;
 		}
@@ -1423,6 +1432,13 @@ namespace Mono.CSharp
 				return true;
 			
 			//
+			// This will point to the NamespaceEntry of the last file that was parsed, and may
+			// not be meaningful when resolving classes from other files.  So, reset it to prevent
+			// silent bugs.
+			//
+			RootContext.Tree.Types.NamespaceEntry = null;
+
+			//
 			// If we are an exe, require a source file for the entry point
 			//
 			if (RootContext.Target == Target.Exe || RootContext.Target == Target.WinExe){
@@ -1452,7 +1468,7 @@ namespace Mono.CSharp
 			//
 			// Load Core Library for default compilation
 			//
-			if (RootContext.StdLib) 
+			if (RootContext.StdLib)
 				references.Insert (0, "mscorlib");
 
 			if (load_default_config)
@@ -1612,7 +1628,7 @@ namespace Mono.CSharp
 
 				if (ep == null) {
 					if (RootContext.MainClass != null) {
-						object main_cont = RootContext.Tree.Decls [RootContext.MainClass];
+						DeclSpace main_cont = RootContext.Tree.Decls [RootContext.MainClass] as DeclSpace;
 						if (main_cont == null) {
 							Report.Error (1555, output_file, "Could not find '{0}' specified for Main method", RootContext.MainClass); 
 							return false;
@@ -1622,6 +1638,9 @@ namespace Mono.CSharp
 							Report.Error (1556, output_file, "'{0}' specified for Main method must be a valid class or struct", RootContext.MainClass);
 							return false;
 						}
+
+						Report.Error (1558, main_cont.Location, "'{0}' does not have a suitable static Main method", main_cont.GetSignatureForError ());
+						return false;
 					}
 
 					if (Report.Errors == 0)

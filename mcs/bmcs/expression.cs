@@ -2724,7 +2724,7 @@ namespace Mono.CSharp {
 				((oper == Operator.LogicalAnd && (bool)lc.GetValue () == false) ||
 				 (oper == Operator.LogicalOr && (bool)lc.GetValue () == true))) {
 
-				// TODO: make a sence to resolve unreachable expression as we do for statement
+				// TODO: make a sense to resolve unreachable expression as we do for statement
 				Report.Warning (429, 4, loc, "Unreachable expression code detected");
 				return left;
 			}
@@ -3556,13 +3556,12 @@ namespace Mono.CSharp {
 				}
 			}
 
+			// Dead code optimalization
 			if (expr is BoolConstant){
 				BoolConstant bc = (BoolConstant) expr;
 
-				if (bc.Value)
-					return trueExpr;
-				else
-					return falseExpr;
+				Report.Warning (429, 4, bc.Value ? falseExpr.Location : trueExpr.Location, "Unreachable expression code detected");
+				return bc.Value ? trueExpr : falseExpr;
 			}
 
 			return this;
@@ -4251,7 +4250,14 @@ namespace Mono.CSharp {
 						pr.AddressOf (ec, mode);
 					}
 				} else {
-					((IMemoryLocation)Expr).AddressOf (ec, mode);
+					if (Expr is IMemoryLocation)
+                                               ((IMemoryLocation) Expr).AddressOf (ec, mode);
+					else {
+						Report.Error (
+							1510, Expr.Location,
+							"An lvalue is required as an argument to out or ref");
+						return;
+					}
 				}
 			} else
 				Expr.Emit (ec);
@@ -4817,14 +4823,12 @@ namespace Mono.CSharp {
 
 			if (Arguments != null)
 				arg_count = Arguments.Count;
-
-#if REVIEW_IFDEF
+  
                         if ((me.Name == "Invoke") &&
 			    TypeManager.IsDelegateType (me.DeclaringType)) {
                                 Error_InvokeOnDelegate (loc);
                                 return null;
                         }
-#endif
 
 			MethodBase[] methods = me.Methods;
 
@@ -5897,11 +5901,16 @@ namespace Mono.CSharp {
 				}
 
 				method = Invocation.OverloadResolve (
-					ec, (MethodGroupExpr) ml, Arguments, false, loc);
+					ec, (MethodGroupExpr) ml, Arguments, true, loc);
 				
 			}
 
-			if (method == null) { 
+			if (method == null) {
+				if (almostMatchedMembers.Count != 0) {
+					MemberLookupFailed (ec, type, type, ".ctor", null, loc);
+					return null;
+				}
+
                                 if (!is_struct || Arguments.Count > 0) {
         				Error (1501, String.Format (
 					    "New invocation: Can not find a constructor in `{0}' for this argument list",
@@ -7215,7 +7224,7 @@ namespace Mono.CSharp {
 			if (sn == null || left == null || left.Type.Name != sn.Name)
 				return false;
 
-			return RootContext.LookupType (ec.DeclSpace, sn.Name, true, loc) != null;
+			return ec.DeclSpace.LookupType (sn.Name, true, loc) != null;
 		}
 		
 		// TODO: possible optimalization
@@ -7435,17 +7444,15 @@ namespace Mono.CSharp {
 			if (expr == null)
 				return null;
 
-			if (expr is SimpleName){
-				SimpleName child_expr = (SimpleName) expr;
-				string fqname = DeclSpace.MakeFQN (child_expr.Name, Identifier);
-
-				Expression new_expr;
-				if (args != null)
-					new_expr = new ConstructedType (fqname, args, loc);
-				else
-					new_expr = new SimpleName (fqname, loc);
-
-				return new_expr.Resolve (ec, flags);
+			if (expr is Namespace) {
+				Namespace ns = (Namespace) expr;
+				string lookup_id = MemberName.MakeName (Identifier, args);
+				FullNamedExpression retval = ns.Lookup (ec.DeclSpace, lookup_id, loc);
+				if ((retval != null) && (args != null))
+					retval = new ConstructedType (retval, args, loc).ResolveAsTypeStep (ec);
+				if (retval == null)
+					Report.Error (234, loc, "The type or namespace name `{0}' could not be found in namespace `{1}'", Identifier, ns.FullName);
+				return retval;
 			}
 					
 			//
@@ -7506,8 +7513,6 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			int errors = Report.Errors;
-
 			Expression member_lookup;
 			member_lookup = MemberLookup (
 				ec, expr_type, expr_type, Identifier, loc);
@@ -7523,7 +7528,8 @@ namespace Mono.CSharp {
 			}
 
 			if (member_lookup is TypeExpr) {
-				if (!(expr is TypeExpr) && !(expr is SimpleName)) {
+				if (!(expr is TypeExpr) && 
+				    !IdenticalNameAndTypeName (ec, original, expr, loc)) {
 					Error (572, "Can't reference type `" + Identifier + "' through an expression; try `" +
 					       member_lookup.Type + "' instead");
 					return null;
@@ -7575,58 +7581,31 @@ namespace Mono.CSharp {
 
 		public override Expression DoResolve (EmitContext ec)
 		{
-			return DoResolve (ec, null, ResolveFlags.VariableOrValue |
-					  ResolveFlags.SimpleName | ResolveFlags.Type);
+			return DoResolve (ec, null, ResolveFlags.VariableOrValue | ResolveFlags.Type);
 		}
 
 		public override Expression DoResolveLValue (EmitContext ec, Expression right_side)
 		{
-			return DoResolve (ec, right_side, ResolveFlags.VariableOrValue |
-					  ResolveFlags.SimpleName | ResolveFlags.Type);
+			return DoResolve (ec, right_side, ResolveFlags.VariableOrValue | ResolveFlags.Type);
 		}
 
-		public override Expression ResolveAsTypeStep (EmitContext ec)
+		public override FullNamedExpression ResolveAsTypeStep (EmitContext ec)
 		{
-			string fname = null;
-			MemberAccess full_expr = this;
-			while (full_expr != null) {
-				if (fname != null)
-					fname = String.Concat (full_expr.Identifier, ".", fname);
-				else
-					fname = full_expr.Identifier;
-
-				fname = MemberName.MakeName (fname, args);
-
-				if (full_expr.Expr is SimpleName) {
-					string full_name = String.Concat (((SimpleName) full_expr.Expr).Name, ".", fname);
-					Type fully_qualified = ec.DeclSpace.FindType (loc, full_name);
-					if (fully_qualified != null) {
-						if (args == null)
-							return new TypeExpression (fully_qualified, loc);
-
-						ConstructedType ctype = new ConstructedType (fully_qualified, args, loc);
-						return ctype.ResolveAsTypeStep (ec);
-					}
-				}
-
-				full_expr = full_expr.Expr as MemberAccess;
-			}
-
-			Expression new_expr = expr.ResolveAsTypeStep (ec);
+			FullNamedExpression new_expr = expr.ResolveAsTypeStep (ec);
 
 			if (new_expr == null)
 				return null;
 
-			if (new_expr is SimpleName){
-				SimpleName child_expr = (SimpleName) new_expr;
-				string fqname = DeclSpace.MakeFQN (child_expr.Name, Identifier);
-				
-				if (args != null)
-					new_expr = new ConstructedType (fqname, args, loc);
-				else
-					new_expr = new SimpleName (fqname, loc);
+			string lookup_id = MemberName.MakeName (Identifier, args);
 
-				return new_expr.ResolveAsTypeStep (ec);
+			if (new_expr is Namespace) {
+				Namespace ns = (Namespace) new_expr;
+				FullNamedExpression retval = ns.Lookup (ec.DeclSpace, lookup_id, loc);
+				if ((retval != null) && (args != null))
+					retval = new ConstructedType (retval, args, loc).ResolveAsTypeStep (ec);
+				if (retval == null)
+					Report.Error (234, loc, "The type or namespace name `{0}' could not be found in namespace `{1}'", Identifier, ns.FullName);
+				return retval;
 			}
 
 			TypeExpr tnew_expr = new_expr.ResolveAsTypeTerminal (ec);
@@ -7642,18 +7621,20 @@ namespace Mono.CSharp {
 			}
 
 			Expression member_lookup;
-			string lookup_id;
-			lookup_id = MemberName.MakeName (Identifier, args);
-			member_lookup = MemberLookupFinal (
-				ec, expr_type, expr_type, lookup_id, loc);
-			if (member_lookup == null)
+			member_lookup = MemberLookupFinal (ec, expr_type, expr_type, lookup_id, loc);
+			if (member_lookup == null) {
+				Report.Error (234, loc, "The type name `{0}' could not be found in type `{1}'", 
+					      Identifier, new_expr.FullName);
 				return null;
+			}
 
-			TypeExpr texpr = member_lookup as TypeExpr;
-			if (texpr == null)
+			if (!(member_lookup is TypeExpr)) {
+				Report.Error (118, loc, "'{0}.{1}' denotes a '{2}', where a type was expected",
+					      new_expr.FullName, Identifier, member_lookup.ExprClassName ());
 				return null;
+			}
 
-			texpr = texpr.ResolveAsTypeTerminal (ec);
+			TypeExpr texpr = member_lookup.ResolveAsTypeTerminal (ec);
 			if (texpr == null)
 				return null;
 
@@ -8868,13 +8849,21 @@ namespace Mono.CSharp {
 				//
 				// For now, fall back to the full lookup in that case.
 				//
-				type = RootContext.LookupType (ec.DeclSpace, cname, false, loc);
+				FullNamedExpression e = ec.DeclSpace.LookupType (cname, false, loc);
+				if (e is TypeExpr)
+					type = ((TypeExpr) e).ResolveType (ec);
 				if (type == null)
 					return null;
 			}
 
 			if (!ec.InUnsafe && type.IsPointer){
 				UnsafeError (loc);
+				return null;
+			}
+
+			if (type.IsArray && (type.GetElementType () == TypeManager.arg_iterator_type ||
+				type.GetElementType () == TypeManager.typed_reference_type)) {
+				Report.Error (611, loc, "Array elements cannot be of type '{0}'", TypeManager.CSharpName (type.GetElementType ()));
 				return null;
 			}
 			
@@ -8885,6 +8874,12 @@ namespace Mono.CSharp {
 		public override string Name {
 			get {
 				return left + dim;
+			}
+		}
+
+		public override string FullName {
+			get {
+				return type.FullName;
 			}
 		}
 	}

@@ -587,6 +587,7 @@ namespace Mono.CSharp {
 			if (expr_type.Equals (target_type))
 				return true;
 
+
 			// First numeric conversions 
 
 			if (expr_type == TypeManager.sbyte_type){
@@ -693,6 +694,20 @@ namespace Mono.CSharp {
 					return true;
 			}	
 			
+			if (expr.eclass == ExprClass.MethodGroup){
+				if (TypeManager.IsDelegateType (target_type) && RootContext.Version != LanguageVersion.ISO_1){
+					MethodGroupExpr mg = expr as MethodGroupExpr;
+					if (mg != null){
+						//
+						// This should not happen frequently, so we can create an object
+						// to test compatibility
+						//
+						Expression c = ImplicitDelegateCreation.Create (ec, mg, target_type, Location.Null);
+						return c != null;
+					}
+				}
+			}
+			
 			if (ImplicitReferenceConversionExists (ec, expr, target_type))
 				return true;
 
@@ -751,6 +766,13 @@ namespace Mono.CSharp {
 					return true;
 			}
 
+			//
+			// If `expr_type' implements `target_type' (which is an iface)
+			// see TryImplicitIntConversion
+			// 
+			if (target_type.IsInterface && target_type.IsAssignableFrom (expr_type))
+				return true;
+
 			if (target_type == TypeManager.void_ptr_type && expr_type.IsPointer)
 				return true;
 
@@ -759,13 +781,12 @@ namespace Mono.CSharp {
 					return false;
 
 				AnonymousMethod am = (AnonymousMethod) expr;
-				int errors = Report.Errors;
 
 				Expression conv = am.Compatible (ec, target_type, true);
 				if (conv != null)
 					return true;
 			}
-			
+
 			return false;
 		}
 
@@ -1288,7 +1309,7 @@ namespace Mono.CSharp {
 		}
 
 		/// <summary>
-		///   Attemps to perform an implict constant conversion of the IntConstant
+		///   Attempts to perform an implicit constant conversion of the IntConstant
 		///   into a different data type using casts (See Implicit Constant
 		///   Expression Conversions)
 		/// </summary>
@@ -1339,6 +1360,14 @@ namespace Mono.CSharp {
 
 				return new EnumConstant (e, target_type);
 			}
+
+			//
+			// If `target_type' is an interface and the type of `ic' implements the interface
+			// e.g. target_type is IComparable, IConvertible, IFormattable
+			//
+			if (target_type.IsInterface && target_type.IsAssignableFrom (ic.Type))
+				return new BoxedCast (ic);
+
 			return null;
 		}
 
@@ -1358,7 +1387,7 @@ namespace Mono.CSharp {
 		}
 
 		/// <summary>
-		///   Attemptes to implicityly convert `target' into `type', using
+		///   Attempts to implicitly convert `source' into `target_type', using
 		///   ImplicitConversion.  If there is no implicit conversion, then
 		///   an error is signaled
 		/// </summary>

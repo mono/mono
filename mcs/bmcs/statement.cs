@@ -146,6 +146,11 @@ namespace Mono.CSharp {
 				return false;
 			}
 			
+			Assign ass = expr as Assign;
+			if (ass != null && ass.Source is Constant) {
+				Report.Warning (665, 3, loc, "Assignment in conditional expression is always constant; did you mean to use == instead of = ?");
+			}
+
 			//
 			// Dead code elimination
 			//
@@ -670,6 +675,7 @@ namespace Mono.CSharp {
 		bool defined;
 		bool referenced;
 		Label label;
+		ILGenerator ig;
 
 		FlowBranching.UsageVector vectors;
 		
@@ -682,6 +688,7 @@ namespace Mono.CSharp {
 		{
 			if (defined)
 				return label;
+			ig = ec.ig;
 			label = ec.ig.DefineLabel ();
 			defined = true;
 
@@ -718,6 +725,10 @@ namespace Mono.CSharp {
 
 		protected override void DoEmit (EmitContext ec)
 		{
+			if (ig != null && ig != ec.ig) {
+				Report.Error (1632, "Control cannot leave body of anonymous method");
+				return;
+			}
 			LabelTarget (ec);
 			ec.ig.MarkLabel (label);
 		}
@@ -820,7 +831,6 @@ namespace Mono.CSharp {
 
 		public override bool Resolve (EmitContext ec)
 		{
-			bool in_catch = ec.CurrentBranching.InCatch ();
 			ec.CurrentBranching.CurrentUsageVector.Throw ();
 
 			if (expr != null){
@@ -831,7 +841,7 @@ namespace Mono.CSharp {
 				ExprClass eclass = expr.eclass;
 
 				if (!(eclass == ExprClass.Variable || eclass == ExprClass.PropertyAccess ||
-				      eclass == ExprClass.Value || eclass == ExprClass.IndexerAccess)) {
+					eclass == ExprClass.Value || eclass == ExprClass.IndexerAccess)) {
 					expr.Error_UnexpectedKind ("value, variable, property or indexer access ", loc);
 					return false;
 				}
@@ -839,20 +849,25 @@ namespace Mono.CSharp {
 				Type t = expr.Type;
 				
 				if ((t != TypeManager.exception_type) &&
-				    !t.IsSubclassOf (TypeManager.exception_type) &&
-				    !(expr is NullLiteral)) {
+					!t.IsSubclassOf (TypeManager.exception_type) &&
+					!(expr is NullLiteral)) {
 					Error (155,
-						      "The type caught or thrown must be derived " +
-						      "from System.Exception");
+						"The type caught or thrown must be derived " +
+						"from System.Exception");
 					return false;
 				}
-			} else if (!in_catch) {
-				Error (156,
-				       "A throw statement with no argument is only " +
-				       "allowed in a catch clause");
+				return true;
+			}
+
+			if (ec.CurrentBranching.InFinally (true)) {
+				Error (724, "A throw statement with no argument is only allowed in a catch clause nested inside of the innermost catch clause");
 				return false;
 			}
 
+			if (!ec.CurrentBranching.InCatch ()) {
+				Error (156, "A throw statement with no argument is only allowed in a catch clause");
+				return false;
+			}
 			return true;
 		}
 			
@@ -1418,12 +1433,12 @@ namespace Mono.CSharp {
 		// </summary>
 		public LocalInfo ThisVariable {
 			get {
-				if (this_variable != null)
-					return this_variable;
-				else if (Parent != null)
-					return Parent.ThisVariable;
-				else
-					return null;
+				for (Block b = this; b != null; b = b.Parent) {
+					if (b.this_variable != null)
+						return b.this_variable;
+				}
+				
+				return null;
 			}
 		}
 
@@ -1745,8 +1760,6 @@ namespace Mono.CSharp {
 		/// </remarks>
 		public void ResolveMeta (ToplevelBlock toplevel, EmitContext ec, InternalParameters ip)
 		{
-			ILGenerator ig = ec.ig;
-
 			bool old_unsafe = ec.InUnsafe;
 
 			// If some parent block was unsafe, we remain unsafe even if this block
@@ -1934,7 +1947,7 @@ namespace Mono.CSharp {
 
 			Report.Debug (4, "RESOLVE BLOCK", StartLocation, ec.CurrentBranching);
 
-			bool unreachable = false;
+			bool unreachable = unreachable_shown;
 
 			int statement_count = statements.Count;
 			for (int ix = 0; ix < statement_count; ix++){
@@ -1952,8 +1965,10 @@ namespace Mono.CSharp {
 					else
 						s.loc = Location.Null;
 
-					statements [ix] = EmptyStatement.Value;
-					continue;
+					if (ok && !(s is Block)) {
+						statements [ix] = EmptyStatement.Value;
+						continue;
+					}
 				}
 
 				if (s.Resolve (ec) == false) {
@@ -2010,7 +2025,18 @@ namespace Mono.CSharp {
 		public override bool ResolveUnreachable (EmitContext ec, bool warn)
 		{
 			unreachable_shown = true;
-			return base.ResolveUnreachable (ec, warn);
+
+			if (warn && (RootContext.WarningLevel >= 2))
+				Report.Warning (162, loc, "Unreachable code detected");
+
+			if (Implicit)
+				return Resolve (ec);
+
+			ec.StartFlowBranching (FlowBranching.BranchingType.Block, loc);
+			bool ok = Resolve (ec);
+			ec.KillFlowBranching ();
+
+			return ok;
 		}
 		
 		protected override void DoEmit (EmitContext ec)
@@ -2021,7 +2047,7 @@ namespace Mono.CSharp {
 				// Check whether we are the last statement in a
 				// top-level block.
 
-				if ((Parent == null) && (ix+1 == num_statements))
+				if (((Parent == null) || Implicit) && (ix+1 == num_statements) && !(s is Block))
 					ec.IsLastStatement = true;
 				else
 					ec.IsLastStatement = false;
@@ -2115,8 +2141,6 @@ namespace Mono.CSharp {
 
 		static int did = 0;
 		
-		int my_id = did++;
-
 			
 		public void RegisterCaptureContext (CaptureContext cc)
 		{
@@ -3883,7 +3907,7 @@ namespace Mono.CSharp {
 			ILGenerator ig = ec.ig;
 
 			int i = assign.Length;
-			foreach (DictionaryEntry e in var_list){
+			for (int ii = 0; ii < var_list.Count; ++ii){
 				Expression var = resolved_vars [--i];
 				Label skip = ig.DefineLabel ();
 				
@@ -4086,6 +4110,11 @@ namespace Mono.CSharp {
 			if (expr == null)
 				return false;
 
+			if (expr is NullLiteral) {
+				Report.Error (186, expr.Location, "Use of null is not valid in this context");
+				return false;
+			}
+
 			TypeExpr texpr = type.ResolveAsTypeTerminal (ec);
 			if (texpr == null)
 				return false;
@@ -4281,7 +4310,6 @@ namespace Mono.CSharp {
 					return false;
 			}
 			ForeachHelperMethods hm = (ForeachHelperMethods) criteria;
-			EmitContext ec = hm.ec;
 
 			// Check whether GetEnumerator is public
 			if ((mi.Attributes & MethodAttributes.Public) != MethodAttributes.Public)
@@ -4488,7 +4516,8 @@ namespace Mono.CSharp {
 			ig.Emit (OpCodes.Brfalse, end_try);
 
 			if (ec.InIterator)
-				enumerator.EmitThis (ig);
+				ig.Emit (OpCodes.Ldarg_0);
+			
 			enumerator.EmitCall (ig, hm.get_current);
 
 			if (ec.InIterator){
@@ -4588,7 +4617,7 @@ namespace Mono.CSharp {
 				ig.MarkLabel (loop);
 
 				if (ec.InIterator)
-					ec.EmitThis ();
+					ig.Emit (OpCodes.Ldarg_0);
 				
 				copy.EmitThis (ig);
 				copy.EmitLoad (ig);
@@ -4657,7 +4686,8 @@ namespace Mono.CSharp {
 				}
 
 				if (ec.InIterator)
-					ec.EmitThis ();
+					ig.Emit (OpCodes.Ldarg_0);
+				
 				copy.EmitThis (ig);
 				copy.EmitLoad (ig);
 				for (dim = 0; dim < rank; dim++){
