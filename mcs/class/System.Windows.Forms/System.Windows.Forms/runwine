@@ -1,0 +1,3 @@
+#!/bin/sh
+export LD_PRELOAD=/usr/local/lib/monowinehooks.so
+exec wine ./monostub.exe.so $*
