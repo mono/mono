@@ -1,3 +1,12 @@
+2003-07-20  Martin Baulig  <martin@ximian.com>
+
+	* mono-debug.h: Set version number to 31.
+	(mono_debug_init): Added `MonoDomain *' argument.
+
+	* mono-debug-debugger.c: Reworked the type support; explicitly
+	tell the debugger about builtin types; pass the `klass' address to
+	the debugger.
+
 2003-07-20 Jackson Harper <jackson@latitudegeo.com>
 
 	* image.c: Allow new metadata tables to be loaded without a
