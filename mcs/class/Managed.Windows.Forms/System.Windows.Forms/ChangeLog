@@ -1,5 +1,11 @@
 2005-01-10  Jackson Harper  <jackson@ximian.com>
 
+	* TreeView.cs: Implement fast scrolling. Now only the newly
+	exposed nodes are drawn and the old image is moved using the
+	XplatUI::ScrollWindow method.
+
+2005-01-10  Jackson Harper  <jackson@ximian.com>
+
 	* TreeNodeCollection.cs: Refresh the tree when a new node is added.
 
 2005-01-10  Peter Bartok  <pbartok@novell.com>
