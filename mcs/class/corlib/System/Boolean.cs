@@ -16,44 +16,28 @@
 // be the standard way according to the poorly documented C# 
 // Programmer's Reference section on XML Documentation.
 //
-// This header and the one above it can be formatted however, just trying
-// to keep it consistent w/ the existing mcs headers.
-//
-// Even though it's not in the ECMA docs, the .NET Framework Class Library
-// says this implements IConvertible, but if it does it has some other
-// member functions to implement. 
-//
 
 using System.Globalization;
-namespace System {
 
+namespace System
+{
 	/// <summary>
 	/// Represents the boolean values of logical true and false.
 	/// </summary>
 	[Serializable]
-	public struct Boolean : IComparable, IConvertible {
-		
+	public struct Boolean : IComparable, IConvertible
+	{
 		/// <value>
 		/// The String representation of Boolean False
 		/// </value>	
-		public static readonly string FalseString;
+		public static readonly string FalseString = "False";
 
 		/// <value>
 		/// The String representation of Boolean True
 		/// </value>	
-		public static readonly string TrueString;
-      
-		/// <value>
-		/// Internal bool value for for this instance
-		/// </value>
+		public static readonly string TrueString = "True";
 
 		internal bool m_value;
-	
-		static Boolean () 
-		{
-			FalseString = "False";
-			TrueString = "True";
-		}
 
 		/// <summary>
 		/// Compares the current Boolean instance against another object.
@@ -73,23 +57,23 @@ namespace System {
 		///  1 if this instance is true and <c>obj</c> is false, 
 		///    or <c>obj</c> is null
 		/// </returns>
-		public int CompareTo (object obj) 
+		public int CompareTo (object obj)
 		{
 			if (obj == null)
 				return 1;
-			
+
 			if (!(obj is System.Boolean))
-				throw new ArgumentException
-				(Locale.GetText ("Object is not a Boolean and is not a null reference"));
-			
+				throw new ArgumentException (Locale.GetText (
+					"Object is not a Boolean."));
+
 			// for case #3
-			if (obj == null || (m_value == true && (bool)obj == false))
+			if (obj == null || (m_value == true && (bool) obj == false))
 				return 1;
-	    
+
 			// for case #2, else it's #1
-			return (m_value == (bool)obj) ? 0 : -1;
+			return (m_value == (bool) obj) ? 0 : -1;
 		}
-	
+
 		/// <summary>
 		/// Determines whether this instance and another object represent the
 		/// same type and value.
@@ -101,21 +85,21 @@ namespace System {
 		/// true if this instnace and <c>obj</c> are same value, 
 		/// otherwise false if it is not or null
 		/// </returns>
-		public override bool Equals (Object obj) 
+		public override bool Equals (Object obj)
 		{
 			if (obj == null || !(obj is System.Boolean))
 				return false;
 
-			return ((bool)obj) == m_value;
+			return ((bool) obj) == m_value;
 		}
-	
+
 		/// <summary>
 		/// Generates a hashcode for this object.
 		/// </summary>
 		/// <returns>
 		/// An Int32 value holding the hash code
 		/// </returns>
-		public override int GetHashCode () 
+		public override int GetHashCode ()
 		{
 			// Guess there's not too many ways to hash a Boolean
 			return m_value ? 1 : 0;
@@ -138,24 +122,21 @@ namespace System {
 		/// true if <c>val</c> is equivalent to TrueString, 
 		/// otherwise false
 		/// </returns>
-		public static bool Parse (string val) 
+		public static bool Parse (string value)
 		{
-			if (val == null)
-				throw new ArgumentNullException (
-					Locale.GetText ("Value is a null reference"));
-	    
-			val = val.Trim ();
-	    
-			if (String.Compare (val, TrueString, true,
-					    CultureInfo.InvariantCulture) == 0)
+			if (value == null)
+				throw new ArgumentNullException ("value");
+
+			value = value.Trim ();
+
+			if (String.Compare (value, TrueString, true, CultureInfo.InvariantCulture) == 0)
 				return true;
-	    
-			if (String.Compare (val, FalseString, true,
-					    CultureInfo.InvariantCulture) == 0)
+
+			if (String.Compare (value, FalseString, true, CultureInfo.InvariantCulture) == 0)
 				return false;
-	    
+
 			throw new FormatException (Locale.GetText (
-				"Value is not equivalent to either TrueString or FalseString"));
+				"Value is not equivalent to either TrueString or FalseString."));
 		}
 
 		/// <summary>
@@ -165,103 +146,100 @@ namespace System {
 		/// <c>FalseString</c> if the instance value is false, otherwise 
 		/// <c>TrueString</c>
 		/// </returns>
-		public override string ToString () 
+		public override string ToString ()
 		{
 			return m_value ? TrueString : FalseString;
 		}
-		
-		// =========== IConvertible Methods =========== //
 
-		public TypeCode GetTypeCode () 
-		{ 
+		// =========== IConvertible Methods =========== //
+		public TypeCode GetTypeCode ()
+		{
 			return TypeCode.Boolean;
 		}
 
 		object IConvertible.ToType (Type conversionType, IFormatProvider provider)
 		{
-			return System.Convert.ToType(m_value, conversionType, provider);
+			return System.Convert.ToType (m_value, conversionType, provider);
 		}
-		
+
 		bool IConvertible.ToBoolean (IFormatProvider provider)
 		{
 			return m_value;
 		}
-		
+
 		byte IConvertible.ToByte (IFormatProvider provider)
 		{
-			return System.Convert.ToByte(m_value);
+			return System.Convert.ToByte (m_value);
 		}
-		
+
 		char IConvertible.ToChar (IFormatProvider provider)
 		{
-			throw new InvalidCastException();
+			throw new InvalidCastException ();
 		}
-		
-		[CLSCompliant(false)]
+
+		[CLSCompliant (false)]
 		DateTime IConvertible.ToDateTime (IFormatProvider provider)
 		{
-			throw new InvalidCastException();
+			throw new InvalidCastException ();
 		}
-		
+
 		decimal IConvertible.ToDecimal (IFormatProvider provider)
 		{
-			return System.Convert.ToDecimal(m_value);
+			return System.Convert.ToDecimal (m_value);
 		}
-		
+
 		double IConvertible.ToDouble (IFormatProvider provider)
 		{
-			return System.Convert.ToDouble(m_value);
+			return System.Convert.ToDouble (m_value);
 		}
-		
+
 		short IConvertible.ToInt16 (IFormatProvider provider)
 		{
-			return System.Convert.ToInt16(m_value);
+			return System.Convert.ToInt16 (m_value);
 		}
-		
+
 		int IConvertible.ToInt32 (IFormatProvider provider)
 		{
-			return System.Convert.ToInt32(m_value);
+			return System.Convert.ToInt32 (m_value);
 		}
-		
+
 		long IConvertible.ToInt64 (IFormatProvider provider)
 		{
-			return System.Convert.ToInt64(m_value);
+			return System.Convert.ToInt64 (m_value);
 		}
-		
-		[CLSCompliant(false)] 
+
+		[CLSCompliant (false)]
 		sbyte IConvertible.ToSByte (IFormatProvider provider)
 		{
-			return System.Convert.ToSByte(m_value);
+			return System.Convert.ToSByte (m_value);
 		}
-		
+
 		float IConvertible.ToSingle (IFormatProvider provider)
 		{
-			return System.Convert.ToSingle(m_value);
+			return System.Convert.ToSingle (m_value);
 		}
-		
+
 		public string ToString (IFormatProvider provider)
 		{
-			return ToString();
+			return ToString ();
 		}
-		
-		[CLSCompliant(false)]
+
+		[CLSCompliant (false)]
 		ushort IConvertible.ToUInt16 (IFormatProvider provider)
 		{
-			return System.Convert.ToUInt16(m_value);
+			return System.Convert.ToUInt16 (m_value);
 		}
-		
-		[CLSCompliant(false)]
+
+		[CLSCompliant (false)]
 		uint IConvertible.ToUInt32 (IFormatProvider provider)
 		{
-			return System.Convert.ToUInt32(m_value);
+			return System.Convert.ToUInt32 (m_value);
 		}
-		
-		[CLSCompliant(false)]
+
+		[CLSCompliant (false)]
 		ulong IConvertible.ToUInt64 (IFormatProvider provider)
 		{
-			return System.Convert.ToUInt64(m_value);
+			return System.Convert.ToUInt64 (m_value);
 		}
-		
-	} // System.Boolean
-
-} // Namespace System
+	}
+}

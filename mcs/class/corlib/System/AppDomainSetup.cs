@@ -1,5 +1,5 @@
 //
-// System/AppDomainSetup.cs
+// System.AppDomainSetup.cs
 //
 // Author:
 //   Dietmar Maurer (dietmar@ximian.com)
@@ -7,17 +7,16 @@
 // (C) 2001 Ximian, Inc.  http://www.ximian.com
 //
 
-using System;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
-namespace System {
-
-
+namespace System
+{
 	[Serializable]
-	[ClassInterface(ClassInterfaceType.None)]
-	public sealed class AppDomainSetup : IAppDomainSetup {
+	[ClassInterface (ClassInterfaceType.None)]
+	public sealed class AppDomainSetup : IAppDomainSetup
+	{
 		string application_base;
 		string application_name;
 		string cache_path;
@@ -33,16 +32,15 @@ namespace System {
 		private LoaderOptimization loader_optimization;
 		bool disallow_binding_redirects;
 		bool disallow_code_downloads;
-		
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private static extern AppDomainSetup InitAppDomainSetup (AppDomainSetup setup);
 
 		public AppDomainSetup ()
 		{
 			InitAppDomainSetup (this);
 		}
-		
-		
+
 		static string GetAppBase (string appBase)
 		{
 			int len = appBase.Length;
@@ -53,8 +51,7 @@ namespace System {
 
 			} else if (appBase.IndexOf (':') == -1) {
 				if (!Path.IsPathRooted (appBase))
-					appBase = Path.Combine (Path.GetTempPath (),
-							appBase);
+					appBase = Path.Combine (Path.GetTempPath (), appBase);
 				else
 					appBase = Path.GetFullPath (appBase);
 			}
@@ -63,44 +60,36 @@ namespace System {
 		}
 		
 		public string ApplicationBase {
-
 			get {
 				return GetAppBase (application_base);
 			}
-
 			set {
 				application_base = value;
 			}
 		}
 
 		public string ApplicationName {
-
 			get {
 				return application_name;
 			}
-
 			set {
 				application_name = value;
 			}
 		}
 
 		public string CachePath {
-
 			get {
 				return cache_path;
 			}
-
 			set {
 				cache_path = value;
 			}
 		}
 
 		public string ConfigurationFile {
-
 			get {
 				return configuration_file;
 			}
-
 			set {
 				configuration_file = value;
 			}
@@ -110,52 +99,43 @@ namespace System {
 			get {
 				return publisher_policy;
 			}
-
 			set {
 				publisher_policy = value;
 			}
 		}
-		
-		public string DynamicBase {
 
+		public string DynamicBase {
 			get {
 				return dynamic_base;
 			}
-
 			set {
 				dynamic_base = value;
 			}
 		}
 
 		public string LicenseFile {
-
 			get {
 				return license_file;
 			}
-
 			set {
 				license_file = value;
 			}
 		}
 
-		[MonoTODO("--share-code")]
-		public LoaderOptimization LoaderOptimization
-		{
+		[MonoTODO ("--share-code")]
+		public LoaderOptimization LoaderOptimization {
 			get {
 				return loader_optimization;
 			}
-
-			set { 
+			set {
 				loader_optimization = value;
 			}
 		}
 
 		public string PrivateBinPath {
-
 			get {
 				return private_bin_path;
 			}
-
 			set {
 				private_bin_path = value;
 				path_changed = true;
@@ -163,11 +143,9 @@ namespace System {
 		}
 
 		public string PrivateBinPathProbe {
-
 			get {
 				return private_bin_path_probe;
 			}
-
 			set {
 				private_bin_path_probe = value;
 				path_changed = true;
@@ -175,22 +153,18 @@ namespace System {
 		}
 
 		public string ShadowCopyDirectories {
-
 			get {
 				return shadow_copy_directories;
 			}
-
 			set {
 				shadow_copy_directories = value;
 			}
 		}
 
 		public string ShadowCopyFiles {
-
 			get {
 				return shadow_copy_files;
 			}
-
 			set {
 				shadow_copy_files = value;
 			}
@@ -201,7 +175,6 @@ namespace System {
 			get {
 				return disallow_binding_redirects;
 			}
-
 			set {
 				disallow_binding_redirects = value;
 			}
@@ -211,7 +184,6 @@ namespace System {
 			get {
 				return disallow_code_downloads;
 			}
-
 			set {
 				disallow_code_downloads = value;
 			}

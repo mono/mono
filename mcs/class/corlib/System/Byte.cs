@@ -9,25 +9,25 @@
 
 using System.Globalization;
 
-namespace System {
-	
+namespace System
+{
 	[Serializable]
-	public struct Byte : IComparable, IFormattable, IConvertible {
-		
+	public struct Byte : IComparable, IFormattable, IConvertible
+	{
 		public const byte MinValue = 0;
 		public const byte MaxValue = 255;
-		
+
 		internal byte m_value;
 
-		public int CompareTo (object v)
+		public int CompareTo (object value)
 		{
-			if (v == null)
+			if (value == null)
 				return 1;
 
-			if (!(v is System.Byte))
-				throw new ArgumentException (Locale.GetText ("Value is not a System.Byte"));
+			if (!(value is System.Byte))
+				throw new ArgumentException (Locale.GetText ("Value is not a System.Byte."));
 
-			byte xv = (byte) v;
+			byte xv = (byte) value;
 
 			if (m_value == xv)
 				return 0;
@@ -37,12 +37,12 @@ namespace System {
 				return -1;
 		}
 
-		public override bool Equals (object o)
+		public override bool Equals (object obj)
 		{
-			if (!(o is System.Byte))
+			if (!(obj is System.Byte))
 				return false;
 
-			return ((byte) o) == m_value;
+			return ((byte) obj) == m_value;
 		}
 
 		public override int GetHashCode ()
@@ -56,9 +56,9 @@ namespace System {
 			int len;
 			int i;
 			bool digits_seen = false;
-			
+
 			if (s == null)
-				throw new ArgumentNullException (Locale.GetText ("s is null"));
+				throw new ArgumentNullException ("s");
 
 			len = s.Length;
 
@@ -69,7 +69,7 @@ namespace System {
 				if (!Char.IsWhiteSpace (c))
 					break;
 			}
-			
+
 			// if it's all whitespace, then throw exception
 			if (i == len)
 				throw new FormatException ();
@@ -85,7 +85,7 @@ namespace System {
 				if (c >= '0' && c <= '9'){
 					// shift left and accumulate every time we find a numeral
 					byte d = (byte) (c - '0');
-					
+
 					val = checked ((byte) (val * 10 + d));
 					digits_seen = true;
 				} else {
@@ -104,13 +104,13 @@ namespace System {
 			// if all we had was a '+' sign, then throw exception
 			if (!digits_seen)
 				throw new FormatException ();
-			
+
 			return val;
 		}
 
-		public static byte Parse (string s, IFormatProvider fp)
+		public static byte Parse (string s, IFormatProvider provider)
 		{
-			return Parse (s, NumberStyles.Integer, fp);
+			return Parse (s, NumberStyles.Integer, provider);
 		}
 
 		public static byte Parse (string s, NumberStyles style)
@@ -118,11 +118,11 @@ namespace System {
 			return Parse (s, style, null);
 		}
 
-		public static byte Parse (string s, NumberStyles style, IFormatProvider fp)
+		public static byte Parse (string s, NumberStyles style, IFormatProvider provider)
 		{
-			uint tmpResult = UInt32.Parse (s, style, fp);
+			uint tmpResult = UInt32.Parse (s, style, provider);
 			if (tmpResult > Byte.MaxValue || tmpResult < Byte.MinValue)
-				throw new OverflowException ("Value too large or too small.");
+				throw new OverflowException (Locale.GetText ("Value too large or too small."));
 
 			return (byte) tmpResult;
 		}
@@ -142,18 +142,17 @@ namespace System {
 			return ToString (null, provider);
 		}
 
-		public string ToString (string format, IFormatProvider fp)
+		public string ToString (string format, IFormatProvider provider)
 		{
-			NumberFormatInfo nfi = NumberFormatInfo.GetInstance( fp );
-			
-			if ( format == null )
+			NumberFormatInfo nfi = NumberFormatInfo.GetInstance (provider);
+
+			if (format == null)
 				format = "G";
-			
-			return IntegerFormatter.NumberToString(format, nfi, m_value);
+
+			return IntegerFormatter.NumberToString (format, nfi, m_value);
 		}
 
 		// =========== IConvertible Methods =========== //
-		
 		public TypeCode GetTypeCode ()
 		{
 			return TypeCode.Byte;
@@ -161,66 +160,66 @@ namespace System {
 
 		object IConvertible.ToType (Type conversionType, IFormatProvider provider)
 		{
-			return System.Convert.ToType(m_value, conversionType, provider);
+			return System.Convert.ToType (m_value, conversionType, provider);
 		}
-		
+
 		bool IConvertible.ToBoolean (IFormatProvider provider)
 		{
-			return System.Convert.ToBoolean(m_value);
+			return System.Convert.ToBoolean (m_value);
 		}
-		
+
 		byte IConvertible.ToByte (IFormatProvider provider)
 		{
 			return m_value;
 		}
-		
+
 		char IConvertible.ToChar (IFormatProvider provider)
 		{
-			return System.Convert.ToChar(m_value);
+			return System.Convert.ToChar (m_value);
 		}
-		
-		[CLSCompliant(false)]
+
+		[CLSCompliant (false)]
 		DateTime IConvertible.ToDateTime (IFormatProvider provider)
 		{
-			throw new InvalidCastException();
+			throw new InvalidCastException ();
 		}
-		
+
 		decimal IConvertible.ToDecimal (IFormatProvider provider)
 		{
-			return System.Convert.ToDecimal(m_value);
+			return System.Convert.ToDecimal (m_value);
 		}
-		
+
 		double IConvertible.ToDouble (IFormatProvider provider)
 		{
-			return System.Convert.ToDouble(m_value);
+			return System.Convert.ToDouble (m_value);
 		}
-		
+
 		short IConvertible.ToInt16 (IFormatProvider provider)
 		{
-			return System.Convert.ToInt16(m_value);
+			return System.Convert.ToInt16 (m_value);
 		}
-		
+
 		int IConvertible.ToInt32 (IFormatProvider provider)
 		{
-			return System.Convert.ToInt32(m_value);
+			return System.Convert.ToInt32 (m_value);
 		}
-		
+
 		long IConvertible.ToInt64 (IFormatProvider provider)
 		{
-			return System.Convert.ToInt64(m_value);
+			return System.Convert.ToInt64 (m_value);
 		}
-		
-		[CLSCompliant(false)] 
+
+		[CLSCompliant (false)]
 		sbyte IConvertible.ToSByte (IFormatProvider provider)
 		{
-			return System.Convert.ToSByte(m_value);
+			return System.Convert.ToSByte (m_value);
 		}
-		
+
 		float IConvertible.ToSingle (IFormatProvider provider)
 		{
-			return System.Convert.ToSingle(m_value);
+			return System.Convert.ToSingle (m_value);
 		}
-		
+
 /*
 		string IConvertible.ToString (IFormatProvider provider)
 		{
@@ -228,22 +227,22 @@ namespace System {
 		}
 */
 
-		[CLSCompliant(false)]
+		[CLSCompliant (false)]
 		ushort IConvertible.ToUInt16 (IFormatProvider provider)
 		{
-			return System.Convert.ToUInt16(m_value);
+			return System.Convert.ToUInt16 (m_value);
 		}
-		
-		[CLSCompliant(false)]
+
+		[CLSCompliant (false)]
 		uint IConvertible.ToUInt32 (IFormatProvider provider)
 		{
-			return System.Convert.ToUInt32(m_value);
+			return System.Convert.ToUInt32 (m_value);
 		}
-		
-		[CLSCompliant(false)]
+
+		[CLSCompliant (false)]
 		ulong IConvertible.ToUInt64 (IFormatProvider provider)
 		{
-			return System.Convert.ToUInt64(m_value);
+			return System.Convert.ToUInt64 (m_value);
 		}
 	}
 }

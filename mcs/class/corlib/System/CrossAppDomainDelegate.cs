@@ -1,8 +1,11 @@
+//
 // System.CrossAppDomainDelegate.cs
 //
-// Paolo Molaro
+// Author:
+//   Paolo Molaro
 //
 // (C) 2002 Ximian, Inc.
+//
 
 namespace System
 {

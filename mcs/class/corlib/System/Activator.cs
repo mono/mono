@@ -21,57 +21,55 @@ namespace System
 {
 	public sealed class Activator
 	{
-		private static BindingFlags _flags = BindingFlags.CreateInstance |
-						     BindingFlags.Public |
-						     BindingFlags.Instance;
+		private static BindingFlags _flags = BindingFlags.CreateInstance | BindingFlags.Public | BindingFlags.Instance;
 
-		private Activator () {}
+		private Activator ()
+		{
+		}
 
 		[MonoTODO]
 		public static ObjectHandle CreateComInstanceFrom (string assemblyName, string typeName)
 		{
-			throw new NotImplementedException(); 
+			if (assemblyName == null)
+				throw new ArgumentNullException ("assemblyName");
+
+			if (typeName == null)
+				throw new ArgumentNullException ("typeName");
+
+			throw new NotImplementedException();
 		}
 
 #if NET_1_1
 		[MonoTODO]
-		public static ObjectHandle CreateComInstanceFrom (string assemblyFile, string typeName,
-								  byte []hash, AssemblyHashAlgorithm hashalgo)
+		public static ObjectHandle CreateComInstanceFrom (string assemblyName, string typeName,
+		                                                  byte []hashValue, AssemblyHashAlgorithm hashAlgorithm)
 		{
-			throw new NotImplementedException(); 
+			if (assemblyName == null)
+				throw new ArgumentNullException ("assemblyName");
+
+			if (typeName == null)
+				throw new ArgumentNullException ("typeName");
+
+			throw new NotImplementedException();
 		}
 #endif
-		
+
 		public static ObjectHandle CreateInstanceFrom (string assemblyFile, string typeName)
 		{
 			return CreateInstanceFrom (assemblyFile, typeName, null);
 		}
 
-		public static ObjectHandle CreateInstanceFrom (string assemblyFile,
-							       string typeName,
-							       object [] activationAttributes)
+		public static ObjectHandle CreateInstanceFrom (string assemblyFile, string typeName, object [] activationAttributes)
 		{
-			return Activator.CreateInstanceFrom (assemblyFile,
-							     typeName,
-							     false,
-							     _flags,
-							     null,
-							     null,
-							     null,
-							     activationAttributes,
-							     null);
+			return Activator.CreateInstanceFrom (assemblyFile, typeName, false, _flags, null, null, null,
+				activationAttributes, null);
 		}
-		
-		[MonoTODO]
-		public static ObjectHandle CreateInstanceFrom (string assemblyFile,
-							       string typeName,
-							       bool ignoreCase,
-							       BindingFlags bindingAttr,
-							       Binder binder,
-							       object [] args,
-							       CultureInfo culture,
-							       object [] activationAttributes,
-							       Evidence securityInfo)
+
+		[MonoTODO ("security")]
+		public static ObjectHandle CreateInstanceFrom (string assemblyFile, string typeName, bool ignoreCase,
+		                                               BindingFlags bindingAttr, Binder binder, object [] args,
+		                                               CultureInfo culture, object [] activationAttributes,
+		                                               Evidence securityInfo)
 		{
 			//TODO: when Assembly implements security, use it.
 			//Assembly assembly = Assembly.LoadFrom (assemblyFile, securityInfo);
@@ -86,7 +84,7 @@ namespace System
 			object obj = CreateInstance (type, bindingAttr, binder, args, culture, activationAttributes);
 			return (obj != null) ? new ObjectHandle (obj) : null;
 		}
-		
+
 		public static ObjectHandle CreateInstance (string assemblyName, string typeName)
 		{
 			if (assemblyName == null)
@@ -94,35 +92,20 @@ namespace System
 
 			return Activator.CreateInstance (assemblyName, typeName, null);
 		}
-		
-		public static ObjectHandle CreateInstance (string assemblyName,
-							   string typeName,
-							   object [] activationAttributes)
+
+		public static ObjectHandle CreateInstance (string assemblyName, string typeName, object [] activationAttributes)
 		{
 			if (assemblyName == null)
 				assemblyName = Assembly.GetCallingAssembly ().GetName ().Name;
 
-			return Activator.CreateInstance (assemblyName,
-							 typeName,
-							 false,
-							 _flags,
-							 null,
-							 null,
-							 null,
-							 activationAttributes,
-							 null);
+			return Activator.CreateInstance (assemblyName, typeName, false, _flags, null, null, null,
+				activationAttributes, null);
 		}
-		
-		[MonoTODO]
-		public static ObjectHandle CreateInstance (string assemblyName,
-							   string typeName,
-							   bool ignoreCase,
-							   BindingFlags bindingAttr,
-							   Binder binder,
-							   object [] args,
-							   CultureInfo culture,
-							   object [] activationAttributes,
-							   Evidence securityInfo)
+
+		[MonoTODO ("security")]
+		public static ObjectHandle CreateInstance (string assemblyName, string typeName, bool ignoreCase,
+		                                           BindingFlags bindingAttr, Binder binder, object [] args,
+							   CultureInfo culture, object [] activationAttributes, Evidence securityInfo)
 		{
 			//TODO: when Assembly implements security, use it.
 			//Assembly assembly = Assembly.Load (assemblyFile, securityInfo);
@@ -130,17 +113,17 @@ namespace System
 			if(assemblyName == null)
 				assembly = Assembly.GetCallingAssembly ();
 			else
-				assembly = Assembly.Load (assemblyName);			
+				assembly = Assembly.Load (assemblyName);
 			Type type = assembly.GetType (typeName, true, ignoreCase);
 			object obj = CreateInstance (type, bindingAttr, binder, args, culture, activationAttributes);
 			return (obj != null) ? new ObjectHandle (obj) : null;
 		}
-		
+
 		public static object CreateInstance (Type type)
 		{
 			return CreateInstance (type, false);
 		}
-		
+
 		public static object CreateInstance (Type type, object [] args)
 		{
 			return CreateInstance (type, args, new object [0]);
@@ -153,7 +136,7 @@ namespace System
 				throw new ArgumentNullException ("type");
 
 			if (type.IsAbstract)
-				throw new MemberAccessException ("Cannot create an abstract class");
+				throw new MemberAccessException (Locale.GetText ("Cannot create an abstract class."));
 
 			int length = 0;
 			if (args != null)
@@ -168,7 +151,7 @@ namespace System
 				if (type.IsValueType && atypes.Length == 0)
 					return CreateInstanceInternal (type);
 
-				throw new MissingMethodException ("Constructor not found");
+				throw new MissingMethodException (Locale.GetText ("Constructor not found."));
 			}
 
 			if (activationAttributes != null && activationAttributes.Length > 0 && type.IsMarshalByRef) {
@@ -180,28 +163,21 @@ namespace System
 			return ctor.Invoke (args);
 		}
 
-		public static object CreateInstance (Type type,
-						     BindingFlags bindingAttr,
-						     Binder binder,
-						     object [] args,
-						     CultureInfo culture)
+		public static object CreateInstance (Type type, BindingFlags bindingAttr, Binder binder, object [] args,
+		                                     CultureInfo culture)
 		{
 			return CreateInstance (type, bindingAttr, binder, args, culture, new object [0]);
 		}
 
 		[MonoTODO]
-		public static object CreateInstance (Type type,
-						     BindingFlags bindingAttr,
-						     Binder binder,
-						     object [] args,
-						     CultureInfo culture,
-						     object [] activationAttributes)
+		public static object CreateInstance (Type type, BindingFlags bindingAttr, Binder binder, object [] args,
+		                                     CultureInfo culture, object [] activationAttributes)
 		{
 			if (type == null)
 				throw new ArgumentNullException ("type");
 		
 			if (type.IsAbstract)
-				throw new MemberAccessException ("Cannot create an abstract class");
+				throw new MemberAccessException (Locale.GetText ("Cannot create an abstract class."));
 
 			int length = 0;
 			if (args != null)
@@ -218,7 +194,7 @@ namespace System
 					return CreateInstanceInternal (type);
 				}
 
-				throw new MissingMethodException ("Constructor not found");
+				throw new MissingMethodException (Locale.GetText ("Constructor not found."));
 			}
 
 			if (activationAttributes != null && activationAttributes.Length > 0 && type.IsMarshalByRef) {
@@ -236,19 +212,19 @@ namespace System
 				throw new ArgumentNullException ("type");
 		
 			if (type.IsAbstract)
-				throw new MemberAccessException ("Cannot create an abstract class");
+				throw new MemberAccessException (Locale.GetText ("Cannot create an abstract class."));
 
 			BindingFlags flags = BindingFlags.Public | BindingFlags.Instance;
 			if (nonPublic)
 				flags |= BindingFlags.NonPublic;
 
-			ConstructorInfo ctor = type.GetConstructor (
-				flags, null, CallingConventions.Any, Type.EmptyTypes, null);
+			ConstructorInfo ctor = type.GetConstructor (flags, null, CallingConventions.Any, Type.EmptyTypes, null);
+
 			if (ctor == null) {
 				if (type.IsValueType)
 					return CreateInstanceInternal (type);
 
-				throw new MissingMethodException ("Default constructor not found");
+				throw new MissingMethodException (Locale.GetText ("Default constructor not found."));
 			}
 
 			return ctor.Invoke (null);
@@ -260,13 +236,11 @@ namespace System
 		}
 
 		public static object GetObject (Type type, string url, object state)
-		{ 
+		{
 			return RemotingServices.Connect (type, url, state);
 		}
 
-
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private static extern object CreateInstanceInternal (Type type);
 	}
 }
-

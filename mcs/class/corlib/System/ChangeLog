@@ -1,3 +1,18 @@
+2004-03-22  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* Console.cs: Styled, optimized calls
+	* CrossAppDomainDelegate.cs: Small header fix
+	* Buffer.cs: Style, improve errors
+	* BitConverter.cs: Style, improve errors, remove obsolete comment
+	* Attribute.cs: Style, improve errors, small fix
+	* Array.cs: Style, improve errors, small fix, added TODOs
+	* Activator.cs: Style, localized errors, added error checks
+	* Byte.cs: Style, localized errors, fixed wrong exception parameters
+	* Char.cs: Style
+	* Boolean.cs: Style
+	* AppDomainSetup.cs: Style
+	* AppDomain.cs: Style, implemented two methods (redirect)
+
 2004-03-21  Jackson Harper  <jackson@ximian.com>
 
 	* FloatingPointFormatter.cs: Set precision from number format info

@@ -1,5 +1,5 @@
 //
-// System/AppDomain.cs
+// System.AppDomain.cs
 //
 // Authors:
 //   Paolo Molaro (lupus@ximian.com)
@@ -13,7 +13,6 @@
 // (C) 2004 Novell (http://www.novell.com)
 //
 
-using System;
 using System.Collections;
 using System.Globalization;
 using System.IO;
@@ -32,11 +31,11 @@ using System.Security.Policy;
 using System.Security.Principal;
 using System.Configuration.Assemblies;
 
-namespace System {
-
+namespace System
+{
 	[ClassInterface(ClassInterfaceType.None)]
-	public sealed class AppDomain : MarshalByRefObject , _AppDomain , IEvidenceFactory {
-
+	public sealed class AppDomain : MarshalByRefObject , _AppDomain , IEvidenceFactory
+	{
 		IntPtr _mono_app_domain;
 		static string _process_guid;
 
@@ -54,59 +53,55 @@ namespace System {
 		[ThreadStatic]
 		private IPrincipal _principal;
 
-		AppDomain () {}
+		private AppDomain ()
+		{
+		}
 
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private extern AppDomainSetup getSetup ();
 
 		public AppDomainSetup SetupInformation {
-
 			get {
 				return getSetup ();
 			}
 		}
 
 		public string BaseDirectory {
-
 			get {
 				return SetupInformation.ApplicationBase;
 			}
 		}
 
 		public string RelativeSearchPath {
-
 			get {
 				return SetupInformation.PrivateBinPath;
 			}
 		}
 
+		[MonoTODO ("fixme: dont know if this is right?")]
 		public string DynamicDirectory {
-
 			get {
-				// fixme: dont know if this is right?
 				return SetupInformation.DynamicBase;
 			}
 		}
 
 		public bool ShadowCopyFiles {
-
 			get {
 				return (SetupInformation.ShadowCopyFiles == "true");
 			}
 		}
 
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private extern string getFriendlyName ();
 
 		public string FriendlyName {
-
 			get {
 				return getFriendlyName ();
 			}
 		}
 
+		[MonoTODO ("Return evidence")]
 		public Evidence Evidence {
-
 			get {
 				return null;
 				//return evidence;
@@ -114,7 +109,7 @@ namespace System {
 		}
 
 		internal IPrincipal DefaultPrincipal {
-			get { 
+			get {
 				if (_principal == null) {
 					switch (_principalPolicy) {
 						case PrincipalPolicy.UnauthenticatedPrincipal:
@@ -129,12 +124,11 @@ namespace System {
 				return _principal; 
 			}
 		}
-		
+
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private static extern AppDomain getCurDomain ();
 		
-		public static AppDomain CurrentDomain
-		{
+		public static AppDomain CurrentDomain {
 			get {
 				return getCurDomain ();
 			}
@@ -142,13 +136,13 @@ namespace System {
 
 		public void AppendPrivatePath (string path)
 		{
-			if (path == null || path == "")
+			if (path == null || path.Length == 0)
 				return;
 
 			AppDomainSetup setup = SetupInformation;
 
 			string pp = setup.PrivateBinPath;
-			if (pp == null || pp == "") {
+			if (pp == null || pp.Length == 0) {
 				setup.PrivateBinPath = path;
 				return;
 			}
@@ -159,37 +153,27 @@ namespace System {
 
 			setup.PrivateBinPath = pp + path;
 		}
-		
+
 		public void ClearPrivatePath ()
 		{
-			SetupInformation.PrivateBinPath = "";
-		}
-		
-		public void ClearShadowCopyPath ()
-		{
-			SetupInformation.ShadowCopyDirectories = "";
+			SetupInformation.PrivateBinPath = String.Empty;
 		}
 
-		[MonoTODO]
-		public ObjectHandle CreateComInstanceFrom (string assemblyName,
-							   string typeName)
+		public void ClearShadowCopyPath ()
 		{
-			if(assemblyName==null) {
-				throw new ArgumentNullException("assemblyName is null");
-			}
-			if(typeName==null) {
-				throw new ArgumentNullException("typeName is null");
-			}
-			
-			throw new NotImplementedException();
+			SetupInformation.ShadowCopyDirectories = String.Empty;
+		}
+
+		public ObjectHandle CreateComInstanceFrom (string assemblyName, string typeName)
+		{
+			return Activator.CreateComInstanceFrom (assemblyName, typeName);
 		}
 
 #if NET_1_1
-		[MonoTODO]
-		public static ObjectHandle CreateComInstanceFrom (string assemblyFile, string typeName,
-								  byte []hash, AssemblyHashAlgorithm hashalgo)
+		public static ObjectHandle CreateComInstanceFrom (string assemblyName, string typeName,
+		                                                  byte [] hashValue, AssemblyHashAlgorithm hashAlgorithm)
 		{
-			throw new NotImplementedException(); 
+			return Activator.CreateComInstanceFrom (assemblyName, typeName, hashValue ,hashAlgorithm);
 		}
 #endif
 
@@ -201,37 +185,23 @@ namespace System {
 			return Activator.CreateInstance (assemblyName, typeName);
 		}
 
-		public ObjectHandle CreateInstance (string assemblyName, string typeName,
-						    object[] activationAttributes)
+		public ObjectHandle CreateInstance (string assemblyName, string typeName, object[] activationAttributes)
 		{
 			if (assemblyName == null)
 				throw new ArgumentNullException ("assemblyName");
 
 			return Activator.CreateInstance (assemblyName, typeName, activationAttributes);
 		}
-		
-		public ObjectHandle CreateInstance (string assemblyName,
-						    string typeName,
-						    bool ignoreCase,
-						    BindingFlags bindingAttr,
-						    Binder binder,
-						    object[] args,
-						    CultureInfo culture,
-						    object[] activationAttributes,
-						    Evidence securityAttributes)
+
+		public ObjectHandle CreateInstance (string assemblyName, string typeName, bool ignoreCase, BindingFlags bindingAttr,
+		                                    Binder binder, object[] args, CultureInfo culture, object[] activationAttributes,
+		                                    Evidence securityAttributes)
 		{
 			if (assemblyName == null)
 				throw new ArgumentNullException ("assemblyName");
 
-			return Activator.CreateInstance (assemblyName,
-							 typeName,
-							 ignoreCase,
-							 bindingAttr,
-							 binder,
-							 args,
-							 culture,
-							 activationAttributes,
-							 securityAttributes);
+			return Activator.CreateInstance (assemblyName, typeName, ignoreCase, bindingAttr, binder, args,
+				culture, activationAttributes, securityAttributes);
 		}
 
 		public object CreateInstanceAndUnwrap (string assemblyName, string typeName)
@@ -239,34 +209,19 @@ namespace System {
 			ObjectHandle oh = CreateInstance (assemblyName, typeName);
 			return (oh != null) ? oh.Unwrap () : null;
 		}
-		
-		public object CreateInstanceAndUnwrap (string assemblyName,
-						       string typeName,
-						       object [] activationAttributes)
+
+		public object CreateInstanceAndUnwrap (string assemblyName, string typeName, object [] activationAttributes)
 		{
 			ObjectHandle oh = CreateInstance (assemblyName, typeName, activationAttributes);
 			return (oh != null) ? oh.Unwrap () : null;
 		}
 
-		public object CreateInstanceAndUnwrap (string assemblyName,
-						       string typeName,
-						       bool ignoreCase,
-						       BindingFlags bindingAttr,
-						       Binder binder,
-						       object[] args,
-						       CultureInfo culture,
-						       object[] activationAttributes,
-						       Evidence securityAttributes)
+		public object CreateInstanceAndUnwrap (string assemblyName, string typeName, bool ignoreCase,
+		                                       BindingFlags bindingAttr, Binder binder, object[] args, CultureInfo culture,
+		                                       object[] activationAttributes, Evidence securityAttributes)
 		{
-			ObjectHandle oh = CreateInstance (assemblyName,
-							  typeName,
-							  ignoreCase,
-							  bindingAttr,
-							  binder,
-							  args,
-							  culture,
-							  activationAttributes,
-							  securityAttributes);
+			ObjectHandle oh = CreateInstance (assemblyName, typeName, ignoreCase, bindingAttr, binder, args,
+				culture, activationAttributes, securityAttributes);
 			return (oh != null) ? oh.Unwrap () : null;
 		}
 
@@ -277,38 +232,24 @@ namespace System {
 
 			return Activator.CreateInstanceFrom (assemblyName, typeName);
 		}
-		
-		public ObjectHandle CreateInstanceFrom (string assemblyName, string typeName,
-							object[] activationAttributes)
+
+		public ObjectHandle CreateInstanceFrom (string assemblyName, string typeName, object[] activationAttributes)
 		{
 			if (assemblyName == null)
 				throw new ArgumentNullException ("assemblyName");
 
 			return Activator.CreateInstanceFrom (assemblyName, typeName, activationAttributes);
 		}
-		
-		public ObjectHandle CreateInstanceFrom (string assemblyName,
-							string typeName,
-							bool ignoreCase,
-							BindingFlags bindingAttr,
-							Binder binder,
-							object[] args,
-							CultureInfo culture,
-							object[] activationAttributes,
-							Evidence securityAttributes)
+
+		public ObjectHandle CreateInstanceFrom (string assemblyName, string typeName, bool ignoreCase,
+		                                        BindingFlags bindingAttr, Binder binder, object[] args, CultureInfo culture,
+		                                        object[] activationAttributes, Evidence securityAttributes)
 		{
 			if (assemblyName == null)
 				throw new ArgumentNullException ("assemblyName");
 
-			return Activator.CreateInstanceFrom (assemblyName,
-							     typeName,
-							     ignoreCase,
-							     bindingAttr,
-							     binder,
-							     args,
-							     culture,
-							     activationAttributes,
-							     securityAttributes);
+			return Activator.CreateInstanceFrom (assemblyName, typeName, ignoreCase, bindingAttr, binder, args,
+			                                     culture, activationAttributes, securityAttributes);
 		}
 
 		public object CreateInstanceFromAndUnwrap (string assemblyName, string typeName)
@@ -316,126 +257,88 @@ namespace System {
 			ObjectHandle oh = CreateInstanceFrom (assemblyName, typeName);
 			return (oh != null) ? oh.Unwrap () : null;
 		}
-		
-		public object CreateInstanceFromAndUnwrap (string assemblyName,
-							   string typeName,
-							   object [] activationAttributes)
+
+		public object CreateInstanceFromAndUnwrap (string assemblyName, string typeName, object [] activationAttributes)
 		{
 			ObjectHandle oh = CreateInstanceFrom (assemblyName, typeName, activationAttributes);
 			return (oh != null) ? oh.Unwrap () : null;
 		}
 
-		public object CreateInstanceFromAndUnwrap (string assemblyName,
-							   string typeName,
-							   bool ignoreCase,
-							   BindingFlags bindingAttr,
-							   Binder binder,
-							   object[] args,
-							   CultureInfo culture,
-							   object[] activationAttributes,
-							   Evidence securityAttributes)
+		public object CreateInstanceFromAndUnwrap (string assemblyName, string typeName, bool ignoreCase,
+		                                           BindingFlags bindingAttr, Binder binder, object[] args,
+		                                           CultureInfo culture, object[] activationAttributes,
+		                                           Evidence securityAttributes)
 		{
-			ObjectHandle oh = CreateInstanceFrom (assemblyName,
-							      typeName,
-							      ignoreCase,
-							      bindingAttr,
-							      binder,
-							      args,
-							      culture,
-							      activationAttributes,
-							      securityAttributes);
+			ObjectHandle oh = CreateInstanceFrom (assemblyName, typeName, ignoreCase, bindingAttr, binder, args,
+				culture, activationAttributes, securityAttributes);
+
 			return (oh != null) ? oh.Unwrap () : null;
 		}
 
-		public AssemblyBuilder DefineDynamicAssembly (AssemblyName name,
-							      AssemblyBuilderAccess access)
+		public AssemblyBuilder DefineDynamicAssembly (AssemblyName name, AssemblyBuilderAccess access)
 		{
-			return DefineDynamicAssembly (name, access, null, null,
-						      null, null, null, false);
+			return DefineDynamicAssembly (name, access, null, null, null, null, null, false);
 		}
 
-		public AssemblyBuilder DefineDynamicAssembly (AssemblyName name,
-							      AssemblyBuilderAccess access,
-							      Evidence evidence)
+		public AssemblyBuilder DefineDynamicAssembly (AssemblyName name, AssemblyBuilderAccess access, Evidence evidence)
 		{
-			return DefineDynamicAssembly (name, access, null, evidence,
-						      null, null, null, false);
+			return DefineDynamicAssembly (name, access, null, evidence, null, null, null, false);
 		}
-		
-		public AssemblyBuilder DefineDynamicAssembly (AssemblyName name,
-							      AssemblyBuilderAccess access,
-							      string dir)
-		{
-			return DefineDynamicAssembly (name, access, dir, null,
-						      null, null, null, false);
-		}
-		
-		public AssemblyBuilder DefineDynamicAssembly (AssemblyName name,
-							      AssemblyBuilderAccess access,
-							      string dir,
-							      Evidence evidence)
-		{
-			return DefineDynamicAssembly (name, access, dir, evidence,
-						      null, null, null, false);
-		}
-		
-		public AssemblyBuilder DefineDynamicAssembly (AssemblyName name,
-							      AssemblyBuilderAccess access,
-							      PermissionSet requiredPermissions,
-							      PermissionSet optionalPermissions,
-							      PermissionSet refusedPersmissions)
-		{
-			return DefineDynamicAssembly (name, access, null, null,
-						      requiredPermissions, optionalPermissions,
-						      refusedPersmissions, false);
-		}
-		
-		public AssemblyBuilder DefineDynamicAssembly (AssemblyName name,
-							      AssemblyBuilderAccess access,
-							      Evidence evidence,
-							      PermissionSet requiredPermissions,
-							      PermissionSet optionalPermissions,
-							      PermissionSet refusedPersmissions)
-		{
-			return DefineDynamicAssembly (name, access, null, evidence,
-						      requiredPermissions, optionalPermissions,
-						      refusedPersmissions, false);
-		}
-		
-		public AssemblyBuilder DefineDynamicAssembly (AssemblyName name,
-							      AssemblyBuilderAccess access,
-							      string dir,
-							      PermissionSet requiredPermissions,
-							      PermissionSet optionalPermissions,
-							      PermissionSet refusedPersmissions)
-		{
-			return DefineDynamicAssembly (name, access, dir, null,
-						      requiredPermissions, optionalPermissions,
-						      refusedPersmissions, false);
-		}
-		
-		public AssemblyBuilder DefineDynamicAssembly (AssemblyName name,
-							      AssemblyBuilderAccess access,
-							      string dir,
-							      Evidence evidence,
-							      PermissionSet requiredPermissions,
-							      PermissionSet optionalPermissions,
-							      PermissionSet refusedPersmissions)
-		{
-			return DefineDynamicAssembly (name, access, dir, evidence,
-						      requiredPermissions, optionalPermissions,
-						      refusedPersmissions, false);
 
+		public AssemblyBuilder DefineDynamicAssembly (AssemblyName name, AssemblyBuilderAccess access, string dir)
+		{
+			return DefineDynamicAssembly (name, access, dir, null, null, null, null, false);
 		}
-		
-		public AssemblyBuilder DefineDynamicAssembly (AssemblyName name,
-							      AssemblyBuilderAccess access,
-							      string dir,
-							      Evidence evidence,
-							      PermissionSet requiredPermissions,
-							      PermissionSet optionalPermissions,
-							      PermissionSet refusedPersmissions,
-							      bool isSynchronized)
+
+		public AssemblyBuilder DefineDynamicAssembly (AssemblyName name, AssemblyBuilderAccess access, string dir,
+		                                              Evidence evidence)
+		{
+			return DefineDynamicAssembly (name, access, dir, evidence, null, null, null, false);
+		}
+
+		public AssemblyBuilder DefineDynamicAssembly (AssemblyName name, AssemblyBuilderAccess access,
+		                                              PermissionSet requiredPermissions,
+		                                              PermissionSet optionalPermissions,
+		                                              PermissionSet refusedPersmissions)
+		{
+			return DefineDynamicAssembly (name, access, null, null, requiredPermissions, optionalPermissions,
+				refusedPersmissions, false);
+		}
+
+		public AssemblyBuilder DefineDynamicAssembly (AssemblyName name, AssemblyBuilderAccess access, Evidence evidence,
+		                                              PermissionSet requiredPermissions,
+		                                              PermissionSet optionalPermissions,
+		                                              PermissionSet refusedPersmissions)
+		{
+			return DefineDynamicAssembly (name, access, null, evidence, requiredPermissions, optionalPermissions,
+				refusedPersmissions, false);
+		}
+
+		public AssemblyBuilder DefineDynamicAssembly (AssemblyName name, AssemblyBuilderAccess access, string dir,
+		                                              PermissionSet requiredPermissions,
+		                                              PermissionSet optionalPermissions,
+		                                              PermissionSet refusedPersmissions)
+		{
+			return DefineDynamicAssembly (name, access, dir, null, requiredPermissions, optionalPermissions,
+				refusedPersmissions, false);
+		}
+
+		public AssemblyBuilder DefineDynamicAssembly (AssemblyName name, AssemblyBuilderAccess access, string dir,
+		                                              Evidence evidence,
+		                                              PermissionSet requiredPermissions,
+		                                              PermissionSet optionalPermissions,
+		                                              PermissionSet refusedPersmissions)
+		{
+			return DefineDynamicAssembly (name, access, dir, evidence, requiredPermissions, optionalPermissions,
+				refusedPersmissions, false);
+		}
+
+		[MonoTODO ("FIXME: examine all other parameters")]
+		public AssemblyBuilder DefineDynamicAssembly (AssemblyName name, AssemblyBuilderAccess access, string dir,
+		                                              Evidence evidence,
+		                                              PermissionSet requiredPermissions,
+		                                              PermissionSet optionalPermissions,
+		                                              PermissionSet refusedPersmissions, bool isSynchronized)
 		{
 			// FIXME: examine all other parameters
 			
@@ -448,31 +351,31 @@ namespace System {
 			if (theDelegate != null)
 				theDelegate ();
 		}
-		
+
 		public int ExecuteAssembly (string assemblyFile)
 		{
 			return ExecuteAssembly (assemblyFile, new Evidence (), null);
 		}
-		
+
 		public int ExecuteAssembly (string assemblyFile, Evidence assemblySecurity)
 		{
 			return ExecuteAssembly (assemblyFile, new Evidence (), null);
 		}
-		
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		public extern int ExecuteAssembly (string assemblyFile, Evidence assemblySecurity, string[] args);
 
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		public extern Assembly [] GetAssemblies ();
 
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		public extern object GetData (string name);
-		
+
 		public new Type GetType()
 		{
 			return base.GetType ();
 		}
-		
+
 		public override object InitializeLifetimeService ()
 		{
 			return null;
@@ -491,8 +394,8 @@ namespace System {
 			if (assemblyRef == null)
 				throw new ArgumentNullException ("assemblyRef");
 
-			if (assemblyRef.Name == null || assemblyRef.Name == String.Empty)
-				throw new ArgumentException ("assemblyRef.Name cannot be empty.", "assemblyRef");
+			if (assemblyRef.Name == null || assemblyRef.Name.Length == 0)
+				throw new ArgumentException (Locale.GetText ("assemblyRef.Name cannot be empty."), "assemblyRef");
 
 			return LoadAssembly (assemblyRef.FullName, assemblySecurity);
 		}
@@ -501,16 +404,16 @@ namespace System {
 		{
 			if (assemblyString == null)
 				throw new ArgumentNullException ("assemblyString");
-				
-			return LoadAssembly (assemblyString, new Evidence ());			
+
+			return LoadAssembly (assemblyString, new Evidence ());
 		}
 
 		public Assembly Load (string assemblyString, Evidence assemblySecurity)
 		{
 			if (assemblyString == null)
 				throw new ArgumentNullException ("assemblyString");
-				
-			return LoadAssembly (assemblyString, assemblySecurity);			
+
+			return LoadAssembly (assemblyString, assemblySecurity);
 		}
 
 		public Assembly Load (byte[] rawAssembly)
@@ -524,8 +427,7 @@ namespace System {
 		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		private extern Assembly LoadAssemblyRaw (byte[] rawAssembly, byte[] rawSymbolStore,
-		    					 Evidence securityEvidence);
+		private extern Assembly LoadAssemblyRaw (byte[] rawAssembly, byte[] rawSymbolStore, Evidence securityEvidence);
 
 		public Assembly Load (byte[] rawAssembly, byte[] rawSymbolStore, Evidence securityEvidence)
 		{
@@ -534,18 +436,18 @@ namespace System {
 				
 			return LoadAssemblyRaw (rawAssembly, rawSymbolStore, securityEvidence);
 		}
-			
+
 		[MonoTODO]
 		public void SetAppDomainPolicy (PolicyLevel domainPolicy)
 		{
 			throw new NotImplementedException ();
 		}
-		
-		public void SetCachePath (string s)
+
+		public void SetCachePath (string path)
 		{
-			SetupInformation.CachePath = s;
+			SetupInformation.CachePath = path;
 		}
-		
+
 		public void SetPrincipalPolicy (PrincipalPolicy policy)
 		{
 			new SecurityPermission (SecurityPermissionFlag.ControlPrincipal).Demand ();
@@ -559,19 +461,19 @@ namespace System {
 		{
 			SetupInformation.ShadowCopyFiles = "true";
 		}
-						
-		public void SetShadowCopyPath (string s)
+
+		public void SetShadowCopyPath (string path)
 		{
-			SetupInformation.ShadowCopyDirectories = s;
+			SetupInformation.ShadowCopyDirectories = path;
 		}
-		
+
 		public void SetThreadPrincipal (IPrincipal principal)
 		{
 			new SecurityPermission (SecurityPermissionFlag.ControlPrincipal).Demand ();
 			if (principal == null)
 				throw new ArgumentNullException ("principal");
 			if (_principal != null)
-				throw new PolicyException ("principal already present");
+				throw new PolicyException (Locale.GetText ("principal already present."));
 			if (IsFinalizingForUnload ())
 				throw new AppDomainUnloadedException ();
 
@@ -614,7 +516,8 @@ namespace System {
 		// This method is handled specially by the runtime
 		// It is the only managed method which is allowed to set the current
 		// appdomain
-		internal static object InvokeInDomain (AppDomain domain, MethodInfo method, object obj, object [] args) {
+		internal static object InvokeInDomain (AppDomain domain, MethodInfo method, object obj, object [] args)
+		{
 			AppDomain current = CurrentDomain;
 			bool pushed = false;
 
@@ -622,7 +525,7 @@ namespace System {
 				InternalPushDomainRef (domain);
 				pushed = true;
 				InternalSetDomain (domain);
-				return ((MonoMethod)method).InternalInvoke (obj, args);
+				return ((MonoMethod) method).InternalInvoke (obj, args);
 			}
 			finally {
 				InternalSetDomain (current);
@@ -631,7 +534,8 @@ namespace System {
 			}
 		}
 
-		internal static object InvokeInDomainByID (int domain_id, MethodInfo method, object obj, object [] args) {
+		internal static object InvokeInDomainByID (int domain_id, MethodInfo method, object obj, object [] args)
+		{
 			AppDomain current = CurrentDomain;
 			bool pushed = false;
 
@@ -639,7 +543,7 @@ namespace System {
 				InternalPushDomainRefByID (domain_id);
 				pushed = true;
 				InternalSetDomainByID (domain_id);
-				return ((MonoMethod)method).InternalInvoke (obj, args);
+				return ((MonoMethod) method).InternalInvoke (obj, args);
 			}
 			finally {
 				InternalSetDomain (current);
@@ -665,13 +569,12 @@ namespace System {
 		{
 			return CreateDomain (friendlyName, securityInfo, new AppDomainSetup ());
 		}
-		
+
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private static extern AppDomain createDomain (string friendlyName, AppDomainSetup info);
 
-		public static AppDomain CreateDomain (string friendlyName,
-						      Evidence securityInfo,
-						      AppDomainSetup info)
+		[MonoTODO]
+		public static AppDomain CreateDomain (string friendlyName, Evidence securityInfo, AppDomainSetup info)
 		{
 			//TODO: treat securityInfo (can be null)
 			if (friendlyName == null)
@@ -681,12 +584,11 @@ namespace System {
 				throw new System.ArgumentNullException ("info");
 
 			// todo: allow setup in the other domain
-			return (AppDomain) RemotingServices.GetDomainProxy( createDomain (friendlyName, info));
+			return (AppDomain) RemotingServices.GetDomainProxy (createDomain (friendlyName, info));
 		}
 
-		public static AppDomain CreateDomain (string friendlyName, Evidence securityInfo,
-						      string appBasePath, string appRelativeSearchPath,
-						      bool shadowCopyFiles)
+		public static AppDomain CreateDomain (string friendlyName, Evidence securityInfo,string appBasePath,
+		                                      string appRelativeSearchPath, bool shadowCopyFiles)
 		{
 			AppDomainSetup info = new AppDomainSetup ();
 
@@ -701,20 +603,21 @@ namespace System {
 			return CreateDomain (friendlyName, securityInfo, info);
 		}
 
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]		
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private static extern bool InternalIsFinalizingForUnload (int domain_id);
 
 		public bool IsFinalizingForUnload()
 		{
 			return InternalIsFinalizingForUnload (getDomainID ());
 		}
-	
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		static extern void InternalUnload (int domain_id);
-		
+
 		// We do this because if the domain is a transparant proxy this
 		// will still return the correct domain id.
-		private int getDomainID () {
+		private int getDomainID ()
+		{
 			return Thread.GetDomainID ();
 		}
 
@@ -726,25 +629,26 @@ namespace System {
 			InternalUnload (domain.getDomainID());
 		}
 
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		public extern void SetData (string name, object data);
 
-		[MonoTODO]
-		public void SetDynamicBase(string path)
+		[MonoTODO ("implement")]
+		public void SetDynamicBase (string path)
 		{
 			throw new NotImplementedException();
 		}
-				
+
 		public static int GetCurrentThreadId ()
 		{
 			return Thread.CurrentThreadId;
 		}
 
-		public override string ToString () {
+		public override string ToString ()
+		{
 			return getFriendlyName ();
 		}
 
-		// This methods called from the runtime. Don't change signature.
+		// The following methods are called from the runtime. Don't change signatures.
 		private void DoAssemblyLoad (Assembly assembly)
 		{
 			if (AssemblyLoad == null)
@@ -777,7 +681,6 @@ namespace System {
 					if (assembly != null)
 						return assembly;
 				}
-
 				return null;
 			}
 			finally {
@@ -793,9 +696,9 @@ namespace System {
 			string name;
 
 			if (name_or_tb is TypeBuilder)
-				name = ((TypeBuilder)name_or_tb).FullName;
+				name = ((TypeBuilder) name_or_tb).FullName;
 			else
-				name = (string)name_or_tb;
+				name = (string) name_or_tb;
 
 			/* Prevent infinite recursion */
 			Hashtable ht = type_resolve_in_progress;
@@ -811,12 +714,11 @@ namespace System {
 
 			try {
 				foreach (Delegate d in TypeResolve.GetInvocationList ()) {
-					ResolveEventHandler eh = (ResolveEventHandler)d;
+					ResolveEventHandler eh = (ResolveEventHandler) d;
 					Assembly assembly = eh (this, new ResolveEventArgs (name));
 					if (assembly != null)
 						return assembly;
 				}
-
 				return null;
 			}
 			finally {
@@ -824,18 +726,20 @@ namespace System {
 			}
 		}
 
-		private void DoDomainUnload () {
+		private void DoDomainUnload ()
+		{
 			if (DomainUnload != null)
 				DomainUnload(this, null);
 		}
 
 		internal byte[] GetMarshalledDomainObjRef ()
 		{
-			ObjRef oref = RemotingServices.Marshal(AppDomain.CurrentDomain, null, typeof(AppDomain));
+			ObjRef oref = RemotingServices.Marshal (AppDomain.CurrentDomain, null, typeof (AppDomain));
 			return CADSerializer.SerializeObject (oref).GetBuffer();
 		}
 
-		internal void ProcessMessageInDomain (byte[] arrRequest, CADMethodCallMessage cadMsg, out byte[] arrResponse, out CADMethodReturnMessage cadMrm)
+		internal void ProcessMessageInDomain (byte[] arrRequest, CADMethodCallMessage cadMsg,
+		                                      out byte[] arrResponse, out CADMethodReturnMessage cadMrm)
 		{
 			IMessage reqDomMsg;
 
@@ -847,8 +751,7 @@ namespace System {
 			IMessage retDomMsg = ChannelServices.SyncDispatchMessage (reqDomMsg);
 
 			cadMrm = CADMethodReturnMessage.Create (retDomMsg);
-			if (null == cadMrm) 
-			{
+			if (null == cadMrm) {
 				arrResponse = CADSerializer.SerializeMessage (retDomMsg).GetBuffer();
 			} 
 			else
@@ -858,9 +761,9 @@ namespace System {
 		// End of methods called from the runtime
 		
 		public event AssemblyLoadEventHandler AssemblyLoad;
-		
+
 		public event ResolveEventHandler AssemblyResolve;
-		
+
 		public event EventHandler DomainUnload;
 
 		public event EventHandler ProcessExit;

@@ -1,5 +1,5 @@
 //
-// System/Buffer.cs
+// System.Buffer.cs
 //
 // Authors:
 //   Paolo Molaro (lupus@ximian.com)
@@ -10,58 +10,70 @@
 
 using System.Runtime.CompilerServices;
 
-namespace System {
-	public sealed class Buffer {
+namespace System
+{
+	public sealed class Buffer
+	{
+		private Buffer ()
+		{
+		}
 
-		private Buffer () {}
-
-		public static int ByteLength (Array array) {
+		public static int ByteLength (Array array)
+		{
 			// note: the other methods in this class also use ByteLength to test for
 			// null and non-primitive arguments as a side-effect.
 
 			if (array == null)
-				throw new ArgumentNullException ();	// default message
+				throw new ArgumentNullException ("array");
 
 			int length = ByteLengthInternal (array);
 			if (length < 0)
-				throw new ArgumentException ("Object must be array of primitives.");
+				throw new ArgumentException (Locale.GetText ("Object must be an array of primitives."));
 
 			return length;
 		}
 
-		public static byte GetByte (Array array, int index) {
+		public static byte GetByte (Array array, int index)
+		{
 			if (index < 0 || index >= ByteLength (array))
-				throw new ArgumentOutOfRangeException ("Index was out of range. Must be non-negative and less than the size of the collection.");
+				throw new ArgumentOutOfRangeException ("index", Locale.GetText(
+					"Value must be non-negative and less than the size of the collection."));
 
 			return GetByteInternal (array, index);
 		}
 
-		public static void SetByte (Array array, int index, byte value) {
+		public static void SetByte (Array array, int index, byte value)
+		{
 			if (index < 0 || index >= ByteLength (array))
-				throw new ArgumentOutOfRangeException ("Index was out of range. Must be non-negative and less than the size of the collection.");
+				throw new ArgumentOutOfRangeException ("index", Locale.GetText(
+					"Value must be non-negative and less than the size of the collection."));
 
 			SetByteInternal (array, index, value);
 		}
 
-		public static void BlockCopy (Array src, int src_offset, Array dest, int dest_offset, int count)
+		public static void BlockCopy (Array src, int srcOffset, Array dest, int destOffset, int count)
 		{
-			if (src_offset < 0)
-				throw new ArgumentOutOfRangeException ("src_offset", "Non-negative number required.");
+			if (srcOffset < 0)
+				throw new ArgumentOutOfRangeException ("srcOffset", Locale.GetText(
+					"Non-negative number required."));
 
-			if (dest_offset < 0)
-				throw new ArgumentOutOfRangeException ("dest_offset", "Non-negative number required.");
+			if (destOffset < 0)
+				throw new ArgumentOutOfRangeException ("destOffset", Locale.GetText (
+					"Non-negative number required."));
 
 			if (count < 0)
-				throw new ArgumentOutOfRangeException ("count", "Non-negative number required.");
+				throw new ArgumentOutOfRangeException ("count", Locale.GetText (
+					"Non-negative number required."));
 
-			if (src_offset + count > ByteLength (src) || dest_offset + count > ByteLength (dest))
-				throw new ArgumentException ("Offset and length were out of bounds for the array or count is greater than the number of elements from index to the end of the source collection.");
+			if (srcOffset + count > ByteLength (src) || destOffset + count > ByteLength (dest))
+				throw new ArgumentException (Locale.GetText (
+					"Offset and length were out of bounds for the array or count is greater than" + 
+					"the number of elements from index to the end of the source collection."));
 
-			BlockCopyInternal (src, src_offset, dest, dest_offset, count);
+			BlockCopyInternal (src, srcOffset, dest, destOffset, count);
 		}
 
 		// private
-
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private extern static int ByteLengthInternal (Array array);
 

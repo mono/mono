@@ -31,12 +31,11 @@ namespace System
 
 		internal char m_value;
 
-		static Char () {
+		static Char ()
+		{
 			unsafe {
-				GetDataTablePointers (out category_data, out numeric_data,
-						out numeric_data_values,
-						out to_lower_data_low, out to_lower_data_high,
-						out to_upper_data_low, out to_upper_data_high);
+				GetDataTablePointers (out category_data, out numeric_data, out numeric_data_values,
+					out to_lower_data_low, out to_lower_data_high, out to_upper_data_low, out to_upper_data_high);
 			}
 		}
 
