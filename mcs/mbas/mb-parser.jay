@@ -1493,12 +1493,16 @@ event_declaration
 	
 enum_declaration
 	: ENUM identifier opt_type_spec logical_end_of_line
-	  opt_enum_member_declarations // FIXME: BC30280: Enum must contain atleast one member
+	  opt_enum_member_declarations 
 	  { 
 		Location enum_location = lexer.Location;
 		string full_name = MakeName ((string) $2);
 		Expression enum_type = ($3 == null) ? TypeManager.system_int32_expr : (Expression) $3;
 		ArrayList enum_members = (ArrayList) $5;
+		
+		if (enum_members.Count == 0)
+			Report.Error (30280, enum_location,
+				"Enum can not have empty member list");
 		
 		// Module members are static by default, but enums *can't* be declared static
 		// so we must fix it if mbas was the one actually responsible for this

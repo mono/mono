@@ -1,4 +1,7 @@
 2004-08-07 Anirban Bhattacharjee <banirban@novell.com>
+	* mb-parser.jay: Check for empty enum declaration
+
+2004-08-07 Anirban Bhattacharjee <banirban@novell.com>
 	* class.cs: 
 	* mb-parser.jay:
 		Multiple Implements for a particular type member got implemented
