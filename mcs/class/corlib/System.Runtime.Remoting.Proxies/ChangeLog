@@ -1,3 +1,7 @@
+2004-09-27  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* RemotingProxy.cs: In Invoke, suport IMessages other than MonoMessage.
+	
 2004-09-22  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* RemotingProxy.cs: When attaching a CBO identity, assign the proxy to

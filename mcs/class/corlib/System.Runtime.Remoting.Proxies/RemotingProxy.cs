@@ -69,16 +69,21 @@ namespace System.Runtime.Remoting.Proxies
 
 		public override IMessage Invoke (IMessage request)
 		{
-			MonoMethodMessage mMsg = (MonoMethodMessage) request;
+			IMethodCallMessage mm = request as IMethodCallMessage;
 
-			if (mMsg.MethodBase == _cache_GetHashCodeMethod)
-				return new MethodResponse(ObjectIdentity.GetHashCode(), null, null, request as IMethodCallMessage);
-
-			if (mMsg.MethodBase == _cache_GetTypeMethod)
-				return new MethodResponse(GetProxiedType(), null, null, request as IMethodCallMessage);
-
-			mMsg.Uri = _targetUri;
-			((IInternalMessage)mMsg).TargetIdentity = _objectIdentity;
+			if (mm != null) {
+				if (mm.MethodBase == _cache_GetHashCodeMethod)
+					return new MethodResponse(ObjectIdentity.GetHashCode(), null, null, mm);
+	
+				if (mm.MethodBase == _cache_GetTypeMethod)
+					return new MethodResponse(GetProxiedType(), null, null, mm);
+			}
+			
+			IInternalMessage im = request as IInternalMessage;
+			if (im != null) {
+				if (im.Uri == null) im.Uri = _targetUri;
+				im.TargetIdentity = _objectIdentity;
+			}
 
 			_objectIdentity.NotifyClientDynamicSinks (true, request, true, false);
 
@@ -91,7 +96,8 @@ namespace System.Runtime.Remoting.Proxies
 			else
 				sink = _sink;
 
-			if (mMsg.CallType == CallType.Sync)
+			MonoMethodMessage mMsg = request as MonoMethodMessage;
+			if (mMsg == null || mMsg.CallType == CallType.Sync)
 				response = sink.SyncProcessMessage (request);
 			else
 			{
