@@ -1,4 +1,16 @@
+2001-09-25  Dietmar Maurer  <dietmar@ximian.com>
+
+	* x86.brg: we now have different types of addresses: ADDR_L for local
+	values, ADDR_A for arguments and ADDR_G for global addresses. We
+	also use LDIND_XX token to load values from a specific address
+	instead of LDLOC/STLOC. 
+
+	* testjit.c: use the new adressing scheme everywhere:
+	LDIND _XX (ADDR_X), and STIND_XX (ADDR_X, tree)  
+
 2001-09-24  Dietmar Maurer  <dietmar@ximian.com>
+
+	* testjit.c (main): fix bug in parameter parsing
 
 	* x86.brg: impl. more opcodes
 

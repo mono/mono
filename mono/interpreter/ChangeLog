@@ -23,6 +23,7 @@ Mon Sep 24 18:50:25 CEST 2001 Paolo Molaro <lupus@ximian.com>
 
 	* interp.c (ves_exec_method): LDC_I4: 8bit constants are signed
 	(ves_exec_method): bug fix for NOT/NEG
+	(main): fix bug in parameter parsing
 
 2001-09-23  Dick Porter  <dick@ximian.com>
 
