@@ -234,7 +234,9 @@ namespace Mono.Tools
 			foreach (DirectoryInfo namedDir in d.GetDirectories ()) {
 				foreach (DirectoryInfo assemblyDir in namedDir.GetDirectories ()) {
 					Hashtable assemblyInfo = GetAssemblyInfo (Path.Combine (assemblyDir.FullName, "__AssemblyInfo__"));
-					Console.WriteLine ("\t" + assemblyInfo["DisplayName"]);
+					if (assemblyInfo != null){
+						Console.WriteLine ("\t" + assemblyInfo["DisplayName"]);
+					}
 				}
 			}
 
@@ -243,16 +245,20 @@ namespace Mono.Tools
 
 		private Hashtable GetAssemblyInfo (string filename)
 		{
-			Hashtable infoHash = new Hashtable ();
-			using (StreamReader s = new StreamReader (filename)) {
-				string line;
-
-				while ((line = s.ReadLine ()) != null) {
-					string[] splitStr = line.Split (new char[] { '=' }, 2);
-					infoHash[splitStr[0]] = splitStr[1];
+			try {
+				Hashtable infoHash = new Hashtable ();
+				using (StreamReader s = new StreamReader (filename)) {
+					string line;
+					
+					while ((line = s.ReadLine ()) != null) {
+						string[] splitStr = line.Split (new char[] { '=' }, 2);
+						infoHash[splitStr[0]] = splitStr[1];
+					}
 				}
+				return infoHash;
+			} catch {
+				return null;
 			}
-			return infoHash;
 		}
 
 		private void WriteAssemblyInfo (string filename, Hashtable info)
@@ -317,12 +323,15 @@ namespace Mono.Tools
 
 			if (File.Exists (fullPath + an.Name + ".dll") && force == false) {
 				Hashtable assemInfo = GetAssemblyInfo (fullPath + "__AssemblyInfo__");
-				assemInfo["RefCount"] = ((int) Convert.ToInt32 (assemInfo["RefCount"]) + 1).ToString ();
-				WriteAssemblyInfo (fullPath + "__AssemblyInfo__", assemInfo);
-				Console.WriteLine ("RefCount of assembly '" + an.Name + "' increased by one.");
-				if (File.Exists (config_path))
-					File.Copy (config_path, fullPath + an.Name + ".dll" + ".config", force);
-				InstallPackage (libdir, linkPath, an, args [0], Path.GetFileName (args [0]));
+
+				if (assemInfo != null){
+					assemInfo["RefCount"] = ((int) Convert.ToInt32 (assemInfo["RefCount"]) + 1).ToString ();
+					WriteAssemblyInfo (fullPath + "__AssemblyInfo__", assemInfo);
+					Console.WriteLine ("RefCount of assembly '" + an.Name + "' increased by one.");
+					if (File.Exists (config_path))
+						File.Copy (config_path, fullPath + an.Name + ".dll" + ".config", force);
+					InstallPackage (libdir, linkPath, an, args [0], Path.GetFileName (args [0]));
+				}
 				return 0;
 			}
 

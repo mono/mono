@@ -1,3 +1,10 @@
+2004-06-05  Miguel de Icaza  <miguel@ximian.com>
+
+	* gacutil.cs: GetAssemblyInfo might return null now, check for
+	that.
+
+	Add try/catch to GetAssemblyInfo.
+	
 2004-05-27  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* gacutil.cs: when -il, don't stop if one assembly fails to install.
