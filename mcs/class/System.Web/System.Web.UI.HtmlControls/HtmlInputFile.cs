@@ -80,6 +80,19 @@ namespace System.Web.UI.HtmlControls{
 			}
 		}
 
+		protected override void OnPreRender (EventArgs e)
+		{
+			base.OnPreRender (e);
+			for (Control ctrl = this.Parent; ctrl != null && !(ctrl is Page); ctrl = ctrl.Parent) {
+				if (!(ctrl is HtmlForm))
+					continue;
+
+				HtmlForm form = (HtmlForm) ctrl;
+				if (form.Enctype == "")
+					form.Enctype = "multipart/form-data";
+				break;
+			}
+		}
 #if NET_1_1
 		[Browsable (false)]
 		public override string Value {

@@ -115,7 +115,7 @@ namespace System.Web.UI.HtmlControls{
 				if (attr != null){
 					return attr;
 				}
-				return null;
+				return "";
 			}
 			set{
 				Attributes["enctype"] = AttributeToString(value);
