@@ -1,3 +1,25 @@
+2005-03-04  Lluis Sanchez Gual <lluis@novell.com>
+
+	* DataKey.cs: Implemented.
+	* XmlDataSourceView.cs: Implemented support for row pagging.
+	* Table.cs: Fixed attribute value.
+	* DataControlField.cs: Added support for sorting headers.
+	* ChildTable.cs: Created.
+	* ListControl.cs: Delay selection assignment, since control state
+	is now loaded before view state.
+	* GridViewDeleteEventArgs.cs, GridViewUpdateEventArgs.cs,
+	GridViewDeletedEventArgs.cs, GridViewUpdatedEventArgs.cs: Implemented
+	several missing properties.
+	* PagerSettings.cs: Fully implemented.
+	* BaseDataList.cs: Added null check.
+	* GridView.cs: Implemented more functionality.
+	* BoundField.cs: Added support for cell editing.
+	* StringArrayConverter.cs: Implemented.
+	* DataKeyArray.cs: Implemented.
+	* BaseDataBoundControl.cs: Reset the requires binding flag before
+	executing the query. This avoids recursive query calls.
+	* GridViewRow.cs: Handler commands raised from row childs.
+
 2005-02-25  Lluis Sanchez Gual <lluis@novell.com>
 
 	* XmlDataSourceView.cs: ExecuteSelect now returns a list of

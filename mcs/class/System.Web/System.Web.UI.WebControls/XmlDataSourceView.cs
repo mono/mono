@@ -66,8 +66,15 @@ namespace System.Web.UI.WebControls
 		protected internal override IEnumerable ExecuteSelect (DataSourceSelectArguments arguments)
 		{
 			ArrayList list = new ArrayList ();
-			foreach (XmlNode node in nodes)
-				list.Add (new XmlDataSourceNodeDescriptor (node));
+			int max = arguments.StartRowIndex + (arguments.MaximumRows > 0 ? arguments.MaximumRows : nodes.Count);
+			if (max > nodes.Count) max = nodes.Count;
+
+			for (int n = arguments.StartRowIndex; n < max; n++)
+				list.Add (new XmlDataSourceNodeDescriptor ((XmlElement) nodes [n]));
+				
+			if (arguments.RetrieveTotalRowCount)
+				arguments.TotalRowCount = nodes.Count;
+
 			return list;
 		}		
 	}

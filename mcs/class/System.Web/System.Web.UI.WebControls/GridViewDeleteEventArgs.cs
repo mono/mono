@@ -38,10 +38,19 @@ namespace System.Web.UI.WebControls
 	public class GridViewDeleteEventArgs : CancelEventArgs
 	{
 		private int rowIndex;
+		IOrderedDictionary keys;
+		IOrderedDictionary values;
 		
 		public GridViewDeleteEventArgs (int index)
 		{
 			this.rowIndex = index;
+		}
+		
+		internal GridViewDeleteEventArgs (int index, IOrderedDictionary keys, IOrderedDictionary values)
+		{
+			this.rowIndex = index;
+			this.keys = keys;
+			this.values = values;
 		}
 		
 		public int RowIndex {
@@ -49,11 +58,11 @@ namespace System.Web.UI.WebControls
 		}
 
 		public IOrderedDictionary Keys {
-			get { throw new NotImplementedException(); }
+			get { return keys; }
 		}
 
 		public IOrderedDictionary Values {
-			get { throw new NotImplementedException(); }
+			get { return values; }
 		}
 	}
 }

@@ -105,6 +105,14 @@ namespace System.Web.UI.WebControls {
 		public override void ExtractValuesFromCell (IOrderedDictionary dictionary,
 			DataControlFieldCell cell, DataControlRowState rowState, bool includeReadOnly)
 		{
+			if ((rowState & DataControlRowState.Edit) != 0) {
+				if (cell.Controls.Count > 0) {
+					TextBox box = cell.Controls [0] as TextBox;
+					dictionary [DataField] = box.Text;
+				}
+			} else if (includeReadOnly) {
+				dictionary [DataField] = cell.Text;
+			}
 		}
 		
 		public override void InitializeCell (DataControlFieldCell cell,
@@ -118,6 +126,10 @@ namespace System.Web.UI.WebControls {
 		
 		public virtual void InitializeDataCell (DataControlFieldCell cell, DataControlRowState rowState)
 		{
+			if ((rowState & DataControlRowState.Edit) != 0) {
+				TextBox box = new TextBox ();
+				cell.Controls.Add (box);
+			}
 		}
 		
 		string FormatValue (object value)
@@ -165,7 +177,12 @@ namespace System.Web.UI.WebControls {
 		protected virtual void OnDataBindField (object sender, EventArgs e)
 		{
 			DataControlFieldCell cell = (DataControlFieldCell) sender;
-			cell.Text = FormatValue (GetValue (cell.BindingContainer));
+			if (cell.Controls.Count > 0) {
+				TextBox box = cell.Controls [0] as TextBox;
+				box.Text = FormatValue (GetValue (cell.BindingContainer));
+			}
+			else
+				cell.Text = FormatValue (GetValue (cell.BindingContainer));
 		}
 	}
 }

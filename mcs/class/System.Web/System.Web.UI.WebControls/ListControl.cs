@@ -72,6 +72,9 @@ namespace System.Web.UI.WebControls
 		{
 		}
 		#else
+		
+		ArrayList selectedIndices;
+		
 		protected override HtmlTextWriterTag TagKey {
 			get { return HtmlTextWriterTag.Select; }
 		}
@@ -223,6 +226,14 @@ namespace System.Web.UI.WebControls
 				if(items==null)
 				{
 					items = new ListItemCollection();
+					
+#if NET_2_0
+					if (selectedIndices != null) {
+						Select (selectedIndices);
+						selectedIndices = null;
+					}
+#endif
+					
 					if(IsTrackingViewState)
 					{
 						items.TrackViewState();
@@ -583,9 +594,7 @@ namespace System.Web.UI.WebControls
 			if (ob == null) return;
 			object[] state = (object[]) ob;
 			base.LoadControlState (state[0]);
-			ArrayList indices = state[1] as ArrayList;
-			if (indices != null)
-				Select (indices);
+			selectedIndices = state[1] as ArrayList;
 		}
 		
 		protected internal override object SaveControlState ()

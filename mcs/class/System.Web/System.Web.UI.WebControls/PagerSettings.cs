@@ -252,22 +252,23 @@ namespace System.Web.UI.WebControls
 			get { return ViewState.IsTrackingViewState; }
 		}
 		
-		internal void Render (HtmlTextWriter writer, int currentPage, int pageCount)
+		internal Table CreatePagerControl (int currentPage, int pageCount)
 		{
-			writer.RenderBeginTag (HtmlTextWriterTag.Table);
-			writer.RenderBeginTag (HtmlTextWriterTag.Tr);
-			
+			Table table = new Table ();
+			TableRow row = new TableRow ();
+			table.Rows.Add (row);
+
 			if (Mode == PagerButtons.NextPrevious || Mode == PagerButtons.NextPreviousFirstLast)
 			{
 				if (currentPage > 0) {
 					if (Mode == PagerButtons.NextPreviousFirstLast)
-						RenderButton (writer, FirstPageText, FirstPageImageUrl);
-					RenderButton (writer, PreviousPageText, PreviousPageImageUrl);
+						row.Cells.Add (CreateCell (FirstPageText, FirstPageImageUrl, "page$first"));
+					row.Cells.Add (CreateCell (PreviousPageText, PreviousPageImageUrl, "page$prev"));
 				}
 				if (currentPage < pageCount - 1) {
-					RenderButton (writer, NextPageText, NextPageImageUrl);
+					row.Cells.Add (CreateCell (NextPageText, NextPageImageUrl, "page$next"));
 					if (Mode == PagerButtons.NextPreviousFirstLast)
-						RenderButton (writer, LastPageText, LastPageImageUrl);
+						row.Cells.Add (CreateCell (LastPageText, LastPageImageUrl, "page$last"));
 				}
 			}
 			else if (Mode == PagerButtons.Numeric || Mode == PagerButtons.NumericFirstLast)
@@ -278,37 +279,36 @@ namespace System.Web.UI.WebControls
 				
 				if (first > 0) {
 					if (Mode == PagerButtons.NumericFirstLast)
-						RenderButton (writer, FirstPageText, FirstPageImageUrl);
-					RenderButton (writer, PreviousPageText, PreviousPageImageUrl);
+						row.Cells.Add (CreateCell (FirstPageText, FirstPageImageUrl, "page$first"));
+					row.Cells.Add (CreateCell (PreviousPageText, PreviousPageImageUrl, "page$prev"));
 				}
 				
 				for (int n = first; n < last; n++)
-					RenderButton (writer, n.ToString(), string.Empty);
+					row.Cells.Add (CreateCell (n.ToString(), string.Empty, (n != currentPage) ? "page$" + n : null));
 				
 				if (last < pageCount - 1) {
-					RenderButton (writer, NextPageText, NextPageImageUrl);
+					row.Cells.Add (CreateCell (NextPageText, NextPageImageUrl, "page$next"));
 					if (Mode == PagerButtons.NumericFirstLast)
-						RenderButton (writer, LastPageText, LastPageImageUrl);
+						row.Cells.Add (CreateCell (LastPageText, LastPageImageUrl, "page$last"));
 				}
 			}
-			
-			writer.RenderEndTag ();	// TR
-			writer.RenderEndTag ();	// TABLE
+			return table;
 		}
 		
-		void RenderButton (HtmlTextWriter writer, string text, string image)
+		TableCell CreateCell (string text, string image, string theEvent)
 		{
-			writer.RenderBeginTag (HtmlTextWriterTag.Td);
-			if (image != "") {
-				writer.AddAttribute (HtmlTextWriterAttribute.Src, image);
-				if (text != "")
-					writer.AddAttribute (HtmlTextWriterAttribute.Alt, text);
-				writer.RenderBeginTag (HtmlTextWriterTag.Img);
-				writer.RenderEndTag ();
+			TableCell cell = new TableCell ();
+			if (theEvent != null) {
+				HyperLink link = new HyperLink ();
+				link.ImageUrl = image;
+				link.Text = text;
+				link.NavigateUrl = ctrl.Page.GetPostBackClientHyperlink (ctrl, theEvent);
+				cell.Controls.Add (link);
 			} else {
-				writer.Write (text);
+				// Only numbers don't have an event
+				cell.Text = text;
 			}
-			writer.RenderEndTag ();	// TD
+			return cell;
 		}
 	}
 }

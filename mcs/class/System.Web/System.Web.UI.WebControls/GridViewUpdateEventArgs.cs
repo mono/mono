@@ -38,10 +38,21 @@ namespace System.Web.UI.WebControls
 	public class GridViewUpdateEventArgs : CancelEventArgs
 	{
 		private int rowIndex;
+		IOrderedDictionary keys;
+		IOrderedDictionary newValues;
+		IOrderedDictionary oldValues;
 		
 		public GridViewUpdateEventArgs (int rowIndex)
 		{
 			this.rowIndex = rowIndex;
+		}
+		
+		internal GridViewUpdateEventArgs (int rowIndex, IOrderedDictionary keys, IOrderedDictionary oldValues, IOrderedDictionary newValues)
+		{
+			this.rowIndex = rowIndex;
+			this.keys = keys;
+			this.newValues = newValues;
+			this.oldValues = oldValues;
 		}
 		
 		public int RowIndex {
@@ -49,15 +60,15 @@ namespace System.Web.UI.WebControls
 		}
 
 		public IOrderedDictionary Keys {
-			get { throw new NotImplementedException(); }
+			get { return keys; }
 		}
 
 		public IOrderedDictionary NewValues {
-			get { throw new NotImplementedException(); }
+			get { return newValues; }
 		}
 
 		public IOrderedDictionary OldValues {
-			get { throw new NotImplementedException(); }
+			get { return oldValues; }
 		}
 	}
 }

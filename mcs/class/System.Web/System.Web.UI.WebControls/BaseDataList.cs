@@ -342,7 +342,7 @@ namespace System.Web.UI.WebControls
 			{
 				IDataSource ds = GetDataSource ();
 				
-				if (currentSource != ds) {
+				if (currentSource != ds && currentSource != null) {
 					currentSource.DataSourceChanged -= new EventHandler (OnDataSourceViewChanged);
 					currentSource = ds;
 				}

@@ -25,13 +25,12 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
-//
 
 #if NET_2_0
 
 using System;
 using System.Collections;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Web.UI;
 using System.Security.Permissions;
@@ -43,7 +42,7 @@ namespace System.Web.UI.WebControls
 	[DefaultEventAttribute ("SelectedIndexChanged")]
 	[AspNetHostingPermissionAttribute (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	[AspNetHostingPermissionAttribute (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
-	public class GridView: CompositeDataBoundControl
+	public class GridView: CompositeDataBoundControl, IPostBackEventHandler
 	{
 		Table table;
 		GridViewRowCollection rows;
@@ -52,6 +51,10 @@ namespace System.Web.UI.WebControls
 		GridViewRow bottomPagerRow;
 		GridViewRow topPagerRow;
 		
+		IOrderedDictionary currentEditRowKeys;
+		IOrderedDictionary currentEditNewValues;
+		IOrderedDictionary currentEditOldValues;
+			
 		// View state
 		DataControlFieldCollection columns;
 		PagerSettings pagerSettings;
@@ -64,13 +67,232 @@ namespace System.Web.UI.WebControls
 		TableItemStyle pagerStyle;
 		TableItemStyle rowStyle;
 		TableItemStyle selectedRowStyle;
+		DataKeyArray keys;
+		DataKey oldEditValues;
+		
+		private static readonly object PageIndexChangedEvent = new object();
+		private static readonly object PageIndexChangingEvent = new object();
+		private static readonly object RowCancelingEditEvent = new object();
+		private static readonly object RowCommandEvent = new object();
+		private static readonly object RowCreatedEvent = new object();
+		private static readonly object RowDataBoundEvent = new object();
+		private static readonly object RowDeletedEvent = new object();
+		private static readonly object RowDeletingEvent = new object();
+		private static readonly object RowEditingEvent = new object();
+		private static readonly object RowUpdatedEvent = new object();
+		private static readonly object RowUpdatingEvent = new object();
+		private static readonly object SelectedIndexChangedEvent = new object();
+		private static readonly object SelectedIndexChangingEvent = new object();
+		private static readonly object SortedEvent = new object();
+		private static readonly object SortingEvent = new object();
 		
 		// Control state
 		int pageIndex;
+		int pageCount = -1;
+		int selectedIndex = -1;
+		int editIndex = -1;
+		SortDirection sortDirection = SortDirection.Ascending;
+		string sortExpression;
 		
 		public GridView ()
 		{
 		}
+		
+		public event EventHandler PageIndexChanged {
+			add { Events.AddHandler (PageIndexChangedEvent, value); }
+			remove { Events.RemoveHandler (PageIndexChangedEvent, value); }
+		}
+		
+		public event GridViewPageEventHandler PageIndexChanging {
+			add { Events.AddHandler (PageIndexChangingEvent, value); }
+			remove { Events.RemoveHandler (PageIndexChangingEvent, value); }
+		}
+		
+		public event GridViewCancelEditEventHandler RowCancelingEdit {
+			add { Events.AddHandler (RowCancelingEditEvent, value); }
+			remove { Events.RemoveHandler (RowCancelingEditEvent, value); }
+		}
+		
+		public event GridViewCommandEventHandler RowCommand {
+			add { Events.AddHandler (RowCommandEvent, value); }
+			remove { Events.RemoveHandler (RowCommandEvent, value); }
+		}
+		
+		public event GridViewRowEventHandler RowCreated {
+			add { Events.AddHandler (RowCreatedEvent, value); }
+			remove { Events.RemoveHandler (RowCreatedEvent, value); }
+		}
+		
+		public event GridViewRowEventHandler RowDataBound {
+			add { Events.AddHandler (RowDataBoundEvent, value); }
+			remove { Events.RemoveHandler (RowDataBoundEvent, value); }
+		}
+		
+		public event GridViewDeletedEventHandler RowDeleted {
+			add { Events.AddHandler (RowDeletedEvent, value); }
+			remove { Events.RemoveHandler (RowDeletedEvent, value); }
+		}
+		
+		public event GridViewDeleteEventHandler RowDeleting {
+			add { Events.AddHandler (RowDeletingEvent, value); }
+			remove { Events.RemoveHandler (RowDeletingEvent, value); }
+		}
+		
+		public event GridViewEditEventHandler RowEditing {
+			add { Events.AddHandler (RowEditingEvent, value); }
+			remove { Events.RemoveHandler (RowEditingEvent, value); }
+		}
+		
+		public event GridViewUpdatedEventHandler RowUpdated {
+			add { Events.AddHandler (RowUpdatedEvent, value); }
+			remove { Events.RemoveHandler (RowUpdatedEvent, value); }
+		}
+		
+		public event GridViewUpdateEventHandler RowUpdating {
+			add { Events.AddHandler (RowUpdatingEvent, value); }
+			remove { Events.RemoveHandler (RowUpdatingEvent, value); }
+		}
+		
+		public event EventHandler SelectedIndexChanged {
+			add { Events.AddHandler (SelectedIndexChangedEvent, value); }
+			remove { Events.RemoveHandler (SelectedIndexChangedEvent, value); }
+		}
+		
+		public event GridViewSelectEventHandler SelectedIndexChanging {
+			add { Events.AddHandler (SelectedIndexChangingEvent, value); }
+			remove { Events.RemoveHandler (SelectedIndexChangingEvent, value); }
+		}
+		
+		public event EventHandler Sorted {
+			add { Events.AddHandler (SortedEvent, value); }
+			remove { Events.RemoveHandler (SortedEvent, value); }
+		}
+		
+		public event GridViewSortEventHandler Sorting {
+			add { Events.AddHandler (SortingEvent, value); }
+			remove { Events.RemoveHandler (SortingEvent, value); }
+		}
+		
+		protected virtual void OnPageIndexChanged (EventArgs e)
+		{
+			if (Events != null) {
+				EventHandler eh = (EventHandler) Events [PageIndexChangedEvent];
+				if (eh != null) eh (this, e);
+			}
+		}
+		
+		protected virtual void OnPageIndexChanging (GridViewPageEventArgs e)
+		{
+			if (Events != null) {
+				GridViewPageEventHandler eh = (GridViewPageEventHandler) Events [PageIndexChangingEvent];
+				if (eh != null) eh (this, e);
+			}
+		}
+		
+		protected virtual void OnRowCancelingEdit (GridViewCancelEditEventArgs e)
+		{
+			if (Events != null) {
+				GridViewCancelEditEventHandler eh = (GridViewCancelEditEventHandler) Events [RowCancelingEditEvent];
+				if (eh != null) eh (this, e);
+			}
+		}
+		
+		protected virtual void OnRowCommand (GridViewCommandEventArgs e)
+		{
+			if (Events != null) {
+				GridViewCommandEventHandler eh = (GridViewCommandEventHandler) Events [RowCommandEvent];
+				if (eh != null) eh (this, e);
+			}
+		}
+		
+		protected virtual void OnRowCreated (GridViewRowEventArgs e)
+		{
+			if (Events != null) {
+				GridViewRowEventHandler eh = (GridViewRowEventHandler) Events [RowCreatedEvent];
+				if (eh != null) eh (this, e);
+			}
+		}
+		
+		protected virtual void OnRowDataBound (GridViewRowEventArgs e)
+		{
+			if (Events != null) {
+				GridViewRowEventHandler eh = (GridViewRowEventHandler) Events [RowDataBoundEvent];
+				if (eh != null) eh (this, e);
+			}
+		}
+		
+		protected virtual void OnRowDeleted (GridViewDeletedEventArgs e)
+		{
+			if (Events != null) {
+				GridViewDeletedEventHandler eh = (GridViewDeletedEventHandler) Events [RowDeletedEvent];
+				if (eh != null) eh (this, e);
+			}
+		}
+		
+		protected virtual void OnRowDeleting (GridViewDeleteEventArgs e)
+		{
+			if (Events != null) {
+				GridViewDeleteEventHandler eh = (GridViewDeleteEventHandler) Events [RowDeletingEvent];
+				if (eh != null) eh (this, e);
+			}
+		}
+		
+		protected virtual void OnRowEditing (GridViewEditEventArgs e)
+		{
+			if (Events != null) {
+				GridViewEditEventHandler eh = (GridViewEditEventHandler) Events [RowEditingEvent];
+				if (eh != null) eh (this, e);
+			}
+		}
+		
+		protected virtual void OnRowUpdated (GridViewUpdatedEventArgs e)
+		{
+			if (Events != null) {
+				GridViewUpdatedEventHandler eh = (GridViewUpdatedEventHandler) Events [RowUpdatedEvent];
+				if (eh != null) eh (this, e);
+			}
+		}
+		
+		protected virtual void OnRowUpdating (GridViewUpdateEventArgs e)
+		{
+			if (Events != null) {
+				GridViewUpdateEventHandler eh = (GridViewUpdateEventHandler) Events [RowUpdatingEvent];
+				if (eh != null) eh (this, e);
+			}
+		}
+		
+		protected virtual void OnSelectedIndexChanged (EventArgs e)
+		{
+			if (Events != null) {
+				EventHandler eh = (EventHandler) Events [SelectedIndexChangedEvent];
+				if (eh != null) eh (this, e);
+			}
+		}
+		
+		protected virtual void OnSelectedIndexChanging (GridViewSelectEventArgs e)
+		{
+			if (Events != null) {
+				GridViewSelectEventHandler eh = (GridViewSelectEventHandler) Events [SelectedIndexChangingEvent];
+				if (eh != null) eh (this, e);
+			}
+		}
+		
+		protected virtual void OnSorted (EventArgs e)
+		{
+			if (Events != null) {
+				EventHandler eh = (EventHandler) Events [SortedEvent];
+				if (eh != null) eh (this, e);
+			}
+		}
+		
+		protected virtual void OnSorting (GridViewSortEventArgs e)
+		{
+			if (Events != null) {
+				GridViewSortEventHandler eh = (GridViewSortEventHandler) Events [SortingEvent];
+				if (eh != null) eh (this, e);
+			}
+		}
+		
 		
 		[WebCategoryAttribute ("Paging")]
 		[DefaultValueAttribute (false)]
@@ -85,10 +307,22 @@ namespace System.Web.UI.WebControls
 			}
 		}
 		
+		[WebCategoryAttribute ("Behavior")]
+		[DefaultValueAttribute (false)]
+		public bool AllowSorting {
+			get {
+				object ob = ViewState ["AllowSorting"];
+				if (ob != null) return (bool) ob;
+				return false;
+			}
+			set {
+				ViewState ["AllowSorting"] = value;
+			}
+		}
+		
 	    [WebCategoryAttribute ("Styles")]
 		[PersistenceMode (PersistenceMode.InnerProperty)]
 		[NotifyParentProperty (true)]
-		[DefaultValue (null)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 		public virtual TableItemStyle AlternatingRowStyle {
 			get {
@@ -100,17 +334,126 @@ namespace System.Web.UI.WebControls
 				return alternatingRowStyle;
 			}
 		}
-		
+
+		[WebCategoryAttribute ("Behavior")]
+		[DefaultValueAttribute (false)]
+		public virtual bool AutoGenerateEditButton {
+			get {
+				object ob = ViewState ["AutoGenerateEditButton"];
+				if (ob != null) return (bool) ob;
+				return false;
+			}
+			set {
+				ViewState ["AutoGenerateEditButton"] = value;
+			}
+		}
+
+		[WebCategoryAttribute ("Behavior")]
+		[DefaultValueAttribute (false)]
+		public virtual bool AutoGenerateDeleteButton {
+			get {
+				object ob = ViewState ["AutoGenerateDeleteButton"];
+				if (ob != null) return (bool) ob;
+				return false;
+			}
+			set {
+				ViewState ["AutoGenerateDeleteButton"] = value;
+			}
+		}
+
+		[WebCategoryAttribute ("Behavior")]
+		[DefaultValueAttribute (false)]
+		public virtual bool AutoGenerateSelectButton {
+			get {
+				object ob = ViewState ["AutoGenerateSelectButton"];
+				if (ob != null) return (bool) ob;
+				return false;
+			}
+			set {
+				ViewState ["AutoGenerateSelectButton"] = value;
+			}
+		}
+
+		[UrlPropertyAttribute]
+		[WebCategoryAttribute ("Appearance")]
+		[DefaultValueAttribute ("")]
+		[EditorAttribute ("System.Web.UI.Design.ImageUrlEditor, System.Design, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
+		public virtual string BackImageUrl {
+			get {
+				object ob = ViewState ["BackImageUrl"];
+				if (ob != null) return (string) ob;
+				return string.Empty;
+			}
+			set {
+				ViewState ["BackImageUrl"] = value;
+			}
+		}
+
 		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
 		[BrowsableAttribute (false)]
 		public virtual GridViewRow BottomPagerRow {
 			get {
-				if (bottomPagerRow == null)
-					bottomPagerRow = CreateRow (0, 0, DataControlRowType.Pager, DataControlRowState.Normal);
+				EnsureDataBound ();
 				return bottomPagerRow;
 			}
 		}
 	
+		[WebCategoryAttribute ("Accessibility")]
+		[DefaultValueAttribute ("")]
+		[LocalizableAttribute (true)]
+		public string Caption {
+			get {
+				object ob = ViewState ["Caption"];
+				if (ob != null) return (string) ob;
+				return string.Empty;
+			}
+			set {
+				ViewState ["Caption"] = value;
+			}
+		}
+		
+		[WebCategoryAttribute ("Accessibility")]
+		[DefaultValueAttribute (TableCaptionAlign.NotSet)]
+		public virtual TableCaptionAlign CaptionAlign
+		{
+			get {
+				object o = ViewState ["CaptionAlign"];
+				if(o != null) return (TableCaptionAlign) o;
+				return TableCaptionAlign.NotSet;
+			}
+			set {
+				ViewState ["CaptionAlign"] = value;
+			}
+		}
+
+		[WebCategoryAttribute ("Layout")]
+		[DefaultValueAttribute (-1)]
+		public virtual int CellPadding
+		{
+			get {
+				object o = ViewState ["CellPadding"];
+				if (o != null) return (int) o;
+				return -1;
+			}
+			set {
+				ViewState ["CellPadding"] = value;
+			}
+		}
+
+		[WebCategoryAttribute ("Layout")]
+		[DefaultValueAttribute (0)]
+		public virtual int CellSpacing
+		{
+			get {
+				object o = ViewState ["CellSpacing"];
+				if (o != null) return (int) o;
+				return 0;
+			}
+			set {
+				ViewState ["CellSpacing"] = value;
+			}
+		}
+		
 		[EditorAttribute ("System.Web.UI.Design.WebControls.DataControlFieldTypeEditor, System.Design, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
 		[MergablePropertyAttribute (false)]
 		[PersistenceModeAttribute (PersistenceMode.InnerProperty)]
@@ -127,11 +470,47 @@ namespace System.Web.UI.WebControls
 				return columns;
 			}
 		}
+
+		[DefaultValueAttribute (null)]
+		[WebCategoryAttribute ("Data")]
+		[TypeConverter (typeof(StringArrayConverter))]
+		[EditorAttribute ("System.Web.UI.Design.WebControls.DataFieldEditor, System.Design, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
+		public virtual string[] DataKeyNames
+		{
+			get {
+				object o = ViewState ["DataKeyNames"];
+				if (o != null) return (string[]) o;
+				return null;
+			}
+			set {
+				ViewState ["DataKeyNames"] = value;
+			}
+		}
+		
+		[BrowsableAttribute (false)]
+		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
+		public virtual DataKeyArray DataKeys {
+			get {
+				EnsureDataBound ();
+				return keys;
+			}
+		}
+
+		[WebCategoryAttribute ("Misc")]
+		[DefaultValueAttribute (-1)]
+		public int EditIndex {
+			get {
+				return editIndex;
+			}
+			set {
+				editIndex = value;
+				RequireBinding ();
+			}
+		}
 	
 	    [WebCategoryAttribute ("Styles")]
 		[PersistenceMode (PersistenceMode.InnerProperty)]
 		[NotifyParentProperty (true)]
-		[DefaultValue (null)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 		public virtual TableItemStyle EditRowStyle {
 			get {
@@ -147,7 +526,6 @@ namespace System.Web.UI.WebControls
 	    [WebCategoryAttribute ("Styles")]
 		[PersistenceMode (PersistenceMode.InnerProperty)]
 		[NotifyParentProperty (true)]
-		[DefaultValue (null)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 		public virtual TableItemStyle EmptyDataRowStyle {
 			get {
@@ -186,6 +564,19 @@ namespace System.Web.UI.WebControls
 			}
 		}
 		
+		[WebCategoryAttribute ("Appearance")]
+		[DefaultValueAttribute (GridLines.Both)]
+		public virtual GridLines GridLines {
+			get {
+				object ob = ViewState ["GridLines"];
+				if (ob != null) return (GridLines) ob;
+				return GridLines.Both;
+			}
+			set {
+				ViewState ["GridLines"] = value;
+			}
+		}
+
 		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
 		[BrowsableAttribute (false)]
 		public virtual GridViewRow HeaderRow {
@@ -212,18 +603,41 @@ namespace System.Web.UI.WebControls
 			}
 		}
 		
+		[DefaultValueAttribute (HorizontalAlign.NotSet)]
+		public virtual HorizontalAlign HorizontalAlign {
+			get {
+				object ob = ViewState ["HorizontalAlign"];
+				if (ob != null) return (HorizontalAlign) ob;
+				return HorizontalAlign.NotSet;
+			}
+			set {
+				ViewState ["HorizontalAlign"] = value;
+			}
+		}
+
 		[BrowsableAttribute (false)]
 		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
 		public int PageCount {
-			get { return (SelectArguments.TotalRowCount / PageSize) + 1; }
+			get {
+				if (pageCount != -1) return pageCount;
+				EnsureDataBound ();
+				if (SelectArguments.TotalRowCount == 0) pageCount = 1;
+				else pageCount = ((SelectArguments.TotalRowCount - 1) / PageSize) + 1;
+				return pageCount;
+			}
 		}
 
 		[WebCategoryAttribute ("Paging")]
 		[BrowsableAttribute (true)]
 		[DefaultValueAttribute (0)]
 		public int PageIndex {
-			get { return pageIndex; }
-			set { pageIndex = value; }
+			get {
+				return pageIndex;
+			}
+			set {
+				pageIndex = value;
+				RequireBinding ();
+			}
 		}
 	
 		[WebCategoryAttribute ("Paging")]
@@ -244,7 +658,6 @@ namespace System.Web.UI.WebControls
 	    [WebCategoryAttribute ("Styles")]
 		[PersistenceMode (PersistenceMode.InnerProperty)]
 		[NotifyParentProperty (true)]
-		[DefaultValue (null)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 		public virtual TableItemStyle PagerStyle {
 			get {
@@ -281,7 +694,6 @@ namespace System.Web.UI.WebControls
 	    [WebCategoryAttribute ("Styles")]
 		[PersistenceMode (PersistenceMode.InnerProperty)]
 		[NotifyParentProperty (true)]
-		[DefaultValue (null)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 		public virtual TableItemStyle RowStyle {
 			get {
@@ -294,10 +706,50 @@ namespace System.Web.UI.WebControls
 			}
 		}
 		
+		[BrowsableAttribute (false)]
+		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
+		public virtual DataKey SelectedDataKey {
+			get {
+				if (selectedIndex >= 0 && selectedIndex < DataKeys.Count) {
+					return DataKeys [selectedIndex];
+				} else
+					return null;
+			}
+		}
+		
+		[BindableAttribute (true)]
+		[DefaultValueAttribute (-1)]
+		public int SelectedIndex {
+			get {
+				return selectedIndex;
+			}
+			set {
+				if (selectedIndex >= 0 && selectedIndex < Rows.Count) {
+					int oldIndex = selectedIndex;
+					selectedIndex = -1;
+					Rows [oldIndex].RowState = GetRowState (oldIndex);
+				}
+				selectedIndex = value;
+				if (selectedIndex >= 0 && selectedIndex < Rows.Count) {
+					Rows [selectedIndex].RowState = GetRowState (selectedIndex);
+				}
+			}
+		}
+	
+		[BrowsableAttribute (false)]
+		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
+		public virtual GridViewRow SelectedRow {
+			get {
+				if (selectedIndex >= 0 && selectedIndex < Rows.Count) {
+					return Rows [selectedIndex];
+				} else
+					return null;
+			}
+		}
+		
 	    [WebCategoryAttribute ("Styles")]
 		[PersistenceMode (PersistenceMode.InnerProperty)]
 		[NotifyParentProperty (true)]
-		[DefaultValue (null)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 		public virtual TableItemStyle SelectedRowStyle {
 			get {
@@ -308,6 +760,11 @@ namespace System.Web.UI.WebControls
 				}
 				return selectedRowStyle;
 			}
+		}
+		
+		[BrowsableAttribute (false)]
+		public virtual object SelectedValue {
+			get { return SelectedDataKey.Value; }
 		}
 		
 		[WebCategoryAttribute ("Appearance")]
@@ -336,6 +793,29 @@ namespace System.Web.UI.WebControls
 			}
 		}
 		
+		[PersistenceModeAttribute (PersistenceMode.InnerProperty)]
+		[BrowsableAttribute (false)]
+		[DefaultValueAttribute (SortDirection.Ascending)]
+		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
+		public virtual SortDirection SortDirection {
+			get { return sortDirection; }
+		}
+		
+		[BrowsableAttribute (false)]
+		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
+		public virtual string SortExpression {
+			get { return sortExpression; }
+		}
+		
+		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
+		[BrowsableAttribute (false)]
+		public virtual GridViewRow TopPagerRow {
+			get {
+				EnsureDataBound ();
+				return topPagerRow;
+			}
+		}
+	
 		public virtual bool IsBindableType (Type type)
 		{
 			return type.IsPrimitive || type == typeof(DateTime) || type == typeof(Guid);
@@ -343,62 +823,230 @@ namespace System.Web.UI.WebControls
 		
 		protected override DataSourceSelectArguments CreateDataSourceSelectArguments ()
 		{
-			DataSourceSelectArguments args = base.CreateDataSourceSelectArguments ();
-			if (AllowPaging) {
-				args.StartRowIndex = PageIndex * PageSize;
-				args.MaximumRows = PageSize;
-			}
-			return args;
+			return base.CreateDataSourceSelectArguments ();
 		}
-	
+		
 		protected virtual GridViewRow CreateRow (int rowIndex, int dataSourceIndex, DataControlRowType rowType, DataControlRowState rowState)
 		{
-			return new GridViewRow (rowIndex, dataSourceIndex, rowType, rowState);
+			GridViewRow row = new GridViewRow (rowIndex, dataSourceIndex, rowType, rowState);
+			OnRowCreated (new GridViewRowEventArgs (row));
+			return row;
+		}
+		
+		void RequireBinding ()
+		{
+			RequiresDataBinding = true;
+			pageCount = -1;
+		}
+		
+		protected virtual ChildTable CreateChildTable ()
+		{
+			ChildTable table = new ChildTable ();
+			table.Caption = Caption;
+			table.CaptionAlign = CaptionAlign;
+			table.CellPadding = CellPadding;
+			table.CellSpacing = CellSpacing;
+			table.HorizontalAlign = HorizontalAlign;
+			table.BackImageUrl = BackImageUrl;
+			return table;
 		}
 	
 		protected override int CreateChildControls (IEnumerable dataSource, bool dataBinding)
 		{
-			table = new Table ();
+			bool showPager = AllowPaging && (PageCount > 1);
+			
+			Controls.Clear ();
+			table = CreateChildTable ();
 			Controls.Add (table);
-
+				
 			ArrayList list = new ArrayList ();
+			ArrayList keyList = new ArrayList ();
+
 			DataControlField[] fields = new DataControlField [Columns.Count];
 			Columns.CopyTo (fields, 0);
+			foreach (DataControlField field in fields)
+				field.Initialize (AllowSorting, this);
 			
-			if (ShowHeader) {
-				table.Rows.Add (HeaderRow);
-				InitializeRow (HeaderRow, fields);
+			if (showPager && PagerSettings.Position == PagerPosition.Top || PagerSettings.Position == PagerPosition.TopAndBottom) {
+				topPagerRow = CreatePagerRow ();
+				table.Rows.Add (topPagerRow);
 			}
 				
+			if (ShowHeader) {
+				headerRow = CreateRow (0, 0, DataControlRowType.Header, DataControlRowState.Normal);
+				table.Rows.Add (headerRow);
+				InitializeRow (headerRow, fields);
+			}
+			
+			int n = 0;
 			foreach (object obj in dataSource) {
-				DataControlRowState rstate = (list.Count % 2) == 0 ? DataControlRowState.Normal : DataControlRowState.Alternate;
+				DataControlRowState rstate = GetRowState (list.Count);
 				GridViewRow row = CreateRow (list.Count, list.Count, DataControlRowType.DataRow, rstate);
 				row.DataItem = obj;
 				list.Add (row);
 				table.Rows.Add (row);
 				InitializeRow (row, fields);
-				if (dataBinding)
+				if (dataBinding) {
 					row.DataBind ();
+					OnRowDataBound (new GridViewRowEventArgs (row));
+					if (EditIndex == row.RowIndex)
+						oldEditValues = new DataKey (GetRowValues (row));
+					keyList.Add (new DataKey (CreateRowDataKey (row), DataKeyNames));
+				} else {
+					if (EditIndex == row.RowIndex)
+						oldEditValues = new DataKey (new OrderedDictionary ());
+					keyList.Add (new DataKey (new OrderedDictionary (), DataKeyNames));
+				}
+
+				if (n >= PageSize)
+					break;
 			}
-			
+
 			if (ShowFooter) {
-				table.Rows.Add (FooterRow);
-				InitializeRow (FooterRow, fields);
+				footerRow = CreateRow (0, 0, DataControlRowType.Footer, DataControlRowState.Normal);
+				table.Rows.Add (footerRow);
+				InitializeRow (footerRow, fields);
 			}
-				
+
+			if (showPager && PagerSettings.Position == PagerPosition.Bottom || PagerSettings.Position == PagerPosition.TopAndBottom) {
+				bottomPagerRow = CreatePagerRow ();
+				table.Rows.Add (bottomPagerRow);
+			}
+
 			rows = new GridViewRowCollection (list);
+			keys = new DataKeyArray (keyList);
 			
 			return list.Count;
 		}
 		
+		DataControlRowState GetRowState (int index)
+		{
+			DataControlRowState rstate = (index % 2) == 0 ? DataControlRowState.Normal : DataControlRowState.Alternate;
+			if (index == SelectedIndex) rstate |= DataControlRowState.Selected;
+			if (index == EditIndex) rstate |= DataControlRowState.Edit;
+			return rstate;
+		}
+		
+		GridViewRow CreatePagerRow ()
+		{
+			GridViewRow row = CreateRow (-1, -1, DataControlRowType.Pager, DataControlRowState.Normal);
+			TableCell cell = new TableCell ();
+			cell.ColumnSpan = row.Cells.Count;
+			cell.Controls.Add (PagerSettings.CreatePagerControl (PageIndex, PageCount));
+			row.Cells.Add (cell);
+			return row;
+		}
+		
 		protected virtual void InitializeRow (GridViewRow row, DataControlField[] fields)
 		{
+			DataControlCellType ctype;
+
+			switch (row.RowType) {
+				case DataControlRowType.Header: ctype = DataControlCellType.Header; break;
+				case DataControlRowType.Footer: ctype = DataControlCellType.Footer; break;
+				default: ctype = DataControlCellType.DataCell; break;
+			}
+			
+			if (AutoGenerateEditButton || AutoGenerateDeleteButton || AutoGenerateSelectButton) {
+				TableCell cell = new TableCell ();
+				row.Cells.Add (cell);
+				
+				if (ctype == DataControlCellType.DataCell)
+				{
+					if ((row.RowState & DataControlRowState.Edit) != 0)
+					{
+						HyperLink link = new HyperLink ();
+						link.Text = "Update";
+						link.NavigateUrl = Page.GetPostBackClientHyperlink (this, "update");
+						cell.Controls.Add (link);
+						
+						Literal lit = new Literal ();
+						lit.Text = "&nbsp;";
+						cell.Controls.Add (lit);
+						
+						link = new HyperLink ();
+						link.Text = "Cancel";
+						link.NavigateUrl = Page.GetPostBackClientHyperlink (this, "cancel");
+						cell.Controls.Add (link);
+					}
+					else
+					{
+						if (AutoGenerateEditButton) {
+							HyperLink link = new HyperLink ();
+							link.Text = "Edit";
+							link.NavigateUrl = Page.GetPostBackClientHyperlink (this, "edit$" + row.RowIndex);
+							cell.Controls.Add (link);
+						}
+						if (AutoGenerateDeleteButton) {
+							HyperLink link = new HyperLink ();
+							link.Text = "Delete";
+							link.NavigateUrl = Page.GetPostBackClientHyperlink (this, "delete$" + row.RowIndex);
+							if (cell.Controls.Count > 0) {
+								Literal lit = new Literal ();
+								lit.Text = "&nbsp;";
+								cell.Controls.Add (lit);
+							}
+							cell.Controls.Add (link);
+						}
+						if (AutoGenerateSelectButton) {
+							HyperLink link = new HyperLink ();
+							link.Text = "Select";
+							link.NavigateUrl = Page.GetPostBackClientHyperlink (this, "select$" + row.RowIndex);
+							if (cell.Controls.Count > 0) {
+								Literal lit = new Literal ();
+								lit.Text = "&nbsp;";
+								cell.Controls.Add (lit);
+							}
+							cell.Controls.Add (link);
+						}
+					 }
+				}
+			}
+
 			for (int n=0; n<fields.Length; n++) {
 				DataControlField field = fields [n];
 				DataControlFieldCell cell = new DataControlFieldCell (field);
 				row.Cells.Add (cell);
-				field.InitializeCell (cell, DataControlCellType.DataCell, row.RowState, row.RowIndex);
+				field.InitializeCell (cell, ctype, row.RowState, row.RowIndex);
 			}
+		}
+		
+		IOrderedDictionary CreateRowDataKey (GridViewRow row)
+		{
+			OrderedDictionary dic = new OrderedDictionary ();
+			ICustomTypeDescriptor desc = row.DataItem as ICustomTypeDescriptor;
+			if (desc != null && DataKeyNames != null) {
+				PropertyDescriptorCollection props = desc.GetProperties ();
+				foreach (string key in DataKeyNames) {
+					PropertyDescriptor prop = props [key];
+					dic [key] = prop.GetValue (row.DataItem);
+				}
+			}
+			return dic;
+		}
+		
+		IOrderedDictionary GetRowValues (GridViewRow row)
+		{
+			OrderedDictionary dic = new OrderedDictionary ();
+			
+			foreach (TableCell cell in row.Cells) {
+				DataControlFieldCell c = cell as DataControlFieldCell;
+				if (c != null)
+					c.ContainingField.ExtractValuesFromCell (dic, c, row.RowState, true);
+			}
+			
+			return dic;
+		}
+		
+		public sealed override void DataBind ()
+		{
+			if (AllowPaging) {
+				SelectArguments.StartRowIndex = PageIndex * PageSize;
+				SelectArguments.MaximumRows = PageSize;
+				SelectArguments.RetrieveTotalRowCount = true;
+				SelectArguments.SortExpression = sortExpression;
+			}
+			base.DataBind ();
 		}
 		
 		protected override void PerformDataBinding (IEnumerable data)
@@ -414,26 +1062,249 @@ namespace System.Web.UI.WebControls
 		
 		void OnFieldsChanged (object sender, EventArgs args)
 		{
-			RequiresDataBinding = true;
+			if (Initialized)
+				RequireBinding ();
 		}
 		
+		protected override void OnDataPropertyChanged ()
+		{
+			base.OnDataPropertyChanged ();
+			RequireBinding ();
+		}
+		
+		protected override void OnDataSourceViewChanged (object sender, EventArgs e)
+		{
+			base.OnDataSourceViewChanged (sender, e);
+			RequireBinding ();
+		}
+		
+		protected override bool OnBubbleEvent (object source, EventArgs e)
+		{
+			GridViewCommandEventArgs args = e as GridViewCommandEventArgs;
+			if (args != null)
+				OnRowCommand (args);
+			return base.OnBubbleEvent (source, e);
+		}
+		
+		void IPostBackEventHandler.RaisePostBackEvent (string eventArgument)
+		{
+			RaisePostBackEvent (eventArgument);
+		}
+		
+		protected virtual void RaisePostBackEvent (string eventArgument)
+		{
+			string eventName;
+			string param;
+			
+			int i = eventArgument.IndexOf ('$');
+			if (i != -1) {
+				eventName = eventArgument.Substring (0, i);
+				param = eventArgument.Substring (i + 1);
+			} else {
+				eventName = eventArgument;
+				param = null;
+			}
+			
+			switch (eventName)
+			{
+				case "page":
+					int newIndex = -1;
+					switch (param) {
+						case "first":
+							newIndex = 0;
+							break;
+						case "last":
+							newIndex = PageCount - 1;
+							break;
+						case "next":
+							if (PageIndex < PageCount - 1) newIndex = PageIndex + 1;
+							break;
+						case "prev":
+							if (PageIndex > 0) newIndex = PageIndex - 1;
+							break;
+						default:
+							newIndex = int.Parse (param);
+							break;
+					}
+					ShowPage (newIndex);
+					break;
+					
+				case "select":
+					SelectRow (int.Parse (param));
+					break;
+					
+				case "edit":
+					EditRow (int.Parse (param));
+					break;
+					
+				case "update":
+					UpdateRow ();
+					break;
+					
+				case "cancel":
+					CancelEdit ();
+					break;
+					
+				case "delete":
+					DeleteRow (int.Parse (param));
+					break;
+					
+				case "sort":
+					Sort (param);
+					break;
+			}
+		}
+		
+		void Sort (string newSortExpression)
+		{
+			SortDirection newDirection;
+			if (sortExpression == newSortExpression) {
+				if (sortDirection == SortDirection.Ascending)
+					newDirection = SortDirection.Descending;
+				else
+					newDirection = SortDirection.Ascending;
+			} else
+				newDirection = sortDirection;
+			
+			GridViewSortEventArgs args = new GridViewSortEventArgs (newSortExpression, newDirection);
+			OnSorting (args);
+			if (args.Cancel) return;
+			
+			sortExpression = args.SortExpression;
+			sortDirection = args.SortDirection;
+			RequireBinding ();
+			
+			OnSorted (EventArgs.Empty);
+		}
+		
+		void SelectRow (int index)
+		{
+			GridViewSelectEventArgs args = new GridViewSelectEventArgs (index);
+			OnSelectedIndexChanging (args);
+			if (!args.Cancel) {
+				SelectedIndex = args.NewSelectedIndex;
+				OnSelectedIndexChanged (EventArgs.Empty);
+			}
+		}
+		
+		void ShowPage (int newIndex)
+		{
+			GridViewPageEventArgs args = new GridViewPageEventArgs (newIndex);
+			OnPageIndexChanging (args);
+			if (!args.Cancel) {
+				EndRowEdit ();
+				PageIndex = args.NewPageIndex;
+				OnPageIndexChanged (EventArgs.Empty);
+			}
+		}
+		
+		void EditRow (int index)
+		{
+			GridViewEditEventArgs args = new GridViewEditEventArgs (index);
+			OnRowEditing (args);
+			if (!args.Cancel) {
+				EditIndex = args.NewEditIndex;
+			}
+		}
+		
+		void CancelEdit ()
+		{
+			GridViewCancelEditEventArgs args = new GridViewCancelEditEventArgs (EditIndex);
+			OnRowCancelingEdit (args);
+			if (!args.Cancel) {
+				EndRowEdit ();
+			}
+		}
+
+		void UpdateRow ()
+		{
+			GridViewRow row = Rows [EditIndex];
+			currentEditRowKeys = DataKeys [EditIndex].Values;
+			currentEditNewValues = GetRowValues (row);
+			currentEditOldValues = oldEditValues.Values;
+			
+			GridViewUpdateEventArgs args = new GridViewUpdateEventArgs (EditIndex, currentEditRowKeys, currentEditOldValues, currentEditNewValues);
+			OnRowUpdating (args);
+			if (!args.Cancel) {
+				DataSourceView view = GetData ();
+				if (view != null)
+					view.Update (currentEditRowKeys, currentEditNewValues, currentEditOldValues, new DataSourceViewOperationCallback (UpdateCallback));
+				else {
+					GridViewUpdatedEventArgs dargs = new GridViewUpdatedEventArgs (0, null, currentEditRowKeys, currentEditOldValues, currentEditNewValues);
+					OnRowUpdated (dargs);
+					if (!dargs.KeepInEditMode)				
+						EndRowEdit ();
+				}
+			} else
+				EndRowEdit ();
+		}
+
+        bool UpdateCallback (int recordsAffected, Exception exception)
+		{
+			GridViewUpdatedEventArgs dargs = new GridViewUpdatedEventArgs (recordsAffected, exception, currentEditRowKeys, currentEditOldValues, currentEditNewValues);
+			OnRowUpdated (dargs);
+
+			if (!dargs.KeepInEditMode)				
+				EndRowEdit ();
+
+			return dargs.ExceptionHandled;
+		}
+		
+		void DeleteRow (int rowIndex)
+		{
+			GridViewRow row = Rows [rowIndex];
+			currentEditRowKeys = DataKeys [rowIndex].Values;
+			currentEditNewValues = GetRowValues (row);
+			
+			GridViewDeleteEventArgs args = new GridViewDeleteEventArgs (rowIndex, currentEditRowKeys, currentEditNewValues);
+			OnRowDeleting (args);
+
+			if (!args.Cancel) {
+				DataSourceView view = GetData ();
+				if (view != null)
+					view.Delete (currentEditRowKeys, currentEditNewValues, new DataSourceViewOperationCallback (DeleteCallback));
+				else {
+					GridViewDeletedEventArgs dargs = new GridViewDeletedEventArgs (0, null, currentEditRowKeys, currentEditNewValues);
+					OnRowDeleted (dargs);
+				}
+			}
+		}
+
+        bool DeleteCallback (int recordsAffected, Exception exception)
+		{
+			GridViewDeletedEventArgs dargs = new GridViewDeletedEventArgs (recordsAffected, exception, currentEditRowKeys, currentEditNewValues);
+			OnRowDeleted (dargs);
+			return dargs.ExceptionHandled;
+		}
+		
+		void EndRowEdit ()
+		{
+			EditIndex = -1;
+			oldEditValues = new DataKey (new OrderedDictionary ());
+			currentEditRowKeys = null;
+			currentEditOldValues = null;
+			currentEditNewValues = null;
+		}
+
 		protected internal override void LoadControlState (object ob)
 		{
 			if (ob == null) return;
 			object[] state = (object[]) ob;
 			base.LoadControlState (state[0]);
 			pageIndex = (int) state[1];
+			pageCount = (int) state[2];
+			selectedIndex = (int) state[3];
+			editIndex = (int) state[4];
+			sortExpression = (string) state[5];
+			sortDirection = (SortDirection) state[6];
 		}
 		
 		protected internal override object SaveControlState ()
 		{
 			object bstate = base.SaveControlState ();
-			object mstate = pageIndex;
-			
-			if (bstate != null || mstate != null)
-				return new object[] { bstate, mstate };
-			else
-				return null;
+			return new object[] {
+				bstate, pageIndex, pageCount, selectedIndex, editIndex, sortExpression, sortDirection
+			};
 		}
 		
 		protected override void TrackViewState()
@@ -449,11 +1320,12 @@ namespace System.Web.UI.WebControls
 			if (selectedRowStyle != null) ((IStateManager)selectedRowStyle).TrackViewState();
 			if (editRowStyle != null) ((IStateManager)editRowStyle).TrackViewState();
 			if (emptyDataRowStyle != null) ((IStateManager)emptyDataRowStyle).TrackViewState();
+			if (keys != null) ((IStateManager)keys).TrackViewState();
 		}
 
 		protected override object SaveViewState()
 		{
-			object[] states = new object [11];
+			object[] states = new object [13];
 			states[0] = base.SaveViewState();
 			states[1] = (columns == null ? null : ((IStateManager)columns).SaveViewState());
 			states[2] = (pagerSettings == null ? null : ((IStateManager)pagerSettings).SaveViewState());
@@ -465,6 +1337,8 @@ namespace System.Web.UI.WebControls
 			states[8] = (selectedRowStyle == null ? null : ((IStateManager)selectedRowStyle).SaveViewState());
 			states[9] = (editRowStyle == null ? null : ((IStateManager)editRowStyle).SaveViewState());
 			states[10] = (emptyDataRowStyle == null ? null : ((IStateManager)emptyDataRowStyle).SaveViewState());
+			states[11] = (keys == null ? null : ((IStateManager)keys).SaveViewState());
+			states[12] = (oldEditValues == null ? null : ((IStateManager)oldEditValues).SaveViewState());
 
 			for (int i = states.Length - 1; i >= 0; i--) {
 				if (states [i] != null)
@@ -482,6 +1356,8 @@ namespace System.Web.UI.WebControls
 			object [] states = (object []) savedState;
 			base.LoadViewState (states[0]);
 			
+			EnsureChildControls ();
+			
 			if (states[1] != null) ((IStateManager)Columns).LoadViewState (states[1]);
 			if (states[2] != null) ((IStateManager)PagerSettings).LoadViewState (states[2]);
 			if (states[3] != null) ((IStateManager)AlternatingRowStyle).LoadViewState (states[3]);
@@ -492,10 +1368,32 @@ namespace System.Web.UI.WebControls
 			if (states[8] != null) ((IStateManager)SelectedRowStyle).LoadViewState (states[8]);
 			if (states[9] != null) ((IStateManager)EditRowStyle).LoadViewState (states[9]);
 			if (states[10] != null) ((IStateManager)EmptyDataRowStyle).LoadViewState (states[10]);
+			if (states[11] != null) ((IStateManager)DataKeys).LoadViewState (states[11]);
+			if (states[12] != null && oldEditValues != null) ((IStateManager)oldEditValues).LoadViewState (states[12]);
 		}
 		
 		protected override void Render (HtmlTextWriter writer)
 		{
+			switch (GridLines) {
+				case GridLines.Horizontal:
+					writer.AddAttribute (HtmlTextWriterAttribute.Rules, "rows");
+					writer.AddAttribute (HtmlTextWriterAttribute.Border, "1");
+					break;
+				case GridLines.Vertical:
+					writer.AddAttribute (HtmlTextWriterAttribute.Rules, "cols");
+					writer.AddAttribute (HtmlTextWriterAttribute.Border, "1");
+					break;
+				case GridLines.Both:
+					writer.AddAttribute (HtmlTextWriterAttribute.Rules, "all");
+					writer.AddAttribute (HtmlTextWriterAttribute.Border, "1");
+					break;
+				default:
+					writer.AddAttribute (HtmlTextWriterAttribute.Border, "0");
+					break;
+			}
+			
+			writer.AddAttribute (HtmlTextWriterAttribute.Cellspacing, "0");
+			writer.AddStyleAttribute (HtmlTextWriterStyle.BorderCollapse, "collapse");
 			table.RenderBeginTag (writer);
 			
 			foreach (GridViewRow row in table.Rows)
@@ -538,10 +1436,10 @@ namespace System.Web.UI.WebControls
 						}
 						if (cellStyle != null)
 							cellStyle.AddAttributesToRender (writer, cell);
-					} else {
-						cell.Render (writer);
 					}
+					cell.Render (writer);
 				}
+				row.RenderEndTag (writer);
 			}
 			table.RenderEndTag (writer);
 		}

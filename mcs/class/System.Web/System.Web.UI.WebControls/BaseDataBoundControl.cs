@@ -94,8 +94,8 @@ namespace System.Web.UI.WebControls
 		
 		public override void DataBind ()
 		{
-			PerformSelect ();
 			RequiresDataBinding = false;
+			PerformSelect ();
 			OnDataBound (EventArgs.Empty);
 		}
 		

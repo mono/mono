@@ -50,6 +50,7 @@ namespace System.Web.UI.WebControls {
 		TableItemStyle footerStyle;
 		TableItemStyle headerStyle;
 		TableItemStyle itemStyle;
+		bool sortingEnabled;
 		
 		protected DataControlField()
 		{ 
@@ -72,6 +73,7 @@ namespace System.Web.UI.WebControls {
 
 		public virtual bool Initialize (bool sortingEnabled, Control control)
 		{
+			this.sortingEnabled = sortingEnabled;
 			this.control = control;
 			return true;
 		}
@@ -79,40 +81,62 @@ namespace System.Web.UI.WebControls {
 		public virtual void InitializeCell (DataControlFieldCell cell,
 			DataControlCellType cellType, DataControlRowState rowState, int rowIndex)
 		{
-			if (cellType == DataControlCellType.Header && ShowHeader) {
-				if (HeaderImageUrl != "") {
-					Image img = new Image ();
-					img.ImageUrl = HeaderImageUrl;
-					cell.Controls.Add (img);
-					if (HeaderText != "") {
-						Label label = new Label ();
-						label.Text = HeaderText;
-						cell.Controls.Add (label);
+			bool isDataControl = control is DataBoundControl;
+			
+			if (cellType == DataControlCellType.Header && ShowHeader)
+			{
+				if (HeaderImageUrl != "")
+				{
+					if (sortingEnabled && SortExpression != "") {
+						if (isDataControl) {
+							HyperLink link = new HyperLink ();
+							link.ImageUrl = HeaderImageUrl;
+							link.NavigateUrl = control.Page.GetPostBackClientHyperlink (control, "sort$" + SortExpression);
+							if (HeaderText != "")
+								link.Text = HeaderText;
+							cell.Controls.Add (link);
+						} else {
+							ImageButton img = new ImageButton ();
+							img.CommandName = "Sort";
+							img.CommandArgument = SortExpression;
+							img.ImageUrl = HeaderImageUrl;
+							if (HeaderText != "")
+								img.AlternateText = HeaderText;
+							cell.Controls.Add (img);
+						}
 					}
-				} else {
+					else {
+						Image img = new Image ();
+						img.ImageUrl = HeaderImageUrl;
+						if (HeaderText != "")
+							img.AlternateText = HeaderText;
+						cell.Controls.Add (img);
+					}
+				}
+				else if (sortingEnabled && SortExpression != "")
+				{
+					if (isDataControl) {
+						HyperLink link = new HyperLink ();
+						link.Text = HeaderText;
+						link.NavigateUrl = control.Page.GetPostBackClientHyperlink (control, "sort$" + SortExpression);
+						cell.Controls.Add (link);
+					} else {
+						LinkButton btn = new LinkButton ();
+						btn.Text = HeaderText;
+						btn.CommandName = "Sort";
+						btn.CommandArgument = SortExpression;
+						cell.Controls.Add (btn);
+					}
+				}
+				else {
 					cell.Text = HeaderText;
 				}
-			} else if (cellType == DataControlCellType.Footer) {
+			}
+			else if (cellType == DataControlCellType.Footer) {
 				cell.Text = FooterText;
 			}
 		}
 		
-		void SetCellText (DataControlFieldCell cell, string text, string img)
-		{
-			if (img != "") {
-				Image image = new Image ();
-				image.ImageUrl = HeaderImageUrl;
-				cell.Controls.Add (image);
-				if (text != "") {
-					Label label = new Label ();
-					label.Text = text;
-					cell.Controls.Add (label);
-				}
-			} else {
-				cell.Text = text;
-			}
-		}
-
 		protected virtual void OnFieldChanged ()
 		{
 			if (FieldChanged != null)

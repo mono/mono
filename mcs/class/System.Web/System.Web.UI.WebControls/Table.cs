@@ -111,7 +111,7 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		[DefaultValue (""), WebCategory ("Accessibility")]
+		[DefaultValue (TableCaptionAlign.NotSet), WebCategory ("Accessibility")]
 		public virtual TableCaptionAlign CaptionAlign
 		{
 			get {

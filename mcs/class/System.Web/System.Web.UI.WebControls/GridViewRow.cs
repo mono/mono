@@ -63,7 +63,6 @@ namespace System.Web.UI.WebControls
 		
 		public virtual int DataItemIndex {
 			get { return dataItemIndex; }
-			set { dataItemIndex = value; }
 		}
 		
 		public virtual int RowIndex {
@@ -90,8 +89,20 @@ namespace System.Web.UI.WebControls
 		
 		int IDataItemContainer.DisplayIndex {
 			get { return RowIndex; }
+		}*/	
+		
+		protected override bool OnBubbleEvent (object source, EventArgs e)
+		{
+			if (base.OnBubbleEvent (source, e)) return true;
+			
+			if (e is CommandEventArgs) {
+				GridViewCommandEventArgs args = new GridViewCommandEventArgs (this, source, (CommandEventArgs)e);
+				RaiseBubbleEvent (source, args);
+				return true;
+			}
+			return false;
 		}
-*/	}
+	}
 }
 
 #endif
