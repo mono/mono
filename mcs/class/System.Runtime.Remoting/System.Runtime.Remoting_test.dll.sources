@@ -6,5 +6,6 @@ BaseCalls.cs
 SyncCalls.cs
 AsyncCalls.cs
 ReflectionCalls.cs
+DelegateCalls.cs
 TcpCalls.cs
 HttpCalls.cs

@@ -1,3 +1,7 @@
+2003-08-22  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* System.Runtime.Remoting_test.dll.sources: Added DelegateCalls.cs test file.
+
 2003-08-20  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* TcpConnectionPool.cs: Check if a connection is alive before reusing
