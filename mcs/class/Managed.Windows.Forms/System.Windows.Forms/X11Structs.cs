@@ -23,9 +23,13 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.3 $
+// $Revision: 1.4 $
 // $Modtime: $
 // $Log: X11Structs.cs,v $
+// Revision 1.4  2004/08/06 21:30:56  pbartok
+// - Fixed recursive loop when resizing
+// - Improved/fixed redrawing on expose messages
+//
 // Revision 1.3  2004/08/06 15:53:39  jordi
 // X11 keyboard navigation
 //
@@ -578,6 +582,14 @@ namespace System.Windows.Forms {
 		internal long		do_not_propagate_mask;
 		internal bool		override_direct;
 		internal IntPtr		screen;
+	}
+
+	[StructLayout(LayoutKind.Sequential, Pack=4)]
+	internal struct XTextProperty {
+		internal string		value;
+		internal IntPtr		encoding;
+		internal int		format;
+		internal ulong		nitems;
 	}
 	#endregion
 

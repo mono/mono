@@ -29,9 +29,13 @@
 //	Jaak Simm		jaaksimm@firm.ee
 //	John Sohn		jsohn@columbus.rr.com
 //
-// $Revision: 1.10 $
+// $Revision: 1.11 $
 // $Modtime: $
 // $Log: Control.cs,v $
+// Revision 1.11  2004/08/06 21:30:56  pbartok
+// - Fixed recursive loop when resizing
+// - Improved/fixed redrawing on expose messages
+//
 // Revision 1.10  2004/08/06 15:53:39  jordi
 // X11 keyboard navigation
 //
@@ -1154,9 +1158,11 @@ namespace System.Windows.Forms
 			bounds.Width=width;
 			bounds.Height=height;
 
+#if notdef
 			if (IsHandleCreated) {
 				XplatUI.SetWindowPos(Handle, bounds);
 			}
+#endif
 
 			if (moved) {
 				OnLocationChanged(EventArgs.Empty);

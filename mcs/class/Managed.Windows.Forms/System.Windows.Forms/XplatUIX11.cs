@@ -23,9 +23,13 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.5 $
+// $Revision: 1.6 $
 // $Modtime: $
 // $Log: XplatUIX11.cs,v $
+// Revision 1.6  2004/08/06 21:30:56  pbartok
+// - Fixed recursive loop when resizing
+// - Improved/fixed redrawing on expose messages
+//
 // Revision 1.5  2004/08/06 15:53:39  jordi
 // X11 keyboard navigation
 //
@@ -134,7 +138,6 @@ namespace System.Windows.Forms {
 			if (FosterParent==IntPtr.Zero) {
 				Console.WriteLine("XplatUIX11 Constructor failed to create FosterParent");
 			}
-			Console.WriteLine("XplatUIX11 Constructor called, DisplayHandle {0:X}", DisplayHandle);
 		}
 
 		~XplatUIX11() {
@@ -142,7 +145,6 @@ namespace System.Windows.Forms {
 				XCloseDisplay(DisplayHandle);
 				DisplayHandle=IntPtr.Zero;
 			}
-			Console.WriteLine("XplatUI Destructor called");
 		}
 		#endregion	// Constructor & Destructor
 
@@ -171,8 +173,6 @@ namespace System.Windows.Forms {
 				mouse_position=Point.Empty;
 			}
 
-			Console.WriteLine("XplatUIX11.InitializeDriver() called");
-
 			return IntPtr.Zero;
 		}
 
@@ -181,7 +181,6 @@ namespace System.Windows.Forms {
 				XCloseDisplay(DisplayHandle);
 				DisplayHandle=IntPtr.Zero;
 			}
-			Console.WriteLine("XplatUIX11.ShutdownDriver called");
 		}
 
 
@@ -258,6 +257,7 @@ namespace System.Windows.Forms {
 		}
 
 		internal override void RefreshWindow(IntPtr handle) {
+			XFlush(DisplayHandle);
 			Console.WriteLine("XplatUIX11.RefreshWindow");
 		}
 
@@ -290,7 +290,8 @@ namespace System.Windows.Forms {
 
 		internal override void SetWindowPos(IntPtr handle, int x, int y, int width, int height) {
 			XMoveResizeWindow(DisplayHandle, handle, x, y, width, height);
-Console.WriteLine("Moving window to {0}:{1} {2}x{3}", x, y, width, height);
+Console.WriteLine("Set window pos {0}:{1} {2}x{3}", x, y, width, height);
+Where();
 			return;
 		}
 
@@ -408,7 +409,6 @@ Console.WriteLine("Moving window to {0}:{1} {2}x{3}", x, y, width, height);
 
 				case XEventName.Expose: {
 					msg.message=Msg.WM_PAINT;
-					msg.hwnd=hWnd;
 					paint_area.X=xevent.ExposeEvent.x;
 					paint_area.Y=xevent.ExposeEvent.y;
 					paint_area.Width=xevent.ExposeEvent.width;
@@ -440,7 +440,14 @@ Console.WriteLine("Moving window to {0}:{1} {2}x{3}", x, y, width, height);
 		}
 
 		internal override bool Text(IntPtr handle, string text) {
-			Console.WriteLine("Setting window text {0}", text);
+#if notdef
+			XTextProperty	property = new XTextProperty();
+
+			property.encoding=
+			XSetWMName(DisplayHandle, handle, ref property);
+#else
+			XStoreName(DisplayHandle, handle, text);
+#endif
 			return true;
 		}
 
@@ -611,6 +618,15 @@ Console.WriteLine("Setting parent for window {0} to {1}, border width of window:
 
 		[DllImport ("libX11.so", EntryPoint="XGetWindowAttributes")]
 		internal extern static int XGetWindowAttributes(IntPtr display, IntPtr window, ref XWindowAttributes attributes);
+
+		[DllImport ("libX11.so", EntryPoint="XFlush")]
+		internal extern static int XFlush(IntPtr display);
+
+		[DllImport ("libX11.so", EntryPoint="XSetWMName")]
+		internal extern static int XSetWMName(IntPtr display, IntPtr window, ref XTextProperty text_prop);
+
+		[DllImport ("libX11.so", EntryPoint="XStoreName")]
+		internal extern static int XStoreName(IntPtr display, IntPtr window, string window_name);
 
 		// Drawing
 		[DllImport ("libX11.so", EntryPoint="XCreateGC")]
