@@ -1,3 +1,7 @@
+2002-07-27  Martin Baulig  <martin@gnome.org>
+
+	Mono 0.13 has been released.
+
 2002-07-25  Miguel de Icaza  <miguel@ximian.com>
 
 	* driver.cs: Rename --resource to --linkres, because that is what
