@@ -1,3 +1,9 @@
+
+Tue Mar 4 18:03:27 CET 2003 Paolo Molaro <lupus@ximian.com>
+
+	* socket-io.c:  handle case when AF_INET6 and AF_IPX are not defined
+	(pointed out by Michael Adams).
+
 2003-03-04  Dick Porter  <dick@ximian.com>
 
 	* icall.c: Temporarily reverted the Double and Single ToString()
