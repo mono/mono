@@ -15,6 +15,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Diagnostics.SymbolStore;
 using System.IO;
+using Mono.CSharp.Debugger;
 
 namespace System.Reflection.Emit {
 	public class ModuleBuilder : Module {
@@ -27,13 +28,15 @@ namespace System.Reflection.Emit {
 		private FieldBuilder[] global_fields;
 		private TypeBuilder global_type;
 		private Type global_type_created;
-		internal ISymbolWriter symbol_writer;
+		private bool is_main_module;
+		internal IMonoSymbolWriter symbol_writer;
 		Hashtable name_cache;
 
-		internal ModuleBuilder (AssemblyBuilder assb, string name, string fullyqname, bool emitSymbolInfo) {
+		internal ModuleBuilder (AssemblyBuilder assb, string name, string fullyqname, bool emitSymbolInfo, bool isMainModule) {
 			this.name = this.scopename = name;
 			this.fqname = fullyqname;
 			this.assembly = this.assemblyb = assb;
+			this.is_main_module = isMainModule;
 			guid = Guid.NewGuid().ToByteArray ();
 			table_idx = get_next_table_index (this, 0x00, true);
 			name_cache = new Hashtable ();
@@ -60,16 +63,14 @@ namespace System.Reflection.Emit {
 
 			// First get the constructor.
 			{
-				Type[] arg_types = new Type [3];
+				Type[] arg_types = new Type [2];
 				arg_types [0] = typeof (ModuleBuilder);
-				arg_types [1] = typeof (string);
-				arg_types [2] = typeof (ArrayList);
+				arg_types [1] = typeof (ArrayList);
 				ConstructorInfo constructor = type.GetConstructor (arg_types);
 
-				object[] args = new object [3];
+				object[] args = new object [2];
 				args [0] = this;
-				args [1] = filename;
-				args [2] = assemblyb.methods;
+				args [1] = assemblyb.methods;
 
 				if (constructor == null)
 					return;
@@ -78,10 +79,10 @@ namespace System.Reflection.Emit {
 				if (instance == null)
 					return;
 
-				if (!(instance is ISymbolWriter))
+				if (!(instance is IMonoSymbolWriter))
 					return;
 
-				symbol_writer = (ISymbolWriter) instance;
+				symbol_writer = (IMonoSymbolWriter) instance;
 			}
 		}
 
@@ -358,6 +359,20 @@ namespace System.Reflection.Emit {
 			Array.Copy (types, copy, n);
 
 			return copy;
+		}
+
+		internal void Save ()
+		{
+			if (symbol_writer != null) {
+				string res_name;
+				if (is_main_module)
+					res_name = "MonoSymbolFile";
+				else
+					res_name = "MonoSymbolFile:" + fqname;
+				byte[] data = symbol_writer.CreateSymbolFile (assemblyb);
+				assemblyb.EmbedResource (res_name, data, ResourceAttributes.Public);
+				Console.WriteLine ("RESOURCE: |{0}|", res_name);
+			}
 		}
 	}
 }

@@ -140,6 +140,21 @@ namespace System.Reflection.Emit {
 			}
 		}
 
+		internal void EmbedResource (string name, byte[] blob, ResourceAttributes attribute)
+		{
+			if (resources != null) {
+				MonoResource[] new_r = new MonoResource [resources.Length + 1];
+				System.Array.Copy(resources, new_r, resources.Length);
+				resources = new_r;
+			} else {
+				resources = new MonoResource [1];
+			}
+			int p = resources.Length - 1;
+			resources [p].name = name;
+			resources [p].attrs = attribute;
+			resources [p].data = blob;
+		}
+
 		public ModuleBuilder DefineDynamicModule (string name)
 		{
 			return DefineDynamicModule (name, name, false);
@@ -158,7 +173,7 @@ namespace System.Reflection.Emit {
 		public ModuleBuilder DefineDynamicModule (string name, string fileName,
 							  bool emitSymbolInfo)
 		{
-			ModuleBuilder r = new ModuleBuilder (this, name, fileName, emitSymbolInfo);
+			ModuleBuilder r = new ModuleBuilder (this, name, fileName, emitSymbolInfo, modules == null);
 
 			if (modules != null) {
 				ModuleBuilder[] new_modules = new ModuleBuilder [modules.Length + 1];
@@ -267,6 +282,11 @@ namespace System.Reflection.Emit {
 			FileStream file;
 			int count, offset;
 
+			build_metadata (this);
+
+			foreach (ModuleBuilder module in modules)
+				module.Save ();
+
 			if (dir != null) {
 				assemblyFileName = String.Format ("{0}{1}{2}", dir, System.IO.Path.DirectorySeparatorChar, assemblyFileName);
 			}
@@ -285,6 +305,9 @@ namespace System.Reflection.Emit {
 			//
 			File.SetAttributes (assemblyFileName, (FileAttributes) (unchecked ((int) 0x80000000)));
 		}
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		private static extern void build_metadata (AssemblyBuilder ab);
 
 		public void SetEntryPoint (MethodInfo entryMethod)
 		{

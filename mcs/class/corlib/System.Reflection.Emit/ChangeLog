@@ -1,3 +1,20 @@
+2003-02-07  Martin Baulig  <martin@ximian.com>
+
+	* ModuleBuilder.cs (.ctor): Added `bool IsMainModule' argument.
+	(Save): New internal method; creates the module's symbol file if
+	we're compiling with debugging information.
+
+	* AssemblyBuilder.cs (EmbedResource): Added internal overloaded
+	version of this method which takes a `byte[] blob' instead of a file.
+	(DefineDynamicMethod): If this is the first module, tell the
+	ModuleBuilder that this is the main module.
+	(Save): Call a new interncall `build_metadata' to create the final
+	metadata and save all the symbol files before creating the actual
+	output.
+
+	* IMonoSymbolWriter.cs: New public class; it is in the namespace
+	Mono.CSharp.Debugger.  The Mono symbol writer implements this interface.
+
 2003-02-04  Zoltan Varga  <vargaz@freemail.hu>
 
 	* AssemblyBuilder.cs: added GetToken (SignatureHelper).
