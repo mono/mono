@@ -12,7 +12,7 @@ using System.Collections;
 using System.Data;
 
 namespace Mono.Data.SqlExpressions {
-	public class Negative : UnaryExpression {
+	internal class Negative : UnaryExpression {
 		public Negative (IExpression e) : base (e) {}
 	
 		override public object Eval (DataRow row)
@@ -21,7 +21,7 @@ namespace Mono.Data.SqlExpressions {
 		}
 	}
 	
-	public class ArithmeticOperation : BinaryOpExpression {
+	internal class ArithmeticOperation : BinaryOpExpression {
 		public ArithmeticOperation (Operation op, IExpression e1, IExpression e2) : base (op, e1, e2) {}
 	
 		override public object Eval (DataRow row)
