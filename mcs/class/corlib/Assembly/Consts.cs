@@ -48,6 +48,8 @@
 // [Designer ("System.Diagnostics.Design.ProcessDesigner, " + Consts.AssemblySystem_Design, typeof (IDesigner))]
 //
 
+using System.Runtime.InteropServices;
+
 internal sealed class Consts
 {
 	
@@ -74,4 +76,5 @@ internal sealed class Consts
 
 #endif
 
+	public const UnmanagedType UnmanagedType_80 = (UnmanagedType) 80;
 }
