@@ -1,3 +1,8 @@
+2002-06-09  Duncan Mak  <duncan@ximian.com>
+
+	* Convert.cs (ToType): Rearranged what Exceptions we throw to
+	match MS behavior.
+
 2002-06-08  Duncan Mak  <duncan@ximian.com>
 
 	* Decimal.cs: Added support for the IConvertible interface.

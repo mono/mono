@@ -2389,10 +2389,12 @@ namespace System {
 		internal static object ToType (object value, Type conversionType, 
 					       IFormatProvider provider) 
 		{
+			if (value == null && conversionType == null)
+				return null;
+			
 			if (value == null)
-				throw new ArgumentException (Locale.GetText (
-					"Invalid conversion from null value"));
-
+				throw new NullReferenceException ("Value is null.");
+			
 			if (value is IConvertible) {
 				IConvertible convertValue = (IConvertible) value;
 
