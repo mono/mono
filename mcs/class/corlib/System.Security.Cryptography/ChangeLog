@@ -1,9 +1,15 @@
+2004-02-06  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* SymmetricAlgorithm.cs: Removed class SymmetricTransform from file
+	and moved it to Mono.Security.Cryptography namespace. The transform
+	class will also be included in Mono.Security assembly.
+
 2004-02-06  David Sheldon <dave-mono@earth.li>
 
   * FromBase64Transform.cs: Improved code layout to match coding style, 
    and removed the Byte comparison with -1.
 
-2004-02-04  Sebastien Pouliot  <spouliot@videotron.ca>
+2004-02-04  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* CryptoStream.cs: New implementation - should fix all known issues
 	with the class (Read/WriteByte, reading by non-multiple of the
