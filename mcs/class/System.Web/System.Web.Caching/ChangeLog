@@ -1,5 +1,9 @@
 2004-01-04  Jackson Harper <jackson@ximian.com>
 
+	* OutputCacheModule.cs: Dont cache items when trace is enabled.
+	
+2004-01-04  Jackson Harper <jackson@ximian.com>
+
 	* OutputCacheModule.cs: Update the date header value.
 	* CachedRawResponse.cs: Expose a ref to the date header, so it can
 	be easily set/updated. Remove unused methods and vars.

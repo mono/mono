@@ -83,7 +83,8 @@ namespace System.Web.Caching {
 			HttpContext context = app.Context;
 			HttpAsyncResult result;
 
-			if (context.Response.IsCached && context.Response.StatusCode == 200)
+			if (context.Response.IsCached && context.Response.StatusCode == 200 && 
+			    !context.Trace.IsEnabled)
 				DoCacheInsert (context);
 
 			result = new HttpAsyncResult (cb, this);
