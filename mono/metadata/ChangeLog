@@ -1,3 +1,7 @@
+2003-06-15  Zoltan Varga  <vargaz@freemail.hu>
+
+	* gc.c: Start GCHandle indexes from 1, since 0 means the handle is
+	not allocated.
 
 Sat Jun 14 19:01:32 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
