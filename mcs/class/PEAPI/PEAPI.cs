@@ -133,7 +133,7 @@ namespace PEAPI
             }
   }
 
-	public class Sentinel : Type {
+        public class Sentinel : Type {
 
             public Sentinel () : base (0x41) { }
 
@@ -142,11 +142,11 @@ namespace PEAPI
             }
         }
 
-	/// <summary>
-	/// The IL Array type
-	/// </summary>
-	public abstract class Array : Type
-	{
+        /// <summary>
+        /// The IL Array type
+        /// </summary>
+        public abstract class Array : Type
+        {
 
     protected Type elemType;
                 protected MetaData metaData;
@@ -154,7 +154,7 @@ namespace PEAPI
 
     internal Array(Type eType, byte TypeId) : base(TypeId) {
       elemType = eType;
-			tabIx = MDTable.TypeSpec;
+                        tabIx = MDTable.TypeSpec;
     }
 
     internal Array(Class eClass, MetaData md, string nameSpace, string name,
@@ -176,7 +176,7 @@ namespace PEAPI
               return meth;
       }
  
-	}
+        }
 
   /**************************************************************************/  
   
@@ -354,13 +354,13 @@ namespace PEAPI
       return 0;
     }
 
-  }	
+  }     
   /**************************************************************************/  
-	/// <summary>
-	/// A reference to an external assembly (.assembly extern)
-	/// </summary>
-	public class AssemblyRef : ResolutionScope
-	{
+        /// <summary>
+        /// A reference to an external assembly (.assembly extern)
+        /// </summary>
+        public class AssemblyRef : ResolutionScope
+        {
     private ushort major, minor, build, revision;
     uint flags, keyIx, hashIx, cultIx;
     bool hasVersion = false, isKeyToken = false;
@@ -369,7 +369,7 @@ namespace PEAPI
 
     internal AssemblyRef(MetaData md, string name) : base(name,md) {
       tabIx = MDTable.AssemblyRef;
-		}
+                }
 
     /// <summary>
     /// Add version information about this external assembly
@@ -493,7 +493,7 @@ namespace PEAPI
       return 0;
     }
  
-	}
+        }
   /**************************************************************************/  
 
   /// <summary>
@@ -664,11 +664,11 @@ namespace PEAPI
   internal enum MapType { eventMap, propertyMap, nestedClass }
 
   /**************************************************************************/  
-	/// <summary>
-	/// The assembly for mscorlib.  
-	/// </summary>
-	public sealed class MSCorLib : AssemblyRef
-	{
+        /// <summary>
+        /// The assembly for mscorlib.  
+        /// </summary>
+        public sealed class MSCorLib : AssemblyRef
+        {
     private static readonly int valueTypeIx = 18;
     private readonly string systemName = "System";
     private ClassRef[] systemClasses = new ClassRef[valueTypeIx+2];
@@ -813,18 +813,18 @@ namespace PEAPI
       return aClass;
     }
 
-	}
+        }
   /**************************************************************************/  
-	/// <summary>
-	/// Signature for calli instruction
-	/// </summary>
-	public class CalliSig : Signature
-	{
+        /// <summary>
+        /// Signature for calli instruction
+        /// </summary>
+        public class CalliSig : Signature
+        {
     private static readonly byte Sentinel = 0x41;
     CallConv callConv;
     Type returnType;
     Type[] parameters, optParams;
-		uint numPars = 0, numOptPars = 0;
+                uint numPars = 0, numOptPars = 0;
 
     /// <summary>
     /// Create a signature for a calli instruction
@@ -833,11 +833,11 @@ namespace PEAPI
     /// <param name="retType">return type</param>
     /// <param name="pars">parameter types</param>
     public CalliSig(CallConv cconv, Type retType, Type[] pars) {
-			tabIx = MDTable.StandAloneSig;
+                        tabIx = MDTable.StandAloneSig;
       callConv = cconv;
       returnType = retType;
       parameters = pars;
-			if (pars != null) numPars = (uint)pars.Length;
+                        if (pars != null) numPars = (uint)pars.Length;
     }
 
     /// <summary>
@@ -878,7 +878,7 @@ namespace PEAPI
       done = true;
     }
 
- 	}
+        }
   /**************************************************************************/  
   /// <summary>
   /// The IL instructions for a method
@@ -929,8 +929,8 @@ namespace PEAPI
           buffer[i] = tmp[i];
         }
       }
-			//Console.WriteLine("Adding instruction at offset " + offset + " with size " + inst.size);
-			inst.offset = offset;
+                        //Console.WriteLine("Adding instruction at offset " + offset + " with size " + inst.size);
+                        inst.offset = offset;
       offset += inst.size;
       buffer[tide++] = inst;
     }
@@ -1300,8 +1300,8 @@ namespace PEAPI
           offset = buffer[tide-1].offset + buffer[tide-1].size;
         }
       }
-			codeSize = offset;
-			// Console.WriteLine("codeSize before header added = " + codeSize);
+                        codeSize = offset;
+                        // Console.WriteLine("codeSize before header added = " + codeSize);
       if ((offset < smallSize) && (maxStack <= 8) && (locSigIx == 0) && (exceptions == null)) {
         // can use tiny header
         //Console.WriteLine("Tiny Header");
@@ -1341,27 +1341,27 @@ namespace PEAPI
         if ((offset % 4) != 0) { paddingNeeded = 4 - (offset % 4); }
         codeSize += FatSize;
       }
-		  // Console.WriteLine("codeSize = " + codeSize + "  headerFlags = " + 
+                  // Console.WriteLine("codeSize = " + codeSize + "  headerFlags = " + 
       //                   Hex.Short(headerFlags));
     }
 
-		internal void Write(FileImage output) {
+                internal void Write(FileImage output) {
       // Console.WriteLine("Writing header flags = " + Hex.Short(headerFlags));
-			if (tinyFormat) {
+                        if (tinyFormat) {
         // Console.WriteLine("Writing tiny code");
-				output.Write((byte)headerFlags);
-			} else {
+                                output.Write((byte)headerFlags);
+                        } else {
         // Console.WriteLine("Writing fat code");
-				output.Write(headerFlags);
-				output.Write((ushort)maxStack);
-				output.Write(offset);
-				output.Write(localSigIx);
-			}
+                                output.Write(headerFlags);
+                                output.Write((ushort)maxStack);
+                                output.Write(offset);
+                                output.Write(localSigIx);
+                        }
       // Console.WriteLine(Hex.Int(tide) + " CIL instructions");
       // Console.WriteLine("starting instructions at " + output.Seek(0,SeekOrigin.Current));
-			for (int i=0; i < tide; i++) {
-				buffer[i].Write(output);
-			}
+                        for (int i=0; i < tide; i++) {
+                                buffer[i].Write(output);
+                        }
       // Console.WriteLine("ending instructions at " + output.Seek(0,SeekOrigin.Current));
       for (int i=0; i < paddingNeeded; i++) { output.Write((byte)0); }
       if (exceptions != null) {
@@ -1374,15 +1374,15 @@ namespace PEAPI
           tryBlock.Write(output,fatExceptionFormat);
         }
       }
-		}
+                }
 
   }
   /**************************************************************************/  
-	/// <summary>
-	/// A label in the IL
-	/// </summary>
-	public class CILLabel
-	{
+        /// <summary>
+        /// A label in the IL
+        /// </summary>
+        public class CILLabel
+        {
     CILInstruction branch;
     CILInstruction[] multipleBranches;
     int tide = 0;
@@ -1390,9 +1390,9 @@ namespace PEAPI
     uint offset = 0;
  
     public CILLabel (uint offset) {
-	this.offset = offset;
-	}
-	
+        this.offset = offset;
+        }
+        
 
     internal CILLabel() {
     }
@@ -1423,7 +1423,7 @@ namespace PEAPI
       return labInstr.offset + offset;
     }
 
-	}
+        }
   /**************************************************************************/  
   public abstract class CodeBlock {
 
@@ -1630,15 +1630,15 @@ namespace PEAPI
 
   /**************************************************************************/  
   /// <summary>
-	/// The base descriptor for a class 
-	/// </summary>
-	public abstract class Class : Type
-	{
+        /// The base descriptor for a class 
+        /// </summary>
+        public abstract class Class : Type
+        {
     protected int row = 0;
     protected string name, nameSpace;
     protected uint nameIx, nameSpaceIx;
                 protected MetaData _metaData;
-		internal Class(string nameSpaceName, string className, MetaData md)
+                internal Class(string nameSpaceName, string className, MetaData md)
                                                               : base(0x12) {
       nameSpace = nameSpaceName;
       name = className;
@@ -1670,7 +1670,7 @@ namespace PEAPI
     internal virtual void MakeValueClass() {
       typeIndex = 0x11;
     }
-	
+        
     internal virtual string TypeName() {
       return (nameSpace + "." + name);
     }
@@ -1678,7 +1678,7 @@ namespace PEAPI
     internal override MetaDataElement GetTypeSpec(MetaData md) {
       return this;
     }
-	}
+        }
   /**************************************************************************/  
   // This Class produces entries in the TypeDef table of the MetaData 
   // in the PE meta data.
@@ -1687,11 +1687,11 @@ namespace PEAPI
   // which is the parent for functions and variables declared a module level
 
   /// <summary>
-	/// The descriptor for a class defined in the IL (.class) in the current assembly/module
-	/// </summary>
-	/// 
-	public class ClassDef : Class
-	{
+        /// The descriptor for a class defined in the IL (.class) in the current assembly/module
+        /// </summary>
+        /// 
+        public class ClassDef : Class
+        {
     private static readonly uint HasSecurity = 0x00040000;
     private static readonly byte ElementType_Class = 0x12;
 
@@ -1710,7 +1710,7 @@ namespace PEAPI
     
     internal ClassDef(TypeAttr attrSet, string nsName, string name, 
                       MetaData md) : base(nsName, name, md) {
-			metaData = md;
+                        metaData = md;
       superType = metaData.mscorlib.GetSpecialSystemClass(PrimitiveType.Object);
       flags = (uint)attrSet;
       tabIx = MDTable.TypeDef;
@@ -1752,29 +1752,19 @@ namespace PEAPI
     /// <summary>
     ///   Add a generic type parameter.
     /// </summary>
-    public void AddGenericParameter (short index) {
-            metaData.AddToTable (MDTable.GenericParam, new GenericParameter (this, index));
+    public GenericParameter AddGenericParameter (short index) {
+            GenericParameter gp = new GenericParameter (this, metaData, index);
+            metaData.AddToTable (MDTable.GenericParam, gp);
+            return gp;
     }
 
     /// <summary>
     ///  Add a named generic type parameter
     /// </summary>
-    public void AddGenericParameter (short index, string name) {
-        metaData.AddToTable (MDTable.GenericParam, new GenericParameter (this, index, name));
-    }
-
-    public void AddGenericParameter (short index, Type constraint) {
-        GenericParameter gp = new GenericParameter (this, index);
-        metaData.AddToTable (MDTable.GenericParam, gp);
-        metaData.AddToTable (MDTable.GenericParamConstraint,
-            new GenericParamConstraint (gp, constraint));
-    }
-
-    public void AddGenericParameter (short index, string name, Type constraint) {
-        GenericParameter gp = new GenericParameter (this, index, name);
-        metaData.AddToTable (MDTable.GenericParam, gp);
-        metaData.AddToTable (MDTable.GenericParamConstraint,
-            new GenericParamConstraint (gp, constraint));
+    public GenericParameter AddGenericParameter (short index, string name) {
+            GenericParameter gp = new GenericParameter (this, metaData, index, name);
+            metaData.AddToTable (MDTable.GenericParam, gp);
+            return gp;
     }
 
     /// <summary>
@@ -2013,23 +2003,23 @@ namespace PEAPI
       return 0;
     }
  
-	}
+        }
   /**************************************************************************/  
-	/// <summary>
-	/// Layout information for a class (.class [sequential | explicit])
-	/// </summary>
-	internal class ClassLayout : MetaDataElement
-	{
+        /// <summary>
+        /// Layout information for a class (.class [sequential | explicit])
+        /// </summary>
+        internal class ClassLayout : MetaDataElement
+        {
     ClassDef parent;
     ushort packSize = 0;
     uint classSize = 0;
 
-		internal ClassLayout(int pack, int cSize, ClassDef par) {
+                internal ClassLayout(int pack, int cSize, ClassDef par) {
       packSize = (ushort)pack;
       classSize = (uint)cSize;
       parent = par;
       tabIx = MDTable.ClassLayout;
-		}
+                }
 
     internal sealed override uint Size(MetaData md) {
       return 6 + md.TableIndexSize(MDTable.TypeDef);
@@ -2041,19 +2031,19 @@ namespace PEAPI
       output.WriteIndex(MDTable.TypeDef,parent.Row);
     }
 
-	}
+        }
   /**************************************************************************/  
-	/// <summary>
-	/// Descriptor for a class/interface declared in another module of THIS 
-	/// assembly, or in another assembly.
-	/// </summary>
-	public class ClassRef : Class
-	{
+        /// <summary>
+        /// Descriptor for a class/interface declared in another module of THIS 
+        /// assembly, or in another assembly.
+        /// </summary>
+        public class ClassRef : Class
+        {
     protected ResolutionScope parent;
     ExternClass externClass;
     protected MetaData metaData;
 
-		internal ClassRef(string nsName, string name, MetaData md) : base(nsName, name, md) {
+                internal ClassRef(string nsName, string name, MetaData md) : base(nsName, name, md) {
       metaData = md;
       tabIx = MDTable.TypeRef;
     }
@@ -2140,7 +2130,7 @@ namespace PEAPI
       return 0;
     }
  
-	}
+        }
   /**************************************************************************/  
 
   public class ExternClassRef : ClassRef {
@@ -2174,7 +2164,7 @@ namespace PEAPI
     protected uint blobIndex;
     protected bool addedToBlobHeap = false;
 
-		internal Constant()	{	}
+                internal Constant()     {       }
 
     internal virtual uint GetBlobIndex(MetaData md) { return 0; }
 
@@ -2184,7 +2174,7 @@ namespace PEAPI
 
     internal virtual void Write(BinaryWriter bw) {  }
 
-	}
+        }
   /// <summary>
   /// Descriptor for a constant value
   /// </summary>
@@ -2544,20 +2534,20 @@ namespace PEAPI
 
 
   /**************************************************************************/  
-	/// <summary>
-	/// Summary description for ConstantElem.
-	/// </summary>
-	internal class ConstantElem : MetaDataElement
-	{
+        /// <summary>
+        /// Summary description for ConstantElem.
+        /// </summary>
+        internal class ConstantElem : MetaDataElement
+        {
     MetaDataElement parent;
     Constant cValue;
     uint valIx = 0;
 
-		internal ConstantElem(MetaDataElement parent, Constant val) {
+                internal ConstantElem(MetaDataElement parent, Constant val) {
       this.parent = parent;
       cValue = val;
-			tabIx = MDTable.Constant;
-		}
+                        tabIx = MDTable.Constant;
+                }
 
     internal sealed override void BuildTables(MetaData md) {
       if (done) return;
@@ -2580,14 +2570,14 @@ namespace PEAPI
       output.BlobIndex(valIx);
     }
 
-	}
+        }
   /**************************************************************************/  
-	/// <summary>
-	/// Descriptor for a Custom Attribute (.custom) 
-	/// </summary>
+        /// <summary>
+        /// Descriptor for a Custom Attribute (.custom) 
+        /// </summary>
 
-	public class CustomAttribute : MetaDataElement
-	{
+        public class CustomAttribute : MetaDataElement
+        {
     private static readonly ushort prolog = 0x0001;
     MetaDataElement parent;
     Method type;
@@ -2597,14 +2587,14 @@ namespace PEAPI
     ushort numNamed = 0;
     ArrayList names, vals;
 
-		internal CustomAttribute(MetaDataElement paren, Method constrType, 
+                internal CustomAttribute(MetaDataElement paren, Method constrType, 
                                                           Constant val) {
       parent = paren;
       type = constrType;
       cVal = val;
       tabIx = MDTable.CustomAttribute;
       throw(new NotYetImplementedException("Custom Attributes "));
-		}
+                }
 
     internal CustomAttribute(MetaDataElement paren, Method constrType,
                                                           byte[] val) {
@@ -2641,14 +2631,14 @@ namespace PEAPI
       output.BlobIndex(valIx);
     }
 
-	}
+        }
   /**************************************************************************/  
-	/// <summary>
-	/// Descriptor for a custom modifier of a type (modopt or modreq)
-	/// </summary>
+        /// <summary>
+        /// Descriptor for a custom modifier of a type (modopt or modreq)
+        /// </summary>
 
-	public class CustomModifiedType : Type
-	{
+        public class CustomModifiedType : Type
+        {
     Type type;
     Class cmodType;
 
@@ -2658,11 +2648,11 @@ namespace PEAPI
     /// <param name="type">the type to be modified</param>
     /// <param name="cmod">the modifier</param>
     /// <param name="cmodType">the type reference to be associated with the type</param>
-		public CustomModifiedType(Type type, CustomModifier cmod, Class cmodType)
+                public CustomModifiedType(Type type, CustomModifier cmod, Class cmodType)
                                                           : base((byte)cmod) {
       this.type = type;
       this.cmodType = cmodType;
-		}
+                }
 
     internal sealed override void TypeSig(MemoryStream str) {
       str.WriteByte(typeIndex);
@@ -2675,19 +2665,19 @@ namespace PEAPI
   /// <summary>
   /// Descriptor for security permissions for a class or a method NOT YET IMPLEMENTED
   /// </summary>
-	
-	public class DeclSecurity : MetaDataElement
-	{
+        
+        public class DeclSecurity : MetaDataElement
+        {
     ushort action;
     MetaDataElement parent;
     uint permissionIx;
 
-		internal DeclSecurity(MetaDataElement paren, ushort act)	{
+                internal DeclSecurity(MetaDataElement paren, ushort act)        {
       parent = paren;
       action = act;
       tabIx = MDTable.DeclSecurity;
       throw(new NotYetImplementedException("Security "));
-		}
+                }
 
     internal sealed override uint Size(MetaData md) {
       return 2 + md.CodedIndexSize(CIx.HasDeclSecurity) + md.BlobIndexSize();
@@ -2705,19 +2695,19 @@ namespace PEAPI
       output.BlobIndex(permissionIx);
     }
  
-	}
+        }
   /**************************************************************************/  
-	/// <summary>
-	/// Descriptor for an event
-	/// </summary>
+        /// <summary>
+        /// Descriptor for an event
+        /// </summary>
   public class Event : Feature
-	{
+        {
     Type eventType;
 
     internal Event(string name, Type eType, ClassDef parent) 
                                             : base(name, parent) {
       eventType = eType;
-			tabIx = MDTable.Event;
+                        tabIx = MDTable.Event;
     }
 
     /// <summary>
@@ -2779,23 +2769,23 @@ namespace PEAPI
       return 0;
     }
    
-	}
+        }
   /**************************************************************************/  
-	/// <summary>
-	/// Descriptor for a class defined in another module of THIS assembly 
-	/// and exported (.class extern)
-	/// </summary>
+        /// <summary>
+        /// Descriptor for a class defined in another module of THIS assembly 
+        /// and exported (.class extern)
+        /// </summary>
 
   internal class ExternClass : Class
-	{
-		MetaDataElement parent;
+        {
+                MetaDataElement parent;
     uint flags;
 
     internal ExternClass(TypeAttr attr, uint nsIx, uint nIx, 
                          MetaDataElement paren) : base(nsIx,nIx) {
       flags = (uint)attr;
-	    parent = paren;
-			tabIx = MDTable.ExportedType;
+            parent = paren;
+                        tabIx = MDTable.ExportedType;
     }
 
     internal sealed override uint Size(MetaData md) {
@@ -2818,14 +2808,14 @@ namespace PEAPI
       return 0;
     }
 
-	}
+        }
   /**************************************************************************/  
-	/// <summary>
-	/// Base class for Event and Property descriptors
-	/// </summary>
+        /// <summary>
+        /// Base class for Event and Property descriptors
+        /// </summary>
 
   public class Feature : MetaDataElement
-	{
+        {
     internal enum MethodType : ushort { Setter = 0x01, Getter, Other = 0x04, AddOn = 0x08, 
       RemoveOn = 0x10, Fire = 0x20 }
 
@@ -2871,30 +2861,30 @@ namespace PEAPI
       flags |= rtSpecialName;
     }
   
-	}
+        }
   /*****************************************************************************/  
-	/// <summary>
-	/// Descriptor for a field of a class
-	/// </summary>
+        /// <summary>
+        /// Descriptor for a field of a class
+        /// </summary>
 
   public abstract class Field : Member
-	{
+        {
     protected static readonly byte FieldSig = 0x6;
 
     protected Type type;
 
-		internal Field(string pfName, Type pfType) : base(pfName)
-		{
+                internal Field(string pfName, Type pfType) : base(pfName)
+                {
       type = pfType;
-		}
+                }
 
-	}
+        }
   /**************************************************************************/  
-	/// <summary>
-	/// Descriptor for a field defined in a class of THIS assembly/module
-	/// </summary>
+        /// <summary>
+        /// Descriptor for a field defined in a class of THIS assembly/module
+        /// </summary>
   public class FieldDef : Field
-	{
+        {
     //private static readonly uint PInvokeImpl = 0x2000;
     private static readonly ushort HasFieldMarshal = 0x1000;
     private static readonly ushort HasFieldRVA = 0x100;
@@ -3000,21 +2990,21 @@ namespace PEAPI
       return 0;
     }
 
-	}
+        }
   /**************************************************************************/  
-	/// <summary>
-	/// Descriptor for layout information for a field
-	/// </summary>
-	
-	public class FieldLayout : MetaDataElement
-	{
+        /// <summary>
+        /// Descriptor for layout information for a field
+        /// </summary>
+        
+        public class FieldLayout : MetaDataElement
+        {
     Field field;
     uint offset;
 
-    internal FieldLayout(Field field, uint offset)	{
+    internal FieldLayout(Field field, uint offset)      {
       this.field = field;
       this.offset = offset;
-			tabIx = MDTable.FieldLayout;
+                        tabIx = MDTable.FieldLayout;
     }
 
     internal sealed override uint Size(MetaData md) {
@@ -3026,22 +3016,22 @@ namespace PEAPI
       output.WriteIndex(MDTable.Field,field.Row);
     }
 
-	}
+        }
   /*****************************************************************************/  
-	/// <summary>
-	/// Marshalling information for a field or param
-	/// </summary>
+        /// <summary>
+        /// Marshalling information for a field or param
+        /// </summary>
   public class FieldMarshal : MetaDataElement
-	{
+        {
     MetaDataElement field;
     NativeType nt;
     uint ntIx;
 
-    internal FieldMarshal(MetaDataElement field, NativeType nType)	{
+    internal FieldMarshal(MetaDataElement field, NativeType nType)      {
       this.field = field;
       this.nt = nType;
-			tabIx = MDTable.FieldMarshal;
-		}
+                        tabIx = MDTable.FieldMarshal;
+                }
 
     internal sealed override void BuildTables(MetaData md) {
       if (done) return;
@@ -3058,16 +3048,16 @@ namespace PEAPI
       output.BlobIndex(ntIx);
     }
 
-	}
+        }
   /**************************************************************************/  
-	/// <summary>
-	/// Descriptor for a field of a class defined in another assembly/module
-	/// </summary>
+        /// <summary>
+        /// Descriptor for a field of a class defined in another assembly/module
+        /// </summary>
   public class FieldRef : Field
-	{
+        {
     MetaDataElement parent;
 
-		internal FieldRef(MetaDataElement paren, string name, Type fType) : base(name, fType)	{	
+                internal FieldRef(MetaDataElement paren, string name, Type fType) : base(name, fType)   {       
       parent = paren;
     }
 
@@ -3093,21 +3083,21 @@ namespace PEAPI
 
     internal sealed override uint GetCodedIx(CIx code) { return 6; }
 
-	}
+        }
   /**************************************************************************/  
-	/// <summary>
-	/// Descriptor for the address of a field's value in the PE file
-	/// </summary>
+        /// <summary>
+        /// Descriptor for the address of a field's value in the PE file
+        /// </summary>
   public class FieldRVA : MetaDataElement
-	{
+        {
     Field field;
     DataConstant data;
 
-    internal FieldRVA(Field field, DataConstant data)	{
+    internal FieldRVA(Field field, DataConstant data)   {
       this.field = field;
       this.data = data;
       tabIx = MDTable.FieldRVA;
-		}
+                }
 
     internal sealed override void BuildTables(MetaData md) {
       if (done) return;
@@ -3124,11 +3114,11 @@ namespace PEAPI
       output.WriteIndex(MDTable.Field,field.Row);
     }
 
-	}
+        }
   /**************************************************************************/  
-	/// <summary>
-	/// Image for a PEFile
-	/// File Structure
+        /// <summary>
+        /// Image for a PEFile
+        /// File Structure
   ///     DOS Header (128 bytes) 
   ///     PE Signature ("PE\0\0") 
   ///     PEFileHeader (20 bytes)
@@ -3165,8 +3155,8 @@ namespace PEAPI
   ///    Rows   (4 bytes * numTables)
   ///    Tables
   /// </summary>
-	internal class FileImage : BinaryWriter
-	{
+        internal class FileImage : BinaryWriter
+        {
     internal readonly static uint[] iByteMask = {0x000000FF, 0x0000FF00, 0x00FF0000, 0xFF000000};
     internal readonly static ulong[] lByteMask = {0x00000000000000FF, 0x000000000000FF00,
                                                   0x0000000000FF0000, 0x00000000FF000000,
@@ -3211,9 +3201,9 @@ namespace PEAPI
     private static readonly uint CLIHeaderSize = 72;
     private uint runtimeFlags = 0x01;  // COMIMAGE_FLAGS_ILONLY
     // 32BITREQUIRED 0x02, STRONGNAMESIGNED 0x08, TRACKDEBUGDATA 0x10000
-		private static readonly uint relocFlags = 0x42000040;
-		private static readonly ushort exeCharacteristics = 0x010E;
-		private static readonly ushort dllCharacteristics = 0x210E;
+                private static readonly uint relocFlags = 0x42000040;
+                private static readonly ushort exeCharacteristics = 0x010E;
+                private static readonly ushort dllCharacteristics = 0x210E;
     // section names are all 8 bytes
     private static readonly string textName = ".text\0\0\0";
     private static readonly string sdataName = ".sdata\0\0";
@@ -3223,8 +3213,8 @@ namespace PEAPI
     private static readonly string dllHintNameTable = "\0\0_CorDllMain\0";
     private static readonly string runtimeEngineName = "mscoree.dll\0\0";
 
-		private Section text, sdata, rsrc;
-		ArrayList data;
+                private Section text, sdata, rsrc;
+                ArrayList data;
     BinaryWriter reloc = new BinaryWriter(new MemoryStream());
     uint dateStamp = 0;
     DateTime origin = new DateTime(1970,1,1);
@@ -3237,8 +3227,8 @@ namespace PEAPI
     uint importTableOffset, importLookupTableOffset, totalImportTableSize;
     MetaData metaData;
     char[] runtimeEngine = runtimeEngineName.ToCharArray(), hintNameTable;
-		bool doDLL, largeStrings, largeGUID, largeUS, largeBlob;
-		ushort characteristics;
+                bool doDLL, largeStrings, largeGUID, largeUS, largeBlob;
+                ushort characteristics;
 
     internal FileImage(bool makeDLL, string fileName) : base(new FileStream(fileName,FileMode.Create)) {
       InitFileImage(makeDLL);
@@ -3254,21 +3244,21 @@ namespace PEAPI
 
     private void InitFileImage(bool makeDLL) {
       doDLL = makeDLL;
-			if (doDLL) {
-				hintNameTable = dllHintNameTable.ToCharArray();
-				characteristics = dllCharacteristics;
-			} else {
-				hintNameTable = exeHintNameTable.ToCharArray();
-				characteristics = exeCharacteristics;
-			}
+                        if (doDLL) {
+                                hintNameTable = dllHintNameTable.ToCharArray();
+                                characteristics = dllCharacteristics;
+                        } else {
+                                hintNameTable = exeHintNameTable.ToCharArray();
+                                characteristics = exeCharacteristics;
+                        }
       text = new Section(textName,0x60000020);     // IMAGE_SCN_CNT  CODE, EXECUTE, READ
-//			rsrc = new Section(rsrcName,0x40000040);     // IMAGE_SCN_CNT  INITIALIZED_DATA, READ
+//                      rsrc = new Section(rsrcName,0x40000040);     // IMAGE_SCN_CNT  INITIALIZED_DATA, READ
       metaData = new MetaData(this);
     }
 
-		internal MetaData GetMetaData() {
-			return metaData;
-		}
+                internal MetaData GetMetaData() {
+                        return metaData;
+                }
 
     private uint GetNextSectStart(uint rva, uint tide) {
       if (tide < SectionAlignment) return rva + SectionAlignment;
@@ -3308,26 +3298,26 @@ namespace PEAPI
       text.AddReloc(entryPointOffset+2);
       text.IncTide(entryPointOffset + 6);
       //if (text.Tide() < fileAlign) fileAlign = minFileAlign;
-			text.SetSize(NumToAlign(text.Tide(),fileAlign));
+                        text.SetSize(NumToAlign(text.Tide(),fileAlign));
       // Console.WriteLine("text size = " + text.Size() + " text tide = " + text.Tide() + " text padding = " + text.Padding());
-			// Console.WriteLine("metaDataOffset = " + Hex.Int(metaDataOffset));
-			// Console.WriteLine("importTableOffset = " + Hex.Int(importTableOffset));
-			// Console.WriteLine("importLookupTableOffset = " + Hex.Int(importLookupTableOffset));
-			// Console.WriteLine("hintNameTableOffset = " + Hex.Int(hintNameTableOffset));
-			// Console.WriteLine("runtimeEngineOffset = " + Hex.Int(runtimeEngineOffset));
-			// Console.WriteLine("entryPointOffset = " + Hex.Int(entryPointOffset));
-			// Console.WriteLine("entryPointPadding = " + Hex.Int(entryPointPadding));
+                        // Console.WriteLine("metaDataOffset = " + Hex.Int(metaDataOffset));
+                        // Console.WriteLine("importTableOffset = " + Hex.Int(importTableOffset));
+                        // Console.WriteLine("importLookupTableOffset = " + Hex.Int(importLookupTableOffset));
+                        // Console.WriteLine("hintNameTableOffset = " + Hex.Int(hintNameTableOffset));
+                        // Console.WriteLine("runtimeEngineOffset = " + Hex.Int(runtimeEngineOffset));
+                        // Console.WriteLine("entryPointOffset = " + Hex.Int(entryPointOffset));
+                        // Console.WriteLine("entryPointPadding = " + Hex.Int(entryPointPadding));
 
     }
 
     internal void BuildRelocSection() {
-			text.DoRelocs(reloc);
-			if (sdata != null) sdata.DoRelocs(reloc);
-			if (rsrc != null) rsrc.DoRelocs(reloc);
+                        text.DoRelocs(reloc);
+                        if (sdata != null) sdata.DoRelocs(reloc);
+                        if (rsrc != null) rsrc.DoRelocs(reloc);
       relocTide = (uint)reloc.Seek(0,SeekOrigin.Current);
       relocPadding = NumToAlign(relocTide,fileAlign);
       relocSize = relocTide + relocPadding;
-			imageSize = relocRVA + SectionAlignment;
+                        imageSize = relocRVA + SectionAlignment;
       initDataSize += relocSize;
     }
 
@@ -3341,26 +3331,26 @@ namespace PEAPI
       text.SetRVA(rva);
       offset += text.Size();
       rva  = GetNextSectStart(rva,text.Tide());
-			// Console.WriteLine("headerSize = " + headerSize);
-			// Console.WriteLine("headerPadding = " + headerPadding);
-			// Console.WriteLine("textOffset = " + Hex.Int(text.Offset()));
-			if (sdata != null) { 
-				numSections++;
-				sdata.SetSize(NumToAlign(sdata.Tide(),fileAlign));
-				sdata.SetOffset(offset);
+                        // Console.WriteLine("headerSize = " + headerSize);
+                        // Console.WriteLine("headerPadding = " + headerPadding);
+                        // Console.WriteLine("textOffset = " + Hex.Int(text.Offset()));
+                        if (sdata != null) { 
+                                numSections++;
+                                sdata.SetSize(NumToAlign(sdata.Tide(),fileAlign));
+                                sdata.SetOffset(offset);
         sdata.SetRVA(rva);
         offset += sdata.Size();
         rva = GetNextSectStart(rva,sdata.Tide());
-				initDataSize += sdata.Size();
+                                initDataSize += sdata.Size();
       }
       if (rsrc != null) { 
-				numSections++;
-				rsrc.SetSize(NumToAlign(rsrc.Tide(),fileAlign));
-				rsrc.SetOffset(offset);
+                                numSections++;
+                                rsrc.SetSize(NumToAlign(rsrc.Tide(),fileAlign));
+                                rsrc.SetOffset(offset);
         rsrc.SetRVA(rva);
         offset += rsrc.Size();
         rva = GetNextSectStart(rva,rsrc.Tide());
-				initDataSize += rsrc.Size();
+                                initDataSize += rsrc.Size();
       }
       relocOffset = offset;
       relocRVA = rva;
@@ -3381,20 +3371,20 @@ namespace PEAPI
 
     private void WriteHeader() {
       Write(DOSHeader);
-			// Console.WriteLine("Writing PEHeader at offset " + Seek(0,SeekOrigin.Current));
-			WritePEHeader();
-			 // Console.WriteLine("Writing text section header at offset " + Hex.Long(Seek(0,SeekOrigin.Current)));
-			text.WriteHeader(this,relocRVA);
+                        // Console.WriteLine("Writing PEHeader at offset " + Seek(0,SeekOrigin.Current));
+                        WritePEHeader();
+                         // Console.WriteLine("Writing text section header at offset " + Hex.Long(Seek(0,SeekOrigin.Current)));
+                        text.WriteHeader(this,relocRVA);
       if (sdata != null) sdata.WriteHeader(this,relocRVA);
       if (rsrc != null) rsrc.WriteHeader(this,relocRVA);
-			// Console.WriteLine("Writing reloc section header at offset " + Seek(0,SeekOrigin.Current));
-			WriteRelocSectionHeader();
-			// Console.WriteLine("Writing padding at offset " + Seek(0,SeekOrigin.Current));
-			WriteZeros(headerPadding);
+                        // Console.WriteLine("Writing reloc section header at offset " + Seek(0,SeekOrigin.Current));
+                        WriteRelocSectionHeader();
+                        // Console.WriteLine("Writing padding at offset " + Seek(0,SeekOrigin.Current));
+                        WriteZeros(headerPadding);
     }
 
     private void WriteSections() {
-			// Console.WriteLine("Writing text section at offset " + Seek(0,SeekOrigin.Current));
+                        // Console.WriteLine("Writing text section at offset " + Seek(0,SeekOrigin.Current));
       WriteTextSection();
       if (sdata != null) WriteSDataSection();
       if (rsrc != null) WriteRsrcSection();
@@ -3406,22 +3396,22 @@ namespace PEAPI
       Write(0);
     }
 
-		private void WriteImportTables() {
-			// Import Table
+                private void WriteImportTables() {
+                        // Import Table
       WriteZeros(importTablePadding);
       // Console.WriteLine("Writing import tables at offset " + Hex.Long(Seek(0,SeekOrigin.Current)));
-			Write(importLookupTableOffset + text.RVA());
-			WriteZeros(8); 
-			Write(runtimeEngineOffset + text.RVA());
-			Write(text.RVA());    // IAT is at the beginning of the text section
-			WriteZeros(20);
-			// Import Lookup Table
-			WriteIAT();                // lookup table and IAT are the same
-			// Hint/Name Table
+                        Write(importLookupTableOffset + text.RVA());
+                        WriteZeros(8); 
+                        Write(runtimeEngineOffset + text.RVA());
+                        Write(text.RVA());    // IAT is at the beginning of the text section
+                        WriteZeros(20);
+                        // Import Lookup Table
+                        WriteIAT();                // lookup table and IAT are the same
+                        // Hint/Name Table
        // Console.WriteLine("Writing hintname table at " + Hex.Long(Seek(0,SeekOrigin.Current)));
-			Write(hintNameTable);
+                        Write(hintNameTable);
       Write(runtimeEngineName.ToCharArray());
-		}
+                }
 
     private void WriteTextSection() {
       WriteIAT();
@@ -3435,10 +3425,10 @@ namespace PEAPI
       largeBlob = metaData.LargeBlobIndex();
       metaData.WriteMetaData(this);
       WriteImportTables();
-			WriteZeros(entryPointPadding);
-			Write((ushort)0x25FF);
-			Write(ImageBase + text.RVA());
-			WriteZeros(text.Padding());
+                        WriteZeros(entryPointPadding);
+                        Write((ushort)0x25FF);
+                        Write(ImageBase + text.RVA());
+                        WriteZeros(text.Padding());
     }
 
     private void WriteCLIHeader() {
@@ -3462,8 +3452,8 @@ namespace PEAPI
       }
     }
 
-		private void WriteRsrcSection() {
-		}
+                private void WriteRsrcSection() {
+                }
 
     private void WriteRelocSection() {
      // Console.WriteLine("Writing reloc section at " + Seek(0,SeekOrigin.Current) + " = " + relocOffset);
@@ -3477,10 +3467,10 @@ namespace PEAPI
     }
 
     internal void AddInitData(DataConstant cVal) {
-			if (sdata == null) { 			
-				sdata = new Section(sdataName,0xC0000040);   // IMAGE_SCN_CNT  INITIALIZED_DATA, READ, WRITE
-				data = new ArrayList(); 
-			}
+                        if (sdata == null) {                    
+                                sdata = new Section(sdataName,0xC0000040);   // IMAGE_SCN_CNT  INITIALIZED_DATA, READ, WRITE
+                                data = new ArrayList(); 
+                        }
       data.Add(cVal);
       cVal.DataOffset = sdata.Tide();
       sdata.IncTide(cVal.GetSize());
@@ -3508,11 +3498,11 @@ namespace PEAPI
       Write(0);                // Check other sections here!!
       Write(text.RVA() + entryPointOffset);
       Write(text.RVA());
-			uint dataBase = 0;
-			if (sdata != null) dataBase = sdata.RVA();
-			else if (rsrc != null) dataBase = rsrc.RVA();
+                        uint dataBase = 0;
+                        if (sdata != null) dataBase = sdata.RVA();
+                        else if (rsrc != null) dataBase = rsrc.RVA();
       else dataBase = relocRVA;
-			Write(dataBase);
+                        Write(dataBase);
       Write(ImageBase);
       Write(SectionAlignment);
       Write(fileAlign);
@@ -3622,13 +3612,13 @@ namespace PEAPI
       Write(b3);
     }
 
-	}
+        }
   /**************************************************************************/  
-	/// <summary>
-	/// Descriptor for a file referenced in THIS assembly/module (.file)
-	/// </summary>
-	public class FileRef : MetaDataElement
-	{
+        /// <summary>
+        /// Descriptor for a file referenced in THIS assembly/module (.file)
+        /// </summary>
+        public class FileRef : MetaDataElement
+        {
     private static readonly uint HasMetaData = 0x1;
     uint nameIx = 0, hashIx = 0;
     uint flags = 0;
@@ -3640,7 +3630,7 @@ namespace PEAPI
       nameIx = md.AddToStringsHeap(name);
       hashIx = md.AddToBlobHeap(hashBytes);
       tabIx = MDTable.File;
-		}
+                }
 
     internal FileRef(uint nameIx, byte[] hashBytes, bool metaData,
                       bool entryPoint, MetaData md) {
@@ -3669,13 +3659,13 @@ namespace PEAPI
       return 0;
     }
 
-	}
+        }
   /**************************************************************************/  
-	/// <summary>
-	/// Descriptor for pinvoke information for a method NOT YET IMPLEMENTED
-	/// </summary>
-	public class ImplMap : MetaDataElement
-	{
+        /// <summary>
+        /// Descriptor for pinvoke information for a method NOT YET IMPLEMENTED
+        /// </summary>
+        public class ImplMap : MetaDataElement
+        {
     private static readonly ushort NoMangle = 0x01;
     ushort flags;
     Method meth;
@@ -3683,7 +3673,7 @@ namespace PEAPI
     uint iNameIx;
     ModuleRef importScope;
 
-		internal ImplMap(ushort flag, Method implMeth, string iName, ModuleRef mScope) {
+                internal ImplMap(ushort flag, Method implMeth, string iName, ModuleRef mScope) {
       flags = flag;
       meth = implMeth;
       importName = iName;
@@ -3691,7 +3681,7 @@ namespace PEAPI
       tabIx = MDTable.ImplMap;
       if (iName == null) flags |= NoMangle;
       //throw(new NotYetImplementedException("PInvoke "));
-		}
+                }
 
     internal sealed override void BuildTables(MetaData md) {
       if (done) return;
@@ -3711,7 +3701,7 @@ namespace PEAPI
       output.WriteIndex(MDTable.ModuleRef,importScope.Row);
     }
 
-	}
+        }
 
   /**************************************************************************/  
   /// <summary>
@@ -3721,7 +3711,7 @@ namespace PEAPI
     protected static readonly sbyte maxByteVal = 127;
     protected static readonly sbyte minByteVal = -128;
     protected static readonly byte leadByte = 0xFE;
-		protected static readonly uint USHeapIndex = 0x70000000;
+                protected static readonly uint USHeapIndex = 0x70000000;
     protected static readonly int longInstrStart = (int)Op.arglist;
     public bool twoByteInstr = false;
     public uint size = 0;
@@ -3731,7 +3721,7 @@ namespace PEAPI
       return false;
     }
 
-		internal virtual void Write(FileImage output) { }
+                internal virtual void Write(FileImage output) { }
 
   }
 
@@ -3764,11 +3754,11 @@ namespace PEAPI
       }
     }
 
-		internal override void Write(FileImage output) {
+                internal override void Write(FileImage output) {
       //Console.WriteLine("Writing instruction " + instr + " with size " + size);
       if (twoByteInstr) output.Write(leadByte);
       output.Write((byte)instr);
-		}
+                }
 
   }
 
@@ -3783,13 +3773,13 @@ namespace PEAPI
       else size += 4;
     }
 
-		internal sealed override void Write(FileImage output) {
-			base.Write(output);
+                internal sealed override void Write(FileImage output) {
+                        base.Write(output);
       if (byteNum) 
         output.Write((sbyte)val);
       else 
-				output.Write(val); 
-		}
+                                output.Write(val); 
+                }
 
   }
 
@@ -3797,37 +3787,37 @@ namespace PEAPI
     int val;
     bool byteNum;
 
-		internal UIntInstr(int inst, int num, bool byteSize) : base(inst) {
-			val = num;
+                internal UIntInstr(int inst, int num, bool byteSize) : base(inst) {
+                        val = num;
       byteNum = byteSize;
       if (byteNum) size++;
       else size += 2;
-		}
+                }
 
-		internal sealed override void Write(FileImage output) {
-			base.Write(output);
+                internal sealed override void Write(FileImage output) {
+                        base.Write(output);
       if (byteNum)
-			  output.Write((byte)val);
+                          output.Write((byte)val);
       else
-				output.Write((ushort)val); 
-		}
-	
+                                output.Write((ushort)val); 
+                }
+        
   }
 
-	internal class LongInstr : Instr {
-		long val;
+        internal class LongInstr : Instr {
+                long val;
 
-		internal LongInstr(int inst, long l) : base(inst) {
-			val = l;
-			size += 8;
-		}
+                internal LongInstr(int inst, long l) : base(inst) {
+                        val = l;
+                        size += 8;
+                }
 
-		internal sealed override void Write(FileImage output) {
-			base.Write(output);
-			output.Write(val);
-		}
+                internal sealed override void Write(FileImage output) {
+                        base.Write(output);
+                        output.Write(val);
+                }
 
-	}
+        }
 
   internal class FloatInstr : Instr {
     float fVal;
@@ -3837,12 +3827,12 @@ namespace PEAPI
       size += 4;
     }
 
-		internal sealed override void Write(FileImage output) {
-			base.Write(output);
-			output.Write(fVal);
-		}
+                internal sealed override void Write(FileImage output) {
+                        base.Write(output);
+                        output.Write(fVal);
+                }
 
-	}
+        }
 
   internal class DoubleInstr : Instr {
     double val;
@@ -3852,12 +3842,12 @@ namespace PEAPI
       size += 8;
     }
 
-		internal sealed override void Write(FileImage output) {
-			base.Write(output);
-			output.Write(val);
-		}
+                internal sealed override void Write(FileImage output) {
+                        base.Write(output);
+                        output.Write(val);
+                }
 
-	}
+        }
 
   internal class StringInstr : Instr {
     string val;
@@ -3873,12 +3863,12 @@ namespace PEAPI
       return false;
     }
 
-		internal sealed override void Write(FileImage output) {
-			base.Write(output);
-			output.Write(USHeapIndex  | strIndex);
-		}
+                internal sealed override void Write(FileImage output) {
+                        base.Write(output);
+                        output.Write(USHeapIndex  | strIndex);
+                }
 
-	}
+        }
 
   internal class LabelInstr : CILInstruction {
     CILLabel label;
@@ -3897,12 +3887,12 @@ namespace PEAPI
       size += 4;
     }
 
-		internal sealed override void Write(FileImage output) {
-			base.Write(output);
-			output.Write(field.Token());
-		}
+                internal sealed override void Write(FileImage output) {
+                        base.Write(output);
+                        output.Write(field.Token());
+                }
 
-	}
+        }
 
   internal class MethInstr : Instr {
     Method meth;
@@ -3912,10 +3902,10 @@ namespace PEAPI
       size += 4;
     }
 
-		internal sealed override void Write(FileImage output) {
-			base.Write(output);
-			output.Write(meth.Token());
-		}
+                internal sealed override void Write(FileImage output) {
+                        base.Write(output);
+                        output.Write(meth.Token());
+                }
 
   }
 
@@ -3933,10 +3923,10 @@ namespace PEAPI
       return false;
     }
 
-		internal sealed override void Write(FileImage output) {
-			base.Write(output);
-			output.Write(signature.Token());
-		}
+                internal sealed override void Write(FileImage output) {
+                        base.Write(output);
+                        output.Write(signature.Token());
+                }
   }
 
   internal class TypeInstr : Instr {
@@ -3950,7 +3940,7 @@ namespace PEAPI
     internal sealed override void Write(FileImage output) {
       base.Write(output);
       output.Write(theType.Token());
-		}
+                }
 
   }
 
@@ -3978,57 +3968,64 @@ namespace PEAPI
       return false;
     }
 
-		internal sealed override void Write(FileImage output) {
-			base.Write(output);
-			if (shortVer)
-				output.Write((sbyte)target);
-			else
-				output.Write(target);
-		}
+                internal sealed override void Write(FileImage output) {
+                        base.Write(output);
+                        if (shortVer)
+                                output.Write((sbyte)target);
+                        else
+                                output.Write(target);
+                }
 
   }
 
   internal class SwitchInstr : Instr {
     CILLabel[] cases;
-		uint numCases = 0;
+                uint numCases = 0;
 
     internal SwitchInstr(int inst, CILLabel[] dsts) : base(inst) {
       cases = dsts;
-			if (cases != null) numCases = (uint)cases.Length;
+                        if (cases != null) numCases = (uint)cases.Length;
       size += 4 + (numCases * 4);
       for (int i=0; i < numCases; i++) {
         cases[i].AddBranch(this);
       }
     }
 
-		internal sealed override void Write(FileImage output) {
-			base.Write(output);
-			output.Write(numCases);
-			for (int i=0; i < numCases; i++) {
-				int target = (int)cases[i].GetLabelOffset() - (int)(offset + size);
-				output.Write(target);
-			}
-		}
+                internal sealed override void Write(FileImage output) {
+                        base.Write(output);
+                        output.Write(numCases);
+                        for (int i=0; i < numCases; i++) {
+                                int target = (int)cases[i].GetLabelOffset() - (int)(offset + size);
+                                output.Write(target);
+                        }
+                }
 
   }
   /**************************************************************************/  
 
-        internal class GenericParameter : MetaDataElement
+        public class GenericParameter : MetaDataElement
         {
                 ClassDef owner; /* FIXME: can also be a MethodDef */
+                MetaData metadata;
                 string name;
                 uint nameIx;
                 short index;
 
-                public GenericParameter (ClassDef owner, short index) {
-			this.owner = owner;
+                public GenericParameter (ClassDef owner, MetaData metadata, short index) {
+                        this.owner = owner;
+                        this.metadata = metadata;
                         this.index = index;
                         tabIx = MDTable.GenericParam;
                 }
 
-                public GenericParameter (ClassDef owner, short index,
-                        string name) : this (owner, index) {
+                public GenericParameter (ClassDef owner, MetaData metadata, short index,
+                        string name) : this (owner, metadata, index) {
                         this.name = name;
+                }
+
+                public void AddConstraint  (Type constraint) {
+                        metadata.AddToTable (MDTable.GenericParamConstraint,
+                                        new GenericParamConstraint (this, constraint));
                 }
 
                 internal sealed override uint Size(MetaData md) {
@@ -4040,10 +4037,10 @@ namespace PEAPI
 
                 internal sealed override void BuildTables(MetaData md) {
                         if (done) return;
-			if (name == null)
-				nameIx = 0;
-			else
-                        	nameIx = md.AddToStringsHeap(name);
+                        if (name == null)
+                                nameIx = 0;
+                        else
+                                nameIx = md.AddToStringsHeap(name);
                         done = true;
                 }
 
@@ -4082,19 +4079,19 @@ namespace PEAPI
 
         }
   /**************************************************************************/
-	/// <summary>
-	/// Descriptor for interface implemented by a class
-	/// </summary>
-	public class InterfaceImpl: MetaDataElement
-	{ 
+        /// <summary>
+        /// Descriptor for interface implemented by a class
+        /// </summary>
+        public class InterfaceImpl: MetaDataElement
+        { 
     ClassDef theClass;
     Class theInterface;
 
-		internal InterfaceImpl(ClassDef theClass, Class theInterface) {
+                internal InterfaceImpl(ClassDef theClass, Class theInterface) {
       this.theClass = theClass;
       this.theInterface = theInterface;
-			tabIx = MDTable.InterfaceImpl;
-		}
+                        tabIx = MDTable.InterfaceImpl;
+                }
 
     internal sealed override uint Size(MetaData md) {
       return md.TableIndexSize(MDTable.TypeDef) + 
@@ -4108,13 +4105,13 @@ namespace PEAPI
 
     internal sealed override uint GetCodedIx(CIx code) { return 5; }
 
-	}
+        }
   /**************************************************************************/  
-	/// <summary>
-	/// Descriptor for a local of a method
-	/// </summary>
+        /// <summary>
+        /// Descriptor for a local of a method
+        /// </summary>
   public class Local
-	{
+        {
     private static readonly byte Pinned = 0x45;
     string name;
     Type type;
@@ -4137,34 +4134,34 @@ namespace PEAPI
     /// <param name="lType">local type</param>
     /// <param name="byRef">is byref</param>
     /// <param name="isPinned">has pinned attribute</param>
-		public Local(string lName, Type lType, bool byRef, bool isPinned)
-		{
+                public Local(string lName, Type lType, bool byRef, bool isPinned)
+                {
       name = lName;
       type = lType;
       byref = byRef;
       pinned = isPinned;
-		}
+                }
 
     internal void TypeSig(MemoryStream str) {
       if (pinned) str.WriteByte(Pinned);
       type.TypeSig(str);
     }
 
-	}
+        }
   /**************************************************************************/  
-	/// <summary>
-	/// Descriptor for the locals for a method
-	/// </summary>
+        /// <summary>
+        /// Descriptor for the locals for a method
+        /// </summary>
 
   public class LocalSig : Signature
-	{
-		private static readonly byte LocalSigByte = 0x7;
+        {
+                private static readonly byte LocalSigByte = 0x7;
     Local[] locals;
 
-		public LocalSig(Local[] locals) 	{
+                public LocalSig(Local[] locals)         {
       this.locals = locals;
       tabIx = MDTable.StandAloneSig;
-		}
+                }
 
     internal sealed override void BuildTables(MetaData md) {
       if (done) return;
@@ -4181,12 +4178,12 @@ namespace PEAPI
   }
 
   /**************************************************************************/  
-	/// <summary>
-	/// Descriptor for resources used in this PE file NOT YET IMPLEMENTED
-	/// </summary>
+        /// <summary>
+        /// Descriptor for resources used in this PE file NOT YET IMPLEMENTED
+        /// </summary>
 
   public class ManifestResource : MetaDataElement
-	{
+        {
     private static readonly uint PublicResource = 0x1;
     private static readonly uint PrivateResource = 0x2;
 
@@ -4241,23 +4238,23 @@ namespace PEAPI
 
     internal sealed override uint GetCodedIx(CIx code) { return 18; }
 
- 	}
+        }
   /**************************************************************************/  
-	/// <summary>
-	/// Base class for elements in the PropertyMap, EventMap and 
-	/// NestedClass MetaData tables
-	/// </summary>
+        /// <summary>
+        /// Base class for elements in the PropertyMap, EventMap and 
+        /// NestedClass MetaData tables
+        /// </summary>
   public class MapElem : MetaDataElement
-	{
+        {
     ClassDef parent;
     uint elemIx;
     MDTable elemTable;
 
-		internal MapElem(ClassDef par, uint elIx, MDTable elemTab) {
+                internal MapElem(ClassDef par, uint elIx, MDTable elemTab) {
       parent = par;
       elemIx = elIx;
       elemTable = elemTab;
-		}
+                }
 
     internal sealed override uint Size(MetaData md) {
       return md.TableIndexSize(MDTable.TypeDef) + md.TableIndexSize(elemTable);
@@ -4267,25 +4264,25 @@ namespace PEAPI
       output.WriteIndex(MDTable.TypeDef,parent.Row);
       output.WriteIndex(elemTable,elemIx);
     }
-	}
+        }
   /**************************************************************************/  
-	/// <summary>
-	/// Base class for field/methods (member of a class)
-	/// </summary>
-	public abstract class Member : MetaDataElement
-	{
+        /// <summary>
+        /// Base class for field/methods (member of a class)
+        /// </summary>
+        public abstract class Member : MetaDataElement
+        {
     protected string name;
     protected uint nameIx = 0, sigIx = 0;
     
-		internal Member(string memName)
-		{
+                internal Member(string memName)
+                {
       name = memName;
-			tabIx = MDTable.MemberRef;
-		}
+                        tabIx = MDTable.MemberRef;
+                }
 
- 	}
+        }
   /**************************************************************************/  
-	/// <summary>
+        /// <summary>
   /// MetaData 
   ///   Root (20 bytes + UTF-8 Version String + quad align padding)
   ///   StreamHeaders (8 bytes + null terminated name string + quad align padding)
@@ -4298,11 +4295,11 @@ namespace PEAPI
   /// </summary>
 
   public class MetaData 
-	{
-		private static readonly int[] CIxShiftMap = {2,2,5,1,2,3,1,1,1,2,3,2,1};
-		private static readonly byte StringsHeapMask = 0x1;
-		private static readonly byte GUIDHeapMask = 0x2;
-		private static readonly byte BlobHeapMask = 0x4;
+        {
+                private static readonly int[] CIxShiftMap = {2,2,5,1,2,3,1,1,1,2,3,2,1};
+                private static readonly byte StringsHeapMask = 0x1;
+                private static readonly byte GUIDHeapMask = 0x2;
+                private static readonly byte BlobHeapMask = 0x4;
     private static readonly uint MetaDataSignature = 0x424A5342;
     private static readonly uint maxSmlIxSize = 0xFFFF;
     private static readonly uint max1BitSmlIx = 0x7FFF;
@@ -4316,7 +4313,7 @@ namespace PEAPI
     private static readonly char[] usName = {'#','U','S','\0'};
     private static readonly char[] guidName = {'#','G','U','I','D','\0','\0','\0'};
     private static readonly char[] blobName = {'#','B','l','o','b','\0','\0','\0'};
-		private static readonly uint MetaDataHeaderSize = 20 + (uint)version.Length;
+                private static readonly uint MetaDataHeaderSize = 20 + (uint)version.Length;
     private static readonly uint TildeHeaderSize = 24;
     private static readonly uint StreamHeaderSize = 8;
     private static readonly uint numMetaDataTables = (int)MDTable.GenericParamConstraint + 1;
@@ -4331,14 +4328,14 @@ namespace PEAPI
     ArrayList[] metaDataTables = new ArrayList[numMetaDataTables];
     ArrayList byteCodes = new ArrayList();
     uint codeSize = 0, codeStart, byteCodePadding = 0, metaDataSize = 0;
-		ulong valid = 0, /*sorted = 0x000002003301FA00;*/ sorted = 0;
+                ulong valid = 0, /*sorted = 0x000002003301FA00;*/ sorted = 0;
     bool[] largeIx = new bool[numMetaDataTables];
     bool[] lgeCIx = new bool[(int)CIx.MaxCIx];
-		bool largeStrings = false, largeUS = false, largeGUID = false, largeBlob = false;
-		private FileImage file;
+                bool largeStrings = false, largeUS = false, largeGUID = false, largeBlob = false;
+                private FileImage file;
     private byte heapSizes = 0;
-		MetaDataElement entryPoint;
-		BinaryWriter output;
+                MetaDataElement entryPoint;
+                BinaryWriter output;
     public MSCorLib mscorlib;
     private TypeSpec[] systemTypeSpecs = new TypeSpec[PrimitiveType.NumSystemTypes];
     long mdStart;
@@ -4346,7 +4343,7 @@ namespace PEAPI
     internal MetaData(FileImage file) {
       // tilde = new MetaDataStream(tildeName,false,0);
       this.file = file;
-			strings = new MetaDataStream(stringsName,new UTF8Encoding(),true);
+                        strings = new MetaDataStream(stringsName,new UTF8Encoding(),true);
       us = new MetaDataStream(usName,new UnicodeEncoding(),true);
       guid = new MetaDataStream(guidName,false);
       blob = new MetaDataStream(blobName,true);
@@ -4361,7 +4358,7 @@ namespace PEAPI
         lgeCIx[i] = false;
       }
       mscorlib = new MSCorLib(this);
-		}
+                }
  
     internal TypeSpec GetPrimitiveTypeSpec(int ix) {
       return systemTypeSpecs[ix];
@@ -4376,9 +4373,9 @@ namespace PEAPI
       return metaDataSize;
     }
 
-		internal void StreamSize(byte mask) {
-			heapSizes |= mask;
-		}
+                internal void StreamSize(byte mask) {
+                        heapSizes |= mask;
+                }
 
     internal uint AddToUSHeap(string str) {
       if (str == null) return 0;
@@ -4487,25 +4484,25 @@ namespace PEAPI
       file.AddInitData(cVal);
     }
 
-		internal static void CompressNum(uint val, MemoryStream sig) {
-			if (val < 0x7F) {
-				sig.WriteByte((byte)val);
-			} else if (val < 0x3FFF) {
-				byte b1 = (byte)((val >> 8) | 0x80);
-				byte b2 = (byte)(val & FileImage.iByteMask[0]);
-				sig.WriteByte(b1);
-				sig.WriteByte(b2);
-			} else {
-				byte b1 = (byte)((val >> 24) | 0xC0);
-				byte b2 = (byte)((val & FileImage.iByteMask[2]) >> 16);
-				byte b3 = (byte)((val & FileImage.iByteMask[1]) >> 8);;
-				byte b4 = (byte)(val & FileImage.iByteMask[0]);
-				sig.WriteByte(b1);
-				sig.WriteByte(b2);
-				sig.WriteByte(b3);
-				sig.WriteByte(b4);
-			}
-		}
+                internal static void CompressNum(uint val, MemoryStream sig) {
+                        if (val < 0x7F) {
+                                sig.WriteByte((byte)val);
+                        } else if (val < 0x3FFF) {
+                                byte b1 = (byte)((val >> 8) | 0x80);
+                                byte b2 = (byte)(val & FileImage.iByteMask[0]);
+                                sig.WriteByte(b1);
+                                sig.WriteByte(b2);
+                        } else {
+                                byte b1 = (byte)((val >> 24) | 0xC0);
+                                byte b2 = (byte)((val & FileImage.iByteMask[2]) >> 16);
+                                byte b3 = (byte)((val & FileImage.iByteMask[1]) >> 8);;
+                                byte b4 = (byte)(val & FileImage.iByteMask[0]);
+                                sig.WriteByte(b1);
+                                sig.WriteByte(b2);
+                                sig.WriteByte(b3);
+                                sig.WriteByte(b4);
+                        }
+                }
 
     internal uint CodeSize() {
       return codeSize + byteCodePadding;
@@ -4547,7 +4544,7 @@ namespace PEAPI
           uint count = (uint)metaDataTables[i].Count;
           if (count > maxSmlIxSize) {
             largeIx[i] = true;
-						MDTable tabIx = (MDTable)i;
+                                                MDTable tabIx = (MDTable)i;
             if (count > max5BitSmlIx) {
               lgeCIx[(int)CIx.HasCustomAttr] = true;
             }
@@ -4582,18 +4579,18 @@ namespace PEAPI
           }
         }
       }
-			if (strings.LargeIx()) {
-				largeStrings = true;
-				heapSizes |= StringsHeapMask;
-			}
-			if (guid.LargeIx()) {
-				largeGUID = true;
-				heapSizes |= GUIDHeapMask;
-			}
-			if (blob.LargeIx()) {
-				largeBlob = true;
-				heapSizes |= BlobHeapMask;
-			}
+                        if (strings.LargeIx()) {
+                                largeStrings = true;
+                                heapSizes |= StringsHeapMask;
+                        }
+                        if (guid.LargeIx()) {
+                                largeGUID = true;
+                                heapSizes |= GUIDHeapMask;
+                        }
+                        if (blob.LargeIx()) {
+                                largeBlob = true;
+                                heapSizes |= BlobHeapMask;
+                        }
       largeUS = us.LargeIx();
     }
 
@@ -4635,33 +4632,33 @@ namespace PEAPI
 
     internal void WriteTildeStream(FileImage output) {
       long startTilde = output.Seek(0,SeekOrigin.Current);
-			output.Write((uint)0); // Reserved
-			output.Write((byte)1); // MajorVersion
-			output.Write((byte)0); // MinorVersion
-			output.Write(heapSizes);
-			output.Write((byte)1); // Reserved
-			output.Write(valid);
-			output.Write(sorted);
-			for (int i=0; i < numMetaDataTables; i++) {
-				if (metaDataTables[i] != null) {
-					uint count = (uint)metaDataTables[i].Count;
-					output.Write(count);
-				}
-			}
+                        output.Write((uint)0); // Reserved
+                        output.Write((byte)1); // MajorVersion
+                        output.Write((byte)0); // MinorVersion
+                        output.Write(heapSizes);
+                        output.Write((byte)1); // Reserved
+                        output.Write(valid);
+                        output.Write(sorted);
+                        for (int i=0; i < numMetaDataTables; i++) {
+                                if (metaDataTables[i] != null) {
+                                        uint count = (uint)metaDataTables[i].Count;
+                                        output.Write(count);
+                                }
+                        }
       long tabStart = output.Seek(0,SeekOrigin.Current);
       // Console.WriteLine("Starting metaData tables at " + tabStart);
-			for (int i=0; i < numMetaDataTables; i++) {
-				if (metaDataTables[i] != null) {
+                        for (int i=0; i < numMetaDataTables; i++) {
+                                if (metaDataTables[i] != null) {
           // Console.WriteLine("Starting metaData table " + i + " at " + (output.Seek(0,SeekOrigin.Current) - startTilde));
           ArrayList table = metaDataTables[i];
-					for (int j=0; j < table.Count; j++) {
+                                        for (int j=0; j < table.Count; j++) {
              ((MetaDataElement)table[j]).Write(output);
-					}
-				}
-			}
+                                        }
+                                }
+                        }
       // Console.WriteLine("Writing padding at " + output.Seek(0,SeekOrigin.Current));
       for (int i=0; i < tildePadding; i++) output.Write((byte)0);
-		}
+                }
 
     private void BuildTable(ArrayList table) {
       if (table == null) return;
@@ -4686,12 +4683,12 @@ namespace PEAPI
         }
       }
       */
-			SetIndexSizes();
-			for (int i=1; i < numStreams; i++) {
-				streams[i].EndStream();
-			}
-			CalcTildeStreamSize();
-			SetStreamOffsets();
+                        SetIndexSizes();
+                        for (int i=1; i < numStreams; i++) {
+                                streams[i].EndStream();
+                        }
+                        CalcTildeStreamSize();
+                        SetStreamOffsets();
       byteCodePadding = NumToAlign(codeSize,4);
       if (entryPoint != null) file.SetEntryPoint(entryPoint.Token());
     }
@@ -4706,7 +4703,7 @@ namespace PEAPI
     }
 
     internal void WriteMetaData(FileImage output) {
-			this.output = output;
+                        this.output = output;
       mdStart = output.Seek(0,SeekOrigin.Current);
       // Console.WriteLine("Writing metaData at " + Hex.Long(mdStart));
       output.Write(MetaDataSignature);
@@ -4728,18 +4725,18 @@ namespace PEAPI
       // Console.WriteLine("Finished Writing metaData at " + output.Seek(0,SeekOrigin.Current));
     }
 
-		internal bool LargeStringsIndex() { return strings.LargeIx(); }
-		internal bool LargeGUIDIndex() { return guid.LargeIx(); }
-		internal bool LargeUSIndex() { return us.LargeIx(); }
-		internal bool LargeBlobIndex() { return blob.LargeIx(); }
+                internal bool LargeStringsIndex() { return strings.LargeIx(); }
+                internal bool LargeGUIDIndex() { return guid.LargeIx(); }
+                internal bool LargeUSIndex() { return us.LargeIx(); }
+                internal bool LargeBlobIndex() { return blob.LargeIx(); }
 
     internal bool LargeIx(MDTable tabIx) { return largeIx[(uint)tabIx]; }
 
 
-		private uint NumToAlign(uint val, uint alignVal) {
-			if ((val % alignVal) == 0) return 0;
-			return alignVal - (val % alignVal);
-		}
+                private uint NumToAlign(uint val, uint alignVal) {
+                        if ((val % alignVal) == 0) return 0;
+                        return alignVal - (val % alignVal);
+                }
 
     internal void WriteCodedIndex(CIx code, MetaDataElement elem, FileImage output) {
       uint ix = 0;
@@ -4755,19 +4752,19 @@ namespace PEAPI
         output.Write((ushort)ix);
     }
 
-	}
+        }
   /**************************************************************************/  
-	/// <summary>
-	/// Base class for all Meta Data table elements
-	/// </summary>
+        /// <summary>
+        /// Base class for all Meta Data table elements
+        /// </summary>
 
   public abstract class MetaDataElement
-	{
+        {
 
     protected ArrayList customAttributes;
     private uint row = 0;
     protected bool done = false;
-		protected MDTable tabIx;
+                protected MDTable tabIx;
 
     internal MetaDataElement() { }
 
@@ -4829,17 +4826,17 @@ namespace PEAPI
 
     internal virtual void Write(FileImage output) {   }
 
-	}
+        }
   /**************************************************************************/  
-	/// <summary>
-	/// Stream in the Meta Data  (#Strings, #US, #Blob and #GUID)
-	/// </summary>
+        /// <summary>
+        /// Stream in the Meta Data  (#Strings, #US, #Blob and #GUID)
+        /// </summary>
 
   internal class MetaDataStream : BinaryWriter 
-	{
-		private static readonly uint StreamHeaderSize = 8;
-		private static uint maxSmlIxSize = 0xFFFF;
-		
+        {
+                private static readonly uint StreamHeaderSize = 8;
+                private static uint maxSmlIxSize = 0xFFFF;
+                
     private uint start = 0; 
     uint size = 0, tide = 1;
     bool largeIx = false;
@@ -4857,7 +4854,7 @@ namespace PEAPI
       if (addInitByte) { Write((byte)0); size = 1; }
       this.name = name;
       sizeOfHeader = StreamHeaderSize + (uint)name.Length;
-		}
+                }
 
     public uint Start {
       get {
@@ -4889,7 +4886,7 @@ namespace PEAPI
       // Console.WriteLine(name + " - size = " + size);
     }
 
-		internal uint Add(string str, bool prependSize) {
+                internal uint Add(string str, bool prependSize) {
       Object val = htable[str];
       uint index = 0;
       if (val == null) { 
@@ -4903,22 +4900,22 @@ namespace PEAPI
       } else {
         index = (uint)val;
       }
-			return index;
-		}
+                        return index;
+                }
 
-		internal uint Add(Guid guid) {
-			Write(guid.ToByteArray());
-			size =(uint)Seek(0,SeekOrigin.Current);
-			return tide++;
-		}
+                internal uint Add(Guid guid) {
+                        Write(guid.ToByteArray());
+                        size =(uint)Seek(0,SeekOrigin.Current);
+                        return tide++;
+                }
 
-		internal uint Add(byte[] blob) {
-			uint ix = size;
-			CompressNum((uint)blob.Length);
-			Write(blob);
-			size = (uint)Seek(0,SeekOrigin.Current);
-			return ix;
-		}
+                internal uint Add(byte[] blob) {
+                        uint ix = size;
+                        CompressNum((uint)blob.Length);
+                        Write(blob);
+                        size = (uint)Seek(0,SeekOrigin.Current);
+                        return ix;
+                }
 
     internal uint Add(byte val) {
       uint ix = size;
@@ -4990,7 +4987,7 @@ namespace PEAPI
       return ix;
     }
 
-		private void CompressNum(uint val) {
+                private void CompressNum(uint val) {
       if (val < 0x7F) {
         Write((byte)val);
       } else if (val < 0x3FFF) {
@@ -5020,12 +5017,12 @@ namespace PEAPI
       }
     }
 
-		internal void EndStream() {
-			QuadAlign();
-			if (size > maxSmlIxSize) {
-				largeIx = true;
-			}
-		}
+                internal void EndStream() {
+                        QuadAlign();
+                        if (size > maxSmlIxSize) {
+                                largeIx = true;
+                        }
+                }
 
     internal void WriteHeader(BinaryWriter output) {
       output.Write(start);
@@ -5033,27 +5030,27 @@ namespace PEAPI
       output.Write(name);
     }
 
-		internal virtual void Write(BinaryWriter output) {
+                internal virtual void Write(BinaryWriter output) {
        // Console.WriteLine("Writing " + name + " stream at " + output.Seek(0,SeekOrigin.Current) + " = " + start);
       MemoryStream str = (MemoryStream)BaseStream;
-			output.Write(str.ToArray());
-		}
+                        output.Write(str.ToArray());
+                }
 
-	}
+        }
   /**************************************************************************/  
-	/// <summary>
-	/// Base class for Method Descriptors
-	/// </summary>
+        /// <summary>
+        /// Base class for Method Descriptors
+        /// </summary>
 
   public abstract class Method : Member
-	{
+        {
     protected CallConv callConv = CallConv.Default;
     protected Type retType;
 
     internal Method(string methName, Type rType) : base(methName)
-		{
+                {
       retType = rType;
-		}
+                }
 
     /// <summary>
     /// Add calling conventions to this method descriptor
@@ -5063,11 +5060,11 @@ namespace PEAPI
       callConv |= cconv;
     }
 
-		internal abstract void TypeSig(MemoryStream sig);
+                internal abstract void TypeSig(MemoryStream sig);
 
     internal uint GetSigIx(MetaData md) {
       MemoryStream sig = new MemoryStream();
-			TypeSig(sig);
+                        TypeSig(sig);
       return md.AddToBlobHeap(sig.ToArray());
     }
 
@@ -5075,15 +5072,15 @@ namespace PEAPI
       return retType;
     }
 
-	}
+        }
   /**************************************************************************/  
-	/// <summary>
-	/// Descriptor for a method defined in THIS assembly/module
-	/// IL     .method
-	/// </summary>
+        /// <summary>
+        /// Descriptor for a method defined in THIS assembly/module
+        /// IL     .method
+        /// </summary>
 
   public class MethodDef : Method
-	{
+        {
     private static readonly ushort PInvokeImpl = 0x2000;
     //private static readonly uint UnmanagedExport = 0x0008;
    // private static readonly byte LocalSigByte = 0x7;
@@ -5092,7 +5089,7 @@ namespace PEAPI
     MetaData metaData;
     CILInstructions code;
     ArrayList securityActions = new ArrayList();
-		Param[] parList;
+                Param[] parList;
     Local[] locals;
     bool initLocals;
     ushort methFlags = 0, implFlags = 0;
@@ -5103,26 +5100,26 @@ namespace PEAPI
     ImplMap pinvokeImpl;
 
 
-		internal MethodDef(MetaData md, string name, Type retType, Param[] pars) : base(name,retType) {
+                internal MethodDef(MetaData md, string name, Type retType, Param[] pars) : base(name,retType) {
       metaData = md;
-			parList = pars;
-			if (parList != null) numPars = parList.Length;
+                        parList = pars;
+                        if (parList != null) numPars = parList.Length;
       tabIx = MDTable.Method;
-		}
+                }
 
     internal MethodDef(MetaData md, MethAttr mAttrSet, ImplAttr iAttrSet, string name, Type retType, Param[] pars) : base(name,retType) {
       metaData = md;
-			parList = pars;
-			if (parList != null) numPars = parList.Length;
+                        parList = pars;
+                        if (parList != null) numPars = parList.Length;
       // Console.WriteLine("Creating method " + name + " with " + numPars + " parameters");
-			methFlags = (ushort)mAttrSet;
+                        methFlags = (ushort)mAttrSet;
       implFlags = (ushort)iAttrSet;
       tabIx = MDTable.Method;
     }
 
-		internal Param[] GetPars() {
-			return parList;
-		}
+                internal Param[] GetPars() {
+                        return parList;
+                }
 
     /// <summary>
     /// Add some attributes to this method descriptor
@@ -5200,15 +5197,15 @@ namespace PEAPI
       return varArgSig;
     }
 
-		internal sealed override void TypeSig(MemoryStream sig) {
-			sig.WriteByte((byte)callConv);
-			MetaData.CompressNum((uint)numPars,sig);
-			retType.TypeSig(sig);
-			for (ushort i=0; i < numPars; i++) {
-				parList[i].seqNo = (ushort)(i+1);
-				parList[i].TypeSig(sig);
-			}
-		}
+                internal sealed override void TypeSig(MemoryStream sig) {
+                        sig.WriteByte((byte)callConv);
+                        MetaData.CompressNum((uint)numPars,sig);
+                        retType.TypeSig(sig);
+                        for (ushort i=0; i < numPars; i++) {
+                                parList[i].seqNo = (ushort)(i+1);
+                                parList[i].TypeSig(sig);
+                        }
+                }
 
     internal sealed override void BuildTables(MetaData md) {
       if (done) return;
@@ -5224,17 +5221,17 @@ namespace PEAPI
         localSig.BuildTables(md);
         locToken = localSig.Token();
       }
-			if (code != null) {
-				code.CheckCode(locToken,initLocals,maxStack);
-				textOffset = md.AddCode(code);
-			}
+                        if (code != null) {
+                                code.CheckCode(locToken,initLocals,maxStack);
+                                textOffset = md.AddCode(code);
+                        }
       nameIx = md.AddToStringsHeap(name);
       sigIx = GetSigIx(md);
       parIx = md.TableIndex(MDTable.Param);
-			for (int i=0; i < numPars; i++) {
-				md.AddToTable(MDTable.Param,parList[i]);
-				parList[i].BuildTables(md);
-			}
+                        for (int i=0; i < numPars; i++) {
+                                md.AddToTable(MDTable.Param,parList[i]);
+                                parList[i].BuildTables(md);
+                        }
       if (varArgSigList != null) {
               foreach (MethodRef varArgSig in varArgSigList) {
         md.AddToTable(MDTable.MemberRef,varArgSig);
@@ -5261,38 +5258,38 @@ namespace PEAPI
     }
 
     internal bool ZeroRva () {
-	return ((methFlags & (ushort)MethAttr.Abstract) != 0);
+        return ((methFlags & (ushort)MethAttr.Abstract) != 0);
     }
 
     internal sealed override uint GetCodedIx(CIx code) {
-			switch (code) {
-				case (CIx.HasCustomAttr) : return 0; 
-				case (CIx.HasDeclSecurity) : return 1; 
-				case (CIx.MemberRefParent) : return 3; 
-				case (CIx.MethodDefOrRef) : return 0; 
-				case (CIx.MemberForwarded) : return 1; 
-				case (CIx.CustomAttributeType) : return 2; 
-				case (CIx.TypeOrMethodDef) : return 1; 
-			}
-			return 0;
+                        switch (code) {
+                                case (CIx.HasCustomAttr) : return 0; 
+                                case (CIx.HasDeclSecurity) : return 1; 
+                                case (CIx.MemberRefParent) : return 3; 
+                                case (CIx.MethodDefOrRef) : return 0; 
+                                case (CIx.MemberForwarded) : return 1; 
+                                case (CIx.CustomAttributeType) : return 2; 
+                                case (CIx.TypeOrMethodDef) : return 1; 
+                        }
+                        return 0;
     }
 
-	}
+        }
   /**************************************************************************/  
-	/// <summary>
-	/// Descriptor for an overriding method (.override)
-	/// </summary>
+        /// <summary>
+        /// Descriptor for an overriding method (.override)
+        /// </summary>
   public class MethodImpl : MetaDataElement
-	{
+        {
     ClassDef parent;
     Method header, body;
 
-		internal MethodImpl(ClassDef par, Method decl, Method bod)	{
+                internal MethodImpl(ClassDef par, Method decl, Method bod)      {
       parent = par;
       header = decl;
       body = bod;
-			tabIx = MDTable.MethodImpl;
-		}
+                        tabIx = MDTable.MethodImpl;
+                }
 
     internal sealed override uint Size(MetaData md) {
       return md.TableIndexSize(MDTable.TypeDef) + 2 * md.CodedIndexSize(CIx.MethodDefOrRef);
@@ -5304,15 +5301,15 @@ namespace PEAPI
       output.WriteCodedIndex(CIx.MethodDefOrRef,header);
     }
 
-	}
+        }
   /**************************************************************************/  
-	/// <summary>
-	/// Descriptor for a method defined in another assembly/module
-	/// </summary>
+        /// <summary>
+        /// Descriptor for a method defined in another assembly/module
+        /// </summary>
   public class MethodRef : Method
   {
     private static readonly byte Sentinel = 0x41;
-		Type[] parList, optParList;
+                Type[] parList, optParList;
     MetaDataElement parent;
     uint numPars = 0, numOptPars = 0;
 
@@ -5328,20 +5325,20 @@ namespace PEAPI
       }
     }
 
-		internal sealed override void TypeSig(MemoryStream sig) {
-			sig.WriteByte((byte)callConv);
-			MetaData.CompressNum(numPars+numOptPars,sig);
-			retType.TypeSig(sig);
-			for (int i=0; i < numPars; i++) {
-				parList[i].TypeSig(sig);
-			}
+                internal sealed override void TypeSig(MemoryStream sig) {
+                        sig.WriteByte((byte)callConv);
+                        MetaData.CompressNum(numPars+numOptPars,sig);
+                        retType.TypeSig(sig);
+                        for (int i=0; i < numPars; i++) {
+                                parList[i].TypeSig(sig);
+                        }
       if (numOptPars > 0) {
         sig.WriteByte(Sentinel);
         for (int i=0; i < numOptPars; i++) {
           optParList[i].TypeSig(sig);
         }
       }
-		}
+                }
 
     internal sealed override void BuildTables(MetaData md) {
       if (done) return;
@@ -5366,14 +5363,14 @@ namespace PEAPI
         case (CIx.MethodDefOrRef) : return 1; 
         case (CIx.CustomAttributeType) : return 3; 
       }
-			return 0;
+                        return 0;
     }
 
-	}
+        }
   /**************************************************************************/  
-	/// <summary>
-	/// Descriptor for Property and Event methods
-	/// </summary>
+        /// <summary>
+        /// Descriptor for Property and Event methods
+        /// </summary>
   public class MethodSemantics : MetaDataElement {
 
     Feature.MethodType type;
@@ -5384,8 +5381,8 @@ namespace PEAPI
       type = mType;
       meth = method;
       eventOrProp = feature;
-			tabIx = MDTable.MethodSemantics;
-		}
+                        tabIx = MDTable.MethodSemantics;
+                }
 
     internal sealed override uint Size(MetaData md) {
       return 2 + md.TableIndexSize(MDTable.Method) + md.CodedIndexSize(CIx.HasSemantics);
@@ -5397,14 +5394,14 @@ namespace PEAPI
       output.WriteCodedIndex(CIx.HasSemantics,eventOrProp);
     }
 
-	}
+        }
   /**************************************************************************/  
-	/// <summary>
-	/// Descriptor for a FunctionPointer type
-	/// </summary>
-	/// 
-	public class MethPtrType : Type
-	{
+        /// <summary>
+        /// Descriptor for a FunctionPointer type
+        /// </summary>
+        /// 
+        public class MethPtrType : Type
+        {
     // MethPtrType == FNPTR
     Method method;
     uint sigIx = 0;
@@ -5413,11 +5410,11 @@ namespace PEAPI
     /// Create a new function pointer type
     /// </summary>
     /// <param name="meth">the function to be referenced</param>
-		public MethPtrType(Method meth) : base(0x1B)
-		{
+                public MethPtrType(Method meth) : base(0x1B)
+                {
       method = meth;
-			tabIx = MDTable.TypeSpec;
-		}
+                        tabIx = MDTable.TypeSpec;
+                }
 
     internal sealed override void TypeSig(MemoryStream str) {
       str.WriteByte(typeIndex);
@@ -5432,27 +5429,27 @@ namespace PEAPI
       done = true;
     }
 
-		internal sealed override uint Size(MetaData md) {
-			return md.BlobIndexSize();
-		}
+                internal sealed override uint Size(MetaData md) {
+                        return md.BlobIndexSize();
+                }
 
-		internal sealed override void Write(FileImage output) {
-			output.BlobIndex(sigIx);
-		}
+                internal sealed override void Write(FileImage output) {
+                        output.BlobIndex(sigIx);
+                }
 
-		internal sealed override uint GetCodedIx(CIx code) { return 0x1B; }
+                internal sealed override uint GetCodedIx(CIx code) { return 0x1B; }
 
-	}
+        }
   /**************************************************************************/  
-	/// <summary>
-	/// Descriptor for THIS module
-	/// </summary>
+        /// <summary>
+        /// Descriptor for THIS module
+        /// </summary>
   public class Module : ResolutionScope
-	{
+        {
     Guid mvid;
     uint mvidIx = 0;
 
-		internal Module(string name, MetaData md) : base(name,md)	{
+                internal Module(string name, MetaData md) : base(name,md)       {
       mvid = Guid.NewGuid();
       mvidIx = md.AddToGUIDHeap(mvid);
       tabIx = MDTable.Module;
@@ -5471,24 +5468,24 @@ namespace PEAPI
     }
 
     internal sealed override uint GetCodedIx(CIx code) {
-			switch (code) {
-				case (CIx.HasCustomAttr) : return 7; 
-				case (CIx.ResolutionScope) : return 0;
-			}
-			return 0;
+                        switch (code) {
+                                case (CIx.HasCustomAttr) : return 7; 
+                                case (CIx.ResolutionScope) : return 0;
+                        }
+                        return 0;
     }
 
-	}
+        }
   /**************************************************************************/  
-	/// <summary>
-	/// Descriptor for another module in THIS assembly
-	/// </summary>
+        /// <summary>
+        /// Descriptor for another module in THIS assembly
+        /// </summary>
   public class ModuleRef : ResolutionScope
-	{
+        {
 
-		internal ModuleRef(MetaData md, string name) : base(name,md) {
+                internal ModuleRef(MetaData md, string name) : base(name,md) {
       tabIx = MDTable.ModuleRef;
-		}
+                }
 
     /// <summary>
     /// Add a class to this external module.  This is a class declared in
@@ -5608,14 +5605,14 @@ namespace PEAPI
         case (CIx.MemberRefParent) : return 2; 
         case (CIx.ResolutionScope) : return 1; 
       }
-			return 0;
+                        return 0;
     }
  
   }
   /**************************************************************************/  
-	/// <summary>
-	/// Descriptors for native types used for marshalling
-	/// </summary>
+        /// <summary>
+        /// Descriptors for native types used for marshalling
+        /// </summary>
   public class NativeType {
     public static readonly NativeType Void = new NativeType(0x01);
     public static readonly NativeType Boolean = new NativeType(0x02);
@@ -5763,11 +5760,11 @@ namespace PEAPI
   }
 
   /**************************************************************************/  
-	/// <summary>
-	/// Descriptor for a parameter of a method defined in this assembly/module
-	/// </summary>
+        /// <summary>
+        /// Descriptor for a parameter of a method defined in this assembly/module
+        /// </summary>
   public class Param : MetaDataElement
-	{
+        {
     private static readonly ushort hasDefault = 0x1000;
     private static readonly ushort hasFieldMarshal = 0x2000;
 
@@ -5789,8 +5786,8 @@ namespace PEAPI
       pName = parName;
       pType = parType;
       parMode = (ushort)mode;
-			tabIx = MDTable.Param;
-		}
+                        tabIx = MDTable.Param;
+                }
 
     /// <summary>
     /// Add a default value to this parameter
@@ -5845,16 +5842,16 @@ namespace PEAPI
         case (CIx.HasConst) : return 1; 
         case (CIx.HasFieldMarshal) : return 1; 
       }
-			return 0;
+                        return 0;
     }
 
-	}
+        }
   /**************************************************************************/  
-	/// <summary>
-	/// Base class for the PEFile (starting point)
-	/// </summary>
+        /// <summary>
+        /// Base class for the PEFile (starting point)
+        /// </summary>
   public class PEFile
-	{
+        {
     private static readonly string mscorlibName = "mscorlib";
     private Module thisMod;
     private ClassDef moduleClass;
@@ -5863,7 +5860,7 @@ namespace PEAPI
     private Assembly thisAssembly;
     private int corFlags = 1;
     FileImage fileImage;
-		MetaData metaData;
+                MetaData metaData;
 
     /// <summary>
     /// Create a new PEFile.  Each PEFile is a module.
@@ -5897,7 +5894,7 @@ namespace PEAPI
       // Console.WriteLine(Hex.Short(0x1234));
       // Console.WriteLine(Hex.Int(0x12345678));
       string fName = MakeFileName(outputDir,name,isDLL);
-			fileImage = new FileImage(isDLL,fName);
+                        fileImage = new FileImage(isDLL,fName);
       InitPEFile(name, fName, hasAssembly);
     }
 
@@ -6126,14 +6123,14 @@ namespace PEAPI
       return thisAssembly;
     }
 
-	}
+        }
 
   /**************************************************************************/  
-	/// <summary>
-	/// Descriptor for the Primitive types defined in IL
-	/// </summary>
+        /// <summary>
+        /// Descriptor for the Primitive types defined in IL
+        /// </summary>
   public class PrimitiveType : Type
-	{
+        {
     private string name;
     private int systemTypeIndex;
     public static int NumSystemTypes = 18;
@@ -6152,7 +6149,7 @@ namespace PEAPI
     public static readonly PrimitiveType Float32 = new PrimitiveType(0x0C,"Single",11);
     public static readonly PrimitiveType Float64 = new PrimitiveType(0x0D,"Double",12);
     public static readonly PrimitiveType String = new PrimitiveType(0x0E,"String",13);
-		internal static readonly PrimitiveType Class = new PrimitiveType(0x12);
+                internal static readonly PrimitiveType Class = new PrimitiveType(0x12);
     public static readonly PrimitiveType TypedRef = new PrimitiveType(0x16,"TypedReference",14);
     public static readonly PrimitiveType IntPtr = new PrimitiveType(0x18,"IntPtr",15);
     public static readonly PrimitiveType UIntPtr = new PrimitiveType(0x19,"UIntPtr",16);
@@ -6163,7 +6160,7 @@ namespace PEAPI
 
     internal PrimitiveType(byte typeIx) : base(typeIx) { }
 
-		internal PrimitiveType(byte typeIx, string name, int STIx) : base(typeIx) {
+                internal PrimitiveType(byte typeIx, string name, int STIx) : base(typeIx) {
       this.name = name;
       this.systemTypeIndex = STIx;
     }
@@ -6186,14 +6183,14 @@ namespace PEAPI
       return tS;
     }
 
-	}
+        }
 
   /**************************************************************************/  
-	/// <summary>
-	/// Descriptor for the Property of a class
-	/// </summary>
+        /// <summary>
+        /// Descriptor for the Property of a class
+        /// </summary>
   public class Property : Feature
-	{
+        {
     private static readonly byte PropertyTag = 0x8;
     MethodDef getterMeth;
     ConstantElem constVal;
@@ -6206,8 +6203,8 @@ namespace PEAPI
       returnType = retType;
       parList = pars;
       if (pars != null) numPars = (uint)pars.Length;
-			tabIx = MDTable.Property;
-		}
+                        tabIx = MDTable.Property;
+                }
 
     /// <summary>
     /// Add a set method to this property
@@ -6274,35 +6271,35 @@ namespace PEAPI
     }
 
     internal sealed override uint GetCodedIx(CIx code) {
-			switch (code) {
-				case (CIx.HasCustomAttr) : return 9; 
-				case (CIx.HasConst) : return 2; 
-				case (CIx.HasSemantics) : return 1; 
-			}
-			return 0;
+                        switch (code) {
+                                case (CIx.HasCustomAttr) : return 9; 
+                                case (CIx.HasConst) : return 2; 
+                                case (CIx.HasSemantics) : return 1; 
+                        }
+                        return 0;
     }
 
-	}
+        }
   /**************************************************************************/  
-	/// <summary>
-	/// Descriptor for an pointer (type * or type &)
-	/// </summary>
+        /// <summary>
+        /// Descriptor for an pointer (type * or type &)
+        /// </summary>
   public abstract class PtrType : Type
-	{
+        {
     Type baseType;
 
-		internal PtrType(Type bType, byte typeIx) : base(typeIx)
-		{
+                internal PtrType(Type bType, byte typeIx) : base(typeIx)
+                {
       baseType = bType;
       tabIx = MDTable.TypeSpec;
-		}
+                }
 
     internal sealed override void TypeSig(MemoryStream str) {
       str.WriteByte(typeIndex);
       baseType.TypeSig(str);
     }
 
-	}
+        }
   /**************************************************************************/  
   /// <summary>
   /// Descriptor for a managed pointer (type &  or byref)
@@ -6332,63 +6329,63 @@ namespace PEAPI
 
   }
   /**************************************************************************/  
-	/// <summary>
-	/// Base class for scopes (extended by Module, ModuleRef, Assembly, AssemblyRef)
-	/// </summary>
+        /// <summary>
+        /// Base class for scopes (extended by Module, ModuleRef, Assembly, AssemblyRef)
+        /// </summary>
   public abstract class ResolutionScope : MetaDataElement
-	{
+        {
     protected uint nameIx = 0;
     protected MetaData metaData;
     protected string name;
 
-		internal ResolutionScope(string name, MetaData md)
-		{
+                internal ResolutionScope(string name, MetaData md)
+                {
       metaData = md;
       this.name = name;
       nameIx = md.AddToStringsHeap(name);
-		}
+                }
 
     internal string GetName() { return name; }
 
-	}
+        }
   /**************************************************************************/  
-	/// <summary>
-	/// Descriptor for a Section in a PEFile  eg .text, .sdata
-	/// </summary>
+        /// <summary>
+        /// Descriptor for a Section in a PEFile  eg .text, .sdata
+        /// </summary>
   internal class Section {
-		private static readonly uint relocPageSize = 4096;  // 4K pages for fixups
+                private static readonly uint relocPageSize = 4096;  // 4K pages for fixups
 
-		char[] name; 
-		uint offset = 0, tide = 0, size = 0, rva = 0, relocTide = 0;
-		//uint relocOff = 0;
+                char[] name; 
+                uint offset = 0, tide = 0, size = 0, rva = 0, relocTide = 0;
+                //uint relocOff = 0;
     uint flags = 0, padding = 0;
-		uint[] relocs; 
+                uint[] relocs; 
 
-		internal Section(string sName, uint sFlags) {
-			name = sName.ToCharArray();
-			flags = sFlags;
-		}
+                internal Section(string sName, uint sFlags) {
+                        name = sName.ToCharArray();
+                        flags = sFlags;
+                }
 
-		internal uint Tide() { return tide; }
+                internal uint Tide() { return tide; }
 
-		internal void IncTide(uint incVal) { tide += incVal; }
+                internal void IncTide(uint incVal) { tide += incVal; }
 
-		internal uint Padding() { return padding; }
+                internal uint Padding() { return padding; }
 
-		internal uint Size() { return size; }
+                internal uint Size() { return size; }
 
-		internal void SetSize(uint pad) {
-			padding = pad;
-			size = tide + padding;
-		}
+                internal void SetSize(uint pad) {
+                        padding = pad;
+                        size = tide + padding;
+                }
 
-		internal uint RVA() { return rva; }
+                internal uint RVA() { return rva; }
 
-		internal void SetRVA(uint rva) { this.rva = rva; }
+                internal void SetRVA(uint rva) { this.rva = rva; }
 
-		internal uint Offset() { return offset; }
+                internal uint Offset() { return offset; }
 
-		internal void SetOffset(uint offs) { offset = offs; }
+                internal void SetOffset(uint offs) { offset = offs; }
 
     internal void DoBlock(BinaryWriter reloc, uint page, int start, int end) {
       //Console.WriteLine("rva = " + rva + "  page = " + page);
@@ -6401,7 +6398,7 @@ namespace PEAPI
       reloc.Write((ushort)0);
     }
 
-		internal void DoRelocs(BinaryWriter reloc) {
+                internal void DoRelocs(BinaryWriter reloc) {
       if (relocTide > 0) {
         //relocOff = (uint)reloc.Seek(0,SeekOrigin.Current);
         uint block = (relocs[0]/relocPageSize + 1) * relocPageSize;
@@ -6415,45 +6412,45 @@ namespace PEAPI
         }
         DoBlock(reloc,block-relocPageSize,start,(int)relocTide);
       }
-		}
+                }
 
-		internal void AddReloc(uint offs) {
-			int pos = 0;
-			if (relocs == null) {
-				relocs = new uint[5];
-			} else {
-				if (relocTide >= relocs.Length) {
-					uint[] tmp = relocs;
-					relocs = new uint[tmp.Length + 5];
-					for (int i=0; i < relocTide; i++) {
-						relocs[i] = tmp[i];
-					}
-				}
-				while ((pos < relocTide) && (relocs[pos] < offs)) pos++;
-				for (int i=pos; i < relocTide; i++) {
-					relocs[i+1] = relocs[i];
-				}
-			}
-			relocs[pos] = offs;
-			relocTide++;    
-		}
+                internal void AddReloc(uint offs) {
+                        int pos = 0;
+                        if (relocs == null) {
+                                relocs = new uint[5];
+                        } else {
+                                if (relocTide >= relocs.Length) {
+                                        uint[] tmp = relocs;
+                                        relocs = new uint[tmp.Length + 5];
+                                        for (int i=0; i < relocTide; i++) {
+                                                relocs[i] = tmp[i];
+                                        }
+                                }
+                                while ((pos < relocTide) && (relocs[pos] < offs)) pos++;
+                                for (int i=pos; i < relocTide; i++) {
+                                        relocs[i+1] = relocs[i];
+                                }
+                        }
+                        relocs[pos] = offs;
+                        relocTide++;    
+                }
       
-		internal void WriteHeader(BinaryWriter output, uint relocRVA) {
-			output.Write(name);
-			output.Write(tide);
-			output.Write(rva);
-			output.Write(size);
-			output.Write(offset);
-			output.Write(0);
-			//output.Write(relocRVA + relocOff);
-			output.Write(0);
+                internal void WriteHeader(BinaryWriter output, uint relocRVA) {
+                        output.Write(name);
+                        output.Write(tide);
+                        output.Write(rva);
+                        output.Write(size);
+                        output.Write(offset);
+                        output.Write(0);
+                        //output.Write(relocRVA + relocOff);
+                        output.Write(0);
       output.Write(0);
-			//output.Write((ushort)relocTide);
-			//output.Write((ushort)0);
-			output.Write(flags);
-		}
+                        //output.Write((ushort)relocTide);
+                        //output.Write((ushort)0);
+                        output.Write(flags);
+                }
 
-	}
+        }
   /**************************************************************************/  
   public abstract class Signature : MetaDataElement 
   {
@@ -6475,18 +6472,18 @@ namespace PEAPI
 
   }
   /**************************************************************************/  
-	/// <summary>
-	/// Descriptor for a class defined in System (mscorlib)
-	/// </summary>
+        /// <summary>
+        /// Descriptor for a class defined in System (mscorlib)
+        /// </summary>
   internal class SystemClass : ClassRef
-	{
+        {
     PrimitiveType elemType; 
 
-		internal SystemClass(PrimitiveType eType, AssemblyRef paren, MetaData md)
+                internal SystemClass(PrimitiveType eType, AssemblyRef paren, MetaData md)
                                     : base("System",eType.GetName(),md) {
       elemType = eType;
       parent = paren;
-		}
+                }
 
     internal override sealed MetaDataElement GetTypeSpec(MetaData md) {
       if (typeSpec == null) typeSpec = (TypeSpec)elemType.GetTypeSpec(md);
@@ -6498,11 +6495,11 @@ namespace PEAPI
         str.WriteByte(elemType.GetTypeIndex());
     }
 
- 	}
+        }
   /**************************************************************************/  
-	/// <summary>
-	/// Base class for all IL types
-	/// </summary>
+        /// <summary>
+        /// Base class for all IL types
+        /// </summary>
   public abstract class Type : MetaDataElement {
     protected byte typeIndex;
     protected TypeSpec typeSpec;

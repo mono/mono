@@ -1,3 +1,8 @@
+2003-09-20 Jackson Harper <jackson@latitudegeo.com>
+
+	* PEAPI.cs: Rework to allow multiple constraints to be added to a
+	single generic parameter.
+	
 2003-08-19 Jackson Harper <jackson@latitudegeo.com>
 
 	* PEAPI.cs: Make no super method public so we can have types
