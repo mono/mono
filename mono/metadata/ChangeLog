@@ -1,5 +1,7 @@
 2004-05-05  Zoltan Varga  <vargaz@freemail.hu>
 
+	* marshal.h marshal.c icall.c: Applied patch from vladimir@pobox.com (Vladimir Vukicevic). Implement UnsafeAddrOfPinnedArrayElement.
+
 	* object.c (mono_class_compute_gc_descriptor): Fix warning.
 
 	* object.c (mono_runtime_invoke_array): Add an assert so null cannot be
