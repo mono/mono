@@ -1,3 +1,20 @@
+2002-04-30  Duncan Mak  <duncan@ximian.com>
+
+	* FileLoadException.cs (constructors): Added missing (string,
+	string) ctor, as well as (string, string, Exception) ctor.
+
+	(Message): Added more info to the error message
+
+	(ToString): Added. We'll need to add the StackTrace stuff when
+	that works.
+
+	* FileShare.cs: Add a missing field, Inheritable.
+	
+	* TextReader.cs: Renamed Synchronised method to Synchronized.
+
+	* TextWriter.cs: Renamed Synchronised method to Synchronized.
+	Renamed protected member coreNewLine to CoreNewLine.
+
 2002-04-30  Sergey Chaban  <serge@wildwestsoftware.com>
 
 	* BinaryReader.cs: Allocate buffer before its first use.

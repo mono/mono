@@ -75,7 +75,7 @@ namespace System.IO {
 		}
 
 		[MonoTODO]
-		public static TextReader Synchronised( TextReader reader )
+		public static TextReader Synchronized( TextReader reader )
 		{
                         // TODO: Implement
 			return Null;

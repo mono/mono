@@ -18,7 +18,7 @@ namespace System.IO {
                         internalFormatProvider = formatProvider;
                 }
 
-                protected char[] coreNewLine;
+                protected char[] CoreNewLine;
 
                 protected IFormatProvider internalFormatProvider;
 
@@ -59,7 +59,7 @@ namespace System.IO {
 		}
 
 		[MonoTODO]
-                public static TextWriter Synchronised (TextWriter writer)
+                public static TextWriter Synchronized (TextWriter writer)
 		{
                         // TODO: Implement.
 

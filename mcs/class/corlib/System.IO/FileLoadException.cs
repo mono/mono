@@ -35,10 +35,25 @@ namespace System.IO {
 			msg = message;
 		}
 
+		public FileLoadException (string message, string fileName)
+			: base (message)
+		{
+			this.msg = message;
+			this.fileName = fileName;
+		}		
+
 		public FileLoadException (string message, Exception inner)
 			: base (message, inner)
 		{
 			msg = message;
+			this.inner = inner;
+		}
+
+		public FileLoadException (string message, string fileName, Exception inner)
+			: base (message, inner)
+		{
+			this.msg = message
+			this.fileName = fileName
 			this.inner = inner;
 		}
 
@@ -51,7 +66,13 @@ namespace System.IO {
 		// Properties
 		public override string Message
 		{
-			get { return msg; }
+			get {
+				if (fileName != null)
+					return Locale.GetText (msg + ": " + fileName);
+
+				if (fileName == null)
+					return msg;
+			}
 		}
 
 		public string FileName
@@ -70,6 +91,12 @@ namespace System.IO {
 			base.GetObjectData (info, context);
 			info.AddValue ("FileLoad_FileName", fileName);
 			info.AddValue ("FileLoad_FusionLog", fusionLog);
+		}
+
+		[MonoTODO (Add StackTrace into the output)]
+		public override string ToString ()
+		{
+			return "System.IO.FileLoadException: " + Message;
 		}
 		
 	}
