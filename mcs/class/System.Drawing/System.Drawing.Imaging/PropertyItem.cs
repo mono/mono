@@ -13,12 +13,20 @@ using System;
 
 namespace System.Drawing.Imaging {
 
-	public sealed class PropertyItem {
+	public sealed class PropertyItem 
+	{
 
 		int id;
 		int len;
 		short type;
 		byte[] value;
+
+		//constructor
+		internal PropertyItem()
+		{
+			//Nothing to be done here
+		}
+
 
 		// properties
 		public int Id {

@@ -10,7 +10,14 @@ using System;
 
 namespace System.Drawing.Imaging {
 
-	public sealed class MetafileHeader {
+	public sealed class MetafileHeader 
+	{
+		
+		//constructor
+		internal MetafileHeader()
+		{
+			//Nothing to be done here
+		}
 
 		// methods
 		[MonoTODO]

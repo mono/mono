@@ -1,5 +1,10 @@
 2004-05-13  Sanjay Gupta <gsanjay@novell.com>
 	
+	* MetaFileHeader.cs: Implemented internal constructor.
+	* PropertyItem.cs: Implemented internal constructor.
+
+2004-05-13  Sanjay Gupta <gsanjay@novell.com>
+	
 	* MetaFile.cs: Added Editor attribute to class Metafile.
 
 2004-05-13  Sanjay Gupta <gsanjay@novell.com>
