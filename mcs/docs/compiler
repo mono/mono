@@ -51,6 +51,148 @@
 	point are done at this point, and the output is saved to
 	disk. 
 
+	The following list will give you an idea of where the
+	different pieces of the compiler live:
+
+	Infrastructure:
+
+	    driver.cs:
+		This drives the compilation process: loading of
+		command line options; parsing the inputs files;
+		loading the referenced assemblies; resolving the type
+		hierarchy and emitting the code. 
+
+	    codegen.cs:
+		
+		The state tracking for code generation. 
+
+	    attribute.cs:
+
+		Code to do semantic analysis and emit the attributes
+		is here.
+
+	    rootcontext.cs:
+
+		Keeps track of the types defined in the source code,
+		as well as the assemblies loaded.  
+
+	    typemanager.cs:
+
+	  	This contains the MCS type system.
+
+	    report.cs:
+
+		Error and warning reporting methods.
+
+	    support.cs:
+
+		Assorted utility functions used by the compiler.
+		
+	Parsing
+
+	    cs-tokenizer.cs:
+
+		The tokenizer for the C# language, it includes also
+		the C# pre-processor.
+
+	    cs-parser.jay, cs-parser.cs:
+
+		The parser is implemented using a C# port of the Yacc
+		parser.  The parser lives in the cs-parser.jay file,
+		and cs-parser.cs is the generated parser.
+
+	    location.cs:
+
+		The `location' structure is a compact representation
+		of a file, line, column where a token, or a high-level
+		construct appears.  This is used to report errors.
+
+	Expressions:
+	  
+	    ecore.cs
+	
+		Basic expression classes, and interfaces most shared
+		code and static methods are here.
+
+	    expression.cs:
+
+		Most of the different kinds of expressions classes
+		live in this file.
+
+	    assign.cs:
+
+		The assignment expression got its own file.
+
+	    constant.cs:
+
+		The classes that represent the constant expressions.
+
+	    literal.cs
+		
+		Literals are constants that have been entered manually
+		in the source code, like `1' or `true'.  The compiler
+		needs to tell constants from literals apart during the
+		compilation process, as literals sometimes have some
+		implicit extra conversions defined for them. 
+
+	    cfold.cs:
+
+		The constant folder for binary expressions.
+
+	Statements
+
+	    statement.cs:
+
+		All of the abstract syntax tree elements for
+		statements live in this file.  This also drives the
+		semantic analysis process.
+
+	Declarations, Classes, Structs, Enumerations
+
+	    decl.cs
+
+		This contains the base class for Members and
+		Declaration Spaces.   A declaration space introduces
+		new names in types, so classes, structs, delegates and
+		enumerations derive from it.
+
+	    class.cs:
+		
+		Methods for holding and defining class and struct
+		information, and every member that can be in these
+		(methods, fields, delegates, events, etc).
+
+		The most interesting type here is the `TypeContainer'
+		which is a derivative of the `DeclSpace' 
+
+	    delegate.cs:
+
+		Handles delegate definition and use. 
+
+	    enum.cs:
+
+		Handles enumerations.
+
+	    interface.cs:
+
+		Holds and defines interfaces.  All the code related to
+		interface declaration lives here.
+
+	    parameter.cs:
+
+		During the parsing process, the compiler encapsulates
+		parameters in the Parameter and Parameters classes.
+		These classes provide definition and resolution tools
+		for them.
+
+	    pending.cs:
+
+		Routines to track pending implementations of abstract
+		methods and interfaces.  These are used by the
+		TypeContainer-derived classes to track whether every
+		method required is implemented.
+
+	
 * The parsing process
 
 	All the input files that make up a program need to be read in
