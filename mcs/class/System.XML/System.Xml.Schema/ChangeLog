@@ -1,3 +1,7 @@
+2004-09-07  Atsushi Enomoto <atsushi@ximian.com>
+
+	* IXmlType.cs : deprecated in .NET 2.0.
+
 2004-09-03  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlSchema.cs : When schema inclusion results in a recursion, just
