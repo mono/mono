@@ -1,3 +1,5 @@
+topdir = ../..
+
 LIBRARY = ../lib/corlib.dll
 
 LIB_LIST = unix.args

@@ -1,5 +1,3 @@
-MCS = mcs
-
 DIRS =	corlib				\
 	System				\
 	System.XML			\

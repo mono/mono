@@ -1,3 +1,5 @@
+topdir = ../..
+
 LIBRARY = ../lib/System.dll
 
 LIB_LIST = list.unix

@@ -1,3 +1,5 @@
+topdir = ../..
+
 LIBRARY = ../lib/System.Drawing.dll
 
 LIB_LIST = list.unix

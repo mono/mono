@@ -1,3 +1,5 @@
+topdir = ..
+
 LIBRARY = ../class/lib/NUnitCore_mono.dll
 
 LIB_LIST = list.unix

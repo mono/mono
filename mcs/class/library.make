@@ -1,4 +1,4 @@
-MCS = mcs
+MCS = mono $(topdir)/mcs/mcs.exe
 MCS_FLAGS = --target library --noconfig
 
 all: $(LIBRARY)

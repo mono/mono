@@ -1,4 +1,4 @@
-DIRS=class jay mcs nunit nunit/src/NUnitConsole
+DIRS=jay mcs class nunit nunit/src/NUnitConsole
 
 #nant doesn't work yet
 
