@@ -1,10 +1,13 @@
 //
-// driver.cs: Walks the AST from a JScript program, and generates CIL opcodes.
+// driver.cs: Guides the compilation process through the different phases.
 //
-// Author: Cesar Octavio Lopez Nataren <cesar@ciencias.unam.mx>
+// Author: 
+//	Cesar Lopez Nataren (cesar@ciencias.unam.mx)
+//
+// (C) 2003, Cesar Lopez Nataren
 //
 
-namespace Microsoft.JScript
+namespace Microsoft.JScript.Tmp
 {
 	using System;
 	using System.IO;
@@ -15,52 +18,59 @@ namespace Microsoft.JScript
 
 	public class Jsc 
 	{
-		AssemblyName assemblyName;
-		AssemblyBuilder assemblyBuilder;
-		ModuleBuilder moduleBuilder;
-		MethodBuilder methodBuilder;
-		
-		string basename;
-		
-		string JSCRIPT_MODULE = "Jscript Module";
+		string filename;
+		string assemblyName;
+		ASTList program;
+		SemanticAnaliser semAnalizer;
+		CodeGenerator codeGen;
 
-		public Jsc (string output)
+		public Jsc (string filename)
 		{
-			basename = output;
-			
-			assemblyName = new AssemblyName ();
+			this.filename = filename;
+			this.assemblyName = Path.GetFileNameWithoutExtension (filename);
 
-			assemblyName.Name = basename;
-
-			assemblyBuilder = AppDomain.CurrentDomain.DefineDynamicAssembly (assemblyName,
-											 AssemblyBuilderAccess.RunAndSave,
-											 ".");
-			// FIXME: hard coded ".exe" extension
-			moduleBuilder = assemblyBuilder.DefineDynamicModule (JSCRIPT_MODULE, basename + ".exe", false);
+			program = new ASTList ();
 		}
 
-		public ASTList GetAST (string filename)
+
+		public void Run ()
+		{
+			this.GetAST (filename);
+			Console.WriteLine (this.program.ToString ());
+			// this.SemanticAnalysis ();
+			this.GenerateCode ();
+
+			this.codeGen.assemblyBuilder.Save (assemblyName + ".exe");
+		}
+
+			
+		public void GenerateCode ()
+		{
+			this.codeGen = new CodeGenerator (assemblyName,
+							  AssemblyBuilderAccess.RunAndSave);
+
+			this.codeGen.EmitJScript0 (this.program);
+			this.codeGen.EmitJScriptMain ();			
+		}
+
+
+		public void GetAST (string filename)
 		{
 			StreamReader reader = new StreamReader (filename);
 			JScriptLexer lexer = new JScriptLexer (reader);
 			JScriptParser parser = new JScriptParser (lexer);
 
-			ASTList astList = new ASTList ();			
-			parser.program (astList);
-
-			return astList;
+			parser.program (program);
 		}
 
 
 		public static void Main (string [] args)
 		{
 			try {			
-				string basename = Path.GetFileNameWithoutExtension (args [0]);
-				Jsc compiler = new Jsc (basename);
+				Jsc compiler = new Jsc (args [0]);
 
-				ASTList astList = compiler.GetAST (args [0]);
-
-				Console.WriteLine (astList.ToString ());
+				compiler.Run ();
+				Console.WriteLine (compiler.program.ToString ());
 
 			} catch (IndexOutOfRangeException) {
 				Console.WriteLine ("Usage: [mono] mjs.exe filename.js");

@@ -1,5 +1,14 @@
 2003-07-27  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
-	* Statement.cs: Forgot to include it at last commit.
+
+	* driver.cs: Modified the driver structure to be compatible
+	with our new CodeGenrator and SemanticAnalizer. I
+	removed the builders from Reflection.Emit to the
+	CodeGenerator. Added an ASTList, SemanticAnalizer and
+	CodeGenerator here. Adde methods Run, GenerateCode
+
+
+2003-07-27  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
+	* Statement.cs: Forgot to include it on last commit.
 
 2003-07-27  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
 	
