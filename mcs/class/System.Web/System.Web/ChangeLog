@@ -1,3 +1,7 @@
+2004-11-28 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpApplication.cs: Create() is now GetInstance().
+
 2004-11-12 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpResponse.cs: added internl SetHeadersSent.
