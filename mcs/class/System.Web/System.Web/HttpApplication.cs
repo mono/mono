@@ -9,6 +9,7 @@
 using System;
 using System.Collections;
 using System.ComponentModel;
+using System.IO;
 using System.Threading;
 using System.Security.Principal;
 using System.Runtime.Remoting.Messaging;
@@ -743,10 +744,16 @@ namespace System.Web
 
 			if (result is IHttpHandlerFactory) {
 				IHttpHandlerFactory factory = (IHttpHandlerFactory) result;
-				return factory.GetHandler (context, type, file, path);
+				try {
+					return factory.GetHandler (context, type, file, path);
+				} catch (DirectoryNotFoundException e) {
+					throw new HttpException (404, "Cannot find '" + file + "'.");
+				} catch (FileNotFoundException e2) {
+					throw new HttpException (404, "Cannot find '" + file + "'.");
+				}
 			}
 
-			return null;
+			throw new HttpException ("Handler not found");
 		}
 
 		[MonoTODO()]

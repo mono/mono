@@ -94,25 +94,34 @@ namespace System.Web
 
 		string GetDefaultErrorMessage ()
 		{
-			StringBuilder builder = new StringBuilder ("<html>\n<title>");
-			builder.Append ("Error"); //FIXME
+			StringBuilder builder = new StringBuilder ("<html>\r\n<title>");
+			builder.Append ("Error");
+			if (http_code != 0)
+				builder.Append (" " + http_code);
+
 			builder.AppendFormat ("</title><body bgcolor=\"white\">" + 
 					      "<h1><font color=\"red\">Server error in '{0}' " + 
-					      "application</font></h1><hr>\n",
+					      "application</font></h1><hr>\r\n",
 					      HttpRuntime.AppDomainAppVirtualPath);
 
-			builder.AppendFormat ("<h2><font color=\"maroon\"><i>{0}</i></font></h2>\n", Message);
-			builder.AppendFormat ("<b>Description: </b>{0}\n<p>\n", "Error processing request.");
-			builder.AppendFormat ("<b>Error Message: </b>{0}\n<p>\n", HtmlEncode (this.Message));
-			builder.AppendFormat ("<b>Stack Trace: </b>");
+			builder.AppendFormat ("<h2><font color=\"maroon\"><i>{0}</i></font></h2>\r\n", Message);
+			builder.AppendFormat ("<b>Description: </b>{0}\r\n<p>\r\n", "Error processing request.");
+			builder.Append ("<b>Error Message: </b>");
+			if (http_code != 0)
+				builder.AppendFormat ("HTTP {0}. ", http_code);
 
-			Exception e = (InnerException != null) ? InnerException : this;
-			builder.Append ("<table summary=\"Stack Trace\" width=\"100%\" bgcolor=\"#ffffc\">\n<tr><td>");
-			WriteTextAsCode (builder, e.ToString ());
-			builder.Append ("</td></tr>\n</table>\n<p>\n");
+			builder.AppendFormat ("{0}\r\n<p>\r\n", HtmlEncode (this.Message));
 
-			builder.Append ("<hr>\n</body>\n</html>\n");
-			builder.AppendFormat ("<!--\n{0}\n-->\n", HttpUtility.HtmlEncode (this.ToString ()));
+			if (InnerException != null) {
+				builder.AppendFormat ("<b>Stack Trace: </b>");
+				builder.Append ("<table summary=\"Stack Trace\" width=\"100%\" " +
+						"bgcolor=\"#ffffc\">\r\n<tr><td>");
+				WriteTextAsCode (builder, InnerException.ToString ());
+				builder.Append ("</td></tr>\r\n</table>\r\n<p>\r\n");
+			}
+
+			builder.Append ("<hr>\r\n</body>\r\n</html>\r\n");
+			builder.AppendFormat ("<!--\r\n{0}\r\n-->\r\n", HttpUtility.HtmlEncode (this.ToString ()));
 
 			return builder.ToString ();
 		}
@@ -123,22 +132,22 @@ namespace System.Web
 				return s;
 
 			string res = HttpUtility.HtmlEncode (s);
-			return res.Replace ("\n", "<br />");
+			return res.Replace ("\r\n", "<br />");
 		}
 		
 		string GetHtmlizedErrorMessage ()
 		{
-			StringBuilder builder = new StringBuilder ("<html>\n<title>");
+			StringBuilder builder = new StringBuilder ("<html>\r\n<title>");
 			HtmlizedException exc = (HtmlizedException) this.InnerException;
 			builder.Append (exc.Title);
 			builder.AppendFormat ("</title><body bgcolor=\"white\">" + 
 					      "<h1><font color=\"red\">Server Error in '{0}' " + 
-					      "Application</font></h1><hr>\n",
+					      "Application</font></h1><hr>\r\n",
 					      HttpRuntime.AppDomainAppVirtualPath);
 
-			builder.AppendFormat ("<h2><font color=\"maroon\"><i>{0}</i></font></h2>\n", exc.Title);
-			builder.AppendFormat ("<b>Description: </b>{0}\n<p>\n", HtmlEncode (exc.Description));
-			builder.AppendFormat ("<b>Error message: </b>{0}\n<p>\n", HtmlEncode (exc.ErrorMessage));
+			builder.AppendFormat ("<h2><font color=\"maroon\"><i>{0}</i></font></h2>\r\n", exc.Title);
+			builder.AppendFormat ("<b>Description: </b>{0}\r\n<p>\r\n", HtmlEncode (exc.Description));
+			builder.AppendFormat ("<b>Error message: </b>{0}\r\n<p>\r\n", HtmlEncode (exc.ErrorMessage));
 
 			if (exc.FileName != null)
 				builder.AppendFormat ("<b>File name: </b> {0}", HtmlEncode (exc.FileName));
@@ -152,32 +161,32 @@ namespace System.Web
 					builder.Append (exc.ErrorLines [0]);
 				}
 
-				builder.Append ("\n<p>\n");
+				builder.Append ("\r\n<p>\r\n");
 
 				if (exc is ParseException) {
-					builder.Append ("<b>Source Error: </b>\n");
+					builder.Append ("<b>Source Error: </b>\r\n");
 					builder.Append ("<table summary=\"Source error\" width=\"100%\"" +
-							" bgcolor=\"#ffffc\">\n<tr><td>");
+							" bgcolor=\"#ffffc\">\r\n<tr><td>");
 					WriteSource (builder, exc);
-					builder.Append ("</td></tr>\n</table>\n<p>\n");
+					builder.Append ("</td></tr>\r\n</table>\r\n<p>\r\n");
 				} else {
 					builder.Append ("<table summary=\"Source file\" width=\"100%\" " +
-							"bgcolor=\"#ffffc\">\n<tr><td>");
+							"bgcolor=\"#ffffc\">\r\n<tr><td>");
 					WriteSource (builder, exc);
-					builder.Append ("</td></tr>\n</table>\n<p>\n");
+					builder.Append ("</td></tr>\r\n</table>\r\n<p>\r\n");
 				}
 			}
 			
-			builder.Append ("<hr>\n</body>\n</html>\n");
-			builder.AppendFormat ("<!--\n{0}\n-->\n", HtmlEncode (exc.ToString ()));
+			builder.Append ("<hr>\r\n</body>\r\n</html>\r\n");
+			builder.AppendFormat ("<!--\r\n{0}\r\n-->\r\n", HtmlEncode (exc.ToString ()));
 			return builder.ToString ();
 		}
 
 		static void WriteTextAsCode (StringBuilder builder, string text)
 		{
-			builder.Append ("<code><pre>\n");
+			builder.Append ("<code><pre>\r\n");
 			builder.AppendFormat ("{0}", HtmlEncode (text));
-			builder.Append ("</pre></code>\n");
+			builder.Append ("</pre></code>\r\n");
 		}
 
 		static void WriteSource (StringBuilder builder, HtmlizedException e)
@@ -188,7 +197,7 @@ namespace System.Web
 			else
 				WritePageSource (builder, e);
 
-			builder.Append ("</pre></code>\n");
+			builder.Append ("</pre></code>\r\n");
 		}
 		
 		static void WriteCompilationSource (StringBuilder builder, HtmlizedException e)
@@ -209,7 +218,7 @@ namespace System.Web
 				if (errline == line)
 					builder.Append ("<span style=\"color: red\">");
 
-				builder.AppendFormat ("Line {0}: {1}\n", line, HtmlEncode (s));
+				builder.AppendFormat ("Line {0}: {1}\r\n", line, HtmlEncode (s));
 
 				if (line == errline) {
 					builder.Append ("</span>");
@@ -241,7 +250,7 @@ namespace System.Web
 				if (beginerror == line)
 					builder.Append ("<span style=\"color: red\">");
 
-				builder.AppendFormat ("{0}\n", HtmlEncode (s));
+				builder.AppendFormat ("{0}\r\n", HtmlEncode (s));
 
 				if (enderror <= line) {
 					builder.Append ("</span>");

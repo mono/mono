@@ -1,3 +1,9 @@
+2003-12-02  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* TemplateParser.cs: basic check for 'classname' attribute and added
+	patch by pcgod@gmx.net for bug #51568, which fixes automatic class
+	names for pages starting with a number.
+
 2003-11-30 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* LosFormatter.cs: Use ObjectStateFormatter. Pretty big size

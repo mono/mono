@@ -21,7 +21,7 @@ namespace System.Web
 			string fileName = request.PhysicalPath;
 			FileInfo fi = new FileInfo (fileName);
 			if (!fi.Exists)
-				throw new HttpException (404, "File '" + fileName + "' does not exist");
+				throw new HttpException (404, "File '" + request.FilePath + "' not found.");
 
 			if ((fi.Attributes & FileAttributes.Directory) != 0) {
 				response.Redirect (request.Path + '/');
@@ -47,7 +47,7 @@ namespace System.Web
 				response.WriteFile (fileName);
 				response.ContentType = MimeTypes.GetMimeType (fileName);
 			} catch (Exception e) {
-				throw new HttpException (403, "Forbidden");
+				throw new HttpException (403, "Forbidden.");
 			}
 		}
 

@@ -361,6 +361,9 @@ namespace System.Web.UI
 			}
 
 			className = GetString (atts, "ClassName", null);
+			if (className != null && !CodeGenerator.IsValidLanguageIndependentIdentifier (className))
+				ThrowParseException (String.Format ("'{0}' is not valid for 'className'", className));
+
 			if (atts.Count > 0)
 				ThrowParseException ("Unknown attribute: " + GetOneKey (atts));
 		}
@@ -419,6 +422,11 @@ namespace System.Web.UI
 				className = Path.GetFileName (inputFile).Replace ('.', '_');
 				className = className.Replace ('-', '_'); 
 				className = className.Replace (' ', '_');
+
+				if (Char.IsDigit(className[0])) {
+					className = "_" + className;
+				}
+
 				return className;
 			}
 		}

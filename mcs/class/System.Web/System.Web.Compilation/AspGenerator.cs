@@ -8,6 +8,7 @@
 //
 using System;
 using System.Collections;
+using System.CodeDom.Compiler;
 using System.IO;
 using System.Text;
 using System.Web.UI;
@@ -336,6 +337,10 @@ namespace System.Web.Compilation
 			}
 
 			if (builder == null && atts != null && atts.IsRunAtServer ()) {
+				string id = htable ["id"] as string;
+				if (id != null && !CodeGenerator.IsValidLanguageIndependentIdentifier (id))
+					throw new ParseException (Location, "'" + id + "' is not a valid identifier");
+					
 				try {
 					builder = rootBuilder.CreateSubBuilder (tagid, htable, null, tparser, location);
 				} catch (TypeLoadException e) {
@@ -438,9 +443,9 @@ namespace System.Web.Compilation
 				return;
 
 			if (String.Compare (lang, tparser.Language, true) != 0) {
-				// FIXME: throw the same exception as MS
-				throw new Exception ("Trying to mix " + tparser.Language + " and " +
-						     lang + ".");
+				throw new ParseException (Location,
+						String.Format ("Trying to mix language '{0}' and '{1}'.", 
+								tparser.Language, lang));
 			}
 		}
 		// Used to get CodeRender tags in attribute values

@@ -1,5 +1,15 @@
 2003-12-02  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* HttpApplication.cs: handle FileNotFound and DirectoryNotFound
+	exceptions when creating the handler to generate a better error page.
+
+	* HttpException.cs: display the http_code if available.  Changed all
+	\n by \r\n to make the hidden stack trace readable.
+	
+	* StaticFileHandler.cs: don't send the real path in th eerror.
+
+2003-12-02  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* HttpContext.cs: updated GetConfig and GetAppConfig to new API.
 	
 	* HttpResponse.cs: separate initialization of the HttpWriter, as it
