@@ -9,8 +9,6 @@
 //
 
 //
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
-//
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
 // "Software"), to deal in the Software without restriction, including
@@ -66,7 +64,7 @@ namespace Mono.Security.X509 {
 		static byte[] localityName = { 0x55, 0x04, 0x07 };
 		static byte[] stateOrProvinceName = { 0x55, 0x04, 0x08 };
 		static byte[] streetAddress = { 0x55, 0x04, 0x09 };
-		static byte[] serialNumber = { 0x55, 0x04, 0x05 };
+		//static byte[] serialNumber = { 0x55, 0x04, 0x05 };
 		static byte[] domainComponent = { 0x09, 0x92, 0x26, 0x89, 0x93, 0xF2, 0x2C, 0x64, 0x01, 0x19 };
 		static byte[] userid = { 0x09, 0x92, 0x26, 0x89, 0x93, 0xF2, 0x2C, 0x64, 0x01, 0x01 };
 		static byte[] email = { 0x2a, 0x86, 0x48, 0x86, 0xf7, 0x0d, 0x01, 0x09, 0x01 };
@@ -80,66 +78,71 @@ namespace Mono.Security.X509 {
 			StringBuilder sb = new StringBuilder ();
 			for (int i = 0; i < seq.Count; i++) {
 				ASN1 entry = seq [i];
-				ASN1 pair = entry [0];
+				// multiple entries are valid
+				for (int k = 0; k < entry.Count; k++) {
+					ASN1 pair = entry [k];
+					ASN1 s = pair [1];
+					if (s == null)
+						continue;
 
-				ASN1 s = pair [1];
-				if (s == null)
-					continue;
+					ASN1 poid = pair [0];
+					if (poid == null)
+						continue;
 
-				ASN1 poid = pair [0];
-				if (poid == null)
-					continue;
+					if (poid.CompareValue (countryName))
+						sb.Append ("C=");
+					else if (poid.CompareValue (organizationName))
+						sb.Append ("O=");
+					else if (poid.CompareValue (organizationalUnitName))
+						sb.Append ("OU=");
+					else if (poid.CompareValue (commonName))
+						sb.Append ("CN=");
+					else if (poid.CompareValue (localityName))
+						sb.Append ("L=");
+					else if (poid.CompareValue (stateOrProvinceName))
+						sb.Append ("S=");	// NOTE: RFC2253 uses ST=
+					else if (poid.CompareValue (streetAddress))
+						sb.Append ("STREET=");
+					else if (poid.CompareValue (domainComponent))
+						sb.Append ("DC=");
+					else if (poid.CompareValue (userid))
+						sb.Append ("UID=");
+					else if (poid.CompareValue (email))
+						sb.Append ("E=");	// NOTE: Not part of RFC2253
+					else {
+						// unknown OID
+						sb.Append ("OID.");	// NOTE: Not present as RFC2253
+						sb.Append (ASN1Convert.ToOid (poid));
+						sb.Append ("=");
+					}
 
-				if (poid.CompareValue (countryName))
-					sb.Append ("C=");
-				else if (poid.CompareValue (organizationName))
-					sb.Append ("O=");
-				else if (poid.CompareValue (organizationalUnitName))
-					sb.Append ("OU=");
-				else if (poid.CompareValue (commonName))
-					sb.Append ("CN=");
-				else if (poid.CompareValue (localityName))
-					sb.Append ("L=");
-				else if (poid.CompareValue (stateOrProvinceName))
-					sb.Append ("S=");	// NOTE: RFC2253 uses ST=
-				else if (poid.CompareValue (streetAddress))
-					sb.Append ("STREET=");
-				else if (poid.CompareValue (domainComponent))
-					sb.Append ("DC=");
-				else if (poid.CompareValue (userid))
-					sb.Append ("UID=");
-				else if (poid.CompareValue (email))
-					sb.Append ("E=");	// NOTE: Not part of RFC2253
-				else {
-					// unknown OID
-					sb.Append ("OID.");	// NOTE: Not present as RFC2253
-					sb.Append (ASN1Convert.ToOid (poid));
-					sb.Append ("=");
+					string sValue = null;
+					// 16bits or 8bits string ? TODO not complete (+special chars!)
+					if (s.Tag == 0x1E) {
+						// BMPSTRING
+						StringBuilder sb2 = new StringBuilder ();
+						for (int j = 1; j < s.Value.Length; j += 2)
+							sb2.Append ((char)s.Value[j]);
+						sValue = sb2.ToString ();
+					} else {
+						sValue = System.Text.Encoding.UTF8.GetString (s.Value);
+						// in some cases we must quote (") the value
+						// Note: this doesn't seems to conform to RFC2253
+						char[] specials = { ',', '+', '"', '\\', '<', '>', ';' };
+						if (sValue.IndexOfAny (specials, 0, sValue.Length) > 0)
+							sValue = "\"" + sValue + "\"";
+						else if (sValue.StartsWith (" "))
+							sValue = "\"" + sValue + "\"";
+						else if (sValue.EndsWith (" "))
+							sValue = "\"" + sValue + "\"";
+					}
+
+					sb.Append (sValue);
+
+					// separator (not on last iteration)
+					if (k < entry.Count - 1)
+						sb.Append (", ");
 				}
-
-				string sValue = null;
-				// 16bits or 8bits string ? TODO not complete (+special chars!)
-				if (s.Tag == 0x1E) {
-					// BMPSTRING
-					StringBuilder sb2 = new StringBuilder ();
-					for (int j = 1; j < s.Value.Length; j+=2)
-						sb2.Append ((char) s.Value[j]);
-					sValue = sb2.ToString ();
-				}
-				else {
-					sValue = System.Text.Encoding.UTF8.GetString (s.Value);
-					// in some cases we must quote (") the value
-					// Note: this doesn't seems to conform to RFC2253
-					char[] specials = { ',', '+', '"', '\\', '<', '>', ';' };
-					if (sValue.IndexOfAny(specials, 0, sValue.Length) > 0)
-						sValue = "\"" + sValue + "\"";
-					else if (sValue.StartsWith (" "))
-						sValue = "\"" + sValue + "\"";
-					else if (sValue.EndsWith (" "))
-						sValue = "\"" + sValue + "\"";
-				}
-
-				sb.Append (sValue);
 
 				// separator (not on last iteration)
 				if (i < seq.Count - 1)
@@ -164,6 +167,8 @@ namespace Mono.Security.X509 {
 				case "S":	// Microsoft
 				case "ST":	// RFC2253
 					return new X520.StateOrProvinceName ();
+				case "E":	// NOTE: Not part of RFC2253
+					return new X520.EmailAddress ();
 				case "DC":
 //					return streetAddress;
 				case "UID":

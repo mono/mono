@@ -9,8 +9,6 @@
 //
 
 //
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
-//
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
 // "Software"), to deal in the Software without restriction, including
@@ -32,6 +30,7 @@
 //
 
 using System;
+using System.Globalization;
 using System.Text;
 
 using Mono.Security;
@@ -83,7 +82,13 @@ namespace Mono.Security.X509 {
 
 			public string Value {
 				get { return attrValue; }
-				set { attrValue = value; }
+				set { 
+					if ((attrValue != null) && (attrValue.Length > upperBound)) {
+						string msg = Locale.GetText ("Value length bigger than upperbound ({0}).");
+						throw new FormatException (String.Format (msg, upperBound));
+					}
+					attrValue = value; 
+				}
 			}
 
 			public ASN1 ASN1 {
@@ -102,6 +107,10 @@ namespace Mono.Security.X509 {
 					case 0x13:
 						// PRINTABLESTRING
 						asn1.Add (new ASN1 (0x13, Encoding.ASCII.GetBytes (attrValue)));
+						break;
+					case 0x16:
+						// IA5STRING
+						asn1.Add (new ASN1 (0x16, Encoding.ASCII.GetBytes (attrValue)));
 						break;
 					case 0x1E:
 						// BMPSTRING
@@ -174,6 +183,14 @@ namespace Mono.Security.X509 {
 		public class OrganizationalUnitName : AttributeTypeAndValue {
 
 			public OrganizationalUnitName () : base ("2.5.4.11", 64)
+			{
+			}
+		}
+
+		// NOTE: Not part of RFC2253
+		public class EmailAddress : AttributeTypeAndValue 
+		{
+			public EmailAddress () : base ("1.2.840.113549.1.9.1", 128, 0x16)
 			{
 			}
 		}
