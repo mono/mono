@@ -1,3 +1,8 @@
+2004-12-12  John Luke  <john.luke@gmail.com>
+
+	* driver.cs (AddArgs): take -- into account when
+	adding arguments, fixes bug 65710 
+
 2004-12-12  Martin Baulig  <martin@ximian.com>
 
 	* expression.cs (Unary.TryReduceNegative): Added support for

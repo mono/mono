@@ -1310,10 +1310,23 @@ namespace Mono.CSharp
 		static string [] AddArgs (string [] args, string [] extra_args)
 		{
 			string [] new_args;
-
 			new_args = new string [extra_args.Length + args.Length];
-			args.CopyTo (new_args, 0);
-			extra_args.CopyTo (new_args, args.Length);
+
+			// if args contains '--' we have to take that into account
+			// split args into first half and second half based on '--'
+			// and add the extra_args before --
+			int split_position = Array.IndexOf (args, "--");
+			if (split_position != -1)
+			{
+				Array.Copy (args, new_args, split_position);
+				extra_args.CopyTo (new_args, split_position);
+				Array.Copy (args, split_position, new_args, split_position + extra_args.Length, args.Length - split_position);
+			}
+			else
+			{
+				args.CopyTo (new_args, 0);
+				extra_args.CopyTo (new_args, args.Length);
+			}
 
 			return new_args;
 		}
