@@ -280,6 +280,12 @@ namespace CIR {
 			}
 		}
 
+		public ModuleBuilder ModuleBuilder {
+			get {
+				return mb;
+			}
+		}
+
 		//
 		// Public Field, used to track which method is the public entry
 		// point.

@@ -1,3 +1,42 @@
+2001-10-28  Ravi Pratap  <ravi@ximian.com>
+
+	* typemanager.cs (IsBuiltinType): New method to help determine the same.
+
+	* expression.cs (New::DoResolve): Get rid of array creation code and instead
+	split functionality out into different classes.
+
+	(New::FormArrayType): Move into NewBuiltinArray.
+
+	(Invocation::EmitArguments): Get rid of the MethodBase argument. Appears
+	quite useless.
+
+	(NewBuiltinArray): New class to handle creation of built-in arrays.
+
+	(NewBuiltinArray::DoResolve): Implement guts of array creation. Also take into
+	account creation of one-dimensional arrays.
+
+	(::Emit): Implement to use Newarr and Newobj opcodes accordingly.
+
+	(NewUserdefinedArray::DoResolve): Implement.
+
+	* cs-parser.jay (local_variable_type): Fix up to add the rank to the variable too.
+
+	* typemanager.cs (AddModule): Used to add a ModuleBuilder to the list of modules
+	we maintain inside the TypeManager. This is necessary to perform lookups on the
+	module builder.
+
+	(LookupType): Update to perform GetType on the module builders too.	
+
+	* driver.cs (Driver): Add the ModuleBuilder to the list maintained by the TypeManager.
+
+	* exprssion.cs (NewUserdefinedArray::Emit): Implement.
+
+2001-10-23  Ravi Pratap  <ravi@ximian.com>
+
+	* expression.cs (New::DoResolve): Implement guts of array creation.
+
+	(New::FormLookupType): Rename to FormArrayType and modify ever so slightly.
+	
 2001-10-27  Miguel de Icaza  <miguel@ximian.com>
 
 	* expression.cs: Fix bug I introduced lsat night that broke
@@ -79,7 +118,6 @@
 	inherited from an interface, we need to set the MethodAttributes.Final flag too. 
 	Also set MethodAttributes.NewSlot and MethodAttributes.HideBySig.
 	
->>>>>>> 1.142
 2001-10-21  Ravi Pratap  <ravi@ximian.com>
 
 	* interface.cs (FindMembers): Implement to work around S.R.E

@@ -2428,7 +2428,7 @@ local_variable_type
 		// SimpleName Expression.
 		//
 		if (((Expression) $1) is SimpleName)
-			$$ = ((SimpleName) $1).Name;
+			$$ = ((SimpleName) $1).Name + (string) $2;
 		else {
 			Location l = lexer.Location;
 			Report.Error (-1, l, "Invalid Type definition");

@@ -72,6 +72,12 @@ public class TypeManager {
 	ArrayList assemblies;
 
 	// <remarks>
+	//  Keeps a list of module builders. We used this to do lookups
+	//  on the modulebuilder using GetType -- needed for arrays
+	// </remarks>
+	ArrayList modules;
+
+	// <remarks>
 	//   This is the type_cache from the assemblies to avoid
 	//   hitting System.Reflection on every lookup.
 	// </summary>
@@ -111,6 +117,7 @@ public class TypeManager {
 	public TypeManager ()
 	{
 		assemblies = new ArrayList ();
+		modules = new ArrayList ();
 		user_types = new ArrayList ();
 		types = new Hashtable ();
 		typecontainers = new Hashtable ();
@@ -178,6 +185,14 @@ public class TypeManager {
 	}
 
 	// <summary>
+	//  Registers a module builder to lookup types from
+	// </summary>
+	public void AddModule (ModuleBuilder mb)
+	{
+		modules.Add (mb);
+	}
+
+	// <summary>
 	//   Returns the Type associated with @name
 	// </summary>
 	public Type LookupType (string name)
@@ -197,6 +212,14 @@ public class TypeManager {
 			if (t != null){
 				types [name] = t;
 
+				return t;
+			}
+		}
+
+		foreach (ModuleBuilder mb in modules) {
+			t = mb.GetType (name);
+			if (t != null) {
+				types [name] = t;
 				return t;
 			}
 		}
@@ -360,6 +383,17 @@ public class TypeManager {
 		
 	}
 
+	public static bool IsBuiltinType (Type t)
+	{
+		if (t == object_type || t == string_type || t == int32_type || t == uint32_type ||
+		    t == int64_type || t == uint64_type || t == float_type || t == double_type ||
+		    t == char_type || t == short_type || t == decimal_type || t == bool_type ||
+		    t == sbyte_type || t == byte_type || t == ushort_type)
+			return true;
+		else
+			return false;
+	}
+
 	public static bool IsDelegateType (Type t)
 	{
 		Delegate del = (Delegate) delegate_types [t];
@@ -484,6 +518,10 @@ public class TypeManager {
 
 		if (interfaces == null) {
 			interfaces = t.GetInterfaces ();
+
+			// Note that interfaces is an empty array if the type
+			// implements or inherits no interfaces so it makes sense for us to
+			// store that so as to not hit the expensive lookup again.
 			type_interface_cache [t] = interfaces;
 		}
 

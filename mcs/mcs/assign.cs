@@ -149,7 +149,7 @@ namespace CIR {
 
 				return n;
 			}
-			
+
 			if (target_type != source_type){
 				source = ConvertImplicitRequired (ec, source, target_type, l);
 				if (source == null)

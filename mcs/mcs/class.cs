@@ -1871,7 +1871,7 @@ namespace CIR {
 		{
 			ec.ig.Emit (OpCodes.Ldarg_0);
 			if (argument_list != null)
-				Invocation.EmitArguments (ec, parent_constructor, argument_list);
+				Invocation.EmitArguments (ec, argument_list);
 			ec.ig.Emit (OpCodes.Call, parent_constructor);
 		}
 	}

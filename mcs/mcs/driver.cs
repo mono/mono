@@ -404,6 +404,8 @@ namespace CIR
 			// or from the system ones.
 			//
 			context.TypeManager.InitCoreTypes ();
+
+			context.TypeManager.AddModule (context.CodeGen.ModuleBuilder);
 			
 			//
 			// The second pass of the compiler

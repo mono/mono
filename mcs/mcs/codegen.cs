@@ -57,6 +57,7 @@ namespace CIR {
 			//
 			module_builder = assembly_builder.DefineDynamicModule (
 				Basename (name), Basename (output));
+
 		}
 		
 		public AssemblyBuilder AssemblyBuilder {

@@ -2185,7 +2185,7 @@ namespace CIR {
 				// Note that operators are static anyway
 				
 				if (Arguments != null) 
-					Invocation.EmitArguments (ec, method, Arguments);
+					Invocation.EmitArguments (ec, Arguments);
 
 				//
 				// Post increment/decrement operations need a copy at this
@@ -2947,7 +2947,7 @@ namespace CIR {
 				// Note that operators are static anyway
 				
 				if (Arguments != null) 
-					Invocation.EmitArguments (ec, method, Arguments);
+					Invocation.EmitArguments (ec, Arguments);
 				
 				if (method is MethodInfo)
 					ig.Emit (OpCodes.Call, (MethodInfo) method);
@@ -4098,7 +4098,7 @@ namespace CIR {
 			return this;
 		}
 
-		public static void EmitArguments (EmitContext ec, MethodBase method, ArrayList Arguments)
+		public static void EmitArguments (EmitContext ec, ArrayList Arguments)
 		{
 			int top;
 
@@ -4158,7 +4158,7 @@ namespace CIR {
 			}
 
 			if (Arguments != null)
-				EmitArguments (ec, method, Arguments);
+				EmitArguments (ec, Arguments);
 
 			if (is_static || struct_call){
 				if (method is MethodInfo)
@@ -4240,20 +4240,6 @@ namespace CIR {
 			
 		}
 
-		public static string FormLookupType (string base_type, int idx_count, string rank)
-		{
-			StringBuilder sb = new StringBuilder (base_type);
-
-			sb.Append (rank);
-
-			sb.Append ("[");
-			for (int i = 1; i < idx_count; i++)
-				sb.Append (",");
-			sb.Append ("]");
-			
-			return sb.ToString ();
-		}
-		
 		public Expression ValueTypeVariable {
 			get {
 				return value_target;
@@ -4263,7 +4249,7 @@ namespace CIR {
 				value_target = value;
 			}
 		}
-		
+
 		public override Expression DoResolve (EmitContext ec)
 		{
 			if (NewType == NType.Object) {
@@ -4307,8 +4293,7 @@ namespace CIR {
 					method = Invocation.OverloadResolve (ec, (MethodGroupExpr) ml,
 									     Arguments, Location);
 				}
-				
-				
+
 				if (method == null && !is_struct) {
 					Error (-6, Location,
 					       "New invocation: Can not find a constructor for " +
@@ -4322,7 +4307,16 @@ namespace CIR {
 			}
 			
 			if (NewType == NType.Array) {
-				throw new Exception ("Finish array creation");
+
+				type = ec.TypeContainer.LookupType (RequestedType, false);
+
+				if (TypeManager.IsBuiltinType (type))
+					return (new NewBuiltinArray (
+						    RequestedType, Rank, Arguments, Initializers, Location)).Resolve (ec);
+				else
+					return (new NewUserdefinedArray (
+						    RequestedType, Rank, Arguments, Initializers, Location)).Resolve (ec); 
+
 			}
 			
 			return null;
@@ -4346,7 +4340,7 @@ namespace CIR {
 
 				ml.AddressOf (ec);
 			} else {
-				Invocation.EmitArguments (ec, method, Arguments);
+				Invocation.EmitArguments (ec, Arguments);
 				ec.ig.Emit (OpCodes.Newobj, (ConstructorInfo) method);
 				return true;
 			}
@@ -4379,6 +4373,254 @@ namespace CIR {
 		}
 	}
 
+	// 
+	// Class to create arrays out of built-in types
+	// 
+	public class NewBuiltinArray : Expression {
+
+		public readonly string RequestedType;
+		public readonly string Rank;
+		public ArrayList Arguments;
+		public ArrayList Initializers;
+
+		Location Location;
+
+		MethodBase method = null;
+		Type array_element_type;
+
+		bool IsOneDimensional = false;
+
+		public NewBuiltinArray (string type, string rank, ArrayList args, ArrayList initializers, Location loc)
+		{
+			RequestedType = type;
+			Rank          = rank;
+			Arguments     = args;
+			Initializers  = initializers;
+			Location      = loc;
+		}
+
+		public static string FormArrayType (string base_type, int idx_count, string rank)
+		{
+			StringBuilder sb = new StringBuilder (base_type);
+
+			sb.Append (rank);
+			
+			sb.Append ("[");
+			for (int i = 1; i < idx_count; i++)
+				sb.Append (",");
+			sb.Append ("]");
+			
+			return sb.ToString ();
+                }
+
+		public static string FormElementType (string base_type, int idx_count, string rank)
+		{
+			StringBuilder sb = new StringBuilder (base_type);
+			
+			sb.Append ("[");
+			for (int i = 1; i < idx_count; i++)
+				sb.Append (",");
+			sb.Append ("]");
+
+			sb.Append (rank);
+
+			string val = sb.ToString ();
+
+			return val.Substring (0, val.LastIndexOf ("["));
+		}
+
+		public override Expression DoResolve (EmitContext ec)
+		{
+			int arg_count;
+
+			if (Arguments == null)
+				arg_count = 0;
+			else
+				arg_count = Arguments.Count;
+			
+			string array_type = FormArrayType (RequestedType, arg_count, Rank);
+
+			string element_type = FormElementType (RequestedType, arg_count, Rank);
+
+			type = ec.TypeContainer.LookupType (array_type, false);
+
+			array_element_type = ec.TypeContainer.LookupType (element_type, false);
+
+			if (type == null)
+				return null;
+
+			if (arg_count == 1) {
+				IsOneDimensional = true;
+				eclass = ExprClass.Value;
+				return this;
+			}
+				
+			Expression ml;
+
+			ml = MemberLookup (ec, type, ".ctor", false, MemberTypes.Constructor,
+					   AllBindingsFlags, Location);
+
+			if (!(ml is MethodGroupExpr)){
+				report118 (Location, ml, "method group");
+				return null;
+			}
+
+			if (ml == null) {
+				Report.Error (-6, Location, "New invocation: Can not find a constructor for " +
+					      "this argument list");
+				return null;
+			}
+				
+			if (Arguments != null) {
+				for (int i = arg_count; i > 0;){
+					--i;
+					Argument a = (Argument) Arguments [i];
+					
+					if (!a.Resolve (ec))
+							return null;
+				}
+			}
+			
+			method = Invocation.OverloadResolve (ec, (MethodGroupExpr) ml, Arguments, Location);
+
+			if (method == null) {
+				Report.Error (-6, Location, "New invocation: Can not find a constructor for " +
+					      "this argument list");
+				return null;
+			}
+
+			eclass = ExprClass.Value;
+			return this;
+
+		}
+
+		public override void Emit (EmitContext ec)
+		{
+			if (IsOneDimensional) {
+				Invocation.EmitArguments (ec, Arguments);
+				ec.ig.Emit (OpCodes.Newarr, array_element_type);
+
+			} else {
+				Invocation.EmitArguments (ec, Arguments);
+				ec.ig.Emit (OpCodes.Newobj, (ConstructorInfo) method);
+			}
+		}
+		
+	}
+
+	//
+	// Class to create arrays out of user defined types
+	//
+	public class NewUserdefinedArray : Expression {
+
+		public readonly string RequestedType;
+		public readonly string Rank;
+		public ArrayList Arguments;
+		public ArrayList Initializers;
+
+		Location Location;
+
+		bool IsOneDimensional = false;
+
+		MethodBase method;
+		Type array_element_type;
+
+		public NewUserdefinedArray (string type, string rank, ArrayList args, ArrayList initializers, Location loc)
+		{
+			RequestedType = type;
+			Rank          = rank;
+			Arguments     = args;
+			Initializers  = initializers;
+			Location      = loc;
+		}
+
+		public static string FormArrayType (string base_type, int idx_count, string rank)
+		{
+			StringBuilder sb = new StringBuilder (base_type);
+
+			sb.Append ("[");
+			for (int i = 1; i < idx_count; i++)
+				sb.Append (",");
+			sb.Append ("]");
+
+			sb.Append (rank);
+			
+			return sb.ToString ();
+                }
+
+		public override Expression DoResolve (EmitContext ec)
+		{
+			ModuleBuilder mb = ec.TypeContainer.RootContext.ModuleBuilder;
+			int arg_count;
+
+			if (Arguments == null)
+				arg_count = 0;
+			else
+				arg_count = Arguments.Count;
+
+			string array_type = NewBuiltinArray.FormArrayType (RequestedType, arg_count, Rank);
+
+			string element_type = NewBuiltinArray.FormElementType (RequestedType, arg_count, Rank);
+			
+			type = mb.GetType (array_type);
+			array_element_type = mb.GetType (element_type);
+
+			if (type == null)
+				return null;
+
+			if (arg_count == 1) {
+				IsOneDimensional = true;
+				eclass = ExprClass.Value;
+				return this;
+			}
+
+			ArrayList args = new ArrayList ();
+			if (Arguments != null){
+				for (int i = arg_count; i > 0;){
+					--i;
+					Argument a = (Argument) Arguments [i];
+					
+					if (!a.Resolve (ec))
+						return null;
+					
+					args.Add (a.Expr.Type);
+				}
+			}
+			
+			Type [] arg_types = null;
+			
+			if (args.Count > 0)
+				arg_types = new Type [args.Count];
+			
+			args.CopyTo (arg_types, 0);
+
+			method = mb.GetArrayMethod (type, ".ctor", CallingConventions.HasThis, null,
+						    arg_types);
+			
+			if (method == null) {
+				Report.Error (-6, Location, "New invocation: Can not find a constructor for " +
+					      "this argument list");
+				return null;
+			}
+
+			eclass = ExprClass.Value;
+			return this;
+		}
+
+		public override void Emit (EmitContext ec)
+		{
+			if (IsOneDimensional) {
+				Invocation.EmitArguments (ec, Arguments);
+				ec.ig.Emit (OpCodes.Newarr, array_element_type);
+				
+			} else {
+				Invocation.EmitArguments (ec, Arguments);
+				ec.ig.Emit (OpCodes.Newobj, (MethodInfo) method);
+			}
+		}
+
+	}
+	
 	//
 	// Represents the `this' construct
 	//
