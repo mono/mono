@@ -9,11 +9,11 @@
 		<mkdir dir="../lib"/>
 		<csc target="library" output="../lib/System.Configuration.Install.dll" debug="${debug}">
 			<arg value="/noconfig"/>	<!-- don't reference ms assemblies -->
-			<arg value="/lib:../lib/"/>
 			
 			<!-- cor compare dies with these currently -->
 			<!--arg value="/nostdlib"/--> 	<!-- don't reference mscorlib -->
-			<arg value="/r:corlib.dll"/>
+			<arg value="/r:mscorlib.dll"/>
+			<arg value="/r:System.dll"/>
 			<sources>
 				<includes name="**/*.cs"/> 
 				<excludes name="Test/**"/>

@@ -6,7 +6,7 @@
 // (C) Alejandro Sánchez Acosta
 // 
 
-using System.Runtime.InteropService;
+using System.Runtime.InteropServices;
 
 namespace System.Configuration.Installer
 {
