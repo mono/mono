@@ -14,7 +14,7 @@ using System.Runtime.InteropServices;
 namespace System.Windows.Forms {
 
 	// <summary>
-	// just a template
+	// Complete
 	// </summary>
 
     public class KeyEventArgs : EventArgs {
@@ -199,7 +199,7 @@ namespace System.Windows.Forms {
 		public override string ToString () 
 		{
 			//FIXME: add class specific stuff;
-			return base.ToString();
+			return base.ToString() + " KeyEventArgs";
 		}
 
 

@@ -101,7 +101,7 @@ namespace System.Windows.Forms {
 		///
 		/// <remarks>
 		///	Checks equivalence of this
-		///	LayoutEventArgs and another
+		///	LabelEditEventArgs and another
 		///	object.
 		/// </remarks>
 		public override bool Equals (object obj) 
@@ -135,7 +135,7 @@ namespace System.Windows.Forms {
 		public override string ToString () 
 		{
 			//FIXME: add class specific stuff;
-			return base.ToString();
+			return base.ToString() + " LabelEditEventArgs";
 		}
 
 

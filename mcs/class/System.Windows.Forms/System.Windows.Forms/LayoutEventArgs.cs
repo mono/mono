@@ -120,7 +120,7 @@ namespace System.Windows.Forms {
 		public override string ToString () 
 		{
 			//FIXME: add class specific stuff;
-			return base.ToString();
+			return base.ToString() + " LayoutEventArgs";
 		}
 
 
