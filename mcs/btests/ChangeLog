@@ -1,3 +1,10 @@
+2004-08-20 Anirban Bhattacharjee <banirban@novell.com>
+	* Event_dll.vb:
+	* Event_exe.vb:
+		New tests for invoking event form other assembly
+	* Test.Sources: Updated with new file names
+	* Makefile: Added new dll name
+
 2004-08-20 Sachin Kumar <skumar1@novell.com>
 	* ConditionalStatementsB.vb:
 	* ConditionalStatementsC.vb:

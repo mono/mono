@@ -6,6 +6,7 @@ TEST_DLL_SOURCES = \
 Dll1 \
 Override_dll \
 Delegate_dll \
+Event_dll \
 
 #
 # All positive test cases goes here
@@ -158,6 +159,7 @@ EventE \
 EventF \
 EventG \
 EventH \
+Event_exe \
 AssignmentOperators \
 RelationalOperators \
 RelationalOperatorsA \
