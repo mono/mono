@@ -5,9 +5,11 @@
 // 	Jochen Wezel (jwezel@compumaster.de)
 //	Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
-// (c) 2003 Jochen Wezel
+// (c) 2003 Jochen Wezel (http://www.compumaster.de)
 // (c) 2003 Ximian, Inc. (http://www.ximian.com)
 //
+// Modifications:
+// 2003-11-28 JW: create reference to Microsoft.VisualBasic if not explicitly done
 
 namespace Microsoft.VisualBasic
 {
@@ -167,10 +169,21 @@ namespace Microsoft.VisualBasic
 				options.OutputAssembly = GetTempFileNameWithExtension ("dll");
 
 			args.AppendFormat ("/out:\"{0}\" ", options.OutputAssembly);
-			if (null != options.ReferencedAssemblies) {
-				foreach (string import in options.ReferencedAssemblies)
-					args.AppendFormat ("/r:\"{0}\" ", import);
-			}
+
+			bool Reference2MSVBFound;
+			Reference2MSVBFound = false;
+			if (null != options.ReferencedAssemblies) 
+			{
+ 				foreach (string import in options.ReferencedAssemblies)
+				{
+					if (string.Compare (import, "Microsoft.VisualBasic", true, System.Globalization.CultureInfo.InvariantCulture) == 0)
+						Reference2MSVBFound = true;
+ 					args.AppendFormat ("/r:\"{0}\" ", import);
+				}
+ 			}
+			// add standard import to Microsoft.VisualBasic if missing
+			if (Reference2MSVBFound == false)
+				args.AppendFormat ("/r:\"{0}\" ", "Microsoft.VisualBasic");
 
 			args.AppendFormat(" -- "); // makes mbas not try to process filenames as options
 

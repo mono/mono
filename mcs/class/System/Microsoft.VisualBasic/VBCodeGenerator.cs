@@ -7,8 +7,14 @@
 //   Jochen Wezel (jwezel@compumaster.de)
 //
 // (C) 2003 Andreas Nahr
-// (C) 2003 Jochen Wezel
+// (C) 2003 Jochen Wezel (http://www.compumaster.de)
 //
+// Modifications:
+// 2003-11-06 JW: some corrections regarding missing spaces in generated code (e. g. "Property ")
+// 2003-11-06 JW: QuoteSnippetString implemented
+// 2003-11-08 JW: automatically add Microsoft.VisualBasic
+// 2003-11-12 JW: some corrections to allow correct compilation
+// 2003-11-28 JW: implementing code differences into current build of this file
 
 using System;
 using System.Text;
@@ -752,6 +758,34 @@ namespace Microsoft.VisualBasic
 
 			Output.WriteLine (output);
 		}
+
+		protected override void GenerateNamespace(CodeNamespace ns)
+		{
+			GenerateCommentStatements (ns.Comments);
+			
+			bool Imports2MSVBFound;
+			Imports2MSVBFound = false;
+			if (null != ns.Imports) 
+			{
+				foreach (CodeNamespaceImport import in ns.Imports)
+				{
+					if (string.Compare (import.Namespace, "Microsoft.VisualBasic", true, System.Globalization.CultureInfo.InvariantCulture) == 0)
+						Imports2MSVBFound = true;
+				}
+			}
+			// add standard import to Microsoft.VisualBasic if missing
+			if (Imports2MSVBFound == false)
+				Output.WriteLine ("Imports Microsoft.VisualBasic");
+			// add regular imports
+			GenerateNamespaceImports (ns);
+
+			TextWriter output = Output;
+			output.WriteLine(); 
+			GenerateNamespaceStart (ns); 
+			GenerateTypes (ns);
+			GenerateNamespaceEnd (ns);
+		}
+
 
 		protected override void GenerateNamespaceStart (CodeNamespace ns)
 		{
