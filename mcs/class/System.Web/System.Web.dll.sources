@@ -457,3 +457,9 @@ System.Web.UI/IHierarchicalDataSource.cs
 System.Web.UI/ListSourceHelper.cs
 System.Web.UI.WebControls/SiteMapDataSourceView.cs
 System.Web.UI/XPathBinder.cs
+System.Web.UI.WebControls/XmlDataSource.cs
+System.Web.UI.WebControls/XmlDataSourceView.cs
+System.Web.UI.WebControls/XmlHierarchicalDataSourceView.cs
+System.Web.UI.WebControls/XmlHierarchicalEnumerable.cs
+System.Web.UI.WebControls/XmlHierarchyData.cs
+System.Web.UI/HierarchicalDataSourceControl.cs

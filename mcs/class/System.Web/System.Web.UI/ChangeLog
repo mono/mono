@@ -1,5 +1,9 @@
 2003-11-09 Ben Maurer  <bmaurer@users.sourceforge.net>
 
+	* HierarchicalDataSourceControl.cs: Implement.
+
+2003-11-09 Ben Maurer  <bmaurer@users.sourceforge.net>
+
 	* XPathBinder.cs: Implemented.
 
 2003-11-08 Ben Maurer  <bmaurer@users.sourceforge.net>

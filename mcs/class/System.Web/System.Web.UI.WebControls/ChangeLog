@@ -1,3 +1,11 @@
+2003-11-09 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* XmlDataSource.cs:
+	* XmlDataSourceView.cs:
+	* XmlHierarchicalDataSourceView.cs:
+	* XmlHierarchicalEnumerable.cs:
+	* XmlHierarchyData.cs: Implement
+
 2003-11-08 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* SiteMapDataSourceView.cs: Implement.
