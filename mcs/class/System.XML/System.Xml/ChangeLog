@@ -1,5 +1,9 @@
 2003-08-10  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
+	* XmlInputStream.cs : Reverted CanSeek as to return false anyway.
+
+2003-08-10  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
 	* DTDObjectModel.cs : added XmlResolver related members. Added
 	  invalid entity recursion logic. Added encodingdecl check on textdecl.
 	* DTDValidatingReader.cs : It now implements IHasXmlParserContext.

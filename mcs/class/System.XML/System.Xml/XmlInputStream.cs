@@ -268,8 +268,9 @@ namespace Mono.Xml.Native
 			}
 		}
 
+		// FIXME: It should support base stream's CanSeek.
 		public override bool CanSeek {
-			get { return stream.CanSeek; }
+			get { return false; } // stream.CanSeek; }
 		}
 
 		public override bool CanWrite {
