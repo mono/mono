@@ -95,7 +95,7 @@ namespace MonoTests.System.Data
 			AssertEquals ("test#44", false, C.Unique);
 
 			Cols.Add ("test1", typeof (int), "");
-			Cols.Add ("test2", typeof (string), "Column1 +  Column2");
+			Cols.Add ("test2", typeof (string), "Column1 + Column2");
 
 			C = Cols [2];
 			AssertEquals ("test#45", true, C.AllowDBNull);
@@ -133,7 +133,7 @@ namespace MonoTests.System.Data
 			AssertEquals ("test#75", typeof (string), C.DataType);
 			AssertEquals ("test#76", DBNull.Value, C.DefaultValue);
 			AssertEquals ("test#77", false, C.DesignMode);
-			AssertEquals ("test#78", "Column1 +  Column2", C.Expression);
+			AssertEquals ("test#78", "Column1 + Column2", C.Expression);
 			AssertEquals ("test#79", 0, C.ExtendedProperties.Count);
 			AssertEquals ("test#80", -1, C.MaxLength);
 			AssertEquals ("test#81", "", C.Namespace);
@@ -142,7 +142,7 @@ namespace MonoTests.System.Data
 			AssertEquals ("test#84", true, C.ReadOnly);
 			AssertEquals ("test#85", null, C.Site);
 			AssertEquals ("test#86", "test_table", C.Table.TableName);
-			AssertEquals ("test#87", "test2 + Column1 +  Column2", C.ToString ());
+			AssertEquals ("test#87", "test2 + Column1 + Column2", C.ToString ());
 			AssertEquals ("test#88", false, C.Unique); 
 
 			C = new DataColumn ("test3", typeof (int));
@@ -196,7 +196,7 @@ namespace MonoTests.System.Data
 				Fail ("test#04");
 			} catch (Exception e) {
 				AssertEquals ("test#05", typeof (ArgumentException), e.GetType ());
-				AssertEquals ("test#06", "Column 'test' already belongs to this DataTable.", e.Message);
+				AssertEquals ("test#06", "Column 'test' already belongs to this or another DataTable.", e.Message);
 			}
 
 			try {
@@ -204,7 +204,7 @@ namespace MonoTests.System.Data
 				Fail ("test#07");
 			} catch (Exception e) {
 				AssertEquals ("test#08", typeof (ArgumentException), e.GetType ());
-				AssertEquals ("test#09", "Column 'test' already belongs to another DataTable.", e.Message);
+				AssertEquals ("test#09", "Column 'test' already belongs to this or another DataTable.", e.Message);
 			}
 
 			DataColumn C2 = new DataColumn ("test");
@@ -214,7 +214,7 @@ namespace MonoTests.System.Data
 				Fail ("test#10");
 			} catch (Exception e) {
 				AssertEquals ("test#11", typeof (DuplicateNameException), e.GetType ());
-				AssertEquals ("test#12", "A column named 'test' already belongs to this DataTable.", e.Message);
+				AssertEquals ("test#12", "A DataColumn named 'test' already belongs to this DataTable.", e.Message);
 			}
 
 			try {
@@ -222,7 +222,7 @@ namespace MonoTests.System.Data
 				Fail ("test#13");
 			} catch (Exception e) {
 				AssertEquals ("test#14", true, e is InvalidExpressionException);
-				AssertEquals ("test#15", "Invalid number of arguments: function substring().", e.Message);
+				AssertEquals ("test#15", "Expression 'substring ('fdsafewq', 2)' is invalid.", e.Message);
 			}
 		}
 
@@ -490,7 +490,7 @@ namespace MonoTests.System.Data
 			AssertEquals ("test#09", "Column1", Cols [0].ColumnName);
 
 			try {
-				Cols.Remove (new DataColumn ("Column1"));
+				Cols.Remove (new DataColumn ("Column10"));
 				Fail ("test#10");
 			} catch (Exception e) {
 				AssertEquals ("test#11", typeof (ArgumentException), e.GetType ());
@@ -531,5 +531,6 @@ namespace MonoTests.System.Data
 			Cols.Add ("test3");
 			AssertEquals ("test#01", "System.Data.DataColumnCollection", Cols.ToString ());
 		}
+		
 	}
 }

@@ -244,7 +244,8 @@ namespace MonoTests.System.Data
                                                                                                     
                                 //Stage 5
                                 //After Accept Changes
-	                        AssertEquals ("#A36", "My FName", row [1, DataRowVersion.Default]);
+				table.AcceptChanges ();
+				AssertEquals ("#A36", "My FName", row [1, DataRowVersion.Default]);
                                 AssertEquals ("#A37", "My LName", row [2, DataRowVersion.Default]);
                                                                                                     
                                                                                                     
