@@ -1,3 +1,7 @@
+2003-11-12  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* ComponentResourceManager.cs: Added and partially implemented
+
 2003-09-13  Duncan Mak  <duncan@ximian.com>
 
 	Patch from Jörg Rosenkranz <joergr@voelcker.com>, this fixes the
