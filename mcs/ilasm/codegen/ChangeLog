@@ -1,3 +1,12 @@
+2004-06-19  Jackson Harper  <jackson@ximian.com>
+
+	* MethodDef.cs: Add a method to create vararg signatures from a
+	list of typerefs that matches the algorithm for creating vararg
+	signatures from paramdefs. This is used when creating methodref
+	signatures.
+	* MethodRef.cs: Use the new CreateVarargSignature method to create
+	the methods signature if it is a vararg method.
+	
 2004-06-14  Jackson Harper  <jackson@ximian.com>
 
 	* CodeGen.cs: Allow file refs to be added.

@@ -57,12 +57,13 @@ namespace Mono.ILASM {
                         else
                                 write_name = name;
 
-                        string sig = MethodDef.CreateSignature (name, param);
-
+                        string sig;
 
                         if ((call_conv & PEAPI.CallConv.Vararg) == 0) {
+                                sig = MethodDef.CreateSignature (name, param);
                                 peapi_method = owner_def.ResolveMethod (sig, code_gen);
                         } else {
+                                sig = MethodDef.CreateVarargSignature (name, param);
                                 ArrayList opt_list = new ArrayList ();
                                 bool in_opt = false;
                                 foreach (ITypeRef type in param) {

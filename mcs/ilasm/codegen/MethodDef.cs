@@ -529,7 +529,7 @@ namespace Mono.ILASM {
                         return builder.ToString ();
                 }
 
-                 public static string CreateVarargSignature (string name, IList param_list)
+                public static string CreateVarargSignature (string name, IList param_list)
                 {
                         StringBuilder builder = new StringBuilder ();
                         ParamDef last = null;
@@ -548,8 +548,38 @@ namespace Mono.ILASM {
                                 last = (ParamDef) param_list[param_list.Count - 1];
                         }
 
-
+                        
                         if (last == null || !last.IsSentinel ()) {
+                                if (!first)
+                                        builder.Append (',');
+                                builder.Append ("...");
+                        }
+
+                        builder.Append (')');
+
+                        return builder.ToString ();
+                }
+
+                public static string CreateVarargSignature (string name, ITypeRef [] param_list)
+                {
+                        StringBuilder builder = new StringBuilder ();
+                        ITypeRef last = null;
+
+                        builder.Append (name);
+                        builder.Append ('(');
+
+                        bool first = true;
+                        if (param_list != null && param_list.Length > 0) {
+                                foreach (ITypeRef param in param_list) {
+                                        if (!first)
+                                                builder.Append (',');
+                                        builder.Append (param.FullName);
+                                        first = false;
+                                }
+                                last = (ITypeRef) param_list[param_list.Length - 1];
+                        }
+                        
+                        if (last == null || !(last is SentinelTypeRef)) {
                                 if (!first)
                                         builder.Append (',');
                                 builder.Append ("...");
