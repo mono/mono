@@ -1,3 +1,11 @@
+2003-11-09  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* HMACMD5Test.cs: New. Unit test for HMAC-MD5 with test vectors from 
+	RFC2104.
+	* HMACRIPEMD160Test.cs: New. Unit test for HMAC-RIPEMD160 with test 
+	vectors from http://www.esat.kuleuven.ac.be/~bosselae/ripemd160.html.
+	* HMACSHA256Test.cs: New. Unit test for HMAC-SHA256.
+
 2003-11-08  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* RIPEMD160Test.cs: New. Unit test using RIPEMD160 test vectors.
