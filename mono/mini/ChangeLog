@@ -1,3 +1,9 @@
+2004-11-19  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile.am (check-local): New.  Integrate into 'make check'.
+	(MCS,RUNTIME): Define using in-tree mono and mcs.
+	(ILASM): New.
+	(%.exe): Use $(ILASM).
 
 Fri Nov 19 14:54:07 CET 2004 Paolo Molaro <lupus@ximian.com>
 
