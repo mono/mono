@@ -1,5 +1,8 @@
 2004-10-29  Raja R Harinath  <rharinath@novell.com>
 
+	* profiles/net_2_0_bootstrap.make (PROFILE_MCS_FLAGS): Remove
+	-langversion:default flag.
+
 	* rules.make (distdir): Remove.
 	(PROFILE_SUBDIRS): New.  Support profile-specific SUBDIRS.
 	(DIST_SUBDIRS): New.
