@@ -1909,7 +1909,7 @@ destructor_declaration
 	  {
 		if ((string) $5 != current_container.Basename){
 			Report.Error (574, lexer.Location, "Name of destructor must match name of class");
-		} else if (!(current_container is Class)){
+		} else if (current_container.Kind != Kind.Class){
 			Report.Error (575, lexer.Location, "Destructors are only allowed in class types");
 		} else {
 			Location l = lexer.Location;
