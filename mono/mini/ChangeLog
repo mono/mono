@@ -1,5 +1,7 @@
 2004-08-20  Zoltan Varga  <vargaz@freemail.hu>
 
+	* mini-amd64.c (mono_arch_call_opcode): Refactor this a little.
+	
 	* mini-amd64.c (mono_arch_regalloc_cost): Adjust regalloc costs for
 	arguments.
 
