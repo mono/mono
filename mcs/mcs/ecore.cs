@@ -668,8 +668,12 @@ namespace Mono.CSharp {
 
 				expr.Emit (null);
 			}
-			
-			if (target_type == TypeManager.object_type) {
+
+			//
+			// notice that it is possible to write "ValueType v = 1", the ValueType here
+			// is an abstract class, and not really a value type, so we apply the same rules.
+			//
+			if (target_type == TypeManager.object_type || target_type == TypeManager.value_type) {
 				//
 				// A pointer type cannot be converted to object
 				// 
@@ -680,9 +684,9 @@ namespace Mono.CSharp {
 					return new BoxedCast (expr);
 				if (expr_type.IsClass || expr_type.IsInterface)
 					return new EmptyCast (expr, target_type);
-			} else if (expr_type.IsSubclassOf (target_type)) {
+			} else if (expr_type.IsSubclassOf (target_type)) 
 				return new EmptyCast (expr, target_type);
-			} else {
+			else {
 
 				// This code is kind of mirrored inside StandardConversionExists
 				// with the small distinction that we only probe there
