@@ -1,5 +1,11 @@
 2004-06-08  Dick Porter  <dick@ximian.com>
 
+	* object.h:
+	* locales.c: Fixed compile warnings, including a real bug in
+	CompareInfo_internal_compare.
+	
+2004-06-08  Dick Porter  <dick@ximian.com>
+
 	* locales.c
 	(ves_icall_System_Globalization_CompareInfo_internal_index):
 	(ves_icall_System_Globalization_CompareInfo_internal_index_char):
