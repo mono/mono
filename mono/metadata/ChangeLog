@@ -1,3 +1,8 @@
+2002-05-14  Dietmar Maurer  <dietmar@ximian.com>
+
+	* threads.c (mono_thread_init): added a callback which is invoked
+	at thread start.
+
 2002-05-14  Dan Lewis  <dihlewis@yahoo.co.uk>
 	
 	* icall.c: make GetHashCode return non-negative values.

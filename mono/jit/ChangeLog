@@ -1,3 +1,10 @@
+2002-05-14  Dietmar Maurer  <dietmar@ximian.com>
+
+	* jit.c: only use one TLS slot to store jit data
+
+	* exception.c (arch_handle_exception): print function signature,
+	use thread relative end_of_stack
+
 2002-05-13  Dietmar Maurer  <dietmar@ximian.com>
 
 	* jit.c (OPT_BOOL): new. opt. for boolean variables - we simply
