@@ -23,9 +23,13 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.14 $
+// $Revision: 1.15 $
 // $Modtime: $
 // $Log: XplatUIWin32.cs,v $
+// Revision 1.15  2004/08/13 18:53:57  pbartok
+// - Changed GetWindowPos to also provide client area size
+// - Fixed broken prototypes for several win32 functions
+//
 // Revision 1.14  2004/08/12 22:59:03  pbartok
 // - Implemented method to get current mouse position
 //
@@ -464,7 +468,7 @@ namespace System.Windows.Forms {
 				// We need to use our foster parent window until this poor child gets it's parent assigned
 				ParentHandle=FosterParent;
 			}
-
+Console.WriteLine("Creating window at {0}:{1} {2}x{3}", cp.X, cp.Y, cp.Width, cp.Height);
 			WindowHandle = Win32CreateWindow((uint)cp.ExStyle, cp.ClassName, cp.Caption, (uint)cp.Style, cp.X, cp.Y, cp.Width, cp.Height, ParentHandle, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero);
 
 			if (WindowHandle==IntPtr.Zero) {
@@ -543,21 +547,27 @@ namespace System.Windows.Forms {
 
 
 		internal override void SetWindowPos(IntPtr handle, int x, int y, int width, int height) {
-			Win32MoveWindow(handle, x, y, width, height);
+			Win32MoveWindow(handle, x, y, width, height, true);
 			return;
 		}
 
-		internal override void GetWindowPos(IntPtr handle, out int x, out int y, out int width, out int height) {
+		internal override void GetWindowPos(IntPtr handle, out int x, out int y, out int width, out int height, out int client_width, out int client_height) {
 			RECT	rect;
+			POINT	pt;
 
 			Win32GetWindowRect(handle, out rect);
-			Win32ScreenToClient(Win32GetParent(handle), ref rect);
-			x = rect.left;
-			y = rect.top;
-
-			//Win32GetClientRect(handle, out rect);
 			width = rect.right - rect.left;
 			height = rect.bottom - rect.top;
+
+			pt.x=rect.left;
+			pt.y=rect.top;
+			Win32ScreenToClient(Win32GetParent(handle), ref pt);
+			x = pt.x;
+			y = pt.y;
+
+			Win32GetClientRect(handle, out rect);
+			client_width = rect.right - rect.left;
+			client_height = rect.bottom - rect.top;
 			return;
 		}
 
@@ -667,15 +677,7 @@ namespace System.Windows.Forms {
 			Win32GetCursorPos(out pt);
 
 			if (handle!=IntPtr.Zero) {
-				RECT	rect;
-
-				rect.left=pt.x;
-				rect.top=pt.y;
-				rect.right=pt.x;
-				rect.bottom=pt.y;
-				Win32ScreenToClient(handle, ref rect);
-				pt.x=rect.left;
-				pt.y=rect.top;
+				Win32ScreenToClient(handle, ref pt);
 			}
 
 			x=pt.x;
@@ -708,7 +710,7 @@ namespace System.Windows.Forms {
 		internal extern static bool Win32DispatchMessage(ref MSG msg);
 
 		[DllImport ("user32.dll", EntryPoint="MoveWindow", CallingConvention=CallingConvention.StdCall)]
-		internal extern static bool Win32MoveWindow(IntPtr hWnd, int x, int y, int width, int height);
+		internal extern static bool Win32MoveWindow(IntPtr hWnd, int x, int y, int width, int height, bool repaint);
 
 		[DllImport ("user32.dll", EntryPoint="SetWindowTextA", CallingConvention=CallingConvention.StdCall)]
 		internal extern static bool Win32SetWindowText(IntPtr hWnd, string lpString);
@@ -768,7 +770,7 @@ namespace System.Windows.Forms {
 		private extern static IntPtr Win32GetClientRect(IntPtr hWnd, out RECT rect);
 
 		[DllImport ("user32.dll", EntryPoint="ScreenToClient", CharSet=CharSet.Ansi, CallingConvention=CallingConvention.StdCall)]
-		private extern static IntPtr Win32ScreenToClient(IntPtr hWnd, ref RECT rect);
+		private extern static IntPtr Win32ScreenToClient(IntPtr hWnd, ref POINT pt);
 
 		[DllImport ("user32.dll", EntryPoint="GetParent", CharSet=CharSet.Ansi, CallingConvention=CallingConvention.StdCall)]
 		private extern static IntPtr Win32GetParent(IntPtr hWnd);
