@@ -1470,7 +1470,6 @@ namespace Microsoft.JScript {
 			if (exp != null && exp.GetType () == typeof (Identifier)) {
 				Identifier id = (Identifier) exp;
 				late_bind = !SemanticAnalyser.is_js_object (id.name.Value);
-				Console.WriteLine ("id = {0}, late_bind = {1}", id.name.Value, late_bind);
 			} 
 			exp.Resolve (context);
 
