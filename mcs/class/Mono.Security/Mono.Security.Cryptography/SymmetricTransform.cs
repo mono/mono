@@ -414,7 +414,8 @@ namespace Mono.Security.Cryptography {
 				lastBlock = false;
 			}
 
-			byte padding = res [total - 1];
+			// total may be 0 (e.g. PaddingMode.None)
+			byte padding = ((total > 0) ? res [total - 1] : (byte) 0);
 			switch (algo.Padding) {
 #if NET_2_0
 			case PaddingMode.ANSIX923:
