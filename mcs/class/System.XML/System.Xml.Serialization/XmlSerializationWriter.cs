@@ -48,7 +48,8 @@ namespace System.Xml.Serialization {
 			{
 				namespaces = new ArrayList ();
 				foreach (XmlQualifiedName ns in nss.ToArray())
-					namespaces.Add (ns);
+					if (ns.Name != "")
+						namespaces.Add (ns);
 			}	
 		}
 
@@ -200,6 +201,8 @@ namespace System.Xml.Serialization {
 
 		private string GetQualifiedName (string name, string ns)
 		{
+			if (ns == String.Empty) return name;
+			
 			string prefix = GetNamespacePrefix (ns);
 			if (prefix == String.Empty)
 				return name;

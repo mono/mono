@@ -177,17 +177,13 @@ namespace System.Xml.Serialization {
 				throw helper.CreateError (map, ex.Message);
 			}
 
-			// Import derived classes
+			// Import included classes
 
 			SoapIncludeAttribute[] includes = (SoapIncludeAttribute[])type.GetCustomAttributes (typeof (SoapIncludeAttribute), false);
 			for (int n=0; n<includes.Length; n++)
 			{
 				Type includedType = includes[n].Type;
-				if (!includedType.IsSubclassOf(type)) throw helper.CreateError (map, "Type '" + includedType.FullName + "' is not a subclass of '" + type.FullName + "'");
-
-				XmlTypeMapping derived = ImportTypeMapping (includedType, defaultNamespace);
-				map.DerivedTypes.Add (derived);
-				map.DerivedTypes.AddRange (derived.DerivedTypes);
+				ImportTypeMapping (includedType, defaultNamespace);
 			}
 
 			if (type == typeof (object) && includedTypes != null)
@@ -196,17 +192,32 @@ namespace System.Xml.Serialization {
 					map.DerivedTypes.Add (ImportTypeMapping (intype, defaultNamespace));
 			}
 
-			// Register this map as a derived class of object
+			// Register inheritance relations
 
-			if (typeData.Type != typeof(object))
-				ImportTypeMapping (typeof(object), defaultNamespace).DerivedTypes.Add (map);
+			if (type.BaseType != null)
+			{
+				XmlTypeMapping bmap = ImportClassMapping (type.BaseType, defaultNamespace);
+				
+				if (type.BaseType != typeof (object))
+					map.BaseMap = bmap;
+					
+				// At this point, derived classes of this map must be already registered
+				
+				RegisterDerivedMap (bmap, map);
+			}
 			
-			if (type.BaseType != null && type.BaseType != typeof(object))
-				map.BaseMap = ImportClassMapping (type.BaseType, defaultNamespace);
-
 			return map;
 		}
 		
+		void RegisterDerivedMap (XmlTypeMapping map, XmlTypeMapping derivedMap)
+		{
+			map.DerivedTypes.Add (derivedMap);
+			map.DerivedTypes.AddRange (derivedMap.DerivedTypes);
+			
+			if (map.BaseMap != null)
+				RegisterDerivedMap (map.BaseMap, derivedMap);
+		}
+
 		string GetTypeNamespace (TypeData typeData, string defaultNamespace)
 		{
 			string membersNamespace = defaultNamespace;

@@ -1,3 +1,11 @@
+2004-01-24  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* SoapReflectionImporter.cs: Types included with SoapInclude don't need
+	  to be derived types of the one that has the attribute.
+	* XmlReflectionImporter.cs: Recursively register the derived maps of a given
+	  map to the parent map. This fixes #53246.
+	* XmlSerializationWriter.cs: Some fixes regarding empty namespaces.
+
 2004-01-22  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* XmlSerializationReaderInterpreter.cs: When deserializing an XmlElement,

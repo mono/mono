@@ -246,14 +246,22 @@ namespace System.Xml.Serialization {
 				
 				// At this point, derived classes of this map must be already registered
 				
-				bmap.DerivedTypes.Add (map);
-				bmap.DerivedTypes.AddRange (map.DerivedTypes);
+				RegisterDerivedMap (bmap, map);
 				
 				if (((ClassMap)bmap.ObjectMap).HasSimpleContent && classMap.ElementMembers != null && classMap.ElementMembers.Count != 1)
 					throw new InvalidOperationException (String.Format (errSimple, map.TypeData.TypeName, map.BaseMap.TypeData.TypeName));
 			}
 			
 			return map;
+		}
+		
+		void RegisterDerivedMap (XmlTypeMapping map, XmlTypeMapping derivedMap)
+		{
+			map.DerivedTypes.Add (derivedMap);
+			map.DerivedTypes.AddRange (derivedMap.DerivedTypes);
+			
+			if (map.BaseMap != null)
+				RegisterDerivedMap (map.BaseMap, derivedMap);
 		}
 
 		string GetTypeNamespace (TypeData typeData, XmlRootAttribute root, string defaultNamespace)
