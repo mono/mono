@@ -1,7 +1,8 @@
 2004-05-14  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* UTF8Encoding.cs: Moved charCount-- after the check for surrogate 
-	pair. This fix bug #57009 (and 2 failing unit tests).
+	pair. This fix bug #57009 (and 2 failing unit tests). Added code
+	to check for some (like MS) overlongs.
 
 2004-05-03 Lluis Sanches Gual  <lluis@ximian.com>
 

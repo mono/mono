@@ -547,6 +547,29 @@ public class UTF8Encoding : Encoding
 									throw new ArgumentException
 										(_("Arg_InsufficientSpace"), "chars");
 								}
+								// is it an overlong ?
+								bool overlong = false;
+								switch (leftSize) {
+								case 2:
+									overlong = (leftBits <= 0x7F);
+									break;
+								case 3:
+									overlong = (leftBits <= 0x07FF);
+									break;
+								case 4:
+									overlong = (leftBits <= 0xFFFF);
+									break;
+								case 5:
+									overlong = (leftBits <= 0x1FFFFF);
+									break;
+								case 6:
+									overlong = (leftBits <= 0x03FFFFFF);
+									break;
+								}
+								if (overlong) {
+									throw new ArgumentException
+										(_("Overlong"), leftBits.ToString ());
+								}
 								chars[posn++] = (char)leftBits;
 							}
 						} else if (leftBits < (uint)0x110000) {
