@@ -1,3 +1,13 @@
+2004-12-07  Martin Baulig  <martin@ximian.com>
+
+	* gcs0305.cs: Renamed to cs0246-2.cs.
+	* gcs0305-2.cs: Renamed to cs0246-3.cs.
+	* gcs0305-3.cs: Renamed to cs0246-4.cs.
+	* gcs0305-4.cs: Renamed to cs0246-5.cs.
+	* gcs0308.cs: Renamed to cs0246-6.cs.
+	* gcs0308-2.cs: Renamed to cs0246-7.cs.
+	* gcs0308-3.cs: Renamed to cs0246-8.cs.
+
 2004-12-06  Martin Baulig  <martin@ximian.com>
 
 	* cs8211.cs: Renamed to cs0182-4.cs.
