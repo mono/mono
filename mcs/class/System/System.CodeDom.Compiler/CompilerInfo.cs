@@ -2,9 +2,10 @@
 // System.CodeDom.Compiler CompilerInfo class
 //
 // Author:
-//   Marek Safar (marek.safar@seznam.cz)
+// 	Marek Safar (marek.safar@seznam.cz)
+//	Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
-// (C) 2004 Ximian, Inc.
+// Copyright (c) 2004,2005 Novell, Inc. (http://www.novell.com)
 //
 
 //
@@ -29,20 +30,73 @@
 //
 
 #if NET_2_0
-
 namespace System.CodeDom.Compiler
 {
 	public sealed class CompilerInfo
 	{
-		private CompilerInfo () {}
+		internal string Languages;
+		internal string Extensions;
+		internal string TypeName;
+		internal int WarningLevel;
+		internal string CompilerOptions;
+		bool inited;
+		Type type;
 
-		[MonoTODO]
+		internal CompilerInfo ()
+		{
+		}
+
+		void Init ()
+		{
+			if (inited)
+				return;
+
+			inited = true;
+			type = Type.GetType (TypeName);
+			if (type == null)
+				return;
+
+			if (!typeof (CodeDomProvider).IsAssignableFrom (type))
+				type = null;
+		}
+
+		public Type CodeDomProviderType {
+			get { return type; }
+		}
+
+		public bool IsCodeDomProviderTypeValid {
+			get { return type != null; }
+		}
+
 		public CodeDomProvider CreateProvider ()
 		{
-			throw new NotImplementedException ();
+			return (CodeDomProvider) Activator.CreateInstance (type);
+		}
+
+		public override bool Equals (object o)
+		{
+			if (!(o is CompilerInfo))
+				return false;
+
+			CompilerInfo c = (CompilerInfo) o;
+			return c.TypeName == TypeName;
+		}
+
+		public override int GetHashCode ()
+		{
+			return TypeName.GetHashCode ();
+		}
+
+		public string [] GetExtensions ()
+		{
+			return Extensions.Split (';');
+		}
+
+		public string [] GetLanguages ()
+		{
+			return Languages.Split (';');
 		}
 	}
 }
-
 #endif
 

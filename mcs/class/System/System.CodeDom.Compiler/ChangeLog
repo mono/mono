@@ -1,3 +1,9 @@
+2005-02-17 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* CodeDomProvider.cs: implemented IsDefined* and GetCompilerInfo.
+	* CompilerInfo.cs: implemented.
+	* CodeDomConfigurationHandler.cs: system.codedom section reader.
+
 2005-01-27  LLuis Sanchez Gual  <lluis@novell.com>
 
 	* CodeGenerator.cs: Write 'f' suffix for float constants.

@@ -4,8 +4,9 @@
 // Author:
 //   Daniel Stodden (stodden@in.tum.de)
 //   Marek Safar (marek.safar@seznam.cz)
+//   Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
-// (C) 2002 Ximian, Inc.
+// copyright (C) 2002,2003,2004,2005 Novell, Inc.
 //
 
 //
@@ -30,6 +31,7 @@
 //
 
 using System.ComponentModel;
+using System.Configuration;
 using System.IO;
 
 namespace System.CodeDom.Compiler
@@ -109,10 +111,33 @@ namespace System.CodeDom.Compiler
 			CreateGenerator ().GenerateCodeFromStatement (statement, writer, options);
 		}
 
-		[MonoTODO ("Not implemented")]
 		public static CompilerInfo GetCompilerInfo (string language)
 		{
-			return null;
+			if (language == null)
+				throw new ArgumentNullException ("language");
+
+			return Config.GetCompilerInfo (language);
+		}
+
+		public static bool IsDefinedExtension (string extension)
+		{
+			if (extension == null)
+				throw new ArgumentNullException ("extension");
+
+			foreach (CompilerInfo c in Config.Compilers.Hash.Values) {
+				if (Array.IndexOf (c.GetExtensions (), extension) != -1)
+					return true;
+			}
+
+			return false;
+		}
+
+		public static bool IsDefinedLanguage (string language)
+		{
+			if (language == null)
+				throw new ArgumentNullException ("language");
+
+			return (Config.GetCompilerInfo (language) == null);
 		}
 
 		public virtual bool Supports (GeneratorSupport supports)
@@ -120,6 +145,9 @@ namespace System.CodeDom.Compiler
 			return CreateGenerator ().Supports (supports);
 		}
 
+		static CompilationConfiguration Config {
+			get { return ConfigurationSettings.GetConfig ("system.codedom") as CompilationConfiguration; }
+		}
 #endif
 
 	}

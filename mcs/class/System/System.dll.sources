@@ -107,6 +107,7 @@ System.CodeDom/CodeTypeReferenceOptions.cs
 System.CodeDom/CodeVariableDeclarationStatement.cs
 System.CodeDom/CodeVariableReferenceExpression.cs
 System.CodeDom.Compiler/CodeCompiler.cs
+System.CodeDom.Compiler/CodeDomConfigurationHandler.cs
 System.CodeDom.Compiler/CodeDomProvider.cs
 System.CodeDom.Compiler/CodeGenerator.cs
 System.CodeDom.Compiler/CodeGeneratorOptions.cs

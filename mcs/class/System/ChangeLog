@@ -1,3 +1,7 @@
+2005-02-17 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* System.dll.sources: added CodeDomConfigurationHandler.
+
 2005-02-03  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile (TEST_RESOURCES): New.
