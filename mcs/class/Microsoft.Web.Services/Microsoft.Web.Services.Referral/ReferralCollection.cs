@@ -48,37 +48,59 @@ namespace Microsoft.Web.Services.Referral {
                         return list.Contains (new Referral (uri));
                 }
 
-                public virtual void CopyTo (Array array, int index)
+#if WSE1
+		public void CopyTo (Array array, int index)
+#else
+		public virtual void CopyTo (Array array, int index)
+#endif
                 {
                         list.CopyTo (array, index);
                 }
 
+#if WSE1
+		public int Count {
+#else
 		public virtual int Count {
+#endif
 			get { return list.Count; }
 		}
 
-                public virtual IEnumerator GetEnumerator ()
-                {
+#if WSE1
+                public IEnumerator GetEnumerator ()
+#else
+		public virtual IEnumerator GetEnumerator () {
+#endif
                         return list.GetEnumerator ();
                 }
 
                 [MonoTODO]
-                public virtual XmlElement GetXml (XmlDocument document)
-                {
+#if WSE1
+		public XmlElement GetXml (XmlDocument document)
+#else
+		public virtual XmlElement GetXml (XmlDocument document) 
+#endif
+		{
                         if (document == null)
                                 throw new ArgumentNullException (
                                         Locale.GetText ("Argument is null."));
 
                         throw new NotImplementedException ();
                 }
-
+#if WSE1
+		public bool IsSynchronized {
+#else
 		public virtual bool IsSynchronized {
+#endif
 			get { return list.IsSynchronized; }
 		}
 
                 [MonoTODO]
-                public virtual void LoadXml (XmlElement element)
-                {
+#if WSE1
+                public void LoadXml (XmlElement element)
+#else
+		public virtual void LoadXml (XmlElement element) 
+#endif
+		{
                         if (element == null)
                                 throw new ArgumentNullException (
                                         Locale.GetText ("Argument is null."));
@@ -96,7 +118,11 @@ namespace Microsoft.Web.Services.Referral {
                         list.Remove (new Referral (uri));
                 }
 
+#if WSE1
+		public object SyncRoot {
+#else
 		public virtual object SyncRoot {
+#endif
 			get { return list.SyncRoot; }
 		}
         }

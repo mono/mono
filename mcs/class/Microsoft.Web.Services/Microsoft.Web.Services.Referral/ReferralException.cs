@@ -1,41 +1,24 @@
-// Microsfot.Web.Services.ReferralException.cs
 //
 // Microsoft.Web.Services.Referral.ReferralException.cs
 //
-// Author: Daniel Kornhauser <dkor@alum.mit.edu>
+// Authors:
+//	Daniel Kornhauser <dkor@alum.mit.edu>
+//	Sebastien Pouliot (spouliot@motus.com)
 //
 // (C) Ximian, Inc. 2003.
+// Portions (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
 //
 
-// TODO: Figure out what the Uri parameter does.
-
 using System;
-using System.Web.Services.Protocols;
-using System.Xml;
 
 namespace Microsoft.Web.Services.Referral {
 	
 	[Serializable]
-	public class ReferralFormatException : SoapHeaderException
-	{
-                Uri reference;
-                
-		public ReferralFormatException (string message)
-                        : base (message, XmlQualifiedName.Empty)
-		{
-		}
+	public class ReferralException : SystemException {
 
-		public ReferralFormatException (Uri refid, string message)
-                        : base (message, XmlQualifiedName.Empty)
-		{
-                        reference = refid;
-		}
+		public ReferralException (string message) : base (message) {}
 
-		public ReferralFormatException (Uri refid, string message, Exception innerException)
-                        : base (message, XmlQualifiedName.Empty, innerException)
-		{
-                        reference = refid;
-                }
+		public ReferralException (string message, Exception ex) : base (message, ex) {}
 	}
 }
 

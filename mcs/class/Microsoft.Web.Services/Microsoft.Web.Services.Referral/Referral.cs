@@ -35,13 +35,21 @@ namespace Microsoft.Web.Services.Referral {
                 {
                 }
 
+#if WSE1
+                public object Clone ()
+#else
                 public virtual object Clone ()
+#endif
                 {
                         return new Referral (uri);
                 }
 
                 [MonoTODO]
+#if WSE1
+                public XmlElement GetXml (XmlDocument document)
+#else
                 public virtual XmlElement GetXml (XmlDocument document)
+#endif
                 {
                         if (document == null)
                                 throw new ArgumentNullException (
@@ -51,8 +59,11 @@ namespace Microsoft.Web.Services.Referral {
                 }
 
                 [MonoTODO]
-                public virtual void LoadXml (XmlElement element)
-                {
+#if WSE1
+		public void LoadXml (XmlElement element)
+#else
+		public virtual void LoadXml (XmlElement element) {
+#endif
                         if (element == null)
                                 throw new ArgumentNullException (
                                         Locale.GetText ("Argument is null."));
@@ -75,7 +86,7 @@ namespace Microsoft.Web.Services.Referral {
 		}
 
 		[MonoTODO]
-		public  For For{
+		public For For{
 			get {
 				throw new NotImplementedException ();
 			}
