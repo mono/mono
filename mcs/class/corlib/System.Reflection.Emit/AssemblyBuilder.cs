@@ -43,6 +43,20 @@ namespace System.Reflection.Emit {
 		public int offset;
 	}
 
+	internal struct MonoWin32Resource {
+		public int res_type;
+		public int res_id;
+		public int lang_id;
+		public byte[] data;
+
+		public MonoWin32Resource (int res_type, int res_id, int lang_id, byte[] data) {
+			this.res_type = res_type;
+			this.res_id = res_id;
+			this.lang_id = lang_id;
+			this.data = data;
+		}
+	}
+
 	public sealed class AssemblyBuilder : Assembly {
 		#region Sync with reflection.h
 		private IntPtr dynamic_assembly;
@@ -60,13 +74,15 @@ namespace System.Reflection.Emit {
 		PEFileKinds pekind = PEFileKinds.Dll;
 		bool delay_sign;
 		uint access;
-		private Module[] loaded_modules;
+		Module[] loaded_modules;
+		MonoWin32Resource[] win32_resources;
 		#endregion
 		internal Type corlib_object_type = typeof (System.Object);
 		internal Type corlib_value_type = typeof (System.ValueType);
 		internal Type corlib_enum_type = typeof (System.Enum);
 		internal Type corlib_void_type = typeof (void);
 		ArrayList resource_writers = null;
+		Win32VersionResource version_res;
 		bool created;
 		bool is_module_only;
 
@@ -290,6 +306,18 @@ namespace System.Reflection.Emit {
 			return writer;
 		}
 
+		private void AddUnmanagedResource (int res_type, int res_id, int lang_id, byte[] data) {
+			if (win32_resources != null) {
+				MonoWin32Resource[] new_res = new MonoWin32Resource [win32_resources.Length + 1];
+				System.Array.Copy (win32_resources, new_res, win32_resources.Length);
+				win32_resources = new_res;
+			}
+			else
+				win32_resources = new MonoWin32Resource [1];
+
+			win32_resources [win32_resources.Length - 1] = new MonoWin32Resource (res_type, res_id, lang_id, data);
+		}
+
 		[MonoTODO]
 		public void DefineUnmanagedResource (byte[] resource)
 		{
@@ -322,7 +350,33 @@ namespace System.Reflection.Emit {
 		public void DefineVersionInfoResource (string product, string productVersion,
 						       string company, string copyright, string trademark)
 		{
-			throw new NotImplementedException ();
+			if ((version_res != null) || (win32_resources != null))
+				throw new ArgumentException ("Native resource has already been defined.");
+
+			/*
+			 * We can only create the resource later, when the file name and
+			 * the binary version is known.
+			 */
+
+			version_res = new Win32VersionResource ();
+			version_res.ProductName = product;
+			version_res.ProductVersion = productVersion;
+			version_res.CompanyName = company;
+			version_res.LegalCopyright = copyright;
+			version_res.LegalTrademarks = trademark;
+		}
+
+		private void DefineVersionInfoResourceImpl (string fileName) {
+			int res_index;
+
+			// Add missing info
+			version_res.FileVersion = version;
+			version_res.OriginalFilename = fileName;
+
+			MemoryStream ms = new MemoryStream ();
+			version_res.WriteTo (ms);
+
+			AddUnmanagedResource ((int)Win32ResourceType.RT_VERSION, 1, 0, ms.ToArray ());
 		}
 
 		public ModuleBuilder GetDynamicModule (string name)
@@ -405,15 +459,20 @@ namespace System.Reflection.Emit {
 
 			// Create a main module if not already created
 			ModuleBuilder mainModule = null;
-			foreach (ModuleBuilder module in modules)
-				if (module.FullyQualifiedName == assemblyFileName)
-					mainModule = module;
+			if (modules != null) {
+				foreach (ModuleBuilder module in modules)
+					if (module.FullyQualifiedName == assemblyFileName)
+						mainModule = module;
+			}
 			if (mainModule == null)
 				mainModule = DefineDynamicModule ("RefEmit_OnDiskManifestModule", assemblyFileName);
 
 			if (!is_module_only)
 				mainModule.IsMain = true;
 
+			if (version_res != null)
+				DefineVersionInfoResourceImpl (assemblyFileName);
+			
 			foreach (ModuleBuilder module in modules)
 				if (module != mainModule)
 					module.Save ();

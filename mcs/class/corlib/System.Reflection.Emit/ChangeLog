@@ -1,3 +1,7 @@
+2004-01-05  Zoltan Varga  <vargaz@freemail.hu>
+
+	* AssemblyBuilder.cs (DefineVersionInfoResource): Implement.
+
 2003-12-29 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* MethodBuilder.cs, ConstructorBuilder.cs: Override GetParameterCount.
