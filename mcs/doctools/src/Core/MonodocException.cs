@@ -1,4 +1,4 @@
-// AbstractDoc.cs
+// MonodocException.cs
 // John Barnette (jbarn@httcb.net)
 // 
 // Copyright (c) 2002 John Barnette
@@ -18,50 +18,21 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 using System;
-using System.Collections.Specialized;
 
 namespace Mono.Doc.Core
 {
-	public abstract class AbstractDoc
+	public class MonodocException : ApplicationException
 	{
-		protected string           name    = null;
-		protected string           summary = null;
-		protected string           remarks = null;
-		protected string          language = null;
-		protected StringCollection seeAlso = null;
-
-		protected AbstractDoc()
+		public MonodocException() : base()
 		{
-			seeAlso = new StringCollection();
 		}
 
-		public string Summary
+		public MonodocException(string msg) : base(msg)
 		{
-			get { return summary;  }
-			set { summary = value; }
 		}
 
-		public string Remarks
+		public MonodocException(string msg, Exception nested) : base(msg, nested)
 		{
-			get { return remarks;  }
-			set { remarks = value; }
-		}
-
-		public string Name
-		{
-			get { return name;  }
-			set { name = value; }
-		}
-
-		public StringCollection SeeAlso
-		{
-			get { return seeAlso; }
-		}
-
-		public string Language
-		{
-			get { return language;  }
-			set { language = value; }
 		}
 	}
 }
