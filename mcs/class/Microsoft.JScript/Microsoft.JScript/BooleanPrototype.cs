@@ -38,13 +38,13 @@ namespace Microsoft.JScript.Tmp
 			get { throw new NotImplementedException (); }
 		}
 
-	
+		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject, JSBuiltin.Boolean_toString)]
 		public static string toString (object thisObj)
 		{
 			throw new NotImplementedException ();
 		}
 
-
+		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject, JSBuiltin.Boolean_valueOf)]
 		public static object valueOf (object thisObj)
 		{
 			throw new NotImplementedException ();
