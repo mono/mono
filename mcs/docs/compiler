@@ -157,6 +157,39 @@
 
 ** Expressions
 
+	Expressions in the Mono C# compiler are represented by the
+	`Expression' class.  This is an abstract class that particular
+	kinds of expressions have to inherit from and override a few
+	methods.
+
+	The base Expression class contains two fields: `eclass' which
+	represents the "expression classification" (from the C#
+	specs) and the type of the expression.
+
+	Expressions have to be resolved before they are can be used.
+	The resolution process is implemented by overriding the
+	`DoResolve' method.  The DoResolve method has to set the
+	`eclass' field and the `type', perform all error checking and
+	computations that will be required for code generation at this
+	stage. 
+
+	The return value from DoResolve is an expression.  Most of the
+	time an Expression derived class will return itself (return
+	this) when it will handle the emission of the code itself, or
+	it can return a new Expression.
+
+	For example, the parser will create an "ElementAccess" class
+	for:
+
+		a [0] = 1;
+
+	During the resolution process, the compiler will know whether
+	this is an array access, or an indexer access.  And will
+	return either an ArrayAccess expression or an IndexerAccess
+	expression from DoResolve.
+
+
+
 *** The Expression Class
 
 	The utility functions that can be called by all children of
