@@ -4918,13 +4918,25 @@ namespace Mono.CSharp {
 
 		public override void Emit (EmitContext ec)
 		{
-			ec.ig.Emit (OpCodes.Ldarg_0);
+			ILGenerator ig = ec.ig;
+			
+			ig.Emit (OpCodes.Ldarg_0);
+			if (ec.TypeContainer is Struct)
+				ig.Emit (OpCodes.Ldobj, type);
 		}
 
 		public void EmitAssign (EmitContext ec, Expression source)
 		{
-			source.Emit (ec);
-			ec.ig.Emit (OpCodes.Starg, 0);
+			ILGenerator ig = ec.ig;
+			
+			if (ec.TypeContainer is Struct){
+				ig.Emit (OpCodes.Ldarg_0);
+				source.Emit (ec);
+				ig.Emit (OpCodes.Stobj, type);
+			} else {
+				source.Emit (ec);
+				ig.Emit (OpCodes.Starg, 0);
+			}
 		}
 
 		public void AddressOf (EmitContext ec, AddressOp mode)

@@ -1207,7 +1207,6 @@ namespace Mono.CSharp {
 					foreach (Enum en in Enums)
 						if (filter (en.TypeBuilder, criteria) == true)
 							members.Add (en.TypeBuilder);
-				
 			}
 
 			if ((mt & MemberTypes.Constructor) != 0){

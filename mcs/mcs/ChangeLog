@@ -1,3 +1,8 @@
+2002-07-02  Miguel de Icaza  <miguel@ximian.com>
+
+	* expression.cs (This): Use Stobj/Ldobj when we are a member of a
+	struct instead of Ldarg/Starg.
+
 2002-07-02  Martin Baulig  <martin@gnome.org>
 
 	* expression.cs (ArrayAccess.EmitStoreOpcode): If the type is a
