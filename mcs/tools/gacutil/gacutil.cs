@@ -318,7 +318,7 @@ namespace Mono.Tools
 
 			WriteAssemblyInfo (fullPath + "__AssemblyInfo__", info);
 
-			Console.WriteLine ("{0} installed into the gac", an.Name);
+			Console.WriteLine ("{0} installed into the gac ({1}/lib/mono/gac)", an.Name, gac_path);
 			return 0;
 		}
 
