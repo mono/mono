@@ -1259,8 +1259,9 @@ namespace Mono.Xml.XPath2
 			if (!passedFilter)
 				passedFilter = expr.WhereClause.EvaluateAsBoolean (contextSequence);
 			if (passedFilter) {
-				foreach (XPathItem item in expr.ReturnExpr.Evaluate (contextSequence))
-					yield return item;
+				IEnumerator ie = expr.ReturnExpr.Evaluate (contextSequence).GetEnumerator ();
+				while (ie.MoveNext ())
+					yield return (XPathItem) ie.Current;
 			}
 		}
 
@@ -1273,7 +1274,8 @@ namespace Mono.Xml.XPath2
 					XPathSequence backup = contextSequence;
 					XPathSequence current = sb.Expression.Evaluate (Context.CurrentSequence);
 					Context.ContextManager.PushCurrentSequence (current);
-					foreach (XPathItem forItem in current) {
+					while (current.MoveNext ()) {
+						XPathItem forItem = (XPathItem) current.Current;
 						Context.PushVariable (fsb.PositionalVar, Context.CurrentSequence.Position);
 						Context.PushVariable (sb.VarName, forItem);
 						// recurse here (including following bindings)

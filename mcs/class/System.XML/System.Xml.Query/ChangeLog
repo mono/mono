@@ -1,5 +1,10 @@
 2004-09-08  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XPathSequence.cs : workarounded bug #65521. Erased foreach inside
+	  iterators.
+
+2004-09-08  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XPath2Expression.cs : fixed EnclosedExpr.Compile() that resulted
 	  in index out of range.
 	* XPathSequence.cs : FLWORIterator got working, but only when compiled
