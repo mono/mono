@@ -1,3 +1,8 @@
+2004-10-06  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
+
+	* expression.cs: added support for function calls. Handle case of
+	print where no args are supplied.	
+
 2004-10-05  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
 
 	* ast.cs: added GetContainerFunction property.

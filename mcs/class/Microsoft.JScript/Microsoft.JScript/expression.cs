@@ -33,6 +33,7 @@ using System.Text;
 using System.Collections;
 using System.Reflection;
 using System.Reflection.Emit;
+using Microsoft.JScript.Vsa;
 
 namespace Microsoft.JScript {
 	
@@ -494,7 +495,14 @@ namespace Microsoft.JScript {
 			ILGenerator ig = ec.ig;
 			if (member_exp.ToString () == "print") {				
 				AST ast;
-				int n = args.Size - 1;				
+				int n = args.Size - 1;
+				
+				if (n == -1) { // no args
+					ig.Emit (OpCodes.Ldstr, "");
+					ig.Emit (OpCodes.Call, typeof (ScriptStream).GetMethod ("WriteLine"));
+					return;
+				}
+
 				Type script_stream = typeof (ScriptStream);
 				MethodInfo write = script_stream.GetMethod ("Write");
 				MethodInfo writeline = script_stream.GetMethod ("WriteLine");
@@ -510,26 +518,55 @@ namespace Microsoft.JScript {
 						ig.Emit (OpCodes.Ldc_I4_1);
 						ig.Emit (OpCodes.Call, to_string);
 					}
-
+					
 					if (i == n)
 						ig.Emit (OpCodes.Call, writeline);
 					else
 						ig.Emit (OpCodes.Call, write);
 				}
 			} else {
-				BuiltIn binding = (BuiltIn) SemanticAnalyser.ObjectSystemContains (member_exp.ToString ());
-				if (binding == null || IsGlobalObjectMethod (binding)) {
+				object binding = SemanticAnalyser.ObjectSystemContains (member_exp.ToString ());
+
+				if (binding == null)
+					binding = TypeManager.GetMethod (member_exp.ToString ());
+
+				if (binding == null) {
+					string msg = "class Call, Method Emit, binding was not found.";
+					throw new Exception (msg + " This should not be reached");
+				}
+				
+				if (IsGlobalObjectMethod (binding)) {
 					args.Emit (ec);
 					member_exp.Emit (ec);
-				} else {
+				} else if (IsConstructorProperty (binding)) {
 					member_exp.Emit (ec);
 					EmitBuiltInArgs (ec);
 					EmitInvoke (ec);
-				}
+				} else if (binding is MethodBuilder)
+					emit_func_call ((MethodBuilder) binding, ec);
+
 				if (no_effect)
 					ec.ig.Emit (OpCodes.Pop);
 			}
 		}
+
+		void emit_func_call (MethodBuilder mb, EmitContext ec)
+		{
+			ILGenerator ig = ec.ig;
+			FieldInfo engine = typeof (ScriptObject).GetField ("engine");
+			ig.Emit (OpCodes.Ldarg_0);
+			ig.Emit (OpCodes.Ldfld, engine);
+			ig.Emit (OpCodes.Call, typeof (VsaEngine).GetMethod ("ScriptObjectStackTop"));
+			Type iact_obj = typeof (IActivationObject);
+			ig.Emit (OpCodes.Castclass, iact_obj);
+			ig.Emit (OpCodes.Callvirt, iact_obj.GetMethod ("GetDefaultThisObject"));
+			ig.Emit (OpCodes.Ldarg_0);
+			ig.Emit (OpCodes.Ldfld, engine);
+
+			args.Emit (ec);
+
+			ig.Emit (OpCodes.Call, mb);
+ 		}
 
 		void EmitBuiltInArgs (EmitContext ec)
 		{
@@ -603,9 +640,18 @@ namespace Microsoft.JScript {
 				ig.Emit (OpCodes.Box, typeof (Double));
 		}
 
-		bool IsGlobalObjectMethod (BuiltIn binding)
+		bool IsConstructorProperty (object binding)
 		{
-			switch (binding.Name) {
+			return false;
+		}
+
+		bool IsGlobalObjectMethod (object binding)
+		{
+			if (binding == null || binding.GetType () != typeof (BuiltIn))
+				return false;
+			
+			BuiltIn bind = binding as BuiltIn;
+			switch (bind.Name) {
 			case "eval":
 			case "parseInt":
 			case "parseFloat":
@@ -733,11 +779,12 @@ namespace Microsoft.JScript {
 			} else if (binding is BuiltIn)
 				binding.Emit (ec);
 			else
-				Console.WriteLine ("Identifier.Emit, DID NOT EMIT ANYTHING, binding is {0}", binding);
+				//Console.WriteLine ("class Identifier, method Emit, DID NOT EMIT ANYTHING, binding is {0}", binding.GetType ());
 
 			if (!assign && no_effect)
 				ig.Emit (OpCodes.Pop);				
 		}
+
 
 		internal FieldInfo extract_field_info (AST a)
 		{
