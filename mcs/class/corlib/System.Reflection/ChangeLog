@@ -1,4 +1,8 @@
 
+Thu Feb 14 18:55:23 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* TypeAttributes.cs: update to latest spec.
+
 Mon Feb 11 19:50:27 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	* Assembly.cs: handle throwOnError in GetType() call.

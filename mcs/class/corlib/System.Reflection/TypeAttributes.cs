@@ -72,7 +72,7 @@ namespace System.Reflection {
 
 		/// <summary>
 		/// </summary>
-		ClassSemanticsMask = 96,
+		ClassSemanticsMask = 32,
 
 		/// <summary>
 		/// </summary>
@@ -84,23 +84,11 @@ namespace System.Reflection {
 
 		/// <summary>
 		/// </summary>
-		ValueType = 64,
-
-		/// <summary>
-		/// </summary>
-		UnmanagedValueType = 96,
-
-		/// <summary>
-		/// </summary>
 		Abstract = 128,
 
 		/// <summary>
 		/// </summary>
 		Sealed = 256,
-
-		/// <summary>
-		/// </summary>
-		Enum = 512,
 
 		/// <summary>
 		/// </summary>
@@ -132,7 +120,7 @@ namespace System.Reflection {
 
 		/// <summary>
 		/// </summary>
-		LateInit = 524288,
+		BeforeFieldInit = 1048576,
 
 		/// <summary>
 		/// </summary>
