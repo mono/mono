@@ -1,3 +1,7 @@
+2002-05-16  Radek Doulik  <rodo@ximian.com>
+
+	* interp.c (ves_exec_method): use data.i instead of data.l in i32 case
+
 2002-05-15  Radek Doulik  <rodo@ximian.com>
 
 	* interp.c (ves_runtime_method): moved stackval_from_data call
