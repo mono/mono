@@ -1,3 +1,10 @@
+2004-09-08  Martin Baulig  <martin@ximian.com>
+
+	* class.cs
+	(TypeContainer.CheckRecursiveDefinition): New protected method.
+	(TypeContainer.DefineType): Move the CS0146 check into
+	CheckRecursiveDefinition().	
+
 2004-09-06  Martin Baulig  <martin@ximian.com>
 
 	* generic.cs (ConstructedType.CheckConstraints): Allow builtin

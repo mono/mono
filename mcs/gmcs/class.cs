@@ -1290,19 +1290,11 @@ namespace Mono.CSharp {
 		{
 			TypeExpr parent;
 
-			if (TypeBuilder != null)
-				return TypeBuilder;
-
 			if (error)
 				return null;
-			
-			if (InTransit) {
-				Report.Error (146, Location, "Class definition is circular: `{0}'", Name);
-				error = true;
-				return null;
-			}
-			
-			InTransit = true;
+
+			if (TypeBuilder != null)
+				return TypeBuilder;
 
 			ec = new EmitContext (this, Mono.CSharp.Location.Null, null, null, ModFlags);
 
@@ -1319,7 +1311,12 @@ namespace Mono.CSharp {
 					TypeBuilder = builder.DefineType (
 						Name, type_attributes, null, null);
 				} else {
-					TypeBuilder builder = Parent.DefineType ();
+					TypeBuilder builder;
+					if (Parent.TypeBuilder != null)
+						builder = Parent.TypeBuilder;
+					else
+						builder = Parent.DefineType ();
+
 					if (builder == null) {
 						error = true;
 						return null;
@@ -1408,6 +1405,11 @@ namespace Mono.CSharp {
 				}
 			}
 
+			if (!CheckRecursiveDefinition ()) {
+				error = true;
+				return null;
+			}
+
 			if (ptype != null)
 				TypeBuilder.SetParent (ptype);
 
@@ -1465,9 +1467,8 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			InTransit = false;
 			return TypeBuilder;
-					}
+		}
 
 		protected virtual bool DefineNestedTypes ()
 		{
@@ -1502,6 +1503,32 @@ namespace Mono.CSharp {
 				}
 			}
 
+			return true;
+		}
+
+		protected bool CheckRecursiveDefinition ()
+		{
+			if (InTransit) {
+				Report.Error (146, Location,
+					      "Class definition is circular: `{0}'",
+					      GetSignatureForError ());
+				error = true;
+				return false;
+			}
+
+			InTransit = true;
+
+			Type parent = ptype;
+			if (parent != null) {
+				if (parent.IsGenericInstance)
+					parent = parent.GetGenericTypeDefinition ();
+
+				TypeContainer ptc = TypeManager.LookupTypeContainer (parent);
+				if ((ptc != null) && !ptc.CheckRecursiveDefinition ())
+					return false;
+			}
+
+			InTransit = false;
 			return true;
 		}
 
