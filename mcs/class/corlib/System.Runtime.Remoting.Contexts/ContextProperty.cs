@@ -12,14 +12,21 @@ namespace System.Runtime.Remoting.Contexts {
 
 	public class ContextProperty
 	{
-		[MonoTODO]
+		string name;
+		object prop;
+		
+		private ContextProperty (string name, object prop)
+		{
+			this.name = name;
+			this.prop = prop;
+		}
+		
 		public virtual string Name {
-			get { throw new NotImplementedException (); }
+			get { return name; } 
 		}
 
-		[MonoTODO]
 		public virtual object Property {
-			get { throw new NotImplementedException (); }
+			get { return prop; }
 		}
 	}
 }

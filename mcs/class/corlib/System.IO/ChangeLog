@@ -1,3 +1,7 @@
+2003-11-14  Miguel de Icaza  <miguel@ximian.com>
+
+	* StreamReader.cs, TextReader, StreamReader (Read): Add [Out]
+
 2003-11-14  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Directory.cs: allow directory names without wildcards in the pattern.

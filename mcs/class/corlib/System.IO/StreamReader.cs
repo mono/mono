@@ -64,7 +64,7 @@ namespace System.IO {
 				return -1;
 			}
 
-			public override int Read (char[] buffer, int index, int count)
+			public override int Read ([In, Out] char[] buffer, int index, int count)
 			{
 				return 0;
 			}
@@ -307,7 +307,7 @@ namespace System.IO {
 			return decoded_buffer [pos++];
 		}
 
-		public override int Read ([In] char[] dest_buffer, int index, int count)
+		public override int Read ([In, Out] char[] dest_buffer, int index, int count)
 		{
 			if (base_stream == null)
 				throw new ObjectDisposedException ("StreamReader", "Cannot read from a closed StreamReader");

@@ -21,7 +21,7 @@ namespace System.Runtime.Remoting.Contexts {
 
 	public class Context 
 	{
-		public int domain_id;
+		internal int domain_id;
 		int context_id;
 		int process_id;
 
