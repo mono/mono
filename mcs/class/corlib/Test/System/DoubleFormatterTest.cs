@@ -939,7 +939,17 @@ namespace MonoTests.System {
 			// we try MS "short" R format
 			se = "2.7182818284590451";
 			de = Double.Parse (se);
-			AssertEquals ("Mono==E", Math.E, de);
+			AssertEquals ("Microsoft==E", Math.E, de);
+		}
+
+		[Test]
+		public void NegativeRoundtrip () 
+		{
+			Double value = -Math.E;
+			// here we check that we can recreate the "extact" same double from the "R" format
+			string se = value.ToString ("R", CultureInfo.InvariantCulture);
+			Double de = Double.Parse (se);
+			AssertEquals ("-E==-E", value, de);
 		}
 	}
 }

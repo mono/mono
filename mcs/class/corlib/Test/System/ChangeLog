@@ -1,3 +1,8 @@
+2004-06-23  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* DoubleFormatterTest.cs: Added a new test for a negative roundtrip
+	(which was broken).
+
 2004-06-19  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* FloatingPointFormatterTest.cs : Format literal (i.e. '...') in
