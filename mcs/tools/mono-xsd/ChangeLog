@@ -1,3 +1,7 @@
+2004-01-19  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* NewMonoXSD.cs: Compile the loaded schemas if they are not already compiled.
+
 2003-08-05  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* NewMonoXSD.cs: new implementation of monoxsd based on the
