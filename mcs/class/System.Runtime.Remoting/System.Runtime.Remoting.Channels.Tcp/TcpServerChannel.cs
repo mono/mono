@@ -304,7 +304,7 @@ namespace System.Runtime.Remoting.Channels.Tcp
 
 		public void ProcessMessages()
 		{
-			_stream = _client.GetStream();
+			_stream = new BufferedStream (_client.GetStream());
 
 			try
 			{
@@ -319,6 +319,7 @@ namespace System.Runtime.Remoting.Channels.Tcp
 							_sink.InternalProcessMessage (this);
 							break;
 
+						case MessageStatus.Unknown:
 						case MessageStatus.CancelSignal:
 							end = true;
 							break;
