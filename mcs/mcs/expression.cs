@@ -2613,14 +2613,12 @@ namespace Mono.CSharp {
 				return null;
 
 			VariableInfo vi = VariableInfo;
-			
+
 			if (vi.ReadOnly){
-				if (vi.Assigned){
-					Report.Error (
-						1604, loc,
-						"cannot assign to `" + Name + "' because it is readonly");
-					return null;
-				}
+				Report.Error (
+					1604, loc,
+					"cannot assign to `" + Name + "' because it is readonly");
+				return null;
 			}
 			
 			return this;

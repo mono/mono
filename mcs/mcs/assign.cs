@@ -147,7 +147,7 @@ namespace Mono.CSharp {
 
 			type = target_type;
 			eclass = ExprClass.Value;
-			
+
 			//
 			// If we are doing a property assignment, then
 			// set the `value' field on the property, and Resolve

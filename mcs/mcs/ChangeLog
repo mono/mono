@@ -3,6 +3,9 @@
 	* ecore.cs: Report readonly assigns here as well, as we might have
 	been resolved only by MemberAccess.
 
+	(SimpleName.SimpleNameResolve): Also be useful for LValue
+	resolution.   We need this to propagate assign to local readonly variables
+
 	* typemanager.cs: Use a ptrhashtable for the criteria, because we
 	do not want to reuse potential criteria memory.
 

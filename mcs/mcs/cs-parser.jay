@@ -3200,6 +3200,7 @@ foreach_statement
 		VariableInfo vi;
 
 		vi = foreach_block.AddVariable ((string) $3, (string) $4, current_local_parameters, l);
+		vi.ReadOnly = true;
 		if (vi == null){
 			Report.Error (
 				128, l, "A local variable `" + (string) $4 + "' is already "+

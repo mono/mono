@@ -3083,12 +3083,18 @@ namespace Mono.CSharp {
 		
 		public override Expression DoResolve (EmitContext ec)
 		{
-			return SimpleNameResolve (ec, false);
+			return SimpleNameResolve (ec, null, false);
 		}
+
+		public override Expression DoResolveLValue (EmitContext ec, Expression right_side)
+		{
+			return SimpleNameResolve (ec, right_side, false);
+		}
+		
 
 		public Expression DoResolveAllowStatic (EmitContext ec)
 		{
-			return SimpleNameResolve (ec, true);
+			return SimpleNameResolve (ec, null, true);
 		}
 
 		/// <remarks>
@@ -3108,7 +3114,7 @@ namespace Mono.CSharp {
 		///   Type is both an instance variable and a Type;  Type.GetType
 		///   is the static method not an instance method of type.
 		/// </remarks>
-		Expression SimpleNameResolve (EmitContext ec, bool allow_static)
+		Expression SimpleNameResolve (EmitContext ec, Expression right_side, bool allow_static)
 		{
 			Expression e = null;
 
@@ -3121,8 +3127,11 @@ namespace Mono.CSharp {
 					LocalVariableReference var;
 					
 					var = new LocalVariableReference (ec.CurrentBlock, Name, Location);
-					
-					return var.Resolve (ec);
+
+					if (right_side != null)
+						return var.ResolveLValue (ec, right_side);
+					else
+						return var.Resolve (ec);
 				}
 			
 				//
