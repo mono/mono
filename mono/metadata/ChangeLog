@@ -1,3 +1,14 @@
+2004-11-06  Ben Maurer  <bmaurer@ximian.com>
+
+	* metadata.c (builtin_types): Add types for System.Object here.
+	(mono_metadata_parse_type_full): Cache MonoType*'s that are
+	for a class or valuetype from klass->this_arg or klass->byval_arg.
+
+	On mcs for a hello world, this gets us down from 21836 MonoType's
+	to 14560.
+
+	(mono_metadata_free_type): Account for the above change.
+
 2004-11-06  Zoltan Varga  <vargaz@freemail.hu>
 
 	* appdomain.c (ves_icall_System_AppDomain_GetData): Throw an 
