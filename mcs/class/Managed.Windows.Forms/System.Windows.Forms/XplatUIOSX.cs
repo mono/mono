@@ -73,6 +73,7 @@ namespace System.Windows.Forms {
 		private static EventTypeSpec [] viewEvents = new EventTypeSpec [] {
 									new EventTypeSpec (OSXConstants.kEventClassControl, OSXConstants.kEventControlSetFocusPart), 
 									new EventTypeSpec (OSXConstants.kEventClassControl, OSXConstants.kEventControlClick), 
+									new EventTypeSpec (OSXConstants.kEventClassControl, OSXConstants.kEventControlContextualMenuClick), 
 									new EventTypeSpec (OSXConstants.kEventClassControl, OSXConstants.kEventControlTrack), 
 									new EventTypeSpec (OSXConstants.kEventClassControl, OSXConstants.kEventControlSimulateHit), 
 									new EventTypeSpec (OSXConstants.kEventClassControl, OSXConstants.kEventControlBoundsChanged), 
@@ -454,7 +455,7 @@ namespace System.Windows.Forms {
 						CGContextFillRect (contextref, bounds);
 					}
 					
-						// Add a paint to the queue
+					// Add a paint to the queue
 					msg.hwnd = hwnd.Handle;
 					msg.message = Msg.WM_PAINT;
 					msg.wParam = IntPtr.Zero;
@@ -504,28 +505,26 @@ namespace System.Windows.Forms {
 						point.y = (short)y;
 					}
 					
-					ushort button = (ushort)(MouseState+1);
-					
 					msg.hwnd = hwnd.Handle;
 					
 					bool client = (hwnd.ClientWindow == handle ? true : false);
 					
 					int wparam = (int)GetMousewParam (0);
-					switch (button) {
-						case 1:
-							MouseState &= MouseButtons.Left;
+					switch (MouseState) {
+						case MouseButtons.Left:
+							MouseState &= ~MouseButtons.Left;
 							msg.message = (client ? Msg.WM_LBUTTONUP : Msg.WM_NCLBUTTONUP);
 							wparam &= (int)MsgButtons.MK_LBUTTON;
 							break;
-						case 2:
-							MouseState &= MouseButtons.Middle;
+						case MouseButtons.Middle:
+							MouseState &= ~MouseButtons.Middle;
 							msg.message = (client ? Msg.WM_MBUTTONUP : Msg.WM_NCMBUTTONUP);
 							wparam &= (int)MsgButtons.MK_MBUTTON;
 							break;
-						case 3:
-							MouseState &= MouseButtons.Right;
+						case MouseButtons.Right:
+							MouseState &= ~MouseButtons.Right;
 							msg.message = (client ? Msg.WM_RBUTTONUP : Msg.WM_NCRBUTTONUP);
-							wparam &= (int)MsgButtons.MK_MBUTTON;
+							wparam &= (int)MsgButtons.MK_RBUTTON;
 							break;
 					}
 					msg.wParam = (IntPtr)wparam;
@@ -541,6 +540,7 @@ namespace System.Windows.Forms {
 					
 					return 0;
 				}
+				case OSXConstants.kEventControlContextualMenuClick:
 				case OSXConstants.kEventControlClick: {
 					// get the point that was hit
 					QDPoint point = new QDPoint ();
@@ -554,6 +554,10 @@ namespace System.Windows.Forms {
 					// which button was pressed?
 					ushort button = 0;
 					GetEventParameter (inEvent, 1835168878, 1835168878, IntPtr.Zero, (uint)Marshal.SizeOf (typeof (ushort)), IntPtr.Zero, ref button);
+					if (button == 2) {
+						point.x = (short)MousePosition.X;
+						point.y = (short)MousePosition.Y;
+					}
 					
 					msg.hwnd = hwnd.Handle;
 					
@@ -567,13 +571,13 @@ namespace System.Windows.Forms {
 							wparam |= (int)MsgButtons.MK_LBUTTON;
 							break;
 						case 2:
-							MouseState |= MouseButtons.Middle;
-							msg.message = (client ? Msg.WM_MBUTTONDOWN : Msg.WM_NCMBUTTONDOWN);
-							wparam |= (int)MsgButtons.MK_MBUTTON;
-							break;
-						case 3:
 							MouseState |= MouseButtons.Right;
 							msg.message = (client ? Msg.WM_RBUTTONDOWN : Msg.WM_NCRBUTTONDOWN);
+							wparam |= (int)MsgButtons.MK_RBUTTON;
+							break;
+						case 3:
+							MouseState |= MouseButtons.Middle;
+							msg.message = (client ? Msg.WM_MBUTTONDOWN : Msg.WM_NCMBUTTONDOWN);
 							wparam |= (int)MsgButtons.MK_MBUTTON;
 							break;
 					}
@@ -638,7 +642,7 @@ namespace System.Windows.Forms {
 			if (timeout < Timer.Minimum)
 				timeout = Timer.Minimum;
 
-			return (double)(timeout/1000);
+			return (double)((double)timeout/1000);
 		}
 		
 		private void CheckTimers (DateTime now)
@@ -1183,7 +1187,6 @@ namespace System.Windows.Forms {
 							ReleaseEvent (evtRef);
 						}
 					} else {
-						// Fix the hard loop here; we'll let carbon event loop do its stuff until the next timer timeout
 						ReceiveNextEvent (0, IntPtr.Zero, NextTimeout (), true, ref evtRef);
 						if (evtRef != IntPtr.Zero && target != IntPtr.Zero) {
 							SendEventToEventTarget (evtRef, target);
