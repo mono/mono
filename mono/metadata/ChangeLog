@@ -1,3 +1,8 @@
+
+Wed Mar 13 00:27:30 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* reflection.c: output the interface map table, too.
+
 2002-03-12  Dietmar Maurer  <dietmar@ximian.com>
 
 	* class.c (class_compute_field_layout): separate computation of 
