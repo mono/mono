@@ -435,7 +435,9 @@ namespace System.Data.OleDb
 
 				if (currentResult == -1) {
 					// FIXME: throw an exception?
+#if DEBUG_OleDbDataReader
 					Console.WriteLine("Error: current result -1");
+#endif
 					return null;
 				}
 						
@@ -478,7 +480,9 @@ namespace System.Data.OleDb
 						i);
 					if (attrs == IntPtr.Zero){
 						// FIXME: throw exception
+#if DEBUG_OleDbDataReader
 						Console.WriteLine("Error: attrs null");
+#endif
 						return null;
 					}
 
