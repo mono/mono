@@ -1,3 +1,9 @@
+2004-08-26  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* corlib_test.dll.sources: Added System.Security.Policy/
+	ApplicationDirectoryTest.cs, HashMembershipConditionTest.cs,
+	HashTest.cs and IBuiltInEvidenceTest.cs to unit tests.
+
 2004-08-25  Nick Drochak <ndrochak@ieee.com>
 
 	* Makefile : Ignore tests that hang MS.NET.

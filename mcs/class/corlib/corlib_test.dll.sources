@@ -203,6 +203,7 @@ System.Security.Permissions/ZoneIdentityPermissionAttributeTest.cs
 System.Security.Permissions/ZoneIdentityPermissionTest.cs
 System.Security.Policy/AllMembershipConditionTest.cs
 System.Security.Policy/ApplicationDirectoryMembershipConditionTest.cs
+System.Security.Policy/ApplicationDirectoryTest.cs
 System.Security.Policy/ApplicationMembershipConditionTest.cs
 System.Security.Policy/CodeGroupTest.cs
 System.Security.Policy/DomainApplicationMembershipConditionTest.cs
@@ -211,6 +212,9 @@ System.Security.Policy/FileCodeGroupTest.cs
 System.Security.Policy/FirstMatchCodeGroupTest.cs
 System.Security.Policy/GacMembershipConditionTest.cs
 System.Security.Policy/GacTest.cs
+System.Security.Policy/HashMembershipConditionTest.cs
+System.Security.Policy/HashTest.cs
+System.Security.Policy/IBuiltInEvidenceTest.cs
 System.Security.Policy/NetCodeGroupTest.cs 
 System.Security.Policy/PermissionRequestEvidenceTest.cs 
 System.Security.Policy/PolicyLevelTest.cs 
