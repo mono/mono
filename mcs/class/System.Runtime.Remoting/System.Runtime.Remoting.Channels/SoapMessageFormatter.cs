@@ -90,7 +90,7 @@ namespace System.Runtime.Remoting.Channels {
 									paramInfo.ParameterType);
 						outParams.Add(outParam); 
 					}
-//					else outParams.Insert(paramInfo.Position - 1, null);
+//					else outParams.Insert(paramInfo.Position, null);
 				}
 				
 				rtnMsg = new ReturnMessage(
@@ -127,7 +127,7 @@ namespace System.Runtime.Remoting.Channels {
 				if(!paramInfo.IsOut) {
 					paramNames.Add(paramInfo.Name);
 					paramTypes.Add(paramInfo.ParameterType);
-					paramValues.Add(mcm.Args[paramInfo.Position - 1]);
+					paramValues.Add(mcm.Args[paramInfo.Position]);
 				}
 			}			
 			soapMsg.ParamNames = (string[]) paramNames.ToArray(typeof(string));
@@ -166,7 +166,7 @@ namespace System.Runtime.Remoting.Channels {
 			_methodCallParameters = _methodCallInfo.GetParameters();
 			foreach(ParameterInfo paramInfo in _methodCallParameters) {
 				if(paramInfo.IsOut) {
-					argsList.Insert(paramInfo.Position - 1, null);
+					argsList.Insert(paramInfo.Position, null);
 				}
 				else{
 					int index = Array.IndexOf(soapMessage.ParamNames, paramInfo.Name);
@@ -174,7 +174,7 @@ namespace System.Runtime.Remoting.Channels {
 						soapMessage.ParamValues[index] = Convert.ChangeType(
 								soapMessage.ParamValues[index],
 								paramInfo.ParameterType);
-					argsList.Insert(paramInfo.Position - 1, soapMessage.ParamValues[index]);
+					argsList.Insert(paramInfo.Position, soapMessage.ParamValues[index]);
 				}
 			}
 			

@@ -1,3 +1,8 @@
+2003-07-23  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* SoapMessageFormatter.cs: ParameterInfo.Position is now zero-based.
+	  Fixed methods that use it.
+
 2003-07-09:  Jean-Marc André <jean-marc.andre@polymtl.ca>
 
 	* SoapClientFormatterSink.cs, SoapClientFormatterSinkProvider.cs, 
