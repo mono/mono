@@ -145,10 +145,6 @@ namespace Mono.CSharp {
 			// First process positional arguments 
 			//
 
-			if (Type.Name.IndexOf ("DefaultValue") != -1){
-				Console.WriteLine ("HELLO");
-			}
-			
 			int i;
 			for (i = 0; i < pos_arg_count; i++) {
 				Argument a = (Argument) pos_args [i];
