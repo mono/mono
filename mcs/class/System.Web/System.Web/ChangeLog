@@ -1,3 +1,7 @@
+2004-09-05 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpApplication.cs: only add/remove to/from the timeout
+	manager when we're in a interruptible step.
 
 2004-08-31 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
