@@ -27,5 +27,11 @@ namespace System.Web.UI.MobileControls.Adapters
 				throw new NotImplementedException();
 			}
 		}
+
+		public virtual void RenderPostBackEvent(HtmlMobileTextWriter writer,
+		                            string target, string argument)
+		{
+			writer.Write("javascript:__doPostBack('" + target + "','" + argument + "')");
+		}
 	}
 }

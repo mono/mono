@@ -1,4 +1,8 @@
 
+2003-09-03	Gaurav Vaish <gvaish_mono AT lycos.com>
+
+	* HtmlControlAdapter.cs : Looks like done, at least stubbing.
+
 2003-08-13	Gaurav Vaish <gvaish_mono AT lycos.com>
 
 	* ControlAdapter.cs     : Style { get; }           - Implemented.

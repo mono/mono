@@ -118,12 +118,12 @@ namespace System.Web.UI.MobileControls.Adapters
 				this.SecondaryUIMode = (int)state;
 			}
 		}
-		
+
 		public virtual void Render(HtmlMobileTextWriter writer)
 		{
 			base.RenderChildren(writer);
 		}
-		
+
 		public override void Render(HtmlTextWriter writer)
 		{
 			if(writer is HtmlMobileTextWriter)
@@ -131,11 +131,11 @@ namespace System.Web.UI.MobileControls.Adapters
 				Render((HtmlMobileTextWriter)writer);
 			}
 		}
-		
+
 		protected virtual void RenderAsHiddenInputField(HtmlMobileTextWriter writer)
 		{
 		}
-		
+
 		[MonoTODO]
 		protected void RenderBeginLink(HtmlMobileTextWriter writer,
 		                               string target)
@@ -156,12 +156,35 @@ namespace System.Web.UI.MobileControls.Adapters
 		{
 			throw new NotImplementedException();
 		}
-		
+
 		[MonoTODO]
 		protected void RenderPostBackEventAsAnchor(HtmlMobileTextWriter writer,
 		                             string argument, string linkText)
 		{
 			throw new NotImplementedException();
+		}
+
+		protected void RenderPostBackEventAsAttribute(HtmlMobileTextWriter writer,
+		                             string name, string value)
+		{
+			writer.Write(" " + name + "=\"");
+			RenderPostBackEventReference(writer, value);
+			writer.Write("\" ");
+		}
+
+		protected void RenderPostBackEventReference(HtmlMobileTextWriter writer,
+		                                            string argument)
+		{
+			PageAdapter.RenderPostBackEvent(writer, Control.UniqueID, argument);
+		}
+
+		public override object SaveAdapterState()
+		{
+			int uiMode = SecondaryUIMode;
+			object retVal = null;
+			if(uiMode != NotSecondaryUI)
+				retVal = uiMode;
+			return retVal;
 		}
 	}
 }
