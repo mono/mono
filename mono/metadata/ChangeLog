@@ -1,4 +1,8 @@
 
+Fri Dec 10 18:43:46 CET 2004 Paolo Molaro <lupus@ximian.com>
+
+	* profiler.c: allow disabling the default profiler.
+
 Fri Dec 10 18:42:11 CET 2004 Paolo Molaro <lupus@ximian.com>
 
 	* decimal.c, icall.c: allow disabling System.Decimal support.
