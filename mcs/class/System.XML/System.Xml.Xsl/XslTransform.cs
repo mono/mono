@@ -333,7 +333,7 @@ namespace System.Xml.Xsl
 		}
 
 
-
+		/*
 		static void Save (XmlReader rdr, TextWriter baseWriter)
 		{
 			XmlTextWriter writer = new XmlTextWriter (baseWriter);
@@ -384,6 +384,7 @@ namespace System.Xml.Xsl
 
 			writer.Close ();
 		}
+		*/
 
 		static void Save (XPathNavigator navigator, TextWriter writer)
 		{
@@ -600,18 +601,18 @@ namespace System.Xml.Xsl
 		[DllImport ("xslt")]
 		static extern int xsltSaveResultToFilename (string URI, IntPtr doc, IntPtr styleSheet, int compression);
 
-		[DllImport ("xslt")]
-		static extern void xsltCleanupGlobals ();
+//		[DllImport ("xslt")]
+//		static extern void xsltCleanupGlobals ();
 
 		[DllImport ("xslt")]
 		static extern void xsltFreeStylesheet (IntPtr cur);
 
 		// libxml2
-		[DllImport ("xml2")]
-		static extern IntPtr xmlNewDoc (string version);
+//		[DllImport ("xml2")]
+//		static extern IntPtr xmlNewDoc (string version);
 
-		[DllImport ("xml2")]
-		static extern int xmlSaveFile (string filename, IntPtr cur);
+//		[DllImport ("xml2")]
+//		static extern int xmlSaveFile (string filename, IntPtr cur);
 
 		[DllImport ("xml2")]
 		static extern IntPtr xmlParseFile (string filename);
@@ -622,14 +623,14 @@ namespace System.Xml.Xsl
 		[DllImport ("xml2")]
 		static extern void xmlFreeDoc (IntPtr doc);
 
-		[DllImport ("xml2")]
-		static extern void xmlCleanupParser ();
+//		[DllImport ("xml2")]
+//		static extern void xmlCleanupParser ();
 
-		[DllImport ("xml2")]
-		static extern void xmlDocDumpMemory (IntPtr doc, ref IntPtr mem, ref int size);
+//		[DllImport ("xml2")]
+//		static extern void xmlDocDumpMemory (IntPtr doc, ref IntPtr mem, ref int size);
 
-		[DllImport ("xml2")]
-		static extern void xmlFree (IntPtr data);
+//		[DllImport ("xml2")]
+//		static extern void xmlFree (IntPtr data);
 
 		// Functions and structures for extension objects
 
