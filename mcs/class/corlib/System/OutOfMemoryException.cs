@@ -20,7 +20,7 @@ namespace System
 
 		// Constructors
 		public OutOfMemoryException ()
-			: base (Locale.GetText ("There is insufficient memory to continue execution."))
+			: base (Locale.GetText ("Out of memory."))
 		{
 			HResult = Result;
 		}

@@ -1,3 +1,8 @@
+2004-04-09  Miguel de Icaza  <miguel@ximian.com>
+
+	* OutOfMemoryException.cs: Removed the call to Locale.GetText from
+	this.
+
 2004-04-10  Gert Driesen (drieseng@users.sourceforge.net)
 
    	* MonoDummy.cs: added MonoTODO to make sure we remove this class

@@ -616,7 +616,7 @@ public abstract class Encoding
 	}
 
 	[MethodImpl (MethodImplOptions.InternalCall)]
-	extern internal static string InternalCodePage ();
+	extern internal static string InternalCodePage (ref int code_page);
 	
 	// Get the default encoding object.
 	public static Encoding Default
@@ -627,9 +627,16 @@ public abstract class Encoding
 					if (defaultEncoding == null) {
 						// See if the underlying system knows what
 						// code page handler we should be using.
-						string codePage = InternalCodePage ();
+						int code_page = 1;
+						
+						string code_page_name = InternalCodePage (ref code_page);
 						try {
-							defaultEncoding = GetEncoding (codePage);
+							if (code_page == -1)
+								defaultEncoding = GetEncoding (code_page_name);
+							else {
+								code_page = code_page & 0x0fffffff;
+								defaultEncoding = GetEncoding (code_page);
+							}
 						} catch (NotSupportedException) {
 							defaultEncoding = UTF8Unmarked;
 						}

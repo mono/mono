@@ -20,7 +20,8 @@ namespace System
 
 		static Console ()
 		{
-			string codepage = Encoding.InternalCodePage ();
+			int code_page = 0;
+			Encoding.InternalCodePage (ref code_page);
 			Encoding encoding;
 
 			if (((int) Environment.Platform) == 128){
@@ -28,26 +29,26 @@ namespace System
 				// On Unix systems (128), do not output the
 				// UTF-8 ZWNBSP (zero-width non-breaking space).
 				//
-				if (codepage.ToUpper ().Replace ('-', '_').IndexOf ("UTF_8") != -1)
+				if (code_page == UTF8Encoding.UTF8_CODE_PAGE || ((code_page & 0x10000000) != 0))
 					encoding = Encoding.UTF8Unmarked;
 				else
 					encoding = Encoding.Default;
-			}else {
+			} else {
 				//
 				// On Windows, follow the Windows tradition
 				//
 				encoding = Encoding.Default;
 			}
 
-			stderr = new StreamWriter (OpenStandardError (), encoding);
+			stderr = new StreamWriter (OpenStandardError (0), encoding); 
 			((StreamWriter)stderr).AutoFlush = true;
 			stderr = TextWriter.Synchronized (stderr);
 
-			stdout = new StreamWriter (OpenStandardOutput (), encoding);
+			stdout = new StreamWriter (OpenStandardOutput (0), encoding);
 			((StreamWriter)stdout).AutoFlush = true;
 			stdout = TextWriter.Synchronized (stdout);
 
-			stdin  = new StreamReader (OpenStandardInput (), encoding);
+			stdin  = new StreamReader (OpenStandardInput (0), encoding);
 			stdin = TextReader.Synchronized (stdin);
 		}
 
