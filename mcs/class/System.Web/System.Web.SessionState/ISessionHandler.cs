@@ -13,7 +13,7 @@ namespace System.Web.SessionState
 	internal interface ISessionHandler
 	{
 		void Dispose ();
-		void Init (HttpApplication context, SessionConfig config);
+		void Init (SessionStateModule module, HttpApplication context, SessionConfig config);
 		HttpSessionState UpdateContext (HttpContext context, SessionStateModule module, bool required,
 						bool read_only, ref bool isNew);
 

@@ -28,7 +28,7 @@ namespace System.Web.SessionState {
 		{
 		}
 
-		public void Init (HttpApplication context, SessionConfig config)
+		public void Init (SessionStateModule module, HttpApplication context, SessionConfig config)
 		{
 			this.config = config;
 			RemotingConfiguration.Configure (null);

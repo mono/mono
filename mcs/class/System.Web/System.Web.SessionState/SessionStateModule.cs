@@ -10,6 +10,7 @@
 // (C) 2003 Stefan Görling (http://www.gorling.se)
 
 using System.Web;
+using System.Web.Caching;
 using System.Web.Util;
 using System.Security.Cryptography;
 
@@ -73,7 +74,7 @@ namespace System.Web.SessionState
 			
 			if (handlerType != null && handler == null) {
 				handler = (ISessionHandler) Activator.CreateInstance (handlerType);
-				handler.Init(app, config); //initialize
+				handler.Init (this, app, config); //initialize
 			}
 		}
 
@@ -153,8 +154,11 @@ namespace System.Web.SessionState
 			return result;
 		}
 
-		void OnEndAcquireState (IAsyncResult result)
+		void OnEndAcquireState (IAsyncResult result) { }
+
+		internal void OnSessionRemoved (string key, object value, CacheItemRemovedReason reason)
 		{
+			OnEnd ();
 		}
 
 		internal void OnEnd ()

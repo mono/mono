@@ -1,3 +1,15 @@
+2004-06-11 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* SessionSQLServerHandler.cs:
+	* SessionStateServerHandler.cs:
+	* ISessionHandler.cs: added new parameter to Init.
+
+	* SessionInProcHandler.cs: use the HttpRuntime cache to store the
+	sessions and handle expiration.
+
+	* SessionStateModule.cs: added OnSessionRemoved internal method that is
+	called whenever a session expires or is removed.
+
 2004-05-05  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpSessionState.cs: added Clone (), which makes and exact copy but
@@ -10,9 +22,9 @@
 
 	* SessionInProcHandler.cs:
 	* SessionSQLServerHandler.cs:
-	* SessionStateServerHandler.cs: don't create a new session if the handler
-	do not require it. UpdateContext() now returns an HttpSessionState to
-	the module.
+	* SessionStateServerHandler.cs: don't create a new session if the
+	handler do not require it. UpdateContext() now returns an
+	HttpSessionState to the module.
 
 	* SessionStateModule.cs: removed IsReadOnly as it is now passed as a 
 	parameter to the session handler. If the session is read-only, clone
