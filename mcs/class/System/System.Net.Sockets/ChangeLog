@@ -1,3 +1,7 @@
+2002-04-16  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* UdpClient.cs: implemented.
+
 2002-04-02  Dick Porter  <dick@ximian.com>
 
 	* TcpListener.cs: in Start(), set the socket listen backlog value
