@@ -1,3 +1,8 @@
+2004-06-22  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* proxies.net.xml.gz: Updated.
+	* wsdlfiles.tar.gz: Updated.
+
 2004-06-10  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* Makefile: Fix ms.net api file before the comparison.
