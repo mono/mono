@@ -1,0 +1,8 @@
+2005-02-23  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* HttpRequestTest.cs: New. Test that ValidateInput throw exceptions
+	when expected.
+	* HttpServerUtilityTest.cs: New. Test for possible XSS when using 
+	HtmlEncode.
+	* HttpUtilityTest.cs: New. Test for possible XSS when using 
+	HtmlEncode.
