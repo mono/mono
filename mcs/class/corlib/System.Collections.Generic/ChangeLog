@@ -1,3 +1,8 @@
+2004-05-26  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Queue.cs: Fixed possible integer overflow in CopyTo methods.
+	* Stack.cs: Fixed possible integer overflow in CopyTo methods.
+
 2004-03-13  Martin Baulig  <martin@ximian.com>
 
 	* Stack.cs, Queue.cs, List.cs: Implement the non-generic interfaces.

@@ -71,7 +71,8 @@ namespace System.Collections.Generic
 
 		public virtual void CopyTo (T[] array, int start)
 		{
-			if (start + count >= array.Length)
+			// re-ordered to avoid possible integer overflow
+			if (start >= array.Length - count)
 				throw new ArgumentException ();
 
 			for (Node node = head; node != null; node = node.Next)
@@ -80,7 +81,8 @@ namespace System.Collections.Generic
 
 		void ICollection.CopyTo (Array array, int start)
 		{
-			if (start + count >= array.Length)
+			// re-ordered to avoid possible integer overflow
+			if (start >= array.Length - count)
 				throw new ArgumentException ();
 
 			for (Node node = head; node != null; node = node.Next)
