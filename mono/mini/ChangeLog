@@ -1,4 +1,9 @@
 
+Mon Jun 9 20:21:47 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* cpu-pentium.md, mini-x86.c: fix (well, actually implement) OP_TAN
+	and OP_ATAN (fixes bug#44293).
+
 Mon Jun 9 19:00:56 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
 	* Makefile.am, mini-x86.c: rename cpu description array to
