@@ -1,3 +1,7 @@
+2003-04-05  Martin Baulig  <martin@ximian.com>
+
+	* statement.cs (FlowBranching.UsageVector.MergeChildren): Fix bug #40670.
+
 2003-04-02  Miguel de Icaza  <miguel@ximian.com>
 
 	* class.cs (Event.Define): Do not allow abstract events to have
