@@ -1,3 +1,6 @@
+2004-08-09 Sureshkumar T <tsureshkumar@novell.com>
+	* Tds70.cs - Prepare Method stored procedure handle read problem fixed.
+
 2004-06-30 Umadevi S <sumadevi@novell.com>
 	* Tds.cs - In the NextResult method handling TdsPacketSubType. TableName. 
 
