@@ -1,3 +1,7 @@
+2003-05-10 Jackson Harper <jackson@latitudegeo.com>
+
+	* ILParser.jay: Add locals, method references, and method instructions
+		
 2003-05-07 Jackson Harper <jackson@latitudegeo.com>
 
 	* ILParser.jay: Add type instructions. NOTE - type_spec is not

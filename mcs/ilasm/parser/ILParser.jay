@@ -1175,16 +1175,11 @@ data_decl		: data_head data_body
 
 data_head		: D_DATA tls id ASSIGN
                           {
-                                
-                                $$ = new DataDef ((string) $3, (bool)
-                          $2);
-                               
+                                $$ = new DataDef ((string) $3, (bool) $2);    
                           } 
 			| D_DATA tls
                           {
-                                
                                 $$ = new DataDef (String.Empty, (bool) $2);
-                                
                           }
 			;
 
@@ -1432,15 +1427,41 @@ sig_arg			: param_attr type
 			| param_attr type K_MARSHAL OPEN_PARENS native_type CLOSE_PARENS id
 			;
 
+type_list               : /* EMPTY */   { $$ = new ArrayList (); }
+                        | type
+                          {
+                                ArrayList type_list = new ArrayList ();
+                                type_list.Add ($1);
+                                $$ = type_list;
+                          }
+                        | type_list COMMA type
+                          {
+                                ArrayList type_list = (ArrayList) $1;
+                                type_list.Add ($3);
+                          }
+                        ;
+
 method_decls		: /* EMPTY */
 			| method_decls method_decl
 			;
 
 method_decl		: D_EMITBYTE int32
 			| D_MAXSTACK int32
-			| D_LOCALS OPEN_PARENS sig_args CLOSE_PARENS
-			| D_LOCALS K_INIT OPEN_PARENS sig_args CLOSE_PARENS
+			| D_LOCALS OPEN_PARENS local_list CLOSE_PARENS
+                          {
+                                codegen.CurrentMethodDef.AddLocals (
+                                        (ArrayList) $3);
+                          }
+			| D_LOCALS K_INIT OPEN_PARENS local_list CLOSE_PARENS
+                          {
+                                codegen.CurrentMethodDef.AddLocals (
+                                        (ArrayList) $4);
+                                codegen.CurrentMethodDef.InitLocals ();
+                          }
 			| D_ENTRYPOINT
+                          {
+                                codegen.CurrentMethodDef.EntryPoint ();
+                          }
 			| D_ZEROINIT
 			| D_EXPORT OPEN_BRACKET int32 CLOSE_BRACKET
 			| D_EXPORT OPEN_BRACKET int32 CLOSE_BRACKET K_AS id
@@ -1460,6 +1481,38 @@ method_decl		: D_EMITBYTE int32
 			| customattr_decl
 			| data_decl
 			;
+
+local_list              : /* EMPTY */
+                        | local
+                          {
+                                ArrayList local_list = new ArrayList ();
+                                local_list.Add ($1);
+                                $$ = local_list;
+                          }
+                        | local_list COMMA local
+                          {
+                                ArrayList local_list = (ArrayList) $1;
+                                local_list.Add ($3);
+                          }
+                        ;
+
+local                   : type
+                          {
+                                $$ = new Local (-1, (ITypeRef) $1);
+                          }
+                        | type id
+                          {
+                                $$ = new Local (-1, (string) $2, (ITypeRef) $1);
+                          }
+                        | OPEN_BRACKET int32 CLOSE_BRACKET type
+                          {
+                                $$ = new Local ((int) $2, (ITypeRef) $4);
+                          }
+                        | OPEN_BRACKET int32 CLOSE_BRACKET type id
+                          {
+                                $$ = new Local ((int) $2, (string) $5, (ITypeRef) $4);
+                          }
+                        ;
 
 type_spec		: class_ref
 			| OPEN_BRACKET comp_name CLOSE_BRACKET
@@ -1504,6 +1557,9 @@ instr			: INSTR_NONE
                                         new SimpInstr ((Op) $1));
                           }
 			| INSTR_VAR int32
+                          {
+                               
+                          }
 			| INSTR_I int32
                           {
                                 codegen.CurrentMethodDef.AddInstr (new
@@ -1544,7 +1600,8 @@ instr			: INSTR_NONE
                           }
 			| INSTR_METHOD method_ref
                           {
-                                
+                                codegen.CurrentMethodDef.AddInstr (new MethodInstr ((MethodOp) $1,
+                                        (IMethodRef) $2));
                           }
 			| INSTR_FIELD type type_spec DOUBLE_COLON id
 			| INSTR_FIELD type id
@@ -1570,9 +1627,19 @@ instr			: INSTR_NONE
 			;
 
 method_ref		: call_conv type type_spec DOUBLE_COLON method_name 
-			  OPEN_PARENS sig_args CLOSE_PARENS
+			  OPEN_PARENS type_list CLOSE_PARENS
+                          {
+                                IClassRef owner = (IClassRef) $3;
+                                ArrayList arg_list = (ArrayList) $7;
+                                
+                                $$ = owner.GetMethodRef ((ITypeRef) $2, (string) $5,
+                                        (ITypeRef[]) arg_list.ToArray (typeof (ITypeRef)));
+                          }
 			| call_conv type method_name 
-			  OPEN_PARENS sig_args CLOSE_PARENS
+			  OPEN_PARENS type_list CLOSE_PARENS
+                          {
+                                
+                          }
 			;
 
 labels			: /* EMPTY */
