@@ -4155,9 +4155,6 @@ catch_clause
 
 				one.Add (new VariableDeclaration (id, null, loc));
 
-				// Note: the $$ below refers to the value of this code block, not of
-				//       the LHS non-terminal.  This can be referred to as $3 below.
-				$$ = current_block;
 				current_block = new Block (current_block);
 				Block b = declare_local_variables (type, one, loc);
 				current_block = b;
@@ -4172,12 +4169,10 @@ catch_clause
 			type = (Expression) cc.Key;
 			id   = (string) cc.Value;
 
-			if ($3 != null){
-				//
-				// FIXME: I can change this for an assignment.
-				//
-				while (current_block != (Block) $3)
+			if (id != null){
+				while (current_block.Implicit)
 					current_block = current_block.Parent;
+				current_block = current_block.Parent;
 			}
 		}
 

@@ -1,3 +1,8 @@
+2005-01-20  Raja R Harinath  <rharinath@novell.com>
+
+	* cs-parser.jay (catch_clause): Simplify current_block handling
+	somewhat.
+
 2005-01-17  Miguel de Icaza  <miguel@ximian.com>
 
 	* convert.cs (ImplicitStandardConversionExists): Synchronize the
