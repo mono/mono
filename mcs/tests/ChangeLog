@@ -1,3 +1,8 @@
+2004-10-01  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile (NEW_TEST_SOURCES_common): Add test-300.
+	* test-300.cs: New.  Test based on #65833.
+
 2004-09-28  Raja R Harinath  <rharinath@novell.com>
 
 	* test-120.cs: Don't exit on the first failure.

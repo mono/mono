@@ -25,7 +25,7 @@ USE_MCS_FLAGS :=
 # He may also move some to TEST_EXCLUDE_net_2_0 if some of the merges are inappropriate for GMCS.
 #
 NEW_TEST_SOURCES_common = \
-	test-297 test-287 test-294 test-299
+	test-297 test-287 test-294 test-299 test-300
 
 #
 # Please do _not_ add any tests here - all new tests should go into NEW_TEST_SOURCES_common
