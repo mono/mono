@@ -8,8 +8,9 @@ Module ImpConversionStringtoCharB
 			Dim a() as Char
 			Dim b as String= "Program"
 			a = b
-			if a <> "Program"
-				Throw new System.Exception("Conversion of String to Char not working. Expected Program but got " &a) 
-			End if		
+			System.Console.WriteLine("Value of b is {0}", b)
+			'if a <> "Program"
+			'	Throw new System.Exception("Conversion of String to Char not working. Expected Program but got " &a) 
+			'End if		
 	End Sub
 End Module

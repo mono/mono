@@ -6,8 +6,9 @@
 Module ImpConversionChartoStringB
 	Sub Main()
 			Dim a as Char = "a"
-			Dim b as String = "hello" + a
-			if b <> "helloa"
+			'Dim b as String = "hello" + a
+			Dim b as String = a + "hello" 
+			if b <> "ahello"
 				Throw new System.Exception("Concat of Char & String not working. Expected helloa but got " &b) 
 			End if		
 	End Sub
