@@ -11,6 +11,7 @@
 using NUnit.Framework;
 using System;
 using System.Xml;
+using System.Xml.Serialization;
 using System.IO;
 using System.Data;
 using System.Data.SqlTypes;
@@ -849,7 +850,7 @@ namespace MonoTests.System.Data
 		{
 			// Attribute order is modified from MS.NET output
 			string schema = @"<?xml version='1.0' encoding='utf-16'?>
-<xs:schema xmlns:msdata='urn:schemas-microsoft-com:xml-msdata' xmlns:mstns='urn:bar' attributeFormDefault='qualified' elementFormDefault='qualified' targetNamespace='urn:bar' id='NewDataSet' xmlns:xs='http://www.w3.org/2001/XMLSchema' xmlns:app1='urn:baz' xmlns:app2='urn:foo' xmlns='urn:bar'>
+<xs:schema xmlns:msdata='urn:schemas-microsoft-com:xml-msdata' xmlns='urn:bar' xmlns:mstns='urn:bar' attributeFormDefault='qualified' elementFormDefault='qualified' targetNamespace='urn:bar' id='NewDataSet' xmlns:xs='http://www.w3.org/2001/XMLSchema' xmlns:app1='urn:baz' xmlns:app2='urn:foo'>
   <!--ATTENTION: This schema contains references to other imported schemas-->
   <xs:import namespace='urn:baz' schemaLocation='_app1.xsd' />
   <xs:import namespace='urn:foo' schemaLocation='_app2.xsd' />
@@ -887,6 +888,38 @@ namespace MonoTests.System.Data
 			ds.WriteXmlSchema (xw);
 			AssertEquals (schema, sw.ToString ());
 
+		}
+
+		[Test]
+		public void IgnoreColumnEmptyNamespace ()
+		{
+			DataColumn col = new DataColumn ("TEST");
+			col.Namespace = "urn:foo";
+			Console.WriteLine (col.Namespace == "");
+			DataSet ds = new DataSet ("DS");
+			ds.Namespace = "urn:foo";
+			DataTable dt = new DataTable ("tab");
+			ds.Tables.Add (dt);
+			dt.Columns.Add (col);
+			dt.Rows.Add (new object [] {"test"});
+			StringWriter sw = new StringWriter ();
+			ds.WriteXml (new XmlTextWriter (sw));
+			string xml = @"<DS xmlns=""urn:foo""><tab><TEST>test</TEST></tab></DS>";
+			AssertEquals (xml, sw.ToString ());
+		}
+
+		[Test]
+		public void SerializeDataSet ()
+		{
+			string xml = "<?xml version='1.0' encoding='shift_jis'?><DS><xs:schema id='NewDataSet' xmlns='' xmlns:xs='http://www.w3.org/2001/XMLSchema' xmlns:msdata='urn:schemas-microsoft-com:xml-msdata'><xs:element name='NewDataSet' msdata:IsDataSet='true' msdata:Locale='ja-JP'><xs:complexType><xs:choice maxOccurs='unbounded' /></xs:complexType></xs:element></xs:schema><diffgr:diffgram xmlns:msdata='urn:schemas-microsoft-com:xml-msdata' xmlns:diffgr='urn:schemas-microsoft-com:xml-diffgram-v1' /></DS>";
+			DataSet ds = new DataSet ();
+			ds.DataSetName = "DS";
+			XmlSerializer ser = new XmlSerializer (typeof (DataSet));
+			StringWriter sw = new StringWriter ();
+			XmlTextWriter xw = new XmlTextWriter (sw);
+			xw.QuoteChar = '\'';
+			ser.Serialize (xw, ds);
+			AssertEquals (xml, sw.ToString ());
 		}
 
 		[Test]

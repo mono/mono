@@ -593,6 +593,32 @@ namespace MonoTests.System.Data
 
 		}
 
+		[Test]
+		public void IgnoreSchemaShouldFillData ()
+		{
+			// no such dataset
+			string xml1 = "<set><tab><col>test</col></tab></set>";
+			// no wrapper element
+			string xml2 = "<tab><col>test</col></tab>";
+			// no such table
+			string xml3 = "<tar><col>test</col></tar>";
+			DataSet ds = new DataSet ();
+			DataTable dt = new DataTable ("tab");
+			ds.Tables.Add (dt);
+			dt.Columns.Add ("col");
+			ds.ReadXml (new StringReader (xml1), XmlReadMode.IgnoreSchema);
+			AssertEquals ("NewDataSet", ds.DataSetName); // don't overwrite
+			AssertEquals ("wrapper element", 1, dt.Rows.Count);
+			dt.Clear ();
+
+			ds.ReadXml (new StringReader (xml2), XmlReadMode.IgnoreSchema);
+			AssertEquals ("no wrapper element", 1, dt.Rows.Count);
+			dt.Clear ();
+
+			ds.ReadXml (new StringReader (xml3), XmlReadMode.IgnoreSchema);
+			AssertEquals ("no such table", 0, dt.Rows.Count);
+		}
+
 		/* To be added
 		[Test]
 		public void SaveDiffLoadAutoSaveSchema ()

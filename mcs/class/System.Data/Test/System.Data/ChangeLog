@@ -1,3 +1,21 @@
+2004-04-22  Atsushi Enomoto <atsushi@ximian.com>
+
+	* DataSetInferXmlSchemaTest.cs : Added ConflictExistingPrimaryKey().
+	* DataSetReadXmlTest.cs : Added IgnoreSchemaShouldFillData().
+	* DataSetTest.cs : Added IgnoreColumnEmptyNamespace() and
+	  SerializeDataSet().
+
+2004-04-20  Atsushi Enomoto <atsushi@ximian.com>
+
+	* DataSetInferXmlSchema.cs : added more 16 patterns.
+	  (mostly fails as yet).
+	* DataSetReadXmlTest.cs : Reverted yesterday's incorrect part.
+	  As for XmlReadMode = Auto, data row should be read.
+	* DataSetTest.cs : Added Namespace and Prefix tests.
+	  Added WriteDifferentNamespaceSchema().
+
+	  hmm... WriteXmlSchema() also needs more love :(
+
 2004-04-19  Atsushi Enomoto <atsushi@ximian.com>
 
 	* Added DataSetInferXmlSchemaTest.cs.

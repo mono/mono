@@ -110,6 +110,7 @@ namespace MonoTests.System.Data
 </col>
 </table>
 </set>";
+		string xml22 = "<set><table><col><descendant/></col></table><table2><col2>v2</col2></table2></set>";
 
 		private DataSet GetDataSet (string xml, string [] nss)
 		{
@@ -408,6 +409,21 @@ namespace MonoTests.System.Data
 			// appears, it cannot be DataColumn, since the name is 
 			// already allocated for DataTable.
 			DataSet ds = GetDataSet (xml21, null);
+		}
+
+		[Test]
+		[ExpectedException (typeof (DataException))]
+		public void ConflictExistingPrimaryKey ()
+		{
+			// The 'col' DataTable tries to create another primary key (and fails)
+			DataSet ds = new DataSet ();
+			ds.Tables.Add (new DataTable ("table"));
+			DataColumn c = new DataColumn ("pk");
+			ds.Tables [0].Columns.Add (c);
+			ds.Tables [0].PrimaryKey = new DataColumn [] {c};
+			XmlTextReader xtr = new XmlTextReader (xml22, XmlNodeType.Document, null);
+			xtr.Read ();
+			ds.ReadXml (xtr, XmlReadMode.InferSchema);
 		}
 	}
 }
