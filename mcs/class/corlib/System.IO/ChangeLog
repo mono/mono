@@ -1,3 +1,10 @@
+2003-04-20  Igor Nosyryev <nosyryev@attbi.com>
+
+	* StringReader.cs (Read): Increment nextChar by charsToRead
+	instead of count, that will guarantee that the next time the
+	method is called, it will return 0 on an empty string rather than
+	throwing an exception
+
 2003-04-19  Ville Palo <vi64pa@kolumbus.fi>
 
 	* BufferedStream.cs: Some fixes, mostly throwing exceptions.

@@ -90,7 +90,7 @@ namespace System.IO {
 
 			Array.Copy(sourceChars, nextChar, buffer, index, charsToRead );
 
-			nextChar += count;
+			nextChar += charsToRead;
 
 			return charsToRead;
 		}
