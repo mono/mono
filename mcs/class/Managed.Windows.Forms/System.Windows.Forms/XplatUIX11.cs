@@ -1836,12 +1836,9 @@ namespace System.Windows.Forms {
 
 			// Generate an expose for the area exposed by the horizontal scroll
 			if (XAmount > 0) {
-                                Console.WriteLine ("exposing 1");
 				XClearArea(DisplayHandle, hwnd, 0, 0, XAmount, height, clear);
 			} else if (XAmount < 0) {
-                                Console.WriteLine ("exposing 2");
-				// XClearArea(DisplayHandle, hwnd, XAmount + width, 0, -XAmount, height, clear);
-                                Invalidate (hwnd, new Rectangle (0, 0, -XAmount, height), clear);
+                                XClearArea(DisplayHandle, hwnd, XAmount + width, 0, -XAmount, height, clear);
 			}
 
 			// Generate an expose for the area exposed by the vertical scroll
