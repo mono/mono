@@ -1,6 +1,9 @@
 2002-09-16  Miguel de Icaza  <miguel@ximian.com>
 
-	* ecore.cs (FindMostSpecificSource): Use an Expression argument
+	* ecore.cs (StandardConversionExists): Sync with the conversion
+	code: allow anything-* to void* conversions.
+
+	(FindMostSpecificSource): Use an Expression argument
 	instead of a Type, because we might be handed over a Literal which
 	gets a few more implicit conversions that plain types do not.  So
 	this information was being lost.

@@ -1217,6 +1217,9 @@ namespace Mono.CSharp {
 					return true;
 			}
 
+			if (target_type == TypeManager.void_ptr_type && expr_type.IsPointer)
+				return true;
+
 			return false;
 		}
 
