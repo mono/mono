@@ -1,3 +1,8 @@
+2004-10-03  Zoltan Varga  <vargaz@freemail.hu>
+
+	* icall.c (ves_icall_System_Reflection_Assembly_GetTypes): Return the
+	created MonoType for dynamic types. Fixes #66180.
+
 2004-10-02  Ben Maurer  <bmaurer@ximian.com>
 
 	* threadpool.c: the ares hashtable needs a critical section around it.
