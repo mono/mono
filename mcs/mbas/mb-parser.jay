@@ -1241,12 +1241,34 @@ event_declaration
 		CheckDef (current_container.AddEvent (e), e.Name, e.Location);
 
 	  }
-//	| EVENT identifier OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS EOL
-//	  {
-//		throw new NotSupportedException();
-//	  }
-	;	
+	| EVENT identifier opt_event_params EOL
+	  {
+		string delName = (string) $2;
+		delName = delName + "EventHandler";
+		Console.WriteLine(delName);
+	    Mono.MonoBASIC.Delegate del = new Mono.MonoBASIC.Delegate 
+						(current_container, TypeManager.system_void_expr, 
+					     (int) current_modifiers, MakeName(delName), (Parameters) $3, 
+					     (Attributes) current_attributes, lexer.Location);
+					     	  
+		del.Namespace = current_namespace;
+		CheckDef (current_container.AddDelegate (del), del.Name, lexer.Location);
+	  
+		Event e = new Event (DecomposeQI (delName, lexer.Location),
+					 (string) $2, 
+				     null, current_modifiers, null, null, 
+				     current_attributes, lexer.Location);
 
+		CheckDef (current_container.AddEvent (e), e.Name, e.Location);
+	  }
+	;
+	
+opt_event_params
+	: /* empty */	{ $$ = Parameters.EmptyReadOnlyParameters; }
+	| OPEN_PARENS CLOSE_PARENS	{ $$ = Parameters.EmptyReadOnlyParameters; }
+	| OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS	{ $$ = $2; }
+	;
+	
 enum_declaration
 	: ENUM identifier opt_type_spec EOL
 	  opt_enum_member_declarations
@@ -1793,9 +1815,10 @@ delegate_declaration
 		if (implicit_modifiers && ((current_modifiers & Modifiers.STATIC) != 0))
 			current_modifiers = (current_modifiers & ~Modifiers.STATIC);
 					
-		Mono.MonoBASIC.Delegate del = new Mono.MonoBASIC.Delegate (current_container, TypeManager.system_void_expr, 
+		Mono.MonoBASIC.Delegate del = new Mono.MonoBASIC.Delegate (current_container, 
+						 TypeManager.system_void_expr, 
 					     (int) current_modifiers, 
-		                             MakeName ((string) $3), (Parameters) $5, 
+		                 MakeName ((string) $3), (Parameters) $5, 
 					     (Attributes) current_attributes, l);
 					     	  
 		del.Namespace = current_namespace;
@@ -3722,14 +3745,14 @@ assignment_expression
 	  { 
 		$$ = new Assign ((Expression) $1, (Expression) $3, lexer.Location);
 	  }
-/*	| prefixed_unary_expression ASSIGN ADDRESSOF argument_list
+	| prefixed_unary_expression ASSIGN ADDRESSOF expression
 	  { 
 			// fixme: this is not working
 			// d = AddressOf F
 			// type of d has to  get resolved somewhere
-			$$ = new New ((Expression) $1, (ArrayList) $4, lexer.Location);
-			$$ = new Assign ((Expression) $1, (Expression) n, lexer.Location);
-	  }*/
+			//$$ = new New ((Expression) $1, (ArrayList) $4, lexer.Location);
+			$$ = new Assign ((Expression) $1, (Expression) $4, lexer.Location);
+	  }
 	| prefixed_unary_expression OP_MULT_ASSIGN expression
 	  {
 		Location l = lexer.Location;
