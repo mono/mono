@@ -1,5 +1,11 @@
 2002-03-18  Kral Ferch <kral_ferch@hotmail.com>
 
+	* XmlNamespaceManager.cs: Implemented LookupPrefix.
+	
+	* XmlTextWriter.cs: Implemented namespace and prefix support.
+
+2002-03-18  Kral Ferch <kral_ferch@hotmail.com>
+
 	* XmlTextReader.cs: Restores properties after
 	reading last attribute on an element.
 	

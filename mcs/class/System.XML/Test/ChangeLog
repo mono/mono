@@ -1,10 +1,16 @@
 2002-03-17  Kral Ferch <kral_ferch@hotmail.com>
 
+	* XmlDocumentTests.cs: Tests navigation to parents since
+	that was part of a document.Load() bug reported by Mike Kestner.
+	
+	* XmlTextWriterTests.cs: Tests for namespaces and prefixes.
+
+2002-03-17  Kral Ferch <kral_ferch@hotmail.com>
+
 	* XmlDocumentTests.cs: TestOuterXml.
 	
 	* XmlTextWriterTests.cs: Tests for CData, Close, Comment, Element,
 	and ProcessingInstruction.
-
 
 2002-03-17  Kral Ferch <kral_ferch@hotmail.com>
 

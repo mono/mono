@@ -101,10 +101,26 @@ namespace System.Xml
 			return null;
 		}
 
-		[MonoTODO]
 		public virtual string LookupPrefix (string uri)
 		{
-			throw new NotImplementedException ();
+			if (uri == null)
+				return null;
+
+			NamespaceScope scope = currentScope;
+
+			while (scope != null) 
+			{
+				if (scope.Namespaces != null && scope.Namespaces.ContainsValue (uri)) {
+					foreach (DictionaryEntry entry in scope.Namespaces) {
+						if (entry.Value.ToString() == uri)
+							return nameTable.Get (entry.Key as string) as string;
+					}
+				}
+
+				scope = scope.Next;
+			}
+
+			return String.Empty;
 		}
 
 		public virtual bool PopScope ()

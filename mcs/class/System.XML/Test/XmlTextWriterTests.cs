@@ -146,5 +146,41 @@ namespace Ximian.Mono.Tests
 				Fail("Should have thrown an ArgumentException.");
 			} catch (ArgumentException) { }
 		}
+
+		public void TestNamespacesNoNamespaceClearsDefaultNamespace ()
+		{
+			xtw.WriteStartElement(String.Empty, "foo", "http://netsack.com/");
+			xtw.WriteStartElement(String.Empty, "bar", String.Empty);
+			xtw.WriteElementString("baz", String.Empty, String.Empty);
+			xtw.WriteEndElement();
+			xtw.WriteEndElement();
+			AssertEquals ("XmlTextWriter is incorrectly outputting namespaces.",
+				"<foo xmlns=\"http://netsack.com/\"><bar xmlns=\"\"><baz /></bar></foo>",
+				sw.GetStringBuilder().ToString());
+		}
+
+		public void TestNamespacesPrefix ()
+		{
+			xtw.WriteStartElement ("foo", "bar", "http://netsack.com/");
+			xtw.WriteStartElement ("foo", "baz", "http://netsack.com/");
+			xtw.WriteElementString ("qux", "http://netsack.com/", String.Empty);
+			xtw.WriteEndElement ();
+			xtw.WriteEndElement ();
+			AssertEquals ("XmlTextWriter is incorrectly outputting prefixes.",
+				"<foo:bar xmlns:foo=\"http://netsack.com/\"><foo:baz><foo:qux /></foo:baz></foo:bar>",
+				sw.GetStringBuilder ().ToString ());
+		}
+
+		public void TestNamespacesPrefixWithEmptyNamespace ()
+		{
+			try {
+				xtw.WriteStartElement ("foo", "bar", "");
+				Fail ("Should have thrown an ArgumentException.");
+			}
+			catch (ArgumentException e) {
+				AssertEquals ("ArgumentException text is incorrect.",
+					"Cannot use a prefix with an empty namespace.", e.Message);
+			}
+		}
 	}
 }

@@ -21,7 +21,8 @@ namespace System.Xml
 		protected TextWriter w;
 		protected bool openWriter = true;
 		protected bool openStartElement;
-		protected Stack openElements = new Stack();
+		protected Stack openElements = new Stack ();
+		protected XmlNamespaceManager namespaceManager = new XmlNamespaceManager (new NameTable ());
 
 		#endregion
 
@@ -216,6 +217,7 @@ namespace System.Xml
 			}
 			else {
 				w.Write ("</{0}>", openElements.Pop ());
+				namespaceManager.PopScope();
 			}
 		}
 
@@ -291,22 +293,53 @@ namespace System.Xml
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO("Not dealing with prefix and ns yet.")]
 		public override void WriteStartElement (string prefix, string localName, string ns)
 		{
+			string formatXmlns = "";
+			string formatPrefix = "";
+
+			if ((prefix != String.Empty) && (ns == String.Empty))
+				throw new ArgumentException ("Cannot use a prefix with an empty namespace.");
+
 			CheckOpenWriter ();
 			CloseStartElement ();
-			w.Write ("<{0}", localName);
-			openElements.Push (localName);
+
+			if (ns != String.Empty) {
+				string existingPrefix = namespaceManager.LookupPrefix (ns);
+
+				if (prefix == String.Empty)
+					prefix = existingPrefix;
+
+				if (prefix != existingPrefix)
+					formatXmlns = " xmlns:" + prefix + "=\"" + ns + "\"";
+				else if (existingPrefix == String.Empty)
+					formatXmlns = " xmlns=\"" + ns + "\"";
+			}
+			else if ((prefix == String.Empty) && (namespaceManager.LookupNamespace(prefix) != String.Empty)) {
+				formatXmlns = " xmlns=\"\"";
+			}
+
+			if (prefix != String.Empty) {
+				formatPrefix = prefix + ":";
+			}
+
+			w.Write ("<{0}{1}{2}", formatPrefix, localName, formatXmlns);
+
+			openElements.Push (formatPrefix + localName);
 			openStartElement = true;
+
+			namespaceManager.PushScope ();
+			namespaceManager.AddNamespace (prefix, ns);
 		}
 
 		[MonoTODO("Haven't done any entity replacements yet.")]
 		public override void WriteString (string text)
 		{
-			CheckOpenWriter ();
-			CloseStartElement ();
-			w.Write (text);
+			if (text != String.Empty) {
+				CheckOpenWriter ();
+				CloseStartElement ();
+				w.Write (text);
+			}
 		}
 
 		[MonoTODO]

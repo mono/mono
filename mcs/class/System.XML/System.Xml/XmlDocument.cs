@@ -9,6 +9,7 @@
 using System;
 using System.IO;
 using System.Xml.XPath;
+using System.Diagnostics;
 
 namespace System.Xml
 {

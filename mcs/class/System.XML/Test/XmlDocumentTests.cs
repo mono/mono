@@ -137,5 +137,14 @@ namespace Ximian.Mono.Tests
 			document.LoadXml (xml);
 			AssertEquals("XmlDocument with processing instruction OuterXml is incorrect.", xml, document.OuterXml);
 		}
+
+		public void TestParentNodes ()
+		{
+			document.LoadXml ("<foo><bar><baz/></bar></foo>");
+			XmlNode node = document.FirstChild.FirstChild.FirstChild;
+			AssertEquals ("Wrong child found.", "baz", node.LocalName);
+			AssertEquals ("Wrong parent.", "bar", node.ParentNode.LocalName);
+			AssertEquals ("Wrong parent.", "foo", node.ParentNode.ParentNode.LocalName);
+		}
 	}
 }
