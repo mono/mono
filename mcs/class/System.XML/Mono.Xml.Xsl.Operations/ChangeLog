@@ -1,3 +1,8 @@
+2005-02-24  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XslAttribute.cs : reduced reference to stylesheet XPathNavigator by
+	  keeping nsDecls.
+
 2005-02-23  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XslNumber.cs : Fixed incorrect 0 padding for 1) unsupported (and thus

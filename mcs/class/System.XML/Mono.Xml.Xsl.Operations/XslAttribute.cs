@@ -43,8 +43,8 @@ namespace Mono.Xml.Xsl.Operations {
 	internal class XslAttribute : XslCompiledElement {
 		XslAvt name, ns;
 		string calcName, calcNs, calcPrefix;
-		XmlNamespaceManager nsm;
-		
+//		XmlNamespaceManager nsm;
+		Hashtable nsDecls;
 		XslOperation value;
 
 		public XslAttribute (Compiler c) : base (c) {}
@@ -52,7 +52,7 @@ namespace Mono.Xml.Xsl.Operations {
 		protected override void Compile (Compiler c)
 		{
 			XPathNavigator nav = c.Input.Clone ();
-			
+			nsDecls = c.GetNamespacesToCopy ();
 			name = c.ParseAvtAttribute ("name");
 			if (name == null)
 				throw new XsltCompileException ("attribute \"name\" is required on XSLT attribute element.", null, c.Input);
@@ -90,8 +90,8 @@ namespace Mono.Xml.Xsl.Operations {
 				}
 			}
 
-			if (ns == null && calcNs == null)
-				nsm = c.GetNsm ();
+//			if (ns == null && calcNs == null)
+//				nsm = c.GetNsm ();
 				
 			if (c.Input.MoveToFirstChild ()) {
 				value = c.CompileTemplateContent (XPathNodeType.Attribute);
@@ -121,7 +121,7 @@ namespace Mono.Xml.Xsl.Operations {
 
 				// global attribute
 				if (nmsp == null) {
-					QName q = XslNameUtil.FromString (nm, nsm);
+					QName q = XslNameUtil.FromString (nm, nsDecls);
 					nm = q.Name;
 					nmsp = q.Namespace;
 				} else
