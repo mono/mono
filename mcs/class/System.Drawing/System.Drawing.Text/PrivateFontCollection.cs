@@ -26,7 +26,6 @@ namespace System.Drawing.Text {
 		}
 		
 		// methods
-		[ComVisible(false)]
 		public void AddFontFile(string filename) 
 		{
 			if ( filename == null )
@@ -39,7 +38,6 @@ namespace System.Drawing.Text {
 			GDIPlus.CheckStatus (status);			
 		}
 
-		[ComVisible(false)]
 		public void AddMemoryFont(IntPtr memory, int length) 
 		{
 			Status status = GDIPlus.GdipPrivateAddMemoryFont (nativeFontCollection, memory, length);

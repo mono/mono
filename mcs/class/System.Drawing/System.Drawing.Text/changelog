@@ -1,5 +1,9 @@
 2004-02-25  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
+	* PrivateFontCollection.cs: Removed excess attributes
+
+2004-02-25  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
 	* FontCollection.cs: Remove console
 
 2004-02-06  Sanjay Gupta <gsanjay@novell.com>
