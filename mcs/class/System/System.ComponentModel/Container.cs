@@ -115,10 +115,11 @@ namespace System.ComponentModel {
 
 		protected virtual ISite CreateSite (IComponent component, string name)
 		{
-			foreach (IComponent Comp in c) {
-				if (Comp.Site != null)
-				if (Comp.Site.Name == name)
-					throw new ArgumentException ("duplicate component name", "name");
+			if (name != null) {
+				foreach (IComponent Comp in c) {
+					if (Comp.Site != null && Comp.Site.Name == name)
+						throw new ArgumentException ("duplicate component name", "name");
+				}
 			}
 
 			return new DefaultSite (name, component, this);

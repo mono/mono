@@ -1,3 +1,6 @@
+2003-08-31  Jerome Laban <jlaban@wanadoo.fr>
+        * Container.cs: A site without name cannot be duplicate.
+
 2003-07-22  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Win32Exception.cs: added message for 10054.
