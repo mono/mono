@@ -25,6 +25,7 @@ using System;
 using System.Text;
 using System.Collections;
 using System.Globalization;
+using System.Runtime.CompilerServices;
 
 namespace System {
 
@@ -870,21 +871,11 @@ namespace System {
 			return new String (str);
 		}
 
-		public static string Intern (string str)
-		{
-			if (str == null)
-				throw new ArgumentNullException ();
-			// FIXME: implement me
-			return null;
-		}
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		public extern static string Intern (string str);
 
-		public static string IsInterned (string str)
-		{
-			if (str == null)
-				throw new ArgumentNullException ();
-			// FIXME: implement me
-			return null;
-		}
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		public extern static string IsInterned (string str);
 
 		public static string Join (string separator, string[] value)
 		{

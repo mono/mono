@@ -1,3 +1,8 @@
+
+Mon Sep 24 20:35:24 CEST 2001 Paolo Molaro <lupus@ximian.com>
+
+	* String.cs: make Intern and IsIntern internalcalls.
+
 2001-09-13  Dick Porter  <dick@ximian.com>
 
 	* Type.cs: Added a stub for the IsValueType property.
