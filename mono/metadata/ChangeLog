@@ -1,3 +1,7 @@
+2003-11-07  Zoltan Varga  <vargaz@freemail.hu>
+
+	* gc.c (mono_domain_finalize): Fix compilation for no GC case.
+
 2003-11-06  Zoltan Varga  <zovarga@ws-zovarga2>
 
 	* appdomain.c (mono_domain_unload): Add a workaround for bug #27663.
