@@ -1,3 +1,7 @@
+2004-11-09  Zoltan Varga  <vargaz@freemail.hu>
+
+	* aot.c (mono_aot_init): Add MONO_AOT_CACHE env variable to turn on
+	the experimental aot cache stuff.
 
 Tue Nov 9 17:30:20 CET 2004 Paolo Molaro <lupus@ximian.com>
 
