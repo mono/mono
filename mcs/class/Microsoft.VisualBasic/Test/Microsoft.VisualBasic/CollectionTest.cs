@@ -440,7 +440,7 @@ namespace MonoTests.Microsoft.VisualBasic
 				c.Remove(null);
 			}
 			catch (Exception e) {
-				AssertEquals("#E19", typeof(ArgumentException), e.GetType());
+				AssertEquals("#E19", typeof(ArgumentNullException), e.GetType());
 				caughtException = true;
 			}
 

@@ -1,4 +1,4 @@
-// Collection.cs - NUnit Test Cases for Microsoft.VisualBasic.Collection
+// DateAndTimeTest.cs - NUnit Test Cases for Microsoft.VisualBasic.DateAndTime
 //
 // Authors:
 //   Chris J. Breisch (cjbreisch@altavista.net)
@@ -233,13 +233,13 @@ namespace MonoTests.Microsoft.VisualBasic
 			AssertEquals("#DP05", 53, DateAndTime.DatePart(DateInterval.WeekOfYear, dtJan4, FirstDayOfWeek.System, FirstWeekOfYear.FirstFullWeek));
 			AssertEquals("#DP06", 1, DateAndTime.DatePart(DateInterval.WeekOfYear, dtJan4, FirstDayOfWeek.System, FirstWeekOfYear.Jan1));
 			AssertEquals("#DP07", 1, DateAndTime.DatePart(DateInterval.WeekOfYear, dtJan4, FirstDayOfWeek.System, FirstWeekOfYear.System));
-			AssertEquals("#DP08", 5, DateAndTime.DatePart(DateInterval.Weekday, dtJan4, FirstDayOfWeek.Friday, FirstWeekOfYear.FirstFourDays));
-			AssertEquals("#DP09", 5, DateAndTime.DatePart(DateInterval.Weekday, dtJan4, FirstDayOfWeek.Saturday, FirstWeekOfYear.FirstFourDays));
+			AssertEquals("#DP08", 7, DateAndTime.DatePart(DateInterval.Weekday, dtJan4, FirstDayOfWeek.Friday, FirstWeekOfYear.FirstFourDays));
+			AssertEquals("#DP09", 6, DateAndTime.DatePart(DateInterval.Weekday, dtJan4, FirstDayOfWeek.Saturday, FirstWeekOfYear.FirstFourDays));
 			AssertEquals("#DP10", 5, DateAndTime.DatePart(DateInterval.Weekday, dtJan4, FirstDayOfWeek.Sunday, FirstWeekOfYear.FirstFourDays));
-			AssertEquals("#DP11", 5, DateAndTime.DatePart(DateInterval.Weekday, dtJan4, FirstDayOfWeek.Monday, FirstWeekOfYear.FirstFourDays));
-			AssertEquals("#DP12", 5, DateAndTime.DatePart(DateInterval.Weekday, dtJan4, FirstDayOfWeek.Tuesday, FirstWeekOfYear.FirstFourDays));
-			AssertEquals("#DP13", 5, DateAndTime.DatePart(DateInterval.Weekday, dtJan4, FirstDayOfWeek.Wednesday, FirstWeekOfYear.FirstFourDays));
-			AssertEquals("#DP14", 5, DateAndTime.DatePart(DateInterval.Weekday, dtJan4, FirstDayOfWeek.Thursday, FirstWeekOfYear.FirstFourDays));
+			AssertEquals("#DP11", 4, DateAndTime.DatePart(DateInterval.Weekday, dtJan4, FirstDayOfWeek.Monday, FirstWeekOfYear.FirstFourDays));
+			AssertEquals("#DP12", 3, DateAndTime.DatePart(DateInterval.Weekday, dtJan4, FirstDayOfWeek.Tuesday, FirstWeekOfYear.FirstFourDays));
+			AssertEquals("#DP13", 2, DateAndTime.DatePart(DateInterval.Weekday, dtJan4, FirstDayOfWeek.Wednesday, FirstWeekOfYear.FirstFourDays));
+			AssertEquals("#DP14", 1, DateAndTime.DatePart(DateInterval.Weekday, dtJan4, FirstDayOfWeek.Thursday, FirstWeekOfYear.FirstFourDays));
 			AssertEquals("#DP15", 5, DateAndTime.DatePart(DateInterval.Weekday, dtJan4, FirstDayOfWeek.System, FirstWeekOfYear.FirstFourDays));
 
 
@@ -273,13 +273,12 @@ namespace MonoTests.Microsoft.VisualBasic
 		}
 
 		[Test]
-		[Ignore ("Hangs Mono")]
 		public void DateValue () 
 		{
 			try {
 				DateAndTime.DateValue("This is not a date.");
 			}
-			catch (FormatException) {
+			catch (InvalidCastException) {
 				/* do nothing.  this is what we expect */
 			}
 			catch (Exception e) {
@@ -294,13 +293,13 @@ namespace MonoTests.Microsoft.VisualBasic
 			try {
 				DateAndTime.TimeValue("This is not a time.");
 			}
-			catch (FormatException) {
+			catch (InvalidCastException) {
 				/* do nothing.  this is what we expect */
 			}
 			catch (Exception e) {
 				Fail ("Unexpected exception:" + e);
 			}
-			AssertEquals("#TV03", new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 16, 35, 17), DateAndTime.TimeValue("4:35:17 PM"));
+			AssertEquals("#TV03", new DateTime(1, 1, 1, 16, 35, 17), DateAndTime.TimeValue("4:35:17 PM"));
 		}
 
 		[Test]
@@ -391,14 +390,14 @@ namespace MonoTests.Microsoft.VisualBasic
 		{
 			DateTime jan1 = new DateTime(2001, 1, 1, 1, 1, 1);
 			AssertEquals("#WN01", "Tue",
-				DateAndTime.WeekdayName((int)jan1.DayOfWeek + 1, true, FirstDayOfWeek.System));
+				DateAndTime.WeekdayName((int)jan1.DayOfWeek + 1, true, FirstDayOfWeek.Monday));
 			AssertEquals("#WN02", "Tuesday",
-				DateAndTime.WeekdayName((int)jan1.DayOfWeek + 1, false, FirstDayOfWeek.System));
+				DateAndTime.WeekdayName((int)jan1.DayOfWeek + 1, false, FirstDayOfWeek.Monday));
 
 			bool caughtException = false;
 
 			try {
-				DateAndTime.WeekdayName(0, false, FirstDayOfWeek.System);
+				DateAndTime.WeekdayName(0, false, FirstDayOfWeek.Monday);
 			}
 			catch (Exception e) {
 				AssertEquals("#WN03", typeof(ArgumentException), e.GetType());
@@ -409,7 +408,7 @@ namespace MonoTests.Microsoft.VisualBasic
 			caughtException = false;
 			
 			try {
-				DateAndTime.WeekdayName(8, false, FirstDayOfWeek.System);
+				DateAndTime.WeekdayName(8, false, FirstDayOfWeek.Monday);
 			}
 			catch (Exception e) {
 				AssertEquals("#WN05", typeof(ArgumentException), e.GetType());
@@ -417,7 +416,7 @@ namespace MonoTests.Microsoft.VisualBasic
 			}
 			AssertEquals("#WN06", true, caughtException);
 
-			AssertEquals("#WN07", "Tuesday", DateAndTime.WeekdayName((int)jan1.DayOfWeek + 1, false, FirstDayOfWeek.System));
+			AssertEquals("#WN07", "Tuesday", DateAndTime.WeekdayName((int)jan1.DayOfWeek + 1, false, FirstDayOfWeek.Monday));
 		}
 	}
 }

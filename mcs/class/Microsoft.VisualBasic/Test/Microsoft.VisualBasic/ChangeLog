@@ -1,3 +1,16 @@
+2004-01-24  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
+	* FileSystemTest.cs:
+		Correcting expected exception type in TestDir to match MS' behaviour
+	* CollectionTest.cs
+		Correcting expected exception type in Exception #E19 to match MS' behaviour
+	* DateAndTimeTest.cs:
+		Correcting expected WeekDay values for many asserts to match MS' behaviour
+		Correcting expected exception type in DateValue "#DV03" to match MS' behaviour
+		WeekdayName Test assumed FirstDayOfWeek.System to always be the same, but it is user configurable, 
+			test with FirstDayOfWeek.Monday instead
+		TimeValue Test wrongly wanted to receive the parsed time as happening today, 
+			instead it comes in day 1/1/1 (timescale-zero)
+		
 2004-01-21  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
 	* Added FileSystemTest.cs:
 		Initial tests for FileSystem.Dir function

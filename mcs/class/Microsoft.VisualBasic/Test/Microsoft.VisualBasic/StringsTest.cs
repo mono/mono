@@ -1405,7 +1405,7 @@ namespace MonoTests.Microsoft.VisualBasic
 			try
 			{
 				string buf = Strings.Space(-1);
-				NUnit.Framework.Assert.Fail ("JW*Space#10");
+				NUnit.Framework.Assertion.Fail ("JW*Space#10");
 			}
 			catch
 			{

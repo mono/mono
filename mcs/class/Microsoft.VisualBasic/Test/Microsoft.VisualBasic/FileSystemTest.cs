@@ -23,7 +23,7 @@ namespace MonoTests.Microsoft.VisualBasic
 		public void Clean() {}
 
 		[Test]
-		[ExpectedException(typeof(NullReferenceException))]
+		[ExpectedException(typeof(ArgumentException))]
 		public void TestDir() {
 			FileSystem.Dir();
 			Fail ("Calling as the first thing the parameterless overload of Dir didn't throw an exception");
