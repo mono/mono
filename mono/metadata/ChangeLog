@@ -1,3 +1,7 @@
+2004-05-25  Zoltan Varga  <vargaz@freemail.hu>
+
+	* locales.c: Fix build.
+
 2004-05-25  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* culture-info-tables.h: reflecting locale-builder updates.
