@@ -425,7 +425,7 @@ namespace System.Drawing {
 			// it is modifiable OR it is not disposed and it is being
 			// collected by GC.
 			if ((disposed == false) && (isModifiable || disposing == false)) {
-                        	Status status = GDIPlus.GdipDeletePen (nativeObject);
+				Status status = GDIPlus.GdipDeletePen (nativeObject);
 				GDIPlus.CheckStatus (status);
 				disposed = true;
 			}

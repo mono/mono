@@ -66,7 +66,7 @@ namespace System.Drawing
 			// SolidBrush is disposed if and only if it is not disposed
 			// and it is modifiable OR it is not disposed and it is being
 			// collected by GC.
-                        if ((disposed == false) && (isModifiable || disposing == false)) {
+			if ((disposed == false) && (isModifiable || disposing == false)) {
 				Status status = GDIPlus.GdipDeleteBrush (nativeObject);
 				GDIPlus.CheckStatus (status);
 				disposed = true;
