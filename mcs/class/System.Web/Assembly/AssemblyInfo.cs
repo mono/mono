@@ -15,7 +15,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Web.UI;
 
-// General Information about the system assembly
+// General Information about the System.Web assembly
 
 #if (NET_1_0)
 	[assembly: AssemblyVersion("1.0.3300.0")]
@@ -39,8 +39,6 @@ using System.Web.UI;
 [assembly: AssemblyDefaultAlias("System.Web.dll")]
 [assembly: AssemblyInformationalVersion("0.0.0.1")]
 [assembly: NeutralResourcesLanguage("en-US")]
-
-[assembly: AllowPartiallyTrustedCallers]
 
 [assembly: TagPrefix("System.Web.UI.WebControls", "asp")]
 
