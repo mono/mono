@@ -1,3 +1,8 @@
+2004-08-31  Nick Drochak <ndrochak@gol.com>
+
+	* DSACryptoServiceProviderTest.cs: 
+	* RSACryptoServiceProviderTest.cs: Feed csc smaller bite sizes.
+
 2004-07-07  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* DESTest.cs: Added a new test case to check default values.
