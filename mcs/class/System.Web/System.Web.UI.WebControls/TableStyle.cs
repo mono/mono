@@ -194,8 +194,8 @@ namespace System.Web.UI.WebControls
 		{
 			if(s != null && !s.IsEmpty)
 			{
-				if (base.IsEmpty) {
-					base.CopyFrom (s);
+				if (IsEmpty) {
+					CopyFrom (s);
 					return;
 				}
 				base.MergeWith(s);
@@ -204,23 +204,23 @@ namespace System.Web.UI.WebControls
 					return;
 				
 				TableStyle with = (TableStyle)s;
-				if(with.IsSet(HOR_ALIGN) && IsSet(HOR_ALIGN))
+				if(with.IsSet(HOR_ALIGN) && !IsSet(HOR_ALIGN))
 				{
 					HorizontalAlign = with.HorizontalAlign;
 				}
-				if(with.IsSet(IMAGE_URL) && IsSet(IMAGE_URL))
+				if(with.IsSet(IMAGE_URL) && !IsSet(IMAGE_URL))
 				{
 					BackImageUrl = with.BackImageUrl;
 				}
-				if(with.IsSet(CELL_PADD) && IsSet(CELL_PADD))
+				if(with.IsSet(CELL_PADD) && !IsSet(CELL_PADD))
 				{
 					CellPadding = with.CellPadding;
 				}
-				if(with.IsSet(CELL_SPAC) && IsSet(CELL_SPAC))
+				if(with.IsSet(CELL_SPAC) && !IsSet(CELL_SPAC))
 				{
 					CellSpacing = with.CellSpacing;
 				}
-				if(with.IsSet(GRID_LINE) && IsSet(GRID_LINE))
+				if(with.IsSet(GRID_LINE) && !IsSet(GRID_LINE))
 				{
 					GridLines = with.GridLines;
 				}

@@ -1,3 +1,7 @@
+2003-12-18  Alon Gazit <along@mainsoft.com>
+	* TableStyle.cs: merge TableStyle properties when Style is
+	empty.
+
 2003-12-16  Alon Gazit <along@mainsoft.com>
 	* HyperLink.cs: Change Text property implementation. in MS when the Text
 	property is set, all the controls in the HyperLink are being deleted. 
