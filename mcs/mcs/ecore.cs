@@ -3108,14 +3108,15 @@ namespace Mono.CSharp {
 
 		public void EmitAddOrRemove (EmitContext ec, Expression source)
 		{
-			Expression handler = ((Binary) source).Right;
+			BinaryDelegate source_del = (BinaryDelegate) source;
+			Expression handler = source_del.Right;
 			
 			Argument arg = new Argument (handler, Argument.AType.Expression);
 			ArrayList args = new ArrayList ();
 				
 			args.Add (arg);
 			
-			if (((Binary) source).Oper == Binary.Operator.Addition)
+			if (source_del.IsAddition)
 				Invocation.EmitCall (
 					ec, false, IsStatic, instance_expr, add_accessor, args, loc);
 			else

@@ -427,9 +427,10 @@ type_declaration
 //
 // Enable this when we have handled all errors, because this acts as a generic fallback
 //
-//	| error {
-//		Report.Error (1518, lexer.Location, "Expected class, struct, interface, enum or delegate");
-//	  }
+	| error {
+		Console.WriteLine ("Token=" + yyToken);
+		Report.Error (1518, lexer.Location, "Expected class, struct, interface, enum or delegate");
+	  }
 	;
 
 //

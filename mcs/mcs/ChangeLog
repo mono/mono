@@ -1,3 +1,24 @@
+2003-08-07  Miguel de Icaza  <miguel@ximian.com>
+
+	* expression.cs (BinaryMethod): This kind of expression is created by the
+	Binary class if it determines that the operator has to be handled
+	by a method.
+
+	(BinaryDelegate): This kind of expression is created if we are
+	dealing with a + or - operator on delegates.
+
+	(Binary): remove method, argumetns, and DelegateOperator: when
+	dealing with methods, 
+	
+	* ecore.cs (EventExpr.EmitAddOrRemove): Update to new layout.
+
+	* statement.cs (Block): use bitfields for the three extra booleans
+	we had in use.   Remove unused topblock parameter.
+
+	* codegen.cs: Remove unecessary argument to Block.EmitTopBlock
+
+	* assign.cs: Drop extra unneeded tests.
+
 2003-08-06  Miguel de Icaza  <miguel@ximian.com>
 
 	* iterators.cs (Mapvariable): provide a mechanism to use prefixes.

@@ -235,17 +235,10 @@ namespace Mono.CSharp {
 					// it will appear as a FieldExpr in that case.
 					//
 					
-					if (!(source is Binary)) {
+					if (!(source is BinaryDelegate)) {
 						error70 (ei, loc);
 						return null;
-					} else {
-						Binary tmp = ((Binary) source);
-						if (tmp.Oper != Binary.Operator.Addition &&
-						    tmp.Oper != Binary.Operator.Subtraction) {
-							error70 (ei, loc);
-							return null;
-						}
-					}
+					} 
 				}
 			}
 			
@@ -288,7 +281,7 @@ namespace Mono.CSharp {
 				CompoundAssign a = (CompoundAssign) this;
 				
 				Binary b = source as Binary;
-				if (b != null && b.IsBuiltinOperator){
+				if (b != null){
 					//
 					// 1. if the source is explicitly convertible to the
 					//    target_type

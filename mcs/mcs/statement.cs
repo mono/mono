@@ -2852,7 +2852,10 @@ namespace Mono.CSharp {
 		[Flags]
 		public enum Flags : byte {
 			Implicit  = 1,
-			Unchecked = 2
+			Unchecked = 2,
+			BlockUsed = 4,
+			VariablesInitialized = 8,
+			HasRet = 16
 		}
 		Flags flags;
 
@@ -2903,8 +2906,6 @@ namespace Mono.CSharp {
 		// If this is a switch section, the enclosing switch block.
 		//
 		Block switch_block;
-
-		bool used = false;
 
 		static int id;
 
@@ -3148,7 +3149,7 @@ namespace Mono.CSharp {
 
 			variables.Add (name, vi);
 
-			if (variables_initialized)
+			if ((flags & Flags.VariablesInitialized) != 0)
 				throw new Exception ();
 
 			// Console.WriteLine ("Adding {0} to {1}", name, ID);
@@ -3264,26 +3265,25 @@ namespace Mono.CSharp {
 		public void AddStatement (Statement s)
 		{
 			statements.Add (s);
-			used = true;
+			flags |= Flags.BlockUsed;
 		}
 
 		public bool Used {
 			get {
-				return used;
+				return (flags & Flags.BlockUsed) != 0;
 			}
 		}
 
 		public void Use ()
 		{
-			used = true;
+			flags |= Flags.BlockUsed;
 		}
 
 		VariableMap param_map, local_map;
-		bool variables_initialized = false;
 
 		public VariableMap ParameterMap {
 			get {
-				if (!variables_initialized)
+				if ((flags & Flags.VariablesInitialized) == 0)
 					throw new Exception ();
 
 				return param_map;
@@ -3292,7 +3292,7 @@ namespace Mono.CSharp {
 
 		public VariableMap LocalMap {
 			get {
-				if (!variables_initialized)
+				if ((flags & Flags.VariablesInitialized) == 0)
 					throw new Exception ();
 
 				return local_map;
@@ -3305,10 +3305,8 @@ namespace Mono.CSharp {
 		/// <remarks>
 		///   tc: is our typecontainer (to resolve type references)
 		///   ig: is the code generator:
-		///   toplevel: the toplevel block.  This is used for checking 
-		///   		that no two labels with the same name are used.
 		/// </remarks>
-		public void EmitMeta (EmitContext ec, InternalParameters ip, Block toplevel)
+		public void EmitMeta (EmitContext ec, InternalParameters ip)
 		{
 			DeclSpace ds = ec.DeclSpace;
 			ILGenerator ig = ec.ig;
@@ -3336,7 +3334,7 @@ namespace Mono.CSharp {
 				local_map = new VariableMap (locals);
 
 			param_map = new VariableMap (ip);
-			variables_initialized = true;
+			flags |= Flags.VariablesInitialized;
 
 			bool old_check_state = ec.ConstantCheckState;
 			ec.ConstantCheckState = (flags & Flags.Unchecked) == 0;
@@ -3401,7 +3399,7 @@ namespace Mono.CSharp {
 			//
 			if (children != null){
 				foreach (Block b in children)
-					b.EmitMeta (ec, ip, toplevel);
+					b.EmitMeta (ec, ip);
 			}
 		}
 
@@ -3435,8 +3433,6 @@ namespace Mono.CSharp {
 				foreach (Block b in children)
 					b.UsageWarning ();
 		}
-
-		bool has_ret = false;
 
 		public override bool Resolve (EmitContext ec)
 		{
@@ -3497,7 +3493,7 @@ namespace Mono.CSharp {
 			if ((returns == FlowReturns.ALWAYS) ||
 			    (returns == FlowReturns.EXCEPTION) ||
 			    (returns == FlowReturns.UNREACHABLE))
-				has_ret = true;
+				flags |= Flags.HasRet;
 
 			return ok;
 		}
@@ -3507,7 +3503,7 @@ namespace Mono.CSharp {
 			foreach (Statement s in statements)
 				s.Emit (ec);
 
-			return has_ret;
+			return (flags & Flags.HasRet) != 0;
 		}
 
 		public override bool Emit (EmitContext ec)

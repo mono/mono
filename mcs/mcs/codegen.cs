@@ -439,7 +439,7 @@ namespace Mono.CSharp {
 			    try {
 				int errors = Report.Errors;
 
-				block.EmitMeta (this, ip, block);
+				block.EmitMeta (this, ip);
 
 				if (Report.Errors == errors){
 					bool old_do_flow_analysis = DoFlowAnalysis;

@@ -1836,15 +1836,6 @@ namespace Mono.CSharp {
 		Operator oper;
 		Expression left, right;
 
-		//
-		// After resolution, method might contain the operator overload
-		// method.
-		//
-		protected MethodBase method;
-		ArrayList  Arguments;
-
-		bool DelegateOperation;
-
 		// This must be kept in sync with Operator!!!
 		public static readonly string [] oper_names;
 		
@@ -2259,16 +2250,15 @@ namespace Mono.CSharp {
 					union = (MethodGroupExpr) left_expr;
 				
 				if (union != null) {
-					Arguments = new ArrayList ();
-					Arguments.Add (new Argument (left, Argument.AType.Expression));
-					Arguments.Add (new Argument (right, Argument.AType.Expression));
+					ArrayList args = new ArrayList (2);
+					args.Add (new Argument (left, Argument.AType.Expression));
+					args.Add (new Argument (right, Argument.AType.Expression));
 					
-					method = Invocation.OverloadResolve (ec, union, Arguments, Location.Null);
+					MethodBase method = Invocation.OverloadResolve (ec, union, args, Location.Null);
 					if (method != null) {
 						MethodInfo mi = (MethodInfo) method;
 						
-						type = mi.ReturnType;
-						return this;
+						return new BinaryMethod (mi.ReturnType, method, args);
 					} else {
 						overload_failed = true;
 					}
@@ -2288,6 +2278,7 @@ namespace Mono.CSharp {
 				//
 				
 				if (l == TypeManager.string_type){
+					MethodBase method;
 					
 					if (r == TypeManager.void_type) {
 						Error_OperatorCannotBeApplied ();
@@ -2303,33 +2294,29 @@ namespace Mono.CSharp {
 								ls.Value + rs.Value);
 						}
 
-						if (left is Binary){
-							Binary b = (Binary) left;
+						if (left is BinaryMethod){
+							BinaryMethod b = (BinaryMethod) left;
 
 							//
 							// Call String.Concat (string, string, string) or
 							// String.Concat (string, string, string, string)
 							// if possible.
 							//
-							if (b.oper == Operator.Addition &&
-							    (b.method == TypeManager.string_concat_string_string ||
-							     b.method == TypeManager.string_concat_string_string_string)){
+							if (b.method == TypeManager.string_concat_string_string ||
+							     b.method == TypeManager.string_concat_string_string_string){
 								ArrayList bargs = b.Arguments;
 								int count = bargs.Count;
 								
 								if (count == 2){
-									Arguments = bargs;
-									Arguments.Add (new Argument (right, Argument.AType.Expression));
-									type = TypeManager.string_type;
-									method = TypeManager.string_concat_string_string_string;
-									
-									return this;
+									bargs.Add (new Argument (right, Argument.AType.Expression));
+									return new BinaryMethod (
+										TypeManager.string_type,
+										TypeManager.string_concat_string_string_string, bargs);
 								} else if (count == 3){
-									Arguments = bargs;
-									Arguments.Add (new Argument (right, Argument.AType.Expression));
-									type = TypeManager.string_type;
-									method = TypeManager.string_concat_string_string_string_string;									
-									return this;
+									bargs.Add (new Argument (right, Argument.AType.Expression));
+									return new BinaryMethod (
+										TypeManager.string_type,
+										TypeManager.string_concat_string_string_string_string, bargs);
 								}
 							}
 						}
@@ -2346,14 +2333,15 @@ namespace Mono.CSharp {
 							return null;
 						}
 					}
-					type = TypeManager.string_type;
 
-					Arguments = new ArrayList ();
-					Arguments.Add (new Argument (left, Argument.AType.Expression));
-					Arguments.Add (new Argument (right, Argument.AType.Expression));
+					//
+					// Cascading concats will hold up to 4 arguments
+					//
+					ArrayList args = new ArrayList (4);
+					args.Add (new Argument (left, Argument.AType.Expression));
+					args.Add (new Argument (right, Argument.AType.Expression));
 
-					return this;
-					
+					return new BinaryMethod (TypeManager.string_type, method, args);
 				} else if (r == TypeManager.string_type){
 					// object + string
 
@@ -2362,19 +2350,16 @@ namespace Mono.CSharp {
 						return null;
 					}
 					
-					method = TypeManager.string_concat_object_object;
 					left = Convert.ImplicitConversion (ec, left, TypeManager.object_type, loc);
 					if (left == null){
 						Error_OperatorCannotBeApplied (loc, OperName (oper), l, r);
 						return null;
 					}
-					Arguments = new ArrayList ();
-					Arguments.Add (new Argument (left, Argument.AType.Expression));
-					Arguments.Add (new Argument (right, Argument.AType.Expression));
+					ArrayList args = new ArrayList (2);
+					args.Add (new Argument (left, Argument.AType.Expression));
+					args.Add (new Argument (right, Argument.AType.Expression));
 
-					type = TypeManager.string_type;
-
-					return this;
+					return new BinaryMethod (TypeManager.string_type, TypeManager.string_concat_object_object, args);
 				}
 
 				//
@@ -2458,10 +2443,12 @@ namespace Mono.CSharp {
 			if (oper == Operator.Addition || oper == Operator.Subtraction) {
 				if (l.IsSubclassOf (TypeManager.delegate_type) &&
 				    r.IsSubclassOf (TypeManager.delegate_type)) {
+					MethodInfo method;
+					ArrayList args = new ArrayList (2);
 					
-					Arguments = new ArrayList ();
-					Arguments.Add (new Argument (left, Argument.AType.Expression));
-					Arguments.Add (new Argument (right, Argument.AType.Expression));
+					args = new ArrayList (2);
+					args.Add (new Argument (left, Argument.AType.Expression));
+					args.Add (new Argument (right, Argument.AType.Expression));
 					
 					if (oper == Operator.Addition)
 						method = TypeManager.delegate_combine_delegate_delegate;
@@ -2473,9 +2460,7 @@ namespace Mono.CSharp {
 						return null;
 					}
 
-					DelegateOperation = true;
-					type = l;
-					return this;
+					return new BinaryDelegate (l, method, args);
 				}
 
 				//
@@ -2731,9 +2716,6 @@ namespace Mono.CSharp {
 		/// </remarks>
 		public bool EmitBranchable (EmitContext ec, Label target, bool onTrue)
 		{
-			if (method != null)
-				return false;
-
 			ILGenerator ig = ec.ig;
 
 			//
@@ -2959,24 +2941,6 @@ namespace Mono.CSharp {
 			Type r = right.Type;
 			OpCode opcode;
 
-			if (method != null) {
-
-				// Note that operators are static anyway
-				
-				if (Arguments != null) 
-					Invocation.EmitArguments (ec, method, Arguments);
-				
-				if (method is MethodInfo)
-					ig.Emit (OpCodes.Call, (MethodInfo) method);
-				else
-					ig.Emit (OpCodes.Call, (ConstructorInfo) method);
-
-				if (DelegateOperation)
-					ig.Emit (OpCodes.Castclass, type);
-					
-				return;
-			}
-
 			//
 			// Handle short-circuit operators differently
 			// than the rest
@@ -3170,14 +3134,87 @@ namespace Mono.CSharp {
 
 			ig.Emit (opcode);
 		}
+	}
 
-		public bool IsBuiltinOperator {
-			get {
-				return method == null;
-			}
+	//
+	// Object created by Binary when the binary operator uses an method instead of being
+	// a binary operation that maps to a CIL binary operation.
+	//
+	public class BinaryMethod : Expression {
+		public MethodBase method;
+		public ArrayList  Arguments;
+		
+		public BinaryMethod (Type t, MethodBase m, ArrayList args)
+		{
+			method = m;
+			Arguments = args;
+			type = t;
+			eclass = ExprClass.Value;
+		}
+
+		public override Expression DoResolve (EmitContext ec)
+		{
+			return this;
+		}
+
+		public override void Emit (EmitContext ec)
+		{
+			ILGenerator ig = ec.ig;
+			
+			if (Arguments != null) 
+				Invocation.EmitArguments (ec, method, Arguments);
+			
+			if (method is MethodInfo)
+				ig.Emit (OpCodes.Call, (MethodInfo) method);
+			else
+				ig.Emit (OpCodes.Call, (ConstructorInfo) method);
 		}
 	}
 
+	//
+	// Object created with +/= on delegates
+	//
+	public class BinaryDelegate : Expression {
+		MethodInfo method;
+		ArrayList  args;
+
+		public BinaryDelegate (Type t, MethodInfo mi, ArrayList args)
+		{
+			method = mi;
+			this.args = args;
+			type = t;
+			eclass = ExprClass.Value;
+		}
+
+		public override Expression DoResolve (EmitContext ec)
+		{
+			return this;
+		}
+
+		public override void Emit (EmitContext ec)
+		{
+			ILGenerator ig = ec.ig;
+			
+			Invocation.EmitArguments (ec, method, args);
+			
+			ig.Emit (OpCodes.Call, (MethodInfo) method);
+			ig.Emit (OpCodes.Castclass, type);
+		}
+
+		public Expression Right {
+			get {
+				Argument arg = (Argument) args [1];
+				return arg.Expr;
+			}
+		}
+
+		public bool IsAddition {
+			get {
+				return method == TypeManager.delegate_combine_delegate_delegate;
+			}
+		}
+	}
+	
 	//
 	// User-defined conditional logical operator
 	public class ConditionalLogicalOperator : Expression {
