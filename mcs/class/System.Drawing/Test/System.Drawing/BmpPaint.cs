@@ -26,7 +26,7 @@ public class BmpPaint {
 			gr.DrawRectangle(p, 10.0F, 10.0F, 80.0F, 80.0F);
 			p.Dispose();
 		}
-		bmp.Save("file.bmp");
+		bmp.Save("file.bmp", ImageFormat.Bmp);
 		gr.Dispose();
 		bmp.Dispose();
 	}
