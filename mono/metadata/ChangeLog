@@ -1,4 +1,8 @@
 
+Fri Aug 2 17:48:17 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* object.h, object.c: added accessors for fields and properties.
+
 Fri Aug 2 17:45:15 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* class.c, class.h: made mono_class_get_field_from_name ()
