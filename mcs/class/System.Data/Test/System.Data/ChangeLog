@@ -1,3 +1,6 @@
+2004-09-24 Umadevi S <sumadevi@novell.com>
+	* DataRowTest.cs : Added a test for EnforceConstraints with relations defined.
+
 2004-09-24  Sureshkumar T  <tsureshkumar@novell.com>
 
 	* DataSetTest.cs (DataSetClearTest): Added a test for DataSet.Clear. This should not

@@ -338,6 +338,7 @@ namespace MonoTests.System.Data
                 } 
 
 
+
 		// tests item at row, column in table to be DBNull.Value
 		private void DBNullTest (string message, DataTable dt, int row, int column) 
 		{
@@ -756,5 +757,42 @@ namespace MonoTests.System.Data
 			dt.Columns.Add (col);
 			dt.Rows [0] [0] = "test";
 		}
+
+		[Test]
+		public void EnforceConstraint ()
+		{
+			 int id = 100;
+   		        // Setup stuff
+		        DataSet ds = new DataSet();
+		        DataTable parent = ds.Tables.Add("parent");
+		        parent.Columns.Add("id", typeof(int));
+		        DataTable child = ds.Tables.Add("child");
+		        child.Columns.Add("idref", typeof(int));
+		        Constraint uniqueId = null;
+		        parent.Constraints.Add(uniqueId = new UniqueConstraint("uniqueId",
+                                      new DataColumn[] {parent.Columns["id"]}, true));
+			ForeignKeyConstraint fkc = new ForeignKeyConstraint("ParentChildConstraint",                                      new DataColumn[] { parent.Columns["id"] },
+				      new DataColumn[] { child.Columns["idref"]});
+        
+		        child.Constraints.Add(fkc);
+        
+		        DataRelation relateParentChild = new DataRelation("relateParentChild",
+                                             new DataColumn[] {parent.Columns["id"] },
+                                             new DataColumn[] {child.Columns["idref"] },
+                                             false);
+		        ds.Relations.Add(relateParentChild);
+        
+			ds.EnforceConstraints = false;
+		        DataRow parentRow = parent.Rows.Add(new object[] { id });
+		        DataRow childRow = child.Rows.Add(new object[] { id });
+		        if (parentRow == childRow.GetParentRow(relateParentChild)) {
+		            foreach(DataColumn dc in parent.Columns)
+				AssertEquals(100,parentRow[dc]);
+		            
+		        }
+		            		
+        
+    		}
+		
 	}
 }
