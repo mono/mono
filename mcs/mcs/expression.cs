@@ -236,8 +236,14 @@ namespace Mono.CSharp {
 
 				Error23 (expr_type);
 				return null;
+
+			case Operator.AddressOf:
+				return e;
+
+			case Operator.Indirection:
+				return e;
 			}
-			throw new Exception ("Can not constant fold");
+			throw new Exception ("Can not constant fold: " + Oper.ToString());
 		}
 
 		Expression ResolveOperator (EmitContext ec)
