@@ -1,3 +1,11 @@
+2001-11-15  Dick Porter  <dick@ximian.com>
+
+	* mutexes.c: Implement mutexes
+
+	* threads.c: 
+	* semaphores.c: 
+	* misc.c: Factor out some common code
+
 2001-11-13  Dick Porter  <dick@ximian.com>
 
 	* threads.c: Implement TLS.  Implement GetCurrentThreadId(), and
