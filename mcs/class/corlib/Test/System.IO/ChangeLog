@@ -1,4 +1,9 @@
-2003-05-26  Atsushi Enomoto <atsushi@ximian.com>
+2004-05-29  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* BinaryReader.cs: Added new cases to check exceptions thrown by Read
+	methods.
+
+2004-05-26  Atsushi Enomoto <atsushi@ximian.com>
 
 	* FileInfoTest.cs : more incorrect \ fix.
 

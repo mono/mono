@@ -4,7 +4,9 @@
 //
 // (C) Eduardo Garcia Cebollero.
 // (C) Ximian, Inc.  http://www.ximian.com
+// Copyright (C) 2004 Novell (http://www.novell.com)
 // 
+
 using NUnit.Framework;
 using System;
 using System.IO;
@@ -30,7 +32,6 @@ namespace MonoTests.System.IO
                 [TearDown]
 		public void TearDown ()
 		{
-
 				if (Directory.Exists (TempFolder))
 					Directory.Delete (TempFolder, true);
 		}		
@@ -550,7 +551,87 @@ namespace MonoTests.System.IO
 			stream.Close ();
 		}
 	}
-	
+
+	[Test]
+	[ExpectedException (typeof (ArgumentNullException))]
+	public void Read_Bytes_BufferNull () 
+	{
+		byte[] b = null;
+		new BinaryReader (new MemoryStream ()).Read (b, 0, 1);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentOutOfRangeException))]
+	public void Read_Bytes_IndexNegative () 
+	{
+		byte[] array = new byte [8];
+		new BinaryReader (new MemoryStream ()).Read (array, -1, array.Length);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentException))]
+	public void Read_Bytes_IndexOverflow () 
+	{
+		byte[] array = new byte [8];
+		new BinaryReader (new MemoryStream ()).Read (array, Int32.MaxValue, array.Length);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentOutOfRangeException))]
+	public void Read_Bytes_CountNegative () 
+	{
+		byte[] array = new byte [8];
+		new BinaryReader (new MemoryStream ()).Read (array, 0, -1);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentException))]
+	public void Read_Bytes_CountOverflow () 
+	{
+		byte[] array = new byte [8];
+		new BinaryReader (new MemoryStream ()).Read (array, 0, Int32.MaxValue);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentNullException))]
+	public void Read_Chars_BufferNull () 
+	{
+		char[] c = null;
+		new BinaryReader (new MemoryStream ()).Read (c, 0, 1);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentOutOfRangeException))]
+	public void Read_Chars_IndexNegative () 
+	{
+		char[] array = new char [8];
+		new BinaryReader (new MemoryStream ()).Read (array, -1, array.Length);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentException))]
+	public void Read_Chars_IndexOverflow () 
+	{
+		char[] array = new char [8];
+		new BinaryReader (new MemoryStream ()).Read (array, Int32.MaxValue, array.Length);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentOutOfRangeException))]
+	public void Read_Chars_CountNegative () 
+	{
+		char[] array = new char [8];
+		new BinaryReader (new MemoryStream ()).Read (array, 0, -1);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentException))]
+	public void Read_Chars_CountOverflow () 
+	{
+		char[] array = new char [8];
+		new BinaryReader (new MemoryStream ()).Read (array, 0, Int32.MaxValue);
+	}
+
 	[Test]
 	public void PeakChar ()
 	{
