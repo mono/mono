@@ -1,3 +1,6 @@
+2004-09-28 Umadevi S <sumadevi@novell.com>
+	* DataRow.cs - checked for Enforceconstraints, while using indices to search for related rows
+
 2004-09-24  Sureshkumar T  <tsureshkumar@novell.com>
 
 	* DataSet.cs : Don't check constraints for dataset clear

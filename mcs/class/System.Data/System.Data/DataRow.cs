@@ -1037,7 +1037,9 @@ namespace System.Data {
 			int numColumn = parentColumns.Length;
 			if (HasVersion(version)) {
 				Index indx = relation.ParentTable.GetIndexByColumns (parentColumns);
-				if (indx != null) { // get the child rows from the index
+				if (indx != null && 
+    (Table == null || Table.DataSet == null || 
+     Table.DataSet.EnforceConstraints)) { // get the child rows from the index
 					Node[] childNodes = indx.FindAllSimple(childColumns, IndexFromVersion(version));
 					for (int i = 0; i < childNodes.Length; i++) {
 						rows.Add (childNodes[i].Row);
@@ -1046,7 +1048,6 @@ namespace System.Data {
 				else { // no index so we have to search manualy.
 					int curIndex = IndexFromVersion(DataRowVersion.Current);
 					int tmpRecord = relation.ParentTable.RecordCache.NewRecord();
-
 					try {
 						for (int i = 0; i < numColumn; i++) {
 							// according to MSDN: the DataType value for both columns must be identical.
