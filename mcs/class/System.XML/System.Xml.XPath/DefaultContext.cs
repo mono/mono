@@ -277,16 +277,19 @@ namespace System.Xml.XPath
 		
 		public XPathFunctionString (FunctionArguments args) : base (args)
 		{
-			if (args == null || args.Tail != null)
-				throw new XPathException ("string takes 1 arg");
-			
-			arg0 = args.Arg;
+			if (args != null) {
+				arg0 = args.Arg;
+				if (args.Tail != null)
+					throw new XPathException ("boolean takes 1 or zero args");
+			}
 		}
 		
 		public override XPathResultType ReturnType { get { return XPathResultType.String; }}
 
 		public override object Evaluate (BaseIterator iter)
 		{
+			if (arg0 == null)
+				return iter.Current.Value;
 			return arg0.EvaluateString (iter);
 		}
 	}
@@ -335,7 +338,7 @@ namespace System.Xml.XPath
 		
 		public override object Evaluate (BaseIterator iter)
 		{
-			return arg0.EvaluateString (iter).StartsWith (arg0.EvaluateString (iter));
+			return arg0.EvaluateString (iter).StartsWith (arg1.EvaluateString (iter));
 		}
 	}
 
@@ -357,7 +360,7 @@ namespace System.Xml.XPath
 		
 		public override object Evaluate (BaseIterator iter)
 		{
-			return arg0.EvaluateString (iter).IndexOf (arg0.EvaluateString (iter)) != -1;
+			return arg0.EvaluateString (iter).IndexOf (arg1.EvaluateString (iter)) != -1;
 		}
 	}
 
@@ -487,7 +490,7 @@ namespace System.Xml.XPath
 		public override object Evaluate (BaseIterator iter)
 		{
 			string str;
-			if (arg0 == null)
+			if (arg0 != null)
 				str = arg0.EvaluateString (iter);
 			else
 				str = iter.Current.Value;
@@ -549,7 +552,7 @@ namespace System.Xml.XPath
 		
 		public XPathFunctionTranslate (FunctionArguments args) : base (args)
 		{
-			if (args == null || args.Tail == null || args.Tail.Tail != null || args.Tail.Tail.Tail != null)
+			if (args == null || args.Tail == null || args.Tail.Tail == null || args.Tail.Tail.Tail != null)
 				throw new XPathException ("translate takes 3 args");
 			
 			arg0 = args.Arg;
@@ -573,15 +576,19 @@ namespace System.Xml.XPath
 		
 		public XPathFunctionBoolean (FunctionArguments args) : base (args)
 		{
-			arg0 = args.Arg;
-			if (args.Tail != null)
-				throw new XPathException ("boolean takes zero args");
+			if (args != null) {
+				arg0 = args.Arg;
+				if (args.Tail != null)
+					throw new XPathException ("boolean takes 1 or zero args");
+			}
 		}
 		
 		public override XPathResultType ReturnType { get { return XPathResultType.Boolean; }}
 
 		public override object Evaluate (BaseIterator iter)
 		{
+			if (arg0 == null)
+				return XPathFunctions.ToBoolean (iter.Current.Value);
 			return arg0.EvaluateBoolean (iter);
 		}
 	}
@@ -669,15 +676,19 @@ namespace System.Xml.XPath
 		
 		public XPathFunctionNumber (FunctionArguments args) : base (args)
 		{
-			if (args == null || args.Tail != null)
-				throw new XPathException ("number takes one arg");
-			arg0 = args.Arg;
+			if (args != null) {
+				arg0 = args.Arg;
+				if (args.Tail != null)
+					throw new XPathException ("number takes 1 or zero args");
+			}
 		}
 		
 		public override XPathResultType ReturnType { get { return XPathResultType.Number; }}
 
 		public override object Evaluate (BaseIterator iter)
 		{
+			if (arg0 == null)
+				return XPathFunctions.ToNumber (iter.Current.Value);
 			return arg0.EvaluateNumber (iter);
 		}
 	}

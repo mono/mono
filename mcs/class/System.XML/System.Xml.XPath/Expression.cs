@@ -1287,7 +1287,7 @@ namespace System.Xml.XPath
 				case "number": return new XPathFunctionNumber (args);
 				case "sum": return new XPathFunctionSum (args);
 				case "floor": return new XPathFunctionFloor (args);
-				case "ceil": return new XPathFunctionCeil (args);
+				case "ceiling": return new XPathFunctionCeil (args);
 				case "round": return new XPathFunctionRound (args);
 			}
 			return new ExprFunctionCall (name, args);
