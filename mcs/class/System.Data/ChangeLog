@@ -1,3 +1,22 @@
+2002-05-04  Daniel Morgan <danmorg@sc.rr.com>
+	
+	* System.Data.SqlClient/PostgresLibrary.cs
+	* System.Data.SqlClient/SqlCommand.cs
+	* System.Data.SqlClient/SqlConnection.cs
+	* System.Data.SqlClient/SqlDataReader.cs
+	oid should not be hard coded because they
+	can change from one version of PostgreSQL
+	to the next.  Use the typname's instead.
+	The PostgreSQL type data retrieves
+	at database connection time.  Any unimplemented
+	types just default to string.  These were things
+	suggested by Gonzalo.
+	
+	* Test/ReadPostgresData.cs - stuff
+	* Test/TestSqlDataReader.cs - stuff
+	
+	* System.Data.SqlTypes/SqlInt32.cs - added a using
+
 2002-05-03  Tim Coleman <tim@timcoleman.com>
 	* System.Data.build: Fix the build so that test depends on build
 

@@ -18,52 +18,11 @@ using System;
 using System.Data;
 using System.Runtime.InteropServices;
 using System.Diagnostics;
+using System.Collections;
 
 namespace System.Data.SqlClient {
 
-	// PostgreSQL Type (oid and typname from pg_type)
-	internal enum PgType {
-		ABSTIME = 702,
-		ACLITEM = 1033,
-		BIT = 1560,
-		BOOL = 16,
-		BOX = 603,
-		BPCHAR = 1042,
-		BYTEA = 17,
-		CHAR = 18,
-		CIDR = 650,
-		CIRCLE = 718,
-		DATE = 1082,
-		FLOAT4 = 700,
-		FLOAT8 = 701,
-		INET = 869,
-		INT2 = 21,
-		INT4 = 23,
-		INT8 = 20,
-		INTERVAL = 1186,
-		LINE = 628,
-		LSEG = 601,
-		MACADDR = 829,
-		MONEY = 790,
-		NAME = 19,
-		NUMERIC = 1700,
-		OID = 26,
-		PATH = 602,
-		POINT = 600,
-		POLYGON = 604,
-		REFCURSOR = 1790,
-		RELTIME = 703,
-		TEXT = 25,
-		TIME = 1083,
-		TIMESTAMP = 1114,
-		TIMESTAMPTZ = 1184,
-		TIMETZ = 1266,
-		TINTERVAL = 704,
-		VARBIT = 1562,
-		VARCHAR = 1043
-	}
-
-	/* IMPORTANT: DO NOT CHANGE ANY OF THESE ENUMS */
+	/* IMPORTANT: DO NOT CHANGE ANY OF THESE ENUMS BELOW */
 	
 	internal enum ConnStatusType
 	{
@@ -97,15 +56,181 @@ namespace System.Data.SqlClient {
 		PGRES_FATAL_ERROR
 	}
 
+	internal struct PostgresType {
+		public int oid;
+		public string typname;
+		public DbType dbType;
+	}
+
 	sealed internal class PostgresHelper {
 
-		/// <summary>
-		/// Convert a PostgreSQL Type to a .NET System type.
-		/// </summary>
-		/// <param name="oid"></param>
-		/// <param name="value"></param>
-		/// <returns></returns>
-		public static object ConvertPgTypeToSystem (int oid, String value) {
+		// translates the PostgreSQL typname to System.Data.DbType
+		public static DbType TypnameToSqlDbType(string typname) {
+			DbType sqlType;
+			
+			switch(typname) {
+
+			case "abstime":
+				sqlType = DbType.Int32;
+				break;
+
+			case "aclitem":
+				sqlType = DbType.String;
+				break;
+
+			case "bit":
+				sqlType = DbType.String;
+				break;
+
+			case "bool":
+				sqlType = DbType.Boolean;
+				break;
+
+			case "box":
+				sqlType = DbType.String;
+				break;
+
+			case "bpchar":
+				sqlType = DbType.String;
+				break;
+
+			case "bytea":
+				sqlType = DbType.String;
+				break;
+
+			case "char":
+				sqlType = DbType.String;
+				break;
+
+			case "cidr":
+				sqlType = DbType.String;
+				break;
+
+			case "circle":
+				sqlType = DbType.String;
+				break;
+
+			case "date":
+				sqlType = DbType.String;
+				break;
+
+			case "float4":
+				sqlType = DbType.Single;
+				break;
+
+			case "float8":
+				sqlType = DbType.Double;
+				break;
+
+			case "inet":
+				sqlType = DbType.String;
+				break;
+
+			case "int2":
+				sqlType = DbType.Int16;
+				break;
+
+			case "int4":
+				sqlType = DbType.Int32;
+				break;
+
+			case "int8":
+				sqlType = DbType.Int64;
+				break;
+
+			case "interval":
+				sqlType = DbType.String;
+				break;
+
+			case "line":
+				sqlType = DbType.String;
+				break;
+
+			case "lseg":
+				sqlType = DbType.String;
+				break;
+
+			case "macaddr":
+				sqlType = DbType.String;
+				break;
+
+			case "money":
+				sqlType = DbType.Decimal;
+				break;
+
+			case "name":
+				sqlType = DbType.String;
+				break;
+
+			case "numeric":
+				sqlType = DbType.Decimal;
+				break;
+
+			case "oid":
+				sqlType = DbType.Int32;
+				break;
+
+			case "path":
+				sqlType = DbType.String;
+				break;
+
+			case "point":
+				sqlType = DbType.String;
+				break;
+
+			case "polygon":
+				sqlType = DbType.String;
+				break;
+
+			case "refcursor":
+				sqlType = DbType.String;
+				break;
+
+			case "reltime":
+				sqlType = DbType.String;
+				break;
+
+			case "text":
+				sqlType = DbType.String;
+				break;
+
+			case "time":
+				sqlType = DbType.String;
+				break;
+
+			case "timestamp":
+				sqlType = DbType.String;
+				break;
+
+			case "timestamptz":
+				sqlType = DbType.String;
+				break;
+
+			case "timetz":
+				sqlType = DbType.String;
+				break;
+
+			case "tinterval":
+				sqlType = DbType.String;
+				break;
+
+			case "varbit":
+				sqlType = DbType.String;
+				break;
+
+			case "varchar":
+				sqlType = DbType.String;
+				break;
+
+			default:
+				sqlType = DbType.String;
+				break;
+			}
+			return sqlType;
+		}
+		
+		// Converts data value from database to .NET System type.
+		public static object ConvertDbTypeToSystem (DbType typ, String value) {
 			object obj = null;
 
 			// FIXME: more types need 
@@ -113,40 +238,41 @@ namespace System.Data.SqlClient {
 			//        from PostgreSQL oid type
 			//        to .NET System.<type>
 
-			switch((PgType) oid) {
-			case PgType.VARCHAR:
-			case PgType.BPCHAR:
-			case PgType.TEXT:
-			case PgType.CHAR:
+			switch(typ) {
+			case DbType.String:
 				obj = (object) String.Copy(value); 
 				break;
-			case PgType.BOOL:
+			case DbType.Boolean:
 				obj = (object) Boolean.Parse(value);
 				break;
-			case PgType.INT2:
+			case DbType.Int16:
 				obj = (object) Int16.Parse(value);
 				break;
-			case PgType.INT4:
+			case DbType.Int32:
 				obj = (object) Int32.Parse(value);
 				break;
-			case PgType.INT8:
+			case DbType.Int64:
 				obj = (object) Int64.Parse(value);
 				break;
+			case DbType.Decimal:
+				obj = (object) Decimal.Parse(value);
+				break;
+			case DbType.Single:
+				obj = (object) Single.Parse(value);
+				break;
+			case DbType.Double:
+				obj = (object) Double.Parse(value);
+				break;
 			default:
-				throw new NotImplementedException(
-					"PGNI1: PostgreSQL oid data type " + oid +
-					" not mapped to .NET System data type.");
+				obj = (object) String.Copy(value);
+				break;
 			}
 
 			return obj;
 		}
 		
-		/// <summary>
-		/// Convert the PostgreSQL Type oid to the .NET System.Type.
-		/// </summary>
-		/// <param name="oid"></param>
-		/// <returns></returns>
-		public static Type OidToType (int oid) {
+		// Translates System.Data.DbType to System.Type
+		public static Type DbTypeToSystemType (DbType dType) {
 			// FIXME: more types need 
 			//        to be mapped
 			//        from PostgreSQL oid type
@@ -154,32 +280,60 @@ namespace System.Data.SqlClient {
 
 			Type typ = null;
 
-			switch((PgType) oid) {
-			case PgType.VARCHAR:
-			case PgType.BPCHAR:
-			case PgType.TEXT:
-			case PgType.CHAR:
+			switch(dType) {
+			case DbType.String:
 				typ = typeof(String);
 				break;
-			case PgType.BOOL:
+			case DbType.Boolean:
 				typ = typeof(Boolean);
 				break;
-			case PgType.INT2:
+			case DbType.Int16: 
 				typ = typeof(Int16);
 				break;
-			case PgType.INT4:
+			case DbType.Int32:
 				typ = typeof(Int32);
 				break;
-			case PgType.INT8:
+			case DbType.Int64:
 				typ = typeof(Int64);
 				break;
+			case DbType.Decimal:
+				typ = typeof(Decimal);
+				break;
+			case DbType.Single:
+				typ = typeof(Single);
+				break;
+			case DbType.Double:
+				typ = typeof(Double);
+				break;
 			default:
-				throw new NotImplementedException(
-					"PGNI2: PostgreSQL oid type " + oid +
-					" not mapped to .NET System Type.");
+				typ = typeof(String);
+				break;
 			}
 			return typ;
 		}
+
+		// Find DbType for oid
+		// which requires a look up of PostgresTypes
+		// DbType <-> typname <-> oid
+		public static string OidToTypname (int oid, ArrayList pgTypes) {
+			// FIXME: more types need 
+			//        to be mapped
+			//        from PostgreSQL oid type
+			//        to .NET System.<type>
+			
+			string typname = "text"; // default
+			int i;
+			for(i = 0; i < pgTypes.Count; i++) {
+				PostgresType pt = (PostgresType) pgTypes[i];
+				if(pt.oid == oid) {
+					typname = pt.typname;
+					break; 
+				}
+			}
+
+			return typname;
+		}
+
 	}
 
 	sealed internal class PostgresLibrary

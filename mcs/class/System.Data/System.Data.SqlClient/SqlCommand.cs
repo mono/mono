@@ -5,7 +5,18 @@
 //   Rodrigo Moya (rodrigo@ximian.com)
 //   Daniel Morgan (danmorg@sc.rr.com)
 //
-// (C) Ximian, Inc 2002
+// (C) Ximian, Inc 2002 http://www.ximian.com/
+// (C) Daniel Morgan, 2002
+//
+// Credits:
+//    SQL and concepts were used from libgda 0.8.190 (GNOME Data Access)
+//    http://www.gnome-db.org/
+//    with permission from the authors of the
+//    PostgreSQL provider in libgda:
+//        Michael Lausch <michael@lausch.at>
+//        Rodrigo Moya <rodrigo@gnome-db.org>
+//        Vivien Malerba <malerba@gnome-db.org>
+//        Gonzalo Paniagua Javier <gonzalo@gnome-db.org>
 //
 
 // use #define DEBUG_SqlCommand if you want to spew debug messages
@@ -18,15 +29,13 @@ using System.Data.Common;
 using System.Runtime.InteropServices;
 using System.Xml;
 
-namespace System.Data.SqlClient
-{
+namespace System.Data.SqlClient {
 	/// <summary>
 	/// Represents a SQL statement that is executed 
 	/// while connected to a SQL database.
 	/// </summary>
 	// public sealed class SqlCommand : Component, IDbCommand, ICloneable
-	public sealed class SqlCommand : IDbCommand
-	{
+	public sealed class SqlCommand : IDbCommand {
 		// FIXME: Console.WriteLine() is used for debugging throughout
 
 		#region Fields
@@ -47,25 +56,21 @@ namespace System.Data.SqlClient
 
 		#region Constructors
 
-		public SqlCommand()
-		{
+		public SqlCommand() {
 			sql = "";
 		}
 
-		public SqlCommand (string cmdText)
-		{
+		public SqlCommand (string cmdText) {
 			sql = cmdText;
 		}
 
-		public SqlCommand (string cmdText, SqlConnection connection)
-		{
+		public SqlCommand (string cmdText, SqlConnection connection) {
 			sql = cmdText;
 			conn = connection;
 		}
 
 		public SqlCommand (string cmdText, SqlConnection connection, 
-						SqlTransaction transaction)
-		{
+			SqlTransaction transaction) {
 			sql = cmdText;
 			conn = connection;
 			trans = transaction;
@@ -76,27 +81,23 @@ namespace System.Data.SqlClient
 		#region Methods
 
 		[MonoTODO]
-		public void Cancel ()
-		{
+		public void Cancel () {
 			// FIXME: use non-blocking Exec for this
 			throw new NotImplementedException ();
 		}
 
 		// FIXME: is this the correct way to return a stronger type?
 		[MonoTODO]
-		IDbDataParameter IDbCommand.CreateParameter ()
-		{
+		IDbDataParameter IDbCommand.CreateParameter () {
 			return CreateParameter ();
 		}
 
 		[MonoTODO]
-		public SqlParameter CreateParameter ()
-		{
+		public SqlParameter CreateParameter () {
 			return new SqlParameter ();
 		}
 
-		public int ExecuteNonQuery ()
-		{	
+		public int ExecuteNonQuery () {	
 			IntPtr pgResult; // PGresult
 			int rowsAffected = -1;
 			ExecStatusType execStatus;
@@ -117,11 +118,10 @@ namespace System.Data.SqlClient
 			pgResult = PostgresLibrary.
 				PQexec (conn.PostgresConnection, sql);
 
-                        execStatus = PostgresLibrary.
-					PQresultStatus (pgResult);
+			execStatus = PostgresLibrary.
+				PQresultStatus (pgResult);
 			
-			if(execStatus == ExecStatusType.PGRES_COMMAND_OK)
-			{
+			if(execStatus == ExecStatusType.PGRES_COMMAND_OK) {
 				rowsAffectedString = PostgresLibrary.
 					PQcmdTuples (pgResult);
 
@@ -131,8 +131,7 @@ namespace System.Data.SqlClient
 
 				PostgresLibrary.PQclear (pgResult);
 			}
-			else
-			{
+			else {
 				String errorMessage;
 				
 				errorMessage = PostgresLibrary.
@@ -142,35 +141,31 @@ namespace System.Data.SqlClient
 					PQresultErrorMessage(pgResult);
 				
 				throw new SqlException(0, 0,
-						  errorMessage, 0, "",
-						  conn.DataSource, "SqlCommand", 0);
+					errorMessage, 0, "",
+					conn.DataSource, "SqlCommand", 0);
 			}
 			
 			return rowsAffected;
 		}
 		
 		[MonoTODO]
-		IDataReader IDbCommand.ExecuteReader ()
-		{
+		IDataReader IDbCommand.ExecuteReader () {
 			return ExecuteReader ();
 		}
 
 		[MonoTODO]
-		SqlDataReader ExecuteReader ()
-		{
+		public SqlDataReader ExecuteReader () {
 			return ExecuteReader(CommandBehavior.Default);
 		}
 
 		[MonoTODO]
 		IDataReader IDbCommand.ExecuteReader (
-					CommandBehavior behavior)
-		{
+			CommandBehavior behavior) {
 			return ExecuteReader (behavior);
 		}
 
 		[MonoTODO]
-		public SqlDataReader ExecuteReader (CommandBehavior behavior)
-		{
+		public SqlDataReader ExecuteReader (CommandBehavior behavior) {
 			// FIXME: currently only works for a 
 			//        single result set
 			//        ExecuteReader can be used 
@@ -201,15 +196,15 @@ namespace System.Data.SqlClient
 			if(execStatus == ExecStatusType.PGRES_TUPLES_OK) {
 				DataTable dt = null;
 				int rows, cols;
-				int[] oids;
+				string[] types;
 				
 				// FIXME: maybe i should move the
 				//        BuildTableSchema code
 				//        to the SqlDataReader?
 				dt = BuildTableSchema(pgResult, 
-					out rows, out cols, out oids);
+					out rows, out cols, out types);
 				dataReader = new SqlDataReader(this, dt, pgResult,
-					rows, cols, oids);
+					rows, cols, types);
 			}
 			else {
 				String errorMessage;
@@ -229,9 +224,9 @@ namespace System.Data.SqlClient
 		}
 
 		internal DataTable BuildTableSchema (IntPtr pgResult, 
-					out int nRows, 
-					out int nFields, 
-					out int[] oids) {
+			out int nRows, 
+			out int nFields, 
+			out string[] types) {
 
 			int nCol;
 			
@@ -243,18 +238,24 @@ namespace System.Data.SqlClient
 			nFields = PostgresLibrary.
 				PQnfields(pgResult);
 			
-			oids = new int[nFields];
+			int oid;
+			types = new string[nFields];
 
 			for(nCol = 0; nCol < nFields; nCol++) {						
+				
+				DbType dbType;
+
 				// get column name
 				String fieldName;
 				fieldName = PostgresLibrary.
 					PQfname(pgResult, nCol);
 
 				// get PostgreSQL data type (OID)
-				oids[nCol] = PostgresLibrary.
+				oid = PostgresLibrary.
 					PQftype(pgResult, nCol);
-
+				types[nCol] = PostgresHelper.
+					OidToTypname (oid, conn.Types);
+				
 				int definedSize;
 				// get defined size of column
 				definedSize = PostgresLibrary.
@@ -262,7 +263,11 @@ namespace System.Data.SqlClient
 								
 				// build the data column and add it the table
 				DataColumn dc = new DataColumn(fieldName);
-				dc.DataType = PostgresHelper.OidToType(oids[nCol]);
+
+				dbType = PostgresHelper.
+						TypnameToSqlDbType(types[nCol]);
+				dc.DataType = PostgresHelper.
+						DbTypeToSystemType(dbType);
 				dc.MaxLength = definedSize;
 				dc.SetTable(dt);
 				
@@ -272,8 +277,7 @@ namespace System.Data.SqlClient
 		}
 
 		[MonoTODO]
-		public object ExecuteScalar ()
-		{
+		public object ExecuteScalar () {
 			IntPtr pgResult; // PGresult
 			ExecStatusType execStatus;	
 			object obj = null; // return
@@ -316,9 +320,15 @@ namespace System.Data.SqlClient
 					//	PQfname(pgResult, nCol);
 
 					int oid;
+					string sType;
+					DbType dbType;
 					// get PostgreSQL data type (OID)
 					oid = PostgresLibrary.
 						PQftype(pgResult, nCol);
+					sType = PostgresHelper.
+						OidToTypname (oid, conn.Types);
+					dbType = PostgresHelper.
+						TypnameToSqlDbType(sType);
 
 					int definedSize;
 					// get defined size of column
@@ -344,7 +354,9 @@ namespace System.Data.SqlClient
 						nRow, nCol);
 						
 					obj = PostgresHelper.
-						ConvertPgTypeToSystem (oid, value);
+						ConvertDbTypeToSystem (
+						dbType,
+						value);
 				}
 
 				// close result set
@@ -369,21 +381,18 @@ namespace System.Data.SqlClient
 		}
 
 		[MonoTODO]
-		public XmlReader ExecuteXmlReader ()
-		{
+		public XmlReader ExecuteXmlReader () {
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public void Prepare ()
-		{
+		public void Prepare () {
 			// FIXME: parameters have to be implemented for this
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public SqlCommand Clone ()
-		{
+		public SqlCommand Clone () {
 			throw new NotImplementedException ();
 		}
 
@@ -538,8 +547,7 @@ namespace System.Data.SqlClient
 		}
 
 		[MonoTODO]
-		~SqlCommand()
-		{
+		~SqlCommand() {
 			// FIXME: need proper way to release resources
 			// Dispose(false);
 		}

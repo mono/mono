@@ -64,7 +64,7 @@ namespace TestSystemDataSqlClient
 				Console.WriteLine("         Type: " +
 					dt.Columns[c].DataType);
 			}
-
+			int nRows = 0;
 			// Read and display the rows
 			while(rdr.Read()) {
 				Console.WriteLine("Row: " +
@@ -78,7 +78,10 @@ namespace TestSystemDataSqlClient
 				Console.WriteLine("2: " + rdr.GetString(1));
 				Console.WriteLine("3: " + rdr.GetInt32(2));
 				Console.WriteLine("4: " + rdr.GetString(3));
+				nRows++;
 			}
+			Console.WriteLine("Rows: " + 
+				nRows);
 			
 			rdr.Close();
 			con.Close();

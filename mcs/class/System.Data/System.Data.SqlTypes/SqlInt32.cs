@@ -8,6 +8,8 @@
 // (C) Ximian, Inc. 2002
 //
 
+using System;
+
 namespace System.Data.SqlTypes
 {
 

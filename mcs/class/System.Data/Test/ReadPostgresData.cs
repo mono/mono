@@ -553,9 +553,9 @@ namespace LearnToCreateSqlDataReader
 		[STAThread]
 		static void Main(string[] args)
 		{
-			Test();
+			// Test();
 
-			TestExecuteScalar();
+			// TestExecuteScalar();
 
 			Type t;
 			int oid;

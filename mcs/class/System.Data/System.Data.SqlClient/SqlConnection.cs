@@ -6,20 +6,31 @@
 //   Daniel Morgan (danmorg@sc.rr.com)
 //
 // (C) Ximian, Inc 2002
+// (C) Daniel Morgan 2002
+//
+// Credits:
+//    SQL and concepts were used from libgda 0.8.190 (GNOME Data Access)
+//    http://www.gnome-db.org/
+//    with permission from the authors of the
+//    PostgreSQL provider in libgda:
+//        Michael Lausch <michael@lausch.at>
+//        Rodrigo Moya <rodrigo@gnome-db.org>
+//        Vivien Malerba <malerba@gnome-db.org>
+//        Gonzalo Paniagua Javier <gonzalo@gnome-db.org>
 //
 
 // use #define DEBUG_SqlConnection if you want to spew debug messages
 // #define DEBUG_SqlConnection
 
 using System;
+using System.Collections;
 using System.ComponentModel;
 using System.Data;
 using System.Data.Common;
 using System.Runtime.InteropServices;
 using System.Text;
 
-namespace System.Data.SqlClient
-{
+namespace System.Data.SqlClient {
 	// using PGconn = IntPtr; 
 	// PGconn is native C library type in libpq for Postgres Connection
 
@@ -31,13 +42,14 @@ namespace System.Data.SqlClient
 	/// </summary>
 	//public sealed class SqlConnection : Component, IDbConnection,
 	//	ICloneable
-	public sealed class SqlConnection : IDbConnection
-	{
+
+	public sealed class SqlConnection : IDbConnection {
 		// FIXME: Need to implement class Component, 
 		// and interfaces: ICloneable and IDisposable	
 
 		#region Fields
 
+		private PostgresTypes types;
 		private IntPtr pgConn = IntPtr.Zero;    
 		// PGConn (Postgres Connection)
 		private string connectionString = "";    
@@ -103,14 +115,12 @@ namespace System.Data.SqlClient
 		*/
 		// A lot of the defaults were initialized in the Fields
 		[MonoTODO]
-		public SqlConnection ()
-		{
+		public SqlConnection () {
 
 		}
 	
 		[MonoTODO]
-		public SqlConnection (String connectionString)
-		{
+		public SqlConnection (String connectionString) {
 			SetConnectionString (connectionString);
 		}
 
@@ -128,8 +138,7 @@ namespace System.Data.SqlClient
 		// aka Finalize
 		// [ClassInterface(ClassInterfaceType.AutoDual)]
 		[MonoTODO]
-		~SqlConnection()
-		{
+		~SqlConnection() {
 			// FIXME: this class need 
 			//        a destructor to release resources
 			//        Also, take a look at Dispose
@@ -140,24 +149,20 @@ namespace System.Data.SqlClient
 
 		#region Public Methods
 
-		IDbTransaction IDbConnection.BeginTransaction ()
-		{
+		IDbTransaction IDbConnection.BeginTransaction () {
 			return BeginTransaction ();
 		}
 
-		public SqlTransaction BeginTransaction ()
-		{
+		public SqlTransaction BeginTransaction () {
 			return TransactionBegin (); // call private method
 		}
 
 		IDbTransaction IDbConnection.BeginTransaction (IsolationLevel 
-						il)
-		{
+			il) {
 			return BeginTransaction (il);
 		}
 
-		public SqlTransaction BeginTransaction (IsolationLevel il)
-		{
+		public SqlTransaction BeginTransaction (IsolationLevel il) {
 			return TransactionBegin (il); // call private method
 		}
 
@@ -170,53 +175,36 @@ namespace System.Data.SqlClient
 
 		[Obsolete]
 		public SqlTransaction BeginTransaction(IsolationLevel iso,
-						string transactionName) {
+			string transactionName) {
 			return TransactionBegin (iso); // call private method
 		}
 
 		[MonoTODO]
-		public void ChangeDatabase (string databaseName)
-		{
+		public void ChangeDatabase (string databaseName) {
 			throw new NotImplementedException ();
 		}
 				
 		[MonoTODO]
-		public void Close ()
-		{
+		public void Close () {
 			CloseDataSource ();
 		}
 
-		IDbCommand IDbConnection.CreateCommand ()
-		{
+		IDbCommand IDbConnection.CreateCommand () {
 			return CreateCommand ();
 		}
 
-		public SqlCommand CreateCommand ()
-		{
+		public SqlCommand CreateCommand () {
 			SqlCommand sqlcmd = new SqlCommand ("", this);
 
 			return sqlcmd;
 		}
 
 		[MonoTODO]
-		public void Open ()
-		{
+		public void Open () {
 			OpenDataSource ();
 		}
 
 		#endregion // Public Methods
-
-		#region Internal Methods
-
-		// this is for System.Data.SqlClient classes
-		// to get the Postgres connection
-		internal IntPtr PostgresConnection {
-			get {
-				return pgConn;
-			}
-		}
-
-		#endregion // Internal Methods
 
 		#region Protected Methods
 
@@ -234,8 +222,7 @@ namespace System.Data.SqlClient
 
 		#region Private Methods
 
-		private void OpenDataSource ()
-		{
+		private void OpenDataSource () {
 			if(dbname.Equals(""))
 				throw new InvalidOperationException(
 					"dbname missing");
@@ -250,7 +237,7 @@ namespace System.Data.SqlClient
 			//        otherwise, throw an exception
 
 			pgConn = PostgresLibrary.PQconnectdb 
-					(pgConnectionString);
+				(pgConnectionString);
 
 			// FIXME: should we use PQconnectStart/PQconnectPoll
 			//        instead of PQconnectdb?  
@@ -258,13 +245,14 @@ namespace System.Data.SqlClient
 			// PQconnectStart/PQconnectPoll is non-blocking
 			
 			connStatus = PostgresLibrary.PQstatus (pgConn);
-			if(connStatus == ConnStatusType.CONNECTION_OK)
-			{
+			if(connStatus == ConnStatusType.CONNECTION_OK) {
 				// Successfully Connected
 				conState = ConnectionState.Open;
+				// FIXME: load types into hashtable
+				types = new PostgresTypes(this);
+				types.Load();
 			}
-			else
-			{
+			else {
 				String errorMessage = PostgresLibrary.
 					PQerrorMessage (pgConn);
 				errorMessage += ": Could not connect to database.";
@@ -275,22 +263,20 @@ namespace System.Data.SqlClient
 			}
 		}
 
-		private void CloseDataSource ()
-		{
+		private void CloseDataSource () {
 			// FIXME: just a quick hack
 			conState = ConnectionState.Closed;
 			PostgresLibrary.PQfinish (pgConn);
 		}
 
-		private void SetConnectionString (string connectionString)
-		{
+		private void SetConnectionString (string connectionString) {
 			// FIXME: perform error checking on string
 			// while translating string from 
 			// OLE DB format to PostgreSQL 
 			// connection string format
 			//
-	//     OLE DB: "host=localhost;dbname=test;user=joe;password=smoe"
-	// PostgreSQL: "host=localhost dbname=test user=joe password=smoe"
+			//     OLE DB: "host=localhost;dbname=test;user=joe;password=smoe"
+			// PostgreSQL: "host=localhost dbname=test user=joe password=smoe"
 			//
 			// For OLE DB, you would have the additional 
 			// "provider=postgresql"
@@ -320,8 +306,7 @@ namespace System.Data.SqlClient
 		}
 
 		private String ConvertStringToPostgres (String 
-			oleDbConnectionString)
-		{
+			oleDbConnectionString) {
 			StringBuilder postgresConnection = 
 				new StringBuilder();
 			string result;
@@ -355,15 +340,14 @@ namespace System.Data.SqlClient
 					BreakConnectionParameter (sParameter);
 					postgresConnection.
 						Append (sParameter + 
-							" ");
+						" ");
 				}
 			}
 			result = postgresConnection.ToString ();
 			return result;
 		}
 
-		private bool BreakConnectionParameter (String sParameter)
-		{	
+		private bool BreakConnectionParameter (String sParameter) {	
 			bool addParm = true;
 			int index;
 
@@ -402,7 +386,7 @@ namespace System.Data.SqlClient
 
 				case "password":
 					password = parmValue;
-				//	addParm = false;
+					//	addParm = false;
 					break;
 
 				case "options":
@@ -421,8 +405,7 @@ namespace System.Data.SqlClient
 			return addParm;
 		}
 
-		private SqlTransaction TransactionBegin ()
-		{
+		private SqlTransaction TransactionBegin () {
 			// FIXME: need to keep track of 
 			// transaction in-progress
 			trans = new SqlTransaction ();
@@ -433,8 +416,7 @@ namespace System.Data.SqlClient
 			return trans;
 		}
 
-		private SqlTransaction TransactionBegin (IsolationLevel il)
-		{
+		private SqlTransaction TransactionBegin (IsolationLevel il) {
 			// FIXME: need to keep track of 
 			// transaction in-progress
 			TransactionBegin();
@@ -445,7 +427,7 @@ namespace System.Data.SqlClient
 
 		#endregion
 
-		#region Properties
+		#region Public Properties
 
 		[MonoTODO]
 		public ConnectionState State 		{
@@ -502,11 +484,29 @@ namespace System.Data.SqlClient
 			}
 		}
 
+		#region Internal Properties
+
 		internal SqlTransaction Transaction {
 			get {
 				return trans;
 			}
 		}
+
+		// this is for System.Data.SqlClient classes
+		// to get the Postgres connection
+		internal IntPtr PostgresConnection {
+			get {
+				return pgConn;
+			}
+		}
+
+		internal ArrayList Types {
+			get {
+				return types.List;
+			}
+		}
+
+		#endregion // Internal Properties
 
 		#endregion
 
@@ -526,6 +526,132 @@ namespace System.Data.SqlClient
 		public event 
 		StateChangeEventHandler StateChange;
 		*/
+
+		#endregion
+
+		#region Classes
+
+		private class PostgresTypes {
+			// TODO: create hashtable for 
+			// PostgreSQL types to .NET types
+			// containing: oid, typname, SqlDbType
+
+			private Hashtable hashTypes;
+			private ArrayList pgTypes;
+			private SqlConnection con;
+
+			// Got this SQL with the permission from 
+			// the authors of libgda
+			private const string SEL_SQL_GetTypes = 
+				"SELECT oid, typname FROM pg_type " +
+				"WHERE typrelid = 0 AND typname !~ '^_' " +
+				" AND  typname not in ('SET', 'cid', " +
+				"'int2vector', 'oidvector', 'regproc', " +
+				"'smgr', 'tid', 'unknown', 'xid') " +
+				"ORDER BY typname";
+
+			internal PostgresTypes(SqlConnection sqlcon) {
+				
+				con = sqlcon;
+				hashTypes = new Hashtable();
+			}
+
+			private void BuildTypes(IntPtr pgResult, 
+				int nRows, int nFields) {
+
+				String value;
+
+				int r, c;
+				for(r = 0; r < nRows; r++) {
+					PostgresType pgType = 
+						new PostgresType();
+
+					for(c = 0; c < nFields; c++) {
+						// get data value
+						value = PostgresLibrary.
+							PQgetvalue(
+							pgResult,
+							r, c);
+						
+						if(c == 0) {
+							pgType.oid = Int32.Parse(value);
+						}
+						else if(c == 1) {
+							pgType.typname = String.Copy(value);
+							pgType.dbType = PostgresHelper.
+								TypnameToSqlDbType(
+								pgType.typname);
+
+							pgTypes.Add(pgType);
+						}
+						// FIXME: needs to be Read Only
+						// pgTypes = ArrayList.ReadOnly(pgTypes);
+
+					}
+				}
+			}
+
+			internal void Load() {
+				pgTypes = new ArrayList();
+				IntPtr pgResult; // PGresult
+				ExecStatusType execStatus;	
+
+				if(con.State != ConnectionState.Open)
+					throw new InvalidOperationException(
+						"ConnnectionState is not Open");
+
+				// FIXME: PQexec blocks 
+				// while PQsendQuery is non-blocking
+				// which is better to use?
+				// int PQsendQuery(PGconn *conn,
+				//        const char *query);
+
+				// execute SQL command
+				// uses internal property to get the PGConn IntPtr
+				pgResult = PostgresLibrary.
+					PQexec (con.PostgresConnection, SEL_SQL_GetTypes);
+
+				execStatus = PostgresLibrary.
+					PQresultStatus (pgResult);
+			
+				if(execStatus == ExecStatusType.PGRES_TUPLES_OK) {
+					int nRows;
+					int nFields;
+
+					nRows = PostgresLibrary.
+						PQntuples(pgResult);
+
+					nFields = PostgresLibrary.
+						PQnfields(pgResult);
+
+					BuildTypes (pgResult, nRows, nFields);
+
+					// close result set
+					PostgresLibrary.PQclear (pgResult);
+
+				}
+				else {
+					String errorMessage;
+				
+					errorMessage = PostgresLibrary.
+						PQresStatus(execStatus);
+
+					errorMessage += " " + PostgresLibrary.
+						PQresultErrorMessage(pgResult);
+				
+					throw new SqlException(0, 0,
+						errorMessage, 0, "",
+						con.DataSource, "SqlConnection", 0);
+				}
+
+			}
+
+			public ArrayList List {
+				get {
+					return pgTypes;
+				}
+			}
+		}
 
 		#endregion
 	}
