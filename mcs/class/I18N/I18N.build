@@ -22,18 +22,18 @@
 		</csc>
 
 		<!-- Build the I18N.CJK.dll library -->
-<!-- 		<csc output="../lib/I18N.CJK.dll" target="library" debug="${debug}"> -->
-<!-- 			<arg value="/unsafe"/> -->
-<!-- 			<arg value="/noconfig"/> -->
-<!-- 			<arg value="/lib:../lib/"/> -->
-<!-- 			<arg value="/r:I18N.dll"/> -->
-<!-- 			<arg value="/resource:CJK/jis.table"/> -->
+ 		<csc output="../lib/I18N.CJK.dll" target="library" debug="${debug}"> 
+			<arg value="/unsafe"/> 
+ 			<arg value="/noconfig"/> 
+ 			<arg value="/lib:../lib/"/>
+ 			<arg value="/r:I18N.dll"/> 
+ 			<arg value="/resource:CJK/jis.table"/> 
 
-<!-- 			<sources> -->
-<!-- 				<includes name="CJK/*.cs"/> -->
-<!-- 			</sources> -->
+ 			<sources> 
+ 				<includes name="CJK/*.cs"/> 
+			</sources> 
 
-<!-- 		</csc> -->
+	 	</csc> 
 
 		<!-- Build the I18N.MidEast.dll library -->
 		<csc output="../lib/I18N.MidEast.dll" target="library" debug="${debug}">

@@ -1,7 +1,7 @@
 INSTALL = /usr/bin/install
 prefix = /usr
 
-DIRS =	Common West MidEast Other Rare
+DIRS =	Common West MidEast Other Rare CJK
 
 default: all
 
