@@ -184,10 +184,14 @@ namespace Mono.ILASM {
                                                                 opcode = InstrTable.GetToken (full_str);
 
                                                                 if (opcode == null) {
-                                                                        reader.Unread (opTail.ToCharArray ());
-                                                                        reader.RestoreLocation ();
-                                                                        res.token = strBuilder.TokenId;
-                                                                        res.val = val;
+                                                                        if (strBuilder.TokenId != Token.ID) {
+                                                                                reader.Unread (opTail.ToCharArray ());
+                                                                                reader.RestoreLocation ();
+                                                                                res.val = val;
+                                                                        } else {
+                                                                                res.token = Token.COMP_NAME;
+                                                                                res.val = full_str;
+                                                                        }
                                                                         break;
                                                                 } else {
                                                                         res = opcode;

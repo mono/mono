@@ -1,3 +1,8 @@
+2003-12-10  Jackson Harper <jackson@ximian.com>
+
+	* ILTokenizer.cs: Handle dotted ids as a single token. This allows
+	keywords at the end of a dotted name.
+	
 2003-10-14 Jackson Harper <jackson@ximian.com>
 
 	* ILTokenizer.cs: Fix /* */ comment blocks.
