@@ -649,6 +649,13 @@ namespace CIR {
 					if (method_builders_to_methods == null)
 						method_builders_to_methods = new Hashtable ();
 
+					//
+					// FIXME:
+					// The following key is not enoug
+					// class x { public void X ()  {} }
+					// class y : x { public void X () {}}
+					// fails
+					
 					if (key == null)
 						remove_list.Add (m);
 					else
@@ -1223,8 +1230,8 @@ namespace CIR {
 			//
 			Type ptype = parent.TypeBuilder.BaseType;
 
-			// BROKEN test: just so I can fix other stuff in the meantime.
-			if (ptype == null){
+			// ptype is only null for System.Object while compiling corlib.
+			if (ptype != null){
 				MethodSignature ms = new MethodSignature (Name, ret_type, parameters);
 				MemberInfo [] mi;
 				
@@ -1238,12 +1245,13 @@ namespace CIR {
 				// it does not work with partial types.
 				//
 				
-				if (mi != null){
+				if (mi != null && mi.Length > 0){
 					if ((ModFlags & Modifiers.NEW) == 0){
 						Report.Error (
 							      108, Location, "The keyword new is required on `" +
 							      parent.Name + "." + Name + "' because it hides `" +
-							      "." + "'");
+							      mi [0].ReflectedType.Name + "." +
+							      mi [0].Name + "'");
 					} 
 				} else if ((ModFlags & Modifiers.NEW) != 0)
 					WarningNotHiding (parent);
