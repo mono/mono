@@ -17,7 +17,7 @@
                 DelaySign = "false"
                 OutputType = "Exe"
                 PreBuildEvent = ""
-                PostBuildEvent = 'copy "$(ProjectDir)nunit-console.exe.1.1.config" "$(TargetDir)nunit-console.exe.config"'
+                PostBuildEvent = 'copy "$(ProjectDir)nunit-console.exe.config" "$(TargetDir)nunit-console.exe.config"'
                 RootNamespace = "nunit_console"
                 RunPostBuildEvent = "OnBuildSuccess"
                 StartupObject = ""
@@ -34,7 +34,7 @@
                     FileAlignment = "4096"
                     IncrementalBuild = "true"
                     NoStdLib = "false"
-                    NoWarn = ""
+                    NoWarn = "618"
                     Optimize = "false"
                     OutputPath = "bin\Debug\"
                     RegisterForComInterop = "false"
@@ -54,7 +54,7 @@
                     FileAlignment = "4096"
                     IncrementalBuild = "false"
                     NoStdLib = "false"
-                    NoWarn = ""
+                    NoWarn = "618"
                     Optimize = "true"
                     OutputPath = "bin\Release\"
                     RegisterForComInterop = "false"
@@ -80,19 +80,23 @@
                     HintPath = "..\..\..\..\WINDOWS\Microsoft.NET\Framework\v1.0.3705\System.XML.dll"
                 />
                 <Reference
-                    Name = "nunit.framework.dll"
-                    Project = "{83DD7E12-A705-4DBA-9D71-09C8973D9382}"
+                    Name = "nunit.util.dll"
+                    Project = "{61CE9CE5-943E-44D4-A381-814DC1406767}"
                     Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
                 />
                 <Reference
-                    Name = "nunit.util.dll"
-                    Project = "{61CE9CE5-943E-44D4-A381-814DC1406767}"
+                    Name = "nunit.core.dll"
+                    Project = "{EBD43A7F-AFCA-4281-BB53-5CDD91F966A3}"
                     Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
                 />
             </References>
         </Build>
         <Files>
             <Include>
+                <File
+                    RelPath = "App.ico"
+                    BuildAction = "Content"
+                />
                 <File
                     RelPath = "AssemblyInfo.cs"
                     SubType = "Code"
@@ -104,11 +108,7 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "nunit-console.exe.1.0.config"
-                    BuildAction = "None"
-                />
-                <File
-                    RelPath = "nunit-console.exe.1.1.config"
+                    RelPath = "nunit-console.exe.config"
                     BuildAction = "None"
                 />
             </Include>

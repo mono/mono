@@ -50,89 +50,61 @@ namespace NUnit.Console
 	/// </summary>
 	public class ConsoleUi
 	{
-		private NUnit.Core.TestDomain testDomain;
-		private XmlTextReader transformReader;
-		private bool silent;
-		private string xmlOutput;
-
 		[STAThread]
 		public static int Main(string[] args)
 		{
-			int returnCode = 0;
-
-			ConsoleOptions parser = new ConsoleOptions(args);
-			if(!parser.nologo)
+			ConsoleOptions options = new ConsoleOptions(args);
+			if(!options.nologo)
 				WriteCopyright();
 
-			if(parser.help)
+			if(options.help)
 			{
-				parser.Help();
+				options.Help();
+				return 0;
 			}
-			else if(parser.NoArgs) 
+			
+			if(options.NoArgs) 
 			{
 				Console.Error.WriteLine("fatal error: no inputs specified");
-				parser.Help();
+				options.Help();
+				return 0;
 			}
-			else if(!parser.Validate())
+			
+			if(!options.Validate())
 			{
 				Console.Error.WriteLine("fatal error: invalid arguments");
-				parser.Help();
-				returnCode = 2;
+				options.Help();
+				return 2;
 			}
-			else
+
+			try
 			{
-				NUnit.Core.TestDomain domain = new NUnit.Core.TestDomain();
-
-				try
+				ConsoleUi consoleUi = new ConsoleUi();
+				return consoleUi.Execute( options );
+			}
+			catch( FileNotFoundException ex )
+			{
+				Console.WriteLine( ex.Message );
+				return 2;
+			}
+			catch( BadImageFormatException ex )
+			{
+				Console.WriteLine( ex.Message );
+				return 2;
+			}
+			catch( Exception ex )
+			{
+				Console.WriteLine( "Unhandled Exception:\n{0}", ex.ToString() );
+				return 2;
+			}
+			finally
+			{
+				if(options.wait)
 				{
-					Test test = MakeTestFromCommandLine(domain, parser);
-
-					if(test == null)
-					{
-						Console.Error.WriteLine("fatal error: invalid assembly {0}", parser.Parameters[0]);
-						returnCode = 2;
-					}
-					else
-					{
-						Directory.SetCurrentDirectory(new FileInfo((string)parser.Parameters[0]).DirectoryName);
-						string xmlResult = "TestResult.xml";
-						if(parser.IsXml)
-							xmlResult = parser.xml;
-				
-						XmlTextReader reader = GetTransformReader(parser);
-						if(reader != null)
-						{
-							ConsoleUi consoleUi = new ConsoleUi(domain, reader, parser.xmlConsole);
-							returnCode = consoleUi.Execute();
-
-							if (parser.xmlConsole)
-								Console.WriteLine(consoleUi.XmlOutput);
-							using (StreamWriter writer = new StreamWriter(xmlResult)) 
-							{
-								writer.Write(consoleUi.XmlOutput);
-							}
-						}
-						else
-							returnCode = 3;
-					}
-				}
-				catch( Exception ex )
-				{
-					Console.WriteLine( "Unhandled Exception: {0}", ex.ToString() );
-				}
-				finally
-				{
-					domain.Unload();
-
-					if(parser.wait)
-					{
-						Console.Out.WriteLine("\nHit <enter> key to continue");
-						Console.ReadLine();
-					}
+					Console.Out.WriteLine("\nHit <enter> key to continue");
+					Console.ReadLine();
 				}
 			}
-
-			return returnCode;
 		}
 
 		private static XmlTextReader GetTransformReader(ConsoleOptions parser)
@@ -141,7 +113,7 @@ namespace NUnit.Console
 			if(!parser.IsTransform)
 			{
 				Assembly assembly = Assembly.GetAssembly(typeof(XmlResultVisitor));
-				ResourceManager resourceManager = new ResourceManager("NUnit.Framework.Transform",assembly);
+				ResourceManager resourceManager = new ResourceManager("NUnit.Util.Transform",assembly);
 				string xmlData = (string)resourceManager.GetObject("Summary.xslt");
 
 				reader = new XmlTextReader(new StringReader(xmlData));
@@ -177,13 +149,15 @@ namespace NUnit.Console
 			Console.WriteLine(String.Format("{0} version {1}", productAttr.Product, version.ToString(3)));
 			Console.WriteLine(copyrightAttr.Copyright);
 			Console.WriteLine();
+
+			string clrPlatform = Type.GetType("Mono.Runtime", false) == null ? ".NET" : "Mono";
+			Console.WriteLine( string.Format("OS Version: {0}    {1} Version: {2}",
+				Environment.OSVersion, clrPlatform, Environment.Version ) );
+			Console.WriteLine();
 		}
 
-		private static Test MakeTestFromCommandLine(NUnit.Core.TestDomain testDomain, 
-			ConsoleOptions parser)
+		private static Test MakeTestFromCommandLine(TestDomain testDomain, ConsoleOptions parser)
 		{
-			if(!DoAssembliesExist(parser.Parameters)) return null; 
-			
 			NUnitProject project;
 
 			if ( parser.IsTestProject )
@@ -196,47 +170,55 @@ namespace NUnit.Console
 			else
 				project = NUnitProject.FromAssemblies( (string[])parser.Parameters.ToArray( typeof( string ) ) );
 
-			return project.LoadTest( testDomain, parser.fixture );
+			return testDomain.Load( project, parser.fixture );
 		}
 
-		private static bool DoAssembliesExist(IList files)
+		public ConsoleUi()
 		{
-			bool exist = true; 
-			foreach(string fileName in files)
-				exist &= DoesFileExist(fileName);
-			return exist;
 		}
 
-		private static bool DoesFileExist(string fileName)
+		public int Execute( ConsoleOptions options )
 		{
-			FileInfo fileInfo = new FileInfo(fileName);
-			return fileInfo.Exists;
-		}
+			XmlTextReader transformReader = GetTransformReader(options);
+			if(transformReader == null) return 3;
 
-		public ConsoleUi(NUnit.Core.TestDomain testDomain, XmlTextReader reader, bool silent)
-		{
-			this.testDomain = testDomain;
-			transformReader = reader;
-			this.silent = silent;
-		}
+			ConsoleWriter outStream = options.isOut
+				? new ConsoleWriter( new StreamWriter( options.output ) )
+				: new ConsoleWriter(Console.Out);
 
-		public string XmlOutput
-		{
-			get { return xmlOutput; }
-		}
+			ConsoleWriter errorStream = options.isErr
+				? new ConsoleWriter( new StreamWriter( options.err ) )
+				: new ConsoleWriter(Console.Error);
 
-		public int Execute()
-		{
-			EventListener collector = null;
-			if (silent)
-				collector = new NullListener();
-			else
-				collector = new EventCollector();
-			ConsoleWriter outStream = new ConsoleWriter(Console.Out);
-			ConsoleWriter errorStream = new ConsoleWriter(Console.Error);
-			
+			TestDomain testDomain = new TestDomain(outStream, errorStream);
+
+			Test test = MakeTestFromCommandLine(testDomain, options);
+
+			if(test == null)
+			{
+				Console.Error.WriteLine("Unable to locate fixture {0}", options.fixture);
+				return 2;
+			}
+
+			Directory.SetCurrentDirectory(new FileInfo((string)options.Parameters[0]).DirectoryName);
+		
+			EventListener collector = new EventCollector( options, outStream );
+
 			string savedDirectory = Environment.CurrentDirectory;
-			TestResult result = testDomain.Run(collector, outStream, errorStream);
+			TestResult result = null;
+			if (options.HasInclude)
+			{
+				Console.WriteLine( "Included categories: " + options.include );
+				testDomain.SetFilter( new CategoryFilter( options.IncludedCategories ) );
+			}
+			else if ( options.HasExclude )
+			{
+				Console.WriteLine( "Excluded categories: " + options.exclude );
+				testDomain.SetFilter( new CategoryFilter( options.ExcludedCategories, true ) );
+			}
+
+			result = testDomain.Run( collector );
+
 			Directory.SetCurrentDirectory( savedDirectory );
 			
 			Console.WriteLine();
@@ -246,66 +228,114 @@ namespace NUnit.Console
 			result.Accept(resultVisitor);
 			resultVisitor.Write();
 
-			xmlOutput = builder.ToString();
+			string xmlOutput = builder.ToString();
 
-			if (!silent)
-				CreateSummaryDocument();
+			if (options.xmlConsole)
+				Console.WriteLine(xmlOutput);
+			else
+				CreateSummaryDocument(xmlOutput, transformReader);
+
+			// Write xml output here
+			string xmlResult = options.IsXml ? options.xml : "TestResult.xml";
+
+			using (StreamWriter writer = new StreamWriter(xmlResult)) 
+			{
+				writer.Write(xmlOutput);
+			}
 
 			int resultCode = 0;
+			
 			if(result.IsFailure)
 				resultCode = 1;
+
 			return resultCode;
 		}
 
-		private void CreateSummaryDocument()
+		private void CreateSummaryDocument(string xmlOutput, XmlTextReader transformReader)
 		{
 			XPathDocument originalXPathDocument = new XPathDocument(new StringReader(xmlOutput));
 			XslTransform summaryXslTransform = new XslTransform();
+			
+			// Using obsolete form for now, remove warning suppression from project after changing
 			summaryXslTransform.Load(transformReader);
 			
+			// Using obsolete form for now, remove warning suppression from project after changing
 			summaryXslTransform.Transform(originalXPathDocument,null,Console.Out);
 		}
 
+		#region Nested Class to Handle Events
+
 		private class EventCollector : LongLivingMarshalByRefObject, EventListener
 		{
-			private int level;
 			private int testRunCount;
 			private int testIgnoreCount;
 			private int failureCount;
+			private int level;
+
+			private ConsoleOptions options;
+			private ConsoleWriter writer;
+
 			StringCollection messages;
 		
 			private bool debugger = false;
+			private string currentTestName;
 
-			public EventCollector()
+			public EventCollector( ConsoleOptions options, ConsoleWriter writer )
 			{
 				debugger = Debugger.IsAttached;
 				level = 0;
+				this.options = options;
+				this.writer = writer;
+				this.currentTestName = string.Empty;
+			}
+
+			public void RunStarted(Test[] tests)
+			{
+			}
+
+			public void RunFinished(TestResult[] results)
+			{
+			}
+
+			public void RunFinished(Exception exception)
+			{
 			}
 
 			public void TestFinished(TestCaseResult testResult)
 			{
-				if(testResult.Executed)
+				if ( !options.xmlConsole && !options.labels )
 				{
-					testRunCount++;
-					if(testResult.IsFailure)
-					{	
-						failureCount++;
-						Console.Write("F");
-						if ( debugger )
-							messages.Add( ParseTestCaseResult( testResult ) );
+					if(testResult.Executed)
+					{
+						testRunCount++;
+						
+						if(testResult.IsFailure)
+						{	
+							failureCount++;
+							Console.Write("F");
+							if ( debugger )
+								messages.Add( ParseTestCaseResult( testResult ) );
+						}
+					}
+					else
+					{
+						testIgnoreCount++;
+						Console.Write("N");
 					}
 				}
-				else
-				{
-					testIgnoreCount++;
-					Console.Write("N");
-				}
+
+				currentTestName = string.Empty;
 			}
 
 			public void TestStarted(TestCase testCase)
 			{
-				Console.Write(".");
-			}
+				currentTestName = testCase.FullName;
+
+				if ( options.labels )
+					writer.WriteLine("***** {0}", testCase.FullName );
+				else if ( !options.xmlConsole )
+					Console.Write(".");
+}
 
 			public void SuiteStarted(TestSuite suite) 
 			{
@@ -315,37 +345,53 @@ namespace NUnit.Console
 					testRunCount = 0;
 					testIgnoreCount = 0;
 					failureCount = 0;
-					Debug.WriteLine( "################################ UNIT TESTS ################################" );
-					Debug.WriteLine( "Running tests in '" + suite.FullName + "'..." );
+					Trace.WriteLine( "################################ UNIT TESTS ################################" );
+					Trace.WriteLine( "Running tests in '" + suite.FullName + "'..." );
 				}
 			}
 
 			public void SuiteFinished(TestSuiteResult suiteResult) 
 			{
-				if ( debugger && --level == 0 ) 
+				if ( debugger && --level == 0) 
 				{
-					Debug.WriteLine( "############################################################################" );
+					Trace.WriteLine( "############################################################################" );
 
 					if (messages.Count == 0) 
 					{
-						Debug.WriteLine( "##############                 S U C C E S S               #################" );
+						Trace.WriteLine( "##############                 S U C C E S S               #################" );
 					}
 					else 
 					{
-						Debug.WriteLine( "##############                F A I L U R E S              #################" );
+						Trace.WriteLine( "##############                F A I L U R E S              #################" );
 						
 						foreach ( string s in messages ) 
 						{
-							Debug.WriteLine(s);
+							Trace.WriteLine(s);
 						}
 					}
 
-					Debug.WriteLine( "############################################################################" );
-					Debug.WriteLine( "Executed tests : " + testRunCount );
-					Debug.WriteLine( "Ignored tests  : " + testIgnoreCount );
-					Debug.WriteLine( "Failed tests   : " + failureCount );
-					Debug.WriteLine( "Total time     : " + suiteResult.Time + " seconds" );
-					Debug.WriteLine( "############################################################################");
+					Trace.WriteLine( "############################################################################" );
+					Trace.WriteLine( "Executed tests : " + testRunCount );
+					Trace.WriteLine( "Ignored tests  : " + testIgnoreCount );
+					Trace.WriteLine( "Failed tests   : " + failureCount );
+					Trace.WriteLine( "Total time     : " + suiteResult.Time + " seconds" );
+					Trace.WriteLine( "############################################################################");
+				}
+			}
+
+			public void UnhandledException( Exception exception )
+			{
+				string msg = string.Format( "##### Unhandled Exception while running {0}", currentTestName );
+
+				// If we do labels, we already have a newline
+				if ( !options.labels ) writer.WriteLine();
+				writer.WriteLine( msg );
+				writer.WriteLine( exception.ToString() );
+
+				if ( debugger )
+				{
+					Trace.WriteLine( msg );
+					Trace.WriteLine( exception.ToString() );
 				}
 			}
 
@@ -370,5 +416,8 @@ namespace NUnit.Console
 				return result.Message;
 			}
 		}
+
+		#endregion
 	}
 }
+
