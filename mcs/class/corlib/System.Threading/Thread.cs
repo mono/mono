@@ -104,11 +104,18 @@ namespace System.Threading
 			if(millisecondsTimeout==0) {
 				// Schedule another thread
 				Schedule_internal();
+			} else {
+				Thread thread=CurrentThread;
+				
+				thread.state |= ThreadState.WaitSleepJoin;
+				int ms_remaining=Sleep_internal(millisecondsTimeout);
+				thread.state &= ~ThreadState.WaitSleepJoin;
+
+				if(ms_remaining>0) {
+					throw new ThreadInterruptedException("Thread interrupted while sleeping");
+				}
 			}
-			int ms_remaining=Sleep_internal(millisecondsTimeout);
-			if(ms_remaining>0) {
-				throw new ThreadInterruptedException("Thread interrupted while sleeping");
-			}
+			
 		}
 
 		public static void Sleep(TimeSpan timeout) {
@@ -119,10 +126,16 @@ namespace System.Threading
 			if(timeout.Milliseconds==0) {
 				// Schedule another thread
 				Schedule_internal();
-			}
-			int ms_remaining=Sleep_internal(timeout.Milliseconds);
-			if(ms_remaining>0) {
-				throw new ThreadInterruptedException("Thread interrupted while sleeping");
+			} else {
+				Thread thread=CurrentThread;
+				
+				thread.state |= ThreadState.WaitSleepJoin;
+				int ms_remaining=Sleep_internal(timeout.Milliseconds);
+				thread.state &= ~ThreadState.WaitSleepJoin;
+				
+				if(ms_remaining>0) {
+					throw new ThreadInterruptedException("Thread interrupted while sleeping");
+				}
 			}
 		}
 
@@ -172,8 +185,13 @@ namespace System.Threading
 
 		public bool IsAlive {
 			get {
-				// FIXME
-				return(false);
+				// LAMESPEC: is a Stopped thread dead?
+				if((state & ThreadState.Running) != 0 ||
+				   (state & ThreadState.Stopped) != 0) {
+					return(true);
+				} else {
+					return(false);
+				}
 			}
 		}
 
@@ -209,10 +227,11 @@ namespace System.Threading
 			}
 		}
 
+		private ThreadState state=ThreadState.Unstarted;
+		
 		public ThreadState ThreadState {
 			get {
-				// FIXME
-				return(ThreadState.Unstarted);
+				return(state);
 			}
 		}
 
@@ -228,16 +247,39 @@ namespace System.Threading
 			// FIXME
 		}
 
+		// The current thread joins with 'this'. Set ms to 0 to block
+		// until this actually exits.
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		private extern /*bool*/ int Join_internal(int ms, UInt32 handle);
+		
 		public void Join() {
-			// FIXME
+			if(state == ThreadState.Unstarted) {
+				throw new ThreadStateException("Thread has not been started");
+			}
+			
+			Thread thread=CurrentThread;
+				
+			thread.state |= ThreadState.WaitSleepJoin;
+			Join_internal(0, system_thread_handle);
+			thread.state &= ~ThreadState.WaitSleepJoin;
 		}
 
 		public bool Join(int millisecondsTimeout) {
 			if(millisecondsTimeout<0) {
 				throw new ArgumentException("Timeout less than zero");
 			}
-			// FIXME
-			return(false);
+			if(state == ThreadState.Unstarted) {
+				throw new ThreadStateException("Thread has not been started");
+			}
+
+			Thread thread=CurrentThread;
+				
+			thread.state |= ThreadState.WaitSleepJoin;
+			bool ret=(Join_internal(millisecondsTimeout,
+						system_thread_handle)==1);
+			thread.state &= ~ThreadState.WaitSleepJoin;
+
+			return(ret);
 		}
 
 		public bool Join(TimeSpan timeout) {
@@ -245,8 +287,18 @@ namespace System.Threading
 			if(timeout.Milliseconds < 0 || timeout.Milliseconds > Int32.MaxValue) {
 				throw new ArgumentOutOfRangeException("timeout out of range");
 			}
-			// FIXME
-			return(false);
+			if(state == ThreadState.Unstarted) {
+				throw new ThreadStateException("Thread has not been started");
+			}
+
+			Thread thread=CurrentThread;
+				
+			thread.state |= ThreadState.WaitSleepJoin;
+			bool ret=(Join_internal(timeout.Milliseconds,
+						system_thread_handle)==1);
+			thread.state &= ~ThreadState.WaitSleepJoin;
+
+			return(ret);
 		}
 
 		public void Resume() {
@@ -263,8 +315,15 @@ namespace System.Threading
 		private extern UInt32 Start_internal(ThreadStart start);
 		
 		public void Start() {
+			if(state!=ThreadState.Unstarted) {
+				throw new ThreadStateException("Thread has already been started");
+			}
+
+			state=ThreadState.Running;
+			
+			// Don't rely on system_thread_handle being
+			// set before start_delegate runs!
 			system_thread_handle=Start_internal(start_delegate);
-			// FIXME
 		}
 
 		public void Suspend() {

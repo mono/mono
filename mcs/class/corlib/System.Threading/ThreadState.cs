@@ -22,6 +22,9 @@ namespace System.Threading {
 		/// </summary>
 		Running = 0x00000000,
 
+		StopRequested = 0x00000001,
+		SuspendRequested = 0x00000002,
+		
 		/// <summary>
 		/// </summary>
 		Background = 0x00000004,
@@ -37,6 +40,8 @@ namespace System.Threading {
 		/// <summary>
 		/// </summary>
 		WaitSleepJoin = 0x00000020,
+
+		Suspended = 0x00000040,
 
 		/// <summary>
 		/// </summary>
