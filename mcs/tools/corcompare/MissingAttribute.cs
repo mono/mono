@@ -53,7 +53,8 @@ namespace Mono.Util.CorCompare
 				if (attribute != null)
 				{
 					string strName = attribute.ToString ();
-					map.Add (strName, attribute);
+					if (!map.Contains (strName))
+						map.Add (strName, attribute);
 				}
 			}
 			return map;
