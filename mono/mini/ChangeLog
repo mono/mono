@@ -1,3 +1,8 @@
+2003-09-04  Zoltan Varga  <vargaz@freemail.hu>
+
+	* aot.c (load_aot_module): Fix build bustage on platforms without
+	Boehm GC.
+
 2003-09-04  Martin Baulig  <martin@ximian.com>
 
 	* Makefile.am (INCLUDES): Added $(LIBGC_CFLAGS).
