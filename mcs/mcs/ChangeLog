@@ -1,3 +1,13 @@
+2004-01-21  Marek Safar  <marek.safar@seznam.cz>
+
+	* class.cs: Added error CS0538, CS0539 reporting.
+        Fixed crash on Microsoft runtime when field type is void.
+
+	* cs-parser.jay: Added error CS0537 reporting.
+
+	* pending.cs: Added error CS0535 reporting.
+        Improved error report for errors CS0536, CS0534.
+
 2004-01-20  Miguel de Icaza  <miguel@ximian.com>
 
 	Merge a few bits from the Anonymous Method MCS tree.

@@ -1910,11 +1910,6 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		public static void Error_ExplicitInterfaceNotMemberInterface (Location loc, string name)
-		{
-			Report.Error (539, loc, "Explicit implementation: `" + name + "' is not a member of the interface");
-		}
-
 		//
 		// IMemberContainer
 		//
@@ -3224,8 +3219,7 @@ namespace Mono.CSharp {
 						member.InterfaceType, name, ReturnType, ParameterTypes);
 
 				if (member.InterfaceType != null && implementing == null){
-					TypeContainer.Error_ExplicitInterfaceNotMemberInterface (
-						Location, name);
+					Report.Error (539, Location, "'{0}' in explicit interface declaration is not an interface", method_name);
 					return false;
 				}
 			}
@@ -3826,6 +3820,11 @@ namespace Mono.CSharp {
 				if (InterfaceType == null)
 					return false;
 
+				if (InterfaceType.IsClass) {
+					Report.Error (538, Location, "'{0}' in explicit interface declaration is not an interface", ExplicitInterfaceName);
+					return false;
+				}
+
 				// Compute the full name that we need to export.
 				Name = InterfaceType.FullName + "." + ShortName;
 				
@@ -4007,10 +4006,17 @@ namespace Mono.CSharp {
 				return false;
 			}
 
-			FieldBuilder = container.TypeBuilder.DefineField (
-				Name, t, Modifiers.FieldAttr (ModFlags));
+			try {
+				FieldBuilder = container.TypeBuilder.DefineField (
+					Name, t, Modifiers.FieldAttr (ModFlags));
 
-			TypeManager.RegisterFieldBase (FieldBuilder, this);
+				TypeManager.RegisterFieldBase (FieldBuilder, this);
+			}
+			catch (ArgumentException) {
+				Report.Warning (-24, Location, "The Microsoft runtime is unable to use [void|void*] as a field type, try using the Mono runtime.");
+				return false;
+			}
+
 			return true;
 		}
 

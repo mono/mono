@@ -2849,8 +2849,12 @@ class_declaration
 	  {
 		Class new_class = (Class) current_container;
 
-		if ($6 != null)
+		if ($6 != null) {
+			if (new_class.Name == "System.Object") {
+				Report.Error (537, new_class.Location, "The class System.Object cannot have a base class or implement an interface.");
+			}
 			new_class.Bases = (ArrayList) $6;
+		}
 
 		current_container = current_container.Parent;
 		CheckDef (current_container.AddClass (new_class), new_class.Name, new_class.Location);

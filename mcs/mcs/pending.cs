@@ -522,21 +522,18 @@ namespace Mono.CSharp {
 						if (pending_implementations [i].optional)
 							continue;
 						
-						string extra = "";
-						
-						if (pending_implementations [i].found [j])
-							extra = ".  (method might be non-public or static)";
-						Report.Error (
-							536, container.Location,
-							"`" + container.Name + "' does not implement " +
-							"interface member `" +
-							type.FullName + "." + mi.Name + "'" + extra);
+						if (pending_implementations [i].found [j]) {
+							string[] methodLabel = TypeManager.CSharpSignature (mi).Split ('.');
+							Report.Error (536, container.Location, "'{0}' does not implement interface member '{1}'. '{2}.{3}' is either static, not public, or has the wrong return type",
+								container.Name, methodLabel, container.Name, methodLabel[methodLabel.Length - 1]);
+						}
+						else { 
+							Report.Error (535, container.Location, "'{0}' does not implement interface member '{1}'",
+								container.Name, TypeManager.CSharpSignature (mi));
+						}
 					} else {
-						Report.Error (
-							534, container.Location,
-							"`" + container.Name + "' does not implement " +
-							"inherited abstract member `" +
-							type.FullName + "." + mi.Name + "'");
+						Report.Error (534, container.Location, "'{0}' does not implement inherited abstract member '{1}'",
+							container.Name, TypeManager.CSharpSignature (mi));
 					}
 					errors = true;
 					j++;
