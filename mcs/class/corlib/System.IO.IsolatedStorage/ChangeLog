@@ -1,3 +1,9 @@
+2002-02-08  Duncan Mak  <duncan@ximian.com>
+
+	* IsolatedStorage.cs: Looked at MemberInfo.cs, another fellow
+	abstract class. Oh, that's what it means! Removed unnesscessary
+	MonoTODO attributes.
+
 2002-02-07  Duncan Mak  <duncan@ximian.com>
 
 	* IsolatedStorage.cs: Added to CVS, stubbed out the API.

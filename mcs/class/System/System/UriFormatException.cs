@@ -14,7 +14,6 @@ using System.Runtime.Serialization;
 
 namespace System {
 	[Serializable]
-	[MonoTODO] // Doc says this class doesn't implement ISerializable
 	public class UriFormatException : FormatException, ISerializable
 	{
 

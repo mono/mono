@@ -1,3 +1,6 @@
+2002-02-08  Duncan Mak  <duncan@ximian.com>
+
+	* RuntimeArgumentHandle.cs: Added to CVS.
 
 Fri Feb 8 19:14:54 CET 2002 Paolo Molaro <lupus@ximian.com>
 

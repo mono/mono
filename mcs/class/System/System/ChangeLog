@@ -1,3 +1,8 @@
+2002-02-08  Duncan Mak  <duncan@ximian.com>
+
+	* UriFormatException.cs: Removed TODO attribute, the docs are
+	probably wrong here. In any case, this code compiles and should work.
+
 2002-01-31  Duncan Mak  <duncan@ximian.com>
 
 	* UriFormatException.cs: Added bits for serialization.
