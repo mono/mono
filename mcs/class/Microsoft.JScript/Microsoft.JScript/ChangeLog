@@ -1,3 +1,8 @@
+2005-02-09  Cesar Lopez Nataren  <cnataren@novell.com>
+
+	* expression.cs: Added method EmitStore and EmitLoad to Identifier
+	class. Implemented op= operators. Fixes 72393.
+
 2005-02-08  Cesar Lopez Nataren  <cnataren@novell.com>
 
 	* expression.cs (Identifier.Emit): Handle case where we are

@@ -978,7 +978,7 @@ namespace Microsoft.JScript {
 			} else if (binding is VariableDeclaration || binding is Try) {
 				FieldInfo field_info = extract_field_info (binding);
 				LocalBuilder local_builder = extract_local_builder (binding);
-
+				
 				if (field_info != null) {
 					if (assign)
 						ig.Emit (OpCodes.Stsfld, field_info);
@@ -998,6 +998,40 @@ namespace Microsoft.JScript {
 				Console.WriteLine ("Identifier.Emit, binding == null? {0}", binding == null);
 			if (!assign && no_effect)
 				ig.Emit (OpCodes.Pop);				
+		}
+
+		internal void EmitStore (EmitContext ec)
+		{
+			ILGenerator ig = ec.ig;
+
+			if (binding is FormalParam) {
+				FormalParam f = binding as FormalParam;
+				ig.Emit (OpCodes.Starg, (short) f.pos);
+			} else if (binding is VariableDeclaration || binding is Try) {
+				FieldInfo fb = extract_field_info (binding);
+				LocalBuilder local = extract_local_builder (binding);
+				if (fb == null)
+					ig.Emit (OpCodes.Stloc, local);
+				else
+					ig.Emit (OpCodes.Stsfld, fb);					
+			}
+		}
+
+		internal void EmitLoad (EmitContext ec)
+		{
+			ILGenerator ig = ec.ig;
+
+			if (binding is FormalParam) {
+				FormalParam f = binding as FormalParam;
+				ig.Emit (OpCodes.Ldarg_S, f.pos);
+			} else if (binding is VariableDeclaration || binding is Try) {
+				FieldInfo fb = extract_field_info (binding);
+				LocalBuilder local = extract_local_builder (binding);
+				if (fb == null)
+					ig.Emit (OpCodes.Ldloc, local);
+				else
+					ig.Emit (OpCodes.Ldsfld, fb);
+			}
 		}
 
 		void load_script_func (EmitContext ec, FunctionDeclaration binding)
@@ -1281,11 +1315,127 @@ namespace Microsoft.JScript {
 				} 
 				left.Emit (ec);
 			} else {
-				Console.WriteLine (this.ToString ());
+				ILGenerator ig = ec.ig;
+				Type type = null;
+				LocalBuilder local = null;
+				LocalBuilder aux = ig.DeclareLocal (typeof (object));
+				
+				switch (op) {
+				case JSToken.PlusAssign:
+					type = typeof (Plus);
+					local = ig.DeclareLocal (type);
+					ig.Emit (OpCodes.Newobj, type.GetConstructor (new Type [] {}));
+					ig.Emit (OpCodes.Stloc, local);
+					if (left is Identifier)
+						((Identifier) left).EmitLoad (ec);
+					ig.Emit (OpCodes.Stloc, aux);
+					ig.Emit (OpCodes.Ldloc, local);
+					ig.Emit (OpCodes.Ldloc, aux);
+					if (right != null)
+						right.Emit (ec);
+					ig.Emit (OpCodes.Call, type.GetMethod ("EvaluatePlus"));
+					if (left is Identifier)
+						((Identifier) left).EmitStore (ec);
+					return;
+				case JSToken.MinusAssign:
+				case JSToken.MultiplyAssign:
+				case JSToken.DivideAssign:
+				case JSToken.ModuloAssign:
+					type = typeof (NumericBinary);
+					break;
+				case JSToken.BitwiseAndAssign:
+				case JSToken.BitwiseOrAssign:
+				case JSToken.BitwiseXorAssign:
+				case JSToken.LeftShiftAssign:
+				case JSToken.RightShiftAssign:
+				case JSToken.UnsignedRightShiftAssign:
+					type = typeof (BitwiseBinary);
+					break;			       
+				}
+				local = ig.DeclareLocal (type);
+				load_parameter (ig, op);
+
+				ig.Emit (OpCodes.Newobj, type.GetConstructor (new Type [] {typeof (int)}));
+				ig.Emit (OpCodes.Stloc, local);
+
+				if (left is Identifier)
+					((Identifier) left).EmitLoad (ec);
+
+				ig.Emit (OpCodes.Stloc, aux);
+				ig.Emit (OpCodes.Ldloc, local);
+				ig.Emit (OpCodes.Ldloc, aux);
+
+				if (right != null)
+					right.Emit (ec);
+
+				emit_evaluation (op, type, ig);
+				
+				if (left is Identifier)
+					((Identifier) left).EmitStore (ec);
+			}
+		}
+
+		void load_parameter (ILGenerator ig, JSToken op)
+		{
+			switch (op) {
+			case JSToken.MinusAssign: 
+				ig.Emit (OpCodes.Ldc_I4_S, 47);
+				break;
+			case JSToken.BitwiseOrAssign:
+				ig.Emit (OpCodes.Ldc_I4_S, 50);
+				break;
+			case JSToken.BitwiseXorAssign:
+				ig.Emit (OpCodes.Ldc_I4_S, 51);
+				break;
+			case JSToken.BitwiseAndAssign:
+				ig.Emit (OpCodes.Ldc_I4_S, 52);
+				break;
+			case JSToken.LeftShiftAssign:
+				ig.Emit (OpCodes.Ldc_I4_S, 61);
+				break;
+			case JSToken.RightShiftAssign:
+				ig.Emit (OpCodes.Ldc_I4_S, 62);
+				break;				
+			case JSToken.UnsignedRightShiftAssign:
+				ig.Emit (OpCodes.Ldc_I4_S, 63);
+				break;
+			case JSToken.MultiplyAssign:
+				ig.Emit (OpCodes.Ldc_I4_S, 64);
+				break;
+			case JSToken.DivideAssign:
+				ig.Emit (OpCodes.Ldc_I4_S, 65);
+				break;
+			case JSToken.ModuloAssign:
+				ig.Emit (OpCodes.Ldc_I4_S, 66);
+				break;
+			default:
 				throw new NotImplementedException ();
 			}
 		}
-		
+
+		void emit_evaluation (JSToken op, Type type, ILGenerator ig)
+		{
+			switch (op) {
+			case JSToken.MinusAssign:
+			case JSToken.MultiplyAssign:
+			case JSToken.DivideAssign:
+			case JSToken.ModuloAssign:
+				ig.Emit (OpCodes.Call, type.GetMethod ("EvaluateNumericBinary"));
+				break;
+			case JSToken.BitwiseAndAssign:
+			case JSToken.BitwiseOrAssign:
+			case JSToken.BitwiseXorAssign:
+			case JSToken.LeftShiftAssign:
+			case JSToken.RightShiftAssign:
+			case JSToken.UnsignedRightShiftAssign:
+				ig.Emit (OpCodes.Call, type.GetMethod ("EvaluateBitwiseBinary"));
+				break;
+			default:
+				throw new NotImplementedException ();
+			}
+
+		}
+
 		public override string ToString ()
 		{
 			string l = left.ToString ();
