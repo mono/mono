@@ -152,7 +152,6 @@ namespace Mono.CSharp {
 			ArrayList ifaces = root.Interfaces;
 			if (ifaces != null){
 				interface_resolve_order = new ArrayList ();
-				
 				foreach (Interface i in ifaces) 
 					i.DefineInterface (mb);
 			}

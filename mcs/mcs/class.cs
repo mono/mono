@@ -51,6 +51,9 @@ namespace Mono.CSharp {
 		// Holds the list of
 		ArrayList interfaces;
 
+		// Holds order in which interfaces must be closed
+		ArrayList interface_order;
+		
 		// Holds the methods.
 		ArrayList methods;
 
@@ -343,6 +346,14 @@ namespace Mono.CSharp {
 			operators.Add (op);
 
 			return AdditionResult.Success;
+		}
+
+		public void RegisterOrder (Interface iface)
+		{
+			if (interface_order == null)
+				interface_order = new ArrayList ();
+
+			interface_order.Add (iface);
 		}
 		
 		public ArrayList Types {
@@ -790,6 +801,30 @@ namespace Mono.CSharp {
 			bool error;
 
 			//
+			// For the case the type we are looking for is nested within this one
+			// or is in any base class
+			//
+			DeclSpace containing_ds = this;
+
+			while (containing_ds != null){
+				Type current_type = containing_ds.TypeBuilder;
+
+				while (current_type != null) {
+					string pre = current_type.FullName;
+					
+					t = LookupInterfaceOrClass (builder, pre, name, is_class, out error);
+					if (error)
+						return null;
+				
+					if (t != null) 
+						return t;
+
+					current_type = current_type.BaseType;
+				}
+				containing_ds = containing_ds.Parent;
+			}
+			
+			//
 			// Attempt to lookup the class on our namespace and all it's implicit parents
 			//
 			for (string ns = Namespace.Name; ns != null; ns = RootContext.ImplicitParent (ns)) {
@@ -1034,18 +1069,24 @@ namespace Mono.CSharp {
 										TypeAttr,
 										parent, 
 										PackingSize.Unspecified);
-				else
-				//
-				// classes or structs with fields
-				//
+				else {
+					//
+					// classes or structs with fields
+					//
 					TypeBuilder = builder.DefineNestedType (Basename,
 										TypeAttr,
 										parent,
 										ifaces);
+				}
 			}
 
 			RootContext.TypeManager.AddUserType (Name, TypeBuilder, this);
 			RootContext.RegisterOrder (this);
+
+			if (Interfaces != null){
+				foreach (Interface iface in Interfaces)
+					iface.DefineInterface (TypeBuilder);
+			}
 			
 			if (Types != null) {
 				foreach (TypeContainer tc in Types)
@@ -1061,7 +1102,7 @@ namespace Mono.CSharp {
 				foreach (Enum en in Enums)
 					en.DefineEnum (TypeBuilder);
 			}
-			
+
 			InTransit = false;
 			return TypeBuilder;
 		}
@@ -1776,6 +1817,11 @@ namespace Mono.CSharp {
 			if (Enums != null)
 				foreach (Enum en in Enums)
 					en.CloseType ();
+
+			if (interface_order != null){
+				foreach (Interface iface in interface_order)
+					iface.CloseType ();
+			}
 			
 			if (Types != null){
 				foreach (TypeContainer tc in Types)

@@ -12,7 +12,7 @@ TEST_SOURCES = \
 	test-51 test-52	test-53 test-54 test-55 test-56 test-57		test-59 	\
 	test-61	test-62 test-63	test-64 test-65 test-66 test-67 test-68 test-69 test-70	\
 	test-71 test-72 test-73 test-74 test-75		test-77 test-78 test-79 test-80 \
-	test-81 test-82 test-83 test-84         test-86
+	test-81 test-82 test-83 test-84         test-86 test-87
 
 UNSAFE_SOURCES = \
 	unsafe-1 unsafe-2

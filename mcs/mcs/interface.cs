@@ -182,25 +182,26 @@ namespace Mono.CSharp {
 
 		public virtual TypeAttributes InterfaceAttr {
 			get {
-				TypeAttributes x = 0;
+				TypeAttributes x = TypeAttributes.Interface | TypeAttributes.Abstract;
 
-				if ((ModFlags & Modifiers.PUBLIC) != 0)
-					x |= TypeAttributes.Public;
-				else if ((ModFlags & Modifiers.PRIVATE) != 0)
-					x |= TypeAttributes.NotPublic;
-				
 				if (IsTopLevel == false) {
 					
 					if ((ModFlags & Modifiers.PROTECTED) != 0
 					    && (ModFlags & Modifiers.INTERNAL) != 0)
 						x |= TypeAttributes.NestedFamORAssem;
-					
-					if ((ModFlags & Modifiers.PROTECTED) != 0)
+					else if ((ModFlags & Modifiers.PROTECTED) != 0)
 						x |= TypeAttributes.NestedFamily;
-					
-					if ((ModFlags & Modifiers.INTERNAL) != 0)
+					else if ((ModFlags & Modifiers.INTERNAL) != 0)
 						x |= TypeAttributes.NestedAssembly;
-					
+					else if ((ModFlags & Modifiers.PUBLIC) != 0)
+						x |= TypeAttributes.NestedPublic;
+					else
+						x |= TypeAttributes.NestedPrivate;
+				} else {
+					if ((ModFlags & Modifiers.PUBLIC) != 0)
+						x |= TypeAttributes.Public;
+					else if ((ModFlags & Modifiers.PRIVATE) != 0)
+						x |= TypeAttributes.NotPublic;
 				}
 				
 				if ((ModFlags & Modifiers.ABSTRACT) != 0)
@@ -671,26 +672,26 @@ namespace Mono.CSharp {
 			if (parent_builder is ModuleBuilder) {
 				ModuleBuilder builder = (ModuleBuilder) parent_builder;
 				
-				TypeBuilder = builder.DefineType (Name,
-								  TypeAttributes.Interface |
-								  InterfaceAttr |
-								  TypeAttributes.Abstract,
-								  (Type)null,   // Parent Type
-								  ifaces);
+				TypeBuilder = builder.DefineType (
+					Name,
+					InterfaceAttr,
+					(Type)null,   // Parent Type
+					ifaces);
+				RootContext.RegisterOrder (this);
 			} else {
 				TypeBuilder builder = (System.Reflection.Emit.TypeBuilder) parent_builder;
 
-				TypeBuilder = builder.DefineNestedType (Basename,
-									TypeAttributes.Interface |
-									InterfaceAttr |
-									TypeAttributes.Abstract,
-									(Type)null,   // Parent Type
-									ifaces);
+				TypeBuilder = builder.DefineNestedType (
+					Basename,
+					InterfaceAttr,
+					(Type) null, //parent type
+					ifaces);
+
+				TypeContainer tc = TypeManager.LookupTypeContainer (builder);
+				tc.RegisterOrder (this);
 			}
 			
 			RootContext.TypeManager.AddUserInterface (Name, TypeBuilder, this);
-			RootContext.RegisterOrder (this);
-			
 			InTransit = false;
 			
 			return TypeBuilder;

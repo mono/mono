@@ -1,3 +1,40 @@
+2002-03-15  Miguel de Icaza  <miguel@ximian.com>
+
+	* interface.cs: 
+
+2002-03-14  Miguel de Icaza  <miguel@ximian.com>
+
+	* rootcontext.cs (ResolveTree): Always set the
+	interface_resolve_order, because nested interfaces will be calling
+	into us.
+
+	* class.cs (GetInterfaceOrClass): Track the same resolution
+	process used by TypeManager.LookupType.  This fixes the nested
+	type lookups in class declarations (separate path from
+	LookupType). 
+
+	(TypeContainer.DefineType): Also define nested interfaces.
+	(TypeContainer.RegisterOrder): New public function used to
+	register the order in which child interfaces need to be closed.
+
+	Nested interfaces need to be closed after their parents have been
+	created. 
+	
+	* interface.cs (InterfaceAttr): Put all the logic for computing
+	the interface attribute here. 
+
+	(DefineInterface): Register our interface order with the
+	RootContext or with the TypeContainer depending on the case.
+
+2002-03-12  Miguel de Icaza  <miguel@ximian.com>
+
+	* cs-parser.jay: rework foreach statement to work with the new
+	changes to the policy on SimpleNames.
+	
+	* report.cs: support Stacktrace on warnings as well.
+
+	* makefile: drop --unsafe and /unsafe from the compile.
+
 2002-03-13  Ravi Pratap  <ravi@ximian.com>
 
 	* ecore.cs (StandardConversionExists): Modify to take an Expression
@@ -37,6 +74,20 @@ Wed Mar 13 12:32:40 CET 2002 Paolo Molaro <lupus@ximian.com>
 	* makefile: drop --unsafe and /unsafe from the compile.
 
 2002-03-11  Miguel de Icaza  <miguel@ximian.com>
+
+	* ecore.cs (SimpleName.SimpleNameResolve): Perform local variable
+	lookups here, instead of doing that at parse time.  This means
+	that our grammar will not introduce `LocalVariableReferences' as
+	expressions at this point.  That solves the problem of code like
+	this:
+
+	class X {
+	   static void Main ()
+	   { int X = 1;
+	    { X x = null }}}
+
+	This is only half the fix.  The full fix requires parameters to
+	also be handled in this way.
 
 	* Everywhere: Use ec.DeclSpace on calls to LookupType, as this
 	makes the use more obvious of the DeclSpace.  The
