@@ -306,12 +306,6 @@ namespace Mono.CSharp.Debugger
 
 			using (MyMemoryStream stream = new MyMemoryStream ()) {
 				Write (new BinaryWriter (stream));
-				Console.WriteLine ("WROTE SYMFILE: {0} sources, {1} methods, {2} types, " +
-						   "{3} line numbers, {4} locals, {5} namespaces, " +
-						   "{6} bytes of string data",
-						   SourceCount, MethodCount, TypeCount, LineNumberCount,
-						   LocalCount, NamespaceCount, StringSize);
-				Console.WriteLine (ot);
 				return stream.GetContents ();
 			}
 		}
