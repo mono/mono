@@ -1,3 +1,8 @@
+2002-09-30  Dick Porter  <dick@ximian.com>
+
+	* sockets.c (ioctlsocket): Set non-blocking mode in a better way,
+	with fcntl.
+
 2002-09-27  Dick Porter  <dick@ximian.com>
 
 	* semaphores.c: Only include semaphore.h if it's present. Patch
