@@ -33,9 +33,12 @@
 // Copyright (C) Novell Inc., 2004
 //
 //
-// $Revision: 1.4 $
+// $Revision: 1.5 $
 // $Modtime: $
 // $Log: ToolBar.cs,v $
+// Revision 1.5  2004/08/22 00:03:20  ravindra
+// Fixed toolbar control signatures.
+//
 // Revision 1.4  2004/08/21 01:52:08  ravindra
 // Improvments in mouse event handling in the ToolBar control.
 //
@@ -114,6 +117,13 @@ namespace System.Windows.Forms
 
 			redraw = true;
 			recalculate = true;
+			
+			// event handlers
+			this.MouseDown += new MouseEventHandler (ToolBar_MouseDown);
+			this.MouseLeave += new EventHandler (ToolBar_MouseLeave);
+			this.MouseMove += new MouseEventHandler (ToolBar_MouseMove);
+			this.MouseUp += new MouseEventHandler (ToolBar_MouseUp);
+			base.Paint += new PaintEventHandler (ToolBar_Paint);
 		}
 		#endregion Constructor
 
@@ -274,6 +284,8 @@ namespace System.Windows.Forms
 					return;
 
 				foreground_color = value;
+				if (ForeColorChanged != null)
+					ForeColorChanged (this, new EventArgs ());
 				Redraw (false);
 			}
 		}
@@ -483,105 +495,6 @@ namespace System.Windows.Forms
 			Refresh ();
 		}
 
-		protected override void OnMouseDown (MouseEventArgs me)
-   		{
-			base.OnMouseDown (me);
-
-			if (! this.Enabled) return;
-
-			Point hit = new Point (me.X, me.Y);
-
-			// draw the pushed button
-			foreach (ToolBarButton button in buttons) {
-				if (button.Rectangle.Contains (hit) && button.Enabled) {
-					button.Pressed = true;
-					Redraw (false);
-					Invalidate (button.Rectangle);
-					break;
-				}
-			}
-		}
-
-		protected override void OnMouseUp (MouseEventArgs me)
-		{
-			base.OnMouseUp (me);
-
-			if (! this.Enabled) return;
-
-			Point hit = new Point (me.X, me.Y);
-
-			// draw the normal button
-			foreach (ToolBarButton button in buttons) {
-				if (button.Rectangle.Contains (hit) && button.Enabled) {
-					if (button.Pressed)
-						this.OnButtonClick (new ToolBarButtonClickEventArgs (button));
-					else {
-						button.Pressed = false;
-						Redraw (false);
-						Invalidate (button.Rectangle);
-					}
-					break;
-				}
-			}
-		}
-
-		protected override void OnMouseLeave (EventArgs e)
-		{
-			base.OnMouseLeave (e);
-
-			if (! this.Enabled || appearance != ToolBarAppearance.Flat) return;
-
-			if (currentButton != null) {
-				currentButton.Hilight = false;
-				Redraw (false);
-				Invalidate (currentButton.Rectangle);
-				currentButton = null;
-			}
-		}
-
-		protected override void OnMouseMove (MouseEventArgs me)
-		{
-			base.OnMouseMove (me);
-
-			if (! this.Enabled || appearance != ToolBarAppearance.Flat) return;
-
-			Point hit = new Point (me.X, me.Y);
-
-			if (currentButton != null && currentButton.Rectangle.Contains (hit)) {
-				if (currentButton.Hilight)
-					return;
-				currentButton.Hilight = true;
-				Redraw (false);
-				Invalidate (currentButton.Rectangle);
-			}
-			else {
-				foreach (ToolBarButton button in buttons) {
-					if (button.Rectangle.Contains (hit) && button.Enabled) {
-						currentButton = button;
-						if (currentButton.Hilight)
-							break;
-						currentButton.Hilight = true;
-						Redraw (false);
-						Invalidate (currentButton.Rectangle);
-					}
-					else if (button.Hilight) {
-						button.Hilight = false;
-						Redraw (false);
-						Invalidate (button.Rectangle);
-					}
-				}
-			}
-		}
-
-		protected override void OnPaint (PaintEventArgs pe)
-		{
-			if (this.Width <= 0 || this.Height <=  0 || this.Visible == false)
-    				return;
-
-			Draw ();
-			pe.Graphics.DrawImage (this.ImageBuffer, pe.ClipRectangle, pe.ClipRectangle, GraphicsUnit.Pixel);
-		}
-
 		protected override void OnResize (EventArgs e)
 		{
 			base.OnResize (e);
@@ -605,6 +518,111 @@ namespace System.Windows.Forms
 		#endregion Protected Methods
 
 		#region Private Methods
+		private void ToolBar_MouseDown (object sender, MouseEventArgs me)
+		{
+			if (! this.Enabled) return;
+
+			Point hit = new Point (me.X, me.Y);
+
+			// draw the pushed button
+			foreach (ToolBarButton button in buttons) 
+			{
+				if (button.Rectangle.Contains (hit) && button.Enabled) 
+				{
+					button.Pressed = true;
+					Redraw (false);
+					Invalidate (button.Rectangle);
+					break;
+				}
+			}
+		}
+
+		private void ToolBar_MouseUp (object sender, MouseEventArgs me)
+		{
+			if (! this.Enabled) return;
+
+			Point hit = new Point (me.X, me.Y);
+
+			// draw the normal button
+			foreach (ToolBarButton button in buttons) 
+			{
+				if (button.Rectangle.Contains (hit) && button.Enabled) 
+				{
+					if (button.Pressed)
+						this.OnButtonClick (new ToolBarButtonClickEventArgs (button));
+					else 
+					{
+						button.Pressed = false;
+						Redraw (false);
+						Invalidate (button.Rectangle);
+					}
+					break;
+				}
+			}
+		}
+
+		private void ToolBar_MouseLeave (object sender, EventArgs e)
+		{
+			if (! this.Enabled || appearance != ToolBarAppearance.Flat) return;
+
+			if (currentButton != null) 
+			{
+				currentButton.Hilight = false;
+				Redraw (false);
+				Invalidate (currentButton.Rectangle);
+				currentButton = null;
+			}
+		}
+
+		private void ToolBar_MouseMove (object sender, MouseEventArgs me)
+		{
+			if (! this.Enabled || appearance != ToolBarAppearance.Flat) return;
+
+			Point hit = new Point (me.X, me.Y);
+
+			if (currentButton != null && currentButton.Rectangle.Contains (hit)) 
+			{
+				if (currentButton.Hilight)
+					return;
+				currentButton.Hilight = true;
+				Redraw (false);
+				Invalidate (currentButton.Rectangle);
+			}
+			else 
+			{
+				foreach (ToolBarButton button in buttons) 
+				{
+					if (button.Rectangle.Contains (hit) && button.Enabled) 
+					{
+						currentButton = button;
+						if (currentButton.Hilight)
+							break;
+						currentButton.Hilight = true;
+						Redraw (false);
+						Invalidate (currentButton.Rectangle);
+					}
+					else if (button.Hilight) 
+					{
+						button.Hilight = false;
+						Redraw (false);
+						Invalidate (button.Rectangle);
+					}
+				}
+			}
+		}
+
+		private void ToolBar_Paint (object sender, PaintEventArgs pe)
+		{
+			if (this.Width <= 0 || this.Height <=  0 || this.Visible == false)
+				return;
+
+			Draw ();
+			pe.Graphics.DrawImage (this.ImageBuffer, pe.ClipRectangle, pe.ClipRectangle, GraphicsUnit.Pixel);
+
+			if (Paint != null)
+				Paint (this, pe);
+		}
+
 		private void Redraw (bool recalculate)
 		{
 			redraw = true;

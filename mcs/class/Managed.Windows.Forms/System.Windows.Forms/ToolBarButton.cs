@@ -29,9 +29,12 @@
 //     - DropDownMenu
 //     - Adding a button to two toolbars
 //
-// $Revision: 1.3 $
+// $Revision: 1.4 $
 // $Modtime: $
 // $Log: ToolBarButton.cs,v $
+// Revision 1.4  2004/08/22 00:03:20  ravindra
+// Fixed toolbar control signatures.
+//
 // Revision 1.3  2004/08/21 01:52:08  ravindra
 // Improvments in mouse event handling in the ToolBar control.
 //
@@ -147,6 +150,9 @@ namespace System.Windows.Forms
 		public int ImageIndex {
 			get { return imageIndex; }
 			set {
+				if (value < -1)
+					throw new ArgumentException ("ImageIndex value must be above or equal to -1.");
+
 				if (value == imageIndex)
 					return;
 
@@ -256,6 +262,7 @@ namespace System.Windows.Forms
 		{
 			Console.WriteLine ("TBButton: style: " + this.Style);
 			Console.WriteLine ("TBButton: wrapper: " + this.Wrapper);
+			Console.WriteLine ("TBButton: hilight: " + this.Hilight);
 			Console.WriteLine ("TBButton: loc: " + this.Location);
 			Console.WriteLine ("TBButton: rect: " + this.Rectangle);
 			Console.WriteLine ("TBButton: txt: " + this.Text);

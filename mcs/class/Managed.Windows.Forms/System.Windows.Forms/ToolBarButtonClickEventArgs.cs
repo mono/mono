@@ -26,9 +26,12 @@
 //	Ravindra (rkumar@novell.com)
 //
 //
-// $Revision: 1.2 $
+// $Revision: 1.3 $
 // $Modtime: $
 // $Log: ToolBarButtonClickEventArgs.cs,v $
+// Revision 1.3  2004/08/22 00:03:20  ravindra
+// Fixed toolbar control signatures.
+//
 // Revision 1.2  2004/08/21 21:52:54  pbartok
 // - Added missing base class
 //
@@ -38,6 +41,8 @@
 //
 
 // COMPLETE
+
+using System;
 
 namespace System.Windows.Forms
 {
