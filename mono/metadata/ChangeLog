@@ -1,3 +1,8 @@
+2004-05-28  Zoltan Varga  <vargaz@freemail.hu>
+
+	* marshal.c (mono_marshal_get_managed_wrapper): Add proper support for
+	byref struct arguments in native->managed marshalling.
+
 2004-05-28	Patrik Torstensson	<totte@hiddenpeaks.com>
 
 	* marshal.c (mono_marshal_get_runtime_invoke): correctly
