@@ -1290,20 +1290,41 @@ catch_args
 do_statement
 	: DO opt_do_construct EOL
 	  opt_statement_list
-	  LOOP opt_do_construct EOL
+	  LOOP opt_do_construct
 	  {
-		$$ = new Do ((Statement) $4, (Expression) $2, lexer.Location);
+	  	Expression t_before = (Expression) $2;
+		Expression t_after = (Expression) $6;
+
+		if  (((t_before == null) && (t_after == null)) ||
+		     ((t_before != null) && (t_after != null)))
+			Report.Error (9999, "Syntax Error in Do..Loop statement");
+			
+		Expression t = (t_before != null) ? t_before : t_after;
+		DoOptions test_type = (t_before != null) ? DoOptions.TEST_BEFORE : DoOptions.TEST_AFTER;
+		$$ = new Do ((Statement) $4, (Expression) t, test_type, lexer.Location);
 	  }
 	  ;
 
 opt_do_construct
-	: /* empty */
+	: /* empty */ { $$ = null; }
 	| while_or_until boolean_expression
+	  {
+	  	Expression e;
+
+		if ((DoOptions)$1 == DoOptions.WHILE) {
+			e = (Expression) $2;
+		}
+		else
+		{
+			e = new Unary (Unary.Operator.LogicalNot, (Expression) $2, lexer.Location);
+		}
+		$$ = e;
+	  }
 	;
 
 while_or_until
-	: WHILE
-	| UNTIL
+	: WHILE { $$ = DoOptions.WHILE; }
+	| UNTIL { $$ = DoOptions.UNTIL; }
 	;
 
 while_statement
