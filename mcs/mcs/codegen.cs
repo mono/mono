@@ -78,7 +78,7 @@ namespace CIR {
 				assembly_builder.Save (Basename (name));
 			} catch (System.IO.IOException io){
 				Report.Error (16, "Coult not write to file `"+name+"', cause: " + io.Message);
-			}
+			} 
 		}
 	}
 

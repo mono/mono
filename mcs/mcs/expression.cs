@@ -369,7 +369,6 @@ namespace CIR {
 		{
 			ILGenerator ig = ec.ig;
 			Type expr_type = expr.Type;
-			ExprClass eclass;
 			
 			if (method != null) {
 
@@ -454,8 +453,7 @@ namespace CIR {
 				
 			case Operator.PostIncrement:
 			case Operator.PostDecrement:
-				eclass = expr.ExprClass;
-				if (eclass == ExprClass.Variable){
+				if (expr is IStackStore){
 					//
 					// Resolve already verified that it is an "incrementable"
 					// 
@@ -468,12 +466,8 @@ namespace CIR {
 					else
 						ig.Emit (OpCodes.Add);
 					((IStackStore) expr).Store (ec);
-				} else if (eclass == ExprClass.PropertyAccess){
-					throw new Exception ("Handle Properties here");
-				} else if (eclass == ExprClass.IndexerAccess) {
-					throw new Exception ("Handle Indexers here");
 				} else {
-					Console.WriteLine ("Unknown exprclass: " + eclass);
+					Console.WriteLine ("Unknown exprclass: " + expr);
 				}
 				break;
 				
@@ -784,7 +778,7 @@ namespace CIR {
 		// Note that handling the case l == Decimal || r == Decimal
 		// is taken care of by the Step 1 Operator Overload resolution.
 		//
-		void DoNumericPromotions (EmitContext ec, Type l, Type r)
+		bool DoNumericPromotions (EmitContext ec, Type l, Type r)
 		{
 			if (l == TypeManager.double_type || r == TypeManager.double_type){
 				//
@@ -895,21 +889,20 @@ namespace CIR {
 				Expression l_tmp, r_tmp;
 
 				l_tmp = ForceConversion (ec, left, TypeManager.int32_type);
-				if (l_tmp == null) {
-					error19 ();
-					left = l_tmp;
-					return;
-				}
+				if (l_tmp == null)
+					return false;
 				
 				r_tmp = ForceConversion (ec, right, TypeManager.int32_type);
-				if (r_tmp == null) {
-					error19 ();
-					right = r_tmp;
-					return;
-				}
+				if (r_tmp == null)
+					return false;
+
+				left = l_tmp;
+				right = r_tmp;
 				
 				type = TypeManager.int32_type;
 			}
+
+			return true;
 		}
 
 		void error19 ()
@@ -1062,16 +1055,39 @@ namespace CIR {
 					type = TypeManager.bool_type;
 					return this;
 				}
-				//
-				// fall here.
-				//
+
 			}
 
 			//
 			// We are dealing with numbers
 			//
 
-			DoNumericPromotions (ec, l, r);
+			if (!DoNumericPromotions (ec, l, r)){
+				// Attempt:
+				//
+				// operator != (object a, object b)
+				// operator == (object a, object b)
+				//
+
+				if (oper == Operator.Equality || oper == Operator.Inequality){
+					Expression li, ri;
+					li = ConvertImplicit (ec, left, TypeManager.object_type, loc);
+					if (li != null){
+						ri = ConvertImplicit (ec, right, TypeManager.object_type,
+								      loc);
+						if (ri != null){
+							left = li;
+							right = ri;
+							
+							type = TypeManager.bool_type;
+							return this;
+						}
+					}
+				}
+
+				error19 ();
+				return null;
+			}
 
 			if (left == null || right == null)
 				return null;
@@ -3203,7 +3219,6 @@ namespace CIR {
 	}
 
 	public class ElementAccess : Expression {
-		
 		public ArrayList  Arguments;
 		public Expression Expr;
 		public Location   loc;
@@ -3251,7 +3266,7 @@ namespace CIR {
 			//
 			// I am experimenting with this pattern.
 			//
-			if (Expr.Type == TypeManager.array_type)
+			if (Expr.Type.IsSubclassOf (TypeManager.array_type))
 				return (new ArrayAccess (this)).Resolve (ec);
 			else
 				return (new IndexerAccess (this)).Resolve (ec);
@@ -3262,7 +3277,7 @@ namespace CIR {
 			if (!CommonResolve (ec))
 				return null;
 
-			if (Expr.Type == TypeManager.array_type)
+			if (Expr.Type.IsSubclassOf (TypeManager.array_type))
 				return (new ArrayAccess (this)).ResolveLValue (ec, right_side);
 			else
 				return (new IndexerAccess (this)).ResolveLValue (ec, right_side);
@@ -3274,7 +3289,10 @@ namespace CIR {
 		}
 	}
 
-	public class ArrayAccess : Expression, IStackStore {
+	//
+	// Implements array access 
+	//
+	public class ArrayAccess : Expression, IAssignMethod {
 		//
 		// Points to our "data" repository
 		//
@@ -3284,38 +3302,137 @@ namespace CIR {
 		{
 			ea = ea_data;
 			eclass = ExprClass.Variable;
-
-			//
-			// FIXME: Figure out the type here
-			//
 		}
 
-		Expression CommonResolve (EmitContext ec)
-		{
-			return this;
-		}
-		
 		public override Expression DoResolve (EmitContext ec)
 		{
 			if (ea.Expr.ExprClass != ExprClass.Variable) {
 				report118 (ea.loc, ea.Expr, "variable");
 				return null;
 			}
-			
-			throw new Exception ("Implement me");
-		}
 
-		public void Store (EmitContext ec)
-		{
-			throw new Exception ("Implement me !");
+			Type t = ea.Expr.Type;
+
+			if (t.GetArrayRank () != ea.Arguments.Count){
+				Report.Error (22, ea.loc,
+					      "Incorrect number of indexes for array " +
+					      " expected: " + t.GetArrayRank () + " got: " +
+					      ea.Arguments.Count);
+				return null;
+			}
+			type = t.GetElementType ();
+			eclass = ExprClass.Variable;
+
+			return this;
 		}
 
 		public override void Emit (EmitContext ec)
 		{
-			throw new Exception ("Implement me !");
+			int rank = ea.Expr.Type.GetArrayRank ();
+			ILGenerator ig = ec.ig;
+
+			ea.Expr.Emit (ec);
+
+			foreach (Argument a in ea.Arguments)
+				a.Expr.Emit (ec);
+
+			if (rank == 1){
+				if (type == TypeManager.byte_type)
+					ig.Emit (OpCodes.Ldelem_I1);
+				else if (type == TypeManager.sbyte_type)
+					ig.Emit (OpCodes.Ldelem_U1);
+				else if (type == TypeManager.short_type)
+					ig.Emit (OpCodes.Ldelem_I2);
+				else if (type == TypeManager.ushort_type)
+					ig.Emit (OpCodes.Ldelem_U2);
+				else if (type == TypeManager.int32_type)
+					ig.Emit (OpCodes.Ldelem_I4);
+				else if (type == TypeManager.uint32_type)
+					ig.Emit (OpCodes.Ldelem_U4);
+				else if (type == TypeManager.uint64_type)
+					ig.Emit (OpCodes.Ldelem_I8);
+				else if (type == TypeManager.int64_type)
+					ig.Emit (OpCodes.Ldelem_I8);
+				else if (type == TypeManager.float_type)
+					ig.Emit (OpCodes.Ldelem_R4);
+				else if (type == TypeManager.double_type)
+					ig.Emit (OpCodes.Ldelem_R8);
+				else if (type == TypeManager.intptr_type)
+					ig.Emit (OpCodes.Ldelem_I);
+				else
+					ig.Emit (OpCodes.Ldelem_Ref);
+			} else {
+				ModuleBuilder mb = ec.TypeContainer.RootContext.ModuleBuilder;
+				Type [] args = new Type [ea.Arguments.Count];
+				MethodInfo get;
+				
+				int i = 0;
+				
+				foreach (Argument a in ea.Arguments)
+					args [i++] = a.Type;
+				
+				get = mb.GetArrayMethod (
+					ea.Expr.Type, "Get",
+					CallingConventions.HasThis |
+					CallingConventions.Standard,
+					type, args);
+				
+				ig.Emit (OpCodes.Call, get);
+			}
+		}
+
+		public void EmitAssign (EmitContext ec, Expression source)
+		{
+			int rank = ea.Expr.Type.GetArrayRank ();
+			ILGenerator ig = ec.ig;
+
+			ea.Expr.Emit (ec);
+
+			foreach (Argument a in ea.Arguments)
+				a.Expr.Emit (ec);
+
+			source.Emit (ec);
+
+			Type t = source.Type;
+			if (rank == 1){
+				if (t == TypeManager.byte_type || t == TypeManager.sbyte_type)
+					ig.Emit (OpCodes.Stelem_I1);
+				else if (t == TypeManager.short_type || t == TypeManager.ushort_type)
+					ig.Emit (OpCodes.Stelem_I2);
+				else if (t == TypeManager.int32_type || t == TypeManager.uint32_type)
+					ig.Emit (OpCodes.Stelem_I4);
+				else if (t == TypeManager.int64_type || t == TypeManager.uint64_type)
+					ig.Emit (OpCodes.Stelem_I8);
+				else if (t == TypeManager.float_type)
+					ig.Emit (OpCodes.Stelem_R4);
+				else if (t == TypeManager.double_type)
+					ig.Emit (OpCodes.Stelem_R8);
+				else if (t == TypeManager.intptr_type)
+					ig.Emit (OpCodes.Stelem_I);
+				else
+					ig.Emit (OpCodes.Stelem_Ref);
+			} else {
+				ModuleBuilder mb = ec.TypeContainer.RootContext.ModuleBuilder;
+				Type [] args = new Type [ea.Arguments.Count + 1];
+				MethodInfo set;
+				
+				int i = 0;
+				
+				foreach (Argument a in ea.Arguments)
+					args [i++] = a.Type;
+
+				args [i] = type;
+				
+				set = mb.GetArrayMethod (
+					ea.Expr.Type, "Set",
+					CallingConventions.HasThis |
+					CallingConventions.Standard,
+					TypeManager.void_type, args);
+				
+				ig.Emit (OpCodes.Call, set);
+			}
 		}
 	}
-
 	class Indexers {
 		public ArrayList getters, setters;
 		static Hashtable map;
@@ -3418,7 +3535,7 @@ namespace CIR {
 					      "it lacks a `get' accessor");
 					return null;
 			}
-				
+
 			type = get.ReturnType;
 			eclass = ExprClass.Value;
 			return this;

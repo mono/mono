@@ -16,11 +16,6 @@
 	Move our utility FindMembers from TypeContainer to Decl, because interfaces
 	are also scanned with it.
 
-* Ordering
-
-	Can a constant_expression invoke overloaded operators?
-	Explicit user-defined conversions?
-
 * Visibility
 
 	I am not reporting errors on visibility yet.
@@ -239,3 +234,32 @@
 
 	And optimize to deal with the array rather than getting the enumerator
 	out of it.
+
+* Indexer bugs:
+
+	the following wont work:
+
+	x [0] = x [1] = N
+
+	if x has indexers, the value of x [N] set is set to void.  This needs to be
+	fixed.
+
+* Preincrement/pre-decrement is not working on array elements. 
+
+	We are catching this now.  But it does not work.
+
+* Infinite loop
+
+	The following goes into an infinite loop because of the implicit
+	variable declaration and the initialization, easy to fix:
+
+class X {
+
+	static void Main ()
+	{
+		for (int i = 0; i < 10; i++)
+			;
+	}
+}
+
+	Set a breakpoint in assign.DoResolve to watch it.

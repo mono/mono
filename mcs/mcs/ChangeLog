@@ -3,6 +3,22 @@
 	* expression.cs (ArrayCreation.Emit): Some bits to initialize data
 	in an array.
 
+	(Binary.ResolveOperator): Handle operator != (object a, object b)
+	and operator == (object a, object b);
+
+	(Binary.DoNumericPromotions): Indicate whether the numeric
+	promotion was possible.
+
+	(ArrayAccess.DoResolve, ArrayAccess.Emit, ArrayAccess.EmitAssign):
+	Implement.  
+
+	Made the ArrayAccess implement interface IAssignMethod instead of
+	IStackStore as the order in which arguments are passed reflects
+	this.
+
+	* assign.cs: Instead of using expr.ExprClass to select the way of
+	assinging, probe for the IStackStore/IAssignMethod interfaces.
+
 	* typemanager.cs: Load InitializeArray definition.
 
 	* rootcontext.cs (RootContext.MakeStaticData): Used to define

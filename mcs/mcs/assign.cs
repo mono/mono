@@ -16,7 +16,7 @@ namespace CIR {
 	//   This interface is implemented by Expressions whose values can not
 	//   store the result on the top of the stack.
 	//
-	//   Expressions implementing this (Properties and Indexers) would
+	//   Expressions implementing this (Properties, Indexers and Arrays) would
 	//   perform an assignment of the Expression "source" into its final
 	//   location.
 	//
@@ -107,7 +107,7 @@ namespace CIR {
 			source = source.Resolve (ec);
 			if (source == null)
 				return null;
-			
+
 			target = target.ResolveLValue (ec, source);
 			
 			if (target == null)
@@ -170,9 +170,28 @@ namespace CIR {
 		{
 			ILGenerator ig = ec.ig;
 			ExprClass eclass = target.ExprClass;
-			
-			if (eclass == ExprClass.Variable){
 
+			//
+			// Properties, Indexers and Arrays are of this kind
+			// (Arrays because multi-dimensional arrays are manipulated
+			// through calls that the runtime expands. 
+			//
+			if (target is IAssignMethod){
+				IAssignMethod am = (IAssignMethod) target;
+
+				if (is_statement)
+					am.EmitAssign (ec, source);
+				else {
+					LocalTemporary tempo;
+					
+					tempo = new LocalTemporary (ec, source.Type);
+
+					source.Emit (ec);
+					tempo.Store (ec);
+					am.EmitAssign (ec, source);
+					tempo.Emit (ec);
+				}
+			} else if (target is IStackStore) {
 				//
 				// If it is an instance field, load the this pointer
 				//
@@ -189,22 +208,6 @@ namespace CIR {
 					ig.Emit (OpCodes.Dup);
 
 				((IStackStore) target).Store (ec);
-			} else if (eclass == ExprClass.PropertyAccess ||
-				   eclass == ExprClass.IndexerAccess){
-				IAssignMethod am = (IAssignMethod) target;
-
-				if (is_statement)
-					am.EmitAssign (ec, source);
-				else {
-					LocalTemporary tempo;
-					
-					tempo = new LocalTemporary (ec, source.Type);
-
-					source.Emit (ec);
-					tempo.Store (ec);
-					am.EmitAssign (ec, source);
-					tempo.Emit (ec);
-				}
 			} else {
 				Console.WriteLine ("Unhandled class: " + eclass + "\n Type:" + target);
 			}
