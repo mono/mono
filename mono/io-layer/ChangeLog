@@ -1,3 +1,8 @@
+2003-05-20  Dick Porter  <dick@ximian.com>
+
+	* io.c (FindFirstFile): Include . files in the glob.  Fixes bug
+	43229.
+
 2003-05-19  Dick Porter  <dick@ximian.com>
 
 	* threads.c: Set the new thread's stack size to 2M.  Fix needed
