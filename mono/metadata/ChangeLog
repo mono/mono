@@ -1,4 +1,8 @@
 
+Fri Jun 7 22:07:25 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* icall.c: more signature fixes that used uint instead of int.
+
 Fri Jun 7 20:41:56 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* reflection.c: fixed signature of field refs.
