@@ -146,5 +146,123 @@ namespace System.Web.UI.WebControls
 				}
 			}
 		}
+                
+                protected override void OnPreRender(EventArgs e)
+                {
+                }
+                
+                protected override void Render(HtmlTextWriter writer)
+		{
+			if (!base.Enabled) return;
+	
+			string[] messages;
+			bool toDisplay;
+			bool showSummary;
+	
+			if (base.Site != null && base.Site.DesignMode)
+			{
+				showSummary = true;
+				messages = new string[]{HttpRuntime.FormatResourceString("ValSummary_error_message_1"),
+							HttpRuntime.FormatResourceString("ValSummary_error_message_2")};
+				toDisplay = true;
+				uplevelRender = false;
+			}
+			else
+			{
+				showSummary = false;
+				messages = null;
+	
+				//Messages count
+				int numOfMsg = 0;
+				for (int i = 0; i < base.Page.Validators.Count; i++)
+				{
+					IValidator currentValidator = base.Page.Validators[i];
+					if (!currentValidator.IsValid)
+					{
+						showSummary = true;
+						if (currentValidator.ErrorMessage.Length != 0)
+							numOfMsg++;
+					}
+				}
+	
+				if (numOfMsg != 0)
+				{
+					messages = new string[(int)numOfMsg];
+					for (int i = 0; i < base.Page.Validators.Count; i++)
+					{
+						IValidator currentValidator = base.Page.Validators[i];
+						if (!currentValidator.IsValid &&
+						     currentValidator.ErrorMessage != null &&
+						     currentValidator.ErrorMessage.Length != 0)
+							messages[i] = String.Copy(currentValidator.ErrorMessage);
+					}
+				}
+	
+				toDisplay = ShowSummary ? showSummary : false;
+				if (!toDisplay && uplevelRender)
+					base.Style["display"] = "none";
+			}
+			if (base.Page != null)
+			{
+				base.Page.VerifyRenderingInServerForm(this);
+			}
+			bool tagRequired = !uplevelRender ? toDisplay : true;
+			if (tagRequired)
+			{
+				base.RenderBeginTag(writer);
+			}
+			if (toDisplay)
+			{
+				string str1, str2, str3, str4, str5;
+			       
+	
+				switch (DisplayMode)
+				{
+				case ValidationSummaryDisplayMode.List:
+					str1 = "<br>";
+					str2 = "";
+					str3 = "";
+					str4 = "<br>";
+					str5 = "";
+					break;
+					
+				case ValidationSummaryDisplayMode.SingleParagraph:
+					str1 = " ";
+					str2 = "";
+					str3 = "";
+					str4 = " ";
+					str5 = "<br>";
+					break;
+					
+				default:
+					str1 = "";
+					str2 = "<ul>";
+					str3 = "<li>";
+					str4 = "</li>";
+					str5 = "</ul>";
+					break;
+				}
+				if (HeaderText.Length > 0)
+				{
+					writer.Write(HeaderText);
+					writer.Write(str1);
+				}
+				writer.Write(str2);
+				if (messages != null)
+				{
+					for (int i = 0; i < (int)messages.Length; i++)
+					{
+						writer.Write(str3);
+						writer.Write(messages[i]);
+						writer.Write(str4);
+					}
+				}
+				writer.Write(str5);
+			}
+			if (tagRequired)
+			{
+				base.RenderEndTag(writer);
+			}
+		}
 	}
 }

@@ -252,7 +252,7 @@ namespace System.Web.UI.WebControls
 
 			if(enabled)
 			{
-				Enabled = false;
+				base.Enabled = false;
 			}
 		}
 

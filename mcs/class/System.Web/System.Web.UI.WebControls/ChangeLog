@@ -1,3 +1,9 @@
+2003-11-06 Jackson Harper <jackson@ximian.com>
+
+	* ValidationSummary.cs: Add Render method. Patch by Yaron Shkop.
+	* BaseValidator.cs: Disable base control so the isValid flag is
+	not reset.
+	
 2003-11-03 Jackson Harper <jackson@ximian.com>
 
 	* TemplateColumn.cs: Use the same renderer for selected items as
