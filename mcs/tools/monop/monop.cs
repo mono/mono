@@ -3,8 +3,10 @@
 //
 // Authors:
 //	Ben Maurer (bmaurer@users.sourceforge.net)
+//	John Luke  (john.luke@gmail.com)
 //
 // (C) 2004 Ben Maurer
+// (C) 2004 John Luke
 //
 
 
@@ -68,6 +70,9 @@ class MonoP {
 			// if it looks like a fullname try that
 			else if (assembly.Split (',').Length == 4)
 				a = Assembly.Load (assembly);
+			// see if MONO_PATH has it
+			else
+				a = LoadFromMonoPath (assembly);
 		} catch {
 			// ignore exception it gets handled below
 		}
@@ -83,6 +88,20 @@ class MonoP {
 		}
 
 		return a;
+	}
+
+	static Assembly LoadFromMonoPath (string assembly)
+	{
+		// ; on win32, : everywhere else
+		char sep = (Path.DirectorySeparatorChar == '/' ? ':' : ';');
+		string[] paths = Environment.GetEnvironmentVariable ("MONO_PATH").Split (sep);
+		foreach (string path in paths)
+		{	
+			string apath = Path.Combine (path, assembly);
+			if (File.Exists (apath))
+				return Assembly.LoadFrom (apath);	
+		}
+		return null;
 	}
 
 	static Type GetType (string tname)

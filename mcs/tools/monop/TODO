@@ -7,4 +7,3 @@ TODO
 	* attributes (Serializable, etc)
 	* add declared only / inherited option
 	* handle ~ based paths (ex -r:~/foo.dll)
-	* handle MONO_PATH
