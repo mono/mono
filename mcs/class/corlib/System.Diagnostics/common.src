@@ -2,3 +2,5 @@ BooleanSwitch.cs
 Switch.cs
 TraceLevel.cs
 TraceSwitch.cs
+DebuggableAttribute.cs
+ConditionalAttribute.cs
