@@ -1,3 +1,9 @@
+2004-10-26  Miguel de Icaza  <miguel@ximian.com>
+
+	* mini.c (mono_jit_free_method): Provide extra information for
+	this error.  Currently this leaks, but will be turned into a
+	developer option in the future.
+
 2004-10-26  Zoltan Varga  <vargaz@freemail.hu>
 
 	* driver.c (mono_main): Applied patch from Willibald Krenn <willibald.krenn@gmx.at>. Make --graph work for icalls and pinvoke methods.
