@@ -1,5 +1,7 @@
 2004-07-06  Zoltan Varga  <vargaz@freemail.hu>
 
+	* Makefile.am (EXTRA_DIST): Add inssel-long[32].brg.
+
 	* inssel.brg: Fix warning. Add rules for SAVE_LMF and RESTORE_LMF.
 
 2004-07-06  Ben Maurer  <bmaurer@ximian.com>
