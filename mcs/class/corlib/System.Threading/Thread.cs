@@ -282,7 +282,6 @@ namespace System.Threading
 		[MonoTODO]
 		public ApartmentState ApartmentState {
 			get {
-				// FIXME
 				return(ApartmentState.Unknown);
 			}
 			
@@ -429,7 +428,6 @@ namespace System.Threading
 		[MonoTODO]
 		public ThreadPriority Priority {
 			get {
-				// FIXME
 				return(ThreadPriority.Lowest);
 			}
 			
@@ -457,7 +455,6 @@ namespace System.Threading
 
 		[MonoTODO]
 		public void Interrupt() {
-			// FIXME
 		}
 
 		// The current thread joins with 'this'. Set ms to 0 to block
