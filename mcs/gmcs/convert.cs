@@ -252,7 +252,7 @@ namespace Mono.CSharp {
 					return new EmptyCast (expr, target_type);
 
 			// from a generic type definition to a generic instance.
-			if (TypeManager.IsEqualGenericType (expr_type, target_type))
+			if (TypeManager.IsEqual (expr_type, target_type))
 				return new EmptyCast (expr, target_type);
 
 			return null;
@@ -335,7 +335,7 @@ namespace Mono.CSharp {
 				return true;
 
 			// from a generic type definition to a generic instance.
-			if (TypeManager.IsEqualGenericType (expr_type, target_type))
+			if (TypeManager.IsEqual (expr_type, target_type))
 				return true;
 
 			return false;

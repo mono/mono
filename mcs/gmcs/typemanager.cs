@@ -1725,42 +1725,6 @@ public class TypeManager {
 		return tc.Kind == Kind.Interface;
 	}
 
-	public static bool IsEqualGenericType (Type a, Type b)
-	{
-		if ((a is TypeBuilder) && a.IsGenericTypeDefinition && b.IsGenericInstance) {
-			//
-			// `a' is a generic type definition's TypeBuilder and `b' is a
-			// generic instance of the same type.
-			//
-			// Example:
-			//
-			// class Stack<T>
-			// {
-			//     void Test (Stack<T> stack) { }
-			// }
-			//
-			// The first argument of `Test' will be the generic instance
-			// "Stack<!0>" - which is the same type than the "Stack" TypeBuilder.
-			//
-			if (a != b.GetGenericTypeDefinition ())
-				return false;
-
-			Type[] aparams = a.GetGenericArguments ();
-			Type[] bparams = b.GetGenericArguments ();
-
-			if (aparams.Length != bparams.Length)
-				return false;
-
-			for (int i = 0; i < aparams.Length; i++)
-				if (!aparams [i].Equals (bparams [i]))
-					return false;
-
-			return true;
-		}
-
-		return false;
-	}
-
 	public static bool IsEqual (Type a, Type b)
 	{
 		if (a.Equals (b))
@@ -1781,6 +1745,9 @@ public class TypeManager {
 			// The first argument of `Test' will be the generic instance
 			// "Stack<!0>" - which is the same type than the "Stack" TypeBuilder.
 			//
+			//
+			// We hit this via Closure.Filter() for gen-82.cs.
+			//
 			if (a != b.GetGenericTypeDefinition ())
 				return false;
 
@@ -1791,7 +1758,7 @@ public class TypeManager {
 				return false;
 
 			for (int i = 0; i < aparams.Length; i++)
-				if (!aparams [i].Equals (bparams [i]))
+				if (!IsEqual (aparams [i], bparams [i]))
 					return false;
 
 			return true;

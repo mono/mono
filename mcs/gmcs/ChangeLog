@@ -1,5 +1,12 @@
 2004-10-11  Martin Baulig  <martin@ximian.com>
 
+	* typemanager.cs
+	(TypeManager.IsEqualGenericType): Removed, use IsEqual() instead.
+	(TypeManager.IsEqual): Call ourself recursively instead of using
+	Type.IsEqual().	
+
+2004-10-11  Martin Baulig  <martin@ximian.com>
+
 	* class.cs (TypeContainer.DefineType): Only call TypeParameter.Define()
 	on our own type parameters, not on the ones we inherit from a containing
 	class.
