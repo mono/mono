@@ -202,110 +202,73 @@ namespace System.Web.Services.Description {
 			ns.Add ("s0", TargetNamespace);
 			return ns;
 		}
+		
+		internal static void WriteExtensions (XmlWriter writer, object ob)
+		{
+			ServiceDescriptionFormatExtensionCollection extensions = ExtensionManager.GetExtensionPoint (ob);
+			if (extensions != null)
+			{
+				foreach (ServiceDescriptionFormatExtension ext in extensions)
+					WriteExtension (writer, ext);
+			}
+		}
+		
+		static void WriteExtension (XmlWriter writer, ServiceDescriptionFormatExtension ext)
+		{
+			Type type = ext.GetType ();
+			ExtensionInfo info = ExtensionManager.GetFormatExtensionInfo (type);
+			string prefix = info.Prefix;
+			
+			if (prefix == null || prefix == "") prefix = writer.LookupPrefix (info.Namespace);
+			
+//				if (prefix != null && prefix != "")
+//					Writer.WriteStartElement (prefix, info.ElementName, info.Namespace);
+//				else
+//					WriteStartElement (info.ElementName, info.Namespace, false);
+
+			info.Serializer.Serialize (writer, ext);
+		}
+		
+		internal static void ReadExtension (XmlReader reader, object ob)
+		{
+			ServiceDescriptionFormatExtensionCollection extensions = ExtensionManager.GetExtensionPoint (ob);
+			if (extensions != null)
+			{
+				ExtensionInfo info = ExtensionManager.GetFormatExtensionInfo (reader.LocalName, reader.NamespaceURI);
+				if (info != null)
+				{
+					object extension = info.Serializer.Deserialize (reader);
+					extensions.Add ((ServiceDescriptionFormatExtension)extension);
+				}
+			}
+		}
+
 
 		#endregion
 
 		internal class ServiceDescriptionSerializer : XmlSerializer 
 		{
-			static XmlTypeMapping _typeMap;
-/*
 			protected override void Serialize (object o, XmlSerializationWriter writer)
 			{
-				ServiceDescriptionWriter xsWriter = writer as ServiceDescriptionWriter;
-				xsWriter.WriteObject (o);
+				ServiceDescriptionWriterBase xsWriter = writer as ServiceDescriptionWriterBase;
+				xsWriter.WriteTree ((ServiceDescription)o);
 			}
 			
 			protected override object Deserialize (XmlSerializationReader reader)
 			{
-				ServiceDescriptionReader xsReader = reader as ServiceDescriptionReader;
-				return xsReader.ReadObject ();
+				ServiceDescriptionReaderBase xsReader = reader as ServiceDescriptionReaderBase;
+				return xsReader.ReadTree ();
 			}
 			
 			protected override XmlSerializationWriter CreateWriter ()
 			{
-				return new ServiceDescriptionWriter (GetTypeMapping());
+				return new ServiceDescriptionWriterBase ();
 			}
 			
 			protected override XmlSerializationReader CreateReader ()
 			{
-				return new ServiceDescriptionReader (GetTypeMapping());
+				return new ServiceDescriptionReaderBase ();
 			}
-			
-			XmlTypeMapping GetTypeMapping ()
-			{
-				if (_typeMap == null) {
-					XmlReflectionImporter ri = new XmlReflectionImporter (ServiceDescription.Namespace);
-					foreach (ExtensionInfo fei in ExtensionManager.GetFormatExtensions()) 
-						ri.IncludeType (fei.Type);
-					_typeMap = ri.ImportTypeMapping (typeof (ServiceDescription));
-				}
-				return _typeMap;
-			}
-			*/
-		}
-		
-		/*
-		internal class ServiceDescriptionWriter : XmlSerializationWriterInterpreter
-		{
-			public ServiceDescriptionWriter (XmlMapping typeMap)
-			: base (typeMap)
-			{
-			}
-
-			protected override void WriteObjectElementElements (XmlTypeMapping typeMap, object ob)
-			{
-				ServiceDescriptionFormatExtensionCollection extensions = ExtensionManager.GetExtensionPoint (ob);
-				if (extensions != null)
-				{
-					foreach (ServiceDescriptionFormatExtension ext in extensions)
-						WriteExtension (ext);
-				}
-				
-				base.WriteObjectElementElements (typeMap, ob);
-			}
-			
-			void WriteExtension (ServiceDescriptionFormatExtension ext)
-			{
-				Type type = ext.GetType ();
-				ExtensionInfo info = ExtensionManager.GetFormatExtensionInfo (type);
-				string prefix = info.Prefix;
-				
-				if (prefix == null || prefix == "") prefix = Writer.LookupPrefix (info.Namespace);
-				
-				if (prefix != null && prefix != "")
-					Writer.WriteStartElement (prefix, info.ElementName, info.Namespace);
-				else
-					WriteStartElement (info.ElementName, info.Namespace, false);
-
-				WriteObjectElement (GetTypeMap (type), ext, info.ElementName, info.Namespace);
-					
-				WriteEndElement ();
-			}
-		}
-
-		internal class ServiceDescriptionReader : XmlSerializationReaderInterpreter
-		{
-			public ServiceDescriptionReader (XmlMapping typeMap)
-			: base (typeMap)
-			{
-			}
-			
-			protected override void ProcessUnknownElement (object ob)
-			{
-				ServiceDescriptionFormatExtensionCollection extensions = ExtensionManager.GetExtensionPoint (ob);
-				if (extensions != null)
-				{
-					ExtensionInfo info = ExtensionManager.GetFormatExtensionInfo (Reader.LocalName, Reader.NamespaceURI);
-					if (info != null)
-					{
-						object extension = Activator.CreateInstance (info.Type);
-						ReadClassInstanceMembers (GetTypeMap (info.Type), extension);
-						extensions.Add ((ServiceDescriptionFormatExtension)extension);
-					}
-				}
-				base.ProcessUnknownElement (ob);
-			}
-		}
-		*/
+		}		
 	}
 }

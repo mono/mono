@@ -1,3 +1,10 @@
+2003-09-01  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* ExtensionManager.cs: Added
+	* ServiceDescriptionSerializerBase.cs. Added
+	* ServiceDescription.cs: Reenabled suspport for serialization.
+	* ServiceDescriptionReflector.cs: Import type and method documentation.
+
 2003-08-29  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* ServiceDescription.cs: Disabled suspport for serialization, until I found

@@ -78,8 +78,8 @@ namespace System.Web.Services.Description {
 		Service ImportService (ServiceDescription desc, TypeStubInfo typeInfo, string url)
 		{
 			Service service = new Service ();
-//			service.Documentation = wsa.Description;
 			service.Name = typeInfo.WebServiceName;
+			service.Documentation = typeInfo.Description;
 
 			desc.Services.Add (service);
 			
@@ -149,6 +149,7 @@ namespace System.Web.Services.Description {
 		{
 			Operation oper = new Operation ();
 			oper.Name = method.Name;
+			oper.Documentation = method.Description;
 			
 			OperationInput inOp = new OperationInput ();
 			inOp.Message = ImportMessage (desc, oper.Name + "In", method.InputMembersMapping);
