@@ -102,8 +102,8 @@ namespace System.Threading
 				}
 				return p;
 			}
+			[SecurityPermission (SecurityAction.Demand, Flags=SecurityPermissionFlag.ControlPolicy)]
 			set {
-				new SecurityPermission (SecurityPermissionFlag.ControlPrincipal).Demand ();
 				CurrentThread._principal = value;
 			}
 		}
