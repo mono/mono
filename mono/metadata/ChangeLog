@@ -1,3 +1,8 @@
+
+Fri Jun 18 11:59:57 CEST 2004 Paolo Molaro <lupus@ximian.com>
+
+	* image.c: swapped name/filename;
+
 2004-06-18  Martin Baulig  <martin@ximian.com>
 
 	* mono-debug-debugger.c (write_class): Write the parent class at
