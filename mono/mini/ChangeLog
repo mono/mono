@@ -1,5 +1,10 @@
 2005-1-20  Massimiliano Mantione  <massi@ximian.com>
 
+	abcremoval.c: Fixed bug 71062.
+	abcremoval.h: Likewise.
+
+2005-1-20  Massimiliano Mantione  <massi@ximian.com>
+
 	* mini.c: Added a new functionality to optimize_branches, the removal
 	of useless basic blocks, and fixed some problem in the removal of
 	critical edges; some utility functions added for both purposes.
