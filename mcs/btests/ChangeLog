@@ -1,3 +1,6 @@
+2004-09-09 Bernie Solomon <bernard@ugsolutions.com>
+	* Test.Sources: fix case of a couple of filenames
+
 2004-09-08 Anirban Bhattacharjee <banirban@novell.com>
 	* OptionalArgu_ByRefFuncA.vb:
 	* OptionalArgu_ByValFuncD.vb:

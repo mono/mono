@@ -184,7 +184,7 @@ ParamArrayA \
 ParamArrayB \
 Function_ParamArrayA \
 Function_ParamArrayB \
-Function_ParamArrayc \
+Function_ParamArrayC \
 OptionalArgu_ByValueA \
 OptionalArgu_ByValueB \
 OptionalArgu_ByValueC \
@@ -192,7 +192,7 @@ OptionalArgu_ByValueD \
 OptionalArgu_ByValueE \
 OptionalArgu_ByValFuncA \
 OptionalArgu_ByValFuncB \
-OptionalArgu_ByValFuncc \
+OptionalArgu_ByValFuncC \
 OptionalArgu_ByValFuncD \
 OptionalArgu_ByValFuncE \
 OptionalArgu_ByReferenceA \
