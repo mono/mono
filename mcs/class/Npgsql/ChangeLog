@@ -1,5 +1,9 @@
 2003-11-10  Pedro Martínez Juliá  <yoros@wanadoo.es>
 
+	* Npgsql/NpgsqlDataAdapter.cs: Best use "if" instead of try-catch.
+
+2003-11-10  Pedro Martínez Juliá  <yoros@wanadoo.es>
+
 	* Npgsql/NpgsqlDataAdapter.cs: Catch the exception thrown by MS.NET
 	when a mapping is not in the collection.
 
