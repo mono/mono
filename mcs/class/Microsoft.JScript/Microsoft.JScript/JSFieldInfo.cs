@@ -36,8 +36,16 @@ namespace Microsoft.JScript {
 
 	public sealed class JSFieldInfo : FieldInfo {
 
+		FieldAttributes attr;
+		string name;
+		
+		internal JSFieldInfo (string name)
+		{
+			this.name = name;
+		}
+
 		public override FieldAttributes Attributes {
-			get { throw new NotImplementedException (); }
+			get { return attr; }
 		}
 
 
