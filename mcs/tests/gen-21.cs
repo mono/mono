@@ -8,7 +8,7 @@ class Foo<T>
 	{
 		t = new T [n];
 		for (int i = 0; i < n; i++)
-			t [i] = T.default;
+			t [i] = default (T);
 	}
 
 	public void Test ()
@@ -21,9 +21,9 @@ class Bar<T>
 {
 	public void Test ()
 	{
-		X.Print (X.default);
-		X.Print (T.default);
-		X.Print (S.default);
+		X.Print (default (X));
+		X.Print (default (T));
+		X.Print (default (S));
 	}
 }
 

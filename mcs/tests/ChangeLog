@@ -1,3 +1,9 @@
+2004-03-20  Martin Baulig  <martin@ximian.com>
+
+	* gen-44.cs: New generics test for operators.
+
+	* gen-21.cs: Use the new `default(T)' syntax.
+
 2004-03-17  Martin Baulig  <martin@ximian.com>
 
 	* gen-43.cs: New generics test for static fields.
