@@ -1,3 +1,7 @@
+2003-11-19  Lluis Sanchez Gual <lluis@ximian.com>
+	
+	* ContextTest.cs, SynchronizationAttributeTest.cs: New tests added.
+
 2003-06-19  Nick Drochak <ndrochak@gol.com>
 
 	* RemotingServicesTest.cs: Lazy fix/workaround for "can't reuse 
