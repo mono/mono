@@ -1,118 +1,169 @@
 //
 // System.Runtime.Remoting.Channels.Http.HttpChannel
 //
+// Summary:     Implements a wrapper class for HTTP client and server channels.
+//
+// Classes:    public HttpChannel
+//
 // Authors:
 //      Martin Willemoes Hansen (mwh@sysrq.dk)
+//		Ahmad Tantawy (popsito82@hotmail.com)
+//		Ahmad Kadry (kadrianoz@hotmail.com)
+//		Hussein Mehanna (hussein_mehanna@hotmail.com)
 //
 // (C) 2003 Martin Willemoes Hansen
 //
 
+using System;
 using System.Collections;
 using System.Runtime.Remoting.Messaging;
 
-namespace System.Runtime.Remoting.Channels.Http 
+
+namespace System.Runtime.Remoting.Channels.Http  
 {
-        public class HttpChannel : BaseChannelWithProperties,
-	                           IChannelReceiver, IChannel, 
-				   IChannelSender, IChannelReceiverHook
+
+	public class HttpChannel: IChannelReceiver, IChannelSender, IChannel
 	{
-		[MonoTODO]
+		private HttpServerChannel serverChannel;
+		private HttpClientChannel clientChannel;
+		private string channelName = "http";
+		private int channelPriority = 1;
+
 		public HttpChannel()
 		{
+			SetupChannel(null,null,null);
 		}
 
-		public object ChannelData {
-			[MonoTODO]
-			get { throw new NotImplementedException(); }
-		}
-
-		public string ChannelName {
-			[MonoTODO]
-			get { throw new NotImplementedException(); }
-		}
-
-		public int ChannelPriority {
-			[MonoTODO]
-			get { throw new NotImplementedException(); }
-		}
-
-		public string ChannelScheme {
-			[MonoTODO]
-			get { throw new NotImplementedException(); }
-		}
-
-		public IServerChannelSink ChannelSinkChain {
-			[MonoTODO]
-			get { throw new NotImplementedException(); }
-		}
-
-		public override object this [object key] {
-			[MonoTODO]
-			get { throw new NotImplementedException(); } 
-
-			[MonoTODO]
-			set { throw new NotImplementedException(); }
-		}
-
-		public override ICollection Keys {
-			[MonoTODO]
-			get { throw new NotImplementedException(); }
-		}
-
-		public override IDictionary Properties {
-			[MonoTODO]
-			get { throw new NotImplementedException(); }
-		}
-
-		public bool WantsToListen {
-			[MonoTODO]
-			get { throw new NotImplementedException(); } 
-
-			[MonoTODO]
-			set { throw new NotImplementedException(); }
-		}
-
-		[MonoTODO]
-		public void AddHookChannelUri (string channelUri)
+		public HttpChannel(int port)
 		{
-			throw new NotImplementedException();
+			Hashtable prop = new Hashtable();
+			prop["port"] = port;
+			SetupChannel(prop,null,null);
 		}
 
-		[MonoTODO]
-		public IMessageSink CreateMessageSink (string url, 
-						       object remoteChannelData,
-						       out string objectURI)
+		public HttpChannel(IDictionary Properties,IClientChannelSinkProvider clientSinkProvider,IServerChannelSinkProvider serverSinkProvider)
 		{
-			throw new NotImplementedException();
+			SetupChannel(Properties,clientSinkProvider,serverSinkProvider);
 		}
 
-		[MonoTODO]
-		public string[] GetUrlsForUri (string objectURI)
+
+		private void SetupChannel(IDictionary Properties,IClientChannelSinkProvider clientSinkProvider,IServerChannelSinkProvider serverSinkProvider)
 		{
-			throw new NotImplementedException();
+			if(Properties == null)
+			{
+				clientChannel = new HttpClientChannel();
+				serverChannel = new HttpServerChannel();
+			}
+			else if(Properties.Count == 1)
+			{
+				clientChannel = new HttpClientChannel();
+				serverChannel = new HttpServerChannel(Convert.ToInt32(Properties["port"].ToString()));
+			}
+			else
+			{
+				IDictionary clientProperties = new Hashtable();
+				IDictionary serverProperties = new Hashtable();
+				foreach(DictionaryEntry DictEntry in Properties)
+				{
+					switch(DictEntry.Key.ToString())
+					{
+						// Properties Supported By : HttpChannel,HttpServerChannel,HttpClientChannel
+						case "name":
+							channelName = DictEntry.Value.ToString(); 
+							break;
+
+						case "priority":
+							channelPriority = Convert.ToInt32(DictEntry.Value.ToString());
+							break;
+					
+						// Properties Supported By : HttpChannel , HttpClientChannel ONLY
+						case "clientConnectionLimit":
+							clientProperties["clientConnectionLimit"] = DictEntry.Value;
+							break;
+
+						case "proxyName":
+							clientProperties["proxyName"] = DictEntry.Value;
+							break;
+
+						case "proxyPort":
+							clientProperties["proxyPort"] = DictEntry.Value;
+							break;
+						
+						case "useDefaultCredentials":
+							clientProperties["useDefaultCredentials"] = DictEntry.Value;
+							break;
+
+						// Properties Supported By : HttpChannel , HttpServerChannel ONLY
+						case "bindTo": 
+							serverProperties["bindTo"] = DictEntry.Value;
+							break;
+						case "listen": 
+							serverProperties["listen"] = DictEntry.Value; 
+							break; 
+						case "machineName": 
+							serverProperties["machineName"] = DictEntry.Value; 
+							break; 
+						case "port": 
+							serverProperties["port"] = DictEntry.Value; 
+							break;
+						case "suppressChannelData": 
+							serverProperties["suppressChannelData"] = DictEntry.Value;
+							break;
+						case "useIpAddress": 
+							serverProperties["useIpAddress"] = DictEntry.Value; 
+							break;
+					}
+
+				}
+				clientChannel = new HttpClientChannel(clientProperties,clientSinkProvider);
+				serverChannel = new HttpServerChannel(serverProperties,serverSinkProvider);
+			}
 		}
 
-		[MonoTODO]
-		public string Parse (string url, out string objectURI)
+
+		//IChannel Members
+		public String ChannelName
 		{
-			throw new NotImplementedException();
+			get { return channelName; }
 		}
 
-		[MonoTODO]
-		public void StartListening (object data)
+		public int ChannelPriority
 		{
-			throw new NotImplementedException();
+			get { return channelPriority; }
 		}
 
-		[MonoTODO]
-		public void StopListening (object data)
+		public String Parse(String url, out String objectURI)
 		{
-			throw new NotImplementedException();
+			return HttpHelper.Parse(url, out objectURI);
 		}
 
-		[MonoTODO]
-		~HttpChannel()
+
+
+		//IChannelSender Members
+		public IMessageSink CreateMessageSink(String url, Object remoteChannelData, out String objectURI)
 		{
+			return clientChannel.CreateMessageSink(url, remoteChannelData, out objectURI);
+		}
+
+
+		//IChannelReciever Members
+		public String[] GetUrlsForUri(String objectURI)
+		{
+			return serverChannel.GetUrlsForUri(objectURI);
+		} 
+
+		public void StartListening(Object data)
+		{
+			serverChannel.StartListening(data);
+		}
+
+		public void StopListening(Object data)
+		{
+			serverChannel.StopListening(data);
+		} 
+		public Object ChannelData
+		{
+			get { return serverChannel.ChannelData; }
 		}
 	}
 }
