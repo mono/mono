@@ -1,3 +1,5 @@
+Assembly/AssemblyInfo.cs
+Assembly/Locale.cs
 Microsoft.Web.Services/UriList.cs
 Microsoft.Web.Services/SoapFormatException.cs
 Microsoft.Web.Services/TODOAttribute.cs
@@ -46,12 +48,6 @@ Microsoft.Web.Services.Routing/Path.cs
 Microsoft.Web.Services.Routing/RoutingFormatException.cs
 Microsoft.Web.Services.Routing/Via.cs
 Microsoft.Web.Services.Routing/ViaCollection.cs
-Microsoft.Web.Services.Security.X509/X509CertificateStore.cs
-Microsoft.Web.Services.Security.X509/X509Certificate.cs
-Microsoft.Web.Services.Security.X509/X509CertificateCollection.cs
-Microsoft.Web.Services.Security.X509/ICertificateStore.cs
-Microsoft.Web.Services.Security.X509/MemoryCertificateStore.cs
-Microsoft.Web.Services.Security.X509/FileCertificateStore.cs
 Microsoft.Web.Services.Security/AsymmetricDecryptionKey.cs
 Microsoft.Web.Services.Security/AsymmetricEncryptionKey.cs
 Microsoft.Web.Services.Security/AuthenticationKey.cs
@@ -94,3 +90,8 @@ Microsoft.Web.Services.Security/XmlDsigExcC14NTransform.cs
 Microsoft.Web.Services.Security/XmlDsigExcC14NWithCommentsTransform.cs
 Microsoft.Web.Services.Security/XmlEncryption.cs
 Microsoft.Web.Services.Security/XmlSignature.cs
+Microsoft.Web.Services.Security.X509/ICertificateStore.cs
+Microsoft.Web.Services.Security.X509/MemoryCertificateStore.cs
+Microsoft.Web.Services.Security.X509/X509Certificate.cs
+Microsoft.Web.Services.Security.X509/X509CertificateCollection.cs
+Microsoft.Web.Services.Security.X509/X509CertificateStore.cs

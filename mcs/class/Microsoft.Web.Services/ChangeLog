@@ -3,7 +3,7 @@
 	* Makefile: Added reference to System.Security assembly and a define
 	for WSE1 (required for classes shared between SS and WSE).
 	* Microsoft.Web.Services.dll.sources: Added (shared) files from
-	System.Security assembly.
+	System.Security assembly. Removed unused files. Added Assembly files.
 
 2003-09-04  Duncan Mak  <duncan@ximian.com>
 
