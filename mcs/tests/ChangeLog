@@ -1,3 +1,9 @@
+2005-03-01  Marek Safar <marek.safar@seznam.cz>
+
+	* test-352.cs: New test.
+	
+	* test-353.cs, test-353-2: Bug #73117
+
 2005-02-22  Raja R Harinath  <rharinath@novell.com>
 
 	* mtest-6-exe.cs, mtest-6-dll.cs: New test based on #71134.
