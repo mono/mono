@@ -1,3 +1,8 @@
+2004-09-03  Zoltan Varga  <vargaz@freemail.hu>
+
+	* marshal.c: Refactor the mono_marshal_get_native_wrapper function into
+	smaller functions.
+
 2004-09-03  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* object.c: In mono_message_invoke, fill the output parameter array after
