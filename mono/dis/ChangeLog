@@ -1,4 +1,9 @@
+2003-07-22 Jackson Harper <jackson@latitudegeo.com>
 
+	* main.c: Dissasemble generic type parameters for type
+	definitions. TODO: Sort type parameters by index, and
+	auto-generate names for parameters that have no name.
+	
 Fri Jul 18 13:12:38 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
 	* get.c: updates for array type representation changes.
