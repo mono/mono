@@ -17,11 +17,13 @@ namespace Mono.ILASM {
 
 		private static Hashtable op_table;
 		private static Hashtable int_table;		
+		private static Hashtable type_table;
 
 		static InstrTable ()
 		{
 			CreateOpTable ();
 			CreateIntTable ();
+			CreateTypeTable ();
 		}
 		
 		public static ILToken GetToken (string str)
@@ -32,6 +34,9 @@ namespace Mono.ILASM {
 			} else if (IsIntOp (str)) {
 				IntOp op = GetIntOp (str);
 				return new ILToken (Token.INSTR_I, op);
+			} else if (IsTypeOp (str)) {
+				TypeOp op = GetTypeOp (str);
+				return new ILToken (Token.INSTR_TYPE, op);
 			}
 
 			return null;
@@ -39,7 +44,7 @@ namespace Mono.ILASM {
 
 		public static bool IsInstr (string str)
 		{
-			return (IsOp (str) || IsIntOp (str));
+			return (IsOp (str) || IsIntOp (str) || IsTypeOp (str));
 		}
 
 		public static bool IsOp (string str)
@@ -52,6 +57,11 @@ namespace Mono.ILASM {
 			return int_table.Contains (str);
 		}
 
+		public static bool IsTypeOp (string str) 
+		{
+			return type_table.Contains (str);
+		}
+
 		public static Op GetOp (string str)
 		{
 			return (Op) op_table[str];
@@ -60,6 +70,11 @@ namespace Mono.ILASM {
 		public static IntOp GetIntOp (string str)
 		{
 			return (IntOp) int_table[str];
+		}
+
+		public static TypeOp GetTypeOp (string str)
+		{
+			return (TypeOp) type_table[str];
 		}
 
 		private static void CreateOpTable ()
@@ -226,6 +241,25 @@ namespace Mono.ILASM {
 			int_table["unaligned"] =  IntOp.unaligned;
 		}
 
+		public static void CreateTypeTable ()
+		{
+			type_table = new Hashtable ();
+			
+			type_table["cpobj"] = TypeOp.cpobj;
+			type_table["ldobj"] = TypeOp.ldobj;
+			type_table["castclass"] = TypeOp.castclass;
+			type_table["isinst"] = TypeOp.isinst;
+			type_table["unbox"] = TypeOp.unbox;
+			type_table["stobj"] = TypeOp.stobj;
+			type_table["box"] = TypeOp.box;
+			type_table["newarr"] = TypeOp.newarr;
+			type_table["ldelema"] = TypeOp.ldelema;
+			type_table["refanyval"] = TypeOp.refanyval;
+			type_table["mkrefany"] = TypeOp.mkrefany;
+			type_table["ldtoken"] = TypeOp.ldtoken;
+			type_table["initobj"] = TypeOp.initobj;
+			type_table["sizeof"] = TypeOp.sizeOf;
+		}
 	}
 
 }
