@@ -436,10 +436,32 @@ namespace System.Xml
 
 		public override string GetAttribute(
 			string localName,
-			string namespaceName)
+			string namespaceURI)
 		{
-			// TODO: implement me.
-			return null;
+			foreach (DictionaryEntry entry in attributes)
+			{
+				string thisName = (string)entry.Key;
+
+				int indexOfColon = thisName.IndexOf(':');
+
+				if (indexOfColon != -1)
+				{
+					string thisLocalName = thisName.Substring(indexOfColon + 1);
+
+					if (localName == thisLocalName)
+					{
+						string thisPrefix = thisName.Substring(0, indexOfColon);
+						string thisNamespaceURI = LookupNamespace(thisPrefix);
+
+						if (namespaceURI == thisNamespaceURI)
+						{
+							return (string)attributes[thisName];
+						}
+					}
+				}
+			}
+
+			return String.Empty;
 		}
 
 		public TextReader GetRemainder()
@@ -607,7 +629,7 @@ namespace System.Xml
 			isEmptyElement = false;
 			value = String.Empty;
 			attributes = new Hashtable();
-
+			
 			returnEntityReference = false;
 			entityReferenceName = String.Empty;
 

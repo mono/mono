@@ -1,5 +1,9 @@
 2002-02-23  Jason Diamond <jason@injektilo.org>
 
+	* XmlTextReader.cs: Added support for qualified attributes.
+
+2002-02-23  Jason Diamond <jason@injektilo.org>
+
 	* XmlNamespaceManager.cs: Initial implementation.
 	
 	* XmlTextReader.cs: Added support for NamespaceURI property on

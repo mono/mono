@@ -98,10 +98,25 @@ namespace Ximian.Mono.Tests
 		private void AssertAttribute(
 			XmlReader xmlReader,
 			string name,
+			string prefix,
+			string localName,
+			string namespaceURI,
 			string value)
 		{
-			Assert(xmlReader[name] == value);
+			Assert(
+				String.Format(
+					"value was {0}, expected {1}",
+					xmlReader[name],
+					value),
+				xmlReader[name] == value);
+
 			Assert(xmlReader.GetAttribute(name) == value);
+
+			if (namespaceURI != String.Empty)
+			{
+				Assert(xmlReader[localName, namespaceURI] == value);
+				Assert(xmlReader.GetAttribute(localName, namespaceURI) == value);
+			}
 		}
 
 		private void AssertEndDocument(XmlReader xmlReader)
@@ -362,6 +377,9 @@ namespace Ximian.Mono.Tests
 			AssertAttribute(
 				xmlReader, // xmlReader
 				"bar", // name
+				String.Empty, // prefix
+				"bar", // localName
+				String.Empty, // namespaceURI
 				"baz" // value
 			);
 
@@ -392,6 +410,9 @@ namespace Ximian.Mono.Tests
 			AssertAttribute(
 				xmlReader, // xmlReader
 				"bar", // name
+				String.Empty, // prefix
+				"bar", // localName
+				String.Empty, // namespaceURI
 				"baz" // value
 			);
 
@@ -435,12 +456,18 @@ namespace Ximian.Mono.Tests
 			AssertAttribute(
 				xmlReader, // xmlReader
 				"bar", // name
+				String.Empty, // prefix
+				"bar", // localName
+				String.Empty, // namespaceURI
 				"baz" // value
 			);
 
 			AssertAttribute(
 				xmlReader, // xmlReader
 				"quux", // name
+				String.Empty, // prefix
+				"quux", // localName
+				String.Empty, // namespaceURI
 				"quuux" // value
 			);
 
@@ -771,6 +798,9 @@ namespace Ximian.Mono.Tests
 			AssertAttribute(
 				xmlReader, // xmlReader
 				"bar", // name
+				String.Empty, // prefix
+				"bar", // localName
+				String.Empty, // namespaceURI
 				"&baz;" // value
 			);
 
@@ -801,6 +831,9 @@ namespace Ximian.Mono.Tests
 			AssertAttribute(
 				xmlReader, // xmlReader
 				"bar", // name
+				String.Empty, // prefix
+				"bar", // localName
+				String.Empty, // namespaceURI
 				"<>&'\"" // value
 			);
 
@@ -831,6 +864,9 @@ namespace Ximian.Mono.Tests
 			AssertAttribute(
 				xmlReader, // xmlReader
 				"bar", // name
+				String.Empty, // prefix
+				"bar", // localName
+				String.Empty, // namespaceURI
 				"FOO" // value
 			);
 
@@ -1054,7 +1090,42 @@ namespace Ximian.Mono.Tests
 			AssertEndDocument(xmlReader);
 		}
 
-	// The following is #if'ed out because it's specific to the Mono
+		public void TestAttributeInNamespace()
+		{
+			string xml = @"<foo bar:baz='quux' xmlns:bar='http://bar/' />";
+			XmlReader xmlReader =
+				new XmlTextReader(new StringReader(xml));
+
+			AssertStartDocument(xmlReader);
+
+			AssertNode(
+				xmlReader, // xmlReader
+				XmlNodeType.Element, // nodeType
+				0, // depth
+				true, // isEmptyElement
+				"foo", // name
+				String.Empty, // prefix
+				"foo", // localName
+				String.Empty, // namespaceURI
+				String.Empty, // value
+				1 // attributeCount
+			);
+
+			AssertAttribute(
+				xmlReader, // xmlReader
+				"bar:baz", // name
+				"bar", // prefix
+				"baz", // localName
+				"http://bar/", // namespaceURI
+				"quux" // value
+			);
+
+			AssertEquals("http://bar/", xmlReader.LookupNamespace("bar"));
+
+			AssertEndDocument(xmlReader);
+		}
+
+// The following is #if'ed out because it's specific to the Mono
 // implementation and won't compile when testing Microsoft's code.
 // Feel free to turn it on if you want to test Mono's name tables.
 
