@@ -64,9 +64,7 @@ namespace System.Web.UI.HtmlControls
 		
 		protected override void Render(HtmlTextWriter writer)
 		{
-			writer.WriteBeginTag (TagName);
-			RenderAttributes (writer);
-			writer.Write ('>');
+			base.Render (writer);
 			if (_doChildren)
 				RenderChildren(writer);
 			else if (_doText)

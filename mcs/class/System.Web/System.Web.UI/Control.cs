@@ -439,6 +439,12 @@ namespace System.Web.UI
                         }
                     */
                 }
+
+		public bool HasChildren
+		{
+			get { return (_controls != null && _controls.Count > 0); }
+		}
+
                 public event EventHandler DataBinding //DIT
                 {
                         add

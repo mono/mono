@@ -63,43 +63,18 @@ namespace System.Web.UI.HtmlControls{
 			Attributes[name] = value;
 		}
 		
+		protected override void Render (HtmlTextWriter writer)
+		{
+			writer.WriteBeginTag (TagName);
+			RenderAttributes (writer);
+			writer.Write ('>');
+		}
+		
 		protected virtual void RenderAttributes(HtmlTextWriter writer){
 			if (ID != null){
 				writer.WriteAttribute("id",ClientID);
 			}
 			Attributes.Render(writer);
-		}
-		
-		internal void WriteOnClickAttribute(HtmlTextWriter writer, bool submitsAutomatically, bool submitsProgramatically, bool causesValidation) {
-			string local1;
-			string local2;
-			string local3;
-			
-			AttributeCollection attr = Attributes;
-			local1 = null;
-			if (submitsAutomatically) {
-				if ((causesValidation))
-					local1 = System.Web.UI.Utils.GetClientValidatedEvent(Page);
-			}
-			else if (submitsProgramatically) {
-				if (causesValidation)
-					local1 = System.Web.UI.Utils.GetClientValidatedPostBack(this);
-				else
-					local1 = Page.GetPostBackClientEvent(this, String.Empty);
-			}
-			if (local1 != null) {
-				local2 = attr["language"];
-				if (local2 != null)
-					attr.Remove("language");
-				writer.WriteAttribute("language", "javascript");
-				local3 = attr["onclick"];
-				if (local3 != null) {
-					attr.Remove("onclick");
-					writer.WriteAttribute("onclick", local3 + " " + local1);
-					return;
-				}
-				writer.WriteAttribute("onclick", local1);
-			}
 		}
 		
 		public AttributeCollection Attributes

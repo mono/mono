@@ -14,9 +14,9 @@ namespace System.Web.UI.HtmlControls{
 		
 		public HtmlImage(): base("img"){}
 		
-		protected new void RenderAttributes(HtmlTextWriter writer){
+		protected override void RenderAttributes(HtmlTextWriter writer){
 			PreProcessRelativeReference(writer,"src");
-			RenderAttributes(writer);
+			base.RenderAttributes(writer);
 			writer.Write(" /");
 		}
 		
@@ -59,6 +59,19 @@ namespace System.Web.UI.HtmlControls{
 			}
 		}
 		
+		public int Height
+		{
+			get {
+				string attr = Attributes ["height"];
+				if (attr != null)
+					return Int32.Parse (attr, CultureInfo.InvariantCulture);
+
+				return -1;
+			}
+
+			set { Attributes["height"] = AttributeToString (value); }
+		}
+
 		public string Src{
 			get{
 				string attr = Attributes["src"];

@@ -54,7 +54,7 @@ namespace System.Web.UI
 				object val = bag [key];
 
 				if (val is StateItem)
-					return val;
+					return ((StateItem) val).Value;
 
 				return null; // 
 			}
@@ -81,23 +81,17 @@ namespace System.Web.UI
 			if (key == null || key.Length == 0)
 				throw new ArgumentException (HttpRuntime.FormatResourceString ("Key_Cannot_Be_Null"));
 
-			StateItem val = null;
-			
-			if (bag [key] is StateItem)
-				val = (StateItem) (bag [key]);
-
+			StateItem val = bag [key] as StateItem; //don't throw exception when null
 			if(val == null) {
 				if(value != null || marked) {
 					val = new StateItem (value);
 					bag.Add (key, val);
 				}
-				
-			} else {
-				if (value != null && !marked) {
-					bag.Remove (key);
-					val.Value = value;
-				}
 			}
+			else if (value == null && !marked)
+				bag.Remove (key);
+			else
+				val.Value = value;
 
 			if (val != null && marked)
 				val.IsDirty = true;

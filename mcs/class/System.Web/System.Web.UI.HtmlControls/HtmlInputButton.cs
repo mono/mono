@@ -23,37 +23,6 @@ namespace System.Web.UI.HtmlControls{
 			}
 		}
 		
-		protected override void RenderAttributes(HtmlTextWriter writer){
-			string attrType = Type;
-			bool ofTypeSubmit = (String.Compare(attrType, "submit", true) == 0);
-			bool events;
-			if (ofTypeSubmit != true){
-				events = (Events[EventServerClick] != null);
-			}
-			else{
-				events = false;
-			}
-			if (Page != null){
-				if (ofTypeSubmit != true){
-					WriteOnClickAttribute(
-					                           writer,
-					                           false,
-					                           true,
-					                           CausesValidation == false? Page.Validators.Count > 0: false);
-				}
-				else{
-					if (events != true && String.Compare(attrType,"button", true) != 0){
-						WriteOnClickAttribute(
-						                           writer,
-						                           false,
-						                           true,
-						                           CausesValidation == false? Page.Validators.Count > 0: false);
-					}
-				}
-			}
-			base.RenderAttributes(writer);
-		}
-		
 		public void RaisePostBackEvent(string eventArgument){
 			if(CausesValidation == true){
 				Page.Validate();

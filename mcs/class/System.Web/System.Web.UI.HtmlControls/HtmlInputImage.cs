@@ -29,18 +29,6 @@ namespace System.Web.UI.HtmlControls{
 			// if (handler != null) handler.Invoke(this, e);
 		}
 		
-		protected override void RenderAttributes(HtmlTextWriter writer){
-			PreProcessRelativeReference(writer,"src");
-			if (Page != null && !CausesValidation){
-				WriteOnClickAttribute(
-				                           writer,
-				                           false,
-				                           true,
-				                           CausesValidation == false? Page.Validators.Count > 0: false);
-			}
-			RenderAttributes(writer);
-		}
-		
 		public bool LoadPostData(string postDataKey, NameValueCollection postCollection){
 			string postX = postCollection[String.Concat(RenderedName,".x")];
 			string postY = postCollection[String.Concat(RenderedName,".y")];

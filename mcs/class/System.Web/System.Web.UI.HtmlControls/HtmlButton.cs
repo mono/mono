@@ -29,13 +29,9 @@ namespace System.Web.UI.HtmlControls{
 			}
 		}
 		
-		protected new void RenderAttributes(HtmlTextWriter writer){
+		protected override void RenderAttributes(HtmlTextWriter writer){
 			if (Page != null && Events[EventServerClick] != null){
-				WriteOnClickAttribute(
-				                           writer,
-				                           false,
-				                           true,
-				                           CausesValidation == false? Page.Validators.Count > 0: false);
+				/* Got to figure out how to manage events */
 			}
 			base.RenderAttributes(writer);
 		}

@@ -13,17 +13,15 @@ namespace System.Web.UI {
 
 	public sealed class AttributeCollection
 	{
-		StateBag bag;
-		Hashtable list;
+		private StateBag bag;
 		
 		public AttributeCollection (StateBag bag)
 		{
 			this.bag = bag;
-			list = new Hashtable ();
 		}
 
 		public int Count {
-			get { return list.Count; }
+			get { return bag.Count; }
 		}
 
 		[MonoTODO]
@@ -32,44 +30,43 @@ namespace System.Web.UI {
 		}
 
 		public string this [string key] {
-			get { return list [key] as string; }
+			get { return bag [key] as string; }
 
-			set { list [key] = value; }
+			set { bag.Add (key, value); }
 		}
 
 		public ICollection Keys {
-			get { return list.Keys; }
+			get { return bag.Keys; }
 		}
 
 		public void Add (string key, string value)
 		{
-			list.Add (key, value);
+			bag.Add (key, value); // if exists, only the value is replaced.
 		}
 
 		public void AddAttributes (HtmlTextWriter writer)
 		{
-			foreach (object key in list.Keys) {
-
-				object value = list [key];
-				writer.AddAttribute ((string) key, (string) value);
+			foreach (string key in bag.Keys) {
+				string value = bag [key] as string;
+				writer.AddAttribute (key, value);
 			}
 		}
 
 		public void Clear ()
 		{
-			list.Clear ();
+			bag.Clear ();
 		}
 
 		public void Remove (string key)
 		{
-			list.Remove (key);
+			bag.Remove (key);
 		}
 
 		public void Render (HtmlTextWriter writer)
 		{
-			foreach (object key in list.Keys) {
-				object value = list [key];
-				writer.WriteAttribute ((string) key, (string) value);
+			foreach (string key in bag.Keys) {
+				string value = bag [key] as string;
+				writer.WriteAttribute (key, value);
 			}
 		}
 	}

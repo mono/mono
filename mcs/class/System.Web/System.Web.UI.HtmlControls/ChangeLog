@@ -1,5 +1,17 @@
 2002-06-05  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* HtmlButton.cs: RenderAttributes is an override, not new.
+
+	* HtmlContainerControl.cs: use the new Render method in HtmlControl.
+
+	* HtmlControl.cs: added Render method to render the tag and its
+	attributes. Works for container and non-containers.
+
+	* HtmlImage.cs: RenderAttributes don't need to be new. Implemented
+	Height property.
+	
+2002-06-05  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* HtmlContainerControl.cs: some formatting and use HttpUtility.Encode
 	instead of Page.Server to encode InnerText.
 

@@ -1,5 +1,14 @@
 2002-06-05  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* AttributeCollection.cs: don't need a Hastable. StateBag now works 
+	fine and takes care of the details.
+
+	* Control.cs: added HasChildren property.
+
+	* StateBag.cs: fixed a couple of nasty bugs.
+
+2002-06-05  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* Page.cs: run OnInit, OnLoad y PreRender before rendering the page.
 	Invoke Page_Init and/or Page_Load if the user supplied them (though 
 	this should depend on AutoEventWireUp attribute of Page directive).
