@@ -188,11 +188,7 @@ namespace System.Collections.Generic
 		
 		public Enumerator <T> GetEnumerator ()
 		{
-#if GMCS_FIXED
-			return new Enumerator (this);
-#else
-			throw new Exception ("FIXME");
-#endif
+			return new Enumerator <T> (this);
 		}
 
 		IEnumerator <T> IEnumerable<T>.GetEnumerator ()
