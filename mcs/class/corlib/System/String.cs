@@ -200,7 +200,7 @@ namespace System {
 		private static int BoyerMoore (char[] haystack, string needle, int startIndex, int count)
 		{
 			/* (hopefully) Unicode-safe Boyer-Moore implementation */
-			uint[] skiptable = new uint[65536];  /* our unicode-safe skip-table */
+			int[] skiptable = new uint[65536];  /* our unicode-safe skip-table */
 			int h, n, he, ne, hc, nc, i;
 
 			if (haystack == null || needle == null)
@@ -226,7 +226,7 @@ namespace System {
 			 * pattern buffer (needle) to the distance from the index to
 			 * the end of the pattern buffer. */
 			for (nc = 0; nc < ne; nc++)
-				skiptable[(uint) needle[nc]] = ne - nc;
+				skiptable[(int) needle[nc]] = ne - nc;
 
 			h = startIndex;
 			while (count >= needle.Length) {
@@ -239,7 +239,7 @@ namespace System {
 						break;
 
 				if (needle[nc] != haystack[hc]) {
-					n = skiptable[(uint) haystack[hc]] - i;
+					n = skiptable[(int) haystack[hc]] - i;
 					h += n;
 					count -= n;
 				} else
