@@ -1,3 +1,8 @@
+2004-03-28  Zoltan Varga  <vargaz@freemail.hu>
+
+	* appdomain.c (unload_thread_main): Do not clear proxy_vtable_hash.
+	Fixes #56091.
+
 2004-03-25  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* icall.c: added Kill_internal icall.
