@@ -1,4 +1,9 @@
 
+Fri Feb 8 12:29:41 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* Makefile.am: correct linking order.
+	* dis-cil.c: use opcode info from opcodes.h instead of a copy of the data.
+
 Thu Jan 31 18:21:12 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	* dis-cil.c: reverse order when outputting start try blocks.
