@@ -66,7 +66,7 @@ namespace Microsoft.CSharp {
 			set { column = value; }      
 		}
 
-		public string FileName {
+		public string SourceFile {
 			get { 
 				return (null == file ? "" : file);
 			}
@@ -91,7 +91,7 @@ namespace Microsoft.CSharp {
 			StringBuilder builder = new StringBuilder ();
 
 			builder.AppendFormat ("[{0}({1},{2}):] ", 
-				FileName, SourceLine, SourceColumn);
+				SourceFile, SourceLine, SourceColumn);
 			builder.AppendFormat ("{0} CS{1}: {2}", 
 				ErrorLevelString, ErrorNumber, ErrorMessage);
 			
