@@ -1,3 +1,10 @@
+2004-11-30  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Iterator.cs : reimplemented AncestorIterator and 
+	  AncestorOrSelfIterator just to collect parents and not to move to
+	  siblings. In some cases like thousands of siblings, it used to be
+	  so slow, while we usually don't have so deep ancestors.
+
 2004-11-26  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Expression.cs : warning removal. Added Optimize() which is not

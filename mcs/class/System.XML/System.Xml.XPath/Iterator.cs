@@ -360,74 +360,63 @@ namespace System.Xml.XPath
 
 	internal class AncestorIterator : SimpleIterator
 	{
-		bool finished;
-		bool started;
-		ArrayList positions = new ArrayList ();
+		int currentPosition;
+		ArrayList navigators;
 		XPathNavigator startPosition;
-		int nextDepth;
+
 		public AncestorIterator (BaseIterator iter) : base (iter)
 		{
 			startPosition = iter.Current.Clone ();
 			_current = startPosition.Clone ();
 		}
-		private AncestorIterator (AncestorIterator other) : base (other, true)
+
+		private AncestorIterator (AncestorIterator other)
+			: base (other, true)
 		{
 			startPosition = other.startPosition;
-			started = other.started;
-			finished = other.finished;
-			positions = (ArrayList) other.positions.Clone ();
-			nextDepth = other.nextDepth;
+			if (other.navigators != null)
+				navigators = (ArrayList) other.navigators.Clone ();
 			if (other._current != null)
 				_current = other._current.Clone ();
+			currentPosition = other.currentPosition;
 		}
-		public override XPathNodeIterator Clone () { return new AncestorIterator (this); }
+
+		public override XPathNodeIterator Clone ()
+		{
+			return new AncestorIterator (this);
+		}
+
+		private void CollectResults ()
+		{
+			navigators = new ArrayList ();
+
+			XPathNavigator ancestors = startPosition.Clone ();
+			if (!ancestors.MoveToParent ())
+				return;
+			while (ancestors.NodeType != XPathNodeType.Root) {
+				navigators.Add (ancestors.Clone ());
+				ancestors.MoveToParent ();
+			}
+			currentPosition = navigators.Count;
+		}
+
 		public override bool MoveNextCore ()
 		{
-			if (finished)
-				return false;
-			if (!started) {
-				started = true;
-				// This clone cannot be omitted
-				XPathNavigator ancestors = startPosition.Clone ();
-				ancestors.MoveToParent ();
-				_nav.MoveToParent ();
-				while (ancestors.NodeType != XPathNodeType.Root) {
-					int i = 0;
-					_nav.MoveToFirst ();
-					while (_nav.ComparePosition (ancestors) == XmlNodeOrder.Before) {
-						_nav.MoveToNext ();
-						i++;
-					}
-					positions.Add (i);
-					if (!ancestors.MoveToParent ())
-						break; // It is for detached nodes under XmlDocumentNavigator
-					_nav.MoveToParent ();
-				}
-
-
-				positions.Reverse ();
-
+			if (navigators == null) {
+				CollectResults ();
 				if (startPosition.NodeType != XPathNodeType.Root) {
 					// First time it returns Root
 					// This clone cannot be omitted
+					_nav.MoveToRoot ();
 					_current = _nav.Clone ();
 					return true;
 				}
 			}
-			// Don't worry about node type of start position, like AncestorOrSelf.
-			// It should be Element or Root.
-			if (nextDepth < positions.Count) {
-				int thisTimePos = (int) positions [nextDepth];
-				_nav.MoveToFirstChild ();
-				for (int i = 0; i < thisTimePos; i++)
-					_nav.MoveToNext ();
-				nextDepth++;
-				// This clone cannot be omitted
-				_current = _nav.Clone ();
-				return true;
-			}
-			finished = true;
-			return false;
+			if (currentPosition == 0)
+				return false;
+			_nav.MoveTo ((XPathNavigator) navigators [--currentPosition]);
+			_current = _nav.Clone ();
+			return true;
 		}
 
 		public override bool ReverseAxis {
@@ -436,80 +425,79 @@ namespace System.Xml.XPath
 
 		public override bool RequireSorting { get { return true; } }
 
-		public override int Count { get { return positions.Count; } }
+		public override int Count {
+			get {
+				if (navigators == null)
+					CollectResults ();
+				return navigators.Count;
+			}
+		}
 	}
 
 	internal class AncestorOrSelfIterator : SimpleIterator
 	{
-		bool finished;
-		bool started;
-		ArrayList positions = new ArrayList ();
+		int currentPosition;
+		ArrayList navigators;
 		XPathNavigator startPosition;
-		int nextDepth;
 
 		public AncestorOrSelfIterator (BaseIterator iter) : base (iter)
 		{
 			startPosition = iter.Current.Clone ();
 			_current = startPosition.Clone ();
 		}
-		private AncestorOrSelfIterator (AncestorOrSelfIterator other) : base (other, true) 
+
+		private AncestorOrSelfIterator (AncestorOrSelfIterator other)
+			: base (other, true)
 		{
 			startPosition = other.startPosition;
-			started = other.started;
-			finished = other.finished;
-			positions = (ArrayList) other.positions.Clone ();
-			nextDepth = other.nextDepth;
+			if (other.navigators != null)
+				navigators = (ArrayList) other.navigators.Clone ();
 			if (other._current != null)
 				_current = other._current.Clone ();
+			currentPosition = other.currentPosition;
 		}
-		public override XPathNodeIterator Clone () { return new AncestorOrSelfIterator (this); }
+
+		public override XPathNodeIterator Clone ()
+		{
+			return new AncestorOrSelfIterator (this);
+		}
+
+		private void CollectResults ()
+		{
+			navigators = new ArrayList ();
+
+			XPathNavigator ancestors = startPosition.Clone ();
+			if (!ancestors.MoveToParent ())
+				return;
+			while (ancestors.NodeType != XPathNodeType.Root) {
+				navigators.Add (ancestors.Clone ());
+				ancestors.MoveToParent ();
+			}
+			currentPosition = navigators.Count;
+		}
+
 		public override bool MoveNextCore ()
 		{
-			bool initialIteration = false;
-			if (finished)
+			if (navigators == null) {
+				CollectResults ();
+				if (startPosition.NodeType != XPathNodeType.Root) {
+					// First time it returns Root
+					// This clone cannot be omitted
+					_nav.MoveToRoot ();
+					_current = _nav.Clone ();
+					return true;
+				}
+			}
+			if (currentPosition == -1)
 				return false;
-			if (!started) {
-				initialIteration = true;
-				started = true;
-				// This clone cannot be omitted
-				XPathNavigator ancestors = startPosition.Clone ();
-				do {
-					int i = 0;
-					_nav.MoveToFirst ();
-					while (_nav.ComparePosition (ancestors) == XmlNodeOrder.Before) {
-						_nav.MoveToNext ();
-						i++;
-					}
-					positions.Add (i);
-					if (!ancestors.MoveToParent ())
-						break; // for detached nodes under XmlDocumentNavigator.
-					_nav.MoveToParent ();
-				} while (ancestors.NodeType != XPathNodeType.Root);
-				positions.Reverse ();
-			}
-			if (initialIteration && startPosition.NodeType != XPathNodeType.Root) {
-				// This clone cannot be omitted
-				_current = _nav.Clone ();
-				return true;
-			} else if (nextDepth + 1 == positions.Count) {
-				nextDepth++;
+			if (currentPosition-- == 0) {
 				_nav.MoveTo (startPosition);
-				// This clone cannot be omitted
 				_current = _nav.Clone ();
-				return true;
+				return true; // returns self.
 			}
-			else if (nextDepth < positions.Count) {
-				int thisTimePos = (int) positions [nextDepth];
-				_nav.MoveToFirstChild ();
-				for (int i = 0; i < thisTimePos; i++)
-					_nav.MoveToNext ();
-				nextDepth++;
-				// This clone cannot be omitted
-				_current = _nav.Clone ();
-				return true;
-			}
-			finished = true;
-			return false;
+			_nav.MoveTo ((XPathNavigator) navigators [currentPosition]);
+			_current = _nav.Clone ();
+			return true;
 		}
 
 		public override bool ReverseAxis {
@@ -518,7 +506,13 @@ namespace System.Xml.XPath
 
 		public override bool RequireSorting { get { return true; } }
 
-		public override int Count { get { return positions.Count; } }
+		public override int Count {
+			get {
+				if (navigators == null)
+					CollectResults ();
+				return navigators.Count + 1;
+			}
+		}
 	}
 
 	internal class DescendantIterator : SimpleIterator
