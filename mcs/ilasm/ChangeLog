@@ -1,3 +1,8 @@
+2003-03-07 Alp Toker <alp@atoker.com>
+
+	* makefile, makefile.gnu: reference PEAPI.dll instead of including
+	PEAPI.cs
+
 2003-03-06 Jackson Harper <jackson@latitudegeo.com>
 
 	* AssemblyInfo.cs: Bump up version number, this new version is a major 

@@ -2,14 +2,13 @@ RUNTIME = mono
 topdir = ..
 MCS = $(RUNTIME) $(topdir)/mcs/mcs.exe
 CSFLAGS = --target exe
-#LIBFLAGS = /r:PEAPI.dll
+LIBFLAGS = /r:PEAPI.dll
 INSTALL = /usr/bin/install
 prefix = /usr
 
 SOURCES = 				\
 	Driver.cs			\
 	AssemblyInfo.cs			\
-	../class/PEAPI/PEAPI.cs		\
 	codegen/CodeGen.cs		\
 	codegen/ClassTable.cs		\
 	parser/ILParser.cs		\
