@@ -538,7 +538,7 @@ el.ElementType != schemaAnyType)
 				if (el != null)
 					ImportColumnElement (parent, el);
 				else
-					ImportColumnGroupBase (parent, (XmlSchemaGroupBase) gb);
+					ImportColumnGroupBase (parent, (XmlSchemaGroupBase) p);
 			}
 		}
 
