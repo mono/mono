@@ -31,7 +31,7 @@ namespace System.Reflection {
 			}
 		}
 		public bool IsMulticast {get {return true;}}
-		public bool IsSpecialName {get {return false;}}
+		public bool IsSpecialName {get {return (Attributes & EventAttributes.SpecialName ) != 0;}}
 		public override MemberTypes MemberType {
 			get {return MemberTypes.Event;}
 		}

@@ -1,3 +1,7 @@
+2003-06-15  Zoltan Varga  <vargaz@freemail.hu>
+
+	* EventInfo.cs: Implement IsSpecialName.
+
 2003-06-10  Zoltan Varga  <vargaz@freemail.hu>
 
 	* Module.cs (Mono_GetGuid): New method to return the GUID of the
