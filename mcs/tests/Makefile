@@ -26,7 +26,7 @@ USE_MCS_FLAGS :=
 # He may also move some to TEST_EXCLUDE_net_2_0 if some of the merges are inappropriate for GMCS.
 #
 NEW_TEST_SOURCES_common = \
-	test-297 test-287 test-294 test-299 test-300 \
+	test-135 test-297 test-287 test-294 test-299 test-300 \
 	test-301 test-302 test-303 test-304 test-305 test-306 test-307 test-259 test-309 test-310 \
 	test-311 test-312 test-313 test-314 \
 	a-call		a-capture5    a-instance	a-parameter2			\
@@ -55,7 +55,7 @@ TEST_SOURCES_common = \
 	test-101 test-102 test-103 test-104          test-106 test-107 test-108 test-109 test-110 \
 	test-111 test-112 test-113 test-114 test-115 test-116 test-117 test-118 test-119 	  \
 	test-121 test-122 test-123          test-125 test-126 test-127 test-128 test-129 test-130 \
-	test-131                   test-134 test-135 test-136 test-137 test-138 test-139 test-140 \
+	test-131                   test-134	     test-136 test-137 test-138 test-139 test-140 \
 	test-141 test-142 test-143 test-144 test-145 test-146 test-147 test-148 test-149 test-150 \
 	test-151 test-152 test-153 test-154 test-155 test-156 test-157 test-158 test-159 test-160 \
 	test-161 test-162 test-163 test-164 test-165 test-166 test-167 test-168 test-169 test-170 \
