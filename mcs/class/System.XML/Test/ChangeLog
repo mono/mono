@@ -1,3 +1,8 @@
+2003-02-16  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* XmlDocumentTests.cs: added TestLoadExternalUri
+	* XmlTextReaderTests.cs: added TestAttributeWithEntityReference
+
 2003-02-09  Piers Haken	<piersh@friskit.com>
 
 	* SelectNodesTests.cs: added TestNamespaceSelect (from Jerome Laban)

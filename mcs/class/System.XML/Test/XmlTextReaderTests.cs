@@ -1764,13 +1764,35 @@ namespace MonoTests.System.Xml
 			AssertEndDocument (xmlReader);
 		}
 
-		public void TestAttributeWithEntityReference ()
+		public void TestAttributeWithCharacterReference ()
 		{
 			string xml = @"<a value='hello &amp; world' />";
 			XmlReader xmlReader =
 				new XmlTextReader (new StringReader (xml));
 			xmlReader.Read ();
 			AssertEquals ("hello & world", xmlReader ["value"]);
+		}
+
+		public void TestAttributeWithEntityReference ()
+		{
+			string xml = @"<a value='hello &ent; world' />";
+			XmlReader xmlReader =
+				new XmlTextReader (new StringReader (xml));
+			xmlReader.Read ();
+			xmlReader.MoveToFirstAttribute ();
+			xmlReader.ReadAttributeValue ();
+			AssertEquals ("hello ", xmlReader.Value);
+			xmlReader.ReadAttributeValue ();
+			AssertEquals (XmlNodeType.EntityReference, xmlReader.NodeType);
+			AssertEquals ("ent", xmlReader.Name);
+			AssertEquals (XmlNodeType.EntityReference, xmlReader.NodeType);
+			xmlReader.ReadAttributeValue ();
+			AssertEquals (" world", xmlReader.Value);
+			AssertEquals (XmlNodeType.Text, xmlReader.NodeType);
+			xmlReader.ReadAttributeValue ();
+			AssertEquals (XmlNodeType.None, xmlReader.NodeType);
+			xmlReader.ReadAttributeValue ();
+			AssertEquals (XmlNodeType.None, xmlReader.NodeType);
 		}
 
 		public void TestQuoteChar ()

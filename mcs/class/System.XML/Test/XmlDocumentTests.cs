@@ -871,5 +871,11 @@ namespace MonoTests.System.Xml
 
 			AssertEquals (XmlNodeType.Element, dom.FirstChild.NextSibling.NextSibling.NodeType);
 		}
+
+		public void TestLoadExternalUri ()
+		{
+			// set any URL of well-formed XML.
+			document.Load ("http://www.go-mono.com/index.rss");
+		}
 	}
 }
