@@ -1,5 +1,13 @@
 2004-01-19 Ben Maurer  <bmaurer@users.sourceforge.net>
 
+	* expression.cs: We need to fix the case where we do
+	not have a temp variable here.
+
+	* assign.cs: Only expression compound assignments need
+	temporary variables.
+
+2004-01-19 Ben Maurer  <bmaurer@users.sourceforge.net>
+
 	* flowanalysis.cs: Reduce memory allocation in a few ways:
 	  - A block with no variables should not allocate a bit
 	    vector for itself.

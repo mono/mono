@@ -379,10 +379,8 @@ namespace Mono.CSharp {
 			// 
 			IAssignMethod am = (IAssignMethod) target;
 			
-			if (this is CompoundAssign){
+			if (this is CompoundAssign)
 				am.CacheTemporaries (ec);
-				use_temporaries = true;
-			}
 
 			if (!is_statement)
 				use_temporaries = true;
