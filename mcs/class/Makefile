@@ -9,8 +9,8 @@ MONO_CSHARP_DEBUGGER =
 endif
 SUBDIRS = \
 	corlib				\
-	I18N				\
 	System				\
+	I18N				\
 	System.XML			\
 	System				\
 	System.Drawing			\
@@ -45,7 +45,6 @@ SUBDIRS = \
 	Commons.Xml.Relaxng		\
 	Novell.Directory.Ldap		\
 	Mono.Security.Win32		\
-	Novell.Directory.Ldap		\
 	System.DirectoryServices	\
 	System.Messaging	\
 	System.ServiceProcess \

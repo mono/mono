@@ -1,3 +1,8 @@
+2004-05-07  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile (SUBDIRS): Build 'corlib' and first pass of 'System'
+	before anything else.  Remove duplicated Novell.Directory.Ldap.
+
 2004-05-02  Duncan Mak  <duncan@ximian.com>
 
 	* I18N/Assembly/AssemblyInfo.cs:
