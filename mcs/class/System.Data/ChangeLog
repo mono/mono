@@ -1,3 +1,8 @@
+2002-10-29  Ville Palo <vi64pa@koti.soon.fi>
+
+	* System.Data.SqlTypes/SqlGuid.cs: Fixed some bugs and finished 
+	couple of MonoTODOs.
+	
 2002-10-28  Tim Coleman (tim@timcoleman.com)
         * System.Data.SqlClient/SqlCommand.cs:
                 Add some error handling

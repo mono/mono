@@ -96,10 +96,16 @@ namespace System.Data.SqlTypes
 			return (x == y);
 		}
 
-		[MonoTODO]
 		public override int GetHashCode ()
 		{
-			return 42;
+			byte [] bytes  = this.ToByteArray ();
+			
+			int result = 10;
+			foreach (byte b in  bytes) {
+				result = 91 * result + b.GetHashCode ();
+			}
+
+			return result;
 		}
 
 		public static SqlBoolean GreaterThan (SqlGuid x, SqlGuid y)
@@ -127,16 +133,14 @@ namespace System.Data.SqlTypes
 			return (x != y);
 		}
 
-		[MonoTODO]
 		public static SqlGuid Parse (string s)
 		{
-			throw new NotImplementedException ();
+			return new SqlGuid (s);
 		}
 
-		[MonoTODO]
 		public byte[] ToByteArray()
 		{
-			throw new NotImplementedException ();
+			return value.ToByteArray ();
 		}
 
 		public SqlBinary ToSqlBinary ()
@@ -163,16 +167,27 @@ namespace System.Data.SqlTypes
 			return new SqlBoolean (x.Value == y.Value);
 		}
 
-		[MonoTODO]
 		public static SqlBoolean operator > (SqlGuid x, SqlGuid y)
 		{
-			throw new NotImplementedException ();
+			if (x.IsNull || y.IsNull)
+				return SqlBoolean.Null;
+
+			if (x.Value.CompareTo (y.Value) > 0)
+				return new SqlBoolean (true);
+			else
+				return new SqlBoolean (false);
 		}
 
-		[MonoTODO]
 		public static SqlBoolean operator >= (SqlGuid x, SqlGuid y)
 		{
-			throw new NotImplementedException ();
+			if (x.IsNull || y.IsNull)
+				return SqlBoolean.Null;
+			
+			if (x.Value.CompareTo (y.Value) >= 0)
+				return new SqlBoolean (true);
+			else
+				return new SqlBoolean (false);
+
 		}
 
 		public static SqlBoolean operator != (SqlGuid x, SqlGuid y)
@@ -181,22 +196,32 @@ namespace System.Data.SqlTypes
 			return new SqlBoolean (!(x.Value == y.Value));
 		}
 
-		[MonoTODO]
 		public static SqlBoolean operator < (SqlGuid x, SqlGuid y)
 		{
-			throw new NotImplementedException ();
+			if (x.IsNull || y.IsNull)
+				return SqlBoolean.Null;
+
+			if (x.Value.CompareTo (y.Value) < 0)
+				return new SqlBoolean (true);
+			else
+				return new SqlBoolean (false);
+
 		}
 
-		[MonoTODO]
 		public static SqlBoolean operator <= (SqlGuid x, SqlGuid y)
 		{
-			throw new NotImplementedException ();
+			if (x.IsNull || y.IsNull)
+				return SqlBoolean.Null;
+
+			if (x.Value.CompareTo (y.Value) <= 0)
+				return new SqlBoolean (true);
+			else
+				return new SqlBoolean (false);
 		}
 
-		[MonoTODO]
 		public static explicit operator SqlGuid (SqlBinary x)
 		{
-			throw new NotImplementedException ();
+			return new SqlGuid (x.Value);
 		}
 
 		public static explicit operator Guid (SqlGuid x)
@@ -204,10 +229,9 @@ namespace System.Data.SqlTypes
 			return x.Value;
 		}
 
-		[MonoTODO]
 		public static explicit operator SqlGuid (SqlString x)
 		{
-			throw new NotImplementedException ();
+			return new SqlGuid (x.Value);
 		}
 
 		public static implicit operator SqlGuid (Guid x)
