@@ -754,6 +754,8 @@ namespace Mono.MonoBASIC {
 			if (attribute_types != null)
 				foreach (TypeContainer tc in attribute_types)
 					tc.Emit ();
+
+			CodeGen.EmitGlobalAttributes ();
 			
 			if (type_container_resolve_order != null) {
 				foreach (TypeContainer tc in type_container_resolve_order)

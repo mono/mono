@@ -121,9 +121,17 @@ namespace Mono.MonoBASIC {
 
 		// Information in the case we are an attribute type
 
-		public AttributeTargets Targets = AttributeTargets.All;
-		public bool AllowMultiple = false;
-		public bool Inherited;
+		AttributeUsageAttribute attribute_usage = new AttributeUsageAttribute (AttributeTargets.All);
+
+		public AttributeUsageAttribute AttributeUsage {
+			get {
+				return attribute_usage;
+			}
+
+			set {
+				attribute_usage = value;
+			}				
+		}
 
 		// The interfaces we implement.
 		Type [] ifaces;
@@ -875,7 +883,6 @@ namespace Mono.MonoBASIC {
 			    (parent == TypeManager.attribute_type ||
 			     parent.IsSubclassOf (TypeManager.attribute_type))) {
 				RootContext.RegisterAttribute (this);
-				TypeManager.RegisterAttrType (TypeBuilder, this);
 			} else
 				RootContext.RegisterOrder (this); 
 				

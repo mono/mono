@@ -27,7 +27,7 @@ namespace Mono.MonoBASIC
 			if (attrs == null)
 				attrs = new Attributes(al);
 			else
-				attrs.AddAttributes(al);
+				attrs.Add(al);
 		}
 	}
 	

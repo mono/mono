@@ -213,12 +213,6 @@ public class TypeManager {
 	static Hashtable method_internal_params;
 
 	// <remarks>
-	//  Keeps track of attribute types
-	// </remarks>
-
-	static Hashtable builder_to_attr;
-
-	// <remarks>
 	//  Keeps track of methods
 	// </remarks>
 
@@ -310,7 +304,6 @@ public class TypeManager {
 		typecontainers = new CaseInsensitiveHashtable ();
 		
 		builder_to_declspace = new PtrHashtable ();
-		builder_to_attr = new PtrHashtable ();
 		builder_to_method = new PtrHashtable ();
 		method_arguments = new PtrHashtable ();
 		method_internal_params = new PtrHashtable ();
@@ -394,11 +387,6 @@ public class TypeManager {
 		builder_to_method.Add (builder, method);
 	}
 
-	public static void RegisterAttrType (Type t, TypeContainer tc)
-	{
-		builder_to_attr.Add (t, tc);
-	}
-
 	/// <summary>
 	///   Returns the TypeContainer whose Type is 't' or null if there is no
 	///   TypeContainer for 't' (ie, the Type comes from a library)
@@ -433,10 +421,10 @@ public class TypeManager {
 	{
 		return builder_to_declspace [t] as Enum;
 	}
-	
-	public static TypeContainer LookupAttr (Type t)
+
+	public static TypeContainer LookupClass (Type t)
 	{
-		return (TypeContainer) builder_to_attr [t];
+		return builder_to_declspace [t] as TypeContainer;
 	}
 	
 	/// <summary>

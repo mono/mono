@@ -1,3 +1,24 @@
+2004-11-07  Jambunathan K  <kjambunathan@novell.com>
+	* typemanager.cs: Removed TypeManager.builder_to_attr which was
+	redundant and replaced LookupAttr with LookupClass.
+
+	* rootcontext.cs: 
+	* module.cs: Miscellaneous changes
+
+	* mb-parser.jay: Upadted actions of the attributes grammar
+
+	* codegen.cs: 1) Introduced new classes CommonAssemblyModulClass,
+	AssemblyClass, ModuleClass 2) Introduced following methods
+	CodeGen.AddGlobalAttributes, CodeGen.EmitGlobalAttributes
+
+	* class.cs: Factored out TypeContainer.AttributeUsage
+
+	* attribute.cs: 1) Factored out Attribute.UsageAttribute and
+	Attribute.GetAttributeUsage 2) Introducing the new base class
+	Attributable from which all Attributable types will be derived in
+	the future 3) Added new accessors Attribute.IsAssemblyAttribute
+	and Attribute.IsModuleAttribute
+
 2004-11-06  Jambunathan K  <kjambunathan@novell.com>
 	* rootcontext.cs: Removed the static field -
 	RootContext:global_attribute.

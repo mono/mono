@@ -20,6 +20,30 @@ using System.Text;
 
 namespace Mono.MonoBASIC {
 
+	/// <summary>
+	///   Base class for objects that can have Attributes applied to them.
+	/// </summary>
+	public abstract class Attributable {
+		/// <summary>
+		///   Attributes for this type
+		/// </summary>
+ 		Attributes attributes;
+
+		public Attributable(Attributes attrs)
+		{
+			attributes = attrs;
+		}
+
+		public Attributes OptAttributes 
+		{
+			get {
+				return attributes;
+			}
+			set {
+				attributes = value;
+			}
+		}
+	};
 	public class Attribute {
 		public readonly string ExplicitTarget;
 		public readonly string    Name;
@@ -28,16 +52,17 @@ namespace Mono.MonoBASIC {
 		Location Location;
 
 		public Type Type;
-		
-		//
-		// The following are only meaningful when the attribute
-		// being emitted is one of the builtin ones
-		//
-		AttributeTargets Targets;
-		bool AllowMultiple;
-		bool Inherited;
 
-		bool UsageAttr = false;
+		// Is non-null if type is AttributeUsageAttribute
+		AttributeUsageAttribute usage_attribute;
+
+		public AttributeUsageAttribute UsageAttribute {
+			get {
+				return usage_attribute;
+			}
+		}
+		
+		bool usage_attr = false;
 		
 		MethodImplOptions ImplOptions;
 		UnmanagedType     UnmanagedType;
@@ -105,6 +130,7 @@ namespace Mono.MonoBASIC {
 				" missing a using directive or an assembly reference ?)");
 			return null;
 		}
+		
 
 		public Type ResolveType (EmitContext ec)
 		{
@@ -123,10 +149,10 @@ namespace Mono.MonoBASIC {
 			bool MethodImplAttr = false;
 			bool MarshalAsAttr = false;
 
-			UsageAttr = false;
+			usage_attr = false;
 
 			if (Type == TypeManager.attribute_usage_type)
-				UsageAttr = true;
+				usage_attr = true;
 			if (Type == TypeManager.methodimpl_attr_type)
 				MethodImplAttr = true;
 			if (Type == TypeManager.marshal_as_attr_type)
@@ -171,8 +197,8 @@ namespace Mono.MonoBASIC {
 					return null;
 				}
 				
-				if (UsageAttr)
-					this.Targets = (AttributeTargets) pos_values [0];
+				if (usage_attr)
+					usage_attribute = new AttributeUsageAttribute ((AttributeTargets) pos_values [0]);
 				
 				if (MethodImplAttr)
 					this.ImplOptions = (MethodImplOptions) pos_values [0];
@@ -225,11 +251,11 @@ namespace Mono.MonoBASIC {
 						object o = ((Constant) e).GetValue ();
 						prop_values.Add (o);
 						
-						if (UsageAttr) {
+						if (usage_attr) {
 							if (member_name == "AllowMultiple")
-								this.AllowMultiple = (bool) o;
+								usage_attribute.AllowMultiple = (bool) o;
 							if (member_name == "Inherited")
-								this.Inherited = (bool) o;
+								usage_attribute.Inherited = (bool) o;
 						}
 						
 					} else if (e is TypeOf) {
@@ -342,32 +368,7 @@ namespace Mono.MonoBASIC {
 		static string GetValidPlaces (Attribute attr)
 		{
 			StringBuilder sb = new StringBuilder ();
-			AttributeTargets targets = 0;
-			
-			TypeContainer a = TypeManager.LookupAttr (attr.Type);
-
-			if (a == null) {
-				
-				System.Attribute [] attrs = null;
-				
-				try {
-					attrs = System.Attribute.GetCustomAttributes (attr.Type);
-					
-				} catch {
-					Report.Error (-20, attr.Location, "Cannot find attribute type " + attr.Name +
-						      " (maybe you forgot to set the usage using the" +
-						      " AttributeUsage attribute ?).");
-					return null;
-				}
-					
-				foreach (System.Attribute tmp in attrs)
-					if (tmp is AttributeUsageAttribute) {
-						targets = ((AttributeUsageAttribute) tmp).ValidOn;
-						break;
-					}
-			} else
-				targets = a.Targets;
-
+			AttributeTargets targets = attr.GetAttributeUsage ().ValidOn;
 			
 			if ((targets & AttributeTargets.Assembly) != 0)
 				sb.Append ("'assembly' ");
@@ -425,29 +426,8 @@ namespace Mono.MonoBASIC {
 
 		public static bool CheckAttribute (Attribute a, object element)
 		{
-			TypeContainer attr = TypeManager.LookupAttr (a.Type);
-			AttributeTargets targets = 0;
-
-			
-			if (attr == null) {
-
-				System.Attribute [] attrs = null;
-				
-				try {
-					attrs = System.Attribute.GetCustomAttributes (a.Type);
-
-				} catch {
-					Report.Error (-20, a.Location, "Cannot find attribute type " + a.Name +
-						      " (maybe you forgot to set the usage using the" +
-						      " AttributeUsage attribute ?).");
-					return false;
-				}
-					
-				foreach (System.Attribute tmp in attrs)
-					if (tmp is AttributeUsageAttribute) 
-						targets = ((AttributeUsageAttribute) tmp).ValidOn;
-			} else
-				targets = attr.Targets;
+			TypeContainer attr = TypeManager.LookupClass (a.Type);
+			AttributeTargets targets = a.GetAttributeUsage ().ValidOn;
 
 			if (element is Class) {
 				if ((targets & AttributeTargets.Class) != 0)
@@ -511,9 +491,29 @@ namespace Mono.MonoBASIC {
 					return true;
 				else
 					return false;
-			}
+			} else if (element is ModuleBuilder){
+					if ((targets & AttributeTargets.Module) != 0)
+						return true;
+					else
+						return false;
+				}  
 
 			return false;
+		}
+
+		/// <summary>
+		/// Returns AttributeUsage attribute for this type
+		/// </summary>
+		public AttributeUsageAttribute GetAttributeUsage ()
+		{
+			Class attr_class = (Class) TypeManager.LookupClass (Type);
+
+			if (attr_class == null) {
+				object[] usage_attr = Type.GetCustomAttributes (TypeManager.attribute_usage_type, true);
+				return (AttributeUsageAttribute)usage_attr [0];
+			}
+		
+			return attr_class.AttributeUsage;
 		}
 
 		//
@@ -678,11 +678,8 @@ namespace Mono.MonoBASIC {
 				} else if (kind is TypeContainer) {
 					TypeContainer tc = (TypeContainer) kind;
 						
-					if (a.UsageAttr) {
-						tc.Targets = a.Targets;
-						tc.AllowMultiple = a.AllowMultiple;
-						tc.Inherited = a.Inherited;
-							
+					if (a.UsageAttribute != null) {
+						tc.AttributeUsage = a.UsageAttribute;
 					} else if (a.Type == TypeManager.default_member_type) {
 						if (tc.Indexers != null) {
 							Report.Error (646, loc, "Cannot specify the DefaultMember attribute on" + " a type containing an indexer");
@@ -831,7 +828,19 @@ namespace Mono.MonoBASIC {
 				mb.SetImplementationFlags (MethodImplAttributes.PreserveSig);
 			
 			return mb;
-		}			
+		}
+
+		public bool IsAssemblyAttribute {
+			get {
+				return ExplicitTarget == "assembly";
+			}
+		}
+
+		public bool IsModuleAttribute {
+			get {
+				return ExplicitTarget == "module";
+			}
+		}
 	}
 	
 	public class Attributes {
@@ -849,18 +858,22 @@ namespace Mono.MonoBASIC {
 			Attrs = attrs;
 		}
 
-		public void AddAttributes (ArrayList attrs)
+		public void Add (Attribute attr)
+		{
+			Attrs.Add (attr);
+		}
+
+		public void Add (ArrayList attrs)
 		{
 			Attrs.AddRange (attrs);
 		}
 
-		public bool Contains (Type t)
-		{
-			foreach (Attribute a in Attrs){
-					if (a.Type == t)
-						return true;
-				}
-			return false;
-		}			
+// 		public void Emit (EmitContext ec, Attributable ias)
+// 		{
+// 			ListDictionary ld = new ListDictionary ();
+	
+// 			foreach (Attribute a in Attrs)
+// 				a.Emit (ec, ias, ld);
+// 		}
 	}
 }

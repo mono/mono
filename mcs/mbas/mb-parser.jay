@@ -848,7 +848,12 @@ attribute_sections
 		if (expecting_local_attribs) {
 			local_attrib_section_added = true;
 			allow_global_attribs = false;
-		}			
+
+			$$ = new Attributes ((ArrayList) $1);
+		}	
+
+		if (expecting_global_attribs)
+			CodeGen.AddGlobalAttributes ((ArrayList) $1);
 
 		expecting_local_attribs = false;
 		expecting_global_attribs = false;
@@ -859,8 +864,9 @@ attribute_sections
 	   }
 	   attribute_section	
 	  {
-	  	$$ = null;
+	  	$$ = $1;
 	  	if ($3 != null) {
+			ArrayList attrs = (ArrayList) $3;
 
 			if (expecting_local_attribs) {
 				if (local_attrib_section_added) {
@@ -870,16 +876,21 @@ attribute_sections
 					break;
 				}
 
+				if ($1 == null)
+					$$ = new Attributes (attrs);
+				else 
+					((Attributes) $1).Add (attrs);
+
 				local_attrib_section_added = true;
 				allow_global_attribs = false;
 			}
+
+			if (expecting_global_attribs)
+				CodeGen.AddGlobalAttributes ((ArrayList) $3);
   		}	
 
 		expecting_local_attribs = false;
 		expecting_global_attribs = false;
-		
-	  	$$ = $1; 
-
 	  }
 	;
 
@@ -900,7 +911,7 @@ attribute_section
 				}
 			}
 
-			$$ = new Attributes ((ArrayList) $2);
+			$$ = $2;
 		}
  	  }
  	; 

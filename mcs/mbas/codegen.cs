@@ -21,10 +21,37 @@ namespace Mono.MonoBASIC {
 	/// </summary>
 	public class CodeGen {
 		static AppDomain current_domain;
-		public static AssemblyBuilder AssemblyBuilder;
-		public static ModuleBuilder   ModuleBuilder;
+
+		public static AssemblyBuilder AssemblyBuilder {
+			get { 
+				return Assembly.Builder;
+			}				
+
+			set {
+				Assembly.Builder = value;
+			}				
+		}
+
+		public static ModuleBuilder ModuleBuilder {
+			get { 
+				return Module.Builder;
+			}				
+
+			set {
+				Module.Builder = value;
+			}				
+		}
+
+		public static AssemblyClass Assembly;
+		public static ModuleClass Module;
 
 		static public ISymbolWriter SymbolWriter;
+
+		static CodeGen ()
+		{
+			Assembly = new AssemblyClass ();
+			Module = new ModuleClass ();
+		}
 
 		public static string Basename (string name)
 		{
@@ -202,6 +229,23 @@ namespace Mono.MonoBASIC {
 				// it opens the assembly and reads its metadata.
 				SymbolWriter.Close ();
 			}
+		}
+
+		public static void AddGlobalAttributes (ArrayList attrs)
+		{
+			foreach (Attribute attr in attrs) {
+				if (attr.IsAssemblyAttribute)
+					Assembly.AddAttribute (attr);
+				else if (attr.IsModuleAttribute)
+					Module.AddAttribute (attr);
+			}
+		}
+
+		public static void EmitGlobalAttributes ()
+		{
+			//Assembly.Emit (Tree.Types);
+			//Module.Emit (Tree.Types);
+
 		}
 	}
 
@@ -686,6 +730,75 @@ namespace Mono.MonoBASIC {
 				}
 
 				return my_this;
+			}
+		}
+	}
+
+	
+	public abstract class CommonAssemblyModulClass: Attributable {
+		protected CommonAssemblyModulClass ():
+			base (null)
+		{
+		}
+
+		public void AddAttribute (Attribute attr)
+		{
+			if (OptAttributes == null) {
+				OptAttributes = new Attributes (attr);
+			} else {
+				OptAttributes.Add (attr);
+			}
+		}
+
+// 		public virtual void Emit (TypeContainer tc) 
+// 		{
+// 			if (OptAttributes == null)
+// 				return;
+// 			EmitContext ec = new EmitContext (tc, Location.Null, null, null, 0, false);
+// 			OptAttributes.Emit (ec, this);
+//  		}
+                
+// 		protected Attribute GetClsCompliantAttribute ()
+// 		{
+// 			if (OptAttributes == null)
+// 				return null;
+
+// 			EmitContext temp_ec = new EmitContext (new RootTypes (), Mono.CSharp.Location.Null, null, null, 0, false);
+// 			Attribute a = OptAttributes.Search (TypeManager.cls_compliant_attribute_type, temp_ec);
+// 			if (a != null) {
+// 				a.Resolve (temp_ec);
+// 			}
+// 			return a;
+// 		}
+	}
+
+	public class AssemblyClass: CommonAssemblyModulClass 
+	{
+		public AssemblyBuilder Builder;
+
+		public AttributeTargets AttributeTargets {
+			get {
+				return AttributeTargets.Assembly;
+			}
+		}
+		
+// 		public override void Emit (TypeContainer tc)
+// 		{
+// 			base.Emit (tc);
+// 		}
+	}
+	
+	public class ModuleClass: CommonAssemblyModulClass 
+	{
+		public ModuleBuilder Builder;
+
+		public ModuleClass ()
+		{
+		}
+	
+		public AttributeTargets AttributeTargets {
+			get {
+				return AttributeTargets.Module;
 			}
 		}
 	}
