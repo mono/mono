@@ -1,3 +1,15 @@
+2004-02-11  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Reference.cs: Added LoadInnerXml to transforms. Removed unused 
+	variable.
+	* Transform.cs: Import GetInnerXml in GetXml.
+	* XmlDsigBase64Transform.cs: Now use a StreamWriter to avoid multiple
+	allocations.
+	* XmlDsigC14NTransform.cs: Added Stream support to LoadInput
+	* XmlDsigXPathTransform.cs: Fixed GetInnerXml to include xpath 
+	expression and LoadInput. It nows match MS implementation but doesn't
+	work like I think it should (but neither is MS implementation).
+
 2004-02-10  Tim Coleman <tim@timcoleman.com>
 	* DataReference.cs EncryptedKey.cs EncryptedXml.cs
 	* KeyInfoEncryptedKey.cs KeyReference.cs ReferenceList.cs

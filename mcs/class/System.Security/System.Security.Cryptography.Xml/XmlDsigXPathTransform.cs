@@ -4,9 +4,10 @@
 // http://www.w3.org/TR/1999/REC-xpath-19991116 
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot <sebastien@ximian.com>
 //
 // (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
+// (C) 2004 Novell (http://www.novell.com)
 //
 
 using System.IO;
@@ -22,8 +23,8 @@ namespace System.Security.Cryptography.Xml {
 
 		private Type[] input;
 		private Type[] output;
-		private XmlNodeList xnl;
-		private XmlNodeList xpathNodes;
+		private XmlNodeList xpath;
+		private XmlDocument doc;
 
 		public XmlDsigXPathTransform () 
 		{
@@ -51,7 +52,7 @@ namespace System.Security.Cryptography.Xml {
 					lock (this) {
 						// this way the result is cached if called multiple time
 						output = new Type [1];
-						output[0] = typeof (System.IO.Stream);
+						output[0] = typeof (System.Xml.XmlNodeList);
 					}
 				}
 				return output;
@@ -60,12 +61,28 @@ namespace System.Security.Cryptography.Xml {
 
 		protected override XmlNodeList GetInnerXml () 
 		{
-			return xnl;
+			if (xpath == null) {
+				// default value
+				XmlDocument doc = new XmlDocument ();
+				doc.LoadXml ("<XPath xmlns=\"" + XmlSignature.NamespaceURI + "\"></XPath>");
+				xpath = doc.ChildNodes;
+			}
+			return xpath;
 		}
-
+		
 		public override object GetOutput () 
 		{
-			return xpathNodes;
+			// note: this will throw a NullReferenceException if 
+			// doc is null - just like MS implementation does
+			if ((xpath == null) || (xpath.Count < 1)) {
+				// can't create an XmlNodeList
+				XmlDocument xd = new XmlDocument ();
+				return xd.ChildNodes;
+			}
+			return doc.ChildNodes;
+//* I know it doesn't make a lot of sense - but this is what the MS framework
+//* returns - I must miss something really bad
+//*			return doc.DocumentElement.SelectNodes (xpath [0].InnerXml);
 		}
 
 		public override object GetOutput (Type type) 
@@ -79,30 +96,26 @@ namespace System.Security.Cryptography.Xml {
 		{
 			if (nodeList == null)
 				throw new CryptographicException ("nodeList");
-			xnl = nodeList;
+			xpath = nodeList;
 		}
 
 		public override void LoadInput (object obj) 
 		{
-			XmlNode xn = null;
 			// possible input: Stream, XmlDocument, and XmlNodeList
 			if (obj is Stream) {
-				XmlDocument doc = new XmlDocument ();
+				doc = new XmlDocument ();
 				doc.Load (obj as Stream);
 			}
 			else if (obj is XmlDocument) {
+				doc = (obj as XmlDocument);
 			}
 			else if (obj is XmlNodeList) {
-				xnl = (XmlNodeList) obj;
+				doc = new XmlDocument ();
+				foreach (XmlNode xn in (obj as XmlNodeList))  {
+					XmlNode importedNode = doc.ImportNode (xn, true);
+					doc.AppendChild (importedNode);
+				}
 			}
-
-			if (xn != null) {
-				string xpath = xn.InnerXml;
-				// only possible output: XmlNodeList
-				xpathNodes = xnl[0].SelectNodes (xpath);
-			}
-			else
-				xpathNodes = null;
 		}
 	}
 }

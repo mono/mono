@@ -2,9 +2,10 @@
 // Transform.cs - Transform implementation for XML Signature
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot <sebastien@ximian.com>
 //
 // (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
+// (C) 2004 Novell (http://www.novell.com)
 //
 
 using System.Runtime.InteropServices;
@@ -42,6 +43,13 @@ namespace System.Security.Cryptography.Xml {
 			XmlDocument document = new XmlDocument ();
 			XmlElement xel = document.CreateElement (XmlSignature.ElementNames.Transform, XmlSignature.NamespaceURI);
 			xel.SetAttribute (XmlSignature.AttributeNames.Algorithm, algo);
+			XmlNodeList xnl = this.GetInnerXml ();
+			if (xnl != null) {
+				foreach (XmlNode xn in xnl) {
+					XmlNode importedNode = document.ImportNode (xn, true);
+					xel.AppendChild (importedNode);
+				}
+			}
 			return xel;
 		}
 

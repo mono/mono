@@ -2,12 +2,13 @@
 // XmlDsigC14NTransform.cs - C14N Transform implementation for XML Signature
 // http://www.w3.org/TR/xml-c14n
 //
-// Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+// Authors:
+//	Sebastien Pouliot <sebastien@ximian.com>
 //	Aleksey Sanin (aleksey@aleksey.com)
 //
 // (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
 // (C) 2003 Aleksey Sanin (aleksey@aleksey.com)
+// (C) 2004 Novell (http://www.novell.com)
 //
 
 using System.Collections;
@@ -28,12 +29,12 @@ namespace System.Security.Cryptography.Xml {
 		public XmlDsigC14NTransform () 
 		{
 			Algorithm = "http://www.w3.org/TR/2001/REC-xml-c14n-20010315";
-			canonicalizer = new XmlCanonicalizer(false, false);
+			canonicalizer = new XmlCanonicalizer (false, false);
 		}
 
 		public XmlDsigC14NTransform (bool includeComments) 
 		{
-			canonicalizer = new XmlCanonicalizer(includeComments, false);
+			canonicalizer = new XmlCanonicalizer (includeComments, false);
 		}
 
 		public override Type[] InputTypes {
@@ -86,16 +87,18 @@ namespace System.Security.Cryptography.Xml {
 			// documented as not changing the state of the transform
 		}
 
-		[MonoTODO]
 		public override void LoadInput (object obj) 
 		{
 			if (obj is Stream) {
 				s = (obj as Stream);
-				// todo: parse doc from stream?
+				XmlDocument doc = new XmlDocument ();
+				doc.PreserveWhitespace = true;	// REALLY IMPORTANT
+				doc.Load (obj as Stream);
+				s = canonicalizer.Canonicalize (doc);
 			} else if (obj is XmlDocument)
-				s = canonicalizer.Canonicalize((obj as XmlDocument));
+				s = canonicalizer.Canonicalize ((obj as XmlDocument));
 			else if (obj is XmlNodeList)
-				s = canonicalizer.Canonicalize((obj as XmlNodeList));
+				s = canonicalizer.Canonicalize ((obj as XmlNodeList));
 			// note: there is no default are other types won't throw an exception
 		}
 	}

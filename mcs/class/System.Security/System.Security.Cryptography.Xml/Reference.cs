@@ -2,9 +2,10 @@
 // Reference.cs - Reference implementation for XML Signature
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot <sebastien@ximian.com>
 //
 // (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
+// (C) 2004 Novell (http://www.novell.com)
 //
 
 using System.IO;
@@ -21,7 +22,6 @@ namespace System.Security.Cryptography.Xml {
 		private string id;
 		private string uri;
 		private string type;
-		private HashAlgorithm hash;
 
 		public Reference () 
 		{
@@ -168,6 +168,9 @@ namespace System.Security.Cryptography.Xml {
 							break;
 						default:
 							throw new NotSupportedException ();
+					}
+					if (xn.ChildNodes.Count > 0) {
+						t.LoadInnerXml (xn.ChildNodes);
 					}
 					AddTransform (t);
 				}

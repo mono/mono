@@ -2,9 +2,10 @@
 // XmlDsigBase64Transform.cs - Base64 Transform implementation for XML Signature
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot <sebastien@ximian.com>
 //
 // (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
+// (C) 2004 Novell (http://www.novell.com)
 //
 
 using System.IO;
@@ -78,14 +79,15 @@ namespace System.Security.Cryptography.Xml {
 				xnl = (XmlNodeList) obj;
 
 			if (xnl != null) {
-				StringBuilder sb = new StringBuilder ();
+				stream = new MemoryStream ();
+				StreamWriter sw = new StreamWriter (stream);
 				foreach (XmlNode xn in xnl) {
 					if (xn is XmlElement)
-						sb.Append (xn.InnerText);
+						sw.Write (xn.InnerText);
 				}
-
-				byte[] data = Encoding.UTF8.GetBytes (sb.ToString ());
-				stream = new MemoryStream (data);
+				sw.Flush ();
+				// ready to be re-used
+				stream.Position = 0;
 			}
 
 			if (stream != null)
