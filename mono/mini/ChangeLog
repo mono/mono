@@ -1,5 +1,7 @@
 2004-02-14  Zoltan Varga  <vargaz@freemail.hu>
 
+	* cpu-pentium.md: Fix length of opcodes which use x86_alu_membase_imm.
+
 	* jit-icalls.c (mono_ldftn_nosync): New JIT icall.
 
 	* tramp-x86.c (mono_arch_create_jump_trampoline): Move arch independent
