@@ -10,9 +10,12 @@ assembliesdir = $(libdir)
 
 install-data-hook:
 	-cp $(srcdir)/*.dll $(assembliesdir)
+	-cp $(srcdir)/*.exe $(bindir)
+
 
 dist-hook:
 	-cp $(srcdir)/*.dll $(distdir)
+	-cp $(srcdir)/*.exe $(distdir)
 
 copy_dlls:
 	cp /nt/mono/mcs/class/*/*.dll .

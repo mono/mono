@@ -1,0 +1,2 @@
+#!/bin/sh
+@bindir@/mint @bindir@/mcs.exe $*
