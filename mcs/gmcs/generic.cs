@@ -326,10 +326,7 @@ namespace Mono.CSharp {
 
 		public override string ToString ()
 		{
-			if (container_type != null)
-				return container_type.ToString () + "<" + args.ToString () + ">";
-			else
-				return "<" + args.ToString () + ">";
+			return name + "<" + args.ToString () + ">";
 		}
 	}
 }

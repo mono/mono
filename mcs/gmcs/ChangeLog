@@ -1,3 +1,8 @@
+2003-09-17  Martin Baulig  <martin@ximian.com>
+
+	* generic.cs (ConstructedType.ToString): Always use `name' as the
+	type name.
+
 2003-09-15  Martin Baulig  <martin@ximian.com>
 
 	* cs-parser.jay: Fix grammar wrt. type_parameter_constraints.
