@@ -1,3 +1,7 @@
+2004-05-25  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Makefile: changed case on nunit.framework.dll (lowercase)
+
 2004-05-22  Todd Berman  <tberman@sevenl.net>
 
 	* corlib.dll.sources: added Mono/Runtime.cs

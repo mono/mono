@@ -50,7 +50,7 @@ test_sourcefile = corlib_test.dll.sources
 test_response = $(depsdir)/$(PROFILE)_$(testlib).response
 test_makefrag = $(depsdir)/$(PROFILE)_$(testlib).makefrag
 test_stampfile = $(depsdir)/$(PROFILE)_$(testlib).stamp
-test_nunitfw = $(topdir)/class/lib/$(PROFILE)/NUnit.Framework.dll
+test_nunitfw = $(topdir)/class/lib/$(PROFILE)/nunit.framework.dll
 test_flags = /nowarn:0618 /nowarn:0672 /unsafe /r:$(test_against) /r:$(test_nunitfw)
 
 cmp_response = $(depsdir)/$(PROFILE)_corlib_cmp.dll.response
