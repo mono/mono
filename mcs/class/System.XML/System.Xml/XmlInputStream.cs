@@ -41,7 +41,7 @@ namespace System.Xml
 		XmlInputStream input;
 
 		XmlStreamReader (XmlInputStream input)
-			: base (input, input.ActualEncoding != null ? input.ActualEncoding : Encoding.UTF8)
+			: base (input, input.ActualEncoding != null ? input.ActualEncoding : XmlInputStream.StrictUTF8)
 		{
 			this.input = input;
 		}
@@ -69,6 +69,13 @@ namespace System.Xml
 
 	class XmlInputStream : Stream
 	{
+		public static readonly Encoding StrictUTF8;
+
+		static XmlInputStream ()
+		{
+			StrictUTF8 = new UTF8Encoding (false, true);
+		}
+
 		Encoding enc;
 		Stream stream;
 		byte[] buffer;
@@ -86,7 +93,7 @@ namespace System.Xml
 		{
 			buffer = new byte [64];
 			this.stream = stream;
-			enc = Encoding.UTF8; // Default to UTF8 if we can't guess it
+			enc = StrictUTF8; // Default to UTF8 if we can't guess it
 			bufLength = stream.Read (buffer, 0, buffer.Length);
 			if (bufLength == -1 || bufLength == 0) {
 				return;

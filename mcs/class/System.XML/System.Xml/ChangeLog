@@ -1,3 +1,8 @@
+2005-02-22  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlTextReader.cs : XmlParserContext was not properly popped on
+	  the expected timing and thus had lost BaseURI, XmlSpace and XmlLang.
+
 2005-02-21  Atsushi Enomoto <atsushi@ximian.com>
 
 	* DTDValidatingReader.cs : It should not skip whitespace and

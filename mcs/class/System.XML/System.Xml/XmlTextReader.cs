@@ -1134,6 +1134,7 @@ namespace System.Xml
 			currentTagLength = 0;
 			if (popScope) {
 				parserContext.NamespaceManager.PopScope ();
+				parserContext.PopScope ();
 				popScope = false;
 			}
 
@@ -1274,8 +1275,8 @@ namespace System.Xml
 			else {
 				depthUp = true;
 				PushElementName (name);
-				parserContext.PushScope ();
 			}
+			parserContext.PushScope ();
 
 			Expect ('>');
 
@@ -1377,7 +1378,6 @@ namespace System.Xml
 			string expected = elementNames [--elementNameStackPos];
 			if (expected != name)
 				throw NotWFError (String.Format ("unmatched closing element: expected {0} but found {1}", expected, name));
-			parserContext.PopScope ();
 
 			ExpectAfterWhitespace ('>');
 
