@@ -1,3 +1,7 @@
+2004-06-18  Dick Porter  <dick@ximian.com>
+
+	* locales.c: Tell ICU the lengths of strings, it can cope with
+	embedded \0 then.  Fixes bug 59274, and doesn't break bug 55822.
 
 Fri Jun 18 11:59:57 CEST 2004 Paolo Molaro <lupus@ximian.com>
 
