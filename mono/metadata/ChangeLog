@@ -1,4 +1,9 @@
 
+Fri Jun 7 17:46:50 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* icall.c: fix method signatures that tried to workaround the previous
+	typo, d'oh!
+
 Fri Jun 7 17:36:33 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* debug-helpers.c: fix typo.
