@@ -341,3 +341,5 @@ Mono.Data.SqlExpressions/Functions.cs
 Mono.Data.SqlExpressions/Like.cs
 Mono.Data.SqlExpressions/In.cs
 Mono.Data.SqlExpressions/Aggregation.cs
+System.Data.SqlClient/SqlClientFactory.cs
+System.Data.SqlClient/SqlDataSourceEnumerator.cs

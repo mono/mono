@@ -1,3 +1,19 @@
+2005-02-22  Sureshkumar T  <tsureshkumar@novell.com>
+
+	* Makefile: added dependancy for test-lib to create
+	$(test-lib).config. These configuration entries are used currently
+	by Test/System.Data.Common/DbProviderFactories-
+	ConigurationHalderTest.cs tests. Future tests can also add
+	configuration information in configuration file
+	app_test.2.0.config. This is for 2.0 profile only.
+
+	* System.Data_test.dll.sources: 
+	Added System.Data.Common/DbProviderFactoriesConfigurationHandlerTest.cs.
+
+	* System.Data.dll.sources: 
+	Added System.Data.SqlClient/SqlClientFactory.cs
+	Added System.Data.SqlClient/SqlDataSourceEnumerator.cs
+
 2005-02-15  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* System.Data.dll.sources : added XmlSchemaWriter.cs.

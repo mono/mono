@@ -38,3 +38,11 @@ Mono.Data.SqlExpressions/Parser.cs: Mono.Data.SqlExpressions/Parser.jay $(topdir
 	$(topdir)/jay/jay -ct < $(topdir)/jay/skeleton.cs $< >$@
 
 include ../../build/library.make
+
+ifeq (net_2_0, $(PROFILE))
+$(test_lib): $(test_lib).config
+
+$(test_lib).config: app_test_2.0.config
+	cp $< $@
+endif
+

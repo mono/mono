@@ -34,6 +34,7 @@ System.Data/TypedDataSetGeneratorTest.cs
 System.Data/UniqueConstraintTest.cs
 System.Data/DataRelationCollectionTest.cs
 System.Data/DataTableCollectionTest.cs
+System.Data.Common/DbProviderFactoriesConfigurationHandlerTest.cs
 System.Data.Common/DataColumnMappingCollectionTest.cs
 System.Data.Common/DataTableMappingCollectionTest.cs
 System.Data.Common/DBDataPermissionAttributeTest.cs

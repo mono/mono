@@ -1,3 +1,8 @@
+2005-02-22  Sureshkumar T  <tsureshkumar@novell.com>
+
+	* DbProviderFactoriesConfigurationHandlerTest.cs: Tests for
+	DbProviderFactoriesConfigurationHandler class.
+
 2005-01-14  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DBDataPermissionTest.cs, DBDataPermissionAttributeTest.cs:
