@@ -1,5 +1,5 @@
 //
-// Ximian.Mono.Tests.StackTraceTest.cs
+// MonoTests.System.Diagnostics.StackTraceTest.cs
 //
 // Author:
 //      Alexander Klyubin (klyubin@aqris.com)

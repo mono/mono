@@ -1,5 +1,5 @@
 //
-// Ximian.Mono.Tests.StackFrameTest.cs
+// MonoTests.System.Diagnostics.StackFrameTest.cs
 //
 // Author:
 //      Alexander Klyubin (klyubin@aqris.com)
