@@ -1,3 +1,8 @@
+2002-12-30  Martin Baulig  <martin@ximian.com>
+
+	* debug.c: When running under the mono debugger, create a special
+	debugger thread; always protect the symbol tables with a mutex.
+
 2002-12-28  Martin Baulig  <martin@ximian.com>
 
 	* debug.c (MonoDebuggerInfo): Added `symbol_file_modified'; it's
