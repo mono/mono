@@ -504,11 +504,9 @@ namespace System {
 						      Evidence securityInfo,
 						      AppDomainSetup info)
 		{
+			//TODO: treat securityInfo (can be null)
 			if (friendlyName == null)
 				throw new System.ArgumentNullException ("friendlyName");
-
-			if (securityInfo == null)
-				throw new System.ArgumentNullException ("securityInfo");
 
 			if (info == null)
 				throw new System.ArgumentNullException ("info");
