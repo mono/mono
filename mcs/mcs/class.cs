@@ -2993,24 +2993,26 @@ namespace Mono.CSharp {
 				// The "candidate" function has been flagged already
 				// but it wont get cleared
 				//
-				if (!member.IsExplicitImpl){
+				if (member.IsExplicitImpl){
+					if ((modifiers & (Modifiers.PUBLIC | Modifiers.ABSTRACT | Modifiers.VIRTUAL)) != 0){
+						Modifiers.Error_InvalidModifier (Location, "public, virtual or abstract");
+						implementing = null;
+					}
+				} else {
 					//
 					// We already catch different accessibility settings
 					// so we just need to check that we are not private
 					//
 					if ((modifiers & Modifiers.PRIVATE) != 0)
 						implementing = null;
+				} 
 					
-					//
-					// Static is not allowed
-					//
-					if ((modifiers & Modifiers.STATIC) != 0)
-						implementing = null;
-				} else {
-					if ((modifiers & (Modifiers.PUBLIC | Modifiers.ABSTRACT | Modifiers.VIRTUAL)) != 0){
-						Modifiers.Error_InvalidModifier (Location, "public, virtual or abstract");
-						implementing = null;
-					}
+				//
+				// Static is not allowed
+				//
+				if ((modifiers & Modifiers.STATIC) != 0){
+					implementing = null;
+					Modifiers.Error_InvalidModifier (Location, "static");
 				}
 			}
 			
@@ -3482,9 +3484,6 @@ namespace Mono.CSharp {
 				return false;
 			}
 
-			if (t.IsPointer && !UnsafeOK (parent))
-				return false;
-				
 			if (RootContext.WarningLevel > 1){
 				Type ptype = parent.TypeBuilder.BaseType;
 

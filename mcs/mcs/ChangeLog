@@ -1,3 +1,14 @@
+2003-01-23  Miguel de Icaza  <miguel@ximian.com>
+
+	* class.cs (MethodData.Define): It is wrong for an interface
+	implementation to be static in both cases: explicit and implicit.
+	We were only handling this in one case.
+
+	Improve the if situation there to not have negations.
+	
+	* class.cs (Field.Define): Turns out that we do not need to check
+	the unsafe bit on field definition, only on usage.  Remove the test.
+
 2003-01-22  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* driver.cs: use assembly.Location instead of Codebase (the latest
