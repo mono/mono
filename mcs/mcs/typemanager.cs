@@ -978,6 +978,22 @@ public class TypeManager {
 			return false;
 	}
 
+	//
+	// Checks whether `type' is a subclass or nested child of `parent'.
+	//
+	public static bool IsSubclassOrNestedChildOf (Type type, Type parent)
+	{
+		do {
+			if (type.IsSubclassOf (parent))
+				return true;
+
+			// Handle nested types.
+			type = type.DeclaringType;
+		} while (type != null);
+
+		return false;
+	}
+
 	/// <summary>
 	///   Returns the User Defined Types
 	/// </summary>
@@ -1780,7 +1796,21 @@ public class TypeManager {
 					return false;
 			}
 
-			// FamORAssem, Family and Public:
+			// Assembly and FamORAssem succeed if we're in the same assembly.
+			if ((ma == MethodAttributes.Assembly) || (ma == MethodAttributes.FamORAssem)){
+				if (closure_invocation_assembly == mb.DeclaringType.Assembly)
+					return true;
+			}
+
+			// We already know that we aren't in the same assembly.
+			if (ma == MethodAttributes.Assembly)
+				return false;
+
+			// Family and FamANDAssem require that we derive.
+			if ((ma == MethodAttributes.Family) || (ma == MethodAttributes.FamANDAssem))
+				return IsSubclassOrNestedChildOf (closure_invocation_type, mb.DeclaringType);
+
+			// Public.
 			return true;
 		}
 
@@ -1799,7 +1829,22 @@ public class TypeManager {
 				if (closure_invocation_assembly != fi.DeclaringType.Assembly)
 					return false;
 			}
-			// FamORAssem, Family and Public:
+
+			// Assembly and FamORAssem succeed if we're in the same assembly.
+			if ((fa == FieldAttributes.Assembly) || (fa == FieldAttributes.FamORAssem)){
+				if (closure_invocation_assembly == fi.DeclaringType.Assembly)
+					return true;
+			}
+
+			// We already know that we aren't in the same assembly.
+			if (fa == FieldAttributes.Assembly)
+				return false;
+
+			// Family and FamANDAssem require that we derive.
+			if ((fa == FieldAttributes.Family) || (fa == FieldAttributes.FamANDAssem))
+				return IsSubclassOrNestedChildOf (closure_invocation_type, fi.DeclaringType);
+
+			// Public.
 			return true;
 		}
 
@@ -1881,7 +1926,7 @@ public class TypeManager {
 
 			closure_private_ok = private_ok;
 			closure_queried_type = current_type;
-			
+
 			mi = TypeManager.FindMembers (
 				current_type, mt, bf | BindingFlags.DeclaredOnly,
 				FilterWithClosure_delegate, name);

@@ -1,5 +1,11 @@
 2002-08-08  Martin Baulig  <martin@gnome.org>
 
+	* typemanager.cs (TypeManager.FilterWithClosure): Check Assembly,
+	Family, FamANDAssem and FamORAssem permissions.
+	(TypeManager.IsSubclassOrNestedChildOf): New public method.
+
+2002-08-08  Martin Baulig  <martin@gnome.org>
+
 	* statement.cs (FlowBranchingType): Added LOOP_BLOCK.
 	(UsageVector.MergeChildren): `break' breaks unless we're in a switch
 	or loop block.
