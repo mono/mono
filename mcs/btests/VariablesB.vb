@@ -16,7 +16,6 @@ Module VariableB
     Dim o
     Dim p As New cls1()
     Dim q%, r&, s@, t!, u#
-    Dim v@, w# as integer
     Sub main()
 	If a.GetTypeCode() <> TypeCode.Int32 Then
             Throw New System.Exception("#A1, Type mismatch found")
@@ -48,9 +47,6 @@ Module VariableB
         End If
 	If u.GetTypeCode() <> TypeCode.Double Then
             Throw New System.Exception("#A10, Type mismatch found")
-        End If
-	If w.GetTypeCode() <> TypeCode.Int32 Then
-            Throw New System.Exception("#A11, Type mismatch found")
         End If
     End Sub
 End Module
