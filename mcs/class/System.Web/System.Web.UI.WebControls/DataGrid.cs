@@ -1029,7 +1029,7 @@ namespace System.Web.UI.WebControls
 					columns.CopyTo(cols, 0);
 					foreach(DataGridColumn current in cols)
 					{
-						cols.Initialize();
+						current.Initialize();
 					}
 					deployTable = new DataGridTableInternal();
 					Controls.Add(deployTable);

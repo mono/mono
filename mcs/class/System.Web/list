@@ -197,6 +197,7 @@ System.Web.UI.WebControls/DataGridPageChangedEventHandler.cs
 System.Web.UI.WebControls/DataGridPagerStyle.cs
 System.Web.UI.WebControls/DataGridSortCommandEventArgs.cs
 System.Web.UI.WebControls/DataGridSortCommandEventHandler.cs
+System.Web.UI.WebControls/DataGridTableInternal.cs
 System.Web.UI.WebControls/DataKeyCollection.cs
 System.Web.UI.WebControls/DataList.cs
 System.Web.UI.WebControls/DataListCommandEventArgs.cs
@@ -205,6 +206,7 @@ System.Web.UI.WebControls/DataListItem.cs
 System.Web.UI.WebControls/DataListItemCollection.cs
 System.Web.UI.WebControls/DataListItemEventArgs.cs
 System.Web.UI.WebControls/DataListItemEventHandler.cs
+System.Web.UI.WebControls/DataSourceInternal.cs
 System.Web.UI.WebControls/DayNameFormat.cs
 System.Web.UI.WebControls/DayRenderEventArgs.cs
 System.Web.UI.WebControls/DayRenderEventHandler.cs
