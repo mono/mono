@@ -223,7 +223,14 @@ namespace System.Data.Odbc
 				return (IDbTransaction) Transaction;
 			}
 			set {
-				throw new NotImplementedException ();
+				if (value is OdbcTransaction)
+				{
+					Transaction = (OdbcTransaction)value;
+				}
+				else
+				{
+					throw new ArgumentException ();
+				}
 			}
 		}
 
