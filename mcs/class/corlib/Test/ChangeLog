@@ -1,3 +1,7 @@
+2003-07-13  Zoltan Varga  <vargaz@freemail.hu>
+
+	* corlib_test.args: Added TypeTest.cs.
+
 2003-07-03  Sebastien Pouliot <spouliot@videotron.ca>
 
 	* corlib_test.args: Added ZoneTest.cs in System.Security.Policy
