@@ -105,9 +105,9 @@ namespace Microsoft.JScript {
 				ig.Emit (OpCodes.Ldloca_S, tmp_obj);
 				ig.Emit (OpCodes.Call, post_prefix.GetMethod ("EvaluatePostOrPrefix"));
 
-				Console.WriteLine ("parent.GetType = {0}", parent.GetType ());
-			
+				//
 				// if does not appear as a global expression
+				//
 				if (prefix && !(parent is ScriptBlock)) {
 					ig.Emit (OpCodes.Dup);
 					ig.Emit (OpCodes.Stloc, tmp_obj);
