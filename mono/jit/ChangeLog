@@ -1,3 +1,7 @@
+2003-01-20  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* debug.c: make all public symbols just dummy for windows.
+
 2003-01-20  Miguel de Icaza  <miguel@ximian.com>
 
 	* debug.c (initialize_debugger_support): ifdef out the call to
