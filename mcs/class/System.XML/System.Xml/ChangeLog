@@ -1,5 +1,9 @@
 2004-03-04  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlImplementation.cs : fixity fix (I need NUnit runnable ;)
+
+2004-03-04  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlImplementation.cs : forgot to commit (renaming internal case)
 
 2004-03-04  Atsushi Enomoto <atsushi@ximian.com>

@@ -65,7 +65,7 @@ namespace System.Xml
 			else
 				implementation = impl;
 
-			nameTable = (nt != null) ? nt : impl.InternalNameTable;
+			nameTable = (nt != null) ? nt : implementation.InternalNameTable;
 			AddDefaultNameTableKeys ();
 			resolver = new XmlUrlResolver ();
 		}
