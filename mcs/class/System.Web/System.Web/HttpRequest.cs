@@ -804,8 +804,13 @@ namespace System.Web {
 		public NameValueCollection QueryString {
 			get {
 				if (_oQueryString == null) {
-					_oQueryString = new HttpValueCollection(QueryStringRaw, true,
-										Encoding.ASCII);
+					try {
+						_oQueryString = new HttpValueCollection(QueryStringRaw, true,
+											ContentEncoding);
+					} catch {
+						_oQueryString = new HttpValueCollection(QueryStringRaw, true,
+											Encoding.ASCII);
+					}
 				}
 
 				return _oQueryString;

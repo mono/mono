@@ -1,5 +1,5 @@
 //
-// System.Web.HttpRequest
+// System.Web.HttpRequestValidationException
 //
 // Authors:
 //   	Gonzalo Paniagua Javier (gonzalo@ximian.com)
