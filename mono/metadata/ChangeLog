@@ -1,3 +1,18 @@
+2003-03-25  Zoltan Varga  <vargaz@freemail.hu>
+
+	* reflection.c (mono_reflection_parse_type): handle deeply nested
+	types correctly.
+
+	* reflection.c (mono_image_create_token): Use unique token values
+	since they will be put into a hash table.
+
+	* class.c (mono_class_setup_vtable): If a method occurs in more than
+	one place in the vtable, and it gets overriden, then change the
+	other occurances too.
+
+	* marshal.c (mono_marshal_get_managed_wrapper): Added support for
+	object as return type.
+
 2003-03-22  Pedro Martínez Juliá  <yoros@wanadoo.es>
 
 	* icall.c: Deleted "ToString" implementation for double and float
