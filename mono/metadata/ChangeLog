@@ -1,4 +1,8 @@
 
+Thu Aug 8 10:18:17 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* reflection.h, reflection.c: code to embed managed resources.
+
 Tue Aug 6 17:59:44 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* class.c: move all the type size stuff into
