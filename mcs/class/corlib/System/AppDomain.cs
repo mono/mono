@@ -632,10 +632,9 @@ namespace System {
 			throw new NotImplementedException();
 		}
 				
-		[MonoTODO]
 		public static int GetCurrentThreadId ()
 		{
-			throw new NotImplementedException ();
+			return Thread.CurrentThreadId;
 		}
 
 		public override string ToString () {

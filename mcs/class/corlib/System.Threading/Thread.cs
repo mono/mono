@@ -66,6 +66,12 @@ namespace System.Threading
 			}
 		}
 
+		internal static int CurrentThreadId {
+			get {
+				return CurrentThread.thread_id;
+			}
+		}
+
 		// Looks up the slot hash for the current thread
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern static Hashtable SlotHash_lookup();
