@@ -16,6 +16,7 @@ namespace System.Windows.Forms
 	/// Specifies the effects of a drag-and-drop operation.
 	/// This enumeration has a FlagsAttribute attribute that allows a bitwise combination of its member values.
 	/// </summary>
+	[Flags]
 	[Serializable]
 	public enum DragDropEffects
 	{
