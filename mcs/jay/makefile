@@ -6,8 +6,9 @@ CFLAGS=#-g
 
 jay:	$(c:.c=.o)	; $(CC) -o $@ $(CFLAGS) $(c:.c=.o)
 
-depend:	*.[ch]		; $(CC) -MM $(CFLAGS) $c > $@
--include depend
-
 clean:
 	rm -f jay *.o
+
+windows: jay
+
+unix: jay
