@@ -1,3 +1,8 @@
+2003-07-20  Peter Williams  <peter@newton.cx>
+
+	* Makefile: Remove the test target which conflicted with
+	the global target. (Change confirmed with Rafael.)
+
 2003-04-02  Duncan Mak  <duncan@ximian.com>
 
 	* mb-parser.jay: Temporarily remove the references to

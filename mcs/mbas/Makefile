@@ -26,5 +26,3 @@ verbose: mbas.exe
 
 testmbas/WriteOK.exe: mbas.exe
 	$(TEST_RUNTIME) mbas.exe --stacktrace /r:Mono.GetOptions.dll /r:System.Data,System.Windows.Forms --main WriteOK testmbas/WriteOK.vb testmbas/WriteOK2.mbs
-
-test: run-test-local
