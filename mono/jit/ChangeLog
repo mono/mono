@@ -1,3 +1,11 @@
+2002-03-07  Dietmar Maurer  <dietmar@ximian.com>
+
+	* x86.brg (SAVE_LFM): bug fix: patch the saved IP because we
+	realloc that code sometimes!
+
+	* emit-x86.c (mono_compute_branches): support several types of
+	jump infos
+
 2002-03-06  Dietmar Maurer  <dietmar@ximian.com>
 
 	* x86.brg: impl. MUL_OVF_UN (reg, reg)
