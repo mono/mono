@@ -23,9 +23,12 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.1 $
+// $Revision: 1.2 $
 // $Modtime: $
 // $Log: ImageList.cs,v $
+// Revision 1.2  2004/08/09 23:12:13  pbartok
+// - Fixed several bugs Ravindra pointed out
+//
 // Revision 1.1  2004/07/15 20:05:28  pbartok
 // - Implemented ImageList and ImageList.ImageCollection classes
 // - Added ColorDepth enumeration
@@ -344,7 +347,7 @@ namespace System.Windows.Forms {
 		public ImageList() {
 			color_depth = ColorDepth.Depth8Bit;
 			transparency_color = Color.Transparent;
-
+			size = new Size(16, 16);
 			image_collection = new ImageCollection(this);
 		}
 		#endregion	// Public Constructors
@@ -386,7 +389,7 @@ namespace System.Windows.Forms {
 			}
 
 			set {
-				if (value.Width<1 || value.Width>255 || value.Height<1 || value.Height>255) {
+				if (value.Width<1 || value.Width>256 || value.Height<1 || value.Height>256) {
 					throw new ArgumentException("ImageSize width and height must be between 1 and 255", "value");
 				}
 				this.size=value;
