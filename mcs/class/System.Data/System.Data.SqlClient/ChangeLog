@@ -1,3 +1,7 @@
+2004-09-24  Umadevi S <sumadevi@novell.com>
+        * SqlTransaction.cs - Dispose will not call rollback incase the transaction is not open.
+                                                                                                    
+
 2004-09-02 Umadevi S <sumadevi@novell.com>
         * SqlCommand.cs - ExecuteNonQuery to return -1 incase of executing a storedprocedure
                                                                                                     
