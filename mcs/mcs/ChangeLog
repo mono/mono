@@ -1,3 +1,9 @@
+
+Sat Feb 8 12:58:06 CET 2003 Paolo Molaro <lupus@ximian.com>
+
+	* typemanager.cs: fix from mathpup@mylinuxisp.com (Marcus Urban) 
+	to IsValueType.
+
 2003-02-07  Martin Baulig  <martin@ximian.com>
 
 	* driver.cs: Removed the `--debug-args' command line argument.
