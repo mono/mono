@@ -1,3 +1,7 @@
+2002-07-11  Dietmar Maurer  <dietmar@ximian.com>
+
+	* x86.brg (freg): new rule freg: CALL_R8 (this, reg)
+
 2002-07-10  Dietmar Maurer  <dietmar@ximian.com>
 
 	* emit-x86.c (arch_emit_prologue): added code to save LMF
