@@ -480,14 +480,13 @@ namespace Mono.CSharp {
 			return ns.Substring (0, i);
 		}
 
-		static Type NamespaceLookup (DeclSpace ds, string name, bool silent,
-					     Location loc)
+		static Type NamespaceLookup (DeclSpace ds, string name, Location loc)
 		{
 			//
 			// Try in the current namespace and all its implicit parents
 			//
 			for (NamespaceEntry ns = ds.NamespaceEntry; ns != null; ns = ns.ImplicitParent) {
-				object result = ns.Lookup (ds, name, false, silent, loc);
+				object result = ns.Lookup (ds, name, false, loc);
 				if (result == null)
 					continue;
 
@@ -555,7 +554,7 @@ namespace Mono.CSharp {
 					containing_ds = containing_ds.Parent;
 				}
 				
-				t = NamespaceLookup (ds, name, silent, loc);
+				t = NamespaceLookup (ds, name, loc);
 				if (!silent)
 					ds.Cache [name] = t;
 			}

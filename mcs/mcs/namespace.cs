@@ -254,12 +254,12 @@ namespace Mono.CSharp {
 
 				// According to section 16.3.1, the namespace-or-type-name is resolved
 				// as if the immediately containing namespace body has no using-directives.
-				resolved = NamespaceEntry.Lookup (null, alias, true, false, Location);
+				resolved = NamespaceEntry.Lookup (null, alias, true, Location);
 
 				NamespaceEntry curr_ns = NamespaceEntry.Parent;
 
 				while ((curr_ns != null) && (resolved == null)) {
-					resolved = curr_ns.Lookup (null, alias, false, false, Location);
+					resolved = curr_ns.Lookup (null, alias, false, Location);
 
 					if (resolved == null)
 						curr_ns = curr_ns.Parent;
@@ -399,7 +399,7 @@ namespace Mono.CSharp {
 				return ((Type) resolved).FullName;
 		}
 
-		public object Lookup (DeclSpace ds, string name, bool ignore_using, bool silent, Location loc)
+		public object Lookup (DeclSpace ds, string name, bool ignore_using, Location loc)
 		{
 			object o;
 			Namespace ns;
@@ -412,7 +412,7 @@ namespace Mono.CSharp {
 				string first = name.Substring (0, pos);
 				string last = name.Substring (pos + 1);
 
-				o = Lookup (ds, first, ignore_using, silent, loc);
+				o = Lookup (ds, first, ignore_using, loc);
 				if (o == null)
 					return null;
 
@@ -458,8 +458,7 @@ namespace Mono.CSharp {
 				match = using_ns.Lookup (ds, name) as Type;
 				if (match != null){
 					if (t != null) {
-						if (!silent)
-							DeclSpace.Error_AmbiguousTypeReference (loc, name, t, match);
+						DeclSpace.Error_AmbiguousTypeReference (loc, name, t, match);
 						return null;
 					} else {
 						t = match;
