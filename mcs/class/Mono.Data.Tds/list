@@ -20,11 +20,9 @@ Mono.Data.Tds.Protocol/TdsInternalErrorMessageEventHandler.cs
 Mono.Data.Tds.Protocol/TdsInternalException.cs
 Mono.Data.Tds.Protocol/TdsInternalInfoMessageEventArgs.cs
 Mono.Data.Tds.Protocol/TdsInternalInfoMessageEventHandler.cs
-Mono.Data.Tds.Protocol/TdsMessage.cs
 Mono.Data.Tds.Protocol/TdsPacketColumnInfoResult.cs
 Mono.Data.Tds.Protocol/TdsPacketColumnOrderResult.cs
 Mono.Data.Tds.Protocol/TdsPacketControlResult.cs
-Mono.Data.Tds.Protocol/TdsPacketEndTokenResult.cs
 Mono.Data.Tds.Protocol/TdsPacketOutputParam.cs
 Mono.Data.Tds.Protocol/TdsPacketResult.cs
 Mono.Data.Tds.Protocol/TdsPacketRetStatResult.cs
