@@ -115,6 +115,7 @@ namespace System.Runtime.Remoting.Proxies
 				ClientActivatedIdentity cai = (ClientActivatedIdentity)identity;
 				_targetContext = cai.Context;
 				AttachServer (cai.GetServerObject ());
+				cai.SetClientProxy ((MarshalByRefObject) GetTransparentProxy());
 			}
 
 			if (identity is ClientIdentity)

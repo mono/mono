@@ -1,3 +1,8 @@
+2004-09-22  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* RemotingProxy.cs: When attaching a CBO identity, assign the proxy to
+	  be used as "this" for method calls.
+
 2004-04-23	Patrik Torstensson
 
 	* RealProxy.cs: Moved async functionlity here, also take
