@@ -8,7 +8,7 @@
 //
 
 namespace System {
-
+	[MonoTODO("Remove this class when no longer needed by mono_class_from_typeref in class.c")]
 	public class MonoDummy {
 
 		public MonoDummy ()
