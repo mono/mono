@@ -1,3 +1,7 @@
+2003-11-16  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* corlib.dll.sources: Add System.Runtime.Remoting/InternalRemotingServices.cs
+	
 2003-11-15  Zoltan Varga  <vargaz@freemail.hu>
 
 	* corlib.dll.sources: Add System.Runtime.CompilerServices/IsVolatile.cs.

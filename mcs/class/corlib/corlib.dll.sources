@@ -551,6 +551,7 @@ System.Runtime.Remoting/EnvoyInfo.cs
 System.Runtime.Remoting/IObjectHandle.cs
 System.Runtime.Remoting/IChannelInfo.cs
 System.Runtime.Remoting/Identity.cs
+System.Runtime.Remoting/InternalRemotingServices.cs
 System.Runtime.Remoting/IEnvoyInfo.cs
 System.Runtime.Remoting/IRemotingTypeInfo.cs
 System.Runtime.Remoting/ObjectHandle.cs
