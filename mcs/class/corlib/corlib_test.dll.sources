@@ -88,6 +88,7 @@ System.Reflection/StrongNameKeyPairTest.cs
 System/ResolveEventArgsTest.cs
 System.Resources/ResourceReaderTest.cs
 System.Runtime.CompilerServices/RuntimeHelpersTest.cs
+System.Runtime.InteropServices/MarshalTest.cs
 System.Runtime.Remoting/ContextTest.cs
 System.Runtime.Remoting/SoapServicesTest.cs
 System.Runtime.Remoting/SynchronizationAttributeTest.cs
