@@ -1933,17 +1933,14 @@ constructor_declarator
 			Lexer.doc_state = XmlCommentState.Allowed;
 		}
 	  }
-	  OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS 
+	  OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS _mark_
 	  {
-		oob_stack.Push (lexer.Location);
-
 		current_local_parameters = (Parameters) $4;
 	  }
 	  opt_constructor_initializer
 	  {
-		Location l = (Location) oob_stack.Pop ();
 		$$ = new Constructor (current_class, (string) $1, 0, (Parameters) $4,
-				      (ConstructorInitializer) $7, l);
+				      (ConstructorInitializer) $8, (Location) $6);
 	  }
 	;
 
@@ -2046,11 +2043,10 @@ event_declaration
 	| opt_attributes
 	  opt_modifiers
 	  EVENT type namespace_or_type_name
-	  OPEN_BRACE
+	  OPEN_BRACE _mark_
 	  {
 		implicit_value_parameter_type = (Expression) $4;  
 		lexer.EventParsing = true;
-		oob_stack.Push (lexer.Location);
 	  }
 	  event_accessor_declarations
 	  {
@@ -2058,13 +2054,13 @@ event_declaration
 	  }
 	  CLOSE_BRACE
 	  {
-		Location loc = (Location) oob_stack.Pop ();
+		Location loc = (Location) $7;
 
-		if ($8 == null){
+		if ($9 == null){
 			Report.Error (65, lexer.Location, "Event must have both add and remove accesors");
 			$$ = null;
 		} else {
-			Pair pair = (Pair) $8;
+			Pair pair = (Pair) $9;
 			
 			MemberName name = (MemberName) $5;
 
@@ -2166,7 +2162,7 @@ remove_accessor_declaration
 
 indexer_declaration
 	: opt_attributes opt_modifiers indexer_declarator 
-	  OPEN_BRACE 
+	  OPEN_BRACE _mark_
 	  {
 		IndexerDeclaration decl = (IndexerDeclaration) $3;
 
@@ -2176,7 +2172,6 @@ indexer_declaration
 		parsing_indexer  = true;
 		
 		indexer_parameters = decl.param_list;
-		oob_stack.Push (lexer.Location);
 	  }
           accessor_declarations 
 	  {
@@ -2187,10 +2182,10 @@ indexer_declaration
 	  { 
 		// The signature is computed from the signature of the indexer.  Look
 	 	// at section 3.6 on the spec
-		Location loc = (Location) oob_stack.Pop ();
+		Location loc = (Location) $5;
 		Indexer indexer;
 		IndexerDeclaration decl = (IndexerDeclaration) $3;
-		Pair pair = (Pair) $6;
+		Pair pair = (Pair) $7;
 		Accessor get_block = (Accessor) pair.First;
 		Accessor set_block = (Accessor) pair.Second;
 
@@ -3061,24 +3056,26 @@ pointer_member_access
 	;
 
 anonymous_method_expression
-	: DELEGATE opt_anonymous_method_signature {
+	: DELEGATE opt_anonymous_method_signature _mark_
+	  {
 		oob_stack.Push (current_local_parameters);
 		current_local_parameters = (Parameters)$2;
 
 		// Force the next block to be created as a ToplevelBlock
 		oob_stack.Push (current_block);
 		oob_stack.Push (top_current_block);
-		oob_stack.Push (lexer.Location);
 		current_block = null;
-	  } block {
-		Location loc = (Location) oob_stack.Pop ();
+	  } 
+	  block
+	  {
+		Location loc = (Location) $3;
 		top_current_block = (Block) oob_stack.Pop ();
 		current_block = (Block) oob_stack.Pop ();
 			if (RootContext.Version == LanguageVersion.ISO_1){
 				Report.FeatureIsNotStandardized (lexer.Location, "anonymous methods");
 				$$ = null;
 		} else  {
-			ToplevelBlock anon_block = (ToplevelBlock) $4;
+			ToplevelBlock anon_block = (ToplevelBlock) $5;
 
 			anon_block.Parent = current_block;
 			$$ = new AnonymousMethod ((Parameters) $2, (ToplevelBlock) top_current_block, 
@@ -3917,52 +3914,37 @@ selection_statement
 	; 
 
 if_statement
-	: if_statement_open if_statement_rest
-	  {
-		$$ = $2;
-	  }
-	;
-
-if_statement_open
-	: IF OPEN_PARENS 
-	  {
-	   	oob_stack.Push (lexer.Location);
-	  }
-	;
-
-if_statement_rest
-	: boolean_expression CLOSE_PARENS 
+	: IF OPEN_PARENS _mark_ boolean_expression CLOSE_PARENS 
 	  embedded_statement
 	  { 
-		Location l = (Location) oob_stack.Pop ();
+		Location l = (Location) $3;
 
-		$$ = new If ((Expression) $1, (Statement) $3, l);
+		$$ = new If ((Expression) $4, (Statement) $6, l);
 
 		if (RootContext.WarningLevel >= 4){
-			if ($3 == EmptyStatement.Value)
+			if ($6 == EmptyStatement.Value)
 				Report.Warning (642, lexer.Location, "Possible mistaken empty statement");
 		}
 
 	  }
-	| boolean_expression CLOSE_PARENS
+	| IF OPEN_PARENS _mark_ boolean_expression CLOSE_PARENS
 	  embedded_statement ELSE embedded_statement
 	  {
-		Location l = (Location) oob_stack.Pop ();
+		Location l = (Location) $3;
 
-		$$ = new If ((Expression) $1, (Statement) $3, (Statement) $5, l);
+		$$ = new If ((Expression) $4, (Statement) $6, (Statement) $8, l);
 	  }
 	;
 
 switch_statement
-	: SWITCH OPEN_PARENS 
+	: SWITCH OPEN_PARENS _mark_
 	  { 
-		oob_stack.Push (lexer.Location);
 		switch_stack.Push (current_block);
 	  }
 	  expression CLOSE_PARENS 
 	  switch_block
 	  {
-		$$ = new Switch ((Expression) $4, (ArrayList) $6, (Location) oob_stack.Pop ());
+		$$ = new Switch ((Expression) $5, (ArrayList) $7, (Location) $3);
 		current_block = (Block) switch_stack.Pop ();
 	  }
 	;
@@ -4051,13 +4033,9 @@ iteration_statement
 	;
 
 while_statement
-	: WHILE OPEN_PARENS 
+	: WHILE OPEN_PARENS _mark_ boolean_expression CLOSE_PARENS embedded_statement
 	{
-		oob_stack.Push (lexer.Location);
-	}
-	boolean_expression CLOSE_PARENS embedded_statement
-	{
-		Location l = (Location) oob_stack.Pop ();
+		Location l = (Location) $3;
 		$$ = new While ((Expression) $4, (Statement) $6, l);
 	
 		if (RootContext.WarningLevel >= 4){
@@ -4069,12 +4047,9 @@ while_statement
 
 do_statement
 	: DO embedded_statement 
-	  WHILE OPEN_PARENS {
-		oob_stack.Push (lexer.Location);
-	  }
-	  boolean_expression CLOSE_PARENS SEMICOLON
+	  WHILE OPEN_PARENS _mark_ boolean_expression CLOSE_PARENS SEMICOLON
 	  {
-		Location l = (Location) oob_stack.Pop ();
+		Location l = (Location) $5;
 
 		$$ = new Do ((Statement) $2, (Expression) $6, l);
 	  }
@@ -4082,7 +4057,7 @@ do_statement
 
 for_statement
 	: FOR OPEN_PARENS 
-	  opt_for_initializer SEMICOLON
+	  opt_for_initializer SEMICOLON _mark_
 	  {
 		Block assign_block = new Block (current_block);
 		current_block = assign_block;
@@ -4123,20 +4098,23 @@ for_statement
 				}
 			}
 			
-			$3 = null;
-		} 
-		oob_stack.Push (lexer.Location);
+			// Note: the $$ below refers to the value of this code block, not of the LHS non-terminal.
+			// This can be referred to as $6 below.
+			$$ = null;
+		} else {
+			$$ = $3;
+		}
 	  } 
 	  opt_for_condition SEMICOLON
 	  opt_for_iterator CLOSE_PARENS 
 	  embedded_statement
 	  {
-		Location l = (Location) oob_stack.Pop ();
+		Location l = (Location) $5;
 
-		For f = new For ((Statement) $3, (Expression) $6, (Statement) $8, (Statement) $10, l);
+		For f = new For ((Statement) $6, (Expression) $7, (Statement) $9, (Statement) $11, l);
 
 		if (RootContext.WarningLevel >= 4){
-			if ($10 == EmptyStatement.Value)
+			if ($11 == EmptyStatement.Value)
 				Report.Warning (642, lexer.Location, "Possible mistaken empty statement");
 		}
 
@@ -4191,16 +4169,17 @@ statement_expression_list
 	;
 
 foreach_statement
-	: FOREACH OPEN_PARENS type IDENTIFIER IN 
-	  {
-		oob_stack.Push (lexer.Location);
-	  }
+	: FOREACH OPEN_PARENS type IN expression CLOSE_PARENS
+	{
+		Report.Error (230, lexer.Location, "Type and identifier are both required in a foreach statement");
+		$$ = null;
+	}
+	| FOREACH OPEN_PARENS type IDENTIFIER IN _mark_
 	  expression CLOSE_PARENS 
 	  {
-		oob_stack.Push (current_block);
-
 		Block foreach_block = new Block (current_block);
-		LocalVariableReference v = null;
+		current_block = foreach_block;
+
 		Location l = lexer.Location;
 		LocalInfo vi;
 
@@ -4209,28 +4188,28 @@ foreach_statement
 			vi.ReadOnly = true;
 
 			// Get a writable reference to this read-only variable.
-			v = new LocalVariableReference (foreach_block, (string) $4, l, vi, false);
+			//
+			// Note that the $$ here refers to the value of _this_ code block,
+			// not the value of the LHS non-terminal.  This can be referred to as $9 below.
+			$$ = new LocalVariableReference (foreach_block, (string) $4, l, vi, false);
+		} else {
+			$$ = null;
 		}
-		current_block = foreach_block;
-
-		oob_stack.Push (v);
-		oob_stack.Push (current_block);
 	  } 
 	  embedded_statement 
 	  {
-		Block foreach_block = (Block) oob_stack.Pop ();
-		LocalVariableReference v = (LocalVariableReference) oob_stack.Pop ();
-		Block prev_block = (Block) oob_stack.Pop ();
-		Location l = (Location) oob_stack.Pop ();
-
-		current_block = prev_block;
+		LocalVariableReference v = (LocalVariableReference) $9;
+		Location l = (Location) $6;
 
 		if (v != null) {
 			Foreach f = new Foreach ((Expression) $3, v, (Expression) $7, (Statement) $10, l);
-			foreach_block.AddStatement (f);
+			current_block.AddStatement (f);
 		}
 
-		$$ = foreach_block;
+		while (current_block.Implicit)
+			  current_block = current_block.Parent;
+		$$ = current_block;
+		current_block = current_block.Parent;
 	  }
 	;
 
@@ -4421,7 +4400,9 @@ catch_clause
 
 				one.Add (new VariableDeclaration (id, null, loc));
 
-				$1 = current_block;
+				// Note: the $$ below refers to the value of this code block, not of
+				//       the LHS non-terminal.  This can be referred to as $3 below.
+				$$ = current_block;
 				current_block = new Block (current_block);
 				Block b = declare_local_variables (type, one, loc);
 				current_block = b;
@@ -4436,17 +4417,16 @@ catch_clause
 			type = (Expression) cc.Key;
 			id   = (string) cc.Value;
 
-			if ($1 != null){
+			if ($3 != null){
 				//
 				// FIXME: I can change this for an assignment.
 				//
-				while (current_block != (Block) $1)
+				while (current_block != (Block) $3)
 					current_block = current_block.Parent;
 			}
 		}
 
-
-		$$ = new Catch (type, id , (Block) $4, ((Block) $4).loc);
+		$$ = new Catch (type, id, (Block) $4, ((Block) $4).loc);
 	}
         ;
 
@@ -4491,7 +4471,7 @@ unsafe_statement
 fixed_statement
 	: FIXED OPEN_PARENS 
 	  type fixed_pointer_declarators 
-	  CLOSE_PARENS 
+	  CLOSE_PARENS _mark_
 	  {
 		ArrayList list = (ArrayList) $4;
 		Expression type = (Expression) $3;
@@ -4514,17 +4494,15 @@ fixed_statement
 			p.First = v;
 			list [i] = p;
 		}
-
-		oob_stack.Push (l);
 	  }
 	  embedded_statement 
 	  {
-		Location l = (Location) oob_stack.Pop ();
+		Location l = (Location) $6;
 
-		Fixed f = new Fixed ((Expression) $3, (ArrayList) $4, (Statement) $7, l);
+		Fixed f = new Fixed ((Expression) $3, (ArrayList) $4, (Statement) $8, l);
 
 		if (RootContext.WarningLevel >= 4){
-			if ($7 == EmptyStatement.Value)
+			if ($8 == EmptyStatement.Value)
 				Report.Warning (642, lexer.Location, "Possible mistaken empty statement");
 		}
 
@@ -4576,13 +4554,11 @@ lock_statement
 	;
 
 using_statement
-	: USING OPEN_PARENS resource_acquisition CLOSE_PARENS 
+	: USING OPEN_PARENS resource_acquisition CLOSE_PARENS _mark_
 	  {
 		Block assign_block = new Block (current_block);
 		current_block = assign_block;
 
-		oob_stack.Push (lexer.Location);
-		
 		if ($3 is DictionaryEntry){
 			DictionaryEntry de = (DictionaryEntry) $3;
 			Location l = lexer.Location;
@@ -4626,12 +4602,17 @@ using_statement
 				// Assign a = new Assign (var, expr, decl.Location);
 				// assign_block.AddStatement (new StatementExpression (a, lexer.Location));
 			}
-			$3 = new DictionaryEntry (type, vars);
+
+			// Note: the $$ here refers to the value of this code block and not of the LHS non-terminal.
+			// It can be referred to as $6 below.
+			$$ = new DictionaryEntry (type, vars);
+		 } else {
+			$$ = $3;
 		 }
 	  } 
 	  embedded_statement
 	  {
-		Using u = new Using ($3, (Statement) $6, (Location) oob_stack.Pop ());
+		Using u = new Using ($6, (Statement) $7, (Location) $5);
 		current_block.AddStatement (u);
 		while (current_block.Implicit)
 			current_block = current_block.Parent;
@@ -4644,6 +4625,11 @@ resource_acquisition
 	: local_variable_declaration
 	| expression
 	;
+
+// Utility rule to save location information
+_mark_
+	: /* empty */
+	{ $$ = lexer.Location; }
 
 %%
 

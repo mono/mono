@@ -1,3 +1,17 @@
+2005-01-19  Raja R Harinath  <rharinath@novell.com>
+
+	* cs-parser.jay: Fix several infelicities.
+	- Avoid assigning to the parser value stack.  Code like 
+	  '$3 = null' is unclean.  Synthesize a value for the code block
+	  instead. 
+	- Avoid using oob_stack for storing location information.  Use ...
+	(_mark_): ... this.  New (empty) rule.  Saves the current location
+	in $$.
+	(foreach_statement): Avoid using oob_stack for current_block
+	handling.  Use technique used in for_statement and
+	using_statement.  Synthesize a value for the code block to store
+	additional intermediate information.
+
 2005-01-13  Miguel de Icaza  <miguel@ximian.com>
 
 	* ecore.cs (IsAccessorAccessible): Accessibility to private fields
