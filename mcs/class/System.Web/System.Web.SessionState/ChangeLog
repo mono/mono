@@ -1,3 +1,9 @@
+2003-11-13  Jackson Harper <jackson@ximian.com>
+
+	* SessionInProcHandler.cs: Use AppDomain.SetData so data is
+	available across all threads. Set the path of session id
+	cookies. Patch by Mohammad DAMT. Fixes bug #50922.
+	 
 2003-11-06 Jackson Harper <jackson@ximian.com>
 
 	* ISessionHandler.cs: Pass the SessionStateModule to handlers when

@@ -16,6 +16,7 @@
 	    * Generate SessionID:s in a good (more random) way.
 */
 using System;
+using System.IO;
 using System.Collections;
 
 namespace System.Web.SessionState
@@ -67,7 +68,9 @@ namespace System.Web.SessionState
 
 		public void Init (HttpApplication context, SessionConfig config)
 		{
-			_sessionTable = new Hashtable();
+			_sessionTable = (Hashtable) AppDomain.CurrentDomain.GetData (".MonoSessionInProc");
+			if (_sessionTable == null)
+				_sessionTable = new Hashtable();
 		}
 
 		public void UpdateHandler (HttpContext context, SessionStateModule module)
@@ -111,6 +114,7 @@ namespace System.Web.SessionState
 										false)); //readonly
 			// puts it in the table.
 			_sessionTable [sessionID]=container;
+			AppDomain.CurrentDomain.SetData (".MonoSessionInProc", _sessionTable);
 
 			// and returns it.
 			context.SetSession (container.SessionState);
@@ -118,7 +122,9 @@ namespace System.Web.SessionState
 
 
 			// sets the session cookie. We're assuming that session scope is the default mode.
-			context.Response.AppendCookie (new HttpCookie (COOKIE_NAME,sessionID));
+			HttpCookie cookie = new HttpCookie (COOKIE_NAME,sessionID);
+			cookie.Path = Path.GetDirectoryName (context.Request.Path);
+			context.Response.AppendCookie (cookie);
 
 			// And we're done!
 			return true;
