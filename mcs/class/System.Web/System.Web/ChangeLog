@@ -1,3 +1,7 @@
+2004-06-15 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* TraceData.cs: fixed <br> output. Closes bug #60181.
+
 2004-06-11  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpUtility.cs: check for control characters in the string to encode
