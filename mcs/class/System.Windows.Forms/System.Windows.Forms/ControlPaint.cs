@@ -28,30 +28,6 @@ namespace System.Windows.Forms {
 	public sealed class ControlPaint {
 		static int		RGBMax=255;
 		static int		HLSMax=255;
-		static Color	colorHighlight;
-		static Color	colorLight;
-		static Color	colorShadow;
-		static Color	colorDarkShadow;
-		static Color	colorSurface;
-		static Color	colorText;
-		static Pen		penHighlight;
-		static Pen		penLight;
-		static Pen		penShadow;
-		static Pen		penDarkShadow;
-
-		static ControlPaint() {
-			colorHighlight=Win32ToColor(Win32.GetSysColor(GetSysColorIndex.COLOR_3DHIGHLIGHT));
-			colorLight=Win32ToColor(Win32.GetSysColor(GetSysColorIndex.COLOR_3DLIGHT));
-			colorShadow=Win32ToColor(Win32.GetSysColor(GetSysColorIndex.COLOR_3DSHADOW));
-			colorDarkShadow=Win32ToColor(Win32.GetSysColor(GetSysColorIndex.COLOR_3DDKSHADOW));
-			colorSurface=Win32ToColor(Win32.GetSysColor(GetSysColorIndex.COLOR_BTNFACE));
-			colorText=Win32ToColor(Win32.GetSysColor(GetSysColorIndex.COLOR_BTNTEXT));
-
-			penHighlight=new Pen(colorHighlight);
-			penLight=new Pen(colorLight);
-			penShadow=new Pen(colorShadow);
-			penDarkShadow= new Pen(colorDarkShadow);
-		}
 
 		private static Color Win32ToColor(int Win32Color) {
 			return(Color.FromArgb(
@@ -63,8 +39,7 @@ namespace System.Windows.Forms {
 
 		#region Properties
 		public static Color ContrastControlDark {
-
-			get { return(colorShadow); }
+			get { return(SystemColors.ControlDark); }
 		}
 		#endregion
 		
@@ -446,20 +421,20 @@ namespace System.Windows.Forms {
 			}
 
 			/* default to flat */
-			penTopLeft=penShadow;
-			penTopLeftInner=penShadow;
-			penBottomRight=penShadow;
-			penBottomRightInner=penShadow;
+			penTopLeft=SystemPens.ControlDark;
+			penTopLeftInner=SystemPens.ControlDark;
+			penBottomRight=SystemPens.ControlDark;
+			penBottomRightInner=SystemPens.ControlDark;
 
 			if ((style & Border3DStyle.RaisedOuter)!=0) {
-				penTopLeft=penHighlight;
-				penBottomRight=penDarkShadow;
+				penTopLeft=SystemPens.ControlLightLight;
+				penBottomRight=SystemPens.ControlDarkDark;
 				if ((style & (Border3DStyle.RaisedInner | Border3DStyle.SunkenInner))!=0) {
 					doInner=true;
 				}
 			} else if ((style & Border3DStyle.SunkenOuter)!=0) {
-				penTopLeft=penDarkShadow;
-				penBottomRight=penHighlight;
+				penTopLeft=SystemPens.ControlDarkDark;
+				penBottomRight=SystemPens.ControlLightLight;
 				if ((style & (Border3DStyle.RaisedInner | Border3DStyle.SunkenInner))!=0) {
 					doInner=true;
 				}
@@ -467,26 +442,24 @@ namespace System.Windows.Forms {
 
 			if ((style & Border3DStyle.RaisedInner)!=0) {
 				if (doInner) {
-					penTopLeftInner=penLight;
-					penBottomRightInner=penShadow;
+					penTopLeftInner=SystemPens.ControlLight;
+					penBottomRightInner=SystemPens.ControlDark;
 				} else {
-					penTopLeft=penHighlight;
-					penBottomRight=penDarkShadow;
+					penTopLeft=SystemPens.ControlLightLight;
+					penBottomRight=SystemPens.ControlDarkDark;
 				}
 			} else if ((style & Border3DStyle.SunkenInner)!=0) {
 				if (doInner) {
-					penTopLeftInner=penShadow;
-					penBottomRightInner=penLight;
+					penTopLeftInner=SystemPens.ControlDark;
+					penBottomRightInner=SystemPens.ControlLight;
 				} else {
-					penTopLeft=penDarkShadow;
-					penBottomRight=penHighlight;
+					penTopLeft=SystemPens.ControlDarkDark;
+					penBottomRight=SystemPens.ControlLightLight;
 				}
 			}
 
 			if ((sides & Border3DSide.Middle)!=0) {
-//				SolidBrush	sb = new SolidBrush(colorSurface);
 				graphics.FillRectangle(SystemBrushes.Control, rect);
-//				sb.Dispose();
 			}
 
 			if ((sides & Border3DSide.Left)!=0) {
@@ -711,17 +684,17 @@ namespace System.Windows.Forms {
 					Pen	pen;
 
 					if ((state & ButtonState.Inactive)!=0) {
-						pen=new Pen(colorHighlight, lineWidth);
-						DrawCaptionHelper(graphics, colorHighlight, pen, lineWidth, 1, captionRect, button);
+						pen=new Pen(SystemColors.ControlLightLight, lineWidth);
+						DrawCaptionHelper(graphics, SystemColors.ControlLightLight, pen, lineWidth, 1, captionRect, button);
 						pen.Dispose();
 
-						pen=new Pen(colorShadow, lineWidth);
-						DrawCaptionHelper(graphics, colorShadow, pen, lineWidth, 0, captionRect, button);
+						pen=new Pen(SystemColors.ControlDark, lineWidth);
+						DrawCaptionHelper(graphics, SystemColors.ControlDark, pen, lineWidth, 0, captionRect, button);
 						pen.Dispose();
 						return;
 					} else {
-						pen=new Pen(colorText, lineWidth);
-						DrawCaptionHelper(graphics, colorText, pen, lineWidth, 0, captionRect, button);
+						pen=new Pen(SystemColors.ControlText, lineWidth);
+						DrawCaptionHelper(graphics, SystemColors.ControlText, pen, lineWidth, 0, captionRect, button);
 						pen.Dispose();
 						return;
 					}
@@ -731,21 +704,13 @@ namespace System.Windows.Forms {
 				case CaptionButton.Maximize:
 				case CaptionButton.Minimize:
 				case CaptionButton.Restore: {
-					Pen	pen;
-
 					if ((state & ButtonState.Inactive)!=0) {
-						pen=new Pen(colorHighlight, 1);
-						DrawCaptionHelper(graphics, colorHighlight, pen, lineWidth, 1, captionRect, button);
-						pen.Dispose();
+						DrawCaptionHelper(graphics, SystemColors.ControlLightLight, SystemPens.ControlLightLight, lineWidth, 1, captionRect, button);
 
-						pen=new Pen(colorShadow, 1);
-						DrawCaptionHelper(graphics, colorShadow, pen, lineWidth, 0, captionRect, button);
-						pen.Dispose();
+						DrawCaptionHelper(graphics, SystemColors.ControlDark, SystemPens.ControlDark, lineWidth, 0, captionRect, button);
 						return;
 					} else {
-						pen=new Pen(colorText, 1);
-						DrawCaptionHelper(graphics, colorText, pen, lineWidth, 0, captionRect, button);
-						pen.Dispose();
+						DrawCaptionHelper(graphics, SystemColors.ControlText, SystemPens.ControlText, lineWidth, 0, captionRect, button);
 						return;
 					}
 				}
@@ -778,7 +743,6 @@ namespace System.Windows.Forms {
 		}
 		
 		public static void DrawComboButton(Graphics graphics, Rectangle rectangle, ButtonState state) {
-			SolidBrush		sb;
 			Point[]			arrow = new Point[3];
 			Point				P1;
 			Point				P2;
@@ -790,13 +754,13 @@ namespace System.Windows.Forms {
 			Rectangle		rect;
 
 			if ((state & ButtonState.Checked)!=0) {
-				HatchBrush	hatchBrush=new HatchBrush(HatchStyle.Percent50, colorLight, colorHighlight);
+				HatchBrush	hatchBrush=new HatchBrush(HatchStyle.Percent50, SystemColors.ControlLight, SystemColors.ControlLightLight);
 				graphics.FillRectangle(hatchBrush,rectangle);
 				hatchBrush.Dispose();
 			}
 
 			if ((state & ButtonState.Flat)!=0) {
-				DrawBorder(graphics, rectangle, colorShadow, ButtonBorderStyle.Solid);
+				DrawBorder(graphics, rectangle, SystemColors.ControlDark, ButtonBorderStyle.Solid);
 			} else {
 				if ((state & (ButtonState.Pushed | ButtonState.Checked))!=0) {
 					DrawBorder3D(graphics, rectangle, Border3DStyle.Sunken, Border3DSide.Left | Border3DSide.Top | Border3DSide.Right | Border3DSide.Bottom);
@@ -828,9 +792,7 @@ namespace System.Windows.Forms {
 
 			/* Draw the arrow */
 			if ((state & ButtonState.Inactive)!=0) {
-				sb=new SolidBrush(colorHighlight);
-				graphics.FillPolygon(sb, arrow, FillMode.Winding);
-				sb.Dispose();
+				graphics.FillPolygon(SystemBrushes.ControlLightLight, arrow, FillMode.Winding);
 
 				/* Move away from the shadow */
 				P1.X-=1;		P1.Y-=1;
@@ -842,14 +804,10 @@ namespace System.Windows.Forms {
 				arrow[2]=P3;
 				
 
-				sb=new SolidBrush(colorShadow);
-				graphics.FillPolygon(sb, arrow, FillMode.Winding);
+				graphics.FillPolygon(SystemBrushes.ControlDark, arrow, FillMode.Winding);
 			} else {
-				sb=new SolidBrush(colorText);
-				
-				graphics.FillPolygon(sb, arrow, FillMode.Winding);
+				graphics.FillPolygon(SystemBrushes.ControlText, arrow, FillMode.Winding);
 			}
-			sb.Dispose();
 		}
 		
 		public static void DrawComboButton(Graphics graphics, int x, int y, int width, int height, ButtonState state) {
@@ -882,22 +840,27 @@ namespace System.Windows.Forms {
 			graphics.DrawLine(pen, rect.Right-3, Y-1, rect.Right-3, Y+1);
 		}
 		
-		[MonoTODO]
 		public static void DrawFocusRectangle( Graphics graphics, Rectangle rectangle) {
-			RECT rc = new RECT();
-			rc.left = rectangle.Left;
-			rc.top = rectangle.Top;
-			rc.right = rectangle.Right;
-			rc.bottom = rectangle.Bottom;
-			IntPtr hdc = graphics.GetHdc();
-			int res = Win32.DrawFocusRect( hdc, ref rc);
-			graphics.ReleaseHdc(hdc);
+			DrawFocusRectangle(graphics, rectangle, Color.White, Color.Black);
 		}
 		
-		[MonoTODO]
 		public static void DrawFocusRectangle( Graphics graphics, Rectangle rectangle, Color foreColor, Color backColor) {
-			//FIXME: what to do with colors ?
-			DrawFocusRectangle( graphics, rectangle);			
+			//Color			colorForeInverted;
+			Color			colorBackInverted;
+			Pen			pen;
+
+			//colorForeInverted=Color.FromArgb(Math.Abs(foreColor.R-255), Math.Abs(foreColor.G-255), Math.Abs(foreColor.B-255));
+			//pen=new Pen(colorForeInverted, 1);
+			// MS seems to always use black
+			pen=new Pen(Color.Black, 1);
+			graphics.DrawRectangle(pen, rectangle);
+			pen.Dispose();
+
+			colorBackInverted=Color.FromArgb(Math.Abs(backColor.R-255), Math.Abs(backColor.G-255), Math.Abs(backColor.B-255));
+			pen=new Pen(colorBackInverted, 1);
+			pen.DashStyle=DashStyle.Dot;
+			graphics.DrawRectangle(pen, rectangle);
+			pen.Dispose();
 		}
 		
 		[MonoTODO]
@@ -946,7 +909,7 @@ namespace System.Windows.Forms {
 					if ((State & DrawFrameControlStates.DFCS_BUTTONPUSH)!=0) {
 						/* Goes first, affects the background */
 						if ((State & DrawFrameControlStates.DFCS_CHECKED)!=0) {
-							HatchBrush	hatchBrush=new HatchBrush(HatchStyle.Percent50, colorLight, colorHighlight);
+							HatchBrush	hatchBrush=new HatchBrush(HatchStyle.Percent50, SystemColors.ControlLight, SystemColors.ControlLightLight);
 							graphics.FillRectangle(hatchBrush,rectangle);
 							hatchBrush.Dispose();
 						}
@@ -954,7 +917,7 @@ namespace System.Windows.Forms {
 						if ((State & DrawFrameControlStates.DFCS_PUSHED)!=0) {
 							DrawBorder3D(graphics, rectangle, Border3DStyle.Sunken, Border3DSide.Left | Border3DSide.Top | Border3DSide.Right | Border3DSide.Bottom);
 						} else if ((State & DrawFrameControlStates.DFCS_FLAT)!=0) {
-							DrawBorder(graphics, rectangle, colorShadow, ButtonBorderStyle.Solid);
+							DrawBorder(graphics, rectangle, SystemColors.ControlDark, ButtonBorderStyle.Solid);
 						} else if ((State & DrawFrameControlStates.DFCS_INACTIVE)!=0) {
 							/* Same as normal, it would seem */
 							DrawBorder3D(graphics, rectangle, Border3DStyle.Raised, Border3DSide.Left | Border3DSide.Top | Border3DSide.Right | Border3DSide.Bottom);
@@ -962,15 +925,15 @@ namespace System.Windows.Forms {
 							DrawBorder3D(graphics, rectangle, Border3DStyle.Raised, Border3DSide.Left | Border3DSide.Top | Border3DSide.Right | Border3DSide.Bottom);
 						}
 					} else if ((State & DrawFrameControlStates.DFCS_BUTTONRADIO)!=0) {
-						Pen			penFatDark	= new Pen(colorDarkShadow, 2);
-						Pen			penFatLight	= new Pen(colorLight, 2);
+						Pen			penFatDark	= new Pen(SystemColors.ControlDarkDark, 2);
+						Pen			penFatLight	= new Pen(SystemColors.ControlLight, 2);
 						int			lineWidth;
 
 						graphics.DrawArc(penFatDark, rectangle.X+1, rectangle.Y+1, rectangle.Width-2, rectangle.Height-2, 135, 180);
 						graphics.DrawArc(penFatLight, rectangle.X+1, rectangle.Y+1, rectangle.Width-2, rectangle.Height-2, 315, 180);
 
-						graphics.DrawArc(penShadow, rectangle, 135, 180);
-						graphics.DrawArc(penHighlight, rectangle, 315, 180);
+						graphics.DrawArc(SystemPens.ControlDark, rectangle, 135, 180);
+						graphics.DrawArc(SystemPens.ControlLightLight, rectangle, 315, 180);
 
 						lineWidth=Math.Max(1, Math.Min(rectangle.Width, rectangle.Height)/3);
 
@@ -978,13 +941,11 @@ namespace System.Windows.Forms {
 							SolidBrush	buttonBrush;
 
 							if ((State & DrawFrameControlStates.DFCS_INACTIVE)!=0) {
-								buttonBrush=new SolidBrush(colorShadow);
+								buttonBrush=(SolidBrush)SystemBrushes.ControlDark;
 							} else {
-								buttonBrush=new SolidBrush(colorText);
+								buttonBrush=(SolidBrush)SystemBrushes.ControlText;
 							}
 							graphics.FillPie(buttonBrush, rectangle.X+lineWidth, rectangle.Y+lineWidth, rectangle.Width-lineWidth*2, rectangle.Height-lineWidth*2, 0, 359);
-
-							buttonBrush.Dispose();
 						}
 						penFatDark.Dispose();
 						penFatLight.Dispose();
@@ -1002,14 +963,14 @@ namespace System.Windows.Forms {
 
 						/* Goes first, affects the background */
 						if ((State & DrawFrameControlStates.DFCS_PUSHED)!=0) {
-							HatchBrush	hatchBrush=new HatchBrush(HatchStyle.Percent50, colorLight, colorHighlight);
+							HatchBrush	hatchBrush=new HatchBrush(HatchStyle.Percent50, SystemColors.ControlLight, SystemColors.ControlLightLight);
 							graphics.FillRectangle(hatchBrush,rectangle);
 							hatchBrush.Dispose();
 						}
 
 						/* Draw the sunken frame */
 						if ((State & DrawFrameControlStates.DFCS_FLAT)!=0) {
-							DrawBorder(graphics, rectangle, colorShadow, ButtonBorderStyle.Solid);
+							DrawBorder(graphics, rectangle, SystemColors.ControlDark, ButtonBorderStyle.Solid);
 						} else {
 							DrawBorder3D(graphics, rectangle, Border3DStyle.Sunken, Border3DSide.Left | Border3DSide.Top | Border3DSide.Right | Border3DSide.Bottom);
 						}
@@ -1020,9 +981,9 @@ namespace System.Windows.Forms {
 
 						rect=new Rectangle(rectangle.X+lineWidth, rectangle.Y+lineWidth, rectangle.Width-lineWidth*2, rectangle.Height-lineWidth*2);
 						if ((State & DrawFrameControlStates.DFCS_INACTIVE)!=0) {
-							pen=new Pen(colorShadow, 1);
+							pen=SystemPens.ControlDark;
 						} else {
-							pen=new Pen(colorText, 1);
+							pen=SystemPens.ControlText;
 						}
 
 						if ((State & DrawFrameControlStates.DFCS_CHECKED)!=0) {
@@ -1033,8 +994,6 @@ namespace System.Windows.Forms {
 							}
 							
 						}
-
-						pen.Dispose();
 					}
 					return;
 				}
@@ -1091,7 +1050,6 @@ namespace System.Windows.Forms {
 		
 		
 		public static void DrawScrollButton(Graphics graphics, Rectangle rectangle, ScrollButton button, ButtonState state) {
-			SolidBrush		sb;
 			Point[]			arrow = new Point[3];
 			Point				P1;
 			Point				P2;
@@ -1103,13 +1061,13 @@ namespace System.Windows.Forms {
 			Rectangle		rect;
 
 			if ((state & ButtonState.Checked)!=0) {
-				HatchBrush	hatchBrush=new HatchBrush(HatchStyle.Percent50, colorLight, colorHighlight);
+				HatchBrush	hatchBrush=new HatchBrush(HatchStyle.Percent50, SystemColors.ControlLight, SystemColors.ControlLightLight);
 				graphics.FillRectangle(hatchBrush,rectangle);
 				hatchBrush.Dispose();
 			}
 
 			if ((state & ButtonState.Flat)!=0) {
-				DrawBorder(graphics, rectangle, colorShadow, ButtonBorderStyle.Solid);
+				DrawBorder(graphics, rectangle, SystemColors.ControlDark, ButtonBorderStyle.Solid);
 			} else {
 				DrawBorder3D(graphics, rectangle, Border3DStyle.Raised, Border3DSide.Left | Border3DSide.Top | Border3DSide.Right | Border3DSide.Bottom);
 			}
@@ -1169,9 +1127,7 @@ namespace System.Windows.Forms {
 
 			/* Draw the arrow */
 			if ((state & ButtonState.Inactive)!=0) {
-				sb=new SolidBrush(colorHighlight);
-				graphics.FillPolygon(sb, arrow, FillMode.Winding);
-				sb.Dispose();
+				graphics.FillPolygon(SystemBrushes.ControlLightLight, arrow, FillMode.Winding);
 
 				/* Move away from the shadow */
 				P1.X-=1;		P1.Y-=1;
@@ -1182,15 +1138,10 @@ namespace System.Windows.Forms {
 				arrow[1]=P2;
 				arrow[2]=P3;
 				
-
-				sb=new SolidBrush(colorShadow);
-				graphics.FillPolygon(sb, arrow, FillMode.Winding);
+				graphics.FillPolygon(SystemBrushes.ControlDark, arrow, FillMode.Winding);
 			} else {
-				sb=new SolidBrush(colorText);
-				
-				graphics.FillPolygon(sb, arrow, FillMode.Winding);
+				graphics.FillPolygon(SystemBrushes.ControlText, arrow, FillMode.Winding);
 			}
-			sb.Dispose();
 		}
 		
 		public static void DrawScrollButton(Graphics graphics, int x, int y, int width, int height, ScrollButton button, ButtonState state) {
