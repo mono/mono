@@ -43,49 +43,66 @@ namespace System.Reflection.Emit {
 		}
 
 		public override FieldAttributes Attributes {
-			get {return attrs;}
+			get { return attrs; }
 		}
+
 		public override Type DeclaringType {
-			get {return typeb;}
+			get { return typeb; }
 		}
+
 		public override RuntimeFieldHandle FieldHandle {
-			get {return new RuntimeFieldHandle();}
+			get {
+				throw CreateNotSupportedException ();
+			}
 		}
+
 		public override Type FieldType {
-			get {return type;}
+			get { return type; }
 		}
+
 		public override string Name {
-			get {return name;}
+			get { return name; }
 		}
+
 		public override Type ReflectedType {
-			get {return typeb;}
+			get { return typeb; }
 		}
 
 		public override object[] GetCustomAttributes(bool inherit) {
-			return null;
+			throw CreateNotSupportedException ();
 		}
+
 		public override object[] GetCustomAttributes(Type attributeType, bool inherit) {
-			return null;
+			throw CreateNotSupportedException ();
 		}
+
 		public FieldToken GetToken() {
 			return new FieldToken (0x04000000 | table_idx);
 		}
+
 		public override object GetValue(object obj) {
-			return null;
+			throw CreateNotSupportedException ();
 		}
+
 		public override bool IsDefined( Type attributeType, bool inherit) {
-			return false;
+			throw CreateNotSupportedException ();
 		}
+
 		internal void SetRVAData (byte[] data) {
 			rva_data = (byte[])data.Clone ();
 		}
+
 		public void SetConstant( object defaultValue) {
+			RejectIfCreated ();
+
 			/*if (defaultValue.GetType() != type)
 				throw new ArgumentException ("Constant doesn't match field type");*/
 			def_value = defaultValue;
 		}
 
-		public void SetCustomAttribute( CustomAttributeBuilder customBuilder) {
+		public void SetCustomAttribute (CustomAttributeBuilder customBuilder) {
+			RejectIfCreated ();
+
 			string attrname = customBuilder.Ctor.ReflectedType.FullName;
 			if (attrname == "System.Runtime.InteropServices.FieldOffsetAttribute") {
 				byte[] data = customBuilder.Data;
@@ -115,20 +132,35 @@ namespace System.Reflection.Emit {
 		}
 
 		public void SetCustomAttribute( ConstructorInfo con, byte[] binaryAttribute) {
+			RejectIfCreated ();
 			SetCustomAttribute (new CustomAttributeBuilder (con, binaryAttribute));
 		}
 
 		public void SetMarshal( UnmanagedMarshal unmanagedMarshal) {
+			RejectIfCreated ();
 			marshal_info = unmanagedMarshal;
 			attrs |= FieldAttributes.HasFieldMarshal;
 		}
 
 		public void SetOffset( int iOffset) {
+			RejectIfCreated ();
 			offset = iOffset;
 		}
+
 		public override void SetValue( object obj, object val, BindingFlags invokeAttr, Binder binder, CultureInfo culture) {
+			throw CreateNotSupportedException ();
 		}
 
+		private Exception CreateNotSupportedException ()
+		{
+			return new NotSupportedException ("The invoked member is not supported in a dynamic module.");
+		}
+
+		private void RejectIfCreated ()
+		{
+			if (typeb.is_created)
+				throw new InvalidOperationException ("Unable to change after type has been created.");
+		}
 	}
 }
 

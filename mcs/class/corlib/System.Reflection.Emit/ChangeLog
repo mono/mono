@@ -1,5 +1,13 @@
 2004-06-09  Gert Driesen <drieseng@users.sourceforge.net>
 
+	* FieldBuilder.cs: fixed implementation to match MS.NET,
+	meaning throw InvalidOperationException for methods that
+	should not be allowed to execute when type has been
+	created, and throw NotSupportedException for methods and
+	properties that should not be called on FieldBuilder
+
+2004-06-09  Gert Driesen <drieseng@users.sourceforge.net>
+
         * MethodBuilder.cs: move check to see if type has already 
 	been created up, to match MS.NET behaviour. Fix GetHashCode 
 	(removed TODO)
