@@ -30,14 +30,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-// FIXME:
-//
-//   Some thought needs to be given to performance.
-//
-//   If current node is on an Attribute, Prefix might be null, and
-//   in several fields which uses XmlReader, it should be considered.
-//
-
 using System;
 using System.Collections;
 using System.Globalization;
@@ -46,10 +38,17 @@ using System.Text;
 using System.Xml.Schema;
 using Mono.Xml;
 
-namespace System.Xml
-{
 #if NET_2_0
-	public class XmlTextReader : XmlReader,
+using System.Xml;
+
+namespace Mono.Xml2
+#else
+namespace System.Xml
+#endif
+{
+
+#if NET_2_0
+	internal class XmlTextReader : XmlReader,
 		IXmlLineInfo, IXmlNamespaceResolver, IHasXmlParserContext
 #else
 	public class XmlTextReader : XmlReader, IXmlLineInfo, IHasXmlParserContext
@@ -157,13 +156,6 @@ namespace System.Xml
 			get { return parserContext.BaseURI; }
 		}
 
-#if NET_2_0
-		public override bool CanResolveEntity {
-			get { return true; }
-		}
-
-#endif
-
 		internal bool CharacterChecking {
 			get { return checkCharacters && normalization; }
 			set { checkCharacters = value; }
@@ -192,7 +184,6 @@ namespace System.Xml
 			get { return parserContext.Encoding; }
 		}
 #if NET_2_0
-		[MonoTODO]
 		public EntityHandling EntityHandling {
 			get { return entityHandling; }
 			set { entityHandling = value; }
@@ -712,13 +703,7 @@ namespace System.Xml
 			return ReadCharsInternal (buffer, offset, length);
 		}
 
-#if NET_2_0
-		public override string ReadString ()
-		{
-			return ReadStringInternal ();
-		}
-#elif NET_1_1
-#else
+#if NET_1_0
 		public override string ReadInnerXml ()
 		{
 			return ReadInnerXmlInternal ();
@@ -1989,22 +1974,29 @@ namespace System.Xml
 					int predefined = XmlChar.GetPredefinedEntity (entName);
 					if (predefined < 0) {
 						CheckAttributeEntityReferenceWFC (entName);
-						currentAttributeValueToken.ValueBufferEnd = valueLength;
-						currentAttributeValueToken.NodeType = XmlNodeType.Text;
-						if (!isNewToken)
-							IncrementAttributeValueToken ();
-						currentAttributeValueToken.Name = entName;
-						currentAttributeValueToken.Value = String.Empty;
-						currentAttributeValueToken.NodeType = XmlNodeType.EntityReference;
-						incrementToken = true;
+#if NET_2_0
+						if (entityHandling == EntityHandling.ExpandEntities) {
+							string value = DTD.GenerateEntityAttributeText (entName);
+							foreach (char c in value)
+								AppendValueChar (c);
+						} else
+#endif
+						{
+							currentAttributeValueToken.ValueBufferEnd = valueLength;
+							currentAttributeValueToken.NodeType = XmlNodeType.Text;
+							if (!isNewToken)
+								IncrementAttributeValueToken ();
+							currentAttributeValueToken.Name = entName;
+							currentAttributeValueToken.Value = String.Empty;
+							currentAttributeValueToken.NodeType = XmlNodeType.EntityReference;
+							incrementToken = true;
+						}
 					}
 					else
 						AppendValueChar (predefined);
 					break;
 				default:
-					// FIXME: this should be done by the JIT
 					if (CharacterChecking && XmlChar.IsInvalid (ch))
-//					if (checkCharacters && normalization && XmlChar.IsInvalid (ch))
 						throw new XmlException (this, "Invalid character was found.");
 					// FIXME: it might be optimized by the JIT later,
 //					AppendValueChar (ch);
@@ -2033,11 +2025,14 @@ namespace System.Xml
 		{
 			DTDEntityDeclaration entDecl = 
 				DTD == null ? null : DTD.EntityDecls [entName];
-			if (DTD != null && resolver != null && entDecl == null)
-				throw new XmlException (this, "Referenced entity does not exist.");
-
-			if (entDecl == null)
-				return;
+			if (entDecl == null) {
+				if (entityHandling == EntityHandling.ExpandEntities
+					|| (DTD != null && resolver != null && entDecl == null))
+					throw new XmlException (this,
+						String.Format ("Referenced entity '{0}' does not exist.", entName));
+				else
+					return;
+			}
 
 			if (entDecl.HasExternalReference)
 				throw new XmlException (this, "Reference to external entities is not allowed in the value of an attribute.");

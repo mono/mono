@@ -29,13 +29,18 @@
 //
 using System;
 using System.Collections;
-//using System.Collections.Specialized;
 using System.Globalization;
 using System.IO;
 using System.Text;
 using System.Xml;
 using System.Xml.Schema;
 using Mono.Xml.Schema;
+
+#if NET_2_0
+using XmlTextReaderImpl = Mono.Xml2.XmlTextReader;
+#else
+using XmlTextReaderImpl = System.Xml.XmlTextReader;
+#endif
 
 namespace Mono.Xml
 {
@@ -229,6 +234,31 @@ namespace Mono.Xml
 		{
 			validationErrors.Add (ex);
 		}
+
+#if NET_2_0
+		internal string GenerateEntityAttributeText (string entityName)
+		{
+			DTDEntityDeclaration entity = EntityDecls [entityName] as DTDEntityDeclaration;
+			if (entity == null)
+				return null;
+			return entity.EntityValue;
+		}
+
+		internal XmlTextReaderImpl GenerateEntityContentReader (string entityName, XmlParserContext context)
+		{
+			DTDEntityDeclaration entity = EntityDecls [entityName] as DTDEntityDeclaration;
+			if (entity == null)
+				return null;
+
+			if (entity.SystemId != null) {
+				Uri baseUri = entity.BaseURI == null ? null : new Uri (entity.BaseURI);
+				Stream stream = resolver.GetEntity (resolver.ResolveUri (baseUri, entity.SystemId), null, typeof (Stream)) as Stream;
+				return new XmlTextReaderImpl (stream, XmlNodeType.Element, context);
+			}
+			else
+				return new XmlTextReaderImpl (entity.EntityValue, XmlNodeType.Element, context);
+		}
+#endif
 	}
 
 	internal class DTDCollectionBase : DictionaryBase
@@ -844,7 +874,7 @@ namespace Mono.Xml
 			Stream s = null;
 			try {
 				s = resolver.GetEntity (absUri, null, typeof (Stream)) as Stream;
-				XmlTextReader xtr = new XmlTextReader (s);
+				XmlTextReaderImpl xtr = new XmlTextReaderImpl (absPath, s, Root.NameTable);
 				// Don't skip Text declaration here. LiteralEntityValue contains it. See spec 4.5
 				this.BaseURI = absPath;
 				LiteralEntityValue = xtr.GetRemainder ().ReadToEnd ();

@@ -1,5 +1,22 @@
 2004-11-08  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlTextReader2.cs : added. It is used to serve public API, plus
+	  entity handling support.
+
+	* DTDObjectModel.cs,
+	  DTDValidatingReader.cs,
+	  XmlDocumentType.cs,
+	  XmlParserContext.cs,
+	  XmlTextReader.cs :
+	  Implemented XmlTextReader.EntityHandling and ResolveEntity(). To
+	  implement them, XmlTextReader in 2.0 itself is in XmlTextReader2.cs
+	  and XmlTextReader.cs contains Mono.Xml2.XmlTextReader which is the
+	  same as 1.x XmlTextReader. XmlTextReader2 switches entity reader and
+	  source reader, and never handles tokenization. 
+	  The reason for "Mono.Xml2" is to avoid large changes in constructor.f
+
+2004-11-08  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlAttribute.cs, XmlElement.cs : get_Name should consider name table.
 	* XmlDocument.cs : use NameTable in Load() and LoadXml().
 	* XmlReader.cs : In Create(), use NameTable in XmlReaderSettings.

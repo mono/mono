@@ -32,6 +32,12 @@ using System.IO;
 using System.Collections;
 using Mono.Xml;
 
+#if NET_2_0
+using XmlTextReaderImpl = Mono.Xml2.XmlTextReader;
+#else
+using XmlTextReaderImpl = System.Xml.XmlTextReader;
+#endif
+
 namespace System.Xml
 {
 	public class XmlDocumentType  : XmlLinkedNode
@@ -47,7 +53,7 @@ namespace System.Xml
 						    XmlDocument doc)
 			: base (doc)
 		{
-			XmlTextReader xtr = new XmlTextReader (BaseURI, new StringReader (""), doc.NameTable);
+			XmlTextReaderImpl xtr = new XmlTextReaderImpl (BaseURI, new StringReader (""), doc.NameTable);
 			xtr.XmlResolver = doc.Resolver;
 			xtr.GenerateDTDObjectModel (name, publicId, systemId, internalSubset);
 			this.dtd = xtr.DTD;

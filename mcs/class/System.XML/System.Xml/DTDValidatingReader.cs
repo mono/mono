@@ -35,6 +35,13 @@ using System.Text;
 using System.Xml;
 using System.Xml.Schema;
 
+#if NET_2_0
+using XmlTextReaderImpl = Mono.Xml2.XmlTextReader;
+#else
+using XmlTextReaderImpl = System.Xml.XmlTextReader;
+#endif
+
+
 namespace Mono.Xml
 {
 #if NET_2_0
@@ -68,10 +75,6 @@ namespace Mono.Xml
 			missingIDReferences = new ArrayList ();
 			XmlTextReader xtReader = reader as XmlTextReader;
 			if (xtReader != null) {
-#if DTD_HANDLE_EVENTS
-				if (validatingReader != null)
-					xtReader.ValidationEventHandler += new ValidationEventHandler (OnValidationEvent);
-#endif
 				resolver = xtReader.Resolver;
 			}
 			else
@@ -344,8 +347,6 @@ namespace Mono.Xml
 
 		private void OnValidationEvent (object o, ValidationEventArgs e)
 		{
-//			if (validatingReader.HasValidationEvent)
-//				validatingReader.OnValidationEvent (this, e);
 			this.HandleError (e.Exception, e.Severity);
 		}
 
@@ -440,14 +441,17 @@ namespace Mono.Xml
 				break;
 
 			case XmlNodeType.DocumentType:
-				XmlTextReader xmlTextReader = reader as XmlTextReader;
-				if (xmlTextReader == null) {
-					xmlTextReader = new XmlTextReader ("", XmlNodeType.Document, null);
+//				XmlTextReader xmlTextReader = reader as XmlTextReader;
+				IHasXmlParserContext ctx = reader as IHasXmlParserContext;
+				if (ctx != null)
+					dtd = ctx.ParserContext.Dtd;
+				if (dtd == null) {
+					XmlTextReaderImpl xmlTextReader = new XmlTextReaderImpl ("", XmlNodeType.Document, null);
 					xmlTextReader.XmlResolver = resolver;
 					xmlTextReader.GenerateDTDObjectModel (reader.Name,
 						reader ["PUBLIC"], reader ["SYSTEM"], reader.Value);
+					dtd = xmlTextReader.DTD;
 				}
-				this.dtd = xmlTextReader.DTD;
 
 				// Validity Constraints Check.
 				if (DTD.Errors.Length > 0)
@@ -767,8 +771,8 @@ namespace Mono.Xml
 					default:
 						try {
 							def.Datatype.ParseValue (normalized, NameTable, null);
-						} catch (Exception) {
-							HandleError ("Attribute value is invalid against its data type.", XmlSeverityType.Error);
+						} catch (Exception ex) {
+							HandleError (String.Format ("Attribute value is invalid against its data type '{0}'. {1}", def.Datatype, ex.Message), XmlSeverityType.Error);
 						}
 						break;
 					}
@@ -918,7 +922,12 @@ namespace Mono.Xml
 			XmlNodeType xmlReaderNodeType =
 				(currentAttribute != null) ? XmlNodeType.Attribute : XmlNodeType.Element;
 
-			// MS.NET seems simply ignoring undeclared entity reference here ;-(
+#if NET_2_0
+			if (entity == null)
+					throw new XmlException (this as IXmlLineInfo, String.Format ("Reference to undeclared entity '{0}'.", reader.Name));
+#endif
+
+			// MS.NET 1.x ignores undeclared entity reference here..
 			if (entity != null && entity.SystemId != null) {
 				Uri baseUri = entity.BaseURI == null ? null : new Uri (entity.BaseURI);
 				Stream stream = resolver.GetEntity (resolver.ResolveUri (baseUri, entity.SystemId), null, typeof (Stream)) as Stream;

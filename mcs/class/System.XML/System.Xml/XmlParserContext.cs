@@ -33,6 +33,12 @@ using System.Collections;
 using System.Text;
 using Mono.Xml;
 
+#if NET_2_0
+using XmlTextReaderImpl = Mono.Xml2.XmlTextReader;
+#else
+using XmlTextReaderImpl = System.Xml.XmlTextReader;
+#endif
+
 namespace System.Xml
 {
 	public class XmlParserContext
@@ -132,7 +138,7 @@ namespace System.Xml
 				nt,
 				nsMgr,
 				(docTypeName != null && docTypeName != String.Empty) ?
-					new XmlTextReader ("", nt).GenerateDTDObjectModel (
+					new XmlTextReaderImpl ("", nt).GenerateDTDObjectModel (
 						docTypeName, pubId, sysId, internalSubset) : null,
 				baseURI,
 				xmlLang,
