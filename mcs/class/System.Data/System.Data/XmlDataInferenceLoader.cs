@@ -518,7 +518,7 @@ namespace System.Data
 
 
 #region FOR_TEST
-public class Driver
+internal class Driver
 {
 	private static void DumpDataTable (DataTable dt)
 	{

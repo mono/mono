@@ -1,3 +1,8 @@
+2004-08-23  Martin Baulig  <martin@ximian.com>
+
+	* XmlDataInferenceLoader.cs (Driver): Make this class internal,
+	not public.
+
 2004-08-18 Umadevi S <sumadevi@novell.com>
 	* DataView.cs - Completed most of the event handling. 
 	Thanks to Punit Todi <punit_todi@da-iict.org> for implementing most of it.
