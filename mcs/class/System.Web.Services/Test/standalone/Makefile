@@ -58,6 +58,7 @@ test-wsdl: tools
 	tar xvfz wsdlfiles.tar.gz
 	gunzip -c proxies.net.xml.gz > proxies.net.xml
 	mono wstest.exe gp
+	mono wstest.exe gc
 	mcs /r:System.Web.Services.dll /r:System.Data /target:library -out:proxies.dll @proxies.sources
 	mono ../../../../tools/corcompare/mono-api-info.exe proxies.dll > proxies.mono.xml
 	mono ../../../../tools/corcompare/mono-api-diff.exe proxies.net.xml proxies.mono.xml > proxies.diff.xml
