@@ -1,3 +1,8 @@
+2004-06-11  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile (TEST_SOURCES): Add test-268.
+	* test-268.cs: New test for #59477.
+
 2004-06-11  Martin Baulig  <martin@ximian.com>
 
 	* vararg-lib.cs, vararg-exe.cs: New tests.
