@@ -1165,6 +1165,16 @@ namespace Mono.CSharp {
 		// FIXME: return an empty static array instead of null, that cleans up
 		// some code and is consistent with some coding conventions I just found
 		// out existed ;-)
+		//
+		//
+		// Notice that in various cases we check if our field is non-null,
+		// something that would normally mean that there was a bug elsewhere.
+		//
+		// The problem happens while we are defining p-invoke methods, as those
+		// will trigger a FindMembers, but this happens before things are defined
+		//
+		// Since the whole process is a no-op, it is fine to check for null here.
+		//
 		public MemberInfo [] FindMembers (MemberTypes mt, BindingFlags bf,
 						  MemberFilter filter, object criteria)
 		{
@@ -1181,9 +1191,9 @@ namespace Mono.CSharp {
 						if ((f.ModFlags & Modifiers.PRIVATE) != 0)
 							if (!priv)
 								continue;
-						
+
 						FieldBuilder fb = f.FieldBuilder;
-						if (filter (fb, criteria) == true)
+						if (fb != null && filter (fb, criteria) == true)
 							members.Add (fb);
 					}
 				}
@@ -1195,7 +1205,7 @@ namespace Mono.CSharp {
 								continue;
 						
 						FieldBuilder fb = con.FieldBuilder;
-						if (filter (fb, criteria) == true)
+						if (fb != null && filter (fb, criteria) == true)
 							members.Add (fb);
 					}
 				}
@@ -1210,14 +1220,7 @@ namespace Mono.CSharp {
 						
 						MethodBuilder mb = m.MethodBuilder;
 
-						// If we are in transit, ignore
-						// This case arises when we are still defining a PInvoke method
-						// and we hit FindMembers because of the need to resolve named
-						// arguments inside of Attribute.DefinePInvokeMethod
-						if (mb == null)
-						        continue;
-
-						if (filter (mb, criteria) == true)
+						if (mb != null && filter (mb, criteria) == true)
 							members.Add (mb);
 					}
 				}
@@ -1229,8 +1232,7 @@ namespace Mono.CSharp {
 								continue;
 						
 						MethodBuilder ob = o.OperatorMethodBuilder;
-
-						if (filter (ob, criteria) == true)
+						if (ob != null && filter (ob, criteria) == true)
 							members.Add (ob);
 					}
 				}
@@ -1260,8 +1262,9 @@ namespace Mono.CSharp {
 						if ((e.ModFlags & Modifiers.PRIVATE) != 0)
 							if (!priv)
 								continue;
-						
-						if (filter (e.EventBuilder, criteria) == true)
+
+						MemberInfo eb = e.EventBuilder;
+						if (eb != null && filter (eb, criteria) == true)
 						        members.Add (e.EventBuilder);
 					}
 			}
@@ -1272,8 +1275,9 @@ namespace Mono.CSharp {
 						if ((p.ModFlags & Modifiers.PRIVATE) != 0)
 							if (!priv)
 								continue;
-					
-						if (filter (p.PropertyBuilder, criteria) == true) {
+
+						MemberInfo pb = p.PropertyBuilder;
+						if (pb != null && filter (pb, criteria) == true) {
 							members.Add (p.PropertyBuilder);
 						}
 					}
@@ -1283,8 +1287,9 @@ namespace Mono.CSharp {
 						if ((ix.ModFlags & Modifiers.PRIVATE) != 0)
 							if (!priv)
 								continue;
-						
-						if (filter (ix.PropertyBuilder, criteria) == true) {
+
+						MemberInfo ib = ix.PropertyBuilder;
+						if (ib != null && filter (ib, criteria) == true) {
 							members.Add (ix.PropertyBuilder);
 						}
 					}

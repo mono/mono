@@ -11,15 +11,15 @@ TEST_SOURCES = \
 	test-41 test-42 test-43 test-44 test-45 test-46 test-47 test-48 test-49 test-50 \
 	test-51 test-52	test-53 test-54 test-55 test-56 test-57		test-59 	\
 	test-61	test-62 test-63	test-64 test-65 test-66 test-67 test-68 test-69 test-70	\
-	test-71 test-72 test-73 test-74 test-75		test-77 test-78 test-79 test-80 \
+	test-71 test-72 test-73 test-74 test-75 test-76 test-77 test-78 test-79 test-80 \
 	test-81 test-82 test-83 test-84         test-86 test-87 test-88 test-89 test-90 \
-	test-91 test-92 test-93 test-94 test-95 test-96 test-97 test-98 test-99
+	test-91 test-92 test-93 test-94 test-95 test-96 test-97 test-98 test-99 test-100
 
 UNSAFE_SOURCES = \
 	unsafe-1 unsafe-2
 
 TEST_NOPASS = \
-	test-29 test-38 test-76
+	test-29 test-38 
 
 all: test-compiler test-unsafe
 

@@ -1,3 +1,9 @@
+2002-04-10  Miguel de Icaza  <miguel@ximian.com>
+
+	* class.cs (FindMembers): Allow the Builders of the various
+	members to be null.  If they are skip them.  This only happens
+	during the PInvoke declaration.
+
 2002-04-09  Miguel de Icaza  <miguel@ximian.com>
 
 	* parameter.cs (Parameters.ComputeParameterTypes): Flag the
