@@ -1,3 +1,12 @@
+2004-11-21  Ravindra <rkumar@novell.com>
+
+	* ListView.cs: Implemented item selection, activation and
+	column header style. Fixed properties to do a redraw, if
+	required. Added support for MouseHover, DoubleClick, KeyDown
+	and KeyUp event handling and some minor fixes.
+	* ListViewItem.cs: Fixed constructor.
+	* ThemeWin32Classic.cs: Improved drawing for ListView.
+
 2004-11-19  Jordi Mas i Hernandez <jordi@ximian.com>
 
 	* ThemeWin32Classic.cs: initial listbox drawing code

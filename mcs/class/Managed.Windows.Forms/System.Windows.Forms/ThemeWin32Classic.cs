@@ -1126,37 +1126,67 @@ namespace System.Windows.Forms
 			dc.Clear (control.BackColor);
 
 			// Draw the border of the list view with a background
-			dc.FillRectangle (ResPool.GetSolidBrush (control.BackColor), control_area);
 			this.CPDrawBorderStyle (dc, control_area, control.BorderStyle);
-			if (details) {
+			if (details && control.HeaderStyle != ColumnHeaderStyle.None) {
 				dc.FillRectangle (ResPool.GetSolidBrush (SystemColors.Control),
 						  0, 0, control.TotalWidth, control.Font.Height);
 				if (control.Columns.Count > 0) {
-					foreach (ColumnHeader col in control.Columns) {
-						this.CPDrawButton (dc, col.Rect, (col.Pressed ?
-										  ButtonState.Pushed :
-										  ButtonState.Normal));
-						dc.DrawString (col.Text, control.Font,
-							       ResPool.GetSolidBrush (this.ColorButtonText),
-							       col.Rect, col.Format);
+					if (control.HeaderStyle == ColumnHeaderStyle.Clickable) {
+						foreach (ColumnHeader col in control.Columns) {
+							this.CPDrawButton (dc, col.Rect,
+									   (col.Pressed ?
+									    ButtonState.Pushed :
+									    ButtonState.Normal));
+							dc.DrawString (col.Text, control.Font,
+								       ResPool.GetSolidBrush
+								       (this.ColorButtonText),
+								       col.Rect, col.Format);
+						}
 					}
-				}
-				if (control.GridLines) {
-					// draw vertical gridlines
-					foreach (ColumnHeader col in control.Columns)
-						dc.DrawLine (this.ResPool.GetPen (this.ColorButtonFace),
-							     col.Rect.Right, col.Rect.Bottom,
-							     col.Rect.Right, control.TotalHeight);
-					// draw horizontal gridlines
-					foreach (ListViewItem item in control.Items)
-						dc.DrawLine (this.ResPool.GetPen (this.ColorButtonFace),
-							     item.EntireRect.Left, item.EntireRect.Bottom,
-							     control.TotalWidth, item.EntireRect.Bottom);
+					// Non-clickable columns
+					else {
+						foreach (ColumnHeader col in control.Columns) {
+							this.CPDrawButton (dc, col.Rect, ButtonState.Flat);
+							dc.DrawString (col.Text, control.Font,
+								       ResPool.GetSolidBrush
+								       (this.ColorButtonText),
+								       col.Rect, col.Format);
+						}
+					}
 				}
 			}
 
 			foreach (ListViewItem item in control.Items)
 				this.DrawListViewItem (dc, control, item);
+
+			// draw the gridlines
+			if (details && control.GridLines) {
+				int top = (control.HeaderStyle == ColumnHeaderStyle.None) ?
+					2 : control.Font.Height + 2;
+
+				// draw vertical gridlines
+				foreach (ColumnHeader col in control.Columns)
+					dc.DrawLine (this.ResPool.GetPen (this.ColorButtonFace),
+						     col.Rect.Right, top,
+						     col.Rect.Right, control.TotalHeight);
+				// draw horizontal gridlines
+				ListViewItem last_item = null;
+				foreach (ListViewItem item in control.Items) {
+					dc.DrawLine (this.ResPool.GetPen (this.ColorButtonFace),
+						     item.EntireRect.Left, item.EntireRect.Top,
+						     control.TotalWidth, item.EntireRect.Top);
+					last_item = item;
+				}
+
+				// draw a line after at the bottom of the last item
+				if (last_item != null) {
+					dc.DrawLine (this.ResPool.GetPen (this.ColorButtonFace),
+						     last_item.EntireRect.Left,
+						     last_item.EntireRect.Bottom,
+						     control.TotalWidth,
+						     last_item.EntireRect.Bottom);
+				}
+			}
 		}
 
 		// draws the ListViewItem of the given index
@@ -1222,12 +1252,7 @@ namespace System.Windows.Forms
 			}
 
 			// draw the item text
-			Rectangle text_rect = Rectangle.Empty;
-			text_rect.X = item.LabelRect.X + 1;
-			text_rect.Y = item.LabelRect.Y + 1;
-			text_rect.Width = item.LabelRect.Width - 3;
-			text_rect.Height = item.LabelRect.Height - 2;
-
+			Rectangle text_rect = item.LabelRect;
 			// format for the item text
 			StringFormat format = new StringFormat ();
 			format.LineAlignment = StringAlignment.Center;
@@ -1235,14 +1260,35 @@ namespace System.Windows.Forms
 				format.Alignment = StringAlignment.Center;
 			else
 				format.Alignment = StringAlignment.Near;
-
+			
 			if (!control.LabelWrap)
 				format.FormatFlags = StringFormatFlags.NoWrap;
+			
+			if (item.Selected) {
+				if (control.View == View.Details && control.FullRowSelect) {
+					// fill the entire rect excluding the checkbox
+					Rectangle full_rect = item.EntireRect;
+					full_rect.Location = item.LabelRect.Location;
+					dc.FillRectangle (SystemBrushes.Highlight, full_rect);
+				}
+				else {
+					Size text_size = Size.Ceiling (dc.MeasureString (item.Text,
+											 item.Font));
+					text_rect.Width = text_size.Width;
+					dc.FillRectangle (SystemBrushes.Highlight, text_rect);
+				}
+			}
+			else
+				dc.FillRectangle (ResPool.GetSolidBrush (item.BackColor), text_rect);
 
-			dc.FillRectangle (ResPool.GetSolidBrush (item.BackColor), text_rect);
-			if (item.Text != null && item.Text.Length > 0)
-				dc.DrawString (item.Text, item.Font, this.ResPool.GetSolidBrush
-					       (item.ForeColor), text_rect, format);
+			if (item.Text != null && item.Text.Length > 0) {
+				if (item.Selected)
+					dc.DrawString (item.Text, item.Font, SystemBrushes.HighlightText,
+						       text_rect, format);
+				else
+					dc.DrawString (item.Text, item.Font, this.ResPool.GetSolidBrush
+						       (item.ForeColor), text_rect, format);
+			}
 
 			if (control.View == View.Details && control.Columns.Count > 0) {
 				// draw subitems for details view
@@ -1251,11 +1297,7 @@ namespace System.Windows.Forms
 					     control.Columns.Count : subItems.Count);
 
 				if (count > 0) {
-					Rectangle sub_item_rect = Rectangle.Empty;
-					sub_item_rect.X = item.LabelRect.Right + 1;
-					sub_item_rect.Y = item.LabelRect.Y + 1;
-					sub_item_rect.Height = item.LabelRect.Height - 2;
-
+					Rectangle sub_item_rect = item.LabelRect;
 					ListViewItem.ListViewSubItem subItem;
 					ColumnHeader col;
 
@@ -1267,9 +1309,17 @@ namespace System.Windows.Forms
 					for (int index = 1; index < count; index++) {
 						subItem = subItems [index];
 						col = control.Columns [index];
-						sub_item_rect.Width = col.Wd - 3;
+						sub_item_rect.Width = col.Wd;
 
-						if (item.UseItemStyleForSubItems) {
+						// In case of fullrowselect, background is filled
+						// for the entire rect above
+						if (item.Selected && control.FullRowSelect) {
+							if (subItem.Text != null && subItem.Text.Length > 0)
+								dc.DrawString (subItem.Text, item.Font,
+									       SystemBrushes.HighlightText,
+									       sub_item_rect, format);
+						}
+						else if (item.UseItemStyleForSubItems) {
 							dc.FillRectangle (this.ResPool.GetSolidBrush
 									  (item.BackColor), sub_item_rect);
 							if (subItem.Text != null && subItem.Text.Length > 0)

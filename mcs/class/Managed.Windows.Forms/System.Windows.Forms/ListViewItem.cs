@@ -537,7 +537,9 @@ namespace System.Windows.Forms
 			}
 
 			public ListViewSubItem (ListViewItem owner, string text)
-				: this (owner, text, owner.ForeColor, owner.BackColor, owner.Font)
+				: this (owner, text, ThemeEngine.Current.ColorWindowText,
+					ThemeEngine.Current.ColorWindow,
+					ThemeEngine.Current.DefaultFont)
 			{
 			}
 

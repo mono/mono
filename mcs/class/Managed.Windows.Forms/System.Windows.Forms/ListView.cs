@@ -22,6 +22,13 @@
 // Author:
 //	Ravindra (rkumar@novell.com)
 //
+// TODO:
+//   - Keys to be handled ENTER/PAGE UP/PAGE DOWN/HOME/END/ARROWS/CTRL/SHIFT
+//   - Item text editing
+//   - Column resizing/reodering
+//   - Feedback for item activation, change in cursor types as mouse moves.
+//   - HideSelection
+//
 // $Revision: 1.9 $
 // $Modtime: $
 // $Log: ListView.cs,v $
@@ -82,7 +89,9 @@ namespace System.Windows.Forms
 		private CheckedListViewItemCollection checked_items;
 		private ColumnHeader clicked_column;
 		private ListViewItem clicked_item;
+		private ListViewItem last_clicked_item;
 		private ColumnHeaderCollection columns;
+		private bool ctrl_pressed;
 		private ListViewItem focused_item;
 		private bool full_row_select = false;
 		private bool grid_lines = false;
@@ -166,10 +175,14 @@ namespace System.Windows.Forms
 			child_controls.Add (this.h_scroll);
 
 			// event handlers
-			base.Paint += new PaintEventHandler (ListView_Paint);
+			base.DoubleClick += new EventHandler(ListView_DoubleClick);
+			base.KeyDown += new KeyEventHandler(ListView_KeyDown);
+			base.KeyUp += new KeyEventHandler(ListView_KeyUp);
 			base.MouseDown += new MouseEventHandler(ListView_MouseDown);
+			base.MouseHover += new EventHandler(ListView_MouseHover);
 			base.MouseUp += new MouseEventHandler(ListView_MouseUp);
 			base.MouseMove += new MouseEventHandler(ListView_MouseMove);
+			base.Paint += new PaintEventHandler (ListView_Paint);
 		}
 		#endregion	// Public Constructors
 
@@ -183,6 +196,15 @@ namespace System.Windows.Forms
 						return ThemeEngine.Current.ListViewCheckBoxSize;
 				}
 				return Size.Empty;
+			}
+		}
+
+		internal bool CanMultiselect {
+			get {
+				if (this.multiselect && this.ctrl_pressed)
+					return true;
+				else
+					return false;
 			}
 		}
 		#endregion	// Private Internal Properties
@@ -208,19 +230,41 @@ namespace System.Windows.Forms
 		[Localizable (true)]
 		public ListViewAlignment Alignment {
 			get { return alignment; }
-			set { alignment = value; }
+			set {
+				if (this.alignment != value) {
+					alignment = value;
+					// alignment does not matter in Details/List views
+					if (this.view == View.LargeIcon ||
+					    this.View == View.SmallIcon)
+						this.Redraw (true);
+				}
+			}
 		}
 
 		[DefaultValue (false)]
 		public bool AllowColumnReorder {
 			get { return allow_column_reorder; }
-			set { allow_column_reorder = value; }
+			set {
+				if (this.allow_column_reorder != value) {
+					allow_column_reorder = value;
+					// column reorder does not matter in Details view
+					if (this.view != View.Details)
+						this.Redraw (true);
+				}
+			}
 		}
 
 		[DefaultValue (true)]
 		public bool AutoArrange {
 			get { return auto_arrange; }
-			set { auto_arrange = value; }
+			set {
+				if (auto_arrange != value) {
+					auto_arrange = value;
+					// autoarrange does not matter in Details/List views
+					if (this.view == View.LargeIcon || this.View == View.SmallIcon)
+						this.Redraw (true);
+				}
+			}
 		}
 
 		public override Color BackColor {
@@ -246,13 +290,23 @@ namespace System.Windows.Forms
 		[DispId (-504)]
 		public BorderStyle BorderStyle {
 			get { return border_style; }
-			set { border_style = value; }
+			set {
+				if (border_style != value) {
+					border_style = value;
+					this.Redraw (false);
+				}
+			}
 		}
 
 		[DefaultValue (false)]
 		public bool CheckBoxes {
 			get { return check_boxes; }
-			set { check_boxes = value; }
+			set {
+				if (check_boxes != value) {
+					check_boxes = value;
+					this.Redraw (true);
+				}
+			}
 		}
 
 		[Browsable (false)]
@@ -294,19 +348,36 @@ namespace System.Windows.Forms
 		[DefaultValue (false)]
 		public bool GridLines {
 			get { return grid_lines; }
-			set { grid_lines = value; }
+			set {
+				if (grid_lines != value) {
+					grid_lines = value;
+					this.Redraw (false);
+				}
+			}
 		}
 
 		[DefaultValue (ColumnHeaderStyle.Clickable)]
 		public ColumnHeaderStyle HeaderStyle {
 			get { return header_style; }
-			set { header_style = value; }
+			set {
+				if (header_style != value) {
+					header_style = value;
+					// header style matters only in Details view
+					if (this.view == View.Details)
+						this.Redraw (false);
+				}
+			}
 		}
 
 		[DefaultValue (true)]
 		public bool HideSelection {
 			get { return hide_selection; }
-			set { hide_selection = value; }
+			set {
+				if (hide_selection != value) {
+					hide_selection = value;
+					this.Redraw (false);
+				}
+			}
 		}
 
 		[DefaultValue (false)]
@@ -332,13 +403,21 @@ namespace System.Windows.Forms
 		[Localizable (true)]
 		public bool LabelWrap {
 			get { return label_wrap; }
-			set { label_wrap = value; }
+			set {
+				if (label_wrap != value) {
+					label_wrap = value;
+					this.Redraw (true);
+				}
+			}
 		}
 
 		[DefaultValue (null)]
 		public ImageList LargeImageList {
 			get { return large_image_list; }
-			set { large_image_list = value; }
+			set {
+				large_image_list = value;
+				this.Redraw (true);
+			}
 		}
 
 		[Browsable (false)]
@@ -357,7 +436,12 @@ namespace System.Windows.Forms
 		[DefaultValue (true)]
 		public bool Scrollable {
 			get { return scrollable; }
-			set { scrollable = value; }
+			set {
+				if (scrollable != value) {
+					scrollable = value;
+					this.Redraw (true);
+				}
+			}
 		}
 
 		[Browsable (false)]
@@ -375,7 +459,10 @@ namespace System.Windows.Forms
 		[DefaultValue (null)]
 		public ImageList SmallImageList {
 			get { return small_image_list; }
-			set { small_image_list = value; }
+			set {
+				small_image_list = value;
+				this.Redraw (true);
+			}
 		}
 
 		[DefaultValue (SortOrder.None)]
@@ -387,7 +474,10 @@ namespace System.Windows.Forms
 		[DefaultValue (null)]
 		public ImageList StateImageList {
 			get { return state_image_list; }
-			set { state_image_list = value; }
+			set {
+				state_image_list = value;
+				this.Redraw (true);
+			}
 		}
 
 		[Bindable (false)]
@@ -400,6 +490,8 @@ namespace System.Windows.Forms
 					return;
 
 				text = value;
+				this.Redraw (true);
+
 				if (TextChanged != null)
 					TextChanged (this, new EventArgs ());
 			}
@@ -581,7 +673,9 @@ namespace System.Windows.Forms
 			switch (view) {
 
 			case View.Details:
-				int ht = this.Font.Height;
+				// ColumnHeaders are not drawn if headerstyle is none
+				int ht = (this.header_style == ColumnHeaderStyle.None) ? 
+					2 : this.Font.Height + 2;
 				if (columns.Count > 0) {
 					foreach (ColumnHeader col in columns) {
 						col.X = current_pos_x;
@@ -792,6 +886,36 @@ namespace System.Windows.Forms
 			}
 		}
 
+		// Event Handlers
+		private void ListView_DoubleClick (object sender, EventArgs e)
+		{
+			if (this.activation == ItemActivation.Standard
+			    && this.ItemActivate != null)
+				this.ItemActivate (this, e);
+		}
+
+		private void ListView_KeyDown (object sender, KeyEventArgs ke)
+		{
+			Console.WriteLine ("key down");
+			if (!ke.Handled && ke.Control) {
+				Console.WriteLine ("CTRL key");
+				this.ctrl_pressed = true;
+				ke.Handled = true;
+				base.OnKeyDown (ke);
+			}
+		}
+
+		private void ListView_KeyUp (object sender, KeyEventArgs ke)
+		{
+			Console.WriteLine ("key up");
+			if (!ke.Handled && ke.Control) {
+				Console.WriteLine ("CTRL key");
+				this.ctrl_pressed = false;
+				ke.Handled = true;
+				base.OnKeyUp (ke);
+			}
+		}
+
 		private void ListView_MouseDown (object sender, MouseEventArgs me)
 		{
 			if (items.Count == 0)
@@ -811,7 +935,6 @@ namespace System.Windows.Forms
 
 				if (this.clicked_column != null) {
 					this.clicked_column.pressed = true;
-					this.Invalidate (this.clicked_column.Rect);
 					this.Redraw (false);
 					return;
 				}
@@ -822,38 +945,84 @@ namespace System.Windows.Forms
 			hit = new Point (me.X + h_marker, me.Y + v_marker);
 			foreach (ListViewItem item in this.items) {
 				if (item.CheckRect.Contains (hit)) {
+					CheckState curr_state = item.Checked ?
+						CheckState.Checked : CheckState.Unchecked;
 					if (item.Checked)
 						item.Checked = false;
 					else
 						item.Checked = true;
 
-					this.Invalidate (item.CheckRect);
+					CheckState new_state = item.Checked ?
+						CheckState.Checked : CheckState.Unchecked;
 					this.Redraw (false);
+
+					// Raise the ItemCheck event
+					ItemCheckEventArgs ice = new ItemCheckEventArgs (item.Index,
+											 curr_state,
+											 new_state);
+					this.OnItemCheck (ice);
 					break;
 				}
 
-				if (item.EntireRect.Contains (hit)) {
-					this.clicked_item = item;
-					break;
+				if (this.view == View.Details &&
+				    this.FullRowSelect == false) {
+					if (item.LabelRect.Contains (hit)) {
+						this.clicked_item = item;
+						break;
+					}
+				}
+				else {
+					if (item.EntireRect.Contains (hit)) {
+						this.clicked_item = item;
+						break;
+					}
 				}
 			}
 
 			if (this.clicked_item != null) {
-				this.clicked_item.Selected = true;
-				if (this.multiselect == false && this.selected_items.Count > 0) {
+				if (this.CanMultiselect == false && this.selected_items.Count > 0) {
 					this.selected_items.Clear ();
 					this.selected_indices.list.Clear ();
 				}
 
+				this.clicked_item.Selected = true;
 				this.selected_items.list.Add (this.clicked_item);
 				this.selected_indices.list.Add (this.clicked_item.Index);
-
-				if (this.multiselect) {
-					this.Invalidate (this.clicked_item.EntireRect);
+				
+				if (this.CanMultiselect)
 					this.OnSelectedIndexChanged (new EventArgs ());
+				
+				this.Redraw (false);
+			}
+
+			// set the FocusedItem to be the current clicked_item
+			this.focused_item = this.clicked_item;
+		}
+
+		private void ListView_MouseHover (object sender, EventArgs e)
+		{
+			// handle the hover events only when the mouse
+			// is not captured.
+			if (this.hover_selection == false || this.Capture)
+				return;
+
+			// hit test for the items
+			Point hit = this.PointToClient (Control.MousePosition);
+			ListViewItem item = this.GetItemAt (hit.X, hit.Y);
+
+			if (item != null) {
+				if (this.CanMultiselect == false &&
+				    this.selected_items.Count > 0) {
+					this.selected_items.Clear ();
+					this.selected_indices.list.Clear ();
 				}
-				else
-					this.Invalidate ();
+
+				item.Selected = true;
+				this.selected_items.list.Add (item);
+				this.selected_indices.list.Add (item.Index);
+
+				if (this.CanMultiselect)
+					this.OnSelectedIndexChanged (new EventArgs ());
 
 				this.Redraw (false);
 			}
@@ -869,13 +1038,11 @@ namespace System.Windows.Forms
 				if (this.clicked_column.pressed == false &&
 				    this.clicked_column.Rect.Contains (hit)) {
 					this.clicked_column.pressed = true;
-					this.Invalidate (this.clicked_column.Rect);
 					this.Redraw (false);
 				}
 				else if (this.clicked_column.pressed && 
 					 ! this.clicked_column.Rect.Contains (hit)) {
 					this.clicked_column.pressed = false;
-					this.Invalidate (this.clicked_column.Rect);
 					this.Redraw (false);
 				}
 			}
@@ -892,10 +1059,36 @@ namespace System.Windows.Forms
 			if (this.clicked_column != null) {
 				if (this.clicked_column.pressed) {
 					this.clicked_column.pressed = false;
-					this.Invalidate (this.clicked_column.Rect);
 					this.Redraw (false);
+
+					// Raise the ColumnClick event
 					this.OnColumnClick (new ColumnClickEventArgs
 							    (this.clicked_column.Index));
+				}
+			}
+
+			// Raise the ItemActivate event
+			Rectangle rect = Rectangle.Empty;
+			if (this.clicked_item != null) {
+				if (this.view == View.Details && !this.full_row_select)
+					rect = this.clicked_item.LabelRect;
+				else
+					rect = this.clicked_item.EntireRect;
+
+				// We handle double click in a separate handler
+				if (rect.Contains (hit)) {
+					if (this.activation == ItemActivation.OneClick)
+						this.ItemActivate (this, EventArgs.Empty);
+
+					// ItemActivate is raised on the second click on the same item
+					else if (this.activation == ItemActivation.TwoClick) {
+						if (this.last_clicked_item == this.clicked_item) {
+							this.ItemActivate (this, EventArgs.Empty);
+							this.last_clicked_item = null;
+						}
+						else
+							this.last_clicked_item = this.clicked_item;
+					}
 				}
 			}
 
@@ -947,7 +1140,11 @@ namespace System.Windows.Forms
 					       srcRect, GraphicsUnit.Pixel);
 
 			// paint the column headers at the top
-			if (this.view == View.Details && this.Columns.Count > 0 && v_marker > 0) {
+			if (this.view == View.Details &&
+			    this.Columns.Count > 0 &&
+			    this.header_style != ColumnHeaderStyle.None &&
+			    v_marker > 0) {
+
 				int col_ht = this.Columns [0].Ht;
 				// move the source rect by the amount of horizontal scrolling
 				// done so far.
@@ -1958,6 +2155,10 @@ namespace System.Windows.Forms
 			#region Public Methods
 			public virtual void Clear ()
 			{
+				// mark the items as unselected before clearing the list
+				for (int i = 0; i < list.Count; i++)
+					((ListViewItem) list [i]).Selected = false;
+
 				list.Clear ();
 			}
 
