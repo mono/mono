@@ -1,43 +1,47 @@
 //
-// System.Data.SqlRowUpdatingEventArgs.cs
+// System.Data.StateChangeEventArgs.cs
 //
 // Author:
 //   Rodrigo Moya (rodrigo@ximian.com)
 //   Daniel Morgan (danmorg@sc.rr.com)
+//   Tim Coleman (tim@timcoleman.com)
 //
 // (C) Ximian, Inc 2002
+// Copyright (C) Tim Coleman, 2002
 //
 
 using System;
 
 namespace System.Data {
-	public sealed class StateChangeEventArgs : EventArgs {
+	public sealed class StateChangeEventArgs : EventArgs 
+	{
+		#region Fields
 
-		[MonoTODO]
-		public StateChangeEventArgs(ConnectionState originalState,
-			ConnectionState currentState)	{
-			// FIXME: do me
+		ConnectionState originalState;
+		ConnectionState currentState;
+
+		#endregion // Fields
+
+		#region Constructors
+
+		public StateChangeEventArgs (ConnectionState originalState, ConnectionState currentState)
+		{
+			this.originalState = originalState;
+			this.currentState = currentState;
 		}
 
-		[MonoTODO]
+		#endregion // Constructors
+
+		#region Properties
+
 		public ConnectionState CurrentState {
-			get {
-				// FIXME: do me
-				throw new NotImplementedException ();
-			}
+			get { return currentState; }
 		}
 
-		[MonoTODO]
 		public ConnectionState OriginalState {
-			get {
-				// FIXME: do me
-				throw new NotImplementedException ();
-			}
+			get { return originalState; }
 		}
 
-		[MonoTODO]
-		~StateChangeEventArgs() {
-			// FIXME: do me
-		}
+		#endregion // Properties
 	}
 }
