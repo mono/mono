@@ -131,11 +131,6 @@ namespace System.Security.Cryptography.Xml {
 			list.Insert (index, value);
 		}
 
-		public EncryptionProperty Item (int index)
-		{
-			return (EncryptionProperty) list [index];
-		}
-
 		public void Remove (EncryptionProperty value)
 		{
 			list.Remove (value);
