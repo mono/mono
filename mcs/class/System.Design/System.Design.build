@@ -28,7 +28,7 @@
 
 	<target name="clean">
 		<delete failonerror="false">
-			<fileset bardir="../lib">
+			<fileset basedir="../lib">
 				<includes name="System.Design.dll"/>
 			</fileset>
 		</delete>
