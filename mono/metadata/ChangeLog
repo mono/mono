@@ -1,3 +1,9 @@
+
+Wed Jun 4 18:01:22 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* class.c: ensure .pack and .size are handled correctly and
+	simplified layout of static fields.
+
 2003-06-04  Dietmar Maurer  <dietmar@ximian.com>
 
 	* appdomain.c
