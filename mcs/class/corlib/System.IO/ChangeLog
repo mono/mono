@@ -1,3 +1,8 @@
+2005-03-09  Dick Porter  <dick@ximian.com>
+
+	* MonoIOError.cs: 
+	* MonoIO.cs: Add a few more exception messages
+
 2005-02-11  Zoltan Varga  <vargaz@freemail.hu>
 
 	* CheckPermission.cs: Fix warning.

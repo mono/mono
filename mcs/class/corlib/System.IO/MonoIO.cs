@@ -66,6 +66,9 @@ namespace System.IO
 				return new FileNotFoundException (message,
 								  path);
 
+			case MonoIOError.ERROR_TOO_MANY_OPEN_FILES:
+				return new IOException ("Too many open files");
+				
 			case MonoIOError.ERROR_PATH_NOT_FOUND:
 				message = String.Format ("Could not find a part of the path \"{0}\"", path);
 				return new DirectoryNotFoundException (message);
@@ -74,6 +77,10 @@ namespace System.IO
 				message = String.Format ("Access to the path \"{0}\" is denied.", path);
 				return new UnauthorizedAccessException (message);
 
+			case MonoIOError.ERROR_INVALID_HANDLE:
+				message = String.Format ("Invalid handle to path \"{0}\"", path);
+				return new IOException (message);
+				
 			case MonoIOError.ERROR_FILE_EXISTS:
 				message = String.Format ("Could not create file \"{0}\". File already exists.", path);
 				return new IOException (message);
