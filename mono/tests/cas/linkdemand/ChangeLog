@@ -1,3 +1,10 @@
+2005-02-10  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* noncas1-4.cs: New. Non-CAS permission tests (derived from test cases
+	in #52693).
+	* Makefile: Updated makefile for noncas test and removed unused crap.
+	* README: Updated informations of non CAS tests.
+
 2005-02-09  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* cas1.cs: Changed for an easier to test case.
