@@ -554,6 +554,7 @@ System.Web.UI/EmptyControlCollection.cs
 System.Web.UI/ExpressionBinding.cs
 System.Web.UI/ExpressionBindingCollection.cs
 System.Web.UI/ExtractTemplateValuesMethod.cs
+System.Web.UI/FilterableAttribute.cs
 System.Web.UI/HierarchicalDataSourceControl.cs
 System.Web.UI/HierarchicalDataSourceView.cs
 System.Web.UI/Html32TextWriter.cs
@@ -638,6 +639,7 @@ System.Web.UI/TemplateControl.cs
 System.Web.UI/TemplateControlParser.cs
 System.Web.UI/TemplateInstance.cs
 System.Web.UI/TemplateParser.cs
+System.Web.UI/ThemeableAttribute.cs
 System.Web.UI/ToolboxDataAttribute.cs
 System.Web.UI/Triplet.cs
 System.Web.UI/UrlTypes.cs
