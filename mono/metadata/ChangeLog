@@ -1,5 +1,8 @@
 2004-10-06  Zoltan Varga  <vargaz@freemail.hu>
 
+	* icall.c (ves_icall_Type_GetInterfaces): Include interfaces 
+	implemented by other interfaces in the result. Fixes #65764.
+	
 	* icall.c (ves_icall_System_Reflection_Assembly_GetModulesInternal): 
 	Handle unloadable modules without crashing.
 
