@@ -454,12 +454,9 @@ attribute_list
 
 attribute
 	: attribute_name
-	  {
-		$$ = lexer.Location;
-	  }
 	  opt_attribute_arguments
 	  {
-		$$ = new Attribute ((string) $1, (ArrayList) $3, (Location) $$);
+		$$ = new Attribute ((string) $1, (ArrayList) $2, lexer.Location);
 	  }
 	;
 
@@ -883,7 +880,6 @@ property_declaration
 		implicit_value_parameter_type = (string) $3;
 
 		lexer.properties = true;
-	        $$ = lexer.Location;
 	  }
 	  accessor_declarations 
 	  {
@@ -902,7 +898,7 @@ property_declaration
 			set_block = (Block) pair.Value;
 
 		prop = new Property ((string) $3, (string) $4, (int) $2, get_block, set_block,
-				     (Attributes) $1, (Location) $$);
+				     (Attributes) $1, lexer.Location);
 		
 		CheckDef (current_container.AddProperty (prop), prop.Name);
 		implicit_value_parameter_type = null;
@@ -1417,7 +1413,6 @@ indexer_declaration
 		implicit_value_parameter_type = decl.type;
 		
 		lexer.properties = true;
-		$$ = lexer.Location;
 		parsing_indexer  = true;
 		
 		indexer_parameters = decl.param_list;
@@ -1444,7 +1439,7 @@ indexer_declaration
 			set_block = (Block) pair.Value;
 
 		indexer = new Indexer (decl.type, decl.interface_type, (int) $2, decl.param_list,
-				       get_block, set_block, (Attributes) $1, (Location) $$);
+				       get_block, set_block, (Attributes) $1, lexer.Location);
 
 		// Note that there is no equivalent of CheckDef for this case
 		// We shall handle this in semantic analysis
@@ -2780,7 +2775,7 @@ statement_expression_list
 foreach_statement
 	: FOREACH OPEN_PARENS type IDENTIFIER IN 
 	  { 
-		$1 = lexer.Location;
+		// empty
 	  } 
 	  expression CLOSE_PARENS 
 	  embedded_statement
@@ -2791,7 +2786,7 @@ foreach_statement
 		foreach_block.AddVariable ((string) $3, (string) $4, (Location) $1);
 		v = new LocalVariableReference (foreach_block, (string) $4);
 		foreach_block.AddStatement (new Foreach ((string) $3, v, (Expression) $7, 
-					    (Statement) $9, (Location) $1));
+					    (Statement) $9, lexer.Location));
 		$$ = foreach_block;
 	  }
 	;
@@ -2983,22 +2978,21 @@ unchecked_statement
 lock_statement
 	: LOCK OPEN_PARENS expression CLOSE_PARENS 
 	  {
-		$1 = lexer.Location;
+		//
  	  } 
 	  embedded_statement
 	  {
-		$$ = new Lock ((Expression) $3, (Statement) $6, (Location) $1);
+		$$ = new Lock ((Expression) $3, (Statement) $6, lexer.Location);
 	  }
 	;
 
 using_statement
 	: USING OPEN_PARENS resource_acquisition CLOSE_PARENS 
 	  {
-		$1 = lexer.Location;
 	  } 
 	  embedded_statement
 	  {
-		$$ = new Using ($3, (Statement) $6, (Location) $1);
+		$$ = new Using ($3, (Statement) $6, lexer.Location);
 	  }
 	; 
 

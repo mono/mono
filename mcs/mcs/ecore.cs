@@ -95,6 +95,13 @@ namespace CIR {
 			Report.Warning (warning, s);
 		}
 
+		static public void error30 (Location loc, Type source, Type target)
+		{
+			Report.Error (30, loc, "Cannot convert type '" +
+				      TypeManager.CSharpName (source) + "' to '" +
+				      TypeManager.CSharpName (target) + "'");
+		}
+
 		// <summary>
 		//   Performs semantic analysis on the Expression
 		// </summary>
@@ -1585,8 +1592,7 @@ namespace CIR {
 			if (ne != null)
 				return ne;
 
-			Report.Error (30, loc, "Cannot convert type '" + TypeManager.CSharpName (expr.Type) + "' to '"
-				      + TypeManager.CSharpName (target_type) + "'");
+			error30 (loc, expr.Type, target_type);
 			return null;
 		}
 
@@ -1609,9 +1615,7 @@ namespace CIR {
 			if (ne != null)
 				return ne;
 
-			Report.Error (30, l, "Cannot convert type '" +
-				      TypeManager.CSharpName (expr.Type) + "' to '" + 
-				      TypeManager.CSharpName (target_type) + "'");
+			error30 (l, expr.Type, target_type);
 			return null;
 		}
 

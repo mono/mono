@@ -1,3 +1,11 @@
+2001-11-15  Miguel de Icaza  <miguel@ximian.com>
+
+	* cs-parser.jay: Kill horrendous hack ($??? = lexer.Location) that
+	broke a bunch of things.  Will have to come up with a better way
+	of tracking locations.
+
+	* statement.cs: Implemented foreach for single dimension arrays.
+
 2001-11-09  Miguel de Icaza  <miguel@ximian.com>
 
 	* enum.cs (Enum.Emit): Delay the lookup of loc until we run into

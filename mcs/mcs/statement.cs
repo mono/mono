@@ -1038,20 +1038,20 @@ namespace CIR {
 	}
 	
 	public class Foreach : Statement {
-		public readonly string Type;
-		public readonly LocalVariableReference Variable;
-		public readonly Expression Expr;
-		public readonly Statement Statement;
-		public readonly Location Location;
+		string type;
+		LocalVariableReference variable;
+		Expression expr;
+		Statement statement;
+		Location loc;
 		
 		public Foreach (string type, LocalVariableReference var, Expression expr,
 				Statement stmt, Location l)
 		{
-			Type = type;
-			Variable = var;
-			Expr = expr;
-			Statement = stmt;
-			Location = l;
+			this.type = type;
+			this.variable = var;
+			this.expr = expr;
+			statement = stmt;
+			loc = l;
 		}
 
 		static bool GetEnumeratorFilter (MemberInfo m, object criteria)
@@ -1093,7 +1093,7 @@ namespace CIR {
 
                 void error1579 (Type t)
                 {
-                        Report.Error (1579, Location,
+                        Report.Error (1579, loc,
                                       "foreach statement cannot operate on variables of type `" +
                                       t.FullName + "' because that class does not provide a " +
                                       " GetEnumerator method or it is inaccessible");
@@ -1119,42 +1119,26 @@ namespace CIR {
 
 			return (MethodInfo) mi [0];
 		}
-		
-		public override bool Emit (EmitContext ec)
+
+		//
+		// FIXME: possible optimization.
+		// We might be able to avoid creating `empty' if the type is the sam
+		//
+		bool EmitCollectionForeach (EmitContext ec, Type var_type, MethodInfo get_enum)
 		{
 			ILGenerator ig = ec.ig;
-			Expression e = Expr;
-			MethodInfo get_enum;
 			LocalBuilder enumerator, disposable;
-			Type var_type;
-			
-			e = e.Resolve (ec);
-			if (e == null)
-				return false;
-
-			var_type = ec.TypeContainer.LookupType (Type, false);
-			if (var_type == null)
-				return false;
-			
-			//
-			// We need an instance variable.  Not sure this is the best
-			// way of doing this.
-			//
-			// FIXME: When we implement propertyaccess, will those turn
-			// out to return values in ExprClass?  I think they should.
-			//
-			if (!(e.ExprClass == ExprClass.Variable || e.ExprClass == ExprClass.Value)){
-				error1579 (e.Type);
-				return false;
-			}
-			
-			if ((get_enum = ProbeCollectionType (e.Type)) == null)
-				return false;
-
 			Expression empty = new EmptyExpression ();
 			Expression conv;
 
-			conv = Expression.ConvertExplicit (ec, empty, var_type, Location);
+			//
+			// FIXME: maybe we can apply the same trick we do in the
+			// array handling to avoid creating empty and conv in some cases.
+			//
+			// Although it is not as important in this case, as the type
+			// will not likely be object (what the enumerator will return).
+			//
+			conv = Expression.ConvertExplicit (ec, empty, var_type, loc);
 			if (conv == null)
 				return false;
 			
@@ -1179,10 +1163,10 @@ namespace CIR {
 			// The code should emit an ldarga instruction
 			// for the ValueTypeVariable rather than a ldarg
 			//
-			if (e.Type.IsValueType){
+			if (expr.Type.IsValueType){
 				ig.Emit (OpCodes.Call, get_enum);
 			} else {
-				e.Emit (ec);
+				expr.Emit (ec);
 				ig.Emit (OpCodes.Callvirt, get_enum);
 			}
 			ig.Emit (OpCodes.Stloc, enumerator);
@@ -1198,8 +1182,8 @@ namespace CIR {
 			ig.Emit (OpCodes.Brfalse, end_try);
 			ig.Emit (OpCodes.Ldloc, enumerator);
 			ig.Emit (OpCodes.Callvirt, TypeManager.object_getcurrent_void);
-			Variable.EmitAssign (ec, conv);
-			Statement.Emit (ec);
+			variable.EmitAssign (ec, conv);
+			statement.Emit (ec);
 			ig.Emit (OpCodes.Br, ec.LoopBegin);
 			ig.MarkLabel (end_try);
 
@@ -1233,6 +1217,106 @@ namespace CIR {
 			ec.InLoop = old_inloop;
 
 			return false;
+		}
+
+		//
+		// FIXME: possible optimization.
+		// We might be able to avoid creating `empty' if the type is the sam
+		//
+		bool EmitArrayForeach (EmitContext ec, Type var_type)
+		{
+			Type array_type = expr.Type;
+			Type element_type = array_type.GetElementType ();
+			Expression conv = null;
+			Expression empty = new EmptyExpression (var_type);
+			
+			conv = Expression.ConvertExplicit (ec, empty, var_type, loc);
+			if (conv == null)
+					return false;
+
+			int rank = array_type.GetArrayRank ();
+			ILGenerator ig = ec.ig;
+
+			Console.WriteLine ("Rank= " + rank);
+			if (rank == 1){
+				LocalBuilder counter = ec.GetTemporaryStorage (TypeManager.int32_type);
+				LocalBuilder copy = ec.GetTemporaryStorage (array_type);
+
+				Label loop, test;
+				
+				//
+				// Make our copy of the array
+				//
+				expr.Emit (ec);
+				ig.Emit (OpCodes.Stloc, copy);
+				
+				ig.Emit (OpCodes.Ldc_I4_0);
+				ig.Emit (OpCodes.Stloc, counter);
+				test = ig.DefineLabel ();
+				ig.Emit (OpCodes.Br, test);
+
+				loop = ig.DefineLabel ();
+				ig.MarkLabel (loop);
+
+				ArrayAccess.EmitLoadOpcode (ig, var_type);
+
+				variable.EmitAssign (ec, conv);
+
+				statement.Emit (ec);
+
+				ig.Emit (OpCodes.Ldloc, counter);
+				ig.Emit (OpCodes.Ldc_I4_1);
+				ig.Emit (OpCodes.Add);
+				ig.Emit (OpCodes.Stloc, counter);
+
+				ig.MarkLabel (test);
+				ig.Emit (OpCodes.Ldloc, counter);
+				ig.Emit (OpCodes.Ldloc, copy);
+				ig.Emit (OpCodes.Ldlen);
+				ig.Emit (OpCodes.Conv_I4);
+				ig.Emit (OpCodes.Blt, loop);
+			} else {
+				throw new Exception ("Unimplemented");
+			}
+
+			return false;
+		}
+		
+		public override bool Emit (EmitContext ec)
+		{
+			Type var_type;
+			
+			expr = expr.Resolve (ec);
+			if (expr == null)
+				return false;
+
+			var_type = ec.TypeContainer.LookupType (type, false);
+			if (var_type == null)
+				return false;
+			
+			//
+			// We need an instance variable.  Not sure this is the best
+			// way of doing this.
+			//
+			// FIXME: When we implement propertyaccess, will those turn
+			// out to return values in ExprClass?  I think they should.
+			//
+			if (!(expr.ExprClass == ExprClass.Variable || expr.ExprClass == ExprClass.Value)){
+				error1579 (expr.Type);
+				return false;
+			}
+
+			if (expr.Type.IsArray)
+				return EmitArrayForeach (ec, var_type);
+			else {
+				MethodInfo get_enum;
+				
+				if ((get_enum = ProbeCollectionType (expr.Type)) == null)
+					return false;
+
+				return EmitCollectionForeach (ec, var_type, get_enum);
+			}
+
 		}
 
 	}

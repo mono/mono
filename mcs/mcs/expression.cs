@@ -1937,6 +1937,7 @@ namespace CIR {
 
 				return (ParameterData) ip;
 			} else {
+				Console.WriteLine ("Getting parameters for: " + mb);
 				ParameterInfo [] pi = mb.GetParameters ();
 				ReflectionParameters rp = new ReflectionParameters (pi);
 				method_parameter_cache [mb] = rp;
@@ -3528,6 +3529,38 @@ namespace CIR {
 			return this;
 		}
 
+		// <summary>
+		//    Emits the right opcode to load an object of Type `t'
+		//    from an array of T
+		// </summary>
+		static public void EmitLoadOpcode (ILGenerator ig, Type type)
+		{
+			if (type == TypeManager.byte_type)
+				ig.Emit (OpCodes.Ldelem_I1);
+			else if (type == TypeManager.sbyte_type)
+				ig.Emit (OpCodes.Ldelem_U1);
+			else if (type == TypeManager.short_type)
+				ig.Emit (OpCodes.Ldelem_I2);
+			else if (type == TypeManager.ushort_type)
+				ig.Emit (OpCodes.Ldelem_U2);
+			else if (type == TypeManager.int32_type)
+				ig.Emit (OpCodes.Ldelem_I4);
+			else if (type == TypeManager.uint32_type)
+				ig.Emit (OpCodes.Ldelem_U4);
+			else if (type == TypeManager.uint64_type)
+				ig.Emit (OpCodes.Ldelem_I8);
+			else if (type == TypeManager.int64_type)
+				ig.Emit (OpCodes.Ldelem_I8);
+			else if (type == TypeManager.float_type)
+				ig.Emit (OpCodes.Ldelem_R4);
+			else if (type == TypeManager.double_type)
+				ig.Emit (OpCodes.Ldelem_R8);
+			else if (type == TypeManager.intptr_type)
+				ig.Emit (OpCodes.Ldelem_I);
+			else
+				ig.Emit (OpCodes.Ldelem_Ref);
+		}
+		
 		public override void Emit (EmitContext ec)
 		{
 			int rank = ea.Expr.Type.GetArrayRank ();
@@ -3538,32 +3571,9 @@ namespace CIR {
 			foreach (Argument a in ea.Arguments)
 				a.Expr.Emit (ec);
 
-			if (rank == 1){
-				if (type == TypeManager.byte_type)
-					ig.Emit (OpCodes.Ldelem_I1);
-				else if (type == TypeManager.sbyte_type)
-					ig.Emit (OpCodes.Ldelem_U1);
-				else if (type == TypeManager.short_type)
-					ig.Emit (OpCodes.Ldelem_I2);
-				else if (type == TypeManager.ushort_type)
-					ig.Emit (OpCodes.Ldelem_U2);
-				else if (type == TypeManager.int32_type)
-					ig.Emit (OpCodes.Ldelem_I4);
-				else if (type == TypeManager.uint32_type)
-					ig.Emit (OpCodes.Ldelem_U4);
-				else if (type == TypeManager.uint64_type)
-					ig.Emit (OpCodes.Ldelem_I8);
-				else if (type == TypeManager.int64_type)
-					ig.Emit (OpCodes.Ldelem_I8);
-				else if (type == TypeManager.float_type)
-					ig.Emit (OpCodes.Ldelem_R4);
-				else if (type == TypeManager.double_type)
-					ig.Emit (OpCodes.Ldelem_R8);
-				else if (type == TypeManager.intptr_type)
-					ig.Emit (OpCodes.Ldelem_I);
-				else
-					ig.Emit (OpCodes.Ldelem_Ref);
-			} else {
+			if (rank == 1)
+				EmitLoadOpcode (ig, type);
+			else {
 				ModuleBuilder mb = ec.TypeContainer.RootContext.ModuleBuilder;
 				Type [] args = new Type [ea.Arguments.Count];
 				MethodInfo get;
@@ -3837,6 +3847,12 @@ namespace CIR {
 			eclass = ExprClass.Value;
 		}
 
+		public EmptyExpression (Type t)
+		{
+			type = t;
+			eclass = ExprClass.Value;
+		}
+		
 		public override Expression DoResolve (EmitContext ec)
 		{
 			return this;
