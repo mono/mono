@@ -1,5 +1,9 @@
 2002-10-13  Daniel Morgan <danmorg@sc.rr.com>
 
+	* SqlSharpCli.cs: better formatting of output
+
+2002-10-13  Daniel Morgan <danmorg@sc.rr.com>
+
 	* SqlSharpCli.cs: modified
 	- add support for the external Mono.Data.SqliteClient 
 	ADO.NET provider. All the user has to do is 

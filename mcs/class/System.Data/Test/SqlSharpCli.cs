@@ -93,8 +93,12 @@ namespace Mono.Data.SqlSharp {
 		//                   called by DisplayData()
 		public void DisplayResult(IDataReader reader, DataTable schemaTable) {
 
+			const string zero = "0";
+			StringBuilder column = null;
 			StringBuilder line = null;
 			StringBuilder hdrUnderline = null;
+			string outData = "";
+			int hdrLen = 0;
 			
 			int spacing = 0;
 			int columnSize = 0;
@@ -118,29 +122,43 @@ namespace Mono.Data.SqlSharp {
 							
 				DataRow schemaRow = schemaTable.Rows[c];
 				string columnHeader = (string) schemaRow["ColumnName"];
-				int columnHeaderSize = columnHeader.Length;
-				
-				line.Append(columnHeader);
-				hdrUnderline.Append(underlineChar, columnHeaderSize);
+				if(columnHeader.Equals(""))
+					columnHeader = "?column?";
+				if(columnHeader.Length > 32)
+					columnHeader = columnHeader.Substring(0,32);											
 					
 				// spacing
 				columnSize = (int) schemaRow["ColumnSize"];
 				dataType = (string) schemaRow["DataType"];
 				dataTypeName = reader.GetDataTypeName(c);
 				
+				if(dataType.Equals("System.DateTime"))
+					columnSize = 19;
+
 				// columnSize correction based on data type
 				if(dataType.Equals("System.Boolean")) {
 					columnSize = 5;
 				}
-				if(provider.Equals("POSTGRESQL"))
+				if(provider.Equals("POSTGRESQL") || 
+				provider.Equals("MYSQL"))
 					if(dataTypeName.Equals("text"))				
 						columnSize = 32; // text will be truncated to 32
 
-				if(columnHeaderSize < columnSize) {
-					spacing = columnSize - columnHeaderSize;
+				hdrLen = (columnHeader.Length > columnSize) ? 
+					columnHeader.Length : columnSize;
+
+				if(hdrLen < 0)
+					hdrLen = 0;
+				if(hdrLen > 32)
+					hdrLen = 32;
+
+				line.Append(columnHeader);
+				if(columnHeader.Length < hdrLen) {
+					spacing = hdrLen - columnHeader.Length;
 					line.Append(spacingChar, spacing);
-					hdrUnderline.Append(underlineChar, spacing);
 				}
+				hdrUnderline.Append(underlineChar, hdrLen);
+
 				line.Append(" ");
 				hdrUnderline.Append(" ");
 			}
@@ -149,38 +167,43 @@ namespace Mono.Data.SqlSharp {
 			
 			OutputHeader(hdrUnderline.ToString());
 			OutputHeader("");
-			hdrUnderline = null;
-			
-			// DEBUG - need to know the columnSize
-			/*
-			line = new StringBuilder();
-			foreach(DataRow schemaRow in schemaTable.Rows) {
-				columnSize = (int) schemaRow["ColumnSize"];
-				line.Append(columnSize.ToString());
-				line.Append(" ");
-			}		
-			Console.WriteLine(line.ToString());
-			Console.WriteLine();
-			line = null;
-			*/
+			hdrUnderline = null;		
 								
 			int rows = 0;
 
 			// column data
 			while(reader.Read()) {
 				rows++;
-
+				
 				line = new StringBuilder();
 				for(c = 0; c < reader.FieldCount; c++) {
 					int dataLen = 0;
 					string dataValue;
+					column = new StringBuilder();
+					outData = "";
 					
 					row = schemaTable.Rows[c];
 					string colhdr = (string) row["ColumnName"];
+					if(colhdr.Equals(""))
+						colhdr = "?column?";
+					if(colhdr.Length > 32)
+						colhdr = colhdr.Substring(0, 32);
+
 					columnSize = (int) row["ColumnSize"];
 					dataType = (string) row["DataType"];
 					dataTypeName = reader.GetDataTypeName(c);
+
+					if(dataType.Equals("System.DateTime"))
+						columnSize = 19;
 					
+					columnSize = (colhdr.Length > columnSize) ? 
+						colhdr.Length : columnSize;
+
+					if(columnSize < 0)
+						columnSize = 0;
+					if(columnSize > 32)
+						columnSize = 32;				
+
 					// certain types need to have the
 					// columnSize adjusted for display
 					// so the column will line up for each
@@ -188,35 +211,109 @@ namespace Mono.Data.SqlSharp {
 					if(dataType.Equals("System.Boolean")) {
 						columnSize = 5;
 					}
-					if(provider.Equals("POSTGRESQL"))
+					if(provider.Equals("POSTGRESQL") ||
+					provider.Equals("MYSQL"))
 						if(dataTypeName.Equals("text"))				
 							columnSize = 32; // text will be truncated to 32
-												
+					
+					dataValue = "";
+		
 					if(reader.IsDBNull(c)) {
 						dataValue = "";
 						dataLen = 0;
 					}
 					else {
 						object obj = reader.GetValue(c);						
-							
-						dataValue = obj.ToString();
-						dataLen = dataValue.Length;
-						line.Append(dataValue);
-					}
-					line.Append(" ");
+												
+						StringBuilder sb;
+						DateTime dt;
+						if(dataType.Equals("System.DateTime")) {
+							// display date in ISO format
+							// "YYYY-MM-DD HH:MM:SS"
+							dt = (DateTime) obj;
+							sb = new StringBuilder();
+							// year
+							if(dt.Year < 10)
+								sb.Append("000" + dt.Year);
+							else if(dt.Year < 100)
+								sb.Append("00" + dt.Year);
+							else if(dt.Year < 1000)
+								sb.Append("0" + dt.Year);
+							else
+								sb.Append(dt.Year);
+							sb.Append("-");
+							// month
+							if(dt.Month < 10)
+								sb.Append(zero + dt.Month);
+							else
+								sb.Append(dt.Month);
+							sb.Append("-");
+							// day
+							if(dt.Day < 10)
+								sb.Append(zero + dt.Day);
+							else
+								sb.Append(dt.Day);
+							sb.Append(" ");
+							// hour
+							if(dt.Hour < 10)
+								sb.Append(zero + dt.Hour);
+							else
+								sb.Append(dt.Hour);
+							sb.Append(":");
+							// minute
+							if(dt.Minute < 10)
+								sb.Append(zero + dt.Minute);
+							else
+								sb.Append(dt.Minute);
+							sb.Append(":");
+							// second
+							if(dt.Second < 10)
+								sb.Append(zero + dt.Second);
+							else
+								sb.Append(dt.Second);
 
+							dataValue = sb.ToString();
+						}
+						else {
+							dataValue = obj.ToString();
+						}
+
+						dataLen = dataValue.Length;
+						if(dataLen < 0) {
+							dataValue = "";
+							dataLen = 0;
+						}
+						if(dataLen > 32) {
+							dataValue = dataValue.Substring(0,32);
+							dataLen = 32;
+						}
+					}
+					columnSize = columnSize > dataLen ? columnSize : dataLen;
+					
 					// spacing
-					spacingChar = ' ';
+					spacingChar = ' ';										
 					if(dataLen < columnSize) {
 						spacing = columnSize - dataLen;
-						line.Append(spacingChar, spacing);
+						column.Append(spacingChar, spacing);
+						switch(dataType) {
+						case "System.Int16":
+						case "System.Int32":
+						case "System.Int64":
+						case "System.Single":
+						case "System.Double":
+						case "System.Decimal":
+							outData = column.ToString() + dataValue;
+							break;
+						default:
+							outData = dataValue + column.ToString();
+							break;
+						}
 					}
-					spacingChar = ' ';
-					if(columnSize < colhdr.Length) {
-						spacing = colhdr.Length - columnSize;
-						line.Append(spacingChar, spacing);
-					}
-						
+					else
+						outData = dataValue;
+
+					line.Append(outData);
+					line.Append(" ");
 				}
 				OutputData(line.ToString());
 				line = null;
@@ -590,7 +687,7 @@ namespace Mono.Data.SqlSharp {
 		// OpenDataSource - open connection to the data source
 		public void OpenDataSource() {
 			
-			Console.WriteLine("Attempt to Open...");
+			Console.WriteLine("Attempt to open connection...");
 
 			try {
 				switch(provider) {
@@ -672,7 +769,7 @@ namespace Mono.Data.SqlSharp {
 									      "Mono.Data.MySql.MySqlConnection"};
 					SetupExternalProvider(extp);
 					UseParameters = false;
-					UseSimpleReader = true;
+					UseSimpleReader = false;
 					break;
 				case "SQLITE":
 					extp = new string[3] {
@@ -1185,7 +1282,8 @@ namespace Mono.Data.SqlSharp {
 			while(entry.ToUpper().Equals("\\Q") == false &&
 				entry.ToUpper().Equals("\\QUIT") == false) {
 				
-				entry = ReadSqlSharpCommand();			
+				while((entry = ReadSqlSharpCommand()) == "") {}
+			
 				
 				if(entry.Substring(0,1).Equals("\\")) {
 					HandleCommand(entry);
