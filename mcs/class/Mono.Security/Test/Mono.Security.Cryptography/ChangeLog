@@ -1,0 +1,6 @@
+2003-03-07  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* ARC4ManagedTest.cs: New. Test vectors for RC4(tm) taken from
+	usenet and Netscape SSL version 3 implementation details.
+	* MD2ManagedTest.cs: New. Call tests defined in MD2Test class.
+	* MD2Test.cs: New. Test vectors defined in RFC1319.
