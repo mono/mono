@@ -1,3 +1,9 @@
+2005-01-25  Zoltan Varga  <vargaz@freemail.hu>
+
+	* ssa.c (mono_ssa_compute): Fix crashes when using AOT.
+
+	* aot.c (mono_compile_assembly): Fix a warning.
+
 2005-01-25  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* declsec.c: Look for security attributes on the original MonoMethod 
