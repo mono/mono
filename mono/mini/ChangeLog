@@ -1,3 +1,10 @@
+2004-12-24  Zoltan Varga  <vargaz@freemail.hu>
+
+	* aot.c: Rework the AOT file format to get rid of most of the global
+	symbols. This reduces the size of the mscorlib.dll.so by 1MB.
+
+	* mini.h: Bump AOT file format version.
+	
 2004-12-23  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini.h: Bump AOT file format version.
