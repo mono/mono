@@ -1,3 +1,31 @@
+2003-10-06  Martin Baulig  <martin@ximian.com>
+
+	* class.c (inflate_generic_method): Renamed to
+	mono_class_inflate_generic_method() and made public.
+	(mono_class_init): Don't inflate the generic methods here.
+	(mono_class_from_generic): Added `gboolean inflate_methods'
+	argument.  Inflate the methods here.
+
+	* loader.c (mono_method_get_param_names): Ignore instances of
+	generic types for the moment.
+
+	* reflection.c (fixup_method): Added support for inflated methods.
+	(mono_image_create_token): Use mono_image_get_methodref_token()
+	for inflated methods.
+	(mono_custom_attrs_from_param): Ignore instances of generic types
+	for the moment.
+	(mono_reflection_bind_generic_parameters): New public function.
+	Moved all the functionality from
+	ves_icall_Type_BindGenericParameters() here and added support for
+	dynamic types.
+	(mono_reflection_define_generic_parameter): Initialize
+	`klass->methods' here.
+
+	* icall.c (ves_icall_Type_BindGenericParameters): Moved all the
+	functionality into mono_reflection_define_generic_parameter().
+	(ves_icall_Type_GetGenericTypeDefinition): If we're coming from a
+	TypeBuilder, return that TypeBuilder.
+
 2003-10-08  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* appdomain.c: removed mono_delegate_semaphore.
