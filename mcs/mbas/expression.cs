@@ -4461,7 +4461,7 @@ namespace Mono.CSharp {
 			Expression ml;
 			ml = MemberLookupFinal (ec, type, ".ctor",
 						MemberTypes.Constructor,
-						AllBindingFlags | BindingFlags.DeclaredOnly, loc);
+						AllBindingFlags | BindingFlags.Public, loc);
 
 			if (ml == null)
 				return null;
