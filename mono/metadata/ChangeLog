@@ -1,4 +1,9 @@
 
+Mon Jan 17 18:48:53 CET 2005 Paolo Molaro <lupus@ximian.com>
+
+	* marshal.c: change the code to allocate memory more
+	conservatively for method wrappers.
+
 Mon Jan 17 18:03:30 CET 2005 Paolo Molaro <lupus@ximian.com>
 
 	* class-internals.h, marshal.c: move the str_to_ptr and ptr_to_str
