@@ -222,10 +222,15 @@ namespace System.Runtime.Serialization.Formatters.Binary
 
 		private void RegisterObject (long objectId, object objectInstance, SerializationInfo info, long parentObjectId, MemberInfo parentObjectMemeber, int[] indices)
 		{
+			if (parentObjectId == 0) indices = null;
+
 			if (!objectInstance.GetType().IsValueType || parentObjectId == 0)
-				_manager.RegisterObject (objectInstance, objectId, info, 0, null, indices);
+				_manager.RegisterObject (objectInstance, objectId, info, 0, null, null);
 			else
+			{
+				if (indices != null) indices = (int[])indices.Clone();
 				_manager.RegisterObject (objectInstance, objectId, info, parentObjectId, parentObjectMemeber, indices);
+			}
 		}
 
 		private void ReadStringIntance (BinaryReader reader, out long objectId, out object value)

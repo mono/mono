@@ -1,3 +1,8 @@
+2003-02-04  Lluis Sanchez Gual <lluis@ideary.com>
+
+    * MessageFormatter.cs: Fixed bug in serialization of arguments.
+    * ObjectReader.cs: Fixed bug causing array of structs to fail.
+
 2003-02-11  Patrik Torstensson
 
     * ObjectReader.cs: Fixed root object bug causing object reader to return root object 

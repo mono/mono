@@ -48,7 +48,7 @@ namespace System.Runtime.Serialization.Formatters.Binary
 				infoArraySize++;
 			}
 
-			if (call.InArgCount == 0)
+			if (call.ArgCount == 0)
 				methodFlags |= MethodFlags.NoArguments;
 			else {
 				if (AllTypesArePrimitive (call.Args)) 
