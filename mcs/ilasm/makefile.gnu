@@ -1,3 +1,4 @@
+topdir = ..
 RUNTIME = mono
 topdir = ..
 MCS = $(RUNTIME) $(topdir)/mcs/mcs.exe
@@ -36,8 +37,12 @@ install: all
 	mkdir -p $(prefix)/bin
 	$(INSTALL) -m 644 ilasm.exe $(prefix)/bin
 
-parser/ILParser.cs: parser/ILParser.jay ../jay/skeleton.cs
-	jay -ct < ../jay/skeleton.cs parser/ILParser.jay > parser/ILParser.cs
+parser/ILParser.cs: parser/ILParser.jay $(topdir)/jay/skeleton.cs
+	$(topdir)/jay/jay -ct < $(topdir)/jay/skeleton.cs parser/ILParser.jay > parser/ILParser.cs
 
 list: $(SOURCES)
 	echo $(SOURCES) > list
+
+clean:
+	rm -f ilasm.exe parser/ILParser.cs list
+

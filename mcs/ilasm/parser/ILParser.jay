@@ -1283,5 +1283,4 @@ manifestResDecl         : D_FILE name1 K_AT int32
 
 %%
 
-	}
 } // namespace Mono.ILASM
