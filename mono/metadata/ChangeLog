@@ -1,3 +1,10 @@
+2005-05-28  Jackson Harper  <jackson@ximian.com>
+
+	* reflection.c/h: Take an assembly ref so that we dont create
+	fully qualified names when encoding types in the same assembly as
+	the custom attribute being emitted.
+	* appdomain.c: Increment version number.
+	
 2004-05-26  Duncan Mak  <duncan@ximian.com>
 
 	* icall.c
