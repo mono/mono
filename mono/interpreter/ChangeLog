@@ -1,4 +1,8 @@
 
+Mon Mar 11 14:48:07 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* interp.c: corlib consistency checls moved to libmetadata.
+
 Mon Mar 11 11:27:27 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	* interp.c: use the new facilities in debug-helpers to
