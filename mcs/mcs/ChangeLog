@@ -1,3 +1,29 @@
+2004-02-26  Miguel de Icaza  <miguel@ximian.com>
+
+	* iterators.cs (IteratorHandler.IsIEnumerator, IsIEnumerable): New
+	routines to check if a type is an enumerable/enumerator allow
+	classes that implement the IEnumerable or IEnumerator interfaces.
+
+	* class.cs (Property, Operator): Implement IIteratorContainer, and
+	implement SetYields.
+
+	(Property.Define): Do the block swapping for get_methods in the
+	context of iterators.   We need to check if Properties also
+	include indexers or not.
+
+	(Operator): Assign the Block before invoking the
+	OperatorMethod.Define, so we can trigger the Iterator code
+	replacement. 
+
+	* cs-parser.jay (SimpleIteratorContainer): new helper class.  Both
+	Property and Operator classes are not created when we parse the
+	declarator but until we have the block completed, so we use a
+	singleton SimpleIteratorContainer.Simple to flag whether the
+	SetYields has been invoked.
+
+	We propagate this setting then to the Property or the Operator to
+	allow the `yield' to function.
+
 2004-02-25  Marek Safar  <marek.safar@seznam.cz>
 
 	* codegen.cs: Implemented attribute support for modules.

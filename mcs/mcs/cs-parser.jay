@@ -1049,6 +1049,8 @@ property_declaration
 		lexer.PropertyParsing = true;
 
 		$$ = lexer.Location;
+
+		iterator_container = SimpleIteratorContainer.GetSimple ();
 	  }
 	  accessor_declarations 
 	  {
@@ -1064,9 +1066,12 @@ property_declaration
 		Location loc = (Location) $6;
 		prop = new Property (current_container, (Expression) $3, (string) $4, (int) $2,
 				     get_block, set_block, (Attributes) $1, loc);
+		if (SimpleIteratorContainer.Simple.Yields)
+			prop.SetYields ();
 		
 		CheckDef (current_container.AddProperty (prop), prop.Name, loc);
 		implicit_value_parameter_type = null;
+		iterator_container = null;
 	  }
 	;
 
@@ -1358,17 +1363,25 @@ interface_indexer_declaration
 	;
 
 operator_declaration
-	: opt_attributes opt_modifiers operator_declarator operator_body
+	: opt_attributes opt_modifiers operator_declarator 
+	  {
+		iterator_container = SimpleIteratorContainer.GetSimple ();
+	  }
+	  operator_body
 	  {
 		OperatorDeclaration decl = (OperatorDeclaration) $3;
 		
 		Operator op = new Operator (decl.optype, decl.ret_type, (int) $2, decl.arg1type, decl.arg1name,
-					    decl.arg2type, decl.arg2name, (Block) $4, (Attributes) $1, decl.location);
+					    decl.arg2type, decl.arg2name, (Block) $5, (Attributes) $1, decl.location);
+
+		if (SimpleIteratorContainer.Simple.Yields)
+			op.SetYields ();
 
 		// Note again, checking is done in semantic analysis
 		current_container.AddOperator (op);
 
 		current_local_parameters = null;
+		iterator_container = null;
 	  }
 	;
 
@@ -3928,6 +3941,25 @@ public class IndexerDeclaration {
 		this.interface_type = interface_type;
 		this.param_list = param_list;
 	}
+}
+
+//
+// We use this when we do not have an object in advance that is an IIteratorContainer
+//
+public class SimpleIteratorContainer : IIteratorContainer {
+	public bool Yields;
+
+	public static SimpleIteratorContainer Simple = new SimpleIteratorContainer ();
+
+	//
+	// Reset and return
+	//
+	public static SimpleIteratorContainer GetSimple () { 
+		Simple.Yields = false;
+		return Simple;
+	}
+
+	public void SetYields () { Yields = true; } 
 }
 
 // <summary>

@@ -2429,6 +2429,7 @@ namespace Mono.CSharp {
 			Modifiers.OVERRIDE |
 			Modifiers.ABSTRACT |
 		        Modifiers.UNSAFE |
+			Modifiers.METHOD_YIELDS | 
 			Modifiers.EXTERN;
 
 		//
@@ -2437,7 +2438,8 @@ namespace Mono.CSharp {
 		public Method (DeclSpace ds, Expression return_type, int mod, string name,
 			       Parameters parameters, Attributes attrs, Location l)
 			: base (ds, return_type, mod, AllowedModifiers, name, attrs, parameters, l)
-		{ }
+		{
+		}
 
 		//
 		// Returns the `System.Type' for the ReturnType of this
@@ -4228,7 +4230,7 @@ namespace Mono.CSharp {
 		}
 	}
 			
-	public class Property : PropertyBase {
+	public class Property : PropertyBase, IIteratorContainer {
 		const int AllowedModifiers =
 			Modifiers.NEW |
 			Modifiers.PUBLIC |
@@ -4241,6 +4243,7 @@ namespace Mono.CSharp {
 			Modifiers.ABSTRACT |
 		        Modifiers.UNSAFE |
 			Modifiers.EXTERN |
+			Modifiers.METHOD_YIELDS |
 			Modifiers.VIRTUAL;
 
 		public Property (DeclSpace ds, Expression type, string name, int mod_flags,
@@ -4272,6 +4275,20 @@ namespace Mono.CSharp {
 							  parameters, ip, CallingConventions.Standard,
 							  Get.OptAttributes, ModFlags, flags, false);
 
+				//
+				// Setup iterator if we are one
+				//
+				if ((ModFlags & Modifiers.METHOD_YIELDS) != 0){
+					IteratorHandler ih = new  IteratorHandler (
+										   "get", container, MemberType,
+										   parameters, ip, ModFlags, Location);
+					
+					Block new_block = ih.Setup (block);
+					if (new_block == null)
+						return false;
+					block = new_block;
+				}
+				
 				if (!GetData.Define (container))
 					return false;
 
@@ -4327,6 +4344,11 @@ namespace Mono.CSharp {
 				}
 			}
 			return true;
+		}
+
+		public void SetYields ()
+		{
+			ModFlags |= Modifiers.METHOD_YIELDS;
 		}
 	}
 
@@ -4871,7 +4893,7 @@ namespace Mono.CSharp {
 		}
 	}
 
-	public class Operator : MemberBase {
+	public class Operator : MemberBase, IIteratorContainer {
 
 		const int AllowedModifiers =
 			Modifiers.PUBLIC |
@@ -4982,6 +5004,7 @@ namespace Mono.CSharp {
 						     new Parameters (param_list, null, Location),
 						     OptAttributes, Location);
 
+			OperatorMethod.Block = Block;
 			OperatorMethod.IsOperator = true;			
 			OperatorMethod.Define (container);
 
@@ -5096,7 +5119,6 @@ namespace Mono.CSharp {
 			if ((ModFlags & (Modifiers.ABSTRACT | Modifiers.EXTERN)) != 0)
 				return;
 			
-			OperatorMethod.Block = Block;
 			OperatorMethod.Emit (container);
 			Block = null;
 		}
@@ -5177,6 +5199,11 @@ namespace Mono.CSharp {
 					TypeManager.CSharpName (return_type),
 					GetName (OperatorType),
 					param_types [0], param_types [1]);
+		}
+
+		public void SetYields ()
+		{
+			ModFlags |= Modifiers.METHOD_YIELDS;
 		}
 	}
 
