@@ -1,3 +1,9 @@
+
+Mon Jul 1 12:26:12 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* class.cs: don't emit ldarg.0 if there is no parent constructor
+	(fixes showstopper for corlib).
+
 2002-06-29  Martin Baulig  <martin@gnome.org>
 
 	MCS now compiles corlib on GNU/Linux :-)

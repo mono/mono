@@ -2300,7 +2300,8 @@ namespace Mono.CSharp {
 
 		public void Emit (EmitContext ec)
 		{
-			ec.ig.Emit (OpCodes.Ldarg_0);
+			if (parent_constructor != null)
+				ec.ig.Emit (OpCodes.Ldarg_0);
 			if (argument_list != null)
 				Invocation.EmitArguments (ec, null, argument_list);
 			if (parent_constructor != null)
