@@ -197,8 +197,7 @@ namespace MonoTests.System {
                 try
                 {
                     string s = tab[i].d.ToString(tab[i].format, nfi);
-		    int expectedLength = tab[i].str.Length;
-		    AssertEquals("A01 tab[" + i + "].format = '" + tab[i].format + "')", tab[i].str, s.Substring(0,expectedLength));
+		    AssertEquals("A01 tab[" + i + "].format = '" + tab[i].format + "')", tab[i].str, s);
                 } 
                 catch (OverflowException)
                 {
@@ -302,7 +301,8 @@ namespace MonoTests.System {
             ParseTest[] tab = {
                 new ParseTest("1.2345", 1.2345m),
                 new ParseTest("-9876543210", -9876543210m),
-                new ParseTest("$ (  79,228,162,514,264,337,593,543,950,335.000 ) ", S.Decimal.MinValue, NumberStyles.Currency),
+                new ParseTest(NumberFormatInfo.InvariantInfo.CurrencySymbol 
+			+ " (  79,228,162,514,264,337,593,543,950,335.000 ) ", S.Decimal.MinValue, NumberStyles.Currency),
                 new ParseTest("1.234567890e-10", (S.Decimal)1.234567890e-10, NumberStyles.Float),
                 new ParseTest("1.234567890e-24", 1.2346e-24m, NumberStyles.Float),
                 new ParseTest("  47896396.457983645462346E10  ", 478963964579836454.62346m, NumberStyles.Float),

@@ -1,3 +1,8 @@
+2002/06/03  Nick Drochak <ndrochak@gol.com>
+
+	* DecimalTest.cs: Fix some errors that were showing up when run against
+	ms.net.
+
 2002-06-02  Nick Drochak  <ndrochak@gol.com>
 
 	* ConvertTest.cs: Use en-US culture since that's all we support in our
