@@ -366,9 +366,11 @@ static void pthread_stop_world()
 	  }
       }
     for (i = 0; i < n_live_threads; i++) {
-	  if (0 != (code = sem_wait(&GC_suspend_ack_sem))) {
-	      GC_err_printf1("Sem_wait returned %ld\n", (unsigned long)code);
-	      ABORT("sem_wait for handler failed");
+	  while (0 != (code = sem_wait(&GC_suspend_ack_sem))) {
+	      if (errno != EINTR) {
+	         GC_err_printf1("Sem_wait returned %ld\n", (unsigned long)code);
+	         ABORT("sem_wait for handler failed");
+	      }
 	  }
     }
     #if DEBUG_THREADS

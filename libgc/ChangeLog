@@ -1,3 +1,8 @@
+
+Tue Jan 18 11:19:47 CET 2005 Paolo Molaro <lupus@ximian.com>
+
+	* pthread_stop_world.c: handle EINTR from sem_wait() call.
+
 2004-08-20 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* include/private/gc_priv.h: use the test glib does
