@@ -742,8 +742,6 @@ namespace System.Xml.Serialization {
 					serializedObjects [o] = o;
 			}
 			
-			WriteState oldState = Writer.WriteState;
-			
 			string prefix = null;
 			
 			if (topLevelElement && ns != null && ns.Length != 0)

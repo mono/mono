@@ -172,6 +172,15 @@ namespace System.Xml.Serialization
 
 	class XmlTypeMapElementInfoList: ArrayList
 	{
+		public int IndexOfElement (string name, string namspace)
+		{
+			for (int n=0; n<Count; n++) {
+				XmlTypeMapElementInfo info = (XmlTypeMapElementInfo) base [n];
+				if (info.ElementName == name && info.Namespace == namspace)
+					return n;
+			}
+			return -1;
+		}
 	}
 }
 
