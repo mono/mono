@@ -1,3 +1,7 @@
+2005-02-10  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* DSA.cs: Fix to case where DSAParameters.Counter is 0.
+
 2005-01-21  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* DSA.cs: Handle the case where DSAParameters.Counter is 0.
