@@ -31,7 +31,7 @@ namespace MonoTests.System.Diagnostics {
     
 		private DiagnosticsConfigurationHandler handler = new DiagnosticsConfigurationHandler ();
 
-		[Test]
+		[Test, Ignore ("DiagnosticsConfigurationHandler is not meant to be used directly on Windows")]
 		public void SwitchesTag_Attributes ()
 		{
 			string[] attrs = {"invalid=\"yes\""};
@@ -88,7 +88,7 @@ namespace MonoTests.System.Diagnostics {
 			return handler.Create (null, null, d);
 		}
 
-		[Test]
+		[Test, Ignore ("DiagnosticsConfigurationHandler is not meant to be used directly on Windows")]
 		public void SwitchesTag_Elements ()
 		{
 			string[] badElements = {
@@ -120,7 +120,7 @@ namespace MonoTests.System.Diagnostics {
 			ValidateSuccess ("#TST:IE:Good", "<switches>{0}</switches>", goodElements);
 		}
 
-		[Test]
+		[Test, Ignore ("DiagnosticsConfigurationHandler is not meant to be used directly on Windows")]
 		public void AssertTag ()
 		{
 			string[] goodAttributes = {
@@ -145,7 +145,7 @@ namespace MonoTests.System.Diagnostics {
 			ValidateExceptions ("#TAT:BadChildren", "<assert>{0}</assert>", badChildren);
 		}
 
-		[Test]
+		[Test, Ignore ("DiagnosticsConfigurationHandler is not meant to be used directly on Windows")]
 		public void TraceTag_Attributes ()
 		{
 			string[] good = {
@@ -168,7 +168,7 @@ namespace MonoTests.System.Diagnostics {
 			ValidateExceptions ("#TTT:A:Bad", "<trace {0}/>", bad);
 		}
 
-		[Test]
+		[Test, Ignore ("DiagnosticsConfigurationHandler is not meant to be used directly on Windows")]
 		public void TraceTag_Children ()
 		{
 			string[] good = {
@@ -184,7 +184,7 @@ namespace MonoTests.System.Diagnostics {
 			ValidateExceptions ("#TTT:C:Bad", "<trace>{0}</trace>", bad);
 		}
 
-		[Test]
+		[Test, Ignore ("DiagnosticsConfigurationHandler is not meant to be used directly on Windows")]
 		public void TraceTag_Listeners ()
 		{
 			const string format = "<trace><listeners>{0}</listeners></trace>";
