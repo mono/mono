@@ -77,6 +77,7 @@ public abstract class Formatter : IFormatter
 	[MonoTODO]
 	protected virtual void WriteMember (string memberName, object data)
 	{
+		throw new NotImplementedException ();
 	}
 
 	protected abstract void WriteObjectRef (object obj, string name, Type memberType);
@@ -89,12 +90,16 @@ public abstract class Formatter : IFormatter
 	
 	protected abstract void WriteTimeSpan (TimeSpan val, string name);
 
+	[CLSCompliant (false)]
 	protected abstract void WriteUInt16 (ushort val, string name);
 
+	[CLSCompliant (false)]
 	protected abstract void WriteUInt32 (uint val, string name);
 
-	protected abstract void WriteInt64 (ulong val, string name);
+	[CLSCompliant (false)]
+	protected abstract void WriteUInt64 (ulong val, string name);
 
+	[CLSCompliant (false)]
 	protected abstract void WriteValueType (object obj, string name, Type memberType);	
 }
 }
