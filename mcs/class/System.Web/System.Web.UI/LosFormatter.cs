@@ -222,10 +222,10 @@ namespace System.Web.UI
 				if (splitted.Length == 0)
 					break;
 				triplet.First = DeserializeObject (splitted [0]);
-				if (splitted.Length < 1)
+				if (splitted.Length < 2)
 					break;
 				triplet.Second = DeserializeObject (splitted [1]);
-				if (splitted.Length < 2)
+				if (splitted.Length < 3)
 					break;
 				triplet.Third = DeserializeObject (splitted [2]);
 				break;

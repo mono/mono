@@ -1,5 +1,9 @@
 2003-10-13  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* LosFormatter.cs: fixed bug #49604. Patch by yaronsh@mainsoft.com.
+
+2003-10-13  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* Control.cs: removed some debug lines.
 	* Page.cs: implemented RegisterOnSubmitStatement
 	* TemplateControl.cs: fixed wire up for methods with no parameters.
