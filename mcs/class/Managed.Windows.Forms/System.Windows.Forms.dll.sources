@@ -33,6 +33,7 @@ System.Windows.Forms/ControlStyles.cs
 System.Windows.Forms/ConvertEventArgs.cs
 System.Windows.Forms/ConvertEventHandler.cs
 System.Windows.Forms/CreateParams.cs
+System.Windows.Forms/Cursor.cs
 System.Windows.Forms/DialogResult.cs
 System.Windows.Forms/DockStyle.cs
 System.Windows.Forms/DragAction.cs
