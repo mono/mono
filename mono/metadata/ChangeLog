@@ -1,5 +1,7 @@
 2003-08-15  Zoltan Varga  <vargaz@freemail.hu>
 
+	* .cvsignore: Added monosn.
+
 	* reflection.h reflection.c loader.c: Added support for parameter
 	marshalling to dynamically created types. Fixes #47295.
 
