@@ -276,7 +276,10 @@ namespace System.Xml
 				if (current == null)
 					return String.Empty;
 
-				return current.Prefix;
+				if (current.NodeType == XmlNodeType.Attribute)
+					return current.Prefix != String.Empty ? current.Prefix : null;
+				else
+					return current.Prefix;
 			}
 		}
 
@@ -781,8 +784,10 @@ namespace System.Xml
 			}
 
 			if (current.NodeType == XmlNodeType.Attribute) {
+				if (current.FirstChild == null)
+					return false;
 				current = current.FirstChild;
-				return current != null;
+				return true;
 			} else if (current.ParentNode.NodeType == XmlNodeType.Attribute) {
 				if (current.NextSibling == null)
 					return false;

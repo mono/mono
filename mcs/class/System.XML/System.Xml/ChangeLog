@@ -1,5 +1,10 @@
 2003-08-14  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
+	* XmlNodeReader.cs : Fixed ReadAttributeValue() that might result in
+	  vanishing current node.
+
+2003-08-14  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
 	* DTDValidatingReader.cs : Added SchemaType.
 	  Read() Assures to return to element.
 	* DTDObjectModel.cs : Removed DTDEntityDeclaration.BaseURI.
