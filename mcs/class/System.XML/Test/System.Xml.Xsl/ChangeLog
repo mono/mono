@@ -1,3 +1,7 @@
+2004-05-20  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XslTransformTests.cs : Added tests for msxsl:node-set().
+
 2004-03-31  Atsushi Enomoto <atsushi@ximian.com>
 
 	* Added MsxslScriptTests.cs.

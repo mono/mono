@@ -8,6 +8,9 @@
 //
 
 using System;
+using System.Globalization;
+using System.IO;
+using System.Text;
 using System.Xml;
 using System.Xml.XPath;
 using System.Xml.Xsl;
@@ -85,5 +88,87 @@ namespace MonoTests.System.Xml.Xsl
 			xslt.Load (new XPathDocument (new XmlTextReader (xsl, XmlNodeType.Document, null)));
 		}
 
+		[Test()]
+		public void MsxslTest() {
+			string _styleSheet = @"
+			<xslt:stylesheet xmlns:xslt=""http://www.w3.org/1999/XSL/Transform"" version=""1.0"" xmlns:msxsl=""urn:schemas-microsoft-com:xslt"" xmlns:stringutils=""urn:schemas-sourceforge.net-blah"">
+				<xslt:output method=""text"" />
+    				<msxsl:script language=""C#"" implements-prefix=""stringutils"">
+    					<![CDATA[
+					        string PadRight( string str, int padding) {
+					            return str.PadRight(padding);
+					        }
+				        ]]>
+				</msxsl:script>
+    				<xslt:template match=""test"">
+        				<xslt:value-of select=""stringutils:PadRight(@name, 20)"" />
+    				</xslt:template>
+			</xslt:stylesheet>";
+
+			StringReader stringReader = new StringReader(_styleSheet);
+			
+            		XslTransform transform = new XslTransform();
+            		XmlTextReader reader = new XmlTextReader(stringReader);
+            		transform.Load(reader, new XmlUrlResolver(), AppDomain.CurrentDomain.Evidence);
+
+            		StringBuilder sb = new StringBuilder();
+            		StringWriter writer = new StringWriter(sb, CultureInfo.InvariantCulture);
+            		XsltArgumentList arguments = new XsltArgumentList();
+
+			XmlDocument xmlDoc = new XmlDocument();
+			xmlDoc.LoadXml("<test name=\"test\" />");
+
+            		// Do transformation
+            		transform.Transform(xmlDoc, new XsltArgumentList(), writer, new XmlUrlResolver());
+
+
+			AssertEquals("test".PadRight(20), sb.ToString());
+		}
+
+		[Test]
+		public void MSXslNodeSet ()
+		{
+			string xsl = @"<xsl:stylesheet version='1.0' xmlns:xsl='http://www.w3.org/1999/XSL/Transform' xmlns:msxsl='urn:schemas-microsoft-com:xslt'>
+<xsl:template match='/'>
+<root>
+	<xsl:variable name='var'>
+		<xsl:copy-of select='root/foo' />
+	</xsl:variable>
+	<xsl:for-each select='msxsl:node-set($var)/foo'>
+		<xsl:value-of select='name(.)' />: <xsl:value-of select='@attr' />
+	</xsl:for-each>
+</root>
+</xsl:template>
+</xsl:stylesheet>";
+			StringWriter sw = new StringWriter ();
+			XslTransform t = new XslTransform ();
+			t.Load (new XPathDocument (new StringReader (xsl)));
+			t.Transform (new XPathDocument (new XmlTextReader (new StringReader ("<root><foo attr='A'/><foo attr='B'/><foo attr='C'/></root>"))), null, sw);
+			AssertEquals (@"<?xml version=""1.0"" encoding=""utf-16""?><root xmlns:msxsl=""urn:schemas-microsoft-com:xslt"">foo: Afoo: Bfoo: C</root>", sw.ToString ());
+		}
+
+		[Test]
+		// Actually MS.NET here throws XsltException, but Mono returns
+		// XPathException (since XPath evaluation engine generally catches
+		// (should catch) this kind of error. It is implementation 
+		// dependent matter.
+		[ExpectedException (typeof (XPathException))]
+		public void MSXslNodeSetRejectsNodeSet ()
+		{
+			string xsl = @"<xsl:stylesheet version='1.0' xmlns:xsl='http://www.w3.org/1999/XSL/Transform' xmlns:msxsl='urn:schemas-microsoft-com:xslt'>
+<xsl:template match='/'>
+<root>
+	<!-- msxsl:node-set() does not accept a node set -->
+	<xsl:for-each select='msxsl:node-set(root/foo)'>
+		<xsl:value-of select='name(.)' />: <xsl:value-of select='@attr' />
+	</xsl:for-each>
+</root>
+</xsl:template>
+</xsl:stylesheet>";
+			StringWriter sw = new StringWriter ();
+			XslTransform t = new XslTransform ();
+			t.Load (new XPathDocument (new StringReader (xsl)));
+			t.Transform (new XPathDocument (new XmlTextReader (new StringReader ("<root><foo attr='A'/><foo attr='B'/><foo attr='C'/></root>"))), null, sw);
+		}
 	}
 }
