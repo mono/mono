@@ -4,69 +4,107 @@
 // Author:
 //   stubbed out by Jackson Harper (jackson@latitudegeo.com)
 //   Dennis Hayes (dennish@Raytek.com)
-//
+//   implemented by Aleksey Ryabchuk (ryabchuk@yahoo.com)
 // (C) 2002 Ximian, Inc
 //
 using System.ComponentModel;
 using System.Collections;
 using System.Drawing;
+using System.Runtime.InteropServices;
 
 namespace System.Windows.Forms {
 
-	// <summary>
-	//
-	// </summary>
-
 	public class TabControl : Control  {
 
-		private int selectedIndex;
+		public class TabPageControlCollection : ControlCollection {
 
-		//
-		//  --- Public Properties
-		//
+			public TabPageControlCollection ( Control owner ): base( owner ){ }
+
+			public override void Add( Control c ) {
+				if ( !( c is TabPage ) ) {
+					throw new ArgumentException();
+				}
+				base.Add(c);
+			}
+		}
+
+		private int selectedIndex;
+		private TabAlignment tabAlignment;
+		private bool multiline;
+		private TabAppearance appearance;
+		private TabDrawMode tabDrawMode;
+		private bool hotTrack;
+		private Point padding;
+		private Size  itemSize;
+		private TabSizeMode sizeMode;
+		private bool showTooltips;
+
 		[MonoTODO]
 		public TabControl() {
-			selectedIndex = 0;
+			selectedIndex = -1;
+			multiline = false;
+			tabAlignment = TabAlignment.Top;
+			appearance   = TabAppearance.Normal;
+			tabDrawMode  = TabDrawMode.Normal;
+			hotTrack = false;
+			padding = new Point ( 6, 3 );
+			itemSize = Size.Empty;
+			sizeMode = TabSizeMode.Normal;
+			showTooltips = false;
 		}
 
 		[MonoTODO]
 		public TabAlignment Alignment  {
 			get {
-				throw new NotImplementedException ();
+				return tabAlignment;
 			}
 			set {
-				throw new NotImplementedException ();
+				if ( !Enum.IsDefined ( typeof(TabAlignment), value ) )
+					throw new InvalidEnumArgumentException( "Alignment",
+						(int)value,
+						typeof(TabAlignment));
+
+				if ( tabAlignment != value ) {
+					if ( value == TabAlignment.Right ||
+						 value == TabAlignment.Left )
+							Multiline = true;
+				
+					tabAlignment = value;
+
+					if ( IsHandleCreated )
+						RecreateHandle( );
+				}
 			}
 		}
 
 		[MonoTODO]
 		public TabAppearance Appearance  {
-			get {
-				throw new NotImplementedException ();
-			}
+			get {	return appearance; }
 			set {
-				throw new NotImplementedException ();
+				if ( !Enum.IsDefined ( typeof(TabAppearance), value ) )
+					throw new InvalidEnumArgumentException( "Appearance",
+						(int)value,
+						typeof(TabAppearance));
+
+				if ( appearance != value ) {
+					appearance = value;
+					
+					if ( IsHandleCreated )
+						RecreateHandle( );
+				}
 			}
 		}
 
-		[MonoTODO]
+		[EditorBrowsable (EditorBrowsableState.Never)]	 
 		public override Color BackColor  {
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				throw new NotImplementedException ();
-			}
+			get {	return base.BackColor;	}
+			set {	base.BackColor = value;	}
 		}
 
-		[MonoTODO]
+		[EditorBrowsable (EditorBrowsableState.Never)]	 
 		public override Image BackgroundImage  {
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				throw new NotImplementedException ();
-			}
+			get {	return base.BackgroundImage; }
+			set {	base.BackgroundImage = value;}
 		}
 
 		[MonoTODO]
@@ -78,31 +116,37 @@ namespace System.Windows.Forms {
 
 		[MonoTODO]
 		public TabDrawMode DrawMode  {
-			get {
-				throw new NotImplementedException ();
-			}
+			get {	return tabDrawMode; }
 			set {
-				throw new NotImplementedException ();
+				if ( !Enum.IsDefined ( typeof(TabDrawMode), value ) )
+					throw new InvalidEnumArgumentException( "DrawMode",
+						(int)value,
+						typeof(TabDrawMode));
+
+				if ( tabDrawMode != value ) {
+					tabDrawMode = value;
+
+					if ( IsHandleCreated )
+						RecreateHandle ( );
+				}
 			}
 		}
 
-		[MonoTODO]
+		[EditorBrowsable (EditorBrowsableState.Never)]	 
 		public override Color ForeColor  {
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				throw new NotImplementedException ();
-			}
+			get {	return base.ForeColor;	}
+			set {	base.ForeColor = value; }
 		}
 
-		[MonoTODO]
 		public bool HotTrack  {
-			get {
-				throw new NotImplementedException ();
-			}
+			get {	return hotTrack; }
 			set {
-				throw new NotImplementedException ();
+				if ( hotTrack != value ) {
+					hotTrack = value;
+
+					if ( IsHandleCreated )
+						RecreateHandle ( );
+				}
 			}
 		}
 
@@ -118,108 +162,138 @@ namespace System.Windows.Forms {
 
 		[MonoTODO]
 		public Size ItemSize  {
-			get {
-				throw new NotImplementedException ();
-			}
+			get {	return itemSize;  } // FIXME: don't know how to get size initially
 			set {
-				throw new NotImplementedException ();
+				if ( itemSize != value ) {
+					if ( value.Width < 0 || value.Height < 0 )
+						throw new ArgumentException ( ); // FIXME: message
+
+					itemSize = value;
+					
+					if ( IsHandleCreated )
+						setItemSize ( );
+				}
 			}
 		}
 
 		[MonoTODO]
 		public bool Multiline  {
-			get {
-				throw new NotImplementedException ();
-			}
+			get {	return multiline; }
 			set {
-				throw new NotImplementedException ();
+				if ( multiline != value ) {
+					multiline = value;
+
+					if ( multiline == false && ( Alignment == TabAlignment.Left ||
+						Alignment == TabAlignment.Right ) )
+							Alignment = TabAlignment.Top;
+
+					if ( IsHandleCreated )
+						RecreateHandle( );
+				}
 			}
 		}
 
 		[MonoTODO]
 		public Point Padding  {
-			get {
-				throw new NotImplementedException ();
-			}
+			get {	return padding;	}
 			set {
-				throw new NotImplementedException ();
+				if ( padding != value ) {
+					if ( value.X < 0 || value.Y < 0 )
+						throw new ArgumentException ( ); // FIXME: message
+
+					padding = value;
+					
+					if ( IsHandleCreated )
+						setPadding ( );
+				}
 			}
 		}
 
 		[MonoTODO]
 		public int RowCount {
 			get {
-				throw new NotImplementedException ();
+				if ( TabCount == 0)
+					return 0;
+				if ( Multiline == false )
+					return 1;
+				// referencing this property creates handle in ms.swf
+				return Win32.SendMessage ( Handle, (int) TabControlMessages.TCM_GETROWCOUNT, 0, 0);
 			}
 		}
 
 		[MonoTODO]
 		public int SelectedIndex {
-			get {
-				return selectedIndex;
-			}
+			get {	return selectedIndex;  }
 			set {
-				selectedIndex = value;
+				if ( selectedIndex != value ) {
+					if ( value < -1 )
+						throw new ArgumentException ( ); // FIXME: message
+
+					selectedIndex = value;
+
+					if ( IsHandleCreated )
+						selectPage ( selectedIndex );
+				}
 			}
 		}
 
 		[MonoTODO]
 		public TabPage SelectedTab  {
-			get {
-				throw new NotImplementedException ();
+			get {	
+				if ( SelectedIndex >= 0 )
+					return TabPages[ SelectedIndex ];
+				return null;
 			}
 			set {
-				throw new NotImplementedException ();
+				int index = TabPages.IndexOf ( value );
+				if ( index >= 0 )
+					SelectedIndex = index;
 			}
 		}
 
-		[MonoTODO]
 		public bool ShowToolTips  {
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				throw new NotImplementedException ();
+			get {	return showTooltips;  }
+			set {	
+				if ( showTooltips != value ) {
+					showTooltips = value;
+
+					if ( IsHandleCreated )
+						RecreateHandle ( );
+				}
 			}
 		}
 
-		[MonoTODO]
 		public TabSizeMode SizeMode {
-			get {
-				throw new NotImplementedException ();
-			}
+			get {	return sizeMode; }
 			set {
-				throw new NotImplementedException ();
+				if ( !Enum.IsDefined ( typeof(TabSizeMode), value ) )
+					throw new InvalidEnumArgumentException( "SizeMode",
+						(int)value,
+						typeof(TabSizeMode));
+
+				if ( sizeMode != value ) {
+					sizeMode = value;
+
+					if ( IsHandleCreated )
+						RecreateHandle ( );
+				}
 			}
 		}
 
-		[MonoTODO]
 		public int TabCount  {
-			get {
-				throw new NotImplementedException ();
-			}
+			get {	return Controls.Count;	}
 		}
 
-		[MonoTODO]
 		public TabControl.TabPageCollection TabPages  {
-			get {
-				throw new NotImplementedException ();
-			}
+			get {	return new TabPageCollection ( this );	}
 		}
 
-		[MonoTODO]
+		[EditorBrowsable (EditorBrowsableState.Never)]	 
 		public override string Text  {
-			//FIXME: just to get it to run
-			get {
-				return base.Text;
-			}
-			set {
-				base.Text = value;
-			}
+			get {	return base.Text; }
+			set {	base.Text = value;}
 		}
 		 
-		// --- Public Methods
-		
 		[MonoTODO]
 		public Rectangle GetTabRect(int index) {
 			throw new NotImplementedException ();
@@ -234,29 +308,58 @@ namespace System.Windows.Forms {
 		
 		[MonoTODO]
 		public event DrawItemEventHandler DrawItem;
-		
+		public event EventHandler SelectedIndexChanged;		
 		// --- Protected Properties
 		
 		[MonoTODO]
 		protected override CreateParams CreateParams  {
 			get {
-				CreateParams createParams = new CreateParams ();
-				window = new ControlNativeWindow (this);
+				CreateParams createParams = base.CreateParams;
+				createParams.ClassName = Win32.TABCONTROL;
+				createParams.Style = (int) ( WindowStyles.WS_CHILD | WindowStyles.WS_VISIBLE );
+				
+				if ( Multiline )
+					createParams.Style |= (int) TabControlStyles.TCS_MULTILINE;
 
-				createParams.Caption = Text;
-				createParams.ClassName = "TABCONTROL";
-				createParams.X = Left;
-				createParams.Y = Top;
-				createParams.Width = Width;
-				createParams.Height = Height;
-				createParams.ClassStyle = 0;
-				createParams.ExStyle = 0;
-				createParams.Param = 0;
-				//			createParams.Parent = Parent.Handle;
-				createParams.Style = (int) (
-					WindowStyles.WS_CHILD | 
-					WindowStyles.WS_VISIBLE);
-				window.CreateHandle (createParams);
+				if ( DrawMode == TabDrawMode.OwnerDrawfixed )
+					createParams.Style |= (int) TabControlStyles.TCS_OWNERDRAWFIXED;
+
+				if ( HotTrack )
+					createParams.Style |= (int) TabControlStyles.TCS_HOTTRACK;
+
+				if ( ShowToolTips )
+					createParams.Style |= (int) TabControlStyles.TCS_TOOLTIPS;
+
+				switch ( Alignment ) {
+				case TabAlignment.Bottom:
+					createParams.Style |= (int) TabControlStyles.TCS_BOTTOM;
+				break;
+				case TabAlignment.Left:
+					createParams.Style |= (int) TabControlStyles.TCS_VERTICAL;
+				break;
+				case TabAlignment.Right:
+					createParams.Style |= (int) TabControlStyles.TCS_RIGHT;
+				break;
+				}
+
+				switch ( Appearance ) {
+				case TabAppearance.Buttons:
+					createParams.Style |= (int) TabControlStyles.TCS_BUTTONS;
+				break;
+				case TabAppearance.FlatButtons:
+					createParams.Style |= (int) TabControlStyles.TCS_FLATBUTTONS;
+				break;
+				}
+
+				switch ( SizeMode ) {
+				case TabSizeMode.Fixed:
+					createParams.Style |= (int) TabControlStyles.TCS_FIXEDWIDTH;
+				break;
+				case TabSizeMode.FillToRight:
+					createParams.Style |= (int) TabControlStyles.TCS_RIGHTJUSTIFY;
+				break;
+				}
+
 				return createParams;
 			}		
 		}
@@ -270,14 +373,13 @@ namespace System.Windows.Forms {
 		
 		// --- Protected Methods
 		
-		[MonoTODO]
 		protected override Control.ControlCollection CreateControlsInstance() {
-			//just to get i tto run, wrong, very wrong
-			return new Control.ControlCollection(this);
+			return new TabPageControlCollection ( this );
 		}
 
 		[MonoTODO]
 		protected override void CreateHandle() {
+			initCommonControlsLibrary ( );
 			base.CreateHandle();
 		}
 
@@ -303,12 +405,17 @@ namespace System.Windows.Forms {
 
 		[MonoTODO]
 		protected override void OnHandleCreated(EventArgs e) {
-			throw new NotImplementedException ();
+			base.OnHandleCreated ( e );
+			setPages ( );
+			setPadding ( );
+			setItemSize ( );
+			selectPage ( SelectedIndex );
 		}
 
 		[MonoTODO]
 		protected override void OnHandleDestroyed(EventArgs e) {
-			throw new NotImplementedException ();
+			base.OnHandleDestroyed ( e );
+			//throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
@@ -318,12 +425,12 @@ namespace System.Windows.Forms {
 
 		[MonoTODO]
 		protected override void OnResize(EventArgs e) {
-			throw new NotImplementedException ();
+			//throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		protected virtual void OnSelectedIndexChanged(EventArgs e) {
-			throw new NotImplementedException ();
+			if ( SelectedIndexChanged != null )
+				SelectedIndexChanged ( this, e );
 		}
 
 		[MonoTODO]
@@ -336,194 +443,224 @@ namespace System.Windows.Forms {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		protected void RemoveAll() {
-			throw new NotImplementedException ();
+			Controls.Clear ( );
 		}
 
 		[MonoTODO]
 		protected override void WndProc(ref Message m) {
-			throw new NotImplementedException ();
+			switch ( m.Msg ) {
+			case Msg.WM_NOTIFY:
+				NMHDR nmhdr = (NMHDR)Marshal.PtrToStructure ( m.LParam,	typeof ( NMHDR ) );
+				switch ( nmhdr.code ) {
+				case (int)TabControlNotifications.TCN_SELCHANGE:
+					selectedIndex =	Win32.SendMessage ( Handle, (int) TabControlMessages.TCM_GETCURSEL, 0, 0);
+					OnSelectedIndexChanged ( EventArgs.Empty );
+				break;
+				}
+			break;
+			}
 		}
 
-		//FIXME DONT COMPILE
-//		[MonoTODO]
-//		public class ControlCollection {//: Control.ControlCollection {
-//			//
-//			// --- Public Methods
-//			//
-//			[MonoTODO]
-//			public override void Add(Control value) {
-//				throw new NotImplementedException ();
-//			}
-//
-//			[MonoTODO]
-//			public override void Remove(Control value) {
-//				throw new NotImplementedException ();
-//			}
-//		}
-		public class TabPageCollection : IList, ICollection, IEnumerable {
-			//
-			// --- Public Contructor
-			//
-			[MonoTODO]
-			public TabPageCollection(TabControl owner) {
-				throw new NotImplementedException ();
+		private void initCommonControlsLibrary ( ) {
+			if ( !RecreatingHandle ) {
+				INITCOMMONCONTROLSEX	initEx = new INITCOMMONCONTROLSEX();
+				initEx.dwICC = CommonControlInitFlags.ICC_TAB_CLASSES;
+				Win32.InitCommonControlsEx(initEx);
 			}
-			//
-			// --- Public Properties
-			//
-			[MonoTODO]
-			public int Count {
-				get {
-					throw new NotImplementedException ();
+		}
+		
+		private void update ( ) {
+		}
+
+		private void setPages ( ) {
+			for (int i = 0; i < Controls.Count; i++ ) {
+				TCITEMHEADER header = new TCITEMHEADER();
+				header.mask = (uint) TabControlItemFlags.TCIF_TEXT;
+				header.pszText = Controls[i].Text;
+				
+				sendMessageHelper ( TabControlMessages.TCM_INSERTITEM, i, ref header );
+			}
+		}
+
+		internal void pageTextChanged ( TabPage page ) {
+			if ( IsHandleCreated ) {
+				int index = Controls.IndexOf ( page );
+				if ( index != -1 ) {
+					TCITEMHEADER header = new TCITEMHEADER();
+					header.mask = (uint) TabControlItemFlags.TCIF_TEXT;
+					header.pszText = page.Text;
+				
+					sendMessageHelper ( TabControlMessages.TCM_SETITEM, index, ref header );
 				}
+			}
+		}
+
+		private void sendMessageHelper ( TabControlMessages mes, int index, ref TCITEMHEADER hdr ) {
+			if ( IsHandleCreated ) {
+				IntPtr ptr	= Marshal.AllocHGlobal ( Marshal.SizeOf ( hdr ) );
+				Marshal.StructureToPtr( hdr, ptr, false );
+				Win32.SendMessage ( Handle , (int)mes, index, ptr.ToInt32() );
+				Marshal.FreeHGlobal ( ptr );
+			}
+		}
+
+		private void setPadding ( ) {
+			Win32.SendMessage ( Handle, (int) TabControlMessages.TCM_SETPADDING, 0, Win32.MAKELONG ( Padding.X, Padding.Y ) );
+		}
+
+		private void setItemSize ( ) {
+			if ( ItemSize != Size.Empty ) {
+				Win32.SendMessage ( Handle, (int) TabControlMessages.TCM_SETPADDING, 0, Win32.MAKELONG ( ItemSize.Width, ItemSize.Height ) );
+			}
+		}
+
+		private void selectPage ( int selectedIndex ) {
+			if ( Win32.SendMessage ( Handle, (int) TabControlMessages.TCM_SETCURSEL, selectedIndex, 0 ) != -1 )
+				OnSelectedIndexChanged ( EventArgs.Empty );
+		}
+
+		public class TabPageCollection : IList, ICollection, IEnumerable {
+			TabControl owner;
+			Control.ControlCollection collection;
+			
+			public TabPageCollection( TabControl owner ) {
+				this.owner = owner;
+				collection = owner.Controls;
 			}
 
-			[MonoTODO]
+			public int Count {
+				get { return collection.Count; }
+			}
+
 			public bool IsReadOnly {
-				get {
-					throw new NotImplementedException ();
-				}
+				get {	return collection.IsReadOnly; }
 			}
 
 			[MonoTODO]
 			public virtual TabPage this[int index] {
-				get {
-					throw new NotImplementedException ();
-				}
-				set {
-					throw new NotImplementedException ();
+				get {	return collection[ index ] as TabPage; }
+				set {	
+					( (IList)collection )[ index ] = value;
+					owner.update ( );
 				}
 			}
 			
-			//--- Public Methods
-			
-			[MonoTODO]
 			public void Add(TabPage value) {
-				throw new NotImplementedException ();
+				collection.Add ( value );
+				owner.update ( );
 			}
 
-			[MonoTODO]
-			public void AddRange(TabPage[] pages) {
-				throw new NotImplementedException ();
+			public void AddRange( TabPage[] pages ) {
+				collection.AddRange ( pages );
+				owner.update ( );
 			}
 
-			[MonoTODO]
 			public virtual void Clear() {
-				throw new NotImplementedException ();
+				collection.Clear ( );
+				owner.update ( );
 			}
 
-			[MonoTODO]
-			public bool Contains(TabPage page) {
-				throw new NotImplementedException ();
+			public bool Contains( TabPage page ) {
+				return collection.Contains ( page );
 			}
 
-			[MonoTODO]
 			public IEnumerator GetEnumerator() {
-				throw new NotImplementedException ();
+				return collection.GetEnumerator ( );
 			}
 
-			[MonoTODO]
-			public int IndexOf(TabPage page) {
-				throw new NotImplementedException ();
+			public int IndexOf( TabPage page ) {
+				return collection.IndexOf ( page );
 			}
 
-			[MonoTODO]
-			public void Remove(TabPage value) {
-				throw new NotImplementedException ();
+			public void Remove( TabPage value ) {
+				collection.Remove ( value );
+				owner.update ( );
 			}
 
-			[MonoTODO]
 			public void RemoveAt(int index) {
-				throw new NotImplementedException ();
+				collection.RemoveAt ( index );
+				owner.update ( );
 			}
 
 			/// <summary>
 			/// IList Interface implmentation.
 			/// </summary>
 			bool IList.IsReadOnly{
-				get{
-					// We allow addition, removeal, and editing of items after creation of the list.
-					return false;
-				}
+				get{	return this.IsReadOnly; }
 			}
 
 			bool IList.IsFixedSize{
-				get{
-					// We allow addition and removeal of items after creation of the list.
-					return false;
-				}
+				get{	return (( IList )collection).IsFixedSize; }
 			}
 
-			//[MonoTODO]
 			object IList.this[int index]{
-				get{
-					throw new NotImplementedException ();
-				}
-				set{
-					throw new NotImplementedException ();
+				get{	return collection [ index ]; }
+				set{	if ( ! (value is TabPage) )
+						throw new ArgumentException ( );
+					this[ index ] = (TabPage) value;
+					owner.update ( );
 				}
 			}
 		
-			[MonoTODO]
 			void IList.Clear(){
-				throw new NotImplementedException ();
+				this.Clear ( );
 			}
 		
 			[MonoTODO]
-			int IList.Add( object value){
-				throw new NotImplementedException ();
+			int IList.Add( object value ) {
+				TabPage page = value as TabPage;
+				if ( page == null )
+					throw new ArgumentException ( );
+				this.Add ( page );
+				return this.IndexOf ( page );
 			}
 
 			[MonoTODO]
-			bool IList.Contains( object value){
-				throw new NotImplementedException ();
+			bool IList.Contains( object value ){
+				return this.Contains ( value as TabPage );
 			}
 
 			[MonoTODO]
-			int IList.IndexOf( object value){
-				throw new NotImplementedException ();
+			int IList.IndexOf( object value ){
+				return this.IndexOf ( value as TabPage );
 			}
 
 			[MonoTODO]
 			void IList.Insert(int index, object value){
-				throw new NotImplementedException ();
+				if ( ! (value is TabPage) )
+					throw new ArgumentException ( );
+
+				(( IList )collection).Insert ( index, value );
+				owner.update ( );
 			}
 
-			[MonoTODO]
-			void IList.Remove( object value){
-				throw new NotImplementedException ();
+			void IList.Remove( object value ){
+				this.Remove ( value as TabPage );
 			}
 
-			[MonoTODO]
 			void IList.RemoveAt( int index){
-				throw new NotImplementedException ();
+				this.RemoveAt ( index );
 			}
 			// End of IList interface
+
 			/// <summary>
 			/// ICollection Interface implmentation.
 			/// </summary>
 			int ICollection.Count{
-				get{
-					throw new NotImplementedException ();
-				}
+				get{ return this.Count;	}
 			}
 
 			bool ICollection.IsSynchronized{
-				get{
-					throw new NotImplementedException ();
-				}
+				get{ return ( (ICollection) collection).IsSynchronized;	}
 			}
 
 			object ICollection.SyncRoot{
-				get{
-					throw new NotImplementedException ();
-				}
+				get{ return ( (ICollection) collection).SyncRoot; }
 			}
 
 			void ICollection.CopyTo(Array array, int index){
-				throw new NotImplementedException ();
+				( (ICollection) collection ).CopyTo ( array, index );
 			}
 			// End Of ICollection
 		}

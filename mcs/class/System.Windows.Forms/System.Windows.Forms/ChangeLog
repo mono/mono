@@ -1,3 +1,12 @@
+2003-04-24  Aleksey Ryabchuk <ryabchuk@yahoo.com>
+	* Control.cs: change to CreateControlInstance function
+	* Panel.cs:   use base CreateParams
+	* TabControl.cs
+	* TabPage : started implementing
+	* win32Enums.cs
+	* win32Structs.cs
+	* win32functions.cs : messages, styles for TabControl
+
 2003-04-24 Alexandre Pigolkine <pigolkine@gmx.de>
 	* Button.cs 	paint with Back/Fore colors
 	* ComboBox.cs   fix to notification handler

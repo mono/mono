@@ -178,7 +178,7 @@
 	 		//Compact Framework //only Control()
     		public Control ()
     		{
-    			CreateControlsInstance ();
+    			childControls = CreateControlsInstance ();
 
 			statuses = new BitVector32(); 
 			
@@ -1138,8 +1138,7 @@
     		
     		protected virtual ControlCollection CreateControlsInstance ()
     		{
-    			childControls = new ControlCollection (this);
-    			return childControls;
+    			return new ControlCollection (this);
     		}
     		
  			//Compact Framework

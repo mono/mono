@@ -68,38 +68,27 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		protected override CreateParams CreateParams {
 			get {
-				if( Parent != null) {
-					CreateParams createParams = base.CreateParams;
+				CreateParams createParams = base.CreateParams;
 
-					createParams.Caption = Text;
-					createParams.X = Left;
-					createParams.Y = Top;
-					createParams.Width = Width;
-					createParams.Height = Height;
-					createParams.ClassStyle = 0;
-					createParams.ExStyle = 0;
-					createParams.Param = 0;
-					createParams.Parent = Parent.Handle;
-					createParams.Style = (int) (
-						WindowStyles.WS_CHILD | 
-						WindowStyles.WS_VISIBLE |
-						WindowStyles.WS_CLIPCHILDREN |
-						WindowStyles.WS_CLIPSIBLINGS);
+				createParams.Style = (int) (
+					WindowStyles.WS_CHILD | 
+					WindowStyles.WS_VISIBLE |
+					WindowStyles.WS_CLIPCHILDREN |
+					WindowStyles.WS_CLIPSIBLINGS);
 
-					switch (BorderStyle) {
-					case BorderStyle.Fixed3D:
-						createParams.ExStyle |= (int)WindowExStyles.WS_EX_CLIENTEDGE;
-					break;
-					case BorderStyle.FixedSingle:
-						createParams.Style   |= (int)WindowStyles.WS_BORDER;
-					break;
-					}
-
-					return createParams;
+				switch (BorderStyle) {
+				case BorderStyle.Fixed3D:
+					createParams.ExStyle |= (int)WindowExStyles.WS_EX_CLIENTEDGE;
+				break;
+				case BorderStyle.FixedSingle:
+					createParams.Style   |= (int)WindowStyles.WS_BORDER;
+				break;
 				}
-				return null;
+
+				return createParams;
 			}		
 		}
+
 		[MonoTODO]
 		protected override Size DefaultSize {
 			get {

@@ -54,6 +54,7 @@ namespace System.Windows.Forms{
 		internal const string SCROLLBAR = "SCROLLBAR";
 		internal const string TOOLTIPS_CLASS = "tooltips_class32";
 		internal const string MDICLIENTCLASSNAME = "MDICLIENT";
+		internal const string TABCONTROL = "SysTabControl32";
 		
 		#endregion
 

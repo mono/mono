@@ -773,6 +773,16 @@ namespace System.Windows.Forms
 		internal uint   idFirstChild; 
 	}
 
+	[StructLayout(LayoutKind.Sequential, CharSet=CharSet.Unicode)]
+	internal struct  TCITEMHEADER {
+		internal uint mask;
+		internal uint lpReserved1;
+		internal uint lpReserved2;
+		internal string pszText;
+		internal int cchTextMax;
+		internal int iImage;
+	}
+
 	//
 	//
 	//		[StructLayout(LayoutKind.Sequential)]

@@ -15,6 +15,18 @@ namespace System.Windows.Forms {
 
 	public class TabPage : Panel {
 
+		public class PageControlsControlCollection : ControlCollection {
+
+			public PageControlsControlCollection ( Control owner ): base( owner ){ }
+
+			public override void Add( Control c ) {
+				if ( c is TabPage  ) {
+					throw new ArgumentException();
+				}
+				base.Add(c);
+			}
+		}
+
 		//
 		//  --- Public Constructor
 		//
@@ -22,30 +34,19 @@ namespace System.Windows.Forms {
 		public TabPage() {
 			//FIXME:
 		}
-		//
-		//  --- Public Properties
-		//
-		[MonoTODO]
+
+		[EditorBrowsable (EditorBrowsableState.Never)]	 
 		public override AnchorStyles Anchor {
-			get {
-				//FIXME:
-				return base.Anchor;
-			}
-			set {
-				//FIXME:
-				base.Anchor = value;
-			}	
+			get {	return base.Anchor; }
+			set {	base.Anchor = value;}	
 		}
-		[MonoTODO]
+
+		[EditorBrowsable (EditorBrowsableState.Never)]	 
 		public override DockStyle Dock {
-			get {
-				//FIXME:
-				return base.Dock;
-			}
-			set {
-				//FIXME:
-				base.Dock = value;			}
+			get {	return base.Dock; }
+			set {	base.Dock = value;}
 		}
+
 		[MonoTODO]
 		public int ImageIndex {
 			get {
@@ -57,15 +58,15 @@ namespace System.Windows.Forms {
 		}
 		[MonoTODO]
 		public override string Text  {
-			get {
-				//FIXME:
-				return base.Text;
-			}
+			get {	return base.Text; }
 			set {
-				//FIXME:
 				base.Text = value;
+				if ( Parent != null && Parent is TabControl ) {
+					( ( TabControl ) Parent ).pageTextChanged ( this );
+				}
 			}
 		}
+
 		[MonoTODO]
 		public string ToolTipText  {
 			get {
@@ -91,11 +92,10 @@ namespace System.Windows.Forms {
 		
 		//  --- Protected Methods
 		
-		[MonoTODO]
 		protected override ControlCollection CreateControlsInstance() {
-			//FIXME:
-			return base.CreateControlsInstance();
+			return new PageControlsControlCollection ( this );
 		}
+
 		[MonoTODO]
 		protected override void SetBoundsCore(int x, int y, int width, int height, BoundsSpecified specified) {
 			//FIXME:
