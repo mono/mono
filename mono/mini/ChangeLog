@@ -1,3 +1,7 @@
+2004-09-11 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* inssel.brg: Make the array ldelema check aot friendly.
+
 2004-09-11  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini-amd64.c (mono_arch_get_argument_info): Fix stack_unwind test.
