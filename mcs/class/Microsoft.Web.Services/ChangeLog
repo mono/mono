@@ -1,3 +1,10 @@
+2003-10-26  Todd Berman <tberman@gentoo.org>
+
+	* Microsoft.Web.Services.dll.2.sources: Added RoutingFault.cs
+	* Microsoft.Web.Services.dll.2.sources: Added Found.cs
+	* Microsoft.Web.Services.dll.sources: Added RoutingFault.cs
+	* Microsoft.Web.Services.dll.sources: Added Found.cs
+
 2003-10-25  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* Microsoft.Web.Services.dll.2.sources: Added IMutableSecurityToken.cs

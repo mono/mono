@@ -47,7 +47,9 @@ Microsoft.Web.Services.Dime/DimeReader.cs
 Microsoft.Web.Services.Dime/DimeRecord.cs
 Microsoft.Web.Services.Dime/DimeFormatException.cs
 Microsoft.Web.Services.Dime/TypeFormatEnum.cs
+Microsoft.Web.Services.Routing/Found.cs
 Microsoft.Web.Services.Routing/Path.cs
+Microsoft.Web.Services.Routing/RoutingFault.cs
 Microsoft.Web.Services.Routing/RoutingFormatException.cs
 Microsoft.Web.Services.Routing/Via.cs
 Microsoft.Web.Services.Routing/ViaCollection.cs

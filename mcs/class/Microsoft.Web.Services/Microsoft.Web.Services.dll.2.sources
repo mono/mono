@@ -83,8 +83,10 @@ Microsoft.Web.Services.Addressing/RelatesTo.cs
 Microsoft.Web.Services.Addressing/ReplyTo.cs
 Microsoft.Web.Services.Addressing/ServiceName.cs
 Microsoft.Web.Services.Addressing/To.cs
+Microsoft.Web.Services.Routing/Found.cs
 Microsoft.Web.Services.Routing/Path.cs
 Microsoft.Web.Services.Routing/RoutingFormatException.cs
+Microsoft.Web.Services.Routing/RoutingFault.cs
 Microsoft.Web.Services.Routing/Via.cs
 Microsoft.Web.Services.Routing/ViaCollection.cs
 Microsoft.Web.Services.Routing/RoutingInputfilter.cs
