@@ -156,6 +156,7 @@ namespace Mono.CSharp {
 		{
 			ig.Emit (OpCodes.Ldarg_0);
 			IntConstant.EmitInt (ig, (int) State.After);
+			ig.Emit (OpCodes.Stfld, pc_field.FieldBuilder);
 			ig.Emit (OpCodes.Br, move_next_error);
 		}
 
