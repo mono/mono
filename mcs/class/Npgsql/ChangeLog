@@ -1,3 +1,8 @@
+2004-03-22  Francisco Figueiredo Jr.  <fxjrlists@yahoo.com.br>
+        * Npgsql/NpgsqlAsciiRow.cs
+        * Npgsql/NpgsqlBinaryRow.cs
+        * Npgsql/NpgsqlDataReader.cs: Fixed NpgsqlDataReader.IsDBNull(). It wasn't working for postgresql 7.4+. Thanks Glen Parker (glenebob@nwlink.com) for the patch.
+
 
 2004-03-13  Francisco Figueiredo Jr.  <fxjrlists@yahoo.com.br>
 
