@@ -1,3 +1,8 @@
+
+Sat May 4 15:00:39 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* Assembly.cs, AssemblyName.cs: updates and fixes.
+
 2002-04-24	Patrik Torstensson <patrik.torstensson@labs2.com>
 
 	* MonoProperty.cs (GetValue) : basic implementation to support nunit

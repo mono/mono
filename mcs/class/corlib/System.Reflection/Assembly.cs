@@ -131,14 +131,19 @@ namespace System.Reflection {
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		public extern Type GetType (String name, Boolean throwOnError, Boolean ignoreCase);
 		
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		static extern void FillName (Assembly ass, AssemblyName aname);
+		
 		public virtual AssemblyName GetName (Boolean copiedName)
 		{
-			throw new NotImplementedException ();
+			AssemblyName aname = new AssemblyName ();
+			FillName (this, aname);
+			return aname;
 		}
 
 		public virtual AssemblyName GetName ()
 		{
-			throw new NotImplementedException ();
+			return GetName (false);
 		}
 
 		public override String ToString ()
@@ -149,19 +154,14 @@ namespace System.Reflection {
 		[MonoTODO]
 		public static String CreateQualifiedName (String assemblyName, String typeName) 
 		{
-			return "FIXME: assembly";
+			return typeName + "," + assemblyName;
 		}
 
-		[MonoTODO]
-		public static String nCreateQualifiedName (String assemblyName, String typeName)
-		{
-			return "FIXME: assembly";
-		}
-
-		[MonoTODO]
 		public static Assembly GetAssembly (Type type)
 		{
-			throw new NotImplementedException ();
+			if (type != null)
+				return type.Assembly;
+			throw new ArgumentNullException ("type");
 		}
 
 		[MonoTODO]
@@ -170,10 +170,8 @@ namespace System.Reflection {
 			throw new NotImplementedException ();
 		}
 
-		public static Assembly LoadFrom (String assemblyFile)
-		{
-			return AppDomain.CurrentDomain.Load (assemblyFile);
-		}
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		public extern static Assembly LoadFrom (String assemblyFile);
 
 		public static Assembly Load (String assemblyString)
 		{

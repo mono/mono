@@ -10,6 +10,8 @@
 
 using System;
 using System.Reflection;
+using System.Globalization;
+using System.Configuration.Assemblies;
 using System.Runtime.Serialization;
 
 namespace System.Reflection {
@@ -17,20 +19,24 @@ namespace System.Reflection {
 	[Serializable]
 	public sealed class AssemblyName  : ISerializable // ICloneable, , IDeserializationCallback
 	{
-		string name;
+		string name = "";
 		string codebase;
-		Version version;
+		int major, minor, build, revision;
+		CultureInfo cultureinfo;
+		AssemblyNameFlags flags;
+		AssemblyHashAlgorithm hashalg;
+		StrongNameKeyPair keypair;
+		AssemblyVersionCompatibility versioncompat;
 		
 		public AssemblyName ()
 		{
-			name = null;
 		}
 
 		internal AssemblyName (SerializationInfo si, StreamingContext sc)
 		{
 			name = si.GetString ("_Name");
 			codebase = si.GetString ("_CodeBase");
-			version = (Version)si.GetValue ("_Version", typeof (Version));
+			Version = (Version)si.GetValue ("_Version", typeof (Version));
 		}
 
 		public string Name {
@@ -52,13 +58,80 @@ namespace System.Reflection {
 			}
 		}
 
-		public Version Version {
+		[MonoTODO]
+		public string EscapedCodeBase {
 			get {
-				return version;
+				return codebase;
+			}
+		}
+
+		public CultureInfo CultureInfo {
+			get {
+				return cultureinfo;
 			}
 
 			set {
-				version = value;
+				cultureinfo = value;
+			}
+		}
+
+		public AssemblyNameFlags Flags {
+			get {
+				return flags;
+			}
+
+			set {
+				flags = value;
+			}
+		}
+
+		[MonoTODO]
+		public string FullName {
+			get {
+				return name;
+			}
+		}
+
+		public AssemblyHashAlgorithm HashAlgorithm {
+			get {
+				return hashalg;
+			}
+
+			set {
+				hashalg = value;
+			}
+		}
+
+		public StrongNameKeyPair KeyPair {
+			get {
+				return keypair;
+			}
+
+			set {
+				keypair = value;
+			}
+		}
+
+		public Version Version {
+			get {
+				return new Version (major, minor, build, revision);
+			}
+
+			set {
+				major = value.Major;
+				minor = value.Minor;
+				build = value.Build;
+				revision = value.Revision;
+			}
+		}
+
+		public AssemblyVersionCompatibility VersionCompatibility {
+			get {
+				return versioncompat;
+			}
+
+			set {
+				versioncompat = value;
 			}
 		}
 		
@@ -80,11 +153,16 @@ namespace System.Reflection {
 			return false;
 		}
 
+		[MonoTODO]
+		public byte[] GetPublicKeyToken() {
+			return new byte[0];
+		}
+
 		public void GetObjectData (SerializationInfo info, StreamingContext context)
 		{
 			info.AddValue ("_Name", name);
 			info.AddValue ("_CodeBase", codebase);
-			info.AddValue ("_Version", version);
+			info.AddValue ("_Version", Version);
 		}
 	}
 }
