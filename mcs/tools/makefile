@@ -4,12 +4,14 @@ CSCFLAGS=/nologo /debug+ /debug:full
 
 windows: linux
 
-linux: verifier.exe EnumCheck.exe IFaceDisco.exe update
+linux: verifier.exe EnumCheck.exe IFaceDisco.exe update ./corcompare/CorCompare.exe
 
 verifier.exe: verifier.cs
 	$(CSC) $(CSCFLAGS) verifier.cs
 
-./corcompare/CorCompare.exe:
+./corcompare/CorCompare.exe: CorCompare.exe
+
+CorCompare.exe:
 	(cd corcompare; make CorCompare.exe)
 
 update: ../../mono/doc/pending-classes
