@@ -1,3 +1,8 @@
+2002-01-13  Ravi Pratap  <ravi@ximian.com>
+
+	* test-58.cs : Since it was a duplicate, replace with unsafe
+	code testing.
+
 2002-01-08  Miguel de Icaza  <miguel@ximian.com>
 
 	* test-34.cs: Improve this test to check ref/ref cases.

@@ -1,15 +1,25 @@
 using System;
-using System.Runtime.InteropServices;
+using System.Reflection;
 
 public class Blah {
-
-	[DllImport ("user32", CallingConvention = CallingConvention.StdCall, CharSet = CharSet.Auto)]
-	public static extern int MessageBox (int hWnd, string pText, string pCaption, int uType);
-
+	
 	public static int Main ()
 	{
-		MessageBox (0, "Hello from Mono !", "PInvoke Test", 0);
+		unsafe {
+			int* i;
+			int foo = 10;
+
+			void* bar;
+
+			i = &foo;
+
+			bar = i;
+			
+			Console.WriteLine ("Address : {0}", (int) i);
+		}
 
 		return 0;
-	}
+	}	
 }
+
+		
