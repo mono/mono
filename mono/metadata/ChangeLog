@@ -1,3 +1,9 @@
+2003-10-20  Zoltan Varga  <vargaz@freemail.hu>
+
+	* rawbuffer.c (mono_raw_buffer_load_mmap): Map mmap-ed memory with
+	PROT_EXEC. This seems to prevent segmentation faults on Fedora Linux.
+	Fixes #49499.
+
 2003-10-18  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* icall.c: OutputDebugStringW expects 16-bit unicode characters, not
@@ -51,6 +57,9 @@
 
 2003-10-17  Zoltan Varga  <vargaz@freemail.hu>
 
+	* reflection.c (load_public_key): Move loading of the public key
+	into managed code.
+
 	* image.h (MonoAssemblyName): Add public_key and hash_alg fields.
 
 	* assembly.c (mono_assembly_open): Fill in public_key and hash_alg
@@ -98,7 +107,6 @@
 	generic parameters, initialize `method->gen_params' and then set
 	the correct `type->data.generic_param' in all the parameters.
 
->>>>>>> 1.1157
 2003-10-16  Zoltan Varga  <vargaz@freemail.hu>
 
 	* threads.c (mono_threads_get_default_stacksize): New function to 
