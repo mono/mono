@@ -482,7 +482,11 @@ namespace System.Web.Configuration
 			if (outerxml == null)
 				return doc;
 			
-			doc.Load (new StringReader (outerxml));
+			StringReader reader = new StringReader (outerxml);
+			XmlTextReader rd = new XmlTextReader (reader);
+			rd.MoveToContent ();
+			doc.LoadSingleElement (fileName, rd);
+
 			return GetInnerDoc (doc, 0, sectionPath);
 		}
 		
