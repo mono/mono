@@ -1,5 +1,10 @@
 2002-08-26  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* HttpWorkerRequest.cs: fixes compilation with mcs. I will add a bug
+	report when i get a test case.
+
+2002-08-26  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* HttpApplicationFactory.cs:
 	* HttpCachePolicy.cs:
 	* HttpResponseHeader.cs:
