@@ -75,26 +75,31 @@ namespace System.Web.UI {
 
 			string val = expr.Substring (openIdx + 1, closeIdx - openIdx - 1);
 			val = val.Trim ();
-			int valLength = val.Length;
-			if (valLength == 0)
+			if (val.Length == 0)
 				throw new ArgumentException (expr + " is not a valid indexed expression.");
 
+			bool is_string = false;
+			// a quoted val means we have a string
+			if ((val[0] == '\'' && val[val.Length - 1] == '\'') ||
+				(val[0] == '\"' && val[val.Length - 1] == '\"')) {
+				is_string = true;
+				val = val.Substring(1, val.Length - 2);
+			} else {
+				// if all chars are digits, then we have a int
+				for(int i = 0; i < val.Length; i++)
+					if (!Char.IsDigit(val[i])) {
+						is_string = true;
+						break;
+					}
+			}
+
 			int intVal = 0;
-			bool is_string;
-			char first = val [0];
-			if (first >= '0' && first <= '9') {
-				is_string = false;
+			if (!is_string) {
 				try {
 					intVal = Int32.Parse (val);
 				} catch {
 					throw new ArgumentException (expr + " is not a valid indexed expression.");
 				}
-
-			} else if (first == '"' && val [valLength - 1] == '"') {
-				is_string = true;
-				val = val.Substring (0, val.Length - 1).Substring (1);
-			} else {
-				throw new ArgumentException (expr + " is not a valid indexed expression.");
 			}
 
 			string property = null;

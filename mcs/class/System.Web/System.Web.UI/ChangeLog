@@ -1,3 +1,8 @@
+2004-03-09  Juraj Skripsky <juraj@hotfeet.ch>
+
+	* DataBinder.cs: allow unquoted string expressions (e.g. "[test]") and
+	handle single quotes and a few corner cases correctly (see test cases).
+
 2004-03-04  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* TemplateControl.cs: fixed typos and added new method names to the set
