@@ -83,7 +83,6 @@ namespace Mono.Xml.XPath
 		public string NamespaceURI;
 		public string Prefix;
 		public string Value;
-		public object SchemaType;
 		public int LineNumber;
 		public int LinePosition;
 	}

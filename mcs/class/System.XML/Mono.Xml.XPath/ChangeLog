@@ -1,3 +1,9 @@
+2004-11-30  Atsushi Enomoto <atsushi@ximian.com>
+
+	* DTMXPathDocumentWriter.cs,
+	  DTMXPathDocumentBuilder.cs,
+	  DTMXPathNode.cs : SchemaType on attribute is not used.
+
 2004-11-26  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XPathNavigatorReader.cs,

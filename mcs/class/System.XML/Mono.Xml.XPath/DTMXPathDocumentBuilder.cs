@@ -153,7 +153,7 @@ namespace Mono.Xml.XPath
 			// (Difference between jnz or jbe in 80x86.)
 			AddNode (0, 0, 0, 0, XPathNodeType.All, "", false, "", "", "", "", "", 0, 0, 0);
 			nodeIndex++;
-			AddAttribute (0, null, null, null, null, null, 0, 0);
+			AddAttribute (0, null, null, null, null, 0, 0);
 			AddNsNode (0, null, null, 0);
 			nsIndex++;
 			AddNsNode (1, "xml", XmlNamespaces.XML, 0);
@@ -359,7 +359,6 @@ namespace Mono.Xml.XPath
 				ns, 
 				prefix != null ? prefix : String.Empty, 
 				value,
-				null, 
 				lineInfo != null ? lineInfo.LineNumber : 0,
 				lineInfo != null ? lineInfo.LinePosition : 0);
 			if (firstAttributeIndex == 0)
@@ -434,7 +433,7 @@ namespace Mono.Xml.XPath
 		}
 
 		// Followings are skipped: nextAttribute,
-		public void AddAttribute (int ownerElement, string localName, string ns, string prefix, string value, object schemaType, int lineNumber, int linePosition)
+		public void AddAttribute (int ownerElement, string localName, string ns, string prefix, string value, int lineNumber, int linePosition)
 		{
 			if (attributes.Length < attributeIndex + 1) {
 				attributeCapacity *= 4;
@@ -449,7 +448,6 @@ namespace Mono.Xml.XPath
 			attributes [attributeIndex].NamespaceURI = ns;
 			attributes [attributeIndex].Prefix = prefix;
 			attributes [attributeIndex].Value = value;
-			attributes [attributeIndex].SchemaType = schemaType;
 			attributes [attributeIndex].LineNumber = lineNumber;
 			attributes [attributeIndex].LinePosition = linePosition;
 		}
