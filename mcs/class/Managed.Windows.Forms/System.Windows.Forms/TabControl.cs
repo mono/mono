@@ -445,6 +445,7 @@ namespace System.Windows.Forms {
 
 		private void ResizeTabPages ()
 		{
+			CalcTabRows (Width);
 			SizeTabs (Width);
 			Rectangle r = DisplayRectangle;
 			foreach (TabPage page in Controls) {
