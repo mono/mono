@@ -50,6 +50,7 @@ namespace System.Web.UI.WebControls
 	public class CheckBox : WebControl, IPostBackDataHandler
 	{
 		private static readonly object CheckedChangedEvent = new object();
+		AttributeCollection commonAttrs;
 		
 		public CheckBox(): base(HtmlTextWriterTag.Input)
 		{
@@ -148,7 +149,61 @@ namespace System.Web.UI.WebControls
 			if (!SaveCheckedViewState)
 				ViewState.SetItemDirty ("Checked", false);
 		}
-		
+
+		static bool IsInputOrCommonAttr (string attname)
+		{
+			switch (attname) {
+			case "VALUE":
+			case "CHECKED":
+			case "SIZE":
+			case "MAXLENGTH":
+			case "SRC":
+			case "ALT":
+			case "USEMAP":
+			case "DISABLED":
+			case "READONLY":
+			case "ACCEPT":
+			case "ACCESSKEY":
+			case "TABINDEX":
+			case "ONFOCUS":
+			case "ONBLUR":
+			case "ONSELECT":
+			case "ONCHANGE":
+			case "ONCLICK":
+			case "ONDBLCLICK":
+			case "ONMOUSEDOWN":
+			case "ONMOUSEUP":
+			case "ONMOUSEOVER":
+			case "ONMOUSEMOVE":
+			case "ONMOUSEOUT":
+			case "ONKEYPRESS":
+			case "ONKEYDOWN":
+			case "ONKEYUP":
+				return true;
+			default:
+				return false;
+			}
+		}
+
+		void AddAttributesForSpan (HtmlTextWriter writer)
+		{
+			ICollection k = Attributes.Keys;
+			string [] keys = new string [k.Count];
+			k.CopyTo (keys, 0);
+			foreach (string key in keys) {
+				if (!IsInputOrCommonAttr (key.ToUpper ()))
+					continue;
+
+				if (commonAttrs == null)
+					commonAttrs = new AttributeCollection (new StateBag ());
+
+				commonAttrs [key] = Attributes [key];
+				Attributes.Remove (key);
+			}
+
+			Attributes.AddAttributes (writer);
+		}
+
 		protected override void Render (HtmlTextWriter writer)
 		{
 			bool hasBeginRendering = false;
@@ -169,15 +224,8 @@ namespace System.Web.UI.WebControls
 			}
 
 			if (Attributes.Count > 0){
-				string val = Attributes ["value"];
-				Attributes.Remove ("value");
-				if (Attributes.Count > 0){
-					hasBeginRendering = true;
-					Attributes.AddAttributes (writer);
-				}
-
-				if (val != null)
-					Attributes ["value"] = val;
+				hasBeginRendering = true;
+				AddAttributesForSpan (writer);
 			}
 
 			if (hasBeginRendering)
@@ -185,17 +233,25 @@ namespace System.Web.UI.WebControls
 
 			if (Text.Length > 0){
 				TextAlign ta = TextAlign;
-				if(ta == TextAlign.Right)
+				if(ta == TextAlign.Right) {
+					if (commonAttrs != null)
+						commonAttrs.AddAttributes (writer);
 					RenderInputTag (writer, ClientID);
+				}
 				writer.AddAttribute (HtmlTextWriterAttribute.For, ClientID);
 				writer.RenderBeginTag (HtmlTextWriterTag.Label);
 				writer.Write (Text);
 				writer.RenderEndTag ();
-				if(ta == TextAlign.Left)
+				if(ta == TextAlign.Left) {
+					if (commonAttrs != null)
+						commonAttrs.AddAttributes (writer);
 					RenderInputTag (writer, ClientID);
-			}
-			else
+				}
+			} else {
+				if (commonAttrs != null)
+					commonAttrs.AddAttributes (writer);
 				RenderInputTag (writer, ClientID);
+			}
 
 			if (hasBeginRendering)
 				writer.RenderEndTag ();
