@@ -1,3 +1,9 @@
+2004-02-12  Zoltan Varga  <vargaz@freemail.hu>
+
+	* marshal9.cs: Fix after marshaling changes.
+
+	* marshal10.cs: Add valuetype marshaling test.
+
 2004-02-10  Zoltan Varga  <vargaz@freemail.hu>
 
 	* Makefile.am: Remove the SHELL=bash setting since some people do not seem to
