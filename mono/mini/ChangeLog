@@ -1,5 +1,9 @@
 2003-08-29  Zoltan Varga  <vargaz@freemail.hu>
 
+	* mini.c (mini_init): Call mono_marshal_init () explicitly since it
+	is needed  by code which is executed before mono_runtime_init ().
+	Thanks to Bernie Solomon (bernard@ugsolutions.com) for noticing this.
+	
 	* mini.c (mono_thread_abort): Fix warning.
 	(mono_jit_compile_method): Call static constructor in the AOT case too.
 
