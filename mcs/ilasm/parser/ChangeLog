@@ -1,5 +1,9 @@
 2003-05-21 Jackson Harper <jackson@latitudegeo.com>
 
+	* ILParser.jay: Add ldc.r4 to INSTR_R int also fix cast to double.
+		
+2003-05-21 Jackson Harper <jackson@latitudegeo.com>
+
 	* ILParser.jay: When converting from int32 to int64 do an exact
 	bit conversion, not a numerical conversion.
 		

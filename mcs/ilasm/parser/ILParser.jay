@@ -1635,9 +1635,12 @@ instr			: INSTR_NONE
                           }
 			| INSTR_R int64
                           {
+                                long l = (long) $2;
+                                
                                 switch ((MiscInstr) $1) {
+                                        case MiscInstr.ldc_r4:
                                         case MiscInstr.ldc_r8:
-                                        codegen.CurrentMethodDef.AddInstr (new LdcInstr ((MiscInstr) $1, (double) $2));
+                                        codegen.CurrentMethodDef.AddInstr (new LdcInstr ((MiscInstr) $1, (double) l));
                                         break;
                                 }
                           }
