@@ -8,6 +8,7 @@
 //
 
 using System;
+using System.Net;
 using System.Text;
 using System.Xml;
 using System.Xml.Schema;
@@ -53,7 +54,7 @@ namespace System.Web.Services.Protocols
 			}
 
 			if (content_type != "text/xml")
-				throw new Exception ("Content is not XML: " + content_type);
+				throw new WebException ("Content is not XML: " + content_type);
 
 			return Encoding.GetEncoding (encoding);
 		}

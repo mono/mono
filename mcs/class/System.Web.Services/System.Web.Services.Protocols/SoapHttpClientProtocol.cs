@@ -212,7 +212,7 @@ namespace System.Web.Services.Protocols {
 			SoapMethodStubInfo msi = message.MethodStubInfo;
 
 			if (!(code == HttpStatusCode.Accepted || code == HttpStatusCode.OK || code == HttpStatusCode.InternalServerError))
-				throw new Exception ("Return code was: " + http_response.StatusCode);
+				throw new WebException ("Request error. Return code was: " + http_response.StatusCode);
 
 			//
 			// Remove optional encoding

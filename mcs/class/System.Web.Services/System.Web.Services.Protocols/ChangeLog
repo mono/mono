@@ -1,3 +1,9 @@
+2003-11-20  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* SoapHttpClientProtocol.cs:
+	* WebServiceHelper.cs: throw a WebException instead of an Exception.
+	Fixes bug #51193.
+
 2003-10-26  Miguel de Icaza  <miguel@ximian.com>
 
 	* WebServiceHelper.cs: Compute content type and encoding
