@@ -188,7 +188,11 @@ AssignmentStatementsC \
 ConditionalStatementsA \
 ConditionalStatementsB \
 ConditionalStatementsC \
-ConditionalStatementsD
+ConditionalStatementsD \
+ForA \
+ForB \
+ForEachB \
+LoopStatementsA
 
 # All negetive test cases which should
 # fail during compilation goes here
@@ -409,7 +413,24 @@ LoopStatementsC4 \
 LoopStatementsC5 \
 LoopStatementsC6 \
 LoopStatementsC7 \
-LoopStatementsC8
+LoopStatementsC8 \
+ForC1 \
+ForC2 \
+ForC3 \
+ForC4 \
+ForC5 \
+ForC6 \
+ForC7 \
+ForC8 \
+ForC9 \
+ForEachC1 \
+ForEachC2 \
+ForEachC3 \
+ForEachC4 \
+ForEachC5 \
+ForEachC6 \
+ForEachC7 \
+ForEachC8
 
 # All negetive test cases which should fail at
 # runtime goes here
@@ -442,6 +463,7 @@ AssignmentStatements2 \
 AssignmentStatements3 \
 AssignmentStatements4 \
 AssignmentStatements5 \
-ConditionalStatements1
+ConditionalStatements1 \
+LoopStatements1
 
 

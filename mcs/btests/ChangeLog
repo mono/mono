@@ -1,4 +1,29 @@
 2004-08-24 Sachin Kumar <skumar1@novell.com>
+	* ForA.vb:
+	* ForB.vb:
+	* ForC1.vb:
+	* ForC2.vb:
+	* ForC3.vb:
+	* ForC4.vb:
+	* ForC5.vb:
+	* ForC6.vb:
+	* ForC7.vb:
+	* ForC8.vb:
+	* ForC9.vb:
+	* ForEachB.vb:
+	* ForEachC1.vb:
+	* ForEachC2.vb:
+	* ForEachC3.vb:
+	* ForEachC4.vb:
+	* ForEachC5.vb:
+	* ForEachC6.vb:
+	* ForEachC7.vb:
+	* ForEachC8.vb:
+	* LoopStatements1.vb:
+	* LoopStatementsA.vb:
+	* Test.Sources: included new tests
+
+2004-08-24 Sachin Kumar <skumar1@novell.com>
 	* LoopStatementsC1.vb:
 	* LoopStatementsC2.vb:
 	* LoopStatementsC3.vb:
