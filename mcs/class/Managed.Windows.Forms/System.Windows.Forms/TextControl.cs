@@ -46,12 +46,12 @@ using System.Drawing.Text;
 using System.Text;
 
 namespace System.Windows.Forms {
-	public enum LineColor {
+	internal enum LineColor {
 		Red	= 0,
 		Black	= 1
 	}
 
-	public enum CaretDirection {
+	internal enum CaretDirection {
 		CharForward,	// Move a char to the right
 		CharBack,	// Move a char to the left
 		LineUp,		// Move a line up
@@ -67,7 +67,7 @@ namespace System.Windows.Forms {
 	}
 
 	// Being cloneable should allow for nice line and document copies...
-	public class Line : ICloneable, IComparable {
+	internal class Line : ICloneable, IComparable {
 		#region	Local Variables
 		// Stuff that matters for our line
 		internal StringBuilder		text;			// Characters for the line
@@ -83,8 +83,8 @@ namespace System.Windows.Forms {
 
 		// Stuff that's important for the tree
 		internal Line			parent;			// Our parent line
-		public Line			left;			// Line with smaller line number
-		public Line			right;			// Line with higher line number
+		internal Line			left;			// Line with smaller line number
+		internal Line			right;			// Line with higher line number
 		internal LineColor		color;			// We're doing a black/red tree. this is the node color
 		internal int			DEFAULT_TEXT_LEN;	// 
 		internal static StringFormat	string_format;		// For calculating widths/heights
@@ -92,7 +92,7 @@ namespace System.Windows.Forms {
 		#endregion	// Local Variables
 
 		#region Constructors
-		public Line() {
+		internal Line() {
 			color = LineColor.Red;
 			left = null;
 			right = null;
@@ -108,7 +108,7 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		public Line(int LineNo, string Text, Font font, Brush color) : this() {
+		internal Line(int LineNo, string Text, Font font, Brush color) : this() {
 			space = Text.Length > DEFAULT_TEXT_LEN ? Text.Length+1 : DEFAULT_TEXT_LEN;
 
 			text = new StringBuilder(Text, space);
@@ -120,7 +120,7 @@ namespace System.Windows.Forms {
 			tags.color = color;
 		}
 
-		public Line(int LineNo, string Text, HorizontalAlignment align, Font font, Brush color) : this() {
+		internal Line(int LineNo, string Text, HorizontalAlignment align, Font font, Brush color) : this() {
 			space = Text.Length > DEFAULT_TEXT_LEN ? Text.Length+1 : DEFAULT_TEXT_LEN;
 
 			text = new StringBuilder(Text, space);
@@ -133,7 +133,7 @@ namespace System.Windows.Forms {
 			tags.color = color;
 		}
 
-		public Line(int LineNo, string Text, LineTag tag) : this() {
+		internal Line(int LineNo, string Text, LineTag tag) : this() {
 			space = Text.Length > DEFAULT_TEXT_LEN ? Text.Length+1 : DEFAULT_TEXT_LEN;
 
 			text = new StringBuilder(Text, space);
@@ -145,8 +145,8 @@ namespace System.Windows.Forms {
 
 		#endregion	// Constructors
 
-		#region Public Properties
-		public int Height {
+		#region Internal Properties
+		internal int Height {
 			get {
 				return height;
 			}
@@ -156,7 +156,7 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		public int LineNo {
+		internal int LineNo {
 			get {
 				return line_no;
 			}
@@ -166,7 +166,7 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		public string Text {
+		internal string Text {
 			get {
 				return text.ToString();
 			}
@@ -176,7 +176,7 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		public HorizontalAlignment Alignment {
+		internal HorizontalAlignment Alignment {
 			get {
 				return alignment;
 			}
@@ -189,7 +189,7 @@ namespace System.Windows.Forms {
 			}
 		}
 #if no
-		public StringBuilder Text {
+		internal StringBuilder Text {
 			get {
 				return text;
 			}
@@ -199,11 +199,11 @@ namespace System.Windows.Forms {
 			}
 		}
 #endif
-		#endregion	// Public Properties
+		#endregion	// Internal Properties
 
-		#region Public Methods
+		#region Internal Methods
 		// Make sure we always have enoughs space in text and widths
-		public void Grow(int minimum) {
+		internal void Grow(int minimum) {
 			int	length;
 			float[]	new_widths;
 
@@ -225,7 +225,7 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		public void Streamline() {
+		internal void Streamline() {
 			LineTag	current;
 			LineTag	next;
 
@@ -266,7 +266,7 @@ namespace System.Windows.Forms {
 		}
 
 		// Find the tag on a line based on the character position
-		public LineTag FindTag(int pos) {
+		internal LineTag FindTag(int pos) {
 			LineTag tag;
 
 			if (pos == 0) {
@@ -293,7 +293,7 @@ namespace System.Windows.Forms {
 		// Go through all tags on a line and recalculate all size-related values
 		// returns true if lineheight changed
 		//
-		public bool RecalculateLine(Graphics g) {
+		internal bool RecalculateLine(Graphics g) {
 			LineTag	tag;
 			int	pos;
 			int	len;
@@ -380,7 +380,7 @@ namespace System.Windows.Forms {
 			}
 			return false;
 		}
-		#endregion	// Public Methods
+		#endregion	// Internal Methods
 
 		#region Administrative
 		public int CompareTo(object obj) {
@@ -419,7 +419,7 @@ namespace System.Windows.Forms {
 			return clone;
 		}
 
-		public object CloneLine() {
+		internal object CloneLine() {
 			Line	clone;
 
 			clone = new Line();
@@ -460,7 +460,7 @@ namespace System.Windows.Forms {
 		#endregion	// Administrative
 	}
 
-	public class Document : ICloneable, IEnumerable {
+	internal class Document : ICloneable, IEnumerable {
 		#region Structures
 		internal struct Marker {
 			internal Line		line;
@@ -496,7 +496,7 @@ namespace System.Windows.Forms {
 		#endregion	// Local Variables
 
 		#region Constructors
-		public Document(Control owner) {
+		internal Document(Control owner) {
 			lines = 0;
 
 			this.owner = owner;
@@ -530,8 +530,8 @@ namespace System.Windows.Forms {
 		}
 		#endregion
 
-		#region Public Properties
-		public Line Root {
+		#region Internal Properties
+		internal Line Root {
 			get {
 				return document;
 			}
@@ -541,31 +541,31 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		public int Lines {
+		internal int Lines {
 			get {
 				return lines;
 			}
 		}
 
-		public Line CaretLine {
+		internal Line CaretLine {
 			get {
 				return caret.line;
 			}
 		}
 
-		public int CaretPosition {
+		internal int CaretPosition {
 			get {
 				return caret.pos;
 			}
 		}
 
-		public LineTag CaretTag {
+		internal LineTag CaretTag {
 			get {
 				return caret.tag;
 			}
 		}
 
-		public int ViewPortX {
+		internal int ViewPortX {
 			get {
 				return viewport_x;
 			}
@@ -575,7 +575,7 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		public int ViewPortY {
+		internal int ViewPortY {
 			get {
 				return viewport_y;
 			}
@@ -585,19 +585,19 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		public int Width {
+		internal int Width {
 			get {
 				return this.document_x;
 			}
 		}
 
-		public int Height {
+		internal int Height {
 			get {
 				return this.document_y;
 			}
 		}
 
-		#endregion	// Public Properties
+		#endregion	// Internal Properties
 
 		#region Private Methods
 		// For debugging
@@ -843,7 +843,7 @@ namespace System.Windows.Forms {
 		}        
 
 
-		public void UpdateView(Line line, int pos) {
+		internal void UpdateView(Line line, int pos) {
 			if (RecalculateDocument(owner.CreateGraphics(), line.line_no, line.line_no, true)) {
 				// Lineheight changed, invalidate the rest of the document
 				if ((line.Y - viewport_y) >=0 ) {
@@ -860,7 +860,7 @@ namespace System.Windows.Forms {
 
 
 		// Update display from line, down line_count lines; pos is unused, but required for the signature
-		public void UpdateView(Line line, int line_count, int pos) {
+		internal void UpdateView(Line line, int line_count, int pos) {
 			if (RecalculateDocument(owner.CreateGraphics(), line.line_no, line.line_no + line_count - 1, true)) {
 				// Lineheight changed, invalidate the rest of the document
 				if ((line.Y - viewport_y) >=0 ) {
@@ -883,9 +883,9 @@ namespace System.Windows.Forms {
 		}
 		#endregion	// Private Methods
 
-		#region Public Methods
+		#region Internal Methods
 		// Clear the document and reset state
-		public void Empty() {
+		internal void Empty() {
 
 			document = sentinel;
 			last_found = sentinel;
@@ -909,7 +909,7 @@ namespace System.Windows.Forms {
 			document_y = 0;
 		}
 
-		public void PositionCaret(Line line, int pos) {
+		internal void PositionCaret(Line line, int pos) {
 			caret.tag = line.FindTag(pos);
 			caret.line = line;
 			caret.pos = pos;
@@ -920,7 +920,7 @@ namespace System.Windows.Forms {
 			XplatUI.SetCaretPos(owner.Handle, (int)caret.tag.line.widths[caret.pos] + caret.line.align_shift - viewport_x, caret.line.Y + caret.tag.shift - viewport_y);
 		}
 
-		public void PositionCaret(int x, int y) {
+		internal void PositionCaret(int x, int y) {
 			caret.tag = FindCursor(x + viewport_x, y + viewport_y, out caret.pos);
 			caret.line = caret.tag.line;
 			caret.height = caret.tag.height;
@@ -930,7 +930,7 @@ namespace System.Windows.Forms {
 			XplatUI.SetCaretPos(owner.Handle, (int)caret.tag.line.widths[caret.pos] + caret.line.align_shift - viewport_x, caret.line.Y + caret.tag.shift - viewport_y);
 		}
 
-		public void CaretHasFocus() {
+		internal void CaretHasFocus() {
 			if (caret.tag != null) {
 				XplatUI.CreateCaret(owner.Handle, 2, caret.height);
 				XplatUI.SetCaretPos(owner.Handle, (int)caret.tag.line.widths[caret.pos] + caret.line.align_shift - viewport_x, caret.line.Y + caret.tag.shift - viewport_y);
@@ -938,11 +938,11 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		public void CaretLostFocus() {
+		internal void CaretLostFocus() {
 			XplatUI.DestroyCaret(owner.Handle);
 		}
 
-		public void AlignCaret() {
+		internal void AlignCaret() {
 			caret.tag = LineTag.FindTag(caret.line, caret.pos);
 			caret.height = caret.tag.height;
 
@@ -951,7 +951,7 @@ namespace System.Windows.Forms {
 			XplatUI.CaretVisible(owner.Handle, true);
 		}
 
-		public void UpdateCaret() {
+		internal void UpdateCaret() {
 			if (caret.tag.height != caret.height) {
 				caret.height = caret.tag.height;
 				XplatUI.CreateCaret(owner.Handle, 2, caret.height);
@@ -960,15 +960,15 @@ namespace System.Windows.Forms {
 			XplatUI.CaretVisible(owner.Handle, true);
 		}
 
-		public void DisplayCaret() {
+		internal void DisplayCaret() {
 			XplatUI.CaretVisible(owner.Handle, true);
 		}
 
-		public void HideCaret() {
+		internal void HideCaret() {
 			XplatUI.CaretVisible(owner.Handle, false);
 		}
 
-		public void MoveCaret(CaretDirection direction) {
+		internal void MoveCaret(CaretDirection direction) {
 			switch(direction) {
 				case CaretDirection.CharForward: {
 					caret.pos++;
@@ -1140,7 +1140,7 @@ namespace System.Windows.Forms {
 		}
 
 		// Draw the document
-		public void Draw(Graphics g, Rectangle clip) {
+		internal void Draw(Graphics g, Rectangle clip) {
 			Line	line;		// Current line being drawn
 			LineTag	tag;		// Current tag being drawn
 			int	start;		// First line to draw
@@ -1254,12 +1254,12 @@ namespace System.Windows.Forms {
 
 
 		// Inserts a character at the given position
-		public void InsertString(Line line, int pos, string s) {
+		internal void InsertString(Line line, int pos, string s) {
 			InsertString(line.FindTag(pos), pos, s);
 		}
 
 		// Inserts a string at the given position
-		public void InsertString(LineTag tag, int pos, string s) {
+		internal void InsertString(LineTag tag, int pos, string s) {
 			Line	line;
 			int	len;
 
@@ -1281,7 +1281,7 @@ namespace System.Windows.Forms {
 		}
 
 		// Inserts a string at the caret position
-		public void InsertStringAtCaret(string s, bool move_caret) {
+		internal void InsertStringAtCaret(string s, bool move_caret) {
 			LineTag	tag;
 			int	len;
 
@@ -1310,12 +1310,12 @@ namespace System.Windows.Forms {
 
 
 		// Inserts a character at the given position
-		public void InsertChar(Line line, int pos, char ch) {
+		internal void InsertChar(Line line, int pos, char ch) {
 			InsertChar(line.FindTag(pos), pos, ch);
 		}
 
 		// Inserts a character at the given position
-		public void InsertChar(LineTag tag, int pos, char ch) {
+		internal void InsertChar(LineTag tag, int pos, char ch) {
 			Line	line;
 
 			line = tag.line;
@@ -1334,7 +1334,7 @@ namespace System.Windows.Forms {
 		}
 
 		// Inserts a character at the current caret position
-		public void InsertCharAtCaret(char ch, bool move_caret) {
+		internal void InsertCharAtCaret(char ch, bool move_caret) {
 			LineTag	tag;
 
 			caret.line.text.Insert(caret.pos, ch);
@@ -1358,7 +1358,7 @@ namespace System.Windows.Forms {
 		}
 
 		// Inserts n characters at the given position; it will not delete past line limits
-		public void DeleteChars(LineTag tag, int pos, int count) {
+		internal void DeleteChars(LineTag tag, int pos, int count) {
 			Line	line;
 			bool	streamline;
 
@@ -1417,7 +1417,7 @@ namespace System.Windows.Forms {
 
 
 		// Deletes a character at or after the given position (depending on forward); it will not delete past line limits
-		public void DeleteChar(LineTag tag, int pos, bool forward) {
+		internal void DeleteChar(LineTag tag, int pos, bool forward) {
 			Line	line;
 			bool	streamline;
 
@@ -1465,11 +1465,11 @@ namespace System.Windows.Forms {
 		}
 
 		// Combine two lines
-		public void Combine(int FirstLine, int SecondLine) {
+		internal void Combine(int FirstLine, int SecondLine) {
 			Combine(GetLine(FirstLine), GetLine(SecondLine));
 		}
 
-		public void Combine(Line first, Line second) {
+		internal void Combine(Line first, Line second) {
 			LineTag	last;
 			int	shift;
 
@@ -1530,7 +1530,7 @@ namespace System.Windows.Forms {
 		}
 
 		// Split the line at the position into two
-		public void Split(int LineNo, int pos) {
+		internal void Split(int LineNo, int pos) {
 			Line	line;
 			LineTag	tag;
 
@@ -1539,14 +1539,14 @@ namespace System.Windows.Forms {
 			Split(line, tag, pos);
 		}
 
-		public void Split(Line line, int pos) {
+		internal void Split(Line line, int pos) {
 			LineTag	tag;
 
 			tag = LineTag.FindTag(line, pos);
 			Split(line, tag, pos);
 		}
 
-		public void Split(Line line, LineTag tag, int pos) {
+		internal void Split(Line line, LineTag tag, int pos) {
 			LineTag	new_tag;
 			Line	new_line;
 
@@ -1618,11 +1618,11 @@ namespace System.Windows.Forms {
 
 		// Adds a line of text, with given font.
 		// Bumps any line at that line number that already exists down
-		public void Add(int LineNo, string Text, Font font, Brush color) {
+		internal void Add(int LineNo, string Text, Font font, Brush color) {
 			Add(LineNo, Text, HorizontalAlignment.Left, font, color);
 		}
 
-		public void Add(int LineNo, string Text, HorizontalAlignment align, Font font, Brush color) {
+		internal void Add(int LineNo, string Text, HorizontalAlignment align, Font font, Brush color) {
 			Line	add;
 			Line	line;
 			int	line_no;
@@ -1672,7 +1672,7 @@ namespace System.Windows.Forms {
 			lines++;
 		}
 
-		public virtual void Clear() {
+		internal virtual void Clear() {
 			lines = 0;
 			document = sentinel;
 		}
@@ -1688,7 +1688,7 @@ namespace System.Windows.Forms {
 			return clone;
 		}
 
-		public void Delete(int LineNo) {
+		internal void Delete(int LineNo) {
 			if (LineNo>lines) {
 				return;
 			}
@@ -1696,7 +1696,7 @@ namespace System.Windows.Forms {
 			Delete(GetLine(LineNo));
 		}
 
-		public void Delete(Line line1) {
+		internal void Delete(Line line1) {
 			Line	line2;// = new Line();
 			Line	line3;
 
@@ -1755,7 +1755,7 @@ namespace System.Windows.Forms {
 		}
 
 		// Set our selection markers
-		public void Invalidate(Line start, int start_pos, Line end, int end_pos) {
+		internal void Invalidate(Line start, int start_pos, Line end, int end_pos) {
 			Line	l1;
 			Line	l2;
 			int	p1;
@@ -1813,7 +1813,7 @@ namespace System.Windows.Forms {
 
 		// It's nothing short of pathetic to always invalidate the whole control
 		// I will find time to finish the optimization and make it invalidate deltas only
-		public void SetSelectionToCaret(bool start) {
+		internal void SetSelectionToCaret(bool start) {
 			if (start) {
 				selection_start.line = caret.line;
 				selection_start.tag = caret.tag;
@@ -1851,7 +1851,7 @@ namespace System.Windows.Forms {
 		}
 
 #if buggy
-		public void SetSelection(Line start, int start_pos, Line end, int end_pos) {
+		internal void SetSelection(Line start, int start_pos, Line end, int end_pos) {
 			// Ok, this is ugly, bad and slow, but I don't have time right now to optimize it.
 			if (selection_visible) {
 				// Try to only invalidate what's changed so we don't redraw the whole thing
@@ -1919,7 +1919,7 @@ if (end != null) {
 			return;
 		}
 
-		public void SetSelectionStart(Line start, int start_pos) {
+		internal void SetSelectionStart(Line start, int start_pos) {
 			selection_start.line = start;
 			selection_start.pos = start_pos;
 			selection_start.tag = LineTag.FindTag(start, start_pos);
@@ -1936,7 +1936,7 @@ if (end != null) {
 
 		}
 
-		public void SetSelectionEnd(Line end, int end_pos) {
+		internal void SetSelectionEnd(Line end, int end_pos) {
 			selection_end.line = end;
 			selection_end.pos = end_pos;
 			selection_end.tag = LineTag.FindTag(end, end_pos);
@@ -1952,7 +1952,7 @@ if (end != null) {
 			}
 		}
 
-		public void SetSelection(Line start, int start_pos) {
+		internal void SetSelection(Line start, int start_pos) {
 			if (selection_visible) {
 				Invalidate(selection_start.line, selection_start.pos, selection_end.line, selection_end.pos);
 			}
@@ -1969,12 +1969,12 @@ if (end != null) {
 			selection_visible = false;
 		}
 
-		public void InvalidateSelectionArea() {
+		internal void InvalidateSelectionArea() {
 			// implement me
 		}
 
 		// Return the current selection, as string
-		public string GetSelection() {
+		internal string GetSelection() {
 			// We return String.Empty if there is no selection
 			if ((selection_start.pos == selection_end.pos) && (selection_start.line == selection_end.line)) {
 				return string.Empty;
@@ -2006,7 +2006,7 @@ if (end != null) {
 			}
 		}
 
-		public void ReplaceSelection(string s) {
+		internal void ReplaceSelection(string s) {
 			// The easiest is to break the lines where the selection tags are and delete those lines
 			if ((selection_start.pos == selection_end.pos) && (selection_start.line == selection_end.line)) {
 				// Nothing to delete, simply insert
@@ -2086,7 +2086,7 @@ if (end != null) {
 			InvalidateSelectionArea();
 		}
 
-		public void CharIndexToLineTag(int index, out Line line_out, out LineTag tag_out, out int pos) {
+		internal void CharIndexToLineTag(int index, out Line line_out, out LineTag tag_out, out int pos) {
 			Line	line;
 			LineTag	tag;
 			int	i;
@@ -2143,7 +2143,7 @@ if (end != null) {
 			pos = line_out.text.Length;
 		}
 
-		public int LineTagToCharIndex(Line line, int pos) {
+		internal int LineTagToCharIndex(Line line, int pos) {
 			int	i;
 			int	length;
 
@@ -2161,7 +2161,7 @@ if (end != null) {
 			return length;
 		}
 
-		public int SelectionLength() {
+		internal int SelectionLength() {
 			if ((selection_start.pos == selection_end.pos) && (selection_start.line == selection_end.line)) {
 				return 0;
 			}
@@ -2195,7 +2195,7 @@ if (end != null) {
 
 
 		// Give it a Line number and it returns the Line object at with that line number
-		public Line GetLine(int LineNo) {
+		internal Line GetLine(int LineNo) {
 			Line	line = document;
 
 			while (line != sentinel) {
@@ -2213,7 +2213,7 @@ if (end != null) {
 
 		// Give it a Y pixel coordinate and it returns the Line covering that Y coordinate
 		///
-		public Line GetLineByPixel(int y, bool exact) {
+		internal Line GetLineByPixel(int y, bool exact) {
 			Line	line = document;
 			Line	last = null;
 
@@ -2235,7 +2235,7 @@ if (end != null) {
 		}
 
 		// Give it x/y pixel coordinates and it returns the Tag at that position; optionally the char position is returned in index
-		public LineTag FindTag(int x, int y, out int index, bool exact) {
+		internal LineTag FindTag(int x, int y, out int index, bool exact) {
 			Line	line;
 			LineTag	tag;
 
@@ -2279,7 +2279,7 @@ if (end != null) {
 		}
 
 		// Give it x/y pixel coordinates and it returns the Tag at that position; optionally the char position is returned in index
-		public LineTag FindCursor(int x, int y, out int index) {
+		internal LineTag FindCursor(int x, int y, out int index) {
 			Line	line;
 			LineTag	tag;
 
@@ -2315,7 +2315,7 @@ if (end != null) {
 			}
 		}
 
-		public void RecalculateAlignments() {
+		internal void RecalculateAlignments() {
 			Line	line;
 			int	line_no;
 
@@ -2338,22 +2338,22 @@ if (end != null) {
 		}
 
 		// Calculate formatting for the whole document
-		public bool RecalculateDocument(Graphics g) {
+		internal bool RecalculateDocument(Graphics g) {
 			return RecalculateDocument(g, 1, this.lines, false);
 		}
 
 		// Calculate formatting starting at a certain line
-		public bool RecalculateDocument(Graphics g, int start) {
+		internal bool RecalculateDocument(Graphics g, int start) {
 			return RecalculateDocument(g, start, this.lines, false);
 		}
 
 		// Calculate formatting within two given line numbers
-		public bool RecalculateDocument(Graphics g, int start, int end) {
+		internal bool RecalculateDocument(Graphics g, int start, int end) {
 			return RecalculateDocument(g, start, end, false);
 		}
 
 		// With optimize on, returns true if line heights changed
-		public bool RecalculateDocument(Graphics g, int start, int end, bool optimize) {
+		internal bool RecalculateDocument(Graphics g, int start, int end, bool optimize) {
 			Line	line;
 			int	line_no;
 			int	Y;
@@ -2425,14 +2425,14 @@ if (end != null) {
 			}
 		}
 
-		public bool SetCursor(int x, int y) {
+		internal bool SetCursor(int x, int y) {
 			return true;
 		}
 
-		public int Size() {
+		internal int Size() {
 			return lines;
 		}
-		#endregion	// Public Methods
+		#endregion	// Internal Methods
 
 		#region Administrative
 		public IEnumerator GetEnumerator() {
@@ -2471,7 +2471,7 @@ if (end != null) {
 		#endregion	// Administrative
 	}
 
-	public class LineTag {
+	internal class LineTag {
 		#region	Local Variables;
 		// Payload; formatting
 		internal Font		font;		// System.Drawing.Font object for this tag
@@ -2498,7 +2498,7 @@ if (end != null) {
 		#endregion;
 
 		#region Constructors
-		public LineTag(Line line, int start, int length) {
+		internal LineTag(Line line, int start, int length) {
 			this.line = line;
 			this.start = start;
 			this.length = length;
@@ -2507,13 +2507,13 @@ if (end != null) {
 		}
 		#endregion	// Constructors
 
-		#region Public Methods
+		#region Internal Methods
 		//
 		// Applies 'font' to characters starting at 'start' for 'length' chars
 		// Removes any previous tags overlapping the same area
 		// returns true if lineheight has changed
 		//
-		public static bool FormatText(Line line, int start, int length, Font font, Brush color) {
+		internal static bool FormatText(Line line, int start, int length, Font font, Brush color) {
 			LineTag	tag;
 			LineTag	start_tag;
 			int	end;
@@ -2611,7 +2611,7 @@ if (end != null) {
 		//
 		// Finds the tag that describes the character at position 'pos' on 'line'
 		//
-		public static LineTag FindTag(Line line, int pos) {
+		internal static LineTag FindTag(Line line, int pos) {
 			LineTag tag = line.tags;
 
 			// Beginning of line is a bit special
@@ -2633,7 +2633,7 @@ if (end != null) {
 		//
 		// Combines 'this' tag with 'other' tag.
 		//
-		public bool Combine(LineTag other) {
+		internal bool Combine(LineTag other) {
 			if (!this.Equals(other)) {
 				return false;
 			}
@@ -2652,7 +2652,7 @@ if (end != null) {
 		//
 		// Remove 'this' tag ; to be called when formatting is to be removed
 		//
-		public bool Remove() {
+		internal bool Remove() {
 			if ((this.start == 1) && (this.next == null)) {
 				// We cannot remove the only tag
 				return false;
@@ -2708,6 +2708,6 @@ if (end != null) {
 			return "Tag starts at index " + this.start + "length " + this.length + " text: " + this.line.Text.Substring(this.start-1, this.length) + "Font " + this.font.ToString();
 		}
 
-		#endregion	// Public Methods
+		#endregion	// Internal Methods
 	}
 }
