@@ -5,6 +5,7 @@
     //   stubbed out by Jaak Simm (jaaksimm@firm.ee)
     //	Dennis Hayes (dennish@rayetk.com)
     //   WINELib implementation started by John Sohn (jsohn@columbus.rr.com)
+    //	 Alexandre Pigolkine (pigolkine@gmx.de)
     //
     // (C) Ximian, Inc., 2002
     //
@@ -14,6 +15,7 @@
     using System.Collections;
 	using System.Threading;
 	using System.Text;
+    using System.Runtime.InteropServices;
     
     namespace System.Windows.Forms {
     
@@ -2489,10 +2491,14 @@
 					CallControlWndProc(ref m);
 					break;
 				case Msg.WM_NOTIFY:
+					NMHDR nmhdr = (NMHDR)Marshal.PtrToStructure ( m.LParam,
+									typeof ( NMHDR ) );
+					if( !Control.ReflectMessage( nmhdr.hwndFrom, ref m )) 
+						CallControlWndProc(ref m);
+					
 					// FIXME: get NM_CLICKED msg from pnmh
 					// OnClick (eventArgs);
 					//OnNotifyMessage (eventArgs);
-					CallControlWndProc(ref m);
 					break;
 				case Msg.WM_PAINT: 
 					if( ControlRealWndProc != IntPtr.Zero) {

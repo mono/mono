@@ -4,6 +4,7 @@
 // Author:
 //   stubbed out by Daniel Carrera (dcarrera@math.toronto.edu)
 //   Dennis Hayes (dennish@Raytek.com)
+//   Alexandre Pigolkine (pigolkine@gmx.de)
 //
 // (C) 2002 Ximian, Inc
 //
@@ -33,6 +34,8 @@ namespace System.Windows.Forms {
 		protected int ColumnWidth_ = 0; // The columns will have default width
 		protected bool IntegralHeight_ = true;
 		protected ListBox.ObjectCollection	Items_ = null;
+		protected ListBox.SelectedIndexCollection SelectedIndices_ = null;
+		protected ListBox.SelectedObjectCollection SelectedObjects_ = null;
 		protected DrawMode DrawMode_ = DrawMode.Normal;
 		protected bool UseTabStops_ = false;
 		protected bool MultiColumn_ = false;
@@ -146,7 +149,10 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public ListBox.SelectedIndexCollection SelectedIndices {
 			get {
-				throw new NotImplementedException ();
+				if( SelectedIndices_ == null) {
+					SelectedIndices_ = new ListBox.SelectedIndexCollection(this);
+				}
+				return SelectedIndices_;
 			}
 		}
 		[MonoTODO]
@@ -161,7 +167,10 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public ListBox.SelectedObjectCollection SelectedItems {
 			get {
-				throw new NotImplementedException ();
+				if( SelectedObjects_ == null) {
+					SelectedObjects_ = new ListBox.SelectedObjectCollection(this);
+				}
+				return SelectedObjects_;
 			}
 		}
 		[MonoTODO]
@@ -182,10 +191,13 @@ namespace System.Windows.Forms {
 				if( Sorted_ != value){
 					Sorted_ = value;
 					if( Sorted_) {
+						Items_.SwitchToSortedStyle();
+/*						
 						object[] items = new object[Items.Count];
 						Items.CopyTo(items, 0);
 						Items.Clear();
 						Items.AddRange(items);
+*/
 					}
 				}
 			}
@@ -259,10 +271,14 @@ namespace System.Windows.Forms {
 		public ListBox.ObjectCollection Items {
 			get {
 				if( Items_ == null) {
-					Items_ = new ListBox.ObjectCollection( this);
+					Items_ = CreateItemCollection();
 				}
 				return Items_;
 			}
+		}
+		
+		internal virtual void OnObjectCollectionChanged() {
+			SelectedIndices_ = null;
 		}
 		
 		//
@@ -343,11 +359,6 @@ namespace System.Windows.Forms {
 				// This is a child control, so it must have a parent for creation
 				if( Parent != null) {
 					CreateParams createParams = new CreateParams ();
-					// CHECKME: here we must not overwrite window
-					if( window == null) {
-						window = new ControlNativeWindow (this);
-					}
-
 					createParams.Caption = Text;
 					createParams.ClassName = "LISTBOX";
 					createParams.X = Left;
@@ -384,9 +395,6 @@ namespace System.Windows.Forms {
 					else {
 						createParams.Style |= (int)WindowStyles.WS_VSCROLL;
 					}
-					// CHECKME : this call is commented because (IMHO) Control.CreateHandle supposed to do this
-					// and this function is CreateParams, not CreateHandle
-					// window.CreateHandle (createParams);
 					return createParams;
 				}
 				return null;
@@ -410,7 +418,7 @@ namespace System.Windows.Forms {
 		//
 		[MonoTODO]
 		protected virtual ObjectCollection CreateItemCollection() {
-			throw new NotImplementedException ();
+			return new ListBox.ObjectCollection( this);
 		}
 
 		[MonoTODO]
@@ -446,9 +454,7 @@ namespace System.Windows.Forms {
 			//FIXME:
 			base.OnHandleCreated(e);
 			if( Items_ != null) {
-				foreach( object item in Items_) {
-					Win32.SendMessage(Handle, (int)ListBoxMessages.LB_ADDSTRING, 0, item.ToString());
-				}
+				Items_.PopulateControl();
 			}
 			if( ColumnWidth_ != 0 && MultiColumn_) {
 				Win32.SendMessage( Handle, (int)ListBoxMessages.LB_SETCOLUMNWIDTH, ColumnWidth_, 0);
@@ -562,11 +568,15 @@ namespace System.Windows.Forms {
 
 		public class SelectedObjectCollection :  IList, ICollection, IEnumerable {
 
+			ArrayList   collection_;
+			ListBox		owner_;
 			//
 			//  --- Constructor
 			//
 			[MonoTODO]
 			public SelectedObjectCollection(ListBox owner) {
+				owner_ = owner;
+				collection_ = owner_.Items.CreateSelectedObjectsList();
 			}
 
 			//
@@ -575,19 +585,19 @@ namespace System.Windows.Forms {
 			[MonoTODO]
 			public int Count {
 				get {
-					throw new NotImplementedException ();
+					return collection_.Count;
 				}
 			}
 			[MonoTODO]
 			public bool IsReadOnly {
 				get {
-					throw new NotImplementedException ();
+					return true;
 				}
 			}
 			[MonoTODO]
 			public object this[int index] {
 				get {
-					throw new NotImplementedException ();
+					return collection_[index];
 				}
 				set {
 					//FIXME:
@@ -599,11 +609,11 @@ namespace System.Windows.Forms {
 			//
 			[MonoTODO]
 			public bool Contains(object selectedObject) {
-				throw new NotImplementedException ();
+				return collection_.Contains(selectedObject);;
 			}
 			[MonoTODO]
 			public void CopyTo(Array dest, int index) {
-				// FIXME:
+				collection_.CopyTo(dest, index);
 			}
 			[MonoTODO]
 			public override bool Equals(object obj) {
@@ -617,11 +627,11 @@ namespace System.Windows.Forms {
 			}
 			[MonoTODO]
 			public IEnumerator GetEnumerator() {
-				throw new NotImplementedException ();
+				return collection_.GetEnumerator();
 			}
 			[MonoTODO]
 			public int IndexOf(object selectedObject) {
-				throw new NotImplementedException ();
+				return collection_.IndexOf(selectedObject);
 			}
 			/// <summary>
 			/// IList Interface implmentation.
@@ -715,8 +725,153 @@ namespace System.Windows.Forms {
 
 		public class ObjectCollection : IList, ICollection {
 
+			internal class ListBoxItem {
+				public object theData_ = null;
+				public string dataRepresentation_ = String.Empty;
+				// FIXME: change those fields to flags
+				//public bool wasSorted_ = false;
+				//public bool wasAddedToControl_ = false;
+				public bool IsAddedToControl_ = false;
+				public bool Selected_ = false;
+				public bool Checked_ = false;
+				
+				public ListBoxItem( object data, string representation) {
+					theData_ = data;
+					dataRepresentation_ = representation;
+				}
+			}
+			
+			internal class ListItemRepresentationComparer : IComparer {
+				public ListItemRepresentationComparer() {
+				}
+	
+				public int Compare(object x, object y) {
+					ListBoxItem left = x as ListBoxItem;
+					ListBoxItem right = y as ListBoxItem;
+					if( left == null || right == null) {
+						throw new ArgumentException();
+					}
+					return left.dataRepresentation_.CompareTo(right.dataRepresentation_);
+				}
+			}
+/*
+			internal class ListItemDataComparer : IComparer {
+				public ListItemDataComparer() {
+				}
+	
+				public int Compare(object x, object y) {
+					ListBoxItem left = x as ListBoxItem;
+					ListBoxItem right = y as ListBoxItem;
+					if( left == null || right == null) {
+						throw new ArgumentException();
+					}
+					return left.theData_.CompareTo(right.dataRepresentation_);
+				}
+			}
+*/			
+			internal ArrayList CreateSelectedIndicesList() {
+				ArrayList result = new ArrayList();
+				int ordinalNumber = 0;
+				foreach( ListBoxItem lbi in items_) {
+					if( lbi.Selected_) {
+						result.Add(ordinalNumber);	
+					}
+					++ordinalNumber;
+				}
+				return result;
+			}
+			
+			internal ArrayList CreateSelectedObjectsList() {
+				ArrayList result = new ArrayList();
+				foreach( ListBoxItem lbi in items_) {
+					if( lbi.Selected_) {
+						result.Add(lbi.theData_);	
+					}
+				}
+				return result;
+			}
+			
+			internal ArrayList CreateCheckedIndexList() {
+				ArrayList result = new ArrayList();
+				int ordinalNumber = 0;
+				foreach( ListBoxItem lbi in items_) {
+					if( lbi.Checked_) {
+						result.Add(ordinalNumber);	
+					}
+					++ordinalNumber;
+				}
+				return result;
+			}
+			
+			internal ArrayList CreateCheckedItemList() {
+				ArrayList result = new ArrayList();
+				foreach( ListBoxItem lbi in items_) {
+					if( lbi.Checked_) {
+						result.Add(lbi.theData_);	
+					}
+				}
+				return result;
+			}
+			
+			internal ListBoxItem getItemAt(int index) {
+				return (ListBoxItem)items_[index];
+			}
+			
+			internal void SwitchToSortedStyle() {
+				if( owner_.IsHandleCreated) {
+					Win32.SendMessage(owner_.Handle, (int)ListBoxMessages.LB_RESETCONTENT, 0, 0);
+				}
+				items_.Sort(new ListItemRepresentationComparer());
+				if( owner_.IsHandleCreated) {
+					foreach( ListBoxItem lbi in items_) {
+						Win32.SendMessage(owner_.Handle, (int)ListBoxMessages.LB_ADDSTRING, 0, lbi.dataRepresentation_);
+					}
+				}
+				owner_.OnObjectCollectionChanged();
+			}
+			
+			internal void PopulateControl() {
+				foreach( ListBoxItem lbi in items_) {
+					Win32.SendMessage(owner_.Handle, (int)ListBoxMessages.LB_ADDSTRING, 0, lbi.dataRepresentation_);
+					lbi.IsAddedToControl_ = true;
+				}
+			}
+			
+			internal void DumpItems() {
+				int ordinalNumber = 0;
+				foreach( ListBoxItem lbi in items_) {
+					Console.WriteLine("ListBoxItem {0} order {1} checked {2}", lbi.dataRepresentation_,
+					                  ordinalNumber, lbi.Checked_);
+					++ordinalNumber;					
+				}
+			}
+			
+			internal class ListBoxItemEnumerator : IEnumerator {
+				private IEnumerator containerEnum_ = null;
+				
+				public ListBoxItemEnumerator( IEnumerator containerEnum) {
+					containerEnum_ = containerEnum;
+				}
+				
+				public object Current {
+					get {
+						return ((ListBoxItem)containerEnum_.Current).theData_;
+					}
+				}
+				
+				public bool MoveNext() {
+					return containerEnum_.MoveNext();
+				}
+				
+				public void Reset() {
+					containerEnum_.Reset();
+				}
+			}
+			
+			
 			protected ListBox owner_ = null;
-			protected ArrayList items_ = new ArrayList();
+			protected ArrayList items_ = new ArrayList(); // has ListBoxItem
+			
 			//
 			//  --- Constructor
 			//
@@ -749,10 +904,11 @@ namespace System.Windows.Forms {
 			[MonoTODO]
 			public virtual object this[int index] {
 				get {
-					return items_[index];
+					return ((ListBoxItem)items_[index]).theData_;
 				}
 				set {
-					throw new NotImplementedException ();
+					((ListBoxItem)items_[index]).theData_ = value;
+					// FIXME: assing representation and sort if needed
 				}
 			}
 
@@ -761,32 +917,58 @@ namespace System.Windows.Forms {
 			//
 			[MonoTODO]
 			public int Add(object item) {
-				// FIXME: not optimal 
-				int idx = items_.Add(item);
+				string representation = owner_.getDisplayMemberOfObj(item);
+				ListBoxItem  newItem = new ListBoxItem(item, representation);
+				int result = items_.Add(newItem);
 				if( owner_.Sorted) {
-					ListControl.ListControlComparer cic = new ListControl.ListControlComparer(owner_);
-					items_.Sort(cic);
-					idx = items_.BinarySearch(item,cic);
+					items_.Sort(new ListItemRepresentationComparer());
+					result = items_.BinarySearch(newItem);
 					if( owner_.IsHandleCreated) {
-						Win32.SendMessage(owner_.Handle, (int)ListBoxMessages.LB_INSERTSTRING, idx, owner_.getDisplayMemberOfObj(item));
+						Win32.SendMessage(owner_.Handle, (int)ListBoxMessages.LB_INSERTSTRING, result, representation);
 					}
-				}
+					owner_.OnObjectCollectionChanged();
+				}					
 				else {
 					if( owner_.IsHandleCreated) {
-						Win32.SendMessage(owner_.Handle, (int)ListBoxMessages.LB_ADDSTRING, 0, owner_.getDisplayMemberOfObj(item));
+						Win32.SendMessage(owner_.Handle, (int)ListBoxMessages.LB_ADDSTRING, 0, representation);
 					}
 				}
-				return idx;
+				newItem.IsAddedToControl_ = true;
+				return result;
 			}
 			
 			[MonoTODO]
 			public void AddRange(object[] items) {
-				if( items != null) {
-					// FIXME: not optimal 
-					foreach(object item in items) {
-						Add(item);
+				if( items == null) throw new ArgumentException();
+				ListBoxItem[] newItems = new ListBoxItem[items.Length];
+				int idx = 0;
+				foreach( object obj in items ) {
+					newItems[idx] = new ListBoxItem(obj, owner_.getDisplayMemberOfObj(obj));
+					++idx;
+				}
+				items_.AddRange(newItems);
+				if( owner_.Sorted) {
+					items_.Sort(new ListItemRepresentationComparer());
+					if( owner_.IsHandleCreated) {
+						int index = 0;
+						foreach( ListBoxItem lbi in items_) {
+							if(!lbi.IsAddedToControl_){
+								Win32.SendMessage(owner_.Handle, (int)ListBoxMessages.LB_INSERTSTRING, index, lbi.dataRepresentation_);
+							}
+							++index;
+						}
+					}
+					owner_.OnObjectCollectionChanged();
+				}
+				else {
+					if( owner_.IsHandleCreated) {
+						foreach(ListBoxItem lbi in newItems) {
+							Win32.SendMessage(owner_.Handle, (int)ListBoxMessages.LB_ADDSTRING, 0, lbi.dataRepresentation_);
+							lbi.IsAddedToControl_ = true;
+						}
 					}
 				}
+				// FIXME: Add items to control
 			}
 			[MonoTODO]
 			public void AddRange(ListBox.ObjectCollection collection) {
@@ -799,13 +981,21 @@ namespace System.Windows.Forms {
 				if( owner_.IsHandleCreated) {
 					Win32.SendMessage(owner_.Handle, (int)ListBoxMessages.LB_RESETCONTENT, 0, 0);
 				}
+				owner_.OnObjectCollectionChanged();
 			}
 			[MonoTODO]
 			public bool Contains(object value) {
-				return items_.Contains(value);
+				// FIXME: determine whether some of ListBoxItem has value as theData_
+				foreach( ListBoxItem lbi in items_) {
+					if( lbi.theData_ == value) {
+						return true;
+					}
+				}
+				return false;
 			}
 			[MonoTODO]
 			public void CopyTo(object[] dest, int arrayIndex) {
+				// FIXME: copy theData_ from ListBoxItem, not the ListBoxItems
 				items_.CopyTo(dest, arrayIndex);
 			}
 			[MonoTODO]
@@ -820,11 +1010,21 @@ namespace System.Windows.Forms {
 			}
 			[MonoTODO]
 			public IEnumerator GetEnumerator() {
-				return items_.GetEnumerator();
+				return new ListBoxItemEnumerator(items_.GetEnumerator());
 			}
 			[MonoTODO]
 			public int IndexOf(object val) {
-				throw new NotImplementedException ();
+				// FIXME: find ListBoxItem object which has the val as theData_
+				int result = -1;
+				int index = 0;
+				foreach( ListBoxItem lbi in items_) {
+					if( lbi.theData_ == val) {
+						result = index;
+						break;
+					}
+					++index;
+				}
+				return result;
 			}
 			[MonoTODO]
 			public void Insert(int index, object item) {
@@ -832,15 +1032,16 @@ namespace System.Windows.Forms {
 			}
 			[MonoTODO]
 			public void Remove(object val) {
-				int pos = items_.IndexOf(val);
-				if( pos >= 0) {
-					RemoveAt(pos);
+				// FIXME: use some sort of Comparer ?
+				int pos = 0;
+				foreach(ListBoxItem lbi in items_) {
+					if( lbi.theData_ == val) {
+						RemoveAt(pos);
+						break;
+					}
+					++pos;
 				}
 			}
-			
-			internal virtual void OnItemRemovedAt( int index) {
-			}
-			
 			[MonoTODO]
 			public void RemoveAt(int index) {
 				if( index < 0 || index >= items_.Count) {
@@ -851,7 +1052,7 @@ namespace System.Windows.Forms {
 				if( owner_.IsHandleCreated) {
 					Win32.SendMessage( owner_.Handle, (int)ListBoxMessages.LB_DELETESTRING, index, 0); 
 				}
-				OnItemRemovedAt(index);
+				owner_.OnObjectCollectionChanged();
 			}
 			/// <summary>
 			/// IList Interface implmentation.
@@ -945,11 +1146,16 @@ namespace System.Windows.Forms {
 
 		public class SelectedIndexCollection :  IList, ICollection, IEnumerable {
 
+			ArrayList   collection_;
+			ListBox		owner_;
+			
 			//
 			//  --- Constructor
 			//
 			[MonoTODO]
 			public SelectedIndexCollection(ListBox owner) {
+				owner_ = owner;
+				collection_ = owner_.Items.CreateSelectedIndicesList();
 			}
 
 			//
@@ -958,19 +1164,19 @@ namespace System.Windows.Forms {
 			[MonoTODO]
 			public int Count {
 				get {
-					throw new NotImplementedException ();
+					return collection_.Count;
 				}
 			}
 			[MonoTODO]
 			public bool IsReadOnly {
 				get {
-					throw new NotImplementedException ();
+					return true;
 				}
 			}
 			[MonoTODO]
 			public int this[int index] {
 				get {
-					throw new NotImplementedException ();
+					return (int)collection_[index];
 				}
 			}
 
@@ -979,11 +1185,11 @@ namespace System.Windows.Forms {
 			//
 			[MonoTODO]
 			public bool Contains(int selectedIndex) {
-				throw new NotImplementedException ();
+				return collection_.Contains(selectedIndex);
 			}
 			[MonoTODO]
 			public void CopyTo(Array dest, int index) {
-				//FIXME:
+				collection_.CopyTo(dest, index);
 			}
 			[MonoTODO]
 			public override bool Equals(object obj) {
@@ -997,7 +1203,7 @@ namespace System.Windows.Forms {
 			}
 			[MonoTODO]
 			public IEnumerator GetEnumerator() {
-				throw new NotImplementedException ();
+				return collection_.GetEnumerator();
 			}
 			/// <summary>
 			/// IList Interface implmentation.

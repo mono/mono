@@ -6,6 +6,7 @@
 //	  implemented for Gtk+ by Rachel Hestilow (hestilow@ximian.com)
 //   Dennis Hayes (dennish@Raytek.com)
 //   WINELib implementation started by John Sohn (jsohn@columbus.rr.com)
+//   Alexandre Pigokine (pigolkine@gmx.de)
 //
 // (C) Ximian, Inc., 2002
 //

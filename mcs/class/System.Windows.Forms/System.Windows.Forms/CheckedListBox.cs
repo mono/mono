@@ -4,6 +4,7 @@
 // Author:
 //   stubbed out by Jaak Simm (jaaksimm@firm.ee)
 //	Denis hayes (dennish@raytek.com)
+//	Alexandre Pigolkine (pigolkine@gmx.de)
 //
 // (C) Ximian, Inc., 2002
 //
@@ -23,24 +24,30 @@ namespace System.Windows.Forms {
 		// private fields
 		private bool checkOnClick;
 		private bool threeDCheckBoxes;
-		private CheckedListBox.CheckedIndexCollection CheckedIndices_;
-		
-		internal ArrayList checkedIndexCollection_ = new ArrayList();
+		private CheckedListBox.CheckedIndexCollection CheckedIndices_ = null;
+		private CheckedListBox.CheckedItemCollection CheckedItems_ = null;
 		
 		// --- Constructor ---
 		public CheckedListBox() : base() 
 		{
 			checkOnClick = false;
 			threeDCheckBoxes = true;
-			Items_ = new CheckedListBox.ObjectCollection(this);
-			CheckedIndices_ = new CheckedListBox.CheckedIndexCollection(this);
 			DrawMode_ = DrawMode.Normal;
+		}
+
+		internal override void OnObjectCollectionChanged() {
+			CheckedIndices_ = null;
+			CheckedItems_ = null;
+			base.OnObjectCollectionChanged();
 		}
 		
 		// --- CheckedListBox Properties ---
 		[MonoTODO]
 		public CheckedListBox.CheckedIndexCollection CheckedIndices {
 			get {
+				if( CheckedIndices_ == null) {
+					CheckedIndices_ = new CheckedListBox.CheckedIndexCollection(this);
+				}
 				return CheckedIndices_; 
 			}
 		}
@@ -48,7 +55,11 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public CheckedListBox.CheckedItemCollection CheckedItems {
 			get {
-				throw new NotImplementedException (); }
+				if( CheckedItems_ == null) {
+					CheckedItems_ = new CheckedListBox.CheckedItemCollection(this); 
+				}
+				return CheckedItems_; 
+			}
 		}
 		
 		public bool CheckOnClick {
@@ -98,7 +109,7 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public CheckedListBox.ObjectCollection Items {
 			get {
-				return (CheckedListBox.ObjectCollection)Items_; 
+				return (CheckedListBox.ObjectCollection)base.Items; 
 			}
 		}
 
@@ -149,11 +160,10 @@ namespace System.Windows.Forms {
 		//	throw new NotImplementedException ();
 		//}
 		
-//		[MonoTODO]
-//		protected override ObjectCollection CreateItemCollection() 
-//		{
-//			throw new NotImplementedException ();
-//		}
+		[MonoTODO]
+		protected override ListBox.ObjectCollection CreateItemCollection() {
+			return (ListBox.ObjectCollection)(new CheckedListBox.ObjectCollection( this));
+		}
 		
 		[MonoTODO]
 		public bool GetItemChecked(int index) 
@@ -275,26 +285,13 @@ namespace System.Windows.Forms {
 				throw new ArgumentException();
 			}
 
-			bool invalidateControl = false;
-			
-			if( value == CheckState.Checked) {
-				if(!checkedIndexCollection_.Contains(index)) {
-					checkedIndexCollection_.Add(index);
-					invalidateControl = true;
-				}
-			}
-			else if( value == CheckState.Unchecked) {
-				if(checkedIndexCollection_.Contains(index)) {
-					checkedIndexCollection_.Remove(index);
-					invalidateControl = true;
-				}
-			}
-			else {
-			}
-			if( invalidateControl) {
-				// FIXME: Minimize repainting here, invalidate only part on the control ?
-				Invalidate();
-			}
+			//bool invalidateControl = false;
+			ListBox.ObjectCollection.ListBoxItem item = Items_.getItemAt(index);
+			item.Checked_ = value == CheckState.Checked ? true : false;
+			CheckedIndices_ = null;
+			CheckedItems_ = null;
+			// FIXME: Minimize repainting here, invalidate only part on the control ?
+			Invalidate();
 		}
 
 		internal void listboxSelChange()
@@ -312,6 +309,7 @@ namespace System.Windows.Forms {
 		
 		[MonoTODO]
 		protected override void WndProc(ref Message m) 
+
 		{
 			//FIXME
 			switch (m.Msg) {
@@ -353,26 +351,28 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public class CheckedIndexCollection : IList, ICollection, IEnumerable {
 			CheckedListBox 		owner_;
+			ArrayList			collection_;
 			
 			internal CheckedIndexCollection(CheckedListBox owner)
 			{
 				owner_ = owner;
+				collection_ = owner_.Items.CreateCheckedIndexList();
 			}
 			
 			/// --- CheckedIndexCollection Properties ---
 			[MonoTODO]
 			public int Count {
-				get { return owner_.checkedIndexCollection_.Count; }
+				get { return collection_.Count; }
 			}
 			
 			[MonoTODO]
 			public bool IsReadOnly {
-				get { return owner_.checkedIndexCollection_.IsReadOnly; }
+				get { return true; }
 			}
 			
 			[MonoTODO]
 			public int this[int index] {
-				get { return (int)owner_.checkedIndexCollection_[index]; }
+				get { return (int)collection_[index]; }
 			}
 			
 			/// --- ICollection properties ---
@@ -402,25 +402,25 @@ namespace System.Windows.Forms {
 			[MonoTODO]
 			public bool Contains(int index) 
 			{
-				return owner_.checkedIndexCollection_.Contains(index);
+				return collection_.Contains(index);
 			}
 			
 			[MonoTODO]
 			public void CopyTo(Array dest,int index) 
 			{
-				owner_.checkedIndexCollection_.CopyTo(dest, index);
+				collection_.CopyTo(dest, index);
 			}
 			
 			[MonoTODO]
 			public IEnumerator GetEnumerator() 
 			{
-				return owner_.checkedIndexCollection_.GetEnumerator();
+				return collection_.GetEnumerator();
 			}
 			
 			[MonoTODO]
 			public int IndexOf(int index) 
 			{
-				return owner_.checkedIndexCollection_.IndexOf(index);
+				return collection_.IndexOf(index);
 			}
 			
 			/// --- CheckedIndexCollection.IList methods ---
@@ -477,40 +477,47 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public class CheckedItemCollection : IList, ICollection, IEnumerable {
 			
+			CheckedListBox 		owner_;
+			ArrayList			collection_;
+			
+			internal CheckedItemCollection(CheckedListBox owner)
+			{
+				owner_ = owner;
+				collection_ = owner_.Items.CreateCheckedItemList();
+			}
 			
 			/// --- CheckedItemCollection Properties ---
 			[MonoTODO]
 			public int Count {
-				get { throw new NotImplementedException (); }
+				get { return collection_.Count; }
 			}
 			
 			[MonoTODO]
 			public bool IsReadOnly {
-				get { throw new NotImplementedException (); }
+				get { return collection_.IsReadOnly; }
 			}
-			
-			[MonoTODO]
-			public int this[int index] {
-				get { throw new NotImplementedException (); }
-				set { throw new NotImplementedException (); }
-			}
-			
+
 			/// --- ICollection properties ---
 			bool IList.IsFixedSize {
 				[MonoTODO] get { throw new NotImplementedException (); }
 			}
-			
-			object IList.this[int index] {
 
+			object IList.this[int index] {
 				[MonoTODO] get { throw new NotImplementedException (); }
 				[MonoTODO] set { throw new NotImplementedException (); }
 			}
-	
+
+			[MonoTODO]
+			public object this[int index] {
+				get { return collection_[index]; }
+				set { throw new NotImplementedException (); }
+			}
+
 			object ICollection.SyncRoot {
 
 				[MonoTODO] get { throw new NotImplementedException (); }
 			}
-	
+
 			bool ICollection.IsSynchronized {
 
 				[MonoTODO] get { throw new NotImplementedException (); }
@@ -521,27 +528,27 @@ namespace System.Windows.Forms {
 			/// --- CheckedItemCollection Methods ---
 			/// Note: IList methods are stubbed out, otherwise IList interface cannot be implemented
 			[MonoTODO]
-			public bool Contains(int item) 
+			public bool Contains(object item) 
 			{
-				throw new NotImplementedException ();
+				return collection_.Contains(item);
 			}
 			
 			[MonoTODO]
 			public void CopyTo(Array dest,int index) 
 			{
-				throw new NotImplementedException ();
+				collection_.CopyTo(dest,index);
 			}
 			
 			[MonoTODO]
 			public IEnumerator GetEnumerator() 
 			{
-				throw new NotImplementedException ();
+				return collection_.GetEnumerator();
 			}
 			
 			[MonoTODO]
-			public int IndexOf(int index) 
+			public int IndexOf(object item) 
 			{
-				throw new NotImplementedException ();
+				return collection_.IndexOf(item);
 			}
 			
 			/// --- CheckedItemCollection.IList methods ---
@@ -615,13 +622,6 @@ namespace System.Windows.Forms {
 			{
 				throw new NotImplementedException ();
 			}
-			
-			internal override void OnItemRemovedAt( int index) {
-				if(((CheckedListBox)owner_).checkedIndexCollection_.Contains(index)) {
-					((CheckedListBox)owner_).checkedIndexCollection_.Remove(index);
-				}
-			}
 		}
-		
 	}
 }

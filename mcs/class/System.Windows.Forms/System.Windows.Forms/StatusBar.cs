@@ -51,9 +51,9 @@ namespace System.Windows.Forms {
 			return str;
 		}
 
-		[MonoTODO]
 		protected override void CreateHandle()
 		{
+			initCommonControlsLibrary ( );
 			base.CreateHandle();
 		}
 
@@ -404,6 +404,14 @@ namespace System.Windows.Forms {
 					UpdatePanels ( true, true, null );
 					UpdateToolTips ( null );
 				}
+			}
+		}
+
+		private void initCommonControlsLibrary ( ) {
+			if ( !RecreatingHandle ) {
+				INITCOMMONCONTROLSEX	initEx = new INITCOMMONCONTROLSEX();
+				initEx.dwICC = CommonControlInitFlags.ICC_BAR_CLASSES;
+				Win32.InitCommonControlsEx(initEx);
 			}
 		}
 

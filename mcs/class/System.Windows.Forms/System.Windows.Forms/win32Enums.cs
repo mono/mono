@@ -2467,6 +2467,24 @@ namespace System.Windows.Forms{
 	}
 	#endregion
 
+	#region DateTimePicker Notifications
+	internal enum DateTimePickerNotifications
+	{
+		DTN_FIRST		= (0 - 760),
+		DTN_DATETIMECHANGE	= (DTN_FIRST + 1),
+		DTN_USERSTRINGA		= (DTN_FIRST + 2),
+		DTN_WMKEYDOWNA		= (DTN_FIRST + 3),
+		DTN_FORMATA		= (DTN_FIRST + 4),
+		DTN_FORMATQUERYA	= (DTN_FIRST + 5),
+		DTN_DROPDOWN		= (DTN_FIRST + 6),
+		DTN_CLOSEUP		= (DTN_FIRST + 7),
+		DTN_USERSTRINGW		= (DTN_FIRST + 15),
+		DTN_WMKEYDOWNW		= (DTN_FIRST + 16),
+		DTN_FORMATW		= (DTN_FIRST + 17),
+		DTN_FORMATQUERYW	= (DTN_FIRST + 18)
+	}
+	#endregion
+
 	#region MonthCal Colors
 	internal enum MonthCalColors
 	{

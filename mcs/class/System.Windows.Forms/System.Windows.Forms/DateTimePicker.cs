@@ -96,11 +96,8 @@ namespace System.Windows.Forms {
 		//
 		//  --- Public Methods
 		//
-		[MonoTODO]
-		public override string ToString()
-		{
-			//FIXME:
-			return base.ToString();
+		public override string ToString(){
+			return GetType().FullName.ToString() + ", Value: " + Value.ToString( );
 		}
 
 		//
@@ -161,10 +158,6 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		protected override void OnSystemColorsChanged(EventArgs e)
 		{
-			//FIXME: update default colors
-			//if (SystemColorsChanged != null) {
-			//	SystemColorsChanged(this, e);
-			//}
 			base.OnSystemColorsChanged( e );
 		}
 
@@ -192,8 +185,17 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		protected override void WndProc(ref Message m)
 		{
-			//FIXME:
-			base.WndProc(ref m);
+			switch ( m.Msg ) {
+			case Msg.WM_NOTIFY:
+				if ( m.LParam != IntPtr.Zero )
+					handleNotification ( ref m );
+				else 
+					CallControlWndProc(ref m);
+				break;
+			default:
+				CallControlWndProc(ref m);
+				break;
+			}
 		}
 
 		
@@ -501,7 +503,7 @@ namespace System.Windows.Forms {
 
 		private void setControlValue ( ) {
 			if ( IsHandleCreated ) 	{
-				SYSTIME systime = toSysTime ( Value ) ;
+				SYSTIME systime = toSysTime ( val ) ;
 
 				IntPtr ptr = Marshal.AllocCoTaskMem ( Marshal.SizeOf ( systime ) );
 				Marshal.StructureToPtr( systime, ptr, false );
@@ -604,6 +606,28 @@ namespace System.Windows.Forms {
 				Win32.SendMessage ( Handle, (int)DateTimePickerMessages.DTM_SETMCFONT,
 							CalendarFont.ToHfont().ToInt32(), 0 );
 			*/
+		}
+
+		private void handleNotification ( ref Message m ) {
+			NMHDR nmhdr = (NMHDR)Marshal.PtrToStructure ( m.LParam,	typeof ( NMHDR ) );
+			
+			m.Result = IntPtr.Zero;
+
+			switch ( nmhdr.code ) {
+			case (int)DateTimePickerNotifications.DTN_CLOSEUP:
+				OnCloseUp ( EventArgs.Empty );
+			break;
+			case (int)DateTimePickerNotifications.DTN_DROPDOWN:
+				OnDropDown ( EventArgs.Empty );
+			break;
+			case (int)DateTimePickerNotifications.DTN_DATETIMECHANGE:
+				getControlValue ( true );
+				OnValueChanged ( EventArgs.Empty );
+			break;
+			default:
+				CallControlWndProc ( ref m );		
+			break;
+			}
 		}
 	}
 }

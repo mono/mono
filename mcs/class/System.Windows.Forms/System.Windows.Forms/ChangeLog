@@ -1,3 +1,19 @@
+2003-03-25 Alexandre Pigolkine <pigolkine@gmx.de>
+	* CheckedListBox.cs
+	* ListBox.cs
+		Implementation of Collections
+		Alexandre Pigolkine <pigolkine@gmx.de>
+
+	* Control.cs
+	* DateTimePicker.cs
+	* win32Enums.cs
+		notification handling for DateTimePicker control.
+	* StatusBar.cs
+	* TrackBar.cs
+		 small modifications.
+		Aleksey Ryabchuk <ryabchuk@yahoo.com>
+
+
 2003-03-23 Alexandre Pigolkine <pigolkine@gmx.de>
 	* DateTimePicker.cs
 	* Form.cs
@@ -261,6 +277,7 @@
     2002-12-3  DennisHayes <dennish@raytek.com>	
 	* *.cs
 	* switched to unix style line terminiators
+
 
 
     2002-12-3  DennisHayes <dennish@raytek.com>	
@@ -601,6 +618,7 @@
 	* UpDownBase.cs
 	* UpDownEventArgs.cs
 	* VScrollBar.cs
+
 
 	* Stubs now compliant with .NET 1.1 Beta, except for one that has dependencies.
 	* Added FolderBrowserDialog.cs for .NET 1.1 beta compatibility.

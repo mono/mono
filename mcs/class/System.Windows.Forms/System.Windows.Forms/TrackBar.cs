@@ -49,28 +49,22 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[EditorBrowsable (EditorBrowsableState.Never)]	 
 		public override Image BackgroundImage {
-			get {
-				return base.BackgroundImage;
-			}
-			set {
-			}
+			get { return base.BackgroundImage; }
+			set { base.BackgroundImage = value; }
 		}
 
+		[EditorBrowsable (EditorBrowsableState.Never)]	 
 		public override Font Font {
-			get {
-				return base.Font;
-			}
-			set {
-			}
+			get { return base.Font;	}
+			set { base.Font = value; }
 		}
 
+		[EditorBrowsable (EditorBrowsableState.Never)]	 
 		public override Color ForeColor {
-			get {
-				return base.ForeColor;
-			}
-			set {
-			}
+			get { return base.ForeColor; }
+			set { base.ForeColor = value; }
 		}
 
 		[MonoTODO]
@@ -149,13 +143,10 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[EditorBrowsable (EditorBrowsableState.Never)]	 
 		public override string Text {
-			get {
-				return base.Text;
-			}
-			set {
-				base.Text = value;
-			}
+			get {	return base.Text; }
+			set {	base.Text = value; }
 		}
 
 		[MonoTODO]
@@ -275,12 +266,12 @@ namespace System.Windows.Forms {
 		//
 		// --- Protected Methods
 		//
-		[MonoTODO]
 		protected override void CreateHandle() 
 		{
-			//FIXME: just to get it to run
+			initCommonControlsLibrary ( );
 			base.CreateHandle();
 		}
+
 		[MonoTODO]
 		protected override bool IsInputKey(Keys keyData) 
 		{
@@ -290,7 +281,7 @@ namespace System.Windows.Forms {
 				keyData == Keys.PageUp || keyData == Keys.PageDown )
 			return true;
 
-			return IsInputKey(keyData);
+			return base.IsInputKey(keyData);
 		}
 		[MonoTODO]
 		protected override void OnBackColorChanged(EventArgs e) 
@@ -333,7 +324,7 @@ namespace System.Windows.Forms {
 					ValueChanged (this, new EventArgs() );
 			break;
 			default:
-				base.WndProc(ref m);
+				CallControlWndProc( ref m );
 			break;
 			}
 		}
@@ -396,5 +387,13 @@ namespace System.Windows.Forms {
 			}
 			return false;
 		}
+
+	    private void initCommonControlsLibrary ( ) {
+		    if ( !RecreatingHandle ) {
+			    INITCOMMONCONTROLSEX	initEx = new INITCOMMONCONTROLSEX();
+			    initEx.dwICC = CommonControlInitFlags.ICC_BAR_CLASSES;
+			    Win32.InitCommonControlsEx(initEx);
+		    }
+	    }
 	}
 }
