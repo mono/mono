@@ -739,6 +739,11 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		internal void RefreshTabs ()
+		{
+			Redraw (true);
+		}
+
 		private void PaintInternal (PaintEventArgs pe)
 		{
 			if (this.Width <= 0 || this.Height <=  0 || this.Visible == false)
@@ -753,7 +758,7 @@ namespace System.Windows.Forms {
 		private void Redraw (bool recalculate)
 		{
 			if (recalculate) {
-				
+				ResizeTabPages ();
 			}
 			redraw = true;
 			Refresh ();

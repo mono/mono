@@ -1,3 +1,10 @@
+2005-01-21  Jackson Harper  <jackson@ximian.com>
+
+	* TabPage.cs: Add a new method so tab pages can force the tab
+	control to recalculate the tab page sizes.
+	* TabControl.cs: UpdateOwner needs to make the tab control recalc
+	sizes.
+
 2005-01-20  Jackson Harper  <jackson@ximian.com>
 
 	* ThemeWin32Classic.cs: Clip text to the staus bar panels rects.

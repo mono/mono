@@ -161,7 +161,7 @@ namespace System.Windows.Forms {
 		private void UpdateOwner ()
 		{
 			if (Owner != null) {
-				// Will do some loving to the owner here
+				Owner.RefreshTabs ();
 			}
 		}
 
