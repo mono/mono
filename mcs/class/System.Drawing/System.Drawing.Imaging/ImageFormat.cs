@@ -35,10 +35,26 @@ namespace System.Drawing.Imaging {
 			return base.GetHashCode();
 		}
 		
-		[MonoTODO]
 		public override string ToString() {
-			// FIXME returns a string for the format like "Png"
-			return String.Format("ImageFormat.Guid {0}", guid);
+			if (this.Guid.Equals(ImageFormat.Bmp.Guid))
+				return "Bmp";
+			if (this.Guid.Equals(ImageFormat.Emf.Guid))
+				return "Emf";
+			if (this.Guid.Equals(ImageFormat.Exif.Guid))
+				return "Exif";
+			if (this.Guid.Equals(ImageFormat.Gif.Guid))
+				return "Gif";
+			if (this.Guid.Equals(ImageFormat.Icon.Guid))
+				return "Icon";
+			if (this.Guid.Equals(ImageFormat.Jpeg.Guid))
+				return "Jpeg";
+			if (this.Guid.Equals(ImageFormat.MemoryBmp.Guid))
+				return "MemoryBMP";
+			if (this.Guid.Equals(ImageFormat.Png.Guid))
+				return "Png";
+			if (this.Guid.Equals(ImageFormat.Tiff.Guid))
+				return "Tiff";
+			return "Wmf";		
 		}
 
 		// properties
