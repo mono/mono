@@ -274,7 +274,7 @@ namespace System.Collections.Specialized {
 					throw new InvalidOperationException();
 				}
 				
-				if (++index >= data.count - 1) {
+				if (++index >= data.count) {
 					return false;
 				}
 				

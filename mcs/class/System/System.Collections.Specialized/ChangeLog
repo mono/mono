@@ -1,3 +1,8 @@
+2002-09-03  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* StringCollection.cs: fixes bug #29791. Thanks to Marcus Urban
+	(mathpup@mylinuxisp.com).
+
 2002-07-22  Tim Coleman <tim@timcoleman.com>
 	* NameObjectCollectionBase.cs: added iterator stubb to 
 		NameObjectCollectionBase.KeysCollection
