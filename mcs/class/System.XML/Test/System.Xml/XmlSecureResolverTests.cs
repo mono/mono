@@ -38,6 +38,7 @@ namespace MonoTestsXml
 		}
 
 		[Test]
+		[Ignore ("depends on CAS")]
 		[ExpectedException (typeof (PolicyException))]
 		public void EmptyEvidenceDeniedAccess ()
 		{
