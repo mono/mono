@@ -1,3 +1,10 @@
+2004-06-15  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Decimal.cs: Fixed scale after Round (a different scale is correct 
+	from a math point of view but affect the string representation of the
+	value). Note: other operations also have scale problems!
+	* DecimalFormatter.cs: Fixed FormatGeneral to match Fx 1.1 output.
+
 2004-06-15  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* AppDomainSetup.cs: added TODO for serialization

@@ -189,30 +189,33 @@ namespace System
         private static string FormatGeneral(NumberFormatInfo nfi, StringBuilder sb, 
             int digits, int decPos, int sign, char gchar)
         {
-            int dig = digits;
-            bool bFix = (digits == 0 && decPos >= -3) || (digits >= decPos && decPos >= -3 && digits != 0);
+		int dig = digits;
+#if NET_1_0
+		bool bFix = (digits == 0 && decPos >= -3) || (digits >= decPos && decPos >= -3 && digits != 0);
+#else
+		bool bFix = ((digits == 0) || ((digits >= decPos) && (digits != 0)));
+#endif
+		if (digits > 0) {
+			// remove trailing digits
+			while (sb.Length > 1 && (sb.Length > decPos || !bFix) && sb [sb.Length-1] == '0') {
+				sb.Remove (sb.Length-1, 1);
+				if (dig != 0)
+					dig--;
+			}
+		}
 
-            // remove trailing digits
-            while (sb.Length > 1 && (sb.Length > decPos || !bFix) && sb[sb.Length-1] == '0')
-            {
-                sb.Remove(sb.Length-1, 1);
-                if (dig != 0) dig--;
-            }
-
-            if (bFix)
-            {
-                while (decPos <= 0) 
-                {
-                    sb.Insert(0, '0');
-                    if (dig != 0 && decPos != 0) dig++;
-                    decPos++;
-                }
-                return FormatFixedPoint(nfi, sb, sb.Length - decPos, decPos, sign);
-            }
-            else
-            {
-                return FormatExponential(nfi, sb, dig, decPos, sign, (char)(gchar-2), false);
-            }
+		if (bFix) {
+			while (decPos <= 0) {
+				sb.Insert (0, '0');
+				if (dig != 0 && decPos != 0)
+					dig++;
+				decPos++;
+			}
+			return FormatFixedPoint(nfi, sb, sb.Length - decPos, decPos, sign);
+		}
+		else {
+			return FormatExponential(nfi, sb, dig, decPos, sign, (char)(gchar-2), false);
+		}
         }
 
         private static string FormatGroupAndDec(StringBuilder sb, int decimals, int decPos, 

@@ -535,6 +535,9 @@ namespace System
 		dec_part = Math.Round (dec_part);
 		dec_part /= p;
 		decimal result = int_part + dec_part;
+		// that fixes the precision/scale (which we must keep for output)
+		result /= (10000000000000000000000000000M / p);
+		result.ss32 = (uint)(decimals << SCALE_SHIFT);
 
 		if (negative)
 			result.ss32 ^= SIGN_FLAG;
