@@ -1,4 +1,17 @@
+2002-03-17  Miguel de Icaza  <miguel@ximian.com>
+
+	* class.cs (Invocation.EmitArguments): Fix to emit arguments for
+	empty param arrays.
+	
+	* class.cs (Method.LabelParameters): Fix incorrect code path that
+	prevented the `ParamArrayAttribute' from being applied to the
+	params attribute.
+
 2002-03-16  Miguel de Icaza  <miguel@ximian.com>
+
+	* support.cs (ReflectionParameters): Correctly compute whether the
+	last argument is a params array.  Fixes the problem with
+	string.Split ('a')
 
 	* typemanager.cs: Make the assemblies array always be non-null
 	(empty, but non-null)

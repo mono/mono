@@ -2117,9 +2117,8 @@ namespace Mono.CSharp {
 			// the argument names.
 			//
 			Parameter [] p = Parameters.FixedParameters;
-			if (p == null)
-				return;
-
+			int i = 0;
+			
 			MethodBuilder mb = null;
 			ConstructorBuilder cb = null;
 
@@ -2127,28 +2126,28 @@ namespace Mono.CSharp {
 				mb = (MethodBuilder) builder;
 			else
 				cb = (ConstructorBuilder) builder;
-			
-			int i;
-				
-			for (i = 0; i < p.Length; i++) {
-				ParameterBuilder pb;
 
-				if (mb == null)
-					pb = cb.DefineParameter (
-						i + 1, p [i].Attributes, p [i].Name);
-				else 
-					pb = mb.DefineParameter (
-						i + 1, p [i].Attributes, p [i].Name);
-				
-				Attributes attr = p [i].OptAttributes;
-				if (attr != null)
-					Attribute.ApplyAttributes (ec, pb, pb, attr, Location);
+			if (p != null){
+				for (i = 0; i < p.Length; i++) {
+					ParameterBuilder pb;
+					
+					if (mb == null)
+						pb = cb.DefineParameter (
+							i + 1, p [i].Attributes, p [i].Name);
+					else 
+						pb = mb.DefineParameter (
+							i + 1, p [i].Attributes, p [i].Name);
+					
+					Attributes attr = p [i].OptAttributes;
+					if (attr != null)
+						Attribute.ApplyAttributes (ec, pb, pb, attr, Location);
+				}
 			}
-			
-			if (i != parameters.Length) {
+
+			if (Parameters.ArrayParameter != null){
 				ParameterBuilder pb;
-				
 				Parameter array_param = Parameters.ArrayParameter;
+				
 				if (mb == null)
 					pb = cb.DefineParameter (
 						i + 1, array_param.Attributes,

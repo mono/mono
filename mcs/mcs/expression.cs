@@ -3541,16 +3541,27 @@ namespace Mono.CSharp {
 		/// </summary>
 		public static void EmitArguments (EmitContext ec, MethodBase mb, ArrayList arguments)
 		{
-			ParameterData pd = null;
-			int top;
-
-			if (arguments != null)
-				top = arguments.Count;
-			else
-				top = 0;
-
+			ParameterData pd;
 			if (mb != null)
-				 pd = GetParameterData (mb);
+				pd = GetParameterData (mb);
+			else
+				pd = null;
+
+			//
+			// If we are calling a params method with no arguments, special case it
+			//
+			if (arguments == null){
+				if (pd != null && pd.ParameterModifier (0) == Parameter.Modifier.PARAMS){
+					ILGenerator ig = ec.ig;
+
+					IntConstant.EmitInt (ig, 0);
+					ig.Emit (OpCodes.Newarr, pd.ParameterType (0).GetElementType ());
+				}
+
+				return;
+			}
+
+			int top = arguments.Count;
 
 			for (int i = 0; i < top; i++){
 				Argument a = (Argument) arguments [i];
@@ -3637,8 +3648,7 @@ namespace Mono.CSharp {
 				}
 			}
 
-			if (Arguments != null)
-				EmitArguments (ec, method, Arguments);
+			EmitArguments (ec, method, Arguments);
 
 			if (is_static || struct_call || is_base){
 				if (method is MethodInfo)

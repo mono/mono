@@ -29,19 +29,22 @@ namespace Mono.CSharp {
 		
 		public ReflectionParameters (ParameterInfo [] pi)
 		{
-			object [] a;
+			object [] attrs;
 			
 			this.pi = pi;
 
 			int count = pi.Length-1;
 
-			if (count > 0) {
-				a = pi [count].GetCustomAttributes (TypeManager.param_array_type, false);
+			if (count >= 0) {
+				attrs = pi [count].GetCustomAttributes (TypeManager.param_array_type, true);
 
-				if (a != null)
-					if (a.Length != 0)
-						last_arg_is_params = true;
-			} 
+				if (attrs == null)
+					return;
+				
+				if (attrs.Length == 0)
+					return;
+				last_arg_is_params = true;
+			}
 		}
 		       
 		public Type ParameterType (int pos)
