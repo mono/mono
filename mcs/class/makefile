@@ -11,5 +11,8 @@ push:
 test:
 	$(NANT) test
 
+testcorlib:
+	$(NANT) testcorlib
+
 clean:
 	$(NANT) clean

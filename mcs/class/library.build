@@ -60,6 +60,10 @@
 		<nant basedir="Mono.Security.Win32" target="test"/>
 	</target>
 
+	<target name="testcorlib">
+		<nant basedir="corlib" target="test"/>
+	</target>
+
 	<target name="clean">
 		<delete failonerror="false">
 			<fileset basedir="lib">

@@ -1,3 +1,8 @@
+2003-02-10  Nick Drochak  <ndrochak@gol.com>
+
+	* library.build:
+	* makefile: add testcorlib target to run unit tests just for corlib.
+
 2003-02-05  Sebastien Pouliot <spouliot@videotron.ca>
 
 	* library.build: added Mono.Security.Win32 to build, test and 
