@@ -1,3 +1,8 @@
+2004-09-05 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Environment.cs: (ExpandEnvironmentVariables) don't nullify the case
+	insensitive environment variables hashtable once we create it.
+
 2004-08-19  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DateTime.cs : When hour format is "hh", MS.NET (maybe incorrectly)
