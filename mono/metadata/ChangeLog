@@ -1,3 +1,7 @@
+2002-06-21  Miguel de Icaza  <miguel@ximian.com>
+
+	* image.c (do_mono_image_open): Initialize reference count,
+	otherwise we leak the MonoImage.
 
 Fri Jun 21 19:16:47 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
