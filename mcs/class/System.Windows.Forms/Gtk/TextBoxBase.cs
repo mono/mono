@@ -294,7 +294,7 @@ namespace System.Windows.Forms {
 		public void Paste()
 		{
 			// Wait for my gtk-sharp patch
-			TextBuffer.PasteClipboard(Gtk.Clipboard.Get (Gdk.Atom.Intern("GDK_NONE", false)), true);
+			// TextBuffer.PasteClipboard(Gtk.Clipboard.Get (Gdk.Atom.Intern("GDK_NONE", false)), true);
 		}
 
 		[MonoTODO]
