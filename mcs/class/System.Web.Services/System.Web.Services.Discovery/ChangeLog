@@ -1,3 +1,8 @@
+2004-06-13  Gert Driesen <drieseng@users.sourceforge.net>
+
+	* SchemaReference.cs: corrected namespace
+	* SoapBinding.cs: corrected namespace
+
 2004-06-10  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* DiscoveryClientProtocol.cs: In DiscoverAny, catch expection of type

@@ -16,12 +16,12 @@ using System.Xml.Serialization;
 
 namespace System.Web.Services.Discovery {
 
-	[XmlRootAttribute("schemaRef", Namespace="http://schemas/xmlsoap.org/disco/schema/", IsNullable=true)]
+	[XmlRootAttribute("schemaRef", Namespace="http://schemas.xmlsoap.org/disco/schema/", IsNullable=true)]
 	public sealed class SchemaReference : DiscoveryReference {
 
 		#region Fields
 		
-		public const string Namespace = "http://schemas/xmlsoap.org/disco/schema/";
+		public const string Namespace = "http://schemas.xmlsoap.org/disco/schema/";
 
 		private string defaultFilename;
 		private string href;

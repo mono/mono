@@ -12,12 +12,12 @@ using System.Xml.Serialization;
 
 namespace System.Web.Services.Discovery {
 
-	[XmlRootAttribute("soap", Namespace="http://schemas/xmlsoap.org/disco/schema/soap/", IsNullable=true)]
+	[XmlRootAttribute("soap", Namespace="http://schemas.xmlsoap.org/disco/soap/", IsNullable=true)]
 	public sealed class SoapBinding  {
 
 		#region Fields
 		
-		public const string Namespace = "http://schemas/xmlsoap.org/disco/schema/soap/";
+		public const string Namespace = "http://schemas.xmlsoap.org/disco/soap/";
 
 		private string address;
 		private XmlQualifiedName binding;
