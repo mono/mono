@@ -201,6 +201,7 @@ System.Web.UI.WebControls/DataGridItem.cs
 System.Web.UI.WebControls/DataGridItemCollection.cs
 System.Web.UI.WebControls/DataGridItemEventArgs.cs
 System.Web.UI.WebControls/DataGridItemEventHandler.cs
+System.Web.UI.WebControls/DataGridLinkButton.cs
 System.Web.UI.WebControls/DataGridPageChangedEventArgs.cs
 System.Web.UI.WebControls/DataGridPageChangedEventHandler.cs
 System.Web.UI.WebControls/DataGridPagerStyle.cs

@@ -1,3 +1,7 @@
+2002-10-28  Duncan Mak  <duncan@ximian.com>
+
+	* list: added DataGridLinkButton.cs.
+
 2002-10-27  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* list: added WebEncoding.cs
