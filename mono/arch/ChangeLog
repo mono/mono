@@ -1,3 +1,7 @@
+2004-07-23  zovarga  <vargaz@freemail.hu>
+
+	* amd64/amd64-codegen.h: Ongoing JIT work.
+
 2004-06-30  Zoltan Varga  <vargaz@freemail.hu>
 
 	* sparc/sparc-codegen.h: Add SPARC64 support.
