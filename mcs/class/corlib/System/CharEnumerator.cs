@@ -15,12 +15,14 @@ namespace System
 	   {
 		 private string str;
 		 private int idx;
+		 private int len;
 			 
            // Constructor
 		 internal CharEnumerator (string s)
 		 {
 			    str = s;
 			    idx = -1;
+				len = s.Length;
 		 }
 			 
 		 // Property
@@ -52,11 +54,17 @@ namespace System
 			 
 		 public bool MoveNext ()
 		 {
-			    if (idx > str.Length) {
-					  idx = -1;
+  			    if (len < 0)
 					  return false;
-			    } else
-					  return true;
+
+			    idx++;
+
+			    if (idx > len) {
+					  idx = -2;
+					  return false;
+			    }
+			    
+			    return true;
 		 }
 			 
 		 public void Reset ()
