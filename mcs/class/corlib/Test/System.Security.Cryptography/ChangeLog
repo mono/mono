@@ -1,3 +1,8 @@
+2003-11-13  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* ProtectedDataTest.cs: New. Unit tests for ProtectedData (1.2).
+	* ProtectedMemoryTest.cs: New. Unit tests for ProtectedMemory (1.2).
+
 2003-11-11  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* Rfc2898DeriveBytesTest.cs: More tests for Reset and keys longer than
