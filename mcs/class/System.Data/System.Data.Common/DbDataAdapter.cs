@@ -362,10 +362,7 @@ namespace System.Data.Common {
 
 		public override int Update (DataSet dataSet) 
 		{
-			int result = 0;
-			foreach (DataTable table in dataSet.Tables)
-				result += Update (table);	
-			return result;
+			return Update (dataSet, DefaultSourceTableName);
 		}
 
 		public int Update (DataTable dataTable) 
