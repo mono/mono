@@ -439,6 +439,7 @@ namespace Mono.Xml.Xsl
 
 	class XsltGenerateId : XPathFunction 
 	{
+		//FIXME: generate short string, not the huge thing it makes now
 		Expression arg0;
 		public XsltGenerateId (FunctionArguments args) : base (args)
 		{
@@ -615,6 +616,8 @@ namespace Mono.Xml.Xsl
 			if (xn == null)
 				return String.Empty;
 			XmlNode n = xn.GetNode ();
+			if (n.OwnerDocument == null)
+				return String.Empty;
 			XmlDocumentType doctype = n.OwnerDocument.DocumentType;
 			if (doctype == null)
 				return String.Empty;

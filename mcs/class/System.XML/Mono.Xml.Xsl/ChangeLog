@@ -1,5 +1,10 @@
 2005-02-08  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XslFunctions.cs : Fixed unparsed-entity-uri() that might result in
+	  NullReferenceException. Patch by Andrew Skiba.
+
+2005-02-08  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XslOutput.cs : MS.NET recovers from unknown encoding according to
 	  XSLT spec 16.1. Patch by Andrew Skiba.
 
