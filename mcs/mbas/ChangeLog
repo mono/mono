@@ -1,4 +1,7 @@
 2002-05-31  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
+	* squashed some reduce/reduce conflicts out of mb-parser.jay
+
+2002-05-31  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
 	* merged codegen.cs from mcs
 	* altered Driver.cs to work with new codegen.cs
 

@@ -291,11 +291,27 @@ namespace Mono.MonoBASIC
 compilation_unit
 	: opt_imports_directives 
 	  opt_attributes
-	  opt_namespace_member_declarations 
+	  opt_declarations 
 	  EOF
 	  {
 		$$ = $3;
 	  }
+	;
+	
+opt_declarations
+	: /* empty */
+	| declarations
+	;
+
+declarations
+	: declaration
+	| declarations declaration
+	;
+	
+declaration
+	: namespace_declaration
+	| module_declaration
+	| class_declaration
 	;
 
 qualified_identifier
@@ -305,7 +321,6 @@ qualified_identifier
 	    $$ = (($1).ToString ()) + "." + ($3.ToString ()); 
 	  }
 	;
-
 opt_imports_directives
 	: /* empty */
 	| imports_directives
@@ -349,8 +364,6 @@ namespace_name
 	: qualified_identifier
 	;
 
-
-
 opt_namespace_member_declarations
 	: /* empty */
 	| namespace_member_declarations
@@ -364,19 +377,9 @@ namespace_member_declarations
 namespace_member_declaration
 	: namespace_declaration
 	| module_declaration
-	  {
-		int mod_flags = 0;
-		string name = "";
-
-		if ($1 is Class){
-			Class c = (Class) $1;
-			mod_flags = c.ModFlags;  //TODO: Add ModuleAttribute
-			name = c.Name;
-		} else
-			break;
-
-	  }
-	| type_declaration
+	| class_declaration
+	;
+/*	| type_declaration
 	  {
 		int mod_flags = 0;
 		string name = "";
@@ -396,10 +399,11 @@ namespace_member_declaration
 	;
 
 type_declaration
-	: /* empty */
+	: /* empty *  /
 	| class_declaration
 	;
 
+*/
 
 class_declaration
 	: /* opt_attributes opt_modifiers */
@@ -434,8 +438,8 @@ class_member_declarations
 	;
 
 class_member_declaration
-	: type_declaration
-	| sub_declaration
+	: /* type_declaration
+	| */ sub_declaration
 	;
 
 sub_declaration
