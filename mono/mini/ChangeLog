@@ -1,3 +1,8 @@
+
+Sun Feb 22 22:25:19 CET 2004 Paolo Molaro <lupus@ximian.com>
+
+	* mini-x86.c: fixed reg allocation for div/rem.
+
 2004-02-22  Miguel de Icaza  <miguel@ximian.com>
 
 	* driver.c (mono_main): Report some configuratio options on --version.
