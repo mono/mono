@@ -730,5 +730,26 @@ namespace System.Reflection {
 			}
 			return true;
 		}
+
+		// Result isn't affected by overrides (like Assert, Deny and PermitOnly)
+		internal bool Demand (PermissionSet ps) 
+		{
+			// have we been explicitely denied this permission ?
+			if (DeniedPermissionSet != null) {
+				if (ps.IsSubsetOf (DeniedPermissionSet)) {
+					return false;
+				}
+			}
+
+			// is it part of the optional permissions requested by the assembly ?
+			if (_optional != null) {
+				// there is! so we can only request a subset of it
+				if (!ps.IsSubsetOf (_optional)) {
+					return false;
+				}
+			}
+
+			return ps.IsSubsetOf (GrantedPermissionSet);
+		}
 	}
 }

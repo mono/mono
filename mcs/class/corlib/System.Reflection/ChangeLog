@@ -1,3 +1,7 @@
+2004-08-30  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Assembly.cs: Added internal Demand(PermissionSet) for CAS.
+
 2004-08-30  Zoltan Varga  <vargaz@freemail.hu>
 
 	* MethodBase.cs (GetMethodFromHandle): Avoid passing a valuetype to
