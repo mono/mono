@@ -101,22 +101,34 @@ dist-local: dist-default
 
 test-compiler-jit: multi test-compiler-jit-real
 
+TEST_TAG = mcs
+
 test-compiler-jit-real:
-	@rm -f *.exe ; \
-	echo "Flags \"$(TEST_RUNTIME)\" ... " ; \
+	@rm -f *.exe $(TEST_TAG)-*.log ; \
+	echo 'Running $(TEST_TAG) tests with flags "$(TEST_RUNTIME)" ... ' ; \
 	for i in $(TEST_SOURCES) ; do \
+	    logfile="$(TEST_TAG)-$$i.log" ; \
+	    rm -f $$logfile ; \
 	    echo -n "$$i: "; \
-	    if $(INTERNAL_MCS) $$i.cs >/dev/null ; then \
-		true ; \
+	    echo "*** $$i compilation" > $$logfile ; \
+	    if $(INTERNAL_MCS) $$i.cs >> $$logfile 2>&1 ; then \
+		: ; \
 	    else \
-	        echo FAILED COMPILATION ; exit 1; \
+		echo "FAIL: $$i compilation" >> $$logfile ; \
+	        echo FAILED COMPILATION ; \
+		failed="$$failed $$i" ; \
 	    fi ; \
-	    if $(TEST_RUNTIME) ./$$i.exe >/dev/null ; then \
+	    echo "*** $$i execution" >> $$logfile ; \
+	    if $(TEST_RUNTIME) ./$$i.exe >> $$logfile 2>&1 ; then \
+	        rm -f $$logfile ; \
 	        echo OK ; \
 	    else \
-	        echo FAILED ; exit 1; \
+		echo "FAIL: $$i execution" >> $$logfile ; \
+	        echo FAILED ; \
+		failed="$$failed $$i" ; \
 	    fi ; \
-	done
+	done ; \
+	if test -z "$$failed"; then :; else echo "Failing tests: $$failed"; exit 1; fi
 
 GENERIC_KNOWN_FAILURES = test-55
 
@@ -124,31 +136,17 @@ GENERIC_KNOWN_FAILURES = test-55
 # Tests the generics compiler, and excludes GENERIC_KNOWN_FAILURES from the build
 #
 test-generic:
-	(sources=`echo $(TEST_SOURCES) | tr ' ' '\n' | grep -v $(GENERIC_KNOWN_FAILURES)| tr '\n' ' ' `;  \
-	make INTERNAL_MCS="mono ../gmcs/gmcs.exe" test-compiler-jit-real TEST_SOURCES="$$sources")
+	sources=`echo $(TEST_SOURCES) | tr ' ' '\n' | grep -v $(GENERIC_KNOWN_FAILURES)| tr '\n' ' ' `;  \
+	make INTERNAL_MCS="mono ../gmcs/gmcs.exe" test-compiler-jit-real TEST_SOURCES="$$sources" TEST_TAG=gmcs
 
 #
 # Tests the 2.0 features
 #
 test-2:
-	make INTERNAL_MCS="mono ../mcs/mcs.exe -v2" test-compiler-jit-real TEST_SOURCES="$(TEST2_SOURCES)"
+	make INTERNAL_MCS="mono ../mcs/mcs.exe -v2" test-compiler-jit-real TEST_SOURCES="$(TEST2_SOURCES)" TEST_TAG=mcs-v2
 
 test-unsafe-compiler-jit:
-	@echo "Running UNSAFE tests ..." ; \
-	echo "Flags \"$(TEST_RUNTIME)\" ... " ; \
-	for i in $(UNSAFE_SOURCES) ; do \
-	    echo -n "$$i: "; \
-	    if $(INTERNAL_MCS) /unsafe $$i.cs >/dev/null ; then \
-		true ; \
-	    else \
-	        echo FAILED COMPILATION ; exit 1; \
-	    fi ; \
-	    if $(TEST_RUNTIME) ./$$i.exe >/dev/null ; then \
-	        echo OK ; \
-	    else \
-	        echo FAILED ; exit 1; \
-	    fi ; \
-	done
+	make INTERNAL_MCS="$(INTERNAL_MCS) /unsafe" test-compiler-jit-real TEST_SOURCES="$(UNSAFE_SOURCES)" TEST_TAG=mcs-unsafe
 
 #
 # Tests that require separate compilation

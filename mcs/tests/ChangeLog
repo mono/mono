@@ -1,5 +1,9 @@
 2004-04-21  Raja R Harinath  <rharinath@novell.com>
 
+	* Makefile (test-compiler-jit-real): Create log files for failed
+	testcases.
+	(test-generic, test-2, test-unsafe-compiler-jit): Update.
+
 	* test-237.cs: Test for #56442.
 
 2004-04-16  Raja R Harinath  <rharinath@novell.com>
