@@ -1,0 +1,4 @@
+2004-09-10  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* MessageQueuePermissionAttributeTest.cs: New. Unit tests for Message
+	QueuePermissionAttribute.
