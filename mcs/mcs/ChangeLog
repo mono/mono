@@ -1,5 +1,9 @@
 2002-08-23  Martin Baulig  <martin@gnome.org>
 
+	* decl.cs (MemberCache.AddMethods): Ignore varargs methods.
+
+2002-08-23  Martin Baulig  <martin@gnome.org>
+
 	* struct.cs (MyStructInfo.ctor): Make this work with empty
 	structs; it's not allowed to use foreach() on null.
 
