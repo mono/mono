@@ -263,7 +263,7 @@ namespace Cairo {
 		public static extern double cairo_current_miter_limit (IntPtr cr);
 
                 [DllImport (CairoImp)]
-                public static extern void cairo_current_matrix (IntPtr cr, out IntPtr matrix);
+                public static extern void cairo_current_matrix (IntPtr cr, IntPtr matrix);
 
                 [DllImport (CairoImp)]
                 public static extern IntPtr cairo_current_target_surface (IntPtr cr);

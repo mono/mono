@@ -17,7 +17,7 @@ namespace Cairo {
 
         public class Matrix
         {
-                internal IntPtr matrix;
+                internal IntPtr matrix = IntPtr.Zero;
 
                 public Matrix ()
                         : this (Create ())
@@ -26,6 +26,9 @@ namespace Cairo {
 
                 internal Matrix (IntPtr ptr)
                 {
+						if (ptr == IntPtr.Zero)
+							ptr =  Create ();
+
                         matrix = ptr;
                 }
 

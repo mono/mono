@@ -88,6 +88,11 @@ namespace Cairo {
 			Dispose (false);
 		}
 
+		public void Show (Graphics gr, int width, int height) 
+		{
+			CairoAPI.cairo_show_surface (gr.Handle, surface, width,  height);
+		}
+
 		void IDisposable.Dispose ()
 		{
 			Dispose (true);
@@ -112,7 +117,7 @@ namespace Cairo {
                 public int Repeat {
                         set {
                                 CairoAPI.cairo_surface_set_repeat (surface, value);
-                        }
+                        } 
                 }
 
                 public Cairo.Matrix Matrix {
@@ -121,10 +126,8 @@ namespace Cairo {
                         }
 
                         get {
-                                IntPtr p;
-                                
+                                IntPtr p = IntPtr.Zero;
                                 CairoAPI.cairo_surface_get_matrix (surface, out p);
-
                                 return new Cairo.Matrix (p);
                         }
                 }

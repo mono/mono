@@ -21,7 +21,6 @@ namespace Cairo {
 
                 internal IntPtr _create (string family, FontSlant fcslant, FontWeight fcweight)
                 {
-                        IntPtr ft_font = IntPtr.Zero;
 	                IntPtr font = IntPtr.Zero;
 	                IntPtr pattern = IntPtr.Zero;
 	                IntPtr library = IntPtr.Zero;
@@ -29,7 +28,7 @@ namespace Cairo {
 
 	                pattern = FontConfig.FcPatternCreate ();                               
 	                if (pattern == IntPtr.Zero)
-		                return ft_font;
+		                return font;
 
 	                FontConfig.FcPatternAddString (pattern, FontConfig.FC_FAMILY, family);
 	                FontConfig.FcPatternAddInteger (pattern, FontConfig.FC_SLANT, (int) fcslant);
@@ -38,12 +37,12 @@ namespace Cairo {
 	                error = FreeType.FT_Init_FreeType (out library);                            
                 	if (error != 0) {
                                 FontConfig.FcPatternDestroy (pattern);
-                		return ft_font;
+                		return font;
                 	}
 
                 	font = CairoAPI.cairo_ft_font_create (library, pattern);
                 	if (font == IntPtr.Zero)
-		                return ft_font;
+		                return font;
 
                         /*
 	                ft_font = (cairo_ft_font_t *) font;
@@ -56,7 +55,7 @@ namespace Cairo {
 			          0, 0);*/
 
                         FontConfig.FcPatternDestroy (pattern);
-	                return ft_font;
+	                return font;
                 }
 
 

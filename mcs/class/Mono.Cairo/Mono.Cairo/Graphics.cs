@@ -360,9 +360,10 @@ namespace Cairo {
                         }
 
                         get {
-                                IntPtr p;
-                                CairoAPI.cairo_current_matrix (state, out p);
-                                return new Cairo.Matrix (p);
+								IntPtr p = CairoAPI.cairo_matrix_create ();
+								CairoAPI.cairo_current_matrix (state, p);
+                                Matrix mat = new Cairo.Matrix (p);
+								return mat;
                         }
                 }
 
