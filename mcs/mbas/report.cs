@@ -119,8 +119,6 @@ namespace Mono.MonoBASIC {
 			if (WarningsAreErrors)
 				Error (code, l, text);
 			else {
-				string row;
-				
 				if (Location.IsNull (l))
 					Console.WriteLine(String.Format("{0} warning BC{2:0000}: {3}",
 						l.Name, code, text));

@@ -226,12 +226,12 @@ namespace Mono.Languages
 			{
 				errors = parser.ParseFile(fileName);
 			} 
-			catch (FileNotFoundException ex)
+			catch (FileNotFoundException)
 			{
 				Report.Error(2001, "Source file \'" + fileName + "\' could not be found!!!");
 				return 1;
 			}
-			catch (DirectoryNotFoundException ex)
+			catch (DirectoryNotFoundException)
 			{
 				Report.Error(2001, "Source file \'" + fileName + "\' could not be found!!!");
 				return 1;

@@ -1,4 +1,4 @@
-﻿//
+//
 // Mono.MonoBASIC.Tokenizer.cs: The Tokenizer for the MonoBASIC compiler
 //
 // Author: A Rafael D Teixeira (rafaelteixeirabr@hotmail.com)
@@ -1067,11 +1067,11 @@ namespace Mono.MonoBASIC
             	           		  	  enUSculture,
         	                   	  	  DateTimeStyles.NoCurrentDateDefault | DateTimeStyles.AllowWhiteSpaces);
  			}
-	 		catch (FormatException fe)
+	 		catch (FormatException)
  			{
 				Report.Error (1, Location, "Invalid date literal");		//TODO: What is the correct error number and message?
  			}
-	 		catch (Exception e)
+	 		catch (Exception)
  			{
 				Report.Error (1, Location, "Error parsing date literal");	//TODO: What is the correct error number and message?
  			}
