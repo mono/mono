@@ -1,8 +1,12 @@
 2004-12-09  Alp Toker  <alp@atoker.com>
 
 	* cilc.cs:
-	Support inheritance within a single namespace
-	Enhance CodeWriter
+	Support inheritance (within a single namespace).
+	Enhance CodeWriter.
+	Handle nested namespaces properly.
+	Generate forward type declarations.
+	Use the real type, not MonoObject, for function parameters.
+	Ignore non-public types for now.
 
 2004-12-08  Alp Toker  <alp@atoker.com>
 

@@ -9,7 +9,7 @@ using System.Collections;
 
 class cilc
 {
-	public static CodeWriter C, H, Cindex, Hindex;
+	public static CodeWriter C, H, Cindex, Hindex, Hdecls;
 	static string ns, dllname;
 	static string cur_type, CurType;
 	static string target_dir;
@@ -64,71 +64,95 @@ class cilc
 		Type[] types = a.GetTypes ();
 
 		ns = types[0].Namespace;
-		Hindex = new CodeWriter (target_dir + ns.ToLower () + ".h");
-		Cindex = new CodeWriter (target_dir + ns.ToLower () + ".c");
+		Hindex = new CodeWriter (target_dir + NsToFlat (ns).ToLower () + ".h");
+		Hdecls = new CodeWriter (target_dir + NsToFlat (ns).ToLower () + "-decls.h");
+		Cindex = new CodeWriter (target_dir + NsToFlat (ns).ToLower () + ".c");
 
-		string Hindex_id = "__" + ns.ToUpper () + "_H__";
+		string Hindex_id = "__" + NsToFlat (ns).ToUpper () + "_H__";
 		Hindex.WriteLine ("#ifndef " + Hindex_id);
 		Hindex.WriteLine ("#define " + Hindex_id);
 		Hindex.WriteLine ();
+
+		string Hdecls_id = "__" + NsToFlat (ns).ToUpper () + "_DECLS_H__";
+		Hdecls.WriteLine ("#ifndef " + Hdecls_id);
+		Hdecls.WriteLine ("#define " + Hdecls_id);
+		Hdecls.WriteLine ();
 
 		Cindex.WriteLine ("#include <glib.h>");
 		Cindex.WriteLine ("#include <mono/jit/jit.h>");
 		Cindex.WriteLine ();
 
-		Cindex.WriteLine ("MonoDomain *" + CamelToC (ns) + "_get_mono_domain (void)");
+		Cindex.WriteLine ("MonoDomain *" + NsToC (ns) + "_get_mono_domain (void)");
 		Cindex.WriteLine ("{");
-		Cindex.Indent ();
 		Cindex.WriteLine ("static MonoDomain *domain = NULL;");
 		Cindex.WriteLine ("if (domain != NULL) return domain;");
 		Cindex.WriteLine ("domain = mono_jit_init (\"cilc\");");
 		Cindex.WriteLine ();
 
 		Cindex.WriteLine ("return domain;");
-		Cindex.Outdent ();
 		Cindex.WriteLine ("}");
 		Cindex.WriteLine ();
 
-		Cindex.WriteLine ("MonoAssembly *" + CamelToC (ns) + "_get_mono_assembly (void)");
+		Cindex.WriteLine ("MonoAssembly *" + NsToC (ns) + "_get_mono_assembly (void)");
 		Cindex.WriteLine ("{");
-		Cindex.Indent ();
 		Cindex.WriteLine ("static MonoAssembly *assembly = NULL;");
-		Cindex.WriteLine ("assembly = mono_domain_assembly_open (" + CamelToC (ns) + "_get_mono_domain (), \"" + dllname + "\");");
+		Cindex.WriteLine ("assembly = mono_domain_assembly_open (" + NsToC (ns) + "_get_mono_domain (), \"" + dllname + "\");");
 		Cindex.WriteLine ();
 
 		Cindex.WriteLine ("return assembly;");
-		Cindex.Outdent ();
 		Cindex.WriteLine ("}");
 
-		foreach (Type t in types) TypeGen (t);
+		//TODO: parse given .h files here and register the type names
+
+		foreach (Type t in types) {
+			if (t.IsNotPublic) {
+				Console.WriteLine ("Ignoring non-public type: " + t.Name);
+				continue;
+			}
+
+			if (!t.IsClass) {
+				Console.WriteLine ("Ignoring unrecognised type: " + t.Name);
+				continue;
+			}
+
+			RegisterCsType (t);
+		}
+
+		foreach (Type t in registered_types)
+			TypeGen (t);
 
 		Hindex.WriteLine ();
 		Hindex.WriteLine ("#endif /* " + Hindex_id + " */");
+		
+		Hdecls.WriteLine ();
+		Hdecls.WriteLine ("#endif /* " + Hdecls_id + " */");
 
 		Cindex.Close ();
 		Hindex.Close ();
+		Hdecls.Close ();
 	}
 
 	static void TypeGen (Type t)
 	{
 		//TODO: we only handle ordinary classes for now
-		if (!t.IsClass) {
-			Console.WriteLine ("Ignoring unrecognised type: " + t.Name);
-			return;
-		} else if (t.IsSubclassOf (typeof (Delegate))) {
+		/*
+		  else if (t.IsSubclassOf (typeof (Delegate))) {
 			Console.WriteLine ("Ignoring delegate: " + t.Name);
 			return;
 		}
+		*/
 
+		cur_type = NsToC (ns) + "_" + CamelToC (t.Name);
+		CurType = NsToFlat (ns) + t.Name;
 
 		//ns = t.Namespace;
-		string fname = ns.ToLower () + t.Name.ToLower ();
+		string fname = NsToFlat (ns).ToLower () + t.Name.ToLower ();
 		C = new CodeWriter (target_dir + fname + ".c");
 		H = new CodeWriter (target_dir + fname + ".h");
 		Hindex.WriteLine ("#include <" + fname + ".h" + ">");
 
 
-		string H_id = "__" + ns.ToUpper () + "_" + t.Name.ToUpper () + "_H__";
+		string H_id = "__" + NsToFlat (ns).ToUpper () + "_" + t.Name.ToUpper () + "_H__";
 		H.WriteLine ("#ifndef " + H_id);
 		H.WriteLine ("#define " + H_id);
 		H.WriteLine ();
@@ -141,7 +165,9 @@ class cilc
 		H.WriteLine ();
 		
 		if (t.BaseType.Namespace == t.Namespace)
-			H.WriteLine ("#include \"" + t.BaseType.Namespace.ToLower () + t.BaseType.Name.ToLower () + ".h\"");
+			H.WriteLine ("#include \"" + NsToFlat (t.BaseType.Namespace).ToLower () + t.BaseType.Name.ToLower () + ".h\"");
+		
+		H.WriteLine ("#include \"" + NsToFlat (t.Namespace).ToLower () + "-decls.h\"");
 
 		H.WriteLine ();
 
@@ -175,24 +201,16 @@ class cilc
 		//TODO: we needn't split out each enum into its own file
 		//TODO: just use glib-mkenums
 
-		cur_type = CamelToC (ns) + "_" + CamelToC (t.Name);
-		CurType = ns + t.Name;
-
 		C.WriteLine ("GType " + cur_type + "_get_type (void)");
 		C.WriteLine ("{");
-		C.Indent ();
 		C.WriteLine ("static GType etype = 0;");
 		C.WriteLine ("etype = g_enum_register_static (\"" + "\", NULL);");
 		C.WriteLine ("return etype;");
-		C.Outdent ();
 		C.WriteLine ("}");
 	}
 
 	static void ClassGen (Type t)
 	{
-		cur_type = CamelToC (ns) + "_" + CamelToC (t.Name);
-		CurType = ns + t.Name;
-
 		//TODO: what flags do we want for GetEvents and GetConstructors?
 
 		//events as signals
@@ -204,7 +222,7 @@ class cilc
 		H.WriteLine ();
 		
 		{
-			string NS = ns.ToUpper ();
+			string NS = NsToC (ns).ToUpper ();
 			string T = CamelToC (t.Name).ToUpper ();
 			string NST = NS + "_" + T;
 			string NSTT = NS + "_TYPE_" + T;
@@ -217,42 +235,42 @@ class cilc
 			H.WriteLine ("#define " + NST + "_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), " + NSTT + ", " + CurType + "Class))");
 		}
 		
-		H.WriteLine ();
-		H.WriteLine ("typedef struct _" + CurType + " " + CurType + ";");
-		H.WriteLine ();
+		if (!C.IsDuplicate) {
+			Hdecls.WriteLine ("typedef struct _" + CurType + " " + CurType + ";");
+			Hdecls.WriteLine ("typedef struct _" + CurType + "Class " + CurType + "Class;");
+			Hdecls.WriteLine ();
+		}
 
 		H.WriteLine ();
-		H.WriteLine ("typedef struct _" + CurType + "Class " + CurType + "Class;");
+		//H.WriteLine ("typedef struct _" + CurType + " " + CurType + ";");
+		
+		//H.WriteLine ();
+		//H.WriteLine ("typedef struct _" + CurType + "Class " + CurType + "Class;");
 		H.WriteLine ("typedef struct _" + CurType + "Private " + CurType + "Private;");
 		H.WriteLine ();
 		H.WriteLine ("struct _" + CurType);
 		H.WriteLine ("{");
-		H.Indent ();
 
-		//TODO: handle external namespaces
 		string ParentName;
-	 	if (t.BaseType.Namespace == t.Namespace)
-			ParentName = t.BaseType.Namespace + t.BaseType.Name;
+	 	if (IsRegistered (t.BaseType))
+			ParentName = NsToFlat (t.BaseType.Namespace) + t.BaseType.Name;
 		else
 			ParentName = "GObject";
 
 		//H.WriteLine ("GObject parent_instance;");
 		H.WriteLine (ParentName + " parent_instance;");
 		H.WriteLine (CurType + "Private *priv;");
-		H.Outdent ();
 		H.WriteLine ("};");
 		H.WriteLine ();
 		H.WriteLine ("struct _" + CurType + "Class");
 		H.WriteLine ("{");
-		H.Indent ();
-		H.WriteLine (ParentName + "Class parent_class;");
+		H.WriteLine (ParentName + "Class parent_class;" + " /* inherits " + t.BaseType.Namespace + " " + t.BaseType.Name + " */");
 		H.WriteLine ();
 		
 		//TODO: event arguments
 		foreach (EventInfo ei in events)
 			H.WriteLine ("void (* " + CamelToC (ei.Name) + ") (" + CurType + " *thiz" + ");");
 		
-		H.Outdent ();
 		H.WriteLine ("};");
 		H.WriteLine ();
 
@@ -261,9 +279,7 @@ class cilc
 		//private struct
 		C.WriteLine ("struct _" + CurType + "Private");
 		C.WriteLine ("{");
-		C.Indent ();
 		C.WriteLine ("MonoObject *mono_object;");
-		C.Outdent ();
 		C.WriteLine ("};");
 
 		C.WriteLine ();
@@ -271,13 +287,11 @@ class cilc
 		//events
 		if (events.Length != 0) {
 			C.WriteLine ("enum {");
-			C.Indent ();
 
 			foreach (EventInfo ei in events)
 				C.WriteLine (CamelToC (ei.Name).ToUpper () + ",");
 
 			C.WriteLine ("LAST_SIGNAL");
-			C.Outdent ();
 			C.WriteLine ("};");
 			C.WriteLine ();
 		}
@@ -294,19 +308,17 @@ class cilc
 
 		C.WriteLine ("static MonoClass *" + cur_type + "_get_mono_class (void)");
 		C.WriteLine ("{");
-		C.Indent ();
 		C.WriteLine ("MonoAssembly *assembly;");
 		C.WriteLine ("static MonoClass *class = NULL;");
 		C.WriteLine ("if (class != NULL) return class;");
 
-		C.WriteLine ("assembly = (MonoAssembly*) " + CamelToC (ns) + "_get_mono_assembly ();");
+		C.WriteLine ("assembly = (MonoAssembly*) " + NsToC (ns) + "_get_mono_assembly ();");
 		C.WriteLine ("class = (MonoClass*) mono_class_from_name ((MonoImage*) mono_assembly_get_image (assembly)" + ", \"" + ns + "\", \"" + t.Name + "\");");
 
 		C.WriteLine ("mono_class_init (class);");
 		C.WriteLine ();
 
 		C.WriteLine ("return class;");
-		C.Outdent ();
 		C.WriteLine ("}");
 
 		C.WriteLine ();
@@ -314,9 +326,7 @@ class cilc
 		//generate the GObject init function
 		C.WriteLine ("static void " + cur_type + "_init (" + CurType + " *thiz" + ")");
 		C.WriteLine ("{");
-		C.Indent ();
 		C.WriteLine ("thiz->priv = g_new0 (" + CurType + "Private, 1);");
-		C.Outdent ();
 		C.WriteLine ("}");
 
 		C.WriteLine ();
@@ -325,7 +335,6 @@ class cilc
 		//generate the GObject class init function
 		C.WriteLine ("static void " + cur_type + "_class_init (" + CurType + "Class *klass" + ")");
 		C.WriteLine ("{");
-		C.Indent ();
 
 		C.WriteLine ("GObjectClass *object_class = G_OBJECT_CLASS (klass);");
 		C.WriteLine ("parent_class = g_type_class_peek_parent (klass);");
@@ -334,16 +343,14 @@ class cilc
 		foreach (EventInfo ei in events)
 			EventGen (ei, t);
 		
-		C.Outdent ();
 		C.WriteLine ("}");
-
+		
 		C.WriteLine ();
 
 
 		//generate the GObject get_type function
 		C.WriteLine ("GType " + cur_type + "_get_type (void)", H, ";");
 		C.WriteLine ("{");
-		C.Indent ();
 		C.WriteLine ("static GType object_type = 0;");
 		C.WriteLine ("g_type_init ();");
 		C.WriteLine ();
@@ -351,7 +358,6 @@ class cilc
 		C.WriteLine ();
 		C.WriteLine ("static const GTypeInfo object_info =");
 		C.WriteLine ("{");
-		C.Indent ();
 		C.WriteLine ("sizeof (" + CurType + "Class),");
 		C.WriteLine ("(GBaseInitFunc) NULL,");
 		C.WriteLine ("(GBaseFinalizeFunc) NULL,");
@@ -361,19 +367,16 @@ class cilc
 		C.WriteLine ("sizeof (" + CurType + "),");
 		C.WriteLine ("0, /* n_preallocs */");
 		C.WriteLine ("(GInstanceInitFunc) " + cur_type + "_init,");
-		C.Outdent ();
 		C.WriteLine ("};");
 		C.WriteLine ();
 		
-		//FIXME: inheritance
 		string parent_type = "G_TYPE_OBJECT";
-	 	if (t.BaseType != null && t.BaseType.Namespace == t.Namespace)
-			parent_type = t.BaseType.Namespace.ToUpper () + "_TYPE_" + CamelToC (t.BaseType.Name).ToUpper ();
+	 	if (IsRegistered (t.BaseType))
+			parent_type = NsToC (t.BaseType.Namespace).ToUpper () + "_TYPE_" + CamelToC (t.BaseType.Name).ToUpper ();
 
 		C.WriteLine ("object_type = g_type_register_static (" + parent_type + ", \"" + CurType + "\", &object_info, 0);");
 		C.WriteLine ();
 		C.WriteLine ("return object_type;");
-		C.Outdent ();
 		C.WriteLine ("}");
 
 
@@ -398,11 +401,33 @@ class cilc
 		H.WriteLine ("G_END_DECLS");
 	}
 
-	static string CsTypeToC (string p)
+	//FIXME: this won't work in the general case. arraylist should contain just type names, not Types
+	static ArrayList registered_types = new ArrayList ();
+
+	static bool IsRegistered (Type t)
 	{
+		return registered_types.Contains (t);
+	}
+	
+	static void RegisterCsType (Type t)
+	{
+		if (IsRegistered (t))
+			return;
+
+		registered_types.Add (t);
+	}
+
+	static string CsTypeToC (Type t)
+	{
+		//TODO: use this method everywhere
+
+		//if (t.Namespace == ns)
+		if (IsRegistered (t))
+			return NsToFlat (t.Namespace) + t.Name + " *";
+		
 		string ptype = "MonoClass *";
 
-		switch (p)
+		switch (t.FullName)
 		{
 			case "System.String":
 				ptype = "const gchar *";
@@ -424,15 +449,14 @@ class cilc
 
 		C.WriteLine ();
 		C.WriteLine ("signals[" + name.ToUpper () + "] = g_signal_new (");
-		C.Indent ();
 		C.WriteLine ("\"" + name + "\",");
 		C.WriteLine ("G_OBJECT_CLASS_TYPE (object_class),");
 		C.WriteLine ("G_SIGNAL_RUN_LAST,");
 		C.WriteLine ("G_STRUCT_OFFSET (" + CurType + "Class" + ", " + name + "),");
 		C.WriteLine ("NULL, NULL,");
 		C.WriteLine ("g_cclosure_marshal_VOID__VOID,");
-		C.WriteLine ("G_TYPE_NONE, 0);");
-		C.Outdent ();
+		C.WriteLine ("G_TYPE_NONE, 0");
+		C.WriteLine (");");
 	}
 
 	static void ConstructorGen (ConstructorInfo c, Type t)
@@ -495,10 +519,10 @@ class cilc
 
 		string params_arg = "NULL";
 		if (parameters.Length != 0)
-			params_arg = "params";
+			params_arg = "_mono_params";
 
 		string instance = "thiz";
-		string instance_arg = instance + "->priv->mono_object"; //+ CamelToC (t.Name);
+		string instance_arg = instance + "->priv->mono_object";
 
 		//TODO: also check, !static
 		if (inst) {
@@ -546,7 +570,7 @@ class cilc
 		for (int i = 0 ; i < parameters.Length ; i++) {
 			ParameterInfo p = parameters[i];
 			mycsargs += GetMonoType (Type.GetTypeCode (p.ParameterType));
-			myargs += CsTypeToC (p.ParameterType.ToString ()) + p.Name;
+			myargs += CsTypeToC (p.ParameterType) + p.Name;
 			if (i != parameters.Length - 1) {
 				mycsargs += ",";
 				myargs += ", ";
@@ -563,21 +587,18 @@ class cilc
 			C.WriteLine ("void " + myname + " (" + myargs + ")", H, ";");
 
 		C.WriteLine ("{");
-		C.Indent ();
 
 		C.WriteLine ("static MonoMethod *_mono_method = NULL;");
 		if (parameters.Length != 0) C.WriteLine ("gpointer " + params_arg + "[" + parameters.Length + "];");
 		if (ctor) {
 			C.WriteLine (CurType + " *" + instance + ";");
-			//C.WriteLine ("MonoObject *" + instance_arg + ";");
 			C.WriteLine ();
-			C.WriteLine (instance + " = g_object_new (" + ns.ToUpper () + "_TYPE_" + CamelToC (t.Name).ToUpper () + ", NULL);");
+			C.WriteLine (instance + " = g_object_new (" + NsToC (ns).ToUpper () + "_TYPE_" + CamelToC (t.Name).ToUpper () + ", NULL);");
 		}
 
 		C.WriteLine ();
 
 		C.WriteLine ("if (_mono_method == NULL) {");
-		C.Indent ();
 
 		//if (ctor) C.WriteLine ("MonoMethodDesc *_mono_method_desc = mono_method_desc_new (\":.ctor()\", FALSE);");
 		if (ctor) C.WriteLine ("MonoMethodDesc *_mono_method_desc = mono_method_desc_new (\":.ctor(" + mycsargs + ")\", FALSE);");
@@ -587,7 +608,6 @@ class cilc
 
 		C.WriteLine ("_mono_method = mono_method_desc_search_in_class (_mono_method_desc, " + cur_type + "_get_mono_class ());");
 
-		C.Outdent ();
 		C.WriteLine ("}");
 		C.WriteLine ();
 
@@ -598,7 +618,7 @@ class cilc
 		}
 		if (parameters.Length != 0) C.WriteLine ();
 
-		if (ctor) C.WriteLine (instance_arg + " = (MonoObject*) mono_object_new ((MonoDomain*) " + CamelToC (ns) + "_get_mono_domain ()" + ", " + cur_type + "_get_mono_class ());");
+		if (ctor) C.WriteLine (instance_arg + " = (MonoObject*) mono_object_new ((MonoDomain*) " + NsToC (ns) + "_get_mono_domain ()" + ", " + cur_type + "_get_mono_class ());");
 
 		//invoke the method
 		
@@ -609,7 +629,6 @@ class cilc
 
 		if (ctor) C.WriteLine ("return " + instance + ";");
 
-		C.Outdent ();
 		C.WriteLine ("}");
 	}
 
@@ -645,6 +664,18 @@ class cilc
 		}
 	}
 
+	static string NsToC (string s)
+	{
+		s = s.Replace ('.', '_');
+		return CamelToC (s);
+	}
+
+	static string NsToFlat (string s)
+	{
+		s = s.Replace (".", "");
+		return s;
+	}
+
 	static string CamelToC (string s)
 	{
 		//converts camel case to c-style
@@ -663,7 +694,9 @@ class cilc
 
 			o += cl;
 			prev_is_cap = is_cap;
-			if (c == '_') prev_is_cap = true;
+
+			if (c == '_')
+				prev_is_cap = true;
 		}
 
 		return o;
@@ -679,11 +712,14 @@ class CodeWriter
 		Init (fname);
 	}
 
+	public bool IsDuplicate = false;
+
 	void Init (string fname)
 	{
 		if (File.Exists (fname)) {
 			string newfname = fname + ".x";
 			Console.WriteLine ("Warning: File " + fname + " already exists, using " + newfname);
+			IsDuplicate = true;
 			Init (newfname);
 			return;
 		}
@@ -717,8 +753,17 @@ class CodeWriter
 
 	public void WriteLine (string text)
 	{
+		char[] opentags = {'{', '('};
+		char[] closetags = {'}', ')'};
+
+		if (text.TrimStart (closetags) != text)
+			Outdent ();
+
 		w.Write (cur_indent);
 		w.WriteLine (text);
+
+		if (text.TrimEnd (opentags) != text)
+			Indent ();
 	}
 
 	public void WriteLine (string text, CodeWriter cc)

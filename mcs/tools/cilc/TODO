@@ -4,17 +4,14 @@ TODO
 HIGH PRIORITY
 -------------
 
-Don't generate GObjects by default, but instead subclass MonoObject. Might need
-to clean up the generator to make this easier.
+Don't generate GObjects by default, said to be too heavy. Might need to clean
+up the generator to make this easier.
 
 For GObject generation, tie in generated code with Gtk+ etc. hierarchy
 
-Handle nested namespaces and classes. Basically target ToUpper(), ToLower() and
-replace them with methods that do the right conversion.
-	We don't want to see stuff like:
-		system.windows.formstreenode.h
-		struct _System.Windows.FormsTreeNodePrivate
-		static void system._windows._forms_tree_node_init (System.Windows.FormsTreeNode *thiz)
+Handle nested classes
+
+Generate enums and structs
 
 Support return values and ref/out parameters
 
@@ -23,15 +20,13 @@ Support more primitive types
 LOW PRIORITY
 ------------
 
-Enums, delegates, events etc.
+Delegates, events etc.
 
 Complete GObject support including macros and GType, taking into account
 inheritance etc.
 
 generate autoconf/automake build files. set AC_VERSION using the assembly's
 version attribute
-
-Allow namespace alias for eg. system_windows_forms?
 
 Automatically generate inline API documentation using documentation in the
 Monodoc format. The GTK+ API documentation generator can then be used to create
