@@ -38,7 +38,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
 using System.Collections;
 using System.Security;
 using System.Security.Permissions;
@@ -83,6 +82,10 @@ namespace System.IO
 
 		static DirectoryInfo CreateDirectoriesInternal (string path)
 		{
+			if (SecurityManager.SecurityEnabled) {
+				new FileIOPermission (FileIOPermissionAccess.Read | FileIOPermissionAccess.Write, path).Demand ();
+			}
+
 			DirectoryInfo info = new DirectoryInfo (path);
 			if (info.Parent != null && !info.Parent.Exists)
 				 info.Parent.Create ();

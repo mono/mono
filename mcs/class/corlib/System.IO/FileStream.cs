@@ -29,12 +29,12 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
 using System.Collections;
 using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Runtime.Remoting.Messaging;
+using System.Security.Permissions;
 using System.Threading;
 
 #if NET_2_0
@@ -59,6 +59,7 @@ namespace System.IO
 		public FileStream (IntPtr handle, FileAccess access, bool ownsHandle, int bufferSize, bool isAsync)
 			: this (handle, access, ownsHandle, bufferSize, isAsync, false) {}
 
+		[SecurityPermission (SecurityAction.Demand, UnmanagedCode = true)]
 		internal FileStream (IntPtr handle, FileAccess access, bool ownsHandle, int bufferSize, bool isAsync, bool noBuffering)
 		{
 			this.handle = MonoIO.InvalidHandle;
@@ -326,6 +327,8 @@ namespace System.IO
 		}
 
 		public virtual IntPtr Handle {
+			[SecurityPermission (SecurityAction.LinkDemand, UnmanagedCode = true)]
+			[SecurityPermission (SecurityAction.InheritanceDemand, UnmanagedCode = true)]
 			get {
 				return handle;
 			}
@@ -333,6 +336,8 @@ namespace System.IO
 
 #if NET_2_0
 		public virtual SafeFileHandle SafeFileHandle {
+			[SecurityPermission (SecurityAction.LinkDemand, UnmanagedCode = true)]
+			[SecurityPermission (SecurityAction.InheritanceDemand, UnmanagedCode = true)]
 			get { throw new NotImplementedException (); }
 		}
 #endif

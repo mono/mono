@@ -15,7 +15,7 @@
 //------------------------------------------------------------------------------
 
 //
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -37,8 +37,9 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
 using System.Runtime.CompilerServices;
+using System.Security;
+using System.Security.Permissions;
 
 namespace System.IO
 {
@@ -192,6 +193,16 @@ namespace System.IO
 
 		public static string GetFullPath (string path)
 		{
+			string fullpath = InsecureGetFullPath (path);
+			if (SecurityManager.SecurityEnabled) {
+				new FileIOPermission (FileIOPermissionAccess.PathDiscovery, fullpath).Demand ();
+			}
+			return fullpath;
+		}
+
+		// insecure - do not call directly
+		internal static string InsecureGetFullPath (string path)
+		{
 			if (path == null)
 				throw (new ArgumentNullException (
 					"path",
@@ -205,11 +216,11 @@ namespace System.IO
 				IsDsc (path [1])) {
 				if (path.Length == 2 || path.IndexOf (path [0], 2) < 0)
 					throw new ArgumentException ("UNC pass should be of the form \\\\server\\share.");
-				else
-					if (path [0] == DirectorySeparatorChar)
-						return path; // UNC
-					else
-						return path.Replace (AltDirectorySeparatorChar, DirectorySeparatorChar);
+
+				if (path [0] != DirectorySeparatorChar)
+					path = path.Replace (AltDirectorySeparatorChar, DirectorySeparatorChar);
+
+				return path;
 			}
 
 			if (!IsPathRooted (path))
@@ -275,6 +286,8 @@ namespace System.IO
 			}
 		}
 
+		// FIXME: Further limit the assertion when imperative Assert is implemented
+		[FileIOPermission (SecurityAction.Assert, Unrestricted = true)]
 		public static string GetTempFileName ()
 		{
 			FileStream f = null;
@@ -290,7 +303,12 @@ namespace System.IO
 
 				try {
 					f = new FileStream (path, FileMode.CreateNew);
-				} catch {
+				}
+				catch (SecurityException) {
+					// avoid an endless loop
+					throw;
+				}
+				catch {
 				}
 			} while (f == null);
 			
@@ -298,9 +316,7 @@ namespace System.IO
 			return path;
 		}
 
-		/// <summary>
-		/// Returns the path of the current systems temp directory
-		/// </summary>
+		[EnvironmentPermission (SecurityAction.Demand, Unrestricted = true)]
 		public static string GetTempPath ()
 		{
 			string p = get_temp_path ();
