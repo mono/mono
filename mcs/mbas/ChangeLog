@@ -1,3 +1,7 @@
+2005/01/25 Satya Sudha K <ksathyasudha@novell.com>
+	* ecore.cs : Added support for Implicit numeric conversions.
+		Most of the work on this patch done by Jambunathan K
+
 2005/01/17 Rafael Teixeira <rafaelteixeirabr@hotmail.com>
 	* driver.cs : correct handling of /imports command-line option.
 		Patch from Hans Kratz <kratz@omnicore.com>
