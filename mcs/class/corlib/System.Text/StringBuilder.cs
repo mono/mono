@@ -83,7 +83,7 @@ namespace System.Text {
 			_length = length;
 		}
 
-		public StringBuilder () : this (String.Empty, 0, 0, 0) {}
+		public StringBuilder () : this (null) {}
 
 		public StringBuilder(int capacity) : this (String.Empty, 0, 0, capacity) {}
 
@@ -96,8 +96,13 @@ namespace System.Text {
 			_maxCapacity = maxCapacity;
 		}
 
-		public StringBuilder( string value ) : this() {
-			Append (value);
+		public StringBuilder (string value)
+		{
+			if (null == value)
+				value = "";
+			
+			_length = value.Length;
+			_str = _cached_str = value;
 		}
 	
 		public StringBuilder( string value, int capacity) : this(value, 0, value.Length, capacity) {}
@@ -111,6 +116,9 @@ namespace System.Text {
 
 		public int Capacity {
 			get {
+				if (_str.Length == 0)
+					return constDefaultCapacity;
+				
 				return _str.Length;
 			}
 
@@ -314,6 +322,12 @@ namespace System.Text {
 		{
 			if (value == null)
 				return this;
+			
+			if (_length == 0 && value.Length < _maxCapacity && value.Length > _str.Length) {
+				_length = value.Length;
+				_str = _cached_str = value;
+				return this;
+			}
 
 			int needed_cap = _length + value.Length;
 			if (null != _cached_str || _str.Length < needed_cap)
@@ -630,6 +644,13 @@ namespace System.Text {
 				// Try double buffer, if that doesn't work, set the length as capacity
 				if (size > capacity) 
 				{
+					
+					// The first time a string is appended, we just set _cached_str
+					// and _str to it. This allows us to do some optimizations.
+					// Below, we take this into account.
+					if (_cached_str == _str && capacity < constDefaultCapacity)
+						capacity = constDefaultCapacity;
+					
 					capacity = capacity << 1;
 					if (size > capacity)
 						capacity = size;

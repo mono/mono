@@ -1,3 +1,10 @@
+2005-01-21  Ben Maurer  <bmaurer@ximian.com>
+
+	* StringBuilder.cs: Don't allocate memory on the .ctor, do it
+	lazily. This saves us lots of memory if you only use the
+	stringbuilder once. Also, we can allocate on the second Append,
+	which might reduce the number of buffers allocated.
+
 2005-01-14 Lluis Sanches Gual  <lluis@novell.com>
 
 	* StringBuilder.cs: Improved parameter check.
