@@ -1,5 +1,9 @@
 2004-01-20  Martin Baulig  <martin@ximian.com>
 
+	* test-226.cs: New test for #53058.
+
+2004-01-20  Martin Baulig  <martin@ximian.com>
+
 	* verify-8.cs: New test for #52707.
 
 2004-01-05 Marek Safar <marek.safar@seznam.cz>
