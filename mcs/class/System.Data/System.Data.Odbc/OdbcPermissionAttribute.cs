@@ -34,7 +34,7 @@ namespace System.Data.Odbc
 		#region Properties
 
 		[MonoTODO]
-		public string Provider {
+		internal string Provider {
 			[MonoTODO]
 			get {
 				throw new NotImplementedException (); 

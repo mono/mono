@@ -1,3 +1,6 @@
+2004-05-17 Umadevi S (sumadevi@novell.com)
+	* OdbcPermissionAttribute, OdbcPermission.cs - fixed missing methods
+
 2004-05-17 Gert Driesen (drieseng@users.sourceforge.net)
 	* OdbcCategoryAttribute.cs: fixed namespace
 	* OdbcDataAdapter.cs: removed extra attributes

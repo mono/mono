@@ -43,7 +43,7 @@ namespace System.Data.Odbc
 
 		#region Properties
 
-		public string Provider {
+		internal string Provider {
 			[MonoTODO]
 			get { throw new NotImplementedException (); }
 			[MonoTODO]
@@ -59,30 +59,13 @@ namespace System.Data.Odbc
 		{
 			throw new NotImplementedException ();
 		}
-
+	
 		[MonoTODO]
-		public override void FromXml (SecurityElement securityElement)
+		public override void Add (string connectionString, string restrictions, KeyRestrictionBehavior behavior)
 		{
 			throw new NotImplementedException ();
 		}
-
-		[MonoTODO]
-		public override IPermission Intersect (IPermission target)
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		public override SecurityElement ToXml ()
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		public override IPermission Union (IPermission target)
-		{
-			throw new NotImplementedException ();
-		}
+		
 
 		#endregion
 	}
