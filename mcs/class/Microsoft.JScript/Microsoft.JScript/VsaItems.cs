@@ -83,7 +83,7 @@ namespace Microsoft.JScript {
 			switch (itemType) {
 			case VsaItemType.AppGlobal:
 				if (itemFlag != VsaItemFlag.None)
-				throw new VsaException (VsaError.ItemFlagNotSupported);
+					throw new VsaException (VsaError.ItemFlagNotSupported);
 				item = new VsaGlobalItem (engine, name, itemFlag);
 				break;
 
@@ -94,7 +94,7 @@ namespace Microsoft.JScript {
 			case VsaItemType.Reference:
 				if (itemFlag != VsaItemFlag.None)
 					throw new VsaException (VsaError.ItemFlagNotSupported);
-					item = new VsaReferenceItem (engine, name, itemFlag);
+				item = new VsaReferenceItem (engine, name, itemFlag);
 					break;
 			}
 				
