@@ -971,7 +971,8 @@ namespace Mono.CSharp {
 		public readonly IMemberContainer Container;
 		protected Hashtable member_hash;
 		protected Hashtable method_hash;
-		protected Hashtable interface_hash;
+		
+		Hashtable interface_hash;
 
 		/// <summary>
 		///   Create a new MemberCache for the given IMemberContainer `container'.
@@ -983,12 +984,14 @@ namespace Mono.CSharp {
 			Timer.IncrementCounter (CounterType.MemberCache);
 			Timer.StartTimer (TimerType.CacheInit);
 
-			interface_hash = new Hashtable ();
+			
 
 			// If we have a parent class (we have a parent class unless we're
 			// TypeManager.object_type), we deep-copy its MemberCache here.
 			if (Container.IsInterface) {
 				MemberCache parent;
+				interface_hash = new Hashtable ();
+				
 				if (Container.Parent != null)
 					parent = Container.Parent.MemberCache;
 				else
@@ -1028,13 +1031,6 @@ namespace Mono.CSharp {
 			return hash;
 		}
 
-		void AddInterfaces (MemberCache parent)
-		{
-			foreach (Type iface in parent.interface_hash.Keys) {
-				if (!interface_hash.Contains (iface))
-					interface_hash.Add (iface, true);
-			}
-		}
 
 		/// <summary>
 		///   Add the contents of `new_hash' to `hash'.
@@ -1066,7 +1062,8 @@ namespace Mono.CSharp {
 
 				if (interface_hash.Contains (itype))
 					continue;
-				interface_hash.Add (itype, true);
+				
+				interface_hash [itype] = null;
 
 				IMemberContainer iface_container =
 					TypeManager.LookupMemberContainer (itype);
@@ -1074,7 +1071,12 @@ namespace Mono.CSharp {
 				MemberCache iface_cache = iface_container.MemberCache;
 
 				AddHashtable (hash, iface_cache.member_hash);
-				AddInterfaces (iface_cache);
+				
+				if (iface_cache.interface_hash == null)
+					continue;
+				
+				foreach (Type parent_contains in iface_cache.interface_hash.Keys)
+					interface_hash [parent_contains] = null;
 			}
 
 			return hash;

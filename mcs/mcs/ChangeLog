@@ -1,5 +1,10 @@
 2003-12-31 Ben Maurer  <bmaurer@users.sourceforge.net>
 
+	* decl.cs: only allocate hashtables for ifaces if 
+	it is an iface!
+
+2003-12-31 Ben Maurer  <bmaurer@users.sourceforge.net>
+
 	* expression.cs: fix the error from cs0121-2.cs
 	(a parent interface has two child interfaces that
 	have a function with the same name and 0 params
