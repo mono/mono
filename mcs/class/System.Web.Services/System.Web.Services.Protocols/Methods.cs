@@ -122,9 +122,9 @@ namespace System.Web.Services.Protocols {
 				in_members [i] = m;
 			}
 
-			TypeStubInfo.SingleMembersMapping [0] =
-				importer.ImportMembersMapping (RequestName, RequestNamespace, in_members, true);
-			XmlSerializer [] s = XmlSerializer.FromMappings (TypeStubInfo.SingleMembersMapping);
+			XmlMembersMapping [] members = new XmlMembersMapping [1];
+			members [0] = importer.ImportMembersMapping (RequestName, RequestNamespace, in_members, true);
+			XmlSerializer [] s = XmlSerializer.FromMappings (members);
 			RequestSerializer = s [0];
 		}
 
@@ -155,9 +155,9 @@ namespace System.Web.Services.Protocols {
 				out_members [i + idx] = m;
 			}
 
-			TypeStubInfo.SingleMembersMapping [0] =
-				importer.ImportMembersMapping (RequestName, RequestNamespace, out_members, true);
-			XmlSerializer [] s = XmlSerializer.FromMappings (TypeStubInfo.SingleMembersMapping);
+			XmlMembersMapping [] members = new XmlMembersMapping [1];
+			members [0] = importer.ImportMembersMapping (RequestName, RequestNamespace, out_members, true);
+			XmlSerializer [] s = XmlSerializer.FromMappings (members);
 			ResponseSerializer = s [0];
 		}
 	}
@@ -179,9 +179,6 @@ namespace System.Web.Services.Protocols {
 		internal string                  BindingName;
 		internal string                  BindingNamespace;
 
-		// We only use this to avoid creating tons of arrays that are barely used.
-		internal static XmlMembersMapping [] SingleMembersMapping = new XmlMembersMapping [1];
-		
 		void GetTypeAttributes (Type t)
 		{
 			object [] o;
