@@ -25,9 +25,12 @@
 //
 //
 //
-// $Revision: 1.8 $
+// $Revision: 1.9 $
 // $Modtime: $
 // $Log: ThemeWin32Classic.cs,v $
+// Revision 1.9  2004/08/09 16:17:19  jackson
+// Use correct default back color
+//
 // Revision 1.8  2004/08/09 15:53:12  jackson
 // Themes now handle default control properties so coloring will be consistent
 //
@@ -270,7 +273,7 @@ namespace System.Windows.Forms
 		}
 
 		public Color DefaultBackColor {
-			get { return Color.FromArgb (255, 0, 128, 128); }
+			get { return Color.FromArgb (255, 236, 233, 216); }
 		}
 
 		public Color DefaultForeColor {
