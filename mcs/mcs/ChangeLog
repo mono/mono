@@ -1,3 +1,8 @@
+2004-04-05  Marek Safar  <marek.safar@seznam.cz>
+
+	* attribute.cs (IsClsCompliant): Fixed problem with handling
+        all three states (compliant, not-compliant, undetected).
+
 2004-03-30  Marek Safar  <marek.safar@seznam.cz>
 
 	* attribute.cs (Attribute): Location is now public.

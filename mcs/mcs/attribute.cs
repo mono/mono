@@ -1439,7 +1439,7 @@ namespace Mono.CSharp {
 
 			object type_compliance = analyzed_types[type];
 			if (type_compliance != null)
-				return type_compliance != null;
+				return type_compliance == TRUE;
 
 			if (type.IsPointer) {
 				analyzed_types.Add (type, null);
@@ -1452,9 +1452,12 @@ namespace Mono.CSharp {
 			} else {
 				result = AnalyzeTypeCompliance (type);
 			}
-			analyzed_types.Add (type, result ? typeof(int) : null);
+			analyzed_types.Add (type, result ? TRUE : FALSE);
 			return result;
 		}                
+
+		static object TRUE = new object ();
+		static object FALSE = new object ();
 
 		/// <summary>
 		/// Non-hierarchical CLS Compliance analyzer
