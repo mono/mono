@@ -1,3 +1,10 @@
+
+Sun Jan 30 16:49:01 CET 2005 Paolo Molaro <lupus@ximian.com>
+
+	* domain.c, appdomain.c, assembly.c, image.c, domain-internals.h,
+	reflection.c: more domain and assembly-unload related fixes
+	and memory leaks plugs.
+
 2005-01-30  Zoltan Varga  <vargaz@freemail.hu>
 
 	* class.c loader.c security.c loader.h process.c threads.c mono-debug-debugger.c profiler.c marshal.c rand.cpedump.c: Fix 64 bit warnings.
