@@ -1,5 +1,11 @@
 2004/08/01  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
 	* mb-parser.jay : Some correction as pointed by Jambunathan, 
+		to allow preprocessor directives after a label that may 
+		leave it orphaned (without a explicit statement)
+	* testmbas/WriteOK.vb : some vb code to test this case
+
+2004/08/01  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
+	* mb-parser.jay : Some correction as pointed by Jambunathan, 
 		to allow intermixing preprocessor directives between 
 		the label and it's associated statement
 

@@ -104,4 +104,16 @@ Public Class Indirector
 	End Sub
 End Class
 
+Module Test ' modified Jambunathan test for intermixed directives with labels
+     Sub MainLabeledSolo()
+         100:
+     End Sub
+     Sub MainLabeled()
+         100:
+         #If False
+               Console.WriteLine("Hello World")
+        #End If
+     End Sub
+End Module
+ 
 End Namespace

@@ -618,11 +618,6 @@ logical_end_of_line
 	| logical_end_of_line pp_directive 
 	;
 
-opt_logical_end_of_line
-	: /* empty */
-	| logical_end_of_line
-	;
-
 compilation_unit
 	: logical_end_of_line
 	  opt_option_directives
@@ -632,8 +627,7 @@ compilation_unit
 	  EOF
 	  {
 		$$=$5;
-	  }
-	
+	  }	
 	;
 	  
 opt_option_directives
@@ -2317,6 +2311,7 @@ opt_raise_event_args
 		$$ = $2;
 	  }
 	;
+
 label_name
 	: identifier
 	| LITERAL_INTEGER
@@ -2326,7 +2321,17 @@ label_name
 	;
 
 labeled_statement
-	: label_name COLON opt_logical_end_of_line 
+	: label_name COLON
+	  {
+		LabeledStatement labeled = new LabeledStatement ((string) $1, lexer.Location);
+
+		if (!current_block.AddLabel ((string) $1, labeled)){
+			Location l = lexer.Location;
+			Report.Error (140, l, "The label '" + ((string) $1) + "' is a duplicate");
+		}	
+		current_block.AddStatement (labeled);
+	  }
+	| label_name COLON
 	  {
 		LabeledStatement labeled = new LabeledStatement ((string) $1, lexer.Location);
 
