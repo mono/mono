@@ -28,6 +28,23 @@
   !define SOURCE_INSTALL_DIR "c:\mono-0.23-setup\install\\*" ;
 
 ; =====================================================
+; SET LOGO
+; =====================================================
+;
+;  Beautification:
+;
+;  This adds a Mono-specific Image on the left
+;  You can choose between the light or dark one.
+;  
+;  If you wish no mono-specifi logo, please outcomment
+;  the lines.
+;  
+;  "light" is enabled.
+;
+;  !define MUI_SPECIALBITMAP "mono-win32-setup-dark.bmp"
+   !define MUI_SPECIALBITMAP "mono-win32-setup-light.bmp"
+
+; =====================================================
 ; BUILDING
 ; =====================================================
 ;
@@ -95,10 +112,6 @@
 ; =====================================================
 ; SCRIPT
 ; =====================================================
-
-
-; [NOT ACTIVE] Beautification: This adds a Mono-specific Image on the left
-; !define MUI_SPECIALBITMAP "mono.bmp"
 
  !define MUI_PRODUCT "${NAME}"
  !define MUI_VERSION "${MILESTONE}"
