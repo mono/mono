@@ -2,14 +2,12 @@
 #include <mono/metadata/debug-helpers.h>
 #include <stdio.h>
 
-// TODO: need better way of dealing with WNDPROC callback in Mono
-// application
 static unsigned int application_instance;
 MonoMethod *wndproc_method = NULL;
 
 // wrapped in the Mono class, enables the embedded application
 // to get the HINSTANCE
- int GetApplicationInstance()
+int GetInstance()
 {
 	return application_instance;
 }
@@ -33,33 +31,13 @@ unsigned long __attribute__((__stdcall__)) WndProc(unsigned int hWnd, unsigned i
 	return (long) &return_object->vtable;
 }
 
-// this function was copied from jit/mono.c
-static MonoMethod *
-find_method_in_assembly (MonoAssembly *assembly, MonoMethodDesc *mdesc)
-{
-	MonoAssembly **ptr;
-	MonoMethod *method;
-
-	method = mono_method_desc_search_in_image (mdesc, assembly->image);
-
-	if (method)
-		return method;
-  
-	for (ptr = assembly->image->references; ptr && *ptr; ptr++) {
-		method = find_method_in_assembly (*ptr, mdesc);
-		if (method)
-			return method;
-  	}
-  
-	return NULL;
-}
-
 // uses Mono embedding API to execute application
 int mono_start(unsigned int hInstance, unsigned int hPrevInstance, char* lpszCmdLine, int nCmdShow)
 {
 	MonoDomain *domain = NULL;
 	MonoAssembly *assembly = NULL;
 	MonoMethodDesc* desc = NULL;
+	MonoImage *image = NULL;
   
 	application_instance = hInstance;
 
@@ -69,25 +47,25 @@ int mono_start(unsigned int hInstance, unsigned int hPrevInstance, char* lpszCmd
 	// helper to allow embedded application to get the HINSTANCE
 	// (not sure if we need this in the latest Win32 API's)
 	//printf("adding internal calls\n");
-	//mono_add_internal_call ("Window::GetApplicationInstance", 
-	//			GetApplicationInstance);
+	//mono_add_internal_call ("Application::GetInstance", 
+	//			GetInstance);
 
 	printf("opening assembly\n");
 	assembly = mono_domain_assembly_open (domain, lpszCmdLine);
 
 	// setup WNDPROC method in embedded application
-	printf("setting up mono_method(s)\n");
-	desc = mono_method_desc_new ("System.Windows.Forms.Application:_ApplicationWndProc", FALSE);
-	printf("created new desc\n");
-
+	desc = mono_method_desc_new ("System.Windows.Forms.Application:_ApplicationWndProc", TRUE);
 	printf("finding method(s)\n");
-	wndproc_method = find_method_in_assembly(assembly, desc);
+	image = mono_image_loaded ("System.Windows.Forms");
 
-	if (wndproc_method == NULL) {
-		printf("_ApplicationWndProc not found");
-		return -1;
+	if (image && desc)
+	  wndproc_method = mono_method_desc_search_in_image (desc, image);
+
+	if (!wndproc_method) {
+	  printf("error: Application:_ApplicationWndProc not found\n");
+	  return 1;
 	}
-	
+
 	printf("executing assembly\n");
 	mono_jit_exec(domain, assembly, 0, 0);
 	

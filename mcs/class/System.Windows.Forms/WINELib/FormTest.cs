@@ -1,12 +1,12 @@
 using System;
 using System.Windows.Forms;
 
-class FormTest : Form
+class FormTest
 {
  	static public void Main ()
 	{
 		Console.WriteLine ("Creating Form");
-		FormTest form = new FormTest ();
+		Form form = new Form ();
 		Application.Run (form);
 	}
 }
