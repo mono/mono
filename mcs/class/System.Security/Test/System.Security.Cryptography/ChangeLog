@@ -1,0 +1,7 @@
+2003-11-06  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* AsnEncodedDataTest.cs: New. Unit tests for AsnEncodedData (.NET 1.2).
+	* OidTest.cs: New. Unit tests for Oid (.NET 1.2).
+	* OidCollectionTest.cs: New. Unit tests for OidCollection (.NET 1.2).
+	* OidEnumeratorTest.cs: New. Unit tests for OidEnumerator (.NET 1.2).
+
