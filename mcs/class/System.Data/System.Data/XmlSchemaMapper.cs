@@ -408,23 +408,25 @@ namespace System.Data {
 				string name = KeyRef.Refer.Name;
 				// get the unique constraint for the releation
 				UniqueConstraint constraint = GetDSConstraint(name, collection);
-				// generate the FK.
-				ForeignKeyConstraint fkConstraint = new ForeignKeyConstraint(KeyRef.Name, constraint.Columns, Columns);
-				Table.Constraints.Add (fkConstraint);
-				// generate the relation.
-				DataRelation relation = new DataRelation(KeyRef.Name, constraint.Columns, Columns, false);
-				if (KeyRef.UnhandledAttributes != null){
-					foreach (XmlAttribute attr in KeyRef.UnhandledAttributes){
-						if (attr.LocalName == "IsNested"){
-							if (attr.Value == "true")
-								relation.Nested = true;
+				if (constraint != null) {
+					// generate the FK.
+					ForeignKeyConstraint fkConstraint = new ForeignKeyConstraint(KeyRef.Name, constraint.Columns, Columns);
+					Table.Constraints.Add (fkConstraint);
+					// generate the relation.
+					DataRelation relation = new DataRelation(KeyRef.Name, constraint.Columns, Columns, false);
+					if (KeyRef.UnhandledAttributes != null){
+						foreach (XmlAttribute attr in KeyRef.UnhandledAttributes){
+							if (attr.LocalName == "IsNested"){
+								if (attr.Value == "true")
+									relation.Nested = true;
+							}
 						}
 					}
-				}
-				relation.SetParentKeyConstraint (constraint);
-				relation.SetChildKeyConstraint (fkConstraint);
+					relation.SetParentKeyConstraint (constraint);
+					relation.SetChildKeyConstraint (fkConstraint);
 
-				DSet.Relations.Add(relation);
+					DSet.Relations.Add(relation);
+				}
 			}
 		}
 		
