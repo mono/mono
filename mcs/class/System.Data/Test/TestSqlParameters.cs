@@ -45,10 +45,13 @@ namespace TestSystemDataSqlClient {
 			// add parameter for inTableName
 			Console.WriteLine("** Create parameter...");
 			SqlParameter parm = new SqlParameter("inTableName", SqlDbType.Text);
+			
 			Console.WriteLine("** set dbtype of parameter to string");
 			parm.DbType = DbType.String;
+			
 			Console.WriteLine("** set direction of parameter to input");
 			parm.Direction = ParameterDirection.Input;
+			
 			Console.WriteLine("** set value to the tableName string...");
 			parm.Value = tableName;
 			
@@ -57,7 +60,9 @@ namespace TestSystemDataSqlClient {
 			
 			SqlDataReader rdr;
 			Console.WriteLine("** ExecuteReader()...");
+			
 			rdr = cmd.ExecuteReader();
+			
 			Console.WriteLine("[][] And now we are going to our results [][]...");
 			int c;
 			int results = 0;
@@ -74,14 +79,15 @@ namespace TestSystemDataSqlClient {
 					dt.Columns.Count);
 
 				// display the schema
-				for(c = 0; c < dt.Columns.Count; c++) {
-					Console.WriteLine("   Column Name: " + 
-						dt.Columns[c].ColumnName);
-					Console.WriteLine("          MaxLength: " +
-						dt.Columns[c].MaxLength);
-					Console.WriteLine("          Type: " +
-						dt.Columns[c].DataType);
+				foreach (DataRow schemaRow in dt.Rows) {
+					foreach (DataColumn schemaCol in dt.Columns)
+						Console.WriteLine(schemaCol.ColumnName + 
+							" = " + 
+							schemaRow[schemaCol]);
+					Console.WriteLine();
 				}
+
+				string output, metadataValue, dataValue;
 				int nRows = 0;
 
 				// Read and display the rows
@@ -89,13 +95,24 @@ namespace TestSystemDataSqlClient {
 					Console.WriteLine("   Row " + nRows + ": ");
 
 					for(c = 0; c < rdr.FieldCount; c++) {
+						// column meta data 
+						DataRow dr = dt.Rows[c];
+						metadataValue = 
+							"    Col " + 
+							c + ": " + 
+							dr["ColumnName"];
+						
+						// column data
 						if(rdr.IsDBNull(c) == true)
-							Console.WriteLine("      " + 
-								rdr.GetName(c) + " is DBNull");
+							dataValue = " is NULL";
 						else
-							Console.WriteLine("      " + 
-								rdr.GetName(c) + ": " +
-								rdr[c].ToString());
+							dataValue = 
+								": " + 
+								rdr.GetValue(c);
+					
+						// display column meta data and data
+						output = metadataValue + dataValue;					
+						Console.WriteLine(output);
 					}
 					nRows++;
 				}

@@ -1,3 +1,8 @@
+2002-05-23  Daniel Morgan <danmorg@sc.rr.com>
+
+	* TestSqlParameters.cs: read and display the schema columns
+	correctly
+
 2002-05-16  Tim Coleman  <tim@timcoleman.com>
         * TestSqlDataAdapter.cs: Added the foreach loop to iterate through
         all of the DataRows in the DataSet table "Table", as the
