@@ -76,14 +76,9 @@ namespace System.Web.UI {
 				return;
 
 			Type type = GetType ();
-			foreach (MethodInfo method in type.GetMethods (bflags)) {
-				int pos = Array.IndexOf (methodNames, method.Name);
-				if (pos == -1)
-					continue;
-
-				string name = methodNames [pos];
-				pos = name.IndexOf ("_");
-				if (pos == -1 || pos + 1 == name.Length)
+			foreach (string methodName in methodNames) {
+				MethodInfo method = type.GetMethod (methodName, bflags);
+				if (method == null)
 					continue;
 
 				if (method.ReturnType != typeof (void))
@@ -92,22 +87,25 @@ namespace System.Web.UI {
 				ParameterInfo [] parms = method.GetParameters ();
 				int length = parms.Length;
 				bool noParams = (length == 0);
-				if (!noParams && (parms.Length != 2 ||
+				if (!noParams && (length != 2 ||
 				    parms [0].ParameterType != typeof (object) ||
 				    parms [1].ParameterType != typeof (EventArgs)))
 				    continue;
 
-				string eventName = name.Substring (pos + 1);
+				int pos = methodName.IndexOf ("_");
+				string eventName = methodName.Substring (pos + 1);
 				EventInfo evt = type.GetEvent (eventName);
-				if (evt == null)
+				if (evt == null) {
+					/* This should never happen */
 					continue;
+				}
 
 				if (noParams) {
-					NoParamsInvoker npi = new NoParamsInvoker (this, method.Name);
+					NoParamsInvoker npi = new NoParamsInvoker (this, methodName);
 					evt.AddEventHandler (this, npi.FakeDelegate);
 				} else {
 					evt.AddEventHandler (this, Delegate.CreateDelegate (
-							typeof (EventHandler), this, method.Name));
+							typeof (EventHandler), this, methodName));
 				}
 			}
 		}
