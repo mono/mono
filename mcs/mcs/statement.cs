@@ -3900,38 +3900,11 @@ namespace Mono.CSharp {
 			ForeachHelperMethods hm = (ForeachHelperMethods) criteria;
 			EmitContext ec = hm.ec;
 
-			//
-			// Check whether GetEnumerator is accessible to us
-			//
-			MethodAttributes prot = mi.Attributes & MethodAttributes.MemberAccessMask;
+			// Check whether GetEnumerator is public
+			if ((mi.Attributes & MethodAttributes.Public) != MethodAttributes.Public)
+				return false;
 
-			Type declaring = mi.DeclaringType;
-			if (prot == MethodAttributes.Private){
-				if (declaring != ec.ContainerType)
-					return false;
-			} else if (prot == MethodAttributes.FamANDAssem){
-				// If from a different assembly, false
-				if (!(mi is MethodBuilder))
-					return false;
-				//
-				// Are we being invoked from the same class, or from a derived method?
-				//
-				if (ec.ContainerType != declaring){
-					if (!ec.ContainerType.IsSubclassOf (declaring))
-						return false;
-				}
-			} else if (prot == MethodAttributes.FamORAssem){
-				if (!(mi is MethodBuilder ||
-				      ec.ContainerType == declaring ||
-				      ec.ContainerType.IsSubclassOf (declaring)))
-					return false;
-			} if (prot == MethodAttributes.Family){
-				if (!(ec.ContainerType == declaring ||
-				      ec.ContainerType.IsSubclassOf (declaring)))
-					return false;
-			}
-
-			if ((mi.ReturnType == TypeManager.ienumerator_type) && (declaring == TypeManager.string_type))
+			if ((mi.ReturnType == TypeManager.ienumerator_type) && (mi.DeclaringType == TypeManager.string_type))
 				//
 				// Apply the same optimization as MS: skip the GetEnumerator
 				// returning an IEnumerator, and use the one returning a 

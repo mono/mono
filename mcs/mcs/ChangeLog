@@ -1,3 +1,10 @@
+2004-08-22  Marek Safar  <marek.safar@seznam.cz>
+
+	Fixed bug #62740.
+	* statement.cs (GetEnumeratorFilter): Removed useless
+	logic because C# specs is strict. GetEnumerator must be
+	public.
+
 2004-08-22  Martin Baulig  <martin@ximian.com>
 
 	* flowanalysis.cs (FlowBranching.UsageVector.MergeChild): If we're
