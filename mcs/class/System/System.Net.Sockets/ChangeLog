@@ -1,3 +1,9 @@
+2004-07-15  Dick Porter  <dick@ximian.com>
+
+	* Socket.cs: Don't try and dereference a null array in Select()
+	(possible if a descriptor list of length 0 was passed.)  Patch by
+	Nick Vaughan (dev@6wardlaw.freeserve.co.uk), fixes bug 61595.
+
 2004-07-12 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Socket.cs: if'ed RemoveReferences calls.
