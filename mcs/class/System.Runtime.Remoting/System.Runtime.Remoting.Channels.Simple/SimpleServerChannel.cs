@@ -1,7 +1,7 @@
 //
-// System.Runtime.Remoting.Channels.Tcp.TcpServerChannel.cs
+// System.Runtime.Remoting.Channels.Simple.SimpleServerChannel.cs
 //
-// Author: Rodrigo Moya (rodrigo@ximian.com)
+// Author: Dietmar Maurer (dietmar@ximian.com)
 //
 // 2002 (C) Copyright, Ximian, Inc.
 //
@@ -14,63 +14,9 @@ using System.Net;
 using System.Threading;
 using System.IO;
 
-namespace System.Runtime.Remoting.Channels.Tcp
+namespace System.Runtime.Remoting.Channels.Simple
 {
-	public class TcpServerTransportSink : IServerChannelSink, IChannelSinkBase
-	{
-		IServerChannelSink next_sink;
-		
-		public TcpServerTransportSink (IServerChannelSink next)
-		{
-			next_sink = next;
-		}
-		
-		public IServerChannelSink NextChannelSink {
-			get {
-				return next_sink;
-			}
-		}
-
-		[MonoTODO]
-		public IDictionary Properties {
-			get {
-				throw new NotImplementedException ();
-			}
-		}
-
-		[MonoTODO]
-		public void AsyncProcessResponse (IServerResponseChannelSinkStack sinkStack, object state,
-						  IMessage msg, ITransportHeaders headers, Stream stream)
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		public Stream GetResponseStream (IServerResponseChannelSinkStack sinkStack, object state,
-						IMessage msg, ITransportHeaders headers)
-		{
-			throw new NotImplementedException ();
-		}
-		
-		public ServerProcessing ProcessMessage (IServerChannelSinkStack sinkStack,
-							IMessage requestMsg,
-							ITransportHeaders requestHeaders,
-							Stream requestStream,
-							out IMessage responseMsg,
-							out ITransportHeaders responseHeaders,
-							out Stream responseStream)
-		{
-			// this is the first sink, and TcpServerChannel does not call it.
-			throw new NotSupportedException ();
-		}
-
-		internal void InternalProcessMessage (Stream requestStream)
-		{
-			Console.WriteLine ("ProcessMessageInternal");
-		}
-	}
-
-	public class TcpServerChannel : IChannelReceiver, IChannel
+	public class SimpleServerChannel : IChannelReceiver, IChannel
 	{
 		int port = 0;
 		string name = "tcp";
@@ -78,14 +24,15 @@ namespace System.Runtime.Remoting.Channels.Tcp
 		int priority = 1;
 		Thread server_thread = null;
 		TcpListener listener;
-		TcpServerTransportSink sink;
+		SimpleServerTransportSink sink;
 		ChannelDataStore channel_data;
 		
 		void Init (IServerChannelSinkProvider provider) {
 			if (provider == null) {
-				provider = new BinaryServerFormatterSinkProvider ();
+				provider = new SimpleServerFormatterSinkProvider ();
 			}
-			IServerChannelSink next_sink = provider.CreateSink (this);
+			
+			IServerChannelSink next_sink = ChannelServices.CreateServerChannelSinkChain (provider, this);
 
 			host = Dns.GetHostByName(Dns.GetHostName()).HostName;
 			
@@ -98,34 +45,34 @@ namespace System.Runtime.Remoting.Channels.Tcp
 			
 			channel_data = new ChannelDataStore (uris);;
 
-			sink = new TcpServerTransportSink (next_sink);
+			sink = new SimpleServerTransportSink (next_sink);
 			
 			listener = new TcpListener (port);
 			StartListening (null);
 		}
 		
-		public TcpServerChannel (int port)
+		public SimpleServerChannel (int port)
 		{
 			this.port = port;
 			Init (null);
 		}
 
-		public TcpServerChannel (IDictionary properties,
+		public SimpleServerChannel (IDictionary properties,
 					 IServerChannelSinkProvider serverSinkProvider)
 		{
 			port = (int)properties ["port"];
 			Init (serverSinkProvider);
 		}
 
-		public TcpServerChannel (string name, int port,
-					 IServerChannelSinkProvider serverSinkProvider)
+		public SimpleServerChannel (string name, int port,
+					    IServerChannelSinkProvider serverSinkProvider)
 		{
 			name = name;
 			this.port = port;
 			Init (serverSinkProvider);
 		}
 		
-		public TcpServerChannel (string name, int port)
+		public SimpleServerChannel (string name, int port)
 		{
 			name = name;
 			this.port = port;
@@ -174,7 +121,7 @@ namespace System.Runtime.Remoting.Channels.Tcp
 		{
 			int port;
 			
-			string host = TcpChannel.ParseTcpURL (url, out objectURI, out port);
+			string host = SimpleChannel.ParseSimpleURL (url, out objectURI, out port);
 
 			return "tcp://" + host + ":" + port;
 		}
@@ -185,7 +132,7 @@ namespace System.Runtime.Remoting.Channels.Tcp
 				TcpClient client = listener.AcceptTcpClient ();
 
 				sink.InternalProcessMessage (client.GetStream ());
-				
+
 				client.Close ();
 			}
 		}

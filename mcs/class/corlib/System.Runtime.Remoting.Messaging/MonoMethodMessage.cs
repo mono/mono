@@ -14,7 +14,7 @@ using System.Runtime.CompilerServices;
 
 namespace System.Runtime.Remoting.Messaging {
 	
-	internal class MonoMethodMessage : IMethodCallMessage, IMethodReturnMessage {
+	public class MonoMethodMessage : IMethodCallMessage, IMethodReturnMessage {
 
 		MonoMethod method;
 
@@ -33,9 +33,22 @@ namespace System.Runtime.Remoting.Messaging {
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		internal extern void InitMessage (MonoMethod method, object [] out_args);
 
-		public MonoMethodMessage (MonoMethod method, object [] out_args)
+		public MonoMethodMessage (MethodBase method, object [] out_args)
 		{
-			InitMessage (method, out_args);			
+			InitMessage ((MonoMethod)method, out_args);			
+		}
+
+		public MonoMethodMessage (Type type, string method_name, object [] in_args)
+		{
+			// fixme: consider arg types
+			MethodInfo minfo = type.GetMethod (method_name);
+			
+			InitMessage ((MonoMethod)minfo, null);
+
+			int len = in_args.Length;
+			for (int i = 0; i < len; i++) {
+				args [i] = in_args [i];
+			}
 		}
 		
 		public IDictionary Properties {

@@ -3,6 +3,7 @@
 //
 // Author:
 //   Miguel de Icaza (miguel@ximian.com)
+//   Dietmar Maurer (dietmar@ximian.com)
 //
 // (C) Ximian, Inc.  http://www.ximian.com
 //
@@ -19,6 +20,7 @@ namespace System.Runtime.Remoting {
 	public class ObjRef : IObjectReference, ISerializable {
 		MarshalByRefObject mbr;
 		SerializationInfo si;
+		string uri;
 		Type type;
 		
 		public ObjRef ()
@@ -37,6 +39,45 @@ namespace System.Runtime.Remoting {
 			// FIXME: Implement.
 			//
 			// This encarnates the object from serialized data.
+		}
+
+		[MonoTODO]
+		public virtual IChannelInfo ChannelInfo {
+			get {
+				throw new NotImplementedException ();
+			}
+			set {
+				throw new NotImplementedException ();
+			}
+		}
+		
+		[MonoTODO]
+		public virtual IEnvoyInfo EnvoyInfo {
+			get {
+				throw new NotImplementedException ();
+			}
+			set {
+				throw new NotImplementedException ();
+			}
+		}
+		
+		[MonoTODO]
+		public virtual IRemotingTypeInfo TypeInfo {
+			get {
+				throw new NotImplementedException ();
+			}
+			set {
+				throw new NotImplementedException ();
+			}
+		}
+		
+		public virtual string URI {
+			get {
+				return uri;
+			}
+			set {
+				uri = value;
+			}
 		}
 
 		[MonoTODO]

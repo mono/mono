@@ -16,7 +16,7 @@ namespace System {
 
 		public virtual ObjRef CreateObjRef (Type type)
 		{
-			return null;
+			return new ObjRef (this, type);
 		}
 
 		public object GetLifetimeService ()

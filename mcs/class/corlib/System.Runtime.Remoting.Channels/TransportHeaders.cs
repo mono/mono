@@ -2,6 +2,7 @@
 // System.Runtime.Remoting.Channels.TransportHeaders.cs
 //
 // Author: Rodrigo Moya (rodrigo@ximian.com)
+//         Dietmar Maurer (dietmar@ximian.com)
 //
 // 2002 (C) Copyright, Ximian, Inc.
 //
@@ -12,29 +13,27 @@ namespace System.Runtime.Remoting.Channels
 {
 	public class TransportHeaders : ITransportHeaders
 	{
-		[MonoTODO]
+		Hashtable hash_table;
+		
 		public TransportHeaders ()
 		{
-			throw new NotImplementedException ();
+			hash_table = new Hashtable ();
 		}
 
-		public object this[object key]
+		public object this [object key]
 	        {
-			[MonoTODO]
 			get {
-				throw new NotImplementedException ();
+				return  hash_table [key];
 			}
 			
-			[MonoTODO]
 			set {
-				throw new NotImplementedException ();
+				hash_table [key] = value;
 			}
 		}
 
-		[MonoTODO]
 		public IEnumerator GetEnumerator ()
 		{
-			throw new NotImplementedException ();
+			return  hash_table.GetEnumerator ();
 		}
 	}
 }

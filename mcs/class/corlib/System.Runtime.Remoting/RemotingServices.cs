@@ -9,6 +9,8 @@
 
 using System;
 using System.Reflection;
+using System.Threading;
+using System.Collections;
 using System.Runtime.Remoting.Messaging;
 using System.Runtime.Remoting.Proxies;
 using System.Runtime.Remoting.Channels;
@@ -74,5 +76,75 @@ namespace System.Runtime.Remoting
 
 			return real_proxy.GetTransparentProxy ();
 		}
+
+		public static Type GetServerTypeForUri (string uri)
+		{
+			object svr = GetServerForUri (uri);
+
+			if (svr == null)
+				return null;
+			
+			return svr.GetType ();
+		}
+
+		static Hashtable uri_hash = new Hashtable ();
+		
+		private static void RegisterServerForUri (MarshalByRefObject obj, string uri)
+		{
+			uri_hash [uri] = obj;
+		}
+
+		public static object Unmarshal (ObjRef objref)
+		{
+			throw new NotImplementedException ();
+		}
+
+		internal static MarshalByRefObject GetServerForUri (string uri)
+		{
+			return (MarshalByRefObject)uri_hash [uri];
+		}
+		
+		static Mutex mtx = new Mutex ();
+		
+		public static ObjRef Marshal (MarshalByRefObject obj, string uri)
+		{
+			return Marshal (obj, uri, null);
+		}
+		
+		public static ObjRef Marshal (MarshalByRefObject obj, string uri, Type requested_type)
+		{
+			if (RemotingServices.IsTransparentProxy (obj))
+				throw new RemotingException ("its not possible marshal proxy objects");
+			
+			// fixme: handle requested_type
+			
+			Type type = obj.GetType ();
+
+			ObjRef res = null;
+
+			try {
+				mtx.WaitOne ();
+			
+				object svr = GetServerForUri (uri);
+
+				if (svr != null) {
+					if (obj != svr)
+						throw new RemotingException ("uri already in use, " + uri);
+
+					// already registered
+				} else {
+					RegisterServerForUri (obj, uri);
+				}
+			
+				res = obj.CreateObjRef (requested_type);
+				res.URI = uri;
+				
+			} finally {
+				mtx.ReleaseMutex ();
+			}
+		   
+			return res;
+		}
 	}
+
 }

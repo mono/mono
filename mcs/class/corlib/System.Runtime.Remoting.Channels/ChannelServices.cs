@@ -38,12 +38,15 @@ namespace System.Runtime.Remoting.Channels
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public static IServerChannelSink CreateServerChannelSinkChain (
 			IServerChannelSinkProvider provider,
 			IChannelReceiver channel)
 	        {
-			throw new NotImplementedException ();
+			IServerChannelSinkProvider tmp = provider;
+			while (tmp.Next != null) tmp = tmp.Next;
+			tmp.Next = new ServerDispatchSinkProvider ();
+
+			return  provider.CreateSink (channel);
 		}
 
 		[MonoTODO]
