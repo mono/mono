@@ -33,9 +33,12 @@
 // Copyright (C) Novell Inc., 2004
 //
 //
-// $Revision: 1.7 $
+// $Revision: 1.8 $
 // $Modtime: $
 // $Log: ToolBar.cs,v $
+// Revision 1.8  2004/08/25 00:43:13  ravindra
+// Fixed wrapping related issues in ToolBar control.
+//
 // Revision 1.7  2004/08/22 01:20:14  ravindra
 // Correcting the formatting mess of VS.NET.
 //
@@ -88,7 +91,6 @@ namespace System.Windows.Forms
 		private bool showToolTips;
 		private ToolBarTextAlign textAlignment;
 		private bool wrappable;        // flag to make the toolbar wrappable
-		private bool recalculate;      // flag to make sure that we calculate the toolbar before drawing
 		private bool redraw;           // flag to force redrawing the control
 		private ToolBarButton currentButton; // the highlighted button
 		#endregion Instance Variables
@@ -141,9 +143,8 @@ namespace System.Windows.Forms
 			showToolTips = false;
 			textAlignment = ToolBarTextAlign.Underneath;
 			wrappable = true;
-
+			dock_style = DockStyle.Top;
 			redraw = true;
-			recalculate = true;
 			
 			// event handlers
 			this.MouseDown += new MouseEventHandler (ToolBar_MouseDown);
@@ -157,14 +158,7 @@ namespace System.Windows.Forms
 		#region protected Properties
 		protected override CreateParams CreateParams 
 		{
-			get {
-				CreateParams createParams = base.CreateParams;
-				createParams.ClassName = XplatUI.DefaultClassName;
-				createParams.Style = (int) WindowStyles.WS_CHILD | (int) WindowStyles.WS_VISIBLE |
-					(int)WindowStyles.WS_CLIPCHILDREN | (int) WindowStyles.WS_CLIPSIBLINGS;
-
-				return createParams;
-			}
+			get { return base.CreateParams; }
 		}
 
 		protected override ImeMode DefaultImeMode {
@@ -522,7 +516,6 @@ namespace System.Windows.Forms
 		protected override void OnHandleCreated (EventArgs e)
 		{
 			base.OnHandleCreated (e);
-			Refresh ();
 		}
 
 		protected override void OnResize (EventArgs e)
@@ -558,6 +551,7 @@ namespace System.Windows.Forms
 			foreach (ToolBarButton button in buttons) {
 				if (button.Rectangle.Contains (hit) && button.Enabled) {
 					button.Pressed = true;
+					this.Capture = true;
 					Redraw (false);
 					Invalidate (button.Rectangle);
 					break;
@@ -570,6 +564,7 @@ namespace System.Windows.Forms
 			if (! this.Enabled) return;
 
 			Point hit = new Point (me.X, me.Y);
+			this.Capture = false;
 
 			// draw the normal button
 			foreach (ToolBarButton button in buttons) {
@@ -581,7 +576,11 @@ namespace System.Windows.Forms
 						Redraw (false);
 						Invalidate (button.Rectangle);
 					}
-					break;
+				}
+				else if (button.Pressed) {
+						button.Pressed = false;
+						Redraw (false);
+						Invalidate (button.Rectangle);
 				}
 			}
 		}
@@ -644,8 +643,12 @@ namespace System.Windows.Forms
 
 		private void Redraw (bool recalculate)
 		{
+			if (recalculate) {
+				CalcToolBar ();
+				CreateBuffers (this.Width, this.Height);
+			}
 			redraw = true;
-			this.recalculate = recalculate;
+			Refresh ();
 		}
 
 		private void Draw ()
@@ -661,15 +664,9 @@ namespace System.Windows.Forms
 					strFormat.Alignment = StringAlignment.Near;
 				}
 
-				if (recalculate) {
-					CalcToolBar ();
-					CreateBuffers (this.Width, this.Height);
-				}
-
 				ThemeEngine.Current.DrawToolBar (this.DeviceContext, this, strFormat);
 			}
 			redraw = false;
-			recalculate = false;
 		}
 
 		private Size CalcButtonSize ()

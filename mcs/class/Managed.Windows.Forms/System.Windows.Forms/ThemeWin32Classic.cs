@@ -25,9 +25,12 @@
 //
 //
 //
-// $Revision: 1.28 $
+// $Revision: 1.29 $
 // $Modtime: $
 // $Log: ThemeWin32Classic.cs,v $
+// Revision 1.29  2004/08/25 00:43:13  ravindra
+// Fixed wrapping related issues in ToolBar control.
+//
 // Revision 1.28  2004/08/24 18:37:02  jordi
 // fixes formmating, methods signature, and adds missing events
 //
@@ -1677,7 +1680,7 @@ namespace System.Windows.Forms
 
 		public  override void DrawToolBar (Graphics dc, ToolBar control, StringFormat format)
 		{
-			Rectangle paint_area = control.ClientRectangle;
+			Rectangle paint_area = new Rectangle (0, 0, control.Width, control.Height);// control.ClientRectangle;
 			dc.FillRectangle (SystemBrushes.Control, paint_area);
 			DrawBorderStyle (dc, paint_area, control.BorderStyle);
 			bool flat = (control.Appearance == ToolBarAppearance.Flat);
