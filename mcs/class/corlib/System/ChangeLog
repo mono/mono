@@ -1,3 +1,12 @@
+2004-02-17  Martin Baulig  <martin@ximian.com>
+
+	* MonoType.cs (GetConstructors): Renamed the interncall to
+	GetConstructors_internal(), made it internal and added a `Type
+	reflected_type' argument to it.
+	(GetEvents, GetFields): Likewise.
+	(GetMethodsByName): Added `Type reflected_type' argument.
+	(GetPropertiesByName): Likewise.
+
 2004-02-16  Jackson Harper  <jackson@ximian.com>
 
 	* FloatingPointFormater.cs: Allow precision to be up to the number

@@ -83,7 +83,12 @@ namespace System
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		public extern override ConstructorInfo[] GetConstructors (BindingFlags bindingAttr);
+		internal extern ConstructorInfo[] GetConstructors_internal (BindingFlags bindingAttr, Type reflected_type);
+
+		public override ConstructorInfo[] GetConstructors (BindingFlags bindingAttr)
+		{
+			return GetConstructors_internal (bindingAttr, this);
+		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		extern EventInfo InternalGetEvent (string name, BindingFlags bindingAttr);
@@ -97,14 +102,24 @@ namespace System
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		public extern override EventInfo[] GetEvents (BindingFlags bindingAttr);
+		internal extern EventInfo[] GetEvents_internal (BindingFlags bindingAttr, Type reflected_type);
+
+		public override EventInfo[] GetEvents (BindingFlags bindingAttr)
+		{
+			return GetEvents_internal (bindingAttr, this);
+		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern override FieldInfo GetField (string name, BindingFlags bindingAttr);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		public extern override FieldInfo[] GetFields (BindingFlags bindingAttr);
+		internal extern FieldInfo[] GetFields_internal (BindingFlags bindingAttr, Type reflected_type);
 
+		public override FieldInfo[] GetFields (BindingFlags bindingAttr)
+		{
+			return GetFields_internal (bindingAttr, this);
+		}
+		
 		public override Type GetInterface (string name, bool ignoreCase)
 		{
 			if (name == null)
@@ -131,11 +146,11 @@ namespace System
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		internal extern MethodInfo [] GetMethodsByName (string name, BindingFlags bindingAttr, bool ignoreCase);
+		internal extern MethodInfo [] GetMethodsByName (string name, BindingFlags bindingAttr, bool ignoreCase, Type reflected_type);
 
 		public override MethodInfo [] GetMethods (BindingFlags bindingAttr)
 		{
-			return GetMethodsByName (null, bindingAttr, false);
+			return GetMethodsByName (null, bindingAttr, false, this);
 		}
 
 		protected override MethodInfo GetMethodImpl (string name, BindingFlags bindingAttr,
@@ -144,7 +159,7 @@ namespace System
 							     Type[] types, ParameterModifier[] modifiers)
 		{
 			bool ignoreCase = ((bindingAttr & BindingFlags.IgnoreCase) != 0);
-			MethodInfo[] methods = GetMethodsByName (name, bindingAttr, ignoreCase);
+			MethodInfo[] methods = GetMethodsByName (name, bindingAttr, ignoreCase, this);
 			MethodInfo found = null;
 			MethodBase[] match;
 			int typesLen = (types != null) ? types.Length : 0;
@@ -192,11 +207,11 @@ namespace System
 		public extern override Type[] GetNestedTypes (BindingFlags bindingAttr);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		internal extern PropertyInfo[] GetPropertiesByName (string name, BindingFlags bindingAttr, bool icase);
+		internal extern PropertyInfo[] GetPropertiesByName (string name, BindingFlags bindingAttr, bool icase, Type reflected_type);
 
 		public override PropertyInfo [] GetProperties (BindingFlags bindingAttr)
 		{
-			return GetPropertiesByName (null, bindingAttr, false);
+			return GetPropertiesByName (null, bindingAttr, false, this);
 		}
 
 		[MonoTODO]
@@ -211,7 +226,7 @@ namespace System
 			
 			PropertyInfo ret = null;
 			bool ignoreCase = ((bindingAttr & BindingFlags.IgnoreCase) != 0);
-			PropertyInfo [] props = GetPropertiesByName (name, bindingAttr, ignoreCase);
+			PropertyInfo [] props = GetPropertiesByName (name, bindingAttr, ignoreCase, this);
 
 			foreach (PropertyInfo info in props) {
 				if (returnType != null && info.PropertyType != returnType)
@@ -326,7 +341,7 @@ namespace System
 			}
 			bool ignoreCase = (invokeAttr & BindingFlags.IgnoreCase) != 0;
 			if ((invokeAttr & BindingFlags.InvokeMethod) != 0) {
-				MethodInfo[] methods = GetMethodsByName (name, invokeAttr, ignoreCase);
+				MethodInfo[] methods = GetMethodsByName (name, invokeAttr, ignoreCase, this);
 				object state = null;
 				MethodBase m = binder.BindToMethod (invokeAttr, methods, ref args, modifiers, culture, namedParameters, out state);
 				if (m == null)
@@ -354,7 +369,7 @@ namespace System
 				/* try SetProperty */
 			}
 			if ((invokeAttr & BindingFlags.GetProperty) != 0) {
-				PropertyInfo[] properties = GetPropertiesByName (name, invokeAttr, ignoreCase);
+				PropertyInfo[] properties = GetPropertiesByName (name, invokeAttr, ignoreCase, this);
 				object state = null;
 				int i, count = 0;
 				for (i = 0; i < properties.Length; ++i) {
@@ -375,7 +390,7 @@ namespace System
 				binder.ReorderArgumentArray (ref args, state);
 				return result;
 			} else if ((invokeAttr & BindingFlags.SetProperty) != 0) {
-				PropertyInfo[] properties = GetPropertiesByName (name, invokeAttr, ignoreCase);
+				PropertyInfo[] properties = GetPropertiesByName (name, invokeAttr, ignoreCase, this);
 				object state = null;
 				int i, count = 0;
 				for (i = 0; i < properties.Length; ++i) {
