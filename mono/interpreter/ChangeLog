@@ -1,5 +1,15 @@
 2004-04-29  Bernie Solomon  <bernard@ugsolutions.com>
 
+	* transform.c (generate): missed a couple
+	of places that should use ADD_CODE so buffer
+	gets grown properly.
+
+	* interp.c (interp_mono_runtime_invoke): 
+	restore state better on catching exception
+	via longjmp here
+
+2004-04-29  Bernie Solomon  <bernard@ugsolutions.com>
+
 	* transform.c:
 	* interp.c:
 	Implement STARG for valuetypes as mcs needs it.
