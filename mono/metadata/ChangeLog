@@ -1,5 +1,7 @@
 2003-10-31  Zoltan Varga  <vargaz@freemail.hu>
 
+	* appdomain.h appdomain.c (ves_icall_System_AppDomain_InternalPushDomainRef): Fix signature.
+	
 	* appdomain.c appdomain.h icall.c: Get rid of the InvokeInDomain 
 	icalls. Instead, do everything in managed code. This is needed since
 	it is hard to restore the original domain etc. in unmanaged code in the
