@@ -71,6 +71,12 @@ namespace Mono.Security.Protocol.Tls
 		
 		#endregion
 
+		#region INTERNAL_CONSTANTS
+
+		internal const short MAX_FRAGMENT_SIZE = 16384; // 2^14
+
+		#endregion
+
 		#region PROPERTIES
 
 		public TlsProtocol Protocol

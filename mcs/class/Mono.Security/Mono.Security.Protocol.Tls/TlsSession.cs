@@ -111,11 +111,6 @@ namespace Mono.Security.Protocol.Tls
 			get { return settings; }
 		}
 
-		internal short MaxFragmentSize
-		{
-			get { return (short)System.Math.Pow(2, 14); }
-		}
-
 		#endregion
 
 		#region CONSTRUCTORS

@@ -425,9 +425,9 @@ namespace Mono.Security.Protocol.Tls
 			{
 				short	fragmentLength = 0;
 				byte[]	fragmentData;
-				if ((messageData.Length - position) > session.MaxFragmentSize)
+				if ((messageData.Length - position) > TlsSessionContext.MAX_FRAGMENT_SIZE)
 				{
-					fragmentLength = session.MaxFragmentSize;
+					fragmentLength = TlsSessionContext.MAX_FRAGMENT_SIZE;
 				}
 				else
 				{
