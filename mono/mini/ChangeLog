@@ -1,3 +1,9 @@
+
+Mon May 31 19:41:46 CEST 2004 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c revert Zoltan's fix to bug#58863 on ppc, since it causes
+	regressions in gtk-sharp.
+
 2004-05-29  Zoltan Varga  <vargaz@freemail.hu>
 
 	* exceptions.cs: New regression tests.
