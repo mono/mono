@@ -13,7 +13,8 @@ namespace System.Security.Cryptography {
 	[Serializable]
 	public enum CspProviderFlags {
 		UseMachineKeyStore = 1,
-		UseDefaultKeyContainer,
+		UseDefaultKeyContainer = 2,
+		UseExistingKey = 8
 	}
 }
 
