@@ -65,7 +65,8 @@ SUBDIRS = \
 	Mono.Http			\
 	Microsoft.Vsa			\
 	Mono.Cairo                      \
-	IBM.Data.DB2			
+	IBM.Data.DB2			\
+	Microsoft.JScript	
 
 # Starting with Microsoft.Vsa, the libraries above weren't in the
 # Linux makefile.gnu before, but they build fine, so might as well
