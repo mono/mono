@@ -48,6 +48,9 @@ namespace System {
 		// </remarks>
 		public override bool Equals (object o)
 		{
+			if (o == null)
+				return false;
+
 			if (!(o is System.MulticastDelegate))
 				return false;
 
@@ -97,13 +100,17 @@ namespace System {
 			// Got to think more about this.
 		}
 
-		[MonoTODO]
 		public static bool operator == (MulticastDelegate a, MulticastDelegate b) {
-			throw new NotImplementedException ();
+			if ((object)a == null) {
+				if ((object)b == null)
+					return false;
+				return false;
+			}
+			return a.Equals (b);
 		}
-		[MonoTODO]
+
 		public static bool operator != (MulticastDelegate a, MulticastDelegate b) {
-			throw new NotImplementedException ();
+			return !(a == b);
 		}
 	}
 }

@@ -1,3 +1,8 @@
+
+Fri Mar 1 15:20:00 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* MulticastDelegate.cs: implement operators so mcs3 can be used on linux.
+
 2002-03-01  Nick Drochak  <ndrochak@gol.com>
 
 	* BitConverter.cs: Throw ArgumentException like mscorlib, instead of
