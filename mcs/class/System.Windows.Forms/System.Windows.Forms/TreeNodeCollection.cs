@@ -67,7 +67,7 @@ namespace System.Windows.Forms {
 
 			TreeView tree = owner.TreeView;
 			if ( tree != null && tree.IsHandleCreated )
-				node.createNode ( tree );
+				node.makeTree ( owner.Handle, tree );
 
 			return 	index;		
 		}
@@ -86,8 +86,10 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public virtual void Clear() 
 		{
-			foreach ( object node in list )
+			foreach ( object node in list ) {
+				( ( TreeNode )node ).Remove ( );
 				( ( TreeNode )node ).setParent ( null );
+			}
 
 			list.Clear();
 		}
@@ -134,6 +136,7 @@ namespace System.Windows.Forms {
 				throw new ArgumentNullException( "node" );
 
 			list.Remove( node );
+			node.Remove( );
 			node.setParent ( null );
 		}
 
@@ -145,6 +148,7 @@ namespace System.Windows.Forms {
 
 			TreeNode node = (TreeNode) list[ index ];
 			list.RemoveAt( index );
+			node.Remove( );
 			node.setParent ( null );
 		}
 		/// <summary>

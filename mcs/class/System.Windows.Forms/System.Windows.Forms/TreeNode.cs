@@ -9,6 +9,8 @@
 // (C) 2002 Ximian, Inc
 //
 using System.Drawing;
+using System.Runtime.InteropServices;
+
 namespace System.Windows.Forms {
 
 	// <summary>
@@ -75,7 +77,7 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public Color BackColor {
 			get
-			{
+			{ 
 				throw new NotImplementedException ();
 			}
 			set
@@ -83,27 +85,55 @@ namespace System.Windows.Forms {
 				//FIXME:
 			}
 		}
-		[MonoTODO]
+
 		public Rectangle Bounds {
-			get
-			{
-				throw new NotImplementedException ();
+			get {
+				IntPtr ptr = IntPtr.Zero;
+				try {
+					TreeView tree = TreeView;
+					if ( tree == null )
+						throw new NullReferenceException ( );
+
+					ptr = Marshal.AllocHGlobal ( Marshal.SizeOf ( typeof ( RECT) ) );
+					Marshal.WriteInt32 ( ptr, Handle.ToInt32 ( ) );
+					Win32.SendMessage ( tree.Handle, (int) TreeViewMessages.TVM_GETITEMRECT, 1, ptr.ToInt32 ( ) );
+					RECT rect = (RECT) Marshal.PtrToStructure ( ptr, typeof ( RECT ) );
+					return new Rectangle ( rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top );
+				}
+				finally {
+					Marshal.FreeHGlobal ( ptr );
+				}
 			}
 		}
 		[MonoTODO]
 		public bool Checked {
 			get {
+				TreeView tree = TreeView;
+				if ( tree != null && tree.IsHandleCreated && Created ) 
+					checked_ = getCheckedState ( tree, Handle );
+
 				return checked_;
 			}
 			set {
 				checked_ = value;
+
+				TreeView tree = TreeView;
+				if ( tree != null && tree.IsHandleCreated && Created ) 
+					setCheckedState ( tree, Handle, checked_ );
 			}
 		}
-		[MonoTODO]
+
 		public TreeNode FirstNode {
-			get
-			{
-				throw new NotImplementedException ();
+			get {
+				if ( !Created && Nodes.Count > 0 )
+					return Nodes[0];
+				else {
+					IntPtr hfirst = (IntPtr) Win32.SendMessage ( TreeView.Handle,
+								(int) TreeViewMessages.TVM_GETNEXTITEM, 
+								(int) TreeViewItemSelFlags.TVGN_CHILD,
+								Handle.ToInt32 ( ) );
+					return TreeNode.FromHandle ( TreeView, hfirst );
+				}
 			}
 		}
 		[MonoTODO]
@@ -144,11 +174,16 @@ namespace System.Windows.Forms {
 				imageIndex = value;
 			}
 		}
-		[MonoTODO]
+
 		public int Index {
-			get
-			{
-				throw new NotImplementedException ();
+			get {
+				if ( Parent == null )
+					return 0;
+
+				if ( Parent.handle == TreeView.RootHandle )
+					return TreeView.Nodes.IndexOf ( this );
+
+				return Parent.Nodes.IndexOf ( this );
 			}
 		}
 		[MonoTODO]
@@ -183,9 +218,8 @@ namespace System.Windows.Forms {
 		}
 		[MonoTODO]
 		public TreeNode LastNode {
-			get
-			{
-				throw new NotImplementedException ();
+			get {
+				return Nodes [ Nodes.Count - 1 ];
 			}
 		}
 		[MonoTODO]
@@ -272,6 +306,7 @@ namespace System.Windows.Forms {
 			get { return text; }
 			set {
 				text = value;
+				updateText ( );
 			}
 		}
 
@@ -413,11 +448,14 @@ namespace System.Windows.Forms {
 			insStruct.item.cchTextMax = Text.Length;
 
 			if ( expanded ) {
-				insStruct.item.state = (int) TreeViewItemState.TVIS_EXPANDED;
-				insStruct.item.stateMask = (int) TreeViewItemState.TVIS_EXPANDED;
+				insStruct.item.state |= (uint) TreeViewItemState.TVIS_EXPANDED;
+				insStruct.item.stateMask |= (uint) TreeViewItemState.TVIS_EXPANDED;
 			}
 
 			handle = (IntPtr) Win32.SendMessage ( TreeView.Handle , TreeViewMessages.TVM_INSERTITEMA, 0, ref insStruct );
+			
+			if ( tree.CheckBoxes )
+				setCheckedState ( tree, handle, checked_ );
 		}
 
 		private static TreeNode FromHandle ( TreeNodeCollection nodes, IntPtr handle )
@@ -481,5 +519,41 @@ namespace System.Windows.Forms {
 				node.collapseAllImpl ( tree );
 		}
 		
+		private void setCheckedState ( TreeView tree, IntPtr hitem, bool isChecked )
+		{
+			TVINSERTSTRUCT insStruct = tree.insStruct;
+	
+			insStruct.item.mask = (uint) ( TreeViewItemFlags.TVIF_HANDLE | TreeViewItemFlags.TVIF_STATE );
+			insStruct.item.hItem = hitem;
+			insStruct.item.stateMask = (uint) TreeViewItemState.TVIS_STATEIMAGEMASK;
+			insStruct.item.state = (uint) Win32.INDEXTOSTATEIMAGEMASK ( isChecked ? 2 : 1 );
+
+			Win32.SendMessage ( TreeView.Handle , TreeViewMessages.TVM_SETITEMA, 0, ref insStruct.item );
+		}
+
+		private bool getCheckedState ( TreeView tree, IntPtr hitem )
+		{
+			TVINSERTSTRUCT insStruct = tree.insStruct;
+	
+			insStruct.item.mask = (uint) ( TreeViewItemFlags.TVIF_HANDLE | TreeViewItemFlags.TVIF_STATE );
+			insStruct.item.hItem = hitem;
+			insStruct.item.stateMask = (uint) TreeViewItemState.TVIS_STATEIMAGEMASK;
+
+			Win32.SendMessage ( TreeView.Handle , TreeViewMessages.TVM_GETITEMA, 0, ref insStruct.item );
+			return ((insStruct.item.state >> 12 ) - 1) > 0;
+		}
+
+		private void updateText ( )
+		{
+			TreeView tree = TreeView;
+			if ( tree != null && tree.IsHandleCreated && this.Created ) {
+				TVINSERTSTRUCT insStruct = tree.insStruct;
+				insStruct.item.mask = (uint) ( TreeViewItemFlags.TVIF_HANDLE | TreeViewItemFlags.TVIF_TEXT );
+				insStruct.item.hItem = Handle;
+				insStruct.item.pszText = Text;
+				insStruct.item.cchTextMax = Text.Length;
+				Win32.SendMessage ( TreeView.Handle , TreeViewMessages.TVM_SETITEMA, 0, ref insStruct.item );
+			}
+		}
 	}
 }

@@ -760,7 +760,7 @@ namespace System.Windows.Forms{
 
 		internal static int INDEXTOSTATEIMAGEMASK(int i) 
 		{
-			return (int)((uint)i << 12);
+			return i << 12;
 		}
 
 		internal static int STATEIMAGEMASKTOINDEX(int i) 

@@ -128,7 +128,7 @@ namespace System.Windows.Forms {
 		//	base.OnMouseLeave(mevent);
 		//}
 
-		protected virtual void OnPaint (PaintEventArgs pevent) {
+		protected override void OnPaint (PaintEventArgs pevent) {
 
 			Rectangle paintBounds = ClientRectangle;
 			Bitmap bmp = new Bitmap( paintBounds.Width, paintBounds.Height,pevent.Graphics);
