@@ -3,6 +3,8 @@
 	* Win32Resources.cs (Win32VersionInfoResource:WriteTo): Add padding
 	at the end of each string entry.
 
+	* Win32Resources.cs: Fix warnings not detected by mcs.
+
 2004-01-08  Zoltan Varga  <vargaz@freemail.hu>
 
 	* Win32Resources.cs: Organize win32 resources into a class hierarchy

@@ -388,9 +388,6 @@ internal class Win32VersionResource : Win32Resource {
 	public override void WriteTo (Stream ms)
 	{
 		using (BinaryWriter w = new BinaryWriter (ms, Encoding.Unicode)) {
-			short len;
-			long pos;
-
 			//
 			// See the documentation for the VS_VERSIONINFO structure and
 			// its children on MSDN
