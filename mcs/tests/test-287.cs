@@ -4,7 +4,10 @@ using System.Reflection;
 static class StaticClass
 {
     const int Foo = 1;    
-    
+ 
+    delegate object D ();
+    enum E {}
+	
     public static string Name ()
     {
         return "OK";

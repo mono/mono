@@ -11,11 +11,11 @@ DISTFILES = README.tests harness.mk $(wildcard *.cs) $(wildcard *.il) $(wildcard
 
 with_mono_path = MONO_PATH="$(topdir)/class/lib/$(PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH"
 
-ifeq (default, $(PROFILE))
+#ifeq (default, $(PROFILE))
 # force this, we don't case if CSC is broken. This also
 # means we can use --options, yay.
 MCS = $(with_mono_path) $(INTERNAL_MCS)
-endif
+#endif
 ILASM = $(with_mono_path) $(INTERNAL_ILASM)
 
 # We don't want debugging info :-)
@@ -28,7 +28,7 @@ USE_MCS_FLAGS :=
 # He may also move some to TEST_EXCLUDE_net_2_0 if some of the merges are inappropriate for GMCS.
 #
 NEW_TEST_SOURCES_common = xml-033 xml-034 xml-035 test-329 2test-16 test-330 a-parameter5 test-331 test-332 \
-			  test-333 test-311 test-335 test-336 test-337
+			  test-333 test-311 test-335 test-336 test-337 test-287
 
 #
 # Please do _not_ add any tests here - all new tests should go into NEW_TEST_SOURCES_common
@@ -65,7 +65,7 @@ TEST_SOURCES_common = \
 	test-251 test-252 test-253 test-254 test-255 test-256 test-257 test-258 test-259 test-260 \
 	test-261 test-262 test-263 test-264 test-265 test-266 test-267 test-268 test-269 test-270 \
 	test-271 test-272 test-273 test-274 test-275 test-276 test-277 test-278 test-279 test-280 \
-	test-281 test-282 test-283 test-284 test-285 test-286 test-287 test-288 test-289 test-290 \
+	test-281 test-282 test-283 test-284 test-285 test-286          test-288 test-289 test-290 \
 	test-291 test-292 test-293 test-294 test-295 test-296 test-297 test-298 test-299 test-300 \
 	test-301 test-302 test-303 test-304 test-305 test-306 test-307          test-309 test-310 \
 	         test-312 test-313 test-314 test-315 test-316 test-317 test-318          test-320 \
