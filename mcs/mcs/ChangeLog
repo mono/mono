@@ -1,3 +1,11 @@
+2001-07-13  Simon Cozens <simon@simon-cozens.org>
+
+	* cs-parser.jay (rank_specifier): Remove a conflict by reordering
+	the 
+
+	(unary_expression): Expand pre_increment_expression and
+	post_decrement_expression to reduce a shift/reduce.
+
 2001-07-11  Simon Cozens
 
 	* cs-tokenizer.cs: Hex numbers should begin with a 0.
