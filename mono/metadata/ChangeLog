@@ -1,3 +1,9 @@
+2004-05-07  Dick Porter  <dick@ximian.com>
+
+	* socket-io.c (addrinfo_to_IPHostEntry): Don't crash if the
+	machine doesn't have a DNS entry.  Patch by Urs Muff
+	(umuff@quark.com), fixes bug 57928.
+
 2004-05-06  Jackson Harper  <jackson@ximian.com>
 
 	* reflection.c: Handle null PublicTokens properly. alloc mem for
