@@ -1012,10 +1012,17 @@ namespace System.Data.SqlTypes
 
 		public static SqlDecimal Truncate (SqlDecimal n, int position)
 		{
-			int prec = n.Precision;// + (position - n.Scale);
-			int sc = position;
-			return new SqlDecimal ((byte)prec, (byte)sc,
-					       n.IsPositive, n.Data);
+			int diff = n.scale - position;
+			if (diff == 0)
+				return n;
+			int [] data = n.Data;
+			decimal d = new decimal (data [0], data [1], data [2], !n.positive, 0);
+			decimal x = 10;
+			for (int i = 0; i < diff; i++, x *= 10)
+				d = d - d % x;
+			data = Decimal.GetBits (d);
+			data [3] = 0;
+			return new SqlDecimal (n.precision, n.scale, n.positive, data);
 		}
 
 		public static SqlDecimal operator + (SqlDecimal x, SqlDecimal y)

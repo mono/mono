@@ -259,6 +259,8 @@ namespace System.Data.SqlTypes
 		public static SqlMoney operator / (SqlMoney x, SqlMoney y)
 		{
 			checked {
+				// FIXME: It's kinda mystery. should not be required.
+				decimal d = x.Value / y.Value;
 				return new SqlMoney (x.Value / y.Value);
 			}
 		}
