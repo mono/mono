@@ -415,8 +415,8 @@ namespace Microsoft.VisualBasic.CompilerServices {
 				long destinationLengthInLastRank = destination.GetLongLength(totalRanks - 1);
 				if (destinationLengthInLastRank > 0) {
 					long lengthToCopyInLastRank = Math.Min(destinationLengthInLastRank, sourceLengthInLastRank);
-					long lowerRankBlocksToCopy = ((source.LongLength / sourceLengthInLastRank) - 1);
-					for (long block = 0; block <= lowerRankBlocksToCopy; block++)
+					long lowerRankBlocksToCopy = source.LongLength / sourceLengthInLastRank;
+					for (long block = 0; block < lowerRankBlocksToCopy; block++)
 						Array.Copy(source, (block * sourceLengthInLastRank), destination, (block * destinationLengthInLastRank), lengthToCopyInLastRank);
 				}
 			}
@@ -444,8 +444,8 @@ namespace Microsoft.VisualBasic.CompilerServices {
 				int destinationLengthInLastRank = destination.GetLength(totalRanks - 1);
 				if (destinationLengthInLastRank > 0) {
 					int lengthToCopyInLastRank = Math.Min(destinationLengthInLastRank, sourceLengthInLastRank);
-					int lowerRankBlocksToCopy = ((source.Length / sourceLengthInLastRank) - 1);
-					for (int block = 0; block <= lowerRankBlocksToCopy; block++)
+					int lowerRankBlocksToCopy = source.Length / sourceLengthInLastRank;
+					for (int block = 0; block < lowerRankBlocksToCopy; block++)
 						Array.Copy(source, (block * sourceLengthInLastRank), destination, (block * destinationLengthInLastRank), lengthToCopyInLastRank);
 				}
 			}
