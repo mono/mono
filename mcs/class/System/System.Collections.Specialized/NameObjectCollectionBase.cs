@@ -3,6 +3,7 @@
 //
 // Author:
 //   Gleb Novodran
+//   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //
 // (C) Ximian, Inc.  http://www.ximian.com
 //
@@ -82,6 +83,7 @@ namespace System.Collections.Specialized
 		/// <summary>
 		/// SDK: Represents a collection of the String keys of a collection.
 		/// </summary>
+		[Serializable]
 		public class KeysCollection : ICollection, IEnumerable
 		{
 			private NameObjectCollectionBase m_collection;
@@ -97,12 +99,7 @@ namespace System.Collections.Specialized
 			}
 			
 			// ICollection methods -----------------------------------
-			/// <summary>
-			/// 
-			/// </summary>
-			/// <param name="arr"></param>
-			/// <param name="index"></param>
-			public virtual void /*ICollection*/  CopyTo(Array arr, int index)
+			void ICollection.CopyTo(Array arr, int index)
 			{
 				if (arr==null)
 					throw new ArgumentNullException("array can't be null");
@@ -115,16 +112,16 @@ namespace System.Collections.Specialized
 				}			
 			}
 
-			public virtual bool IsSynchronized
+			bool ICollection.IsSynchronized
 			{
 				get{
-					throw new Exception("Not implemented yet");
+					return false;
 				}
 			}
-			public virtual object SyncRoot
+			object ICollection.SyncRoot
 			{
 				get{
-					throw new Exception("Not implemented yet");
+					return m_collection;
 				}
 			}
 			/// <summary>
@@ -138,9 +135,8 @@ namespace System.Collections.Specialized
 				}
 			}
 
-			[MonoTODO]
 			public string this [int index] {
-				get { throw new NotImplementedException (); }
+				get { return Get (index); }
 			}
 
 			// IEnumerable methods --------------------------------
@@ -385,16 +381,18 @@ namespace System.Collections.Specialized
 				allValues[i] = BaseGet(i);
 			
 			return allValues;
-//			throw new Exception("Not implemented yet");
 		}
-		[MonoTODO]
+
 		protected object[] BaseGetAllValues( Type type )
 		{
 			if (type == null)
 				throw new ArgumentNullException("'type' argument can't be null");
-			// TODO: implements this
-
-			throw new Exception("Not implemented yet");
+			int cnt = m_ItemsArray.Count;
+			object[] allValues = (object[]) Array.CreateInstance (type, cnt);
+			for(int i=0; i<cnt; i++)
+				allValues[i] = BaseGet(i);
+			
+			return allValues;
 		}
 		
 		protected string BaseGetKey( int index )

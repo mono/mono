@@ -1,3 +1,7 @@
+2003-07-10  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* NameObjectCollectionBase.cs: Implemented a few missing methods, fixed public signatures
+
 2003-07-09  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
 	* NameObjectCollectionBase.cs: Fixed signature to be CLSCompliant, changed/corrected header
