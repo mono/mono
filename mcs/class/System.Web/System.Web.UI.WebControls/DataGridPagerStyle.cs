@@ -219,9 +219,9 @@ namespace System.Web.UI.WebControls
 		{
 			if(s != null && !s.IsEmpty)
 			{
-				if(base.IsEmpty)
+				if(IsEmpty)
 				{
-					base.CopyFrom(s);
+					CopyFrom(s);
 					return;
 				}
 

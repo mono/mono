@@ -1,4 +1,8 @@
 2003-12-18  Alon Gazit <along@mainsoft.com>
+	* DataGridPagerStyle.cs: merge DataGridPagerStyle properties when Style is
+	empty.
+
+2003-12-18  Alon Gazit <along@mainsoft.com>
 	* TableStyle.cs: merge TableStyle properties when Style is
 	empty.
 
