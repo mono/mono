@@ -1,4 +1,11 @@
 
+Fri Aug 24 19:30:25 CEST 2001 Paolo Molaro <lupus@ximian.com>
+
+	* class.c, class.h: add a MonoType this_arg to MonoClass that
+	represents a pointer to an object of the class' type that
+	can be used by the interpreter and later the type cache.
+	Add best guess alignment info for valuetype objects.
+
 Fri Aug 24 15:50:31 CEST 2001 Paolo Molaro <lupus@ximian.com>
 
 	* metadata.h, metadata.c, class.h, class.c: squeezed MonoParam
