@@ -1,5 +1,9 @@
 2004-04-07  Martin Baulig  <martin@ximian.com>
 
+	* convert.cs: Check null literal -> type parameter conversions.
+
+2004-04-07  Martin Baulig  <martin@ximian.com>
+
 	* generic.cs (ConstructedType.CheckConstraints): Enforce the
 	`class' and `struct' constraints.
 

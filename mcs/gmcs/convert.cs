@@ -19,11 +19,35 @@ namespace Mono.CSharp {
 	// A container class for all the conversion operations
 	//
 	public class Convert {
-		static public void Error_CannotConvertType (Location loc, Type source, Type target)
+		static void Error_CannotConvertType (Location loc, Type source, Type target)
 		{
 			Report.Error (30, loc, "Cannot convert type '" +
 				      TypeManager.CSharpName (source) + "' to '" +
 				      TypeManager.CSharpName (target) + "'");
+		}
+
+		static Expression TypeParameter_to_Null (Expression expr, Type target_type,
+							 Location loc)
+		{
+			if (!TypeParameter_to_Null (target_type)) {
+				Report.Error (403, loc, "Cannot convert null to the type " +
+					      "parameter `{0}' becaues it could be a value " +
+					      "type.  Consider using `default ({0})' instead.",
+					      target_type);
+				return null;
+			}
+
+			return new NullCast (expr, target_type);
+		}
+
+		static bool TypeParameter_to_Null (Type target_type)
+		{
+			if ((target_type.BaseType == null) ||
+			    (target_type.BaseType == TypeManager.value_type) ||
+			    target_type.BaseType.IsValueType)
+				return false;
+
+			return true;
 		}
 
 		static EmptyExpression MyEmptyExpr;
@@ -412,6 +436,9 @@ namespace Mono.CSharp {
 		/// </summary>
 		public static bool ImplicitConversionExists (EmitContext ec, Expression expr, Type target_type)
 		{
+			if ((expr is NullLiteral) && target_type.IsGenericParameter)
+				return TypeParameter_to_Null (target_type);
+
 			if (ImplicitStandardConversionExists (expr, target_type))
 				return true;
 
@@ -1038,6 +1065,9 @@ namespace Mono.CSharp {
 			Type expr_type = expr.Type;
 			Expression e;
 
+			if ((expr is NullLiteral) && target_type.IsGenericParameter)
+				return TypeParameter_to_Null (expr, target_type, loc);
+
 			if (expr.eclass == ExprClass.MethodGroup){
 				if (!TypeManager.IsDelegateType (target_type)){
 					Report.Error (428, loc,
@@ -1171,7 +1201,10 @@ namespace Mono.CSharp {
 		{
 			Expression e;
 
+			int errors = Report.Errors;
 			e = ImplicitConversion (ec, source, target_type, loc);
+			if (Report.Errors > errors)
+				return null;
 			if (e != null)
 				return e;
 
@@ -1631,7 +1664,7 @@ namespace Mono.CSharp {
 		///   type is expr.Type to `target_type'.
 		/// </summary>
 		static public Expression ExplicitConversion (EmitContext ec, Expression expr,
-							  Type target_type, Location loc)
+							     Type target_type, Location loc)
 		{
 			Type expr_type = expr.Type;
 			Type original_expr_type = expr_type;
@@ -1658,7 +1691,10 @@ namespace Mono.CSharp {
 				expr_type = expr.Type;
 			}
 
+			int errors = Report.Errors;
 			Expression ne = ImplicitConversionStandard (ec, expr, target_type, loc);
+			if (Report.Errors > errors)
+				return null;
 
 			if (ne != null)
 				return ne;
@@ -1763,9 +1799,12 @@ namespace Mono.CSharp {
 		///   Same as ExplicitConversion, only it doesn't include user defined conversions
 		/// </summary>
 		static public Expression ExplicitConversionStandard (EmitContext ec, Expression expr,
-								  Type target_type, Location l)
+								     Type target_type, Location l)
 		{
+			int errors = Report.Errors;
 			Expression ne = ImplicitConversionStandard (ec, expr, target_type, l);
+			if (Report.Errors > errors)
+				return null;
 
 			if (ne != null)
 				return ne;
