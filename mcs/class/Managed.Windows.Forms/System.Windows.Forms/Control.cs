@@ -29,9 +29,12 @@
 //	Jaak Simm		jaaksimm@firm.ee
 //	John Sohn		jsohn@columbus.rr.com
 //
-// $Revision: 1.46 $
+// $Revision: 1.47 $
 // $Modtime: $
 // $Log: Control.cs,v $
+// Revision 1.47  2004/08/23 19:16:23  jordi
+// avoids null exception
+//
 // Revision 1.46  2004/08/22 21:10:30  pbartok
 // - Removed OverlappedWindow style from Control, instead it's default
 //   now is child
@@ -719,7 +722,10 @@ namespace System.Windows.Forms
 
 			set {
 				background_color=value;
-				XplatUI.SetWindowBackground(this.window.Handle, value);
+
+				if (this.window != null)
+					XplatUI.SetWindowBackground(this.window.Handle, value);
+
 				Refresh();
 			}
 		}
