@@ -197,7 +197,19 @@ namespace Mono.Security.Protocol.Tls
 
 		#endregion
 
-		#region Send Record Methods
+		#region Send Alert Methods
+
+		public void SendAlert(TlsAlertDescription description)
+		{
+			this.SendAlert(new TlsAlert(this.Context, description));
+		}
+
+		public void SendAlert(
+			TlsAlertLevel		level, 
+			TlsAlertDescription description)
+		{
+			this.SendAlert(new TlsAlert(this.Context, level, description));
+		}
 
 		public void SendAlert(TlsAlert alert)
 		{			
@@ -210,6 +222,10 @@ namespace Mono.Security.Protocol.Tls
 			// Reset message contents
 			alert.Reset();
 		}
+
+		#endregion
+
+		#region Send Record Methods
 
 		public void SendChangeCipherSpec()
 		{

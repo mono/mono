@@ -66,22 +66,13 @@ namespace Mono.Security.Protocol.Tls.Alerts
 
 	#endregion
 	
-	internal abstract class TlsAlert : TlsStream
+	internal class TlsAlert : TlsStream
 	{
 		#region Fields
 
-		private Context				context;
+		private Context					context;
 		private TlsAlertLevel			level;
 		private TlsAlertDescription		description;
-
-		#endregion
-
-		#region Properties
-
-		public Context Context
-		{
-			get { return this.context; }
-		}
 
 		#endregion
 
@@ -89,8 +80,20 @@ namespace Mono.Security.Protocol.Tls.Alerts
 
 		public TlsAlert(
 			Context				context,
-			TlsAlertLevel			level,
-			TlsAlertDescription		description) : base()
+			TlsAlertDescription	description) : base()
+		{
+			this.context		= context;
+			this.description	= description;
+			
+			this.inferAlertLevel();
+
+			this.fill();
+		}
+
+		public TlsAlert(
+			Context				context,
+			TlsAlertLevel		level,
+			TlsAlertDescription	description) : base()
 		{
 			this.context		= context;
 			this.level			= level;
@@ -98,12 +101,6 @@ namespace Mono.Security.Protocol.Tls.Alerts
 
 			this.fill();
 		}
-
-		#endregion
-
-		#region Abstract Methods
-
-		public abstract void Update();
 
 		#endregion
 
@@ -146,6 +143,27 @@ namespace Mono.Security.Protocol.Tls.Alerts
 
 		#endregion
 
+		#region Methods
+		
+		public void Update()
+		{
+			if ( this.description == TlsAlertDescription.CloseNotify )
+			{
+				this.context.ConnectionEnd = true;
+			}
+
+			if (this.IsFatal)
+			{
+				this.context.ConnectionEnd = true;
+				if (this.context is ServerContext)
+				{
+					((ServerContext)this.context).SslStream.Close();
+				}
+			}
+		}
+
+		#endregion
+
 		#region Private Methods
 
 		private void fill()
@@ -154,6 +172,42 @@ namespace Mono.Security.Protocol.Tls.Alerts
 			this.Write((byte)description);
 		}
 
+		private void inferAlertLevel()
+		{
+			switch (description)
+			{
+				case TlsAlertDescription.CloseNotify:
+					this.level = TlsAlertLevel.Warning;
+					break;
+
+				case TlsAlertDescription.AccessDenied:
+				case TlsAlertDescription.BadCertificate:
+				case TlsAlertDescription.BadRecordMAC:
+				case TlsAlertDescription.CertificateExpired:
+				case TlsAlertDescription.CertificateRevoked:
+				case TlsAlertDescription.CertificateUnknown:
+				case TlsAlertDescription.DecodeError:
+				case TlsAlertDescription.DecompressionFailiure:
+				case TlsAlertDescription.DecryptError:
+				case TlsAlertDescription.DecryptionFailed:
+				case TlsAlertDescription.ExportRestriction:
+				case TlsAlertDescription.HandshakeFailiure:
+				case TlsAlertDescription.IlegalParameter:
+				case TlsAlertDescription.InsuficientSecurity:
+				case TlsAlertDescription.InternalError:
+				case TlsAlertDescription.NoRenegotiation:
+				case TlsAlertDescription.ProtocolVersion:
+				case TlsAlertDescription.RecordOverflow:
+				case TlsAlertDescription.UnexpectedMessage:
+				case TlsAlertDescription.UnknownCA:
+				case TlsAlertDescription.UnsupportedCertificate:
+				case TlsAlertDescription.UserCancelled:
+				default:
+					this.level = TlsAlertLevel.Fatal;
+					break;
+			}
+		}
+		
 		#endregion
 
 		#region Static Methods

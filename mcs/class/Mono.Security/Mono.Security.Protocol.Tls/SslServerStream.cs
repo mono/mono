@@ -323,8 +323,7 @@ namespace Mono.Security.Protocol.Tls
 						if (this.context.HandshakeFinished)
 						{
 							// Write close notify
-							TlsCloseNotifyAlert alert = new TlsCloseNotifyAlert(this.context);
-							this.protocol.SendAlert(alert);
+							this.protocol.SendAlert(TlsAlertDescription.CloseNotify);
 						}
 
 						if (this.ownsStream)

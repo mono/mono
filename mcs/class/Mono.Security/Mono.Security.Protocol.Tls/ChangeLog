@@ -1,3 +1,11 @@
+2004-02-24 Carlos Guzman Alvarez  <carlosga@telefonica.net>
+
+	* Mono.Security.Protocol.Tls/RecordProtocol.cs:
+	* Mono.Security.Protocol.Tls/SslClientStream.cs:
+	* Mono.Security.Protocol.Tls/SslServerStream.cs:
+
+		- Reimplementation of TLS/SSL Alert Protocol.
+
 2004-02-20 Carlos Guzmán Álvarez  <carlosga@telefonica.net>
 
 	* Mono.Security.Protocol.Tls.Handshake.Client/SslClientCertificate.cs:

@@ -388,11 +388,11 @@ namespace Mono.Security.Protocol.Tls
 				{
 					if (this.innerStream != null)
 					{
-						if (this.context.HandshakeFinished)
+						if (this.context.HandshakeFinished &&
+							!this.context.ConnectionEnd)
 						{
-							// Write close notify
-							TlsCloseNotifyAlert alert = new TlsCloseNotifyAlert(this.context);
-							this.protocol.SendAlert(alert);
+							// Write close notify							
+							this.protocol.SendAlert(TlsAlertDescription.CloseNotify);
 						}
 
 						if (this.ownsStream)

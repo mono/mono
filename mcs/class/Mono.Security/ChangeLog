@@ -1,3 +1,16 @@
+2004-02-24 Carlos Guzman Alvarez  <carlosga@telefonica.net>
+
+	* Mono.Security.Protocol.Tls.Alerts/TlsCloseNotifyAlert.cs:
+
+		- Removed File.
+
+	* Mono.Security.Protocol.Tls.Alerts/TlsAlerts.cs:
+	* Mono.Security.Protocol.Tls/RecordProtocol.cs:
+	* Mono.Security.Protocol.Tls/SslClientStream.cs:
+	* Mono.Security.Protocol.Tls/SslServerStream.cs:
+
+		- Reimplementation of TLS/SSL Alert Protocol.
+
 2004-02-23 Carlos Guzman Alvarez  <carlosga@telefonica.net>
 
 	* Mono.Security.Protocol.Tls/TlsContext.cs:
