@@ -2236,8 +2236,8 @@ namespace Mono.CSharp {
 			// Special cases: string or type parameter comapred to null
 			//
 			if (oper == Operator.Equality || oper == Operator.Inequality){
-				if ((l == TypeManager.string_type && (right is NullLiteral)) ||
-				    (r == TypeManager.string_type && (left is NullLiteral))){
+				if ((!TypeManager.IsValueType (l) && (right is NullLiteral)) ||
+				    (!TypeManager.IsValueType (r) && (left is NullLiteral))) {
 					Type = TypeManager.bool_type;
 					
 					return this;

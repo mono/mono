@@ -1,3 +1,28 @@
+2004-10-04  Miguel de Icaza  <miguel@ximian.com>
+
+	* ecore.cs (Expression.Constantity): Add support for turning null
+	into a constant.
+
+	* const.cs (Const.Define): Allow constants to be reference types
+	as long as the value is Null.
+
+2004-10-04  Juraj Skripsky  <js@hotfeet.ch>
+
+	* namespace.cs (NamespaceEntry.Using): No matter which warning
+	level is set, check if this namespace name has already been added.
+
+2004-10-03 Ben Maurer  <bmaurer@ximian.com>
+
+	* expression.cs: reftype [!=]= null should always use br[true,false].
+	# 67410
+
+2004-10-03  Marek Safar  <marek.safar@seznam.cz>
+
+	Fix #67108
+	* attribute.cs: Enum conversion moved to 
+	GetAttributeArgumentExpression to be applied to the all
+	expressions.
+
 2004-10-01  Raja R Harinath  <rharinath@novell.com>
 
 	Fix #65833, test-300.cs, cs0122-5.cs, cs0122-6.cs.
