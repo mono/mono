@@ -1,3 +1,8 @@
+2005-03-11 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* SqlException.cs: make it serialization-compatible with MS. Patch by
+	Aleksandar Dezelin. Closes bug #73596.
+
 2005-03-08  Sureshkumar T  <tsureshkumar@novell.com>
 
 	* SqlDataReader.cs: Call base constructor with CommandBehavior

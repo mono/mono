@@ -46,7 +46,7 @@ namespace System.Data.SqlClient {
 	{
 		#region Fields
 
-		SqlErrorCollection errors; 
+		private SqlErrorCollection errors; 
 
 		#endregion // Fields
 
@@ -62,6 +62,11 @@ namespace System.Data.SqlClient {
 			: base (message) 
 		{
 			errors = new SqlErrorCollection (theClass, lineNumber, message, number, procedure, server, source, state);
+		}
+		
+		private SqlException(SerializationInfo si, StreamingContext sc)
+		{
+			errors = (SqlErrorCollection)si.GetValue("Errors", typeof(SqlErrorCollection));
 		}
 
 		#endregion // Constructors
@@ -127,7 +132,7 @@ namespace System.Data.SqlClient {
 			if (si == null)
 				throw new ArgumentNullException ("si");
 
-			si.AddValue ("errors", errors);
+			si.AddValue ("Errors", errors, typeof(SqlErrorCollection));
 			base.GetObjectData (si, context);
 		}
 
