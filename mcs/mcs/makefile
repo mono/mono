@@ -1,4 +1,4 @@
-CSC=$(SYSTEMROOT)/microsoft.net/framework/v1.0.2914/csc.exe
+CSC=//c/winnt/microsoft.net/framework/v1.0.2914/csc.exe
 CSCFLAGS=/nologo /debug+ /debug:full 
 
 VERSION=0.13
@@ -50,14 +50,8 @@ bison:
 cs-parser.cs: cs-parser.jay
 	../jay/jay -ctv < ../jay/skeleton.cs cs-parser.jay > cs-parser.cs
 
-syncunix:
-	rsync -v -a /quack/Barra ~/Barra
-
-syncquack:
-	rsync -v -a ~/Barra /quack/Barra
-
-syncnt:
-	rsync -v -a ~/Barra /quack/nt
+pn:
+	../jay/jay -ctv < ../jay/skeleton.cs cs-parser.jay | grep -v '#line' > cs-parser.cs
 
 statementCollection.cs: X-Collection.cs
 	sed -e "s/@CONTAINEE@/Statement/g" -e "s/@arrayname@/statements/g" < X-Collection.cs > statementCollection.cs

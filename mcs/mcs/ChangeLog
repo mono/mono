@@ -1,3 +1,25 @@
+2001-07-26  Miguel de Icaza  <miguel@ximian.com>
+
+	* cs-parser.jay: Add a second production for delegate_declaration
+	with `VOID'.
+
+	(enum_body): Put an opt_comma here instead of putting it on
+	enum_body or enum_member_declarations so we can handle trailing
+	commas on enumeration members.  Gets rid of a shift/reduce.
+	
+	(type_list): Need a COMMA in the middle.
+
+	(indexer_declaration): Tell tokenizer to recognize get/set
+
+	* Remove old targets.
+
+	* Re-add the parser target.
+
+2001-07-13  Simon Cozens <simon@simon-cozens.org>
+
+	* cs-parser.jay: Add precendence rules for a number of operators
+	ot reduce the number of shift/reduce conflicts in the grammar.
+	
 2001-07-17  Miguel de Icaza  <miguel@ximian.com>
 
 	* tree.cs: moved IGenerator interface and renamed it to ITreeDump

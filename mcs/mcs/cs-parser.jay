@@ -238,8 +238,23 @@ namespace CSC
 %token IDENTIFIER
 
 /* Add precedence rules to solve dangling else s/r conflict */
+%nonassoc LOWPREC
 %nonassoc IF
 %nonassoc ELSE
+%right ASSIGN
+%left OP_OR
+%left OP_AND
+%left BITWISE_OR
+%left BITWISE_AND
+%left OP_SHIFT_LEFT OP_SHIFT_RIGHT
+%left PLUS MINUS
+%left STAR DIV PERCENT
+%right BANG CARRET UMINUS
+%nonassoc OP_INC OP_DEC
+%left OPEN_PARENS
+%left OPEN_BRACKET OPEN_BRACE
+%left DOT
+%nonassoc HIGHPREC
 
 %start compilation_unit
 /*%start namespace_declaration */
@@ -1131,7 +1146,11 @@ remove_accessor_declaration
 
 indexer_declaration
 	: opt_attributes opt_modifiers indexer_declarator 
-	  OPEN_BRACE accessor_declarations CLOSE_BRACE
+	  OPEN_BRACE 
+	  { lexer.properties = true; }
+	  accessor_declarations 
+	  { lexer.properties = false; }
+	  CLOSE_BRACE
 	  { 
 		// The signature is computed from the signature of the indexer.  Look
 	 	// at section 3.6 on the spec
@@ -1177,15 +1196,11 @@ enum_body
 	  {
 		$$ = $2;
 	  }
-	| OPEN_BRACE enum_member_declarations COMMA CLOSE_BRACE
-	  {
-		$$ = $2;
-	  }
 	;
 
 opt_enum_member_declarations
 	: /* empty */			{ $$ = new ArrayList (); }
-	| enum_member_declarations      { $$ = $1; }
+	| enum_member_declarations opt_comma { $$ = $1; }
 	;
 
 enum_member_declarations
@@ -1221,6 +1236,15 @@ delegate_declaration
 	: opt_attributes
 	  opt_modifiers
 	  DELEGATE type	  
+	  IDENTIFIER OPEN_PARENS 
+	  formal_parameter_list
+	  CLOSE_PARENS 
+	  SEMICOLON
+	  { note ("validate that modifiers only contains NEW PUBLIC PROTECTED INTERNAL PRIVATE"); }
+
+	| opt_attributes
+	  opt_modifiers
+	  DELEGATE VOID	  
 	  IDENTIFIER OPEN_PARENS 
 	  formal_parameter_list
 	  CLOSE_PARENS 
@@ -1262,7 +1286,7 @@ type_list
 		types.Add ($1);
 		$$ = types;
 	  }
-	| type_list type
+	| type_list COMMA type
 	  {
 		ArrayList types = new ArrayList ();
 		types.Add ($2);
@@ -1547,8 +1571,7 @@ opt_array_initializer
 
 array_initializer
 	: OPEN_BRACE CLOSE_BRACE
-	| OPEN_BRACE variable_initializer_list CLOSE_BRACE
-	| OPEN_BRACE variable_initializer_list COMMA CLOSE_BRACE
+	| OPEN_BRACE variable_initializer_list opt_comma CLOSE_BRACE
 	// finishme
 	;
 
@@ -1607,8 +1630,14 @@ unary_expression
 	  {
 		$$ = new Unary (Unary.Operator.AddressOf, (Expression) $2);
 	  }
-	| pre_increment_expression
-	| pre_decrement_expression 
+	| OP_INC unary_expression 
+	  {
+		$$ = new Unary (Unary.Operator.PreIncrement, (Expression) $2);
+	  }
+	| OP_DEC unary_expression 
+	  {
+		$$ = new Unary (Unary.Operator.PreDecrement, (Expression) $2);
+	  }
         | cast_expression 
 	/*
 	 we can not do cast expressions at this level,
@@ -1632,8 +1661,13 @@ pre_decrement_expression
 	;
 
 cast_expression
-	/* FIXME: This is actually wrong, it should be `type' but that
+	/* 
+	 * FIXME: This is actually wrong, it should be `type' but that
 	 * introduces a lot of {shift,reduce}/reduces
+	 *
+	 * This is really really wrong.  We need to track down
+	 * the source of problems with QIs because expressions like:
+	 * foreach (string s in (string []) object) wont be parsed.
 	 */
 	: OPEN_PARENS qualified_identifier CLOSE_PARENS unary_expression
 	  {
@@ -2411,11 +2445,11 @@ try_statement
 
 		$$ = new Try ((Block) $2, s, (Catch) cc.Value, null);
 	  }
-	| TRY block finalize_clause 
+	| TRY block FINALLY block
 	  {
-		$$ = new Try ((Block) $2, null, null, (Block) $3);
+		$$ = new Try ((Block) $2, null, null, (Block) $4);
 	  }
-	| TRY block catch_clauses finalize_clause
+	| TRY block catch_clauses FINALLY block
 	  {
 		DictionaryEntry cc = (DictionaryEntry) $3;
 		ArrayList s = null;
@@ -2423,7 +2457,7 @@ try_statement
 		if (cc.Key != null)
 			s = (ArrayList) cc.Key;
 
-		$$ = new Try ((Block) $2, s, (Catch) cc.Value, (Block) $4);
+		$$ = new Try ((Block) $2, s, (Catch) cc.Value, (Block) $5);
 	  }
 	;
 
@@ -2495,13 +2529,6 @@ general_catch_clause
 	: CATCH block
 	  {
 		$$ = new Catch (null, null, (Block) $2);
-	  }
-	;
-
-finalize_clause
-	: FINALLY block
-	  {
-		$$ = $2;
 	  }
 	;
 
