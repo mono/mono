@@ -563,7 +563,7 @@ namespace Mono.CSharp {
 				}
 				
 				t = NamespaceLookup (ds, name, num_type_params, loc);
-				if (t != null){
+				if (!silent || t != null){
 					ds.Cache [name] = t;
 					return t;
 				}

@@ -1,3 +1,9 @@
+2004-11-25  Ben Maurer  <bmaurer@ximian.com>
+
+	* rootcontext.cs (LookupType): Make sure to cache lookups that
+	don't give us a negative result. This saves about 5% of corlib
+	compilation time.
+
 2004-11-25  Miguel de Icaza  <miguel@ximian.com>
 
 	* report.cs (AbstractMessage.Print): messages are sent to stderr
