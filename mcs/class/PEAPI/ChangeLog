@@ -1,3 +1,7 @@
+2004-07-29  Martin Baulig  <martin@ximian.com>
+
+	* PEAPI.cs (Module.Guid): New public property.
+
 2004-07-27  Martin Baulig  <martin@ximian.com>
 
 	* PEAPI.cs (CILInstructions.Offset): New public property.

@@ -5624,6 +5624,10 @@ CalcHeapSizes ();
       tabIx = MDTable.Module;
     }
 
+    public Guid Guid {
+      get { return mvid; }
+    }
+
     internal sealed override uint Size(MetaData md) {
       return 2 + md.StringsIndexSize() + 3 * md.GUIDIndexSize();
     }
