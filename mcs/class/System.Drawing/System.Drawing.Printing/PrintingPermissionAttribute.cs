@@ -1,14 +1,12 @@
 //
 // System.Drawing.PrintingPermissionAttribute.cs
 //
-// Author:
-//   Dennis Hayes (dennish@Raytek.com)
-//   Herve Poussineau (hpoussineau@fr.st)
+// Authors:
+//	Dennis Hayes (dennish@Raytek.com)
+//	Herve Poussineau (hpoussineau@fr.st)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2002 Ximian, Inc
-//
-
-//
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -30,38 +28,42 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-using System;
+
 using System.Security;
 using System.Security.Permissions;
 
-namespace System.Drawing.Printing
-{
-	/// <summary>
-	/// Summary description for PrintingPermissionAttribute.
-	/// </summary>
-	/// 
-	[AttributeUsage(AttributeTargets.All)]
-	public sealed class PrintingPermissionAttribute : CodeAccessSecurityAttribute
-	{
-		private PrintingPermissionLevel _Level;
+namespace System.Drawing.Printing {
+
+	[AttributeUsage (AttributeTargets.All, AllowMultiple=true)]
+	// strangely this class isn't [Serializable] like other permission classes
+	public sealed class PrintingPermissionAttribute : CodeAccessSecurityAttribute {
+
+		private PrintingPermissionLevel _level;
 		
-		public PrintingPermissionAttribute(SecurityAction action) : base(action)
+		public PrintingPermissionAttribute (SecurityAction action)
+			: base (action)
 		{
 			// seems to always assign PrintingPermissionLevel.NoPrinting ...
-			Level = PrintingPermissionLevel.NoPrinting;
+			_level = PrintingPermissionLevel.NoPrinting;
 		}
 		
 		public PrintingPermissionLevel Level {
-			get{
-				return _Level;
-			}
-			set{
-				_Level = value;
+			get { return _level; }
+			set {
+				if (!Enum.IsDefined (typeof (PrintingPermissionLevel), value)) {
+					string msg = Locale.GetText ("Invalid enum {0}");
+					throw new ArgumentException (String.Format (msg, value), "Level");
+				}
+				_level = value;
 			}
 		}
 		
-		public override IPermission CreatePermission(){
-			return new PrintingPermission(this.Level);
+		public override IPermission CreatePermission ()
+		{
+			if (base.Unrestricted)
+				return new PrintingPermission (PermissionState.Unrestricted);
+			else
+				return new PrintingPermission (_level);
 		}
 	}
 }
