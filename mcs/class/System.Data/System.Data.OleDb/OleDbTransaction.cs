@@ -19,7 +19,6 @@ namespace System.Data.OleDb
 		#region Fields
 
 		OleDbConnection connection;
-		IsolationLevel isolationLevel;
 		IntPtr gdaTransaction;
 		int depth;
 
@@ -28,12 +27,8 @@ namespace System.Data.OleDb
 		#region Constructors
 
 		internal OleDbTransaction (OleDbConnection connection, int depth)
+			: this (connection, depth, IsolationLevel.ReadCommitted)
 		{
-			this.connection = connection;
-			isolationLevel = IsolationLevel.ReadCommitted;
-
-			gdaTransaction = libgda.gda_transaction_new (depth.ToString ());
-			libgda.gda_connection_begin_transaction (connection.GdaConnection, gdaTransaction);
 		}
 
 		internal OleDbTransaction (OleDbConnection connection)
@@ -42,9 +37,31 @@ namespace System.Data.OleDb
 		}
 
 		internal OleDbTransaction (OleDbConnection connection, int depth, IsolationLevel isolevel) 
-			: this (connection, depth)
 		{
-			isolationLevel = isolevel;
+			this.connection = connection;
+
+			gdaTransaction = libgda.gda_transaction_new (depth.ToString ());
+			
+			switch (isolevel) {
+			case IsolationLevel.ReadCommitted :
+				libgda.gda_transaction_set_isolation_level (gdaTransaction,
+									    GdaTransactionIsolation.ReadCommitted);
+				break;
+			case IsolationLevel.ReadUncommitted :
+				libgda.gda_transaction_set_isolation_level (gdaTransaction,
+									    GdaTransactionIsolation.ReadUncommitted);
+				break;
+			case IsolationLevel.RepeatableRead :
+				libgda.gda_transaction_set_isolation_level (gdaTransaction,
+									    GdaTransactionIsolation.RepeatableRead);
+				break;
+			case IsolationLevel.Serializable :
+				libgda.gda_transaction_set_isolation_level (gdaTransaction,
+									    GdaTransactionIsolation.Serializable);
+				break;
+			}
+			
+			libgda.gda_connection_begin_transaction (connection.GdaConnection, gdaTransaction);
 		}
 
 		internal OleDbTransaction (OleDbConnection connection, IsolationLevel isolevel) 
@@ -71,7 +88,18 @@ namespace System.Data.OleDb
 		
 		public IsolationLevel IsolationLevel {
 			get {
-				return isolationLevel;
+				switch (libgda.gda_transaction_get_isolation_level (gdaTransaction)) {
+				case GdaTransactionIsolation.ReadCommitted :
+					return IsolationLevel.ReadCommitted;
+				case GdaTransactionIsolation.ReadUncommitted :
+					return IsolationLevel.ReadUncommitted;
+				case GdaTransactionIsolation.RepeatableRead :
+					return IsolationLevel.RepeatableRead;
+				case GdaTransactionIsolation.Serializable :
+					return IsolationLevel.Serializable;
+				}
+
+				return IsolationLevel.Unspecified;
 			}
 		}
 
@@ -99,6 +127,8 @@ namespace System.Data.OleDb
 		[MonoTODO]
 		~OleDbTransaction ()
 		{
+			libgda.FreeObject (gdaTransaction);
+			gdaTransaction = IntPtr.Zero;
 		}
 
 		[MonoTODO]

@@ -30,6 +30,14 @@ namespace System.Data.OleDb
 		Invalid = 5
 	};
 
+	internal enum GdaTransactionIsolation {
+		Unknown,
+		ReadCommitted,
+		ReadUncommitted,
+		RepeatableRead,
+		Serializable
+	};
+	
 	internal enum GdaValueType {
 		Null = 0,
 		Bigint = 1,
@@ -229,7 +237,14 @@ namespace System.Data.OleDb
 
 		[DllImport("gda-2")]
 		public static extern IntPtr gda_transaction_set_name (IntPtr xaction, string name);
-	
+
+		[DllImport("gda-2")]
+		public static extern GdaTransactionIsolation gda_transaction_get_isolation_level (IntPtr xaction);
+
+		[DllImport("gda-2")]
+		public static extern void gda_transaction_set_isolation_level (IntPtr xaction,
+									       GdaTransactionIsolation level);
+		
 		[DllImport("gda-2")]
 		public static extern bool gda_connection_begin_transaction (IntPtr cnc, IntPtr xaction);
 
