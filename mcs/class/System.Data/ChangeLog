@@ -1,3 +1,14 @@
+2003-03-10  Daniel Morgan <danmorg@sc.rr.com>
+
+	* System.Data.SqlClient/SqlDataReader.cs: when 
+	the data reader is closed, this SqlDataReader referenced 
+	in SqlConnection needs to be null
+	
+	* System.Data.Common/DbDataAdapter.cs: for SelectCommands executed that
+	have no result set, such as, DDL like CREATE TABLE or DML like INSERT,
+	the data reader needs to be immediately closed, and 0 returned
+	as the number of rows added or refreshed
+
 2003-02-18  Daniel Morgan <danmorg@sc.rr.com>
 
 	* DataTableRelationCollection.cs: removed file

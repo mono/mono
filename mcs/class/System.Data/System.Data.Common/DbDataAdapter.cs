@@ -107,6 +107,11 @@ namespace System.Data.Common {
 			int count = 0;
 			bool doContinue = true;
 
+			if (dataReader.FieldCount == 0) {
+				dataReader.Close ();
+				return 0;
+			}
+
 			object[] itemArray = new object [dataReader.FieldCount];
 			SetupSchema (SchemaType.Mapped, dataTable.TableName, dataTable); // FIXME
 			BuildSchema (dataReader, dataTable, SchemaType.Mapped);
@@ -146,6 +151,11 @@ namespace System.Data.Common {
 				throw new ArgumentException ("The startRecord parameter was less than 0.");
 			if (maxRecords < 0)
 				throw new ArgumentException ("The maxRecords parameter was less than 0.");
+
+			if (dataReader.FieldCount == 0) {
+				dataReader.Close ();
+				return 0;
+			}
 
                         DataTable dataTable;
                         int resultIndex = 0;

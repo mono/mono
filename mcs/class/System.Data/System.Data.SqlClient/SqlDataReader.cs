@@ -91,6 +91,7 @@ namespace System.Data.SqlClient {
 		public void Close ()
 		{
 			isClosed = true;
+			command.Connection.DataReader = null;
 			command.CloseDataReader (moreResults);
 		}
 
@@ -136,6 +137,7 @@ namespace System.Data.SqlClient {
 				if (disposing) {
 					schemaTable.Dispose ();
 					Close ();
+					command = null;
 				}
 				disposed = true;
 			}
