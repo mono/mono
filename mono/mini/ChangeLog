@@ -1,3 +1,8 @@
+2004-11-05  Geoff Norton  <gnorton@customerdna.com>
+	
+	* helpers.c: Change otool arguments from -V -v -t to -v -t on Darwin
+	Makes the output much easier to read
+
 2004-11-05  Ben Maurer  <bmaurer@ximian.com>
 
 	* ssa.c: allocate MonoMethodVar.uses from the mempool. First, this
