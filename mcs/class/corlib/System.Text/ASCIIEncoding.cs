@@ -155,7 +155,7 @@ namespace System.Text {
 				throw new ArgumentNullException ();
 
 			if ((byteIndex < 0) || (byteCount <= 0) || 
-			    ((byteIndex + byteCount) >= bytes.Length))
+			    ((byteIndex + byteCount) > bytes.Length))
 				throw new ArgumentOutOfRangeException ();
 
 			return new String (GetChars (bytes, byteIndex, byteCount));
