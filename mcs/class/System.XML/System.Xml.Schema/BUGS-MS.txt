@@ -126,3 +126,18 @@ BUGS in MS Implementation of XmlSchema:
 	(union as well.)
 
 	Related msxsdtest is stF034.xsd and stF036.xsd.
+
+012. derived types cannot duplicate fixed facet
+
+  If you have a facet like <xsd:minLength value="5" fixed="true" />, you should
+  be able to have <xsd:minLength value="5" /> in restrictions of it, as long as
+  the values are the same. MS says: 
+    "Base type has {fixed} equal to true."
+
+  XML-Schema part2 Datatype, 4.3.2.1: 
+    "If {fixed} is true, then types for which the current type is the {base
+    type definition} cannot specify a value for minLength other than
+    {value}."
+
+  Which implies that you can specify a value for minLength that is the same as
+  {value}.
