@@ -1,6 +1,6 @@
 topdir = ../..
 
-LIBRARY = ../lib/Mono.CSharp.Debugger.dll
+LIBRARY = $(topdir)/class/lib/Mono.CSharp.Debugger.dll
 
 LIB_LIST = list.unix
 LIB_FLAGS = -r corlib
@@ -8,6 +8,6 @@ LIB_FLAGS = -r corlib
 SOURCES_INCLUDE=*.cs
 
 
-export MONO_PATH_PREFIX = ../lib:
+export MONO_PATH_PREFIX = $(topdir)/class/lib:
 
-include ../library.make
+include $(topdir)/class/library.make

@@ -42,7 +42,7 @@ endif
 -include .makefrag
 
 ifdef USE_SOURCE_RULES
-$(LIBRARY): $(SOURCES) $(topdir)/class/library.make
+$(LIBRARY): makefile.gnu $(SOURCES) $(topdir)/class/library.make
 else
 $(LIBRARY): .response library-deps.stamp
 endif

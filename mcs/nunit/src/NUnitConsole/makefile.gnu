@@ -1,13 +1,13 @@
 topdir = ../../..
-PROGRAM = NUnitConsole_mono.exe
+PROGRAM = $(topdir)/class/lib/NUnitConsole_mono.exe
 
 PROGRAM_LIST = list.unix
 PROGRAM_FLAGS =	\
-	-r ../../../class/lib/corlib.dll	\
-	-r ../../../class/lib/System.dll 	\
-	-r ../NUnitCore/NUnitCore_mono.dll
+	-r $(topdir)/class/lib/corlib.dll	\
+	-r $(topdir)/class/lib/System.dll 	\
+	-r $(topdir)/class/lib/NUnitCore_mono.dll
 
-include ../../../class/executable.make
+include $(topdir)/class/executable.make
 
 MCS = mono $(topdir)/mcs/mcs.exe
 MCS_FLAGS = --target exe --noconfig

@@ -1,6 +1,6 @@
 topdir = ../../..
 
-LIBRARY = NUnitCore_mono.dll
+LIBRARY = $(topdir)/class/lib/NUnitCore_mono.dll
 
 LIB_LIST = list.unix
 LIB_FLAGS = -r corlib -r System

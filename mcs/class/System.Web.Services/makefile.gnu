@@ -1,6 +1,6 @@
 topdir = ../..
 
-LIBRARY = ../lib/System.Web.Services.dll
+LIBRARY = $(topdir)/class/lib/System.Web.Services.dll
 
 LIB_LIST = list
 LIB_FLAGS = -r corlib -r System.Xml -r System.EnterpriseServices -r System.Web -r System
@@ -8,6 +8,6 @@ LIB_FLAGS = -r corlib -r System.Xml -r System.EnterpriseServices -r System.Web -
 SOURCES_INCLUDE=*.cs
 SOURCES_EXCLUDE=./Test*
 
-export MONO_PATH_PREFIX = ../lib:
+export MONO_PATH_PREFIX = $(topdir)/class/lib:
 
-include ../library.make
+include $(topdir)/class/library.make

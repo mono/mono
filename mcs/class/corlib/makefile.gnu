@@ -1,7 +1,7 @@
 topdir = ../..
 
 TEST_DIR= Test
-LIBRARY = ../lib/corlib.dll
+LIBRARY = $(topdir)/class/lib/corlib.dll
 
 LIB_LIST = unix.args
 LIB_FLAGS = --unsafe --nostdlib
@@ -11,6 +11,8 @@ SOURCES_EXCLUDE=\
 	./Test*	\
 	./System.Security.Permissions/SecurityPermissionAttribute.cs	\
 	./System.PAL/*.cs	\
-	./Windows/*.cs
+	./Windows/*.cs	\
+	./System.Runtime.Remoting.Activation/UrlAttribute.cs	\
+	./System.Runtime.Remoting.Contexts/ContextAttribute.cs
 
-include ../library.make
+include $(topdir)/class/library.make

@@ -1,6 +1,6 @@
 topdir = ../..
 
-LIBRARY = ../lib/System.Data.dll
+LIBRARY = $(topdir)/class/lib/System.Data.dll
 
 LIB_LIST = list
 LIB_FLAGS = -r corlib -r System -r System.Xml
@@ -11,6 +11,6 @@ SOURCES_EXCLUDE=\
 	*TestGDA.cs	\
 	./System.Xml*
 
-export MONO_PATH_PREFIX = ../lib:
+export MONO_PATH_PREFIX = $(topdir)/class/lib:
 
-include ../library.make
+include $(topdir)/class/library.make

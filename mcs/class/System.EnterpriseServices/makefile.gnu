@@ -1,6 +1,6 @@
 topdir = ../..
 
-LIBRARY = ../lib/System.EnterpriseServices.dll
+LIBRARY = $(topdir)/class/lib/System.EnterpriseServices.dll
 
 LIB_LIST = list
 LIB_FLAGS = -r corlib 
@@ -8,6 +8,6 @@ LIB_FLAGS = -r corlib
 SOURCES_INCLUDE=*.cs
 SOURCES_EXCLUDE=./Test*
 
-export MONO_PATH_PREFIX = ../lib:
+export MONO_PATH_PREFIX = $(topdir)/class/lib:
 
-include ../library.make
+include $(topdir)/class/library.make

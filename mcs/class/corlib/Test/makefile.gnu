@@ -3,17 +3,21 @@ topdir = ../../..
 LIBRARY = corlib_linux_test.dll
 
 LIB_LIST = corlib_linux_test.args
-LIB_FLAGS = -r ../../lib/corlib.dll -r ../../lib/System.dll \
-	    -r $(topdir)/nunit/src/NUnitCore/NUnitCore_mono.dll
+LIB_FLAGS =	\
+		-r $(topdir)/class/lib/corlib.dll \
+		-r $(topdir)/class/lib/System.dll \
+	    -r $(topdir)/class/lib/NUnitCore_mono.dll
 
-include ../../library.make
+SOURCES_INCLUDE=*.cs
+SOURCES_EXCLUDE=_DUMMY_
+
+include $(topdir)/class/library.make
 
 MCS_FLAGS = --target library --noconfig
 
 TEST_SUITE_PREFIX = MonoTests.
 TEST_SUITE = AllTests
-NUNITCONSOLE=$(topdir)/nunit/src/NUnitConsole/NUnitConsole_mono.exe 
-NUNIT_MONO_PATH=$(topdir)/nunit/src/NUnitCore:.
+NUNITCONSOLE=$(topdir)/class/lib/NUnitConsole_mono.exe 
 
 test: $(LIBRARY) run_test
 
