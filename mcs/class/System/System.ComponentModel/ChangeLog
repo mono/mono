@@ -1,3 +1,7 @@
+2002-07-13  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* DefaultEventAttribute.cs: new file.
+
 2002-07-12  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* AttributeCollection.cs: fixlet.
