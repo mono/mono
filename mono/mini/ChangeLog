@@ -1,3 +1,7 @@
+2005-03-30  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini.c (mono_method_to_ir): Verify called method is not abstract.
+
 2005-03-29  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini.c (mono_method_to_ir): Applied Ben's patch from bug #61441 to
