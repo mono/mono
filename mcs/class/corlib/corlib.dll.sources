@@ -262,6 +262,7 @@ System.IO/FileNotFoundException.cs
 System.IO/FileShare.cs
 System.IO/FileStream.cs
 System.IO/FileSystemInfo.cs
+System.IO/IntPtrStream.cs
 System.IO/IOException.cs
 System.IO/MemoryStream.cs
 System.IO/MonoIO.cs
