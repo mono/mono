@@ -577,8 +577,7 @@ namespace System.Collections {
 		//
 
 
-		private sealed class Enumerator : IDictionaryEnumerator,
-		                                    IEnumerator {
+		private sealed class Enumerator : ICloneable, IDictionaryEnumerator, IEnumerator {
 
 			private SortedList host;
 			private int stamp;
@@ -681,6 +680,20 @@ namespace System.Collections {
                                                 throw new NotSupportedException (mode + " is not a supported mode.");
                                         }
 				}
+			}
+
+			// ICloneable
+
+			public object Clone ()
+			{
+				Enumerator e = new Enumerator (host, mode);
+				e.stamp = stamp;
+				e.pos = pos;
+				e.size = size;
+				e.currentKey = currentKey;
+				e.currentValue = currentValue;
+				e.invalid = invalid;
+				return e;
 			}
 		}
 
@@ -937,6 +950,19 @@ namespace System.Collections {
 				if (host == null)
 					throw new ArgumentNullException ();
 				this.host = host;
+			}
+
+			public override int Capacity {
+				get {
+					lock (host.SyncRoot) {
+						return host.Capacity;
+					}
+				}
+				set {
+					lock (host.SyncRoot) {
+						host.Capacity = value;
+					}
+				}
 			}
 
 			// ICollection
