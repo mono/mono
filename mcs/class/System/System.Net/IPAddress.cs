@@ -6,6 +6,8 @@
 //
 // (C) Ximian, Inc.  http://www.ximian.com
 //
+//
+// Note: the address is stored in host order
 
 using System.Net.Sockets;
 using System.Runtime.InteropServices;
@@ -21,7 +23,6 @@ namespace System.Net {
 	public class IPAddress {
 		// Don't change the name of this field without also
 		// changing socket-io.c in the runtime
-		// This will stored in network order
 		private long address;
 
 		public static readonly IPAddress Any=new IPAddress(0);
@@ -145,12 +146,13 @@ namespace System.Net {
 				throw new FormatException ("the string is not a valid ip");
 
 
-			long a = 0;
+			int a = 0;
 			string [] ips = ip.Split (new char [] {'.'});
 			// Make the number in network order
 			for (int i = ips.Length - 1; i >= 0; i--)
 				a = (a << 8) |  (Byte.Parse(ips [i]));
-
+			
+			a = NetworkToHostOrder (a);
 			return (new IPAddress (a));
 		}
 		
@@ -159,11 +161,12 @@ namespace System.Net {
 				return address;
 			}
 			set {
-			if (value < 0 || value > 0x00000000FFFFFFFF)
-				throw new ArgumentOutOfRangeException (
-					"the address must be between 0 and 0xFFFFFFFF");
+				// FIXME: Temporarily disabled as a workaround for bug #23547
+				/*if (value < 0 || value > 0x00000000FFFFFFFF)
+					throw new ArgumentOutOfRangeException (
+						"the address must be between 0 and 0xFFFFFFFF");*/
 
-				address = value;
+				address = value & 0x00000000FFFFFFFF;
 			}
 		}
 
@@ -183,7 +186,7 @@ namespace System.Net {
 		/// <returns></returns>
 		public static bool IsLoopback (IPAddress addr)
 		{
-			return (addr.address & 0xFF) == 127;
+			return (HostToNetworkOrder (addr.address) & 0xFF) == 127;
 		}
 
 		/// <summary>
@@ -192,7 +195,7 @@ namespace System.Net {
 		/// </summary>
 		public override string ToString ()
 		{
-			return ToString (address);
+			return ToString (HostToNetworkOrder (address));
 		}
 
 		/// <summary>

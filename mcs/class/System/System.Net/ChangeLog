@@ -1,3 +1,8 @@
+2002-04-17  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* IPAddress.cs: the icalls for sockets are endianness-aware. So I
+	changed a few things. Also included a workaround for bug #23547.
+
 2002-04-15  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* IPAddress.cs: use System.BitConverter.IsLittleEndian (suggested
