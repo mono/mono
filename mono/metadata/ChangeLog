@@ -1,3 +1,7 @@
+2003-11-12  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* icall.c: Added internal call for System.Environment::GetMachineConfigPath
+
 2003-11-12  Zoltan Varga  <vargaz@freemail.hu>
 
 	* assembly.c (mono_assembly_load_references): Disable check because it
