@@ -1,3 +1,8 @@
+2001-08-28  Dietmar Maurer  <dietmar@ximian.com>
+
+	* StreamWriter.cs: impl.
+
+	* TextWriter.cs: implemented Write and WriteLine methods
 
 Sun Aug 26 23:01:41 CEST 2001 Paolo Molaro <lupus@ximian.com>
 

@@ -11,8 +11,6 @@ namespace System.IO {
                 
                 protected StringBuilder internalString;
 
-                private IFormatProvider internalFormatProvider;
-
                 public StringWriter() {
                         internalString = new StringBuilder();
                 }

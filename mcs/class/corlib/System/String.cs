@@ -1611,12 +1611,20 @@ namespace System {
 		// Operators
 		public static bool operator ==(string a, string b)
 		{
-			return a == b;
+			if (a.length != b.length)
+				return false;
+
+			int l = a.length;
+			for (int i = 0; i < l; i++)
+				if (a.c_str [i] != b.c_str [i])
+					return false;
+
+			return true;
 		}
 
 		public static bool operator !=(string a, string b)
 		{
-			return a != b;
+			return !(a == b);
 		}
 	}
 }

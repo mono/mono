@@ -76,8 +76,26 @@ namespace System {
 
 		public string ToString (string format, IFormatProvider fp)
 		{
-			// TODO: Implement me.
-			return "";
+			// TODO: use IFormatProvider.
+			
+			char[] ca = new char [20];
+			int i = 19;
+			int rem;
+
+			if (value < 0) {
+				ca [i] = '-';
+				value = -value;
+				i--;
+			}
+			
+			do {
+				rem = value % 10;
+				value = value / 10;
+				ca [i] = (char)('0' + rem);
+				i--;
+			} while (value > 0);
+
+			return new String (ca, i + 1, 19 - i);
 		}
 
 		// =========== IConvertible Methods =========== //

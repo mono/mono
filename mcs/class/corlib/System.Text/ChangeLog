@@ -1,3 +1,7 @@
+2001-08-28  Dietmar Maurer  <dietmar@ximian.com>
+
+	* UTF8Encoding.cs: impl. clumsy GetBytes
+
 2001-07-16  Marcin Szczepanski <marcins@zipworld.com.au>
 
 	* StringBuilder.cs (Text): Fixed.

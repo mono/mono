@@ -17,8 +17,21 @@ namespace System.Text {
                 }
 
                 public override int GetBytes(char[] chars, int charIndex, int charCount, byte[] bytes, int byteIndex) {
-                        // FIXME
-                        return 0;
+                        if (chars == null || bytes == null)
+				throw new ArgumentNullException ();
+			if (charIndex < 0 || charCount < 0 || byteIndex < 0 ||
+			    charIndex + charCount > chars.Length ||
+			    byteIndex + charCount > bytes.Length)
+				throw new ArgumentOutOfRangeException ();
+
+			// fixme: do realy unicode conversion
+			
+			for (int i = 0; i < charCount; i++) {
+				bytes [byteIndex + i] = (byte)chars [charIndex + i];
+				
+			}
+			
+                        return charCount;
                 }
 
                 public override char[] GetChars(byte[] bytes, int byteIndex, int byteCount, char[] chars, int charIndex) {
@@ -27,13 +40,11 @@ namespace System.Text {
                 }
 
                 public override int GetMaxByteCount(int charCount) {
-                        // FIXME
-                        return 0;
+                        return charCount*3;
                 }
 
                 public override int GetMaxCharCount(int byteCount) {
-                        // FIXME
-                        return 0;
+                        return byteCount;
                 }
         }
 }
