@@ -8,6 +8,7 @@
 //
 
 using System;
+using System.IO;
 using System.Collections;
 using System.Diagnostics.SymbolStore;
 
@@ -130,18 +131,20 @@ namespace Mono.CSharp {
 				if (sw == null)
 					return null;
 
-				if (sym_docs.Contains (Name))
+				string path = Path.GetFullPath (Name);
+
+				if (sym_docs.Contains (path))
 					// If we already created an ISymbolDocumentWriter
 					// instance for this document, return it.
-					doc = (ISymbolDocumentWriter) sym_docs [Name];
+					doc = (ISymbolDocumentWriter) sym_docs [path];
 				else {
 					// Create a new ISymbolDocumentWriter instance and
 					// store it in the hash table.
-					doc = sw.DefineDocument (Name, SymLanguageType.CSharp,
+					doc = sw.DefineDocument (path, SymLanguageType.CSharp,
 								 SymLanguageVendor.Microsoft,
 								 SymDocumentType.Text);
 
-					sym_docs.Add (Name, doc);
+					sym_docs.Add (path, doc);
 				}
 
 				return doc;
