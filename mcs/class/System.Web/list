@@ -60,6 +60,8 @@ System.Web.Caching/CacheDependency.cs
 System.Web.Caching/CacheEntry.cs
 System.Web.Caching/CacheExpires.cs
 System.Web.Caching/ExpiresBuckets.cs
+System.Web.Configuration/AuthConfig.cs
+System.Web.Configuration/AuthenticationConfigHandler.cs
 System.Web.Configuration/AuthenticationMode.cs
 System.Web.Configuration/ClientTargetSectionHandler.cs
 System.Web.Configuration/FormsAuthPasswordFormat.cs
@@ -72,6 +74,8 @@ System.Web.Configuration/HttpConfigurationContext.cs
 System.Web.Configuration/HttpHandlersSectionHandler.cs
 System.Web.Configuration/HttpModulesConfigurationHandler.cs
 System.Web.Configuration/HandlerItem.cs
+System.Web.Configuration/MachineKeyConfig.cs
+System.Web.Configuration/MachineKeyConfigHandler.cs
 System.Web.Configuration/ModulesConfiguration.cs
 System.Web.Configuration/ModuleItem.cs
 System.Web.Hosting/AppDomainFactory.cs
