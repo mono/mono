@@ -1,5 +1,10 @@
 2005-01-06  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* doc.cs : When searching for a type, find nested type too.
+	  This fixes bug #71040.
+
+2005-01-06  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* doc.cs :
 	  - Warn missing member comment on those classes which also does not
 	    have doc comments. Fixed bug #71041.
