@@ -1,3 +1,11 @@
+2005-02-09  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Makefile.mstest,
+	  alltest.cs,
+	  simplify.xsl : another test runner from MainSoft. See the top of
+	  Makefile.mstest. IMPORTANT: it can't co-exist with existing tests
+	  extracted.
+
 2004-12-03  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* xslttest.cs : improved. See "mono xslttest.exe -?" for details.
