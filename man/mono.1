@@ -230,12 +230,6 @@ Provides a search path to the runtime where to look for library files.
 Directories are separated by the platform path separator (colons on unix). Example:
 .B /home/username/lib:/usr/local/mono/lib
 .TP
-.I "MONO_DISABLE_SHM"
-If this variable is set, it disables the shared memory part of the
-Windows I/O Emulation layer, and handles (files, events, mutexes,
-pipes) will not be shared across processes.  Process creation is also
-disabled.  This option is only available on Unix.
-.TP
 .I "MONO_CFG_DIR"
 If set, this variable overrides the default system configuration directory
 ($PREFIX/etc). It's used to locate machine.config file.
@@ -250,10 +244,20 @@ If set, enables some features of the runtime useful for debugging.
 Currently it only makes the runtime display the stack traces for all the
 threads running and exit. It may not exit cleanly. Use at your own risk.
 .TP
+.I "MONO_DISABLE_AIO"
+If set, tells mono NOT to attempt using native asynchronous I/O services. In
+that case, the threadpool is used for asynchronous I/O on files and sockets.
+.TP
+.I "MONO_DISABLE_SHM"
+If this variable is set, it disables the shared memory part of the
+Windows I/O Emulation layer, and handles (files, events, mutexes,
+pipes) will not be shared across processes.  Process creation is also
+disabled.  This option is only available on Unix.
+.TP
 .I "MONO_EXTERNAL_ENCODINGS"
 If set, contains a colon-separated list of text encodings to try when
 turning externally-generated text (e.g. command-line arguments or
-filenames) into unicode.  The encoding names come from the list
+filenames) into Unicode.  The encoding names come from the list
 provided by iconv, and the special case "default_locale" which refers
 to the current locale's default encoding.
 .TP
@@ -287,10 +291,6 @@ managed implementation on error.
 .I "MONO_CODEDOM_NODELETE"
 If set to any value, the C# CodeDom compiler will not remove the temporary
 source files generated.
-.TP
-.I "MONO_DISABLE_AIO"
-If set, tells mono NOT to attempt using native asynchronous I/O services. In
-that case, the threadpool is used for asynchronous I/O on files and sockets.
 .SH FILES
 On Unix assemblies are loaded from the installation lib directory.  If you set
 `prefix' to /usr, the assemblies will be located in /usr/lib.  On
