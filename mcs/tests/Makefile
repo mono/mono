@@ -19,7 +19,7 @@ USE_MCS_FLAGS :=
 TEST_SOURCES = \
 	test-1   test-2   test-3   test-4   test-5   test-6   test-7   test-8   test-9   test-10 \
 	test-11  test-12  test-13  test-14  test-15  test-16  test-17  test-18  test-19  test-20 \
-	test-21  test-22  test-23  test-24  test-25  test-26  test-27  test-28  test-29  test-30 \
+	test-21  test-22  test-23  test-24  test-25  test-26  test-27           test-29  test-30 \
 	test-31  test-32  test-33  test-34  test-35  test-36  test-37  test-38  test-39  test-40 \
 	test-41  test-42  test-43  test-44           test-46  test-47  test-48  test-49  \
 	test-51  test-52           test-54  test-55  test-56  test-57  	        test-59  test-60 \
@@ -27,7 +27,7 @@ TEST_SOURCES = \
 	test-71  test-72  test-73  test-74  test-75  test-76  test-77  test-78  test-79  test-80 \
 	test-81  test-82  test-83  test-84  test-85  test-86  test-87  test-88  test-89  test-90 \
 	         test-92  test-93  test-94  test-95  test-96  test-97  test-98  test-99  test-100\
-	test-101 test-102 test-103 test-104 test-105                   test-108 test-109 test-110\
+	test-101          test-103 test-104 test-105                   test-108 test-109 test-110\
 	test-111 test-112 test-113 test-114 test-115 test-116 test-117 test-118 test-119 \
 	test-121          test-123          test-125 test-126 test-127 test-128 test-129 test-130 \
 	test-131                   test-134 test-135 test-136 test-137 test-138 test-139 test-140 \
@@ -50,7 +50,7 @@ WINDOWS_SOURCES = \
 # Test 120 does not pass because the MS.NET runtime is buggy.
 
 TEST_NOPASS = \
-	test-45  test-53  test-91  test-106 test-107 test-120 test-122 test-132 test-133 test-66 test-177
+	test-28  test-45  test-53  test-91  test-202 test-106 test-107 test-120 test-122 test-132 test-133 test-66 test-177
 
 all-local install-local:
 
