@@ -261,12 +261,14 @@ namespace System {
 
 		public static bool ToBoolean (object value)
 		{
-			return (bool) ChangeType (value, typeof (System.Boolean));
+			return ToBoolean (value, null);
 		}
 
 		public static bool ToBoolean (object value, IFormatProvider provider)
 		{
-			return (bool) ChangeType (value, typeof (System.Boolean), provider);
+			if (value == null)
+				return false;
+			return ((IConvertible) value).ToBoolean (provider);
 		}
 
 		// ========== Byte Conversions ========== //
@@ -418,12 +420,14 @@ namespace System {
 
 		public static byte ToByte (object value)
 		{
-			return (byte) ChangeType (value, typeof (System.Byte));
+			return ToByte (value, null);
 		}
 
 		public static byte ToByte (object value, IFormatProvider provider)
 		{
-			return (byte) ChangeType (value, typeof (System.Byte), provider);
+			if (value == null)
+				return 0;
+			return ((IConvertible) value).ToByte (provider);
 		}
 
 		// ========== Char Conversions ========== //
@@ -538,15 +542,14 @@ namespace System {
 
 		public static char ToChar (object value)
 		{
-			return (char) ChangeType (value, typeof (System.Char));
+			return ToChar (value, null);
 		}
 
 		public static char ToChar (object value, IFormatProvider provider)
 		{
 			if (value == null)
-				return Char.MinValue;
-			else
-				return (char) ChangeType (value, typeof (System.Char), provider);
+				return (char) 0;
+			return ((IConvertible) value).ToChar (provider);
 		}
 
 		// ========== DateTime Conversions ========== //
@@ -613,12 +616,14 @@ namespace System {
 
 		public static DateTime ToDateTime (object value)
 		{
-			return (DateTime) ChangeType (value, typeof (System.DateTime));
+			return ToDateTime (value, null);
 		}
 
 		public static DateTime ToDateTime (object value, IFormatProvider provider)
 		{
-			return (DateTime) ChangeType (value, typeof (System.DateTime), provider);
+			if (value == null)
+				return DateTime.MinValue;
+			return ((IConvertible) value).ToDateTime (provider);
 		}
 
 		[CLSCompliant (false)]
@@ -736,12 +741,14 @@ namespace System {
 
 		public static decimal ToDecimal (object value)
 		{
-			return (decimal) ChangeType (value, typeof (System.Decimal));
+			return ToDecimal (value, null);
 		}
 
 		public static decimal ToDecimal (object value, IFormatProvider provider)
 		{
-			return (decimal) ChangeType (value, typeof (System.Decimal), provider);
+			if (value == null)
+				return new Decimal (0);
+			return ((IConvertible) value).ToDecimal (provider);
 		}
 						 
 
@@ -833,12 +840,14 @@ namespace System {
 
 		public static double ToDouble (object value)
 		{
-			return (double) ChangeType (value, typeof (System.Double));
+			return ToDouble (value, null);
 		}
 
 		public static double ToDouble (object value, IFormatProvider provider)
 		{
-			return (double) ChangeType (value, typeof (System.Double), provider);
+			if (value == null)
+				return 0.0;
+			return ((IConvertible) value).ToDouble (provider);
 		}
 
 		// ========== Int16 Conversions ========== //
@@ -973,12 +982,14 @@ namespace System {
 
 		public static short ToInt16 (object value)
 		{
-			return (short) ChangeType (value, typeof (System.Int16));
+			return ToInt16 (value, null);
 		}
 
 		public static short ToInt16 (object value, IFormatProvider provider)
 		{
-			return (short) ChangeType (value, typeof (System.Int16), provider);
+			if (value == null)
+				return 0;
+			return ((IConvertible) value).ToInt16 (provider);
 		}
 	
 		// ========== Int32 Conversions ========== //
@@ -1103,12 +1114,14 @@ namespace System {
 
 		public static int ToInt32 (object value)
 		{
-			return (int) ChangeType (value, typeof (System.Int32));
+			return ToInt32 (value, null);
 		}
 
 		public static int ToInt32 (object value, IFormatProvider provider)
 		{
-			return (int) ChangeType (value, typeof (System.Int32), provider);
+			if (value == null)
+				return 0;
+			return ((IConvertible) value).ToInt32 (provider);
 		}
 
 		// ========== Int64 Conversions ========== //
@@ -1120,7 +1133,7 @@ namespace System {
 	
 		public static long ToInt64 (byte value) 
 		{ 
-			return (long)value; 
+			return (long)(ulong)value; 
 		}
 
 		public static long ToInt64 (char value) 
@@ -1206,7 +1219,7 @@ namespace System {
 		[CLSCompliant (false)]
 		public static long ToInt64 (uint value) 
 		{ 
-			return (long)value; 
+			return (long)(ulong)value; 
 		}
 
 		[CLSCompliant (false)]
@@ -1222,17 +1235,19 @@ namespace System {
 		[CLSCompliant (false)]
 		public static long ToInt64 (ushort value) 
 		{ 
-			return (long)value; 
+			return (long)(ulong)value; 
 		}
 
 		public static long ToInt64 (object value)
 		{
-			return (long) ChangeType (value, typeof (System.Int64));
+			return ToInt64 (value, null);
 		}
 
 		public static long ToInt64 (object value, IFormatProvider provider)
 		{
-			return (long) ChangeType (value, typeof (System.Int64), provider);
+			if (value == null)
+				return 0;
+			return ((IConvertible) value).ToInt64 (provider);
 		}
 		
 		// ========== SByte Conversions ========== //
@@ -1389,13 +1404,15 @@ namespace System {
 		[CLSCompliant (false)]
 		public static sbyte ToSByte (object value)
 		{
-			return (sbyte) ChangeType (value, typeof (System.SByte));
+			return ToSByte (value, null);
 		}
 
 		[CLSCompliant (false)]
 		public static sbyte ToSByte (object value, IFormatProvider provider)
 		{
-			return (sbyte) ChangeType (value, typeof (System.SByte), provider);
+			if (value == null)
+				return 0;
+			return ((IConvertible) value).ToSByte (provider);
 		}
 
 		// ========== Single Conversions ========== //
@@ -1491,13 +1508,15 @@ namespace System {
 		[CLSCompliant (false)]
 		public static float ToSingle (object value)
 		{
-			return (float) ChangeType (value, typeof (System.Single));
+			return ToSingle (value, null);
 		}
 
 		[CLSCompliant (false)]
 		public static float ToSingle (object value, IFormatProvider provider)
 		{
-			return (float) ChangeType (value, typeof (System.Single), provider);
+			if (value == null)
+				return 0;
+			return ((IConvertible) value).ToSingle (provider);
 		}
 
 		// ========== String Conversions ========== //
@@ -1613,12 +1632,16 @@ namespace System {
 
 		public static string ToString (object value)
 		{
-			return (string) ChangeType (value, typeof (System.String));
+			return ToString (value, null);
 		}		
 
 		public static string ToString (object value, IFormatProvider provider)
 		{
-			return (string) ChangeType (value, typeof (System.String), provider);
+			if (value is IConvertible)
+				return ((IConvertible) value).ToString (provider);
+			else if (value != null)
+				return value.ToString ();
+			return String.Empty;
 		}				
 
 		public static string ToString (sbyte value) 
@@ -1838,13 +1861,15 @@ namespace System {
 		[CLSCompliant (false)]
 		public static ushort ToUInt16 (object value)
 		{
-			return (ushort) ChangeType (value, typeof (System.UInt16));
+			return ToUInt16 (value, null);
 		}
 
 		[CLSCompliant (false)]
 		public static ushort ToUInt16 (object value, IFormatProvider provider)
 		{
-			return (ushort) ChangeType (value, typeof (System.UInt16), provider);
+			if (value == null)
+				return 0;
+			return ((IConvertible) value).ToUInt16 (provider);
 		}
 
 		// ========== UInt32 Conversions ========== //
@@ -1989,13 +2014,15 @@ namespace System {
 		[CLSCompliant (false)]
 		public static uint ToUInt32 (object value)
 		{
-			return (uint) ChangeType (value, typeof (System.UInt32));
+			return ToUInt32 (value, null);
 		}		
 
 		[CLSCompliant (false)]
 		public static uint ToUInt32 (object value, IFormatProvider provider)
 		{
-			return (uint) ChangeType (value, typeof (System.UInt32), provider);
+			if (value == null)
+				return 0;
+			return ((IConvertible) value).ToUInt32 (provider);
 		}		
 		
 
@@ -2137,13 +2164,15 @@ namespace System {
 		[CLSCompliant (false)]
 		public static ulong ToUInt64 (object value)
 		{
-			return (ulong) ChangeType (value, typeof (System.UInt64));
+			return ToUInt64 (value, null);
 		}		
 
 		[CLSCompliant (false)]
 		public static ulong ToUInt64 (object value, IFormatProvider provider)
 		{
-			return (ulong) ChangeType (value, typeof (System.UInt64), provider);
+			if (value == null)
+				return 0;
+			return ((IConvertible) value).ToUInt64 (provider);
 		}		
 		
 
