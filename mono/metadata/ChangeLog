@@ -1,3 +1,8 @@
+2004-08-16  Zoltan Varga  <vargaz@freemail.hu>
+
+	* Makefile.am: Build static versions of libmetadata and libmonoruntime
+	for inclusion into the mono executable.
+
 2004-08-16  Martin Baulig  <martin@ximian.com>
 
 	* metadata.c (do_mono_metadata_parse_generic_inst): Store the
