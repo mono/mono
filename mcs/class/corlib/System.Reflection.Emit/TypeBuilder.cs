@@ -572,9 +572,9 @@ namespace System.Reflection.Emit {
 		}
 		protected override bool IsValueTypeImpl () {
 			//Console.WriteLine ("is value type: {0}: {1} ({2}) base: {3}", AssemblyQualifiedName, type_is_subtype_of (this, pmodule.assemblyb.corlib_value_type, false), pmodule.assemblyb.corlib_value_type.AssemblyQualifiedName, BaseType != null?BaseType.AssemblyQualifiedName: "");
-			return (type_is_subtype_of (this, pmodule.assemblyb.corlib_value_type, false) || type_is_subtype_of (this, typeof(System.ValueType), false));
-//				this != pmodule.assemblyb.corlib_value_type &&
-//				this != typeof (System.Enum); /* FIXME: handle a TypeBuilder System.Enum */
+			return ((type_is_subtype_of (this, pmodule.assemblyb.corlib_value_type, false) || type_is_subtype_of (this, typeof(System.ValueType), false)) &&
+				this != pmodule.assemblyb.corlib_value_type &&
+				this != typeof (System.Enum)); /* FIXME: handle a TypeBuilder System.Enum */
 
 /*			return type_is_subtype_of (this, typeof(System.ValueType), false) &&
 				this != typeof(System.ValueType) &&
