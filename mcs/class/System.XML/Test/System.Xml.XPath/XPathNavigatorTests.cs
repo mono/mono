@@ -260,5 +260,23 @@ namespace MonoTests.System.Xml
 			Assert ("ctor() from XmlTextReader", !nav.MoveToId ("aaa"));
 			xtr.Close ();
 		}
+
+		[Test]
+		public void SignificantWhitespaceConstruction ()
+		{
+			string xml = @"<root>
+        <child xml:space='preserve'>    <!-- -->   </child>
+        <child xml:space='preserve'>    </child>
+</root>";
+		XPathNavigator nav = new XPathDocument (
+			new XmlTextReader (xml, XmlNodeType.Document, null),
+			XmlSpace.Preserve).CreateNavigator ();
+		nav.MoveToFirstChild ();
+		nav.MoveToFirstChild ();
+		AssertEquals ("#1", XPathNodeType.Whitespace, nav.NodeType);
+		nav.MoveToNext ();
+		nav.MoveToFirstChild ();
+		AssertEquals ("#2", XPathNodeType.SignificantWhitespace,
+			nav.NodeType);
 	}
 }
