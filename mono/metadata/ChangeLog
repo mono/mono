@@ -1,3 +1,17 @@
+2004-04-13  Miguel de Icaza  <miguel@ximian.com>
+
+	* appdomain.c: Pass arguments to the bootstraping exceptions to
+	minimize JITed methods at boot
+
+	* metadata.c (mono_exception_from_name_two_strings): Allow for the
+	second string to be null.
+
+	* icall.c (ves_icall_System_Text_Encoding_InternalCodePage):
+	Change the protocol to minimize the JIT methods at startup.  Now
+	it Returns the internal codepage, if the value of "int_code_page"
+	is 1 at entry, and we can not compute a suitable code page
+	number, returns the code page as a string.
+
 2004-04-13  Jackson Harper  <jackson@ximian.com>
 
 	* culture-info-tables.h: Fix number of decimal digits for all

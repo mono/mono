@@ -1,5 +1,14 @@
 2004-04-13  Miguel de Icaza  <miguel@ximian.com>
 
+	* inssel-x86.brg (reg): Add new rules for add, sub and mul that
+	can use the memory directly.
+
+	* cpu-pentium.md: Update documentation from a post from Zoltan. 
+
+	add x86_add_membase, x86_sub_membase, x86_mul_membase
+
+2004-04-13  Miguel de Icaza  <miguel@ximian.com>
+
 	* mini-ppc.c: Remove unused definitions FLOAT_REGS and
 	GENERAL_REGS they were also hardcoded for all PPC ports.
 
