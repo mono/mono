@@ -1,3 +1,7 @@
+2004-12-03  Raja R Harinath  <rharinath@novell.com>
+
+	* test-326.cs (Main): Set return type to int, not void.
+
 2004-12-02  Marek Safar <marek.safar@seznam.cz>
 
 	* test-325.cs: New test for #70102.
