@@ -160,7 +160,7 @@ namespace System.IO {
 			if (DisposedAlready)
 				throw new ObjectDisposedException("StreamWriter");
 
-			byte[] res = new byte [internalEncoding.GetMaxByteCount (buffer.Length)];
+			byte[] res = new byte [internalEncoding.GetByteCount (buffer)];
 			int len;
 			int BytesToBuffer;
 			int resPos = 0;

@@ -1,3 +1,9 @@
+2002-08-03  Jason Diamond  <jason@injektilo.org>
+
+	* makefile.gnu: Added.
+
+	* System.XML_linux_test.args: Added.
+
 2002-07-12  Piers Haken <piersh@friskit.com
 
 	* SelectNodesTests.cs: Added TestUnion (bug #27548)

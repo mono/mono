@@ -1,0 +1,25 @@
+--target library
+-o System.XML_linux_test.dll
+--noconfig
+-r ../../lib/corlib.dll
+-r ../../lib/System.dll
+-r ../../../nunit/NUnitCore_mono.dll
+AllTests.cs
+NameTableTests.cs
+SelectNodesTests.cs
+XmlAttributeTests.cs
+XmlCDataSectionTests.cs
+XmlCommentTests.cs
+XmlDeclarationTests.cs
+XmlDocumentTests.cs
+XmlDocumentTypeTests.cs
+XmlElementTests.cs
+XmlNamespaceManagerTests.cs
+XmlNodeListTests.cs
+XmlProcessingInstructionTests.cs
+XmlSignificantWhitespaceTests.cs
+XmlTextReaderTests.cs
+XmlTextTests.cs
+XmlTextWriterTests.cs
+XmlWhiteSpaceTests.cs
+XPathNavigatorTests.cs
