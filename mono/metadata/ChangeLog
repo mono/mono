@@ -1,3 +1,8 @@
+2005-03-24  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile.am (assembly.lo, mono-config.lo): Rebuild when Makefile
+	changes to pick up any changes in prefix, etc.
+
 2005-03-23  Zoltan Varga  <vargaz@freemail.hu>
 
 	* marshal.c (mono_marshal_get_managed_wrapper): Remove fixme.
