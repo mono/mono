@@ -165,7 +165,7 @@ namespace Mono.CSharp {
 			{
 				Type[] types;
 				Type[] ifaces = t.GetInterfaces ();
-				if (t.BaseType != null) {
+				if (t.BaseType != TypeManager.object_type) {
 					types = new Type [ifaces.Length + 1];
 					types [0] = t.BaseType;
 					ifaces.CopyTo (types, 1);
