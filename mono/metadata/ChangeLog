@@ -1,3 +1,17 @@
+2004-12-04  Zoltan Varga  <vargaz@freemail.hu>
+
+	* image.c: Add unbox_wrapper_cache.
+
+	* class-internals.h debug-helpers.c: Add MONO_WRAPPER_UNBOX.
+
+	* marshal.h marshal.c (mono_marshal_get_unbox_wrapper): New wrapper
+	function generator.
+	
+	* object.c (mono_delegate_ctor): Call unbox wrapper if neccesary.
+	Fixes #70173.
+
+	* metadata-internals.h image.c: Add MonoImage->unbox_wrapper_cache.
+
 2004-12-01 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* process.c: (complete_path) return the path quoted

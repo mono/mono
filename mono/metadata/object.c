@@ -2843,6 +2843,10 @@ mono_delegate_ctor (MonoObject *this, MonoObject *target, gpointer addr)
 		method = mono_marshal_get_remoting_invoke (method);
 		delegate->method_ptr = mono_compile_method (method);
 		delegate->target = target;
+	} else if (method->signature->hasthis && method->klass->valuetype) {
+		method = mono_marshal_get_unbox_wrapper (method);
+		delegate->method_ptr = mono_compile_method (method);
+		delegate->target = target;
 	} else {
 		delegate->method_ptr = addr;
 		delegate->target = target;
