@@ -50,6 +50,7 @@ namespace System.Windows.Forms {
 		private static bool		themes_enabled;
 
 		private static IntPtr		DisplayHandle;		// X11 handle to display
+		private static int		ScreenNum;		// Screen number used
 		private static IntPtr		root_window;		// Handle of the root window for the screen/display
 		private static IntPtr		FosterParent;		// Container to hold child windows until their parent exists
 		private static int		wm_protocols;		// X Atom
@@ -199,6 +200,8 @@ namespace System.Windows.Forms {
 
 		internal static void SetDisplay(IntPtr display_handle) {
 			if (display_handle != IntPtr.Zero) {
+				IntPtr	Screen;
+
 				if (FosterParent != IntPtr.Zero) {
 					XDestroyWindow(DisplayHandle, FosterParent);
 				}
@@ -207,6 +210,9 @@ namespace System.Windows.Forms {
 				}
 
 				DisplayHandle=display_handle;
+
+				Screen = XDefaultScreenOfDisplay(DisplayHandle);
+				ScreenNum = XScreenNumberOfScreen(DisplayHandle, Screen);
 
 				// We need to tell System.Drawing our DisplayHandle. FromHdcInternal has
 				// been hacked to do this for us.
@@ -371,12 +377,18 @@ namespace System.Windows.Forms {
 		}
 
 		internal override void SetWindowBackground(IntPtr handle, Color color) {
-			uint	backcolor;
+			XColor	exact_color;
+			XColor	screen_color;
+			uint	cmap;
 
-//			backcolor = ((uint)(color.ToArgb() & 0xff0000)>>16) | (uint)(color.ToArgb() & 0xff00) | (uint)((color.ToArgb() & 0xff) << 16);
-			backcolor = ((uint)(color.ToArgb() & 0xff0000)) | (uint)(color.ToArgb() & 0xff00) | (uint)((color.ToArgb() & 0xff) );
+			exact_color = new XColor();
+			screen_color = new XColor();
+
+			XLookupColor(DisplayHandle, XDefaultColormap(DisplayHandle, ScreenNum), "rgb:"+color.R.ToString("x")+"/"+color.G.ToString("x")+"/"+color.B.ToString("x"), ref exact_color, ref screen_color);
+			XAllocColor(DisplayHandle, XDefaultColormap(DisplayHandle, ScreenNum), ref screen_color);
+
 			lock (xlib_lock) {
-				XSetWindowBackground(DisplayHandle, handle, backcolor);
+				XSetWindowBackground(DisplayHandle, handle, screen_color.pixel);
 			}
 		}
 
@@ -1285,32 +1297,31 @@ namespace System.Windows.Forms {
 		[DllImport ("libX11.so", EntryPoint="XGetGeometry")]
 		internal extern static bool XGetGeometry(IntPtr display, IntPtr window, out IntPtr root, out int x, out int y, out int width, out int height, out int border_width, out int depth);
 
-		[DllImport ("libX11.so", EntryPoint="XAllocColor")]
-		internal extern static int XAllocColor(IntPtr display, uint Colormap, ref XColor colorcell_def);
+		[DllImport ("libX11.so", EntryPoint="XWarpPointer")]
+		internal extern static uint XWarpPointer(IntPtr display, IntPtr src_w, IntPtr dest_w, int src_x, int src_y, uint src_width, uint src_height, int dest_x, int dest_y);
 
-		[DllImport ("libX11.so", EntryPoint="XGetStandardColormap")]
-		internal extern static int XGetStandardColormap(IntPtr display, IntPtr window, ref XStandardColormap cmap_info, Atom property);
+		// Colormaps
+		[DllImport ("libX11.so", EntryPoint="XDefaultScreenOfDisplay")]
+		internal extern static IntPtr XDefaultScreenOfDisplay(IntPtr display);
 
-		[DllImport ("libX11.so", EntryPoint="XSetRGBColormaps")]
-		internal extern static int XSetRGBColormaps(IntPtr display, IntPtr window, ref XStandardColormap cmap_info, int count, Atom property);
-
-		[DllImport ("libX11.so", EntryPoint="XInstallColormap")]
-		internal extern static int XInstallColormap(IntPtr display, uint cmap);
-
-		[DllImport ("libX11.so", EntryPoint="XDefaultColormap")]
-		internal extern static uint XDefaultColormap(IntPtr display, int screen_number);
-
-		[DllImport ("libX11.so", EntryPoint="XDefaultDepth")]
-		internal extern static uint XDefaultDepth(IntPtr display, int screen_number);
+		[DllImport ("libX11.so", EntryPoint="XScreenNumberOfScreen")]
+		internal extern static int XScreenNumberOfScreen(IntPtr display, IntPtr Screen);
 
 		[DllImport ("libX11.so", EntryPoint="XDefaultVisual")]
 		internal extern static uint XDefaultVisual(IntPtr display, int screen_number);
 
-		[DllImport ("libX11.so", EntryPoint="XSetWindowColormap")]
-		internal extern static uint XSetWindowColormap(IntPtr display, IntPtr window, uint cmap);
+		[DllImport ("libX11.so", EntryPoint="XDefaultDepth")]
+		internal extern static uint XDefaultDepth(IntPtr display, int screen_number);
 
-		[DllImport ("libX11.so", EntryPoint="XWarpPointer")]
-		internal extern static uint XWarpPointer(IntPtr display, IntPtr src_w, IntPtr dest_w, int src_x, int src_y, uint src_width, uint src_height, int dest_x, int dest_y);
+		[DllImport ("libX11.so", EntryPoint="XDefaultColormap")]
+		internal extern static uint XDefaultColormap(IntPtr display, int screen_number);
+
+		[DllImport ("libX11.so", EntryPoint="XLookupColor")]
+		internal extern static int XLookupColor(IntPtr display, uint Colormap, string Coloranem, ref XColor exact_def_color, ref XColor screen_def_color);
+
+		[DllImport ("libX11.so", EntryPoint="XAllocColor")]
+		internal extern static int XAllocColor(IntPtr display, uint Colormap, ref XColor colorcell_def);
+
 
 		// Drawing
 		[DllImport ("libX11.so", EntryPoint="XCreateGC")]
