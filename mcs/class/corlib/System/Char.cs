@@ -102,8 +102,49 @@ namespace System {
 			return IsControl (str[index]);
 		}
 		
-		[MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.InternalCall)]
-		public static extern bool IsDigit (char c);
+		public static bool IsDigit (char c)
+		{
+			// You will find that this int-comparison version 
+			// is faster than char-comparison version.
+			int i = (int) c;
+			if (i >= 0x30 && i <= 0x39) // ASCII digits
+				return true;
+			if (i < 0x660) // quick check for ASCII range.
+				return false;
+
+			// hereby all ASCII characters are evaluated quickly.
+
+			// the largest ranges of digits
+			if (i >= 0xff10 && i <= 0xff19) // fullwidth digits
+				return true;
+			// after the block above, there is a wide range of non-digits.
+			if (i > 0x1820)
+				return false;
+
+			if (i >= 0x660 && i <= 0x669 || // arabic-indic
+				i >= 0x6f0 && i <= 0x6f9)  // extended arabic-indic
+				return true;
+			if (i < 0x966)
+				return false;
+			if (i == 0xbe6)
+				return false; // (reserved - Tamil number 0 does not exist in Unicode spec)
+			// Devanagari, Bengali, Gurmukhi, Gujarati, Oriya, 
+			// Tamil, Telugu, Kannada and Malayalam digits.
+			if (i >= 0x960 && i <= 0xd6f &&
+				(i & 0xf) > 5 &&
+				((i & 0xf0) == 0x60 || (i & 0xf0) == 0xe0))
+				return true;
+			if (i < 0xe50)
+				return false;
+			return // rest are boring check ;-)
+				i >= 0xe50 && i <= 0xe59 || // Thai
+				i >= 0xed0 && i <= 0xed9 || // Lao
+				i >= 0xf20 && i <= 0xf29 || // Tibetan
+				i >= 0x1040 && i <= 0x1049 || // Myanmer
+				i >= 0x1369 && i <= 0x1371 || // Ethiopic
+				i >= 0x17e0 && i <= 0x17e9 || // Buhid
+				i >= 0x1810 && i <= 0x1819; // Mongolian
+		}
 
 		public static bool IsDigit (string str, int index)
 		{
@@ -197,8 +238,23 @@ namespace System {
 			return IsPunctuation (str[index]);
 		}
 
-		[MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.InternalCall)]
-		public static extern bool IsSeparator (char c);
+		public static bool IsSeparator (char c)
+		{
+			int i = (int) c;
+			switch (i) {
+			case 0x20:
+			case 0xa0: // &nbsp;
+			case 0x1680: // Ogham space mark
+			case 0x202f: // Narrow nbsp
+			case 0x3000: // Ideographic space
+			case 0x2028:
+			case 0x2029:
+				return true;
+			default:
+				// general punctuations :: spaces
+				return i >= 0x2000 && i <= 0x200b;
+			}
+		}
 		
 		public static bool IsSeparator (string str, int index)
 		{
@@ -257,8 +313,30 @@ namespace System {
 			return IsUpper (str[index]);
 		}
 
-		[MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.InternalCall)]
-		public static extern bool IsWhiteSpace (char c);
+		public static bool IsWhiteSpace (char c)
+		{
+			int i = (int) c;
+			switch (i) {
+			case 0x20:
+			case 0x9:
+			case 0x0a:
+			case 0x0b:
+			case 0x0c:
+			case 0x0d:
+			case 0x85: // NEL
+			case 0x2028: // Line Separator
+			case 0x2029: // Paragraph Separator
+			// Below are copy of IsSeparator test.
+			case 0xa0: // &nbsp;
+			case 0x1680: // Ogham space mark
+			case 0x202f: // Narrow nbsp
+			case 0x3000: // Ideographic space
+				return true;
+			default:
+				// general punctuations :: spaces
+				return i >= 0x2000 && i <= 0x200b;
+			}
+		}
 		
 		public static bool IsWhiteSpace (string str, int index)
 		{
@@ -287,7 +365,7 @@ namespace System {
 		public static extern char ToLower (char c);
 
 		[MonoTODO]
-		public static char ToLower(char c, CultureInfo culture)
+		public static char ToLower (char c, CultureInfo culture)
 		{
 			throw new NotImplementedException();
 		}

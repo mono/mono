@@ -1,3 +1,8 @@
+2004-02-18  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Char.cs : optimized IsSeparator(), IsWhiteSpace() and IsDigit().
+	  (Moved from InternalCall to Managed code).
+
 2004-02-17  Martin Baulig  <martin@ximian.com>
 
 	* MonoType.cs (GetConstructors): Renamed the interncall to
