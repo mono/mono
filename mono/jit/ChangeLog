@@ -1,3 +1,14 @@
+2002-09-21  Martin Baulig  <martin@gnome.org>
+
+	* debug.c (MonoDebuggerSymbolFileTable): Use an actual typedef for this
+	instead of writing a byte blob.
+	(mono_debug_make_symbols): This doesn't touch the symbol tables anymore.
+	(mono_debug_add_method): Incrementally add the new method to the symbol
+	table.
+
+	* exception.c (arch_handle_exception): If we have debugging support,
+	call mono_debugger_update_symbol_file_table () as well.
+
 2002-09-20  Martin Baulig  <martin@gnome.org>
 
 	* debug.c (mono_debug_add_method): The `MonoDebugVarInfo' now includes
