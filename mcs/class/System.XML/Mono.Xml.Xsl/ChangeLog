@@ -1,5 +1,10 @@
 2005-03-02  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XslStylesheet.cs : included stylesheet could be literal result 
+	  element as stylesheet (see the spec 2.6.1).
+
+2005-03-02  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* GenericOutputter.cs : On WriteStartElement(), prefix should be an
 	  empty string when nsURI is empty.
 	* HtmlEmitter.cs : non-HTML elements in default namespace are treated
