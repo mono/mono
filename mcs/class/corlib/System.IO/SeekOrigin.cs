@@ -15,6 +15,7 @@ namespace System.IO {
 
 	/// <summary>
 	/// </summary>
+	[Serializable]
 	public enum SeekOrigin : int {
 
 		/// <summary>
