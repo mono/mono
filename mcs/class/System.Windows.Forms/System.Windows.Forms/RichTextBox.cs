@@ -353,13 +353,8 @@ namespace System.Windows.Forms {
 		{
 			throw new NotImplementedException ();
 		}
-		[MonoTODO]
-		public override bool Equals(object o)
-		{
-			throw new NotImplementedException ();
-		}
 
-			[MonoTODO]
+		[MonoTODO]
 		public int Find(char[] characterSet)
 		{
 			throw new NotImplementedException ();

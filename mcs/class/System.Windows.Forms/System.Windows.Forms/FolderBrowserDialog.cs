@@ -97,7 +97,8 @@ namespace System.Windows.Forms {
 		// FIXME: beta 1.1 says the following should be public virtual ISite Site {
 		// but the compiler gives warning that it must be new.
 		// Probably system.component needs to change to be beta 1.1 compliant
-		public new virtual ISite Site {
+		// looks fixed on 9/28/2003
+		public virtual ISite Site {
 			get {
 				throw new NotImplementedException ();
 			}

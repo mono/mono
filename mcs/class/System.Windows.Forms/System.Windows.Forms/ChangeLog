@@ -11,6 +11,18 @@
 	* FontDialog.cs
 
 	*signiture corrections
+2003-09-28  Dennis Hayes <dennish@raytek.com>
+	* FileDialog.cs
+	* FolderBrowserDialog.cs
+	* GridItemCollection.cs
+	* FontDialog.cs
+	* RichTextBox.cs
+	* GridColumnStylesCollection.cs
+	* Label.cs
+	* GroupBox.cs
+	* Help.cs
+
+	*signiture corrections
 
 2003-09-28  Dennis Hayes <dennish@raytek.com>
 
@@ -23,6 +35,8 @@
 	* UpDownBase.cs
 	* ErrorProvider.cs
 	* FeatureSupport.cs
+
+	*signiture corrections
 
 2003-09-27  Dennis Hayes <dennish@raytek.com>
 	* BindingsCollection.cs

@@ -207,7 +207,7 @@ namespace System.Windows.Forms {
     			}
     		}
     
-			protected new virtual bool RenderTransparent {
+			protected virtual bool RenderTransparent {
 				get {
 					return render_transparent;
 				}

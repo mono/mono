@@ -134,7 +134,7 @@ namespace System.Windows.Forms {
 				br.Dispose();
 				bmp.Dispose();
 			}
-			catch(Exception ex) {
+			catch/*(Exception ex)*/ {
 			}
 			//base.OnPaint(e);
 		}

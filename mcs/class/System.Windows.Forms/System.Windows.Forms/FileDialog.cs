@@ -33,7 +33,7 @@ namespace System.Windows.Forms {
 		bool restoreDirectory;
 		bool validateNames;
 
-		protected static readonly object EventFireOk;
+		protected static readonly object EventFileOk;
 		internal FileDialog ( )
 		{
 			setDefaults ( );

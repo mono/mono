@@ -16,6 +16,12 @@ namespace System.Windows.Forms {
 
     public abstract class GridItemCollection : ICollection, IEnumerable {
 
+		private GridItemCollection() {
+			//just for signture compatablity
+		}
+
+		public static GridItemCollection Empty;
+
 		//
 		//  --- Public Properties
 		//

@@ -10,7 +10,6 @@
 //
 using System.Drawing;
 using System.Runtime.InteropServices;
-using System.Drawing;
 namespace System.Windows.Forms 
 {	
         public class FontDialog : CommonDialog 

@@ -40,8 +40,18 @@ namespace System.Windows.Forms {
 		}
 
 		[MonoTODO]
-		public bool Contains()
+		public bool Contains(PropertyDescriptor propDesc)
 		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public bool Contains(string name) {
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public bool Contains(DataGridColumnStyle column) {
 			throw new NotImplementedException ();
 		}
 
@@ -90,7 +100,7 @@ namespace System.Windows.Forms {
 		//  --- Protected Methods
 		//
 		[MonoTODO]
-		protected void OnCollectionChanged(CollectionChangeEventArgs cevent)
+		protected void OnCollectionChanged(CollectionChangeEventArgs ccevent)
 		{
 			//FIXME:
 		}
@@ -110,6 +120,38 @@ namespace System.Windows.Forms {
 			}
 		}
 
+//		[MonoTODO]
+//		DataGridColumnStyle IList.this[int index]{
+//			get{
+//				throw new NotImplementedException ();
+//			}
+//		}
+//		
+//		[MonoTODO]
+//		public DataGridColumnStyle this[PropertyDescriptor propDesc]{
+//			get{
+//				throw new NotImplementedException ();
+//			}
+//		}
+//
+//		[MonoTODO]
+//		public DataGridColumnStyle this[string columnName]{
+//			get{
+//				throw new NotImplementedException ();
+//			}
+//		}
+
+		[MonoTODO]
+		void IList.Clear(){
+			//FIXME:
+		}
+
+//		[MonoTODO]
+//		DataGridColumnStyle IList.[int index]{
+//			get{
+//				throw new NotImplementedException ();
+//			}
+//		}
 		[MonoTODO]
 		public object this[int index]{
 			get{
@@ -118,11 +160,6 @@ namespace System.Windows.Forms {
 			set{
 				//FIXME:
 			}
-		}
-		
-		[MonoTODO]
-		void IList.Clear(){
-			//FIXME:
 		}
 		
 		[MonoTODO]

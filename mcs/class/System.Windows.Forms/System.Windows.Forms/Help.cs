@@ -7,7 +7,7 @@
 //
 // (C) 2002/3 Ximian, Inc
 //
-
+using System.Drawing;
 namespace System.Windows.Forms {
 
 	// <summary>
@@ -29,7 +29,25 @@ namespace System.Windows.Forms {
 		}
 
 		[MonoTODO]
+		public static void ShowHelp(Control parent, string caption, Point location)
+		{
+			//FIXME:
+		}
+
+		[MonoTODO]
+		public static void ShowHelp(Control parent, string url, string keyword)
+		{
+			//FIXME:
+		}
+
+		[MonoTODO]
 		public static void ShowHelp(Control parent, string url, HelpNavigator navigator)
+		{
+			//FIXME:
+		}
+
+		[MonoTODO]
+		public static void ShowHelp(Control parent, string url, HelpNavigator navigator, object param)
 		{
 			//FIXME:
 		}
