@@ -3,6 +3,8 @@
 	* test-189.cs: Reuse vacant slot. Test for bugs #43367 and
 	#46199.
 
+	* test-212.cs: New test for bug #44468.
+
 2003-07-28  Martin Baulig  <martin@ximian.com>
 
 	* test-210.cs: New test for bug #46923.
