@@ -1,3 +1,7 @@
+2004-03-31  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* StrongNameManager.cs: Synched with corlib version (updated graphic).
+
 2004-03-30  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* StrongNameManager.cs: New. Added a check for "*" (any) assembly

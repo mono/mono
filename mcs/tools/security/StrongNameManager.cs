@@ -20,16 +20,21 @@ using Mono.Xml;
 
 namespace Mono.Security {
 
-	/*
-	 *	StrongNameManager.Verify
+	/* RUNTIME
+	 *				yes
+	 *	in_gac ---------------------------------\
+	 *		|				|
+	 *		| no				\/
+	 *		|			return true
+	 * CLASS LIBRARY|
 	 *		|
-	 *		|			yes
-	 *	Assembly.GlobalAssemblyCache -----------\
-	 *		|				|
-	 *		| no				|
-	 *		|				|
-	 *		\/		not found	|
-	 *		Token --------------------------|
+	 * 		|
+	 *		|				
+	 *	bool StrongNameManager.MustVerify
+	 *		|
+	 *		|
+	 *		\/		not found	
+	 *		Token --------------------------\
 	 *		|				|
 	 *		| present ?			|
 	 *		|				|
@@ -43,12 +48,9 @@ namespace Mono.Security {
 	 *		|				|
 	 *		| present ?			|
 	 *		| or "*"			|
-	 *		\/				|
-	 *	SKIP VERIFICATION		VERIFY ASSEMBLY
-	 *		|				|
-	 *		|				|
 	 *		\/				\/
-	 *	return true			return StrongName.Verify()
+	 *	return false			return true
+	 *	SKIP VERIFICATION		VERIFY ASSEMBLY
 	 */
 
 	internal class StrongNameManager {
@@ -212,10 +214,9 @@ namespace Mono.Security {
 				return true;
 
 			string token = CryptoConvert.ToHex (an.GetPublicKeyToken ());
-			
 			Element el = (Element) tokens [token];
 			if (el != null) {
-				// lokok for this specific assembly first
+				// look for this specific assembly first
 				string users = el.GetUsers (an.Name);
 				if (users == null) {
 					// nothing for the specific assembly
