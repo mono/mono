@@ -28,18 +28,18 @@ public class BooleanTest : TestCase
 
 	public void TestStrings ()
 	{
-		AssertEquals("Wrong False string", Boolean.FalseString, "False");
-		AssertEquals("Wrong True string", Boolean.TrueString, "True");
+		AssertEquals("Wrong False string", "False", Boolean.FalseString);
+		AssertEquals("Wrong True string", "True", Boolean.TrueString);
 	}
 	
 	public void TestCompareTo() {
 		Boolean t=true,f=false;
 		String s = "What Ever";
-		AssertEquals("CompareTo Failed", f.CompareTo(t) < 0, true);
-		AssertEquals("CompareTo Failed", f.CompareTo(f), 0);
-		AssertEquals("CompareTo Failed", t.CompareTo(t), 0);
-		AssertEquals("CompareTo Failed", t.CompareTo(f) > 0, true);		
-		AssertEquals("CompareTo Failed", t.CompareTo(null) > 0, true);
+		AssertEquals("CompareTo Failed", true, f.CompareTo(t) < 0);
+		AssertEquals("CompareTo Failed", 0, f.CompareTo(f));
+		AssertEquals("CompareTo Failed", 0, t.CompareTo(t));
+		AssertEquals("CompareTo Failed", true, t.CompareTo(f) > 0);
+		AssertEquals("CompareTo Failed", true, t.CompareTo(null) > 0);
 		try {
 			t.CompareTo(s);
 			Fail("CompareTo should raise a System.ArgumentException");
@@ -52,38 +52,38 @@ public class BooleanTest : TestCase
 	public void TestEquals() {
 		Boolean t=true, f=false;
 		String s = "What Ever";
-		AssertEquals("Equals Failed", t.Equals(t), true);
-		AssertEquals("Equals Failed", f.Equals(f), true);
-		AssertEquals("Equals Failed", f.Equals(t), false);
-		AssertEquals("Equals Failed", t.Equals(null), false);
-		AssertEquals("Equals Failed", t.Equals(s), false);
+		AssertEquals("Equals Failed", true, t.Equals(t));
+		AssertEquals("Equals Failed", true, f.Equals(f));
+		AssertEquals("Equals Failed", false, f.Equals(t));
+		AssertEquals("Equals Failed", false, t.Equals(null));
+		AssertEquals("Equals Failed", false, t.Equals(s));
 	}
 
 	public void TestGetHashCode() {
 		Boolean t=true, f=false;
-		AssertEquals("GetHashCode True failed", t.GetHashCode(), 1);
-		AssertEquals("GetHashCode True failed", f.GetHashCode(), 0);
+		AssertEquals("GetHashCode True failed", 1, t.GetHashCode());
+		AssertEquals("GetHashCode True failed", 0, f.GetHashCode());
 	}
 
 	public void TestGetType() {
 		Boolean t=true, f=false;
-		AssertEquals("GetType failed", Object.ReferenceEquals(t.GetType(), f.GetType()), true);
+		AssertEquals("GetType failed", true, Object.ReferenceEquals(t.GetType(), f.GetType()));
 	}
 
 	public void TestGetTypeCode() {
 		Boolean b=true;
-		AssertEquals("GetTypeCode failed", b.GetTypeCode(), TypeCode.Boolean);
+		AssertEquals("GetTypeCode failed", TypeCode.Boolean, b.GetTypeCode());
 	}
 
 	public void TestParse() {
-		AssertEquals("Parse True failed", Boolean.Parse("True"), true);
-		AssertEquals("Parse True failed", Boolean.Parse(" True"), true);
-		AssertEquals("Parse True failed", Boolean.Parse("True "), true);
-		AssertEquals("Parse True failed", Boolean.Parse("tRuE"), true);
-		AssertEquals("Parse False failed", Boolean.Parse("False"), false);
-		AssertEquals("Parse False failed", Boolean.Parse(" False"), false);
-		AssertEquals("Parse False failed", Boolean.Parse("False "), false);
-		AssertEquals("Parse False failed", Boolean.Parse("fAlSe"), false);
+		AssertEquals("Parse True failed", true, Boolean.Parse("True"));
+		AssertEquals("Parse True failed", true, Boolean.Parse(" True"));
+		AssertEquals("Parse True failed", true, Boolean.Parse("True "));
+		AssertEquals("Parse True failed", true, Boolean.Parse("tRuE"));
+		AssertEquals("Parse False failed", false, Boolean.Parse("False"));
+		AssertEquals("Parse False failed", false, Boolean.Parse(" False"));
+		AssertEquals("Parse False failed", false, Boolean.Parse("False "));
+		AssertEquals("Parse False failed", false, Boolean.Parse("fAlSe"));
 		
 		try {
 			Boolean.Parse("not-t-or-f");
@@ -104,8 +104,8 @@ public class BooleanTest : TestCase
 	
 	public void TestToString() {
 		Boolean t=true,f=false;
-		AssertEquals("ToString True Failed", t.ToString(), Boolean.TrueString);
-		AssertEquals("ToString False Failed", f.ToString(), Boolean.FalseString);
+		AssertEquals("ToString True Failed", Boolean.TrueString, t.ToString());
+		AssertEquals("ToString False Failed", Boolean.FalseString, f.ToString());
 	}
 }
 

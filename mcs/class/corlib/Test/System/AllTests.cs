@@ -39,6 +39,7 @@ namespace MonoTests.System {
 				suite.AddTest(UInt16Test.Suite);
                                 suite.AddTest(UInt32Test.Suite);
                                 suite.AddTest(UInt64Test.Suite);
+				suite.AddTest(DoubleTest.Suite);
 				return suite;
                         }
                 }

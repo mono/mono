@@ -75,3 +75,8 @@
 	* BooleanTest.cs: Added New test suite
 	* AllTests.cs: Added new Boolean test to suite.
 
+2002-02-24  Bob Doan  <bdoan@sicompos.com>
+
+	* BooleanTest.cs: Use correct argument order in AssertEquals
+	* AllTests.cs: Added new Double test to suite.
+	* DoubleTest.cs: Add new test suite
