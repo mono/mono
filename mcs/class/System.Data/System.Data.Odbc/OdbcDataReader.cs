@@ -199,6 +199,10 @@ namespace System.Data.Odbc
 			return GetColumn(index).OdbcType.ToString();
 		}
 
+		public DateTime GetDate(int ordinal) {
+			return GetDateTime(ordinal);
+		}
+
 		public DateTime GetDateTime (int ordinal)
 		{
 			return (DateTime) GetValue(ordinal);
@@ -362,7 +366,7 @@ namespace System.Data.Odbc
 		}
 
 		[MonoTODO]
-		public TimeSpan GetTimeSpan (int ordinal)
+		public TimeSpan GetTime (int ordinal)
 		{
 			throw new NotImplementedException ();
 		}

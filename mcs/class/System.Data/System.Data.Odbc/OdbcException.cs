@@ -20,20 +20,10 @@ namespace System.Data.Odbc
 	{
 		OdbcErrorCollection col;
 
-
 		internal OdbcException(OdbcError Error) : base (Error.Message)
 		{
 			col=new OdbcErrorCollection();
 			col.Add(Error);
-		}
-
-
-		public int ErrorCode 
-		{	
-			get 
-			{
-				return col[0].NativeError;
-			}
 		}
 
 		public OdbcErrorCollection Errors 
@@ -53,11 +43,12 @@ namespace System.Data.Odbc
 		}
 
 
-		public override string Message 	{
-			get { 
+		public override string Message {
+			get 
+			{
 				
 				return  col[0].Message;
-			     }
+			}
 		}	
 		
 		#region Methods

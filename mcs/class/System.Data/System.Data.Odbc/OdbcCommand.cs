@@ -31,7 +31,7 @@ namespace System.Data.Odbc
 		bool designTimeVisible;
 		bool prepared=false;
 		OdbcDataReader dataReader;
-		public IntPtr hstmt;
+		IntPtr hstmt;
 		
 		#endregion // Fields
 
@@ -126,9 +126,6 @@ namespace System.Data.Odbc
 		public OdbcParameterCollection Parameters {
 			get {
 				return parameters;
-			}
-			set {
-				parameters = value;
 			}
 		}
 

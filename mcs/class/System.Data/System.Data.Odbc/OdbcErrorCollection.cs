@@ -22,6 +22,13 @@ namespace System.Data.Odbc
 	
 		#endregion // Fields
 
+		#region Constructors
+
+		internal OdbcErrorCollection() {
+		}
+
+		#endregion Constructors
+
 		#region Properties 
 
 		public int Count 
@@ -60,7 +67,7 @@ namespace System.Data.Odbc
 
 		#region Methods
 
-		public void Add (OdbcError error)
+		internal void Add (OdbcError error)
 		{
 			list.Add ((object) error);
 		}
