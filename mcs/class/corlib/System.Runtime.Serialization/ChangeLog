@@ -1,3 +1,9 @@
+2003-07-26  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* FormatterServices.cs:
+	(GetSerializableMembers): check that all base types are serializable
+	when getting their fields. Fixes bug #46875.
+
 2003-07-17  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* ObjectIDGenerator.cs: Optimized access to hashtable and reduced the
