@@ -1,5 +1,7 @@
 2003-09-10  Zoltan Varga  <vargaz@freemail.hu>
 
+	* aot.c (mono_aot_get_method_inner): Fix memory leak.
+	
 	* aot.c: Added mono_aot_verbose variable and made all debugging
 	output depend on the value of this variable.
 
