@@ -385,6 +385,7 @@ System.Web.UI.WebControls/ListSelectionMode.cs
 System.Web.UI.WebControls/Literal.cs
 System.Web.UI.WebControls/LiteralControlBuilder.cs
 System.Web.UI.WebControls/LiteralMode.cs
+System.Web.UI.WebControls/Localize.cs
 System.Web.UI.WebControls/LoginFailureAction.cs
 System.Web.UI.WebControls/LoginTextLayout.cs
 System.Web.UI.WebControls/LogoutAction.cs
