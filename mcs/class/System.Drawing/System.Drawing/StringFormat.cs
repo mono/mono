@@ -16,7 +16,7 @@ namespace System.Drawing
 	/// <summary>
 	/// Summary description for StringFormat.
 	/// </summary>
-	public sealed class StringFormat
+	public sealed class StringFormat : IDisposable
 	{
 		private static StringFormat genericDefault;
 		StringAlignment alignment;
@@ -33,6 +33,10 @@ namespace System.Drawing
 			alignment = StringAlignment.Center;
 			line_alignment = StringAlignment.Center;
 			format_flags = 0;
+		}
+
+		public void Dispose()
+		{
 		}
 
 		public StringFormat (StringFormat source)
