@@ -212,7 +212,16 @@ namespace System.IO
 			ArrayList entries = new ArrayList ();
 
 			while (true) {
-				if ((stat.Attributes & mask) == attrs && search.IsMatch (stat.Name))
+				// Ignore entries of "." and ".." -
+				// the documentation doesn't mention
+				// it (surprise!) but empirical
+				// testing indicates .net never
+				// returns "." or ".." in a
+				// GetDirectories() list.
+				if ((stat.Attributes & mask) == attrs &&
+				    search.IsMatch (stat.Name) &&
+				    stat.Name != "." &&
+				    stat.Name != "..")
 					entries.Add (Path.Combine (path, stat.Name));
 
 				if (!MonoIO.FindNextFile (find, out stat))

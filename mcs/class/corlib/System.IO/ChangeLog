@@ -1,3 +1,9 @@
+2002-03-31  Dick Porter  <dick@ximian.com>
+
+	* Directory.cs: Strip out "." and ".." from returned list
+
+	* FileAttributes.cs: Get the right enum values
+
 2002-03-28  Dietmar Maurer  <dietmar@ximian.com>
 
 	* TextWriter.cs (write): added check for null
