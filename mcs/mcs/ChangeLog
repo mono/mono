@@ -1,5 +1,11 @@
 2002-07-29  Martin Baulig  <martin@gnome.org>
 
+	* attribute.cs (Attribute.Resolve): Explicitly catch a
+	System.NullReferenceException when creating the
+	CustromAttributeBuilder and report a different warning message.
+
+2002-07-29  Martin Baulig  <martin@gnome.org>
+
 	* support.cs (ParameterData.ParameterName): Added method to
 	get the name of a parameter.
 
