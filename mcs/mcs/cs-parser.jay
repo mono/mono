@@ -630,7 +630,7 @@ struct_declaration
 		Struct new_struct = (Struct) current_container;
 
 		current_container = current_container.Parent;
-		CheckDef (current_container.AddStruct (new_struct), new_struct.Name);
+		CheckDef (current_container.AddStruct (new_struct), new_struct.Name, new_struct.Location);
 		$$ = new_struct;
 	  }
 	;
@@ -690,12 +690,14 @@ constant_declaration
 	  SEMICOLON
 	  {
 		foreach (VariableDeclaration constant in (ArrayList) $5){
+			Location l = constant.Location;
+
 			Const c = new Const (
 				(string) $4, (string) constant.identifier, 
-				(Expression) constant.expression_or_array_initializer, (int) $2, (Attributes) $1,
-				constant.Location);
+				(Expression) constant.expression_or_array_initializer, (int) $2, 
+				(Attributes) $1, l);
 
-			CheckDef (current_container.AddConstant (c), c.Name);
+			CheckDef (current_container.AddConstant (c), c.Name, l);
 		}
 	  }
 	;
@@ -733,10 +735,13 @@ field_declaration
 		int mod = (int) $2;
 
 		foreach (VariableDeclaration var in (ArrayList) $4){
-			Field field = new Field (type, mod, var.identifier, 
-						 var.expression_or_array_initializer, (Attributes) $1, var.Location);
+			Location l = var.Location;
 
-			CheckDef (current_container.AddField (field), field.Name);
+			Field field = new Field (type, mod, var.identifier, 
+						 var.expression_or_array_initializer, 
+						 (Attributes) $1, l);
+
+			CheckDef (current_container.AddField (field), field.Name, l);
 		}
 	  }
 	;
@@ -805,7 +810,7 @@ method_declaration
 		}
 
 		method.Block = (Block) $2;
-		CheckDef (current_container.AddMethod (method), method.Name);
+		CheckDef (current_container.AddMethod (method), method.Name, method.Location);
 
 		current_local_parameters = null;
 	  }
@@ -970,10 +975,11 @@ property_declaration
 		if (pair.Second != null)
 			set_block = (Block) pair.Second;
 
+		Location loc = (Location) $6;
 		prop = new Property ((string) $3, (string) $4, (int) $2, get_block, set_block,
-				     (Attributes) $1, (Location) $6);
+				     (Attributes) $1, loc);
 		
-		CheckDef (current_container.AddProperty (prop), prop.Name);
+		CheckDef (current_container.AddProperty (prop), prop.Name, loc);
 		implicit_value_parameter_type = null;
 	  }
 	;
@@ -1082,7 +1088,8 @@ interface_declaration
 			new_interface.Bases = (ArrayList) $6;
 
 		current_interface = null;
-		CheckDef (current_container.AddInterface (new_interface), new_interface.Name);
+		CheckDef (current_container.AddInterface (new_interface), 
+			  new_interface.Name, new_interface.Location);
 	  }
 	;
 
@@ -1132,25 +1139,25 @@ interface_member_declaration
 	  { 
 		InterfaceMethod m = (InterfaceMethod) $1;
 
-		CheckDef (current_interface.AddMethod (m), m.Name);
+		CheckDef (current_interface.AddMethod (m), m.Name, m.Location);
 	  }
 	| interface_property_declaration	
 	  { 
 		InterfaceProperty p = (InterfaceProperty) $1;
 
-		CheckDef (current_interface.AddProperty (p), p.Name);
+		CheckDef (current_interface.AddProperty (p), p.Name, p.Location);
           }
 	| interface_event_declaration 
           { 
 		InterfaceEvent e = (InterfaceEvent) $1;
 
-		CheckDef (current_interface.AddEvent (e), e.Name);
+		CheckDef (current_interface.AddEvent (e), e.Name, lexer.Location);
 	  }
 	| interface_indexer_declaration
 	  { 
 		InterfaceIndexer i = (InterfaceIndexer) $1;
 
-		CheckDef (current_interface.AddIndexer (i), "indexer");
+		CheckDef (current_interface.AddIndexer (i), "indexer", i.Location);
 	  }
 	;
 
@@ -1365,22 +1372,25 @@ constructor_declaration
 
 		if ((c.ModFlags & Modifiers.STATIC) != 0){
 			if ((c.ModFlags & Modifiers.Accessibility) != 0) {
-				Location l = lexer.Location;
-				Report.Error (515, l, "Access modifiers are not allowed on static constructors");
+				Report.Error (
+					515, c.Location, 
+					"Access modifiers are not allowed on static constructors");
 			}
 
 			if (c.Initializer != null){
-				Location l = lexer.Location;
-				Report.Error (514, l, "Static constructors can not have an explicit this or base constructor invocations");
+				Report.Error (
+					514, c.Location, 
+					"Static constructors can not have an explicit this or base " +
+					"constructor invocations");
 			}
 
 			if (!c.Parameters.Empty){
-				Location l = lexer.Location;
-				Report.Error (132, l, "Static constructors should not have parameters");
+				Report.Error (
+					132, c.Location, "Static constructors should not have parameters");
 			}
 		} 
 		
-		CheckDef (current_container.AddConstructor (c), c.Name);
+		CheckDef (current_container.AddConstructor (c), c.Name, c.Location);
 
 		current_local_parameters = null;
 	  }
@@ -1437,7 +1447,7 @@ destructor_declaration
 				new Parameters (null, null, l), (Attributes) $1, l);
 		  
 			d.Block = (Block) $6;
-			CheckDef (current_container.AddMethod (d), d.Name);
+			CheckDef (current_container.AddMethod (d), d.Name, d.Location);
 		}
 	  }
 	;
@@ -1452,7 +1462,7 @@ event_declaration
 			Event e = new Event ((string) $4, var.identifier, var.expression_or_array_initializer,
 					     (int) $2, null, null, (Attributes) $1, lexer.Location);
 
-			CheckDef (current_container.AddEvent (e), e.Name);
+			CheckDef (current_container.AddEvent (e), e.Name, e.Location);
 				       
 		}
 	  }
@@ -1463,6 +1473,7 @@ event_declaration
 	  {
 		implicit_value_parameter_type = (string) $4;  
 		lexer.EventParsing = true;
+		oob_stack.Push (lexer.Location);
 	  }
 	  event_accessor_declarations
 	  {
@@ -1470,6 +1481,8 @@ event_declaration
 	  }
 	  CLOSE_BRACE
 	  {
+		Location loc = (Location) oob_stack.Pop ();
+
 		Pair pair = (Pair) $8;
 		Block add_block = null;
 		Block rem_block = null;
@@ -1480,9 +1493,9 @@ event_declaration
 			rem_block = (Block) pair.Second;
 		
 		Event e = new Event ((string) $4, (string) $5, null, (int) $2, add_block, rem_block,
-				     (Attributes) $1, lexer.Location);
+				     (Attributes) $1, loc);
 		
-		CheckDef (current_container.AddEvent (e), e.Name);
+		CheckDef (current_container.AddEvent (e), e.Name, loc);
 		implicit_value_parameter_type = null;
 	  }
 	;
@@ -1612,24 +1625,30 @@ indexer_declarator
 enum_declaration
 	: opt_attributes
 	  opt_modifiers
-	  ENUM IDENTIFIER
+	  ENUM IDENTIFIER 
 	  opt_enum_base
 	  enum_body
 	  opt_semicolon
 	  { 
+		Location enum_location = lexer.Location;
+
 		string full_name = MakeName ((string) $4);
-		Enum e = new Enum (current_container, (string) $5, (int) $2, full_name, (Attributes) $1, lexer.Location);
+		Enum e = new Enum (
+				current_container, (string) $5, (int) $2, full_name, 
+				(Attributes) $1, enum_location);
 
 		foreach (VariableDeclaration ev in (ArrayList) $6){
+			Location loc = (Location) ev.Location;
+
 			CheckDef (e.AddEnumMember (ev.identifier, 
 						   (Expression) ev.expression_or_array_initializer,
-						   (Location) ev.Location),
-				  ev.identifier);
+						   loc),
+				  ev.identifier, loc);
 		}
 
 		e.Namespace = current_namespace;
 
-		CheckDef (current_container.AddEnum (e), full_name);
+		CheckDef (current_container.AddEnum (e), full_name, enum_location);
 		RootContext.Tree.RecordEnum (full_name, e);
 
 	  }
@@ -1694,12 +1713,13 @@ delegate_declaration
 	  CLOSE_PARENS 
 	  SEMICOLON
 	  {
+		Location l = lexer.Location;
 		Delegate del = new Delegate ((string) $4, (int) $2, 
 		                             MakeName ((string) $5), (Parameters) $7, 
-					     (Attributes) $1, lexer.Location);
+					     (Attributes) $1, l);
 		  
 
-		CheckDef (current_container.AddDelegate (del), del.Name);
+		CheckDef (current_container.AddDelegate (del), del.Name, l);
 	  }	
 	| opt_attributes
 	  opt_modifiers
@@ -1709,11 +1729,12 @@ delegate_declaration
 	  CLOSE_PARENS 
 	  SEMICOLON
 	  {
+		Location l = lexer.Location;
 		Delegate del = new Delegate (
 			"System.Void", (int) $2, MakeName ((string) $5), (Parameters) $7, 
-		        (Attributes) $1, lexer.Location);
+		        (Attributes) $1, l);
 
-		CheckDef (current_container.AddDelegate (del), del.Name);
+		CheckDef (current_container.AddDelegate (del), del.Name, l);
 	  }
 	;
 
@@ -2575,7 +2596,7 @@ class_declaration
 			new_class.Bases = (ArrayList) $6;
 
 		current_container = current_container.Parent;
-		CheckDef (current_container.AddClass (new_class), new_class.Name);
+		CheckDef (current_container.AddClass (new_class), new_class.Name, new_class.Location);
 
 		$$ = new_class;
 	  }
@@ -3613,13 +3634,11 @@ MakeName (string class_name)
 //   in the current declaration space
 // </summary>
 void 
-CheckDef (AdditionResult result, string name)
+CheckDef (AdditionResult result, string name, Location l)
 {
 	if (result == AdditionResult.Success)
 		return;
 
-	Location l = lexer.Location;
-	
 	switch (result){
 	case AdditionResult.NameExists:
 		Report.Error (102, l, "The container `" + current_container.Name + 
@@ -3650,11 +3669,11 @@ CheckDef (AdditionResult result, string name)
 }
 
 void 
-CheckDef (bool result, string name)
+CheckDef (bool result, string name, Location l)
 {
 	if (result)
 		return;
-	CheckDef (AdditionResult.NameExists, name);
+	CheckDef (AdditionResult.NameExists, name, l);
 }
 
 //

@@ -1873,6 +1873,20 @@ namespace Mono.CSharp {
 			}
 
 			//
+			// operator & (bool x, bool y)
+			// operator | (bool x, bool y)
+			// operator ^ (bool x, bool y)
+			//
+			if (l == TypeManager.bool_type && r == TypeManager.bool_type){
+				if (oper == Operator.BitwiseAnd ||
+				    oper == Operator.BitwiseOr ||
+				    oper == Operator.ExclusiveOr){
+					type = l;
+					return this;
+				}
+			}
+			
+			//
 			// Pointer comparison
 			//
 			if (l.IsPointer && r.IsPointer){

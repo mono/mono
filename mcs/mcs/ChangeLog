@@ -1,5 +1,13 @@
 2002-03-27  Miguel de Icaza  <miguel@ximian.com>
 
+	* expression.cs (Binary.ResolveOperator): added missing operator|
+	operator& and operator^ for bool/bool.
+
+	* cs-parser.jay: CheckDef now takes a Location argument that is
+	used to report errors more precisly (instead of reporting the end
+	of a definition, we try to track something which is a lot closer
+	to the source of the problem).
+
 	* cs-tokenizer.cs: Track global token use, so we can properly flag
 	the use of #define/#undef after the first token has been seen.
 
