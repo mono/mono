@@ -158,6 +158,13 @@ public class WebHeaderCollectionTest : TestCase
 		AssertEquals ("#15", null, w.GetValues ("NotExistent"));
 	}
 	
+	public void TestIndexers ()
+	{
+		AssertEquals ("#1", "Value1", col [0]);
+		AssertEquals ("#2", "Value1", col ["Name1"]);
+		AssertEquals ("#3", "Value1", col ["NAME1"]);
+	}
+	
 	public void TestRemove ()
 	{
 		col.Remove ("Name1");

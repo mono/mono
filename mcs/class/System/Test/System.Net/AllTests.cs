@@ -24,12 +24,21 @@ namespace MonoTests.System.Net {
                                 suite.AddTest (CookieCollectionTest.Suite);
                                 //suite.AddTest (CookieContainerTest.Suite);
                                 suite.AddTest (CredentialCacheTest.Suite);
-                                suite.AddTest (FileWebRequestTest.Suite);                                
+                                suite.AddTest (FileWebRequestTest.Suite);
                                 suite.AddTest (IPAddressTest.Suite);
                                 suite.AddTest (IPEndPointTest.Suite);
                                 suite.AddTest (SocketPermissionTest.Suite);
                                 suite.AddTest (WebHeaderCollectionTest.Suite);
+                                suite.AddTest (WebProxyTest.Suite);
                                 suite.AddTest (WebRequestTest.Suite);
+                                
+				#if NETWORKTEST                                
+                                	suite.AddTest (DnsTest.Suite);
+                                	suite.AddTest (HttpWebRequestTest.Suite);
+                                	suite.AddTest (ServicePointTest.Suite);
+                                	suite.AddTest (ServicePointManagerTest.Suite);
+				#endif                                
+                                
 				return suite;
                         }
                 }

@@ -24,10 +24,8 @@ namespace MonoTests
 				suite.AddTest (System.Collections.Specialized.AllTests.Suite);
 				suite.AddTest (System.Diagnostics.AllTests.Suite);
                                 suite.AddTest (System.Net.AllTests.Suite);
+                                suite.AddTest (System.Net.Sockets.AllTests.Suite);
 				suite.AddTest (System.Text.RegularExpressions.AllTests.Suite);
-				
-				//suite.AddTest (System.Net.DnsTest.Suite);
-				
 				return suite;
 			}
 		}

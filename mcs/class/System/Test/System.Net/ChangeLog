@@ -1,3 +1,11 @@
+2002-05-20  Lawrence Pit <loz@cable.a2000.nl>
+
+	* ServicePointTest.cs: added
+	* ServicePointManagerTest.cs: added
+	* WebProxyTest.cs: added
+	* AllTests.cs: added the above tests
+	* WebHeaderCollection.cs: added TestIndexers.
+
 2002-05-19  Lawrence Pit <loz@cable.a2000.nl>
 
 	* FileWebRequestTest.cs: all the async methods tests to behave the same 
