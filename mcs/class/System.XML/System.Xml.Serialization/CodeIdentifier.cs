@@ -55,7 +55,7 @@ namespace System.Xml.Serialization {
 			if (identifier == null)
 				throw new NullReferenceException ();
 			if (identifier.Length == 0)
-				return identifier;
+				return "Item";
 
 			string output = "";
 

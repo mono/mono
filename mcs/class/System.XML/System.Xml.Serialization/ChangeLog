@@ -1,3 +1,8 @@
+2004-09-28  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* CodeIdentifier.cs: MakeValid now returns "Item" for an empty string.
+	  This fixes bug #66877.
+
 2004-09-03  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* XmlSerializer.cs: When the XmlReader is created by XmlSerializer, use
