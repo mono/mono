@@ -147,7 +147,7 @@ namespace System.Web.UI
 
 			language = GetAndRemove (attributes, "language");
 			if (language != null) {
-				if (0 != String.Compare (language, "C#", false))
+				if (0 != String.Compare (language, "C#", true))
 					throw new ParseException (null, "Only C# language is supported by now.");
 			}
 
