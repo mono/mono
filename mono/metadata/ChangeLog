@@ -1,3 +1,8 @@
+2003-10-25  Zoltan Varga  <vargaz@freemail.hu>
+
+	* object.c (mono_class_vtable): Turn off typed allocation in non-root
+	domains and add some comments.
+
 2003-10-25  Martin Baulig  <martin@ximian.com>
 
 	* class.h (MonoGenericInst): Added `MonoClass *klass' field.
