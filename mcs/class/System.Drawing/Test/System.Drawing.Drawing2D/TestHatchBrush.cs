@@ -50,7 +50,7 @@ namespace MonoTests.System.Drawing.Drawing2D
 			bgColor = Color.Yellow;
 			fgColor = Color.Red;
 		}
-			
+
 		[Test]
 		public void TestProperties () 
 		{
@@ -66,7 +66,7 @@ namespace MonoTests.System.Drawing.Drawing2D
 			AssertEquals ("Props#5", hbr.ForegroundColor.ToArgb(), fgColor.ToArgb());
 			AssertEquals ("Props#6", hbr.BackgroundColor.ToArgb(), bgColor.ToArgb());
 		}
-		
+
 		[Test]
 		public void TestClone ()
 		{
@@ -84,7 +84,7 @@ namespace MonoTests.System.Drawing.Drawing2D
 		{
 			// create a bitmap with big enough dimensions 
 			// to accomodate all the tests
-			bmp = new Bitmap (700, 4000); // width, height
+			bmp = new Bitmap (700, 6000); // width, height
 			gr = Graphics.FromImage (bmp);
 			font = new Font (new FontFamily ("Arial"), fontSize);
 
@@ -120,7 +120,7 @@ namespace MonoTests.System.Drawing.Drawing2D
 			Pen pen = new Pen (new HatchBrush (HatchStyle.Horizontal, Color.White), penWidth);
 	 		gr.DrawLine (pen, lineStart, top, lineStart + length, top);
 
- 			// #2
+			// #2
  			top += spacing;
 			gr.DrawString ("Test #2 Vertical, BackgroundColor=Blue, ForegroundColor=Red", font, br, textStart, top);
 			
@@ -151,7 +151,7 @@ namespace MonoTests.System.Drawing.Drawing2D
 			pen = new Pen (hbr, penWidth);
 	 		gr.DrawLine (pen, lineStart, top, lineStart + length, top);
 
- 			// #2
+			// #2
  			top += spacing;
 			gr.DrawString ("Test #2 Min", font, br, textStart, top);
 			
@@ -159,7 +159,7 @@ namespace MonoTests.System.Drawing.Drawing2D
 			pen.Brush = new HatchBrush (HatchStyle.Min, fgColor, bgColor);
 	 		gr.DrawLine (pen, lineStart, top, lineStart + length, top);
 
- 			// #3
+			// #3
  			top += spacing;
 			gr.DrawString ("Test #3 DarkHorizontal", font, br, textStart, top);
 
@@ -167,7 +167,7 @@ namespace MonoTests.System.Drawing.Drawing2D
 			pen.Brush = new HatchBrush (HatchStyle.DarkHorizontal, fgColor, bgColor);
 	 		gr.DrawLine (pen, lineStart, top, lineStart + length, top);
 
- 			// #4
+			// #4
  			top += spacing;
 			gr.DrawString ("Test #4 LightHorizontal", font, br, textStart, top);
 
@@ -175,7 +175,7 @@ namespace MonoTests.System.Drawing.Drawing2D
 			pen.Brush = new HatchBrush (HatchStyle.LightHorizontal, fgColor, bgColor);
 	 		gr.DrawLine (pen, lineStart, top, lineStart + length, top);
 
- 			// #5
+			// #5
  			top += spacing;
 			gr.DrawString ("Test #5 NarrowHorizontal", font, br, textStart, top);
 
@@ -183,7 +183,7 @@ namespace MonoTests.System.Drawing.Drawing2D
 			pen.Brush = new HatchBrush (HatchStyle.NarrowHorizontal, fgColor, bgColor);
 	 		gr.DrawLine (pen, lineStart,top, lineStart + length,top);
 
- 			// #6
+			// #6
  			top += spacing;
 			gr.DrawString ("Test #6 Vertical", font, br, textStart, top);
 
@@ -191,7 +191,7 @@ namespace MonoTests.System.Drawing.Drawing2D
 			pen.Brush = new HatchBrush (HatchStyle.Vertical, fgColor, bgColor);
 	 		gr.DrawLine (pen, lineStart, top, lineStart + length, top);
 
- 			// #7
+			// #7
  			top += spacing;
 			gr.DrawString ("Test #7 DarkVertical", font, br, textStart, top);
 
@@ -199,7 +199,7 @@ namespace MonoTests.System.Drawing.Drawing2D
 			pen.Brush = new HatchBrush (HatchStyle.DarkVertical, fgColor, bgColor);
 	 		gr.DrawLine (pen, lineStart, top, lineStart + length, top);
 
- 			// #8
+			// #8
  			top += spacing;
 			gr.DrawString ("Test #8 LightVertical", font, br, textStart, top);
 
@@ -207,7 +207,7 @@ namespace MonoTests.System.Drawing.Drawing2D
 			pen.Brush = new HatchBrush (HatchStyle.LightVertical, fgColor, bgColor);
 	 		gr.DrawLine (pen, lineStart, top, lineStart + length, top);
 
- 			// #9
+			// #9
  			top += spacing;
 			gr.DrawString ("Test #9 NarrowVertical", font, br, textStart, top);
 
@@ -231,7 +231,7 @@ namespace MonoTests.System.Drawing.Drawing2D
 			pen.Brush = new HatchBrush (HatchStyle.LargeGrid, fgColor, bgColor);
 			gr.DrawLine (pen, lineStart, top, lineStart + length, top);
 
- 			// #12
+			// #12
  			top += spacing;
 			gr.DrawString ("Test #12 SmallGrid", font, br, textStart, top);
 			
@@ -319,7 +319,7 @@ namespace MonoTests.System.Drawing.Drawing2D
 			pen.Brush = new HatchBrush (HatchStyle.WideUpwardDiagonal, fgColor, bgColor);
 			gr.DrawLine (pen, lineStart, top, lineStart + length, top);
 
- 			// #23
+			// #23
  			top += spacing;
 			gr.DrawString ("Test #23 DashedHorizontal", font, br, textStart, top);
 			
@@ -327,7 +327,7 @@ namespace MonoTests.System.Drawing.Drawing2D
 			pen.Brush = new HatchBrush (HatchStyle.DashedHorizontal, fgColor, bgColor);
 	 		gr.DrawLine (pen, lineStart, top, lineStart + length, top);
 
- 			// #24
+			// #24
  			top += spacing;
 			gr.DrawString ("Test #24 DashedVertical", font, br, textStart, top);
 			
@@ -335,7 +335,7 @@ namespace MonoTests.System.Drawing.Drawing2D
 			hbr = new HatchBrush (HatchStyle.DashedVertical, fgColor, bgColor);
 	 		gr.FillRectangle (hbr, lineStart, top, length, penWidth);
 
- 			// #25
+			// #25
  			top += spacing;
 			gr.DrawString ("Test #25 DashedDownwardDiagonal", font, br, textStart, top);
 			
@@ -343,68 +343,244 @@ namespace MonoTests.System.Drawing.Drawing2D
 			hbr = new HatchBrush (HatchStyle.DashedDownwardDiagonal, fgColor, bgColor);
 	 		gr.FillRectangle (hbr, lineStart, top, length, penWidth);
 
- 			// #26
+			// #26
  			top += spacing;
 			gr.DrawString ("Test #26 DashedUpwardDiagonal", font, br, textStart, top);
 			
 			top += spacing;
 			pen = new Pen (new HatchBrush (HatchStyle.DashedUpwardDiagonal, fgColor, bgColor), penWidth);
-	 		gr.DrawLine (pen, lineStart, top, lineStart + length, top);
+			gr.DrawLine (pen, lineStart, top, lineStart + length, top);
 
- 			// #27
- 			top += spacing;
-			gr.DrawString ("Test #27 HorizontalBrick", font, br, textStart, top);
+			// #27
+			top += spacing;
+			gr.DrawString ("Test #27 05Percent", font, br, textStart, top);
+			
+			top += spacing;
+			pen = new Pen (new HatchBrush (HatchStyle.Percent05, fgColor, bgColor), penWidth);
+			gr.DrawLine (pen, lineStart, top, lineStart + length, top);
+
+			// #28
+			top += spacing;
+			gr.DrawString ("Test #28 10Percent", font, br, textStart, top);
+			
+			top += spacing;
+			pen = new Pen (new HatchBrush (HatchStyle.Percent10, fgColor, bgColor), penWidth);
+			gr.DrawLine (pen, lineStart, top, lineStart + length, top);
+
+			// #29
+			top += spacing;
+			gr.DrawString ("Test #29 20Percent", font, br, textStart, top);
+			
+			top += spacing;
+			pen = new Pen (new HatchBrush (HatchStyle.Percent20, fgColor, bgColor), penWidth);
+			gr.DrawLine (pen, lineStart, top, lineStart + length, top);
+
+			// #30
+			top += spacing;
+			gr.DrawString ("Test #30 25Percent", font, br, textStart, top);
+			
+			top += spacing;
+			pen = new Pen (new HatchBrush (HatchStyle.Percent25, fgColor, bgColor), penWidth);
+			gr.DrawLine (pen, lineStart, top, lineStart + length, top);
+
+			// #31
+			top += spacing;
+			gr.DrawString ("Test #31 30Percent", font, br, textStart, top);
+			
+			top += spacing;
+			pen = new Pen (new HatchBrush (HatchStyle.Percent30, fgColor, bgColor), penWidth);
+			gr.DrawLine (pen, lineStart, top, lineStart + length, top);
+
+			// #32
+			top += spacing;
+			gr.DrawString ("Test #32 40Percent", font, br, textStart, top);
+			
+			top += spacing;
+			pen = new Pen (new HatchBrush (HatchStyle.Percent40, fgColor, bgColor), penWidth);
+			gr.DrawLine (pen, lineStart, top, lineStart + length, top);
+
+			// #33
+			top += spacing;
+			gr.DrawString ("Test #33 50Percent", font, br, textStart, top);
+			
+			top += spacing;
+			pen = new Pen (new HatchBrush (HatchStyle.Percent50, fgColor, bgColor), penWidth);
+			gr.DrawLine (pen, lineStart, top, lineStart + length, top);
+
+			// #34
+			top += spacing;
+			gr.DrawString ("Test #34 60Percent", font, br, textStart, top);
+			
+			top += spacing;
+			pen = new Pen (new HatchBrush (HatchStyle.Percent60, fgColor, bgColor), penWidth);
+			gr.DrawLine (pen, lineStart, top, lineStart + length, top);
+
+			// #35
+			top += spacing;
+			gr.DrawString ("Test #35 70Percent", font, br, textStart, top);
+			
+			top += spacing;
+			pen = new Pen (new HatchBrush (HatchStyle.Percent70, fgColor, bgColor), penWidth);
+			gr.DrawLine (pen, lineStart, top, lineStart + length, top);
+
+			// #36
+			top += spacing;
+			gr.DrawString ("Test #36 75Percent", font, br, textStart, top);
+			
+			top += spacing;
+			pen = new Pen (new HatchBrush (HatchStyle.Percent75, fgColor, bgColor), penWidth);
+			gr.DrawLine (pen, lineStart, top, lineStart + length, top);
+
+			// #37
+			top += spacing;
+			gr.DrawString ("Test #37 80Percent", font, br, textStart, top);
+			
+			top += spacing;
+			pen = new Pen (new HatchBrush (HatchStyle.Percent70, fgColor, bgColor), penWidth);
+			gr.DrawLine (pen, lineStart, top, lineStart + length, top);
+
+			// #38
+			top += spacing;
+			gr.DrawString ("Test #38 90Percent", font, br, textStart, top);
+			
+			top += spacing;
+			pen = new Pen (new HatchBrush (HatchStyle.Percent70, fgColor, bgColor), penWidth);
+			gr.DrawLine (pen, lineStart, top, lineStart + length, top);
+
+			// #39
+			top += spacing;
+			gr.DrawString ("Test #39 SmallConfetti", font, br, textStart, top);
+			
+			top += spacing;
+			pen = new Pen (new HatchBrush (HatchStyle.SmallConfetti, fgColor, bgColor), penWidth);
+			gr.DrawLine (pen, lineStart, top, lineStart + length, top);
+
+			// #40
+			top += spacing;
+			gr.DrawString ("Test #40 LargeConfetti", font, br, textStart, top);
+			
+			top += spacing;
+			pen = new Pen (new HatchBrush (HatchStyle.LargeConfetti, fgColor, bgColor), penWidth);
+			gr.DrawLine (pen, lineStart, top, lineStart + length, top);
+
+			// #41
+			top += spacing;
+			gr.DrawString ("Test #41 ZigZag", font, br, textStart, top);
+			
+			top += spacing;
+			pen = new Pen (new HatchBrush (HatchStyle.ZigZag, fgColor, bgColor), penWidth);
+			gr.DrawLine (pen, lineStart, top, lineStart + length, top);
+
+			// #42
+			top += spacing;
+			gr.DrawString ("Test #42 Wave", font, br, textStart, top);
+			
+			top += spacing;
+			pen = new Pen (new HatchBrush (HatchStyle.Wave, fgColor, bgColor), penWidth);
+			gr.DrawLine (pen, lineStart, top, lineStart + length, top);
+
+			// #43
+			top += spacing;
+			gr.DrawString ("Test #43 HorizontalBrick", font, br, textStart, top);
 			
 			top += spacing;
 			pen = new Pen (new HatchBrush (HatchStyle.HorizontalBrick, fgColor, bgColor), penWidth);
 	 		gr.DrawLine (pen, lineStart, top, lineStart + length, top);
 
- 			// #28
+			// #44
  			top += spacing;
-			gr.DrawString ("Test #28 DiagonalBrick", font, br, textStart, top);
+			gr.DrawString ("Test #44 DiagonalBrick", font, br, textStart, top);
 			
 			top += spacing;
 			pen = new Pen (new HatchBrush (HatchStyle.DiagonalBrick, fgColor, bgColor), penWidth);
 	 		gr.DrawLine (pen, lineStart, top, lineStart + length, top);
 
- 			// #29
- 			top += spacing;
-			gr.DrawString ("Test #29 LargeCheckerBoard", font, br, textStart, top);
+			// #45
+			top += spacing;
+			gr.DrawString ("Test #45 Weave", font, br, textStart, top);
 			
 			top += spacing;
-			pen.Brush = new HatchBrush (HatchStyle.LargeCheckerBoard, fgColor, bgColor);
-	 		gr.DrawLine (pen, lineStart, top, lineStart + length, top);
+			pen = new Pen (new HatchBrush (HatchStyle.Weave, fgColor, bgColor), penWidth);
+			gr.DrawLine (pen, lineStart, top, lineStart + length, top);
 
- 			// #30
+			// #46
+			top += spacing;
+			gr.DrawString ("Test #46 Plaid", font, br, textStart, top);
+			
+			top += spacing;
+			pen = new Pen (new HatchBrush (HatchStyle.Plaid, fgColor, bgColor), penWidth);
+			gr.DrawLine (pen, lineStart, top, lineStart + length, top);
+
+			// #47
+			top += spacing;
+			gr.DrawString ("Test #47 Divot", font, br, textStart, top);
+			
+			top += spacing;
+			pen = new Pen (new HatchBrush (HatchStyle.Divot, fgColor, bgColor), penWidth);
+			gr.DrawLine (pen, lineStart, top, lineStart + length, top);
+
+			// #48
  			top += spacing;
-			gr.DrawString ("Test #30 SmallCheckerBoard", font, br, textStart, top);
+			gr.DrawString ("Test #48 SmallCheckerBoard", font, br, textStart, top);
 			
 			top += spacing;
 			pen.Brush = new HatchBrush (HatchStyle.SmallCheckerBoard, fgColor, bgColor);
 	 		gr.DrawLine (pen, lineStart, top, lineStart + length, top);
 
- 			// #31
+			// #49
  			top += spacing;
-			gr.DrawString ("Test #31 OutlinedDiamond", font, br, textStart, top);
+			gr.DrawString ("Test #49 LargeCheckerBoard", font, br, textStart, top);
+			
+			top += spacing;
+			pen.Brush = new HatchBrush (HatchStyle.LargeCheckerBoard, fgColor, bgColor);
+	 		gr.DrawLine (pen, lineStart, top, lineStart + length, top);
+
+			// #50
+ 			top += spacing;
+			gr.DrawString ("Test #50 OutlinedDiamond", font, br, textStart, top);
 			
 			top += spacing;
 			pen.Brush = new HatchBrush (HatchStyle.OutlinedDiamond, fgColor, bgColor);
 	 		gr.DrawLine (pen, lineStart, top, lineStart + length, top);
 
- 			// #32
+			// #51
  			top += spacing;
-			gr.DrawString ("Test #32 SolidDiamond", font, br, textStart, top);
+			gr.DrawString ("Test #51 SolidDiamond", font, br, textStart, top);
 			
 			top += spacing;
 			pen.Brush = new HatchBrush (HatchStyle.SolidDiamond, fgColor, bgColor);
 	 		gr.DrawLine (pen, lineStart, top, lineStart + length, top);
 
- 			// #33
+			// #52
  			top += spacing;
-			gr.DrawString ("Test #33 DottedDiamond", font, br, textStart, top);
+			gr.DrawString ("Test #52 DottedDiamond", font, br, textStart, top);
 			
 			top += spacing;
 			pen.Brush = new HatchBrush (HatchStyle.DottedDiamond, fgColor, bgColor);
+	 		gr.DrawLine (pen, lineStart, top, lineStart + length, top);
+
+			// #53
+ 			top += spacing;
+			gr.DrawString ("Test #53 Shingle", font, br, textStart, top);
+			
+			top += spacing;
+			pen.Brush = new HatchBrush (HatchStyle.Shingle, fgColor, bgColor);
+	 		gr.DrawLine (pen, lineStart, top, lineStart + length, top);
+
+			// #54
+ 			top += spacing;
+			gr.DrawString ("Test #54 Trellis", font, br, textStart, top);
+			
+			top += spacing;
+			pen.Brush = new HatchBrush (HatchStyle.Trellis, fgColor, bgColor);
+	 		gr.DrawLine (pen, lineStart, top, lineStart + length, top);
+
+			// #55
+ 			top += spacing;
+			gr.DrawString ("Test #55 Sphere", font, br, textStart, top);
+			
+			top += spacing;
+			pen.Brush = new HatchBrush (HatchStyle.Sphere, fgColor, bgColor);
 	 		gr.DrawLine (pen, lineStart, top, lineStart + length, top);
 
 			currentTop = top;
