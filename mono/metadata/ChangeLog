@@ -1,5 +1,24 @@
 2004-11-09  Martin Baulig  <martin@ximian.com>
 
+	* class-internals.h (MonoGenericContainer): Removed `method' and
+	`signature', replaced them with `is_method' and `is_signature'
+	flags.  Added `context'.
+
+	* loader.c (method_from_methodspec): Take a `MonoGenericContext *'
+	instead of a `MonoGenericContainer *'.
+
+	* metadata.c (mono_metadata_generic_param_equal): Removed the hack
+	for dynamic type parameters.
+	(mono_metadata_load_generic_params): Setup `container->context'.
+
+	* reflection.c (mono_reflection_setup_generic_class): Setup
+	`tb->generic_container->context'.
+	(do_mono_reflection_bind_generic_parameters): Use
+	mono_class_inflate_generic_type() to correctly inflate types,
+	rather than using our own hack just for MONO_TYPE_VAR.
+
+2004-11-09  Martin Baulig  <martin@ximian.com>
+
 	* class.c (mono_class_inflate_generic_method): Small fix; don't
 	crash here.
 
