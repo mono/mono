@@ -1,3 +1,14 @@
+2005-02-07  Daniel Morgan <danielmorgan@verizon.net>
+
+	* System.Data.OracleClient/OracleDataReader.cs: add LONG 
+	to GetOracleValue to return an OracleString
+	
+	* System.Data.OracleClient.Oci/OciDefineHandle.cs: add
+	LONG VARCHAR support.  See DefineLong () 
+	for LAMESPEC about OCI
+
+	* Test/TestOracleClient.cs: add LONG to Oracle tests
+	
 2005-01-09  Daniel Morgan <danielmorgan@verizon.net>
 
 	* System.Data.OracleClient/OracleCommand.cs: set Command

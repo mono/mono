@@ -43,6 +43,11 @@ namespace System.Data.OracleClient.Oci
 		Type fieldType;
 		string name;
 
+		// Oracle defines the LONG VARCHAR have a size of 2 to the 31 power - 5
+		// maybe this should settable via a config file for System.Data.OracleClient.dll
+		// see DefineLong
+		internal static int LongVarCharMaxValue = (int) Int16.MaxValue - 5;
+
 		OciErrorHandle errorHandle;
 
 		OciLobLocator lobLocator;
@@ -135,6 +140,10 @@ namespace System.Data.OracleClient.Oci
 			case OciDataType.Float:
 				DefineNumber (position);
 				return;
+			case OciDataType.Long:
+			case OciDataType.LongVarChar:
+				DefineLong (position);
+				return;
 			default:
 				DefineChar (position); // HANDLE ALL OTHERS AS CHAR FOR NOW
 				return;
@@ -162,6 +171,44 @@ namespace System.Data.OracleClient.Oci
 						ref rlenp,
 						IntPtr.Zero,
 						0);
+
+			if (status != 0) {
+				OciErrorInfo info = ErrorHandle.HandleError ();
+				throw new OracleException (info.ErrorCode, info.ErrorMessage);
+			}
+		}
+
+		void DefineLong (int position) 
+		{
+			fieldType = typeof (System.String);
+
+			// LONG VARCHAR max length is 2 to the 31 power - 5
+			// the first 4 bytes of a LONG VARCHAR value contains the length
+			// Int32.MaxValue - 5 causes out of memory in mono on win32
+			// because I do not have 2GB of memory available
+			// so Int16.MaxValue - 5 is used instead.
+			// LAMESPEC for Oracle OCI - you can not get the length of the LONG VARCHAR value
+			// until after you get the value.  This could be why Oracle deprecated LONG VARCHAR.
+			// If you specify a definedSize less then the length of the column value,
+			// then you will get an OCI_ERROR ORA-01406: fetched column value was truncated
+			definedSize = LongVarCharMaxValue;
+			
+			value = Marshal.AllocHGlobal (definedSize);
+			ociType = OciDataType.LongVarChar;
+
+			int status = 0;
+			status = OciCalls.OCIDefineByPos (Parent,
+				out handle,
+				ErrorHandle,
+				position + 1,
+				value,
+				definedSize,
+				ociType,
+				ref indicator,
+				ref rlenp,
+				IntPtr.Zero, 0);
+
+			rlenp = (short) definedSize;
 
 			if (status != 0) {
 				OciErrorInfo info = ErrorHandle.HandleError ();
@@ -325,6 +372,8 @@ namespace System.Data.OracleClient.Oci
 		{
 			object tmp;
 
+			byte [] buffer = null;
+
 			switch (DataType) {
 			case OciDataType.VarChar2:
 			case OciDataType.String:
@@ -333,8 +382,7 @@ namespace System.Data.OracleClient.Oci
 			case OciDataType.CharZ:
 			case OciDataType.OciString:
 			case OciDataType.RowIdDescriptor:
-			case OciDataType.LongVarChar:
-				byte [] buffer = new byte [Size];
+				buffer = new byte [Size];
 				Marshal.Copy (Value, buffer, 0, Size);
 				
 				// Get length of returned string
@@ -347,6 +395,20 @@ namespace System.Data.OracleClient.Oci
 				OciCalls.OCICharSetToUnicode (env, ret, buffer, out rsize);
 	
 				return ret.ToString ();
+			case OciDataType.LongVarChar:
+			case OciDataType.Long:
+				buffer = new byte [LongVarCharMaxValue];
+				Marshal.Copy (Value, buffer, 0, buffer.Length);
+				
+				int longSize = 0;
+				if (BitConverter.IsLittleEndian)
+					longSize = BitConverter.ToInt32 (new byte[]{buffer[0], buffer[1], buffer[2], buffer[3]}, 0);
+				else
+					longSize = BitConverter.ToInt32 (new byte[]{buffer[3], buffer[2], buffer[1], buffer[0]}, 0);
+
+				ASCIIEncoding encoding = new ASCIIEncoding ();
+				string e = encoding.GetString (buffer, 4, longSize);
+				return e;
 			case OciDataType.Integer:
 			case OciDataType.Number:
 			case OciDataType.Float:
@@ -392,6 +454,7 @@ namespace System.Data.OracleClient.Oci
 			case OciDataType.CharZ:
 			case OciDataType.OciString:
 			case OciDataType.LongVarChar:
+			case OciDataType.Long:
 			case OciDataType.RowIdDescriptor:
 				return new OracleString ((string) ovalue);
 			default:

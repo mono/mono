@@ -360,6 +360,7 @@ namespace System.Data.OracleClient {
 			case OciDataType.CharZ:
 			case OciDataType.OciString:
 			case OciDataType.LongVarChar:
+			case OciDataType.Long:
 			case OciDataType.RowIdDescriptor:
 				return GetOracleString (i);
 			default:

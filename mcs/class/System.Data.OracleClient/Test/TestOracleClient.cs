@@ -56,6 +56,7 @@ namespace Test.OracleClient
 			cmd.Connection = con;
 			cmd.CommandText = "CREATE TABLE MONO_ORACLE_TEST ( " +
 				" varchar2_value VarChar2(32),  " +
+				" long_value long, " +
 				" number_whole_value Number(18), " +
 				" number_scaled_value Number(18,2), " +
  				" number_integer_value Integer, " +
@@ -88,6 +89,7 @@ namespace Test.OracleClient
 			cmd.Transaction = trans;
 			cmd.CommandText = "INSERT INTO mono_oracle_test " +
  				" ( varchar2_value,  " +
+				"  long_value, " +
  				"  number_whole_value, " +
   				"  number_scaled_value, " +
   				"  number_integer_value, " +
@@ -101,6 +103,7 @@ namespace Test.OracleClient
 				") " +
  				" VALUES( " +
   				"  'Mono', " +
+				"  'This is a LONG column', " +
   				"  123, " +
   				"  456.78, " +
   				"  8765, " +
@@ -284,6 +287,7 @@ namespace Test.OracleClient
 						sOraDataType = "DBNull.Value";
 					}
 					else {
+						//ovalue = reader.GetValue (f);
 						ovalue = reader.GetOracleValue (f);
 						object oravalue = null;
 					
@@ -304,7 +308,8 @@ namespace Test.OracleClient
 							oravalue = ((OracleDateTime) ovalue).Value;
 							break;
 						default:
-							oravalue = "*** no test available ***";
+							oravalue = ovalue.ToString ();
+
 							break;
 						}
 					
@@ -847,8 +852,6 @@ namespace Test.OracleClient
 		[STAThread]
 		static void Main(string[] args) 
 		{ 	
-			args = new string[3] { "palis", "scott", "tiger" };
-
 			if(args.Length != 3) {
 				Console.WriteLine("Usage: mono TestOracleClient database userid password");
 				return;
