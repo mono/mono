@@ -64,7 +64,7 @@ namespace Mono.Data.TdsClient {
 		}
 
 		public object this [string name] {
-			get { return GetValue (GetColumnOrdinal (name)); }
+			get { return GetValue (GetOrdinal (name)); }
 		}
 	
 		public int RecordsAffected {
@@ -236,7 +236,7 @@ namespace Mono.Data.TdsClient {
 		public int GetOrdinal (string name)
 		{
 			foreach (DataRow schemaRow in schemaTable.Rows) 
-				if (schemaRow ["ColumnName"] == name)
+				if (((string) schemaRow ["ColumnName"]).Equals (name))
 					return (int) schemaRow ["ColumnOrdinal"];
 			foreach (DataRow schemaRow in schemaTable.Rows) 
 				if (String.Compare (((string) schemaRow ["ColumnName"]), name, true) == 0)
