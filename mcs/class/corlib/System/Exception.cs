@@ -150,9 +150,13 @@ namespace System {
 
 		public override string ToString ()
 		{
-			return this.GetType ().FullName + ": " + Message + "\n" +
-				// GetBaseException ().GetType ().FullName +
-				stack_trace;
+			string result = this.GetType ().FullName + ": " + Message;
+			if (inner_exception != null) {
+				result += " ---> " + inner_exception.ToString ();
+				result += "--- End of inner exception stack trace ---";
+			}
+				
+			return result + "\n" + stack_trace;
 		}
 	}
 }
