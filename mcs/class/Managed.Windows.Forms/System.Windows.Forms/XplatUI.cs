@@ -426,6 +426,10 @@ namespace System.Windows.Forms {
 				return driver.KeyboardSpeed;
 			}
 		}
+
+		internal static void ScrollWindow(IntPtr hwnd, int XAmount, int YAmount) {
+			driver.ScrollWindow(hwnd, XAmount, YAmount);
+		}
 		
 		// Santa's little helper
 		internal static void Where() {

@@ -472,6 +472,13 @@ namespace System.Windows.Forms {
 			internal byte			tmCharSet; 
 		} 
 
+		[Flags]
+		private enum ScrollWindowExFlags {
+			SW_SCROLLCHILDREN		= 0x0001,
+			SW_INVALIDATE			= 0x0002,
+			SW_ERASE			= 0x0004,
+			SW_SMOOTHSCROLL			= 0x0010
+		}
 		#endregion
 
 		#region Constructor & Destructor
@@ -1161,6 +1168,11 @@ namespace System.Windows.Forms {
 			return true;
 		}
 
+		internal override void ScrollWindow(IntPtr hwnd, int XAmount, int YAmount) {
+			Win32ScrollWindowEx(hwnd, XAmount, YAmount, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, ScrollWindowExFlags.SW_INVALIDATE | ScrollWindowExFlags.SW_ERASE);
+		}
+
+
 		internal override int KeyboardSpeed {
 			get {
 				Console.WriteLine ("KeyboardSpeed: need to query Windows");
@@ -1359,25 +1371,31 @@ namespace System.Windows.Forms {
 		internal extern static bool Win32CreateCaret(IntPtr hwnd, IntPtr hBitmap, int nWidth, int nHeight);
 
 		[DllImport ("user32.dll", EntryPoint="DestroyCaret", CharSet=CharSet.Ansi, CallingConvention=CallingConvention.StdCall)]
-		internal extern static bool Win32DestroyCaret();
+		private  extern static bool Win32DestroyCaret();
 
 		[DllImport ("user32.dll", EntryPoint="ShowCaret", CharSet=CharSet.Ansi, CallingConvention=CallingConvention.StdCall)]
-		internal extern static bool Win32ShowCaret(IntPtr hwnd);
+		private  extern static bool Win32ShowCaret(IntPtr hwnd);
 
 		[DllImport ("user32.dll", EntryPoint="HideCaret", CharSet=CharSet.Ansi, CallingConvention=CallingConvention.StdCall)]
-		internal extern static bool Win32HideCaret(IntPtr hwnd);
+		private  extern static bool Win32HideCaret(IntPtr hwnd);
 
 		[DllImport ("user32.dll", EntryPoint="SetCaretPos", CharSet=CharSet.Ansi, CallingConvention=CallingConvention.StdCall)]
-		internal extern static bool Win32SetCaretPos(int X, int Y);
+		private  extern static bool Win32SetCaretPos(int X, int Y);
 
 		[DllImport ("user32.dll", EntryPoint="GetCaretBlinkTime", CharSet=CharSet.Ansi, CallingConvention=CallingConvention.StdCall)]
-		internal extern static uint Win32GetCaretBlinkTime();
+		private  extern static uint Win32GetCaretBlinkTime();
 
 		[DllImport ("gdi32.dll", EntryPoint="GetTextMetricsA", CharSet=CharSet.Ansi, CallingConvention=CallingConvention.StdCall)]
 		internal extern static bool Win32GetTextMetrics(IntPtr hdc, ref TEXTMETRIC tm);
 
 		[DllImport ("gdi32.dll", EntryPoint="SelectObject", CharSet=CharSet.Ansi, CallingConvention=CallingConvention.StdCall)]
 		internal extern static bool Win32SelectObject(IntPtr hdc, IntPtr hgdiobject);
+
+		[DllImport ("user32.dll", EntryPoint="ScrollWindowEx", CharSet=CharSet.Ansi, CallingConvention=CallingConvention.StdCall)]
+		private extern static bool Win32ScrollWindowEx(IntPtr hwnd, int dx, int dy, ref RECT prcScroll, ref RECT prcClip, IntPtr hrgnUpdate, out RECT prcUpdate, ScrollWindowExFlags flags);
+
+		[DllImport ("user32.dll", EntryPoint="ScrollWindowEx", CharSet=CharSet.Ansi, CallingConvention=CallingConvention.StdCall)]
+		private extern static bool Win32ScrollWindowEx(IntPtr hwnd, int dx, int dy, IntPtr prcScroll, IntPtr prcClip, IntPtr hrgnUpdate, IntPtr prcUpdate, ScrollWindowExFlags flags);
 		#endregion
 	}
 }

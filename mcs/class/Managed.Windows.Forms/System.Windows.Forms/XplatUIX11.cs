@@ -697,7 +697,7 @@ namespace System.Windows.Forms {
 
 		internal override void Invalidate (IntPtr handle, Rectangle rc, bool clear) {
 			if (clear) {
-				XClearArea (DisplayHandle, handle, rc.Left, rc.Top, (uint)rc.Width, (uint)rc.Height, true);
+				XClearArea (DisplayHandle, handle, rc.Left, rc.Top, rc.Width, rc.Height, true);
 			} else {
 				XEvent xevent = new XEvent ();
 				xevent.type = XEventName.Expose;
@@ -721,7 +721,7 @@ namespace System.Windows.Forms {
 
 					}
 					
-					XClearArea(DisplayHandle, msg.HWnd, data.InvalidArea.Left, data.InvalidArea.Top, (uint)data.InvalidArea.Width, (uint)data.InvalidArea.Height, false);
+					XClearArea(DisplayHandle, msg.HWnd, data.InvalidArea.Left, data.InvalidArea.Top, data.InvalidArea.Width, data.InvalidArea.Height, false);
 
 					return IntPtr.Zero;
 				}
@@ -1550,6 +1550,44 @@ namespace System.Windows.Forms {
 			return GetFontMetrics(g.GetHdc(), font.ToHfont(), out ascent, out descent);
 		}
 
+		internal override void ScrollWindow(IntPtr hwnd, int XAmount, int YAmount) {
+			IntPtr		gc;
+			XGCValues	gc_values;
+			IntPtr		root;
+			int		x;
+			int		y;
+			int		width;
+			int		height;
+			int		border_width;
+			int		depth;
+
+			// We're abusing clear_width and height, here, don't want two extra vars, we don't use the results here
+			XGetGeometry(DisplayHandle, hwnd, out root, out x, out y, out width, out height, out border_width, out depth);
+
+			gc_values = new XGCValues();
+
+			gc = XCreateGC(DisplayHandle, hwnd, 0, ref gc_values);
+
+			XCopyArea(DisplayHandle, hwnd, hwnd, gc, -XAmount, -YAmount, width, height, 0, 0);
+
+			// Generate an expose for the area exposed by the horizontal scroll
+			if (XAmount > 0) {
+				XClearArea(DisplayHandle, hwnd, 0, 0, XAmount, height, true);
+			} else {
+				XClearArea(DisplayHandle, hwnd, XAmount + width, 0, -XAmount, height, true);
+			}
+
+			// Generate an expose for the area exposed by the vertical scroll
+			if (YAmount > 0) {
+				XClearArea(DisplayHandle, hwnd, 0, 0, width, YAmount, true);
+			} else {
+				XClearArea(DisplayHandle, hwnd, 0, YAmount + height, width, -YAmount, true);
+			}
+
+			XFreeGC(DisplayHandle, gc);
+		}
+
+
 
 		// Santa's little helper
 		static void Where() 
@@ -1656,6 +1694,15 @@ namespace System.Windows.Forms {
 		[DllImport ("libX11", EntryPoint="XGetGeometry")]
 		internal extern static bool XGetGeometry(IntPtr display, IntPtr window, out IntPtr root, out int x, out int y, out int width, out int height, out int border_width, out int depth);
 
+		[DllImport ("libX11", EntryPoint="XGetGeometry")]
+		internal extern static bool XGetGeometry(IntPtr display, IntPtr window, IntPtr root, out int x, out int y, out int width, out int height, IntPtr border_width, IntPtr depth);
+
+		[DllImport ("libX11", EntryPoint="XGetGeometry")]
+		internal extern static bool XGetGeometry(IntPtr display, IntPtr window, IntPtr root, out int x, out int y, IntPtr width, IntPtr height, IntPtr border_width, IntPtr depth);
+
+		[DllImport ("libX11", EntryPoint="XGetGeometry")]
+		internal extern static bool XGetGeometry(IntPtr display, IntPtr window, IntPtr root, IntPtr x, IntPtr y, out int width, out int height, IntPtr border_width, IntPtr depth);
+
 		[DllImport ("libX11", EntryPoint="XWarpPointer")]
 		internal extern static uint XWarpPointer(IntPtr display, IntPtr src_w, IntPtr dest_w, int src_x, int src_y, uint src_width, uint src_height, int dest_x, int dest_y);
 
@@ -1663,7 +1710,7 @@ namespace System.Windows.Forms {
 		internal extern static int XClearWindow(IntPtr display, IntPtr window);
 
 		[DllImport ("libX11", EntryPoint="XClearArea")]
-		internal extern static int XClearArea(IntPtr display, IntPtr window, int x, int y, uint width, uint height, bool exposures);
+		internal extern static int XClearArea(IntPtr display, IntPtr window, int x, int y, int width, int height, bool exposures);
 
 		// Colormaps
 		[DllImport ("libX11", EntryPoint="XDefaultScreenOfDisplay")]
@@ -1687,19 +1734,19 @@ namespace System.Windows.Forms {
 		[DllImport ("libX11", EntryPoint="XAllocColor")]
 		internal extern static int XAllocColor(IntPtr display, uint Colormap, ref XColor colorcell_def);
 
-		[DllImport ("libX11.so", EntryPoint="XSetTransientForHint")]
+		[DllImport ("libX11", EntryPoint="XSetTransientForHint")]
 		internal extern static int XSetTransientForHint(IntPtr display, IntPtr window, IntPtr prop_window);
 
-		[DllImport ("libX11.so", EntryPoint="XChangeProperty")]
+		[DllImport ("libX11", EntryPoint="XChangeProperty")]
 		internal extern static int XChangeProperty(IntPtr display, IntPtr window, int property, int type, int format, PropertyMode  mode, ref MotifWmHints data, int nelements);
 
-		[DllImport ("libX11.so", EntryPoint="XChangeProperty")]
+		[DllImport ("libX11", EntryPoint="XChangeProperty")]
 		internal extern static int XChangeProperty(IntPtr display, IntPtr window, int property, int format, int type, PropertyMode  mode, ref uint[] atoms, int nelements);
 
-		[DllImport ("libX11.so", EntryPoint="XChangeProperty")]
+		[DllImport ("libX11", EntryPoint="XChangeProperty")]
 		internal extern static int XChangeProperty(IntPtr display, IntPtr window, int property, int format, int type, PropertyMode  mode, IntPtr data, int nelements);
 
-		[DllImport ("libX11.so", EntryPoint="XDeleteProperty")]
+		[DllImport ("libX11", EntryPoint="XDeleteProperty")]
 		internal extern static int XDeleteProperty(IntPtr display, IntPtr window, int property);
 
 		[DllImport ("gdiplus", EntryPoint="GetFontMetrics")]
@@ -1720,6 +1767,9 @@ namespace System.Windows.Forms {
 
 		[DllImport ("libX11", EntryPoint="XSetWindowBackground")]
 		internal extern static int XSetWindowBackground(IntPtr display, IntPtr window, uint background);
+
+		[DllImport ("libX11", EntryPoint="XCopyArea")]
+		internal extern static int XCopyArea(IntPtr display, IntPtr src, IntPtr dest, IntPtr gc, int src_x, int src_y, int width, int height, int dest_x, int dest_y);
 		#endregion
 	}
 }
