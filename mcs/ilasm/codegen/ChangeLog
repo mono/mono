@@ -1,5 +1,9 @@
 2003-10-18 Jackson Harper <jackson@ximian.com>
 
+	* ExternTable.cs: Separate class and value types into diff tables.
+	
+2003-10-18 Jackson Harper <jackson@ximian.com>
+
 	* InstrTable.cs: Use short branch instructions instead of aliasing them
 	to the long branch instructions.
 	

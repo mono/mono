@@ -18,31 +18,33 @@ namespace Mono.ILASM {
                 protected class ExternAssembly {
 
                         public PEAPI.AssemblyRef AssemblyRef;
-                        protected Hashtable type_table;
-			protected string name;
+                        protected Hashtable class_table;
+                        protected Hashtable value_table;
+                        protected string name;
 
                         public ExternAssembly (string name, AssemblyName asmb_name)
                         {
-				this.name = name;
-                                type_table = new Hashtable ();
+                                this.name = name;
                         }
 
-			public void Resolve (CodeGen code_gen)
-			{
-				AssemblyRef = code_gen.PEFile.AddExternAssembly (name);
-			}
+                        public void Resolve (CodeGen code_gen)
+                        {
+                                AssemblyRef = code_gen.PEFile.AddExternAssembly (name);
+                                class_table = new Hashtable ();
+                                value_table = new Hashtable ();
+                        }
 
                         public PEAPI.ClassRef GetType (string name_space, string name)
                         {
                                 string full_name = String.Format ("{0}.{1}",
                                         name_space, name);
-                                PEAPI.ClassRef klass = type_table[full_name] as PEAPI.ClassRef;
+                                PEAPI.ClassRef klass = class_table[full_name] as PEAPI.ClassRef;
 
                                 if (klass != null)
                                         return klass;
 
                                 klass = (PEAPI.ClassRef) AssemblyRef.AddClass (name_space, name);
-                                type_table[full_name] = klass;
+                                class_table[full_name] = klass;
 
                                 return klass;
                         }
@@ -51,13 +53,13 @@ namespace Mono.ILASM {
                         {
                                 string full_name = String.Format ("{0}.{1}",
                                         name_space, name);
-                                PEAPI.ClassRef klass = type_table[full_name] as PEAPI.ClassRef;
+                                PEAPI.ClassRef klass = value_table[full_name] as PEAPI.ClassRef;
 
                                 if (klass != null)
                                         return klass;
 
                                 klass = (PEAPI.ClassRef) AssemblyRef.AddValueClass (name_space, name);
-                                type_table[full_name] = klass;
+                                value_table[full_name] = klass;
 
                                 return klass;
                         }
@@ -90,11 +92,11 @@ namespace Mono.ILASM {
                         assembly_table[name] = new ExternAssembly (name, asmb_name);
                 }
 
-		public void Resolve (CodeGen code_gen)
-		{
-			foreach (ExternAssembly ext in assembly_table.Values)
-				ext.Resolve (code_gen);
-		}
+                public void Resolve (CodeGen code_gen)
+                {
+                        foreach (ExternAssembly ext in assembly_table.Values)
+                                ext.Resolve (code_gen);
+                }
 
                 public PEAPI.ClassRef GetClass (string asmb_name, string name_space, string name)
                 {
