@@ -8,7 +8,7 @@ Microsoft.JScript/ArrayObject.cs
 Microsoft.JScript/ArrayPrototype.cs
 Microsoft.JScript/ArrayWrapper.cs
 Microsoft.JScript/AssemblyCustomAttributeList.cs
-Microsoft.JScript/BaseVsaEngine.cs
+Microsoft.Vsa/BaseVsaEngine.cs
 Microsoft.JScript/BinaryOp.cs
 Microsoft.JScript/Binding.cs
 Microsoft.JScript/BitwiseBinary.cs
@@ -154,7 +154,7 @@ Microsoft.JScript/VBArrayObject.cs
 Microsoft.JScript/VBArrayPrototype.cs
 Microsoft.JScript/VersionableAttribute.cs
 Microsoft.JScript/Visitor.cs
-Microsoft.JScript/VsaEngine.cs
+Microsoft.JScript.Vsa/VsaEngine.cs
 Microsoft.JScript/With.cs
 Antlr.Runtime/antlr/ANTLRException.cs
 Antlr.Runtime/antlr/CommonHiddenStreamToken.cs
