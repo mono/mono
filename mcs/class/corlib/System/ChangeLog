@@ -1,3 +1,9 @@
+2004-05-07  Sebastien Pouliot  <sebastien@ximian.com>
+ 
+	* Convert.cs: ToBase64CharArray method was depending on a bug in 
+	S.S.C.ToBase64Transform class to work. Added an internal method to 
+	provide the same functionality (multiple block processing).
+
 2004-05-06  Jackson Harper  <jackson@ximian.com>
 
 	* Environment.cs: Make $HOME the personal directory.

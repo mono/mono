@@ -160,7 +160,8 @@ namespace System {
 			if (offsetIn < 0 || length < 0 || offsetOut < 0 || (offsetIn + length) > inArray.Length)
 				throw new ArgumentOutOfRangeException();
 			
-			byte[] outArr = toBase64Transform.TransformFinalBlock(inArray, offsetIn, length);
+			// note: normally ToBase64Transform doesn't support multiple block processing
+			byte[] outArr = toBase64Transform.InternalTransformFinalBlock(inArray, offsetIn, length);
 			
 			char[] cOutArr = new System.Text.ASCIIEncoding().GetChars(outArr);
 			
