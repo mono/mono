@@ -362,7 +362,7 @@ _loop4_breakloop:			;
 		
 			func = null;
 			bool is_func_exp = false;
-			FormalParameterList p = null;
+			FormalParameterList p = new FormalParameterList ();
 			Block body = null;
 		
 		
@@ -396,7 +396,7 @@ _loop4_breakloop:			;
 			{
 			case IDENTIFIER:
 			{
-				p=formal_param_list();
+				p=formal_param_list(parent);
 				break;
 			}
 			case CLOSE_PARENS:
@@ -457,7 +457,9 @@ _loop4_breakloop:			;
 		return func;
 	}
 	
-	public FormalParameterList  formal_param_list() //throws RecognitionException, TokenStreamException
+	public FormalParameterList  formal_param_list(
+		AST parent
+	) //throws RecognitionException, TokenStreamException
 {
 		FormalParameterList p;
 		
@@ -467,6 +469,7 @@ _loop4_breakloop:			;
 		Token  t2 = null;
 		
 			p = new FormalParameterList ();
+		p.parent = parent;
 		
 		
 		i = LT(1);
