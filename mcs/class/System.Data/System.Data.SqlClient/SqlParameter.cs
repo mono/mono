@@ -83,16 +83,17 @@ namespace System.Data.SqlClient {
 		[EditorBrowsable (EditorBrowsableState.Advanced)]	 
 		public SqlParameter (string parameterName, SqlDbType dbType, int size, ParameterDirection direction, bool isNullable, byte precision, byte scale, string sourceColumn, DataRowVersion sourceVersion, object value) 
 		{
-			this.parmName = parameterName;
-			this.size = size;
-			this.sourceColumn = sourceColumn;
-			this.direction = direction;
-			this.isNullable = isNullable;
-			this.precision = precision;
-			this.scale = scale;
-			this.sourceVersion = sourceVersion;
-			this.objValue = value;
 			SqlDbType = dbType;
+			Size = size;
+			Value = value;
+
+			ParameterName = parameterName;
+			Direction = direction;
+			IsNullable = isNullable;
+			Precision = precision;
+			Scale = scale;
+			SourceColumn = sourceColumn;
+			SourceVersion = sourceVersion;
 		}
 
 		internal SqlParameter (object[] dbValues)
@@ -331,25 +332,16 @@ namespace System.Data.SqlClient {
 			case SqlDbType.VarChar :
 				if (!isSizeSet || size == 0)
 					throw new InvalidOperationException ("All variable length parameters must have an explicitly set non-zero size.");
-				result.Append ("(");
-				result.Append (size.ToString ());
-				result.Append (")");
+				result.Append (String.Format ("({0})", size));
 				break;
 			case SqlDbType.NChar :
 			case SqlDbType.Char :
 			case SqlDbType.Binary :
-				if (size > 0) {
-					result.Append ("(");
-					result.Append (size.ToString ());
-					result.Append (")");
-				}
+				if (size > 0) 
+					result.Append (String.Format ("({0})", size));
 				break;
 			case SqlDbType.Decimal :
-				result.Append ("(");
-				result.Append (precision.ToString ());
-				result.Append (",");
-				result.Append (scale.ToString ());
-				result.Append (")");
+				result.Append (String.Format ("({0},{1})", precision, scale));
 				break;
                         default:
                                 break;

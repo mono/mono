@@ -234,20 +234,13 @@ namespace System.Data.SqlClient {
 			SqlParameterCollection localParameters = new SqlParameterCollection (this);
 			SqlParameter parm;
 		
-			parm = new SqlParameter ("@P1", SqlDbType.NVarChar);
-			parm.Value = sql;
-			parm.Size = ((string) parm.Value).Length;
-			localParameters.Add (parm);
+			localParameters.Add ("@P1", SqlDbType.NVarChar, sql.Length).Value = sql;
 
-			if (parameters.Count > 0) {
-				parm = new SqlParameter ("@P2", SqlDbType.NVarChar);
-				parm.Value = parms.ToString ();
-				parm.Size = ((string) parm.Value).Length;
-				localParameters.Add (parm);
-			}
+			if (parameters.Count > 0) 
+				localParameters.Add ("@P2", SqlDbType.NVarChar, parms.ToString ().Length).Value = parms.ToString ();
 
 			foreach (SqlParameter p in parameters)
-				localParameters.Add (p);
+				localParameters.Add ((SqlParameter) ((ICloneable) p).Clone ());
 
 			return BuildProcedureCall ("sp_executesql", localParameters);
 		}

@@ -104,7 +104,7 @@ namespace System.Data.SqlClient {
 		public int Add (object value)
 		{
 			if (!(value is SqlParameter))
-				throw new InvalidCastException ("Only SQLParameter objects can be used.");
+				throw new InvalidCastException ("The parameter was not an SqlParameter.");
 			Add ((SqlParameter) value);
 			return IndexOf (value);
 		}
@@ -147,7 +147,7 @@ namespace System.Data.SqlClient {
 		public bool Contains (object value)
 		{
 			if (!(value is SqlParameter))
-				throw new InvalidCastException ("Only SQLParameter objects can be used.");
+				throw new InvalidCastException ("The parameter was not an SqlParameter.");
 			return Contains (((SqlParameter) value).ParameterName);
 		}
 
@@ -172,7 +172,7 @@ namespace System.Data.SqlClient {
 		public int IndexOf (object value)
 		{
 			if (!(value is SqlParameter))
-				throw new InvalidCastException ("Only SQLParameter objects can be used.");
+				throw new InvalidCastException ("The parameter was not an SqlParameter.");
 			return IndexOf (((SqlParameter) value).ParameterName);
 		}
 		
