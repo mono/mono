@@ -5,11 +5,7 @@
 //	Sebastien Pouliot <sebastien@ximian.com>
 //
 // (C) 2002 Motus Technologies Inc. (http://www.motus.com)
-// (C) 2004 Novell (http://www.novell.com)
-//
-
-//
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -31,7 +27,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
 using System.Globalization;
 using Mono.Security.Cryptography;
 
@@ -59,6 +54,12 @@ namespace System.Security.Cryptography {
 	
 		public override byte[] DecryptKeyExchange (byte[] rgbData) 
 		{
+#if NET_2_0
+			if (rsa == null) {
+				string msg = Locale.GetText ("No RSA key specified");
+				throw new CryptographicUnexpectedOperationException (msg);
+			}
+#endif
 			SHA1 sha1 = SHA1.Create ();
 			return PKCS1.Decrypt_OAEP (rsa, sha1, rgbData);
 		}

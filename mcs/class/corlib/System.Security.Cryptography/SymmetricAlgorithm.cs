@@ -6,11 +6,7 @@
 //   Sebastien Pouliot <sebastien@ximian.com>
 //
 // Portions (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
-// (C) 2004 Novell (http://www.novell.com)
-//
-
-//
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -32,7 +28,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
 using System.Globalization;
 using Mono.Security.Cryptography;
 
@@ -122,12 +117,18 @@ namespace System.Security.Cryptography {
 			set {
 				if (value == null)
 					throw new ArgumentNullException ("IV");
-					
+#if NET_2_0
+				// 2.0 is stricter for IV length - which is bad for IV-less stream ciphers like RC4
+				if ((value.Length << 3) != this.BlockSizeValue) {
+					throw new CryptographicException (
+						Locale.GetText ("IV length is different than block size"));
+				}
+#else					
 				if ((value.Length << 3) > this.BlockSizeValue) {
 					throw new CryptographicException (
 						Locale.GetText ("IV length cannot be larger than block size"));
 				}
-
+#endif
 				this.IVValue = (byte[]) value.Clone ();
 			}
 		}

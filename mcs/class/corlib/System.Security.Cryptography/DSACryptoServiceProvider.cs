@@ -280,13 +280,16 @@ namespace System.Security.Cryptography {
 		[ComVisible (false)]
 		public byte[] ExportCspBlob (bool includePrivateParameters)
 		{
-			return null;
+			throw new NotImplementedException ("CryptoConvert doesn't currently support DSA");
 		}
 
 		[MonoTODO ("call into CryptoConvert (doesn't currently support DSA)")]
 		[ComVisible (false)]
 		public void ImportCspBlob (byte[] rawData)
 		{
+			if (rawData == null)
+				throw new ArgumentNullException ("rawData");
+			throw new NotImplementedException ("CryptoConvert doesn't currently support DSA");
 		}
 #endif
 	}

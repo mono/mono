@@ -5,11 +5,7 @@
 //	Sebastien Pouliot <sebastien@ximian.com>
 //
 // (C) 2002 Motus Technologies Inc. (http://www.motus.com)
-// (C) 2004 Novell (http://www.novell.com)
-//
-
-//
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -31,7 +27,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
 using System.Globalization;
 using Mono.Security.Cryptography;
 
@@ -54,19 +49,25 @@ namespace System.Security.Cryptography {
 			SetKey (key);
 		}
 	
-		public RandomNumberGenerator Rng 
-		{
+		public RandomNumberGenerator Rng {
 			get { return random; }
 			set { random = value; }
 		}
 	
-		public override string Parameters 
-		{
+		public override string Parameters {
 			get { return "<enc:KeyEncryptionMethod enc:Algorithm=\"http://www.microsoft.com/xml/security/algorithm/PKCS1-v1.5-KeyEx\" xmlns:enc=\"http://www.microsoft.com/xml/security/encryption/v1.0\" />"; }
 		}
 	
 		public override byte[] CreateKeyExchange (byte[] rgbData)
 		{
+			if (rgbData == null)
+				throw new ArgumentNullException ("rgbData");
+#if NET_2_0
+			if (rsa == null) {
+				string msg = Locale.GetText ("No RSA key specified");
+				throw new CryptographicUnexpectedOperationException (msg);
+			}
+#endif
 			if (random == null)
 				random = RandomNumberGenerator.Create ();  // create default
 			return PKCS1.Encrypt_v15 (rsa, random, rgbData);

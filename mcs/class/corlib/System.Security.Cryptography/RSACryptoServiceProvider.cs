@@ -296,10 +296,15 @@ namespace System.Security.Cryptography {
 		{
 			if (rgbHash == null)
 				throw new ArgumentNullException ("rgbHash");
+#if NET_2_0
+			// Fx 2.0 defaults to the SHA-1
+			string hashName = (str == null) ? "SHA1" : GetHashNameFromOID (str);
+#else
 			if (str == null)
 				throw new CryptographicException (Locale.GetText ("No OID specified"));
-	
-			HashAlgorithm hash = HashAlgorithm.Create (GetHashNameFromOID (str));
+			string hashName = GetHashNameFromOID (str);
+#endif
+			HashAlgorithm hash = HashAlgorithm.Create (hashName);
 			return PKCS1.Sign_v15 (this, hash, rgbHash);
 		}
 
@@ -329,8 +334,15 @@ namespace System.Security.Cryptography {
 				throw new ArgumentNullException ("rgbHash");
 			if (rgbSignature == null)
 				throw new ArgumentNullException ("rgbSignature");
-	
-			HashAlgorithm hash = HashAlgorithm.Create (GetHashNameFromOID (str));
+#if NET_2_0
+			// Fx 2.0 defaults to the SHA-1
+			string hashName = (str == null) ? "SHA1" : GetHashNameFromOID (str);
+#else
+			if (str == null)
+				throw new CryptographicException (Locale.GetText ("No OID specified"));
+			string hashName = GetHashNameFromOID (str);
+#endif
+			HashAlgorithm hash = HashAlgorithm.Create (hashName);
 			return PKCS1.Verify_v15 (this, hash, rgbHash, rgbSignature);
 		}
 	
@@ -374,13 +386,44 @@ namespace System.Security.Cryptography {
 		[ComVisible (false)]
 		public byte[] ExportCspBlob (bool includePrivateParameters)
 		{
-			return null;
+			byte[] blob = null;
+			if (includePrivateParameters)
+				blob = CryptoConvert.ToCapiPrivateKeyBlob (this);
+			else
+				blob = CryptoConvert.ToCapiPublicKeyBlob (this);
+
+			// ALGID (bytes 4-7) - default is KEYX
+			// 00 24 00 00 (for CALG_RSA_SIGN)
+			// 00 A4 00 00 (for CALG_RSA_KEYX)
+			blob [5] = 0xA4;
+			return blob;
 		}
 
 		[MonoTODO ("call into CryptoConvert")]
 		[ComVisible (false)]
 		public void ImportCspBlob (byte[] rawData)
 		{
+			if (rawData == null)
+				throw new ArgumentNullException ("rawData");
+
+			RSA rsa = CryptoConvert.FromCapiKeyBlob (rawData);
+			if (rsa is RSACryptoServiceProvider) {
+				// default (if no change are present in machine.config)
+				RSAParameters rsap = rsa.ExportParameters (!(rsa as RSACryptoServiceProvider).PublicOnly);
+				ImportParameters (rsap);
+			} else {
+				// we can't know from RSA if the private key is available
+				try {
+					// so we try it...
+					RSAParameters rsap = rsa.ExportParameters (true);
+					ImportParameters (rsap);
+				}
+				catch {
+					// and fall back
+					RSAParameters rsap = rsa.ExportParameters (false);
+					ImportParameters (rsap);
+				}
+			}
 		}
 #endif
 	}

@@ -1,9 +1,22 @@
-2005-01-11  Sebastien Pouliot  <sebastien@ximian.com>
+2005-01-11  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* CryptoConfig.cs: Added support to create RIPEMD160 and the new HMAC
 	algorithms (HMACMD5, HMACRIPEMD160, HMACSHA256, HMACSHA384 and 
 	HMACSHA512). This fix the unit tests failures in Mono.Security.dll in
 	the NET_2_0 profile.
+	* DSACryptoServiceProvider.cs: Import|ExportCspBlob throws 
+	NotImplementedException (CryptoConvert class doesn't support DSA yet).
+	* RSACryptoServiceProvider.cs: SignHash/VerifyHash defaults to SHA-1
+	in 2.0. VerifyHash throw appropriate exception when no OID is 
+	specified (1.0/1.1). Import|ExportCspBlob implemented using the
+	CryptoConvert class.
+	* RSAOAEPKeyExchangeDeformatter.cs: Throw exception if no key is 
+	specified.
+	* RSAOAEPKeyExchangeFormatter.cs: Throw exception if no key is 
+	specified.
+	* RSAPKCS1KeyExchangeFormatter.cs: Throw exception if no key is 
+	specified.
+	* SymmetricAlgorithm.cs: More strict IV length checks on 2.0.
 
 2005-01-10  Sebastien Pouliot  <sebastien@ximian.com>
 
