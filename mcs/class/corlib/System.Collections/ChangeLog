@@ -1,3 +1,12 @@
+2003-08-17  Duncan Mak  <duncan@ximian.com>
+
+	* Hashtable.cs (PutImpl): Patch from Luca Barbieri <lb@lb.ods.org>.
+	Currently Hashtable.PutImpl has an incorrect test which causes the
+	key chain search to terminate as soon as a free slot is found,
+	causing key duplication.
+
+	This fixes bug #47692.
+
 2003-08-11  Duncan Mak  <duncan@ximian.com>
 
 	* DictionaryBase.cs: Applied patch from Carlos Barcenilla
