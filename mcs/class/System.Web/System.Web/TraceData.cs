@@ -125,7 +125,7 @@ namespace System.Web {
 		static string HtmlEncode (string s)
 		{
 			if (s == null)
-				return s;
+				return "";
 
 			string res = HttpUtility.HtmlEncode (s);
 			res = res.Replace ("\n", "<br />");

@@ -1,5 +1,10 @@
 2004-06-07  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* TraceData.cs: fixes nullref in an application that relies on
+	r ["Message"] not being null. Closes bug #59679.
+
+2004-06-07  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* HttpCachePolicy.cs: implemented SetAllowResponseInBrowserHistory.
 
 2004-06-07  Gonzalo Paniagua Javier <gonzalo@ximian.com>
