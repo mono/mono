@@ -1,7 +1,11 @@
 
+Wed Dec 18 11:42:58 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* jit.c: handle CEE_CONV_OVF_U8_UN like CEE_CONV_OVF_I8_UN.
+
 Wed Dec 18 11:36:04 CET 2002 Paolo Molaro <lupus@ximian.com>
 
-	jit.c: query the thread abort signal from the runtime.
+	* jit.c: query the thread abort signal from the runtime.
 
 2002-12-12  Juli Mallett  <jmallett@FreeBSD.org>
 
