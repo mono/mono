@@ -666,11 +666,16 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 				throw new NotImplementedException (); 
 			
 			Status status = GDIPlus.GdipCloneImage (NativeObject, out newimage);			
-			
 			GDIPlus.CheckStatus (status);			
-			
-			if (this is Bitmap)
-				return new Bitmap (newimage);
+
+			if (this is Bitmap){
+				Bitmap b = new Bitmap (newimage);
+
+				if (colorPalette != null)
+					b.colorPalette = colorPalette.Clone ();
+
+				return b;
+			}
 			
 			throw new NotImplementedException (); 
 		}

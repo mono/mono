@@ -541,8 +541,10 @@ namespace System.Drawing
 
 		void Dispose (bool disposing)
 		{
-			if (disposing) 
+			if (disposing) {
 				GDIPlus.GdipDeleteRegion (nativeRegion);
+				nativeRegion = IntPtr.Zero;
+			}
 		}
 
 		~Region ()

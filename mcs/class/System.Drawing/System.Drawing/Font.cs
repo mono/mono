@@ -64,6 +64,7 @@ namespace System.Drawing
 		{
 			if (fontObject != IntPtr.Zero) {
 				GDIPlus.CheckStatus (GDIPlus.GdipDeleteFont (fontObject));
+				fontObject = IntPtr.Zero;
 				GC.SuppressFinalize (this);
 			}
 		}
