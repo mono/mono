@@ -123,7 +123,7 @@ namespace Mono.CSharp {
 		public bool Inherited;
 
 		// The interfaces we implement.
-		Type [] ifaces;
+		TypeExpr [] ifaces;
 
 		// The parent member container and our member cache
 		IMemberContainer parent_container;
@@ -617,7 +617,7 @@ namespace Mono.CSharp {
 		///   The @parent argument is set to the parent object or null
 		///   if this is `System.Object'. 
 		/// </summary>
-		Type [] GetClassBases (bool is_class, out Type parent, out bool error)
+		TypeExpr [] GetClassBases (bool is_class, out TypeExpr parent, out bool error)
 		{
 			ArrayList bases = Bases;
 			int count;
@@ -628,14 +628,14 @@ namespace Mono.CSharp {
 			if (is_class)
 				parent = null;
 			else
-				parent = TypeManager.value_type;
+				parent = TypeManager.system_valuetype_expr;
 
 			if (bases == null){
 				if (is_class){
 					if (RootContext.StdLib)
-						parent = TypeManager.object_type;
+						parent = TypeManager.system_object_expr;
 					else if (Name != "System.Object")
-						parent = TypeManager.object_type;
+						parent = TypeManager.system_object_expr;
 				} else {
 					//
 					// If we are compiling our runtime,
@@ -643,7 +643,7 @@ namespace Mono.CSharp {
 					// parent is `System.Object'.
 					//
 					if (!RootContext.StdLib && Name == "System.ValueType")
-						parent = TypeManager.object_type;
+						parent = TypeManager.system_object_expr;
 				}
 
 				return null;
@@ -662,33 +662,38 @@ namespace Mono.CSharp {
 					return null;
 				}
 
-				Type first = name.Type;
-
-				if (first.IsClass){
-					parent = first;
+				if (name.IsClass){
+					parent = name;
 					start = 1;
 				} else {
-					parent = TypeManager.object_type;
+					parent = TypeManager.system_object_expr;
 					start = 0;
 				}
-				if (first.IsSealed){
+				if (name.IsSealed){
 					string detail = "";
 					
-					if (first.IsValueType)
+					if (name.IsValueType)
 						detail = " (a class can not inherit from a struct/enum)";
 					
 					Report.Error (509, "class `"+ Name +
 						      "': Cannot inherit from sealed class `"+
-						      first + "'" + detail);
+						      name.Name + "'" + detail);
 					error = true;
 					return null;
 				}
 
-				if (!AsAccessible (parent, ModFlags))
+				if (!parent.CanInheritFrom ()){
+					Report.Error (644, Location,
+						      "`{0}' cannot inherit from special class `{1}'",
+						      Name, parent.Name);
+					error = true;
+					return null;
+				}
+
+				if (!parent.AsAccessible (this, ModFlags))
 					Report.Error (60, Location,
 						      "Inconsistent accessibility: base class `" +
-						      TypeManager.CSharpName (parent) + "' is less " +
-						      "accessible than class `" +
+						      name.Name + "' is less accessible than class `" +
 						      Name + "'");
 
 			} else {
@@ -698,30 +703,24 @@ namespace Mono.CSharp {
 			if (parent != null)
 				base_class_name = parent.Name;
 
-			Type [] ifaces = new Type [count-start];
+			TypeExpr [] ifaces = new TypeExpr [count-start];
 			
 			for (i = start, j = 0; i < count; i++, j++){
 				Expression name = (Expression) bases [i];
-				Expression resolved = ResolveTypeExpr (name, false, Location);
+				TypeExpr resolved = ResolveTypeExpr (name, false, Location);
 				if (resolved == null)
 					return null;
 				
 				bases [i] = resolved;
-				Type t = resolved.Type;
 
-				if (t == null){
-					error = true;
-					return null;
-				}
-
-				if (is_class == false && !t.IsInterface){
+				if (is_class == false && !resolved.IsInterface){
 					Report.Error (527, "In Struct `" + Name + "', type `"+
 						      name +"' is not an interface");
 					error = true;
 					return null;
 				}
 				
-				if (t.IsClass) {
+				if (resolved.IsClass) {
 					if (parent != null){
 						Report.Error (527, "In Class `" + Name + "', type `"+
 							      name+"' is not an interface");
@@ -731,14 +730,14 @@ namespace Mono.CSharp {
 				}
 
 				for (int x = 0; x < j; x++) {
-					if (t == ifaces [x]) {
+					if (resolved == ifaces [x]) {
 						Report.Error (528, "`" + name + "' is already listed in interface list");
 						error = true;
 						return null;
 					}
 				}
 
-				ifaces [j] = t;
+				ifaces [j] = resolved;
 			}
 
 			return TypeManager.ExpandInterfaces (ifaces);
@@ -751,7 +750,7 @@ namespace Mono.CSharp {
 		//
 		public override TypeBuilder DefineType ()
 		{
-			Type parent;
+			TypeExpr parent;
 			bool is_class;
 
 			if (TypeBuilder != null)
@@ -780,23 +779,16 @@ namespace Mono.CSharp {
 			if (error)
 				return null;
 
-			if (is_class && parent != null){
-				if (parent == TypeManager.enum_type ||
-				    (parent == TypeManager.value_type && RootContext.StdLib) ||
-				    parent == TypeManager.delegate_type ||
-				    parent == TypeManager.array_type){
-					Report.Error (
-						644, Location, "`" + Name + "' cannot inherit from " +
-						"special class `" + TypeManager.CSharpName (parent) + "'");
-					error = true;
-					return null;
-				}
-			}
-
 			if (!is_class && TypeManager.value_type == null)
 				throw new Exception ();
 
 			TypeAttributes type_attributes = TypeAttr;
+
+			Type ptype;
+			if (parent != null)
+				ptype = parent.ResolveType (ec);
+			else
+				ptype = null;
 
 			if (IsTopLevel){
 				if (TypeManager.NamespaceClash (Name, Location)) {
@@ -806,7 +798,7 @@ namespace Mono.CSharp {
 				
 				ModuleBuilder builder = CodeGen.ModuleBuilder;
 				TypeBuilder = builder.DefineType (
-					Name, type_attributes, parent, ifaces);
+					Name, type_attributes, ptype, null);
 				
 			} else {
 				TypeBuilder builder = Parent.DefineType ();
@@ -814,7 +806,7 @@ namespace Mono.CSharp {
 					return null;
 				
 				TypeBuilder = builder.DefineNestedType (
-					Basename, type_attributes, parent, ifaces);
+					Basename, type_attributes, ptype, null);
 			}
 				
 			//
@@ -827,10 +819,13 @@ namespace Mono.CSharp {
 			if (!is_class && !have_nonstatic_fields){
 				TypeBuilder.DefineField ("$PRIVATE$", TypeManager.byte_type,
 							 FieldAttributes.Private);
-				// add interfaces that were not added at type creation
-				if (ifaces != null) {
-					foreach (Type i in ifaces)
-						TypeBuilder.AddInterfaceImplementation (i);
+			}
+
+			// add interfaces that were not added at type creation
+			if (ifaces != null) {
+				foreach (TypeExpr iface in ifaces) {
+					Type itype = iface.ResolveType (ec);
+					TypeBuilder.AddInterfaceImplementation (itype);
 				}
 			}
 
@@ -841,9 +836,7 @@ namespace Mono.CSharp {
 
 			TypeManager.AddUserType (Name, TypeBuilder, this, ifaces);
 
-			if ((parent != null) &&
-			    (parent == TypeManager.attribute_type ||
-			     parent.IsSubclassOf (TypeManager.attribute_type))) {
+			if ((parent != null) && parent.IsAttribute) {
 				RootContext.RegisterAttribute (this);
 				TypeManager.RegisterAttrType (TypeBuilder, this);
 			} else
@@ -1771,8 +1764,8 @@ namespace Mono.CSharp {
 			bool found = false;
 
 			if (ifaces != null){
-				foreach (Type t in ifaces){
-					if (t == interface_type){
+				foreach (TypeExpr t in ifaces){
+					if (t.Type == interface_type){
 						found = true;
 						break;
 					}

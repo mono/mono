@@ -388,7 +388,7 @@ public class TypeManager {
 		types.Add (name, t);
 	}
 	
-	public static void AddUserType (string name, TypeBuilder t, Type [] ifaces)
+	public static void AddUserType (string name, TypeBuilder t, TypeExpr[] ifaces)
 	{
 		try {
 			types.Add (name, t);
@@ -404,13 +404,13 @@ public class TypeManager {
 	//
 	// This entry point is used by types that we define under the covers
 	// 
-	public static void RegisterBuilder (TypeBuilder tb, Type [] ifaces)
+	public static void RegisterBuilder (TypeBuilder tb, TypeExpr [] ifaces)
 	{
 		if (ifaces != null)
 			builder_to_ifaces [tb] = ifaces;
 	}
 	
-	public static void AddUserType (string name, TypeBuilder t, TypeContainer tc, Type [] ifaces)
+	public static void AddUserType (string name, TypeBuilder t, TypeContainer tc, TypeExpr [] ifaces)
 	{
 		builder_to_declspace.Add (t, tc);
 		typecontainers.Add (name, tc);
@@ -438,7 +438,7 @@ public class TypeManager {
 		builder_to_declspace.Add (t, en);
 	}
 
-	public static void AddUserInterface (string name, TypeBuilder t, Interface i, Type [] ifaces)
+	public static void AddUserInterface (string name, TypeBuilder t, Interface i, TypeExpr [] ifaces)
 	{
 		AddUserType (name, t, ifaces);
 		builder_to_declspace.Add (t, i);
@@ -1753,22 +1753,22 @@ public class TypeManager {
 	///   This expands in context like: IA; IB : IA; IC : IA, IB; the interface "IC" to
 	///   be IA, IB, IC.
 	/// </remarks>
-	public static Type [] ExpandInterfaces (Type [] base_interfaces)
+	public static TypeExpr[] ExpandInterfaces (TypeExpr [] base_interfaces)
 	{
 		ArrayList new_ifaces = new ArrayList ();
 		
-		foreach (Type iface in base_interfaces){
+		foreach (TypeExpr iface in base_interfaces){
 			if (!new_ifaces.Contains (iface))
 				new_ifaces.Add (iface);
 			
-			Type [] implementing = TypeManager.GetInterfaces (iface);
+			TypeExpr [] implementing = iface.GetInterfaces ();
 			
-			foreach (Type imp in implementing){
+			foreach (TypeExpr imp in implementing){
 				if (!new_ifaces.Contains (imp))
 					new_ifaces.Add (imp);
 			}
 		}
-		Type [] ret = new Type [new_ifaces.Count];
+		TypeExpr [] ret = new TypeExpr [new_ifaces.Count];
 		new_ifaces.CopyTo (ret, 0);
 		return ret;
 	}
@@ -1777,7 +1777,7 @@ public class TypeManager {
 	///   This function returns the interfaces in the type `t'.  Works with
 	///   both types and TypeBuilders.
 	/// </summary>
-	public static Type [] GetInterfaces (Type t)
+	public static TypeExpr [] GetInterfaces (Type t)
 	{
 		//
 		// The reason for catching the Array case is that Reflection.Emit
@@ -1793,24 +1793,30 @@ public class TypeManager {
 			t = TypeManager.array_type;
 		
 		if (t is TypeBuilder){
-			Type [] parent_ifaces;
+			TypeExpr [] parent_ifaces;
 			
 			if (t.BaseType == null)
-				parent_ifaces = NoTypes;
+				parent_ifaces = NoTypeExprs;
 			else
 				parent_ifaces = GetInterfaces (t.BaseType);
-			Type [] type_ifaces = (Type []) builder_to_ifaces [t];
+			TypeExpr [] type_ifaces = (TypeExpr []) builder_to_ifaces [t];
 			if (type_ifaces == null)
-				type_ifaces = NoTypes;
+				type_ifaces = NoTypeExprs;
 
 			int parent_count = parent_ifaces.Length;
-			Type [] result = new Type [parent_count + type_ifaces.Length];
+			TypeExpr [] result = new TypeExpr [parent_count + type_ifaces.Length];
 			parent_ifaces.CopyTo (result, 0);
 			type_ifaces.CopyTo (result, parent_count);
 
 			return result;
-		} else
-			return t.GetInterfaces ();
+		} else {
+			Type [] ifaces = t.GetInterfaces ();
+
+			TypeExpr [] result = new TypeExpr [ifaces.Length];
+			for (int i = 0; i < ifaces.Length; i++)
+				result [i] = new TypeExpression (ifaces [i], Location.Null);
+			return result;
+		}
 	}
 	
 	/// <remarks>
@@ -1819,7 +1825,7 @@ public class TypeManager {
 	/// </remarks>
 	public static bool ImplementsInterface (Type t, Type iface)
 	{
-		Type [] interfaces;
+		TypeExpr [] interfaces;
 
 		//
 		// FIXME OPTIMIZATION:
@@ -1832,8 +1838,8 @@ public class TypeManager {
 			interfaces = GetInterfaces (t);
 
 			if (interfaces != null){
-				foreach (Type i in interfaces){
-					if (i == iface)
+				foreach (TypeExpr i in interfaces){
+					if (i.Type == iface)
 						return true;
 				}
 			}
@@ -2571,14 +2577,14 @@ public class TypeManager {
 		if (queried_type.IsArray)
 			queried_type = TypeManager.array_type;
 		
-		Type [] ifaces = GetInterfaces (queried_type);
+		TypeExpr [] ifaces = GetInterfaces (queried_type);
 		if (ifaces == null)
 			return null;
 		
-		foreach (Type itype in ifaces){
+		foreach (TypeExpr itype in ifaces){
 			MemberInfo [] x;
 
-			x = MemberLookup (null, null, itype, mt, bf, name);
+			x = MemberLookup (null, null, itype.Type, mt, bf, name);
 			if (x != null)
 				return x;
 		}

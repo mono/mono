@@ -420,9 +420,12 @@ namespace Mono.CSharp {
 		//
 		void MakeEnumeratorProxy ()
 		{
-			Type [] proxy_base_interfaces = new Type [2];
-			proxy_base_interfaces [0] = TypeManager.ienumerator_type;
-			proxy_base_interfaces [1] = TypeManager.idisposable_type;
+			TypeExpr [] proxy_base_interfaces = new TypeExpr [2];
+			proxy_base_interfaces [0] = new TypeExpression (TypeManager.ienumerator_type, loc);
+			proxy_base_interfaces [1] = new TypeExpression (TypeManager.idisposable_type, loc);
+			Type [] proxy_base_itypes = new Type [2];
+			proxy_base_itypes [0] = TypeManager.ienumerator_type;
+			proxy_base_itypes [1] = TypeManager.idisposable_type;
 			TypeBuilder container_builder = container.TypeBuilder;
 
 			//
@@ -430,7 +433,7 @@ namespace Mono.CSharp {
 			//
 			enumerator_proxy_class = container_builder.DefineNestedType (
 				MakeProxyName (), TypeAttributes.AutoLayout | TypeAttributes.Class |TypeAttributes.NestedPublic,
-				TypeManager.object_type, proxy_base_interfaces);
+				TypeManager.object_type, proxy_base_itypes);
 
 			TypeManager.RegisterBuilder (enumerator_proxy_class, proxy_base_interfaces);
 

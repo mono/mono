@@ -2220,6 +2220,18 @@ namespace Mono.CSharp {
 			return true;
 		}
 
+		public virtual bool IsAttribute {
+			get {
+				return Type == TypeManager.attribute_type ||
+					Type.IsSubclassOf (TypeManager.attribute_type);
+			}
+		}
+
+		public virtual TypeExpr[] GetInterfaces ()
+		{
+			return TypeManager.GetInterfaces (Type);
+		}
+
 		public abstract TypeExpr DoResolveAsTypeStep (EmitContext ec);
 
 		public virtual Type ResolveType (EmitContext ec)

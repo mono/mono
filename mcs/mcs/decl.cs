@@ -337,7 +337,7 @@ namespace Mono.CSharp {
 			}
 
 			if (!d.CheckAccessLevel (this)) {
-				Report.	Error (122, loc,  "`" + d.Type + "' " +
+				Report.	Error (122, loc,  "`" + d.Name + "' " +
 				       "is inaccessible because of its protection level");
 				return null;
 			}
@@ -1055,15 +1055,17 @@ namespace Mono.CSharp {
 		Hashtable SetupCacheForInterface (MemberCache parent)
 		{
 			Hashtable hash = SetupCache (parent);
-			Type [] ifaces = TypeManager.GetInterfaces (Container.Type);
+			TypeExpr [] ifaces = TypeManager.GetInterfaces (Container.Type);
 
-			foreach (Type iface in ifaces) {
-				if (interface_hash.Contains (iface))
+			foreach (TypeExpr iface in ifaces) {
+				Type itype = iface.Type;
+
+				if (interface_hash.Contains (itype))
 					continue;
-				interface_hash.Add (iface, true);
+				interface_hash.Add (itype, true);
 
 				IMemberContainer iface_container =
-					TypeManager.LookupMemberContainer (iface);
+					TypeManager.LookupMemberContainer (itype);
 
 				MemberCache iface_cache = iface_container.MemberCache;
 

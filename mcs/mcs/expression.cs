@@ -7562,10 +7562,11 @@ namespace Mono.CSharp {
 			if (!lookup_type.IsInterface)
 				return ix;
 
-			Type [] ifaces = TypeManager.GetInterfaces (lookup_type);
+			TypeExpr [] ifaces = TypeManager.GetInterfaces (lookup_type);
 			if (ifaces != null) {
-				foreach (Type iface in ifaces) {
-					MemberInfo [] mi = GetIndexersForTypeOrInterface (caller_type, iface);
+				foreach (TypeExpr iface in ifaces) {
+					Type itype = iface.Type;
+					MemberInfo [] mi = GetIndexersForTypeOrInterface (caller_type, itype);
 					if (mi != null){
 						if (ix == null)
 							ix = new Indexers ();

@@ -648,7 +648,7 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		Type GetInterfaceTypeByName (string name)
+		TypeExpr GetInterfaceTypeByName (string name)
 		{
 			Type t = FindType (Location, name);
 
@@ -659,7 +659,7 @@ namespace Mono.CSharp {
 			}
 			
 			if (t.IsInterface)
-				return t;
+				return new TypeExpression (t, Location);
 				
 			string cause;
 			
@@ -682,20 +682,20 @@ namespace Mono.CSharp {
 		//
 		// Sets the error boolean accoringly.
 		//
-		Type [] GetInterfaceBases (out bool error)
+		TypeExpr [] GetInterfaceBases (out bool error)
 		{
-			Type [] tbases;
+			TypeExpr [] tbases;
 			int i;
 
 			error = false;
 			if (Bases == null)
 				return null;
 			
-			tbases = new Type [Bases.Count];
+			tbases = new TypeExpr [Bases.Count];
 			i = 0;
 
 			foreach (string name in Bases){
-				Type t;
+				TypeExpr t;
 
 				t = GetInterfaceTypeByName (name);
 				if (t == null){
@@ -703,11 +703,10 @@ namespace Mono.CSharp {
 					return null;
 				}
 
-				if (!Parent.AsAccessible (t, ModFlags))
+				if (!t.AsAccessible (Parent, ModFlags))
 					Report.Error (61, Location,
 						      "Inconsistent accessibility: base interface `" +
-						      TypeManager.CSharpName (t) + "' is less " +
-						      "accessible than interface `" +
+						      t.Name + "' is less accessible than interface `" +
 						      Name + "'");
 
 				tbases [i++] = t;
@@ -728,7 +727,7 @@ namespace Mono.CSharp {
 		
 		public override TypeBuilder DefineType ()
 		{
-			Type [] ifaces;
+			TypeExpr [] ifaces;
 			bool error;
 
 			if (TypeBuilder != null)
@@ -739,6 +738,9 @@ namespace Mono.CSharp {
 			
 			InTransit = true;
 			
+			EmitContext ec = new EmitContext (this, this, Location, null, null,
+							  ModFlags, false);
+
 			ifaces = GetInterfaceBases (out error);
 
 			if (error)
@@ -754,7 +756,7 @@ namespace Mono.CSharp {
 					Name,
 					InterfaceAttr,
 					(Type)null,   // Parent Type
-					ifaces);
+					null);
 				RootContext.RegisterOrder (this);
 			} else {
 				TypeBuilder builder = Parent.TypeBuilder;
@@ -763,10 +765,17 @@ namespace Mono.CSharp {
 					Basename,
 					InterfaceAttr,
 					(Type) null, //parent type
-					ifaces);
+					null);
 
 				TypeContainer tc = TypeManager.LookupTypeContainer (builder);
 				tc.RegisterOrder (this);
+			}
+
+			if (ifaces != null) {
+				foreach (TypeExpr iface in ifaces) {
+					Type itype = iface.ResolveType (ec);
+					TypeBuilder.AddInterfaceImplementation (itype);
+				}
 			}
 
 			TypeManager.AddUserInterface (Name, TypeBuilder, this, ifaces);
