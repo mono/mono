@@ -1,3 +1,8 @@
+2003-11-30  Jackson Harper <jackson@ximian.com>
+
+	* CheckBoxList.cs: A checkbox will have null post data if it is
+	unselected. This fixes bug #51516.
+	
 2003-11-29  Jackson Harper <jackson@ximian.com>
 
 	* DataGrid.cs: Display paging controls even when there is no

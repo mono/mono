@@ -198,10 +198,7 @@ namespace System.Web.UI.WebControls
 			if(index >= 0 && index < Items.Count)
 			{
 				string v = postCollection [postDataKey];
-				if (v == null)
-					return false;
-
-				bool exists = (v.Trim () != "");
+				bool exists = (v != null);
 				if(Items[index].Selected != exists)
 				{
 					Items[index].Selected = exists;
