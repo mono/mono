@@ -1093,7 +1093,8 @@ namespace System.Collections {
 
 			public override object Clone ()
 			{
-				return (host.Clone () as Hashtable);
+				Hashtable ht = (Hashtable) host.Clone ();
+				return new SyncHashtable (ht);
 			}
 
 		} // SyncHashtable
