@@ -1,3 +1,8 @@
+2004-09-02  Duncan Mak  <duncan@ximian.com>
+
+	* mono-find-provides/mono-find-provides.cs (PrintProvides): Fix
+	the handling of 2.0 mscorlib.
+
 2004-08-10  Duncan Mak  <duncan@ximian.com>
 
 	* mono-find-requires/mono-find-requires.cs (PrintRequires): Since

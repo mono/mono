@@ -35,7 +35,7 @@ class FindProvides {
                         AssemblyName an = a.GetName ();
 
                         // hack to work around the issue with a 2.0 corlib
-                        if (s.EndsWith ("2.0/mscorlib.dll"))
+			if (s.Trim ().EndsWith ("2.0/mscorlib.dll"))
                                 Console.WriteLine  ("mono({0}) = {1}", "mscorlib", "2.0.3600.0");
                         else
                                 Console.WriteLine ("mono({0}) = {1}", an.Name, an.Version);
