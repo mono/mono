@@ -1,5 +1,13 @@
 2004-06-17  Gert Driesen <drieseng@users.sourceforge.net>
 
+	* MarshalDirectiveException.cs: marked serializable to match MS.NET
+	* SafeArrayRankMismatchException.cs: marked serializable to match
+	MS.NET
+	* SafeArrayTypeMismatchException.cs: marked serializable to match
+	MS.NET
+
+2004-06-17  Gert Driesen <drieseng@users.sourceforge.net>
+
 	* InvalidComObjectException.cs: marked serializable to match MS.NET
 	* InvalidOleVarianTypeException.cs: marked serializable to match
 	MS.NET
