@@ -6,7 +6,7 @@ AC_CANONICAL_SYSTEM
 m4_ifdef([_A][M_PROG_TAR],[_A][M_SET_OPTION([tar-ustar])])
 
 AM_CONFIG_HEADER(config.h)
-AM_INIT_AUTOMAKE(mono,1.1.5)
+AM_INIT_AUTOMAKE(mono,1.1.6)
 AM_MAINTAINER_MODE
 
 AC_PROG_LN_S
@@ -1665,7 +1665,7 @@ runtime/Makefile
 
   echo "prefix=$prefix" > $srcdir/$mcsdir/build/config.make
   echo "exec_prefix=$exec_prefix" >> $srcdir/$mcsdir/build/config.make
-  echo "libdir=$libdir" >> $srcdir/$mcsdir/build/config.make
+  echo "mono_libdir=$exec_prefix/lib" >> $srcdir/$mcsdir/build/config.make
   echo 'MCS_FLAGS = $(PLATFORM_DEBUG_FLAGS)' >> $srcdir/$mcsdir/build/config.make
 )
 

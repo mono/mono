@@ -86,7 +86,7 @@ Mon Feb 21 17:14:34 CET 2005 Paolo Molaro <lupus@ximian.com>
 	($(tmpinst)/bin/mono): Simplify.
 	(mcs-do-compiler-tests,mcs-compileall): Update.
 	* runtime/mono-wrapper.in: Use wrapper-config.
-	
+
 	* Makefile.am (DIST_SUBDIRS): Sync with $(SUBDIRS).
 
 	* runtime/Makefile.am (verify_profiles): Remove.
