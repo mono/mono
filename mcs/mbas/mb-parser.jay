@@ -2291,7 +2291,7 @@ parameter
   			pm |= Parameter.Modifier.ISBYREF;
 		
 	  	if ($4 != null && $6 != null && $4 != $6)
-			Report.Error (-1, lexer.Location, "Type character conflicts with declared type."); // TODO: Correct error number and message text
+			Report.Error (30302, lexer.Location, "Type character conflicts with declared type."); // TODO: Correct error number and message text
 
 		ptype = (Expression)(($6 == null) ? (($4 == null) ? TypeManager.system_object_expr : $4) : $6);
 		if ($5 != null)	{

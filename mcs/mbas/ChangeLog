@@ -1,4 +1,7 @@
 2004-09-14 Anirban Bhattacharjee <banirban@novell.com>
+	* mb-parser.jay: Fixed exception number for type confliction in method parameter
+
+2004-09-14 Anirban Bhattacharjee <banirban@novell.com>
 	* class.cs: Set default constant value for optional parameters in ParameterBuilder
 	* parameter.cs: Setting optional attribute
 		These two fixes makes sure that optional parameter with default value get emitted correctly
