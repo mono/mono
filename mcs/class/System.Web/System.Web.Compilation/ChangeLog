@@ -1,5 +1,10 @@
 2003-02-11  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* AspGenerator.cs: rethrow exceptions that may can from parsing or 
+	compilation if a user control.
+
+2003-02-11  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* AspGenerator.cs: throw ParseException on parse
 	error.
 

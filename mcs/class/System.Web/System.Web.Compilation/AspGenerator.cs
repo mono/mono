@@ -1872,6 +1872,10 @@ class AspGenerator
 
 		try {
 			parser.Parse ();
+		} catch (CompilationException e) {
+			throw;
+		} catch (ParseException e) {
+			throw;
 		} catch (Exception e) {
 			throw new ParseException (fullPath, e.Message, parser.Line, parser.Column, e);
 		}
