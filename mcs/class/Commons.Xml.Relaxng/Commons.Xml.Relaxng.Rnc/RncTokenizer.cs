@@ -271,6 +271,8 @@ namespace Commons.Xml.Relaxng.Rnc
 				tokenValue = prefixName + ":" + ReadOneToken ();
 				prefixName = null;
 				return Token.CName;
+			case '~':
+				return Token.Tilde;
 			case ',':
 				return Token.Comma;
 			case '{':

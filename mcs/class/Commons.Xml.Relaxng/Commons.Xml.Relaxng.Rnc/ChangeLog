@@ -1,3 +1,8 @@
+2005-02-05  Atsushi Enomoto <atsushi@ximian.com>
+
+	* RncParser.jay : Mixed and List accepted patterns incorrectly.
+	* RncTokenizer.cs : Handle ~ correctly.
+
 2005-01-26  Atsushi Enomoto <atsushi@ximian.com>
 
 	* RncWriter.cs : new file. Implements RelaxngPattern.WriteCompact().

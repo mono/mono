@@ -84,7 +84,8 @@ namespace Commons.Xml.Relaxng.Rnc
 		public RelaxngPattern Parse (TextReader source)
 		{
 			try {
-//				debug = new yydebug.yyDebugSimple ();
+				if (Environment.GetEnvironmentVariable ("MONO_RELAXNG_COMPACT_DEBUG") == "yes")
+					debug = new yydebug.yyDebugSimple ();
 				tokenizer = new RncTokenizer (source);
 				return (RelaxngPattern) yyparse (tokenizer);
 			} catch (Exception ex) {
@@ -219,7 +220,6 @@ TopLevel /* returns RelaxngPattern */
 	;
 
 TopLevelAfterAnnotations /* returns RelaxngPattern */
-	/* TODO: here Annotations is not specified in the spec!! */
 	: Preamble TopLevelBody
 	{
 		$$ = (RelaxngPattern) $2;
@@ -705,9 +705,6 @@ Primary /* returns RelaxngPattern */
 		RelaxngElement el = new RelaxngElement ();
 		el.NameClass = nc;
 		FillElementDefaultNS (el.NameClass);
-
-//		foreach (RelaxngPattern p in (RelaxngPatternList) $4)
-//			el.Patterns.Add (p);
 		el.Patterns.Add ((RelaxngPattern) $4);
 		$$ = el;
 	}
@@ -724,15 +721,13 @@ Primary /* returns RelaxngPattern */
 	| KeywordMixed OpenCurly Pattern CloseCurly
 	{
 		RelaxngMixed mixed = new RelaxngMixed ();
-		foreach (RelaxngPattern p in (RelaxngPatternList) $3)
-			mixed.Patterns.Add (p);
+		mixed.Patterns.Add ((RelaxngPattern) $3);
 		$$ = mixed;
 	}
 	| KeywordList OpenCurly Pattern CloseCurly
 	{
 		RelaxngList list = new RelaxngList ();
-		foreach (RelaxngPattern p in (RelaxngPatternList) $3)
-			list.Patterns.Add (p);
+		list.Patterns.Add ((RelaxngPattern) $3);
 		$$ = list;
 	}
 	| DatatypeName OptParams
