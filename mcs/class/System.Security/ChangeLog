@@ -1,3 +1,8 @@
+2003-03-03  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* System.Security.build: Updated build file to stop linking with
+	MS assemblies (and like with Mono's corlib instead).
+
 2003-03-02  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* list.unix: Added XmlSignature.cs.

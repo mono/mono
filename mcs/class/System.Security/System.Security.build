@@ -8,11 +8,18 @@
 	<target name="build">
 		<csc target="library" output="../lib/System.Security.dll" debug="${debug}">
 			<arg value="/nowarn:0169"/>
+			<arg value="/nowarn:1595"/>
+			<arg value="/nostdlib"/> 	<!-- don't reference mscorlib -->
 			<arg value="/noconfig"/>
-			<arg value="/r:..\lib\System.XML.dll"/>
+			<arg value="/r:../lib/corlib.dll"/>
+			<arg value="/r:../lib/System.Xml.dll"/>
 			<sources basedir=".">
 				<includes name="System.Security.Cryptography.Xml/*.cs"/>
 			</sources>
+			<references>
+				<includes name="../lib/corlib.dll"/>
+				<includes name="../lib/System.Xml.dll"/>
+			</references>
 		</csc>
 	</target>
 
