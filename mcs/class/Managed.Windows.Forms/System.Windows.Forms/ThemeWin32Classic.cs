@@ -1096,7 +1096,10 @@ namespace System.Windows.Forms
 							dc.DrawString (col.Text, ThemeEngine.Current.DefaultFont,
 								       ResPool.GetSolidBrush
 								       (this.ColorButtonText),
-								       col.Rect, col.Format);
+								       //col.Rect,
+									col.Rect.X + 3,
+									col.Rect.Y + col.Rect.Height/2 + 1,
+									col.Format);
 						}
 					}
 					// Non-clickable columns
@@ -1106,7 +1109,10 @@ namespace System.Windows.Forms
 							dc.DrawString (col.Text, ThemeEngine.Current.DefaultFont,
 								       ResPool.GetSolidBrush
 								       (this.ColorButtonText),
-								       col.Rect, col.Format);
+									//col.Rect,
+									col.Rect.X + 3,
+									col.Rect.Y + col.Rect.Height/2 + 1,
+									col.Format);
 						}
 					}
 				}

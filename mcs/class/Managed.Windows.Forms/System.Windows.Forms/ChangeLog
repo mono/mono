@@ -1,5 +1,10 @@
 2005-03-18  Peter Bartok  <pbartok@novell.com>
 
+	* ThemeWin32Classic.cs: Moved listview column headers a bit, to avoid
+	  them being touching the border
+
+2005-03-18  Peter Bartok  <pbartok@novell.com>
+
 	* TextControl.cs: Quick hack to center text better
 
 2005-03-18  Peter Bartok  <pbartok@novell.com>
