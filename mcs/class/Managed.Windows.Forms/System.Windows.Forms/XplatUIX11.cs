@@ -2131,7 +2131,7 @@ namespace System.Windows.Forms {
 		[DllImport ("libX11", EntryPoint="XOpenDisplay")]
 		internal extern static IntPtr XOpenDisplay(IntPtr display);
 		[DllImport ("libX11", EntryPoint="XCloseDisplay")]
-		internal extern static void XCloseDisplay(IntPtr display);						    
+		internal extern static int XCloseDisplay(IntPtr display);						    
 
 		[DllImport ("libX11", EntryPoint="XCreateWindow")]
 		internal extern static IntPtr XCreateWindow(IntPtr display, IntPtr parent, int x, int y, int width, int height, int border_width, int depth, int xclass, IntPtr visual, SetWindowValuemask valuemask, ref XSetWindowAttributes attributes);
