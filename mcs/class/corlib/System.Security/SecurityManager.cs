@@ -50,16 +50,13 @@ namespace System.Security {
 		private static object _lockObject;
 		private static ArrayList _hierarchy;
 
-		private static Hashtable _ht;
-
 		static SecurityManager () 
 		{
 			// lock(this) is bad
 			// http://msdn.microsoft.com/library/en-us/dnaskdr/html/askgui06032003.asp?frame=true
 			_lockObject = new object ();
-
-			// temporary (to be relocated)
-			_ht = new Hashtable ();
+			securityEnabled = true;
+//			checkExecutionRights = true;
 		}
 
 		private SecurityManager ()
@@ -110,8 +107,7 @@ namespace System.Security {
 			// - Policy driven
 			// - Only check the caller (no stack walk required)
 			// - Not affected by overrides (like Assert, Deny and PermitOnly)
-			Assembly a = Assembly.GetCallingAssembly ();
-			return DemandFromAssembly (perm, a);
+			return Assembly.GetCallingAssembly ().Demand (perm);
 		}
 
 		[SecurityPermission (SecurityAction.Demand, Flags=SecurityPermissionFlag.ControlPolicy)]
@@ -169,13 +165,15 @@ namespace System.Security {
 			while (ple.MoveNext ()) {
 				PolicyLevel pl = (PolicyLevel) ple.Current;
 				PolicyStatement pst = pl.Resolve (evidence);
-				if (ps == null)
-					ps = pst.PermissionSet;
-				else
-					ps = ps.Intersect (pst.PermissionSet);
-
-				if ((pst.Attributes & PolicyStatementAttribute.LevelFinal) == PolicyStatementAttribute.LevelFinal)
-					break;
+				if (pst != null) {
+					if (ps == null)
+						ps = pst.PermissionSet;
+					else
+						ps = ps.Intersect (pst.PermissionSet);
+	
+					if ((pst.Attributes & PolicyStatementAttribute.LevelFinal) == PolicyStatementAttribute.LevelFinal)
+						break;
+				}
 			}
 	
 			foreach (object o in evidence) {
@@ -204,11 +202,32 @@ namespace System.Security {
 		}
 #endif
 
+		static private SecurityPermission _execution = new SecurityPermission (SecurityPermissionFlag.Execution);
+
 		[MonoTODO()]
 		public static PermissionSet ResolvePolicy (Evidence evidence, PermissionSet reqdPset, PermissionSet optPset, PermissionSet denyPset, out PermissionSet denied)
 		{
-			denied = null;
-			return null;
+			PermissionSet resolved = ResolvePolicy (evidence);
+			// do we have the minimal permission requested by the assembly ?
+			if ((reqdPset != null) && !reqdPset.IsSubsetOf (resolved)) {
+				throw new PolicyException (Locale.GetText (
+					"Policy doesn't grant the minimal permissions required to execute the assembly."));
+			}
+			// do we have the right to execute ?
+			if (checkExecutionRights) {
+				// unless we have "Full Trust"...
+				if (!resolved.IsUnrestricted ()) {
+					// ... we need to find a SecurityPermission
+					IPermission security = resolved.GetPermission (typeof (SecurityPermission));
+					if (!_execution.IsSubsetOf (security)) {
+						throw new PolicyException (Locale.GetText (
+							"Policy doesn't grant the right to execute to the assembly."));
+					}
+				}
+			}
+
+			denied = denyPset;
+			return resolved;
 		}
 
 		public static IEnumerator ResolvePolicyGroups (Evidence evidence)
@@ -276,26 +295,6 @@ namespace System.Security {
 				Path.Combine (userPolicyPath, "security.config")));
 
 			_hierarchy = ArrayList.Synchronized (al);
-		}
-
-		private static bool DemandFromAssembly (IPermission demanded, Assembly a) 
-		{
-			PermissionSet granted = (PermissionSet) _ht [a];
-			if (granted == null) {
-				Evidence e = a.Evidence;
-				lock (_lockObject) {
-					granted = SecurityManager.ResolvePolicy (e);
-					_ht [a] = granted;
-				}
-			}
-
-			Type t = demanded.GetType ();
-			IPermission p = granted.GetPermission (t);
-			if (p != null) {
-				if (!demanded.IsSubsetOf (p))
-					return false;
-			}
-			return true;
 		}
 	}
 }

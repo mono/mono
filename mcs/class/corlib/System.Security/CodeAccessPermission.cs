@@ -31,7 +31,9 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Diagnostics;
 using System.Globalization;
+using System.Reflection;
 using System.Security.Permissions;
 using System.Text;
 
@@ -116,69 +118,33 @@ namespace System.Security {
 		public abstract IPermission Copy ();
 
 		// LAMESPEC: Documented as virtual
-		[MonoTODO ("MS centralize demands for IBuiltInPermission, but I think we should branch back into indivual permission classes.")]
+		[MonoTODO ("Assert, Deny and PermitOnly aren't yet supported")]
 		public void Demand ()
 		{
-			IBuiltInPermission perm = (this as IBuiltInPermission);
-			if (perm == null)
-				return; // not sure about this :(
+			if (!SecurityManager.SecurityEnabled)
+				return;
 
-			bool result = false;
-
-			// TODO : Loop the stack
-			// TODO : Loop all permission on the current frame
-			result = CheckDemand (this);
-			switch (perm.GetTokenIndex ()) {
-				case 0: // EnvironmentPermission
+			Assembly a = null;
+			StackTrace st = new StackTrace (1); // skip ourself
+			StackFrame[] frames = st.GetFrames ();
+			foreach (StackFrame sf in frames) {
+				MethodBase mb = sf.GetMethod ();
+				// declarative security checks, when present, must be checked
+				// for each stack frame
+				if ((MethodAttributes.HasSecurity & mb.Attributes) == MethodAttributes.HasSecurity) {
 					// TODO
-					break;
-				case 1: // FileDialogPermission
-					// TODO
-					break;
-				case 2: // FileIOPermission
-					// TODO
-					break;
-				case 3: // IsolatedStorageFilePermission
-					// TODO
-					break;
-				case 4: // ReflectionPermission
-					// TODO
-					break;
-				case 5: // RegistryPermission
-					// TODO
-					break;
-				case 6: // SecurityPermission
-					// TODO
-					break;
-				case 7: // UIPermission
-					// TODO
-					break;
-				case 8: // PrincipalPermission
-					// TODO
-					break;
-				case 9: // PublisherIdentityPermission
-					// TODO
-					break;
-				case 10: // SiteIdentityPermission
-					// TODO
-					break;
-				case 11: // StrongNameIdentityPermission
-					// TODO
-					break;
-				case 12: // UrlIdentityPermission
-					// TODO
-					break;
-				case 13: // ZoneIdentityPermission
-					// TODO
-					break;
-				default:
-					string message = String.Format (Locale.GetText ("Unknown IBuiltInPermission #{0}"), perm.GetTokenIndex ());
-					throw new SecurityException (message);
-			}
-
-			if (!result) {
-				throw new SecurityException (Locale.GetText (
-					"Demand failed."));
+				}
+				// however the "final" grant set is resolved by assembly, so
+				// there's no need to check it every time (just when we're 
+				// changing assemblies between frames).
+				Assembly af = mb.ReflectedType.Assembly;
+				if (a != af) {
+					a = af;
+					if (!a.Demand (this)) {
+						Type t = this.GetType ();
+						throw new SecurityException ("Demand failed", t);
+					}
+				}
 			}
 		}
 
@@ -189,6 +155,7 @@ namespace System.Security {
 		}
 
 #if NET_2_0
+		[MonoTODO]
 		public override bool Equals (object obj)
 		{
 			if (obj == null)
@@ -203,6 +170,7 @@ namespace System.Security {
 		public abstract void FromXml (SecurityElement elem);
 
 #if NET_2_0
+		[MonoTODO]
 		public override int GetHashCode ()
 		{
 			return base.GetHashCode ();

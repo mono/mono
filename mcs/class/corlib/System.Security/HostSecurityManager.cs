@@ -42,6 +42,7 @@ namespace System.Security {
 		}
 
 		public virtual PolicyLevel DomainPolicy {
+			// always return null - may be overriden
 			get { return null; }
 		}
 
@@ -50,6 +51,7 @@ namespace System.Security {
 		}
 
 		public virtual PermissionSet RefusedSet {
+			// always return null - may be overriden
 			get { return null; }
 		}
 
@@ -62,6 +64,7 @@ namespace System.Security {
 
 		public virtual Evidence ProvideAssemblyEvidence (Assembly loadedAssembly, Evidence evidence)
 		{
+			// no changes - may be overriden
 			return evidence;
 		}
 	}

@@ -1,3 +1,16 @@
+2004-08-11  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* CodeAccessPermission.cs: Basic implementation for Demand (without
+	full stack trace, i.e. Assert, Deny and PermitOnly aren't considered).
+	Added TODO to unimplemented NET_2_0 methods.
+	* HostSecurityManager.cs: Added comments (as it looked not implemented
+	even to myself).
+	* PermissionSet.cs: Fixed Unrestricted when copied. Changed exception
+	ordering in Copy (ArgumentNullException couldn't work). Made IsEmpty
+	more robust.
+	* SecurityManager.cs: Implemented IsGranted using Assembly.Demand. 
+	Basic implementation for policy resolution.
+
 2004-08-03  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* PermissionSetCollection.cs: New class in Fx 2.0.

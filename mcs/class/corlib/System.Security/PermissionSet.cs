@@ -52,15 +52,14 @@ namespace System.Security {
 			list = new ArrayList ();
 		}
 
-		public PermissionSet (PermissionState state)
+		public PermissionSet (PermissionState state) : this ()
 		{
-			if (!Enum.IsDefined(typeof(System.Security.Permissions.PermissionState), state))
-				throw new System.ArgumentException(); // state is not a valid System.Security.Permissions.PermissionState value.
+			if (!Enum.IsDefined (typeof (PermissionState), state))
+				throw new System.ArgumentException ("state");
 			this.state = state;
-			list = new ArrayList ();
 		}
 
-		public PermissionSet (PermissionSet permSet) : this (PermissionState.None)
+		public PermissionSet (PermissionSet permSet) : this ()
 		{
 			// LAMESPEC: This would be handled by the compiler.  No way permSet is not a PermissionSet.
 			//if (!(permSet is PermissionSet))
@@ -68,6 +67,7 @@ namespace System.Security {
 			if (permSet == null)
 				state = PermissionState.Unrestricted;
 			else {
+				state = permSet.state;
 				foreach (IPermission p in permSet.list)
 					list.Add (p);
 			}
@@ -105,12 +105,12 @@ namespace System.Security {
 
 		public virtual void CopyTo (Array array, int index)
 		{
+			if (null == array)
+				throw new System.ArgumentNullException ("array"); // array is null.
 			if (array.Rank > 1)
 				throw new System.ArgumentException("Array has more than one dimension"); // array has more than one dimension.
 			if (index < 0 || index >= array.Length)
 				throw new System.IndexOutOfRangeException(); // index is outside the range of allowable values for array.
-			if (null == array)
-				throw new System.ArgumentNullException(); // array is null.
 			list.CopyTo (array, index);
 		}
 
@@ -242,7 +242,9 @@ namespace System.Security {
 		public virtual bool IsEmpty () 
 		{
 			// note: Unrestricted isn't empty
-			return ((state == PermissionState.Unrestricted) ? false : (list.Count == 0));
+			if (state == PermissionState.Unrestricted)
+				return false;
+			return ((list == null) || (list.Count == 0));
 		}
 
 		public virtual bool IsUnrestricted () 
