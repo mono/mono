@@ -206,5 +206,12 @@ namespace System.Reflection.Emit {
 		public ISymbolWriter GetSymWriter () {
 			return symbol_writer;
 		}
+
+		public ISymbolDocumentWriter DefineDocument (string url, Guid language, Guid languageVendor, Guid documentType) {
+			if (symbol_writer == null)
+				throw new InvalidOperationException ();
+
+			return symbol_writer.DefineDocument (url, language, languageVendor, documentType);
+		}
 	}
 }

@@ -1,3 +1,6 @@
+2002-04-26  Martin Baulig  <martin@gnome.org>
+
+	* ModuleBuilder.cs (DefineDocument): Implemented.
 
 Tue Apr 16 13:02:28 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
