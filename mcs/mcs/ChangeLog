@@ -1,3 +1,24 @@
+2002-04-22  Miguel de Icaza  <miguel@ximian.com>
+
+	* driver.cs: Call BootCorlib_PopulateCoreType
+
+	* class.cs (Property.CheckBase): Check for properties only, not
+	for all members. 
+
+	* interface.cs: Temporary hack: try/catch around the
+	CustomAttributeBuilder, because I am getting an exception that I
+	do not understand.
+
+	* rootcontext.cs (BootCorlib_PopulateCoreType): Populate some
+	types whose definitions are required to be there (attributes are
+	defined before standard types).
+
+	Compute definitions as we boot the various types, as they are used
+	immediately (value_type class will need object_type, but if we do
+	not initialize object_type, we will pass a null, which will let
+	the runtime pick the System.Object from the existing corlib, which
+	is not what we want).
+
 2002-04-22  Patrik Torstensson <totte@labs2.com>
 
 	* cs-tokenizer.cs: fixed a number of trim() issues.

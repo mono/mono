@@ -469,12 +469,6 @@ public class TypeManager {
 		return (ConstructorInfo) mi [0];
 	}
 	
-	public static void InitBaseTypes ()
-	{
-		object_type   = CoreLookupType ("System.Object");
-		value_type    = CoreLookupType ("System.ValueType");
-	}
-	
 	/// <remarks>
 	///   The types have to be initialized after the initial
 	///   population of the type has happened (for example, to
@@ -482,8 +476,8 @@ public class TypeManager {
 	/// </remarks>
 	public static void InitCoreTypes ()
 	{
-		InitBaseTypes ();
-		
+		object_type   = CoreLookupType ("System.Object");
+		value_type    = CoreLookupType ("System.ValueType");
 		string_type   = CoreLookupType ("System.String");
 		int32_type    = CoreLookupType ("System.Int32");
 		int64_type    = CoreLookupType ("System.Int64");

@@ -837,6 +837,8 @@ namespace Mono.CSharp
 			RootContext.ResolveTree ();
 			if (timestamps)
 				ShowTime ("Populate tree");
+			if (!RootContext.StdLib)
+				RootContext.BootCorlib_PopulateCoreTypes ();
 			RootContext.PopulateTypes ();
 			
 			if (RootContext.StdLib)

@@ -258,6 +258,8 @@ System.Runtime.Remoting.Messaging/IMessage.cs
 System.Runtime.Remoting.Messaging/IMethodMessage.cs
 System.Runtime.Remoting.Messaging/IMethodReturnMessage.cs
 System.Runtime.Remoting.Messaging/LogicalCallContext.cs
+System.Runtime.Remoting.Messaging/IMessageSink.cs
+System.Runtime.Remoting.Messaging/IMessageCtrl.cs
 System.Runtime.Remoting/LeaseState.cs
 System.Runtime.Remoting/ObjRef.cs
 System.Runtime.Remoting/ObjectHandle.cs

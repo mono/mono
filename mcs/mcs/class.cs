@@ -1324,8 +1324,9 @@ namespace Mono.CSharp {
 					foreach (Constructor c in instance_constructors){
 						ConstructorBuilder cb = c.ConstructorBuilder;
 
-						if (filter (cb, criteria) == true)
-							members.Add (cb);
+						if (cb != null)
+							if (filter (cb, criteria) == true)
+								members.Add (cb);
 					}
 				}
 
@@ -2196,10 +2197,11 @@ namespace Mono.CSharp {
 					if ((ModFlags & Modifiers.NEW) != 0)
 						WarningNotHiding (parent);
 
-					if ((ModFlags & Modifiers.OVERRIDE) != 0)
+					if ((ModFlags & Modifiers.OVERRIDE) != 0){
 						Report.Error (115, Location,
 							      parent.MakeName (Name) +
 							      " no suitable methods found to override");
+					}
 				}
 			} else if ((ModFlags & Modifiers.NEW) != 0)
 				WarningNotHiding (parent);
@@ -2818,12 +2820,12 @@ namespace Mono.CSharp {
 			MemberInfo [] props;
 			MemberInfo [] props_static = TypeContainer.FindMembers (
 				parent.TypeBuilder.BaseType,
-				MemberTypes.All, BindingFlags.Public | BindingFlags.Static,
+				MemberTypes.Property, BindingFlags.Public | BindingFlags.Static,
 				System.Type.FilterName, Name);
 
 			MemberInfo [] props_instance = TypeContainer.FindMembers (
 				parent.TypeBuilder.BaseType,
-				MemberTypes.All, BindingFlags.Public | BindingFlags.Instance,
+				MemberTypes.Property, BindingFlags.Public | BindingFlags.Instance,
 				System.Type.FilterName, Name);
 
 			//
@@ -2867,7 +2869,7 @@ namespace Mono.CSharp {
 				if ((ModFlags & Modifiers.OVERRIDE) != 0){
 					Report.Error (115, Location,
 						      parent.MakeName (Name) +
-						      " no suitable methods found to override");
+						      " no suitable properties found to override");
 					return false;
 				}
 			}

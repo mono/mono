@@ -10,7 +10,8 @@
 using System.Runtime.CompilerServices;
 
 namespace System {
-	
+
+	[Serializable]
 	public abstract class ValueType {
 
 		// <summary>

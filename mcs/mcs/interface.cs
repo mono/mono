@@ -679,8 +679,9 @@ namespace Mono.CSharp {
 					PopulateIndexer (ii);
 
 				CustomAttributeBuilder cb = EmitDefaultMemberAttr (parent, ModFlags, Location);
-				TypeBuilder.SetCustomAttribute (cb);
-			}
+				if (cb != null)
+					TypeBuilder.SetCustomAttribute (cb);
+ 			}
 			
 			return true;
 		}
@@ -706,7 +707,12 @@ namespace Mono.CSharp {
 
 			string [] vals = { "Item" };
 
-			CustomAttributeBuilder cb = new CustomAttributeBuilder ((ConstructorInfo) constructor, vals);
+			CustomAttributeBuilder cb = null;
+			try {
+				cb = new CustomAttributeBuilder ((ConstructorInfo) constructor, vals);
+			} catch {
+				Report.Warning (-100, "Can not set the indexer default member attribute");
+			}
 
 			return cb;
 		}

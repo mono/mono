@@ -170,12 +170,12 @@ namespace Mono.CSharp {
 		//
 		// Resolves a single class during the corlib bootstrap process
 		//
-		static void BootstrapCorlib_ResolveClass (TypeContainer root, string name)
+		static TypeBuilder BootstrapCorlib_ResolveClass (TypeContainer root, string name)
 		{
 			object o = root.GetDefinition (name);
 			if (o == null){
 				Report.Error (518, "The predefined type `" + name + "' is not defined");
-				return;
+				return null;
 			}
 
 			if (!(o is Class)){
@@ -186,10 +186,10 @@ namespace Mono.CSharp {
 				} else
 					Error_TypeConflict (name);
 
-				return;
+				return null;
 			}
 
-			((DeclSpace) o).DefineType ();
+			return ((DeclSpace) o).DefineType ();
 		}
 
 		//
@@ -269,14 +269,9 @@ namespace Mono.CSharp {
 		{
 			TypeContainer root = Tree.Types;
 
-			string [] classes_first_stage = {
-				"System.Object", "System.ValueType"
-			};
-
-			foreach (string cname in classes_first_stage)
-				BootstrapCorlib_ResolveClass (root, cname);
-
-			TypeManager.InitBaseTypes ();
+			TypeManager.object_type = BootstrapCorlib_ResolveClass (root, "System.Object");
+			TypeManager.value_type = BootstrapCorlib_ResolveClass (root, "System.ValueType");
+			TypeManager.attribute_type = BootstrapCorlib_ResolveClass (root, "System.Attribute");
 			
 			string [] interfaces_first_stage = {
 				"System.IComparable", "System.ICloneable",
@@ -375,10 +370,8 @@ namespace Mono.CSharp {
 				foreach (TypeContainer tc in attribute_types)
 					tc.CloseType ();
 			
-			if (interface_resolve_order != null){
-				foreach (Interface iface in interface_resolve_order)
-					iface.CloseType ();
-			}
+			foreach (Interface iface in interface_resolve_order)
+				iface.CloseType ();
 
 			//
 			// We do this in two passes, first we close the structs,
@@ -386,17 +379,15 @@ namespace Mono.CSharp {
 			// way.  If this is really what is going on, we should probably
 			// make sure that we define the structs in order as well.
 			//
-			if (type_container_resolve_order != null){
-				foreach (TypeContainer tc in type_container_resolve_order){
-					if (tc is Struct && tc.Parent == tree.Types){
-						tc.CloseType ();
-					}
+			foreach (TypeContainer tc in type_container_resolve_order){
+				if (tc is Struct && tc.Parent == tree.Types){
+					tc.CloseType ();
 				}
+			}
 
-				foreach (TypeContainer tc in type_container_resolve_order){
-					if (!(tc is Struct && tc.Parent == tree.Types))
-						tc.CloseType ();					
-				}
+			foreach (TypeContainer tc in type_container_resolve_order){
+				if (!(tc is Struct && tc.Parent == tree.Types))
+					tc.CloseType ();					
 			}
 			
 			if (root.Delegates != null)
@@ -571,6 +562,22 @@ namespace Mono.CSharp {
 		static void Report1530 (Location loc)
 		{
 			Report.Error (1530, loc, "Keyword new not allowed for namespace elements");
+		}
+		
+		static public void PopulateCoreType (TypeContainer root, string name)
+		{
+			DeclSpace ds = (DeclSpace) root.GetDefinition (name);
+
+			ds.Define (root);
+		}
+		
+		static public void BootCorlib_PopulateCoreTypes ()
+		{
+			TypeContainer root = tree.Types;
+
+			PopulateCoreType (root, "System.Object");
+			PopulateCoreType (root, "System.ValueType");
+			PopulateCoreType (root, "System.Attribute");
 		}
 		
 		// <summary>
