@@ -99,6 +99,11 @@ namespace System.Collections.Generic
 			contents [index] = item;
 		}
 
+		void IList.Insert (int index, object item)
+		{
+			Insert (index, (T) item);
+		}
+
 		public void Remove (T item)
 		{
 			int index = IndexOf (item);
@@ -153,7 +158,7 @@ namespace System.Collections.Generic
 			}
 
 			set {
-				contents [index] = (T) value;
+				// contents [index] = (T) value;
 			}
 		}
 

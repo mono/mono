@@ -1018,3 +1018,4 @@ System.Collections.Generic/IKeyComparer.cs
 System.Collections.Generic/KeyValuePair.cs
 System.Collections.Generic/Queue.cs
 System.Collections.Generic/Stack.cs
+System.Collections.Generic/List.cs
