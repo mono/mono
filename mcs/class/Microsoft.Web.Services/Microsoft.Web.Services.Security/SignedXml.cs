@@ -16,16 +16,22 @@ using System.Xml;
 
 using SSCX = System.Security.Cryptography.Xml;
 
+#if WSE2
+using Microsoft.Web.Services.Xml;
+#endif
 #if (WSE1 || WSE2)
 using Microsoft.Web.Services.Security;
 
 namespace Microsoft.Web.Services.Security {
+
+	public class SignedXml : IXmlElement {
 #else
 using System.Security.Cryptography.Xml;
 
 namespace System.Security.Cryptography.Xml {
-#endif
+
 	public class SignedXml {
+#endif
 
 #if (WSE1 || WSE2)
 		private SignedXmlSignature signature;
@@ -206,7 +212,7 @@ namespace System.Security.Cryptography.Xml {
 			return hash.ComputeHash (SignedInfoTransformed ());
 		}
 
-		public bool CheckSignature () 
+		public virtual bool CheckSignature () 
 		{
 			// CryptographicException
 			if (key == null)
@@ -366,6 +372,14 @@ namespace System.Security.Cryptography.Xml {
 		{
 			signature.LoadXml (value);
 		}
+
+#if (WSE1 || WSE2)
+		[MonoTODO]
+		public virtual XmlElement GetXml (XmlDocument document) 
+		{
+			return null;
+		}
+#endif
 
 #if ! NET_1_0
 		private XmlResolver xmlResolver;
