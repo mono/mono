@@ -88,6 +88,9 @@ namespace Mono.MonoBASIC {
 		// Holds the operators
 		ArrayList operators;
 
+		// Holds AddHandlers stements for events
+		ArrayList handlers;
+
 		// The emit context for toplevel objects.
 		EmitContext ec;
 
@@ -415,6 +418,15 @@ namespace Mono.MonoBASIC {
 			return AdditionResult.Success;
 		}
 
+		public AdditionResult AddEventHandler (Statement stmt)
+		{
+			if (handlers == null)
+				handlers = new ArrayList ();
+
+			handlers.Add (stmt);
+			return AdditionResult.Success;
+		}
+
 		public void RegisterOrder (Interface iface)
 		{
 			if (interface_order == null)
@@ -530,6 +542,12 @@ namespace Mono.MonoBASIC {
 		public virtual TypeAttributes TypeAttr {
 			get {
 				return Modifiers.TypeAttr (ModFlags, this);
+			}
+		}
+
+		public ArrayList EventHandlers {
+			get {
+				return handlers;
 			}
 		}
 
@@ -2715,6 +2733,13 @@ namespace Mono.MonoBASIC {
 		{
 			MethodAttributes ca = (MethodAttributes.RTSpecialName |
 					       MethodAttributes.SpecialName);
+
+			if (parent.EventHandlers != null) {
+				ArrayList hdlrs = parent.EventHandlers;
+				foreach(Statement stmt in hdlrs)
+                    this.Block.AddStatement (stmt);
+			}
+
 
 			// Check if arguments were correct.
 			if (!DoDefineParameters (parent))

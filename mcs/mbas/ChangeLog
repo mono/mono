@@ -1,4 +1,11 @@
-2004-06-04 Anirban Bhattacharjee <banirban@novell.com
+2004-06-07 Anirban Bhattacharjee <banirban@novell.com>
+	* mb-parser.jay: Resolved the problem in Sub statement with Handles cluse
+	* class.cs: Added a AddEventHandler function and a EventHandler readonly property. Also modified define of constructor to accommodate Handlers clause.		
+	            If one initialize a event handler as
+			Sub Handler() Handles x.Event
+		    The handler will be initialized by the constructor of the corresponding class by calling AddHandler.
+
+2004-06-04 Anirban Bhattacharjee <banirban@novell.com>
 	* mb-parser.jay: Modified WithEvents grammar	
 
 2004-06-04 Anirban Bhattacharjee <banirban@novell.com>
