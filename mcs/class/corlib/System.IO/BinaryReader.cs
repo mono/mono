@@ -29,7 +29,7 @@ namespace System.IO {
 				throw new ArgumentException();
 
 			m_stream = input;
-			m_encoding = Encoding.UTF8;
+			m_encoding = encoding;
 			m_encoding_max_byte = m_encoding.GetMaxByteCount(1);
 		}
 
