@@ -72,12 +72,12 @@ namespace NpgsqlTypes
         private static readonly DateTime postgresEpoch = new DateTime(2000, 1, 1);
 
         private static readonly string[] DateFormats = new String[] 
-	{
+        {
           "yyyy-MM-dd",
-	};
+        };
 
         private static readonly string[] TimeFormats = new String[]
-	{
+        {
           "HH:mm:ss.ffffff",
           "HH:mm:ss.fffff",	
           "HH:mm:ss.ffff",
@@ -92,10 +92,10 @@ namespace NpgsqlTypes
           "HH:mm:ss.ffzz",
           "HH:mm:ss.fzz",
           "HH:mm:sszz"
-	};
+        };
 
         private static readonly string[] DateTimeFormats = new String[] 
-	{
+        {
           "yyyy-MM-dd HH:mm:ss.ffffff",
           "yyyy-MM-dd HH:mm:ss.fffff",	
           "yyyy-MM-dd HH:mm:ss.ffff",
@@ -110,7 +110,7 @@ namespace NpgsqlTypes
           "yyyy-MM-dd HH:mm:ss.ffzz",
           "yyyy-MM-dd HH:mm:ss.fzz",
           "yyyy-MM-dd HH:mm:sszz"
-	};
+        };
 
         public static String GetBackendTypeNameFromDbType(DbType dbType)
         {
