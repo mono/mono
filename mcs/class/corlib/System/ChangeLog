@@ -1,3 +1,8 @@
+2003-04-22  Nick Drochak  <ndrochak@gol.com>
+
+	* Double.cs (ToString):
+	* Single.cs (ToString): Handle case where param is a CultureInfo.
+
 2003-04-18  Zoltan Varga  <vargaz@freemail.hu>
 
 	* Object.cs ValueType.cs: Make the Object::GetHashCode() and 

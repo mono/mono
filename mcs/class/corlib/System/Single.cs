@@ -126,7 +126,11 @@ namespace System {
 
 		public string ToString (string format, IFormatProvider fp)
 		{
-			return SingleFormatter.NumberToString(format,
+			if (fp is CultureInfo)
+				return SingleFormatter.NumberToString(format,
+				((CultureInfo)fp).NumberFormat, value);
+			else
+				return SingleFormatter.NumberToString(format,
 				(NumberFormatInfo)fp, value);
 		}
 
