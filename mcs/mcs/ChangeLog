@@ -1,3 +1,8 @@
+2003-03-31  Gaurav Vaish <gvaish_mono@lycos.com>
+
+	* cs-parser.jay: Attributes cannot be applied to
+	                 namespaces. Fixes #40473
+
 2003-03-31  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* class.cs:
