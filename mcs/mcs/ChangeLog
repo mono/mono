@@ -1,3 +1,8 @@
+2001-09-20  Ravi Pratap  <ravi@ximian.com>
+
+	* expression.cs (everywhere): Comment out return statements in ::Resolve
+	methods to avoid the warnings.
+
 2001-09-20  Miguel de Icaza  <miguel@ximian.com>
 
 	* driver.cs (parse): Report error 2001 if we can not open the

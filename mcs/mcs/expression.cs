@@ -791,7 +791,7 @@ namespace CIR {
 		{
 			// FIXME: Implement;
 			throw new Exception ("Unimplemented");
-			return this;
+			// return this;
 		}
 
 		public override void Emit (EmitContext ec)
@@ -1108,7 +1108,7 @@ namespace CIR {
 				//
 				MethodGroupExpr left_set = null, right_set = null;
 				int length1 = 0, length2 = 0;
-				
+
 				if (left_expr != null) {
 					left_set = (MethodGroupExpr) left_expr;
 					length1 = left_set.Methods.Length;
@@ -1131,10 +1131,10 @@ namespace CIR {
 				Arguments.Add (new Argument (left, Argument.AType.Expression));
 				Arguments.Add (new Argument (right, Argument.AType.Expression));
 
+			
 				method = Invocation.OverloadResolve (union, Arguments);
-				if (method != null)
+				if (method != null) 
 					return this;
-
 			}
 
 			//
@@ -1449,8 +1449,7 @@ namespace CIR {
 		{
 			// FIXME: Implement;
 			throw new Exception ("Unimplemented");
-
-			return this;
+			// return this;
 		}
 
 		public override void Emit (EmitContext ec)
@@ -2140,8 +2139,7 @@ namespace CIR {
 		{
 			// FIXME: Implement;
 			throw new Exception ("Unimplemented");
-
-			return this;
+			// return this;
 		}
 
 		public override void Emit (EmitContext ec)
@@ -2316,8 +2314,7 @@ namespace CIR {
 		{
 			// FIXME: Implement;
 			throw new Exception ("Unimplemented");
-
-			return this;
+			// return this;
 		}
 
 		public override void Emit (EmitContext ec)
@@ -2512,8 +2509,7 @@ namespace CIR {
 		{
 			// FIXME: Implement;
 			throw new Exception ("Unimplemented");
-
-			return this;
+			// return this;
 		}
 		
 		public override void Emit (EmitContext ec)
@@ -2546,8 +2542,7 @@ namespace CIR {
 		{
 			// FIXME: Implement;
 			throw new Exception ("Unimplemented");
-
-			return this;
+			// return this;
 		}
 
 		public override void Emit (EmitContext ec)
