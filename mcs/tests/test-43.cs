@@ -61,6 +61,16 @@ class X {
 
 		return total;
 	}
+
+	static bool test_multi (int [,] d)
+	{
+		int total = 0;
+		
+		foreach (int a in d){
+			total += a;
+		}
+		return (total == 46);
+	}
 	
 	static int Main ()
 	{
@@ -93,6 +103,14 @@ class X {
 		if (!test_double (d))
 			return 5;
 
+		int [,] jj = new int [2,2];
+		jj [0,0] = 10;
+		jj [0,1] = 2;
+		jj [1,0] = 30;
+		jj [1,1] = 4;
+		if (!test_multi (jj))
+			return 6;
+			
 		return 0;
 	}
 }

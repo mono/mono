@@ -13,14 +13,21 @@ class X {
 		yield 100;
 	}
 
-	static void Main ()
+	static int Main ()
 	{
 		start = 10;
 		end = 30;
 
+		int total = 0;
+		
 		IEnumerator e = GetRange ();
 		while (e.MoveNext ()){
 			Console.WriteLine ("Value=" + e.Current);
+			total += (int) e.Current;
 		}
+
+		if (total != 491)
+			return 1;
+		return 0;
 	}
 }

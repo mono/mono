@@ -1,20 +1,25 @@
+//
+// Use
+
 using System;
 using System.Collections;
 
 class X {
-	static IEnumerable GetIt ()
+	static IEnumerable GetIt (int [] args)
 	{
-		Console.WriteLine ("hello");
-		yield 1;
-		yield 2;
-		yield 3;
+		foreach (int a in args)
+			yield a;
 	}
 	
-	static void Main ()
+	static int Main ()
 	{
-		foreach (int i in GetIt ()){
-			Console.WriteLine ("Value=" + i);
+		int total = 0;
+		foreach (int i in GetIt (new int [] { 1, 2, 3})){
+			Console.WriteLine ("Got: " + i);
+			total += i;
 		}
-		
+		if (total != 6)
+			return 1;
+		return 0;
 	}
 }

@@ -4,22 +4,39 @@ using System.Collections;
 class X {
 	static IEnumerator GetIt ()
 	{
-		Console.WriteLine ("test");
-#if __V2__
 		yield 1;
 		yield 2;
 		yield 3;
-#else
-		return null;
-#endif
 	}
 	
-	static void Main ()
+	static IEnumerable GetIt2 ()
+	{
+		yield 1;
+		yield 2;
+		yield 3;
+	}
+
+	static int Main ()
 	{
 		IEnumerator e = GetIt ();
+		int total = 0;
+		
 		while (e.MoveNext ()){
 			Console.WriteLine ("Value=" + e.Current);
+			total += (int) e.Current;
 		}
+
+		if (total != 6)
+			return 1;
+
+		total = 0;
+		foreach (int i in GetIt2 ()){
+			Console.WriteLine ("Value=" + i);
+			total += i;
+		}
+		if (total != 6)
+			return 2;
 		
+		return 0;
 	}
 }

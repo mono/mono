@@ -36,6 +36,12 @@ TEST_SOURCES = \
 	test-201 test-202 test-203 test-204 test-205 test-206 test-207 test-208 test-209 test-210 \
 	test-211 test-212
 
+#
+# C# 2.0 tests 
+#
+TEST2_SOURCES = \
+	2test-1 2test-2 2test-3
+
 UNSAFE_SOURCES = \
 	unsafe-1 unsafe-2 unsafe-3 test-58 test-171 unsafe-5 unsafe-6
 
@@ -107,9 +113,18 @@ test-compiler-jit-real:
 
 GENERIC_KNOWN_FAILURES = test-55
 
+# 
+# Tests the generics compiler, and excludes GENERIC_KNOWN_FAILURES from the build
+#
 test-generic:
 	(sources=`echo $(TEST_SOURCES) | tr ' ' '\n' | grep -v $(GENERIC_KNOWN_FAILURES)| tr '\n' ' ' `;  \
 	make INTERNAL_MCS="mono ../gmcs/gmcs.exe" test-compiler-jit-real TEST_SOURCES="$$sources")
+
+#
+# Tests the 2.0 features
+#
+test-2:
+	make INTERNAL_MCS="mono ../mcs/mcs.exe -v2" test-compiler-jit-real TEST_SOURCES="$(TEST2_SOURCES)"
 
 test-unsafe-compiler-jit:
 	@echo "Running UNSAFE tests ..." ; \
