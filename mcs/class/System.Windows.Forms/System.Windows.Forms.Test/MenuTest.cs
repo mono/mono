@@ -2,6 +2,7 @@ using System;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Collections;
+using System.Runtime.InteropServices;
 
 class MyMenuItem : MenuItem
 {
@@ -35,16 +36,17 @@ class MenuTest : Form
 	{
 		ClientSize = new Size(300, 250);
 		CreateMyMainMenu();
-
 		button = new Button ();
+
 		button.Top = 20;
 		button.Left = 20;
 		button.Width = 50;
 		button.Height = 50;
-		button.Parent = this;
-		button.Text = "Menu";
+		//button.Parent = this;
+		button.Text = "Click Me!";
 
 		button.Click += new EventHandler(OnMenuButtonClick);
+		this.Controls.AddRange(new System.Windows.Forms.Control[] {button});
 
 	}
 	
@@ -84,8 +86,9 @@ class MenuTest : Form
 		MenuItem menuItem1 = new MenuItem("&New", new System.EventHandler(this.OnFileNew));
 		MenuItem menuItem2 = new MenuItem("&Open...", new System.EventHandler(this.OnFileOpen));
 		MenuItem menuItem3 = new MenuItem("&Quit", new System.EventHandler(this.OnFileQuit));
+		MenuItem menuItem4 = new MenuItem("Test &Controls", new System.EventHandler(this.OnTestControlMethods));
 		MenuItem recentFiles = new MenuItem("Recent files", RecentFilesMenu());
-		MenuItem FileMenu = new MenuItem("File", new MenuItem[]{menuItem1, menuItem2,recentFiles, menuItem3});
+		MenuItem FileMenu = new MenuItem("File", new MenuItem[]{menuItem1, menuItem2,recentFiles, menuItem3, menuItem4});
 
 		myMI = new MyMenuItem("2");
 		System.Console.WriteLine("My menu ID {0}", myMI.GetID());
@@ -164,6 +167,63 @@ class MenuTest : Form
 		}
 	}
 
+		[DllImport ("user32.dll", 
+			 CallingConvention = CallingConvention.StdCall,
+			 CharSet = CharSet.Ansi, EntryPoint = "CreateWindowExA")]
+		internal static extern IntPtr CreateWindowExEx (
+			uint dwExStyle, string lpClassName, 
+			string lpWindowName, uint dwStyle, 
+			int x, int y, int nWidth, int nHeight,
+			IntPtr hWndParent, IntPtr hMenu, IntPtr hInstance,
+			ref object lpParam);
+
+	protected void OnTestControlMethods( object sender, System.EventArgs e)
+	{
+		int WS_CHILD = 0x40000000;
+		int WS_VISIBLE = 0x10000000;
+		object abc = null;
+		IntPtr hwnd = CreateWindowExEx(0, "BUTTON", "WindowName",
+			(uint)( WS_CHILD | WS_VISIBLE), 10, 10,
+			100, 50, Handle, (IntPtr)100, (IntPtr)0, ref abc);
+			
+		Control cc = Control.FromChildHandle(hwnd);
+		if( cc == this) {
+			Console.WriteLine("FromChildHandle: The frame was found by BUTTON");
+		}
+		else if( cc == null) {
+			Console.WriteLine("FromChildHandle: Nothing was found by BUTTON");
+		}
+		else {
+			Console.WriteLine("FromChildHandle: Some control was found by BUTTON");
+		}
+		
+		Control c1 = Control.FromHandle(hwnd);
+		if( c1 == this) {
+			Console.WriteLine("FromHandle: The frame was found by BUTTON");
+		}
+		else if( c1 == null) {
+			Console.WriteLine("FromHandle: Nothing was found by BUTTON");
+		}
+		else {
+			Console.WriteLine("FromHandle: Some control was found by BUTTON");
+		}
+		
+		Control cntr = Control.FromChildHandle(button.Handle);
+		if( cntr == button) {
+			Console.WriteLine("FromChildHandle are the same");
+		}
+		else {
+			Console.WriteLine("FromChildHandle are NOT the same");
+		}
+		cntr = Control.FromHandle(button.Handle);
+		if( cntr == button) {
+			Console.WriteLine("FromHandle are the same");
+		}
+		else {
+			Console.WriteLine("FromHandle are NOT the same");
+		}
+	}
+	
 	// - verifies the WndProc can be overridden propery
 	// - verifies the Application.MessageLoop is working properly
 	protected override void WndProc (ref Message m)
