@@ -23,7 +23,9 @@ namespace System.Collections {
 		public virtual System.Collections.IEnumerator GetEnumerator() { return InnerList.GetEnumerator(); }
 		
 		// Protected Instance Constructors
-		protected ReadOnlyCollectionBase() { }
+		protected ReadOnlyCollectionBase() {
+			this.myList = new System.Collections.ArrayList();
+		}
 		
 		// Protected Instance Properties
 		protected virtual System.Collections.ArrayList InnerList {get { return this.myList; } }

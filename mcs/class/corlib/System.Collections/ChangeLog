@@ -1,3 +1,11 @@
+2001-08-08 Nick Drochak <ndrochak@gol.com>
+
+         * ReadOnlyCollectionBase.cs: Initialized private member.
+         * CollectionBase.cs: Initialized private member.
+	 * common.src : Added ReadOnlyCollectionBase.cs and CollectionBase.cs
+	 * /mcs/class/makefile: Used $(SYSTEMROOT) instead of hard coded //c/winnt
+	 * /mcs/makefile: Used $(SYSTEMROOT) instead of hard coded //c/winnt
+
 2001-08-08 Nick Drochak <nick@jobdragon.com>
 
          * CollectionBase.cs: Add

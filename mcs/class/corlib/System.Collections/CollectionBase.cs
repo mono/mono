@@ -31,7 +31,9 @@ namespace System.Collections {
 		}
 		
 		// Protected Instance Constructors
-		protected CollectionBase() { }
+		protected CollectionBase() { 
+			this.myList = new System.Collections.ArrayList();
+		}
 		
 		// Protected Instance Properties
 		protected System.Collections.ArrayList InnerList {get { return this.myList; } }

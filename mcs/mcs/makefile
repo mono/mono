@@ -1,4 +1,4 @@
-CSC=//c/winnt/microsoft.net/framework/v1.0.2914/csc.exe
+CSC=$(SYSTEMROOT)/microsoft.net/framework/v1.0.2914/csc.exe
 CSCFLAGS=/nologo /debug+ /debug:full 
 
 VERSION=0.13

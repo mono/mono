@@ -11,3 +11,5 @@ IHashCodeProvider.cs
 IList.cs
 Stack.cs
 SortedList.cs
+CollectionBase.cs
+ReadOnlyCollectionBase.cs
