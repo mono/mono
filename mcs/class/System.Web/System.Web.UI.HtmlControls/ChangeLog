@@ -1,3 +1,9 @@
+2002-07-04  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HtmlContainerControl.cs: 
+	(CreateControlCollection): added. All containers must have a non-empty
+	control collection.
+
 2002-06-30  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* System.Web.UI.HtmlControls/HtmlAnchor.cs: 

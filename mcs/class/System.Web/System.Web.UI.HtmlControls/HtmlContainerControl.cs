@@ -79,5 +79,11 @@ namespace System.Web.UI.HtmlControls
 		{
 			writer.WriteEndTag (TagName);
 		}
+
+		protected override ControlCollection CreateControlCollection ()
+		{
+			return new ControlCollection (this);
+		}
+
 	}
 }
