@@ -1,3 +1,9 @@
+
+Wed Jun 23 15:37:31 CEST 2004 Paolo Molaro <lupus@ximian.com>
+
+	* reflection.c: make mono_reflection_setup_internal_class ()
+	callable a second time to setup a new parent class.
+
 2004-06-23  Dick Porter  <dick@ximian.com>
 
 	* threads.c: Check for WAIT_IO_COMPLETION return values.
