@@ -240,6 +240,7 @@ using System;
 			//The tokenizer uses the default delimiter set: the space character, the tab character, the newline character, and the carriage-return character
 			private string delimiters = " \t\n\r";		
 
+			private bool returnDelims=false;
 			/// <summary>
 			/// Initializes a new class instance with a specified string to process
 			/// </summary>
@@ -267,6 +268,62 @@ using System;
 				this.source = source;
 			}
 
+			public Tokenizer(string source, string delimiters,bool retDel)
+			{
+				this.elements = new System.Collections.ArrayList();
+				this.delimiters = delimiters;
+				this.source = source;
+				this.returnDelims = retDel;
+				if( returnDelims)
+					Tokenize();
+				else
+					this.elements.AddRange(source.Split(this.delimiters.ToCharArray()));
+				this.RemoveEmptyStrings();
+			}
+		
+			private void Tokenize()
+			{
+				string tempstr = this.source;
+				string toks = "";
+				if (tempstr.IndexOfAny(this.delimiters.ToCharArray()) < 0 && tempstr.Length > 0)
+				{
+					this.elements.Add(tempstr);
+				}
+				else if (tempstr.IndexOfAny(this.delimiters.ToCharArray()) < 0 && tempstr.Length <= 0)
+				{
+					return;
+				}
+				while (tempstr.IndexOfAny(this.delimiters.ToCharArray()) >= 0)
+				{
+					if(tempstr.IndexOfAny(this.delimiters.ToCharArray()) == 0)
+					{
+						if (tempstr.Length > 1 )
+						{
+							this.elements.Add(tempstr.Substring(0,1));
+							tempstr=tempstr.Substring(1);
+						}
+						else
+							tempstr = "";
+					}
+					else
+					{
+						toks = tempstr.Substring(0,tempstr.IndexOfAny(this.delimiters.ToCharArray()));
+						this.elements.Add(toks);
+						this.elements.Add(tempstr.Substring(toks.Length,1));
+						if ( tempstr.Length > (toks.Length + 1))
+						{
+							tempstr = tempstr.Substring(toks.Length + 1);
+						}
+						else
+                                                        tempstr = "";
+					}
+				}
+				if (tempstr.Length > 0)
+				{
+					this.elements.Add(tempstr);
+				}
+			}
+						
 			/// <summary>
 			/// Current token count for the source string
 			/// </summary>
@@ -297,14 +354,24 @@ using System;
 				if (source == "") throw new System.Exception();
 				else
 				{
-					this.elements = new System.Collections.ArrayList();
-					this.elements.AddRange(this.source.Split(delimiters.ToCharArray()));
-					RemoveEmptyStrings();		
-					result = (string) this.elements[0];
-					this.elements.RemoveAt(0);				
-					this.source = this.source.Remove(this.source.IndexOf(result),result.Length);
-					this.source = this.source.TrimStart(this.delimiters.ToCharArray());
-					return result;					
+					if(returnDelims){
+//						Tokenize();
+						RemoveEmptyStrings();		
+						result = (string) this.elements[0];
+						this.elements.RemoveAt(0);
+						return result;
+					}
+					else
+					{
+						this.elements = new System.Collections.ArrayList();
+						this.elements.AddRange(this.source.Split(delimiters.ToCharArray()));
+						RemoveEmptyStrings();		
+						result = (string) this.elements[0];
+						this.elements.RemoveAt(0);				
+						this.source = this.source.Remove(this.source.IndexOf(result),result.Length);
+						this.source = this.source.TrimStart(this.delimiters.ToCharArray());
+						return result;
+					}
 				}			
 			}
 
