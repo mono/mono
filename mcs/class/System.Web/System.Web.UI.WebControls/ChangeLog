@@ -2,6 +2,7 @@
 
 	* ListBox.cs                  - Completed. Implemented
 	           LoadPostData(string, NameValueCollection)
+	* RequiredFieldValidator.cs   - Completed. Pretty simple class.
 
 2002-02-06      Gaurav Vaish <gvaish@iitk.ac.in>
 
