@@ -793,7 +793,14 @@ namespace System
 			if (index < 0)
 				throw new ArgumentOutOfRangeException ();
 
-			Copy (this, this.GetLowerBound(0), array, index, this.GetLength (0));
+			Type src_type = this.GetType ().GetElementType ();
+			Type dst_type = array.GetType ().GetElementType ();
+
+			if (! dst_type.IsAssignableFrom (src_type)) {
+				throw new ArrayTypeMismatchException();
+			}
+
+			Copy (this, this.GetLowerBound (0), array, index, this.GetLength (0));
 		}
 
 		internal class SimpleEnumerator : IEnumerator {
