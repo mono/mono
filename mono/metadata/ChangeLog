@@ -1,3 +1,13 @@
+2002-11-07  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* appdomain.c: insert the loaded assemblies in the domain->assemblies in
+	the hook function called when an assembly is loaded.
+	
+	* domain.c: Modified file.
+	(mono_domain_assembly_load): removed hash table insertion of assemblies.
+
+	Fixes bug #33196.
+
 2002-11-07  Miguel de Icaza  <miguel@ximian.com>
 
 	* reflection.c: Map PEFileKind to the value expected by the WinNT
