@@ -1,3 +1,11 @@
+2005-03-11 Ritvik Mayank <mritvik@novell.com>
+	* Modified the Following Test Cases: 
+	* teststack.vb
+	* test.vb
+	* testdate.vb
+	* testdecimal.vb
+	* Impwork.vb
+
 2005-03-11 Manjula GHM <mmanjula@novell.com>
 	* Minor fix in the LoopStatement test case
 2005-03-08 Satya Sudha K <ksathyasudha@novell.com>
