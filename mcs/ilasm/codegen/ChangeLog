@@ -1,3 +1,8 @@
+2005-02-07  Jackson Harper  <jackson@ximian.com>
+
+	* MethodDef.cs: Don't die on duplicate local symbols. Fixes bug
+	72149. Patch by Sohail Somani.
+
 2004-12-14  Raja R Harinath  <rharinath@novell.com>
 
 	* MethodDef.cs (CreateSignature): Add a space in generated signature.

@@ -183,7 +183,8 @@ namespace Mono.ILASM {
                                 slot_pos++;
                                 if (local.Name == null)
                                         continue;
-                                named_local_table.Add (local.Name, local);
+				if(!named_local_table.Contains(local.Name))
+				  named_local_table.Add (local.Name, local);
                         }
 
                         this.local_list.AddRange (local_list);
