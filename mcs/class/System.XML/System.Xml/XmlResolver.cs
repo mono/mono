@@ -50,7 +50,7 @@ namespace System.Xml
 		{
 			if (baseUri == null) {
 				if (relativeUri == null)
-					throw new NullReferenceException ("Either baseUri or relativeUri are required.");
+					throw new ArgumentException ("Either baseUri or relativeUri are required.");
 				// Don't ignore such case that relativeUri is in fact absolute uri (e.g. ResolveUri (null, "http://foo.com")).
 				if (relativeUri.StartsWith ("http:") ||
 					relativeUri.StartsWith ("https:") ||
