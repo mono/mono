@@ -1,24 +1,26 @@
 //
 // System.Drawing.PageSettings.cs
 //
-// Author:
+// Authors:
 //   Dennis Hayes (dennish@Raytek.com)
 //   Herve Poussineau (hpoussineau@fr.st)
+//   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //
 // (C) 2002 Ximian, Inc
 //
+
 using System;
+using System.Runtime.InteropServices;
 
 namespace System.Drawing.Printing
 {
-	/// <summary>
-	/// Summary description for PageSettings.
-	/// </summary>
+	[ComVisible (false)]
 	public class PageSettings : ICloneable
 	{
 		bool _Color;
 		bool _Landscape;
-		Margins _Margins = new Margins(100, 100, 100, 100); // default margin: 1 inch for all margins
+		// create a new default Margins object (is 1 inch for all margins)
+		Margins _Margins = new Margins();
 		PaperSize _PaperSize;
 		PaperSource _PaperSource;
 		PrinterResolution _PrinterResolution;
@@ -50,7 +52,8 @@ namespace System.Drawing.Printing
 			PaperSource = paperSource;
 			PrinterResolution = printerResolution;
 		}
-//props
+
+		//props
 		public Rectangle Bounds{
 			get{
 				int width = this.PaperSize.Width;
@@ -131,24 +134,23 @@ namespace System.Drawing.Printing
 				_PrinterSettings = value;
 			}
 		}
-		//[ComVisible(false)]
+
 		public object Clone(){
 			return new PageSettings(this.PrinterSettings);
 		}
 
-		//[ComVisible(false)]
-		//[MonoTODO("PageSettings.CopyToHdevmode")]
-		//public void CopyToHdevmode(IntPtr hdevmode){
-		//	throw new NotImplementedException ();
-		//}
 
-		//[ComVisible(false)]
-		//[MonoTODO("PageSettings.SetHdevmode")]
-		//public void SetHdevmode(IntPtr hdevmode){
-		//	throw new NotImplementedException ();
-		//}
-	
-		//[ComVisible(false)]
+		[MonoTODO("PageSettings.CopyToHdevmode")]
+		public void CopyToHdevmode (IntPtr hdevmode){
+			throw new NotImplementedException ();
+		}
+
+
+		[MonoTODO("PageSettings.SetHdevmode")]
+		public void SetHdevmode (IntPtr hdevmode){
+			throw new NotImplementedException ();
+		}	
+
 		public override string ToString(){
 			string ret = "[PageSettings: Color={0}";
 			ret += ", Landscape={1}";

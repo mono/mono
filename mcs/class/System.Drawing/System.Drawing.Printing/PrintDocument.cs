@@ -1,19 +1,24 @@
 //
 // System.Drawing.PrintDocument.cs
 //
-// Author:
+// Authors:
 //   Dennis Hayes (dennish@Raytek.com)
 //   Herve Poussineau (hpoussineau@fr.st)
+//   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //
 // (C) 2002 Ximian, Inc
 //
-using System;
 
-namespace System.Drawing.Printing {
-	/// <summary>
-	/// Summary description for PrintDocument.
-	/// </summary>
-	public class PrintDocument : System.ComponentModel.Component {
+using System;
+using System.ComponentModel;
+
+namespace System.Drawing.Printing
+{
+	[DefaultEvent ("PrintPage"), DefaultProperty ("DocumentName")]
+	[ToolboxItemFilter ("System.Drawing.Printing", ToolboxItemFilterType.Allow)]
+	[DesignerCategory ("Component")]
+	public class PrintDocument : System.ComponentModel.Component
+	{
 		private PageSettings defaultpagesettings;
 		private PrinterSettings printersettings;
 		private PrintController printcontroller;
@@ -29,7 +34,10 @@ namespace System.Drawing.Printing {
 			printcontroller = new StandardPrintController();
 		}
 		
-// properties
+		// properties
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[Browsable (false)]
+		[SRDescription ("The settings for the current page.")]
 		public PageSettings DefaultPageSettings{
 			get{
 				return defaultpagesettings;
@@ -38,9 +46,10 @@ namespace System.Drawing.Printing {
 				defaultpagesettings = value;
 			}
 		}
-		/// <summary>
-		/// Name of the document, not the file!
-		/// </summary>
+
+		// Name of the document, not the file!
+		[DefaultValue ("document")]
+		[SRDescription ("The name of the document.")]
 		public string DocumentName{
 			get{
 				return documentname;
@@ -49,6 +58,10 @@ namespace System.Drawing.Printing {
 				documentname = value;
 			}
 		}
+
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[Browsable (false)]
+		[SRDescription ("The print controller object.")]
 		public PrintController PrintController{
 			get{
 				return printcontroller;
@@ -57,6 +70,10 @@ namespace System.Drawing.Printing {
 				printcontroller = value;
 			}
 		}
+
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[Browsable (false)]
+		[SRDescription ("The current settings for the active printer.")]
 		public PrinterSettings PrinterSettings{
 			get{
 				return printersettings;
@@ -65,8 +82,11 @@ namespace System.Drawing.Printing {
 				printersettings = value;
 			}
 		}
+
 #if !(NET_1_0)
-		public bool OriginAtMargins{// .NET V1.1 Beta
+		[DefaultValue (false)]
+		[SRDescription ("Determines if the origin is set at the specified margins.")]
+		public bool OriginAtMargins{
 			get{
 				return originAtMargins;
 			}
@@ -76,7 +96,7 @@ namespace System.Drawing.Printing {
 		}
 #endif
 
-// methods
+		// methods
 		public void Print(){
 			PrintEventArgs printArgs = new PrintEventArgs();
 			this.OnBeginPrint(printArgs);
@@ -113,11 +133,12 @@ namespace System.Drawing.Printing {
 			this.OnEndPrint(printArgs);
 			PrintController.OnEndPrint(this, printArgs);
 		}
+
 		public override string ToString(){
 			return "[PrintDocument " + this.DocumentName + "]";
 		}
 		
-// events
+		// events
 		protected virtual void OnBeginPrint(PrintEventArgs e){
 			//fire the event
 			if (BeginPrint != null)
@@ -138,13 +159,20 @@ namespace System.Drawing.Printing {
 		
 		protected virtual void OnQueryPageSettings(QueryPageSettingsEventArgs e){
 			//fire the event
-			if (QuerypageSettings != null)
-				QuerypageSettings(this, e);
+			if (QueryPageSettings != null)
+				QueryPageSettings(this, e);
 		}
-		
+
+		[SRDescription ("Raised when printing begins")]
 		public event PrintEventHandler BeginPrint;
+
+		[SRDescription ("Raised when printing ends")]
 		public event PrintEventHandler EndPrint;
+
+		[SRDescription ("Raised when printing of a new page begins")]
 		public event PrintPageEventHandler PrintPage;
-		public event QueryPageSettingsEventHandler QuerypageSettings;
+
+		[SRDescription ("Raised before printing of a new page begins")]
+		public event QueryPageSettingsEventHandler QueryPageSettings;
 	}
 }

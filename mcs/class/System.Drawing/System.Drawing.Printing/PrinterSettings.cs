@@ -1,33 +1,33 @@
 //
 // System.Drawing.PrinterSettings.cs
 //
-// Author:
+// Authors:
 //   Dennis Hayes (dennish@Raytek.com)
 //   Herve Poussineau (hpoussineau@fr.st)
+//   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //
 // (C) 2002 Ximian, Inc
 //
+
 using System;
+using System.Runtime.InteropServices;
 using System.Collections;
 using System.Drawing.Printing;
 
 namespace System.Drawing.Printing
 {
-	/// <summary>
-	/// Summary description for PrinterSettings.
-	/// </summary>
-	/// 
 	[Serializable]
-	//[ComVisible(false)]
-	public class PrinterSettings : ICloneable{
+	[ComVisible(false)]
+	public class PrinterSettings : ICloneable
+	{
 		public PrinterSettings()
 		{
 		}
-		// SUBCLASS
-		/// <summary>
-		/// Summary description for PaperSourceCollection.
-		/// </summary>
-		public class PaperSourceCollection : ICollection, IEnumerable {
+
+		// Public subclasses
+
+		public class PaperSourceCollection : ICollection
+		{
 			ArrayList _PaperSources = new ArrayList();
 			
 			public PaperSourceCollection(PaperSource[] array) {
@@ -43,7 +43,7 @@ namespace System.Drawing.Printing
 				get { return _PaperSources[index] as PaperSource; }
 			}
 			
-			IEnumerator IEnumerable.GetEnumerator()
+			public IEnumerator GetEnumerator()
 			{
 				return _PaperSources.GetEnumerator();
 			}
@@ -53,10 +53,9 @@ namespace System.Drawing.Printing
 				_PaperSources.CopyTo(array, index);
 			}
 		}
-		/// <summary>
-		/// Summary description for PaperSizeCollection.
-		/// </summary>
-		public class PaperSizeCollection : ICollection, IEnumerable {
+
+		public class PaperSizeCollection : ICollection
+		{
 			ArrayList _PaperSizes = new ArrayList();
 			
 			public PaperSizeCollection(PaperSize[] array) {
@@ -72,7 +71,7 @@ namespace System.Drawing.Printing
 				get { return _PaperSizes[index] as PaperSize; }
 			}
 			
-			IEnumerator IEnumerable.GetEnumerator()
+			public IEnumerator GetEnumerator()
 			{
 				return _PaperSizes.GetEnumerator();
 			}
@@ -82,10 +81,9 @@ namespace System.Drawing.Printing
 				_PaperSizes.CopyTo(array, index);
 			}
 		}
-		/// <summary>
-		/// Summary description for PrinterResolutionCollection.
-		/// </summary>
-		public class PrinterResolutionCollection : ICollection, IEnumerable {
+
+		public class PrinterResolutionCollection : ICollection
+		{
 			ArrayList _PrinterResolutions = new ArrayList();
 			
 			public PrinterResolutionCollection(PrinterResolution[] array) {
@@ -101,7 +99,7 @@ namespace System.Drawing.Printing
 				get { return _PrinterResolutions[index] as PrinterResolution; }
 			}
 			
-			IEnumerator IEnumerable.GetEnumerator()
+			public IEnumerator GetEnumerator()
 			{
 				return _PrinterResolutions.GetEnumerator();
 			}
@@ -111,10 +109,9 @@ namespace System.Drawing.Printing
 				_PrinterResolutions.CopyTo(array, index);
 			}
 		}
-		/// <summary>
-		/// Summary description for PrinterResolutionCollection.
-		/// </summary>
-		public class StringCollection : ICollection, IEnumerable {
+
+		public class StringCollection : ICollection
+		{
 			ArrayList _Strings = new ArrayList();
 			
 			public StringCollection(string[] array) {
@@ -122,11 +119,15 @@ namespace System.Drawing.Printing
 					_Strings.Add(s);
 			}
 			
-			int ICollection.Count { get { return _Strings.Count; } }
+			public int Count { get { return _Strings.Count; } }
 			bool ICollection.IsSynchronized { get { return false; } }
 			object ICollection.SyncRoot { get { return this; } }
 			
-			IEnumerator IEnumerable.GetEnumerator()
+			public virtual string this[int index] {
+				get { return _Strings[index] as string; }
+			}
+
+			public IEnumerator GetEnumerator()
 			{
 				return _Strings.GetEnumerator();
 			}
@@ -137,24 +138,28 @@ namespace System.Drawing.Printing
 			}
 		}
 		
-//props
-		//[MonoTODO("PrinterSettings.CanDuplex")]
-		//public bool CanDuplex
-		//{
-		//	get { throw new NotImplementedException(); }
-		//}
-		//[MonoTODO("PrinterSettings.Collate")]
-		//public bool Collate
-		//{
-		//	get { throw new NotImplementedException(); }
-		//	set { throw new NotImplementedException(); }
-		//}
-		//[MonoTODO("PrinterSettings.Copies")]
-		//public short Copies
-		//{
-		//	get { throw new NotImplementedException(); }
-		//	set { throw new NotImplementedException(); }
-		//}
+		//properties
+
+		[MonoTODO("PrinterSettings.CanDuplex")]
+		public bool CanDuplex
+		{
+			get { throw new NotImplementedException(); }
+		}
+
+		[MonoTODO("PrinterSettings.Collate")]
+		public bool Collate
+		{
+			get { throw new NotImplementedException(); }
+			set { throw new NotImplementedException(); }
+		}
+
+		[MonoTODO("PrinterSettings.Copies")]
+		public short Copies
+		{
+			get { throw new NotImplementedException(); }
+			set { throw new NotImplementedException(); }
+		}
+
 		[MonoTODO("PrinterSettings.DefaultPageSettings")]
 		public PageSettings DefaultPageSettings
 		{
@@ -175,145 +180,171 @@ namespace System.Drawing.Printing
 				);
 			}
 		}
-		//[MonoTODO("PrinterSettings.Duplex")]
-		//public Duplex Duplex
-		//{
-		//	get { throw new NotImplementedException(); }
-		//	set { throw new NotImplementedException(); }
-		//}
-		//[MonoTODO("PrinterSettings.FromPage)]
-		//public int FromPage
-		//{
-		//	get { throw new NotImplementedException(); }
-		//	set { throw new NotImplementedException(); }
-		//}
-		//[MonoTODO("PrinterSettings.InstalledPrinters")]
-		//public static PrinterSettings.StringCollection InstalledPrinters
-		//{
-		//	get { throw new NotImplementedException(); }
-		//}
-		//[MonoTODO("PrinterSettings.IsDefaultPrinter")]
-		//public bool IsDefaultPrinter
-		//{
-		//	get { throw new NotImplementedException(); }
-		//}
-		//[MonoTODO("PrinterSettings.IsPlotter")]
-		//public bool IsPlotter
-		//{
-		//	get { throw new NotImplementedException(); }
-		//}
-		//[MonoTODO("PrinterSettings.IsValid")]
-		//public bool IsValid
-		//{
-		//	get { throw new NotImplementedException(); }
-		//}
-		//[MonoTODO("PrinterSettings.LandscapeAngle")]
-		//public int LandscapeAngle
-		//{
-		//	get { throw new NotImplementedException(); }
-		//}
-		//[MonoTODO("PrinterSettings.MaximumCopies")]
-		//public int MaximumCopies
-		//{
-		//	get { throw new NotImplementedException(); }
-		//}
-		//[MonoTODO("PrinterSettings.MaximumPage")]
-		//public int MaximumPage
-		//{
-		//	get { throw new NotImplementedException(); }
-		//	set { throw new NotImplementedException(); }
-		//}
-		//[MonoTODO("PrinterSettings.MinimumPage")]
-		//public int MinimumPage
-		//{
-		//	get { throw new NotImplementedException(); }
-		//	set { throw new NotImplementedException(); }
-		//}
-		//[MonoTODO("PrinterSettings.PaperSizes")]
-		//public PrinterSettings.PaperSizeCollection PaperSizes
-		//{
-		//	get { throw new NotImplementedException(); }
-		//}
-		//[MonoTODO("PrinterSettings.PaperSources")]
-		//public PrinterSettings.PaperSourceCollection PaperSources
-		//{
-		//	get { throw new NotImplementedException(); }
-		//}
-		//[MonoTODO("PrinterSettings.PrinterName")]
-		//public string PrinterName
-		//{
-		//	get { throw new NotImplementedException(); }
-		//	set { throw new NotImplementedException(); }
-		//}
-		//[MonoTODO("PrinterSettings.PrinterResolutions")]
-		//public PrinterSettings.PrinterResolutionCollection PrinterResolutions
-		//{
-		//	get { throw new NotImplementedException(); }
-		//}
-		//[MonoTODO("PrinterSettings.PrintRange")]
-		//public PrintRange PrintRange
-		//{
-		//	get { throw new NotImplementedException(); }
-		//	set { throw new NotImplementedException(); }
-		//}
-		//[MonoTODO("PrinterSettings.PrintToFile")]
-		//public bool PrintToFile
-		//{
-		//	get { throw new NotImplementedException(); }
-		//	set { throw new NotImplementedException(); }
-		//}
-		//[MonoTODO("PrinterSettings.SupportsColor")]
-		//public bool SupportsColor
-		//{
-		//	get { throw new NotImplementedException(); }
-		//}
-		//[MonoTODO("PrinterSettings.ToPage")]
-		//public int ToPage
-		//{
-		//	get { throw new NotImplementedException(); }
-		//	set { throw new NotImplementedException(); }
-		//}
 
-//methods
+		[MonoTODO("PrinterSettings.Duplex")]
+		public Duplex Duplex
+		{
+			get { throw new NotImplementedException(); }
+			set { throw new NotImplementedException(); }
+		}
+
+		[MonoTODO("PrinterSettings.FromPage")]
+		public int FromPage
+		{
+			get { throw new NotImplementedException(); }
+			set { throw new NotImplementedException(); }
+		}
+
+		[MonoTODO("PrinterSettings.InstalledPrinters")]
+		public static PrinterSettings.StringCollection InstalledPrinters
+		{
+			get { throw new NotImplementedException(); }
+		}
+
+		[MonoTODO("PrinterSettings.IsDefaultPrinter")]
+		public bool IsDefaultPrinter
+		{
+			get { throw new NotImplementedException(); }
+		}
+
+		[MonoTODO("PrinterSettings.IsPlotter")]
+		public bool IsPlotter
+		{
+			get { throw new NotImplementedException(); }
+		}
+
+		[MonoTODO("PrinterSettings.IsValid")]
+		public bool IsValid
+		{
+			get { throw new NotImplementedException(); }
+		}
+
+		[MonoTODO("PrinterSettings.LandscapeAngle")]
+		public int LandscapeAngle
+		{
+			get { throw new NotImplementedException(); }
+		}
+
+		[MonoTODO("PrinterSettings.MaximumCopies")]
+		public int MaximumCopies
+		{
+			get { throw new NotImplementedException(); }
+		}
+
+		[MonoTODO("PrinterSettings.MaximumPage")]
+		public int MaximumPage
+		{
+			get { throw new NotImplementedException(); }
+			set { throw new NotImplementedException(); }
+		}
+
+		[MonoTODO("PrinterSettings.MinimumPage")]
+		public int MinimumPage
+		{
+			get { throw new NotImplementedException(); }
+			set { throw new NotImplementedException(); }
+		}
+
+		[MonoTODO("PrinterSettings.PaperSizes")]
+		public PrinterSettings.PaperSizeCollection PaperSizes
+		{
+			get { throw new NotImplementedException(); }
+		}
+
+		[MonoTODO("PrinterSettings.PaperSources")]
+		public PrinterSettings.PaperSourceCollection PaperSources
+		{
+			get { throw new NotImplementedException(); }
+		}
+
+		[MonoTODO("PrinterSettings.PrinterName")]
+		public string PrinterName
+		{
+			get { throw new NotImplementedException(); }
+			set { throw new NotImplementedException(); }
+		}
+
+		[MonoTODO("PrinterSettings.PrinterResolutions")]
+		public PrinterSettings.PrinterResolutionCollection PrinterResolutions
+		{
+			get { throw new NotImplementedException(); }
+		}
+
+		[MonoTODO("PrinterSettings.PrintRange")]
+		public PrintRange PrintRange
+		{
+			get { throw new NotImplementedException(); }
+			set { throw new NotImplementedException(); }
+		}
+
+		[MonoTODO("PrinterSettings.PrintToFile")]
+		public bool PrintToFile
+		{
+			get { throw new NotImplementedException(); }
+			set { throw new NotImplementedException(); }
+		}
+
+		[MonoTODO("PrinterSettings.SupportsColor")]
+		public bool SupportsColor
+		{
+			get { throw new NotImplementedException(); }
+		}
+
+		[MonoTODO("PrinterSettings.ToPage")]
+		public int ToPage
+		{
+			get { throw new NotImplementedException(); }
+			set { throw new NotImplementedException(); }
+		}
+
+		//methods
+
 		[MonoTODO("PrinterSettings.Clone")]
 		public virtual object Clone()
 		{
 			throw new NotImplementedException();
 		}
-		//[MonoTODO("PrinterSettings.CreateMeasurementGraphics")]
-		//public Graphics CreateMeasurementGraphics()
-		//{
-		//	throw new NotImplementedException();
-		//}
-		//[MonoTODO("PrinterSettings.GetHdevmode")]
-		//public IntPtr GetHdevmode()
-		//{
-		//	throw new NotImplementedException();
-		//}
-		//[MonoTODO("PrinterSettings.GetHdevmode")]
-		//public IntPtr GetHdevmode(PageSettings pageSettings)
-		//{
-		//	throw new NotImplementedException();
-		//}
-		//[MonoTODO("PrinterSettings.GetHdevname")]
-		//public IntPtr GetHdevnames()
-		//{
-		//	throw new NotImplementedException();
-		//}
-		//[MonoTODO("PrinterSettings.SetHdevmode")]
-		//public void SetHdevmode(IntPtr hdevmode)
-		//{
-		//	throw new NotImplementedException();
-		//}
-		//[MonoTODO("PrinterSettings.SetHdevnames")]
-		//public void SetHdevnames(IntPtr hdevnames)
-		//{
-		//	throw new NotImplementedException();
-		//}
-		//[MonoTODO("PrinterSettings.ToString"]
-		//public override string ToString()
-		//{
-		//	throw new NotImplementedException();
-		//}
+
+		[MonoTODO("PrinterSettings.CreateMeasurementGraphics")]
+		public Graphics CreateMeasurementGraphics()
+		{
+			throw new NotImplementedException();
+		}
+
+		[MonoTODO("PrinterSettings.GetHdevmode")]
+		public IntPtr GetHdevmode()
+		{
+			throw new NotImplementedException();
+		}
+
+		[MonoTODO("PrinterSettings.GetHdevmode")]
+		public IntPtr GetHdevmode(PageSettings pageSettings)
+		{
+			throw new NotImplementedException();
+		}
+
+		[MonoTODO("PrinterSettings.GetHdevname")]
+		public IntPtr GetHdevnames()
+		{
+			throw new NotImplementedException();
+		}
+
+		[MonoTODO("PrinterSettings.SetHdevmode")]
+		public void SetHdevmode(IntPtr hdevmode)
+		{
+			throw new NotImplementedException();
+		}
+
+		[MonoTODO("PrinterSettings.SetHdevnames")]
+		public void SetHdevnames(IntPtr hdevnames)
+		{
+			throw new NotImplementedException();
+		}
+
+		[MonoTODO("PrinterSettings.ToString")]
+		public override string ToString()
+		{
+			throw new NotImplementedException();
+		}
 	}
 }

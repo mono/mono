@@ -5,9 +5,11 @@
 // Author: Dennis Hayes (dennish@raytek.com)
 //
 using System;
+
 namespace System.Drawing.Printing 
 {
-	public enum PaperKind {
+	public enum PaperKind
+	{
 		A2 = 66,
 		A3 = 8,
 		A3Extra = 63,
@@ -30,7 +32,9 @@ namespace System.Drawing.Printing
 		B4 = 12,
 		B4Envelope = 33,
 		B4JisRotated = 79,
-		B5Extra,
+		B5 = 13,
+		B5Envelope = 34,
+		B5Extra = 65,
 		B5JisRotated = 80,
 		B5Transverse = 61,
 		B6Envelope = 35,
@@ -41,6 +45,7 @@ namespace System.Drawing.Printing
 		C4Envelope = 30,
 		C5Envelope = 34,
 		C65Envelope = 32,
+		C6Envelope = 31,
 		CSheet = 24,
 		Custom = 0,
 		DLEnvelope = 27,
@@ -52,6 +57,7 @@ namespace System.Drawing.Printing
 		GermanStandardFanfold = 40,
 		InviteEnvelope = 47,
 		IsoB4 = 42,
+		ItalyEnvelope = 36,
 		JapaneseDoublePostcard = 69,
 		JapaneseDoublePostcardRotated = 81,
 		JapaneseEnvelopeChouNumber3 = 73,

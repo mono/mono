@@ -6,23 +6,37 @@
 //
 // (C) 2002 Ximian, Inc
 //
+
 using System;
 
 namespace System.Drawing.Printing
 {
-	/// <summary>
-	/// Summary description for PrintController.
-	/// </summary>
 	public abstract class PrintController
 	{
-		public virtual void OnEndPage(PrintDocument document, PrintPageEventArgs e){
+		public PrintController ()
+		{
 		}
-		public virtual void OnStartPrint(PrintDocument document, PrintEventArgs e){
+
+		[MonoTODO]
+		public virtual void OnEndPage (PrintDocument document, PrintPageEventArgs e)
+		{
 		}
-		public virtual void OnEndPrint(PrintDocument document, PrintEventArgs e){
+
+		[MonoTODO]
+		public virtual void OnStartPrint (PrintDocument document, PrintEventArgs e)
+		{
 		}
-		public virtual Graphics OnStartPage(PrintDocument document, PrintPageEventArgs e){
+
+		[MonoTODO]
+		public virtual void OnEndPrint (PrintDocument document, PrintEventArgs e)
+		{
+		}
+
+		[MonoTODO]
+		public virtual Graphics OnStartPage (PrintDocument document, PrintPageEventArgs e)
+		{
 			throw new NotImplementedException();
+			return null;
 		}
 	}
 }

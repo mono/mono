@@ -47,5 +47,10 @@ namespace System.Drawing.Printing
 				return kind;
 			}
 		}
+
+		public override string ToString ()
+		{
+			return "[PrinterResolution X=" + x + " Y=" + y + "]";
+		}
 	}
 }

@@ -6,36 +6,39 @@
 //
 // (C) 2002 Ximian, Inc
 //
+
 using System;
 
 namespace System.Drawing.Printing
 {
-	/// <summary>
-	/// Summary description for PreviewPrintController.
-	/// </summary>
 	public class PreviewPrintController : PrintController
 	{
 		private bool useantialias;
+
 		public PreviewPrintController()
 		{
 			useantialias = false;
 		}
-//		//[MonoTODO]
-//		public override void OnEndPage(PrintDocument document, PrintPageEventArgs e){
-//			throw new NotImplementedException ();
-//		}
-//		//[MonoTODO]
-//		public override void OnStartPrint(PrintDocument document, PrintPageEventArgs e){
-//			throw new NotImplementedException ();
-//		}
-//		//[MonoTODO]
-//		public override void OnEndPrint(PrintDocument document, PrintPageEventArgs e){
-//			throw new NotImplementedException ();
-//		}
-		//[MonoTODO]
-		//public override Graphics OnStartPage(PrintDocument document, PrintPageEventArgs e){
-		//	throw new NotImplementedException ();
-		//}
+
+		[MonoTODO]
+		public override void OnEndPage(PrintDocument document, PrintPageEventArgs e){
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public override void OnStartPrint(PrintDocument document, PrintEventArgs e){
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public override void OnEndPrint(PrintDocument document, PrintEventArgs e){
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public override Graphics OnStartPage(PrintDocument document, PrintPageEventArgs e){
+			throw new NotImplementedException ();
+		}
 		
 		public bool UseAntiAlias {
 			get{
@@ -45,7 +48,8 @@ namespace System.Drawing.Printing
 				useantialias = value;
 			}
 		}
-		//[MonoTODO]
+
+		[MonoTODO]
 		public PreviewPageInfo [] GetPreviewPageInfo(){
 			throw new NotImplementedException ();
 		}

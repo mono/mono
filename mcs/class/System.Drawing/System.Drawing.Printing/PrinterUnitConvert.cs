@@ -1,9 +1,9 @@
 //
-// System.Drawing.Printing.PrinterUnitConvert
+// System.Drawing.Printing.PrinterUnitConvert.cs
 //
 // Authors:
-//      Martin Willemoes Hansen (mwh@sysrq.dk)
-//      Herve Poussineau (hpoussineau@fr.st)
+//   Martin Willemoes Hansen (mwh@sysrq.dk)
+//   Herve Poussineau (hpoussineau@fr.st)
 //
 // (C) 2003 Martin Willemoes Hansen
 //
@@ -12,6 +12,10 @@ namespace System.Drawing.Printing
 {
 	public sealed class PrinterUnitConvert
 	{
+		private PrinterUnitConvert ()
+		{
+		}
+
 		public static double Convert (double value,
 					      PrinterUnit fromUnit,
 					      PrinterUnit toUnit)
