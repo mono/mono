@@ -167,16 +167,22 @@ set_attributes (int fd, int baud_rate, int parity, int dataBits, int stopBits, i
 
 	newtio.c_iflag &= ~IXOFF;
 	newtio.c_oflag &= ~IXON;
+#ifdef CRTSCTS
 	newtio.c_cflag &= ~CRTSCTS;
+#endif /* def CRTSCTS */
 	switch (handshake) {
 	case 0: /* None */
 		/* do nothing */
 		break;
 	case 1: /* RequestToSend (RTS) */
+#ifdef CRTSCTS
 		newtio.c_cflag |= CRTSCTS;
+#endif /* def CRTSCTS */
 		break;
 	case 2: /* RequestToSendXOnXOff (RTS + XON/XOFF) */
+#ifdef CRTSCTS
 		newtio.c_cflag |= CRTSCTS;
+#endif /* def CRTSCTS */
 		/* fall through */
 	case 3: /* XOnXOff */
 		newtio.c_iflag |= IXOFF;

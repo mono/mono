@@ -13,6 +13,30 @@
 
 G_BEGIN_DECLS
 
+gint32
+Mono_Posix_Stdlib_EXIT_FAILURE (void)
+{
+	return EXIT_FAILURE;
+}
+
+gint32
+Mono_Posix_Stdlib_EXIT_SUCCESS (void)
+{
+	return EXIT_SUCCESS;
+}
+
+gint32
+Mono_Posix_Stdlib_MB_CUR_MAX (void)
+{
+	return MB_CUR_MAX;
+}
+
+gint32
+Mono_Posix_Stdlib_RAND_MAX (void)
+{
+	return RAND_MAX;
+}
+
 void*
 Mono_Posix_Stdlib_calloc (mph_size_t nmemb, mph_size_t size)
 {
