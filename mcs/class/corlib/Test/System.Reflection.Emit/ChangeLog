@@ -1,3 +1,7 @@
+2005-03-08  Zoltan Varga  <vargaz@freemail.hu>
+
+	* TypeBuilderTest.cs: Add new test.
+
 2005-02-11  Zoltan Varga  <vargaz@freemail.hu>
 
 	* TypeBuilderTest.cs: Add tests for IsAssignableFrom.

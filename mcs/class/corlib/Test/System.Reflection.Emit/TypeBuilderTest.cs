@@ -1778,6 +1778,8 @@ public class TypeBuilderTest : Assertion
 		tb.AddInterfaceImplementation (typeof (IDisposable));
 		// Fails under MS.NET:
 		//Assert (tb.IsAssignableFrom (typeof (IDisposable)));
+
+		Assert (typeof (Bar[]).IsAssignableFrom (module.GetType (tb.FullName + "[]")));
 	}
 }
 }
