@@ -1,3 +1,10 @@
+
+Mon Feb 14 16:48:24 CET 2005 Paolo Molaro <lupus@ximian.com>
+
+	* domain.c: keep the domains in an array and ensure the domain ids
+	are kept small, so they can be used as indexes to domain-specific data
+	with a small memory overhead.
+
 2005-02-14  Zoltan Varga  <vargaz@freemail.hu>
 
 	* icall.c: Handle byref types in Type icalls. Fixes #72544.
