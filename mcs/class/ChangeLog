@@ -1,11 +1,5 @@
 2004-12-03  Raja R Harinath  <rharinath@novell.com>
 
-	System.Xml.dll is no longer built in the 'basic' profile.
-	* Makefile (basic_SUBDIRS): Don't mention System.XML.
-	(basic_files): Remove System.Xml.dll.
-
-2004-12-03  Raja R Harinath  <rharinath@novell.com>
-
 	* Makefile (basic_SUBDIRS): Add second-pass System, too.
 	(basic_files): Add System.Xml.dll.
 
