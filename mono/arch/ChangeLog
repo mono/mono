@@ -1,3 +1,7 @@
+2002-11-11  Mark Crichton  <crichton@gimp.org>
+
+	* sparc/tramp.c: Added some disassembly bits for debugging.
+
 2002-10-02  Mark Crichton  <crichton@gimp.org>
 
 	* sparc/tramp.c: More cleanup of the trampoline code.  Still some
