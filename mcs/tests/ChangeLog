@@ -1,3 +1,7 @@
+2004-06-13  Martin Baulig  <martin@ximian.com>
+
+	* gen-57.cs: New test.
+
 2004-06-11  Martin Baulig  <martin@ximian.com>
 
 	* gen-56.cs: New test from #58307.
