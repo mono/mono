@@ -1,3 +1,8 @@
+2003-11-12  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini-x86.c (mono_arch_output_basic_block): Use mono_signbit, since
+	signbit is missing on some platforms.
+
 2003-11-06  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini.h (mono_arch_setup_jit_tls_data): New arch specific function.
