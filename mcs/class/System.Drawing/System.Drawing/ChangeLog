@@ -1,5 +1,8 @@
+2003-11-12  Alexandre Pigolkine <pigolkine@gmx.de>
+	* Bitmap.cs
+	* gdipFunctions.cs		copy image in Bitmap constructor
+	
 2003-11-06  Duncan Mak  <duncan@ximian.com>
-
 	* Graphics.cs (DrawPie): Use DrawPieI instead of DrawPie and fix
 	angle parameters for the integer case.
 	(DrawBezier): Hook it up with GdipDrawBezier.

@@ -57,9 +57,8 @@ namespace System.Drawing {
 			nativeObject = (IntPtr)bmp;
 		}
 
-		public Bitmap (Image original)
+		public Bitmap (Image original) : this (original, original.Size)
 		{
-			image_size = original.Size;
 		}
 
 		public Bitmap (Stream stream)  : this (stream, false) {} 
@@ -68,7 +67,19 @@ namespace System.Drawing {
 
 		public Bitmap (Image original, Size newSize)
 		{
-			image_size = newSize;
+			if (original is Bitmap) {
+				Bitmap bmpOriginal = (Bitmap) original;
+				image_size = bmpOriginal.Size;
+				pixel_format = bmpOriginal.pixel_format;
+				int bmp = 0;
+				Status s = GDIPlus.GdipCloneBitmapAreaI (0, 0, newSize.Width, newSize.Height, bmpOriginal.PixelFormat, bmpOriginal.nativeObject, out bmp);
+				if (s != Status.Ok)
+					throw new ArgumentException ("Could not allocate the GdiPlus image: " + s);
+				nativeObject = (IntPtr)bmp;
+			}
+			else {
+				throw new NotImplementedException ();
+			}
 		}
 
 		void InitFromStream (Stream stream)
