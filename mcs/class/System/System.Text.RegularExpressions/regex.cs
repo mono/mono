@@ -442,7 +442,7 @@ namespace System.Text.RegularExpressions {
 		}
 
 		// ISerializable interface
-		public virtual void GetObjectData (SerializationInfo info, StreamingContext context) {
+		void ISerializable.GetObjectData (SerializationInfo info, StreamingContext context) {
 			info.AddValue ("pattern", this.ToString (), typeof (string));
 			info.AddValue ("roptions", this.Options, typeof (RegexOptions));
 		}

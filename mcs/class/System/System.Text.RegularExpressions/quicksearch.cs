@@ -14,7 +14,7 @@ using System;
 using System.Collections;
 
 namespace System.Text.RegularExpressions {
-	public class QuickSearch {
+	internal class QuickSearch {
 		// simplified boyer-moore for fast substring matching
 		// (for short strings, we use simple scans)
 		public QuickSearch (string str, bool ignore) 
