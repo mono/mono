@@ -1,3 +1,9 @@
+2004-07-21  Jackson Harper  <jackson@ximian.com>
+
+	* PEAPI.cs: Create ClassRefInsts with types not just
+	ClassRefs. This way modified types can be used. I am having alot
+	of trouble remembering why I actually even need this class though.
+	
 2004-07-16  Jackson Harper  <jackson@ximian.com>
 
 	* PEAPI.cs: make sure small index sizes get set properly. Use a

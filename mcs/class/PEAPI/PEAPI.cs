@@ -97,10 +97,10 @@ namespace PEAPI
 
                    public class ClassRefInst : Type {
 
-                          private Class type;
+                          private Type type;
                           private bool is_value;
 
-            public ClassRefInst (Class type, bool is_value) : base (0x12) {
+            public ClassRefInst (Type type, bool is_value) : base (0x12) {
                     this.type = type;
                     this.is_value = is_value;
                     if (is_value)
@@ -109,8 +109,7 @@ namespace PEAPI
             }
 
             internal sealed override void TypeSig(MemoryStream str) {
-                    str.WriteByte (GetTypeIndex());
-                    MetaData.CompressNum (type.TypeDefOrRefToken(), str);
+                    type.TypeSig (str);
             }
     }
                   
