@@ -1,9 +1,11 @@
 //
 // OptionList.cs
 //
-// Author: Rafael Teixeira (rafaelteixeirabr@hotmail.com)
+// Author: Rafael Teixeira (rafaelteixeirabr@hotmail.com) (original)
+// Author: Dean Scarff (D_Scarff@AIMINGFORSPAMFREEmsn.com) (modifications)
 //
 // (C) 2002 Rafael Teixeira
+// Modifications (C) 2002 Dean Scarff, distributed under the Gnu General Public License Version 2 or later
 //
 
 using System;
@@ -13,80 +15,61 @@ using System.Reflection;
 
 namespace Mono.GetOptions
 {
-	[AttributeUsage(AttributeTargets.Assembly, AllowMultiple=true)]
-	public class AuthorAttribute : System.Attribute
-	{
-		public string Name;
-		public string SubProject;
 
-		public AuthorAttribute(string Name)
-		{
-			this.Name = Name;
-			this.SubProject = null;
-		}
-
-		public AuthorAttribute(string Name, string SubProject)
-		{
-			this.Name = Name;
-			this.SubProject = SubProject;
-		}
-
-		public override string ToString()
-		{
-			if (SubProject == null)
-				return Name;
-			else
-				return Name + " (" + SubProject + ")"; 
-		}
+	[Flags]
+	public enum OptionsParsingMode 
+	{ 
+		Linux   = 1, 
+		Windows = 2,
+		Both    = 3
 	}
-
-	enum OptionParameterType
-	{
-		None,
-		Integer,
-		Decimal, // look XML Schemas for better names
-		String,
-		Symbol,
-		FilePath,
-		FileMask,
-		AssemblyName,
-		AssemblyFileName,
-		AssemblyNameOrFileName
-	}
-		
-	public delegate bool OptionFound(object Value);
 
 	/// <summary>
-	/// Summary description for Class1.
+	/// Option Parsing
 	/// </summary>
 	public class OptionList
 	{
-		struct OptionDetails
-		{
-			public char ShortForm;
-			public string LongForm;
-			public string ShortDescription;
-			public OptionParameterType ParameterType;
-			public int MinOccurs;
-			public int MaxOccurs; // negative means there is no limit
-			public object DefaultValue;
-			public OptionFound Dispatcher;
-
-		}
 	
+		private Options optionBundle = null;
+		private OptionsParsingMode parsingMode;
+		private bool endOptionProcessingWithDoubleDash;
+		
+		private string appExeName;
+		private string appVersion;
+
 		private string appTitle = "Add a [assembly: AssemblyTitle(\"Here goes the application name\")] to your assembly";
 		private string appCopyright = "Add a [assembly: AssemblyCopyright(\"(c)200n Here goes the copyright holder name\")] to your assembly";
 		private string appDescription = "Add a [assembly: AssemblyDescription(\"Here goes the short description\")] to your assembly";
+		private string appAboutDetails = "Add a [assembly: Mono.About(\"Here goes the short about details\")] to your assembly";
+		private string appUsageComplement = "Add a [assembly: Mono.UsageComplement(\"Here goes the usage clause complement\")] to your assembly";
 		private string[] appAuthors;
  
-		public readonly string usageFormat;
-		public readonly string aboutDetails;
+		private ArrayList list = new ArrayList();
+		private ArrayList arguments = new ArrayList();
+		private ArrayList argumentsTail = new ArrayList();
 
-		private SortedList list = new SortedList();
+		public string Usage
+		{
+			get
+			{
+				return "Usage: " + appExeName + " [options] " + appUsageComplement;
+			}
+		}
 
+		public string AboutDetails
+		{
+			get
+			{
+				return appAboutDetails;
+			}
+		}
+
+		#region Assembly Attributes
+
+		Assembly entry;
+		
 		private object[] GetAssemblyAttributes(Type type)
 		{
-			Assembly entry = Assembly.GetEntryAssembly();
 			return entry.GetCustomAttributes(type, false);
 		}
 			
@@ -111,99 +94,241 @@ namespace Mono.GetOptions
 			object[] result = GetAssemblyAttributes(type);
 			
 			if ((result != null) && (result.Length > 0))
-				var = (string)(string)type.InvokeMember(propertyName, BindingFlags.Public | BindingFlags.GetField | BindingFlags.GetProperty | BindingFlags.Instance, null, result[0], new object [] {}); ;
+				var = (string)type.InvokeMember(propertyName, BindingFlags.Public | BindingFlags.GetField | BindingFlags.GetProperty | BindingFlags.Instance, null, result[0], new object [] {}); ;
 		}
 
-		public OptionList(string aboutDetails, string usageFormat)
+		private void GetAssemblyAttributeValue(Type type, ref string var)
 		{
-			this.aboutDetails = aboutDetails;
-			this.usageFormat = usageFormat;
+			object[] result = GetAssemblyAttributes(type);
+			
+			if ((result != null) && (result.Length > 0))
+				var = result[0].ToString();
+		}
+
+		#endregion
+
+		#region Constructors
+
+		private void Initialize(Options optionBundle)
+		{
+			if (optionBundle == null)
+				throw new ArgumentNullException("optionBundle");
+
+			entry = Assembly.GetEntryAssembly();
+			appExeName = entry.GetName().Name;
+			appVersion = entry.GetName().Version.ToString();
+
+			this.optionBundle = optionBundle; 
+			this.parsingMode = optionBundle.ParsingMode ;
+			this.endOptionProcessingWithDoubleDash = optionBundle.EndOptionProcessingWithDoubleDash;
 
 			GetAssemblyAttributeValue(typeof(AssemblyTitleAttribute), "Title", ref appTitle);
 			GetAssemblyAttributeValue(typeof(AssemblyCopyrightAttribute), "Copyright", ref appCopyright);
 			GetAssemblyAttributeValue(typeof(AssemblyDescriptionAttribute), "Description", ref appDescription);
+			GetAssemblyAttributeValue(typeof(Mono.AboutAttribute), ref appAboutDetails);
+			GetAssemblyAttributeValue(typeof(Mono.UsageComplementAttribute), ref appUsageComplement);
 			appAuthors = GetAssemblyAttributeStrings(typeof(AuthorAttribute));
 			if (appAuthors.Length == 0)
 			{
 				appAuthors = new String[1];
 				appAuthors[0] = "Add one or more [assembly: Mono.GetOptions.Author(\"Here goes the author name\")] to your assembly";
 			}
+
+			foreach(MemberInfo mi in optionBundle.GetType().GetMembers())
+			{
+				object[] attribs = mi.GetCustomAttributes(typeof(OptionAttribute), true);
+				if (attribs != null && attribs.Length > 0)
+					list.Add(new OptionDetails(mi, (OptionAttribute)attribs[0], optionBundle));
+			}
 		}
 
-		private void AddGenericOption(
-			char shortForm, 
-			string longForm, 
-			string shortDescription,
-			OptionParameterType parameterType, 
-			int minOccurs, 
-			int maxOccurs, 
-			object defaultValue, 
-			OptionFound dispatcher)
+		public OptionList(Options optionBundle)
 		{
-			OptionDetails option = new OptionDetails();
-
-			option.ShortForm = shortForm;
-			option.LongForm = longForm;
-			option.ShortDescription = shortDescription;
-			option.ParameterType = parameterType;
-			option.MinOccurs = minOccurs;
-			option.MaxOccurs = maxOccurs;
-			option.DefaultValue = defaultValue;
-			option.Dispatcher = dispatcher;
-
-			if (shortForm == ' ')
-				list.Add(longForm, option);
-			else
-				list.Add(shortForm.ToString(), option);
+			Initialize(optionBundle);
 		}
 
-		public void AddAbout(char shortForm, string longForm, string shortDescription)
-		{
-			AddGenericOption(shortForm, longForm, shortDescription, OptionParameterType.None, 0, 1, null, new OptionFound(DoAbout));
-		}
+		#endregion
 
-		public void AddBooleanSwitch(char shortForm, string longForm, string shortDescription, bool defaultValue, OptionFound switcher)
-		{
-			AddGenericOption(shortForm, longForm, shortDescription, OptionParameterType.None, 0, 1, defaultValue, switcher);
-		}
+		#region Prebuilt Options
 
-		public void ShowAbout()
+		private void ShowTitleLines()
 		{
-			Console.WriteLine(appTitle + " - " + appCopyright); 
+			Console.WriteLine(appTitle + "  " + appVersion + " - " + appCopyright); 
 			Console.WriteLine(appDescription); 
 			Console.WriteLine();
-			Console.WriteLine(aboutDetails); 
+		}
+
+		private void ShowAbout()
+		{
+			ShowTitleLines();
+			Console.WriteLine(appAboutDetails); 
 			Console.WriteLine();
 			Console.WriteLine("Authors:");
 			foreach(string s in appAuthors)
 				Console.WriteLine ("\t" + s);
 		}
 
-		private bool DoAbout(object nothing)
+		private void ShowHelp()
 		{
-			ShowAbout();
-			return true;
+			ShowTitleLines();
+			Console.WriteLine(Usage);
+			Console.WriteLine("Options:");
+			foreach (OptionDetails option in list)
+				Console.WriteLine(option);
 		}
 
-		public void ShowUsage()
+		private void ShowUsage()
 		{
-			Console.WriteLine(appTitle + " - " + appCopyright); 
-			Console.Write("Usage: ");
-			Console.WriteLine(usageFormat);
-			// TODO: list registered options here
-			foreach (DictionaryEntry option in list)
-				Console.WriteLine(option.Value.ToString());
+			Console.WriteLine(Usage);
+			Console.Write("Short Options: ");
+			foreach (OptionDetails option in list)
+				Console.Write((option.ShortForm != ' ') ? option.ShortForm.ToString() : "");
+			Console.WriteLine();
+			
 		}
 
-		public void ShowUsage(string errorMessage)
+		private void ShowUsage(string errorMessage)
 		{
-			Console.WriteLine(errorMessage);
+			Console.WriteLine("ERROR: " + errorMessage.TrimEnd());
 			ShowUsage();
 		}
 
-		public void ProcessArgs(string[] args)
+		internal WhatToDoNext DoUsage()
+		{
+			ShowUsage();
+			return WhatToDoNext.AbandonProgram;
+		}
+
+		internal WhatToDoNext DoAbout()
 		{
 			ShowAbout();
+			return WhatToDoNext.GoAhead;
 		}
+
+		internal WhatToDoNext DoHelp()
+		{
+			ShowHelp();
+			return WhatToDoNext.AbandonProgram;
+		}
+
+		#endregion
+
+		#region Arguments Processing
+
+		public string[] NormalizeArgs(string[] args)
+		{
+			bool ParsingOptions = true;
+			ArrayList result = new ArrayList();
+
+			foreach(string arg in args)
+			{
+				if (ParsingOptions)
+				{
+					if (endOptionProcessingWithDoubleDash && (arg == "--"))
+					{
+						ParsingOptions = false;
+						continue;
+					}
+
+					if ((parsingMode & OptionsParsingMode.Windows) > 0)
+					{
+						if ((arg.Length == 2) && (arg[0] == '/')) // Windows options only come in this fashion
+						{
+							result.Add("-" + arg[1]); // translate to Linux style
+							continue;
+						}
+					}
+
+					if ((parsingMode & OptionsParsingMode.Linux) > 0)
+					{
+						if ((arg[0] == '-') && (arg[1] != '-'))
+						{
+							foreach(char c in arg.Substring(1)) // many single-letter options
+								result.Add("-" + c); // expand into individualized options
+							continue;
+						}
+
+						if (arg.StartsWith("--"))
+						{
+							result.AddRange(arg.Split('='));  // put in the same form of one-letter options with a parameter
+							continue;
+						}
+					}
+				}
+				else
+				{
+					argumentsTail.Add(arg);
+					continue;
+				}
+
+				// if nothing else matches then it get here
+				result.Add(arg);
+			}
+
+			return (string[])result.ToArray(typeof(string));
+		}
+
+		public string[] ProcessArgs(string[] args)
+		{
+			string arg;
+			string nextArg;
+			bool OptionWasProcessed;
+
+			list.Sort();
+
+			args = NormalizeArgs(args);
+
+			try
+			{
+				int argc = args.Length;
+				for(int i = 0; i < argc; i++)
+				{
+					arg =  args[i];
+					if (i+1 < argc)
+					{
+						nextArg = args[i+1];
+						if (nextArg.StartsWith("-"))
+							nextArg = null;
+					}
+					else
+						nextArg = null;
+
+					OptionWasProcessed = false;
+
+					if (arg.StartsWith("-"))
+					{
+						foreach(OptionDetails option in list)
+						{
+							if (option.ProcessArgument(arg, nextArg))
+							{
+								OptionWasProcessed = true;
+								if (nextArg != null)
+									i++;
+								break;
+							}
+						}
+					}
+
+					if (!OptionWasProcessed)
+						arguments.Add(arg); 
+				}
+
+				foreach(OptionDetails option in list)
+					option.TransferValues(); 
+
+				foreach(string argument in argumentsTail)
+					arguments.Add(argument);
+			}
+			catch (Exception ex)
+			{
+				ShowUsage(ex.Message);
+				System.Environment.Exit(1);
+			}
+
+			return (string[])arguments.ToArray(typeof(string));
+		}
+		
+		#endregion
+
 	}
 }
