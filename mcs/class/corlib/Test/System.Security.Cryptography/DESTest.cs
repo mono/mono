@@ -1,5 +1,5 @@
 //
-// TestSuite.System.Security.Cryptography.AsymmetricAlgorithmTest.cs
+// TestSuite.System.Security.Cryptography.DESTest.cs
 //
 // Author:
 //      Sebastien Pouliot  <sebastien@ximian.com>
@@ -9,6 +9,7 @@
 
 using System;
 using System.Security.Cryptography;
+using System.Text;
 
 using NUnit.Framework;
 
@@ -179,6 +180,115 @@ namespace MonoTests.System.Security.Cryptography {
 		{
 			DES des = DES.Create ();
 			des.Key = swk1;
+		}
+	}
+
+	// Test vectors from FIPS 81 - DES Modes of Operations
+	// http://csrc.nist.gov/publications/fips/fips81/fips81.htm
+	//
+	// Note: they are to be called from specifics implementations -
+	//   not for the abstract DES. Thats why they are in a separate class
+	//   which doesn't have a [TestFixture] attribute
+	public class DESFIPS81Test : Assertion {
+		protected DES des;
+
+		// Table B1 - ECB Mode
+		[Test]
+		public void FIPS81_ECBMode () 
+		{
+			byte[] plaintext = Encoding.ASCII.GetBytes ("Now is the time for all ");
+			byte[] result = new byte [24];
+
+			des.Key = new byte[] { 0x01, 0x23, 0x45, 0x67, 0x89, 0xAB, 0xCD, 0xEF };
+			des.Mode = CipherMode.ECB;
+			des.Padding = PaddingMode.None;
+			ICryptoTransform encrypt = des.CreateEncryptor ();
+
+			encrypt.TransformBlock (plaintext, 0, 8, result, 0);
+			AssertEquals ("Encrypt Block 1", "3F-A4-0E-8A-98-4D-48-15", BitConverter.ToString (result, 0, 8));
+
+			encrypt.TransformBlock (plaintext, 8, 8, result, 8);
+			AssertEquals ("Encrypt Block 2", "6A-27-17-87-AB-88-83-F9", BitConverter.ToString (result, 8, 8));
+
+			encrypt.TransformBlock (plaintext, 16, 8, result, 16);
+			AssertEquals ("Encrypt Block 3", "89-3D-51-EC-4B-56-3B-53", BitConverter.ToString (result, 16, 8));
+
+			ICryptoTransform decrypt = des.CreateDecryptor ();
+			
+			byte[] decrypted = new byte [24]; // MS cannot *always* reuse buffers
+			decrypt.TransformBlock (result, 0, 8, decrypted, 0);
+			AssertEquals ("Decrypt Block 1", "Now is t", Encoding.ASCII.GetString (decrypted, 0, 8));
+
+			decrypt.TransformBlock (result, 8, 8, decrypted, 8);
+			AssertEquals ("Decrypt Block 2", "he time ", Encoding.ASCII.GetString (decrypted, 8, 8));
+
+			decrypt.TransformBlock (result, 16, 8, decrypted, 16);
+			AssertEquals ("Decrypt Block 3", "for all ", Encoding.ASCII.GetString (decrypted, 16, 8));
+		}
+
+		// Table C1 - CBC Mode
+		[Test]
+		public void FIPS81_CBCMode () 
+		{
+			byte[] plaintext = Encoding.ASCII.GetBytes ("Now is the time for all ");
+			byte[] result = new byte [24];
+
+			des.Key = new byte[] { 0x01, 0x23, 0x45, 0x67, 0x89, 0xAB, 0xCD, 0xEF };
+			des.IV = new byte[] { 0x12, 0x34, 0x56, 0x78, 0x90, 0xAB, 0xCD, 0xEF };
+			des.Mode = CipherMode.CBC;
+			des.Padding = PaddingMode.None;
+			ICryptoTransform encrypt = des.CreateEncryptor ();
+
+			encrypt.TransformBlock (plaintext, 0, 8, result, 0);
+			AssertEquals ("Encrypt Block 1", "E5-C7-CD-DE-87-2B-F2-7C", BitConverter.ToString (result, 0, 8));
+
+			encrypt.TransformBlock (plaintext, 8, 8, result, 8);
+			AssertEquals ("Encrypt Block 2", "43-E9-34-00-8C-38-9C-0F", BitConverter.ToString (result, 8, 8));
+
+			byte[] final = encrypt.TransformFinalBlock (plaintext, 16, 8);
+			Buffer.BlockCopy (final, 0, result, 16, 8);
+			AssertEquals ("Encrypt Block 3", "68-37-88-49-9A-7C-05-F6", BitConverter.ToString (result, 16, 8));
+
+			ICryptoTransform decrypt = des.CreateDecryptor ();
+			
+			decrypt.TransformBlock (result, 0, 8, result, 0);
+			AssertEquals ("Decrypt Block 1", "Now is t", Encoding.ASCII.GetString (result, 0, 8));
+
+			decrypt.TransformBlock (result, 8, 8, result, 8);
+			AssertEquals ("Decrypt Block 2", "he time ", Encoding.ASCII.GetString (result, 8, 8));
+
+			final = decrypt.TransformFinalBlock (result, 16, 8);
+			AssertEquals ("Decrypt Block 3", "for all ", Encoding.ASCII.GetString (final));
+		}
+
+		// Table D2 - CFB Mode 8 bits
+		[Test]
+		public void FIPS81_CFB8Mode () 
+		{
+			byte[] plaintext = Encoding.ASCII.GetBytes ("Now is theXXXXXX"); // padding
+			byte[] result = new byte [16];
+
+			des.Key = new byte[] { 0x01, 0x23, 0x45, 0x67, 0x89, 0xAB, 0xCD, 0xEF };
+			des.IV = new byte[] { 0x12, 0x34, 0x56, 0x78, 0x90, 0xAB, 0xCD, 0xEF };
+			des.Mode = CipherMode.CFB;
+			des.Padding = PaddingMode.None;
+			des.FeedbackSize = 8;
+			ICryptoTransform encrypt = des.CreateEncryptor ();
+
+			encrypt.TransformBlock (plaintext, 0, 8, result, 0);
+			AssertEquals ("Encrypt Block 1", "F3-1F-DA-07-01-14-62-EE", BitConverter.ToString (result, 0, 8));
+
+			byte[] final = encrypt.TransformFinalBlock (plaintext, 8, 8);
+			Buffer.BlockCopy (final, 0, result, 8, 8);
+			AssertEquals ("Encrypt Block 2", "18-7F", BitConverter.ToString (final).Substring (0, 5));
+
+			ICryptoTransform decrypt = des.CreateDecryptor ();
+			
+			decrypt.TransformBlock (result, 0, 8, result, 0);
+			AssertEquals ("Decrypt Block 1", "Now is t", Encoding.ASCII.GetString (result, 0, 8));
+
+			final = decrypt.TransformFinalBlock (result, 8, 8);
+			AssertEquals ("Decrypt Block 2", "he", Encoding.ASCII.GetString (final, 0, 2));
 		}
 	}
 }

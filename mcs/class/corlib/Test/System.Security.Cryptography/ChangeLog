@@ -1,3 +1,10 @@
+2004-03-28  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* DESCryptoServiceProviderTest.cs: New. Completes coverage for 
+	DESCryptoServiceProvider class. Calls the FIPS 81 tests for this
+	implementation.
+	* DESTest.cs: Added test vectors from FIPS 81.
+
 2004-03-26  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* DESTest.cs: New. Unit tests for DES including checks for weak and
