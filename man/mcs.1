@@ -53,6 +53,10 @@ Multiple paths can be provided.
 Use this flag if you want to compile the core library.  This makes the
 compiler load its internal types from the assembly being compiled.
 .TP
+.I \-\-noconfig
+Disables the default compiler configuration to be loaded.  The
+compiler by default has references to the system assemblies. 
+.TP
 .I \-\-nowarn XXX
 Makes the compiler ignore warning XXX.
 .TP
@@ -100,7 +104,9 @@ highest.  The default is 2.
 .TP
 .I \-r ASSEMBLY
 Reference the named assembly.  Use this to use classes from the named
-assembly in your program.
+assembly in your program.  The assembly will be loaded from either the
+system directory where all the assemblies live, or from the path
+explicitly given with the -L option.
 .TP
 .I \-v 
 Debugging. Turns on verbose yacc parsing.
