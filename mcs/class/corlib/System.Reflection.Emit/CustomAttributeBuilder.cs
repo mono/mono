@@ -11,9 +11,22 @@
 using System;
 using System.Reflection;
 using System.Reflection.Emit;
+using System.Runtime.CompilerServices;
 
 namespace System.Reflection.Emit {
 	public class CustomAttributeBuilder {
+		ConstructorInfo ctor;
+		byte[] data;
+		
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		static extern byte[] GetBlob(ConstructorInfo con, object[] constructorArgs, PropertyInfo[] namedProperties, object[] propertyValues, FieldInfo[] namedFields, object[] fieldValues);
+		
+		internal CustomAttributeBuilder( ConstructorInfo con, byte[] cdata) {
+			ctor = con;
+			data = (byte[])cdata.Clone ();
+			/* should we check that the user supplied data is correct? */
+		}
+		
 		public CustomAttributeBuilder( ConstructorInfo con, object[] constructorArgs)
 			: this (con, constructorArgs, null, null, null, null) {
 		}
@@ -24,6 +37,8 @@ namespace System.Reflection.Emit {
 			: this (con, constructorArgs, namedProperties, propertyValues, null, null) {
 		}
 		public CustomAttributeBuilder( ConstructorInfo con, object[] constructorArgs, PropertyInfo[] namedProperties, object[] propertyValues, FieldInfo[] namedFields, object[] fieldValues) {
+			ctor = con;
+			data = GetBlob (con, constructorArgs, namedProperties, propertyValues, namedFields, fieldValues);
 		}
 
 	}

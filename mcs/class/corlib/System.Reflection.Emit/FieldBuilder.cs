@@ -25,6 +25,7 @@ namespace System.Reflection.Emit {
 		private int table_idx;
 		internal TypeBuilder typeb;
 		private byte[] rva_data;
+		private CustomAttributeBuilder[] cattrs;
 
 		internal FieldBuilder (TypeBuilder tb, string fieldName, Type type, FieldAttributes attributes) {
 			attrs = attributes;
@@ -78,8 +79,18 @@ namespace System.Reflection.Emit {
 			def_value = defaultValue;
 		}
 		public void SetCustomAttribute( CustomAttributeBuilder customBuilder) {
+			if (cattrs != null) {
+				CustomAttributeBuilder[] new_array = new CustomAttributeBuilder [cattrs.Length + 1];
+				cattrs.CopyTo (new_array, 0);
+				new_array [cattrs.Length] = customBuilder;
+				cattrs = new_array;
+			} else {
+				cattrs = new CustomAttributeBuilder [1];
+				cattrs [0] = customBuilder;
+			}
 		}
 		public void SetCustomAttribute( ConstructorInfo con, byte[] binaryAttribute) {
+			SetCustomAttribute (new CustomAttributeBuilder (con, binaryAttribute));
 		}
 		public void SetMarshal( UnmanagedMarshal unmanagedMarshal) {
 		}

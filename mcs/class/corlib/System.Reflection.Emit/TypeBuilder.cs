@@ -24,6 +24,7 @@ namespace System.Reflection.Emit {
 	private ConstructorBuilder[] ctors;
 	private PropertyBuilder[] properties;
 	private FieldBuilder[] fields;
+	private CustomAttributeBuilder[] cattrs;
 	internal TypeBuilder[] subtypes;
 	private TypeAttributes attrs;
 	private int table_idx;
@@ -366,8 +367,18 @@ namespace System.Reflection.Emit {
 		public override RuntimeTypeHandle TypeHandle { get { return _impl; } }
 
 		public void SetCustomAttribute( CustomAttributeBuilder customBuilder) {
+			if (cattrs != null) {
+				CustomAttributeBuilder[] new_array = new CustomAttributeBuilder [cattrs.Length + 1];
+				cattrs.CopyTo (new_array, 0);
+				new_array [cattrs.Length] = customBuilder;
+				cattrs = new_array;
+			} else {
+				cattrs = new CustomAttributeBuilder [1];
+				cattrs [0] = customBuilder;
+			}
 		}
 		public void SetCustomAttribute( ConstructorInfo con, byte[] binaryAttribute) {
+			SetCustomAttribute (new CustomAttributeBuilder (con, binaryAttribute));
 		}
 
 		public EventBuilder DefineEvent( string name, EventAttributes attributes, Type eventtype) {

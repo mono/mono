@@ -24,6 +24,7 @@ namespace System.Reflection.Emit {
 		private CallingConventions call_conv;
 		private TypeBuilder type;
 		private ParameterBuilder[] pinfo;
+		private CustomAttributeBuilder[] cattrs;
 
 		internal ConstructorBuilder (TypeBuilder tb, MethodAttributes attributes, CallingConventions callingConvention, Type[] parameterTypes) {
 			attrs = attributes;
@@ -102,8 +103,18 @@ namespace System.Reflection.Emit {
 		}
 
 		public void SetCustomAttribute( CustomAttributeBuilder customBuilder) {
+			if (cattrs != null) {
+				CustomAttributeBuilder[] new_array = new CustomAttributeBuilder [cattrs.Length + 1];
+				cattrs.CopyTo (new_array, 0);
+				new_array [cattrs.Length] = customBuilder;
+				cattrs = new_array;
+			} else {
+				cattrs = new CustomAttributeBuilder [1];
+				cattrs [0] = customBuilder;
+			}
 		}
 		public void SetCustomAttribute( ConstructorInfo con, byte[] binaryAttribute) {
+			SetCustomAttribute (new CustomAttributeBuilder (con, binaryAttribute));
 		}
 		public void SetImplementationFlags( MethodImplAttributes attributes) {
 			iattrs = attributes;

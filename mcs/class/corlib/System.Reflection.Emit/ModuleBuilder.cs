@@ -15,6 +15,7 @@ using System.Runtime.CompilerServices;
 namespace System.Reflection.Emit {
 	public class ModuleBuilder : Module {
 		private TypeBuilder[] types;
+		private CustomAttributeBuilder[] cattrs;
 		private int table_idx;
 		private AssemblyBuilder assemblyb;
 
@@ -122,5 +123,19 @@ namespace System.Reflection.Emit {
 			return assemblyb.get_next_table_index (table, inc);
 		}
 
+		public void SetCustomAttribute( CustomAttributeBuilder customBuilder) {
+			if (cattrs != null) {
+				CustomAttributeBuilder[] new_array = new CustomAttributeBuilder [cattrs.Length + 1];
+				cattrs.CopyTo (new_array, 0);
+				new_array [cattrs.Length] = customBuilder;
+				cattrs = new_array;
+			} else {
+				cattrs = new CustomAttributeBuilder [1];
+				cattrs [0] = customBuilder;
+			}
+		}
+		public void SetCustomAttribute( ConstructorInfo con, byte[] binaryAttribute) {
+			SetCustomAttribute (new CustomAttributeBuilder (con, binaryAttribute));
+		}
 	}
 }

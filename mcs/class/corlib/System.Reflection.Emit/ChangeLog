@@ -1,4 +1,14 @@
 
+Wed Feb 20 22:30:49 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* AssemblyBuilder.cs: upped compiled assembly size limit.
+	Implemented SetCustomAttribute () methods.
+	* CustomAttributeBuilder.cs: implemented the needed constructor
+	stuff.
+	* Cosntructorbuilder.cs, EnumBuilder.cs, FieldBuilder.cs,
+	MethodBuilder.cs, ModuleBuilder.cs, ParameterBuilder.cs,
+	PropertyBuilder.cs, TypeBuilder.cs: Implemented SetCustomAttribute () methods.
+
 Wed Feb 20 14:54:01 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	* AssemblyBuilder.cs: add SetCustomAttribute () to keep the compiler

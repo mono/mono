@@ -20,6 +20,7 @@ namespace System.Reflection.Emit {
 		private string name;
 		private Type type;
 		private Type[] parameters;
+		private CustomAttributeBuilder[] cattrs;
 		private object def_value;
 		private MethodBuilder set_method;
 		private MethodBuilder get_method;
@@ -95,8 +96,18 @@ namespace System.Reflection.Emit {
 			def_value = defaultValue;
 		}
 		public void SetCustomAttribute( CustomAttributeBuilder customBuilder) {
+			if (cattrs != null) {
+				CustomAttributeBuilder[] new_array = new CustomAttributeBuilder [cattrs.Length + 1];
+				cattrs.CopyTo (new_array, 0);
+				new_array [cattrs.Length] = customBuilder;
+				cattrs = new_array;
+			} else {
+				cattrs = new CustomAttributeBuilder [1];
+				cattrs [0] = customBuilder;
+			}
 		}
 		public void SetCustomAttribute( ConstructorInfo con, byte[] binaryAttribute) {
+			SetCustomAttribute (new CustomAttributeBuilder (con, binaryAttribute));
 		}
 		public void SetGetMethod( MethodBuilder mdBuilder) {
 			get_method = mdBuilder;

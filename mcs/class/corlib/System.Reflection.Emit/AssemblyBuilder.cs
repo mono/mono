@@ -23,6 +23,7 @@ namespace System.Reflection.Emit {
 		private MethodInfo entry_point;
 		private ModuleBuilder[] modules;
 		private string name;
+		private CustomAttributeBuilder[] cattrs;
 		private int[] table_indexes;
 
 		internal AssemblyBuilder (AssemblyName n, AssemblyBuilderAccess access) {
@@ -182,7 +183,7 @@ namespace System.Reflection.Emit {
 
 		public void Save (string assemblyFileName)
 		{
-			byte[] buf = new byte[8192];
+			byte[] buf = new byte [65536];
 			FileStream file;
 			int count;
 
@@ -209,8 +210,18 @@ namespace System.Reflection.Emit {
 		}
 
 		public void SetCustomAttribute( CustomAttributeBuilder customBuilder) {
+			if (cattrs != null) {
+				CustomAttributeBuilder[] new_array = new CustomAttributeBuilder [cattrs.Length + 1];
+				cattrs.CopyTo (new_array, 0);
+				new_array [cattrs.Length] = customBuilder;
+				cattrs = new_array;
+			} else {
+				cattrs = new CustomAttributeBuilder [1];
+				cattrs [0] = customBuilder;
+			}
 		}
 		public void SetCustomAttribute( ConstructorInfo con, byte[] binaryAttribute) {
+			SetCustomAttribute (new CustomAttributeBuilder (con, binaryAttribute));
 		}
 
 	}
