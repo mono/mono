@@ -24,10 +24,8 @@ all-local: $(symlinks) mono-wrapper wrapper-config
 
 if INSTALL_2_0
 build_profiles = default net_2_0
-clean_profiles = basic net_1_1_bootstrap default net_2_0_bootstrap net_2_0
 else
 build_profiles = default
-clean_profiles = basic net_1_1_bootstrap default
 endif
 
 # override automake
@@ -36,7 +34,7 @@ install: install-exec install-data
 # override automake
 install-exec:
 	d=`pwd`; \
-	cd $(mcs_topdir) && $(MAKE) prefix='$(exec_prefix)' PROFILES='$(build_profiles)' \
+	cd $(mcs_topdir) && $(MAKE) PROFILES='$(build_profiles)' \
 				    RUNTIME=$$d/mono-wrapper RUNTIME_HAS_CONSISTENT_GACDIR=yes install-profiles
 
 # override automake
@@ -46,11 +44,11 @@ install-data:
 # override automake
 uninstall:
 	d=`pwd`; \
-	cd $(mcs_topdir) && $(MAKE) prefix='$(exec_prefix)' PROFILES='$(build_profiles)' \
+	cd $(mcs_topdir) && $(MAKE) PROFILES='$(build_profiles)' \
 				    RUNTIME=$$d/mono-wrapper RUNTIME_HAS_CONSISTENT_GACDIR=yes uninstall-profiles
 
 clean-local:
-	d=`pwd`; cd $(mcs_topdir) && $(MAKE) PROFILES='$(clean_profiles)' clean-profiles
+	d=`pwd`; cd $(mcs_topdir) && $(MAKE) PROFILES='$(build_profiles)' clean-profiles
 	-rm -fr $(symlinks) $(tmpinst) .wapi
 
 if INSTALL_2_0
