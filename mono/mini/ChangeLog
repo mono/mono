@@ -1,5 +1,14 @@
 2004-04-01  Martin Baulig  <martin@ximian.com>
 
+	* mini.c (handle_box): New static function; moved the
+	implementation of CEE_BOX here.
+	(mono_method_to_ir): Added `constrained_call' variable.
+	(mono_method_to_ir:CEE_CONSTRAINED_): Set it.
+	(mono_method_to_ir:CEE_CALL): If `constrained_call' is set, use
+	mono_method_get_constrained() to get the method.
+
+2004-04-01  Martin Baulig  <martin@ximian.com>
+
 	* mini.c (TYPE_PARAM_TO_TYPE, TYPE_PARAM_TO_CLASS): Removed.
 	(MTYPE_PARAM_TO_TYPE, MTYPE_PARAM_TO_CLASS): Removed.
 	(mono_method_to_ir): We don't need these macros anymore since
