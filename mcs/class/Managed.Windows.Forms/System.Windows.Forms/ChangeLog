@@ -1,3 +1,7 @@
+2005-01-08  Geoff Norton  <gnorton@customerdna.com>
+
+        * XplatUIOSX.cs: Fix GetWindowState & SetWindowState
+
 2005-01-07  Jackson Harper  <jackson@ximian.com>
 
 	* TreeNode.cs: Just update the single node when it is

@@ -322,12 +322,12 @@ namespace System.Windows.Forms {
 		internal override FormWindowState GetWindowState(IntPtr hwnd) {
 			IntPtr window = GetControlOwner (hwnd);
 
-			if (!IsWindowCollapsed (window))
+			if (IsWindowCollapsed (window))
 				return FormWindowState.Minimized;
 			if (IsWindowInStandardState (window, IntPtr.Zero, IntPtr.Zero))
-				return FormWindowState.Normal;
+				return FormWindowState.Maximized;
 
-			return FormWindowState.Maximized;
+			return FormWindowState.Normal;
 		}
 
 		internal override void SetWindowState(IntPtr hwnd, FormWindowState state) {
@@ -339,11 +339,11 @@ namespace System.Windows.Forms {
 					break;
 				}
 				case FormWindowState.Normal: {
-					ZoomWindow (window, 8, false);
+					ZoomWindow (window, 7, false);
 					break;
 				}
 				case FormWindowState.Maximized: {
-					ZoomWindow (window, 7, false);
+					ZoomWindow (window, 8, false);
 					break;
 				}
 			}
