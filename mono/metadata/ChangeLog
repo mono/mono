@@ -1,3 +1,8 @@
+2002-05-25  Martin Baulig  <martin@gnome.org>
+
+	* debug-symfile.c
+	(ves_icall_Debugger_DwarfFileWriter_get_type_token): Removed.
+
 2002-05-24  Martin Baulig  <martin@gnome.org>
 
 	* debug-symfile.c
