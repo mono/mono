@@ -27,7 +27,8 @@ namespace System.Net
 		[MonoTODO ("Need EnvironmentPermission implementation first")]
 		public static ICredentials DefaultCredentials {
 			get {
-				throw new NotImplementedException ();
+				// This is used for NTLM, Kerberos and Negotiate under MS
+				return null;
 			}
 		}
 		
