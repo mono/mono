@@ -19,7 +19,7 @@ namespace System {
 		protected object target;
 		protected string method;
 		protected IntPtr method_ptr;
-		
+
 		protected Delegate (object target, string method)
 		{
 			if (target == null)
@@ -94,6 +94,26 @@ namespace System {
 		{
 			// TODO: IMPLEMENT ME
 		}
-		
+
+		public static Delegate Combine (Delegate a, Delegate b)
+		{
+			if (a == null){
+				if (b == null)
+					return null;
+				return b;
+			} else 
+				if (b == null)
+					return a;
+
+			if (a.GetType () != b.GetType ())
+				throw new ArgumentException ("Incompatible Delegate Types");
+			
+			return a.CombineImpl (b);
+		}
+
+		protected virtual Delegate CombineImpl (Delegate d)
+		{
+			throw new MulticastNotSupportedException ("");
+		}
 	}
 }

@@ -16,7 +16,8 @@ namespace System {
 	/// <remarks>
 	///   
 	/// </remarks>
-	public class ContextStatic : Attribute {
+	[AttributeUsage (AttributeTargets.Field)]
+	public class ContextStaticAttribute : Attribute {
 
 		// No methods.
 		

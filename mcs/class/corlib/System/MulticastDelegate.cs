@@ -13,16 +13,26 @@ namespace System {
 
 	public abstract class MulticastDelegate : Delegate {
 
+		Delegate [] invocation_list;
+		
 		protected MulticastDelegate (object target, string method)
 			: base (target, method)
 		{
+			invocation_list = null;
 		}
 
 		protected MulticastDelegate (Type target_type, string method)
 			: base (target_type, method)
 		{
+			invocation_list = null;
 		}
 
+		private MulticastDelegate (Type target_type, string method, Delegate [] list)
+			: base (target_type, method)
+		{
+			invocation_list = list;
+		}
+		
 #if NOTYET
 		public MethodInfo Method {
 			get {
@@ -31,22 +41,57 @@ namespace System {
 		}
 #endif
 
-		//
-		// Methods
-		//
+		// <remarks>
+		//   Equals: two multicast delegates are equal if their base is equal
+		//   and their invocations list is equal.
+		// </remarks>
 		public override bool Equals (object o)
 		{
 			if (!(o is System.MulticastDelegate))
 				return false;
 
-			return base.Equals (o);
+			if (!base.Equals (o))
+				return false;
+
+			MulticastDelegate d = (MulticastDelegate) o;
+
+			if (d.invocation_list == null){
+				if (invocation_list == null)
+					return true;
+				return false;
+			} else if (invocation_list == null)
+				return false;
+
+			int i = 0;
+			foreach (Delegate del in invocation_list){
+				if (del != d.invocation_list [i++])
+					return false;
+			}
+			
+			return true;
 		}
 
+		//
+		// FIXME: This could use some improvements.
+		//
 		public override int GetHashCode ()
 		{
 			return base.GetHashCode ();
 		}
 
-		
+		// <summary>
+		//   Combines this MulticastDelegate with the Delegate `follow'.
+		//   This can combine MulticastDelegates and Delegates
+		// </summary>
+		protected override Delegate CombineImpl (Delegate follow)
+		{
+			throw new Exception ("IMPLEMENT ME");
+
+			// FIXME: Implement me.
+			// This is not as simple to implement, as we can
+			// not create an instance of MulticastDelegate.
+			//
+			// Got to think more about this.
+		}
 	}
 }

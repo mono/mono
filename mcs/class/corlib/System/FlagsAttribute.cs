@@ -18,6 +18,8 @@ namespace System {
 	///   a bit field.  This will allow the compiler and visual tools
 	///   to treat the bits in an enumeration as a set of flags.
 	/// </remarks>
+
+	[AttributeUsage (AttributeTargets.Enum)]
 	public class FlagsAttribute : Attribute {
 
 		// No methods.

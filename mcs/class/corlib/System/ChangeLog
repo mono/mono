@@ -1,3 +1,18 @@
+2001-10-27  Miguel de Icaza  <miguel@ximian.com>
+
+	* Delegate.cs (Delegate.CombineImpl): Implement.
+	(Delegate.Combine): Implement.
+
+	* MulticastDelegate.cs (MulticastDelegate.Equals): Implement.
+
+	(MulticastDelegate.CombineImpl): This was not as trivial as I
+	thought. 
+
+	* ContextStaticAttribute.cs: Added AttributeUsage to
+	ContextStaticAttribute. 
+
+	* FlagsAttribute.cs: Add AttributeUsage to FlagsAttribute
+
 2001-10-15  Martin Weindel <martin.weindel@t-online.de>
         * added Decimal.cs
         * added DecimalFormatter.cs (internal class used from System.Decimal)
