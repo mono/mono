@@ -1,3 +1,8 @@
+2004-05-16  Gert Driesen (drieseng@users.sourceforge.net)
+
+	* CodeDomSerializerException.cs: removed default public
+	ctror, removed finalizer, removed ToString() method
+
 2003-03-27  Martin Willemoes Hansen <mwh@sysrq.dk>
 	* Moved classes which was belonging to the System assembly.
 	* Added CodeDomSerializerException.cs stub

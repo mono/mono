@@ -15,11 +15,6 @@ namespace System.ComponentModel.Design.Serialization
 	public class CodeDomSerializerException : SystemException
 	{
 		[MonoTODO]
-		public CodeDomSerializerException()
-		{
-		}
-
-		[MonoTODO]
 		public CodeDomSerializerException (Exception ex, 
 						   CodeLinePragma code_line_pragma)
 		{
@@ -50,17 +45,6 @@ namespace System.ComponentModel.Design.Serialization
 						    StreamingContext context)
 		{
 			throw new NotImplementedException();
-		}
-
-		[MonoTODO]
-		public override string ToString()
-		{
-			throw new NotImplementedException();
-		}
-
-		[MonoTODO]
-		~CodeDomSerializerException()
-		{
 		}
 	}
 }
