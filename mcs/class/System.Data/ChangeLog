@@ -1,3 +1,6 @@
+2004-07-14 Umadevi S <sumadevi@novell.com>
+	* Added System.Data.SqlTypes/StorageState.cs to System.data.dll.sources
+
 2004-07-09 Umadevi S <sumadevi@novell.com>
 	* Added System.Data.Sql/IUdtSerializationContext.cs and System.Data.Sql/SqlFacetAttribute.cs to system.data.dll.sources
 
