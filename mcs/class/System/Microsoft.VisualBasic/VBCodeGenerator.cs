@@ -641,10 +641,10 @@ namespace Microsoft.VisualBasic
 			OutputMemberAccessModifier (attributes);
 			OutputMemberScopeModifier (attributes);
 
-			if (property.HasGet && (property.HasSet = false))
+			if (property.HasGet && (!property.HasSet))
 				output.Write ("ReadOnly " );
 
-			if (property.HasSet && (property.HasGet = false))
+			if (property.HasSet && (!property.HasGet))
 				output.Write ("WriteOnly " );
 
 			output.Write ("Property " );
@@ -664,7 +664,9 @@ namespace Microsoft.VisualBasic
 			}
 			
 			if (property.HasSet) {
-				output.WriteLine ("Set");
+				output.Write ("Set (");
+				OutputTypeNamePair (property.Type, "Value");
+				output.WriteLine (")");
 				++Indent;
 
 				GenerateStatements (property.SetStatements);
@@ -805,8 +807,11 @@ namespace Microsoft.VisualBasic
 		{
 			string name = ns.Name;
 			if (name != null && name != string.Empty) {
+				Output.WriteLine ("'Why is the indentation not working correctly here? --> see in mcs/class/System/Micrisoft.VisualBasic/VBCodeGenerator.cs");
+				Output.WriteLine ("'Indent=" + Indent.ToString());
 				--Indent;
 				Output.WriteLine ("End Namespace");
+				Output.WriteLine ("'Indent=" + Indent.ToString());
 			}
 		}
 
@@ -893,7 +898,8 @@ namespace Microsoft.VisualBasic
 				Output.Write ("MustOverride ");
 				break;
 			case MemberAttributes.Final:
-				Output.Write ("NotOverridable ");
+				//JW 2004-06-03: seems to be the "sealed" keyword in C# and the "NotOverridable" keyword in VB, but conflicts with ASP.NET generation
+				//Output.Write ("NotOverridable ");
 				break;
 			case MemberAttributes.Static:
 				Output.Write ("Shared ");
@@ -901,6 +907,14 @@ namespace Microsoft.VisualBasic
 			case MemberAttributes.Override:
 				Output.Write ("Overrides ");
 				break;
+			case MemberAttributes.Overloaded:
+				// based on http://gendotnet.com/Code%20Gen%20Articles/codedom.htm
+				Output.Write ("Overloads ");
+                                MemberAttributes access_ovl = attributes & MemberAttributes.AccessMask;
+                                if ( access_ovl == MemberAttributes.Public || 
+                                        access_ovl == MemberAttributes.Family )
+                                        Output.Write ("Overridable ");
+                                break;
 			default:
 				//
 				// FUNNY! if the scope value is
