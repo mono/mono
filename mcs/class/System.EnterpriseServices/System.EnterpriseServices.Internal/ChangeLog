@@ -1,4 +1,17 @@
-2004-05-14: Mike Kestner  <mkestner@ximian.com>
+2004-06-11  Gert Driesen <drieseng@users.sourceforge.net>
+
+	* IClrObjectFactory.cs: added missing DispId attributes
+	* IComManagedImportUtil.cs: added missing DispId attributes
+	* IComSoapIISVRoot.cs: added missing DispId attributes
+	* IComSoapMetadata.cs: added missing DispId attributes
+	* IComSoapPublisher.cs: added missing DispId attributes
+	* IServerWebConfig.cs: added missing DispId attributes
+	* ISoapClientImport.cs: added missing DispId attributes
+	* ISoapServerTlb.cs: added missing DispId attributes
+	* ISoapServerVRoot.cs: added missing DispId attributes
+	* ISoapUtility.cs: added missing DispId attributes
+
+2004-05-14  Mike Kestner  <mkestner@ximian.com>
 
 	* ClientRemotingConfig.cs : stub
 	* ComSoapPublishError.cs : stub
@@ -9,7 +22,7 @@
 	* IServerWebConfig.cs : impl
 	* ServerWebConfig.cs : stub
 
-2004-05-13: Mike Kestner  <mkestner@ximian.com>
+2004-05-13  Mike Kestner  <mkestner@ximian.com>
 
 	* SoapClientImportUtil.cs : add a TODO
 	* SoapServerTlb.cs : stub
