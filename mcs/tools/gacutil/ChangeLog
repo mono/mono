@@ -1,5 +1,7 @@
 2003-12-10  Zoltan Varga  <vargaz@freemail.hu>
 
+	* gacutil.cs: Fix binding flags.
+	
 	* gacutil.cs: Applied patch from Todd Berman (tbermann@gentoo.org).
 	Use Environment.GacPath () instead of hardcoding the GAC path.
 

@@ -401,7 +401,7 @@ namespace Mono.Tools
 		}
 
 		private static string GetGacPath () {
-			PropertyInfo gac = typeof (System.Environment).GetProperty ("GacPath", BindingFlags.Instance|BindingFlags.NonPublic);
+			PropertyInfo gac = typeof (System.Environment).GetProperty ("GacPath", BindingFlags.Static|BindingFlags.NonPublic);
 			MethodInfo getGac = gac.GetGetMethod (true);
 			return Path.Combine ((string) getGac.Invoke (null, null), "");
 		}
