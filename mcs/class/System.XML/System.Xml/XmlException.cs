@@ -1,3 +1,12 @@
+// -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
+//
+// System.Xml.XmlException
+//
+// Author:
+//   Daniel Weber (daniel-weber@austin.rr.com)
+//
+// (C) 2001 Daniel Weber
+
 using System;
 using System.Runtime.Serialization;
 
