@@ -1,3 +1,8 @@
+2004-03-04  Alon Gazit <along@mainsoft.com>
+
+	* XmlSchemaUnique.cs : Changed Read implementation.
+	Currently can read "field" element before "selector" element (like MS).  
+
 2004-02-26  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlSchemaCollection.cs : Implemented SyncRoot and IsSynchronized

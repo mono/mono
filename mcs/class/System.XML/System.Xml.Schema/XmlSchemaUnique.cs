@@ -83,7 +83,6 @@ namespace System.Xml.Schema
 				return unique;
 
 			//  Content: annotation?, selector, field+
-			int level = 1;
 			while(reader.ReadNextElement())
 			{
 				if(reader.NodeType == XmlNodeType.EndElement)
@@ -92,27 +91,22 @@ namespace System.Xml.Schema
 						error(h,"Should not happen :2: XmlSchemaUnion.Read, name="+reader.Name,null);
 					break;
 				}
-				if(level <= 1 && reader.LocalName == "annotation")
+				if(reader.LocalName == "annotation" && unique.Annotation == null )//Only one annotation
 				{
-					level = 2; //Only one annotation
 					XmlSchemaAnnotation annotation = XmlSchemaAnnotation.Read(reader,h);
 					if(annotation != null)
 						unique.Annotation = annotation;
 					continue;
 				}
-				if(level <= 2 && reader.LocalName == "selector")
+				if( reader.LocalName == "selector")
 				{
-					level = 3;
 					XmlSchemaXPath selector = XmlSchemaXPath.Read(reader,h,"selector");
 					if(selector != null)
 						unique.Selector = selector;
 					continue;
 				}
-				if(level <= 3 && reader.LocalName == "field")
-				{
-					level = 3;
-					if(unique.Selector == null)
-						error(h,"selector must be defined before field declarations",null);
+				if(reader.LocalName == "field")
+				{	
 					XmlSchemaXPath field = XmlSchemaXPath.Read(reader,h,"field");
 					if(field != null)
 						unique.Fields.Add(field);
