@@ -29,6 +29,6 @@
 //
 #if NET_2_0
 namespace System.Web.UI.WebControls {
-	public sealed delegate void SiteMapNodeItemEventHandler (object sender, SiteMapNodeItemEventArgs e);
+	public delegate void SiteMapNodeItemEventHandler (object sender, SiteMapNodeItemEventArgs e);
 }
 #endif

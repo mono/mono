@@ -30,7 +30,7 @@
 
 #if NET_2_0
 
-using System.Collections.Specialized;
+using System.Collections;
 
 namespace System.Web.UI.WebControls
 {
@@ -66,7 +66,7 @@ namespace System.Web.UI.WebControls
 			set { exceptionHandled = value; }
 		}
 
-		public IDicitionary OutputParameters {
+		public IDictionary OutputParameters {
 			get { return outPutParam; }
 		}
 		

@@ -38,7 +38,7 @@ namespace System.Web.UI.WebControls {
 		
 		public CreateUserErrorEventArgs (MembershipCreateStatus status)
 		{
-			this.status = status
+			this.status = status;
 		}
 		
 		public MembershipCreateStatus CreateUserError { 

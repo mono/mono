@@ -29,6 +29,6 @@
 //
 #if NET_2_0
 namespace System.Web.UI.WebControls {
-	public sealed delegate void GridViewRowEventHandler (object sender, GridViewRowEventArgs e);
+	public delegate void GridViewRowEventHandler (object sender, GridViewRowEventArgs e);
 }
 #endif

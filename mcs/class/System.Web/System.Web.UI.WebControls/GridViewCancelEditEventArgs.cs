@@ -40,11 +40,11 @@ namespace System.Web.UI.WebControls
 		
 		public GridViewCancelEditEventArgs (int index)
 		{
-			this.rowsIndex = index;
+			this.rowIndex = index;
 		}
 		
 		public int RowIndex {
-			get { return rowsIndex; }
+			get { return rowIndex; }
 		}
 
 	}

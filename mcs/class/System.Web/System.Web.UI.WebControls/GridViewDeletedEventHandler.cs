@@ -29,6 +29,6 @@
 //
 #if NET_2_0
 namespace System.Web.UI.WebControls {
-	public sealed delegate void GridViewDeletedEventHandler (object sender, GridViewDeletedEventArgs e);
+	public delegate void GridViewDeletedEventHandler (object sender, GridViewDeletedEventArgs e);
 }
 #endif

@@ -36,10 +36,10 @@ namespace System.Web.UI.WebControls
 {
 	public class DetailsViewModeEventArgs : CancelEventArgs
 	{
-		private DetaislViewMode mode;
+		private DetailsViewMode mode;
 		private bool cancelEdit;
 		
-		public DetailsViewModeEventArgs (DetaislViewMode mode, bool cancelingEdit)
+		public DetailsViewModeEventArgs (DetailsViewMode mode, bool cancelingEdit)
 		{
 			this.mode = mode;
 			this.cancelEdit = cancelingEdit;
@@ -49,7 +49,7 @@ namespace System.Web.UI.WebControls
 			get { return cancelEdit; }
 		}
 
-		public DetaislViewMode NewMode {
+		public DetailsViewMode NewMode {
 			get { return mode; }
 			set { mode = value;}
 		}

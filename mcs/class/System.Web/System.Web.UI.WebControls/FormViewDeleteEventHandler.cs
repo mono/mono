@@ -29,6 +29,6 @@
 //
 #if NET_2_0
 namespace System.Web.UI.WebControls {
-	public sealed delegate void FormViewDeleteEventHandler (object sender, FormViewDeleteEventArgs e);
+	public delegate void FormViewDeleteEventHandler (object sender, FormViewDeleteEventArgs e);
 }
 #endif

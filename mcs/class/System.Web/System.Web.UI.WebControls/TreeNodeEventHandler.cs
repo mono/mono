@@ -30,7 +30,7 @@
 
 #if NET_2_0
 namespace System.Web.UI.WebControls {
-	public sealed delegate void TreeNodeEventHandler (object source, TreeNodeEventArgs e);
+	public delegate void TreeNodeEventHandler (object source, TreeNodeEventArgs e);
 }
 #endif
 

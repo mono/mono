@@ -52,7 +52,7 @@ namespace System.Web.UI.WebControls
 		}
 
 		public Exception Exception {
-			get { return e };
+			get { return e; }
 		}
 
 		public bool ExceptionHandled {
@@ -61,11 +61,11 @@ namespace System.Web.UI.WebControls
 		}
 	
 		public IOrderedDictionary Keys {
-			get { return new NotImplementedException(); }
+			get { throw new NotImplementedException(); }
 		}
 
 		public IOrderedDictionary Values {
-			get { return new NotImplementedException(); }
+			get { throw new NotImplementedException(); }
 		}
 	}
 }

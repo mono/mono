@@ -30,7 +30,7 @@
 
 #if NET_2_0
 namespace System.Web.UI.WebControls {
-	public sealed delegate void SqlDataSourceSelectingEventHandler (object source, SqlDataSourceSelectingEventArgs e);
+	public delegate void SqlDataSourceSelectingEventHandler (object source, SqlDataSourceSelectingEventArgs e);
 }
 #endif
 

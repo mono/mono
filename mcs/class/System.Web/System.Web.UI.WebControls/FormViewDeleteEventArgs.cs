@@ -43,19 +43,19 @@ namespace System.Web.UI.WebControls
 		
 		public FormViewDeleteEventArgs (int index)
 		{
-			this.rowsIndex = index;
+			this.rowIndex = index;
 		}
 		
 		public int RowIndex {
-			get { return rowsIndex; }
+			get { return rowIndex; }
 		}
 
 		public IOrderedDictionary Keys {
-			get { return new NotImplementedException(); }
+			get { throw new NotImplementedException(); }
 		}
 
 		public IOrderedDictionary Values {
-			get { return new NotImplementedException(); }
+			get { throw new NotImplementedException(); }
 		}
 	}
 }

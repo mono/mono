@@ -29,6 +29,6 @@
 //
 #if NET_2_0
 namespace System.Web.UI.WebControls {
-	public sealed delegate void GridViewCancelEditEventHandler (object sender, GridViewCancelEditEventArgs e);
+	public delegate void GridViewCancelEditEventHandler (object sender, GridViewCancelEditEventArgs e);
 }
 #endif

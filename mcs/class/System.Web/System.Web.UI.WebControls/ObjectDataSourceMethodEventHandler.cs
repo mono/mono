@@ -29,6 +29,6 @@
 //
 #if NET_2_0
 namespace System.Web.UI.WebControls {
-	public sealed delegate void ObjectDataSourceMethodEventHandler (object sender, ObjectDataSourceMethodEventArgs e);
+	public delegate void ObjectDataSourceMethodEventHandler (object sender, ObjectDataSourceMethodEventArgs e);
 }
 #endif

@@ -29,6 +29,6 @@
 //
 #if NET_2_0
 namespace System.Web.UI.WebControls {
-	public sealed delegate void GridViewSortEventHandler (object sender, GridViewSortEventArgs e);
+	public delegate void GridViewSortEventHandler (object sender, GridViewSortEventArgs e);
 }
 #endif

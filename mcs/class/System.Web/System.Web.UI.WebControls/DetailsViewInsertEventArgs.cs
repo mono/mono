@@ -49,7 +49,7 @@ namespace System.Web.UI.WebControls
 		}
 
 		public IOrderedDictionary Values {
-			get { return new NotImplementedException(); }
+			get { throw new NotImplementedException(); }
 		}
 	}
 }

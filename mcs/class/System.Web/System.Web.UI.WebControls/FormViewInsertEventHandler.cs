@@ -29,6 +29,6 @@
 //
 #if NET_2_0
 namespace System.Web.UI.WebControls {
-	public sealed delegate void FormViewInsertEventHandler (object sender, FormViewInsertEventArgs e);
+	public delegate void FormViewInsertEventHandler (object sender, FormViewInsertEventArgs e);
 }
 #endif

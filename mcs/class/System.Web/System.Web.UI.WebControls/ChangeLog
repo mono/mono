@@ -1,3 +1,76 @@
+2004-08-31  Sanjay Gupta <gsanjay@novell.com>
+
+	* AuthenticateEventHandler.cs: 
+	* CreateUserErrorEventArgs.cs:
+	* CreateUserErrorEventHandler.cs:
+    	* DetailsViewCommandEventHandler.cs:
+	* DetailsViewDeleteEventArgs.cs:
+	* DetailsViewDeleteEventHandler.cs:
+	* DetailsViewDeletedEventArgs.cs:
+    	* DetailsViewDeletedEventHandler.cs:
+	* DetailsViewInsertEventArgs.cs:
+	* DetailsViewInsertEventHandler.cs:
+	* DetailsViewInsertedEventArgs.cs:
+	* DetailsViewInsertedEventHandler.cs:
+	* DetailsViewModeEventArgs.cs:
+    	* DetailsViewModeEventHandler.cs:
+	* DetailsViewPageEventHandler.cs:
+	* DetailsViewUpdateEventArgs.cs:
+	* DetailsViewUpdateEventHandler.cs:
+	* DetailsViewUpdatedEventArgs.cs:
+    	* DetailsViewUpdatedEventHandler.cs:
+    	* FormViewCommandEventHandler.cs:
+	* FormViewDeleteEventArgs.cs:
+	* FormViewDeleteEventHandler.cs:
+	* FormViewDeletedEventArgs.cs:
+    	* FormViewDeletedEventHandler.cs:
+	* FormViewInsertEventArgs.cs:
+    	* FormViewInsertEventHandler.cs:
+	* FormViewInsertedEventArgs.cs:
+    	* FormViewInsertedEventHandler.cs:
+	* FormViewModeEventHandler.cs:
+    	* FormViewPageEventHandler.cs:
+	* FormViewUpdateEventArgs.cs:
+    	* FormViewUpdateEventHandler.cs:
+	* FormViewUpdatedEventArgs.cs:
+    	* FormViewUpdatedEventHandler.cs:
+	* GridViewCancelEditEventArgs.cs:
+	* GridViewCancelEditEventHandler.cs:
+    	* GridViewCommandEventHandler.cs:
+	* GridViewDeleteEventArgs.cs:
+    	* GridViewDeleteEventHandler.cs:
+	* GridViewDeletedEventArgs.cs:
+    	* GridViewDeletedEventHandler.cs:
+	* GridViewEditEventHandler.cs:
+    	* GridViewPageEventHandler.cs:
+	* GridViewRowEventHandler.cs:
+    	* GridViewSelectEventHandler.cs:
+	* GridViewSortEventArgs.cs:
+    	* GridViewSortEventHandler.cs:
+	* GridViewUpdateEventArgs.cs:
+    	* GridViewUpdateEventHandler.cs:
+	* GridViewUpdatedEventArgs.cs:
+    	* GridViewUpdatedEventHandler.cs:
+	* ImageMapEventHandler.cs:
+    	* MailMessageEventHandler.cs:
+	* MenuEventHandler.cs:
+    	* ObjectDataSourceDisposingEventHandler.cs:
+    	* ObjectDataSourceEventHandler.cs:
+    	* ObjectDataSourceMethodEventArgs.cs:
+    	* ObjectDataSourceMethodEventHandler.cs:
+	* ObjectDataSourceSelectingEventArgs.cs:
+    	* ObjectDataSourceSelectingEventHandler.cs:
+    	* ObjectDataSourceStatusEventArgs.cs:
+    	* ObjectDataSourceStatusEventHandler.cs:
+    	* SendMailErrorEventHandler.cs:
+	* SiteMapNodeItemEventHandler.cs:
+    	* SqlDataSourceSelectingEventArgs.cs:
+    	* SqlDataSourceSelectingEventHandler.cs:
+	* TreeNodeEventHandler.cs:
+    	* WizardNavigationEventArgs.cs:
+	* WizardNavigationEventHandler.cs: Minor modifications, compiler error
+	corrections and removing "sealed" access specifier from *EventHandler.cs
+
 2004-08-18  Sanjay Gupta <gsanjay@novell.com>
 
 	* Literal.cs: Added new attributes and property for .Net 2.0
@@ -2069,4 +2142,4 @@ Comments:
 
 
 
-// File Created 2001-11-13
+i/ File Created 2001-11-13

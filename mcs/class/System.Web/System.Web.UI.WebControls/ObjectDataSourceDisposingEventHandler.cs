@@ -29,6 +29,6 @@
 //
 #if NET_2_0
 namespace System.Web.UI.WebControls {
-	public sealed delegate void ObjectDataSourceDisposingEventHandler (object sender, ObjectDataSourceDisposingEventArgs e);
+	public delegate void ObjectDataSourceDisposingEventHandler (object sender, ObjectDataSourceDisposingEventArgs e);
 }
 #endif

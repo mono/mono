@@ -35,14 +35,14 @@ namespace System.Web.UI.WebControls {
 		DataSourceSelectArguments arguments;
 		bool executeSelect;
 		
-		public SqlDataSourceSelectingEventArgs (IDbCommand command, DataSourceSelectArgument argument, 
+		public SqlDataSourceSelectingEventArgs (IDbCommand command, DataSourceSelectArguments argument, 
 			bool executeSelect) : base (command)
 		{
 			this.arguments = argument;
 			this.executeSelect = executeSelect;
 		}
 		
-		public DataSourceSelectArguments {
+		public DataSourceSelectArguments Arguments {
 			get { return arguments; }
 		}
 

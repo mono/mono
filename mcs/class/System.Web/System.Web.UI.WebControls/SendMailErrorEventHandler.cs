@@ -29,6 +29,6 @@
 //
 #if NET_2_0
 namespace System.Web.UI.WebControls {
-	public sealed delegate void SendMailErrorEventHandler (object sender, SendMailErrorEventArgs e);
+	public delegate void SendMailErrorEventHandler (object sender, SendMailErrorEventArgs e);
 }
 #endif

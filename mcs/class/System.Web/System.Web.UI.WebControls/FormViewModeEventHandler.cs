@@ -29,6 +29,6 @@
 //
 #if NET_2_0
 namespace System.Web.UI.WebControls {
-	public sealed delegate void FormViewModeEventHandler (object sender, FormViewModeEventArgs e);
+	public delegate void FormViewModeEventHandler (object sender, FormViewModeEventArgs e);
 }
 #endif

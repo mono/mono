@@ -29,6 +29,6 @@
 //
 #if NET_2_0
 namespace System.Web.UI.WebControls {
-	public sealed delegate void ImageMapEventHandler (object sender, ImageMapEventArgs e);
+	public delegate void ImageMapEventHandler (object sender, ImageMapEventArgs e);
 }
 #endif

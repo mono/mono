@@ -30,7 +30,7 @@
 
 #if NET_2_0
 namespace System.Web.UI.WebControls {
-	public sealed delegate void WizardNavigationEventHandler (object source, WizardNavigationEventArgs e);
+	public delegate void WizardNavigationEventHandler (object source, WizardNavigationEventArgs e);
 }
 #endif
 

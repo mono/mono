@@ -30,6 +30,8 @@
 
 #if NET_2_0
 
+using System.Collections;
+
 namespace System.Web.UI.WebControls
 {
 	public class ObjectDataSourceSelectingEventArgs: ObjectDataSourceMethodEventArgs

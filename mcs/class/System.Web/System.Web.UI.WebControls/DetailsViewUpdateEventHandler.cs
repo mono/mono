@@ -29,6 +29,6 @@
 //
 #if NET_2_0
 namespace System.Web.UI.WebControls {
-	public sealed delegate void DetailsViewUpdateEventHandler (object sender, DetailsViewUpdateEventArgs e);
+	public delegate void DetailsViewUpdateEventHandler (object sender, DetailsViewUpdateEventArgs e);
 }
 #endif

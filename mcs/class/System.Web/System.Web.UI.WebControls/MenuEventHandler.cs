@@ -29,6 +29,6 @@
 //
 #if NET_2_0
 namespace System.Web.UI.WebControls {
-	public sealed delegate void MenuEventHandler (object sender, MenuEventArgs e);
+	public delegate void MenuEventHandler (object sender, MenuEventArgs e);
 }
 #endif
