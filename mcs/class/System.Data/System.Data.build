@@ -7,10 +7,12 @@
 
 	<target name="build">
 		<csc target="library" output="../lib/System.Data.dll" debug="${debug}">
-			<arg value="/nowarn:1595"/>
+			<!--<arg value="/nowarn:1595"/>-->
 			<arg value="/unsafe"/>
 			<sources>
 				<includes name="**/*.cs"/> 
+				<excludes name="System.Data/DataViewSetting.cs"/>
+				<excludes name="System.Data/DataViewSettingCollection.cs"/>
 				<!--
 				<excludes name="System.Data/Constraint.cs"/>
 				<excludes name="System.Data/ConstraintCollection.cs"/>
