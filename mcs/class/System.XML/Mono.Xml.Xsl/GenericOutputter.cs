@@ -59,14 +59,16 @@ namespace Mono.Xml.Xsl
 		{			
 			XslOutput xslOutput = (XslOutput)outputs [String.Empty];
 			switch (xslOutput.Method) {
+				
+				case OutputMethod.HTML:
+					Console.WriteLine ("WARNING: HTML output not fully supported, using XML output");
+					goto case OutputMethod.XML;
 				case OutputMethod.Unknown: //TODO: handle xml vs html
 				case OutputMethod.XML:
 					//TODO: XmlTextEmitter goes here
 					//_emitter = new XmlTextEmitter (writer);
 					_emitter = new XmlWriterEmitter (new XmlTextWriter (writer));					
 					break;
-				case OutputMethod.HTML:
-					throw new NotImplementedException ("HTML output method is not implemented yet.");
 				case OutputMethod.Text:
 					_emitter = new TextEmitter (writer);
 					break;

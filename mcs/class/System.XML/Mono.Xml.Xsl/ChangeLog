@@ -1,5 +1,10 @@
 2003-09-28 Ben Maurer  <bmaurer@users.sourceforge.net>
 
+	* GenericOutputter.cs: make html output a warning, because doing
+	xml will be right most of the time.
+
+2003-09-28 Ben Maurer  <bmaurer@users.sourceforge.net>
+
 	* Debug.cs: comment out {Enter, Exit}Navigator. Haven't had bugs
 	here for a long time and it hurts thread safty and memory
 	allocation.
