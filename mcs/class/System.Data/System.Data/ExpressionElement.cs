@@ -1658,7 +1658,7 @@ namespace System.Data
 				try {
 					Element = int.Parse (s);
 					_ResultType = typeof (int);
-				} catch (OverflowException) {
+				} catch {
 					Element = Decimal.Parse (s);
 					_ResultType = typeof (Decimal);
 				}
