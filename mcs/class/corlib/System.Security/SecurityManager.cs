@@ -417,46 +417,118 @@ namespace System.Security {
 			return Decode (methodPermissions);
 		}
 
+		//  security check when using reflection
+
+		internal static void ReflectedLinkDemandEcma ()
+		{
+			Assembly corlib = typeof (int).Assembly;
+			// find the real caller of the icall
+			foreach (SecurityFrame f in SecurityFrame.GetStack (0)) {
+				// ignore System.Reflection class in corlib
+				if ((f.Assembly != corlib) || !f.Method.Name.StartsWith ("System.Reflection")) {
+					// else check for the ECMA key
+					byte[] pk = f.Assembly.GetName ().GetPublicKey ();
+					if ((pk != null) && (pk.Length == 16) && (pk [8] == 0x04)) {
+						int n = 0;
+						for (int i=0; i < pk.Length; i++)
+							n += pk [i];
+						if (n == 4)
+							return;
+					}
+					LinkDemandSecurityException (4, f.Assembly);
+				}
+			}
+		}
+
 		// internal - get called at JIT time
 
-		unsafe private static void LinkDemand (
+		private static bool LinkDemand (
 			IntPtr casClassPermission, int casClassLength,
 			IntPtr nonCasClassPermission, int nonCasClassLength,
+			IntPtr choiceClassPermission, int choiceClassLength,
 			IntPtr casMethodPermission, int casMethodLength,
 			IntPtr nonCasMethodPermission, int nonCasMethodLength,
-			bool requiresFullTrust)
+			IntPtr choiceMethodPermission, int choiceMethodLength)
 		{
-			PermissionSet ps = null;
-
-			if (casClassLength > 0) {
-				ps = Decode (casClassPermission, casClassLength);
-				ps.ImmediateCallerDemand ();
-			}
-			if (nonCasClassLength > 0) {
-				ps = Decode (nonCasClassPermission, nonCasClassLength);
-				ps.ImmediateCallerNonCasDemand ();
-			}
-
-			if (casMethodLength > 0) {
-				ps = Decode (casMethodPermission, casMethodLength);
-				ps.ImmediateCallerDemand ();
-			}
-			if (nonCasMethodLength > 0) {
-				ps = Decode (nonCasMethodPermission, nonCasMethodLength);
-				ps.ImmediateCallerNonCasDemand ();
-			}
-
-			if (requiresFullTrust) {
-				// double-lock pattern
-				if (_fullTrust == null) {
-					lock (_lockObject) {
-						if (_fullTrust == null)
-							_fullTrust = new NamedPermissionSet ("FullTrust");
-					}
+			try {
+				PermissionSet ps = null;
+				if (casClassLength > 0) {
+					ps = Decode (casClassPermission, casClassLength);
+					ps.ImmediateCallerDemand ();
 				}
+				if (nonCasClassLength > 0) {
+					ps = Decode (nonCasClassPermission, nonCasClassLength);
+					ps.ImmediateCallerNonCasDemand ();
+				}
+
+				if (casMethodLength > 0) {
+					ps = Decode (casMethodPermission, casMethodLength);
+					ps.ImmediateCallerDemand ();
+				}
+				if (nonCasMethodLength > 0) {
+					ps = Decode (nonCasMethodPermission, nonCasMethodLength);
+					ps.ImmediateCallerNonCasDemand ();
+				}
+
+				// TODO LinkDemandChoice (2.0)
+				return true;
+			}
+			catch (SecurityException) {
+				return false;
+			}
+		}
+
+		private static bool LinkDemandFullTrust (Assembly a)
+		{
+			// double-lock pattern
+			if (_fullTrust == null) {
+				lock (_lockObject) {
+					if (_fullTrust == null)
+						_fullTrust = new NamedPermissionSet ("FullTrust");
+				}
+			}
+			try {
 				// FIXME: to be optimized with a flag
 				_fullTrust.ImmediateCallerDemand ();
+				return true;
 			}
+			catch (SecurityException) {
+				return false;
+			}
+		}
+
+		private static bool LinkDemandUnmanaged (Assembly a)
+		{
+			return IsGranted (a, new SecurityPermission (SecurityPermissionFlag.UnmanagedCode));
+		}
+
+		private static void LinkDemandSecurityException (int securityViolation, Assembly a)
+		{
+			string message = null;
+			switch (securityViolation) {
+			case 1: // MONO_JIT_LINKDEMAND_PERMISSION
+				message = Locale.GetText ("Permissions refused to call this method.");
+				break;
+			case 2: // MONO_JIT_LINKDEMAND_APTC
+				message = Locale.GetText ("Partially trusted callers aren't allowed to call into this assembly.");
+				break;
+			case 4: // MONO_JIT_LINKDEMAND_ECMA
+				message = Locale.GetText ("Calling internal calls is restricted to ECMA signed assemblies.");
+				break;
+			case 8: // MONO_JIT_LINKDEMAND_PINVOKE
+				message = Locale.GetText ("Calling unmanaged code isn't allowed from this assembly.");
+				break;
+			default:
+				message = Locale.GetText ("JIT time LinkDemand failed.");
+				break;
+			}
+
+			AssemblyName an = null;
+			if (a != null)
+				an = a.GetName ();
+
+			// TODO - add more details to the exception
+			throw new SecurityException (message, an, null, null, null, SecurityAction.LinkDemand, null, null, null);
 		}
 
 		// internal - get called by the class loader
@@ -480,13 +552,13 @@ namespace System.Security {
 
 		// internal - get called by JIT generated code
 
-		unsafe private static void InternalDemand (IntPtr permissions, int length)
+		private static void InternalDemand (IntPtr permissions, int length)
 		{
 			PermissionSet ps = Decode (permissions, length);
 			ps.Demand ();
 		}
 
-		unsafe private static void InternalDemandChoice (IntPtr permissions, int length)
+		private static void InternalDemandChoice (IntPtr permissions, int length)
 		{
 #if NET_2_0
 			PermissionSet ps = Decode (permissions, length);
