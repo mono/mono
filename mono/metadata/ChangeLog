@@ -1,3 +1,17 @@
+2003-02-03  Patrik Torstensson
+	* appdomain.[c|h], domain.c : 
+	 - Added support for getting a domain via domain id
+	 - Support for setting and getting domain from System.AppDomain 
+	   (used in cross appdomain channel)
+	 - Added support for get/set for a MonoAppContext on a thread 
+	   (Context class in System.Runtime.Remoting.Contexts),
+	 - Removed hack in Get/SetData and ExecuteAssembly.
+	
+	* icall.c : renamed GetTransparantProxy to InternalGetTransparantProxy to allow
+	the managed world to get control when a proxy is created.
+
+	* icall.c (ves_icall_InternalExecute) : bug fix, must return empty array
+	
 2003-02-03  Miguel de Icaza  <miguel@ximian.com>
 
 	* icall.c
