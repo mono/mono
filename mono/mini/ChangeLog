@@ -1,4 +1,10 @@
 
+Tue Aug 5 12:21:08 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* cprop.c, mini-x86.c, cpu-pentium.md: fix buglets spotted
+	by Laurent Morichetti <l_m@pacbell.net>. Disabled local cprop
+	until it's fixed and actually useful.
+
 Mon Aug 4 12:12:26 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
 	* inssel-long32.brg: couple more opcodes implemented.
