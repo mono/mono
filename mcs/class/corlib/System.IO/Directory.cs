@@ -342,7 +342,6 @@ namespace System.IO
 
 		private static string [] GetFileSystemEntries (string path, string pattern, FileAttributes mask, FileAttributes attrs)
 		{
-			SearchPattern search;
 			MonoIOStat stat;
 			IntPtr find;
 
@@ -378,9 +377,7 @@ namespace System.IO
 				throw new ArgumentException ("Path is invalid", "path");
 			}
 
-			search = new SearchPattern (Path.GetFileName (wild));
-
-			find = MonoIO.FindFirstFile (Path.Combine (wildpath , "*"), out stat, out error);
+			find = MonoIO.FindFirstFile (wild, out stat, out error);
 			if (find == MonoIO.InvalidHandle) {
 				switch (error) {
 				case MonoIOError.ERROR_FILE_NOT_FOUND:
@@ -398,22 +395,11 @@ namespace System.IO
 			
 			ArrayList entries = new ArrayList ();
 
-			while (true) {
-				// Ignore entries of "." and ".." -
-				// the documentation doesn't mention
-				// it (surprise!) but empirical
-				// testing indicates .net never
-				// returns "." or ".." in a
-				// GetDirectories() list.
-				if ((stat.Attributes & mask) == attrs &&
-				    search.IsMatch (stat.Name) &&
-				    stat.Name != "." &&
-				    stat.Name != "..")
+			do {
+				if ((stat.Attributes & mask) == attrs)
 					entries.Add (Path.Combine (wildpath, stat.Name));
+			} while (MonoIO.FindNextFile (find, out stat, out error));
 
-				if (!MonoIO.FindNextFile (find, out stat, out error))
-					break;
-			}
 			MonoIO.FindClose (find, out error);
 
 			return (string []) entries.ToArray (typeof (string));
