@@ -1,3 +1,8 @@
+2005-03-24  Miguel de Icaza  <miguel@novell.com>
+
+	* DynamicMethod.cs (CreateDelegate): Add second overload based on
+	the first one that allows for a `target' argument.
+
 2005-03-24  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* MethodRental.cs: Added Demand for UnmanagedCode on SwapMethodBody 

@@ -107,7 +107,7 @@ namespace System
 				throw new ArgumentNullException ("method");
 
 			if (!type.IsSubclassOf (typeof (MulticastDelegate)))
-				throw new ArgumentException ("type");
+				throw new ArgumentException ("type is not a subclass of Multicastdelegate");
 
 			if (!method.IsStatic)
 				throw new ArgumentException ("The method should be static.", "method");
@@ -116,16 +116,35 @@ namespace System
 			ParameterInfo[] args = method.GetParameters ();
 
 			if (args.Length != delargs.Length)
-				throw new ArgumentException ("method");
+				throw new ArgumentException ("method argument length mismatch");
 			
 			int length = delargs.Length;
 			for (int i = 0; i < length; i++)
 				if (delargs [i].ParameterType != args [i].ParameterType)
-					throw new ArgumentException ("method");
+					throw new ArgumentException ("method arguments are incompatible");
 
 			return CreateDelegate_internal (type, null, method);
 		}
 
+		//
+		// This method is internal because this exact signature does 
+		// not exist on the framework.
+		//
+		internal static Delegate CreateDelegate (Type type, object target, MethodInfo method)
+		{
+			if (type == null)
+				throw new ArgumentNullException ("type");
+
+			if (method == null)
+				throw new ArgumentNullException ("method");
+
+			if (!type.IsSubclassOf (typeof (MulticastDelegate)))
+				throw new ArgumentException ("type is not a subclass of Multicastdelegate");
+
+			return CreateDelegate_internal (type, target, method);
+
+		}
+		
 		public static Delegate CreateDelegate (Type type, object target, string method)
 		{
 			return CreateDelegate(type, target, method, false);

@@ -110,7 +110,8 @@ namespace System.Reflection.Emit {
 				create_dynamic_method (this);
 		}
 
-		public Delegate CreateDelegate (Type delegateType) {
+		public Delegate CreateDelegate (Type delegateType)
+		{
 			if (delegateType == null)
 				throw new ArgumentNullException ("delegateType");
 			if (deleg != null)
@@ -122,6 +123,19 @@ namespace System.Reflection.Emit {
 			return deleg;
 		}
 
+		public Delegate CreateDelegate (Type delegateType, object target)
+		{
+			if (delegateType == null)
+				throw new ArgumentNullException ("delegateType");
+			if (deleg != null)
+				return deleg;
+
+			CreateDynMethod ();
+
+			deleg = Delegate.CreateDelegate (delegateType, target, this);
+			return deleg;
+		}
+		
 		[MonoTODO]
 		public ParameterBuilder DefineParameter (int position, ParameterAttributes attributes, string strParamName)
 		{

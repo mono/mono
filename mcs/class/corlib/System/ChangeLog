@@ -1,3 +1,8 @@
+2005-03-24  Miguel de Icaza  <miguel@novell.com>
+
+	* Delegate.cs: Add CreateDelegate with a target option, currently
+	internal as it is not exposed by the framework yet.
+
 2005-03-24  Zoltan Varga  <vargaz@freemail.hu>
 
 	* String.cs: Add some 2.0 methods.
