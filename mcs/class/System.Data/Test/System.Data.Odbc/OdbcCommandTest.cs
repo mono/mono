@@ -66,5 +66,25 @@ namespace MonoTests.System.Data.Odbc
 			object objCount = cmd.ExecuteScalar ();
 			Assertion.AssertEquals( "ExecuteScalar does not return int type", 5, Convert.ToInt32(objCount));
 		}
+
+		 /// <summary>
+                /// Test String parameters to ODBC Command
+                /// </summary>
+                [Test]
+                public void ExecuteStringParameterTest()
+                {
+                                                                                                    
+                        OdbcCommand dbcmd = new OdbcCommand();
+                        dbcmd.Connection = conn;
+                        dbcmd.CommandType = CommandType.Text;
+                        dbcmd.CommandText = "select count(*) from test where col_char=?;";
+                        string colvalue = "mono test";
+                        dbcmd.Parameters.Add("@un",colvalue);
+                        Object  obj = dbcmd.ExecuteScalar();
+                        Assertion.AssertEquals( "String parameter not passed correctly",5, Convert.ToInt32(obj));
+                                                                                                    
+                                                                                                 
+                }
+
 	}
 }
