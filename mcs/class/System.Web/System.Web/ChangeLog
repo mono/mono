@@ -1,3 +1,8 @@
+2004-11-11 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpApplication.cs: undo the TimeoutManager.(Add|Remove) shuffling.
+	It causes troubles under heavy load.
+
 2004-11-08 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* SiteMap.cs: don't lock on Type.
