@@ -1072,27 +1072,27 @@ namespace Mono.CSharp {
 			bool preserve_sig = true;
 			string entry_point = name;
 
-			if (prop_info_arr != null) {
+			if (field_info_arr != null) {
 				int char_set_extra = 0;
 
-				for (int i = 0; i < prop_info_arr.Length; i++) {
-					switch (prop_info_arr [i].Name) {
+				for (int i = 0; i < field_info_arr.Length; i++) {
+					switch (field_info_arr [i].Name) {
 						case "BestFitMapping":
 							throw new NotImplementedException ();
 						case "CallingConvention":
-							cc = (CallingConvention) prop_values_arr [i];
+							cc = (CallingConvention) field_values_arr [i];
 							break;
 						case "CharSet":
-							charset = (CharSet) prop_values_arr [i];
+							charset = (CharSet) field_values_arr [i];
 							break;
 						case "EntryPoint":
-							entry_point = (string) prop_values_arr [i];
+							entry_point = (string) field_values_arr [i];
 							break;
 						case "ExactSpelling":
 							char_set_extra |= 0x01;
 							break;
 						case "PreserveSig":
-							preserve_sig = (bool) prop_values_arr [i];
+							preserve_sig = (bool) field_values_arr [i];
 							break;
 						case "SetLastError":
 							char_set_extra |= 0x40;
@@ -1100,7 +1100,7 @@ namespace Mono.CSharp {
 						case "ThrowOnUnmappableChar":
 							throw new NotImplementedException ();
 						default: 
-							throw new InternalErrorException (prop_info_arr [i].ToString ());
+							throw new InternalErrorException (field_info_arr [i].ToString ());
 					}
 				}
 				charset |= (CharSet)char_set_extra;
