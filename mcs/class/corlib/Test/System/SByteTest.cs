@@ -145,25 +145,25 @@ public class SByteTest : TestCase
 	public void TestToString()
 	{
 		//test ToString()
-		Assert(String.Compare(MyString1, MySByte1.ToString()) == 0);
-		Assert(String.Compare(MyString2, MySByte2.ToString()) == 0);
-		Assert(String.Compare(MyString3, MySByte3.ToString()) == 0);
+		Assert("MyString1, MySByte1.ToString()", String.Compare(MyString1, MySByte1.ToString()) == 0);
+		Assert("MyString2, MySByte2.ToString()", String.Compare(MyString2, MySByte2.ToString()) == 0);
+		Assert("MyString3, MySByte3.ToString()", String.Compare(MyString3, MySByte3.ToString()) == 0);
 		//test ToString(string format)
 		for (int i=0; i < Formats1.Length; i++) {
-			Assert(String.Compare(Results1[i], MySByte2.ToString(Formats1[i])) == 0);
-			Assert(String.Compare(Results2[i], MySByte3.ToString(Formats2[i])) == 0);
+			Assert("Results1[i], MySByte2.ToString(Formats1[i])", String.Compare(Results1[i], MySByte2.ToString(Formats1[i])) == 0);
+			Assert("Results2[i], MySByte3.ToString(Formats2[i])", String.Compare(Results2[i], MySByte3.ToString(Formats2[i])) == 0);
 		}
 		//test ToString(string format, IFormatProvider provider);
 		for (int i=0; i < Formats1.Length; i++) {
-			Assert(String.Compare(ResultsNfi1[i], MySByte2.ToString(Formats1[i], Nfi)) == 0);
-			Assert(String.Compare(ResultsNfi2[i], MySByte3.ToString(Formats2[i], Nfi)) == 0);
+			Assert("i="+i+", ResultsNfi1[i]="+ResultsNfi1[i]+", MySByte2.ToString(Formats1[i]="+Formats1[i]+"): Expected "+ResultsNfi1[i]+" but got "+MySByte2.ToString(Formats1[i], Nfi), String.Compare(ResultsNfi1[i], MySByte2.ToString(Formats1[i], Nfi)) == 0);
+			Assert("ResultsNfi2[i], MySByte3.ToString(Formats2[i], Nfi):"+ResultsNfi2[i]+"<==>"+MySByte3.ToString(Formats2[i], Nfi), String.Compare(ResultsNfi2[i], MySByte3.ToString(Formats2[i], Nfi)) == 0);
 		}
 		try {
 			MySByte1.ToString("z");
 			Fail("Should raise a System.FormatException");
 		}
 		catch (Exception e) {
-			Assert(typeof(FormatException) == e.GetType());
+			Assert("typeof(FormatException) == e.GetType()", typeof(FormatException) == e.GetType());
 		}
 	}
 }
