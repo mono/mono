@@ -26,7 +26,29 @@ class MonoP {
 		string tname = args [0];
 		Type t = Type.GetType (tname);
 		
-		o.WriteLine ("public class {0} {{", t.Name); o.Indent++;
+		o.Write ("public class {0}", t.Name);
+		
+		Type [] interfaces = t.GetInterfaces ();
+		Type parent = t.BaseType;
+		
+		if ((parent != null && parent != typeof (object))|| interfaces.Length != 0) {
+			bool first = true;
+			o.Write (" : ");
+			
+			if (parent != null && parent != typeof (object)) {
+				o.Write (PName (parent));
+				first = false;
+			}
+			
+			foreach (Type intf in interfaces) {
+				if (!first) o.Write (", ");
+				first = false;
+				
+				o.Write (PName (intf));
+			}
+		}
+		
+		o.WriteLine (" {"); o.Indent++;
 		
 		foreach (ConstructorInfo ci in t.GetConstructors ())
 			o.WriteLine ("{0} ({1});", t.Name, PPParams (ci.GetParameters ()));

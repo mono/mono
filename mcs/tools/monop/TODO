@@ -2,7 +2,6 @@ TODO
 ----
 
 	* Need to distinguish between static and instance things
-	* Show the base class (public class Foo : Bar)
 	* Add options like /show-private. For example, if you view System.String
 	  you should only see public methods etc unless you specify /private. Similar
 	  thing for other scope things.
