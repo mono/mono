@@ -29,9 +29,13 @@
 //	Jaak Simm		jaaksimm@firm.ee
 //	John Sohn		jsohn@columbus.rr.com
 //
-// $Revision: 1.13 $
+// $Revision: 1.14 $
 // $Modtime: $
 // $Log: Control.cs,v $
+// Revision 1.14  2004/08/09 22:11:25  pbartok
+// - Added incomplete dock layout code
+// - Added support for mouse wheel
+//
 // Revision 1.13  2004/08/09 17:25:56  jackson
 // Use new color names
 //
@@ -213,10 +217,18 @@ namespace System.Windows.Forms
 				// Don't add it if we already have it
 				for (int i=0; i<owner.num_of_children; i++) {
 					if (value==owner.child_controls[i]) {
+						// Do we need to do anything here?
 						return;
 					}
 				}
 				value.Parent=owner;
+
+				// Handle layout duties
+				owner.SuspendLayout();
+//				value.InitLayout();
+				owner.ResumeLayout(false);
+
+				// Let everyone know about our new child
 				owner.OnControlAdded(new ControlEventArgs(value));
 			}
 
@@ -785,6 +797,7 @@ namespace System.Windows.Forms
 					return;
 
 				dock_style = value;
+				OnDockChanged(EventArgs.Empty);
 			}
 		}
 
@@ -1235,12 +1248,97 @@ namespace System.Windows.Forms
 			return result;
 		}
 
+		public void PerformLayout() {
+			PerformLayout(null, null);
+		}
+
+		public void PerformLayout(Control affectedControl, string affectedProperty) {
+			LayoutEventArgs levent = new LayoutEventArgs(affectedControl, affectedProperty);
+
+			if (layout_suspended>0) {
+				return;
+			}
+
+			// Prevent us from getting messed up
+			layout_suspended++;
+
+			// Perform all Dock and Anchor calculations
+			try {
+				Control		child;
+				Rectangle	space;
+
+				space=this.DisplayRectangle;
+
+				// Deal with docking
+				for (int i=0; i < num_of_children; i++) {
+					child=children[i];
+					switch (child.Dock) {
+						case DockStyle.None: {
+							// Do nothing
+							break;
+						}
+
+						case DockStyle.Left: {
+							child.SetBounds(space.Left, space.Y, child.Width, space.Height);
+							space.X+=child.Width;
+							space.Width-=child.Width;
+							break;
+						}
+
+						case DockStyle.Top: {
+							child.SetBounds(space.Left, space.Y, space.Width, child.Height);
+							space.Y+=child.Height;
+							space.Height-=child.Height;
+							break;
+						}
+				
+						case DockStyle.Right: {
+							child.SetBounds(space.Right-child.Width, space.Y, child.Width, space.Height);
+							space.Width-=child.Width;
+							break;
+						}
+
+						case DockStyle.Bottom: {
+							child.SetBounds(space.Left, space.Bottom-child.Height, space.Width, child.Height);
+							space.Height-=child.Height;
+							break;
+						}
+
+						case DockStyle.Fill: {
+							child.SetBounds(space.Left, space.Top, space.Width, space.Height);
+							space.Width=0;
+							space.Height=0;
+							break;
+						}
+					}
+				}
+
+				// Deal with anchoring
+				for (int i=0; i < num_of_children; i++) {
+					child=children[i];
+
+					if (child.Dock != DockStyle.None) {
+						continue;
+					}
+
+					
+				}
+
+				// Let everyone know
+				OnLayout(levent);
+			}
+
+			// Need to make sure we decremend layout_suspended
+			finally {
+				layout_suspended--;
+			}
+		}
+
 		public void ResumeLayout() 
 		{
 			ResumeLayout (true);
 		}
 
-		[MonoTODO]
 		public void ResumeLayout(bool peformLayout) 
 		{
 			layout_suspended--;
@@ -1248,7 +1346,7 @@ namespace System.Windows.Forms
 			if (layout_suspended > 0 || peformLayout == false)
 				return;
 
-			// PerformLayout and fire event			
+			PerformLayout();
 		}
 
 		
@@ -1296,7 +1394,6 @@ namespace System.Windows.Forms
 				}
 				
 				case Msg.WM_ERASEBKGND:{					
-					
 					if (GetStyle (ControlStyles.UserPaint)){						
 	    					PaintEventArgs eraseEventArgs = new PaintEventArgs (Graphics.FromHdc (m.WParam), new Rectangle (new Point (0,0),Size));
 		    				OnPaintBackground (eraseEventArgs);												
@@ -1311,43 +1408,46 @@ namespace System.Windows.Forms
 				}
 				
 				case Msg.WM_LBUTTONUP: {					
-					
 					int clicks = 1;
-					int delta = 1;			
 					
 					OnMouseUp (new MouseEventArgs (FromParamToMouseButtons ((int) m.WParam.ToInt32()), 
-						clicks, LowOrder ((int) m.LParam.ToInt32 ()),
-							HighOrder ((int) m.LParam.ToInt32 ()), delta));
-					
+							clicks, 
+							LowOrder ((int) m.LParam.ToInt32 ()), HighOrder ((int) m.LParam.ToInt32 ()), 
+							0));
 					break;
 				}
 				
 				case Msg.WM_LBUTTONDOWN: {					
-					
 					int clicks = 1;
-					int delta = 1;					
 					
 					OnMouseDown (new MouseEventArgs (FromParamToMouseButtons ((int) m.WParam.ToInt32()), 
-						clicks, LowOrder ((int) m.LParam.ToInt32 ()),
-							HighOrder ((int) m.LParam.ToInt32 ()), delta));
+							clicks, LowOrder ((int) m.LParam.ToInt32 ()), HighOrder ((int) m.LParam.ToInt32 ()), 
+							0));
 					
 					break;
 				}
-				
+
+				case Msg.WM_MOUSEWHEEL: {
+					int clicks = 1;
+
+					OnMouseWheel (new MouseEventArgs (FromParamToMouseButtons ((int) m.WParam.ToInt32()), 
+							clicks, LowOrder ((int) m.LParam.ToInt32 ()), HighOrder ((int) m.LParam.ToInt32 ()), 
+							HighOrder(m.WParam.ToInt32())));
+					break;
+				}
+
 				
 				case Msg.WM_MOUSEMOVE: {					
-										
 					int clicks = 1;
-					int delta = 1;								
-					
+
 					OnMouseMove  (new MouseEventArgs (FromParamToMouseButtons ((int) m.WParam.ToInt32()), 
-						clicks, LowOrder ((int) m.LParam.ToInt32 ()),
-							HighOrder ((int) m.LParam.ToInt32 ()), delta));
+							clicks, 
+							LowOrder ((int) m.LParam.ToInt32 ()), HighOrder ((int) m.LParam.ToInt32 ()), 
+							0));
 					break;
 				}
 				
 				case Msg.WM_SIZE: {					
-					
 					UpdateBounds (bounds.X, bounds.Y, LowOrder ((int) m.LParam.ToInt32 ()),
 						HighOrder ((int) m.LParam.ToInt32 ()));					
 					
