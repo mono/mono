@@ -1,3 +1,7 @@
+2004-02-04  Jackson Harper <jackson@ximian.com>
+
+	* VBCodeProviderTest.cs: Use mono to execute assembly.
+	
 2003-12-11  Nick Drochak  <ndrochak@ieee.org>
 
 	* VBCodeProviderTest.cs: Console.WriteLine's don't really belong in 
