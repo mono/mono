@@ -3,7 +3,7 @@
 //
 // Author: 
 // Alexandre Pigolkine (pigolkine@gmx.de)
-// Jordi Mas i Hern‡ndez (jordi@ximian.com)
+// Jordi Mas i Hern√†ndez (jordi@ximian.com)
 // Sanjay Gupta (gsanjay@novell.com)
 //
 
@@ -105,6 +105,27 @@ namespace System.Drawing {
 		[DllImport("gdiplus.dll")]
 		static internal extern Status GdipGetSolidFillColor (IntPtr brush, out int color);
 		
+		// Texture brush functions
+		[DllImport("gdiplus.dll")]
+		static internal extern Status GdipGetTextureImage (IntPtr texture, out IntPtr image);
+		[DllImport("gdiplus.dll")]
+		static internal extern Status GdipCreateTexture (IntPtr image, WrapMode wrapMode,  out IntPtr texture);
+		[DllImport("gdiplus.dll")]
+		static internal extern Status GdipCreateTextureIAI (IntPtr image, IntPtr imageAttributes, int x, int y, int width, int height, out IntPtr texture);
+		[DllImport("gdiplus.dll")]
+		static internal extern Status GdipCreateTextureIA (IntPtr image, IntPtr imageAttributes, float x, float y, float width, float height, out IntPtr texture);
+		[DllImport("gdiplus.dll")]
+		static internal extern Status GdipCreateTexture2I (IntPtr image, WrapMode wrapMode, int x, int y, int width, int height, out IntPtr texture);
+		[DllImport("gdiplus.dll")]
+		static internal extern Status GdipCreateTexture2 (IntPtr image, WrapMode wrapMode, float x, float y, float width, float height, out IntPtr texture);
+		[DllImport("gdiplus.dll")]
+		static internal extern Status GdipGetTextureTransform (IntPtr texture, out IntPtr matrix);
+		[DllImport("gdiplus.dll")]
+		static internal extern Status GdipSetTextureTransform (IntPtr texture, IntPtr matrix);
+		[DllImport("gdiplus.dll")]
+		static internal extern Status GdipGetTextureWrapMode (IntPtr texture, out WrapMode wrapMode);
+		[DllImport("gdiplus.dll")]
+		static internal extern Status GdipSetTextureWrapMode (IntPtr texture, WrapMode wrapMode);
 		// Graphics functions
 		[DllImport("gdiplus.dll")]
 		static internal extern Status GdipCreateFromHDC(IntPtr hDC, out int graphics);
