@@ -22,6 +22,11 @@ namespace System.Web.UI.HtmlControls{
 			Attributes.Remove("method");
 			writer.WriteAttribute("action",Action,true);
 			Attributes.Remove("action");
+			if (Enctype != null){
+				writer.WriteAttribute ("enctype", Enctype);
+				Attributes.Remove ("enctype");
+			}
+				
 
 //			string clientOnSubmit = Page.ClientOnSubmitEvent;
 // 			if (clientOnSubmit != null && clientOnSubmit.Length > 0){
@@ -90,7 +95,7 @@ namespace System.Web.UI.HtmlControls{
 			}
 		}
 		
-		public string EncType{
+		public string Enctype{
 			get{
 				string attr = Attributes["enctype"];
 				if (attr != null){

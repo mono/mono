@@ -1,3 +1,10 @@
+2002-06-07  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HtmlForm.cs: fixed name of Enctype property and render enctype
+	enctype attribute.
+
+	* HtmlInputControl.cs: tag type is "input", not "type".
+
 2002-06-06  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HtmlControl.cs: Render contents moved to new RenderBeginTag method,

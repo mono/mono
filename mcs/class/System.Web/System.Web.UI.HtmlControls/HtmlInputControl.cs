@@ -14,7 +14,7 @@ namespace System.Web.UI.HtmlControls
 	public class HtmlInputControl : HtmlControl
 	{
 		
-		public HtmlInputControl (string type) : base ("type")
+		public HtmlInputControl (string type) : base ("input")
 		{
 			Attributes ["type"] = type;
 		}
