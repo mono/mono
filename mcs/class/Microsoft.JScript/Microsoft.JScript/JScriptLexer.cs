@@ -1,4 +1,4 @@
-// $ANTLR 2.7.3rc3-20040317: "jscript-lexer-parser.g" -> "JScriptLexer.cs"$
+// $ANTLR 2.7.3: "jscript-lexer-parser.g" -> "JScriptLexer.cs"$
 
 namespace Microsoft.JScript
 {
@@ -175,7 +175,7 @@ namespace Microsoft.JScript
 			literals.Add("with", 20);
 		}
 		
-		 public Token nextToken()			//throws TokenStreamException
+		public Token nextToken()			//throws TokenStreamException
 		{
 			Token theRetToken = null;
 tryAgain:

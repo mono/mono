@@ -1,4 +1,4 @@
-// $ANTLR 2.7.3rc3-20040317: "jscript-lexer-parser.g" -> "JScriptParser.cs"$
+// $ANTLR 2.7.3: "jscript-lexer-parser.g" -> "JScriptParser.cs"$
 
 namespace Microsoft.JScript
 {
@@ -340,7 +340,7 @@ _loop4_breakloop:			;
 		}
 		case LITERAL_try:
 		{
-			try_stm();
+			stm=try_stm(parent);
 			break;
 		}
 		default:
@@ -920,12 +920,18 @@ _loop15_breakloop:			;
 		return t;
 	}
 	
-	public void try_stm() //throws RecognitionException, TokenStreamException
+	public Try  try_stm(
+		AST parent
+	) //throws RecognitionException, TokenStreamException
 {
+		Try t;
+		
+		
+			t = new Try (parent);
 		
 		
 		match(LITERAL_try);
-		block();
+		block(t.guarded_block, t);
 		{
 			switch ( LA(1) )
 			{
@@ -976,13 +982,13 @@ _loop15_breakloop:			;
 					{
 					case LITERAL_catch:
 					{
-						catch_exp();
+						catch_exp(ref t.catch_id, t.catch_block, t);
 						{
 							switch ( LA(1) )
 							{
 							case LITERAL_finally:
 							{
-								finally_exp();
+								finally_exp(t.finally_block, t);
 								break;
 							}
 							case EOF:
@@ -1089,7 +1095,7 @@ _loop15_breakloop:			;
 			}
 			case LITERAL_finally:
 			{
-				finally_exp();
+				finally_exp(t.finally_block, t);
 				break;
 			}
 			default:
@@ -1098,10 +1104,16 @@ _loop15_breakloop:			;
 			}
 			 }
 		}
+		return t;
 	}
 	
-	public void block() //throws RecognitionException, TokenStreamException
+	public void block(
+		Block elems, AST parent
+	) //throws RecognitionException, TokenStreamException
 {
+		
+		
+			AST stm = null;
 		
 		
 		match(OPEN_BRACE);
@@ -1110,7 +1122,11 @@ _loop15_breakloop:			;
 			{
 				if ((tokenSet_2_.member(LA(1))))
 				{
-					statement(null);
+					stm=statement(parent);
+					if (0==inputState.guessing)
+					{
+						if (stm != null) elems.Add (stm);
+					}
 				}
 				else
 				{
@@ -1123,23 +1139,33 @@ _loop19_breakloop:			;
 		match(CLOSE_BRACE);
 	}
 	
-	public void catch_exp() //throws RecognitionException, TokenStreamException
+	public void catch_exp(
+		ref string id, Block catch_block, AST parent
+	) //throws RecognitionException, TokenStreamException
 {
 		
+		Token  i = null;
 		
 		match(LITERAL_catch);
 		match(OPEN_PARENS);
+		i = LT(1);
 		match(IDENTIFIER);
+		if (0==inputState.guessing)
+		{
+			id = i.getText ();
+		}
 		match(CLOSE_PARENS);
-		block();
+		block(catch_block, parent);
 	}
 	
-	public void finally_exp() //throws RecognitionException, TokenStreamException
+	public void finally_exp(
+		Block elems, AST parent
+	) //throws RecognitionException, TokenStreamException
 {
 		
 		
 		match(LITERAL_finally);
-		block();
+		block(elems, parent);
 	}
 	
 	public Expression  expr(
