@@ -1,5 +1,10 @@
 2001-09-18  Ravi Pratap  <ravi@ximian.com>
 
+	* class.cs (RegisterMethodBuilder): Remove : it's unnecessary.
+	Move back code into TypeContainer::Populate.
+
+2001-09-18  Ravi Pratap  <ravi@ximian.com>
+
 	* class.cs (TypeContainer::AddConstructor): Fix the check to
 	compare against Name, not Basename. 
 	(Operator::OpType): Change Plus and Minus to Add and Subtract.

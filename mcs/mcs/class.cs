@@ -530,28 +530,6 @@ namespace CIR {
 			c.ModFlags = mods;	
 		}
 
-		public void RegisterMethodBuilder (object element)
-		{
-			if (method_builders_to_methods == null)
-				method_builders_to_methods = new Hashtable ();
-
-			if (element is Method) {
-				Method m = (Method) element;
-				method_builders_to_methods.Add (m.MethodBuilder, m);
-			}
-			
-			if (element is Constructor) {
-				Constructor c = (Constructor) element;
-				method_builders_to_methods.Add (c.ConstructorBuilder, c);
-			}
-			
-			if (element is Operator) {
-				Operator op = (Operator) element;
-				method_builders_to_methods.Add (op.OperatorMethodBuilder, op.OperatorMethod);
-			}
-			
-		}
-		
 		//
 		// Populates our TypeBuilder with fields and methods
 		//
@@ -577,14 +555,18 @@ namespace CIR {
 			if (Constructors != null){
 				foreach (Constructor c in Constructors){
 					c.Define (this);
-					RegisterMethodBuilder (c);
+					if (method_builders_to_methods == null)
+						method_builders_to_methods = new Hashtable ();
+					method_builders_to_methods.Add (c.ConstructorBuilder, c);
 				}
 			} 
 
 			if (Methods != null){
 				foreach (Method m in Methods){
 					m.Define (this);
-					RegisterMethodBuilder (m);
+					if (method_builders_to_methods == null)
+						method_builders_to_methods = new Hashtable ();
+					method_builders_to_methods.Add (m.MethodBuilder, m);
 				}
 			}
 
@@ -611,7 +593,9 @@ namespace CIR {
 			if (Operators != null) {
 				foreach (Operator o in Operators) {
 					o.Define (this);
-					RegisterMethodBuilder (o);
+					if (method_builders_to_methods == null)
+						method_builders_to_methods = new Hashtable ();
+					method_builders_to_methods.Add (o.OperatorMethodBuilder, o.OperatorMethod);
 				}
 			}
 
