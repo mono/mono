@@ -284,9 +284,8 @@ namespace System.Windows.Forms {
 		}
 		
 		[MonoTODO]
-		public static void DrawCheckBox( Graphics graphics, Rectangle rectangle,CaptionButton button, ButtonState state) {
-			//Fixme: blindly and wrongly copied from same function without CaptionButton. This ignors CaptionButton. It should use it.
-			DrawFrameControlHelper (graphics, rectangle, (uint)DrawFrameControl.DFC_BUTTON, (uint)state | (uint)DrawFrameControl.DFCS_BUTTONCHECK);
+		public static void DrawCaptionButton( Graphics graphics, Rectangle rectangle,CaptionButton button, ButtonState state) {
+			//FIXME:
 		}
 		
 		[MonoTODO]

@@ -12,46 +12,46 @@ namespace System.Windows.Forms.Design {
 	/// Summary description for ComponentEditorForm.
 	/// </summary>
 	public class ComponentEditorForm : Form {
-		public ComponentEditorForm() {
-			//
-			// TODO: Add constructor logic here
-			//
-			throw new NotImplementedException ();
-		}
 
+		[MonoTODO]
 		public ComponentEditorForm(object component, Type[] pageTypes){
-			//
-			// TODO: Add constructor logic here
-			//
-			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		protected override void OnActivated(EventArgs e){
-			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
+		protected virtual void OnSelChangeSelector(EventArgs e){
+		}
+
+		[MonoTODO]
 		public override bool PreProcessMessage(ref Message msg){
 			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		public virtual DialogResult ShowForm(){
 			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		public virtual DialogResult ShowForm(int page){
 			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		public virtual DialogResult ShowForm(IWin32Window owner){
 			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		public virtual DialogResult ShowForm(IWin32Window owner, int page){
 			throw new NotImplementedException ();
 		}
-		// can't override the function in control. bug in compiler
-		//protected override void onHelpRequested(HelpEventArgs e){
-		//	throw new NotImplementedException ();
-		//}
+		[MonoTODO]
+		// can't override the function in control. bug in compiler. Fixed?
+		protected override void OnHelpRequested(HelpEventArgs e){
+		}
 	}
 }
