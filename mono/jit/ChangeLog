@@ -1,3 +1,14 @@
+2002-07-23  Dietmar Maurer  <dietmar@ximian.com>
+
+	* emit-x86.c (enter_method): use arch_get_argument_info to get
+	stack layout.
+
+	* jit.c (mono_analyze_stack): use arch_get_argument_info to get
+	stack layout.
+	(mono_analyze_stack): removed unused code
+
+	* emit-x86.c (arch_allocate_arg): impl.
+
 2002-07-22  Dietmar Maurer  <dietmar@ximian.com>
 
 	* emit-x86.c (arch_allocate_var): fix alignment bug
