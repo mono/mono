@@ -49,7 +49,6 @@ namespace System
 		private string fragment = String.Empty;
 		private string userinfo = String.Empty;
 		private bool is_root_path = false;
-		private bool is_wins_dir = true;
 		private bool isUnc = false;
 		private bool isOpaquePart = false;
 
@@ -350,7 +349,7 @@ namespace System
 					else if (System.IO.Path.DirectorySeparatorChar == '\\')
 						cachedLocalPath = "\\\\" + Unescape (host + path.Replace ('/', '\\'));
 					else 
-						cachedLocalPath = (is_root_path? "/": "") + (is_wins_dir? "/": "") + Unescape (host + path);
+						cachedLocalPath = (is_root_path? "/": "") + "/" + Unescape (host + path);
 				}
 				return cachedLocalPath;
 			} 
@@ -795,7 +794,23 @@ namespace System
 		
 		private void ParseAsWindowsUNC (string uriString)
 		{
-			// not required as yet.
+			scheme = UriSchemeFile;
+			port = -1;
+			fragment = String.Empty;
+			query = String.Empty;
+			isUnc = true;
+
+			uriString = uriString.TrimStart (new char [] {'\\'});
+			isUnc = true;
+			int pos = uriString.IndexOf ('\\');
+			if (pos > 0) {
+				path = uriString.Substring (pos);
+				host = uriString.Substring (0, pos);
+			} else { // "\\\\server"
+				host = uriString;
+				path = String.Empty;
+			}
+			path = path.Replace ("\\", "/");
 		}
 
 		private void ParseAsWindowsAbsoluteFilePath (string uriString)
@@ -806,7 +821,7 @@ namespace System
 			scheme = UriSchemeFile;
 			host = String.Empty;
 			port = -1;
-			path = EscapeString (uriString.Replace ("\\", "/"));
+			path = uriString.Replace ("\\", "/");
 			fragment = String.Empty;
 			query = String.Empty;
 		}
@@ -858,76 +873,45 @@ namespace System
 
 			int pos = 0;
 
+			// 1, 2
+			// Identify Windows path, unix path, or standard URI.
 			pos = uriString.IndexOf (':');
 			if (pos < 0) {
 				// It must be Unix file path or Windows UNC
-				if (uriString [0] == '/') {
+				if (uriString [0] == '/')
 					ParseAsUnixAbsoluteFilePath (uriString);
-					return;
-				}
 				else if (uriString.StartsWith ("\\\\"))
-					;// ParseAsWindowsUNC (uriString);
+					ParseAsWindowsUNC (uriString);
 				else
-					throw new UriFormatException ();
+					throw new UriFormatException ("URI scheme was not recognized, nor input string is not recognized as an absolute file path.");
+				return;
 			}
 			else if (pos == 1) {
+				if (!Char.IsLetter (uriString [0]))
+					throw new UriFormatException ("URI scheme must start with alphabet character.");
+				// This means 'a:' == windows full path.
 				ParseAsWindowsAbsoluteFilePath (uriString);
 				return;
 			}
-			pos = 0;
 
-			// 1
-			char c = 'x';
-			for (; pos < len; pos++) {
-				c = uriString [pos];
-				if ((c == ':') || (c == '/') || (c == '\\') || (c == '?') || (c == '#')) 
-					break;
-			}
-
-			if (pos == len)
-				throw new UriFormatException ("The format of the URI could not be determined.");
-
-			if (c == '/') {
-				is_root_path = true;
-			}
-
-			if (uriString.StartsWith ("//")
-					|| uriString.StartsWith ("\\\\"))  {
-				is_wins_dir = true;
-				is_root_path = true;
-			}
-
-			// 2 scheme
-			if (c == ':') {
-				if (pos == 1) {
-					// a windows filepath
-					if (uriString.Length < 3 || (uriString [2] != '\\' && uriString [2] != '/'))
-						throw new UriFormatException ("Invalid URI: The format of the URI could not be determined.");
-					scheme = Uri.UriSchemeFile;
-					path = uriString.Replace ('\\', '/');
-					return;
+			// scheme
+			scheme = uriString.Substring (0, pos).ToLower ();
+			// Check scheme name characters as specified in RFC2396.
+			if (!Char.IsLetter (scheme [0]))
+					throw new UriFormatException ("URI scheme must start with alphabet character.");
+			for (int i = 1; i < scheme.Length; i++) {
+				if (!Char.IsLetterOrDigit (scheme, i)) {
+					switch (scheme [i]) {
+					case '+':
+					case '-':
+					case '.':
+						break;
+					default:
+						throw new UriFormatException ("URI scheme must consist of one of alphabet, digits, '+', '-' or '.' character.");
+					}
 				}
-
-				scheme = uriString.Substring (0, pos).ToLower ();
-				uriString = uriString.Remove (0, pos + 1);
-			} else if ((c == '/') && (pos == 0)) {
-				scheme = Uri.UriSchemeFile;
-				if (uriString.Length > 1 && uriString [1] != '/')
-					// unix bare filepath
-					isUnixFilePath = true;
-				else
-					// unix UNC (kind of)
-					isUnc = true;
-			} else {
-				if (uriString [0] != '\\' && uriString [0] != '/' && !uriString.StartsWith ("file://"))
-					throw new UriFormatException ("Invalid URI: The format of the URI could not be determined.");
-				scheme = Uri.UriSchemeFile;
-				if (uriString.StartsWith ("\\\\")) {
-					isUnc = true;
-				}
-				if (uriString.Length > 8 && uriString [8] != '/')
-					isUnc = true;
 			}
+			uriString = uriString.Substring (pos + 1);
 
 			// 3
 			if (uriString.StartsWith ("//")

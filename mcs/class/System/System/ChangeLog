@@ -1,5 +1,10 @@
 2004-06-11  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* Uri.cs : Handle Windows UNC. Now we could simplify Parse(). Don't
+	  escape windows path twice. Check scheme name as defined in RFC2396.
+
+2004-06-11  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* Uri.cs : Reverted some changes. '#' should be handled when the input
 	  string is NOT raw file path. So handle raw file paths differently.
 	  (right now except for Windows UNC).
