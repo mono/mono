@@ -493,7 +493,8 @@ class_attr		: /* EMPTY */
 			| class_attr K_NESTED K_FAMANDASSEM     { $$ = (TypeAttr)$1 | TypeAttr.NestedFamAndAssem; }
 			| class_attr K_NESTED K_FAMORASSEM      { $$ = (TypeAttr)$1 | TypeAttr.NestedFamOrAssem; }
 			| class_attr K_VALUE                    { is_value_class = true; }
-			| class_attr K_ENUM                     { is_enum_class = true; }
+			| class_attr K_ENUM                     { is_enum_class = true; is_value_class = true;
+			  }
 			| class_attr K_INTERFACE                { $$ = (TypeAttr)$1 | TypeAttr.Interface; }
 			| class_attr K_SEALED                   { $$ = (TypeAttr)$1 | TypeAttr.Sealed; }
 			| class_attr K_ABSTRACT                 { $$ = (TypeAttr)$1 | TypeAttr.Abstract; }
@@ -687,11 +688,15 @@ type			: K_CLASS class_ref
                           }
 			| K_VALUETYPE OPEN_BRACKET slashed_name CLOSE_BRACKET slashed_name
                           {
-                                $$ = new ExternTypeRef ((string) $3, (string) $5, true);
+                                ExternTypeRef ext_ref = new ExternTypeRef ((string) $3, (string) $5, true);
+                                ext_ref.MakeValueClass ();
+                                $$ = ext_ref;
                           }
                         | K_VALUETYPE slashed_name
                           {
-                                $$ = new TypeRef ((string) $2, true, null);
+                                TypeRef t_ref = new TypeRef ((string) $2, true, null);
+                                t_ref.MakeValueClass ();
+                                $$ = t_ref;
                           }
 			| type OPEN_BRACKET CLOSE_BRACKET
                           {
@@ -1955,7 +1960,7 @@ instr			: INSTR_NONE
                                 if (arg_list != null)
                                         arg_array = (ITypeRef[]) arg_list.ToArray (typeof (ITypeRef));
 
-                                codegen.CurrentMethodDef.AddInstr (new CalliInstr ((CallConv) $1,
+                                codegen.CurrentMethodDef.AddInstr (new CalliInstr ((CallConv) $2,
                                         (ITypeRef) $3, arg_array));
                           }     
 			| INSTR_TOK owner_type

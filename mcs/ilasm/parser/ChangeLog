@@ -1,3 +1,8 @@
+2003-10-17 Jackson Harper <jackson@ximian.com>
+
+	* ILParser.jay: Set value types, set enums as value types. Use
+	correct var for call conv in method signatures.
+	
 2003-10-10 Jackson Harper <jackson@ximian.com>
 
 	* ILParser.jay: Create generic method refs.
