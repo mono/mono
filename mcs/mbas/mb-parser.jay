@@ -2302,9 +2302,21 @@ opt_raise_event_args
 		$$ = $2;
 	  }
 	;
+label_name
+	: identifier
+	| LITERAL_INTEGER
+	{
+		$$ = $1.ToString();
+	}
+	;
+
+opt_linebreak
+	: /* empty */
+	| EOL
+	;
 
 labeled_statement
-	: identifier COLON end_of_stmt 
+	: label_name COLON opt_linebreak 
 	  {
 		LabeledStatement labeled = new LabeledStatement ((string) $1, lexer.Location);
 
@@ -2443,7 +2455,7 @@ jump_statement
 	;
 	        
 goto_statement
-	: GOTO identifier  
+	: GOTO label_name  
 	  {
 		$$ = new Goto (current_block, (string) $2, lexer.Location);
 	  }

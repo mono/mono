@@ -1,3 +1,6 @@
+2004/08/01  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
+	* mb-parser.jay : Revised patch from João Viegas for the labeled_statement accepting integer literals as labels
+
 2004-07-30  Jambunathan K  <kjambunathan@novell.com>
 	* mb-parser.jay: Oops. Reversed unintended checkin.
 	* mb-tokenizer.cs: Added comment in Tokenizer() 
