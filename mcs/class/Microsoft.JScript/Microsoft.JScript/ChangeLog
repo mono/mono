@@ -1,3 +1,9 @@
+2003-12-07  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
+
+	* jscript-lexer-parser.g: things like 'new Point (10, 20).x' were
+	not parsable now they are. Mozilla's and Janet's  test suites are
+	being really helpful.
+
 2003-12-05  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
 
 	* jscript-lexer-parser.g: added check for non-null reference at

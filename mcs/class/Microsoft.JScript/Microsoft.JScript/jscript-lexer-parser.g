@@ -325,15 +325,17 @@ member_expr [AST parent] returns [AST mem_exp]
 {
 	mem_exp = null;
 }
-	: mem_exp = primary_expr [parent] member_aux [parent]
-	| "new" member_expr [parent] arguments [parent]
+	: ( mem_exp = primary_expr [parent]
+	  | "new" member_expr [parent] arguments [parent]
+	  ) member_aux [parent]
 	;
 
 member_aux [AST parent]
-	: ( DOT IDENTIFIER member_aux [parent]
-	  | (OPEN_BRACKET)=> OPEN_BRACKET expr [parent] CLOSE_BRACKET
-	  |
-	  )
+	: 
+	( DOT IDENTIFIER 
+	| OPEN_BRACKET expr [parent] CLOSE_BRACKET
+	) member_aux [parent]
+	|
 	;
 
 new_expr [AST parent] returns [AST new_exp]
