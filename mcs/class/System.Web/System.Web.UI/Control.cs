@@ -47,33 +47,33 @@ namespace System.Web.UI
 	[DesignerSerializer ("Microsoft.VSDesigner.WebForms.ControlCodeDomSerializer, " + Consts.AssemblyMicrosoft_VSDesigner, "System.ComponentModel.Design.Serialization.CodeDomSerializer, " + Consts.AssemblySystem_Design)]
         public class Control : IComponent, IDisposable, IParserAccessor, IDataBindingsAccessor
         {
-                private static readonly object DataBindingEvent = new object();
-                private static readonly object DisposedEvent = new object();
-                private static readonly object InitEvent = new object();
-                private static readonly object LoadEvent = new object();
-                private static readonly object PreRenderEvent = new object();
-                private static readonly object UnloadEvent = new object();
-                private static string[] defaultNameArray;
+		private static readonly object DataBindingEvent = new object();
+		private static readonly object DisposedEvent = new object();
+		private static readonly object InitEvent = new object();
+		private static readonly object LoadEvent = new object();
+		private static readonly object PreRenderEvent = new object();
+		private static readonly object UnloadEvent = new object();
+		private static string[] defaultNameArray;
 		private string _templateSourceDir;
 		private string uniqueID;
-                private string _userId;
+		private string _userId;
 		private bool id_set;
-                private ControlCollection _controls;
-                private bool _enableViewState = true;
-                private IDictionary _childViewStates;
-                private bool _isNamingContainer;
-                private Control _namingContainer;
-                private Page _page;
-                private Control _parent;
-                private ISite _site;
-                private bool _visible = true;
-                private bool visibleChanged;
-                private HttpContext _context;
-                private bool _childControlsCreated;
-                private StateBag _viewState;
-                private bool _trackViewState;
-                private EventHandlerList _events = new EventHandlerList();
-                private RenderMethod _renderMethodDelegate;
+		private ControlCollection _controls;
+		private bool _enableViewState = true;
+		private IDictionary _childViewStates;
+		private bool _isNamingContainer;
+		private Control _namingContainer;
+		private Page _page;
+		private Control _parent;
+		private ISite _site;
+		private bool _visible = true;
+		private bool visibleChanged;
+		private HttpContext _context;
+		private bool _childControlsCreated;
+		private StateBag _viewState;
+		private bool _trackViewState;
+		private EventHandlerList _events = new EventHandlerList();
+		private RenderMethod _renderMethodDelegate;
 		private bool autoID = true;
 		private bool creatingControls;
 		private bool bindingContainer = true;
@@ -88,11 +88,11 @@ namespace System.Web.UI
 		DataBindingCollection dataBindings;
 		Hashtable pendingVS; // may hold unused viewstate data from child controls
 		
-		static Control()
+		static Control ()
 		{
-			defaultNameArray = new string[100];
+			defaultNameArray = new string [100];
 			for (int i = 0 ; i < 100 ; i++)
-				defaultNameArray[i] = "_ctrl"+i;
+				defaultNameArray [i] = "_ctrl" + i;
 		}
 
                 public Control()
@@ -233,14 +233,7 @@ namespace System.Web.UI
 		[Browsable (false)]
 		[WebSysDescription ("A virtual directory containing the parent of the control.")]
                 public virtual string TemplateSourceDirectory {
-                        get 
-			{ 
-				if (_templateSourceDir == null)
-				{
-					_templateSourceDir =(_parent == null) ? String.Empty : _parent.TemplateSourceDirectory; 
-				}
-				return _templateSourceDir;
-			}
+			get { return (_parent == null) ? String.Empty : _parent.TemplateSourceDirectory; }
                 }
 
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
@@ -301,7 +294,7 @@ namespace System.Web.UI
                         set
                         {
                                 if (value == false && _childControlsCreated == true)
-                                        _controls.Clear();
+                                        Controls.Clear();
                                 _childControlsCreated = value;
                         }
                 }
@@ -390,29 +383,28 @@ namespace System.Web.UI
 		{
 			defaultNumberID = 0;
 		}
-		
+
 		string GetDefaultName ()
 		{
 			string defaultName;
-			if (defaultNumberID >99)
+			if (defaultNumberID > 99) {
 				defaultName = "_ctrl" + defaultNumberID++;
-			else
-			{
-				defaultName = defaultNameArray[defaultNumberID++];
+			} else {
+				defaultName = defaultNameArray [defaultNumberID++];
 			}
 			return defaultName;
 		}
-		
+
 		void NullifyUniqueID ()
 		{
 			uniqueID = null;
-			if (_controls == null)
+			if (!HasControls ())
 				return;
 
-			foreach (Control c in _controls)
+			foreach (Control c in Controls)
 				c.NullifyUniqueID ();
 		}
-		
+
 		protected internal virtual void AddedControl (Control control, int index)
 		{
 			/* Ensure the control don't have more than 1 parent */
@@ -490,10 +482,9 @@ namespace System.Web.UI
 
 		protected bool IsLiteralContent()
 		{
-			if (_controls != null) 
-				if (_controls.Count == 1)
-					if (_controls[0] is LiteralControl)
-						return true;
+			if (HasControls () && Controls.Count == 1 && (Controls [0] is LiteralControl))
+				return true;
+
 			return false;
 		}
 
@@ -504,14 +495,14 @@ namespace System.Web.UI
 
 		Control LookForControlByName (string id)
 		{
-			if (!HasChildren)
+			if (!HasControls ())
 				return null;
 
-			foreach (Control c in _controls) {
+			foreach (Control c in Controls) {
 				if (String.Compare (id, c._userId, true) == 0)
 					return c;
 
-				if (!c._isNamingContainer && c.HasChildren) {
+				if (!c._isNamingContainer && c.HasControls ()) {
 					Control child = c.LookForControlByName (id);
 					if (child != null)
 						return child;
@@ -524,7 +515,7 @@ namespace System.Web.UI
                 protected virtual Control FindControl (string id, int pathOffset)
                 {
 			EnsureChildControls ();
-			if (_controls == null)
+			if (!HasControls ())
 				return null;
 
 			Control namingContainer = null;
@@ -627,17 +618,15 @@ namespace System.Web.UI
                         RenderChildren(writer);
                 }
 
-                protected virtual void RenderChildren(HtmlTextWriter writer) //DIT
+                protected virtual void RenderChildren (HtmlTextWriter writer) //DIT
                 {
-                        if (_renderMethodDelegate != null)
-                                _renderMethodDelegate(writer, this);
-			else if (HasChildren)
-			{
+                        if (_renderMethodDelegate != null) {
+                                _renderMethodDelegate (writer, this);
+			} else if (HasControls ()) {
 				int len = Controls.Count;
-				for (int i=0;i<len;i++)
-				{
-					Control c = Controls[i];
-					c.RenderControl(writer);
+				for (int i = 0; i < len; i++) {
+					Control c = Controls [i];
+					c.RenderControl (writer);
 				}
 			}
                 }
@@ -669,11 +658,6 @@ namespace System.Web.UI
 					eh(this, EventArgs.Empty);
                         }
                 }
-
-		internal bool HasChildren
-		{
-			get { return (_controls != null && _controls.Count > 0); }
-		}
 
 		[WebCategory ("FIXME")]
 		[WebSysDescription ("Raised when the contols databound properties are evaluated.")]
@@ -785,14 +769,13 @@ namespace System.Web.UI
 		
 		void DataBindChildren ()
 		{
-			if (!HasChildren)
+			if (!HasControls ())
 				return;
 			
 			int len = Controls.Count;
-			for (int i=0;i<len;i++)
-			{
-				Control c = Controls[i];
-				c.DataBind();
+			for (int i = 0; i < len; i++) {
+				Control c = Controls [i];
+				c.DataBind ();
 			}
 		}
 
@@ -839,7 +822,7 @@ namespace System.Web.UI
                 internal void LoadRecursive()
                 {
                         OnLoad (EventArgs.Empty);
-                        if (HasChildren) {
+                        if (HasControls ()) {
 				int len = Controls.Count;
 				for (int i=0;i<len;i++)
 				{
@@ -852,7 +835,7 @@ namespace System.Web.UI
 
                 internal void UnloadRecursive(Boolean dispose)
                 {
-			if (HasChildren) {
+			if (HasControls ()) {
 				int len = Controls.Count;
 				for (int i=0;i<len;i++)
 				{
@@ -871,7 +854,7 @@ namespace System.Web.UI
 			if (_visible) {
 				EnsureChildControls ();
 				OnPreRender (EventArgs.Empty);
-				if (!HasChildren)
+				if (!HasControls ())
 					return;
 				
 				int len = Controls.Count;
@@ -886,7 +869,7 @@ namespace System.Web.UI
 
                 internal void InitRecursive(Control namingContainer)
                 {
-                        if (_controls != null) {
+                        if (HasControls ()) {
 				if (_isNamingContainer)
 					namingContainer = this;
 
@@ -923,7 +906,7 @@ namespace System.Web.UI
 			ArrayList controlStates = null;
 
 			int idx = -1;
-			if (HasChildren)
+			if (HasControls ())
 			{
 				int len = Controls.Count;
 				for (int i=0;i<len;i++)

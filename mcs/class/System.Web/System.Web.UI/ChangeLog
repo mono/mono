@@ -1,3 +1,10 @@
+2004-07-27 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Control.cs: style. Reverted previous patch modification of
+	TemplateSourceDirectory (failed when the control is reparented). Use
+	HasControls() and Controls all over instead of _controls, as Controls
+	property and HasControls() might be overriden.
+
 2004-07-27 Alon Gazit <along@mainsoft.com>
 
 	* Control.cs: Changed the implementation of TemplateSourceDirectory
