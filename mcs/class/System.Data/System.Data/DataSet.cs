@@ -70,7 +70,12 @@ namespace System.Data {
 		[DefaultValue (false)]
 		public bool CaseSensitive {
 			get { return caseSensitive; } 
-			set { caseSensitive = value; }
+			set {
+				foreach (DataTable T in Tables)
+					T.CaseSensitive = value;
+
+				caseSensitive = value; 
+			}
 		}
 
 		[DataCategory ("Data")]

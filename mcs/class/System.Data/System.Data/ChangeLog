@@ -1,3 +1,8 @@
+2003-02-19  Ville Palo <vi64pa@kolumbus.fi>
+
+	* DataSet.cs: When CaseSensitive property is changed all of the Tables
+	of DataSet have to change too
+	
 2003-02-19  Daniel Morgan <danmorg@sc.rr.com>
 
 	* InternalDataCollectionBase.cs: revert change to field
