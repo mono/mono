@@ -1,3 +1,7 @@
+2002-12-12  Juli Mallett  <jmallett@FreeBSD.org>
+
+	* jit.c: If SIGRTMIN is not defined, fall back to SIGUSR1.
+
 2002-12-11  Zoltan Varga  <vargaz@freemail.hu>
 
 	* jit.c (mono_analyze_stack): call the utility function 
