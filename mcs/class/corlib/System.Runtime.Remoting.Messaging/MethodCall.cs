@@ -54,9 +54,9 @@ namespace System.Runtime.Remoting.Messaging {
 
 		internal MethodCall (CADMethodCallMessage msg) 
 		{
-			_typeName = msg.TypeName;
-			_uri = msg.Uri;
-			_methodName = msg.MethodName;
+			_typeName = new string (msg.TypeName.ToCharArray ());
+			_uri = new string (msg.Uri.ToCharArray ());
+			_methodName = new string (msg.MethodName.ToCharArray ());
 			
 			// Get unmarshalled arguments
 			ArrayList args = msg.GetArguments ();

@@ -1,3 +1,8 @@
+2003-10-23  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* MethodCall.cs: In the constructor that takes a CADMethodCallMessage
+	  object, make sure strings are not reused across domains.
+
 2003-10-08  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* CADMessages.cs: added smuggeling argument support for some instances
