@@ -1,3 +1,7 @@
+2002-11-03  Phillip Pearson  <pp@myelin.co.nz>
+
+	* AllTests.cs: Fixed Lawrence's e-mail address.
+
 2002-05-17  Lawrence Pit <loz@cable.a2000.nl>
 
 	* AllTests.cs: added

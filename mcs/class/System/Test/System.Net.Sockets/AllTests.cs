@@ -2,7 +2,7 @@
 // MonoTests.System.Net.Sockets.AllTests, System.dll
 //
 // Author:
-//   Lawrence Pit <loz@cable.a2000nl>
+//   Lawrence Pit <loz@cable.a2000.nl>
 //
 
 using System;
