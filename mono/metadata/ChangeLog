@@ -1,4 +1,9 @@
 
+Mon Jan 6 19:37:59 CET 2003 Paolo Molaro <lupus@ximian.com>
+
+	* marshal.c: throw a missing method exception if a
+	P/Invoke method is not found.
+
 Sun Jan 5 11:57:09 CET 2003 Paolo Molaro <lupus@ximian.com>
 
 	* icall.c: allow a null this for constructors.
