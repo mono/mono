@@ -9,6 +9,7 @@ PROGRAM_FLAGS =	\
 
 include $(topdir)/class/executable.make
 
-MCS = mono $(topdir)/mcs/mcs.exe
+RUNTIME=mono
+MCS = $(RUNTIME) $(topdir)/mcs/mcs.exe
 MCS_FLAGS = --target exe --noconfig
 

@@ -2,6 +2,7 @@ MCS = csc
 MCS_FLAGS = /target:exe $(MCS_DEFINES)
 INSTALL = /usr/bin/install
 prefix = /usr
+RUNTIME=mono
 
 SOURCES=monoresgen.cs
 

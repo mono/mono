@@ -1,4 +1,5 @@
-CSC=mcs
+RUNTIME=mono
+CSC= $(RUNTIME) ../mcs/mcs.exe
 CSCRIPT=$(WINDIR)/system32/cscript.exe
 CSCFLAGS=/nologo /debug+ /debug:full 
 INSTALL = /usr/bin/install
@@ -11,9 +12,6 @@ DIRS =
 #MONO_TOOLS = monostyle.exe verifier.exe GenerateDelegate.exe EnumCheck.exe IFaceDisco.exe ./type-reflector/type-reflector.exe ./corcompare/CorCompare.exe ./SqlSharp/SqlSharpCli.exe
 
 all: tools
-	for i in $(DIRS) ; do \
-		$(MAKE) -C $$i -f makefile.gnu $@ || exit 1; \
-	done
 
 linx: $(MONO_TOOLS)
 
@@ -30,9 +28,6 @@ install: all
 	for i in $(MONO_TOOLS) ; do \
 		($(INSTALL) -m 755 $$i $(prefix)/bin/) || exit 1; \
 	done
-	for i in $(DIRS) ; do \
-		$(MAKE) -C $$i -f makefile.gnu $@ || exit 1; \
-	done
 
 monostyle.exe: monostyle.cs
 	$(CSC) $(CSCFLAGS) monostyle.cs
@@ -44,7 +39,7 @@ verifier.exe: verifier.cs
 	$(CSC) $(CSCFLAGS) verifier.cs
 
 ./SqlSharp/sqlsharp.exe: dummy
-	(cd SqlSharp; make CSC=$(CSC))
+	(cd SqlSharp; make)
 
 ./corcompare/CorCompare.exe: dummy
 	(cd corcompare; make CorCompare.exe)
@@ -78,9 +73,6 @@ clean:
 	rm -f *.exe *.pdb *.dbg *.dll
 	rm -f cormissing.xml
 	rm -f ../../mono/doc/pending-classes.in
-	for i in $(DIRS) ; do \
-		$(MAKE) -C $$i -f makefile.gnu $@ || exit 1; \
-	done
 
 dummy:
 

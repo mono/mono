@@ -5,7 +5,8 @@
 #   Jackson Harper (Jackson@LatitudeGeo.com)
 #
 
-MCS = mcs
+RUNTIME=mono
+MCS = $(RUNTIME) ../../mcs/mcs.exe
 MCS_FLAGS =
 
 all: NUnit.Util.dll

@@ -1,4 +1,5 @@
-MCS = mcs
+RUNTIME=mono
+MCS = $(RUNTIME) ../mcs/mcs.exe
 MCS_FLAGS = /target:exe $(MCS_DEFINES)
 INSTALL = /usr/bin/install
 prefix = /usr

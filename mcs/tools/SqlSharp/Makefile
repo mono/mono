@@ -1,4 +1,5 @@
-CSC = csc
+RUNTIME=mono
+CSC = $(RUNTIME) ../../mcs/mcs.exe
 
 CSCFLAGS = /out:$(PROGRAM) \
 	/noconfig \
