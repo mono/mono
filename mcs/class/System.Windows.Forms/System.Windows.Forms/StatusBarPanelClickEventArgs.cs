@@ -35,20 +35,6 @@ namespace System.Windows.Forms {
 		/// </remarks>
 		public StatusBarPanel StatusBarPanel 
 		{
-			get {
-				return panel;
-			}
-		}
-
-		/// <summary>
-		///	StatusBarPanel Property
-		/// </summary>
-		///
-		/// <remarks>
-		///	Gets the StatusBarPanel to draw.
-		/// </remarks>
-		public StatusBarPanel StatusBarPanel 
-		{
 			get 
 			{
 				return panel;
