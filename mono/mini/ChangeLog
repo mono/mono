@@ -1,5 +1,7 @@
 2004-07-06  Zoltan Varga  <vargaz@freemail.hu>
 
+	* mini-ops.h: Add OP_SAVE_LMF and OP_RESTORE_LMF.
+
 	* Makefile.am (EXTRA_DIST): Add inssel-long[32].brg.
 
 	* inssel.brg: Fix warning. Add rules for SAVE_LMF and RESTORE_LMF.
