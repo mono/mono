@@ -2572,7 +2572,7 @@ namespace Mono.CSharp {
 
 			Expression left, right, underlying, null_value, bool_wrap;
 			Unwrap left_unwrap, right_unwrap;
-			bool is_equality, is_boolean;
+			bool is_equality, is_comparision, is_boolean;
 
 			public LiftedBinaryOperator (Binary.Operator op, Expression left, Expression right,
 						     Location loc)
@@ -2617,6 +2617,16 @@ namespace Mono.CSharp {
 
 					type = TypeManager.bool_type;
 					is_equality = true;
+				} else if ((Oper == Binary.Operator.LessThan) ||
+					   (Oper == Binary.Operator.GreaterThan) ||
+					   (Oper == Binary.Operator.LessThanOrEqual) ||
+					   (Oper == Binary.Operator.GreaterThanOrEqual)) {
+					underlying = new Binary (Oper, left, right, loc).Resolve (ec);
+					if (underlying == null)
+						return null;
+
+					type = TypeManager.bool_type;
+					is_comparision = true;
 				} else {
 					underlying = new Binary (Oper, left, right, loc).Resolve (ec);
 					if (underlying == null)
@@ -2773,6 +2783,32 @@ namespace Mono.CSharp {
 				ig.MarkLabel (end_label);
 			}
 
+			void EmitComparision (EmitContext ec)
+			{
+				ILGenerator ig = ec.ig;
+
+				Label is_null_label = ig.DefineLabel ();
+				Label end_label = ig.DefineLabel ();
+
+				if (left_unwrap != null) {
+					left_unwrap.EmitCheck (ec);
+					ig.Emit (OpCodes.Brfalse, is_null_label);
+				}
+
+				if (right_unwrap != null) {
+					right_unwrap.EmitCheck (ec);
+					ig.Emit (OpCodes.Brfalse, is_null_label);
+				}
+
+				underlying.Emit (ec);
+				ig.Emit (OpCodes.Br, end_label);
+
+				ig.MarkLabel (is_null_label);
+				ig.Emit (OpCodes.Ldc_I4_0);
+
+				ig.MarkLabel (end_label);
+			}
+
 			public override void Emit (EmitContext ec)
 			{
 				if (is_boolean) {
@@ -2780,6 +2816,9 @@ namespace Mono.CSharp {
 					return;
 				} else if (is_equality) {
 					EmitEquality (ec);
+					return;
+				} else if (is_comparision) {
+					EmitComparision (ec);
 					return;
 				}
 
