@@ -149,6 +149,7 @@ namespace System.Runtime.Remoting.Proxies
 		{
 			if (_objectIdentity is ClientIdentity) {
 				ObjRef oref = _objectIdentity.CreateObjRef (null);
+				if (oref.IsReferenceToWellKnow && (fromType.IsInterface || GetProxiedType() == typeof(MarshalByRefObject))) return true;
 				if (oref.TypeInfo != null) return oref.TypeInfo.CanCastTo (fromType, o);
 			}
 			return fromType.IsAssignableFrom (GetProxiedType());
