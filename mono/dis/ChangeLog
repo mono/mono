@@ -1,5 +1,10 @@
 2004-12-11  Martin Baulig  <martin@ximian.com>
 
+	* get.c (get_class_name): Renamed to get_escaped_class_name() and
+	return an escaped class name; correctly escape nested classes.
+
+2004-12-11  Martin Baulig  <martin@ximian.com>
+
 	* get.c (dis_stringify_type): Added `gboolean is_def' argument; if
 	false, display type parameters as numbers and not as names.
 	(dis_stringify_object_with_class): Added `gboolean is_def' argument.
