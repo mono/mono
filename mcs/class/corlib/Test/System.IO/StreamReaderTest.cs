@@ -63,7 +63,7 @@ public class StreamReaderTest : TestCase
 			FileStream f = new FileStream(_codeFileName, 
 						      FileMode.Open, 
 						      FileAccess.Read);
-			StreamReader r = new StreamReader(_codeFileName);
+			StreamReader r = new StreamReader(f);
 			AssertNotNull("no stream reader", r);
 			r.Close();
 			f.Close();
@@ -153,7 +153,7 @@ public class StreamReaderTest : TestCase
 			FileStream f = new FileStream(_codeFileName, 
 						      FileMode.Open, 
 						      FileAccess.Read);
-			StreamReader r = new StreamReader(_codeFileName, false);
+			StreamReader r = new StreamReader(f, false);
 			AssertNotNull("no stream reader", r);
 			r.Close();
 			f.Close();
@@ -184,7 +184,7 @@ public class StreamReaderTest : TestCase
 			FileStream f = new FileStream(_codeFileName, 
 						      FileMode.Open, 
 						      FileAccess.Read);
-			StreamReader r = new StreamReader(_codeFileName, true);
+			StreamReader r = new StreamReader(f, true);
 			AssertNotNull("no stream reader", r);
 			r.Close();
 			f.Close();
