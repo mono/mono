@@ -2,7 +2,8 @@
 
 	* Decimal.cs: Fixed regression in System.Data caused by the recent 
 	changes. Adapted (and moved) the code to correct the scale from 
-	SqlMoney.
+	SqlMoney. Removed unused (and unusable) IsOne and fixed IsZero (where
+	scale has no importance).
 
 2004-06-17  Lluis Sanchez Gual  <lluis@ximian.com>
 

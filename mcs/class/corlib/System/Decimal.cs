@@ -501,13 +501,7 @@ namespace System
 	// avoid unmanaged call
 	private bool IsZero () 
 	{
-		return ((ss32 == 0) && (hi32 == 0) && (lo32 == 0) && (mid32 == 0));
-	}
-
-	// avoid unmanaged call
-	private bool IsOne () 
-	{
-		return ((ss32 == 0x80000000) && (hi32 == 0) && (lo32 == 0) && (mid32 == 0));
+		return ((hi32 == 0) && (lo32 == 0) && (mid32 == 0));
 	}
 
 	// avoid unmanaged call
