@@ -1,5 +1,11 @@
 2004-11-30 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* Control.cs: when saving "Visible" into the ViewState, save the value
+	for this precise control, as using the Visible property might give us
+	Control's parent visibility. Fixes bug #69200.
+
+2004-11-30 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* Control.cs: fixed ResolveUrl for relative URLs when using cookie-less
 	sessions.
 
