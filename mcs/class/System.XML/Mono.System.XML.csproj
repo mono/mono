@@ -21,7 +21,7 @@
             >
                 <Config
                     Name = "Debug"
-                    AllowUnsafeBlocks = "false"
+                    AllowUnsafeBlocks = "true"
                     BaseAddress = "285212672"
                     CheckForOverflowUnderflow = "false"
                     ConfigurationOverrideFile = ""
@@ -39,7 +39,7 @@
                 />
                 <Config
                     Name = "Release"
-                    AllowUnsafeBlocks = "false"
+                    AllowUnsafeBlocks = "true"
                     BaseAddress = "285212672"
                     CheckForOverflowUnderflow = "false"
                     ConfigurationOverrideFile = ""
@@ -72,16 +72,32 @@
         <Files>
             <Include>
                 <File
-                    RelPath = "System.Xml\ChangeLog"
-                    BuildAction = "None"
+                    RelPath = "Mono.Xml.XPath\DTMXPathDocument.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "System.Xml\Driver.cs"
+                    RelPath = "Mono.Xml.XPath\DTMXPathDocumentBuilder.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Mono.Xml.XPath\DTMXPathNavigator.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Xml\DTDAutomata.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "System.Xml\DTDObjectModel.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Xml\DTDValidatingReader.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -341,6 +357,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Xml\XmlSecureResolver.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Xml\XmlSignificantWhitespace.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -381,6 +402,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Xml\XmlValidatingReader.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Xml\XmlWhitespace.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -391,16 +417,9 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "System.Xml.Schema\BUGS.txt"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "System.Xml.Schema\BUGS-MS.txt"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "System.Xml.Schema\ChangeLog"
-                    BuildAction = "None"
+                    RelPath = "System.Xml.Schema\BuiltInDatatype.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
                 />
                 <File
                     RelPath = "System.Xml.Schema\ValidationEventArgs.cs"
@@ -598,11 +617,6 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "System.Xml.Schema\XmlSchemaInfo.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
                     RelPath = "System.Xml.Schema\XmlSchemaKey.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -783,27 +797,6 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "System.Xml.Schema\CVS\Entries"
-                    BuildAction = "None"
-                />
-                <File
-                    RelPath = "System.Xml.Schema\CVS\Repository"
-                    BuildAction = "None"
-                />
-                <File
-                    RelPath = "System.Xml.Schema\CVS\Root"
-                    BuildAction = "None"
-                />
-                <File
-                    RelPath = "System.Xml.Serialization\AssemblyInfo.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Xml.Serialization\ChangeLog"
-                    BuildAction = "None"
-                />
-                <File
                     RelPath = "System.Xml.Serialization\CodeIdentifier.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -815,6 +808,11 @@
                 />
                 <File
                     RelPath = "System.Xml.Serialization\IXmlSerializable.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Xml.Serialization\ReflectionHelper.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -1099,12 +1097,22 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Xml.Serialization\XmlSerializationReaderInterpreter.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Xml.Serialization\XmlSerializationWriteCallback.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "System.Xml.Serialization\XmlSerializationWriter.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Xml.Serialization\XmlSerializationWriterInterpreter.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -1129,25 +1137,34 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "System.Xml.Serialization\XmlTypeMapping.cs"
+                    RelPath = "System.Xml.Serialization\XmlTypeMapElementInfo.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "System.Xml.Serialization\CVS\Entries"
-                    BuildAction = "None"
+                    RelPath = "System.Xml.Serialization\XmlTypeMapMember.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "System.Xml.Serialization\CVS\Repository"
-                    BuildAction = "None"
+                    RelPath = "System.Xml.Serialization\XmlTypeMapMemberAttribute.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "System.Xml.Serialization\CVS\Root"
-                    BuildAction = "None"
+                    RelPath = "System.Xml.Serialization\XmlTypeMapMemberElement.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "System.Xml.XPath\ChangeLog"
-                    BuildAction = "None"
+                    RelPath = "System.Xml.Serialization\XmlTypeMapMemberNamespaces.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Xml.Serialization\XmlTypeMapping.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
                 />
                 <File
                     RelPath = "System.Xml.XPath\DefaultContext.cs"
