@@ -110,9 +110,19 @@ public class Manager
 				if (e == null)
 					e = Instantiate (name) as Encoding;
 
+				if (e == null) {
+					// Try windows aliases
+					string alias = Handlers.GetAlias (name);
+					if (alias != null) {
+						e = Instantiate ("ENC" + alias) as Encoding;
+						if (e == null)
+							e = Instantiate (alias) as Encoding;
+					}
+				}
+
 				return e;
 			}
-
+	
 	// List of hex digits for use by "GetCulture".
 	private const String hex = "0123456789abcdef";
 

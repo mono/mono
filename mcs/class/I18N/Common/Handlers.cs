@@ -26,6 +26,7 @@ namespace I18N.Common
 {
 
 using System;
+using System.Collections;
 
 // This class provides an internal list of handlers, for runtime
 // engines that do not implement the altered "GetFile" semantics.
@@ -198,7 +199,119 @@ public sealed class Handlers
         "I18N.West.CP865",
         "I18N.West.ENCibm865"
     };
+	
+	static Hashtable aliases;
+	public static string GetAlias (string name)
+	{
+		if (aliases == null)
+			BuildHash ();
 
+		return aliases [name] as string;
+	}
+
+	static void BuildHash ()
+	{
+		aliases = new Hashtable (new CaseInsensitiveHashCodeProvider (),
+					 new CaseInsensitiveComparer ());
+
+		aliases.Add ("arabic", "iso_8859_6");
+		aliases.Add ("csISOLatinArabic", "iso_8859_6");
+		aliases.Add ("ECMA_114", "iso_8859_6");
+		aliases.Add ("ISO_8859_6:1987", "iso_8859_6");
+		aliases.Add ("iso_ir_127", "iso_8859_6");
+
+		aliases.Add ("cp1256" ,"windows_1256");
+
+		aliases.Add ("csISOLatin4", "iso_8859_4");
+		aliases.Add ("ISO_8859_4:1988", "iso_8859_4");
+		aliases.Add ("iso_ir_110", "iso_8859_4");
+		aliases.Add ("l4", "iso_8859_4");
+		aliases.Add ("latin4", "iso_8859_4");
+
+		aliases.Add ("cp852" ,"ibm852");
+
+		aliases.Add ("csISOLatin2", "iso_8859_2");
+		aliases.Add ("iso_8859_2:1987", "iso_8859_2");
+		aliases.Add ("iso8859_2", "iso_8859_2");
+		aliases.Add ("iso_ir_101", "iso_8859_2");
+		aliases.Add ("l2", "iso_8859_2");
+		aliases.Add ("latin2", "iso_8859_2");
+
+		aliases.Add ("x-cp1250", "windows_1250");
+
+		aliases.Add ("chinese", "gb2312");
+		aliases.Add ("CN-GB", "gb2312");
+		aliases.Add ("csGB2312", "gb2312");
+		aliases.Add ("csGB231280", "gb2312");
+		aliases.Add ("csISO58GB231280", "gb2312");
+		aliases.Add ("GB_2312_80", "gb2312");
+		aliases.Add ("GB231280", "gb2312");
+		aliases.Add ("GB2312_80", "gb2312");
+		aliases.Add ("GBK", "gb2312");
+		aliases.Add ("iso_ir_58", "gb2312");
+
+		aliases.Add ("cn-big5", "big5");
+		aliases.Add ("csbig5", "big5");
+		aliases.Add ("x-x-big5", "big5");
+
+		aliases.Add ("cp866", "ibm866");
+
+		aliases.Add ("csISOLatin5", "iso_8859_5");
+		aliases.Add ("csISOLatinCyrillic", "iso_8859_5");
+		aliases.Add ("cyrillic", "iso_8859_5");
+		aliases.Add ("ISO_8859_5:1988", "iso_8859_5");
+		aliases.Add ("iso_ir_144", "iso_8859_5");
+		aliases.Add ("l5", "iso_8859_5");
+
+		aliases.Add ("csKOI8R", "koi8_r");
+		aliases.Add ("koi", "koi8_r");
+		aliases.Add ("koi8", "koi8_r");
+		aliases.Add ("koi8r", "koi8_r");
+
+		aliases.Add ("koi8ru", "koi8_u");
+
+		aliases.Add ("x-cp1251", "windows_1251");
+
+		aliases.Add ("csISOLatinGreek", "iso_8859_7");
+		aliases.Add ("ECMA_118", "iso_8859_7");
+		aliases.Add ("ELOT_928", "iso_8859_7");
+		aliases.Add ("greek", "iso_8859_7");
+		aliases.Add ("greek8", "iso_8859_7");
+		aliases.Add ("ISO_8859_7:1987", "iso_8859_7");
+		aliases.Add ("iso_ir_126", "iso_8859_7");
+
+		aliases.Add ("csISOLatinHebrew", "iso_8859_8");
+		aliases.Add ("hebrew", "iso_8859_8");
+		aliases.Add ("ISO_8859_8:1988", "iso_8859_8");
+		aliases.Add ("iso_ir_138", "iso_8859_8");
+
+		aliases.Add ("csShiftJIS", "shift_jis");
+		aliases.Add ("csWindows31J", "shift_jis");
+		aliases.Add ("ms_Kanji", "shift_jis");
+		aliases.Add ("shift-jis", "shift_jis");
+		aliases.Add ("x-ms-cp932", "shift_jis");
+		aliases.Add ("x-sjis", "shift_jis");
+
+		aliases.Add ("csISOLatin3", "iso_8859_3");
+		aliases.Add ("ISO_8859_3:1988", "iso_8859_3");
+		aliases.Add ("iso_ir_109", "iso_8859_3");
+		aliases.Add ("l3", "iso_8859_3");
+		aliases.Add ("latin3", "iso_8859_3");
+
+		aliases.Add ("csISOLatin9", "iso_8859_15");
+		aliases.Add ("l9", "iso_8859_15");
+		aliases.Add ("latin9", "iso_8859_15");
+
+		aliases.Add ("cp437", "ibm437");
+		aliases.Add ("csPC8", "ibm437");
+		aliases.Add ("CodePage437", "ibm437");
+
+		aliases.Add ("DOS_874", "windows_874");
+		aliases.Add ("iso_8859_11", "windows_874");
+		aliases.Add ("TIS_620", "windows_874");
+	}
+
+	
 }; // class Handlers
 
 }; // namespace I18N.Common
