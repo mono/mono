@@ -121,6 +121,9 @@ namespace System.IO
 				throw new ArgumentException ("Name is empty");
 			}
 
+			if (bufferSize <= 0)
+				throw new ArgumentOutOfRangeException ("Positive number required.");
+
 			if (mode < FileMode.CreateNew || mode > FileMode.Append)
 				throw new ArgumentOutOfRangeException ("mode");
 

@@ -242,6 +242,44 @@ namespace System.IO
 						long last_write_time,
 						out MonoIOError error)
 		{
+			return SetFileTime (path,
+				0,
+				creation_time,
+				last_access_time,
+				last_write_time,
+				DateTime.MinValue,
+				out error);
+		}
+
+		public static bool SetCreationTime (string path,
+						DateTime dateTime,
+						out MonoIOError error)
+		{
+			return SetFileTime (path, 1, -1, -1, -1, dateTime, out error);
+		}
+
+		public static bool SetLastAccessTime (string path,
+						DateTime dateTime,
+						out MonoIOError error)
+		{
+			return SetFileTime (path, 2, -1, -1, -1, dateTime, out error);
+		}
+
+		public static bool SetLastWriteTime (string path,
+						DateTime dateTime,
+						out MonoIOError error)
+		{
+			return SetFileTime (path, 3, -1, -1, -1, dateTime, out error);
+		}
+
+		public static bool SetFileTime (string path,
+						int type,
+						long creation_time,
+						long last_access_time,
+						long last_write_time,
+						DateTime dateTime,
+						out MonoIOError error)
+		{
 			IntPtr handle;
 			bool result;
 
@@ -250,6 +288,18 @@ namespace System.IO
 				       FileShare.ReadWrite, false, out error);
 			if (handle == MonoIO.InvalidHandle)
 				return false;
+
+			switch (type) {
+			case 1:
+				creation_time = dateTime.ToFileTime ();
+				break;
+			case 2:
+				last_access_time = dateTime.ToFileTime ();
+				break;
+			case 3:
+				last_write_time = dateTime.ToFileTime ();
+				break;
+			}
 
 			result = SetFileTime (handle, creation_time,
 					      last_access_time,

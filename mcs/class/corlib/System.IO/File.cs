@@ -328,8 +328,7 @@ namespace System.IO
 			if (!MonoIO.Exists (path, out error))
 				throw MonoIO.GetException (path, error);
 			
-			if (!MonoIO.SetFileTime (path, creation_time.ToFileTime(),
-						 -1, -1, out error)) {
+			if (!MonoIO.SetCreationTime (path, creation_time, out error)) {
 				throw MonoIO.GetException (path, error);
 			}
 		}
@@ -347,9 +346,7 @@ namespace System.IO
 			if (!MonoIO.Exists (path, out error))
 				throw MonoIO.GetException (path, error);
 
-			if (!MonoIO.SetFileTime (path, -1,
-						 last_access_time.ToFileTime(), -1,
-						 out error)) {
+			if (!MonoIO.SetLastAccessTime (path, last_access_time, out error)) {
 				throw MonoIO.GetException (path, error);
 			}
 		}
@@ -367,9 +364,7 @@ namespace System.IO
 			if (!MonoIO.Exists (path, out error))
 				throw MonoIO.GetException (path, error);
 
-			if (!MonoIO.SetFileTime (path, -1, -1,
-						 last_write_time.ToFileTime(),
-						 out error)) {
+			if (!MonoIO.SetLastWriteTime (path, last_write_time, out error)) {
 				throw MonoIO.GetException (path, error);
 			}
 		}

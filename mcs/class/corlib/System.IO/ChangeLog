@@ -1,3 +1,11 @@
+2004-06-21  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* FileStream.cs : Check buffer size before creating file.
+	* StreamReader.cs : Check encoding!=null before creating file.
+	* File.cs,
+	  MonoIO.cs : Convert DateTime to FileTime after checking
+	  file IO sharing violation (it just fixes the type of exception).
+
 2004-06-15  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* MemoryStream.cs: added TODO for serialization

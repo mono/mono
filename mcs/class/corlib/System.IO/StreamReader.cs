@@ -155,6 +155,8 @@ namespace System.IO {
 				throw new ArgumentException("Empty path not allowed");
 			if (path.IndexOfAny (Path.InvalidPathChars) != -1)
 				throw new ArgumentException("path contains invalid characters");
+			if (null == encoding)
+				throw new ArgumentNullException ("encoding");
 			if (buffer_size <= 0)
 				throw new ArgumentOutOfRangeException ("buffer_size", "The minimum size of the buffer must be positive");
 
