@@ -1,3 +1,26 @@
+2003-09-17  Martin Baulig  <martin@ximian.com>
+
+	* metadata.h (MonoType): Replaced the data's `int type_param'
+	field with `MonoGenericParam *generic_param'.
+	(MonoGenericParam): Added `MonoClass *klass'.
+
+	* class.c (mono_class_from_gen_param): Removed the
+	`MonoImage *image' and `int type_num' arguments.
+
+	* metadata.c (mono_metadata_parse_generic_param): New static
+	method; creates a MonoGenericParam which just contains the index.
+	(do_mono_metadata_parse_type): Call
+	mono_metadata_parse_generic_param() for MONO_TYPE_VAR and
+	MONO_TYPE_MVAR.
+
+	* reflection.c (mono_image_typedef_or_ref): Generic type
+	parameters may be in the same assembly, but never use a typedef
+	for them.
+	(mono_reflection_define_generic_parameter): We're now creating a
+	"real" class for the type parameter; it's now safe to call
+	mono_class_from_mono_type() on the class'es type, it'll do the
+	right thing.
+
 2003-09-16  Martin Baulig  <martin@ximian.com>
 
 	* mono-debug-debugger.c (allocate_symbol_file_entry): Initialize
