@@ -1,5 +1,9 @@
 2003-04-06  Martin Baulig  <martin@ximian.com>
 
+	* ecore.cs (SimpleName.SimpleNameResolve): Don't report an error
+	if it's a nested child, but also deriving from the outer class.
+	See test 190.cs.
+
 	* typemanager.cs (IsNestedChildOf): Make this work if it's a
 	nested child, but also deriving from the outer class.  See
 	test-190.cs.
