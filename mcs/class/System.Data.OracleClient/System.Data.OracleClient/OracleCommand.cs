@@ -37,7 +37,7 @@ namespace System.Data.OracleClient {
 		OracleTransaction transaction;
 		UpdateRowSource updatedRowSource;
 		
-		IntPtr statementHandle;
+		OciStatementHandle statement;
 		OciStatementType statementType;
 
 		#endregion // Fields
@@ -68,7 +68,7 @@ namespace System.Data.OracleClient {
 			this.updatedRowSource = UpdateRowSource.Both;
 			this.designTimeVisible = false;
                         parameters = new OracleParameterCollection (this);
-
+			Console.WriteLine ("Creating statement ...");
 		}
 
 		#endregion // Constructors
@@ -188,9 +188,9 @@ namespace System.Data.OracleClient {
 			int rowsAffected = -1;
 
 			ValidateCommand ("ExecuteNonQuery");
-			statementHandle = Connection.Oci.PrepareStatement (CommandText);
-			statementType = Connection.Oci.GetStatementType (statementHandle);
-			Connection.Oci.ExecuteStatement (statementHandle, statementType);
+			statement = Connection.Oci.CreateStatement ();
+			statement.Prepare (CommandText);
+			statement.ExecuteNonQuery ();
 
 			return rowsAffected;
 		}

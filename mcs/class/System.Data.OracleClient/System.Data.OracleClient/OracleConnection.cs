@@ -122,19 +122,18 @@ namespace System.Data.OracleClient
 
 		public OracleTransaction BeginTransaction (IsolationLevel il)
 		{
-			IntPtr transactionHandle;
-
 			if (state == ConnectionState.Closed)
 				throw new InvalidOperationException ("The connection is not open.");
-
 			if (transaction != null)
 				throw new InvalidOperationException ("OracleConnection does not support parallel transactions.");
 
-			transactionHandle = oci.BeginTransaction ();
-			if (transactionHandle == IntPtr.Zero)
+			OciTransactionHandle transactionHandle = oci.CreateTransaction ();
+			if (transactionHandle == null) 
 				throw new Exception("Error: Unable to start transaction");
-			else
+			else {
+				transactionHandle.Begin ();
 				transaction = new OracleTransaction (this, il, transactionHandle);
+			}
 
 			return transaction;
 		}
@@ -181,32 +180,14 @@ namespace System.Data.OracleClient
 
 		public void Open () 
 		{
-			OciStatus ociStatus;
-						
-			ociStatus = oci.Connect(conInfo);
-			if(ociStatus.Status != 0) {
-				string errmsg = ociStatus.ErrorMessage;
-				string status = ociStatus.Status.ToString ();
-				string errcode = ociStatus.ErrorCode.ToString ();
-				string msg = "Oracle Error: Unable to connect: " +
-					"status: " + status + 
-					": errcode:" +
-					errcode + " - " + errmsg;
-				throw new Exception (msg);
-			}
-					
+			oci.CreateConnection (conInfo);
 			state = ConnectionState.Open;
 		}
 
 		public void Close () 
 		{
-			Int32 status = oci.Disconnect();
+			oci.Disconnect();
 			state = ConnectionState.Closed;
-			if(status != 0)
-				throw new Exception("Error: Unable to disconnect: " + 
-					status.ToString() + 
-					": " +
-					oci.CheckStatus (status));
 		}
 
 

@@ -27,16 +27,18 @@ namespace System.Data.OracleClient {
 		OracleConnection connection;
 		IsolationLevel isolationLevel;
 		bool disposed = false;
+		OciTransactionHandle transaction;
 		bool isOpen;
 
 		#endregion // Fields
 
 		#region Constructors
 
-		internal OracleTransaction (OracleConnection connection, IsolationLevel isolevel, IntPtr transactionHandle)
+		internal OracleTransaction (OracleConnection connection, IsolationLevel isolevel, OciTransactionHandle transaction)
 		{
 			this.connection = connection;
 			this.isolationLevel = isolevel;
+			this.transaction = transaction;
 			isOpen = true;
 		}
 
@@ -66,13 +68,9 @@ namespace System.Data.OracleClient {
 
 		public void Commit ()
 		{
-			Int32 status = Connection.Oci.CommitTransaction ();
-			if (status != 0)
-				throw new Exception("Error: Unable to connect: " + status.ToString() + ": " + Connection.Oci.CheckError(status));
-			else {
-				Connection.Transaction = null;
-				isOpen = false;
-			}
+			transaction.Commit ();
+			Connection.Transaction = null;
+			isOpen = false;
 		}
 
 		private void Dispose (bool disposing)
@@ -93,13 +91,9 @@ namespace System.Data.OracleClient {
 
 		public void Rollback ()
 		{
-			Int32 status = Connection.Oci.RollbackTransaction ();
-			if (status != 0)
-				throw new Exception("Error: Unable to connect: " + status.ToString() + ": " + Connection.Oci.CheckError(status));
-			else {
-				Connection.Transaction = null;
-				isOpen = false;
-			}
+			transaction.Rollback ();
+			Connection.Transaction = null;
+			isOpen = false;
 		}
 
 		#endregion // Methods

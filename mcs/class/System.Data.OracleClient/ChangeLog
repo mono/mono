@@ -1,3 +1,25 @@
+2003-02-12  Tim Coleman <tim@timcoleman.com>
+	* System.Data.OracleClient/OracleException.cs:
+	* System.Data.OracleClient.Oci/IOciHandle.cs:
+	* System.Data.OracleClient.Oci/OciEnvironmentHandle.cs:
+	* System.Data.OracleClient.Oci/OciErrorHandle.cs:
+	* System.Data.OracleClient.Oci/OciErrorInfo.cs:
+	* System.Data.OracleClient.Oci/OciHandle.cs:
+	* System.Data.OracleClient.Oci/OciServerHandle.cs:
+	* System.Data.OracleClient.Oci/OciServiceHandle.cs:
+	* System.Data.OracleClient.Oci/OciSessionHandle.cs:
+	* System.Data.OracleClient.Oci/OciStatementHandle.cs:
+	* System.Data.OracleClient.Oci/OciTransactionHandle.cs:
+	* list:
+		New classes added.  This encapsulates the OCI
+		functionality into Handle objects.
+	* System.Data.OracleClient/OciGlue.cs:
+		Move a lot of code into Handle classes.
+	* System.Data.OracleClient/OracleCommand.cs:
+	* System.Data.OracleClient/OracleConnection.cs:
+	* System.Data.OracleClient/OracleTransaction.cs:
+		Retrofit for changes in OciGlue.
+
 2003-02-12  Daniel Morgan <danmorg@sc.rr.com>
 
 	* README.TXT
