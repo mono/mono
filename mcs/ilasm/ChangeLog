@@ -2,7 +2,8 @@
 
 	* AssemblyInfo.cs: Bump up version number, this new version is a major 
 	structural change, PEAPI is now being used for code emission.
-
+	* makefile, makefile.gnu: Add AssemblyInfo.cs to build
+	
 2003-03-06 Jackson Harper <jackson@latitudegeo.com>
 
 	* Driver.cs: Check that all types are defined before writing pe file

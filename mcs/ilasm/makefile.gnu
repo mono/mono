@@ -8,6 +8,7 @@ prefix = /usr
 
 SOURCES = 				\
 	Driver.cs			\
+	AssemblyInfo.cs			\
 	../class/PEAPI/PEAPI.cs		\
 	codegen/CodeGen.cs		\
 	codegen/ClassTable.cs		\
