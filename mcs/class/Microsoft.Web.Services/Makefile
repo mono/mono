@@ -73,7 +73,7 @@ clean-local:
 	       $(the_pdb2) $(test_pdb2) \
 	       TestResult.xml
 ifdef PLATFORM_CHANGE_SEPARATOR_CMD
-	-rm -rf $(response)
+	-rm -rf $(response) $(response2)
 endif
 
 ifndef NO_TEST
@@ -133,8 +133,6 @@ $(stampfile):
 	touch $@
 endif
 
-include ../../build/config.make
-
 $(the_lib2): $(makefrag2) $(stampfile2) $(response2)
 	$(CSCOMPILE) $(LIBRARY_FLAGS) $(LIB_MCS_FLAGS2) /target:library /out:$@ @$(response2)
 
@@ -159,6 +157,8 @@ ifndef HAVE_MAKEFRAG
 $(stampfile2):
 	touch $@
 endif
+
+include ../../build/config.make
 
 # for now, don't give any /lib flags or set MONO_PATH, since we
 # give a full path to the assembly.
