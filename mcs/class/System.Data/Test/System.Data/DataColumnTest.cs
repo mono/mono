@@ -527,5 +527,20 @@ namespace MonoTests.System.Data
 			AssertEquals ("DC76", "False", T.Rows [4] [2]);
 			AssertEquals ("DC77", "True", T.Rows [1] [2]);
 		}
+		
+		 [Test]
+                public void AdditionToConstraintCollectionTest()
+                {
+                        DataTable myTable = new DataTable("myTable");
+                        DataColumn idCol = new DataColumn("id",System.Type.GetType("System.Int32"));                        //set the unique property and add them to the table
+                        idCol.Unique=true;
+                        myTable.Columns.Add(idCol);
+                        ConstraintCollection cc = myTable.Constraints;
+                        //cc just contains a single UniqueConstraint object.
+                        UniqueConstraint uc = cc[0] as UniqueConstraint;
+                        AssertEquals("#verifying whether the column associated with the UniqueConstraint is same:", uc.Columns[0].ColumnName , "id");
+                                                                                                    
+                }
+
 	}
 }
