@@ -191,7 +191,7 @@ namespace Mono.Languages {
 		[Option("Emit full debugging information (default)", "debug:full")]
 		public bool fullDebugging = false;
 
-		[Option("[IGNORED]Emit PDB file only", "debug:pdbonly")]
+		[Option("[IGNORED] Emit PDB file only", "debug:pdbonly")]
 		public bool pdbOnly = false;
 
 		// errors and warnings options
@@ -253,10 +253,10 @@ namespace Mono.Languages {
 		// Miscellaneous options	
 		//------------------------------------------------------------------
 		
-		[Option("[IGNORED]Do not display compiler copyright banner")]
+		[Option("[IGNORED] Do not display compiler copyright banner")]
 		public bool nologo = false;
 		
-		[Option("[Mono]Quiet output mode", 'q')]
+		[Option("[Mono] Quiet output mode", 'q')]
 		public bool quiet = false;
 		
 		// TODO: semantics are different and should be adjusted
@@ -297,7 +297,7 @@ namespace Mono.Languages {
 		public string main { set { RootContext.MainClass = value; } }
 
 		// TODO: handle VB.NET [+|-] boolean syntax
-		[Option("[IGNORED]Emit compiler output in UTF8 character encoding")]
+		[Option("[IGNORED] Emit compiler output in UTF8 character encoding")]
 		public bool utf8output;
 
 		ArrayList defines = new ArrayList();

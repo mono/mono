@@ -1,4 +1,9 @@
 2004-12-01 Rafael Teixeira <rafaelteixeirabr@hotmail.com>
+	Ooops small bits on:
+	* driver.cs: -q --quiet works, inclusive for the "Alpha" message
+	* Test/misc/Makefile : Added dependency on newly compiled compiler for the test executable
+
+2004-12-01 Rafael Teixeira <rafaelteixeirabr@hotmail.com>
 	* driver.cs: it was "monostyled" and some extract method refactorings to make things clear
 	now -q --quiet works, inclusive for the "Alpha" message
 	* Test/misc/Makefile : Added dependency on newly compiled compiler for the test executable
