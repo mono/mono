@@ -1,3 +1,8 @@
+2004-06-13  Gert Driesen <drieseng@users.sourceforge.net>
+
+	* System_test.dll.sources: Added IndentedTextWriterTest to unit
+	tests
+
 2004-06-10  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile (LIBRARY_COMPILE): Define only if 'USE_BOOT_COMPILE' is

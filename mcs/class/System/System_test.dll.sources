@@ -9,6 +9,7 @@ Microsoft.VisualBasic/VBCodeProviderTest.cs
 System/UriBuilderTest.cs
 System/UriTest.cs
 System/UriTest2.cs
+System.CodeDom.Compiler/IndentedTextWriterTest.cs
 System.Collections.Specialized/BasicOperationsTest.cs
 System.Collections.Specialized/BitVector32Test.cs
 System.Collections.Specialized/HybridDictionaryTest.cs
