@@ -1,3 +1,8 @@
+2004-06-03  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* threads.c: Implemented SleepEx.
+	* threads.h: Fixed SleepEx signature.
+
 2004-06-03  Miguel de Icaza  <miguel@ximian.com>
 
 	* threads.c: When running under valgrind, do not allocate too much
