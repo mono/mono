@@ -1,5 +1,9 @@
 2004-10-08  Zoltan Varga  <vargaz@freemail.hu>
 
+	* reflection.c (mono_reflection_event_builder_get_event_info): Fix
+	length of event->other array.
+	(typebuilder_setup_events): Ditto.
+
 	* domain-internals.h (MonoDomain): Rename 'assemblies' hash table to
 	'assembly_by_name' and add an 'assemblies' list.
 
