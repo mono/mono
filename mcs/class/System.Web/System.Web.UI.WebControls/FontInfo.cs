@@ -12,6 +12,7 @@
  */
 
 using System;
+using System.Text;
 using System.Reflection;
 using System.Web;
 using System.Web.UI;
@@ -26,6 +27,16 @@ namespace System.Web.UI.WebControls
 		internal FontInfo(Style owner)
 		{
 			infoOwner = owner;
+		}
+		
+		/// <summary>
+		/// Default constructor
+		/// <remarks>
+		/// The default constructor is made private to prevent any instances being made.
+		/// </remarks>
+		/// </summary>
+		private FontInfo()
+		{
 		}
 		
 		public bool Bold
@@ -103,6 +114,7 @@ namespace System.Web.UI.WebControls
 			}
 		}
 		
+		//TODO: How do I check if the value is negative. FontUnit is struct not enum
 		public FontUnit Size
 		{
 			get
@@ -150,8 +162,11 @@ namespace System.Web.UI.WebControls
 			}
 			set
 			{
-				infoOwner.ViewState["FontInfoNames"] = value;
-				infoOwner.Set(Style.FONT_NAMES);
+				if(value!=null)
+				{
+					infoOwner.ViewState["FontInfoNames"] = value;
+					infoOwner.Set(Style.FONT_NAMES);
+				}
 			}
 		}
 		
@@ -169,7 +184,7 @@ namespace System.Web.UI.WebControls
 				infoOwner.ViewState.Remove("FontInfoOverline");
 			if(infoOwner.IsSet(Style.FONT_ULINE))
 				infoOwner.ViewState.Remove("FontInfoUnderline");
-			if(infoOwner.IsSet(Style.FONT_SIZE) && infoOwner.Size != FontUnit.Empty)
+			if(infoOwner.IsSet(Style.FONT_SIZE) && infoOwner.Font.Size != FontUnit.Empty)
 				infoOwner.ViewState.Remove("FontInfoSize");
 		}
 		
@@ -185,19 +200,19 @@ namespace System.Web.UI.WebControls
 		{
 			if(source!=null)
 			{
-				if(source.IsSet(Style.FONT_NAMES))
+				if(source.Owner.IsSet(Style.FONT_NAMES))
 					Names = source.Names;
-				if(source.IsSet(Style.FONT_BOLD))
+				if(source.Owner.IsSet(Style.FONT_BOLD))
 					Bold = source.Bold;
-				if(source.IsSet(Style.FONT_ITALIC))
+				if(source.Owner.IsSet(Style.FONT_ITALIC))
 					Italic = source.Italic;
-				if(source.IsSet(Style.FONT_STRIKE))
+				if(source.Owner.IsSet(Style.FONT_STRIKE))
 					Strikeout = source.Strikeout;
-				if(source.IsSet(Style.FONT_OLINE))
+				if(source.Owner.IsSet(Style.FONT_OLINE))
 					Overline = source.Overline;
-				if(source.IsSet(Style.FONT_ULINE))
+				if(source.Owner.IsSet(Style.FONT_ULINE))
 					Underline = source.Underline;
-				if(source.IsSet(Style.FONT_SIZE) && source.Size != FontUnit.Empty)
+				if(source.Owner.IsSet(Style.FONT_SIZE) && source.Size != FontUnit.Empty)
 					Size = source.Size;
 			}
 		}
@@ -206,20 +221,20 @@ namespace System.Web.UI.WebControls
 		{
 			if(with!=null)
 			{
-				if(source.IsSet(Style.FONT_NAMES) && !infoOwner.IsSet(Style.FONT_NAMES))
-					Names = source.Names;
-				if(source.IsSet(Style.FONT_BOLD && !infoOwner.IsSet(Style.FONT_BOLD)))
-					Bold = source.Bold;
-				if(source.IsSet(Style.FONT_ITALIC && !infoOwner.IsSet(Style.FONT_ITALIC)))
-					Italic = source.Italic;
-				if(source.IsSet(Style.FONT_STRIKE && !infoOwner.IsSet(Style.FONT_STRIKE)))
-					Strikeout = source.Strikeout;
-				if(source.IsSet(Style.FONT_OLINE && !infoOwner.IsSet(Style.FONT_OLINE)))
-					Overline = source.Overline;
-				if(source.IsSet(Style.FONT_ULINE && !infoOwner.IsSet(Style.FONT_ULINE)))
-					Underline = source.Underline;
-				if(source.IsSet(Style.FONT_SIZE) && source.Size != FontUnit.Empty && !infoOwner.IsSet(Style.FONT_SIZE))
-					Size = source.Size;
+				if(with.Owner.IsSet(Style.FONT_NAMES) && !infoOwner.IsSet(Style.FONT_NAMES))
+					Names = with.Names;
+				if(with.Owner.IsSet(Style.FONT_BOLD) && !infoOwner.IsSet(Style.FONT_BOLD))
+					Bold = with.Bold;
+				if(with.Owner.IsSet(Style.FONT_ITALIC) && !infoOwner.IsSet(Style.FONT_ITALIC))
+					Italic = with.Italic;
+				if(with.Owner.IsSet(Style.FONT_STRIKE) && !infoOwner.IsSet(Style.FONT_STRIKE))
+					Strikeout = with.Strikeout;
+				if(with.Owner.IsSet(Style.FONT_OLINE) && !infoOwner.IsSet(Style.FONT_OLINE))
+					Overline = with.Overline;
+				if(with.Owner.IsSet(Style.FONT_ULINE) && !infoOwner.IsSet(Style.FONT_ULINE))
+					Underline = with.Underline;
+				if(with.Owner.IsSet(Style.FONT_SIZE) && with.Size != FontUnit.Empty && !infoOwner.IsSet(Style.FONT_SIZE))
+					Size = with.Size;
 			}
 		}
 		
@@ -228,7 +243,7 @@ namespace System.Web.UI.WebControls
 			return (Names.Length > 0);
 		}
 		
-		protected override ToString()
+		public override string ToString()
 		{
 			return ( (Name.Length > 0) ? (Name.ToString() + ", " + Size.ToString()) : Size.ToString() );
 		}

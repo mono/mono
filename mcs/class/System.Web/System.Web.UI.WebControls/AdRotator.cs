@@ -42,13 +42,11 @@ namespace System.Web.UI.WebControls
 			public int         hits; // or impressions or clicks
 			public string      keyword;
 
-			public AdRecord()
-			{
-			}
-			
-			public void Initialize(IDictionary adProps)
+			public AdRecord(IDictionary adProps)
 			{
 				this.adProps = adProps;
+				hits         = 0;
+				keyword      = String.Empty;
 			}
 		}
 
@@ -70,7 +68,7 @@ namespace System.Web.UI.WebControls
 			XmlReader   reader;
 			XmlDocument document;
 			XmlNode     topNode, innerNode;
-			IDictionary hybridDict;
+			IDictionary hybridDict = null;
 			AdRecord[]  adsArray = null;
 			try
 			{
@@ -97,11 +95,11 @@ namespace System.Web.UI.WebControls
 								innerNode = topNode.FirstChild;
 								while(innerNode!=null)
 								{
-									if(innerNode.NodeType==NodeType.Element)
+									if(innerNode.NodeType==XmlNodeType.Element)
 									{
-										if(hybridDic==null)
+										if(hybridDict==null)
 										{
-											hybirdDict = new HybridDictionary();
+											hybridDict = new HybridDictionary();
 										}
 										hybridDict.Add(innerNode.LocalName, innerNode.InnerText);
 									}
@@ -141,23 +139,23 @@ namespace System.Web.UI.WebControls
 			string physPath = MapPathSecure(file);
 			string AdKey = "AdRotatorCache: " + physPath;
 			fileDirectory = UrlUtils.GetDirectory(UrlUtils.Combine(TemplateSourceDirectory, file));
-			CacheInternal ci = HttpRuntime.CacheInternal;
-			AdRecord[] records = (AdRecord[])ci[AdKey];
+			Cache cache = HttpRuntime.Cache;
+			AdRecord[] records = (AdRecord[])cache[AdKey];
 			if(records==null)
 			{
 				records = LoadAdFile(physPath);
-				if(!(records))
+				if(records==null)
 				{
 					return null;
 				}
-				ci.Insert(AdKey, records, new CacheDependency(physPath));
+				cache.Insert(AdKey, records, new CacheDependency(physPath));
 			}
 			return records;
 		}
 		
 		private IDictionary SelectAd()
 		{
-			AdRecord[] records = GetFileData(AdvertisementFile);
+			AdRecord[] records = GetData(AdvertisementFile);
 			if(records!=null && records.Length!=0)
 			{
 				int impressions = 0;
@@ -173,7 +171,7 @@ namespace System.Web.UI.WebControls
 					int index = 0;
 					for(int i=0; i < records.Length; i++)
 					{
-						if(IsAdMaching(records[i]))
+						if(IsAdMatching(records[i]))
 						{
 							if(rnd <= (counter + records[i].hits))
 							{
@@ -225,9 +223,8 @@ namespace System.Web.UI.WebControls
 			}
 		}
 		
-		public AdRotator()
+		public AdRotator(): base()
 		{
-			base();
 			advertisementFile = string.Empty;
 			fileDirectory     = null;
 		}
@@ -307,7 +304,7 @@ namespace System.Web.UI.WebControls
 			Image adImage = new Image();
 			foreach(IEnumerable current in Attributes.Keys)
 			{
-				hLink[(string)current] = Attributes[(string)current];
+				hLink.Attributes[(string)current] = Attributes[(string)current];
 			}
 			if(ID != null && ID.Length > 0)
 				hLink.ID = ID;

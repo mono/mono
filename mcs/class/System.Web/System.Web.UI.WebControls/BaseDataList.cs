@@ -12,6 +12,7 @@
  */
 
 using System;
+using System.ComponentModel;
 using System.Collections;
 using System.Web;
 using System.Web.UI;
@@ -59,7 +60,7 @@ namespace System.Web.UI.WebControls
 			get
 			{
 				if(!ControlStyleCreated)
-					retrurn -1;
+					return -1;
 				return ((TableStyle)ControlStyle).CellPadding;
 			}
 			set
@@ -73,7 +74,7 @@ namespace System.Web.UI.WebControls
 			get
 			{
 				if(!ControlStyleCreated)
-					retrurn -1;
+					return -1;
 				return ((TableStyle)ControlStyle).CellSpacing;
 			}
 			set
@@ -101,7 +102,7 @@ namespace System.Web.UI.WebControls
 		{
 			get
 			{
-				if( !(dataKeys) )
+				if( dataKeys==null )
 					dataKeys = new DataKeyCollection(DataKeysArray);
 				return dataKeys;
 				
@@ -131,7 +132,7 @@ namespace System.Web.UI.WebControls
 			}
 			set
 			{
-				if( (value) && ( value is IListSource || value is IEnumerable) )
+				if( (value!=null) && ( value is IListSource || value is IEnumerable) )
 				{
 					dataSource = value;
 				} else

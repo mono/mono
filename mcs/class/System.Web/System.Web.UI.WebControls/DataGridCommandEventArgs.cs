@@ -24,7 +24,7 @@ namespace System.Web.UI.WebControls
 		public DataGridCommandEventArgs(DataGridItem item, object commandSource, CommandEventArgs originalArgs): base(originalArgs)
 		{
 			dgItem = item;
-			original = originalArgs;
+			cmdSrc = originalArgs;
 		}
 		
 		public object CommandSource

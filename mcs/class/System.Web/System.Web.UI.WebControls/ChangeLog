@@ -1,3 +1,7 @@
+2001-12-20	Gaurav Vaish <gvaish@iitk.ac.in>
+
+	FontInfo.cs                 - Completed revamp. Completed
+
 2001-12-19	Gaurav Vaish <gvaish@iitk.ac.in>
 
 	ListItemCollection.cs       - Completed
@@ -29,7 +33,8 @@
 
 2001-12-02	Gaurav Vaish <gvaish@iitk.ac.in>
 
-	CheckBoxList.cs            - Partial Implementation. All except "Render"
+	CheckBoxList.cs            - Partial Implementation.
+                                     All except "Render"
 
 2001-12-01	Gaurav Vaish <gvaish@iitk.ac.in>
 
@@ -39,13 +44,16 @@
 
 	CheckBox.cs                - Completed
 	ListControl.cs             - Initial Implementation
-	CheckBoxList.cs            - Started with it, but first needed ListControl. Left it.
+	CheckBoxList.cs            - Started with it, but first needed
+                                     ListControl. Left it.
 
 2001-11-29	Gaurav Vaish <gvaish@iitk.ac.in>
 
-	CalendarDay.cs             - Making a note that this has been implemented
+	CalendarDay.cs             - Making a note that this
+                                     has been implemented
 	Calendar.cs                - Making a note that have made some changes.
-                                     Unimplmented functions throw NotImplementedException
+                                     Unimplmented functions throw
+                                     NotImplementedException
 	CheckBox.cs                - Can now "Render" and "LoadPostData"
 
 

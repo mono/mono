@@ -21,9 +21,8 @@ namespace System.Web.UI.WebControls
 		private string cmdName;
 		private object cmdArg;
 		
-		public CommandEventArgs(CommandEventArgs e)
+		public CommandEventArgs(CommandEventArgs e) : this(e.CommandName, e.CommandArgument)
 		{
-			CommandEventArgs(e.CommandName, e.CommandArgument);
 		}
 		
 		public CommandEventArgs(string commandName, object argument)

@@ -131,25 +131,25 @@ namespace System.Web.UI.WebControls
 		public ListItem FindByText(string text)
 		{
 			int i=-1;
-			foreach(ListItem current in items)
+			foreach(object current in items)
 			{
 				i++;
-				if(current.Text == text)
+				if(((ListItem)current).Text == text)
 					break;
 			}
-			return (i==-1 ? null : items[i]);
+			return (i==-1 ? null : (ListItem)items[i]);
 		}
 		
 		public ListItem FindByValue(string value)
 		{
 			int i=-1;
-			foreach(ListItem current in items)
+			foreach(object current in items)
 			{
 				i++;
-				if(current.Value == value)
+				if(((ListItem)current).Value == value)
 					break;
 			}
-			return (i==-1 ? null : items[i]);
+			return (i==-1 ? null : (ListItem)items[i]);
 		}
 		
 		public IEnumerator GetEnumerator()
@@ -190,7 +190,7 @@ namespace System.Web.UI.WebControls
 		
 		public void Remove(string item)
 		{
-			RemoveAt(IndexOf(item));
+			RemoveAt(IndexOf(ListItem.FromString(item)));
 		}
 		
 		internal object SaveViewState()
@@ -279,7 +279,10 @@ namespace System.Web.UI.WebControls
 			}
 			set
 			{
-				this[index] = value;
+				if(value is ListItem)
+				{
+					this[index] = (ListItem)value;
+				}
 			}
 		}
 
@@ -287,7 +290,7 @@ namespace System.Web.UI.WebControls
 		{
 			int index = (item is ListItem ? items.Add((ListItem)item) : -1);
 			if(index!=-1 && marked)
-				item.Dirty = true;
+				((ListItem)item).Dirty = true;
 			return index;
 		}
 		

@@ -94,10 +94,10 @@ namespace System.Web.UI.WebControls
 		{
 			// TODO: How to extract the value from the object?
 			// TODO: Then format the value. Here's a possible solution
-			if(dataFormatString == null || dataFormatString.equals(String.Empty))
-				return dataValue.toString();
+			if(dataFormatString == null || dataFormatString.Equals(String.Empty))
+				return dataValue.ToString();
 			if(dataValue is DateTime)
-				return ((DateTime)dataValue).toString(dataFormatString);
+				return ((DateTime)dataValue).ToString(dataFormatString);
 			throw new NotImplementedException();
 			// and so on for int, String, double..
 			// something's wrong here. there must be some shorter method!

@@ -177,15 +177,18 @@ namespace System.Web.UI.WebControls
 		protected string GetControlRenderID(string name)
 		{
 			// TODO: What value? What is it?
+			throw new NotImplementedException();
 		}
 
 		protected string GetControlValidationValue(string name)
 		{
+			throw new NotImplementedException();
 			// TODO: What value? What is it?
 		}
 
 		protected void RegisterValidatorCommonScript()
 		{
+			throw new NotImplementedException();
 			// TODO: Still wondering!
 			// Note: This method is primarily used by control developers
 		}
@@ -195,6 +198,7 @@ namespace System.Web.UI.WebControls
 			// TODO: Still wondering!
 			// Note: This method is primarily used by control developers
 			// The documentation in M$ refers to: Page_Validators array
+			throw new NotImplementedException();
 		}
 	}
 }

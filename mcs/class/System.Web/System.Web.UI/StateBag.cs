@@ -38,7 +38,7 @@ namespace System.Web.UI
 		{
 			this.ignoreCase = ignoreCase;
 			marked = false;
-			bag = new HybridDictionary(false);
+			bag = new HybridDictionary(ignoreCase);
 		}
 		
 		public int Count

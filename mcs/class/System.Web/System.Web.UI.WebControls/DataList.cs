@@ -32,11 +32,13 @@ namespace System.Web.UI.WebControls
 		private TableItemStyle editItemStyle;
 		private TableItemStyle footerStyle;
 		private TableItemStyle headerStyle;
+		private TableItemStyle separatorStyle;
 
 		private ITemplate alternatingItemTemplate;
 		private ITemplate editItemTemplate;
 		private ITemplate footerTemplate;
 		private ITemplate headerTemplate;
+		private ITemplate separatorTemplate;
 
 		private int editItemIndex;
 		private bool extractTemplateRows;
@@ -48,11 +50,13 @@ namespace System.Web.UI.WebControls
 			alternatingItemStyle = new TableItemStyle();
 			editItemStyle        = new TableItemStyle();
 			footerStyle          = new TableItemStyle();
+			headerStyle          = new TableItemStyle();
 
 			alternatingItemTemplate = null;
 			editItemTemplate        = null;
 			footerTemplate          = null;
 			headerTemplate          = null;
+			separatorTemplate       = null;
 			
 			extractTemplateRows = false;
 			
@@ -245,6 +249,7 @@ namespace System.Web.UI.WebControls
 		{
 			if(GetItem(itemType, repeatIndex)!=null && ControlStyleCreated)
 				return ControlStyle;
+			return null;
 		}
 	}
 }

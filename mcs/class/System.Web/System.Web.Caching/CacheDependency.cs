@@ -19,7 +19,23 @@ namespace System.Web.Caching
 		{
 			_boolDisposed = false;
 		}
-	
+
+		/// <remarks>
+		/// Added by gvaish@iitk.ac.in
+		/// </remarks>
+		public CacheDependency(string filename)
+		{
+			throw new NotImplementedException();
+		}
+		
+		/// <remarks>
+		/// Added by gvaish@iitk.ac.in
+		/// </remarks>
+		public CacheDependency(string[] filenames, string[] cachekeys)
+		{
+			throw new NotImplementedException();
+		}
+
 		public delegate void CacheDependencyCallback(CacheDependency objDependency);
 		
 		public event CacheDependencyCallback Changed;

@@ -26,9 +26,8 @@ namespace System.Web.UI.WebControls
 	{
 		private static readonly object CheckedChangedEvent = new object();
 		
-		public CheckBox()
+		public CheckBox(): base(HtmlTextWriterTag.Input)
 		{
-			base(HtmlTextWriterTag.Input);
 		}
 		
 		public virtual bool AutoPostBack

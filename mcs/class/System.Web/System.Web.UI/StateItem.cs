@@ -38,8 +38,8 @@ namespace System.Web.UI
                                 _value = value;
                         }
                 }
-                public StateItem() {}
-                public StateItem(Object value)
+                private StateItem() {}
+                internal StateItem(Object value)
                 {
                         _value = value;
                 }

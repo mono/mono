@@ -12,6 +12,7 @@
  */
 
 using System;
+using System.IO;
 using System.Collections;
 using System.Globalization;
 using System.Text;
@@ -589,9 +590,9 @@ namespace System.Web.UI.WebControls
 			{
 				weekendDayStyle.TrackViewState();
 			}
-			if(otherMonthStyle!=null)
+			if(otherMonthDayStyle!=null)
 			{
-				otherMonthStyle.TrackViewState();
+				otherMonthDayStyle.TrackViewState();
 			}
 			if(selectedDayStyle!=null)
 			{
@@ -678,7 +679,6 @@ namespace System.Web.UI.WebControls
 		
 		private DateTime SetFirstCalendarDay(DateTime visibleDate)
 		{
-			globCal = visibleDate;
 			throw new NotImplementedException();
 			//TODO: Implement me
 		}
@@ -707,10 +707,10 @@ namespace System.Web.UI.WebControls
 				dispVal.Append("\" style=\"color: ");
 				if(foreground.IsEmpty)
 				{
-					dispVal.Append(ColorTranslater.ToHtml(defaultTextColor);
+					dispVal.Append(ColorTranslator.ToHtml(defaultTextColor));
 				} else
 				{
-					dispVal.Append(ColorTranslater.ToHtml(foreground);
+					dispVal.Append(ColorTranslator.ToHtml(foreground));
 				}
 				dispVal.Append("\">");
 				dispVal.Append(text);

@@ -92,9 +92,9 @@ namespace System.Web.UI.WebControls
 					writer.AddAttribute("digits", currInfo.CurrencyDecimalDigits.ToString(NumberFormatInfo.InvariantInfo));
 					return;
 				}
-				if(Type == ValidationType.Date)
+				if(Type == ValidationDataType.Date)
 				{
-					writer.AddAttribute("cutoffyear", CutoffYear);
+					writer.AddAttribute("cutoffyear", CutoffYear.ToString());
 					writer.AddAttribute("century", ( DateTime.Today.Year - (DateTime.Today.Year % 100) ).ToString());
 					return;
 				}

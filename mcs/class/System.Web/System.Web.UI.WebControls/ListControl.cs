@@ -193,7 +193,7 @@ namespace System.Web.UI.WebControls
 				for(int i=0; i < Items.Count; i++)
 				{
 					if(Items[i].Selected)
-						ArrayList.Add(i);
+						si.Add(i);
 				}
 				return si;
 			}
@@ -202,8 +202,9 @@ namespace System.Web.UI.WebControls
 		internal void Select(ArrayList indices)
 		{
 			ClearSelection();
-			foreach(int index in indices)
+			foreach(object intObj in indices)
 			{
+				int index = (int)intObj;
 				if(index >= 0 && index < Items.Count)
 					Items[index].Selected = true;
 			}
@@ -237,7 +238,7 @@ namespace System.Web.UI.WebControls
 		{
 			base.OnDataBinding(e);
 			IEnumerable resolvedDataSource = DataSourceHelper.GetResolvedDataSource(DataSource, DataMember);
-			if(resolvedData != null)
+			if(resolvedDataSource != null)
 			{
 				string dataTextField = DataTextField;
 				string dataValueField = DataValueField;
