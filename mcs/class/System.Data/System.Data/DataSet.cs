@@ -31,8 +31,7 @@ namespace System.Data {
 	[Serializable]
 	public class DataSet : MarshalByValueComponent, IListSource,
 		ISupportInitialize, ISerializable {
-
-		private string dataSetName = "NewDataSet";
+		private string dataSetName;
 		private string _namespace = "";
 		private string prefix;
 		private bool caseSensitive;
@@ -45,13 +44,14 @@ namespace System.Data {
 		#region Constructors
 
 		[MonoTODO]
-		public DataSet() {
-			tableCollection = new DataTableCollection (this);
+		public DataSet() : this ("NewDataSet") {		
 		}
 
 		[MonoTODO]
-		public DataSet(string name) : this () {
+		public DataSet(string name) {
 			dataSetName = name;
+			tableCollection = new DataTableCollection (this);
+			//relationCollection = new DataTableRelationCollection ();
 		}
 
 		[MonoTODO]
@@ -159,8 +159,8 @@ namespace System.Data {
 		public DataRelationCollection Relations {
 			[MonoTODO]
 			get{
-				//return relationCollection;
-				throw new NotImplementedException();
+				//return relationCollection;		
+				throw new NotImplementedException ();		
 			}
 		}
 
@@ -365,9 +365,7 @@ namespace System.Data {
 				}
 			}
 			
-			writer.WriteEndElement();
-			
-			writer.WriteEndDocument();
+			writer.WriteEndElement();			
 		}
 
 		public void WriteXmlSchema(Stream stream)
@@ -529,7 +527,7 @@ namespace System.Data {
 		{
 			return DefaultViewManager;
 		}
-
+		
 		bool IListSource.ContainsListCollection {
 			get {
 				return true;
@@ -538,12 +536,12 @@ namespace System.Data {
 		#endregion IListSource methods
 		
 		#region ISupportInitialize methods
-		void ISupportInitialize.BeginInit ()
+		public void BeginInit ()
 		{
 			throw new NotImplementedException ();
 		}
-
-		void ISupportInitialize.EndInit ()
+		
+		public void EndInit ()
 		{
 			throw new NotImplementedException ();
 		}
@@ -649,7 +647,7 @@ namespace System.Data {
 						break;
 					case XmlWriteMode.DiffGram:
 						throw new NotImplementedException();
-					default:
+					default:					       
 						writer.WriteStartElement(name );
 						break;					
 				};

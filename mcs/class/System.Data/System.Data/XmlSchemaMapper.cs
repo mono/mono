@@ -65,8 +65,8 @@ namespace System.Data {
 			
 			if (Item is XmlSchemaType)
 				ReadXmlSchemaType ((XmlSchemaType)Item);
-			else if ((SchemaObject = Item as XmlSchemaElement) != null)
-				ReadXmlSchemaElement (SchemaObject as XmlSchemaElement, ElementType.ELEMENT_UNDEFINED);
+			else if (Item is XmlSchemaElement)
+				ReadXmlSchemaElement (Item as XmlSchemaElement, ElementType.ELEMENT_UNDEFINED);
 		}
 
 		private void ReadXmlSchemaSequence (XmlSchemaSequence Sequence)
@@ -78,9 +78,9 @@ namespace System.Data {
 		{
 			foreach (XmlSchemaObject TempObj in Sequence.Items) {
 				
-				XmlSchemaObject SchemaObject;
-				if ((SchemaObject = TempObj as XmlSchemaElement) != null)
-					ReadXmlSchemaElement ((XmlSchemaElement)SchemaObject, ElementType.ELEMENT_COLUMN, Table);
+				if (TempObj is XmlSchemaElement)
+					ReadXmlSchemaElement (TempObj as XmlSchemaElement, ElementType.ELEMENT_COLUMN, Table);
+				
 			}
 		}
 
@@ -124,7 +124,7 @@ namespace System.Data {
 				DataTable TempTable = new DataTable (Element.Name);
 				DSet.Tables.Add (TempTable);
 				
-				// If type is already defined in schema read it...
+				// If type is already defined in schema read it...				
 				if (TypeCollection.Contains (Element.SchemaTypeName.ToString ()))
 					ReadXmlSchemaType ((XmlSchemaType)TypeCollection [Element.SchemaTypeName.ToString ()], TempTable);
 				else // but if it's not yet defined put it safe to wait if we need it later. 
@@ -354,24 +354,31 @@ namespace System.Data {
 		private void ReadXmlSchemaComplexType (XmlSchemaComplexType Type, DataTable Table)
 		{
 			XmlSchemaComplexType ComplexType = Type as XmlSchemaComplexType;
-
+			
 			if (ComplexType.Name != null && ComplexType.Name != string.Empty) {
+
 				if (ElementCollection.Contains (ComplexType.Name)) {
-					
-					XmlSchemaParticle Particle;
-					if ((Particle = ComplexType.Particle as XmlSchemaChoice) != null) {
-						ReadXmlSchemaChoice (Particle as XmlSchemaChoice);
+
+					if (ComplexType.Particle is XmlSchemaChoice) {
+						ReadXmlSchemaChoice (ComplexType.Particle as XmlSchemaChoice);
 					}
-					else if ((Particle = ComplexType.Particle as XmlSchemaSequence) != null) {
+					else if (ComplexType.Particle is XmlSchemaSequence) {
+
 						DataTable TempTable = ElementCollection [ComplexType.Name] as DataTable;
 						ElementCollection.Remove (ComplexType.Name);
-						ReadXmlSchemaSequence (Particle as XmlSchemaSequence, TempTable);
+						ReadXmlSchemaSequence (ComplexType.Particle as XmlSchemaSequence, TempTable);
 					}
-					
 				}
 				else if (ComplexType.Name != null && !TypeCollection.Contains (ComplexType.Name)) {
 					TypeCollection.Add (ComplexType.Name, ComplexType);
+				} 
+				else {
+
+					// If we are here it means that types of elements are Tables :-P
+					if (ComplexType.Particle is XmlSchemaSequence)
+						ReadXmlSchemaSequence (ComplexType.Particle as XmlSchemaSequence, Table);
 				}
+
 			}
 			else {
 				XmlSchemaParticle Particle;

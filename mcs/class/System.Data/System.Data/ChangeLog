@@ -1,3 +1,9 @@
+2003-01-27  Ville Palo <vi64pa@koti.soon.fi>
+
+	* XmlSchemaMapper.cs: Some fixes.
+	* DatSet.cs: Some XmlFixes and BeginInit ()/ EndInit () -fix
+
+		
 2003-01-24  Ville Palo <vi64pa@koti.soon.fi>
 
 	* UniqueConstraint.cs: Do not set columns Unique property true 
