@@ -1,3 +1,9 @@
+2004-12-06  Martin Baulig  <martin@ximian.com>
+
+	* class.c (mono_class_create_generic): Call
+	mono_class_setup_supertypes() if we're dynamic.
+	(mono_class_is_subclass_of): `g_assert (klass->idepth > 0)'.
+
 2004-12-06  Zoltan Varga  <vargaz@freemail.hu>
 
 	* object-internals.h: Add new fields to MonoThread.
