@@ -1,3 +1,7 @@
+2003-07-15  Dick Porter  <dick@ximian.com>
+
+	* timed-thread.c (timed_thread_start_routine): Fix virtual memory
+	leak when threads quit.  Fixes bug 44067.
 
 Wed Jun 18 19:08:40 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
