@@ -1,5 +1,12 @@
 2003-11-03 Jackson Harper <jackson@ximian.com>
 
+	* Repeater.cs: Always set alternating items to the AlternatingItem
+	type, when instantiating alternating items use the itemTemplate if
+	the alternatingItem template is null. This matches MS behavoir and
+	fixes bug #50157.
+	
+2003-11-03 Jackson Harper <jackson@ximian.com>
+
 	* DataGridPagerStyle.cs: Name of view state attribute is
 	PagerVisible not Visible. Call owner.OnPagerChanged when the pager
 	visibility is changed. Patch by Yaron Shkop.

@@ -282,7 +282,7 @@ namespace System.Web.UI.WebControls
 					template = this.itemTemplate;
 					break;
 				case ListItemType.AlternatingItem:
-					template = this.alternatingItemTemplate;
+					template = (alternatingItemTemplate != null ? this.alternatingItemTemplate : itemTemplate);
 					break;
 				case ListItemType.Separator:
 					template = this.separatorTemplate;
@@ -324,7 +324,7 @@ namespace System.Web.UI.WebControls
 
 					RepeaterItem repeaterItem;
 					ListItemType lType;
-					if (!even && alternatingItemTemplate != null)
+					if (!even)
 						lType = ListItemType.AlternatingItem;
 					else
 						lType = ListItemType.Item;
