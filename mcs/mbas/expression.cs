@@ -5621,7 +5621,7 @@ namespace Mono.CSharp {
 		public MemberAccess (Expression expr, string id, Location l)
 		{
 			this.expr = expr;
-			Identifier = id;
+			Identifier = (id == "New" ? ".ctor" : id);
 			loc = l;
 		}
 
@@ -5902,7 +5902,7 @@ namespace Mono.CSharp {
 				// Error has already been reported.
 				if (errors < Report.Errors)
 					return null;
-				
+
 				//
 				// Try looking the member up from the same type, if we find
 				// it, we know that the error was due to limited visibility
@@ -6778,7 +6778,7 @@ namespace Mono.CSharp {
 				Error (1511, "Keyword MyBase is not allowed in static method");
 				return null;
 			}
-			
+
 			if (member == "New")
 				member = ".ctor";
 			
