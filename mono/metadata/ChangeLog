@@ -1,4 +1,10 @@
 
+Thu Jun 20 11:49:00 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* row-indexes.h: fix typos.
+	* reflection.c: adjust for typos and fix method_def_or_ref
+	encoding in MethodImpl table.
+
 Wed Jun 19 21:57:30 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* reflection.c: fix entry point patching (thanks Serge!).
