@@ -1,3 +1,14 @@
+2003-06-28  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* CodeAccessPermission.cs: Added missing methods. Removed old XML
+	documentation (present in monodoc). Added missing MonoTODO attrs.
+	* NamedPermissionSet.cs : Changed some code from result of unit 
+	tests. Updated MonoTODO attributes.
+	* PermissionSet.cs: Added missing methods. Removed old XML
+	documentation (present in monodoc). Added missing MonoTODO attrs.
+	Added code to some methods.
+	* SecurityManager.cs: Added missing MonoTODO attributes.
+
 2003-05-09  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* AllowPartiallyTrustedCallersAttribute.cs: New. Class was missing

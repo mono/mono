@@ -2,7 +2,7 @@
 // System.Security.SecurityManager.cs
 //
 // Author:
-//   Nick Drochak(ndrochak@gol.com)
+//	Nick Drochak(ndrochak@gol.com)
 //
 // (C) Nick Drochak
 //
@@ -12,77 +12,76 @@ using System.Collections;
 
 namespace System.Security {
 
-	public sealed class SecurityManager  {
+	public sealed class SecurityManager {
+
 		private static bool checkExecutionRights;
 		private static bool securityEnabled;
 
 		private SecurityManager () {}
 
 		public static bool CheckExecutionRights {
-			get{
-				return checkExecutionRights;
-			}
-			set{
-				checkExecutionRights = value;
-			}
+			get { return checkExecutionRights; }
+			set { checkExecutionRights = value; }
 		}
 
 		public static bool SecurityEnabled {
-			get{
-				return securityEnabled;
-			}
-			set{
-				securityEnabled = value;
-			}
+			get { return securityEnabled; }
+			set { securityEnabled = value; }
 		}
 
-		public static bool IsGranted(IPermission perm){
+		[MonoTODO("Incomplete")]
+		public static bool IsGranted (IPermission perm)
+		{
+			if (perm == null)
+				return false;
+			if (!securityEnabled)
+				return true;
 			return false;
 		}
 
-		public static PolicyLevel LoadPolicyLevelFromFile(
-			string path, 
-			PolicyLevelType type)
+		[MonoTODO()]
+		public static PolicyLevel LoadPolicyLevelFromFile (string path, PolicyLevelType type)
 		{
 			return null;
 		}
 
-		public static PolicyLevel LoadPolicyLevelFromString(
-			string str, 
-			PolicyLevelType type)
+		[MonoTODO()]
+		public static PolicyLevel LoadPolicyLevelFromString (string str, PolicyLevelType type)
 		{
-			if (null == str){    
+			if (null == str)
 				throw new ArgumentNullException("str");
-			}
 			return null;
 		}
 
-		public static IEnumerator PolicyHierarchy(){
+		[MonoTODO()]
+		public static IEnumerator PolicyHierarchy ()
+		{
 			return null;
 		}
 
-		public static PermissionSet ResolvePolicy(Evidence evidence){
+		[MonoTODO()]
+		public static PermissionSet ResolvePolicy (Evidence evidence)
+		{
 			return null;
 		}
 
-		public static PermissionSet ResolvePolicy(
-			Evidence evidence,
-			PermissionSet reqdPset,
-			PermissionSet optPset,
-			PermissionSet denyPset,
-			out PermissionSet denied)
+		[MonoTODO()]
+		public static PermissionSet ResolvePolicy (Evidence evidence, PermissionSet reqdPset, PermissionSet optPset, PermissionSet denyPset, out PermissionSet denied)
 		{
 			denied = null;
 			return null;
 		}
 
-		public static IEnumerator ResolvePolicyGroups(Evidence evidence){
+		[MonoTODO()]
+		public static IEnumerator ResolvePolicyGroups (Evidence evidence)
+		{
 			return null;
 		}
 
-		public static void SavePolicy(){}
+		[MonoTODO()]
+		public static void SavePolicy () {}
 
-		public static void SavePolicyLevel(PolicyLevel level){}
-
+		[MonoTODO()]
+		public static void SavePolicyLevel (PolicyLevel level) {}
 	}
 }
