@@ -52,6 +52,21 @@ public class WebProxyTest : TestCase
 			p.BypassList = null;
 			Fail ("#5 not spec'd, but should follow ms.net implementation");
 		} catch (ArgumentNullException) {}
+
+		p = new WebProxy ("webserver.com", 8080);
+		AssertEquals ("#6", new Uri ("http://webserver.com:8080/"), p.Address);
+		
+		p = new WebProxy ("webserver");
+		AssertEquals ("#7", new Uri ("http://webserver"), p.Address);
+
+		p = new WebProxy ("webserver.com");
+		AssertEquals ("#8", new Uri ("http://webserver.com"), p.Address);
+
+		p = new WebProxy ("http://webserver.com");
+		AssertEquals ("#9", new Uri ("http://webserver.com"), p.Address);
+
+		p = new WebProxy ("file://webserver");
+		AssertEquals ("#10", new Uri ("file://webserver"), p.Address);		
 	}
 	
 	public void TestGetProxy ()

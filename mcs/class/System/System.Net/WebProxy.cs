@@ -7,8 +7,6 @@
 
 using System;
 using System.Collections;
-using System.Collections.Specialized;
-using System.IO;
 using System.Runtime.Serialization;
 using System.Text.RegularExpressions;
 
@@ -30,13 +28,13 @@ namespace System.Net
 			: this ((Uri) null, false, null, null) {}
 		
 		public WebProxy (string address) 
-			: this (new Uri (address), false, null, null) {}
+			: this (ToUri (address), false, null, null) {}
 		
 		public WebProxy (Uri address) 
 			: this (address, false, null, null) {}
 		
 		public WebProxy (string address, bool bypassOnLocal) 
-			: this (new Uri (address), bypassOnLocal, null, null) {}
+			: this (ToUri (address), bypassOnLocal, null, null) {}
 		
 		public WebProxy (string host, int port)
 			: this (new Uri ("http://" + host + ":" + port)) {}
@@ -45,14 +43,14 @@ namespace System.Net
 			: this (address, bypassOnLocal, null, null) {}
 
 		public WebProxy (string address, bool bypassOnLocal, string [] bypassList)
-			: this (new Uri (address), bypassOnLocal, bypassList, null) {}
+			: this (ToUri (address), bypassOnLocal, bypassList, null) {}
 
 		public WebProxy (Uri address, bool bypassOnLocal, string [] bypassList)
 			: this (address, bypassOnLocal, bypassList, null) {}
 		
 		public WebProxy (string address, bool bypassOnLocal,
 				 string[] bypassList, ICredentials credentials)
-			: this (new Uri (address), bypassOnLocal, bypassList, null) {}
+			: this (ToUri (address), bypassOnLocal, bypassList, null) {}
 
 		public WebProxy (Uri address, bool bypassOnLocal, 
 				 string[] bypassList, ICredentials credentials)
@@ -140,8 +138,9 @@ namespace System.Net
 			if (bypassOnLocal && host.Host.IndexOf ('.') == -1)
 				return true;
 				
+			string hostStr = host.Scheme + "://" + host.Authority;				
 			for (int i = 0; i < bypassRegexList.Length; i++) 
-				if (bypassRegexList [i].IsMatch (host.Scheme + "://" + host.Authority))
+				if (bypassRegexList [i].IsMatch (hostStr))
 					return true;
 			
 			return false;
@@ -164,6 +163,17 @@ namespace System.Net
 							// TODO: RegexOptions.Compiled |  // not implemented yet by Regex
 							RegexOptions.IgnoreCase |
 							RegexOptions.Singleline);
+		}
+		
+		private static Uri ToUri (string address)
+		{
+			if (address == null)
+				return null;
+				
+			if (address.IndexOf (':') == -1) 
+				address = "http://" + address;
+			
+			return new Uri (address);
 		}
 	}
 }
