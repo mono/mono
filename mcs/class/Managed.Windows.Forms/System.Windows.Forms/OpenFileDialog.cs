@@ -5,10 +5,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -21,70 +21,99 @@
 //
 // Authors:
 //
-//
+//  Alexander Olk	xenomorph2@onlinehome.de
 //
 
-// NOT COMPLETE - This is a placeholder until our contributors get a chance to check their code in
+// NOT COMPLETE - work in progress
 
 using System;
+using System.Drawing;
 using System.IO;
 
-namespace System.Windows.Forms {
-	public class OpenFileDialog : FileDialog {
+namespace System.Windows.Forms
+{
+	public class OpenFileDialog : FileDialog
+	{
+		private bool multiSelect = false;
+		private bool readOnlyChecked = false;
+		private bool showReadOnly = false;
+		
 		#region Public Constructors
-		public OpenFileDialog() {
-			throw new NotImplementedException ();
+		public OpenFileDialog( )
+		{
+			form.Text = "Open";
+			
+			form.Size =  new Size( 554, 384 );
+			
+			fileDialogPanel = new FileDialogPanel( this );
 		}
 		#endregion	// Public Constructors
-
+		
 		#region Public Instance Properties
-		public bool Multiselect {
-			get {
-				throw new NotImplementedException ();
+		public bool Multiselect
+		{
+			get
+			{
+				return multiSelect;
 			}
-
-			set {
-				throw new NotImplementedException ();
-			}
-		}
-
-		public bool ReadOnlyChecked {
-			get {
-				throw new NotImplementedException ();
-			}
-
-			set {
-				throw new NotImplementedException ();
+			
+			set
+			{
+				multiSelect = value;
 			}
 		}
-		public bool ShowReadOnly {
-			get {
-				throw new NotImplementedException ();
+		
+		public bool ReadOnlyChecked
+		{
+			get
+			{
+				return readOnlyChecked;
 			}
-
-			set {
-				throw new NotImplementedException ();
+			
+			set
+			{
+				readOnlyChecked = value;
 			}
 		}
-
+		
+		public bool ShowReadOnly
+		{
+			get
+			{
+				return showReadOnly;
+			}
+			
+			set
+			{
+				showReadOnly = value;
+			}
+		}
+		
 		#endregion	// Public Instance Properties
-
+		
 		#region Public Instance Methods
-		public Stream OpenFile() {
-			throw new NotImplementedException ();
+		public Stream OpenFile( )
+		{
+			if ( FileName == null )
+				throw new ArgumentNullException( "OpenFile", "FileName is null" );
+			
+			return new FileStream( FileName, FileMode.Open, FileAccess.Read );
 		}
 		#endregion	// Public Instance Methods
-
-		[MonoTODO]
-		public override void Reset() {
-			throw new NotImplementedException ();
+		
+		public override void Reset( )
+		{
+			base.Reset( );
+			multiSelect = false;
+			readOnlyChecked = false;
+			showReadOnly = false;
 		}
-
+		
 		[MonoTODO]
-		protected override bool RunDialog(IntPtr hwndOwner) {
-			throw new NotImplementedException();
+		protected override bool RunDialog( IntPtr hwndOwner )
+		{
+			return base.RunDialog( hwndOwner );
 		}
-
-
 	}
 }
+

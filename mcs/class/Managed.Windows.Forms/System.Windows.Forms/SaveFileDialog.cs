@@ -5,10 +5,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -21,21 +21,67 @@
 //
 // Authors:
 //
+//  Alexander Olk	xenomorph2@onlinehome.de
 //
 
-// NOT COMPLETE
+// NOT COMPLETE - work in progress
 
-namespace System.Windows.Forms {
-	public sealed class SaveFileDialog : FileDialog {
+using System;
+using System.Drawing;
+using System.IO;
+
+namespace System.Windows.Forms
+{
+	public sealed class SaveFileDialog : FileDialog
+	{
+		private bool overwritePrompt = true;
+		
 		#region Public Constructors
-		public SaveFileDialog() {
+		public SaveFileDialog( )
+		{
+			form.Text = "Save";
+			
+			form.Size =  new Size( 554, 384 );
+			
+			fileDialogPanel = new FileDialogPanel( this );
 		}
 		#endregion	// Public Constructors
-
+		
 		#region Public Instance Properties
+		public bool OverwritePrompt
+		{
+			set
+			{
+				overwritePrompt = value;
+			}
+			
+			get
+			{
+				return overwritePrompt;
+			}
+		}
 		#endregion	// Public Instance Properties
-
+		
 		#region Public Instance Methods
+		public Stream OpenFile( )
+		{
+			if ( FileName == null )
+				throw new ArgumentNullException( "OpenFile", "FileName is null" );
+			
+			return new FileStream( FileName, FileMode.Open, FileAccess.ReadWrite );
+		}
 		#endregion	// Public Instance Methods
+		
+		public override void Reset( )
+		{
+			base.Reset( );
+			overwritePrompt = true;
+		}
+		
+		[MonoTODO]
+		protected override bool RunDialog( IntPtr hwndOwner )
+		{
+			return base.RunDialog( hwndOwner );
+		}
 	}
 }
