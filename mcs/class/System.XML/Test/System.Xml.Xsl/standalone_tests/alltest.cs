@@ -25,14 +25,13 @@ namespace simpleTests
 
 			XslTransform xslt = new XslTransform();
 			StreamWriter strWr = new StreamWriter (resFileName, false, System.Text.Encoding.UTF8);
-			XmlTextWriter wr = new XmlTextWriter (strWr);
+//			XmlTextWriter wr = new XmlTextWriter (strWr);
 			try {
 				XmlDocument xml = new XmlDocument();
 				xml.Load (data);
 				xslt.Load (stylesheet);
-				xslt.Transform (xml, null, wr, null);
-			}
-			catch(Exception x) {
+				xslt.Transform (xml, null, strWr, null);
+			} catch(Exception x) {
 				strWr.Close();
 				strWr = new StreamWriter (resFileName, false, System.Text.Encoding.UTF8);
 				strWr.Write("<exception>{0}</exception>", x.GetType().ToString());

@@ -58,8 +58,8 @@ run-test-xslt : xslttest.exe
 	$(RUNTIME) xslttest.exe --report:TestResult.xml --xml --details --outall
 
 run-test-ms : alltest.exe xmlnorm.exe
-	$(RUNTIME) alltest.exe $(TARGET_RESULTS)
-	$(RUNTIME) xmlnorm.exe -s testsuite/TESTS/$(TARGET_RESULTS) testsuite/TESTS/norm-tmp
+	$(RUNTIME) ./alltest.exe $(TARGET_RESULTS)
+	$(RUNTIME) ./xmlnorm.exe -s testsuite/TESTS/$(TARGET_RESULTS) testsuite/TESTS/norm-tmp
 	rm -rf testsuite/TESTS/$(TARGET_RESULTS)
 	mv testsuite/TESTS/norm-tmp testsuite/TESTS/$(TARGET_RESULTS)
 	diff -r -q testsuite/TESTS/ExpectedResults testsuite/TESTS/$(TARGET_RESULTS) > diffreport.txt
