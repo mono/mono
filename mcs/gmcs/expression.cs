@@ -6063,7 +6063,7 @@ namespace Mono.CSharp {
 			if (IsDelegate){
 				RequestedType = (new NewDelegate (type, Arguments, loc)).Resolve (ec);
 				if (RequestedType != null)
-					if (!(RequestedType is NewDelegate || RequestedType is AnonymousMethod))
+					if (!(RequestedType is DelegateCreation))
 						throw new Exception ("NewDelegate.Resolve returned a non NewDelegate: " + RequestedType.GetType ());
 				return RequestedType;
 			}
