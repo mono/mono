@@ -61,9 +61,8 @@ namespace Mono.Xml.Xsl.Operations {
 				if (colonAt == 0)
 					throw new XsltCompileException ("Invalid name attribute.", null, c.Input);
 				calcPrefix = colonAt < 0 ? String.Empty : calcName.Substring (0, colonAt);
-				calcName = colonAt < 0 ? calcName : calcName.Substring (colonAt + 1, calcName.Length - colonAt - 1);
-				if (ns == null)
-					calcNs = c.Input.GetNamespace (calcPrefix);
+				if (colonAt > 0)
+					calcName = calcName.Substring (colonAt + 1);
 
 				try {
 					XmlConvert.VerifyNCName (calcName);
@@ -71,6 +70,12 @@ namespace Mono.Xml.Xsl.Operations {
 						XmlConvert.VerifyNCName (calcPrefix);
 				} catch (XmlException ex) {
 					throw new XsltCompileException ("Invalid name attribute.", ex, c.Input);
+				}
+
+				if (ns == null) {
+					calcNs = c.Input.GetNamespace (calcPrefix);
+					if (calcPrefix != String.Empty && calcNs == String.Empty)
+						throw new XsltCompileException ("Invalid name attribute.", null, c.Input);
 				}
 			} else if (ns != null)
 				calcNs = XslAvt.AttemptPreCalc (ref ns);
