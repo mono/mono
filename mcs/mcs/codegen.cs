@@ -70,7 +70,7 @@ namespace CIR {
 		{
 			this.parent = parent;
 			this.ig = ig;
-			check_state = false;
+			CheckState = false;
 		}
 
 		public bool ConvertTo (Type target, Type source, bool verbose)
