@@ -1,6 +1,8 @@
 2004-12-06  Zoltan Varga  <vargaz@freemail.hu>
 
 	* Environment.cs: Bump corlib version.
+	
+	* Environment.cs: Bump corlib version.
 
 2004-11-30  Zoltan Varga  <vargaz@freemail.hu>
 
