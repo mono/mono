@@ -1,3 +1,10 @@
+2004-12-06  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile (RESOURCE_FILES): List only filenames.
+	(LIB_MCS_FLAGS): Strip off directory of resource files to get
+	resource names.
+	(EXTRA_DISTFILES): Add $(RESOURCE_FILES).
+
 2004-12-06  Atsushi Enomoto <atsushi@ximian.com>
 
 	* Makefile : added relaxng.rng as a resource.
