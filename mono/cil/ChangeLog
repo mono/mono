@@ -1,0 +1,9 @@
+2001-07-01  Miguel de Icaza  <miguel@ximian.com>
+
+	* cil-opcodes.xml: New file that describes the CIL opcodes in
+	XML format.
+
+	* make-opcodes-def.pl: Perl script that parses the above file and
+	generates a Annex V/C.2 compliant opcode.def file.
+
+
