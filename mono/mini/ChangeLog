@@ -1,3 +1,19 @@
+2003-09-01  Zoltan Varga  <vargaz@freemail.hu>
+
+	* aot.c (mono_compile_assembly): Emit a symbol containing the file 
+	format version into the generated library.
+
+	* mini-x86.c (mono_arch_patch_code): Do not emit the address of the
+	callee method into the caller since one of them could be shared.
+
+	* mini.h mini-x86.c aot.c: Added two new relocations so throwing
+	system exceptions from AOT code now works.
+
+	* tramp-x86.c (x86_magic_trampoline): Avoid patching the calling 
+	method if it is domain neutral and the callee is not.
+
+	* graph.c (cfg_emit_one_loop_level): Fix warning.
+
 2003-08-30  Zoltan Varga  <vargaz@freemail.hu>
 
 	* aot.c (mono_compile_assembly): Oops. Remove debugging cruft from
