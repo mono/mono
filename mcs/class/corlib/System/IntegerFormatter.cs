@@ -685,7 +685,7 @@ namespace System {
 		// over, pad w/ zeros.
 		//
 
-		private static string FormatDecimal (long value, int precision, int maxLength)
+		internal static string FormatDecimal (long value, int precision, int maxLength)
 		{
 			int size = (precision > 0) ? (maxLength + precision) : maxLength;
 			char[] buffy = new char[size];
@@ -717,7 +717,7 @@ namespace System {
 			return new string (buffy, position, (size - position));  
 		}
 
-		private static string FormatDecimal (ulong value, int precision, int maxLength)
+		internal static string FormatDecimal (ulong value, int precision, int maxLength)
 		{
 			int size = (precision > 0) ? (maxLength + precision) : maxLength;
 			char[] buffy = new char[size];
