@@ -1,3 +1,10 @@
+2004-06-11  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Uri.cs : Reverted some changes. '#' should be handled when the input
+	  string is NOT raw file path. So handle raw file paths differently.
+	  (right now except for Windows UNC).
+	  Cache LocalPath and don't compute every time.
+
 2004-06-10  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Uri.cs : Don't escape '#' in file URI paths. This fixes bug #47691.

@@ -13,7 +13,7 @@
 // (C) 2003 Ben Maurer
 // (C) 2003 Novell inc.
 //
-
+using System.IO;
 using System.Net;
 using System.Runtime.Serialization;
 using System.Text;
@@ -58,6 +58,7 @@ namespace System
 		private bool userEscaped = false;
 		private string cachedAbsoluteUri = null;
 		private string cachedToString = null;
+		private string cachedLocalPath = null;
 		private int cachedHashCode = 0;
 		
 		private static readonly string hexUpperChars = "0123456789ABCDEF";
@@ -149,13 +150,12 @@ namespace System
 			}
 			
 			// 8 fragment
-			if (scheme != UriSchemeFile) {
-				pos = relativeUri.IndexOf ('#');
-				if (pos != -1) {
-					fragment = relativeUri.Substring (pos);
-					// fragment is not escaped.
-					relativeUri = relativeUri.Substring (0, pos);
-				}
+			// Note that in relative constructor, file URI cannot handle '#' as a filename character, but just regarded as a fragment identifier.
+			pos = relativeUri.IndexOf ('#');
+			if (pos != -1) {
+				fragment = relativeUri.Substring (pos);
+				// fragment is not escaped.
+				relativeUri = relativeUri.Substring (0, pos);
 			}
 
 			// 6 query
@@ -174,16 +174,8 @@ namespace System
 					return;
 				} else {
 					path = relativeUri;
-					if (!userEscaped) {
-						if (scheme == UriSchemeFile) {
-							string [] list = path.Split ('#');
-							for (int i = 0; i < list.Length; i++)
-								list [i] = EscapeString (list [i]);
-							path = String.Join ("#", list);
-						}
-						else
-							path = EscapeString (path);
-					}
+					if (!userEscaped)
+						path = EscapeString (path);
 					return;
 				}
 			}
@@ -334,8 +326,10 @@ namespace System
 
 		public string LocalPath { 
 			get {
+				if (cachedLocalPath != null)
+					return cachedLocalPath;
 				if (!IsFile)
-					return path;
+					return AbsolutePath;
 
 				bool windows = (path.Length > 3 && path [1] == ':' &&
 						(path [2] == '\\' || path [2] == '/'));
@@ -343,19 +337,22 @@ namespace System
 				if (!IsUnc) {
 					string p = Unescape (path);
 					if (System.IO.Path.DirectorySeparatorChar == '\\' || windows)
-						return p.Replace ('/', '\\');
+						cachedLocalPath = p.Replace ('/', '\\');
 					else
-						return p;
+						cachedLocalPath = p;
 				}
 
-				// support *nix and W32 styles
-				if (path.Length > 1 && path [1] == ':')
-					return Unescape (path.Replace ('/', '\\'));
+				else {
+					// support *nix and W32 styles
+					if (path.Length > 1 && path [1] == ':')
+						cachedLocalPath = Unescape (path.Replace ('/', '\\'));
 
-				if (System.IO.Path.DirectorySeparatorChar == '\\')
-					return "\\\\" + Unescape (host + path.Replace ('/', '\\'));
-				else 
-					return (is_root_path? "/": "") + (is_wins_dir? "/": "") + Unescape (host + path);
+					else if (System.IO.Path.DirectorySeparatorChar == '\\')
+						cachedLocalPath = "\\\\" + Unescape (host + path.Replace ('/', '\\'));
+					else 
+						cachedLocalPath = (is_root_path? "/": "") + (is_wins_dir? "/": "") + Unescape (host + path);
+				}
+				return cachedLocalPath;
 			} 
 		}
 
@@ -764,14 +761,7 @@ namespace System
 				return;
 
 			host = EscapeString (host, false, true, false);
-			if (scheme == UriSchemeFile) {
-				string [] list = path.Split ('#');
-				for (int i = 0; i < list.Length; i++)
-					list [i] = EscapeString (list [i]);
-				path = String.Join ("#", list);
-			}
-			else
-				path = EscapeString (path);
+			path = EscapeString (path);
 		}
 		
 		protected virtual string Unescape (string str)
@@ -803,6 +793,51 @@ namespace System
 		
 		// Private Methods
 		
+		private void ParseAsWindowsUNC (string uriString)
+		{
+			// not required as yet.
+		}
+
+		private void ParseAsWindowsAbsoluteFilePath (string uriString)
+		{
+			if (uriString.Length > 2 && uriString [2] != '\\'
+					&& uriString [2] != '/')
+				throw new UriFormatException ("Relative file path is not allowed.");
+			scheme = UriSchemeFile;
+			host = String.Empty;
+			port = -1;
+			path = EscapeString (uriString.Replace ("\\", "/"));
+			fragment = String.Empty;
+			query = String.Empty;
+		}
+
+		private void ParseAsUnixAbsoluteFilePath (string uriString)
+		{
+			isUnixFilePath = true;
+			scheme = UriSchemeFile;
+			port = -1;
+			fragment = String.Empty;
+			query = String.Empty;
+			host = String.Empty;
+			path = null;
+
+			if (uriString.StartsWith ("//")) {
+				// kind of Unix UNC
+				uriString = uriString.TrimStart (new char [] {'/'});
+				isUnc = true;
+				int pos = uriString.IndexOf ('/');
+				if (pos > 0) {
+					path = '/' + uriString.Substring (pos + 1);
+					host = uriString.Substring (0, pos);
+				} else { // "//server"
+					host = uriString;
+					path = String.Empty;
+				}
+			}
+			if (path == null)
+				path = uriString; // FIXME: Should allow '\\' ?
+		}
+
 		// this parse method is as relaxed as possible about the format
 		// it will hardly ever throw a UriFormatException
 		private void Parse (string uriString)
@@ -821,9 +856,28 @@ namespace System
 			if (len <= 1) 
 				throw new UriFormatException ();
 
+			int pos = 0;
+
+			pos = uriString.IndexOf (':');
+			if (pos < 0) {
+				// It must be Unix file path or Windows UNC
+				if (uriString [0] == '/') {
+					ParseAsUnixAbsoluteFilePath (uriString);
+					return;
+				}
+				else if (uriString.StartsWith ("\\\\"))
+					;// ParseAsWindowsUNC (uriString);
+				else
+					throw new UriFormatException ();
+			}
+			else if (pos == 1) {
+				ParseAsWindowsAbsoluteFilePath (uriString);
+				return;
+			}
+			pos = 0;
+
 			// 1
 			char c = 'x';
-			int pos = 0;
 			for (; pos < len; pos++) {
 				c = uriString [pos];
 				if ((c == ':') || (c == '/') || (c == '\\') || (c == '?') || (c == '#')) 
@@ -889,12 +943,10 @@ namespace System
 			}
 
 			// 8 fragment
-			if (scheme != UriSchemeFile) {
-				pos = uriString.IndexOf ('#');
-				if (!IsUnc && pos != -1) {
-					fragment = uriString.Substring (pos);
-					uriString = uriString.Substring (0, pos);
-				}
+			pos = uriString.IndexOf ('#');
+			if (!IsUnc && pos != -1) {
+				fragment = uriString.Substring (pos);
+				uriString = uriString.Substring (0, pos);
 			}
 
 			// 6 query
