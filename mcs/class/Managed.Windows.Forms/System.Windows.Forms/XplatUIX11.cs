@@ -87,7 +87,6 @@ namespace System.Windows.Forms {
 		private static int		async_method;
 		private static int		post_message;
 		private static uint		default_colormap;	// X Colormap ID
-		internal static Keys		key_state;
 		internal static MouseButtons	mouse_state;
 		internal static Point		mouse_position;
 		internal static bool		grab_confined;		// Is the current grab (if any) confined to grab_area?
@@ -312,7 +311,6 @@ namespace System.Windows.Forms {
 			lock (this) {
 				if (DisplayHandle==IntPtr.Zero) {
 					DisplayHandle=XOpenDisplay(IntPtr.Zero);
-					key_state=Keys.None;
 					mouse_state=MouseButtons.None;
 					mouse_position=Point.Empty;
 				}
@@ -338,7 +336,6 @@ namespace System.Windows.Forms {
 				Graphics.FromHdcInternal (DisplayHandle);
 
 				// Create a few things
-				key_state = Keys.None;
 				mouse_state = MouseButtons.None;
 				mouse_position = Point.Empty;
 				Screen = XDefaultScreenOfDisplay(DisplayHandle);
@@ -745,67 +742,6 @@ namespace System.Windows.Forms {
 		internal override bool PeekMessage(ref MSG msg, IntPtr hWnd, int wFilterMin, int wFilterMax, uint flags) {
 			Console.WriteLine("XplatUIX11.PeekMessage");
 			return true;
-		}
-
-		private void CreateKeyBoardMsg (XEvent xevent, ref MSG msg)
-		{
-			IntPtr	buffer = Marshal.AllocHGlobal(24);
-			XKeySym	keysym;
-			string	keys;
-			int	len;
-			msg.wParam = IntPtr.Zero;
-
-			lock (xlib_lock) {
-				len = XLookupString(ref xevent, buffer, 24, out keysym, IntPtr.Zero);
-			}
-
-			if ((keysym==XKeySym.XK_Control_L) || (keysym==XKeySym.XK_Control_R)) {
-				if (xevent.type==XEventName.KeyPress) {
-					key_state |= Keys.Control;
-				} else {
-					key_state &= ~Keys.Control;
-				}
-			}
-
-			if ((keysym==XKeySym.XK_Shift_L) || (keysym==XKeySym.XK_Shift_R)) {
-				if (xevent.type==XEventName.KeyPress) {
-					key_state |= Keys.Shift;
-				} else {
-					key_state &= ~Keys.Shift;
-				}
-			}
-
-			if ((keysym==XKeySym.XK_Alt_L) || (keysym==XKeySym.XK_Alt_R)) {
-				if (xevent.type==XEventName.KeyPress) {
-					key_state |= Keys.Alt;
-				} else {
-					key_state &= ~Keys.Alt;
-				}
-			}
-
-			if (len>0) { /* String is not zero terminated*/
-				Marshal.WriteByte (buffer, len, 0);
-			}
-
-			keys=Marshal.PtrToStringAuto(buffer);
-
-			for (int i = 0; i < KeyMapping.Length; i++) {
-				if (KeyMapping[i].X11Key == keysym) {
-					msg.wParam = (IntPtr) KeyMapping[i].Win32Key;
-					// Console.WriteLine("Got special key {0} {1:x} ", (VirtualKeys) keysym, keysym);
-					break;
-				}							
-			}
-
-			if ((msg.wParam == IntPtr.Zero) && (keys.Length>0)) {
-				char[] keychars;				
-				keychars=keys.ToCharArray(0, 1);
-				msg.wParam=(IntPtr)keychars[0];
-				// Console.WriteLine("Got key {0} {1:x} ", (VirtualKeys) keysym, keysym);
-			}
-
-			Marshal.FreeHGlobal (buffer);
-			msg.lParam = (IntPtr) 1;
 		}
 
 		private IntPtr GetMousewParam(int Delta) {
@@ -1622,48 +1558,6 @@ namespace System.Windows.Forms {
 		}
 		#endregion	// Public Static Methods
 
-		internal struct X11ToWin32KeyMapping {
-			internal XKeySym	X11Key;
-			internal VirtualKeys	Win32Key;	
-
-			internal X11ToWin32KeyMapping (XKeySym x11, VirtualKeys win32)
-			{
-				X11Key = x11;
-				Win32Key = win32;
-			} 
-		}
-
-		/* X11 to Win32 VK mapping */
-		static readonly X11ToWin32KeyMapping[] KeyMapping = new X11ToWin32KeyMapping[] 
-		{
-			/* Cursor navigation*/
-			new X11ToWin32KeyMapping (XKeySym.XK_Left, VirtualKeys.VK_LEFT),
-			new X11ToWin32KeyMapping (XKeySym.XK_Right, VirtualKeys.VK_RIGHT),
-			new X11ToWin32KeyMapping (XKeySym.XK_Up, VirtualKeys.VK_UP),
-			new X11ToWin32KeyMapping (XKeySym.XK_Down, VirtualKeys.VK_DOWN),
-
-			new X11ToWin32KeyMapping (XKeySym.XK_Page_Up, VirtualKeys.VK_PRIOR),
-			new X11ToWin32KeyMapping (XKeySym.XK_Page_Down, VirtualKeys.VK_NEXT),
-			new X11ToWin32KeyMapping (XKeySym.XK_End, VirtualKeys.VK_END),
-			new X11ToWin32KeyMapping (XKeySym.XK_Home, VirtualKeys.VK_HOME),
-
-			/* Modifiers*/
-			new X11ToWin32KeyMapping (XKeySym.XK_Shift_R, VirtualKeys.VK_SHIFT),
-			new X11ToWin32KeyMapping (XKeySym.XK_Shift_L, VirtualKeys.VK_SHIFT),
-			new X11ToWin32KeyMapping (XKeySym.XK_Control_R, VirtualKeys.VK_CONTROL),
-			new X11ToWin32KeyMapping (XKeySym.XK_Control_L, VirtualKeys.VK_CONTROL),			
-
-			/* Others */
-			new X11ToWin32KeyMapping (XKeySym.XK_Return, VirtualKeys.VK_RETURN),
-			new X11ToWin32KeyMapping (XKeySym.XK_Tab, VirtualKeys.VK_TAB),
-			new X11ToWin32KeyMapping (XKeySym.XK_Menu, VirtualKeys.VK_MENU),
-			new X11ToWin32KeyMapping (XKeySym.XK_BackSpace, VirtualKeys.VK_BACK),
-			new X11ToWin32KeyMapping (XKeySym.XK_Clear, VirtualKeys.VK_CLEAR),
-			
-		};
-
-		
-
 		#region X11 Imports
 		[DllImport ("libX11", EntryPoint="XOpenDisplay")]
 		internal extern static IntPtr XOpenDisplay(IntPtr display);
@@ -1696,8 +1590,6 @@ namespace System.Windows.Forms {
 		internal extern static bool XCheckMaskEvent (IntPtr display, EventMask mask, ref XEvent xevent);
 		[DllImport ("libX11", EntryPoint="XSelectInput")]
 		internal extern static IntPtr XSelectInput(IntPtr display, IntPtr window, EventMask mask);
-		[DllImport ("libX11", EntryPoint="XLookupString")]
-		internal extern static int XLookupString(ref XEvent xevent, IntPtr buffer, int num_bytes, out XKeySym keysym, IntPtr status);
 
 		[DllImport ("libX11", EntryPoint="XDestroyWindow")]
 		internal extern static int XDestroyWindow(IntPtr display, IntPtr window);
@@ -1809,9 +1701,6 @@ namespace System.Windows.Forms {
 
 		[DllImport ("libX11.so", EntryPoint="XDeleteProperty")]
 		internal extern static int XDeleteProperty(IntPtr display, IntPtr window, int property);
-
-		[DllImport ("libX11", EntryPoint="XGetKeyboardControl")]
-		internal extern static int XGetKeyboardControl (IntPtr display, out XKeyBoardState state);
 
 		[DllImport ("gdiplus", EntryPoint="GetFontMetrics")]
 		internal extern static bool GetFontMetrics(IntPtr graphicsObject, IntPtr nativeObject, out int ascent, out int descent);
