@@ -1,3 +1,7 @@
+2004-10-09  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XPathAtomicValue.cs : Init(string, XmlSchemaType) is private.
+
 2004-10-05  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XPathAtomicValue.cs : missing Init() definition for float and string;

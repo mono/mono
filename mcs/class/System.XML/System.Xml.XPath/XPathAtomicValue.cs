@@ -164,7 +164,7 @@ namespace System.Xml.XPath
 			Init (value, xmlType);
 		}
 		
-		public void Init (string value, XmlSchemaType xmlType)
+		private void Init (string value, XmlSchemaType xmlType)
 		{
 			if (value == null)
 				throw new ArgumentNullException ("value");
