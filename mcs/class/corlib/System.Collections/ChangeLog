@@ -1,3 +1,7 @@
+2003-03-05  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Queue.cs: fixed bug #39046.
+
 2003-02-15  Pedro Martínez Juliá  <yoros@wanadoo.es>
 
 	* Hashtable.cs: Make hashtable serializable (at least with binary

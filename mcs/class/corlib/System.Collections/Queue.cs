@@ -60,20 +60,18 @@ namespace System.Collections {
 			get { return this; }
 		}
 
-		public virtual void CopyTo (Array array, int index) {
-			if (array == null) {
-				throw new ArgumentNullException ();
-			}
+		public virtual void CopyTo (Array array, int index)
+		{
+			if (array == null)
+				throw new ArgumentNullException ("array");
 
-			if (index < 0) {
-				throw new ArgumentOutOfRangeException ();
-			}
+			if (index < 0)
+				throw new ArgumentOutOfRangeException ("index");
 
 			if (array.Rank > 1 
-			    || index >= array.Length 
-			    || count > array.Length - index) {
+			    || (index != 0 && index >= array.Length)
+			    || count > array.Length - index)
 				throw new ArgumentException ();
-			}
 			
 			int contents_length = contents.Length;
 			int length_from_head = contents_length - head;
