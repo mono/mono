@@ -1094,16 +1094,19 @@ AnnotationElementNotKeyword /* returns null */
 	;
 
 ForeignElementNameNotKeyword  /* returns XmlQualifiedName */
-/* LAMESPEC: unprefixed Identifier causes conflict */
+/* FIXME: unprefixed Identifier causes conflict */
 	: /*Identifier
 	{
 		$$ = new XmlQualifiedName ((string) $1, String.Empty);
 	}
-	|*/ PrefixedName
+*/
+/* FIXME: prefixed name causes conflict */
+	| /*PrefixedName
 	{
 		// Constraint: RELAX NG namespace URI
 		$$ = (XmlQualifiedName) $1;
 	}
+	*/
 	;
 
 AnnotationAttributesContent /* returns null */

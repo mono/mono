@@ -310,8 +310,11 @@ namespace Commons.Xml.Relaxng.Rnc
 		{
 			int index = 0;
 			bool loop = true;
+			int c = PeekChar ();
+			if (!XmlChar.IsFirstNameChar (c) || !XmlChar.IsNCNameChar (c))
+				throw new RelaxngException (String.Format ("Invalid NCName start character: {0}", c));
 			do {
-				int c = PeekChar ();
+				c = PeekChar ();
 				switch (c) {
 				case -1:
 				case ' ':

@@ -1,5 +1,12 @@
 2005-03-28  Atsushi Enomoto <atsushi@ximian.com>
 
+	* RncTokenizer.cs : check names strictly.
+	* RncParser.jay : quick workaround that "datatype" is rejected as
+	  top level content. We should fix the problem that annotation
+	  elements are not accepted instead of datatype later.
+
+2005-03-28  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlChar.cs : copied from system.xml.
 	* RncTokenizer.cs : check character validity.
 	  Handle \-prefixed keyword name more strictly.
