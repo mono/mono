@@ -1,5 +1,5 @@
 //
-// System.ApplicationIdentity class
+// System.DomainManagerInitializationFlags enum
 //
 // Author:
 //	Sebastien Pouliot  <sebastien@ximian.com>
@@ -30,30 +30,12 @@
 
 namespace System {
 
-	public sealed class ApplicationIdentity {
-
-		private string _fullName;
-		private string _codeBase;
-
-		public ApplicationIdentity (string applicationIdentityFullName)
-		{
-			_fullName = applicationIdentityFullName;
-		}
-
-		[MonoTODO ("URL but where does it comes from?")]
-		public string CodeBase {
-			get { return _codeBase; }
-		}
-
-		public string FullName {
-			get { return _fullName; }
-		}
-
-		[MonoTODO]
-		public override string ToString ()
-		{
-			return _fullName;
-		}
+	[Flags]
+	[Serializable]
+	public enum DomainManagerInitializationFlags {
+		None = 0,
+		Activate = 1,
+		RegisterWithHost = 2
 	}
 }
 

@@ -1,5 +1,5 @@
 //
-// System.ApplicationIdentity class
+// System.ApplicationActivator class
 //
 // Author:
 //	Sebastien Pouliot  <sebastien@ximian.com>
@@ -28,31 +28,24 @@
 
 #if NET_2_0
 
+using System.Runtime.Remoting;
+
 namespace System {
 
-	public sealed class ApplicationIdentity {
+	public class ApplicationActivator {
 
-		private string _fullName;
-		private string _codeBase;
+		private ApplicationActivator _activator;
 
-		public ApplicationIdentity (string applicationIdentityFullName)
+		public ApplicationActivator ()
 		{
-			_fullName = applicationIdentityFullName;
-		}
-
-		[MonoTODO ("URL but where does it comes from?")]
-		public string CodeBase {
-			get { return _codeBase; }
-		}
-
-		public string FullName {
-			get { return _fullName; }
 		}
 
 		[MonoTODO]
-		public override string ToString ()
+		public virtual ObjectHandle CreateInstance (ActivationContext activationContext)
 		{
-			return _fullName;
+			if (activationContext == null)
+				throw new ArgumentNullException ("activationContext");
+			throw new NotImplementedException ();
 		}
 	}
 }
