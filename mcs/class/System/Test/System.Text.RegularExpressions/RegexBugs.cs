@@ -268,6 +268,15 @@ namespace MonoTests.System.Text.RegularExpressions
 			m = x.Match (test3);
 			AssertEquals ("#03", true, m.Success);
 		}
+
+		[Test]
+		public void QuantifiersParseError () // bug 69193
+		{
+			Regex x = new Regex ("{1,a}");
+			x = new Regex ("{a,1}");
+			x = new Regex ("{a}");
+			x = new Regex ("{,a}");
+		}
 	}
 }
 
