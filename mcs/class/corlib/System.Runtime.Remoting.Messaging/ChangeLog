@@ -1,3 +1,7 @@
+2004-04-30  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* MethodResponse.cs, ReturnMessage.cs: Added null checks.
+
 2004-04-29  Raja R Harinath  <rharinath@novell.com>
 
 	* MethodResponse.cs (MethodResponse.OutArgCount)
