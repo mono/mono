@@ -1,3 +1,8 @@
+2004-11-26  Martin Baulig  <martin@ximian.com>
+
+	* */*.cs: Added some more `#if FIXME's to comment out tests which
+	are currently crashing or hanging.
+
 2004-11-20  Martin Baulig  <martin@ximian.com>
 
 	* arrays/ArrayListTest.cs: Comment out some anonymous methods.

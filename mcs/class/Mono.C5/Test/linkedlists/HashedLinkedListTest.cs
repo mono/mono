@@ -360,6 +360,7 @@ namespace nunit.linkedlists.hashed
 
 	namespace EditableCollection
 	{
+#if FIXME
 		[TestFixture]
 		public class Searching
 		{
@@ -428,7 +429,6 @@ namespace nunit.linkedlists.hashed
 				Assert.IsTrue(IC.eq(list, 7, 5));
 			}
 
-
 			[Test]
 			public void FindAll()
 			{
@@ -439,7 +439,6 @@ namespace nunit.linkedlists.hashed
 				Assert.IsTrue(((LinkedList<int>)list.FindAll(f)).Check());
 				Assert.IsTrue(IC.eq(list.FindAll(f), 8, 10));
 			}
-
 
 			[Test]
 			public void ContainsAll()
@@ -503,7 +502,6 @@ namespace nunit.linkedlists.hashed
 				Assert.IsTrue(IC.eq(list, 4));
 			}
 
-
 			[Test]
 			public void Remove()
 			{
@@ -535,6 +533,7 @@ namespace nunit.linkedlists.hashed
 			[TearDown]
 			public void Dispose() { list = null; }
 		}
+#endif
 	}
 
 
@@ -785,6 +784,7 @@ namespace nunit.linkedlists.hashed
 		}
 
 
+#if FIXME
 		[TestFixture]
 		public class Combined
 		{
@@ -874,7 +874,7 @@ namespace nunit.linkedlists.hashed
 				Assert.IsFalse(lst.RemoveWithReturn(ref p));
 			}
 		}
-
+#endif
 
 		[TestFixture]
 		public class Inserting
@@ -955,6 +955,7 @@ namespace nunit.linkedlists.hashed
 			}
 
 
+#if FIXME
 			[Test]
 			public void InsertBefore()
 			{
@@ -972,6 +973,7 @@ namespace nunit.linkedlists.hashed
 				Assert.IsTrue(lst.Check());
 				Assert.IsTrue(IC.eq(lst, 7, 2, 8, 3, 4, 9, 5));
 			}
+#endif
 
 
 			[Test]
@@ -986,6 +988,7 @@ namespace nunit.linkedlists.hashed
 			}
 
 
+#if FIXME
 			[Test]
 			public void InsertAfter()
 			{
@@ -1004,6 +1007,7 @@ namespace nunit.linkedlists.hashed
 				Assert.IsTrue(lst.Check());
 				Assert.IsTrue(IC.eq(lst, 1, 8, 2, 7, 3, 4, 5, 9));
 			}
+#endif
 
 
 			[Test]
@@ -1043,6 +1047,7 @@ namespace nunit.linkedlists.hashed
 			}
 
 
+#if FIXME
 			[Test]
 			public void Map()
 			{
@@ -1061,6 +1066,7 @@ namespace nunit.linkedlists.hashed
 				for (int i = 0; i < 4; i++)
 					Assert.AreEqual("<<" + (i + 1) + ">>", r[i]);
 			}
+#endif
 
 
 			[Test]

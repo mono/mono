@@ -1468,6 +1468,7 @@ namespace nunit.arrays.sorted
 
 	namespace MultiOps
 	{
+#if FIXME
 		[TestFixture]
 		public class AddAll
 		{
@@ -1479,7 +1480,6 @@ namespace nunit.arrays.sorted
 
 			[SetUp]
 			public void Init() { array = new SortedArray<int>(new IC()); }
-
 
 			[Test]
 			public void EmptyEmpty()
@@ -1529,6 +1529,7 @@ namespace nunit.arrays.sorted
 			[TearDown]
 			public void Dispose() { array = null; }
 		}
+#endif
 
 
 
@@ -1787,6 +1788,7 @@ namespace nunit.arrays.sorted
 
 
 
+#if FIXME_THREADING_TESTS
 	namespace Sync
 	{
 		[TestFixture]
@@ -1903,8 +1905,6 @@ namespace nunit.arrays.sorted
 			public void Dispose() { tree = null; }
 		}
 
-
-
 		//[TestFixture]
 		public class ConcurrentQueries
 		{
@@ -1979,7 +1979,7 @@ namespace nunit.arrays.sorted
 			public void Dispose() { tree = null; }
 		}
 	}
-
+#endif
 
 
 

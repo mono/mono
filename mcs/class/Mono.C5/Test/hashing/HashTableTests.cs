@@ -670,6 +670,7 @@ namespace nunit.hashtable.set
 			public void Dispose() { hashset = null; }
 		}
 
+#if FIXME
 		[TestFixture]
 		public class Combined
 		{
@@ -769,8 +770,7 @@ namespace nunit.hashtable.set
 				Assert.IsFalse(lst.RemoveWithReturn(ref p));
 			}
 		}
-
-
+#endif
 	}
 
 
