@@ -1,5 +1,13 @@
 2004-06-17  Boris Kirzner  <borisk@mainsoft.com>
 
+	* DataTable.cs :
+	  - Table stores default values for columns in soecial default values row. 
+	  It is allocated once (in NewRow)
+	  - DataTable.Copy rewrited. It works with uninitialized rows for better perfomance.
+	  - OnRemoveColumn has nothing to perform by now.
+
+2004-06-17  Boris Kirzner  <borisk@mainsoft.com>
+
 	* DataRow.cs : 
 	  - Changed access of original, current and proposed indexes to internal.
 	  - ColumnErrors reviewed : now column errors stored in ArrayList and allocated on demand only.

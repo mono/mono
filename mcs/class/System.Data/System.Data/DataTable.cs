@@ -91,6 +91,7 @@ namespace System.Data {
 		private DataRowBuilder _rowBuilder;
 		private ArrayList _indexes;
 		private RecordCache _recordCache;
+		private int _defaultValuesRowIndex = -1;
 		protected internal bool fInitInProgress;
 
 		// If CaseSensitive property is changed once it does not anymore follow owner DataSet's 
@@ -740,19 +741,29 @@ namespace System.Data {
 		/// </summary>
 		public DataTable Copy () 
 		{
-			DataTable Copy = new DataTable ();
-			CopyProperties (Copy);
+			DataTable copy = Clone();
 
-			// we can not simply copy the row values (NewRow [C.ColumnName] = Row [C.ColumnName])
-			// because if the row state is deleted we get an exception.
-			Copy._duringDataLoad = true;
-			foreach (DataRow Row in Rows) {
-				DataRow NewRow = Copy.NewRow ();
-				Copy.Rows.Add (NewRow);
-				Row.CopyValuesToRow(NewRow);
+			copy._duringDataLoad = true;
+			foreach (DataRow row in Rows) {
+				DataRow newRow = copy.NewNotInitializedRow();
+				copy.Rows.Add(newRow);
+				CopyRow(row,newRow);
 			}
-		       	Copy._duringDataLoad = false;		
-			return Copy;
+			copy._duringDataLoad = false;		
+			return copy;
+		}
+
+		internal void CopyRow(DataRow fromRow,DataRow toRow)
+		{
+			fromRow.CopyState(toRow);
+
+			if (fromRow.HasVersion(DataRowVersion.Original)) {
+				toRow._original = toRow.Table.RecordCache.CopyRecord(this,fromRow._original,-1);
+			}
+
+			if (fromRow.HasVersion(DataRowVersion.Current)) {
+				toRow._current = toRow.Table.RecordCache.CopyRecord(this,fromRow._current,-1);
+			}
 		}
 
 		private void CopyProperties (DataTable Copy) 
@@ -967,6 +978,13 @@ namespace System.Data {
 			
 		}
 
+		internal int DefaultValuesRowIndex
+		{
+			get {
+				return _defaultValuesRowIndex;
+			}	
+		}
+
 		/// <summary>
 		/// This member is only meant to support Mono's infrastructure 		
 		/// </summary>
@@ -1140,6 +1158,15 @@ namespace System.Data {
 			
 			// new row get id -1.
 			_rowBuilder._rowId = -1;
+
+			// initialize default values row for the first time
+			if ( _defaultValuesRowIndex == -1 ) {
+				_defaultValuesRowIndex = RecordCache.NewRecord();
+				foreach(DataColumn column in Columns) {
+					column.DataContainer[_defaultValuesRowIndex] = column.DefaultValue;
+				}
+			}
+
 			return this.NewRowFromBuilder (_rowBuilder);
 		}
 
@@ -1160,7 +1187,10 @@ namespace System.Data {
 			return new DataRow (builder);
 		}
 		
-		
+		internal DataRow NewNotInitializedRow()
+		{
+			return new DataRow(this,-1);
+		}
 
 #if NET_2_0
 		[MonoTODO]
@@ -1530,12 +1560,8 @@ namespace System.Data {
 		/// </summary>
 		[MonoTODO]
 		protected internal virtual void OnRemoveColumn (DataColumn column) {
-			//	if (null != RemoveColumn)
-			//	{
-			//		RemoveColumn(this, e);
-			//	}
-			this.Rows.onColumnRemoved(column.Ordinal);
 		}
+
 
 		/// <summary>
 		/// Raises the RowChanged event.
