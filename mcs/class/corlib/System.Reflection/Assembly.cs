@@ -156,7 +156,7 @@ namespace System.Reflection {
 		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		private extern IntPtr GetManifestResourceInternal (String name, out int size);
+		private extern IntPtr GetManifestResourceInternal (String name, out int size, out Module module);
 
 		public virtual Stream GetManifestResourceStream (String name)
 		{
@@ -178,11 +178,20 @@ namespace System.Reflection {
 			}
 
 			int size;
-			IntPtr data = GetManifestResourceInternal (name, out size);
+			Module module;
+			IntPtr data = GetManifestResourceInternal (name, out size, out module);
 			if (data == (IntPtr) 0)
 				return null;
-			else
-				return new IntPtrStream (data, size);
+			else {
+				IntPtrStream stream = new IntPtrStream (data, size);
+				/* 
+				 * The returned pointer points inside metadata, so
+				 * we have to increase the refcount of the module, and decrease
+				 * it when the stream is finalized.
+				 */
+				stream.Closed += new EventHandler (new ResourceCloseHandler (module).OnClose);
+				return stream;
+			}
 		}
 
 		public virtual Stream GetManifestResourceStream (Type type, String name)
@@ -489,6 +498,20 @@ namespace System.Reflection {
 				return result;
 			else
 				return null;
+		}
+
+		private class ResourceCloseHandler {
+
+			Module module;
+
+			public ResourceCloseHandler (Module module) {
+				this.module = module;
+			}
+
+			public void OnClose (object sender, EventArgs e) {
+				// The module dtor will take care of things
+				module = null;
+			}
 		}
 
 		//

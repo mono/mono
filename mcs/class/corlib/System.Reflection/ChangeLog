@@ -1,5 +1,8 @@
 2004-01-19  Zoltan Varga  <vargaz@freemail.hu>
 
+	* Assembly.cs (GetManifestResourceStream): Make the IntPtrStream keep
+	a reference on the Module object which contains the resource.
+
 	* Module.cs: Decrease the image reference count when the Module is
 	garbage collected.
 
