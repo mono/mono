@@ -1,3 +1,16 @@
+2003-08-18  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* GacIdentityPermissionAttributeTest.cs: New unit tests for 
+	GacIdentityPermissionAttribute (NET_2_0).
+	* GacIdentityPermissionTest.cs: New unit tests for 
+	GacIdentityPermission (NET_2_0).
+	* StrongNameIdentityPermissionAttributeTest.cs: Added tests to 
+	check class's attributes.
+	* UIPermissionAttributeTest.cs: Added tests to check class's 
+	attributes. Converted existing tests to NUnit 2.2 format.
+	* ZoneIdentityPermissionAttributeTest.cs: Added tests to check class's
+	attributes. Converted existing tests to NUnit 2.2 format.
+
 2003-08-17  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* IBuiltInPermissionTest.cs: New. Unit tests to check the result of 

@@ -210,5 +210,21 @@ namespace MonoTests.System.Security.Permissions {
 			a.Unrestricted = true;
 			IPermission perm = a.CreatePermission ();
 		}
+
+		[Test]
+		public void Attributes ()
+		{
+			StrongNameIdentityPermissionAttribute a = new StrongNameIdentityPermissionAttribute (SecurityAction.Assert);
+			Type t = typeof (StrongNameIdentityPermissionAttribute);
+			Assert.IsTrue (t.IsSerializable, "IsSerializable");
+
+			object [] attrs = t.GetCustomAttributes (typeof (AttributeUsageAttribute), false);
+			Assert.AreEqual (1, attrs.Length, "AttributeUsage");
+			AttributeUsageAttribute aua = (AttributeUsageAttribute)attrs [0];
+			Assert.IsTrue (aua.AllowMultiple, "AllowMultiple");
+			Assert.IsFalse (aua.Inherited, "Inherited");
+			AttributeTargets at = (AttributeTargets.Assembly | AttributeTargets.Class | AttributeTargets.Struct | AttributeTargets.Constructor | AttributeTargets.Method);
+			Assert.AreEqual (at, aua.ValidOn, "ValidOn");
+		}
 	}
 }

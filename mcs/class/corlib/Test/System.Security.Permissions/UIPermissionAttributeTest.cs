@@ -35,43 +35,51 @@ using System.Security.Permissions;
 namespace MonoTests.System.Security.Permissions {
 
 	[TestFixture]
-	public class UIPermissionAttributeTest : Assertion {
+	public class UIPermissionAttributeTest {
 
 		[Test]
 		public void Default () 
 		{
 			UIPermissionAttribute a = new UIPermissionAttribute (SecurityAction.Assert);
-			AssertEquals ("Clipboard", UIPermissionClipboard.NoClipboard, a.Clipboard);
-			AssertEquals ("Window", UIPermissionWindow.NoWindows, a.Window);
-			AssertEquals ("TypeId", a.ToString (), a.TypeId.ToString ());
-			Assert ("Unrestricted", !a.Unrestricted);
+			Assert.AreEqual (UIPermissionClipboard.NoClipboard, a.Clipboard, "Clipboard");
+			Assert.AreEqual (UIPermissionWindow.NoWindows, a.Window, "Window");
+			Assert.AreEqual (a.ToString (), a.TypeId.ToString (), "TypeId");
+			Assert.IsFalse (a.Unrestricted, "Unrestricted");
 
 			UIPermission perm = (UIPermission) a.CreatePermission ();
-			AssertEquals ("CreatePermission-Clipboard", UIPermissionClipboard.NoClipboard, perm.Clipboard);
-			AssertEquals ("CreatePermission-Window", UIPermissionWindow.NoWindows, perm.Window);
+			Assert.AreEqual (UIPermissionClipboard.NoClipboard, perm.Clipboard, "CreatePermission-Clipboard");
+			Assert.AreEqual (UIPermissionWindow.NoWindows, perm.Window, "CreatePermission-Window");
 		}
 
 		[Test]
 		public void Action () 
 		{
 			UIPermissionAttribute a = new UIPermissionAttribute (SecurityAction.Assert);
-			AssertEquals ("Action=Assert", SecurityAction.Assert, a.Action);
+			Assert.AreEqual (SecurityAction.Assert, a.Action, "Action=Assert");
 			a.Action = SecurityAction.Demand;
-			AssertEquals ("Action=Demand", SecurityAction.Demand, a.Action);
+			Assert.AreEqual (SecurityAction.Demand, a.Action, "Action=Demand");
 			a.Action = SecurityAction.Deny;
-			AssertEquals ("Action=Deny", SecurityAction.Deny, a.Action);
+			Assert.AreEqual (SecurityAction.Deny, a.Action, "Action=Deny");
 			a.Action = SecurityAction.InheritanceDemand;
-			AssertEquals ("Action=InheritanceDemand", SecurityAction.InheritanceDemand, a.Action);
+			Assert.AreEqual (SecurityAction.InheritanceDemand, a.Action, "Action=InheritanceDemand");
 			a.Action = SecurityAction.LinkDemand;
-			AssertEquals ("Action=LinkDemand", SecurityAction.LinkDemand, a.Action);
+			Assert.AreEqual (SecurityAction.LinkDemand, a.Action, "Action=LinkDemand");
 			a.Action = SecurityAction.PermitOnly;
-			AssertEquals ("Action=PermitOnly", SecurityAction.PermitOnly, a.Action);
+			Assert.AreEqual (SecurityAction.PermitOnly, a.Action, "Action=PermitOnly");
 			a.Action = SecurityAction.RequestMinimum;
-			AssertEquals ("Action=RequestMinimum", SecurityAction.RequestMinimum, a.Action);
+			Assert.AreEqual (SecurityAction.RequestMinimum, a.Action, "Action=RequestMinimum");
 			a.Action = SecurityAction.RequestOptional;
-			AssertEquals ("Action=RequestOptional", SecurityAction.RequestOptional, a.Action);
+			Assert.AreEqual (SecurityAction.RequestOptional, a.Action, "Action=RequestOptional");
 			a.Action = SecurityAction.RequestRefuse;
-			AssertEquals ("Action=RequestRefuse", SecurityAction.RequestRefuse, a.Action);
+			Assert.AreEqual (SecurityAction.RequestRefuse, a.Action, "Action=RequestRefuse");
+#if NET_2_0
+			a.Action = SecurityAction.DemandChoice;
+			Assert.AreEqual (SecurityAction.DemandChoice, a.Action, "Action=DemandChoice");
+			a.Action = SecurityAction.InheritanceDemandChoice;
+			Assert.AreEqual (SecurityAction.InheritanceDemandChoice, a.Action, "Action=InheritanceDemandChoice");
+			a.Action = SecurityAction.LinkDemandChoice;
+			Assert.AreEqual (SecurityAction.LinkDemandChoice, a.Action, "Action=LinkDemandChoice");
+#endif
 		}
 
 		[Test]
@@ -85,11 +93,11 @@ namespace MonoTests.System.Security.Permissions {
 		public void Clipboard () 
 		{
 			UIPermissionAttribute a = new UIPermissionAttribute (SecurityAction.Assert);
-			AssertEquals ("Clipboard=NoClipboard", UIPermissionClipboard.NoClipboard, a.Clipboard);
+			Assert.AreEqual (UIPermissionClipboard.NoClipboard, a.Clipboard, "Clipboard=NoClipboard");
 			a.Clipboard = UIPermissionClipboard.OwnClipboard;
-			AssertEquals ("Clipboard=OwnClipboard", UIPermissionClipboard.OwnClipboard, a.Clipboard);
+			Assert.AreEqual (UIPermissionClipboard.OwnClipboard, a.Clipboard, "Clipboard=OwnClipboard");
 			a.Clipboard = UIPermissionClipboard.AllClipboard;
-			AssertEquals ("Clipboard=AllClipboard", UIPermissionClipboard.AllClipboard, a.Clipboard);
+			Assert.AreEqual (UIPermissionClipboard.AllClipboard, a.Clipboard, "Clipboard=AllClipboard");
 		}
 
 		[Test]
@@ -104,13 +112,13 @@ namespace MonoTests.System.Security.Permissions {
 		public void Window () 
 		{
 			UIPermissionAttribute a = new UIPermissionAttribute (SecurityAction.Assert);
-			AssertEquals ("Window=NoWindows", UIPermissionWindow.NoWindows, a.Window);
+			Assert.AreEqual (UIPermissionWindow.NoWindows, a.Window, "Window=NoWindows");
 			a.Window = UIPermissionWindow.SafeSubWindows;
-			AssertEquals ("Window=SafeSubWindows", UIPermissionWindow.SafeSubWindows, a.Window);
+			Assert.AreEqual (UIPermissionWindow.SafeSubWindows, a.Window, "Window=SafeSubWindows");
 			a.Window = UIPermissionWindow.SafeTopLevelWindows;
-			AssertEquals ("Window=SafeTopLevelWindows", UIPermissionWindow.SafeTopLevelWindows, a.Window);
+			Assert.AreEqual (UIPermissionWindow.SafeTopLevelWindows, a.Window, "Window=SafeTopLevelWindows");
 			a.Window = UIPermissionWindow.AllWindows;
-			AssertEquals ("Window=AllWindows", UIPermissionWindow.AllWindows, a.Window);
+			Assert.AreEqual (UIPermissionWindow.AllWindows, a.Window, "Window=AllWindows");
 		}
 
 		[Test]
@@ -127,8 +135,24 @@ namespace MonoTests.System.Security.Permissions {
 			UIPermissionAttribute a = new UIPermissionAttribute (SecurityAction.Assert);
 			a.Unrestricted = true;
 			UIPermission perm = (UIPermission) a.CreatePermission ();
-			AssertEquals ("Unrestricted-Clipboard", UIPermissionClipboard.AllClipboard, perm.Clipboard);
-			AssertEquals ("Unrestricted-Window", UIPermissionWindow.AllWindows, perm.Window);
+			Assert.AreEqual (UIPermissionClipboard.AllClipboard, perm.Clipboard, "Unrestricted-Clipboard");
+			Assert.AreEqual (UIPermissionWindow.AllWindows, perm.Window, "Unrestricted-Window");
+		}
+
+		[Test]
+		public void Attributes ()
+		{
+			UIPermissionAttribute a = new UIPermissionAttribute (SecurityAction.Assert);
+			Type t = typeof (UIPermissionAttribute);
+			Assert.IsTrue (t.IsSerializable, "IsSerializable");
+
+			object [] attrs = t.GetCustomAttributes (typeof (AttributeUsageAttribute), false);
+			Assert.AreEqual (1, attrs.Length, "AttributeUsage");
+			AttributeUsageAttribute aua = (AttributeUsageAttribute)attrs [0];
+			Assert.IsTrue (aua.AllowMultiple, "AllowMultiple");
+			Assert.IsFalse (aua.Inherited, "Inherited");
+			AttributeTargets at = (AttributeTargets.Assembly | AttributeTargets.Class | AttributeTargets.Struct | AttributeTargets.Constructor | AttributeTargets.Method);
+			Assert.AreEqual (at, aua.ValidOn, "ValidOn");
 		}
 	}
 }
