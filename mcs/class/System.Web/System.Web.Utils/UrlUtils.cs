@@ -4,7 +4,7 @@
  * 
  * Author:  Gaurav Vaish
  * Contact: <gvaish@iitk.ac.in>
- * Status:  10??%
+ * Status:  100%
  * 
  * (C) Gaurav Vaish (2001)
  */
@@ -73,7 +73,39 @@ namespace System.Web.Utils
 					return IsValidProtocol(GetProtocol(url).ToLower());
 				}
 			}
-			return false;
+			return true;
+		}
+		
+		public static void FailIfPhysicalPath(string path)
+		{
+			if(path!= null && path.Length > 0)
+			{
+				if(path[0]==':' || path.StartsWith(@"\\"))
+					throw new HttpException(HttpRuntime.FormatResourceString("Physical_path_not_allowed", path));
+			}
+		}
+		
+		public static string Combine(string basePath, string relPath)
+		{
+			FailIfPhysicalPath(relPath);
+			if(IsRootUrl(relPath))
+			{
+				if(relPath != null && relPath.Length > 0)
+				{
+					return Reduce(relPath);
+				}
+				return String.Empty;
+			}
+			if(relPath.Length < 3 || relPath[0]!='~' || (relPath[0]!='/' && relPath[0]!='\\'))
+			{
+				if(basePath==null || basePath.Length==1 || basePath[0]=='/')
+					basePath = String.Empty;
+				return Reduce(basePath + "/" + relPath);
+			}
+			string vPath = HttpRuntime.AppDomainAppVirtualPath;
+			if(vPath.Length <= 1)
+				vPath = String.Empty;
+			return Reduce(vPath + "/" + relPath.Substring(2));
 		}
 		
 		public static bool IsValidProtocol(string protocol)
@@ -105,8 +137,6 @@ namespace System.Web.Utils
 		 */
 		public static string MakeRelative(string fullUrl, string relativeTo)
 		{
-			//Uri fromUri;
-			//Uri toUri;
 			if(fullUrl==relativeTo)
 			{
 				return String.Empty;
@@ -163,6 +193,54 @@ namespace System.Web.Utils
 				}
 			}
 			return false;
+		}
+
+		public static string Reduce(string path)
+		{
+			int len = path.Length;
+			int dotIndex = -1;
+			path = path.Replace('\\','/');
+			while(true)
+			{
+				dotIndex++;
+				dotIndex = path.IndexOf('.', dotIndex);
+				if(dotIndex < 0)
+				{
+					return path;
+				}
+				if(dotIndex != 0 && path[dotIndex -1]=='/')
+					continue;
+				if(dotIndex+1 == len || path[dotIndex+1]=='/')
+					break;
+				if(path[dotIndex+1]=='.')
+					continue;
+				if(dotIndex+2 == len || path[dotIndex+2]=='/')
+					break;
+			}
+			ArrayList list = new ArrayList();
+			StringBuilder sb = new StringBuilder();
+			dotIndex = 0;
+			int temp;
+			do
+			{
+				temp = dotIndex;
+				dotIndex = path.IndexOf('/', temp + 1);
+				if(dotIndex < 0)
+					dotIndex = len;
+				if( (dotIndex - temp) <= 3 && (dotIndex < 1 || path[dotIndex - 1]== '.') && ( (temp+1) >= len || path[temp+1]=='.') )
+				{
+					if(dotIndex - temp == 3)
+						continue;
+					if(list.Count == 0)
+						throw new System.Web.HttpException(System.Web.HttpRuntime.FormatResourceString("Cannot_exit_up_top_directory"));
+					sb.Length = (int) list[list.Count - 1];
+					list.RemoveRange(list.Count - 1, 1);
+					continue;
+				}
+				list.Add(sb.Length);
+				sb.Append(path, temp, dotIndex - temp);
+			} while(dotIndex != len);
+			return sb.ToString();
 		}
 		
 		public static string GetDirectory(string url)
