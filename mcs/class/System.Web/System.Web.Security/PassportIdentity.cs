@@ -1,8 +1,9 @@
 //
-// System.Web.Security.PassportIdentity
+// System.Web.Security.PassportIdentity.cs
 //
 // Authors:
-//	Gonzalo Paniagua Javier (gonzalo@ximian.com)
+//   Gonzalo Paniagua Javier (gonzalo@ximian.com)
+//   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //
 // (C) 2002 Ximian, Inc (http://www.ximian.com)
 //
@@ -24,13 +25,18 @@ namespace System.Web.Security
 		{
 		}
 
-		[MonoTODO]
 		public string AuthUrl ()
 		{
-			throw new NotImplementedException ();
+			return AuthUrl (null, -1, -1, null, -1, null, -1, -1);
 		}
 
-		[MonoTODO]
+#if (!NET_1_0)
+		public string AuthUrl (String strReturnUrl)
+		{
+			return AuthUrl (strReturnUrl, -1, -1, null, -1, null, -1, -1);
+		}
+#endif
+
 		public string AuthUrl (string strReturnUrl,
 				       int iTimeWindow,
 				       bool fForceLogin,
@@ -40,7 +46,7 @@ namespace System.Web.Security
 				       int iKPP,
 				       bool bUseSecureAuth)
 		{
-			throw new NotImplementedException ();
+			return AuthUrl (strReturnUrl, iTimeWindow, (fForceLogin ? 1 : 0), strCoBrandedArgs, iLangID, strNameSpace, iKPP, (bUseSecureAuth ? 1 : 0));
 		}
 
 		[MonoTODO]
@@ -56,13 +62,18 @@ namespace System.Web.Security
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public string AuthUrl2 ()
 		{
-			throw new NotImplementedException ();
+			return AuthUrl2 (null, -1, -1, null, -1, null, -1, -1);
 		}
 
-		[MonoTODO]
+#if (!NET_1_0)
+		public string AuthUrl2 (String strReturnUrl)
+		{
+			return AuthUrl2 (strReturnUrl, -1, -1, null, -1, null, -1, -1);
+		}
+#endif
+
 		public string AuthUrl2 (string strReturnUrl,
 					int iTimeWindow,
 					bool fForceLogin,
@@ -72,7 +83,7 @@ namespace System.Web.Security
 					int iKPP,
 					bool bUseSecureAuth)
 		{
-			throw new NotImplementedException ();
+			return AuthUrl2 (strReturnUrl, iTimeWindow, (fForceLogin ? 1 : 0), strCoBrandedArgs, iLangID, strNameSpace, iKPP, (bUseSecureAuth ? 1 : 0));
 		}
 
 		[MonoTODO]
@@ -148,10 +159,9 @@ namespace System.Web.Security
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public bool GetIsAuthenticated (int iTimeWindow, bool bForceLogin, bool bCheckSecure)
 		{
-			throw new NotImplementedException ();
+			return this.GetIsAuthenticated (iTimeWindow, (bForceLogin ? 1 : 0), (bCheckSecure ? 1 : 0));
 		}
 
 		[MonoTODO]
@@ -160,11 +170,17 @@ namespace System.Web.Security
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public string GetLoginChallenge ()
 		{
-			throw new NotImplementedException ();
+			return GetLoginChallenge (null, -1, -1, null, -1, null, -1, -1, null);
 		}
+
+#if (!NET_1_0)
+		public string GetLoginChallenge (String strReturnUrl)
+		{
+			return GetLoginChallenge (strReturnUrl, -1, -1, null, -1, null, -1, -1, null);
+		}
+#endif
 
 		[MonoTODO]
 		public string GetLoginChallenge (string szRetURL,
@@ -210,13 +226,18 @@ namespace System.Web.Security
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public int LoginUser ()
 		{
-			throw new NotImplementedException ();
+			return LoginUser (null, -1, -1, null, -1, null, -1, -1, null);
 		}
 
-		[MonoTODO]
+#if (!NET_1_0)
+		public int LoginUser (String strReturnUrl)
+		{
+			return LoginUser (strReturnUrl, -1, -1, null, -1, null, -1, -1, null);
+		}
+#endif
+
 		public int LoginUser (string szRetURL,
 				      int iTimeWindow,
 				      bool fForceLogin,
@@ -227,7 +248,7 @@ namespace System.Web.Security
 				      bool fUseSecureAuth,
 				      object oExtraParams)
 		{
-			throw new NotImplementedException ();
+			return LoginUser (szRetURL, iTimeWindow, (fForceLogin ? 1 : 0), szCOBrandArgs, iLangID, strNameSpace, iKPP, (fUseSecureAuth ? 1 : 0), null);
 		}
 
 		[MonoTODO]
@@ -244,13 +265,18 @@ namespace System.Web.Security
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public string LogoTag ()
 		{
-			throw new NotImplementedException ();
+			return LogoTag (null, -1, -1, null, -1, -1, null, -1, -1);
 		}
 
-		[MonoTODO]
+#if (!NET_1_0)
+		public string LogoTag (String strReturnUrl)
+		{
+			return LogoTag (strReturnUrl, -1, -1, null, -1, -1, null, -1, -1);
+		}
+#endif
+
 		public string LogoTag (string strReturnUrl,
 				       int iTimeWindow,
 				       bool fForceLogin,
@@ -261,7 +287,7 @@ namespace System.Web.Security
 				       int iKPP,
 				       bool bUseSecureAuth)
 		{
-			throw new NotImplementedException ();
+			return LogoTag (strReturnUrl, iTimeWindow, (fForceLogin ? 1 : 0), strCoBrandedArgs, iLangID, (fSecure ? 1 : 0), strNameSpace, iKPP, (bUseSecureAuth ? 1 : 0));
 		}
 
 		[MonoTODO]
@@ -278,13 +304,18 @@ namespace System.Web.Security
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public string LogoTag2 ()
 		{
-			throw new NotImplementedException ();
+			return LogoTag2 (null, -1, -1, null, -1, -1, null, -1, -1);
 		}
 
-		[MonoTODO]
+#if (!NET_1_0)
+		public string LogoTag2 (String strReturnUrl)
+		{
+			return LogoTag2 (strReturnUrl, -1, -1, null, -1, -1, null, -1, -1);
+		}
+#endif
+
 		public string LogoTag2 (string strReturnUrl,
 				        int iTimeWindow,
 				        bool fForceLogin,
@@ -295,7 +326,7 @@ namespace System.Web.Security
 				        int iKPP,
 				        bool bUseSecureAuth)
 		{
-			throw new NotImplementedException ();
+			return LogoTag2 (strReturnUrl, iTimeWindow, (fForceLogin ? 1 : 0), strCoBrandedArgs, iLangID, (fSecure ? 1 : 0), strNameSpace, iKPP, (bUseSecureAuth ? 1 : 0));
 		}
 
 		[MonoTODO]
@@ -312,10 +343,9 @@ namespace System.Web.Security
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public string LogoutURL ()
 		{
-			throw new NotImplementedException ();
+			return LogoutURL (null, null, -1, null, -1);
 		}
 
 		[MonoTODO]
