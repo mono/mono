@@ -1,5 +1,8 @@
 2005-03-24  Zoltan Varga  <vargaz@freemail.hu>
 
+	* marshal.c (mono_marshal_get_managed_wrapper): Fix crashes in 2.0
+	profile.
+
 	* reflection.c (create_custom_attr): Allocate the params array using
 	alloca so it gets GC tracking.
 
