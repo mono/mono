@@ -252,11 +252,9 @@ namespace Mono.Data.Tds.Protocol {
 
 			Comm.SendPacket ();
 
-			bool done = false;
-			while (!done) {
-				TdsPacketResult result = ProcessSubPacket ();
-				done = (result is TdsPacketEndTokenResult);
-			}
+			MoreResults = true;
+			SkipToEnd ();
+
 			return IsConnected;
 		}
 

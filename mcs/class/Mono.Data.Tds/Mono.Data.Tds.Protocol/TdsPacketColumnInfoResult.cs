@@ -36,6 +36,10 @@ namespace Mono.Data.Tds.Protocol {
 			set { list[index] = value; }
 		}
 
+		public int Count {
+			get { return list.Count; }
+		}
+
 		#endregion // Properties
 
 		#region Methods
