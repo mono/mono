@@ -26,9 +26,12 @@
 //
 //
 //
-// $Revision: 1.57 $
+// $Revision: 1.58 $
 // $Modtime: $
 // $Log: ThemeWin32Classic.cs,v $
+// Revision 1.58  2004/11/08 14:15:00  jordi
+// fixes vertical scrollbar and removes dead code
+//
 // Revision 1.57  2004/11/05 05:47:34  jba
 // - Fix Button rendering for FlatStyle = Flat or Popup
 // - Fix RadioButton and CheckBox rendering when Appearance = Button (normal and
@@ -1568,18 +1571,16 @@ namespace System.Windows.Forms
 			int		scrollbutton_width = bar.scrollbutton_width;
 			int		scrollbutton_height = bar.scrollbutton_height;
 			Rectangle	first_arrow_area;
-			Rectangle	second_arrow_area;
-			Rectangle	area;
+			Rectangle	second_arrow_area;			
 			Rectangle	thumb_pos;
-
-			area = bar.paint_area;
+			
 			thumb_pos = bar.ThumbPos;
 
 			if (bar.vert) {
 				first_arrow_area = new Rectangle(0, 0, bar.Width, scrollbutton_height);
 				bar.FirstArrowArea = first_arrow_area;
 
-				second_arrow_area = new Rectangle(0, area.Height - scrollbutton_height, bar.Width, scrollbutton_height);
+				second_arrow_area = new Rectangle(0, bar.ClientRectangle.Height - scrollbutton_height, bar.Width, scrollbutton_height);
 				bar.SecondArrowArea = second_arrow_area;
 
 				thumb_pos.Width = bar.Width;
@@ -1593,18 +1594,18 @@ namespace System.Windows.Forms
 				switch (bar.thumb_moving) {
 				case ScrollBar.ThumbMoving.None: {
 					dc.FillRectangle (ResPool.GetHatchBrush (HatchStyle.Percent50, ColorButtonHilight, ColorButtonFace), 0,  
-						scrollbutton_height, area.Width, area.Height - (scrollbutton_height * 2));
+						scrollbutton_height, bar.ClientRectangle.Width, bar.ClientRectangle.Height - (scrollbutton_height * 2));
 					
 					break;
 				}
 				case ScrollBar.ThumbMoving.Forward: {
 					dc.FillRectangle (ResPool.GetHatchBrush (HatchStyle.Percent50, ColorButtonHilight, ColorButtonFace),
 						0,  scrollbutton_height,
-						area.Width, thumb_pos.Y - scrollbutton_height);
+						bar.ClientRectangle.Width, thumb_pos.Y - scrollbutton_height);
 												
 					dc.FillRectangle (ResPool.GetHatchBrush (HatchStyle.Percent50, Color.FromArgb (255, 63,63,63), Color.Black),
 						0, thumb_pos.Y + thumb_pos.Height,
-						area.Width, area.Height -  (thumb_pos.Y + thumb_pos.Height) - scrollbutton_height);						
+						bar.ClientRectangle.Width, bar.ClientRectangle.Height -  (thumb_pos.Y + thumb_pos.Height) - scrollbutton_height);
 						
 					break;
 				}
@@ -1612,11 +1613,11 @@ namespace System.Windows.Forms
 				case ScrollBar.ThumbMoving.Backwards: {
 					dc.FillRectangle (ResPool.GetHatchBrush (HatchStyle.Percent50, Color.FromArgb (255, 63,63,63), Color.Black),
 						0,  scrollbutton_height,
-						area.Width, thumb_pos.Y - scrollbutton_height);
+						bar.ClientRectangle.Width, thumb_pos.Y - scrollbutton_height);
 												
 					dc.FillRectangle (ResPool.GetHatchBrush (HatchStyle.Percent50, ColorButtonHilight, ColorButtonFace),
 						0, thumb_pos.Y + thumb_pos.Height,
-						area.Width, area.Height -  (thumb_pos.Y + thumb_pos.Height) - scrollbutton_height);						
+						bar.ClientRectangle.Width, bar.ClientRectangle.Height -  (thumb_pos.Y + thumb_pos.Height) - scrollbutton_height);						
 						
 					break;
 				}
@@ -1630,7 +1631,7 @@ namespace System.Windows.Forms
 				first_arrow_area = new Rectangle(0, 0, scrollbutton_width, bar.Height);
 				bar.FirstArrowArea = first_arrow_area;
 
-				second_arrow_area = new Rectangle(area.Width - scrollbutton_width, 0, scrollbutton_width, bar.Height);
+				second_arrow_area = new Rectangle (bar.ClientRectangle.Width - scrollbutton_width, 0, scrollbutton_width, bar.Height);
 				bar.SecondArrowArea = second_arrow_area;
 
 				thumb_pos.Height = bar.Height;
@@ -1647,7 +1648,7 @@ namespace System.Windows.Forms
 				switch (bar.thumb_moving) {
 				case ScrollBar.ThumbMoving.None: {
 					dc.FillRectangle (ResPool.GetHatchBrush (HatchStyle.Percent50, ColorButtonHilight, ColorButtonFace), scrollbutton_width,
-						0, area.Width - (scrollbutton_width * 2), area.Height);
+						0, bar.ClientRectangle.Width - (scrollbutton_width * 2), bar.ClientRectangle.Height);
 					
 					break;
 				}
@@ -1655,11 +1656,11 @@ namespace System.Windows.Forms
 				case ScrollBar.ThumbMoving.Forward: {
 					dc.FillRectangle (ResPool.GetHatchBrush (HatchStyle.Percent50, ColorButtonHilight, ColorButtonFace),
 						scrollbutton_width,  0,
-						thumb_pos.X - scrollbutton_width, area.Height);
+						thumb_pos.X - scrollbutton_width, bar.ClientRectangle.Height);
 												
 					dc.FillRectangle (ResPool.GetHatchBrush (HatchStyle.Percent50, Color.FromArgb (255, 63,63,63), Color.Black),
 						thumb_pos.X + thumb_pos.Width, 0,
-						area.Width -  (thumb_pos.X + thumb_pos.Width) - scrollbutton_width, area.Height);
+						bar.ClientRectangle.Width -  (thumb_pos.X + thumb_pos.Width) - scrollbutton_width, bar.ClientRectangle.Height);
 						
 					break;
 				}
@@ -1667,11 +1668,11 @@ namespace System.Windows.Forms
 				case ScrollBar.ThumbMoving.Backwards: {
 					dc.FillRectangle (ResPool.GetHatchBrush (HatchStyle.Percent50, Color.FromArgb (255, 63,63,63), Color.Black),
 						scrollbutton_width,  0,
-						thumb_pos.X - scrollbutton_width, area.Height);
+						thumb_pos.X - scrollbutton_width, bar.ClientRectangle.Height);
 												
 					dc.FillRectangle (ResPool.GetHatchBrush (HatchStyle.Percent50, ColorButtonHilight, ColorButtonFace),
 						thumb_pos.X + thumb_pos.Width, 0,
-						area.Width -  (thumb_pos.X + thumb_pos.Width) - scrollbutton_width, area.Height);
+						bar.ClientRectangle.Width -  (thumb_pos.X + thumb_pos.Width) - scrollbutton_width, bar.ClientRectangle.Height);
 
 						
 					break;

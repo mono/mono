@@ -26,9 +26,12 @@
 //	Jordi Mas i Hernandez	jordi@ximian.com
 //
 //
-// $Revision: 1.25 $
+// $Revision: 1.26 $
 // $Modtime: $
 // $Log: ScrollBar.cs,v $
+// Revision 1.26  2004/11/08 14:15:00  jordi
+// fixes vertical scrollbar and removes dead code
+//
 // Revision 1.25  2004/11/04 12:03:49  ravindra
 // 	- We need to recalculate the Thumb area when LargeChange/maximum/minimum values are changed.
 // 	- We set the 'pos' in UpdatePos() method to minimum, if it's less than minimum. This is required to handle the case if large_change is more than max, and use LargeChange property instead of large_change variable.
@@ -131,8 +134,7 @@ namespace System.Windows.Forms
 		private int large_change;
 		private int small_change;
 		internal int scrollbutton_height;
-		internal int scrollbutton_width;
-		internal Rectangle paint_area = new Rectangle ();
+		internal int scrollbutton_width;		
 		private ScrollBars type;
 		private Rectangle first_arrow_area = new Rectangle ();		// up or left
 		private Rectangle second_arrow_area = new Rectangle ();		// down or right
@@ -583,10 +585,6 @@ namespace System.Windows.Forms
     		{
     			if (Width <= 0 || Height <= 0)
     				return;
-
-			paint_area.X = paint_area. Y = 0;
-			paint_area.Width = Width;
-			paint_area.Height = Height;
 
 			CalcThumbArea ();
 			UpdatePos (position, true);
