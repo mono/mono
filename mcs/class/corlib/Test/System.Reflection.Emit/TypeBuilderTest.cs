@@ -1778,6 +1778,7 @@ public class TypeBuilderTest : Assertion
 
 	[Test]
 	[Category("NotDotNet")]
+	[Category("NotWorking")]
 	public void TestIsAssignableTo_NotDotNet () {
 		Type icomparable = typeof (IComparable);
 
@@ -1791,7 +1792,7 @@ public class TypeBuilderTest : Assertion
 		Assert ("02", tb.IsAssignableFrom (typeof (IDisposable)));
 
 		// bug #73469
-		// Assert ("07", typeof (Bar[]).IsAssignableFrom (module.GetType (tb.FullName + "[]")));
+		Assert ("07", typeof (Bar[]).IsAssignableFrom (module.GetType (tb.FullName + "[]")));
 	}
 }
 }
