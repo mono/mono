@@ -1,25 +1,26 @@
 //
 // System.Security.Permissions.FileIOPermissionAttribute.cs
 //
-// Author:
-//	Duncan Mak (duncan@ximian.com)
+// Authors
+//	Duncan Mak <duncan@ximian.com>
+//	Sebastien Pouliot <spouliot@motus.com>
 //
-// (C) 2002 Ximian, Inc.		http://www.ximian.com
+// (C) 2002 Ximian, Inc. http://www.ximian.com
+// Portions Copyright (C) 2003 Motus Technologies (http://www.motus.com)
 //
 
 using System;
 using System.Security.Permissions;
 
-namespace System.Security.Permissions
-{
+namespace System.Security.Permissions {
+
 	[AttributeUsage (AttributeTargets.Assembly | AttributeTargets.Class |
 			 AttributeTargets.Struct | AttributeTargets.Constructor |
 			 AttributeTargets.Method)]
 	[Serializable]
-	public sealed class FileIOPermissionAttribute : CodeAccessSecurityAttribute
-	{
+	public sealed class FileIOPermissionAttribute : CodeAccessSecurityAttribute {
+
 		// Fields
-		private string all;
 		private string append;
 		private string path;
 		private string read;
@@ -31,7 +32,15 @@ namespace System.Security.Permissions
 		// Properties
 		public string All
 		{
-			 set { all = value; }
+#if ! NET_1_0
+			get { throw new NotSupportedException ("All"); }
+#endif
+			set {
+				append = value; 
+				path = value;
+				read = value;
+				write = value;
+			}
 		}
 
 		public string Append
@@ -59,10 +68,18 @@ namespace System.Security.Permissions
 		}
 			 
 		// Methods
-		[MonoTODO]
 		public override IPermission CreatePermission ()
 		{
-			return null;
+			FileIOPermission p = new FileIOPermission (PermissionState.None);
+			if (append != null)
+				p.AddPathList (FileIOPermissionAccess.Append, append);
+			if (path != null)
+				p.AddPathList (FileIOPermissionAccess.PathDiscovery, path);
+			if (read != null)
+				p.AddPathList (FileIOPermissionAccess.Read, read);
+			if (write != null)
+				p.AddPathList (FileIOPermissionAccess.Write, write);
+			return p;
 		}
 	}
 }	   

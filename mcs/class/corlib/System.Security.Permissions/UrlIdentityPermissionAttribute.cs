@@ -31,10 +31,9 @@ namespace System.Security.Permissions
 		}
 		
 		// Methods
-		[MonoTODO]
 		public override IPermission CreatePermission ()
 		{
-			return null;
+			return new UrlIdentityPermission (url);
 		}
 	}
 }

@@ -7,17 +7,15 @@
 //
 
 using System;
-using System.Security.Permissions;
 
-namespace System.Security.Permissions
-{
+namespace System.Security.Permissions {
 
 	[AttributeUsage (AttributeTargets.Assembly | AttributeTargets.Class |
 			 AttributeTargets.Struct | AttributeTargets.Constructor |
 			 AttributeTargets.Method)]
 	[Serializable]
-	public sealed class StrongNameIdentityPermissionAttribute : CodeAccessSecurityAttribute
-	{
+	public sealed class StrongNameIdentityPermissionAttribute : CodeAccessSecurityAttribute	{
+
 		// Fields
 		private string name;
 		private string key;
@@ -46,11 +44,12 @@ namespace System.Security.Permissions
 		}
 			 
 		// Methods
-		[MonoTODO]
 		public override IPermission CreatePermission ()
-		 {
-			 return null;
-		 }
+		{
+			byte[] keyblob = Convert.FromBase64String (key);
+			StrongNamePublicKeyBlob blob = new StrongNamePublicKeyBlob (keyblob);
+			Version v = new Version (version);
+			return new StrongNameIdentityPermission (blob, name, v);
+		}
 	}
-	
 }

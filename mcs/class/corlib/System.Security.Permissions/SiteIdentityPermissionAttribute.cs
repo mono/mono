@@ -9,22 +9,20 @@
 using System;
 using System.Security.Permissions;
 
-namespace System.Security.Permissions
-{
+namespace System.Security.Permissions {
+
 	[AttributeUsage (AttributeTargets.Assembly | AttributeTargets.Class |
 			 AttributeTargets.Struct | AttributeTargets.Constructor |
 			 AttributeTargets.Method)]
 	[Serializable]
-	public sealed class SiteIdentityPermissionAttribute : CodeAccessSecurityAttribute
-	{
+	public sealed class SiteIdentityPermissionAttribute : CodeAccessSecurityAttribute {
+
 		// Fields
 		private string site;
 		
 		// Constructor
 		public SiteIdentityPermissionAttribute (SecurityAction action)
-			: base (action)
-		{
-		}
+			: base (action) {}
 		
 		// Properties
 		public string Site
@@ -34,10 +32,9 @@ namespace System.Security.Permissions
 		}
 		
 		// Methods
-		[MonoTODO]
 		public override IPermission CreatePermission ()
 		{
-			return null;
+			return new SiteIdentityPermission (site);
 		}
-	   }
+	}
 }

@@ -9,10 +9,11 @@
 using System;
 using System.Security;
 
-namespace System.Security.Permissions
-{
-	public sealed class ZoneIdentityPermission : CodeAccessPermission
-	{
+namespace System.Security.Permissions {
+
+	[Serializable]
+	public sealed class ZoneIdentityPermission : CodeAccessPermission {
+
 		SecurityZone zone;
 
 		public ZoneIdentityPermission (PermissionState state)
@@ -114,6 +115,5 @@ namespace System.Security.Permissions
 			}
 		}
 	}
-
 }
 

@@ -14,16 +14,18 @@ using System.Security.Permissions;
 
 namespace System.Security.Permissions {
 	
-	[MonoTODO]
 	[Serializable]
 	public sealed class SecurityPermission :
-		CodeAccessPermission, IUnrestrictedPermission
-	{
-		public SecurityPermission (PermissionState state) {
+		CodeAccessPermission, IUnrestrictedPermission {
+
+		[MonoTODO]
+		public SecurityPermission (PermissionState state) 
+		{
 			this.flags = SecurityPermissionFlag.NoFlags;
 		}
 
-		public SecurityPermission (SecurityPermissionFlag flags) {
+		public SecurityPermission (SecurityPermissionFlag flags) 
+		{
 			this.flags = flags;
 		}
 
@@ -32,30 +34,43 @@ namespace System.Security.Permissions {
 			set { flags = value; }
 		}
 
-		public bool IsUnrestricted () {
+		[MonoTODO]
+		public bool IsUnrestricted () 
+		{
 			return false;
 		}
 
-		public override IPermission Copy () {
+		public override IPermission Copy () 
+		{
+			return new SecurityPermission (flags);
+		}
+
+		[MonoTODO]
+		public override IPermission Intersect (IPermission target) 
+		{
 			return null;
 		}
 
-		public override IPermission Intersect (IPermission target) {
+		[MonoTODO]
+		public override IPermission Union (IPermission target) 
+		{
 			return null;
 		}
 
-		public override IPermission Union (IPermission target) {
-			return null;
-		}
-
-		public override bool IsSubsetOf (IPermission target) {
+		[MonoTODO]
+		public override bool IsSubsetOf (IPermission target) 
+		{
 			return false;
 		}
 
-		public override void FromXml (SecurityElement e) {
+		[MonoTODO]
+		public override void FromXml (SecurityElement e) 
+		{
 		}
 
-		public override SecurityElement ToXml () {
+		[MonoTODO]
+		public override SecurityElement ToXml () 
+		{
 			return null;
 		}
 

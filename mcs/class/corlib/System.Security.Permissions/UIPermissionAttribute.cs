@@ -7,16 +7,14 @@
 //
 
 using System;
-using System.Security.Permissions;
 
-namespace System.Security.Permissions
-{
+namespace System.Security.Permissions {
+
 	[AttributeUsage (AttributeTargets.Assembly | AttributeTargets.Class |
 			 AttributeTargets.Struct | AttributeTargets.Constructor |
 			 AttributeTargets.Method)]
 	[Serializable]
-	public sealed class UIPermissionAttribute : CodeAccessSecurityAttribute
-	{
+	public sealed class UIPermissionAttribute : CodeAccessSecurityAttribute	{
 
 		// Fields
 		private UIPermissionClipboard clipboard;
@@ -39,10 +37,9 @@ namespace System.Security.Permissions
 		}
 
 		// Methods
-		[MonoTODO]
 		public override IPermission CreatePermission ()
 		{
-			return null;
+			return new UIPermission (window, clipboard);
 		}
 	}
 }

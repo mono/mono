@@ -12,8 +12,8 @@
 using System;
 using System.Security.Permissions;
 
-namespace System.Security.Permissions
-{
+namespace System.Security.Permissions {
+
 	[System.AttributeUsage(
 		System.AttributeTargets.Assembly 
 		| System.AttributeTargets.Class 
@@ -26,7 +26,7 @@ namespace System.Security.Permissions
 	[Serializable]
 	public abstract class CodeAccessSecurityAttribute : SecurityAttribute {
 
-		public CodeAccessSecurityAttribute(SecurityAction action) : base(action) {}
+		public CodeAccessSecurityAttribute (SecurityAction action) : base (action) {}
 
 	}  // public abstract class CodeAccessSecurityAttribute
 }  // namespace System.Security.Permissions

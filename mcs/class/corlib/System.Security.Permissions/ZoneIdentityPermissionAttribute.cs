@@ -9,14 +9,14 @@
 using System;
 using System.Security.Permissions;
 
-namespace System.Security.Permissions
-{
+namespace System.Security.Permissions {
+
 	[AttributeUsage (AttributeTargets.Assembly | AttributeTargets.Class |
 			 AttributeTargets.Struct | AttributeTargets.Constructor |
 			 AttributeTargets.Method)]
 	[Serializable]
-	public sealed class ZoneIdentityPermissionAttribute : CodeAccessSecurityAttribute
-	{
+	public sealed class ZoneIdentityPermissionAttribute : CodeAccessSecurityAttribute {
+
 		// Fields
 		private SecurityZone zone;
 		
@@ -31,10 +31,9 @@ namespace System.Security.Permissions
 		}
 		
 		// Methods
-		[MonoTODO]
 		public override IPermission CreatePermission ()
 		{
-			return null;
+			return new ZoneIdentityPermission (zone);
 		}
 	}
 }

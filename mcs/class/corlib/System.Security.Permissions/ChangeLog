@@ -1,3 +1,32 @@
+2003-06-28  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* CodeAccessSecurityAttribute.cs: Added [Serializable] to class.
+	* EnvironmentPermission.cs: Completed class implementation.
+	* EnvironmentPermissionAttribute.cs: Corrected 1.1 signature and
+	completed class implementation.
+	* FileDialogPermission.cs: New. Complete implementation.
+	* FileDialogPermissionAttribute.cs: Completed class implementation.
+	* FileIOPermissionAttribute.cs: Corrected 1.1 signature and
+	completed class implementation.
+	* IsolatedStorageFilePermission.cs: New. Stubbed missing class.
+	* PrincipalPermission.cs: New. Stubbed missing class.
+	* PublisherIdentityPermission.cs: Completed class implementation.
+	* PublisherIdentityPermissionAttribute.cs: New.  Complete 
+	implementation.
+	* RegistryPermission.cs: New. Stubbed missing class.
+	* SecurityPermission.cs: Added missing MonoTODO attributes.
+	* SecurityPermissionFlag.cs: Added new BindingRedirects flag for 
+	.NET 1.1 compatibility.
+	* SiteIdentityPermission.cs: New. Stubbed missing class.
+	* SiteIdentityPermissionAttribute.cs: Completed class implementation.
+	* StrongNamePermissionAttribute.cs: Completed class implementation.
+	* UIPermission.cs: New. Stubbed missing class.
+	* UIPermissionAttribute.cs: Completed class implementation.
+	* UrlIdentityPermission.cs: New. Stubbed missing class.
+	* UrlIdentityPermissionAttribute.cs: Completed class implementation.
+	* ZoneIdentityPermission.cs: Added [Serializable] to class.
+	* ZoneIdentityPermissionAttribute.cs: Completed class implementation.
+
 2002-12-16  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* StrongNamePublicKeyBlob.cs: New. Implemented.

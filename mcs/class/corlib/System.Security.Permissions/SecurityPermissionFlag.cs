@@ -58,11 +58,17 @@ namespace System.Security.Permissions {
 
 		Infrastructure = 0x00001000,
 
+#if ! NET_1_0
+		BindingRedirects = 0x00002000,
+#endif
 		/// <summary>
 		/// </summary>
 		AllFlags = Assertion | UnmanagedCode | SkipVerification | Execution | ControlThread
 			| ControlAppDomain | ControlDomainPolicy | ControlEvidence | ControlPolicy
-			| ControlPrincipal | Infrastructure | RemotingConfiguration | SerializationFormatter,
+			| ControlPrincipal | Infrastructure | RemotingConfiguration | SerializationFormatter
+#if ! NET_1_0
+			| BindingRedirects
+#endif
 	} // SecurityPermissionFlag
 
 } // System.Security.Permissions
