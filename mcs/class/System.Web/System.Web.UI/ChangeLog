@@ -1,3 +1,15 @@
+2002-07-19  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Control.cs: uncommented Dispose.
+
+	* Page.cs:
+	(DeterminePostBackMode): more checkings.
+	(GetPostBackClientHyperLink): implemented.
+	(GetPostBackEventReference): added some comments with the HTML that MS
+	generates for that.
+	(ProcessRequest): fixed processing order. The page is unloaded after
+	a request and regenerated from view state on subsequents posts.
+
 2002-07-17  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Control.cs: fixed related to ViewState. Added RemovedControl.

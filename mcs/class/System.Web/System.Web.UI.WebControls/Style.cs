@@ -498,13 +498,13 @@ namespace System.Web.UI.WebControls
 
 		protected internal void LoadViewState(object state)
 		{
-			if(state!=null && selfStateBag)
-			{
+			if (state != null && selfStateBag)
 				ViewState.LoadViewState(state);
-			}
-			if(viewState!=null)
-			{
-				selectionBits = (int)ViewState[selectionBitString];
+
+			if (viewState != null) {
+				object o = ViewState[selectionBitString];
+				if (o != null)
+					selectionBits = (int) o;
 			}
 		}
 

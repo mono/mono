@@ -77,13 +77,11 @@ namespace System.Web.UI.WebControls
 
 		public override string ToolTip
 		{
-			get
-			{
-				return ToolTip;
+			// MS ignores the tooltip for this one
+			get {
+				return String.Empty;
 			}
-			set
-			{
-				ToolTip = value;
+			set {
 			}
 		}
 

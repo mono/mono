@@ -40,8 +40,7 @@ public class Page : TemplateControl, IHttpHandler
 	private string _UICulture;
 	private HttpContext _context;
 	private ValidatorCollection _validators;
-	private bool _renderingForm;
-	private bool _hasForm;
+	private bool renderingForm;
 	private object _savedViewState;
 	private ArrayList _requiresPostBack;
 	private ArrayList requiresPostDataChanged;
@@ -143,7 +142,7 @@ public class Page : TemplateControl, IHttpHandler
 	public bool IsPostBack
 	{
 		get {
-			return (Request.HttpMethod == "POST");
+			return (0 == String.Compare (Request.HttpMethod, "POST", true));
 		}
 	}
 
@@ -270,10 +269,22 @@ public class Page : TemplateControl, IHttpHandler
 
 	protected virtual NameValueCollection DeterminePostBackMode ()
 	{
-		if (IsPostBack)
-			return _context.Request.Form;
+		if (_context == null)
+			return null;
 
-		return _context.Request.QueryString;
+		HttpRequest req = _context.Request;
+		if (req == null)
+			return null;
+
+		NameValueCollection coll = null;
+		if (IsPostBack)
+			coll =  _context.Request.Form;
+		else 
+			coll = _context.Request.QueryString;
+
+		if (coll == null || coll ["__VIEWSTATE"] == null)
+			return null;
+		return coll;
 	}
 	
 	[MonoTODO]
@@ -286,28 +297,36 @@ public class Page : TemplateControl, IHttpHandler
 		return result.ToString ();
 	}
 
-	[MonoTODO]
 	public string GetPostBackClientHyperlink (Control control, string argument)
 	{
-		throw new NotImplementedException ();
+		return "javascript:" + GetPostBackEventReference (control, argument);
 	}
 
-	[MonoTODO]
 	public string GetPostBackEventReference (Control control)
 	{
-		// Don't throw the exception. keep going
-		//throw new NotImplementedException ();
 		return GetPostBackEventReference (control, "");
 	}
 	
 	[MonoTODO]
 	public string GetPostBackEventReference (Control control, string argument)
 	{
-		// Don't throw the exception. keep going
-		//throw new NotImplementedException ();
-		StringBuilder result = new StringBuilder ();
-		result.AppendFormat ("GetPostBackEventReference ('{0}', '{1}')", control.ID, argument);
-		return result.ToString ();
+		// We should generate something like that for some controls.
+		//<form name="_ctl0" method="post" action="web_linkbutton.aspx" id="_ctl0">
+		//<input type="hidden" name="__EVENTTARGET" value="" />
+		//<input type="hidden" name="__EVENTARGUMENT" value="" />
+		//<input type="hidden" name="__VIEWSTATE" value="dDwtMTQ0OTU5MDMyOzs+QVNcmTndkSoEzsv+d4Wt7Jj8X0c=" />
+		//<script language="javascript">
+		//<!--
+		//	function __doPostBack(eventTarget, eventArgument) {
+		//		var theform = document._ctl0;
+		//		theform.__EVENTTARGET.value = eventTarget;
+		//		theform.__EVENTARGUMENT.value = eventArgument;
+		//		theform.submit();
+		//	}
+		// -->
+		//</script>
+		//
+		return String.Format ("GetPostBackEventReference ('{0}', '{1}')", control.ID, argument);
 	}
 
 	public virtual int GetTypeHashCode ()
@@ -356,15 +375,14 @@ public class Page : TemplateControl, IHttpHandler
 		}
 	}
 
-	private bool _got_state = false;
+	private bool got_state = false;
 	private int _random;
 	internal void OnFormRender (HtmlTextWriter writer, string formUniqueID)
 	{
-		if (_hasForm)
+		if (renderingForm)
 			throw new HttpException ("Only 1 HtmlForm is allowed per page.");
 
-		_renderingForm = true;
-		_hasForm = true;
+		renderingForm = true;
 		writer.WriteLine();
 		writer.Write("<input type=\"hidden\" name=\"__VIEWSTATE\" ");
 		writer.WriteLine("value=\"{0}\" />", GetViewStateString ());
@@ -377,13 +395,13 @@ public class Page : TemplateControl, IHttpHandler
 		if (_context != null)
 			state_string.Append (_context.Request.QueryString.GetHashCode ());
 
-		if (!_got_state) {
+		if (!got_state) {
 			Random rnd = new Random ();
 			_random = rnd.Next ();
 			if (_random < 0)
 				_random = -_random;
 			_random++;
-			_got_state = true;
+			got_state = true;
 		}
 
 		state_string.AppendFormat ("{0:X}", _random);
@@ -392,7 +410,7 @@ public class Page : TemplateControl, IHttpHandler
 
 	internal void OnFormPostRender (HtmlTextWriter writer, string formUniqueID)
 	{
-		_renderingForm = false;
+		renderingForm = false;
 	}
 
 
@@ -440,23 +458,20 @@ public class Page : TemplateControl, IHttpHandler
 	{
 		if (!init_done){
 			init_done = true;
-			FrameworkInitialize ();
 			// This 2 should depend on AutoEventWireUp in Page directive. Defaults to true.
 			Init += new EventHandler (_Page_Init);
 			Load += new EventHandler (_Page_Load);
-			//-- Control execution lifecycle in the docs
-			InitRecursive (null);
 		}
-		_got_state = false;
-		_hasForm = false;
+		//-- Control execution lifecycle in the docs
+		FrameworkInitialize ();
+		InitRecursive (null);
+		got_state = false;
+		renderingForm = false;	
 		_context = context;
-		if (IsPostBack)
+		if (IsPostBack) {
 			LoadPageViewState ();
-		//if (this is IPostBackDataHandler)
-		//	LoadPostData ();
-		
-		if (IsPostBack)
 			ProcessPostData ();
+		}
 
 		LoadRecursive ();
 		if (IsPostBack) {
@@ -469,7 +484,8 @@ public class Page : TemplateControl, IHttpHandler
 		//--
 		HtmlTextWriter output = new HtmlTextWriter (context.Response.Output);
 		this.RenderControl (output);
-
+		_context = null;
+		UnloadRecursive (true);
 	}
 
 	internal void RaisePostBackEvents ()
@@ -597,7 +613,7 @@ public class Page : TemplateControl, IHttpHandler
 
 	public virtual void VerifyRenderingInServerForm (Control control)
 	{
-		if (!_renderingForm)
+		if (!renderingForm)
 			throw new HttpException ("Control '" + control.ClientID + " " + control.GetType () + 
 						 "' must be rendered within a HtmlForm");
 	}

@@ -272,7 +272,7 @@ namespace System.Web.UI.WebControls
 		internal void TrackViewState()
 		{
 			marked = true;
-			foreach(ListItem current in this)
+			foreach(ListItem current in items)
 				current.TrackViewState();
 		}
 

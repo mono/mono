@@ -1,3 +1,20 @@
+2002-07-19  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* DropDownList.cs:
+	(ToolTip): fixed.
+
+	* ListItem.cs:
+	(LoadViewState): fixed.
+
+	* ListItemCollection.cs:
+	(TrackViewState): use items instead of 'this' in foreach.
+
+	* Style.cs:
+	(LoadViewState): more checking of parameters.
+
+	* WebControl.cs: implemented LoadViewState and SaveViewState.
+	
+
 2002-07-17  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* ListItem.cs: there was no code to unset the flags!!!

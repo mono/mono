@@ -89,15 +89,10 @@ namespace System.Web.UI.WebControls
 					if(attributeState == null)
 					{
 						attributeState = new StateBag(true);
-						//FIXME: Uncomment the following in the final release
-						// commented because of the assembly problem.
-						//The function TrackViewState() is internal
-						/*
 						if(IsTrackingViewState)
 						{
 							attributeState.TrackViewState();
 						}
-						*/
 					}
 					attributes = new AttributeCollection(attributeState);
 				}
@@ -190,16 +185,11 @@ namespace System.Web.UI.WebControls
 				if(controlStyle == null)
 				{
 					controlStyle = CreateControlStyle();
-					//FIXME: Uncomment the following in the final release
-					// commented because of the assembly problem.
-					//The functions TrackViewState() and LoadViewState() are internal
-					/*
 					if(IsTrackingViewState)
 					{
 						controlStyle.TrackViewState();
 					}
 					controlStyle.LoadViewState(null);
-					*/
 				}
 				return controlStyle;
 			}
@@ -427,14 +417,16 @@ namespace System.Web.UI.WebControls
 			return new Style(ViewState);
 		}
 
-		[MonoTODO]
-		protected override void LoadViewState(object savedState)
+		protected override void LoadViewState (object savedState)
 		{
-			throw new NotImplementedException();
-			//TODO: Load viewStates
-			/*
-			 * May be will have to first look at Control::LoadViewState
-			*/
+			if (savedState != null) {
+				Triplet saved = (Triplet) savedState;
+				base.LoadViewState (saved.First);
+				if (ControlStyleCreated)
+					ControlStyle.LoadViewState (saved.Second);
+				if (attributeState != null)
+					attributeState.LoadViewState (saved.Third);
+			}
 		}
 
 		protected override void Render(HtmlTextWriter writer)
@@ -449,24 +441,27 @@ namespace System.Web.UI.WebControls
 			base.Render(writer);
 		}
 
-		[MonoTODO]
 		protected override object SaveViewState()
 		{
-			throw new NotImplementedException();
-			//TODO: Implement me!
+			object baseView = base.SaveViewState ();
+			object controlView = null;
+			if (ControlStyleCreated)
+				controlView = ControlStyle.SaveViewState();
+
+			object attrView = null;
+			if (attributeState != null)
+				attrView = attributeState.SaveViewState();
+
+			return new Triplet (baseView, controlView, attrView);
 		}
 
 		protected override void TrackViewState()
 		{
-			TrackViewState();
-			if(ControlStyleCreated)
-			{
-				ControlStyle.TrackViewState();
-			}
-			if(attributeState!=null)
-			{
-				attributeState.TrackViewState();
-			}
+			base.TrackViewState();
+			if (ControlStyleCreated)
+				ControlStyle.TrackViewState ();
+			if (attributeState != null)
+				attributeState.TrackViewState ();
 		}
 
 		string IAttributeAccessor.GetAttribute(string key)

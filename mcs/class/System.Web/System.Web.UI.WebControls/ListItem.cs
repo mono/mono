@@ -180,10 +180,6 @@ namespace System.Web.UI.WebControls
 					Value = (string)tv.Second;
 				}
 			}
-			if(state is string)
-			{
-				Text = (string)state;
-			}
 		}
 
 		internal object SaveViewState()

@@ -491,18 +491,14 @@ namespace System.Web.UI
                         _trackViewState = true;
                 }
                 
-				[MonoTODO]
                 public virtual void Dispose()
                 {
-                        //TODO: nuke stuff.
-                        throw new NotImplementedException();
-                	/*
                         if (_events != null)
                         {
-                                EventHandler eh = (EventHandler)(_events[DisposedEvent]);
-                                if (eh != null) eh(this, e);
+                                EventHandler eh = (EventHandler) _events [DisposedEvent];
+                                if (eh != null)
+					eh(this, EventArgs.Empty);
                         }
-                    */
                 }
 
 		public bool HasChildren
