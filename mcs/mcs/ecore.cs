@@ -4179,7 +4179,7 @@ namespace Mono.CSharp {
 			// Special case: length of single dimension array is turned into ldlen
 			//
 			if ((method == TypeManager.system_int_array_get_length) ||
-			    (method == TypeManager.system_int_array_get_length)){
+			    (method == TypeManager.int_array_get_length)){
 				Type iet = instance_expr.Type;
 
 				//
