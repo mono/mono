@@ -45,10 +45,12 @@ namespace System {
 		}
 
 		private string NumberToString () {
-			if (format == null)
+			if (format == null) {
 				format = "G";
-			if (nfi == null)
+			}
+			if (nfi == null) {
 				nfi = NumberFormatInfo.CurrentInfo;
+			}
 			char specifier;
 			int precision;
 			if (!ParseFormat(out specifier, out precision)) {
@@ -613,16 +615,22 @@ namespace System {
 			last_semicolon = format.LastIndexOf(';');
 			if (first_semicolon == last_semicolon) {
 				if (first_semicolon == -1) {
+					if (value < 0.0) {
+						string result = FormatCustomParser(format);
+						if (result.Length > 0) {
+							result = "-" + result;
+						}
+						return result;
+					}
 					return FormatCustomParser(format);
-				}
-				if (value >= 0.0) {
-					return FormatCustomParser
-						(format.Substring(0, first_semicolon - 1));
+					
 				}
 				if (value < 0.0) {
 					return FormatCustomParser
 						(format.Substring(first_semicolon + 1));
 				}
+				return FormatCustomParser
+					(format.Substring(0, first_semicolon - 1));
 			}
 			if (value > 0.0) {
 				return FormatCustomParser
@@ -647,17 +655,20 @@ namespace System {
 			public int DotPos;
 			public int ExpPos;
 			public int FirstFormatPos;
+			public int IntegralLength;
+			public int DecimalLength;
+			public int ExponentialLength;
 		}
 
 		private Flags AnalizeFormat (string format) {
-			Flags f;
+			Flags f = new Flags();
 			f.NumberOfColons = 0;
 			f.DotPos = -1;
 			f.ExpPos = -1;
 			f.Groupping = false;
 			f.Percent = false;
 			f.FirstFormatPos = -1;
-			int aux = 0, i = 0;
+			int aux = 0, i = 0, count = 0;
 			foreach (char c in format) {
 				switch (c) {
 				case ',':
@@ -672,9 +683,12 @@ namespace System {
 						f.Groupping = true;
 						aux = 0;
 					}
+					count++;
 					break;
 				case '.':
 					f.DotPos = i;
+					f.IntegralLength = count;
+					count = 0;
 					if (aux > 0) {
 						f.NumberOfColons = aux;
 						aux = 0;
@@ -685,6 +699,8 @@ namespace System {
 					break;
 				case 'e':
 				case 'E':
+					f.DecimalLength = count;
+					count = 0;
 					f.ExpPos = i;
 					break;
 				}
@@ -692,6 +708,12 @@ namespace System {
 			}
 			if (aux > 0) {
 				f.NumberOfColons = aux;
+			}
+			if (f.DecimalLength > 0) {
+				f.ExponentialLength = count;
+			}
+			else {
+				f.DecimalLength = count;
 			}
 			return f;
 		}
@@ -707,27 +729,42 @@ namespace System {
 			}
 			long mantissa;
 			int exponent;
-			Normalize(value, out mantissa, out exponent);
 			Flags f = AnalizeFormat(format);
-			if (f.Percent) {
-				exponent += 2;
+			if (((f.Percent) || (f.NumberOfColons > 0)) && (f.ExpPos < 0)) {
+				int len = f.DecimalLength;
+				int exp = 0;
+				if (f.Percent) {
+					len += 2;
+					exp += 2;
+				}
+				if (f.NumberOfColons > 0) {
+					len -= (3 * f.NumberOfColons);
+					exp -= 3 * f.NumberOfColons;
+				}
+				if (len < 0) {
+					len = 0;
+				}
+				value = Math.Round(value, len);
+				Normalize(value, out mantissa, out exponent);
+				exponent += exp;
 			}
-			if (f.NumberOfColons > 0) {
-				exponent -= 3 * f.NumberOfColons;
+			else {
+				value = Math.Round(value, f.DecimalLength);
+				Normalize(value, out mantissa, out exponent);
 			}
 			StringBuilder sb = new StringBuilder();
 			if (f.ExpPos > 0) {
-				StringBuilder sb_exp = new StringBuilder();
+				StringBuilder sb_decimal = new StringBuilder();
 				while (mantissa > 0) {
-					sb_exp.Insert(0, Digits[mantissa % 10]);
+					sb_decimal.Insert(0, Digits[mantissa % 10]);
 					mantissa /= 10;
 					exponent++;
 				}
 				exponent--;
 				int k;
-				for (k = sb_exp.Length - 1;
-					k > 0 && sb_exp[k] == '0'; k--);
-				sb_exp.Remove(k + 1, sb_exp.Length - k - 1);
+				for (k = sb_decimal.Length - 1;
+					k >= 0 && sb_decimal[k] == '0'; k--);
+				sb_decimal.Remove(k + 1, sb_decimal.Length - k - 1);
 				for (int i = f.DotPos - 2; i >= 0; i--) {
 					char c = format[i];
 					if (i > 0 && format[i-1] == '\\') {
@@ -747,7 +784,7 @@ namespace System {
 						break;
 					}
 				}
-				sb.Append(sb_exp[0]);
+				sb.Append(sb_decimal[0]);
 				sb.Append(nfi.NumberDecimalSeparator);
 				for (int j = 1, i = f.DotPos + 1; i < f.ExpPos; i++) {
 					char c = format[i];
@@ -756,23 +793,24 @@ namespace System {
 						sb.Append(format[++i]);
 						break;
 					case '0':
-						if (j >= sb_exp.Length) {
+						if (j >= sb_decimal.Length) {
 							sb.Append('0');
 							break;
 						}
 						goto case '#';
 					case '#':
-						if (j < sb_exp.Length) {
-							if (i == f.ExpPos-1) {
-								int a = sb_exp[j] - '0';
-								int b = sb_exp[j+1] - '0';
+						if (j < sb_decimal.Length) {
+							if ((i == f.ExpPos - 1) &&
+									(j < sb_decimal.Length - 1)) {
+								int a = sb_decimal[j] - '0';
+								int b = sb_decimal[j+1] - '0';
 								if (((b == 5) && ((a % 2) == 0)) || (b > 5)) {
 									a++;
 								}
-								sb.Append(Digits[a]);
+								sb.Append(Digits[a % 10]);
 							}
 							else {
-								sb.Append(sb_exp[j++]);
+								sb.Append(sb_decimal[j++]);
 							}
 						}
 						break;
@@ -791,23 +829,23 @@ namespace System {
 					inicio++;
 				}
 				else if (format[inicio] == '+') {
-					if (exponent > 0) {
+					if (exponent >= 0) {
 						sb.Append('+');
 					}
 					inicio++;
 				}
 				fin = inicio;
 				while (fin < format.Length && format[fin++] == '0');
-				StringBuilder sb_exp_num = new StringBuilder();
+				StringBuilder sb_exponent = new StringBuilder();
 				exponent = Math.Abs(exponent);
 				while (exponent > 0) {
-					sb_exp_num.Insert(0, Digits[exponent % 10]);
+					sb_exponent.Insert(0, Digits[exponent % 10]);
 					exponent /= 10;
 				}
-				while (sb_exp_num.Length < (fin - inicio)) {
-					sb_exp_num.Insert(0, '0');
+				while (sb_exponent.Length < (fin - inicio)) {
+					sb_exponent.Insert(0, '0');
 				}
-				sb.Append(sb_exp_num.ToString());
+				sb.Append(sb_exponent.ToString());
 				for (int i = fin; i < format.Length; i++) {
 					sb.Append(format[i]);
 				}
@@ -830,30 +868,27 @@ namespace System {
 					mantissa /= 10;
 					exponent++;
 				}
-				if (sb_decimal.Length > 0 || format[f.DotPos + 1] == '0') {
-					sb.Append(nfi.NumberDecimalSeparator);
-				}
 				int k;
 				for (k = sb_decimal.Length - 1;
-					k > 0 && sb_decimal[k] == '0'; k--);
+					k >= 0 && sb_decimal[k] == '0'; k--);
 				sb_decimal.Remove(k + 1, sb_decimal.Length - k - 1);
+				if (sb_decimal.Length > 0) {
+					sb.Append(nfi.NumberDecimalSeparator);
+				}
+				else if (format[f.DotPos + 1] == '0') {
+					sb.Append(nfi.NumberDecimalSeparator);
+				}
+				bool terminado = false;
 				for (int j = 0, i = f.DotPos + 1; i < f.ExpPos; i++) {
 					if (format[i] == '0' || format[i] == '#') {
 						if (j < sb_decimal.Length) {
-							if (i == format.Length-1) {
-								int a = sb_decimal[j] - '0';
-								int b = sb_decimal[j+1] - '0';
-								if (((b == 5) && ((a % 2) == 0)) || (b > 5)) {
-									a++;
-								}
-								sb.Append(Digits[a]);
-							}
-							else {
-								sb.Append(sb_decimal[j++]);
-							}
+							sb.Append(sb_decimal[j++]);
 						}
-						else if (format[i] == '0') {
+						else if (format[i] == '0' && !terminado) {
 							sb.Append('0');
+						}
+						else if (format[i] == '#' && !terminado) {
+							terminado = true;
 						}
 					}
 					else if (format[i] == '\\') {
@@ -867,21 +902,23 @@ namespace System {
 			int gro = 0;
 			for (int i = f.DotPos - 1; i >= f.FirstFormatPos; i--) {
 				if (format[i] == '#' || format[i] == '0') {
-					if (f.Groupping && gro == nfi.NumberGroupSizes[0]) {
-						sb.Insert(0, nfi.NumberGroupSeparator);
-						gro = 0;
-					}
-					gro++;
-					if (exponent > 0) {
-						sb.Insert(0, '0');
-						exponent--;
-					}
-					else if (mantissa > 0) {
-						sb.Insert(0, Digits[mantissa % 10]);
-						mantissa /= 10;
-					}
-					else if (format[i] == '0') {
-						sb.Insert(0, '0');
+					if (exponent > 0 || mantissa > 0 || format[i] == '0') {
+						if (f.Groupping && gro == nfi.NumberGroupSizes[0]) {
+							sb.Insert(0, nfi.NumberGroupSeparator);
+							gro = 0;
+						}
+						gro++;
+						if (exponent > 0) {
+							sb.Insert(0, '0');
+							exponent--;
+						}
+						else if (mantissa > 0) {
+							sb.Insert(0, Digits[mantissa % 10]);
+							mantissa /= 10;
+						}
+						else if (format[i] == '0') {
+							sb.Insert(0, '0');
+						}
 					}
 				}
 				else if (format[i] != ',') {
