@@ -1213,19 +1213,74 @@ dataitem_list		: dataitem
 dataitem		: K_CHAR STAR OPEN_PARENS comp_qstring CLOSE_PARENS
 			| AMPERSAND OPEN_PARENS id CLOSE_PARENS
 			| K_BYTEARRAY ASSIGN OPEN_PARENS bytes CLOSE_PARENS
-			| K_BYTEARRAY OPEN_PARENS bytes CLOSE_PARENS			// ******** ADDED
+                          {
+                                $$ = new ByteArrConst ((byte[]) $4);
+                          }
+			| K_BYTEARRAY OPEN_PARENS bytes CLOSE_PARENS
+                          {
+                                // ******** THIS IS NOT IN THE SPECIFICATION ******** //
+                                $$ = new ByteArrConst ((byte[]) $4);
+                          }
 			| K_FLOAT32 OPEN_PARENS float64 CLOSE_PARENS repeat_opt
+                          {
+                                FloatConst float_const = new FloatConst ((float) $3);
+                                $$ = new RepeatedConstant (float_const, (int) $5);
+                          }
 			| K_FLOAT64 OPEN_PARENS float64 CLOSE_PARENS repeat_opt
+                          {
+                                DoubleConst double_const = new DoubleConst ((double) $3);
+                                $$ = new RepeatedConstant (double_const, (int) $5);
+                          }
 			| K_INT64 OPEN_PARENS int64 CLOSE_PARENS repeat_opt
+                          {
+                                IntConst int_const = new IntConst ((long) $3);
+                                $$ = new RepeatedConstant (int_const, (int) $5);
+                          }
 			| K_INT32 OPEN_PARENS int32 CLOSE_PARENS repeat_opt
+                          {
+                                IntConst int_const = new IntConst ((int) $3);
+                                $$ = new RepeatedConstant (int_const, (int) $5);
+                          }
 			| K_INT16 OPEN_PARENS int32 CLOSE_PARENS repeat_opt
+                          {
+                                IntConst int_const = new IntConst ((short) $3);
+                                $$ = new RepeatedConstant (int_const, (int) $5);
+                          }
 			| K_INT8 OPEN_PARENS int32 CLOSE_PARENS repeat_opt
+                          {
+                                IntConst int_const = new IntConst ((sbyte) $3);
+                                $$ = new RepeatedConstant (int_const, (int) $5);
+                          }
 			| K_FLOAT32 repeat_opt
+                          {
+                                FloatConst float_const = new FloatConst (0F);
+                                $$ = new RepeatedConstant (float_const, (int) $2);
+                          }
 			| K_FLOAT64 repeat_opt
+                          {
+                                DoubleConst double_const = new DoubleConst (0);
+                                $$ = new RepeatedConstant (double_const, (int) $2);
+                          }
 			| K_INT64 repeat_opt
+                          {
+                                IntConst int_const = new IntConst ((long) 0);
+                                $$ = new RepeatedConstant (int_const, (int) $2);
+                          }
 			| K_INT32 repeat_opt
+                          {
+                                IntConst int_const = new IntConst ((int) 0);
+                                $$ = new RepeatedConstant (int_const, (int) $2);
+                          }
 			| K_INT16 repeat_opt
+                          {
+                                IntConst int_const = new IntConst ((short) 0);
+                                $$ = new RepeatedConstant (int_const, (int) $2);
+                          }
 			| K_INT8 repeat_opt
+                          {
+                                IntConst int_const = new IntConst ((sbyte) 0);
+                                $$ = new RepeatedConstant (int_const, (int) $2);
+                          }
 			;
 
 method_all		: method_head OPEN_BRACE method_decls CLOSE_BRACE
