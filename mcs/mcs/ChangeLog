@@ -1,3 +1,8 @@
+2003-07-17  Peter Williams  <peter@newton.cx>
+
+	* Makefile: Change the name of the test target so that it doesn't
+	conflict with the recursive test target.
+
 2003-07-17  Miguel de Icaza  <miguel@ximian.com>
 
 	* expression.cs (LocalVariableReference.Emit, EmitAssign,

@@ -73,7 +73,10 @@ cs-parser.cs: cs-parser.jay $(topdir)/jay/skeleton.cs
 
 TIME = time
 
-test: mcs2.exe mcs3.exe
+# This used to be called test, but that conflicts with the global
+# recursive target.
+
+btest: mcs2.exe mcs3.exe
 	ls -l mcs2.exe mcs3.exe
 
 mcs2.exe: mcs.exe
