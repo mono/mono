@@ -257,7 +257,7 @@ namespace System.Xml
 			if ((localName == null) || (localName == String.Empty))
 				throw new ArgumentException ("The attribute local name cannot be empty.");
 
-			return new XmlAttribute (prefix, localName, namespaceURI, this);
+			return new XmlAttribute (prefix, localName, namespaceURI, this, false);
 		}
 
 		public virtual XmlCDataSection CreateCDataSection (string data)
@@ -322,7 +322,7 @@ namespace System.Xml
 			// I leave it as it is.
 			if (!XmlChar.IsName (localName))
 				throw new ArgumentException ("Invalid name.", "localName");
-			return new XmlElement (prefix != null ? prefix : String.Empty, localName, namespaceURI != null ? namespaceURI : String.Empty, this);
+			return new XmlElement (prefix != null ? prefix : String.Empty, localName, namespaceURI != null ? namespaceURI : String.Empty, this, false);
 		}
 
 		public virtual XmlEntityReference CreateEntityReference (string name)

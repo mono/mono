@@ -1,5 +1,11 @@
 2004-01-07  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XmlAttribute.cs, XmlDocument.cs, XmlElement.cs :
+	  set_Prefix should atomize to name table.
+	  Avoided extraneous atomization attempt a bit.
+
+2004-01-07  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* DTDObjectModel.cs, DTDReader.cs, XmlSecureResolver.cs :
 	  avoiding obvious exception.
 	* DTDReader.cs, XmlTextReader.cs : Some optimization. 

@@ -34,7 +34,8 @@ namespace System.Xml
 			string prefix, 
 			string localName, 
 			string namespaceURI,
-			XmlDocument doc) : base (doc)
+			XmlDocument doc,
+			bool atomizedNames) : base (doc)
 		{
 			if (prefix == null)
 				prefix = String.Empty;
@@ -56,9 +57,15 @@ namespace System.Xml
 			else if (!XmlChar.IsName (localName))
 				throw new ArgumentException ("Invalid attribute local name.");
 
-			this.prefix = doc.NameTable.Add (prefix);
-			this.localName = doc.NameTable.Add (localName);
-			this.namespaceURI = doc.NameTable.Add (namespaceURI);
+			if (atomizedNames) {
+				this.prefix = prefix;
+				this.localName = localName;
+				this.namespaceURI = namespaceURI;
+			} else {
+				this.prefix = doc.NameTable.Add (prefix);
+				this.localName = doc.NameTable.Add (localName);
+				this.namespaceURI = doc.NameTable.Add (namespaceURI);
+			}
 		}
 
 		#endregion
@@ -164,7 +171,7 @@ namespace System.Xml
 				if (prefix == "xmlns" && value != "xmlns")
 					throw new ArgumentException ("Cannot bind to the reserved namespace.");
 
-				prefix = value;
+				prefix = OwnerDocument.NameTable.Add (value);
 			}
 			
 			get {
@@ -214,7 +221,7 @@ namespace System.Xml
 		public override XmlNode CloneNode (bool deep)
 		{
 			XmlNode node = new XmlAttribute (prefix, localName, namespaceURI,
-							 OwnerDocument);
+							 OwnerDocument, true);
 			if (deep) {
 				foreach (XmlNode child in this.ChildNodes)
 					node.AppendChild (child.CloneNode (deep));

@@ -36,11 +36,18 @@ namespace System.Xml
 			string prefix, 
 			string localName, 
 			string namespaceURI, 
-			XmlDocument doc) : base (doc)
+			XmlDocument doc,
+			bool atomizedNames) : base (doc)
 		{
-			this.prefix = doc.NameTable.Add (prefix);
-			this.localName = doc.NameTable.Add (localName);
-			this.namespaceURI = doc.NameTable.Add (namespaceURI);
+			if (atomizedNames) {
+				this.prefix = prefix;
+				this.localName = localName;
+				this.namespaceURI = namespaceURI;
+			} else {
+				this.prefix = doc.NameTable.Add (prefix);
+				this.localName = doc.NameTable.Add (localName);
+				this.namespaceURI = doc.NameTable.Add (namespaceURI);
+			}
 
 			attributes = new XmlAttributeCollection (this);
 
@@ -177,7 +184,7 @@ namespace System.Xml
 				if (!XmlChar.IsNCName (value))
 					throw new ArgumentException ("Specified name is not a valid NCName: " + value);
 
-				prefix = value;
+				prefix = OwnerDocument.NameTable.Add (value);
 			}
 		}
 
@@ -188,7 +195,7 @@ namespace System.Xml
 		public override XmlNode CloneNode (bool deep)
 		{
 			XmlElement node = new XmlElement (
-				prefix, localName, namespaceURI, OwnerDocument);
+				prefix, localName, namespaceURI, OwnerDocument, true);
 
 			for (int i = 0; i < Attributes.Count; i++)
 				node.SetAttributeNode ((XmlAttribute) 
@@ -329,7 +336,7 @@ namespace System.Xml
 		public virtual XmlAttribute SetAttributeNode (string localName, string namespaceURI)
 		{
 			XmlDocument xmlDoc = this.OwnerDocument;
-			XmlAttribute xmlAttribute = new XmlAttribute (String.Empty, localName, namespaceURI, xmlDoc);
+			XmlAttribute xmlAttribute = new XmlAttribute (String.Empty, localName, namespaceURI, xmlDoc, false);
 			return this.attributes.Append (xmlAttribute);
 		}
 
