@@ -1,3 +1,8 @@
+2004-09-02 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* ModuleBuilder.cs: dont throw an S.IOE for debugging stuff.
+	makes sre apps work
+
 2004-09-02  Martin Baulig  <martin@ximian.com>
 
 	* MethodBuilder.cs (MethodBuilder.GetParameters): Throw a

@@ -378,11 +378,11 @@ namespace System.Reflection.Emit {
 		}
 
 		public ISymbolWriter GetSymWriter () {
-			throw new InvalidOperationException ();
+			return null;
 		}
 
 		public ISymbolDocumentWriter DefineDocument (string url, Guid language, Guid languageVendor, Guid documentType) {
-			throw new InvalidOperationException ();
+			return null;
 		}
 
 		public override Type [] GetTypes ()
