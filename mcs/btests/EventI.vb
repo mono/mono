@@ -8,22 +8,20 @@ Class C
 		RaiseEvent E
 	End Sub
 
-	Sub bxh() 
-		Console.WriteLine("event called from other class")
+	Sub xh() 
+		Console.WriteLine("event called")
 	End Sub
 End Class
 
 Class C1
+	Inherits C
+
 	Sub call_S()
 		dim x as C = new C()
-		AddHandler x.E, AddressOf Me.xh
-		AddHandler x.E, AddressOf x.bxh
+		AddHandler x.E, AddressOf MyBase.xh
 		x.S()
 	End Sub
 
-	Sub xh() 
-		Console.WriteLine("event called")
-	End Sub
 End Class
 
 Module M

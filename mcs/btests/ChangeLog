@@ -1,3 +1,8 @@
+2004-09-21 Anirban Bhattacharjee <banirban@novell.com>
+	* EventF.vb: Modified
+	* EventI.vb: New test
+	* Test.Sources: Modified
+
 2004-09-15 Anirban Bhattacharjee <banirban@novell.com>
 	* OptionalArgu_dll.vb:
 	* OptionalArgu_exe.vb:
