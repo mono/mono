@@ -321,6 +321,12 @@ namespace System.Xml
 		}
 
 		[MonoTODO]
+		public static DateTime DateTimeToGMonthDay (DateTime value)
+		{
+			return new DateTime (0, value.Month, value.Day);
+		}
+
+		[MonoTODO]
 		public static DateTime DateTimeToGYear (DateTime value)
 		{
 			return new DateTime (value.Year, 0, 0);
@@ -330,6 +336,12 @@ namespace System.Xml
 		public static DateTime DateTimeToGYearMonth (DateTime value)
 		{
 			return new DateTime (value.Year, value.Month, 0);
+		}
+
+		[MonoTODO]
+		public static DateTime DateTimeToTime (DateTime value)
+		{
+			return new DateTime (value.TimeOfDay.Ticks);
 		}
 
 		[MonoTODO]
@@ -348,6 +360,12 @@ namespace System.Xml
 		public static DateTime DateToGMonth (DateTime value)
 		{
 			return new DateTime (0, value.Month, 0);
+		}
+
+		[MonoTODO]
+		public static DateTime DateToGMonthDay (DateTime value)
+		{
+			return new DateTime (0, value.Month, value.Day);
 		}
 
 		[MonoTODO]
