@@ -89,11 +89,14 @@ namespace System.Web.Services {
 		}
 		
 #if NET_2_0
+
+		[System.Runtime.InteropServices.ComVisibleAttribute (false)]
 		public WsiClaims ConformanceClaims {
 			get { return conformanceClaims; }
 			set { conformanceClaims = value; }
 		}
 		
+		[System.Runtime.InteropServices.ComVisibleAttribute (false)]
 		public bool EmitConformanceClaims {
 			get { return emitConformanceClaims; }
 			set { emitConformanceClaims = value; }

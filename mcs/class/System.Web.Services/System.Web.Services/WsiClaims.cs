@@ -30,8 +30,12 @@
 
 #if NET_2_0
 
+using System;
+
 namespace System.Web.Services
 {
+	[Flags]
+	[Serializable]
 	public enum WsiClaims
 	{
 		None,
