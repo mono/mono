@@ -1,3 +1,7 @@
+2004-04-16  Raja R Harinath  <rharinath@novell.com>
+
+	* test-236.cs: Test for #56300.
+
 2004-04-10 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* test-12.cs: test for concat inside array.
