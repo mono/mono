@@ -1885,7 +1885,7 @@ statement :
 	    {
 	    	RaiseEvent ((string) $2, (ArrayList) $4);
 	    }
-	  /*| array_handling_statement*/
+	  | array_handling_statement
 	  /* | empty_statement */
 	  | with_statement 
 	    {
@@ -1915,7 +1915,7 @@ embedded_statement
 	| iteration_statement
 	| try_statement
 	| jump_statement 
-	| array_handling_statement
+/*	| array_handling_statement */
 	;
 /*        
 empty_statement
@@ -4103,7 +4103,7 @@ public override int parse ()
 	{
 		Console.WriteLine (lexer.location + "  : Parsing error in " + lexer.ref_name);
 		Report.Error (9999, lexer.Location, "\n");
-		//Console.WriteLine (e);
+		Console.WriteLine (e);
 	}
 	
 	return Report.Errors;
