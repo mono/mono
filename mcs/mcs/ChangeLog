@@ -1,5 +1,15 @@
 2003-12-13  Martin Baulig  <martin@ximian.com>
 
+	* flowanalysis.cs (UsageVector.MergeFinallyOrigins): Made this
+	working again.
+	(FlowBranching.MergeFinally): Don't call
+	`branching.CheckOutParameters()' here, this is called in
+	MergeTopBlock().
+	(FlowBranchingException.AddSibling): Call MergeFinallyOrigins()
+	when adding the `finally' vector.	
+
+2003-12-13  Martin Baulig  <martin@ximian.com>
+
 	* flowanalysis.cs
 	(UsageVector.MergeJumpOrigins, FlowBranching.Label): Make this
 	actually work and also fix #48962.

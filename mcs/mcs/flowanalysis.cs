@@ -634,8 +634,6 @@ namespace Mono.CSharp
 				for (UsageVector vector = f_origins; vector != null; vector = vector.Next) {
 					MyBitVector temp_params = f_params.Clone ();
 					temp_params.Or (vector.Parameters);
-
-					branching.CheckOutParameters (temp_params, branching.Location);
 				}
 			}
 
@@ -709,23 +707,19 @@ namespace Mono.CSharp
 			//   This is used at the beginning of a finally block if there were
 			//   any return statements in the try block or one of the catch blocks.
 			// </summary>
-			public void MergeFinallyOrigins (ICollection finally_vectors)
+			public void MergeFinallyOrigins (UsageVector f_origins)
 			{
 				Report.Debug (1, "  MERGING FINALLY ORIGIN", this);
 
-#if FIXME
-				RealBreaks = FlowReturns.Never;
-#endif
+				reachability = Reachability.Never ();
 
-				foreach (UsageVector vector in finally_vectors) {
+				for (UsageVector vector = f_origins; vector != null; vector = vector.Next) {
 					Report.Debug (1, "    MERGING FINALLY ORIGIN", vector);
 
 					if (parameters != null)
 						parameters.And (vector.parameters);
 
-#if FIXME
-					RealBreaks = AndFlowReturns (Breaks, vector.Breaks);
-#endif
+					Reachability.And (ref reachability, vector.Reachability, true);
 				}
 
 				is_finally = true;
@@ -916,7 +910,7 @@ namespace Mono.CSharp
 					(Type != BranchingType.LoopBlock);
 
 				Report.Debug (2, "    MERGING SIBLING   ", child,
-					      child.Locals, child.Parameters,
+					      child.Parameters, child.Locals,
 					      reachability, child.Reachability, do_break);
 
 				Reachability.And (ref reachability, child.Reachability, do_break);
@@ -972,9 +966,10 @@ namespace Mono.CSharp
 
 				// An `out' parameter must be assigned in all branches which do
 				// not always throw an exception.
-				if ((child.Type != SiblingType.Catch) &&
-				    (child.ParameterVector != null) && !child.Reachability.AlwaysThrows)
+				if ((child.ParameterVector != null) && !child.Reachability.AlwaysThrows)
 					MyBitVector.And (ref parameters, child.ParameterVector);
+
+				Report.Debug (2, "    MERGING SIBLING #2", parameters, locals);
 			}
 
 			if (reachability == null)
@@ -1147,7 +1142,7 @@ namespace Mono.CSharp
 				sibling.Next = catch_vectors;
 				catch_vectors = sibling;
 			} else if (sibling.Type == SiblingType.Finally) {
-				// sibling.MergeFinallyOrigins (finally_vectors);
+				sibling.MergeFinallyOrigins (finally_origins);
 				finally_vector = sibling;
 			} else
 				throw new InvalidOperationException ();
