@@ -81,8 +81,8 @@ all-local: $(gac_assemblies_list)
 install-data-local:
 	@if test -n '$(gac_assemblies_list)'; then \
 	  for i in ''$(gac_assemblies_list); do	\
-		echo "$(top_builddir)/mono/mini/mono $(gacutil) /i $(srcdir)/$$i /f" ; \
-		$(top_builddir)/mono/mini/mono $(gacutil) /i $(srcdir)/$$i /f || exit 1 ; \
+		echo "$(top_builddir)/mono/mini/mono $(gacutil) /i $(srcdir)/$$i /f /prefix $(DESTDIR)/$(libdir)/gac" ; \
+		$(top_builddir)/mono/mini/mono $(gacutil) /i $(srcdir)/$$i /f /prefix $(DESTDIR)/$(libdir)/gac || exit 1 ; \
 	  done; fi
 
 uninstall-local:
