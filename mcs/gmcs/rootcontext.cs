@@ -545,6 +545,7 @@ namespace Mono.CSharp {
 						//
 						Type type = TypeManager.LookupType (current_type.FullName + "." + name);
 						if (type != null){
+							type = ds.ResolveNestedType (type, loc);
 							t = new TypeExpression (type, loc);
 							ds.Cache [name] = t;
 							return t;

@@ -1,5 +1,10 @@
 2004-11-10  Martin Baulig  <martin@ximian.com>
 
+	* rootcontext.cs (RootContext.LookupType): If we're a nested type,
+	call DeclSpace.ResolveNestedType() on it.
+
+2004-11-10  Martin Baulig  <martin@ximian.com>
+
 	* support.cs (ReflectionParameters.ParameterModifier): If `gpd' is
 	non-null, call ParameterModifier() on it.
 
