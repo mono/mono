@@ -30,9 +30,12 @@
 //	- Change the cursor to a hand cursor when you are over a link (when cursors are available)
 //
 //
-// $Revision: 1.4 $
+// $Revision: 1.5 $
 // $Modtime: $
 // $Log: LinkLabel.cs,v $
+// Revision 1.5  2004/08/08 17:52:12  jordi
+// *** empty log message ***
+//
 // Revision 1.4  2004/08/07 23:31:15  jordi
 // fixes label bug and draw method name
 //
@@ -100,7 +103,7 @@ namespace System.Windows.Forms
 			pieces = null;
 			
 			ActiveLinkColor = Color.Red;
-			DisabledLinkColor = Color.FromArgb (255, 143, 140, 127);
+			DisabledLinkColor = ThemeEngine.Current.ColorGrayText;
 			LinkColor = Color.FromArgb (255, 0, 0, 255);
 			VisitedLinkColor = Color.FromArgb (255, 128, 0, 128);
 		}

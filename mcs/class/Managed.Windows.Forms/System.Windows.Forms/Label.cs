@@ -81,8 +81,8 @@ namespace System.Windows.Forms
 			image_align = ContentAlignment.MiddleCenter;
 			set_usemnemonic (UseMnemonic);
 
-			BackColor = Color.FromArgb (255, 236, 233, 216);
-			ForeColor = Color.Black;
+			BackColor = ThemeEngine.Current.ColorButtonFace;
+			ForeColor = ThemeEngine.Current.ColorWindowText;
 
 			CalcPreferredHeight ();
 			CalcPreferredWidth ();
