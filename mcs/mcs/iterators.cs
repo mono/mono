@@ -46,6 +46,10 @@ namespace Mono.CSharp {
 					      "finally clause");
 				return false;
 			}
+			if (ec.InUnsafe) {
+				Report.Error (1629, loc, "Unsafe code may not appear in iterators");
+				return false;
+			}
 			if (ec.CurrentBranching.InCatch ()){
 				Report.Error (1631, loc, "Cannot yield in the body of a " +
 					      "catch clause");
@@ -352,7 +356,7 @@ namespace Mono.CSharp {
 				 Type [] param_types, InternalParameters parameters,
 				 int modifiers, ToplevelBlock block, Location loc)
 			: base (container.NamespaceEntry, container, MakeProxyName (name),
-				Modifiers.PRIVATE, null, loc)
+				(modifiers & Modifiers.UNSAFE) | Modifiers.PRIVATE, null, loc)
 		{
 			this.container = container;
 			this.return_type = return_type;
@@ -756,6 +760,8 @@ namespace Mono.CSharp {
 				int code_flags = Modifiers.METHOD_YIELDS;
 				if (iterator.is_static)
 					code_flags |= Modifiers.STATIC;
+
+				code_flags |= iterator.ModFlags & Modifiers.UNSAFE;
 
 				EmitContext new_ec = new EmitContext (
 					iterator.container, loc, ec.ig,

@@ -1,3 +1,13 @@
+2005-03-03  Marek Safar  <marek.safar@seznam.cz>
+
+	* cs-parser.jay: Add 1534 error test.
+
+	* iterators.cs (Yield.CheckContext): Add error 1629.
+	(Iterator.ctor): Save unsafe modifier.
+	(MoveNextMethod.DoEmit): Restore unsafe context.
+
+	* namespace.cs (UsingAlias): Better error message.
+
 2005-03-03  Dan Winship  <danw@novell.com>
 
 	* convert.cs (Error_CannotImplicitConversion): fix two bugs in

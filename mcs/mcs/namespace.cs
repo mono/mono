@@ -421,6 +421,8 @@ namespace Mono.CSharp {
 				aliases = new Hashtable ();
 			
 			if (aliases.Contains (name)){
+				AliasEntry ae = (AliasEntry)aliases [name];
+				Report.SymbolRelatedToPreviousError (ae.Location, ae.Name);
 				Report.Error (1537, loc, "The using alias `" + name +
 					      "' appeared previously in this namespace");
 				return;
