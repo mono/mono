@@ -808,14 +808,13 @@ namespace Mono.CSharp {
 			if (!is_class && !have_nonstatic_fields){
 				TypeBuilder.DefineField ("$PRIVATE$", TypeManager.byte_type,
 							 FieldAttributes.Private);
+				// add interfaces that were not added at type creation
+				if (ifaces != null) {
+					foreach (Type i in ifaces)
+						TypeBuilder.AddInterfaceImplementation (i);
+				}
 			}
 
-			// add interfaces that were not added at type creation (weird API issue)
-			if (!is_class && !have_nonstatic_fields && (ifaces != null)) {
-				foreach (Type i in ifaces)
-					TypeBuilder.AddInterfaceImplementation (i);
-			}
-			
 			//
 			// Finish the setup for the EmitContext
 			//
