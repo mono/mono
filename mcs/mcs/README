@@ -12,16 +12,16 @@ Testing the Compiler
 	test.
 
 	Before commiting changes to MCS, make sure that all the tests
-	in `mcs/tests' pass, type:
+	in `mcs/tests' pass, and all the tests in 'mcs/errors' have the
+	expected result, type:
 
-	cd mcs/tests
-	make run-test-local
+	  cd mcs		# The top-level 'mcs' directory
+	  make compiler-tests
 
-	There is a new set of negative tests (errors that the compiler
-	should flag), but not all of them pass currently:
+	If you want to test the installed compiler, you can run:
 
-	cd mcs/errors
-	make run-test-local
+	  cd mcs		# The top-level 'mcs' directory
+	  make test-installed-compiler
 
 Full Bootstrap
 ==============
