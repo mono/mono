@@ -5,6 +5,7 @@
 //	Cesar Lopez Nataren (cesar@ciencias.unam.mx)
 //
 // (C) 2003, Cesar Lopez Nataren
+// (C) 2005, Novell Inc. (http://www.novell.com)
 //
 
 //
@@ -29,25 +30,71 @@
 //
 
 using System;
+using System.IO;
+using Microsoft.Vsa;
+using Microsoft.JScript;
+using Microsoft.JScript.Vsa;
 
-namespace Microsoft.JScript {
-
-	public class Driver {
-		
-		public static void Main (string [] args) {
+class Driver {		
+	public static void Main (string [] args) {
 	
-			if (args.Length < 1) {
-				Console.WriteLine ("Usage: [mono] mjs.exe filename.js");
-				Environment.Exit (0);
-			}
-
-			string filename = args [0];
-			Context ctx = new Context (filename);
- 			JSParser parser = new JSParser (ctx);
- 			ScriptBlock prog_tree = parser.Parse ();			
-			SemanticAnalyser.Run (prog_tree);
-			CodeGenerator.Run (args [0], prog_tree);
-			Console.WriteLine ("Compilation succeeded.");
+		if (args.Length < 1) {
+			Console.WriteLine ("Usage: [mono] mjs.exe filename.js");
+			Environment.Exit (0);
 		}
+
+		VsaEngine engine = new VsaEngine ();
+		engine.InitVsaEngine ("mjs:com.mono-project", new MonoEngineSite ());
+
+		foreach (string fn in args) {
+			IVsaCodeItem item = (IVsaCodeItem) engine.Items.CreateItem (fn, VsaItemType.Code, VsaItemFlag.None);
+			item.SourceText = GetCodeFromFile (fn);
+		}
+		engine.Compile ();
+	}
+
+	static string GetCodeFromFile (string fn)
+	{
+		try {
+			StreamReader reader = new StreamReader (fn);
+			return reader.ReadToEnd ();
+		} catch (FileNotFoundException) {
+			throw new JScriptException (JSError.FileNotFound);
+		} catch (ArgumentNullException) {
+			throw new JScriptException (JSError.FileNotFound);
+		} catch (ArgumentException) {
+			throw new JScriptException (JSError.FileNotFound);
+		} catch (IOException) {
+			throw new JScriptException (JSError.NoError);
+		} catch (OutOfMemoryException) {
+			throw new JScriptException (JSError.OutOfMemory);
+		}
+	}
+}
+
+class MonoEngineSite : IVsaSite {
+	public void GetCompiledState (out byte [] pe, out byte [] debugInfo)
+	{
+		throw new NotImplementedException ();
+	}
+
+	public object GetEventSourceInstance (string itemName, string eventSourceName)
+	{
+		throw new NotImplementedException ();
+	}
+
+	public object GetGlobalInstance (string name)
+	{
+		throw new NotImplementedException ();
+	}
+
+	public void Notify (string notify, object info)
+	{
+		throw new NotImplementedException ();
+	}
+
+	public bool OnCompilerError (IVsaError error)
+	{
+		throw new NotImplementedException ();
 	}
 }

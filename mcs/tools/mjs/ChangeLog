@@ -1,0 +1,10 @@
+2005-02-14  Cesar Lopez Nataren  <cnataren@novell.com>
+
+	* Added this file.
+	
+	* Makefile: add reference to Microsoft.Vsa.
+	* mjs.cs (Main): As we can't directly create a Context outside of
+	Microsoft.JScript, we use the VsaEngine to add the code items and
+	after that guide the compilation, added method
+	GetCodeFromFile. Added class MonoEngineSite.
+
