@@ -1,3 +1,11 @@
+2002-12-10  Daniel Morgan <danmorg@sc.rr.com>
+
+	* makefile
+	* tools/makefile
+	* tools/makefile.gnu: change target
+	from SqlSharpCli.exe
+	to sqlsharp.exe
+
 2002-12-10  Alp Toker  <alp@atoker.com>
 
 	* ilasm/makefile.gnu: Install ilasm executable with -m 755, not 644

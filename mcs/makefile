@@ -105,6 +105,6 @@ MONO_WIN_INSTALL_BIN=	\
 	tools/verifier.exe	\
 	tools/GenerateDelegate.exe	\
 	tools/monostyle.exe	\
-	tools/SqlSharp/SqlSharpCli.exe	\
+	tools/SqlSharp/sqlsharp.exe	\
 	tools/type-reflector/type-reflector.exe	\
 	tools/corcompare/CorCompare.exe

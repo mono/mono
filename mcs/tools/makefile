@@ -4,7 +4,7 @@ CSCFLAGS=/nologo /debug+ /debug:full
 
 windows: linux
 
-linux: monostyle.exe verifier.exe GenerateDelegate.exe EnumCheck.exe IFaceDisco.exe ./type-reflector/type-reflector.exe ./corcompare/CorCompare.exe ./SqlSharp/SqlSharpCli.exe
+linux: monostyle.exe verifier.exe GenerateDelegate.exe EnumCheck.exe IFaceDisco.exe ./type-reflector/type-reflector.exe ./corcompare/CorCompare.exe ./SqlSharp/sqlsharp.exe
 #linux: verifier.exe GenerateDelegate.exe EnumCheck.exe IFaceDisco.exe ./corcompare/CorCompare.exe update
 
 monostyle.exe: monostyle.cs
@@ -19,7 +19,7 @@ verifier.exe: verifier.cs
 ./type-reflector/type-reflector.exe: dummy
 	(cd type-reflector; make CSC=$(CSC))
 
-./SqlSharp/SqlSharpCli.exe: dummy
+./SqlSharp/sqlsharp.exe: dummy
 	(cd SqlSharp; make CSC=$(CSC))
 
 ./corcompare/CorCompare.exe: dummy
