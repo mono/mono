@@ -14,6 +14,8 @@ using System.Xml;
 using System.Xml.Schema;
 using NUnit.Framework;
 
+using ValidationFlags = System.Xml.Schema.XmlSchemaValidationFlags;
+
 namespace MonoTests.System.Xml
 {
 	[TestFixture]
@@ -24,13 +26,19 @@ namespace MonoTests.System.Xml
 		{
 			XmlReaderSettings s = new XmlReaderSettings ();
 			AssertEquals (true, s.CheckCharacters);
-			AssertEquals (ConformanceLevel.Document, s.ConformanceLevel);
+			AssertEquals (ConformanceLevel.Document,
+				s.ConformanceLevel);
 			AssertEquals (false, s.DtdValidate);
 			AssertEquals (false, s.IgnoreComments);
-			AssertEquals (true, s.IgnoreInlineSchema);
+			Assert (0 != (s.ValidationFlags &
+				ValidationFlags.IgnoreInlineSchema));
 			AssertEquals (false, s.IgnoreProcessingInstructions);
-			AssertEquals (true, s.IgnoreSchemaLocation);
-			AssertEquals (true, s.IgnoreValidationWarnings);
+			Assert (0 != (s.ValidationFlags &
+				ValidationFlags.IgnoreSchemaLocation));
+			Assert (0 != (s.ValidationFlags &
+				ValidationFlags.IgnoreValidationWarnings));
+			Assert (0 == (s.ValidationFlags &
+				ValidationFlags.IgnoreIdentityConstraints));
 			AssertEquals (false, s.IgnoreWhitespace);
 			AssertEquals (0, s.LineNumberOffset);
 			AssertEquals (0, s.LinePositionOffset);
