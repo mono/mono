@@ -1,5 +1,9 @@
 2003-07-30  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
+	* PersistenceModeAttribute.cs: Fixed wrong AttributeUsage
+
+2003-07-30  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
 	* UserControl.cs: Added attribute
 	* BasePartialCachingControl.cs: New class and paritally implemented
 	* DesignerDataBoundLiteralControl.cs: New class and implemented

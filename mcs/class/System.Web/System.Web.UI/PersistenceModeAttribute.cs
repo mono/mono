@@ -10,7 +10,7 @@ using System;
 
 namespace System.Web.UI {
 
-	[AttributeUsage (AttributeTargets.Class)]
+	[AttributeUsage (AttributeTargets.All)]
 	public sealed class PersistenceModeAttribute : Attribute
 	{
 		PersistenceMode mode;
