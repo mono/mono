@@ -2050,13 +2050,9 @@ namespace Mono.CSharp {
 
 		public override FullNamedExpression ResolveAsTypeStep (EmitContext ec)
 		{
-			DeclSpace ds = ec.DeclSpace;
-			FullNamedExpression dt;
-
 			int errors = Report.Errors;
-			dt = ec.ResolvingTypeTree 
-				? ds.FindType (loc, Name)
-				: ds.LookupType (Name, loc, /*silent=*/ true, /*ignore_cs0104=*/ false);
+			FullNamedExpression dt = ec.DeclSpace.LookupType (
+				  Name, loc, /*silent=*/ true, /*ignore_cs0104=*/ false);
 			if (Report.Errors != errors)
 				return null;
 

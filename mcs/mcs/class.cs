@@ -1554,6 +1554,70 @@ namespace Mono.CSharp {
 				return false;
 			}
 		}
+
+		public override Type FindNestedType (string name)
+		{
+			ArrayList [] lists = { types, enums, delegates, interfaces };
+
+			for (int j = 0; j < lists.Length; ++j) {
+				ArrayList list = lists [j];
+				if (list == null)
+					continue;
+				
+				int len = list.Count;
+				for (int i = 0; i < len; ++i) {
+					DeclSpace ds = (DeclSpace) list [i];
+					if (ds.Basename == name) {
+						ds.DefineType ();
+						return ds.TypeBuilder;
+					}
+				}
+			}
+
+			if (Parts != null) {
+				foreach (ClassPart cp in Parts) {
+					Type t = cp.PartFindNestedType (name);
+					if (t != null)
+						return t;
+				}
+			}
+
+			return null;
+		}
+
+		private void FindMembers_NestedTypes (int modflags,
+						      BindingFlags bf, MemberFilter filter, object criteria,
+						      ref ArrayList members)
+		{
+			ArrayList [] lists = { types, enums, delegates, interfaces };
+
+			for (int j = 0; j < lists.Length; ++j) {
+				ArrayList list = lists [j];
+				if (list == null)
+					continue;
+			
+				int len = list.Count;
+				for (int i = 0; i < len; i++) {
+					DeclSpace ds = (DeclSpace) list [i];
+					
+					if ((ds.ModFlags & modflags) == 0)
+						continue;
+					
+					TypeBuilder tb = ds.TypeBuilder;
+					if (tb == null) {
+						if (!(criteria is string) || ds.Basename.Equals (criteria))
+							tb = ds.DefineType ();
+					}
+					
+					if (tb != null && (filter (tb, criteria) == true)) {
+						if (members == null)
+							members = new ArrayList ();
+						
+						members.Add (tb);
+					}
+				}
+			}
+		}
 		
 		/// <summary>
 		///   This method returns the members of this type just like Type.FindMembers would
@@ -1820,82 +1884,8 @@ namespace Mono.CSharp {
 				}
 			}
 			
-			if ((mt & MemberTypes.NestedType) != 0) {
-				if (types != null) {
-					int len = types.Count;
-					for (int i = 0; i < len; i++) {
-						TypeContainer t = (TypeContainer) types [i];
-						
-						if ((t.ModFlags & modflags) == 0)
-							continue;
-
-						TypeBuilder tb = t.TypeBuilder;
-						if (tb == null)
-							tb = t.DefineType ();
-
-						if (tb != null && (filter (tb, criteria) == true)) {
-							if (members == null)
-								members = new ArrayList ();
-							
-							members.Add (tb);
-						}
-					}
-				}
-
-				if (enums != null) {
-					int len = enums.Count;
-					for (int i = 0; i < len; i++) {
-						Enum en = (Enum) enums [i];
-						
-						if ((en.ModFlags & modflags) == 0)
-							continue;
-
-						TypeBuilder tb = en.TypeBuilder;
-						if (tb != null && (filter (tb, criteria) == true)) {
-							if (members == null)
-								members = new ArrayList ();
-							
-							members.Add (tb);
-						}
-					}
-				}
-				
-				if (delegates != null) {
-					int len = delegates.Count;
-					for (int i = 0; i < len; i++) {
-						Delegate d = (Delegate) delegates [i];
-						
-						if ((d.ModFlags & modflags) == 0)
-							continue;
-
-						TypeBuilder tb = d.TypeBuilder;
-						if (tb != null && (filter (tb, criteria) == true)) {
-							if (members == null)
-								members = new ArrayList ();
-							
-							members.Add (tb);
-						}
-					}
-				}
-
-				if (interfaces != null) {
-					int len = interfaces.Count;
-					for (int i = 0; i < len; i++) {
-						TypeContainer iface = (TypeContainer) interfaces [i];
-						
-						if ((iface.ModFlags & modflags) == 0)
-							continue;
-
-						TypeBuilder tb = iface.TypeBuilder;
-						if (tb != null && (filter (tb, criteria) == true)) {
-							if (members == null)
-								members = new ArrayList ();
-							
-							members.Add (tb);
-						}
-					}
-				}
-			}
+			if ((mt & MemberTypes.NestedType) != 0)
+				FindMembers_NestedTypes (modflags, bf, filter, criteria, ref members);
 
 			if ((mt & MemberTypes.Constructor) != 0){
 				if (((bf & BindingFlags.Instance) != 0) && (instance_constructors != null)){
@@ -2617,6 +2607,16 @@ namespace Mono.CSharp {
 		{
 			return PartialContainer.VerifyImplements (
 				interface_type, full, name, loc);
+		}
+
+		public override Type FindNestedType (string name)
+		{
+			return PartialContainer.FindNestedType (name);
+		}
+
+		public Type PartFindNestedType (string name)
+		{
+			return base.FindNestedType (name);
 		}
 
 		public override MemberCache BaseCache {

@@ -113,7 +113,18 @@ namespace Mono.CSharp {
 			Type t;
 			DeclSpace tdecl = o as DeclSpace;
 			if (tdecl != null) {
-				t = tdecl.DefineType ();
+				//
+				// Note that this is not:
+				//
+				//   t = tdecl.DefineType ()
+				//
+				// This is to make it somewhat more useful when a DefineType
+				// fails due to problems in nested types (more useful in the sense
+				// of fewer misleading error messages)
+				//
+				tdecl.DefineType ();
+				t = tdecl.TypeBuilder;
+
 				if (t == null)
 					return null;
 
@@ -125,7 +136,8 @@ namespace Mono.CSharp {
 			if (ns != null)
 				return ns;
 
-			t = TypeManager.LookupType (DeclSpace.MakeFQN (fullname, name));
+			// We are sure that 'name' is a simple name (no dots).
+			t = TypeManager.LookupTypeDirect (DeclSpace.MakeFQN (fullname, name));
 			if ((t == null) || ((ds != null) && !ds.CheckAccessLevel (t)))
 				return null;
 

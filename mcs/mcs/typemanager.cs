@@ -438,6 +438,9 @@ public class TypeManager {
 		} catch {
 			HandleDuplicate (name, t); 
 		}
+
+		negative_hits.Remove (t);
+
 		user_types.Add (t);
 	}
 
@@ -740,57 +743,48 @@ public class TypeManager {
 		// First lookup in user defined and cached values
 		//
 
-		t = (Type) types [name];
+		t = LookupTypeDirect (name);
 		if (t != null)
 			return t;
 
-		// Two thirds of the failures are caught here.
-		if (negative_hits.Contains (name))
-			return null;
-
-		// Sadly, split takes a param array, so this ends up allocating *EVERY TIME*
 		string [] elements = name.Split (dot_array);
 		int count = elements.Length;
 
-		for (int n = 1; n <= count; n++){
-			string top_level_type = String.Join (".", elements, 0, n);
+		if (count == 1)
+			return null;
 
-			// One third of the failures are caught here.
-			if (negative_hits.Contains (top_level_type))
-				continue;
-			
-			t = (Type) types [top_level_type];
-			if (t == null){
-				t = LookupTypeReflection (top_level_type);
-				if (t == null){
-					negative_hits [top_level_type] = null;
-					continue;
-				}
-			}
-			
-			if (count == n){
-				types [name] = t;
+		string top_level_type = elements [0];
+		int n = 1;
+		for (;;) {
+			t = LookupTypeDirect (top_level_type);
+
+			if (count == n)
 				return t;
-			} 
 
-			//
-			// We know that System.Object does not have children, and since its the base of 
-			// all the objects, it always gets probbed for inner classes. 
-			//
-			if (top_level_type == "System.Object")
-				return null;
-			
-			string newt = top_level_type + "+" + String.Join ("+", elements, n, count - n);
-			//Console.WriteLine ("Looking up: " + newt + " " + name);
-			t = LookupTypeReflection (newt);
-			if (t == null)
-				negative_hits [name] = null;
-			else
-				types [name] = t;
-			return t;
+			if (t != null)
+				break;
+
+			top_level_type = top_level_type + "." + elements [n++];
 		}
-		negative_hits [name] = null;
-		return null;
+			
+		//
+		// We know that System.Object does not have children, and since its the base of 
+		// all the objects, it always gets probed for inner classes. 
+		//
+		if (top_level_type == "System.Object")
+			return null;
+		
+		string nested_type = top_level_type + "+" + String.Join ("+", elements, n, count - n);
+		//Console.WriteLine ("Looking up: " + newt + " " + name);
+
+		t = LookupTypeDirect (nested_type);
+
+		// Cache the dotted version of the name too.
+		if (t == null)
+			negative_hits [name] = null;
+		else
+			types [name] = t;
+		return t;
 	}
 
 	/// <summary>
@@ -1268,7 +1262,7 @@ public class TypeManager {
 		Type [] string_string_string_string = { string_type, string_type, string_type, string_type };
 		string_concat_string_string_string_string = GetMethod (
 			string_type, "Concat", string_string_string_string);
-		Type[] params_string = { TypeManager.LookupType ("System.String[]") };
+		Type[] params_string = { TypeManager.LookupTypeDirect ("System.String[]") };
 		string_concat_string_dot_dot_dot = GetMethod (
 			string_type, "Concat", params_string);
 
@@ -1278,7 +1272,7 @@ public class TypeManager {
 		Type [] object_object_object = { object_type, object_type, object_type };
 		string_concat_object_object_object = GetMethod (
 			string_type, "Concat", object_object_object);
-		Type[] params_object = { TypeManager.LookupType ("System.Object[]") };
+		Type[] params_object = { TypeManager.LookupTypeDirect ("System.Object[]") };
 		string_concat_object_dot_dot_dot = GetMethod (
 			string_type, "Concat", params_object);
 

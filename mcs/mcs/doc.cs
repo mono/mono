@@ -317,7 +317,7 @@ namespace Mono.CSharp {
 			case "void":
 				return typeof (void);
 			}
-			FullNamedExpression e = ds.FindType (mc.Location, identifier);
+			FullNamedExpression e = ds.LookupType (identifier, mc.Location, true, false);
 			if (e != null) {
 				if (!(e is TypeExpr))
 					return null;
