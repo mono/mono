@@ -1,3 +1,8 @@
+2002-07-17  Dietmar Maurer  <dietmar@ximian.com>
+
+	* jit.c (mono_analyze_stack): remove the vtype pointer from the
+	stack (fix bug #27420)
+
 2002-07-16  Dietmar Maurer  <dietmar@ximian.com>
 
 	* x86.brg (CALL_VOID): fix bug #27751
