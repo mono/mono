@@ -29,13 +29,13 @@ namespace System.Data.OracleClient {
 		public static readonly int MinScale = -84;
 		public static readonly OracleNumber MinusOne = new OracleNumber (-1);
 		public static readonly OracleNumber MinValue; // FIXME
-		public static readonly OracleNumber Null = CreateNullOracleNumber ();
+		public static readonly OracleNumber Null = new OracleNumber ();
 		public static readonly OracleNumber One = new OracleNumber (1);
 		public static readonly OracleNumber PI = new OracleNumber (Math.PI);
 		public static readonly OracleNumber Zero = new OracleNumber (0);
 
 		decimal value;
-		internal bool isNull;
+		bool notNull;
 
 		#endregion // Fields
 
@@ -44,7 +44,7 @@ namespace System.Data.OracleClient {
 		public OracleNumber (decimal decValue)
 		{
 			this.value = decValue;
-			isNull = false;
+			notNull = true;
 		}
 
 		public OracleNumber (double dblValue)
@@ -72,7 +72,7 @@ namespace System.Data.OracleClient {
 		#region Properties
 
 		public bool IsNull {
-			get { return isNull; }
+			get { return !notNull; }
 		}
 
 		public decimal Value {
@@ -154,13 +154,6 @@ namespace System.Data.OracleClient {
 			if (n.IsNull)
 				return OracleNumber.Null;
 			return new OracleNumber (Math.Cosh ((double) n));
-		}
-
-		internal static OracleNumber CreateNullOracleNumber ()
-		{
-			OracleNumber x = new OracleNumber ();
-			x.isNull = true;
-			return x;
 		}
 
 		public static OracleNumber Divide (OracleNumber x, OracleNumber y)

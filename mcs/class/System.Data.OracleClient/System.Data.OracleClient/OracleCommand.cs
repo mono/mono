@@ -216,7 +216,7 @@ namespace System.Data.OracleClient {
 		{
 			object output;
 
-			ValidateCommand ("ExecuteNonQuery");
+			ValidateCommand ("ExecuteScalar");
 			if (Transaction != null)
 				Transaction.AttachToServiceContext ();
 			statement.ExecuteQuery ();

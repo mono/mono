@@ -23,6 +23,10 @@ namespace System.Data.OracleClient {
 		#region Fields
 
 		string value;
+		bool notNull;
+
+		public static readonly OracleString Empty = new OracleString (String.Empty);
+		public static readonly OracleString Null = new OracleString ();
 
 		#endregion // Fields
 
@@ -30,7 +34,8 @@ namespace System.Data.OracleClient {
 
 		public OracleString (string s)
 		{
-			this.value = s;
+			value = s;
+			notNull = true;
 		}
 
 		#endregion // Constructors
@@ -38,7 +43,7 @@ namespace System.Data.OracleClient {
 		#region Properties
 
 		public bool IsNull {
-			get { return value == null; }
+			get { return !notNull; }
 		}
 
 		public string Value {

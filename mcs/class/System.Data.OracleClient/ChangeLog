@@ -1,3 +1,37 @@
+2003-02-21  Tim Coleman <tim@timcoleman.com>
+	* System.Data.OracleClient/OracleDateTime.cs:
+	* System.Data.OracleClient/OracleInfoMessageEventArgs.cs:
+	* System.Data.OracleClient/OracleInfoMessageEventHandler.cs:
+	* System.Data.OracleClient/OracleMonthSpan.cs:
+	* System.Data.OracleClient/OraclePermission.cs:
+	* System.Data.OracleClient/OraclePermissionAttribute.cs:
+	* System.Data.OracleClient/OracleTimeSpan.cs:
+	* System.Data.OracleClient.Oci/IOciDescriptorHandle.cs:
+	* System.Data.OracleClient.Oci/OciDescriptorHandle.cs:
+	* System.Data.OracleClient.Oci/OciLobLocator.cs:
+		New classes added.  Some based on .NET docs,
+		others (internal) based on getting some LOB
+		support (doesn't actually work yet).
+	* list:
+		Add new files
+	* System.Data.OracleClient/OracleBFile.cs:
+	* System.Data.OracleClient/OracleBinary.cs:
+	* System.Data.OracleClient/OracleLob.cs:
+	* System.Data.OracleClient/OracleNumber.cs:
+	* System.Data.OracleClient/OracleString.cs:
+		Change handling of NULL object based on new
+		discovery.
+	* System.Data.OracleClient/OracleCommand.cs:
+	* System.Data.OracleClient/OracleDataReader.cs:
+		Typo fix.
+	* System.Data.OracleClient.Oci/OciDefineHandle.cs:
+	* System.Data.OracleClient.Oci/OciEnvironmentHandle.cs:
+		Add some code to handle LOBs.  Still more to
+		come.
+	* Test/TestOracleClient.cs:
+		New test for LOB added.
+	
+
 2003-02-20  Tim Coleman <tim@timcoleman.com>
 	* System.Data.OracleClient/OracleBFile.cs:
 	* System.Data.OracleClient/OracleBinary.cs:

@@ -16,6 +16,7 @@
 
 using System;
 using System.IO;
+using System.Data.OracleClient.Oci;
 using System.Data.SqlTypes;
 
 namespace System.Data.OracleClient {
@@ -23,16 +24,27 @@ namespace System.Data.OracleClient {
 	{
 		#region Fields
 
-		public static readonly new OracleLob Null; // FIXME
+		public static readonly new OracleLob Null = new OracleLob ();
 
 		OracleConnection connection;
 		bool isBatched = false;
 		bool isOpen = true;
-		internal bool isNull;
+		bool notNull = false;
+		OciLobLocator locator;
 
 		#endregion // Fields
 
 		#region Constructors
+
+		internal OracleLob ()
+		{
+		}
+
+		internal OracleLob (OciLobLocator locator)
+		{
+			notNull = true;
+			this.locator = locator;
+		}
 
 		#endregion // Constructors
 
@@ -70,7 +82,7 @@ namespace System.Data.OracleClient {
 		}
 
 		public bool IsNull {
-			get { return isNull; }
+			get { return !notNull; }
 		}
 
 		public bool IsTemporary {

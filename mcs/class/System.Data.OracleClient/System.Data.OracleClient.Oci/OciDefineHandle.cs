@@ -16,6 +16,7 @@
 // 
 
 using System;
+using System.Data.OracleClient;
 using System.Runtime.InteropServices;
 using System.Text;
 
@@ -33,6 +34,8 @@ namespace System.Data.OracleClient.Oci {
 		int definedSize;
 		int rlenp;
 		sbyte scale;
+
+		OciLobLocator lobLocator;
 	
 		#endregion // Fields
 
@@ -86,6 +89,11 @@ namespace System.Data.OracleClient.Oci {
 			case OciDataType.Date:
 				ociType = OciDataType.Char;
 				definedSize = 20;
+				break;
+			case OciDataType.Clob:
+				lobLocator = (OciLobLocator) statement.Environment.AllocateDescriptor (OciDescriptorType.LobLocator);
+				value = lobLocator.Handle;
+				ociType = definedType;
 				break;
 			default:
 				ociType = definedType;
@@ -171,6 +179,11 @@ namespace System.Data.OracleClient.Oci {
 		public void Dispose ()
 		{
 			Marshal.FreeHGlobal (value);
+		}
+
+		public OracleLob GetOracleLob ()
+		{
+			return new OracleLob (lobLocator);
 		}
 
 		public object GetValue ()

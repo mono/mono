@@ -104,8 +104,9 @@ namespace System.Data.OracleClient {
 
 		public void Close ()
 		{
+			if (!isClosed) 
+				command.CloseDataReader ();
 			isClosed = true;
-			command.CloseDataReader ();
 		}
 
 		private static DataTable ConstructSchemaTable ()

@@ -83,8 +83,19 @@ namespace System.Data.OracleClient.Oci {
 							IntPtr usrmempp);
 
 		[DllImport ("oci")]
+		public static extern int OCIDescriptorAlloc (IntPtr parenth,
+							out IntPtr descpp,
+							[MarshalAs (UnmanagedType.U4)] OciDescriptorType type,
+							int xtramem_sz,
+							IntPtr usrmempp);
+
+		[DllImport ("oci")]
 		public static extern int OCIHandleFree (IntPtr hndlp, 
 							[MarshalAs (UnmanagedType.U4)] OciHandleType type);
+
+		[DllImport ("oci")]
+		public static extern int OCIDescriptorFree (IntPtr hndlp, 
+							[MarshalAs (UnmanagedType.U4)] OciDescriptorType type);
 
 
 		public IOciHandle Allocate (OciHandleType type)
@@ -120,6 +131,28 @@ namespace System.Data.OracleClient.Oci {
 			}
 		}
 
+		public IOciDescriptorHandle AllocateDescriptor (OciDescriptorType type)
+		{
+			IntPtr newHandle = IntPtr.Zero;
+			int status = 0;
+
+			status = OCIDescriptorAlloc (Handle,
+						out newHandle,
+						type,
+						0,
+						IntPtr.Zero);
+			if (status != 0 && status != 1) 
+				return null;
+			switch (type) {
+				case OciDescriptorType.LobLocator:
+					return new OciLobLocator (this, newHandle);
+				default:
+					OCIDescriptorFree (newHandle, type);
+					newHandle = IntPtr.Zero;
+					throw new ArgumentException ("Invalid handle type.");
+			}
+		}
+
 		public void Dispose ()
 		{
 			FreeHandle (this);
@@ -128,6 +161,12 @@ namespace System.Data.OracleClient.Oci {
 		public void FreeHandle (IOciHandle toBeDisposed)
 		{
 			OCIHandleFree (toBeDisposed.Handle, toBeDisposed.HandleType);
+			toBeDisposed.Handle = IntPtr.Zero;
+		}
+
+		public void FreeDescriptor (IOciDescriptorHandle toBeDisposed)
+		{
+			OCIDescriptorFree (toBeDisposed.Handle, toBeDisposed.HandleType);
 			toBeDisposed.Handle = IntPtr.Zero;
 		}
 

@@ -23,15 +23,19 @@ namespace System.Data.OracleClient {
 	{
 		#region Fields
 
-		public static readonly new OracleBFile Null; // FIXME
+		public static readonly new OracleBFile Null = new OracleBFile ();
 
 		OracleConnection connection;
 		bool isOpen = true;
-		internal bool isNull;
+		bool notNull = false;
 
 		#endregion // Fields
 
 		#region Constructors
+
+		internal OracleBFile ()
+		{
+		}
 
 		#endregion // Constructors
 
@@ -85,7 +89,7 @@ namespace System.Data.OracleClient {
 		}
 
 		public bool IsNull {
-			get { return isNull; }
+			get { return !notNull; }
 		}
 
 		public override long Length {

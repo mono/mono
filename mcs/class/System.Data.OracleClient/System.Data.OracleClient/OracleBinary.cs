@@ -23,9 +23,9 @@ namespace System.Data.OracleClient {
 	{
 		#region Fields
 
-		public static readonly OracleBinary Null = CreateNullOracleBinary ();
+		public static readonly OracleBinary Null = new OracleBinary ();
 
-		internal bool isNull;
+		bool notNull; 
 		byte[] value; 
 
 		#endregion // Fields
@@ -34,8 +34,8 @@ namespace System.Data.OracleClient {
 
 		public OracleBinary (byte[] b)
 		{
-			this.value = b;
-			this.isNull = false;
+			value = b;
+			notNull = true;
 		}
 
 		#endregion // Constructors
@@ -43,7 +43,7 @@ namespace System.Data.OracleClient {
 		#region Properties
 
 		public bool IsNull {
-			get { return isNull; }
+			get { return !notNull; }
 		}
 
 		public byte this [int index] {
@@ -84,13 +84,6 @@ namespace System.Data.OracleClient {
 		public static OracleBinary Concat (OracleBinary x, OracleBinary y)
 		{
 			throw new NotImplementedException ();
-		}
-
-		internal static OracleBinary CreateNullOracleBinary ()
-		{
-			OracleBinary output = new OracleBinary ();
-			output.isNull = true;
-			return output;
 		}
 
 		[MonoTODO]

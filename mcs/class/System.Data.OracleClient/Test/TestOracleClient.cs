@@ -259,12 +259,47 @@ namespace Test.OracleClient
 			transaction.Rollback ();
 		}
 
+		public static void LOBTest (OracleConnection connection)
+		{
+			Console.WriteLine ("BEGIN TRANSACTION ...");
+
+			OracleTransaction transaction = connection.BeginTransaction ();
+
+			Console.WriteLine ("CREATE TABLE ...");
+
+			OracleCommand create = connection.CreateCommand ();
+			create.Transaction = transaction;
+			create.CommandText = "CREATE TABLE LOBTEST (CLOB_COLUMN CLOB)";
+			create.ExecuteNonQuery ();
+
+			Console.WriteLine ("INSERT RECORD ...");
+
+			OracleCommand insert = connection.CreateCommand ();
+			insert.Transaction = transaction;
+			insert.CommandText = "INSERT INTO LOBTEST VALUES ('1234')";
+			insert.ExecuteNonQuery ();
+
+			OracleCommand select = connection.CreateCommand ();
+			select.Transaction = transaction;
+			select.CommandText = "SELECT CLOB_COLUMN FROM LOBTEST";
+			Console.WriteLine ("SELECTING A CLOB (CHARACTER) VALUE FROM CLOBTEST");
+
+			OracleDataReader reader = select.ExecuteReader ();
+			if (!reader.Read ())
+				Console.WriteLine ("ERROR: RECORD NOT FOUND");
+
+			reader.Close ();
+
+			Console.WriteLine ("ROLLBACK TRANSACTION ...");
+
+			transaction.Rollback ();
+		}
 
 		static void Wait(string msg) 
 		{
-			//Console.WriteLine(msg);
-			//Console.WriteLine("Waiting...  Presee Enter to continue...");
-			//string nothing = Console.ReadLine();
+			Console.WriteLine(msg);
+			Console.WriteLine("Waiting...  Press Enter to continue...");
+			string nothing = Console.ReadLine();
 		}
 
 		[STAThread]
@@ -307,6 +342,10 @@ namespace Test.OracleClient
 			
 			//DoTest9(con1);
 			
+			Console.WriteLine ("LOB Test BEGIN...");
+			LOBTest (con1);
+			Console.WriteLine ("LOB Test END.");
+
 			Console.WriteLine ("Read Simple Test BEGIN...");
                         ReadSimpleTest(con1);
 			Console.WriteLine ("Read Simple Test END.");
@@ -328,6 +367,8 @@ namespace Test.OracleClient
 			Console.WriteLine ("Parameter Test BEGIN...");
                         ParameterTest(con1);
 			Console.WriteLine ("Parameter Test END.");
+
+
 
 			Wait("Verify Proper Results.");
 						
