@@ -1,3 +1,11 @@
+2003-08-08  Martin Baulig  <martin@ximian.com>
+
+	* flowanalysis.cs (FlowReturns): This is now nested in the
+	`FlowBranching' class.
+	(MyBitVector): Moved this here from statement.cs.
+	(FlowBranching.SiblingType): New enum type.
+	(FlowBranching.CreateSibling): Added `SiblingType' argument.
+
 2003-08-07  Martin Baulig  <martin@ximian.com>
 
 	* flowanalysis.cs (FlowBranchingType): This is now nested in the

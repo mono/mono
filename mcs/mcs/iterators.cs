@@ -96,8 +96,8 @@ namespace Mono.CSharp {
 			if (!Yield.CheckContext (ec, loc))
 				return false;
 
-			ec.CurrentBranching.CurrentUsageVector.Breaks = FlowReturns.ALWAYS;
-			ec.CurrentBranching.CurrentUsageVector.Returns = FlowReturns.ALWAYS;
+			ec.CurrentBranching.CurrentUsageVector.Breaks = FlowBranching.FlowReturns.Always;
+			ec.CurrentBranching.CurrentUsageVector.Returns = FlowBranching.FlowReturns.Always;
 			return true;
 		}
 

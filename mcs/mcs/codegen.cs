@@ -412,7 +412,7 @@ namespace Mono.CSharp {
 		//   Ends a code branching.  Merges the state of locals and parameters
 		//   from all the children of the ending branching.
 		// </summary>
-		public FlowReturns EndFlowBranching ()
+		public FlowBranching.FlowReturns EndFlowBranching ()
 		{
 			FlowBranching cfb = (FlowBranching) FlowStack.Pop ();
 
@@ -455,15 +455,15 @@ namespace Mono.CSharp {
 					}
 
 					cfb = (FlowBranching) FlowStack.Pop ();
-					FlowReturns returns = cfb.MergeTopBlock ();
+					FlowBranching.FlowReturns returns = cfb.MergeTopBlock ();
 
 					DoFlowAnalysis = old_do_flow_analysis;
 
 					has_ret = block.Emit (this);
 
-					if ((returns == FlowReturns.ALWAYS) ||
-					    (returns == FlowReturns.EXCEPTION) ||
-					    (returns == FlowReturns.UNREACHABLE))
+					if ((returns == FlowBranching.FlowReturns.Always) ||
+					    (returns == FlowBranching.FlowReturns.Exception) ||
+					    (returns == FlowBranching.FlowReturns.Unreachable))
 						has_ret = true;
 
 					if (Report.Errors == errors){

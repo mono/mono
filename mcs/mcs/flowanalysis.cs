@@ -43,6 +43,44 @@ namespace Mono.CSharp
 		}
 
 		// <summary>
+		//   The type of one sibling of a branching.
+		// </summary>
+		public enum SiblingType {
+			Conditional,
+			SwitchSection,
+			Try,
+			Catch,
+			Finally
+		}
+
+		// <summary>
+		//   This is used in the control flow analysis code to specify whether the
+		//   current code block may return to its enclosing block before reaching
+		//   its end.
+		// </summary>
+		public enum FlowReturns {
+			Undefined = 0,
+
+			// It can never return.
+			Never,
+
+			// This means that the block contains a conditional return statement
+			// somewhere.
+			Sometimes,
+
+			// The code always returns, ie. there's an unconditional return / break
+			// statement in it.
+			Always,
+
+			// The code always throws an exception.
+			Exception,
+
+			// The current code block is unreachable.  This happens if it's immediately
+			// following a FlowReturns.Always block.
+			Unreachable
+		}
+
+		// <summary>
 		//   The type of this flow branching.
 		// </summary>
 		public readonly BranchingType Type;
@@ -90,37 +128,37 @@ namespace Mono.CSharp
 
 		// <summary>
 		//   Performs an `And' operation on the FlowReturns status
-		//   (for instance, a block only returns ALWAYS if all its siblings
+		//   (for instance, a block only returns Always if all its siblings
 		//   always return).
 		// </summary>
 		public static FlowReturns AndFlowReturns (FlowReturns a, FlowReturns b)
 		{
-			if (b == FlowReturns.UNREACHABLE)
+			if (b == FlowReturns.Unreachable)
 				return a;
 
 			switch (a) {
-			case FlowReturns.NEVER:
-				if (b == FlowReturns.NEVER)
-					return FlowReturns.NEVER;
+			case FlowReturns.Never:
+				if (b == FlowReturns.Never)
+					return FlowReturns.Never;
 				else
-					return FlowReturns.SOMETIMES;
+					return FlowReturns.Sometimes;
 
-			case FlowReturns.SOMETIMES:
-				return FlowReturns.SOMETIMES;
+			case FlowReturns.Sometimes:
+				return FlowReturns.Sometimes;
 
-			case FlowReturns.ALWAYS:
-				if ((b == FlowReturns.ALWAYS) || (b == FlowReturns.EXCEPTION))
-					return FlowReturns.ALWAYS;
+			case FlowReturns.Always:
+				if ((b == FlowReturns.Always) || (b == FlowReturns.Exception))
+					return FlowReturns.Always;
 				else
-					return FlowReturns.SOMETIMES;
+					return FlowReturns.Sometimes;
 
-			case FlowReturns.EXCEPTION:
-				if (b == FlowReturns.EXCEPTION)
-					return FlowReturns.EXCEPTION;
-				else if (b == FlowReturns.ALWAYS)
-					return FlowReturns.ALWAYS;
+			case FlowReturns.Exception:
+				if (b == FlowReturns.Exception)
+					return FlowReturns.Exception;
+				else if (b == FlowReturns.Always)
+					return FlowReturns.Always;
 				else
-					return FlowReturns.SOMETIMES;
+					return FlowReturns.Sometimes;
 			}
 
 			return b;
@@ -172,8 +210,8 @@ namespace Mono.CSharp
 				this.InheritsFrom = parent;
 				this.CountParameters = num_params;
 				this.CountLocals = num_locals;
-				this.real_returns = FlowReturns.NEVER;
-				this.real_breaks = FlowReturns.NEVER;
+				this.real_returns = FlowReturns.Never;
+				this.real_breaks = FlowReturns.Never;
 
 				if (parent != null) {
 					locals = new MyBitVector (parent.locals, CountLocals);
@@ -244,9 +282,9 @@ namespace Mono.CSharp
 
 			// <summary>
 			//   Specifies when the current block returns.
-			//   If this is FlowReturns.UNREACHABLE, then control can never reach the
+			//   If this is FlowReturns.Unreachable, then control can never reach the
 			//   end of the method (so that we don't need to emit a return statement).
-			//   The same applies for FlowReturns.EXCEPTION, but in this case the return
+			//   The same applies for FlowReturns.Exception, but in this case the return
 			//   value will never be used.
 			// </summary>
 			public FlowReturns Returns {
@@ -278,29 +316,29 @@ namespace Mono.CSharp
 
 			public bool AlwaysBreaks {
 				get {
-					return (Breaks == FlowReturns.ALWAYS) ||
-						(Breaks == FlowReturns.EXCEPTION) ||
-						(Breaks == FlowReturns.UNREACHABLE);
+					return (Breaks == FlowReturns.Always) ||
+						(Breaks == FlowReturns.Exception) ||
+						(Breaks == FlowReturns.Unreachable);
 				}
 			}
 
 			public bool MayBreak {
 				get {
-					return Breaks != FlowReturns.NEVER;
+					return Breaks != FlowReturns.Never;
 				}
 			}
 
 			public bool AlwaysReturns {
 				get {
-					return (Returns == FlowReturns.ALWAYS) ||
-						(Returns == FlowReturns.EXCEPTION);
+					return (Returns == FlowReturns.Always) ||
+						(Returns == FlowReturns.Exception);
 				}
 			}
 
 			public bool MayReturn {
 				get {
-					return (Returns == FlowReturns.SOMETIMES) ||
-						(Returns == FlowReturns.ALWAYS);
+					return (Returns == FlowReturns.Sometimes) ||
+						(Returns == FlowReturns.Always);
 				}
 			}
 
@@ -312,8 +350,8 @@ namespace Mono.CSharp
 				MyBitVector new_locals = null;
 				MyBitVector new_params = null;
 
-				FlowReturns new_returns = FlowReturns.NEVER;
-				FlowReturns new_breaks = FlowReturns.NEVER;
+				FlowReturns new_returns = FlowReturns.Never;
+				FlowReturns new_breaks = FlowReturns.Never;
 				bool new_returns_set = false, new_breaks_set = false;
 
 				Report.Debug (2, "MERGING CHILDREN", branching, branching.Type,
@@ -323,7 +361,7 @@ namespace Mono.CSharp
 					Report.Debug (2, "  MERGING CHILD", child, child.is_finally);
 					
 					if (!child.is_finally) {
-						if (child.Breaks != FlowReturns.UNREACHABLE) {
+						if (child.Breaks != FlowReturns.Unreachable) {
 							// If Returns is already set, perform an
 							// `And' operation on it, otherwise just set just.
 							if (!new_returns_set) {
@@ -345,7 +383,7 @@ namespace Mono.CSharp
 					}
 
 					// Ignore unreachable children.
-					if (child.Returns == FlowReturns.UNREACHABLE)
+					if (child.Returns == FlowReturns.Unreachable)
 						continue;
 
 					// A local variable is initialized after a flow branching if it
@@ -409,9 +447,9 @@ namespace Mono.CSharp
 						// An `out' parameter must be assigned in all branches which do
 						// not always throw an exception.
 						if (parameters != null) {
-							bool and_params = child.Breaks != FlowReturns.EXCEPTION;
+							bool and_params = child.Breaks != FlowReturns.Exception;
 							if (branching.Type == BranchingType.Exception)
-								and_params &= child.Returns != FlowReturns.NEVER;
+								and_params &= child.Returns != FlowReturns.Never;
 							if (and_params) {
 								if (new_params != null)
 									new_params.And (child.parameters);
@@ -430,14 +468,14 @@ namespace Mono.CSharp
 				Returns = new_returns;
 				if ((branching.Type == BranchingType.Block) ||
 				    (branching.Type == BranchingType.Exception) ||
-				    (new_breaks == FlowReturns.UNREACHABLE) ||
-				    (new_breaks == FlowReturns.EXCEPTION))
+				    (new_breaks == FlowReturns.Unreachable) ||
+				    (new_breaks == FlowReturns.Exception))
 					Breaks = new_breaks;
 				else if (branching.Type == BranchingType.SwitchSection)
 					Breaks = new_returns;
 				else if (branching.Type == BranchingType.Switch){
-					if (new_breaks == FlowReturns.ALWAYS)
-						Breaks = FlowReturns.ALWAYS;
+					if (new_breaks == FlowReturns.Always)
+						Breaks = FlowReturns.Always;
 				}
 
 				//
@@ -449,9 +487,9 @@ namespace Mono.CSharp
 				// we need to look at (see above).
 				//
 
-				if (((new_breaks != FlowReturns.ALWAYS) &&
-				     (new_breaks != FlowReturns.EXCEPTION) &&
-				     (new_breaks != FlowReturns.UNREACHABLE)) ||
+				if (((new_breaks != FlowReturns.Always) &&
+				     (new_breaks != FlowReturns.Exception) &&
+				     (new_breaks != FlowReturns.Unreachable)) ||
 				    (children.Length == 1)) {
 					if (new_locals != null)
 						locals.Or (new_locals);
@@ -465,9 +503,9 @@ namespace Mono.CSharp
 					      branching.Infinite, branching.MayLeaveLoop, this);
 
 				if (branching.Type == BranchingType.SwitchSection) {
-					if ((new_breaks != FlowReturns.ALWAYS) &&
-					    (new_breaks != FlowReturns.EXCEPTION) &&
-					    (new_breaks != FlowReturns.UNREACHABLE))
+					if ((new_breaks != FlowReturns.Always) &&
+					    (new_breaks != FlowReturns.Exception) &&
+					    (new_breaks != FlowReturns.Unreachable))
 						Report.Error (163, branching.Location,
 							      "Control cannot fall through from one " +
 							      "case label to another");
@@ -478,19 +516,19 @@ namespace Mono.CSharp
 						      Returns, Breaks, this);
 
 					// We're actually infinite.
-					if (new_returns == FlowReturns.NEVER) {
-						Breaks = FlowReturns.UNREACHABLE;
-						return FlowReturns.UNREACHABLE;
+					if (new_returns == FlowReturns.Never) {
+						Breaks = FlowReturns.Unreachable;
+						return FlowReturns.Unreachable;
 					}
 
 					// If we're an infinite loop and do not break, the code after
 					// the loop can never be reached.  However, if we may return
 					// from the loop, then we do always return (or stay in the loop
 					// forever).
-					if ((new_returns == FlowReturns.SOMETIMES) ||
-					    (new_returns == FlowReturns.ALWAYS)) {
-						Returns = FlowReturns.ALWAYS;
-						return FlowReturns.ALWAYS;
+					if ((new_returns == FlowReturns.Sometimes) ||
+					    (new_returns == FlowReturns.Always)) {
+						Returns = FlowReturns.Always;
+						return FlowReturns.Always;
 					}
 				}
 
@@ -500,13 +538,13 @@ namespace Mono.CSharp
 						      new_breaks, new_returns);
 
 					// If we may leave the loop, then we do not always return.
-					if (branching.MayLeaveLoop && (new_returns == FlowReturns.ALWAYS)) {
-						Returns = FlowReturns.SOMETIMES;
-						return FlowReturns.SOMETIMES;
+					if (branching.MayLeaveLoop && (new_returns == FlowReturns.Always)) {
+						Returns = FlowReturns.Sometimes;
+						return FlowReturns.Sometimes;
 					}
 
 					// A `break' in a loop does not "break" in the outer block.
-					Breaks = FlowReturns.NEVER;
+					Breaks = FlowReturns.Never;
 				}
 
 				return new_returns;
@@ -536,8 +574,8 @@ namespace Mono.CSharp
 			{
 				Report.Debug (1, "MERGING JUMP ORIGIN", this);
 
-				real_breaks = FlowReturns.NEVER;
-				real_returns = FlowReturns.NEVER;
+				real_breaks = FlowReturns.Never;
+				real_returns = FlowReturns.Never;
 
 				foreach (UsageVector vector in origin_vectors) {
 					Report.Debug (1, "  MERGING JUMP ORIGIN", vector);
@@ -560,7 +598,7 @@ namespace Mono.CSharp
 			{
 				Report.Debug (1, "MERGING FINALLY ORIGIN", this);
 
-				real_breaks = FlowReturns.NEVER;
+				real_breaks = FlowReturns.Never;
 
 				foreach (UsageVector vector in finally_vectors) {
 					Report.Debug (1, "  MERGING FINALLY ORIGIN", vector);
@@ -737,24 +775,14 @@ namespace Mono.CSharp
 		// <summary>
 		//   Creates a sibling of the current usage vector.
 		// </summary>
-		public void CreateSibling ()
+		public void CreateSibling (SiblingType type)
 		{
 			AddSibling (new UsageVector (Parent.CurrentUsageVector));
 
 			Report.Debug (1, "CREATED SIBLING", CurrentUsageVector);
-		}
 
-		// <summary>
-		//   Creates a sibling for a `finally' block.
-		// </summary>
-		public void CreateSiblingForFinally ()
-		{
-			if (Type != BranchingType.Exception)
-				throw new NotSupportedException ();
-
-			CreateSibling ();
-
-			CurrentUsageVector.MergeFinallyOrigins (finally_vectors);
+			if (type == SiblingType.Finally)
+				CurrentUsageVector.MergeFinallyOrigins (finally_vectors);
 		}
 
 		// <summary>
@@ -817,12 +845,12 @@ namespace Mono.CSharp
 
 			Report.Debug (1, "MERGING TOP BLOCK DONE", Location, vector);
 
-			if (vector.Breaks != FlowReturns.EXCEPTION) {
+			if (vector.Breaks != FlowReturns.Exception) {
 				if (!vector.AlwaysBreaks)
 					CheckOutParameters (CurrentUsageVector.Parameters, Location);
-				return vector.AlwaysBreaks ? FlowReturns.ALWAYS : vector.Returns;
+				return vector.AlwaysBreaks ? FlowReturns.Always : vector.Returns;
 			} else
-				return FlowReturns.EXCEPTION;
+				return FlowReturns.Exception;
 		}
 
 		public bool InTryBlock ()
@@ -886,7 +914,7 @@ namespace Mono.CSharp
 				// The code following a loop is reachable unless the loop always
 				// returns or it's an infinite loop without any `break's in it.
 				reachable = !CurrentUsageVector.AlwaysReturns &&
-					(CurrentUsageVector.Breaks != FlowReturns.UNREACHABLE);
+					(CurrentUsageVector.Breaks != FlowReturns.Unreachable);
 				break;
 
 			default:
@@ -1536,6 +1564,203 @@ namespace Mono.CSharp
 		public override string ToString ()
 		{
 			return String.Format ("VariableMap ({0}:{1})", Count, Length);
+		}
+	}
+
+
+	// <summary>
+	//   This is a special bit vector which can inherit from another bit vector doing a
+	//   copy-on-write strategy.  The inherited vector may have a smaller size than the
+	//   current one.
+	// </summary>
+	public class MyBitVector {
+		public readonly int Count;
+		public readonly MyBitVector InheritsFrom;
+
+		bool is_dirty;
+		BitArray vector;
+
+		public MyBitVector (int Count)
+			: this (null, Count)
+		{ }
+
+		public MyBitVector (MyBitVector InheritsFrom, int Count)
+		{
+			this.InheritsFrom = InheritsFrom;
+			this.Count = Count;
+		}
+
+		// <summary>
+		//   Checks whether this bit vector has been modified.  After setting this to true,
+		//   we won't use the inherited vector anymore, but our own copy of it.
+		// </summary>
+		public bool IsDirty {
+			get {
+				return is_dirty;
+			}
+
+			set {
+				if (!is_dirty)
+					initialize_vector ();
+			}
+		}
+
+		// <summary>
+		//   Get/set bit `index' in the bit vector.
+		// </summary>
+		public bool this [int index]
+		{
+			get {
+				if (index > Count)
+					throw new ArgumentOutOfRangeException ();
+
+				// We're doing a "copy-on-write" strategy here; as long
+				// as nobody writes to the array, we can use our parent's
+				// copy instead of duplicating the vector.
+
+				if (vector != null)
+					return vector [index];
+				else if (InheritsFrom != null) {
+					BitArray inherited = InheritsFrom.Vector;
+
+					if (index < inherited.Count)
+						return inherited [index];
+					else
+						return false;
+				} else
+					return false;
+			}
+
+			set {
+				if (index > Count)
+					throw new ArgumentOutOfRangeException ();
+
+				// Only copy the vector if we're actually modifying it.
+
+				if (this [index] != value) {
+					initialize_vector ();
+
+					vector [index] = value;
+				}
+			}
+		}
+
+		// <summary>
+		//   If you explicitly convert the MyBitVector to a BitArray, you will get a deep
+		//   copy of the bit vector.
+		// </summary>
+		public static explicit operator BitArray (MyBitVector vector)
+		{
+			vector.initialize_vector ();
+			return vector.Vector;
+		}
+
+		// <summary>
+		//   Performs an `or' operation on the bit vector.  The `new_vector' may have a
+		//   different size than the current one.
+		// </summary>
+		public void Or (MyBitVector new_vector)
+		{
+			BitArray new_array = new_vector.Vector;
+
+			initialize_vector ();
+
+			int upper;
+			if (vector.Count < new_array.Count)
+				upper = vector.Count;
+			else
+				upper = new_array.Count;
+
+			for (int i = 0; i < upper; i++)
+				vector [i] = vector [i] | new_array [i];
+		}
+
+		// <summary>
+		//   Perfonrms an `and' operation on the bit vector.  The `new_vector' may have
+		//   a different size than the current one.
+		// </summary>
+		public void And (MyBitVector new_vector)
+		{
+			BitArray new_array = new_vector.Vector;
+
+			initialize_vector ();
+
+			int lower, upper;
+			if (vector.Count < new_array.Count)
+				lower = upper = vector.Count;
+			else {
+				lower = new_array.Count;
+				upper = vector.Count;
+			}
+
+			for (int i = 0; i < lower; i++)
+				vector [i] = vector [i] & new_array [i];
+
+			for (int i = lower; i < upper; i++)
+				vector [i] = false;
+		}
+
+		// <summary>
+		//   This does a deep copy of the bit vector.
+		// </summary>
+		public MyBitVector Clone ()
+		{
+			MyBitVector retval = new MyBitVector (Count);
+
+			retval.Vector = Vector;
+
+			return retval;
+		}
+
+		BitArray Vector {
+			get {
+				if (vector != null)
+					return vector;
+				else if (!is_dirty && (InheritsFrom != null))
+					return InheritsFrom.Vector;
+
+				initialize_vector ();
+
+				return vector;
+			}
+
+			set {
+				initialize_vector ();
+
+				for (int i = 0; i < System.Math.Min (vector.Count, value.Count); i++)
+					vector [i] = value [i];
+			}
+		}
+
+		void initialize_vector ()
+		{
+			if (vector != null)
+				return;
+
+			vector = new BitArray (Count, false);
+			if (InheritsFrom != null)
+				Vector = InheritsFrom.Vector;
+
+			is_dirty = true;
+		}
+
+		public override string ToString ()
+		{
+			StringBuilder sb = new StringBuilder ("MyBitVector (");
+
+			BitArray vector = Vector;
+			sb.Append (Count);
+			sb.Append (",");
+			if (!IsDirty)
+				sb.Append ("INHERITED - ");
+			for (int i = 0; i < vector.Count; i++) {
+				if (i > 0)
+					sb.Append (",");
+				sb.Append (vector [i]);
+			}
+			
+			sb.Append (")");
+			return sb.ToString ();
 		}
 	}
 }

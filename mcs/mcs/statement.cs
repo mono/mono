@@ -146,7 +146,7 @@ namespace Mono.CSharp {
 				return false;
 			}
 
-			ec.CurrentBranching.CreateSibling ();
+			ec.CurrentBranching.CreateSibling (FlowBranching.SiblingType.Conditional);
 
 			if ((FalseStatement != null) && !FalseStatement.Resolve (ec)) {
 				ec.KillFlowBranching ();
@@ -245,8 +245,8 @@ namespace Mono.CSharp {
 			}
 
 			ec.CurrentBranching.Infinite = infinite;
-			FlowReturns returns = ec.EndFlowBranching ();
-			may_return = returns != FlowReturns.NEVER;
+			FlowBranching.FlowReturns returns = ec.EndFlowBranching ();
+			may_return = returns != FlowBranching.FlowReturns.Never;
 
 			return ok;
 		}
@@ -331,7 +331,7 @@ namespace Mono.CSharp {
 				//
 				// We are not infinite, so the loop may or may not be executed.
 				//
-				ec.CurrentBranching.CreateSibling ();
+				ec.CurrentBranching.CreateSibling (FlowBranching.SiblingType.Conditional);
 			}
 
 			if (!Statement.Resolve (ec))
@@ -341,8 +341,8 @@ namespace Mono.CSharp {
 				ec.KillFlowBranching ();
 			else {
 				ec.CurrentBranching.Infinite = infinite;
-				FlowReturns returns = ec.EndFlowBranching ();
-				may_return = returns != FlowReturns.NEVER;
+				FlowBranching.FlowReturns returns = ec.EndFlowBranching ();
+				may_return = returns != FlowBranching.FlowReturns.Never;
 			}
 
 			return ok;
@@ -453,7 +453,7 @@ namespace Mono.CSharp {
 
 			ec.StartFlowBranching (FlowBranching.BranchingType.LoopBlock, loc);
 			if (!infinite)
-				ec.CurrentBranching.CreateSibling ();
+				ec.CurrentBranching.CreateSibling (FlowBranching.SiblingType.Conditional);
 
 			if (!Statement.Resolve (ec))
 				ok = false;
@@ -467,8 +467,8 @@ namespace Mono.CSharp {
 				ec.KillFlowBranching ();
 			else {
 				ec.CurrentBranching.Infinite = infinite;
-				FlowReturns returns = ec.EndFlowBranching ();
-				may_return = returns != FlowReturns.NEVER;
+				FlowBranching.FlowReturns returns = ec.EndFlowBranching ();
+				may_return = returns != FlowBranching.FlowReturns.Never;
 			}
 
 			return ok;
@@ -605,8 +605,8 @@ namespace Mono.CSharp {
 			else
 				vector.CheckOutParameters (ec.CurrentBranching);
 
-			vector.Returns = FlowReturns.ALWAYS;
-			vector.Breaks = FlowReturns.ALWAYS;
+			vector.Returns = FlowBranching.FlowReturns.Always;
+			vector.Breaks = FlowBranching.FlowReturns.Always;
 			return true;
 		}
 		
@@ -677,8 +677,8 @@ namespace Mono.CSharp {
 			if (!label.IsDefined)
 				label.AddUsageVector (ec.CurrentBranching.CurrentUsageVector);
 
-			ec.CurrentBranching.CurrentUsageVector.Breaks = FlowReturns.ALWAYS;
-			ec.CurrentBranching.CurrentUsageVector.Returns = FlowReturns.ALWAYS;
+			ec.CurrentBranching.CurrentUsageVector.Breaks = FlowBranching.FlowReturns.Always;
+			ec.CurrentBranching.CurrentUsageVector.Returns = FlowBranching.FlowReturns.Always;
 
 			return true;
 		}
@@ -755,8 +755,8 @@ namespace Mono.CSharp {
 			if (vectors != null)
 				ec.CurrentBranching.CurrentUsageVector.MergeJumpOrigins (vectors);
 			else {
-				ec.CurrentBranching.CurrentUsageVector.Breaks = FlowReturns.NEVER;
-				ec.CurrentBranching.CurrentUsageVector.Returns = FlowReturns.NEVER;
+				ec.CurrentBranching.CurrentUsageVector.Breaks = FlowBranching.FlowReturns.Never;
+				ec.CurrentBranching.CurrentUsageVector.Returns = FlowBranching.FlowReturns.Never;
 			}
 
 			referenced = true;
@@ -786,8 +786,8 @@ namespace Mono.CSharp {
 
 		public override bool Resolve (EmitContext ec)
 		{
-			ec.CurrentBranching.CurrentUsageVector.Breaks = FlowReturns.ALWAYS;
-			ec.CurrentBranching.CurrentUsageVector.Returns = FlowReturns.ALWAYS;
+			ec.CurrentBranching.CurrentUsageVector.Breaks = FlowBranching.FlowReturns.Always;
+			ec.CurrentBranching.CurrentUsageVector.Returns = FlowBranching.FlowReturns.Always;
 			return true;
 		}
 
@@ -853,8 +853,8 @@ namespace Mono.CSharp {
 
 			label = sl.ILLabelCode;
 
-			ec.CurrentBranching.CurrentUsageVector.Breaks = FlowReturns.UNREACHABLE;
-			ec.CurrentBranching.CurrentUsageVector.Returns = FlowReturns.ALWAYS;
+			ec.CurrentBranching.CurrentUsageVector.Breaks = FlowBranching.FlowReturns.Unreachable;
+			ec.CurrentBranching.CurrentUsageVector.Returns = FlowBranching.FlowReturns.Always;
 			return true;
 		}
 
@@ -901,8 +901,8 @@ namespace Mono.CSharp {
 				}
 			}
 
-			ec.CurrentBranching.CurrentUsageVector.Returns = FlowReturns.EXCEPTION;
-			ec.CurrentBranching.CurrentUsageVector.Breaks = FlowReturns.EXCEPTION;
+			ec.CurrentBranching.CurrentUsageVector.Returns = FlowBranching.FlowReturns.Exception;
+			ec.CurrentBranching.CurrentUsageVector.Breaks = FlowBranching.FlowReturns.Exception;
 			return true;
 		}
 			
@@ -938,7 +938,7 @@ namespace Mono.CSharp {
 		public override bool Resolve (EmitContext ec)
 		{
 			ec.CurrentBranching.MayLeaveLoop = true;
-			ec.CurrentBranching.CurrentUsageVector.Breaks = FlowReturns.ALWAYS;
+			ec.CurrentBranching.CurrentUsageVector.Breaks = FlowBranching.FlowReturns.Always;
 			return true;
 		}
 
@@ -969,7 +969,7 @@ namespace Mono.CSharp {
 
 		public override bool Resolve (EmitContext ec)
 		{
-			ec.CurrentBranching.CurrentUsageVector.Breaks = FlowReturns.ALWAYS;
+			ec.CurrentBranching.CurrentUsageVector.Breaks = FlowBranching.FlowReturns.Always;
 			return true;
 		}
 
@@ -1000,227 +1000,6 @@ namespace Mono.CSharp {
 			else
 				ec.ig.Emit (OpCodes.Br, begin);
 			return false;
-		}
-	}
-
-	// <summary>
-	//   This is used in the control flow analysis code to specify whether the
-	//   current code block may return to its enclosing block before reaching
-	//   its end.
-	// </summary>
-	public enum FlowReturns {
-		// It can never return.
-		NEVER,
-
-		// This means that the block contains a conditional return statement
-		// somewhere.
-		SOMETIMES,
-
-		// The code always returns, ie. there's an unconditional return / break
-		// statement in it.
-		ALWAYS,
-
-		// The code always throws an exception.
-		EXCEPTION,
-
-		// The current code block is unreachable.  This happens if it's immediately
-		// following a FlowReturns.ALWAYS block.
-		UNREACHABLE
-	}
-
-	// <summary>
-	//   This is a special bit vector which can inherit from another bit vector doing a
-	//   copy-on-write strategy.  The inherited vector may have a smaller size than the
-	//   current one.
-	// </summary>
-	public class MyBitVector {
-		public readonly int Count;
-		public readonly MyBitVector InheritsFrom;
-
-		bool is_dirty;
-		BitArray vector;
-
-		public MyBitVector (int Count)
-			: this (null, Count)
-		{ }
-
-		public MyBitVector (MyBitVector InheritsFrom, int Count)
-		{
-			this.InheritsFrom = InheritsFrom;
-			this.Count = Count;
-		}
-
-		// <summary>
-		//   Checks whether this bit vector has been modified.  After setting this to true,
-		//   we won't use the inherited vector anymore, but our own copy of it.
-		// </summary>
-		public bool IsDirty {
-			get {
-				return is_dirty;
-			}
-
-			set {
-				if (!is_dirty)
-					initialize_vector ();
-			}
-		}
-
-		// <summary>
-		//   Get/set bit `index' in the bit vector.
-		// </summary>
-		public bool this [int index]
-		{
-			get {
-				if (index > Count)
-					throw new ArgumentOutOfRangeException ();
-
-				// We're doing a "copy-on-write" strategy here; as long
-				// as nobody writes to the array, we can use our parent's
-				// copy instead of duplicating the vector.
-
-				if (vector != null)
-					return vector [index];
-				else if (InheritsFrom != null) {
-					BitArray inherited = InheritsFrom.Vector;
-
-					if (index < inherited.Count)
-						return inherited [index];
-					else
-						return false;
-				} else
-					return false;
-			}
-
-			set {
-				if (index > Count)
-					throw new ArgumentOutOfRangeException ();
-
-				// Only copy the vector if we're actually modifying it.
-
-				if (this [index] != value) {
-					initialize_vector ();
-
-					vector [index] = value;
-				}
-			}
-		}
-
-		// <summary>
-		//   If you explicitly convert the MyBitVector to a BitArray, you will get a deep
-		//   copy of the bit vector.
-		// </summary>
-		public static explicit operator BitArray (MyBitVector vector)
-		{
-			vector.initialize_vector ();
-			return vector.Vector;
-		}
-
-		// <summary>
-		//   Performs an `or' operation on the bit vector.  The `new_vector' may have a
-		//   different size than the current one.
-		// </summary>
-		public void Or (MyBitVector new_vector)
-		{
-			BitArray new_array = new_vector.Vector;
-
-			initialize_vector ();
-
-			int upper;
-			if (vector.Count < new_array.Count)
-				upper = vector.Count;
-			else
-				upper = new_array.Count;
-
-			for (int i = 0; i < upper; i++)
-				vector [i] = vector [i] | new_array [i];
-		}
-
-		// <summary>
-		//   Perfonrms an `and' operation on the bit vector.  The `new_vector' may have
-		//   a different size than the current one.
-		// </summary>
-		public void And (MyBitVector new_vector)
-		{
-			BitArray new_array = new_vector.Vector;
-
-			initialize_vector ();
-
-			int lower, upper;
-			if (vector.Count < new_array.Count)
-				lower = upper = vector.Count;
-			else {
-				lower = new_array.Count;
-				upper = vector.Count;
-			}
-
-			for (int i = 0; i < lower; i++)
-				vector [i] = vector [i] & new_array [i];
-
-			for (int i = lower; i < upper; i++)
-				vector [i] = false;
-		}
-
-		// <summary>
-		//   This does a deep copy of the bit vector.
-		// </summary>
-		public MyBitVector Clone ()
-		{
-			MyBitVector retval = new MyBitVector (Count);
-
-			retval.Vector = Vector;
-
-			return retval;
-		}
-
-		BitArray Vector {
-			get {
-				if (vector != null)
-					return vector;
-				else if (!is_dirty && (InheritsFrom != null))
-					return InheritsFrom.Vector;
-
-				initialize_vector ();
-
-				return vector;
-			}
-
-			set {
-				initialize_vector ();
-
-				for (int i = 0; i < System.Math.Min (vector.Count, value.Count); i++)
-					vector [i] = value [i];
-			}
-		}
-
-		void initialize_vector ()
-		{
-			if (vector != null)
-				return;
-
-			vector = new BitArray (Count, false);
-			if (InheritsFrom != null)
-				Vector = InheritsFrom.Vector;
-
-			is_dirty = true;
-		}
-
-		public override string ToString ()
-		{
-			StringBuilder sb = new StringBuilder ("MyBitVector (");
-
-			BitArray vector = Vector;
-			sb.Append (Count);
-			sb.Append (",");
-			if (!IsDirty)
-				sb.Append ("INHERITED - ");
-			for (int i = 0; i < vector.Count; i++) {
-				if (i > 0)
-					sb.Append (",");
-				sb.Append (vector [i]);
-			}
-			
-			sb.Append (")");
-			return sb.ToString ();
 		}
 	}
 
@@ -1952,12 +1731,12 @@ namespace Mono.CSharp {
 
 			Report.Debug (1, "RESOLVE BLOCK DONE", StartLocation, ec.CurrentBranching);
 
-			FlowReturns returns = ec.EndFlowBranching ();
+			FlowBranching.FlowReturns returns = ec.EndFlowBranching ();
 			ec.CurrentBlock = prev_block;
 
 			// If we're a non-static `struct' constructor which doesn't have an
 			// initializer, then we must initialize all of the struct's fields.
-			if ((this_variable != null) && (returns != FlowReturns.EXCEPTION) &&
+			if ((this_variable != null) && (returns != FlowBranching.FlowReturns.Exception) &&
 			    !this_variable.IsThisAssigned (ec, loc))
 				ok = false;
 
@@ -1968,9 +1747,9 @@ namespace Mono.CSharp {
 								"This label has not been referenced");
 			}
 
-			if ((returns == FlowReturns.ALWAYS) ||
-			    (returns == FlowReturns.EXCEPTION) ||
-			    (returns == FlowReturns.UNREACHABLE))
+			if ((returns == FlowBranching.FlowReturns.Always) ||
+			    (returns == FlowBranching.FlowReturns.Exception) ||
+			    (returns == FlowBranching.FlowReturns.Unreachable))
 				flags |= Flags.HasRet;
 
 			return ok;
@@ -2767,7 +2546,7 @@ namespace Mono.CSharp {
 			bool first = true;
 			foreach (SwitchSection ss in Sections){
 				if (!first)
-					ec.CurrentBranching.CreateSibling ();
+					ec.CurrentBranching.CreateSibling (FlowBranching.SiblingType.SwitchSection);
 				else
 					first = false;
 
@@ -2777,7 +2556,7 @@ namespace Mono.CSharp {
 
 
 			if (!got_default)
-				ec.CurrentBranching.CreateSibling ();
+				ec.CurrentBranching.CreateSibling (FlowBranching.SiblingType.SwitchSection);
 
 			ec.EndFlowBranching ();
 			ec.Switch = old_switch;
@@ -3327,7 +3106,7 @@ namespace Mono.CSharp {
 			Report.Debug (1, "START OF CATCH BLOCKS", vector);
 
 			foreach (Catch c in Specific){
-				ec.CurrentBranching.CreateSibling ();
+				ec.CurrentBranching.CreateSibling (FlowBranching.SiblingType.Catch);
 				Report.Debug (1, "STARTED SIBLING FOR CATCH", ec.CurrentBranching);
 
 				if (c.Name != null) {
@@ -3357,7 +3136,7 @@ namespace Mono.CSharp {
 			Report.Debug (1, "END OF CATCH BLOCKS", ec.CurrentBranching);
 
 			if (General != null){
-				ec.CurrentBranching.CreateSibling ();
+				ec.CurrentBranching.CreateSibling (FlowBranching.SiblingType.Catch);
 				Report.Debug (1, "STARTED SIBLING FOR GENERAL", ec.CurrentBranching);
 
 				bool old_in_catch = ec.InCatch;
@@ -3380,7 +3159,7 @@ namespace Mono.CSharp {
 
 			if (Fini != null) {
 				if (ok)
-					ec.CurrentBranching.CreateSiblingForFinally ();
+					ec.CurrentBranching.CreateSibling (FlowBranching.SiblingType.Finally);
 				Report.Debug (1, "STARTED SIBLING FOR FINALLY", ec.CurrentBranching, vector);
 
 				bool old_in_finally = ec.InFinally;
@@ -3392,13 +3171,13 @@ namespace Mono.CSharp {
 				ec.InFinally = old_in_finally;
 			}
 
-			FlowReturns returns = ec.EndFlowBranching ();
+			FlowBranching.FlowReturns returns = ec.EndFlowBranching ();
 
 			FlowBranching.UsageVector f_vector = ec.CurrentBranching.CurrentUsageVector;
 
 			Report.Debug (1, "END OF FINALLY", ec.CurrentBranching, returns, vector, f_vector);
 
-			if ((returns == FlowReturns.SOMETIMES) || (returns == FlowReturns.ALWAYS)) {
+			if ((returns == FlowBranching.FlowReturns.Sometimes) || (returns == FlowBranching.FlowReturns.Always)) {
 				ec.CurrentBranching.CheckOutParameters (f_vector.Parameters, loc);
 			}
 
@@ -3406,7 +3185,7 @@ namespace Mono.CSharp {
 
 			Report.Debug (1, "END OF TRY", ec.CurrentBranching);
 
-			if (returns != FlowReturns.ALWAYS) {
+			if (returns != FlowBranching.FlowReturns.Always) {
 				// Unfortunately, System.Reflection.Emit automatically emits a leave
 				// to the end of the finally block.  This is a problem if `returns'
 				// is true since we may jump to a point after the end of the method.
@@ -3741,7 +3520,7 @@ namespace Mono.CSharp {
 			}
 
 			ec.StartFlowBranching (FlowBranching.BranchingType.LoopBlock, loc);
-			ec.CurrentBranching.CreateSibling ();
+			ec.CurrentBranching.CreateSibling (FlowBranching.SiblingType.Conditional);
 
  			//
 			//
@@ -3762,7 +3541,7 @@ namespace Mono.CSharp {
 			if (!statement.Resolve (ec))
 				return false;
 
-			FlowReturns returns = ec.EndFlowBranching ();
+			FlowBranching.FlowReturns returns = ec.EndFlowBranching ();
 
 			return true;
 		}
