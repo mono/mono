@@ -687,6 +687,38 @@ propDecl                : D_SET callConv type typeSpec DOUBLE_COLON methodName O
 			| languageDecl
 			;
 
+method_ref		: internal_method_ref
+			| external_method_ref
+			;
+
+internal_method_ref	: type_ref internal_type_ref DOUBLE_COLON name1 OPEN_PARENS arg_list CLOSE_PARENS
+			  {	
+				TypeRef parent, return_type;
+				parent = (TypeRef) $2;
+				return_type = (TypeRef) $1;
+
+				Param[] param_array;
+				TypeRef[] typeref_array;
+				if ($6 != null) {
+					ArrayList param_list = $6 as ArrayList;
+					int index = 0;
+					param_array = new Param[param_list.Count];
+					typeref_array = new TypeRef[param_list.Count];
+					foreach (DictionaryEntry entry in param_list) {
+						param_array[index] = entry.Key as Param;
+						typeref_array[index] = entry.Value as TypeRef;
+						index++;
+					}
+				} else {
+					param_array = new Param[0];
+					typeref_array = new TypeRef[0];
+				}
+			
+				$$ = codegen.GetMethodRef (parent, (string) $4, return_type, param_array, 
+					typeref_array, null);
+			  }
+			;			
+
 
 methodHead              : D_METHOD methAttr callConv type_ref methodName 
 				OPEN_PARENS arg_list CLOSE_PARENS implAttr OPEN_BRACE 
@@ -1008,17 +1040,9 @@ instr                   : INSTR_NONE
 			| instr_r_head bytes CLOSE_PARENS 
 			| INSTR_BRTARGET int32  
 			| INSTR_BRTARGET id 
-			| INSTR_METHOD binding_flags type type_ref DOUBLE_COLON call_name OPEN_PARENS arg_list CLOSE_PARENS 
+			| INSTR_METHOD method_ref 
 			  {
-				/*
-				if (OpCodes.Call.Equals ((OpCode)$1) || OpCodes.Callvirt.Equals ((OpCode)$1)) {
-					currentInstr = new InstrCall ((OpCode) $1, (string)$2, (string)$3, 
-						(string)$4, (string)$6, $8 as ArrayList);
-				} else if (OpCodes.Newobj.Equals ((OpCode)$1)) {
-					currentInstr = new InstrNewobj ((OpCode) $1, (string)$2, (string)$3, 
-						(string)$4, (string)$6, $8 as ArrayList);
-				}
-				*/			
+				codegen.CodeBuffer.MethInst ((MethodOp) $1, (Method) $2);		
 			  }
 
 					
@@ -1079,6 +1103,10 @@ arg_list
 		$$ = arg_list;
 	  }
 	;
+
+param_name		: /* EMPTY */
+			| name1
+			;
 
 named_arg
 	: type_ref ID
