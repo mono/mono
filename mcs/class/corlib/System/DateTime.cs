@@ -52,23 +52,45 @@ namespace System
 		public static readonly DateTime MaxValue = new DateTime (false, MAX_VALUE_TICKS);
 		public static readonly DateTime MinValue = new DateTime (false, 0);
 
-		private static readonly string[] formats = {
+		private static readonly string[] commonFormats = {
 			// For compatibility with MS's CLR, this format (which
 			// doesn't have a one-letter equivalent) is parsed
 			// too. It's important because it's used in XML
 			// serialization.
-			// FIXME: We should use GetAllDateTimePatterns() and
-			// fill the complete pattern tables.
+
+			// Note that those format should be tried only for
+			// invalid patterns; 
+
+			// FIXME: SOME OF those patterns looks tried against 
+			// the current culture, since some patterns fail in 
+			// some culture.
+
+			"yyyy-MM-dd",
 			"yyyy-MM-ddTHH:mm:sszzz",
-			// Fix for bug #58938
-			"yyyy-MM-dd HH:mm:ss",
+			// UTC / allow any separator
+			"yyyy/MM/ddTHH:mm:ssZ",
+			// bug #58938
+			"yyyy/MM/dd HH:mm:ss",
+			// bug #47720
 			"yyyy/MM/dd HH:mm:ss 'GMT'",
-			// Fix for bug #47720
-			"yyyy-MM-dd HH:mm:ss 'GMT'",
+			// Close to RFC1123, but without 'GMT'
+			"ddd, d MMM yyyy HH:mm:ss",
+			// use UTC ('Z'; not literal "'Z'")
+			// FIXME: 1078(af-ZA) and 1079(ka-GE) reject it
+			"yyyy/MM/dd HH':'mm':'ssZ", 
+
 			// DayOfTheWeek, dd full_month_name yyyy
+			// FIXME: 1054(th-TH) rejects it
 			"dddd, dd MMMM yyyy",
-			// DayOfTheWeek, dd yyyy
+			// DayOfTheWeek, dd yyyy. This works for every locales.
 			"MMMM dd, yyyy",
+#if NET_1_1
+			// X509Certificate pattern is accepted by Parse() *in every culture*
+			"yyyyMMddHHmmssZ",
+#endif
+			// In Parse() the 'r' equivalent pattern is first parsed as universal time
+			"ddd, dd MMM yyyy HH':'mm':'ss 'GMT'",
+/*
 			// Full date and time
 			"F", "G", "r", "s", "u", "U",
 			// Full date and time, but no seconds
@@ -81,6 +103,7 @@ namespace System
 			"m",
 			// Only date, but no day
 			"y" 
+*/
 		};
 
 		private enum Which 
@@ -595,7 +618,7 @@ namespace System
 		{
 			// This method should try only expected patterns. 
 			// Should not try extra patterns.
-			// Right now we also tries InvariantCulture, but I
+			// Right now we also try InvariantCulture, but I
 			// confirmed in some cases this method rejects what
 			// InvariantCulture supports (can be checked against
 			// "th-TH" with Gregorian Calendar). So basically it
@@ -611,25 +634,20 @@ namespace System
 			if (fp == null)
 				fp = CultureInfo.CurrentCulture;
 			DateTimeFormatInfo dfi = DateTimeFormatInfo.GetInstance (fp);
-			string [] formats = dfi.GetAllDateTimePatterns ();
 
-			if (ParseExact (s, formats, dfi, styles, out result))
+			// Try common formats.
+			if (ParseExact (s, commonFormats, dfi, styles, out result, false))
 				return result;
 
-			// Also try CurrentCulture + its supported formats.
-			fp = CultureInfo.CurrentCulture;
-			dfi = DateTimeFormatInfo.GetInstance (fp);
-			formats = dfi.GetAllDateTimePatterns ();
-
-			if (ParseExact (s, formats, dfi, styles, out result))
+			// Try common formats, also with invariant culture
+			if (ParseExact (s, commonFormats, DateTimeFormatInfo.InvariantInfo, styles, out result, false))
 				return result;
 
-			// Also try InvariantCulture + our custom formats.
-			fp = CultureInfo.InvariantCulture;
-			dfi = DateTimeFormatInfo.GetInstance (fp);
-			formats = DateTime.formats;//dfi.GetAllDateTimePatterns ();
 
-			if (ParseExact (s, formats, dfi, styles, out result))
+			// Next, try all the patterns
+			string [] patterns = new string [] {"d", "D", "g", "G", "f", "F", "m", "M", "r", "R", "s", "t", "T", "u", "U", "y", "Y"};
+
+			if (ParseExact (s, patterns, dfi, styles, out result, false))
 				return result;
 
 			throw new FormatException ();
@@ -730,10 +748,12 @@ namespace System
 					       DateTimeStyles style)
 		{
 			bool useutc = false, use_localtime = true;
+			bool use_invariant = false;
 			bool sloppy_parsing = false;
-
 			if (format.Length == 1)
-				format = _GetStandardPattern (format[0], dfi, out useutc);
+				format = _GetStandardPattern (format[0], dfi, out useutc, out use_invariant);
+			else if (!exact && format.IndexOf ("GMT") >= 0)
+				useutc = true;
 
 			if ((style & DateTimeStyles.AllowLeadingWhite) != 0) {
 				format = format.TrimStart (null);
@@ -746,13 +766,11 @@ namespace System
 				s = s.TrimEnd (null);
 			}
 
-			// FIXME: it should be done in another place
-			if (format.EndsWith ("'GMT'"))
-				useutc = true;
+			if (use_invariant)
+				dfi = DateTimeFormatInfo.InvariantInfo;
 
 			if ((style & DateTimeStyles.AllowInnerWhite) != 0)
 				sloppy_parsing = true;
-//Console.WriteLine ("** Trying '{1}' as '{0}'", format, s);
 
 			char[] chars = format.ToCharArray ();
 			int len = format.Length, pos = 0, num = 0;
@@ -1052,23 +1070,22 @@ namespace System
 						num = 2;
 					}
 					break;
+
 				// LAMESPEC: This should be part of UTCpattern
 				// string and thus should not be considered here.
+				//
 				// Note that 'Z' is not defined as a pattern
-				// character. Keep it for certificate
-				// verification  right now.
+				// character. Keep it for X509 certificate
+				// verification. Also, "Z" != "'Z'" under MS.NET
+				// ("'Z'" is just literal; handled above)
 				case 'Z':
 					useutc = true;
 					s = s.Substring (1);
 					break;
+
 				case ':':
 					if (!_ParseString (s, 0, dfi.TimeSeparator, out num_parsed))
 						return false;
-					break;
-				case '-':
-					if (!_ParseString (s, 0, new String('-', num + 1), out num_parsed)) {
-						return false;
-					}
 					break;
 				case '/':
 					/* Accept any character for
@@ -1079,6 +1096,8 @@ namespace System
 					 * behaviour here.  See bug
 					 * 54047.
 					 */
+					if (exact && s [0] != '/')
+						return false;
 					if (_ParseString (s, 0,
 							  dfi.TimeSeparator,
 							  out num_parsed) ||
@@ -1094,8 +1113,18 @@ namespace System
 					
 					break;
 				default:
-					if (s[0] != chars[pos])
-						return false;
+					if (s[0] != chars[pos]) {
+						// FIXME: It is not sure, but
+						// IsLetter() is introduced 
+						// because we have to reject 
+						// "2002a02b25" but have to
+						// allow "2002$02$25". The same
+						// thing applies to '/' case.
+						if (exact ||
+							Char.IsDigit (s [0]) ||
+							Char.IsLetter (s [0]))
+							return false;
+					}
 					num = 0;
 					num_parsed = 1;
 					break;
@@ -1109,6 +1138,9 @@ namespace System
 				pos = pos + num + 1;
 				num = 0;
 			}
+
+			if (pos < chars.Length)
+				return false;
 
 			if (s.Length != 0) // extraneous tail.
 				return false;
@@ -1163,7 +1195,7 @@ namespace System
 
 			result = new DateTime (year, month, day, hour, minute, second, millisecond);
 
-//Console.WriteLine ("**** useutc? {0} format {1} s {2}", useutc, format, s);
+//Console.WriteLine ("**** Parsed as {1} {0} {2}", new object [] {useutc ? "[u]" : "", format, use_localtime ? "[lt]" : ""});
 			if ((dayofweek != -1) && (dayofweek != (int) result.DayOfWeek))
 				throw new FormatException (Locale.GetText ("String was not recognized as valid DateTime because the day of week was incorrect."));
 
@@ -1220,20 +1252,20 @@ namespace System
 				throw new ArgumentNullException (Locale.GetText ("format is null"));
 
 			DateTime result;
-			if (!ParseExact (s, formats, dfi, style, out result))
+			if (!ParseExact (s, formats, dfi, style, out result, true))
 				throw new FormatException ();
 			return result;
 		}
 		
 		private static bool ParseExact (string s, string [] formats,
-			DateTimeFormatInfo dfi, DateTimeStyles style, out DateTime ret)
+			DateTimeFormatInfo dfi, DateTimeStyles style, out DateTime ret, bool exact)
 		{
 			int i;
 			for (i = 0; i < formats.Length; i++)
 			{
 				DateTime result;
 
-				if (_DoParse (s, formats[i], true, out result, dfi, style)) {
+				if (_DoParse (s, formats[i], exact, out result, dfi, style)) {
 					ret = result;
 					return true;
 				}
@@ -1338,11 +1370,12 @@ namespace System
 			return ToString (format, null);
 		}
 
-		internal static string _GetStandardPattern (char format, DateTimeFormatInfo dfi, out bool useutc)
+		internal static string _GetStandardPattern (char format, DateTimeFormatInfo dfi, out bool useutc, out bool use_invariant)
 		{
 			String pattern;
 
 			useutc = false;
+			use_invariant = true;
 
 			switch (format)
 			{
@@ -1373,7 +1406,8 @@ namespace System
 				pattern = dfi.RFC1123Pattern;
 				// commented by LP 09/jun/2002, rfc 1123 pattern is always in GMT
 				// uncommented by AE 27/may/2004
-				useutc= true;
+//				useutc = true;
+				use_invariant = true;
 				break;
 			case 's':
 				pattern = dfi.SortableDateTimePattern;
@@ -1646,13 +1680,15 @@ namespace System
 			if (format == null)
 				format = "G";
 
-			bool useutc = false;
+			bool useutc = false, use_invariant = false;
 
 			if (format.Length == 1) {
 				char fchar = format [0];
-				format = _GetStandardPattern (fchar, dfi, out useutc);
+				format = _GetStandardPattern (fchar, dfi, out useutc, out use_invariant);
 			}
 
+			// Don't convert UTC value. It just adds 'Z' for 
+			// 'u' format, for the same ticks.
 			return this._ToString (format, dfi);
 		}
 

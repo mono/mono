@@ -1,3 +1,29 @@
+2004-06-08  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DateTime.cs :
+	  - Now re-checked all common format patterns. They should be tried
+	    with both current culture and invariant culture. Since '/' covers
+	    '-', removed extraneous patterns. Added more common patterns
+	    such as "yyyy-MM-dd" and X509Certificate pattern (it is valid
+	    only after NET_1_1). Commented out 1 character format patterns.
+	  - The format patterns we should try should not be obtained by
+	    GetAllDateTimePatterns(). Just use 'd', 'D', 't', 'T', ... (one
+	    character patterns), to handle UTC correctly. Examined patterns
+	    are changed, to 1) common patterns with specified (or current)
+	    culture, 2) common patterns with invariant, 3) The above "one
+	    character patterns" with specified (or current) culture.
+	  - When trying to parse some kind of patterns such as RFC1123, 
+	    always use invariant DateTimeFormatInfo so that they can avoid
+	    parsing with culture-dependent calendar.
+	  - Check "GMT" only when doing Parse(). Don't it when ParseExact().
+	  - Removed extraneous '-' case. It is not special one.
+	  - When ParseExact(), allow only '/' for '/' pattern character.
+	  - When Parse(), allow any non-letter & non-number characters.
+	  - When pattern is not fully parsed, reject that format.
+	  - Added "exact" parameter to some ParseExact().
+	  - RFC1123 pattern is (again) now parsed in local time. I regressed
+	    some problems in previous fix.
+
 2004-06-08  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Decimal.cs: Fixed cast to integer types to truncate (not round) the
