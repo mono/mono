@@ -1,3 +1,9 @@
+2004-07-12  Martin Baulig  <martin@ximian.com>
+
+	Merged latest changes into gmcs.  Please keep this comment in
+	here, it makes it easier for me to see what changed in MCS since
+	the last time I merged.
+
 2004-07-14  Martin Baulig  <martin@ximian.com>
 
 	* iterator.cs (IteratorHandle.IsIEnumerable): The spec explicitly
@@ -13,12 +19,6 @@
 
 	* enum.cs (Enum.Define): Call Emit() to emit the attributes.
 	Fixes #61293.
-
-2004-07-12  Martin Baulig  <martin@ximian.com>
-
-	Merged latest changes into gmcs.  Please keep this comment in
-	here, it makes it easier for me to see what changed in MCS since
-	the last time I merged.
 
 2004-07-09  Miguel de Icaza  <miguel@ximian.com>
 
