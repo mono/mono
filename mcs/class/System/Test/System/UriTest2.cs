@@ -119,7 +119,7 @@ TextWriter sw = Console.Out;
 						sr.ReadLine (),
 						sr.ReadLine ());
 //				Console.WriteLine ("Passed: " + uriString);
-				} catch (Exception ex) {
+				} catch (UriFormatException ex) {
 					Fail (String.Format ("Construction failed: [{0}] {1}", uriString, ex.Message));
 				}
 			}

@@ -1,3 +1,12 @@
+2004-06-11  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* test-uri-list.txt,
+	  test-uri-props.txt,
+	  test-uri-props-manual.txt :
+	  Reverted the last change. File URI handling should be common to 
+	  MS.NET. We have to change the behavior only for Unix file path.
+	* UriTest2.cs : Fixed just catch only UriFormatException.
+
 2004-06-10  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* UriTest.cs : Should not expect exception for Unix file path.

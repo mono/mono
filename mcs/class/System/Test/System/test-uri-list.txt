@@ -90,6 +90,9 @@ file:///c:/name%20with%20space.txt
 # Below should be allowed
 http://localhost/c#
 http://localhost/c#bookmark
+file://localhost/c#fragment
+file://test.domain.com/c#
+file://test.domain.com/c#bookmark
 //localhost/c#
 # below should not be allowed ...
 file://c:/c#
