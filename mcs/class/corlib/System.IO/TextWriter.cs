@@ -38,14 +38,14 @@ namespace System.IO {
 	public abstract class TextWriter : MarshalByRefObject, IDisposable {
                 
                 protected TextWriter() {
-			CoreNewLine = System.Environment.NewLine;
+			CoreNewLine = System.Environment.NewLine.ToCharArray ();
 		}
                 
                 protected TextWriter( IFormatProvider formatProvider ) {
                         internalFormatProvider = formatProvider;
                 }
 
-                protected string CoreNewLine;
+                protected char[] CoreNewLine;
 
                 internal IFormatProvider internalFormatProvider;
 
@@ -61,11 +61,14 @@ namespace System.IO {
 
                 public virtual string NewLine { 
                         get {
-                                return CoreNewLine;
+                                return new string(CoreNewLine);
                         }
                         
                         set {
-                                CoreNewLine = value;
+				if (value == null)
+					value = Environment.NewLine;
+
+				CoreNewLine = value.ToCharArray();
                         }
                 }
 

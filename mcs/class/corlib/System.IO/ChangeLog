@@ -1,3 +1,12 @@
+2004-06-15  Gert Driesen <drieseng@users.sourceforge.net>
+
+	* MemoryStream.cs: added TODO for serialization
+	* StringWriter.cs: added TODO for serialization
+
+2004-06-15  Gert Driesen <drieseng@users.sourceforge.net>
+
+	* TextWriter.cs: fixed CoreNewLine to return char[]
+
 2004-06-14  Dick Porter  <dick@ximian.com>
 
 	* Directory.cs:

@@ -37,7 +37,8 @@ using System.Text;
 namespace System.IO {
 
 	[Serializable]
-        public class StringWriter : TextWriter {
+	[MonoTODO ("Fix serialization compatibility with MS.NET")]
+	public class StringWriter : TextWriter {
                 
                 private StringBuilder internalString;
 		private bool disposed = false;

@@ -39,6 +39,7 @@ using System.Runtime.InteropServices;
 namespace System.IO
 {
 	[Serializable]
+	[MonoTODO ("Fix serialization compatibility with MS.NET")]
 	public class MemoryStream : Stream
 	{
 		bool canWrite;
