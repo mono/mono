@@ -46,10 +46,43 @@ namespace Font1Sample {
 				break;				
 			}
 			
-			str+="fmt: ";
+			switch (format.Trimming) {
+			case StringTrimming.Character:
+				str += "trimm: Char - ";
+				break;
+			case StringTrimming.EllipsisCharacter:
+				str += "trimm: EllipsisChar - ";
+				break;
+			case StringTrimming.EllipsisPath:
+				str += "trimm: EllipsisPath - ";
+				break;
+			case StringTrimming.EllipsisWord:
+				str += "trimm: EllipsisWord - ";
+				break;
+			case StringTrimming.None:
+				str += "trimm: None - ";
+				break;				
+			case StringTrimming.Word:
+				str += "trimm: Word - ";
+				break;								
+			default:
+				break;				
+			}			
 			
-			if (format.FormatFlags==StringFormatFlags.NoWrap) str+="NoWarp ";
-			if (format.FormatFlags==StringFormatFlags.DirectionVertical) str+="DirVer ";
+			switch (format.FormatFlags) {
+			case StringFormatFlags.NoWrap:
+				str+="fmt: NoWrap";
+				break;
+			case StringFormatFlags.DirectionVertical:
+				str+="fmt: DirVer ";
+				break;
+			case StringFormatFlags.DirectionRightToLeft:
+				str+="fmt: rtl ";
+				break;
+			
+			default:
+				break;				
+			}
 			
 			return str;	
 		}
@@ -61,8 +94,8 @@ namespace Font1Sample {
 		
 		public static void Main( ) 
 		{						
-			float width = 700.0F;
-			float height = 600.0F;
+			float width = 750.0F;
+			float height = 1000.0F;
 			string str;
 			int chars = 0;
 			int lines = 0;
@@ -119,8 +152,7 @@ namespace Font1Sample {
 			strfmt6.Alignment = StringAlignment.Far;
 			strfmt6.LineAlignment = StringAlignment.Far;
 			strfmt6.Trimming = StringTrimming.EllipsisCharacter;
-			strfmt6.FormatFlags = StringFormatFlags.NoWrap;
-			
+			strfmt6.FormatFlags = StringFormatFlags.NoWrap;			
 			
 			Rectangle rect1 = new Rectangle (10,50,100,150);
 			Rectangle rect2 = new Rectangle (10,300,150,150);
@@ -148,7 +180,7 @@ namespace Font1Sample {
 			str = "Ara que tinc &vint anys, ara que encara tinc força,que no tinc l'ànima morta, i em sento bullir la sang. (" + f1.Name + ")";			
 			gr.DrawString( str,	f1, new SolidBrush(Color.White), rect1, strfmt1);						
 			gr.DrawString(flagProcessing(strfmt1), fonttxt, brushtxt, calcRect(rect1), strfmttxt);						                                    
-            sz =  gr.MeasureString (str, f1, new SizeF (rect1.Width, rect1.Height), strfmt1, out chars, out lines);                             			                                
+            		sz =  gr.MeasureString (str, f1, new SizeF (rect1.Width, rect1.Height), strfmt1, out chars, out lines);                             			                                
 			Console.WriteLine("MeasureString str1 [" + str + "] " + sz + ";chars:" + chars + " lines:" + lines);
 			
 			str = "Ara que em sento capaç de cantar si un altre canta. Avui que encara tinc veu i encara puc creure en déus (" + f2.Name + ")";
@@ -184,8 +216,114 @@ namespace Font1Sample {
 			str = "Vull plorar amb aquells que es troben tots sols, sense cap amor van passant pel món.. (" + f5.Name + ")";
 			gr.DrawString(str, f5, new SolidBrush(Color.White), rect7, strfmt4);
 			gr.DrawString(flagProcessing(strfmt4), fonttxt, brushtxt, calcRect(rect7), strfmttxt);			
-			sz =  gr.MeasureString (str, f4, new SizeF (rect7.Width, rect7.Height), strfmt5, out chars, out lines);                             			                                			
+			sz =  gr.MeasureString (str, f5, new SizeF (rect7.Width, rect7.Height), strfmt5, out chars, out lines);                             			                                			
 			Console.WriteLine("MeasureString str7 [" + str + "] " + sz + ";chars:" + chars + " lines:" + lines);			
+			
+			/* 3rd row */			
+			
+			Font f8  = new Font("Verdana", 10);			
+			Font f9  = new Font("Verdana", 6);		
+			Font f10  = new Font("Verdana", 12);		
+			Font f11  = new Font("Verdana", 14);		
+			
+			Rectangle rect8 = new Rectangle (10, 550,100,100);			
+			Rectangle rect9 = new Rectangle (150,550, 100,100);			
+			Rectangle rect10 = new Rectangle (300,550, 100,100);			
+			Rectangle rect11 = new Rectangle (420,550, 100,100);			
+			Rectangle rect12 = new Rectangle (530,550, 200,100);			
+			Rectangle rect13 = new Rectangle (530,600, 200,100);			
+			Rectangle rect14 = new Rectangle (530,650, 200,100);			
+			
+			gr.DrawRectangle( new Pen(Color.Yellow), rect8);			
+			gr.DrawRectangle( new Pen(Color.Yellow), rect9);			
+			gr.DrawRectangle( new Pen(Color.Yellow), rect10);			
+			
+			StringFormat strfmt8 = new StringFormat();						
+			strfmt8.Alignment = StringAlignment.Center;
+			strfmt8.LineAlignment = StringAlignment.Near;
+			strfmt8.Trimming = StringTrimming.EllipsisCharacter;
+			strfmt8.HotkeyPrefix = HotkeyPrefix.Show;			
+			
+			StringFormat strfmt9 = new StringFormat();						
+			strfmt9.Alignment = StringAlignment.Center;
+			strfmt9.LineAlignment = StringAlignment.Center;
+			strfmt9.Trimming = StringTrimming.EllipsisCharacter;
+			strfmt9.HotkeyPrefix = HotkeyPrefix.None;			
+			
+			StringFormat strfmt10 = new StringFormat();						
+			strfmt10.Alignment = StringAlignment.Center;
+			strfmt10.LineAlignment = StringAlignment.Near;
+			strfmt10.Trimming = StringTrimming.Word;
+			strfmt10.HotkeyPrefix = HotkeyPrefix.Show;					
+			
+			StringFormat strfmt11 = new StringFormat();						
+			strfmt11.Alignment = StringAlignment.Center;
+			strfmt11.LineAlignment = StringAlignment.Near;
+			strfmt11.Trimming = StringTrimming.Word;
+			strfmt11.HotkeyPrefix = HotkeyPrefix.Show;					
+			strfmt11.FormatFlags = StringFormatFlags.DirectionRightToLeft;
+			
+			StringFormat strfmt12 = new StringFormat();						
+			float[] tabs = {10, 20, 30};
+			strfmt12.Alignment = StringAlignment.Center;
+			strfmt12.LineAlignment = StringAlignment.Near;
+			strfmt12.Trimming = StringTrimming.Word;
+			strfmt12.HotkeyPrefix = HotkeyPrefix.Show;								
+			strfmt12.SetTabStops(20, tabs);
+			
+			StringFormat strfmt13 = new StringFormat();						
+			float[] tabs2 = {5, 50, 60};
+			strfmt13.Alignment = StringAlignment.Center;
+			strfmt13.LineAlignment = StringAlignment.Near;
+			strfmt13.Trimming = StringTrimming.Word;
+			strfmt13.HotkeyPrefix = HotkeyPrefix.Show;											
+			strfmt13.SetTabStops(0, tabs2);
+			
+			StringFormat strfmt14 = new StringFormat();						
+			strfmt14.Alignment = StringAlignment.Center;
+			strfmt14.LineAlignment = StringAlignment.Near;
+			strfmt14.Trimming = StringTrimming.Word;
+			strfmt14.HotkeyPrefix = HotkeyPrefix.Show;								
+			strfmt14.FormatFlags = StringFormatFlags.DirectionRightToLeft;
+			
+			str = "Vull alçar la veu,per cantar als homes que han nascut dempeus (" + f8.Name + ")";
+			gr.DrawString(str, f8, new SolidBrush(Color.White), rect8, strfmt8);
+			gr.DrawString(flagProcessing(strfmt8), fonttxt, brushtxt, calcRect(rect8), strfmttxt);			
+			sz =  gr.MeasureString (str, f8, new SizeF (rect8.Width, rect8.Height), strfmt8, out chars, out lines);                             			                                			
+			gr.DrawRectangle(new Pen(Color.Red), new Rectangle (rect8.X, rect8.Y, (int)sz.Width, (int)sz.Height));			
+			
+			str = "I no tinc l'ànima morta i  em sento bollir la sang (" + f9.Name + ")";
+			gr.DrawString(str, f9, new SolidBrush(Color.White), rect9, strfmt9);
+			gr.DrawString(flagProcessing(strfmt9), fonttxt, brushtxt, calcRect(rect9), strfmttxt);			
+			sz =  gr.MeasureString (str, f9, new SizeF (rect9.Width, rect9.Height), strfmt9, out chars, out lines);                             			                                			
+			gr.DrawRectangle(new Pen(Color.Red), new Rectangle (rect9.X, rect9.Y, (int)sz.Width, (int)sz.Height));			
+			
+			str = "I no tinc l'ànima morta i  em sento bollir la sang (" + f10.Name + ")";
+			gr.DrawString(str, f10, new SolidBrush(Color.White), rect10, strfmt10);
+			gr.DrawString(flagProcessing(strfmt10), fonttxt, brushtxt, calcRect(rect10), strfmttxt);			
+			sz =  gr.MeasureString (str, f10, new SizeF (rect10.Width, rect10.Height), strfmt10, out chars, out lines);                             			                                			
+			gr.DrawRectangle(new Pen(Color.Red), new Rectangle (rect10.X, rect10.Y, (int)sz.Width, (int)sz.Height));			
+			
+			str = "I no tinc l'ànima morta i  em sento bollir la sang (" + f11.Name + ")";
+			gr.DrawString(str, f11, new SolidBrush(Color.White), rect11, strfmt11);
+			gr.DrawString(flagProcessing(strfmt11), fonttxt, brushtxt, calcRect(rect11), strfmttxt);			
+			sz =  gr.MeasureString (str, f11, new SizeF (rect11.Width, rect11.Height), strfmt11, out chars, out lines);                             			                                			
+			gr.DrawRectangle(new Pen(Color.Red), new Rectangle (rect11.X, rect11.Y, (int)sz.Width, (int)sz.Height));			
+			
+			str = "Tab1\tTab2\tTab3";
+			gr.DrawString(str, f8, new SolidBrush(Color.White), rect12, strfmt12);
+			sz =  gr.MeasureString (str, f8, new SizeF (rect12.Width, rect12.Height), strfmt12, out chars, out lines);                             			                                						
+			gr.DrawRectangle(new Pen(Color.Red), new Rectangle (rect12.X, rect12.Y, (int)sz.Width, (int)sz.Height));			
+			
+			str = "Nom\tCognom\tAdreça";
+			gr.DrawString(str, f8, new SolidBrush(Color.White), rect13, strfmt13);
+			sz =  gr.MeasureString (str, f8, new SizeF (rect13.Width, rect13.Height), strfmt13, out chars, out lines);                             			                                						
+			gr.DrawRectangle(new Pen(Color.Red), new Rectangle (rect13.X, rect13.Y, (int)sz.Width, (int)sz.Height));			
+			
+			str = "Nom Cognom Adreça";
+			gr.DrawString(str, f8, new SolidBrush(Color.White), rect14, strfmt14);
+			sz =  gr.MeasureString (str, f8, new SizeF (rect14.Width, rect13.Height), strfmt14, out chars, out lines);                             			                                						
+			gr.DrawRectangle(new Pen(Color.Red), new Rectangle (rect14.X, rect14.Y, (int)sz.Width, (int)sz.Height));			
 			
 			bmp.Save("fontDrawingAdv.bmp", ImageFormat.Bmp);
 			
