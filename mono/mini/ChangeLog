@@ -1,4 +1,7 @@
 2004-07-29  Ben Maurer  <bmaurer@ximian.com>
+	
+	* cpu-pentium.md, mini-x86.c, inssel-x86.brg, mini-ops.h:
+	add opcode for cmp BYTE PTR [eax], imm.
 
 	* inssel.brg: Make memcpy and memset takes bases.
 
