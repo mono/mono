@@ -184,7 +184,7 @@ namespace Mono.Languages
 		public static int Main (string[] args)
 		{
 			Driver Exec = new Driver();
-			
+
 			Exec.MainDriver(args);
 
 			if (Report.Errors == 0) 
@@ -386,7 +386,7 @@ namespace Mono.Languages
 				"System",
 				"System.Data",
 				"System.Xml",
-				"Microsoft.VisualBasic", 
+				"Microsoft.VisualBasic" , 
 #if EXTRA_DEFAULT_REFS
 				//
 				// Is it worth pre-loading all this stuff?
@@ -406,7 +406,7 @@ namespace Mono.Languages
 				"System.ServiceProcess",
 				"System.Web",
 				"System.Web.RegularExpressions",
-				"System.Web.Services",
+				"System.Web.Services" ,
 				"System.Windows.Forms"
 #endif
 			};

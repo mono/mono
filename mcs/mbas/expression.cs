@@ -4074,6 +4074,20 @@ namespace Mono.CSharp {
 				}
 			}
 
+			if (expr is FieldExpr) {
+				// If we are here, expr must be an ArrayAccess
+				// FIXME: we should check dimensions, etc.
+				ArrayList idxs = new ArrayList();
+				foreach (Argument a in Arguments) 
+				{
+					idxs.Add (a.Expr);
+				}
+				ElementAccess ea = new ElementAccess (expr, idxs, expr.Location);
+				ArrayAccess aa = new ArrayAccess (ea, expr.Location);
+				expr_to_return = aa.DoResolve(ec);
+				expr_to_return.eclass = ExprClass.Variable;
+			}
+
 			return expr_to_return;
 		}
 

@@ -1002,6 +1002,50 @@ namespace Mono.CSharp {
 			return false;
 		}
 	}
+	
+	public enum ExitType {
+		DO, 
+		FOR, 
+		WHILE,
+		SELECT,
+		SUB,
+		FUNCTION,
+		PROPERTY,
+		TRY			
+	};
+	
+	public class Exit : Statement {
+		public readonly ExitType type;
+		public Exit (ExitType t, Location l)
+		{
+			loc = l;
+			type = t;
+		}
+
+		public override bool Resolve (EmitContext ec)
+		{
+			ec.CurrentBranching.MayLeaveLoop = true;
+			ec.CurrentBranching.CurrentUsageVector.Breaks = FlowReturns.ALWAYS;
+			return true;
+		}
+
+		protected override bool DoEmit (EmitContext ec)
+		{
+			ILGenerator ig = ec.ig;
+
+			if (ec.InLoop == false && ec.Switch == null){
+				Report.Error (139, loc, "No enclosing loop or switch to continue to");
+				return false;
+			}
+
+			if (ec.InTry || ec.InCatch)
+				ig.Emit (OpCodes.Leave, ec.LoopEnd);
+			else
+				ig.Emit (OpCodes.Br, ec.LoopEnd);
+
+			return false;
+		}
+	}	
 
 	public class Continue : Statement {
 		

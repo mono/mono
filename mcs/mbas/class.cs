@@ -188,13 +188,25 @@ namespace Mono.CSharp {
 		public AdditionResult AddClass (Class c)
 		{
 			AdditionResult res;
-
+			
 			if ((res = IsValid (c.Basename)) != AdditionResult.Success)
 				return res;
-
+				
+	
+					
 			DefineName (c.Name, c);
 			types.Add (c);
-
+			
+			// FIXME: Do we really need to explicitly add an empty default static constructor?
+			if (c.default_static_constructor == null) 
+			{
+				bool isModule = c is Mono.MonoBASIC.Module;
+				Constructor dc = new Constructor ("New", Parameters.EmptyReadOnlyParameters, null, c.Location);
+				dc.ModFlags = isModule ? Modifiers.PUBLIC | Modifiers.STATIC : Modifiers.PUBLIC;				
+				c.AddConstructor (dc);		
+			}
+			// --------------------------------------------------------------				
+				
 			return AdditionResult.Success;
 		}
 
@@ -314,8 +326,8 @@ namespace Mono.CSharp {
 			
 			fields.Add (field);
 			
-			if (field.HasInitializer){
-				if ((field.ModFlags & Modifiers.STATIC) != 0){
+			if (field.HasInitializer){	
+				if ((field.ModFlags & Modifiers.STATIC) != 0) {
 					if (initialized_static_fields == null)
 						initialized_static_fields = new ArrayList ();
 
