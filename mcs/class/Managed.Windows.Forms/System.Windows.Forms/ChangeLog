@@ -1,5 +1,10 @@
 2005-04-01  Jordi Mas i Hernandez <jordi@ximian.com>
 
+	* DataGridTextBoxColumn.cs: fixes signature
+	* DataGrid.cs: calls right constructor
+
+2005-04-01  Jordi Mas i Hernandez <jordi@ximian.com>
+
 	* DataGridTextBoxColumn.cs: implements DataGridTextBoxColumn class
 	* GridColumnStylesCollection.cs: implements GridColumnStylesCollection
 	* GridTableStylesCollection.cs: implements GridTableStylesCollection

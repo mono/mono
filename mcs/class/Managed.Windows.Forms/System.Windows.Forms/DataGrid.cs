@@ -47,7 +47,7 @@ namespace System.Windows.Forms {
 			caption_visible = true;
 			data_member = string.Empty;
 			header_forecolor = Color.Black;
-			table_styles = new GridTableStylesCollection();
+			table_styles = new GridTableStylesCollection (this);
 		}
 		#endregion	// Public Constructors
 

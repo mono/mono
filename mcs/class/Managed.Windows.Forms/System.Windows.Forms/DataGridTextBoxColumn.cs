@@ -91,7 +91,7 @@ namespace System.Windows.Forms
 			}
 		}
 		
-		PropertyDescriptor PropertyDescriptor {
+		public PropertyDescriptor PropertyDescriptor {
 			set { 
 				base.PropertyDescriptor = value;
 			}
