@@ -584,7 +584,7 @@ namespace System.Text.RegularExpressions.Syntax {
 		}
 
 		private Expression ParseCharacterClass (RegexOptions options) {
-			bool negate;
+			bool negate, ecma;
 			if (pattern[ptr] == '^') {
 				negate = true;
 				++ ptr;
@@ -592,6 +592,7 @@ namespace System.Text.RegularExpressions.Syntax {
 			else
 				negate = false;
 			
+			ecma = IsECMAScript (options);
 			CharacterClass cls = new CharacterClass (negate, IsIgnoreCase (options));
 
 			if (pattern[ptr] == ']') {
@@ -625,14 +626,45 @@ namespace System.Text.RegularExpressions.Syntax {
 						switch (c) {
 						case 'b': c = '\b'; break;
 
-						case 'd': cls.AddCategory (Category.Digit, false); last = -1; continue;
-						case 'w': cls.AddCategory (Category.Word, false); last = -1; continue;
-						case 's': cls.AddCategory (Category.WhiteSpace, false); last = -1; continue;
-						case 'p': cls.AddCategory (ParseUnicodeCategory (), true); last = -1; continue;
-						case 'D': cls.AddCategory (Category.Digit, true); last = -1; continue;
-						case 'W': cls.AddCategory (Category.Word, true); last = -1; continue;
-						case 'S': cls.AddCategory (Category.WhiteSpace, true); last = -1; continue;
-						case 'P': cls.AddCategory (ParseUnicodeCategory (), true); last = -1; continue;
+						case 'd':
+							cls.AddCategory (ecma ? Category.EcmaDigit : Category.Digit, false);
+							last = -1;
+							continue;
+							
+						case 'w':
+							cls.AddCategory (ecma ? Category.EcmaWord : Category.Word, false);
+							last = -1;
+							continue;
+							
+						case 's':
+							cls.AddCategory (ecma ? Category.EcmaWhiteSpace : Category.WhiteSpace, false);
+							last = -1;
+							continue;
+							
+						case 'p':
+							cls.AddCategory (ParseUnicodeCategory (), false);	// ignore ecma
+							last = -1;
+							continue;
+							
+						case 'D':
+							cls.AddCategory (ecma ? Category.EcmaDigit : Category.Digit, true);
+							last = -1;
+							continue;
+							
+						case 'W':
+							cls.AddCategory (ecma ? Category.EcmaWord : Category.Word, true);
+							last = -1;
+							continue;
+							
+						case 'S':
+							cls.AddCategory (ecma ? Category.EcmaWhiteSpace : Category.WhiteSpace, true);
+							last = -1;
+							continue;
+							
+						case 'P':
+							cls.AddCategory (ParseUnicodeCategory (), true);
+							last = -1;
+							continue;
 
 						default: break;		// add escaped character
 						}
@@ -730,20 +762,49 @@ namespace System.Text.RegularExpressions.Syntax {
 
 		private Expression ParseSpecial (RegexOptions options) {
 			int p = ptr;
+			bool ecma = IsECMAScript (options);
 			Expression expr = null;
 			
 			switch (pattern[ptr ++]) {
 
 			// categories
 
-			case 'd': expr = new CharacterClass (Category.Digit, false); break;
-			case 'w': expr = new CharacterClass (Category.Word, false); break;
-			case 's': expr = new CharacterClass (Category.WhiteSpace, false); break;
-			case 'D': expr = new CharacterClass (Category.Digit, true); break;
-			case 'W': expr = new CharacterClass (Category.Word, true); break;
-			case 'S': expr = new CharacterClass (Category.WhiteSpace, true); break;
-			case 'p': expr = new CharacterClass (ParseUnicodeCategory (), true); break;
-			case 'P': expr = new CharacterClass (ParseUnicodeCategory (), false); break;
+			case 'd':
+				expr = new CharacterClass (ecma ? Category.EcmaDigit : Category.Digit, false);
+				break;
+				
+			case 'w':
+				expr = new CharacterClass (ecma ? Category.EcmaWord : Category.Word, false);
+				break;
+				
+			case 's':
+				expr = new CharacterClass (ecma ? Category.EcmaWhiteSpace : Category.WhiteSpace, false);
+				break;
+				
+			case 'p':
+				// this is odd - ECMAScript isn't supposed to support Unicode,
+				// yet \p{..} compiles and runs under the MS implementation
+				// identically to canonical mode. That's why I'm ignoring the
+				// value of ecma here.
+			
+				expr = new CharacterClass (ParseUnicodeCategory (), false);
+				break;
+				
+			case 'D':
+				expr = new CharacterClass (ecma ? Category.EcmaDigit : Category.Digit, true);
+				break;
+				
+			case 'W':
+				expr = new CharacterClass (ecma ? Category.EcmaWord : Category.Word, true);
+				break;
+				
+			case 'S':
+				expr = new CharacterClass (ecma ? Category.EcmaWhiteSpace : Category.WhiteSpace, true);
+				break;
+				
+			case 'P':
+				expr = new CharacterClass (ParseUnicodeCategory (), true);
+				break;
 
 			// positions
 
@@ -1025,6 +1086,10 @@ namespace System.Text.RegularExpressions.Syntax {
 
 		private static bool IsRightToLeft (RegexOptions options) {
 			return (options & RegexOptions.RightToLeft) != 0;
+		}
+
+		private static bool IsECMAScript (RegexOptions options) {
+			return (options & RegexOptions.ECMAScript) != 0;
 		}
 
 		// exception creation

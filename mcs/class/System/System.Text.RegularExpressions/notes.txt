@@ -12,13 +12,13 @@ TODO:
   reverse. There may be other stuff.... work through the code.
 
 * Add ECMAScript support to the parser. For example, [.\w\s\d] map to ECMA
-  categories instead of canonical ones. There's different behaviour on
+  categories instead of canonical ones [DONE]. There's different behaviour on
   backreference/octal disambiguation. Find out what the runtime behavioural
   difference is for cyclic backreferences eg (?(1)abc\1) - this is only briefly 
   mentioned in the spec. I couldn't find much on this in the ECMAScript
   specification either.
 
-* Check the octal disambiguation for canonical syntax works as specced.
+* Octal/backreference parsing needs a big fix. The rules are ridiculously complex.
 
 * Add a check in QuickSearch for single character substrings. This is likely to
   be a common case. There's no need to go through a shift table. Also, have a
