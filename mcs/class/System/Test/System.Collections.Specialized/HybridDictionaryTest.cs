@@ -16,7 +16,7 @@ using System.Collections.Specialized;
 namespace MonoTests.System.Collections.Specialized
 {
 	[TestFixture]
-	public class HybridDictionaryTest
+	public class HybridDictionaryTest : Assertion
 	{
 		[Test]
 		public void All ()
@@ -41,6 +41,14 @@ namespace MonoTests.System.Collections.Specialized
 			
 			Assertion.AssertEquals ("#3", 12, dict.Count);
 			Assertion.AssertEquals ("#4", "eee", dict ["eee"]);	
+		}
+
+		[Test]
+		public void Empty () 
+		{
+			HybridDictionary hd = new HybridDictionary (true);
+			Assert ("null", !hd.Contains (null));
+			Assert ("unexisting", !hd.Contains ("unexisting"));
 		}
 	}        
 }

@@ -1,3 +1,9 @@
+2004-06-05  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* HybridDictionaryTest.cs: Added cases with an empty diectionary.
+	* NameValueCollectionTest.cs: Added tests to add and replace (set) 
+	existing values in collection. Added tests for CopyTo.
+
 2004-01-01  Nick Drochak  <ndrochak@gol.com>
 
 	* BitVector32Test.cs: Test some more values less than 1.
