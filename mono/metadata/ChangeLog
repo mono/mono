@@ -1,3 +1,8 @@
+
+Mon Jul 22 18:17:05 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* appdomain.c: set the missing filename when throwing exception.
+
 2002-07-22  Dietmar Maurer  <dietmar@ximian.com>
 
 	* metadata.c (mono_type_size): code cleanup
