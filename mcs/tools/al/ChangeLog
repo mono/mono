@@ -1,3 +1,11 @@
+2005-03-01  Zoltan Varga  <vargaz@freemail.hu>
+
+	* Al.cs: Applied patch from Gert Driesen (gert.driesen@pandora.be). 
+	Fixes #72274.
+	
+	* Al.cs: Algid and Flags should be specified in hexadecimal. Fixes
+	#72282.
+
 2005-01-30  Zoltan Varga  <vargaz@freemail.hu>
 
 	* Al.cs: Fix spitting of newlines.
