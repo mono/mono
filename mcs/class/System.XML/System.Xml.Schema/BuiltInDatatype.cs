@@ -11,6 +11,7 @@ using System.Collections;
 using System.Text;
 using System.Xml;
 using System.Xml.Schema;
+using System.Globalization;
 
 namespace Mono.Xml.Schema
 {
@@ -739,7 +740,7 @@ namespace Mono.Xml.Schema
 		public override object ParseValue (string s,
 			XmlNameTable nameTable, XmlNamespaceManager nsmgr)
 		{
-			return Convert.FromBase64String (s);
+			return Convert.FromBase64String (Normalize (s));
 		}
 	}
 
@@ -761,7 +762,7 @@ namespace Mono.Xml.Schema
 		public override object ParseValue (string s,
 			XmlNameTable nameTable, XmlNamespaceManager nsmgr)
 		{
-			return XmlConvert.FromBinHexString (s);
+			return XmlConvert.FromBinHexString (Normalize (s));
 		}
 
 		// Fundamental Facets ... no need to override
@@ -851,7 +852,7 @@ namespace Mono.Xml.Schema
 		public override object ParseValue (string s,
 			XmlNameTable nameTable, XmlNamespaceManager nsmgr)
 		{
-			return new Uri (s);
+			return new Uri (Normalize (s));
 		}
 	}
 	
@@ -873,7 +874,7 @@ namespace Mono.Xml.Schema
 		public override object ParseValue (string s,
 			XmlNameTable nameTable, XmlNamespaceManager nsmgr)
 		{
-			return XmlConvert.ToTimeSpan (s);
+			return XmlConvert.ToTimeSpan (Normalize (s));
 		}
 
 		// Fundamental Facets
@@ -909,7 +910,7 @@ namespace Mono.Xml.Schema
 		public override object ParseValue (string s,
 			XmlNameTable nameTable, XmlNamespaceManager nsmgr)
 		{
-			return XmlConvert.ToDateTime (s);
+			return XmlConvert.ToDateTime (Normalize (s));
 		}
 
 		// Fundamental Facets
@@ -928,22 +929,75 @@ namespace Mono.Xml.Schema
 	}
 
 	// xs:date
-	public class XsdDate : XsdDateTime
+	public class XsdDate : XsdAnySimpleType
 	{
+		public override XmlTokenizedType TokenizedType {
+			get { return XmlTokenizedType.CDATA; }
+		}
+
+		public override Type ValueType {
+			get { return typeof (DateTime); }
+		}
+
 		public override object ParseValue (string s,
 			XmlNameTable nameTable, XmlNamespaceManager nsmgr)
 		{
-			return DateTime.ParseExact (s, "yyyy-MM-dd", null);
+			return DateTime.ParseExact (Normalize (s), "yyyy-MM-dd", null);
+		}
+
+		// Fundamental Facets ... no need to override except for Ordered.
+		public override XsdOrderedFacet Ordered {
+			get { return XsdOrderedFacet.Partial; }
 		}
 	}
 
 	// xs:time
-	public class XsdTime : XsdDateTime
+	public class XsdTime : XsdAnySimpleType
 	{
+		static string [] timeFormats = new string [] {
+			  // copied from XmlConvert.
+			  "HH:mm:ss",
+			  "HH:mm:ss.f",
+			  "HH:mm:ss.ff",
+			  "HH:mm:ss.fff",
+			  "HH:mm:ss.ffff",
+			  "HH:mm:ss.fffff",
+			  "HH:mm:ss.ffffff",
+			  "HH:mm:ss.fffffff",
+			  "HH:mm:sszzz",
+			  "HH:mm:ss.fzzz",
+			  "HH:mm:ss.ffzzz",
+			  "HH:mm:ss.fffzzz",
+			  "HH:mm:ss.ffffzzz",
+			  "HH:mm:ss.fffffzzz",
+			  "HH:mm:ss.ffffffzzz",
+			  "HH:mm:ss.fffffffzzz",
+			  "HH:mm:ssZ",
+			  "HH:mm:ss.fZ",
+			  "HH:mm:ss.ffZ",
+			  "HH:mm:ss.fffZ",
+			  "HH:mm:ss.ffffZ",
+			  "HH:mm:ss.fffffZ",
+			  "HH:mm:ss.ffffffZ",
+			  "HH:mm:ss.fffffffZ"};
+
+		public override XmlTokenizedType TokenizedType {
+			get { return XmlTokenizedType.CDATA; }
+		}
+
+		public override Type ValueType {
+			get { return typeof (DateTime); }
+		}
+
 		public override object ParseValue (string s,
 			XmlNameTable nameTable, XmlNamespaceManager nsmgr)
 		{
-			return DateTime.ParseExact (s, "HH:mm:ss.fffffffzzz", null);
+			return DateTime.ParseExact (Normalize (s), timeFormats, null, DateTimeStyles.None);
+		}
+
+		// Fundamental Facets ... no need to override except for Ordered.
+		public override XsdOrderedFacet Ordered {
+			get { return XsdOrderedFacet.Partial; }
 		}
 	}
 
@@ -954,11 +1008,10 @@ namespace Mono.Xml.Schema
 			get { return typeof (DateTime); }
 		}
 
-		[MonoTODO]
 		public override object ParseValue (string s,
 			XmlNameTable nameTable, XmlNamespaceManager nsmgr)
 		{
-			return XmlConvert.ToDateTime (Normalize (s));
+			return DateTime.ParseExact (Normalize (s), "yyyy-MM", null);
 		}
 	}
 
@@ -969,11 +1022,10 @@ namespace Mono.Xml.Schema
 			get { return typeof (DateTime); }
 		}
 
-		[MonoTODO]
 		public override object ParseValue (string s,
 			XmlNameTable nameTable, XmlNamespaceManager nsmgr)
 		{
-			return XmlConvert.ToDateTime (Normalize (s));
+			return DateTime.ParseExact (Normalize (s), "--MM-dd", null);
 		}
 	}
 
@@ -984,11 +1036,12 @@ namespace Mono.Xml.Schema
 			get { return typeof (DateTime); }
 		}
 
-		[MonoTODO]
+		// LAMESPEC: XML Schema Datatypes allows leading '-' to identify B.C. years,
+		// but CLR DateTime does not allow such expression.
 		public override object ParseValue (string s,
 			XmlNameTable nameTable, XmlNamespaceManager nsmgr)
 		{
-			return new DateTime (int.Parse (s), 1, 1);
+			return DateTime.ParseExact (s, "yyyy", null);
 		}
 	}
 
@@ -999,11 +1052,10 @@ namespace Mono.Xml.Schema
 			get { return typeof (DateTime); }
 		}
 
-		[MonoTODO]
 		public override object ParseValue (string s,
 			XmlNameTable nameTable, XmlNamespaceManager nsmgr)
 		{
-			return new DateTime (0, int.Parse (s), 1);
+			return DateTime.ParseExact (s, "--MM--", null);
 		}
 	}
 
@@ -1014,11 +1066,10 @@ namespace Mono.Xml.Schema
 			get { return typeof (DateTime); }
 		}
 
-		[MonoTODO]
 		public override object ParseValue (string s,
 			XmlNameTable nameTable, XmlNamespaceManager nsmgr)
 		{
-			return new DateTime (0, 1, int.Parse (s));
+			return DateTime.ParseExact (s, "---dd", null);
 		}
 	}
 

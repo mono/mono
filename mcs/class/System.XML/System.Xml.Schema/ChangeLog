@@ -1,3 +1,9 @@
+2003-10-25  Atsushi Enomoto  <ginga@kit.hi-ho.ne.jp>
+
+	* BuiltInDatatype.cs : Fixed incorrect inheritance of date and time.
+	  Fixed most of date-time related types' ParseValue().
+	  Applied Normalize() before parsing values in some ParseValue().
+
 2003-10-23  Atsushi Enomoto  <ginga@kit.hi-ho.ne.jp>
 
 	* XmlSchemaAll.cs,
