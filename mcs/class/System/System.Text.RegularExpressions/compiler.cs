@@ -66,6 +66,10 @@ namespace System.Text.RegularExpressions {
 			return new Interpreter (pattern);
 		}
 
+		public int GroupCount {
+			get { return pattern[0]; }
+		}
+
 		private ushort[] pattern;
 	}
 

@@ -81,6 +81,7 @@ namespace System.Text.RegularExpressions {
 
 	interface IMachineFactory {
 		IMachine NewInstance ();
+		int GroupCount { get; }
 	}
 
 	// Anchor SKIP OFFSET

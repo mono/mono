@@ -146,14 +146,14 @@ namespace System.Text.RegularExpressions {
 		
 			this.factory = cache.Lookup (pattern, options);
 
-			// parse and install group mapping
-
-			Parser psr = new Parser ();
-			RegularExpression re = psr.ParseRegularExpression (pattern, options);
-			this.group_count = re.GroupCount;
-			this.mapping = psr.GetMapping ();
-
 			if (this.factory == null) {
+				// parse and install group mapping
+
+				Parser psr = new Parser ();
+				RegularExpression re = psr.ParseRegularExpression (pattern, options);
+				this.group_count = re.GroupCount;
+				this.mapping = psr.GetMapping ();
+
 				// compile
 				
 				ICompiler cmp;
@@ -169,6 +169,8 @@ namespace System.Text.RegularExpressions {
 
 				this.factory = cmp.GetMachineFactory ();
 				cache.Add (pattern, options, this.factory);
+			} else {
+				this.group_count = this.factory.GroupCount;
 			}
 		}
 

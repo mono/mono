@@ -1,3 +1,13 @@
+2002-08-28  Juli Mallett  <jmallett@FreeBSD.org>
+
+	* arch.cs, compiler.cs: Give the interpreter machine a property
+	for the retrieval of the group count.
+
+	* regex.cs: Use the new GroupCount property of the factory to
+	initialise the current group count, and restructure code to compile
+	the pattern only the first time it is needed (essentially backing
+	out the previous revision of regex.cs, to use the new code.)
+
 2002-08-14  Cesar Octavio Lopez Nataren <cesar@ciencias.unam.mx>
 
 	* regex.cs: Added the ctr for ISerializable implementation and
