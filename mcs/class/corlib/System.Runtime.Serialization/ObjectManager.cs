@@ -18,6 +18,7 @@ namespace System.Runtime.Serialization
 		ObjectRecord _objectRecordChain = null;
 		ObjectRecord _lastObjectRecord = null;
 
+		ArrayList _deserializedRecords = new ArrayList();
 		Hashtable _objectRecords = new Hashtable();
 		bool _finalFixup = false;
 
@@ -48,6 +49,7 @@ namespace System.Runtime.Serialization
 					if ( record.DoFixups (true, this, true) && 
 						 record.LoadData(this, _selector, _context))
 					{
+						_deserializedRecords.Add (record);
 						record = record.Next;
 					}
 					else
@@ -63,6 +65,7 @@ namespace System.Runtime.Serialization
 								record.Status = ObjectRecordStatus.ReferenceSolvingDelayed;
 						}
 
+						// _deserializedRecords.Add (record);
 						ObjectRecord next = record.Next;
 						record.Next = null;
 						_lastObjectRecord.Next = record;
@@ -101,9 +104,9 @@ namespace System.Runtime.Serialization
 
 		public virtual void RaiseDeserializationEvent ()
 		{
-			ICollection values = _objectRecords.Values;
-			foreach (ObjectRecord record in values)
+			for (int i = _deserializedRecords.Count-1; i >= 0; i--)
 			{
+				ObjectRecord record = (ObjectRecord) _deserializedRecords [i];
 				IDeserializationCallback obj = record.OriginalObject as IDeserializationCallback;
 				if (obj != null) obj.OnDeserialization (this);
 			}

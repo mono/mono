@@ -1,3 +1,8 @@
+2003-01-24  Martin Baulig  <martin@ximian.com>
+
+	* ObjectManager.cs (RaiseDeserializationEvent): Walk the object
+	list in the correct order.
+
 2003-01-16  Lluis Sanchez Gual  <lsg@ctv.es>
 
 	* ObjectManager.cs: Implemented and added file
