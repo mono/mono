@@ -335,10 +335,9 @@ namespace System.Collections
 						"Can't be less than 0.");
 				}
 
-				if (startIndex + count > m_Adaptee.Count) 
-				{
+				// re-ordered to avoid possible integer overflow
+				if (startIndex > m_Adaptee.Count - count) {
 					// LAMESPEC: Every other method throws ArgumentException
-
 					throw new ArgumentOutOfRangeException("count",
 						"Start index and count do not specify a valid range.");
 				}
@@ -379,10 +378,9 @@ namespace System.Collections
 
 			public override int LastIndexOf(object value, int startIndex, int count) 
 			{
-				if (startIndex < 0 || startIndex > m_Adaptee.Count - 1) 
+				if (startIndex < 0) 
 				{
-					throw new ArgumentOutOfRangeException("startIndex", startIndex,
-						"startIndex must be within the list.");
+					throw new ArgumentOutOfRangeException("startIndex", startIndex, "< 0");
 				}
 
 				if (count < 0) 
@@ -553,8 +551,8 @@ namespace System.Collections
 					throw new ArgumentException("Destination array is too small.");
 				}
 
-				if (index + count > m_Adaptee.Count) 
-				{
+				// re-ordered to avoid possible integer overflow
+				if (index > m_Adaptee.Count - count) {
 					throw new ArgumentException("Index and count do not denote a valid range of elements.", "index");
 				}
 
@@ -1797,7 +1795,8 @@ namespace System.Collections
 						"Can't be less than 0.");
 				}
 
-				if (startIndex + count > m_InnerCount) 
+				// re-ordered to avoid possible integer overflow
+				if (startIndex > m_InnerCount - count) 
 				{
 					// LAMESPEC: Every other method throws ArgumentException
 
@@ -1829,20 +1828,14 @@ namespace System.Collections
 
 			public override int LastIndexOf(object value, int startIndex, int count) 
 			{
-				if (startIndex < 0 || startIndex > m_InnerCount - 1) 
+				if (startIndex < 0) 
 				{
-					throw new ArgumentOutOfRangeException("startIndex", startIndex,
-						"index must be within the list.");
+					throw new ArgumentOutOfRangeException("startIndex", startIndex,	"< 0");
 				}
 
 				if (count < 0) 
 				{
 					throw new ArgumentOutOfRangeException("count", count, "count is negative.");
-				}
-
-				if (startIndex - count  + 1 < 0) 
-				{
-					throw new ArgumentOutOfRangeException("count", count, "count too large.");
 				}
 
 				int retval = m_InnerArrayList.LastIndexOf(value, m_InnerIndex + startIndex, count);
@@ -2888,7 +2881,8 @@ namespace System.Collections
 					"Can't be less than 0.");
 			}
 
-			if (startIndex + count > _size) 
+			// re-ordered to avoid integer overflow
+			if (startIndex > _size - count) 
 			{
 				// LAMESPEC: Every other method throws ArgumentException
 
@@ -2909,25 +2903,10 @@ namespace System.Collections
 			return LastIndexOf(value, startIndex, startIndex + 1);
 		}
 
-		public virtual int LastIndexOf(object value, int startIndex, int count) 
+		public virtual int LastIndexOf (object value, int startIndex, int count) 
 		{
-			if (startIndex < 0 || startIndex > _size - 1) 
-			{
-				throw new ArgumentOutOfRangeException("startIndex", startIndex,
-					"index must be within the list.");
-			}
-
-			if (count < 0) 
-			{
-				throw new ArgumentOutOfRangeException("count", count, "count is negative.");
-			}
-
-			if (startIndex - count  + 1 < 0) 
-			{
-				throw new ArgumentOutOfRangeException("count", count, "count too large.");
-			}
-
-			return Array.LastIndexOf(_items, value, startIndex, count);
+			// Array will catch the exceptions
+			return Array.LastIndexOf (_items, value, startIndex, count);
 		}
 
 		public virtual void Insert(int index, object value) 
@@ -3248,7 +3227,8 @@ namespace System.Collections
 				throw new ArgumentOutOfRangeException("count", count, "Can't be less than 0.");
 			}
 
-			if (index + count > listCount) 
+			// re-ordered to avoid possible integer overflow
+			if (index > listCount - count) 
 			{
 				throw new ArgumentException("Index and count do not denote a valid range of elements.", "index");
 			}
