@@ -59,7 +59,7 @@ namespace System.Web.UI.WebControls.WebParts
 		private WebPartExportMode exportMode = WebPartExportMode.None;
 		private WebPartHelpMode   helpMode   = WebPartHelpMode.Navigate;
 
-		private string caption;
+		private string subtitle;
 		private string catalogIconImageUrl;
 		private string description;
 		private string titleIconImageUrl;
@@ -144,8 +144,11 @@ namespace System.Web.UI.WebControls.WebParts
 			}
 		}
 
-		string IWebPart.Caption { 
-			get { return caption; }
+		[BrowsableAttribute (false), 
+		DesignerSerializationVisibilityAttribute (System.ComponentModel.DesignerSerializationVisibility.Hidden),
+		LocalizableAttribute (true)]			
+		string IWebPart.Subtitle { 
+			get { return subtitle; }
 		}
 	
 		[DefaultValueAttribute (String.Empty), 

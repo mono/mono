@@ -1,5 +1,10 @@
 2004-09-29  Sanjay Gupta <gsanjay@novell.com>
 		
+	* IWebPart.cs: Added new property and removed extra property.
+	* WebPart.cs: Corrected according to change in interface IWebPart.
+
+2004-09-29  Sanjay Gupta <gsanjay@novell.com>
+		
 	* WebPartPageMenuMode.cs: Added new enumeration.
 
 2004-09-28  Sanjay Gupta <gsanjay@novell.com>
