@@ -605,9 +605,16 @@ namespace MonoTests.System
 		public void TestToDateTime() {
 			string dateString = "2002-01-01";
 			
-			AssertEquals("#G01", tryDT, Convert.ToDateTime(tryDT));
-			AssertEquals("#G02", tryDT, Convert.ToDateTime(dateString));
-			AssertEquals("#G03", tryDT, Convert.ToDateTime(dateString, ci));
+			int iTest = 1;
+			try {
+				AssertEquals("#G01", tryDT, Convert.ToDateTime(tryDT));
+				iTest++;
+				AssertEquals("#G02", tryDT, Convert.ToDateTime(dateString));
+				iTest++;
+				AssertEquals("#G03", tryDT, Convert.ToDateTime(dateString, ci));
+			} catch (Exception e) {
+				Fail ("Unexpected exception at iTest = " + iTest + ": e = " + e);
+			}
 
 			try {
 				Convert.ToDateTime(boolTrue);
@@ -857,21 +864,40 @@ namespace MonoTests.System
 		}
 		
 		public void TestToDouble() {
-			AssertEquals("#I01", (double)1, Convert.ToDouble(boolTrue));
-			AssertEquals("#I02", (double)0, Convert.ToDouble(boolFalse));
-			AssertEquals("#I03", (double)tryByte, Convert.ToDouble(tryByte));
-			AssertEquals("#I04", tryDbl, Convert.ToDouble(tryDbl));
-			AssertEquals("#I05", (double)tryDec, Convert.ToDouble(tryDec));
-			AssertEquals("#I06", (double)tryInt16, Convert.ToDouble(tryInt16));
-			AssertEquals("#I07", (double)tryInt32, Convert.ToDouble(tryInt32));
-			AssertEquals("#I08", (double)tryInt64, Convert.ToDouble(tryInt64));
-			AssertEquals("#I09", (double)trySByte, Convert.ToDouble(trySByte));
-			AssertEquals("#I10", (double)tryFloat, Convert.ToDouble(tryFloat));
-			AssertEquals("#I11", (double)23456.432, Convert.ToDouble("23456.432"));
-			AssertEquals("#I12", (double)tryUI16, Convert.ToDouble(tryUI16));
-			AssertEquals("#I13", (double)tryUI32, Convert.ToDouble(tryUI32));
-			AssertEquals("#I14", (double)tryUI64, Convert.ToDouble(tryUI64));
-			AssertEquals("#H15", (double)63784, Convert.ToDouble("63784", ci));
+			int iTest = 1;
+			try {
+				AssertEquals("#I01", (double)1, Convert.ToDouble(boolTrue));
+				iTest++;
+				AssertEquals("#I02", (double)0, Convert.ToDouble(boolFalse));
+				iTest++;
+				AssertEquals("#I03", (double)tryByte, Convert.ToDouble(tryByte));
+				iTest++;
+				AssertEquals("#I04", tryDbl, Convert.ToDouble(tryDbl));
+				iTest++;
+				AssertEquals("#I05", (double)tryDec, Convert.ToDouble(tryDec));
+				iTest++;
+				AssertEquals("#I06", (double)tryInt16, Convert.ToDouble(tryInt16));
+				iTest++;
+				AssertEquals("#I07", (double)tryInt32, Convert.ToDouble(tryInt32));
+				iTest++;
+				AssertEquals("#I08", (double)tryInt64, Convert.ToDouble(tryInt64));
+				iTest++;
+				AssertEquals("#I09", (double)trySByte, Convert.ToDouble(trySByte));
+				iTest++;
+				AssertEquals("#I10", (double)tryFloat, Convert.ToDouble(tryFloat));
+				iTest++;
+				AssertEquals("#I11", (double)23456.432, Convert.ToDouble("23456.432"));
+				iTest++;
+				AssertEquals("#I12", (double)tryUI16, Convert.ToDouble(tryUI16));
+				iTest++;
+				AssertEquals("#I13", (double)tryUI32, Convert.ToDouble(tryUI32));
+				iTest++;
+				AssertEquals("#I14", (double)tryUI64, Convert.ToDouble(tryUI64));
+				iTest++;
+				AssertEquals("#H15", (double)63784, Convert.ToDouble("63784", ci));
+			} catch (Exception e) {
+				Fail ("Unexpected exception at iTest = " + iTest + ": e = " + e);
+			}
 			
 			try {
 				Convert.ToDouble(tryChar);
@@ -1363,7 +1389,7 @@ namespace MonoTests.System
 				Fail();
 			}
 			catch (Exception e) {
-				AssertEquals("#L25", typeof(InvalidCastException), e.GetType());
+				AssertEquals("#L20", typeof(InvalidCastException), e.GetType());
 			}
 
 			try {
@@ -1371,7 +1397,7 @@ namespace MonoTests.System
 				Fail();
 			}
 			catch (Exception e) {
-				AssertEquals("#L23", typeof(OverflowException), e.GetType());
+				AssertEquals("#L21", typeof(OverflowException), e.GetType());
 			}
 
 			try {
@@ -1472,25 +1498,48 @@ namespace MonoTests.System
 		}
 
 		public void TestToSByte() {
-			AssertEquals("#M01", (sbyte)0, Convert.ToSByte(boolFalse));
-			AssertEquals("#M02", (sbyte)1, Convert.ToSByte(boolTrue));
-			AssertEquals("#M03", (sbyte)97, Convert.ToSByte(tryChar));
-			AssertEquals("#M04", (sbyte)15, Convert.ToSByte((decimal)15));
-			AssertEquals("#M05", (sbyte)0, Convert.ToSByte(tryDbl));
-			AssertEquals("#M06", (sbyte)127, Convert.ToSByte((short)127));
-			AssertEquals("#M07", (sbyte)-128, Convert.ToSByte((int)-128));
-			AssertEquals("#M08", (sbyte)30, Convert.ToSByte((long)30));
-			AssertEquals("#M09", (sbyte)123, Convert.ToSByte(trySByte));
-			AssertEquals("#M10", (sbyte)12, Convert.ToSByte((float)12.46987f));
-			AssertEquals("#M11", (sbyte)1, Convert.ToSByte("1"));
-			AssertEquals("#M12", (sbyte)99, Convert.ToSByte((ushort)99));
-			AssertEquals("#M13", (sbyte)54, Convert.ToSByte((uint)54));
-			AssertEquals("#M14", (sbyte)127, Convert.ToSByte((ulong)127));
-			AssertEquals("#M15", (sbyte)14, Convert.ToSByte("14", ci));
-			AssertEquals("#M16", (sbyte)11, Convert.ToSByte("01011", 2));
-			AssertEquals("#M17", (sbyte)5, Convert.ToSByte("5", 8));
-			AssertEquals("#M18", (sbyte)100, Convert.ToSByte("100", 10));
-			AssertEquals("#M19", (sbyte)-1, Convert.ToSByte("FF", 16));
+			int iTest = 1;
+			try {
+				AssertEquals("#M01", (sbyte)0, Convert.ToSByte(boolFalse));
+				iTest++;
+				AssertEquals("#M02", (sbyte)1, Convert.ToSByte(boolTrue));
+				iTest++;
+				AssertEquals("#M03", (sbyte)97, Convert.ToSByte(tryChar));
+				iTest++;
+				AssertEquals("#M04", (sbyte)15, Convert.ToSByte((decimal)15));
+				iTest++;
+				AssertEquals("#M05", (sbyte)0, Convert.ToSByte(tryDbl));
+				iTest++;
+				AssertEquals("#M06", (sbyte)127, Convert.ToSByte((short)127));
+				iTest++;
+				AssertEquals("#M07", (sbyte)-128, Convert.ToSByte((int)-128));
+				iTest++;
+				AssertEquals("#M08", (sbyte)30, Convert.ToSByte((long)30));
+				iTest++;
+				AssertEquals("#M09", (sbyte)123, Convert.ToSByte(trySByte));
+				iTest++;
+				AssertEquals("#M10", (sbyte)12, Convert.ToSByte((float)12.46987f));
+				iTest++;
+				AssertEquals("#M11", (sbyte)1, Convert.ToSByte("1"));
+				iTest++;
+				AssertEquals("#M12", (sbyte)99, Convert.ToSByte((ushort)99));
+				iTest++;
+				AssertEquals("#M13", (sbyte)54, Convert.ToSByte((uint)54));
+				iTest++;
+				AssertEquals("#M14", (sbyte)127, Convert.ToSByte((ulong)127));
+				iTest++;
+				AssertEquals("#M15", (sbyte)14, Convert.ToSByte("14", ci));
+				iTest++;
+				AssertEquals("#M16", (sbyte)11, Convert.ToSByte("01011", 2));
+				iTest++;
+				AssertEquals("#M17", (sbyte)5, Convert.ToSByte("5", 8));
+				iTest++;
+				AssertEquals("#M18", (sbyte)100, Convert.ToSByte("100", 10));
+				iTest++;
+				AssertEquals("#M19", (sbyte)-1, Convert.ToSByte("FF", 16));
+			} catch (Exception e) {
+				Fail ("Unexpected exception at iTest = " + iTest + ": e = " + e);
+			}
 
 			try {
 				Convert.ToSByte((byte)200);
