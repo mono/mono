@@ -145,6 +145,8 @@ namespace System.Resources
 		public virtual string GetString (string name)
 		{
 			Object o = GetObject (name);
+			if (o == null)
+				return null;
 			if (o is string)
 				return (string) o;
 			throw new InvalidOperationException("Not a string");
@@ -153,6 +155,8 @@ namespace System.Resources
 		public virtual string GetString (string name, bool ignoreCase)
 		{
 			Object o = GetObject (name, ignoreCase);
+			if (o == null)
+				return null;
 			if (o is string)
 				return (string) o;
 			throw new InvalidOperationException("Not a string");

@@ -1,3 +1,7 @@
+2004-02-03  Jackson Harper <jackson@ximian.com>
+
+	* ResourceSet.cs: Do not throw an exception for null strings.
+	
 2004-01-13  Zoltan Varga  <vargaz@freemail.hu>
 
 	* Win32Resources.cs (Win32VersionInfoResource): Add more properties.
