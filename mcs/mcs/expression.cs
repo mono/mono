@@ -2559,9 +2559,9 @@ namespace Mono.CSharp {
 							type = TypeManager.EnumToUnderlying (l);
 							return this;
 						}
+						Error_OperatorCannotBeApplied ();
+						return null;
 					}
-					Error_OperatorCannotBeApplied ();
-					return null;
 				}
 					
 				//

@@ -1,5 +1,8 @@
 2004-01-07  Miguel de Icaza  <miguel@ximian.com>
 
+	* expression.cs (Binary.ResolveOperator): My previous bug fix had
+	the error reporting done in the wrong place.  Fix.
+
 	* expression.cs (Binary.ResolveOperator): Catch the 
 	operator + (E x, E y) error earlier, and later allow for implicit
 	conversions in operator +/- (E e, U x) from U to the underlying
