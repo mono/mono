@@ -7,6 +7,8 @@
 // (C) 2004 Novell, Inc.
 //
 
+#if NET_1_2
+
 using System.Runtime.InteropServices;
 
 namespace System.Runtime.CompilerServices
@@ -18,3 +20,5 @@ namespace System.Runtime.CompilerServices
 		}
 	}
 }
+
+#endif
