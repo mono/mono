@@ -1274,6 +1274,10 @@ namespace System.Xml.XPath
 						return false;
 					return true;
 				
+				case XPathNodeType.Text:
+					if (nodeType == XPathNodeType.SignificantWhitespace)
+						return true;
+					goto default;
 				default:
 					return type == nodeType;
 			}
