@@ -40,6 +40,6 @@ class MyTest {
     foreach (int? x in ivals) 
       foreach (int? y in ivals) 
         Console.WriteLine("{0,6} {1,6} {2,6} {3,6} {4,-6} {5,-6} {6,-6} {7,-6}", 
-                          x, y, x+y, x-y, x<y, x>=y, x==y, x!=y);
+                          x, y, x+y, x-y, (x<y), (x>=y), x==y, x!=y);
   }
 }
