@@ -8,6 +8,7 @@
 //
 
 using System;
+using System.Data.Common;
 using System.ComponentModel;
 using System.Reflection;
 
@@ -19,8 +20,9 @@ namespace System.Data
 		private Type componentType = null;
 		private Type propertyType = null;
 		private PropertyInfo prop = null;
+		private int columnIndex = 0;
 
-		public DataColumnPropertyDescriptor (string name, Attribute [] attrs)
+		public DataColumnPropertyDescriptor (string name, int columnIndex, Attribute [] attrs)
 			: base (name, attrs) 
 		{
 		}
@@ -65,6 +67,18 @@ namespace System.Data
 
 		public override object GetValue (object component) 
 		{
+			// FIXME: what is the correct way to Get a Value?
+			if(componentType == typeof(DataRowView) && component is DataRowView) {
+				DataRowView drv = (DataRowView) component;
+				return drv[base.Name];
+			}
+			else if(component == typeof(DbDataRecord) && component is DbDataRecord) {
+				DbDataRecord dr = (DbDataRecord) component;
+				return dr[columnIndex];
+			}
+			throw new InvalidOperationException();
+
+			/*
 			if (prop == null)
 				prop = GetPropertyInfo ();		
 							
@@ -72,10 +86,14 @@ namespace System.Data
 			object[] parms = new object[1];
 			parms[0] = base.Name;
 			return prop.GetValue (component, parms);
+			*/
 		}
 
 		public override void SetValue(object component,	object value) 
 		{
+			DataRowView drv = (DataRowView) component;
+			drv[base.Name] = value;
+			/*
 			if (prop == null)
 				prop = GetPropertyInfo ();		
 
@@ -88,24 +106,25 @@ namespace System.Data
 			object[] parms = new Object[1];
 			parms[0] = base.Name;
 			prop.SetValue (component, value, parms);
+			*/
 		}
 
 		[MonoTODO]
 		public override void ResetValue(object component) 
 		{
-			throw new NotImplementedException ();
+			// FIXME:
 		}
 
 		[MonoTODO]
 		public override bool CanResetValue(object component) 
 		{
-			throw new NotImplementedException ();
+			return false; // FIXEME
 		}
 
 		[MonoTODO]
 		public override bool ShouldSerializeValue(object component) 
 		{
-			throw new NotImplementedException ();
+			return false;
 		}
 
 		public override Type ComponentType {

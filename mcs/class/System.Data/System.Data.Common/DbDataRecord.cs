@@ -45,6 +45,7 @@ namespace System.Data.Common {
 			get { return this [GetOrdinal (name)]; }
 		}
 
+		[System.Runtime.CompilerServices.IndexerName("Item")]
 		public object this [int index] {
 			get { return GetValue (index); }
 		}	
@@ -159,79 +160,101 @@ namespace System.Data.Common {
 		[MonoTODO]
 		public int GetValues (object[] values)
 		{
-			throw new NotImplementedException ();
+			object[] newArray = new object[this.values.Length];
+			values.CopyTo (newArray, 0);
+			return values.Length;
 		}
 
 		[MonoTODO]
 		AttributeCollection ICustomTypeDescriptor.GetAttributes ()
 		{
-			throw new NotImplementedException ();
+			return new AttributeCollection(null);
 		}
 
 		[MonoTODO]
 		string ICustomTypeDescriptor.GetClassName ()
 		{
-			throw new NotImplementedException ();
+			return "";
 		}
 
 		[MonoTODO]
 		string ICustomTypeDescriptor.GetComponentName ()
 		{
-			throw new NotImplementedException ();
+			return null;
 		}
 
 		[MonoTODO]
 		TypeConverter ICustomTypeDescriptor.GetConverter ()
 		{
-			throw new NotImplementedException ();
+			return null;
 		}	
 
 		[MonoTODO]
 		EventDescriptor ICustomTypeDescriptor.GetDefaultEvent ()
 		{
-			throw new NotImplementedException ();
+			return null;
 		}	
 
 		[MonoTODO]
 		PropertyDescriptor ICustomTypeDescriptor.GetDefaultProperty ()
 		{
-			throw new NotImplementedException ();
+			return null;
 		}	
 
 		[MonoTODO]
 		object ICustomTypeDescriptor.GetEditor (Type editorBaseType)
 		{
-			throw new NotImplementedException ();
+			return null;
 		}	
 
 		[MonoTODO]
 		EventDescriptorCollection ICustomTypeDescriptor.GetEvents ()
 		{
-			throw new NotImplementedException ();
+			return new EventDescriptorCollection(null);
 		}	
 
 		[MonoTODO]
 		EventDescriptorCollection ICustomTypeDescriptor.GetEvents (Attribute[] attributes)
 		{
-			throw new NotImplementedException ();
+			return new EventDescriptorCollection(null);
 		}	
 
 		[MonoTODO]
 		PropertyDescriptorCollection ICustomTypeDescriptor.GetProperties ()
 		{
-			throw new NotImplementedException ();
+			DataColumnPropertyDescriptor[] descriptors = 
+				new DataColumnPropertyDescriptor[FieldCount];
+
+			DataColumnPropertyDescriptor descriptor;
+			DataColumn dataColumn;
+			for(int col = 0; col < FieldCount; col++) {
+				descriptor = new DataColumnPropertyDescriptor(
+					GetName(col), col, null);
+				descriptor.SetComponentType(typeof(DbDataRecord));
+				descriptor.SetPropertyType(GetFieldType(col));
+				
+				descriptors[col] = descriptor;
+			}
+
+			return new PropertyDescriptorCollection (descriptors);
 		}	
 
 		[MonoTODO]
 		PropertyDescriptorCollection ICustomTypeDescriptor.GetProperties (Attribute[] attributes)
 		{
-			throw new NotImplementedException ();
+			PropertyDescriptorCollection descriptors;
+			descriptors = ((ICustomTypeDescriptor) this).GetProperties ();
+			// TODO: filter out descriptors which do not contain
+			//       any of those attributes
+			//       except, those descriptors 
+			//       that contain DefaultMemeberAttribute
+			return descriptors;
 		}	
 
 		[MonoTODO]
 		object ICustomTypeDescriptor.GetPropertyOwner (PropertyDescriptor pd)
 		{
-			throw new NotImplementedException ();
+			return this;
 		}	
 
 		public bool IsDBNull (int i)

@@ -1,3 +1,17 @@
+2002-11-14  Daniel Morgan <danmorg@sc.rr.com>
+
+	* System.Data/DataColumnPropertyDescriptor.cs
+	* System.Data/DataRowView.cs
+	* System.Data/DataView.cs
+	* System.Data.Common/DbDataRecord.cs: a little bit more
+	implementation for data binding purposes
+	
+	* Test/PostgresTest.cs
+	* Test/TestSqlDataAdapter.cs
+	* Test/TestSqlException.cs
+	* TestSqlParameters.cs: fixed test for PostgreSQL's new home
+	at Mono.Data.PostgreSqlClient
+
 2002-11-14  Tim Coleman <tim@timcoleman.com>
 	* System.Data.SqlClient/SqlCommand.cs:
 		Slight reformatting of Bit values and sql statements

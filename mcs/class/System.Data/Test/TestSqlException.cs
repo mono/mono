@@ -1,7 +1,7 @@
 //
-// TestSqlInsert.cs
+// TestPgSqlInsert.cs
 //
-// To Test SqlConnection and SqlCommand by connecting
+// To Test PgSqlConnection and PgSqlCommand by connecting
 // to a PostgreSQL database 
 // and then executing an INSERT SQL statement
 //
@@ -11,8 +11,8 @@
 //        insertStatement
 //
 // To test:
-//   mcs TestSqlInsert.cs -r System.Data
-//   mint TestSqlInsert.exe
+//   mcs TestPgSqlInsert.cs -r System.Data
+//   mint TestPgSqlInsert.exe
 //
 // Author:
 //   Rodrigo Moya (rodrigo@ximian.com)
@@ -23,23 +23,23 @@
 
 using System;
 using System.Data;
-using System.Data.SqlClient;
+using Mono.Data.PostgreSqlClient;
 
-namespace TestSystemDataSqlClient
+namespace TestSystemDataPgSqlClient
 {
-	class TestSqlInsert
+	class TestPgSqlInsert
 	{
 		[STAThread]
 		static void Main(string[] args) {
-			SqlConnection conn;
-			SqlCommand cmd;
-			SqlTransaction trans;
+			PgSqlConnection conn = null;
+			PgSqlCommand cmd = null;
+			PgSqlTransaction trans = null;
 
-			int rowsAffected;
+			int rowsAffected = -1;
 
-			String connectionString;
-			String insertStatement;
-			String deleteStatement;
+			String connectionString = "";
+			String insertStatement = "";
+			String deleteStatement = "";
 	
 			connectionString = 
 				"host=localhost;" +
@@ -58,7 +58,7 @@ namespace TestSystemDataSqlClient
 			try {
 				// Connect to a PostgreSQL database
 				Console.WriteLine ("Connect to database...");
-				conn = new SqlConnection(connectionString);
+				conn = new PgSqlConnection(connectionString);
 				conn.Open();
 			
 				// begin transaction
@@ -68,7 +68,7 @@ namespace TestSystemDataSqlClient
 				// create SQL DELETE command
 				Console.WriteLine ("Create Command initializing " +
 					"with an DELETE statement...");
-				cmd = new SqlCommand (deleteStatement, conn);
+				cmd = new PgSqlCommand (deleteStatement, conn);
 
 				// execute the DELETE SQL command
 				Console.WriteLine ("Execute DELETE SQL Command...");
@@ -99,9 +99,9 @@ namespace TestSystemDataSqlClient
 				Console.WriteLine ("Verify data in database to " +
 					"see if row is there.");
 			}
-			catch(SqlException e) {
+			catch(PgSqlException e) {
 				// Display the SQL Errors and Rollback the database
-				Console.WriteLine("SqlException caught: " +
+				Console.WriteLine("PgSqlException caught: " +
 					e.ToString());
 				if(trans != null) {
 					trans.Rollback();

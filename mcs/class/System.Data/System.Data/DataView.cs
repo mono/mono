@@ -12,6 +12,7 @@
 using System;
 using System.Collections;
 using System.ComponentModel;
+using System.Reflection;
 
 namespace System.Data {
 	/// <summary>
@@ -29,6 +30,17 @@ namespace System.Data {
 		string rowFilter = "";
 		string sort = "";
 		DataViewRowState rowState;
+		
+		// FIXME: what are the default values?
+		bool allowNew = true; 
+		bool allowEdit = true;
+		bool allowDelete = true;
+		bool applyDefaultSort = false;
+		bool isSorted = false;
+
+		bool isOpen = false;
+
+		DataViewManager dataViewManager = null;
 
 		[MonoTODO]	
 		public DataView () {
@@ -41,6 +53,7 @@ namespace System.Data {
 
 			dataTable = table;
 			rowState = DataViewRowState.None;
+			Open ();
 		}
 
 		[MonoTODO]
@@ -50,6 +63,8 @@ namespace System.Data {
 			rowFilter = RowFilter;
 			sort = Sort;
 			rowState = RowState;
+
+			Open();
 		}
 
 		[DataCategory ("Data")]
@@ -58,12 +73,12 @@ namespace System.Data {
 		public bool AllowDelete {
 			[MonoTODO]
 			get {
-				throw new NotImplementedException ();
+				return allowDelete;
 			}
 			
 			[MonoTODO]
 			set {
-				throw new NotImplementedException ();
+				allowDelete = value;
 			}
 		}
 
@@ -73,12 +88,12 @@ namespace System.Data {
 		public bool AllowEdit {
 			[MonoTODO]
 			get {
-				throw new NotImplementedException ();
+				return allowEdit;
 			}
 			
 			[MonoTODO]
 			set {
-				throw new NotImplementedException ();
+				allowEdit = value;
 			}
 		}
 
@@ -88,12 +103,12 @@ namespace System.Data {
 		public bool AllowNew {
 			[MonoTODO]
 			get {
-				throw new NotImplementedException ();
+				return allowNew;
 			}
 			
 			[MonoTODO]
 			set {
-				throw new NotImplementedException ();
+				allowNew = value;
 			}
 		}
 
@@ -103,13 +118,13 @@ namespace System.Data {
 		[RefreshProperties (RefreshProperties.All)]
 		public bool ApplyDefaultSort {
 			[MonoTODO]
-			get {
-				throw new NotImplementedException ();
+			get {				
+				return applyDefaultSort;
 			}
 			
 			[MonoTODO]
 			set {
-				throw new NotImplementedException ();
+				applyDefaultSort = value;
 			}
 		}
 
@@ -131,11 +146,14 @@ namespace System.Data {
 		public DataViewManager DataViewManager {
 			[MonoTODO]
 			get {
-				throw new NotImplementedException ();
+				return dataViewManager;
 			}
 		}
 
 		// Item indexer
+		// the compiler creates a DefaultMemeberAttribute from
+		// this IndexerNameAttribute
+		[System.Runtime.CompilerServices.IndexerName("Item")]
 		public DataRowView this[int recordIndex] {
 			[MonoTODO]
 			get {
@@ -149,12 +167,12 @@ namespace System.Data {
 		public virtual string RowFilter {
 			[MonoTODO]
 			get {
-				throw new NotImplementedException ();
+				return rowFilter;
 			}
 			
 			[MonoTODO]
 			set {
-				throw new NotImplementedException ();
+				rowFilter = value;
 			}
 		}
 
@@ -164,12 +182,12 @@ namespace System.Data {
 		public DataViewRowState RowStateFilter {
 			[MonoTODO]
 			get {
-				throw new NotImplementedException ();
+				return rowState;
 			}
 			
 			[MonoTODO]
 			set {
-				throw new NotImplementedException ();
+				rowState = value;
 			}
 		}
 
@@ -179,12 +197,12 @@ namespace System.Data {
 		public string Sort {
 			[MonoTODO]
 			get {
-				throw new NotImplementedException ();
+				return sort;
 			}
 			
 			[MonoTODO]
 			set {
-				throw new NotImplementedException ();
+				sort = value;
 			}
 		}
 
@@ -211,7 +229,7 @@ namespace System.Data {
 
 		[MonoTODO]
 		public void BeginInit() {
-			throw new NotImplementedException ();
+			// FIXME:
 		}
 
 		[MonoTODO]
@@ -230,7 +248,7 @@ namespace System.Data {
 
 		[MonoTODO]
 		public void EndInit() {
-			throw new NotImplementedException ();
+			// FIXME:
 		}
 
 		[MonoTODO]
@@ -271,13 +289,14 @@ namespace System.Data {
 		protected bool IsOpen {
 			[MonoTODO]
 			get {
-				throw new NotImplementedException ();
+				return isOpen;
 			}
 		}
 
 		[MonoTODO]
 		protected void Close() {
-			throw new NotImplementedException ();
+			// FIXME:
+			isOpen = false;
 		}
 
 		[MonoTODO]
@@ -303,7 +322,8 @@ namespace System.Data {
 
 		[MonoTODO]
 		protected void Open() {
-			
+			// FIXME:
+			isOpen = true;
 		}
 		
 		[MonoTODO]
@@ -322,7 +342,7 @@ namespace System.Data {
 				dataColumn = dataTable.Columns[col];
 				
 				descriptor = new DataColumnPropertyDescriptor(
-					dataColumn.ColumnName, null);
+					dataColumn.ColumnName, col, null);
 				descriptor.SetComponentType(typeof(System.Data.DataRowView));
 				descriptor.SetPropertyType(dataColumn.DataType);
 				
@@ -346,7 +366,7 @@ namespace System.Data {
 		bool ICollection.IsSynchronized { 
 			[MonoTODO]
 			get {
-				throw new NotImplementedException ();
+				return false;
 			} 
 		}
 
@@ -354,7 +374,7 @@ namespace System.Data {
 			[MonoTODO]
 			get {
 				// FIXME:
-				throw new NotImplementedException ();
+				return this;
 			}
 		}
 
@@ -365,141 +385,158 @@ namespace System.Data {
 		bool IList.IsFixedSize {
 			[MonoTODO]
 			get {
-				throw new NotImplementedException ();
+				return false;
 			}
 		}
 		
 		bool IList.IsReadOnly {
 			[MonoTODO]
 			get {
-				throw new NotImplementedException ();
+				return false;
 			}
 		}
 
 		object IList.this[int recordIndex] {
+			[MonoTODO]
 			get {
 				return this[recordIndex];
 			}
 
 			[MonoTODO]
 			set{
-				// FIXME: throw an exception
-				// because it can not be set
-				throw new InvalidOperationException("Can not set Item property of a DataView");
+				throw new InvalidOperationException();
 			}
 		}
 
+		[MonoTODO]
 		int IList.Add (object value) {
 			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		void IList.Clear () {
 			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		bool IList.Contains (object value) {
 			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		int IList.IndexOf (object value) {
 			throw new NotImplementedException ();
 		}
-				
+			
+		[MonoTODO]
 		void IList.Insert(int index,object value) {
 			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		void IList.Remove(object value) {
 			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		void IList.RemoveAt(int index) {
 			throw new NotImplementedException ();
 		}
 
 		#region IBindingList implementation
 
+		[MonoTODO]
 		void IBindingList.AddIndex (PropertyDescriptor property) {
 			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		object IBindingList.AddNew () {
 			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		void IBindingList.ApplySort (PropertyDescriptor property, ListSortDirection direction) {
 			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		int IBindingList.Find (PropertyDescriptor property, object key) {
 			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		void IBindingList.RemoveIndex (PropertyDescriptor property) {
 			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		void IBindingList.RemoveSort () {
 			throw new NotImplementedException ();
 		}
 		
 		bool IBindingList.AllowEdit {
+			[MonoTODO]
 			get {
-				throw new NotImplementedException ();
+				return AllowEdit;
 			}
 		}
 
 		bool IBindingList.AllowNew {
+			[MonoTODO]
 			get {
-				throw new NotImplementedException ();
+				return AllowNew;
 			}
 		}
 
 		bool IBindingList.AllowRemove {
+			[MonoTODO]
 			get {
-				throw new NotImplementedException ();
+				return AllowDelete;
 			}
 		}
 
 		bool IBindingList.IsSorted {
 			[MonoTODO]
 			get {
-				throw new NotImplementedException ();
+				return isSorted;
 			}
 		}
 
 		ListSortDirection IBindingList.SortDirection {
 			[MonoTODO]
 			get {
-				throw new NotImplementedException ();
+				// FIXME: 
+				return ListSortDirection.Ascending;
 			}
 		}
 
 		PropertyDescriptor IBindingList.SortProperty {
 			[MonoTODO]
 			get {
-				throw new NotImplementedException ();
+				// FIXME:
+				return null;
 			}
 		}
 
 		bool IBindingList.SupportsChangeNotification {
 			[MonoTODO]
 			get {
-				throw new NotImplementedException ();
+				return false;
 			}
 		}
 
 		bool IBindingList.SupportsSearching {
 			[MonoTODO]
 			get {
-				throw new NotImplementedException ();
+				return false;
 			}
 		}
 
 		bool IBindingList.SupportsSorting {
 			[MonoTODO]
 			get {
-				throw new NotImplementedException ();
+				return false;
 			}
 		}
 

@@ -485,26 +485,42 @@ namespace Test.Mono.Data.PostgreSqlClient {
 
 		[STAThread]
 		static void Main(string[] args) {
+			Console.WriteLine("Tests Start.");
+			Console.WriteLine("Creating PgSqlConnectioin...");
 			PgSqlConnection cnc = new PgSqlConnection ();
 
-			/*
-			string connectionString = 
-				"host=hostname;" +
-				"dbname=database;" +
-				"user=userid;" +
-				"password=password";
-			*/
+			// possible PostgreSQL Provider ConnectionStrings
+			//string connectionString = 
+			//	"Server=hostname;" +
+			//	"Database=database;" +
+			//	"User ID=userid;" +
+			//	"Password=password";
+			// or
+			//string connectionString = 
+			//	"host=hostname;" +
+			//	"dbname=database;" +
+			//	"user=userid;" +
+			//	"password=password";
 
 			string connectionString = 
 				"host=localhost;" +
 				"dbname=test;" +
-				"user=postgres;";
-
+				"user=postgres";
+                        
+			Console.WriteLine("Setting ConnectionString: " +
+				connectionString);
 			cnc.ConnectionString =  connectionString;
 
+			Console.WriteLine("Opening database connection...");
 			cnc.Open();
+
+			Console.WriteLine("Do Tests....");
 			DoPostgresTest(cnc);
+
+			Console.WriteLine("Close database connection...");
 			cnc.Close();
+
+			Console.WriteLine("Tests Done.");
 		}
 	}
 }

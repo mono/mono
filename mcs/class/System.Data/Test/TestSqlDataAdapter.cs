@@ -1,5 +1,5 @@
 //
-// TestSqlDataAdapter - tests SqlDataAdapter, DbDataAdapter, DataSet, DataTable,
+// TestPgSqlDataAdapter - tests PgSqlDataAdapter, DbDataAdapter, DataSet, DataTable,
 //                      DataRow, and DataRowCollection by retrieving data
 //
 // Authors:
@@ -13,17 +13,17 @@
 using System;
 using System.Collections;
 using System.Data;
-using System.Data.SqlClient;
+using Mono.Data.PostgreSqlClient;
 
-namespace TestSystemDataSqlClient 
+namespace TestSystemDataPgSqlClient 
 {
-	public class TestSqlDataAdapter 
+	public class TestPgSqlDataAdapter 
 	{
 		public static void Test() 
 		{
 			string connectionString;
 			string sqlQuery;
-			SqlDataAdapter adapter;
+			PgSqlDataAdapter adapter;
 			DataSet dataSet = null;
 
 			connectionString =
@@ -33,8 +33,8 @@ namespace TestSystemDataSqlClient
 						
 			sqlQuery = "select * from pg_tables";
 
-			System.Console.WriteLine ("new SqlDataAdapter...");
-			adapter = new SqlDataAdapter (sqlQuery, 
+			System.Console.WriteLine ("new PgSqlDataAdapter...");
+			adapter = new PgSqlDataAdapter (sqlQuery, 
 					connectionString);
 
 			System.Console.WriteLine ("new DataSet...");

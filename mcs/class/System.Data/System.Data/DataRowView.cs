@@ -20,14 +20,17 @@ namespace System.Data
 	/// <summary>
 	/// Represents a customized view of a DataRow exposed as a fully featured Windows Forms control.
 	/// </summary>
-	//[DefaultMember("Item")]
-	[DefaultProperty("Item")]
 	public class DataRowView : ICustomTypeDescriptor, IEditableObject, IDataErrorInfo
 	{
 		#region Fields
 
-		private DataView dataView;
-		private DataRow dataRow;
+		DataView dataView;
+		DataRow dataRow;
+		DataRowVersion rowVersion = DataRowVersion.Default;
+
+		// FIXME: what are the defaults?
+		bool isEdit = false;
+		bool isNew = false;
 
 		#endregion // Fields
 
@@ -45,13 +48,13 @@ namespace System.Data
 		[MonoTODO]
 		public void BeginEdit ()
 		{
-			throw new NotImplementedException ();
+			// FIXME:
 		}
 
 		[MonoTODO]
 		public void CancelEdit ()
 		{
-			throw new NotImplementedException ();
+			// FIXME:
 		}
 
 		[MonoTODO]
@@ -75,7 +78,7 @@ namespace System.Data
 		[MonoTODO]
 		public void EndEdit ()
 		{
-			throw new NotImplementedException ();
+			// FIXME:
 		}
 
 		#endregion // Methods
@@ -93,17 +96,18 @@ namespace System.Data
 		public bool IsEdit {
 			[MonoTODO]
 			get {
-				throw new NotImplementedException ();
+				return isEdit;
 			}
 		}
 
 		public bool IsNew {
 			[MonoTODO]
 			get {
-				throw new NotImplementedException ();
+				return isNew;
 			}
 		}
 		
+		[System.Runtime.CompilerServices.IndexerName("Item")]
 		public object this[string column] {
 			[MonoTODO]
 			get {
@@ -119,10 +123,12 @@ namespace System.Data
 
 		public string Error {
 			get {
-				throw new NotImplementedException ();
+				return ""; // FIXME:
 			}
 		}
-
+                
+		// the compiler creates a DefaultMemeberAttribute from
+		// this IndexerNameAttribute
 		public object this[int column] {
 			[MonoTODO]
 			get {
@@ -147,7 +153,7 @@ namespace System.Data
 		public DataRowVersion RowVersion {
 			[MonoTODO]
 			get {
-				throw new NotImplementedException ();
+				return rowVersion;
 			}
 		}
 
@@ -161,10 +167,6 @@ namespace System.Data
 			System.ComponentModel.AttributeCollection attributes;
 			attributes = AttributeCollection.Empty;
 			return attributes;
-			//object[] attributes = this.GetType ().GetCustomAttributes (true);
-			//AttributeCollection attribCollection;
-			//attribCollection = new AttributeCollection (attributes);
-			//return attribCollection;
 		}
 
 		[MonoTODO]
@@ -176,7 +178,7 @@ namespace System.Data
 		[MonoTODO]
 		string ICustomTypeDescriptor.GetComponentName ()
 		{
-			return "";
+			return null;
 		}
 
 		[MonoTODO]
@@ -188,7 +190,7 @@ namespace System.Data
 		[MonoTODO]
 		EventDescriptor ICustomTypeDescriptor.GetDefaultEvent ()
 		{
-			throw new NotImplementedException ();
+			return null;
 		}
 		
 		[MonoTODO]
@@ -200,19 +202,19 @@ namespace System.Data
 		[MonoTODO]
 		object ICustomTypeDescriptor.GetEditor (Type editorBaseType)
 		{
-			throw new NotImplementedException ();
+			return null;
 		}
 		
 		[MonoTODO]
 		EventDescriptorCollection ICustomTypeDescriptor.GetEvents ()
 		{
-			throw new NotImplementedException ();
+			return new EventDescriptorCollection(null);
 		}
 
 		[MonoTODO]
 		EventDescriptorCollection ICustomTypeDescriptor.GetEvents (Attribute [] attributes)
 		{
-			throw new NotImplementedException ();
+			return new EventDescriptorCollection(null);
 		}
 
 		[MonoTODO]
@@ -227,14 +229,17 @@ namespace System.Data
 		{
 			PropertyDescriptorCollection descriptors;
 			descriptors = ((ICustomTypeDescriptor) this).GetProperties ();
-			// TODO: filter out any Attributes not in the attributes array
+			// TODO: filter out descriptors which do not contain
+			//       any of those attributes
+			//       except, those descriptors 
+			//       that contain DefaultMemeberAttribute
 			return descriptors;
 		}
 		
 		[MonoTODO]
 		object ICustomTypeDescriptor.GetPropertyOwner (PropertyDescriptor pd)
 		{
-			throw new NotImplementedException ();
+			return this;
 		}
 
 		#endregion // ICustomTypeDescriptor implementations
@@ -244,14 +249,14 @@ namespace System.Data
 		string IDataErrorInfo.Error {
 			[MonoTODO]
 			get {
-				throw new NotImplementedException();
+				return ""; // FIXME
 			}
 		}
 
 		string IDataErrorInfo.this[string columnName] {
 			[MonoTODO]
 			get {
-				throw new NotImplementedException();
+				return ""; // FIXME
 			}
 		}
 

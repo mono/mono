@@ -1,6 +1,6 @@
 //
 // TestSqlParameters.cs - test parameters for the PostgreSQL .NET Data Provider in Mono
-//                        using *Parameter and *ParameterCollection
+//                        using PgSqlParameter and PgSqlParameterCollection
 //
 // Note: it currently only tests input parameters.  Output is next on the list.
 //       Then output/input and return parameters.
@@ -14,9 +14,9 @@
 using System;
 using System.Collections;
 using System.Data;
-using System.Data.SqlClient;
+using Mono.Data.PostgreSqlClient;
 
-namespace TestSystemDataSqlClient {
+namespace TestSystemDataPgSqlClient {
 
 	public class TestParameters {
 		public static void Main() {
@@ -28,9 +28,9 @@ namespace TestSystemDataSqlClient {
 				"dbname=test;" +
 				"user=postgres";
 						
-			SqlConnection con;
+			PgSqlConnection con;
 			Console.WriteLine("** Creating connection...");
-			con = new SqlConnection(connectionString);
+			con = new PgSqlConnection(connectionString);
 			Console.WriteLine("** opening connection...");
 			con.Open();
 		
@@ -40,11 +40,11 @@ namespace TestSystemDataSqlClient {
 			sql = "SELECT * FROM PG_TABLES WHERE TABLENAME = :inTableName";
 						
 			Console.WriteLine("** Creating command...");
-			SqlCommand cmd = new SqlCommand(sql, con);
+			PgSqlCommand cmd = new PgSqlCommand(sql, con);
 			
 			// add parameter for inTableName
 			Console.WriteLine("** Create parameter...");
-			SqlParameter parm = new SqlParameter("inTableName", SqlDbType.Text);
+			PgSqlParameter parm = new PgSqlParameter("inTableName", DbType.String);
 			
 			Console.WriteLine("** set dbtype of parameter to string");
 			parm.DbType = DbType.String;
@@ -58,7 +58,7 @@ namespace TestSystemDataSqlClient {
 			Console.WriteLine("** add parameter to parameters collection in the command...");
 			cmd.Parameters.Add(parm);
 			
-			SqlDataReader rdr;
+			PgSqlDataReader rdr;
 			Console.WriteLine("** ExecuteReader()...");
 			
 			rdr = cmd.ExecuteReader();
