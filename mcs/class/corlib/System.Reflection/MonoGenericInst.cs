@@ -283,8 +283,7 @@ namespace System.Reflection
 
 	internal class MonoInflatedMethod : MonoMethod
 	{
-		private readonly MethodInfo declaring;
-		private readonly IntPtr ginst;
+		private readonly IntPtr gmethod;
 
 		public override bool IsDefined (Type attributeType, bool inherit)
 		{
@@ -305,8 +304,7 @@ namespace System.Reflection
 
 	internal class MonoInflatedCtor : MonoCMethod
 	{
-		private readonly ConstructorInfo declaring;
-		private readonly IntPtr ginst;
+		private readonly IntPtr gmethod;
 
 		public override bool IsDefined (Type attributeType, bool inherit)
 		{
