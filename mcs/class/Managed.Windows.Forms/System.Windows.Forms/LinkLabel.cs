@@ -540,7 +540,7 @@ namespace System.Windows.Forms
 					DeviceContext.DrawString (pieces[i].text, Font, ThemeEngine.Current.ResPool.GetSolidBrush (Color.Black),
 						pieces[i].rect.X, pieces[i].rect.Y, string_format);
 				else
-					DeviceContext.DrawString (pieces[i].text, link_font, ThemeEngine.Current.ResPool.GetSolidBrush ()color),
+					DeviceContext.DrawString (pieces[i].text, link_font, ThemeEngine.Current.ResPool.GetSolidBrush (color),
 						pieces[i].rect.X, pieces[i].rect.Y, string_format);
 			}
 
