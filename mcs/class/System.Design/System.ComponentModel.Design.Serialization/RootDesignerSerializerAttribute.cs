@@ -70,8 +70,6 @@ namespace System.ComponentModel.Design.Serialization
 		[MonoTODO]
 		public override object TypeId {
 			get { throw new NotImplementedException ();}
-
-			set { throw new NotImplementedException ();}
 		}
 	}
 }

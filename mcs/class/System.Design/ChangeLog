@@ -1,3 +1,8 @@
+2002-12-11  Jeroen Janssen <japj@darius.demon.nl>
+	
+	* removed set for RootDesignerSerializerAttribute.TypeId
+	* fixed .build file to include reference to System.dll
+
 2002-09-16       Gaurav Vaish <gvaish_mono@lycos.com>
 
 	* System.Web.UI.Design             : Added directory.
