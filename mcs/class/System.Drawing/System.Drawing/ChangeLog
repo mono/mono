@@ -1,3 +1,6 @@
+2004-02-25  Jordi Mas i Hernandez <jordi@ximian.com>
+	* StringFormat.cs: Clone method
+	
 2004-02-24  Jordi Mas i Hernandez <jordi@ximian.com>
 	* font.cs: fixes, Clone, and ToString	
 	

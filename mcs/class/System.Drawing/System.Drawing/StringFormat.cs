@@ -165,10 +165,17 @@ namespace System.Drawing
 			}
 		}
 
-		[MonoTODO]
-		public object Clone ()
+	
+		public object Clone()
 		{
-			throw new NotImplementedException ();
+			IntPtr native;
+			
+			Status status = GDIPlus.GdipCloneStringFormat (nativeStrFmt, out native);        			
+					
+			if (status != Status.Ok)
+				throw new ArgumentException ("Could not allocate string format: " + status);
+			
+			return new StringFormat (native);
 		}
 
 		public override string ToString ()
