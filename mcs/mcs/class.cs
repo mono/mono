@@ -2381,6 +2381,7 @@ namespace Mono.CSharp {
 						"constructors");
 					return false;
 				}
+				ca |= MethodAttributes.Public | MethodAttributes.HideBySig;
 			}
 
 			foreach (Type partype in parameters)

@@ -1,3 +1,8 @@
+
+Sat Jan 5 16:08:23 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* class.cs: make the default instance constructor public and hidebysig.
+
 2001-01-03  Ravi Pratap  <ravi@ximian.com>
 
 	* interface.cs (EmitDefaultMemberAttr): Make this helper method static
