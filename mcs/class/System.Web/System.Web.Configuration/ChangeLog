@@ -1,3 +1,8 @@
+2003-03-03  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* ModuleItem.cs: it's not public.
+	* ModulesConfiguration.cs: it's not public.
+
 2003-02-27  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* AuthenticationConfigHandler.cs: 'name' is optional in <forms>.

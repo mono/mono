@@ -1,3 +1,8 @@
+2003-03-03  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpHelper.cs: store the values in an ArrayList to get them in correct
+	order.
+
 2003-02-17  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpApplicationFactory.cs: Global.asax takes precedence over

@@ -20,7 +20,7 @@ namespace System.Web {
          }
 
          // Parse the , chars
-         Stack oValues = new Stack();
+         ArrayList oValues = new ArrayList();
 
          string sValue;
 
@@ -32,11 +32,11 @@ namespace System.Web {
             iLastPos = iPos;
 
             iPos = header.IndexOf(",", iPos + 1);
-            oValues.Push(sValue);
+            oValues.Add(sValue);
          }
 
          sValue = header.Substring(iLastPos + 1).Trim();
-         oValues.Push(sValue);
+         oValues.Add(sValue);
 
          string [] arrValues = new string[oValues.Count];
 

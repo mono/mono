@@ -12,7 +12,7 @@ using System.Collections;
 
 namespace System.Web.Configuration
 {
-	public class ModulesConfiguration
+	class ModulesConfiguration
 	{
 		ArrayList modules;
 

@@ -1,3 +1,9 @@
+2003-03-03  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* SessionConfig.cs:
+	* SessionStateSectionHandler.cs: new files to read <sessionState>
+	configuration.
+
 2002-10-08  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* SessionStateModule.cs: don't throw exception.  Just for testing the

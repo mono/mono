@@ -7,7 +7,7 @@
 using System;
 
 namespace System.Web.Configuration {
-	public class ModuleItem {
+	class ModuleItem {
 		private Type _type;
 		private string _typeName;
 		private string _name;

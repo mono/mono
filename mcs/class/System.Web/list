@@ -359,9 +359,11 @@ System.Web.Security/WindowsAuthenticationModule.cs
 System.Web.SessionState/HttpSessionState.cs
 System.Web.SessionState/IReadOnlySessionState.cs
 System.Web.SessionState/IRequiresSessionState.cs
+System.Web.SessionState/SessionConfig.cs
 System.Web.SessionState/SessionDictionary.cs
 System.Web.SessionState/SessionStateMode.cs
 System.Web.SessionState/SessionStateModule.cs
+System.Web.SessionState/SessionStateSectionHandler.cs
 System.Web.Compilation/AspComponentFoundry.cs
 System.Web.Compilation/AspElements.cs
 System.Web.Compilation/AspGenerator.cs
