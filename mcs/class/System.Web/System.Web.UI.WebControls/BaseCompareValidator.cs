@@ -164,7 +164,7 @@ namespace System.Web.UI.WebControls
 				case ValidationCompareOperator.LessThan:
 					return (compareResult < 0);
 				case ValidationCompareOperator.LessThanEqual:
-					return (compareResult == 0);
+					return (compareResult <= 0);
 			}
 			return false;
 		}

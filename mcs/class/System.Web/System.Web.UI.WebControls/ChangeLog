@@ -1,6 +1,12 @@
 
 2002-10-28      Gaurav Vaish <gvaish_mono@lycos.com>
 
+	* BaseCompareValidator.cs - Fixed operator bug in 
+	                            Compare(string, string, ...)
+	* CompareValidator.cs     - EvaluateIsValid()            : Implemented.
+
+2002-10-28      Gaurav Vaish <gvaish_mono@lycos.com>
+
 	* BoundColumn.cs        - InitializeCell(TableCell, int, ListItemType)
 	                                              : Implemented.
 	                        - All Properties      : Now make use of ViewState.

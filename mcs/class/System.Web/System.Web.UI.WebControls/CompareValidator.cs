@@ -73,15 +73,15 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		[MonoTODO]
 		protected override bool EvaluateIsValid()
 		{
 			string ctrl = GetControlValidationValue(ControlToValidate);
-			throw new NotImplementedException();
-			if(ctrl!=null && ctrl.Length > 0)
+			if(ctrl != null && ctrl.Length > 0)
 			{
-				//string
-				throw new NotImplementedException();
+				string cmp = (ControlToCompare.Length > 0 ?
+				              ControlToCompare : ValueToCompare);
+				return BaseCompareValidator.Compare(ctrl, cmp,
+				                                    Operator, Type);
 			}
 			return true;
 		}
