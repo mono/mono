@@ -36,19 +36,18 @@ namespace System.IO
 			}
 
 			int iExt = findExtension (path);
+
+			if (extension != null) {
+				if (extension [0] != '.')
+					extension = "." + extension;
+			} else
+				extension = "";
 			
-			if (iExt < 0)
-			{
-				return extension == null ? path : path + extension;
-			}
-			else if (iExt > 0)
-			{
+			if (iExt < 0) {
+				return path + extension;
+			} else if (iExt > 0) {
 				string temp = path.Substring (0, iExt);
-				if (extension != null)
-				{
-					return temp + extension;
-				}
-				return  temp;
+				return temp + extension;
 			}
 
 			return extension;
