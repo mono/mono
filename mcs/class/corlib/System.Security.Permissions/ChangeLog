@@ -1,3 +1,8 @@
+2004-08-20  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* SiteIdentityPermission.cs: Basic (without wildcards) implementation
+	for Intersect, IsSubsetOf and Union. Fixed to pass all new unit tests.
+
 2004-08-19  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* CodeAccessSecurityAttribute.cs: Namespace clean-up (removing System.)
