@@ -1,3 +1,10 @@
+2005-03-24  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* X509CapiTest.cs: Enabled IntPtr test under Linux. Add IntPtr.Zero 
+	tests (special case).
+	* X509CertificateCas.cs: New. CAS unit tests for X509Certificate.
+	* X509SpcTest.cs: Activate some tests (most only on Windows);
+
 2005-02-24  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* X509Cert20Test.cs: Fx 2.0 specific certificate tests.

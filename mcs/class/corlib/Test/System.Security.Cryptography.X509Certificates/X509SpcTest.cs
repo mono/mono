@@ -16,7 +16,7 @@ using System.Text;
 
 namespace MonoTests.System.Security.Cryptography.X509Certificates {
 
-//	[TestFixture]
+	[TestFixture]
 	public class SoftwarePublisherCertificateTest : Assertion {
 
 		[TearDown]
@@ -288,7 +288,7 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
 		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
 
-		static private byte[] smallspcexe = { 
+		static internal byte[] smallspcexe = { 
 		0x4D, 0x5A, 0x90, 0x00, 0x03, 0x00, 0x00, 0x00, 0x04, 0x00, 0x00, 0x00, 
 		0xFF, 0xFF, 0x00, 0x00, 0xB8, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
 		0x40, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
@@ -1000,6 +1000,7 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 		}
 
 		[Test]
+		[Category ("NotWorking")] // we're missing the root certificate
 		public void ValidSignature () 
 		{
 			string filename = Path.GetFullPath ("smallspc.exe");
@@ -1012,6 +1013,7 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 
 		[Test]
 		[ExpectedException (typeof (COMException))]
+		[Category ("NotWorking")]
 		public void InvalidSignature () 
 		{
 			string filename = Path.GetFullPath ("smallspc-invalid.exe");
