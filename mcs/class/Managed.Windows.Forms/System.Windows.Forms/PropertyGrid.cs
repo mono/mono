@@ -57,7 +57,7 @@ namespace System.Windows.Forms
 		private PropertySort property_sort;
 		private PropertyTabCollection property_tabs;
 		private GridItem selected_grid_item;
-		private GridItemCollection grid_items;
+		internal GridItemCollection grid_items;
 		private object[] selected_objects;
 		private PropertyTab selected_tab;
 		private Color view_back_color;
