@@ -126,11 +126,13 @@ namespace System.Web.UI
 		private bool autoEventWireup = true;
 
 		bool inited = false;
+		bool viewStateLoaded;
 		bool loaded = false;
 		bool prerendered = false;
 		int defaultNumberID = 0;
-        	
+ 
 		private DataBindingCollection dataBindings = null;
+		Hashtable pendingVS; // may hold unused viewstate data from child controls
 
                 public Control()
                 {
@@ -441,9 +443,23 @@ namespace System.Web.UI
 			if (inited)
 				control.InitRecursive (nc);
 
+			
+			if (viewStateLoaded) {
+				if (pendingVS != null) {
+					object vs = pendingVS [index];
+					if (vs != null) {
+						pendingVS.Remove (index);
+						if (pendingVS.Count == 0)
+							pendingVS = null;
+					
+						control.LoadViewStateRecursive (vs);
+					}
+				}
+			}
+
 			if (loaded)
 				control.LoadRecursive ();
-
+			
 			if (prerendered)
 				control.PreRenderRecursiveInternal ();
 		}
@@ -889,9 +905,17 @@ namespace System.Web.UI
 			int nControls = controlList.Count;
 			for (int i = 0; i < nControls; i++) {
 				Control c = FindControl ((string) controlList [i]);
-				if (c != null && controlStates != null)
+				if (c != null && controlStates != null) {
 					c.LoadViewStateRecursive (controlStates [i]);
+				} else {
+					if (pendingVS == null)
+						pendingVS = new Hashtable ();
+
+					pendingVS [i] = controlStates [i];
+				}
 			}
+
+			viewStateLoaded = true;
                 }
                 
                 void IParserAccessor.AddParsedSubObject(object obj)

@@ -1,3 +1,9 @@
+2003-08-18  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Control.cs: when we load the viewstate for a control that has children
+	viewstates and the child is not found, keep its viewstate around and
+	wait until the child is added to load the viewstate. Fixes bug #47697.
+
 2003-08-11  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* TemplateControl.cs: more Delegate.CreateDelegate fixes.
