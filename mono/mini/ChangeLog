@@ -1,3 +1,8 @@
+
+Tue Sep 9 16:33:07 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* aot.c: make aot loader less verbose. Remove free of unused variable.
+
 2003-09-08  Zoltan Varga  <vargaz@freemail.hu>
 
 	* aot.c (mono_aot_get_method_inner): Fix MONO_PATCH_INFO_IMAGE.
