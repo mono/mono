@@ -1,3 +1,7 @@
+2004-08-26 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* basic-long.cs, basic-calls.cs: new tests for optimization.
+
 2004-08-26  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini-amd64.c (read_tls_offset_from_method): Fix typo in previous
