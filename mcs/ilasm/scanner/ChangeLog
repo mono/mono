@@ -1,3 +1,9 @@
+2003-03-31 Jackson Harper <jackson@latitudegeo.com>
+
+	* NumberHelper.cs: handle sci, hex, and byte
+	do not handle all corner case
+	will optimize soon
+	
 2003-03-30 Jackson Harper <jackson@latitudegeo.com>
 
 	* ILReader.cs: Instead of mainting a buffer let the reader handle
