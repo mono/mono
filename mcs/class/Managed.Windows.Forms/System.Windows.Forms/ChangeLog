@@ -1,3 +1,34 @@
+2005-01-06  Peter Bartok <pbartok@novell.com>
+
+	* Form.cs:
+	  - Implemented ClientSize property
+	  - Implemented DesktopBounds property
+	  - Implemented DesktopLocation property
+	  - Implemented IsRestrictedWindow property
+	  - Implemented Size property
+	  - Implemented TopLevel property
+	  - Implemented FormWindowState property
+	* Control.cs:
+	  - Implemented GetTopLevel() method
+	  - Implemented SetTopLevel() method
+	* X11Structs.cs (Atom):
+	  - Added AnyPropertyType definition
+	  - Added MapState definiton and updated XWindowAttribute struct
+	* XplatUI.cs: Added GetWindowState() and SetWindowState() methods
+	* XplatUIDriver.cs: Added GetWindowState() and SetWindowState() methods
+	* XplatUIOSX.cs: Stubbed GetWindowState() and SetWindowState() methods
+	* XplatUIWin32.cs:
+	  - Implemented GetWindowState() and SetWindowState() methods
+	  - Fixed Win32GetWindowLong return type
+	* XplatUIX11.cs:
+	  - Introduced central function for sending NET_WM messages
+	  - Implemented GetWindowState() and SetWindowState() methods
+	* TextBoxBase.cs (set_Lines):
+	  - Now uses Foreground color for text added via Text property (Duh!)
+	  - Added code to remember programmatically requested size (fixes 
+	    behaviour when Multiline is set after Size)
+	  - Added AutoSize logic
+
 2005-01-06  Jackson Harper  <jackson@ximian.com>
 
 	* TreeView.cs: Draw the image after the checkbox if checkboxes are enabled.

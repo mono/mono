@@ -183,6 +183,14 @@ namespace System.Windows.Forms {
 			driver.DestroyWindow(handle);
 		}
 
+		internal static FormWindowState GetWindowState(IntPtr handle) {
+			return driver.GetWindowState(handle);
+		}
+
+		internal static void SetWindowState(IntPtr handle, FormWindowState state) {
+			driver.SetWindowState(handle, state);
+		}
+
 		internal static void RefreshWindow(IntPtr handle) {
 			driver.RefreshWindow(handle);
 		}

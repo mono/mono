@@ -83,6 +83,9 @@ namespace System.Windows.Forms {
 				this.Dock = DockStyle.Fill;
 				this.is_visible = false;
 
+				// We must set this via the internal var, the SetTopLevel method will too much stuff
+				is_toplevel = true;
+
 				MouseDown += new MouseEventHandler (OnMouseDownForm); 
 				MouseMove += new MouseEventHandler (OnMouseMoveForm); 
 				owner.TextChanged += new EventHandler(OnFormTextChanged);
@@ -174,17 +177,6 @@ namespace System.Windows.Forms {
 						}
 						break;
 					}
-#if not
-					case Msg.WM_ACTIVATE: {
-						if (m.WParam == (IntPtr)WindowActiveFlags.WA_INACTIVE) {
-							if (active_form == owner) {
-								owner.OnDeactivate(EventArgs.Empty);
-								active_form = null;
-							}
-						}
-						break;
-					}
-#endif
 
 #if topmost_workaround
 					case Msg.WM_ACTIVATE: {
@@ -352,6 +344,16 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		public Size ClientSize {
+			get {
+				return base.ClientSize;
+			}
+
+			set {
+				form_parent_window.ClientSize = value;
+			}
+		}
+
 		public bool ControlBox {
 			get {
 				return control_box;
@@ -361,6 +363,26 @@ namespace System.Windows.Forms {
 				if (control_box != value) {
 					control_box = value;
 				}
+			}
+		}
+
+		public Rectangle DesktopBounds {
+			get {
+				return new Rectangle(form_parent_window.Location, form_parent_window.Size);
+			}
+
+			set {
+				this.form_parent_window.Bounds = value;
+			}
+		}
+
+		public Point DesktopLocation {
+			get {
+				return form_parent_window.Location;
+			}
+
+			set {
+				form_parent_window.Location = value;
 			}
 		}
 
@@ -412,6 +434,11 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		public bool IsRestrictedWindow {
+			get {
+				return false;
+			}
+		}
 
 		public bool KeyPreview {
 			get {
@@ -548,6 +575,16 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		public Size Size {
+			get {
+				return form_parent_window.Size;
+			}
+
+			set {
+				form_parent_window.Size = value;
+			}
+		}
+
 		public FormStartPosition StartPosition {
 			get {
 				return start_position;
@@ -584,15 +621,36 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		public bool TopLevel {
+			get {
+				return GetTopLevel();
+			}
+
+			set {
+				SetTopLevel(value);
+			}
+		}
+
 		public bool TopMost {
 			get {
 				return topmost;
 			}
+
 			set {
 				if (topmost != value) {
 					topmost = value;
 					XplatUI.SetTopmost(window.Handle, owner != null ? owner.window.Handle : IntPtr.Zero, value);
 				}
+			}
+		}
+
+		public FormWindowState WindowState {
+			get {
+				return XplatUI.GetWindowState(form_parent_window.window.Handle);;
+			}
+
+			set {
+				XplatUI.SetWindowState(form_parent_window.window.Handle, value);
 			}
 		}
 

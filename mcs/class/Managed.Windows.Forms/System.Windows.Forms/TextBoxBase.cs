@@ -58,6 +58,7 @@ namespace System.Windows.Forms {
 		internal ScrollBars		scrollbars;
 		internal bool			grabbed;
 		internal bool			richtext;
+		internal Rectangle		text_bounds;
 
 		#if Debug
 		internal static bool	draw_lines = false;
@@ -83,6 +84,8 @@ namespace System.Windows.Forms {
 			word_wrap = true;
 			richtext = false;
 			document = new Document(this);
+			text_bounds = Rectangle.Empty;
+
 			MouseDown += new MouseEventHandler(TextBoxBase_MouseDown);
 			MouseUp += new MouseEventHandler(TextBoxBase_MouseUp);
 			MouseMove += new MouseEventHandler(TextBoxBase_MouseMove);
@@ -145,6 +148,11 @@ namespace System.Windows.Forms {
 			set {
 				if (value != auto_size) {
 					auto_size = value;
+					if (auto_size) {
+						if (PreferredHeight != Height) {
+							Height = PreferredHeight;
+						}
+					}
 					OnAutoSizeChanged(EventArgs.Empty);
 				}
 			}
@@ -240,7 +248,7 @@ namespace System.Windows.Forms {
 				document.Empty();
 
 				l = value.Length;
-				brush = ThemeEngine.Current.ResPool.GetSolidBrush(this.BackColor);
+				brush = ThemeEngine.Current.ResPool.GetSolidBrush(this.ForeColor);
 
 				for (i = 0; i < l; i++) {
 					document.Add(i+1, CaseAdjust(value[i]), alignment, Font, brush);
@@ -282,6 +290,12 @@ namespace System.Windows.Forms {
 			set {
 				if (value != multiline) {
 					multiline = value;
+
+					// Make sure we update our size; the user may have already set the size before going to multiline
+					if (text_bounds != Rectangle.Empty) {
+						SetBoundsCore(text_bounds.X, text_bounds.Y, text_bounds.Width, text_bounds.Height, BoundsSpecified.All);
+					}
+
 					OnMultilineChanged(EventArgs.Empty);
 				}
 
@@ -559,6 +573,12 @@ namespace System.Windows.Forms {
 
 		protected override void OnFontChanged(EventArgs e) {
 			base.OnFontChanged (e);
+
+			if (auto_size) {
+				if (PreferredHeight != Height) {
+					Height = PreferredHeight;
+				}
+			}
 		}
 
 		protected override void OnHandleCreated(EventArgs e) {
@@ -602,6 +622,7 @@ namespace System.Windows.Forms {
 			if (!richtext) {
 				if (!multiline) {
 					if (height > PreferredHeight) {
+						text_bounds = new Rectangle(x, y, width, height);
 						height = PreferredHeight;
 					}
 				}
@@ -854,8 +875,8 @@ static int current;
 				start = document.GetLineByPixel(pevent.ClipRectangle.Top - viewport_y, false).line_no;
 				end = document.GetLineByPixel(pevent.ClipRectangle.Bottom - viewport_y, false).line_no;
 
-				Console.WriteLine("Starting drawing on line '{0}'", document.GetLine(start));
-				Console.WriteLine("Ending drawing on line '{0}'", document.GetLine(end));
+				//Console.WriteLine("Starting drawing on line '{0}'", document.GetLine(start));
+				//Console.WriteLine("Ending drawing on line '{0}'", document.GetLine(end));
 
 				line_no = start;
 				while (line_no <= end) {

@@ -86,6 +86,8 @@ namespace System.Windows.Forms {
 		private static int		wm_state_above;		// X Atom
 		private static int		atom;			// X Atom
 		private static int		wm_state_modal;		// X Atom
+		private static int		wm_state_maximized_horz;// X Atom
+		private static int		wm_state_maximized_vert;// X Atom
 		private static int		net_wm_state;		// X Atom
 		private static int		net_active_window;	// X Atom
 		private static int		net_wm_context_help;	// X Atom
@@ -318,6 +320,23 @@ namespace System.Windows.Forms {
 		}
 		#endregion	// Callbacks
 
+		#region	Helpers
+		private void SendNetWMMessage(IntPtr window, IntPtr message_type, IntPtr l0, IntPtr l1, IntPtr l2) {
+			XEvent	xev;
+
+			xev = new XEvent();
+			xev.ClientMessageEvent.type = XEventName.ClientMessage;
+			xev.ClientMessageEvent.send_event = true;
+			xev.ClientMessageEvent.window = window;
+			xev.ClientMessageEvent.message_type = message_type;
+			xev.ClientMessageEvent.format = 32;
+			xev.ClientMessageEvent.ptr1 = l0;
+			xev.ClientMessageEvent.ptr2 = l1;
+			xev.ClientMessageEvent.ptr3 = l2;
+			XSendEvent(DisplayHandle, root_window, false, EventMask.SubstructureRedirectMask | EventMask.SubstructureNotifyMask, ref xev);
+		}
+		#endregion	// Helpers
+
 		#region Public Static Methods
 		internal override IntPtr InitializeDriver() {
 			lock (this) {
@@ -375,6 +394,8 @@ namespace System.Windows.Forms {
 				wm_state_above=XInternAtom(display_handle, "_NET_WM_STATE_ABOVE", false);
 				wm_state_modal = XInternAtom(display_handle, "_NET_WM_STATE_MODAL", false);
 				net_active_window = XInternAtom(display_handle, "_NET_ACTIVE_WINDOW", false);
+				wm_state_maximized_horz = XInternAtom(display_handle, "_NET_WM_STATE_MAXIMIZED_HORZ", false);
+				wm_state_maximized_vert = XInternAtom(display_handle, "_NET_WM_STATE_MAXIMIZED_VERT", false);
 
 				atom=XInternAtom(display_handle, "ATOM", false);
 				async_method = XInternAtom(display_handle, "_SWF_AsyncAtom", false);
@@ -551,6 +572,7 @@ namespace System.Windows.Forms {
 					atoms[atom_count++] = (IntPtr)wm_state_above;
 					atoms[atom_count++] = (IntPtr)wm_no_taskbar;
 				}
+				// Should we use SendNetWMMessage here?
 				XChangeProperty(DisplayHandle, WindowHandle, net_wm_state, atom, 32, PropertyMode.Replace, ref atoms, atom_count);
 
 				XSelectInput(DisplayHandle, WindowHandle, SelectInputMask);
@@ -604,6 +626,82 @@ namespace System.Windows.Forms {
 					data.Dispose ();
 					handle_data [handle] = null;
 					XDestroyWindow(DisplayHandle, handle);
+				}
+			}
+		}
+
+		internal override FormWindowState GetWindowState(IntPtr handle) {
+			Atom			actual_atom;
+			int			actual_format;
+			int			nitems;
+			int			bytes_after;
+			IntPtr			prop = IntPtr.Zero;
+			IntPtr			atom;
+			int			maximized;
+			XWindowAttributes	attributes;
+
+			maximized = 0;
+			XGetWindowProperty(DisplayHandle, handle, net_wm_state, 0, 256, false, Atom.XA_ATOM, out actual_atom, out actual_format, out nitems, out bytes_after, ref prop);
+			if ((nitems > 0) && (prop != IntPtr.Zero)) {
+
+				for (int i = 0; i < nitems; i++) {
+					atom = (IntPtr)Marshal.ReadInt32(prop, i * 4);
+					if ((atom == (IntPtr)wm_state_maximized_horz) || (atom == (IntPtr)wm_state_maximized_vert)) {
+						maximized++;
+					}
+				}
+				XFree(prop);
+			}
+			if (maximized == 2) {
+				return FormWindowState.Maximized;
+			}
+
+
+			attributes = new XWindowAttributes();
+			XGetWindowAttributes(DisplayHandle, handle, ref attributes);
+			if (attributes.map_state == MapState.IsUnmapped) {
+				return FormWindowState.Minimized;
+			}
+
+			return FormWindowState.Normal;
+		}
+
+		internal override void SetWindowState(IntPtr handle, FormWindowState state) {
+			FormWindowState	current_state;
+
+			current_state = GetWindowState(handle);
+
+			if (current_state == state) {
+				return;
+			}
+
+			switch(state) {
+				case FormWindowState.Normal: {
+					if (current_state == FormWindowState.Minimized) {
+						XMapWindow(DisplayHandle, handle);
+					} else if (current_state == FormWindowState.Maximized) {
+						SendNetWMMessage(handle, (IntPtr)net_wm_state, (IntPtr)2 /* toggle */, (IntPtr)wm_state_maximized_horz, (IntPtr)wm_state_maximized_vert);
+					}
+					Activate(handle);
+					return;
+				}
+
+				case FormWindowState.Minimized: {
+					if (current_state == FormWindowState.Maximized) {
+					       SendNetWMMessage(handle, (IntPtr)net_wm_state, (IntPtr)2 /* toggle */, (IntPtr)wm_state_maximized_horz, (IntPtr)wm_state_maximized_vert);
+					}
+					XIconifyWindow(DisplayHandle, handle, 0);
+					return;
+				}
+
+				case FormWindowState.Maximized: {
+					if (current_state == FormWindowState.Minimized) {
+						XMapWindow(DisplayHandle, handle);
+					}
+
+					SendNetWMMessage(handle, (IntPtr)net_wm_state, (IntPtr)1 /* Add */, (IntPtr)wm_state_maximized_horz, (IntPtr)wm_state_maximized_vert);
+					Activate(handle);
+					return;
 				}
 			}
 		}
@@ -724,15 +822,7 @@ namespace System.Windows.Forms {
 		internal override void Activate(IntPtr handle) {
 
 			lock (xlib_lock) {
-				XEvent	xev = new XEvent();
-
-				xev.ClientMessageEvent.type = XEventName.ClientMessage;
-				xev.ClientMessageEvent.send_event = true;
-				xev.ClientMessageEvent.window = handle;
-				xev.ClientMessageEvent.message_type = (IntPtr) net_active_window;
-				xev.ClientMessageEvent.format = 32;
-				XSendEvent(DisplayHandle, root_window, false, EventMask.SubstructureRedirectMask | EventMask.SubstructureNotifyMask, ref xev);
-
+				SendNetWMMessage(handle, (IntPtr)net_active_window, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero);
 				//XRaiseWindow(DisplayHandle, handle);
 			}
 			return;
@@ -991,8 +1081,6 @@ namespace System.Windows.Forms {
 								break;
 							}
 						}
-
-
 					}
 					break;
 
@@ -1931,6 +2019,9 @@ namespace System.Windows.Forms {
 
 		[DllImport ("libX11", EntryPoint="XSetInputFocus")]
 		internal extern static int XSetInputFocus(IntPtr display, IntPtr window, RevertTo revert_to, IntPtr time);
+
+		[DllImport ("libX11", EntryPoint="XIconifyWindow")]
+		internal extern static int XIconifyWindow(IntPtr display, IntPtr window, int screen_number);
 		#endregion
 	}
 }

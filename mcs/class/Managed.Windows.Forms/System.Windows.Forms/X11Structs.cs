@@ -589,7 +589,7 @@ namespace System.Windows.Forms {
 		internal bool		save_under;
 		internal IntPtr		colormap;
 		internal bool		map_installed;
-		internal int		map_state;
+		internal MapState	map_state;
 		internal IntPtr		all_event_masks;
 		internal IntPtr		your_event_mask;
 		internal IntPtr		do_not_propagate_mask;
@@ -780,6 +780,7 @@ namespace System.Windows.Forms {
 	}
 
 	internal enum Atom {
+		AnyPropertyType		= 0,
 		XA_PRIMARY		= 1,
 		XA_SECONDARY		= 2,
 		XA_ARC			= 3,
@@ -1137,6 +1138,12 @@ namespace System.Windows.Forms {
 		None				= 0,
 		PointerRoot			= 1,
 		Parent				= 2
+	}
+
+	internal enum MapState {
+		IsUnmapped			= 0,
+		IsUnviewable			= 1,
+		IsViewable			= 2
 	}
 }
 

@@ -95,6 +95,9 @@ namespace System.Windows.Forms {
 		internal abstract IntPtr CreateWindow(IntPtr Parent, int X, int Y, int Width, int Height);
 		internal abstract void DestroyWindow(IntPtr handle);
 
+		internal abstract FormWindowState GetWindowState(IntPtr handle);
+		internal abstract void SetWindowState(IntPtr handle, FormWindowState state);
+
 		internal abstract bool GetText(IntPtr handle, out string text);
 		internal abstract bool Text(IntPtr handle, string text);
 		internal abstract bool SetVisible(IntPtr handle, bool visible);

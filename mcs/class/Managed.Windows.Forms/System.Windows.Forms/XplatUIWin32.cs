@@ -386,7 +386,7 @@ namespace System.Windows.Forms {
 			RECT		rect;
 						
 			//msg.wParam
-			argb = (uint)Win32GetWindowLong(hWnd, WindowLong.GWL_USERDATA);
+			argb = Win32GetWindowLong(hWnd, WindowLong.GWL_USERDATA);
 			lb = new LOGBRUSH();
 						
 			lb.lbColor.B = (byte)((argb & 0xff0000)>>16);
@@ -542,6 +542,37 @@ namespace System.Windows.Forms {
 		internal override void DestroyWindow(IntPtr handle) {
 			Win32DestroyWindow(handle);
 			return;
+		}
+
+		internal override FormWindowState GetWindowState(IntPtr handle) {
+			uint style;
+
+			style = Win32GetWindowLong(handle, WindowLong.GWL_STYLE);
+			if ((style & (uint)WindowStyles.WS_MAXIMIZE) != 0) {
+				return FormWindowState.Maximized;
+			} else if ((style & (uint)WindowStyles.WS_MINIMIZE) != 0) {
+				return FormWindowState.Minimized;
+			}
+			return FormWindowState.Normal;
+		}
+
+		internal override void SetWindowState(IntPtr hwnd, FormWindowState state) {
+			switch(state) {
+				case FormWindowState.Normal: {
+					Win32ShowWindow(hwnd, WindowPlacementFlags.SW_SHOWNORMAL);
+					return;
+				}
+
+				case FormWindowState.Minimized: {
+					Win32ShowWindow(hwnd, WindowPlacementFlags.SW_SHOWMINIMIZED);
+					return;
+				}
+
+				case FormWindowState.Maximized: {
+					Win32ShowWindow(hwnd, WindowPlacementFlags.SW_SHOWMAXIMIZED);
+					return;
+				}
+			}
 		}
 
 		internal override void RefreshWindow(IntPtr handle) {			
@@ -1196,7 +1227,7 @@ namespace System.Windows.Forms {
 		private extern static IntPtr Win32SetWindowLong(IntPtr hwnd, WindowLong index, IntPtr value);
 
 		[DllImport ("user32.dll", EntryPoint="GetWindowLong", CharSet=CharSet.Ansi, CallingConvention=CallingConvention.StdCall)]
-		private extern static IntPtr Win32GetWindowLong(IntPtr hwnd, WindowLong index);
+		private extern static uint Win32GetWindowLong(IntPtr hwnd, WindowLong index);
 
 		[DllImport ("gdi32.dll", EntryPoint="DeleteObject", CharSet=CharSet.Ansi, CallingConvention=CallingConvention.StdCall)]
 		private extern static bool Win32DeleteObject(IntPtr o);

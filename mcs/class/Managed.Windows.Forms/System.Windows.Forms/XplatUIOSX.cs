@@ -319,6 +319,14 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		internal override FormWindowState GetWindowState(IntPtr hwnd) {
+			throw new NotImplementedException();
+		}
+
+		internal override void SetWindowState(IntPtr hwnd, FormWindowState state) {
+			throw new NotImplementedException();
+		}
+
 		internal override void RefreshWindow(IntPtr handle) {
 			HIRect r = new HIRect ();
 			CheckError (HIViewGetFrame (handle, ref r), "HIViewGetFrame ()");

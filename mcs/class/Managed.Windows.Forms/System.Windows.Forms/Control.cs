@@ -60,6 +60,7 @@ namespace System.Windows.Forms
 		internal bool			is_selected;		// true if control is selected
 		internal bool			is_accessible;		// true if the control is visible to accessibility applications
 		internal bool			is_captured;		// tracks if the control has captured the mouse
+		internal bool			is_toplevel;		// tracks if the control is a toplevel window
 		internal bool			is_recreating;		// tracks if the handle for the control is being recreated
 		internal bool			causes_validation;	// tracks if validation is executed on changes
 		internal int			tab_index;		// position in tab order of siblings
@@ -469,6 +470,7 @@ namespace System.Windows.Forms
 			is_enabled = true;
 			is_entered = false;
 			layout_pending = false;
+			is_toplevel = false;
 			causes_validation = true;
 			has_focus = false;
 			layout_suspended = 0;		
@@ -2077,6 +2079,10 @@ namespace System.Windows.Forms
 			return (control_style & flag) != 0;
 		}
 
+		protected bool GetTopLevel() {
+			return is_toplevel;
+		}
+
 		protected virtual void InitLayout() {
 			if (parent != null) {
 				parent.PerformLayout(this, "parent");
@@ -2386,6 +2392,25 @@ namespace System.Windows.Forms
 			}
 		}
 
+		protected void SetTopLevel(bool value) {
+			if ((GetTopLevel() != value) && (parent != null)) {
+				throw new Exception();
+			}
+
+			if (this is Form) {
+				if (value == true) {
+					if (!Visible) {
+						Visible = true;
+					}
+				} else {
+					if (Visible) {
+						Visible = false;
+					}
+				}
+			}
+			is_toplevel = value;
+		}
+
 		protected virtual void SetVisibleCore(bool value) {
 			if (value!=is_visible) {
 				is_visible=value;
@@ -2678,10 +2703,17 @@ namespace System.Windows.Forms
 
 				break;
 			}
+
+			case Msg.WM_KILLFOCUS: {
+				break;
+			}
+
+			case Msg.WM_SETFOCUS: {
+				break;
+			}
 				
 
 #if notyet				
-				case Msg.WM_WINDOWPOSCHANGED:	throw new NotImplementedException();	break;
 				case Msg.WM_SYSCOLORCHANGE:	throw new NotImplementedException();	break;
 				
 #endif
@@ -2912,10 +2944,12 @@ namespace System.Windows.Forms
 		}
 
 		protected virtual void OnParentEnabledChanged(EventArgs e) {
-			if ((is_enabled && !Parent.is_enabled) || (!is_enabled && Parent.is_enabled)) {
-				is_enabled=false;
+			if (is_enabled != Parent.is_enabled) {
+				is_enabled=Parent.is_enabled;
 				Invalidate();
-				EnabledChanged(this, e);
+				if (EnabledChanged != null) {
+					EnabledChanged(this, e);
+				}
 			}
 		}
 
