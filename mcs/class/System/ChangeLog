@@ -1,3 +1,7 @@
+2005-03-04  Lluis Sanchez Gual <lluis@novell.com>
+
+	* System.dll.sources: Added OrderedDictionary.cs.
+
 2005-02-22  Sureshkumar T  <tsureshkumar@novell.com>
 
 	* System.dll.sources: Added files.
