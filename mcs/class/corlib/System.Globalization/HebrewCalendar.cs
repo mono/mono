@@ -877,6 +877,12 @@ public class HebrewCalendar : Calendar {
 			hour, minute, second, milliseconds);
 	}
 
+	[MonoTODO]
+	public override int ToFourDigitYear (int year)
+	{
+		throw new NotImplementedException ();
+	}
+
 } // class HebrewCalendar
 	
 } // namespace System.Globalization

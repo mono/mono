@@ -66,6 +66,18 @@ public class HijriCalendar : Calendar {
 		}
 	}
 
+#if NET_1_1
+	[MonoTODO]
+	public int HijriAdjustment {
+		get {
+			throw new NotImplementedException ();
+		}
+		set {
+			throw new NotImplementedException ();
+		}
+	}
+#endif
+
 	int twoDigitYearMax = 1451;
 	
 	[MonoTODO ("Add call into operating system")]
