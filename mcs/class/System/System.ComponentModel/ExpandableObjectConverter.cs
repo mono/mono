@@ -14,7 +14,11 @@ namespace System.ComponentModel {
 
 		#region Constructors
 
-		public ExpandableObjectConverter ();
+		[MonoTODO]
+		public ExpandableObjectConverter ()
+		{
+			throw new NotImplementedException ();
+		}
 
 		#endregion // Constructors
 

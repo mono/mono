@@ -1,4 +1,7 @@
 2002-07-22  Tim Coleman <tim@timcoleman.com>
+	* ExpandableObjectConverter.cs: Fix error with constructor
+
+2002-07-22  Tim Coleman <tim@timcoleman.com>
 	* TypeConverter.cs: Fixed bad stubb function
 		GetConvertToException ()
 
