@@ -354,7 +354,7 @@ namespace System.Reflection
 				for (i = match.Length - 1; i >= 0; i--) {
 					PropertyInfo p = match [i];
 					ParameterInfo[] args = p.GetIndexParameters ();
-					if (idxlen > 0 && idxlen != args.Length)
+					if (idxlen >= 0 && idxlen != args.Length)
 						continue;
 
 					if (haveRet && !check_type (p.PropertyType, returnType))
