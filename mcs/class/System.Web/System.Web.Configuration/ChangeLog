@@ -1,3 +1,8 @@
+2003-10-15  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* CompilationConfiguration.cs: use the context passed in. If not, try
+	the current context.
+
 2003-10-14  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* CompilationConfiguration.cs:

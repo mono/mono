@@ -54,8 +54,10 @@ namespace System.Web.Configuration
 		static public CompilationConfiguration GetInstance (HttpContext context)
 		{
 			CompilationConfiguration config;
-			config = HttpContext.Context.GetConfig ("system.web/compilation")
-							as CompilationConfiguration;
+			if (context == null)
+				context = HttpContext.Context;
+
+			config = context.GetConfig ("system.web/compilation") as CompilationConfiguration;
 
 			if (config == null)
 				throw new HttpException ("Configuration error.", 500);
