@@ -1,3 +1,7 @@
+2001-09-20  Dietmar Maurer  <dietmar@ximian.com>
+
+	* wrapper.c: added declaration of environ
+
 2001-09-07  Nick Drochak  <ndrochak@gol.com>
 
 	* Makefile.am: Use '=' to set CLEANFILES instead of '+=' since 
