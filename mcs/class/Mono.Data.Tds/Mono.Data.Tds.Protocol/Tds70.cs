@@ -4,7 +4,7 @@
 // Author:
 //   Tim Coleman (tim@timcoleman.com)
 //   Diego Caravana (diego@toth.it)
-//   Sebastien Pouliot (spouliot@motus.com)
+//   Sebastien Pouliot (sebastien@ximian.com)
 //   Daniel Morgan (danielmorgan@verizon.net)
 //
 // Copyright (C) 2002 Tim Coleman
@@ -300,7 +300,7 @@ namespace Mono.Data.Tds.Protocol {
 				msg.Domain = domain;
 				msg.Host = connectionParameters.Hostname;
 				msg.Flags = NtlmFlags.NegotiateUnicode | 
-					NtlmFlags.NegotiateNTLM | 
+					NtlmFlags.NegotiateNtlm | 
 					NtlmFlags.NegotiateDomainSupplied | 
 					NtlmFlags.NegotiateWorkstationSupplied | 
 					NtlmFlags.NegotiateAlwaysSign; // 0xb201

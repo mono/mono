@@ -1,3 +1,7 @@
+2004-04-22  Sebastien Pouliot <sebastien@ximian.com> 
+
+	* Tds70.cs: Updated to match changes in Mono.Security.dll.
+
 2004-04-05  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* ITds.cs: Added method for reseting a connection.
