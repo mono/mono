@@ -20,7 +20,7 @@ using System.Runtime.CompilerServices;
 namespace System {
 	
 	[Serializable]
-	public struct Char : IComparable, IConvertible { //, IFormattable {
+	public struct Char : IComparable, IConvertible {
 		public const char MaxValue = (char) 0xffff;
 		public const char MinValue = (char) 0;
 		
@@ -286,14 +286,33 @@ namespace System {
 		[MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.InternalCall)]
 		public static extern char ToLower (char c);
 
+		[MonoTODO]
+		public static char ToLower(char c, CultureInfo culture)
+		{
+			throw new NotImplementedException();
+		}
+		
+
 		[MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.InternalCall)]
 		public static extern char ToUpper (char c);
+
+		[MonoTODO]
+		public static char ToUpper(char c, CultureInfo culture)
+		{
+			throw new NotImplementedException();
+		}
 
 		public override string ToString ()
 		{
 			// LAMESPEC: ECMA draft lists this as returning ToString (null), 
 			// However it doesn't list another ToString() method.
 			return new String (value, 1);
+		}
+
+		[MonoTODO]
+		public static string ToString(char c)
+		{
+			throw new NotImplementedException();
 		}
 
 		public string ToString (IFormatProvider fp)

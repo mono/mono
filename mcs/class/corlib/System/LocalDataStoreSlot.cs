@@ -17,5 +17,10 @@ namespace System
 		internal LocalDataStoreSlot ()
 		{
 		}
+
+		[MonoTODO("Spec: Finalize locks the data store manager before marking the data slot as unoccupied")]
+		~LocalDataStoreSlot()
+		{
+		}
 	}
 }

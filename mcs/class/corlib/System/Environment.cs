@@ -104,6 +104,15 @@ namespace System
 			}
 		}
 
+		[MonoTODO]
+		public bool HasShutdownStarted
+		{
+			get {
+				throw new NotImplementedException();
+			}
+		}
+		
+
 		/// <summary>
 		/// Gets the name of the local computer
 		/// </summary>
@@ -301,3 +310,4 @@ namespace System
 
 	}
 }
+

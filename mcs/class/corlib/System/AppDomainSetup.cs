@@ -9,11 +9,13 @@
 
 using System;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
 namespace System {
 
 
 	[Serializable]
+	[ClassInterface(ClassInterfaceType.None)]
 	public sealed class AppDomainSetup : IAppDomainSetup {
 		string application_base;
 		string application_name;

@@ -6,6 +6,7 @@ System/AppDomain.cs
 System/AppDomainSetup.cs
 System/AppDomainUnloadedException.cs
 System/ApplicationException.cs
+System/ArgIterator.cs
 System/ArgumentException.cs
 System/ArgumentNullException.cs
 System/ArgumentOutOfRangeException.cs
@@ -124,6 +125,7 @@ System/TimeZone.cs
 System/TODOAttribute.cs
 System/Type.cs
 System/TypeCode.cs
+System/TypedReference.cs
 System/TypeInitializationException.cs
 System/TypeLoadException.cs
 System/TypeUnloadedException.cs

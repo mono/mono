@@ -22,10 +22,7 @@ using System.Runtime.InteropServices;
 namespace System
 {
 
-[
-    StructLayout(LayoutKind.Auto),
-    CLSCompliant(false)
-]
+[CLSCompliant(false)]
 [Serializable]
 public unsafe struct UIntPtr : ISerializable
 {

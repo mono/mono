@@ -585,6 +585,12 @@ namespace System
 			return array.GetLowerBound (0) - 1;
 		}
 
+		[MonoTODO]
+		public void Initialize()
+		{
+			throw new NotImplementedException();
+		}
+
 		public static int LastIndexOf (Array array, object value)
 		{
 			if (array == null)

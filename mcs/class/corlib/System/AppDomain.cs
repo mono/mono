@@ -16,6 +16,7 @@ using System.Globalization;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using System.Runtime.Remoting;
 using System.Security.Principal;
 using System.Security.Policy;
@@ -23,6 +24,7 @@ using System.Security;
 
 namespace System {
 
+	[ClassInterface(ClassInterfaceType.None)]
 	public sealed class AppDomain : MarshalByRefObject , _AppDomain , IEvidenceFactory {
 
 		IntPtr _mono_app_domain;
@@ -117,6 +119,21 @@ namespace System {
 		{
 			throw new NotImplementedException ();
 		}
+
+		[MonoTODO]
+		public ObjectHandle CreateComInstanceFrom (string assemblyName,
+							   string typeName)
+		{
+			if(assemblyName==null) {
+				throw new ArgumentNullException("assemblyName is null");
+			}
+			if(typeName==null) {
+				throw new ArgumentNullException("typeName is null");
+			}
+			
+			throw new NotImplementedException();
+		}
+		
 
 		public ObjectHandle CreateInstance (string assemblyName, string typeName)
 		{
@@ -407,10 +424,22 @@ namespace System {
 			return (int)_mono_app_domain;
 		}
 
+		[MonoTODO("Somehow, we're supposed to implement 'public Type _AppDomain.GetType()' and still inherit 'public Type Object.GetType()")]
+		Type _AppDomain.GetType()
+		{
+			throw new NotImplementedException();
+		}
+		
 		[MonoTODO]
 		public override object InitializeLifetimeService ()
 		{
 			throw new NotImplementedException ();			
+		}
+
+		[MonoTODO]
+		public bool IsFinalizingForUnload()
+		{
+			throw new NotImplementedException();
 		}
 	
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
@@ -474,7 +503,13 @@ namespace System {
 		{
 			throw new NotImplementedException ();
 		}
-		
+
+		[MonoTODO]
+		public void SetShadowCopyFiles()
+		{
+			throw new NotImplementedException ();
+		}
+						
 		[MonoTODO]
 		public void SetShadowCopyPath (string s)
 		{
@@ -542,6 +577,12 @@ namespace System {
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern void SetData (string name, object data);
 
+		[MonoTODO]
+		public void SetDynamicBase(string path)
+		{
+			throw new NotImplementedException();
+		}
+				
 		[MonoTODO]
 		public static int GetCurrentThreadId ()
 		{

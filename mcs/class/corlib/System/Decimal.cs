@@ -28,10 +28,19 @@ namespace System
 	[Serializable]
     public struct Decimal: IComparable, IFormattable, IConvertible
     {
+	// LAMESPEC: the attributes aren't mentioned, but show up in CorCompare
+	// Unfortunately, corcompare starts throwing security exceptions when
+	// these attributes are present...
+	    
+	[DecimalConstantAttribute(0, 1, unchecked((uint)-1), unchecked((uint)-1), unchecked((uint)-1))]
         public static readonly Decimal MinValue = new Decimal(-1, -1, -1, true, 0);
+	[DecimalConstantAttribute(0, 0, unchecked((uint)-1), unchecked((uint)-1), unchecked((uint)-1))]
         public static readonly Decimal MaxValue = new Decimal(-1, -1, -1, false, 0);
+	[DecimalConstantAttribute(0, 1, 0, 0, 1)]
         public static readonly Decimal MinusOne = new Decimal(1, 0, 0, true, 0);
+	[DecimalConstantAttribute(0, 0, 0, 0, 1)]
         public static readonly Decimal One = new Decimal(1, 0, 0, false, 0);
+	[DecimalConstantAttribute(0, 0, 0, 0, 0)]
         public static readonly Decimal Zero = new Decimal(0, 0, 0, false, 0);
 
         // maximal decimal value as double
@@ -174,6 +183,12 @@ namespace System
             }
         }
 
+	[MonoTODO]
+	public static decimal FromOACurrency(long cy)
+	{
+		throw new NotImplementedException();
+	}
+	
         public static int[] GetBits(Decimal d) 
         {
             unchecked 
@@ -893,6 +908,100 @@ namespace System
 	    return TypeCode.Decimal;
 	}
 
+	[MonoTODO]
+	public static byte ToByte(decimal value)
+	{
+		if(value < Byte.MinValue || value > Byte.MaxValue) {
+			throw new OverflowException("Invalid value");
+		}
+		throw new NotImplementedException();
+	}
+
+	[MonoTODO]
+	public static double ToDouble(decimal d)
+	{
+		throw new NotImplementedException();
+	}
+
+	[MonoTODO]
+	public static short ToInt16(decimal value)
+	{
+		if(value < Int16.MinValue || value > Int16.MaxValue) {
+			throw new OverflowException("Invalid value");
+		}
+		throw new NotImplementedException();
+	}
+
+	[MonoTODO]
+	public static int ToInt32(decimal d)
+	{
+		if(d < Int32.MinValue || d > Int32.MaxValue) {
+			throw new OverflowException("Invalid value");
+		}
+		throw new NotImplementedException();
+	}
+
+	[MonoTODO]
+	public static long ToInt64(decimal d)
+	{
+		if(d < Int64.MinValue || d > Int64.MaxValue) {
+			throw new OverflowException("Invalid value");
+		}
+		throw new NotImplementedException();
+	}
+
+	[MonoTODO]
+	public static long ToOACurrency(decimal value)
+	{
+		throw new NotImplementedException();
+	}
+
+	[MonoTODO]
+	[CLSCompliant(false)]
+	public static sbyte ToSByte(decimal value)
+	{
+		if(value < SByte.MinValue || value > SByte.MaxValue) {
+			throw new OverflowException("Invalid value");
+		}
+		throw new NotImplementedException();
+	}
+
+	[MonoTODO]
+	public static float ToSingle(decimal d)
+	{
+		throw new NotImplementedException();
+	}
+
+	[MonoTODO]
+	[CLSCompliant(false)]
+	public static ushort ToUInt16(decimal value)
+	{
+		if(value < UInt16.MinValue || value > UInt16.MaxValue) {
+			throw new OverflowException("Invalid value");
+		}
+		throw new NotImplementedException();
+	}
+
+	[MonoTODO]
+	[CLSCompliant(false)]
+	public static uint ToUInt32(decimal d)
+	{
+		if(d < 0 || d > UInt32.MaxValue) {
+			throw new OverflowException("Invalid value");
+		}
+		throw new NotImplementedException();
+	}
+
+	[MonoTODO]
+	[CLSCompliant(false)]
+	public static ulong ToUInt64(decimal d)
+	{
+		if(d < 0 || d > UInt64.MaxValue) {
+			throw new OverflowException("Invalid value");
+		}
+		throw new NotImplementedException();
+	}
+		
 	object IConvertible.ToType (Type conversionType, IFormatProvider provider)
 	{
 	    return Convert.ToType (this, conversionType, provider);
@@ -1113,3 +1222,4 @@ namespace System
 #endif
     }
 }
+

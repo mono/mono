@@ -1,3 +1,7 @@
+2002-09-12  Dick Porter  <dick@ximian.com>
+
+	* TypeBuilder.cs: Say _which_ Type has already been created
+
 2002-09-11  Miguel de Icaza  <miguel@ximian.com>
 
 	* ModuleBuilder.cs (GetTypes): Implement.

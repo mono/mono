@@ -303,8 +303,10 @@ namespace System.Reflection.Emit {
 		
 		public Type CreateType() {
 			/* handle nesting_type */
-			if (created != null)
-				throw new InvalidOperationException ("type already created");
+			if (created != null) {
+				string err="type already created: " + created.ToString();
+				throw new InvalidOperationException (err);
+			}
 			if (methods != null) {
 				foreach (MethodBuilder method in methods) {
 					method.fixup ();

@@ -63,6 +63,10 @@
 				<excludes name="System/Delegate.cs"/>
 				<excludes name="System/MulticastDelegate.cs"/>
 				<excludes name="System/Exception.cs"/>
+
+				<!-- DecimalConstantAttribute presence causes security exceptions in corcompare -->
+				<excludes name="System/Decimal.cs"/>
+				<excludes name="System/DecimalFormatter.cs"/>
 			</sources>
 		</csc>
 		<!-- NUnit can only run under windows right now, so build for windows

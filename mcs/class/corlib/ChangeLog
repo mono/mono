@@ -1,3 +1,11 @@
+2002-09-12  Dick Porter  <dick@ximian.com>
+
+	* unix.args: Add System.ArgIterator and System.TypedReference
+
+	* corlib.build: Adding DecimalConstantAttribute to Decimal (which
+	corcompare showed as missing) causes a SecurityException in
+	corcompare, so exclude Decimal from the corlib_cmp build.
+
 2002-08-26  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* unix.args: added a couple of new files in System.Security.Principal.
