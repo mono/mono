@@ -1,3 +1,7 @@
+2004-12-05 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* WebConnection.cs: readd prevStream. Caused regressions.
+
 2004-12-04 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* WebConnection.cs: handle errors on chunked streams. Fixes bug #66858.
