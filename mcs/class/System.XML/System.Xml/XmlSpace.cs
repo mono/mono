@@ -14,18 +14,22 @@ namespace System.Xml {
 
 
 	/// <summary>
+	/// Specifies the current xml:space scope
 	/// </summary>
 	public enum XmlSpace {
 
 		/// <summary>
+		/// No xml:space scope.
 		/// </summary>
 		None = 0,
 
 		/// <summary>
+		/// the xml:space scope = "default"
 		/// </summary>
 		Default = 1,
 
 		/// <summary>
+		/// the xml:space scope = "preserve"
 		/// </summary>
 		Preserve = 2,
 	} // XmlSpace
