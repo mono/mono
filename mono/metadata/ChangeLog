@@ -1,5 +1,12 @@
 2004-04-06  Martin Baulig  <martin@ximian.com>
 
+	* class.c (mono_class_init): If we're a generic instance,
+	initialize our nested classes, too.
+	(_mono_class_get_instantiation_name): Deal with the new `!%d'
+	suffix.	
+
+2004-04-06  Martin Baulig  <martin@ximian.com>
+
 	* row-indexes.h
 	(MONO_GENERICPARAM_DEPRECATED_CONSTRAINT): Removed.
 
