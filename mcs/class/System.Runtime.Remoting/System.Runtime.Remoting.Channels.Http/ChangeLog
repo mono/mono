@@ -1,3 +1,9 @@
+2003-11-16  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* HttpHelper.cs: Removed usnused method GetMachineIp.
+	* HttpServerChannel.cs: Added support for priority, bindTo, useIpAddress and
+	  machineName properties.
+
 2003-11-13  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* HttpChannel.cs: Create empty property dictionary in the default

@@ -34,13 +34,12 @@ namespace System.Runtime.Remoting.Channels.Http
 	public class HttpServerChannel : IChannel,
 		IChannelReceiver, IChannelReceiverHook
 	{
-		private int                 _channelPriority = 1;  // priority of channel (default=1)
+		private int               _channelPriority = 1;  // priority of channel (default=1)
 		private String            _channelName = "http"; // channel name
 		private String            _machineName = null;   // machine name
 		private int               _port = -1;            // port to listen on
 		private ChannelDataStore  _channelData = null;   // channel data
 		
-		private String  _forcedMachineName = null; // an explicitly configured machine name
 		private bool _bUseIpAddress = true; // by default, we'll use the ip address.
 		private IPAddress _bindToAddr = IPAddress.Any; // address to bind to.
 		private bool _bSuppressChannelData = false; // should we hand out null for our channel data
@@ -94,6 +93,9 @@ namespace System.Runtime.Remoting.Channels.Http
 				{
 					case "name":
 						_channelName = (string)Dict.Value;
+						break;
+					case "priority":
+						_channelPriority = Convert.ToInt32 (Dict.Value);
 						break;
 					case "bindTo": 
 						_bindToAddr = IPAddress.Parse ((string)Dict.Value); 
@@ -197,32 +199,17 @@ namespace System.Runtime.Remoting.Channels.Http
 		
 		void SetupMachineName()
 		{
-			if (_forcedMachineName != null)
+			if (_machineName == null)
 			{
-				// an explicitly configured machine name was used
-				//_machineName = CoreChannel.DecodeMachineName(_forcedMachineName);
-				if (_forcedMachineName.Equals("$hostName"))
-				{
-					_machineName =  Dns.GetHostName();
-					if(_machineName == null)
-							throw new ArgumentNullException("hostName");
-					
+				if (_bUseIpAddress) {
+					IPHostEntry he = Dns.Resolve (Dns.GetHostName());
+					if (he.AddressList.Length == 0) throw new RemotingException ("IP address could not be determined for this host");
+					_machineName = he.AddressList [0].ToString ();
 				}
-
-				else _machineName = _forcedMachineName;
-			}
-			else
-			{
-				if (!_bUseIpAddress)
-					_machineName = HttpHelper.GetMachineName();
 				else
-				{
-					if (_bindToAddr == IPAddress.Any)
-						_machineName = HttpHelper.GetMachineIp();
-					else
-						_machineName = _bindToAddr.ToString();
-				}
+					_machineName = Dns.GetHostByName(Dns.GetHostName()).HostName;
 			}
+			
 		} // SetupMachineName
 
 

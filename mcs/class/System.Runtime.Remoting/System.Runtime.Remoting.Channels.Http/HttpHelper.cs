@@ -134,24 +134,5 @@ namespace System.Runtime.Remoting.Channels.Http
 			            
 			return machineName;      
 		} 
-
-		public static String GetMachineIp()
-		{
-			
-			String hostName = GetMachineName();
-			String MachineIp=null;
-
-			IPHostEntry Entries = Dns.GetHostByName(hostName);
-			if ((Entries.AddressList.Length > 0)&&(Entries != null))
-			{
-				MachineIp = Entries.AddressList[0].ToString();
-			}               
-
-			if (MachineIp == null)
-			{
-				throw new ArgumentNullException("ip");
-			}		
-			return MachineIp;      
-		} 
 	}
 }
