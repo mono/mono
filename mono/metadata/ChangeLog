@@ -1,3 +1,8 @@
+2003-11-11  Miguel de Icaza  <miguel@ximian.com>
+
+	* appdomain.h: Added loader_optimization here to sync with the C#
+	code, and add disallow_binding_redirects field.
+
 2003-11-11  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mono-debug.c (mono_debug_add_method): Ignore unknown modules.
