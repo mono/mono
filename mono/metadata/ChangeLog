@@ -1,3 +1,7 @@
+2005-03-01  Marek Safar  <marek.safar@seznam.cz>
+
+	* null-gc.c (mono_gc_free_fixed): Was not compilable.
+
 2005-02-28  Zoltan Varga  <vargaz@freemail.hu>
 
 	* reflection.c (encode_marshal_blob): Encode param_num field as well.
