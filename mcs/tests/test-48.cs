@@ -6,6 +6,7 @@ public class Blah {
 
 	public static int Main ()
 	{
+		const int aaa = 1, bbb = 2;
 		const int foo = 10;
 		
 		int j = Blah.i;
@@ -22,6 +23,8 @@ public class Blah {
 			Console.WriteLine (bar);
 			Console.WriteLine (foo);
 		}
+		if ((aaa + bbb) != 3)
+			return 2;
 
 		Console.WriteLine ("Constant emission test okay");
 
