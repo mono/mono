@@ -22,6 +22,8 @@ System.Web/WebCategoryAttribute.cs
 System.Web/WebSysDescriptionAttribute.cs
 System.Web/HttpApplication.cs
 System.Web/HttpApplicationState.cs
+System.Web/HttpApplicationFactory.cs
+System.Web/HttpAsyncResult.cs
 System.Web/HttpBrowserCapabilities.cs
 System.Web/HttpCachePolicy.cs
 System.Web/HttpClientCertificate.cs
@@ -58,6 +60,11 @@ System.Web.Configuration/ClientTargetSectionHandler.cs
 System.Web.Configuration/FormsAuthPasswordFormat.cs
 System.Web.Configuration/FormsProtectionEnum.cs
 System.Web.Configuration/HttpCapabilitiesBase.cs
+System.Web.Configuration/HandlerFactoryConfiguration.cs
+System.Web.Configuration/HandlerFactoryProxy.cs
+System.Web.Configuration/HandlerItem.cs
+System.Web.Configuration/ModulesConfiguration.cs
+System.Web.Configuration/ModuleItem.cs
 System.Web.Hosting/AppDomainFactory.cs
 System.Web.Hosting/ApplicationHost.cs
 System.Web.Hosting/IAppDomainFactory.cs

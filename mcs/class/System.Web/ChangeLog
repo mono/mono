@@ -1,5 +1,16 @@
 2002-07-24  Tim Coleman <tim@timcoleman.com>
 	* list: 
+		Add System.Web/ApplicationFactory.cs
+		Add System.Web/HttpAsyncResult.cs
+		Add System.Web.Configuration/GlobalizationConfiguration.cs
+		Add System.Web.Configuration/HandlerFactoryConfiguration.cs
+		Add System.Web.Configuration/HandlerFactoryProxy.cs
+		Add System.Web.Configuration/HandlerItem.cs
+		Add System.Web.Configuration/ModuleItem.cs
+		Add System.Web.Configuration/ModulesConfiguration.cs
+
+2002-07-24  Tim Coleman <tim@timcoleman.com>
+	* list: 
 		Add System.Web/ProcessInfo.cs
 		Add System.Web/HttpCompileException.cs
 		Add System.Web/HttpParseException.cs
