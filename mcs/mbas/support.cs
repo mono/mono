@@ -57,8 +57,12 @@ namespace Mono.MonoBASIC {
 			else
 				if (pos >= pi.Length)
 					return null;
-				else
-					return pi [pos].ParameterType;
+				else {
+					Type pt = pi [pos].ParameterType;
+                              		if (pt.IsByRef)
+						pt = pt.GetElementType();
+					return pt;
+				}
 		}
 
 		public string ParameterName (int pos)
@@ -98,7 +102,7 @@ namespace Mono.MonoBASIC {
 			
 			Type t = pi [pos].ParameterType;
 			if (t.IsByRef)
-				return Parameter.Modifier.ISBYREF;
+				return Parameter.Modifier.ISBYREF | Parameter.Modifier.REF;
 			
 			return Parameter.Modifier.NONE;
 		}

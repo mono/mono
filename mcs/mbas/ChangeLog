@@ -1,3 +1,10 @@
+2004-08-06  Bernie Solomon  <bernard@ugsolutions.com>
+
+	* support.cs: Make ReflectionParameter behave
+	like InternalParameter for byref args.
+	* expression.cs: Cope with byref args in
+	an imported DLL
+
 2004-08-06  Jambunathan K  <kjambunathan@novell.com>
 	* mb-parser.jay: Changed expression grammar so that it now has a
 	  better semblance to those defined in section 11 of VB.NET spec.

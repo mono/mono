@@ -3651,6 +3651,7 @@ namespace Mono.MonoBASIC {
 					}
 					else {
 						param_type = pd.ParameterType (i);
+						Parameter.Modifier mod;
 						if (ps != null) {
 							Parameter p = (Parameter) ps.FixedParameters[i];
 							bool IsDelegate = TypeManager.IsDelegateType (param_type);
@@ -3680,11 +3681,14 @@ namespace Mono.MonoBASIC {
 									return false;
 							}
 
-							if ((p.ModFlags & Parameter.Modifier.REF) != 0) {
-								a = new Argument (a.Expr, Argument.AType.Ref);
-								if (!a.Resolve(ec,Location.Null))
-									return false;
-							}
+							mod = p.ModFlags;
+						} else
+							mod = pd.ParameterModifier (i);
+
+						if ((mod & Parameter.Modifier.REF) != 0) {
+							a = new Argument (a.Expr, Argument.AType.Ref);
+							if (!a.Resolve(ec,Location.Null))
+								return false;
 						}
 					}	
 
@@ -3755,6 +3759,9 @@ namespace Mono.MonoBASIC {
 				}
 
 				if ((p != null) && ((p.ModFlags & Parameter.Modifier.REF) != 0)) {
+					a.ArgType = Argument.AType.Ref;
+					a.Resolve(ec, Location.Null);
+				} else if ((pd.ParameterModifier (i) & Parameter.Modifier.REF) != 0) {
 					a.ArgType = Argument.AType.Ref;
 					a.Resolve(ec, Location.Null);
 				}	
@@ -3972,7 +3979,6 @@ namespace Mono.MonoBASIC {
 				if (pd.ParameterModifier (j) == Parameter.Modifier.PARAMS &&
 			    	chose_params_expanded)
 					parameter_type = TypeManager.TypeToCoreType (parameter_type.GetElementType ());
-
 				if (a.Type != parameter_type){
 					Expression conv;
 					
