@@ -1,5 +1,24 @@
 2004-08-11  Sanjay Gupta <gsanjay@novell.com>
 
+	* ImageMapEventArgs.cs:
+	* ImageMapEventHandler.cs:
+	* MailMessageEventArgs.cs:
+	* MailMessageEventHandler.cs:
+	* MenuEventArgs.cs:
+	* MenuEventHandler.cs:
+	* ObjectDataSourceDisposingEventArgs.cs:
+	* ObjectDataSourceDisposingEventHandler.cs:
+	* ObjectDataSourceEventArgs.cs:
+	* ObjectDataSourceEventHandler.cs:
+	* ObjectDataSourceMethodEventArgs.cs:
+	* ObjectDataSourceMethodEventHandler.cs:
+	* ObjectDataSourceSelectingEventArgs.cs:
+	* ObjectDataSourceSelectingEventHandler.cs:
+	* ObjectDataSourceStatusEventArgs.cs:
+	* ObjectDataSourceStatusEventHandler.cs: Added new delegates.
+
+2004-08-11  Sanjay Gupta <gsanjay@novell.com>
+
 	* DetailsViewCommandEventArgs.cs:
 	* FormViewCommandEventArgs.cs:
 	* GridViewCommandEventArgs.cs: Corrected constructor.
