@@ -10,8 +10,7 @@
 
 // FIXME:
 //   This can only parse basic XML: elements, attributes, processing
-//   instructions, and comments are OK but there's no support for
-//   namespaces yet.
+//   instructions, and comments are OK.
 //
 //   It barfs on DOCTYPE declarations.
 //
@@ -75,6 +74,8 @@ namespace System.Xml
 
  		public XmlTextReader(Stream input, XmlNameTable nameTable)
  		{
+			this.nameTable = nameTable;
+
 			// TODO: implement me.
 			throw new NotImplementedException();
 		}
@@ -93,6 +94,8 @@ namespace System.Xml
 
 		public XmlTextReader(string url, XmlNameTable nameTable)
 		{
+			this.nameTable = nameTable;
+
 			// TODO: implement me.
 			throw new NotImplementedException();
 		}
@@ -101,6 +104,8 @@ namespace System.Xml
 			TextReader input,
 			XmlNameTable nameTable)
 		{
+			this.nameTable = nameTable;
+
 			// TODO: implement me.
 			throw new NotImplementedException();
 		}
@@ -119,6 +124,8 @@ namespace System.Xml
 			Stream input,
 			XmlNameTable nameTable)
 		{
+			this.nameTable = nameTable;
+
 			// TODO: implement me.
 			throw new NotImplementedException();
 		}
@@ -128,6 +135,7 @@ namespace System.Xml
 			TextReader input,
 			XmlNameTable nameTable)
 		{
+			this.nameTable = nameTable;
 			// TODO: implement me.
 			throw new NotImplementedException();
 		}
@@ -300,8 +308,7 @@ namespace System.Xml
 		{
 			get
 			{
-				// TODO: implement me.
-				return null;
+				return namespaceURI;
 			}
 		}
 
@@ -450,8 +457,7 @@ namespace System.Xml
 
 		public override string LookupNamespace(string prefix)
 		{
-			// TODO: implement me.
-			return null;
+			return namespaceManager.LookupNamespace(prefix);
 		}
 
 		public override void MoveToAttribute(int i)
@@ -558,10 +564,15 @@ namespace System.Xml
 		private int depth;
 		private bool depthDown;
 
+		private XmlNameTable nameTable;
+		private XmlNamespaceManager namespaceManager;
+		private bool popScope;
+
 		private XmlNodeType nodeType;
 		private string name;
 		private string prefix;
 		private string localName;
+		private string namespaceURI;
 		private bool isEmptyElement;
 		private string value;
 		private Hashtable attributes;
@@ -581,6 +592,9 @@ namespace System.Xml
 
 		private void Init()
 		{
+			namespaceManager = new XmlNamespaceManager(nameTable);
+			popScope = false;
+
 			readState = ReadState.Initial;
 
 			depth = -1;
@@ -640,6 +654,8 @@ namespace System.Xml
 				prefix = name.Substring(0, indexOfColon);
 				localName = name.Substring(indexOfColon + 1);
 			}
+
+			namespaceURI = LookupNamespace(prefix);
 		}
 
 		private void AddAttribute(string name, string value)
@@ -671,6 +687,12 @@ namespace System.Xml
 		private bool ReadContent()
 		{
 			bool more = false;
+
+			if (popScope)
+			{
+				namespaceManager.PopScope();
+				popScope = false;
+			}
 
 			if (depthDown)
 			{
@@ -753,6 +775,8 @@ namespace System.Xml
 		// The leading '<' has already been consumed.
 		private void ReadStartTag()
 		{
+			namespaceManager.PushScope();
+
 			string name = ReadName();
 			SkipWhitespace();
 
@@ -770,6 +794,7 @@ namespace System.Xml
 				ReadChar();
 				isEmptyElement = true;
 				depthDown = true;
+				popScope = true;
 			}
 
 			Expect('>');
@@ -802,6 +827,8 @@ namespace System.Xml
 				String.Empty, // value
 				true // clearAttributes
 			);
+
+			popScope = true;
 		}
 
 		private void AppendNameChar(int ch)
@@ -1045,7 +1072,18 @@ namespace System.Xml
 				string value = ReadAttribute();
 				SkipWhitespace();
 
-				AddAttribute(name, value);
+				if (name == "xmlns")
+				{
+					namespaceManager.AddNamespace(String.Empty, value);
+				}
+				else if (name.StartsWith("xmlns:"))
+				{
+					namespaceManager.AddNamespace(name.Substring(6), value);
+				}
+				else
+				{
+					AddAttribute(name, value);
+				}
 			}
 			while (PeekChar() != '/' && PeekChar() != '>' && PeekChar() != -1);
 		}

@@ -1,0 +1,9 @@
+2002-02-23  Jason Diamond <jason@injektilo.org>
+
+	* ChangeLog: Added change log to this directory.
+
+	* Test.cs: Renamed to XmlTextReaderTests.cs.
+
+	* XmlTextReaderTests.cs: Added tests for NamespaceURI property.
+
+	* XmlNamespaceManagerTests.cs: Initial tests.

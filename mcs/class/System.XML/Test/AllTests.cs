@@ -5,6 +5,7 @@
 //
 
 using NUnit.Framework;
+
 namespace Ximian.Mono.Tests
 {
 	/// <summary>
@@ -18,7 +19,8 @@ namespace Ximian.Mono.Tests
 		public static ITest Suite {
 			get {
 				TestSuite suite =  new TestSuite();
-				suite.AddTest(new TestSuite(typeof(System.Xml.Test)));
+				suite.AddTest(new TestSuite(typeof(XmlTextReaderTests)));
+				suite.AddTest(new TestSuite(typeof(XmlNamespaceManagerTests)));
 				return suite;
 			}
 		}

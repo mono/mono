@@ -1,3 +1,10 @@
+2002-02-23  Jason Diamond <jason@injektilo.org>
+
+	* XmlNamespaceManager.cs: Initial implementation.
+	
+	* XmlTextReader.cs: Added support for NamespaceURI property on
+	elements.
+
 2002-02-23  Nick Drochak <ndrochak@gol.com>
 
 	* ChangeLog: Add the change log to this directory
