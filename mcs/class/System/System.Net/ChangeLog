@@ -1,3 +1,8 @@
+2003-09-16  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* WebConnectionStream.cs: fix by Lluis to avoid the stream being in an
+	invalid state.
+
 2003-08-14  Nick Drochak <ndrochak@gol.com>
 
 	* WebRequest.cs: Check lower case string since that is what we will add.
