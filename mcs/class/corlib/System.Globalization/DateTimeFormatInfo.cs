@@ -84,16 +84,14 @@ namespace System.Globalization
 		// LAMESPEC: this is not in ECMA specs
 		public static DateTimeFormatInfo GetInstance(IFormatProvider provider)
 		{
-			if (provider != null) 
-			{
-				if (provider is DateTimeFormatInfo) return (DateTimeFormatInfo) provider;
-				if (provider is CultureInfo) return ((CultureInfo) provider).DateTimeFormat;
-				return null;
+			if (provider != null) {
+				DateTimeFormatInfo dtfi;
+				dtfi = (DateTimeFormatInfo)provider.GetFormat(typeof(DateTimeFormatInfo));
+				if (dtfi != null)
+					return dtfi;
 			}
-			else 
-			{
-				return CurrentInfo;
-			}
+			
+			return CurrentInfo;
 		}
 
 		public bool IsReadOnly {

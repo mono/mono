@@ -636,22 +636,7 @@ namespace System.Globalization {
 
 		public object GetFormat (Type formatType) 
 		{
-			// LAMESPEC: ECMA says we implement IFormatProvider, but doesn't define this
-			//
-			// From the .NET Framework SDK
-			//
-			// Parameters: formatType The Type of the formatting service required. 
-			//
-			// Return Value: The current instance of the NumberFormatInfo class, if formatType 
-			// is the same as the type of the current instance; otherwise, a null reference
-			//
-			// Remarks: This method is invoked by the Format(String, IFormatProvider) method 			
-			// supported by the base data types when this instance is passed as the 
-			// IFormatProvider parameter. It implements IFormatProvider.GetFormat.
-
-			if (formatType.Equals(this)) // LAMESPEC: Should this be IsInstanceOfType?
-				return this;
-			else return null;
+			return (formatType == GetType()) ? this : null;
 		}
 		
 		public object Clone () 
@@ -669,12 +654,16 @@ namespace System.Globalization {
 			return copy;
 		}			
 
-		public static NumberFormatInfo GetInstance(IFormatProvider formatProvider)
+		public static NumberFormatInfo GetInstance(IFormatProvider provider)
 		{
-			if (formatProvider == null) return NumberFormatInfo.CurrentInfo;
-			NumberFormatInfo retval = (NumberFormatInfo)formatProvider.GetFormat(Type.GetType("System.Globalization.NumberFormatInfo"));
-			if (retval == null) return NumberFormatInfo.CurrentInfo;
-			return retval;
+			if (provider != null) {
+				NumberFormatInfo nfi;
+				nfi = (NumberFormatInfo)provider.GetFormat(typeof(NumberFormatInfo));
+				if (nfi != null)
+					return nfi;
+			}
+			
+			return CurrentInfo;
 		}
 	}
 }

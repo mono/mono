@@ -10,7 +10,7 @@ using System.Threading;
 
 namespace System.Globalization
 {
-	public class CultureInfo
+	public class CultureInfo : IFormatProvider
 	{
 		static CultureInfo invariant_culture_info;
 		bool is_read_only;
@@ -804,6 +804,21 @@ namespace System.Globalization
 				
 				datetime_format = value;
 			}
+		}
+
+		// 
+		// IFormatProvider implementation
+		//
+		public virtual object GetFormat( Type formatType )
+		{
+			object format = null;
+
+			if ( formatType == typeof(NumberFormatInfo) )
+				format = NumberFormat;
+			else if ( formatType == typeof(DateTimeFormatInfo) )
+				format = DateTimeFormat;
+			
+			return format;
 		}
 
 		//

@@ -12,7 +12,6 @@ using System.Globalization;
 namespace System {
 	
 	public struct Byte : IComparable, IFormattable, IConvertible {
-		private static Type Type = typeof (byte);
 		
 		public const byte MinValue = 0;
 		public const byte MaxValue = 255;
@@ -133,7 +132,7 @@ namespace System {
 
 		public override string ToString ()
 		{
-			return ToString ("G", null);
+			return ToString (null, null);
 		}
 
 		public string ToString (string format)
@@ -143,26 +142,17 @@ namespace System {
 
 		public string ToString (IFormatProvider provider)
 		{
-			return ToString ("G", provider);
+			return ToString (null, provider);
 		}
 
 		public string ToString (string format, IFormatProvider fp)
 		{
-			string fmt;
-			NumberFormatInfo nfi;
+			NumberFormatInfo nfi = NumberFormatInfo.GetInstance( fp );
 			
-			fmt = (format == null) ? "G" : format;
+			if ( format == null )
+				format = "G";
 			
-			if (fp == null)
-				nfi = NumberFormatInfo.CurrentInfo;
-			else {
-				nfi = (NumberFormatInfo) fp.GetFormat (Type);
-				
-				if (nfi == null)
-					nfi = NumberFormatInfo.CurrentInfo;
-			}
-
-			return IntegerFormatter.NumberToString (fmt, nfi, value);
+			return IntegerFormatter.NumberToString(format, nfi, value);
 		}
 
 		// =========== IConvertible Methods =========== //
