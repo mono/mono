@@ -1,3 +1,6 @@
+2003-06-16  Alexandre Pigolkine <pigolkine@gmx.de>
+	* Image.cs	InternalImageInfo support
+	
 2003-05-25  Alexandre Pigolkine <pigolkine@gmx.de>
 	* Bitmap.cs		Bitmap constructors
 

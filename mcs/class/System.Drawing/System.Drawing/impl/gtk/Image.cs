@@ -120,7 +120,11 @@ namespace System.Drawing {
 				throw new NotImplementedException ();
 			}
 
-	
+			public InternalImageInfo ConvertToInternalImageInfo() {
+				// Fixme: implement me
+				throw new NotImplementedException ();
+			}
+
 			[MonoTODO]
 			public void Save(Stream stream, ImageFormat format) {
 				throw new NotImplementedException();
