@@ -1,3 +1,7 @@
+2003-01-16  Rodrigo Moya <rodrigo@ximian.com>
+
+	* makefile.gnu: added Mono.Data.DB2Client directory.
+
 2003-01-08  Gaurav Vaish <gvaish_mono AT lycos.com>
 
 	* System.Web.Mobile  : Added new directory

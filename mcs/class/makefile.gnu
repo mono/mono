@@ -16,6 +16,7 @@ DIRS =	corlib				\
 	System.Runtime.Serialization.Formatters.Soap \
 	System.Configuration.Install 	\
 	Mono.CSharp.Debugger		\
+	Mono.Data.DB2Client		\
 	Mono.Data.MySql			\
 	Mono.Data.PostgreSqlClient	\
 	Mono.Data.SqliteClient		\
@@ -24,8 +25,8 @@ DIRS =	corlib				\
 	Mono.PEToolkit			\
 	Accessibility			\
 	Microsoft.VisualBasic		\
-	Cscompmgd			\
-	System.Windows.Forms
+	Cscompmgd			#\
+#	System.Windows.Forms
 
 default: all
 
