@@ -323,9 +323,10 @@ namespace Mono.CSharp {
 		private const int DefaultCacheSize = 1024;
 
 		char[] buffer;
-		int buffer_start;
-		int buffer_size;
-		int pos;
+		int buffer_start;       // in bytes
+		int buffer_size;        // in bytes
+		int char_count;         // count buffer[] valid characters
+		int pos;                // index into buffer[]
 
 		/// <remarks>
 		///   The difference to the StreamReader's BaseStream.Position is that this one is reliable; ie. it
@@ -333,21 +334,26 @@ namespace Mono.CSharp {
 		/// </remarks>
 		public int Position {
 			get {
-				return buffer_start + pos;
+				return buffer_start + reader.CurrentEncoding.GetByteCount (buffer, 0, pos);
 			}
 
 			set {
 				// This one is easy: we're modifying the position within our current
 				// buffer.
 				if ((value >= buffer_start) && (value < buffer_start + buffer_size)) {
-					pos = value - buffer_start;
+					int byte_offset = value - buffer_start;
+					pos = byte_offset;
+					// encoded characters can take more than 1 byte length
+					while (reader.CurrentEncoding.GetByteCount (buffer, 0, pos) > byte_offset)
+						pos--;
+					
 					return;
 				}
 
 				// Ok, now we need to seek.
 				reader.DiscardBufferedData ();
 				reader.BaseStream.Position = buffer_start = value;
-				buffer_size = pos = 0;
+				char_count = buffer_size = pos = 0;
 			}
 		}
 
@@ -355,13 +361,14 @@ namespace Mono.CSharp {
 		{
 			pos = 0;
 			buffer_start += buffer_size;
-			buffer_size = reader.Read (buffer, 0, buffer.Length);
+			char_count = reader.Read (buffer, 0, buffer.Length);
+			buffer_size = reader.CurrentEncoding.GetByteCount (buffer, 0, char_count);
 			return buffer_size > 0;
 		}
 
 		public int Peek ()
 		{
-			if ((pos >= buffer_size) && !ReadBuffer ())
+			if ((pos >= char_count) && !ReadBuffer ())
 				return -1;
 
 			return buffer [pos];
@@ -369,7 +376,7 @@ namespace Mono.CSharp {
 
 		public int Read ()
 		{
-			if ((pos >= buffer_size) && !ReadBuffer ())
+			if ((pos >= char_count) && !ReadBuffer ())
 				return -1;
 
 			return buffer [pos++];

@@ -8,6 +8,13 @@
 	basically ignored the method name.  Now we make sure that the
 	method name is one of the valid indexer names.
 
+2004-03-14  Gustavo Giráldez  <gustavo.giraldez@gmx.net>
+ 
+ 	* support.cs (SeekableStreamReader): Keep track of stream byte
+ 	positions and don't mix them with character offsets to the buffer.
+
+	Patch from Gustavo Giráldez
+	
 2004-03-15  Marek Safar  <marek.safar@seznam.cz>
 
 	* interface.cs (InterfaceSetGetBase): Removed double member
