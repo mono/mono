@@ -3,7 +3,7 @@ Test cases listed by Category:
 
 * Binary operators
 
-  test-146.cs
+  test-146.cs test-175.cs
 
 * Overloading
 
@@ -160,6 +160,11 @@ test-174.cs
 -----------
 Checks access to protected properties on base classes, and access to 
 private properties on container classes.
+
+test-175.cs
+-----------
+Check for user-defined implicit conversions if both arguments of a
+binary operator are of a user-defined type.  Bug #30443.
 
 verify-1.cs
 -----------

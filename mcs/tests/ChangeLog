@@ -1,3 +1,7 @@
+2002-11-24  Martin Baulig  <martin@ximian.com>
+
+	* test-175.cs: New test for bug #30443.
+
 2002-11-17  Martin Baulig  <martin@ximian.com>
 
 	* README.tests: Whoever added test-167 to test-172
