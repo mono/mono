@@ -1,5 +1,7 @@
 2003-11-28  Zoltan Varga  <vargaz@freemail.hu>
 
+	* gc.c: Fix hangs and error messages when GC_DONT_GC is set.
+
 	* reflection.c (assembly_name_to_aname): Allow extra characters in
 	assembly names. Fixes #51468.
 
