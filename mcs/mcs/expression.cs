@@ -3767,7 +3767,7 @@ namespace Mono.CSharp {
 
 			array = ig.DeclareLocal (Type.GetType (array_type));
 			IntConstant.EmitInt (ig, count);
-			ig.Emit (OpCodes.Newarr, t);
+			ig.Emit (OpCodes.Newarr, TypeManager.TypeToCoreType (t));
 			ig.Emit (OpCodes.Stloc, array);
 
 			int top = arguments.Count;
@@ -5664,7 +5664,7 @@ namespace Mono.CSharp {
 			else if (t == TypeManager.intptr_type)
 				ig.Emit (OpCodes.Stelem_I);
 			else if (t.IsValueType)
-				ig.Emit (OpCodes.Stobj, t);
+				ig.Emit (OpCodes.Stobj, TypeManager.TypeToCoreType (t));
 			else
 				ig.Emit (OpCodes.Stelem_Ref);
 		}

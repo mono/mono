@@ -1,5 +1,12 @@
 2002-07-02  Martin Baulig  <martin@gnome.org>
 
+	* expression.cs (ArrayAccess.EmitStoreOpcode): If the type is a
+	ValueType, call TypeManager.TypeToCoreType() on it.
+	(Invocations.EmitParams): Call TypeManager.TypeToCoreType() on
+	the OpCodes.Newarr argument.
+
+2002-07-02  Martin Baulig  <martin@gnome.org>
+
 	* expression.cs (Invocation.EmitCall): When compiling corlib,
 	replace all calls to the system's System.Array type to calls to
 	the newly created one.
