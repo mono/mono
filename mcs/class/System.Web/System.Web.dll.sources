@@ -30,6 +30,7 @@ System.Web/HttpParseException.cs
 System.Web/HttpPostedFile.cs
 System.Web/HttpRequest.cs
 System.Web/HttpRequestStream.cs
+System.Web/HttpRequestValidationException.cs
 System.Web/HttpUtility.cs
 System.Web/HttpResponseHeader.cs
 System.Web/HttpResponseStream.cs
@@ -232,6 +233,7 @@ System.Web.UI/LiteralControl.cs
 System.Web.UI/OutputCacheLocation.cs
 System.Web.UI/Page.cs
 System.Web.UI/PageHandlerFactory.cs
+System.Web.UI/ObjectConverter.cs
 System.Web.UI/ObjectTag.cs
 System.Web.UI/Pair.cs
 System.Web.UI/ParseChildrenAttribute.cs

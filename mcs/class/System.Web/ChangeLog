@@ -1,3 +1,7 @@
+2003-12-18  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* System.Web.dll.sources: added HttpRequestValidationException.
+
 2003-12-17  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* System.Web.dll.sources: added CustomErrorsConfigHandler.cs
