@@ -111,10 +111,10 @@ namespace System.Web.Compilation
 			if (errorPage != null)
 				method.Statements.Add (CreatePropertyAssign ("ErrorPage", errorPage));
 
-                        if (pageParser.Trace) {
+                        if (pageParser.HaveTrace) {
                                 CodeAssignStatement stmt = new CodeAssignStatement ();
                                 stmt.Left = new CodePropertyReferenceExpression (thisRef, "TraceEnabled");
-                                stmt.Right = new CodePrimitiveExpression (true);
+                                stmt.Right = new CodePrimitiveExpression (pageParser.Trace);
                                 method.Statements.Add (stmt);
                         }
 
@@ -123,6 +123,13 @@ namespace System.Web.Compilation
                                 CodeTypeReferenceExpression tm = new CodeTypeReferenceExpression ("System.Web.TraceMode");
                                 stmt.Left = new CodePropertyReferenceExpression (thisRef, "TraceModeValue");
                                 stmt.Right = new CodeFieldReferenceExpression (tm, pageParser.TraceMode.ToString ());
+                                method.Statements.Add (stmt);
+                        }
+
+                        if (pageParser.NotBuffer) {
+                                CodeAssignStatement stmt = new CodeAssignStatement ();
+                                stmt.Left = new CodePropertyReferenceExpression (thisRef, "Buffer");
+                                stmt.Right = new CodePrimitiveExpression (false);
                                 method.Statements.Add (stmt);
                         }
 

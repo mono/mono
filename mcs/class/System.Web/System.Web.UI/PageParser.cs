@@ -20,7 +20,9 @@ namespace System.Web.UI
 	public sealed class PageParser : TemplateControlParser
 	{
 		bool enableSessionState = true;
+		bool haveTrace;
 		bool trace;
+		bool notBuffer;
 		TraceMode tracemode;
 		bool readonlySessionState;
 		string responseEncoding;
@@ -175,7 +177,12 @@ namespace System.Web.UI
 				}
 			}
 
-			trace = GetBool (atts, "Trace", false);
+			string tracestr = GetString (atts, "Trace", null);
+			if (tracestr != null) {
+				haveTrace = true;
+				atts ["Trace"] = tracestr;
+				trace = GetBool (atts, "Trace", false);
+			}
 
 			string tracemodes = GetString (atts, "TraceMode", null);
 			if (tracemodes != null) {
@@ -206,8 +213,9 @@ namespace System.Web.UI
 				clientTarget = (string) coll [clientTarget];
 			}
 
+			notBuffer = !GetBool (atts, "Buffer", true);
+
 			// Ignored by now
-			GetString (atts, "Buffer", null);
 			GetString (atts, "EnableViewStateMac", null);
 			GetString (atts, "SmartNavigation", null);
 
@@ -238,8 +246,12 @@ namespace System.Web.UI
 			get { return readonlySessionState; }
 		}
 
+		internal bool HaveTrace {
+			get { return haveTrace; }
+		}
+
 		internal bool Trace {
-			get { return trace; } 
+			get { return trace; }
 		}
 
 		internal TraceMode TraceMode {
@@ -292,6 +304,10 @@ namespace System.Web.UI
 
 		internal string ClientTarget {
 			get { return clientTarget; }
+		}
+
+		internal bool NotBuffer {
+			get { return notBuffer; }
 		}
 	}
 }

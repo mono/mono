@@ -74,7 +74,7 @@ namespace System.Web {
       }
 
       private void Write(string category, string msg, Exception error, bool Warning) {
-	      if (!_Enabled && !HttpRuntime.TraceManager.Enabled)
+	      if (!_Enabled)
 		      return;
               if (data == null)
                       data = new TraceData ();

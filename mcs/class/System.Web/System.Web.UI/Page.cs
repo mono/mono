@@ -29,7 +29,6 @@ using System.Web.Util;
 namespace System.Web.UI
 {
 
-[MonoTODO ("FIXME missing the IRootDesigner Attribute")]
 [DefaultEvent ("Load"), DesignerCategory ("ASPXCodeBehind")]
 [ToolboxItem (false)]
 [Designer ("System.Web.UI.Design.ControlDesigner, " + Consts.AssemblySystem_Design, typeof (IDesigner))]
@@ -745,15 +744,11 @@ public class Page : TemplateControl, IHttpHandler
 
 	private void RenderTrace (HtmlTextWriter output)
 	{
-		TraceManager manager = HttpRuntime.TraceManager;
-		
-		if (!Trace.IsEnabled && !manager.Enabled)
+		if (!Trace.IsEnabled)
 			return;
 		
 		Trace.SaveData ();
-		
-		if (Trace.IsEnabled || manager.PageOutput)
-			Trace.Render (output);
+		Trace.Render (output);
 	}
 	
 	internal void RaisePostBackEvents ()
