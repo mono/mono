@@ -147,13 +147,13 @@ namespace System.Windows.Forms{
 			return sb.ToString();
 		}
 		
-		[DllImport ("kernel32.dll", CallingConvention = CallingConvention.StdCall,
-			 CharSet = CharSet.Auto)]
+		[DllImport ("kernel32.dll", CallingConvention = CallingConvention.StdCall, CharSet = CharSet.Auto)]
 		internal extern static int wine_get_unix_file_name (string dos, IntPtr unix, int len);
 		
-		internal static string wine_get_unix_file_name(string dos) {
+		internal static string wine_get_unix_file_name (string dos)
+		{
 			string result = dos;
-			if (RunningOnLinux){
+			if (RunningOnUnix){
 				// FIXME: shall we have a static buffer here ?
 				IntPtr tempBuf = Marshal.AllocHGlobal(2048);
 				if( Win32.wine_get_unix_file_name( dos, tempBuf, 2048) != 0){
@@ -1204,28 +1204,29 @@ namespace System.Windows.Forms{
 		[DllImport ("libwinnt.dll.so", EntryPoint="LoadLibraryA")]
 		extern static void NTDLL_LoadLibraryA (string s);
 
-		internal static bool RunningOnLinux = true;		
+		internal static bool RunningOnUnix = false;		
 		// 
 		// Used to initialize the runtime
 		//
 		static Win32 ()
 		{
 			// FIXME: this is definitely not the right way to understand that we are on Linux
-			if (Environment.GetEnvironmentVariable ("PWD") == null){
-				RunningOnLinux = false;
-			}
+			RunningOnUnix = System.IO.Path.PathSeparator == '/';
 
 			//
 			// Tell System.Drawing to use the Wine function drawing.
 			//
 			Thread.GetDomain ().SetData ("Mono.Running.Windows.Forms", true);
+
+			if (!RunningOnUnix)
+				return;
 			
 			string new_mode = Environment.GetEnvironmentVariable ("SWF");
-			if (new_mode == null){
-				Console.WriteLine ("MonoWin32: Default path");
-				return;
-			} else {
+			if (new_mode == null || new_mode == "1"){
 				Console.WriteLine ("MonoWin32: Initializing WineLib");
+			} else {
+				Console.WriteLine ("MonoWin32: Needs Wine MonoStub");				
+				return;
 			}
 				
 			string [] args = new string [1];

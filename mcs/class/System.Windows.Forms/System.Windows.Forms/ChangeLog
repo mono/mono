@@ -1,3 +1,19 @@
+2003-07-28  Miguel de Icaza  <miguel@ximian.com>
+
+	* win32functions.cs: Set the default to WineLib now on Linux.
+
+2003-07-23  Miguel de Icaza  <miguel@ximian.com>
+
+	* win32functions.cs: Move functions that do not exist in WineLib
+	over to Win32_Wineless, so we do not trigger the warning messages
+	until a function tries to use them.
+
+	Win32() constructor: Set a hint on the appdomain that we would
+	prefer to have the System.Drawing API use the Win32 implementation
+	of the API.
+	
+	* *.cs: Updated sources to use this.
+
 2003-07-16 Aleksey Ryabchuk <ryabchuk@yahoo.com>
 	* ColorDialog.cs : implemented
 	* win32functions.cs			
