@@ -66,7 +66,7 @@ namespace Mono.Unix {
 		{
 			try {
 				Translate = new ErrorTranslator (strerror_r);
-				string ignore = Translate (Error.EPERM);
+				string ignore = Translate (Error.ERANGE);
 				ignore = ignore;
 				HaveStrerror_r = true;
 			}
@@ -78,7 +78,7 @@ namespace Mono.Unix {
 
 		private static string strerror (Error errno)
 		{
-			return Syscall.strerror (errno);
+			return Stdlib.strerror (errno);
 		}
 
 		private static string strerror_r (Error errno)
@@ -88,7 +88,7 @@ namespace Mono.Unix {
 			do {
 				buf.Capacity *= 2;
 				r = Syscall.strerror_r (errno, buf);
-			} while (r == -1 && Syscall.GetLastError() == Error.ERANGE);
+			} while (r == -1 && Stdlib.GetLastError() == Error.ERANGE);
 
 			if (r == -1)
 				return "** Unknown error code: " + ((int) errno) + "**";
@@ -195,7 +195,7 @@ namespace Mono.Unix {
 
 		public static bool ShouldRetrySyscall (int r)
 		{
-			if (r == -1 && Syscall.GetLastError () == Error.EINTR)
+			if (r == -1 && Stdlib.GetLastError () == Error.EINTR)
 				return true;
 			return false;
 		}
@@ -203,7 +203,7 @@ namespace Mono.Unix {
 		public static bool ShouldRetrySyscall (int r, out Error error)
 		{
 			error = (Error) 0;
-			if (r == -1 && (error = Syscall.GetLastError ()) == Error.EINTR)
+			if (r == -1 && (error = Stdlib.GetLastError ()) == Error.EINTR)
 				return true;
 			return false;
 		}
@@ -267,6 +267,11 @@ namespace Mono.Unix {
 			return p;
 		}
 
+		internal static Exception CreateExceptionForLastError ()
+		{
+			return CreateExceptionForError (Stdlib.GetLastError());
+		}
+
 		public static void ThrowExceptionForError (Error errno)
 		{
 			throw CreateExceptionForError (errno);
@@ -274,7 +279,7 @@ namespace Mono.Unix {
 
 		public static void ThrowExceptionForLastError ()
 		{
-			throw CreateExceptionForError (Syscall.GetLastError());
+			throw CreateExceptionForLastError ();
 		}
 
 		public static void ThrowExceptionForErrorIf (int retval, Error errno)

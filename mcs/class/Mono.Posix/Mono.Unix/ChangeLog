@@ -1,3 +1,15 @@
+2005-03-17  Jonathan Pryor <jonpryor@vt.edu>
+
+	* Stdlib.cs: Move Errno-related functionality into Stdlib from Syscall,
+	  since (1) errno is part of C89, and (2) StdioFileStream will need it, and
+	  StdioFileStream shouldn't use Syscall.  Add [UnmanagedFunctionPointer]
+		attribute to SignalHandler for .NET 2.0 (since signal handlers use C
+		calling convention, not Stdcall).
+	* Syscall.cs: Move Errno-related functionality into Stdlib.
+	* UnixMarshal.cs: Use ERANGE not EPERM when figuring out appropriate
+	  translator, since ERANGE is part of C99 and EPERM isn't.  Use Stdlib
+	  instead of Syscall for Errno-related functionality.
+
 2005-02-02  Jonathan Pryor <jonpryor@vt.edu>
 
 	* UnixFile.cs: Cope with changes in UnixStream.
