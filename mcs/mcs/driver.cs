@@ -1012,18 +1012,32 @@ namespace Mono.CSharp
 				pi.RedirectStandardOutput = true;
 				pi.UseShellExecute = false;
 				pi.Arguments = "--libs " + packages;
-				Process p = Process.Start (pi);
+				Process p = null;
+				try {
+					p = Process.Start (pi);
+				} catch (Exception e) {
+					Report.Error (-27, "Couldn't run pkg-config: " + e.Message);
+					Environment.Exit (1);
+				}
+
 				if (p.StandardOutput == null){
 					Report.Warning (-27, "Specified package did not return any information");
 					return true;
 				}
 				string pkgout = p.StandardOutput.ReadToEnd ();
 				p.WaitForExit ();
+				if (p.ExitCode != 0) {
+					Report.Error (-27, "Error running pkg-config. Check the above output.");
+					Environment.Exit (1);
+				}
+
 				if (pkgout != null){
 					string [] xargs = pkgout.Trim (new Char [] {' ', '\n', '\r', '\t'}).
 						Split (new Char [] { ' ', '\t'});
 					args = AddArgs (args, xargs);
 				}
+				
+				p.Close ();
 				return true;
 			}
 				
