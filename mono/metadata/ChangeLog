@@ -1,3 +1,9 @@
+
+Mon Dec 13 18:10:50 CET 2004 Paolo Molaro <lupus@ximian.com>
+
+	* Makefile.am, monodiet.c: add monodiet, an IL code garbage
+	collector.
+
 2004-12-12  Ben Maurer  <bmaurer@ximian.com>
 
 	* icall.c (ves_icall_ModuleBuilder_getToken): Check for null
