@@ -1,3 +1,11 @@
+2002-10-29  Daniel Morgan <danmorg@sc.rr.com>
+
+	* System.ComponentModel/PropertyDescriptor.cs: added
+	missing abstract methods and properties
+
+	* System.ComponentModel/DerivedPropertyDescriptor.cs: implemented
+	SetValue and added stubs for missing methods and properties
+	
 2002-10-03  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* list.unix: added new files in System.Configuration.

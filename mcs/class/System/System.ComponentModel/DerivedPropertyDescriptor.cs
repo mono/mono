@@ -51,6 +51,32 @@ namespace System.ComponentModel
 			return prop.GetValue (component, null);
 		}
 
+		public override void SetValue(object component,	object value) {
+			
+			if (prop == null)
+				prop = componentType.GetProperty (Name);
+
+			prop.SetValue (component, value, null);
+		}
+
+		[MonoTODO]
+		public override void ResetValue(object component) {
+
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public override bool CanResetValue(object component) {
+
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public override bool ShouldSerializeValue(object component) {
+
+			throw new NotImplementedException ();
+		}
+
 		public override Type ComponentType
 		{
 			get {

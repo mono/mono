@@ -109,5 +109,13 @@ namespace System.ComponentModel {
 		}
 
 		public abstract object GetValue (object component);
+
+		public abstract void SetValue (object component, object value);
+
+		public abstract void ResetValue (object component);
+
+		public abstract bool CanResetValue (object component);
+
+		public abstract bool ShouldSerializeValue (object component);
 	}
 }
