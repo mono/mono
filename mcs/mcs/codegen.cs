@@ -211,7 +211,7 @@ namespace Mono.CSharp {
 	/// </summary>
 	public class EmitContext {
 		public DeclSpace DeclSpace;
-		public TypeContainer TypeContainer;
+		public DeclSpace TypeContainer;
 		public ILGenerator   ig;
 
 		/// <summary>
@@ -335,7 +335,7 @@ namespace Mono.CSharp {
 
 		protected Stack FlowStack;
 		
-		public EmitContext (TypeContainer parent, DeclSpace ds, Location l, ILGenerator ig,
+		public EmitContext (DeclSpace parent, DeclSpace ds, Location l, ILGenerator ig,
 				    Type return_type, int code_flags, bool is_constructor)
 		{
 			this.ig = ig;

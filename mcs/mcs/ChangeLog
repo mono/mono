@@ -1,5 +1,23 @@
 2002-11-19  Miguel de Icaza  <miguel@ximian.com>
 
+	* ecore.cs (SimpleName.SimpleNameResolve): Remove the special
+	handling for enumerations, as we only needed the TypeContainer
+	functionality to begin with (this is required for the fix below to
+	work for enums that reference constants in a container class for
+	example). 
+
+	* codegen.cs (EmitContext): Make TypeContainer a DeclSpace.
+
+	* enum.cs (Enum.Define): Use `this' instead of parent, so we have
+	a valid TypeBuilder to perform lookups on.o
+
+	* class.cs (InheritableMemberSignatureCompare): Use true in the
+	call to GetGetMethod and GetSetMethod, because we are comparing
+	the signature, and we need to get the methods *even* if they are
+	private. 
+
+	(PropertyBase.CheckBase): ditto.
+
 	* statement.cs (Switch.ResolveAndReduce, Block.EmitMeta,
 	GotoCase.Resolve): Use Peel on EmpytCasts.
 

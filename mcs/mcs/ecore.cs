@@ -3545,11 +3545,6 @@ namespace Mono.CSharp {
 			// Stage 2: Lookup members 
 			//
 
-			//
-			// For enums, the TypeBuilder is not ec.DeclSpace.TypeBuilder
-			// Hence we have two different cases
-			//
-
 			DeclSpace lookup_ds = ec.DeclSpace;
 			do {
 				if (lookup_ds.TypeBuilder == null)
@@ -3559,13 +3554,7 @@ namespace Mono.CSharp {
 				if (e != null)
 					break;
 
-				//
-				// Classes/structs keep looking, enums break
-				//
-				if (lookup_ds is TypeContainer)
-					lookup_ds = ((TypeContainer) lookup_ds).Parent;
-				else
-					break;
+				lookup_ds =lookup_ds.Parent;
 			} while (lookup_ds != null);
 				
 			if (e == null && ec.ContainerType != null)

@@ -3601,8 +3601,8 @@ namespace Mono.CSharp {
 					parent_property.Name;
 
 				MethodInfo get, set, parent_method;
-				get = parent_property.GetGetMethod ();
-				set = parent_property.GetSetMethod ();
+				get = parent_property.GetGetMethod (true);
+				set = parent_property.GetSetMethod (true);
 
 				if (get != null)
 					parent_method = get;
@@ -4705,12 +4705,16 @@ namespace Mono.CSharp {
 			PropertyInfo pi = m as PropertyInfo;
 
 			if (pi != null) {
-				mi = pi.GetGetMethod ();
+				mi = pi.GetGetMethod (true);
 				if (mi == null)
-					mi = pi.GetSetMethod ();
+					mi = pi.GetSetMethod (true);
 			} else
 				mi = m as MethodInfo;
 
+			if (mi == null){
+				Console.WriteLine ("Nothing found");
+			}
+			
 			MethodAttributes prot = mi.Attributes & MethodAttributes.MemberAccessMask;
 
 			// If only accessible to the current class.
