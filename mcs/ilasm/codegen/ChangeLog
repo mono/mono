@@ -1,5 +1,10 @@
 2004-12-02  Jackson Harper  <jackson@ximian.com>
 
+	* MethodDef.cs: Abstract methods don't get bodies. Even if there
+	are bodies there.
+
+2004-12-02  Jackson Harper  <jackson@ximian.com>
+
 	* MethodDef.cs: If the type is an interface auto set fields to
 	static (and give a warning if they are not static), and set
 	methods to abstract virtual (and give warning if they were not already).

@@ -359,6 +359,9 @@ namespace Mono.ILASM {
 
                 protected void WriteCode (CodeGen code_gen, PEAPI.MethodDef methoddef)
                 {
+                        if (IsAbstract)
+                                return;
+
                         if (entry_point)
                                 methoddef.DeclareEntryPoint ();
 
