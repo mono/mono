@@ -31,7 +31,6 @@ using System.Drawing.Text;
 using System.Runtime.InteropServices;
 
 namespace System.Windows.Forms {
-	[ComVisible(true)]
 	[DefaultProperty("Checked")]
 	[DefaultEvent("CheckedChanged")]
 	public class RadioButton : ButtonBase {
@@ -43,6 +42,7 @@ namespace System.Windows.Forms {
 		#endregion	// Local Variables
 
 		#region RadioButtonAccessibleObject Subclass
+		[ComVisible(true)]
 		public class RadioButtonAccessibleObject : ControlAccessibleObject {
 			#region RadioButtonAccessibleObject Local Variables
 			private RadioButton	owner;
@@ -309,6 +309,9 @@ namespace System.Windows.Forms {
 		#region Events
 		public event EventHandler	AppearanceChanged;
 		public event EventHandler	CheckedChanged;
+
+		[Browsable(false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public event EventHandler	DoubleClick;
 		#endregion	// Events
 	}

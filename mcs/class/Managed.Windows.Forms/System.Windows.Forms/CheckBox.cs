@@ -276,6 +276,8 @@ namespace System.Windows.Forms {
 		#endregion	// Events
 
 		#region Events
+		[Browsable(false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public event EventHandler DoubleClick;
 		#endregion	// Events
 	}

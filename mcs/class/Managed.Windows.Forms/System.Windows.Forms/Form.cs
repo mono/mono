@@ -856,12 +856,14 @@ Console.WriteLine("ParentForm got focus");
 		}
 
 		protected override bool ProcessDialogKey(Keys keyData) {
-			if (keyData == Keys.Enter && accept_button != null) {
-				accept_button.PerformClick();
-				return true;
-			} else if (keyData == Keys.Enter && cancel_button != null) {
-				cancel_button.PerformClick();
-				return true;
+			if ((keyData & Keys.Modifiers) == 0) {
+				if (keyData == Keys.Enter && accept_button != null) {
+					accept_button.PerformClick();
+					return true;
+				} else if (keyData == Keys.Escape && cancel_button != null) {
+					cancel_button.PerformClick();
+					return true;
+				}
 			}
 			return base.ProcessDialogKey(keyData);
 		}

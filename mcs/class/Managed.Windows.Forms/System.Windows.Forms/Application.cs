@@ -77,6 +77,8 @@ namespace System.Windows.Forms {
 				}
 			}
 
+			form.CreateControl();
+
 			while (!exiting && !form.end_modal && XplatUI.GetMessage(ref msg, IntPtr.Zero, 0, 0)) {
 				XplatUI.TranslateMessage(ref msg);
 				XplatUI.DispatchMessage(ref msg);

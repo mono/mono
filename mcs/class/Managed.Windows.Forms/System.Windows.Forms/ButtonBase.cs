@@ -190,6 +190,7 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[DefaultValue(null)]
 		public ImageList ImageList {
 			get {
 				return image_list;
@@ -214,6 +215,7 @@ namespace System.Windows.Forms {
 		}
 
 		[Browsable(false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new ImeMode ImeMode {
 			get {
 				return ime_mode;
@@ -309,7 +311,7 @@ namespace System.Windows.Forms {
 
 				cp=base.CreateParams;
 
-				cp.Style=(int)WindowStyles.WS_VISIBLE | (int)WindowStyles.WS_CHILD;
+				cp.Style=(int)(WindowStyles.WS_VISIBLE | WindowStyles.WS_CHILD | WindowStyles.WS_CLIPSIBLINGS | WindowStyles.WS_CLIPCHILDREN);
 
 				return cp;
 			}
@@ -511,6 +513,8 @@ namespace System.Windows.Forms {
 		#endregion	// Public Instance Properties
 
 		#region	Events
+		[Browsable(false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new event EventHandler ImeModeChanged;
 		#endregion	// Events
 	}

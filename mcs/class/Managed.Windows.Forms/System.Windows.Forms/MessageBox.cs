@@ -17,7 +17,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (c) 2004 Novell, Inc.
+// Copyright (c) 2004-2005 Novell, Inc.
 //
 // Authors:
 //	Jordi Mas i Hernandez	(jordi@ximian.com)
@@ -60,7 +60,7 @@ namespace System.Windows.Forms
 
 						cp = base.CreateParams;
 
-						cp.Style = (int)(WindowStyles.WS_POPUP | WindowStyles.WS_CAPTION);
+						cp.Style = (int)(WindowStyles.WS_POPUP | WindowStyles.WS_CAPTION | WindowStyles.WS_CLIPCHILDREN | WindowStyles.WS_CLIPSIBLINGS);
 						return cp;
 					}
 				}
@@ -272,6 +272,7 @@ namespace System.Windows.Forms
 				bok.Top = this.Height - 70;
 				bok.Left = left;
 				bok.Click += new EventHandler (OkClick);
+				AcceptButton = bok;
 				this.Controls.Add (bok);
 			}
 
@@ -284,6 +285,7 @@ namespace System.Windows.Forms
 				bcan.Top = this.Height - 70;
 				bcan.Left = left;
 				bcan.Click += new EventHandler (CancelClick);
+				CancelButton = bcan;
 				this.Controls.Add (bcan);
 			}
 
@@ -296,6 +298,7 @@ namespace System.Windows.Forms
 				babort.Top = this.Height - 70;
 				babort.Left = left;
 				babort.Click += new EventHandler (AbortClick);
+				CancelButton = babort;
 				this.Controls.Add (babort);
 			}
 
@@ -308,6 +311,7 @@ namespace System.Windows.Forms
 				bretry.Top = this.Height - 70;
 				bretry.Left = left;
 				bretry.Click += new EventHandler (RetryClick);
+				AcceptButton = bretry;
 				this.Controls.Add (bretry);
 			}
 
@@ -332,6 +336,7 @@ namespace System.Windows.Forms
 				byes.Top = this.Height - 70;
 				byes.Left = left;
 				byes.Click += new EventHandler (YesClick);
+				AcceptButton = byes;
 				this.Controls.Add (byes);
 			}
 
@@ -344,6 +349,7 @@ namespace System.Windows.Forms
 				bno.Top = this.Height - 70;
 				bno.Left = left;
 				bno.Click += new EventHandler (NoClick);
+				CancelButton = bno;
 				this.Controls.Add (bno);
 			}
 			#endregion

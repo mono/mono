@@ -1,3 +1,31 @@
+2005-01-19  Peter Bartok  <pbartok@novell.com>
+
+	* Application.cs (ModalRun): Added a call to CreateControl to ensure
+	  focus is properly set
+	* Button.cs:
+	  - Added missing attributes
+	  - removed styles, those are already set in the base class
+	* ButtonBase.cs:
+	  - Added missing attributes
+	  - Added clip window styles
+	* CheckBox.cs: Added missing attributes
+	* CommonDialog.cs: 
+	  - FormParentWindow.CreateParams: Added required clip styles
+	* Form.cs (ProcessDialogKey): Fixed handling of Escape key, now
+	  also filters modifier keys 
+	* MessageBox.cs:
+	  - Added assignment of Accept and Cancel button to enable Enter 
+	    and Esc keys in MessageBox dialogs
+	  - FormParentWindow.CreateParams: Added required clip styles
+	* RadioButton.cs: Added missing attributes
+	* TextControl.cs: No longer draws selection if control does not
+	  have focus
+	* TextBoxBase.cs: 
+	  - Now draws simple rectangle around test area to make it obvious 
+	    there's a control. This is a hack until we properly support borders
+	  - A few simple fixes to support selections better, now erases selected
+	    text when typing, and resets selection when using movement keys
+
 2005-01-19  Miguel de Icaza  <miguel@ximian.com>
 
 	* UpDownBase.cs: Added some new properties.

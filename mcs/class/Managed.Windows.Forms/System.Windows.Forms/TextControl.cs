@@ -1172,8 +1172,8 @@ namespace System.Windows.Forms {
 				while (tag != null) {
 					if (((tag.X + tag.width) > (clip.Left - viewport_x)) || (tag.X < (clip.Right - viewport_x))) {
 						// Check for selection
-						if ((!selection_visible) || (line_no < selection_start.line.line_no) || (line_no > selection_end.line.line_no)) {
-							// regular drawing
+						if ((!selection_visible) || (!owner.has_focus) || (line_no < selection_start.line.line_no) || (line_no > selection_end.line.line_no)) {
+						// regular drawing
 							g.DrawString(s.Substring(tag.start-1, tag.length), tag.font, tag.color, tag.X + line.align_shift - viewport_x, line.Y + tag.shift  - viewport_y, StringFormat.GenericTypographic);
 						} else {
 							// we might have to draw our selection
@@ -2088,6 +2088,7 @@ if (end != null) {
 			selection_end.pos = selection_start.pos;
 			selection_end.tag = selection_start.tag;
 			selection_visible = false;
+			PositionCaret(selection_start.line, selection_start.pos);
 			InvalidateSelectionArea();
 		}
 

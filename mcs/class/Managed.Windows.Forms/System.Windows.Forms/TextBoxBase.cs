@@ -665,6 +665,8 @@ Console.WriteLine("Destroying caret");
 				case Msg.WM_KEYDOWN: {
 					switch ((Keys)(m.WParam.ToInt32())) {
 						case Keys.Left: {
+							document.SetSelectionToCaret(true);
+
 							if ((Control.ModifierKeys & Keys.Control) != 0) {
 								document.MoveCaret(CaretDirection.WordBack);
 							} else {
@@ -674,6 +676,8 @@ Console.WriteLine("Destroying caret");
 						}
 
 						case Keys.Right: {
+							document.SetSelectionToCaret(true);
+
 							if ((Control.ModifierKeys & Keys.Control) != 0) {
 								document.MoveCaret(CaretDirection.WordForward);
 							} else {
@@ -683,17 +687,20 @@ Console.WriteLine("Destroying caret");
 						}
 
 						case Keys.Up: {
+							document.SetSelectionToCaret(true);
 							document.MoveCaret(CaretDirection.LineUp);
 							return;
 						}
 
 						case Keys.Down: {
-							document.DumpTree(document.Root, true);
+							document.SetSelectionToCaret(true);
 							document.MoveCaret(CaretDirection.LineDown);
 							return;
 						}
 
 						case Keys.Home: {
+							document.SetSelectionToCaret(true);
+
 							if ((Control.ModifierKeys & Keys.Control) != 0) {
 								document.MoveCaret(CaretDirection.CtrlHome);
 							} else {
@@ -703,6 +710,8 @@ Console.WriteLine("Destroying caret");
 						}
 
 						case Keys.End: {
+							document.SetSelectionToCaret(true);
+
 							if ((Control.ModifierKeys & Keys.Control) != 0) {
 								document.MoveCaret(CaretDirection.CtrlEnd);
 							} else {
@@ -712,19 +721,29 @@ Console.WriteLine("Destroying caret");
 						}
 
 						case Keys.Enter: {
-							
 							if (multiline && (accepts_return || ((Control.ModifierKeys & Keys.Control) != 0))) {
+								if (document.selection_visible) {
+									document.ReplaceSelection("");
+								}
+								document.SetSelectionToCaret(true);
+
 								document.Split(document.CaretLine, document.CaretTag, document.CaretPosition);
 								OnTextChanged(EventArgs.Empty);
 								document.UpdateView(document.CaretLine, 2, 0);
 								document.MoveCaret(CaretDirection.CharForward);
+								return;
 							}
-							return;
+							break;
 						}
 
 						case Keys.Tab: {
 							if (accepts_tab) {
 								document.InsertChar(document.CaretLine, document.CaretPosition, '\t');
+								if (document.selection_visible) {
+									document.ReplaceSelection("");
+								}
+								document.SetSelectionToCaret(true);
+
 								OnTextChanged(EventArgs.Empty);
 							} else {
 								base.WndProc(ref m);
@@ -735,6 +754,10 @@ Console.WriteLine("Destroying caret");
 
 						case Keys.Back: {
 							// delete only deletes on the line, doesn't do the combine
+							if (document.selection_visible) {
+								document.ReplaceSelection("");
+							}
+							document.SetSelectionToCaret(true);
 							if (document.CaretPosition == 0) {
 								if (document.CaretLine.LineNo > 1) {
 									Line	line;
@@ -787,11 +810,16 @@ Console.WriteLine("Destroying caret");
 							return;
 						}
 					}
+					base.WndProc(ref m);
 					return;
 				}
 
 				case Msg.WM_CHAR: {
 					if (m.WParam.ToInt32() >= 32) {	// FIXME, tabs should probably go through
+						if (document.selection_visible) {
+							document.ReplaceSelection("");
+						}
+
 						switch (character_casing) {
 							case CharacterCasing.Normal: {
 								document.InsertCharAtCaret((char)m.WParam, true);
@@ -812,7 +840,7 @@ Console.WriteLine("Destroying caret");
 							}
 						}
 					}
-						
+					base.WndProc(ref m);
 					return;
 				}
 
@@ -858,9 +886,10 @@ static int current;
 			// Draw the viewable document
 			document.Draw(pevent.Graphics, pevent.ClipRectangle);
 
-			if (this.has_focus) {
-				ThemeEngine.Current.CPDrawFocusRectangle(pevent.Graphics, ClientRectangle, ForeColor, BackColor);
-			}
+			Rectangle	rect = ClientRectangle;
+			rect.Width--;
+			rect.Height--;
+			pevent.Graphics.DrawRectangle(ThemeEngine.Current.ResPool.GetPen(ThemeEngine.Current.ColorButtonShadow), rect);
 
 			// Set the scrollbar
 			switch (scrollbars) {

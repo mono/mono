@@ -39,9 +39,6 @@ namespace System.Windows.Forms {
 		#region Public Constructors
 		public Button() {
 			dialog_result = DialogResult.None;
-
-			SetStyle(ControlStyles.AllPaintingInWmPaint, true);
-			SetStyle(ControlStyles.UserPaint, true);
 		}
 		#endregion	// Public Constructors
 
@@ -116,6 +113,8 @@ namespace System.Windows.Forms {
 		#endregion	// Protected Instance Methods
 
 		#region Events
+		[Browsable(false)]
+		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		public event EventHandler DoubleClick;
 		#endregion	// Events
 	}
