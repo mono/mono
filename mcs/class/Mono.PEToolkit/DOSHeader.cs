@@ -8,74 +8,65 @@ using System.Runtime.InteropServices;
 
 namespace Mono.PEToolkit {
 
-	[StructLayout(LayoutKind.Explicit)]
-	public struct DOSHeader {
-		// Magic number (ExeSignature.DOS).
-		[FieldOffset(0*2)]  public ExeSignature magic;
+	public class DOSHeader {
+		
+		private readonly int OpenSize = 60;
+		private readonly int CloseSize = 64;
 
-		// Bytes on last page of file.
-		[FieldOffset(1*2)]  public short cblp;
-
-		// Pages in file.
-		[FieldOffset(2*2)]  public short cp;
-
-		// Relocations.
-		[FieldOffset(3*2)]  public short crlc;
-
-		// Size of header in paragraphs.
-		[FieldOffset(4*2)]  public short cparhdr;
-
-		// Minimum extra paragraphs needed.
-		[FieldOffset(5*2)]  public short minalloc;
-
-		// Maximum extra paragraphs needed.
-		[FieldOffset(6*2)]  public short maxalloc;
-
-		// Initial (relative) SS value.
-		[FieldOffset(7*2)]  public short ss;
-
-		// Initial SP value.
-		[FieldOffset(8*2)]  public short sp;
-
-		// Checksum.
-		[FieldOffset(9*2)]  public short csum;
-
-		// Initial IP value.
-		[FieldOffset(10*2)] public short ip;
-
-		// Initial (relative) CS value.
-		[FieldOffset(11*2)] public short cs;
-
-		// File address of relocation table.
-		[FieldOffset(12*2)] public short lfarlc;
-
-		// Overlay number.
-		[FieldOffset(13*2)] public short ovno;
-
-		// Reserved words.
-		// short[4] res;
-
-		// OEM identifier (for e_oeminfo).
-		[FieldOffset(18*2)] public short oemid;
-
-		// OEM information; e_oemid specific.
-		[FieldOffset(19*2)] public short oeminfo;
-
-		// Reserved words
-		// short[10] res2;
+		private byte[] open_data; 	// First 60 bytes of data
+		private byte[] close_data;	// Last 64 bytes of data
 
 		// File address of new exe header.
-		[FieldOffset(30*2)] public uint lfanew;
+		private uint lfanew;
 
-
-
-		/// <summary>
-		/// </summary>
-		unsafe public void Read(BinaryReader reader)
+		public DOSHeader ()
 		{
-			fixed (void* pThis = &this) {
-				PEUtils.ReadStruct(reader, pThis, sizeof (DOSHeader), typeof (DOSHeader));
-			}
+			Init ();
+		}
+
+		public DOSHeader (BinaryReader reader)
+		{
+			Read (reader);
+		}
+
+		public uint Lfanew {
+			get { return lfanew; }
+		}
+
+		public void Read (BinaryReader reader)
+		{
+			open_data = reader.ReadBytes (OpenSize);
+			lfanew = reader.ReadUInt32 ();
+			close_data = reader.ReadBytes (CloseSize);
+		}
+
+		public void Write (BinaryWriter writer)
+		{
+			writer.Write (open_data);
+			writer.Write (lfanew);
+			writer.Write (close_data);
+		}
+
+		public void Init ()
+		{
+			open_data = new byte[] { 0x4D, 0x5A, 0x0, 0x0, 0xE7, 0x0, 0x0, 0x0, 
+						 0x4, 0x0, 0x0, 0x0, 0xFF, 0xFF, 0x0, 0x0, 
+						 0xB8, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 
+						 0x40, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 
+						 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 
+						 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 
+						 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 
+						 0x0, 0x0, 0x0, 0x0 };
+			
+			close_data = new byte[] { 0xE, 0x1F, 0xBA, 0xE, 0x0, 0xB4, 0x9, 0xCD, 
+						  0x21, 0xB8, 0x1, 0x4C, 0xCD, 0x21,0x54, 0x68, 
+						  0x69, 0x73, 0x20, 0x70, 0x72, 0x6F, 0x67, 0x72, 
+						  0x61, 0x6D, 0x20, 0x63, 0x61, 0x6E, 0x6E, 0x6F, 
+						  0x74, 0x20, 0x62, 0x65, 0x20, 0x72, 0x75, 0x6E, 
+						  0x20, 0x69, 0x6E, 0x20, 0x44, 0x4F, 0x53, 0x20, 
+						  0x6D, 0x6F, 0x64, 0x65, 0x2E, 0xD, 0xD, 0xA, 
+						  0x24, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0 };
+
 		}
 
 		/// <summary>
@@ -84,17 +75,8 @@ namespace Mono.PEToolkit {
 		public void Dump(TextWriter writer)
 		{
 			writer.WriteLine(
-				"Number of pages     : {0}" + Environment.NewLine +
-				"Bytes on last pages : {1}" + Environment.NewLine +
-				"New header offset   : {2}" + Environment.NewLine +
-				"Initial CS:IP       : {3}:{4}" + Environment.NewLine +
-				"Initial SS:SP       : {5}:{6}" + Environment.NewLine +
-				"Overlay number      : {7}" + Environment.NewLine,
-				cp, cblp,
-				lfanew + " (0x" + lfanew.ToString("X") + ")",
-				cs.ToString("X"), ip.ToString("X"),
-				ss.ToString("X"), sp.ToString("X"),
-				ovno
+				"New header offset   : {0}",
+				lfanew + " (0x" + lfanew.ToString("X") + ")"
 			);
 		}
 

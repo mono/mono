@@ -1,0 +1,15 @@
+2003-02-17  Jackson Harper <jackson@latitudegeo.com>
+
+	* COFFHeader.cs: Convert to class, use Read and Write methods. Compress some code
+	* CheckSum.cs: Access Lfanew through property not field.
+	* CorHeader.cs: Convert to class, use Read and Write methods.
+	* DOSHeader.cs: Convert to class, use Read and Write methods, and Init method for creating
+	                new DOSHeaders
+	* DataDir.cs: Convert to class, use Read and Write methods.
+	* Image.cs: Access lfanew through property, add Write method.
+	* PEHeader.cs: Convert to class, use Read and Write methods.
+	* PEUtils.cs: Add GetString method for converting byte pointers to strings.
+	* RVA.cs: Add Write method
+	* Section.cs: Use PEUtils.GetString method instead of new string (byte*)
+	* makefuile.gnu: Compile all the files I want compiled ;-)	
+	

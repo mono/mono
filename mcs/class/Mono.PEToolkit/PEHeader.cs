@@ -9,15 +9,12 @@ using System.Runtime.InteropServices;
 namespace Mono.PEToolkit {
 
 	// IMAGE_OPTIONAL_HEADER
-
-	[StructLayoutAttribute(LayoutKind.Sequential)]
-	public struct PEHeader {
+	public class PEHeader {
 
 		/// <summary>
 		/// Standard PE/COFF fields.
 		/// </summary>
-		[StructLayoutAttribute(LayoutKind.Sequential)]
-		public struct StdFields {
+		public class StdFields {
 			internal short magic; // always 0x10B?
 			internal byte lMajor;
 			internal byte lMinor;
@@ -28,19 +25,48 @@ namespace Mono.PEToolkit {
 			internal RVA  codeBase;
 			internal RVA  dataBase;
 
+			public StdFields ()
+			{
 
-			/// <summary>
-			/// </summary>
+			}
+
+			public StdFields (BinaryReader reader)
+			{
+				Read (reader);
+			}
+
+			public void Read (BinaryReader reader)
+			{
+				magic = reader.ReadInt16 ();
+				lMajor = reader.ReadByte ();
+				lMinor = reader.ReadByte ();
+				codeSize = reader.ReadUInt32 ();
+				initDataSize = reader.ReadUInt32 ();
+				uninitDataSize = reader.ReadUInt32 ();
+				entryRVA = new RVA (reader.ReadUInt32 ());
+				codeBase = new RVA (reader.ReadUInt32 ());
+				dataBase = new RVA (reader.ReadUInt32 ());
+			}
+
+			public void Write (BinaryWriter writer)
+			{
+				writer.Write (magic);
+				writer.Write (lMajor);
+				writer.Write (lMinor);
+				writer.Write (codeSize);
+				writer.Write (initDataSize);
+				writer.Write (uninitDataSize);
+				entryRVA.Write (writer);
+				codeBase.Write (writer);
+				dataBase.Write (writer);
+			}
+
 			public string LinkerVersion {
 				get {
 					return String.Format("{0}.{1}", lMajor, lMinor);
 				}
 			}
 			
-
-			/// <summary>
-			/// </summary>
-			/// <returns></returns>
 			public override string ToString() {
 				return String.Format(
 					"Magic                           : 0x{0}" + Environment.NewLine +
@@ -61,8 +87,7 @@ namespace Mono.PEToolkit {
 		/// <remarks>
 		/// See Partition II, 24.2.3.2
 		/// </remarks>
-		[StructLayoutAttribute(LayoutKind.Sequential)]
-		public struct NTFields {
+		public class NTFields {
 			internal uint      imgBase;
 			internal uint      sectAlign;
 			internal uint      fileAlign;
@@ -84,6 +109,66 @@ namespace Mono.PEToolkit {
 			internal uint      heapCommit;
 			internal uint      ldrFlags;
 			internal uint      numDirs;
+
+			public NTFields ()
+			{
+
+			}
+			
+			public NTFields (BinaryReader reader) 
+			{
+				Read (reader);
+			}
+
+			public void Read (BinaryReader reader) 
+			{
+				imgBase = reader.ReadUInt32 ();
+				sectAlign = reader.ReadUInt32 ();
+				fileAlign = reader.ReadUInt32 ();
+				osMaj = reader.ReadInt16 ();
+				osMin = reader.ReadInt16 ();
+				imgMaj = reader.ReadInt16 ();
+				imgMin = reader.ReadInt16 ();
+				subSysMaj = reader.ReadInt16 ();
+				subSysMin = reader.ReadInt16 ();
+				reserved_win32ver = reader.ReadInt32 ();
+				imgSize = reader.ReadUInt32 ();
+				hdrSize = reader.ReadUInt32 ();
+				chksum = reader.ReadUInt32 ();
+				subSys = (Subsystem) reader.ReadInt16 ();
+				dllFlags = reader.ReadInt16 ();
+				stackRes = reader.ReadUInt32 ();
+				stackCommit  = reader.ReadUInt32 ();
+				heapRes  = reader.ReadUInt32 ();
+				heapCommit  = reader.ReadUInt32 ();
+				ldrFlags  = reader.ReadUInt32 ();
+				numDirs  = reader.ReadUInt32 ();
+			}
+
+			public void Write (BinaryWriter writer) 
+			{
+				writer.Write (imgBase);
+				writer.Write (sectAlign);
+				writer.Write (fileAlign);
+				writer.Write (osMaj);
+				writer.Write (osMin);
+				writer.Write (imgMaj);
+				writer.Write (imgMin);
+				writer.Write (subSysMaj);
+				writer.Write (subSysMin);
+				writer.Write (reserved_win32ver);
+				writer.Write (imgSize);
+				writer.Write (hdrSize);
+				writer.Write (chksum);
+				writer.Write ((short)subSys);
+				writer.Write (dllFlags);
+				writer.Write (stackRes);
+				writer.Write (stackCommit);
+				writer.Write (heapRes);
+				writer.Write (heapCommit);
+				writer.Write (ldrFlags);
+				writer.Write (numDirs);
+			}
 
 			public string OSVersion {
 				get {
@@ -491,20 +576,52 @@ namespace Mono.PEToolkit {
 
 		/// <summary>
 		/// </summary>
-		unsafe public void Read(BinaryReader reader)
+		public void Read(BinaryReader reader)
 		{
-			fixed (void* pThis = &this) {
-				int hdrSize = sizeof (StdFields) + sizeof (NTFields);
-				PEUtils.ReadStruct(reader, pThis, hdrSize);
-				PEUtils.ReadStruct(reader, (byte*)pThis + hdrSize, (int) NumberOfRvaAndSizes * sizeof (DataDir));
+			stdFlds = new StdFields (reader);
+			ntFlds = new NTFields (reader);
 
-				if (!System.BitConverter.IsLittleEndian) {
-					PEUtils.ChangeStructEndianess(pThis, typeof (PEHeader));
-				}
-			}
+			exportDir = new DataDir (reader);
+			importDir = new DataDir (reader);		
+			resourceDir = new DataDir (reader);
+			exceptionDir = new DataDir (reader);
+			securityDir = new DataDir (reader);
+			baseRelocDir = new DataDir (reader);
+			debugDir = new DataDir (reader);
+			copyrightDir = new DataDir (reader);
+			GPDir = new DataDir (reader);
+			TLSDir = new DataDir (reader);
+			loadCfgDir = new DataDir (reader);
+			boundImpDir = new DataDir (reader);
+			IATDir = new DataDir (reader);
+			delayImpDir = new DataDir (reader);
+			CLIHdrDir = new DataDir (reader);
+			reservedDir = new DataDir (reader);
+			
 		}
 
+		public void Write (BinaryWriter writer)
+		{
+			stdFlds.Write (writer);
+			ntFlds.Write (writer);
 
+			exportDir.Write (writer);
+			importDir.Write (writer);
+			resourceDir.Write (writer);
+			exceptionDir.Write (writer);
+			securityDir.Write (writer);
+			baseRelocDir.Write (writer);
+			debugDir.Write (writer);
+			copyrightDir.Write (writer);
+			GPDir.Write (writer);
+			TLSDir.Write (writer);
+			loadCfgDir.Write (writer);
+			boundImpDir.Write (writer);
+			IATDir.Write (writer);
+			delayImpDir.Write (writer);
+			CLIHdrDir.Write (writer);
+			reservedDir.Write (writer);
+		}
 
 		/// <summary>
 		/// </summary>
@@ -534,7 +651,9 @@ namespace Mono.PEToolkit {
 			);
 
 			writer.WriteLine(
+				"Standard Fields:" + Environment.NewLine +
 				stdFlds.ToString() + Environment.NewLine +
+				"NT Fields:" + Environment.NewLine +
 				ntFlds.ToString() + Environment.NewLine +
 				"Directories: "+ Environment.NewLine +
 				dirs

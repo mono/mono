@@ -38,8 +38,7 @@ namespace Mono.PEToolkit {
 	/// CLR 2.0 header structure.
 	/// IMAGE_COR20_HEADER
 	/// </summary>
-	[StructLayoutAttribute(LayoutKind.Sequential)]
-	public  struct CorHeader {
+	public class CorHeader {
 		// Header versioning
 		internal uint cb;
 		internal short runtimeMaj;
@@ -266,26 +265,77 @@ namespace Mono.PEToolkit {
 		}
 
 
-		unsafe public void Read(BinaryReader reader)
+		public void Read(BinaryReader reader)
 		{
-			// TODO: clear structure before reading to initialize/reset
-			// unused fields. initblk would be great.
+			// Header versioning
+			cb = reader.ReadUInt32 ();
+			
+			runtimeMaj = reader.ReadInt16 ();
+			runtimeMin = reader.ReadInt16 ();
+	
+			
+			// Symbol table and startup information.
+			meta = new DataDir (reader);
+			flags = (CorFlags) reader.ReadUInt32 ();
+			entryTok = reader.ReadUInt32 ();
 
-			// Read exactly the number of bytes as specified in the header.
-			// This number is duplicated in PEHeader::CLIHdrDir.
-			cb = reader.ReadUInt32();
-			if (cb > sizeof(uint)) {
-				fixed (void* ptr = &this.runtimeMaj, pThis = &this) {
-					PEUtils.ReadStruct(reader, ptr, (int)cb - sizeof (uint));
-					if (!System.BitConverter.IsLittleEndian) {
-						// fix entries on big-endian machine
-						// preserving cb
-						uint oldcb = cb;
-						PEUtils.ChangeStructEndianess(pThis, typeof (CorHeader));
-						cb = oldcb;
-					}
-				}
-			}
+			// Binding information.
+			rsrc  = new DataDir (reader);
+			strongSig = new DataDir (reader);
+		
+			// Regular fixup and binding information.
+			codeManTab = new DataDir (reader);
+			vtab = new DataDir (reader);
+			jumps = new DataDir (reader);
+
+			// Managed Native Code.
+			eeInfo = new DataDir (reader);
+			helper = new DataDir (reader);
+			dynInfo = new DataDir (reader);
+			delayInfo = new DataDir (reader);
+			modImg = new DataDir (reader);
+			extFixups = new DataDir (reader);
+			ridMap = new DataDir (reader);
+			dbgMap = new DataDir (reader);
+
+			// obsolete?
+			ipMap = new DataDir (reader);
+		}
+
+		public void Write (BinaryWriter writer)
+		{
+			// Header versioning
+			writer.Write (cb);
+			
+			writer.Write (runtimeMaj);
+			writer.Write (runtimeMin);
+				
+			// Symbol table and startup information.
+			meta.Write (writer);
+			writer.Write ((uint)flags);
+			writer.Write (entryTok);
+
+			// Binding information.
+			rsrc.Write (writer);
+			strongSig.Write (writer);
+		
+			// Regular fixup and binding information.
+			codeManTab.Write (writer);
+			vtab.Write (writer);
+			jumps.Write (writer);
+
+			// Managed Native Code.
+			eeInfo.Write (writer);
+			helper.Write (writer);
+			dynInfo.Write (writer);
+			delayInfo.Write (writer);
+			modImg.Write (writer);
+			extFixups.Write (writer);
+			ridMap.Write (writer);
+			dbgMap.Write (writer);
+
+			// obsolete?
+			ipMap.Write (writer);
 		}
 
 
@@ -310,15 +360,18 @@ namespace Mono.PEToolkit {
 				"External Fixups            : {15}"  + Environment.NewLine +
 				"Rid Map                    : {16}"  + Environment.NewLine +
 				"Debug Map                  : {17}"  + Environment.NewLine +
-				"IP Map                     : {18}"  + Environment.NewLine,
-				cb + String.Format(" (0x{0})", cb.ToString("X")),
+				"IP Map                     : {18}"  + Environment.NewLine +
+				"Runtime Major		    : {19}"  + Environment.NewLine +
+				"Runtime Minor		    : {20}" + Environment.NewLine,
+				cb,
 				RuntimeVersion,
-				meta, flags, EntryPointToken,
+				meta, null, EntryPointToken,
 				rsrc, strongSig,
 				codeManTab, vtab, jumps,
 				eeInfo, helper, dynInfo, delayInfo, modImg, extFixups,
-				ridMap, dbgMap, ipMap
+				ridMap, dbgMap, ipMap, MajorRuntimeVersion, MinorRuntimeVersion
 			));
+			
 		}
 
 		/// <summary>

@@ -4,6 +4,7 @@
 
 using System;
 using System.IO;
+using System.Text;
 using System.Reflection;
 using System.Runtime.InteropServices;
 
@@ -16,6 +17,15 @@ namespace Mono.PEToolkit {
 		}
 
 
+		unsafe internal static string GetString (sbyte* data, int start, int len, Encoding encoding)
+		{
+			byte[] data_array = new byte[len-start];
+			
+			for (int i=start; i<len; i++)
+				data_array[i-start] = (byte)*data++;
+			
+			return encoding.GetString (data_array);
+		}
 
 		/// <summary>
 		/// Reads structure from the input stream preserving its endianess.

@@ -3,6 +3,7 @@
  */
 
 using System;
+using System.IO;
 using System.Runtime.InteropServices;
 
 namespace Mono.PEToolkit {
@@ -10,8 +11,7 @@ namespace Mono.PEToolkit {
 	/// <summary>
 	/// IMAGE_DATA_DIRECTORY.
 	/// </summary>
-	[StructLayoutAttribute(LayoutKind.Sequential)]
-	public struct DataDir {
+	public class DataDir {
 
 		public static readonly DataDir Null;
 
@@ -20,10 +20,31 @@ namespace Mono.PEToolkit {
 
 		static DataDir ()
 		{
+			Null = new DataDir ();
 			Null.virtAddr = 0;
 			Null.size = 0;
 		}
 
+		public DataDir () {
+
+		}
+
+		public DataDir (BinaryReader reader)
+		{
+			Read (reader);
+		}
+
+		public void Read (BinaryReader reader)
+		{
+			virtAddr = new RVA (reader.ReadUInt32 ());
+			size = reader.ReadUInt32 ();
+		}
+
+		public void Write (BinaryWriter writer)
+		{
+			virtAddr.Write (writer);
+			writer.Write (size);
+		}
 
 		public RVA VirtualAddress {
 			get {

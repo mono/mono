@@ -111,7 +111,7 @@ namespace Mono.PEToolkit {
 			}
 
 			dosHdr.Read(reader);
-			reader.BaseStream.Position = dosHdr.lfanew;
+			reader.BaseStream.Position = dosHdr.Lfanew;
 			ExeSignature peSig = (ExeSignature) reader.ReadUInt16();
 			if (peSig != ExeSignature.NT) {
 				throw new Exception ("Invalid image format: cannot find PE signature.");
@@ -123,17 +123,49 @@ namespace Mono.PEToolkit {
 
 			coffHdr.Read(reader);
 			peHdr.Read(reader);
+		
 			sectionsPos = reader.BaseStream.Position;
 			ReadSections();
-
+			
 			if (this.IsCLI) {
+				
 				reader.BaseStream.Position = RVAToVA(peHdr.CLIHdrDir.virtAddr);
-				corHdr.Read(reader);
-
+				corHdr.Read (reader);
+				
 				mdRoot = new MetaDataRoot(this);
 				reader.BaseStream.Position = RVAToVA(corHdr.MetaData.virtAddr);
 				mdRoot.Read(reader);
+				
 			}
+			
+		}
+
+		public void WriteHeaders (BinaryWriter writer)
+		{
+			dosHdr.Write (writer);
+			writer.BaseStream.Position = dosHdr.Lfanew;
+			writer.Write ((ushort)ExeSignature.NT);
+			writer.Write ((ushort)ExeSignature.NT2);
+			
+			coffHdr.Write (writer);
+			peHdr.Write (writer);
+		
+			/*
+			int pos = reader.BaseStream.Position;
+			ReadSections();
+			
+			if (this.IsCLI) {
+				
+				reader.BaseStream.Position = RVAToVA(peHdr.CLIHdrDir.virtAddr);
+				corHdr.Read (reader);
+				
+				mdRoot = new MetaDataRoot(this);
+				reader.BaseStream.Position = RVAToVA(corHdr.MetaData.virtAddr);
+				mdRoot.Read(reader);
+				
+			}
+			*/
+			
 		}
 
 		/// <summary>
@@ -160,9 +192,11 @@ namespace Mono.PEToolkit {
 		public void Dump(TextWriter writer)
 		{
 			writer.WriteLine (
-				dosHdr.ToString() + Environment.NewLine +
+				"COFF Header:" + Environment.NewLine +
 				coffHdr.ToString() + Environment.NewLine +
+				"PE Header:" + Environment.NewLine +
 				peHdr.ToString() + Environment.NewLine +
+				"Core Header:" + Environment.NewLine +
 				corHdr.ToString()
 			);
 		}

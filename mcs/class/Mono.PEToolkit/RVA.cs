@@ -3,6 +3,7 @@
  */
 
 using System;
+using System.IO;
 
 namespace Mono.PEToolkit {
 
@@ -36,6 +37,10 @@ namespace Mono.PEToolkit {
 			}
 		}
 
+		public void Write (BinaryWriter writer)
+		{
+			writer.Write (value);
+		}
 
 		public static implicit operator RVA (uint val)
 		{

@@ -37,7 +37,7 @@ namespace Mono.PEToolkit {
 				PEHeader peHdr = new PEHeader();
 
 				dosHdr.Read (reader);
-				reader.BaseStream.Position = dosHdr.lfanew;
+				reader.BaseStream.Position = dosHdr.Lfanew;
 				ExeSignature peSig = (ExeSignature) reader.ReadUInt16();
 				if (peSig != ExeSignature.NT) {
 					throw new BadImageException("Checksum : Invalid image format, cannot find PE signature.");
