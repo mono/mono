@@ -1,3 +1,7 @@
+2004-06-25  Atsushi Enomoto <atsushi@ximian.com>
+
+	* RncParser.jay : added MIT license.
+
 2004-06-07  Atsushi Enomoto <atsushi@ximian.com>
 
 	* RncParser.jay : removed unused code. Fixed LookupNamespace() to 
