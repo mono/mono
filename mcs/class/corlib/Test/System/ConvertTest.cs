@@ -3468,5 +3468,12 @@ namespace MonoTests.System {
 			AssertEquals ("ToUInt32", 0, Convert.ToUInt32 (s, fp));
 			AssertEquals ("ToUInt64", 0, Convert.ToUInt64 (s, fp));
 		}
+
+		[Test]
+		[ExpectedException (typeof (InvalidCastException))]
+		public void ChangeTypeToTypeCodeEmpty ()
+		{
+			Convert.ChangeType (true, TypeCode.Empty);
+		}
 	}
 }

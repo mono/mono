@@ -1,7 +1,7 @@
 2004-05-29  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* ConvertTest.cs: Added new parsing tests including special case for
-	Convert.ToSByte.
+	Convert.ToSByte. Added test to ChangeType to Empty.
 	* Int64Test.cs: Added new test cases for overflows. 
 
 2004-05-28  Sebastien Pouliot  <sebastien@ximian.com>
