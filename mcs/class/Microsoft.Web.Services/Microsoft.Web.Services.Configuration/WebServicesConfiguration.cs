@@ -10,6 +10,9 @@
 using System;
 using System.Configuration;
 using System.Xml;
+#if WSE2
+using Microsoft.Web.Services.Messaging.Configuration;
+#endif
 
 namespace Microsoft.Web.Services.Configuration {
 
@@ -41,6 +44,7 @@ namespace Microsoft.Web.Services.Configuration {
 		}
 	}
 
+	[MonoTODO("This whole class requires some serious attention")]
 	public sealed class WebServicesConfiguration : ConfigurationBase, IConfigurationSectionHandler {
 
 		static WSEConfig config;
@@ -59,18 +63,18 @@ namespace Microsoft.Web.Services.Configuration {
 		public static FilterConfiguration FilterConfiguration { 
 			get { return new FilterConfiguration (); }
 		}
-/* FIXME: Classes are not stubbed yet, breaks a WSE2 build
 #if WSE2
-		[MonoTODO()]
 		public static MessagingConfiguration MessagingConfiguration {
-			get { return null; }
+			get { return new MessagingConfiguration (); }
 		}
-
+		
+/* Class not stubbed
 		[MonoTODO()]
 		public static TokenIssuerConfiguration TokenIssuerConfiguration {
 			get { return null; }
 		}
-#endif */
+*/
+#endif
 
 		// from IConfigurationSectionHandler
 		[MonoTODO()]
