@@ -8,16 +8,13 @@
 #
 
 cs0121-3.cs
-cs0154-2.cs
 cs0164.cs
 cs0186.cs
 cs0229.cs
 cs0576.cs
 cs0580.cs
 
-cs0571-2.cs #64224
 cs0647-3.cs #64225
-cs1017.cs   #64226
 
 #
 # These bugs are new in gmcs
@@ -28,6 +25,5 @@ cs1540-3.cs
 cs1540-5.cs
 cs8201.cs
 cs0182.cs
-cs0571-3.cs
-cs1017-2.cs
 
+cs0029-3.cs
