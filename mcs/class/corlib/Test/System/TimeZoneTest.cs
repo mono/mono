@@ -60,29 +60,46 @@ public class TimeZoneTest : TestCase {
 
 	private void EST (TimeZone t1) 
 	{
-		AssertEquals("A01", "Eastern Standard Time", t1.StandardName);
-		AssertEquals("A02", "Eastern Daylight Time", t1.DaylightName);
+		AssertEquals("B01", "Eastern Standard Time", t1.StandardName);
+		AssertEquals("B02", "Eastern Daylight Time", t1.DaylightName);
 
 		DaylightTime d1 = t1.GetDaylightChanges (2002);
-		AssertEquals("A03", "04/07/2002 02:00:00", d1.Start.ToString ("G"));
-		AssertEquals("A04", "10/27/2002 02:00:00", d1.End.ToString ("G"));
-		AssertEquals("A05", 36000000000L, d1.Delta.Ticks);
+		AssertEquals("B03", "04/07/2002 02:00:00", d1.Start.ToString ("G"));
+		AssertEquals("B04", "10/27/2002 02:00:00", d1.End.ToString ("G"));
+		AssertEquals("B05", 36000000000L, d1.Delta.Ticks);
 
 		DaylightTime d2 = t1.GetDaylightChanges (1996);
-		AssertEquals("A06", "04/07/1996 02:00:00", d2.Start.ToString ("G"));
-		AssertEquals("A07", "10/27/1996 02:00:00", d2.End.ToString ("G"));
-		AssertEquals("A08", 36000000000L, d2.Delta.Ticks);
+		AssertEquals("B06", "04/07/1996 02:00:00", d2.Start.ToString ("G"));
+		AssertEquals("B07", "10/27/1996 02:00:00", d2.End.ToString ("G"));
+		AssertEquals("B08", 36000000000L, d2.Delta.Ticks);
 
 		DateTime d3 = new DateTime (2002,2,25);
-		AssertEquals("A09", false, t1.IsDaylightSavingTime (d3));
+		AssertEquals("B09", false, t1.IsDaylightSavingTime (d3));
 		DateTime d4 = new DateTime (2002,4,8);
-		AssertEquals("A10", true, t1.IsDaylightSavingTime (d4));
+		AssertEquals("B10", true, t1.IsDaylightSavingTime (d4));
 		DateTime d5 = new DateTime (2002,11,4);
-		AssertEquals("A11", false, t1.IsDaylightSavingTime (d5));
+		AssertEquals("B11", false, t1.IsDaylightSavingTime (d5));
 
-		AssertEquals("A12", -180000000000L, t1.GetUtcOffset (d3).Ticks);
-		AssertEquals("A13", -144000000000L, t1.GetUtcOffset (d4).Ticks);
-		AssertEquals("A14", -180000000000L, t1.GetUtcOffset (d5).Ticks);
+		AssertEquals("B12", -180000000000L, t1.GetUtcOffset (d3).Ticks);
+		AssertEquals("B13", -144000000000L, t1.GetUtcOffset (d4).Ticks);
+		AssertEquals("B14", -180000000000L, t1.GetUtcOffset (d5).Ticks);
+	}
+
+	private void TST (TimeZone t1) 
+	{
+		AssertEquals("C01", "Tokyo Standard Time", t1.StandardName);
+		AssertEquals("C02", "Tokyo Standard Time", t1.DaylightName);
+
+		DateTime d3 = new DateTime (2002,2,25);
+		AssertEquals("C09", false, t1.IsDaylightSavingTime (d3));
+		DateTime d4 = new DateTime (2002,4,8);
+		AssertEquals("C10", false, t1.IsDaylightSavingTime (d4));
+		DateTime d5 = new DateTime (2002,11,4);
+		AssertEquals("C11", false, t1.IsDaylightSavingTime (d5));
+
+		AssertEquals("C12", 324000000000L, t1.GetUtcOffset (d3).Ticks);
+		AssertEquals("C13", 324000000000L, t1.GetUtcOffset (d4).Ticks);
+		AssertEquals("C14", 324000000000L, t1.GetUtcOffset (d5).Ticks);
 	}
 
 	public void TestCtors ()
@@ -94,6 +111,9 @@ public class TimeZoneTest : TestCase {
 				break;
 			case "Eastern Standard Time":
 				EST (t1);
+				break;
+			case "Tokyo Standard Time":
+				TST (t1);
 				break;
 			default:
 				Fail ("Your time zone (" + t1.StandardName + ") isn't defined in the test case");
