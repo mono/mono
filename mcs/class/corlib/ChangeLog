@@ -1,3 +1,8 @@
+2003-03-03  Lluis Sanchez Gual <lluis@ideary.com>
+
+	* unix.args: added ConstructionLevelActivator.cs, ContextLevelActivator.cs,
+		RemoteActivationAttribute.cs
+
 2003-03-01  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* unix.args: added ModuleResolveEventHandler.cs
