@@ -32,6 +32,11 @@ namespace System.Web.Services.Protocols {
 		// The name used by the stub class to reference this method.
 		internal string Name;
 		internal WebMethodAttribute MethodAttribute;
+		
+		internal string OperationName
+		{
+			get { return MethodInfo.Name; }
+		}
 
 		//
 		// Constructor
