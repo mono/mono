@@ -1,3 +1,8 @@
+
+Mon Feb 18 15:50:59 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* sockets.c: #undef DEBUG.
+
 2002-02-14  Jeffrey Stedfast  <fejj@ximian.com>
 
 	* io-layer.h: conditionally include sys/filio.h and sys/sockio.h
