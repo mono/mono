@@ -1,5 +1,5 @@
 //
-// System.AssemblyLoadEventArgs.cs 
+// System.AssemblyLoadEventArgs.cs
 //
 // Author:
 //   Chris Hynes (chrish@assistedsolutions.com)
@@ -7,7 +7,6 @@
 // (C) 2001 Chris Hynes
 //
 
-using System;
 using System.Reflection;
 
 namespace System 
@@ -16,19 +15,15 @@ namespace System
 	{
 		private Assembly m_loadedAssembly;
 
-		public AssemblyLoadEventArgs(Assembly loadedAssembly)
+		public AssemblyLoadEventArgs (Assembly loadedAssembly)
 		{
 			this.m_loadedAssembly = loadedAssembly;
 		}
 
-		public Assembly LoadedAssembly
-		{
-			get 
-			{
+		public Assembly LoadedAssembly {
+			get {
 				return m_loadedAssembly;
 			}
 		}
 	}
 }
-
-

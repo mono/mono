@@ -16,8 +16,8 @@ namespace System
 	{
 		IntPtr sig;
 		IntPtr args;
-		int    next_arg;
-		int    num_args;
+		int next_arg;
+		int num_args;
 
 		[MethodImpl (MethodImplOptions.InternalCall)]
 		extern void Setup (IntPtr argsp, IntPtr start);
@@ -46,7 +46,7 @@ namespace System
 
 		public override bool Equals (object o)
 		{
-			throw new NotSupportedException("This operation is not supported for this type");
+			throw new NotSupportedException (Locale.GetText ("ArgIterator does not support Equals."));
 		}
 
 		public override int GetHashCode ()
@@ -58,7 +58,7 @@ namespace System
 		public TypedReference GetNextArg ()
 		{
 			if (num_args == next_arg)
-				throw new InvalidOperationException ("invalid iterator position");
+				throw new InvalidOperationException (Locale.GetText ("Invalid iterator position."));
 			return IntGetNextArg ();
 		}
 
@@ -69,7 +69,7 @@ namespace System
 		public TypedReference GetNextArg (RuntimeTypeHandle rth)
 		{
 			if (num_args == next_arg)
-				throw new InvalidOperationException ("invalid iterator position");
+				throw new InvalidOperationException (Locale.GetText ("Invalid iterator position."));
 			return IntGetNextArg (rth.Value);
 		}
 
@@ -79,7 +79,7 @@ namespace System
 		public RuntimeTypeHandle GetNextArgType ()
 		{
 			if (num_args == next_arg)
-				throw new InvalidOperationException ("invalid iterator position");
+				throw new InvalidOperationException (Locale.GetText ("Invalid iterator position."));
 			return new RuntimeTypeHandle (IntGetNextArgType ());
 		}
 

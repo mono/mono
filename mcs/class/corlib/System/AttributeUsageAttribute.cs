@@ -1,5 +1,5 @@
 //
-// System.AttributeUsage.cs
+// System.AttributeUsageAttribute.cs
 //
 // Author:
 //   Miguel de Icaza (miguel@ximian.com)
@@ -7,14 +7,15 @@
 // (C) Ximian, Inc.  http://www.ximian.com
 //
 
-namespace System {
-
-	[AttributeUsage(AttributeTargets.All)]
+namespace System
+{
 	[Serializable]
-	public sealed class AttributeUsageAttribute : Attribute {
+	[AttributeUsage(AttributeTargets.All)]
+	public sealed class AttributeUsageAttribute : Attribute
+	{
 		AttributeTargets valid_on;
 		bool allow_multiple, inherited;
-		
+
 		public AttributeUsageAttribute (AttributeTargets validOn)
 		{
 			valid_on = validOn;
@@ -24,7 +25,6 @@ namespace System {
 			get {
 				return allow_multiple;
 			}
-
 			set {
 				allow_multiple = value;
 			}
@@ -34,7 +34,6 @@ namespace System {
 			get {
 				return inherited;
 			}
-
 			set {
 				inherited = value;
 			}
@@ -47,4 +46,5 @@ namespace System {
 		}
 	}
 }
+
 

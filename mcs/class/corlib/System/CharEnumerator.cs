@@ -1,7 +1,8 @@
 //
 // System.CharEnumerator.cs
 //
-// Author: Duncan Mak  (duncan@ximian.com)
+// Author:
+//   Duncan Mak (duncan@ximian.com)
 //
 // (C) Ximian, Inc.
 //
@@ -23,30 +24,26 @@ namespace System
 		// Constructor
 		internal CharEnumerator (string s)
 		{
-			 str = s;
-			 index = -1;
-			 length = s.Length;
+			str = s;
+			index = -1;
+			length = s.Length;
 		}
-		
-		// Property
-		public char Current
-		{
+
+		// Properties
+		public char Current {
 			get {
 				if (index == -1 || index >= length)
-					throw new InvalidOperationException
-						("The position is not valid.");
-
+					throw new InvalidOperationException (Locale.GetText ("The position is not valid."));
 				return str [index];
 			}
 		}
-		
-		object IEnumerator.Current
-		{
+
+		object IEnumerator.Current {
 			get { 
 				return Current;
 			}
 		}
-		
+
 		// Methods
 		public object Clone ()
 		{
@@ -54,7 +51,7 @@ namespace System
 			x.index = index;
 			return x;
 		}
-		
+
 		public bool MoveNext ()
 		{
 			// Representation invariant holds: -1 <= index <= length
@@ -77,7 +74,7 @@ namespace System
 			else
 				return true;
 		}
-		
+
 		public void Reset ()
 		{
 			index = -1;

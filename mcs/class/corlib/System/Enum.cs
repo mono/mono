@@ -15,14 +15,16 @@ using System.Collections;
 using System.Globalization;
 using System.Runtime.CompilerServices;
 
-namespace System {
-	internal struct MonoEnumInfo {
+namespace System
+{
+	internal struct MonoEnumInfo
+	{
 		internal Type utype;
 		internal Array values;
 		internal string[] names;
 		static Hashtable cache;
 		
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private static extern void get_enum_info (Type enumType, out MonoEnumInfo info);
 		
 		private MonoEnumInfo (MonoEnumInfo other)
@@ -31,7 +33,7 @@ namespace System {
 			values = other.values;
 			names = other.names;
 		}
-		
+
 		internal static void GetInfo (Type enumType, out MonoEnumInfo info)
 		{
 			if (cache == null)
@@ -48,15 +50,17 @@ namespace System {
 		}
 	};
 
+	[MonoTODO ("Locale.GetText")]
 	[Serializable]
-	public abstract class Enum : ValueType, IComparable, IConvertible, IFormattable {
-
-		internal Enum () {
+	public abstract class Enum : ValueType, IComparable, IConvertible, IFormattable
+	{
+		internal Enum ()
+		{
 		}
-		
-		// IConvertible methods Start -->
 
-		public TypeCode GetTypeCode () {
+		// IConvertible methods Start -->
+		public TypeCode GetTypeCode ()
+		{
 			MonoEnumInfo info;
 			MonoEnumInfo.GetInfo (this.GetType (), out info);
 			return Type.GetTypeCode (info.utype);
@@ -107,7 +111,7 @@ namespace System {
 			return Convert.ToInt64 (get_value (), provider);
 		}
 
-    		[CLSCompliant(false)]
+		[CLSCompliant (false)]
 		sbyte IConvertible.ToSByte (IFormatProvider provider)
 		{
 			return Convert.ToSByte (get_value (), provider);
@@ -122,33 +126,33 @@ namespace System {
 		{
 			return Convert.ToType (get_value (), conversionType, provider);
 		}
-		
-    		[CLSCompliant(false)]
+
+		[CLSCompliant (false)]
 		ushort IConvertible.ToUInt16 (IFormatProvider provider)
 		{
 			return Convert.ToUInt16 (get_value (), provider);
 		}
 
-    		[CLSCompliant(false)]
+		[CLSCompliant (false)]
 		uint IConvertible.ToUInt32 (IFormatProvider provider)
 		{
 			return Convert.ToUInt32 (get_value (), provider);
 		}
 
-    		[CLSCompliant(false)]
+		[CLSCompliant (false)]
 		ulong IConvertible.ToUInt64 (IFormatProvider provider)
 		{
 			return Convert.ToUInt64 (get_value (), provider);
 		}
-
 		// <-- End IConvertible methods
 
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private extern object get_value ();
-		
-		public static Array GetValues (Type enumType) {
-			if (null == enumType)
-				throw new ArgumentNullException ("enumType cannot be null.");
+
+		public static Array GetValues (Type enumType)
+		{
+			if (enumType == null)
+				throw new ArgumentNullException ("enumType");
 
 			if (!enumType.IsEnum)
 				throw new ArgumentException ("enumType is not an Enum type.");
@@ -157,10 +161,11 @@ namespace System {
 			MonoEnumInfo.GetInfo (enumType, out info);
 			return (Array) info.values.Clone ();
 		}
-		
-		public static string[] GetNames (Type enumType) {
-			if (null == enumType)
-				throw new ArgumentNullException ("enumType cannot be null.");
+
+		public static string[] GetNames (Type enumType)
+		{
+			if (enumType == null)
+				throw new ArgumentNullException ("enumType");
 
 			if (!enumType.IsEnum)
 				throw new ArgumentException ("enumType is not an Enum type.");
@@ -169,12 +174,13 @@ namespace System {
 			MonoEnumInfo.GetInfo (enumType, out info);
 			return (string []) info.names.Clone ();
 		}
-		
-		public static string GetName (Type enumType, object value) {
-			if (null == enumType)
-				throw new ArgumentNullException ("enumType cannot be null.");
-			if (null == value)
-				throw new ArgumentNullException ("value cannot be null.");
+
+		public static string GetName (Type enumType, object value)
+		{
+			if (enumType == null)
+				throw new ArgumentNullException ("enumType");
+			if (value == null)
+				throw new ArgumentNullException ("value");
 
 			if (!enumType.IsEnum)
 				throw new ArgumentException ("enumType is not an Enum type.");
@@ -183,18 +189,19 @@ namespace System {
 			int i;
 			value = ToObject (enumType, value);
 			MonoEnumInfo.GetInfo (enumType, out info);
-			for (i = 0; i < info.values.Length; ++i) {				
+			for (i = 0; i < info.values.Length; ++i) {
 				if (value.Equals (info.values.GetValue (i)))
 					return info.names [i];
 			}
 			return null;
 		}
-		
-		public static bool IsDefined (Type enumType, object value) {
-			if (null == enumType)
-				throw new ArgumentNullException ("enumType cannot be null.");
-			if (null == value)
-				throw new ArgumentNullException ("value cannot be null.");
+
+		public static bool IsDefined (Type enumType, object value)
+		{
+			if (enumType == null)
+				throw new ArgumentNullException ("enumType");
+			if (value == null)
+				throw new ArgumentNullException ("value");
 
 			if (!enumType.IsEnum)
 				throw new ArgumentException ("enumType is not an Enum type.");
@@ -209,7 +216,7 @@ namespace System {
 				int i;
 				value = ToObject (enumType, value);
 				MonoEnumInfo.GetInfo (enumType, out info);
-				for (i = 0; i < info.values.Length; ++i) {				
+				for (i = 0; i < info.values.Length; ++i) {
 					if (value.Equals (info.values.GetValue (i)))
 						return true;
 				}
@@ -219,13 +226,12 @@ namespace System {
 					+ "It must be type String or the same type as the underlying type"
 					+ "of the Enum.");
 			}
-			
-
 		}
-		
-		public static Type GetUnderlyingType (Type enumType) {
-			if (null == enumType)
-				throw new ArgumentNullException ("enumType cannot be null.");
+
+		public static Type GetUnderlyingType (Type enumType)
+		{
+			if (enumType == null)
+				throw new ArgumentNullException ("enumType");
 
 			if (!enumType.IsEnum)
 				throw new ArgumentException ("enumType is not an Enum type.");
@@ -243,11 +249,11 @@ namespace System {
 
 		public static object Parse (Type enumType, string value, bool ignoreCase)
 		{
-			if (null == enumType)
-				throw new ArgumentNullException ("enumType cannot be null.");
+			if (enumType == null)
+				throw new ArgumentNullException ("enumType");
 
-			if (null == value)
-				throw new ArgumentNullException ("value cannot be null.");
+			if (value == null)
+				throw new ArgumentNullException ("value");
 
 			if (!enumType.IsEnum)
 				throw new ArgumentException ("enumType is not an Enum type.");
@@ -265,16 +271,16 @@ namespace System {
 
 			try {
 				// Attempt to convert to numeric type
-				return ToObject(enumType, Convert.ChangeType (value, typeCode) );
+				return ToObject (enumType, Convert.ChangeType (value, typeCode) );
 			} catch {}
 
-			string[] names = value.Split(new char[] {','});
+			string[] names = value.Split (new char[] {','});
 			for (i = 0; i < names.Length; ++i)
 				names [i] = names [i].Trim ();
 
 			foreach (string name in names) {
 				bool found = false;
-				for (i = 0; i < info.values.Length; ++i) {				
+				for (i = 0; i < info.values.Length; ++i) {
 					if (String.Compare (name, info.names [i], ignoreCase, CultureInfo.InvariantCulture) == 0) {
 						switch (typeCode) {
 							case TypeCode.Byte:
@@ -313,10 +319,10 @@ namespace System {
 					}
 				}
 				if (!found)
-					throw new ArgumentException ("The requested value was not found");
+					throw new ArgumentException ("The requested value was not found.");
 				
 			}
-			return ToObject(enumType, retVal);
+			return ToObject (enumType, retVal);
 		}
 
 		/// <summary>
@@ -331,24 +337,24 @@ namespace System {
 			if (obj == null)
 				return 1;
 
-			thisType = this.GetType();
-			if (obj.GetType() != thisType){
-				throw new ArgumentException(
+			thisType = this.GetType ();
+			if (obj.GetType() != thisType) {
+				throw new ArgumentException (
 					"Object must be the same type as the "
 					+ "enum. The type passed in was " 
-					+ obj.GetType().ToString()
+					+ obj.GetType().ToString ()
 					+ "; the enum type was " 
-					+ thisType.ToString() + ".");
+					+ thisType.ToString () + ".");
 			}
 
 			object value1, value2;
 
 			value1 = this.get_value ();
-			value2 = ((Enum)obj).get_value();
+			value2 = ((Enum)obj).get_value ();
 
 			return ((IComparable)value1).CompareTo (value2);
 		}
-		
+
 		public override string ToString ()
 		{
 			return ToString ("G", null);
@@ -368,60 +374,65 @@ namespace System {
 		{
 			// provider is not used for Enums
 
-			if (format == String.Empty || format == null){
+			if (format == String.Empty || format == null) {
 				format = "G";
 			}
 			return Format (this.GetType(), this.get_value (), format);
 		}
 
-		public static object ToObject(Type enumType, byte value)
+		public static object ToObject (Type enumType, byte value)
 		{
 			return ToObject (enumType, (object)value);
 		}
-		
-		public static object ToObject(Type enumType, short value)
+
+		public static object ToObject (Type enumType, short value)
 		{
 			return ToObject (enumType, (object)value);
 		}
-		public static object ToObject(Type enumType, int value)
+
+		public static object ToObject (Type enumType, int value)
 		{
 			return ToObject (enumType, (object)value);
 		}
-		public static object ToObject(Type enumType, long value)
+
+		public static object ToObject (Type enumType, long value)
 		{
 			return ToObject (enumType, (object)value);
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		public static extern object ToObject(Type enumType, object value);
+		public static extern object ToObject (Type enumType, object value);
 
-		[CLSCompliant(false)]
-		public static object ToObject(Type enumType, sbyte value)
+		[CLSCompliant (false)]
+		public static object ToObject (Type enumType, sbyte value)
 		{
 			return ToObject (enumType, (object)value);
 		}
-		[CLSCompliant(false)]
-		public static object ToObject(Type enumType, ushort value)
+
+		[CLSCompliant (false)]
+		public static object ToObject (Type enumType, ushort value)
 		{
 			return ToObject (enumType, (object)value);
 		}
-		[CLSCompliant(false)]
-		public static object ToObject(Type enumType, uint value)
+
+		[CLSCompliant (false)]
+		public static object ToObject (Type enumType, uint value)
 		{
 			return ToObject (enumType, (object)value);
 		}
-		[CLSCompliant(false)]
-		public static object ToObject(Type enumType, ulong value)
+
+		[CLSCompliant (false)]
+		public static object ToObject (Type enumType, ulong value)
 		{
 			return ToObject (enumType, (object)value);
 		}
 
 		public override bool Equals (object obj)
 		{
-			if (null == obj || !(obj is Enum))
+			if (obj == null || !(obj is Enum))
 				return false;
 
-			if (obj.GetType() != this.GetType())
+			if (obj.GetType() != this.GetType ())
 				return false;
 
 			object v1 = this.get_value ();
@@ -442,30 +453,30 @@ namespace System {
 			// 8, if it's culture specific, or what.  This works for me.
 			const string format = "x8";
 
-			switch (Type.GetTypeCode(enumType)) {
+			switch (Type.GetTypeCode (enumType)) {
 				case TypeCode.Char:
 					// Char doesn't support ToString(format), so convert to an int and
 					// use that...
 					char v = (char) value;
-					return Convert.ToInt32(v).ToString(format);
+					return Convert.ToInt32 (v).ToString(format);
 				case TypeCode.SByte:
-					return ((sbyte)value).ToString(format);
+					return ((sbyte)value).ToString (format);
 				case TypeCode.Byte:
-					return ((byte)value).ToString(format);
+					return ((byte)value).ToString (format);
 				case TypeCode.Int16:
-					return ((short)value).ToString(format);
+					return ((short)value).ToString (format);
 				case TypeCode.UInt16:
-					return ((ushort)value).ToString(format);
+					return ((ushort)value).ToString (format);
 				case TypeCode.Int32:
-					return ((int)value).ToString(format);
+					return ((int)value).ToString (format);
 				case TypeCode.UInt32:
-					return ((uint)value).ToString(format);
+					return ((uint)value).ToString (format);
 				case TypeCode.Int64:
-					return ((long)value).ToString(format);
+					return ((long)value).ToString (format);
 				case TypeCode.UInt64:
-					return ((ulong)value).ToString(format);
+					return ((ulong)value).ToString (format);
 				default:
-					throw new Exception ("invalid type code for enumeration");
+					throw new Exception ("Invalid type code for enumeration.");
 			}
 		}
 
@@ -479,12 +490,11 @@ namespace System {
 				retVal = GetName (enumType, value);
 				if (retVal == null)
 					retVal = asString;
-
 				return retVal;
 			}
 			// This is ugly, yes.  We need to handle the different integer
 			// types for enums.  If someone else has a better idea, be my guest.
-			switch (((Enum)info.values.GetValue (0)).GetTypeCode()) {
+			switch (((Enum)info.values.GetValue (0)).GetTypeCode ()) {
 			case TypeCode.SByte: {
 				sbyte flags = (sbyte) value;
 				sbyte enumValue;
@@ -493,7 +503,7 @@ namespace System {
 					if (i == 0 && enumValue == 0)
 						continue;
 
-					if ((flags & enumValue) == enumValue){
+					if ((flags & enumValue) == enumValue) {
 						retVal = info.names[i] + (retVal == String.Empty ? "" : ", ") + retVal;
 						flags -= enumValue;
 					}
@@ -501,7 +511,7 @@ namespace System {
 				if (flags != 0) return asString;
 				}
 				break;
-			case TypeCode.Byte:{
+			case TypeCode.Byte: {
 				byte flags = (byte) value;
 				byte enumValue;
 				for (int i = info.values.Length - 1; i >= 0; i--) {
@@ -509,7 +519,7 @@ namespace System {
 					if (i == 0 && enumValue == 0)
 						continue;
 
-					if ((flags & enumValue) == enumValue){
+					if ((flags & enumValue) == enumValue) {
 						retVal = info.names[i] + (retVal == String.Empty ? "" : ", ") + retVal;
 						flags -= enumValue;
 					}
@@ -525,7 +535,7 @@ namespace System {
 					if (i == 0 && enumValue == 0)
 						continue;
 
-					if ((flags & enumValue) == enumValue){
+					if ((flags & enumValue) == enumValue) {
 						retVal = info.names[i] + (retVal == String.Empty ? "" : ", ") + retVal;
 						flags -= enumValue;
 					}
@@ -541,7 +551,7 @@ namespace System {
 					if (i == 0 && enumValue == 0)
 						continue;
 
-					if ((flags & enumValue) == enumValue){
+					if ((flags & enumValue) == enumValue) {
 						retVal = info.names[i] + (retVal == String.Empty ? "" : ", ") + retVal;
 						flags -= enumValue;
 					}
@@ -557,7 +567,7 @@ namespace System {
 					if (i == 0 && enumValue == 0)
 						continue;
 
-					if ((flags & enumValue) == enumValue){
+					if ((flags & enumValue) == enumValue) {
 						retVal = info.names[i] + (retVal == String.Empty ? "" : ", ") + retVal;
 						flags -= enumValue;
 					}
@@ -573,7 +583,7 @@ namespace System {
 					if (i == 0 && enumValue == 0)
 						continue;
 
-					if ((flags & enumValue) == enumValue){
+					if ((flags & enumValue) == enumValue) {
 						retVal = info.names[i] + (retVal == String.Empty ? "" : ", ") + retVal;
 						flags -= enumValue;
 					}
@@ -589,7 +599,7 @@ namespace System {
 					if (i == 0 && enumValue == 0)
 						continue;
 
-					if ((flags & enumValue) == enumValue){
+					if ((flags & enumValue) == enumValue) {
 						retVal = info.names[i] + (retVal == String.Empty ? "" : ", ") + retVal;
 						flags -= enumValue;
 					}
@@ -605,7 +615,7 @@ namespace System {
 					if (i == 0 && enumValue == 0)
 						continue;
 
-					if ((flags & enumValue) == enumValue){
+					if ((flags & enumValue) == enumValue) {
 						retVal = info.names[i] + (retVal == String.Empty ? "" : ", ") + retVal;
 						flags -= enumValue;
 					}
@@ -623,23 +633,23 @@ namespace System {
 
 		public static string Format (Type enumType, object value, string format)
 		{
-			if (null == enumType)
-				throw new ArgumentNullException("enumType cannot be null");
-			if (null == value)
-				throw new ArgumentNullException("value cannot be null");
-			if (null == format)
-				throw new ArgumentNullException("format cannot be null");
+			if (enumType == null)
+				throw new ArgumentNullException ("enumType");
+			if (value == null)
+				throw new ArgumentNullException ("value");
+			if (format == null)
+				throw new ArgumentNullException ("format");
 
 			if (!enumType.IsEnum)
-				throw new ArgumentException("enumType is not an Enum Type");
+				throw new ArgumentException ("enumType is not an Enum Type.");
 			
 			Type vType = value.GetType();
-			if (vType != enumType && vType != Enum.GetUnderlyingType(enumType))
-				throw new ArgumentException();
+			if (vType != enumType && vType != Enum.GetUnderlyingType (enumType))
+				throw new ArgumentException ();
 
 			if (format.Length != 1)
 				throw new FormatException ("Format String can be only \"G\",\"g\",\"X\"," + 
-							  "\"x\",\"F\",\"f\",\"D\" or \"d\".");
+					"\"x\",\"F\",\"f\",\"D\" or \"d\".");
 
 			char formatChar = format [0];
 			string retVal;
@@ -660,12 +670,12 @@ namespace System {
 
 			retVal = "";
 			switch (formatChar) {
-			    case 'X':
-			    case 'x':
+			case 'X':
+			case 'x':
 				retVal = FormatSpecifier_X (enumType, value);
 				break;
-			    case 'D':
-			    case 'd':
+			case 'D':
+			case 'd':
 				if (Enum.GetUnderlyingType (enumType) == typeof (ulong)) {
 					ulong ulongValue = Convert.ToUInt64 (value);
 					retVal = ulongValue.ToString ();
@@ -674,11 +684,10 @@ namespace System {
 					retVal = longValue.ToString ();
 				}
 				break;
-			    default:
+			default:
 				throw new FormatException ("Format String can be only \"G\",\"g\",\"X\"," + 
-							  "\"x\",\"F\",\"f\",\"D\" or \"d\".");
+					"\"x\",\"F\",\"f\",\"D\" or \"d\".");
 			}
-
 			return retVal;
 		}
 	}

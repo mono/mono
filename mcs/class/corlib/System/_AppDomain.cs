@@ -1,5 +1,5 @@
 //
-// System._AppDomain
+// System.AppDomain.cs
 //
 // Author:
 //   Duco Fijma (duco@lorentz.xs4all.nl)
@@ -16,149 +16,88 @@ using System.Runtime.InteropServices;
 
 namespace System
 {
+	[CLSCompliant (false)]
+	[InterfaceType (ComInterfaceType.InterfaceIsIUnknown)]
+	[Guid ("05F696DC-2B29-3663-AD8B-C4389CF2A713")]
+	public interface _AppDomain
+	{
+		string BaseDirectory {get; }
+		string DynamicDirectory {get; }
+		Evidence Evidence {get; }
+		string FriendlyName {get; }
+		string RelativeSearchPath {get; }
+		bool ShadowCopyFiles {get; }
 
-[CLSCompliant(false)]
-[InterfaceType (ComInterfaceType.InterfaceIsIUnknown)]
-[Guid ("05F696DC-2B29-3663-AD8B-C4389CF2A713")]
-public interface _AppDomain {
+		void AppendPrivatePath (string path);
+		void ClearPrivatePath ();
+		void ClearShadowCopyPath ();
 
-	string BaseDirectory {get; }
-	string DynamicDirectory {get; }
-	Evidence Evidence {get; }
-	string FriendlyName {get; }
-	string RelativeSearchPath {get; }
-	bool ShadowCopyFiles {get; }
+		ObjectHandle CreateInstance (string assemblyName, string typeName);
+		ObjectHandle CreateInstance (string assemblyName, string typeName, object[] activationAttributes);
+		ObjectHandle CreateInstance (string assemblyName, string typeName, bool ignoreCase,
+			BindingFlags bindingAttr, Binder binder, object[] args, CultureInfo culture,
+			object[] activationAttributes, Evidence securityAttribtutes);
 
-	void AppendPrivatePath (string path);
-	void ClearPrivatePath ();
-	void ClearShadowCopyPath ();
+		ObjectHandle CreateInstanceFrom (string assemblyFile, string typeName);
+		ObjectHandle CreateInstanceFrom (string assemblyName, string typeName, object[] activationAttributes);
+		ObjectHandle CreateInstanceFrom (string assemblyName, string typeName, bool ignoreCase,
+			BindingFlags bindingAttr, Binder binder, object[] args, CultureInfo culture,
+			object[] activationAttributes, Evidence securityAttribtutes);
 
-	ObjectHandle CreateInstance (string assemblyName, string typeName);
-	ObjectHandle CreateInstance (
-		string assemblyName,
-		string typeName,
-		object[] activationAttributes);
-	ObjectHandle CreateInstance (
-		string assemblyName,
-		string typeName,
-		bool ignoreCase,
-		BindingFlags bindingAttr,
-		Binder binder,
-		object[] args,
-		CultureInfo culture,
-		object[] activationAttributes,
-		Evidence securityAttribtutes);
+		AssemblyBuilder DefineDynamicAssembly (AssemblyName name, AssemblyBuilderAccess access);
+		AssemblyBuilder DefineDynamicAssembly (AssemblyName name, AssemblyBuilderAccess access, Evidence evidence);
+		AssemblyBuilder DefineDynamicAssembly (AssemblyName name, AssemblyBuilderAccess access, string dir);
+		AssemblyBuilder DefineDynamicAssembly (AssemblyName name, AssemblyBuilderAccess access, string dir, Evidence evidence);
+		AssemblyBuilder DefineDynamicAssembly (AssemblyName name, AssemblyBuilderAccess access,
+			PermissionSet requiredPermissions, PermissionSet optionalPermissions, PermissionSet refusedPersmissions);
+		AssemblyBuilder DefineDynamicAssembly (AssemblyName name, AssemblyBuilderAccess access,
+			Evidence evidence, PermissionSet requiredPermissions, PermissionSet optionalPermissions,
+			PermissionSet refusedPersmissions);
+		AssemblyBuilder DefineDynamicAssembly (AssemblyName name, AssemblyBuilderAccess access,
+			string dir, PermissionSet requiredPermissions, PermissionSet optionalPermissions, PermissionSet refusedPersmissions);
+		AssemblyBuilder DefineDynamicAssembly (AssemblyName name, AssemblyBuilderAccess access,
+			string dir, Evidence evidence, PermissionSet requiredPermissions, PermissionSet optionalPermissions,
+			PermissionSet refusedPersmissions);
+		AssemblyBuilder DefineDynamicAssembly (AssemblyName name, AssemblyBuilderAccess access, string dir,
+			Evidence evidence, PermissionSet requiredPermissions, PermissionSet optionalPermissions,
+			PermissionSet refusedPersmissions, bool isSynchronized);
 
-	ObjectHandle CreateInstanceFrom (string assemblyFile, string typeName);
-	ObjectHandle CreateInstanceFrom (
-		string assemblyName, string typeName,
-		object[] activationAttributes);
-	ObjectHandle CreateInstanceFrom (string assemblyName,
-		string typeName,
-		bool ignoreCase,
-		BindingFlags bindingAttr,
-		Binder binder,
-		object[] args,
-		CultureInfo culture,
-		object[] activationAttributes,
-		Evidence securityAttribtutes);
+		void DoCallBack (CrossAppDomainDelegate theDelegate);
+		bool Equals (object other);
 
-	AssemblyBuilder DefineDynamicAssembly (
-		AssemblyName name,
-		AssemblyBuilderAccess access);
-	AssemblyBuilder DefineDynamicAssembly (
-		AssemblyName name,
-		AssemblyBuilderAccess access,
-		Evidence evidence);
-	AssemblyBuilder DefineDynamicAssembly (
-		AssemblyName name,
-		AssemblyBuilderAccess access, string dir);
-	AssemblyBuilder DefineDynamicAssembly (
-		AssemblyName name,
-		AssemblyBuilderAccess access,
-		string dir,
-		Evidence evidence);
-	AssemblyBuilder DefineDynamicAssembly (
-		AssemblyName name,
-		AssemblyBuilderAccess access,
-		PermissionSet requiredPermissions,
-		PermissionSet optionalPermissions,
-		PermissionSet refusedPersmissions);
-	AssemblyBuilder DefineDynamicAssembly (
-		AssemblyName name,
-		AssemblyBuilderAccess access,
-		Evidence evidence,
-		PermissionSet requiredPermissions,
-		PermissionSet optionalPermissions,
-		PermissionSet refusedPersmissions);
-	AssemblyBuilder DefineDynamicAssembly (
-		AssemblyName name,
-		AssemblyBuilderAccess access,
-		string dir,
-		PermissionSet requiredPermissions,
-		PermissionSet optionalPermissions,
-		PermissionSet refusedPersmissions);
-	AssemblyBuilder DefineDynamicAssembly (
-		AssemblyName name,
-		AssemblyBuilderAccess access,
-		string dir,
-		Evidence evidence,
-		PermissionSet requiredPermissions,
-		PermissionSet optionalPermissions,
-		PermissionSet refusedPersmissions);
-	AssemblyBuilder DefineDynamicAssembly (
-		AssemblyName name,
-		AssemblyBuilderAccess access,
-		string dir,
-		Evidence evidence,
-		PermissionSet requiredPermissions,
-		PermissionSet optionalPermissions,
-		PermissionSet refusedPersmissions,
-		bool isSynchronized);
+		int ExecuteAssembly (string assemblyFile);
+		int ExecuteAssembly (string assemblyFile, Evidence assemblySecurity);
+		int ExecuteAssembly (string assemblyFile, Evidence assemblySecurity, string[] args);
 
-	void DoCallBack (CrossAppDomainDelegate theDelegate);
-	bool Equals (object other);
+		Assembly[] GetAssemblies ();
+		object GetData (string name);
+		int GetHashCode();
+		object GetLifetimeService ();
+		Type GetType ();
+		object InitializeLifetimeService ();
 
-	int ExecuteAssembly (string assemblyFile);
-	int ExecuteAssembly (string assemblyFile, Evidence assemblySecurity);
-	int ExecuteAssembly (
-		string assemblyFile,
-		Evidence assemblySecurity,
-		string[] args);
+		Assembly Load (AssemblyName assemblyRef);
+		Assembly Load (byte[] rawAssembly);
+		Assembly Load (string assemblyString);
+		Assembly Load (AssemblyName assemblyRef, Evidence assemblySecurity);
+		Assembly Load (byte[] rawAssembly, byte[] rawSymbolStore);
+		Assembly Load (string assemblyString, Evidence assemblySecurity);
+		Assembly Load (byte[] rawAssembly, byte[] rawSymbolStore, Evidence securityEvidence);
 
-	Assembly[] GetAssemblies ();
-	object GetData (string name);
-	int GetHashCode();
-	object GetLifetimeService ();
-	Type GetType ();
-	object InitializeLifetimeService ();
+		void SetAppDomainPolicy (PolicyLevel domainPolicy);
+		void SetCachePath (string s);
+		void SetData (string name, object data);
+		void SetPrincipalPolicy (PrincipalPolicy policy);
+		void SetShadowCopyPath (string s);
+		void SetThreadPrincipal (IPrincipal principal);
+		string ToString ();
 
-	Assembly Load (AssemblyName assemblyRef);
-	Assembly Load (byte[] rawAssembly);
-	Assembly Load (string assemblyString);
-	Assembly Load (AssemblyName assemblyRef, Evidence assemblySecurity);
-	Assembly Load (byte[] rawAssembly, byte[] rawSymbolStore);
-	Assembly Load (string assemblyString, Evidence assemblySecurity);
-	Assembly Load (
-		byte[] rawAssembly,
-		byte[] rawSymbolStore,
-		Evidence securityEvidence);
-
-	void SetAppDomainPolicy (PolicyLevel domainPolicy);
-	void SetCachePath (string s);
-	void SetData (string name, object data);
-	void SetPrincipalPolicy (PrincipalPolicy policy);
-	void SetShadowCopyPath (string s);
-	void SetThreadPrincipal (IPrincipal principal);
-	string ToString ();
-
-	event AssemblyLoadEventHandler AssemblyLoad;
-	event ResolveEventHandler AssemblyResolve;
-	event EventHandler DomainUnload;
-	event EventHandler ProcessExit;
-	event ResolveEventHandler ResourceResolve;
-	event ResolveEventHandler TypeResolve;
-	event UnhandledExceptionEventHandler UnhandledException;
-}
-
+		event AssemblyLoadEventHandler AssemblyLoad;
+		event ResolveEventHandler AssemblyResolve;
+		event EventHandler DomainUnload;
+		event EventHandler ProcessExit;
+		event ResolveEventHandler ResourceResolve;
+		event ResolveEventHandler TypeResolve;
+		event UnhandledExceptionEventHandler UnhandledException;
+	}
 }

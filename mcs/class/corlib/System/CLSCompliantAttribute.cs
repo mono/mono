@@ -7,23 +7,20 @@
 // (C) Ximian, Inc.  http://www.ximian.com
 //
 
-namespace System {
-
+namespace System
+{
 	/// <summary>
 	///   Used to indicate if an element of a program is CLS compliant.
 	/// </summary>
-	///
-	/// <remarks>
-	/// </remarks>
-	[AttributeUsage(AttributeTargets.All)]
+	[AttributeUsage (AttributeTargets.All)]
 	[Serializable]
-	public sealed class CLSCompliantAttribute : Attribute {
-
+	public sealed class CLSCompliantAttribute : Attribute
+	{
 		bool is_compliant;
 
-		public CLSCompliantAttribute (bool is_compliant)
+		public CLSCompliantAttribute (bool isCompliant)
 		{
-			this.is_compliant = is_compliant;
+			this.is_compliant = isCompliant;
 		}
 
 		public bool IsCompliant {

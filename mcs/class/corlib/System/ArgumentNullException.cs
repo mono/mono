@@ -8,30 +8,30 @@
 //
 
 using System.Runtime.Serialization;
-using System.Globalization;
 
-namespace System {
-
+namespace System
+{
 	[Serializable]
-	public class ArgumentNullException : ArgumentException {
+	public class ArgumentNullException : ArgumentException
+	{
 		// Constructors
 		public ArgumentNullException ()
-			: base (Locale.GetText ("Argument cannot be null"))
+			: base (Locale.GetText ("Argument cannot be null."))
 		{
 		}
 
-		public ArgumentNullException (string param_name)
-			: base (Locale.GetText ("Argument cannot be null"), param_name)
+		public ArgumentNullException (string paramName)
+			: base (Locale.GetText ("Argument cannot be null."), paramName)
 		{
 		}
 
-		public ArgumentNullException (string param_name, string message)
-			: base (message, param_name)
+		public ArgumentNullException (string paramName, string message)
+			: base (message, paramName)
 		{
 		}
 
-		protected ArgumentNullException (SerializationInfo info, StreamingContext sc)
-			: base (info, sc)
+		protected ArgumentNullException (SerializationInfo info, StreamingContext context)
+			: base (info, context)
 		{
 		}
 	}

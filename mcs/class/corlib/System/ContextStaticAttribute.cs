@@ -7,22 +7,18 @@
 // (C) Ximian, Inc.  http://www.ximian.com
 //
 
-namespace System {
-
+namespace System
+{
 	/// <summary>
 	///   The ContextStatic attribute is used to flag fields as being unique
 	/// </summary>
-	///
-	/// <remarks>
-	///   
-	/// </remarks>
 	[AttributeUsage (AttributeTargets.Field)]
 	[Serializable]
-	public class ContextStaticAttribute : Attribute {
-
-		   public ContextStaticAttribute () : base ()
-		   {
-		   }
-		
+	public class ContextStaticAttribute : Attribute
+	{
+		public ContextStaticAttribute ()
+			: base ()
+		{
+		}
 	}
 }

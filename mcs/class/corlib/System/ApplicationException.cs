@@ -9,12 +9,10 @@
 //
 
 using System.Reflection;
-using System.Globalization;
 using System.Runtime.Serialization;
 
 namespace System
 {
-
 	[Serializable]
 	public class ApplicationException : Exception
 	{
@@ -29,8 +27,8 @@ namespace System
 		{
 		}
 
-		public ApplicationException (string message, Exception inner)
-			: base (message, inner)
+		public ApplicationException (string message, Exception innerException)
+			: base (message, innerException)
 		{
 		}
 

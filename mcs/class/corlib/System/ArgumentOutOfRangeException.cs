@@ -1,42 +1,42 @@
 //
 // System.ArgumentOutOfRangeException.cs
 //
-// Author:
+// Authors:
 //   Joe Shaw (joe@ximian.com)
 //   Duncan Mak (duncan@ximian.com)
 //
 // (C) 2001 Ximian, Inc.  http://www.ximian.com
 //
 
-using System.Globalization;
 using System.Runtime.Serialization;
 
-namespace System {
-
+namespace System
+{
 	[Serializable]
-	public class ArgumentOutOfRangeException : ArgumentException {
+	public class ArgumentOutOfRangeException : ArgumentException
+	{
 		private object actual_value;
 
 		// Constructors
 		public ArgumentOutOfRangeException ()
-			: base (Locale.GetText ("Argument is out of range"))
+			: base (Locale.GetText ("Argument is out of range."))
 		{
 		}
 
-		public ArgumentOutOfRangeException (string param_name)
-			: base (Locale.GetText ("Argument is out of range"), param_name)
+		public ArgumentOutOfRangeException (string paramName)
+			: base (Locale.GetText ("Argument is out of range."), paramName)
 		{
 		}
 
-		public ArgumentOutOfRangeException (string param_name, string message)
-			: base (message, param_name)
+		public ArgumentOutOfRangeException (string paramName, string message)
+			: base (message, paramName)
 		{
 		}
 
-		public ArgumentOutOfRangeException (string param_name, object actual_value, string message)
-			: base (message, param_name)
+		public ArgumentOutOfRangeException (string paramName, object actualValue, string message)
+			: base (message, paramName)
 		{
-			this.actual_value = actual_value;
+			this.actual_value = actualValue;
 		}
 
 		protected ArgumentOutOfRangeException (SerializationInfo info, StreamingContext context)

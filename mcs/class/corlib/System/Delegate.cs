@@ -1,7 +1,7 @@
 //
 // System.Delegate.cs
 //
-// Author:
+// Authors:
 //   Miguel de Icaza (miguel@ximian.com)
 //   Daniel Stodden (stodden@in.tum.de)
 //   Dietmar Maurer (dietmar@ximian.com)
@@ -9,21 +9,19 @@
 // (C) Ximian, Inc.  http://www.ximian.com
 //
 
-using System;
-using System.Globalization;
 using System.Reflection;
 using System.Runtime.Serialization;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
-
-namespace System {
-
+namespace System
+{
 #if NET_1_1
 	[ClassInterface (ClassInterfaceType.AutoDual)]
 #endif
 	[MonoTODO]
-	public abstract class Delegate : ICloneable, ISerializable {
+	public abstract class Delegate : ICloneable, ISerializable
+	{
 		protected Type target_type;
 		protected object m_target;
 		protected string method_name;
@@ -34,10 +32,10 @@ namespace System {
 		protected Delegate (object target, string method)
 		{
 			if (target == null)
-				throw new ArgumentNullException (Locale.GetText ("Target object is null"));
+				throw new ArgumentNullException ("target");
 
 			if (method == null)
-				throw new ArgumentNullException (Locale.GetText ("method name is null"));
+				throw new ArgumentNullException ("method");
 
 			this.target_type = null;
 			this.method_ptr = IntPtr.Zero;
@@ -45,15 +43,15 @@ namespace System {
 			this.method_name = method;
 		}
 
-		protected Delegate (Type target_type, string method)
+		protected Delegate (Type target, string method)
 		{
-			if (target_type == null)
-				throw new ArgumentNullException (Locale.GetText ("Target type is null"));
+			if (target == null)
+				throw new ArgumentNullException ("target");
 
 			if (method == null)
-				throw new ArgumentNullException (Locale.GetText ("method string is null"));
+				throw new ArgumentNullException ("method");
 
-			this.target_type = target_type;
+			this.target_type = target;
 			this.method_ptr = IntPtr.Zero;
 			this.m_target = null;
 			this.method_name = method;
@@ -75,35 +73,35 @@ namespace System {
 		// Methods
 		//
 
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal static extern Delegate CreateDelegate_internal (Type type, object target, MethodInfo info);
 
-		public static Delegate CreateDelegate (Type type, MethodInfo info)
+		public static Delegate CreateDelegate (Type type, MethodInfo method)
 		{
 			if (type == null)
-				throw new ArgumentNullException (Locale.GetText ("Type is null"));
+				throw new ArgumentNullException ("type");
 
-			if (info == null)
-				throw new ArgumentNullException (Locale.GetText ("MethodInfo is null"));
+			if (method == null)
+				throw new ArgumentNullException ("method");
 
 			if (!type.IsSubclassOf (typeof (MulticastDelegate)))
 				throw new ArgumentException ("type");
 
-			if (!info.IsStatic)
-				throw new ArgumentException ("The method should be static.", "info");
+			if (!method.IsStatic)
+				throw new ArgumentException ("The method should be static.", "method");
 
 			ParameterInfo[] delargs = type.GetMethod ("Invoke").GetParameters ();
-			ParameterInfo[] args = info.GetParameters ();
+			ParameterInfo[] args = method.GetParameters ();
 
 			if (args.Length != delargs.Length)
-				throw new ArgumentException ("info");
+				throw new ArgumentException ("method");
 			
 			int length = delargs.Length;
 			for (int i = 0; i < length; i++)
 				if (delargs [i].ParameterType != args [i].ParameterType)
-					throw new ArgumentException ("info");
+					throw new ArgumentException ("method");
 
-			return CreateDelegate_internal (type, null, info);
+			return CreateDelegate_internal (type, null, method);
 		}
 
 		public static Delegate CreateDelegate (Type type, object target, string method)
@@ -114,16 +112,16 @@ namespace System {
  		public static Delegate CreateDelegate (Type type, Type target, string method)
 		{
 			if (type == null)
-				throw new ArgumentNullException (Locale.GetText ("Type is null"));
+				throw new ArgumentNullException ("type");
 
 			if (target == null)
-				throw new ArgumentNullException (Locale.GetText ("Target type is null"));
+				throw new ArgumentNullException ("target");
 
 			if (method == null)
-				throw new ArgumentNullException (Locale.GetText ("method string is null"));
+				throw new ArgumentNullException ("method");
 
 			if (!type.IsSubclassOf (typeof (MulticastDelegate)))
-				throw new ArgumentException ("type is not subclass of MulticastDelegate");
+				throw new ArgumentException ("type is not subclass of MulticastDelegate.");
 
 			ParameterInfo[] delargs = type.GetMethod ("Invoke").GetParameters ();
 			Type[] delargtypes = new Type [delargs.Length];
@@ -139,21 +137,21 @@ namespace System {
 			MethodInfo info = target.GetMethod (method, flags, null, delargtypes, new ParameterModifier [0]);
 
 			if (info == null)
-				throw new ArgumentException ("Couldn't bind to method");
+				throw new ArgumentException ("Couldn't bind to method.");
 
 			return CreateDelegate_internal (type, null, info);
 		}
 
-		public static Delegate CreateDelegate (Type type, object target, string method, bool ignorecase)
+		public static Delegate CreateDelegate (Type type, object target, string method, bool ignoreCase)
 		{
 			if (type == null)
-				throw new ArgumentNullException (Locale.GetText ("Type is null"));
+				throw new ArgumentNullException ("type");
 
 			if (target == null)
-				throw new ArgumentNullException (Locale.GetText ("Target object is null"));
+				throw new ArgumentNullException ("target");
 
 			if (method == null)
-				throw new ArgumentNullException (Locale.GetText ("method string is null"));
+				throw new ArgumentNullException ("method");
 
 			if (!type.IsSubclassOf (typeof (MulticastDelegate)))
 				throw new ArgumentException ("type");
@@ -170,13 +168,13 @@ namespace System {
 			 */
 			BindingFlags flags = BindingFlags.ExactBinding | BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance;
 
-			if (ignorecase)
+			if (ignoreCase)
 				flags |= BindingFlags.IgnoreCase;
 
 			MethodInfo info = target.GetType ().GetMethod (method, flags, null, delargtypes, new ParameterModifier [0]);
 
 			if (info == null)
-				throw new ArgumentException ("Couldn't bind to method '" + method + "'");
+				throw new ArgumentException ("Couldn't bind to method '" + method + "'.");
 
 			return CreateDelegate_internal (type, target, info);
 		}
@@ -188,9 +186,9 @@ namespace System {
 
 		internal virtual object DynamicInvokeImpl (object[] args)
 		{
-			if (Method == null){
+			if (Method == null) {
 				Type[] mtypes = new Type [args.Length];
-   				for (int i = 0; i < args.Length; ++i){
+				for (int i = 0; i < args.Length; ++i) {
 					mtypes [i] = args [i].GetType ();
 				}
 				method_info = m_target.GetType ().GetMethod (method_name, mtypes);
@@ -203,17 +201,15 @@ namespace System {
 			return MemberwiseClone ();
 		}
 
-		public override bool Equals (object o)
+		public override bool Equals (object obj)
 		{
-			if (o == null)
+			if (obj == null)
 				return false;
-			
-			Delegate d = (Delegate) o;
+
+			Delegate d = (Delegate) obj;
 			// Do not compare method_ptr, since it can point to a trampoline
-			if ((d.target_type == target_type) &&
-			    (d.m_target == m_target) &&
-			    (d.method_name == method_name) &&
-				(d.method_info == method_info))
+			if ((d.target_type == target_type) && (d.m_target == m_target) &&
+				(d.method_name == method_name) && (d.method_info == method_info))
 				return true;
 
 			return false;
@@ -241,7 +237,7 @@ namespace System {
 		/// </symmary>
 		public static Delegate Combine (Delegate a, Delegate b)
 		{
-			if (a == null){
+			if (a == null) {
 				if (b == null)
 					return null;
 				return b;
@@ -250,7 +246,7 @@ namespace System {
 					return a;
 
 			if (a.GetType () != b.GetType ())
-				throw new ArgumentException (Locale.GetText ("Incompatible Delegate Types"));
+				throw new ArgumentException (Locale.GetText ("Incompatible Delegate Types."));
 			
 			return a.CombineImpl (b);
 		}
@@ -259,7 +255,7 @@ namespace System {
 		///   Returns a new MulticastDelegate holding the
 		///   concatenated invocation lists of an Array of MulticastDelegates
 		/// </symmary>
-		public static Delegate Combine( Delegate[] delegates )
+		public static Delegate Combine (Delegate[] delegates)
 		{
 			Delegate retval = null;
 
@@ -269,18 +265,16 @@ namespace System {
 			return retval;
 		}
 
-
 		protected virtual Delegate CombineImpl (Delegate d)
 		{
 			throw new MulticastNotSupportedException ("");
 		}
-		
-		
+
 		public static Delegate Remove (Delegate source, Delegate value) 
 		{
 			if (source == null)
 				return null;
-				
+
 			return source.RemoveImpl (value);
 		}
 
@@ -288,7 +282,7 @@ namespace System {
 		{
 			if (this.Equals (d))
 				return null;
-		       
+
 			return this;
 		}
 #if NET_1_1

@@ -8,15 +8,16 @@
 // (C) 2001 Ximian, Inc.  http://www.ximian.com
 //
 
-using System.Globalization;
 using System.Runtime.Serialization;
 
-namespace System {
+namespace System
+{
 	[Serializable]
-	public class ArithmeticException : SystemException {
+	public class ArithmeticException : SystemException
+	{
 		// Constructors
 		public ArithmeticException ()
-			: base (Locale.GetText ("The arithmetic operation is not allowed"))
+			: base (Locale.GetText ("The arithmetic operation is not allowed."))
 		{
 		}
 
@@ -25,8 +26,8 @@ namespace System {
 		{
 		}
 
-		public ArithmeticException (string message, Exception inner)
-			: base (message, inner)
+		public ArithmeticException (string message, Exception innerException)
+			: base (message, innerException)
 		{
 		}
 

@@ -6,15 +6,17 @@
 //
 // (C) 2001 Ximian, Inc.  http://www.ximian.com
 //
-using System.Globalization;
+
 using System.Runtime.Serialization;
 
-namespace System {
+namespace System
+{
 	[Serializable]
-	public class ArrayTypeMismatchException : SystemException {
+	public class ArrayTypeMismatchException : SystemException
+	{
 		// Constructors
 		public ArrayTypeMismatchException ()
-			: base (Locale.GetText ("Source array type cannot be assigned to destination array type"))
+			: base (Locale.GetText ("Source array type cannot be assigned to destination array type."))
 		{
 		}
 
@@ -23,8 +25,8 @@ namespace System {
 		{
 		}
 
-		public ArrayTypeMismatchException (string message, Exception inner)
-			: base (message, inner)
+		public ArrayTypeMismatchException (string message, Exception innerException)
+			: base (message, innerException)
 		{
 		}
 
@@ -32,7 +34,5 @@ namespace System {
 			: base (info, context)
 		{
 		}
-
-		
 	}
 }

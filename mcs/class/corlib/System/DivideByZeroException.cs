@@ -7,13 +7,13 @@
 // (C) 2001 Ximian, Inc.  http://www.ximian.com
 //
 
-using System.Globalization;
 using System.Runtime.Serialization;
 
-namespace System {
-
+namespace System
+{
 	[Serializable]
-	public class DivideByZeroException : ArithmeticException {
+	public class DivideByZeroException : ArithmeticException
+	{
 		// Constructors
 		public DivideByZeroException ()
 			: base (Locale.GetText ("Division by zero"))
@@ -25,8 +25,8 @@ namespace System {
 		{
 		}
 
-		public DivideByZeroException (string message, Exception inner)
-			: base (message, inner)
+		public DivideByZeroException (string message, Exception innerException)
+			: base (message, innerException)
 		{
 		}
 

@@ -1,11 +1,12 @@
-// DelegateSerializationHolder.cs
+//
+// System.DelegateSerializationHolder.cs
 //
 // Author:
-//  Lluis Sanchez Gual (lsg@ctv.es)
+//   Lluis Sanchez Gual (lsg@ctv.es)
 //
 // (C) 2003 Lluis Sanchez Gual
+//
 
-using System;
 using System.Reflection;
 using System.Runtime.Serialization;
 
@@ -14,14 +15,21 @@ namespace System
 	[Serializable]
 	public class DelegateSerializationHolder: ISerializable, IObjectReference
 	{
-		Delegate _delegate;	// The deserialized delegate
+		Delegate _delegate; // The deserialized delegate
 
 		[Serializable]
 		class DelegateEntry
 		{
+			string type;
+			string assembly;
+			public object target;
+			string targetTypeAssembly;
+			string targetTypeName;
+			string methodName;
+			public DelegateEntry delegateEntry; // next delegate in the invocation list
+
 			// A DelegateEntry holds information about a delegate that is part
 			// of an invocation list of a multicast delegate.
-
 			public DelegateEntry (Delegate del, string targetLabel)
 			{
 				type = del.GetType().FullName;
@@ -32,7 +40,7 @@ namespace System
 				methodName = del.Method.Name;
 			}
 
-			public Delegate DeserializeDelegate(SerializationInfo info)
+			public Delegate DeserializeDelegate (SerializationInfo info)
 			{
 				object realTarget = null;
 				if (target != null)
@@ -40,30 +48,21 @@ namespace System
 
 				Assembly dasm = Assembly.Load (assembly);
 				Type dt = dasm.GetType (type);
-
 				Delegate del;
 				if (realTarget != null)
 					del = Delegate.CreateDelegate (dt, realTarget, methodName);
-				else
-				{
+				else {
 					Assembly tasm = Assembly.Load (targetTypeAssembly);
 					Type tt = tasm.GetType (targetTypeName);
 					del = Delegate.CreateDelegate (dt, tt, methodName);
 				}
 
 				if (!del.Method.IsPublic)
-					throw new SerializationException ("Serialization will not deserialize delegates to non-public methods.");
+					throw new SerializationException (Locale.GetText (
+						"Serialization will not deserialize delegates to non-public methods."));
 
 				return del;
 			}
-
-			string type;
-			string assembly;
-			public object target;
-			string targetTypeAssembly;
-			string targetTypeName;
-			string methodName;
-			public DelegateEntry delegateEntry;	// next delegate in the invocation list
 		}
 
 		DelegateSerializationHolder(SerializationInfo info, StreamingContext ctx)
@@ -71,17 +70,14 @@ namespace System
 			DelegateEntry entryChain = (DelegateEntry)info.GetValue ("Delegate", typeof(DelegateEntry));
 
 			// Count the number of delegates to combine
-
 			int count = 0;
 			DelegateEntry entry = entryChain;
-			while (entry != null)
-			{
+			while (entry != null) {
 				entry = entry.delegateEntry;
 				count++;
 			}
 
 			// Deserializes and combines the delegates
-
 			if (count == 1) 
 				_delegate = entryChain.DeserializeDelegate (info);
 			else
@@ -93,22 +89,20 @@ namespace System
 					delegates[n] = entry.DeserializeDelegate (info);
 					entry = entry.delegateEntry;
 				}
-
 				_delegate = Delegate.Combine (delegates);
 			}
 		}
 
-		public static void GetDelegateData(Delegate instance, SerializationInfo info, StreamingContext ctx)
+		public static void GetDelegateData (Delegate instance, SerializationInfo info, StreamingContext ctx)
 		{
 			// Fills a SerializationInfo object with the information of the delegate.
 
-			Delegate[] delegates = instance.GetInvocationList();
+			Delegate[] delegates = instance.GetInvocationList ();
 			DelegateEntry lastEntry = null;
-			for (int n=0; n<delegates.Length; n++)
-			{
+			for (int n=0; n<delegates.Length; n++) {
 				Delegate del = delegates[n];
 				string targetLabel = (del.Target != null) ? ("target" + n) : null;
-				DelegateEntry entry = new DelegateEntry(del, targetLabel);
+				DelegateEntry entry = new DelegateEntry (del, targetLabel);
 
 				if (lastEntry == null)
 					info.AddValue ("Delegate", entry);
@@ -122,13 +116,13 @@ namespace System
 			info.SetType (typeof (DelegateSerializationHolder));
 		}
 
-		public void GetObjectData(SerializationInfo info, StreamingContext context)
+		public void GetObjectData (SerializationInfo info, StreamingContext context)
 		{
 			// Not needed.
-			throw new NotSupportedException();
+			throw new NotSupportedException ();
 		}
 
-		public object GetRealObject(StreamingContext context)
+		public object GetRealObject (StreamingContext context)
 		{
 			return _delegate;
 		}

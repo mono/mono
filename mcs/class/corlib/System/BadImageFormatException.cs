@@ -1,16 +1,19 @@
-// System.BadImageFormatException
 //
-// Sean MacIsaac (macisaac@ximian.com)
-// Duncan Mak (duncan@ximian.com)
+// System.BadImageFormatException.cs
+//
+// Authors:
+//   Sean MacIsaac (macisaac@ximian.com)
+//   Duncan Mak (duncan@ximian.com)
 //
 // (C) 2001 Ximian, Inc.
+//
 
-using System.Globalization;
 using System.Runtime.Serialization;
 
 namespace System
 {
 	[Serializable]
+	[MonoTODO ("fix wrong impl.")]
 	public class BadImageFormatException : SystemException
 	{
 		// Fields
@@ -39,11 +42,11 @@ namespace System
 			fusionLog = info.GetString ("BadImageFormat_FusionLog");
 		}
 
-		public BadImageFormatException (string message, Exception inner)
-			: base (message, inner)
+		public BadImageFormatException (string message, Exception innerException)
+			: base (message, innerException)
 		{
 			msg = message;
-			this.inner = inner;
+			this.inner = innerException;
 		}
 
 		public BadImageFormatException (string message, string fileName)
@@ -53,11 +56,11 @@ namespace System
 			this.fileName = fileName;
 		}
 
-		public BadImageFormatException (string message, string fileName, Exception inner)
-			: base (message, inner)
+		public BadImageFormatException (string message, string fileName, Exception innerException)
+			: base (message, innerException)
 		{
 			msg = message;
-			this.inner = inner;
+			this.inner = innerException;
 			this.fileName = fileName;
 		}
 		    

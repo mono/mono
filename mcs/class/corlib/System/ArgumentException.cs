@@ -6,13 +6,14 @@
 //
 // (C) 2001 Ximian, Inc.  http://www.ximian.com
 //
+
 using System.Runtime.Serialization;
-using System.Globalization;
 
-namespace System {
-
+namespace System
+{
 	[Serializable]
-	public class ArgumentException : SystemException {
+	public class ArgumentException : SystemException
+	{
 		private string param_name;
 
 		// Constructors
@@ -26,30 +27,30 @@ namespace System {
 		{
 		}
 
-		public ArgumentException (string message, Exception inner)
-			: base (message, inner)
+		public ArgumentException (string message, Exception innerException)
+			: base (message, innerException)
 		{
 		}
 
-		public ArgumentException (string message, string param_name)
+		public ArgumentException (string message, string paramName)
 			: base (message)
 		{
-			this.param_name = param_name;
+			this.param_name = paramName;
 		}
 
-		public ArgumentException (string message, string param_name, Exception inner)
-			: base (message, inner)
+		public ArgumentException (string message, string paramName, Exception innerException)
+			: base (message, innerException)
 		{
-			this.param_name = param_name;
+			this.param_name = paramName;
 		}
 
-		protected ArgumentException (SerializationInfo info, StreamingContext sc)
-			: base (info, sc)
+		protected ArgumentException (SerializationInfo info, StreamingContext context)
+			: base (info, context)
 		{
 			param_name = info.GetString ("ParamName");
 		}
 
-		// Properties		
+		// Properties
 		public virtual string ParamName {
 			get {
 				return param_name;
@@ -65,10 +66,10 @@ namespace System {
 				if (param_name == null)
 					return base_message;
 				else
-					return base_message + "\nParameter name: " + param_name;
+					return base_message + Environment.NewLine + Locale.GetText ("Parameter name: ") + param_name;
 			}
 		}
-		
+
 		public override void GetObjectData (SerializationInfo info, StreamingContext context)
 		{
 			base.GetObjectData (info, context);

@@ -1,3 +1,37 @@
+2004-03-13  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* Enum.cs
+	* EntryPointNotFoundException.cs
+	* DuplicateWaitObjectException.cs
+	* DoubleFormatter.cs
+	* DllNotFoundException.cs
+	* DivideByZeroException.cs
+	* DelegateSerializationHolder.cs
+	* Delegate.cs
+	* DBNull.cs
+	* ContextStaticAttribute.cs
+	* ContextMarshalException.cs
+	* ContextBoundObject.cs
+	* CLSCompliantAttribute.cs
+	* CharEnumerator.cs
+	* CannotUnloadAppDomainException.cs
+	* BadImageFormatException.cs
+	* AttributeUsageAttribute.cs
+	* AttributeTargets.cs
+	* AsyncCallback.cs
+	* AssemblyLoadEventHandler.cs
+	* AssemblyLoadEventArgs.cs
+	* ArrayTypeMismatchException.cs
+	* ArithmeticException.cs
+	* ArgumentOutOfRangeException.cs
+	* ArgumentNullException.cs
+	* ArgumentException.cs
+	* ArgIterator.cs
+	* ApplicationException.cs
+	* AppDomainUnloadedException.cs
+	* AppDomain.cs: Mono styled, fixed exceptions/ locales
+	  removed excess usings
+
 2004-03-10  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Convert.cs: FromBase64 now ignore some characters (tab, LF, CR and

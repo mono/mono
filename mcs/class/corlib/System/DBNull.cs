@@ -1,9 +1,9 @@
 //
-// DBNull.cs
+// System.DBNull.cs
 //
 // Authors:
-//	Duncan Mak (duncan@ximian.com)
-//	Ben Maurer (bmaurer@users.sourceforge.net)
+//   Duncan Mak (duncan@ximian.com)
+//   Ben Maurer (bmaurer@users.sourceforge.net)
 //
 // (C) 2002 Ximian, Inc. http://www.ximian.com
 // (C) 2003 Ben Maurer
@@ -20,7 +20,14 @@ namespace System
 		public static readonly DBNull Value = new DBNull ();
 
 		// Private constructor
-		private DBNull () {}
+		private DBNull ()
+		{
+		}
+
+		private DBNull (SerializationInfo info, StreamingContext context)
+		{
+			throw new NotSupportedException ();
+		}
 
 		// Methods
 		public void GetObjectData (SerializationInfo info, StreamingContext context)
@@ -91,7 +98,8 @@ namespace System
 
 		object IConvertible.ToType (Type type, IFormatProvider provider)
 		{
-			if (type == typeof (string)) return String.Empty;
+			if (type == typeof (string))
+				return String.Empty;
 			throw new InvalidCastException ();
 		}
 

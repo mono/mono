@@ -6,17 +6,12 @@
 //
 // (C) Ximian, Inc.  http://www.ximian.com
 //
-// TODO: Mucho left to implement.
-//
 
-namespace System {
-
-	/// <summary>
-	///   Base class for all the context-bound classes
-	/// </summary>
+namespace System
+{
 	[Serializable]
-	public abstract class ContextBoundObject : MarshalByRefObject {
-
+	public abstract class ContextBoundObject : MarshalByRefObject
+	{
 		protected ContextBoundObject ()
 		{
 		}
