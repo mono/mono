@@ -1,3 +1,7 @@
+2002-03-29  Nick Drochak  <ndrochak@gol.com>
+
+	* makefile.gnu: change 8 spaces to tabs
+
 2003-03-12  Martin Willemoes Hansen <mwh@sysrq.dk>
 	* Removed AllTests.cs, System.Configuration.Install/AllTests.cs
 	  System.Configuration.Install/ChangeLog
