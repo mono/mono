@@ -14,6 +14,7 @@ using System;
 using System.Net;
 using System.Collections;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Reflection;
 using System.IO;
@@ -22,15 +23,16 @@ namespace System.Net.Sockets
 {
 	public class Socket : IDisposable 
 	{
+		[StructLayout (LayoutKind.Sequential)]
 		private sealed class SocketAsyncResult: IAsyncResult 
 		{
 			/* Same structure in the runtime */
 			public Socket Sock;
+			IntPtr handle;
 			object state;
 			AsyncCallback callback;
 			WaitHandle waithandle;
-			bool completed_sync;
-			bool completed;
+
 			Exception delayedException;
 
 			public EndPoint EndPoint;	// Connect,ReceiveFrom,SendTo
@@ -42,27 +44,47 @@ namespace System.Net.Sockets
 			// Return values
 			Socket acc_socket;
 			int total;
-			
+
+			bool completed_sync;
+			bool completed;
+			AsyncCallback real_callback;
+			int error;
 
 			public SocketAsyncResult (Socket sock, object state, AsyncCallback callback)
 			{
 				this.Sock = sock;
+				this.handle = sock.socket;
 				this.state = state;
-				this.callback = callback;
+				this.real_callback = callback;
 				SockFlags = SocketFlags.None;
+			}
+
+			public void CreateAsyncDelegate ()
+			{
+				if (real_callback != null)
+					this.callback = new AsyncCallback (FakeCB);
+			}
+
+			static void FakeCB (IAsyncResult result)
+			{
+				SocketAsyncResult ares = (SocketAsyncResult) result;
+				ares.real_callback.BeginInvoke (ares, null, null);
 			}
 
 			public void CheckIfThrowDelayedException ()
 			{
 				if (delayedException != null)
 					throw delayedException;
+
+				if (error != 0)
+					throw new SocketException (error);
 			}
 
 			public void Complete ()
 			{
 				IsCompleted = true;
-				if (callback != null)
-					callback (this);
+				if (real_callback != null)
+					real_callback (this);
 			}
 
 			public void Complete (int total)
@@ -185,7 +207,7 @@ namespace System.Net.Sockets
 						if (!result.Sock.blocking)
 							result.Sock.Poll (-1, SelectMode.SelectRead);
 
-						total = result.Sock.Receive (result.Buffer,
+						total = result.Sock.Receive_nochecks (result.Buffer,
 									     result.Offset,
 									     result.Size,
 									     result.SockFlags);
@@ -206,7 +228,7 @@ namespace System.Net.Sockets
 						if (!result.Sock.blocking)
 							result.Sock.Poll (-1, SelectMode.SelectRead);
 
-						total = result.Sock.ReceiveFrom (result.Buffer,
+						total = result.Sock.ReceiveFrom_nochecks (result.Buffer,
 										 result.Offset,
 										 result.Size,
 										 result.SockFlags,
@@ -228,7 +250,7 @@ namespace System.Net.Sockets
 						if (!result.Sock.blocking)
 							result.Sock.Poll (-1, SelectMode.SelectWrite);
 
-						total = result.Sock.Send (result.Buffer,
+						total = result.Sock.Send_nochecks (result.Buffer,
 									  result.Offset,
 									  result.Size,
 									  result.SockFlags);
@@ -248,7 +270,7 @@ namespace System.Net.Sockets
 						if (!result.Sock.blocking)
 							result.Sock.Poll (-1, SelectMode.SelectWrite);
 
-						total = result.Sock.SendTo (result.Buffer,
+						total = result.Sock.SendTo_nochecks (result.Buffer,
 									    result.Offset,
 									    result.Size,
 									    result.SockFlags,
@@ -713,14 +735,11 @@ namespace System.Net.Sockets
 			if (buffer == null)
 				throw new ArgumentNullException ("buffer");
 
-			if (offset < 0)
-				throw new ArgumentOutOfRangeException ("offset must be >= 0");
+			if (offset < 0 || offset > buffer.Length)
+				throw new ArgumentOutOfRangeException ("offset");
 
-			if (size < 0)
-				throw new ArgumentOutOfRangeException ("size must be >= 0");
-
-			if (offset + size > buffer.Length)
-				throw new ArgumentOutOfRangeException ("offset + size exceeds the buffer length");
+			if (size < 0 || offset + size > buffer.Length)
+				throw new ArgumentOutOfRangeException ("size");
 
 			Interlocked.Increment (ref pendingEnds);
 			SocketAsyncResult req = new SocketAsyncResult (this, state, callback);
@@ -728,9 +747,19 @@ namespace System.Net.Sockets
 			req.Offset = offset;
 			req.Size = size;
 			req.SockFlags = socket_flags;
-			Worker worker = new Worker (req);
-			SocketAsyncCall sac = new SocketAsyncCall (worker.Receive);
-			sac.BeginInvoke (null, null);
+			if (supportsAsync && socket_type == SocketType.Stream) {
+				int error;
+				req.CreateAsyncDelegate ();
+				KeepReference (req);
+				AsyncReceiveInternal (req, out error);
+				if (error != 10036) // WSAEINPROGRESS
+					throw new SocketException (error);
+			} else {
+				Worker worker = new Worker (req);
+				SocketAsyncCall sac = new SocketAsyncCall (worker.Receive);
+				sac.BeginInvoke (null, null);
+			}
+
 			return req;
 		}
 
@@ -768,11 +797,9 @@ namespace System.Net.Sockets
 			return req;
 		}
 
-		public IAsyncResult BeginSend(byte[] buffer, int offset,
-					      int size,
-					      SocketFlags socket_flags,
-					      AsyncCallback callback,
-					      object state) {
+		public IAsyncResult BeginSend (byte[] buffer, int offset, int size, SocketFlags socket_flags,
+					       AsyncCallback callback, object state)
+		{
 			if (disposed && closed)
 				throw new ObjectDisposedException (GetType ().ToString ());
 
@@ -794,9 +821,18 @@ namespace System.Net.Sockets
 			req.Offset = offset;
 			req.Size = size;
 			req.SockFlags = socket_flags;
-			Worker worker = new Worker (req);
-			SocketAsyncCall sac = new SocketAsyncCall (worker.Send);
-			sac.BeginInvoke (null, null);
+			if (supportsAsync && socket_type == SocketType.Stream) {
+				int error;
+				req.CreateAsyncDelegate ();
+				KeepReference (req);
+				AsyncSendInternal (req, out error);
+				if (error != 10036) // WSAEINPROGRESS
+					throw new SocketException (error);
+			} else {
+				Worker worker = new Worker (req);
+				SocketAsyncCall sac = new SocketAsyncCall (worker.Send);
+				sac.BeginInvoke (null, null);
+			}
 			return req;
 		}
 
@@ -901,7 +937,7 @@ namespace System.Net.Sockets
 
 			SocketAsyncResult req = result as SocketAsyncResult;
 			if (req == null)
-				throw new ArgumentException ("Invalid IAsyncResult");
+				throw new ArgumentException ("Invalid IAsyncResult", "result");
 
 			if (!result.IsCompleted)
 				result.AsyncWaitHandle.WaitOne();
@@ -921,7 +957,7 @@ namespace System.Net.Sockets
 
 			SocketAsyncResult req = result as SocketAsyncResult;
 			if (req == null)
-				throw new ArgumentException ("Invalid IAsyncResult");
+				throw new ArgumentException ("Invalid IAsyncResult", "result");
 
 			if (!result.IsCompleted)
 				result.AsyncWaitHandle.WaitOne();
@@ -940,8 +976,9 @@ namespace System.Net.Sockets
 
 			SocketAsyncResult req = result as SocketAsyncResult;
 			if (req == null)
-				throw new ArgumentException ("Invalid IAsyncResult");
+				throw new ArgumentException ("Invalid IAsyncResult", "result");
 
+			RemoveReference (req);
 			if (!result.IsCompleted)
 				result.AsyncWaitHandle.WaitOne();
 
@@ -961,7 +998,7 @@ namespace System.Net.Sockets
 
 			SocketAsyncResult req = result as SocketAsyncResult;
 			if (req == null)
-				throw new ArgumentException ("Invalid IAsyncResult");
+				throw new ArgumentException ("Invalid IAsyncResult", "result");
 
 			if (!result.IsCompleted)
 				result.AsyncWaitHandle.WaitOne();
@@ -982,8 +1019,9 @@ namespace System.Net.Sockets
 
 			SocketAsyncResult req = result as SocketAsyncResult;
 			if (req == null)
-				throw new ArgumentException ("Invalid IAsyncResult");
+				throw new ArgumentException ("Invalid IAsyncResult", "result");
 
+			RemoveReference (req);
 			if (!result.IsCompleted)
 				result.AsyncWaitHandle.WaitOne();
 
@@ -1002,7 +1040,7 @@ namespace System.Net.Sockets
 
 			SocketAsyncResult req = result as SocketAsyncResult;
 			if (req == null)
-				throw new ArgumentException ("Invalid IAsyncResult");
+				throw new ArgumentException ("Invalid IAsyncResult", "result");
 
 			if (!result.IsCompleted)
 				result.AsyncWaitHandle.WaitOne();
@@ -1095,8 +1133,7 @@ namespace System.Net.Sockets
 					    byte [] input, byte [] output,
 					    out int error);
 
-		public int IOControl (int ioctl_code, byte [] in_value,
-				      byte [] out_value)
+		public int IOControl (int ioctl_code, byte [] in_value, byte [] out_value)
 		{
 			if (disposed)
 				throw new ObjectDisposedException (GetType ().ToString ());
@@ -1133,9 +1170,6 @@ namespace System.Net.Sockets
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		extern static bool Poll_internal (IntPtr socket, SelectMode mode, int timeout, out int error);
 
-		/* The docs for Poll() are a bit lightweight too, but
-		 * it seems to be just a simple wrapper around Select.
-		 */
 		public bool Poll (int time_us, SelectMode mode)
 		{
 			if (mode != SelectMode.SelectRead &&
@@ -1151,16 +1185,31 @@ namespace System.Net.Sockets
 			return result;
 		}
 		
-		public int Receive(byte[] buf) {
-			return(Receive(buf, 0, buf.Length, SocketFlags.None));
+		public int Receive (byte [] buf)
+		{
+			if (buf == null)
+				throw new ArgumentNullException ("buf");
+
+			return Receive_nochecks (buf, 0, buf.Length, SocketFlags.None);
 		}
 
-		public int Receive(byte[] buf, SocketFlags flags) {
-			return(Receive(buf, 0, buf.Length, flags));
+		public int Receive (byte [] buf, SocketFlags flags)
+		{
+			if (buf == null)
+				throw new ArgumentNullException ("buf");
+
+			return Receive_nochecks (buf, 0, buf.Length, flags);
 		}
 
-		public int Receive(byte[] buf, int size, SocketFlags flags) {
-			return(Receive(buf, 0, size, flags));
+		public int Receive (byte [] buf, int size, SocketFlags flags)
+		{
+			if (buf == null)
+				throw new ArgumentNullException ("buf");
+
+			if (size < 0 || size > buf.Length)
+				throw new ArgumentOutOfRangeException ("size");
+
+			return Receive_nochecks (buf, 0, size, flags);
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
@@ -1171,48 +1220,72 @@ namespace System.Net.Sockets
 							   SocketFlags flags,
 							   out int error);
 
-		public int Receive(byte[] buf, int offset, int size,
-				   SocketFlags flags) {
-			if(buf==null) {
-				throw new ArgumentNullException("buffer is null");
-			}
-			if(offset<0 || offset > buf.Length) {
-				throw new ArgumentOutOfRangeException("offset exceeds the size of buffer");
-			}
-			if(size<0 || offset+size > buf.Length) {
-				throw new ArgumentOutOfRangeException("offset+size exceeds the size of buffer");
-			}
+		public int Receive (byte [] buf, int offset, int size, SocketFlags flags)
+		{
+			if (buf == null)
+				throw new ArgumentNullException ("buf");
+
+			if (offset < 0 || offset > buf.Length)
+				throw new ArgumentOutOfRangeException ("offset");
+
+			if (size < 0 || offset + size > buf.Length)
+				throw new ArgumentOutOfRangeException ("size");
 			
+			return Receive_nochecks (buf, offset, size, flags);
+		}
+
+		int Receive_nochecks (byte [] buf, int offset, int size, SocketFlags flags)
+		{
 			int ret, error;
 			
-			ret=Receive_internal(socket, buf, offset, size, flags,
-					     out error);
+			ret = Receive_internal (socket, buf, offset, size, flags, out error);
 
-			if(error != 0) {
-				connected=false;
+			if (error != 0) {
+				connected = false;
 				throw new SocketException (error);
 			}
 			
-			connected=true;
+			connected = true;
 
-			return(ret);
+			return ret;
 		}
 		
-		public int ReceiveFrom(byte[] buf, ref EndPoint remote_end) {
-			return(ReceiveFrom(buf, 0, buf.Length,
-					   SocketFlags.None, ref remote_end));
+		public int ReceiveFrom (byte [] buf, ref EndPoint remote_end)
+		{
+			if (buf == null)
+				throw new ArgumentNullException ("buf");
+
+			if (remote_end == null)
+				throw new ArgumentNullException ("remote_end");
+
+			return ReceiveFrom_nochecks (buf, 0, buf.Length, SocketFlags.None, ref remote_end);
 		}
 
-		public int ReceiveFrom(byte[] buf, SocketFlags flags,
-				       ref EndPoint remote_end) {
-			return(ReceiveFrom(buf, 0, buf.Length, flags,
-					   ref remote_end));
+		public int ReceiveFrom (byte [] buf, SocketFlags flags, ref EndPoint remote_end)
+		{
+			if (buf == null)
+				throw new ArgumentNullException ("buf");
+
+			if (remote_end == null)
+				throw new ArgumentNullException ("remote_end");
+
+
+			return ReceiveFrom_nochecks (buf, 0, buf.Length, flags, ref remote_end);
 		}
 
-		public int ReceiveFrom(byte[] buf, int size, SocketFlags flags,
-				       ref EndPoint remote_end) {
-			return(ReceiveFrom(buf, 0, size, flags,
-					   ref remote_end));
+		public int ReceiveFrom (byte [] buf, int size, SocketFlags flags,
+					ref EndPoint remote_end)
+		{
+			if (buf == null)
+				throw new ArgumentNullException ("buf");
+
+			if (remote_end == null)
+				throw new ArgumentNullException ("remote_end");
+
+			if (size < 0 || size > buf.Length)
+				throw new ArgumentOutOfRangeException ("size");
+
+			return ReceiveFrom_nochecks (buf, 0, size, flags, ref remote_end);
 		}
 
 
@@ -1225,52 +1298,71 @@ namespace System.Net.Sockets
 							    ref SocketAddress sockaddr,
 							    out int error);
 
-		public int ReceiveFrom(byte[] buf, int offset, int size,
-				       SocketFlags flags,
-				       ref EndPoint remote_end) {
-			if(buf==null) {
-				throw new ArgumentNullException("buffer is null");
-			}
-			if(remote_end==null) {
-				throw new ArgumentNullException("remote endpoint is null");
-			}
-			if(offset<0 || offset>buf.Length) {
-				throw new ArgumentOutOfRangeException("offset exceeds the size of buffer");
-			}
-			if(size<0 || offset+size>buf.Length) {
-				throw new ArgumentOutOfRangeException("offset+size exceeds the size of buffer");
-			}
+		public int ReceiveFrom (byte [] buf, int offset, int size, SocketFlags flags,
+					ref EndPoint remote_end)
+		{
+			if (buf == null)
+				throw new ArgumentNullException ("buf");
 
-			SocketAddress sockaddr=remote_end.Serialize();
-			int count, error;
+			if (remote_end == null)
+				throw new ArgumentNullException ("remote_end");
 
-			count=RecvFrom_internal(socket, buf, offset, size,
-						flags, ref sockaddr,
-						out error);
+			if (offset < 0 || offset > buf.Length)
+				throw new ArgumentOutOfRangeException ("offset");
+
+			if (size < 0 || offset + size > buf.Length)
+				throw new ArgumentOutOfRangeException ("size");
+
+			return ReceiveFrom_nochecks (buf, offset, size, flags, ref remote_end);
+		}
+
+		int ReceiveFrom_nochecks (byte [] buf, int offset, int size, SocketFlags flags,
+					  ref EndPoint remote_end)
+		{
+			SocketAddress sockaddr = remote_end.Serialize();
+			int cnt, error;
+
+			cnt = RecvFrom_internal (socket, buf, offset, size, flags, ref sockaddr, out error);
 
 			if (error != 0) {
-				connected=false;
+				connected = false;
 				throw new SocketException (error);
 			}
-			connected=true;
+
+			connected = true;
 			
 			// Stupidly, EndPoint.Create() is an
 			// instance method
-			remote_end=remote_end.Create(sockaddr);
+			remote_end = remote_end.Create (sockaddr);
 
-			return(count);
+			return cnt;
 		}
 
-		public int Send(byte[] buf) {
-			return(Send(buf, 0, buf.Length, SocketFlags.None));
+		public int Send (byte [] buf)
+		{
+			if (buf == null)
+				throw new ArgumentNullException ("buf");
+
+			return Send_nochecks (buf, 0, buf.Length, SocketFlags.None);
 		}
 
-		public int Send(byte[] buf, SocketFlags flags) {
-			return(Send(buf, 0, buf.Length, flags));
+		public int Send (byte [] buf, SocketFlags flags)
+		{
+			if (buf == null)
+				throw new ArgumentNullException ("buf");
+
+			return Send_nochecks (buf, 0, buf.Length, flags);
 		}
 
-		public int Send(byte[] buf, int size, SocketFlags flags) {
-			return(Send(buf, 0, size, flags));
+		public int Send (byte [] buf, int size, SocketFlags flags)
+		{
+			if (buf == null)
+				throw new ArgumentNullException ("buf");
+
+			if (size < 0 || size > buf.Length)
+				throw new ArgumentOutOfRangeException ("size");
+
+			return Send_nochecks (buf, 0, size, flags);
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
@@ -1280,7 +1372,7 @@ namespace System.Net.Sockets
 							SocketFlags flags,
 							out int error);
 
-		public int Send (byte[] buf, int offset, int size, SocketFlags flags)
+		public int Send (byte [] buf, int offset, int size, SocketFlags flags)
 		{
 			if (buf == null)
 				throw new ArgumentNullException ("buffer");
@@ -1291,37 +1383,62 @@ namespace System.Net.Sockets
 			if (size < 0 || offset + size > buf.Length)
 				throw new ArgumentOutOfRangeException ("size");
 
+			return Send_nochecks (buf, offset, size, flags);
+		}
+
+		int Send_nochecks (byte [] buf, int offset, int size, SocketFlags flags)
+		{
 			if (size == 0)
 				return 0;
 
 			int ret, error;
 
-			ret = Send_internal (socket, buf, offset, size, flags,
-					     out error);
+			ret = Send_internal (socket, buf, offset, size, flags, out error);
 
 			if (error != 0) {
 				connected = false;
 				throw new SocketException (error);
 			}
+
 			connected = true;
 
 			return ret;
 		}
 
-		public int SendTo(byte[] buffer, EndPoint remote_end) {
-			return(SendTo(buffer, 0, buffer.Length,
-				      SocketFlags.None, remote_end));
+		public int SendTo (byte [] buffer, EndPoint remote_end)
+		{
+			if (buffer == null)
+				throw new ArgumentNullException ("buffer");
+
+			if (remote_end == null)
+				throw new ArgumentNullException ("remote_end");
+
+			return SendTo_nochecks (buffer, 0, buffer.Length, SocketFlags.None, remote_end);
 		}
 
-		public int SendTo(byte[] buffer, SocketFlags flags,
-				  EndPoint remote_end) {
-			return(SendTo(buffer, 0, buffer.Length, flags,
-				      remote_end));
+		public int SendTo (byte [] buffer, SocketFlags flags, EndPoint remote_end)
+		{
+			if (buffer == null)
+				throw new ArgumentNullException ("buffer");
+
+			if (remote_end == null)
+				throw new ArgumentNullException ("remote_end");
+				
+			return SendTo_nochecks (buffer, 0, buffer.Length, flags, remote_end);
 		}
 
-		public int SendTo(byte[] buffer, int size, SocketFlags flags,
-				  EndPoint remote_end) {
-			return(SendTo(buffer, 0, size, flags, remote_end));
+		public int SendTo (byte [] buffer, int size, SocketFlags flags, EndPoint remote_end)
+		{
+			if (buffer == null)
+				throw new ArgumentNullException ("buffer");
+
+			if (remote_end == null)
+				throw new ArgumentNullException ("remote_end");
+
+			if (size < 0 || size > buffer.Length)
+				throw new ArgumentOutOfRangeException ("size");
+
+			return SendTo_nochecks (buffer, 0, size, flags, remote_end);
 		}
 
 
@@ -1334,39 +1451,48 @@ namespace System.Net.Sockets
 							  SocketAddress sa,
 							  out int error);
 
-		public int SendTo(byte[] buffer, int offset, int size,
-				  SocketFlags flags, EndPoint remote_end) {
-			if(buffer==null) {
-				throw new ArgumentNullException("buffer is null");
-			}
-			if(remote_end==null) {
-				throw new ArgumentNullException("remote endpoint is null");
-			}
-			if(offset<0 || offset>buffer.Length) {
-				throw new ArgumentOutOfRangeException("offset exceeds the size of buffer");
-			}
-			if(size<0 || offset+size>buffer.Length) {
-				throw new ArgumentOutOfRangeException("offset+size exceeds the size of buffer");
-			}
+		public int SendTo (byte [] buffer, int offset, int size, SocketFlags flags,
+				   EndPoint remote_end)
+		{
+			if (buffer == null)
+				throw new ArgumentNullException ("buffer");
 
-			SocketAddress sockaddr=remote_end.Serialize();
+			if (remote_end == null)
+				throw new ArgumentNullException("remote_end");
+
+			if (offset < 0 || offset > buffer.Length)
+				throw new ArgumentOutOfRangeException ("offset");
+
+			if (size < 0 || offset + size > buffer.Length)
+				throw new ArgumentOutOfRangeException ("size");
+
+			return SendTo_nochecks (buffer, offset, size, flags, remote_end);
+		}
+
+		int SendTo_nochecks (byte [] buffer, int offset, int size, SocketFlags flags,
+				   EndPoint remote_end)
+		{
+			SocketAddress sockaddr = remote_end.Serialize ();
 
 			int ret, error;
 
-			ret=SendTo_internal(socket, buffer, offset, size,
-					    flags, sockaddr, out error);
+			ret = SendTo_internal (socket, buffer, offset, size, flags, sockaddr, out error);
 
 			if (error != 0) {
-				connected=false;
+				connected = false;
 				throw new SocketException (error);
 			}
-			connected=true;
 
-			return(ret);
+			connected = true;
+
+			return ret;
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern static void SetSocketOption_internal(IntPtr socket, SocketOptionLevel level, SocketOptionName name, object obj_val, byte[] byte_val, int int_val, out int error);
+		private extern static void SetSocketOption_internal (IntPtr socket, SocketOptionLevel level,
+								     SocketOptionName name, object obj_val,
+								     byte [] byte_val, int int_val,
+								     out int error);
 
 		public void SetSocketOption(SocketOptionLevel level,
 					    SocketOptionName name,
@@ -1408,25 +1534,13 @@ namespace System.Net.Sockets
 			 * used when in fact we want to pass the value
 			 * to the runtime as an int.
 			 */
-			if(opt_value is System.Boolean) {
-				bool bool_val=(bool)opt_value;
+			if (opt_value is System.Boolean) {
+				bool bool_val = (bool) opt_value;
+				int int_val = (bool_val) ? 1 : 0;
 				
-				/* Stupid casting rules :-( */
-				if(bool_val==true) {
-					SetSocketOption_internal(socket, level,
-								 name, null,
-								 null, 1,
-								 out error);
-				} else {
-					SetSocketOption_internal(socket, level,
-								 name, null,
-								 null, 0,
-								 out error);
-				}
+				SetSocketOption_internal (socket, level, name, null, null, int_val, out error);
 			} else {
-				SetSocketOption_internal(socket, level, name,
-							 opt_value, null, 0,
-							 out error);
+				SetSocketOption_internal (socket, level, name, opt_value, null, 0, out error);
 			}
 
 			if (error != 0) {
@@ -1494,7 +1608,36 @@ namespace System.Net.Sockets
 			Dispose(false);
 		}
 
+		static Hashtable asyncObjects;
+
+		static void KeepReference (object o)
+		{
+			lock (typeof (Socket)) {
+				if (asyncObjects == null)
+					asyncObjects = new Hashtable ();
+
+				asyncObjects [o] = o;
+			}
+		}
+
+		static void RemoveReference (object o)
+		{
+			lock (typeof (Socket)) {
+				if (asyncObjects == null)
+					return;
+
+				asyncObjects.Remove (o);
+			}
+		}
+
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		extern static bool GetSupportsAsync ();
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		extern static void AsyncReceiveInternal (SocketAsyncResult ares, out int error);
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		extern static void AsyncSendInternal (SocketAsyncResult ares, out int error);
 	}
 }
+

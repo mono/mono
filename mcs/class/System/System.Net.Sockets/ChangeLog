@@ -1,3 +1,10 @@
+2004-04-28  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Socket.cs: added support for unmanaged asynchronous IO. Speed up
+	error checking.
+	* UdpClient.cs: fixed Dispose so that it only closes the socket when
+	called explicitly.
+
 2004-04-24  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Socket.cs: added GetSupportsAsync and Poll_internal internal calls.

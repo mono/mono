@@ -270,17 +270,16 @@ namespace System.Net.Sockets
 
 		void Dispose (bool disposing)
 		{
-			if (disposed) 
+			if (disposed)
 				return;
 			disposed = true;
-			if (disposing) {
-				// release managed resources
-			}			
-			// release unmanaged resources
-			Socket s = socket;
-			socket = null;
-			if (s != null)
-				s.Close ();
+
+			if (disposing){
+				if (socket != null)
+					socket.Close ();
+
+				socket = null;
+			}
 		}
 		
 		~UdpClient ()
