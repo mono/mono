@@ -274,6 +274,12 @@ namespace System.Windows.Forms {
 			XplatUI.EnableThemes();
 		}
 
+#if NET_2_0
+		public static void EnableRTLMirroring () 
+		{
+		}
+#endif
+
 		public static void Exit() {
 			XplatUI.Exit();
 		}
