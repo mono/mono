@@ -1,17 +1,46 @@
 //
-// System.Web.UI.TemplateParser.cs
+// System.Web.UI.TemplateParser
 //
-// Duncan Mak  (duncan@ximian.com)
+// Authors:
+//	Duncan Mak (duncan@ximian.com)
+//	Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
-// (C) Ximian, Inc.
+// (C) 2002 Ximian, Inc. (http://www.ximian.com)
 //
-
 using System;
+using System.Web;
 
-namespace System.Web.UI {
-
+namespace System.Web.UI
+{
 	public abstract class TemplateParser : BaseParser
 	{
+		private string inputFile;
+		private string text;
+		private Type baseType;
+
 		protected abstract Type CompileIntoType ();
+
+		protected abstract Type DefaultBaseType { get; }
+
+		protected abstract string DefaultDirectiveName { get; }
+
+		internal string InputFile
+		{
+			get { return inputFile; }
+			set { inputFile = value; }
+		}
+
+		internal string Text
+		{
+			get { return text; }
+			set { text = value; }
+		}
+
+		internal Type BaseType
+		{
+			get { return baseType; }
+			set { baseType = value; }
+		}
 	}
 }
+

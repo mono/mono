@@ -1,0 +1,9 @@
+2002-08-16  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* AspElements.cs:
+	* AspParser.cs:
+	* AspTokenizer.cs:
+	* ChangeLog:
+	* PageCompiler.cs:
+	* TemplateFactory.cs: first steps to move xsp into System.Web.
+

@@ -1,3 +1,13 @@
+2002-08-16  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* System.Web.UI/ApplicationFileParser.cs:
+	* System.Web.UI/BaseParser.cs:
+	* System.Web.UI/PageParser.cs:
+	* System.Web.UI/TemplateControl.cs:
+	* System.Web.UI/TemplateControlParser.cs:
+	* System.Web.UI/TemplateParser.cs: first steps to move xsp into
+	System.Web.
+
 2002-07-30  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Page.cs: request to render postback script can be after form started

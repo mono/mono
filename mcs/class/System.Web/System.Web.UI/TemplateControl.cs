@@ -12,24 +12,29 @@ namespace System.Web.UI {
 
 	public abstract class TemplateControl : Control, INamingContainer
 	{
+		private object abortTransaction = new object ();
+		private object commitTransaction = new object ();
+		private object error = new object ();
+
 		#region Constructor
 		protected TemplateControl ()
 		{
+			Construct ();
 		}
 
 		#endregion
 
 		#region Properties
 
-		[MonoTODO]
-		protected virtual int AutoHandlers {
-			get { return 1; }
+		protected virtual int AutoHandlers
+		{
+			get { return 0; }
 			set { }
 		}
 
-		[MonoTODO]
-		protected virtual bool SupportAutoEvents {
-			get { return false; }
+		protected virtual bool SupportAutoEvents
+		{
+			get { return true; }
 		}
 
 		#endregion
@@ -41,13 +46,13 @@ namespace System.Web.UI {
 		}
 
 		[MonoTODO]
-		protected virtual LiteralControl CreateResourceBasedLiteralControl (
-			int offset, int size, bool fAsciiOnly)
+		protected virtual LiteralControl CreateResourceBasedLiteralControl (int offset,
+										    int size,
+										    bool fAsciiOnly)
 		{
 			return null;
 		}
 
-		[MonoTODO]
 		protected virtual void FrameworkInitialize ()
 		{
 		}
@@ -64,19 +69,25 @@ namespace System.Web.UI {
 			return null;
 		}
 
-		[MonoTODO]
 		protected virtual void OnAbortTransaction (EventArgs e)
 		{
+			EventHandler eh = (EventHandler) Events [error];
+			if (eh != null)
+				eh.Invoke (this, e);
 		}
 
-		[MonoTODO]
 		protected virtual void OnCommitTransaction (EventArgs e)
 		{
+			EventHandler eh = (EventHandler) Events [commitTransaction];
+			if (eh != null)
+				eh.Invoke (this, e);
 		}
 
-		[MonoTODO]
 		protected virtual void OnError (EventArgs e)
 		{
+			EventHandler eh = (EventHandler) Events [abortTransaction];
+			if (eh != null)
+				eh.Invoke (this, e);
 		}
 
 		[MonoTODO]
@@ -107,9 +118,39 @@ namespace System.Web.UI {
 
 		#region Events
 
-		public event EventHandler AbortTransaction;
-		public event EventHandler CommitTransaction;
-		public event EventHandler Error;
+		public event EventHandler AbortTransaction
+		{
+			add {
+				Events.AddHandler (abortTransaction, value);
+			}
+
+			remove {
+				Events.RemoveHandler (abortTransaction, value);
+			}
+		}
+
+		public event EventHandler CommitTransaction
+		{
+			add {
+				Events.AddHandler (commitTransaction, value);
+			}
+
+			remove {
+				Events.RemoveHandler (commitTransaction, value);
+			}
+		}
+
+		public event EventHandler Error
+		{
+			add {
+				Events.AddHandler (error, value);
+			}
+
+			remove {
+				Events.RemoveHandler (error, value);
+			}
+		}
+
 		#endregion
 	}
 }
