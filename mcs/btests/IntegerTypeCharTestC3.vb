@@ -1,0 +1,9 @@
+Imports System
+Namespace IntegerTypeCharTest%
+	Module M
+		Sub [sub]%()
+		End Sub
+		Sub Main()
+		End Sub
+	End Module
+End Namespace

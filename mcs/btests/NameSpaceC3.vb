@@ -1,0 +1,10 @@
+Namespace NS1
+	Module NameSpaceTest
+	End Module
+End Namespace
+Namespace NS1
+	Module NameSpaceTest
+		Sub Main()
+		End Sub
+	End Module
+End Namespace
