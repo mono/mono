@@ -45,6 +45,9 @@ namespace System.Reflection
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		protected extern PropertyInfo[] GetProperties_internal (Type reflected_type);
 
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		protected extern Type[] GetNestedTypes_internal ();
+
 		private const BindingFlags flags = BindingFlags.Public | BindingFlags.NonPublic |
 		BindingFlags.Static | BindingFlags.Instance | BindingFlags.DeclaredOnly;
 
@@ -375,6 +378,60 @@ namespace System.Reflection
 				l.Add (c);
 			}
 			PropertyInfo[] result = new PropertyInfo [l.Count];
+			l.CopyTo (result);
+			return result;
+		}
+
+		public override Type[] GetNestedTypes (BindingFlags bf)
+		{
+			initialize ();
+
+			ArrayList l = new ArrayList ();
+
+			Type current_type = this;
+			do {
+				MonoGenericInst gi = current_type as MonoGenericInst;
+				if (gi != null)
+					l.AddRange (gi.GetNestedTypes_impl (bf));
+				else if (current_type is TypeBuilder)
+					l.AddRange (current_type.GetNestedTypes (bf));
+				else {
+					MonoType mt = (MonoType) current_type;
+					l.AddRange (mt.GetNestedTypes (bf));
+					break;
+				}
+
+				if ((bf & BindingFlags.DeclaredOnly) != 0)
+					break;
+				current_type = current_type.BaseType;
+			} while (current_type != null);
+
+			Type[] result = new Type [l.Count];
+			l.CopyTo (result);
+			return result;
+		}
+
+		protected Type[] GetNestedTypes_impl (BindingFlags bindingAttr) {
+			ArrayList l = new ArrayList ();
+			bool match;
+			TypeAttributes tattrs;
+		
+			Type[] subtypes = GetNestedTypes_internal ();
+			foreach (Type t in subtypes) {
+				match = false;
+				tattrs = t.Attributes;
+				if ((tattrs & TypeAttributes.VisibilityMask) == TypeAttributes.NestedPublic) {
+					if ((bindingAttr & BindingFlags.Public) != 0)
+						match = true;
+				} else {
+					if ((bindingAttr & BindingFlags.NonPublic) != 0)
+						match = true;
+				}
+				if (!match)
+					continue;
+				l.Add (t);
+			}
+			Type[] result = new Type [l.Count];
 			l.CopyTo (result);
 			return result;
 		}
