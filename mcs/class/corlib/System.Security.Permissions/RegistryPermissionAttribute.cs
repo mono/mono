@@ -47,7 +47,7 @@ namespace System.Security.Permissions
 		public string Write
 		{
 			get { return write; }
-			set { write = value;
+			set { write = value; }
 		}
 
 		// Methods
