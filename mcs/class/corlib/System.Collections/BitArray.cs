@@ -246,17 +246,18 @@ namespace System.Collections
       return new BitArray((Int32 [])m_array.Clone(), m_length);
     }
 
-    [MonoTODO]	 
     public void CopyTo(Array array, int index)
     {
       if (array == null)
-	throw new ArgumentNullException();
+	throw new ArgumentNullException("array");
       if (index < 0)
-	throw new ArgumentOutOfRangeException();
+	throw new ArgumentOutOfRangeException("index");
       
-      // FIXME: Throw ArgumentException if array is multidimensional
+      if (array.Rank != 1)
+	      throw new ArgumentException ("Array rank must be 1", "array");
+
       if (index >= array.Length)
-	throw new ArgumentException();
+	throw new ArgumentException("index is greater than array.Length", "index");
 
       // in each case, check to make sure enough space in array
 
@@ -291,7 +292,7 @@ namespace System.Collections
       }
       else
       {
-	throw new InvalidCastException();
+	throw new ArgumentException("Unsupported type", "array");
       }
     }
 

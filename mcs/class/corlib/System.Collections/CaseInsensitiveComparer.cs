@@ -9,6 +9,7 @@
 
 using System;
 using System.Collections;
+using System.Globalization;
 
 
 
@@ -34,6 +35,11 @@ namespace System.Collections {
 		{
 		}
 
+		[MonoTODO]
+		public CaseInsensitiveComparer (CultureInfo culture)
+		{
+			throw new NotImplementedException ();
+		}
 
 
 		//

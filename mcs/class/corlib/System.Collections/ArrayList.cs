@@ -722,7 +722,7 @@ namespace System.Collections {
 		}
 
 		[Serializable]
-		private class ArrayListEnumerator : IEnumerator {
+		private class ArrayListEnumerator : IEnumerator, ICloneable {
 			private object[] data;
 			private int idx;
 			private int start;

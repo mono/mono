@@ -34,8 +34,10 @@ namespace System.Collections {
 		{
 		}
 
+		[MonoTODO]
 		public CaseInsensitiveHashCodeProvider (CultureInfo culture)
 		{
+			throw new NotImplementedException ();
 		}
 
 
@@ -59,7 +61,6 @@ namespace System.Collections {
 		// IHashCodeProvider
 		//
 
-		[MonoTODO]
 		public int GetHashCode (object obj)
 		{
 			if (obj == null) {
@@ -68,10 +69,8 @@ namespace System.Collections {
 
 			string str = obj as string;
 
-			if (str == null) {
-				// FIXME:
-				return 0;
-			}
+			if (str == null)
+				return obj.GetHashCode ();
 
 			int h = 0;
 			char c;

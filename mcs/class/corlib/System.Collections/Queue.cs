@@ -296,7 +296,7 @@ namespace System.Collections {
 		}
 
 		[Serializable]
-		private class QueueEnumerator : IEnumerator {
+		private class QueueEnumerator : IEnumerator, ICloneable {
 			Queue queue;
 			private int modCount;
 			private int current;
@@ -305,6 +305,14 @@ namespace System.Collections {
 				queue = q;
 				modCount = q.modCount;
 				current = -1;  // one element before the head
+			}
+
+			public object Clone ()
+			{
+				QueueEnumerator q = new QueueEnumerator (queue);
+				q.modCount = modCount;
+				q.current = current;
+				return q;
 			}
 
 			public virtual object Current {

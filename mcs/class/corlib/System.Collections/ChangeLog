@@ -1,3 +1,12 @@
+2002-08-24  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* ArrayList.cs:
+	* BitArray.cs:
+	* CaseInsensitiveComparer.cs:
+	* CaseInsensitiveHashCodeProvider.cs:
+	* IEnumerable.cs:
+	* Queue.cs: misc. fixes based on class status page.
+
 2002-07-22  Tim Coleman  <tim@timcoleman.com>
 	* CaseInsensitiveHashCodeProvider.cs: Added missing constructor
 		which was breaking System.Web build on linux
