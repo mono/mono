@@ -5,8 +5,8 @@
 //   Nick Drochak (ndrochak@gol.com)
 //
 // (C) 2001 Nick Drochak II
+// Copyright (C) 2004 Novell (http://www.novell.com)
 //
-
 
 using System;
 using System.Collections;
@@ -22,7 +22,8 @@ namespace MonoTests.System.Resources {
 		private static string m_ResourceFile;
 		private static string m_BadResourceFile;
 
-		static ResourceReaderTest ()
+		[TestFixtureSetUp]
+		public void FixtureSetUp ()
 		{
 			char ds = Path.DirectorySeparatorChar;
 			if (ds == '/') {
@@ -37,109 +38,92 @@ namespace MonoTests.System.Resources {
 		}
 
 		[Test]
-		public void TestConstructorStringExceptions() {
-			ResourceReader r;
-			try {
-				r = new ResourceReader((String)null);
-				Fail("Should throw exception on null");
-			} catch{}
-			try {
-				r = new ResourceReader("");
-				Fail("Should throw exception on empty path");
-			} catch{}
-			try {
-				// use a file name that is *very* unlikely to exsist
-				r = new ResourceReader("j38f8axvnn9h38hfa9nxn93f8hav4zvag87vvah32o");
-				Fail("Should throw exception on file not found");
-			} catch{}
-			try {
-				r = new ResourceReader(m_BadResourceFile);
-				Fail("Should throw exception on bad resource file");
-			}
-			catch {}
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void ConstructorString_Null () 
+		{
+			string s = null;
+			ResourceReader r = new ResourceReader (s);
 		}
 
 		[Test]
-		public void TestConstructorString() {
+		[ExpectedException (typeof (ArgumentException))]
+		public void ConstructorString_Empty () 
+		{
+			ResourceReader r = new ResourceReader (String.Empty);
+		}
+
+
+		[Test]
+		[ExpectedException (typeof (FileNotFoundException))]
+		public void ConstructorString_NotFound () 
+		{
+			// use a file name that is *very* unlikely to exsist
+			ResourceReader r = new ResourceReader("j38f8axvnn9h38hfa9nxn93f8hav4zvag87vvah32o");
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void ConstructorString_Bad () 
+		{
+			ResourceReader r = new ResourceReader(m_BadResourceFile);
+		}
+
+		[Test]
+		public void ConstructorString () 
+		{
 			if (!File.Exists(m_ResourceFile)) {
-				Fail("Resource file is not where it should be:" + m_ResourceFile);
+				Fail ("Resource file is not where it should be:" + m_ResourceFile);
 			}
-			ResourceReader r = null;
-			try {
-				r = new ResourceReader(m_ResourceFile);
-			}
-			catch {
-				Fail("Should have been able to open resource file.");
-			}
-			finally {
-				if (null != r)
-					r.Close();
-			}
-			Assert("String constructor should not be null", null != r);
-		}
-
-		[Test]
-		public void TestConstructorStreamException1() {
-			ResourceReader r;
-			try {
-				r = new ResourceReader((Stream)null);
-				Fail("Should throw exception on null");
-			} catch{}
-		}
-
-		[Ignore("makes mono throw an NullReferenceException")]
-		[Test]
-		public void TestConstructorStreamException2() {
-			ResourceReader r;
-			try {
-				Stream stream = new FileStream (m_ResourceFile, FileMode.Open);
-				stream.Close();
-				r = new ResourceReader(stream);
-				Fail("Should throw exception on cannot read");
-			} catch{}
-		}
-
-		[Test]
-		public void TestStream(){
-			ResourceReader r = null;
-			try {
-				Stream stream = new FileStream (m_ResourceFile, FileMode.Open);
-				r = new ResourceReader(stream);
-			} 
-			catch{
-				Fail("Should not throw exception constructing from stream");
-			}
-			finally {
-				if (null != r) {
-					r.Close();
-				}
-			}
-		}
-
-		[Test]
-		public void TestClose() {
-			ResourceReader r = null;
-			Stream stream = new FileStream (m_ResourceFile, FileMode.Open);
-			r = new ResourceReader(stream);
+			ResourceReader r = new ResourceReader(m_ResourceFile);
+			AssertNotNull ("ResourceReader", r);
 			r.Close();
-			try {
-				stream = new FileStream (m_ResourceFile, FileMode.Open);
-			} 
-			catch{
-				Fail("Should be able to open the stream again after close");
-			}
-			finally {
-				if (null != stream) {
-					stream.Close();
-				}
-			}
 		}
 
 		[Test]
-		public void TestEnumerator(){
-			ResourceReader reader = null;
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void ConstructorStream_Null ()
+		{
+			Stream s = null;
+			ResourceReader r = new ResourceReader (s);
+			Fail("Should throw exception on null");
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void ConstructorStream_Closed ()
+		{
 			Stream stream = new FileStream (m_ResourceFile, FileMode.Open);
-			reader = new ResourceReader(stream);
+			stream.Close ();
+			ResourceReader r = new ResourceReader (stream);
+		}
+
+		[Test]
+		public void Stream ()
+		{
+			Stream stream = new FileStream (m_ResourceFile, FileMode.Open);
+			ResourceReader r = new ResourceReader (stream);
+			AssertNotNull ("ResourceReader", r);
+			r.Close();
+		}
+
+		[Test]
+		public void Close () 
+		{
+			Stream stream = new FileStream (m_ResourceFile, FileMode.Open);
+			ResourceReader r = new ResourceReader (stream);
+			r.Close ();
+
+			stream = new FileStream (m_ResourceFile, FileMode.Open);
+			AssertNotNull ("FileStream", stream);
+			stream.Close ();
+		}
+
+		[Test]
+		public void Enumerator ()
+		{
+			Stream stream = new FileStream (m_ResourceFile, FileMode.Open);
+			ResourceReader reader = new ResourceReader (stream);
+
 			IDictionaryEnumerator en = reader.GetEnumerator();
 			// Goes through the enumerator, printing out the key and value pairs.
 			while (en.MoveNext()) {

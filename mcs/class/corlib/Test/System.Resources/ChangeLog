@@ -1,3 +1,9 @@
+2004-06-14  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ResourceReaderTest.cs: Un-ignored an old test case (probably fixed a
+	long time ago). Converted tests to NUnit 2.x format to be more 
+	specific when checking exceptions.
+
 2004-02-25  Jackson Harper <jackson@ximian.com>
 
 	* ResourceReaderTest.cs: Make work on windows.
