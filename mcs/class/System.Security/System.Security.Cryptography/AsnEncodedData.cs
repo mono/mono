@@ -5,7 +5,7 @@
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
-// Copyright (C) 2004 Novell Inc. (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell Inc. (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -29,7 +29,6 @@
 
 #if NET_2_0
 
-using System;
 using System.Text;
 
 namespace System.Security.Cryptography {
@@ -41,27 +40,24 @@ namespace System.Security.Cryptography {
 
 		// constructors
 
-		public AsnEncodedData ()
+		protected AsnEncodedData ()
 		{
 		}
 	
 		public AsnEncodedData (string oid, byte[] rawData)
-			: this (new Oid (oid), rawData)
 		{
+			_oid = new Oid (oid);
+			RawData = rawData;
 		}
 
 		public AsnEncodedData (Oid oid, byte[] rawData)
 		{
-// FIXME: compatibility with fx 1.2.3400.0
-			if (oid == null)
-				throw new NullReferenceException ();
-//				throw new ArgumentNullException ("oid");
-			if (rawData == null)
-				throw new NullReferenceException ();
-//				throw new ArgumentNullException ("rawData");
+			Oid = oid;
+			RawData = rawData;
 
-			_oid = oid;
-			_raw = rawData;
+			// yes, here oid == null is legal (by design), 
+			// but no, it would not be legal for an oid string
+			// see MSDN FDBK11479
 		}
 
 		public AsnEncodedData (AsnEncodedData asnEncodedData)
@@ -69,35 +65,41 @@ namespace System.Security.Cryptography {
 			CopyFrom (asnEncodedData);
 		}
 
-		[MonoTODO]
 		public AsnEncodedData (byte[] rawData)
 		{
+			RawData = rawData;
 		}
 
 		// properties
 
-		[MonoTODO ("actual data or copy ?")]
 		public Oid Oid {
 			get { return _oid; }
-			set { _oid = value; }
+			set {
+				if (value == null)
+					_oid = null;
+				else
+					_oid = new Oid (value);
+			}
 		}
 
-		[MonoTODO ("actual data or copy ?")]
 		public byte[] RawData { 
 			get { return _raw; }
-			set { _raw = value; }
+			set {
+				if (value == null)
+					throw new ArgumentNullException ("RawData");
+				_raw = (byte[])value.Clone ();
+			}
 		}
 
 		// methods
 
-		[MonoTODO ("actual data or copy ?")]
 		public virtual void CopyFrom (AsnEncodedData asnEncodedData)
 		{
 			if (asnEncodedData == null)
 				throw new ArgumentNullException ("asnEncodedData");
 
-			_oid = new Oid (asnEncodedData._oid);
-			_raw = asnEncodedData._raw;
+			Oid = new Oid (asnEncodedData._oid);
+			RawData = asnEncodedData._raw;
 		}
 
 		public virtual string Format (bool multiLine) 

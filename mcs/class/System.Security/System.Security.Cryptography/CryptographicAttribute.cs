@@ -5,7 +5,7 @@
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
-// Copyright (C) 2004 Novell Inc. (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell Inc. (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -29,7 +29,6 @@
 
 #if NET_2_0
 
-using System;
 using System.Collections;
 
 namespace System.Security.Cryptography {
@@ -43,21 +42,23 @@ namespace System.Security.Cryptography {
 
 		public CryptographicAttribute (Oid oid) 
 		{
-// FIXME: compatibility with fx 1.2.3400.0
-//			if (oid == null)
-//				throw new ArgumentNullException ("oid");
+			if (oid == null)
+				throw new ArgumentNullException ("oid");
 
-			_oid = oid;
+			_oid = new Oid (oid);
 			_list = new AsnEncodedDataCollection ();
 		}
 
-		public CryptographicAttribute (Oid oid,	AsnEncodedDataCollection values) : this (oid) 
+		public CryptographicAttribute (Oid oid,	AsnEncodedDataCollection values)
 		{
-			if (values == null)
-				throw new ArgumentNullException ("values");
+			if (oid == null)
+				throw new ArgumentNullException ("oid");
 
-			foreach (AsnEncodedData aed in values)
-				_list.Add (aed);
+			_oid = new Oid (oid);
+			if (values == null)
+				_list = new AsnEncodedDataCollection ();
+			else
+				_list = values;
 		}
 
 		// properties

@@ -1,3 +1,10 @@
+2005-01-13  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* AsnEncodedData.cs: Completed/fixed implementation.
+	* CryptographicAttribute.cs: Fixed implementation with updated unit
+	tests.
+	* Oid.cs: Fixed implementation with updated unit tests.
+
 2004-07-08  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* AsnEncodedData.cs: Fixes for Fx 2.0 beta 1 compatibility. Added
