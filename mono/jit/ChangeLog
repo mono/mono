@@ -1,3 +1,9 @@
+
+Mon Mar 11 11:30:56 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* emit-x86.c, jit.c: use the debug-helpers facilities to
+	describe and match a method when debugging.
+
 2002-03-10  Martin Baulig  <martin@gnome.org>
 
 	* emit-x86.c (arch_compile_method): When emitting stabs debugging
