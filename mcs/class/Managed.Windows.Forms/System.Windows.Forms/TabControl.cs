@@ -56,6 +56,7 @@ namespace System.Windows.Forms {
 			item_size = ThemeEngine.Current.TabControlDefaultItemSize;
 
 			MouseDown += new MouseEventHandler (MouseDownHandler);
+			SizeChanged += new EventHandler (SizeChangedHandler);
 		}
 
 		public TabAlignment Alignment {
@@ -358,6 +359,11 @@ namespace System.Windows.Forms {
 				SelectedIndex = i;
 				break;
 			}
+		}
+
+		private void SizeChangedHandler (object sender, EventArgs e)
+		{
+			ResizeTabPages ();
 		}
 
 		internal void UpdateTabpage (TabPage page)
