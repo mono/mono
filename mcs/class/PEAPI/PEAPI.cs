@@ -2220,6 +2220,11 @@ namespace PEAPI
 
     internal DataConstant() { }
 
+    public Type Type {
+            get { return type; }
+            set { type = value; }
+    }
+
     public uint DataOffset {
       get { return dataOffset; }
       set { dataOffset = value; }
