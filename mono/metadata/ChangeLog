@@ -1,4 +1,9 @@
 
+Wed Jul 2 13:21:26 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* object.h, reflection.h, verify.c: fixes for some 64bit issues,
+	mostly from a patch by Laramie Leavitt <lar@leavitt.us>.
+
 Tue Jul 1 21:24:14 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
 	* threadpool.c: fix leaks.
