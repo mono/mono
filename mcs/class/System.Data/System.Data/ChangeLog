@@ -1,5 +1,9 @@
 2004-02-08 Eran Domb <erand@mainsoft.com>
 
+	* XmlSchemaMapper.cs : Read columns is they were written as SimpleContent or as Attributes.
+
+2004-02-08 Eran Domb <erand@mainsoft.com>
+
 	* DataSet.cs: Fix some bugs in ReadXml().
 
 2004-02-04 Lluis Sanchez Gual <lluis@ximian.com>

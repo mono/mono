@@ -597,7 +597,57 @@ namespace System.Data {
 				else if ((Particle = ComplexType.Particle as XmlSchemaSequence) != null) {
 					ReadXmlSchemaSequence (Particle as XmlSchemaSequence, Table);
 				}
-			}				
+				
+				// read columns if they were written as simplecontent.
+				XmlSchemaSimpleContent simpleContent;
+				if ((simpleContent = ComplexType.ContentModel as XmlSchemaSimpleContent) != null){
+					ReadColumn (simpleContent, Table);
+				}
+				
+				// read columns if they were written as attributes
+				if (ComplexType.Attributes != null) {
+				
+					foreach (XmlSchemaObject sobj in ComplexType.Attributes) {
+						if (sobj is XmlSchemaAttribute)
+							ReadColumn ((XmlSchemaAttribute)sobj, Table);
+					}
+				}
+			}
+		}
+
+		private void ReadColumn (XmlSchemaSimpleContent simpleContent, DataTable Table)
+		{
+			DataColumn Column = new DataColumn ();
+			
+
+			if (simpleContent.UnhandledAttributes != null) {
+				
+				foreach (XmlAttribute Attr in simpleContent.UnhandledAttributes) {
+					switch (Attr.LocalName) {
+						
+				        case XmlConstants.ColumnName:
+						Column.ColumnName = Attr.Value;
+						break;
+				        default:
+						break;
+					}
+				}
+			}
+			
+			
+			XmlSchemaSimpleContentExtension extension;
+			if ((extension = simpleContent.Content as XmlSchemaSimpleContentExtension) != null) {
+				Column.DataType = GetColumnType (extension.BaseTypeName.Name);	
+			}
+
+			Table.Columns.Add (Column);
+		}
+
+		private void ReadColumn (XmlSchemaAttribute schemaAttribute, DataTable table)
+		{
+			DataColumn column = new DataColumn (schemaAttribute.Name);
+			column.DataType = GetColumnType (schemaAttribute.SchemaTypeName.Name);
+			table.Columns.Add (column);
 		}
 		
 		DataTable GetTable (string name)
