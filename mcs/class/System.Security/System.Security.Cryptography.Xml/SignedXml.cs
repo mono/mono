@@ -125,13 +125,9 @@ namespace System.Security.Cryptography.Xml {
 
 			t.LoadInput (input);
 
-			if (t is XmlDsigEnvelopedSignatureTransform) {
+			if (t is XmlDsigEnvelopedSignatureTransform)
 				// It returns XmlDocument for XmlDocument input.
-				XmlDocument doc = (XmlDocument) t.GetOutput ();
-				Transform c14n = GetC14NMethod ();
-				c14n.LoadInput (doc);
-				return (Stream) c14n.GetOutput ();
-			}
+				return CanonicalizeOutput (t.GetOutput ());
 
 			object obj = t.GetOutput ();
 			if (obj is Stream)
@@ -147,10 +143,15 @@ namespace System.Security.Cryptography.Xml {
 			}
 			else {
 				// e.g. XmlDsigXPathTransform returns XmlNodeList
-				Transform c14n = GetC14NMethod ();
-				c14n.LoadInput (obj);
-				return (Stream) c14n.GetOutput ();
+				return CanonicalizeOutput (obj);
 			}
+		}
+
+		private Stream CanonicalizeOutput (object obj)
+		{
+			Transform c14n = GetC14NMethod ();
+			c14n.LoadInput (obj);
+			return (Stream) c14n.GetOutput ();
 		}
 
 		private XmlDocument GetManifest (Reference r) 
@@ -236,7 +237,11 @@ namespace System.Security.Cryptography.Xml {
 					}
 					else {
 						t.LoadInput (s);
-						s = (Stream) t.GetOutput ();
+						object o = t.GetOutput ();
+						if (o is Stream)
+							s = (Stream) o;
+						else
+							s = CanonicalizeOutput (o);
 					}
 				}
 			}

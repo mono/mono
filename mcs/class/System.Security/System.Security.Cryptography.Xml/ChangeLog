@@ -1,5 +1,10 @@
 2004-03-27  Atsushi Enomoto <atsushi@ximian.com>
 
+	* SignedXml.cs : XPath transformation output is not type of Stream.
+	  Fix to support them by canonicalizing it.
+
+2004-03-27  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlDsigXsltTransform.cs : GetOutput() now just returns
 	  transformation output.
 
