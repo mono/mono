@@ -1,3 +1,12 @@
+//
+// System.Data.DataViewSettingCollection.cs
+//
+// (C) 2002 Ximian, Inc.  http://www.ximian.com
+//
+// Authors:
+//   Rodrigo Moya (rodrigo@ximian.com)
+//   Miguel de Icaza (miguel@gnome.org)
+//
 
 using System;
 using System.Collections;
