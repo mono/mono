@@ -702,6 +702,128 @@ namespace System.Windows.Forms
 			return buttons;
 
 		}
+
+		private static Control FindFlatForward(Control container, Control start) {
+			Control	found;
+			int	index;
+			int	end;
+
+			found = null;
+			end = container.child_controls.Count;
+
+			if (start != null) {
+				index = start.tab_index;
+			} else {
+				index = -1;
+			}
+
+			for (int i = 0; i < end; i++) {
+				if (found == null) {
+					if (container.child_controls[i].tab_index > index) {
+						found = container.child_controls[i];
+					}
+				} else if (found.tab_index > container.child_controls[i].tab_index) {
+					if (container.child_controls[i].tab_index > index) {
+						found = container.child_controls[i];
+					}
+				}
+			}
+			return found;
+		}
+
+		private static Control FindControlForward(Control container, Control start) {
+			Control found;
+			int	end;
+			int	index;
+			bool	ready;
+			Control	p;
+
+			found = null;
+
+			if (start != null) {
+				if ((start is IContainerControl) || start.GetStyle(ControlStyles.ContainerControl)) {
+					found = FindControlForward(start, null);
+					if (found != null) {
+						return found;
+					}
+				}
+
+				p = start.parent;
+				while (p != container) {
+					found = FindFlatForward(p, start);
+					if (found != null) {
+						return found;
+					}
+					start = p;
+					p = p.parent;
+				}
+			}
+			return FindFlatForward(container, start);
+		}
+
+		private static Control FindFlatBackward(Control container, Control start) {
+			Control	found;
+			int	index;
+			int	end;
+
+			found = null;
+			end = container.child_controls.Count;
+
+			if (start != null) {
+				index = start.tab_index;
+			} else {
+				// FIXME: Possible speed-up: Keep the highest taborder index in the container
+				index = -1;
+				for (int i = 0; i < end; i++) {
+					if (container.child_controls[i].tab_index > index) {
+						index = container.child_controls[i].tab_index;
+					}
+				}
+				index++;
+			}
+
+			for (int i = 0; i < end; i++) {
+				if (found == null) {
+					if (container.child_controls[i].tab_index < index) {
+						found = container.child_controls[i];
+					}
+				} else if (found.tab_index < container.child_controls[i].tab_index) {
+					if (container.child_controls[i].tab_index < index) {
+						found = container.child_controls[i];
+					}
+				}
+			}
+			return found;
+		}
+
+		private static Control FindControlBackward(Control container, Control start) {
+			Control found;
+			int	end;
+			int	index;
+			bool	ready;
+			Control	p;
+
+			found = null;
+
+			if (start != null) {
+				found = FindFlatBackward(start.parent, start);
+				if (found == null && start.parent != container) {
+					return start.parent;
+				}
+			}
+			if (found == null) {
+				found = FindFlatBackward(container, start);
+			}
+
+			while ((found != null) && ((found is IContainerControl) || found.GetStyle(ControlStyles.ContainerControl))) {
+				found = FindControlBackward(found, null);
+				if (found != null) {
+					return found;
+				}
+			}
+
+			return found;
+		}
 		#endregion	// Private & Internal Methods
 
 		#region Public Static Properties
@@ -1679,14 +1801,11 @@ namespace System.Windows.Forms
 		}
 
 		public bool Contains(Control ctl) {
-			Control current;
-
-			current=ctl;
-			while (current!=null) {
-				if (current==ctl) {
+			while (ctl != null) {
+				ctl = ctl.parent;
+				if (ctl == this) {
 					return true;
 				}
-				current=current.parent;
 			}
 			return false;
 		}
@@ -1746,17 +1865,22 @@ namespace System.Windows.Forms
 
 		public Control GetNextControl(Control ctl, bool forward) {
 			// If we're not a container we don't play
-			if ( !(this is IContainerControl) || !ctl.GetStyle(ControlStyles.ContainerControl)) {
+			if (!(this is IContainerControl) && !this.GetStyle(ControlStyles.ContainerControl)) {
 				return null;
 			}
 
 			// If ctl is not contained by this, we start at the first child of this
 			if (!this.Contains(ctl)) {
-				ctl = this;
+				ctl = null;
 			}
 
-			// We walk the list of controls, starting at ctl, stepping into children as we encounter them
-			return null;
+			// Search through our controls, starting at ctl, stepping into children as we encounter them
+			// try to find the control with the tabindex closest to our own, or, if we're looking into
+			// child controls, the one with the smallest tabindex
+			if (forward) {
+				return FindControlForward(this, ctl);
+			}
+			return FindControlBackward(this, ctl);
 		}
 
 		public void Hide() {

@@ -1,5 +1,12 @@
 2005-01-12  Peter Bartok  <pbartok@novell.com>
 
+	* Control.cs:
+	  - Fixed broken Contains() method
+	  - Implemented GetNextControl() method. Finally. This is the pre-
+	    requisite for focus handling.
+
+2005-01-12  Peter Bartok  <pbartok@novell.com>
+
 	* OSXStrucs.cs: Added
 
 2005-01-12  Peter Bartok  <pbartok@novell.com>
