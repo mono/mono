@@ -1,3 +1,17 @@
+2004-12-01  Jackson Harper  <jackson@ximian.com>
+
+	* NodeLabelEditEventArgs.cs:
+	* NodeLabelEditEventHandler.cs:
+	* OpenTreeNodeEnumerator.cs:
+	* TreeNode.cs:
+	* TreeNodeCollection.cs:
+	* TreeView.cs:
+	* TreeViewAction.cs:
+	* TreeViewCancelEventArgs.cs:
+	* TreeViewCancelEventHandler.cs:
+	* TreeViewEventArgs.cs:
+	* TreeViewEventHandler.cs: Initial implementation.
+
 2004-12-01  Ravindra <rkumar@novell.com>
 
 	* ListView.cs (CalculateListView): Fixed scrolling related
