@@ -1,3 +1,6 @@
+2002-04-12  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Enum.cs: little improvements to Format ().
 
 Thu Apr 11 12:28:13 CEST 2002 Paolo Molaro <lupus@ximian.com>
 

@@ -255,11 +255,12 @@ namespace System {
 
 			long retVal = 0;
 			string[] names = value.Split(new char[] {','});
+			TypeCode typeCode = ((Enum) info.values.GetValue (0)).GetTypeCode ();
 			foreach (string name in names) {
 				bool found = false;
 				for (i = 0; i < info.values.Length; ++i) {				
 					if (String.Compare (name, info.names [i], ignoreCase) == 0) {
-						switch (((Enum)info.values.GetValue (i)).GetTypeCode()) {
+						switch (typeCode) {
 							case TypeCode.Byte:
 								retVal |= (long)((byte)info.values.GetValue (i));
 								break;
@@ -432,40 +433,38 @@ namespace System {
 			if (vType != enumType && vType != Enum.GetUnderlyingType(enumType))
 				throw new ArgumentException();
 
-			if (format.Length != 1 || (
-				format != "G" && format != "g" &&
-				format != "X" && format != "x" &&
-				format != "D" && format != "d" &&
-				format != "F" && format != "f")
-				)
-				throw new FormatException("Format String can be only \"G\",\"g\",\"X\",\"x\",\"F\",\"f\",\"D\" or \"d\".");
 
-			if ((format == "G" || format == "g") 
+			if (format.Length != 1)
+				throw new FormatException ("Format String can be only \"G\",\"g\",\"X\"," + 
+							  "\"x\",\"F\",\"f\",\"D\" or \"d\".");
+
+			char formatChar = format [0];
+			if ((formatChar == 'G' || formatChar == 'g') 
 				&& Attribute.IsDefined(enumType, typeof(FlagsAttribute)))
-				format = "F";
+				formatChar = 'F';
 
 			string retVal = "";
-			switch (format) {
-			    case "G":
-			    case "g":
+			switch (formatChar) {
+			    case 'G':
+			    case 'g':
 				retVal = GetName (enumType, value);
 				if (retVal == null)
 					retVal = value.ToString();
 				break;
-			    case "X":
-			    case "x":
+			    case 'X':
+			    case 'x':
 				retVal = value.ToString();
 				long xValue = Int64.Parse(retVal);
 				// FIXME: Not sure if padding should always be with precision
 				// 8, if it's culture specific, or what.  This works for me.
 				retVal = xValue.ToString("x8");
 				break;
-			    case "D":
-			    case "d":
+			    case 'D':
+			    case 'd':
 				retVal = value.ToString();
 				break;
-			    case "F":
-			    case "f":
+			    case 'F':
+			    case 'f':
 				MonoEnumInfo info;
 				MonoEnumInfo.GetInfo (enumType, out info);
 				// This is ugly, yes.  We need to handle the different integer
@@ -561,6 +560,9 @@ namespace System {
 						break;
 				}
 				break;
+			    default:
+				throw new FormatException ("Format String can be only \"G\",\"g\",\"X\"," + 
+							  "\"x\",\"F\",\"f\",\"D\" or \"d\".");
 			}
 
 			return retVal;
