@@ -2153,7 +2153,6 @@ class FormatParse {
 			pos++;
 		}
 		else if (current == '\'' || current == '"') {
-			char Quote = current;
 			curpos++;
 			int endpos = Array.IndexOf (fmt_chars, current, curpos);
 			if (endpos == -1)

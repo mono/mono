@@ -286,7 +286,7 @@ namespace System.Runtime.Serialization.Formatters.Binary
 			if (((BinaryTypeCode)reader.ReadByte()) != BinaryTypeCode.String) throw new SerializationException ("Invalid format");
 			string className = reader.ReadString();
 
-			bool hasContextInfo = (flags & MethodFlags.IncludesLogicalCallContext) > 0;
+			//bool hasContextInfo = (flags & MethodFlags.IncludesLogicalCallContext) > 0;
 
 			object[] arguments = null;
 			object methodSignature = null;

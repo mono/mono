@@ -3143,8 +3143,6 @@ namespace System.Collections
 
 		public virtual void SetRange(int index, ICollection c) 
 		{
-			int x = index;
-
 			if (c == null) 
 			{
 				throw new ArgumentNullException("c");

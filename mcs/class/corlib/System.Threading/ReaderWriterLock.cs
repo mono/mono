@@ -114,7 +114,7 @@ namespace System.Threading
 		public void AcquireReaderLock(TimeSpan timeout)
 		{
 			int ms = CheckTimeout (timeout);
-			AcquireReaderLock ((int) timeout.TotalMilliseconds, 1);
+			AcquireReaderLock (ms, 1);
 		}
 
 		public void AcquireWriterLock (int millisecondsTimeout)

@@ -98,7 +98,6 @@ namespace System.Runtime.Remoting.Messaging {
 				CopyFrom ((IMethodMessage) msg);
 			else
 			{
-				IDictionary dic = msg.Properties;
 				foreach (DictionaryEntry entry in msg.Properties)
 					InitMethodProperty ((String) entry.Key, entry.Value);
 				Init();
