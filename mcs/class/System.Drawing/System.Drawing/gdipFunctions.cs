@@ -1481,7 +1481,7 @@ namespace System.Drawing
 			public GdiPlusStreamHelper (Stream s) 
 			{ 
 				stream = s;
-				if (stream.CanSeek) 
+				if (stream != null && stream.CanSeek) 
 					stream.Seek (0, SeekOrigin.Begin);
 			}
 
@@ -1520,7 +1520,7 @@ namespace System.Drawing
 
 			public StreamGetBytesDelegate GetBytesDelegate {
 				get {
-					if (stream.CanRead)
+					if (stream != null && stream.CanRead)
 						return new StreamGetBytesDelegate (StreamGetBytesImpl);
 					return null;
 				}
@@ -1544,7 +1544,7 @@ namespace System.Drawing
 
 			public StreamSeekDelegate SeekDelegate {
 				get {
-					if (stream.CanSeek)
+					if (stream != null && stream.CanSeek)
 						return new StreamSeekDelegate (StreamSeekImpl);
 					return null;
 				}
@@ -1560,7 +1560,7 @@ namespace System.Drawing
 
 			public StreamPutBytesDelegate PutBytesDelegate {
 				get {
-					if (stream.CanWrite)
+					if (stream != null && stream.CanWrite)
 						return new StreamPutBytesDelegate (StreamPutBytesImpl);
 					return null;
 				}
@@ -1608,6 +1608,6 @@ namespace System.Drawing
 		static internal extern Status GdipSaveImageToDelegate_linux ( IntPtr image, StreamGetBytesDelegate getBytes, StreamPutBytesDelegate putBytes, 
 			StreamSeekDelegate doSeek, StreamCloseDelegate close, StreamSizeDelegate size, ref Guid encoderClsID, IntPtr encoderParameters );
 		
-#endregion      
-	}               
-}               
+#endregion
+	}
+}

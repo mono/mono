@@ -1,4 +1,12 @@
+2004-10-28  Ravindra  <rkumar@novell.com>
+
+	* gdipFunctions.cs: Added checks for null stream in the
+	StreamHelper internal class.
+	* Icon.cs: Removed an ugly hack that used temp files in
+	ToBitmap () method. We use MemoryStream instead.
+
 2004-10-27 Jordi Mas i Hernandez <jordi@ximian.com>
+
 	* Font.cs: fixes bug 66533
 	
 2004-10-22 Jordi Mas i Hernandez <jordi@ximian.com>
@@ -22,7 +30,7 @@
 	member out of private constructor to class initialization.
 	So that, we get it right even if Graphics is not instantiated.
 	This fixes the problem we face (otherwise) when we make first
-	call to	Graphics.FromHwnd () method.
+	call to Graphics.FromHwnd () method.
 
 2004-10-08  Ravindra  <rkumar@novell.com>
 
