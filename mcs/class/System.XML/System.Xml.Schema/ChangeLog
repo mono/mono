@@ -1,5 +1,9 @@
 2004-08-30  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlSchemaType.cs : quick build fix.
+
+2004-08-30  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlSchemaDatatype.cs : Removed FromName(localName) that cannot
 	  handle xdt:* types.
 	* XmlSchemaType.cs : added internal GetBuiltInType() methods that
