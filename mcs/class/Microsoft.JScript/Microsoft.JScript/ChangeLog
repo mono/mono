@@ -1,4 +1,7 @@
 2003-07-27  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
+	* Added files StringLiteral.cs, CodeGenerator.cs and Print.cs.
+
+2003-07-27  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
 
 	* jscript-lexer-parser.g: Changed the namespace to
 	Microsoft.JScript.Tmp.
