@@ -26,13 +26,11 @@
 //
 
 #if NET_2_0
-namespace System.Web.UI.WebControls.WebParts
-{
-        public enum WebPartExportMode
-        {
+namespace System.Web.UI.WebControls.WebParts {
+        public enum WebPartExportMode {
                 None = 0,
-				All = 1,
-				NonSensitiveData = 2
+		All = 1,
+		NonSensitiveData = 2
         }
 }
 #endif

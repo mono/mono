@@ -26,12 +26,10 @@
 //
 
 #if NET_2_0
-namespace System.Web.UI.WebControls.WebParts
-{
-        public enum PersonalizationScope
-        {
+namespace System.Web.UI.WebControls.WebParts {
+        public enum PersonalizationScope {
                 User = 0,
-				Shared = 1
+		Shared = 1
         }
 }
 #endif

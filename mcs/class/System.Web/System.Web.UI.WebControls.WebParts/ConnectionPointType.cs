@@ -26,12 +26,10 @@
 //
 
 #if NET_2_0
-namespace System.Web.UI.WebControls.WebParts
-{
-        public enum ConnectionPointType
-        {
+namespace System.Web.UI.WebControls.WebParts {
+        public enum ConnectionPointType {
                 Consumer = 0,
-				Provider = 1		
+		Provider = 1		
         }
 }
 #endif

@@ -26,12 +26,10 @@
 //
 
 #if NET_2_0
-namespace System.Web.UI.WebControls.WebParts
-{
-        public enum PartChromeState
-        {
+namespace System.Web.UI.WebControls.WebParts {
+        public enum PartChromeState {
                 Normal = 0,
-				Minimized = 1		
+		Minimized = 1		
         }
 }
 #endif

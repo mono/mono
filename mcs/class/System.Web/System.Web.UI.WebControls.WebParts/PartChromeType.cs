@@ -26,15 +26,13 @@
 //
 
 #if NET_2_0
-namespace System.Web.UI.WebControls.WebParts
-{
-        public enum PartChromeType
-        {
+namespace System.Web.UI.WebControls.WebParts {
+        public enum PartChromeType {
                 Default = 0,
-				TitleAndBorder = 1,
-				None = 2,
-				TitleOnly = 3,
-				BorderOnly = 4		
+		TitleAndBorder = 1,
+		None = 2,
+		TitleOnly = 3,
+		BorderOnly = 4		
         }
 }
 #endif

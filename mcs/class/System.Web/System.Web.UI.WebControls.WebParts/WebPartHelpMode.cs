@@ -26,13 +26,11 @@
 //
 
 #if NET_2_0
-namespace System.Web.UI.WebControls.WebParts
-{
-        public enum WebPartHelpMode
-        {
+namespace System.Web.UI.WebControls.WebParts {
+        public enum WebPartHelpMode {
                 Modal = 0,
-				Modeless = 1,
-				Navigate = 2
+		Modeless = 1,
+		Navigate = 2
         }
 }
 #endif
