@@ -337,7 +337,6 @@ string GetTestResult ()
 	
 	try
 	{
-		Console.WriteLine (location + "/" + CurrentOperationName + "?" + qs);
 		WebRequest req = WebRequest.Create (location + "/" + CurrentOperationName + "?" + qs);
 		HttpCookieCollection cookies = Request.Cookies;
 		int last = cookies.Count;
