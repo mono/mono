@@ -1,3 +1,6 @@
+2002-02-27  Dietmar Maurer  <dietmar@ximian.com>
+
+	* interp.c (interp_mono_runtime_invoke): use alloca instead of g_new0
 
 Tue Feb 26 11:43:34 CET 2002 Paolo Molaro <lupus@ximian.com>
 
