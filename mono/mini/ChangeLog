@@ -1,3 +1,12 @@
+2004-03-26  Zoltan Varga  <vargaz@freemail.hu>
+
+	* inssel.brg mini-ops.h mini.c: Use OP_REFANYTYPE instead of 
+	CEE_REFANYTYPE, since CEE_REFANYTYPE needs a prefix to be unique.
+
+	* inssel.brg: Fix register allocation in OP_ARGLIST.
+
+	* inssel.brg: Fix warnings.
+
 2004-03-25  Martin Baulig  <martin@ximian.com>
 
 	* mini.c (inflate_generic_field): Removed.
