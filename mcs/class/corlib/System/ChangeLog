@@ -1,5 +1,10 @@
 2004-06-17  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* DateTime.cs : Incorrect maxvalue comparison in ToUniversalTime().
+	  Fixed ToLocalTime() as well, but it does check range for MinValue.
+
+2004-06-17  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* DateTime.cs : Added overflow check in ToUniversalTime() and
 	  ToLocalTime(). Fixed bug #60253.
 

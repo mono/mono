@@ -1736,12 +1736,16 @@ namespace System
 
 			TimeSpan offset = tz.GetUtcOffset (this);
 
-			if (offset.Ticks < 0) {
-				if (DateTime.MinValue - offset > this)
-					return DateTime.MinValue;
-			} else if (offset.Ticks > 0) {
+			if (offset.Ticks > 0) {
 				if (DateTime.MaxValue - offset < this)
 					return DateTime.MaxValue;
+			} else if (offset.Ticks < 0) {
+				// MS.NET fails to check validity here 
+				// - it may throw ArgumentOutOfRangeException
+				/*
+				if (DateTime.MinValue - offset > this)
+					return DateTime.MinValue;
+				*/
 			}
 
 			return new DateTime (true, ticks + offset);
@@ -1754,7 +1758,7 @@ namespace System
 			TimeSpan offset = tz.GetUtcOffset (this);
 
 			if (offset.Ticks < 0) {
-				if (DateTime.MaxValue - offset < this)
+				if (DateTime.MaxValue + offset < this)
 					return DateTime.MaxValue;
 			} else if (offset.Ticks > 0) {
 				if (DateTime.MinValue + offset > this)
