@@ -2498,12 +2498,19 @@ namespace Mono.CSharp {
 			
 			ig.EndExceptionBlock ();
 
-			//
-			// FIXME: Is this correct?
-			// Replace with `returns' and check test-18, maybe we can
-			// perform an optimization here.
-			//
-			return returns;
+			if (!returns || ec.InTry || ec.InCatch)
+				return returns;
+
+			// Unfortunately, System.Reflection.Emit automatically emits a leave
+			// to the end of the finally block.  This is a problem if `returns'
+			// is true since we may jump to a point after the end of the method.
+			// As a workaround, emit an explicit ret here.
+
+			if (ec.ReturnType != null)
+				ec.ig.Emit (OpCodes.Ldloc, ec.TemporaryReturn ());
+			ec.ig.Emit (OpCodes.Ret);
+
+			return true;
 		}
 	}
 

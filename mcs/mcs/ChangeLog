@@ -1,5 +1,12 @@
 2002-07-22  Martin Baulig  <martin@gnome.org>
 
+	* statement.cs (Try.Emit): Emit an explicit ret after the end of the
+	block unless the block does not always return or it is contained in
+	another try { ... } catch { ... } block.  Fixes bug #26506.
+	Added verify-1.cs to the test suite.
+
+2002-07-22  Martin Baulig  <martin@gnome.org>
+
 	* statement.cs (Switch.TableSwitchEmit): If we don't have a default,
 	then we do not always return.  Fixes bug #24985.
 
