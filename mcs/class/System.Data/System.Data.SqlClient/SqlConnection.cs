@@ -211,11 +211,11 @@ namespace System.Data.SqlClient {
 			if (transaction != null)
 				throw new InvalidOperationException ("SqlConnection does not support parallel transactions.");
 
+			if (iso == IsolationLevel.Chaos)
+				throw new ArgumentException ("Invalid IsolationLevel parameter: must be ReadCommitted, ReadUncommitted, RepeatableRead, or Serializable.");
+
 			string isolevel = String.Empty;
 			switch (iso) {
-			case IsolationLevel.Chaos:
-				isolevel = "CHAOS";
-				break;
 			case IsolationLevel.ReadCommitted:
 				isolevel = "READ COMMITTED";
 				break;

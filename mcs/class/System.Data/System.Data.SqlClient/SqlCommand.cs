@@ -245,7 +245,7 @@ namespace System.Data.SqlClient {
 			TdsMetaParameterCollection parms = Parameters.MetaParameters;
 			if (preparedStatement == null) {
 				bool schemaOnly = ((CommandBehavior & CommandBehavior.SchemaOnly) > 0);
-				bool keyInfo = ((CommandBehavior & CommandBehavior.SchemaOnly) > 0);
+				bool keyInfo = ((CommandBehavior & CommandBehavior.KeyInfo) > 0);
 
 				StringBuilder sql1 = new StringBuilder ();
 				StringBuilder sql2 = new StringBuilder ();
