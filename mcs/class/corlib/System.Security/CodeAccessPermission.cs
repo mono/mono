@@ -37,34 +37,22 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Security.Permissions;
+using System.Threading;
 
 namespace System.Security {
 
 	[Serializable]
 	public abstract class CodeAccessPermission : IPermission, ISecurityEncodable, IStackWalk {
 
-		internal enum StackModifier {
-			Assert = 1,
-			Deny = 2,
-			PermitOnly = 3
-		}
-
 		protected CodeAccessPermission ()
 		{
 		}
 
 		// LAMESPEC: Documented as virtual
-		[MonoTODO ("unmanaged side is incomplete")]
+		[MonoTODO ("Imperative mode isn't supported")]
 		public void Assert ()
 		{
-			// Not everyone can assert freely so we must check for
-			// System.Security.Permissions.SecurityPermissionFlag.Assertion
-			new SecurityPermission (SecurityPermissionFlag.Assertion).Demand ();
-
-			// we must have the permission to assert it to others
-			if (SecurityManager.IsGranted (this)) {
-				SetCurrentFrame (StackModifier.Assert, this.Copy ());
-			}
+			new PermissionSet (this).Assert ();
 		}
 
 #if NET_2_0
@@ -129,121 +117,19 @@ namespace System.Security {
 		[MonoTODO ("Assert, Deny and PermitOnly aren't yet supported")]
 		public void Demand ()
 		{
+			// note: here we're sure it's a CAS demand
 			if (!SecurityManager.SecurityEnabled)
 				return;
 
-			// Order is:
-			// 1. CheckDemand (current frame)
-			//	note: for declarative attributes directly calls IsSubsetOf
-
-			Assembly a = null;
-			StackTrace st = new StackTrace (1); // skip ourself
-			StackFrame[] frames = st.GetFrames ();
-			foreach (StackFrame sf in frames) {
-				MethodBase mb = sf.GetMethod ();
-				// however the "final" grant set is resolved by assembly, so
-				// there's no need to check it every time (just when we're 
-				// changing assemblies between frames).
-				Assembly af = mb.ReflectedType.Assembly;
-				CodeAccessPermission cap = null;
-				if (a != af) {
-					a = af;
-					if (a.GrantedPermissionSet != null)
-						cap = (CodeAccessPermission) a.GrantedPermissionSet.GetPermission (this.GetType ());
-					else
-						cap = null;
-
-					// CheckDemand will always return false in case cap is null
-					if ((cap == null) || !CheckDemand (cap)) {
-						if (a.DeniedPermissionSet != null) {
-							cap = (CodeAccessPermission) a.DeniedPermissionSet.GetPermission (this.GetType ());
-						}
-						else
-							cap = null;
-
-						// IsSubsetOf "should" always return false if cap is null
-						if ((cap != null) && IsSubsetOf (cap)) {
-							Type t = this.GetType ();
-							// TODO add more details
-							throw new SecurityException ("ReqRefuse", t);
-						}
-					}
-					else {
-						throw new SecurityException ("Demand failed", a.GetName (),
-							a.GrantedPermissionSet, a.DeniedPermissionSet, (MethodInfo) mb, 
-							SecurityAction.Demand, this, cap, a.Evidence);
-					}
-				}
-				object[] perms = GetFramePermissions ();
-				if (perms == null)
-					continue;
-
-				// 2. CheckPermitOnly
-				object o = perms [(int)StackModifier.PermitOnly];
-				if (o != null) {
-					cap = (o as CodeAccessPermission);
-					if (cap != null) {
-						if (!CheckPermitOnly (cap))
-							throw new SecurityException ("PermitOnly");
-					}
-					else {
-						PermissionSet ps = (o as PermissionSet);
-						foreach (IPermission p in ps) {
-							if (p is CodeAccessPermission) {
-								if (!CheckPermitOnly (p as CodeAccessPermission))
-									throw new SecurityException ("PermitOnly");
-							}
-						}
-					}
-				}
-
-				// 3. CheckDeny
-				o = perms [(int)StackModifier.Deny];
-				if (o != null) {
-					cap = (o as CodeAccessPermission) ;
-					if (cap != null) {
-						if (!CheckDeny (cap))
-							throw new SecurityException ("Deny");
-					}
-					else {
-						PermissionSet ps = (o as PermissionSet);
-						foreach (IPermission p in ps) {
-							if (p is CodeAccessPermission) {
-								if (!CheckPermitOnly (p as CodeAccessPermission))
-									throw new SecurityException ("Deny");
-							}
-						}
-					}
-				}
-
-				// 4. CheckAssert
-				o = perms [(int)StackModifier.Assert];
-				if (o != null) {
-					cap = (o as CodeAccessPermission);
-					if (cap != null) {
-						if (CheckAssert (cap)) {
-							return; // stop the stack walk
-						}
-					}
-					else {
-						PermissionSet ps = (o as PermissionSet);
-						foreach (IPermission p in ps) {
-							if (p is CodeAccessPermission) {
-								if (!CheckPermitOnly (p as CodeAccessPermission)) {
-									return; // stop the stack walk
-								}
-							}
-						}
-					}
-				}
-			}
+			// skip frames until we get the caller (of our caller)
+			new PermissionSet (this).CasOnlyDemand (2);
 		}
 
 		// LAMESPEC: Documented as virtual
-		[MonoTODO ("unmanaged side is incomplete")]
+		[MonoTODO ("Imperative mode isn't supported")]
 		public void Deny ()
 		{
-			SetCurrentFrame (StackModifier.Deny, this.Copy ());
+			new PermissionSet (this).Deny ();
 		}
 
 #if NET_2_0
@@ -291,69 +177,79 @@ namespace System.Security {
 		}
 
 		// LAMESPEC: Documented as virtual
-		[MonoTODO ("unmanaged side is incomplete")]
+		[MonoTODO ("Imperative mode isn't supported")]
 		public void PermitOnly ()
 		{
-			SetCurrentFrame (StackModifier.PermitOnly, this.Copy ());
+			new PermissionSet (this).PermitOnly ();
 		}
 
-		[MonoTODO ("unmanaged side is incomplete")]
+		[MonoTODO ("Imperative mode isn't supported")]
 		public static void RevertAll ()
 		{
-			if (!ClearFramePermissions ()) {
-				string msg = Locale.GetText ("No security frame present to be reverted.");
+			SecurityFrame sf = new SecurityFrame (1);
+			bool revert = false;
+			if ((sf.Assert != null) && !sf.Assert.DeclarativeSecurity) {
+				revert = true;
+				// TODO
+				throw new NotSupportedException ("Currently only declarative Assert are supported.");
+			}
+			if ((sf.Deny != null) && !sf.Deny.DeclarativeSecurity) {
+				revert = true;
+				// TODO
+				throw new NotSupportedException ("Currently only declarative Deny are supported.");
+			}
+			if ((sf.PermitOnly != null) && sf.PermitOnly.DeclarativeSecurity) {
+				revert = true;
+				// TODO
+				throw new NotSupportedException ("Currently only declarative PermitOnly are supported.");
+			}
+
+			if (!revert) {
+				string msg = Locale.GetText ("No stack modifiers are present on the current stack frame.");
+				// FIXME: we don't (yet) support imperative stack modifiers
+				msg += Environment.NewLine + "Currently only declarative stack modifiers are supported.";
 				throw new ExecutionEngineException (msg);
 			}
 		}
 
-		[MonoTODO ("unmanaged side is incomplete")]
+		[MonoTODO ("Imperative mode isn't supported")]
 		public static void RevertAssert ()
 		{
-			RevertCurrentFrame (StackModifier.Assert);
+			SecurityFrame sf = new SecurityFrame (1);
+			if ((sf.Assert != null) && !sf.Assert.DeclarativeSecurity) {
+				// TODO
+				throw new NotSupportedException ("Currently only declarative Assert are supported.");
+			} else {
+				// we can't revert declarative security (or an empty frame) imperatively
+				ThrowExecutionEngineException (SecurityAction.Assert);
+			}
 		}
 
-		[MonoTODO ("unmanaged side is incomplete")]
+		[MonoTODO ("Imperative mode isn't supported")]
 		public static void RevertDeny ()
 		{
-			RevertCurrentFrame (StackModifier.Deny);
+			SecurityFrame sf = new SecurityFrame (1);
+			if ((sf.Deny != null) && !sf.Deny.DeclarativeSecurity) {
+				// TODO
+				throw new NotSupportedException ("Currently only declarative Deny are supported.");
+			} else {
+				// we can't revert declarative security (or an empty frame) imperatively
+				ThrowExecutionEngineException (SecurityAction.Deny);
+			}
 		}
 
-		[MonoTODO ("unmanaged side is incomplete")]
+		[MonoTODO ("Imperative mode isn't supported")]
 		public static void RevertPermitOnly ()
 		{
-			RevertCurrentFrame (StackModifier.PermitOnly);
+			SecurityFrame sf = new SecurityFrame (1);
+			if ((sf.PermitOnly != null) && sf.PermitOnly.DeclarativeSecurity) {
+				// TODO
+				throw new NotSupportedException ("Currently only declarative PermitOnly are supported.");
+			} else {
+				// we can't revert declarative security (or an empty frame) imperatively
+				ThrowExecutionEngineException (SecurityAction.PermitOnly);
+			}
 		}
-
-		// Internal calls
-#if false
-		// see mono/mono/metadata/cas.c for implementation
-
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		static extern bool ClearFramePermissions ();
-
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		static extern object[] GetFramePermissions ();
-
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		static extern bool SetFramePermissions (int index, object permissions);
-#else
-		// icalls are not yet commited so...
-
-		static bool ClearFramePermissions () 
-		{
-			return true;
-		}
-
-		static object[] GetFramePermissions () 
-		{
-			return null;
-		}
-
-		static bool SetFramePermissions (int index, object permissions)
-		{
-			return true;
-		}
-#endif
 
 		// Internal helpers methods
 
@@ -433,6 +329,60 @@ namespace System.Security {
 			return (String.Compare (value, Boolean.TrueString, true, CultureInfo.InvariantCulture) == 0);
 		}
 
+		internal bool ProcessFrame (SecurityFrame frame, ref Assembly current)
+		{ 
+			// however the "final" grant set is resolved by assembly, so
+			// there's no need to check it every time (just when we're 
+			// changing assemblies between frames).
+			if (frame.Assembly != current) {
+				current = frame.Assembly;
+				// 1. CheckDemand
+				if (!SecurityManager.IsGranted (current, this)) {
+					ThrowSecurityException ("Demand failed assembly permissions checks.",
+						current, frame.Method, SecurityAction.Demand, this);
+				}
+			}
+
+			// skip next steps if not Assert, Deny or PermitOnly are present
+			if (!frame.HasStackModifiers)
+				return false;	// continue the stack walk
+
+			// 2. CheckPermitOnly
+			if (frame.PermitOnly != null) {
+				foreach (IPermission p in frame.PermitOnly) {
+					if (p is CodeAccessPermission) {
+						if (!CheckPermitOnly (p as CodeAccessPermission))
+							ThrowSecurityException ("PermitOnly", current, frame.Method, SecurityAction.Demand, p);
+					}
+				}
+			}
+
+			// 3. CheckDeny
+			if (frame.Deny != null) {
+				foreach (IPermission p in frame.Deny) {
+					if (p is CodeAccessPermission) {
+						if (!CheckDeny (p as CodeAccessPermission))
+							ThrowSecurityException ("Deny", current, frame.Method, SecurityAction.Demand, p);
+					}
+				}
+			}
+
+			// 4. CheckAssert
+			if (frame.Assert != null) {
+				foreach (IPermission p in frame.Assert) {
+					if (p is CodeAccessPermission) {
+						if (!CheckAssert (p as CodeAccessPermission)) {
+							// FIXME: partial asserts
+							return true; // stop the stack walk
+						}
+					}
+				}
+			}
+
+			// continue the stack walk
+			return false; 
+		}
+
 		internal static void ThrowInvalidPermission (IPermission target, Type expected) 
 		{
 			string msg = Locale.GetText ("Invalid permission type '{0}', expected type '{1}'.");
@@ -440,20 +390,20 @@ namespace System.Security {
 			throw new ArgumentException (msg, "target");
 		}
 
-		internal static void SetCurrentFrame (StackModifier stackmod, object permissions)
+		internal static void ThrowExecutionEngineException (SecurityAction stackmod)
 		{
-			if (!SetFramePermissions ((int)stackmod, permissions)) {
-				string msg = Locale.GetText ("An {0} modifier is already present on the current stack frame.");
-				throw new SecurityException (String.Format (msg, stackmod));
-			}
+			string msg = Locale.GetText ("No {0} modifier is present on the current stack frame.");
+			// FIXME: we don't (yet) support imperative stack modifiers
+			msg += Environment.NewLine + "Currently only declarative stack modifiers are supported.";
+			throw new ExecutionEngineException (String.Format (msg, stackmod));
 		}
 
-		internal static void RevertCurrentFrame (StackModifier stackmod)
+		internal void ThrowSecurityException (string message, Assembly a, MethodInfo mi, SecurityAction action, IPermission failed)
 		{
-			if (!SetFramePermissions ((int)stackmod, null)) {
-				string msg = Locale.GetText ("No {0} modifier is present on the current stack frame.");
-				throw new ExecutionEngineException (String.Format (msg, stackmod));
-			}
+			throw new SecurityException (Locale.GetText (message), 
+				a.GetName (), a.GrantedPermissionSet, 
+				a.DeniedPermissionSet, mi, action, this, 
+				failed, a.Evidence);
 		}
 	}
 }

@@ -39,6 +39,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.Security.Permissions;
 using System.Security.Policy;
 using System.Text;
+using System.Threading;
 
 namespace System.Security {
 
@@ -53,6 +54,7 @@ namespace System.Security {
 		private ArrayList list;
 		private int _hashcode;
 		private PolicyLevel _policyLevel;
+		private bool _declsec;
 
 		// constructors
 
@@ -93,6 +95,17 @@ namespace System.Security {
 			}
 		}
 
+		// Light version for creating a (non unrestricted) PermissionSet with
+		// a single permission. This allows to relax most validations.
+		internal PermissionSet (IPermission perm)
+			: this ()
+		{
+			if (perm != null) {
+				// note: we do not copy IPermission like AddPermission
+				list.Add (perm);
+			}
+		}
+
 		// methods
 
 		public virtual IPermission AddPermission (IPermission perm)
@@ -119,11 +132,12 @@ namespace System.Security {
 				perm = perm.Union (existing);
 			}
 
+			// note: Add doesn't copy
 			list.Add (perm);
 			return perm;
 		}
 
-		[MonoTODO ("unmanaged side is incomplete")]
+		[MonoTODO ("Imperative mode isn't supported")]
 		public virtual void Assert ()
 		{
 			new SecurityPermission (SecurityPermissionFlag.Assertion).Demand ();
@@ -139,7 +153,7 @@ namespace System.Security {
 				}
 			}
 
-			CodeAccessPermission.SetCurrentFrame (CodeAccessPermission.StackModifier.Assert, this.Copy ());
+			throw new NotSupportedException ("Currently only declarative Assert are supported.");
 		}
 
 		internal void Clear () 
@@ -170,9 +184,11 @@ namespace System.Security {
 			}
 		}
 
-		[MonoTODO ("Assert, Deny and PermitOnly aren't yet supported")]
+		[MonoTODO ("Imperative Assert, Deny and PermitOnly aren't yet supported")]
 		public virtual void Demand ()
 		{
+			// Note: SecurityEnabled only applies to CAS permissions
+			// so we're not checking for it (yet)
 			if (IsEmpty ())
 				return;
 
@@ -189,26 +205,43 @@ namespace System.Security {
 						cas.RemovePermission (t);
 					}
 				}
-
-				// don't start the walk if the permission set only contains non CAS permissions
-				if (cas.Count == 0)
-					return;
 			}
 
-			// Note: SecurityEnabled only applies to CAS permissions
-			if (!SecurityManager.SecurityEnabled)
-				return;
+			// don't start the stack walk if
+			// - the permission set only contains non CAS permissions; or
+			// - security isn't enabled (applis only to CAS!)
+			if ((cas.Count > 0) && SecurityManager.SecurityEnabled)
+				CasOnlyDemand (_declsec ? 3 : 2);
+		}
 
-			// FIXME: optimize
-			foreach (IPermission p in cas.list) {
-				p.Demand ();
+		// The number of frames to skip depends on who's calling
+		// - CodeAccessPermission.Demand (imperative)
+		// - PermissionSet.Demand (imperative)
+		// - SecurityManager.InternalDemand (declarative)
+		internal void CasOnlyDemand (int skip)
+		{
+			Assembly current = null;
+
+			// skip ourself, Demand and other security runtime methods
+			foreach (SecurityFrame sf in SecurityFrame.GetStack (skip)) {
+				if (ProcessFrame (sf, ref current))
+					return; // reached Assert
+			}
+
+			// Is there a CompressedStack to handle ?
+			CompressedStack stack = Thread.CurrentThread.GetCompressedStack ();
+			if ((stack != null) && !stack.IsEmpty ()) {
+				foreach (SecurityFrame frame in stack.List) {
+					if (ProcessFrame (frame, ref current))
+						return; // reached Assert
+				}
 			}
 		}
 
-		[MonoTODO ("unmanaged side is incomplete")]
+		[MonoTODO ("Imperative mode isn't supported")]
 		public virtual void Deny ()
 		{
-			CodeAccessPermission.SetCurrentFrame (CodeAccessPermission.StackModifier.Deny, this.Copy ());
+			throw new NotSupportedException ("Currently only declarative Deny are supported.");
 		}
 
 		[MonoTODO ("adjust class version with current runtime - unification")]
@@ -289,10 +322,10 @@ namespace System.Security {
 			return true;
 		}
 
-		[MonoTODO ("unmanaged side is incomplete")]
+		[MonoTODO ("Imperative mode isn't supported")]
 		public virtual void PermitOnly ()
 		{
-			CodeAccessPermission.SetCurrentFrame (CodeAccessPermission.StackModifier.PermitOnly, this.Copy ());
+			throw new NotSupportedException ("Currently only declarative Deny are supported.");
 		}
 
 		public bool ContainsNonCodeAccessPermissions () 
@@ -540,6 +573,11 @@ namespace System.Security {
 			get { return this; }
 		}
 
+		internal bool DeclarativeSecurity {
+			get { return _declsec; }
+			set { _declsec = value; }
+		}
+
 		[MonoTODO()]
 		void IDeserializationCallback.OnDeserialization (object sender) 
 		{
@@ -589,6 +627,8 @@ namespace System.Security {
 		[MonoTODO ("what's it doing here?")]
 		static public void RevertAssert ()
 		{
+			// FIXME: There's probably a reason this was added here ?
+			CodeAccessPermission.RevertAssert ();
 		}
 #endif
 
@@ -602,19 +642,19 @@ namespace System.Security {
 
 		internal void ImmediateCallerDemand ()
 		{
-			if (!SecurityManager.SecurityEnabled)
-				return;
 			if (IsEmpty ())
 				return;
 
-			StackTrace st = new StackTrace (1); // skip ourself
-			StackFrame sf = st.GetFrame (0);
-			MethodBase mb = sf.GetMethod ();
-			Assembly af = mb.ReflectedType.Assembly;
-			if (!af.Demand (this)) {
-				Type t = this.GetType ();
-				// TODO add more details
-				throw new SecurityException ("LinkDemand failed", t);
+			// skip ourself
+			SecurityFrame sf = new SecurityFrame (1);	// FIXME skip
+			foreach (IPermission p in list) {
+				// note: this may contains non CAS permissions
+				if (p is CodeAccessPermission) {
+					if (SecurityManager.SecurityEnabled)
+						SecurityManager.IsGranted (sf.Assembly, p);
+				} else {
+					p.Demand ();
+				}
 			}
 		}
 
@@ -628,6 +668,15 @@ namespace System.Security {
 			foreach (IPermission p in list) {
 				p.Demand ();
 			}
+		}
+
+		internal bool ProcessFrame (SecurityFrame frame, ref Assembly current)
+		{
+			foreach (CodeAccessPermission cap in list) {
+				if (cap.ProcessFrame (frame, ref current))
+					return true; // Assert reached - abort stack walk!
+			}
+			return false;
 		}
 	}
 }

@@ -33,6 +33,8 @@ using System.Collections;
 using System.Globalization;
 using System.IO;
 using System.Reflection;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using System.Security.Permissions;
 using System.Security.Policy;
 using System.Text;
@@ -41,9 +43,6 @@ using Mono.Xml;
 
 namespace System.Security {
 
-	// Note: Using [SecurityPermissionAttribute] would be cool but triggers an error
-	// as you can't reference a custom security attribute from it's own assembly (CS0647)
-
 	public sealed class SecurityManager {
 
 		private static bool checkExecutionRights;
@@ -51,6 +50,7 @@ namespace System.Security {
 		private static object _lockObject;
 		private static ArrayList _hierarchy;
 		private static PermissionSet _fullTrust; // for [AllowPartiallyTrustedCallers]
+		private static Hashtable _declsecCache;
 
 		static SecurityManager () 
 		{
@@ -109,7 +109,27 @@ namespace System.Security {
 			// - Policy driven
 			// - Only check the caller (no stack walk required)
 			// - Not affected by overrides (like Assert, Deny and PermitOnly)
-			return Assembly.GetCallingAssembly ().Demand (perm);
+			// - calls IsSubsetOf even for non CAS permissions
+			//   (i.e. it does call Demand so any code there won't be executed)
+			return IsGranted (Assembly.GetCallingAssembly (), perm);
+		}
+
+		internal static bool IsGranted (Assembly a, IPermission perm)
+		{
+			CodeAccessPermission grant = null;
+
+			if (a.GrantedPermissionSet != null)
+				grant = (CodeAccessPermission) a.GrantedPermissionSet.GetPermission (perm.GetType ());
+
+			if ((grant == null) || !perm.IsSubsetOf (grant)) {
+				if (a.DeniedPermissionSet != null) {
+					CodeAccessPermission refuse = (CodeAccessPermission) a.DeniedPermissionSet.GetPermission (perm.GetType ());
+					if ((refuse != null) && perm.IsSubsetOf (refuse))
+						return false;
+				}
+				return true;
+			}
+			return false;
 		}
 
 		[SecurityPermission (SecurityAction.Demand, Flags=SecurityPermissionFlag.ControlPolicy)]
@@ -309,7 +329,36 @@ namespace System.Security {
 			_hierarchy = ArrayList.Synchronized (al);
 		}
 
-		private static PermissionSet Decode (byte[] encodedPermissions)
+		internal static PermissionSet Decode (IntPtr permissions, int length)
+		{
+			// Permission sets from the runtime (declarative security) can be cached
+			// for performance as they can never change (i.e. they are read-only).
+
+			if (_declsecCache == null) {
+				lock (_lockObject) {
+					if (_declsecCache == null) {
+						_declsecCache = new Hashtable ();
+					}
+				}
+			}
+
+			PermissionSet ps = null;
+			lock (_lockObject) {
+				object key = (object) (int) permissions;
+				ps = (PermissionSet) _declsecCache [key];
+				if (ps == null) {
+					// create permissionset and add it to the cache
+					byte[] data = new byte [length];
+					Marshal.Copy (permissions, data, 0, length);
+					ps = Decode (data);
+					ps.DeclarativeSecurity = true;
+					_declsecCache.Add (key, ps);
+				}
+			}
+			return ps;
+		}
+
+		internal static PermissionSet Decode (byte[] encodedPermissions)
 		{
 			switch (encodedPermissions [0]) {
 			case 60:
@@ -337,38 +386,36 @@ namespace System.Security {
 			return Decode (methodPermissions);
 		}
 
-		// internal - get called by JIT generated code
+		// internal - get called at JIT time
 
-		private static void LinkDemand (
-			byte[] classPermissions, byte[] classNonCasPermissions,
-			byte[] methodPermissions, byte[] methodNonCasPermissions,
-			bool allowPartiallyTrustedCallers)
+		unsafe private static void LinkDemand (
+			IntPtr casClassPermission, int casClassLength,
+			IntPtr nonCasClassPermission, int nonCasClassLength,
+			IntPtr casMethodPermission, int casMethodLength,
+			IntPtr nonCasMethodPermission, int nonCasMethodLength,
+			bool requiresFullTrust)
 		{
 			PermissionSet ps = null;
 
-			if (classPermissions != null) {
-				ps = Decode (classPermissions);
-				if (ps != null)
-					ps.ImmediateCallerDemand ();
+			if (casClassLength > 0) {
+				ps = Decode (casClassPermission, casClassLength);
+				ps.ImmediateCallerDemand ();
 			}
-			if (classNonCasPermissions != null) {
-				ps = Decode (classNonCasPermissions);
-				if (ps != null)
-					ps.ImmediateCallerNonCasDemand ();
+			if (nonCasClassLength > 0) {
+				ps = Decode (nonCasClassPermission, nonCasClassLength);
+				ps.ImmediateCallerNonCasDemand ();
 			}
 
-			if (methodPermissions != null) {
-				ps = Decode (methodPermissions);
-				if (ps != null)
-					ps.ImmediateCallerDemand ();
+			if (casMethodLength > 0) {
+				ps = Decode (casMethodPermission, casMethodLength);
+				ps.ImmediateCallerDemand ();
 			}
-			if (methodNonCasPermissions != null) {
-				ps = Decode (methodNonCasPermissions);
-				if (ps != null)
-					ps.ImmediateCallerNonCasDemand ();
+			if (nonCasMethodLength > 0) {
+				ps = Decode (nonCasMethodPermission, nonCasMethodLength);
+				ps.ImmediateCallerNonCasDemand ();
 			}
 
-			if (allowPartiallyTrustedCallers) {
+			if (requiresFullTrust) {
 				// double-lock pattern
 				if (_fullTrust == null) {
 					lock (_lockObject) {
@@ -376,9 +423,12 @@ namespace System.Security {
 							_fullTrust = new NamedPermissionSet ("FullTrust");
 					}
 				}
+				// FIXME: to be optimized with a flag
 				_fullTrust.ImmediateCallerDemand ();
 			}
 		}
+
+		// internal - get called by the class loader
 
 		// Called when
 		// - class inheritance
@@ -397,41 +447,22 @@ namespace System.Security {
 			}
 		}
 
-		private static void InternalDemand (byte[] permissions)
+		// internal - get called by JIT generated code
+
+		unsafe private static void InternalDemand (IntPtr permissions, int length)
 		{
-			PermissionSet ps = Decode (permissions);
+			PermissionSet ps = Decode (permissions, length);
 			ps.Demand ();
 		}
 
-		private static void InternalDemandChoice (byte[] permissions)
+		unsafe private static void InternalDemandChoice (IntPtr permissions, int length)
 		{
 #if NET_2_0
-			PermissionSet ps = Decode (permissions);
+			PermissionSet ps = Decode (permissions, length);
 			// TODO
 #else
 			throw new SecurityException ("SecurityAction.DemandChoice is only possible in 2.0");
 #endif
-		}
-
-		private static void InternalAssert (byte[] permissions)
-		{
-			PermissionSet ps = Decode (permissions);
-			// note: Calling PermissionSet.Assert would have produced an unrequired copy of the PermissionSet
-			CodeAccessPermission.SetCurrentFrame (CodeAccessPermission.StackModifier.Assert, ps);
-		}
-
-		private static void InternalDeny (byte[] permissions)
-		{
-			PermissionSet ps = Decode (permissions);
-			// note: Calling PermissionSet.Deny would have produced an unrequired copy of the PermissionSet
-			CodeAccessPermission.SetCurrentFrame (CodeAccessPermission.StackModifier.Deny, ps);
-		}
-
-		private static void InternalPermitOnly (byte[] permissions)
-		{
-			PermissionSet ps = Decode (permissions);
-			// note: Calling PermissionSet.PermitOnly would have produced an unrequired copy of the PermissionSet
-			CodeAccessPermission.SetCurrentFrame (CodeAccessPermission.StackModifier.PermitOnly, ps);
 		}
 	}
 }

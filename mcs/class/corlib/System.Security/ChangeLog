@@ -1,3 +1,16 @@
+2004-12-20  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* CodeAccessPermission.cs: Refactored to play more nicely with 
+	PermissionSet and the new functionalities in the runtime.
+	* PermissionSet.cs: Modified to use the new functionalities in the
+	runtime. This allows the declarative stack modifiers to work in a 
+	stack walk.
+	* SecurityFrame.cs: New. This is the managed representation of the
+	security informations associated with a stack frame. This current
+	version only support declarative stack modifiers.
+	* SecurityManager.cs: Modified to use the new functionalities in the
+	runtime.
+
 2004-11-30  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* CodeAccessPermission.cs:
