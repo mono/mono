@@ -1,5 +1,8 @@
 2003-05-26  Miguel de Icaza  <miguel@ximian.com>
 
+	* statement.cs (GotoCase.Resolve): Return after reporting an
+	error, do not attempt to continue. 
+
 	* expression.cs (PointerArithmetic.Emit): If our operand is a
 	long, convert our constants to match the operand before
 	multiplying.  Convert to I type before adding.   Fixes 43670.

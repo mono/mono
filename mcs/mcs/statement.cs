@@ -851,6 +851,7 @@ namespace Mono.CSharp {
 				Report.Error (
 					159, loc,
 					"No such label 'case " + val + "': for the goto case");
+				return false;
 			}
 
 			label = sl.ILLabelCode;
