@@ -106,7 +106,7 @@ namespace Mono.Xml.Xsl.Operations {
 			if (nsDecls != null) {
 				foreach (DictionaryEntry de in nsDecls) {
 					string actualPrefix = p.CompiledStyle.Style.PrefixInEffect (de.Key as String, excludedPrefixes);
-					if (prefix != null)
+					if (actualPrefix != null)
 						p.Out.WriteNamespaceDecl (actualPrefix, (string)de.Value);
 				}
 			}

@@ -1,3 +1,8 @@
+2003-12-16 Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* XslLiteralElement.cs : Pretty fix for prefix.
+	* XslNumber.cs : Fix for rounding value and decimal digits hack.
+
 2003-12-05 Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* XslAttribute.cs, XslElement.cs, XslVariable.cs : Check name.
@@ -7,8 +12,6 @@
 	* XslCompiledElement.cs : Added ParentType to check content validity.
 	* XslCopy.cs : Check attribute set existence.
 	* XslCopy.cs, XslCopyOf.cs  Don't output whitspace as cdata.
-	* XslFallback.cs, XslForEach.cs, XslIf.cs, XslMessage.cs :
-	  Reflecting XslCompiledElement change.
 	* XslLiteralElement.cs : Added extension element prefixes as 
 	  namespace exclusion target. Consider namespace-aliases.
 	* XslNumber.cs : level="any" should also be emptiable. MatchesCount()

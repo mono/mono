@@ -114,8 +114,11 @@ namespace Mono.Xml.Xsl.Operations {
 		{
 			XslNumberFormatter nf = GetNumberFormatter (p);
 			
-			if (this.value != null)
-				return nf.Format ((int)p.EvaluateNumber (this.value)); // TODO: Correct rounding
+			if (this.value != null) {
+				double result = p.EvaluateNumber (this.value);
+				result = (int) ((result - (int) result >= 0.5) ? result + 1 : result);
+				return nf.Format ((int) result);
+			}
 			
 			switch (this.level) {
 			case XslNumberingLevel.Single:
@@ -419,7 +422,7 @@ namespace Mono.Xml.Xsl.Operations {
 			class DigitItem : FormatItem {
 				System.Globalization.NumberFormatInfo nfi;
 				int decimalSectionLength;
-				string format;
+				StringBuilder numberBuilder;
 				
 				public DigitItem (string sep, int len, char gpSep, int gpSize) : base (sep)
 				{
@@ -427,24 +430,23 @@ namespace Mono.Xml.Xsl.Operations {
 					nfi.NumberDecimalDigits = 0;
 					nfi.NumberGroupSizes = new int [] {gpSize};
 					nfi.NumberGroupSeparator = gpSep.ToString ();
-
-					/*
-					FIXME: This washes other format specifications away ;-(
 					decimalSectionLength = len;
-					StringBuilder sb = new StringBuilder ();
-					if (len > 0) {
-						sb.Append ("D");
-						sb.Append ('0');
-						sb.Append (len);
-						format = sb.ToString ();
-					}
-					*/
 				}
 				
 				public override void Format (StringBuilder b, int num)
 				{
-//					b.Append (num.ToString (format, nfi));
-					b.Append (num.ToString ("N", nfi));
+					string number = num.ToString ("N", nfi);
+					int len = decimalSectionLength;
+					if (len > 1) {
+						// It is hack, but in most case it will work.
+						if (numberBuilder == null)
+							numberBuilder = new StringBuilder ();
+						for (int i = len; i > number.Length; i--)
+							numberBuilder.Append ('0');
+						numberBuilder.Append (number.Length <= len ? number : number.Substring (number.Length - len, len));
+						number = numberBuilder.ToString ();
+					}
+					b.Append (number);
 				}
 			}
 		}
