@@ -1,3 +1,7 @@
+2004-12-04 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* interp.c: fix the build. Dunno if it's correct.
+
 2004-12-02  Bernie Solomon  <bernard@ugsolutions.com>
 
 	* mintops.def:
