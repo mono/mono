@@ -128,7 +128,6 @@ namespace MonoTests.System {
 		}
 
 		[Test]
-		[Category ("NotWorking")] // http://bugzilla.ximian.com/show_bug.cgi?id=71938
 		public void GetCommandLineArgs ()
 		{
 			string[] args = Environment.GetCommandLineArgs ();

@@ -1,3 +1,7 @@
+2005-01-29  Zoltan Varga  <vargaz@freemail.hu>
+
+	* EnvironmentTest.cs: Reenable command line args test.
+
 2005-01-28  Sebastien Pouliot  <sebastien@ximian.com>  
  
 	* EnvironmentTest.cs: Added a new unit for GetCommandLineArgs to track
