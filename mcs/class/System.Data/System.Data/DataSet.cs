@@ -1739,6 +1739,7 @@ namespace System.Data {
 					}
 					
 					colElem.UnhandledAttributes = (XmlAttribute[])xattrs.ToArray(typeof (XmlAttribute));
+					xattrs.Clear ();
 					AddExtendedPropertyAttributes (colElem, col.ExtendedProperties, doc);
 					seq.Items.Add (colElem);
 				}
