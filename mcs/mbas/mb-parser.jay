@@ -2589,28 +2589,58 @@ iteration_statement
 	;
 
 foreach_statement
-	: FOR EACH identifier IN 
+	: FOR EACH identifier opt_type_spec IN 
 	  {
 		oob_stack.Push (lexer.Location);
 	  }	  
 	  expression end_of_stmt
 	  {
-		
-		start_block();
-		Block foreach_block = current_block;
 		Location l = lexer.Location;		
 		LocalVariableReference v = null;
 		VariableInfo vi;
 
-		vi = foreach_block.GetVariableInfo ((string) $3);
-		if (vi != null) {
-			// Get a reference to this variable.
-			v = new LocalVariableReference (foreach_block, (string) $3, l, vi, false);
+		if ($4 != null)	
+		{
+			start_block();
+			VariableDeclaration decl = new VariableDeclaration ((string) $3, 
+					(Expression) $4, null, lexer.Location, null);
+			
+			vi = current_block.AddVariable (
+				(Expression) $4, decl.identifier, current_local_parameters, decl.Location);
+
+			Expression expr;
+			if (decl.expression_or_array_initializer is Expression)
+				expr = (Expression) decl.expression_or_array_initializer;
+			else if (decl.expression_or_array_initializer == null) 
+				expr = null;
+			else 
+			{
+				ArrayList init = (ArrayList) decl.expression_or_array_initializer;
+				expr = new ArrayCreation ((Expression) $4, "", init, decl.Location);
+			}
+		
+			v = new LocalVariableReference (current_block, decl.identifier, l);
+
+			if (expr != null) 
+			{
+				Assign a = new Assign (v, expr, decl.Location);
+				current_block.AddStatement (new StatementExpression (a, lexer.Location));
+			}
 		}
 		else
-			Report.Error (451, "Name '" + (string) $3 + "' is not declared.");
-	
+		{
+			vi = current_block.GetVariableInfo ((string) $3);
+
+			if (vi != null) {
+				// Get a reference to this variable.
+				v = new LocalVariableReference (current_block, (string) $3, l, vi, false);
+			}
+			else
+				Report.Error (451, "Name '" + (string) $3 + "' is not declared.");
+		}
+		
 		oob_stack.Push (v);
+		start_block();	
 	  } 	  
 	  opt_statement_list
 	  NEXT opt_identifier
@@ -2620,11 +2650,16 @@ foreach_statement
 		Location l = (Location) oob_stack.Pop ();
 
 		Foreach f = null;
-		if (v != null) {
-			f = new Foreach (null, v, (Expression) $6, foreach_block, l);
-		}
+		if (v != null)
+			f = new Foreach (null, v, (Expression) $7, foreach_block, l);
 		
-		$$ = f;
+		if ($4 != null)
+		{
+			current_block.AddStatement (f);
+			$$ = end_block ();
+		}
+		else
+			$$ = f;
 	  }	  
 	;
 

@@ -1,3 +1,6 @@
+2004-10-19 Anirban Bhattacharjee <banirban@novell.com>
+	* mb-parser.jay: Enhanced For Each...Next statement grammar
+
 2004-10-15 Anirban Bhattacharjee <banirban@novell.com>
 	* mb-parser.jay: Little improvement in For...next statement
 
