@@ -23,8 +23,7 @@ EXTRA_DISTFILES = \
 	Test/XmlFiles/xsd/ChangeLog	\
 	Test/XmlFiles/xsl/empty.xsl	\
 	Test/XmlFiles/xsl/ChangeLog	\
-	Test/XmlFiles/ChangeLog		\
-	Test/NUnit.Prefs
+	Test/XmlFiles/ChangeLog
 
 CLEAN_FILES = Test/XmlFiles/xsl/result.xml
 

@@ -22,7 +22,6 @@ EXTRA_DISTFILES = \
 	System.Text.RegularExpressions/notes.txt	\
 	System.ComponentModel.Design/Changelog		\
 	Test/test-config-file				\
-	Test/NUnit.Prefs				\
 	Test/argument.txt				\
 	Test/foo
 

@@ -1,3 +1,8 @@
+2003-07-18  Peter Williams  <peter@newton.cx>
+
+	* Makefile (EXTRA_DISTFILES): Oops, NUnit.Prefs is not
+	a distable file.
+
 2003-07-17  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
 	* Assembly/Consts.cs: added

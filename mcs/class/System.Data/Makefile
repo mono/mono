@@ -29,7 +29,6 @@ EXTRA_DISTFILES = \
 	Test/System.Xml/2books.xml		\
 	Test/System.Xml/region.xml		\
 	Test/System.Xml/region.xsd		\
-	Test/System.Xml/store.xsd		\
-	Test/NUnit.Prefs
+	Test/System.Xml/store.xsd
 
 include ../../build/library.make
