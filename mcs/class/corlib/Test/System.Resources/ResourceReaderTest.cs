@@ -19,7 +19,7 @@ namespace MonoTests.System.Resources {
 
 	public class ResourceReaderTest : TestCase {
 		private static string m_ResourceFile = "MyResources.resources";
-		private static string m_BadResourceFile = "Bad.resources";
+		private static string m_BadResourceFile = "Empty.resources";
 		
 		public ResourceReaderTest(String name) : base(name) {
 		}
@@ -124,12 +124,14 @@ namespace MonoTests.System.Resources {
 			Stream stream = new FileStream (m_ResourceFile, FileMode.Open);
 			reader = new ResourceReader(stream);
 			IDictionaryEnumerator en = reader.GetEnumerator();
-      
 			// Goes through the enumerator, printing out the key and value pairs.
 			while (en.MoveNext()) {
-				Console.WriteLine();
-				Console.WriteLine("Name: {0}", en.Key);
-				Console.WriteLine("Value: {0}", en.Value);
+				DictionaryEntry de = (DictionaryEntry)en.Current;
+				Assert("Current.Key should not be empty",String.Empty != de.Key);
+				Assert("Current.Value should not be empty",String.Empty != de.Value);
+				Assert("Current.Value should not be empty",String.Empty != de.Value);
+				Assert("Entry.Key should not be empty",String.Empty != en.Key);
+				Assert("Entry.Value should not be empty",String.Empty != en.Value);
 			}
 			reader.Close();
 		}
