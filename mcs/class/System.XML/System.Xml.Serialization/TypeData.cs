@@ -32,11 +32,11 @@ namespace System.Xml.Serialization
 			{
 				if (type.IsEnum)
 					sType = SchemaTypes.Enum;
-				else if (type.GetInterface ("IXmlSerializable") != null)
+				else if (typeof(IXmlSerializable).IsAssignableFrom (type))
 					sType = SchemaTypes.XmlSerializable;
 				else if (typeof (System.Xml.XmlNode).IsAssignableFrom (type))
 					sType = SchemaTypes.XmlNode;
-				else if (type.IsArray || type.GetInterface ("IEnumerable") != null || type.GetInterface ("ICollection") != null)
+				else if (type.IsArray || typeof(IEnumerable).IsAssignableFrom (type))
 					sType = SchemaTypes.Array;
 				else
 					sType = SchemaTypes.Class;
@@ -104,9 +104,10 @@ namespace System.Xml.Serialization
 					throw new InvalidOperationException (Type.FullName + " is not a collection");
 				else if (type.IsArray) 
 					listItemType = type.GetElementType ();
-				else if (type.GetInterface ("ICollection") != null)
+				else if (typeof(ICollection).IsAssignableFrom (type))
 				{
-					PropertyInfo prop = type.GetProperty ("Item", new Type[] { typeof (int) });
+					PropertyInfo prop = GetIndexerProperty (type);
+					if (prop == null) throw new InvalidOperationException ("You must implement a default accessor on " + type.FullName + " because it inherits from ICollection");
 					return prop.PropertyType;
 				}
 				else
@@ -114,6 +115,18 @@ namespace System.Xml.Serialization
 
 				return listItemType;
 			}
+		}
+
+		public static PropertyInfo GetIndexerProperty (Type collectionType)
+		{
+			PropertyInfo[] props = collectionType.GetProperties (BindingFlags.Instance | BindingFlags.Public);
+			foreach (PropertyInfo prop in props)
+			{
+				ParameterInfo[] pi = prop.GetIndexParameters ();
+				if (pi != null && pi.Length == 1 && pi[0].ParameterType == typeof(int))
+					return prop;
+			}
+			return null;
 		}
 	}
 }

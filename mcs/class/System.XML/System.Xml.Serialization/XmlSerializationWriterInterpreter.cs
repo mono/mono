@@ -8,6 +8,7 @@
 //
 
 using System;
+using System.Text;
 using System.Collections;
 using System.Reflection;
 using System.Xml.Schema;
@@ -185,7 +186,7 @@ namespace System.Xml.Serialization
 					else if (memType == typeof(XmlTypeMapMemberFlatList))
 					{
 						if (memberValue != null)
-							WriteListContent (member.TypeData, ((XmlTypeMapMemberFlatList)member).ListMap, memberValue);
+							WriteListContent (member.TypeData, ((XmlTypeMapMemberFlatList)member).ListMap, memberValue, null);
 					}
 					else if (memType == typeof(XmlTypeMapMemberAnyElement))
 					{
@@ -245,7 +246,7 @@ namespace System.Xml.Serialization
 					if (_format == SerializationFormat.Literal) 
 						WritePrimitiveValueLiteral (memberValue, elem.ElementName, elem.Namespace, elem.MappedType, elem.TypeData, elem.WrappedElement, elem.IsNullable);
 					else
-						WritePrimitiveValueEncoded (memberValue, elem.ElementName, elem.Namespace, new XmlQualifiedName (elem.DataType, elem.DataTypeNamespace), elem.MappedType, elem.TypeData, elem.WrappedElement, elem.IsNullable);
+						WritePrimitiveValueEncoded (memberValue, elem.ElementName, elem.Namespace, new XmlQualifiedName (elem.TypeData.XmlType, elem.DataTypeNamespace), elem.MappedType, elem.TypeData, elem.WrappedElement, elem.IsNullable);
 					break;
 
 				case SchemaTypes.Array:
@@ -257,7 +258,7 @@ namespace System.Xml.Serialization
 						WriteReferencingElement (elem.ElementName, elem.Namespace, memberValue, elem.IsNullable);
 					else {
 						WriteStartElement(elem.ElementName, elem.Namespace, memberValue);
-						WriteListContent (elem.TypeData, (ListMap) elem.MappedType.ObjectMap, memberValue);
+						WriteListContent (elem.TypeData, (ListMap) elem.MappedType.ObjectMap, memberValue, null);
 						WriteEndElement (memberValue);
 					}
 					break;
@@ -321,10 +322,10 @@ namespace System.Xml.Serialization
 				string arrayType = (ns != string.Empty) ? FromXmlQualifiedName (new XmlQualifiedName(n,ns)) : n;
 				WriteAttribute ("arrayType", SoapReflectionImporter.EncodingNamespace, arrayType);
 			}
-			WriteListContent (typeMap.TypeData, (ListMap) typeMap.ObjectMap, ob);
+			WriteListContent (typeMap.TypeData, (ListMap) typeMap.ObjectMap, ob, null);
 		}
 
-		void WriteListContent (TypeData listType, ListMap map, object ob)
+		void WriteListContent (TypeData listType, ListMap map, object ob, StringBuilder targetString)
 		{
 			if (listType.Type.IsArray)
 			{
@@ -333,21 +334,23 @@ namespace System.Xml.Serialization
 				{
 					object item = array.GetValue (n);
 					XmlTypeMapElementInfo info = map.FindElement (item);
-					if (info != null) WriteMemberElement (info, item);
+					if (info != null && targetString == null) WriteMemberElement (info, item);
+					else if (info != null && targetString != null) targetString.Append (GetStringValue (info.MappedType, info.TypeData, item)).Append (" ");
 					else if (item != null) throw CreateUnknownTypeException (item);
 				}
 			}
 			else if (ob is ICollection)
 			{
 				int count = (int) listType.Type.GetProperty ("Count").GetValue(ob,null);
-				PropertyInfo itemProp = listType.Type.GetProperty ("Item", new Type[] { typeof(int) });
+				PropertyInfo itemProp = TypeData.GetIndexerProperty (listType.Type);
 				object[] index = new object[1];
 				for (int n=0; n<count; n++)
 				{
 					index[0] = n;
 					object item = itemProp.GetValue (ob, index);
 					XmlTypeMapElementInfo info = map.FindElement (item);
-					if (info != null) WriteMemberElement (info, item);
+					if (info != null && targetString == null) WriteMemberElement (info, item);
+					else if (info != null && targetString != null) targetString.Append (GetStringValue (info.MappedType, info.TypeData, item)).Append (" ");
 					else if (item != null) throw CreateUnknownTypeException (item);
 				}
 			}
@@ -357,7 +360,8 @@ namespace System.Xml.Serialization
 				foreach (object item in e)
 				{
 					XmlTypeMapElementInfo info = map.FindElement (item);
-					if (info != null) WriteMemberElement (info, item);
+					if (info != null && targetString == null) WriteMemberElement (info, item);
+					else if (info != null && targetString != null) targetString.Append (GetStringValue (info.MappedType, info.TypeData, item)).Append (" ");
 					else if (item != null) throw CreateUnknownTypeException (item);
 				}
 			}
@@ -409,12 +413,17 @@ namespace System.Xml.Serialization
 
 		string GetStringValue (XmlTypeMapping typeMap, TypeData type, object value)
 		{
-			if (type.SchemaType == SchemaTypes.Enum)
+			if (type.SchemaType == SchemaTypes.Array) {
+				StringBuilder sb = new StringBuilder ();
+				WriteListContent (typeMap.TypeData, (ListMap)typeMap.ObjectMap, value, sb);
+				return sb.ToString ().Trim ();
+			}
+			else if (type.SchemaType == SchemaTypes.Enum)
 				return GetEnumXmlValue (typeMap, value);
 			else if (type.Type == typeof (XmlQualifiedName))
 				return FromXmlQualifiedName ((XmlQualifiedName)value);
 			else
-				return XmlCustomFormatter.ToXmlString (value);
+				return XmlCustomFormatter.ToXmlString (type, value);
 		}
 
 		string GetEnumXmlValue (XmlTypeMapping typeMap, object ob)

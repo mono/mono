@@ -417,12 +417,14 @@ nss.Add (Reader.LocalName, Reader.Value);
 		
 		object GetValueFromXmlString (string value, TypeData typeData, XmlTypeMapping typeMap)
 		{
-			if (typeData.SchemaType == SchemaTypes.Enum)
+			if (typeData.SchemaType == SchemaTypes.Array)
+				return ReadListString (typeMap, value);
+			else if (typeData.SchemaType == SchemaTypes.Enum)
 				return GetEnumValue (typeMap, value);
 			else if (typeData.Type == typeof (XmlQualifiedName))
 				return ToXmlQualifiedName (value);
 			else 
-				return XmlCustomFormatter.FromXmlString (typeData.Type, value);
+				return XmlCustomFormatter.FromXmlString (typeData, value);
 		}
 
 		object ReadListElement (XmlTypeMapping typeMap, bool isNullable, object list, bool canCreateInstance)
@@ -467,6 +469,28 @@ nss.Add (Reader.LocalName, Reader.Value);
 
 			if (listType.IsArray)
 				list = ShrinkArray ((Array)list, index, listType.GetElementType(), isNullable);
+
+			return list;
+		}
+
+		object ReadListString (XmlTypeMapping typeMap, string values)
+		{
+			Type listType = typeMap.TypeData.Type;
+			ListMap listMap = (ListMap)typeMap.ObjectMap;
+			values = values.Trim ();
+
+			if (values == string.Empty)
+			{
+				return Array.CreateInstance (listType.GetElementType(), 0);
+			}
+
+			string[] valueArray = values.Split (' ');
+			Array list = Array.CreateInstance (listType.GetElementType(), valueArray.Length);
+
+			XmlTypeMapElementInfo info = (XmlTypeMapElementInfo)listMap.ItemInfo[0];
+
+			for (int index = 0; index < valueArray.Length; index++)
+				list.SetValue (GetValueFromXmlString (valueArray[index], info.TypeData, info.MappedType), index);
 
 			return list;
 		}

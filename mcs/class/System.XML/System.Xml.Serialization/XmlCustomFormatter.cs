@@ -12,6 +12,7 @@ using System;
 using System.Collections;
 using System.Text;
 using System.Xml;
+using System.Globalization;
 
 namespace System.Xml.Serialization {
 	internal class XmlCustomFormatter {
@@ -151,60 +152,59 @@ namespace System.Xml.Serialization {
 			return ToXmlName (value);
 		}
 
-		internal static string ToXmlString (object value)
+		internal static string ToXmlString (TypeData type, object value)
 		{
 			if (value == null) return null;
-			switch (Type.GetTypeCode(value.GetType()))
+			switch (type.XmlType)
 			{
-				case TypeCode.Boolean: return XmlConvert.ToString ((bool)value);
-				case TypeCode.Byte: return XmlConvert.ToString ((byte)value);
-				case TypeCode.Char: return XmlConvert.ToString ((int)(char)value);
-				case TypeCode.DateTime: return XmlConvert.ToString ((DateTime)value);
-				case TypeCode.Decimal: return XmlConvert.ToString ((decimal)value);
-				case TypeCode.Double: return XmlConvert.ToString ((double)value);
-				case TypeCode.Int16: return XmlConvert.ToString ((Int16)value);
-				case TypeCode.Int32: return XmlConvert.ToString ((Int32)value);
-				case TypeCode.Int64: return XmlConvert.ToString ((Int64)value);
-				case TypeCode.SByte: return XmlConvert.ToString ((sbyte)value);
-				case TypeCode.Single: return XmlConvert.ToString ((Single)value);
-				case TypeCode.UInt16: return XmlConvert.ToString ((UInt16)value);
-				case TypeCode.UInt32: return XmlConvert.ToString ((UInt32)value);
-				case TypeCode.UInt64: return XmlConvert.ToString ((UInt64)value);
+				case "boolean": return XmlConvert.ToString ((bool)value);
+				case "unsignedByte": return XmlConvert.ToString ((byte)value);
+				case "char": return XmlConvert.ToString ((int)(char)value);
+				case "dateTime": return XmlConvert.ToString ((DateTime)value);
+				case "date": return ((DateTime)value).ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
+				case "time": return ((DateTime)value).ToString("HH:mm:ss.fffffffzzz", CultureInfo.InvariantCulture);
+				case "decimal": return XmlConvert.ToString ((decimal)value);
+				case "double": return XmlConvert.ToString ((double)value);
+				case "short": return XmlConvert.ToString ((Int16)value);
+				case "int": return XmlConvert.ToString ((Int32)value);
+				case "long": return XmlConvert.ToString ((Int64)value);
+				case "byte": return XmlConvert.ToString ((sbyte)value);
+				case "float": return XmlConvert.ToString ((Single)value);
+				case "unsignedShort": return XmlConvert.ToString ((UInt16)value);
+				case "unsignedInt": return XmlConvert.ToString ((UInt32)value);
+				case "unsignedLong": return XmlConvert.ToString ((UInt64)value);
+				case "guid": return XmlConvert.ToString ((Guid)value);
+				case "base64Binary": return Convert.ToBase64String ((byte[])value);
+				default: return value.ToString ();
 			}
-
-			if (value.GetType() == typeof(TimeSpan)) return XmlConvert.ToString ((TimeSpan)value);
-			else if (value.GetType() == typeof (Guid)) return XmlConvert.ToString ((Guid)value);
-			else if (value.GetType() == typeof(byte[])) return Convert.ToBase64String ((byte[])value);
-
-			return value.ToString ();
 		}
 
-		internal static object FromXmlString (Type type, string value)
+		internal static object FromXmlString (TypeData type, string value)
 		{
 			if (value == null) return null;
 
-			switch (Type.GetTypeCode (type))
+			switch (type.XmlType)
 			{
-				case TypeCode.Boolean: return XmlConvert.ToBoolean (value);
-				case TypeCode.Byte: return XmlConvert.ToByte (value);
-				case TypeCode.Char: return (char)XmlConvert.ToInt32 (value);
-				case TypeCode.DateTime: return XmlConvert.ToDateTime (value);
-				case TypeCode.Decimal: return XmlConvert.ToDecimal (value);
-				case TypeCode.Double: return XmlConvert.ToDouble (value);
-				case TypeCode.Int16: return XmlConvert.ToInt16 (value);
-				case TypeCode.Int32: return XmlConvert.ToInt32 (value);
-				case TypeCode.Int64: return XmlConvert.ToInt64 (value);
-				case TypeCode.SByte: return XmlConvert.ToSByte (value);
-				case TypeCode.Single: return XmlConvert.ToSingle (value);
-				case TypeCode.UInt16: return XmlConvert.ToUInt16 (value);
-				case TypeCode.UInt32: return XmlConvert.ToUInt32 (value);
-				case TypeCode.UInt64: return XmlConvert.ToUInt64 (value);
+				case "boolean": return XmlConvert.ToBoolean (value);
+				case "unsignedByte": return XmlConvert.ToByte (value);
+				case "char": return (char)XmlConvert.ToInt32 (value);
+				case "dateTime": return XmlConvert.ToDateTime (value);
+				case "date": return DateTime.ParseExact (value, "yyyy-MM-dd", null);
+				case "time": return DateTime.ParseExact (value, "HH:mm:ss.fffffffzzz", null);
+				case "decimal": return XmlConvert.ToDecimal (value);
+				case "double": return XmlConvert.ToDouble (value);
+				case "short": return XmlConvert.ToInt16 (value);
+				case "int": return XmlConvert.ToInt32 (value);
+				case "long": return XmlConvert.ToInt64 (value);
+				case "byte": return XmlConvert.ToSByte (value);
+				case "float": return XmlConvert.ToSingle (value);
+				case "unsignedShort": return XmlConvert.ToUInt16 (value);
+				case "unsignedInt": return XmlConvert.ToUInt32 (value);
+				case "unsignedLong": return XmlConvert.ToUInt64 (value);
+				case "guid": return XmlConvert.ToGuid (value);
+				case "base64Binary": return Convert.FromBase64String (value);
+				default: return Convert.ChangeType (value, type.Type);
 			}
-
-			if (type == typeof (TimeSpan)) return XmlConvert.ToTimeSpan (value);
-			else if (type == typeof(Guid)) return XmlConvert.ToGuid (value);
-			else if (type == typeof(byte[])) return Convert.FromBase64String (value);
-			else return Convert.ChangeType (value, type);
 		}
 
 		#endregion // Methods

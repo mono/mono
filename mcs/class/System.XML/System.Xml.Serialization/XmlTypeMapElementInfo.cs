@@ -19,7 +19,6 @@ namespace System.Xml.Serialization
 	internal class XmlTypeMapElementInfo
 	{
 		string _elementName;
-		string _dataType;
 		string _namespace = "";
 		XmlSchemaForm _form;
 		XmlTypeMapMember _member;
@@ -58,12 +57,6 @@ namespace System.Xml.Serialization
 		{
 			get { return _namespace; }
 			set { _namespace = value; }
-		}
-
-		public string DataType
-		{
-			get { return _dataType; }
-			set { _dataType = value; }
 		}
 
 		public string DataTypeNamespace
@@ -129,7 +122,7 @@ namespace System.Xml.Serialization
 		{
 			XmlTypeMapElementInfo oinfo = (XmlTypeMapElementInfo)other;
 			if (_elementName != oinfo._elementName) return false;
-			if (_dataType != oinfo._dataType) return false;
+			if (_type.XmlType != oinfo._type.XmlType) return false;
 			if (_namespace != oinfo._namespace) return false;
 			if (_form != oinfo._form) return false;
 			if (_choiceValue != oinfo._choiceValue) return false;

@@ -1,3 +1,15 @@
+2003-06-30  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* SoapReflectionImporter.cs: Fix support for DataType in class members.
+	* TypeData.cs: Don't use "Index" name to get indexer property. Indexer properties
+	  can have other names.
+	* TypeTranslator.cs, XmlCustomFormatter.cs: Added support for "time" and "data" xml types.
+	* XmlReflectionImporter.cs, XmlTypeMapElementInfo.cs, XmlSerializationReader.cs,
+	  XmlSerializationWriter.cs, XmlTypeMapElementInfo.cs, XmlTypeMapping.cs: 
+	  Fix support for DataType in class members.
+	* XmlSerializationReaderInterpreter.cs, XmlSerializationWriterInterpreter.cs: 
+	  Added support for array of primitive types in attributes.
+
 2003-06-28  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* TypeData.cs: Type of item of ICollections is now taken from the Item(int) property. Add() can

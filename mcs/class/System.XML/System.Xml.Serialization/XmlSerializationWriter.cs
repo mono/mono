@@ -564,7 +564,7 @@ namespace System.Xml.Serialization {
 				if (td.SchemaType != SchemaTypes.Primitive)
 					throw new InvalidOperationException ("Invalid type: " + o.GetType().FullName);
 				WriteXsiType(td.XmlType, XmlSchema.Namespace);
-				Writer.WriteString (XmlCustomFormatter.ToXmlString (o));
+				Writer.WriteString (XmlCustomFormatter.ToXmlString (td, o));
 			}
 
 			WriteEndElement (o);
@@ -687,6 +687,7 @@ namespace System.Xml.Serialization {
 		protected void WriteTypedPrimitive (string name, string ns, object o, bool xsiType)
 		{
 			string value;
+			TypeData td = TypeTranslator.GetTypeData (o.GetType ());
 
 			name = XmlCustomFormatter.FromXmlName (name);
 			Writer.WriteStartElement (name, ns);
@@ -694,11 +695,10 @@ namespace System.Xml.Serialization {
 			if (o is XmlQualifiedName)
 				value = FromXmlQualifiedName ((XmlQualifiedName) o);
 			else
-				value = XmlCustomFormatter.ToXmlString (o);
+				value = XmlCustomFormatter.ToXmlString (td, o);
 
 			if (xsiType)
 			{
-				TypeData td = TypeTranslator.GetTypeData (o.GetType ());
 				if (td.SchemaType != SchemaTypes.Primitive)
 					throw new InvalidOperationException ("Invalid type: " + o.GetType().FullName);
 				WriteXsiType (td.XmlType, XmlSchema.Namespace);

@@ -624,7 +624,7 @@ namespace System.Xml.Serialization {
 			if (typeData == null || typeData.SchemaType != SchemaTypes.Primitive) throw new InvalidOperationException ("Unknown type: " + qname.Name);
 
 			if (typeData.Type == typeof (XmlQualifiedName)) return ReadNullableQualifiedName ();
-			return XmlCustomFormatter.FromXmlString (typeData.Type, Reader.ReadElementString ());
+			return XmlCustomFormatter.FromXmlString (typeData, Reader.ReadElementString ());
 		}
 
 		protected XmlNode ReadXmlNode (bool wrapped)

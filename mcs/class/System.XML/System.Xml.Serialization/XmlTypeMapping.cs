@@ -271,7 +271,7 @@ namespace System.Xml.Serialization
 				}
 				else 
 				{
-					localName = info.DataType + arrayDim;
+					localName = info.TypeData.XmlType + arrayDim;
 					ns = info.DataTypeNamespace;
 				}
 			}

@@ -239,8 +239,7 @@ namespace System.Xml.Serialization {
 			{
 				if (att.NestingLevel != nestingLevel) continue;
 				Type elemType = (att.Type != null) ? att.Type : itemType;
-				XmlTypeMapElementInfo elem = new XmlTypeMapElementInfo (null, TypeTranslator.GetTypeData(elemType));
-				elem.DataType = att.DataType;
+				XmlTypeMapElementInfo elem = new XmlTypeMapElementInfo (null, TypeTranslator.GetTypeData(elemType, att.DataType));
 				elem.Namespace = att.Namespace != null ? att.Namespace : defaultNamespace;
 				if (elem.Namespace == null) elem.Namespace = "";
 				elem.Form = att.Form;
@@ -298,7 +297,7 @@ namespace System.Xml.Serialization {
 			do {
 				XmlTypeMapping foundMap = helper.GetRegisteredSchemaType (name, defaultNamespace);
 				if (foundMap == null) nameCount = -1;
-				else if (obmap.Equals (foundMap.ObjectMap)) return foundMap;
+				else if (obmap.Equals (foundMap.ObjectMap) && typeData.Type == foundMap.TypeData.Type) return foundMap;
 				else name = baseName + (nameCount++);
 			}
 			while (nameCount != -1);
@@ -528,8 +527,7 @@ namespace System.Xml.Serialization {
 				if (atts.XmlText.Type != null) defaultType = atts.XmlText.Type;
 				if (defaultType == typeof(XmlNode)) defaultType = typeof(XmlText);	// Nodes must be text nodes
 				
-				XmlTypeMapElementInfo elem = new XmlTypeMapElementInfo (member, TypeTranslator.GetTypeData(defaultType));
-				if (atts.XmlText.DataType != null) elem.DataType = atts.XmlText.DataType;
+				XmlTypeMapElementInfo elem = new XmlTypeMapElementInfo (member, TypeTranslator.GetTypeData(defaultType, atts.XmlText.DataType));
 
 				if (elem.TypeData.SchemaType != SchemaTypes.Primitive && elem.TypeData.SchemaType != SchemaTypes.Enum &&
 				    elem.TypeData.SchemaType != SchemaTypes.XmlNode)
@@ -555,14 +553,16 @@ namespace System.Xml.Serialization {
 			foreach (XmlElementAttribute att in atts.XmlElements)
 			{
 				Type elemType = (att.Type != null) ? att.Type : defaultType;
-				XmlTypeMapElementInfo elem = new XmlTypeMapElementInfo (member, TypeTranslator.GetTypeData(elemType));
+				XmlTypeMapElementInfo elem = new XmlTypeMapElementInfo (member, TypeTranslator.GetTypeData(elemType, att.DataType));
 				elem.ElementName = (att.ElementName != null) ? att.ElementName : defaultName;
-				elem.DataType = att.DataType;
 				elem.Namespace = (att.Namespace != null) ? att.Namespace : defaultNamespace;
 				elem.Form = att.Form;
 				elem.IsNullable = att.IsNullable;
 				if (elem.TypeData.IsComplexType)
+				{
+					if (att.DataType != null) throw new InvalidOperationException ("'" + att.DataType + "' is an invalid value for the XmlElementAttribute.DateTime property. The property may only be specified for primitive types.");
 					elem.MappedType = ImportTypeMapping (elemType, null, elem.Namespace);
+				}
 
 				if (att.ElementName != null) 
 					elem.ElementName = att.ElementName;

@@ -217,10 +217,8 @@ namespace System.Xml.Serialization {
 			
 			if (elem.TypeData.IsComplexType) {
 				elem.MappedType = ImportTypeMapping (itemType);
-				elem.DataType = elem.MappedType.XmlType;
+				elem.TypeData = elem.MappedType.TypeData;
 			}
-			else
-				elem.DataType = itemTypeData.XmlType;
 				
 			elem.ElementName = "Item";
 			elem.Namespace = string.Empty;
@@ -325,6 +323,9 @@ namespace System.Xml.Serialization {
 				if (typeData.SchemaType == SchemaTypes.Array) mapMember = new XmlTypeMapMemberList ();
 				else mapMember = new XmlTypeMapMemberElement ();
 
+				if (atts.SoapElement != null && atts.SoapElement.DataType != null)
+					typeData = TypeTranslator.GetTypeData (rmember.MemberType, atts.SoapElement.DataType);
+
 				// Creates an ElementInfo that identifies the element
 				XmlTypeMapElementInfoList infoList = new XmlTypeMapElementInfoList();
 				XmlTypeMapElementInfo elem = new XmlTypeMapElementInfo (mapMember, typeData);
@@ -332,7 +333,6 @@ namespace System.Xml.Serialization {
 				elem.ElementName = (atts.SoapElement != null && atts.SoapElement.ElementName != null) ? atts.SoapElement.ElementName : rmember.MemberName;
 				elem.Namespace = string.Empty;
 				elem.IsNullable = (atts.SoapElement != null) ? atts.SoapElement.IsNullable : false;
-				elem.DataType = (atts.SoapElement != null && atts.SoapElement.DataType != null) ? atts.SoapElement.DataType : typeData.XmlType;
 				if (typeData.IsComplexType)
 					elem.MappedType = ImportTypeMapping (typeData.Type);
 				

@@ -49,10 +49,20 @@ namespace System.Xml.Serialization
 			ICollection types = nameCache.Values;
 			foreach (TypeData td in types)
 				primitiveTypes.Add (td.XmlType, td);
+
+			primitiveTypes.Add ("date", new TypeData (typeof (DateTime), "date", true));	// TODO: timeInstant
+			primitiveTypes.Add ("time", new TypeData (typeof (DateTime), "time", true));
 		}
 
 		public static TypeData GetTypeData (Type type)
 		{
+			return GetTypeData (type, null);
+		}
+
+		public static TypeData GetTypeData (Type type, string xmlDataType)
+		{
+			if (xmlDataType != null) return GetPrimitiveTypeData (xmlDataType);
+
 			TypeData typeData = nameCache[type] as TypeData;
 			if (typeData != null) return typeData;
 			
