@@ -256,17 +256,20 @@ namespace Mono.Xml.XPath
 			parentForFirstChild = -1;	// Might be changed in ProcessElement().
 
 			string value = null;
-			XPathNodeType nodeType = xmlReader.NodeType == XmlNodeType.Whitespace ?
-				XPathNodeType.Whitespace : XPathNodeType.Text;
+			XPathNodeType nodeType = XPathNodeType.Text;
 
 			switch (xmlReader.NodeType) {
 			case XmlNodeType.Element:
 				ProcessElement (parent, prevSibling);
 				break;
-			case XmlNodeType.CDATA:
 			case XmlNodeType.SignificantWhitespace:
-			case XmlNodeType.Text:
+				nodeType = XPathNodeType.SignificantWhitespace;
+				goto case XmlNodeType.Text;
 			case XmlNodeType.Whitespace:
+				nodeType = XPathNodeType.Whitespace;
+				goto case XmlNodeType.Text;
+			case XmlNodeType.CDATA:
+			case XmlNodeType.Text:
 				if (value == null)
 					skipRead = true;
 				AddNode (parent,

@@ -56,6 +56,7 @@ namespace Mono.Xml.Xsl.Operations {
 					case XPathNodeType.Comment:
 					case XPathNodeType.ProcessingInstruction:
 					case XPathNodeType.Whitespace:
+					case XPathNodeType.SignificantWhitespace:
 						continue;
 					case XPathNodeType.Element:
 						if (c.Input.NamespaceURI != XsltNamespace)

@@ -1,3 +1,8 @@
+2005-02-14  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XslApplyTemplates.cs : significant whitespace should not be regarded
+	  as invalid element. Patch by Andrew Skiba.
+
 2005-02-09  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XslNumber.cs : For group size, use decimal instead of integer to allow
