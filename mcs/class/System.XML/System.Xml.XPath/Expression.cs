@@ -182,6 +182,21 @@ namespace System.Xml.XPath
 					throw new XPathException ("invalid node type"); // TODO: handle other types
 			}
 		}
+		public object EvaluateAs (BaseIterator iter, XPathResultType type)
+		{
+			switch (type)
+			{
+			case XPathResultType.Boolean:
+				return EvaluateBoolean (iter);
+			case XPathResultType.NodeSet:
+				return EvaluateNodeSet (iter);
+			case XPathResultType.String:
+				return EvaluateString (iter);
+			case XPathResultType.Number:
+				return EvaluateNumber (iter);
+			}
+			return Evaluate (iter);
+		}
 	}
 
 	internal abstract class ExprBinary : Expression
@@ -928,6 +943,8 @@ namespace System.Xml.XPath
 			XsltContext context = iter.NamespaceManager as XsltContext;
 			if (context != null)
 				var = context.ResolveVariable (_name.Prefix, _name.Local);
+			if (context == null)
+				var = DefaultContext.ResolveVariable (_name.Prefix, _name.Local);
 			if (var == null)
 				throw new XPathException ("variable "+_name.Prefix+":"+_name.Local+" not found");
 			return var.VariableType;
@@ -984,6 +1001,8 @@ namespace System.Xml.XPath
 			if (context != null)
 				func = context.ResolveFunction (_name.Prefix, _name.Local, GetArgTypes (iter));
 			if (func == null)
+				func = DefaultContext.ResolveFunction (_name.Prefix, _name.Local, GetArgTypes (iter));
+			if (func == null)
 				throw new XPathException ("function "+_name.Prefix+":"+_name.Local+" not found");
 			return func.ReturnType;
 		}
@@ -1025,8 +1044,15 @@ namespace System.Xml.XPath
 				throw new XPathException ("function "+_name.Prefix+":"+_name.Local+" not found");
 
 			object [] rgArgs = new object [_args.Count];
-			for (int iArg = 0; iArg < _args.Count; iArg ++)
-				rgArgs [iArg] = ((Expression) _args [iArg]).Evaluate (iter);
+			if (func.Maxargs != 0)
+			{
+				XPathResultType [] rgFuncTypes = func.ArgTypes;
+				for (int iArg = 0; iArg < _args.Count; iArg ++)
+				{
+					XPathResultType typeArg = (iArg < rgFuncTypes.Length) ? rgFuncTypes [iArg] : rgFuncTypes [rgFuncTypes.Length - 1];
+					rgArgs [iArg] = ((Expression) _args [iArg]).EvaluateAs (iter, typeArg);
+				}
+			}
 			return func.Invoke (context, rgArgs, iter.Current);
 		}
 	}

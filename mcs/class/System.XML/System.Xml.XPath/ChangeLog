@@ -1,3 +1,9 @@
+2003-03-07  Piers Haken  <piersh@friskit.com>
+
+	* Exression.cs:
+	* DefaultContext.cs:
+		fixed function argument resolution
+
 2003-02-09  Piers Haken  <piersh@friskit.com>
 
 	* XPathNavigator.cs:

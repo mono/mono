@@ -79,12 +79,17 @@ namespace System.Xml.XPath
 			else
 			{
 				int cTypes = rgTypes.Length;
+				XPathResultType [] rgTypesRequested = ArgTypes;
 				for (int iArg = 0; iArg < cArgs; iArg ++)
 				{
-					XPathResultType typeRequested = ArgTypes [iArg];
+					XPathResultType typeRequested = rgTypesRequested [iArg];
 					XPathResultType typeDefined = (iArg >= cTypes) ? rgTypes [cTypes - 1] : rgTypes [iArg];
-					if (typeDefined != XPathResultType.Any && typeDefined != typeRequested)
+					if (typeRequested != XPathResultType.NodeSet &&
+						typeDefined != XPathResultType.Any &&
+						typeDefined != typeRequested)
+					{
 						return null;
+					}
 				}
 			}
 			return fn;
@@ -104,6 +109,7 @@ namespace System.Xml.XPath
 			_htFunctions.Add (fn.Name, fn);
 		}
 	}
+
 
 	internal class XPathFunctions
 	{
@@ -179,6 +185,7 @@ namespace System.Xml.XPath
 		public abstract object TypesafeInvoke (XsltContext xsltContext, object[] args, XPathNavigator docContext);
 	}
 
+
 	internal class XPathFunctionLast : XPathFunction
 	{
 		public override XPathResultType ReturnType { get { return XPathResultType.Number; }}
@@ -191,6 +198,8 @@ namespace System.Xml.XPath
 		}
 		public override string Name { get { return "last"; }}
 	}
+
+
 	internal class XPathFunctionPosition : XPathFunction
 	{
 		public override XPathResultType ReturnType { get { return XPathResultType.Number; }}
@@ -203,6 +212,8 @@ namespace System.Xml.XPath
 		}
 		public override string Name { get { return "position"; }}
 	}
+
+
 	internal class XPathFunctionCount : XPathFunction
 	{
 		public override XPathResultType ReturnType { get { return XPathResultType.Number; }}
@@ -215,6 +226,8 @@ namespace System.Xml.XPath
 		}
 		public override string Name { get { return "count"; }}
 	}
+
+
 	internal class XPathFunctionId : XPathFunction
 	{
 		private static char [] rgchWhitespace = {' ', '\t', '\r', '\n'};
@@ -246,6 +259,8 @@ namespace System.Xml.XPath
 		}
 		public override string Name { get { return "id"; }}
 	}
+
+
 	internal class XPathFunctionLocalName : XPathFunction
 	{
 		public override XPathResultType ReturnType { get { return XPathResultType.NodeSet; }}
@@ -261,6 +276,8 @@ namespace System.Xml.XPath
 		}
 		public override string Name { get { return "local-name"; }}
 	}
+
+
 	internal class XPathFunctionNamespaceUri : XPathFunction
 	{
 		public override XPathResultType ReturnType { get { return XPathResultType.String; }}
@@ -277,6 +294,8 @@ namespace System.Xml.XPath
 		}
 		public override string Name { get { return "namespace-uri"; }}
 	}
+
+
 	internal class XPathFunctionName : XPathFunction
 	{
 		public override XPathResultType ReturnType { get { return XPathResultType.String; }}
@@ -293,6 +312,8 @@ namespace System.Xml.XPath
 		}
 		public override string Name { get { return "name"; }}
 	}
+
+
 	internal class XPathFunctionString : XPathFunction
 	{
 		public override XPathResultType ReturnType { get { return XPathResultType.String; }}
@@ -305,6 +326,8 @@ namespace System.Xml.XPath
 		}
 		public override string Name { get { return "string"; }}
 	}
+
+
 	internal class XPathFunctionConcat : XPathFunction
 	{
 		public override XPathResultType ReturnType { get { return XPathResultType.String; }}
@@ -320,6 +343,8 @@ namespace System.Xml.XPath
 		}
 		public override string Name { get { return "concat"; }}
 	}
+
+
 	internal class XPathFunctionStartsWith : XPathFunction
 	{
 		public override XPathResultType ReturnType { get { return XPathResultType.Boolean; }}
@@ -334,6 +359,8 @@ namespace System.Xml.XPath
 		}
 		public override string Name { get { return "starts-with"; }}
 	}
+
+
 	internal class XPathFunctionContains : XPathFunction
 	{
 		public override XPathResultType ReturnType { get { return XPathResultType.Boolean; }}
@@ -348,6 +375,8 @@ namespace System.Xml.XPath
 		}
 		public override string Name { get { return "contains"; }}
 	}
+
+
 	internal class XPathFunctionSubstringBefore : XPathFunction
 	{
 		public override XPathResultType ReturnType { get { return XPathResultType.String; }}
@@ -365,6 +394,8 @@ namespace System.Xml.XPath
 		}
 		public override string Name { get { return "substring-before"; }}
 	}
+
+
 	internal class XPathFunctionSubstringAfter : XPathFunction
 	{
 		public override XPathResultType ReturnType { get { return XPathResultType.String; }}
@@ -382,12 +413,14 @@ namespace System.Xml.XPath
 		}
 		public override string Name { get { return "substring-after"; }}
 	}
+
+
 	internal class XPathFunctionSubstring : XPathFunction
 	{
 		public override XPathResultType ReturnType { get { return XPathResultType.String; }}
 		public override int Minargs { get { return 2; }}
-		public override int Maxargs { get { return int.MaxValue; }}
-		public override XPathResultType [] ArgTypes { get { return new XPathResultType [] { XPathResultType.String, XPathResultType.String, XPathResultType.String }; }}
+		public override int Maxargs { get { return 3; }}
+		public override XPathResultType [] ArgTypes { get { return new XPathResultType [] { XPathResultType.String, XPathResultType.Number, XPathResultType.Number }; }}
 		[MonoTODO]
 		public override object TypesafeInvoke (XsltContext xsltContext, object[] args, XPathNavigator docContext)
 		{
@@ -423,6 +456,8 @@ namespace System.Xml.XPath
 		}
 		public override string Name { get { return "substring"; }}
 	}
+
+
 	internal class XPathFunctionStringLength : XPathFunction
 	{
 		public override XPathResultType ReturnType { get { return XPathResultType.Number; }}
@@ -440,6 +475,8 @@ namespace System.Xml.XPath
 		}
 		public override string Name { get { return "string-length"; }}
 	}
+
+
 	internal class XPathFunctionNormalizeSpace : XPathFunction
 	{
 		public override XPathResultType ReturnType { get { return XPathResultType.String; }}
@@ -477,6 +514,8 @@ namespace System.Xml.XPath
 		}
 		public override string Name { get { return "normalize-space"; }}
 	}
+
+
 	internal class XPathFunctionTranslate : XPathFunction
 	{
 		public override XPathResultType ReturnType { get { return XPathResultType.String; }}
@@ -490,6 +529,8 @@ namespace System.Xml.XPath
 		}
 		public override string Name { get { return "translate"; }}
 	}
+
+
 	internal class XPathFunctionBoolean : XPathFunction
 	{
 		public override XPathResultType ReturnType { get { return XPathResultType.Boolean; }}
@@ -502,6 +543,8 @@ namespace System.Xml.XPath
 		}
 		public override string Name { get { return "boolean"; }}
 	}
+
+
 	internal class XPathFunctionNot : XPathFunction
 	{
 		public override XPathResultType ReturnType { get { return XPathResultType.Boolean; }}
@@ -514,6 +557,8 @@ namespace System.Xml.XPath
 		}
 		public override string Name { get { return "not"; }}
 	}
+
+
 	internal class XPathFunctionTrue : XPathFunction
 	{
 		public override XPathResultType ReturnType { get { return XPathResultType.Boolean; }}
@@ -526,6 +571,8 @@ namespace System.Xml.XPath
 		}
 		public override string Name { get { return "true"; }}
 	}
+
+
 	internal class XPathFunctionFalse : XPathFunction
 	{
 		public override XPathResultType ReturnType { get { return XPathResultType.Boolean; }}
@@ -538,6 +585,8 @@ namespace System.Xml.XPath
 		}
 		public override string Name { get { return "false"; }}
 	}
+
+
 	internal class XPathFunctionLang : XPathFunction
 	{
 		public override XPathResultType ReturnType { get { return XPathResultType.Boolean; }}
@@ -551,6 +600,8 @@ namespace System.Xml.XPath
 		}
 		public override string Name { get { return "lang"; }}
 	}
+
+
 	internal class XPathFunctionNumber : XPathFunction
 	{
 		public override XPathResultType ReturnType { get { return XPathResultType.Number; }}
@@ -563,6 +614,8 @@ namespace System.Xml.XPath
 		}
 		public override string Name { get { return "number"; }}
 	}
+
+
 	internal class XPathFunctionSum : XPathFunction
 	{
 		public override XPathResultType ReturnType { get { return XPathResultType.Number; }}
@@ -576,6 +629,8 @@ namespace System.Xml.XPath
 		}
 		public override string Name { get { return "sum"; }}
 	}
+
+
 	internal class XPathFunctionFloor : XPathFunction
 	{
 		public override XPathResultType ReturnType { get { return XPathResultType.Number; }}
@@ -588,6 +643,8 @@ namespace System.Xml.XPath
 		}
 		public override string Name { get { return "floor"; }}
 	}
+
+
 	internal class XPathFunctionCeil : XPathFunction
 	{
 		public override XPathResultType ReturnType { get { return XPathResultType.Number; }}
@@ -600,6 +657,8 @@ namespace System.Xml.XPath
 		}
 		public override string Name { get { return "ceil"; }}
 	}
+
+
 	internal class XPathFunctionRound : XPathFunction
 	{
 		public override XPathResultType ReturnType { get { return XPathResultType.Number; }}
