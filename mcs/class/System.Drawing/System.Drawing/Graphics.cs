@@ -43,7 +43,7 @@ namespace System.Drawing
 		[MonoTODO]
 		public GraphicsContainer BeginContainer ()
 		{
-			throw new NotImplementedException ();
+			return implementation_.BeginContainer();
 		}
 
 		[MonoTODO]
@@ -462,13 +462,13 @@ namespace System.Drawing
 		[MonoTODO]
 		public void DrawLines (Pen pen, PointF [] points)
 		{
-			throw new NotImplementedException ();
+			implementation_.DrawLines( pen, points);
 		}
 
 		[MonoTODO]
 		public void DrawLines (Pen pen, Point [] points)
 		{
-			throw new NotImplementedException ();
+			implementation_.DrawLines( pen, points);
 		}
 
 		[MonoTODO]
@@ -587,7 +587,7 @@ namespace System.Drawing
 		[MonoTODO]
 		public void EndContainer (GraphicsContainer container)
 		{
-			throw new NotImplementedException ();
+			implementation_.EndContainer(container);
 		}
 
 		[MonoTODO]
@@ -947,7 +947,7 @@ namespace System.Drawing
 		[MonoTODO]
 		public void FillRectangle (Brush brush, float x, float y, float width, float height)
 		{
-		    FillRectangle( brush, (int)x, (int)y, (int)width, (int)height);
+		    implementation_.FillRectangle( brush, x, y, width, height);
 		}
 
 		[MonoTODO]
@@ -1199,13 +1199,13 @@ namespace System.Drawing
 		[MonoTODO]
 		public void Restore (GraphicsState gstate)
 		{
-			throw new NotImplementedException ();
+			implementation_.Restore(gstate);
 		}
 
 		[MonoTODO]
 		public void RotateTransform (float angle)
 		{
-			throw new NotImplementedException ();
+			implementation_.RotateTransform(angle);
 		}
 
 		[MonoTODO]
@@ -1217,7 +1217,7 @@ namespace System.Drawing
 		[MonoTODO]
 		public GraphicsState Save ()
 		{
-			throw new NotImplementedException ();
+			return implementation_.Save();
 		}
 
 		[MonoTODO]
@@ -1313,7 +1313,7 @@ namespace System.Drawing
 		[MonoTODO]
 		public void TranslateTransform (float dx, float dy)
 		{
-			throw new NotImplementedException ();
+			implementation_.TranslateTransform( dx, dy);
 		}
 
 		[MonoTODO]
