@@ -4,7 +4,7 @@
 // Author:
 //   Miguel de Icaza (miguel@ximian.com)
 //
-// (C) 2001 Ximian, Inc.
+// (C) 2001, 2002 Ximian, Inc.
 //
 using System;
 using System.Reflection;
@@ -169,6 +169,12 @@ namespace Mono.CSharp {
 			if (target is PropertyExpr){
 				PropertyExpr property_assign = (PropertyExpr) target;
 
+				if (source_type != target_type){
+					source = ConvertImplicitRequired (ec, source, target_type, l);
+					if (source == null)
+						return null;
+				}
+
 				//
 				// FIXME: Maybe handle this in the LValueResolve
 				//
@@ -320,8 +326,7 @@ namespace Mono.CSharp {
 
 	
 	//
-	// This is just a class used to flag that the assignment was part of a
-	// compound assignment, hence allowing a set of extra rules to be used.
+	// This class is used for compound assignments.  
 	//
 	class CompoundAssign : Assign {
 		Binary.Operator op;
@@ -348,7 +353,12 @@ namespace Mono.CSharp {
 			original_source = original_source.Resolve (ec);
 			if (original_source == null)
 				return null;
-			
+
+			//
+			// Only now we can decouple the original source/target
+			// into a tree, to guarantee that we do not have side
+			// effects.
+			//
 			source = new Binary (op, target, original_source, l);
 			return base.DoResolve (ec);
 		}

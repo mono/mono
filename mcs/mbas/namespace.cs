@@ -8,9 +8,9 @@
 //
 using System;
 using System.Collections;
+using Mono.Languages;
 
 namespace Mono.CSharp {
-	using Mono.Languages;
 
 	/// <summary>
 	///   Keeps track of the namespaces defined in the C# code.

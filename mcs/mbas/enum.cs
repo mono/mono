@@ -28,6 +28,7 @@ namespace Mono.CSharp {
 		public Type UnderlyingType;
 
 		Hashtable member_to_location;
+		Hashtable member_to_attributes;
 
 		//
 		// This is for members that have been defined
@@ -60,7 +61,8 @@ namespace Mono.CSharp {
 		///   Adds @name to the enumeration space, with @expr
 		///   being its definition.  
 		/// </summary>
-		public AdditionResult AddEnumMember (string name, Expression expr, Location loc)
+		public AdditionResult AddEnumMember (string name, Expression expr, Location loc,
+						     Attributes opt_attrs)
 		{
 			if (defined_names.Contains (name))
 				return AdditionResult.NameExists;
@@ -69,6 +71,11 @@ namespace Mono.CSharp {
 
 			ordered_enums.Add (name);
 			member_to_location.Add (name, loc);
+
+			if (member_to_attributes == null)
+				member_to_attributes = new Hashtable ();
+
+			member_to_attributes.Add (name, opt_attrs);
 			
 			return AdditionResult.Success;
 		}
@@ -343,6 +350,11 @@ namespace Mono.CSharp {
 
 			if (!TypeManager.RegisterFieldValue (fb, default_value))
 				return null;
+
+			//
+			// Now apply attributes
+			//
+			Attribute.ApplyAttributes (ec, fb, fb, (Attributes) member_to_attributes [name], loc); 
 			
 			return default_value;
 		}
@@ -402,6 +414,11 @@ namespace Mono.CSharp {
 					
 					if (!TypeManager.RegisterFieldValue (fb, default_value))
 						return false;
+
+					//
+					// Apply attributes on the enum member
+					//
+					Attribute.ApplyAttributes (ec, fb, fb, (Attributes) member_to_attributes [name], loc);
 				}
 
 				default_value = GetNextDefaultValue (default_value);

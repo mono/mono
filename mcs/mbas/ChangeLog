@@ -1,4 +1,8 @@
 2002-06-15  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
+	* merged assign.cs, attribute.cs, enum.cs and namespace.cs from mcs/mcs, to resync
+	* namespace.cs needed some fixing, because CSharpParser isn´t available
+
+2002-06-15  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
 	* merged delegate.cs, ecore.cs, typemanager.cs and rootcontext.cs from mcs/mcs, to resolve expression.cs blues
 
 2002-06-15  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
