@@ -49,6 +49,36 @@ namespace System.Web.Mobile.Util
 			}
 		}
 
+		public string DataTextField
+		{
+			get
+			{
+				object o = parentViewState["DataTextField"];
+				if(o != null)
+					return (string)o;
+				return String.Empty;
+			}
+			set
+			{
+				parentViewState["DataTextField"] = value;
+			}
+		}
+
+		public string DataValueField
+		{
+			get
+			{
+				object o = parentViewState["DataValueField"];
+				if(o != null)
+					return (string)o;
+				return String.Empty;
+			}
+			set
+			{
+				parentViewState["DataValueField"] = value;
+			}
+		}
+
 		public object DataSource
 		{
 			get
@@ -89,6 +119,52 @@ namespace System.Web.Mobile.Util
 			}
 		}
 
+		public MobileListItemCollection Items
+		{
+			get
+			{
+				if(items == null)
+				{
+					items = new MobileListItemCollection();
+					if(parent.TrackingViewState)
+						((IStateManager)items).TrackViewState();
+				}
+				return items;
+			}
+		}
 
+		public void AddItem(MobileListItem item)
+		{
+			Items.Add(item);
+		}
+		
+		public MobileListItem CreateItem(object dataItem)
+		{
+			MobileListItem retVal;
+			string itemText = null;
+			string itemValue = null;
+			if(bindFromFields)
+			{
+				if(this.dataTextField.Length > 0)
+				{
+					itemText = DataBinder.GetPropertyValue(dataItem,
+					                        dataTextField, "{0}");
+				}
+				if(this.dataValueField.Length > 0)
+				{
+					itemValue = DataBinder.GetPropertyValue(dataItem,
+					                         dataValueField, "{0}");
+				}
+			} else
+			{
+				itemText = dataItem.ToString();
+			}
+			retVal = new MobileListItem(dataItem, itemText, itemValue);
+			if(dataItem != null)
+			{
+				parent.OnItemDataBind(new ListDataBindEventArgs(retVal, dataItem));
+			}
+			return retVal;
+		}
 	}
 }
