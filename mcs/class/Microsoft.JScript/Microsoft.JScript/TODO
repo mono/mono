@@ -22,7 +22,7 @@ a list of things where you can start helping with:
 interest are the classes:
 
 	 - GlobalScope (which is the implementation of the so called
-	   'Activation Object' at the spec.
+	   'Global Object' at the spec.
 	 - ScriptObject
 	 - ScriptFunction
 
