@@ -1210,6 +1210,10 @@ namespace System
 				num = 0;
 			}
 
+			// possible empty value. Regarded as no match.
+			if (pos == 0)
+				return false;
+
 			if (exact && pos < len)
 				return false;
 
