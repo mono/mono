@@ -1,3 +1,7 @@
+2001-09-17  Miguel de Icaza  <miguel@ximian.com>
+
+	* rootcontext.cs: Fix bug: tree.Namespaces might be null.
+
 2001-09-16  Ravi Pratap  <ravi@ximian.com>
 
 	* class.cs (EmitStaticFieldInitializers, EmitFieldInitializers): Make public.

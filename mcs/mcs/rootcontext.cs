@@ -565,13 +565,18 @@ namespace CIR {
 
 		public bool IsNamespace (string name)
 		{
-			Namespace ns = (Namespace) tree.Namespaces [name];
+			Namespace ns;
 
-			if (ns != null)
-				return true;
-			else
-				return false;
-			
+			if (tree.Namespaces){
+				ns = (Namespace) tree.Namespaces [name];
+
+				if (ns != null)
+					return true;
+				else
+					return false;
+			}
+
+			return false;
 		}
 		
 		// <summary>
