@@ -1,3 +1,8 @@
+2004-06-18  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XsdIdentityPath.cs : removed unused code.
+	* XsdIdentityState.cs : Globalization.
+
 2004-06-11  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XsdValidatingReader.cs : Identity check didn't work fine when

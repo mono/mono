@@ -74,8 +74,6 @@ namespace Mono.Xml.Schema
 	{
 		public XsdIdentityStep [] OrderedSteps;
 		public bool Descendants;
-		// For selectors, it should be always null
-		public string AttributeName;
 	}
 
 	internal class XsdIdentityStep

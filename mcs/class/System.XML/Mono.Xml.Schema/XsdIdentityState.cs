@@ -13,6 +13,7 @@
 using System;
 using System.Collections;
 using System.Collections.Specialized;
+using System.Globalization;
 using System.Xml;
 using System.Xml.Schema;
 
@@ -162,7 +163,7 @@ namespace Mono.Xml.Schema
 			if (this.FieldFound)
 				throw new XmlSchemaException ("The key value was was already found."
 					+ (this.FieldHasLineInfo ?
-						String.Format (" At line {0}, position {1}.", FieldLineNumber, FieldLinePosition) :
+						String.Format (CultureInfo.InvariantCulture, " At line {0}, position {1}.", FieldLineNumber, FieldLinePosition) :
 						""),
 					reader, reader.BaseURI, entry.KeySequence.SourceSchemaIdentity, null);
 			XmlSchemaDatatype dt = reader.SchemaType as XmlSchemaDatatype;
