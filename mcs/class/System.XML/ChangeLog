@@ -1,3 +1,7 @@
+2002-03-06  Jason Diamond  <jason@injektilo.org>
+
+	* System.XML.build: Disable warning CS0679: Other languages may permit the internal virtual member 'foo' to be overridden.
+
 2002-02-23  Nick Drochak  <ndrochak@gol.com>
 
 	* System.XML.build: Change dll name to System.Xml.dll from 

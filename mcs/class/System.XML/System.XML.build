@@ -8,7 +8,10 @@
 	<target name="build">
 		<mkdir dir="../lib"/>
 		<csc target="library" output="../lib/System.Xml.dll" debug="${debug}">
+			<!-- 'foo' is defined in multiple places; using definition from 'bar' -->
 			<arg value="/nowarn:1595"/>
+			<!-- Other languages may permit the internal virtual member 'foo' to be overridden -->
+			<arg value="/nowarn:0679"/>
 			<sources>
 				<includes name="**/*.cs"/> 
 				<excludes name="Test/**"/>
