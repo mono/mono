@@ -1,3 +1,7 @@
+2003-11-26  Zoltan Varga  <vargaz@freemail.hu>
+
+	* tramp-x86.c (x86_magic_trampoline): Avoid patching in the addresses
+	of icall wrappers into InvokeInDomain, since these are now per-domain.
 
 Wed Nov 26 20:15:04 CET 2003 Paolo Molaro <lupus@ximian.com>
 
