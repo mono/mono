@@ -1,5 +1,10 @@
 2004-08-17  Sebastien Pouliot  <sebastien@ximian.com>
 
+	* corlib_test.dll.sources: Added StrongNameIdentityPermissionTest.cs
+	to unit tests.
+
+2004-08-17  Sebastien Pouliot  <sebastien@ximian.com>
+
 	* corlib.dll.sources: Added System.Security.Permissions/
 	DataProtectionPermission.cs, DataProtectionPermissionAttribute.cs,
 	DataProtectionPermissionFlags.cs, HostProtectionAttribute.cs,
