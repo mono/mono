@@ -33,9 +33,12 @@
 // Copyright (C) Novell Inc., 2004
 //
 //
-// $Revision: 1.5 $
+// $Revision: 1.6 $
 // $Modtime: $
 // $Log: TrackBar.cs,v $
+// Revision 1.6  2004/08/10 15:47:11  jackson
+// Allow control to handle buffering
+//
 // Revision 1.5  2004/08/07 23:32:26  jordi
 // throw exceptions of invalid enums values
 //
@@ -73,8 +76,6 @@ namespace System.Windows.Forms
 		private int largeChange;
 		private Orientation orientation;
 		private TickStyle tickStyle;
-		private Bitmap bmp_mem = null;
-		private Graphics dc_mem = null;
 		private Rectangle paint_area = new Rectangle ();
 		private Rectangle thumb_pos = new Rectangle ();	 /* Current position and size of the thumb */
 		private Rectangle thumb_area = new Rectangle (); /* Area where the thumb can scroll */
@@ -408,11 +409,8 @@ namespace System.Windows.Forms
     				return;
 
 			UpdateArea ();
-
-			/* Area for double buffering */
-			bmp_mem = new Bitmap (Width, Height, PixelFormat.Format32bppArgb);
-			dc_mem = Graphics.FromImage (bmp_mem);
-    		}
+			CreateBuffers (Width, Height);
+		}
 
 
 		protected override void OnHandleCreated (EventArgs e)
@@ -421,13 +419,12 @@ namespace System.Windows.Forms
 			//Console.WriteLine ("OnHandleCreated");
 			UpdateArea ();
 
-			bmp_mem = new Bitmap (Width, Height, PixelFormat.Format32bppArgb);
-			dc_mem = Graphics.FromImage (bmp_mem);
+			CreateBuffers (Width, Height);
 
 			UpdatePos (Value, true);
 			UpdatePixelPerPos ();
 
-			draw();
+			Draw();
 			UpdatePos (Value, true);
 
 			if (AutoSize)
@@ -444,11 +441,11 @@ namespace System.Windows.Forms
     			// None
     		}
 
-		private void draw ()
+		private void Draw ()
 		{
 			int ticks = (Maximum - Minimum)	/ tickFrequency;
 			
-			ThemeEngine.Current.DrawTrackBar (dc_mem, paint_area, ref thumb_pos, ref thumb_area,
+			ThemeEngine.Current.DrawTrackBar (DeviceContext, paint_area, ref thumb_pos, ref thumb_area,
 				tickStyle, ticks, Orientation, Focused);
 		}
 
@@ -461,8 +458,8 @@ namespace System.Windows.Forms
 
 			/* Copies memory drawing buffer to screen*/
 			UpdateArea ();
-			draw();
-			pevent.Graphics.DrawImage (bmp_mem, 0, 0);
+			Draw();
+			pevent.Graphics.DrawImage (ImageBuffer, 0, 0);
 		}
 
 		protected override void OnMouseDown (MouseEventArgs e)
