@@ -1435,7 +1435,6 @@ namespace MonoTests.Microsoft.VisualBasic
 			}
 		}
 
-/* TODO: reenable when Mono supports compilation of these lines
 		[Test]
 		public void Split()
 		{
@@ -1516,7 +1515,6 @@ namespace MonoTests.Microsoft.VisualBasic
 			NUnit.Framework.Assertion.AssertEquals ("JW*StrComp#06b", -1, Strings.StrComp(Strings.ChrW(88) + TextStringOfMultipleLanguages,TextStringOfMultipleLanguages, CompareMethod.Text));
 			NUnit.Framework.Assertion.AssertEquals ("JW*StrComp#07", 1, Strings.StrComp(TextStringOfMultipleLanguages + " ",TextStringOfMultipleLanguages, CompareMethod.Text));
 		}
-*/
 
 		// TODO: Chinese testings
 		[Test]

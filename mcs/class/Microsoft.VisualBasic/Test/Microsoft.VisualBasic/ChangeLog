@@ -1,3 +1,7 @@
+2004-08-04  Jochen Wezel <jwezel@compumaster.de>
+	* StringsTest.cs: reenabled Split and StrComp tests which had been 
+		disabled because of compilation trouble in the past
+	
 2004-06-17  Jambunathan K <kjambunathan@novell.com>
 	* FileSystemTest.cs: A few more test cases from Rob Tillie 
 	<Rob.Tillie@Student.tUL.EDU>
