@@ -1,3 +1,25 @@
+2001-08-28  Bob Smith  <bob@thestuff.net>
+        * Added TODO.
+        * BuildMethod.cs: Initial implementation.
+        * BuildTemplateMethod.cs: Initial implementation.
+        * HtmlTextWriterAttribute.cs: Initial implementation.
+        * HtmlTextWriterStyle.cs: Initial implementation.
+        * HtmlTextWriterTag.cs: Initial implementation.
+        * IAttributeAccessor.cs: Initial implementation.
+        * IDataBindingsAccessor.cs: Initial implementation.
+        * ImageClickEventHandler.cs: Initial implementation.
+        * INamingContainer.cs: Initial implementation.
+        * IParserAccessor.cs: Initial implementation.
+        * IPostBackDataHandler.cs: Initial implementation.
+        * IPostBackEventHandler.cs: Initial implementation.
+        * IStateManager.cs: Initial implementation.
+        * ITagNameToTypeMapper.cs: Initial implementation.
+        * ITemplate.cs: Initial implementation.
+        * IValidator.cs: Initial implementation.
+        * OutputCacheLocation.cs: Initial implementation.
+        * PersistanceMode.cs: Initial implementation.
+        * StateItem.cs: Initial implementation.
+
 2001-08-27  Bob Smith  <bob@thestuff.net>
 
         * Control.cs: Bug fixes and implementations.
@@ -22,4 +44,3 @@
 2001-08-17  Bob Smith  <bob@thestuff.net>
 
         * Control.cs: Partial implementation.
-
