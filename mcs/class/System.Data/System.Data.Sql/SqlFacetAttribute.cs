@@ -48,7 +48,7 @@ namespace System.Data.Sql {
 
 		#region Constructors
 
-		public SqlFunctionAttribute ()
+		public SqlFacetAttribute ()
 		{
 			isFixedLength = false;
 			isNullable = false;
