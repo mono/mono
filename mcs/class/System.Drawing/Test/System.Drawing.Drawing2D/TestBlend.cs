@@ -4,8 +4,6 @@
 // Author:
 //   Ravindra (rkumar@novell.com)
 //
-
-//
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -28,7 +26,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-
 using NUnit.Framework;
 using System;
 using System.Drawing;
@@ -39,7 +36,6 @@ namespace MonoTests.System.Drawing.Drawing2D
 	[TestFixture]
 	public class BlendTest : Assertion
 	{
-
 		[TearDown]
 		public void TearDown () { }
 
