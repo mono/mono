@@ -1,4 +1,8 @@
 2004-06-04 Anirban Bhattacharjee <banirban@novell.com>
+	* class.cs: - NotOverridable modifier support added to Property
+		    - Few overriding related checks put on Property
+ 
+2004-06-04 Anirban Bhattacharjee <banirban@novell.com>
 	* decl.cs: Check for duplicate member name within same container
 
 2004-06-04 Anirban Bhattacharjee <banirban@novell.com>

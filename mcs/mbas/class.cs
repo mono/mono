@@ -3845,6 +3845,21 @@ namespace Mono.MonoBASIC {
 							      " no suitable properties found to override");
 					return false;
 				}
+
+				if ((ModFlags & ( Modifiers.NEW | Modifiers.SHADOWS | Modifiers.OVERRIDE )) == 0) {
+						if ((ModFlags & Modifiers.NONVIRTUAL) != 0) {
+							Report.Error (31088, Location,
+								parent.MakeName (Name) + " : Cannot " +
+								"be declared NotOverridable since this 'Property' does " +
+								"not 'Overrides' any other 'Property'");
+						}
+					}
+					// if a member of module is not inherited from Object class
+					// can not be declared protected
+					if ((parent is Module) && ((ModFlags & Modifiers.PROTECTED) != 0))
+						Report.Error (30503, Location,
+								"'Property' inside a 'Module' can not be declared as " +
+								"'Protected' or 'Protected Friend'");
 			}
 			return true;
 		}
@@ -3882,6 +3897,7 @@ namespace Mono.MonoBASIC {
 		    Modifiers.UNSAFE |
 			Modifiers.EXTERN |
 			Modifiers.VIRTUAL |
+			Modifiers.NONVIRTUAL |
 			Modifiers.DEFAULT |
 			Modifiers.READONLY |
 			Modifiers.WRITEONLY |
@@ -3918,6 +3934,11 @@ namespace Mono.MonoBASIC {
 			Type [] g_parameters=null, s_parameters=null;
 			Parameter [] g_parms, s_parms;
 			InternalParameters g_ip=null, s_ip=null;
+
+			if ((parent is Struct) && ((ModFlags & Modifiers.PROTECTED) != 0))
+				Report.Error (30435, Location,
+					"'Property' inside a 'Structure' can not be declared as " +
+					"'Protected' or 'Protected Friend'");
 
 			if (!DoDefine (parent))
 				return false;
