@@ -31,12 +31,9 @@
 //
 
 using System;
-using System.CodeDom;
 using System.Collections;
-using System.Collections.Specialized;
 using System.Security.Policy;
 using System.Xml;
-using System.Xml.Schema;
 using System.Xml.XPath;
 using System.Xml.Xsl;
 using System.IO;
