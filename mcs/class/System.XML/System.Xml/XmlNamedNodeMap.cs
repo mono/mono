@@ -93,7 +93,7 @@ namespace System.Xml
 			foreach (XmlNode x in nodeList)
 				if (x.Name == node.Name) {
 					nodeList.Remove (x);
-					nodeList.Add (x);
+					nodeList.Add (node);
 					return x;
 				}
 			

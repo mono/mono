@@ -1,3 +1,7 @@
+2002-05-08  Mike Kestner  <mkestner@speakeasy.net>
+
+	* XmlNamedNodeMap.cs (SetNamedItem): Fixed a copy/paste bug.
+
 2002-04-28  Duncan Mak  <duncan@ximian.com>
 
 	* XmlSignificantWhitespace.cs (Value):
