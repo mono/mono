@@ -1,0 +1,5 @@
+2001-08-22  Bob Smith  <bob@thestuff.net>
+
+         * HtmlContainerControl.cs: Initial implementation.
+         * HtmlControl.cs: Initial implementation.
+         * HtmlGenericControl.cs: Initial implementation.

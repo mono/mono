@@ -1,8 +1,12 @@
+2001-08-22  Bob Smith  <bob@thestuff.net>
+
+        * Control.cs: Even more implementation (Events). What a beast.
+
 2001-08-20  Bob Smith  <bob@thestuff.net>
 
         * Control.cs: More implementation. Not done yet. Shutter.
 
 2001-08-17  Bob Smith  <bob@thestuff.net>
 
-         * Control.cs: Partial implementation.
+        * Control.cs: Partial implementation.
 

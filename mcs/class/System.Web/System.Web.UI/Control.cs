@@ -28,6 +28,12 @@ namespace System.Web.UI
 {
         public class Control : IComponent, IDisposable, IParserAccessor, IDataBindingsAccessor
         {
+                public event EventHandler DataBinding;
+                public event EventHandler Disposed;
+                public event EventHandler Init;
+                public event EventHandler Load;
+                public event EventHandler PreRender;
+                public event EventHandler Unload;
                 private string _clientId; //default to "ctrl#" where # is a static count of ctrls per page.
                 private string _userId = null;
                 private ControlCollection _controls;
@@ -42,13 +48,16 @@ namespace System.Web.UI
                 private StateBag _viewState; //TODO: help me.
                 private bool _trackViewState = false; //TODO: I think this is right. Verify. Also modify other methods to use this.
                 private bool _viewStateIgnoreCase = true;
-                private EventHandlerList _events;
                 public Control()
                 {
                         _namingContainer = _parent;
                         _viewState = new StateBag(_viewStateIgnoreCase);
                         _events = new EventHandlerList();
                         _controls = this.CreateControlCollection(); //FIXME: this goes here?
+                }
+                public ~Control()
+                {
+                        Dispose();
                 }
                 public virtual string ClientID
                 {
@@ -187,7 +196,14 @@ namespace System.Web.UI
                 {
                         get
                         {
-                                return _events;
+                                EventHandlerList e = new EventHandlerList();
+                                e.AddHandler(this, DataBinding);
+                                e.AddHandler(this, Disposed);
+                                e.AddHandler(this, Init);
+                                e.AddHandler(this, Load);
+                                e.AddHandler(this, PreRender);
+                                e.AddHandler(this, Unload);
+                                return e;
                         }
                 }
                 protected bool HasChildViewState
@@ -266,10 +282,22 @@ namespace System.Web.UI
                 {
                         return false; //FIXME: It might throw "ItemCommand". not sure.
                 }
-                protected virtual void OnDataBinding(EventArgs e) {} //FIXME: I think this should be empty.
-                protected virtual void OnInit(EventArgs e) {} //FIXME: This one too.controls 
-                protected virtual void OnPreRender(EventArgs e) {} //FIXME: Me to.
-                protected virtual void OnUnload(EventArgs e) {} //TODO: Ok, I'm missing something. Read up on the event system.
+                protected virtual void OnDataBinding(EventArgs e)
+                {
+                        if (DataBinding != null) DataBinding(this, e);
+                }
+                protected virtual void OnInit(EventArgs e)
+                {
+                        if (Init != null) Init(this, e);
+                }
+                protected virtual void OnPreRender(EventArgs e)
+                {
+                        if (PreRender != null) PreRender(this, e);
+                }
+                protected virtual void OnUnload(EventArgs e)
+                {
+                        if (Unload != null) Unload(this, e);
+                }
                 protected void RaiseBubbleEvent(object source, EventArgs args)
                 {
                         _parent.OnBubbleEvent(source, args); //FIXME: I think this is right. Check though.
@@ -280,10 +308,25 @@ namespace System.Web.UI
                         //if render method delegate is set, call it here. otherwise,
                         //render any child controls. just a for loop?
                 }
+                protected virtual object SaveViewState()
+                {
+                        return ViewState;
+                }
                 protected virtual void TrackViewState()
                 {
                         _trackViewState = true;
                 }
+                public virtual void DataBind()
+                {
+//TODO: I think this recursively calls this method on its children.
+                }
+                public virtual void Dispose()
+                {
+                        //TODO: nuke stuff.
+                        if (Disposed != null) Disposed(this, e);
+                }
+
+
 
 
         }

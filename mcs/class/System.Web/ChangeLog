@@ -1,3 +1,8 @@
+2001-08-22  Bob Smith <bob@thestuff.net>
+
+        * Added directory: System.Web.UI.HtmlControls
+        * Added directory: Test
+
 2001-08-17  Bob Smith <bob@thestuff.net>
 
         * Added directory: System.Web.UI
