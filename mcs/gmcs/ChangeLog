@@ -1,4 +1,11 @@
-2004-11-10  Martin Baulig  <martin@localhost>
+2004-11-10  Martin Baulig  <martin@ximian.com>
+
+	* iterators.cs
+	(Iterators): Added `current_type' and `this_type' fields.
+	(Iterators.DefineIterator): Create a new EmitContext and store it
+	in `ec'; compute `this_type'.
+
+2004-11-10  Martin Baulig  <martin@ximian.com>
 
 	* typemanager.cs
 	(TypeManager.IsPrivateAccessible): New public method.

@@ -134,6 +134,8 @@ namespace Mono.CSharp {
 		// Context from the original method
 		//
 		TypeContainer container;
+		TypeExpr current_type;
+		Type this_type;
 		Type return_type;
 		Type [] param_types;
 		InternalParameters parameters;
@@ -374,6 +376,8 @@ namespace Mono.CSharp {
 
 		public bool DefineIterator ()
 		{
+			ec = new EmitContext (this, Mono.CSharp.Location.Null, null, null, ModFlags);
+
 			if (!CheckType (return_type)) {
 				Report.Error (
 					1624, Location,
@@ -392,6 +396,11 @@ namespace Mono.CSharp {
 					return false;
 				}
 			}
+
+			if (container.CurrentType != null)
+				this_type = container.CurrentType.ResolveType (ec);
+			else
+				this_type = container.TypeBuilder;
 
 			generic_args = new TypeArguments (Location);
 			generic_args.Add (new TypeExpression (iterator_type, Location));
@@ -432,6 +441,11 @@ namespace Mono.CSharp {
 		//
 		protected override bool DefineNestedTypes ()
 		{
+			if (CurrentType != null)
+				current_type = CurrentType;
+			else
+				current_type = new TypeExpression (TypeBuilder, Location);
+
 			Define_Fields ();
 			Define_Constructor ();
 			Define_Current (false);
@@ -464,7 +478,7 @@ namespace Mono.CSharp {
 
 			ArrayList args = new ArrayList ();
 			if (!is_static) {
-				Type t = container.TypeBuilder;
+				Type t = this_type;
 				args.Add (new Argument (
 					new ThisParameterReference (t, 0, Location)));
 			}
@@ -477,8 +491,7 @@ namespace Mono.CSharp {
 					new SimpleParameterReference (t, first + i, Location)));
 			}
 
-			Expression new_expr = new New (
-				new TypeExpression (TypeBuilder, Location), args, Location);
+			Expression new_expr = new New (current_type, args, Location);
 
 			block.AddStatement (new NoCheckReturn (new_expr, Location));
 		}
@@ -499,8 +512,7 @@ namespace Mono.CSharp {
 
 			if (!is_static) {
 				this_field = new Field (
-					this,
-					new TypeExpression (container.TypeBuilder, Location),
+					this, new TypeExpression (this_type, loc),
 					Modifiers.PRIVATE, "this", null, null, loc);
 				AddField (this_field);
 			}
@@ -526,7 +538,7 @@ namespace Mono.CSharp {
 
 			if (!is_static)
 				list.Add (new Parameter (
-					new TypeExpression (container.TypeBuilder, Location),
+					new TypeExpression (this_type, Location),
 					"this", Parameter.Modifier.NONE, null));
 			list.Add (new Parameter (
 				TypeManager.system_boolean_expr, "initialized",
@@ -553,7 +565,7 @@ namespace Mono.CSharp {
 			Block block = ctor.Block = new Block (null);
 
 			if (!is_static) {
-				Type t = container.TypeBuilder;
+				Type t = this_type;
 
 				Assign assign = new Assign (
 					new FieldExpression (this_field),
@@ -707,8 +719,7 @@ namespace Mono.CSharp {
 				args.Add (new Argument (
 						  new FieldExpression (parameter_fields [i])));
 
-			Expression new_expr = new New (
-				new TypeExpression (TypeBuilder, Location), args, Location);
+			Expression new_expr = new New (current_type, args, Location);
 			get_enumerator.Block.AddStatement (new Return (new_expr, Location));
 		}
 
