@@ -1,3 +1,10 @@
+
+Thu Jan 13 18:16:35 CET 2005 Paolo Molaro <lupus@ximian.com>
+
+	* object-internal.h, threads.c: implement stacksize and 
+	parameterized thread start functionality (requires
+	matching corlib). Marked broken code for later removal.
+
 2005-01-12  Martin Baulig  <martin@ximian.com>
 
 	* class-internals.h (MonoGenericClass): Moved the `initialized'
