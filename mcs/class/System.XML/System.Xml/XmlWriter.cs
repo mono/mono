@@ -159,10 +159,61 @@ namespace System.Xml
 
 		public abstract void WriteNmToken (string name);
 
-		[MonoTODO]
+		[MonoTODO("needs to test")]
 		public virtual void WriteNode (XmlReader reader, bool defattr)
 		{
-			throw new NotImplementedException ();
+			if (reader == null)
+				throw new ArgumentException ();
+
+			if (reader.ReadState == ReadState.Initial) {
+				while (reader.Read ())
+					WriteNode (reader, defattr);
+			}
+			else {
+				switch (reader.NodeType) {
+				case XmlNodeType.Element:
+					WriteStartElement (reader.Prefix, reader.LocalName, reader.NamespaceURI);
+					WriteAttributes (reader, defattr);
+					if (reader.IsEmptyElement)
+						WriteEndElement ();
+					break;
+				case XmlNodeType.Attribute:
+					break;
+				case XmlNodeType.Text:
+					WriteString (reader.Value);
+					break;
+				case XmlNodeType.CDATA:
+					WriteCData (reader.Value);
+					break;
+				case XmlNodeType.EntityReference:
+					WriteEntityRef (reader.Name);
+					break;
+				case XmlNodeType.ProcessingInstruction:
+					WriteProcessingInstruction (reader.Name, reader.Value);
+					break;
+				case XmlNodeType.Comment:
+					WriteComment (reader.Value);
+					break;
+				case XmlNodeType.DocumentType:
+					WriteDocType (reader.Name,
+						reader ["PUBLIC"], reader ["SYSTEM"], reader.Value);
+					break;
+				case XmlNodeType.SignificantWhitespace:
+					goto case XmlNodeType.Whitespace;
+				case XmlNodeType.Whitespace:
+					WriteWhitespace (reader.Value);
+					break;
+				case XmlNodeType.EndElement:
+					break;
+				case XmlNodeType.EndEntity:
+					break;
+				case XmlNodeType.XmlDeclaration:
+					WriteStartDocument (reader.GetAttribute  ("standalone").ToLower () == "yes");
+					break;
+				default:
+					throw new NotImplementedException ();
+				}
+			}
 		}
 
 		public abstract void WriteProcessingInstruction (string name, string text);
@@ -186,12 +237,12 @@ namespace System.Xml
 
 		public void WriteStartElement (string localName)
 		{
-			WriteStartElement (String.Empty, localName, String.Empty);
+			WriteStartElement (null, localName, null);
 		}
 
 		public void WriteStartElement (string localName, string ns)
 		{
-			WriteStartElement (String.Empty, localName, ns);
+			WriteStartElement (null, localName, ns);
 		}
 
 		public abstract void WriteStartElement (string prefix, string localName, string ns);

@@ -1,3 +1,8 @@
+2003-01-18  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* XmlWriter.cs: modified WriteStartElement (see test for detail).
+	Added WriteNode.
+
 2003-01-13  Ville Palo <vi64pa@koti.soon.fi>
 
 	* XmlDocument.cs: Added CheckName () method to check names validity.
