@@ -1,5 +1,10 @@
-// Author: Dwivedi, Ajay kumar
-//            Adwiv@Yahoo.com
+//
+// System.Xml.Schema.XmlSchemaComplexContentExtension.cs
+//
+// Author:
+//	Dwivedi, Ajay kumar  Adwiv@Yahoo.com
+//	Atsushi Enomoto  ginga@kit.hi-ho.ne.jp
+//
 using System;
 using System.Xml;
 using System.Xml.Serialization;
@@ -57,15 +62,26 @@ namespace System.Xml.Schema
 		/// <remarks>
 		/// </remarks>
 		[MonoTODO]
-		internal int Compile(ValidationEventHandler h, XmlSchema schema)
+		internal override int Compile(ValidationEventHandler h, XmlSchema schema)
 		{
 			// If this is already compiled this time, simply skip.
 			if (this.IsComplied (schema.CompilationId))
 				return 0;
 
+			if (this.isRedefinedComponent) {
+				if (Annotation != null)
+					Annotation.isRedefinedComponent = true;
+				if (AnyAttribute != null)
+					AnyAttribute.isRedefinedComponent  = true;
+				foreach (XmlSchemaObject obj in Attributes)
+					obj.isRedefinedComponent  = true;
+				if (Particle != null)
+					Particle.isRedefinedComponent  = true;
+			}
+
 			if(BaseTypeName == null || BaseTypeName.IsEmpty)
 			{
-				error(h, "base must be present and a QName");
+				error(h, "base must be present, as a QName");
 			}
 			else if(!XmlSchemaUtil.CheckQName(BaseTypeName))
 				error(h,"BaseTypeName is not a valid XmlQualifiedName");
@@ -109,6 +125,8 @@ namespace System.Xml.Schema
 				{
 					errorCount += ((XmlSchemaSequence)Particle).Compile(h, schema);
 				}
+				else
+					error (h, "Particle of a restriction is limited only to group, sequence, choice and all.");
 			}
 			
 			XmlSchemaUtil.CompileID(Id,this, schema.IDCollection,h);
@@ -118,8 +136,19 @@ namespace System.Xml.Schema
 		}
 		
 		[MonoTODO]
-		internal int Validate(ValidationEventHandler h)
+		internal override int Validate(ValidationEventHandler h, XmlSchema schema)
 		{
+			if (IsValidated (schema.ValidationId))
+				return errorCount;
+
+			if (AnyAttribute != null)
+				errorCount += AnyAttribute.Validate (h, schema);
+			foreach (XmlSchemaObject attrObj in Attributes)
+				errorCount += attrObj.Validate (h, schema);
+			if (Particle != null)
+				errorCount += Particle.Validate (h, schema);
+
+			ValidationId = schema.ValidationId;
 			return errorCount;
 		}
 		//<extension

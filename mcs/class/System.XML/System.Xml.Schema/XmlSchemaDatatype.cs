@@ -64,7 +64,6 @@ namespace System.Xml.Schema
 			}
 		}
 
-		//TODO: This should return all appropriate inbuilt type
 		internal static XmlSchemaDatatype FromName (XmlQualifiedName qname)
 		{
 			if (qname.Namespace != XmlSchema.Namespace)
@@ -72,10 +71,11 @@ namespace System.Xml.Schema
 			return FromName (qname.Name);
 		}
 
-		//TODO: This should return all appropriate inbuilt type
 		internal static XmlSchemaDatatype FromName (string localName)
 		{
 			switch (localName) {
+//			case "anyType":
+//				return datatypeAnySimpleType;
 			case "string":
 				return datatypeString;
 			case "normalizedString":
@@ -142,17 +142,36 @@ namespace System.Xml.Schema
 				return datatypeBoolean;
 			case "anyURI":
 				return datatypeAnyURI;
+			case "duration":
+				return datatypeDuration;
 			case "dateTime":
 				return datatypeDateTime;
 			case "date":
 				return datatypeDate;
 			case "time":
 				return datatypeTime;
+			case "hexBinary":
+				return datatypeHexBinary;
+			case "QName":
+				return datatypeQName;
+			case "gYearMonth":
+				return datatypeGYearMonth;
+			case "gMonthDay":
+				return datatypeGMonthDay;
+			case "gYear":
+				return datatypeGYear;
+			case "gMonth":
+				return datatypeGMonth;
+			case "gDay":
+				return datatypeGDay;
 			default:
-				throw new NotImplementedException ("Unknown type: " + localName);
+//				throw new NotImplementedException ("Unknown type: " + localName);
+				// Maybe invalid name was specified. In such cases, let processors handle them.
+				return null;
 			}
 		}
 
+//		private static XsdAnySimpleType datatypeAnySimpleType = new XsdAnySimpleType ();
 		private static XsdString datatypeString = new XsdString ();
 		private static XsdNormalizedString datatypeNormalizedString = new XsdNormalizedString ();
 		private static XsdToken datatypeToken = new XsdToken ();
@@ -186,8 +205,16 @@ namespace System.Xml.Schema
 		private static XsdBase64Binary datatypeBase64Binary = new XsdBase64Binary ();
 		private static XsdBoolean datatypeBoolean = new XsdBoolean ();
 		private static XsdAnyURI datatypeAnyURI = new XsdAnyURI ();
+		private static XsdDuration datatypeDuration = new XsdDuration ();
 		private static XsdDateTime datatypeDateTime = new XsdDateTime ();
 		private static XsdDate datatypeDate = new XsdDate ();
 		private static XsdTime datatypeTime = new XsdTime ();
+		private static XsdHexBinary datatypeHexBinary = new XsdHexBinary ();
+		private static XsdQName datatypeQName = new XsdQName ();
+		private static XsdGYearMonth datatypeGYearMonth = new XsdGYearMonth ();
+		private static XsdGMonthDay datatypeGMonthDay = new XsdGMonthDay ();
+		private static XsdGYear datatypeGYear = new XsdGYear ();
+		private static XsdGMonth datatypeGMonth = new XsdGMonth ();
+		private static XsdGDay datatypeGDay = new XsdGDay ();
 	}
 }

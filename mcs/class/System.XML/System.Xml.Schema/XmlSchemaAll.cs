@@ -1,6 +1,12 @@
-// Author: Dwivedi, Ajay kumar
-//            Adwiv@Yahoo.com
+//
+// System.Xml.Schema.XmlSchemaAll.cs
+//
+// Author:
+//	Dwivedi, Ajay kumar  Adwiv@Yahoo.com
+//	Atsushi Enomoto  ginga@kit.hi-ho.ne.jp
+//
 using System;
+using System.Collections;
 using System.Xml;
 using System.Xml.Serialization;
 
@@ -12,7 +18,9 @@ namespace System.Xml.Schema
 	public class XmlSchemaAll : XmlSchemaGroupBase
 	{
 		private XmlSchemaObjectCollection items;
+		private XmlSchemaObjectCollection compiledItems;
 		private static string xmlname = "all";
+		private bool emptiable;
 
 		public XmlSchemaAll()
 		{
@@ -24,13 +32,21 @@ namespace System.Xml.Schema
 		{
 			get{ return items; }
 		}
+		internal XmlSchemaObjectCollection CompiledItems 
+		{
+			get{ return compiledItems; }
+		}
+		internal bool Emptiable
+		{
+			get { return emptiable; }
+		}
 
 		/// <remarks>
 		/// 1. MaxOccurs must be one. (default is also one)
 		/// 2. MinOccurs must be zero or one.
 		/// </remarks>
 		[MonoTODO]
-		internal int Compile(ValidationEventHandler h, XmlSchema schema)
+		internal override int Compile(ValidationEventHandler h, XmlSchema schema)
 		{
 			// If this is already compiled this time, simply skip.
 			if (this.IsComplied (schema.CompilationId))
@@ -43,12 +59,13 @@ namespace System.Xml.Schema
 				error(h,"minOccurs must be 0 or 1");
 
 			XmlSchemaUtil.CompileID(Id, this, schema.IDCollection, h);
+			CompileOccurence (h, schema);
 
 			foreach(XmlSchemaObject obj in Items)
 			{
-				if(obj is XmlSchemaElement)
+				XmlSchemaElement elem = obj as XmlSchemaElement;
+				if(elem != null)
 				{
-					XmlSchemaElement elem = (XmlSchemaElement)obj;
 					if(elem.MaxOccurs != Decimal.One && elem.MaxOccurs != Decimal.Zero)
 					{
 						elem.error(h,"The {max occurs} of all the elements of 'all' must be 0 or 1. ");
@@ -66,10 +83,90 @@ namespace System.Xml.Schema
 		}
 
 		[MonoTODO]
-		internal int Validate(ValidationEventHandler h)
+		internal override int Validate(ValidationEventHandler h, XmlSchema schema)
 		{
+			if (IsValidated (schema.CompilationId))
+				return errorCount;
+			this.CompileOccurence (h, schema);
+			// 3.8.6 All Group Limited :: 1.
+			// Beware that this section was corrected: E1-26 of http://www.w3.org/2001/05/xmlschema-errata#Errata1
+			if (!this.parentIsGroupDefinition && ValidatedMaxOccurs != 1)
+				error (h, "-all- group is limited to be content of a model group, or that of a complex type with maxOccurs to be 1.");
+
+			emptiable = true;
+			compiledItems = new XmlSchemaObjectCollection ();
+			foreach (XmlSchemaElement obj in Items) {
+				errorCount += obj.Validate (h, schema);
+				if (obj.ValidatedMaxOccurs != 0 &&
+					obj.ValidatedMaxOccurs != 1)
+					error (h, "MaxOccurs of a particle inside -all- compositor must be either 0 or 1.");
+				compiledItems.Add (obj);
+				if (obj.MinOccurs > 0)
+					emptiable = false;
+			}
+
+			ValidationId = schema.ValidationId;
 			return errorCount;
 		}
+
+		internal override void ValidateDerivationByRestriction (XmlSchemaParticle baseParticle,
+			ValidationEventHandler h, XmlSchema schema)
+		{
+			XmlSchemaAny any = baseParticle as XmlSchemaAny;
+			XmlSchemaAll derivedAll = baseParticle as XmlSchemaAll;
+			if (any != null) {
+				// NSRecurseCheckCardinality
+				this.ValidateNSRecurseCheckCardinality (any, h, schema);
+				return;
+			} else if (derivedAll != null) {
+				// Recurse
+				ValidateOccurenceRangeOK (derivedAll, h, schema);
+
+				// FIXME: What is the correct "order preserving" mapping?
+				int baseIndex = 0;
+				for (int i = 0; i < this.Items.Count; i++) {
+					XmlSchemaParticle pd = Items [i] as XmlSchemaParticle;
+					if (derivedAll.Items.Count > baseIndex) {
+						XmlSchemaParticle pb = derivedAll.Items [baseIndex] as XmlSchemaParticle;
+						pd.ActualParticle.ValidateDerivationByRestriction (pb.ActualParticle, h, schema);
+						baseIndex++;
+					}
+					else
+						error (h, "Invalid choice derivation by extension was found.");
+				}
+
+				return;
+			}
+			else
+				error (h, "Invalid -all- particle derivation was found.");
+		}
+
+		internal override decimal GetMinEffectiveTotalRange ()
+		{
+			return GetMinEffectiveTotalRangeAllAndSequence ();
+		}
+
+		internal override void CheckRecursion (int depth, ValidationEventHandler h, XmlSchema schema)
+		{
+			foreach (XmlSchemaElement el in this.Items)
+				el.CheckRecursion (depth, h, schema);
+		}
+
+		internal override void ValidateUniqueParticleAttribution (XmlSchemaObjectTable qnames, ArrayList nsNames,
+			ValidationEventHandler h, XmlSchema schema)
+		{
+			foreach (XmlSchemaElement el in this.Items)
+				el.ValidateUniqueParticleAttribution (qnames, nsNames, h, schema);
+		}
+
+		internal override void ValidateUniqueTypeAttribution (XmlSchemaObjectTable labels,
+			ValidationEventHandler h, XmlSchema schema)
+		{
+			foreach (XmlSchemaElement el in this.Items)
+				el.ValidateUniqueTypeAttribution (labels, h, schema);
+		}
+
+
 		//<all
 		//  id = ID
 		//  maxOccurs = 1 : 1

@@ -1,9 +1,12 @@
 // Author: Dwivedi, Ajay kumar
 //            Adwiv@Yahoo.com
 using System;
+using System.Collections;
+using System.Collections.Specialized;
 using System.Xml;
 using System.Xml.Serialization;
 using System.ComponentModel;
+using Mono.Xml.Schema;
 
 namespace System.Xml.Schema
 {
@@ -12,12 +15,33 @@ namespace System.Xml.Schema
 	/// </summary>
 	public class XmlSchemaAny : XmlSchemaParticle
 	{
+		static XmlSchemaAny anyTypeContent;
+		internal static XmlSchemaAny AnyTypeContent {
+			get {
+				if (anyTypeContent == null) {
+					anyTypeContent = new XmlSchemaAny ();
+					anyTypeContent.MaxOccursString = "unbounded";
+					anyTypeContent.MinOccurs = 0;
+					anyTypeContent.CompileOccurence (null, null);
+					anyTypeContent.Namespace = "##any";
+					anyTypeContent.wildcard.HasValueAny = true;
+					anyTypeContent.wildcard.ResolvedNamespaces = new StringCollection ();
+					// Although it is not documented by W3C, but it should be.
+					anyTypeContent.wildcard.ResolvedProcessing =
+					anyTypeContent.ProcessContents = XmlSchemaContentProcessing.Lax;
+				}
+				return anyTypeContent;
+			}
+		}
+
 		private string nameSpace;
 		private XmlSchemaContentProcessing processing;
 		private static string xmlname = "any";
+		private XsdWildcard wildcard;
 
 		public XmlSchemaAny()
 		{
+			wildcard = new XsdWildcard (this);
 		}
 
 		[System.Xml.Serialization.XmlAttribute("namespace")]
@@ -35,6 +59,37 @@ namespace System.Xml.Schema
 			set{ processing = value; }
 		}
 
+		// Internal
+		internal bool HasValueAny {
+			get { return wildcard.HasValueAny; }
+		}
+
+		internal bool HasValueLocal {
+			get { return wildcard.HasValueLocal; }
+		}
+
+		internal bool HasValueOther {
+			get { return wildcard.HasValueOther; }
+		}
+
+		internal bool HasValueTargetNamespace {
+			get { return wildcard.HasValueTargetNamespace; }
+		}
+
+		internal StringCollection ResolvedNamespaces {
+			get { return wildcard.ResolvedNamespaces; }
+		}
+
+		internal XmlSchemaContentProcessing ResolvedProcessContents 
+		{ 
+			get{ return wildcard.ResolvedProcessing; } 
+		}
+
+		internal string TargetNamespace
+		{
+			get { return wildcard.TargetNamespace; }
+		}
+
 		/// <remarks>
 		/// 1. id must be of type ID
 		/// 2. namespace can have one of the following values:
@@ -42,7 +97,7 @@ namespace System.Xml.Schema
 		///		b) list of anyURI and ##targetNamespace and ##local
 		/// </remarks>
 		[MonoTODO]
-		internal int Compile(ValidationEventHandler h, XmlSchema schema)
+		internal override int Compile(ValidationEventHandler h, XmlSchema schema)
 		{
 			// If this is already compiled this time, simply skip.
 			if (this.IsComplied (schema.CompilationId))
@@ -51,48 +106,73 @@ namespace System.Xml.Schema
 			errorCount = 0;
 
 			XmlSchemaUtil.CompileID(Id,this, schema.IDCollection,h);
+			wildcard.TargetNamespace = schema.TargetNamespace;
+			if (wildcard.TargetNamespace == null)
+				wildcard.TargetNamespace = "";
+			CompileOccurence (h, schema);
 
-			//define ##any=1,##other=2,##targetNamespace=4,##local=8,anyURI=16
-			int nscount = 0;
-			string[] nslist = XmlSchemaUtil.SplitList(Namespace);
-			foreach(string ns in nslist)
-			{
-				switch(ns)
-				{
-					case "##any": 
-						nscount |= 1;
-						break;
-					case "##other":
-						nscount |= 2;
-						break;
-					case "##targetNamespace":
-						nscount |= 4;
-						break;
-					case "##local":
-						nscount |= 8;
-						break;
-					default:
-						if(!XmlSchemaUtil.CheckAnyUri(ns))
-							error(h,"the namespace is not a valid anyURI");
-						else
-							nscount |= 16;
-						break;
-				}
-			}
-			if((nscount&1) == 1 && nscount != 1)
-				error(h,"##any if present must be the only namespace attribute");
-			if((nscount&2) == 2 && nscount != 2)
-				error(h,"##other if present must be the only namespace attribute");
-			
+			wildcard.Compile (Namespace, h, schema);
+
+			if (processing == XmlSchemaContentProcessing.None)
+				wildcard.ResolvedProcessing = XmlSchemaContentProcessing.Strict;
+			else
+				wildcard.ResolvedProcessing = processing;
+
 			this.CompilationId = schema.CompilationId;
 			return errorCount;
 		}
 		
 		[MonoTODO]
-		internal int Validate(ValidationEventHandler h)
+		internal override int Validate(ValidationEventHandler h, XmlSchema schema)
 		{
 			return errorCount;
 		}
+
+		// 3.8.6. Attribute Wildcard Intersection
+		// Only try to examine if their intersection is expressible, and
+		// returns if the result is empty.
+		internal bool ExamineAttributeWildcardIntersection (XmlSchemaAny other,
+			ValidationEventHandler h, XmlSchema schema)
+		{
+			return wildcard.ExamineAttributeWildcardIntersection (other, h, schema);
+		}
+
+		internal override void ValidateDerivationByRestriction (XmlSchemaParticle baseParticle, 
+			ValidationEventHandler h, XmlSchema schema)
+		{
+			// TODO
+		}
+
+
+		internal override void CheckRecursion (int depth, ValidationEventHandler h, XmlSchema schema)
+		{
+			// do nothing
+		}
+
+		internal override void ValidateUniqueParticleAttribution (
+			XmlSchemaObjectTable qnames, ArrayList nsNames,
+			ValidationEventHandler h, XmlSchema schema)
+		{
+			// Wildcard Intersection check.
+			foreach (XmlSchemaAny other in nsNames)
+				if (!ExamineAttributeWildcardIntersection (other, h, schema))
+					error (h, "Ambiguous -any- particle was found.");
+			nsNames.Add (this);
+		}
+
+		internal override void ValidateUniqueTypeAttribution (XmlSchemaObjectTable labels,
+			ValidationEventHandler h, XmlSchema schema)
+		{
+			// do nothing
+		}
+
+		// 3.10.4 Wildcard Allows Namespace Name. (In fact it is almost copy...)
+		internal bool ValidateWildcardAllowsNamespaceName (string ns,
+			ValidationEventHandler h, XmlSchema schema, bool raiseError)
+		{
+			return wildcard.ValidateWildcardAllowsNamespaceName (ns, h, schema, raiseError);
+		}
+
 		//<any
 		//  id = ID
 		//  maxOccurs =  (nonNegativeInteger | unbounded)  : 1

@@ -43,11 +43,15 @@ namespace System.Xml.Schema
                 private string version;
                 private string language;
 
-		// post schema compilation infoset
+		// other post schema compilation infoset
 		private Hashtable idCollection;
-		private Hashtable missingBaseSchemaTypeRefs;
-		private ArrayList missingElementTypeRefs;
+		private XmlSchemaObjectTable namedIdentities;
 		private XmlSchemaCollection schemas;
+
+		private XmlNameTable nameTable;
+		private XmlResolver resolver;
+
+		internal bool missedSubComponents;
 
                 // Compiler specific things
                 private static string xmlname = "schema";
@@ -68,8 +72,7 @@ namespace System.Xml.Schema
                         notations                       = new XmlSchemaObjectTable();
                         schemaTypes                     = new XmlSchemaObjectTable();
 			idCollection                    = new Hashtable ();
-			missingBaseSchemaTypeRefs       = new Hashtable ();
-			missingElementTypeRefs          = new ArrayList ();
+                        namedIdentities                 = new XmlSchemaObjectTable();
                 }
 
                 #region Properties
@@ -224,14 +227,9 @@ namespace System.Xml.Schema
 			get { return idCollection; }
 		}
 
-		internal Hashtable MissingBaseSchemaTypeRefs
+		internal XmlSchemaObjectTable NamedIdentities
 		{
-			get { return missingBaseSchemaTypeRefs; }
-		}
-
-		internal ArrayList MissingElementTypeRefs
-		{
-			get { return missingElementTypeRefs; }
+			get { return namedIdentities; }
 		}
 
 		internal XmlSchemaCollection Schemas
@@ -260,22 +258,36 @@ namespace System.Xml.Schema
                 [MonoTODO]
                 public void Compile(ValidationEventHandler handler)
 		{
-			Compile (handler, new Stack (), this);
+			Compile (handler, new Stack (), this, null);
 			isCompiled = true;
 		}
 
-		private void Compile (ValidationEventHandler handler, Stack schemaLocationStack, XmlSchema rootSchema)
+		internal void Compile (ValidationEventHandler handler, XmlSchemaCollection col)
+		{
+			Compile (handler, new Stack (), this, col);
+		}
+
+		private void Compile (ValidationEventHandler handler, Stack schemaLocationStack, XmlSchema rootSchema, XmlSchemaCollection col)
                 {
-			CompilationId = Guid.NewGuid ();
-			schemas = new XmlSchemaCollection ();
+			if (rootSchema != this) {
+				CompilationId = rootSchema.CompilationId;
+				schemas = rootSchema.schemas;
+			}
+			else {
+				schemas = col;
+				if (schemas == null) {
+					schemas = new XmlSchemaCollection ();
+					schemas.CompilationId = Guid.NewGuid ();
+				}
+				CompilationId = schemas.CompilationId;
+				this.idCollection.Clear ();
+			}
 			schemas.Add (this);
 
 			attributeGroups = new XmlSchemaObjectTable ();
 			attributes = new XmlSchemaObjectTable ();
 			elements = new XmlSchemaObjectTable ();
 			groups = new XmlSchemaObjectTable ();
-			missingElementTypeRefs.Clear ();
-			missingBaseSchemaTypeRefs.Clear ();
 			notations = new XmlSchemaObjectTable ();
 			schemaTypes = new XmlSchemaObjectTable ();
 
@@ -319,106 +331,101 @@ namespace System.Xml.Schema
 			foreach (XmlSchemaObject obj in Items)
 				compilationItems.Add (obj);
 
+			// First, we run into inclusion schemas to collect 
+			// compilation target items into compiledItems.
                         foreach(XmlSchemaObject obj in Includes)
                         {
 				XmlSchemaExternal ext = obj as XmlSchemaExternal;
                                 if(ext != null)
                                 {
-					if (ext.SchemaLocation == null) continue;
+					if (ext.SchemaLocation == null) 
+						continue;
 					string url = GetResolvedUri (ext.SchemaLocation);
-					XmlSchemaInclude include = ext as XmlSchemaInclude;
-					if (include != null) {
-						if (schemaLocationStack.Contains (url)) {
-							error(handler, "Nested inclusion was found: " + url);
-							// must skip this inclusion
-							continue;
-						}
-						schemaLocationStack.Push (url);
-						XmlSchema includedSchema = XmlSchema.Read (new XmlTextReader (url), handler);
-						includedSchema.schemas = schemas;
-						includedSchema.Compile (handler, schemaLocationStack, rootSchema);
-						schemaLocationStack.Pop ();
-						foreach (XmlSchemaObject includedObj in includedSchema.Items)
-							compilationItems.Add (includedObj);
+					Stream stream = null;
+					if (schemaLocationStack.Contains (url)) {
+						error(handler, "Nested inclusion was found: " + url);
+						// must skip this inclusion
+						continue;
 					}
+					try {
+						if (resolver == null)
+							resolver = new XmlUrlResolver ();
+						stream = resolver.GetEntity (new Uri (url), null, typeof (Stream)) as Stream;
+					} catch (Exception ex) {
+						// FIXME: This is not good way to handle errors.
+						stream = null;
+					}
+
+					// Process redefinition children in advance.
 					XmlSchemaRedefine redefine = obj as XmlSchemaRedefine;
 					if (redefine != null) {
-
-	                                        //FIXME: Kuch to karo! (Do Something ;)
-						throw new NotImplementedException ();
-
-						if (schemaLocationStack.Contains (url)) {
-							error(handler, "Nested inclusion was found: " + url);
-							// must skip this inclusion
-							continue;
+						foreach (XmlSchemaObject redefinedObj in redefine.Items) {
+							redefinedObj.isRedefinedComponent = true;
+							redefinedObj.isRedefineChild = true;
+							if (redefinedObj is XmlSchemaType ||
+								redefinedObj is XmlSchemaGroup ||
+								redefinedObj is XmlSchemaAttributeGroup)
+								compilationItems.Add (redefinedObj);
+							else
+								error (handler, "Redefinition is only allowed to simpleType, complexType, group and attributeGroup.");
 						}
 					}
-					XmlSchemaImport import = obj as XmlSchemaImport;
-					if (import != null) {
-						if (schemaLocationStack.Contains (url)) {
-							error(handler, "Nested inclusion was found: " + url);
-							// must skip this inclusion
-							continue;
-						}
+
+					XmlSchema includedSchema = null;
+					if (stream == null) {
+						// It is missing schema components.
+						missedSubComponents = true;
+						continue;
+					} else {
 						schemaLocationStack.Push (url);
-						XmlSchema includedSchema = XmlSchema.Read (new XmlTextReader (url), handler);
+						includedSchema = XmlSchema.Read (new XmlTextReader (url, stream, nameTable), handler);
 						includedSchema.schemas = schemas;
-						includedSchema.Compile (handler, schemaLocationStack, rootSchema);
-						schemaLocationStack.Pop ();
-						// TODO: check targetNamespace constraints
-						rootSchema.schemas.Add (includedSchema);
-						foreach (XmlSchemaElement element in includedSchema.Elements)
-							elements.Add (element.QualifiedName, element);
-						foreach (XmlSchemaAttribute attribute in includedSchema.Attributes)
-							attributes.Add (attribute.QualifiedName, attribute);
-						foreach (XmlSchemaAttributeGroup attrGroup in includedSchema.AttributeGroups)
-							attributeGroups.Add (attrGroup.QualifiedName, attrGroup);
-						foreach (XmlSchemaGroup group in includedSchema.Groups)
-							groups.Add (group.QualifiedName, group);
-						foreach (XmlSchemaGroup group in includedSchema.Groups)
-							groups.Add (group.QualifiedName, group);
-						foreach (XmlSchemaNotation notation in includedSchema.Notations)
-							notations.Add (notation.QualifiedName, notation);
-						foreach (XmlSchemaType schemaType in includedSchema.SchemaTypes)
-							schemaTypes.Add (schemaType.QualifiedName, schemaType);
 					}
+
+					// Set - actual - target namespace for the included schema * before compilation*.
+					XmlSchemaImport import = ext as XmlSchemaImport;
+					if (import != null) {
+						if (TargetNamespace == includedSchema.TargetNamespace) {
+							error (handler, "Target namespace must be different from that of included schema.");
+							continue;
+						} else if (includedSchema.TargetNamespace != import.Namespace) {
+							error (handler, "Attribute namespace and its importing schema's target namespace must be the same.");
+							continue;
+						}
+					} else {
+						if (TargetNamespace == null && 
+							includedSchema.TargetNamespace != null) {
+							error (handler, "Target namespace is required to include a schema which has its own target namespace");
+							continue;
+						}
+						else if (TargetNamespace != null && 
+							includedSchema.TargetNamespace == null)
+							includedSchema.TargetNamespace = TargetNamespace;
+					}
+
+					// Compile included schema.
+					includedSchema.idCollection = this.IDCollection;
+					includedSchema.Compile (handler, schemaLocationStack, rootSchema, col);
+					schemaLocationStack.Pop ();
+
+					if (import != null)
+						rootSchema.schemas.Add (includedSchema);
+
+					// Add compiled items.
+					foreach (XmlSchemaObject includedObj in includedSchema.Items)
+						compilationItems.Add (includedObj);
                                 }
                                 else
                                 {
                                         error(handler,"Object of Type "+obj.GetType().Name+" is not valid in Includes Property of XmlSchema");
                                 }
                         }
-			// It is hack, but types are required before element/attributes.
-			foreach (XmlSchemaObject obj in compilationItems)
-			{
-                                if(obj is XmlSchemaComplexType)
-                                {
-                                        XmlSchemaComplexType ctype = (XmlSchemaComplexType) obj;
-                                        ctype.istoplevel = true;
-                                        int numerr = ctype.Compile(handler, this);
-                                        errorCount += numerr;
-                                        if(numerr == 0)
-                                        {
-                                                schemaTypes.Add(ctype.QualifiedName, ctype);
-                                        }
-                                }
-                                else if(obj is XmlSchemaSimpleType)
-                                {
-                                        XmlSchemaSimpleType stype = (XmlSchemaSimpleType) obj;
-                                        stype.islocal = false; //This simple type is toplevel
-                                        int numerr = stype.Compile(handler, this);
-                                        errorCount += numerr;
-                                        if(numerr == 0)
-                                        {
-                                                SchemaTypes.Add(stype.QualifiedName, stype);
-                                        }
-                                }
-			}
-			// Add missing references.
-			foreach (XmlSchemaComplexType cType in missingBaseSchemaTypeRefs.Keys)
-				cType.BaseSchemaTypeInternal = 
-					SchemaTypes [missingBaseSchemaTypeRefs [cType] as XmlQualifiedName];
 
+			// Compilation phase.
+			// At least each Compile() must gives unique (qualified) name for each component.
+			// It also checks self-resolvable properties correct.
+			// Post compilation schema information contribution is not required here.
+			// It should be done by Validate().
 			foreach(XmlSchemaObject obj in compilationItems)
                         {
                                 if(obj is XmlSchemaAnnotation)
@@ -433,12 +440,12 @@ namespace System.Xml.Schema
                                 else if(obj is XmlSchemaAttribute)
                                 {
                                         XmlSchemaAttribute attr = (XmlSchemaAttribute) obj;
-                                        attr.parentIsSchema = true;
+                                        attr.ParentIsSchema = true;
                                         int numerr = attr.Compile(handler, this);
                                         errorCount += numerr;
                                         if(numerr == 0)
                                         {
-                                                Attributes.Set(attr.QualifiedName, attr);
+                                                XmlSchemaUtil.AddToTable (Attributes, attr, attr.QualifiedName, handler);
                                         }
                                 }
                                 else if(obj is XmlSchemaAttributeGroup)
@@ -448,16 +455,30 @@ namespace System.Xml.Schema
                                         errorCount += numerr;
                                         if(numerr == 0)
                                         {
-                                                AttributeGroups.Set(attrgrp.QualifiedName, attrgrp);
+                                                XmlSchemaUtil.AddToTable (AttributeGroups, attrgrp, attrgrp.QualifiedName, handler);
                                         }
                                 }
                                 else if(obj is XmlSchemaComplexType)
                                 {
-					// Do nothing here.
+                                        XmlSchemaComplexType ctype = (XmlSchemaComplexType) obj;
+                                        ctype.ParentIsSchema = true;
+                                        int numerr = ctype.Compile(handler, this);
+                                        errorCount += numerr;
+                                        if(numerr == 0)
+                                        {
+                                                XmlSchemaUtil.AddToTable (schemaTypes, ctype, ctype.QualifiedName, handler);
+                                        }
                                 }
                                 else if(obj is XmlSchemaSimpleType)
                                 {
-					// Do nothing here.
+                                        XmlSchemaSimpleType stype = (XmlSchemaSimpleType) obj;
+                                        stype.islocal = false; //This simple type is toplevel
+                                        int numerr = stype.Compile(handler, this);
+                                        errorCount += numerr;
+                                        if(numerr == 0)
+                                        {
+                                                XmlSchemaUtil.AddToTable (SchemaTypes, stype, stype.QualifiedName, handler);
+                                        }
                                 }
                                 else if(obj is XmlSchemaElement)
                                 {
@@ -467,7 +488,7 @@ namespace System.Xml.Schema
                                         errorCount += numerr;
                                         if(numerr == 0)
                                         {
-                                                Elements.Set(elem.QualifiedName,elem);
+                                                XmlSchemaUtil.AddToTable (Elements, elem, elem.QualifiedName, handler);
                                         }
                                 }
                                 else if(obj is XmlSchemaGroup)
@@ -477,7 +498,7 @@ namespace System.Xml.Schema
                                         errorCount += numerr;
                                         if(numerr == 0)
                                         {
-                                                Groups.Set(grp.QualifiedName,grp);
+                                                XmlSchemaUtil.AddToTable (Groups, grp, grp.QualifiedName, handler);
                                         }
                                 }
                                 else if(obj is XmlSchemaNotation)
@@ -487,42 +508,21 @@ namespace System.Xml.Schema
                                         errorCount += numerr;
                                         if(numerr == 0)
                                         {
-                                                Notations.Set(ntn.QualifiedName, ntn);
+                                                XmlSchemaUtil.AddToTable (Notations, ntn, ntn.QualifiedName, handler);
                                         }
                                 }
                                 else
                                 {
-                                        ValidationHandler.RaiseValidationError(handler,this,
-                                                "Object of Type "+obj.GetType().Name+" is not valid in Item Property of Schema");
+                                        ValidationHandler.RaiseValidationEvent (
+						handler, null,
+                                                "Object of Type "+obj.GetType().Name+" is not valid in Item Property of Schema",
+						null, this, null, XmlSeverityType.Error);
                                 }
                         }
 
 			if (rootSchema == this)
-			{
-				// First, fill type information for type reference
-				foreach (XmlSchemaElement element in missingElementTypeRefs)
-				{
-					if (element.SchemaTypeName != XmlQualifiedName.Empty)
-					{
-						XmlSchemaType type = FindSchemaType (element.SchemaTypeName);
-						// If el is null, then it is missing sub components ... ?
-						element.SetSchemaType (type);
-					}
-				}
-				// Then, fill type information for the type references for the referencing elements
-				foreach (XmlSchemaElement element in missingElementTypeRefs)
-				{
-					if (element.RefName != XmlQualifiedName.Empty)
-					{
-						XmlSchemaElement refElem = FindElement (element.RefName);
-						// If el is null, then it is missing sub components ... ?
-						if (refElem != null) element.SetSchemaType (refElem.ElementType);
-					}
-				}
-			}
-
-			Validate(handler);
-                }
+				Validate(handler);
+		}
 
 		private string GetResolvedUri (string relativeUri)
 		{
@@ -537,70 +537,33 @@ namespace System.Xml.Schema
                 [MonoTODO]
                 private void Validate(ValidationEventHandler handler)
                 {
+			ValidationId = CompilationId;
+
                         foreach(XmlSchemaAttribute attr in Attributes.Values)
                         {
-                                attr.Validate(handler, this);
+                                errorCount += attr.Validate(handler, this);
                         }
                         foreach(XmlSchemaAttributeGroup attrgrp in AttributeGroups.Values)
                         {
-                                attrgrp.Validate(handler);
+                                errorCount += attrgrp.Validate(handler, this);
                         }
                         foreach(XmlSchemaType type in SchemaTypes.Values)
                         {
-                                if(type is XmlSchemaComplexType)
-                                {
-                                        ((XmlSchemaComplexType)type).Validate(handler);
-                                }
-                                else
-                                        ((XmlSchemaSimpleType)type).Validate(handler, this);
+                                errorCount += type.Validate(handler, this);
                         }
                         foreach(XmlSchemaElement elem in Elements.Values)
                         {
-                                elem.Validate(handler);
+                                errorCount += elem.Validate(handler, this);
                         }
                         foreach(XmlSchemaGroup grp in Groups.Values)
                         {
-                                grp.Validate(handler);
+                                errorCount += grp.Validate(handler, this);
                         }
                         foreach(XmlSchemaNotation ntn in Notations.Values)
                         {
-                                ntn.Validate(handler);
+                                errorCount += ntn.Validate(handler, this);
                         }
                 }
-
-		internal XmlSchemaElement FindElement (XmlQualifiedName name)
-		{
-			if (name.Namespace != TargetNamespace)
-				return null;
-
-			XmlSchema target = schemas [name.Namespace];
-			if (target == null)
-				return null;
-
-			foreach (XmlSchemaObject obj in target.Items) {
-				XmlSchemaElement elem = obj as XmlSchemaElement;
-				if (elem != null && elem.Name == name.Name)
-					return elem;
-			}
-			return null;
-		}
-
-		internal XmlSchemaType FindSchemaType (XmlQualifiedName name)
-		{
-			if (name.Namespace != TargetNamespace)
-				return null;
-
-			XmlSchema target = schemas [name.Namespace];
-			if (target == null)
-				return null;
-
-			foreach (XmlSchemaObject obj in target.Items) {
-				XmlSchemaType type = obj as XmlSchemaType;
-				if (type != null && type.Name == name.Name)
-					return type;
-			}
-			return null;
-		}
 
                 #region Read
 
@@ -616,13 +579,15 @@ namespace System.Xml.Schema
 		[MonoTODO ("Use ValidationEventHandler")]
                 public static XmlSchema Read(XmlReader rdr, ValidationEventHandler validationEventHandler)
                 {
+/*
 			string baseURI = rdr.BaseURI;
                         XmlSerializer xser = new XmlSerializer (typeof (XmlSchema));
                         XmlSchema schema = (XmlSchema) xser.Deserialize (rdr);
 			schema.SourceUri = baseURI;
 			schema.Compile (validationEventHandler);
+			schema.nameTable = rdr.NameTable;
 			return schema;
-/*
+*/
 			XmlSchemaReader reader = new XmlSchemaReader(rdr, validationEventHandler);
 
                         while(reader.ReadNextElement())
@@ -633,6 +598,7 @@ namespace System.Xml.Schema
                                                 if(reader.LocalName == "schema")
                                                 {
                                                         XmlSchema schema = new XmlSchema();
+							schema.nameTable = rdr.NameTable;
 
                                                         schema.LineNumber = reader.LineNumber;
                                                         schema.LinePosition = reader.LinePosition;
@@ -659,10 +625,9 @@ namespace System.Xml.Schema
                                 }
                         }
                         throw new XmlSchemaException("The top level schema must have namespace "+XmlSchema.Namespace, null);
-*/
                 }
-/*
-                private static void ReadAttributes(XmlSchema schema, XmlSchemaReader reader, ValidationEventHandler h)
+
+		private static void ReadAttributes(XmlSchema schema, XmlSchemaReader reader, ValidationEventHandler h)
                 {
                         Exception ex;
 
@@ -677,7 +642,8 @@ namespace System.Xml.Schema
                                                         error(h, reader.Value + " is not a valid value for attributeFormDefault.", ex);
                                                 break;
                                         case "blockDefault" :
-                                                schema.blockDefault = XmlSchemaUtil.ReadDerivationAttribute(reader,out ex, "blockDefault");
+                                                schema.blockDefault = XmlSchemaUtil.ReadDerivationAttribute(reader,out ex, "blockDefault",
+							XmlSchemaUtil.ElementBlockAllowed);
                                                 if(ex != null)
                                                         warn(h, ex.Message, ex);
                                                 break;
@@ -687,7 +653,8 @@ namespace System.Xml.Schema
                                                         error(h, reader.Value + " is not a valid value for elementFormDefault.", ex);
                                                 break;
                                         case "finalDefault":
-                                                schema.finalDefault = XmlSchemaUtil.ReadDerivationAttribute(reader, out ex, "finalDefault");
+                                                schema.finalDefault = XmlSchemaUtil.ReadDerivationAttribute(reader, out ex, "finalDefault",
+							XmlSchemaUtil.FinalAllowed);
                                                 if(ex != null)
                                                         warn(h, ex.Message , ex);
                                                 break;
@@ -826,7 +793,6 @@ namespace System.Xml.Schema
                                 reader.RaiseInvalidElementError();
                         }
                 }
-*/
 		#endregion
 
                 #region write

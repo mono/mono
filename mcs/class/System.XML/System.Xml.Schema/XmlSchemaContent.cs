@@ -9,7 +9,14 @@ namespace System.Xml.Schema
 	/// </summary>
 	public abstract class XmlSchemaContent : XmlSchemaAnnotated
 	{
+		internal object actualBaseSchemaType;
+
 		protected XmlSchemaContent()
 		{}
+
+		internal object ActualBaseSchemaType
+		{
+			get { return actualBaseSchemaType; }
+		}
 	}
 }

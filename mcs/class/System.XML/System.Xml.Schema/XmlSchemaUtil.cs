@@ -1,6 +1,8 @@
 using System;
 using System.Xml;
 using System.Collections;
+using Mono.Xml;
+using Mono.Xml.Schema;
 
 namespace System.Xml.Schema
 {
@@ -10,8 +12,47 @@ namespace System.Xml.Schema
 	/// </summary>
 	internal class XmlSchemaUtil
 	{
-		private XmlSchemaUtil()
-		{}
+		static XmlSchemaUtil()
+		{
+			FinalAllowed = XmlSchemaDerivationMethod.Restriction | 
+				XmlSchemaDerivationMethod.Extension;
+			ComplexTypeBlockAllowed = FinalAllowed;
+			ElementBlockAllowed = XmlSchemaDerivationMethod.Substitution | 
+				FinalAllowed;
+		}
+
+		internal static XmlSchemaDerivationMethod FinalAllowed;
+		internal static XmlSchemaDerivationMethod ElementBlockAllowed;
+		internal static XmlSchemaDerivationMethod ComplexTypeBlockAllowed;
+
+		public static void AddToTable (XmlSchemaObjectTable table, XmlSchemaObject obj,
+			XmlQualifiedName qname, ValidationEventHandler h)
+		{
+			if (table.Contains (qname)) {
+				// FIXME: This logic unexpectedly allows 
+				// one redefining item and two or more redefining items.
+				// FIXME: redefining item is not simple replacement,
+				// but much more complex stuff.
+				if (obj.isRedefineChild) {	// take precedence.
+					if (obj.redefinedObject != null)
+						obj.error (h, "Named item " + qname + " was already contained in the schema object table.");
+					else
+						obj.redefinedObject = table [qname];
+					table.Set (qname, obj);
+				}
+				else if (table [qname].isRedefineChild) {
+					if (table [qname].redefinedObject != null)
+						obj.error (h, "Named item " + qname + " was already contained in the schema object table.");
+					else
+						table [qname].redefinedObject = obj;
+					return;	// never add to the table.
+				}
+				else
+					obj.error (h, "Named item " + qname + " was already contained in the schema object table.");
+			}
+			else
+				table.Set (qname, obj);
+		}
 
 		public static void CompileID(string id,  XmlSchemaObject xso, Hashtable idCollection, ValidationEventHandler h)
 		{
@@ -31,7 +72,9 @@ namespace System.Xml.Schema
 		[MonoTODO]
 		public static bool CheckAnyUri(string uri)
 		{
-			 return true;
+			if (uri.StartsWith ("##"))
+				return false;
+			return true;
 		}
 
 		public static bool CheckToken(string token)
@@ -66,8 +109,80 @@ namespace System.Xml.Schema
 
 		public static bool CheckQName(XmlQualifiedName qname)
 		{
+			// What is this doing?
 			return true;
 		}
+
+		public static XmlParserContext GetParserContext (XmlReader reader)
+		{
+			XmlTextReader xtr = reader as XmlTextReader;
+			if (xtr != null)
+				return xtr.GetInternalParserContext ();
+			XmlNodeReader xnr = reader as XmlNodeReader;
+			if (xnr != null)
+				return xnr.GetInternalParserContext ();
+			XmlValidatingReader xvr = reader as XmlValidatingReader;
+			if (xvr != null)
+				return xvr.GetInternalParserContext ();
+			IHasXmlParserContext xctx = reader as IHasXmlParserContext;
+			if (xctx != null)
+				return xctx.ParserContext;
+
+			throw new NotSupportedException ("XmlParserContext cannot be acquired from this XmlReader.");
+		}
+
+		public static bool IsSchemaDatatypeEquals (XsdAnySimpleType st1, object v1,
+			XsdAnySimpleType st2, object v2)
+		{
+			if (v1 == null || v2 == null)
+				return false;
+
+			if (st1 == null)
+				st1 = XmlSchemaSimpleType.AnySimpleType;
+			if (st2 == null)
+				st2 = XmlSchemaSimpleType.AnySimpleType;
+
+			Type t = st2.GetType ();
+			if (st1 is XsdFloat) {
+				return st2 is XsdFloat && Convert.ToSingle (v1) == Convert.ToSingle (v2);
+			} else if (st1 is XsdDouble) {
+				return st2 is XsdDouble && Convert.ToDouble (v1) == Convert.ToDouble (v2);
+			} else if (st1 is XsdDecimal) {
+				if (!(st2 is XsdDecimal) || Convert.ToDecimal (v1) != Convert.ToDecimal (v2))
+					return false;
+				if (st1 is XsdNonPositiveInteger)
+					return st2 is XsdNonPositiveInteger || t == typeof (XsdDecimal) || t == typeof (XsdInteger);
+				else if (st1 is XsdPositiveInteger)
+					return st2 is XsdPositiveInteger || t == typeof (XsdDecimal) || 
+						t == typeof (XsdInteger) || t == typeof (XsdNonNegativeInteger);
+				else if (st1 is XsdUnsignedLong)
+					return st2 is XsdUnsignedLong || t == typeof (XsdDecimal) || 
+						t == typeof (XsdInteger) || t == typeof (XsdNonNegativeInteger);
+				else if (st1 is XsdNonNegativeInteger)
+					return st2 is XsdNonNegativeInteger || t == typeof (XsdDecimal) || t == typeof (XsdInteger);
+				else if (st1 is XsdLong)
+					return st2 is XsdLong || t == typeof (XsdDecimal) || t == typeof (XsdInteger);
+				return true;
+			}
+			else if (!v1.Equals (v2))
+				return false;
+			if (st1 is XsdString) {
+				if (!(st2 is XsdString))
+					return false;
+				if (st1 is XsdNMToken && (st2 is XsdLanguage || st2 is XsdName))
+					return false;
+				if (st2 is XsdNMToken && (st1 is XsdLanguage || st1 is XsdName))
+					return false;
+				if (st1 is XsdName && (st2 is XsdLanguage || st2 is XsdNMToken))
+					return false;
+				if (st2 is XsdName && (st1 is XsdLanguage || st1 is XsdNMToken))
+					return false;
+			}
+			else if (st1 != st2)
+				return false;
+			return true;
+		}
+
 		public static bool IsValidQName(string qname)
 		{
 			foreach(string part in qname.Split(new char[]{':'},2))
@@ -83,7 +198,7 @@ namespace System.Xml.Schema
 		public static string[] SplitList(string list)
 		{
 			if(list == null || list == string.Empty)
-				return new String[0];
+				return new string [0];
 
 			string[] listarr = list.Split(new char[]{' ','\t','\n'});
 			int pos=0;
@@ -151,7 +266,7 @@ namespace System.Xml.Schema
 		// Is some value is read, return it.
 		// If no values return empty.
 		// If exception, return none
-		public static XmlSchemaDerivationMethod ReadDerivationAttribute(XmlReader reader, out Exception innerExcpetion, string name)
+		public static XmlSchemaDerivationMethod ReadDerivationAttribute(XmlReader reader, out Exception innerExcpetion, string name, XmlSchemaDerivationMethod allowed)
 		{
 			innerExcpetion = null;
 			try
@@ -170,19 +285,19 @@ namespace System.Xml.Schema
 					switch(xsdm)
 					{
 						case "":
-							val |= XmlSchemaDerivationMethod.Empty; break;
+							val = AddFlag (val, XmlSchemaDerivationMethod.Empty, allowed); break;
 						case "#all":
-							val |= XmlSchemaDerivationMethod.All; break;
+							val = AddFlag (val,XmlSchemaDerivationMethod.All, allowed); break;
 						case "substitution":
-							val |= XmlSchemaDerivationMethod.Substitution; break;
+							val = AddFlag (val,XmlSchemaDerivationMethod.Substitution, allowed); break;
 						case "extension":
-							val |= XmlSchemaDerivationMethod.Extension; break;
+							val = AddFlag (val,XmlSchemaDerivationMethod.Extension, allowed); break;
 						case "restriction":
-							val |= XmlSchemaDerivationMethod.Restriction; break;
+							val = AddFlag (val,XmlSchemaDerivationMethod.Restriction, allowed); break;
 						case "list":
-							val |= XmlSchemaDerivationMethod.List; break;
+							val = AddFlag (val,XmlSchemaDerivationMethod.List, allowed); break;
 						case "union":
-							val |= XmlSchemaDerivationMethod.Union; break;
+							val = AddFlag (val,XmlSchemaDerivationMethod.Union, allowed); break;
 						default:
 							warn += xsdm + " "; break;
 					}
@@ -196,6 +311,16 @@ namespace System.Xml.Schema
 				innerExcpetion = ex;
 				return XmlSchemaDerivationMethod.None;
 			}
+		}
+
+		private static XmlSchemaDerivationMethod AddFlag (XmlSchemaDerivationMethod dst,
+			XmlSchemaDerivationMethod add, XmlSchemaDerivationMethod allowed)
+		{
+			if ((add & allowed) == 0 && allowed != XmlSchemaDerivationMethod.All)
+				throw new ArgumentException (add + " is not allowed in this attribute.");
+			if ((dst & add) != 0)
+				throw new ArgumentException (add + " is already specified in this attribute.");
+			return dst | add;
 		}
 
 		public static XmlSchemaForm ReadFormAttribute(XmlReader reader, out Exception innerExcpetion)
@@ -295,5 +420,74 @@ namespace System.Xml.Schema
 			qname = new XmlQualifiedName(name,ns);
 			return qname;
 		}
+
+		public static int ValidateAttributesResolved (
+			XmlSchemaObjectTable attributesResolved,
+			ValidationEventHandler h,
+			XmlSchema schema,
+			XmlSchemaObjectCollection attributes,
+			XmlSchemaAnyAttribute anyAttribute,
+			ref XmlSchemaAnyAttribute anyAttributeUse,
+			XmlSchemaAttributeGroup redefined)
+		{
+			int errorCount = 0;
+			if (anyAttribute != null && anyAttributeUse == null)
+				anyAttributeUse = anyAttribute;
+
+			foreach (XmlSchemaObject xsobj in attributes) {
+				XmlSchemaAttributeGroupRef grpRef = xsobj as XmlSchemaAttributeGroupRef;
+				if (grpRef != null) {
+					// Resolve attributeGroup redefinition.
+					XmlSchemaAttributeGroup grp = null;
+					if (redefined != null && grpRef.RefName == redefined.QualifiedName)
+						grp = redefined;
+					else
+						grp = schema.AttributeGroups [grpRef.RefName] as XmlSchemaAttributeGroup;
+					// otherwise, it might be missing sub components.
+					if (grp == null) {
+						if (!schema.missedSubComponents)// && schema.Schemas [grpRef.RefName.Namespace] != null)
+							grpRef.error (h, "Referenced attribute group " + grpRef.RefName + " was not found in the corresponding schema.");
+						continue;
+					}
+					if (grp.AttributeGroupRecursionCheck) {
+						grp.error (h, "Attribute group recursion was found: " + grpRef.RefName);
+						continue;
+					}
+					try {
+						grp.AttributeGroupRecursionCheck = true;
+						errorCount += grp.Validate (h, schema);
+					} finally {
+						grp.AttributeGroupRecursionCheck = false;
+					}
+					if (grp.AnyAttributeUse != null) {
+						// FIXME: should validate wildcard subset validity. See spec 3.10.6
+						if (anyAttribute == null)
+							anyAttributeUse = grp.AnyAttributeUse;
+					}
+					foreach (XmlSchemaAttribute attr in grp.AttributeUses) {
+						if (attr.RefName != null && attr.RefName != XmlQualifiedName.Empty)
+							AddToTable (attributesResolved, attr, attr.RefName, h);
+						else
+							AddToTable (attributesResolved, attr, attr.QualifiedName, h);
+					}
+				} else {
+					XmlSchemaAttribute attr = xsobj as XmlSchemaAttribute;
+					if (attr != null) {
+						errorCount += attr.Validate (h, schema);
+						if (attr.RefName != null && attr.RefName != XmlQualifiedName.Empty)
+							AddToTable (attributesResolved, attr, attr.RefName, h);
+						else
+							AddToTable (attributesResolved, attr, attr.QualifiedName, h);
+					} else {
+						if (anyAttribute == null) {
+							anyAttributeUse = (XmlSchemaAnyAttribute) xsobj;
+							anyAttribute.Validate (h, schema);
+						}
+					}
+				}
+			}
+			return errorCount;
+		}
+
 	}
 }

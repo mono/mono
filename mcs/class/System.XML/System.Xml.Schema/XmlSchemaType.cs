@@ -12,14 +12,15 @@ namespace System.Xml.Schema
 	/// </summary>
 	public class XmlSchemaType : XmlSchemaAnnotated
 	{
-		internal object BaseSchemaTypeInternal;
-		private XmlSchemaDatatype datatype;
-		private XmlSchemaDerivationMethod derivedBy;
+		internal object baseSchemaTypeInternal;
+		internal XmlSchemaDatatype datatypeInternal;
+		internal XmlSchemaDerivationMethod resolvedDerivedBy;
 		private XmlSchemaDerivationMethod final;
 		internal XmlSchemaDerivationMethod finalResolved;
 		private bool isMixed;
 		private string name;
 		internal XmlQualifiedName QNameInternal;
+		bool recursed;
 
 		public XmlSchemaType()
 		{
@@ -41,6 +42,9 @@ namespace System.Xml.Schema
 			get{ return  final; }
 			set{ final = value; }
 		}
+		#endregion
+
+		#region XmlIgnore
 		[XmlIgnore]
 		public XmlQualifiedName QualifiedName 
 		{
@@ -54,21 +58,18 @@ namespace System.Xml.Schema
 		[XmlIgnore]
 		public object BaseSchemaType 
 		{
-			get{ return  BaseSchemaTypeInternal; }
+			get{ return  baseSchemaTypeInternal; }
 		}
 		[XmlIgnore]
 		public XmlSchemaDerivationMethod DerivedBy 
 		{
-			get{ return derivedBy; }
+			get{ return resolvedDerivedBy; }
 		}
 		[XmlIgnore]
 		public XmlSchemaDatatype Datatype 
 		{
-			get{ return datatype; }
+			get{ return datatypeInternal; }
 		}
-		#endregion
-
-		#region XmlIgnore
 		[XmlIgnore]
 		public virtual bool IsMixed 
 		{  
@@ -77,5 +78,17 @@ namespace System.Xml.Schema
 		}
 		#endregion
 
+		internal bool ValidateRecursionCheck ()
+		{
+			if (recursed)
+				return (this != XmlSchemaComplexType.AnyType);
+			recursed = true;
+			XmlSchemaType baseType = this.BaseSchemaType as XmlSchemaType;
+			bool result = false;
+			if (baseType != null)
+				result = baseType.ValidateRecursionCheck ();
+			recursed = false;
+			return result;
+		}
 	}
 }

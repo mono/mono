@@ -1,5 +1,10 @@
-// Author: Dwivedi, Ajay kumar
-//            Adwiv@Yahoo.com
+//
+// System.Xml.Schema.XmlSchemaCollection.cs
+//
+// Authors:
+//	Dwivedi, Ajay kumar  Adwiv@Yahoo.com
+//	Atsushi Enomoto      ginga@kit.hi-ho.ne.jp
+//
 using System;
 using System.Collections;
 using System.Xml;
@@ -16,6 +21,7 @@ namespace System.Xml.Schema
 		private Hashtable htable;
 		private Hashtable uriTable;
 		private XmlNameTable ntable;
+		internal Guid CompilationId;
 
 		public XmlSchemaCollection()
 			: this (new NameTable ())
@@ -27,6 +33,7 @@ namespace System.Xml.Schema
 			htable = new Hashtable();
 			uriTable = new Hashtable ();
 			ntable = nametable;
+			CompilationId = Guid.NewGuid ();
 		}
 
 		//properties
@@ -56,8 +63,7 @@ namespace System.Xml.Schema
 		public event ValidationEventHandler ValidationEventHandler;
 
 		// Methods
-		[MonoTODO]
-		public XmlSchema Add(string ns, XmlReader reader)
+		public XmlSchema Add (string ns, XmlReader reader)
 		{
 			if (reader == null)
 				throw new ArgumentNullException ("reader");
@@ -66,20 +72,24 @@ namespace System.Xml.Schema
 			return Add (schema);
 		}
 
-		[MonoTODO]
 		public XmlSchema Add(string ns, string uri)
 		{
-			if (uri == null || uri == String.Empty)
-				throw new ArgumentNullException ("uri");
-
 			return Add (ns, new XmlTextReader (uri));
 		}
 
-		[MonoTODO]
 		public XmlSchema Add(XmlSchema schema)
 		{
 			if (schema == null)
 				throw new ArgumentNullException ("schema");
+
+			if (!schema.IsCompiled)
+				schema.Compile (null, this);
+			/*
+			// This is requried to complete maybe missing sub components.
+			foreach (XmlSchema existing in htable.Values)
+				if (existing.CompilationId != this.CompilationId)
+					existing.Compile (null, this);
+			*/
 
 			htable [GetSafeNs(schema.TargetNamespace)] = schema;
 			return schema;
@@ -117,7 +127,7 @@ namespace System.Xml.Schema
 			return new XmlSchemaCollectionEnumerator(this);
 		}
 		
-		//assembly Methods
+		// interface Methods
 		[MonoTODO]
 		void ICollection.CopyTo(Array array, int index)
 		{
@@ -134,6 +144,60 @@ namespace System.Xml.Schema
 		Object ICollection.SyncRoot
 		{
 			get { return this; }
+		}
+
+		// Internal Methods
+		internal XmlSchemaAttribute FindAttribute (XmlQualifiedName qname)
+		{
+			XmlSchemaAttribute found = null;
+			XmlSchema target = this [qname.Namespace];
+			if (target != null)
+				found = target.Attributes [qname] as XmlSchemaAttribute;
+			if (found != null)
+				return found;
+			foreach (XmlSchema schema in htable.Values) {
+				found = schema.Attributes [qname] as XmlSchemaAttribute;
+				if (found != null)
+					return found;
+			}
+			return null;
+		}
+
+		internal XmlSchemaElement FindElement (XmlQualifiedName qname)
+		{
+			XmlSchemaElement found = null;
+			XmlSchema target = this [qname.Namespace];
+			if (target != null)
+				found = target.Elements [qname] as XmlSchemaElement;
+			if (found != null)
+				return found;
+			foreach (XmlSchema schema in htable.Values) {
+				found = schema.Elements [qname] as XmlSchemaElement;
+				if (found != null)
+					return found;
+			}
+			return null;
+		}
+
+		internal object FindSchemaType (XmlQualifiedName qname)
+		{
+			if (qname == XmlSchemaComplexType.AnyTypeName)
+				return XmlSchemaComplexType.AnyType;
+			else if (qname.Namespace == XmlSchema.Namespace)
+				return XmlSchemaDatatype.FromName (qname);
+
+			XmlSchemaType found = null;
+			XmlSchema target = this [qname.Namespace];
+			if (target != null)
+				found = target.SchemaTypes [qname] as XmlSchemaType;
+			if (found != null)
+				return found;
+			foreach (XmlSchema schema in htable.Values) {
+				found = schema.SchemaTypes [qname] as XmlSchemaType;
+				if (found != null)
+					return found;
+			}
+			return null;
 		}
 	}
 }

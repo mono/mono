@@ -1,6 +1,12 @@
-// Author: Dwivedi, Ajay kumar
-//            Adwiv@Yahoo.com
+//
+// System.Xml.Schema.XmlSchemaGroupBase.cs
+//
+// Author:
+//	Dwivedi, Ajay kumar  Adwiv@Yahoo.com
+//	Atsushi Enomoto  ginga@kit.hi-ho.ne.jp
+//
 using System;
+using System.Collections;
 using System.Xml;
 using System.Xml.Serialization;
 
@@ -13,7 +19,9 @@ namespace System.Xml.Schema
 	{
 		private XmlSchemaGroupBase particle;
 		private XmlQualifiedName refName;
+		private XmlQualifiedName resolvedRefName;
 		private static string xmlname = "group";
+		private XmlSchemaGroup referencedGroup;
 
 		public XmlSchemaGroupRef()
 		{
@@ -28,23 +36,45 @@ namespace System.Xml.Schema
 		[XmlIgnore]
 		public XmlSchemaGroupBase Particle 
 		{
-			get{ return particle; }
+			get{
+				if (TargetGroup != null)
+					return TargetGroup.Particle;
+				else
+					return null;
+			}
 		}
+		internal XmlSchemaGroup TargetGroup
+		{
+			get {
+				if (referencedGroup != null && referencedGroup.IsCircularDefinition)
+					return null;
+				else
+					return referencedGroup;
+			}
+		}
+		internal override XmlSchemaParticle ActualParticle
+		{
+			get {
+				if (TargetGroup != null)
+					return TargetGroup.Particle.ActualParticle;
+				else
+					// For ValidationEventHandler and missing sub components.
+					return XmlSchemaParticle.Empty;
+			}
+		}
+
 		/// <remarks>
 		/// 1. RefName must be present
 		/// </remarks>
 		[MonoTODO]
-		internal int Compile(ValidationEventHandler h, XmlSchema schema)
+		internal override int Compile(ValidationEventHandler h, XmlSchema schema)
 		{
 			// If this is already compiled this time, simply skip.
 			if (this.IsComplied (schema.CompilationId))
 				return 0;
 
-			//FIXME: Should we reset the values
-			if(MinOccurs > MaxOccurs)
-				error(h,"minOccurs must be less than or equal to maxOccurs");
-
 			XmlSchemaUtil.CompileID(Id,this,schema.IDCollection,h);
+			CompileOccurence (h, schema);
 
 			if(refName == null || refName.IsEmpty)
 			{
@@ -58,10 +88,57 @@ namespace System.Xml.Schema
 		}
 		
 		[MonoTODO]
-		internal int Validate(ValidationEventHandler h)
+		internal override int Validate(ValidationEventHandler h, XmlSchema schema)
 		{
+			if (IsValidated (schema.ValidationId))
+				return errorCount;
+
+			referencedGroup = schema.Groups [RefName] as XmlSchemaGroup;
+			// it might be missing sub components.
+			if (referencedGroup == null && !schema.missedSubComponents)// && schema.Schemas [RefName.Namespace] != null)
+				error (h, "Referenced group " + RefName + " was not found in the corresponding schema.");
+			else if (TargetGroup != null)
+				TargetGroup.Validate (h, schema);
+
+			ValidationId = schema.ValidationId;
 			return errorCount;
 		}
+
+		internal override void ValidateDerivationByRestriction (XmlSchemaParticle baseParticle,
+			ValidationEventHandler h, XmlSchema schema)
+		{
+			if (TargetGroup != null)
+				TargetGroup.Particle.ValidateDerivationByRestriction (baseParticle, h, schema);
+		}
+
+
+		internal override void CheckRecursion (int depth, ValidationEventHandler h, XmlSchema schema)
+		{
+			if (TargetGroup == null)
+				return;
+
+			if (this.recursionDepth == -1) {
+				recursionDepth = depth;
+				TargetGroup.Particle.CheckRecursion (depth, h, schema);
+				recursionDepth = -2;
+			} else if (depth == recursionDepth)
+				throw new XmlSchemaException ("Circular group reference was found.", this, null);
+		}
+
+		internal override void ValidateUniqueParticleAttribution (XmlSchemaObjectTable qnames, ArrayList nsNames,
+			ValidationEventHandler h, XmlSchema schema)
+		{
+			if (TargetGroup != null)
+				TargetGroup.Particle.ValidateUniqueParticleAttribution (qnames, nsNames, h, schema);
+		}
+
+		internal override void ValidateUniqueTypeAttribution (XmlSchemaObjectTable labels,
+			ValidationEventHandler h, XmlSchema schema)
+		{
+			if (TargetGroup != null)
+				TargetGroup.Particle.ValidateUniqueTypeAttribution (labels, h, schema);
+		}
+
 
 		//	<group 
 		//		 id = ID 

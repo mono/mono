@@ -15,6 +15,7 @@ namespace System.Xml.Schema
 		private XmlSchemaSimpleType itemType;
 		private XmlQualifiedName itemTypeName;
 		private static string xmlname = "list";
+		private object validatedListItemType;
 
 		public XmlSchemaSimpleTypeList()
 		{
@@ -40,12 +41,17 @@ namespace System.Xml.Schema
 				itemType = value;
 			}
 		}
+		internal object ValidatedListItemType
+		{
+			get { return validatedListItemType; }
+		}
+
 		/// <remarks>
 		/// 1. One of itemType or a <simpleType> must be present, but not both.
 		/// 2. id must be of type ID
 		/// </remarks>
 		[MonoTODO]
-		internal int Compile(ValidationEventHandler h, XmlSchema schema)
+		internal override int Compile(ValidationEventHandler h, XmlSchema schema)
 		{
 			// If this is already compiled this time, simply skip.
 			if (this.IsComplied (schema.CompilationId))
@@ -71,8 +77,33 @@ namespace System.Xml.Schema
 		}
 		
 		[MonoTODO]
-		internal int Validate(ValidationEventHandler h)
+		internal override int Validate(ValidationEventHandler h, XmlSchema schema)
 		{
+			if (IsValidated (schema.ValidationId))
+				return errorCount;
+
+			// As far as I saw, MS.NET handles simpleType.BaseSchemaType as anySimpleType.
+			this.actualBaseSchemaType = XmlSchemaSimpleType.AnySimpleType;
+
+			// ListItemType
+			XmlSchemaSimpleType type = itemType;
+			if (type == null)
+				type = schema.SchemaTypes [itemTypeName] as XmlSchemaSimpleType;
+			if (type != null) {
+				errorCount += type.Validate (h, schema);
+				validatedListItemType = type;
+			} else if (itemTypeName == XmlSchemaComplexType.AnyTypeName) {
+				validatedListItemType = XmlSchemaSimpleType.AnySimpleType;
+			} else if (itemTypeName.Namespace == XmlSchema.Namespace) {
+				validatedListItemType = XmlSchemaDatatype.FromName (itemTypeName);
+				if (validatedListItemType == null)
+					error (h, "Invalid schema type name was specified: " + itemTypeName);
+			}
+			// otherwise, it might be missing sub components.
+			else if (!schema.missedSubComponents)
+				error (h, "Referenced base list item schema type " + itemTypeName + " was not found.");
+
+			ValidationId = schema.ValidationId;
 			return errorCount;
 		}
 		//<list 

@@ -1,6 +1,7 @@
 // Author: Dwivedi, Ajay kumar
 //            Adwiv@Yahoo.com
 using System;
+using System.Collections;
 using System.Xml;
 using System.Xml.Serialization;
 
@@ -14,6 +15,7 @@ namespace System.Xml.Schema
 		private XmlSchemaObjectCollection baseTypes;
 		private XmlQualifiedName[] memberTypes;
 		private static string xmlname = "union";
+		private object [] validatedTypes;
 
 		public XmlSchemaSimpleTypeUnion()
 		{
@@ -32,12 +34,18 @@ namespace System.Xml.Schema
 			get{ return  memberTypes; } 
 			set{ memberTypes = value; }
 		}
+
+		internal object [] ValidatedTypes
+		{
+			get { return validatedTypes; }
+		}
+
 		/// <remarks>
 		/// 1. Circular union type definition is disallowed. (WTH is this?)
 		/// 2. id must be a valid ID
 		/// </remarks>
 		[MonoTODO]
-		internal int Compile(ValidationEventHandler h, XmlSchema schema)
+		internal override int Compile(ValidationEventHandler h, XmlSchema schema)
 		{
 			// If this is already compiled this time, simply skip.
 			if (this.IsComplied (schema.CompilationId))
@@ -86,10 +94,49 @@ namespace System.Xml.Schema
 		}
 		
 		[MonoTODO]
-		internal int Validate(ValidationEventHandler h)
+		internal override int Validate(ValidationEventHandler h, XmlSchema schema)
 		{
+			if (IsValidated (schema.ValidationId))
+				return errorCount;
+
+			// As far as I saw, MS.NET handles simpleType.BaseSchemaType as anySimpleType.
+			this.actualBaseSchemaType = XmlSchemaSimpleType.AnySimpleType;
+
+			ArrayList al = new ArrayList ();
+			// Validate MemberTypes
+			if (MemberTypes != null) {
+				foreach (XmlQualifiedName memberTypeName in MemberTypes) {
+					object type = null;
+					XmlSchemaType xstype = schema.SchemaTypes [memberTypeName] as XmlSchemaSimpleType;
+					if (xstype != null) {
+						errorCount += xstype.Validate (h, schema);
+						type = xstype;
+					} else if (memberTypeName == XmlSchemaComplexType.AnyTypeName) {
+						type = XmlSchemaSimpleType.AnySimpleType;
+					} else if (memberTypeName.Namespace == XmlSchema.Namespace) {
+						type = XmlSchemaDatatype.FromName (memberTypeName);
+						if (type == null)
+							error (h, "Invalid schema type name was specified: " + memberTypeName);
+					}
+					// otherwise, it might be missing sub components.
+					else if (!schema.missedSubComponents)
+						error (h, "Referenced base schema type " + memberTypeName + " was not found in the corresponding schema.");
+
+					al.Add (type);
+				}
+			}
+			if (BaseTypes != null) {
+				foreach (XmlSchemaSimpleType st in BaseTypes) {
+					st.Validate (h, schema);
+					al.Add (st);
+				}
+			}
+			this.validatedTypes = al.ToArray ();
+
+			ValidationId = schema.ValidationId;
 			return errorCount;
 		}
+
 		//<union 
 		//  id = ID 
 		//  memberTypes = List of QName 

@@ -1,6 +1,12 @@
-// Author: Dwivedi, Ajay kumar
-//            Adwiv@Yahoo.com
+//
+// System.Xml.Schema.XmlSchemaSequence.cs
+//
+// Author:
+//	Dwivedi, Ajay kumar  Adwiv@Yahoo.com
+//	Atsushi Enomoto  ginga@kit.hi-ho.ne.jp
+//
 using System;
+using System.Collections;
 using System.Xml.Serialization;
 using System.Xml;
 
@@ -12,6 +18,7 @@ namespace System.Xml.Schema
 	public class XmlSchemaSequence : XmlSchemaGroupBase
 	{
 		private XmlSchemaObjectCollection items;
+		private XmlSchemaObjectCollection compiledItems;
 		private static string xmlname = "sequence";
 
 		public XmlSchemaSequence()
@@ -28,51 +35,159 @@ namespace System.Xml.Schema
 		{
 			get{ return items; }
 		}
+		internal XmlSchemaObjectCollection CompiledItems 
+		{
+			get{ return compiledItems; }
+		}
+
 		[MonoTODO]
-		internal int Compile(ValidationEventHandler h, XmlSchema schema)
+		internal override int Compile(ValidationEventHandler h, XmlSchema schema)
 		{
 			// If this is already compiled this time, simply skip.
 			if (this.IsComplied (schema.CompilationId))
 				return 0;
 
-			//FIXME: Should we reset the values
-			if(MinOccurs > MaxOccurs)
-				error(h,"minOccurs must be less than or equal to maxOccurs");
-
 			XmlSchemaUtil.CompileID(Id, this, schema.IDCollection, h);
+			CompileOccurence (h, schema);
 
 			foreach(XmlSchemaObject obj in Items)
 			{
-				if(obj is XmlSchemaElement)
+				if(obj is XmlSchemaElement ||
+					obj is XmlSchemaGroupRef ||
+					obj is XmlSchemaChoice ||
+					obj is XmlSchemaSequence ||
+					obj is XmlSchemaAny)
 				{
-					errorCount += ((XmlSchemaElement)obj).Compile(h,schema);
+					errorCount += obj.Compile(h,schema);
 				}
-				else if(obj is XmlSchemaGroupRef)
-				{
-					errorCount += ((XmlSchemaGroupRef)obj).Compile(h,schema);
-				}
-				else if(obj is XmlSchemaChoice)
-				{
-					errorCount += ((XmlSchemaChoice)obj).Compile(h,schema);
-				}
-				else if(obj is XmlSchemaSequence)
-				{
-					errorCount += ((XmlSchemaSequence)obj).Compile(h,schema);
-				}
-				else if(obj is XmlSchemaAny)
-				{
-					errorCount += ((XmlSchemaAny)obj).Compile(h,schema);
-				}
+				else
+					error(h, "Invalid schema object was specified in the particles of the sequence model group.");
 			}
 			this.CompilationId = schema.CompilationId;
 			return errorCount;
 		}
 		
 		[MonoTODO]
-		internal int Validate(ValidationEventHandler h)
+		internal override int Validate(ValidationEventHandler h, XmlSchema schema)
 		{
+			if (IsValidated (schema.CompilationId))
+				return errorCount;
+
+			compiledItems = new XmlSchemaObjectCollection ();
+			foreach (XmlSchemaObject obj in Items) {
+				errorCount += obj.Validate (h, schema);
+				compiledItems.Add (obj);
+			}
+
+			ValidationId = schema.ValidationId;
 			return errorCount;
 		}
+
+		internal override void ValidateDerivationByRestriction (XmlSchemaParticle baseParticle,
+			ValidationEventHandler h, XmlSchema schema)
+		{
+			XmlSchemaElement el = baseParticle as XmlSchemaElement;
+			if (el != null) {
+				// Forbidden
+				error (h, "Invalid sequence paricle derivation.");
+				return;
+			}
+
+			XmlSchemaSequence seq = baseParticle as XmlSchemaSequence;
+			if (seq != null) {
+				// Recurse
+				ValidateOccurenceRangeOK (seq, h, schema);
+
+				// FIXME: What is the correct "order preserving" mapping?
+				int baseIndex = 0;
+				for (int i = 0; i < this.Items.Count; i++) {
+					XmlSchemaParticle pd = Items [i] as XmlSchemaParticle;
+					if (seq.Items.Count > baseIndex) {
+						XmlSchemaParticle pb = seq.Items [baseIndex] as XmlSchemaParticle;
+						pd.ActualParticle.ValidateDerivationByRestriction (pb.ActualParticle, h, schema);
+						baseIndex++;
+					}
+					else
+						error (h, "Invalid choice derivation by extension was found.");
+				}
+
+				return;
+			} 
+
+			XmlSchemaAll all = baseParticle as XmlSchemaAll;
+			XmlSchemaAny any = baseParticle as XmlSchemaAny;
+			XmlSchemaChoice choice = baseParticle as XmlSchemaChoice;
+			if (all != null) {
+				// RecurseUnordered
+				XmlSchemaObjectCollection already = new XmlSchemaObjectCollection ();
+				for (int i = 0; i < this.Items.Count; i++) {
+					XmlSchemaElement de = this.Items [i] as XmlSchemaElement;
+					if (de == null) {
+						error (h, "Invalid sequence particle derivation by restriction from all.");
+						continue;
+					}
+					foreach (XmlSchemaElement e in all.Items) {
+						if (e.QualifiedName == de.QualifiedName) {
+							if (already.Contains (e))
+								error (h, "Base element particle is mapped to the derived element particle in a sequence two or more times.");
+							else {
+								already.Add (e);
+								de.ValidateDerivationByRestriction (e, h, schema);
+							}
+						}
+					}
+				}
+				foreach (XmlSchemaElement e in all.Items)
+					if (!already.Contains (e))
+						if (!e.ValidateIsEmptiable ())
+							error (h, "In base -all- particle, mapping-skipped base element which is not emptiable was found.");
+			} else if (any != null) {
+				// NSRecurseCheckCardinality
+				ValidateNSRecurseCheckCardinality (any, h, schema);
+				return;
+			} else if (choice != null) {
+				// TODO: MapAndSum
+			}
+		}
+
+		internal override decimal GetMinEffectiveTotalRange ()
+		{
+			return GetMinEffectiveTotalRangeAllAndSequence ();
+		}
+
+		internal override void CheckRecursion (int depth, ValidationEventHandler h, XmlSchema schema)
+		{
+			foreach (XmlSchemaParticle p in this.Items)
+				p.CheckRecursion (depth, h, schema);
+		}
+
+		internal override void ValidateUniqueParticleAttribution (XmlSchemaObjectTable qnames, ArrayList nsNames,
+			ValidationEventHandler h, XmlSchema schema)
+		{
+			foreach (XmlSchemaParticle p in this.Items) {
+				p.ValidateUniqueParticleAttribution (qnames, nsNames, h, schema);
+				if (p.ValidatedMinOccurs == p.ValidatedMaxOccurs)
+					break;
+			}
+			XmlSchemaObjectTable tmpTable = new XmlSchemaObjectTable ();
+			ArrayList al = new ArrayList ();
+			for (int i=0; i<Items.Count; i++) {
+				XmlSchemaParticle p1 = Items [i] as XmlSchemaParticle;
+				p1.ValidateUniqueParticleAttribution (tmpTable, al, h, schema);
+				if (p1.ValidatedMinOccurs == p1.ValidatedMaxOccurs) {
+					tmpTable.Clear ();
+					al.Clear ();
+				}
+			}
+		}
+
+		internal override void ValidateUniqueTypeAttribution (XmlSchemaObjectTable labels,
+			ValidationEventHandler h, XmlSchema schema)
+		{
+			foreach (XmlSchemaParticle p in this.Items)
+				p.ValidateUniqueTypeAttribution (labels, h, schema);
+		}
+
 		//<sequence
 		//  id = ID
 		//  maxOccurs =  (nonNegativeInteger | unbounded)  : 1

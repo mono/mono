@@ -1,5 +1,10 @@
-// Author: Dwivedi, Ajay kumar
-//            Adwiv@Yahoo.com
+//
+// System.Xml.Schema.XmlSchemaAttribute.cs
+//
+// Authors:
+//	Dwivedi, Ajay kumar  Adwiv@Yahoo.com
+//	Enomoto, Atsushi     ginga@kit.hi-ho.ne.jp
+//
 using System;
 using System.Xml;
 using System.ComponentModel;
@@ -15,15 +20,19 @@ namespace System.Xml.Schema
 		private object attributeType;
 		private string defaultValue;
 		private string fixedValue;
+		private string validatedDefaultValue;
+		private string validatedFixedValue;
 		private XmlSchemaForm form;
 		private string name;
+		private string targetNamespace;
 		private XmlQualifiedName qualifiedName;
 		private XmlQualifiedName refName;
 		private XmlSchemaSimpleType schemaType;
 		private XmlQualifiedName schemaTypeName;
 		private XmlSchemaUse use;
 		//Compilation fields
-		internal bool parentIsSchema = false;
+		internal bool ParentIsSchema = false;
+		private XmlSchemaAttribute referencedAttribute;
 		private static string xmlname = "attribute";
 
 		public XmlSchemaAttribute()
@@ -122,8 +131,27 @@ namespace System.Xml.Schema
 
 		[XmlIgnore]
 		public object AttributeType 
-		{ //FIXME: This is not correct. Is it?
-			get{ return attributeType; }
+		{
+			get{
+				if (referencedAttribute != null)
+					return referencedAttribute.AttributeType;
+				else
+					return attributeType;
+			}
+		}
+
+		// Post compilation default value (normalized)
+		internal string ValidatedDefaultValue
+		{
+			// DefaultValue can be overriden in case of ref.
+			get { return validatedDefaultValue; }
+		}
+
+		// Post compilation fixed value (normalized)
+		internal string ValidatedFixedValue 
+		{
+			// FixedValue can be overriden in case of ref.
+			get { return validatedFixedValue; }
 		}
 
 		#endregion
@@ -168,7 +196,7 @@ namespace System.Xml.Schema
 		///     4. If default and use are both present, use must have the ·actual value· optional.
 		/// </remarks>
 		[MonoTODO]
-		internal int Compile(ValidationEventHandler h, XmlSchema schema)
+		internal override int Compile(ValidationEventHandler h, XmlSchema schema)
 		{
 			// If this is already compiled this time, simply skip.
 			if (this.IsComplied (schema.CompilationId))
@@ -176,7 +204,7 @@ namespace System.Xml.Schema
 
 			errorCount = 0;
 			
-			if(parentIsSchema)//a
+			if(ParentIsSchema || isRedefineChild)//a
 			{
 				if(RefName!= null && !RefName.IsEmpty) // a.1
 					error(h,"ref must be absent in the top level <attribute>");
@@ -187,6 +215,8 @@ namespace System.Xml.Schema
 				if(Use != XmlSchemaUse.None)		// a.3
 					error(h,"use must be absent in the top level <attribute>");
 
+				targetNamespace = schema.TargetNamespace;
+
 				// TODO: a.10, a.11, a.12, a.13
 				CompileCommon(h, schema, true);
 			}
@@ -195,6 +225,11 @@ namespace System.Xml.Schema
 				//FIXME: How to Use of AttributeFormDefault????
 				if(RefName == null || RefName.IsEmpty)
 				{
+					if(form == XmlSchemaForm.Qualified || (form == XmlSchemaForm.None && schema.AttributeFormDefault == XmlSchemaForm.Qualified))
+						this.targetNamespace = schema.TargetNamespace;
+					else
+						this.targetNamespace = "";
+
 					//TODO: b.8
 					CompileCommon(h, schema, true);
 				}
@@ -208,6 +243,7 @@ namespace System.Xml.Schema
 						error(h,"simpletype must be absent if ref is present");
 					if(this.schemaTypeName != null && !this.schemaTypeName.IsEmpty)
 						error(h,"type must be absent if ref is present");
+
 					CompileCommon(h, schema, false);
 				}
 			}
@@ -227,7 +263,7 @@ namespace System.Xml.Schema
 				else if(Name == "xmlns") // a.14 , b5
 					error(h,"attribute name must not be xmlns");
 				else
-					qualifiedName = new XmlQualifiedName(Name, schema.TargetNamespace);	
+					qualifiedName = new XmlQualifiedName(Name, targetNamespace);
 
 				if(SchemaType != null)
 				{
@@ -243,7 +279,7 @@ namespace System.Xml.Schema
 			else
 			{
 				if(RefName == null || RefName.IsEmpty) 
-					error(h,"Error: Should Never Happen. refname must be present");
+					throw new NotImplementedException ("Error: Should Never Happen. refname must be present");
 				else
 					qualifiedName = RefName;
 			}
@@ -266,57 +302,107 @@ namespace System.Xml.Schema
 		///			QName, SimpleType, Scope, Default|Fixed, annotation
 		/// </summary>
 		[MonoTODO]
-		internal int Validate(ValidationEventHandler h, XmlSchema schema)
+		internal override int Validate(ValidationEventHandler h, XmlSchema schema)
 		{
-			if(isCompiled)
+			if(IsValidated (schema.ValidationId))
 				return errorCount;
 
-			//If Parent is schema:
-			if(parentIsSchema)
-			{
-				if(SchemaType != null)
-				{
-					errorCount += SchemaType.Validate(h, schema);
-					attributeType = SchemaType;
-				}
-				else if(SchemaTypeName != null && !SchemaTypeName.IsEmpty)
-				{
-					//First Try to get a Inbuilt DataType
-					XmlSchemaDatatype dtype = XmlSchemaDatatype.FromName(SchemaTypeName);
-					if(dtype != null)
-					{
-						attributeType = dtype;
-					}
-					else
-					{
-						XmlSchemaObject obj = schema.SchemaTypes[SchemaTypeName];
+			// -- Attribute Declaration Schema Component --
+			// {name}, {target namespace} -> QualifiedName. Already Compile()d.
+			// {type definition} -> attributeType. From SchemaType or SchemaTypeName.
+			// {scope} -> ParentIsSchema | isRedefineChild.
+			// {value constraint} -> ValidatedFixedValue, ValidatedDefaultValue.
+			// {annotation}
+			// -- Attribute Use Schema Component --
+			// {required}
+			// {attribute declaration}
+			// {value constraint}
 
-						if(obj is XmlSchemaSimpleType)
-						{
-							XmlSchemaSimpleType stype = (XmlSchemaSimpleType) obj;
-							errorCount += stype.Validate(h, schema);
-							attributeType = stype;
+			// First, fill type information for type reference
+			if (SchemaTypeName != null && SchemaTypeName != XmlQualifiedName.Empty)
+			{
+				// If type is null, then it is missing sub components .
+				XmlSchemaType type = schema.SchemaTypes [SchemaTypeName] as XmlSchemaType;
+				if (type is XmlSchemaComplexType)
+					error(h,"An attribute can't have complexType Content");
+				else if (type != null) {	// simple type
+					errorCount += type.Validate (h, schema);
+					attributeType = type;
+				}
+				else if (SchemaTypeName == XmlSchemaComplexType.AnyTypeName)
+					attributeType = XmlSchemaComplexType.AnyType;
+				else if (SchemaTypeName.Namespace == XmlSchema.Namespace) {
+					attributeType = XmlSchemaDatatype.FromName (SchemaTypeName);
+					if (attributeType == null)
+						error (h, "Invalid xml schema namespace datatype was specified.");
+				}
+				// otherwise, it might be missing sub components.
+				else if (!schema.missedSubComponents)
+					error (h, "Referenced schema type " + SchemaTypeName + " was not found in the corresponding schema.");
+				/*
+				attributeType = schema.Schemas.FindSchemaType (SchemaTypeName);
+				if (attributeType == null) {
+					if (SchemaTypeName.Namespace == XmlSchema.Namespace)
+						error (h, "Invalid xml schema namespace datatype was specified.");
+					else if (!schema.missedSubComponents)
+						error (h, "Referenced schema type was not found in the corresponding schema. Schema type name is " + SchemaTypeName + " .");
+				}
+				if (attributeType is XmlSchemaComplexType)
+					error(h,"An attribute can't have complexType Content");
+				XmlSchemaType attrSchemaType = attributeType as XmlSchemaType;
+				if (attrSchemaType != null)
+					attrSchemaType.Validate (h, schema);
+				*/
+			}
+
+			// Then, fill type information for the type references for the referencing attributes
+			if (RefName != null && RefName != XmlQualifiedName.Empty)
+			{
+				referencedAttribute = schema.Attributes [RefName] as XmlSchemaAttribute;
+				// If el is null, then it is missing sub components .
+				if (referencedAttribute != null)
+					errorCount += referencedAttribute.Validate (h, schema);
+				// otherwise, it might be missing sub components.
+				else if (!schema.missedSubComponents)
+					error (h, "Referenced attribute " + RefName + " was not found in the corresponding schema.");
+			}
+
+			if (attributeType == null)
+				attributeType = XmlSchemaSimpleType.AnySimpleType;
+
+			// Validate {value constraints}
+			if (defaultValue != null || fixedValue != null) {
+				XmlSchemaDatatype datatype = attributeType as XmlSchemaDatatype;
+				if (datatype == null)
+					datatype = ((XmlSchemaSimpleType) attributeType).Datatype;
+				if (datatype.TokenizedType == XmlTokenizedType.QName)
+					error (h, "By the defection of the W3C XML Schema specification, it is impossible to supply QName default or fixed values.");
+				else {
+					try {
+						if (defaultValue != null) {
+							validatedDefaultValue = datatype.Normalize (defaultValue);
+							datatype.ParseValue (validatedDefaultValue, null, null);
 						}
-						else if(attributeType == null)
-							error(h,"The type '"+ SchemaTypeName +"' is not defined in the schema");
-						else if(attributeType is XmlSchemaComplexType)
-							error(h,"An attribute can't have complexType Content");
-						else
-							error(h, "Should Never Happen. Illegal content in SchemaTypes");
+					} catch (Exception ex) {
+						// FIXME: This is not a good way to handle exception.
+						error (h, "The Attribute's default value is invalid with its type definition.", ex);
+					}
+					try {
+						if (fixedValue != null) {
+							validatedFixedValue = datatype.Normalize (fixedValue);
+							datatype.ParseValue (validatedFixedValue, null, null);
+						}
+					} catch (Exception ex) {
+						// FIXME: This is not a good way to handle exception.
+						error (h, "The Attribute's fixed value is invalid with its type definition.", ex);
 					}
 				}
-				else
-				{
-					error(h,"Should Never Happen. Attribute SimpleType Not set. Should have been caught in the Compile() phase");
-				}
 			}
-			else
-			{
-				//TODO: Local Attribute Validation
-			}
-			isCompiled = true;
+
+			ValidationId = schema.ValidationId;
 			return errorCount;
 		}
+
 		//<attribute
 		//  default = string
 		//  fixed = string

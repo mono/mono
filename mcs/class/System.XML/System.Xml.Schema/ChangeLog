@@ -1,3 +1,33 @@
+2003-09-30  Atsushi Enomoto  <ginga@kit.hi-ho.ne.jp>
+
+	* Forgot to append 8/24/2003 ChangeLog.
+	* BUGS.txt, BUGS-MS.txt : Appended additional bug info.
+	* BuiltInDatatype.cs, ValidationHandler.cs, XmlSchema.cs, 
+	  XmlSchemaAll.cs, XmlSchemaAnnotation.cs. XmlSchemaAny.cs,
+	  XmlSchemaAnyAttribute.cs, XmlSchemaAttribute.cs,
+	  XmlSchemaAttributeGroup.cs, XmlSchemaAttributeGroupRef.cs,
+	  XmlSchemaChoice.cs, XmlSchemaCollection.cs,
+	  XmlSchemaComplexContent.cs, XmlSchemaComplexContentExtension.cs,
+	  XmlSchemaComplexContentRestriction.cs, XmlSchemaComplexType.cs,
+	  XmlSchemaContent.cs, XmlSchemaDatatype.cs, XmlSchemaElement.cs,
+	  XmlSchemaException.cs, XmlSchemaGroup.cs, XmlSchemaGroupBase.cs,
+	  XmlSchemaGroupRef.cs, XmlSchemaIdentityConstraint.cs,
+	  XmlSchemaKey.cs, XmlSchemaKeyref.cs, XmlSchemaNotation.cs,
+	  XmlSchemaObject.cs, XmlSchemaObjectTable.cs, XmlSchemaParticle.cs,
+	  XmlSchemaReader.cs, XmlSchemaSequence.cs, XmlSchemaSimpleContent.cs,
+	  XmlSchemaSimpleContentExtension.cs,
+	  XmlSchemaSimpleContentRestriction.cs, XmlSchemaSimpleType.cs,
+	  XmlSchemaSimpleTypeContent.cs, XmlSchemaSimpleTypeList.cs,
+	  XmlSchemaSimpleTypeRestriction.cs, XmlSchemaSimpleTypeUnion.cs,
+	  XmlSchemaType.cs, XmlSchemaUnique.cs, XmlSchemaUtil.cs,
+	  XmlSchemaXPath.cs :
+
+	  - Almost all classes are changed to implement schema component
+	    constraints, and schema validation using XsdValidatingReader.
+	  - better exception messages.
+	  - More datatype support.
+	  and so on.
+
 2003-09-14  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* XmlSchema.cs: Do not add schema namespace declaration if it is already
@@ -6,6 +36,12 @@
 2003-08-28  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* BuiltInDatatypes.cs, XmlSchemaDatatype.cs: Added double type.
+
+2003-08-24  Atsushi Enomoto  <ginga@kit.hi-ho.ne.jp>
+
+	* BuiltInDatatype.cs : XsdDecimal.TokenizedType should be None.
+	* XmlSchemaCollection.cs : Add(uri) should not reject chameleon schema.
+	  Add() should compile specified schema.
 
 2003-08-08  Lluis Sanchez Gual <lluis@ximian.com>
 

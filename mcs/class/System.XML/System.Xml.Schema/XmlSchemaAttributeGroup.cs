@@ -1,6 +1,12 @@
-// Author: Dwivedi, Ajay kumar
-//            Adwiv@Yahoo.com
+//
+// System.Xml.Schema.XmlSchemaAttributeGroup.cs
+//
+// Authors:
+//	Dwivedi, Ajay kumar  Adwiv@Yahoo.com
+//	Enomoto, Atsushi     ginga@kit.hi-ho.ne.jp
+//
 using System;
+using System.Collections;
 using System.Xml.Serialization;
 using System.Xml;
 
@@ -11,12 +17,14 @@ namespace System.Xml.Schema
 	/// </summary>
 	public class XmlSchemaAttributeGroup : XmlSchemaAnnotated
 	{
-		private XmlSchemaAnyAttribute any;
+		private XmlSchemaAnyAttribute anyAttribute;
 		private XmlSchemaObjectCollection attributes;
 		private string name;
 		private XmlSchemaAttributeGroup redefined;
 		private XmlQualifiedName qualifiedName;
 		private static string xmlname = "attributeGroup";
+		private XmlSchemaObjectTable attributeUses;
+		private XmlSchemaAnyAttribute anyAttributeUse;
 
 		public XmlSchemaAttributeGroup()
 		{
@@ -37,11 +45,20 @@ namespace System.Xml.Schema
 			get{ return attributes;}
 		}
 
+		internal XmlSchemaObjectTable AttributeUses
+		{
+			get { return attributeUses; }
+		}
+		internal XmlSchemaAnyAttribute AnyAttributeUse
+		{
+			get { return anyAttributeUse; }
+		}
+
 		[XmlElement("anyAttribute",Namespace=XmlSchema.Namespace)]
 		public XmlSchemaAnyAttribute AnyAttribute 
 		{
-			get{ return any;}
-			set{ any = value;}
+			get{ return anyAttribute;}
+			set{ anyAttribute = value;}
 		}
 
 		//Undocumented property
@@ -63,17 +80,24 @@ namespace System.Xml.Schema
 		///  1. Name must be present
 		/// </remarks>
 		[MonoTODO]
-		internal int Compile(ValidationEventHandler h, XmlSchema schema)
+		internal override int Compile(ValidationEventHandler h, XmlSchema schema)
 		{
+			// FIXME: Even if it was already compiled, it should check recursion.
 			// If this is already compiled this time, simply skip.
 			if (this.IsComplied (schema.CompilationId))
-				return 0;
+				return errorCount;
 
 			errorCount = 0;
 
+			if (redefinedObject != null) {
+				errorCount += redefined.Compile (h, schema);
+				if (errorCount == 0)
+					redefined = (XmlSchemaAttributeGroup) redefinedObject;
+			}
+
 			XmlSchemaUtil.CompileID(Id,this, schema.IDCollection,h);
 
-			if(this.Name == null) //1
+			if(this.Name == null || this.Name == String.Empty) //1
 				error(h,"Name is required in top level simpletype");
 			else if(!XmlSchemaUtil.CheckNCName(this.Name)) // b.1.2
 				error(h,"name attribute of a simpleType must be NCName");
@@ -105,10 +129,40 @@ namespace System.Xml.Schema
 			this.CompilationId = schema.CompilationId;
 			return errorCount;
 		}
-		
+
 		[MonoTODO]
-		internal int Validate(ValidationEventHandler h)
+		internal override int Validate(ValidationEventHandler h, XmlSchema schema)
 		{
+			if (IsValidated (schema.CompilationId))
+				return errorCount;
+
+			if (redefined == null && redefinedObject != null) {
+				redefinedObject.Compile (h, schema);
+				redefined = (XmlSchemaAttributeGroup) redefinedObject;
+				redefined.Validate (h, schema);
+			}
+
+			XmlSchemaObjectCollection actualAttributes = null;
+			/*
+			if (this.redefined != null) {
+				actualAttributes = new XmlSchemaObjectCollection ();
+				foreach (XmlSchemaObject obj in Attributes) {
+					XmlSchemaAttributeGroupRef grp = obj as XmlSchemaAttributeGroupRef;
+					if (grp != null && grp.QualifiedName == this.QualifiedName)
+						actualAttributes.Add (redefined);
+					else
+						actualAttributes.Add (obj);
+				}
+			}
+			else
+			*/
+				actualAttributes = Attributes;
+
+			attributeUses = new XmlSchemaObjectTable ();
+			errorCount += XmlSchemaUtil.ValidateAttributesResolved (attributeUses,
+				h, schema, actualAttributes, AnyAttribute, 
+				ref anyAttributeUse, redefined);
+			ValidationId = schema.ValidationId;
 			return errorCount;
 		}
 

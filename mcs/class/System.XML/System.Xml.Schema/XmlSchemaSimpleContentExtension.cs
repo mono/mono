@@ -1,5 +1,10 @@
-// Author: Dwivedi, Ajay kumar
-//            Adwiv@Yahoo.com
+//
+// System.Xml.Schema.XmlSchemaSimpleContentExtension.cs
+//
+// Author:
+//	Dwivedi, Ajay kumar  Adwiv@Yahoo.com
+//	Atsushi Enomoto  ginga@kit.hi-ho.ne.jp
+//
 using System;
 using System.Xml;
 using System.Xml.Serialization;
@@ -48,15 +53,24 @@ namespace System.Xml.Schema
 		/// 1. Base must be present and a QName
 		///</remarks>
 		[MonoTODO]
-		internal int Compile(ValidationEventHandler h, XmlSchema schema)
+		internal override int Compile(ValidationEventHandler h, XmlSchema schema)
 		{
 			// If this is already compiled this time, simply skip.
 			if (this.IsComplied (schema.CompilationId))
 				return 0;
 
+			if (this.isRedefinedComponent) {
+				if (Annotation != null)
+					Annotation.isRedefinedComponent = true;
+				if (AnyAttribute != null)
+					AnyAttribute.isRedefinedComponent = true;
+				foreach (XmlSchemaObject obj in Attributes)
+					obj.isRedefinedComponent = true;
+			}
+
 			if(BaseTypeName == null || BaseTypeName.IsEmpty)
 			{
-				error(h, "base must be present and a QName");
+				error(h, "base must be present, as a QName");
 			}
 			else if(!XmlSchemaUtil.CheckQName(BaseTypeName))
 				error(h,"BaseTypeName must be a QName");
@@ -89,10 +103,33 @@ namespace System.Xml.Schema
 		}
 		
 		[MonoTODO]
-		internal int Validate(ValidationEventHandler h)
+		internal override int Validate(ValidationEventHandler h, XmlSchema schema)
 		{
+			if (IsValidated (schema.ValidationId))
+				return errorCount;
+
+			XmlSchemaType st = schema.SchemaTypes [baseTypeName] as XmlSchemaType;
+			if (st != null) {
+				XmlSchemaComplexType ct = st as XmlSchemaComplexType;
+				if (ct != null && ct.ContentModel is XmlSchemaComplexContent)
+					error (h, "Specified type is complex type which contains complex content.");
+				st.Validate (h, schema);
+				actualBaseSchemaType = st;
+			} else if (baseTypeName == XmlSchemaComplexType.AnyTypeName) {
+				actualBaseSchemaType = XmlSchemaComplexType.AnyType;
+			} else if (baseTypeName.Namespace == XmlSchema.Namespace) {
+				actualBaseSchemaType = XmlSchemaDatatype.FromName (baseTypeName);
+				if (actualBaseSchemaType == null)
+					error (h, "Invalid schema datatype name is specified.");
+			}
+			// otherwise, it might be missing sub components.
+			else if (!schema.missedSubComponents)// && schema.Schemas [baseTypeName.Namespace] != null)
+				error (h, "Referenced base schema type " + baseTypeName + " was not found in the corresponding schema.");
+
+			ValidationId = schema.ValidationId;
 			return errorCount;
 		}
+
 		//<extension 
 		//base = QName 
 		//id = ID 

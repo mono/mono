@@ -13,6 +13,7 @@ namespace System.Xml.Schema
 	public class XmlSchemaException : System.SystemException
 	{
 		//fields
+		private bool hasLineInfo;
 		private int lineNumber;
 		private int linePosition;
 		private XmlSchemaObject sourceObj;
@@ -21,26 +22,42 @@ namespace System.Xml.Schema
 		protected XmlSchemaException(SerializationInfo info, StreamingContext context)
 			: base (info, context)
 		{
+			hasLineInfo = true;
 			this.lineNumber = info.GetInt32 ("lineNumber");
 			this.linePosition = info.GetInt32 ("linePosition");
 			this.sourceUri = info.GetString ("sourceUri");
 			this.sourceObj = info.GetValue ("sourceObj", typeof (XmlSchemaObject)) as XmlSchemaObject;
 		}
 		
-		
 		internal XmlSchemaException(string message, int lineNumber, int linePosition,
 			XmlSchemaObject sourceObject, string sourceUri, Exception innerException)
 			: base(message, innerException)
 		{
+			hasLineInfo = true;
 			this.lineNumber		= lineNumber;
 			this.linePosition	= linePosition;
 			this.sourceObj		= sourceObject;
 			this.sourceUri		= sourceUri;
 		}
+
+		internal XmlSchemaException(string message, object sender,
+			string sourceUri, XmlSchemaObject sourceObject, Exception innerException)
+			: base(message, innerException)
+		{
+			IXmlLineInfo li = sender as IXmlLineInfo;
+			if (li != null && li.HasLineInfo ()) {
+				hasLineInfo = true;
+				this.lineNumber = li.LineNumber;
+				this.linePosition = li.LinePosition;
+			}
+			this.sourceObj = sourceObject;
+		}
+
 		internal XmlSchemaException(string message, XmlSchemaObject sourceObject,
 			Exception innerException)
 			: base(message, innerException)
 		{
+			hasLineInfo = true;
 			this.lineNumber = sourceObject.LineNumber;
 			this.linePosition = sourceObject.LinePosition;
 			this.sourceObj	=	sourceObject;
@@ -71,12 +88,15 @@ namespace System.Xml.Schema
 		public override string Message
 		{
 			get {
-				string msg = base.Message;
-				if (sourceUri != null)
-					msg = String.Format ("XmlSchema error: {0}\n" +
-							     "URI: {1}, line {2}, position {3}",
-							     msg, sourceUri, lineNumber, linePosition);
-
+				string msg = "XmlSchema error: " + base.Message;
+				if (hasLineInfo)
+					msg += String.Format (" XML {0} Line {1}, Position {2}.",
+						(sourceUri != null && sourceUri != "") ? "URI: " + sourceUri + " ." : "",
+						lineNumber,
+						linePosition);
+				if (sourceObj != null)
+					msg += String.Format (" Related schema item SourceUri: {0}, Line {1}, Position {2}.",
+						sourceObj.SourceUri, sourceObj.LineNumber, sourceObj.LinePosition);
 				return msg;
 			}
 		}

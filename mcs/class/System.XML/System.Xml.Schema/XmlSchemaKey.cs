@@ -20,26 +20,18 @@ namespace System.Xml.Schema
 		/// 2. selector and field must be present
 		/// </remarks>
 		[MonoTODO]
-		internal new int Compile(ValidationEventHandler h, XmlSchema schema)
+		internal override int Compile(ValidationEventHandler h, XmlSchema schema)
 		{
-			// If this is already compiled this time, simply skip.
-			if (this.IsComplied (schema.CompilationId))
-				return 0;
-
 			return base.Compile(h, schema);
 		}
 		
-		[MonoTODO]
-		internal int Validate(ValidationEventHandler h)
-		{
-			return errorCount;
-		}
-
+		/*
 		internal new void error(ValidationEventHandler handle, string message)
 		{
 			errorCount++;
 			ValidationHandler.RaiseValidationError(handle, this, message);
 		}
+		*/
 
 		//<key 
 		//  id = ID 

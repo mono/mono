@@ -12,9 +12,16 @@ namespace System.Xml.Schema
 	/// </summary>
 	internal class ValidationHandler
 	{
-		public static void RaiseValidationEvent(ValidationEventHandler handle, Exception innerException,  object sender, string message, XmlSeverityType severity)
+		public static void RaiseValidationEvent(ValidationEventHandler handle,
+			Exception innerException,
+			string message,
+			XmlSchemaObject xsobj,
+			object sender,
+			string sourceUri,
+			XmlSeverityType severity)
 		{
-			XmlSchemaException ex = new XmlSchemaException(message,innerException);
+			XmlSchemaException ex = new XmlSchemaException (
+				message, sender, sourceUri, xsobj, innerException);
 			ValidationEventArgs e = new ValidationEventArgs(ex,message,severity);
 			if(handle == null)
 			{
@@ -25,6 +32,13 @@ namespace System.Xml.Schema
 				handle(sender,e);
 			}
 		}
+
+		/*
+		public static void RaiseValidationEvent(ValidationEventHandler handle, Exception innerException,  object sender, string message, XmlSeverityType severity)
+		{
+			RaiseValidationEvent(handle,null,sender,message,XmlSeverityType.Error);
+		}
+
 		public static void RaiseValidationError(ValidationEventHandler handle, object sender, string message)
 		{
 			RaiseValidationEvent(handle,null,sender,message,XmlSeverityType.Error);
@@ -44,5 +58,6 @@ namespace System.Xml.Schema
 		{
 			RaiseValidationEvent(handle, innerException, null, message, XmlSeverityType.Warning);
 		}
+		*/
 	}
 }

@@ -45,7 +45,16 @@ namespace System.Xml.Schema
 
 		internal void Add(XmlQualifiedName name, XmlSchemaObject value)
 		{
-			table.Add(name,value);
+			if (table.ContainsKey (name))
+				throw new XmlSchemaException (
+					"Schema object for the name " + name + " already exists in this table.",
+					0, 0, value, null, null);
+			table [name] = value;
+		}
+
+		internal void Clear ()
+		{
+			table.Clear ();
 		}
 
 		internal void Set(XmlQualifiedName name, XmlSchemaObject value)

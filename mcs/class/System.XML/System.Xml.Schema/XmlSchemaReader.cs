@@ -30,6 +30,11 @@ namespace System.Xml.Schema
 			get { return NamespaceURI + ":" + LocalName; }
 		}
 
+		public XmlReader Reader
+		{
+			get { return this.reader; }
+		}
+
 		public void RaiseInvalidElementError()
 		{
 			string errstr = "Element "+FullName + " is invalid in this context.\n";

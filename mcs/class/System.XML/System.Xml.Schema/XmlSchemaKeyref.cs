@@ -13,6 +13,7 @@ namespace System.Xml.Schema
 	{
 		private XmlQualifiedName refer;
 		private static string xmlname = "keyref";
+		private XmlSchemaIdentityConstraint target;
 
 		public XmlSchemaKeyref()
 		{
@@ -25,19 +26,22 @@ namespace System.Xml.Schema
 			get{ return  refer; } 
 			set{ refer = value; }
 		}
+
+		internal XmlSchemaIdentityConstraint Target
+		{
+			get { return target; }
+		}
+
 		/// <remarks>
 		/// 1. name must be present
 		/// 2. selector and field must be present
 		/// 3. refer must be present
 		/// </remarks>
 		[MonoTODO]
-		internal new int Compile(ValidationEventHandler h, XmlSchema schema)
+		internal override int Compile(ValidationEventHandler h, XmlSchema schema)
 		{
-			// If this is already compiled this time, simply skip.
-			if (this.IsComplied (schema.CompilationId))
-				return 0;
+			base.Compile(h, schema);
 
-			errorCount += base.Compile(h, schema);
 			if(refer == null || refer.IsEmpty)
 				error(h,"refer must be present");
 			else if(!XmlSchemaUtil.CheckQName(refer))
@@ -47,16 +51,28 @@ namespace System.Xml.Schema
 		}
 		
 		[MonoTODO]
-		internal int Validate(ValidationEventHandler h)
+		internal override int Validate (ValidationEventHandler h, XmlSchema schema)
 		{
+			// Find target key
+			XmlSchemaIdentityConstraint target = schema.NamedIdentities [this.Refer] as XmlSchemaIdentityConstraint;
+			if (target == null)
+				error (h, "Target key was not found.");
+			else if (target is XmlSchemaKeyref)
+				error (h, "Target identity constraint was keyref.");
+			else if (target.Fields.Count != this.Fields.Count)
+				error (h, "Target identity constraint has different number of fields.");
+			else
+				this.target = target;
 			return errorCount;
 		}
 
+		/*
 		internal new void error(ValidationEventHandler handle, string message)
 		{
 			errorCount++;
 			ValidationHandler.RaiseValidationError(handle, this, message);
 		}
+		*/
 		//<key 
 		//  id = ID 
 		//  name = NCName 

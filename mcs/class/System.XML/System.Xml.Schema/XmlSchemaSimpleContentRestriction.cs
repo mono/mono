@@ -75,15 +75,24 @@ namespace System.Xml.Schema
 		/// 1. Base must be present and a QName
 		///</remarks>
 		[MonoTODO]
-		internal int Compile(ValidationEventHandler h, XmlSchema schema)
+		internal override int Compile(ValidationEventHandler h, XmlSchema schema)
 		{
 			// If this is already compiled this time, simply skip.
 			if (this.IsComplied (schema.CompilationId))
 				return 0;
 
+			if (this.isRedefinedComponent) {
+				if (Annotation != null)
+					Annotation.isRedefinedComponent = true;
+				if (AnyAttribute != null)
+					AnyAttribute.isRedefinedComponent = true;
+				foreach (XmlSchemaObject obj in Attributes)
+					obj.isRedefinedComponent = true;
+			}
+
 			if(BaseTypeName == null || BaseTypeName.IsEmpty)
 			{
-				error(h, "base must be present and a QName");
+				error(h, "base must be present, as a QName");
 			}
 			else if(!XmlSchemaUtil.CheckQName(BaseTypeName))
 				error(h,"BaseTypeName must be a QName");
@@ -123,8 +132,33 @@ namespace System.Xml.Schema
 		}
 		
 		[MonoTODO]
-		internal int Validate(ValidationEventHandler h)
+		internal override int Validate(ValidationEventHandler h, XmlSchema schema)
 		{
+			if (IsValidated (schema.ValidationId))
+				return errorCount;
+
+			if (baseType != null) {
+				baseType.Validate (h, schema);
+				actualBaseSchemaType = baseType;
+			}
+			else if (baseTypeName != XmlQualifiedName.Empty) {
+				XmlSchemaType st = schema.SchemaTypes [baseTypeName] as XmlSchemaType;
+				if (st != null) {
+					st.Validate (h, schema);
+					actualBaseSchemaType = st;
+				} else if (baseTypeName == XmlSchemaComplexType.AnyTypeName) {
+					actualBaseSchemaType = XmlSchemaComplexType.AnyType;
+				} else if (baseTypeName.Namespace == XmlSchema.Namespace) {
+					actualBaseSchemaType = XmlSchemaDatatype.FromName (baseTypeName);
+					if (actualBaseSchemaType == null)
+						error (h, "Invalid schema datatype name is specified.");
+				}
+				// otherwise, it might be missing sub components.
+				else if (!schema.missedSubComponents)// && schema.Schemas [baseTypeName.Namespace] != null)
+					error (h, "Referenced base schema type " + baseTypeName + " was not found in the corresponding schema.");
+			}
+
+			ValidationId = schema.ValidationId;
 			return errorCount;
 		}
 

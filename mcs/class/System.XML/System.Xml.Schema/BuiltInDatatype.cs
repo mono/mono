@@ -28,17 +28,58 @@ namespace Mono.Xml.Schema
 		Total
 	}
 
-	public abstract class XsdAnySimpleType : XmlSchemaDatatype
+	public class XsdAnySimpleType : XmlSchemaDatatype
 	{
+		static XsdAnySimpleType instance;
+		static XsdAnySimpleType ()
+		{
+			instance = new XsdAnySimpleType ();
+		}
+
+		public static XsdAnySimpleType Instance {
+			get { return instance; }
+		}
+
+		readonly char [] whitespaceArray = new char [] {' '};
+
 		// Fundamental Facets
-		public abstract bool Bounded { get; }
+		public virtual bool Bounded {
+			get { return false; }
+		}
 
-		public abstract bool Finite { get; }
+		public virtual bool Finite {
+			get { return false; }
+		}
 
-		public abstract bool Numeric { get; }
+		public virtual bool Numeric { 
+			get { return false; }
+		}
 
-		public abstract XsdOrderedFacet Ordered { get; }
+		public virtual XsdOrderedFacet Ordered { 
+			get { return XsdOrderedFacet.False; }
+		}
 
+		public override Type ValueType {
+			get { return typeof (object); }
+		}
+
+		public override XmlTokenizedType TokenizedType {
+			get {
+				return XmlTokenizedType.None;
+			}
+		}
+
+		public override object ParseValue (string s,
+			XmlNameTable nameTable, XmlNamespaceManager nsmgr)
+		{
+			return Normalize (s);
+		}
+
+		internal object ParseListValue (string s,
+			XmlNameTable nameTable, XmlNamespaceManager nsmgr)
+		{
+			return this.Normalize (s).Split (whitespaceArray);
+		}
 	}
 
 	// xs:string
@@ -54,12 +95,6 @@ namespace Mono.Xml.Schema
 
 		public override Type ValueType {
 			get { return typeof (string); }
-		}
-
-		public override object ParseValue (string s,
-			XmlNameTable nameTable, XmlNamespaceManager nsmgr)
-		{
-			return Normalize (s);
 		}
 
 		// Fundamental Facets
@@ -159,7 +194,14 @@ namespace Mono.Xml.Schema
 			get { return typeof (string); }
 		}
 
-		// ParseValue () method is as same as that of xs:string
+		public override object ParseValue (string s,
+			XmlNameTable nameTable, XmlNamespaceManager nsmgr)
+		{
+			if (!XmlChar.IsNmToken (s))
+				throw new ArgumentException ("'" + s + "' is an invalid NMTOKEN.");
+			return s;
+		}
+
 	}
 
 	// xs:NMTOKENS
@@ -177,10 +219,9 @@ namespace Mono.Xml.Schema
 			get { return typeof (string []); }
 		}
 
-		readonly char [] whitespaceArray = new char [] {' '};
 		public override object ParseValue (string value, XmlNameTable nt, XmlNamespaceManager nsmgr)
 		{
-			return this.Normalize (value).Split (whitespaceArray);
+			return ParseListValue (value, nt, nsmgr);
 		}
 	}
 
@@ -199,7 +240,13 @@ namespace Mono.Xml.Schema
 			get { return typeof (string); }
 		}
 
-		// ParseValue () method is as same as that of xs:string
+		public override object ParseValue (string s,
+			XmlNameTable nameTable, XmlNamespaceManager nsmgr)
+		{
+			if (!XmlChar.IsName (s))
+				throw new ArgumentException ("'" + s + "' is an invalid name.");
+			return s;
+		}
 	}
 
 	// xs:NCName
@@ -217,7 +264,14 @@ namespace Mono.Xml.Schema
 			get { return typeof (string); }
 		}
 
-		// ParseValue () method is as same as that of xs:string
+		public override object ParseValue (string s,
+			XmlNameTable nameTable, XmlNamespaceManager nsmgr)
+		{
+			if (!XmlChar.IsNCName (s))
+				throw new ArgumentException ("'" + s + "' is an invalid NCName.");
+			return s;
+		}
+
 	}
 
 	// xs:ID
@@ -271,10 +325,9 @@ namespace Mono.Xml.Schema
 			get { return typeof (string []); }
 		}
 
-		readonly char [] whitespaceArray = new char [] {' '};
 		public override object ParseValue (string value, XmlNameTable nt, XmlNamespaceManager nsmgr)
 		{
-			return this.Normalize (value).Split (whitespaceArray);
+			return ParseListValue (value, nt, nsmgr);
 		}
 	}
 
@@ -313,10 +366,9 @@ namespace Mono.Xml.Schema
 			get { return typeof (string []); }
 		}
 
-		readonly char [] whitespaceArray = new char [] {' '};
 		public override object ParseValue (string value, XmlNameTable nt, XmlNamespaceManager nsmgr)
 		{
-			return this.Normalize (value).Split (whitespaceArray);
+			return ParseListValue (value, nt, nsmgr);
 		}
 	}
 
@@ -338,7 +390,7 @@ namespace Mono.Xml.Schema
 		public override object ParseValue (string s,
 			XmlNameTable nameTable, XmlNamespaceManager nsmgr)
 		{
-			throw new NotImplementedException ();
+			return Normalize (s);
 		}
 
 		// Fundamental Facets
@@ -374,7 +426,7 @@ namespace Mono.Xml.Schema
 		}
 
 		public override XmlTokenizedType TokenizedType {
-			get { return XmlTokenizedType.CDATA; }
+			get { return XmlTokenizedType.None; }
 		}
 
 		public override Type ValueType {
@@ -415,6 +467,11 @@ namespace Mono.Xml.Schema
 	// xs:integer
 	public class XsdInteger : XsdDecimal
 	{
+		public XsdInteger ()
+		{
+			this.WhitespaceValue = XsdWhitespaceFacet.Collapse;
+		}
+
 		// Here it may be bigger than int's (or long's) MaxValue.
 		public override Type ValueType {
 			get { return typeof (decimal); }
@@ -428,7 +485,7 @@ namespace Mono.Xml.Schema
 	}
 
 	// xs:Long
-	public class XsdLong : XsdNonNegativeInteger
+	public class XsdLong : XsdInteger
 	{
 		public override Type ValueType {
 			get { return typeof (long); }
@@ -608,8 +665,22 @@ namespace Mono.Xml.Schema
 	}
 
 	// xs:float
-	public class XsdFloat : XsdDecimal
+	public class XsdFloat : XsdAnySimpleType
 	{
+		// Fundamental Facets
+		public override bool Bounded {
+			get { return true; }
+		}
+		public override bool Finite {
+			get { return true; }
+		}
+		public override bool Numeric {
+			get { return true; }
+		}
+		public override XsdOrderedFacet Ordered {
+			get { return XsdOrderedFacet.Total; }
+		}
+
 		public override Type ValueType {
 			get { return typeof (float); }
 		}
@@ -622,8 +693,22 @@ namespace Mono.Xml.Schema
 	}
 
 	// xs:double
-	public class XsdDouble : XsdDecimal
+	public class XsdDouble : XsdAnySimpleType
 	{
+		// Fundamental Facets
+		public override bool Bounded {
+			get { return true; }
+		}
+		public override bool Finite {
+			get { return true; }
+		}
+		public override bool Numeric {
+			get { return true; }
+		}
+		public override XsdOrderedFacet Ordered {
+			get { return XsdOrderedFacet.Total; }
+		}
+
 		public override Type ValueType {
 			get { return typeof (double); }
 		}
@@ -650,6 +735,64 @@ namespace Mono.Xml.Schema
 			XmlNameTable nameTable, XmlNamespaceManager nsmgr)
 		{
 			return Convert.FromBase64String (s);
+		}
+	}
+
+	// xs:hexBinary
+	public class XsdHexBinary : XsdAnySimpleType
+	{
+		internal XsdHexBinary ()
+		{
+		}
+
+		public override XmlTokenizedType TokenizedType {
+			get { return XmlTokenizedType.None; }
+		}
+
+		public override Type ValueType {
+			get { return typeof (byte []); }
+		}
+
+		[MonoTODO]
+		public override object ParseValue (string s,
+			XmlNameTable nameTable, XmlNamespaceManager nsmgr)
+		{
+			throw new NotImplementedException ();
+		}
+
+		// Fundamental Facets ... no need to override
+	}
+
+	// xs:QName
+	public class XsdQName : XsdName
+	{
+		internal XsdQName ()
+		{
+		}
+
+		// Fundamental facets are the same as anySimpleType.
+
+		public override XmlTokenizedType TokenizedType {
+			get { return XmlTokenizedType.QName; }
+		}
+
+		public override Type ValueType {
+			get { return typeof (XmlQualifiedName); }
+		}
+
+		// ParseValue () method is as same as that of xs:string
+		public override object ParseValue (string s,
+			XmlNameTable nameTable, XmlNamespaceManager nsmgr)
+		{
+			if (nameTable == null)
+				throw new ArgumentNullException ("name table");
+			if (nsmgr == null)
+				throw new ArgumentNullException ("namespace manager");
+			int colonAt = s.IndexOf (':');
+			string localName = 
+				nameTable.Add (colonAt < 0 ? s : s.Substring (colonAt + 1));
+			return new XmlQualifiedName (localName, nsmgr.LookupNamespace (
+				colonAt < 0 ? "" : s.Substring (0, colonAt - 1)));
 		}
 	}
 
@@ -708,6 +851,42 @@ namespace Mono.Xml.Schema
 		}
 	}
 	
+	// xs:duration
+	public class XsdDuration : XsdAnySimpleType
+	{
+		internal XsdDuration ()
+		{
+		}
+
+		public override XmlTokenizedType TokenizedType {
+			get { return XmlTokenizedType.CDATA; }
+		}
+
+		public override Type ValueType {
+			get { return typeof (TimeSpan); }
+		}
+
+		public override object ParseValue (string s,
+			XmlNameTable nameTable, XmlNamespaceManager nsmgr)
+		{
+			return XmlConvert.ToTimeSpan (s);
+		}
+
+		// Fundamental Facets
+		public override bool Bounded {
+			get { return false; }
+		}
+		public override bool Finite {
+			get { return false; }
+		}
+		public override bool Numeric {
+			get { return false; }
+		}
+		public override XsdOrderedFacet Ordered {
+			get { return XsdOrderedFacet.Partial; }
+		}
+	}
+
 	// xs:dateTime
 	public class XsdDateTime : XsdAnySimpleType
 	{
@@ -734,13 +913,13 @@ namespace Mono.Xml.Schema
 			get { return false; }
 		}
 		public override bool Finite {
-			get { return true; }
+			get { return false; }
 		}
 		public override bool Numeric {
 			get { return false; }
 		}
 		public override XsdOrderedFacet Ordered {
-			get { return XsdOrderedFacet.Total; }
+			get { return XsdOrderedFacet.Partial; }
 		}
 	}
 
@@ -763,4 +942,80 @@ namespace Mono.Xml.Schema
 			return DateTime.ParseExact (s, "HH:mm:ss.fffffffzzz", null);
 		}
 	}
+
+	// xs:gYearMonth
+	public class XsdGYearMonth : XsdAnySimpleType
+	{
+		public override Type ValueType {
+			get { return typeof (DateTime); }
+		}
+
+		[MonoTODO]
+		public override object ParseValue (string s,
+			XmlNameTable nameTable, XmlNamespaceManager nsmgr)
+		{
+			return XmlConvert.ToDateTime (Normalize (s));
+		}
+	}
+
+	// xs:gMonthDay
+	public class XsdGMonthDay : XsdAnySimpleType
+	{
+		public override Type ValueType {
+			get { return typeof (DateTime); }
+		}
+
+		[MonoTODO]
+		public override object ParseValue (string s,
+			XmlNameTable nameTable, XmlNamespaceManager nsmgr)
+		{
+			return XmlConvert.ToDateTime (Normalize (s));
+		}
+	}
+
+	// xs:gYear
+	public class XsdGYear : XsdAnySimpleType
+	{
+		public override Type ValueType {
+			get { return typeof (DateTime); }
+		}
+
+		[MonoTODO]
+		public override object ParseValue (string s,
+			XmlNameTable nameTable, XmlNamespaceManager nsmgr)
+		{
+			return new DateTime (int.Parse (s), 1, 1);
+		}
+	}
+
+	// xs:gMonth
+	public class XsdGMonth : XsdAnySimpleType
+	{
+		public override Type ValueType {
+			get { return typeof (DateTime); }
+		}
+
+		[MonoTODO]
+		public override object ParseValue (string s,
+			XmlNameTable nameTable, XmlNamespaceManager nsmgr)
+		{
+			return new DateTime (0, int.Parse (s), 1);
+		}
+	}
+
+	// xs:gDay
+	public class XsdGDay : XsdAnySimpleType
+	{
+		public override Type ValueType {
+			get { return typeof (DateTime); }
+		}
+
+		[MonoTODO]
+		public override object ParseValue (string s,
+			XmlNameTable nameTable, XmlNamespaceManager nsmgr)
+		{
+			return new DateTime (0, 1, int.Parse (s));
+		}
+	}
+
 }

@@ -1,6 +1,12 @@
-// Author: Dwivedi, Ajay kumar
-//            Adwiv@Yahoo.com
+//
+// System.Xml.Schema.XmlSchemaGroup.cs
+//
+// Author:
+//	Dwivedi, Ajay kumar  Adwiv@Yahoo.com
+//	Atsushi Enomoto  ginga@kit.hi-ho.ne.jp
+//
 using System;
+using System.Collections;
 using System.Xml.Serialization;
 using System.Xml;
 
@@ -14,6 +20,7 @@ namespace System.Xml.Schema
 		private string name;
 		private XmlSchemaGroupBase particle;
 		private XmlQualifiedName qualifiedName;
+		private bool isCircularDefinition;
 		
 		private static string xmlname = "group";
 
@@ -43,10 +50,15 @@ namespace System.Xml.Schema
 			get{ return qualifiedName;}
 		}
 
+		internal bool IsCircularDefinition
+		{
+			get { return isCircularDefinition; }
+		}
+
 		// 1. name must be present
 		// 2. MinOccurs & MaxOccurs of the Particle must be absent
 		[MonoTODO]
-		internal int Compile(ValidationEventHandler h, XmlSchema schema)
+		internal override int Compile(ValidationEventHandler h, XmlSchema schema)
 		{
 			// If this is already compiled this time, simply skip.
 			if (this.IsComplied (schema.CompilationId))
@@ -95,8 +107,31 @@ namespace System.Xml.Schema
 		}
 		
 		[MonoTODO]
-		internal int Validate(ValidationEventHandler h)
+		internal override int Validate(ValidationEventHandler h, XmlSchema schema)
 		{
+			if (this.IsValidated (schema.ValidationId))
+				return errorCount;
+
+			// 3.8.6 Model Group Correct :: 2. Circular group disallowed.
+			if (Particle != null) {	// in case of invalid schema.
+				Particle.parentIsGroupDefinition = true;
+
+				try {
+					Particle.CheckRecursion (0, h, schema);
+				} catch (XmlSchemaException ex) {
+					error (h, ex.Message, ex);
+					this.isCircularDefinition = true;
+					return errorCount;
+				}
+				errorCount += Particle.Validate (h,schema);
+
+				Particle.ValidateUniqueParticleAttribution (new XmlSchemaObjectTable (),
+					new ArrayList (), h, schema);
+				Particle.ValidateUniqueTypeAttribution (
+					new XmlSchemaObjectTable (), h, schema);
+			}
+
+			this.ValidationId = schema.ValidationId;
 			return errorCount;
 		}
 

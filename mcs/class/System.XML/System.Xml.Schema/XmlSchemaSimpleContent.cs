@@ -1,5 +1,10 @@
-// Author: Dwivedi, Ajay kumar
-//            Adwiv@Yahoo.com
+//
+// System.Xml.Schema.XmlSchemaSimpleContent.cs
+//
+// Author:
+//	Dwivedi, Ajay kumar  Adwiv@Yahoo.com
+//	Atsushi Enomoto  ginga@kit.hi-ho.ne.jp
+//
 using System;
 using System.Xml.Serialization;
 using System.Xml;
@@ -13,6 +18,7 @@ namespace System.Xml.Schema
 	{
 		private XmlSchemaContent content;
 		private static string xmlname = "simpleContent";
+		internal object actualBaseSchemaType;
 		public XmlSchemaSimpleContent()
 		{
 		}
@@ -29,7 +35,7 @@ namespace System.Xml.Schema
 		/// 1. Content must be present and one of restriction or extention
 		///</remarks>
 		[MonoTODO]
-		internal int Compile(ValidationEventHandler h, XmlSchema schema)
+		internal override int Compile(ValidationEventHandler h, XmlSchema schema)
 		{
 			// If this is already compiled this time, simply skip.
 			if (this.IsComplied (schema.CompilationId))
@@ -61,8 +67,14 @@ namespace System.Xml.Schema
 		}
 		
 		[MonoTODO]
-		internal int Validate(ValidationEventHandler h)
+		internal override int Validate(ValidationEventHandler h, XmlSchema schema)
 		{
+			if (IsValidated (schema.ValidationId))
+				return errorCount;
+
+			errorCount += this.Content.Validate (h, schema);
+
+			ValidationId = schema.ValidationId;
 			return errorCount;
 		}
 		//<simpleContent 

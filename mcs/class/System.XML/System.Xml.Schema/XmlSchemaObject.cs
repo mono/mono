@@ -1,5 +1,10 @@
-// Author: Dwivedi, Ajay kumar
-//            Adwiv@Yahoo.com
+//
+// System.Xml.Schema.XmlSchemaObject.cs
+//
+// Authors:
+//	Dwivedi, Ajay kumar  Adwiv@Yahoo.com
+//	Enomoto, Atsushi     ginga@kit.hi-ho.ne.jp
+//
 using System;
 using System.Collections;
 using System.Xml.Serialization;
@@ -20,6 +25,12 @@ namespace System.Xml.Schema
 		internal bool isCompiled = false;
 		internal int errorCount = 0;
 		internal Guid CompilationId;
+		internal Guid ValidationId;
+		internal bool isRedefineChild;
+		internal bool isRedefinedComponent;
+		internal XmlSchemaObject redefinedObject;
+
+		internal bool AttributeGroupRecursionCheck;
 
 		protected XmlSchemaObject()
 		{
@@ -58,25 +69,67 @@ namespace System.Xml.Schema
 		internal void error(ValidationEventHandler handle,string message)
 		{
 			errorCount++;
-			ValidationHandler.RaiseValidationError(handle,this,message);
+			error (handle, message, null, this, null);
 		}
 		internal void warn(ValidationEventHandler handle,string message)
 		{
-			errorCount++;
-			ValidationHandler.RaiseValidationWarning(handle,this,message);
+			warn (handle, message, null, this, null);
 		}
 		internal static void error(ValidationEventHandler handle, string message, Exception innerException)
 		{
-			ValidationHandler.RaiseValidationError(handle,message, innerException);
+			error (handle, message, innerException, null, null);
 		}
 		internal static void warn(ValidationEventHandler handle, string message, Exception innerException)
 		{
-			ValidationHandler.RaiseValidationWarning(handle,message, innerException);
+			warn (handle, message, innerException, null, null);
+		}
+		internal static void error(ValidationEventHandler handle,
+			string message,
+			Exception innerException,
+			XmlSchemaObject xsobj,
+			object sender)
+		{
+			ValidationHandler.RaiseValidationEvent (handle,
+				innerException,
+				message,
+				xsobj,
+				sender,
+				null,
+				XmlSeverityType.Warning);
+		}
+		internal static void warn(ValidationEventHandler handle,
+			string message,
+			Exception innerException,
+			XmlSchemaObject xsobj,
+			object sender)
+		{
+			ValidationHandler.RaiseValidationEvent (handle,
+				innerException,
+				message,
+				xsobj,
+				sender,
+				null,
+				XmlSeverityType.Warning);
 		}
 
-		internal bool IsComplied (Guid CompilationId)
+		internal virtual int Compile (ValidationEventHandler h, XmlSchema schema)
 		{
-			return this.CompilationId == CompilationId;
+			return 0;
+		}
+
+		internal bool IsComplied (Guid compilationId)
+		{
+			return this.CompilationId == compilationId;
+		}
+
+		internal virtual int Validate (ValidationEventHandler h, XmlSchema schema)
+		{
+			return 0;
+		}
+
+		internal bool IsValidated (Guid validationId)
+		{
+			return this.ValidationId == validationId;
 		}
 	}
 }

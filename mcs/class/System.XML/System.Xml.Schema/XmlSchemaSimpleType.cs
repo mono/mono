@@ -1,8 +1,14 @@
-// Author: Dwivedi, Ajay kumar
-//            Adwiv@Yahoo.com
+//
+// System.Xml.Schema.XmlSchemaSimpleType.cs
+//
+// Author:
+//	Dwivedi, Ajay kumar  Adwiv@Yahoo.com
+//	Atsushi Enomoto  ginga@kit.hi-ho.ne.jp
+//
 using System;
 using System.Xml.Serialization;
 using System.Xml;
+using Mono.Xml.Schema;
 
 namespace System.Xml.Schema
 {
@@ -11,10 +17,18 @@ namespace System.Xml.Schema
 	/// </summary>
 	public class XmlSchemaSimpleType : XmlSchemaType
 	{
+		static XmlSchemaSimpleType anySimpleType;
+
 		private XmlSchemaSimpleTypeContent content;
 		//compilation vars
 		internal bool islocal = true; // Assuming local means we have to specify islocal=false only in XmlSchema
 		private static string xmlname = "simpleType";
+		private bool recursed;
+		private XmlSchemaDerivationMethod variety;
+
+		internal static XsdAnySimpleType AnySimpleType {
+			get { return XsdAnySimpleType.Instance; }
+		}
 
 		public XmlSchemaSimpleType()
 		{
@@ -27,6 +41,11 @@ namespace System.Xml.Schema
 		{
 			get{ return  content; } 
 			set{ content = value; }
+		}
+
+		internal XmlSchemaDerivationMethod Variety
+		{
+			get{ return variety; }
 		}
 
 		/// <remarks>
@@ -49,7 +68,7 @@ namespace System.Xml.Schema
 		///				4.2 otherwise simple ur-type
 		/// </remarks>
 		[MonoTODO]
-		internal int Compile(ValidationEventHandler h, XmlSchema schema)
+		internal override int Compile(ValidationEventHandler h, XmlSchema schema)
 		{
 			// If this is already compiled this time, simply skip.
 			if (this.IsComplied (schema.CompilationId))
@@ -61,6 +80,8 @@ namespace System.Xml.Schema
 			{
 				if(this.Name != null) // a.1
 					error(h,"Name is prohibited in a local simpletype");
+				else
+					this.QNameInternal = new XmlQualifiedName(this.Name,schema.TargetNamespace);
 				if(this.Final != XmlSchemaDerivationMethod.None) //a.2
 					error(h,"Final is prohibited in a local simpletype");
 			}
@@ -82,13 +103,9 @@ namespace System.Xml.Schema
 						this.finalResolved = XmlSchemaDerivationMethod.All;
 						break;
 					case XmlSchemaDerivationMethod.List:
-						this.finalResolved = XmlSchemaDerivationMethod.List;
-						break;
 					case XmlSchemaDerivationMethod.Union:
-						this.finalResolved = XmlSchemaDerivationMethod.Union;
-						break;
 					case XmlSchemaDerivationMethod.Restriction:
-						this.finalResolved = XmlSchemaDerivationMethod.Restriction;
+						this.finalResolved = Final;
 						break;
 					default:
 						error(h,"The value of final attribute is not valid for simpleType");
@@ -98,12 +115,17 @@ namespace System.Xml.Schema
 						XmlSchemaDerivationMethod flags = 
 							(XmlSchemaDerivationMethod.Restriction | XmlSchemaDerivationMethod.List |
 							XmlSchemaDerivationMethod.Extension | XmlSchemaDerivationMethod.Union );
-						if(schema.FinalDefault == XmlSchemaDerivationMethod.All)
+						switch (schema.FinalDefault) {
+						case XmlSchemaDerivationMethod.All:
 							finalResolved = XmlSchemaDerivationMethod.All;
-						else if(schema.FinalDefault == XmlSchemaDerivationMethod.None)
-							finalResolved = flags;
-						else 
+							break;
+						case XmlSchemaDerivationMethod.None:
+							finalResolved = XmlSchemaDerivationMethod.Empty;
+							break;
+						default:
 							finalResolved = schema.FinalDefault & flags;
+							break;
+						}
 						break;
 				}
 			}
@@ -114,14 +136,17 @@ namespace System.Xml.Schema
 				error(h,"Content is required in a simpletype");
 			else if(Content is XmlSchemaSimpleTypeRestriction)
 			{
+				this.resolvedDerivedBy = XmlSchemaDerivationMethod.Restriction;
 				errorCount += ((XmlSchemaSimpleTypeRestriction)Content).Compile(h,schema);
 			}
 			else if(Content is XmlSchemaSimpleTypeList)
 			{
+				this.resolvedDerivedBy = XmlSchemaDerivationMethod.List;
 				errorCount += ((XmlSchemaSimpleTypeList)Content).Compile(h,schema);
 			}
 			else if(Content is XmlSchemaSimpleTypeUnion)
 			{
+				this.resolvedDerivedBy = XmlSchemaDerivationMethod.Union;
 				errorCount += ((XmlSchemaSimpleTypeUnion)Content).Compile(h,schema);
 			}
 			this.CompilationId = schema.CompilationId;
@@ -129,12 +154,176 @@ namespace System.Xml.Schema
 		}
 		
 		[MonoTODO]
-		internal int Validate(ValidationEventHandler h, XmlSchema schema)
+		internal override int Validate(ValidationEventHandler h, XmlSchema schema)
 		{
-			if(isCompiled)
+			// 3.14.6 Properties Correct.
+			// 
+			// 1. Post Compilation Properties
+			// {name}, {target namespace} => QNameInternal. Already Compile()d.
+			// {base type definition} => baseSchemaTypeInternal
+			// {final} => finalResolved. Already Compile()d.
+			// {variety} => resolvedDerivedBy. Already Compile()d.
+			//
+			// 2. Should be checked by "recursed" field.
+
+			if(IsValidated (schema.ValidationId))
 				return errorCount;
 
+			if (recursed) {
+				error (h, "Circular type reference was found.");
+				return errorCount;
+			}
+			recursed = true;
+
+			errorCount += content.Validate (h, schema);
+			// BaseSchemaType property
+			this.baseSchemaTypeInternal = content.ActualBaseSchemaType;
+
+			// Datatype property
+			XmlSchemaSimpleType simple = BaseSchemaType as XmlSchemaSimpleType;
+			if (simple != null)
+				this.datatypeInternal = simple.Datatype;
+			else
+				this.datatypeInternal = BaseSchemaType as XmlSchemaDatatype;
+
+			// 3.
+			XmlSchemaSimpleType baseSType = baseSchemaTypeInternal as XmlSchemaSimpleType;
+			if (baseSType != null) {
+				if ((baseSType.FinalResolved & this.DerivedBy) != 0)
+					error (h, "Specified derivation is prohibited by the base simple type.");
+			}
+
+			// {variety}
+			if (this.resolvedDerivedBy == XmlSchemaDerivationMethod.Restriction &&
+				baseSType != null)
+				this.variety = baseSType.Variety;
+			else
+				this.variety = this.resolvedDerivedBy;
+
+			// 3.14.6 Derivation Valid (Restriction, Simple)
+			XmlSchemaSimpleTypeRestriction r = Content as XmlSchemaSimpleTypeRestriction;
+			if (r != null)
+				ValidateDerivationValid (BaseSchemaType, r.Facets, h, schema);
+
+			recursed = false;
+			ValidationId = schema.ValidationId;
 			return errorCount;
+		}
+
+		// 3.14.6 Derivation Valid (RestrictionSimple)
+		internal void ValidateDerivationValid (object baseType, XmlSchemaObjectCollection facets,
+			ValidationEventHandler h, XmlSchema schema)
+		{
+			// TODO
+			XmlSchemaSimpleType baseSimpleType = baseType as XmlSchemaSimpleType;
+			switch (this.Variety) {
+			// 1. atomic type
+			case XmlSchemaDerivationMethod.Restriction:
+				// 1.1
+				if (baseSimpleType != null && baseSimpleType.resolvedDerivedBy != XmlSchemaDerivationMethod.Restriction)
+					error (h, "Base schema type is not either atomic type or primitive type.");
+				// 1.2
+				if (baseSimpleType != null && 
+					(baseSimpleType.FinalResolved & XmlSchemaDerivationMethod.Restriction) != 0)
+					error (h, "Derivation by restriction is prohibited by the base simple type.");
+				// TODO: 1.3 facet restriction valid.
+				break;
+			case XmlSchemaDerivationMethod.List:
+				XmlSchemaSimpleTypeList thisList = Content as XmlSchemaSimpleTypeList;
+				/*
+				// 2.1 item list type not allowed
+				if (baseSimpleType != null && baseSimpleType.resolvedDerivedBy == XmlSchemaDerivationMethod.List)
+					error (h, "Base list schema type is not allowed.");
+				XmlSchemaSimpleTypeUnion baseUnion = baseSimpleType.Content as XmlSchemaSimpleTypeUnion;
+				if (baseUnion != null) {
+					bool errorFound = false;
+					foreach (object memberType in baseUnion.ValidatedTypes) {
+						XmlSchemaSimpleType memberST = memberType as XmlSchemaSimpleType;
+						if (memberST != null && memberST.resolvedDerivedBy == XmlSchemaDerivationMethod.List)
+							errorFound = true;
+					}
+					if (errorFound)
+						error (h, "Base union schema type should not contain list types.");
+				}
+				*/
+				// 2.2 facets limited
+				if (facets != null)
+					foreach (XmlSchemaFacet facet in facets) {
+						if (facet is XmlSchemaLengthFacet ||
+							facet is XmlSchemaMaxLengthFacet ||
+							facet is XmlSchemaMinLengthFacet ||
+							facet is XmlSchemaEnumerationFacet ||
+							facet is XmlSchemaPatternFacet)
+							continue;
+						else
+							error (h, "Not allowed facet was found on this simple type which derives list type.");
+					}
+				break;
+			case XmlSchemaDerivationMethod.Union:
+				// 3.1
+
+				// 3.2
+				if (facets != null)
+					foreach (XmlSchemaFacet facet in facets) {
+						if (facet is XmlSchemaEnumerationFacet ||
+							facet is XmlSchemaPatternFacet)
+							continue;
+						else
+							error (h, "Not allowed facet was found on this simple type which derives list type.");
+					}
+				break;
+			}
+		}
+
+		// 3.14.6 Type Derivation OK (Simple)
+		internal bool ValidateTypeDerivationOK (object baseType,
+			ValidationEventHandler h, XmlSchema schema, bool raiseError)
+		{
+			// 1
+			// Note that anyType should also be allowed as anySimpleType.
+			if (this == baseType || baseType == XmlSchemaSimpleType.AnySimpleType ||
+				baseType == XmlSchemaComplexType.AnyType)
+				return true;
+
+			// 2.1
+			XmlSchemaSimpleType baseSimpleType = baseType as XmlSchemaSimpleType;
+			if (baseSimpleType != null && 
+				(baseSimpleType.FinalResolved & resolvedDerivedBy) != 0) {
+				if (raiseError)
+					error (h, "Specified derivation is prohibited by the base type.");
+				return false;
+			}
+
+			// 2.2.1
+			if (BaseSchemaType == baseType)
+				return true;
+
+			// 2.2.2
+			XmlSchemaSimpleType thisBaseSimpleType = BaseSchemaType as XmlSchemaSimpleType;
+			if (thisBaseSimpleType != null) {
+				if (thisBaseSimpleType.ValidateTypeDerivationOK (baseType, h, schema, false))
+					return true;
+			}
+
+			// 2.2.3
+			switch (Variety) {
+			case XmlSchemaDerivationMethod.Union:
+			case XmlSchemaDerivationMethod.List:
+				if (baseType == XmlSchemaSimpleType.AnySimpleType)
+					return true;
+				break;
+			}
+
+			// 2.2.4 validly derived from one of the union member type.
+			if (baseSimpleType != null && baseSimpleType.Variety == XmlSchemaDerivationMethod.Union) {
+				foreach (object memberType in ((XmlSchemaSimpleTypeUnion) baseSimpleType.Content).ValidatedTypes)
+					if (this.ValidateTypeDerivationOK (memberType, h, schema, false))
+						return true;
+			}
+
+			if (raiseError)
+				error(h, "Invalid simple type derivation was found.");
+			return false;
 		}
 
 		//<simpleType 
@@ -165,7 +354,8 @@ namespace System.Xml.Schema
 				if(reader.Name == "final")
 				{
 					Exception innerex;
-					stype.Final = XmlSchemaUtil.ReadDerivationAttribute(reader, out innerex, "final");
+					stype.Final = XmlSchemaUtil.ReadDerivationAttribute(reader, out innerex, "final",
+						XmlSchemaUtil.FinalAllowed);
 					if(innerex != null)
 						error(h, "some invalid values not a valid value for final", innerex);
 				}

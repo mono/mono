@@ -1,9 +1,12 @@
 // Author: Dwivedi, Ajay kumar
 //            Adwiv@Yahoo.com
 using System;
+using System.Collections;
+using System.Collections.Specialized;
 using System.Xml;
 using System.ComponentModel;
 using System.Xml.Serialization;
+using Mono.Xml.Schema;
 
 namespace System.Xml.Schema
 {
@@ -15,9 +18,11 @@ namespace System.Xml.Schema
 		private string nameSpace;
 		private XmlSchemaContentProcessing processing;
 		private static string xmlname = "anyAttribute";
+		private XsdWildcard wildcard;
 
 		public XmlSchemaAnyAttribute()
 		{
+			wildcard = new XsdWildcard (this);
 		}
 
 		[System.Xml.Serialization.XmlAttribute("namespace")]
@@ -35,6 +40,37 @@ namespace System.Xml.Schema
 			set{ processing = value; }
 		}
 
+		// Internal
+		internal bool HasValueAny {
+			get { return wildcard.HasValueAny; }
+		}
+
+		internal bool HasValueLocal {
+			get { return wildcard.HasValueLocal; }
+		}
+
+		internal bool HasValueOther {
+			get { return wildcard.HasValueOther; }
+		}
+
+		internal bool HasValueTargetNamespace {
+			get { return wildcard.HasValueTargetNamespace; }
+		}
+
+		internal StringCollection ResolvedNamespaces {
+			get { return wildcard.ResolvedNamespaces; }
+		}
+
+		internal XmlSchemaContentProcessing ResolvedProcessContents 
+		{ 
+			get{ return wildcard.ResolvedProcessing; } 
+		}
+
+		internal string TargetNamespace
+		{
+			get { return wildcard.TargetNamespace; }
+		}
+
 		/// <remarks>
 		/// 1. id must be of type ID
 		/// 2. namespace can have one of the following values:
@@ -42,7 +78,7 @@ namespace System.Xml.Schema
 		///		b) list of anyURI and ##targetNamespace and ##local
 		/// </remarks>
 		[MonoTODO]
-		internal int Compile(ValidationEventHandler h, XmlSchema schema)
+		internal override int Compile(ValidationEventHandler h, XmlSchema schema)
 		{
 			// If this is already compiled this time, simply skip.
 			if (this.IsComplied (schema.CompilationId))
@@ -50,48 +86,72 @@ namespace System.Xml.Schema
 
 			errorCount = 0;
 
+			wildcard.TargetNamespace = schema.TargetNamespace;
+			if (wildcard.TargetNamespace == null)
+				wildcard.TargetNamespace = "";
+
 			XmlSchemaUtil.CompileID(Id,this, schema.IDCollection,h);
 
-			//define ##any=1,##other=2,##targetNamespace=4,##local=8,anyURI=16
-			int nscount = 0;
-			string[] nslist = XmlSchemaUtil.SplitList(Namespace);
-			foreach(string ns in nslist)
-			{
-				switch(ns)
-				{
-					case "##any": 
-						nscount |= 1;
-						break;
-					case "##other":
-						nscount |= 2;
-						break;
-					case "##targetNamespace":
-						nscount |= 4;
-						break;
-					case "##local":
-						nscount |= 8;
-						break;
-					default:
-						if(!XmlSchemaUtil.CheckAnyUri(ns))
-							error(h,"the namespace is not a valid anyURI");
-						else
-							nscount |= 16;
-						break;
-				}
-			}
-			if((nscount&1) == 1 && nscount != 1)
-				error(h,"##any if present must be the only namespace attribute");
-			if((nscount&2) == 2 && nscount != 2)
-				error(h,"##other if present must be the only namespace attribute");
-			
+			wildcard.Compile (Namespace, h, schema);
+
+			if (processing == XmlSchemaContentProcessing.None)
+				wildcard.ResolvedProcessing = XmlSchemaContentProcessing.Strict;
+			else
+				wildcard.ResolvedProcessing = processing;
+
 			this.CompilationId = schema.CompilationId;
 			return errorCount;
 		}
 		
 		[MonoTODO]
-		internal int Validate(ValidationEventHandler h)
+		internal override int Validate(ValidationEventHandler h, XmlSchema schema)
 		{
 			return errorCount;
+		}
+
+		// 3.10.6 Wildcard Subset
+		internal void ValidateWildcardSubset (XmlSchemaAnyAttribute other,
+			ValidationEventHandler h, XmlSchema schema)
+		{
+			wildcard.ValidateWildcardSubset (other, h, schema);
+
+			/*
+			// 1.
+			if (this.hasValueAny)
+				return;
+			if (this.hasValueOther) {
+				if (other.hasValueOther) {
+					// 2.1 and 2.2
+					if (this.targetNamespace == other.targetNamespace ||
+						other.targetNamespace == null || other.targetNamespace == "")
+						return;
+				}
+				// 3.2.2
+				else if (this.targetNamespace == null || targetNamespace == String.Empty)
+					return;
+				else {
+					foreach (string ns in other.resolvedNamespaces)
+						if (ns == this.targetNamespace) {
+							error (h, "Invalid wildcard subset was found.");
+							return;
+						}
+				}
+			} else {
+				// 3.1
+				if (!this.hasValueLocal && other.hasValueLocal) {
+					error (h, "Invalid wildcard subset was found.");
+				} else if (other.resolvedNamespaces.Count == 0)
+					return;
+				else {
+					ArrayList al = new ArrayList (this.resolvedNamespaces);
+					foreach (string ns in other.resolvedNamespaces)
+						if (!al.Contains (ns)) {
+							error (h, "Invalid wildcard subset was found.");
+							return;
+						}
+				}
+			}
+			*/
 		}
 
 		//<anyAttribute

@@ -16,5 +16,13 @@ namespace System.Xml.Schema
 
 		[XmlIgnore]
 		public abstract XmlSchemaObjectCollection Items { get; }
+
+		internal void ValidateNSRecurseCheckCardinality (XmlSchemaAny any,
+			ValidationEventHandler h, XmlSchema schema)
+		{
+			foreach (XmlSchemaParticle p in Items)
+				p.ValidateDerivationByRestriction (any, h, schema);
+			ValidateOccurenceRangeOK (any, h, schema);
+		}
 	}
 }

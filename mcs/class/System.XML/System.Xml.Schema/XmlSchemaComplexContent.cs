@@ -1,5 +1,10 @@
-// Author: Dwivedi, Ajay kumar
-//            Adwiv@Yahoo.com
+//
+// System.Xml.Schema.XmlSchemaComplexContent.cs
+//
+// Author:
+//	Dwivedi, Ajay kumar  Adwiv@Yahoo.com
+//	Atsushi Enomoto  ginga@kit.hi-ho.ne.jp
+//
 using System;
 using System.Xml.Serialization;
 using System.Xml;
@@ -37,11 +42,18 @@ namespace System.Xml.Schema
 		/// 1. Content must be present
 		/// </remarks>
 		[MonoTODO]
-		internal int Compile(ValidationEventHandler h, XmlSchema schema)
+		internal override int Compile(ValidationEventHandler h, XmlSchema schema)
 		{
 			// If this is already compiled this time, simply skip.
 			if (this.IsComplied (schema.CompilationId))
 				return 0;
+
+			if (isRedefinedComponent) {
+				if (Annotation != null)
+					Annotation.isRedefinedComponent = true;
+				if (Content != null)
+					Content.isRedefinedComponent = true;
+			}
 
 			if(Content == null)
 			{
@@ -70,8 +82,14 @@ namespace System.Xml.Schema
 		}
 		
 		[MonoTODO]
-		internal int Validate(ValidationEventHandler h)
+		internal override int Validate(ValidationEventHandler h, XmlSchema schema)
 		{
+			if (IsValidated (schema.ValidationId))
+				return errorCount;
+
+			errorCount += Content.Validate (h, schema);
+
+			ValidationId = schema.ValidationId;
 			return errorCount;
 		}
 		//<complexContent
