@@ -3,8 +3,10 @@ Assembly/Consts.cs
 Assembly/Locale.cs
 System.Resources/ResXResourceReader.cs
 System.Resources/ResXResourceWriter.cs
+System.Windows.Forms/AccessibleNavigation.cs
 System.Windows.Forms/AccessibleObject.cs
 System.Windows.Forms/AccessibleRole.cs
+System.Windows.Forms/AccessibleSelection.cs
 System.Windows.Forms/AccessibleStates.cs
 System.Windows.Forms/AnchorStyles.cs
 System.Windows.Forms/Appearance.cs
@@ -22,6 +24,7 @@ System.Windows.Forms/Border3DSide.cs
 System.Windows.Forms/Border3DStyle.cs
 System.Windows.Forms/BorderStyle.cs
 System.Windows.Forms/BoundsSpecified.cs
+System.Windows.Forms/Button.cs
 System.Windows.Forms/ButtonBase.cs
 System.Windows.Forms/ButtonBorderStyle.cs
 System.Windows.Forms/ButtonState.cs
