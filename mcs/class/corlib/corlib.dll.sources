@@ -1,4 +1,5 @@
 Assembly/AssemblyInfo.cs
+Assembly/Locale.cs
 Microsoft.Win32/RegistryKey.cs
 Microsoft.Win32/Registry.cs
 Microsoft.Win32/RegistryHive.cs
@@ -232,7 +233,6 @@ System.Globalization/HijriCalendar.cs
 System.Globalization/JapaneseCalendar.cs
 System.Globalization/JulianCalendar.cs
 System.Globalization/KoreanCalendar.cs
-System.Globalization/Locale.cs
 System.Globalization/NumberFormatInfo.cs
 System.Globalization/NumberStyles.cs
 System.Globalization/RegionInfo.cs
