@@ -1,6 +1,8 @@
 2002-08-15  Miguel de Icaza  <miguel@ximian.com>
 
-	* driver.cs: Show the CSC-like command line arguments.
+	* driver.cs (LoadArgs): Support quoting.
+
+	(Usage): Show the CSC-like command line arguments.
 
 	Improved a few error messages.
 

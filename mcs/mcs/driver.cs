@@ -15,6 +15,7 @@ namespace Mono.CSharp
 	using System.Reflection.Emit;
 	using System.Collections;
 	using System.IO;
+	using System.Text;
 	using System.Globalization;
 	using Mono.Languages;
 
@@ -314,11 +315,36 @@ namespace Mono.CSharp
 				return null;
 			}
 
+			StringBuilder sb = new StringBuilder ();
+			
 			while ((line = f.ReadLine ()) != null){
-				string [] line_args = line.Split (new char [] { ' ' });
+				int t = line.Length;
 
-				foreach (string arg in line_args)
-					args.Add (arg);
+				for (int i = 0; i < t; i++){
+					char c = line [i];
+					
+					if (c == '"' || c == '\''){
+						char end = c;
+						
+						for (i++; i < t; i++){
+							c = line [i];
+
+							if (c == end)
+								break;
+							sb.Append (c);
+						}
+					} else if (c == ' '){
+						if (sb.Length > 0){
+							args.Add (sb.ToString ());
+							sb.Length = 0;
+						}
+					} else
+						sb.Append (c);
+				}
+				if (sb.Length > 0){
+					args.Add (sb.ToString ());
+					sb.Length = 0;
+				}
 			}
 
 			string [] ret_value = new string [args.Count];
