@@ -18,6 +18,7 @@ namespace System.Web.Services.Protocols {
 		SoapClientMethod clientMethod;
 		string url;
 
+		#endregion
 
 		#region Constructors
 		
