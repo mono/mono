@@ -1,3 +1,6 @@
+2004-02-03  Jordi Mas  <jordi@ximian.com>
+	* Font.cs: Setup font properties
+
 2004-02-03  Ravindra  <rkumar@novell.com>
 
         * TextureBrush.cs and Brush.cs: Moved GetException (Status)

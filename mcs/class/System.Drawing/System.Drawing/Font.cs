@@ -1,3 +1,11 @@
+//
+// System.Drawing.Fonts.cs
+//
+// (C) 2004 Ximian, Inc.  http://www.ximian.com
+//
+// Authors: 
+
+
 using System.Runtime.Serialization;
 using System.Runtime.InteropServices;
 using System.ComponentModel;
@@ -27,6 +35,41 @@ namespace System.Drawing {
 				GDIPlus.GdipDeleteFont(fontObject);			
 				GC.SuppressFinalize(this);
 			}
+		}
+		
+		internal void setProperties(FontFamily family, float emSize, FontStyle style, GraphicsUnit unit, byte charSet, bool isVertical)			 
+		{
+			//Todo: Handle unit conversions
+			_name=family.Name;
+			_fontFamily = family;
+			_size = emSize;
+			_unit = unit;
+			_style = style;
+			_gdiCharSet = charSet;
+			_gdiVerticalFont = isVertical;
+			_sizeInPoints = emSize;
+			
+			_bold = _italic = _strikeout = _underline = false;
+			
+			switch (style) {
+			case FontStyle.Bold: 
+				_bold = true;
+				break;
+			case FontStyle.Italic:
+				_italic = true;
+				break;
+			case FontStyle.Regular:
+				_bold = true;
+				break;
+			case FontStyle.Strikeout:
+				_strikeout = true;
+				break;
+			case FontStyle.Underline:
+				_underline = true;
+				break;
+			default:
+				break;
+			}			
 		}
 
 		public static Font FromHfont(IntPtr font)
@@ -78,6 +121,7 @@ namespace System.Drawing {
 		public Font(FontFamily family, float emSize, FontStyle style, GraphicsUnit unit, byte charSet, bool isVertical)
 		{			
 			GDIPlus.GdipCreateFont(family.NativeObject,	emSize,  style,   unit,  out fontObject);		
+			setProperties(family, emSize, style, unit, charSet, isVertical);
 		}
 
 		public Font(string familyName, float emSize)
@@ -104,6 +148,8 @@ namespace System.Drawing {
 		{
 			FontFamily family = new FontFamily(familyName);			
 			GDIPlus.GdipCreateFont(family.NativeObject,	emSize,  style,   unit,  out fontObject);		
+			
+			setProperties(family, emSize, style, unit, charSet, isVertical);
 		}
 		
 		
