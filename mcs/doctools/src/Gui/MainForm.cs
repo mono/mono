@@ -39,6 +39,9 @@ namespace Mono.Doc.Gui
 		private DocProject project;
 		private string     projectName;
 
+		// mdi toolbar
+		private MdiToolBar mdiToolBar;
+
 		// main menu / items
 		private MainMenu mainMenu;
 		private MenuItem menuFile;
@@ -58,6 +61,7 @@ namespace Mono.Doc.Gui
 		private MenuItem menuWindowTileHorizontal;
 		private MenuItem menuDebug;
 		private MenuItem menuDebugHaltAndCatchFire;
+		private MenuItem menuDebugDisplayGeneric;
 		private MenuItem menuHelp;
 		private MenuItem menuHelpAbout;
 
@@ -105,6 +109,14 @@ namespace Mono.Doc.Gui
 			this.IsMdiContainer            = true;
 			this.Name                      = "MainForm";
 
+			// mdiToolBar
+			this.mdiToolBar             = new MdiToolBar();
+			this.mdiToolBar.Dock        = DockStyle.Top; // TODO: make this configurable
+			this.mdiToolBar.TextAlign   = ToolBarTextAlign.Right;
+			this.mdiToolBar.Divider     = true; // TODO: only if it's docked at the top.
+			this.mdiToolBar.ImageList   = AssemblyTreeImages.List;
+			this.mdiToolBar.Appearance  = ToolBarAppearance.Flat;
+
 			// set initial size to 75% of the current screen
 			// TODO: this should only happen if we have no size prefs
 			// HACK: not sure how best to determine the current screen for multihead users
@@ -135,6 +147,7 @@ namespace Mono.Doc.Gui
 			this.menuWindowTileHorizontal  = new MenuItem();
 			this.menuDebug                 = new MenuItem();
 			this.menuDebugHaltAndCatchFire = new MenuItem();
+			this.menuDebugDisplayGeneric   = new MenuItem();
 			this.menuHelp                  = new MenuItem();
 			this.menuHelpAbout             = new MenuItem();
 
@@ -162,6 +175,7 @@ namespace Mono.Doc.Gui
 			// add components and layout
 			this.Menu = this.mainMenu;
 			this.Controls.AddRange(new Control[] {
+			    this.mdiToolBar,
 				this.verticalSplitter,
 				this.tree,
 				this.status
@@ -734,7 +748,8 @@ namespace Mono.Doc.Gui
 
 			this.menuDebug.MenuItems.AddRange(
 				new MenuItem[] {
-								   this.menuDebugHaltAndCatchFire
+								   this.menuDebugHaltAndCatchFire,
+								   this.menuDebugDisplayGeneric
 							   });
 
 			// DEBUG|Halt and Catch Fire
@@ -742,6 +757,10 @@ namespace Mono.Doc.Gui
 			this.menuDebugHaltAndCatchFire.Text   = "Halt and Catch Fire";
 			this.menuDebugHaltAndCatchFire.Click += new EventHandler(this.menuDebugHaltAndCatchFire_Click);
 
+			// DEBUG|Display Generic
+			this.menuDebugDisplayGeneric.Index  = 1;
+			this.menuDebugDisplayGeneric.Text   = "Display Generic Form";
+			this.menuDebugDisplayGeneric.Click += new EventHandler(this.menuDebugDisplayGeneric_Click);
 
 			// Help
 			this.menuHelp.Index   = 4;
@@ -823,6 +842,14 @@ namespace Mono.Doc.Gui
 				);
 		}
 
+		private void menuDebugDisplayGeneric_Click(object sender, EventArgs e)
+		{
+			GenericEditorForm generic = new GenericEditorForm();
+			generic.MdiParent         = this;
+			
+			generic.Show();
+		}
+
 		private void menuHelpAbout_Click(object sender, EventArgs e)
 		{
 			Form aboutForm = new AboutForm();
@@ -831,7 +858,7 @@ namespace Mono.Doc.Gui
 
 		#endregion // Main Menu Events
 
-		#region Other Events
+		#region Other Events and Handlers
 
 		private void project_Modified(object sender, EventArgs args)
 		{
@@ -839,7 +866,6 @@ namespace Mono.Doc.Gui
 			InitializeTree();
 		}
 
-		// not really an event, but...
 		protected override void OnClosing(CancelEventArgs e)
 		{
 			base.OnClosing(e);
@@ -867,7 +893,6 @@ namespace Mono.Doc.Gui
 				}
 			}
 		}
-
-		#endregion // Other Events
+		#endregion // Other Events and Handlers
 	}
 }
