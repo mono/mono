@@ -41,6 +41,9 @@ namespace System.Reflection.Emit {
 		}
 
 		public void AddOtherMethod( MethodBuilder mdBuilder) {
+			if (mdBuilder == null)
+				throw new ArgumentNullException ("mdBuilder");
+			RejectIfCreated ();
 			if (other_methods != null) {
 				MethodBuilder[] newv = new MethodBuilder [other_methods.Length + 1];
 				other_methods.CopyTo (newv, 0);
@@ -55,16 +58,28 @@ namespace System.Reflection.Emit {
 			return new EventToken (0x14000000 | table_idx);
 		}
 		public void SetAddOnMethod( MethodBuilder mdBuilder) {
+			if (mdBuilder == null)
+				throw new ArgumentNullException ("mdBuilder");
+			RejectIfCreated ();
 			add_method = mdBuilder;
 		}
 		public void SetRaiseMethod( MethodBuilder mdBuilder) {
+			if (mdBuilder == null)
+				throw new ArgumentNullException ("mdBuilder");
+			RejectIfCreated ();
 			raise_method = mdBuilder;
 		}
 		public void SetRemoveOnMethod( MethodBuilder mdBuilder) {
+			if (mdBuilder == null)
+				throw new ArgumentNullException ("mdBuilder");
+			RejectIfCreated ();
 			remove_method = mdBuilder;
 		}
 
 		public void SetCustomAttribute( CustomAttributeBuilder customBuilder) {
+			if (customBuilder == null)
+				throw new ArgumentNullException ("customBuilder");
+			RejectIfCreated ();
 			if (cattrs != null) {
 				CustomAttributeBuilder[] new_array = new CustomAttributeBuilder [cattrs.Length + 1];
 				cattrs.CopyTo (new_array, 0);
@@ -76,10 +91,17 @@ namespace System.Reflection.Emit {
 			}
 		}
 		public void SetCustomAttribute( ConstructorInfo con, byte[] binaryAttribute) {
+			if (con == null)
+				throw new ArgumentNullException ("con");
+			if (binaryAttribute == null)
+				throw new ArgumentNullException ("binaryAttribute");
 			SetCustomAttribute (new CustomAttributeBuilder (con, binaryAttribute));
 		}
 
-
+		private void RejectIfCreated () {
+			if (typeb.is_created)
+				throw new InvalidOperationException ("Type definition of the method is complete.");
+		}
 	}
 }
 

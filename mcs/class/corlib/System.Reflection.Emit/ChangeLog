@@ -1,3 +1,6 @@
+2003-06-15  Zoltan Varga  <vargaz@freemail.hu>
+
+	* EventBuilder.cs: Add argument checking to methods.
 
 Thu Jun 5 20:18:55 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
