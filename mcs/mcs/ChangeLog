@@ -1,3 +1,12 @@
+2002-01-15  Miguel de Icaza  <miguel@ximian.com>
+
+	* cs-parser.jay: Report 1524.
+
+2002-01-14  Miguel de Icaza  <miguel@ximian.com>
+
+	* typemanager.cs (RegisterMethod): drop checking if we have
+	registered this from here
+
 2002-01-12  Miguel de Icaza  <miguel@ximian.com>
 
 	* class.cs (Method.EmitDestructor): Implement calling our base

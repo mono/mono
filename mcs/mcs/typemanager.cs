@@ -626,18 +626,17 @@ public class TypeManager {
 		return (Const) builder_to_constant [fb];
 	}
 	
-	//
-	// Gigantic work around for stupidity in System.Reflection.Emit follows
-	//
-	// Since System.Reflection.Emit can not return MethodBase.GetParameters
-	// for anything which is dynamic, and we need this in a number of places,
-	// we register this information here, and use it afterwards.
-	//
+	/// <summary>
+	///   Gigantic work around for missing features in System.Reflection.Emit follows.
+	/// </summary>
+	///
+	/// <remarks>
+	///   Since System.Reflection.Emit can not return MethodBase.GetParameters
+	///   for anything which is dynamic, and we need this in a number of places,
+	///   we register this information here, and use it afterwards.
+	/// </remarks>
 	static public bool RegisterMethod (MethodBase mb, InternalParameters ip, Type [] args)
 	{
-		if (method_arguments.Contains (mb))
-			return false;
-		
 		method_arguments.Add (mb, args);
 		method_internal_params.Add (mb, ip);
 		
@@ -646,8 +645,6 @@ public class TypeManager {
 	
 	static public InternalParameters LookupParametersByBuilder (MethodBase mb)
 	{
-		object o = method_arguments [mb];
-
 		if (! (mb is ConstructorBuilder || mb is MethodBuilder))
 			return null;
 		

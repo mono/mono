@@ -13,6 +13,7 @@ using System.Collections;
 using System.Reflection;
 using System.Reflection.Emit;
 using System;
+using System.Runtime.CompilerServices;
 
 namespace Mono.CSharp {
 
@@ -1669,6 +1670,15 @@ namespace Mono.CSharp {
 			// FIXME: Implement me
 			return true;
 		}
+
+		Hashtable builder_and_args;
+		
+		public bool RegisterMethod (MethodBuilder mb, InternalParameters ip, Type [] args)
+		{
+			if (builder_and_args == null)
+				builder_and_args = new Hashtable ();
+			return true;
+		}
 	}
 
 	public class Class : TypeContainer {
@@ -2488,7 +2498,7 @@ namespace Mono.CSharp {
 		public override bool Define (TypeContainer parent)
 		{
 			Type t = RootContext.LookupType (parent, Type, false, Location);
-
+			
 			if (t == null)
 				return false;
 
@@ -2544,7 +2554,7 @@ namespace Mono.CSharp {
 		{
 			EmitContext ec = new EmitContext (tc, Location, null, FieldBuilder.FieldType, ModFlags);
 
-			Attribute.ApplyAttributes (ec, FieldBuilder, this, OptAttributes, Location); 
+			Attribute.ApplyAttributes (ec, FieldBuilder, this, OptAttributes, Location);
 		}
 	}
 

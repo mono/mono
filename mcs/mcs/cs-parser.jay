@@ -3057,6 +3057,10 @@ try_statement
 
 		$$ = new Try ((Block) $2, s, g, (Block) $5);
 	  }
+	| TRY block error 
+	  {
+		Report.Error (1524, lexer.Location, "Expected catch or finally");
+	  }
 	;
 
 opt_catch_clauses
