@@ -17,6 +17,7 @@ namespace Mono.Data.SqlExpressions {
 	internal class Parser {
 		bool cacheAggregationResults = false;
 		DataRow[] aggregationRows = null;
+		static int yacc_verbose_flag;
 		
 		//called by DataTable.Select
 		//called by DataColumn.set_Expression //FIXME: enable cache in this case?
