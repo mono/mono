@@ -1,3 +1,8 @@
+2002-11-09  Rodrigo Moya <rodrigo@ximian.com>
+
+	* System.Data.OleDb/OleDbDataAdapter.cs: cleaned up implementation,
+	based on the PgSql/SqlClient data adapter classes.
+
 2002-11-09  Tim Coleman <tim@timcoleman.com>
 	* list:
 		Add new internal tds classes

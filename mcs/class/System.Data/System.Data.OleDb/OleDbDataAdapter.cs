@@ -169,123 +169,37 @@ namespace System.Data.OleDb
 
 		#region Methods
 
-		public int Fill (DataTable dataTable, object ADODBRecordSet)
-		{
-			throw new NotImplementedException ();
-		}
-
-		public int Fill (DataSet dataSet, object ADODBRecordSet, string srcTable)
-		{
-			throw new NotImplementedException ();
-		}
-
-		public override int Fill (DataSet dataSet)
-		{
-			throw new NotImplementedException ();
-		}
-
-		protected override int Fill (DataTable dataTable, IDataReader dataReader)
-		{
-			throw new NotImplementedException ();
-		}
-
-		protected override int Fill (DataTable dataTable,
-					     IDbCommand command,
-					     CommandBehavior behavior)
-		{
-			throw new NotImplementedException ();
-		}
-
-		protected override int Fill (DataSet dataSet,
-					     string srcTable,
-					     IDataReader dataReader,
-					     int startRecord,
-					     int maxRecords)
-		{
-			throw new NotImplementedException ();
-		}
-
-		protected override int Fill (DataSet dataSet,
-					     int startRecord,
-					     int maxRecords,
-					     string srcTable,
-					     IDbCommand command,
-					     CommandBehavior behavior)
-		{
-			throw new NotImplementedException ();
-		}
-
-		public override DataTable[] FillSchema (DataSet dataSet,
-							SchemaType schemaType)
-		{
-			throw new NotImplementedException ();
-		}
-
-		protected override DataTable FillSchema (DataTable dataTable,
-							 SchemaType schemaType,
-							 IDbCommand command,
-							 CommandBehavior behavior)
-		{
-			throw new NotImplementedException ();
-		}
-
-		protected override DataTable[] FillSchema (DataSet dataSet,
-							   SchemaType schemaType,
-							   IDbCommand command,
-							   string srcTable,
-							   CommandBehavior behavior)
-		{
-			throw new NotImplementedException ();
-		}
-		
 		protected override RowUpdatedEventArgs CreateRowUpdatedEvent (DataRow dataRow,
 									      IDbCommand command,
 									      StatementType statementType,
-									      DataTableMapping tableMapping)
+									      DataTableMapping tableMapping) 
 		{
-			return new OleDbRowUpdatedEventArgs (dataRow, command,
-							     statementType, tableMapping);
+			return new OleDbRowUpdatedEventArgs (dataRow, command, statementType, tableMapping);
 		}
+
 
 		protected override RowUpdatingEventArgs CreateRowUpdatingEvent (DataRow dataRow,
 										IDbCommand command,
 										StatementType statementType,
-										DataTableMapping tableMapping)
+										DataTableMapping tableMapping) 
 		{
-			return new OleDbRowUpdatingEventArgs (dataRow, command,
-							      statementType, tableMapping);
+			return new OleDbRowUpdatingEventArgs (dataRow, command, statementType, tableMapping);
 		}
 
-		public override IDataParameter[] GetFillParameters ()
+		protected override void OnRowUpdated (RowUpdatedEventArgs value) 
 		{
-			throw new NotImplementedException ();
+         		OleDbRowUpdatedEventHandler handler = (OleDbRowUpdatedEventHandler) Events[EventRowUpdated];
+			if ((handler != null) && (value is OleDbRowUpdatedEventArgs))
+            			handler (this, (OleDbRowUpdatedEventArgs) value);
+		}
+
+		protected override void OnRowUpdating (RowUpdatingEventArgs value) 
+		{
+         		OleDbRowUpdatingEventHandler handler = (OleDbRowUpdatingEventHandler) Events[EventRowUpdating];
+			if ((handler != null) && (value is OleDbRowUpdatingEventArgs))
+            			handler (this, (OleDbRowUpdatingEventArgs) value);
 		}
 		
-		protected override void OnRowUpdated (RowUpdatedEventArgs value)
-		{
-			OleDbRowUpdatedEventHandler handler = (OleDbRowUpdatedEventHandler) Events[EventRowUpdated];
-			if ((handler != null) && (value is OleDbRowUpdatedEventArgs))
-				handler (this, (OleDbRowUpdatedEventArgs) value);
-		}
-
-		protected override void OnRowUpdating (RowUpdatingEventArgs value)
-		{
-			OleDbRowUpdatingEventHandler handler = (OleDbRowUpdatingEventHandler) Events[EventRowUpdated];
-			if ((handler != null) && (value is OleDbRowUpdatingEventArgs))
-				handler (this, (OleDbRowUpdatingEventArgs) value);
-		}
-
-		public override int Update (DataSet dataSet)
-		{
-			throw new NotImplementedException ();
-		}
-
-		protected override int Update (DataRow[] dataRows,
-					       DataTableMapping tableMapping)
-		{
-			throw new NotImplementedException ();
-		}
-
 		#endregion // Methods
 
 		#region Events and Delegates
