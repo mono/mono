@@ -1,3 +1,6 @@
+2004-02-13 Sanjay Gupta <gsanjay@novell.com>
+	* FrameDimension.cs: Implemented missing functionalities
+
 2004-02-12 Ravindra <rkumar@novell.com>
 	* EncoderParameters.cs: Implemented.
 	* EncoderParameter.cs: Implemented.
