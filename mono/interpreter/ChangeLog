@@ -1,3 +1,8 @@
+2003-9-24  Bernie Solomon  <bernard@ugsolutions.com>
+
+	* interp.c: I broke calling native delegates reinstate
+	old code for the moment.
+
 2003-9-22  Bernie Solomon  <bernard@ugsolutions.com>
 
 	* interp.c: use mono_marshal_get_delegate_invoke to get delegate 
