@@ -1,3 +1,8 @@
+2002-08-03  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* IBuiltInEvidence.cs: New file.
+	* Zone.cs: New file. Implemented.
+
 2002-06-10  Duncan Mak  <duncan@ximian.com>
 
 	* IMembershipCondition.cs (Equals): Add missing methods.
