@@ -1,3 +1,8 @@
+2003-03-15  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* PrivateKey.cs: New. Class to load or create PVK (PriVate Key)
+	files (a Microsoft specific file format for private keys).
+
 2003-03-06  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* SoftwarePublisherCertificate.cs: New. Class to load or create
