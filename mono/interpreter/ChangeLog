@@ -1,7 +1,6 @@
-2003-01-23  Dick Porter  <dick@ximian.com>
+2003-02-06  Piers Haken	<piersh@friskit.com>
 
-	* interp.c: Use mono_runtime_exec_managed_code() to run all
-	managed code in a subthread.
+	* interp.c: warning cleanups
 
 2002-11-15  Dick Porter  <dick@ximian.com>
 
