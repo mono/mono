@@ -1,5 +1,9 @@
 2003-08-28  Martin Baulig  <martin@ximian.com>
 
+	* cs-tokenizer.cs (parse_less_than): Also allow all builtin types.
+
+2003-08-28  Martin Baulig  <martin@ximian.com>
+
 	* cs-parser.jay (opt_type_argument_list): Use
 	`OP_GENERICS_LT type_arguments OP_GENERICS_GT'.
 	(primary_expression): Replace `qualified_identifier' with `type_name'.

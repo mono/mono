@@ -370,9 +370,29 @@ namespace Mono.CSharp
 		{
 		start:
 			int the_token = token ();
-			if (the_token != Token.IDENTIFIER)
-				return false;
+			switch (the_token) {
+			case Token.IDENTIFIER:
+			case Token.OBJECT:
+			case Token.STRING:
+			case Token.BOOL:
+			case Token.DECIMAL:
+			case Token.FLOAT:
+			case Token.DOUBLE:
+			case Token.SBYTE:
+			case Token.BYTE:
+			case Token.SHORT:
+			case Token.USHORT:
+			case Token.INT:
+			case Token.UINT:
+			case Token.LONG:
+			case Token.ULONG:
+			case Token.CHAR:
+			case Token.VOID:
+				break;
 
+			default:
+				return false;
+			}
 		again:
 			the_token = token ();
 
