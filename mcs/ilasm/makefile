@@ -13,7 +13,9 @@ SOURCES =				\
         codegen/ITypeRef.cs             \
         codegen/IClassRef.cs            \
         codegen/FieldDef.cs             \
-        codegen/TypeDef.cs              \
+	codegen/ParamDef.cs		\
+	codegen/MethodDef.cs		\
+	codegen/TypeDef.cs              \
         codegen/TypeRef.cs              \
         codegen/PeapiTypeRef.cs         \
         codegen/ExternTypeRef.cs        \

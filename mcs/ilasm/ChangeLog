@@ -1,5 +1,10 @@
 2003-04-17 Jackson Harper <jackson@latitudegeo.com>
 
+	* makefile: Add new types to build
+	* makefile.gnu: Add new types to build
+		
+2003-04-17 Jackson Harper <jackson@latitudegeo.com>
+
 	* AssemblyInfo.cs: Increase version number.
 		
 2003-04-17 Jackson Harper <jackson@latitudegeo.com>
