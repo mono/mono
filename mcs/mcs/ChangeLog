@@ -1,3 +1,9 @@
+2004-06-13  Martin Baulig  <martin@ximian.com>
+
+	Merged latest changes into gmcs.  Please keep this comment in
+	here, it makes it easier for me to see what changed in MCS since
+	the last time I merged.
+
 2004-06-11  Martin Baulig  <martin@ximian.com>
 
 	* expression.cs (Invocation.IsParamsMethodApplicable): We need to
@@ -17,12 +23,6 @@
 	(AbstractPropertyEventMethod.ApplyAttributeBuilder): Add error
 	CS1667 report.
 	(PropertyMethod, DelegateMethod): Derived from AbstractPropertyEventMethod
-
-2004-06-04  Martin Baulig  <martin@ximian.com>
-
-	Merged latest changes into gmcs.  Please keep this comment in
-	here, it makes it easier for me to see what changed in MCS since
-	the last time I merged.
 
 2004-06-11  Raja R Harinath  <rharinath@novell.com>
 
