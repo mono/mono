@@ -1,5 +1,9 @@
 2004-12-06  Martin Baulig  <martin@ximian.com>
 
+	* cs8201.cs: Removed, this is not an error !
+
+2004-12-06  Martin Baulig  <martin@ximian.com>
+
 	* gmcs-expect-*: Updated from mcs-expect-*.
 
 2004-12-06  Raja R Harinath  <rharinath@novell.com>
