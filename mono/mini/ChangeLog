@@ -1,3 +1,8 @@
+
+Tue Dec 9 15:39:54 CET 2003 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c: check for overruns in IL code.
+
 2003-12-09  Zoltan Varga  <vargaz@freemail.hu>
 
 	* TODO: Add/remove some todo entries.
