@@ -18,10 +18,10 @@
 			<arg value="/r:System.dll"/>
 			<arg value="/r:System.EnterpriseServices.dll"/>
 			<arg value="/r:System.Xml.dll"/>
-			<sources>
-				<includes name="**/*.cs"/> 
-				<excludes name="Test/**"/>
-				<excludes name="System.Data.SqlClient/**"/>
+			<sources basedir="..">
+				<includes name="Mono.Data.TdsClient/Mono.Data.TdsClient.Internal/*.cs"/>
+				<includes name="System.Data/**/*.cs"/> 
+				<excludes name="System.Data/Test/**"/>
 			</sources>
 			<references>
 				<includes name="../lib/corlib.dll"/>
