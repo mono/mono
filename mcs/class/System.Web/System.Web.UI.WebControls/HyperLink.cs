@@ -4,9 +4,9 @@
  * 
  * Author:  Gaurav Vaish
  * Maintainer: gvaish@iitk.ac.in
- * Contact: <gvaish@iitk.ac.in>
+ * Contact: gvaish@iitk.ac.in, myscripts_2001@yahoo.com
  * Implementation: yes
- * Status:  10% (??)
+ * Status:  100%
  * 
  * (C) Gaurav Vaish (2001)
  */
@@ -15,28 +15,22 @@ namespace System.Web.UI.WebControls
 {
 	public class HyperLink: WebControl
 	{
-		string imageUrl;
-		string navigateUrl;
-		string target;
-		string text;
-		
-		public HyperLink()
+		public HyperLink(): base()
 		{
-			imageUrl = string.Empty;
-			navigateUrl = string.Empty;
-			target = string.Empty;
-			text = string.Empty;
 		}
 		
 		public virtual string ImageUrl
 		{
 			get
 			{
-				return imageUrl;
+				object o = ViewState["ImageUrl"];
+				if(o!=null)
+					return (string)o;
+				return String.Empty;
 			}
 			set
 			{
-				imageUrl = value;
+				ViewState["ImageUrl"] = value;
 			}
 		}
 		
@@ -44,11 +38,14 @@ namespace System.Web.UI.WebControls
 		{
 			get
 			{
-				return navigateUrl;
+				object o = ViewState["NavigateUrl"];
+				if(o!=null)
+					return (string)o;
+				return String.Empty;
 			}
 			set
 			{
-				navigateUrl = value;
+				ViewState["NavigateUrl"] = value;
 			}
 		}
 		
@@ -56,11 +53,14 @@ namespace System.Web.UI.WebControls
 		{
 			get
 			{
-				return target;
+				object o = ViewState["Target"];
+				if(o!=null)
+					return (string)o;
+				return String.Empty;
 			}
 			set
 			{
-				target = value;
+				ViewState["Target"] = value;
 			}
 		}
 		
@@ -68,12 +68,79 @@ namespace System.Web.UI.WebControls
 		{
 			get
 			{
-				return text;
+				object o = ViewState["Text"];
+				if(o!=null)
+					return (string)o;
+				return String.Empty;
 			}
 			set
 			{
-				text = value;
+				ViewState["Text"] = value;
 			}
+		}
+		
+		protected override void AddAttributesToRender(HtmlTextWriter writer) : AddAttributesToRender(writer)
+		{
+			if(NavigateUrl.Length > 0)
+			{
+				writer.AddAttribute(HtmlTextWriterAttribute.Href, NavigateUrl);
+			}
+			if(Target.Length > 0)
+			{
+				writer.AddAttribute(HtmlTextWriterAttribute.Target, Target);
+			}
+		}
+		
+		protected override void AddParsedSubObject(object obj)
+		{
+			if(HasControls())
+			{
+				base.AddParsedSubObject(obj);
+				return;
+			}
+			if(obj is LiteralConrol)
+			{
+				Text = ((LiteralControl)obj).Text;
+				return;
+			}
+			if(Text.Length > 0)
+			{
+				base.AddParsedSubObject(Text);
+				Text = String.Empty;
+			}
+			AddParsedSubObject(obj);
+		}
+		
+		protected override void LoadViewState(object savedState)
+		{
+			if(savedState != null)
+			{
+				base.LoadViewState(savedState);
+				object o = ViewState["Text"];
+				if(o!=null)
+					Text = (string)o;
+			}
+		}
+		
+		protected override void RenderContents(HtmlTextWriter writer)
+		{
+			if(ImageUrl.Length > 0)
+			{
+				Image img = new Image();
+				img.ImageUrl = ResolveUrl(ImageUrl);
+				if(ToolTip.Length > 0)
+					img.ToolTip = ToolTip;
+				if(Text.Length > 0)
+					img.AlternateText = Text;
+				img.RenderControl(writer);
+				return;
+			}
+			if(HasControls())
+			{
+				base.RenderControl(writer);
+				return;
+			}
+			writer.Write(Text);
 		}
 	}
 }
