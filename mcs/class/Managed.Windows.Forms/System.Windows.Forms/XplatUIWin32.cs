@@ -23,9 +23,13 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.24 $
+// $Revision: 1.25 $
 // $Modtime: $
 // $Log: XplatUIWin32.cs,v $
+// Revision 1.25  2004/08/21 18:35:38  pbartok
+// - Fixed bug with Async message handling
+// - Implemented getting the ModifierKeys
+//
 // Revision 1.24  2004/08/21 17:31:21  pbartok
 // - Drivers now return proper mouse state
 //
@@ -125,7 +129,6 @@ namespace System.Windows.Forms {
 		private static int		ref_count;
 		private static IntPtr		FosterParent;
 
-		internal static Keys		key_state;
 		internal static MouseButtons	mouse_state;
 		internal static Point		mouse_position;
 		internal static WndProc		wnd_proc;
@@ -463,7 +466,6 @@ namespace System.Windows.Forms {
 			ref_count=0;
 
 			// Now regular initialization
-			key_state = Keys.None;
 			mouse_state = MouseButtons.None;
 			mouse_position = Point.Empty;
 
@@ -532,6 +534,19 @@ namespace System.Windows.Forms {
 		#region Static Properties
 		internal override Keys ModifierKeys {
 			get {
+				short	state;
+				Keys	key_state;
+
+				key_state = Keys.None;
+
+				state = Win32GetKeyState(VirtualKeys.VK_SHIFT);
+				if ((state & 0x8000) != 0) {
+					key_state |= Keys.Shift;
+				}
+				state = Win32GetKeyState(VirtualKeys.VK_CONTROL);
+				if ((state & 0x8000) != 0) {
+					key_state |= Keys.Control;
+				}
 				return key_state;
 			}
 		}
@@ -579,7 +594,6 @@ namespace System.Windows.Forms {
 
 		#region Public Static Methods
 		internal override IntPtr InitializeDriver() {
-			key_state=Keys.None;
 			mouse_state=MouseButtons.None;
 			mouse_position=Point.Empty;
 
@@ -788,7 +802,6 @@ namespace System.Windows.Forms {
 		internal override bool GetMessage(ref MSG msg, IntPtr hWnd, int wFilterMin, int wFilterMax) {
 			HandleData	data;
 			bool		result;
-
 			data = (HandleData) handle_data [0];
 			if ((data!=null) && data.GetMessage(ref msg)) {
 				return true;
@@ -838,8 +851,9 @@ namespace System.Windows.Forms {
 					AsyncMethodData asyncdata = (AsyncMethodData) handle.Target;
 					AsyncMethodResult asyncresult = asyncdata.Result.Target as AsyncMethodResult;
 					object ret = asyncdata.Method.DynamicInvoke (asyncdata.Args);
-					if (asyncresult != null)
+					if (asyncresult != null) {
 						asyncresult.Complete (ret);
+					}
 					handle.Free ();
 					break;
 				}
@@ -972,7 +986,7 @@ namespace System.Windows.Forms {
 
 		internal override void SendAsyncMethod (AsyncMethodData method)
 		{
-			Win32PostMessage(IntPtr.Zero, Msg.WM_ASYNC_MESSAGE, IntPtr.Zero, (IntPtr)GCHandle.Alloc (method));
+			Win32PostMessage(FosterParent, Msg.WM_ASYNC_MESSAGE, IntPtr.Zero, (IntPtr)GCHandle.Alloc (method));
 		}
 
 		// Santa's little helper
@@ -1101,6 +1115,9 @@ namespace System.Windows.Forms {
 
 		[DllImport ("user32.dll", EntryPoint="PostMessage", CharSet=CharSet.Ansi, CallingConvention=CallingConvention.StdCall)]
 		private extern static bool Win32PostMessage(IntPtr hwnd, Msg msg, IntPtr wParam, IntPtr lParam);
+
+		[DllImport ("user32.dll", EntryPoint="GetKeyState", CharSet=CharSet.Ansi, CallingConvention=CallingConvention.StdCall)]
+		private extern static short Win32GetKeyState(VirtualKeys nVirtKey);
 		#endregion
 
 	}
