@@ -1,5 +1,10 @@
 2005-01-18  Zoltan Varga  <vargaz@freemail.hu>
 
+	* mini-amd64.c (mono_arch_output_basic_block): Remove some assertions
+	which can happen. Fixes #71361.
+
+2005-01-18  Zoltan Varga  <vargaz@freemail.hu>
+
 	* exceptions-sparc.c tramp-sparc.c: Allocate code using the global code
 	manager.
 
