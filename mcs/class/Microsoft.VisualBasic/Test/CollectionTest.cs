@@ -1,9 +1,11 @@
 // Collection.cs - NUnit Test Cases for Microsoft.VisualBasic.Collection
 //
-// Author:
+// Authors:
 //   Chris J. Breisch (cjbreisch@altavista.net)
+//   Martin Willemoes Hansen (mwh@sysrq.dk)
 //
 // (C) Chris J. Breisch
+// (C) Martin Willemoes Hansen
 // 
 
 using NUnit.Framework;

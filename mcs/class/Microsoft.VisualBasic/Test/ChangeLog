@@ -1,3 +1,7 @@
+2003-03-13  Martin Willemoes Hansen <mwh@sysrq.dk>
+	* Credited myself in CollectionTest.cs, 
+	  ConversionTest.cs and DateAndTimeTest.cs
+
 2003-03-12  Martin Willemoes Hansen <mwh@sysrq.dk>
 	* Added makefile.gnu
 	* Added microsoftvisualbasic_test.args
