@@ -9,6 +9,8 @@
 
 using System;
 using System.Text;
+using System.Reflection;
+using System.Reflection.Emit;
 
 namespace Microsoft.JScript {
 
@@ -28,7 +30,7 @@ namespace Microsoft.JScript {
 
 		public double EvaluateRelational (object v1, object v2)
 		{
-			throw new NotImplementedException ();
+			return -1;
 		}
 
 
@@ -71,7 +73,81 @@ namespace Microsoft.JScript {
 
 		internal override void Emit (EmitContext ec)
 		{
-			throw new NotImplementedException ();
+			if (current_op == JSToken.None &&  right == null) {
+				left.Emit (ec);
+				return;
+			}			
+
+			ILGenerator ig;
+			LocalBuilder loc;
+			Type t = typeof (Relational);
+			ConstructorInfo ctr_info;
+
+			if (parent == null)
+				ig = ec.gc_ig;
+			else
+				ig = ec.ig;
+			
+			loc = ig.DeclareLocal (t);
+			
+			switch (current_op) {
+			case JSToken.GreaterThan:
+				ig.Emit (OpCodes.Ldc_I4_S, (byte) 57);
+				break;
+			case JSToken.LessThan:
+				ig.Emit (OpCodes.Ldc_I4_S, (byte) 58);
+				break;
+			case JSToken.LessThanEqual:
+				ig.Emit (OpCodes.Ldc_I4_S, (byte) 59);
+				break;
+			case JSToken.GreaterThanEqual:
+				ig.Emit (OpCodes.Ldc_I4_S, (byte) 60);
+				break;
+			}
+			
+			ctr_info = typeof (Relational).GetConstructor (new Type [] { typeof (Int32) });
+			ig.Emit (OpCodes.Newobj, ctr_info);
+			ig.Emit (OpCodes.Stloc, loc);
+			ig.Emit (OpCodes.Ldloc, loc);
+			
+			if (left != null)
+				left.Emit (ec);
+			if (right != null)
+				right.Emit (ec);
+
+			ig.Emit (OpCodes.Call, t.GetMethod ("EvaluateRelational"));
+			ig.Emit (OpCodes.Ldc_I4_0);
+			ig.Emit (OpCodes.Conv_R8);
+
+			Label a, b;
+			a = ig.DefineLabel ();
+			b = ig.DefineLabel ();
+			
+			switch (current_op) {
+			case JSToken.GreaterThan:
+				ig.Emit (OpCodes.Bgt_S, a);
+				break;
+			case JSToken.LessThan:
+				ig.Emit (OpCodes.Blt_S, a);
+				break;
+			case JSToken.LessThanEqual:
+				ig.Emit (OpCodes.Ble_S, a);
+				break;
+			case JSToken.GreaterThanEqual:
+				ig.Emit (OpCodes.Bge_S, a);
+				break;
+			}			
+
+			ig.Emit (OpCodes.Ldc_I4_0);
+			ig.Emit (OpCodes.Br_S, b);
+			ig.MarkLabel (a);
+			ig.Emit (OpCodes.Ldc_I4_1);
+			ig.MarkLabel (b);
+			
+			if (no_effect)				
+				ig.Emit (OpCodes.Pop);
+			else 
+				ig.Emit (OpCodes.Box, typeof (Boolean));
 		}
 	}
 }
