@@ -1,5 +1,10 @@
-2002-01-15  Dick Porter  <dick@ximian.com>
 
+Tue Jan 15 19:42:50 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* unicode.c: make iconv_convert () return the number of bytess written
+	in the output buffer.
+
+2002-01-15  Dick Porter  <dick@ximian.com>
 	* threads.c: Make the runtime's idea of infinite timeouts coincide
 	with the class library's
 
