@@ -303,9 +303,11 @@ namespace CIR {
 
 	public class Goto : Statement {
 		string target;
-		
-		public Goto (string label)
+		Location loc;
+			
+		public Goto (string label, Location l)
 		{
+			loc = l;
 			target = label;
 		}
 
@@ -317,7 +319,7 @@ namespace CIR {
 
 		public override bool Emit (EmitContext ec)
 		{
-			throw new Exception ("Unimplemented");
+			return false;
 		}
 	}
 

@@ -2669,10 +2669,16 @@ continue_statement
 goto_statement
 	: GOTO IDENTIFIER SEMICOLON 
 	  {
-		$$ = new Goto ((string) $2);
+		$$ = new Goto ((string) $2, lexer.Location);
 	  }
 	| GOTO CASE constant_expression SEMICOLON
+	  {
+		// FIXME
+	  }
 	| GOTO DEFAULT SEMICOLON 
+	  {
+		// FIXME
+	  }
 	; 
 
 return_statement

@@ -44,10 +44,13 @@ namespace CIR {
 
 		public override Expression DoResolve (EmitContext ec)
 		{
-			target = target.Resolve (ec);
 			source = source.Resolve (ec);
-
-			if (target == null || source == null)
+			if (source == null)
+				return null;
+			
+			target = target.ResolveLValue (ec, source);
+			
+			if (target == null)
 				return null;
 
 			Type target_type = target.Type;
@@ -69,6 +72,15 @@ namespace CIR {
 				
 				return this;
 			}
+
+			if (target is IndexerAccess){
+				IndexerAccess ia = (IndexerAccess) target;
+
+				if (!ia.VerifyAssignable (source))
+					return null;
+
+				return this;
+			}
 			
 			if (source is New && target_type.IsSubclassOf (TypeManager.value_type)){
 				New n = (New) source;
@@ -83,9 +95,11 @@ namespace CIR {
 				if (source == null)
 					return null;
 			}
-			
-			if (!(target is LValue)){
-				Report.Error (131, l, "Left hand of an assignment must be a variable, a property or an indexer");
+
+			if (target.ExprClass != ExprClass.Variable){
+				Report.Error (131, l,
+					      "Left hand of an assignment must be a variable, " +
+					      "a property or an indexer");
 				return null;
 			}
 
@@ -114,7 +128,7 @@ namespace CIR {
 				if (!is_statement)
 					ig.Emit (OpCodes.Dup);
 
-				((LValue) target).Store (ec);
+				((IStackStore) target).Store (ec);
 			} else if (eclass == ExprClass.PropertyAccess){
 				PropertyExpr pe = (PropertyExpr) target;
 

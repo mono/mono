@@ -32,7 +32,7 @@ namespace CIR {
 		Invalid,
 		
 		Value,
-		Variable,   // Every Variable should implement LValue
+		Variable,
 		Namespace,
 		Type,
 		MethodGroup,
@@ -40,6 +40,32 @@ namespace CIR {
 		EventAccess,
 		IndexerAccess,
 		Nothing, 
+	}
+
+	// <summary>
+	//   An interface provided by expressions that can be used as
+	//   LValues and can store the value on the top of the stack on
+	//   their storage
+	// </summary>
+	public interface IStackStore {
+
+		// <summary>
+		//   The Store method should store the contents of the top
+		//   of the stack into the storage that is implemented by
+		//   the particular implementation of LValue
+		// </summary>
+		void Store     (EmitContext ec);
+	}
+
+	// <summary>
+	//   This interface is implemented by variables
+	// </summary>
+	public interface IMemoryLocation {
+		// <summary>
+		//   The AddressOf method should generate code that loads
+		//   the address of the object and leaves it on the stack
+		// </summary>
+		void AddressOf (EmitContext ec);
 	}
 
 	// <remarks>
@@ -120,12 +146,15 @@ namespace CIR {
 		
 		public abstract Expression DoResolve (EmitContext ec);
 
-
+		public virtual Expression DoResolveLValue (EmitContext ec, Expression right_side)
+		{
+			return DoResolve (ec);
+		}
+		
 		//
 		// Currently Resolve wraps DoResolve to perform sanity
 		// checking and assertion checking on what we expect from Resolve
 		//
-
 		public Expression Resolve (EmitContext ec)
 		{
 			Expression e = DoResolve (ec);
@@ -142,14 +171,36 @@ namespace CIR {
 					if (e.type == null)
 						throw new Exception ("Expression " + e +
 								     " did not set its type after Resolve");
-
-				if (e is LValue)
-					e = ((LValue) e).LValueResolve (ec);
 			}
 
 			return e;
 		}
-		       
+
+		//
+		// Currently ResolveLValue wraps DoResolveLValue to perform sanity
+		// checking and assertion checking on what we expect from Resolve
+		//
+		public Expression ResolveLValue (EmitContext ec, Expression right_side)
+		{
+			Expression e = DoResolveLValue (ec, right_side);
+
+			if (e != null){
+				if (e is SimpleName)
+					return e;
+
+				if (e.ExprClass == ExprClass.Invalid)
+					throw new Exception ("Expression " + e +
+							     " ExprClass is Invalid after resolve");
+
+				if (e.ExprClass != ExprClass.MethodGroup)
+					if (e.type == null)
+						throw new Exception ("Expression " + e +
+								     " did not set its type after Resolve");
+			}
+
+			return e;
+		}
+		
 		// <summary>
 		//   Emits the code for the expression
 		// </summary>
@@ -226,7 +277,7 @@ namespace CIR {
 
 					return e;
 				} else
-					return new FieldExpr (fi);
+					return new FieldExpr (fi, loc);
 			} else if (mi is PropertyInfo){
 				return new PropertyExpr ((PropertyInfo) mi, loc);
 			} else if (mi is Type)
@@ -321,64 +372,6 @@ namespace CIR {
 			return MemberLookup (ec, t, name, same_type, AllMemberTypes, AllBindingsFlags, loc);
 		}
 
-		//
-		// I am in general unhappy with this implementation.
-		//
-		// I need to revise this.
-		//
-//		  
-//		  static public Expression ResolveMemberAccess (EmitContext ec, string name)
-//		  {
-//			  Expression left_e = null;
-//			  int dot_pos = name.LastIndexOf (".");
-//			  string left = name.Substring (0, dot_pos);
-//			  string right = name.Substring (dot_pos + 1);
-//			  Type t;
-//
-//			  if ((t = ec.TypeContainer.LookupType (left, false)) != null){
-//				  Expression e;
-//				  
-//				  left_e = new TypeExpr (t);
-//				  e = new MemberAccess (left_e, right);
-//				  return e.Resolve (ec);
-//			  } else {
-//				  //
-//				  // FIXME: IMplement:
-//				  
-//				  // Handle here:
-//				  //    T.P  Static property access (P) on Type T.
-//				  //    e.P  instance property access on instance e for P.
-//				  //    p
-//				  //
-//			  }
-//
-//			  if (left_e == null){
-//				  Error (246, "Can not find type or namespace `"+left+"'");
-//				  return null;
-//			  }
-//
-//			  switch (left_e.ExprClass){
-//			  case ExprClass.Type:
-//				  return  MemberLookup (ec,
-//							left_e.Type, right,
-//							left_e.Type == ec.TypeContainer.TypeBuilder);
-//				  
-//			  case ExprClass.Namespace:
-//			  case ExprClass.PropertyAccess:
-//			  case ExprClass.IndexerAccess:
-//			  case ExprClass.Variable:
-//			  case ExprClass.Value:
-//			  case ExprClass.Nothing:
-//			  case ExprClass.EventAccess:
-//			  case ExprClass.MethodGroup:
-//			  case ExprClass.Invalid:
-//				  throw new Exception ("Should have got the " + left_e.ExprClass +
-//						       " handled before");
-//			  }
-//			  
-//			  return null;
-//		  }
-//
 		static public Expression ImplicitReferenceConversion (Expression expr, Type target_type)
 		{
 			Type expr_type = expr.Type;
@@ -1907,7 +1900,7 @@ namespace CIR {
 			//
 			Expression mg;
 			string op_name;
-				
+			
 			if (oper == Operator.PostIncrement || oper == Operator.PreIncrement)
 				op_name = "op_Increment";
 			else if (oper == Operator.PostDecrement || oper == Operator.PreDecrement)
@@ -2088,14 +2081,8 @@ namespace CIR {
 					throw new Exception ("Implement me");
 				} else if (expr.ExprClass == ExprClass.PropertyAccess){
 					PropertyExpr pe = (PropertyExpr) expr;
-
-					bool a, b;
 					
-					a = pe.VerifyReadable ();
-					b = pe.VerifyAssignable ();
-					type = expr_type;
-					
-					if (a && b)
+					if (pe.VerifyAssignable ())
 						return this;
 					return null;
 				} else {
@@ -2120,7 +2107,7 @@ namespace CIR {
 		public override Expression DoResolve (EmitContext ec)
 		{
 			expr = expr.Resolve (ec);
-
+			
 			if (expr == null)
 				return null;
 
@@ -2163,7 +2150,7 @@ namespace CIR {
 				//
 				if (oper == Operator.PreDecrement || oper == Operator.PreIncrement ||
 				    oper == Operator.PostDecrement || oper == Operator.PostIncrement){
-					((LValue) expr).Store (ec);
+					((IStackStore) expr).Store (ec);
 				}
 				return;
 			}
@@ -2189,7 +2176,7 @@ namespace CIR {
 				break;
 				
 			case Operator.AddressOf:
-				((MemoryLocation)expr).AddressOf (ec);
+				((IMemoryLocation)expr).AddressOf (ec);
 				break;
 				
 			case Operator.Indirection:
@@ -2209,7 +2196,7 @@ namespace CIR {
 					else
 						ig.Emit (OpCodes.Add);
 					ig.Emit (OpCodes.Dup);
-					((LValue) expr).Store (ec);
+					((IStackStore) expr).Store (ec);
 				} else {
 					throw new Exception ("Handle Indexers and Properties here");
 				}
@@ -2230,7 +2217,7 @@ namespace CIR {
 						ig.Emit (OpCodes.Sub);
 					else
 						ig.Emit (OpCodes.Add);
-					((LValue) expr).Store (ec);
+					((IStackStore) expr).Store (ec);
 				} else if (eclass == ExprClass.PropertyAccess){
 					throw new Exception ("Handle Properties here");
 				} else if (eclass == ExprClass.IndexerAccess) {
@@ -3269,38 +3256,7 @@ namespace CIR {
 		}
 	}
 
-	// <summary>
-	//   A simple interface that should be implemeneted by LValues
-	// </summary>
-	public interface LValue {
-
-		// <summary>
-		//   The Store method should store the contents of the top
-		//   of the stack into the storage that is implemented by
-		//   the particular implementation of LValue
-		// </summary>
-		void Store     (EmitContext ec);
-
-		// <summary>
-		//   Allows an LValue to perform any necessary semantic
-		//   analysis in an lvalue-context.
-		// </summary>
-
-		Expression LValueResolve (EmitContext ec);
-	}
-
-	// <summary>
-	//   This interface is implemented by variables
-	// </summary>
-	public interface MemoryLocation {
-		// <summary>
-		//   The AddressOf method should generate code that loads
-		//   the address of the LValue and leaves it on the stack
-		// </summary>
-		void AddressOf (EmitContext ec);
-	}
-
-	public class LocalTemporary : Expression, LValue, MemoryLocation {
+	public class LocalTemporary : Expression, IStackStore, IMemoryLocation {
 		LocalBuilder builder;
 		
 		public LocalTemporary (EmitContext ec, Type t)
@@ -3315,11 +3271,6 @@ namespace CIR {
 			return this;
 		}
 
-		public Expression LValueResolve (EmitContext ec)
-		{
-			return this;
-		}
-		
 		public override void Emit (EmitContext ec)
 		{
 			ec.ig.Emit (OpCodes.Ldloc, builder); 
@@ -3336,7 +3287,7 @@ namespace CIR {
 		}
 	}
 	
-	public class LocalVariableReference : Expression, LValue, MemoryLocation {
+	public class LocalVariableReference : Expression, IStackStore, IMemoryLocation {
 		public readonly string Name;
 		public readonly Block Block;
 
@@ -3365,11 +3316,6 @@ namespace CIR {
 			return this;
 		}
 
-		public Expression LValueResolve (EmitContext ec)
-		{
-			return this;
-		}
-		
 		public override void Emit (EmitContext ec)
 		{
 			VariableInfo vi = VariableInfo;
@@ -3461,7 +3407,7 @@ namespace CIR {
 		}
 	}
 
-	public class ParameterReference : Expression, LValue, MemoryLocation {
+	public class ParameterReference : Expression, IStackStore, IMemoryLocation {
 		public readonly Parameters Pars;
 		public readonly String Name;
 		public readonly int Idx;
@@ -3511,11 +3457,6 @@ namespace CIR {
 				ec.ig.Emit (OpCodes.Ldarga_S, (byte) arg_idx);
 			else
 				ec.ig.Emit (OpCodes.Ldarga, arg_idx);
-		}
-
-		public Expression LValueResolve (EmitContext ec)
-		{
-			return this;
 		}
 	}
 	
@@ -4167,14 +4108,14 @@ namespace CIR {
 						struct_call = true;
 
 						//
-						// If the expression is an LValue, then
+						// If the expression implements IMemoryLocation, then
 						// we can optimize and use AddressOf on the
 						// return.
 						//
 						// If not we have to use some temporary storage for
 						// it.
-						if (instance_expr is MemoryLocation)
-							((MemoryLocation) instance_expr).AddressOf (ec);
+						if (instance_expr is IMemoryLocation)
+							((IMemoryLocation) instance_expr).AddressOf (ec);
 						else {
 							Type t = instance_expr.Type;
 							
@@ -4373,7 +4314,7 @@ namespace CIR {
 		bool DoEmit (EmitContext ec, bool need_value_on_stack)
 		{
 			if (method == null){
-				MemoryLocation ml = (MemoryLocation) value_target;
+				IMemoryLocation ml = (IMemoryLocation) value_target;
 
 				ml.AddressOf (ec);
 			} else {
@@ -4413,14 +4354,14 @@ namespace CIR {
 	//
 	// Represents the `this' construct
 	//
-	public class This : Expression, LValue, MemoryLocation {
+	public class This : Expression, IStackStore, IMemoryLocation {
 		Location loc;
 		
 		public This (Location loc)
 		{
 			this.loc = loc;
 		}
-		
+
 		public override Expression DoResolve (EmitContext ec)
 		{
 			eclass = ExprClass.Variable;
@@ -4432,6 +4373,18 @@ namespace CIR {
 				return null;
 			}
 			
+			return this;
+		}
+
+		public Expression DoResolveLValue (EmitContext ec)
+		{
+			DoResolve (ec);
+			
+			if (ec.TypeContainer is Class){
+				Report.Error (1604, loc, "Cannot assign to `this'");
+				return null;
+			}
+
 			return this;
 		}
 
@@ -4448,16 +4401,6 @@ namespace CIR {
 		public void AddressOf (EmitContext ec)
 		{
 			ec.ig.Emit (OpCodes.Ldarga_S, (byte) 0);
-		}
-
-		public Expression LValueResolve (EmitContext ec)
-		{
-			if (ec.TypeContainer is Class){
-				Report.Error (1604, loc, "Cannot assign to `this'");
-				return null;
-			}
-
-			return this;
 		}
 	}
 
@@ -4677,6 +4620,14 @@ namespace CIR {
 			eclass = ExprClass.MethodGroup;
 		}
 
+		public MethodGroupExpr (ArrayList l)
+		{
+			Methods = new MethodBase [l.Count];
+
+			l.CopyTo (Methods, 0);
+			eclass = ExprClass.MethodGroup;
+		}
+		
 		//
 		// `A method group may have associated an instance expression' 
 		// 
@@ -4744,15 +4695,17 @@ namespace CIR {
 	// <summary>
 	//   Fully resolved expression that evaluates to a Field
 	// </summary>
-	public class FieldExpr : Expression, LValue, MemoryLocation {
+	public class FieldExpr : Expression, IStackStore, IMemoryLocation {
 		public readonly FieldInfo FieldInfo;
 		public Expression InstanceExpression;
-			
-		public FieldExpr (FieldInfo fi)
+		Location loc;
+		
+		public FieldExpr (FieldInfo fi, Location l)
 		{
 			FieldInfo = fi;
 			eclass = ExprClass.Variable;
 			type = fi.FieldType;
+			loc = l;
 		}
 
 		override public Expression DoResolve (EmitContext ec)
@@ -4770,6 +4723,25 @@ namespace CIR {
 				
 			}
 			return this;
+		}
+
+		public Expression DoResolveLValue (EmitContext ec)
+		{
+			if (!FieldInfo.IsInitOnly)
+				return this;
+
+			//
+			// InitOnly fields can only be assigned in constructors
+			//
+
+			if (ec.IsConstructor)
+				return this;
+
+			Report.Error (191, loc,
+				      "Readonly field can not be assigned outside " +
+				      "of constructor or variable initializer");
+			
+			return null;
 		}
 
 		override public void Emit (EmitContext ec)
@@ -4802,26 +4774,14 @@ namespace CIR {
 				ec.ig.Emit (OpCodes.Ldflda, FieldInfo);
 			}
 		}
-
-		public Expression LValueResolve (EmitContext ec)
-		{
-			if (!FieldInfo.IsInitOnly)
-				return this;
-
-			//
-			// InitOnly fields can only be assigned in constructors
-			//
-
-			if (ec.IsConstructor)
-				return this;
-
-			return null;
-		}
 	}
 	
 	// <summary>
 	//   Expression that evaluates to a Property.  The Assign class
-	//   might set the `Value' expression if we are in an assignment. 
+	//   might set the `Value' expression if we are in an assignment.
+	//
+	//   This is not an LValue because we need to re-write the expression, we
+	//   can not take data from the stack and store it.  
 	// </summary>
 	public class PropertyExpr : ExpressionStatement {
 		public readonly PropertyInfo PropertyInfo;
@@ -4894,26 +4854,16 @@ namespace CIR {
 			return true;
 		}
 
-		public bool VerifyReadable ()
+		override public Expression DoResolve (EmitContext ec)
 		{
 			if (!PropertyInfo.CanRead){
 				Report.Error (154, loc, 
 					      "The property `" + PropertyInfo.Name +
 					      "' can not be used in " +
 					      "this context because it lacks a get accessor");
-				return false;
+				return null;
 			}
 
-			return true;
-		}
-		
-		override public Expression DoResolve (EmitContext ec)
-		{
-			//
-			// Not really sure who should call perform the test below
-			// given that `assignable' has special code for this.
-			//
-			
 			return this;
 		}
 
@@ -5029,15 +4979,14 @@ namespace CIR {
 		}
 		
 	}
-	
-	public class ElementAccess : Expression, LValue {
+
+	public class ElementAccess : Expression {
 		
 		public ArrayList  Arguments;
 		public Expression Expr;
-
-		Location   location;
+		public Location   loc;
 		
-		public ElementAccess (Expression e, ArrayList e_list, Location loc)
+		public ElementAccess (Expression e, ArrayList e_list, Location l)
 		{
 			Expr = e;
 
@@ -5045,14 +4994,12 @@ namespace CIR {
 			foreach (Expression tmp in e_list)
 				Arguments.Add (new Argument (tmp, Argument.AType.Expression));
 			
-			location  = loc;
+			loc  = l;
 		}
 
-		public override Expression DoResolve (EmitContext ec)
+		Expression CommonResolve (EmitContext ec)
 		{
 			Expr = Expr.Resolve (ec);
-
-			//Console.WriteLine (Expr.ToString ());
 
 			if (Expr == null) 
 				return null;
@@ -5060,33 +5007,84 @@ namespace CIR {
 			if (Arguments == null)
 				return null;
 
-			if (Expr.ExprClass != ExprClass.Variable) {
-				report118 (location, Expr, "variable");
-				return null;
+			for (int i = Arguments.Count; i > 0;){
+				--i;
+				Argument a = (Argument) Arguments [i];
+				
+				if (!a.Resolve (ec))
+					return null;
 			}
 
-			if (Arguments != null){
-				for (int i = Arguments.Count; i > 0;){
-					--i;
-					Argument a = (Argument) Arguments [i];
-					
-					if (!a.Resolve (ec))
-						return null;
-					
-					Type a_type = a.expr.Type;
-					if (!(StandardConversionExists (a_type, TypeManager.int32_type) ||
-					      StandardConversionExists (a_type, TypeManager.uint32_type) ||
-					      StandardConversionExists (a_type, TypeManager.int64_type) ||
-					      StandardConversionExists (a_type, TypeManager.uint64_type)))
-						return null;
-					
-				}
-			}			
+			return this;
+		}
+				
+		public override Expression DoResolve (EmitContext ec)
+		{
+			Expr = CommonResolve (ec);
 
-			// FIXME : Implement the actual storage here.
+			if (Expr == null)
+				return null;
 			
-			throw new Exception ("Finish element access");
+			//
+			// We perform some simple tests, and then to "split" the emit and store
+			// code we create an instance of a different class, and return that.
+			//
+			// I am experimenting with this pattern.
+			//
+			if (Expr.Type == TypeManager.array_type)
+				return (new ArrayAccess (this)).Resolve (ec);
+			else
+				return (new IndexerAccess (this)).Resolve (ec);
+		}
+
+		public override Expression DoResolveLValue (EmitContext ec, Expression right_side)
+		{
+			Expr = CommonResolve (ec);
+
+			if (Expr == null)
+				return null;
+
+			if (Expr.Type == TypeManager.array_type)
+				return (new ArrayAccess (this)).ResolveLValue (ec, right_side);
+			else
+				return (new IndexerAccess (this)).ResolveLValue (ec, right_side);
+		}
+		
+		public override void Emit (EmitContext ec)
+		{
+			throw new Exception ("Should never be reached");
+		}
+	}
+
+	public class ArrayAccess : Expression, IStackStore {
+		//
+		// Points to our "data" repository
+		//
+		ElementAccess ea;
+		
+		public ArrayAccess (ElementAccess ea_data)
+		{
+			ea = ea_data;
+			eclass = ExprClass.Variable;
+
+			//
+			// FIXME: Figure out the type here
+			//
+		}
+
+		Expression CommonResolve (EmitContext ec)
+		{
+			return this;
+		}
+		
+		public override Expression DoResolve (EmitContext ec)
+		{
+			if (ea.Expr.ExprClass != ExprClass.Variable) {
+				report118 (ea.loc, ea.Expr, "variable");
+				return null;
+			}
 			
+			throw new Exception ("Implement me");
 		}
 
 		public void Store (EmitContext ec)
@@ -5098,10 +5096,167 @@ namespace CIR {
 		{
 			throw new Exception ("Implement me !");
 		}
+	}
 
-		public Expression LValueResolve (EmitContext ec)
+	class Indexers {
+		public ArrayList getters, setters;
+		static Hashtable map;
+
+		static Indexers ()
 		{
+			map = new Hashtable ();
+		}
+
+		Indexers (MemberInfo [] mi)
+		{
+			foreach (PropertyInfo property in mi){
+				MethodInfo [] accessors;
+
+				accessors = TypeManager.GetAccessors (property);
+				if (accessors != null){
+					int idx = 0;
+					
+					if (property.CanRead){
+						if (getters == null)
+							getters = new ArrayList ();
+						
+						getters.Add (accessors [idx++]);
+					}
+					if (property.CanWrite){
+						if (setters == null)
+							setters = new ArrayList ();
+						
+						setters.Add (accessors [idx++]);
+					}
+				}
+			}
+		}
+		
+		static string IndexerPropertyName (Type t)
+		{
+			System.Attribute attr;
+
+			attr = System.Attribute.GetCustomAttribute (t, TypeManager.default_member_type);
+
+			if (attr != null)
+			{
+				DefaultMemberAttribute dma = (DefaultMemberAttribute) attr;
+				
+				return dma.MemberName;
+			}
+
+			return "Item";
+		}
+
+		static public Indexers GetIndexersForType (Type t, TypeManager tm, Location loc) 
+		{
+			Indexers ix = (Indexers) map [t];
+			string p_name = IndexerPropertyName (t);
+			
+			if (ix != null)
+				return ix;
+
+			MemberInfo [] mi = tm.FindMembers (
+				t, MemberTypes.Property,
+				BindingFlags.Public | BindingFlags.Instance,
+				Type.FilterName, p_name);
+
+			if (mi == null || mi.Length == 0){
+				Report.Error (21, loc,
+					      "Type `" + TypeManager.CSharpName (t) + "' does not have " +
+					      "any indexers defined");
+				return null;
+			}
+			
+			ix = new Indexers (mi);
+			map [t] = ix;
+
+			return ix;
+		}
+	}
+	
+	public class IndexerAccess : Expression {
+		//
+		// Points to our "data" repository
+		//
+		ElementAccess ea;
+		MethodInfo get, set;
+		Indexers ilist;
+		ArrayList set_arguments;
+		
+		public IndexerAccess (ElementAccess ea_data)
+		{
+			ea = ea_data;
+			eclass = ExprClass.Value;
+		}
+
+		public bool VerifyAssignable (Expression source)
+		{
+			throw new Exception ("Implement me!");
+		}
+
+		public override Expression DoResolve (EmitContext ec)
+		{
+			Type indexer_type = ea.Expr.Type;
+			
+			//
+			// Step 1: Query for all `Item' *properties*.  Notice
+			// that the actual methods are pointed from here.
+			//
+			// This is a group of properties, piles of them.  
+
+			if (ilist == null)
+				ilist = Indexers.GetIndexersForType (
+					indexer_type, ec.TypeContainer.RootContext.TypeManager, ea.loc);
+			
+			if (ilist.getters != null && ilist.getters.Count > 0)
+				get = (MethodInfo) Invocation.OverloadResolve (
+					ec, new MethodGroupExpr (ilist.getters), ea.Arguments, ea.loc);
+
+			if (get == null){
+				Report.Error (154, ea.loc,
+					      "indexer can not be used in this context, because " +
+					      "it lacks a `get' accessor");
+					return null;
+			}
+				
+			type = get.ReturnType;
+			eclass = ExprClass.Value;
 			return this;
+		}
+
+		public override Expression DoResolveLValue (EmitContext ec, Expression right_side)
+		{
+			Type indexer_type = ea.Expr.Type;
+			Type right_type = right_side.Type;
+			
+			if (ilist == null)
+				ilist = Indexers.GetIndexersForType (
+					indexer_type, ec.TypeContainer.RootContext.TypeManager, ea.loc);
+			
+			if (ilist.setters != null && ilist.setters.Count > 0){
+				set_arguments = (ArrayList) ea.Arguments.Clone ();
+				set_arguments.Add (new Argument (right_side, Argument.AType.Expression));
+
+				set = (MethodInfo) Invocation.OverloadResolve (
+					ec, new MethodGroupExpr (ilist.getters), set_arguments, ea.loc);
+			}
+			
+			if (set == null){
+				Report.Error (200, ea.loc,
+					      "indexer X.this [" + TypeManager.CSharpName (right_type) +
+					      "] lacks a `set' accessor");
+					return null;
+			}
+				
+			type = set.ReturnType;
+			eclass = ExprClass.Value;
+			return this;
+		}
+		
+		public override void Emit (EmitContext ec)
+		{
+			Invocation.EmitCall (ec, false, ea.Expr, get, ea.Arguments);
 		}
 	}
 	

@@ -1,3 +1,35 @@
+2001-10-17  Miguel de Icaza  <miguel@ximian.com>
+
+	* assign.cs (Assign::Resolve): Resolve right hand side first, and
+	then pass this as a hint to ResolveLValue.
+	
+	* expression.cs (FieldExpr): Add Location information
+
+	(FieldExpr::LValueResolve): Report assignment to readonly
+	variable. 
+	
+	(Expression::ExprClassFromMemberInfo): Pass location information.
+
+	(Expression::ResolveLValue): Add new method that resolves an
+	LValue. 
+
+	(Expression::DoResolveLValue): Default invocation calls
+	DoResolve. 
+
+	(Indexers): New class used to keep track of indexers in a given
+	Type. 
+
+	(IStackStore): Renamed from LValue, as it did not really describe
+	what this did.  Also ResolveLValue is gone from this interface and
+	now is part of Expression.
+
+	(ElementAccess): Depending on the element access type
+	
+	* typemanager.cs: Add `indexer_name_type' as a Core type
+	(System.Runtime.CompilerServices.IndexerNameAttribute)
+
+	* statement.cs (Goto): Take a location.
+	
 2001-10-18  Ravi Pratap  <ravi@ximian.com>
 
 	* delegate.cs (Delegate::VerifyDelegate): New method to verify

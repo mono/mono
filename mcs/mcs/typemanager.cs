@@ -43,9 +43,9 @@ public class TypeManager {
 	static public Type type_type;
 	static public Type ienumerator_type;
 	static public Type idisposable_type;
+	static public Type default_member_type;
 	static public Type iasyncresult_type;
 	static public Type asynccallback_type;
-
 	static public Type intptr_type;
 	
 	static public MethodInfo string_concat_string_string;
@@ -283,7 +283,8 @@ public class TypeManager {
 		array_type    = CoreLookupType ("System.Array");
 		void_type     = CoreLookupType ("System.Void");
 		type_type     = CoreLookupType ("System.Type");
-		
+
+		default_member_type   = CoreLookupType ("System.Reflection.DefaultMemberAttribute");
 		runtime_handle_type = CoreLookupType ("System.RuntimeTypeHandle");
 		ienumerator_type    = CoreLookupType ("System.Collections.IEnumerator");
 		icloneable_type     = CoreLookupType ("System.ICloneable");
