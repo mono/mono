@@ -909,6 +909,8 @@ public class TypeBuilderTest : Assertion
 		}
 	}
 
+	/* IsDefined actually works under mono */
+	/*
 	public void TestIsDefined () {
 		TypeBuilder tb = module.DefineType (genTypeName ());
 
@@ -919,6 +921,7 @@ public class TypeBuilderTest : Assertion
 		catch (NotSupportedException) {
 		}
 	}
+	*/
 
 	/* FIXME: This does not work under mono
 	public void TestGetEvents () {
