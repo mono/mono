@@ -1,5 +1,8 @@
 2002-05-10  Miguel de Icaza  <miguel@ximian.com>
 
+	* driver.cs: Do not load directories for each file processed, only
+	do it if there is a pattern.
+
 	* ecore.cs: Report readonly assigns here as well, as we might have
 	been resolved only by MemberAccess.
 

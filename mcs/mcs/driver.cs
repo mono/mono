@@ -388,6 +388,10 @@ namespace Mono.CSharp
 			int errors = 0;
 
 			SplitPathAndPattern (spec, out path, out pattern);
+			if (pattern.IndexOf ("*") == -1){
+				return ProcessFile (spec);
+			}
+
 			string [] files = null;
 			try {
 				files = Directory.GetFiles (path, pattern);
@@ -398,7 +402,6 @@ namespace Mono.CSharp
 				Report.Error (2001, "Source file `" + spec + "' could not be found");
 				return 1;
 			}
-				
 			foreach (string f in files)
 				errors += ProcessFile (f);
 
