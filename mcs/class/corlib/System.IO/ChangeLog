@@ -1,3 +1,7 @@
+2002-03-25  Mike Kestner <mkestner@speakeasy.net>
+
+	* MemoryStream.cs (Read): Fixed bug in exception throw.
+
 2002-03-24  Mike Kestner <mkestner@speakeasy.net>
 
 	* StreamReader.cs (ReadBuffer): Fix buffer merging bugs.

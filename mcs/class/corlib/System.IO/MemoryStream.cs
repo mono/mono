@@ -217,7 +217,7 @@ namespace System.IO {
                                 throw new ArgumentNullException();
                         } else if( offset < 0 || count < 0 ) {
                                 throw new ArgumentOutOfRangeException();
-                        } else if( internalBuffer.Length - offset < count ) {
+                        } else if( buffer.Length - offset < count ) {
                                 throw new ArgumentException();
                         } else if ( streamClosed ) {
                                 throw new ObjectDisposedException( "MemoryStream" );
