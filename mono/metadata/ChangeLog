@@ -1,3 +1,9 @@
+
+Wed Mar 19 18:05:57 CET 2003 Paolo Molaro <lupus@ximian.com>
+
+	* reflection.c, reflection.h: implemented and exported functions
+	to retrieve info about custom attributes.
+
 2003-03-19  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* appdomain.c: moved Uri handling to assembly.c
@@ -5071,6 +5077,7 @@ Tue Jul  3 18:33:32 CEST 2001 Paolo Molaro <lupus@ximian.com>
 	Beta2. 
 
 	* mono/metadata/assembly.c (load_metadata_ptrs): Fix for Beta2
+
 
 
 
