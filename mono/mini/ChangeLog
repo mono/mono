@@ -1,3 +1,7 @@
+2003-04-17  Dietmar Maurer  <dietmar@ximian.com>
+
+	* exceptions-x86.c (mono_arch_handle_exception): fix for bug 36252
+
 2003-04-16  Dietmar Maurer  <dietmar@ximian.com>
 
 	* mini.c (mono_compile_create_var): use g_malloc/g_realloc instead
