@@ -87,6 +87,7 @@ public class TypeManager {
 	static public Type cls_compliant_attribute_type;
 	static public Type typed_reference_type;
 	static public Type arg_iterator_type;
+	static public Type mbr_type;
 
 	//
 	// An empty array of types
@@ -1045,6 +1046,7 @@ public class TypeManager {
 		in_attribute_type    = CoreLookupType ("System.Runtime.InteropServices.InAttribute");
 		typed_reference_type = CoreLookupType ("System.TypedReference");
 		arg_iterator_type    = CoreLookupType ("System.ArgIterator");
+		mbr_type             = CoreLookupType ("System.MarshalByRefObject");
 
 		//
 		// Sigh. Remove this before the release.  Wonder what versions of Mono

@@ -377,6 +377,7 @@ namespace Mono.CSharp {
 				"System.Runtime.CompilerServices.IndexerNameAttribute",
 				"System.Runtime.InteropServices.InAttribute",
 				"System.InvalidOperationException",
+				"System.MarshalByRefObject"
 			};
 
 			// We must store them here before calling BootstrapCorlib_ResolveDelegate.

@@ -4004,6 +4004,24 @@ namespace Mono.CSharp {
 
 			if (ArgType == AType.Expression)
 				return true;
+			else {
+				//
+				// Catch errors where fields of a MarshalByRefObject are passed as ref or out
+				// This is only allowed for `this'
+				//
+				FieldExpr fe = Expr as FieldExpr;
+				if (fe != null && !fe.IsStatic){
+					Expression instance = fe.InstanceExpression;
+
+					if (instance.GetType () != typeof (This)){
+						if (fe.InstanceExpression.Type.IsSubclassOf (TypeManager.mbr_type)){
+							Report.Error (197, loc,
+								      "Can not pass a type that derives from MarshalByRefObject with out or ref");
+							return false;
+						}
+					}
+				}
+			}
 
 			if (Expr.eclass != ExprClass.Variable){
 				//

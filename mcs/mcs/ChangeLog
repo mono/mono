@@ -1,3 +1,11 @@
+2004-04-11  Miguel de Icaza  <miguel@ximian.com>
+
+	* expression.cs (Argument.Resolve): Check if fields passed as ref
+	or out are contained in a MarshalByRefObject.
+
+	* typemanager.cs, rootcontext.cs: Add System.Marshalbyrefobject as
+	another compiler type.
+
 2004-04-06 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* class.cs (Indexer.Define): use the new name checking method.
