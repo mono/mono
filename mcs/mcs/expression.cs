@@ -5547,7 +5547,6 @@ namespace Mono.CSharp {
 		void LoadArrayAndArguments (EmitContext ec)
 		{
 			if (cached_locations == null){
-				Console.WriteLine ("Emitting without request to cache");
 				ea.Expr.Emit (ec);
 				foreach (Argument a in ea.Arguments)
 					a.Expr.Emit (ec);
@@ -5563,7 +5562,6 @@ namespace Mono.CSharp {
 				cached_locations [0].Store (ec);
 				
 				int j = 1;
-				Console.WriteLine ("Loading into cache");
 				
 				foreach (Argument a in ea.Arguments){
 					cached_locations [j] = new LocalTemporary (ec, a.Expr.Type);
@@ -5575,14 +5573,12 @@ namespace Mono.CSharp {
 				return;
 			}
 
-			Console.WriteLine ("Reusing cache");
 			foreach (LocalTemporary lt in cached_locations)
 				lt.Emit (ec);
 		}
 
 		public new void CacheTemporaries (EmitContext ec)
 		{
-			Console.WriteLine ("requested to cache values");
 			cached_locations = new LocalTemporary [ea.Arguments.Count + 1];
 		}
 		

@@ -1,5 +1,11 @@
 2002-05-16  Miguel de Icaza  <miguel@ximian.com>
 
+	* expression.cs (ArrayAccess): dropped debugging information. 
+
+	* typemanager.cs: Small bug fix: I was always returning i_members,
+	instead of one of i_members or s_members (depending on which had
+	the content).
+
 	* assign.cs (IAssignMethod.CacheTemporaries): New method.  This
 	method is invoked before any code generation takes place, and it
 	is a mechanism to inform that the expression will be invoked more

@@ -653,8 +653,12 @@ public class TypeManager {
 					s_members.CopyTo (both, i_len);
 
 					return both;
-				} else
-					return i_members;
+				} else {
+					if (i_len > 0)
+						return i_members;
+					else
+						return s_members;
+				}
 			}
 		        return t.FindMembers (mt, bf, filter, criteria);
 		}
