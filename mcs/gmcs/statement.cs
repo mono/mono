@@ -615,7 +615,7 @@ namespace Mono.CSharp {
 				Report.Error (157, loc, "Control can not leave the body of the finally block");
 				return false;
 			}
-			
+
 			if (ec.ReturnType == null){
 				if (Expr != null){
 					Report.Error (127, loc, "Return with a value not allowed here");
@@ -1659,11 +1659,18 @@ namespace Mono.CSharp {
 					if (e == null)
 						continue;
 
-					if (!(e is Constant)){
+					Constant ce = e as Constant;
+					if (ce == null){
 						Report.Error (133, vi.Location,
 							      "The expression being assigned to `" +
 							      name + "' must be constant (" + e + ")");
 						continue;
+					}
+
+					if (e.Type != variable_type){
+						e = Const.ChangeType (vi.Location, ce, variable_type);
+						if (e == null)
+							continue;
 					}
 
 					constants.Remove (name);
@@ -2323,6 +2330,13 @@ namespace Mono.CSharp {
 			if (rgKeys.Length > 0)
 				typeKeys = rgKeys [0].GetType ();	// used for conversions
 
+			Type compare_type;
+			
+			if (TypeManager.IsEnumType (SwitchType))
+				compare_type = TypeManager.EnumToUnderlying (SwitchType);
+			else
+				compare_type = SwitchType;
+			
 			for (int iBlock = rgKeyBlocks.Count - 1; iBlock >= 0; --iBlock)
 			{
 				KeyBlock kb = ((KeyBlock) rgKeyBlocks [iBlock]);
@@ -2341,8 +2355,8 @@ namespace Mono.CSharp {
 				{
 					// TODO: if all the keys in the block are the same and there are
 					//       no gaps/defaults then just use a range-check.
-					if (SwitchType == TypeManager.int64_type ||
-						SwitchType == TypeManager.uint64_type)
+					if (compare_type == TypeManager.int64_type ||
+						compare_type == TypeManager.uint64_type)
 					{
 						// TODO: optimize constant/I4 cases
 
@@ -2351,7 +2365,7 @@ namespace Mono.CSharp {
 						EmitObjectInteger (ig, System.Convert.ChangeType (kb.nFirst, typeKeys));
 						ig.Emit (OpCodes.Blt, lblDefault);
 						ig.Emit (OpCodes.Ldloc, val);
-						EmitObjectInteger (ig, System.Convert.ChangeType (kb.nFirst, typeKeys));
+						EmitObjectInteger (ig, System.Convert.ChangeType (kb.nLast, typeKeys));
 						ig.Emit (OpCodes.Bgt, lblDefault);
 
 						// normalize range

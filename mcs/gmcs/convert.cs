@@ -37,6 +37,9 @@ namespace Mono.CSharp {
 				expr.Emit (null);
 			}
 
+			if (expr_type == TypeManager.void_type)
+				return null;
+			
 			//
 			// notice that it is possible to write "ValueType v = 1", the ValueType here
 			// is an abstract class, and not really a value type, so we apply the same rules.
@@ -539,7 +542,10 @@ namespace Mono.CSharp {
 			
 			if (ImplicitReferenceConversionExists (expr, target_type))
 				return true;
-			
+
+			//
+			// Implicit Constant Expression Conversions
+			//
 			if (expr is IntConstant){
 				int value = ((IntConstant) expr).Value;
 
@@ -1615,8 +1621,8 @@ namespace Mono.CSharp {
 			//
 			if (expr_type == TypeManager.object_type && target_type.IsValueType){
 				if (expr is NullLiteral){
-					Report.Error (37, "Cannot convert null to value type `" +
-                                                      TypeManager.CSharpName (expr_type) + "'");
+					Report.Error (37, loc, "Cannot convert null to value type `" +
+                                                      TypeManager.CSharpName (target_type) + "'");
 					return null;
 				}
 				return new UnboxCast (expr, target_type);

@@ -1268,9 +1268,12 @@ namespace Mono.CSharp
 				return;
 			}
 
-			foreach (char c in arg){
-				if (!Char.IsLetter (c) && (c != '_')){
-					Report.Error (1001, Location, "Identifier expected");
+			if (!is_identifier_start_character (arg [0]))
+				Report.Error (1001, Location, "Identifier expected: " + arg);
+			
+			foreach (char c in arg.Substring (1)){
+				if (!is_identifier_part_character (c)){
+					Report.Error (1001, Location, "Identifier expected: " + arg);
 					return;
 				}
 			}

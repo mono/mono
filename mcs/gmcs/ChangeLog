@@ -1,3 +1,90 @@
+2003-11-06  Miguel de Icaza  <miguel@ximian.com>
+
+	* expression.cs (New.DoResolve): Do not dereference value that
+	might be a null return.
+
+	* statement.cs (Block.EmitMeta): Use the Const.ChangeType to make
+	sure that the constant value has the right type.  Fixes an
+	unreported bug, similar to 50425.
+
+	* const.cs (Const.LookupConstantValue): Call
+	ImplicitStandardConversionExists before doing a conversion to
+	avoid havng the TypeManager.ChangeType do conversions.
+
+	Reduced the number of casts used
+
+	(Const.ChangeType): New routine to enable reuse of the constant
+	type changing code from statement.
+
+	* typemanager.cs (ChangeType): Move common initialization to
+	static global variables.
+
+	Fixes #50425.
+
+	* convert.cs (ImplicitReferenceConversion): Somehow we allowed
+	every value type to go through, even if it was void.  Fix that. 
+
+	* cs-tokenizer.cs: Use is_identifier_start_character on the start
+	character of the define, and the is_identifier_part_character for
+	the rest of the string.
+
+2003-11-05  Miguel de Icaza  <miguel@ximian.com>
+
+	* expression.cs (UnaryMutator.EmitCode): When I updated
+	LocalVariableReference.DoResolve, I overdid it, and dropped an
+	optimization done on local variable references.
+
+2003-11-04  Miguel de Icaza  <miguel@ximian.com>
+
+	* ecore.cs: Convert the return from Ldlen into an int.
+
+2003-10-20  Miguel de Icaza  <miguel@ximian.com>
+
+	* decl.cs (DeclSpace.GetAccessLevel): Handle NotPublic case for
+	the accessibility, this is a special case for toplevel non-public
+	classes (internal for instance).
+
+2003-10-20  Nick Drochak <ndrochak@gol.com>
+
+	* ecore.cs: Fix typo and build.  Needed another right paren.
+
+2003-10-19  Miguel de Icaza  <miguel@ximian.com>
+
+	* ecore.cs: Applied fix from Ben Maurer.   We were handling in the
+	`internal' case regular and protected, but not allowing protected
+	to be evaluated later.  Bug 49840
+
+2003-10-15  Miguel de Icaza  <miguel@ximian.com>
+
+	* statement.cs (Switch.TableSwitchEmit): Compare the upper bound
+	to kb.Nlast, and not the kb.nFirst to isolate the switch
+	statement.
+
+	Extract the underlying type, so enumerations of long/ulong are
+	treated like long/ulong.
+
+2003-10-14  Miguel de Icaza  <miguel@ximian.com>
+
+	* expression.cs (New): Overload the meaning of RequestedType to
+	track the possible creation of the NewDelegate type, since
+	DoResolve is invoked more than once for new constructors on field
+	initialization.
+
+	See bugs: #48800 and #37014
+
+	* cs-parser.jay (declare_local_constants): Take an arraylist
+	instead of a single constant.
+
+	(local_constant_declaration): It should take a
+	constant_declarators, not a constant_declarator.  Fixes 49487
+
+	* convert.cs: Fix error report.
+
+2003-10-13 Jackson Harper <jackson@ximian.com>
+
+	* typemanager.cs (TypeToCoreType): Add float and double this fixes
+	bug #49611
+	
 2003-11-03  Martin Baulig  <martin@ximian.com>
 
 	* expression.cs (ArrayAccess.GetStoreOpcode): Added

@@ -578,14 +578,14 @@ public class TypeManager {
 					// In .NET pointers turn out to be private, even if their
 					// element type is not
 					//
-					
 					if (t.IsPointer){
 						t = t.GetElementType ();
 						continue;
 					} else
 						t = null;
-				} else
+				} else {
 					return t;
+				}
 			} while (t != null);
 		}
 
@@ -1823,19 +1823,19 @@ public class TypeManager {
 		return false;
 	}
 
+	static NumberFormatInfo nf_provider = CultureInfo.CurrentCulture.NumberFormat;
+
 	// This is a custom version of Convert.ChangeType() which works
 	// with the TypeBuilder defined types when compiling corlib.
 	public static object ChangeType (object value, Type conversionType, out bool error)
 	{
-		if (!(value is IConvertible)){
+		IConvertible convert_value = value as IConvertible;
+		
+		if (convert_value == null){
 			error = true;
 			return null;
 		}
 		
-		IConvertible convertValue = (IConvertible) value;
-		CultureInfo ci = CultureInfo.CurrentCulture;
-		NumberFormatInfo provider = ci.NumberFormat;
-
 		//
 		// We must use Type.Equals() here since `conversionType' is
 		// the TypeBuilder created version of a system type and not
@@ -1845,35 +1845,35 @@ public class TypeManager {
 		error = false;
 		try {
 			if (conversionType.Equals (typeof (Boolean)))
-				return (object)(convertValue.ToBoolean (provider));
+				return (object)(convert_value.ToBoolean (nf_provider));
 			else if (conversionType.Equals (typeof (Byte)))
-				return (object)(convertValue.ToByte (provider));
+				return (object)(convert_value.ToByte (nf_provider));
 			else if (conversionType.Equals (typeof (Char)))
-				return (object)(convertValue.ToChar (provider));
+				return (object)(convert_value.ToChar (nf_provider));
 			else if (conversionType.Equals (typeof (DateTime)))
-				return (object)(convertValue.ToDateTime (provider));
+				return (object)(convert_value.ToDateTime (nf_provider));
 			else if (conversionType.Equals (typeof (Decimal)))
-				return (object)(convertValue.ToDecimal (provider));
+				return (object)(convert_value.ToDecimal (nf_provider));
 			else if (conversionType.Equals (typeof (Double)))
-				return (object)(convertValue.ToDouble (provider));
+				return (object)(convert_value.ToDouble (nf_provider));
 			else if (conversionType.Equals (typeof (Int16)))
-				return (object)(convertValue.ToInt16 (provider));
+				return (object)(convert_value.ToInt16 (nf_provider));
 			else if (conversionType.Equals (typeof (Int32)))
-				return (object)(convertValue.ToInt32 (provider));
+				return (object)(convert_value.ToInt32 (nf_provider));
 			else if (conversionType.Equals (typeof (Int64)))
-				return (object)(convertValue.ToInt64 (provider));
+				return (object)(convert_value.ToInt64 (nf_provider));
 			else if (conversionType.Equals (typeof (SByte)))
-				return (object)(convertValue.ToSByte (provider));
+				return (object)(convert_value.ToSByte (nf_provider));
 			else if (conversionType.Equals (typeof (Single)))
-				return (object)(convertValue.ToSingle (provider));
+				return (object)(convert_value.ToSingle (nf_provider));
 			else if (conversionType.Equals (typeof (String)))
-				return (object)(convertValue.ToString (provider));
+				return (object)(convert_value.ToString (nf_provider));
 			else if (conversionType.Equals (typeof (UInt16)))
-				return (object)(convertValue.ToUInt16 (provider));
+				return (object)(convert_value.ToUInt16 (nf_provider));
 			else if (conversionType.Equals (typeof (UInt32)))
-				return (object)(convertValue.ToUInt32 (provider));
+				return (object)(convert_value.ToUInt32 (nf_provider));
 			else if (conversionType.Equals (typeof (UInt64)))
-				return (object)(convertValue.ToUInt64 (provider));
+				return (object)(convert_value.ToUInt64 (nf_provider));
 			else if (conversionType.Equals (typeof (Object)))
 				return (object)(value);
 			else 
@@ -1972,6 +1972,10 @@ public class TypeManager {
 			return TypeManager.int64_type;
 		case TypeCode.UInt64:
 			return TypeManager.uint64_type;
+                case TypeCode.Single:
+                        return TypeManager.float_type;
+                case TypeCode.Double:
+                        return TypeManager.double_type;
 		case TypeCode.String:
 			return TypeManager.string_type;
 		default:
