@@ -1,5 +1,8 @@
 2004-12-24  Ben Maurer  <bmaurer@ximian.com>
 
+	* metadata-internals.h, marshal.c, reflection.c: More
+	MonoGHashTable->GHashTable.
+
 	* domain-internals.h, class.c: Change MonoGHashTable's into
 	GHashTables for some cases where no gc stuff is used
 
