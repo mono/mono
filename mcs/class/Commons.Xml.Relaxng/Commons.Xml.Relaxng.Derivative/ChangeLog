@@ -1,3 +1,8 @@
+2003-05-05  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* RdpPattern.cs : added RdpAttribute.expandRef(). UnresolvedRef had
+	  remained in attribute patterns.
+
 2003-04-29  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* Started.

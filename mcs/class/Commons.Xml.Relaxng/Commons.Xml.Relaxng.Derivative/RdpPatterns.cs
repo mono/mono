@@ -22,6 +22,11 @@ namespace Commons.Xml.Relaxng.Derivative
 		internal protected bool IsNullable;
 		Hashtable patternPool;
 
+		internal string debug ()
+		{
+			return RdpUtil.DebugRdpPattern (this, new Hashtable ());
+		}
+
 		public abstract RngPatternType PatternType { get; }
 
 		private Hashtable setupTable (RngPatternType type, RdpPattern p)
@@ -1098,6 +1103,16 @@ namespace Commons.Xml.Relaxng.Derivative
 		public RdpPattern Children {
 			get { return children; }
 			set { children = value; }
+		}
+
+		bool isExpanded;
+		internal override RdpPattern expandRef (Hashtable defs)
+		{
+			if (!isExpanded) {
+				isExpanded = true;
+				children = children.expandRef (defs);
+			}
+			return this;
 		}
 
 		internal override RdpPattern reduceEmptyAndNotAllowed (ref bool result, Hashtable visited)
