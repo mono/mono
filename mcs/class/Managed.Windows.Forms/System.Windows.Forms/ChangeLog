@@ -7,6 +7,54 @@
 
 2005-01-04  Peter Bartok <pbartok@novell.com>
 
+	* ICommandExecutor.cs: Added
+	* IDataGridColumnStyleEditingNotificationService.cs: Added
+	* IFeatureSupport.cs: Added
+	* IFileReaderService.cs: Added
+	* IDataObject.cs: Added ComVisible attribute
+	* AmbientProperties.cs: Added
+	* BaseCollection.cs: Added missing attributes
+	* ListBindingConverter.cs: Added (stubbed, required for certain attributes)
+	* BaseCollection.cs: Added missing attributes
+	* Binding.cs: Added TypeConverter attribute
+	* BindingContext.cs: Added DefaultEvent attribute
+	* BindingsCollection.cs: Added DefaultEvent attribute
+	* Button.cs: Added DefaultValue attribute
+	* DragEventArgs.cs: Added ComVisible attribute
+	* GiveFeedbackEventArgs.cs: Added ComVisible attribute
+	* KeyEventArgs.cs: Added ComVisible attribute
+	* KeyPressEventArgs.cs: Added ComVisible attribute
+	* MouseEventArgs.cs: Added ComVisible attribute
+	* NavigateEventArgs.cs: Added
+	* NavigateEventHandler.cs: Added
+	* FeatureSupport.cs: Added
+	* OSFeature.cs: Added
+	* Theme.cs: Added abstract Version property to support OSFeature
+	* ThemeWin32Classic.cs: Added Version property to 
+	  support OSFeature.Themes
+	* ProgressBar.cs: Removed OnPaintBackground override, not required since
+	  the proper styles to avoid background drawing are set, also doesn't
+	  match MS signature
+	* QueryAccessibilityHelpEventArgs.cs: Added ComVisible attribute
+	* QueryContinueDragEventArgs.cs: Added ComVisible attribute
+	* ScrollEventArgs.cs: Added ComVisible attribute
+	* SplitterEventArgs.cs: Added ComVisible attribute
+	* AccessibleSelection.cs: Added Flags attribute
+	* Appearance.cs: Added ComVisible attribute
+	* Border3DSide.cs: Added ComVisible attribute
+	* Border3DStyle.cs: Added ComVisible attribute
+	* BorderStyle.cs: Added ComVisible attribute
+	* DragAction.cs: Added ComVisible attribute
+	* ErrorBlinkStyle.cs: Added
+	* ScrollEventType.cs: Added ComVisible attribute
+	* AnchorStyles.cs: Added Editor attribute
+	* DockStyle.cs: Added Editor attribute
+	* HorizontalAlignment.cs: Added ComVisible attribute
+	* HelpEventArgs.cs: Added ComVisible attribute
+	* PaintEventArgs.cs: Added IDisposable
+
+2005-01-04  Peter Bartok <pbartok@novell.com>
+
 	* TextControl.cs: Switched Line, LineTag and Document classes to 
 	  internal
 
