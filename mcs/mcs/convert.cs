@@ -93,8 +93,8 @@ namespace Mono.CSharp {
 							return new EmptyCast (expr, target_type);
 						else if (expr_type.IsValueType || expr_type == TypeManager.enum_type)
 							return new BoxedCast (expr, target_type);
-						else 
-							throw new Exception (String.Format ("ImplicitReferenceConversion: we should be able to perform this cast {0} to {1}", expr_type, target_type));
+						else
+							return new EmptyCast (expr, target_type);
 					}
 				}
 
