@@ -101,7 +101,7 @@ namespace System.Xml.XPath
 		}
 		public abstract XPathResultType ReturnType { get; }
 		public virtual XPathResultType GetReturnType (BaseIterator iter) { return ReturnType; }
-		public virtual object Evaluate (BaseIterator iter) { return null; }
+		public abstract object Evaluate (BaseIterator iter);// { return null; }
 
 		public BaseIterator EvaluateNodeSet (BaseIterator iter)
 		{
@@ -817,12 +817,8 @@ namespace System.Xml.XPath
 		{
 			String strExpr = _test.ToString ();
 			if (_preds != null)
-			{
 				foreach (Expression pred in _preds)
-				{
 					strExpr += '[' + pred.ToString () + ']';
-				}
-			}
 			return strExpr;
 		}
 		public override object Evaluate (BaseIterator iter)
@@ -830,7 +826,6 @@ namespace System.Xml.XPath
 			BaseIterator iterStep = _test.Evaluate (iter);
 			if (_preds == null)
 				return iterStep;
-
 			return new PredicateIterator (iterStep, _preds);
 		}
 	}
@@ -865,14 +860,19 @@ namespace System.Xml.XPath
 	internal class ExprFilter : Expression
 	{
 		protected Expression _expr;
-		protected Expression _pred;
+		protected Expression [] _preds = new Expression [1];
 		public ExprFilter (Expression expr, Expression pred)
 		{
 			_expr = expr;
-			_pred = pred;
+			_preds [0] = pred;
 		}
-		public override String ToString () { return "(" + _expr.ToString () + ")[" + _pred.ToString () + "]"; }
+		public override String ToString () { return "(" + _expr.ToString () + ")[" + _preds [0].ToString () + "]"; }
 		public override XPathResultType ReturnType { get { return XPathResultType.NodeSet; }}
+		public override object Evaluate (BaseIterator iter)
+		{
+			BaseIterator iterExpr = _expr.EvaluateNodeSet (iter);
+			return new PredicateIterator (iterExpr, _preds);
+		}
 	}
 
 	internal class ExprNumber : Expression
