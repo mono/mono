@@ -25,9 +25,12 @@
 //
 //
 //
-// $Revision: 1.9 $
+// $Revision: 1.10 $
 // $Modtime: $
 // $Log: ThemeWin32Classic.cs,v $
+// Revision 1.10  2004/08/09 17:00:00  jackson
+// Add default window color properties
+//
 // Revision 1.9  2004/08/09 16:17:19  jackson
 // Use correct default back color
 //
@@ -282,6 +285,14 @@ namespace System.Windows.Forms
 
 		public Font DefaultFont {
 			get { return new Font (FontFamily.GenericSansSerif, 8.25f); }
+		}
+
+		public Color DefaultWindowBackColor {
+			get { return Color.FromArgb (255, 10, 10, 10); }
+		}
+
+		public Color DefaultWindowForeColor {
+			get { return Color.FromKnownColor (KnownColor.ControlText); }
 		}
 
 		private enum DrawFrameControlStates
