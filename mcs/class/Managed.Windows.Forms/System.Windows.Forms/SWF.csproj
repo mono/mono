@@ -119,6 +119,16 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "AsyncMethodData.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "AsyncMethodResult.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "BaseCollection.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -166,6 +176,11 @@
                 <File
                     RelPath = "BoundsSpecified.cs"
                     SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "ButtonBase.cs"
+                    SubType = "Component"
                     BuildAction = "Compile"
                 />
                 <File
@@ -405,11 +420,6 @@
                 />
                 <File
                     RelPath = "InvalidateEventHandler.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ITheme.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -684,7 +694,17 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Theme.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "ThemeEngine.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "ThemeGtk.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -696,6 +716,11 @@
                 <File
                     RelPath = "TickStyle.cs"
                     SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Timer.cs"
+                    SubType = "Component"
                     BuildAction = "Compile"
                 />
                 <File
