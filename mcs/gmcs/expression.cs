@@ -896,6 +896,10 @@ namespace Mono.CSharp {
 				return null;
 
 			eclass = ExprClass.Value;
+
+			if (TypeManager.IsNullableType (expr.Type))
+				return new Nullable.LiftedUnaryMutator (mode, expr, loc).Resolve (ec);
+
 			return ResolveOperator (ec);
 		}
 
@@ -991,7 +995,6 @@ namespace Mono.CSharp {
 			this.is_expr = is_expr;
 			((IAssignMethod) expr).EmitAssign (ec, this, is_expr && (mode == Mode.PreIncrement || mode == Mode.PreDecrement), true);
 		}
-		
 
 		public override void Emit (EmitContext ec)
 		{

@@ -1,3 +1,11 @@
+2005-03-16  Martin Baulig  <martin@ximian.com>
+
+	* generic.cs (Nullable.Unwrap): Implement IAssignMethod.
+	(Nullable.LiftedUnaryMutator): New public class.
+
+	* expression.cs (UnaryMutator.DoResolve): Added support for
+	Nullable Types.
+
 2005-03-14  Martin Baulig  <martin@ximian.com>
 
 	* generic.cs (Nullable.NullCoalescingOperator): Implemented.

@@ -2291,7 +2291,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		protected class Unwrap : Expression, IMemoryLocation
+		protected class Unwrap : Expression, IMemoryLocation, IAssignMethod
 		{
 			Expression expr;
 			NullableInfo info;
@@ -2332,17 +2332,48 @@ namespace Mono.CSharp {
 				ec.ig.EmitCall (OpCodes.Call, info.HasValue, null);
 			}
 
+			void create_temp (EmitContext ec)
+			{
+				if ((temp != null) && !has_temp) {
+					expr.Emit (ec);
+					temp.Store (ec);
+					has_temp = true;
+				}
+			}
+
 			public void AddressOf (EmitContext ec, AddressOp mode)
 			{
-				if (temp != null) {
-					if (!has_temp) {
-						expr.Emit (ec);
-						temp.Store (ec);
-						has_temp = true;
-					}
+				create_temp (ec);
+				if (temp != null)
 					temp.AddressOf (ec, AddressOp.LoadStore);
-				} else
+				else
 					((IMemoryLocation) expr).AddressOf (ec, AddressOp.LoadStore);
+			}
+
+			public void Emit (EmitContext ec, bool leave_copy)
+			{
+				create_temp (ec);
+				if (leave_copy) {
+					if (temp != null)
+						temp.Emit (ec);
+					else
+						expr.Emit (ec);
+				}
+
+				Emit (ec);
+			}
+
+			public void EmitAssign (EmitContext ec, Expression source,
+						bool leave_copy, bool prepare_for_load)
+			{
+				source.Emit (ec);
+				ec.ig.Emit (OpCodes.Newobj, info.Constructor);
+
+				if (leave_copy)
+					ec.ig.Emit (OpCodes.Dup);
+
+				Expression empty = new EmptyExpression (expr.Type);
+				((IAssignMethod) expr).EmitAssign (ec, empty, false, prepare_for_load);
 			}
 		}
 
@@ -2966,6 +2997,77 @@ namespace Mono.CSharp {
 				expr.Emit (ec);
 
 				ig.MarkLabel (end_label);
+			}
+		}
+
+		public class LiftedUnaryMutator : ExpressionStatement
+		{
+			public readonly UnaryMutator.Mode Mode;
+			Expression expr, null_value;
+			UnaryMutator underlying;
+			Unwrap unwrap;
+
+			public LiftedUnaryMutator (UnaryMutator.Mode mode, Expression expr, Location loc)
+			{
+				this.expr = expr;
+				this.Mode = mode;
+				this.loc = loc;
+
+				eclass = ExprClass.Value;
+			}
+
+			public override Expression DoResolve (EmitContext ec)
+			{
+				expr = expr.Resolve (ec);
+				if (expr == null)
+					return null;
+
+				unwrap = (Unwrap) new Unwrap (expr, loc).Resolve (ec);
+				if (unwrap == null)
+					return null;
+
+				underlying = (UnaryMutator) new UnaryMutator (Mode, unwrap, loc).Resolve (ec);
+				if (underlying == null)
+					return null;
+
+				null_value = new NullableLiteral (expr.Type, loc).Resolve (ec);
+				if (null_value == null)
+					return null;
+
+				type = expr.Type;
+				return this;
+			}
+
+			void DoEmit (EmitContext ec, bool is_expr)
+			{
+				ILGenerator ig = ec.ig;
+				Label is_null_label = ig.DefineLabel ();
+				Label end_label = ig.DefineLabel ();
+
+				unwrap.EmitCheck (ec);
+				ig.Emit (OpCodes.Brfalse, is_null_label);
+
+				if (is_expr)
+					underlying.Emit (ec);
+				else
+					underlying.EmitStatement (ec);
+				ig.Emit (OpCodes.Br, end_label);
+
+				ig.MarkLabel (is_null_label);
+				if (is_expr)
+					null_value.Emit (ec);
+
+				ig.MarkLabel (end_label);
+			}
+
+			public override void Emit (EmitContext ec)
+			{
+				DoEmit (ec, true);
+			}
+
+			public override void EmitStatement (EmitContext ec)
+			{
+				DoEmit (ec, false);
 			}
 		}
 	}
