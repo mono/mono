@@ -1,3 +1,11 @@
+2005-02-25  Jordi Mas i Hernandez <jordi@ximian.com>
+
+	* MenuAPI.cs: Respect disabled items
+	* ThemeWin32Classic.cs
+		- Caches ImageAttributes creation for DrawImageDisabled
+		- Fixes vertical menu line drawing
+		- Draws disabled arrows in disable menu items
+
 2005-02-24  Peter Bartok  <pbartok@novell.com>
 
 	* Hwnd.cs:

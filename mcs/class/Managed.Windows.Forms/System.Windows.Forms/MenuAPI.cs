@@ -888,7 +888,9 @@ namespace System.Windows.Forms
 
 			if (item != null) {
 				item.item.PerformClick ();
-				HideWindow ();				
+				if (item.item.Enabled) {
+					HideWindow ();
+				}
 			}
 		}
 

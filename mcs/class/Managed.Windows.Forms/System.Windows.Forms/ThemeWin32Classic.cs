@@ -82,6 +82,7 @@ namespace System.Windows.Forms
 		static StringFormat string_format_menu_shortcut;
 		static StringFormat string_format_menu_menubar_text;
 		static readonly Rectangle checkbox_rect = new Rectangle (2, 2, 11,11); // Position of the checkbox relative to the item
+		static ImageAttributes imagedisabled_attributes = null;
 		const int SEPARATOR_HEIGHT = 5;
 		const int SM_CXBORDER = 1;
 		const int SM_CYBORDER = 1;		
@@ -1545,7 +1546,7 @@ namespace System.Windows.Forms
 				Rectangle rect = e.Bounds;
 				rect.Y++;
 	        		rect.Width = 3;
-	        		rect.Height = MenuHeight - 6;
+	        		rect.Height = item.MenuHeight - 6;
 
 				e.Graphics.DrawLine (ThemeEngine.Current.ResPool.GetPen (ThemeEngine.Current.ColorButtonShadow),
 					rect.X, rect.Y , rect.X, rect.Y + rect.Height);
@@ -1602,9 +1603,15 @@ namespace System.Windows.Forms
 				Rectangle rect_arrow = new Rectangle (0, 0, cx, cy);
 				ControlPaint.DrawMenuGlyph (gr, rect_arrow, MenuGlyph.Arrow);
 				bmp.MakeTransparent ();
-				e.Graphics.DrawImage (bmp, e.Bounds.X + e.Bounds.Width - cx,
-					e.Bounds.Y + ((e.Bounds.Height - cy) /2));
-
+				
+				if (item.Enabled) {
+					e.Graphics.DrawImage (bmp, e.Bounds.X + e.Bounds.Width - cx,
+						e.Bounds.Y + ((e.Bounds.Height - cy) /2));
+				} else {
+					ControlPaint.DrawImageDisabled (e.Graphics, bmp, e.Bounds.X + e.Bounds.Width - cx,
+						e.Bounds.Y + ((e.Bounds.Height - cy) /2),  color_back);
+				}
+ 
 				gr.Dispose ();
 				bmp.Dispose ();
 			}
@@ -4358,30 +4365,33 @@ namespace System.Windows.Forms
 				the image grayscale. At least when having > 256 colors on
 				the display.
 			*/
-
-			ImageAttributes	imageAttributes=new ImageAttributes();
-			ColorMatrix			colorMatrix=new ColorMatrix(new float[][] {
-													  // This table would create a perfect grayscale image, based on luminance
-													  //				new float[]{0.3f,0.3f,0.3f,0,0},
-													  //				new float[]{0.59f,0.59f,0.59f,0,0},
-													  //				new float[]{0.11f,0.11f,0.11f,0,0},
-													  //				new float[]{0,0,0,1,0,0},
-													  //				new float[]{0,0,0,0,1,0},
-													  //				new float[]{0,0,0,0,0,1}
-
-													  // This table generates a image that is grayscaled and then
-													  // brightened up. Seems to match MS close enough.
-													  new float[]{0.2f,0.2f,0.2f,0,0},
-													  new float[]{0.41f,0.41f,0.41f,0,0},
-													  new float[]{0.11f,0.11f,0.11f,0,0},
-													  new float[]{0.15f,0.15f,0.15f,1,0,0},
-													  new float[]{0.15f,0.15f,0.15f,0,1,0},
-													  new float[]{0.15f,0.15f,0.15f,0,0,1}
-												  });
-
-			imageAttributes.SetColorMatrix(colorMatrix);
-			graphics.DrawImage(image, new Rectangle(x, y, image.Width, image.Height), 0, 0, image.Width, image.Height, GraphicsUnit.Pixel, imageAttributes);
-			imageAttributes.Dispose();
+			
+			if (imagedisabled_attributes == null) {				
+				imagedisabled_attributes = new ImageAttributes ();
+				ColorMatrix colorMatrix=new ColorMatrix(new float[][] {
+					  // This table would create a perfect grayscale image, based on luminance
+					  //				new float[]{0.3f,0.3f,0.3f,0,0},
+					  //				new float[]{0.59f,0.59f,0.59f,0,0},
+					  //				new float[]{0.11f,0.11f,0.11f,0,0},
+					  //				new float[]{0,0,0,1,0,0},
+					  //				new float[]{0,0,0,0,1,0},
+					  //				new float[]{0,0,0,0,0,1}
+		
+					  // This table generates a image that is grayscaled and then
+					  // brightened up. Seems to match MS close enough.
+					  new float[]{0.2f,0.2f,0.2f,0,0},
+					  new float[]{0.41f,0.41f,0.41f,0,0},
+					  new float[]{0.11f,0.11f,0.11f,0,0},
+					  new float[]{0.15f,0.15f,0.15f,1,0,0},
+					  new float[]{0.15f,0.15f,0.15f,0,1,0},
+					  new float[]{0.15f,0.15f,0.15f,0,0,1}
+				  });
+				  
+				 imagedisabled_attributes.SetColorMatrix (colorMatrix);
+			}
+			
+			graphics.DrawImage(image, new Rectangle(x, y, image.Width, image.Height), 0, 0, image.Width, image.Height, GraphicsUnit.Pixel, imagedisabled_attributes);
+			
 		}
 
 
