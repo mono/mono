@@ -160,6 +160,11 @@ public class TypeManager {
 		builder_to_container = new Hashtable ();
 		type_interface_cache = new Hashtable ();
 	}
+
+	static string MakeKey (Type t)
+	{
+		return t.FullName + t.GetHashCode ();
+	}
 	
 	public void AddUserType (string name, TypeBuilder t)
 	{
@@ -170,7 +175,7 @@ public class TypeManager {
 	public void AddUserType (string name, TypeBuilder t, TypeContainer tc)
 	{
 		AddUserType (name, t);
-		builder_to_container.Add (t, tc);
+		builder_to_container.Add (MakeKey (t), tc);
 		typecontainers.Add (name, tc);
 	}
 
@@ -179,22 +184,22 @@ public class TypeManager {
 		types.Add (name, t);
 		builder_to_delegate.Add (t, del);
 	}
-
+	
 	public void AddEnumType (string name, TypeBuilder t, Enum en)
 	{
 		types.Add (name, t);
-		builder_to_enum.Add (t, en);
+		builder_to_enum.Add (MakeKey (t), en);
 	}
 
 	public void AddUserInterface (string name, TypeBuilder t, Interface i)
 	{
 		AddUserType (name, t);
-		builder_to_interface.Add (t, i);
+		builder_to_interface.Add (MakeKey (t), i);
 	}
 
 	public void RegisterAttrType (Type t, TypeContainer tc)
 	{
-		builder_to_attr.Add (t, tc);
+		builder_to_attr.Add (MakeKey (t), tc);
 	}
 		
 	/// <summary>
@@ -203,12 +208,12 @@ public class TypeManager {
 	/// </summary>
 	public static TypeContainer LookupTypeContainer (Type t)
 	{
-		return (TypeContainer) builder_to_container [t];
+		return (TypeContainer) builder_to_container [MakeKey (t)];
 	}
 
 	public Interface LookupInterface (Type t)
 	{
-		return (Interface) builder_to_interface [t];
+		return (Interface) builder_to_interface [MakeKey (t)];
 	}
 
 	public static Delegate LookupDelegate (Type t)
@@ -218,7 +223,7 @@ public class TypeManager {
 
 	public static TypeContainer LookupAttr (Type t)
 	{
-		return (TypeContainer) builder_to_attr [t];
+		return (TypeContainer) builder_to_attr [MakeKey (t)];
 	}
 	
 	/// <summary>
@@ -452,10 +457,12 @@ public class TypeManager {
 	
 	public MemberInfo [] FindMembers (Type t, MemberTypes mt, BindingFlags bf, MemberFilter filter, object criteria)
 	{
+		string key = MakeKey (t);
+		
 		if (!(t is TypeBuilder))
 		        return t.FindMembers (mt, bf, filter, criteria);
 
-		Enum e = (Enum) builder_to_enum [t];
+		Enum e = (Enum) builder_to_enum [key];
 
 		if (e != null)
 		        return e.FindMembers (mt, bf, filter, criteria);
@@ -465,12 +472,12 @@ public class TypeManager {
 		if (del != null)
 		        return del.FindMembers (mt, bf, filter, criteria);
 
-		Interface iface = (Interface) builder_to_interface [t];
+		Interface iface = (Interface) builder_to_interface [key];
 
 		if (iface != null) 
 		        return iface.FindMembers (mt, bf, filter, criteria);
 		
-		TypeContainer tc = (TypeContainer) builder_to_container [t];
+		TypeContainer tc = (TypeContainer) builder_to_container [key];
 
 		if (tc != null)
 		        return tc.FindMembers (mt, bf, filter, criteria);

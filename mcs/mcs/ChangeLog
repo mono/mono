@@ -5,6 +5,10 @@
 
 	* cs-parser.jay (declare_local_variables): Support array initialization too.
 
+	* typemanager.cs (MakeKey): Implement.
+
+	(everywhere): Use the above appropriately.
+
 2001-11-21  Ravi Pratap  <ravi@ximian.com>
 
 	* parameter.cs (GetCallingConvention): Always return
