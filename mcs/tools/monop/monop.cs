@@ -195,8 +195,8 @@ class MonoP {
 	{
 		return GetType (tname, false);
 	}
-	
-	static void PrintTypes (string assembly)
+
+	static void PrintTypes (string assembly, bool show_private)
 	{
 		Assembly a = GetAssembly (assembly, true);
 
@@ -214,7 +214,7 @@ class MonoP {
 			Console.WriteLine (ai.Trim ());
 			
 		Console.WriteLine ();
-		Type [] types = a.GetExportedTypes ();
+		Type [] types = show_private ? a.GetTypes () : a.GetExportedTypes ();
 		Array.Sort (types, new TypeSorter ());
 
 		foreach (Type t in types)
@@ -223,7 +223,7 @@ class MonoP {
 		Console.WriteLine ("\nTotal: {0} types.", types.Length);
 	}
 	
-	static void Completion (string prefix)
+	internal static void Completion (string prefix)
 	{
 		foreach (Type t in typeof (object).Assembly.GetExportedTypes ()) {
 			if (t.Name.StartsWith (prefix)) {
@@ -262,79 +262,33 @@ class MonoP {
 		
 	}
 
-	static void PrintUsage ()
-	{
-		Console.WriteLine ("Usage is: monop [option] [-c] [-r:Assembly] [class-name]");
-	}
-
-	static void PrintHelp ()
-	{
-		PrintUsage ();
-		Console.WriteLine ("");
-		Console.WriteLine ("options:");
-		Console.WriteLine ("\t--declared-only,-d\tOnly show members declared in the Type");
-		Console.WriteLine ("\t--help,-h\t\tShow this information");
-		Console.WriteLine ("\t--private,-p\t\tShow private members");
-		Console.WriteLine ("\t--search,-s,-k\t\tSearch through all known namespaces");
-	}
-	
 	static void Main (string [] args)
 	{
-		if (args.Length < 1) {
-			PrintUsage ();
-			return;
-		}
-
-		if (args.Length == 1 && (args[0] == "--help" || args[0] == "-h"))
-		{
-			PrintHelp ();
+		Options options = new Options ();
+		if (!options.ProcessArgs (args))
 			return;
 
-		}
+		if (options.ShowPrivate)
+			default_flags |= BindingFlags.NonPublic;
+
+		if (options.DeclaredOnly)
+			default_flags |= BindingFlags.DeclaredOnly;
 		
-		int i = 0;
-		if (args [0].StartsWith ("-r:") || args [0].StartsWith ("/r:")){
-			i++;
-			assembly = args [0].Substring (3);
+		if (options.AssemblyReference != null) {
+			assembly = options.AssemblyReference;
 			
-			if (args.Length == 1) {
-				PrintTypes (assembly);
+			if (options.Type == null) {
+				PrintTypes (assembly, options.ShowPrivate);
 				return;
 			}
 		}
-		
-		if (args [0] == "-c") {
-			Completion (args [1]);
-			return;
-		}
-
-		if (args [i] == "--private" || args [i] == "-p") {
-			default_flags |= BindingFlags.NonPublic;
-			i++;
-		}
-
-		if (args [i] == "--declared-only" || args [i] == "-d") {
-			default_flags |= BindingFlags.DeclaredOnly;
-			i++;
-		}
-
-		bool search = false;
-		if (args [i] == "--search" || args [i] == "-s" || args [i] == "-k") {
-			search = true;
-			i++;
-		}
-
-		if (args.Length < i + 1) {
-			PrintUsage ();
-			return;
-		}
 
 		string message = null;
-		string tname = args [i];
+		string tname = options.Type;
 		Type t = null;
 		int count;
 
-		if (search){
+		if (options.Search) {
 			string matches = SearchTypes (tname, ref t, out count);
 
 			if (count == 0)

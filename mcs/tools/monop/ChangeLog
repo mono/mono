@@ -1,3 +1,11 @@
+2005-01-08  John Luke  <john.luke@gmail.com>
+
+	* monop.cs: use Options class
+	add a little print-runtime option
+	(PrintTypes): respect --private option
+	* options.cs: split out option parsing and improve it
+	(simpler, order independent, less prone to crash)
+
 2005-01-01  Duncan Mak  <duncan@ximian.com>
 
 	* monop.cs (SearchType): Filter out non-public members and return
