@@ -4,6 +4,7 @@ Microsoft.CSharp/CodeGeneratorFromNamespaceTest.cs
 Microsoft.CSharp/CodeGeneratorFromStatementTest.cs
 Microsoft.CSharp/CodeGeneratorFromTypeTest.cs
 Microsoft.CSharp/CodeGeneratorTestBase.cs
+Microsoft.VisualBasic/VBCodeProviderTest.cs
 System/UriBuilderTest.cs
 System/UriTest.cs
 System/UriTest2.cs
