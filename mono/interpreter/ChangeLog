@@ -1,3 +1,7 @@
+2005-03-07  Zoltan Varga  <vargaz@freemail.hu>
+
+	* transform.c (generate): Add CEE_MONO_NOT_TAKEN.
+
 2005-01-31  Bernie Solomon  <bernard@ugsolutions.com>
 
 	* interp.c: fix typo
