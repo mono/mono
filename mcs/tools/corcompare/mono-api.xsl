@@ -408,7 +408,16 @@
 					</xsl:element>
 				</xsl:when>
 				<xsl:when test="@error = 'todo'">
-					<img src="cm/st.gif" class="t"/>
+					<xsl:element name="img">
+						<xsl:attribute name="src">cm/st.gif</xsl:attribute>
+						<xsl:attribute name="class">t</xsl:attribute>
+						<xsl:if test="@comment">
+							<xsl:attribute name="title"><xsl:value-of select="@comment"/></xsl:attribute>
+						</xsl:if>
+						<xsl:if test="not(@comment)">
+							<xsl:attribute name="title">No TODO description</xsl:attribute>
+						</xsl:if>
+					</xsl:element>
 				</xsl:when>
 				<xsl:when test="@presence = 'missing'">
 					<img src="cm/sm.gif" class="t"/>

@@ -290,7 +290,7 @@ namespace Mono.AssemblyCompare
 			keys = new Hashtable ();
 			foreach (XmlNode n in node.ChildNodes) {
 				string name = n.Attributes ["name"].Value;
-				if (CheckIfAdd (name)) {
+				if (CheckIfAdd (name, n)) {
 					string key = GetNodeKey (name, n);
 					keys.Add (key, name);
 					if (n.HasChildNodes)
@@ -299,7 +299,7 @@ namespace Mono.AssemblyCompare
 			}
 		}
 
-		protected virtual bool CheckIfAdd (string value)
+		protected virtual bool CheckIfAdd (string value, XmlNode node)
 		{
 			return true;
 		}
@@ -425,6 +425,8 @@ namespace Mono.AssemblyCompare
 				counters.TodoTotal++;
 				counters.ErrorTotal++;
 				AddAttribute (childA, "error", "todo");
+				if (assembly.attributes.Comment != null)
+					AddAttribute (childA, "comment", assembly.attributes.Comment);
 			}
 
 			AddCountersAttributes (childA);
@@ -578,7 +580,7 @@ namespace Mono.AssemblyCompare
 				count = other.Length;
 				for (int i = 0; i < count; i++) {
 					XMLClass c = other [i];
-					if (c == null || c.Name == "MonoTODOAttribute")
+					if (c == null || c.Name.EndsWith ("TODOAttribute"))
 						continue;
 
 					node = document.CreateElement ("class", null);
@@ -719,6 +721,8 @@ namespace Mono.AssemblyCompare
 					counters.TodoTotal++;
 					counters.ErrorTotal++;
 					AddAttribute (parent, "error", "todo");
+					if (oclass.attributes.Comment != null)
+						AddAttribute (parent, "comment", oclass.attributes.Comment);
 				}
 			}
 
@@ -819,7 +823,7 @@ namespace Mono.AssemblyCompare
 				count = other.Length;
 				for (int i = 0; i < count; i++) {
 					XMLClass c = other [i];
-					if (c == null || c.Name == "MonoTODOAttribute")
+					if (c == null || c.Name.EndsWith ("TODOAttribute"))
 						continue;
 
 					node = document.CreateElement ("nestedclass", null);
@@ -862,11 +866,16 @@ namespace Mono.AssemblyCompare
 	class XMLAttributes : XMLNameGroup
 	{
 		bool isTodo;
+		string comment;
 
-		protected override bool CheckIfAdd (string value)
+		protected override bool CheckIfAdd (string value, XmlNode node)
 		{
-			if (value.EndsWith (".MonoTODOAttribute")) {
+			if (value.EndsWith ("TODOAttribute")) {
 				isTodo = true;
+				XmlAttribute att = node.Attributes ["comment"];
+				if (att != null)
+					comment = att.Value;
+
 				return false;
 			}
 
@@ -893,6 +902,10 @@ namespace Mono.AssemblyCompare
 
 		public bool IsTodo {
 			get { return isTodo; }
+		}
+
+		public string Comment {
+			get { return comment; }
 		}
 	}
 
@@ -957,6 +970,8 @@ namespace Mono.AssemblyCompare
 					counters.Todo++;
 					counters.ErrorTotal++;
 					AddAttribute (parent, "error", "todo");
+					if (oatt.Comment != null)
+						AddAttribute (parent, "comment", oatt.Comment);
 				}
 			}
 

@@ -1,3 +1,16 @@
+2004-06-03  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* mono-api-info.cs: if we have a TODOAttribute, get the Comment property
+	value and store it in attribute 'comment'.
+
+	* mono-api-diff.cs: if we have a 'comment' keep it in the output file.
+
+	* mono-api.xsl: if we have a 'comment' set it as the title attribute
+	of the monoTODO gif image.
+
+	Now we can see the MonoTODO comments when browsing the class status
+	pages.
+
 2004-06-02  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* mono-api-diff.cs: also report mismatches in protected members

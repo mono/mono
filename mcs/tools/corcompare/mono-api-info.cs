@@ -683,13 +683,23 @@ namespace Mono.AssemblyInfo
 			parent.AppendChild (natts);
 
 			Type [] types = new Type [atts.Length];
-			for (int i = atts.Length - 1; i >= 0; i--)
+			string comment = null;
+			for (int i = atts.Length - 1; i >= 0; i--) {
 				types [i] = atts [i].GetType ();
+				if (types [i].Name.EndsWith ("TODOAttribute")) {
+					PropertyInfo prop = types [i].GetProperty ("Comment");
+					if (prop != null)
+						comment = (string) prop.GetValue (atts [i], null);
+				}
+			}
 
 			Array.Sort (types, TypeComparer.Default);
 			foreach (Type t in types) {
 				XmlNode node = document.CreateElement ("attribute");
 				AddAttribute (node, "name", t.FullName);
+				if (comment != null && t.Name.EndsWith ("TODOAttribute"))
+					AddAttribute (node, "comment", comment);
+
 				natts.AppendChild (node);
 			}
 		}
