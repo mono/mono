@@ -19,8 +19,7 @@ namespace System.Runtime.Remoting.Messaging
 			// Makes the real call to the object
 
 			MarshalByRefObject obj = RemotingServices.GetServerForUri (((IMethodMessage)msg).Uri);
-			//return RemotingServices.InternalExecuteMessage (obj, (IMethodCallMessage)msg);
-			return null;
+			return RemotingServices.InternalExecuteMessage (obj, (IMethodCallMessage)msg);
 		}
 
 		[MonoTODO]
