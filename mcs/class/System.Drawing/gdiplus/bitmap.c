@@ -225,6 +225,29 @@ GdipCreateBitmapFromGraphics (int width, int height, GpGraphics *graphics, GpBit
 	return Ok;
 }
 
+GpStatus
+GdipCloneBitmapAreaI (int x, int y, int width, int height, int format, GpBitmap *original, GpBitmap **bitmap)
+{
+	GpBitmap *result = 0;
+	int bmpSize = original->data.Height * original->data.Stride;
+
+	/*
+	 * FIXME: Convert format if needed and copy only specified rectangle
+	 */ 
+	result = gdip_bitmap_new ();
+	result->cairo_format = original->cairo_format;
+	result->data.Width = original->data.Width;
+	result->data.Height = original->data.Height;
+	result->data.Stride = original->data.Stride;
+	result->data.PixelFormat = original->data.PixelFormat;
+	result->data.Scan0 = GdipAlloc (bmpSize);
+	memmove (result->data.Scan0, original->data.Scan0, bmpSize);
+	result->data.Reserved = 1;
+	
+	*bitmap = result;
+	return Ok;
+}
+
 static int 
 ChangePixelFormat (GpBitmap *bitmap, GdipBitmapData *destData) 
 {
@@ -234,8 +257,10 @@ ChangePixelFormat (GpBitmap *bitmap, GdipBitmapData *destData)
 	char * 	curDst = 0;
 	int 	i, j;
 	
-	//printf("ChangePixelFormat to %d. Src inc %d, Dest Inc %d\n", 
-	//	destData->PixelFormat, sourcePixelIncrement, destinationPixelIncrement);
+	/*
+	printf("ChangePixelFormat to %d. Src inc %d, Dest Inc %d\n", 
+		destData->PixelFormat, sourcePixelIncrement, destinationPixelIncrement);
+	*/
 	if (bitmap->data.PixelFormat == destData->PixelFormat) return 0;
 	
 	if (destData->PixelFormat != Format32bppArgb && destData->PixelFormat != Format24bppRgb) {
