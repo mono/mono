@@ -61,6 +61,12 @@ namespace Mono.ILASM {
                         }
                 }
 
+		public Location Location {
+			get {
+				return reader.Location;
+			}
+		}
+
                 public bool InByteArray {
                         get { return in_byte_array; }
                         set { in_byte_array = value; }
