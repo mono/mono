@@ -40,7 +40,6 @@ EXTRA_DISTFILES = \
 	$(wildcard System.Xml.Serialization/standalone_tests/*.cs) \
 	$(wildcard System.Xml.Serialization/standalone_tests/*.output) \
 	System.Xml.XPath/Parser.jay	\
-	System.Xml.Query/XQueryParser.jay	\
 	System.Xml.Query/skeleton-2.0.cs	\
 	Test/Microsoft.Test.csproj	\
 	Test/Mono.Test.csproj		\
@@ -54,10 +53,24 @@ EXTRA_DISTFILES = \
 System.Xml.XPath/Parser.cs: System.Xml.XPath/Parser.jay $(topdir)/jay/skeleton.cs
 	$(topdir)/jay/jay -ct < $(topdir)/jay/skeleton.cs $< >$@
 
-System.Xml.Query/XQueryParser.cs: System.Xml.Query/XQueryParser.jay System.Xml.Query/skeleton-2.0.cs
-	$(topdir)/jay/jay -ct < System.Xml.Query/skeleton-2.0.cs $< >$@
+Mono.Xml.Xsl/PatternParser.jay: System.Xml.XPath/Parser.jay $(topdir)/jay/skeleton.cs
+	sed "s/\%start Expr/\%start Pattern/" $< >$@
 
-BUILT_SOURCES = System.Xml.XPath/Parser.cs #System.Xml.Query/XQueryParser.cs
-CLEAN_FILES = Test/XmlFiles/xsl/result.xml System.Xml.Query/XQueryParser.cs
+Mono.Xml.Xsl/PatternParser.cs: Mono.Xml.Xsl/PatternParser.jay $(topdir)/jay/skeleton.cs
+	echo "#define XSLT_PATTERN" > $@
+	$(topdir)/jay/jay -ct $< < $(topdir)/jay/skeleton.cs >>$@
+
+Mono.Xml.Xsl/PatternTokenizer.cs: System.Xml.XPath/Tokenizer.cs
+	echo "#define XSLT_PATTERN" > $@
+	cat $< >>$@
+
+BUILT_SOURCES = System.Xml.XPath/Parser.cs \
+	Mono.Xml.Xsl/PatternParser.cs \
+	Mono.Xml.Xsl/PatternTokenizer.cs
+
+CLEAN_FILES = Test/XmlFiles/xsl/result.xml \
+	System.Xml.XPath/Parser.cs \
+	Mono.Xml.Xsl/PatternParser.cs \
+	Mono.Xml.Xsl/PatternTokenizer.cs
 
 include ../../build/library.make
