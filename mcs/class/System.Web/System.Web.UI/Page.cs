@@ -676,8 +676,16 @@ public class Page : TemplateControl, IHttpHandler
 		//--
 		HtmlTextWriter output = new HtmlTextWriter (_context.Response.Output);
 		RenderControl (output);
+		RenderTrace (output);
 		_context = null;
 		UnloadRecursive (true);
+	}
+
+	private void RenderTrace (HtmlTextWriter output)
+	{
+		if (!Trace.IsEnabled)
+			return;
+		Trace.Render (output);
 	}
 	
 	internal void RaisePostBackEvents ()

@@ -1,3 +1,7 @@
+2003-12-16  Jackson Harper <jackson@ximian.com>
+
+	* Page.cs: Render trace data when tracing is enabled.
+	
 2003-12-15  Jackson Harper <jackson@ximian.com>
 
 	* PageParser.cs: Add Trace and Trace mode attributes.
