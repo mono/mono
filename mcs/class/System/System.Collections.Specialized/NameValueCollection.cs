@@ -1,9 +1,12 @@
-/**
- * System.Collections.Specialized.NamaValueCollection class implementation
- * 
- * Author: Gleb Novodran
- */
-// created on 7/21/2001 at 5:15 PM
+//
+// System.Collections.Specialized.NameValueCollection.cs
+//
+// Author:
+//   Gleb Novodran
+//
+// (C) Ximian, Inc.  http://www.ximian.com
+//
+
 using System;
 using System.Collections;
 using System.Collections.Specialized;
@@ -204,21 +207,19 @@ namespace System.Collections.Specialized{
 		/// <summary> SDK: Copies the entire NameValueCollection to a compatible one-dimensional Array,
 		/// starting at the specified index of the target array.</summary>
 
-		[MonoTODO]
 		public void CopyTo( Array dest, int index )
 		{
 			if (dest==null)
-				throw new ArgumentNullException("Null argument - dest");
+				throw new ArgumentNullException("dest", "Null argument - dest");
 			if (index<0)
-				throw new ArgumentOutOfRangeException("index is less than 0");
-//			throw new Exception("Not implemented yet");
-			
-			//TODO: add implementation here
+				throw new ArgumentOutOfRangeException("index", "index is less than 0");
+
 			if (cachedAll==null)
 				RefreshCachedAll();
 			cachedAll.CopyTo(dest, index);
 		}
-		protected void RefreshCachedAll()
+
+		private void RefreshCachedAll()
 		{
 			this.cachedAll=null;
 			int max = this.Count;

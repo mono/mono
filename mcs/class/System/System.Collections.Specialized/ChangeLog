@@ -1,3 +1,8 @@
+2003-07-02  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+	* BitVector32.cs: Implemented missing method
+	* NameValueCollection.cs: Fixed public signature, Styleguidelined header
+	* StringDictionary.cs: Added missing attribute, fixed visibilities
+
 2003-06-08  Ben Maurer <bmaurer@users.sourceforge.net>
 	* StringCollection.cs: Rewrote. Now uses ArrayList. Fixes up quite
 	a few Rotor bugs.

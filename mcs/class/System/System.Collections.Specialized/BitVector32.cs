@@ -5,6 +5,7 @@
 //   Miguel de Icaza (miguel@ximian.com)
 //   Lawrence Pit (loz@cable.a2000.nl)
 //   Andrew Birkett (adb@tardis.ed.ac.uk)
+//   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //
 // (C) Ximian, Inc.  http://www.ximian.com
 //
@@ -54,6 +55,18 @@ namespace System.Collections.Specialized {
 			{
 				return "Section{0x" + Convert.ToString(mask, 16) + 
 				       ", 0x" + Convert.ToString(offset, 16) + "}";
+			}
+
+			public static string ToString (Section value)
+			{
+				StringBuilder b = new StringBuilder ();
+				b.Append ("Section{0x");
+				b.Append (Convert.ToString(value.Mask,16));
+				b.Append (", 0x");
+				b.Append (Convert.ToString(value.Offset,16));
+				b.Append ("}");
+
+				return b.ToString ();
 			}
 		}
 		

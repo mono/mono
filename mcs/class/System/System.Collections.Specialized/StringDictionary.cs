@@ -1,8 +1,25 @@
+//
+// System.Collections.Specialized.StringDictionary.cs
+//
+// Author:
+//   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
+//
+// (C) Ximian, Inc.  http://www.ximian.com
+//
+
+using System.ComponentModel.Design.Serialization;
+
 namespace System.Collections.Specialized
 {
+#if (NET_1_0)
+	[DesignerSerializer ("System.Diagnostics.Design.StringDictionaryCodeDomSerializer, System.Design, Version=1.0.3300.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.ComponentModel.Design.Serialization.CodeDomSerializer, System.Design, Version=1.0.3300.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
+#endif
+#if (NET_1_1)
+    	[DesignerSerializer ("System.Diagnostics.Design.StringDictionaryCodeDomSerializer, System.Design, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.ComponentModel.Design.Serialization.CodeDomSerializer, System.Design, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
+#endif
 	public class StringDictionary : IEnumerable
 	{
-		protected Hashtable table;
+		private Hashtable table;
 			
 		public StringDictionary()
 		{
