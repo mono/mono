@@ -1,3 +1,8 @@
+2003-11-13  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* ProtectedData.cs: Added exceptions - core is still TODO.
+	* ProtectedMemory.cs: Added exceptions - core is still TODO.
+
 2003-11-11  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* Rfc2898DeriveBytes.cs: Now handle resets and keys longer than 160 
