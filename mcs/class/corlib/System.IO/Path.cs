@@ -301,7 +301,7 @@ namespace System.IO
 			
 			// STEP 1: Check for empty string
 			if (path == null) return path;
-			path.Trim ();
+			path = path.Trim ();
 			if (path == String.Empty) return path;
 			
 			// STEP 2: Check to see if this is only a root
@@ -311,10 +311,8 @@ namespace System.IO
 			string dir = GetDirectoryName (path).Substring (path.IndexOfAny (new char [] {DirectorySeparatorChar,	AltDirectorySeparatorChar}) + 1);
 			if (dir == String.Empty) return path;
 			
-			string file = GetFileName (path);
-			
 			// STEP 3: split the directories, this gets rid of consecutative "/"'s
-			string [] dirs = dir.Split (DirectorySeparatorChar, AltDirectorySeparatorChar);
+			string [] dirs = path.Split (DirectorySeparatorChar, AltDirectorySeparatorChar);
 			
 			// STEP 4: Get rid of directories containing . and ..
 			int target = 0;
@@ -330,9 +328,9 @@ namespace System.IO
 			
 			// STEP 5: Combine everything.
 			if (target == 0)
-				return root + file;
+				return root;
 			else
-				return root + String.Join (DirectorySeparatorChar.ToString (), dirs, 0, target) + DirectorySeparatorChar + file;
+				return root + String.Join (DirectorySeparatorStr, dirs, 0, target);
 		}
 	}
 }

@@ -44,7 +44,7 @@ namespace System.IO {
 		public override string Name {
 			get {
 				string result = Path.GetFileName (FullPath);
-				if (result == "")
+				if (result == null || result == "")
 					return FullPath;
 				return result;
 			}
@@ -52,13 +52,21 @@ namespace System.IO {
 
 		public DirectoryInfo Parent {
 			get {
-				return new DirectoryInfo (Path.GetDirectoryName (FullPath));
+				string dirname = Path.GetDirectoryName (FullPath);
+				if (dirname == null)
+					return null;
+
+				return new DirectoryInfo (dirname);
 			}
 		}
 
 		public DirectoryInfo Root {
 			get {
-				return new DirectoryInfo (Path.GetPathRoot (FullPath));
+				string root = Path.GetPathRoot (FullPath);
+				if (root == null)
+					return null;
+
+				return new DirectoryInfo (root);
 			}
 		}
 
