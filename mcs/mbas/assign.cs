@@ -321,7 +321,7 @@ namespace Mono.CSharp {
 
 			if (target_type == source_type)
 				return this;
-			
+		
 			//
 			// If this assignemnt/operator was part of a compound binary
 			// operator, then we allow an explicit conversion, as detailed
@@ -355,14 +355,21 @@ namespace Mono.CSharp {
 					return null;
 				}
 			}
-			if (IsLateIndexSet(target, ec)) 
-			{
+
+			if (IsLateIndexSet(target, ec))
+			{		
 				// then we must rewrite the whole expression, since 
 				// THIS assign is no longer valid/needed
 				Invocation i = (Invocation) target;
+				ArrayList args = i.Arguments;
+				ArrayCreation ac = (ArrayCreation) ((Argument)args[1]).Expr;
+				
+				ac.initializers[ac.initializers.Count-1] = source;
+				i = (Invocation)i.Resolve(ec);
 				return i;
-			}
-			source = ConvertImplicitRequired (ec, source, target_type, loc);
+			}	
+			
+			source = ConvertImplicitRequired (ec, source, target_type, loc);		
 			if (source == null)
 				return null;
 
