@@ -1,3 +1,8 @@
+2005-03-14  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* StackFrameCas.cs: Fixed failures under MS for NET_1_1.
+	* StackTraceCas.cs: Fixed failures under MS for NET_1_1.
+
 2005-01-28  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* StackFrameCas.cs: New. Permission tests for StackFrame.

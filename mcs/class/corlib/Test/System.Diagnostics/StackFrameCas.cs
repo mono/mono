@@ -58,7 +58,10 @@ namespace MonoCasTests.System.Diagnostics {
 			int ln = sf.GetFileLineNumber ();
 			int il = sf.GetILOffset ();
 			int no = sf.GetNativeOffset ();
+#if NET_2_0
+			// this throws in 1.x
 			Assert.IsNotNull (sf.GetMethod (), "GetMethod");
+#endif
 			if (checkFile) {
 				string fn = sf.GetFileName ();
 			}
@@ -78,7 +81,9 @@ namespace MonoCasTests.System.Diagnostics {
 #else
 		[FileIOPermission (SecurityAction.Deny, PathDiscovery = "/")]
 #endif
+#if NET_2_0
 		[ExpectedException (typeof (SecurityException))]
+#endif
 		public void StackFrame_TrueConstructor_Fail ()
 		{
 			StackFrame sf = null;
@@ -91,6 +96,7 @@ namespace MonoCasTests.System.Diagnostics {
 				Assert.Fail ("Didn't ask for file information");
 			}
 			// now look at the file informations...
+			// note: only fails under 2.0
 			Check (sf, true);
 		}
 
@@ -130,7 +136,9 @@ namespace MonoCasTests.System.Diagnostics {
 #else
 		[FileIOPermission (SecurityAction.Deny, PathDiscovery = "/")]
 #endif
+#if NET_2_0
 		[ExpectedException (typeof (SecurityException))]
+#endif
 		public void StackFrame_IntTrueConstructor_Fail ()
 		{
 			StackFrame sf = null;
@@ -143,6 +151,7 @@ namespace MonoCasTests.System.Diagnostics {
 				Assert.Fail ("Didn't ask for file information");
 			}
 			// now look at the file informations...
+			// note: only fails under 2.0
 			Check (sf, true);
 		}
 
@@ -174,7 +183,9 @@ namespace MonoCasTests.System.Diagnostics {
 #else
 		[FileIOPermission (SecurityAction.Deny, PathDiscovery = "/")]
 #endif
+#if NET_2_0
 		[ExpectedException (typeof (SecurityException))]
+#endif
 		public void StackFrame_StringIntConstructor_Fail ()
 		{
 			StackFrame sf = null;
@@ -187,6 +198,7 @@ namespace MonoCasTests.System.Diagnostics {
 				Assert.Fail ("Didn't ask for file information");
 			}
 			// now look at the file informations...
+			// note: only fails under 2.0
 			Check (sf, true);
 		}
 
@@ -209,7 +221,9 @@ namespace MonoCasTests.System.Diagnostics {
 #else
 		[FileIOPermission (SecurityAction.Deny, PathDiscovery = "/")]
 #endif
+#if NET_2_0
 		[ExpectedException (typeof (SecurityException))]
+#endif
 		public void StackFrame_StringIntIntConstructor_Fail ()
 		{
 			StackFrame sf = null;
@@ -222,6 +236,7 @@ namespace MonoCasTests.System.Diagnostics {
 				Assert.Fail ("Didn't ask for file information");
 			}
 			// now look at the file informations...
+			// note: only fails under 2.0
 			Check (sf, true);
 		}
 
