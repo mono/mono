@@ -1,3 +1,8 @@
+2002-07-11  Miguel de Icaza  <miguel@ximian.com>
+
+	* statement.cs (Unsafe.Resolve): The state is checked during
+	resolve, not emit, so we have to set the flags for IsUnsfe here.
+
 2002-07-10  Miguel de Icaza  <miguel@ximian.com>
 
 	* expression.cs (MemberAccess.ResolveMemberAccess): Since we can
