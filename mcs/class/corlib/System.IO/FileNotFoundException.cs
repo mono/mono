@@ -6,10 +6,7 @@
 //   Duncan Mak (duncan@ximian.com)
 //
 // (C) 2001 Ximian, Inc.  http://www.ximian.com
-//
-
-//
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -30,14 +27,19 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+
 using System.Globalization;
-using System.IO;
 using System.Runtime.Serialization;
+using System.Security.Permissions;
+using System.Text;
 
 namespace System.IO {
 
 	[Serializable]
 	public class FileNotFoundException : IOException {
+
+		const int Result = unchecked ((int)0x80131621);
+
 		private string fileName;
 		private string fusionLog;
 
@@ -45,27 +47,32 @@ namespace System.IO {
 		public FileNotFoundException ()
 			: base (Locale.GetText ("File not found"))
 		{
+			HResult = Result;
 		}
 
 		public FileNotFoundException (string message)
 			: base (message)
 		{
+			HResult = Result;
 		}
 
 		public FileNotFoundException (string message, Exception inner)
 			: base (message, inner)
 		{
+			HResult = Result;
 		}
 
 		public FileNotFoundException (string message, string fileName)
 			: base (message)
 		{
+			HResult = Result;
 			this.fileName = fileName;
 		}
 
 		public FileNotFoundException (string message, string fileName, Exception innerException)
 			: base (message, innerException)
 		{
+			HResult = Result;
 			this.fileName = fileName;
 		}
 
@@ -81,21 +88,19 @@ namespace System.IO {
 			get { return fileName; }
 		}
 
-		public string FusionLog
-		{
+		public string FusionLog {
+			// note: MS runtime throws a SecurityException when the Exception is created
+			// but a FileLoadException once the exception as been thrown. Mono always
+			// throw a SecurityException in both case (anyway fusionLog is currently empty)
+			[SecurityPermission (SecurityAction.Demand, ControlEvidence=true, ControlPolicy=true)]
 			get { return fusionLog; }
 		}
 
-		public override string Message
-		{
+		public override string Message {
 			get {
 				if (base.Message == null)
 					return "File not found";
-
-				if (fileName == null)
-					return base.Message;
-				
-				return "File '" + fileName + "' not found.";
+				return base.Message;
 			}
 		}
 
@@ -108,14 +113,21 @@ namespace System.IO {
 
 		public override string ToString ()
 		{
-			string result = GetType ().FullName + ": " + Message;
-			if (InnerException != null)
-				result += " ----> " + InnerException.ToString ();
+			StringBuilder sb = new StringBuilder (GetType ().FullName);
+			sb.AppendFormat (": {0}", Message);
 
-			if (StackTrace != null)
-				result += "\n" + StackTrace;
+			if (fileName != null);
+				sb.AppendFormat (" : {0}", fileName);
 
-			return result;
+			if (this.InnerException != null)
+				sb.AppendFormat (" ----> {0}", InnerException);
+
+			if (this.StackTrace != null) {
+				sb.Append (Environment.NewLine);
+				sb.Append (StackTrace);
+			}
+
+			return sb.ToString ();
 		}
 	}
 }

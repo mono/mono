@@ -6,10 +6,7 @@
 //   Duncan Mak (duncan@ximian.com)
 //
 // (C) 2001 Ximian, Inc.  http://www.ximian.com
-//
-
-//
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -32,14 +29,18 @@
 //
 
 using System.Globalization;
-using System.IO;
 using System.Runtime.Serialization;
+using System.Security;
+using System.Security.Permissions;
+using System.Text;
 
 namespace System.IO {
+
 	[Serializable]
 	public class FileLoadException : IOException {
 
 		// Fields
+		const int Result = unchecked ((int)0x80070002);
 		string msg;
 		Exception inner;
 		string fileName;
@@ -49,18 +50,21 @@ namespace System.IO {
 		public FileLoadException ()
 			: base (Locale.GetText ("I/O Error"))
 		{
+			HResult = Result;
 			msg = Locale.GetText ("I/O Error");
 		}
 
 		public FileLoadException (string message)
 			: base (message)
 		{
+			HResult = Result;
 			msg = message;
 		}
 
 		public FileLoadException (string message, string fileName)
 			: base (message)
 		{
+			HResult = Result;
 			this.msg = message;
 			this.fileName = fileName;
 		}		
@@ -68,6 +72,7 @@ namespace System.IO {
 		public FileLoadException (string message, Exception inner)
 			: base (message, inner)
 		{
+			HResult = Result;
 			msg = message;
 			this.inner = inner;
 		}
@@ -75,6 +80,7 @@ namespace System.IO {
 		public FileLoadException (string message, string fileName, Exception inner)
 			: base (message, inner)
 		{
+			HResult = Result;
 			this.msg = message;
 			this.fileName = fileName;
 			this.inner = inner;
@@ -87,14 +93,8 @@ namespace System.IO {
 		}
 
 		// Properties
-		public override string Message
-		{
-			get {
-				if (fileName != null)
-					return Locale.GetText (msg + ": " + fileName);
-				else
-					return msg;
-			}
+		public override string Message {
+			get { return msg; }
 		}
 
 		public string FileName
@@ -102,8 +102,11 @@ namespace System.IO {
 			get { return fileName; }
 		}
 		
-		public string FusionLog
-		{
+		public string FusionLog	{
+			// note: MS runtime throws a SecurityException when the Exception is created
+			// but a FileLoadException once the exception as been thrown. Mono always
+			// throw a SecurityException in both case (anyway fusionLog is currently empty)
+			[SecurityPermission (SecurityAction.Demand, ControlEvidence=true, ControlPolicy=true)]
 			get { return fusionLog; }
 		}
 
@@ -117,13 +120,21 @@ namespace System.IO {
 
 		public override string ToString ()
 		{
-			string result = GetType ().FullName + ": " + Message;
-			if (this.InnerException != null)
-				result +=" ----> " + InnerException;
-			if (this.StackTrace != null)
-				result += '\n' + StackTrace;
+			StringBuilder sb = new StringBuilder (GetType ().FullName);
+			sb.AppendFormat (": {0}", msg);
 
-			return result;
+			if (fileName != null);
+				sb.AppendFormat (" : {0}", fileName);
+
+			if (this.InnerException != null)
+				sb.AppendFormat (" ----> {0}", InnerException);
+
+			if (this.StackTrace != null) {
+				sb.Append (Environment.NewLine);
+				sb.Append (StackTrace);
+			}
+
+			return sb.ToString ();
 		}
 	}
 }
