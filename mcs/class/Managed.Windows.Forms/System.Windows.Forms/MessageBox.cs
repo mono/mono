@@ -58,6 +58,24 @@ namespace System.Windows.Forms
 		#region Private MessageBoxForm class
 		private class MessageBoxForm : Form
 		{
+			#region FormParentWindow Override
+			internal class FormParentWindow : Form.FormParentWindow {
+				internal FormParentWindow(Form owner) : base(owner) {
+				}
+
+				protected override CreateParams CreateParams {
+					get {
+						CreateParams	cp;
+
+						cp = base.CreateParams;
+						cp.Style = (int)(WindowStyles.WS_POPUP | WindowStyles.WS_CAPTION | WindowStyles.WS_SYSMENU);
+						return cp;
+					}
+				}
+
+			}
+			#endregion
+
 			#region MessageBoxFrom Local Variables
 			string			msgbox_text;
 			bool			size_known	=false;
@@ -115,13 +133,11 @@ namespace System.Windows.Forms
 			#region Protected Instance Properties
 			protected override CreateParams CreateParams {
 				get {
-					CreateParams create_params = base.CreateParams;
-					create_params.Style = (int)WindowStyles.WS_OVERLAPPED;
-					create_params.Style |= (int)WindowStyles.WS_CAPTION;
-					create_params.Style |= (int)WindowStyles.WS_SYSMENU;
-					create_params.Style |= (int)WindowStyles.WS_VISIBLE;
+					if (this.form_parent_window == null) {
+						form_parent_window = new FormParentWindow(this);
+					}
 
-					return create_params;
+					return base.CreateParams;
 				}
 			}
 			#endregion	// Protected Instance Properties
@@ -397,8 +413,7 @@ namespace System.Windows.Forms
 		#region Public Static Methods
 		public static DialogResult Show (string text)
 		{
-			MessageBoxForm form = new MessageBoxForm (null, text, string.Empty,
-					MessageBoxButtons.OK, MessageBoxIcon.None);
+			MessageBoxForm form = new MessageBoxForm (null, text, string.Empty, MessageBoxButtons.OK, MessageBoxIcon.None);
 
 			return form.RunDialog ();
 
