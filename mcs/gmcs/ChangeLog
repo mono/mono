@@ -1,5 +1,9 @@
 2004-12-09  Martin Baulig  <martin@ximian.com>
 
+	* doc.cs (DocUtil): Make this a static class.
+
+2004-12-09  Martin Baulig  <martin@ximian.com>
+
 	* expression.cs (Invocation.InferType): Moved the type inference
 	implementation into TypeManager.
 
