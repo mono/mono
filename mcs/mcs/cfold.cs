@@ -195,7 +195,7 @@ namespace Mono.CSharp {
 				if (right is EnumConstant)
 					right = ((EnumConstant) right).Child;
 			}
-			
+
 			switch (oper){
 			case Binary.Operator.BitwiseOr:
 				DoConstantNumericPromotions (ec, oper, ref left, ref right, loc);
