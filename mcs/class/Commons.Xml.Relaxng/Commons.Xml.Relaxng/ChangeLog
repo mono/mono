@@ -1,3 +1,9 @@
+2005-02-27  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XsdDatatypeProvider.cs : Added simpleType parameter support.
+	* RelaxngValidatingReader.cs : added ReportDetails flag to report all
+	  expected element names / attribute names. Removed all unused code.
+
 2005-02-06  Atsushi Enomoto <atsushi@ximian.com>
 
 	* RelaxngReader.cs : ns attribute on root element should also be 

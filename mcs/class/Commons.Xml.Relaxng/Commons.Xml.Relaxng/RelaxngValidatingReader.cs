@@ -32,6 +32,7 @@
 //
 using System;
 using System.Collections;
+using System.Text;
 using System.Xml;
 using Commons.Xml.Relaxng.Derivative;
 
@@ -72,6 +73,7 @@ namespace Commons.Xml.Relaxng
 		bool isEmptiable;
 		bool roughLabelCheck;
 		ArrayList strictCheckCache;
+		bool reportDetails;
 
 		internal string CurrentStateXml {
 			get { return RdpUtil.DebugRdpPattern (vState, new Hashtable ()); }
@@ -81,75 +83,17 @@ namespace Commons.Xml.Relaxng
 			get { return RdpUtil.DebugRdpPattern (prevState, new Hashtable ()); }
 		}
 
+		#region Validation State support
+
+		public bool ReportDetails {
+			get { return reportDetails; }
+			set { reportDetails = value; }
+		}
+
 		public bool RoughLabelCheck {
 			get { return roughLabelCheck; }
 			set { roughLabelCheck = value; }
 		}
-
-		#region These members will be removed soon!
-		[Obsolete ("Use GetElementLabels(object) instead.")]
-		public ICollection ExpectedElements {
-			get {
-				if (!labelsComputed)
-					GetLabels (elementLabels, attributeLabels);
-				return elementLabels.Values;
-			}
-		}
-
-		[Obsolete ("Use GetAttributeLabels(object) instead.")]
-		public ICollection ExpectedAttributes {
-			get {
-				if (!labelsComputed)
-					GetLabels (elementLabels, attributeLabels);
-				return attributeLabels.Values;
-			}
-		}
-
-		[Obsolete ("Use GetElementLabels(object) and GetAttributeLabels(object) instead.")]
-		public void GetLabels (Hashtable elements, Hashtable attributes)
-		{
-			if (elements == null)
-				throw new ArgumentNullException ("elements");
-			if (attributes == null)
-				throw new ArgumentNullException ("attributes");
-			PrepareState ();
-			vState.GetLabels (elements, attributes);
-
-			if (roughLabelCheck)
-				return;
-
-			// Strict check that tries actual validation that will
-			// cover rejection by notAllowed.
-			if (strictCheckCache == null)
-				strictCheckCache = new ArrayList ();
-			else
-				strictCheckCache.Clear ();
-			foreach (XmlQualifiedName qname in attributes.Values)
-				if (vState.AttDeriv (qname.Name, qname.Namespace,null, this) is RdpNotAllowed)
-					strictCheckCache.Add (qname);
-			foreach (XmlQualifiedName qname in strictCheckCache)
-				attributes.Remove (qname);
-			strictCheckCache.Clear ();
-			foreach (XmlQualifiedName qname in elements.Values)
-				if (vState.StartTagOpenDeriv (qname.Name, qname.Namespace) is RdpNotAllowed)
-					strictCheckCache.Add (qname);
-			foreach (XmlQualifiedName qname in strictCheckCache)
-				elements.Remove (qname);
-		}
-
-		[Obsolete ("Use Emptiable(object) instead.")]
-		public bool Emptiable ()
-		{
-			if (!labelsComputed) {
-				PrepareState ();
-				isEmptiable = !(vState.EndTagDeriv () is RdpNotAllowed);
-			}
-			return isEmptiable;
-		}
-		#endregion
-
-		#region Validation State support
-
 
 		// It is used to disclose its validation feature to public
 		class ValidationState
@@ -388,6 +332,19 @@ namespace Commons.Xml.Relaxng
 				vState = pattern.StartPattern;
 		}
 
+		private string BuildLabels (bool elements)
+		{
+			StringBuilder sb = new StringBuilder ();
+			ValidationState s = new ValidationState (prevState);
+			ICollection col = elements ?
+				GetElementLabels (s) : GetAttributeLabels (s);
+			foreach (XmlQualifiedName qname in col) {
+				sb.Append (qname.ToString ());
+				sb.Append (' ');
+			}
+			return sb.ToString ();
+		}
+
 		public override bool Read ()
 		{
 			PrepareState ();
@@ -404,11 +361,14 @@ namespace Commons.Xml.Relaxng
 				prevState = vState;
 				vState = vState.StartTagOpenDeriv (
 					reader.LocalName, reader.NamespaceURI);
-				if (vState.PatternType == RelaxngPatternType.NotAllowed)
-					throw createValidationError (String.Format ("Invalid start tag found. LocalName = {0}, NS = {1}. ", reader.LocalName, reader.NamespaceURI));
+				if (vState.PatternType == RelaxngPatternType.NotAllowed) {
+					string labels = String.Empty;
+					if (reportDetails)
+						labels = "Allowed elements are: " + BuildLabels (true);
+					throw createValidationError (String.Format ("Invalid start tag found. LocalName = {0}, NS = {1}. {2}", reader.LocalName, reader.NamespaceURI, labels));
+				}
 
 				// AttsDeriv equals to for each AttDeriv
-//				if (reader.AttributeCount > 0) {
 				string elementNS = reader.NamespaceURI;
 				if (reader.MoveToFirstAttribute ()) {
 					do {
@@ -416,10 +376,15 @@ namespace Commons.Xml.Relaxng
 							continue;
 
 						prevState = vState;
-						string attrNS = /*reader.NamespaceURI == "" ? elementNS :*/ reader.NamespaceURI;
+						string attrNS = reader.NamespaceURI;
 						vState = vState.AttDeriv (reader.LocalName, attrNS, reader.GetAttribute (reader.Name), this);
-						if (vState.PatternType == RelaxngPatternType.NotAllowed)
-							throw createValidationError (String.Format ("Invalid attribute found. LocalName = {0}, NS = {1}. ", reader.LocalName, reader.NamespaceURI));
+						if (vState.PatternType == RelaxngPatternType.NotAllowed) {
+							string labels = String.Empty;
+							if (reportDetails)
+								labels = "Allowed attributes are: " + BuildLabels (false);
+
+							throw createValidationError (String.Format ("Invalid attribute found. LocalName = {0}, NS = {1}. {2}", reader.LocalName, reader.NamespaceURI, labels));
+						}
 					} while (reader.MoveToNextAttribute ());
 					MoveToElement ();
 				}
@@ -427,8 +392,13 @@ namespace Commons.Xml.Relaxng
 				// StarTagCloseDeriv
 				prevState = vState;
 				vState = vState.StartTagCloseDeriv ();
-				if (vState.PatternType == RelaxngPatternType.NotAllowed)
-					throw createValidationError (String.Format ("Invalid start tag closing found. LocalName = {0}, NS = {1}. ", reader.LocalName, reader.NamespaceURI));
+				if (vState.PatternType == RelaxngPatternType.NotAllowed) {
+					string labels = String.Empty;
+					if (reportDetails)
+						labels = "Expected attributes are: " + BuildLabels (false);
+
+					throw createValidationError (String.Format ("Invalid start tag closing found. LocalName = {0}, NS = {1}. {2}", reader.LocalName, reader.NamespaceURI, labels));
+				}
 
 				// if it is empty, then redirect to EndElement
 				if (reader.IsEmptyElement)
@@ -438,16 +408,18 @@ namespace Commons.Xml.Relaxng
 				// EndTagDeriv
 				prevState = vState;
 				vState = vState.EndTagDeriv ();
-				if (vState.PatternType == RelaxngPatternType.NotAllowed)
-					throw createValidationError (String.Format ("Invalid end tag found. LocalName = {0}, NS = {1}. ", reader.LocalName, reader.NamespaceURI));
+				if (vState.PatternType == RelaxngPatternType.NotAllowed) {
+					string labels = String.Empty;
+					if (reportDetails)
+						labels = "Expected elements are: " + BuildLabels (true);
+					throw createValidationError (String.Format ("Invalid end tag found. LocalName = {0}, NS = {1}. {2}", reader.LocalName, reader.NamespaceURI, labels));
+				}
 				break;
 			case XmlNodeType.CDATA:
 			case XmlNodeType.Text:
 			case XmlNodeType.SignificantWhitespace:
 				// Whitespace cannot be skipped because data and
 				// value types are required to validate whitespaces.
-//				if (Util.IsWhitespace (Value))
-//					break;
 				prevState = vState;
 				vState = vState.TextDeriv (this.Value, reader);
 				if (vState.PatternType == RelaxngPatternType.NotAllowed)

@@ -95,8 +95,17 @@ namespace Commons.Xml.Relaxng.XmlSchema
 
 		public override RelaxngDatatype GetDatatype (string name, string ns, RelaxngParamList parameters)
 		{
-			// TODO: parameter support
+			RelaxngDatatype dt = GetPrimitiveType (name, ns);
+			if (dt == null)
+				return null;
+			else if (parameters == null || parameters.Count == 0)
+				return dt;
+			else
+				return new XsdSimpleRestrictionType (dt, parameters);
+		}
 
+		private RelaxngDatatype GetPrimitiveType (string name, string ns)
+		{
 			switch (ns) {
 			case System.Xml.Schema.XmlSchema.Namespace:
 			case "http://www.w3.org/2001/XMLSchema-datatypes":
@@ -109,6 +118,96 @@ namespace Commons.Xml.Relaxng.XmlSchema
 			return table [name] as RelaxngDatatype;
 		}
 
+	}
+
+	public class XsdSimpleRestrictionType : RelaxngDatatype
+	{
+		XmlSchemaSimpleType type;
+		XSchema schema;
+
+		public XsdSimpleRestrictionType (RelaxngDatatype primitive, RelaxngParamList parameters)
+		{
+			type = new XmlSchemaSimpleType ();
+			XmlSchemaSimpleTypeRestriction r =
+				new XmlSchemaSimpleTypeRestriction ();
+			type.Content = r;
+			r.BaseTypeName = new XmlQualifiedName (primitive.Name, primitive.NamespaceURI);
+			foreach (RelaxngParam p in parameters) {
+				XmlSchemaFacet f = null;
+				switch (p.Name) {
+				case "maxExclusive":
+					f = new XmlSchemaMaxExclusiveFacet ();
+					break;
+				case "maxInclusive":
+					f = new XmlSchemaMaxInclusiveFacet ();
+					break;
+				case "minExclusive":
+					f = new XmlSchemaMinExclusiveFacet ();
+					break;
+				case "minInclusive":
+					f = new XmlSchemaMinInclusiveFacet ();
+					break;
+				case "pattern":
+					f = new XmlSchemaPatternFacet ();
+					break;
+				case "whiteSpace":
+					f = new XmlSchemaWhiteSpaceFacet ();
+					break;
+				case "length":
+					f = new XmlSchemaLengthFacet ();
+					break;
+				case "maxLength":
+					f = new XmlSchemaMaxLengthFacet ();
+					break;
+				case "minLength":
+					f = new XmlSchemaMinLengthFacet ();
+					break;
+				case "fractionDigits":
+					f = new XmlSchemaFractionDigitsFacet ();
+					break;
+				case "totalDigits":
+					f = new XmlSchemaTotalDigitsFacet ();
+					break;
+				default:
+					throw new RelaxngException (String.Format ("XML Schema facet {0} is not recognized or not supported.", p.Name));
+				}
+				f.Value = p.Value;
+				r.Facets.Add (f);
+			}
+
+			// Now we create XmlSchema to handle simple-type
+			// based validation (since there is no other way, 
+			// because of sucky XmlSchemaSimpleType design).
+			schema = new XSchema ();
+			XmlSchemaElement el = new XmlSchemaElement ();
+			el.Name = "root";
+			el.SchemaType = type;
+			schema.Items.Add (el);
+		}
+
+		public override string Name {
+			get { return type.QualifiedName.Name; }
+		}
+
+		public override string NamespaceURI {
+			get { return type.QualifiedName.Namespace; }
+		}
+
+		public override object Parse (string value, XmlReader reader)
+		{
+			// Now we create XmlValidatingReader to handle
+			// simple-type based validation (since there is no
+			// other way, because of sucky XmlSchemaSimpleType
+			// design).
+			XmlValidatingReader v = new XmlValidatingReader (
+				new XmlTextReader (
+					String.Concat ("<root>", value, "</root>"),
+					XmlNodeType.Document,
+					null));
+			v.Schemas.Add (schema);
+			v.Read (); // <root>
+			return v.ReadTypedValue ();
+		}
 	}
 
 	public class XsdPrimitiveType : RelaxngDatatype
