@@ -1,5 +1,8 @@
 2002-04-20  Dietmar Maurer  <dietmar@ximian.com>
 
+	* jit.c (mono_analyze_stack): added a check for (this!=NULL) if we
+	inline methods (to keep semantics)
+
 	* x86.brg: added constant folding for inegers 
 
 	* emit-x86.c (tree_allocate_regs): handle the special case when
