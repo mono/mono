@@ -1,3 +1,7 @@
+2003-07-11  Zoltan Varga  <vargaz@freemail.hu>
+
+	* domain.c (foreach_domain): fix compiler warning.
+
 2003-07-11  Dietmar Maurer  <dietmar@ximian.com>
 
 	* image.c (load_metadata_ptrs): use g_strndup because strndup is
