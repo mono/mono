@@ -1281,14 +1281,15 @@ interface_property_declaration
 	  type IDENTIFIER 
 	  OPEN_BRACE 
 	  { lexer.PropertyParsing = true; }
-	  interface_accesors 
+	  interface_accessors 
 	  { lexer.PropertyParsing = false; }
 	  CLOSE_BRACE
 	  {
-	        int gs = (int) $7;
+                InterfaceAccessorInfo pinfo = (InterfaceAccessorInfo) $7;
 
 		$$ = new InterfaceProperty ((Expression) $3, (string) $4, (bool) $2, 
-					    (gs & 1) == 1, (gs & 2) == 2, (Attributes) $1,
+					    pinfo.has_get, pinfo.has_set, (Attributes) $1,
+                                            pinfo.get_attrs, pinfo.set_attrs,
 					    lexer.Location);
 	  }
 	| opt_attributes
@@ -1299,13 +1300,13 @@ interface_property_declaration
 	  }
 	;
 
-interface_accesors
-	: opt_attributes GET SEMICOLON		{ $$ = 1; }
-	| opt_attributes SET SEMICOLON		{ $$ = 2; }
+interface_accessors
+	: opt_attributes GET SEMICOLON		{ $$ = new InterfaceAccessorInfo (true, false, (Attributes) $1, null); }
+	| opt_attributes SET SEMICOLON		{ $$ = new InterfaceAccessorInfo (false, true, null, (Attributes) $1); }
 	| opt_attributes GET SEMICOLON opt_attributes SET SEMICOLON 
-	  { $$ = 3; }
+	  { $$ = new InterfaceAccessorInfo (true, true, (Attributes) $1, (Attributes) $3); }
 	| opt_attributes SET SEMICOLON opt_attributes GET SEMICOLON
-	  { $$ = 3; }
+	  { $$ = new InterfaceAccessorInfo (true, true, (Attributes) $3, (Attributes) $1); }
 	;
 
 interface_event_declaration
@@ -1333,17 +1334,18 @@ interface_indexer_declaration
 	  OPEN_BRACKET formal_parameter_list CLOSE_BRACKET
 	  OPEN_BRACE 
 	  { lexer.PropertyParsing = true; }
-	  interface_accesors 
+	  interface_accessors 
 	  { lexer.PropertyParsing = false; }
 	  CLOSE_BRACE
 	  {
-		int a_flags = (int) $10;
+		InterfaceAccessorInfo info = (InterfaceAccessorInfo) $10;
 
-	  	bool do_get = (a_flags & 1) == 1;
-		bool do_set = (a_flags & 2) == 2;
+	  	bool do_get = info.has_get;
+		bool do_set = info.has_set;
 
 		$$ = new InterfaceIndexer ((Expression) $3, (Parameters) $6, do_get, do_set,
-					   (bool) $2, (Attributes) $1, lexer.Location);
+					   (bool) $2, (Attributes) $1, (Attributes) info.get_attrs,
+                                           (Attributes) info.set_attrs, lexer.Location);
 	  }
 	;
 
@@ -3882,6 +3884,27 @@ public class VariableDeclaration {
 	{
 	}
 }
+
+/// <summary>
+///  Used to pass around interface property information
+/// </summary>
+public class InterfaceAccessorInfo {
+
+        public bool has_get;
+        public bool has_set;
+        public Attributes get_attrs;
+        public Attributes set_attrs;
+
+        public InterfaceAccessorInfo (bool has_get, bool has_set,
+                                      Attributes get_attrs, Attributes set_attrs)
+        {
+                this.has_get = has_get;
+                this.has_set = has_set;
+                this.get_attrs = get_attrs;
+                this.set_attrs = set_attrs;
+        }
+}
+
 
 // <summary>
 //   A class used to hold info about an indexer declarator

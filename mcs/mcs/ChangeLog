@@ -1,3 +1,20 @@
+2004-02-02  Ravi Pratap M <ravi@ximian.com>
+
+	* cs-parser.jay (interface_accessors): Re-write actions to also
+	store attributes attached to get and set methods. Fix spelling
+	while at it.
+
+	(inteface_property_declaration): Modify accordingly.
+
+	(InterfaceAccessorInfo): New helper class to store information to pass
+	around between rules that use interface_accessors.
+
+	* interface.cs (Emit): Apply attributes on the get and set
+	accessors of properties and indexers too.
+	
+	* attribute.cs (ApplyAttributes): Modify accordingly to use the
+	right MethodBuilder when applying attributes to the get and set accessors.
+
 2004-01-31  Miguel de Icaza  <miguel@ximian.com>
 
 	* cs-tokenizer.cs: Applied patch from Marek Safar to fix bug 53386

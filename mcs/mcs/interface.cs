@@ -355,7 +355,7 @@ namespace Mono.CSharp {
 		void PopulateProperty (TypeContainer parent, DeclSpace decl_space, InterfaceProperty ip)
 		{
 			PropertyBuilder pb;
-			MethodBuilder get = null, set = null;
+
 			ip.Type = this.ResolveTypeExpr (ip.Type, false, ip.Location);
 			if (ip.Type == null)
 				return;
@@ -379,6 +379,8 @@ namespace Mono.CSharp {
 				ip.Name, PropertyAttributes.None,
 				prop_type, null);
 
+                        MethodBuilder get = null, set = null;
+                        
 			if (ip.HasGet){
 				get = TypeBuilder.DefineMethod (
 					"get_" + ip.Name, property_attributes ,
@@ -426,6 +428,8 @@ namespace Mono.CSharp {
 			TypeManager.RegisterProperty (pb, get, set);
 			property_builders.Add (pb);
                         ip.Builder = pb;
+                        ip.GetBuilder = get;
+                        ip.SetBuilder = set;
 		}
 
 		//
@@ -610,6 +614,8 @@ namespace Mono.CSharp {
 			property_builders.Add (pb);
 
                         ii.Builder = pb;
+                        ii.GetBuilder = get_item;
+                        ii.SetBuilder = set_item;
 		}
 
 		/// <summary>
@@ -904,6 +910,12 @@ namespace Mono.CSharp {
                                         
                                         if (ip.OptAttributes != null)
                                         	Attribute.ApplyAttributes (ec, ip.Builder, ip, ip.OptAttributes);
+
+                                        if (ip.GetAttributes != null)
+                                                Attribute.ApplyAttributes (ec, ip.GetBuilder, ip, ip.GetAttributes);
+
+                                        if (ip.SetAttributes != null)
+                                                Attribute.ApplyAttributes (ec, ip.SetBuilder, ip, ip.SetAttributes);
                                 }
                         }
 
@@ -914,6 +926,22 @@ namespace Mono.CSharp {
                                         
                                         if (ie.OptAttributes != null)
                                         	Attribute.ApplyAttributes (ec, ie.Builder, ie, ie.OptAttributes);
+                                }
+                        }
+
+                        if (defined_indexer != null) {
+                                foreach (InterfaceIndexer ii in defined_indexer) {
+                                        EmitContext ec = new EmitContext (tc, this, Location, null,
+                                                                          null, ModFlags, false);
+
+                                        if (ii.OptAttributes != null)
+                                        	Attribute.ApplyAttributes (ec, ii.Builder, ii, ii.OptAttributes);
+                                        
+                                        if (ii.GetAttributes != null)
+                                                Attribute.ApplyAttributes (ec, ii.GetBuilder, ii, ii.GetAttributes);
+                                        
+                                        if (ii.SetAttributes != null)
+                                                Attribute.ApplyAttributes (ec, ii.SetBuilder, ii, ii.SetAttributes);
                                 }
                         }
                 }
@@ -929,11 +957,6 @@ namespace Mono.CSharp {
 								 ".ctor", MemberTypes.Constructor,
 								 BindingFlags.Public | BindingFlags.Instance,
 								 Location.Null);
-			
-			if (!(ml is MethodGroupExpr)) {
-				Console.WriteLine ("Internal error !!!!");
-				return null;
-			}
 			
 			MethodGroupExpr mg = (MethodGroupExpr) ml;
 
@@ -1027,15 +1050,22 @@ namespace Mono.CSharp {
 		public readonly Location Location;
 		public Expression Type;
                 public PropertyBuilder Builder;
+                public MethodBuilder GetBuilder;
+                public MethodBuilder SetBuilder;
+                public Attributes GetAttributes;
+                public Attributes SetAttributes;
 		
 		public InterfaceProperty (Expression type, string name,
 					  bool is_new, bool has_get, bool has_set,
-					  Attributes attrs, Location loc)
-			: base (name, is_new, attrs)
+					  Attributes prop_attrs, Attributes get_attrs,
+                                          Attributes set_attrs, Location loc)
+			: base (name, is_new, prop_attrs)
 		{
 			Type = type;
 			HasGet = has_get;
 			HasSet = has_set;
+                        GetAttributes = get_attrs;
+                        SetAttributes = set_attrs;
 			Location = loc;
 		}
 	}
@@ -1099,15 +1129,23 @@ namespace Mono.CSharp {
 		public readonly Location Location;
 		public Expression Type;
                 public PropertyBuilder Builder;
-		
+                public MethodBuilder GetBuilder;
+                public MethodBuilder SetBuilder;
+                public Attributes GetAttributes;
+                public Attributes SetAttributes;
+                
 		public InterfaceIndexer (Expression type, Parameters args, bool do_get, bool do_set,
-					 bool is_new, Attributes attrs, Location loc)
+					 bool is_new, Attributes attrs,
+                                         Attributes get_attrs, Attributes set_attrs,
+                                         Location loc)
 			: base ("", is_new, attrs)
 		{
 			Type = type;
 			Parameters = args;
 			HasGet = do_get;
 			HasSet = do_set;
+                        GetAttributes = get_attrs;
+                        SetAttributes = set_attrs;
 			Location = loc;
 		}
 

@@ -889,7 +889,15 @@ namespace Mono.CSharp {
 						}
 					} else if (kind is Property || kind is Indexer ||
 						   kind is InterfaceProperty || kind is InterfaceIndexer) {
-						((PropertyBuilder) builder).SetCustomAttribute (cb);
+
+                                                if (builder is PropertyBuilder) 
+                                                        ((PropertyBuilder) builder).SetCustomAttribute (cb);
+                                                //
+                                                // This is for the case we are setting attributes on
+                                                // the get and set accessors
+                                                //
+                                                else if (builder is MethodBuilder)
+                                                        ((MethodBuilder) builder).SetCustomAttribute (cb);
 					} else if (kind is Event || kind is InterfaceEvent) {
 						((MyEventBuilder) builder).SetCustomAttribute (cb);
 					} else if (kind is ParameterBuilder) {
