@@ -1,3 +1,9 @@
+2004-07-18 Anirban Bhattacharjee <banirban@novell.com>i
+	* argument.cs: Introduced AddressOf argument type for tracking AddressOf operator in method parameter
+	* expression.cs: A parameter with AddressOf operator will get converted to Delegate before overload resolution
+	* mb-parser.jay: Omitted two delegate creation expression grammar. This is now taken care by normal object creation expressions since Argument is capable of handling AddressOf operator now
+		This is a fix for bug #59555
+
 2004/07/15  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
 	* driver.cs : Implemented support for -pkg to match mcs (bug #58673)
 

@@ -3612,8 +3612,7 @@ namespace Mono.MonoBASIC {
 				ps_count = 0;
 				po_count = 0;
 			}
-			else
-			{
+			else {
 				ps_count = ps.CountStandardParams();			
 				po_count = ps.CountOptionalParams();
 			}
@@ -3624,8 +3623,7 @@ namespace Mono.MonoBASIC {
 				if (arg_count != pd.Count)
 					return false;
 			}
-			else
-			{
+			else {
 				if ((arg_count < ps_count) || (arg_count > pd_count))
 					return false;	
 			}       
@@ -3635,33 +3633,51 @@ namespace Mono.MonoBASIC {
 					i--;
 
 					Argument a = (Argument) arguments [i];
-					if (a.ArgType == Argument.AType.NoArg)
-					{
+					if (a.ArgType == Argument.AType.NoArg) {
 						Parameter p = (Parameter) ps.FixedParameters[i];
 						a = new Argument (p.ParameterInitializer, Argument.AType.Expression);
 						param_type = p.ParameterInitializer.Type;
 					}
-					else 
-					{
+					else {
 						param_type = pd.ParameterType (i);
 						if (ps != null) {
 							Parameter p = (Parameter) ps.FixedParameters[i];
-							
-							if ((p.ModFlags & Parameter.Modifier.REF) != 0) 
-							{
+							bool IsDelegate = TypeManager.IsDelegateType (param_type);
+
+							if (IsDelegate)	{	
+								if (a.ArgType != Argument.AType.AddressOf)
+									return false;
+
+								a = new Argument ((Expression) a.Expr, Argument.AType.Expression);
+								ArrayList args = new ArrayList();
+								args.Add (a);
+								string param_name = param_type.Name;
+								Expression pname = MonoBASIC.Parser.DecomposeQI (param_name, Location.Null);
+
+								New temp_new = new New ((Expression)pname, args, Location.Null);
+								Expression del_temp = temp_new.DoResolve(ec);
+
+								if (del_temp == null)
+									return false;
+
+								a = new Argument (del_temp, Argument.AType.Expression);
+								if (!a.Resolve(ec, Location.Null))
+									return false;
+							}
+
+							if ((p.ModFlags & Parameter.Modifier.REF) != 0) {
 								a = new Argument (a.Expr, Argument.AType.Ref);
 								if (!a.Resolve(ec,Location.Null))
 									return false;
 							}
 						}
 					}	
-	
+
 					if (!CheckParameterAgainstArgument (ec, pd, i, a, param_type))
 						return (false);
 				}
 			}
-			else
-			{
+			else {
 				// If we have no arguments AND the first parameter is optional
 				// we must check for a candidate (the loop above wouldn't)	
 				if (po_count > 0) {
@@ -3684,6 +3700,7 @@ namespace Mono.MonoBASIC {
 			}
 			// We've found a candidate, so we exchange the dummy NoArg arguments
 			// with new arguments containing the default value for that parameter
+
 			ArrayList newarglist = new ArrayList();
 			for (int i = 0; i < arg_count; i++) {
 				Argument a = (Argument) arguments [i];
@@ -3695,19 +3712,41 @@ namespace Mono.MonoBASIC {
 				if (a.ArgType == Argument.AType.NoArg){
 					a = new Argument (p.ParameterInitializer, Argument.AType.Expression);
 					a.Resolve(ec, Location.Null);
-				}		
-				
-				if ((p != null) && ((p.ModFlags & Parameter.Modifier.REF) != 0))
-				{
+				}
+
+				// ToDo - This part is getting resolved second time within this function
+				// This is a costly operation
+				// The earlier resoved result should be used here.
+				// Has to be done during compiler optimization.
+				if (a.ArgType == Argument.AType.AddressOf) {
+					param_type = pd.ParameterType (i);
+					bool IsDelegate = TypeManager.IsDelegateType (param_type);
+
+					a = new Argument ((Expression) a.Expr, Argument.AType.Expression);
+					ArrayList args = new ArrayList();
+					args.Add (a);
+					string param_name = param_type.Name;
+					Expression pname = MonoBASIC.Parser.DecomposeQI (param_name, Location.Null);
+								
+					New temp_new = new New ((Expression)pname, args, Location.Null);
+					Expression del_temp = temp_new.DoResolve(ec);
+
+					if (del_temp == null)
+						return false;
+
+					a = new Argument (del_temp, Argument.AType.Expression);
+					if (!a.Resolve(ec, Location.Null))
+						return false;
+				}
+
+				if ((p != null) && ((p.ModFlags & Parameter.Modifier.REF) != 0)) {
 					a.ArgType = Argument.AType.Ref;
 					a.Resolve(ec, Location.Null);
 				}	
 				newarglist.Add(a);
 				int n = pd_count - arg_count;
-				if (n > 0) 
-				{
-					for (int x = 0; x < n; x++) 
-					{
+				if (n > 0) {
+					for (int x = 0; x < n; x++) {
 						Parameter op = (Parameter) ps.FixedParameters[x + arg_count];
 						Argument b = new Argument (op.ParameterInitializer, Argument.AType.Expression);
 						b.Resolve(ec, Location.Null);
@@ -4039,7 +4078,8 @@ namespace Mono.MonoBASIC {
 				{
 					if ((a.ArgType == Argument.AType.NoArg) && (!(expr is MethodGroupExpr)))
 						Report.Error (999, "This item cannot have empty arguments");
-					
+
+			
 					if (!a.Resolve (ec, loc))
 						return null;				
 				}

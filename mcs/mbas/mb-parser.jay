@@ -2921,7 +2921,7 @@ array_creation_expression
 	  }
 	;	
 
-delegate_creation_expression
+/*delegate_creation_expression
 	: NEW type OPEN_PARENS ADDRESSOF expression CLOSE_PARENS
 	  {
 	    ArrayList args = new ArrayList();
@@ -2931,12 +2931,12 @@ delegate_creation_expression
 		New n = new New ((Expression) $2, (ArrayList) args, lexer.Location);
 		$$ = n;
 	  }
-	;
+	;*/
 
 new_expression
 	: object_creation_expression
 	| array_creation_expression
-	| delegate_creation_expression
+	//| delegate_creation_expression
 	;
 
 declaration_statement
@@ -3215,7 +3215,7 @@ opt_type_decl
 	  	New n = new New ((Expression)$3, (ArrayList) $5, lexer.Location);
 	  	$$ = (Expression) n;
 	  }
-	| AS NEW type OPEN_PARENS ADDRESSOF expression CLOSE_PARENS 
+	/*| AS NEW type OPEN_PARENS ADDRESSOF expression CLOSE_PARENS 
 	  {
 	    ArrayList args = new ArrayList();
 		Argument arg = new Argument ((Expression) $6, Argument.AType.Expression);
@@ -3223,7 +3223,7 @@ opt_type_decl
 		
 	  	New n = new New ((Expression)$3, (ArrayList) args, lexer.Location);
 	  	$$ = (Expression) n;
-	  }
+	  }*/
  	;
 		
 opt_array_name_modifier
@@ -3372,7 +3372,6 @@ primary_expression
 	| qualified_identifier
 	  {
 		string name = (string) $1;
-
 		$$ = DecomposeQI (name, lexer.Location);
 	  }
 	| parenthesized_expression
@@ -3548,10 +3547,10 @@ argument
 	  {
 	  	$$ = new Argument (new EmptyExpression (), Argument.AType.NoArg);
 	  }
-	/*| ADDRESSOF expression
+	| ADDRESSOF expression
 	  {
 		$$ = new Argument ((Expression) $2, Argument.AType.AddressOf);
-	  }*/
+	  }
 	;
 
 variable_reference

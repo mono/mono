@@ -25,7 +25,8 @@ namespace Mono.MonoBASIC {
 			Expression,
 			Ref,
 			Out,
-			NoArg
+			NoArg,
+			AddressOf
 		};
 
 		public AType ArgType;
@@ -86,6 +87,7 @@ namespace Mono.MonoBASIC {
 			{
 				return true;				
 			}
+
 /*
 			if (ArgType == AType.Ref) {
 				Expr = Expr.Resolve (ec);
@@ -93,12 +95,24 @@ namespace Mono.MonoBASIC {
 					return false;
 
 				Expr = Expr.ResolveLValue (ec, Expr);
-			} else */if (ArgType == AType.Out)
+			} else */
+
+			if (ArgType == AType.Out)
 				Expr = Expr.ResolveLValue (ec, new EmptyExpression ());
+			else if (ArgType == AType.AddressOf) {
+				Expression temp_expr = Expr;
+				SimpleName sn = temp_expr as SimpleName;
+				temp_expr = sn.DoResolveAllowStatic(ec);
+
+				if (temp_expr is MethodGroupExpr)
+					return true;
+
+				ArgType = AType.Expression;
+				Expr = Expr.Resolve (ec);
+			}
 			else
 				Expr = Expr.Resolve (ec);
-
-
+			
 			if (Expr == null)
 				return false;
 
