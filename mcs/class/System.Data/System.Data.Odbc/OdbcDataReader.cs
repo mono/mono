@@ -138,7 +138,7 @@ namespace System.Data.Odbc
 					return i;
 				i++;
 			}
-			return 0;
+			return -1;
 		}
 
 		// Dynamically load column descriptions as needed.
@@ -338,9 +338,6 @@ namespace System.Data.Odbc
 
 		public int GetOrdinal (string name)
 		{
-			if (currentRow == -1)
-				throw new IndexOutOfRangeException ();
-
 			int i=ColIndex(name);
 
 			if (i==-1)
