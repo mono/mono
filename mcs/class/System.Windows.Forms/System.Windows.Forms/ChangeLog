@@ -109,6 +109,44 @@
 * View.cs
 * Added enums.
 * All System.Windows.Forms enums complete with correct values.
+ 2002-5-8 Dennis Hayes <dennish@raytek.com>
+Dennis Hayes <dennish@raytek.com>
+Checking in new System.Windows.forms classes (a* to c*) for 
+Jaak Simm <jaaksimm@firm.ee>
+* AmbientProperties.cs
+* Application.cs
+* ApplicationContext.cs
+* AxHost.cs
+* BaseCollection.cs
+* Binding.cs
+* BindingContext.cs
+* BindingManagerBase.cs
+* BindingsCollection.cs
+* Button.cs
+* ButtonBase.cs
+* CheckBox.cs
+* CheckedListBox.cs
+* Clipboard.cs
+* ColorDialog.cs
+* ColumnClickEventArgs.cs
+* ColumnHeader.cs
+* ComboBox.cs
+* CommonDialog.cs
+* ContainerControl.cs
+* ContentsResizedEventArgs.cs
+* ContextMenu.cs
+* Control.cs
+* ControlBindingsCollection.cs
+* ControlEventArgs.cs
+* ControlPaint.cs
+* ConvertEventArgs.cs
+* CreateParams.cs
+* CurrencyManager.cs
+* Cursor.cs
+* CursorConverter.cs
+* Cursors.cs
+* Classes stubbed and commented out.
+
 
 
 
