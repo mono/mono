@@ -421,7 +421,7 @@ namespace System.Xml.XPath
 				case XPathResultType.Number:
 				{
 					double num = Convert.ToDouble (result);
-					return (num != 0.0 && num != -0.0 && num != Double.NaN);
+					return (num != 0.0 && num != -0.0 && !Double.IsNaN (num));
 				}
 				case XPathResultType.Boolean:
 					return (bool) result;
