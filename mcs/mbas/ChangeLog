@@ -1,3 +1,8 @@
+2003/12/18  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
+	* class.cs : case-sensitiveness when tracking the entry-point removed
+	* driver.cs : IsSWFApp would try to pass a null 'mainclass' to the hashtable indexer, throwing an exception
+		(even for correct programs because of the bug above). Now this condition is tested before
+
 2003/12/06  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
 	* ecore.cs : problems trying to implicit convert OMITTED arguments, solved
 	* mb-tokenizer.cs, mb-parser.jay, typemanager.cs : support for the date primitive type and date literals

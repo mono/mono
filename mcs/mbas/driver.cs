@@ -697,21 +697,19 @@ namespace Mono.Languages
 		
 		bool IsSWFApp()
 		{
-			bool hasSWF = false, isForm = false;
 			string mainclass = GetFQMainClass();
 			
-			foreach (string r in references) {
-				if (r.IndexOf ("System.Windows.Forms") >= 0) {
-					hasSWF = true;
-					break;	
-				}	
-			}	
-			if (mainclass != ".") {
-				Type t = TypeManager.LookupType(mainclass);
-				if (t != null) 
-					isForm = t.IsSubclassOf (TypeManager.LookupType("System.Windows.Forms.Form"));
+			if (mainclass != null) {
+				foreach (string r in references) {
+					if (r.IndexOf ("System.Windows.Forms") >= 0) {
+						Type t = TypeManager.LookupType(mainclass);
+						if (t != null) 
+							return t.IsSubclassOf (TypeManager.LookupType("System.Windows.Forms.Form"));
+						break;	
+					}	
+				}
 			}
-			return (hasSWF && isForm);
+			return false;
 		}
 		
 		string GetFQMainClass()

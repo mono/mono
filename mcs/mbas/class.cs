@@ -2382,7 +2382,7 @@ namespace Mono.MonoBASIC {
 			//
 			// This is used to track the Entry Point,
 			//
-			if (Name == "Main" &&
+			if (Name.ToUpper() == "MAIN" &&
 			    ((ModFlags & Modifiers.STATIC) != 0) && 
 			    (RootContext.MainClass == null ||
 			     RootContext.MainClass == parent.TypeBuilder.FullName ||
