@@ -1,5 +1,10 @@
 2002-06-11  Nick Drochak  <ndrochak@gol.com>
 
+	* StringTest.cs: Check for "end of string" conditions for IndexOf() and
+	Substring().
+
+2002-06-11  Nick Drochak  <ndrochak@gol.com>
+
 	* DoubleTest.cs: Add some more detail to failure message.
 	* Int64Test.cs: Add some details, and fix a copy-paste error.
 	* UInt32Test.cs: Fix currency symbol/culture issues

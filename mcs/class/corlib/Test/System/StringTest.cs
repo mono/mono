@@ -376,6 +376,7 @@ public class StringTest : TestCase
 		AssertEquals("stepped char index", 2, s1.IndexOf('i', 1));
 		AssertEquals("stepped char index", 4, s1.IndexOf('i', 3));
 		AssertEquals("stepped char index", -1, s1.IndexOf('i', 5));
+		AssertEquals("stepped char index", -1, s1.IndexOf('l', s1.Length));
 
 		AssertEquals("stepped limited char index", 
 			     1, s1.IndexOf('r', 1, 1));
@@ -957,6 +958,8 @@ public class StringTest : TestCase
 			     s1.Substring(4));
 		AssertEquals("midstring", "igin",
 			     s1.Substring(2, 4));
+		AssertEquals("at end", "",
+			     s1.Substring(s1.Length, 0));
 	}
 
 	public void TestToCharArray() {
