@@ -29,9 +29,12 @@
 //	Jaak Simm		jaaksimm@firm.ee
 //	John Sohn		jsohn@columbus.rr.com
 //
-// $Revision: 1.24 $
+// $Revision: 1.25 $
 // $Modtime: $
 // $Log: Control.cs,v $
+// Revision 1.25  2004/08/12 19:31:19  pbartok
+// - Fixed Anchoring bugs
+//
 // Revision 1.24  2004/08/12 16:10:42  jackson
 // Add missing properties
 //
@@ -1245,10 +1248,12 @@ namespace System.Windows.Forms
 		public void PerformLayout(Control affectedControl, string affectedProperty) {
 			LayoutEventArgs levent = new LayoutEventArgs(affectedControl, affectedProperty);
 
-Console.WriteLine("Performing layout on control {0}", this);
 			if (layout_suspended>0) {
 				return;
 			}
+
+			// Prevent recursion
+			//in_layout=true;
 
 			// Prevent us from getting messed up
 			layout_suspended++;
@@ -1272,7 +1277,6 @@ Console.WriteLine("Performing layout on control {0}", this);
 
 						case DockStyle.Left: {
 							child.SetBounds(space.Left, space.Y, child.Width, space.Height);
-Console.WriteLine("DockStyle.Left: Moving control {0} to {1}:{2} {3}x{4}", this, space.Left, space.Y, child.Width, space.Height);
 							space.X+=child.Width;
 							space.Width-=child.Width;
 							break;
@@ -1280,7 +1284,6 @@ Console.WriteLine("DockStyle.Left: Moving control {0} to {1}:{2} {3}x{4}", this,
 
 						case DockStyle.Top: {
 							child.SetBounds(space.Left, space.Y, space.Width, child.Height);
-Console.WriteLine("DockStyle.Top: Moving control {0} to {1}:{2} {3}x{4}", this, space.Left, space.Y, child.Width, space.Height);
 							space.Y+=child.Height;
 							space.Height-=child.Height;
 							break;
@@ -1288,20 +1291,17 @@ Console.WriteLine("DockStyle.Top: Moving control {0} to {1}:{2} {3}x{4}", this, 
 				
 						case DockStyle.Right: {
 							child.SetBounds(space.Right-child.Width, space.Y, child.Width, space.Height);
-Console.WriteLine("DockStyle.Right: Moving control {0} to {1}:{2} {3}x{4}", this, space.Left, space.Y, child.Width, space.Height);
 							space.Width-=child.Width;
 							break;
 						}
 
 						case DockStyle.Bottom: {
 							child.SetBounds(space.Left, space.Bottom-child.Height, space.Width, child.Height);
-Console.WriteLine("DockStyle.Bottom: Moving control {0} to {1}:{2} {3}x{4}", this, space.Left, space.Y, child.Width, space.Height);
 							space.Height-=child.Height;
 							break;
 						}
 
 						case DockStyle.Fill: {
-Console.WriteLine("DockStyle.Fill: Moving control {0} to {1}:{2} {3}x{4} (prev width/height: {5}x{6}", child, space.Left, space.Y, space.Width, space.Height, child.Width, child.Height);
 							child.SetBounds(space.Left, space.Top, space.Width, space.Height);
 							space.Width=0;
 							space.Height=0;
@@ -1326,8 +1326,8 @@ Console.WriteLine("DockStyle.Fill: Moving control {0} to {1}:{2} {3}x{4} (prev w
 
 					left=child.Left-space.Left;
 					top=child.Top-space.Top;
-					width=prev_size.Width-child.Width-child.Left;
-					height=prev_size.Height-child.Height-child.Top;
+					width=child.Width;
+					height=child.Height;
 
 					diff_width=space.Width-prev_size.Width;
 					diff_height=space.Height-prev_size.Height;
@@ -1510,11 +1510,9 @@ Console.WriteLine("DockStyle.Fill: Moving control {0} to {1}:{2} {3}x{4} (prev w
 					if (GetStyle(ControlStyles.ResizeRedraw)) {
 						Invalidate();
 					}
-
 					// Call UpdateBounds, the GUI already has the sizes
 					UpdateBounds (bounds.X, bounds.Y, LowOrder ((int) m.LParam.ToInt32 ()),
 						HighOrder ((int) m.LParam.ToInt32 ()));
-					
 					DefWndProc(ref m);	
 					break;				
 				}
