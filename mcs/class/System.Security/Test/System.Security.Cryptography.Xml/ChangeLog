@@ -1,0 +1,20 @@
+2002-11-20  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* AllTests.cs: New. Added suites for very listed files.
+	* DataObjectTest.cs: New. Test suite for DataObject.
+	* DSAKeyValueTest.cs: New. Test suite for DSAKeyValue.
+	* KeyInfoNameTest.cs: New. Test suite for KeyInfoName.
+	* KeyInfoNodeTest.cs: New. Test suite for KeyInfoNode.
+	* KeyInfoRetrievalMethodTest.cs: New. Test suite for DSAKeyValue.
+	* KeyInfoTest.cs: New. Test suite for KeyInfo.
+	* KeyInfoX509DataTest.cs: New. Test suite for KeyInfoX509Data.
+	* ReferenceTest.cs: New. Incomplete test suite for Reference.
+	* RSAKeyValueTest.cs: New. Test suite for RSAKeyValue.
+	* SignatureTest.cs: New. Partial test suite for Signature.
+	* SignedInfoTest.cs: New. Partial test suite for SignedInfo.
+	* SignedXmlTest.cs: New. Partial test suite for SignedXml.
+	* TransformChainTest.cs: New. Test suite for TransformChain.
+	* XmlDsigBase64TransformTest.cs: New. Partial test suite for 
+	XmlDsigBase64Transform
+	* XmlDsigXsltTransformTest.cs: New. Partial test suite for 
+	XmlDsigXsltTransform.
