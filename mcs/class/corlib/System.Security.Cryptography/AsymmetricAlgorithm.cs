@@ -62,7 +62,7 @@ namespace System.Security.Cryptography {
 		public virtual int KeySize {
 			get { return this.KeySizeValue; }
 			set {
-				if (!IsLegalKeySize (this.LegalKeySizesValue, value))
+				if (!KeySizes.IsLegalKeySize (this.LegalKeySizesValue, value))
 					throw new CryptographicException("key size not supported by algorithm");
 				
 				this.KeySizeValue = value;
@@ -103,17 +103,6 @@ namespace System.Security.Cryptography {
 		/// Returns an XML string representation the current AsymmetricAlgorithm object
 		/// </summary>
 		public abstract string ToXmlString (bool includePrivateParameters);		
-		
-		private bool IsLegalKeySize (KeySizes[] LegalKeys, int Size) 
-		{
-			foreach (KeySizes LegalKeySize in LegalKeys) {
-				for (int i=LegalKeySize.MinSize; i<=LegalKeySize.MaxSize; i+=LegalKeySize.SkipSize) {
-					if (i == Size)
-						return true;
-				}
-			}
-			return false;
-		}
 		
 		/// <summary>
 		/// Creates the default implementation of the default asymmetric algorithm (RSA).

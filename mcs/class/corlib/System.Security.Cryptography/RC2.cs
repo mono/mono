@@ -32,7 +32,7 @@ namespace System.Security.Cryptography {
 					return EffectiveKeySizeValue;
 			}
 			set { 
-				if (!IsLegalKeySize (LegalKeySizesValue, value))
+				if (!KeySizes.IsLegalKeySize (LegalKeySizesValue, value))
 					throw new CryptographicException ("key size not supported by algorithm");
 				EffectiveKeySizeValue = value; 
 			}

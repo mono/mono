@@ -1,5 +1,18 @@
 2003-04-06  Sebastien Pouliot  <spouliot@videotron.ca>
 
+	* AsymmetricAlgorithm.cs: Moved IsLegalKeySize to KeySizes.cs.
+	* DSACryptoServiceProvider.cs: Fix bug where key generation always
+	resulted in 1024 bits keypair.
+	* KeySizes.cs: Added internal IsLegalKeySize and IsLegal to avoid
+	duplication in both AsymmetricAlgorithm and SymmetricAlgorithm.
+	* RC2.cs: Modified to use IsLegalKeySize from KeySizes.cs.
+	* RSACryptoServiceProvider.cs: Fix bug where key generation always
+	resulted in 1024 bits keypair. Should fix unit test failure under
+	Linux.
+	* SymmetricAlgorithm.cs: Moved IsLegalKeySize to KeySizes.cs.
+
+2003-04-06  Sebastien Pouliot  <spouliot@videotron.ca>
+
 	* CryptoStream.cs: Partial fix for bug #40689 (workaround). Does not 
 	throw a NotSupportedException on closing a CryptoStream in read mode
 	(like MS does but unlike MS documents).

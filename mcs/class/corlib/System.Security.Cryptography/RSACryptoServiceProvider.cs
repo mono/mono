@@ -45,19 +45,19 @@ namespace System.Security.Cryptography {
 			// So we'll generate the keypair only when (and if) it's being
 			// used (or exported). This should save us a lot of time (at 
 			// least in the unit tests).
-			Common (null);
+			Common (1024, null);
 		}
 	
 		public RSACryptoServiceProvider (CspParameters parameters) 
 		{
-			Common (parameters);
+			Common (1024, parameters);
 			// no keypair generation done at this stage
 		}
 	
 		public RSACryptoServiceProvider (int dwKeySize) 
 		{
 			// Here it's clear that we need to generate a new keypair
-			Common (null);
+			Common (dwKeySize, null);
 			// no keypair generation done at this stage
 		}
 	
@@ -65,14 +65,14 @@ namespace System.Security.Cryptography {
 		// only sense in Windows - what do we do elsewhere ?
 		public RSACryptoServiceProvider (int dwKeySize, CspParameters parameters) 
 		{
-			Common (parameters);
+			Common (dwKeySize, parameters);
 			// no keypair generation done at this stage
 		}
 	
 		[MonoTODO("Persistance")]
 		// FIXME: We currently dont link with MS CAPI. Anyway this makes
 		// only sense in Windows - what do we do elsewhere ?
-		private void Common (CspParameters p) 
+		private void Common (int dwKeySize, CspParameters p) 
 		{
 			if (p == null) {
 				cspParams = new CspParameters ();
@@ -86,16 +86,14 @@ namespace System.Security.Cryptography {
 			// we limit ourselve to 2048 because (a) BigInteger limits and (b) it's so SLOW
 			LegalKeySizesValue = new KeySizes [1];
 			LegalKeySizesValue [0] = new KeySizes (384, 2048, 8);
+			KeySize = dwKeySize;
 		}
 	
-		private void GenerateKeyPair (int dwKeySize) 
+		private void GenerateKeyPair () 
 		{
-			// will throw an exception is key size isn't supported
-			base.KeySize = dwKeySize;
-	
 			// p and q values should have a length of half the strength in bits
-			int pbitlength = ((dwKeySize + 1) >> 1);
-			int qbitlength = (dwKeySize - pbitlength);
+			int pbitlength = ((KeySize + 1) >> 1);
+			int qbitlength = (KeySize - pbitlength);
 			e = new BigInteger (17); // fixed
 	
 			// generate p, prime and (p-1) relatively prime to e
@@ -116,7 +114,7 @@ namespace System.Security.Cryptography {
 	
 				// calculate the modulus
 				n = p * q;
-				if (n.bitCount () == dwKeySize)
+				if (n.bitCount () == KeySize)
 					break;
 	
 				// if we get here our primes aren't big enough, make the largest
@@ -213,7 +211,7 @@ namespace System.Security.Cryptography {
 		public override byte[] EncryptValue (byte[] rgb) 
 		{
 			if (!keypairGenerated)
-				GenerateKeyPair (1024);
+				GenerateKeyPair ();
 	
 			// TODO: With CRT
 			// without CRT
@@ -227,7 +225,7 @@ namespace System.Security.Cryptography {
 			if ((includePrivateParameters) && (!privateKeyExportable))
 				throw new CryptographicException ("cannot export private key");
 			if (!keypairGenerated)
-				GenerateKeyPair (1024);
+				GenerateKeyPair ();
 	
 			RSAParameters param = new RSAParameters();
 			param.Exponent = e.getBytes ();
@@ -329,7 +327,7 @@ namespace System.Security.Cryptography {
 				throw new ArgumentNullException ();
 	
 			if (!keypairGenerated)
-				GenerateKeyPair (1024);
+				GenerateKeyPair ();
 	
 			ValidateHash (str, rgbHash.Length);
 	

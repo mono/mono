@@ -371,7 +371,7 @@ namespace System.Security.Cryptography {
 		public virtual int BlockSize {
 			get { return this.BlockSizeValue; }
 			set {
-				if (IsLegalKeySize(this.LegalBlockSizesValue, value))
+				if (KeySizes.IsLegalKeySize (this.LegalBlockSizesValue, value))
 					this.BlockSizeValue = value;
 				else
 					throw new CryptographicException("block size not supported by algorithm");
@@ -427,7 +427,7 @@ namespace System.Security.Cryptography {
 				if (value == null)
 					throw new ArgumentNullException ("tried setting key to null");
 
-				if (!IsLegalKeySize (this.LegalKeySizesValue, value.Length * 8))
+				if (!KeySizes.IsLegalKeySize (this.LegalKeySizesValue, value.Length * 8))
 					throw new CryptographicException ("key size not supported by algorithm");
 
 				this.KeySizeValue = value.Length * 8;
@@ -442,7 +442,7 @@ namespace System.Security.Cryptography {
 		public virtual int KeySize {
 			get { return this.KeySizeValue; }
 			set {
-				if (!IsLegalKeySize (this.LegalKeySizesValue, value))
+				if (!KeySizes.IsLegalKeySize (this.LegalKeySizesValue, value))
 					throw new CryptographicException ("key size not supported by algorithm");
 				
 				this.KeyValue = null;
@@ -526,24 +526,13 @@ namespace System.Security.Cryptography {
 		/// </summary>
 		public abstract void GenerateKey ();
 
-		internal bool IsLegalKeySize (KeySizes[] LegalKeys, int Size) 
-		{
-			foreach (KeySizes LegalKeySize in LegalKeys) {
-				for (int i=LegalKeySize.MinSize; i<=LegalKeySize.MaxSize; i+=LegalKeySize.SkipSize) {
-					if (i == Size)
-						return true;
-				}
-			}
-			return false;
-		}
-		
 		/// <summary>
 		/// Checks wether the given keyLength is valid for the current algorithm
 		/// </summary>
 		/// <param name="bitLength">the given keyLength</param>
 		public bool ValidKeySize (int bitLength) 
 		{
-			return IsLegalKeySize (LegalKeySizesValue, bitLength);
+			return KeySizes.IsLegalKeySize (LegalKeySizesValue, bitLength);
 		}
 		
 		/// <summary>

@@ -1,12 +1,13 @@
 //
 // System.Security.Cryptography KeySizes Class implementation
 //
-// Author:
-//   Matthew S. Ford (Matthew.S.Ford@Rose-Hulman.Edu)
+// Authors:
+//	Matthew S. Ford (Matthew.S.Ford@Rose-Hulman.Edu)
+//	Ben Maurer (bmaurer@users.sf.net)
+//	Sebastien Pouliot (spouliot@motus.com)
 //
 // Copyright 2001 by Matthew S. Ford.
 //
-
 
 namespace System.Security.Cryptography {
 	
@@ -24,7 +25,8 @@ namespace System.Security.Cryptography {
 		/// <param name="minSize">The minimum size key allowed for this cipher in bits.</param>
 		/// <param name="maxSize">The maximum size key allowed for this cipher in bits.</param>
 		/// <param name="skipSize">The jump/skip between the valid key sizes in bits.</param>
-		public KeySizes (int minSize, int maxSize, int skipSize) {
+		public KeySizes (int minSize, int maxSize, int skipSize) 
+		{
 			_maxSize = maxSize;
 			_minSize = minSize;
 			_skipSize = skipSize;
@@ -34,28 +36,43 @@ namespace System.Security.Cryptography {
 		/// Returns the maximum valid key size in bits;
 		/// </summary>
 		public int MaxSize {
-			get {
-				return _maxSize;
-			}
+			get { return _maxSize; }
 		}
 		
 		/// <summary>
 		/// Returns the minimum valid key size in bits;
 		/// </summary>
 		public int MinSize {
-			get {
-				return _minSize;
-			}
+			get { return _minSize; }
 		}
 		
 		/// <summary>
 		/// Returns the skip between valid key sizes in bits;
 		/// </summary>
 		public int SkipSize {
-			get {
-				return _skipSize;
+			get { return _skipSize; }
+		}
+	
+		/// <summary>
+		/// Checks if a key of keySize bits is valid, according to this
+		/// rule.
+		/// </summary>
+		/// <param name="keySize">The keysize to check.</param>
+		/// <returns>True if the key size is legal, else false.</returns>
+		internal bool IsLegal (int keySize) 
+		{
+			int ks = keySize - MinSize;
+			bool result = ((ks >= 0) && (keySize <= MaxSize));
+			return ((SkipSize == 0) ? result : (result && (ks % SkipSize == 0)));
+		}
+
+		internal static bool IsLegalKeySize (KeySizes[] legalKeys, int size) 
+		{
+			foreach (KeySizes legalKeySize in legalKeys) {
+				if (legalKeySize.IsLegal (size)) 
+					return true;
 			}
-		}		
+			return false;
+		}
 	}
 }
-

@@ -47,12 +47,12 @@ namespace System.Security.Cryptography {
 			// So we'll generate the keypair only when (and if) it's being
 			// used (or exported). This should save us a lot of time (at 
 			// least in the unit tests).
-			Common (null);
+			Common (1024, null);
 		}
 	
 		public DSACryptoServiceProvider (CspParameters parameters) 
 		{
-			Common (parameters);
+			Common (1024, parameters);
 			// no keypair generation done at this stage
 		}
 	
@@ -60,15 +60,15 @@ namespace System.Security.Cryptography {
 		public DSACryptoServiceProvider (int dwKeySize) 
 		{
 			// Here it's clear that we need to generate a new keypair
-			Common (null);
-			Generate (dwKeySize);
+			Common (dwKeySize, null);
+			Generate ();
 		}
 	
 		// This constructor will generate a new keypair
 		public DSACryptoServiceProvider (int dwKeySize, CspParameters parameters) 
 		{
-			Common (parameters);
-			Generate (dwKeySize);
+			Common (dwKeySize, parameters);
+			Generate ();
 		}
 	
 		~DSACryptoServiceProvider () 
@@ -77,7 +77,7 @@ namespace System.Security.Cryptography {
 		}
 	
 		[MonoTODO("Persistance")]
-		private void Common (CspParameters p) 
+		private void Common (int dwKeySize, CspParameters p) 
 		{
 			rng = RandomNumberGenerator.Create ();
 			cspParams = new CspParameters ();
@@ -91,14 +91,14 @@ namespace System.Security.Cryptography {
 			}
 			LegalKeySizesValue = new KeySizes [1];
 			LegalKeySizesValue [0] = new KeySizes (512, 1024, 64);
+			// will throw an exception is key size isn't supported
+			KeySize = dwKeySize;
 		}
 	
 		// generate both the group and the keypair
-		private void Generate (int keyLength) 
+		private void Generate () 
 		{
-			// will throw an exception is key size isn't supported
-			base.KeySize = keyLength;
-			GenerateParams (keyLength);
+			GenerateParams (base.KeySize);
 			GenerateKeyPair ();
 			keypairGenerated = true;
 		}
@@ -308,7 +308,7 @@ namespace System.Security.Cryptography {
 				throw new Exception (); // not documented
 	
 			if (!keypairGenerated)
-				Generate (1024);
+				Generate ();
 	
 			BigInteger m = new BigInteger (rgbHash);
 			// (a) Select a random secret integer k; 0 < k < q.
@@ -414,7 +414,7 @@ namespace System.Security.Cryptography {
 			if ((includePrivateParameters) && (!privateKeyExportable))
 				throw new CryptographicException ("cannot export private key");
 			if (!keypairGenerated)
-				Generate (1024);
+				Generate ();
 	
 			DSAParameters param = new DSAParameters();
 			// all parameters must be in multiple of 4 bytes arrays
