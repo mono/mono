@@ -35,8 +35,8 @@ namespace System.Web.UI
 {
 	public interface IMobileTextWriter
 	{
-		void AddRecognizedAttribute (string element string attribute);
-		void RemoveRecognizedAttribute (string element string attribute);
+		void AddRecognizedAttribute (string element, string attribute);
+		void RemoveRecognizedAttribute (string element, string attribute);
 	}
 }
 #endif

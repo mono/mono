@@ -1,3 +1,9 @@
+2004-08-31 Sanjay Gupta <gsanjay@novell.com>
+
+	* IDReferencePropertyAttribute.cs: Corrected and changed from interface
+          to class.
+	* IMobileTextWriter.cs: Corrected method signatures.
+
 2004-08-09 Sanjay Gupta <gsanjay@novell.com>
 
 	* ControlSkinProc.cs:

@@ -33,15 +33,32 @@ using System;
 
 namespace System.Web.UI
 {
-	public interface IDReferencePropertyAttribute
+	public sealed class IDReferencePropertyAttribute : Attribute
 	{
-		public IDReferencePropertyAttribute ();
-		public IDReferencePropertyAttribute (Type controlReferenceType);
-		
-		public override bool Equals (object obj);
-		public override int GetHashCode ();
+		Type controlType;
 
-		public Type ReferencedControlType { get; }
+		public IDReferencePropertyAttribute ()
+		{
+		}
+
+		public IDReferencePropertyAttribute (Type controlReferenceType)
+		{
+			controlType = controlReferenceType;
+		}
+		
+		public override bool Equals (object obj)
+		{
+			throw new NotImplementedException();
+		}
+		
+		public override int GetHashCode ()
+		{
+			throw new NotImplementedException();
+		}
+
+		public Type ReferencedControlType { 
+			get { return controlType; }
+		}
 	}
 }
 #endif
