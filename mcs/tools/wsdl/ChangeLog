@@ -1,3 +1,9 @@
+2004-01-18  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* MonoWSDL.cs: Added new option that prints a sample request and response
+	for a web service operation.
+	* SampleGenerator.cs: Added.
+
 2003-12-10  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* MonoWSDL.cs: Return error codes.

@@ -15,7 +15,6 @@ using System.CodeDom;
 using System.CodeDom.Compiler;
 using System.IO;
 using System.Net;
-using System.Text;
 using System.Web.Services.Description;
 
 using Microsoft.CSharp;
@@ -190,6 +189,7 @@ namespace Mono.WebServices
 		{
 			// FIXME validate
 			set { protocol = value; }
+			get { return protocol; }
 		}
 		
 		///
@@ -267,8 +267,12 @@ namespace Mono.WebServices
 				hasWarnings = true;
 			}
 			
-			string serviceName = ((ServiceDescription)descriptions[0]).Services[0].Name;
-			WriteCodeUnit(codeUnit, serviceName);
+			ServiceDescription sdesc = (ServiceDescription)descriptions[0];
+			if (sdesc.Services.Count > 0)
+			{
+				string serviceName = sdesc.Services[0].Name;
+				WriteCodeUnit(codeUnit, serviceName);
+			}
 			
 			return hasWarnings;
 		}
@@ -365,6 +369,7 @@ namespace Mono.WebServices
 			+ "                                (default), HttpGet, HttpPost\n"
 			+ "   -server                      Generate server instead of client proxy code.\n"
 			+ "   -username:username           Username used to contact server (short -u)\n"
+			+ "   -sample:[binding/]operation  Display a sample SOAP request and response\n"
 			+ "   -?                           Display this message\n"
 			+ "\n"
 			+ "Options can be of the forms  -option, --option or /option\n";
@@ -378,6 +383,7 @@ namespace Mono.WebServices
 		bool noLogo = false;
 		bool help = false;
 		bool hasURL = false;
+		string sampleSoap = null;
 		
 		// FIXME implement these options
 		// (are they are usable by the System.Net.WebProxy class???)
@@ -509,6 +515,10 @@ namespace Mono.WebServices
 				case "username":
 				    retriever.Username = value;
 				    break;
+					
+				case "sample":
+					sampleSoap = value;
+					break;
 
 				case "?":
 				    help = true;
@@ -559,6 +569,12 @@ namespace Mono.WebServices
 					ReadDocuments (serviceDescription);
 				}
 				
+				if (sampleSoap != null)
+				{
+					ConsoleSampleGenerator.Generate (descriptions, schemas, sampleSoap, generator.Protocol);
+					return 0;
+				}
+				
 				// generate the code
 				if (generator.GenerateCode (descriptions, schemas))
 					return 1;
@@ -567,7 +583,7 @@ namespace Mono.WebServices
 			}
 			catch (Exception exception)
 			{
-				Console.WriteLine("Error: {0}", exception.Message);
+				Console.WriteLine("Error: {0}", exception);
 				// FIXME: surpress this except for when debug is enabled
 				//Console.WriteLine("Stack:\n {0}", exception.StackTrace);
 				return 2;
