@@ -1,4 +1,8 @@
 
+Sat Dec 13 09:45:56 CET 2003 Paolo Molaro <lupus@ximian.com>
+
+	* mini-ppc.c, basic.cs: shl_imm fix with test.
+
 Fri Dec 12 21:25:14 CET 2003 Paolo Molaro <lupus@ximian.com>
 
 	* inssel-ppc.brg, mini-ppc.h, mini-ppc.c: support for passing 
