@@ -232,6 +232,11 @@ namespace System.Web {
 			varyByCustom = custom;
 		}
 
+		internal string GetVaryByCustom ()
+		{
+			return varyByCustom;
+		}
+
 		[MonoTODO]
 		public void SetAllowResponseInBrowserHistory (bool allow)
 		{

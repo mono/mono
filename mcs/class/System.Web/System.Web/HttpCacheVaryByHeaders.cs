@@ -106,5 +106,18 @@ namespace System.Web {
             this["Accept-Language"] = value;
          }
       }   
+
+	internal string [] GetHeaderNames ()
+	   {
+		   if (_Items == null)
+			   return null;
+
+		   string[] headers = new string [_Items.Count];
+		   int i = 0;
+		   foreach (string header in _Items.Keys)
+			   headers [i++] = header;
+		   
+		   return headers;
+	   }
    }
 }
