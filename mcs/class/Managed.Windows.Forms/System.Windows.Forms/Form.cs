@@ -138,7 +138,7 @@ namespace System.Windows.Forms {
 
 			protected override void OnResize(EventArgs e) {
 				base.OnResize(e);
-				//owner.SetBoundsCore(owner.Bounds.X, owner.Bounds.Y, ClientSize.Width, ClientSize.Height, BoundsSpecified.All);
+
 				if (owner.menu == null) {
 					owner.SetBoundsCore(0, 0, ClientSize.Width, ClientSize.Height, BoundsSpecified.All);
 				} else {
@@ -212,7 +212,11 @@ Console.WriteLine("ParentForm got focus");
 			}
 			#endregion	// FormParentWindow Class Protected Instance Methods
 
-			#region FormParentWindow Class Private Methods
+			#region FormParentWindow Class Private & Internal Methods
+			internal void MenuChanged() {
+				OnResize(EventArgs.Empty);
+			}
+
 			private void OnMouseDownForm (object sender, MouseEventArgs e) {			
 				if (owner.menu != null)
 					owner.menu.OnMouseDown (owner, e);
@@ -233,7 +237,7 @@ Console.WriteLine("ParentForm got focus");
 			private void OnFormTextChanged(object sender, EventArgs e) {
 				this.Text = ((Control)sender).Text;
 			}
-			#endregion	// FormParentWindow Class Private Methods
+			#endregion	// FormParentWindow Class Private & Internal Methods
 		}
 		#endregion	// Private Classes
 
@@ -498,22 +502,17 @@ Console.WriteLine("ParentForm got focus");
 
 			set {
 				if (menu != value) {
-					if (value == null) {
-						form_parent_window.Width = form_parent_window.Width;	// Trigger a resize
-					}
-
-					menu = value;
-
 					// To simulate the non-client are for menus we create a 
 					// new control as the 'client area' of our form.  This
 					// way, the origin stays 0,0 and we don't have to fiddle with
 					// coordinates. The menu area is part of the original container
-					if (menu != null) {
-						form_parent_window.Width = form_parent_window.Width;	// Trigger a resize
-					}
+
+					menu = value;
 
 					menu.SetForm (this);
 					MenuAPI.SetMenuBarWindow (menu.Handle, form_parent_window);
+
+					form_parent_window.MenuChanged();
 				}
 			}
 		}
@@ -785,6 +784,7 @@ Console.WriteLine("ParentForm got focus");
 			XplatUI.SetModal(form_parent_window.window.Handle, true);
 
 			Show();
+			PerformLayout();
 
 			is_modal = true;
 			Application.ModalRun(this);
@@ -822,7 +822,9 @@ Console.WriteLine("ParentForm got focus");
 		protected override void OnCreateControl() {
 			base.OnCreateControl ();
 			if (this.ActiveControl == null) {
-				SelectNextControl(this, true, true, true, true);
+				if (SelectNextControl(this, true, true, true, true) == false) {
+					Select(this);
+				}
 			}
 			OnLoad(EventArgs.Empty);
 		}

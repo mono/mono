@@ -676,7 +676,7 @@ namespace System.Windows.Forms
 				
 		}
 
-		private bool Select(Control control) {
+		internal bool Select(Control control) {
 			Control	parent;
 			IContainerControl container;
 
@@ -2101,9 +2101,10 @@ namespace System.Windows.Forms
 		}
 
 		public bool Focus() {
-			if (IsHandleCreated) {
+			if (IsHandleCreated && !has_focus) {
 				XplatUI.SetFocus(window.Handle);
 			}
+			has_focus = true;
 			return true;
 		}
 

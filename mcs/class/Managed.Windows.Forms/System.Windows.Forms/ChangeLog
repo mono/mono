@@ -1,3 +1,21 @@
+2005-01-18  Peter Bartok  <pbartok@novell.com>
+
+	* Form.cs: 
+	  - Added method to parent window that allows triggering size
+	    calculations when a menu is added/removed
+	  - set_Menu: Cleaned up mess from early days of Form and Control,
+	    now properly triggers a recalc when a menu is added/removed
+	  - Added case to select form itself as focused form if no child
+	    controls exist
+	  - Added PerformLayout call when showing dialog, to ensure properly
+	    placed controls
+	* Control.cs:
+	  - Select(): Made internal so Form can access it
+	  - Focus(): Only call Xplat layer if required (avoids loop), and sets
+	    status
+	* Application.cs (Run): Removed hack and calls PerformLayout instead
+	  to trigger calculation when Form becomes visible
+
 2005-01-18  Jordi Mas i Hernandez <jordi@ximian.com>
 
 	* ComboBox.cs: fixes for ownerdraw
