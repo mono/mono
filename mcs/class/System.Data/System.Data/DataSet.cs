@@ -1194,16 +1194,22 @@ namespace System.Data {
 					case 0:
 						break;
 					case 1:
+						if (!oneRel.Nested)
+							break;
 						if (row.GetParentRow (oneRel) != null)
 							continue;
 						break;
 					case 2:
 						bool skip = false;
-						for (int i = 0; i < table.ParentRelations.Count; i++)
-							if (row.GetParentRow (table.ParentRelations [i]) != null) {
+						for (int i = 0; i < table.ParentRelations.Count; i++) {
+							DataRelation prel = table.ParentRelations [i];
+							if (!prel.Nested)
+								continue;
+							if (row.GetParentRow (prel) != null) {
 								skip = true;
 								continue;
 							}
+						}
 						if (skip)
 							continue;
 						break;

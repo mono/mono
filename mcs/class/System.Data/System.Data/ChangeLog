@@ -1,3 +1,9 @@
+2004-10-04  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DataSet.cs : For a row, when a relation is not nested, then it is
+	  still output target since it won't be written as a child of its
+	  parent. It fixes bug #66379.
+
 2004-10-03  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DataSet.cs : Attribute constraint field XPath must be written as
