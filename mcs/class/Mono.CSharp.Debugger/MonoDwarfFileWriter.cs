@@ -1017,12 +1017,17 @@ namespace Mono.CSharp.Debugger
 
 			public void WriteTypeReference (ITypeHandle ihandle)
 			{
+				WriteTypeReference (ihandle, true);
+			}
+
+			public void WriteTypeReference (ITypeHandle ihandle, bool use_pointer_die)
+			{
 				if (!(ihandle is TypeHandle))
 					throw new NotSupportedException ();
 
 				TypeHandle handle = (TypeHandle) ihandle;
 
-				if (handle.PointerDie != null)
+				if (use_pointer_die && (handle.PointerDie != null))
 					WriteRelativeDieReference (handle.PointerDie);
 				else
 					WriteRelativeDieReference (handle.TypeDie);
@@ -1878,7 +1883,7 @@ namespace Mono.CSharp.Debugger
 
 			public override void DoEmit ()
 			{
-				DieCompileUnit.WriteTypeReference (TypeHandle);
+				DieCompileUnit.WriteTypeReference (TypeHandle, false);
 
 				object end_index = aw.StartSubsectionWithSize ();
 				aw.WriteUInt8 ((int) DW_OP.OP_const1u);

@@ -1,5 +1,9 @@
 2002-06-29  Martin Baulig  <martin@gnome.org>
 
+	* MonoDwarfFileWriter.cs (DieInheritance): Make this actually work.
+
+2002-06-29  Martin Baulig  <martin@gnome.org>
+
 	* MonoDwarfFileWriter.cs, MonoSymbolWriter.cs: Put all TAG_subprogram's into their
 	corresponding struct/class declarations.
 
