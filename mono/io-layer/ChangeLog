@@ -1,3 +1,8 @@
+2004-04-17  Zoltan Varga  <vargaz@freemail.hu>
+
+	* processes.c: Include <signal.h> for SIGKILL and SIGILL + fix some
+	warnings. Fixes #57168.
+
 2004-04-16  Dick Porter  <dick@ximian.com>
 
 	* threads.c (Sleep): Using div(3) with a negative (when signed)
