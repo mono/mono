@@ -905,7 +905,7 @@ public class TypeManager {
 
 		if (t == null){
 			Report.Error (518, "The predefined type `" + name + "' is not defined or imported");
-			Environment.Exit (0);
+			Environment.Exit (1);
 		}
 
 		return t;

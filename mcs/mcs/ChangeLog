@@ -1,3 +1,11 @@
+2004-05-05  Raja R Harinath  <rharinath@novell.com>
+
+	* expression.cs (MemberAccess.ResolveMemberAccess):
+	Exit with non-zero status after Report.Error.
+	* rootcontext.cs (RootContext.BootstrapCorlib_ResolveDelegate):
+	Likewise.
+	* typemanager.cs (TypeManager.CoreLookupType): Likewise.
+
 2004-05-04  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* support.cs: Don't hang when the file is empty.
