@@ -1,3 +1,8 @@
+2004-05-31  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Directory.cs, File.cs : Fixed Exists() that raised 
+	  DirectoryNotFoundException. Quick fix for bug #59354.
+
 2004-05-30  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* BinaryReader.cs: Added missing disposed check for most methods. 

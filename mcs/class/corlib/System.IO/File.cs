@@ -129,26 +129,30 @@ namespace System.IO
 
 		public static bool Exists (string path)
 		{
-			// For security reasons no exceptions are
-			// thrown, only false is returned if there is
-			// any problem with the path or permissions.
-			// Minimizes what information can be
-			// discovered by using this method.
-			if (null == path || String.Empty == path.Trim()
-			    || path.IndexOfAny(Path.InvalidPathChars) >= 0) {
+			try {
+				// For security reasons no exceptions are
+				// thrown, only false is returned if there is
+				// any problem with the path or permissions.
+				// Minimizes what information can be
+				// discovered by using this method.
+				if (null == path || String.Empty == path.Trim()
+				    || path.IndexOfAny(Path.InvalidPathChars) >= 0) {
+					return false;
+				}
+
+				MonoIOError error;
+				bool exists;
+			
+				exists = MonoIO.ExistsFile (path, out error);
+				if (error != MonoIOError.ERROR_SUCCESS &&
+				    error != MonoIOError.ERROR_FILE_NOT_FOUND) {
+					throw MonoIO.GetException (path, error);
+				}
+
+				return(exists);
+			} catch (Exception) {
 				return false;
 			}
-
-			MonoIOError error;
-			bool exists;
-			
-			exists = MonoIO.ExistsFile (path, out error);
-			if (error != MonoIOError.ERROR_SUCCESS &&
-			    error != MonoIOError.ERROR_FILE_NOT_FOUND) {
-				throw MonoIO.GetException (path, error);
-			}
-
-			return(exists);
 		}
 
 		public static FileAttributes GetAttributes (string path)

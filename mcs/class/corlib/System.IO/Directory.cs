@@ -131,19 +131,23 @@ namespace System.IO
 
 		public static bool Exists (string path)
 		{
-			if (path == null)
-				return false;
+			try {
+				if (path == null)
+					return false;
 				
-			MonoIOError error;
-			bool exists;
+				MonoIOError error;
+				bool exists;
 			
-			exists = MonoIO.ExistsDirectory (path, out error);
-			if (error != MonoIOError.ERROR_SUCCESS &&
-			    error != MonoIOError.ERROR_PATH_NOT_FOUND) {
-				throw MonoIO.GetException (path, error);
-			}
+				exists = MonoIO.ExistsDirectory (path, out error);
+				if (error != MonoIOError.ERROR_SUCCESS &&
+				    error != MonoIOError.ERROR_PATH_NOT_FOUND) {
+					throw MonoIO.GetException (path, error);
+				}
 
-			return(exists);
+				return(exists);
+			} catch (Exception) {
+				return false;
+			}
 		}
 
 		public static DateTime GetLastAccessTime (string path)
