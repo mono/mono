@@ -172,7 +172,7 @@ namespace System.DirectoryServices
 			get { throw new NotImplementedException (); }
 		}
 
-		IntPtr Handle
+		public IntPtr Handle
 		{
 			[MonoTODO]
 			get { throw new NotImplementedException (); }

@@ -34,7 +34,8 @@ using System.Security.Permissions;
 
 namespace System.DirectoryServices
 {
-	public class DirectoryServicesPermission : ResourcePermissionBase
+	[Serializable()]
+	public sealed class DirectoryServicesPermission : ResourcePermissionBase
 	{
 		DirectoryServicesPermissionEntryCollection entries;
 
