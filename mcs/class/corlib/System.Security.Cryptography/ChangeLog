@@ -1,3 +1,9 @@
+2003-05-12  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* PKCS1MaskGenerationMethod.cs: Added comment to justify why
+	the class is no more compatible with MS implementation (the bug
+	was preventing OAEP to work properly).
+
 2003-05-09  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* DSACryptoServiceProvider.cs: Class is now sealed in v.1.1.

@@ -4,7 +4,7 @@
 // Author:
 //	Sebastien Pouliot (spouliot@motus.com)
 //
-// (C) 2002 Motus Technologies Inc. (http://www.motus.com)
+// (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
 //
 
 using System;
@@ -20,7 +20,7 @@ namespace System.Security.Cryptography {
 
 		private string hashName;
 	
-		public PKCS1MaskGenerationMethod()
+		public PKCS1MaskGenerationMethod ()
 		{
 			hashName = "SHA1";
 		}
@@ -28,14 +28,12 @@ namespace System.Security.Cryptography {
 		public string HashName 
 		{
 			get { return hashName; }
-			set { 
-				if (value == null)
-					hashName = "SHA1";
-				else
-					hashName = value; 
-			}
+			set { hashName = ((value == null) ? "SHA1" : value); }
 		}
 	
+		// This method is not compatible with the one provided by MS in
+		// framework 1.0 and 1.1 but IS compliant with PKCS#1 v.2.1 and
+		// work for implementing OAEP
 		public override byte[] GenerateMask (byte[] mgfSeed, int maskLen)
 		{
 			HashAlgorithm hash = HashAlgorithm.Create (hashName);
