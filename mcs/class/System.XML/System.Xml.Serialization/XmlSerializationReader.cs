@@ -658,7 +658,7 @@ namespace System.Xml.Serialization {
 			{
 				if (refid.StartsWith ("#")) refid = refid.Substring (1);
 
-				Reader.ReadStartElement ();
+				Reader.Skip ();
 				if (TargetReady (refid))
 				{
 					fixupReference = null;
