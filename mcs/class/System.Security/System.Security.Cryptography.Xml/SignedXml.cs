@@ -36,6 +36,8 @@ namespace System.Security.Cryptography.Xml {
 		private XmlResolver xmlResolver = new XmlUrlResolver ();
 #endif
 		private ArrayList manifests;
+		
+		private static readonly char [] whitespaceChars = new char [] {' ', '\r', '\n', '\t'};
 
 		public SignedXml () 
 		{
@@ -211,19 +213,23 @@ namespace System.Security.Cryptography.Xml {
 			else {
 				doc = new XmlDocument ();
 				doc.PreserveWhitespace = true;
+				string objectName = null;
 
-				if (r.Uri == "#xpointer(/)") {
-					doc = envdoc;
+				if (r.Uri.StartsWith ("#xpointer")) {
+					string uri = string.Join ("", r.Uri.Substring (9).Split (whitespaceChars));
+					if (uri.Length < 2 || uri [0] != '(' || uri [uri.Length - 1] != ')')
+						// FIXME: how to handle invalid xpointer?
+						uri = String.Empty;
+					else
+						uri = uri.Substring (1, uri.Length - 2);
+					if (uri == "/")
+						doc = envdoc;
+					else if (uri.Length > 6 && uri.StartsWith ("id(") && uri [uri.Length - 1] == ')')
+						// id('foo'), id("foo")
+						objectName = uri.Substring (4, uri.Length - 6);
 				}
 				else if (r.Uri [0] == '#') {
-					foreach (DataObject obj in signature.ObjectList) {
-						if ("#" + obj.Id == r.Uri) {
-							XmlElement xel = obj.GetXml ();
-							doc.LoadXml (xel.OuterXml);
-							FixupNamespaceNodes (xel, doc.DocumentElement);
-							break;
-						}
-					}
+					objectName = r.Uri.Substring (1);
 				}
 				else if (xmlResolver != null) {
 					// TODO: test but doc says that Resolver = null -> no access
@@ -235,6 +241,16 @@ namespace System.Security.Cryptography.Xml {
 					catch {
 						// may still be a local file (and maybe not xml)
 						s = File.OpenRead (r.Uri);
+					}
+				}
+				if (objectName != null) {
+					foreach (DataObject obj in signature.ObjectList) {
+						if (obj.Id == objectName) {
+							XmlElement xel = obj.GetXml ();
+							doc.LoadXml (xel.OuterXml);
+							FixupNamespaceNodes (xel, doc.DocumentElement);
+							break;
+						}
 					}
 				}
 			}
@@ -299,7 +315,14 @@ namespace System.Security.Cryptography.Xml {
 				XmlDocument doc = new XmlDocument ();
 				doc.PreserveWhitespace = true;
 				doc.LoadXml (signature.SignedInfo.GetXml ().OuterXml);
-
+				if (envdoc != null)
+				foreach (XmlAttribute attr in envdoc.DocumentElement.SelectNodes ("namespace::*")) {
+					if (attr.LocalName == "xml")
+						continue;
+					if (attr.Prefix == doc.DocumentElement.Prefix)
+						continue;
+					doc.DocumentElement.SetAttributeNode (doc.ImportNode (attr, true) as XmlAttribute);
+				}
 				t.LoadInput (doc);
 			}
 			else {
@@ -444,7 +467,7 @@ namespace System.Security.Cryptography.Xml {
 				HashAlgorithm hash = GetHash (sd.DigestAlgorithm);
 				// get the hash of the C14N SignedInfo element
 				MemoryStream ms = (MemoryStream) SignedInfoTransformed ();
-				byte[] debug = ms.ToArray ();
+
 				byte[] digest = hash.ComputeHash (ms);
 				return verifier.VerifySignature (digest, signature.SignatureValue);
 			}

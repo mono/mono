@@ -1,5 +1,10 @@
 2004-06-04  Atsushi Enomoto <atsushi@ximian.com>
 
+	* SignedXml.cs : Complete fix for bug #59545. Support #xpointer(id()).
+	  Namespace fixup is required when signing prefixed xml.
+
+2004-06-04  Atsushi Enomoto <atsushi@ximian.com>
+
 	* SignedXml.cs : Fix for bug #59545. Handle #xpointer(/) as document.
 
 2004-05-31  Atsushi Enomoto <atsushi@ximian.com>
