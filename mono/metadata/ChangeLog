@@ -1,3 +1,17 @@
+2005-01-08  Miguel de Icaza  <miguel@ximian.com>
+
+	* locales.c (string_invariant_compare_char): Only compute
+	GUnicodeTypes in the case where we need them.  Test for ordinality
+	first and return if so.
+
+	From the commit:
+
+		/*
+		 * FIXME: here we must use the information from c1type and c2type
+		 * to find out the proper collation, even on the InvariantCulture, the
+		 * sorting is not done by computing the unicode values, but their
+		 * actual sort order.
+		 */
 
 Sat Jan 8 19:03:26 CET 2005 Paolo Molaro <lupus@ximian.com>
 
