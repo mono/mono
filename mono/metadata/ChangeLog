@@ -1,3 +1,8 @@
+2003-05-17	Patrik Torstensson <totte@hiddenpeaks.com>
+
+	* marshal.c: Don't pass wrappers to message init because method 
+	addressed used to lookup metadata. part of remoting[2|3] fix.
+
 2004-05-15  Jackson Harper  <jackson@ximian.com>
 
 	* assembly.c: Remove user gac and implement MONO_GAC_PATH, this
