@@ -1,3 +1,8 @@
+2003-08-12  Nick Drochak <ndrochak@gol.com>
+
+	* NewArrayListTest.cs: Disable part that was failing on .NET. Marked
+	with FIXME.
+
 2003-08-11  Duncan Mak  <duncan@ximian.com>
 
 	* ArrayListTest.cs: Added test case submitted by Tum in bug #45036.

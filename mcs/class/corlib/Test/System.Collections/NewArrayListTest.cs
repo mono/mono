@@ -1092,13 +1092,15 @@ namespace MonoTests.System.Collections
 
 			this.VerifyContains(rangeList, new object[] {3,4,5,6,7}, "1: VerifyContains(rangeList)");
 			
+//FIXME: If items are removed from the Range, one may not iterate over it on .NET
+/*
 			rangeList.Remove(7);
 			
-			this.VerifyContains(rangeList, new object[] {3,4,5,6}, "2: VerifyContains(rangeList)");
+			this.VerifyContains(a2, new object[] {3,4,5,6}, "2: VerifyContains(rangeList)");
 
 			rangeList.RemoveAt(0);
 
-			this.VerifyContains(rangeList, new object[] {4,5,6}, "3: VerifyContains(rangeList)");
+			this.VerifyContains(a3, new object[] {4,5,6}, "3: VerifyContains(rangeList)");
 
 			rangeList.Add(7);
 			rangeList.Add(6);
@@ -1110,6 +1112,7 @@ namespace MonoTests.System.Collections
 			rangeList.Sort();
 
 			this.VerifyContains(arrayList, new object[] {0, 1, 2, 3, 4, 5, 6, 6, 7, 11, 8, 9}, "4: VerifyContains(rangeList)");
+*/
 		}
 
 		[Test]
