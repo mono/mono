@@ -2214,6 +2214,18 @@ invocation_expression
 	  {
 		$$ = new InvocationOrCast ((Expression) $1, (Expression) $3, lexer.Location);
 	  }
+	| parenthesized_expression_0 CLOSE_PARENS_OPEN_PARENS OPEN_PARENS non_simple_argument CLOSE_PARENS
+	  {
+		ArrayList args = new ArrayList (1);
+		args.Add ($4);
+		$$ = new Invocation ((Expression) $1, args, lexer.Location);
+	  }
+	| parenthesized_expression_0 CLOSE_PARENS_OPEN_PARENS OPEN_PARENS argument_list COMMA argument CLOSE_PARENS
+	  {
+		ArrayList args = ((ArrayList) $4);
+		args.Add ($6);
+		$$ = new Invocation ((Expression) $1, args, lexer.Location);
+	  }
 	;
 
 opt_argument_list
@@ -2244,7 +2256,14 @@ argument
 	  {
 		$$ = new Argument ((Expression) $1, Argument.AType.Expression);
 	  }
-	| REF variable_reference 
+	| non_simple_argument
+	  {
+		$$ = $1;
+	  }
+	;
+
+non_simple_argument
+	: REF variable_reference 
 	  { 
 		$$ = new Argument ((Expression) $2, Argument.AType.Ref);
 	  }

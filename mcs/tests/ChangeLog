@@ -1,3 +1,9 @@
+2005-01-13  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile (TEST_SOURCES): Add test-335.cs from HEAD.
+	(UNSAFE_SOURCES): Disable unsafe-9 and unsafe-10, as they're
+	missing from the repository.
+
 2004-09-15  Raja R Harinath  <rharinath@novell.com>
 
 	* test-280.cs: Backport fix from HEAD.
