@@ -4,3 +4,4 @@
 ./Mono.Posix/Syscall.cs
 ./Mono.Posix/MapAttribute.cs
 ./Mono.Posix/IncludeAttribute.cs
+./Mono.Posix/Catalog.cs
