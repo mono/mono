@@ -21,7 +21,7 @@ namespace System.Windows.Forms {
 		None = 0,
 		Top = 1,
 		Bottom = 2,
-		left = 3,		
+		Left = 3,		
 		Right = 4,
 		Fill = 5,
 	}

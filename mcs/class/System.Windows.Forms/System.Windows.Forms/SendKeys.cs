@@ -20,17 +20,17 @@ namespace System.Windows.Forms {
 		//
 
 		[MonoTODO]
-		static void Flush()
+		public static void Flush()
 		{
 			//FIXME:
 		}
 		[MonoTODO]
-		static void Send(string keys)
+		public static void Send(string keys)
 		{
 			//FIXME:
 		}
 		[MonoTODO]
-		static void SendWait(string keys)
+		public static void SendWait(string keys)
 		{
 			//FIXME:
 		}

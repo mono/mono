@@ -17,6 +17,7 @@ namespace System.Windows.Forms {
 		Animation = 54,
 		Application = 14,
 		Border = 19,
+		ButtonDropDown = 56,
 		ButtonDropDownGrid = 58,
 		ButtonMenu = 57,
 		Caret = 7,

@@ -15,6 +15,6 @@ namespace System.Windows.Forms {
 	public enum SortOrder {
 		Ascending = 1,
 		Descending = 2,
-		Nonoe = 0
+		None = 0
 	}
 }

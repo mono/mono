@@ -40,6 +40,7 @@ namespace System.Windows.Forms {
 		public static readonly string Tiff="TaggedImageFileFormat";
 		public static readonly string UnicodeText="UnicodeText";
 		public static readonly string WaveAudio="WaveAudio";
+		public static readonly string SymbolicLink="SymbolLink";
 		#endregion
 		
 		#region Methods
