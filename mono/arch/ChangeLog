@@ -1,3 +1,7 @@
+2004-03-15  Zoltan Varga  <vargaz@freemail.hu>
+
+	* sparc/sparc-codegen.h: Add some v9 instructions.
+
 2004-03-11  Zoltan Varga  <vargaz@freemail.hu>
 
 	* sparc/sparc-codegen.h: Ongoing sparc work.
