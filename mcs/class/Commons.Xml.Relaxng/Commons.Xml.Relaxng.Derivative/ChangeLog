@@ -1,5 +1,10 @@
 2004-12-05  Atsushi Enomoto <atsushi@ximian.com>
 
+	* RdpPattern.cs : RdpAttribute now omits value check when the argument
+	  value is null. It is useful to get labels.
+
+2004-12-05  Atsushi Enomoto <atsushi@ximian.com>
+
 	* RdpPattern.cs : added GetLabels().
 
 2004-06-25  Atsushi Enomoto <atsushi@ximian.com>

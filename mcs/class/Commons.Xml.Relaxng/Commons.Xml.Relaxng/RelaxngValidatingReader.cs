@@ -66,6 +66,12 @@ namespace Commons.Xml.Relaxng
 		RdpPattern vState;
 		RdpPattern prevState;	// Mainly for debugging.
 		ArrayList PredefinedAttributes = new ArrayList ();
+		bool labelsComputed;
+		Hashtable elementLabels = new Hashtable ();
+		Hashtable attributeLabels = new Hashtable ();
+		bool isEmptiable;
+		bool roughLabelCheck;
+		ArrayList strictCheckCache;
 
 		internal string CurrentStateXml {
 			get { return RdpUtil.DebugRdpPattern (vState, new Hashtable ()); }
@@ -75,6 +81,28 @@ namespace Commons.Xml.Relaxng
 			get { return RdpUtil.DebugRdpPattern (prevState, new Hashtable ()); }
 		}
 
+		public bool RoughLabelCheck {
+			get { return roughLabelCheck; }
+			set { roughLabelCheck = value; }
+		}
+
+		public ICollection ExpectedElements {
+			get {
+				if (!labelsComputed)
+					GetLabels (elementLabels, attributeLabels);
+				return elementLabels.Values;
+			}
+		}
+
+		public ICollection ExpectedAttributes {
+			get {
+				if (!labelsComputed)
+					GetLabels (elementLabels, attributeLabels);
+				return attributeLabels.Values;
+			}
+		}
+
+		[Obsolete ("Use ExpectedElements and ExpectedAttributs instead.")]
 		public void GetLabels (Hashtable elements, Hashtable attributes)
 		{
 			if (elements == null)
@@ -83,12 +111,36 @@ namespace Commons.Xml.Relaxng
 				throw new ArgumentNullException ("attributes");
 			PrepareState ();
 			vState.GetLabels (elements, attributes);
+
+			if (roughLabelCheck)
+				return;
+
+			// Strict check that tries actual validation that will
+			// cover rejection by notAllowed.
+			if (strictCheckCache == null)
+				strictCheckCache = new ArrayList ();
+			else
+				strictCheckCache.Clear ();
+			foreach (XmlQualifiedName qname in attributes.Values)
+				if (vState.AttDeriv (qname.Name, qname.Namespace,null, this) is RdpNotAllowed)
+					strictCheckCache.Add (qname);
+			foreach (XmlQualifiedName qname in strictCheckCache)
+				attributes.Remove (qname);
+			strictCheckCache.Clear ();
+			foreach (XmlQualifiedName qname in elements.Values)
+				if (vState.StartTagOpenDeriv (qname.Name, qname.Namespace) is RdpNotAllowed)
+					strictCheckCache.Add (qname);
+			foreach (XmlQualifiedName qname in strictCheckCache)
+				elements.Remove (qname);
 		}
 
 		public bool Emptiable ()
 		{
-			PrepareState ();
-			return !(vState.EndTagDeriv () is RdpNotAllowed);
+			if (!labelsComputed) {
+				PrepareState ();
+				isEmptiable = !(vState.EndTagDeriv () is RdpNotAllowed);
+			}
+			return isEmptiable;
 		}
 
 		private RelaxngException createValidationError (string message)
@@ -113,6 +165,10 @@ namespace Commons.Xml.Relaxng
 		public override bool Read ()
 		{
 			PrepareState ();
+
+			labelsComputed = false;
+			elementLabels.Clear ();
+			attributeLabels.Clear ();
 
 			bool ret = reader.Read ();
 

@@ -1410,15 +1410,16 @@ namespace Commons.Xml.Relaxng.Derivative
 		//  if contains nc qn && valueMatch cx p s then Empty else NotAllowed
 		public override RdpPattern AttDeriv (string name, string ns, string value, XmlReader reader)
 		{
+			// If value is null, then does not check ValueMatch.
 #if UseStatic
 			if (RdpUtil.Contains (this.nameClass, att.QName)
-				&& RdpUtil.ValueMatch (ctx, this.children, att.Value))
+				&& value == null || RdpUtil.ValueMatch (ctx, this.children, att.Value))
 				return RdpEmpty.Instance;
 			else
 				return RdpNotAllowed.Instance;
 #else
 			if (nameClass.Contains (name, ns) &&
-				children.ValueMatch (value, reader))
+				value == null || children.ValueMatch (value, reader))
 				return RdpEmpty.Instance;
 			else
 				return RdpNotAllowed.Instance;

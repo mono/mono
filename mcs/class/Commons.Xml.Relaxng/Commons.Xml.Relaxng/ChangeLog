@@ -1,5 +1,16 @@
 2004-12-05  Atsushi Enomoto <atsushi@ximian.com>
 
+	* RelaxngValidatingReader.cs :
+	  - Better way to expose API; use ExpectedElements and 
+	    ExpectedAttributes of type ICollection. Now GetLabels is obsolete.
+	  - Implemented notAllowed check. It might be too heavy since it
+	    checks all the QNames returned by GetLabels. In such case, use
+	    RoughLabelCheck = true.
+	  - Added RoughLabelCheck of type bool that indicates to omit
+	    notAllowed check.
+
+2004-12-05  Atsushi Enomoto <atsushi@ximian.com>
+
 	* RelaxngValidatingReader.cs : no, it was very easy. But to avoid
 	  state-changeful property, it is now bool Emptiable().
 
