@@ -5,6 +5,7 @@
 	MoveNext. Fixed Count for Queue.Synchronize (Queue.Synchronize (q)).
 	* SortedList.cs: Added missing ICloneable support to internal 
 	enumerator. Added Capacity to the synchronized version of SortedList.
+	Setting Capacity to 0 returns it to it's default value (16).
 
 2004-05-26  Sebastien Pouliot  <sebastien@ximian.com>
 

@@ -171,19 +171,26 @@ namespace System.Collections {
 
 				if (inUse > value) {
 					throw new ArgumentOutOfRangeException("capacity too small");
-#if NET_1_0
-				} else if (current > INITIAL_SIZE && value < current) {
+				}
+				else if (value == 0) {
+					// return to default size
                                         Slot [] newTable = new Slot [INITIAL_SIZE];
                                         Array.Copy (table, newTable, inUse);
                                         this.table = newTable;
+				}
+#if NET_1_0
+				else if (current > INITIAL_SIZE && value < current) {
+                                        Slot [] newTable = new Slot [INITIAL_SIZE];
+                                        Array.Copy (table, newTable, inUse);
+                                        this.table = newTable;
+                                }
 #endif
-                                } else if (value > inUse) {
+				else if (value > inUse) {
                                         Slot [] newTable = new Slot [value];
                                         Array.Copy (table, newTable, inUse);
                                         this.table = newTable;
-
-
-                                } else if (value > current) {
+                                }
+				else if (value > current) {
 					Slot [] newTable = new Slot [value];
 					Array.Copy (table, newTable, current);
 					this.table = newTable;
