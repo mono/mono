@@ -1,3 +1,7 @@
+2004-07-24  Zoltan Varga  <vargaz@freemail.hu>
+
+	* *-amd64*.*: Ongoing AMD64 work.
+
 2004-07-23 Zoltan Varga <vargaz@freemail.hu>
 
 	* inssel-long.brg: Implement CONV_I8/CONV_U8 in the backends.
