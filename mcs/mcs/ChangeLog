@@ -1,3 +1,10 @@
+2004-09-23  Marek Safar  <marek.safar@seznam.cz>
+
+	* cs-parser.jay: Fix wrong warning 642 report.
+
+	* cs-tokenizer.cs (CheckNextToken): New helper;
+	Inspect next character if is same as expected.
+
 2004-09-23  Martin Baulig  <martin@ximian.com>
 
 	* convert.cs (Convert.ImplicitReferenceConversion): Some code cleanup.
