@@ -70,6 +70,7 @@ namespace MonoTests.System.Net.Sockets
 		}
 
 		[Test]
+		[Category("NotDotNet")]
 		public void AcceptBlockingStatus()
 		{
 			bool block;

@@ -29,8 +29,8 @@ namespace MonoTests.System.Text.RegularExpressions {
 		public void Unescape () {
 			string inString = @"\a\b\t\r\v\f\n\e\02400\x231\cC\ufffff\*";
 			char [] c = { (char)7, (char)8, (char)9, (char)13, 
-				      (char)11, (char)12, (char)10, (char)27, 
-				      (char)160, (char)48, (char)35, (char)49, 
+				      (char)11, (char)12, (char)10, (char)27, (char) 20,
+				      (char)48, (char)48, (char)35, (char)49, 
 				      (char)3, (char)65535, (char)102, (char)42
 			};
 			string expectedString = new String(c);

@@ -56,6 +56,7 @@ namespace MonoTests.System
 		}
 		
 		[Test]
+		[Category("NotDotNet")]
 		public void AbsoluteUriFromFileManual ()
 		{
 			FromFile ("Test/System/test-uri-props-manual.txt", null);

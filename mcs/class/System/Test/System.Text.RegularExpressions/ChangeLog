@@ -1,3 +1,7 @@
+2005-01-08  Nick Drochak  <ndrochak@ieee.org>
+
+	* RegexTest.cs: Make pass on MS.NET
+
 2004-11-29 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* System.Text.RegularExpressions/RegexBugs.cs: test case for bug #57274.

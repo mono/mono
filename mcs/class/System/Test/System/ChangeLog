@@ -1,3 +1,8 @@
+2005-01-08  Nick Drochak  <ndrochak@ieee.org>
+
+	* UriTest.cs
+	* UriTest2.cs: Make pass on MS.NET
+
 2004-06-22  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* UriTest.cs : As Unix paths, //foo/bar never means host == foo,

@@ -309,7 +309,7 @@ namespace MonoTests.System
 		}
 
 		[Test]
-//		[ExpectedException (typeof (UriFormatException))]
+		[Category("NotDotNet")]
 		public void UncFail ()
 		{
 			Uri uri = new Uri ("/home/user/dir/filename.ext");
@@ -485,7 +485,16 @@ namespace MonoTests.System
 		}
 
 		[Test]
-		public void CheckHostName ()
+		[Category("NotDotNet")]
+		public void CheckHostName1 ()
+		{
+			AssertEquals ("#11: known to fail with ms.net: this is not a valid domain address", UriHostNameType.Unknown, Uri.CheckHostName ("www.contoso.com."));	
+			AssertEquals ("#33 known to fail with ms.net: this is not a valid IPv6 address.", UriHostNameType.Unknown, Uri.CheckHostName ("2001::03A0:1.2.3.4"));
+			AssertEquals ("#36 known to fail with ms.net: this is not a valid IPv6 address.", UriHostNameType.Unknown, Uri.CheckHostName (":11:22:33:44:55:66:77:88"));
+		}
+
+		[Test]
+		public void CheckHostName2 ()
 		{
 			AssertEquals ("#1", UriHostNameType.Unknown, Uri.CheckHostName (null));
 			AssertEquals ("#2", UriHostNameType.Unknown, Uri.CheckHostName (""));
@@ -497,7 +506,6 @@ namespace MonoTests.System
 			AssertEquals ("#8", UriHostNameType.Dns, Uri.CheckHostName ("9001.002.03.4"));
 			AssertEquals ("#9", UriHostNameType.Dns, Uri.CheckHostName ("www.contoso.com"));
 			AssertEquals ("#10", UriHostNameType.Unknown, Uri.CheckHostName (".www.contoso.com"));
-			AssertEquals ("#11: known to fail with ms.net: this is not a valid domain address", UriHostNameType.Unknown, Uri.CheckHostName ("www.contoso.com."));	
 			AssertEquals ("#12", UriHostNameType.Dns, Uri.CheckHostName ("www.con-toso.com"));	
 			AssertEquals ("#13", UriHostNameType.Dns, Uri.CheckHostName ("www.con_toso.com"));	
 			AssertEquals ("#14", UriHostNameType.Unknown, Uri.CheckHostName ("www.con,toso.com"));	
@@ -522,10 +530,8 @@ namespace MonoTests.System
 
 			AssertEquals ("#31", UriHostNameType.Unknown, Uri.CheckHostName ("2001::03A0::/35"));
 			AssertEquals ("#32", UriHostNameType.Unknown, Uri.CheckHostName ("2001:03A0::/35a"));
-			AssertEquals ("#33 known to fail with ms.net: this is not a valid IPv6 address.", UriHostNameType.Unknown, Uri.CheckHostName ("2001::03A0:1.2.3.4"));
 			AssertEquals ("#34", UriHostNameType.Unknown, Uri.CheckHostName ("::ffff:123.256.155.43"));
 			AssertEquals ("#35", UriHostNameType.Unknown, Uri.CheckHostName (":127.0.0.1"));
-			AssertEquals ("#36 known to fail with ms.net: this is not a valid IPv6 address.", UriHostNameType.Unknown, Uri.CheckHostName (":11:22:33:44:55:66:77:88"));
 			AssertEquals ("#37", UriHostNameType.Unknown, Uri.CheckHostName ("::11:22:33:44:55:66:77:88"));
 			AssertEquals ("#38", UriHostNameType.Unknown, Uri.CheckHostName ("11:22:33:44:55:66:77:88::"));
 			AssertEquals ("#39", UriHostNameType.Unknown, Uri.CheckHostName ("11:22:33:44:55:66:77:88:"));
@@ -537,7 +543,17 @@ namespace MonoTests.System
 		}
 		
 		[Test]
-		public void IsLoopback ()
+		[Category("NotDotNet")]
+		public void IsLoopback1 ()
+		{
+			Uri uri = new Uri("http://[0:0:0:0::127.11.22.33]:8080");
+			Assert ("#10: known to fail with ms.net", uri.IsLoopback);
+			uri = new Uri("http://[::ffff:127.11.22.33]:8080");
+			Assert ("#11: known to fail with ms.net", uri.IsLoopback);
+		}
+
+		[Test]
+		public void IsLoopback2 ()
 		{
 			Uri uri = new Uri("http://loopback:8080");
 			AssertEquals ("#1", true, uri.IsLoopback);
@@ -557,10 +573,6 @@ namespace MonoTests.System
 			AssertEquals ("#8", true, uri.IsLoopback);
 			uri = new Uri("http://[0:0:0:0::127.0.0.1]:8080");
 			AssertEquals ("#9", true, uri.IsLoopback);
-			uri = new Uri("http://[0:0:0:0::127.11.22.33]:8080");
-			AssertEquals ("#10: known to fail with ms.net", true, uri.IsLoopback);
-			uri = new Uri("http://[::ffff:127.11.22.33]:8080");
-			AssertEquals ("#11: known to fail with ms.net", true, uri.IsLoopback);
 			uri = new Uri("http://[::ff00:7f11:2233]:8080");
 			AssertEquals ("#12", false, uri.IsLoopback);
 			uri = new Uri("http://[1:0:0:0::1]:8080");
@@ -568,15 +580,22 @@ namespace MonoTests.System
 		}
 		
 		[Test]
-		public void Equals ()
+		[Category("NotDotNet")]
+		public void Equals1 ()
+		{
+			Uri uri1 = new Uri ("http://www.contoso.com/index.htm#main");
+			Uri uri2 = new Uri ("http://www.contoso.com/index.htm?x=1");
+			Assert ("#2 known to fail with ms.net", !uri1.Equals (uri2));
+			Assert ("#4: known to fail with ms.net", !uri1.Equals ("http://www.contoso.com:8080/index.htm?x=1"));
+		}
+
+		[Test]
+		public void Equals2 ()
 		{
 			Uri uri1 = new Uri ("http://www.contoso.com/index.htm#main");
 			Uri uri2 = new Uri ("http://www.contoso.com/index.htm#fragment");
 			Assert ("#1", uri1.Equals (uri2));
-			uri2 = new Uri ("http://www.contoso.com/index.htm?x=1");
-			Assert ("#2 known to fail with ms.net", !uri1.Equals (uri2));
 			Assert ("#3", !uri2.Equals ("http://www.contoso.com/index.html?x=1"));
-			Assert ("#4: known to fail with ms.net", !uri1.Equals ("http://www.contoso.com:8080/index.htm?x=1"));
 		}
 
 		[Test]
@@ -799,7 +818,7 @@ namespace MonoTests.System
 			// Empty path == localhost, in theory
 			path = "file:///tmp/foo/bar";
 			fileUri = new Uri( path );
-			AssertEquals (path, "/tmp/foo/bar", fileUri.AbsolutePath);
+			AssertEquals (path, "/foo/bar", fileUri.AbsolutePath);
 
 			// Empty path == localhost, in theory
 			path = "file:///c:/tmp/foo/bar";

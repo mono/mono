@@ -176,7 +176,7 @@ namespace MonoTests.System.ComponentModel
 		[Test]
 		public void TestGetComponentName ()
 		{
-			AssertNull ("t1", TypeDescriptor.GetComponentName (com));
+			AssertNotNull ("t1", TypeDescriptor.GetComponentName (com));
 			AssertEquals ("t1", "TestName", TypeDescriptor.GetComponentName (sitedcom));
 		}
 		
@@ -216,7 +216,7 @@ namespace MonoTests.System.ComponentModel
 			
 			des = TypeDescriptor.GetDefaultEvent (sitedcom);
 			AssertNotNull ("t3", des);
-			AssertEquals ("t4", "AnEvent", des.Name);
+			AssertEquals ("t4", "AnotherEvent", des.Name);
 		}
 		
 		[Test]
@@ -228,7 +228,13 @@ namespace MonoTests.System.ComponentModel
 			des = TypeDescriptor.GetDefaultProperty (com);
 			AssertNull ("t2", des);
 			
-			des = TypeDescriptor.GetDefaultProperty (sitedcom);
+		}
+		
+		[Test]
+		[Ignore("Fails on .NET")]
+		public void TestGetDefaultProperty2 ()
+		{
+			PropertyDescriptor des = TypeDescriptor.GetDefaultProperty (sitedcom);
 			AssertNotNull ("t3", des);
 			AssertEquals ("t4", "TestProperty", des.Name);
 		}
@@ -279,10 +285,6 @@ namespace MonoTests.System.ComponentModel
 			Assert ("t2.1", col.Find ("TestProperty", true) != null);
 			Assert ("t2.2", col.Find ("AnotherProperty", true) != null);
 			
-			col = TypeDescriptor.GetProperties (sitedcom);
-			Assert ("t3.1", col.Find ("TestProperty", true) == null);
-			Assert ("t3.2", col.Find ("AnotherProperty", true) != null);
-			
 			Attribute[] filter = new Attribute[] { new DescriptionAttribute ("test") };
 			
 			col = TypeDescriptor.GetProperties (typeof(MyComponent), filter);
@@ -293,10 +295,22 @@ namespace MonoTests.System.ComponentModel
 			Assert ("t5.1", col.Find ("TestProperty", true) != null);
 			Assert ("t5.2", col.Find ("AnotherProperty", true) == null);
 			
+		}
+
+		[Test]
+		[Ignore("Fails on .NET")]
+		public void TestGetProperties2 ()
+		{
+			PropertyDescriptorCollection col = TypeDescriptor.GetProperties (sitedcom);
+			Assert ("t3.1", col.Find ("TestProperty", true) == null);
+			Assert ("t3.2", col.Find ("AnotherProperty", true) != null);
+
+			Attribute[] filter = new Attribute[] { new DescriptionAttribute ("test") };
 			col = TypeDescriptor.GetProperties (sitedcom, filter);
 			Assert ("t6.1", col.Find ("TestProperty", true) == null);
 			Assert ("t6.2", col.Find ("AnotherProperty", true) == null);
 		}
+
 	}
 }
 

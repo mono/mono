@@ -1,3 +1,7 @@
+2005-01-08  Nick Drochak  <ndrochak@ieee.org>
+
+	* SocketTest.cs: Ignore test on MS.NET
+
 2004-10-14  Dick Porter  <dick@ximian.com>
 
 	* SocketTest.cs: Test the blocking status of accepted sockets
