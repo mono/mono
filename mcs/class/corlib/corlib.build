@@ -113,7 +113,7 @@
 				<excludes name="System.Security.Permissions/SecurityPermissionAttribute.cs"/>
 			</sources>
 		</csc>
-		<nant basedir="Test" target="build" buildfile="Test/corlib_test.build"/>
+		<nant basedir="Test" target="build"/>
 	</target>
 
 	<target name="mcs-build">

@@ -26,7 +26,7 @@
 			</sources>
 		</csc>
 		<copy file="../lib/System.dll" tofile="Test/System.dll"/>
-		<nant basedir="Test" target="build" buildfile="Test/System_test.build"/>
+		<nant basedir="Test" target="build"/>
 	</target>
 
 	<target name="test" depends="build">

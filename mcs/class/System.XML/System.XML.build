@@ -20,7 +20,7 @@
 			</sources>
 		</csc>
 		<copy file="../lib/System.Xml.dll" tofile="Test/System.XML.dll"/>
-		<nant basedir="Test" target="build" buildfile="Test/System.XML_test.build"/>
+		<nant basedir="Test" target="build"/>
 	</target>
 
 	<target name="test" depends="build">
