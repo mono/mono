@@ -1,3 +1,18 @@
+2005-01-23  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini-ops.h: Add OP_DUMMY_STORE opcode.
+
+	* mini.h (MONO_BBLOCK_IS_IN_REGION): New helper macro.
+
+	* liveness.c: Handle OP_DUMMY_STORE. Enable register allocation for
+	variables in try regions.
+
+	* mini.c (mini_method_compile): Don't disable optimizations on large
+	methods when AOT compiling.
+
+	* mini.c (mono_allocate_stack_slots): New arch independent method to 
+	allocate stack slots. Not yet used.
+
 2005-01-22  Ben Maurer  <bmaurer@ximian.com>
 
 	* debug-mini.c (mono_debug_close_method): Plug some leaks.
