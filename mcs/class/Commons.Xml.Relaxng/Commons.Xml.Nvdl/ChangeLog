@@ -1,3 +1,7 @@
+2005-04-06  Atsushi Enomoto <atsushi@ximian.com>
+
+	* NvdlValidator.cs : fixed warning.
+
 2005-03-07  Atsushi Enomoto <atsushi@ximian.com>
 
 	* NvdlFilteredXmlReader.cs, NvdlStructures.cs, NvdlSimplified.cs :

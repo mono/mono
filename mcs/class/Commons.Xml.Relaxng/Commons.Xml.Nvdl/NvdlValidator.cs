@@ -167,7 +167,7 @@ NvdlDebug.Writer.WriteLine ("------- corresponding PlanElem already exists.");
 			int elemStep = elementNameStack.Count - 1;
 			for (int i = path.Steps.Length; i >= 0 && elemStep >= 0;) {
 				SimplePathStep ps = path.Steps [i];
-				if (ps.Name != elementNameStack [elemStep]) {
+				if (ps.Name != elementNameStack [elemStep] as string) {
 					if (!ps.Descendants)
 						return false;
 					if (--elemStep < 0)
