@@ -309,7 +309,7 @@ namespace System.Web.Compilation
 			bool keepFiles = (Environment.GetEnvironmentVariable ("MONO_ASPNET_NODELETE") != null);
 			TempFileCollection tempcoll = new TempFileCollection (config.TempDirectory, keepFiles);
 			compilerParameters.TempFiles = tempcoll;
-			string dllfilename = tempcoll.AddExtension ("dll", true);
+			string dllfilename = Path.GetFileName (tempcoll.AddExtension ("dll", true));
 			if (!Directory.Exists (dynamicBase))
 				Directory.CreateDirectory (dynamicBase);
 
