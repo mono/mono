@@ -109,6 +109,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Application.resx"
+                    DependentUpon = "Application.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
                     RelPath = "ApplicationContext.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -264,6 +269,16 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "DrawItemEventArgs.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "DrawItemState.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "FlatStyle.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -295,6 +310,11 @@
                 />
                 <File
                     RelPath = "HelpEventHandler.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "HorizontalAlignment.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -605,6 +625,41 @@
                 />
                 <File
                     RelPath = "ScrollEventType.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "StatusBar.cs"
+                    SubType = "Component"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "StatusBarDrawItemEventArgs.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "StatusBarDrawItemEventHandler.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "StatusBarPanel.cs"
+                    SubType = "Component"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "StatusBarPanelAutoSize.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "StatusBarPanelBorderStyle.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "StatusBarPanelStyle.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
