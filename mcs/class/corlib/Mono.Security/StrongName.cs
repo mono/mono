@@ -120,7 +120,7 @@ namespace Mono.Security {
 			get {
 				if (rsa == null)
 					return false;
-#if INSIDE_CORLIB || NET_1_2
+#if INSIDE_CORLIB
 				// the easy way
 				if (RSA is RSACryptoServiceProvider) {
 					// available as internal for corlib
