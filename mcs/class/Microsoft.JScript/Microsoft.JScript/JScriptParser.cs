@@ -603,19 +603,19 @@ _loop15_breakloop:			;
 		AST parent
 	) //throws RecognitionException, TokenStreamException
 {
-		AST ifStm;
+		AST if_stm;
 		
 		
-			ifStm = null;
+			if_stm = null;
 			AST cond, true_stm, false_stm;
 			cond = true_stm = false_stm = null;
 		
 		
 		match(LITERAL_if);
 		match(OPEN_PARENS);
-		cond=expr(parent);
+		cond=expr(if_stm);
 		match(CLOSE_PARENS);
-		true_stm=statement(null);
+		true_stm=statement(if_stm);
 		{
 			bool synPredMatched53 = false;
 			if (((LA(1)==LITERAL_else)))
@@ -638,7 +638,7 @@ _loop15_breakloop:			;
 			if ( synPredMatched53 )
 			{
 				match(LITERAL_else);
-				false_stm=statement(null);
+				false_stm=statement(if_stm);
 			}
 			else if ((tokenSet_1_.member(LA(1)))) {
 			}
@@ -651,10 +651,10 @@ _loop15_breakloop:			;
 		if (0==inputState.guessing)
 		{
 			
-					  ifStm = new If (cond, true_stm, false_stm);
+			if_stm = new If (parent, cond, true_stm, false_stm);
 				
 		}
-		return ifStm;
+		return if_stm;
 	}
 	
 	public void iteration_stm(
@@ -1130,7 +1130,7 @@ _loop19_breakloop:			;
 		Expression e;
 		
 		
-			e = new Expression ();
+			e = new Expression (parent);
 			AST a = null;
 		
 		
@@ -3922,7 +3922,7 @@ _loop150_breakloop:					;
 			match(DECIMAL_LITERAL);
 			if (0==inputState.guessing)
 			{
-				num_lit = new NumericLiteral (parent, Convert.ToSingle (d.getText ()));
+				num_lit = new NumericLiteral (parent, System.Convert.ToSingle (d.getText ()));
 			}
 			break;
 		}
