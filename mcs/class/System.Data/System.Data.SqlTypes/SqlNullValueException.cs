@@ -33,7 +33,9 @@ using System.Globalization;
 using System.Runtime.Serialization;
 
 namespace System.Data.SqlTypes {
+	#if NET_1_1
 	[Serializable]
+	#endif	
 	public sealed class SqlNullValueException : SqlTypeException, ISerializable
 	{
 		public SqlNullValueException ()

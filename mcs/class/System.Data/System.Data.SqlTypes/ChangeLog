@@ -1,4 +1,8 @@
 2004-09-14 Umadevi S <sumadevi@novell.com>
+        * Made SerializableAttribute !net_2_0 for all the exception classes
+
+                                                                                                    
+2004-09-14 Umadevi S <sumadevi@novell.com>
 	* SqlAlreadyFilledException.cs, SqlNotFilledException.cs - Added these files
 
 2004-07-21 Umadevi S <sumadevi@novell.com>

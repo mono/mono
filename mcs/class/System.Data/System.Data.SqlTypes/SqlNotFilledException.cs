@@ -35,7 +35,6 @@ using System.Runtime.Serialization;
 
 namespace System.Data.SqlTypes {
 
-	[Serializable]
 	public class SqlNotFilledException : SqlTypeException, ISerializable
 	{
 		public SqlNotFilledException()
