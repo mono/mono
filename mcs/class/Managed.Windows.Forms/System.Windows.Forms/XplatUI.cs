@@ -23,9 +23,14 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.24 $
+// $Revision: 1.25 $
 // $Modtime: $
 // $Log: XplatUI.cs,v $
+// Revision 1.25  2004/10/18 04:50:54  pbartok
+// - Added method for enabling/disabling windows
+// - Added method for setting window modality
+// - Added method for setting topmost window
+//
 // Revision 1.24  2004/10/02 19:07:36  pbartok
 // - Added ClientToScreen coordinate translation method
 //
@@ -294,6 +299,14 @@ namespace System.Windows.Forms {
 			driver.Activate(handle);
 		}
 
+		internal static void EnableWindow(IntPtr handle, bool Enable) {
+			driver.EnableWindow(handle, Enable);
+		}
+
+		internal static void SetModal(IntPtr handle, bool Modal) {
+			driver.SetModal(handle, Modal);
+		}
+
 		internal static IntPtr DefWndProc(ref Message msg) {
 			return driver.DefWndProc(ref msg);
 		}
@@ -336,6 +349,10 @@ namespace System.Windows.Forms {
 
 		internal static bool SetZOrder(IntPtr hWnd, IntPtr AfterhWnd, bool Top, bool Bottom) {
 			return driver.SetZOrder(hWnd, AfterhWnd, Top, Bottom);
+		}
+
+		internal static bool SetTopmost(IntPtr hWnd, bool Enabled) {
+			return driver.SetTopmost(hWnd, Enabled);
 		}
 
 		internal static bool CalculateWindowRect(IntPtr hWnd, ref Rectangle ClientRect, int Style, bool HasMenu, out Rectangle WindowRect) {
