@@ -1,3 +1,10 @@
+2004-04-13 Umadevi S   <sumadevi@novell.com>
+	*  UniqueConstraint.cs
+	*  ConstraintCollection.cs
+	*  DataTable.cs
+	- Implemented a Constructor for UniqueConstraint.cs
+	- Used  EndInit on DataTable  to call a delegate which adds the constraints passed to the most recent call of AddRange().Used AddRange() on ConstraintCollection to check whether DataTable.BeginInit has occurred.  If yes, save the argument  constraint collection passed, then return.  If no, Check whether the constraints are of type UniqueConstraint and initialized with the special constructor  If yes Initialized the table property of this UniqueConstraint object with table assosciated with the current instance of ConstraintCollection class.
+
 2004-04-07  Marek Safar  <marek.safar@seznam.cz>
 
 	* Constraint.cs: changed ClsCompliant to CLSCompliant, build fix.
