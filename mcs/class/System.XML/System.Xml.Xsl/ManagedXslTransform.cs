@@ -28,6 +28,9 @@ namespace System.Xml.Xsl {
 
 		public override void Transform (XPathNavigator input, XsltArgumentList args, XmlWriter output, XmlResolver resolver)
 		{
+			if (s == null)
+				throw new XsltException ("No stylesheet was loaded.", null);
+
 			Outputter outputter = new GenericOutputter(output, s.Outputs);
 			bool wroteStartDocument = false;
 			if (output.WriteState == WriteState.Start) {

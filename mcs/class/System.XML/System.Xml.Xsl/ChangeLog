@@ -1,3 +1,8 @@
+2003-11-19  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* ManagedXslTransform.cs : Transform() should raise an error if no 
+	  stylesheet was loaded.
+
 2003-10-04  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* XslTransformImpl.cs : Load(url, resolver) now uses XPathDocument
