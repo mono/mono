@@ -44,9 +44,10 @@ namespace System.Web.Handlers {
 		
 		internal static string GetResourceUrl (Type type, string resourceName)
 		{
-			return "WebResource.axd?assembly=" 
-				+ HttpUtility.UrlEncode (type.Assembly.GetName ().FullName) 
-				+ "&resource=" 
+			string aname = type.Assembly == typeof(AssemblyResourceLoader).Assembly ? "s" : HttpUtility.UrlEncode (type.Assembly.GetName ().FullName);
+			return "WebResource.axd?a=" 
+				+ aname 
+				+ "&r=" 
 				+ HttpUtility.UrlEncode (resourceName);
 		}
 
@@ -55,8 +56,12 @@ namespace System.Web.Handlers {
 		void System.Web.IHttpHandler.ProcessRequest (HttpContext context)
 		{
 #if NET_2_0
-			string resourceName = context.Request.QueryString ["resource"];
-			Assembly assembly = Assembly.Load (context.Request.QueryString ["assembly"]);
+			string resourceName = context.Request.QueryString ["r"];
+			string asmName = context.Request.QueryString ["a"];
+			Assembly assembly;
+			
+			if (asmName == null || asmName == "s") assembly = GetType().Assembly;
+			else assembly = Assembly.Load (asmName);
 			
 			bool found = false;
 			foreach (WebResourceAttribute wra in assembly.GetCustomAttributes (typeof (WebResourceAttribute), false)) {

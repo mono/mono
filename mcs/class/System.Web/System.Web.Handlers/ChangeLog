@@ -1,3 +1,8 @@
+2004-11-18  Lluis Sanchez Gual <lluis@novell.com>
+
+	* AssemblyResourceLoader.cs: Use a special name when encoding a resource
+	from the System.Web assembly.
+
 2004-10-06 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* TraceHandler.cs: error code is 403 and the message different when
