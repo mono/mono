@@ -1,3 +1,8 @@
+2004-02-02  Zoltan Varga  <vargaz@freemail.hu>
+
+	* interp.c (ves_exec_method_with_context): Add new marshalling 
+	conventions.
+
 2004-01-22  Zoltan Varga  <vargaz@freemail.hu>
 
 	* interp.c (mono_main): Remove call to mono_verify_corlib (), since
