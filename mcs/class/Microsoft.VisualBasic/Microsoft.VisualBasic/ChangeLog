@@ -1,0 +1,6 @@
+2002-08-15  Tim Coleman <tim@timcoleman.com>
+	* ChangeLog:
+		Added a ChangeLog
+	* Constants.cs:
+		Make these actual constants so mcs will compile them.
+
