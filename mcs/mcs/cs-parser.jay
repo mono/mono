@@ -320,6 +320,10 @@ namespace_declaration
 			foreach (AttributeSection asec in attrs.AttributeSections)
 				if (asec.Target == "assembly")
 					RootContext.AddGlobalAttributeSection (current_container, asec);
+				else
+					Report.Error(1518, Lexer.Location,
+					"Attributes cannot be applied to namespaces."
+					+ " Expected class, delegate, enum, interface, or struct");
 		}
 
 		current_namespace = RootContext.Tree.RecordNamespace (current_namespace, file, (string) $3);
