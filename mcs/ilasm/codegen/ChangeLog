@@ -1,3 +1,8 @@
+2003-10-18 Jackson Harper <jackson@ximian.com>
+
+	* InstrTable.cs: Use short branch instructions instead of aliasing them
+	to the long branch instructions.
+	
 2003-10-13 Jackson Harper <jackson@ximian.com>
 
 	* MethodDef.cs: Check for null param lists in vararg

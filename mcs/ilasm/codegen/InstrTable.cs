@@ -271,20 +271,19 @@ namespace Mono.ILASM {
                         inst_table["blt.un"] = new ILToken (Token.INSTR_BRTARGET, BranchOp.blt_un);
                         inst_table["leave"] = new ILToken (Token.INSTR_BRTARGET, BranchOp.leave);
 
-                        /// TODO: .s instructions don't exist in PEAPI...yet
-                        inst_table["br.s"] = new ILToken (Token.INSTR_BRTARGET, BranchOp.br);
-                        inst_table["brfalse.s"] = new ILToken (Token.INSTR_BRTARGET, BranchOp.brfalse);
-                        inst_table["brtrue.s"] = new ILToken (Token.INSTR_BRTARGET, BranchOp.brtrue);
-                        inst_table["beq.s"] = new ILToken (Token.INSTR_BRTARGET, BranchOp.beq);
-                        inst_table["bge.s"] = new ILToken (Token.INSTR_BRTARGET, BranchOp.bge);
-                        inst_table["bgt.s"] = new ILToken (Token.INSTR_BRTARGET, BranchOp.bgt);
-                        inst_table["ble.s"] = new ILToken (Token.INSTR_BRTARGET, BranchOp.ble);
-                        inst_table["blt.s"] = new ILToken (Token.INSTR_BRTARGET, BranchOp.blt);
-                        inst_table["bne.un.s"] = new ILToken (Token.INSTR_BRTARGET, BranchOp.bne_un);
-                        inst_table["bge.un.s"] = new ILToken (Token.INSTR_BRTARGET, BranchOp.bge_un);
-                        inst_table["bgt.un.s"] = new ILToken (Token.INSTR_BRTARGET, BranchOp.bgt_un);
-                        inst_table["ble.un.s"] = new ILToken (Token.INSTR_BRTARGET, BranchOp.blt_un);
-                        inst_table["leave.s"] = new ILToken (Token.INSTR_BRTARGET, BranchOp.leave);
+                        inst_table["br.s"] = new ILToken (Token.INSTR_BRTARGET, BranchOp.br_s);
+                        inst_table["brfalse.s"] = new ILToken (Token.INSTR_BRTARGET, BranchOp.brfalse_s);
+                        inst_table["brtrue.s"] = new ILToken (Token.INSTR_BRTARGET, BranchOp.brtrue_s);
+                        inst_table["beq.s"] = new ILToken (Token.INSTR_BRTARGET, BranchOp.beq_s);
+                        inst_table["bge.s"] = new ILToken (Token.INSTR_BRTARGET, BranchOp.bge_s);
+                        inst_table["bgt.s"] = new ILToken (Token.INSTR_BRTARGET, BranchOp.bgt_s);
+                        inst_table["ble.s"] = new ILToken (Token.INSTR_BRTARGET, BranchOp.ble_s);
+                        inst_table["blt.s"] = new ILToken (Token.INSTR_BRTARGET, BranchOp.blt_s);
+                        inst_table["bne.un.s"] = new ILToken (Token.INSTR_BRTARGET, BranchOp.bne_un_s);
+                        inst_table["bge.un.s"] = new ILToken (Token.INSTR_BRTARGET, BranchOp.bge_un_s);
+                        inst_table["bgt.un.s"] = new ILToken (Token.INSTR_BRTARGET, BranchOp.bgt_un_s);
+                        inst_table["ble.un.s"] = new ILToken (Token.INSTR_BRTARGET, BranchOp.blt_un_s);
+                        inst_table["leave.s"] = new ILToken (Token.INSTR_BRTARGET, BranchOp.leave_s);
 
                         //
                         // Misc other instructions
