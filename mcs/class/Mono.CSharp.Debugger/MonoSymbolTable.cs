@@ -534,9 +534,9 @@ namespace Mono.CompilerServices.SymbolWriter
 		int LexicalBlockTableOffset;
 		#endregion
 
+		int index;
 		int file_offset;
 
-		public readonly int Index;
 		public readonly SourceFileEntry SourceFile;
 		public readonly LineNumberEntry[] LineNumbers;
 		public readonly int[] LocalTypeIndices;
@@ -545,6 +545,11 @@ namespace Mono.CompilerServices.SymbolWriter
 
 		public readonly MonoSymbolFile SymbolFile;
 
+		public int Index {
+			get { return index; }
+			set { index = value; }
+		}
+
 		public static int Size {
 			get { return 52; }
 		}
@@ -552,7 +557,7 @@ namespace Mono.CompilerServices.SymbolWriter
 		internal MethodEntry (MonoSymbolFile file, MyBinaryReader reader, int index)
 		{
 			this.SymbolFile = file;
-			this.Index = index;
+			this.index = index;
 			SourceFileIndex = reader.ReadInt32 ();
 			Token = reader.ReadInt32 ();
 			StartRow = reader.ReadInt32 ();
@@ -625,7 +630,7 @@ namespace Mono.CompilerServices.SymbolWriter
 		{
 			this.SymbolFile = file;
 
-			Index = file.GetNextMethodIndex ();
+			index = -1;
 
 			Token = token;
 			SourceFileIndex = source.Index;
@@ -727,6 +732,9 @@ namespace Mono.CompilerServices.SymbolWriter
 
 		internal MethodSourceEntry Write (MonoSymbolFile file, MyBinaryWriter bw)
 		{
+			if (index <= 0)
+				throw new InvalidOperationException ();
+
 			NameOffset = (int) bw.BaseStream.Position;
 
 			TypeIndexTableOffset = (int) bw.BaseStream.Position;
@@ -764,21 +772,11 @@ namespace Mono.CompilerServices.SymbolWriter
 			bw.Write (NamespaceID);
 			bw.Write (LocalNamesAmbiguous ? 1 : 0);
 
-			return new MethodSourceEntry (Index, file_offset, StartRow, EndRow);
+			return new MethodSourceEntry (index, file_offset, StartRow, EndRow);
 		}
 
 		internal void WriteIndex (BinaryWriter bw)
 		{
-			/*
-			 * NOTE: This has nothing to do with the `Index' field.
-			 *
-			 * The `Index' field specifies at which position the `MethodEntry' is
-			 * written to the symbol file; they can be in any order.
-			 *
-			 * The `MethodIndexEntry' is a way of quickly looking up a method by its
-			 * token - we're using a bsearch() on it in the runtime, so they have to
-			 * be sorted by token.
-			 */
 			new MethodIndexEntry (file_offset, Token).Write (bw);
 		}
 
@@ -797,7 +795,7 @@ namespace Mono.CompilerServices.SymbolWriter
 		public override string ToString ()
 		{
 			return String.Format ("[Method {0}:{1}:{2}:{3}:{4} - {6}:{7} - {5}]",
-					      Index, Token, SourceFileIndex, StartRow, EndRow,
+					      index, Token, SourceFileIndex, StartRow, EndRow,
 					      SourceFile, NumLocals, NumLineNumbers);
 		}
 	}

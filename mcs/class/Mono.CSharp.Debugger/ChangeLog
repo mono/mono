@@ -1,3 +1,12 @@
+2004-10-20  Martin Baulig  <martin@ximian.com>
+
+	* MonoSymbolFile.cs (MonoSymbolFile.Write): Sort the method table
+	before actually writing it to disk and update MethodEntry.Index.
+
+	* MonoSymbolTable.cs (MethodEntry.Index): Make this a writable
+	property; set it after creating all the methods and sorting the
+	method table.
+
 2004-09-21  Martin Baulig  <martin@ximian.com>
 
 	* MonoSymbolFile.cs (MonoDebuggerSupport.CheckRuntimeVersion): New
