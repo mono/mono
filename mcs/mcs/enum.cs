@@ -30,8 +30,6 @@ namespace Mono.CSharp {
 		
 		public Type UnderlyingType;
 
-		public readonly RootContext RootContext;
-
 		Hashtable member_to_location;
 
 		//
@@ -50,9 +48,8 @@ namespace Mono.CSharp {
 			Modifiers.PRIVATE;
 
 		public Enum (RootContext rc, string type, int mod_flags, string name, Attributes attrs, Location l)
-			: base (name, l)
+			: base (rc, name, l)
 		{
-			RootContext = rc;
 			this.BaseType = type;
 			this.EnumName = name;
 			this.mod_flags = Modifiers.Check (AllowedModifiers, mod_flags, Modifiers.PUBLIC);

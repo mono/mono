@@ -328,6 +328,17 @@ namespace Mono.CSharp {
 		}
 
 		//
+		// This routine should remove members that are overwritten from
+		// a base class.
+		//
+		// 
+		//
+		static MemberInfo [] RemoveOverwritten (Type t, MemberInfo [] mi)
+		{
+			return mi;
+		}
+		
+		//
 		// FIXME: Probably implement a cache for (t,name,current_access_set)?
 		//
 		// FIXME: We need to cope with access permissions here, or this wont
@@ -367,10 +378,21 @@ namespace Mono.CSharp {
 			if (mi == null)
 				return null;
 
+			//
 			// Empty array ...
-			// This arises when we use FindMembers from SRE. Our code prefers to send a null back
-			if (mi.Length == 0) 
+			// This arises when we use FindMembers from SRE.
+			// Our code prefers to send a null back
+			//
+			// FIXME: Ponder whether this is a good idea, maybe we should
+			// just stick to the convention and use empty arrays.
+			//
+			int count = mi.Length;
+			
+			if (count == 0) 
 				return null;
+
+			if (count > 1)
+				mi = RemoveOverwritten (t, mi);
 			
 			if (mi.Length == 1 && !(mi [0] is MethodBase))
 				return Expression.ExprClassFromMemberInfo (ec, mi [0], loc);
@@ -2823,6 +2845,8 @@ namespace Mono.CSharp {
 					      "this context because it lacks a get accessor");
 				return null;
 			}
+
+			type = PropertyInfo.PropertyType;
 
 			return this;
 		}

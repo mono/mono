@@ -30,17 +30,12 @@ namespace Mono.CSharp {
 		static int global_count;
 		static int module_base;
 
-		static void Reset ()
+		static Location ()
 		{
 			map = new Hashtable ();
 			list = new ArrayList ();
 			global_count = 0;
 			module_base = 0;
-		}
-		
-		static Location ()
-		{
-			Reset ();
 		}
 	
 		public void Push (string name)
@@ -56,7 +51,8 @@ namespace Mono.CSharp {
 				token = -1;
 			else {
 				token = module_base + row;
-				global_count = token;
+				if (global_count < token)
+					global_count = token;
 			}
 		}
 		
@@ -76,30 +72,31 @@ namespace Mono.CSharp {
 
 		public string Name {
 			get {
+				int best = 0;
+				
 				if (token < 0)
 					return "Internal";
-				
-				foreach (int b in list){
-					if (token < b)
-						continue;
-					return (string) map [b];
-				}
 
-				return "Unknown";
+				foreach (int b in list){
+					if (token > b)
+						best = b;
+				}
+				return (string) map [best];
 			}
 		}
 
 		public int Row {
 			get {
+				int best = 0;
+				
 				if (token < 0)
 					return 1;
 				
 				foreach (int b in list){
-					if (token < b)
-						continue;
-					return token - b;
+					if (token > b)
+						best = b;
 				}
-				return 0;
+				return token - best;
 			}
 		}
 	}

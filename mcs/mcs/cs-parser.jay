@@ -1008,6 +1008,7 @@ interface_declaration
 			Report.Error (-2, l, "Internal compiler error: interface inside interface");
 		}
 		current_interface = new_interface;
+		new_interface.Namespace = current_namespace;
 		tree.RecordInterface (full_interface_name, new_interface);
 	  }
 	  opt_interface_base

@@ -1,3 +1,24 @@
+2001-12-15  Miguel de Icaza  <miguel@ximian.com>
+
+	* expression.cs (ArrayCreation.DoResolve): We need to do the
+	argument resolution *always*.
+
+	* decl.cs: Make this hold the namespace.  Hold the root context as
+	well.
+	(LookupType): Move here.
+
+	* enum.cs, class.cs, interface.cs: Adapt to new hierarchy.
+
+	* location.cs (Row, Name): Fixed the code, it was always returning
+	references to the first file.
+
+	* interface.cs: Register properties defined through interfaces.
+
+	* driver.cs: Add support for globbing on the command line
+
+	* class.cs (Field): Make it derive from MemberCore as well.
+	(Event): ditto.
+
 2001-12-15  Ravi Pratap  <ravi@ximian.com>
 
 	* class.cs (Event::Define): Check that the type of the event is a delegate

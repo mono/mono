@@ -200,11 +200,11 @@ namespace Mono.CSharp {
 		//
 		// Returns: Type or null if they type can not be found.
 		//
-		public Type LookupType (TypeContainer tc, string name, bool silent)
+		public Type LookupType (DeclSpace ds, string name, bool silent)
 		{
 			Type t;
 
-			t = TypeManager.LookupType (MakeFQN (tc.Namespace.Name, name));
+			t = TypeManager.LookupType (MakeFQN (ds.Namespace.Name, name));
 			if (t != null)
 				return t;
 
@@ -215,7 +215,7 @@ namespace Mono.CSharp {
 			if (t != null)
 				return t;
 			
-			for (Namespace ns = tc.Namespace; ns != null; ns = ns.Parent){
+			for (Namespace ns = ds.Namespace; ns != null; ns = ns.Parent){
 				ArrayList using_list = ns.UsingTable;
 
 				if (using_list == null)
@@ -229,7 +229,7 @@ namespace Mono.CSharp {
 			}
 
 			// For the case the type we are looking for is nested within this one.
-			t = TypeManager.LookupType (tc.Name + "." + name);
+			t = TypeManager.LookupType (ds.Name + "." + name);
 			if (t != null)
 				return t;
 			

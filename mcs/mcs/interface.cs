@@ -50,8 +50,6 @@ namespace Mono.CSharp {
 
 		Attributes OptAttributes;
 
-		public readonly RootContext RootContext;
-		
 		// These will happen after the semantic analysis
 		
 		// Hashtable defined_indexers;
@@ -67,13 +65,13 @@ namespace Mono.CSharp {
 			Modifiers.INTERNAL |
 			Modifiers.PRIVATE;
 
-		public Interface (RootContext rc, TypeContainer parent, string name, int mod, Attributes attrs, Location l)
-			: base (name, l)
+		public Interface (RootContext rc, TypeContainer parent, string name, int mod,
+				  Attributes attrs, Location l)
+			: base (rc, name, l)
 		{
 			this.mod_flags = Modifiers.Check (AllowedModifiers, mod, Modifiers.PRIVATE);
 			this.parent = parent;
 			OptAttributes = attrs;
-			RootContext = rc;
 			
 			method_builders = new ArrayList ();
 			property_builders = new ArrayList ();
@@ -281,18 +279,20 @@ namespace Mono.CSharp {
 
 			return null;
 		}
-		
-		
+
 		//
 		// Populates the methods in the interface
 		//
 		void PopulateMethod (InterfaceMethod im)
 		{
-			Type return_type = parent.LookupType (im.ReturnType, true);
+			Type return_type = LookupType (im.ReturnType, false);
 			Type [] arg_types = im.ParameterTypes (parent);
 			MethodBuilder mb;
 			Parameter [] p;
 			int i;
+
+			if (return_type == null)
+				return;
 			
 			//
 			// Create the method
@@ -328,22 +328,25 @@ namespace Mono.CSharp {
 		void PopulateProperty (InterfaceProperty ip)
 		{
 			PropertyBuilder pb;
-			MethodBuilder mb;
-			Type prop_type = parent.LookupType (ip.Type, true);
+			MethodBuilder get = null, set = null;
+			Type prop_type = LookupType (ip.Type, false);
 			Type [] setter_args = new Type [1];
 
+			if (prop_type == null)
+				return;
+			
 			setter_args [0] = prop_type;
 
 			//
 			// FIXME: properties are missing the following
 			// flags: hidebysig newslot specialname
-			// 
+			//
 			pb = TypeBuilder.DefineProperty (
 				ip.Name, PropertyAttributes.None,
 				prop_type, null);
 
 			if (ip.HasGet){
-				mb = TypeBuilder.DefineMethod (
+				get = TypeBuilder.DefineMethod (
 					"get_" + ip.Name, property_attributes ,
 					prop_type, null);
 
@@ -353,23 +356,23 @@ namespace Mono.CSharp {
 				InternalParameters inp = new InternalParameters
 					((Type [])null, Parameters.GetEmptyReadOnlyParameters ());
 				
-				if (!RegisterMethod (mb, inp, null)) {
+				if (!RegisterMethod (get, inp, null)) {
 					Error111 (ip);
 					return;
 				}
 				
-				pb.SetGetMethod (mb);
+				pb.SetGetMethod (get);
 			}
 
 			if (ip.HasSet){
 				setter_args [0] = prop_type;
 
-				mb = TypeBuilder.DefineMethod (
+				set = TypeBuilder.DefineMethod (
 					"set_" + ip.Name, property_attributes,
 					null, setter_args);
 
-				mb.DefineParameter (1, ParameterAttributes.None, "value");
-				pb.SetSetMethod (mb);
+				set.DefineParameter (1, ParameterAttributes.None, "value");
+				pb.SetSetMethod (set);
 
 				//
 				// HACK because System.Reflection.Emit is lame
@@ -379,12 +382,13 @@ namespace Mono.CSharp {
 				InternalParameters ipp = new InternalParameters (
 					parent, new Parameters (parms, null));
 					
-				if (!RegisterMethod (mb, ipp, setter_args)) {
+				if (!RegisterMethod (set, ipp, setter_args)) {
 					Error111 (ip);
 					return;
 				}
 			}
 
+			TypeManager.RegisterProperty (pb, get, set);
 			property_builders.Add (pb);
 		}
 
@@ -405,10 +409,13 @@ namespace Mono.CSharp {
 		void PopulateIndexer (InterfaceIndexer ii)
 		{
 			PropertyBuilder pb;
-			Type prop_type = parent.LookupType (ii.Type, true);
+			Type prop_type = LookupType (ii.Type, false);
 			Type [] arg_types = ii.ParameterTypes (parent);
 			Type [] value_arg_types;
 
+			if (prop_type == null)
+				return;
+			
 			//
 			// Sets up the extra invisible `value' argument for setters.
 			// 

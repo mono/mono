@@ -3388,8 +3388,16 @@ namespace Mono.CSharp {
 
 			if (Arguments == null)
 				arg_count = 0;
-			else
+			else {
 				arg_count = Arguments.Count;
+				for (int i = arg_count; i > 0;){
+					--i;
+					Argument a = (Argument) Arguments [i];
+					
+					if (!a.Resolve (ec, loc))
+						return null;
+				}
+			}
 			
 			string array_type = FormArrayType (RequestedType, arg_count, Rank);
 			string element_type = FormElementType (RequestedType, arg_count, Rank);
@@ -3427,16 +3435,6 @@ namespace Mono.CSharp {
 					return null;
 				}
 				
-				if (Arguments != null) {
-					for (int i = arg_count; i > 0;){
-						--i;
-						Argument a = (Argument) Arguments [i];
-						
-						if (!a.Resolve (ec, loc))
-							return null;
-					}
-				}
-				
 				method = Invocation.OverloadResolve (ec, (MethodGroupExpr) ml, Arguments, loc);
 				
 				if (method == null) {
@@ -3456,9 +3454,6 @@ namespace Mono.CSharp {
 					for (int i = arg_count; i > 0;){
 						--i;
 						Argument a = (Argument) Arguments [i];
-						
-						if (!a.Resolve (ec, loc))
-							return null;
 						
 						args.Add (a.Type);
 					}

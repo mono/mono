@@ -301,13 +301,15 @@ namespace Mono.CSharp
 				if (first_source == null)
 					first_source = arg;
 
-				if (!arg.EndsWith (".cs")){
-					error ("Do not know how to compile " + arg);
-					errors++;
-					continue;
+				string [] files = Directory.GetFiles (".", arg);
+				foreach (string f in files){
+					if (!f.ToLower ().EndsWith (".cs")){
+						error ("Do not know how to compile " + arg);
+						errors++;
+						continue;
+					}
+					errors += parse (f);
 				}
-				
-				errors += parse (arg);
 			}
 
 			if (first_source == null){

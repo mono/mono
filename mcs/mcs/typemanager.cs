@@ -687,7 +687,7 @@ public class TypeManager {
 	static public MethodInfo [] GetAccessors (PropertyInfo pi)
 	{
 		MethodInfo [] ret;
-			
+
 		if (pi is PropertyBuilder){
 			DictionaryEntry de = (DictionaryEntry) properties [pi];
 

@@ -36,6 +36,24 @@ namespace Mono.CSharp {
 		/// </summary>
 		public readonly Location Location;
 		
+		//
+		// This is the namespace in which this typecontainer
+		// was declared.  We use this to resolve names.
+		//
+		Namespace my_namespace;
+		
+		public Namespace Namespace {
+			get {
+				return my_namespace;
+			}
+
+			set {
+				my_namespace = value;
+			}
+		}
+
+		public readonly RootContext RootContext;
+		
 		string name, basename;
 		
 		/// <summary>
@@ -88,9 +106,10 @@ namespace Mono.CSharp {
 		/// </summary>
 		protected Hashtable defined_names;
 
-		public DeclSpace (string name, Location l)
+		public DeclSpace (RootContext rc, string name, Location l)
 		{
 			this.name = name;
+			this.RootContext = rc;
 			this.basename = name.Substring (1 + name.LastIndexOf ('.'));
 			defined_names = new Hashtable ();
 			Location = l;
@@ -145,6 +164,11 @@ namespace Mono.CSharp {
 			set {
 				definition = value;
 			}
+		}
+
+		public Type LookupType (string name, bool silent)
+		{
+			return RootContext.LookupType (this, name, silent);
 		}
 
 	}

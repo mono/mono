@@ -43,9 +43,9 @@ namespace Mono.CSharp {
 			OptAttributes = attrs;
 		}
 
-		public bool Resolve (TypeContainer tc)
+		public bool Resolve (DeclSpace ds)
 		{
-			ParameterType = tc.LookupType (TypeName, false);
+			ParameterType = ds.LookupType (TypeName, false);
 			return ParameterType != null;
 		}
 
@@ -93,10 +93,10 @@ namespace Mono.CSharp {
 		///   Returns the signature for this parameter evaluating it on the
 		///   @tc context
 		/// </summary>
-		public string GetSignature (TypeContainer tc)
+		public string GetSignature (DeclSpace ds)
 		{
 			if (ParameterType == null){
-				if (!Resolve (tc))
+				if (!Resolve (ds))
 					return null;
 			}
 

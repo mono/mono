@@ -76,12 +76,6 @@ namespace Mono.CSharp {
 		bool have_static_constructor = false;
 		
 		//
-		// This is the namespace in which this typecontainer
-		// was declared.  We use this to resolve names.
-		//
-		Namespace my_namespace;
-		
-		//
 		// This one is computed after we can distinguish interfaces
 		// from classes from the arraylist `type_bases' 
 		//
@@ -89,11 +83,6 @@ namespace Mono.CSharp {
 
 		TypeContainer parent;
 		ArrayList type_bases;
-
-		//
-		// This behaves like a property ;-)
-		//
-		public readonly RootContext RootContext;
 
 		// Attributes for this type
 		protected Attributes attributes;
@@ -106,12 +95,11 @@ namespace Mono.CSharp {
 		
 
 		public TypeContainer (RootContext rc, TypeContainer parent, string name, Location l)
-			: base (name, l)
+			: base (rc, name, l)
 		{
 			string n;
 			types = new ArrayList ();
 			this.parent = parent;
-			RootContext = rc;
 
 			if (parent == null)
 				n = "";
@@ -458,16 +446,6 @@ namespace Mono.CSharp {
 			}
 		}
 		
-		public Namespace Namespace {
-			get {
-				return my_namespace;
-			}
-
-			set {
-				my_namespace = value;
-			}
-		}
-
 		// 
 		// root_types contains all the types.  All TopLevel types
 		// hence have a parent that points to `root_types', that is
@@ -1078,18 +1056,13 @@ namespace Mono.CSharp {
 		
 		}
 
-		public Type LookupType (string name, bool silent)
-		{
-			return RootContext.LookupType (this, name, silent);
-		}
-
 		/// <summary>
 		///   Looks up the alias for the name
 		/// </summary>
 		public string LookupAlias (string name)
 		{
-			if (my_namespace != null)
-				return my_namespace.LookupAlias (name);
+			if (Namespace != null)
+				return Namespace.LookupAlias (name);
 			else
 				return null;
 		}
@@ -1302,7 +1275,7 @@ namespace Mono.CSharp {
 						i++;
 						continue;
 					}
-					
+
 					if (ret_type != m.ReturnType){
 						i++;
 						continue;
@@ -1335,7 +1308,7 @@ namespace Mono.CSharp {
 					int j;
 						
 					for (j = 0; j < args.Length; j++){
-						if (tm.args [i][j] != args[i]){
+						if (tm.args [i][j] != args[j]){
 							i++;
 							continue;
 						}
@@ -2428,15 +2401,11 @@ namespace Mono.CSharp {
 		}
 	}
 	
-	public class Field {
+	public class Field : MemberCore {
 		public readonly string Type;
 		public readonly Object Initializer;
-		public readonly string Name;
-		public readonly int    ModFlags;
 		public readonly Attributes OptAttributes;
 		public FieldBuilder  FieldBuilder;
-		
-		public Location Location;
 		
 		// <summary>
 		//   Modifiers allowed in a class declaration
@@ -2450,14 +2419,14 @@ namespace Mono.CSharp {
 			Modifiers.STATIC |
 			Modifiers.READONLY;
 
-		public Field (string type, int mod, string name, Object expr_or_array_init, Attributes attrs, Location loc)
+		public Field (string type, int mod, string name, Object expr_or_array_init,
+			      Attributes attrs, Location loc)
+			: base (name, loc)
 		{
 			Type = type;
 			ModFlags = Modifiers.Check (AllowedModifiers, mod, Modifiers.PRIVATE);
-			Name = name;
 			Initializer = expr_or_array_init;
 			OptAttributes = attrs;
-			this.Location = loc;
 		}
 
 		public void Define (TypeContainer parent)
@@ -2606,18 +2575,21 @@ namespace Mono.CSharp {
 			MethodAttributes flags = Modifiers.MethodAttr (ModFlags);
 			Type [] parameters = null;
 			MethodInfo implementing;
+			Type fn_type;
 			string name;
 			
-			if (is_get)
+			if (is_get){
+				fn_type = PropertyType;
 				name = "get_" + short_name;
-			else {
+			} else {
 				name = "set_" + short_name;
 				parameters = new Type [1];
 				parameters [0] = PropertyType;
+				fn_type = null;
 			}
 
 			implementing = parent.IsInterfaceMethod (
-				iface_type, name, PropertyType, parameters, false);
+				iface_type, name, fn_type, parameters, false);
 
 			//
 			// For implicit implementations, make sure we are public, for
@@ -2662,7 +2634,7 @@ namespace Mono.CSharp {
 				// clear the pending flag
 				//
 				parent.IsInterfaceMethod (
-					iface_type, name, PropertyType, parameters, true);
+					iface_type, name, fn_type, parameters, true);
 			}
 			
 			if (is_get){
@@ -2841,7 +2813,7 @@ namespace Mono.CSharp {
 		}
 	}
 
-	public class Event {
+	public class Event : MemberCore {
 		
 		const int AllowedModifiers =
 			Modifiers.NEW |
@@ -2856,29 +2828,23 @@ namespace Mono.CSharp {
 			Modifiers.ABSTRACT;
 
 		public readonly string    Type;
-		public readonly string    Name;
 		public readonly Object    Initializer;
-		public readonly int       ModFlags;
 		public readonly Block     Add;
 		public readonly Block     Remove;
 		public EventBuilder       EventBuilder;
 		public Attributes         OptAttributes;
-
 		Type EventType;
 
-		Location Location;
-		
-		public Event (string type, string name, Object init, int flags, Block add_block, Block rem_block,
-			      Attributes attrs, Location loc)
+		public Event (string type, string name, Object init, int flags, Block add_block,
+			      Block rem_block, Attributes attrs, Location loc)
+			: base (name, loc)
 		{
 			Type = type;
-			Name = name;
 			Initializer = init;
 			ModFlags = Modifiers.Check (AllowedModifiers, flags, Modifiers.PRIVATE);  
 			Add = add_block;
 			Remove = rem_block;
 			OptAttributes = attrs;
-			Location = loc;
 		}
 
 		public void Define (TypeContainer parent)
