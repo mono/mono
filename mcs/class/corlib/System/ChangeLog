@@ -1,6 +1,11 @@
 
 2003-01-09  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* Type.cs:
+	(IsSubclassOf): return false when null. Use != instead of Equals.
+
+2003-01-09  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* Type.cs: fixed IsSubclassOf. Patch from Zoltan Varga.
 
 Fri Jan 3 20:18:51 CET 2003 Paolo Molaro <lupus@ximian.com>
