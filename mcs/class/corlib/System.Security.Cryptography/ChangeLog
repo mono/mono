@@ -1,3 +1,12 @@
+2005-03-07  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* MD5CryptoServiceProvider.cs: Fixed #73404 to return right results
+	if the data length is bigger than 2^32 bits.
+	* SHA1CryptoServiceProvider.cs: Fixed #73404 to return right results
+	if the data length is bigger than 2^32 bits.
+	* SHA256Managed.cs: Fixed #73404 to return right results if the data
+	length is bigger than 2^32 bits.
+
 2005-03-03  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* RNGCryptoServiceProvider.cs: Added a new call in the static ctor
