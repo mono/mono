@@ -1,3 +1,7 @@
+2004-08-25  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini.c (mono_method_to_ir): Handle generic types in init locals.
+
 2004-08-24  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini.c (handle_box): Fix warning.
