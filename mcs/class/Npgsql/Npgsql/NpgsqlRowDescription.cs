@@ -192,7 +192,7 @@ namespace Npgsql
                 foreach (String name in fields_index)
                 {
 
-                    if (name.Equals(fieldName))
+                    if (name.ToLower().Equals(fieldName.ToLower()))
                     {
                         return result;
                     }
