@@ -7,7 +7,7 @@
 // (C) 2003 Andreas Nahr
 //
 
-#if (NET_1_1)
+#if NET_1_1
 
 namespace System.Runtime.Serialization.Formatters
 {

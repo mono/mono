@@ -12,7 +12,7 @@
 
 namespace System.Runtime.Serialization.Formatters {
 
-
+#if ECMA
 	/// <summary>
 	/// </summary>
 	public enum InternalElementTypeE {
@@ -29,5 +29,6 @@ namespace System.Runtime.Serialization.Formatters {
 		/// </summary>
 		Member = 2,
 	} // InternalElementTypeE
-
+#endif
+	
 } // System.Runtime.Serialization.Formatters

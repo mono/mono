@@ -12,7 +12,7 @@
 
 namespace System.Runtime.Serialization.Formatters {
 
-
+#if ECMA
 	/// <summary>
 	/// </summary>
 	public enum InternalNameSpaceE {
@@ -57,5 +57,5 @@ namespace System.Runtime.Serialization.Formatters {
 		/// </summary>
 		CallElement = 9,
 	} // InternalNameSpaceE
-
+#endif
 } // System.Runtime.Serialization.Formatters

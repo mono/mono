@@ -12,7 +12,7 @@
 
 namespace System.Runtime.Serialization.Formatters {
 
-
+#if ECMA
 	/// <summary>
 	/// </summary>
 	public enum InternalParseStateE {
@@ -33,5 +33,5 @@ namespace System.Runtime.Serialization.Formatters {
 		/// </summary>
 		MemberChild = 3,
 	} // InternalParseStateE
-
+#endif
 } // System.Runtime.Serialization.Formatters

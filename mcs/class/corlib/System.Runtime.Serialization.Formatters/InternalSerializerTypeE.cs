@@ -12,7 +12,7 @@
 
 namespace System.Runtime.Serialization.Formatters {
 
-
+#if ECMA
 	/// <summary>
 	/// </summary>
 	public enum InternalSerializerTypeE {
@@ -25,5 +25,6 @@ namespace System.Runtime.Serialization.Formatters {
 		/// </summary>
 		Binary = 2,
 	} // InternalSerializerTypeE
-
+#endif
+	
 } // System.Runtime.Serialization.Formatters

@@ -12,7 +12,7 @@
 
 namespace System.Runtime.Serialization.Formatters {
 
-
+#if ECMA
 	/// <summary>
 	/// </summary>
 	public enum InternalParseTypeE {
@@ -69,5 +69,6 @@ namespace System.Runtime.Serialization.Formatters {
 		/// </summary>
 		BodyEnd = 12,
 	} // InternalParseTypeE
-
+#endif
+	
 } // System.Runtime.Serialization.Formatters

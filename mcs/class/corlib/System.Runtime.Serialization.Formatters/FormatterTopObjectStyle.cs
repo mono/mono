@@ -13,6 +13,8 @@
 namespace System.Runtime.Serialization.Formatters {
 
 
+#if ECMA
+	
 	/// <summary>
 	/// </summary>
 	public enum FormatterTopObjectStyle {
@@ -25,5 +27,6 @@ namespace System.Runtime.Serialization.Formatters {
 		/// </summary>
 		SoapMessage = 1,
 	} // FormatterTopObjectStyle
-
+#endif
+	
 } // System.Runtime.Serialization.Formatters

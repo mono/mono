@@ -12,7 +12,8 @@
 
 namespace System.Runtime.Serialization.Formatters {
 
-
+#if ECMA
+	
 	/// <summary>
 	/// </summary>
 	public enum InternalArrayTypeE {
@@ -37,5 +38,6 @@ namespace System.Runtime.Serialization.Formatters {
 		/// </summary>
 		Base64 = 4,
 	} // InternalArrayTypeE
-
+#endif
+	
 } // System.Runtime.Serialization.Formatters

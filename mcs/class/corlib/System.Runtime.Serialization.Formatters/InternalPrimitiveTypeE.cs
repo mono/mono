@@ -11,7 +11,7 @@
 
 
 namespace System.Runtime.Serialization.Formatters {
-
+#if ECMA
 
 	/// <summary>
 	/// </summary>
@@ -85,5 +85,5 @@ namespace System.Runtime.Serialization.Formatters {
 		/// </summary>
 		UInt64 = 16,
 	} // InternalPrimitiveTypeE
-
+#endif
 } // System.Runtime.Serialization.Formatters

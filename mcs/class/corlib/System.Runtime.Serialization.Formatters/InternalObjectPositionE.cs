@@ -12,7 +12,7 @@
 
 namespace System.Runtime.Serialization.Formatters {
 
-
+#if ECMA
 	/// <summary>
 	/// </summary>
 	public enum InternalObjectPositionE {
@@ -33,5 +33,5 @@ namespace System.Runtime.Serialization.Formatters {
 		/// </summary>
 		Headers = 3,
 	} // InternalObjectPositionE
-
+#endif
 } // System.Runtime.Serialization.Formatters
