@@ -1,3 +1,7 @@
+2003-01-13  Ville Palo <vi64pa@koti.soon.fi>
+
+	* data_linux_test.args: Added some classes
+	
 2002-12-16  Ville Palo <vi64pa@koti.soon.fi>
 
 	* System.Xml/XmlDataDocumentTest.cs: some fixes.
