@@ -1,3 +1,8 @@
+2005-02-17  Zoltan Varga  <vargaz@freemail.hu>
+
+	* reflection.c (mono_reflection_create_runtime_class): Set has_cctor
+	and has_finalize in dynamic types as well.
+
 2005-02-17  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* culture-info-table.h : fixed currency format for en-GB (and so on).
