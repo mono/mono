@@ -1,3 +1,8 @@
+2004-11-27  Ben Maurer  <bmaurer@ximian.com>
+
+	* inssel.brg (CEE_SWITCH): The AOT stuff Zoltan added is only for
+	platforms with PIC aot.
+
 2004-11-28  Martin Baulig  <martin@ximian.com>
 
 	* mini-x86.c (mono_arch_call_opcode): Use the original type, not
