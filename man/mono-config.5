@@ -1,0 +1,36 @@
+.\" 
+.\" mono configuration page.
+.\" (C) Ximian, Inc. 
+.\" Author:
+.\"   Miguel de Icaza (miguel@gnu.org)
+.\"
+.TH Mono "Mono 1.0"
+.SH NAME
+mono-config \- Mono runtime file format configuration
+.SH DESCRIPTION
+The Mono runtime will load configuration data from the
+installation prefix /etc/mono/config file, the ~/.mono/config or from
+the file pointed by the MONO_CONFIG environment variable.
+.PP
+This file controls the behavior of the runtime.
+.PP
+The file contains an XML-like file with various sections, all of them
+contained inside a 
+.B<configuration> 
+section (It actually uses GMarkup
+to parse the file).
+.SH <dllmap> directive
+You use the dllmap directive to map shared libraries referenced by
+P/Invoke in your assemblies to a different shared library.
+.PP
+This is typically used to map Windows libraries to Unix library names.
+.SH EXAMPLES
+The following example maps references to the `cygwin1.dll' shared
+library to the `libc.so.6' file.  
+.nf
+<configuration>
+	<dllmap dll="cygwin1.dll" target="libc.so.6"/>
+</configuration>
+.fi
+.SH SEE ALSO
+.BR mono(1), monodis(1), mint(1)
