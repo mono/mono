@@ -135,3 +135,8 @@ dist-default:
 	    dest=`dirname $(distdir)/$$f` ; \
 	    $(MKINSTALLDIRS) $$dest && cp $$f $$dest || exit 1 ; \
 	done
+
+# Useful
+
+withmcs:
+	$(MAKE) MCS='$(INTERNAL_MCS)' BOOTSTRAP_MCS='$(INTERNAL_MCS)' all

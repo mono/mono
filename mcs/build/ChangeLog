@@ -1,3 +1,7 @@
+2003-07-22  Peter Williams  <peter@newton.cx>
+
+	* rules.make (withmcs): Add this developer utility target.
+
 2003-07-20  Peter Williams  <peter@newton.cx>
 
 	* README.platforms: Update docs for changes below.
