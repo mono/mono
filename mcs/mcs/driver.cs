@@ -1287,6 +1287,8 @@ namespace Mono.CSharp
 			
 			if (parse_only)
 				return true;
+
+			Tokenizer.Cleanup ();
 			
 			//
 			// Load Core Library for default compilation

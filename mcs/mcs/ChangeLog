@@ -1,3 +1,9 @@
+2004-01-02  Zoltan Varga  <vargaz@freemail.hu>
+
+	* cs-tokenizer.cs (consume_identifier) driver.cs: Cache identifiers in
+	a hashtable to avoid needless string allocations when an identifier is
+	used more than once (the common case).
+
 2004-01-01 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* pending.cs: MS's TypeBuilder.GetInterfaces ()
