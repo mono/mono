@@ -1,3 +1,12 @@
+2003-11-24  Jackson Harper <jackson@ximian.com>
+
+	* RemoteStateServer.cs: The state server object that will reside
+	on the server and store session data and ids.
+	* StateServerItem.cs: Container for session data.
+	* SessionStateServerHandler.cs: Handler that communicates with the
+	StateServer so sessions can be stored out of process.
+	* SessionStateModule.cs: Allow state server mode.
+	
 2003-11-13  Jackson Harper <jackson@ximian.com>
 
 	* SessionInProcHandler.cs: Use AppDomain.SetData so data is

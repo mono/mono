@@ -46,7 +46,7 @@ namespace System.Web.SessionState
 					config = new SessionConfig (null);
 
 				if (config.Mode == SessionStateMode.StateServer)
-					throw new NotSupportedException ("StateServer mode is not supported.");
+					handlerType = typeof (SessionStateServerHandler);
 
 				if (config.Mode == SessionStateMode.SQLServer)
 					handlerType = typeof (SessionSQLServerHandler);
