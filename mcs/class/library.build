@@ -11,6 +11,7 @@
 		<nant basedir="corlib" target="build"/>
 		<nant basedir="System" target="build"/>
 		<nant basedir="System.Drawing" target="build"/>
+		<nant basedir="System.EnterpriseServices" target="build"/>
 		<nant basedir="System.XML" target="build"/>
 		<nant basedir="System.Data" target="build"/>
 		<nant basedir="System.Web" target="build"/>
