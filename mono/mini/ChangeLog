@@ -1,3 +1,14 @@
+2003-11-06  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini.h (mono_arch_setup_jit_tls_data): New arch specific function.
+
+	* mini.c (setup_jit_tls_data): Call the new function.
+	
+	* mini-x86.c mini-ppc.c mini-sparc.c: Define the new function.
+
+	* mini-x86.c: Add experimental support for fast access to the lmf
+	structure under NPTL/Linux 2.6.x.
+
 2003-11-06  Martin Baulig  <martin@ximian.com>
 
 	* ldscript: Make `GC_push_all_stack', `GC_start_blocking',
