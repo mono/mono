@@ -127,22 +127,16 @@ namespace System.IO {
 			}
 		}
 
-		void Dispose() {
-			Dispose(true);
-			// Take yourself off of the Finalization queue 
-			// to prevent finalization code for this object
-			// from executing a second time.
-			GC.SuppressFinalize(this);
-		}
-
 		protected override void Dispose (bool disposing) {
 			if (!DisposedAlready && disposing && internalStream != null) {
+				DisposedAlready = true;
 				Flush();
 				internalStream.Close ();
-				internalStream = null;
-				TheBuffer = null;
 			}
-			DisposedAlready = true;
+
+			internalStream = null;
+			TheBuffer = null;
+			internalEncoding = null;
 		}
 
 		public override void Flush () {
@@ -205,8 +199,9 @@ namespace System.IO {
 				Write (value.ToCharArray (), 0, value.Length);
 		}
 
-		public override void Close() {
-			Dispose();
+		public override void Close()
+		{
+			Dispose (true);
 		}
 
 		~StreamWriter() {

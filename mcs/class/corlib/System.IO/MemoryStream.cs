@@ -197,7 +197,8 @@ namespace System.IO {
                                 throw new IOException( "MemoryStream already closed" );
                         }
 
-                        streamClosed = true;
+			streamClosed = true;
+			internalBuffer = null;
                 }
 
                 public override void Flush() { }

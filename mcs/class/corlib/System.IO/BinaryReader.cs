@@ -45,10 +45,12 @@ namespace System.IO {
 		
 		protected virtual void Dispose (bool disposing)
 		{
-			if (disposing)
+			if (disposing && m_stream != null)
 				m_stream.Close ();
 
 			m_buffer = null;
+			m_encoding = null;
+			m_stream = null;
 		}
 
 		void IDisposable.Dispose() 

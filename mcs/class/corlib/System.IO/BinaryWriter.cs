@@ -57,11 +57,12 @@ namespace System.IO {
 
 		protected virtual void Dispose (bool disposing)
 		{
-			if (disposing)
-			{
+			if (disposing && OutStream != null)
 				OutStream.Close();
-				//OutStream.Dispose();			
-			}
+			
+			buffer = null;
+			m_encoding = null;
+			OutStream = null;
 		}
 
 		public virtual void Flush() {

@@ -78,7 +78,8 @@ namespace System.IO {
 
                 public virtual void Write (char[] value)
 		{
-			Write (new String (value));
+			if (value != null)
+				Write (new String (value));
 		}
 		
                 public virtual void Write (decimal value)
@@ -103,7 +104,8 @@ namespace System.IO {
 		
                 public virtual void Write (object value)
 		{
-			Write (value != null ? value.ToString () : String.Empty);
+			if (value != null)
+				Write (value.ToString ());
 		}
 		
                 public virtual void Write (float value)

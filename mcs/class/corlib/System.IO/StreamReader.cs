@@ -169,11 +169,15 @@ namespace System.IO {
 
 		protected override void Dispose (bool disposing)
 		{
-			if (disposing)
+			if (disposing && internalStream != null)
 				internalStream.Close ();
 			
 			rgbEncoded = null;
 			rgchDecoded = null;
+			internalEncoding = null;
+			decoder = null;
+			internalStream = null;
+			base.Dispose (disposing);
 		}
 
 		public void DiscardBufferedData ()

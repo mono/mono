@@ -28,8 +28,10 @@ namespace System.IO {
 			Dispose( true );
 		}
 
-		protected override void Dispose( bool disposing ) {
-			return;
+		protected override void Dispose (bool disposing)
+		{
+			sourceChars = null;
+			base.Dispose (disposing);
 		}
 
 		public override int Peek() {

@@ -141,7 +141,8 @@ namespace System.Threading
 		}
 
 		public virtual void Close() {
-			Dispose(false);
+			Dispose(true);
+			GC.SuppressFinalize (this);
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
@@ -168,7 +169,7 @@ namespace System.Threading
 
 		private bool disposed = false;
 
-		public void Dispose() {
+		void IDisposable.Dispose() {
 			Dispose(true);
 			// Take yourself off the Finalization queue
 			GC.SuppressFinalize(this);
@@ -177,6 +178,7 @@ namespace System.Threading
 		protected virtual void Dispose(bool explicitDisposing) {
 			// Check to see if Dispose has already been called.
 			if(!this.disposed) {
+				this.disposed=true;
 				// If this is a call to Dispose,
 				// dispose all managed resources.
 				if(explicitDisposing) {
@@ -191,7 +193,6 @@ namespace System.Threading
 				// managed resources are disposed, but
 				// before the disposed flag is set to
 				// true.
-				this.disposed=true;
 				//Release(handle);
 				//handle=IntPtr.Zero;
 			}

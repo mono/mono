@@ -1,3 +1,14 @@
+2002-08-27  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* BinaryReader.cs:
+	* BinaryWriter.cs:
+	* MemoryStream.cs:
+	* StreamReader.cs:
+	* StreamWriter.cs:
+	* StringReader.cs:
+	* StringWriter.cs:
+	* TextWriter.cs: IDisposable fixes.
+
 2002-08-24  Miguel de Icaza  <miguel@ximian.com>
 
 	* StreamReader.cs: Removed TODOs, as the code seems to be

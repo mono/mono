@@ -39,7 +39,11 @@ namespace System.IO {
                         Dispose( true );
                 }
 
-                protected override void Dispose( bool disposing ) { }
+                protected override void Dispose (bool disposing)
+		{
+			internalString = null;
+			base.Dispose (disposing);
+		}
 
                 public virtual StringBuilder GetStringBuilder() {
                         return internalString;
