@@ -1,3 +1,7 @@
+2003-08-14  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* ClientSponsor.cs: Implemented.
+
 2003-03-03  Lluis Sanchez Gual <lluis@ideary.com>
 
 	* LeaseManager.cs: Added method for removing an object from the lease manager.

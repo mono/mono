@@ -2,11 +2,13 @@
 // System.Runtime.Remoting.Lifetime.ClientSponsor.cs
 //
 // Author: Duncan Mak  (duncan@ximian.com)
+//         Lluis Sanchez Gual (lluis@ximian.com)
 //
 // 2002 (C) Copyright. Ximian, Inc.
 //
 
 using System;
+using System.Collections;
 using System.Runtime.Remoting.Lifetime;
 
 namespace System.Runtime.Remoting.Lifetime {
@@ -14,6 +16,7 @@ namespace System.Runtime.Remoting.Lifetime {
 	public class ClientSponsor : MarshalByRefObject, ISponsor
 	{
 		TimeSpan renewal_time;
+		ArrayList registered_objects = new ArrayList ();
 
 		public ClientSponsor ()
 		{
@@ -35,39 +38,47 @@ namespace System.Runtime.Remoting.Lifetime {
 			}
 		}
 
-		[MonoTODO]
 		public void Close ()
 		{
+			foreach (MarshalByRefObject obj in registered_objects)
+			{
+				ILease lease = obj.GetLifetimeService () as ILease;
+				lease.Unregister (this);
+			}
+			registered_objects.Clear ();
 		}
 
-		[MonoTODO]
 		~ClientSponsor ()
 		{
-			throw new NotImplementedException ();
+			Close ();
 		}
 
-		[MonoTODO]
 		public override object InitializeLifetimeService ()
 		{
-			throw new NotImplementedException ();
+			return base.InitializeLifetimeService ();
 		}
 
-		[MonoTODO]
 		public bool Register (MarshalByRefObject obj)
 		{
-			throw new NotImplementedException ();
+			if (registered_objects.Contains (obj)) return false;
+			ILease lease = obj.GetLifetimeService () as ILease;
+			if (lease == null) return false;
+			lease.Register (this);
+			registered_objects.Add (obj);
+			return true;
 		}
 
-		[MonoTODO]
 		public TimeSpan Renewal (ILease lease)
 		{
-			throw new NotImplementedException ();
+			return renewal_time;
 		}
 		       
-		[MonoTODO]
 		public void Unregister (MarshalByRefObject obj)
 		{
-			throw new NotImplementedException ();
+			if (!registered_objects.Contains (obj)) return;
+			ILease lease = obj.GetLifetimeService () as ILease;
+			lease.Unregister (this);
+			registered_objects.Remove (obj);
 		}
 	}
 }
