@@ -142,14 +142,6 @@ public class ByteTest : TestCase
 		catch (Exception e) {
 			Assert("not-a-number", typeof(FormatException) == e.GetType());
 		}
-		try {
-			int OverInt = Byte.MaxValue + 1;
-			Byte.Parse(OverInt.ToString());
-			Fail("Should raise a System.OverflowException");
-		}
-		catch (Exception e) {
-			Assert("OverflowException", typeof(OverflowException) == e.GetType());
-		}
 
 		//test Parse(string s, NumberStyles style)
 		AssertEquals(" "+NumberFormatInfo.CurrentInfo.CurrencySymbol+"42 ",
@@ -181,7 +173,16 @@ public class ByteTest : TestCase
 			Assert(NumberFormatInfo.CurrentInfo.CurrencySymbol+"42, NumberStyles.Integer, Nfi", typeof(FormatException) == e.GetType());
 		}
 	}
-	
+
+	[Test]
+	[ExpectedException (typeof(OverflowException))]
+	public void ParseOverflow()
+	{
+		int OverInt = Byte.MaxValue + 1;
+		Byte.Parse(OverInt.ToString());
+	}
+
+
 	public void TestToString()
 	{
 		//test ToString()
