@@ -1568,6 +1568,11 @@ method_decl		: D_EMITBYTE int32
 			| D_EXPORT OPEN_BRACKET int32 CLOSE_BRACKET K_AS id
 			| D_VTENTRY int32 COLON int32 
 			| D_OVERRIDE type_spec DOUBLE_COLON method_name
+                          {
+                                codegen.CurrentTypeDef.AddOverride (codegen.CurrentMethodDef,
+                                        (ITypeRef) $2, (string) $4);
+                                
+                          }
 			| scope_block
 			| D_PARAM OPEN_BRACKET int32 CLOSE_BRACKET init_opt
 			| id COLON

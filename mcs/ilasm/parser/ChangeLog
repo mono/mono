@@ -1,3 +1,7 @@
+2003-08-19 Jackson Harper <jackson@latitudegeo.com>
+
+	* ILParser.jay: Add override methods.
+	
 2003-08-10 Jackson Harper <jackson@latitudegeo.com>
 
 	* ILParser.jay: Create an empty array list for empty type
