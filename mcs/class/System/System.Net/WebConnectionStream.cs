@@ -176,6 +176,7 @@ namespace System.Net
 					result.DoCallback ();
 					return result;
 				}
+				result.NBytes = copy;
 			}
 
 			result.InnerAsyncResult = cnc.BeginRead (buffer, offset, size, null, null);
@@ -196,6 +197,8 @@ namespace System.Net
 					if (pendingReads == 0)
 						pending.Set ();
 				}
+
+				nbytes += result.NBytes; // partially filled from the read buffer
 				result.SetCompleted (false, nbytes);
 				totalRead += nbytes;
 			}

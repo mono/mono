@@ -1,3 +1,8 @@
+2003-06-10  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* WebConnectionStream.cs: when the read is partially filled from the
+	initial buffer, add those bytes too. Thanks to Lluis for debugging this.
+
 2003-06-09  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpWebRequest.cs: added ExpectContinue property.
