@@ -1,3 +1,11 @@
+REM LineNo: 16
+REM ExpectedError: BC30610
+REM ErrorMessage: Class 'C2' must either be declared 'MustInherit' or override the following inherited 'MustOverride' member(s): Public MustOverride Property p() As Integer.
+
+REM LineNo: 21
+REM ExpectedError: BC31404
+REM ErrorMessage: 'Public Shadows Property p() As Integer' cannot shadow a method declared 'MustOverride'.
+
 Imports system
 
 MustInherit Class C1
