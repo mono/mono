@@ -1,3 +1,7 @@
+2004-08-03  Martin Baulig  <martin@ximian.com>
+
+	* class.c (mono_type_get_name_recurse): Enclose the generic type
+	arguments in `<', '>'.
 
 Tue Aug 3 17:54:17 CEST 2004 Paolo Molaro <lupus@ximian.com>
 
