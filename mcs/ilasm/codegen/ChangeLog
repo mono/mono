@@ -1,3 +1,7 @@
+2003-02-03 Jackson Harper <jackson@latitudegeo.com>
+
+	* AssemblyNameStore.cs: Added file
+
 2003-02-02 Jackson Harper <jackson@latitudegeo.com>
 
 	* Instructions.cs: Resolve parameters types in a more proper manner.
