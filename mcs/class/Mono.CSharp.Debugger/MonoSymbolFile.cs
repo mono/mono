@@ -442,6 +442,8 @@ namespace Mono.CompilerServices.SymbolWriter
 			FileStream stream = new FileStream (filename, FileMode.Open, FileAccess.Read);
 			reader = new MyBinaryReader (stream);
 
+			Guid guid;
+
 			try {
 				long magic = reader.ReadInt64 ();
 				long version = reader.ReadInt32 ();
@@ -454,14 +456,15 @@ namespace Mono.CompilerServices.SymbolWriter
 						"Symbol file `{0}' has version {1}, " +
 						"but expected {2}", filename, version,
 						OffsetTable.Version);
+
+				guid = new Guid (reader.ReadBytes (16));
+
 				ot = new OffsetTable (reader);
 			} catch {
 				throw new MonoSymbolFileException (
 					"Cannot read symbol file `{0}'", filename);
 			}
 
-			reader.BaseStream.Position = 12;
-			Guid guid = new Guid (reader.ReadBytes (16));
 			Module[] modules = assembly.GetModules ();
 			Guid assembly_guid = MonoDebuggerSupport.GetGuid (modules [0]);
 
