@@ -27,7 +27,6 @@ namespace System.Runtime.Remoting.Lifetime {
 			_leaseTime = TimeSpan.FromMinutes (5);
 			_renewOnCallTime = TimeSpan.FromMinutes (2);
 			_sponsorshipTimeout = TimeSpan.FromMinutes (2);
-			// TODO: read values form config file
 		}
 
 		public LifetimeServices ()

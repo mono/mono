@@ -1,3 +1,7 @@
+2003-12-10  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* LifetimeServices.cs: Removed TODO.
+
 2003-10-08  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* ClientSponsor.cs: Improved implementation. Use Hashtable instead of
