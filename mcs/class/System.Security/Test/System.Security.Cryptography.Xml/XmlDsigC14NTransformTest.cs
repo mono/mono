@@ -40,6 +40,18 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			transform = new UnprotectedXmlDsigC14NTransform ();
 		}
 
+		[TearDown]
+		protected void CleanUp () 
+		{
+			try {
+				if (File.Exists ("doc.dtd"))
+					File.Delete ("doc.dtd");
+				if (File.Exists ("world.txt"))
+					File.Delete ("world.txt");
+			}
+			catch {}
+		}
+
 		[Test]
 		public void Properties () 
 		{
@@ -170,6 +182,10 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 	        [Test]
 	        public void C14NSpecExample1 ()
 	        {
+			using (StreamWriter sw = new StreamWriter ("doc.dtd", false, Encoding.ASCII)) {
+				sw.Write ("<!-- presence, not content, required -->");
+				sw.Close ();
+			}
 			string res = ExecuteXmlDSigC14NTransform (C14NSpecExample1Input);
 			AssertEquals ("Example 1 from c14n spec - PIs, Comments, and Outside of Document Element (without comments)", 
 				        C14NSpecExample1Output, res);
@@ -203,6 +219,10 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 	        [Test]
 	        public void C14NSpecExample5 ()
 	        {
+			using (StreamWriter sw = new StreamWriter ("world.txt", false, Encoding.ASCII)) {
+				sw.Write ("world");
+				sw.Close ();
+			}
 	    	    	string res = ExecuteXmlDSigC14NTransform (C14NSpecExample5Input);
 	    	    	AssertEquals ("Example 5 from c14n spec - Entity References (without comments)", 
 	    				C14NSpecExample5Output, res);

@@ -1,3 +1,9 @@
+2004-03-12  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* XmlDsigC14NTransformTest.cs: Fixed missing files error under MS.NET.
+	* XmlDsigC14NWithCommentsTransformTest.cs: Fixed missing files error
+	under MS.NET.
+
 2004-03-11  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlDsigC14NTransformTest.cs : Stream2String() should consider utf-8
