@@ -530,7 +530,8 @@ namespace Mono.CSharp {
 
 		public override bool Resolve (EmitContext ec)
 		{
-			expr = expr.ResolveStatement (ec);
+			if (expr != null)
+				expr = expr.ResolveStatement (ec);
 			return expr != null;
 		}
 		
