@@ -8,7 +8,7 @@
 
 using System.Collections;
 
-namespace System.Runtime.Remoting
+namespace System.Runtime.Remoting.Channels
 {
 	internal class AggregateDictionary: IDictionary
 	{

@@ -22,7 +22,7 @@ namespace System.Runtime.Remoting.Channels
 			table = new Hashtable ();
 		}
 
-	        public virtual int Count
+		public virtual int Count
 		{
 			get { return table.Count; }
 		}
