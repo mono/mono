@@ -378,9 +378,6 @@ namespace System
 			if ((int) Platform != 128)
 				return GetWindowsFolderPath ((int) folder);
 
-			// we can do this in managed code for non-Windows environments
-			string path = String.Empty;
-
 			string home = internalGetHome ();
 
 			// http://freedesktop.org/Standards/basedir-spec/basedir-spec-0.6.html
@@ -395,68 +392,52 @@ namespace System
 				config = Path.Combine (home, ".config");
 			}
 
-			string cache = GetEnvironmentVariable ("XDG_CACHE_HOME");
-			if ((cache == null) || (cache == String.Empty)) {
-				cache = Path.Combine (home, ".cache");
-			}
-
 			switch (folder) {
 #if NET_1_1
-			case SpecialFolder.MyComputer: // MyComputer is a virtual directory
-				path = "";
-				break;
-#endif				      
-
+			// MyComputer is a virtual directory
+			case SpecialFolder.MyComputer:
+				return "";
+#endif
+			// personal == ~
 			case SpecialFolder.Personal:
-				path = home;
-				break;
-
-			// data related
+				return home;
+			// use FDO's CONFIG_HOME. This data will be synced across a network like the windows counterpart.
 			case SpecialFolder.ApplicationData:
+				return config;
+			//use FDO's DATA_HOME. This is *NOT* synced
 			case SpecialFolder.LocalApplicationData:
-			case SpecialFolder.MyMusic:
-			case SpecialFolder.MyPictures:
-			case SpecialFolder.Templates:
-				path = data;
-				break;
-
-			// configuration related
+				return data;
 #if NET_1_1
 			case SpecialFolder.Desktop:
 #endif
 			case SpecialFolder.DesktopDirectory:
+				return Path.Combine (home, "Desktop");
+			
+			// these simply dont exist on Linux
+			// The spec says if a folder doesnt exist, we
+			// should return ""
 			case SpecialFolder.Favorites:
 			case SpecialFolder.Programs:
 			case SpecialFolder.SendTo:
 			case SpecialFolder.StartMenu:
 			case SpecialFolder.Startup:
-				path = config;
-				break;
-
-			// cache related (could disappear)
+			case SpecialFolder.MyMusic:
+			case SpecialFolder.MyPictures:
+			case SpecialFolder.Templates:
 			case SpecialFolder.Cookies:
 			case SpecialFolder.History:
 			case SpecialFolder.InternetCache:
 			case SpecialFolder.Recent:
-				path = cache;
-				break;
-
-			// programs
 			case SpecialFolder.CommonProgramFiles:
 			case SpecialFolder.ProgramFiles:
 			case SpecialFolder.System:
-				break;
-
-			// Directories shared by all users
+				return "";
+			// This is where data common to all users goes
 			case SpecialFolder.CommonApplicationData:
-				path = Path.GetDirectoryName (GetMachineConfigPath ());
-				break;
-
+				return "/usr/share";
 			default:
 				throw new ArgumentException ("Invalid SpecialFolder");
                         }
-
-			return path;
                 }
 
 		public static string[] GetLogicalDrives ()

@@ -1,3 +1,7 @@
+2004-06-25  Ben Maurer <bmaurer@ximian.com>
+	
+	* Environment.cs: GetFolderPath has new behavior. r=miguel
+
 2004-06-23  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* DateTime.cs: Throw ArgumentOutOfRangeException if the year is
