@@ -913,12 +913,12 @@ namespace System.Windows.Forms {
 
 		internal override bool SetZOrder(IntPtr hWnd, IntPtr AfterhWnd, bool Top, bool Bottom) {
 			if (Top) {
-				HIViewSetZOrder (hWnd, 1, IntPtr.Zero);
+				HIViewSetZOrder (hWnd, 2, IntPtr.Zero);
 				return true;
 			} else if (!Bottom) {
-				HIViewSetZOrder (hWnd, 1, AfterhWnd);
+				HIViewSetZOrder (hWnd, 2, AfterhWnd);
 			} else {
-				HIViewSetZOrder (hWnd, 2, IntPtr.Zero);
+				HIViewSetZOrder (hWnd, 1, IntPtr.Zero);
 				return true;
 			}
 			return false;

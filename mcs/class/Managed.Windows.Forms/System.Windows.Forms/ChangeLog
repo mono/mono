@@ -1,3 +1,9 @@
+2005-01-12  Geoff Norton  <gnorton@customerdna.com>
+
+	* XplatUIOSX.cs: Fix SetZOrder (this needs more testing with a 3 
+	button mouse).
+
+
 2005-01-11  Jackson Harper  <jackson@ximian.com>
 
 	* TreeView.cs: Still need to draw lines to siblings even if out of
