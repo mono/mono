@@ -647,7 +647,7 @@ namespace System.Xml.XPath
 		}
 		public override XPathNavigator Current { get { return _iter.Current; }}
 		public override int CurrentPosition { get { return _pos; }}
-		public override int ComparablePosition { get { return _iter.ComparablePosition; } }
+		//public override int ComparablePosition { get { return _iter.ComparablePosition; } }
 		
 		bool Match ()
 		{

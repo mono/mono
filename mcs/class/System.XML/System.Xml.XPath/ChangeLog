@@ -1,3 +1,11 @@
+2003-11-06 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* Iterator.cs: (AxisIterator.ComparablePosition): Remove. Let
+	it inherit from the base class. This made b[2] evaluated on 
+	<a /><b /><c /><a /><b /><c /> return the first b node because
+	in the ChildIterator it was the second node and seemed to satsify
+	the predicate.
+
 2003-11-04  Atsushi Enomoto  <ginga@kit.hi-ho.ne.jp>
 
 	* Iterator.cs : Added bool ReverseAxis property to identify whether
