@@ -733,6 +733,47 @@ public class DateTimeTest : Assertion
 		string [] expectedFormats = {"dd\"/\"MMM\"/\"yyyy:HH:mm:ss zz\"00\""};
 		DateTime mydate = DateTime.ParseExact (date, expectedFormats, null, DateTimeStyles.AllowWhiteSpaces);
 	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentOutOfRangeException))]
+	public void ToFileTime_MinValue () 
+	{
+		DateTime.FromFileTime (Int64.MinValue);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentOutOfRangeException))]
+	public void ToFileTime_Negative () 
+	{
+		DateTime.FromFileTime (-1);
+	}
+
+	[Test]
+	public void ToFileTime () 
+	{
+		long u = DateTime.FromFileTimeUtc (0).Ticks;
+		AssertEquals ("Utc-0", 504911232000000000, u);
+		long max = DateTime.MaxValue.Ticks - 504911232000000000; // w32file_epoch
+		AssertEquals ("Utc-MaxValue", 3155378975999999999, DateTime.FromFileTimeUtc (max).Ticks);
+
+		long t = DateTime.FromFileTime (0).Ticks;
+		Assert ("ToFileTime>", t > (u - TimeSpan.TicksPerDay));
+		Assert ("ToFileTime<", t < (u + TimeSpan.TicksPerDay));
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentOutOfRangeException))]
+	public void ToFileTimeUtc_MinValue () 
+	{
+		DateTime.FromFileTimeUtc (Int64.MinValue);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentOutOfRangeException))]
+	public void ToFileTimeUtc_Negative () 
+	{
+		DateTime.FromFileTimeUtc (-1);
+	}
 }
 
 }

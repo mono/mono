@@ -1,7 +1,7 @@
 2004-06-07  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* DateTimeTest.cs: Added new test cases for From|ToOADate (OLE 
-	Automation date format).
+	Automation date format). Added test cases for FromFileTime.
 
 2004-06-06  Sebastien Pouliot  <sebastien@ximian.com>
 
