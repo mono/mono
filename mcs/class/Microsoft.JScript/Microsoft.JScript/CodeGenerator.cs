@@ -122,6 +122,7 @@ namespace Microsoft.JScript {
 
 		internal static void emit_default_end_global_code (ILGenerator ig)
 		{
+			ig.Emit (OpCodes.Ldnull);
 			ig.Emit (OpCodes.Ldarg_0);
 			ig.Emit (OpCodes.Ldfld, typeof (ScriptObject).GetField ("engine"));
 			ig.Emit (OpCodes.Call, typeof (VsaEngine).GetMethod ("PopScriptObject"));

@@ -1,3 +1,7 @@
+2003-12-17  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
+
+	* CodeGenerator.cs: Added IL emittion for ldnull on default ending code for 'Global Code'.
+
 2003-12-10  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
 
 	* jscript-lexer-parser.g: added 'tokens { IN = "in"; INSTANCE_OF =
