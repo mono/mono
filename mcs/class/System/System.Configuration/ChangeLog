@@ -1,6 +1,6 @@
 2004-03-19  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
-	* ConfigurationSettings.cs: removed FileWatcherCache.
+	* ConfigurationSettings.cs: removed FileWatcherCache. See bug #53445.
 
 2003-12-03  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
