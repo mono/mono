@@ -135,6 +135,12 @@ namespace System.Web.UI.WebControls
 				hasBeginRendering = true;
 				ControlStyle.AddAttributesToRender (writer, this);
 			}
+			
+			if (!Enabled)
+			{
+				hasBeginRendering = true;
+ 				writer.AddAttribute(HtmlTextWriterAttribute.Disabled, "disabled");				
+			}
 
 			if (ToolTip.Length > 0){
 				hasBeginRendering = true;

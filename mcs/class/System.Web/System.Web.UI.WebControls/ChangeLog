@@ -1,4 +1,10 @@
 2003-12-15  Alon Gazit <along@mainsoft.com>
+	* CheckBox.cs: Disabled CheckBox does not produce same HTML as .NET.
+	In .NET if the checkbox is disabled ,its text appears disabled too.
+	In Mono the text appears enabled. the fix is in Render().
+	This fixes bug #52180.
+
+2003-12-15  Alon Gazit <along@mainsoft.com>
 	* Repeater.cs: Change the implementation of CreateControlHierarchy().
 	The current implementation renders extra Header and footer 
 	without Repeater.DataSource assign. 
