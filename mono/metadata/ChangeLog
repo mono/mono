@@ -1,4 +1,10 @@
 
+Tue Apr 16 20:08:43 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* profiler.c, profiler.h, profiler-private.h: profiling interface
+	and sample implementation. Moved here so that it can be used also by
+	the jit.
+
 Tue Apr 16 12:58:12 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* reflection.c, reflection.h: keep types and other handles separate in
