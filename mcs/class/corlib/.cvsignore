@@ -1,5 +1,6 @@
 corlib.dll
 corlib.pdb
+corlib_test.pdb
 .makefrag
 .response
 library-deps.stamp
