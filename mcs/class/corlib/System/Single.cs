@@ -21,9 +21,7 @@ namespace System {
 		public const float PositiveInfinity =  1.0f / 0.0f;
 		public const float NegativeInfinity = -1.0f / 0.0f;
 			
-		// VES needs to know about value.  public is workaround
-		// so source will compile
-		public float value;
+		internal float value;
 	       		
 		public int CompareTo (object v)
 		{

@@ -1,5 +1,10 @@
 2002-09-04  Miguel de Icaza  <miguel@ximian.com>
 
+	* Double.cs, Single.cs, Char.cs, Boolean.cs: Use internal for the
+	actual value instead of public.
+
+	* LocalDataStoreSlot.cs: Make constructor internal.
+
 	* Int16.cs, UInt16.cs, Int32.cs, UInt32.cs, Int64.cs, UInt64.cs,
 	SByte.cs, Byte.cs, Char.cs: Use internal for the actual value
 	instead of public.

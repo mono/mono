@@ -20,7 +20,7 @@ namespace System
 	/// </summary>
 	/// 
 	[Serializable]
-	public struct DateTime : IComparable , IFormattable  , IConvertible
+	public struct DateTime : IComparable, IFormattable, IConvertible
 	{
 		private TimeSpan ticks;
 

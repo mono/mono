@@ -46,9 +46,8 @@ namespace System {
 		/// <value>
 		/// Internal bool value for for this instance
 		/// </value>
-		//
-		// HACK: we tag it as public, so the source will compile.		
-		public bool value;
+
+		internal bool value;
 	
 		static Boolean () 
 		{
