@@ -3,6 +3,7 @@
 //
 // Author:
 //	Sebastien Pouliot  <sebastien@ximian.com>
+//	Atsushi Enomoto <atsushi@ximian.com>
 //
 // (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
 // (C) 2004 Novell (http://www.novell.com)
@@ -13,6 +14,7 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Net;
+using System.Text;
 using System.Xml;
 
 namespace System.Security.Cryptography.Xml {
@@ -101,13 +103,24 @@ namespace System.Security.Cryptography.Xml {
 			signature.SignedInfo.AddReference (reference);
 		}
 
-		private Stream ApplyTransform (Transform t, XmlDocument doc) 
+		private Stream ApplyTransform (Transform t, XmlDocument input) 
 		{
+			XmlDocument doc = (XmlDocument) input.Clone ();
+
 			t.LoadInput (doc);
 			if (t is XmlDsigEnvelopedSignatureTransform) {
-				XmlDocument d = (XmlDocument) t.GetOutput ();
+				object o = t.GetOutput ();
 				MemoryStream ms = new MemoryStream ();
-				d.Save (ms);
+				XmlTextWriter xw = new XmlTextWriter (ms, Encoding.UTF8);
+				XmlDocument d = o as XmlDocument;
+				if (d != null)
+					d.Save (xw);
+				else {
+					XmlNodeList nl = (XmlNodeList) o;
+					foreach (XmlNode n in nl)
+						n.WriteTo (xw);
+				}
+				// don't close xw (and thus ms).
 				return ms;
 			}
 

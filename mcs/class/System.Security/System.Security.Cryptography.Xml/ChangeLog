@@ -1,3 +1,13 @@
+2004-03-16  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlDsigNodeList.cs : added.
+	* XmlDsigXPathTransform.cs : removed XmlDsigNodeList class.
+	* XmlDsigEnvelopedSignatureTransform.cs :
+	  Implemented GetOutput(). However, it is totally MS behavior
+	  dependent and not based on the spec (we can reimplement it based on
+	  improved XmlDsigXPathTransform).
+	* SignedXml.cs : in GetOutput(), accept XmlNodeList input too.
+
 2004-03-15  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* SignedXml.cs: Now use the original Signature element before applying

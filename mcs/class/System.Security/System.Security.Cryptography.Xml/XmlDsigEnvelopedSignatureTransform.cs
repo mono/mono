@@ -4,10 +4,13 @@
 //
 // Author:
 //	Sebastien Pouliot (spouliot@motus.com)
+//	Atsushi Enomoto (atsushi@ximian.com)
 //
 // (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
+// (C) 2004 Novell Inc.
 //
 
+using System.Collections;
 using System.IO;
 using System.Xml;
 
@@ -19,6 +22,7 @@ namespace System.Security.Cryptography.Xml {
 		private Type[] input;
 		private Type[] output;
 		private bool comments;
+		private object inputObj;
 
 		public XmlDsigEnvelopedSignatureTransform () 
 		{
@@ -65,11 +69,64 @@ namespace System.Security.Cryptography.Xml {
 			return null; // THIS IS DOCUMENTED AS SUCH
 		}
 
-		[MonoTODO()]
-		public override object GetOutput() 
+		[MonoTODO ("Is it really spec-compliant??")]
+		public override object GetOutput ()
 		{
-//			return (object) new XmlNodeList ();
-			return null;
+			XmlDocument doc = null;
+
+			// possible input: Stream, XmlDocument, and XmlNodeList
+			if (inputObj is Stream) {
+				doc = new XmlDocument ();
+				doc.XmlResolver = GetResolver ();
+				doc.Load (inputObj as Stream);
+				return GetOutputFromNode (doc, GetNamespaceManager (doc), true);
+			}
+			else if (inputObj is XmlDocument) {
+				doc = inputObj as XmlDocument;
+				return GetOutputFromNode (doc, GetNamespaceManager (doc), true);
+			}
+			else if (inputObj is XmlNodeList) {
+				ArrayList al = new ArrayList ();
+				XmlNodeList nl = (XmlNodeList) inputObj;
+				if (nl.Count > 0) {
+					XmlNamespaceManager m = GetNamespaceManager (nl.Item (0));
+					ArrayList tmp = new ArrayList ();
+					foreach (XmlNode n in nl)
+						tmp.Add (n);
+					foreach (XmlNode n in tmp)
+						if (n.SelectNodes ("ancestor-or-self::dsig:Signature", m).Count == 0)
+							al.Add (GetOutputFromNode (n, m, false));
+				}
+				return new XmlDsigNodeList (al);
+			}
+			// Note that it is unexpected behavior with related to InputTypes (MS.NET accepts XmlElement)
+			else if (inputObj is XmlElement) {
+				XmlElement el = inputObj as XmlElement;
+				XmlNamespaceManager m = GetNamespaceManager (el);
+				if (el.SelectNodes ("ancestor-or-self::dsig:Signature", m).Count == 0)
+					return GetOutputFromNode (el, m, true);
+			}
+
+			throw new NullReferenceException ();
+		}
+
+		private XmlNamespaceManager GetNamespaceManager (XmlNode n)
+		{
+			XmlDocument doc = n is XmlDocument ? n as XmlDocument : n.OwnerDocument;
+			XmlNamespaceManager nsmgr = new XmlNamespaceManager (doc.NameTable);
+			nsmgr.AddNamespace ("dsig", XmlSignature.NamespaceURI);
+			return nsmgr;
+		}
+
+		private XmlNode GetOutputFromNode (XmlNode input, XmlNamespaceManager nsmgr, bool remove)
+		{
+			XmlDocument doc = input is XmlDocument ? input as XmlDocument : input.OwnerDocument;
+			if (remove) {
+				XmlNodeList nl = input.SelectNodes ("//dsig:Signature", nsmgr);
+				foreach (XmlNode n in nl)
+					n.ParentNode.RemoveChild (n);
+			}
+			return input;
 		}
 
 		public override object GetOutput (Type type) 
@@ -84,10 +141,10 @@ namespace System.Security.Cryptography.Xml {
 			// NO CHANGE
 		}
 
-		[MonoTODO()]
+		[MonoTODO ("test")]
 		public override void LoadInput (object obj) 
 		{
-			//	if (type.Equals (Stream.GetType ())
+			inputObj = obj;
 		}
 	}
 }
