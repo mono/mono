@@ -1,8 +1,9 @@
 //
 // System.Security.Cryptography.X509Certificates.X509CertificateCollection
 //
-// Author:
+// Authors:
 //	Lawrence Pit (loz@cable.a2000.nl)
+//	Sebastien Pouliot (spouliot@motus.com)
 //
 
 using System;
@@ -47,17 +48,18 @@ public class X509CertificateCollection : CollectionBase, IEnumerable {
 	{
 		if (value == null)
 			throw new ArgumentNullException ("value");
+
 		for (int i = 0; i < value.Length; i++) 
-			InnerList.Add (value);
+			InnerList.Add (value [i]);
 	}
 	
 	public void AddRange (X509CertificateCollection value)
 	{
 		if (value == null)
 			throw new ArgumentNullException ("value");
-		int len = value.InnerList.Count;
-		for (int i = 0; i < len; i++) 
-			InnerList.Add (value);
+
+		for (int i = 0; i < value.InnerList.Count; i++) 
+			InnerList.Add (value [i]);
 	}
 	
 	public bool Contains (X509Certificate value) 
@@ -121,7 +123,7 @@ public class X509CertificateCollection : CollectionBase, IEnumerable {
 		}
 		
 		object IEnumerator.Current {
-			get { return (X509Certificate) enumerator.Current; }
+			get { return enumerator.Current; }
 		}
 
 		// Methods
