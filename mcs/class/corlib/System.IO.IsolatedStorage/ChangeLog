@@ -1,3 +1,20 @@
+2003-07-30  Duncan Mak  <duncan@ximian.com>
+
+	* IsolatedStorageFile.cs:
+	(GetStore): Update storage_scope accordingly.
+	(GetUseStoreForAssembly): Include IsolatedStorageScope.User.
+	(GetUseStoreForDomain): Include IsolatedStorageScope.User and
+	IsolatedStorageScope.Assembly.
+	
+	* IsolatedStorage.cs:
+	(CurrentSize):
+	(MaximumSize): throw InvalidOperationExceptions. This is a
+	subclass responsibility.
+	(Scope): Implemented using a static field, storage_scope.
+	(SeparatorInternal)
+	(SeparatorExternal): Implemented. Use Path.DirectorySeparatorChar
+	for SeparatorExternal.
+
 2003-02-18  Jonathan Pryor <jonpryor@vt.edu>
 	* IsolatedStorageFile.cs: Fix spelling error (GetUseStoreForDomain -->
 	  GetUserStoreFor Domain).  Reported by 

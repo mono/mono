@@ -76,6 +76,9 @@ namespace System.IO.IsolatedStorage
 		private static IsolatedStorageFile GetStore (IsolatedStorageScope scope)
 		{
 			string dir = GetScopeDirectory (scope);
+
+                        storage_scope = scope;
+
 			return new IsolatedStorageFile (dir);
 		}
 
@@ -96,12 +99,12 @@ namespace System.IO.IsolatedStorage
 
 		public static IsolatedStorageFile GetUserStoreForAssembly ()
 		{
-			return GetStore (IsolatedStorageScope.Assembly);
+			return GetStore (IsolatedStorageScope.User | IsolatedStorageScope.Assembly);
 		}
 
 		public static IsolatedStorageFile GetUserStoreForDomain ()
 		{
-			return GetStore (IsolatedStorageScope.Domain);
+			return GetStore (IsolatedStorageScope.User | IsolatedStorageScope.Domain | IsolatedStorageScope.Assembly);
 		}
 
 		public static void Remove (IsolatedStorageScope scope)

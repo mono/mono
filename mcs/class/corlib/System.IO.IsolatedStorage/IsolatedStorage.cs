@@ -7,6 +7,7 @@
 //
 
 using System.Security;
+using System.Globalization;
 using System.Security.Permissions;
 
 namespace System.IO.IsolatedStorage
@@ -19,16 +20,19 @@ namespace System.IO.IsolatedStorage
 		{
 		}
 
+                protected static IsolatedStorageScope storage_scope;
+
 		// Properties
-		[MonoTODO]
 		public object AssemblyIdentity {
-			get {return null;}
+			get {return null;}                        
 		}
 
 		[CLSCompliant (false)]
-		[MonoTODO]
 		public virtual ulong CurrentSize {
-			get {return 0;}
+			get {
+                                throw new InvalidOperationException (
+                                        Locale.GetText ("IsolatedStorage does not have a preset CurrentSize."));
+                        }
 		}
 
 		[MonoTODO]
@@ -37,32 +41,32 @@ namespace System.IO.IsolatedStorage
 		}
 
 		[CLSCompliant (false)]
-		[MonoTODO]
 		public virtual ulong MaximumSize {
-			get {return 0;}
-		}
+                        get {
+                                throw new InvalidOperationException (
+                                        Locale.GetText ("IsolatedStorage does not have a preset MaximumSize."));
+                        }
+                }
 
-		[MonoTODO]
 		public IsolatedStorageScope Scope {
-			get {return 0;}
+			get { return storage_scope; }
 		}
 
-		[MonoTODO]
 		protected virtual char SeparatorExternal {
-			get {return Char.MinValue;}
+			get { return System.IO.Path.DirectorySeparatorChar; }
 		}
 
-		[MonoTODO]
 		protected virtual char SeparatorInternal {
-			get {return Char.MinValue;}
+			get { return '.'; }
 		}
 
 		// Methods
 		protected abstract IsolatedStoragePermission GetPermission (PermissionSet ps);
 
 		[MonoTODO]
-		protected void InitStore (IsolatedStorageScope scope, Type domainEvidenceType,
-					  Type assemblyEvidenceType)
+		protected void InitStore (
+                        IsolatedStorageScope scope, Type domainEvidenceType,
+                        Type assemblyEvidenceType)
 		{
 		}
 

@@ -12,7 +12,7 @@ using System.Runtime.Serialization;
 namespace System.IO.IsolatedStorage
 {
 	[Serializable]
-		public class IsolatedStorageException : Exception
+        public class IsolatedStorageException : Exception
 	{
 		public IsolatedStorageException ()
 			: base (Locale.GetText ("An Isolated storage operation failed."))
