@@ -683,6 +683,7 @@ namespace System.Net
 			do {
 				if (redirected) {
 					haveResponse = false;
+					webResponse = null;
 					result.Reset ();
 					servicePoint = GetServicePoint ();
 					abortHandler = servicePoint.SendRequest (this, connectionGroup);
@@ -1105,11 +1106,12 @@ namespace System.Net
 
 			if (throwMe == null) {
 				bool b = false;
-				if (allowAutoRedirect && (int) code >= 300) {
+				int c = (int) code;
+				if (allowAutoRedirect && c >= 300)
 					b = Redirect (result, code);
-					if (resp != null && (int) code != 304)
-						resp.ReadAll ();
-				}
+
+				if (resp != null && c >= 300 && c != 304)
+					resp.ReadAll ();
 
 				return b;
 			}
