@@ -1,5 +1,5 @@
 //
-// System.Drawing.QueryPageSettingEventArgs.cs
+// System.Drawing.QueryPageSettingsEventArgs.cs
 //
 // Author:
 //   Dennis Hayes (dennish@Raytek.com)
@@ -13,7 +13,7 @@ namespace System.Drawing.Printing
 	/// <summary>
 	/// Summary description for QueryPageSettingEventArgs.
 	/// </summary>
-	public class QueryPageSettingEventArgs : PrintEventArgs
+	public class QueryPageSettingsEventArgs : PrintEventArgs
 	{
 		private PageSettings pageSettings;
 
