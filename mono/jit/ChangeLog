@@ -1,3 +1,8 @@
+2002-05-21  Dietmar Maurer  <dietmar@ximian.com>
+
+	* jit.c (check_inlining):  we cant inline throw instructions
+	(because it breaks some basic block requirements)
+
 2002-05-21  Martin Baulig  <martin@gnome.org>
 
 	* debug-private.h (MonoDebugFlags): New enum typedef.
