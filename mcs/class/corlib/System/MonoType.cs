@@ -539,29 +539,21 @@ namespace System
 		}
 
 #if GENERICS
-		public override bool HasGenericParameters {
-			get {
-				throw new NotImplementedException ();
-			}
+		public extern override bool HasGenericParameters {
+			[MethodImplAttribute(MethodImplOptions.InternalCall)]
+			get;
 		}
 
-		public override bool HasUnboundGenericParameters {
-			get {
-				throw new NotImplementedException ();
-			}
+		public extern override bool HasUnboundGenericParameters {
+			[MethodImplAttribute(MethodImplOptions.InternalCall)]
+			get;
 		}
 
-		public override bool IsUnboundGenericParameter {
-			get {
-				throw new NotImplementedException ();
-			}
+		public extern override bool IsUnboundGenericParameter {
+			[MethodImplAttribute(MethodImplOptions.InternalCall)]
+			get;
 		}
 
-		public override int GenericParameterPosition {
-			get {
-				throw new Exception ("Unimplemented");
-			}
-		}
 #endif
 	}
 }

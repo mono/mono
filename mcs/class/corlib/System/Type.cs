@@ -930,13 +930,8 @@ namespace System {
 		}
 
 #if GENERICS
-		public Type [] GetGenericParameters ()
-		{
-			if (HasGenericParameters == false)
-				return new Type [0];
-
-			throw new Exception ("Unimplemented");
-		}
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		public extern Type [] GetGenericParameters ();
 
 		public abstract bool HasGenericParameters {
 			get;
@@ -946,28 +941,50 @@ namespace System {
 			get;
 		}
 
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		static extern Type GetGenericTypeDefinition (Type t);
+
 		public Type GetGenericTypeDefinition ()
 		{
-			throw new Exception ("Unimplemented");
+			Type res = GetGenericTypeDefinition (this);
+			if (res == null)
+				throw new ArgumentException ();
+			return res;
 		}
 
-		public Type IsGenericTypeDefinition ()
-		{
-			throw new Exception ("Unimplemented");
-		}
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		public extern Type IsGenericTypeDefinition ();
 
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		static extern Type BindGenericParameters (Type gt, Type [] types);
+		
 		public Type BindGenericParameters (Type [] types)
 		{
-			throw new Exception ("Unimplemented");
+			if (types == null)
+				throw new ArgumentNullException ("types");
+			foreach (Type t in types) {
+				if (t == null)
+					throw new ArgumentNullException ("types");
+			}
+			Type res = BindGenericParameters (this, types);
+			if (res == null)
+				throw new TypeLoadException ();
+			return res;
 		}
 
 		public abstract bool IsUnboundGenericParameter {
 			get;
 		}
 
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		extern int GetGenericParameterPosition ();
+		
 		public virtual int GenericParameterPosition {
 			get {
-				throw new Exception ("Unimplemented");
+				int res = GetGenericParameterPosition ();
+				if (res < 0)
+					throw new ArgumentException ();
+				return res;
 			}
 		}
 #endif

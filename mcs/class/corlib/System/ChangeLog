@@ -1,3 +1,8 @@
+
+Fri Aug 1 16:47:17 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* Type.cs, MonoType.cs: implemented generic-specific methods.
+
 2003-07-29  Miguel de Icaza  <miguel@ximian.com>
 
 	* Buffer.cs: Add new internal MemCopy call.
