@@ -24,7 +24,7 @@ namespace Test {
 			for (int i = 0; i < attributes.Length; i ++) {
 				System.Console.WriteLine(attributes[i]);
 			}
-			if (attributes.Length != 2)
+			if (attributes.Length != 1)
 				return 1;
 			MyAttribute attr = (MyAttribute) attributes [0];
 			if (attr.val != "testclass")
