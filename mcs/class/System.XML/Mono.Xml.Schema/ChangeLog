@@ -1,3 +1,7 @@
+2004-01-08  Nick Drochak <ndrochak@ieee.org>
+
+	* XsdParticleValidationState.cs: Remove unreachable code.
+
 2003-12-18  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* XsdValidatingReader.cs : When source Reader has schema context, it

@@ -380,7 +380,6 @@ namespace Mono.Xml.Schema
 					xa = null;
 				}
 			}
-			return XsdValidationState.Invalid;
 		}
 
 		public override bool EvaluateEndElement ()
