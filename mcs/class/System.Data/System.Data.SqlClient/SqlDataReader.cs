@@ -56,6 +56,8 @@ namespace System.Data.SqlClient {
 		private int rows;
 		private int cols;
 
+		private int recordsAffected = -1; // TODO: get this value
+
 		private int currentRow = -1; // no Read() has been done yet
 
 		#endregion // Fields
@@ -221,7 +223,8 @@ namespace System.Data.SqlClient {
 		[MonoTODO]
 		public Type GetFieldType(int i) {
 
-			return table.Columns[i].DataType;
+			DataRow row = table.Rows[i];
+			return Type.GetType((string)row["DataType"]);
 		}
 
 		[MonoTODO]
@@ -251,24 +254,29 @@ namespace System.Data.SqlClient {
 
 		[MonoTODO]
 		public string GetName(int i) {
-			return table.Columns[i].ColumnName;
+
+			DataRow row = table.Rows[i];
+			return (string) row["ColumnName"];
 		}
 
 		[MonoTODO]
 		public int GetOrdinal(string name) {
-			int i;
-			for(i = 0; i < cols; i ++) {
-				if(table.Columns[i].ColumnName.Equals(name)) {
-					return i;
-				}
 
+			int i;
+			DataRow row;
+
+			for(i = 0; i < table.Rows.Count; i++) {
+				row = table.Rows[i];
+				if(((string) row["ColumnName"]).Equals(name))
+					return i;
 			}
-	
-			for(i = 0; i < cols; i++) {
+
+			for(i = 0; i < table.Rows.Count; i++) {
 				string ta;
 				string n;
-						
-				ta = table.Columns[i].ColumnName.ToUpper();
+					
+				row = table.Rows[i];
+				ta = ((string) row["ColumnName"]).ToUpper();
 				n = name.ToUpper();
 						
 				if(ta.Equals(n)) {
@@ -319,9 +327,9 @@ namespace System.Data.SqlClient {
 		public void Dispose () {
 		}
 
-		[MonoTODO]
-		~SqlDataReader() {
-		}
+		//[MonoTODO]
+		//~SqlDataReader() {
+		//}
 
 		#endregion // Destructors
 
@@ -330,7 +338,9 @@ namespace System.Data.SqlClient {
 		public int Depth {
 			[MonoTODO]
 			get { 
-				throw new NotImplementedException (); 
+				return 0; // always return zero, unless
+				          // this provider will allow
+				          // nesting of a row
 			}
 		}
 
@@ -347,7 +357,7 @@ namespace System.Data.SqlClient {
 		public int RecordsAffected {
 			[MonoTODO]
 			get { 
-				throw new NotImplementedException (); 
+				return recordsAffected;
 			}
 		}
 	
@@ -362,18 +372,20 @@ namespace System.Data.SqlClient {
 			[MonoTODO]
 			get { 
 				int i;
-				for(i = 0; i < cols; i ++) {
-					if(table.Columns[i].ColumnName.Equals(name)) {
-						return fields[i];
-					}
+				DataRow row;
 
+				for(i = 0; i < table.Rows.Count; i++) {
+					row = table.Rows[i];
+					if(row["ColumnName"].Equals(name))
+						return fields[i];
 				}
-	
-				for(i = 0; i < cols; i++) {
+
+				for(i = 0; i < table.Rows.Count; i++) {
 					string ta;
 					string n;
-						
-					ta = table.Columns[i].ColumnName.ToUpper();
+					
+					row = table.Rows[i];
+					ta = ((string) row["ColumnName"]).ToUpper();
 					n = name.ToUpper();
 						
 					if(ta.Equals(n)) {

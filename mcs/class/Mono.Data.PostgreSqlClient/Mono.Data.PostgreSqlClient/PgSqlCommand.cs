@@ -719,7 +719,7 @@ namespace System.Data.SqlClient {
 			dataTableSchema.Columns.Add ("BaseTableName", typeof (string));
 			dataTableSchema.Columns.Add ("DataType", typeof(string));
 			dataTableSchema.Columns.Add ("AllowDBNull", typeof (bool));
-			dataTableSchema.Columns.Add ("ProviderType", typeof (string));
+			dataTableSchema.Columns.Add ("ProviderType", typeof (int));
 			dataTableSchema.Columns.Add ("IsAliased", typeof (bool));
 			dataTableSchema.Columns.Add ("IsExpression", typeof (bool));
 			dataTableSchema.Columns.Add ("IsIdentity", typeof (bool));
@@ -763,7 +763,7 @@ namespace System.Data.SqlClient {
 				schemaRow["DataType"] = st;
 
 				schemaRow["AllowDBNull"] = false; // ? tim
-				schemaRow["ProviderType"] = ""; // ? tim
+				schemaRow["ProviderType"] = oid; // ? tim
 				schemaRow["IsAliased"] = false; // ? tim
 				schemaRow["IsExpression"] = false; // ? tim
 				schemaRow["IsIdentity"] = false; // ? tim

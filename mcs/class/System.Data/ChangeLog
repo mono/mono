@@ -1,3 +1,14 @@
+2002-05-23  Daniel Morgan <danmorg@sc.rr.com>
+
+	* System.Data.SqlClient/SqlCommand.cs: set
+	the "ProviderType" to the PostgreSQL type oid
+	
+	* System.Data.SqlClient/SqlDataReader.cs: fix
+	for various properties and methods that 
+	return meta data: Item indexers this[name] and this[index],
+	GetFieldType, GetName, and GetOrdinal.  SqlDataAdapter
+	should work again.
+
 2002-05-22  Daniel Morgan <danmorg@sc.rr.com>
 
 	* System.Data/DataRow.cs: change suggested
