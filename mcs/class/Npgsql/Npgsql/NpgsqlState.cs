@@ -6,8 +6,9 @@
 // 	Dave Joyner <d4ljoyn@yahoo.com>
 //
 //	Copyright (C) 2002 The Npgsql Development Team
+//	npgsql-general@gborg.postgresql.org
+//	http://gborg.postgresql.org/project/npgsql/projdisplay.php
 //
-
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
 // License as published by the Free Software Foundation; either
@@ -29,6 +30,7 @@ using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Collections;
+using System.Text;
 
 
 namespace Npgsql
@@ -42,10 +44,10 @@ namespace Npgsql
  	{
  		public virtual void Open(NpgsqlConnection context) {}
  		public virtual void Startup(NpgsqlConnection context) {}
- 		public virtual void Authenticate(NpgsqlConnection context){}
+ 		public virtual void Authenticate(NpgsqlConnection context, string password){}
  		public virtual void Query(NpgsqlConnection context, NpgsqlCommand command) {}
  		public virtual void Ready( NpgsqlConnection context ) {}
- 		public virtual void FunctionCall(NpgsqlConnection context){}
+ 		public virtual void FunctionCall(NpgsqlConnection context, NpgsqlCommand command){}
 		
 		
 		public virtual void Close( NpgsqlConnection context )
@@ -71,19 +73,15 @@ namespace Npgsql
 			context.CurrentState = newState;
 		}
 		
-		//public delegate void ProcessBackendMessage( NpgsqlConnection context, byte[] message );
- 		
- 		public delegate void ProcessBackendMessage( NpgsqlConnection context, Object message );
-		
 		///<summary>
 		/// This method is responsible to handle all protocol messages sent from the backend.
 		/// It holds all the logic to do it.
-		/// To exchange data, it uses a Mediator object from which it read/write information
+		/// To exchange data, it uses a Mediator object from which it reads/writes information
 		/// to handle backend requests.
 		/// </summary>
 		/// 
 		
-		protected virtual void ProcessBackendResponses( NpgsqlConnection context, ProcessBackendMessage handler )
+		protected virtual void ProcessBackendResponses( NpgsqlConnection context )
 		{
 			NetworkStream 	stream = context.TcpClient.GetStream(); 
 			Int32 bytesRead;
@@ -97,10 +95,8 @@ namespace Npgsql
 			mediator.Reset();
 			
 			Int16 rowDescNumFields = 0;
-			
-			//NpgsqlRowDescription 	rd = null;		
-			//ArrayList							rows = null;	// Rows associated with the row description.
-			
+			NpgsqlRowDescription rd = null;
+						
 			Byte[] inputBuffer = new Byte[ 500 ];
 			
 			NpgsqlEventLog.LogMsg( this.ToString(), LogLevel.Debug);
@@ -151,20 +147,77 @@ namespace Npgsql
 							// Send the PasswordPacket.
 
 							ChangeState( context, NpgsqlStartupState.Instance );
-							context.Authenticate();
+							context.Authenticate(context.ServerPassword);
 							
 					  	break;
 						}
 					
 						
-						// Only AuthenticationClearTextPassword supported for now.
-						mediator.Errors.Add("Only AuthenticationClearTextPassword supported for now.");
-						return;
-						
+						if ( authType == NpgsqlMessageTypes.AuthenticationMD5Password )
+						{
+							NpgsqlEventLog.LogMsg("Server requested MD5 password authentication.", LogLevel.Debug);
+							// Now do the "MD5-Thing"
+							// for this the Password has to be:
+							// 1. md5-hashed with the username as salt
+							// 2. md5-hashed again with the salt we get from the backend
+							
+							
+							MD5 md5 = MD5.Create();
+							
+							
+							// 1.
+							byte[] passwd = context.Encoding.GetBytes(context.ServerPassword);
+							byte[] saltUserName = context.Encoding.GetBytes(context.UserName);
+							
+							byte[] crypt_buf = new byte[passwd.Length + saltUserName.Length];
+							
+							passwd.CopyTo(crypt_buf, 0);
+							saltUserName.CopyTo(crypt_buf, passwd.Length);							
+							
+							
+							
+							StringBuilder sb = new StringBuilder ();
+							byte[] hashResult = md5.ComputeHash(crypt_buf);
+							foreach (byte b in hashResult)
+								sb.Append (b.ToString ("x2"));
+							
+							
+							String prehash = sb.ToString();
+							
+							byte[] prehashbytes = context.Encoding.GetBytes(prehash);
+							
+							
+							
+							byte[] saltServer = new byte[4];
+							stream.Read(saltServer, 0, 4);
+							// Send the PasswordPacket.
+							ChangeState( context, NpgsqlStartupState.Instance );
+							
+							
+							// 2.
+							
+							crypt_buf = new byte[prehashbytes.Length + saltServer.Length];
+							prehashbytes.CopyTo(crypt_buf, 0);
+							saltServer.CopyTo(crypt_buf, prehashbytes.Length);
+							
+							sb = new StringBuilder ("md5"); // This is needed as the backend expects md5 result starts with "md5"
+							hashResult = md5.ComputeHash(crypt_buf);
+							foreach (byte b in hashResult)
+								sb.Append (b.ToString ("x2"));
+							
+							context.Authenticate(sb.ToString ());
+							
+					  	break;
+						}
+
+						// Only AuthenticationClearTextPassword and AuthenticationMD5Password supported for now.
+						mediator.Errors.Add("Only AuthenticationClearTextPassword and AuthenticationMD5Password supported for now.");
+ 						return;
+												
 					case NpgsqlMessageTypes.RowDescription:
 						// This is the RowDescription message.
 						
-						NpgsqlRowDescription rd = new NpgsqlRowDescription();
+						rd = new NpgsqlRowDescription();
 						rd.ReadFromStream(stream, context.Encoding);
 						
 						// Initialize the array list which will contain the data from this rowdescription.
@@ -181,7 +234,7 @@ namespace Npgsql
 					
 						// This is the AsciiRow message.
 						
-						NpgsqlAsciiRow asciiRow = new NpgsqlAsciiRow(rowDescNumFields);
+						NpgsqlAsciiRow asciiRow = new NpgsqlAsciiRow(rd, context.OidToNameMapping);
 						asciiRow.ReadFromStream(stream, context.Encoding);
 						
 						
@@ -192,7 +245,16 @@ namespace Npgsql
 						// Now wait for CompletedResponse message.
 						break;
 					
-										
+					case NpgsqlMessageTypes.BinaryRow:
+						
+						NpgsqlEventLog.LogMsg("BinaryRow message from Server", LogLevel.Debug);
+						NpgsqlBinaryRow binaryRow = new NpgsqlBinaryRow(rd);
+						binaryRow.ReadFromStream(stream, context.Encoding);
+					
+						mediator.AddBinaryRow(binaryRow);
+					
+						break;
+					
 					case NpgsqlMessageTypes.ReadyForQuery :
 
 						NpgsqlEventLog.LogMsg("ReadyForQuery message from Server", LogLevel.Debug);
@@ -248,7 +310,7 @@ namespace Npgsql
 						// the cursor in a FETCH case or 'blank' otherwise.
 						// In this case it should be always 'blank'.
 						// [FIXME] Get another name for this function.
-						
+						NpgsqlEventLog.LogMsg("CursorResponse message from Server: ", LogLevel.Debug);
 						//String cursor_name = GetStringFromNetStream(networkStream);
 						String cursorName = PGUtil.ReadString(stream, context.Encoding);
 						// Continue wainting for ReadyForQuery message.
@@ -261,6 +323,8 @@ namespace Npgsql
 						//GetStringFromNetStream(networkStream);
 						PGUtil.ReadString(stream, context.Encoding);
 						break;
+					
+										
 				}
 			}
 			

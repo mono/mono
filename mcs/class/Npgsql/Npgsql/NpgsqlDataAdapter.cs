@@ -6,8 +6,10 @@
 //	Francisco Jr. (fxjrlists@yahoo.com.br)
 //
 //	Copyright (C) 2002 The Npgsql Development Team
+//	npgsql-general@gborg.postgresql.org
+//	http://gborg.postgresql.org/project/npgsql/projdisplay.php
 //
-
+//
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
 // License as published by the Free Software Foundation; either
@@ -38,6 +40,17 @@ namespace Npgsql
 		
 		// Log support
 		private static readonly String CLASSNAME = "NpgsqlDataAdapter";
+		
+		public NpgsqlDataAdapter() {}
+		
+		public NpgsqlDataAdapter(NpgsqlCommand selectCommand)
+		{
+			_selectCommand = selectCommand;
+		}
+		
+		public NpgsqlDataAdapter(String selectCommandText, NpgsqlConnection selectConnection) : this(new NpgsqlCommand(selectCommandText, selectConnection)){}
+		
+		public NpgsqlDataAdapter(String selectCommandText, String selectConnectionString) : this(selectCommandText, new NpgsqlConnection(selectConnectionString)){}
 		
 		
 		protected override RowUpdatedEventArgs CreateRowUpdatedEvent(

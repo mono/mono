@@ -4,8 +4,9 @@
 // 	Dave Joyner <d4ljoyn@yahoo.com>
 //
 //	Copyright (C) 2002 The Npgsql Development Team
+//	npgsql-general@gborg.postgresql.org
+//	http://gborg.postgresql.org/project/npgsql/projdisplay.php
 //
-
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
 // License as published by the Free Software Foundation; either
@@ -48,12 +49,12 @@ namespace Npgsql
 				return _instance;	
 			}
 		}
-		public override void Authenticate( NpgsqlConnection context)
+		public override void Authenticate( NpgsqlConnection context, string password)
 		{
-			
-			NpgsqlPasswordPacket password = new NpgsqlPasswordPacket(context.ServerPassword);
+			NpgsqlEventLog.LogMsg("Entering NpgsqlStartupState.Authenticate", LogLevel.Debug);
+			NpgsqlPasswordPacket pwpck = new NpgsqlPasswordPacket(password);
 			BufferedStream stream = new BufferedStream(context.TcpClient.GetStream());
-			password.WriteToStream(stream, context.Encoding);
+			pwpck.WriteToStream(stream, context.Encoding);
 			stream.Flush();
 			
 		}

@@ -4,8 +4,10 @@
 // 	Dave Joyner <d4ljoyn@yahoo.com>
 //
 //	Copyright (C) 2002 The Npgsql Development Team
+//	npgsql-general@gborg.postgresql.org
+//	http://gborg.postgresql.org/project/npgsql/projdisplay.php
 //
-
+//
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
 // License as published by the Free Software Foundation; either
@@ -55,7 +57,7 @@ namespace Npgsql
 		public const Char CopyDataRows = ' ';
 		public const Char CopyInResponse = 'G';
 		public const Char CopyOutResponse = 'H';
-		public const Char CursorResponse = 'B';
+		public const Char CursorResponse = 'P';
 		public const Char EmptyQueryResponse = 'I';
 		public const Char ErrorResponse = 'E';
 		public const Char FunctionCall = 'F';

@@ -6,8 +6,9 @@
 //	Francisco Jr. (fxjrlists@yahoo.com.br)
 //
 //	Copyright (C) 2002 The Npgsql Development Team
+//	npgsql-general@gborg.postgresql.org
+//	http://gborg.postgresql.org/project/npgsql/projdisplay.php
 //
-
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
 // License as published by the Free Software Foundation; either
@@ -30,6 +31,7 @@ using System.Net.Sockets;
 using System.IO;
 using System.Text;
 using System.Collections;
+using NpgsqlTypes;
 
 namespace Npgsql
 {
@@ -165,11 +167,13 @@ namespace Npgsql
 		{
 			get
 			{
+				NpgsqlEventLog.LogMsg("Entering " + CLASSNAME + ".get_Transaction()", LogLevel.Debug);
 				throw new NotImplementedException();
 			}
 			
 			set
 			{
+				NpgsqlEventLog.LogMsg("Entering " + CLASSNAME + ".set_Transaction()", LogLevel.Debug);
 				throw new NotImplementedException();	
 			}
 		}
@@ -351,7 +355,7 @@ namespace Npgsql
 			// For while only int4 and string are strong typed.
 			// Any other type will be returned as string.
 			
-			switch (rd[0].type_oid)
+			/*switch (rd[0].type_oid)
 			{
 				case 20:	// int8, integer.
 					result = Convert.ToInt64(ascii_row[0]);
@@ -370,7 +374,12 @@ namespace Npgsql
 					break;
 			}
 			
-			return result;
+			
+			return result;*/
+			
+			//return NpgsqlTypesHelper.ConvertNpgsqlTypeToSystemType(connection.OidToNameMapping, ascii_row[0], rd[0].type_oid);
+			return ascii_row[0];
+			
 			
 		}
 		
@@ -379,7 +388,11 @@ namespace Npgsql
 		public void Prepare()
 		{
 		  NpgsqlEventLog.LogMsg("Entering " + CLASSNAME + ".Prepare()", LogLevel.Debug);
+			
 		  
+		  if (!connection.SupportsPrepare)
+		  	return;	// Do nothing.
+		  	
 			// Check the connection state.
 			CheckConnectionState();
 			
@@ -446,7 +459,10 @@ namespace Npgsql
 			String result = text;
 			
 			if (type == CommandType.StoredProcedure)
-					result = "select " + result;
+				if (connection.SupportsPrepare)
+					result = "select * from " + result; // This syntax is only available in 7.3+ as well SupportsPrepare.
+				else
+					result = "select " + result;				// Only a single result return supported. 7.2 and earlier.
 						
 			if (parameters.Count == 0)
 				return result;
@@ -459,7 +475,8 @@ namespace Npgsql
 			for (Int32 i = 0; i < parameters.Count; i++)
 			{
 				parameterName = parameters[i].ParameterName;
-				result = result.Replace(":" + parameterName, parameters[i].Value.ToString());
+				//result = result.Replace(":" + parameterName, parameters[i].Value.ToString());
+				result = result.Replace(":" + parameterName, NpgsqlTypesHelper.ConvertNpgsqlParameterToBackendStringValue(parameters[i]));
 			}
 			
 			return result;
@@ -482,7 +499,8 @@ namespace Npgsql
 			
 			for (Int32 i = 0; i < parameters.Count; i++)
 			{
-				result.Append(parameters[i].Value.ToString() + ',');
+				//result.Append(parameters[i].Value.ToString() + ',');
+				result.Append(NpgsqlTypesHelper.ConvertNpgsqlParameterToBackendStringValue(parameters[i]) + ',');
 				//result = result.Replace(":" + parameterName, parameters[i].Value.ToString());
 			}
 			
@@ -506,7 +524,7 @@ namespace Npgsql
 			String textCommand = text;
 			
 			if (type == CommandType.StoredProcedure)
-				textCommand = "select " + textCommand;
+				textCommand = "select * from " + textCommand;
 			
 			
 			
@@ -520,7 +538,7 @@ namespace Npgsql
 				{
 					//[TODO] Add support for all types. 
 					
-					switch (parameters[i].DbType)
+					/*switch (parameters[i].DbType)
 					{
 						case DbType.Int32:
 							command.Append("int4");
@@ -533,7 +551,8 @@ namespace Npgsql
 						default:
 							throw new InvalidOperationException("Only DbType.Int32, DbType.Int64 datatypes supported");
 							
-					}
+					}*/
+					command.Append(NpgsqlTypesHelper.GetBackendTypeNameFromDbType(parameters[i].DbType));
 					
 					command.Append(',');
 				}

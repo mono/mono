@@ -4,8 +4,10 @@
 // 	Dave Joyner <d4ljoyn@yahoo.com>
 //
 //	Copyright (C) 2002 The Npgsql Development Team
+//	npgsql-general@gborg.postgresql.org
+//	http://gborg.postgresql.org/project/npgsql/projdisplay.php
 //
-
+//
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
 // License as published by the Free Software Foundation; either
@@ -55,12 +57,8 @@ namespace Npgsql
 																   "",
 																   "");
 			startupPacket.WriteToStream( context.TcpClient.GetStream(), context.Encoding );
-			ProcessBackendResponses( context, new ProcessBackendMessage(ProcessStartupResponses) );
+			ProcessBackendResponses( context );
 		}
-		private void ProcessStartupResponses( NpgsqlConnection context, Object message )
-		{
-			
-
-		}
+		
 	}
 }

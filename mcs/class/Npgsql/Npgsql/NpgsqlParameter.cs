@@ -6,8 +6,9 @@
 //	Francisco Jr. (fxjrlists@yahoo.com.br)
 //
 //	Copyright (C) 2002 The Npgsql Development Team
+//	npgsql-general@gborg.postgresql.org
+//	http://gborg.postgresql.org/project/npgsql/projdisplay.php
 //
-
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
 // License as published by the Free Software Foundation; either
@@ -25,6 +26,8 @@
 
 using System;
 using System.Data;
+using NpgsqlTypes;
+
 
 namespace Npgsql
 {
@@ -43,7 +46,7 @@ namespace Npgsql
 		private Int32				size;
 		
 		// Fields to implement IDataParameter
-		private DbType				type;
+		private DbType				db_type;
 		private ParameterDirection	direction;
 		private Boolean				is_nullable;
 		private String				name;
@@ -64,13 +67,14 @@ namespace Npgsql
 		public NpgsqlParameter(String parameterName, DbType parameterType)
 		{
 			name = parameterName;
-			type = parameterType;
+			db_type = parameterType;
+			
 		}
 		
 		public NpgsqlParameter(String parameterName, DbType parameterType, Int32 size, String sourceColumn)
 		{
 			name = parameterName;
-			type = parameterType;
+			db_type = parameterType;
 			this.size = size;
 			source_column = sourceColumn;
 			direction = ParameterDirection.Input;
@@ -123,16 +127,18 @@ namespace Npgsql
 		{
 			get
 			{
-				return type;
+				return db_type;
 			}
 			
 			// [TODO] Validate data type.
 			set
 			{
-				type = value;
+				db_type = value;
 				NpgsqlEventLog.LogMsg("Set " + CLASSNAME + ".DbType = " + value, LogLevel.Normal);
 			}
 		}
+		
+		
 		
 		public ParameterDirection Direction
 		{

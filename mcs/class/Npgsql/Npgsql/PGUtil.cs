@@ -6,8 +6,9 @@
 //	Francisco Jr. (fxjrlists@yahoo.com.br)
 //
 //	Copyright (C) 2002 The Npgsql Development Team
+//	npgsql-general@gborg.postgresql.org
+//	http://gborg.postgresql.org/project/npgsql/projdisplay.php
 //
-
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
 // License as published by the Free Software Foundation; either
@@ -28,6 +29,7 @@ using System.IO;
 using System.Text;
 using System.Net.Sockets;
 using System.Net;
+
 
 namespace Npgsql
 {
@@ -109,11 +111,13 @@ namespace Npgsql
 		
 		public static void CheckedStreamRead(Stream stream, Byte[] buffer, Int32 offset, Int32 size)
 		{
-			Int32 bytes_read = 0;
+			Int32 bytes_from_stream = 0;
+			Int32 total_bytes_read = 0;
 			do
 			{
-				bytes_read = stream.Read(buffer, offset + bytes_read, size);
-				size = size - bytes_read;
+				bytes_from_stream = stream.Read(buffer, offset + total_bytes_read, size);
+				total_bytes_read += bytes_from_stream;
+				size -= bytes_from_stream;
 			}
 			while(size > 0);
 			
@@ -136,24 +140,6 @@ namespace Npgsql
 		}
 		
 		
-    public static String GetSystemTypeFromDbType(Int32 dbType)
-    {
-    	// This method gets a db type identifier and return the equivalent
-    	// system type name.
-    	
-    	//[FIXME] Only Int32 and String supported for now.
-    	switch (dbType)
-    	{
-    		case 23:
-    			return "System.Int32";
-    		
-    		case 25:
-    			return "System.String";
-    		
-    		default:
-    			return "System.String";
-    		
-    	}
-    }
+   
 	}
 }

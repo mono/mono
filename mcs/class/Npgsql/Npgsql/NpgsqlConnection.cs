@@ -6,8 +6,10 @@
 //	Francisco Jr. (fxjrlists@yahoo.com.br)
 //
 //	Copyright (C) 2002 The Npgsql Development Team
+//	npgsql-general@gborg.postgresql.org
+//	http://gborg.postgresql.org/project/npgsql/projdisplay.php
 //
-
+//
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
 // License as published by the Free Software Foundation; either
@@ -33,9 +35,9 @@ using System.IO;
 using System.Text;
 using System.Collections;
 using System.Collections.Specialized;
+using NpgsqlTypes;
 
 
-// Npgsql.NpgsqlConnection
 namespace Npgsql
 {
   /// <summary>
@@ -63,7 +65,7 @@ namespace Npgsql
     private readonly String CONN_DATABASE = "DATABASE";
     private readonly String CONN_PORT 		= "PORT";
 
-    // Postgres default port
+		// Postgres default port
     private readonly String PG_PORT = "5432";
 		
     // These are for ODBC connection string compatibility
@@ -86,25 +88,32 @@ namespace Npgsql
     /*private BufferedStream	output_stream;
     private Byte[]					input_buffer;*/
     private Encoding				connection_encoding;
-  		
-    public NpgsqlConnection() : this(""){}
+  	
+  	private Boolean					_supportsPrepare = false;
+  	
+  	private String 					_serverVersion; // Contains string returned from select version();
+  	
+  	private Hashtable				_oidToNameMapping; 
+  	
+  	
+    public NpgsqlConnection() : this(String.Empty){}
 
     public NpgsqlConnection(String ConnectionString)
     {
-     // NpgsqlEventLog.LogMsg("Entering " + CLASSNAME + ".NpgsqlConnection()", LogLevel.Debug);
+      NpgsqlEventLog.LogMsg("Entering " + CLASSNAME + ".NpgsqlConnection()", LogLevel.Debug);
       
       connection_state = ConnectionState.Closed;
     	state = NpgsqlClosedState.Instance;
     	connection_string = ConnectionString;
-	    
-	connection_string_values = new ListDictionary();
-	    
+      connection_string_values = new ListDictionary();
       connection_encoding = Encoding.Default;
     	
     	_mediator = new NpgsqlMediator();
-    
-	if(!ConnectionString.Equals(""))
-		ParseConnectionString();
+    	
+    	_oidToNameMapping = new Hashtable();
+    	
+    	if (connection_string != String.Empty)
+				ParseConnectionString();
     }
 
 		///<value> This is the ConnectionString value </value>
@@ -118,7 +127,8 @@ namespace Npgsql
       {
         connection_string = value;
         NpgsqlEventLog.LogMsg("Set " + CLASSNAME + ".ConnectionString = " + value, LogLevel.Normal);
-        ParseConnectionString();
+      	if (connection_string != String.Empty)
+        	ParseConnectionString();
       }
     }
 	
@@ -224,17 +234,38 @@ namespace Npgsql
         if (connection_state == ConnectionState.Open)
           throw new NpgsqlException("Connection already open");
 		    		    
+		   	if (connection_string == String.Empty)
+		   		throw new InvalidOperationException("ConnectionString cannot be empty.");
+      	
 		    CurrentState.Open(this);
       	
       	// Check if there were any errors.
       	if (_mediator.Errors.Count > 0)
-      		throw new NpgsqlException(_mediator.Errors[0].ToString());
+      	{
+      		StringWriter sw = new StringWriter();
+      		sw.WriteLine("There have been errors on Open()");
+      		uint i = 1;
+      		foreach(string error in _mediator.Errors){
+      			sw.WriteLine("{0}. {1}", i++, error);
+      		}
+      		CurrentState = NpgsqlClosedState.Instance;
+      		_mediator.Reset();
+      		throw new NpgsqlException(sw.ToString());
+      	}
       	
       	backend_keydata = _mediator.GetBackEndKeyData();
       	
         // Change the state of connection to open.
         connection_state = ConnectionState.Open;
-	    			    		
+      	
+      	// Get version information to enable/disable server version features.
+      	NpgsqlCommand command = new NpgsqlCommand("select version();set DATESTYLE TO ISO;", this);
+      	_serverVersion = (String) command.ExecuteScalar();
+      	ProcessServerVersion();
+      	_oidToNameMapping = NpgsqlTypesHelper.LoadTypesMapping(this);
+      	
+      	
+      		    			    		
       }
       catch(SocketException e)
       {
@@ -313,8 +344,10 @@ namespace Npgsql
     private void ParseConnectionString()
     {
       NpgsqlEventLog.LogMsg("Entering " + CLASSNAME + ".ParseConnectionString()", LogLevel.Debug);
-	    	
-      // Get the key-value pairs delimited by CONN_DELIM
+	    
+	    connection_string_values.Clear();
+	    
+	    // Get the key-value pairs delimited by CONN_DELIM
       String[] pairs = connection_string.Split(new Char[] {CONN_DELIM});
 	    	
       String[] keyvalue;
@@ -359,22 +392,40 @@ namespace Npgsql
       if (connection_string_values[CONN_PORT] == null)
         // Port is optional. Defaults to PG_PORT.
         connection_string_values[CONN_PORT] = PG_PORT;
+    	
     }
-	    
+
+
+		/// <summary>
+		/// This method is required to set all the version dependent features flags.
+		/// SupportsPrepare means the server can use prepared query plans (7.3+)
+		/// 
+		/// </summary>
+		 		 
+		private void ProcessServerVersion()
+		{
+			NpgsqlEventLog.LogMsg("Entering " + CLASSNAME + ".ProcessServerVersion()", LogLevel.Debug);
+			
+			
+			SupportsPrepare = (_serverVersion.IndexOf("PostgreSQL 7.3") != -1) || 
+												(_serverVersion.IndexOf("PostgreSQL 7.4") != -1) ;
+			
+		}
     
     // State 
 		internal void Query( NpgsqlCommand queryCommand )
 		{
 			CurrentState.Query( this, queryCommand );
 		}
-		internal void Authenticate()
+		internal void Authenticate(string password)
 		{
-			CurrentState.Authenticate( this );
+			CurrentState.Authenticate( this, password );
 		}
 		internal void Startup()
 		{
 			CurrentState.Startup( this );
 		}
+		
 		internal NpgsqlState CurrentState
 		{
 			get 
@@ -473,6 +524,41 @@ namespace Npgsql
 			{
 				_inTransaction = value;
 			}
+		}
+		
+		internal Boolean SupportsPrepare
+		{
+			get
+			{
+				return _supportsPrepare;
+			}
+			
+			set
+			{
+				_supportsPrepare = value;
+			}
+		}
+		
+		internal String ServerVersion
+		{
+			get
+			{
+				return _serverVersion;
+			}
+		}
+		
+		internal Hashtable OidToNameMapping
+		{
+			get
+			{
+				return _oidToNameMapping;
+			}
+			
+			set 
+			{
+				_oidToNameMapping = value;
+			}
+			
 		}
 		
   }

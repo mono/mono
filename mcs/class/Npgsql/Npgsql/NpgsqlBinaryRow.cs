@@ -1,6 +1,6 @@
-// created on 13/6/2002 at 21:06
+// created on 4/3/2003 at 19:45
 
-// Npgsql.NpgsqlAsciiRow.cs
+// Npgsql.NpgsqlBinaryRow.cs
 // 
 // Author:
 //	Francisco Jr. (fxjrlists@yahoo.com.br)
@@ -39,26 +39,24 @@ namespace Npgsql
 	/// server.
 	/// </summary>
 	/// 
-	internal sealed class NpgsqlAsciiRow
+	internal sealed class NpgsqlBinaryRow
 	{
 		// Logging related values
-    private static readonly String CLASSNAME = "NpgsqlAsciiRow";
+    private static readonly String CLASSNAME = "NpgsqlBinaryRow";
 		
 		private ArrayList							data;
 		private Byte[]								null_map_array;
 		private Int16									num_fields;
 		private readonly Int16	READ_BUFFER_SIZE = 300; //[FIXME] Is this enough??
 		private NpgsqlRowDescription row_desc;
-		private Hashtable							oid_to_name_mapping;
 		
-		public NpgsqlAsciiRow(NpgsqlRowDescription rowDesc, Hashtable oidToNameMapping)
+		public NpgsqlBinaryRow(NpgsqlRowDescription rowDesc)
 		{
-			NpgsqlEventLog.LogMsg("Entering " + CLASSNAME + ".NpgsqlAsciiRow()", LogLevel.Debug);
+			NpgsqlEventLog.LogMsg("Entering " + CLASSNAME + ".NpgsqlBinaryRow()", LogLevel.Debug);
 			
 			data = new ArrayList();
 			row_desc = rowDesc;
 			null_map_array = new Byte[(row_desc.NumFields + 7)/8];
-			oid_to_name_mapping = oidToNameMapping;
 			//num_fields = numFields;
 				
 			
@@ -69,12 +67,13 @@ namespace Npgsql
 		{
 			NpgsqlEventLog.LogMsg("Entering " + CLASSNAME + ".ReadFromStream()", LogLevel.Debug);
 			
-			Byte[] input_buffer = new Byte[READ_BUFFER_SIZE]; 
+			//Byte[] input_buffer = new Byte[READ_BUFFER_SIZE]; 
+			Byte[] input_buffer = null;
 			
 			Array.Clear(null_map_array, 0, null_map_array.Length);
 			
 			// Read the null fields bitmap.
-			PGUtil.CheckedStreamRead(inputStream, null_map_array, 0, null_map_array.Length );
+			inputStream.Read(null_map_array, 0, null_map_array.Length );
 			
 			// Get the data.
 			for (Int16 field_count = 0; field_count < row_desc.NumFields; field_count++)
@@ -96,11 +95,14 @@ namespace Npgsql
 								
 				Int32 field_value_size = IPAddress.NetworkToHostOrder(BitConverter.ToInt32(input_buffer, 0));
 							
-				Int32 bytes_left = field_value_size - 4;
+				Int32 bytes_left = field_value_size; //Size of data is the value read.
 				
-				StringBuilder result = new StringBuilder();
+				input_buffer = new Byte[bytes_left];
 				
-				while (bytes_left > READ_BUFFER_SIZE)
+				
+				//StringBuilder result = new StringBuilder();
+				
+				/*while (bytes_left > READ_BUFFER_SIZE)
 				{
 					// Now, read just the field value.
 					PGUtil.CheckedStreamRead(inputStream, input_buffer, 0, READ_BUFFER_SIZE);
@@ -110,16 +112,17 @@ namespace Npgsql
 									
 					bytes_left -= READ_BUFFER_SIZE;
 				}
-				
+				*/
 				// Now, read just the field value.
 				PGUtil.CheckedStreamRead(inputStream, input_buffer, 0, bytes_left);
 				
 				// Read the bytes as string.
-				result.Append(new String(encoding.GetChars(input_buffer, 0, bytes_left)));
+				//result.Append(new String(encoding.GetChars(input_buffer, 0, bytes_left)));
 				
 				
-				// Add them to the AsciiRow data.
-				data.Add(NpgsqlTypesHelper.ConvertBackendStringToSystemType(oid_to_name_mapping, result.ToString(), row_desc[field_count].type_oid, row_desc[field_count].type_modifier));
+				// Add them to the BinaryRow data.
+				//data.Add(NpgsqlTypesHelper.ConvertStringToNpgsqlType(result.ToString(), row_desc[field_count].type_oid));
+				data.Add(input_buffer);
 				
 			}
 			

@@ -5,8 +5,10 @@
 //	Francisco Jr. (fxjrlists@yahoo.com.br)
 //
 //	Copyright (C) 2002 The Npgsql Development Team
+//	npgsql-general@gborg.postgresql.org
+//	http://gborg.postgresql.org/project/npgsql/projdisplay.php
 //
-
+//
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
 // License as published by the Free Software Foundation; either
@@ -24,14 +26,19 @@
 using System;
 using System.Data;
 using System.Collections;
+using NpgsqlTypes;
 
 
 namespace Npgsql
-{	
+{
+		
 	public class NpgsqlDataReader : IDataReader, IEnumerable
 	{
+		
+		
+		
 	  private NpgsqlConnection 	_connection;
-	private ArrayList 				_resultsets;
+		private ArrayList 				_resultsets;
 		private ArrayList					_responses;
 	  private Int32 						_rowIndex;
 		private Int32							_resultsetIndex;
@@ -61,16 +68,20 @@ namespace Npgsql
 	  	NpgsqlEventLog.LogMsg("Entering " + CLASSNAME + ".CanRead() ", LogLevel.Debug);
 	  	/*if (_currentResultset == null)
 	  		return false;*/
-	  	return (_currentResultset != null);
+	  	return ((_currentResultset != null) && (_currentResultset.Count > 0));
 	  	
 	  }
 	  
+	  private void CheckCanRead()
+	  {
+	    if (!CanRead())
+	      throw new InvalidOperationException("Cannot read data");
+	  }
 	  
 	  public void Dispose()
 	  {
 	  	
 	  }
-
 	  public Int32 Depth 
 	  {
 	  	get
@@ -194,30 +205,40 @@ namespace Npgsql
 	  
 	  public String GetDataTypeName(Int32 i)
 	  {
-		  // FIXME: have a type name instead of the oid
-	  	 return (_currentResultset.RowDescription[i].type_oid).ToString();
+	  	// FIXME: have a type name instead of the oid
+			return (_currentResultset.RowDescription[i].type_oid).ToString();
 	  }
 	  
 	  public Type GetFieldType(Int32 i)
 	  {
 	  	NpgsqlEventLog.LogMsg("Entering " + CLASSNAME + ".GetFieldType(Int32)", LogLevel.Debug);
-	      	//[FIXME] hack
+	    	  	
 	  	  	
-	  	return Type.GetType(PGUtil.GetSystemTypeFromDbType(_currentResultset.RowDescription[i].type_oid));
+	  	//return Type.GetType(NpgsqlTypesHelper.GetSystemTypeNameFromTypeOid(_connection.OidToNameMapping, _currentResultset.RowDescription[i].type_oid));
+	  	
+	  	return NpgsqlTypesHelper.GetSystemTypeFromTypeOid(_connection.OidToNameMapping, _currentResultset.RowDescription[i].type_oid);
 	  }
 	  
 	  public Object GetValue(Int32 i)
 	  {
 	  	NpgsqlEventLog.LogMsg("Entering " + CLASSNAME + ".GetValue(Int32)", LogLevel.Debug);
+	    
+	    CheckCanRead();
+	    
 	  	if (i < 0 || _rowIndex < 0)
 	  		throw new InvalidOperationException("Cannot read data.");
 	  	return ((NpgsqlAsciiRow)_currentResultset[_rowIndex])[i];
+	  	
+	  	
 	  }
+	  
 	  
 	  public Int32 GetValues(Object[] values)
 	  {
 	  	NpgsqlEventLog.LogMsg("Entering " + CLASSNAME + ".GetValues(Object[])", LogLevel.Debug);
 	  	
+	  	CheckCanRead();
+	    
 	  	// Only the number of elements in the array are filled.
 	  	// It's also possible to pass an array with more that FieldCount elements.
 	  	Int32 maxColumnIndex = (values.Length < FieldCount) ? values.Length : FieldCount;
@@ -231,7 +252,8 @@ namespace Npgsql
 	  
 	  public Int32 GetOrdinal(String name)
 	  {
-		return _currentResultset.RowDescription.FieldIndex(name);
+	    CheckCanRead();
+	    return _currentResultset.RowDescription.FieldIndex(name);
 	  }
 	  
 	  public Object this [ Int32 i ]
@@ -259,18 +281,8 @@ namespace Npgsql
 	  	// and parsing from there?
 	  	NpgsqlEventLog.LogMsg("Entering " + CLASSNAME + ".GetBoolean(Int32)", LogLevel.Debug);
 	  	
-  		switch ((String) this[i])
-  		{
-  			case "t":
-  				return true;
-  				
-  			case "f":
-  				return false;
-  				
-  			default:
-  				throw new System.InvalidCastException();
-  			
-  		}
+  		  		
+  		return (Boolean) GetValue(i);
 	  	
 	  }
 	  
@@ -311,45 +323,52 @@ namespace Npgsql
 	    // Should this be done using the GetValue directly and not by converting to String
 	  	// and parsing from there?
 	  	NpgsqlEventLog.LogMsg("Entering " + CLASSNAME + ".GetInt16(Int32)", LogLevel.Debug);
-	  	try
+	  	/*try
 	  	{
 		    return Int16.Parse((String) this[i]);
 	  	} catch (System.FormatException)
 	  	{
 	  		throw new System.InvalidCastException();
-	  	}
+	  	}*/
+	  	
+	  	return (Int16) GetValue(i);
 	  	
 
 	  }
+	  
 	  
 	  public Int32 GetInt32(Int32 i)
 	  {
 	    // Should this be done using the GetValue directly and not by converting to String
 	  	// and parsing from there?
 	  	NpgsqlEventLog.LogMsg("Entering " + CLASSNAME + ".GetInt32(Int32)", LogLevel.Debug);
-	  	try
+	  	/*try
 	  	{
 		    return Int32.Parse((String) this[i]);
 	  	} catch (System.FormatException)
 	  	{
 	  		throw new System.InvalidCastException();
-	  	}
+	  	}*/
 	  	
-
+	  	
+	  	return (Int32) GetValue(i);
+	  
 	  }
+	  
 	  
 	  public Int64 GetInt64(Int32 i)
 	  {
 	    // Should this be done using the GetValue directly and not by converting to String
 	  	// and parsing from there?
 	  	NpgsqlEventLog.LogMsg("Entering " + CLASSNAME + ".GetInt64(Int32)", LogLevel.Debug);
-	  	try
+	  	/*try
 	  	{
 		    return Int64.Parse((String) this[i]);
 	  	} catch (System.FormatException)
 	  	{
 	  		throw new System.InvalidCastException();
-	  	}
+	  	}*/
+	  	return (Int64) GetValue(i);
 	  }
 	  
 	  public Single GetFloat(Int32 i)
@@ -359,7 +378,7 @@ namespace Npgsql
 	  	NpgsqlEventLog.LogMsg("Entering " + CLASSNAME + ".GetFloat(Int32)", LogLevel.Debug);
 	  	try
 	  	{
-		    return Single.Parse((String) this[i]);
+	  		return Single.Parse((String) this[i]);
 	  	} catch (System.FormatException)
 	  	{
 	  		throw new System.InvalidCastException();
@@ -391,25 +410,15 @@ namespace Npgsql
 	    // Should this be done using the GetValue directly and not by converting to String
 	  	// and parsing from there?
 	  	NpgsqlEventLog.LogMsg("Entering " + CLASSNAME + ".GetDecimal(Int32)", LogLevel.Debug);
-	  	try
-	  	{
-		    return Decimal.Parse((String) this[i]);
-	  	} catch (System.FormatException)
-	  	{
-	  		throw new System.InvalidCastException();
-	  	}
+	  	
+	  	
+	  	return (Decimal) GetValue(i);
 	  }
 	  
 	  public DateTime GetDateTime(Int32 i)
 	  {
-		  // Should this be done using the GetValue directly and not by converting to String
-		  // and parsing from there?
-		  NpgsqlEventLog.LogMsg("Entering " + CLASSNAME + ".GetInt32(Int32)", LogLevel.Debug);
-		  try {
-			  return DateTime.ParseExact((string) this[i], "dd/MM/yyyy", null);
-		  } catch (System.FormatException) {
-			  throw new System.InvalidCastException();
-		  }
+	    //throw new NotImplementedException();
+	  	return (DateTime) GetValue(i);
 	  }
 	  
 	  public IDataReader GetData(Int32 i)
@@ -421,19 +430,26 @@ namespace Npgsql
 	  {
 	  	//throw new NotImplementedException();
 	  	
+	  	if (!CanRead())
+	  	  throw new InvalidOperationException("Cannot read data");
 	  	return ((NpgsqlAsciiRow)_currentResultset[_rowIndex]).IsNull(i);
 	  }
 
+
+		
+	  
+	  
+
 		private DataTable GetResultsetSchema()
 		{
-			DataTable result = null;
-			NpgsqlEventLog.LogMsg("Entering " + CLASSNAME + ".GetResultsetSchema()", LogLevel.Debug);
-			// [FIXME] For now, just support fields name.
 			
+			NpgsqlEventLog.LogMsg("Entering " + CLASSNAME + ".GetResultsetSchema()", LogLevel.Debug);
+			DataTable result = null;
+
 			NpgsqlRowDescription rd = _currentResultset.RowDescription;
 			Int16 numFields = rd.NumFields;
 			if(numFields > 0) {
-				result = new DataTable("SchemaTable");		
+				result = new DataTable("SchemaTable");
 
 				result.Columns.Add ("ColumnName", typeof (string));
 				result.Columns.Add ("ColumnOrdinal", typeof (int));
@@ -461,12 +477,12 @@ namespace Npgsql
 				result.Columns.Add ("IsReadOnly", typeof (bool));
 
 				DataRow row;
-			
+
 				for (Int16 i = 0; i < numFields; i++) {
 					row = result.NewRow();
 
 					row["ColumnName"] = GetName(i);
-					row["ColumnOrdinal"] = i + 1;				
+					row["ColumnOrdinal"] = i + 1;
 					row["ColumnSize"] = (int) rd[i].type_size;
 					row["NumericPrecision"] = 0;
 					row["NumericScale"] = 0;
@@ -477,7 +493,7 @@ namespace Npgsql
 					row["BaseSchemaName"] = "";
 					row["BaseTableName"] = "";
 					row["DataType"] = GetFieldType(i);
-					row["AllowDBNull"] = false;					
+					row["AllowDBNull"] = false;
 					row["ProviderType"] = (int) rd[i].type_oid;
 					row["IsAliased"] = false;
 					row["IsExpression"] = false;
@@ -491,12 +507,15 @@ namespace Npgsql
 					result.Rows.Add(row);
 				}
 			}
-			
-			return result;
-			
-		}
 
-		IEnumerator IEnumerable.GetEnumerator () {
+			return result;
+
+		}
+		
+		
+		
+		IEnumerator IEnumerable.GetEnumerator () 
+		{
 			return new System.Data.Common.DbEnumerator (this);
 		}
 	}
