@@ -1,3 +1,7 @@
+2003-10-23  Miguel de Icaza  <miguel@ximian.com>
+
+	* Image.cs: Implement Dispose pattern.
+
 2003-10-14  Alexandre Pigolkine <pigolkine@gmx.de>
 	* Graphics.cs
 	* gdipFunctioncs.cs		

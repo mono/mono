@@ -138,7 +138,8 @@ internal class InternalImageInfo : IDisposable
 		set { rawFormat = value; }
 	}
 	
-	internal unsafe void ChangePixelFormat (PixelFormat destPixelFormat) {
+	internal unsafe void ChangePixelFormat (PixelFormat destPixelFormat)
+	{
 		//Console.WriteLine ("{0}.ChangePixelFormat to {1}", ToString(), destPixelFormat);
 		if (PixelFormat == destPixelFormat) return;
 		if (destPixelFormat != PixelFormat.Format32bppArgb &&
@@ -155,11 +156,11 @@ internal class InternalImageInfo : IDisposable
 		Size ourSize = Size;
 		int destStride = (Image.GetPixelFormatSize(destPixelFormat) >> 3 ) * ourSize.Width;
 		byte[] temp = new byte [destStride * ourSize.Height];
-		fixed( byte *psrc = image, pbuf = temp) {
+		fixed (byte *psrc = image, pbuf = temp) {
 			byte* curSrc = psrc;
 			byte* curDst = pbuf;
-			for ( int i = 0; i < ourSize.Height; i++) {
-				for( int j = 0; j < ourSize.Width; j++) {
+			for  (int i = 0; i < ourSize.Height; i++) {
+				for (int j = 0; j < ourSize.Width; j++) {
 					*curDst++ = *curSrc++;
 					*curDst++ = *curSrc++;
 					*curDst++ = *curSrc++;
@@ -181,6 +182,17 @@ internal class InternalImageInfo : IDisposable
 	
 	public void Dispose ()
 	{
+		Dispose (true);
+		GC.SuppressFinalize (this);
+	}
+
+	~InternalImageInfo ()
+	{
+		Dispose (false);
+	}
+
+	void Dispose (bool disposing)
+	{
 		FreeUnmanagedPtr();
 	}
 }
@@ -196,7 +208,8 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 	public delegate bool GetThumbnailImageAbort ();	       
 	
 	// constructor
-	public Image () {
+	public Image ()
+	{
 		pixel_format = PixelFormat.Format32bppArgb;
 	}
 
@@ -232,24 +245,24 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 		throw new NotImplementedException ();
 	}
 
-	internal static InternalImageInfo Decode( Stream streamIn) 
+	internal static InternalImageInfo Decode (Stream streamIn) 
 	{
 		Stream stream = streamIn;
-		InternalImageInfo	result = new InternalImageInfo();
+		InternalImageInfo result = new InternalImageInfo();
 		if (!stream.CanSeek) {
 			// FIXME: if stream.CanSeek == false, copy to a MemoryStream and read nicely 
 		}
 		ImageCodecInfo[] availableDecoders = ImageCodecInfo.GetImageDecoders();
 		long pos = stream.Position;
 		ImageCodecInfo codecToUse = null;
-		foreach( ImageCodecInfo info in availableDecoders) {
+		foreach (ImageCodecInfo info in availableDecoders) {
 			for (int i = 0; i < info.SignaturePatterns.Length; i++) {
 				stream.Seek(pos, SeekOrigin.Begin);
 				bool codecFound = true;
 				for (int iPattern = 0; iPattern < info.SignaturePatterns[i].Length; iPattern++) {
 					byte pattern = (byte)stream.ReadByte();
 					pattern &= info.SignatureMasks[i][iPattern];
-					if( pattern != info.SignaturePatterns[i][iPattern]) {
+					if (pattern != info.SignaturePatterns[i][iPattern]) {
 						codecFound = false;
 						break;
 					}
@@ -262,7 +275,7 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 		}
 		stream.Seek (pos, SeekOrigin.Begin);
 		if (codecToUse != null && codecToUse.decode != null) {
-			codecToUse.decode( stream, result);
+			codecToUse.decode (stream, result);
 		}
 		return result;
 	}
@@ -373,7 +386,7 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 
 	public void Save (string filename)
 	{
-		Save( filename, RawFormat);
+		Save (filename, RawFormat);
 	}
 
 	internal virtual InternalImageInfo ConvertToInternalImageInfo() 
@@ -402,7 +415,7 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 
 	public void Save(string filename, ImageFormat format) 
 	{
-		FileStream fs = new FileStream( filename, FileMode.Create);
+		FileStream fs = new FileStream (filename, FileMode.Create);
 		Save(fs, format);
 		fs.Flush();
 		fs.Close();
