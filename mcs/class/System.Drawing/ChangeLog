@@ -1,4 +1,4 @@
-2004-11-07  Geoff Norton  <gnorton@customerdna.com>
+2004-12-07  Geoff Norton  <gnorton@customerdna.com>
 
 	* System.Drawing/Graphics.cs:  Add FromHwndWithSize for the MWF/Quartz backend
 	* System.Drawing/gdipFunctions.cs: Add the quartz dllimport into libgdiplus
