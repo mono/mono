@@ -1,4 +1,5 @@
-System.Runtime.Serialization.Formatters.Soap/AssemblyInfo.cs
+Assembly/AssemblyInfo.cs
+Assembly/Locale.cs
 System.Runtime.Serialization.Formatters.Soap/SoapWriter.cs
 System.Runtime.Serialization.Formatters.Soap/ISoapParser.cs
 System.Runtime.Serialization.Formatters.Soap/ISoapReader.cs

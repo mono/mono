@@ -1,3 +1,9 @@
+2004-03-31  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* System.Runtime.Serialization.Formatters.Soap.dll.sources:
+	  Added new AssemblyInfo, removed old one, added Locale.cs
+	* Makefile: Removed unused ref
+
 2004-02-19  Jean-Marc Andre <jeanmarc.andre@cpe.fr>
 	* SoapFormatter.cs:
 		Forced the utilisation of CultureInfo("en-US") during
