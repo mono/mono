@@ -12,6 +12,7 @@ using System.Security.Cryptography;
 
 namespace Mono.Math.Prime {
 
+	[CLSCompliant(false)]
 	public delegate bool PrimalityTest (BigInteger bi, ConfidenceFactor confidence);
 
 	[CLSCompliant(false)]

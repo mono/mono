@@ -1,3 +1,7 @@
+2003-04-23  Alp Toker  <alp@atoker.com>
+
+	* PrimalityTests.cs: Mark PrimalityTest as non-CLS-compliant (build fix)
+
 2003-04-22  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* ConfidenceFactor.cs: New. Enum for prime quality.
