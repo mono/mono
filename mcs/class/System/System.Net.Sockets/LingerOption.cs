@@ -19,7 +19,7 @@ namespace System.Net.Sockets
 		// Don't change the names of these fields without also
 		// changing socket-io.c in the runtime
 		private bool	enabled;
-		protected int	seconds;
+		private int	seconds;
 
 		public LingerOption (bool enable, int secs)
 		{

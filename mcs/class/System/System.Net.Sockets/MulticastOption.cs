@@ -20,7 +20,7 @@ namespace System.Net.Sockets
 		// Don't change the names of these fields without also
 		// changing socket-io.c in the runtime
 		private IPAddress group;
-		protected IPAddress local;
+		private IPAddress local;
 
 		public MulticastOption (IPAddress grp)
 			: this (grp, IPAddress.Any)
