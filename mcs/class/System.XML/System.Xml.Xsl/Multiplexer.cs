@@ -169,7 +169,7 @@ namespace System.Xml.Xsl {
 		internal void Load (XmlReader stylesheet, XmlResolver resolver, Evidence evidence)
 #endif
 		{
-			Load (stylesheet, resolver, null);
+			impl.Load (stylesheet, resolver, null);
 		}
 
 	}
