@@ -1,3 +1,5 @@
+Assembly/AssemblyInfo.cs
+Assembly/Locale.cs
 System/TODOAttribute.cs
 System.Data.ObjectSpaces/ASTBaseParser.cs
 System.Data.ObjectSpaces/AstKeywords.cs

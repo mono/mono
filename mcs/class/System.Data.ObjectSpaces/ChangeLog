@@ -1,3 +1,9 @@
+2003-12-13  Tim Coleman <tim@timcoleman.com>
+	* System.Data.ObjectSpaces.Query/ObjectExpression.cs:
+		Add missing includes
+	* System.Data.ObjectSpaces.dll.Sources:
+		Add missing files to build.
+
 2003-12-02  Richard Thombs <stony@stony.org>
 	* TODOAttribute.cs:
 	* System.Data.ObjectSpaces.dll.sources:

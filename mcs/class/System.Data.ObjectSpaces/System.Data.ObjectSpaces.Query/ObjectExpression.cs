@@ -12,6 +12,8 @@
 #if NET_1_2
 
 using System.Data.ObjectSpaces;
+using System.Data.ObjectSpaces.Schema;
+using System.Data.Mapping;
 
 namespace System.Data.ObjectSpaces.Query {
 	public class ObjectExpression
