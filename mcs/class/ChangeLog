@@ -1,3 +1,7 @@
+2005-01-04  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile (DIST_ONLY_SUBDIRS): Remove Managed.Windows.Forms.
+
 2004-12-26  Peter Bartok  <pbartok@novell.com>
 
 	* Makefile (SUBDIRS): Switched from System.Windows.Forms to

@@ -76,12 +76,9 @@ SUBDIRS = \
 # These libraries below are either unimplemented or don't compile, but
 # I wrote makefiles for them.
 
-# Managed.Windows.Forms will move to the main SUBDIRS soon.
-
 DIST_ONLY_SUBDIRS = \
 	Custommarshalers		\
-	Mono.Globalization		\
-	Managed.Windows.Forms
+	Mono.Globalization
 
 # No new makefiles for: System.Messaging, System.Web.Mobile,
 # System.ServiceProcess
