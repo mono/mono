@@ -1,3 +1,11 @@
+2003-03-31 Jackson Harper <jackson@latitudegeo.com>
+
+	* test-10.il: New test, does some bounded array stuff
+		
+2003-03-17 Jackson Harper <jackson@latitudegeo.com>
+
+	* tests: Update to valid il code.
+
 2003-03-17 Jackson Harper <jackson@latitudegeo.com>
 
 	* test-9.il: Add output to the constructor so I know it is called, give 
