@@ -7,6 +7,8 @@
 // Sanjay Gupta (gsanjay@novell.com)
 // Ravindra (rkumar@novell.com)
 //
+// Copyright (C) 2004 Novell, Inc. http://www.novell.com
+//
 
 using System;
 using System.IO;
@@ -118,7 +120,7 @@ namespace System.Drawing {
 					throw new Exception ("Generic Error.");
 
 				case Status.InvalidParameter:
-					throw new ArgumentException ("Invalid Parameter.");
+					throw new ArgumentException ("Invalid Parameter. A null reference or invalid value was found.");
 
 				case Status.OutOfMemory:
 					throw new OutOfMemoryException ("Out of memory.");
@@ -663,6 +665,8 @@ namespace System.Drawing {
                 [DllImport("gdiplus.dll")]
                 internal static extern Status GdipGetPenBrushFill (IntPtr pen, out IntPtr brush);
                 [DllImport("gdiplus.dll")]
+                internal static extern Status GdipGetPenFillType (IntPtr pen, out PenType type);
+                [DllImport("gdiplus.dll")]
                 internal static extern Status GdipSetPenColor (IntPtr pen, int color);
                 [DllImport("gdiplus.dll")]                
                 internal static extern Status GdipGetPenColor (IntPtr pen, out int color);
@@ -712,6 +716,14 @@ namespace System.Drawing {
 		internal static extern Status GdipSetPenEndCap (IntPtr pen, LineCap endCap);
 		[DllImport("gdiplus.dll")]
 		internal static extern Status GdipGetPenEndCap (IntPtr pen, out LineCap endCap);
+                [DllImport("gdiplus.dll")]
+                internal static extern Status GdipSetPenCustomStartCap (IntPtr pen, IntPtr customCap);
+                [DllImport("gdiplus.dll")]
+                internal static extern Status GdipGetPenCustomStartCap (IntPtr pen, out IntPtr customCap);
+                [DllImport("gdiplus.dll")]
+                internal static extern Status GdipSetPenCustomEndCap (IntPtr pen, IntPtr customCap);
+                [DllImport("gdiplus.dll")]
+                internal static extern Status GdipGetPenCustomEndCap (IntPtr pen, out IntPtr customCap);
 		[DllImport("gdiplus.dll")]
                 internal static extern Status GdipSetPenTransform (IntPtr pen, IntPtr matrix);
 		[DllImport("gdiplus.dll")]
@@ -730,6 +742,35 @@ namespace System.Drawing {
                 internal static extern Status GdipScalePenTransform (IntPtr pen, float sx, float sy, MatrixOrder order);
 		[DllImport("gdiplus.dll")]
                 internal static extern Status GdipTranslatePenTransform (IntPtr pen, float dx, float dy, MatrixOrder order);
+
+		// CustomLineCap functions
+		[DllImport("gdiplus.dll")]
+		internal static extern Status GdipCreateCustomLineCap (IntPtr fillPath, IntPtr strokePath, LineCap baseCap, float baseInset, out IntPtr customCap);
+		[DllImport("gdiplus.dll")]
+		internal static extern Status GdipDeleteCustomLineCap (IntPtr customCap);
+		[DllImport("gdiplus.dll")]
+		internal static extern Status GdipCloneCustomLineCap (IntPtr customCap, out IntPtr clonedCap);
+		[DllImport("gdiplus.dll")]
+		internal static extern Status GdipSetCustomLineCapStrokeCaps (IntPtr customCap, LineCap startCap, LineCap endCap);
+		[DllImport("gdiplus.dll")]
+		internal static extern Status GdipGetCustomLineCapStrokeCaps (IntPtr customCap, out LineCap startCap, out LineCap endCap);
+		[DllImport("gdiplus.dll")]
+		internal static extern Status GdipSetCustomLineCapStrokeJoin (IntPtr customCap, LineJoin lineJoin);
+		[DllImport("gdiplus.dll")]
+		internal static extern Status GdipGetCustomLineCapStrokeJoin (IntPtr customCap, out LineJoin lineJoin);
+		[DllImport("gdiplus.dll")]
+		internal static extern Status GdipSetCustomLineCapBaseCap (IntPtr customCap, LineCap baseCap);
+		[DllImport("gdiplus.dll")]
+		internal static extern Status GdipGetCustomLineCapBaseCap (IntPtr customCap, out LineCap baseCap);
+		[DllImport("gdiplus.dll")]
+		internal static extern Status GdipSetCustomLineCapBaseInset (IntPtr customCap, float inset);
+		[DllImport("gdiplus.dll")]
+		internal static extern Status GdipGetCustomLineCapBaseInset (IntPtr customCap, out float inset);
+		[DllImport("gdiplus.dll")]
+		internal static extern Status GdipSetCustomLineCapWidthScale (IntPtr customCap, float widthScale);
+		[DllImport("gdiplus.dll")]
+		internal static extern Status GdipGetCustomLineCapWidthScale (IntPtr customCap, out float widthScale);
+
 
 		[DllImport("gdiplus.dll")]
 		internal static extern Status GdipCreateFromHWND (IntPtr hwnd, out IntPtr graphics);
