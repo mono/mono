@@ -1,5 +1,9 @@
 2004-01-18  Miguel de Icaza  <miguel@ximian.com>
 
+	* ecore.cs (FieldExpr.AddressOf): For ValueTypes that do not
+	implement IMemoryLocation, we store a copy on a local variable and
+	take the address of it.  Patch from Benjamin Jemlich
+
 	* cs-parser.jay: Applied patch from Ben Maurer to the "type" rule
 	to use a special "type_name_expression" rule which reduces the
 	number of "QualifiedIdentifier" classes created, and instead
