@@ -39,7 +39,7 @@ namespace System {
 			object[] r;
 			object[] res = from_cache (obj);
 			// shortcut
-			if (res.Length == 1) {
+			if (!inherit && res.Length == 1) {
 				if (attributeType.IsAssignableFrom (res[0].GetType ())) {
 					r = (object []) Array.CreateInstance (attributeType, 1);
 					r [0] = res [0];

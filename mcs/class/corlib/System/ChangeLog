@@ -1,3 +1,7 @@
+2003-02-18  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* MonoCustomAttrs.cs: fixed bug #38238.
+
 2003-02-17  Martin Baulig  <martin@ximian.com>
 
 	* Exception.cs (Exception.ToString): Print a newline between the
