@@ -38,7 +38,6 @@ namespace System.Runtime.Remoting.Metadata {
 	{
 		bool _nested;
 		bool _useAttribute;
-		string _namespace;
 		
 		protected string ProtXmlNamespace;
 		protected object ReflectInfo;
@@ -69,11 +68,11 @@ namespace System.Runtime.Remoting.Metadata {
 
 		public virtual string XmlNamespace {
 			get {
-				return _namespace;
+				return ProtXmlNamespace;
 			}
 
 			set {
-				_namespace = value;
+				ProtXmlNamespace = value;
 			}
 		}
 		
