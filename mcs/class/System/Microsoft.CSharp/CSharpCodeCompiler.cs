@@ -151,14 +151,14 @@ namespace Mono.CSharp
 			args.AppendFormat("/warn:{0} ",options.WarningLevel);
 			if (options.OutputAssembly==null)
 				options.OutputAssembly=Path.ChangeExtension(Path.GetTempFileName(),"dll");
-			args.AppendFormat("/out:'{0}' ",options.OutputAssembly);
+			args.AppendFormat("/out:\"{0}\" ",options.OutputAssembly);
 			if (null != options.ReferencedAssemblies)
 			{
 				foreach (string import in options.ReferencedAssemblies)
-					args.AppendFormat("/r:'{0}' ",import);
+					args.AppendFormat("/r:\"{0}\" ",import);
 			}
 			foreach (string source in fileNames)
-				args.AppendFormat("'{0}' ",source);
+				args.AppendFormat("\"{0}\" ",source);
 			return args.ToString();
 		}
 		private static CompilerError CreateErrorFromString(string error_string)

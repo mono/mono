@@ -1,3 +1,8 @@
+2003-07-02  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* CSharpCodeCompiler.cs: patch from pelle.johnsen@mail.dk (Pelle
+	Johnsen) that fixes bug #45708.
+
 2003-05-17  Ben Maurer <bmaurer@users.sourceforge.net>
 
 	* CSharpCodeGenerator.cs: implemented GenerateLinePragma{Start, End}. 
