@@ -1,3 +1,7 @@
+2003-07-26  Ben Maurer  <bmaurer@users.sourceforge.net>
+	
+	* statement.cs: Make Math.XXX System.Math.XXX, to fix the build.
+	
 2003-07-20  Peter Williams  <peter@newton.cx>
 
 	* Makefile: Remove the test target which conflicted with
