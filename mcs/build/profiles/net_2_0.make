@@ -24,3 +24,4 @@ endif
 profile-check:
 
 PROFILE_MCS_FLAGS = -d:NET_1_1 -d:NET_2_0 -2
+FRAMEWORK_VERSION = 2.0
