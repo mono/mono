@@ -80,7 +80,7 @@ namespace System.Xml.XPath
 		private int PutBack ()
 		{
 			if (m_ich == 0)
-				throw new Exception ();	// TODO: better description
+				throw new XPathException ("invalid tokenizer state");	// TODO: better description
 			return m_rgchInput [--m_ich];
 		}
 

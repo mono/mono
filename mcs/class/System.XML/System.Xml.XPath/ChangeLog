@@ -1,3 +1,13 @@
+2002-09-21  Piers Haken <piersh@friskit.com>
+
+	* XPathException: implementation
+	* Expression.cs:
+	* Iterator.cs:
+	* Parser.jay:
+	* Tokenizer.jay:
+	* XPathNavigator.jay:
+		use XPathException.
+
 2002-09-13  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Parser.cs: commented out non-existent namespace (it compiles fine

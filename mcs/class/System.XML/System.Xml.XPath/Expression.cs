@@ -58,11 +58,33 @@ namespace System.Xml.XPath
 
 		public object Evaluate (BaseIterator iter)
 		{
-			return _expr.Evaluate (iter);
+			try
+			{
+				return _expr.Evaluate (iter);
+			}
+			catch (XPathException e)
+			{
+				throw e;
+			}
+			catch (Exception e)
+			{
+				throw new XPathException ("Error during evaluation", e);
+			}
 		}
 		public XPathNodeIterator EvaluateNodeSet (BaseIterator iter)
 		{
-			return _expr.EvaluateNodeSet (iter);
+			try
+			{
+				return _expr.EvaluateNodeSet (iter);
+			}
+			catch (XPathException e)
+			{
+				throw e;
+			}
+			catch (Exception e)
+			{
+				throw new XPathException ("Error during evaluation", e);
+			}
 		}
 	}
 
@@ -83,7 +105,7 @@ namespace System.Xml.XPath
 		{
 			if (GetReturnType (iter) == XPathResultType.NodeSet)
 				return (BaseIterator) Evaluate (iter);
-			throw new Exception ("expected nodeset: "+ToString ());
+			throw new XPathException ("expected nodeset: "+ToString ());
 		}
 		[MonoTODO]
 		public double EvaluateNumber (BaseIterator iter)
@@ -107,7 +129,7 @@ namespace System.Xml.XPath
 				case XPathResultType.String:
 					return XmlConvert.ToDouble ((string) result);	// TODO: spec? convert string to number
 				default:
-					throw new Exception (); // TODO: handle other types
+					throw new XPathException ("invalid node type"); // TODO: handle other types
 			}
 		}
 		[MonoTODO]
@@ -130,7 +152,7 @@ namespace System.Xml.XPath
 					return iterResult.Current.Value;
 				}
 				default:
-					throw new Exception (); // TODO: handle other types
+					throw new XPathException ("invalid node type"); // TODO: handle other types
 			}
 		}
 		[MonoTODO]
@@ -154,7 +176,7 @@ namespace System.Xml.XPath
 					return (iterResult != null && iterResult.MoveNext ());
 				}
 				default:
-					throw new Exception (); // TODO: handle other types
+					throw new XPathException ("invalid node type"); // TODO: handle other types
 			}
 		}
 	}
@@ -669,7 +691,7 @@ namespace System.Xml.XPath
 			_type = type;
 			_param = param;
 			if (param != null && type != XPathNodeType.ProcessingInstruction)
-				throw new Exception ("No argument allowed for "+ToString (_type)+"() test");	// TODO: better description
+				throw new XPathException ("No argument allowed for "+ToString (_type)+"() test");	// TODO: better description
 		}
 		public override String ToString ()
 		{
@@ -747,7 +769,7 @@ namespace System.Xml.XPath
 			{
 				strURI1 = context.LookupNamespace (_name.Prefix);	// TODO: check to see if this returns null or ""
 				if (strURI1 == null)
-					throw new Exception ("Invalid namespace prefix: "+_name.Prefix);
+					throw new XPathException ("Invalid namespace prefix: "+_name.Prefix);
 			}
 
 			string strURI = nav.NamespaceURI;

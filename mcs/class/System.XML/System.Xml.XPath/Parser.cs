@@ -12,18 +12,39 @@
 
 using System;
 using System.Xml.XPath;
-//using Test.Xml.XPath;
+using Test.Xml.XPath;
 
 namespace Mono.Xml.XPath
 {
 	public class XPathParser
 	{
-		internal object yyparseDebug (Tokenizer tok)
+		internal object yyparseSafe (Tokenizer tok)
 		{
-			return yyparse (tok, new yydebug.yyDebugSimple ());
+			return yyparseSafe (tok, null);
 		}
 
-					// line 27 "-"
+		internal object yyparseSafe (Tokenizer tok, object yyDebug)
+		{
+			try
+			{
+				return yyparse (tok, yyDebug);
+			}
+			catch (XPathException e)
+			{
+				throw e;
+			}
+			catch (Exception e)
+			{
+				throw new XPathException ("Error during parse", e);
+			}
+		}
+
+		internal object yyparseDebug (Tokenizer tok)
+		{
+			return yyparseSafe (tok, new yydebug.yyDebugSimple ());
+		}
+
+					// line 48 "-"
 
   /** simplified error message.
       @see <a href="#yyerror(java.lang.String, java.lang.String[])">yyerror</a>
@@ -330,335 +351,335 @@ namespace Mono.Xml.XPath
         yyVal = yyDefault(yyV > yyTop ? null : yyVals[yyV]);
         switch (yyN) {
 case 3:
-					// line 112 "Parser.jay"
+					// line 133 "Parser.jay"
   {
 		yyVal = new ExprOR ((Expression) yyVals[-2+yyTop], (Expression) yyVals[0+yyTop]);
 	}
   break;
 case 5:
-					// line 120 "Parser.jay"
+					// line 141 "Parser.jay"
   {
 		yyVal = new ExprAND ((Expression) yyVals[-2+yyTop], (Expression) yyVals[0+yyTop]);
 	}
   break;
 case 7:
-					// line 128 "Parser.jay"
+					// line 149 "Parser.jay"
   {
 		yyVal = new ExprEQ ((Expression) yyVals[-2+yyTop], (Expression) yyVals[0+yyTop]);
 	}
   break;
 case 8:
-					// line 132 "Parser.jay"
+					// line 153 "Parser.jay"
   {
 		yyVal = new ExprNE ((Expression) yyVals[-2+yyTop], (Expression) yyVals[0+yyTop]);
 	}
   break;
 case 10:
-					// line 140 "Parser.jay"
+					// line 161 "Parser.jay"
   {
 		yyVal = new ExprLT ((Expression) yyVals[-2+yyTop], (Expression) yyVals[0+yyTop]);
 	}
   break;
 case 11:
-					// line 144 "Parser.jay"
+					// line 165 "Parser.jay"
   {
 		yyVal = new ExprGT ((Expression) yyVals[-2+yyTop], (Expression) yyVals[0+yyTop]);
 	}
   break;
 case 12:
-					// line 148 "Parser.jay"
+					// line 169 "Parser.jay"
   {
 		yyVal = new ExprLE ((Expression) yyVals[-2+yyTop], (Expression) yyVals[0+yyTop]);
 	}
   break;
 case 13:
-					// line 152 "Parser.jay"
+					// line 173 "Parser.jay"
   {
 		yyVal = new ExprGE ((Expression) yyVals[-2+yyTop], (Expression) yyVals[0+yyTop]);
 	}
   break;
 case 15:
-					// line 160 "Parser.jay"
+					// line 181 "Parser.jay"
   {
 		yyVal = new ExprPLUS ((Expression) yyVals[-2+yyTop], (Expression) yyVals[0+yyTop]);
 	}
   break;
 case 16:
-					// line 164 "Parser.jay"
+					// line 185 "Parser.jay"
   {
 		yyVal = new ExprMINUS ((Expression) yyVals[-2+yyTop], (Expression) yyVals[0+yyTop]);
 	}
   break;
 case 18:
-					// line 172 "Parser.jay"
+					// line 193 "Parser.jay"
   {
 		yyVal = new ExprMULT ((Expression) yyVals[-2+yyTop], (Expression) yyVals[0+yyTop]);
 	}
   break;
 case 19:
-					// line 176 "Parser.jay"
+					// line 197 "Parser.jay"
   {
 		yyVal = new ExprDIV ((Expression) yyVals[-2+yyTop], (Expression) yyVals[0+yyTop]);
 	}
   break;
 case 20:
-					// line 180 "Parser.jay"
+					// line 201 "Parser.jay"
   {
 		yyVal = new ExprMOD ((Expression) yyVals[-2+yyTop], (Expression) yyVals[0+yyTop]);
 	}
   break;
 case 22:
-					// line 188 "Parser.jay"
+					// line 209 "Parser.jay"
   {
 		yyVal = new ExprNEG ((Expression) yyVals[0+yyTop]);
 	}
   break;
 case 24:
-					// line 196 "Parser.jay"
+					// line 217 "Parser.jay"
   {
 		yyVal = new ExprUNION ((NodeSet) yyVals[-2+yyTop], (NodeSet) yyVals[0+yyTop]);
 	}
   break;
 case 26:
-					// line 204 "Parser.jay"
+					// line 225 "Parser.jay"
   {
 		yyVal = new ExprRoot ();
 	}
   break;
 case 27:
-					// line 208 "Parser.jay"
+					// line 229 "Parser.jay"
   {
 		yyVal = new ExprSLASH (new ExprRoot (), (NodeSet) yyVals[0+yyTop]);
 	}
   break;
 case 28:
-					// line 212 "Parser.jay"
+					// line 233 "Parser.jay"
   {
 		ExprStep exprStep = new ExprStep (new NodeTypeTest (Axes.DescendantOrSelf, XPathNodeType.All));
 		yyVal = new ExprSLASH (new ExprSLASH (new ExprRoot (), exprStep), (NodeSet) yyVals[0+yyTop]);
 	}
   break;
 case 30:
-					// line 218 "Parser.jay"
+					// line 239 "Parser.jay"
   {
 		yyVal = new ExprSLASH ((Expression) yyVals[-2+yyTop], (NodeSet) yyVals[0+yyTop]);
 	}
   break;
 case 31:
-					// line 222 "Parser.jay"
+					// line 243 "Parser.jay"
   {
 		ExprStep exprStep = new ExprStep (new NodeTypeTest (Axes.DescendantOrSelf, XPathNodeType.All));
 		yyVal = new ExprSLASH (new ExprSLASH ((Expression) yyVals[-2+yyTop], exprStep), (NodeSet) yyVals[0+yyTop]);
 	}
   break;
 case 33:
-					// line 231 "Parser.jay"
+					// line 252 "Parser.jay"
   {
 		yyVal = new ExprSLASH ((Expression) yyVals[-2+yyTop], (NodeSet) yyVals[0+yyTop]);
 	}
   break;
 case 34:
-					// line 235 "Parser.jay"
+					// line 256 "Parser.jay"
   {
 		ExprStep exprStep = new ExprStep (new NodeTypeTest (Axes.DescendantOrSelf, XPathNodeType.All));
 		yyVal = new ExprSLASH (new ExprSLASH ((Expression) yyVals[-2+yyTop], exprStep), (NodeSet) yyVals[0+yyTop]);
 	}
   break;
 case 35:
-					// line 243 "Parser.jay"
+					// line 264 "Parser.jay"
   {
 		yyVal = new ExprStep (new NodeNameTest ((Axes) yyVals[-2+yyTop], (QName) yyVals[-1+yyTop]), (ExprPredicates) yyVals[0+yyTop]);
 	}
   break;
 case 36:
-					// line 247 "Parser.jay"
+					// line 268 "Parser.jay"
   {
 		yyVal = new ExprStep (new NodeTypeTest ((Axes) yyVals[-2+yyTop]), (ExprPredicates) yyVals[0+yyTop]);
 	}
   break;
 case 37:
-					// line 251 "Parser.jay"
+					// line 272 "Parser.jay"
   {
 		yyVal = new ExprStep (new NodeTypeTest ((Axes) yyVals[-5+yyTop], (XPathNodeType) yyVals[-4+yyTop], (String) yyVals[-2+yyTop]), (ExprPredicates) yyVals[0+yyTop]);
 	}
   break;
 case 38:
-					// line 255 "Parser.jay"
+					// line 276 "Parser.jay"
   {
 		yyVal = new ExprStep (new NodeTypeTest (Axes.Self, XPathNodeType.All));
 	}
   break;
 case 39:
-					// line 259 "Parser.jay"
+					// line 280 "Parser.jay"
   {
 		yyVal = new ExprStep (new NodeTypeTest (Axes.Parent, XPathNodeType.All));
 	}
   break;
 case 40:
-					// line 266 "Parser.jay"
+					// line 287 "Parser.jay"
   {
 		yyVal = Axes.Child;
 	}
   break;
 case 41:
-					// line 270 "Parser.jay"
+					// line 291 "Parser.jay"
   {
 		yyVal = Axes.Attribute;
 	}
   break;
 case 42:
-					// line 274 "Parser.jay"
+					// line 295 "Parser.jay"
   {
 		yyVal = yyVals[-1+yyTop];
 	}
   break;
 case 43:
-					// line 280 "Parser.jay"
+					// line 301 "Parser.jay"
   { yyVal = XPathNodeType.Comment; }
   break;
 case 44:
-					// line 281 "Parser.jay"
+					// line 302 "Parser.jay"
   { yyVal = XPathNodeType.Text; }
   break;
 case 45:
-					// line 282 "Parser.jay"
+					// line 303 "Parser.jay"
   { yyVal = XPathNodeType.ProcessingInstruction; }
   break;
 case 46:
-					// line 283 "Parser.jay"
+					// line 304 "Parser.jay"
   { yyVal = XPathNodeType.All; }
   break;
 case 48:
-					// line 290 "Parser.jay"
+					// line 311 "Parser.jay"
   {
 		yyVal = new ExprFilter ((Expression) yyVals[-1+yyTop], (Expression) yyVals[0+yyTop]);
 	}
   break;
 case 49:
-					// line 297 "Parser.jay"
+					// line 318 "Parser.jay"
   {
 		yyVal = new ExprVariable ((QName) yyVals[0+yyTop]);
 	}
   break;
 case 50:
-					// line 301 "Parser.jay"
+					// line 322 "Parser.jay"
   {
 		yyVal = yyVals[-1+yyTop];
 	}
   break;
 case 51:
-					// line 305 "Parser.jay"
+					// line 326 "Parser.jay"
   {
 		yyVal = new ExprLiteral ((String) yyVals[0+yyTop]);
 	}
   break;
 case 52:
-					// line 309 "Parser.jay"
+					// line 330 "Parser.jay"
   {
 		yyVal = new ExprNumber ((double) yyVals[0+yyTop]);
 	}
   break;
 case 54:
-					// line 317 "Parser.jay"
+					// line 338 "Parser.jay"
   {
 		yyVal = new ExprFunctionCall ((String) yyVals[-3+yyTop], (FunctionArguments) yyVals[-1+yyTop]);
 	}
   break;
 case 56:
-					// line 325 "Parser.jay"
+					// line 346 "Parser.jay"
   {
 		yyVal = new FunctionArguments ((Expression) yyVals[-1+yyTop], (FunctionArguments) yyVals[0+yyTop]);
 	}
   break;
 case 58:
-					// line 333 "Parser.jay"
+					// line 354 "Parser.jay"
   {
 		yyVal = new FunctionArguments ((Expression) yyVals[-1+yyTop], (FunctionArguments) yyVals[0+yyTop]);
 	}
   break;
 case 60:
-					// line 342 "Parser.jay"
+					// line 363 "Parser.jay"
   {
 		yyVal = new ExprPredicates ((Expression) yyVals[-1+yyTop], (ExprPredicates) yyVals[0+yyTop]);
 	}
   break;
 case 61:
-					// line 349 "Parser.jay"
+					// line 370 "Parser.jay"
   {
 		yyVal = yyVals[-1+yyTop];
 	}
   break;
 case 62:
-					// line 355 "Parser.jay"
+					// line 376 "Parser.jay"
   { yyVal = Axes.Ancestor; }
   break;
 case 63:
-					// line 356 "Parser.jay"
+					// line 377 "Parser.jay"
   { yyVal = Axes.AncestorOrSelf; }
   break;
 case 64:
-					// line 357 "Parser.jay"
+					// line 378 "Parser.jay"
   { yyVal = Axes.Attribute; }
   break;
 case 65:
-					// line 358 "Parser.jay"
+					// line 379 "Parser.jay"
   { yyVal = Axes.Child; }
   break;
 case 66:
-					// line 359 "Parser.jay"
+					// line 380 "Parser.jay"
   { yyVal = Axes.Descendant; }
   break;
 case 67:
-					// line 360 "Parser.jay"
+					// line 381 "Parser.jay"
   { yyVal = Axes.DescendantOrSelf; }
   break;
 case 68:
-					// line 361 "Parser.jay"
+					// line 382 "Parser.jay"
   { yyVal = Axes.Following; }
   break;
 case 69:
-					// line 362 "Parser.jay"
+					// line 383 "Parser.jay"
   { yyVal = Axes.FollowingSibling; }
   break;
 case 70:
-					// line 363 "Parser.jay"
+					// line 384 "Parser.jay"
   { yyVal = Axes.Namespace; }
   break;
 case 71:
-					// line 364 "Parser.jay"
+					// line 385 "Parser.jay"
   { yyVal = Axes.Parent; }
   break;
 case 72:
-					// line 365 "Parser.jay"
+					// line 386 "Parser.jay"
   { yyVal = Axes.Preceding; }
   break;
 case 73:
-					// line 366 "Parser.jay"
+					// line 387 "Parser.jay"
   { yyVal = Axes.PrecedingSibling; }
   break;
 case 74:
-					// line 367 "Parser.jay"
+					// line 388 "Parser.jay"
   { yyVal = Axes.Self; }
   break;
 case 77:
-					// line 377 "Parser.jay"
+					// line 398 "Parser.jay"
   {
 		yyVal = new NCName ((String) yyVals[0+yyTop]);
 	}
   break;
 case 78:
-					// line 381 "Parser.jay"
+					// line 402 "Parser.jay"
   {
 		yyVal = new QName ((String) yyVals[-2+yyTop], null);
 	}
   break;
 case 79:
-					// line 385 "Parser.jay"
+					// line 406 "Parser.jay"
   {
 		yyVal = new QName ((String) yyVals[-2+yyTop], (String) yyVals[0+yyTop]);
 	}
   break;
-					// line 662 "-"
+					// line 683 "-"
         }
         yyTop -= yyLen[yyN];
         yyState = yyStates[yyTop];
@@ -923,9 +944,9 @@ case 79:
   271,   -1,  273,
   };
 
-					// line 391 "Parser.jay"
+					// line 412 "Parser.jay"
 	}
-					// line 929 "-"
+					// line 950 "-"
 namespace yydebug {
         using System;
 	 public interface yyDebug {

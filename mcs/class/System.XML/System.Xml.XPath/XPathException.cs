@@ -14,44 +14,14 @@ namespace System.Xml.XPath
 	[Serializable]
 	public class XPathException : SystemException
 	{
-		#region Fields
-		
-		string message;
-
-		#endregion
-		
 		#region Constructors
 
-		[MonoTODO]
-		protected XPathException (SerializationInfo info, StreamingContext context)
-		{
-			throw new NotImplementedException ();
-		}
+		protected XPathException (SerializationInfo info, StreamingContext context) : base (info, context) {}
 
-		[MonoTODO]
-		public XPathException (string message, Exception innerException)
-		{
-			throw new NotImplementedException ();
-		}
+		public XPathException (string message, Exception innerException) : base (message, innerException) {}
 
-		#endregion
+		internal XPathException (string message) : base (message, null) {}
 
-		#region Properties
-		
-		public override string Message {
-			get { return message; }
-		}
-
-		#endregion
-
-		#region Methods
-
-		[MonoTODO]
-		public override void GetObjectData (SerializationInfo info, StreamingContext context)
-		{
-			throw new NotImplementedException ();
-		}
-		
 		#endregion
 	}
 }

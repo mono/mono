@@ -248,7 +248,7 @@ namespace System.Xml.XPath
 					return true;
 				}
 				if (!_nav.MoveToParent ())	// should NEVER fail!
-					throw new Exception ("unexpected depth");	// TODO: better message
+					throw new XPathException ("unexpected depth");	// TODO: better message
 				_depth --;
 			}
 			return false;
@@ -595,7 +595,7 @@ namespace System.Xml.XPath
 			get
 			{
 				if (_pos < _rgNodes.Count)
-					throw new Exception ("bug in UnionOperator");	// TODO: better exception
+					throw new XPathException ("bug in UnionOperator");	// TODO: better exception
 				if (_pos == _rgNodes.Count)
 					return _left.Current;
 				else

@@ -16,9 +16,30 @@ namespace Mono.Xml.XPath
 {
 	public class XPathParser
 	{
+		internal object yyparseSafe (Tokenizer tok)
+		{
+			return yyparseSafe (tok, null);
+		}
+
+		internal object yyparseSafe (Tokenizer tok, object yyDebug)
+		{
+			try
+			{
+				return yyparse (tok, yyDebug);
+			}
+			catch (XPathException e)
+			{
+				throw e;
+			}
+			catch (Exception e)
+			{
+				throw new XPathException ("Error during parse", e);
+			}
+		}
+
 		internal object yyparseDebug (Tokenizer tok)
 		{
-			return yyparse (tok, new yydebug.yyDebugSimple ());
+			return yyparseSafe (tok, new yydebug.yyDebugSimple ());
 		}
 
 %}

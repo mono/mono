@@ -64,7 +64,7 @@ namespace System.Xml.XPath
 		{
 			Tokenizer tokenizer = new Tokenizer (xpath);
 			XPathParser parser = new XPathParser ();
-			Expression expr = (Expression) parser.yyparse (tokenizer);
+			Expression expr = (Expression) parser.yyparseSafe (tokenizer);
 //			Expression expr = (Expression) parser.yyparseDebug (tokenizer);
 			return new CompiledExpression (expr);
 		}
