@@ -1,3 +1,13 @@
+2002-05-30  Martin Baulig  <martin@gnome.org>
+
+	* codegen.cs (InitMonoSymbolWriter): Added `string[] args' argument
+	to take command line arguments.  Use reflection to call the new
+	custom `Initialize' function on the symbol writer and pass it the
+	command line arguments.
+
+	* driver.cs (--debug-args): New command line argument to pass command
+	line arguments to the symbol writer.
+
 2002-05-28  Miguel de Icaza  <miguel@ximian.com>
 
 	* assign.cs (DoResolve): Forgot to do the implicit conversion to

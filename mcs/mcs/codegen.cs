@@ -65,21 +65,33 @@ namespace Mono.CSharp {
 		//
 		// This routine initializes the Mono runtime SymbolWriter.
 		//
-		static void InitMonoSymbolWriter (string basename)
+		static void InitMonoSymbolWriter (string basename, string[] debug_args)
 		{
 			string symbol_output = basename + "-debug.s";
 
-			//
-			// Mono's default symbol writer ignores the first and third argument
-			// of this method.
-			//
-			SymbolWriter.Initialize (new IntPtr (0), symbol_output, true);
+			Type itype = SymbolWriter.GetType ();
+			if (itype == null)
+				return;
+
+			Type[] arg_types = new Type [2];
+			arg_types [0] = typeof (string);
+			arg_types [1] = typeof (string[]);
+
+			MethodInfo initialize = itype.GetMethod ("Initialize", arg_types);
+			if (initialize == null)
+				return;
+
+			object[] args = new object [2];
+			args [0] = symbol_output;
+			args [1] = debug_args;
+
+			initialize.Invoke (SymbolWriter, args);
 		}
 
 		//
 		// Initializes the symbol writer
 		//
-		static void InitializeSymbolWriter (string basename)
+		static void InitializeSymbolWriter (string basename, string[] args)
 		{
 			SymbolWriter = ModuleBuilder.GetSymWriter ();
 
@@ -103,7 +115,7 @@ namespace Mono.CSharp {
 			
 			switch (sym_type.Name){
 			case "MonoSymbolWriter":
-				InitMonoSymbolWriter (basename);
+				InitMonoSymbolWriter (basename, args);
 				break;
 
 			default:
@@ -116,7 +128,8 @@ namespace Mono.CSharp {
 		//
 		// Initializes the code generator variables
 		//
-		static public void Init (string name, string output, bool want_debugging_support)
+		static public void Init (string name, string output, bool want_debugging_support,
+					 string[] debug_args)
 		{
 			AssemblyName an;
 
@@ -139,7 +152,7 @@ namespace Mono.CSharp {
 				Basename (name), Basename (output), want_debugging_support);
 
 			if (want_debugging_support)
-				InitializeSymbolWriter (an.Name);
+				InitializeSymbolWriter (an.Name, debug_args);
 		}
 
 		static public void Save (string name)

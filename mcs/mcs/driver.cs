@@ -57,6 +57,7 @@ namespace Mono.CSharp
 		static string target_ext = ".exe";
 
 		static bool want_debugging_support = false;
+		static ArrayList debug_arglist = new ArrayList ();
 
 		static bool parse_only = false;
 		static bool timestamps = false;
@@ -160,6 +161,8 @@ namespace Mono.CSharp
 				"   --define SYM    Defines the symbol SYM\n" +
 				"   --debug         Generate debugging information\n" + 
 				"   -g              Generate debugging information\n" +
+				"   --debug-args X  Specify additional arguments for the\n" +
+				"                   symbol writer.\n" +
 				"   --fatal         Makes errors fatal\n" +
 				"   -L PATH         Adds PATH to the assembly link path\n" +
 				"   --noconfig      Disables implicit references to assemblies\n" +
@@ -743,10 +746,21 @@ namespace Mono.CSharp
 					case "--timestamp":
 						timestamps = true;
 						last_time = DateTime.Now;
+						debug_arglist.Add ("timestamp");
 						continue;
 
 					case "--debug": case "-g":
 						want_debugging_support = true;
+						continue;
+
+					case "--debug-args":
+						if ((i + 1) >= argc){
+							Console.WriteLine ("--debug-args requires an argument");
+							error_count++;
+							return;
+						}
+						char[] sep = { ',' };
+						debug_arglist.AddRange (args [++i].Split (sep));
 						continue;
 
 					case "--noconfig":
@@ -819,7 +833,9 @@ namespace Mono.CSharp
 					output_file = first_source + target_ext;
 			}
 
-			CodeGen.Init (output_file, output_file, want_debugging_support);
+			string[] debug_args = new string [debug_arglist.Count];
+			debug_arglist.CopyTo (debug_args);
+			CodeGen.Init (output_file, output_file, want_debugging_support, debug_args);
 
 			TypeManager.AddModule (CodeGen.ModuleBuilder);
 
