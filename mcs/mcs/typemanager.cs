@@ -24,7 +24,8 @@ public class TypeManager {
 	ArrayList assemblies;
 
 	// <remarks>
-	//   This is used to map defined FQN to Types
+	//   This is the type_cache from the assemblies to avoid
+	//   hitting System.Reflection on every lookup.
 	// </summary>
 	Hashtable types;
 
@@ -37,17 +38,8 @@ public class TypeManager {
 	public TypeManager ()
 	{
 		assemblies = new ArrayList ();
-		types = new Hashtable ();
 		user_types = new ArrayList ();
-	}
-
-	// <summary>
-	//   Registers a single type with the Type Manager.  This is
-	//   an interface for our type builder. 
-	// </summary>
-	public void AddType (string name, Type t)
-	{
-		types.Add (t.FullName, t);
+		types = new Hashtable ();
 	}
 
 	public void AddUserType (string name, TypeBuilder t)
@@ -62,9 +54,6 @@ public class TypeManager {
 	public void AddAssembly (Assembly a)
 	{
 		assemblies.Add (a);
-		foreach (Type t in a.GetExportedTypes ()){
-			AddType (t.FullName, t);
-		}
 	}
 
 	// <summary>
@@ -72,9 +61,25 @@ public class TypeManager {
 	// </summary>
 	public Type LookupType (string name)
 	{
-		Type t = (Type) types [name];
+		Type t;
+
+		//
+		// First lookup in user defined and cached values
+		//
+		t = (Type) types [name];
+		if (t != null)
+			return t;
 		
-		return t;
+		foreach (Assembly a in assemblies){
+			t = a.GetType (name);
+			if (t != null){
+				types [name] = t;
+
+				return t;
+			}
+		}
+
+		return null;
 	}
 
 	// <summary>

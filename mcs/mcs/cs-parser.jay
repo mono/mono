@@ -24,14 +24,12 @@
 //	 separate problem
 //
 using System.Text;
-using CSC;
+using CIR;
 using System;
 
-namespace CSC
+namespace CIR
 {
 	using System.Collections;
-	using CSC;
-	using CIR;
 
 	/// <summary>
 	///    The C# Parser

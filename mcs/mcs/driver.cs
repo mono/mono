@@ -8,7 +8,7 @@
 // (C) 2001 Ximian, Inc (http://www.ximian.com)
 //
 
-namespace CSC
+namespace CIR
 {
 	using System;
 	using System.Reflection;
@@ -17,7 +17,6 @@ namespace CSC
 	using System.IO;
 	using CIR;
 	using Generator;
-	using CSC;
 
 	/// <summary>
 	///    The compiler driver.
@@ -111,6 +110,7 @@ namespace CSC
 				string full_path = dir + "/" + assembly;
 
 				try {
+					Console.WriteLine ("Loading: " + assembly);
 					a = Assembly.Load (assembly);
 				} catch (FileNotFoundException f) {
 					error ("// File not found: " + full_path);
@@ -231,7 +231,7 @@ namespace CSC
 			// Load Core Library for default compilation
 			//
 			if (context.StdLib)
-				references.Add ("mscorlib");
+				references.Insert (0, "mscorlib");
 
 			if (errors > 0){
 				error ("Parsing failed");

@@ -224,30 +224,86 @@ namespace CIR {
 			return tb;
 		}
 
-		//
-		// Returns the type for an interface or a class
-		//
-		Type GetInterfaceOrClass (string name, bool is_class)
+		string MakeFQN (string nsn, string name)
 		{
-			Type t = type_manager.LookupType (name);
-			Class parent;
+			string prefix = (nsn == "" ? "" : nsn + ".");
 
+			return prefix + name;
+		}
+		       
+		Type LookupInterfaceOrClass (string ns, string name, bool is_class, out bool error)
+		{
+			TypeContainer parent;
+			Type t;
+
+			error = false;
+			name = MakeFQN (ns, name);
+			Console.WriteLine ("Attempting to locate " + name);
+
+			t  = type_manager.LookupType (name);
 			if (t != null)
 				return t;
 
-			parent = (Class) tree.Classes [name];
-			if (parent == null){
-				report.Error (246, "Can not find type `"+name+"'");
-				return null;
+			if (is_class){
+				parent = (Class) tree.Classes [name];
+			} else {
+				parent = (Struct) tree.Structs [name];
 			}
 
-			t = CreateType ((Class) parent, is_class);
-			if (t == null){
-				report.Error (146, "Class definition is circular: `"+name+"'");
-				return null;
+			if (parent != null){
+				t = CreateType (parent, is_class);
+				if (t == null){
+					report.Error (146, "Class definition is circular: `"+name+"'");
+					error = true;
+					return null;
+				}
+
+				return t;
 			}
 
-			return t;
+			return null;
+		}
+		
+		//
+		// returns the type for an interface or a class
+		//
+		Type GetInterfaceOrClass (TypeContainer tc, string name, bool is_class)
+		{
+			Type t;
+			bool error;
+
+			//
+			// Attempt to lookup the class on our namespace
+			//
+			t = LookupInterfaceOrClass (tc.Namespace.Name, name, is_class, out error);
+			if (error)
+				return null;
+			
+			if (t != null)
+				return t;
+
+			//
+			// Attempt to lookup the class on any of the `using'
+			// namespaces
+			//
+			for (Namespace ns = tc.Namespace; ns != null; ns = ns.Parent){
+				ArrayList using_list = ns.UsingTable;
+
+				if (using_list == null)
+					continue;
+				
+				foreach (string n in using_list){
+					t = LookupInterfaceOrClass (n, name, is_class, out error);
+					if (error)
+						return null;
+
+					if (t != null)
+						return t;
+				}
+				
+			}
+			report.Error (246, "Can not find type `"+name+"'");
+			return null;
 		}
 
 		//
@@ -300,8 +356,13 @@ namespace CIR {
 
 			if (is_class){
 				string name = (string) bases [0];
-				Type first = GetInterfaceOrClass (name, is_class);
+				Type first = GetInterfaceOrClass (tc, name, is_class);
 
+				if (first == null){
+					error = true;
+					return null;
+				}
+				
 				if (first.IsClass){
 					parent = first;
 					start = 1;
@@ -317,7 +378,7 @@ namespace CIR {
 			
 			for (i = start, j = 0; i < count; i++, j++){
 				string name = (string) bases [i];
-				Type t = GetInterfaceOrClass (name, is_class);
+				Type t = GetInterfaceOrClass (tc, name, is_class);
 
 				if (t == null){
 					error = true;

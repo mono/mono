@@ -1,7 +1,7 @@
 using System.IO;
 using System;
 
-namespace CSC {
+namespace CIR {
 	public class Error {
 		public static void report_error (string error) 
 		{

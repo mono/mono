@@ -1,5 +1,21 @@
 2001-08-08  Miguel de Icaza  <miguel@ximian.com>
 
+	* rootcontext.cs: OH MY!  My trick works!   It is amazing how nice
+	this System.Reflection code is.  Kudos to Microsoft
+	
+	* typemanager.cs: Implement a type cache and avoid loading all
+	types at boot time.  Wrap in LookupType the internals.  This made
+	the compiler so much faster.  Wow.  I rule!
+	
+	* driver.cs: Make sure we always load mscorlib first (for
+	debugging purposes, nothing really important).
+
+	* Renamespaced things that were on `CSC' to `CIR'.  Maybe I should
+	have moved to `CSC' rather than `CIR'.  Oh man!  The confussion!  
+
+	* rootcontext.cs: Lookup types on their namespace;  Lookup types
+	on namespaces that have been imported using the `using' keyword.
+
 	* class.cs (TypeContainer::TypeAttr): Virtualize.
 	(Class::TypeAttr): Return attributes suitable for this bad boy.
 	(Struct::TypeAttr): ditto.

@@ -68,6 +68,15 @@ namespace CIR {
 		public Error (int code, string text) : base (code, text)
 		{
 		}
+
+		//
+		// For compatibility reasons with old code.
+		//
+		public static void report_error (string error)
+		{
+			Console.Write ("ERROR: ");
+			Console.WriteLine (error);
+		}
 	}
 }
 

@@ -1,8 +1,7 @@
 using System;
 using System.Collections;
-using CIR;
 
-namespace CSC {
+namespace CIR {
 
 	// <summary>
 	//   Keeps track of the namespaces defined in the C# code.
@@ -10,7 +9,7 @@ namespace CSC {
 	public class Namespace {
 		Namespace parent;
 		string name;
-		Hashtable using_clauses;
+		ArrayList using_clauses;
 		bool decl_found = false;
 		
 		// <summary>
@@ -29,10 +28,12 @@ namespace CSC {
 		// </summary>
 		public string Name {
 			get {
-				if (parent != null)
+				string pname = parent != null ? parent.Name : "";
+				
+				if (pname == "")
+					return name;
+				else
 					return parent.Name + "." + name;
-			
-				return name;
 			}
 		}
 
@@ -67,12 +68,12 @@ namespace CSC {
 			}
 			
 			if (using_clauses == null)
-				using_clauses = new Hashtable ();
+				using_clauses = new ArrayList ();
 
-			using_clauses.Add (ns, null);
+			using_clauses.Add (ns);
 		}
 
-		public Hashtable UsingTable {
+		public ArrayList UsingTable {
 			get {
 				return using_clauses;
 			}

@@ -31,7 +31,7 @@ namespace CIR {
 		// This is the namespace in which this typecontainer
 		// was declared.  We use this to resolve names.
 		//
-		CSC.Namespace my_namespace;
+		Namespace my_namespace;
 		
 		//
 		// This one is computed after we can distinguish interfaces
@@ -291,7 +291,7 @@ namespace CIR {
 			}
 		}
 
-		public CSC.Namespace Namespace {
+		public Namespace Namespace {
 			get {
 				return my_namespace;
 			}

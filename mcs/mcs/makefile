@@ -3,7 +3,7 @@ CSCFLAGS=/nologo /debug+ /debug:full
 
 VERSION=0.13
 
-COMMON_SOURCES = cs-parser.cs cs-tokenizer.cs errors.cs tree.cs  
+COMMON_SOURCES = cs-parser.cs cs-tokenizer.cs tree.cs  
 
 COMPILER_SOURCES = \
 	assign.cs			\

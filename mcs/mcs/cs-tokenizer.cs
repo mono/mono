@@ -57,15 +57,12 @@
 
 using System;
 using System.Text;
-using CSC;
 using System.Collections;
 using System.IO;
 using System.Globalization;
 
-namespace CSC
+namespace CIR
 {
-	using CSC;
-	
 	/// <summary>
 	///    Tokenizer for C# source code. 
 	/// </summary>

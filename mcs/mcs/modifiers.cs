@@ -107,7 +107,7 @@ namespace CIR {
 				a = ((a & 2) >> 1) + (a & 5);
 				a = ((a & 4) >> 2) + (a & 3);
 				if (a > 1)
-					CSC.CSharpParser.error (107, "More than one protecion modifier specified");
+					CSharpParser.error (107, "More than one protecion modifier specified");
 				
 				return mod;
 			}
@@ -116,7 +116,7 @@ namespace CIR {
 				if ((i & invalid_flags) == 0)
 					continue;
 
-				CSC.CSharpParser.error (106, "the modifier `" + Name (i) + "' is not valid for this item");
+				CSharpParser.error (106, "the modifier `" + Name (i) + "' is not valid for this item");
 			}
 
 			return allowed & mod;
