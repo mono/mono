@@ -46,8 +46,16 @@ Npgsql/Design/ConnectionStringEditorForm.cs
 Npgsql/Design/NpgsqlParameterConverter.cs
 Npgsql/Design/NpgsqlParametersEditor.cs
 Npgsql/Design/NpgsqlSysDescriptionAttribute.cs
-NpgsqlTypes/NpgsqlTypesHelper.cs
+NpgsqlTypes/FastPath.cs
+NpgsqlTypes/FastPathArg.cs
+NpgsqlTypes/LargeObject.cs
+NpgsqlTypes/LargeObjectManager.cs
 NpgsqlTypes/NpgsqlDbType.cs
 NpgsqlTypes/NpgsqlTypeConverters.cs
 NpgsqlTypes/NpgsqlTypes.cs
+NpgsqlTypes/NpgsqlTypesHelper.cs
+
+
+
+
 

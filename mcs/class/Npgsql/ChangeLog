@@ -1,3 +1,11 @@
+2004-09-30  Francisco Figueiredo Jr.  <fxjrlists@yahoo.com.br>
+    * NpgsqlTypes/FastPath.cs,
+    NpgsqlTypes/FastPathArg.cs,
+    NpgsqlTypes/LargeObject.cs,
+    NpgsqlTypes/LargeObjectManager.cs,
+    Npgsql.dll.sources: Added large object support. Thanks Emiliano Necciari (e dot necciari at blogic dot it) for the patch.
+    
+
 2004-09-26  Francisco Figueiredo Jr.  <fxjrlists@yahoo.com.br>
 
     * Npgsql/NpgsqlDataReader.cs:
