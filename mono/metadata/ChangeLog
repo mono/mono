@@ -1,5 +1,15 @@
 2002-08-23  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* icall.c: re-applied patch to GetValueInternal. Also added R4 and R8
+	types to it and to SetValueInternal.
+
+	* object.c: Moved handle_enum label to its proper place. This was the
+	f... bug! ;-)
+
+	This time i compiled mcs and gtk-sharp and they both work.
+
+2002-08-23  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* icall.c: reverted partially my previous patch until 
 	object.c:set_value handles enums correcly.
 
