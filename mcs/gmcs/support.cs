@@ -39,6 +39,7 @@ namespace Mono.CSharp {
 
 	public class ReflectionParameters : ParameterData {
 		ParameterInfo [] pi;
+		Type[] type_params;
 		bool last_arg_is_params = false;
 		bool is_varargs = false;
 		ParameterData gpd;
@@ -63,6 +64,9 @@ namespace Mono.CSharp {
 				last_arg_is_params = gpd.HasArrayParameter;
 				return;
 			}
+
+			if (mb.IsGenericMethodDefinition)
+				type_params = mb.GetGenericArguments ();
 
 			attrs = pi [count].GetCustomAttributes (TypeManager.param_array_type, true);
 			if (attrs == null)
@@ -96,11 +100,10 @@ namespace Mono.CSharp {
 			if (gpd != null)
 				return gpd.GenericConstraints (pos);
 
-			Type t = ParameterType (pos);
-			if (!t.IsGenericParameter)
+			if (type_params == null)
 				return null;
 
-			return ReflectionConstraints.Create (t);
+			return ReflectionConstraints.Create (type_params [pos]);
 		}
 
 		public string ParameterName (int pos)
@@ -235,6 +238,7 @@ namespace Mono.CSharp {
 		int count;
 
 		public readonly Parameters Parameters;
+		public readonly TypeParameter[] TypeParameters;
 		
 		public InternalParameters (Type [] param_types, Parameters parameters)
 		{
@@ -251,6 +255,13 @@ namespace Mono.CSharp {
 				count = 0;
 			else
 				count = param_types.Length;
+		}
+
+		public InternalParameters (DeclSpace ds, Parameters parameters,
+					   TypeParameter [] type_params)
+			: this (ds, parameters)
+		{
+			this.TypeParameters = type_params;
 		}
 
 		public int Count {
@@ -288,10 +299,10 @@ namespace Mono.CSharp {
 
 		public GenericConstraints GenericConstraints (int pos)
 		{
-			if (param_types == null)
+			if (TypeParameters == null)
 				return null;
 
-			return GetParameter (pos).GenericConstraints;
+			return TypeParameters [pos].Constraints;
 		}
 
 		public string ParameterName (int pos)

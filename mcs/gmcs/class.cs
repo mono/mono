@@ -3349,7 +3349,8 @@ namespace Mono.CSharp {
 			    !CheckParameters (ds, parameter_types))
 				return false;
 
-			parameter_info = new InternalParameters (ds, Parameters);
+			TypeParameter[] tparam = ds.IsGeneric ? ds.TypeParameters : null;
+			parameter_info = new InternalParameters (ds, Parameters, tparam);
 
 			Parameter array_param = Parameters.ArrayParameter;
 			if ((array_param != null) &&
@@ -4761,11 +4762,6 @@ namespace Mono.CSharp {
 			if (builder == null)
 				return false;
 
-			if (GenericMethod != null) {
-				if (!GenericMethod.DefineType (ec, builder))
-					return false;
-			}
-
 			if (container.CurrentType != null)
 				declaring_type = container.CurrentType.ResolveType (ec);
 			else
@@ -4803,6 +4799,17 @@ namespace Mono.CSharp {
 			}
 
 			TypeManager.AddMethod (builder, method);
+
+			if (GenericMethod != null) {
+				bool is_override = member.IsExplicitImpl |
+					((modifiers & Modifiers.OVERRIDE) != 0);
+
+				is_override &= IsImplementing;
+
+				if (!GenericMethod.DefineType (
+					    ec, builder, implementing, is_override))
+					return false;
+			}
 
 			return true;
 		}

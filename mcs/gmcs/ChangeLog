@@ -1,3 +1,16 @@
+2004-08-25  Martin Baulig  <martin@ximian.com>
+
+	* support.cs (ReflectionParameters..ctor): If this is a generic
+	method, retrieve and store its type parameters.
+	(InternalParameters..ctor): Added `TypeParameter[]' argument.
+	(ReflectionParameters.GenericConstraints): The argument specifies
+	the type parameter, not the method parameter.
+	(InternalParameters.GenericConstraints): Likewise.
+
+	* generic.cs (TypeParameter.DefineType): Correctly handle
+	constraints wrt. generic methods in interfaces and their
+	implementations.	
+
 2004-08-24  Martin Baulig  <martin@ximian.com>
 
 	* generic.cs (TypeParameter.IsSubclassOf): New public method.

@@ -4934,9 +4934,9 @@ namespace Mono.CSharp {
 				//
 				// Check Type
 				//
-				if (a.Type != parameter_type){
+				if (!TypeManager.IsEqual (a.Type, parameter_type)){
 					Expression conv;
-					
+
 					conv = Convert.ImplicitConversion (ec, a_expr, parameter_type, loc);
 
 					if (conv == null) {

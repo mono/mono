@@ -183,8 +183,8 @@ namespace Mono.CSharp {
 				if (resolved == null)
 					return false;
 
-				foreach (TypeExpr texpr in list) {
-					if (!texpr.Equals (resolved))
+				foreach (Type type in list) {
+					if (!type.Equals (resolved))
 						continue;
 
 					Report.Error (405, loc,
@@ -201,8 +201,8 @@ namespace Mono.CSharp {
 				if (resolved == null)
 					return false;
 
-				foreach (TypeExpr texpr in list) {
-					if (!texpr.Equals (resolved))
+				foreach (Type type in list) {
+					if (!type.Equals (resolved))
 						continue;
 
 					Report.Error (405, loc,
@@ -311,11 +311,11 @@ namespace Mono.CSharp {
 				type.Mono_SetValueTypeConstraint ();
 		}
 
-		bool GenericConstraints.HasConstructor {
+		public bool HasConstructor {
 			get { return has_ctor_constraint; }
 		}
 
-		bool GenericConstraints.IsReferenceType {
+		public bool IsReferenceType {
 			get { return has_reference_type; }
 		}
 
@@ -331,7 +331,7 @@ namespace Mono.CSharp {
 			get { return class_constraint_type; }
 		}
 
-		Type[] GenericConstraints.InterfaceConstraints {
+		public Type[] InterfaceConstraints {
 			get { return iface_constraint_types; }
 		}
 
@@ -350,6 +350,47 @@ namespace Mono.CSharp {
 			}
 
 			return false;
+		}
+
+		public bool CheckInterfaceMethod (EmitContext ec, GenericConstraints gc)
+		{
+			if (!ResolveTypes (ec))
+				return false;
+
+			if (gc.HasConstructor != HasConstructor)
+				return false;
+			if (gc.IsReferenceType != IsReferenceType)
+				return false;
+			if (gc.IsValueType != IsValueType)
+				return false;
+			if (gc.HasClassConstraint != HasClassConstraint)
+				return false;
+
+			if (HasClassConstraint && !gc.ClassConstraint.Equals (ClassConstraint))
+				return false;
+
+			int gc_icount = gc.InterfaceConstraints != null ?
+				gc.InterfaceConstraints.Length : 0;
+			int icount = InterfaceConstraints != null ?
+				InterfaceConstraints.Length : 0;
+
+			if (gc_icount != icount)
+				return false;
+
+			foreach (Type iface in gc.InterfaceConstraints) {
+				bool ok = false;
+				foreach (Type check in InterfaceConstraints) {
+					if (iface.Equals (check)) {
+						ok = true;
+						break;
+					}
+				}
+
+				if (!ok)
+					return false;
+			}
+
+			return true;
 		}
 	}
 
@@ -421,18 +462,66 @@ namespace Mono.CSharp {
 
 		public bool DefineType (EmitContext ec)
 		{
-			if (constraints != null) {
-				if (!constraints.ResolveTypes (ec))
+			return DefineType (ec, null, null, false);
+		}
+
+		public bool DefineType (EmitContext ec, MethodBuilder builder,
+					MethodInfo implementing, bool is_override)
+		{
+			GenericConstraints gc;
+
+			if (implementing != null) {
+				if (is_override && (constraints != null)) {
+					Report.Error (
+						460, loc, "Constraints for override and " +
+						"explicit interface implementation methods " +
+						"are inherited from the base method so they " +
+						"cannot be specified directly");
 					return false;
+				}
 
-				GenericConstraints gc = (GenericConstraints) constraints;
+				MethodBase mb = implementing;
+				if (mb.Mono_IsInflatedMethod)
+					mb = mb.GetGenericMethodDefinition ();
 
-				if (gc.HasClassConstraint)
-					type.SetBaseTypeConstraint (gc.ClassConstraint);
+				int pos = type.GenericParameterPosition;
+				ParameterData pd = Invocation.GetParameterData (mb);
+				gc = pd.GenericConstraints (pos);
+				Type mparam = mb.GetGenericArguments () [pos];
 
-				type.SetInterfaceConstraints (gc.InterfaceConstraints);
-				TypeManager.RegisterBuilder (type, gc.InterfaceConstraints);
+				if (((constraints != null) && (gc == null)) ||
+				    ((constraints == null) && (gc != null)) ||
+				    ((constraints != null) &&
+				     !constraints.CheckInterfaceMethod (ec, gc))) {
+					Report.SymbolRelatedToPreviousError (implementing);
+
+					Report.Error (
+						425, loc, "The constraints for type " +
+						"parameter `{0}' of method `{1}' must match " +
+						"the constraints for type parameter `{2}' " +
+						"of interface method `{3}'.  Consider using " +
+						"an explicit interface implementation instead",
+						Name, TypeManager.CSharpSignature (builder),
+						mparam, TypeManager.CSharpSignature (mb));
+					return false;
+				}
+			} else {
+				if (constraints != null) {
+					if (!constraints.ResolveTypes (ec))
+						return false;
+				}
+
+				gc = (GenericConstraints) constraints;
 			}
+
+			if (gc == null)
+				return true;
+
+			if (gc.HasClassConstraint)
+				type.SetBaseTypeConstraint (gc.ClassConstraint);
+
+			type.SetInterfaceConstraints (gc.InterfaceConstraints);
+			TypeManager.RegisterBuilder (type, gc.InterfaceConstraints);
 
 			return true;
 		}
@@ -1069,10 +1158,12 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		public bool DefineType (EmitContext ec, MethodBuilder mb)
+		public bool DefineType (EmitContext ec, MethodBuilder mb,
+					MethodInfo implementing, bool is_override)
 		{
 			for (int i = 0; i < TypeParameters.Length; i++)
-				if (!TypeParameters [i].DefineType (ec))
+				if (!TypeParameters [i].DefineType (
+					    ec, mb, implementing, is_override))
 					return false;
 
 			return true;
