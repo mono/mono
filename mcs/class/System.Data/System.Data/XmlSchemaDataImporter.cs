@@ -225,6 +225,7 @@ namespace System.Data
 	internal class XmlSchemaDataImporter
 	{
 		static readonly XmlSchemaDatatype schemaIntegerType;
+		static readonly XmlSchemaDatatype schemaDecimalType;
 		static readonly XmlSchemaComplexType schemaAnyType;
 
 		static XmlSchemaDataImporter ()
@@ -236,11 +237,18 @@ namespace System.Data
 			// reference resolution. XmlSchema.Namespace should work.
 			a.SchemaTypeName = new XmlQualifiedName ("integer", System.Xml.Schema.XmlSchema.Namespace);
 			s.Items.Add (a);
+			XmlSchemaAttribute b = new XmlSchemaAttribute ();
+			b.Name = "bar";
+			// FIXME: mcs looks to have a bug around static 
+			// reference resolution. XmlSchema.Namespace should work.
+			b.SchemaTypeName = new XmlQualifiedName ("decimal", System.Xml.Schema.XmlSchema.Namespace);
+			s.Items.Add (b);
 			XmlSchemaElement e = new XmlSchemaElement ();
 			e.Name = "bar";
 			s.Items.Add (e);
 			s.Compile (null);
 			schemaIntegerType = a.AttributeType as XmlSchemaDatatype;
+			schemaDecimalType = b.AttributeType as XmlSchemaDatatype;
 			schemaAnyType = e.ElementType as XmlSchemaComplexType;
 		}
 
@@ -484,7 +492,7 @@ el.ElementType != schemaAnyType)
 			// Handle simple content
 			switch (ct.ContentType) {
 			case XmlSchemaContentType.TextOnly:
-			case XmlSchemaContentType.Mixed:
+//			case XmlSchemaContentType.Mixed:
 				// LAMESPEC: When reading from XML Schema, it maps to "_text", while on the data inference, it is mapped to "_Text" (case ignorant).
 				string simpleName = el.QualifiedName.Name + "_text";
 				DataColumn simple = new DataColumn (simpleName);
@@ -595,7 +603,7 @@ el.ElementType != schemaAnyType)
 
 			if (el.ElementType is XmlSchemaComplexType && el.ElementType != schemaAnyType)
 				FillDataColumnComplexElement (parent, el, col);
-			else if (el.MaxOccurs > 1)
+			else if (el.MaxOccurs != 1)
 				FillDataColumnRepeatedSimpleElement (parent, el, col);
 			else
 				FillDataColumnSimpleElement (el, col);
@@ -773,12 +781,18 @@ el.ElementType != schemaAnyType)
 		{
 			if (dt == null)
 				return typeof (string);
-			else if (dt == schemaIntegerType)
+			else if (dt.ValueType == typeof (decimal)) {
 				// LAMESPEC: MSDN documentation says it is based 
 				// on ValueType. However, in the System.Xml.Schema
 				// context, xs:integer is mapped to Decimal, while
 				// in DataSet context it is mapped to Int64.
-				return typeof (long);
+				if (dt == schemaDecimalType)
+					return typeof (decimal);
+				else if (dt == schemaIntegerType)
+					return typeof (long);
+				else
+					return typeof (ulong);
+			}
 			else
 				return dt.ValueType;
 		}

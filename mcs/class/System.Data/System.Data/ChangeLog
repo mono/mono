@@ -1,5 +1,13 @@
 2004-05-20  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XmlSchemaDataImporter.cs : xs:positiveInteger is mapped to ulong.
+	  When content type is Mixed, text column is not required (it is
+	  required only when the complex type has no particle). 
+	  "Repeated element" column is also created (considering maxOccurs=0 
+	  and complex content extension).
+
+2004-05-20  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XmlSchemaDataImporter.cs : XmlSchemaGroupBase was not handled 
 	  properly.
 
