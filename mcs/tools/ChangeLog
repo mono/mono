@@ -1,3 +1,7 @@
+2003/01/20 Nick Drochak <ndrochak@gol.com>
+
+	* makefile: take out type-reflector since it's gone.
+
 2003-01-18  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* makefile, makefile.gnu: Renamed Cert2Spc.exe to cert2spc.exe.

@@ -4,7 +4,7 @@ CSCFLAGS=/nologo /debug+ /debug:full
 
 windows: linux
 
-linux: monostyle.exe verifier.exe GenerateDelegate.exe EnumCheck.exe IFaceDisco.exe ./type-reflector/type-reflector.exe ./corcompare/CorCompare.exe ./SqlSharp/sqlsharp.exe secutil.exe cert2spc.exe
+linux: monostyle.exe verifier.exe GenerateDelegate.exe EnumCheck.exe IFaceDisco.exe ./corcompare/CorCompare.exe ./SqlSharp/sqlsharp.exe secutil.exe cert2spc.exe
 #linux: verifier.exe GenerateDelegate.exe EnumCheck.exe IFaceDisco.exe ./corcompare/CorCompare.exe update
 
 monostyle.exe: monostyle.cs
@@ -15,9 +15,6 @@ GenerateDelegate.exe: GenerateDelegate.cs
 
 verifier.exe: verifier.cs
 	$(CSC) $(CSCFLAGS) verifier.cs
-
-./type-reflector/type-reflector.exe: dummy
-	(cd type-reflector; make CSC=$(CSC))
 
 ./SqlSharp/sqlsharp.exe: dummy
 	(cd SqlSharp; make CSC=$(CSC))
@@ -50,7 +47,6 @@ cert2spc.exe: cert2spc.cs ASN1.cs
 
 clean:
 	(cd corcompare; make clean)
-	(cd type-reflector; make clean)
 	(cd SqlSharp; make clean)
 	rm -f *.exe *.pdb *.dbg *.dll
 	rm -f cormissing.xml
