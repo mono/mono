@@ -66,11 +66,6 @@ EXTRA_DIST = $(assemblies_DATA)
 # Keep in sync with mono/mono/metadata/Makefile.am
 #
 assembliesdir = $(libdir)
-if PLATFORM_WIN32
-monobinsdir = $(libdir)
-else
-monobinsdir = $(bindir)
-endif
 
 $(assemblies_DATA):
 	@f=$(mcs_topdir)/class/lib/default/$@; \
@@ -79,21 +74,22 @@ $(assemblies_DATA):
 	cp -f $$f $(srcdir)
 
 $(gac_assemblies_list):
-	@f=$(mcs_topdir)/class/lib/default/$@; \
-	if test -f $$f; then :; else f=$(assembliesdir)/$@; fi ; \
-	echo "cp -f $$f $(srcdir)"; \
-	cp -f $$f $(srcdir)
+	cp -f $(mcs_topdir)/class/lib/default/$@ $(srcdir)
 
-install-data-local: $(gac_assemblies_list)
+all-local: $(gac_assemblies_list)
+
+install-data-local:
 	@if test -n '$(gac_assemblies_list)'; then \
 	  for i in ''$(gac_assemblies_list); do	\
-		mono $(gacutil) /i $$i /f || exit 1 ; \
+		echo "$(top_builddir)/mono/mini/mono $(gacutil) /i $(srcdir)/$$i /f" ; \
+		$(top_builddir)/mono/mini/mono $(gacutil) /i $(srcdir)/$$i /f || exit 1 ; \
 	  done; fi
 
 uninstall-local:
 	@if test -n '$(gac_assemblies_list)'; then \
 	  for i in ''$(gac_assemblies_list); do \
-		mono $(gacutil) /u $$i || exit 1 ; \
+		echo "$(top_builddir)/mono/mini/mono $(gacutil) /u $(srcdir)/$$i" ; \
+		$(top_builddir)/mono/mini/mono $(gacutil) /u $(srcdir)/$$i || exit 1 ; \
 	  done; fi
 
 dist-hook: $(gac_assemblies_list)
