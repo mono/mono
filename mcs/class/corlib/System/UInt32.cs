@@ -7,20 +7,28 @@
 // (C) Ximian, Inc.  http://www.ximian.com
 //
 
+using System.Globalization;
+
 namespace System {
 	
-	public struct Int32 : ValueType, IComparable, IFormattable {
+	public struct UInt32 : IComparable, IFormattable {
 		public const uint MinValue = 0;
 		public const uint MaxValue = 0xffffffff;
 		
-		uint value;
+		public uint value;
 
 		public int CompareTo (object v)
 		{
-			if (!(value is System.UInt32))
+			if (!(v is System.UInt32))
 				throw new ArgumentException ("Value is not a System.UInt32");
 
-			return value - (uint) v;
+			if (value == (uint) v)
+				return 0;
+
+			if (value < (uint) v)
+				return -1;
+
+			return 1;
 		}
 
 		public override bool Equals (object o)
@@ -47,19 +55,13 @@ namespace System {
 			return 0;
 		}
 
-		public static uint Parse (string s, IFormatProvider)
+		public static uint Parse (string s, IFormatProvider fp)
 		{
 			// TODO: Implement me
 			return 0;
 		}
 
-		public static uint Parse (string s, NumberStyles s, fp)
-		{
-			// TODO: Implement me
-			return 0;
-		}
-
-		public static uint Parse (string s, NumberStyles s, IFormatProvider fp)
+		public static uint Parse (string s, NumberStyles style, IFormatProvider fp)
 		{
 			// TODO: Implement me
 			return 0;

@@ -7,17 +7,19 @@
 // (C) Ximian, Inc.  http://www.ximian.com
 //
 
+using System.Globalization;
+
 namespace System {
 	
-	public struct UInt16 : ValueType, IComparable, IFormattable {
+	public struct UInt16 : IComparable, IFormattable {
 		public const ushort MinValue = 0;
 		public const ushort MaxValue = 0xffff;
 		
-		ushort value;
+		public ushort value;
 
 		public int CompareTo (object v)
 		{
-			if (!(value is System.UInt16))
+			if (!(v is System.UInt16))
 				throw new ArgumentException ("Value is not a System.UInt16");
 
 			return value - ((ushort) v);
@@ -47,19 +49,13 @@ namespace System {
 			return 0;
 		}
 
-		public static ushort Parse (string s, IFormatProvider)
+		public static ushort Parse (string s, IFormatProvider fp)
 		{
 			// TODO: Implement me
 			return 0;
 		}
 
-		public static ushort Parse (string s, NumberStyles s, fp)
-		{
-			// TODO: Implement me
-			return 0;
-		}
-
-		public static ushort Parse (string s, NumberStyles s, IFormatProvider fp)
+		public static ushort Parse (string s, NumberStyles style, IFormatProvider fp)
 		{
 			// TODO: Implement me
 			return 0;

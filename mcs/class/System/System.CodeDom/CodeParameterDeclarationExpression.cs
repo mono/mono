@@ -1,5 +1,5 @@
 //
-// System.CodeDOM CodeParameterDeclarationExpression Class implementation
+// System.CodeDom CodeParameterDeclarationExpression Class implementation
 //
 // Author:
 //   Miguel de Icaza (miguel@ximian.com)
@@ -7,7 +7,7 @@
 // (C) 2001 Ximian, Inc.
 //
 
-namespace System.CodeDOM {
+namespace System.CodeDom {
 
 	public class CodeParameterDeclarationExpression : CodeExpression {
 		FieldDirection direction;

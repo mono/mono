@@ -9,7 +9,7 @@
 
 namespace System {
 
-	interface IFormattable {
-		public string ToString (string format, IFormatProvider format_provider);
+	public interface IFormattable {
+		string ToString (string format, IFormatProvider format_provider);
 	}
 }

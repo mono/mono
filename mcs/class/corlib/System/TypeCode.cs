@@ -22,7 +22,7 @@ namespace System {
 		Int32 = 9,
 		UInt32 = 10,
 		Int64 = 11,
-		UInt63 = 12,
+		UInt64 = 12,
 		Single = 13,
 		Double = 14,
 		Decimal = 15,

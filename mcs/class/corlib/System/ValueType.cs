@@ -25,10 +25,10 @@ namespace System {
 		public override bool Equals (object o)
 		{
 			if (o == null){
-				return new ArgumentNullException ("Null argument to Equals");
+				throw new ArgumentNullException ("Null argument to Equals");
 			}
 
-			if (o.Type != this.Type)
+			if (o.GetType() != this.GetType())
 				return false;
 
 			// TODO:
@@ -60,7 +60,7 @@ namespace System {
 		// </summary>
 		public override string ToString ()
 		{
-			return Type.FullName ();
+			return GetType().FullName;
 		}
 	}
 }

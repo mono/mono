@@ -7,17 +7,19 @@
 // (C) Ximian, Inc.  http://www.ximian.com
 //
 
+using System.Globalization;
+
 namespace System {
 	
-	public struct Int32 : ValueType, IComparable, IFormattable {
-		public const int MinValue = 0x80000000;
+	public struct Int32 : IComparable, IFormattable {
+		public const int MinValue = -2147483648;
 		public const int MaxValue = 0x7fffffff;
 		
-		int value;
+		public int value;
 
 		public int CompareTo (object v)
 		{
-			if (!(value is System.Int32))
+			if (!(v is System.Int32))
 				throw new ArgumentException ("Value is not a System.Int32");
 
 			return value - (int) v;
@@ -47,19 +49,13 @@ namespace System {
 			return 0;
 		}
 
-		public static int Parse (string s, IFormatProvider)
+		public static int Parse (string s, IFormatProvider fp)
 		{
 			// TODO: Implement me
 			return 0;
 		}
 
-		public static int Parse (string s, NumberStyles s, fp)
-		{
-			// TODO: Implement me
-			return 0;
-		}
-
-		public static int Parse (string s, NumberStyles s, IFormatProvider fp)
+		public static int Parse (string s, NumberStyles style, IFormatProvider fp)
 		{
 			// TODO: Implement me
 			return 0;

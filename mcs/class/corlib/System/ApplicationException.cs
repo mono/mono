@@ -12,7 +12,7 @@ namespace System {
 	public class ApplicationException : Exception {
 		// Constructors
 		public ApplicationException ()
-			: base ("An application exception has occurred.");
+			: base ("An application exception has occurred.")
 		{
 		}
 

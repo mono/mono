@@ -13,17 +13,17 @@ namespace System.Net {
 	//   Encapsulates an IP Address.
 	// </remarks>
 	public class IPAddress {
-		public int Address;
+		public uint address;
 		
-		public const int InaddrAny       = 0;
-		public const int InaddrBroadcast = 0xffffffff;
-		public const int InaddrLoopback  = 0x7f000001;
-		public const int InaddrNone      = 0xffffffff;
+		public const uint InaddrAny       = 0;
+		public const uint InaddrBroadcast = 0xffffffff;
+		public const uint InaddrLoopback  = 0x7f000001;
+		public const uint InaddrNone      = 0xffffffff;
 		
 		// <summary>
 		//   Constructor from a 32-bit constant.
 		// </summary>
-		public IPAddress (int address)
+		public IPAddress (uint address)
 		{
 			this.address = address;
 		}
@@ -33,13 +33,14 @@ namespace System.Net {
 		// </summary>
 		public IPAddress (string ip)
 		{
-			string ips = ip.Split (".");
-			int i, a = 0;
+			string[] ips = ip.Split (new char[] {'.'});
+			int i;
+			uint a = 0;
 
-			for (i = 0; i < ips.Count; i++)
-				a = (a << 8) |  (ips [i].ToInt16 ());
+			for (i = 0; i < ips.Length; i++)
+				a = (a << 8) |  (UInt16.Parse(ips [i]));
 
-			Address = a;
+			address = a;
 		}
 
 		// <summary>
@@ -49,7 +50,7 @@ namespace System.Net {
 		// <returns></returns>
 		public static bool IsLoopback (IPAddress addr)
 		{
-			return addr.Address == InaddrLoopback;
+			return addr.address == InaddrLoopback;
 		}
 
 		// <summary>
@@ -58,13 +59,13 @@ namespace System.Net {
 		// </summary>
 		public override string ToString ()
 		{
-			System.Net.IPAddress.ToString (Address);
+			return ToString (address);
 		}
 
 		// <summary>
 		//   Returns this object rendered in a quad-dotted notation
 		// </summary>
-		public static string ToString (int addr)
+		public static string ToString (uint addr)
 		{
 			return  (addr >> 24).ToString () + "." +
 				((addr >> 16) & 0xff).ToString () + "." +
@@ -75,12 +76,17 @@ namespace System.Net {
 		// <returns>
 		//   Whether both objects are equal.
 		// </returns>
-		public override bool Equal (object other)
+		public override bool Equals (object other)
 		{
-			if (typeof (other) is System.Net.IPAddress){
-				return Address == ((System.Net.IPAddress) other).Address;
+			if (other is System.Net.IPAddress){
+				return address == ((System.Net.IPAddress) other).address;
 			}
 			return false;
+		}
+
+		public override int GetHashCode ()
+		{
+			return (int)address;
 		}
 	}
 	

@@ -1,5 +1,5 @@
 //
-// System.CodeDOM CodeConstructor Class implementation
+// System.CodeDom CodeConstructor Class implementation
 //
 // Author:
 //   Miguel de Icaza (miguel@ximian.com)
@@ -7,7 +7,7 @@
 // (C) 2001 Ximian, Inc.
 //
 
-namespace System.CodeDOM {
+namespace System.CodeDom {
 
 	public class CodeConstructor : CodeMemberMethod {
 		CodeExpressionCollection baseConstructorArgs;

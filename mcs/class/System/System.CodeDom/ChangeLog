@@ -1,0 +1,5 @@
+2001-07-12  Sean MacIsaac  <macisaac@ximian.com>
+
+	* All files implementing IList: Added IsFixedSize property.
+
+	* All files:  Changed CodeDOM to CodeDom.

@@ -12,18 +12,21 @@ namespace System.Net {
 	public class EndPoint {
 		public virtual EndPoint Create (SocketAddress address)
 		{
+			return null;
 		}
 
 		public virtual SocketAddress Serialize ()
 		{
+			return null;
 		}
 
 		protected EndPoint ()
 		{
 		}
 
-		public int AddressFamily {
-			virtual get {
+		public virtual int AddressFamily {
+			get {
+				return 0;
 			}
 		}
 

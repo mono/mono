@@ -1,5 +1,5 @@
 //
-// System.CodeDOM CodeTryCatchFinallyStatement Class implementation
+// System.CodeDom CodeTryCatchFinallyStatement Class implementation
 //
 // Author:
 //   Miguel de Icaza (miguel@ximian.com)
@@ -7,7 +7,7 @@
 // (C) 2001 Ximian, Inc.
 //
 
-namespace System.CodeDOM {
+namespace System.CodeDom {
 
 	public class CodeTryCatchFinallyStatement : CodeStatement {
 		CodeStatementCollection tryStatements, finallyStatements;

@@ -9,7 +9,7 @@
 
 namespace System {
 
-	interface ICloneable {
-		public object Clone ();
+	public interface ICloneable {
+		object Clone ();
 	}
 }

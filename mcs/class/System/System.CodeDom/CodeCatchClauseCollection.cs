@@ -1,5 +1,5 @@
 //
-// System.CodeDOM CodeCatchClauseCollection Class implementation
+// System.CodeDom CodeCatchClauseCollection Class implementation
 //
 // Author:
 //   Miguel de Icaza (miguel@ximian.com)
@@ -7,7 +7,7 @@
 // (C) 2001 Ximian, Inc.
 //
 
-namespace System.CodeDOM {
+namespace System.CodeDom {
 
 	using System.Collections;
 	
@@ -31,6 +31,12 @@ namespace System.CodeDOM {
 				return catchClauses.Count;
 			}
 		}
+
+                public bool IsFixedSize {
+                        get {
+                                return true;
+                        }
+                }
 
 		//
 		// Methods

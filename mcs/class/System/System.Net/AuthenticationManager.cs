@@ -7,6 +7,8 @@
 // (C) Ximian, Inc.  http://www.ximian.com
 //
 
+using System.Collections;
+
 namespace System.Net {
 
 	public class AuthenticationManager {
@@ -15,33 +17,26 @@ namespace System.Net {
 
 		public static IEnumerator RegisteredModules {
 			get {
-				if (!modules)
+				if (modules == null)
 					modules = new ArrayList ();
 
-				return modules;
+				return modules as IEnumerator;
 			}
 		}
 
 		public static Authorization PreAuthenticate (WebRequest request,
-							     ICredentialLookup credentials)
+							     ICredentials credentials)
 		{
 			// FIXME: implement
+			return null;
 		}
 
 		public static void Register (IAuthenticationModule authenticationModule)
 		{
-			if (!modules)
+			if (modules == null)
 				modules = new ArrayList ();
 
 			modules.Add (authenticationModule);
-		}
-
-		public static Authorization Respond (WebHeaders ResponseHeaders,
-						     WebRequest Request,
-						     ICredentialLookup credentials)
-		{
-			// FIXME: implement
-			return null;
 		}
 
 		public static void Unregister (IAuthenticationModule authenticationModule)
@@ -49,7 +44,7 @@ namespace System.Net {
 			// FIXME: implement
 		}
 
-		pubilc static void Unregister (string authenticationScheme)
+		public static void Unregister (string authenticationScheme)
 		{
 			// FIXME: implement
 		}

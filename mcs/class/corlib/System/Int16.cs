@@ -7,17 +7,21 @@
 // (C) Ximian, Inc.  http://www.ximian.com
 //
 
+using System.Globalization;
+
 namespace System {
 	
-	public struct Int16 : ValueType, IComparable, IFormattable {
+	public struct Int16 : IComparable, IFormattable {
 		public const short MinValue = -32768;
 		public const short MaxValue =  32767;
 		
-		short value;
+		// VES needs to know about value.  public is workaround
+		// so source will compile
+		public short value;
 
 		public int CompareTo (object v)
 		{
-			if (!(value is System.Int16))
+			if (!(v is System.Int16))
 				throw new ArgumentException ("Value is not a System.Int16");
 
 			return value - ((short) v);
@@ -47,19 +51,13 @@ namespace System {
 			return 0;
 		}
 
-		public static short Parse (string s, IFormatProvider)
+		public static short Parse (string s, IFormatProvider fp)
 		{
 			// TODO: Implement me
 			return 0;
 		}
 
-		public static short Parse (string s, NumberStyles s, fp)
-		{
-			// TODO: Implement me
-			return 0;
-		}
-
-		public static short Parse (string s, NumberStyles s, IFormatProvider fp)
+		public static short Parse (string s, NumberStyles style, IFormatProvider fp)
 		{
 			// TODO: Implement me
 			return 0;

@@ -1,5 +1,5 @@
 //
-// System.CodeDOM CodeMemberEvent Class implementation
+// System.CodeDom CodeMemberEvent Class implementation
 //
 // Author:
 //   Miguel de Icaza (miguel@ximian.com)
@@ -7,7 +7,7 @@
 // (C) 2001 Ximian, Inc.
 //
 
-namespace System.CodeDOM {
+namespace System.CodeDom {
 
 	public class CodeMemberEvent : CodeClassMember {
 		string implementsType, type;

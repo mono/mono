@@ -1,5 +1,5 @@
 //
-// System.CodeDOM CodeLinePragma Class implementation
+// System.CodeDom CodeLinePragma Class implementation
 //
 // Author:
 //   Miguel de Icaza (miguel@ximian.com)
@@ -8,7 +8,7 @@
 //
 using System;
 
-namespace System.CodeDOM {
+namespace System.CodeDom {
 
 	// <summary>
 	//    Use objects of this class to keep track of locations where

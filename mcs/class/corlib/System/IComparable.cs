@@ -9,7 +9,7 @@
 
 namespace System {
 
-	interface IComparable {
-		public int CompareTo (object obj);
+	public interface IComparable {
+		int CompareTo (object obj);
 	}
 }

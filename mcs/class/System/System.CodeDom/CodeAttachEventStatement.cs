@@ -1,12 +1,12 @@
 //
-// System.CodeDOM CodeAttachEventStatement Class implementation
+// System.CodeDom CodeAttachEventStatement Class implementation
 //
 // Author:
 //   Miguel de Icaza (miguel@ximian.com)
 //
 // (C) 2001 Ximian, Inc.
 //
-namespace System.CodeDOM {
+namespace System.CodeDom {
 
 	public class CodeAttachEventStatement : CodeStatement {
 		CodeExpression targetObject;

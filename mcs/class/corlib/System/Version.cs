@@ -92,7 +92,7 @@ namespace System {
 			if (! (version is Version))
 				throw new ArgumentException ("version");
 
-			v = version;
+			v = version as Version;
 
 			if (this.major > v.major)
 				return 1;
@@ -153,7 +153,7 @@ namespace System {
 		// </summary>
 		public override string ToString ()
 		{
-			string mm = major.ToString + "." + minor.ToString ();
+			string mm = major.ToString () + "." + minor.ToString ();
 			
 			if (build != MAXINT)
 				mm = mm + "." + build.ToString ();
@@ -191,7 +191,7 @@ namespace System {
 				return major.ToString () + "." + minor.ToString () + "." +
 					build.ToString () + "." + revision.ToString ();
 			}
-			
+			throw new ArgumentException ("Invalid fields parameter: " + fields.ToString());	
 		}
 	}
 }

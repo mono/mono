@@ -9,18 +9,20 @@
 
 namespace System.Collections.Specialized {
 	
-	public struct BitVector32 : ValueType {
+	public struct BitVector32 {
 		int value;
 
 		public struct Section {
-			short maxval;
+			public short maxval;
 		}
 
 		public static Section CreateSection (short maxval)
 		{
-			Section s = new Section;
+			Section s = new Section();
 
-		FIXME: Imeplemtn me
+			// FIXME: Imeplemtn me
+
+			return s;
 		}
 		
 		public static int CreateMask ()
@@ -43,12 +45,17 @@ namespace System.Collections.Specialized {
 			value = init;
 		}
 
-		public bool Equals (object o)
+		public override bool Equals (object o)
 		{
 			if (!(o is BitVector32))
 				return false;
 
 			return value == ((BitVector32) o).value;
+		}
+
+		public override int GetHashCode ()
+		{
+			return 0;
 		}
 		
 		public int Data {

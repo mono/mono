@@ -7,20 +7,28 @@
 // (C) Ximian, Inc.  http://www.ximian.com
 //
 
+using System.Globalization;
+
 namespace System {
 	
-	public struct Int64 : ValueType, IComparable, IFormattable {
-		public const long MinValue = 0x8000000000000000;
+	public struct Int64 : IComparable, IFormattable {
+		public const long MinValue = -9223372036854775808;
 		public const long MaxValue = 0x7fffffffffffffff;
 		
-		long value;
+		public long value;
 
 		public int CompareTo (object v)
 		{
-			if (!(value is System.Int64))
+			if (!(v is System.Int64))
 				throw new ArgumentException ("Value is not a System.Int64");
 
-			return value - (long) v;
+			if (value == (long) v)
+				return 0;
+
+			if (value < (long) v)
+				return -1;
+
+			return 1;
 		}
 
 		public override bool Equals (object o)
@@ -33,7 +41,7 @@ namespace System {
 
 		public override int GetHashCode ()
 		{
-			return (value & 0xffffffff) ^ (value >> 32);
+			return (int)(value & 0xffffffff) ^ (int)(value >> 32);
 		}
 
 		public TypeCode GetTypeCode ()
@@ -47,19 +55,13 @@ namespace System {
 			return 0;
 		}
 
-		public static long Parse (string s, IFormatProvider)
+		public static long Parse (string s, IFormatProvider fp)
 		{
 			// TODO: Implement me
 			return 0;
 		}
 
-		public static long Parse (string s, NumberStyles s, fp)
-		{
-			// TODO: Implement me
-			return 0;
-		}
-
-		public static long Parse (string s, NumberStyles s, IFormatProvider fp)
+		public static long Parse (string s, NumberStyles style, IFormatProvider fp)
 		{
 			// TODO: Implement me
 			return 0;

@@ -27,7 +27,7 @@ namespace System.Net {
 
 		public bool Complete {
 			get {
-				return finished;
+				return complete;
 			}
 		}
 

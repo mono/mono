@@ -72,7 +72,9 @@ namespace System {
 			// TODO: This probably needs to be tied up
 			// with the Type system.  Private communications
 			// channel? 
-			return new Type ();
+			// Type is abstract, so the following line won't cut it.
+			//return new Type ();
+			return null;
 		}
 
 		// <summary>
@@ -80,7 +82,7 @@ namespace System {
 		// </summary>
 		protected object MemberWiseClone ()
 		{
-			
+			return null;	
 		}
 
 		// <summary>
@@ -92,7 +94,7 @@ namespace System {
 		// </summary>
 		public virtual string ToString ()
 		{
-			return Type.FullName;
+			return GetType().FullName;
 		}
 
 		// <summary>

@@ -7,6 +7,9 @@
 // (C) Ximian, Inc.  http://www.ximian.com
 //
 
+using System.Runtime.Serialization;
+using System.Reflection;
+
 namespace System {
 
 	public class Exception : ISerializable {
@@ -15,6 +18,7 @@ namespace System {
 		string help_link;
 		string stack_trace = "TODO: implement stack traces";
 		int hresult;
+		private string source;
 		
 		public Exception ()
 		{
@@ -30,7 +34,7 @@ namespace System {
 
 		protected Exception (SerializationInfo info, StreamingContext sc)
 		{
-			if (si == null){
+			if (info == null){
 				throw new ArgumentNullException ("info");
 			}
 			
@@ -106,8 +110,8 @@ namespace System {
 		{
 			Exception inner = inner_exception;
 				
-			while (inner){
-				if (inner.InnerException)
+			while (inner != null){
+				if (inner.InnerException != null)
 					inner = inner.InnerException;
 				else
 					return inner;
@@ -121,7 +125,7 @@ namespace System {
 			// TODO: implement me.
 		}
 
-		public string ToString ()
+		public override string ToString ()
 		{
 			return this.GetType ().FullName + "\n" +
 				message +

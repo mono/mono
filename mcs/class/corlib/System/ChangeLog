@@ -1,3 +1,48 @@
+2001-07-12  Sean MacIsaac  <macisaac@ximian.com>
+
+	* TypeCode.cs: UInt64 was UInt63.
+
+	* Object.cs: Fixed a numer of compiler errors.
+
+	* Array.cs: Fixed some compiler errors.
+
+	* IComparable.cs: Fixed some compiler errors.
+
+	* ICloneable.cs: Fixed some compiler errors.
+
+	* IConvertible.cs: Fixed some compiler errors.
+
+	* IFormattable.cs: Fixed a compiler error.
+
+	* IFormatProvider.cs: Fixed a compiler error.
+
+	* IDisposable.cs: Fixed a compiler error.
+
+	* IFormatProvider.cs: Added public accesability type to
+	IFormatProvider.
+
+	* Exception.cs: Added a using statement to remove compile time error.
+
+	* ApplicationException.cs: Removed a ; that was causing a compiler
+	error.
+
+	* Int16.cs: Fixed some compiler errors.
+
+	* Int32.cs: Fixed some compiler errors.
+
+	* Int64.cs: Fixed some compiler errors.
+
+	* SystemException.cs: Fixed a compiler error.
+
+	* UInt16.cs: Fixed some compiler errors.
+
+	* UInt32.cs: Fixed some compiler errors.
+
+	* UInt64.cs: Fixed some compiler errors.
+
+	* Void.cs: Fixed a compiler error.
+	
+
 2001-07-12  Joe Shaw  <joe@ximian.com>
 
 	* Array.cs: Fix backwards parameters to Array.SetValue() throughout.

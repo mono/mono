@@ -23,8 +23,8 @@ namespace System.Net {
 
 		bool CanRespond (string challenge);
 
-		Authorization PreAuthenticate (WebRequest request, ICredentialLookup credentials);
+		Authorization PreAuthenticate (WebRequest request, ICredentials credentials);
 
-		Authorization Respond (string challenge, WebRequest request, ICredentialLookup credentials);
+		Authorization Respond (string challenge, WebRequest request, ICredentials credentials);
 	}
 }

@@ -1,0 +1,13 @@
+2001-07-12  Sean MacIsaac  <macisaac@ximian.com>
+
+	* Authorization.cs: Fixed compiler error.
+
+	* IAuthenticationModule.cs: Changes for Beta2.
+
+	* IPAddress.cs: Internal storage changed to be uint not int.
+
+	* IPEndPoint.cs: Fixed compiler error.
+
+	* EndPoint.cs: Fixed compiler error.
+
+	* AuthenticationManager.cs: Fixed typo.

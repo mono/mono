@@ -15,7 +15,15 @@ namespace System.Net {
 		public const int MaxPort = 65535;
 		public const int MinPort = 0;
 
-		public short Port;
+		private int port;
+		public int Port {
+			get {
+				return port;
+			}
+			set {
+				port = value;
+			}
+		}
 		
 		public IPEndPoint (IPAddress address, int port)
 		{
@@ -23,15 +31,16 @@ namespace System.Net {
 			Port = port;
 		}
 		
-		public IPEndPoint (int iaddr, int port)
+		public IPEndPoint (long iaddr, int port)
 		{
-			IPAddress address = new IPAddress (iaddr);
+			IPAddress address = new IPAddress ((uint)iaddr);
 			
-			IPEndPoint (address, port);
+			Address = address;
+			this.port = port;
 		}
 
-		public int AddressFamily {
-			override get {
+		public override int AddressFamily {
+			get {
 				return 2;
 			}
 		}

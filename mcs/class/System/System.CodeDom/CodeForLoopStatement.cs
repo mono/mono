@@ -1,5 +1,5 @@
 //
-// System.CodeDOM CodeForLoopStatement Class implementation
+// System.CodeDom CodeForLoopStatement Class implementation
 //
 // Author:
 //   Miguel de Icaza (miguel@ximian.com)
@@ -7,7 +7,7 @@
 // (C) 2001 Ximian, Inc.
 //
 
-namespace System.CodeDOM {
+namespace System.CodeDom {
 
 	public class CodeForLoopStatement : CodeExpression {
 		CodeStatement initStatement, incrementStatement;

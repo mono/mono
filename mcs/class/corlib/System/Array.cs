@@ -7,14 +7,17 @@
 // (C) 2001 Ximian, Inc.  http://www.ximian.com
 //
 
+using System.Collections;
+using System.Runtime.CompilerServices;
+
 namespace System
 {
 
 	public abstract class Array : ICloneable 
 	{
 		public int lower_bound = 0;
-		private int length;
-		private int rank;
+		protected int length;
+		protected int rank;
 
 		// Properties
 		public int Length 
@@ -36,12 +39,12 @@ namespace System
 		// Methods
 		public static int BinarySearch (Array array, object value)
 		{
-			return BinarySearch (array, this.lower_bound, this.length, value, null);
+			return BinarySearch (array, array.lower_bound, array.length, value, null);
 		}
 
 		public static int BinarySearch (Array array, object value, IComparer comparer)
 		{
-			return BinarySearch (array, this.lower_bound, this.length, value, comparer);
+			return BinarySearch (array, array.lower_bound, array.length, value, comparer);
 		}
 
 		public static int BinarySearch (Array array, int index, int length, object value)
@@ -78,7 +81,7 @@ namespace System
 					throw new ArgumentException ();
 
 				if (comparer == null)
-					result = value.CompareTo(array.GetValue(index + i));
+					result = (value as IComparable).CompareTo(array.GetValue(index + i));
 				else
 					result = comparer.Compare(value, array.GetValue(index + i));
 
@@ -96,8 +99,8 @@ namespace System
 			if (array == null)
 				throw new ArgumentNullException ();
 
-			if (index < this.lower_bound || length < 0 ||
-				index + length > this.lower_bound + this.length)
+			if (index < array.lower_bound || length < 0 ||
+				index + length > array.lower_bound + array.length)
 				throw new ArgumentOutOfRangeException ();
 
 			for (int i = 0; i < length; i++) 
@@ -113,7 +116,8 @@ namespace System
 
 		public virtual object Clone ()
 		{
-			Array a = new Array();
+			// Array is abstract -- Array a = new Array();
+			Array a = (Array)this.Clone();
 
 			for (int i = 0; i < this.length; i++) 
 			{
@@ -152,8 +156,8 @@ namespace System
 			}
 		}
 
-		[MethodImplAttribute(InternalCall)]
-		private object InternalGetValue (int index);
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		private extern object InternalGetValue (int index);
 
 		public object GetValue (int index)
 		{
@@ -167,8 +171,8 @@ namespace System
 			return InternalGetValue (index);
 		}
 
-		[MethodImplAttribute(InternalCall)]
-		private void InternalSetValue (object value, int index);
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		private extern void InternalSetValue (object value, int index);
 
 		public void SetValue (object value, int index)
 		{
@@ -179,7 +183,7 @@ namespace System
 				index > this.lower_bound + this.length)
 				throw new ArgumentOutOfRangeException ();
 
-			InternalSetValue (value);
+			InternalSetValue (value, index);
 		}
 
 		public static int IndexOf (Array array, object value)
@@ -341,8 +345,8 @@ namespace System
 				}
 			}
 
-			qsort (keys, items, low0, low - 1);
-			qsort (keys, items, high + 1, high0);
+			qsort (keys, items, low0, low - 1, comparer);
+			qsort (keys, items, high + 1, high0, comparer);
 		}
 
 		private static void swap (Array keys, Array items, int i, int j)
@@ -367,6 +371,11 @@ namespace System
 				return ((IComparable) value1).CompareTo(value2);
 			else
 				return comparer.Compare(value1, value2);
+		}
+
+		public static Array CreateInstance(Type elementType, int length)
+		{
+			return null;
 		}
 	}
 }

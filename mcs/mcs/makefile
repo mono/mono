@@ -42,7 +42,7 @@ bison:
 	bison --debug --verbose x.y
 
 parser:
-	jay -tv cs-parser.jay > cs-parser.cs
+	./jay -tv cs-parser.jay > cs-parser.cs
 
 parsernoline:
 	jay -tv cs-parser.jay | grep -v '^#line' > cs-parser.cs

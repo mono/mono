@@ -12,7 +12,7 @@ namespace System {
 	public class SystemException : Exception {
 		// Constructors
 		public SystemException ()
-			: base ("A system exception has occurred.");
+			: base ("A system exception has occurred.")
 		{
 		}
 

@@ -19,9 +19,9 @@ namespace System.Text {
                 private static UTF8Encoding utf8Encoding;
 
                 private int codepage;
-                private string bodyName;
-                private string encodingName;
-                private string headerName;
+                protected string bodyName;
+                protected string encodingName;
+                protected string headerName;
 
                 protected Encoding() {
                 }

@@ -9,9 +9,9 @@
 
 namespace System {
 
-	interface IDisposable {
+	public interface IDisposable {
 
-		public void Dispose ();
+		void Dispose ();
 		
 	}
 }

@@ -9,7 +9,7 @@
 
 namespace System {
 
-	interface IFormatProvider {
-		public object GetFormat (Type format_type);
+	public interface IFormatProvider {
+		object GetFormat (Type format_type);
 	}
 }

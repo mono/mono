@@ -9,6 +9,6 @@
 
 namespace System {
 	
-	public struct Void : ValueType {
+	public struct Void {
 	}
 }
