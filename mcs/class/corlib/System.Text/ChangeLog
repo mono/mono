@@ -1,5 +1,11 @@
 2004-06-07  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* UTF8Encoding.cs : Length check must be done only when the character
+	  sequence is valid (i.e. should not check when it is overlongs).
+	  See also TestThrowOnInvalid().
+
+2004-06-07  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* UTF8Encoding.cs : Added Overlong check to InternalGetCharCount().
 
 2004-06-07  Atsushi Enomoto  <atsushi@ximian.com>

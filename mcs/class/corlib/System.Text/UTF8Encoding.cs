@@ -509,6 +509,9 @@ public class UTF8Encoding : Encoding
 			throw new ArgumentOutOfRangeException ("charIndex", _("ArgRange_Array"));
 		}
 
+		if (charIndex == chars.Length)
+			return 0;
+
 		// Convert the bytes into the output buffer.
 		uint ch;
 		int length = chars.Length;
@@ -567,10 +570,6 @@ public class UTF8Encoding : Encoding
 						// We have a complete character now.
 						if (leftBits < (uint)0x10000) {
 							if (leftBits != (uint)0xFEFF) {
-								if (posn >= length) {
-									throw new ArgumentException
-										(_("Arg_InsufficientSpace"), "chars");
-								}
 								// is it an overlong ?
 								bool overlong = false;
 								switch (leftSize) {
@@ -594,8 +593,13 @@ public class UTF8Encoding : Encoding
 									if (throwOnInvalid)
 										throw new ArgumentException (_("Overlong"), leftBits.ToString ());
 								}
-								else
+								else {
+									if (posn >= length) {
+										throw new ArgumentException
+											(_("Arg_InsufficientSpace"), "chars");
+									}
 									chars[posn++] = (char)leftBits;
+								}
 							}
 						} else if (leftBits < (uint)0x110000) {
 							if ((posn + 2) > length) {
