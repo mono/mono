@@ -1,3 +1,14 @@
+2002-08-19  Tim Coleman <tim@timcoleman.com>
+	* DiscoveryClientProtocol.cs:
+		Added ResolveAll () stub.
+	* DiscoveryDocument.cs:
+		Added XmlRoot attribute to class.
+	* DiscoveryClientDocumentCollection.cs:
+	* DiscoveryClientReferenceCollection.cs:
+	* DiscoveryClientResultCollection.cs:
+	* DiscoveryReferenceCollection.cs:
+		Implementation of these classes.
+
 2002-08-04  Dave Bettin <javabettin@yahoo.com>
 		* ContractSearchPattern.cs
 		* DiscoveryClientDocumentCollection.cs

@@ -15,6 +15,7 @@ using System.Xml;
 using System.Xml.Serialization;
 
 namespace System.Web.Services.Discovery {
+	[XmlRoot ("discovery", Namespace = "http://schemas.xmlsoap.org/disco/")]
 	public sealed class DiscoveryDocument {
 
 		#region Fields

@@ -3,8 +3,10 @@
 //
 // Author:
 //   Dave Bettin (javabettin@yahoo.com)
+//   Tim Coleman (tim@timcoleman.com)
 //
 // Copyright (C) Dave Bettin, 2002
+// Copyright (C) Tim Coleman, 2002
 //
 
 using System.Collections;
@@ -14,60 +16,50 @@ namespace System.Web.Services.Discovery {
 
 		#region Constructors
 
-		[MonoTODO]
 		public DiscoveryClientReferenceCollection () 
+			: base ()
 		{
-			throw new NotImplementedException ();
 		}
 		
 		#endregion // Constructors
 
 		#region Properties
 
-		public DiscoveryReference this[string url] {
-			[MonoTODO]
-			get { throw new NotImplementedException (); }
-			
-			[MonoTODO]
-			set { throw new NotImplementedException (); }
+		public DiscoveryReference this [string url] {
+			get { return (DiscoveryReference) InnerHashtable [url]; }
+			set { InnerHashtable [url] = value; }
 		}
 		
 		public ICollection Keys {
-			[MonoTODO]
-			get { throw new NotImplementedException (); }
+			get { return InnerHashtable.Keys; }
 		}
 		
 		public ICollection Values {
-			[MonoTODO]
-			get { throw new NotImplementedException (); }
+			get { return InnerHashtable.Values; }
 		}
 		
 		#endregion // Properties
 
 		#region Methods
 
-		[MonoTODO]
 		public void Add (DiscoveryReference value)
 		{
-                        throw new NotImplementedException ();
+			Add (value.Url, value);
 		}
 		
-		[MonoTODO]
 		public void Add (string url, DiscoveryReference value)
 		{
-                        throw new NotImplementedException ();
+			InnerHashtable [url] = value;
 		}
 
-		[MonoTODO]
 		public bool Contains (string url)
 		{
-                        throw new NotImplementedException ();
+			return InnerHashtable.Contains (url);
 		}
 		
-		[MonoTODO]
 		public void Remove (string url)
 		{
-                        throw new NotImplementedException ();
+			InnerHashtable.Remove (url);
 		}
 
 		#endregion // Methods

@@ -3,57 +3,58 @@
 //
 // Author:
 //   Dave Bettin (javabettin@yahoo.com)
+//   Tim Coleman (tim@timcoleman.com)
 //
 // Copyright (C) Dave Bettin, 2002
+// Copyright (C) Tim Coleman, 2002
 //
 
 using System.Collections;
-using System.Reflection;
 
 namespace System.Web.Services.Discovery {
-
 	public sealed class DiscoveryReferenceCollection : CollectionBase {
 
 		#region Constructors
 
-		[MonoTODO]
 		public DiscoveryReferenceCollection () 
+			: base ()
 		{
-			throw new NotImplementedException ();
 		}
 		
 		#endregion // Constructors
 
 		#region Properties
 
-		public DiscoveryReference this[int i] {
-			[MonoTODO]
-			get { throw new NotImplementedException (); }
-			
-			[MonoTODO]
-			set { throw new NotImplementedException (); }
+		public DiscoveryReference this [int i] {
+			get { 
+				if (i < 0 || i >= Count)
+					throw new ArgumentOutOfRangeException ();
+				return (DiscoveryReference) InnerList [i]; 
+			}
+			set {
+				if (i < 0 || i >= Count)
+					throw new ArgumentOutOfRangeException ();
+				InnerList [i] = value;
+			}
 		}
 		
 		#endregion // Properties
 
 		#region Methods
 
-		[MonoTODO]
 		public int Add (DiscoveryReference value)
 		{
-                        throw new NotImplementedException ();
+			return InnerList.Add (value);
 		}
 
-		[MonoTODO]
 		public bool Contains (DiscoveryReference value)
 		{
-                        throw new NotImplementedException ();
+			return InnerList.Contains (value);
 		}
 		
-		[MonoTODO]
 		public void Remove (DiscoveryReference value)
 		{
-                        throw new NotImplementedException ();
+			InnerList.Remove (value);
 		}
 
 		#endregion // Methods

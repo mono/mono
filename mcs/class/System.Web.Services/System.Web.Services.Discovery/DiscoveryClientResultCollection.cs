@@ -3,8 +3,10 @@
 //
 // Author:
 //   Dave Bettin (javabettin@yahoo.com)
+//   Tim Coleman (tim@timcoleman.com)
 //
 // Copyright (C) Dave Bettin, 2002
+// Copyright (C) Tim Coleman, 2002
 //
 
 using System.Collections;
@@ -14,44 +16,45 @@ namespace System.Web.Services.Discovery {
 
 		#region Constructors
 
-		[MonoTODO]
 		public DiscoveryClientResultCollection () 
+			: base ()
 		{
-			throw new NotImplementedException ();
 		}
 		
 		#endregion // Constructors
 
 		#region Properties
 
-		public DiscoveryClientResult this[int i] {
-			[MonoTODO]
-			get { throw new NotImplementedException (); }
-			
-			[MonoTODO]
-			set { throw new NotImplementedException (); }
+		public DiscoveryClientResult this [int i] {
+			get { 
+				if (i < 0 || i >= Count)
+					throw new ArgumentOutOfRangeException (); 
+				return (DiscoveryClientResult) InnerList [i]; 
+			}	
+			set { 
+				if (i < 0 || i >= Count)
+					throw new ArgumentOutOfRangeException (); 
+				InnerList [i] = value; 
+			}
 		}				
 		
 		#endregion // Properties
 
 		#region Methods
 
-		[MonoTODO]
 		public int Add (DiscoveryClientResult value)
 		{
-                        throw new NotImplementedException ();
+			return InnerList.Add (value);
 		}
 
-		[MonoTODO]
 		public bool Contains (DiscoveryClientResult value)
 		{
-                        throw new NotImplementedException ();
+			return InnerList.Contains (value);
 		}
 		
-		[MonoTODO]
 		public void Remove (DiscoveryClientResult value)
 		{
-                        throw new NotImplementedException ();
+			InnerList.Remove (value);
 		}
 
 		#endregion // Methods

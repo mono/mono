@@ -84,6 +84,12 @@ namespace System.Web.Services.Discovery {
 		{
                         throw new NotImplementedException ();
 		}
+
+		[MonoTODO]
+		public void ResolveAll ()
+		{
+			throw new NotImplementedException (); 
+		}
 		
 		[MonoTODO]
 		public void ResolveOneLevel ()

@@ -3,66 +3,62 @@
 //
 // Author:
 //   Dave Bettin (javabettin@yahoo.com)
+//   Tim Coleman (tim@timcoleman.com)
 //
 // Copyright (C) Dave Bettin, 2002
+// Copyright (C) Tim Coleman, 2002
 //
 
 using System.Collections;
 
 namespace System.Web.Services.Discovery {
-
 	public sealed class DiscoveryClientDocumentCollection : DictionaryBase {
 
 		#region Constructors 
 
-		[MonoTODO]
 		public DiscoveryClientDocumentCollection () 
+			: base ()
 		{
-			throw new NotImplementedException ();
 		}
 		
 		#endregion // Constructors
 
 		#region Properties
 
-		public object this[string url] {
-			[MonoTODO]
-			get { throw new NotImplementedException (); }
-			
-			[MonoTODO]
-			set { throw new NotImplementedException (); }
+		public object this [string url] {
+			get { return InnerHashtable [url]; }
+			set { 
+				if (url == null)
+					throw new ArgumentNullException ();
+				InnerHashtable [url] = value; 
+			}
 		}
 		
 		public ICollection Keys {
-			[MonoTODO]
-			get { throw new NotImplementedException (); }
+			get { return InnerHashtable.Keys; }
 		}
 		
 		public ICollection Values {
-			[MonoTODO]
-			get { throw new NotImplementedException (); }
+			get { return InnerHashtable.Values; }
 		}
 		
 		#endregion // Properties
 
 		#region Methods
 
-		[MonoTODO]
 		public void Add (string url, object value)
 		{
-                        throw new NotImplementedException ();
+			InnerHashtable [url] = value;
 		}
 
-		[MonoTODO]
 		public bool Contains (string url)
 		{
-                        throw new NotImplementedException ();
+			return InnerHashtable.Contains (url);
 		}
 		
-		[MonoTODO]
 		public void Remove (string url)
 		{
-                        throw new NotImplementedException ();
+			InnerHashtable.Remove (url);
 		}
 
 		#endregion // Methods
