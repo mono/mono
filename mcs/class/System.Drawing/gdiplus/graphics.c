@@ -35,6 +35,7 @@ void _init_graphics (gdip_graphics_ptr graphics)
 	graphics->hdc_busy_count = 0;
 	graphics->image = 0;
 	graphics->type = gtUndefined;
+	cairo_select_font (graphics->ct, "serif:12");
 }
 
 gdip_graphics_ptr _new_graphics ()
@@ -180,3 +181,20 @@ Status GdipFillRectangle (gdip_graphics_ptr graphics, gdip_brush_ptr brush, floa
 	cairo_fill (graphics->ct);
 	return Ok;
 }
+
+Status GdipDrawString (gdip_graphics_ptr graphics, const char *string, int len, void *font, RectF *rc, void *format, gdip_brush_ptr brush)
+{
+    cairo_save(graphics->ct);
+	if (brush) {
+		_setup_brush (graphics, brush);
+	}
+	else {
+		cairo_set_rgb_color (graphics->ct, 0., 0., 0.);
+	}
+	cairo_move_to (graphics->ct, rc->left, rc->top + 12);
+    cairo_scale_font (graphics->ct, 12);
+	cairo_show_text (graphics->ct, string);
+    cairo_restore(graphics->ct);
+	return Ok;
+}
+

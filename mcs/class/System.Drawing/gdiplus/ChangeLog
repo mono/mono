@@ -1,3 +1,9 @@
+2003-10-14  Alexandre Pigolkine <pigolkine@gmx.de>
+	* gdip_defs.h
+	* graphics.c
+	* gdip_main.h
+						DrawString function added
+
 2003-10-12  Alexandre Pigolkine <pigolkine@gmx.de>
 	* bitmap.c
 	* brush.c

@@ -65,5 +65,14 @@ namespace System.Drawing {
 		internal int bottom;
 	}
 
+	[StructLayout(LayoutKind.Sequential)]
+	internal struct RectF
+	{
+		internal float left;
+		internal float top;
+		internal float right;
+		internal float bottom;
+	}
+
 }
 

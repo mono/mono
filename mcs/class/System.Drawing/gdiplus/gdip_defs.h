@@ -97,6 +97,7 @@ Status GdipRotateWorldTransform (gdip_graphics_ptr graphics, float angle, int or
 Status GdipTranslateWorldTransform (gdip_graphics_ptr graphics, float dx, float dy, int order);
 Status GdipDrawLine (gdip_graphics_ptr graphics, gdip_pen_ptr pen, float x1, float y1, float x2, float y2);
 Status GdipFillRectangle (gdip_graphics_ptr graphics, gdip_brush_ptr brush, float x1, float y1, float x2, float y2);
+Status GdipDrawString (gdip_graphics_ptr graphics, const char *string, int len, void *font, RectF *rc, void *format, gdip_brush_ptr brush);
 
 Status GdipCloneBrush (gdip_brush_ptr brush, gdip_brush_ptr * clonedBrush);
 Status GdipDeleteBrush (gdip_brush_ptr brush);

@@ -74,6 +74,9 @@ namespace System.Drawing {
 		static internal extern Status GdipFillRectangle (IntPtr graphics, IntPtr brush, float x1, float y1, float x2, float y2);
 
 		[DllImport("gdiplus.dll")]
+		static internal extern Status GdipDrawString (IntPtr graphics, string text, int len, IntPtr font, ref RectF rc, IntPtr format, IntPtr brush);
+
+		[DllImport("gdiplus.dll")]
 		static internal extern Status GdipGetDC (IntPtr graphics, out int hdc);
 
 		[DllImport("gdiplus.dll")]

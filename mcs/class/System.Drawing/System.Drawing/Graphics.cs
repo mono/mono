@@ -1,5 +1,5 @@
 //
-// System.Drawing.Bitmap.cs
+// System.Drawing.Graphics.cs
 //
 // (C) 2003 Ximian, Inc.  http://www.ximian.com
 //
@@ -582,7 +582,12 @@ namespace System.Drawing
 		[MonoTODO]
 		public void DrawString (string s, Font font, Brush brush, float x, float y)
 		{
-			throw new NotImplementedException ();
+			RectF rc = new RectF ();
+			rc.left = x;
+			rc.top = y;
+			rc.right = 0;
+			rc.bottom = 0;
+			GDIPlus.GdipDrawString (nativeObject, s, s.Length, IntPtr.Zero, ref rc, IntPtr.Zero, brush.nativeObject);
 		}
 
 		[MonoTODO]

@@ -45,6 +45,10 @@ typedef struct tagRect{
 	int left, top, right, bottom;
 } Rect;
 
+typedef struct tagRectF{
+	float left, top, right, bottom;
+} RectF;
+
 enum graphics_type {
 	gtUndefined, gtX11Drawable, gtMemoryBitmap
 };
