@@ -1,3 +1,25 @@
+2003-07-12  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* XmlAttribute.cs,
+	  XmlElement.cs : Fixed CloneNode() for bug #46129.
+	* XmlDocument.cs : Fixed MakeReaderErrorMessage that specified invalid
+	  String.Format arguments, and basically XmlException.ctor(
+	  IXmlLineInfo, message) seems good idea to use.
+	* XmlTextReader.cs :
+	  - Fixed .ctor(Stream, XmlNodeType, XmlParserContext) which had
+	    required non-null context which don't have to exist.
+	  - Added state check. Introduced 'currentState' and 'maybeTextDecl' 
+	    (for external entity) and removed hasEnteredDocument. Added 
+	    state-check logic to ReadStartTag(), ReadEndTag(), ReadText(),
+	    ReadCData(), ReadDoctypeDecl() and ReadWhitespace().
+	  - Replaced throw ReaderError() with throw new XmlException() and
+	    fixed that some error hadn't thrown, only created.
+	  - ResetState() should re-initialize existing private members other 
+	    than some specified fields.
+	  - Private AddAttribute() should check if the same-named attribute 
+	    already exists.
+	* DTDObjectModel.cs : Additive declaration for ATTLIST is availabe now.
+
 2003-07-09  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* XmlTextReader.cs : Implemented ResetState() method.

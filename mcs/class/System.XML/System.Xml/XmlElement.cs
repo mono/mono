@@ -176,50 +176,41 @@ namespace System.Xml
 
 		#region Methods
 		
-		[MonoTODO]
 		public override XmlNode CloneNode (bool deep)
 		{
-			XmlNode node =  new XmlElement (prefix, localName, namespaceURI,
-							OwnerDocument);
+			XmlElement node = new XmlElement (
+				prefix, localName, namespaceURI, OwnerDocument);
 
-			for (int i = 0; i < node.Attributes.Count; i++)
-				node.AppendChild (node.Attributes [i].CloneNode (false));
-			
+			for (int i = 0; i < Attributes.Count; i++)
+				node.SetAttributeNode ((XmlAttribute) 
+					Attributes [i].CloneNode (true));
+
 			if (deep) {
-				while ((node != null) && (node.HasChildNodes)) {					
-					AppendChild (node.NextSibling.CloneNode (true));
-					node = node.NextSibling;
-				}
+				foreach (XmlNode child in this.ChildNodes)
+					node.AppendChild (child.CloneNode (true));
 			} // shallow cloning
-				
-			//
-			// Reminder: Also look into Default attributes.
-			//
+
 			return node;
 		}
 
-		[MonoTODO]
 		public virtual string GetAttribute (string name)
 		{
 			XmlNode attributeNode = Attributes.GetNamedItem (name);
 			return attributeNode != null ? attributeNode.Value : String.Empty;
 		}
 
-		[MonoTODO]
 		public virtual string GetAttribute (string localName, string namespaceURI)
 		{
 			XmlNode attributeNode = Attributes.GetNamedItem (localName, namespaceURI);
 			return attributeNode != null ? attributeNode.Value : String.Empty;
 		}
 
-		[MonoTODO]
 		public virtual XmlAttribute GetAttributeNode (string name)
 		{
 			XmlNode attributeNode = Attributes.GetNamedItem (name);
 			return attributeNode != null ? attributeNode as XmlAttribute : null;
 		}
 
-		[MonoTODO]
 		public virtual XmlAttribute GetAttributeNode (string localName, string namespaceURI)
 		{
 			XmlNode attributeNode = Attributes.GetNamedItem (localName, namespaceURI);
@@ -265,14 +256,12 @@ namespace System.Xml
 			return new XmlNodeArrayList (nodeArrayList);
 		}
 
-		[MonoTODO]
 		public virtual bool HasAttribute (string name)
 		{
 			XmlNode attributeNode = Attributes.GetNamedItem (name);
 			return attributeNode != null;
 		}
 
-		[MonoTODO]
 		public virtual bool HasAttribute (string localName, string namespaceURI)
 		{
 			XmlNode attributeNode = Attributes.GetNamedItem (localName, namespaceURI);
@@ -329,7 +318,6 @@ namespace System.Xml
 			return attributes.Remove(attributes[localName, namespaceURI]);
 		}
 
-		[MonoTODO]
 		public virtual void SetAttribute (string name, string value)
 		{
 			XmlAttribute attribute = OwnerDocument.CreateAttribute (name);
@@ -338,7 +326,6 @@ namespace System.Xml
 			Attributes.SetNamedItem (attribute);
 		}
 
-//		[MonoTODO]
 		public virtual string SetAttribute (string localName, string namespaceURI, string value)
 		{
 			XmlAttribute attr = attributes[localName, namespaceURI];
@@ -353,7 +340,6 @@ namespace System.Xml
 			return attr.Value;
 		}
 
-//		[MonoTODO]
 		public virtual XmlAttribute SetAttributeNode (XmlAttribute newAttr)
 		{
 			newAttr.SetOwnerElement(this);
@@ -374,23 +360,12 @@ namespace System.Xml
 				childNode.WriteTo(w);
 		}
 
-		[MonoTODO]
 		public override void WriteTo (XmlWriter w)
 		{
 			w.WriteStartElement(Prefix, LocalName, NamespaceURI);
 
 			foreach(XmlNode attributeNode in Attributes)
 				attributeNode.WriteTo(w);
-/*
-// It should be automatically written by XmlWriter.
-			// write namespace declarations(if not exist)
-			foreach(XmlNode attributeNode in Attributes) {
-				if(attributeNode.Prefix != null && attributeNode.Prefix != String.Empty &&
-					w.LookupPrefix(attributeNode.NamespaceURI) != attributeNode.Prefix &&
-					attributeNode.Prefix != "xmlns")
-					w.WriteAttributeString("xmlns", attributeNode.Prefix, "http://www.w3.org/2000/xmlns/", attributeNode.NamespaceURI);
-			}
-*/
 			if (IsEmpty)
 				w.WriteEndElement ();
 			else {

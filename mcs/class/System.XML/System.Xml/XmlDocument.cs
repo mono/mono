@@ -542,12 +542,15 @@ namespace System.Xml
 
 		public virtual void Load (Stream inStream)
 		{
-			Load (new XmlTextReader (new XmlStreamReader (inStream)));
+			Load (new XmlTextReader (inStream));
+//			Load (new XmlValidatingReader (
+//				inStream, XmlNodeType.Document, null));
 		}
 
 		public virtual void Load (string filename)
 		{
 			XmlReader xr = new XmlTextReader (filename);
+//			XmlReader xr = new XmlValidatingReader (new XmlTextReader (filename));
 			Load (xr);
 			xr.Close ();
 		}
@@ -555,6 +558,7 @@ namespace System.Xml
 		public virtual void Load (TextReader txtReader)
 		{
 			Load (new XmlTextReader (txtReader));
+//			Load (new XmlValidatingReader (new XmlTextReader (txtReader)));
 		}
 
 		public virtual void Load (XmlReader xmlReader)
@@ -576,7 +580,10 @@ namespace System.Xml
 
 		public virtual void LoadXml (string xml)
 		{
-			XmlReader xmlReader = new XmlTextReader (new StringReader (xml));
+			XmlReader xmlReader = new XmlTextReader (
+				xml, XmlNodeType.Document, null);
+//			XmlReader xmlReader = new XmlValidatingReader (
+//				xml, XmlNodeType.Document, null);
 			Load (xmlReader);
 		}
 
@@ -745,7 +752,7 @@ namespace System.Xml
 					if (currentNode == null)
 						throw new XmlException ("Unexpected end element.");
 					else if (currentNode.Name != reader.Name)
-						throw new XmlException (MakeReaderErrorMessage (String.Format ("mismatch end tag. Expected {0} but found {1}", currentNode.Name, reader.Name), reader));
+						throw new XmlException (reader as IXmlLineInfo, String.Format ("mismatch end tag. Expected {0} but found {1}", currentNode.Name, reader.Name));
 					currentNode = currentNode.ParentNode;
 					break;
 
@@ -769,7 +776,7 @@ namespace System.Xml
 					newNode = CreateXmlDeclaration ("1.0" , String.Empty, String.Empty);
 					((XmlDeclaration)newNode).Value = reader.Value;
 					if(currentNode != null)
-						throw new XmlException (MakeReaderErrorMessage ("XmlDeclaration at invalid position.", reader));
+						throw new XmlException (reader as IXmlLineInfo, "XmlDeclaration at invalid position.");
 					break;
 
 				case XmlNodeType.DocumentType:
@@ -788,7 +795,7 @@ namespace System.Xml
 						newNode = ReadDoctypeNode (xtReader);
 					}
 					if(currentNode != null)
-						throw new XmlException (this.MakeReaderErrorMessage ("XmlDocumentType at invalid position.", reader));
+						throw new XmlException (reader as IXmlLineInfo, "XmlDocumentType at invalid position.");
 					break;
 
 				case XmlNodeType.EntityReference:
@@ -826,7 +833,7 @@ namespace System.Xml
 		{
 			IXmlLineInfo li = reader as IXmlLineInfo;
 			if (li != null)
-				return String.Format ("{0} Line number = {1}, Inline position = {2}.", li.LineNumber, li.LinePosition);
+				return String.Format ("{0} Line number = {1}, Inline position = {2}.", message, li.LineNumber, li.LinePosition);
 			else
 				return message;
 		}

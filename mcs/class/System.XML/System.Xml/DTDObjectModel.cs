@@ -147,12 +147,20 @@ namespace Mono.Xml
 
 		public void Add (string name, DTDAttListDeclaration decl)
 		{
-			if (attListDecls [name] != null)
-				throw new InvalidOperationException (String.Format (
-					"AttList declaration for {0} was already added.",
-					name));
-			decl.SetRoot (root);
-			attListDecls.Add (name, decl);
+			DTDAttListDeclaration existing = this [name];
+			if (existing != null) {
+				// It should be valid and 
+				// has effect of additive declaration.
+//				throw new InvalidOperationException (String.Format (
+//					"AttList declaration for {0} was already added.",
+//					name));
+				foreach (DTDAttributeDefinition def in decl.Definitions)
+					if (decl.Get (def.Name) == null)
+						existing.Add (def);
+			} else {
+				decl.SetRoot (root);
+				attListDecls.Add (name, decl);
+			}
 		}
 
 		public ICollection Keys {

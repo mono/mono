@@ -1,10 +1,12 @@
 //
 // System.Xml.XmlAttribute
 //
-// Author:
+// Authors:
 //   Jason Diamond (jason@injektilo.org)
+//   Atsushi Enomoto (ginga@kit.hi-ho.ne.jp)
 //
 // (C) 2002 Jason Diamond  http://injektilo.org/
+// (C) 2003 Atsushi Enomoto
 //
 
 using System;
@@ -221,10 +223,8 @@ namespace System.Xml
 			XmlNode node = new XmlAttribute (prefix, localName, namespaceURI,
 							 OwnerDocument);
 			if (deep) {
-				while ((node != null) && (node.HasChildNodes)) {
-					AppendChild (node.NextSibling.CloneNode (true));
-					node = node.NextSibling;
-				}
+				foreach (XmlNode child in this.ChildNodes)
+					node.AppendChild (child.CloneNode (deep));
 			}
 
 			return node;
