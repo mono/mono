@@ -202,5 +202,29 @@ namespace MonoTests.System.Threading
 			rwlock.ReleaseReaderLock ();
 			Assert ("u6", !rwlock.IsReaderLockHeld);
 		}
+		
+		[Test]
+		public void TestReaderInsideWriter ()
+		{
+			// Reader acquires and releases work like the writer equivalent
+			
+			rwlock = new ReaderWriterLock ();
+			rwlock.AcquireWriterLock (-1);
+			rwlock.AcquireReaderLock (-1);
+			Assert ("u1", !rwlock.IsReaderLockHeld);
+			Assert ("u2", rwlock.IsWriterLockHeld);
+			rwlock.AcquireReaderLock (-1);
+			Assert ("u3", !rwlock.IsReaderLockHeld);
+			Assert ("u4", rwlock.IsWriterLockHeld);
+			rwlock.ReleaseWriterLock ();
+			Assert ("u5", !rwlock.IsReaderLockHeld);
+			Assert ("u6", rwlock.IsWriterLockHeld);
+			rwlock.ReleaseReaderLock ();
+			Assert ("u7", !rwlock.IsReaderLockHeld);
+			Assert ("u8", rwlock.IsWriterLockHeld);
+			rwlock.ReleaseReaderLock ();
+			Assert ("u9", !rwlock.IsReaderLockHeld);
+			Assert ("u10", !rwlock.IsWriterLockHeld);
+		}
 	}
 }
