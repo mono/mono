@@ -25,6 +25,7 @@ using System.Text;
 using System.Xml;
 
 namespace System.Data.SqlClient {
+	[DesignerAttribute ("Microsoft.VSDesigner.Data.VS.SqlCommandDesigner, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.ComponentModel.Design.IDesigner")]
 	public sealed class SqlCommand : Component, IDbCommand, ICloneable
 	{
 		#region Fields
@@ -86,6 +87,7 @@ namespace System.Data.SqlClient {
 		[DataCategory ("Data")]
 		[DataSysDescription ("Command text to execute.")]
 		[DefaultValue ("")]
+		[EditorAttribute ("Microsoft.VSDesigner.Data.SQL.Design.SqlCommandTextEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing )]
 		[RefreshProperties (RefreshProperties.All)]
 		public string CommandText {
 			get { return commandText; }
@@ -123,7 +125,7 @@ namespace System.Data.SqlClient {
 		[DataCategory ("Behavior")]
 		[DefaultValue (null)]
 		[DataSysDescription ("Connection used by the command.")]
-		public SqlConnection Connection {
+		[EditorAttribute ("Microsoft.VSDesigner.Data.Design.DbConnectionEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing )]		public SqlConnection Connection {
 			get { return connection; }
 			set { 
 				if (transaction != null && connection.Transaction != null && connection.Transaction.IsOpen)
