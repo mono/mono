@@ -1,4 +1,9 @@
 
+Tue Aug 3 16:40:17 CEST 2004 Paolo Molaro <lupus@ximian.com>
+
+	* gc.c, object.h: mono_gc_handle_*() interface and
+	AddrOfPinnedObject fixes. GC handle support even without GC.
+
 Fri Jul 30 16:49:05 CEST 2004 Paolo Molaro <lupus@ximian.com>
 
 	* object.c: always create an object if null is passed
