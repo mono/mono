@@ -378,6 +378,18 @@ namespace Mono.CSharp {
 
 				Attribute.ApplyAttributes (ec, ab, ab, global_attributes,
 							   global_attributes.Location);
+			} 
+
+			if (Unsafe) {
+				ConstructorInfo ci = TypeManager.unverifiable_code_type.GetConstructor (new Type [0]);
+					
+				if (ci == null) {
+					Console.WriteLine ("Internal error !");
+					return;
+				}
+				
+				CustomAttributeBuilder cb = new CustomAttributeBuilder (ci, new object [0]);
+				mb.SetCustomAttribute (cb);
 			}
 		}
 		

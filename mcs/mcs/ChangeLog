@@ -1,7 +1,22 @@
 2002-02-20  Ravi Pratap  <ravi@ximian.com>
 
 	* expression.cs (Binary.ResolveOperator): Ensure that we are
-	not trying to operate on a void type - this fixes Dan's bug.
+	not trying to operate on a void type - this fixes the reported
+	bug.
+
+	* decl.cs (CheckMethodAgainstBase): Do not allow overriding if
+	the parent implementation is sealed.
+
+	* ../errors/cs0239.cs : Add.
+
+	* attribute.cs (ApplyAttributes): Handle Modulebuilders too.
+
+	* typemanager.cs (unverifiable_code_type): Corresponds to 
+	System.Security.UnverifiableCodeAttribute. We need to emit this for modules
+	which have unsafe code in them.
+
+	* rootcontext.cs (EmitCode): Emit the above attribute when we are in an 
+	unsafe context.
 
 2002-02-19  Miguel de Icaza  <miguel@ximian.com>
 

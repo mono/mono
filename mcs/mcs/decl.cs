@@ -72,9 +72,18 @@ namespace Mono.CSharp {
 				if (!(mb.IsAbstract || mb.IsVirtual)){
 					Report.Error (
 						506, Location, parent.MakeName (Name) +
-						": cannot override inherited member `" +
-						mb.ReflectedType.Name + "' because it is not " +
+						": cannot override inherited member " +
+						MethodBaseName (mb) + " because it is not " +
 						"virtual, abstract or override");
+					ok = false;
+				}
+				
+				// Now we check that the overriden method is not final
+				
+				if (mb.IsFinal) {
+					Report.Error (239, Location, parent.MakeName (Name) + " : cannot " +
+						      "override inherited member " + MethodBaseName (mb) +
+						      " because it is sealed.");
 					ok = false;
 				}
 			}

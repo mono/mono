@@ -476,6 +476,8 @@ namespace Mono.CSharp {
 						
 					} else if (kind is AssemblyBuilder){
 						((AssemblyBuilder) builder).SetCustomAttribute (cb);
+					} else if (kind is ModuleBuilder) {
+						((ModuleBuilder) builder).SetCustomAttribute (cb);
 					} else
 						throw new Exception ("Unknown kind: " + kind);
 				}
