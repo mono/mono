@@ -1,4 +1,12 @@
 2004-08-31 Sanjay Gupta <gsanjay@novell.com>
+	
+	* ControlSkinProc.cs:
+	* DataSourceViewOperationCallback.cs:
+	* DataSourceViewSelectCallback.cs:
+	* ExtractTemplateValuesMethod.cs: Explicit modifier "sealed" not 
+	required in definition as delegates by default are sealed.
+	
+2004-08-31 Sanjay Gupta <gsanjay@novell.com>
 
 	* IDReferencePropertyAttribute.cs: Corrected and changed from interface
           to class.

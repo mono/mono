@@ -30,11 +30,11 @@
 
 #if NET_2_0
 using System;
-using System.Collection.Specialized;
+using System.Collections.Specialized;
 
 namespace System.Web.UI
 {
-        public sealed delegate IOrderedDicitionary ExtractTemplateValuesMethod (Control control);
+        public delegate IOrderedDictionary ExtractTemplateValuesMethod (Control control);
 }
 
 #endif

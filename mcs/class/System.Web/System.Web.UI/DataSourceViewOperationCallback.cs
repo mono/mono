@@ -33,7 +33,7 @@ using System;
 
 namespace System.Web.UI
 {
-        public sealed delegate bool DataSourceViewOperationCallback (int recordsAffected, Exception exception);
+        public delegate bool DataSourceViewOperationCallback (int recordsAffected, Exception exception);
 }
 
 #endif

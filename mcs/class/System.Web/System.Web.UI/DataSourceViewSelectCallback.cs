@@ -30,11 +30,11 @@
 
 #if NET_2_0
 using System;
-using System.Collection;
+using System.Collections;
 
 namespace System.Web.UI
 {
-        public sealed delegate bool DataSourceViewSelectCallback (IEnumerable data);
+        public delegate bool DataSourceViewSelectCallback (IEnumerable data);
 }
 
 #endif

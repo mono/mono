@@ -35,7 +35,7 @@ using System.Web;
 
 namespace System.Web.UI
 {
-        public sealed delegate Control ControlSkinProc (Control control);
+        public delegate Control ControlSkinProc (Control control);
 }
 
 #endif
