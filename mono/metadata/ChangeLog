@@ -1,3 +1,9 @@
+2004-03-25  Martin Baulig  <martin@ximian.com>
+
+	* class.h (MonoStats): Added `generic_instance_count',
+	`inflated_method_count', `inflated_type_count' and
+	`generics_metadata_size'.	
+
 2004-03-25  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* reflection.c: no warnings now.
