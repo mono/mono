@@ -3,7 +3,7 @@ topdir = ../..
 LIBRARY = $(topdir)/class/lib/Mono.Data.DB2Client.dll
 
 LIB_LIST = list
-LIB_FLAGS = -r corlib -r System -r System.Xml -r System.Data
+LIB_FLAGS = --unsafe -r corlib -r System -r System.Xml -r System.Data
 
 SOURCES_INCLUDE=*.cs
 
