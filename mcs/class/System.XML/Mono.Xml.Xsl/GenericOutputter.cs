@@ -75,7 +75,7 @@ namespace Mono.Xml.Xsl
 		//Determines whether xsl:copy can output attribute-sets or not.
 		bool _canProcessAttributes;
 		bool _insideCData;
-		bool _isVariable;
+//		bool _isVariable;
 		bool _omitXmlDeclaration;
 		int _xpCount;
 
@@ -102,7 +102,7 @@ namespace Mono.Xml.Xsl
 		{
 			_emitter = new XmlWriterEmitter (writer);
 			_state = writer.WriteState;
-			_isVariable = isVariable;
+//			_isVariable = isVariable;
 			_omitXmlDeclaration = true; // .Net never writes XML declaration via XmlWriter
 		}
 

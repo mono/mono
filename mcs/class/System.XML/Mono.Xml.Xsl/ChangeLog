@@ -1,3 +1,7 @@
+2005-03-22  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* GenericOutputter.cs : commented out warned fields.
+
 2005-03-15  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XslKey.cs : removed last ListIterator.ctor() argument.
