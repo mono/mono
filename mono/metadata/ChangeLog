@@ -1,4 +1,10 @@
 
+Fri Jun 7 17:00:04 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* cil-coff.h, icall.c, image.c, reflection.c, reflection.h:
+	rewrote the PE/COFF writing code (our programs are understood by the
+	ms runtime, now).
+
 Tue Jun 4 18:10:47 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* gc.c, gc.h, icall.c: weakreference support.
