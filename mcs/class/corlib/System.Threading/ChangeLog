@@ -1,3 +1,26 @@
+2001-09-21  Dick Porter  <dick@ximian.com>
+
+	* Thread.cs: Implement Thread(ThreadStart) constructor and Start()
+	with an internal call
+
+	* WaitHandle.cs: Close calls Dispose(false)
+
+2001-09-13  Dick Porter  <dick@ximian.com>
+
+	* ApartmentState.cs (Threading): Set the correct enum values
+
+2001-09-13  Dick Porter  <dick@ximian.com>
+
+	* ApartmentState.cs, AutoResetEvent.cs, IOCompletionCallback.cs,
+	Interlocked.cs, LockCookie.cs, ManualResetEvent.cs, Monitor.cs,
+	Mutex.cs, NativeOverlapped.cs, Overlapped.cs, ReaderWriterLock.cs,
+	RegisteredWaitHandle.cs, SynchronizationLockException.cs,
+	Thread.cs, ThreadAbortException.cs, ThreadInterruptedException.cs,
+	ThreadPool.cs, ThreadStart.cs, ThreadStateException.cs,
+	Timeout.cs, Timer.cs, TimerCallback.cs, WaitCallback.cs,
+	WaitHandle.cs, WaitOrTimerCallback.cs: System.Threading class
+	stubs.
+	
 2001-07-18  Michael Lambert <michaellambert@email.com>
 
 	* ThreadPriority.cs, ThreadState.cs: Add.

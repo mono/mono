@@ -10,6 +10,7 @@
 using System.Runtime.Remoting.Contexts;
 using System.Security.Principal;
 using System.Globalization;
+using System.Runtime.CompilerServices;
 
 namespace System.Threading
 {
@@ -17,14 +18,18 @@ namespace System.Threading
 	{
 		public static Context CurrentContext {
 			get {
-				// FIXME
+				// FIXME -
+				// System.Runtime.Remoting.Context not
+				// yet implemented
 				return(null);
 			}
 		}
 
 		public static IPrincipal CurrentPrincipal {
 			get {
-				// FIXME
+				// FIXME -
+				// System.Security.Principal.IPrincipal
+				// not yet implemented
 				return(null);
 			}
 			
@@ -96,11 +101,18 @@ namespace System.Threading
 			// FIXME
 		}
 
+		private ThreadStart start_delegate=null;
+		
 		public Thread(ThreadStart start) {
 			if(start==null) {
 				throw new ArgumentNullException("Null ThreadStart");
 			}
-			// FIXME
+
+			// Nothing actually happens here, the fun
+			// begins when Thread.Start() is called.  For
+			// now, just record what the ThreadStart
+			// delegate is.
+			start_delegate=start;
 		}
 
 		public ApartmentState ApartmentState {
@@ -213,8 +225,18 @@ namespace System.Threading
 		public void Resume() {
 			// FIXME
 		}
+		
+		// stores a pthread_t, which is defined as unsigned long
+		// on my system.  I _think_ windows uses "unsigned int" for
+		// its thread handles, so that _should_ work too.
+		private UInt32 system_thread_handle;
 
+		// Returns the system thread handle
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		private extern UInt32 Start_internal(ThreadStart start);
+		
 		public void Start() {
+			system_thread_handle=Start_internal(start_delegate);
 			// FIXME
 		}
 

@@ -12,15 +12,16 @@ namespace System.Threading
 {
 	public class ThreadExceptionEventArgs : EventArgs
 	{
+		private Exception exception;
+		
 		public ThreadExceptionEventArgs(Exception t) {
-			// blah
+			exception=t;
 		}
 
 		public Exception Exception {
 			get {
-				return new Exception();
+				return(exception);
 			}
 		}
-		
 	}
 }

@@ -17,12 +17,16 @@ namespace System.Threading
 			return(false);
 		}
 
-		public static bool WaitAll(WaitHandle[] waitHandles, int millisecondsTimeout, bool exitContext) {
+		public static bool WaitAll(WaitHandle[] waitHandles,
+					   int millisecondsTimeout,
+					   bool exitContext) {
 			// FIXME
 			return(false);
 		}
 
-		public static bool WaitAll(WaitHandle[] waitHandles, TimeSpan timeout, bool exitContext) {
+		public static bool WaitAll(WaitHandle[] waitHandles,
+					   TimeSpan timeout,
+					   bool exitContext) {
 			// FIXME
 			return(false);
 		}
@@ -32,13 +36,17 @@ namespace System.Threading
 			return(0);
 		}
 
-		public static int WaitAny(WaitHandle[] waitHandles, int millisecondsTimeout, bool exitContext) {
+		public static int WaitAny(WaitHandle[] waitHandles,
+					  int millisecondsTimeout,
+					  bool exitContext) {
 			// FIXME
 			return(0);
 		}
 
-		public static int WaitAny(WaitHandle[] waitHandles, TimeSpan timeout, bool exitContext) {
-			if(timeout.Milliseconds < 0 || timeout.Milliseconds > Int32.MaxValue) {
+		public static int WaitAny(WaitHandle[] waitHandles,
+					  TimeSpan timeout, bool exitContext) {
+			if(timeout.Milliseconds < 0 ||
+			   timeout.Milliseconds > Int32.MaxValue) {
 				throw new ArgumentOutOfRangeException("Timeout out of range");
 			}
 			// FIXME
@@ -61,7 +69,7 @@ namespace System.Threading
 		}
 
 		public virtual void Close() {
-			// FIXME
+			Dispose(false);
 		}
 
 		protected static readonly IntPtr InvalidHandle;

@@ -1,3 +1,10 @@
+2001-09-13  Dick Porter  <dick@ximian.com>
+
+	* Type.cs: Added a stub for the IsValueType property.
+
+	* SystemException.cs (System): Added the other constructor, so
+	that System.Threading exceptions can inherit it.
+
 2001-09-08  Jeffrey Stedfast  <fejj@ximian.com>
 
 	* String.cs (TrimStart): Don't keep looping through the trimchars
