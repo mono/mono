@@ -513,6 +513,23 @@ namespace MonoTests.System
 			Assertion.AssertEquals ("#1", "dummy://xxx/", uri.ToString ());
 		}
 
+		[Test]
+		public void CheckSchemeName ()
+		{
+			Assertion.AssertEquals ("#01", false, Uri.CheckSchemeName (null));
+			Assertion.AssertEquals ("#02", false, Uri.CheckSchemeName (""));
+			Assertion.AssertEquals ("#03", true, Uri.CheckSchemeName ("http"));
+			Assertion.AssertEquals ("#04", true, Uri.CheckSchemeName ("http-"));
+			Assertion.AssertEquals ("#05", false, Uri.CheckSchemeName ("6http-"));
+			Assertion.AssertEquals ("#06", true, Uri.CheckSchemeName ("http6-"));
+			Assertion.AssertEquals ("#07", false, Uri.CheckSchemeName ("http6,"));
+			Assertion.AssertEquals ("#08", true, Uri.CheckSchemeName ("http6."));
+			Assertion.AssertEquals ("#09", false, Uri.CheckSchemeName ("+http"));
+			Assertion.AssertEquals ("#10", true, Uri.CheckSchemeName ("htt+p6"));
+			// 0x00E1 -> &atilde;
+			Assertion.AssertEquals ("#11", true, Uri.CheckSchemeName ("htt\u00E1+p6"));
+		}
+
 		public static void Print (Uri uri)
 		{
 			Console.WriteLine ("ToString: " + uri.ToString ());	

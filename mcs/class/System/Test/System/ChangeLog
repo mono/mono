@@ -1,3 +1,7 @@
+2003-03-19  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* UriTest.cs: added CheckSchemaName tests.
+
 2002-09-17  Nick Drochak  <ndrochak@gol.com>
 
 	* UriTest.cs: Fixed some path separator issues for the tests running on
