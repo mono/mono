@@ -1,3 +1,10 @@
+2004-10-18    <vargaz@freemail.hu>
+
+	* exceptions-amd64.c (mono_arch_find_jit_info): Pop arguments of the stack.
+
+	* mini-amd64.c (mono_amd64_get_vcall_slot_addr): Handle extended registers. Fixes
+	#68447.
+
 2004-10-15  Geoff Norton  <gnorton@customerdna.com>
 
 	* mini-ppc.c (calculate_sizes): Marshal valuetypes for pinvoke
