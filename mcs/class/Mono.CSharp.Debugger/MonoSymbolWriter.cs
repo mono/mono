@@ -158,7 +158,7 @@ namespace Mono.CSharp.Debugger
 
 			public override string ToString ()
 			{
-				return "SourceLine (" + _offset + "," + _row + ":" + _column + ")";
+				return "SourceLine (" + _offset + "@" + _row + ":" + _column + ")";
 			}
 
 			internal SourceOffsetType _type;
@@ -690,3 +690,4 @@ namespace Mono.CSharp.Debugger
 		}
 	}
 }
+

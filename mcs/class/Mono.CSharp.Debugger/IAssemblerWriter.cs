@@ -19,8 +19,6 @@ namespace Mono.CSharp.Debugger
 	{
 		int GetNextLabelIndex ();
 
-		string GetLabelName (int index);
-
 		void WriteLabel (int index);
 
 		void WriteLabel (string label);
@@ -32,6 +30,8 @@ namespace Mono.CSharp.Debugger
 		void WriteUInt8 (int value);
 
 		void WriteInt8 (int value);
+
+		void Write2Bytes (int a, int b);
 
 		void WriteUInt16 (int value);
 
@@ -53,9 +53,11 @@ namespace Mono.CSharp.Debugger
 
 		void WriteSectionEnd ();
 
-		void WriteRelativeOffset (string start_label, string end_label);
+		void WriteRelativeOffset (int start_label, int end_label);
 
-		void WriteShortRelativeOffset (string start_label, string end_label);
+		void WriteShortRelativeOffset (int start_label, int end_label);
+
+		void WriteAbsoluteOffset (int index);
 
 		void WriteAbsoluteOffset (string label);
 
