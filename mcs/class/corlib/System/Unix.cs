@@ -16,7 +16,13 @@ using System.Runtime.InteropServices;
 namespace System
 {
 	public sealed class PlatformSpecific
-	{	
+	{
+		public static readonly char AltDirectorySeparatorChar = '\\'; // TODO: verify this
+		public static readonly char DirectorySeparatorChar = '/';
+		public static readonly char[] InvalidPathChars = { '/' };	// TODO: Research this further
+		public static readonly char PathSeparator = ';';	// might be a space for unix/linux
+		public static readonly char VolumeSeparatorChar = '/';
+			
  		/// <summary>
 		/// Gets the standard new line value
 		/// </summary>
