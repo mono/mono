@@ -1,3 +1,13 @@
+2004-05-07  Marek Safar  <marek.safar@seznam.cz>
+
+	* decl.cs:
+	(MemberCore.Flags): Extended for caching presence of CLSCompliantAttribute.
+	(MemberCore.VerifyClsCompliance): Implemented CS3019 error report.
+	(DeclSpace.GetClsCompliantAttributeValue): Returns simple bool.
+
+	* report.cs: (Report.Warning): Renamed to Warning_T because of
+	parameter collision.
+
 2004-05-05  Raja R Harinath  <rharinath@novell.com>
 
 	* expression.cs (MemberAccess.ResolveMemberAccess):

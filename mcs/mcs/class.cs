@@ -3408,7 +3408,7 @@ namespace Mono.CSharp {
 
 		protected override bool VerifyClsCompliance (DeclSpace ds)
 		{
-			if (!base.VerifyClsCompliance (ds)) {
+			if (!base.VerifyClsCompliance (ds) || !IsExposedFromAssembly (ds)) {
 				return false;
 			}
 			
@@ -4360,7 +4360,7 @@ namespace Mono.CSharp {
 				return true;
 			}
 
-			if (IsInterface && HasClsCompliantAttribute (ds) && ds.IsClsCompliaceRequired (ds)) {
+			if (IsInterface && HasClsCompliantAttribute && ds.IsClsCompliaceRequired (ds)) {
 				Report.Error_T (3010, Location, GetSignatureForError ());
 			}
 			return false;

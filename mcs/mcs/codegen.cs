@@ -1011,7 +1011,7 @@ namespace Mono.CSharp {
 
 			Attribute a = GetClsCompliantAttribute ();
 			if (a != null) {
-				Report.Warning (3012, a.Location);
+				Report.Warning_T (3012, a.Location);
 			}
 
 			if (!m_module_is_unsafe)

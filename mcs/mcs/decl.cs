@@ -39,11 +39,14 @@ namespace Mono.CSharp {
 
 		[Flags]
 		public enum Flags {
-			Obsolete_Undetected = 1,		// Obsolete attribute has not beed detected yet
+			Obsolete_Undetected = 1,		// Obsolete attribute has not been detected yet
 			Obsolete = 1 << 1,			// Type has obsolete attribute
 			ClsCompliance_Undetected = 1 << 2,	// CLS Compliance has not been detected yet
 			ClsCompliant = 1 << 3,			// Type is CLS Compliant
-			CloseTypeCreated = 1 << 4		// Tracks whether we have Closed the type
+			CloseTypeCreated = 1 << 4,		// Tracks whether we have Closed the type
+			HasCompliantAttribute_Undetected = 1 << 5,	// Presence of CLSCompliantAttribute has not been detected
+			HasClsCompliantAttribute = 1 << 6,			// Type has CLSCompliantAttribute
+			ClsCompliantAttributeTrue = 1 << 7,			// Type has CLSCompliant (true)
 		}
 
 		/// <summary>
@@ -56,7 +59,7 @@ namespace Mono.CSharp {
 		{
 			Name = name;
 			Location = loc;
-			caching_flags = Flags.Obsolete_Undetected | Flags.ClsCompliance_Undetected;
+			caching_flags = Flags.Obsolete_Undetected | Flags.ClsCompliance_Undetected | Flags.HasCompliantAttribute_Undetected;
 		}
 
 		public abstract bool Define (TypeContainer parent);
@@ -106,20 +109,20 @@ namespace Mono.CSharp {
 			if ((caching_flags & Flags.ClsCompliance_Undetected) == 0)
 				return (caching_flags & Flags.ClsCompliant) != 0;
 
-			if (!IsExposedFromAssembly (container) || !GetClsCompliantAttributeValue (container)) {
+			if (GetClsCompliantAttributeValue (container) && IsExposedFromAssembly (container)) {
 				caching_flags &= ~Flags.ClsCompliance_Undetected;
-				return false;
+				caching_flags |= Flags.ClsCompliant;
+				return true;
 			}
 
 			caching_flags &= ~Flags.ClsCompliance_Undetected;
-			caching_flags |= Flags.ClsCompliant;
-			return true;
+			return false;
 		}
 
 		/// <summary>
 		/// Returns true when MemberCore is exposed from assembly.
 		/// </summary>
-		protected virtual bool IsExposedFromAssembly (DeclSpace ds)
+		protected bool IsExposedFromAssembly (DeclSpace ds)
 		{
 			if ((ModFlags & (Modifiers.PUBLIC | Modifiers.PROTECTED)) == 0)
 				return false;
@@ -141,22 +144,20 @@ namespace Mono.CSharp {
 			if (OptAttributes != null) {
 				Attribute cls_attribute = OptAttributes.GetClsCompliantAttribute (ds);
 				if (cls_attribute != null) {
+					caching_flags |= Flags.HasClsCompliantAttribute;
 					return cls_attribute.GetClsCompliantAttributeValue (ds);
 				}
 			}
-
-			return (ds.GetClsCompliantAttributeValue () & Flags.ClsCompliant) != 0;
+			return ds.GetClsCompliantAttributeValue ();
 		}
 
 		/// <summary>
 		/// Returns true if MemberCore is explicitly marked with CLSCompliantAttribute
 		/// </summary>
-		protected bool HasClsCompliantAttribute (DeclSpace ds)
-		{
-			if (OptAttributes == null)
-				return false;
-
-			return OptAttributes.GetClsCompliantAttribute (ds) != null;
+		protected bool HasClsCompliantAttribute {
+			get {
+				return (caching_flags & Flags.HasClsCompliantAttribute) != 0;
+			}
 		}
 
 		/// <summary>
@@ -235,11 +236,14 @@ namespace Mono.CSharp {
 		protected virtual bool VerifyClsCompliance (DeclSpace ds)
 		{
 			if (!IsClsCompliaceRequired (ds)) {
+				if (HasClsCompliantAttribute && !IsExposedFromAssembly (ds)) {
+					Report.Warning_T (3019, Location, GetSignatureForError ());
+				}
 				return false;
 			}
 
 			if (!CodeGen.Assembly.IsClsCompliant) {
-				if (HasClsCompliantAttribute (ds)) {
+				if (HasClsCompliantAttribute) {
 					Report.Error_T (3014, Location, GetSignatureForError ());
 				}
 			}
@@ -948,31 +952,38 @@ namespace Mono.CSharp {
 		/// Goes through class hierarchy and get value of first CLSCompliantAttribute that found.
 		/// If no is attribute exists then return assembly CLSCompliantAttribute.
 		/// </summary>
-		public Flags GetClsCompliantAttributeValue ()
+		public bool GetClsCompliantAttributeValue ()
 		{
-			if ((caching_flags & Flags.ClsCompliance_Undetected) == 0)
-				return caching_flags;
+			if ((caching_flags & Flags.HasCompliantAttribute_Undetected) == 0)
+				return (caching_flags & Flags.ClsCompliantAttributeTrue) != 0;
 
-			caching_flags &= ~Flags.ClsCompliance_Undetected;
+			caching_flags &= ~Flags.HasCompliantAttribute_Undetected;
 
 			if (OptAttributes != null) {
 				Attribute cls_attribute = OptAttributes.GetClsCompliantAttribute (this);
 				if (cls_attribute != null) {
+					caching_flags |= Flags.HasClsCompliantAttribute;
 					if (cls_attribute.GetClsCompliantAttributeValue (this)) {
-						caching_flags |= Flags.ClsCompliant;
+						caching_flags |= Flags.ClsCompliantAttributeTrue;
+						return true;
 					}
-					return caching_flags;
+					return false;
 				}
 			}
 
 			if (parent == null) {
-				if (CodeGen.Assembly.IsClsCompliant)
-					caching_flags |= Flags.ClsCompliant;
-				return caching_flags;
+				if (CodeGen.Assembly.IsClsCompliant) {
+					caching_flags |= Flags.ClsCompliantAttributeTrue;
+					return true;
+				}
+				return false;
 			}
 
-			caching_flags |= (parent.GetClsCompliantAttributeValue () & Flags.ClsCompliant);
-			return caching_flags;
+			if (parent.GetClsCompliantAttributeValue ()) {
+				caching_flags |= Flags.ClsCompliantAttributeTrue;
+				return true;
+			}
+			return false;
 		}
 
 
