@@ -23,42 +23,26 @@ namespace System.Web.UI.WebControls
 	[ParseChildrenAttribute(true)]
 	public class WebControl : Control, IAttributeAccessor
 	{
-		//TODO: A list of private members may be incomplete
-
-		private HtmlTextWriterTag   tagKey;
-		private string              stringTag;
-		private AttributeCollection attributes;
-		private StateBag            attributeState;
-		private Style               controlStyle;
-		private bool                enabled;
-		private string              tagName;
+		HtmlTextWriterTag tagKey;
+		AttributeCollection attributes;
+		StateBag attributeState;
+		Style controlStyle;
+		bool enabled = true;
+		string tagName;
 
 		// TODO: The constructors definitions
 		protected WebControl () : this (HtmlTextWriterTag.Span)
 		{
 		}
 
-		public WebControl(HtmlTextWriterTag tag): base()
+		public WebControl (HtmlTextWriterTag tag)
 		{
-			//FIXME: am i right?
 			tagKey = tag;
-			//stringTag = null;
-			Initialize();
 		}
 
-		protected WebControl(string tag): base()
+		protected WebControl (string tag)
 		{
-			//FIXME: am i right?
-			stringTag = tag;
-			Initialize();
-		}
-
-		private void Initialize()
-		{
-			controlStyle   = null;
-			enabled        = true;
-			tagName        = stringTag;
-			attributeState = null;
+			tagName = tag;
 		}
 
 		[DefaultValue (""), Bindable (true), WebCategory ("Behavior")]
@@ -211,14 +195,12 @@ namespace System.Web.UI.WebControls
 
 		[DefaultValue (true), Bindable (true), WebCategory ("Behavior")]
 		[WebSysDescription ("The activation state of this WebControl.")]
-		public virtual bool Enabled
-		{
-			get
-			{
-				return enabled;
-			}
-			set
-			{
+		public virtual bool Enabled {
+			get { return enabled; }
+			set {
+				if (enabled != value)
+					ViewState ["Enabled"] = value;
+
 				enabled = value;
 			}
 		}
@@ -420,9 +402,9 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		protected virtual Style CreateControlStyle()
+		protected virtual Style CreateControlStyle ()
 		{
-			return new Style(ViewState);
+			return new Style (ViewState);
 		}
 
 		protected override void LoadViewState (object savedState)
@@ -438,18 +420,22 @@ namespace System.Web.UI.WebControls
 
 			if (attributeState != null)
 				attributeState.LoadViewState (saved.Third);
+
+			object e = ViewState ["Enabled"];
+			if (e != null)
+				enabled = (bool) e;
 		}
 
 		protected override void Render(HtmlTextWriter writer)
 		{
-			RenderBeginTag(writer);
-			RenderContents(writer);
-			RenderEndTag(writer);
+			RenderBeginTag (writer);
+			RenderContents (writer);
+			RenderEndTag (writer);
 		}
 
 		protected virtual void RenderContents(HtmlTextWriter writer)
 		{
-			base.Render(writer);
+			base.Render (writer);
 		}
 
 		protected override object SaveViewState()
@@ -488,3 +474,4 @@ namespace System.Web.UI.WebControls
 		}
 	}
 }
+
