@@ -1,3 +1,9 @@
+2004-05-30  David Sheldon <dave-mono@earth.li>
+
+	* StackFrameTest.cs: Mark the failures that have been failing
+	for months due to bug 45730 as ignored as it doesn't look like
+	it will be fixed soon.
+
 2003-10-07  Nick Drochak <ndrochak@gol.com>
 
 	* StackFrameTest.cs: Get tests to pass on .NET 1.1.

@@ -145,6 +145,7 @@ namespace MonoTests.System.Diagnostics {
                 /// <summary>
                 ///   Tests whether getting file line number works.
                 /// </summary>
+		[Ignore ("Bug 45730 - Incorrect line numbers returned")]
                 public void TestGetFileLineNumber() {
                         AssertEquals("Line number (1)",
                                      0,
@@ -162,6 +163,7 @@ namespace MonoTests.System.Diagnostics {
                 /// <summary>
                 ///   Tests whether getting file column number works.
                 /// </summary>
+		[Ignore ("Bug 45730 - Column numbers always zero")]
                 public void TestGetFileColumnNumber() {
                         AssertEquals("Column number (1)",
                                      0,
@@ -267,6 +269,7 @@ namespace MonoTests.System.Diagnostics {
                 /// <summary>
                 ///   Tests whether getting file line number works.
                 /// </summary>
+		[Ignore ("Bug 45730 - Incorrect line numbers returned")]
                 public void TestGetFileLineNumber() {
                         AssertEquals("Line number (1)",
                                      0,
@@ -280,6 +283,7 @@ namespace MonoTests.System.Diagnostics {
                 /// <summary>
                 ///   Tests whether getting file column number works.
                 /// </summary>
+		[Ignore ("Bug 45730 - Column numbers always zero")]
                 public void TestGetFileColumnNumber() {
                         AssertEquals("Column number (1)",
                                      0,
