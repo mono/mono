@@ -285,7 +285,14 @@ public class RSAPKCS1SignatureDeformatterTest : TestCase {
 
 		// bad signature
 		md5Signature [0] = (byte) ~md5Signature [0];
-		Assert ("VerifySignature(MD5, badSign)", !fmt.VerifySignature (hash, md5Signature));
+		try {
+		    fmt.VerifySignature (hash, md5Signature);
+		    Fail ("Should have thrown at VerifySignature(MD5, badSign)");
+		} catch (CryptographicException) {
+			// do nothing, this is what we expect
+		} catch (Exception e) {
+			Fail ("Unexpected exception thrown at VerifySignature(MD5, badSign). e=" + e);
+		}
 
 		// wrong signature length
 		md5Signature = new byte [md5Signature.Length-1];

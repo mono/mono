@@ -1,3 +1,8 @@
+2002-11-18  Nick Drochak  <ndrochak@gol.com>
+
+	* RSAPKCS1SignatureDeformatterTest.cs: MS .NET throws an exception when
+	verifying a bad signature.  Test for that.
+
 2002-11-17  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* AllTests.cs: Added a common RSA keypair for tests and all RSA 
