@@ -60,7 +60,7 @@ namespace Mono.CSharp {
 			return parameter_type != null;
 		}
 
-		public Type ExternalType (DeclSpace ds, Location l)
+		public Type ExternalType ()
 		{
 			if ((ModFlags & Parameter.Modifier.ISBYREF) != 0)
 				return TypeManager.GetReferenceType (parameter_type);
@@ -103,7 +103,7 @@ namespace Mono.CSharp {
 					return null;
 			}
 
-			return ExternalType (ds, loc).FullName;
+			return ExternalType ().FullName;
 		}
 	}
 
@@ -261,10 +261,10 @@ namespace Mono.CSharp {
 					Type t = null;
 					
 					if (p.Resolve (ds, loc))
-						t = p.ExternalType (ds, loc);
+						t = p.ExternalType ();
 					else
 						failed = true;
-					
+
 					types [i] = t;
 					i++;
 				}
@@ -272,7 +272,7 @@ namespace Mono.CSharp {
 			
 			if (extra > 0){
 				if (ArrayParameter.Resolve (ds, loc))
-					types [i] = ArrayParameter.ExternalType (ds, loc);
+					types [i] = ArrayParameter.ExternalType ();
 				else 
 					failed = true;
 			}
@@ -314,7 +314,7 @@ namespace Mono.CSharp {
 					Type t = null;
 					
 					if (p.Resolve (ds, loc))
-						t = p.ExternalType (ds, loc);
+						t = p.ExternalType ();
 					else
 						ok_flag = false;
 					
@@ -325,7 +325,7 @@ namespace Mono.CSharp {
 			
 			if (extra > 0){
 				if (ArrayParameter.Resolve (ds, loc))
-					types [i] = ArrayParameter.ExternalType (ds, loc);
+					types [i] = ArrayParameter.ExternalType ();
 				else
 					ok_flag = false;
 			}

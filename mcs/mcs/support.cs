@@ -162,7 +162,7 @@ namespace Mono.CSharp {
 			if (param_types == null)
 				return null;
 
-			return GetParameter (pos).ParameterType;
+			return GetParameter (pos).ExternalType ();
 		}
 
 

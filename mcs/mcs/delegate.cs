@@ -371,8 +371,9 @@ namespace Mono.CSharp {
 				if (invoke_pd.ParameterType (i) == pd.ParameterType (i) &&
 				    invoke_pd.ParameterModifier (i) == pd.ParameterModifier (i))
 					continue;
-				else
+				else {
 					return null;
+				}
 			}
 
 			if (((MethodInfo) invoke_mb).ReturnType == ((MethodInfo) mb).ReturnType)

@@ -1,4 +1,12 @@
-2003-05-11  Miguel de Icaza  <miguel@ximian.com>
+2003-05-12  Miguel de Icaza  <miguel@ximian.com>
+
+	* support.cs (InternalParameters.ParameterType): Return the
+	ExternalType of the parameter.
+
+	* parameter.cs (Parameter.ExternalType): drop the two arguments,
+	they were unused.
+
+s2003-05-11  Miguel de Icaza  <miguel@ximian.com>
 
 	* class.cs (MethodData.Define): Do not set the `newslot' on
 	interface members, if they are also flagged as "override".
