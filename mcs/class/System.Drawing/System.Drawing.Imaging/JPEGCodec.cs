@@ -707,11 +707,10 @@ namespace System.Drawing.Imaging
 				// Setup the pointers
 				//
 				unsafe {
-					fixed (void **p = &outbuf.JSAMPLE0){
-						for (int i = 0; i < rec_outbuf_height; i++){
-							p [i] = start;
-							start += stride;
-						}
+					void **p = &outbuf.JSAMPLE0;
+					for (int i = 0; i < rec_outbuf_height; i++){
+						p [i] = start;
+						start += stride;
 					}
 				}
 				

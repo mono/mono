@@ -16,7 +16,7 @@ namespace System.Drawing.Drawing2D {
 
 	public sealed class GraphicsPathIterator : MarshalByRefObject {
 
-		protected GraphicsPath path;
+		GraphicsPath path;
 		
 		// Constructors
 		public GraphicsPathIterator(GraphicsPath path) {
