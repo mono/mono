@@ -153,13 +153,15 @@ namespace Mono.Xml.Xsl {
 
 		public override System.Xml.Xsl.IXsltContextVariable ResolveVariable(string prefix, string name)
 		{
+			QName varName = new QName (name, LookupNamespace (prefix));
+			
 			if (v != null) {
-				XslGeneralVariable var = v.Resolve (p, new QName (name));
+				XslGeneralVariable var = v.Resolve (p, varName);
 	
 				if (var != null)
 					return var;
 			}
-			return p.CompiledStyle.ResolveVariable (new QName (name));
+			return p.CompiledStyle.ResolveVariable (varName);
 		}
 
 		public override int CompareDocument (string baseUri, string nextBaseUri) { throw new NotImplementedException (); }

@@ -456,7 +456,6 @@ namespace Mono.Xml.Xsl {
 					if (v.IsEvaluated (p))
 						return v;
 				}
-			
 			return null;
 		}
 	}
@@ -556,7 +555,12 @@ namespace Mono.Xml.Xsl {
 		public void AddExpression (XPathExpression e, Compiler c)
 		{
 			exprToVarCtx [e] = c.CurrentVariableScope;
-			exprToDocument [e] = c.Input.Clone ();
+			
+			XPathNavigator nsScope = c.Input.Clone ();
+			if (nsScope.NodeType == XPathNodeType.Attribute)
+				nsScope.MoveToParent ();
+			
+			exprToDocument [e] = nsScope;
 		}
 		
 		public void AddSort (XPathExpression e, Sort s)
@@ -590,7 +594,7 @@ namespace Mono.Xml.Xsl {
 		{
 			int colon = name.IndexOf (':');
 			if (colon > 0)
-				return new QName (name.Substring (colon, name.Length - colon), current.GetNamespace (name.Substring (0, colon)));
+				return new QName (name.Substring (colon+ 1), current.GetNamespace (name.Substring (0, colon)));
 			else if (colon < 0)
 				// Default namespace is not used for unprefixed names.
 				return new QName (name, "");
@@ -602,7 +606,7 @@ namespace Mono.Xml.Xsl {
 		{
 			int colon = name.IndexOf (':');
 			if (colon > 0)
-				return new QName (name.Substring (colon, name.Length - colon), ctx.LookupNamespace (name.Substring (0, colon)));
+				return new QName (name.Substring (colon + 1), ctx.LookupNamespace (name.Substring (0, colon)));
 			else if (colon < 0)
 				// Default namespace is not used for unprefixed names.
 				return new QName (name, "");

@@ -44,13 +44,14 @@ namespace Mono.Xml.Xsl {
 
 		public void Process (XPathNavigator root, Outputter outputtter, XsltArgumentList args, XmlResolver resolver)
 		{
-			foreach (XslGlobalVariable v in CompiledStyle.Variables.Values)	{
-				if (v is XslGlobalParam) {
-					object p = args.GetParam(v.Name.Name, v.Name.Namespace);
-					if (p != null)
-						((XslGlobalParam)v).Override (this, p);
+			if (args != null)
+				foreach (XslGlobalVariable v in CompiledStyle.Variables.Values)	{
+					if (v is XslGlobalParam) {
+						object p = args.GetParam(v.Name.Name, v.Name.Namespace);
+						if (p != null)
+							((XslGlobalParam)v).Override (this, p);
+					}
 				}
-			}
 			
 			this.args = args;
 			this.root = root;
