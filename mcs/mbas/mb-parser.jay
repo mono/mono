@@ -1839,8 +1839,46 @@ iteration_statement
 	: while_statement
 	| do_statement
 	| for_statement
-	/*| foreach_statement*/
+	| foreach_statement
 	;
+
+foreach_statement
+	: FOR EACH IDENTIFIER IN 
+	  {
+		oob_stack.Push (lexer.Location);
+	  }	  
+	  expression EOL
+	  {
+		oob_stack.Push (current_block);
+
+		Block foreach_block = new Block (current_block, true);
+		LocalVariableReference v = null;
+		Location l = lexer.Location;		
+		v = new LocalVariableReference (foreach_block, (string) $3, l, null, false);
+		current_block = foreach_block;
+
+		oob_stack.Push (v);
+		oob_stack.Push (current_block);
+	  } 	  
+	  opt_statement_list
+	  NEXT opt_identifier
+	  {
+		Block foreach_block = (Block) oob_stack.Pop ();
+		LocalVariableReference v = (LocalVariableReference) oob_stack.Pop ();
+		Block prev_block = (Block) oob_stack.Pop ();
+		Location l = (Location) oob_stack.Pop ();
+
+		current_block = prev_block;
+
+		if (v != null) {
+			Foreach f = new Foreach (null, v, (Expression) $6, (Statement) $9, l);
+			foreach_block.AddStatement (f);
+		}
+
+		$$ = foreach_block;
+	  }	  
+	;
+
 
 try_statement
 	: try_catch
