@@ -1,3 +1,10 @@
+2004-04-01  Martin Baulig  <martin@ximian.com>
+
+	* mini.c (TYPE_PARAM_TO_TYPE, TYPE_PARAM_TO_CLASS): Removed.
+	(MTYPE_PARAM_TO_TYPE, MTYPE_PARAM_TO_CLASS): Removed.
+	(mono_method_to_ir): We don't need these macros anymore since
+	mono_class_get_full() already takes care of it.	
+
 2004-03-31  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* aot.c: set aot_verbose to 0, fixed format string that caused sigsegv,
