@@ -7,9 +7,11 @@
 //
 
 using System;
+using System.IO;
 using System.Runtime.Remoting;
 using System.Runtime.Remoting.Activation;
 using System.Runtime.Remoting.Contexts;
+using System.Runtime.Serialization;
 
 namespace System.Runtime.Remoting.Proxies {
 
