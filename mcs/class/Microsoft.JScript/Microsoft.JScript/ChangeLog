@@ -1,5 +1,30 @@
 2003-07-27  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
 
+	* jscript-lexer-parser.g: Changed the namespace to
+	Microsoft.JScript.Tmp.
+
+	* jscript-lexer-parser.g: Fixwd a typo at source_elements rule.
+
+	* jscript-lexer-parser.g: Got the name of a
+	global_function_declaration and also its return type if
+	available. 
+
+	* jscript-lexer-parser.g: Added syntatic rule for print_statement.
+	* jscript-lexer-parser.g: Initial construction of AST for
+	enum_statement and package_statement.
+
+	* jscript-lexer-parser.g: Fixed the enum_statement to accept
+	empty enum declarations.
+
+	* jscript-lexer-parser.g: Got the type of a
+	veriable_declaration.
+
+	* jscript-lexer-parser.g: Initial construction of AST for
+	primary_expression (in particular literal).
+
+
+2003-07-27  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
+
 	* driver.cs: Modified the driver structure to be compatible
 	with our new CodeGenrator and SemanticAnalizer. I
 	removed the builders from Reflection.Emit to the

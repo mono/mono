@@ -7,10 +7,9 @@
 // (C) 2003, Cesar Lopez Nataren
 //
 
-
 options {
     language = "CSharp";
-    namespace =  "Microsoft.JScript";
+    namespace =  "Microsoft.JScript.Tmp";
 }
 
 
@@ -27,7 +26,7 @@ program [ASTList astList]
 source_elements	[ASTList astList]
 { AST ast = null; }
     : 
-	ast = source_element { if (ast != null) astList. Add (ast); } (source_elements [astList] | )
+	ast = source_element { if (ast != null) astList.Add (ast); } (source_elements [astList] | )
     ;
 
 
@@ -52,10 +51,10 @@ source_element returns [AST ast]
 global_function_declaration returns [FunctionDeclaration fd]
 { fd = new FunctionDeclaration (); }
     :
-   	"function" 
-   	id:IDENTIFIER
+	"function" 
+	id:IDENTIFIER { fd.id = id.getText (); }
    	LPAREN (formal_parameter_list [fd.parameters] | ) RPAREN 
-   	(COLON IDENTIFIER | ) 
+   	(COLON rType:IDENTIFIER { fd.returnType = rType.getText (); } | ) 
    	LBRACE (function_body [fd.funcBody] | ) RBRACE
        ;
 
@@ -65,13 +64,15 @@ statement returns [Statement stm]
 { 
 	stm = null; 
 	VariableStatement varStm = null;
+	Print printStatement = null;
+	Enum enumStatement = null;
 }
     : 
 	block	    
     |
 	modifiers ( class_statement
 		  | const_statement
-		  | enum_statement
+		  | enumStatement = enum_statement
 		  | interface_statement
                   | varStm = variable_statement { stm = (Statement) varStm; }
 		  )			
@@ -106,7 +107,10 @@ statement returns [Statement stm]
     |
 	try_statement
     |
-	cc_on_statement	    
+	cc_on_statement
+    |
+	printStatement = print_statement
+	{ stm = (Statement) printStatement; }
     ;
 
 
@@ -208,7 +212,10 @@ continue_statement: "continue" (IDENTIFIER | ) SEMI_COLON ;
 break_statement: "break" (IDENTIFIER | ) SEMI_COLON ;
 
 
-package_statement: "package" IDENTIFIER LBRACE package_members RBRACE;
+package_statement returns [Package pack]
+{ pack = new Package (); }
+    : 
+	"package" IDENTIFIER LBRACE package_members RBRACE;
 
 
 package_members: (package_member)* ;
@@ -258,11 +265,19 @@ default_clause
     ;
 
 
-enum_statement: 
-	"enum" IDENTIFIER (COLON IDENTIFIER | ) 
+enum_statement returns [Enum enm]
+{ 
+    enm = new Enum (); 
+}
+    : 
+	"enum" name:IDENTIFIER { enm.Name = name.getText (); }
+	(COLON type:IDENTIFIER { enm.Type = type.getText (); } | ) 
 	LBRACE
-	(IDENTIFIER (ASSIGNMENT numeric_literal | ))
-	(COMMA IDENTIFIER (ASSIGNMENT numeric_literal | ))*
+	(enumVal:IDENTIFIER
+	 (ASSIGNMENT nl:numeric_literal | ) 
+	 (COMMA IDENTIFIER (ASSIGNMENT numeric_literal | ))* 
+	| 
+	)
 	RBRACE
 	;
 
@@ -290,6 +305,15 @@ try_statement
 
 
 cc_on_statement: CC_ON ;
+
+
+print_statement returns [Print p]
+{ 
+    p = new Print (); 
+    AST exp = null;
+}
+    :
+	"print" LPAREN (exp = primary_expression { p.Exp = exp; } | ) RPAREN ;
 
 
 // FIXME: more options left to implement
@@ -331,7 +355,7 @@ variable_declaration returns [VariableDeclaration varDecl]
 { varDecl = new VariableDeclaration (); }
     :
 	id:IDENTIFIER { varDecl.Id = id.getText (); } 
-        (COLON type:IDENTIFIER | ) (initialiser | )
+        (COLON type:IDENTIFIER { varDecl.Type = type.getText (); } | ) (initialiser | )
     ;
     
 
@@ -525,13 +549,18 @@ argument_list
 
 // Expressions, section 11, from Ecma-262 3d Edition, page 40.
 // FIXME: more options left to implement
-primary_expression
+primary_expression returns [AST pExp]
+{
+    pExp = null;
+    Literal lit;
+}
     :
-        THIS
+        "this"
     |
         IDENTIFIER
     |
-        literal
+	lit = literal
+	{ pExp = lit; }	    
     |
 	array_literal
     |
@@ -543,7 +572,11 @@ primary_expression
 
 // Literals, section 7.8 from Ecma-262 3d Edition, page 16.
 // FIXME: more options left to implement
-literal
+literal returns [Literal lit]
+{ 
+    lit = null;
+    StringLiteral strl = new StringLiteral (); 
+}
     :
 	boolean_literal
     |
@@ -551,7 +584,11 @@ literal
     |
 	null_literal
     |
-	STRING_LITERAL
+	s:STRING_LITERAL
+	{ 
+	    strl.Str = s.getText (); 
+	    lit = strl; 
+	}
     ;
 
 
