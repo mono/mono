@@ -321,6 +321,7 @@ System.Web.Util/NativeFileChangeEventHandler.cs
 System.Web.Util/UrlUtils.cs
 System.Web.Util/WebEqualComparer.cs
 System.Web.Util/WebHashCodeProvider.cs
+System.Web.Util/WebTrace.cs
 System.Web.Security/DefaultAuthenticationEventArgs.cs
 System.Web.Security/DefaultAuthenticationEventHandler.cs
 System.Web.Security/DefaultAuthenticationModule.cs
