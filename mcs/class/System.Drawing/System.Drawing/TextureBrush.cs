@@ -21,14 +21,12 @@ namespace System.Drawing
 	public sealed class TextureBrush : Brush
 	{
 		Image image;
-		Matrix matrix;
 
 		internal TextureBrush (IntPtr ptr) : base (ptr)
 		{
 			// get image from IntPtr
 			// image could be Bitmap or Metafile
 			image = Image;
-			matrix = Transform;
 		}
 
 		public TextureBrush (Image image) : this (image, WrapMode.Tile)
@@ -100,18 +98,15 @@ namespace System.Drawing
 
 		public Matrix Transform {
 			get {
-				if (matrix == null) {
-					IntPtr m;
-					Status status =	GDIPlus.GdipGetTextureTransform (nativeObject, out m);
-					GDIPlus.CheckStatus (status);
-					matrix = new Matrix (m);
-				}
+				Matrix matrix = new Matrix ();
+				Status status =	GDIPlus.GdipGetTextureTransform (nativeObject, matrix.nativeMatrix);
+				GDIPlus.CheckStatus (status);
+
 				return matrix;
 			}
 			set {
 				Status status = GDIPlus.GdipSetTextureTransform (nativeObject, value.nativeMatrix);
 				GDIPlus.CheckStatus (status);
-				matrix = value;
 			}
 		}
 

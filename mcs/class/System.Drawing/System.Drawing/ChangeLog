@@ -1,3 +1,14 @@
+2004-05-04  Ravindra <rkumar@novell.com>
+
+	* Pen.cs: Modified exception message. Fixed Transform, DashPattern,
+	and DashCap properties. Implementing CoumpoundArray, StartCap, EndCap
+	properties and SetLineCap method. In constructors use IntPtr instead
+	of int.
+	* SolidBrush.cs: Modified exception message.
+	* TextureBrush.cs: Fixed Transform property.
+	* gdipFunctions.cs: Fixed P/Invokes for Pen.cs, TextureBrush.cs and
+	LinearGradientBrush.cs.
+
 2004-04-30  Sanjay Gupta <gsanjay@novell.com>
 
 	* Image.cs: Implemented FrameDimensionsList property.

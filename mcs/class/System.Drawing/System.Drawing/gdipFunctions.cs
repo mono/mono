@@ -297,7 +297,7 @@ namespace System.Drawing {
 		[DllImport("gdiplus.dll")]
 		static internal extern Status GdipCreateTexture2 (IntPtr image, WrapMode wrapMode, float x, float y, float width, float height, out IntPtr texture);
 		[DllImport("gdiplus.dll")]
-		static internal extern Status GdipGetTextureTransform (IntPtr texture, out IntPtr matrix);
+		static internal extern Status GdipGetTextureTransform (IntPtr texture, IntPtr matrix);
 		[DllImport("gdiplus.dll")]
 		static internal extern Status GdipSetTextureTransform (IntPtr texture, IntPtr matrix);
 		[DllImport("gdiplus.dll")]
@@ -397,7 +397,7 @@ namespace System.Drawing {
 		[DllImport("gdiplus.dll")]
 		static internal extern Status GdipSetLineTransform (IntPtr brush, IntPtr matrix);
 		[DllImport("gdiplus.dll")]
-		static internal extern Status GdipGetLineTransform (IntPtr brush, out IntPtr matrix);
+		static internal extern Status GdipGetLineTransform (IntPtr brush, IntPtr matrix);
 		[DllImport("gdiplus.dll")]
 		static internal extern Status GdipSetLineWrapMode (IntPtr brush, WrapMode wrapMode);
 		[DllImport("gdiplus.dll")]
@@ -651,9 +651,9 @@ namespace System.Drawing {
 				
 		// Pen functions
 		[DllImport("gdiplus.dll")]
-		internal static extern Status GdipCreatePen1(int argb, float width, Unit unit, out int pen);
+		internal static extern Status GdipCreatePen1 (int argb, float width, Unit unit, out IntPtr pen);
 		[DllImport("gdiplus.dll")]
-		internal static extern Status GdipCreatePen2 (IntPtr brush, float width, Unit unit, out int pen);
+		internal static extern Status GdipCreatePen2 (IntPtr brush, float width, Unit unit, out IntPtr pen);
                 [DllImport("gdiplus.dll")]
                 internal static extern Status GdipClonePen (IntPtr pen, out IntPtr clonepen);
 		[DllImport("gdiplus.dll")]
@@ -666,16 +666,16 @@ namespace System.Drawing {
                 internal static extern Status GdipSetPenColor (IntPtr pen, int color);
                 [DllImport("gdiplus.dll")]                
                 internal static extern Status GdipGetPenColor (IntPtr pen, out int color);
-//                 [DllImport("gdiplus.dll")]
-//                 internal static extern Status GdipSetPenCompoundArray (IntPtr pen, IntPtr dash, int count);
-//                 [DllImport("gdiplus.dll")]
-//                 internal static extern Status GdipGetPenCompoundArray (IntPtr pen, out IntPtr dash, out int count);
-//                 [DllImport("gdiplus.dll")]
-//                 internal static extern Status GdipGetPenCompoundArrayCount (IntPtr pen, out int count);
                 [DllImport("gdiplus.dll")]
-                internal static extern Status GdipSetPenDashCap (IntPtr pen, DashCap dashCap);
+                internal static extern Status GdipSetPenCompoundArray (IntPtr pen, float[] dash, int count);
                 [DllImport("gdiplus.dll")]
-                internal static extern Status GdipGetPenDashCap (IntPtr pen, out DashCap dashCap);
+                internal static extern Status GdipGetPenCompoundArray (IntPtr pen, float[] dash, int count);
+                [DllImport("gdiplus.dll")]
+                internal static extern Status GdipGetPenCompoundCount (IntPtr pen, out int count);
+                [DllImport("gdiplus.dll")]
+                internal static extern Status GdipSetPenDashCap197819 (IntPtr pen, DashCap dashCap);
+                [DllImport("gdiplus.dll")]
+                internal static extern Status GdipGetPenDashCap197819 (IntPtr pen, out DashCap dashCap);
                 [DllImport("gdiplus.dll")]
                 internal static extern Status GdipSetPenDashStyle (IntPtr pen, DashStyle dashStyle);
                 [DllImport("gdiplus.dll")]
@@ -685,13 +685,11 @@ namespace System.Drawing {
                 [DllImport("gdiplus.dll")]
                 internal static extern Status GdipGetPenDashOffset (IntPtr pen, out float offset);
                 [DllImport("gdiplus.dll")]
-                internal static extern Status GdipSetPenDashCount (IntPtr pen, int count);
-                [DllImport("gdiplus.dll")]
                 internal static extern Status GdipGetPenDashCount (IntPtr pen, out int count);
                 [DllImport("gdiplus.dll")]
-                internal static extern Status GdipSetPenDashArray (IntPtr pen, IntPtr dash, int count);
+                internal static extern Status GdipSetPenDashArray (IntPtr pen, float[] dash, int count);
                 [DllImport("gdiplus.dll")]
-                internal static extern Status GdipGetPenDashArray (IntPtr pen, out IntPtr dash, out int count);
+                internal static extern Status GdipGetPenDashArray (IntPtr pen, float[] dash, int count);
 		[DllImport("gdiplus.dll")]
                 internal static extern Status GdipSetPenMiterLimit (IntPtr pen, float miterLimit);
 		[DllImport("gdiplus.dll")]
@@ -700,31 +698,28 @@ namespace System.Drawing {
                 internal static extern Status GdipSetPenLineJoin (IntPtr pen, LineJoin lineJoin);
 		[DllImport("gdiplus.dll")]
                 internal static extern Status GdipGetPenLineJoin (IntPtr pen, out LineJoin lineJoin);
-// 		[DllImport("gdiplus.dll")]
-//                 internal static extern Status GdipSetPenLineCap197819 (IntPtr pen, LineCap startCap, LineCap endCap, DashCap dashCap);
-// 		[DllImport("gdiplus.dll")]
-//                 internal static extern Status GdipGetPenLineCap197819 (IntPtr pen, out LineCap startCap, out LineCap endCap, out DashCap dashCap);
+		[DllImport("gdiplus.dll")]
+		internal static extern Status GdipSetPenLineCap197819 (IntPtr pen, LineCap startCap, LineCap endCap, DashCap dashCap);
 		[DllImport("gdiplus.dll")]
                 internal static extern Status GdipSetPenMode (IntPtr pen, PenAlignment alignment);
 		[DllImport("gdiplus.dll")]
                 internal static extern Status GdipGetPenMode (IntPtr pen, out PenAlignment alignment);
-// 		[DllImport("gdiplus.dll")]
-//                 internal static extern Status GdipSetPenStartCap (IntPtr pen, LineCap startCap);
-// 		[DllImport("gdiplus.dll")]
-//                 internal static extern Status GdipGetPenStartCap (IntPtr pen, out LineCap startCap);
-// 		[DllImport("gdiplus.dll")]
-//                 internal static extern Status GdipSetPenEndCap (IntPtr pen, LineCap endCap);
-// 		[DllImport("gdiplus.dll")]
-//                 internal static extern Status GdipGetPenEndCap (IntPtr pen, out LineCap endCap);
+		[DllImport("gdiplus.dll")]
+		internal static extern Status GdipSetPenStartCap (IntPtr pen, LineCap startCap);
+		[DllImport("gdiplus.dll")]
+		internal static extern Status GdipGetPenStartCap (IntPtr pen, out LineCap startCap);
+		[DllImport("gdiplus.dll")]
+		internal static extern Status GdipSetPenEndCap (IntPtr pen, LineCap endCap);
+		[DllImport("gdiplus.dll")]
+		internal static extern Status GdipGetPenEndCap (IntPtr pen, out LineCap endCap);
 		[DllImport("gdiplus.dll")]
                 internal static extern Status GdipSetPenTransform (IntPtr pen, IntPtr matrix);
 		[DllImport("gdiplus.dll")]
-                internal static extern Status GdipGetPenTransform (IntPtr pen, out IntPtr matrix);
+                internal static extern Status GdipGetPenTransform (IntPtr pen, IntPtr matrix);
 		[DllImport("gdiplus.dll")]
                 internal static extern Status GdipSetPenWidth (IntPtr pen, float width);
 		[DllImport("gdiplus.dll")]
                 internal static extern Status GdipGetPenWidth (IntPtr pen, out float width);
-                
 		[DllImport("gdiplus.dll")]
                 internal static extern Status GdipResetPenTransform (IntPtr pen);
 		[DllImport("gdiplus.dll")]

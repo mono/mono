@@ -47,7 +47,7 @@ namespace System.Drawing
 					GDIPlus.CheckStatus (status);
 				}
 				else
-					throw new ArgumentException ("You may not change this Brush because it does not belong to you.");
+					throw new ArgumentException ("This SolidBrush object can't be modified.");
 			}
 		}
 		
@@ -69,7 +69,7 @@ namespace System.Drawing
 				GDIPlus.CheckStatus (status);
 			}
 			else
-				throw new ArgumentException ("You may not change this Brush because it does not belong to you.");
+				throw new ArgumentException ("This SolidBrush object can't be modified.");
 		}
 	}
 }
