@@ -378,8 +378,6 @@ namespace System.Collections {
 				throw new ArgumentOutOfRangeException("arrayIndex");
 			if (array.Rank > 1)
 				throw new ArgumentException("array cannot be multidimensional");
-			if (arrayIndex >= array.Length)
-				throw new ArgumentException("arrayIndex is greater than or equal to array's length");
 			if (this.count > array.Length - arrayIndex)
 				throw new ArgumentException("this ArrayList has more items than the space available in array from arrayIndex to the end of array");
 			

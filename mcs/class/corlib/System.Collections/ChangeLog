@@ -1,4 +1,10 @@
 
+Thu May 2 15:18:11 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* ArrayList.cs: make mcs compile again: it's allowed to
+	call arraylist.CopyTo(array, 0) when the length of the array
+	is also 0.
+
 Wed May 1 17:05:40 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* SortedList.cs: fix RemoveAt () to use the correct length in
