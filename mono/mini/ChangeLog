@@ -1,3 +1,10 @@
+2003-11-25  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* aot.c:
+	(load_aot_module): free 'info->methods' and 'info' properly. No more
+	"free(): invalid pointer blah" messages when you have an old aot
+	compiled assembly.
+
 2003-11-21  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* jit-icalls.c, mini.c: Added support for context static fields.
