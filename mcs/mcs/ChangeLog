@@ -1,3 +1,15 @@
+2001-09-26  Ravi Pratap  <ravi@ximian.com>
+
+	* expression.cs (Unary::Emit and Binary::Emit): If we have an overloaded
+	operator, return after emitting body. Regression tests pass again !
+
+	* expression.cs (ConvertImplicit): Take TypeContainer as first argument
+	(Unary::ForceConversion, Binary::ForceConversion): Ditto.
+	(Invocation::OverloadResolve): Ditto.
+	(Invocation::BetterFunction, BetterConversion, ConversionExists): Ditto.
+
+	* everywhere : update calls to the above methods accordingly.
+
 2001-09-26  Miguel de Icaza  <miguel@ximian.com>
 
 	* assign.cs (Assign): Make it inherit from ExpressionStatement.

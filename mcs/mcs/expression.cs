@@ -309,7 +309,7 @@ namespace CIR {
 		//   `target_type'.  It returns a new expression that can be used
 		//   in a context that expects a `target_type'. 
 		// </summary>
-		static public Expression ConvertImplicit (Expression expr, Type target_type, TypeContainer tc)
+		static public Expression ConvertImplicit (TypeContainer tc, Expression expr, Type target_type)
 		{
 			Type expr_type = expr.Type;
 
@@ -464,7 +464,7 @@ namespace CIR {
 		{
 			Expression e;
 			
-			e = ConvertImplicit (target, type, tc);
+			e = ConvertImplicit (tc, target, type);
 			if (e == null){
 				string msg = "Can not convert implicitly from `"+
 					TypeManager.CSharpName (target.Type) + "' to `" +
@@ -723,12 +723,12 @@ namespace CIR {
 			return oper.ToString ();
 		}
 
-		Expression ForceConversion (Expression expr, Type target_type, TypeContainer tc)
+		Expression ForceConversion (TypeContainer tc, Expression expr, Type target_type)
 		{
 			if (expr.Type == target_type)
 				return expr;
 
-			return ConvertImplicit (expr, target_type, tc);
+			return ConvertImplicit (tc, expr, target_type);
 		}
 
 		void report23 (Report r, Type t)
@@ -782,7 +782,7 @@ namespace CIR {
 				Arguments = new ArrayList ();
 				Arguments.Add (new Argument (expr, Argument.AType.Expression));
 				
-				method = Invocation.OverloadResolve ((MethodGroupExpr) mg, Arguments, tc, location);
+				method = Invocation.OverloadResolve (tc, (MethodGroupExpr) mg, Arguments, location);
 				if (method != null) {
 					Method m = (Method) TypeContainer.LookupMethodByBuilder (method);
 					type = m.GetReturnType (tc);
@@ -880,7 +880,7 @@ namespace CIR {
 					// bt written as a decimal interger literal
 					//
 					type = TypeManager.int64_type;
-					expr = ConvertImplicit (expr, type, tc);
+					expr = ConvertImplicit (tc, expr, type);
 					return this;
 				}
 
@@ -894,21 +894,21 @@ namespace CIR {
 					return null;
 				}
 
-				e = ConvertImplicit (expr, TypeManager.int32_type, tc);
+				e = ConvertImplicit (tc, expr, TypeManager.int32_type);
 				if (e != null){
 					expr = e;
 					type = e.Type;
 					return this;
 				} 
 
-				e = ConvertImplicit (expr, TypeManager.int64_type, tc);
+				e = ConvertImplicit (tc, expr, TypeManager.int64_type);
 				if (e != null){
 					expr = e;
 					type = e.Type;
 					return this;
 				}
 
-				e = ConvertImplicit (expr, TypeManager.double_type, tc);
+				e = ConvertImplicit (tc, expr, TypeManager.double_type);
 				if (e != null){
 					expr = e;
 					type = e.Type;
@@ -981,14 +981,17 @@ namespace CIR {
 					ig.Emit (OpCodes.Call, (MethodInfo) method);
 				else
 					ig.Emit (OpCodes.Call, (ConstructorInfo) method);
+
+				return;
+
 			}
 			
-			switch (oper){
+			switch (oper) {
 			case Operator.Add:
 				throw new Exception ("This should be caught by Resolve");
-
+				
 			case Operator.Subtract:
-			        expr.Emit (ec);
+				expr.Emit (ec);
 				ig.Emit (OpCodes.Neg);
 				break;
 				
@@ -997,18 +1000,18 @@ namespace CIR {
 				ig.Emit (OpCodes.Ldc_I4_0);
 				ig.Emit (OpCodes.Ceq);
 				break;
-
+				
 			case Operator.BitComplement:
 				expr.Emit (ec);
 				ig.Emit (OpCodes.Not);
 				break;
-
+				
 			case Operator.AddressOf:
 				throw new Exception ("Not implemented yet");
-
+				
 			case Operator.Indirection:
 				throw new Exception ("Not implemented yet");
-
+				
 			case Operator.PreIncrement:
 			case Operator.PreDecrement:
 				if (expr.ExprClass == ExprClass.Variable){
@@ -1020,7 +1023,7 @@ namespace CIR {
 						// 
 						expr.Emit (ec);
 						ig.Emit (OpCodes.Ldc_I4_1);
-
+						
 						if (oper == Operator.PreDecrement)
 							ig.Emit (OpCodes.Sub);
 						else
@@ -1045,7 +1048,7 @@ namespace CIR {
 						expr.Emit (ec);
 						ig.Emit (OpCodes.Dup);
 						ig.Emit (OpCodes.Ldc_I4_1);
-
+						
 						if (oper == Operator.PostDecrement)
 							ig.Emit (OpCodes.Sub);
 						else
@@ -1062,6 +1065,7 @@ namespace CIR {
 						     + oper.ToString ());
 			}
 		}
+		
 
 		public override void EmitStatement (EmitContext ec)
 		{
@@ -1269,12 +1273,12 @@ namespace CIR {
 			return oper.ToString ();
 		}
 
-		Expression ForceConversion (Expression expr, Type target_type, TypeContainer tc)
+		Expression ForceConversion (TypeContainer tc, Expression expr, Type target_type)
 		{
 			if (expr.Type == target_type)
 				return expr;
 
-			return ConvertImplicit (expr, target_type, tc);
+			return ConvertImplicit (tc, expr, target_type);
 		}
 		
 		//
@@ -1289,9 +1293,9 @@ namespace CIR {
 				// conveted to type double.
 				//
 				if (r != TypeManager.double_type)
-					right = ConvertImplicit (right, TypeManager.double_type, tc);
+					right = ConvertImplicit (tc, right, TypeManager.double_type);
 				if (l != TypeManager.double_type)
-					left = ConvertImplicit (left, TypeManager.double_type, tc);
+					left = ConvertImplicit (tc, left, TypeManager.double_type);
 				
 				type = TypeManager.double_type;
 			} else if (l == TypeManager.float_type || r == TypeManager.float_type){
@@ -1300,9 +1304,9 @@ namespace CIR {
 				// converd to type float.
 				//
 				if (r != TypeManager.double_type)
-					right = ConvertImplicit (right, TypeManager.float_type, tc);
+					right = ConvertImplicit (tc, right, TypeManager.float_type);
 				if (l != TypeManager.double_type)
-					left = ConvertImplicit (left, TypeManager.float_type, tc);
+					left = ConvertImplicit (tc, left, TypeManager.float_type);
 				type = TypeManager.float_type;
 			} else if (l == TypeManager.uint64_type || r == TypeManager.uint64_type){
 				//
@@ -1336,9 +1340,9 @@ namespace CIR {
 				// to type long.
 				//
 				if (l != TypeManager.int64_type)
-					left = ConvertImplicit (left, TypeManager.int64_type, tc);
+					left = ConvertImplicit (tc, left, TypeManager.int64_type);
 				if (r != TypeManager.int64_type)
-					right = ConvertImplicit (right, TypeManager.int64_type, tc);
+					right = ConvertImplicit (tc, right, TypeManager.int64_type);
 
 				type = TypeManager.int64_type;
 			} else if (l == TypeManager.uint32_type || r == TypeManager.uint32_type){
@@ -1357,21 +1361,21 @@ namespace CIR {
 				if ((other == TypeManager.sbyte_type) ||
 				    (other == TypeManager.short_type) ||
 				    (other == TypeManager.int32_type)){
-					left = ForceConversion (left, TypeManager.int64_type, tc);
-					right = ForceConversion (right, TypeManager.int64_type, tc);
+					left = ForceConversion (tc, left, TypeManager.int64_type);
+					right = ForceConversion (tc, right, TypeManager.int64_type);
 					type = TypeManager.int64_type;
 				} else {
 					//
 					// if either operand is of type uint, the other
 					// operand is converd to type uint
 					//
-					left = ForceConversion (left, TypeManager.uint32_type, tc);
-					right = ForceConversion (left, TypeManager.uint32_type, tc);
+					left = ForceConversion (tc, left, TypeManager.uint32_type);
+					right = ForceConversion (tc, left, TypeManager.uint32_type);
 					type = TypeManager.uint32_type;
 				} 
 			} else {
-				left = ForceConversion (left, TypeManager.int32_type, tc);
-				right = ForceConversion (right, TypeManager.int32_type, tc);
+				left = ForceConversion (tc, left, TypeManager.int32_type);
+				right = ForceConversion (tc, right, TypeManager.int32_type);
 				type = TypeManager.int32_type;
 			}
 		}
@@ -1392,17 +1396,17 @@ namespace CIR {
 			Type l = left.Type;
 			Type r = right.Type;
 
-			e = ForceConversion (right, TypeManager.int32_type, tc);
+			e = ForceConversion (tc, right, TypeManager.int32_type);
 			if (e == null){
 				error19 (tc);
 				return null;
 			}
 			right = e;
 
-			if (((e = ConvertImplicit (left, TypeManager.int32_type, tc)) != null) ||
-			    ((e = ConvertImplicit (left, TypeManager.uint32_type, tc)) != null) ||
-			    ((e = ConvertImplicit (left, TypeManager.int64_type, tc)) != null) ||
-			    ((e = ConvertImplicit (left, TypeManager.uint64_type, tc)) != null)){
+			if (((e = ConvertImplicit (tc, left, TypeManager.int32_type)) != null) ||
+			    ((e = ConvertImplicit (tc, left, TypeManager.uint32_type)) != null) ||
+			    ((e = ConvertImplicit (tc, left, TypeManager.int64_type)) != null) ||
+			    ((e = ConvertImplicit (tc, left, TypeManager.uint64_type)) != null)){
 				left = e;
 
 				return this;
@@ -1458,7 +1462,7 @@ namespace CIR {
 				Arguments.Add (new Argument (right, Argument.AType.Expression));
 
 			
-				method = Invocation.OverloadResolve (union, Arguments, tc, location);
+				method = Invocation.OverloadResolve (tc, union, Arguments, location);
 				if (method != null) {
 					Method m = (Method) TypeContainer.LookupMethodByBuilder (method);
 					type = m.GetReturnType (tc);
@@ -1623,6 +1627,8 @@ namespace CIR {
 					ig.Emit (OpCodes.Call, (MethodInfo) method);
 				else
 					ig.Emit (OpCodes.Call, (ConstructorInfo) method);
+
+				return;
 			}
 			
 			left.Emit (ec);
@@ -2215,7 +2221,7 @@ namespace CIR {
 			}
 		}
 
-		static bool ConversionExists (Type from, Type to, TypeContainer tc)
+		static bool ConversionExists (TypeContainer tc, Type from, Type to)
 		{
 			// Locate user-defined implicit operators
 
@@ -2259,7 +2265,7 @@ namespace CIR {
 		//  Returns : 1 if a->p is better
 		//            0 if a->q or neither is better 
 		// </summary>
-		static int BetterConversion (Argument a, Type p, Type q, TypeContainer tc)
+		static int BetterConversion (TypeContainer tc, Argument a, Type p, Type q)
 		{
 			
 			Type argument_type = a.Expr.Type;
@@ -2339,8 +2345,8 @@ namespace CIR {
 			// User-defined Implicit conversions come here
 			
 			if (q != null)
-				if (ConversionExists (p, q, tc) == true &&
-				    ConversionExists (q, p, tc) == false)
+				if (ConversionExists (tc, p, q) == true &&
+				    ConversionExists (tc, q, p) == false)
 					return 1;
 			
 			if (p == TypeManager.sbyte_type)
@@ -2369,7 +2375,7 @@ namespace CIR {
 		//  0 if candidate ain't better
 		//  1 if candidate is better than the current best match
 		// </summary>
-		static int BetterFunction (ArrayList args, MethodBase candidate, MethodBase best, TypeContainer tc)
+		static int BetterFunction (TypeContainer tc, ArrayList args, MethodBase candidate, MethodBase best)
 		{
 			ParameterData candidate_pd = GetParameterData (candidate);
 			ParameterData best_pd;
@@ -2391,7 +2397,7 @@ namespace CIR {
 						
 						Argument a = (Argument) args [j];
 						
-						x = BetterConversion (a, candidate_pd.ParameterType (j), null, tc);
+						x = BetterConversion (tc, a, candidate_pd.ParameterType (j), null);
 						
 						if (x > 0)
 							continue;
@@ -2419,11 +2425,11 @@ namespace CIR {
 					
 					Argument a = (Argument) args [j];
 
-					x = BetterConversion (a, candidate_pd.ParameterType (j),
-							      best_pd.ParameterType (j), tc);
-					y = BetterConversion (a, best_pd.ParameterType (j),
-							      candidate_pd.ParameterType (j), tc);
-
+					x = BetterConversion (tc, a, candidate_pd.ParameterType (j),
+							      best_pd.ParameterType (j));
+					y = BetterConversion (tc, a, best_pd.ParameterType (j),
+							      candidate_pd.ParameterType (j));
+					
 					rating1 += x;
 					rating2 += y;
 				}
@@ -2467,8 +2473,8 @@ namespace CIR {
 		//            that is the best match of me on Arguments.
 		//
 		// </summary>
-		public static MethodBase OverloadResolve (MethodGroupExpr me, ArrayList Arguments,
-							  TypeContainer tc, Location loc)
+		public static MethodBase OverloadResolve (TypeContainer tc, MethodGroupExpr me,
+							  ArrayList Arguments, Location loc)
 		{
 			ArrayList afm = new ArrayList ();
 			int best_match_idx = -1;
@@ -2480,7 +2486,7 @@ namespace CIR {
 				MethodBase candidate  = me.Methods [i];
 				int x;
 				
-				x = BetterFunction (Arguments, candidate, method, tc);
+				x = BetterFunction (tc, Arguments, candidate, method);
 				
 				if (x == 0)
 					continue;
@@ -2528,7 +2534,7 @@ namespace CIR {
 				Argument a = (Argument) Arguments [j];
 				Expression a_expr = a.Expr;
 				
-				Expression conv = ConvertImplicit (a_expr, pd.ParameterType (j), tc);
+				Expression conv = ConvertImplicit (tc, a_expr, pd.ParameterType (j));
 
 				if (conv == null) {
 					tc.RootContext.Report.Error (1502, loc,
@@ -2580,7 +2586,7 @@ namespace CIR {
 				}
 			}
 
-			method = OverloadResolve ((MethodGroupExpr) this.expr, Arguments, tc, Location);
+			method = OverloadResolve (tc, (MethodGroupExpr) this.expr, Arguments, Location);
 
 			if (method == null){
 				tc.RootContext.Report.Error (-6, Location,
@@ -2722,7 +2728,7 @@ namespace CIR {
 				}
 			}
 
-			method = Invocation.OverloadResolve ((MethodGroupExpr) ml, Arguments, tc, Location);
+			method = Invocation.OverloadResolve (tc, (MethodGroupExpr) ml, Arguments, Location);
 
 			if (method == null) {
 				tc.RootContext.Report.Error (-6, Location,
@@ -3264,7 +3270,7 @@ namespace CIR {
 				arguments = new ArrayList ();
 				arguments.Add (new Argument (source, Argument.AType.Expression));
 
-				method = Invocation.OverloadResolve (me, arguments, tc, new Location ("", 0,0));
+				method = Invocation.OverloadResolve (tc, me, arguments, new Location ("", 0,0));
 			
 				if (method != null) {
 					Method m = (Method) TypeContainer.LookupMethodByBuilder (method);

@@ -113,7 +113,7 @@ namespace CIR {
 				return false;
 
 			if (e.Type != TypeManager.bool_type)
-				e = Expression.ConvertImplicit (e, TypeManager.bool_type, parent);
+				e = Expression.ConvertImplicit (parent, e, TypeManager.bool_type);
 
 			if (e == null || e.Type != TypeManager.bool_type){
 				parent.RootContext.Report.Error (
