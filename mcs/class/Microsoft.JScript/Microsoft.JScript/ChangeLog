@@ -1,3 +1,30 @@
+2004-01-16  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
+
+	* IdentificationTable.cs, ScriptBlock.cs: deleted debugging messages.
+	* jscript-lexer-parser.g: deleted debugging messages. Create a
+	Assign object instance of a simple Binary obj. Same case for Equality.
+
+	* expression.cs: added Exp abstract class. Classes that are ast of
+	language constructions that can appear as global expressions that
+	get evaluated and then the result is discarded inherit from this
+	new class. This let meee keep track of things that must get Popped
+	or can even avoid the evaluation of it. Wrote real Resolve method
+	for classes: Unary, Binary.
+	Implemted Emit method for some binary operations (+, -, / and *),
+	for other operators some more code is still missing.	
+	Identifier: handle assignment cases and global exp cases.
+	Added class Assign (compisite assignment still missing tough :-(
+
+	* driver.cs: deleted debug messages, added "Compilation Succeeded"
+	message ;-).
+	* VariableStatement.cs, VariableDeclaration.cs: wrote real Resolve method.	
+	* Literal.cs (BooleanLiteral, NumericLiteral): now inherits from
+	Exp and handle the case for global expressions that must be popped
+	after evaluation. no more invalid IL being generated! yeah!
+	* Block.cs: wrote real Resolve method, erased debug messages.
+	* BitwiseBinary.cs, InstanceOf.cs, UnaryOp.cs: : add new Resolve inherited from Exp.
+	* BinaryOp.cs, Conditional: now inherits from Exp.
+
 2004-01-15  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
 
 	* ReferenceAttribute.cs: moved it back to namespace Microsoft.JScript.

@@ -50,21 +50,14 @@ namespace Microsoft.JScript {
 		internal override bool Resolve (IdentificationTable context)
 		{
 			VariableDeclaration tmp_decl;
-			int i, size = var_decls.Count;
-			bool res = true;
-			AST init_val;
+			int i, n = var_decls.Count;
+			bool r = true;
 
-			for (i = 0; i < size; i++) {
+			for (i = 0; i < n; i++) {
 				tmp_decl = (VariableDeclaration) var_decls [i];
-				init_val = tmp_decl.val;
-
-				if (init_val != null)
-					res = init_val.Resolve (context);
-
-				if (res)
-					context.Enter (tmp_decl.id, tmp_decl);
+				r &= tmp_decl.Resolve (context);
 			}
-			return true;
+			return r;
 		}
 	}
 }

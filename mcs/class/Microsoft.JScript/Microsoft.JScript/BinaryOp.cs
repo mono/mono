@@ -8,7 +8,7 @@
 
 namespace Microsoft.JScript {
 
-	public abstract class BinaryOp : AST {
+	public abstract class BinaryOp : Exp {
 
 		internal AST left, right;
 
@@ -32,4 +32,3 @@ namespace Microsoft.JScript {
 		internal JSToken current_op;
 	}
 }
-	

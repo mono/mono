@@ -25,7 +25,7 @@ namespace Microsoft.JScript {
 		}
 	}
 
-	internal class BooleanLiteral : AST {
+	internal class BooleanLiteral : Exp {
 
 		internal bool val;
 
@@ -45,6 +45,12 @@ namespace Microsoft.JScript {
 			return true;
 		}
 
+		internal override bool Resolve (IdentificationTable context, bool no_effect)
+		{
+			this.no_effect = no_effect;
+			return true;
+		}
+
 		internal override void Emit (EmitContext ec)
 		{
 			ILGenerator ig;
@@ -60,10 +66,13 @@ namespace Microsoft.JScript {
 				ig.Emit (OpCodes.Ldc_I4_0);
 
 			ig.Emit (OpCodes.Box, typeof (System.Boolean));
+
+			if (no_effect)
+				ig.Emit (OpCodes.Pop);
 		}
 	}
 
-	public class NumericLiteral : AST {
+	public class NumericLiteral : Exp {
 
 		double val;
 
@@ -83,17 +92,23 @@ namespace Microsoft.JScript {
 			return true;
 		}
 
+		internal override bool Resolve (IdentificationTable context, bool no_effect)
+		{
+			this.no_effect = no_effect;
+			return true;
+		}
+		
 		internal override void Emit (EmitContext ec)
 		{
 			ILGenerator ig;
-
 			if (parent == null)
 				ig = ec.gc_ig;
 			else
 				ig = ec.ig;
-
 			ig.Emit (OpCodes.Ldc_I4, (int) val);
 			ig.Emit (OpCodes.Box, typeof (System.Int32));
+			if (no_effect)
+				ig.Emit (OpCodes.Pop);
 		}
 	}
 }

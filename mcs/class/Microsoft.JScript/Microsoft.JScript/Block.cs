@@ -29,8 +29,6 @@ namespace Microsoft.JScript {
 
 		public override string ToString ()
 		{
-			System.Console.WriteLine (Elements.Count);
-
 			StringBuilder sb = new StringBuilder ();
 
 			foreach (AST a in Elements)
@@ -50,15 +48,18 @@ namespace Microsoft.JScript {
 
 		internal override bool Resolve (IdentificationTable context)
 		{
+			object e;
 			bool r = true;
-			int i, size = Elements.Count;
+			int i, n = Elements.Count;
 
-			System.Console.WriteLine ("Block::Resolve");
-
-			for (i = 0; i < size; i++)
-				r &= ((AST) Elements [i]).Resolve (context);
-
-			return r;
+			for (i = 0; i < n; i++) {
+				e = Elements [i];
+				if (e is Exp)
+					r &= ((Exp) e).Resolve (context, true);
+				else 
+					r &= ((AST) e).Resolve (context);
+			}
+			return r;			
 		}
 	}
 }

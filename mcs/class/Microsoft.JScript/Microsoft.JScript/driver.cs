@@ -23,13 +23,10 @@ namespace Microsoft.JScript {
 			string filename = args [0];
 			Context ctx = new Context (filename);
 			JSParser parser = new JSParser (ctx);
-
 			ScriptBlock prog_tree = parser.Parse ();
-			Console.WriteLine (prog_tree.ToString ());
-
 			SemanticAnalyser.Run (prog_tree);
-
 			CodeGenerator.Run (args [0], prog_tree);
+			Console.WriteLine ("Compilation succeeded.");
 		}
 	}
 }

@@ -84,8 +84,14 @@ namespace Microsoft.JScript {
 
 		internal override bool Resolve (IdentificationTable context)
 		{
+			bool r = true;
+			if (val != null)
+				if (val is Exp) 
+					r = ((Exp) val).Resolve (context, false);
+				else
+					r = val.Resolve (context);
 			context.Enter (id, this);
-			return true;
+			return r;
 		}
 	}
 }

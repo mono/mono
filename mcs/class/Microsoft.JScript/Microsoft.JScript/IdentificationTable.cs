@@ -24,22 +24,18 @@ namespace Microsoft.JScript {
 		
 		internal void OpenBlock ()
 		{
-			System.Console.WriteLine ("IdTable::OpenBlock");
-
 			SymbolTable parent = (SymbolTable) stack.Peek ();
 			stack.Push (new SymbolTable (parent));
 		}
 
 		internal void CloseBlock ()
 		{
-			System.Console.WriteLine ("IdTable::CloseBlock");
 			stack.Pop ();
 		}
 
 		internal void Enter (string id, object decl)
 		{			
 			((SymbolTable) stack.Peek ()).Add (id , decl);
-			System.Console.WriteLine ("IdentificationTable::Enter::{0}", id);
 		}
 		
 		//

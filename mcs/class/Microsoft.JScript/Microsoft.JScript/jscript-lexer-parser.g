@@ -34,17 +34,13 @@ source_element [Block elems, AST parent]
 { AST stm = null; }
 	: stm = statement [parent]
 	  { 
-		  if (stm != null) {
+		  if (stm != null)
 		  	  elems.Add (stm); 
-		  	  Console.WriteLine ("DEBUG::src_elem::Add::{0}", 
-					     stm.ToString ());
-		  }
 	  }
 	| stm = function_decl_or_expr [parent]
           {
 		  if (stm != null)
 			  elems.Add (stm);
-			  Console.WriteLine ("DEBUG:src_elem::Add (function)");
 	  }
 	;
 
@@ -312,11 +308,13 @@ assignment_expr [AST parent] returns [AST assign_expr]
 	: ((left_hand_side_expr [parent] assignment_op)=> 
 	    left = left_hand_side_expr [parent] op = assignment_op right = assignment_expr [parent]
 	    {
-		  Binary a = new Binary (parent, left, right, op);
-		  Console.WriteLine ("\nDEBUG::jscript.g::assign_expr::ToString::" + a.ToString () + "\n");
+		  Assign a;
+		  if (right is Assign)
+		  	  a = new Assign (parent, left, right, op, true);
+		  else
+		  	  a = new Assign (parent, left, right, op, false);
 		  assign_expr = a;
-	    }
- 
+	    } 
 	| assign_expr = cond_expr [parent]
 	)
 	;
@@ -597,33 +595,32 @@ equality_expr [AST parent] returns [AST eq_expr]
 {
 	eq_expr = null;
 	AST left = null;
-	Equality right = null;
+	AST right = null;
 }
 	: left = relational_expr [parent] right = equality_aux [parent]
 	  {
 		  if (right == null)
 			  eq_expr = left;
 		  else {
-			  eq_expr = new Equality (parent, left, right, right.old_op);
+			  eq_expr = new Binary (parent, left, right, ((Binary) right).old_op);
 		  }
 	  }
 	;
 
-equality_aux [AST parent] returns [Equality eq_aux]
+equality_aux [AST parent] returns [AST eq_aux]
 {
 	eq_aux = null;
 	AST left = null;
-	Equality right = null;
+	AST right = null;
 	JSToken op = JSToken.None;
 }
 	: (op = equality_op left = relational_expr [parent] right = equality_aux [parent]
 	   {
 		   if (right == null)
-			  eq_aux = new Equality (parent, left, null, JSToken.None);
+			  eq_aux = new Binary (parent, left, null, JSToken.None);
 		   else
-			  eq_aux = new Equality (parent, left, right, right.old_op);
-
-		  eq_aux.old_op = op;
+			  eq_aux = new Binary (parent, left, right, ((Binary) right).old_op);
+		  ((Binary) eq_aux).old_op = op;
 	   }
 	  | )
 	;

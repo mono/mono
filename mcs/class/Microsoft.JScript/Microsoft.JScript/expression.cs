@@ -14,6 +14,11 @@ using System.Reflection.Emit;
 
 namespace Microsoft.JScript {
 
+	public abstract class Exp : AST {
+		internal bool no_effect;
+		internal abstract bool Resolve (IdentificationTable context, bool no_effect);
+	}
+
 	public class Unary : UnaryOp {
 
 		internal Unary (AST parent, AST operand, JSToken oper)
@@ -38,10 +43,18 @@ namespace Microsoft.JScript {
 
 		internal override bool Resolve (IdentificationTable context)
 		{
-			if (operand != null)
-				operand.Resolve (context);
+			bool r = false;		       
+			if (operand is Exp)
+				if (oper != JSToken.Increment && oper != JSToken.Decrement)
+					r = ((Exp) operand).Resolve (context, no_effect);
+			r = ((AST) operand).Resolve (context);			
+			return r;
+		}
 
-			return true;
+		internal override bool Resolve (IdentificationTable context, bool no_effect)
+		{
+			this.no_effect = no_effect;
+			return Resolve (context);
 		}
 
 		internal override void Emit (EmitContext ec)
@@ -55,7 +68,6 @@ namespace Microsoft.JScript {
 
 		internal Binary (AST parent, AST left, AST right, JSToken op)
 		{
-			Console.WriteLine ("DEBUG::expression.cs::Binary constructor called");
 			this.parent = parent;
 			this.left = left;
 			this.right = right;
@@ -79,43 +91,117 @@ namespace Microsoft.JScript {
 
 		internal override bool Resolve (IdentificationTable context)
 		{
+			bool r = true;
 			if (left != null)
-				left.Resolve (context);
-
+				r &= left.Resolve (context);
 			if (right != null)
-				right.Resolve (context);
+				r &= right.Resolve (context);
+			return r;
+		}
 
-			return true;
+		internal override bool Resolve (IdentificationTable context, bool no_effect)
+		{
+			this.no_effect = no_effect;
+			return Resolve (context);
 		}
 
 		internal override void Emit (EmitContext ec)
 		{
 			ILGenerator ig;
-
 			if (parent == null)
 				ig = ec.gc_ig;
 			else
 				ig = ec.ig;
+			if (current_op != JSToken.None)
+				emit_operator (ig);
+			if (left != null)
+				left.Emit (ec);
+			if (right != null)
+				right.Emit (ec);			       
+			emit_op_eval (ig);
+			if (no_effect)
+				ig.Emit (OpCodes.Pop);
+		}
 
-			emit_operator (ig);
+		internal void emit_op_eval (ILGenerator ig)
+		{
+			switch (current_op) {
+			case JSToken.Plus:
+				ig.Emit (OpCodes.Callvirt, typeof (Plus).GetMethod ("EvaluatePlus"));
+				break;
+			case JSToken.Minus:
+			case JSToken.Divide:
+			case JSToken.Modulo:
+			case JSToken.Multiply:
+				ig.Emit (OpCodes.Call, typeof (NumericBinary).GetMethod ("EvaluateNumericBinary"));
+				break;
+			case JSToken.Equal:
+				ig.Emit (OpCodes.Call, typeof (Equality).GetMethod ("EvaluateEquality"));
+				Label t = ig.DefineLabel ();
+				Label f = ig.DefineLabel ();
+				ig.Emit (OpCodes.Brtrue_S, t);
+				ig.Emit (OpCodes.Ldc_I4_0);
+				ig.Emit (OpCodes.Br_S, f);
+				ig.MarkLabel (t);
+				ig.Emit (OpCodes.Ldc_I4_1);
+				ig.MarkLabel (f);
+				ig.Emit (OpCodes.Pop);
+				break;
+			}
 		}
 
 		internal void emit_operator (ILGenerator ig)
 		{
-			if (current_op == JSToken.Plus)
-				ig.DeclareLocal (typeof (Microsoft.JScript.Plus));
-			else if (current_op == JSToken.Minus || current_op == JSToken.Divide ||
-				 current_op == JSToken.Modulo)
-				ig.DeclareLocal (typeof (Microsoft.JScript.NumericBinary));
-			else if (current_op == JSToken.BitwiseOr || current_op == JSToken.BitwiseXor ||
-				 current_op == JSToken.BitwiseAnd)
-				ig.DeclareLocal (typeof (Microsoft.JScript.BitwiseBinary));
-			else if (current_op == JSToken.Equal || current_op == JSToken.NotEqual)
-				ig.DeclareLocal (typeof (Microsoft.JScript.Equality));
+			LocalBuilder local_builder = null;
+			Type t = null;
+
+			if (current_op == JSToken.Plus) {
+				t = typeof (Plus);
+				local_builder = ig.DeclareLocal (t);				
+				ig.Emit (OpCodes.Newobj, t.GetConstructor (new Type [] {}));
+				ig.Emit (OpCodes.Stloc, local_builder);
+				ig.Emit (OpCodes.Ldloc, local_builder);
+				return;
+			} else if (current_op == JSToken.Minus) {
+				t = typeof (NumericBinary);
+				local_builder = ig.DeclareLocal (t);
+				ig.Emit (OpCodes.Ldc_I4_S, (byte) 47);
+			} else if (current_op == JSToken.Multiply) {
+				t = typeof (NumericBinary);
+				local_builder = ig.DeclareLocal (t);
+				ig.Emit (OpCodes.Ldc_I4_S, (byte) 64);
+			} else if (current_op == JSToken.Divide) {
+				t = typeof (NumericBinary);
+				local_builder = ig.DeclareLocal (t);
+				ig.Emit (OpCodes.Ldc_I4_S, (byte) 65);
+			} else if (current_op == JSToken.BitwiseOr) {
+				t = typeof (BitwiseBinary);
+				local_builder = ig.DeclareLocal (t);
+				ig.Emit (OpCodes.Ldc_I4_S, (byte) 50);
+			} else if (current_op == JSToken.BitwiseXor) {
+				t = typeof (BitwiseBinary);
+				local_builder = ig.DeclareLocal (t);
+				ig.Emit (OpCodes.Ldc_I4_S, (byte) 51);				
+			} else if (current_op == JSToken.BitwiseAnd) {
+				t = typeof (BitwiseBinary);
+				local_builder = ig.DeclareLocal (t);
+				ig.Emit (OpCodes.Ldc_I4_S, (byte) 52);				
+			} else if (current_op == JSToken.Equal) {
+				t = typeof (Equality);
+				local_builder = ig.DeclareLocal (t);
+				ig.Emit (OpCodes.Ldc_I4_S, (byte) 53);
+			} else if (current_op == JSToken.NotEqual) {
+				t = typeof (Equality);
+				local_builder = ig.DeclareLocal (t);
+				ig.Emit (OpCodes.Ldc_I4_S, (byte) 54);
+			}
+			ig.Emit (OpCodes.Newobj, t.GetConstructor (new Type [] {typeof (int)}));
+			ig.Emit (OpCodes.Stloc, local_builder);
+			ig.Emit (OpCodes.Ldloc, local_builder);
 		}
 	}
 
-	public class Conditional : AST {
+	public class Conditional : Exp {
 
 		AST cond_expr, trueExpr, falseExpr;
 
@@ -143,6 +229,12 @@ namespace Microsoft.JScript {
 		internal override bool Resolve (IdentificationTable context)
 		{
 			throw new NotImplementedException ();
+		}
+		
+		internal override bool Resolve (IdentificationTable context, bool no_effect)
+		{
+			this.no_effect = no_effect;
+			return true;
 		}
 
 		internal override void Emit (EmitContext ec)
@@ -199,10 +291,11 @@ namespace Microsoft.JScript {
 		}
 	}
 
-	internal class Identifier : AST {
+	internal class Identifier : Exp, IAssignable {
 
 		internal string name;
 		internal Decl binding;
+		internal bool assign;
 
 		internal Identifier (AST parent, string id)
 		{
@@ -226,23 +319,49 @@ namespace Microsoft.JScript {
 				throw new Exception ("variable not found: " +  name);
 			else
 				binding = bind;
+
+			return true;
+		}
+
+		internal override bool Resolve (IdentificationTable context, bool no_effect)
+		{
+			this.no_effect = no_effect;
+			return Resolve (context);
+		}
+
+		public bool ResolveAssign (IdentificationTable context)
+		{
+			this.assign = true;
+			this.no_effect = false;
+			if (name != String.Empty)			
+				return Resolve (context);
 			return true;
 		}
 
 		internal override void Emit (EmitContext ec)
 		{
 			ILGenerator ig;
-
 			if (parent == null) {
 				ig = ec.gc_ig;
-				ig.Emit (OpCodes.Ldsfld, binding.field_info);
+				if (assign)
+					ig.Emit (OpCodes.Stsfld, binding.field_info);
+				else {
+					ig.Emit (OpCodes.Ldsfld, binding.field_info);
+					if (no_effect)
+						ig.Emit (OpCodes.Pop);
+				}
 			} else {
-				ig = ec.ig;				
-				ig.Emit (OpCodes.Ldloc, binding.local_builder);
+				ig = ec.ig;
+				if (assign)
+					ig.Emit (OpCodes.Stloc, binding.local_builder);
+				else {
+					ig.Emit (OpCodes.Ldloc, binding.local_builder);
+					if (no_effect)
+						ig.Emit (OpCodes.Pop);
+				}
 			}
-			ig.Emit (OpCodes.Pop);
 		}
-	}	
+	}
 
 	public class Args : AST {
 
@@ -308,12 +427,21 @@ namespace Microsoft.JScript {
 
 		internal override bool Resolve (IdentificationTable context)
 		{
-			int i, size = exprs.Count;
+			int i, n = exprs.Count;
+			object e;
+			bool r = true;
 
-			for (i = 0; i < size; i++)
-				((AST) exprs [i]).Resolve (context);
-
-			return true;
+			for (i = 0; i < n; i++) {
+				e = exprs [i];
+				if (e is Exp)
+					if (e is Assign)
+						r &= ((Assign) e).Resolve (context);
+					else
+						r &= ((Exp) e).Resolve (context, true);	
+				else
+					r &= ((AST) e).Resolve (context);				
+			}
+			return r;
 		}
 
 		internal override void Emit (EmitContext ec)
@@ -321,12 +449,68 @@ namespace Microsoft.JScript {
 			int i, n = exprs.Count;
 			AST exp;
 
-			Console.WriteLine ("n = {0}", n);
-
 			for (i = 0; i < n; i++) {
 				exp = (AST) exprs [i];
 				exp.Emit (ec);
 			}
 		}
+	}
+
+	internal class Assign : BinaryOp {
+
+		internal bool is_embedded;
+
+		internal Assign (AST parent, AST left, AST right, JSToken op, bool is_embedded)
+		{
+			this.parent = parent;
+			this.left = left;
+			this.right = right;
+			this.is_embedded = is_embedded;
+			current_op = op;
+		}
+
+		internal override bool Resolve (IdentificationTable context)
+		{
+			bool r;
+			if (left is IAssignable)
+				r = ((IAssignable) left).ResolveAssign (context);
+			else 
+				return false;
+			if (right is Exp)
+				r &=((Exp) right).Resolve (context, false);
+			return r;
+		}
+
+		internal override bool Resolve (IdentificationTable context, bool no_effect)
+		{
+			return true;
+		}
+
+		internal override void Emit (EmitContext ec)
+		{
+			ILGenerator ig;
+			if (parent == null)
+				ig = ec.gc_ig;
+			else
+				ig = ec.ig;			
+			if (is_embedded) {
+				Console.WriteLine ("embedded assignments not supported yet");
+				Environment.Exit (-1);
+			} else {
+				right.Emit (ec);
+				left.Emit (ec);
+			}			
+		}
+		
+		public override string ToString ()
+		{
+			string l = left.ToString ();
+			string r = right.ToString ();
+			return l + " " + r;			
+		}
+	}
+
+	internal interface IAssignable {
+		bool ResolveAssign (IdentificationTable context);
 	}
 }
