@@ -2167,12 +2167,13 @@ namespace System.Windows.Forms
 
 		public bool SelectNextControl(Control ctl, bool forward, bool tabStopOnly, bool nested, bool wrap) {
 			Control c;
-
+				
 			c = ctl;
 			do {
 				c = GetNextControl(c, forward);
 				if (c == null) {
 					if (wrap) {
+						wrap = false;
 						continue;
 					}
 					break;
@@ -2737,6 +2738,9 @@ namespace System.Windows.Forms
 #if debug
 			Console.WriteLine("Received message {0}", m);
 #endif
+			if ((this.control_style & ControlStyles.EnableNotifyMessage) != 0) {
+				OnNotifyMessage(m);
+			}
 
 			switch((Msg)m.Msg) {
 			case Msg.WM_WINDOWPOSCHANGED: {
@@ -2799,6 +2803,7 @@ namespace System.Windows.Forms
 				OnMouseDown (new MouseEventArgs (FromParamToMouseButtons ((int) m.WParam.ToInt32()), 
 					mouse_clicks, LowOrder ((int) m.LParam.ToInt32 ()), HighOrder ((int) m.LParam.ToInt32 ()), 
 					0));
+
 				break;
 			}
 

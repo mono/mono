@@ -1,3 +1,10 @@
+2005-01-13  Peter Bartok  <pbartok@novell.com>
+
+	* Control.cs:
+	  - WndProc(): Now handles EnableNotifyMessage
+	  - SelectNextControl(): Fixed bug where if no child or sibling 
+	    controls exist we looped endlessly
+
 2005-01-14  Jackson Harper  <jackson@ximian.com>
 
 	* TreeView.cs: Recalculate the tab pages when a new one is added
