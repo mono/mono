@@ -20,7 +20,7 @@ using System.Reflection;
 
 namespace Mono.CSharp {
 
-	public class MemberName : ICloneable {
+	public class MemberName {
 		public readonly string Name;
 		public readonly TypeArguments TypeArguments;
 
@@ -121,19 +121,6 @@ namespace Mono.CSharp {
 				else
 					return Name;
 			}
-		}
-
-		public MemberName Clone ()
-		{
-			if (Left != null)
-				return new MemberName (Left.Clone (), this);
-			else
-				return new MemberName (Name, TypeArguments);
-		}
-
-		object ICloneable.Clone ()
-		{
-			return Clone ();
 		}
 
 		public override string ToString ()
