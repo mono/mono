@@ -101,7 +101,11 @@ namespace System.Runtime.Remoting.Messaging {
 
 		public virtual string Uri {
 			get { return ((IMethodCallMessage)WrappedMessage).Uri; }
-			set { Properties["__Uri"] = value; }
+			set {
+				IInternalMessage im = WrappedMessage as IInternalMessage;
+				if (im != null) im.Uri = value;
+				else Properties["__Uri"] = value; 
+			}
 		}
 
 		public virtual object GetArg (int argNum)

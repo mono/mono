@@ -1,3 +1,10 @@
+2004-09-27  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* MethodCallMessageWrapper.cs: The wrapper has to modify the wrapped
+	  message. MS does it.
+	* ReturnMessage.cs: Use TypeName instead of _typeName since now name is
+	  lazely constructed.
+
 2004-09-22  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* ConstructionCall.cs: Added a Proxy property (which is the proxy that

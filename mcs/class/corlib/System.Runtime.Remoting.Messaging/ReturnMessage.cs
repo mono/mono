@@ -216,7 +216,7 @@ namespace System.Runtime.Remoting.Messaging
 
 		public override string ToString ()
 		{
-			string s = _typeName.Split(',')[0] + "." + _methodName + " (";
+			string s = TypeName.Split(',')[0] + "." + MethodName + " (";
 			if (_exception != null)
 			{
 				s += "Exception)\n" + _exception;
