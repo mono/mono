@@ -1,4 +1,17 @@
+2001-09-28  Miguel de Icaza  <miguel@ximian.com>
+
+	* typemanager.cs (string_concat_string_string, string_concat_object_object):
+	Export standard methods that we expect for string operations.
+	
+	* statement.cs (Block::UsageWarning): Track usage of variables and
+	report the errors for not used variables.
+
+	* expression.cs (Conditional::Resolve, ::Emit): Implement ?:
+	operator. 
+
 2001-09-27  Miguel de Icaza  <miguel@ximian.com>
+
+	* codegen.cs: remove unnneded code 
 
 	* expression.cs: Removed BuiltinTypeAccess class
 

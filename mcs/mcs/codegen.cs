@@ -115,7 +115,7 @@ namespace CIR {
 			if (e.Type != TypeManager.bool_type)
 				e = Expression.ConvertImplicit (parent, e, TypeManager.bool_type);
 
-			if (e == null || e.Type != TypeManager.bool_type){
+			if (e == null){
 				parent.RootContext.Report.Error (
 					31, "Can not convert the expression to a boolean");
 				return false;
@@ -309,10 +309,18 @@ namespace CIR {
 		public void EmitTopBlock (Block block)
 		{
 			bool has_ret = false;
+			Report r = parent.RootContext.Report;
 			
 			if (block != null){
+				int errors = r.Errors;
+				
 				block.EmitMeta (parent, ig, block, 0);
 				has_ret = EmitBlock (block);
+
+				//
+				// Only emit warnings if there were no errors
+				if (r.Errors == errors)
+					block.UsageWarning (r);
 			}
 
 			if (!has_ret)

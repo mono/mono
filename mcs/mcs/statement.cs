@@ -219,14 +219,18 @@ namespace CIR {
 		public readonly string Type;
 		public LocalBuilder LocalBuilder;
 		public Type VariableType;
+		public readonly Location Location;
 		
-		int idx;
+		int  idx;
+		public bool Used;
+		public bool Assigned; 
 		
-		public VariableInfo (string type)
+		public VariableInfo (string type, Location l)
 		{
 			Type = type;
 			LocalBuilder = null;
 			idx = -1;
+			Location = l;
 		}
 
 		public int Idx {
@@ -336,7 +340,7 @@ namespace CIR {
 			return true;
 		}
 
-		public bool AddVariable (string type, string name)
+		public bool AddVariable (string type, string name, Location l)
 		{
 			if (variables == null)
 				variables = new Hashtable ();
@@ -344,7 +348,7 @@ namespace CIR {
 			if (GetVariableType (name) != null)
 				return false;
 
-			VariableInfo vi = new VariableInfo (type);
+			VariableInfo vi = new VariableInfo (type, l);
 			
 			variables.Add (name, vi);
 			return true;
@@ -486,6 +490,36 @@ namespace CIR {
 				foreach (Block b in children)
 					b.EmitMeta (tc, ig, toplevel, count);
 			}
+		}
+
+		public void UsageWarning (Report r)
+		{
+			string name;
+			
+			if (variables != null){
+				foreach (DictionaryEntry de in variables){
+					VariableInfo vi = (VariableInfo) de.Value;
+					
+					if (vi.Used)
+						continue;
+					
+					name = (string) de.Key;
+						
+					if (vi.Assigned){
+						r.Warning (
+							219, vi.Location, "The variable `" + name +
+							"' is assigned but its value is never used");
+					} else {
+						r.Warning (168, vi.Location, "The variable `" +
+							   name +
+							   "' is declared but never used");
+					} 
+				}
+			}
+
+			if (children != null)
+				foreach (Block b in children)
+					b.UsageWarning (r);
 		}
 	}
 

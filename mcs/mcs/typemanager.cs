@@ -36,6 +36,9 @@ public class TypeManager {
 	static public Type enum_type;
 	static public Type delegate_type;
 	static public Type void_type;
+
+	static public MethodInfo string_concat_string_string;
+	static public MethodInfo string_concat_object_object;
 	
 	// <remarks>
 	//   Holds the Array of Assemblies that have been loaded
@@ -167,7 +170,17 @@ public class TypeManager {
 
 		return t;
 	}
-	       
+
+	MethodInfo GetMethod (Type t, string name, Type [] args)
+	{
+		MethodInfo mi = t.GetMethod (name, args);
+
+		if (mi == null)
+			throw new Exception ("Can not find the core function `" + name + "'");
+
+		return mi;
+	}
+	
 	// <remarks>
 	//   The types have to be initialized after the initial
 	//   population of the type has happened (for example, to
@@ -194,6 +207,15 @@ public class TypeManager {
 		enum_type     = CoreLookupType ("System.Enum");
 		delegate_type = CoreLookupType ("System.Delegate");
 		void_type     = CoreLookupType ("System.Void");
+
+		//
+		// Now load the default methods that we use.
+		//
+		Type [] string_string = { string_type, string_type };
+		Type [] object_object = { object_type, object_type };
+
+		string_concat_string_string = GetMethod (string_type, "Concat", string_string);
+		string_concat_object_object = GetMethod (string_type, "Concat", object_object);
 	}
 	
 	public MemberInfo [] FindMembers (Type t, MemberTypes mt, BindingFlags bf, MemberFilter filter, object criteria)

@@ -89,3 +89,18 @@
 	- IntLiteral in a float context to generate a -FloatLiteral.
 	Instead it will perform an integer load followed by a conversion.
 
+* Location
+
+	Implement location as a struct that contains only an integer,
+	to speed things up.
+
+	The integer would be monotonically increasing across files and we
+	would keep a table of where each file begun processing.
+
+	Like this:
+		A.cs	lines 1 to 24	 (a file with 24 lines)
+		B.cs	lines 25 to 43	 (a file with 18 lines)
+		C.cs	lines 44 to 50	 (a file with 6 lines)
+
+	And then on error reporting, we map the the integer to the
+	file/line

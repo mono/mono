@@ -346,11 +346,11 @@ namespace CIR {
 		//   `target_type'.  It returns a new expression that can be used
 		//   in a context that expects a `target_type'. 
 		// </summary>
-		static public Expression ConvertImplicit (TypeContainer tc, Expression expr, Type target_type)
+		static public Expression ConvertImplicit (TypeContainer tc, Expression expr,
+							  Type target_type)
 		{
 			Type expr_type = expr.Type;
 
-			Console.WriteLine ("ConvertImplicit " + expr_type + " => " + target_type);
 			if (level != 0)
 				throw new Exception ("Lame Loop Detector Triggered");
 			
@@ -1835,11 +1835,44 @@ namespace CIR {
 
 				if (l != TypeManager.bool_type || r != TypeManager.bool_type)
 					error19 (tc);
-			} else
+			} else if (oper == Operator.Addition){
+				//
+				// If any of the arguments is a string, cast to string
+				//
+				if (l == TypeManager.string_type){
+					if (r == TypeManager.string_type){
+						// string + string
+						method = TypeManager.string_concat_string_string;
+					} else {
+						// string + object
+						method = TypeManager.string_concat_object_object;
+						right = ConvertImplicit (tc, right, TypeManager.object_type);
+					}
+					type = TypeManager.string_type;
+
+					Arguments = new ArrayList ();
+					Arguments.Add (new Argument (left, Argument.AType.Expression));
+					Arguments.Add (new Argument (right, Argument.AType.Expression));
+				} else if (r == TypeManager.string_type){
+					// object + string
+					method = TypeManager.string_concat_object_object;
+					Arguments = new ArrayList ();
+					Arguments.Add (new Argument (left, Argument.AType.Expression));
+					Arguments.Add (new Argument (right, Argument.AType.Expression));
+
+					left = ConvertImplicit (tc, left, TypeManager.object_type);
+					type = TypeManager.string_type;
+				}
+
+				//
+				// FIXME: is Delegate operator + (D x, D y) handled?
+				//
+			} else 			
 				DoNumericPromotions (tc, l, r);
 
 			if (left == null || right == null)
 				return null;
+
 
 			if (oper == Operator.BitwiseAnd ||
 			    oper == Operator.BitwiseOr ||
@@ -2104,12 +2137,14 @@ namespace CIR {
 
 	public class Conditional : Expression {
 		Expression expr, trueExpr, falseExpr;
+		Location l;
 		
-		public Conditional (Expression expr, Expression trueExpr, Expression falseExpr)
+		public Conditional (Expression expr, Expression trueExpr, Expression falseExpr, Location l)
 		{
 			this.expr = expr;
 			this.trueExpr = trueExpr;
 			this.falseExpr = falseExpr;
+			this.l = l;
 		}
 
 		public Expression Expr {
@@ -2132,13 +2167,60 @@ namespace CIR {
 
 		public override Expression Resolve (TypeContainer tc)
 		{
-			// FIXME: Implement;
-			throw new Exception ("Unimplemented");
-			// return this;
+			expr = expr.Resolve (tc);
+
+			if (expr.Type != TypeManager.bool_type)
+				expr = Expression.ConvertImplicitRequired (
+					tc, expr, TypeManager.bool_type, l);
+			
+			trueExpr = trueExpr.Resolve (tc);
+			falseExpr = falseExpr.Resolve (tc);
+
+			if (expr == null || trueExpr == null || falseExpr == null)
+				return null;
+			
+			if (trueExpr.Type == falseExpr.Type)
+				type = trueExpr.Type;
+			else {
+				Expression conv;
+
+				//
+				// First, if an implicit conversion exists from trueExpr
+				// to falseExpr, then the result type is of type falseExpr.Type
+				//
+				conv = ConvertImplicit (tc, trueExpr, falseExpr.Type);
+				if (conv != null){
+					type = falseExpr.Type;
+					trueExpr = conv;
+				} else if ((conv = ConvertImplicit (tc, falseExpr, trueExpr.Type)) != null){
+					type = trueExpr.Type;
+					falseExpr = conv;
+				} else {
+					Error (tc, 173, l, "The type of the conditional expression can " +
+					       "not be computed because there is no implicit conversion" +
+					       " from `" + TypeManager.CSharpName (trueExpr.Type) + "'" +
+					       " and `" + TypeManager.CSharpName (falseExpr.Type) + "'");
+					return null;
+				}
+			}
+
+			eclass = ExprClass.Value;
+			return this;
 		}
 
 		public override void Emit (EmitContext ec)
 		{
+			ILGenerator ig = ec.ig;
+			Label false_target = ig.DefineLabel ();
+			Label end_target = ig.DefineLabel ();
+
+			expr.Emit (ec);
+			ig.Emit (OpCodes.Brfalse, false_target);
+			trueExpr.Emit (ec);
+			ig.Emit (OpCodes.Br, end_target);
+			ig.MarkLabel (false_target);
+			falseExpr.Emit (ec);
+			ig.MarkLabel (end_target);
 		}
 	}
 
@@ -2296,6 +2378,8 @@ namespace CIR {
 			ILGenerator ig = ec.ig;
 			int idx = vi.Idx;
 
+			vi.Used = true;
+			
 			switch (idx){
 			case 0:
 				ig.Emit (OpCodes.Ldloc_0);
@@ -2327,7 +2411,8 @@ namespace CIR {
 			ILGenerator ig = ec.ig;
 			VariableInfo vi = VariableInfo;
 			int idx = vi.Idx;
-					
+
+			vi.Assigned = true;
 			switch (idx){
 			case 0:
 				ig.Emit (OpCodes.Stloc_0);
@@ -2358,6 +2443,9 @@ namespace CIR {
 		{
 			VariableInfo vi = VariableInfo;
 			int idx = vi.Idx;
+
+			vi.Used = true;
+			vi.Assigned = true;
 			
 			if (idx <= 255)
 				ec.ig.Emit (OpCodes.Ldloca_S, (byte) idx);
@@ -3325,7 +3413,7 @@ namespace CIR {
 
 		public override void Emit (EmitContext ec)
 		{
-			throw new Exception ("Implement me");
+			throw new Exception ("Should not happen I think");
 		}
 
 	}

@@ -659,11 +659,11 @@ variable_declarators
 variable_declarator
 	: IDENTIFIER ASSIGN variable_initializer
 	  {
-		$$ = new VariableDeclaration ((string) $1, $3);
+		$$ = new VariableDeclaration ((string) $1, $3, lexer.Location);
 	  }
 	| IDENTIFIER
 	  {
-		$$ = new VariableDeclaration ((string) $1, null);
+		$$ = new VariableDeclaration ((string) $1, null, lexer.Location);
 	  }
 	;
 
@@ -1386,11 +1386,11 @@ enum_member_declarations
 enum_member_declaration
 	: opt_attributes IDENTIFIER 
 	  {
-		$$ = new VariableDeclaration ((string) $2, null);
+		$$ = new VariableDeclaration ((string) $2, null, lexer.Location);
 	  }
 	| opt_attributes IDENTIFIER ASSIGN expression
 	  { 
-		$$ = new VariableDeclaration ((string) $2, $4);
+		$$ = new VariableDeclaration ((string) $2, $4, lexer.Location);
 	  }
 	;
 
@@ -2044,7 +2044,7 @@ conditional_expression
 	: conditional_or_expression
 	| conditional_or_expression INTERR expression COLON expression 
 	  {
-		$$ = new Conditional ((Expression) $1, (Expression) $3, (Expression) $5);
+		$$ = new Conditional ((Expression) $1, (Expression) $3, (Expression) $5, lexer.Location);
 	  }
 	;
 
@@ -2613,11 +2613,12 @@ foreach_statement
 		Expression ma;
 		Statement getcurrent;
 		Block foreach_block, child_block;
+		Location l = lexer.Location;
 
 		foreach_block = new Block (current_block, true);
 
-		foreach_block.AddVariable ("System.IEnumerator", temp_id);
-		foreach_block.AddVariable ((string) $3, (string) $4);
+		foreach_block.AddVariable ("System.IEnumerator", temp_id, l);
+		foreach_block.AddVariable ((string) $3, (string) $4, l);
 		assign_e = new Assign (new LocalVariableReference (foreach_block, temp_id), 
 				       new Invocation (
 						new MemberAccess ((Expression) $6, "GetEnumerator"), 
@@ -2822,10 +2823,12 @@ resource_acquisition
 public class VariableDeclaration {
 	public string identifier;
 	public object expression_or_array_initializer;
+	public Location Location;
 
-	public VariableDeclaration (string id, object eoai){
+	public VariableDeclaration (string id, object eoai, Location l){
 		this.identifier = id;
 		this.expression_or_array_initializer = eoai;
+		this.Location = l;
 	}
 }
 
@@ -3019,7 +3022,7 @@ Block declare_local_variables (string type, ArrayList variable_declarators)
 		implicit_block = new Block (current_block, true);
 
 	foreach (VariableDeclaration decl in variable_declarators){
-		if (implicit_block.AddVariable (type, decl.identifier)){
+		if (implicit_block.AddVariable (type, decl.identifier, decl.Location)){
 			if (decl.expression_or_array_initializer != null){
 				if (inits == null)
 					inits = new ArrayList ();
