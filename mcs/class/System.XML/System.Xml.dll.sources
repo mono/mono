@@ -265,11 +265,17 @@ System.Xml.Schema/XmlSchemaUtil.cs
 System.Xml.Schema/XmlSchemaReader.cs
 System.Xml.Schema/XmlTypeCode.cs
 System.Xml.Schema/XmlValueConverter.cs
+System.Xml.Serialization/CodeExporter.cs
+System.Xml.Serialization/CodeGenerationOptions.cs
 System.Xml.Serialization/CodeIdentifier.cs
 System.Xml.Serialization/CodeIdentifiers.cs
 System.Xml.Serialization/IXmlSerializable.cs
+System.Xml.Serialization/ImportContext.cs
 System.Xml.Serialization/MapCodeGenerator.cs
 System.Xml.Serialization/ReflectionHelper.cs
+System.Xml.Serialization/SchemaImporter.cs
+System.Xml.Serialization/SchemaImporterExtension.cs
+System.Xml.Serialization/SchemaImporterExtensionCollection.cs
 System.Xml.Serialization/SchemaTypes.cs
 System.Xml.Serialization/SerializationCodeGenerator.cs
 System.Xml.Serialization/SerializationCodeGeneratorConfiguration.cs
@@ -307,6 +313,7 @@ System.Xml.Serialization/XmlAttributes.cs
 System.Xml.Serialization/XmlCodeExporter.cs
 System.Xml.Serialization/XmlChoiceIdentifierAttribute.cs
 System.Xml.Serialization/XmlCustomFormatter.cs
+System.Xml.Serialization/XmlDeserializationEvents.cs
 System.Xml.Serialization/XmlElementAttribute.cs
 System.Xml.Serialization/XmlElementAttributes.cs
 System.Xml.Serialization/XmlElementEventArgs.cs
@@ -326,6 +333,7 @@ System.Xml.Serialization/XmlSchemaImporter.cs
 System.Xml.Serialization/XmlSchemas.cs
 System.Xml.Serialization/XmlSerializationCollectionFixupCallback.cs
 System.Xml.Serialization/XmlSerializationFixupCallback.cs
+System.Xml.Serialization/XmlSerializationGeneratedCode.cs
 System.Xml.Serialization/XmlSerializationReadCallback.cs
 System.Xml.Serialization/XmlSerializationReader.cs
 System.Xml.Serialization/XmlSerializationReaderInterpreter.cs

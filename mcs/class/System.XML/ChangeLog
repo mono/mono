@@ -1,3 +1,7 @@
+2004-07-06  Raja R Harinath  <rharinath@novell.com>
+
+	* System.Xml.dll.sources: List newly added NET 2.0 stubs.
+
 2004-07-02  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile (LIBRARY_USE_INTERMEDIATE_FILE): Define.
