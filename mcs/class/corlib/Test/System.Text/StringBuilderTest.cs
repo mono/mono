@@ -274,6 +274,26 @@ namespace MonoTests.System.Text {
 		b.Remove (0, 7);  // Should remove "Hello, "
 		AssertEquals ("#01", "I am a StringBuilder", b.ToString ());
 	}
+
+	[Test]
+	public void Insert1 ()
+	{
+		StringBuilder sb = new StringBuilder();
+		sb.Insert(0, "aa");
+		AssertEquals ("#01", "aa", sb.ToString ());
+
+		char [] charArr = new char [] { 'b', 'c', 'd' };
+		sb.Insert(1, charArr, 1, 1);
+		AssertEquals ("#02", "aca", sb.ToString ());
+
+		sb.Insert (1, null, 0, 0);
+		AssertEquals ("#03", "aca", sb.ToString ());
+		
+		try {
+			sb.Insert (1, null, 1, 1);
+			Assertion.Fail ("#04: Value must not be null if startIndex and charCount > 0");
+		} catch (ArgumentNullException) {}
+	}
 }
 
 }
