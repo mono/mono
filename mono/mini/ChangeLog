@@ -1,3 +1,8 @@
+
+Tue Mar 22 16:28:48 CET 2005 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c: fix tail recursion elimination (see test in bug#73936).
+
 2005-03-21  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini-amd64.c (mono_arch_output_basic_block): Add inline versions of
