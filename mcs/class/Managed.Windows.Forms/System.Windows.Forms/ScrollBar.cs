@@ -26,9 +26,12 @@
 //	Jordi Mas i Hernandez	jordi@ximian.com
 //
 //
-// $Revision: 1.17 $
+// $Revision: 1.18 $
 // $Modtime: $
 // $Log: ScrollBar.cs,v $
+// Revision 1.18  2004/08/31 10:35:04  jordi
+// adds autorepeat timer, uses a single timer, fixes scrolling bugs, adds new methods
+//
 // Revision 1.17  2004/08/25 21:35:18  jordi
 // more fixes to scrollbar
 //
@@ -93,8 +96,8 @@ namespace System.Windows.Forms
 		private int position;
 		private int minimum;
 		private int maximum;
-		private int largeChange;
-		private int smallChange;
+		private int large_change;
+		private int small_change;
 		private int scrollbutton_height;
 		private int scrollbutton_width;
 		private Rectangle paint_area = new Rectangle ();
@@ -107,13 +110,27 @@ namespace System.Windows.Forms
 		private ButtonState secondbutton_state = ButtonState.Normal;
 		private bool thumb_pressed = false;
 		private float pixel_per_pos = 0;
-		private Timer firstclick_timer;
-		private Timer holdclick_timer;
+		private Timer timer = new Timer ();
+		private TimerType timer_type;
 		private int thumb_pixel_click_move;
+		private int thumb_pixel_click_move_prev;
 		private int thumb_size = 0;
 		private const int thumb_min_size = 8;
 		internal bool vert;
+		private int lastclick_pos;      // Position of the last button-down event
+		private int lastclick_pos_thumb;      // Position of the last button-down event relative to the thumb
+		private bool repeat_thumb_forward;
+		private bool outside_thumbarea_right = false;
+		private bool outside_thumbarea_left = false;
 		#endregion	// Local Variables
+
+		private enum TimerType
+		{
+			HoldButton,
+			RepeatButton,
+			HoldThumbArea,
+			RepeatThumbArea
+		}
 
 		#region Events
 		public new event EventHandler BackColorChanged;
@@ -131,22 +148,18 @@ namespace System.Windows.Forms
 		public new event EventHandler TextChanged;
 		public event EventHandler ValueChanged;
 		#endregion Events
-		
 
-		public ScrollBar () 
+		public ScrollBar ()
 		{
 			position = 0;
 			minimum = 0;
 			maximum = 100;
-			largeChange = 10;
-			smallChange = 1;
+			large_change = 10;
+			small_change = 1;
 
-			holdclick_timer = new Timer ();
-			firstclick_timer = new Timer ();
-			holdclick_timer.Tick += new EventHandler (OnHoldClickTimer);
-			firstclick_timer.Tick += new EventHandler (OnFirstClickTimer);			
+			timer.Tick += new EventHandler (OnTimer);
 			base.KeyDown += new KeyEventHandler (OnKeyDownSB);
-			base.MouseDown += new MouseEventHandler (OnMouseDownSB); 
+			base.MouseDown += new MouseEventHandler (OnMouseDownSB);
 			base.MouseUp += new MouseEventHandler (OnMouseUpSB);
 			base.MouseMove += new MouseEventHandler (OnMouseMoveSB);
 			base.Resize += new EventHandler (OnResizeSB);
@@ -161,7 +174,7 @@ namespace System.Windows.Forms
 			SetStyle (ControlStyles.ResizeRedraw | ControlStyles.Opaque, true);
 		}
 
-		#region Public Properties		
+		#region Public Properties
 
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public override Color BackColor
@@ -194,17 +207,17 @@ namespace System.Windows.Forms
 			}
 		}
 
-		protected override CreateParams CreateParams 
+		protected override CreateParams CreateParams
 		{
 			get {	return base.CreateParams; }
 		}
 
-		protected override ImeMode DefaultImeMode 
+		protected override ImeMode DefaultImeMode
 		{
 			get { return ImeMode.Disable; }
 		}
 
-		public override Font Font 
+		public override Font Font
 		{
 			get { return base.Font; }
 			set {
@@ -250,13 +263,13 @@ namespace System.Windows.Forms
 		}
 
 		public int LargeChange {
-			get { return largeChange; }
+			get { return large_change; }
 			set {
 				if (value < 0)
 					throw new Exception( string.Format("Value '{0}' must be greater than or equal to 0.", value));
 
-				if (largeChange != value) {
-					largeChange = value;
+				if (large_change != value) {
+					large_change = value;
 					Refresh ();
 				}
 			}
@@ -287,18 +300,17 @@ namespace System.Windows.Forms
 		}
 
 		public int SmallChange {
-			get { return smallChange; }
+			get { return small_change; }
 			set {
 				if ( value < 0 )
 					throw new Exception( string.Format("Value '{0}' must be greater than or equal to 0.", value));
 
-				if (smallChange != value) {
-					smallChange = value;
+				if (small_change != value) {
+					small_change = value;
 					Refresh ();
 				}
 			}
 		}
-
 
 		public new bool TabStop {
 			get { return base.TabStop; }
@@ -314,7 +326,7 @@ namespace System.Windows.Forms
 		public int Value {
 			get { return position; }
 			set {
-				if ( value < Minimum || value > Maximum )
+				if ( value < minimum || value > maximum )
 					throw new ArgumentException(
 						string.Format("'{0}' is not a valid value for 'Value'. 'Value' should be between 'Minimum' and 'Maximum'", value));
 
@@ -333,23 +345,20 @@ namespace System.Windows.Forms
 		#endregion //Public Properties
 
 		#region Public Methods
-
+		
 		protected override void OnEnabledChanged (EventArgs e)
 		{
 			base.OnEnabledChanged (e);
 
-			if (Enabled) 
+			if (Enabled)
 				firstbutton_state = secondbutton_state = ButtonState.Normal;
-			else 
+			else
 				firstbutton_state = secondbutton_state = ButtonState.Inactive;
 
 			Refresh ();
 		}
-
-		/*
-			Called when the control is created
-		*/
-		protected override void OnHandleCreated (System.EventArgs e)		
+		
+		protected override void OnHandleCreated (System.EventArgs e)
 		{
 			base.OnHandleCreated (e);
 
@@ -362,12 +371,12 @@ namespace System.Windows.Forms
 			UpdatePos (Value, true);
 		}
 
-		protected virtual void OnScroll (ScrollEventArgs event_args)		
+		protected virtual void OnScroll (ScrollEventArgs event_args)
 		{
 			if (Scroll == null)
 				return;
 
-			Scroll (this, event_args);		
+			Scroll (this, event_args);
 		}
 
 		protected virtual void OnValueChanged (EventArgs e)
@@ -379,8 +388,8 @@ namespace System.Windows.Forms
 		public override string ToString()
 		{
 			return string.Format("{0}, Minimum: {1}, Maximum: {2}, Value: {3}",
-						GetType( ).FullName.ToString( ), Minimum, Maximum, position);
-		}		
+						GetType( ).FullName.ToString( ), minimum, maximum, position);
+		}
 
 		protected void UpdateScrollInfo ()
 		{
@@ -389,43 +398,34 @@ namespace System.Windows.Forms
 
 		protected override void WndProc (ref Message m)
 		{
-			switch ((Msg) m.Msg) 
-			{	
-				case Msg.WM_PAINT: 
-				{				
+			switch ((Msg) m.Msg)
+			{
+				case Msg.WM_PAINT:
+				{
 					PaintEventArgs	paint_event;
 
 					paint_event = XplatUI.PaintEventStart (Handle);
 					OnPaintSB (paint_event);
 					XplatUI.PaintEventEnd (Handle);
 					return;
-				}		
+				}
 
-				
+
 				case Msg.WM_ERASEBKGND:
-					m.Result = (IntPtr) 1; /// Disable background painting to avoid flickering 
+					m.Result = (IntPtr) 1; /// Disable background painting to avoid flickering
 					return;
-				
+
 				default:
 					break;
 			}
-			
+
 			base.WndProc (ref m);
-		}    		
-
-		#endregion //Public Methods		
-
-		#region Private Methods		
-
-		private void Draw ()
-		{
-			ThemeEngine.Current.DrawScrollBar (DeviceContext, paint_area, this, ref thumb_pos,
-				ref first_arrow_area, ref second_arrow_area,
-				firstbutton_state, secondbutton_state,
-				ref scrollbutton_width, ref scrollbutton_height, vert);
-
 		}
 
+		#endregion //Public Methods
+
+		#region Private Methods
+		
 		private void CalcThumbArea ()
 		{
 			// Thumb area
@@ -439,7 +439,7 @@ namespace System.Windows.Forms
 				if (Height < scrollbutton_height * 2)
 					thumb_size = 0;
 				else {
-					double per =  ((double)LargeChange / (double)((1 + Maximum - Minimum)));
+					double per =  ((double) large_change / (double)((1 + maximum - minimum)));
 					thumb_size = 1 + (int) (thumb_area.Height * per);
 
 					if (thumb_size < thumb_min_size)
@@ -447,7 +447,7 @@ namespace System.Windows.Forms
 				}
 
 
-				pixel_per_pos = ((float)(thumb_area.Height - thumb_size) / (float) ((Maximum - Minimum - LargeChange) + 1));
+				pixel_per_pos = ((float)(thumb_area.Height - thumb_size) / (float) ((maximum - minimum - large_change) + 1));
 
 			} else	{
 
@@ -456,21 +456,48 @@ namespace System.Windows.Forms
 				thumb_area.Height = Height;
 				thumb_area.Width = Width - scrollbutton_width -  scrollbutton_width;
 
-				if (Width < scrollbutton_width * 2) 
+				if (Width < scrollbutton_width * 2)
 					thumb_size = 0;
 				else {
-					double per =  ((double)LargeChange / (double)((1 + Maximum - Minimum)));
+					double per =  ((double) large_change / (double)((1 + maximum - minimum)));
 					thumb_size = 1 + (int) (thumb_area.Width * per);
 
 					if (thumb_size < thumb_min_size)
 						thumb_size = thumb_min_size;
 				}
-				pixel_per_pos = ((float)(thumb_area.Width - thumb_size) / (float) ((Maximum - Minimum - LargeChange) + 1));
+				pixel_per_pos = ((float)(thumb_area.Width - thumb_size) / (float) ((maximum - minimum - large_change) + 1));
 			}
 		}
+		
+		private void Draw ()
+		{
+			ThemeEngine.Current.DrawScrollBar (DeviceContext, paint_area, this, ref thumb_pos,
+				ref first_arrow_area, ref second_arrow_area,
+				firstbutton_state, secondbutton_state,
+				ref scrollbutton_width, ref scrollbutton_height, vert);
+
+		}
+
+		private void LargeIncrement ()
+    		{
+			UpdatePos (position + large_change, true);
+
+			Refresh ();
+			OnScroll (new ScrollEventArgs (ScrollEventType.LargeIncrement, position));
+			OnScroll (new ScrollEventArgs (ScrollEventType.EndScroll, position));
+    		}
+
+    		private void LargeDecrement ()
+    		{
+			UpdatePos (position - large_change, true);
+
+			Refresh ();
+			OnScroll (new ScrollEventArgs (ScrollEventType.LargeDecrement, position));
+			OnScroll (new ScrollEventArgs (ScrollEventType.EndScroll, position));
+    		}
 
     		private void OnResizeSB (Object o, EventArgs e)
-    		{ 
+    		{
     			if (Width <= 0 || Height <= 0)
     				return;
 
@@ -497,99 +524,64 @@ namespace System.Windows.Forms
 
 		}
 
-		
-    		private void UpdatePos (int newPos, bool update_trumbpos)
-    		{
-    			int old = position;
-			int pos;
+		private void OnTimer (Object source, EventArgs e)
+		{
+			switch (timer_type) {
 
-    			if (newPos < minimum)
-    				pos = minimum;
-    			else
-    				if (newPos > maximum)
-    					pos = maximum;
-    					else
-    						pos = newPos;
+			case TimerType.HoldButton:
+				SetRepeatButtonTimer ();
+				break;
 
-			if (update_trumbpos)
-				if (vert)
-					UpdateThumbPos (thumb_area.Y + (int)(((float)(pos - Minimum)) * pixel_per_pos), false);
-				else
-					UpdateThumbPos (thumb_area.X + (int)(((float)(pos - Minimum)) * pixel_per_pos), false);
+			case TimerType.RepeatButton:
+			{
+				if ((firstbutton_state & ButtonState.Pushed) == ButtonState.Pushed)
+					SmallDecrement();
 
-			Value = pos;
-			if (pos != old) // Fire event
-				OnScroll (new ScrollEventArgs (ScrollEventType.ThumbTrack, pos));
+				if ((secondbutton_state & ButtonState.Pushed) == ButtonState.Pushed)
+					SmallIncrement();
 
-    		}
-
-    		private void UpdateThumbPos (int pixel, bool update_value)
-    		{
-    			float new_pos = 0;
-
-    			if (vert) {
-	    			if (pixel < thumb_area.Y)
-	    				thumb_pos.Y = thumb_area.Y;
-	    			else
-	    				if (pixel > thumb_area.Y + thumb_area.Height - thumb_size)
-	    					thumb_pos.Y = thumb_area.Y +  thumb_area.Height - thumb_size;
-	    				else
-	    					thumb_pos.Y = pixel;
-
-				thumb_pos = new Rectangle (0, thumb_pos.Y, ThemeEngine.Current.ScrollBarButtonSize, thumb_size);
-				new_pos = (float) (thumb_pos.Y - thumb_area.Y);
-				new_pos = new_pos / pixel_per_pos;
-			} else	{
-
-				if (pixel < thumb_area.X)
-	    				thumb_pos.X = thumb_area.X;
-	    			else
-	    				if (pixel > thumb_area.X + thumb_area.Width - thumb_size)
-	    					thumb_pos.X = thumb_area.X +  thumb_area.Width - thumb_size;
-	    				else
-	    					thumb_pos.X = pixel;
-
-				thumb_pos = new Rectangle (thumb_pos.X, 0, thumb_size, ThemeEngine.Current.ScrollBarButtonSize);
-				new_pos = (float) (thumb_pos.X - thumb_area.X);
-				new_pos = new_pos / pixel_per_pos;
+				break;
 			}
 
-				  // Console.WriteLine ("UpdateThumbPos: thumb_pos.Y {0} thumb_area.Y {1} pixel_per_pos {2}, new pos {3}, pixel {4}",
-			//	thumb_pos.Y, thumb_area.Y, pixel_per_pos, new_pos, pixel);
+			case TimerType.HoldThumbArea:
+				SetRepeatThumbAreaTimer ();
+				break;
 
-			
+			case TimerType.RepeatThumbArea:
+			{
 
-			if (update_value) 
-				UpdatePos ((int) new_pos + Minimum, false);			
-    		}
+				if (repeat_thumb_forward) {
+					if ((vert && (thumb_pos.Y + thumb_size > lastclick_pos)) ||
+						(!vert && (thumb_pos.X + thumb_size > lastclick_pos))){
+						timer.Enabled = false;
+					} else
+						LargeIncrement ();
+				}
+				else
+					if ((vert && (thumb_pos.Y < lastclick_pos)) ||
+						(!vert && (thumb_pos.X  < lastclick_pos))){
+						timer.Enabled = false;
+					} else
+						LargeDecrement ();
 
-		private void OnHoldClickTimer (Object source, EventArgs e)
-		{
-			if ((firstbutton_state & ButtonState.Pushed) == ButtonState.Pushed)
-				SmallDecrement();
+				break;
+			}
+			default:
+				break;
+			}
 
-			if ((secondbutton_state & ButtonState.Pushed) == ButtonState.Pushed)
-				SmallIncrement();
-
-		}
-
-		private void OnFirstClickTimer (Object source, EventArgs e)
-		{
-			firstclick_timer.Enabled = false;
-		        holdclick_timer.Interval = 50;
-		        holdclick_timer.Enabled = true;
-		}
+		}		
 
     		private void OnMouseMoveSB (object sender, MouseEventArgs e)
     		{
-    			if (!first_arrow_area.Contains (new Point (e.X, e.Y)) &&
-    				((firstbutton_state & ButtonState.Pushed) == ButtonState.Pushed)) {				
+    			if (!first_arrow_area.Contains (e.X, e.Y) &&
+    				((firstbutton_state & ButtonState.Pushed) == ButtonState.Pushed)) {
 				firstbutton_state = ButtonState.Normal;
 				this.Capture = false;
 				Refresh ();
 			}
 
-			if (!second_arrow_area.Contains (new Point (e.X, e.Y)) &&
+			if (!second_arrow_area.Contains (e.X, e.Y) &&
     				((secondbutton_state & ButtonState.Pushed) == ButtonState.Pushed)) {
 				secondbutton_state = ButtonState.Normal;
 				this.Capture = false;
@@ -600,126 +592,171 @@ namespace System.Windows.Forms
 
     				int pixel_pos;
 
-				if (vert) {					
-					pixel_pos = e.Y - (thumb_pixel_click_move - thumb_pos.Y);
-					thumb_pixel_click_move = e.Y;
-					UpdateThumbPos (pixel_pos, true);	
-					
+				if (vert) {
+
+					int mouse_click = e.Y;
+					int outside_curpos = thumb_area.Y + thumb_area.Height - thumb_size + lastclick_pos_thumb;
+
+					if (mouse_click > thumb_area.Y + thumb_area.Height) {
+						outside_thumbarea_right = true;
+						mouse_click = thumb_area.Y + thumb_area.Height;
+					}
+
+					if (mouse_click < thumb_area.Y) {
+						outside_thumbarea_left = true;
+						mouse_click = thumb_area.Y;
+					}
+
+					if (outside_thumbarea_right && mouse_click < outside_curpos) {
+						outside_thumbarea_right = false;
+						thumb_pixel_click_move_prev =
+						thumb_pixel_click_move = outside_curpos;
+					}
+
+					if (outside_thumbarea_left && mouse_click > thumb_area.Y + lastclick_pos_thumb) {
+						outside_thumbarea_left = false;
+						thumb_pixel_click_move_prev =
+						thumb_pixel_click_move = thumb_area.Y + lastclick_pos_thumb;
+					}
+
+					if (outside_thumbarea_right == false && outside_thumbarea_left == false) {
+						pixel_pos = thumb_pos.Y + (thumb_pixel_click_move - thumb_pixel_click_move_prev);
+						thumb_pixel_click_move_prev = thumb_pixel_click_move;
+						thumb_pixel_click_move = mouse_click;
+						UpdateThumbPos (pixel_pos, true);
+					}
+
 				}
 				else {
-					pixel_pos = e.X - (thumb_pixel_click_move - thumb_pos.X);
-					thumb_pixel_click_move = e.X;      
-					UpdateThumbPos (pixel_pos, true);	
-					
+					int mouse_click = e.X;
+					int outside_curpos = thumb_area.X + thumb_area.Width - thumb_size + lastclick_pos_thumb;
+
+					if (mouse_click >  thumb_area.X + thumb_area.Width) {
+						outside_thumbarea_right = true;
+						mouse_click = thumb_area.X + thumb_area.Width;
+					}
+
+					if (mouse_click <  thumb_area.X) {
+						outside_thumbarea_left = true;
+						mouse_click = thumb_area.X;
+					}
+
+					if (outside_thumbarea_right && mouse_click < outside_curpos) {
+						outside_thumbarea_right = false;
+						thumb_pixel_click_move_prev =
+						thumb_pixel_click_move = outside_curpos;
+					}
+
+					if (outside_thumbarea_left && mouse_click > thumb_area.X + lastclick_pos_thumb) {
+						outside_thumbarea_left = false;
+						thumb_pixel_click_move_prev =
+						thumb_pixel_click_move = thumb_area.X + lastclick_pos_thumb;
+					}
+
+					if (outside_thumbarea_right == false && outside_thumbarea_left == false) {
+						pixel_pos = thumb_pos.X + (thumb_pixel_click_move - thumb_pixel_click_move_prev);
+						thumb_pixel_click_move_prev = thumb_pixel_click_move;
+						thumb_pixel_click_move = mouse_click;
+						UpdateThumbPos (pixel_pos, true);
+					}
+
 				}
-				
+
 				Refresh ();
 			}
 
     		}
 
     		private void OnMouseDownSB (object sender, MouseEventArgs e)
-    		{			
-    			Point point = new Point (e.X, e.Y);
+    		{
 
-    			if (firstbutton_state != ButtonState.Inactive && first_arrow_area.Contains (point)) {				
+    			if (firstbutton_state != ButtonState.Inactive && first_arrow_area.Contains (e.X, e.Y)) {
 				this.Capture = true;
 				firstbutton_state = ButtonState.Pushed;
 				Refresh ();
 			}
 
-			if (secondbutton_state != ButtonState.Inactive && second_arrow_area.Contains (point)) {
+			if (secondbutton_state != ButtonState.Inactive && second_arrow_area.Contains (e.X, e.Y)) {
 				this.Capture = true;
 				secondbutton_state = ButtonState.Pushed;
 				Refresh ();
 			}
 
-			if (thumb_pos.Contains (point)) {
+			if (thumb_pos.Contains (e.X, e.Y)) {
 				thumb_pressed = true;
 				this.Capture = true;
 				Refresh ();
-				if (vert)
-					thumb_pixel_click_move = e.Y;
-				else
-					thumb_pixel_click_move = e.X;
+				if (vert) {
+					lastclick_pos_thumb = e.Y - thumb_pos.Y;
+					lastclick_pos = e.Y;					
+					thumb_pixel_click_move_prev = thumb_pixel_click_move = e.Y;
+				}
+				else {
+					lastclick_pos_thumb = e.X - thumb_pos.X;
+					lastclick_pos = e.X;
+					thumb_pixel_click_move_prev = thumb_pixel_click_move = e.X;
+				}
 			}
 			else
-				if (thumb_area.Contains (point)) {
+				if (thumb_area.Contains (e.X, e.Y)) {
+
 					if (vert) {
-						if (e.Y > thumb_pos.Y + thumb_pos.Height)
+						lastclick_pos_thumb = e.Y - thumb_pos.Y;
+						lastclick_pos = e.Y;
+
+						if (e.Y > thumb_pos.Y + thumb_pos.Height) {
 							LargeIncrement ();
-						else
+							repeat_thumb_forward = true;
+						}
+						else {
 							LargeDecrement ();
-					} else 	{
-						if (e.X > thumb_pos.X + thumb_pos.Width)
+							repeat_thumb_forward = false;
+						}
+					}
+					else 	{
+
+						lastclick_pos_thumb = e.X - thumb_pos.X;
+						lastclick_pos = e.X;
+
+						if (e.X > thumb_pos.X + thumb_pos.Width) {
 							LargeIncrement ();
-						else
+							repeat_thumb_forward = true;
+						}
+						else {
 							LargeDecrement ();
+							repeat_thumb_forward = false;
+						}
 					}
 
+					SetHoldThumbAreaTimer ();
+					timer.Enabled = true;
 				}
 
 
-			/* If arrows are pressed, lunch timer for auto-repeat */
+			/* If arrows are pressed, fire timer for auto-repeat */
 			if ((((firstbutton_state & ButtonState.Pushed) == ButtonState.Pushed)
 			|| ((secondbutton_state & ButtonState.Pushed) == ButtonState.Pushed)) &&
-				firstclick_timer.Enabled == false) {			
-		        	firstclick_timer.Interval = 200;
-		        	firstclick_timer.Enabled = true;
+				timer.Enabled == false) {
+		        	SetHoldButtonClickTimer ();
+		        	timer.Enabled = true;
 			}
-			
+
     		}
-
-    		private void SmallIncrement ()
-    		{
-			UpdatePos (Value + SmallChange, true);
-
-			Refresh ();
-			OnScroll (new ScrollEventArgs (ScrollEventType.SmallIncrement, position));
-			OnScroll (new ScrollEventArgs (ScrollEventType.EndScroll, position));
-    		}
-
-    		private void SmallDecrement ()
-    		{
-			UpdatePos (Value - SmallChange, true);
-
-			Refresh ();
-			OnScroll (new ScrollEventArgs (ScrollEventType.SmallDecrement, position));
-			OnScroll (new ScrollEventArgs (ScrollEventType.EndScroll, position));
-    		}
-
-    		private void LargeIncrement ()
-    		{
-			UpdatePos (Value + LargeChange, true);
-
-			Refresh ();
-			OnScroll (new ScrollEventArgs (ScrollEventType.LargeIncrement, position));
-			OnScroll (new ScrollEventArgs (ScrollEventType.EndScroll, position));
-    		}
-
-    		private void LargeDecrement ()
-    		{
-			UpdatePos (Value - LargeChange, true);
-
-			Refresh ();
-			OnScroll (new ScrollEventArgs (ScrollEventType.LargeDecrement, position));
-			OnScroll (new ScrollEventArgs (ScrollEventType.EndScroll, position));
-    		}
-
+    		
     		private void OnMouseUpSB (object sender, MouseEventArgs e)
     		{
-    			if (firstbutton_state != ButtonState.Inactive && first_arrow_area.Contains (new Point (e.X, e.Y))) {
+    			timer.Enabled = false;
+
+    			if (firstbutton_state != ButtonState.Inactive && first_arrow_area.Contains (e.X, e.Y)) {
 
 				firstbutton_state = ButtonState.Normal;
 				SmallDecrement ();
-				holdclick_timer.Enabled = false;
 			}
 
-			if (secondbutton_state != ButtonState.Inactive && second_arrow_area.Contains (new Point (e.X, e.Y))) {
+			if (secondbutton_state != ButtonState.Inactive && second_arrow_area.Contains (e.X, e.Y)) {
 
 				secondbutton_state = ButtonState.Normal;
 				SmallIncrement ();
-				holdclick_timer.Enabled = false;
 			}
 
 			if (thumb_pressed == true) {
@@ -762,7 +799,129 @@ namespace System.Windows.Forms
 
 		}
 
-		#endregion //Private Methods		
+    		private void SmallIncrement ()
+    		{
+			UpdatePos (position + small_change, true);
+
+			Refresh ();
+			OnScroll (new ScrollEventArgs (ScrollEventType.SmallIncrement, position));
+			OnScroll (new ScrollEventArgs (ScrollEventType.EndScroll, position));
+    		}
+
+    		private void SmallDecrement ()
+    		{
+			UpdatePos (position - small_change, true);
+
+			Refresh ();
+			OnScroll (new ScrollEventArgs (ScrollEventType.SmallDecrement, position));
+			OnScroll (new ScrollEventArgs (ScrollEventType.EndScroll, position));
+    		}
+    		
+    		private void SetHoldButtonClickTimer ()
+		{
+			timer.Enabled = false;
+			timer.Interval = 200;
+			timer_type = TimerType.HoldButton;
+			timer.Enabled = true;
+		}
+
+		private void SetRepeatButtonTimer ()
+		{
+			timer.Enabled = false;
+			timer.Interval = 50;
+			timer_type = TimerType.RepeatButton;
+			timer.Enabled = true;
+		}
+
+		private void SetHoldThumbAreaTimer ()
+		{
+			timer.Enabled = false;
+			timer.Interval = 200;
+			timer_type = TimerType.HoldThumbArea;
+			timer.Enabled = true;
+		}
+
+		private void SetRepeatThumbAreaTimer ()
+		{
+			timer.Enabled = false;
+			timer.Interval = 50;
+			timer_type = TimerType.RepeatThumbArea;
+			timer.Enabled = true;
+		}    		
+
+		
+    		private void UpdatePos (int newPos, bool update_thumbpos)
+    		{
+    			int old = position;
+			int pos;
+
+    			if (newPos < minimum)
+    				pos = minimum;
+    			else
+    				if (newPos > maximum + 1 - large_change)
+    					pos = maximum + 1 - large_change;
+    					else
+    						pos = newPos;
+
+			if (update_thumbpos) {
+				if (vert)
+					UpdateThumbPos (thumb_area.Y + (int)(((float)(pos - minimum)) * pixel_per_pos), false);
+				else
+					UpdateThumbPos (thumb_area.X + (int)(((float)(pos - minimum)) * pixel_per_pos), false);
+
+				Value = pos;
+			}
+			else {
+				position = pos; // Updates directly the value to avoid thumb pos update
+			}
+
+			if (pos != old) // Fire event
+				OnScroll (new ScrollEventArgs (ScrollEventType.ThumbTrack, pos));
+
+    		}
+
+    		private void UpdateThumbPos (int pixel, bool update_value)
+    		{
+    			float new_pos = 0;
+
+    			if (vert) {
+	    			if (pixel < thumb_area.Y)
+	    				thumb_pos.Y = thumb_area.Y;
+	    			else
+	    				if (pixel > thumb_area.Y + thumb_area.Height - thumb_size)
+	    					thumb_pos.Y = thumb_area.Y +  thumb_area.Height - thumb_size;
+	    				else
+	    					thumb_pos.Y = pixel;
+
+				thumb_pos.X = 0;
+				thumb_pos.Width = ThemeEngine.Current.ScrollBarButtonSize;
+				thumb_pos.Height = thumb_size;
+				new_pos = (float) (thumb_pos.Y - thumb_area.Y);
+				new_pos = new_pos / pixel_per_pos;
+
+			} else	{
+
+				if (pixel < thumb_area.X)
+	    				thumb_pos.X = thumb_area.X;
+	    			else
+	    				if (pixel > thumb_area.X + thumb_area.Width - thumb_size)
+	    					thumb_pos.X = thumb_area.X +  thumb_area.Width - thumb_size;
+	    				else
+	    					thumb_pos.X = pixel;
+
+				thumb_pos.Y = 0;
+				thumb_pos.Width =  thumb_size;
+				thumb_pos.Height = ThemeEngine.Current.ScrollBarButtonSize;
+				new_pos = (float) (thumb_pos.X - thumb_area.X);
+				new_pos = new_pos / pixel_per_pos;
+			}
+
+			if (update_value)
+				UpdatePos ((int) new_pos + minimum, false);
+    		}
+
+
+		#endregion //Private Methods
 	 }
 }
 
