@@ -9,7 +9,7 @@
 
 namespace System {
 
-	public class Version : ICloneable, IComparable {
+	public sealed class Version : ICloneable, IComparable {
 		int major, minor, build, revision;
 
 		const int MAXINT = int.MaxValue;

@@ -52,7 +52,5 @@ TypeCode.cs
 UInt16.cs
 UInt32.cs
 UInt64.cs
-Uri.cs
-UriFormatException.cs
 Version.cs
 Void.cs

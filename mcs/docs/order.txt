@@ -1,2 +1,3 @@
-Order:
-	Not all code paths return a value
+The plans:
+
+    Currently types and base classes are being registered.

@@ -1,5 +1,6 @@
 ArrayList.cs
 BitArray.cs
+CollectionBase.cs
 Hashtable.cs
 ICollection.cs
 IComparer.cs
@@ -9,6 +10,7 @@ IEnumerable.cs
 IEnumerator.cs
 IHashCodeProvider.cs
 IList.cs
+ReadOnlyCollectionBase.cs
 Stack.cs
 SortedList.cs
 CollectionBase.cs
