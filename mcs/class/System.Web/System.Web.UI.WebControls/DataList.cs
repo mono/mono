@@ -669,21 +669,21 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		protected virtual void OnItemCreated(DataListCommandEventArgs e)
+		protected virtual void OnItemCreated(DataListItemEventArgs e)
 		{
 			if(Events != null)
 			{
-				DataListCommandEventHandler dlceh = (DataListCommandEventHandler)(Events[ItemCreatedEvent]);
+				DataListItemEventHandler dlceh = (DataListItemEventHandler)(Events[ItemCreatedEvent]);
 				if(dlceh != null)
 					dlceh(this, e);
 			}
 		}
 
-		protected virtual void OnItemDataBound(DataListCommandEventArgs e)
+		protected virtual void OnItemDataBound(DataListItemEventArgs e)
 		{
 			if(Events != null)
 			{
-				DataListCommandEventHandler dlceh = (DataListCommandEventHandler)(Events[ItemDataBoundEvent]);
+				DataListItemEventHandler dlceh = (DataListItemEventHandler)(Events[ItemDataBoundEvent]);
 				if(dlceh != null)
 					dlceh(this, e);
 			}
@@ -747,11 +747,8 @@ namespace System.Web.UI.WebControls
 			throw new NotImplementedException();
 		}
 
-		/// <summary>
-		/// Undocumented
-		/// </summary>
 		[MonoTODO]
-		protected DataListItem CreateItem(int itemIndex, ListItemType itemType, bool dataBind, object dataItem)
+		private DataListItem CreateItem(int itemIndex, ListItemType itemType, bool dataBind, object dataItem)
 		{
 			throw new NotImplementedException();
 		}

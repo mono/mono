@@ -176,7 +176,7 @@ namespace System.Web.UI.WebControls
 			throw new HttpException(HttpRuntime.FormatResourceString("Cannot_Have_Children_Of_Type", "ListItem", obj.GetType().ToString()));
 		}
 
-		internal bool IsTrackingViewState
+		bool IsTrackingViewState
 		{
 			get
 			{

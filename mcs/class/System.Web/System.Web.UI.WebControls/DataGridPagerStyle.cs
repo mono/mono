@@ -21,12 +21,12 @@ namespace System.Web.UI.WebControls
 	{
 		DataGrid owner;
 
-		public static int MODE         = (0x01 << 19);
-		public static int NEXT_PG_TEXT = (0x01 << 20);
-		public static int PG_BTN_COUNT = (0x01 << 21);
-		public static int POSITION     = (0x01 << 22);
-		public static int VISIBLE      = (0x01 << 23);
-		public static int PREV_PG_TEXT = (0x01 << 24);
+		private static int MODE         = (0x01 << 19);
+		private static int NEXT_PG_TEXT = (0x01 << 20);
+		private static int PG_BTN_COUNT = (0x01 << 21);
+		private static int POSITION     = (0x01 << 22);
+		private static int VISIBLE      = (0x01 << 23);
+		private static int PREV_PG_TEXT = (0x01 << 24);
 
 		internal DataGridPagerStyle(DataGrid owner): base()
 		{

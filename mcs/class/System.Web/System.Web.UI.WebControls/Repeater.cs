@@ -256,11 +256,11 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		protected virtual void OnItemCreated(RepeaterCommandEventArgs e)
+		protected virtual void OnItemCreated(RepeaterItemEventArgs e)
 		{
 			if(Events != null)
 			{
-				RepeaterCommandEventHandler rceh = (RepeaterCommandEventHandler)(ViewState[ItemCreatedEvent]);
+				RepeaterItemEventHandler rceh = (RepeaterItemEventHandler)(ViewState[ItemCreatedEvent]);
 				if(rceh != null)
 				{
 					rceh(this, e);
@@ -268,11 +268,11 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		protected virtual void OnItemDataBound(RepeaterCommandEventArgs e)
+		protected virtual void OnItemDataBound(RepeaterItemEventArgs e)
 		{
 			if(Events != null)
 			{
-				RepeaterCommandEventHandler rceh = (RepeaterCommandEventHandler)(ViewState[ItemDataBoundEvent]);
+				RepeaterItemEventHandler rceh = (RepeaterItemEventHandler)(ViewState[ItemDataBoundEvent]);
 				if(rceh != null)
 				{
 					rceh(this, e);

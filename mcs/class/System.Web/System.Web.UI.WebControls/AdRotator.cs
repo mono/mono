@@ -27,7 +27,7 @@ namespace System.Web.UI.WebControls
 	[DefaultEvent("AdCreated")]
 	[DefaultProperty("AdvertisementFile")]
 	//TODO: [Designer("??")]
-	[ToolboxData("<{0}:AdRotator runat=\"server\" Height=\"60px\""
+	[ToolboxData("<{0}:AdRotator runat=\"server\" Height=\"60px\" "
 	             + "Width=\"468\"></{0}:AdRotator>")]
 	public class AdRotator: WebControl
 	{
@@ -42,7 +42,7 @@ namespace System.Web.UI.WebControls
 
 		private string fileDirectory;
 
-		private class AdRecord
+		class AdRecord
 		{
 			public IDictionary adProps;
 			public int         hits; // or impressions or clicks

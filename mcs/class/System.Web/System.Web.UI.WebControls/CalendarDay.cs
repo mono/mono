@@ -1,13 +1,13 @@
 /**
  * Namespace: System.Web.UI.WebControls
  * Class:     CalendarDay
- * 
+ *
  * Author:  Gaurav Vaish
  * Maintainer: gvaish@iitk.ac.in
  * Contact: <my_scripts2001@yahoo.com>, <gvaish@iitk.ac.in>
  * Implementation: yes
  * Status:  100%
- * 
+ *
  * (C) Gaurav Vaish (2001)
  */
 
@@ -36,7 +36,7 @@ namespace System.Web.UI.WebControls
 			this.isOtherMonth = isOtherMonth;
 			this.dayNumberText = dayNumberText;
 		}
-		
+
 		public DateTime Date
 		{
 			get
@@ -44,7 +44,7 @@ namespace System.Web.UI.WebControls
 				return date;
 			}
 		}
-		
+
 		public string DayNumberText
 		{
 			get
@@ -52,7 +52,7 @@ namespace System.Web.UI.WebControls
 				return dayNumberText;
 			}
 		}
-		
+
 		public bool IsOtherMonth
 		{
 			get
@@ -60,7 +60,7 @@ namespace System.Web.UI.WebControls
 				return isOtherMonth;
 			}
 		}
-		
+
 		public bool IsSelectable
 		{
 			get
@@ -72,40 +72,28 @@ namespace System.Web.UI.WebControls
 				isSelectable = value;
 			}
 		}
-		
+
 		public bool IsSelected
 		{
 			get
 			{
 				return isSelected;
 			}
-			set
-			{
-				isSelected = value;
-			}
 		}
-		
+
 		public bool IsToday
 		{
 			get
 			{
 				return isToday;
 			}
-			set
-			{
-				isToday = value;
-			}
 		}
-		
+
 		public bool IsWeekend
 		{
 			get
 			{
 				return isWeekend;
-			}
-			set
-			{
-				isWeekend = value;
 			}
 		}
 	}

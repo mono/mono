@@ -1,3 +1,8 @@
+2002-03-27      Gaurav Vaish <gvaish@iitk.ac.in>
+
+	* Removed extra methods, corrected access modifiers to several
+	  methods.
+
 2002-03-26      Gaurav Vaish <gvaish@iitk.ac.in>
 
 	* <SeveralFiles>.cs        - Added some attributes

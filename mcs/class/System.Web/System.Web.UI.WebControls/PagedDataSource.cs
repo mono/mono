@@ -276,7 +276,7 @@ namespace System.Web.UI.WebControls
 			return dataSource.GetEnumerator();
 		}
 
-		private class PrivateIEnumeratorEnumerator : IEnumerator
+		class PrivateIEnumeratorEnumerator : IEnumerator
 		{
 			private int index;
 			private int max;
@@ -312,7 +312,7 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		private class PrivateICollectionEnumerator : IEnumerator
+		class PrivateICollectionEnumerator : IEnumerator
 		{
 			private int index;
 			private int start;
@@ -364,7 +364,7 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		private class PrivateArrayEnumerator : IEnumerator
+		class PrivateArrayEnumerator : IEnumerator
 		{
 			private int index;
 			private int start;
@@ -407,7 +407,7 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		private class PrivateListEnumerator : IEnumerator
+		class PrivateListEnumerator : IEnumerator
 		{
 			private int   index;
 			private int   start;

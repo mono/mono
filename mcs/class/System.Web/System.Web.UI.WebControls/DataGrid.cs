@@ -23,15 +23,15 @@ namespace System.Web.UI.WebControls
 	//TODO: [Editor("??")]
 	public class DataGrid : BaseDataList, INamingContainer
 	{
-		public const string CancelCommandName   = "Cancel";
-		public const string DeleteCommandName   = "Delete";
-		public const string EditCommandName     = "Edit";
-		public const string NextPageCommandName = "Next";
-		public const string PageCommandName     = "Page";
-		public const string PrevPageCommandName = "Prev";
-		public const string SelectCommandName   = "Select";
-		public const string SortCommandName     = "Sort";
-		public const string UpdateCommandName   = "Update";
+		public const string CancelCommandName       = "Cancel";
+		public const string DeleteCommandName       = "Delete";
+		public const string EditCommandName         = "Edit";
+		public const string NextPageCommandArgument = "Next";
+		public const string PageCommandName         = "Page";
+		public const string PrevPageCommandArgument = "Prev";
+		public const string SelectCommandName       = "Select";
+		public const string SortCommandName         = "Sort";
+		public const string UpdateCommandName       = "Update";
 
 		private TableItemStyle alternatingItemStyle;
 		private TableItemStyle editItemStyle;
