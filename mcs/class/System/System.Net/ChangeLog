@@ -1,3 +1,7 @@
+2003-10-16  Pedro Martínez Juliá  <yoros@wanadoo.es>
+
+	* WebClient.cs: added a slash between directory and file names.
+
 2003-10-13  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpWebRequest.cs:

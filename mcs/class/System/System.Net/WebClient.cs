@@ -300,7 +300,7 @@ namespace System.Net
 						return new Uri ("file://" + path);
 					}
 					else {
-						return new Uri ("file://" + Environment.CurrentDirectory + path);
+						return new Uri ("file://" + Environment.CurrentDirectory + "/" + path);
 					}
 				}
 			}
