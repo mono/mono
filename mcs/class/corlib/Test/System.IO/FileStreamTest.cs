@@ -981,8 +981,8 @@ namespace MonoTests.System.IO
 		[ExpectedException (typeof (NotSupportedException))]
 		public void SetLengthWithClosedBaseStream ()
 		{
-			FileSteam fs = new FileSteam ("temp", FileMode.Create);
-			BufferStream bs = new BufferStream (fs);
+			FileStream fs = new FileStream ("temp", FileMode.Create);
+			BufferedStream bs = new BufferedStream (fs);
 			fs.Close ();
 			
 			bs.SetLength (1000);
