@@ -20,6 +20,7 @@ namespace System.Drawing
 	{
 		internal System.Drawing.IGraphics	implementation_;
 		internal static System.Drawing.IGraphicsFactory	graphicsFactory_ = Factories.GetGraphicsFactory();
+		internal Matrix transform = new Matrix();
 
 		public delegate bool EnumerateMetafileProc (EmfPlusRecordType recordType,
 							   int flags,
@@ -438,37 +439,51 @@ namespace System.Drawing
 		[MonoTODO]
 		public void DrawLine (Pen pen, PointF pt1, PointF pt2)
 		{
-			implementation_.DrawLine(pen, pt1, pt2);
+			PointF[] pts = new PointF[2];
+			pts[0] = pt1;
+			pts[1] = pt2;
+			transform.TransformPoints(pts);
+			implementation_.DrawLine(pen, pts[0], pts[1]);
 		}
 
 		[MonoTODO]
 		public void DrawLine (Pen pen, Point pt1, Point pt2)
 		{
-			implementation_.DrawLine(pen, pt1, pt2);
+			Point[] pts = new Point[2];
+			pts[0] = pt1;
+			pts[1] = pt2;
+			transform.TransformPoints(pts);
+			implementation_.DrawLine(pen, pts[0], pts[1]);
 		}
 
 		[MonoTODO]
 		public void DrawLine (Pen pen, int x1, int y1, int x2, int y2)
 		{
-			implementation_.DrawLine(pen, x1, y1, x2, y2);
+			DrawLine(pen, new Point(x1, y1), new Point(x2, y2));
 		}
 
 		[MonoTODO]
 		public void DrawLine (Pen pen, float x1, float y1, float x2, float y2)
 		{
-			implementation_.DrawLine(pen, x1, y1, x2, y2);
+			DrawLine(pen, new PointF(x1, y1), new PointF(x2, y2));
 		}
 
 		[MonoTODO]
 		public void DrawLines (Pen pen, PointF [] points)
 		{
-			implementation_.DrawLines( pen, points);
+			PointF[] pts = new PointF[points.Length];
+			Array.Copy( points, pts, points.Length);
+			transform.TransformPoints(pts);
+			implementation_.DrawLines( pen, pts);
 		}
 
 		[MonoTODO]
 		public void DrawLines (Pen pen, Point [] points)
 		{
-			implementation_.DrawLines( pen, points);
+			Point[] pts = new Point[points.Length];
+			Array.Copy( points, pts, points.Length);
+			transform.TransformPoints(pts);
+			implementation_.DrawLines( pen, pts);
 		}
 
 		[MonoTODO]
@@ -568,7 +583,6 @@ namespace System.Drawing
 		[MonoTODO]
 		public void DrawString (string s, Font font, Brush brush, RectangleF layoutRectangle, StringFormat format)
 		{
-			//throw new NotImplementedException ();
 			implementation_.DrawString(s, font, brush, layoutRectangle, format);
 		}
 
@@ -1199,25 +1213,28 @@ namespace System.Drawing
 		[MonoTODO]
 		public void Restore (GraphicsState gstate)
 		{
-			implementation_.Restore(gstate);
+			transform = gstate.matrix.Clone();
 		}
 
 		[MonoTODO]
 		public void RotateTransform (float angle)
 		{
-			implementation_.RotateTransform(angle);
+			RotateTransform(angle, MatrixOrder.Prepend);
 		}
 
 		[MonoTODO]
 		public void RotateTransform (float angle, MatrixOrder order)
 		{
-			throw new NotImplementedException ();
+			transform.Rotate(angle, order);
 		}
 
 		[MonoTODO]
 		public GraphicsState Save ()
 		{
-			return implementation_.Save();
+			//return implementation_.Save();
+			GraphicsState state = new GraphicsState();
+			state.matrix = transform.Clone();
+			return state;
 		}
 
 		[MonoTODO]
@@ -1313,13 +1330,13 @@ namespace System.Drawing
 		[MonoTODO]
 		public void TranslateTransform (float dx, float dy)
 		{
-			implementation_.TranslateTransform( dx, dy);
+			TranslateTransform(dx, dy, MatrixOrder.Prepend);
 		}
 
 		[MonoTODO]
 		public void TranslateTransform (float dx, float dy, MatrixOrder order)
 		{
-			throw new NotImplementedException ();
+			transform.Translate(dx, dy, order);
 		}
 
 		public Region Clip
@@ -1470,10 +1487,10 @@ namespace System.Drawing
 		public Matrix Transform
 		{
 			get {
-				throw new NotImplementedException ();
+				return transform;
 			}
 			set {
-				throw new NotImplementedException ();
+				transform = value.Clone();
 			}
 		}
 

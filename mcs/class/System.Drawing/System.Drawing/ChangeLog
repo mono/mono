@@ -1,3 +1,7 @@
+2003-06-26 Alexandre Pigolkine <pigolkine@gmx.de>
+	* Graphics.cs		coordinate transformations
+	* Image.cs			small fix
+
 2003-06-22 Alexandre Pigolkine <pigolkine@gmx.de>
 	* Factories.cs
 	* FontFamily.cs		more implementation

@@ -231,7 +231,6 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 
 	public void Save (string filename)
 	{
-		//implementation_.Save(filename);
 		Save( filename, RawFormat);
 	}
 
@@ -240,13 +239,14 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 	}
 
 	public void Save(Stream stream, ImageFormat format) {
-		InternalImageInfo imageInfo = ConvertToInternalImageInfo();
 		ImageCodecInfo[] encoders = ImageCodecInfo.GetImageEncoders();
 		foreach( ImageCodecInfo encoder in encoders) {
 			if (encoder.FormatID == format.Guid) {
 				if(encoder.encode != null) {
+					InternalImageInfo imageInfo = ConvertToInternalImageInfo();
 					encoder.encode(stream, imageInfo);
 				}
+				break;
 			}
 		}
 	}
@@ -258,10 +258,8 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 		fs.Close();
 	}
 
-	//public void Save(Stream stream, ImageCodecInfo encoder,
-	//                 EncoderParameters encoderParams);
-	//public void Save(string filename, ImageCodecInfo encoder,
-	//                 EncoderParameters encoderParams);
+	//public void Save(Stream stream, ImageCodecInfo encoder, EncoderParameters encoderParams);
+	//public void Save(string filename, ImageCodecInfo encoder, EncoderParameters encoderParams);
 	//public void SaveAdd(EncoderParameters_ encoderParams);
 	//public void SaveAdd(Image image, EncoderParameters_ encoderParams);
 	//public int SelectActiveFrame(FrameDimension dimension, int frameIndex);
