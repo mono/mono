@@ -1,3 +1,6 @@
+2005-01-26 Rafael Teixeira <rafaelteixeirabr@hotmail.com>
+	* misc/test3.vb : better winforms code (this one runs with current MWF implementation)
+
 2004-12-20  Jambunathan K  <kjambunathan@novell.com>
 	* README.tests: Added
 	* Makefile (DISTFILES): Added README.tests

@@ -3,9 +3,9 @@ Imports System.Drawing
 
 Module Test3
 
+private form1 As Form
 Sub Main()
     ' Create a new instance of the form.
-    Dim form1 As Form
     Dim button1 As Button
     Dim button2 As Button
     
@@ -16,11 +16,11 @@ Sub Main()
     ' Set the text of button1 to "OK".
     button1.Text = "OK"
     ' Set the position of the button on the form.
-    button1.Location = New Point(10, 10)
+    button1.Location = New System.Drawing.Point(10, 10)
     ' Set the text of button2 to "Cancel".
     button2.Text = "Cancel"
     ' Set the position of the button based on the location of button1.
-    button2.Location = New Point(button1.Left, button1.Height + button1.Top + 10)
+    button2.Location = New System.Drawing.Point(button1.Left, button1.Height + button1.Top + 10)
     ' Set the caption bar text of the form.   
     form1.Text = "My Dialog Box"
     ' Display a help button on the form.
@@ -44,8 +44,24 @@ Sub Main()
     ' Add button2 to the form.
     form1.Controls.Add(button2)
        
-    ' Display the form as a modal dialog box.
-    form1.ShowDialog()
+           AddHandler form1.Closed, AddressOf Me.OnClosed
+    AddHandler button1.Click, AddressOf Me.OnOK
+    AddHandler button2.Click, AddressOf Me.OnCancel
+ 
+	Application.Run(form1)
 End Sub
+
+Private Sub OnClosed(ByVal sender As Object, ByVal e As System.EventArgs)
+	Application.Exit()
+End Sub	
+	Private Sub OnCancel(ByVal sender As Object, ByVal e As System.EventArgs)
+	System.Console.WriteLine("CANCEL pressed")
+	form1.Close()
+End Sub	
+
+Private Sub OnOK(ByVal sender As Object, ByVal e As System.EventArgs)
+	System.Console.WriteLine("OK pressed")
+	form1.Close()
+End Sub	
 
 End Module
