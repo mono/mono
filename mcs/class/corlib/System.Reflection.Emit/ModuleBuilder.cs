@@ -19,6 +19,7 @@ using Mono.CSharp.Debugger;
 
 namespace System.Reflection.Emit {
 	public class ModuleBuilder : Module {
+		private IntPtr dynamic_image;
 		private TypeBuilder[] types;
 		private CustomAttributeBuilder[] cattrs;
 		private byte[] guid;
@@ -26,10 +27,12 @@ namespace System.Reflection.Emit {
 		internal AssemblyBuilder assemblyb;
 		private MethodBuilder[] global_methods;
 		private FieldBuilder[] global_fields;
+		bool is_main;
 		private TypeBuilder global_type;
 		private Type global_type_created;
 		internal IMonoSymbolWriter symbol_writer;
 		Hashtable name_cache;
+		Hashtable us_string_cache = new Hashtable ();
 		bool transient;
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
@@ -361,22 +364,83 @@ namespace System.Reflection.Emit {
 			return copy;
 		}
 
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		private static extern int getUSIndex (ModuleBuilder mb, string str);
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		private static extern int getToken (ModuleBuilder mb, object obj);
+
+		internal int GetToken (string str) {
+			if (us_string_cache.Contains (str))
+				return (int)us_string_cache [str];
+			int result = getUSIndex (this, str);
+			us_string_cache [str] = result;
+			return result;
+		}
+
+		internal int GetToken (MemberInfo member) {
+			return getToken (this, member);
+		}
+
+		internal int GetToken (SignatureHelper helper) {
+			return getToken (this, helper);
+		}
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		private static extern void build_metadata (ModuleBuilder mb);
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		private static extern int getDataChunk (ModuleBuilder mb, byte[] buf, int offset);
+
 		internal void Save ()
 		{
+			if (transient)
+				return;
+
 			if (symbol_writer != null) {
 				string res_name;
-				if (assemblyb.mainModule == this)
+				if (is_main)
 					res_name = "MonoSymbolFile";
 				else
 					res_name = "MonoSymbolFile:" + fqname;
 				byte[] data = symbol_writer.CreateSymbolFile (assemblyb);
 				assemblyb.EmbedResource (res_name, data, ResourceAttributes.Public);
 			}
+
+			build_metadata (this);
+
+			string fileName = fqname;
+			if (assemblyb.AssemblyDir != null)
+				fileName = System.IO.Path.Combine (assemblyb.AssemblyDir, fileName);
+
+			byte[] buf = new byte [65536];
+			FileStream file;
+			int count, offset;
+
+			file = new FileStream (fileName, FileMode.Create, FileAccess.Write);
+
+			offset = 0;
+			while ((count = getDataChunk (this, buf, offset)) != 0) {
+				file.Write (buf, 0, count);
+				offset += count;
+			}
+			file.Close ();
+
+			//
+			// The constant 0x80000000 is internal to Mono, it means `make executable'
+			//
+			File.SetAttributes (fileName, (FileAttributes) (unchecked ((int) 0x80000000)));
 		}
 
 		internal string FileName {
 			get {
 				return fqname;
+			}
+		}
+
+		internal bool IsMain {
+			set {
+				is_main = value;
 			}
 		}
 	}

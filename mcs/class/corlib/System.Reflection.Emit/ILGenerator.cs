@@ -395,7 +395,7 @@ namespace System.Reflection.Emit {
 		
 		public virtual void Emit (OpCode opcode, ConstructorInfo constructor)
 		{
-			int token = abuilder.GetToken (constructor);
+			int token = module.GetToken (constructor);
 			make_room (6);
 			ll_emit (opcode);
 			if (constructor.DeclaringType.Module == module)
@@ -430,7 +430,7 @@ namespace System.Reflection.Emit {
 		
 		public virtual void Emit (OpCode opcode, FieldInfo field)
 		{
-			int token = abuilder.GetToken (field);
+			int token = module.GetToken (field);
 			make_room (6);
 			ll_emit (opcode);
 			if (field.DeclaringType.Module == module)
@@ -580,7 +580,7 @@ namespace System.Reflection.Emit {
 			if (method == null)
 				throw new ArgumentNullException ("method");
 
-			int token = abuilder.GetToken (method);
+			int token = module.GetToken (method);
 			make_room (6);
 			ll_emit (opcode);
 			if (method.DeclaringType.Module == module)
@@ -603,7 +603,7 @@ namespace System.Reflection.Emit {
 
 		public virtual void Emit (OpCode opcode, SignatureHelper shelper)
 		{
-			int token = abuilder.GetToken (shelper);
+			int token = module.GetToken (shelper);
 			make_room (6);
 			ll_emit (opcode);
 			emit_int (token);
@@ -627,7 +627,7 @@ namespace System.Reflection.Emit {
 
 		public virtual void Emit (OpCode opcode, string val)
 		{
-			int token = abuilder.GetToken (val);
+			int token = module.GetToken (val);
 			make_room (6);
 			ll_emit (opcode);
 			emit_int (token);
@@ -637,7 +637,7 @@ namespace System.Reflection.Emit {
 		{
 			make_room (6);
 			ll_emit (opcode);
-			emit_int (abuilder.GetToken (type));
+			emit_int (module.GetToken (type));
 		}
 
 		[MonoTODO ("Do something about varargs method")]

@@ -1,5 +1,20 @@
 2003-11-03  Zoltan Varga  <vargaz@freemail.hu>
 
+	* AssemblyBuilder.cs ModuleBuilder.cs ILGenerator.cs: Move getUSIndex 
+	and getToken methods, and the associated icalls to ModuleBuilder, 
+	since tokens are per-module.
+
+	* AssemblyBuilder.cs ModuleBuilder.cs: Partially revert the previous
+	patch, since having the 'is_main' field is useful in the unmanaged 
+	code.
+
+	* AssemblyBuilder.cs ModuleBuilder.cs: Move the metadata creation and
+	file creation logic to ModuleBuilder:Save (), since this needs to be
+	done for every module. Also move the corresponding icalls to 
+	ModuleBuilder.
+
+2003-11-03  Zoltan Varga  <vargaz@freemail.hu>
+
 	* AssemblyBuilder.cs ModuleBuilder.cs: First steps toward a fix for
 	#48700 (proper module support in Ref.Emit). Remove is_main field from
 	ModuleBuilder and add a mainModule field to AssemblyBuilder instead.

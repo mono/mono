@@ -47,13 +47,11 @@ namespace System.Reflection.Emit {
 		PEFileKinds pekind = PEFileKinds.Dll;
 		bool delay_sign;
 		uint access;
-		internal ModuleBuilder mainModule;
 		internal Type corlib_object_type = typeof (System.Object);
 		internal Type corlib_value_type = typeof (System.ValueType);
 		internal Type corlib_enum_type = typeof (System.Enum);
 		internal Type corlib_void_type = typeof (void);
 		private int[] table_indexes;
-		Hashtable us_string_cache = new Hashtable ();
 		ArrayList resource_writers = null;
 		bool created;
 
@@ -334,43 +332,20 @@ namespace System.Reflection.Emit {
 			throw not_supported ();
 		}
 
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private static extern int getUSIndex (AssemblyBuilder ab, string str);
-
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private static extern int getToken (AssemblyBuilder ab, object obj);
-
-		internal int GetToken (string str) {
-			if (us_string_cache.Contains (str))
-				return (int)us_string_cache [str];
-			int result = getUSIndex (this, str);
-			us_string_cache [str] = result;
-			return result;
-		}
-		
-		internal int GetToken (MemberInfo member) {
-			return getToken (this, member);
-		}
-
-		internal int GetToken (SignatureHelper helper) {
-			return getToken (this, helper);
-		}
-
 		internal bool IsSave {
 			get {
 				return access != (uint)AssemblyBuilderAccess.Run;
 			}
 		}
 
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private static extern int getDataChunk (AssemblyBuilder ab, byte[] buf, int offset);
+		internal string AssemblyDir {
+			get {
+				return dir;
+			}
+		}
 
 		public void Save (string assemblyFileName)
 		{
-			byte[] buf = new byte [65536];
-			FileStream file;
-			int count, offset;
-
 			if (resource_writers != null) {
 				foreach (IResourceWriter writer in resource_writers) {
 					writer.Generate ();
@@ -386,34 +361,11 @@ namespace System.Reflection.Emit {
 			if (mainModule == null)
 				mainModule = DefineDynamicModule ("RefEmit_OnDiskManifestModule", assemblyFileName);
 
-			build_metadata (this);
+			mainModule.IsMain = true;
 
 			foreach (ModuleBuilder module in modules)
 				module.Save ();
-
-			if (dir != null) {
-				assemblyFileName = String.Format ("{0}{1}{2}", dir, System.IO.Path.DirectorySeparatorChar, assemblyFileName);
-			}
-
-			file = new FileStream (assemblyFileName, FileMode.Create, FileAccess.Write);
-
-			offset = 0;
-			while ((count = getDataChunk (this, buf, offset)) != 0) {
-				file.Write (buf, 0, count);
-				offset += count;
-			}
-			file.Close ();
-
-			created = true;
-
-			//
-			// The constant 0x80000000 is internal to Mono, it means `make executable'
-			//
-			File.SetAttributes (assemblyFileName, (FileAttributes) (unchecked ((int) 0x80000000)));
 		}
-
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private static extern void build_metadata (AssemblyBuilder ab);
 
 		public void SetEntryPoint (MethodInfo entryMethod)
 		{
