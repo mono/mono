@@ -675,14 +675,29 @@ namespace System.Xml.Serialization {
 			}
 			
 			WriteState oldState = Writer.WriteState;
-
+			
 			// Elements with schema namespace are always written prefixed
 			if (ns == XmlSchema.Namespace) writePrefixed = true;
 
-			if (writePrefixed && ns != string.Empty) {
+			string prefix = null;
+			
+			if (topLevelElement && ns != null && ns.Length != 0)
+			{
+				foreach (XmlQualifiedName qn in namespaces)
+					if (qn.Namespace == ns) {
+						prefix = qn.Name;
+						writePrefixed = true;
+						break;
+					}
+			}
+
+			if (writePrefixed && ns != string.Empty)
+			{
 				name = XmlCustomFormatter.FromXmlName (name);
-				string prefix = Writer.LookupPrefix (ns);
-				if (prefix == null) {
+				
+				if (prefix == null)
+					prefix = Writer.LookupPrefix (ns);
+				if (prefix == null || prefix.Length == 0) {
 					if (ns == XmlSchema.Namespace) prefix = "xsd";
 					else prefix = "q" + (++qnameCount);
 				}
@@ -695,11 +710,12 @@ namespace System.Xml.Serialization {
 				if (namespaces != null) {
 					foreach (XmlQualifiedName qn in namespaces)
 					{
+						string currentPrefix = Writer.LookupPrefix (qn.Namespace);
 						if (qn.Namespace == XmlSchema.Namespace || qn.Namespace == XmlSchema.InstanceNamespace) {
-							if (Writer.LookupPrefix (qn.Namespace) == qn.Name) continue;
+							if (currentPrefix == qn.Name) continue;
 						}
 						else 
-							if (Writer.LookupPrefix (qn.Namespace) != null) continue;
+							if (currentPrefix != null && currentPrefix.Length != 0) continue;
 						
 						WriteAttribute ("xmlns",qn.Name,xmlNamespace,qn.Namespace);
 					}

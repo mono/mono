@@ -1,3 +1,9 @@
+2004-02-17  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* XmlSerializationWriter.cs: When writing the root element, use a prefix
+	  if the namespace of the element is defined in the list of namespaces
+	  provided to the XmlSerializer. This fixes bug #54427.
+
 2004-02-16  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* MapCodeGenerator.cs: Modified some methods to make them easier to reuse.
