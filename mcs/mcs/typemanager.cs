@@ -1069,6 +1069,14 @@ public class TypeManager {
 		return false;
 	}
 
+	//
+	// Checks whether `type' is a nested child of `parent'.
+	//
+	public static bool IsNestedChildOf (Type type, Type parent)
+	{
+		return IsSubclassOrNestedChildOf (type, parent) && !type.IsSubclassOf (parent);
+	}
+
 	/// <summary>
 	///   Returns the User Defined Types
 	/// </summary>

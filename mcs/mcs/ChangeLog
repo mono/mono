@@ -1,3 +1,11 @@
+2002-09-12  Martin Baulig  <martin@gnome.org>
+
+	* typemanager.cs (TypeManager.IsNestedChildOf): New method.
+
+	* ecore.cs (IMemberExpr.DeclaringType): New property.
+	(SimpleName.SimpleNameResolve): Check whether we're accessing a
+	nonstatic member of an outer type (CS0038).
+
 2002-09-11  Miguel de Icaza  <miguel@ximian.com>
 
 	* driver.cs: Activate the using-error detector at warning level

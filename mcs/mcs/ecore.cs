@@ -156,6 +156,13 @@ namespace Mono.CSharp {
 		}
 
 		/// <summary>
+		///   The type which declares this member.
+		/// </summary>
+		Type DeclaringType {
+			get;
+		}
+
+		/// <summary>
 		///   The instance expression associated with this member, if it's a
 		///   non-static member.
 		/// </summary>
@@ -3566,6 +3573,16 @@ namespace Mono.CSharp {
 				if (!me.IsStatic && (me.InstanceExpression == null))
 					return e;
 
+				Report.Debug (8, "RESOLVE", e, me, me.InstanceExpression, right_side);
+
+				if (!me.IsStatic &&
+				    TypeManager.IsNestedChildOf (me.InstanceExpression.Type, me.DeclaringType)) {
+					Error (38, "Cannot access a nonstatic member of outer type `" +
+					       me.DeclaringType + "' via nested type `" +
+					       me.InstanceExpression.Type + "'");
+					return null;
+				}
+
 				if (right_side != null)
 					e = e.DoResolveLValue (ec, right_side);
 				else
@@ -3707,6 +3724,12 @@ namespace Mono.CSharp {
 			eclass = ExprClass.MethodGroup;
 			type = TypeManager.object_type;
 		}
+
+		public Type DeclaringType {
+			get {
+				return Methods [0].DeclaringType;
+			}
+		}
 		
 		//
 		// `A method group may have associated an instance expression' 
@@ -3840,6 +3863,12 @@ namespace Mono.CSharp {
 		public bool IsStatic {
 			get {
 				return FieldInfo.IsStatic;
+			}
+		}
+
+		public Type DeclaringType {
+			get {
+				return FieldInfo.DeclaringType;
 			}
 		}
 
@@ -4115,6 +4144,12 @@ namespace Mono.CSharp {
 			}
 		}
 		
+		public Type DeclaringType {
+			get {
+				return PropertyInfo.DeclaringType;
+			}
+		}
+
 		//
 		// The instance expression associated with this expression
 		//
@@ -4259,6 +4294,12 @@ namespace Mono.CSharp {
 		public bool IsStatic {
 			get {
 				return is_static;
+			}
+		}
+
+		public Type DeclaringType {
+			get {
+				return EventInfo.DeclaringType;
 			}
 		}
 
