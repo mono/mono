@@ -1,5 +1,7 @@
 2005-02-03  Zoltan Varga  <vargaz@freemail.hu>
 
+	* marshal.c (emit_marshal_array): Add missing 'break'. Fixes #72169.
+
 	* mono-debug-debugger.c (get_exception_message): Use 
 	mono_class_get_method_from_name_flags ().
 
