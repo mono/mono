@@ -395,9 +395,9 @@ public class DateTimeTest : Assertion
 		AssertEquals ("D16", t2.Ticks, t1.Ticks);
 
 		// Custom patterns
-		t2 = new DateTime (2003, 1, 25);
+		t2 = new DateTime (DateTime.Now.Year, 1, 25);
 		t1 = DateTime.ParseExact ("25", "%d", null);
-		AssertEquals ("E01", t2.Ticks, t1.Ticks);
+		AssertEquals ("E01: " + t2 + " -- " + t1, t2.Ticks, t1.Ticks);
 		t1 = DateTime.ParseExact ("25", "dd", null);
 		AssertEquals ("E02", t2.Ticks, t1.Ticks);
 

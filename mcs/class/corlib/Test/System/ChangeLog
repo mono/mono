@@ -1,5 +1,9 @@
 2003-06-25  Nick Drochak <ndrochak@gol.com>
 
+	* DateTimeTest.cs: Custom format string uses January of current Year.
+
+2003-06-25  Nick Drochak <ndrochak@gol.com>
+
 	* DateTimeTest.cs: Re-enable test because bug #30030 is fixed.
 
 2003-06-25  Nick Drochak <ndrochak@gol.com>
