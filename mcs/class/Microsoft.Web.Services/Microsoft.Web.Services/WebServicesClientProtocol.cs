@@ -60,7 +60,7 @@ namespace Microsoft.Web.Services {
 		{
 			SoapWebRequest request = new SoapWebRequest (uri);
 			RequestSoapContext.CopyTo (request.SoapContext);
-			request.Pipeline = _pipeline;
+			request.Pipeline = Pipeline;
 			return request;
 		}
 

@@ -28,7 +28,7 @@ namespace Microsoft.Web.Services {
 
 		public override Stream GetResponseStream () 
 		{
-			SoapEnvelope envelope = new SoapEnvelope (request.SoapContext);
+			SoapEnvelope envelope = new SoapEnvelope ();
 			Stream s = response.GetResponseStream ();
 			envelope.Load (s);
 			request.Pipeline.ProcessInputMessage (envelope);
