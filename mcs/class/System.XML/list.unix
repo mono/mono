@@ -168,6 +168,7 @@ System.Xml.Serialization/SoapIgnoreAttribute.cs
 System.Xml.Serialization/SoapIncludeAttribute.cs
 System.Xml.Serialization/SoapSchemaImporter.cs
 System.Xml.Serialization/SoapSchemaMember.cs
+System.Xml.Serialization/SoapReflectionImporter.cs
 System.Xml.Serialization/SoapTypeAttribute.cs
 System.Xml.Serialization/TypeMember.cs
 System.Xml.Serialization/UnreferencedObjectEventArgs.cs
