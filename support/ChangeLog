@@ -1,5 +1,9 @@
 2005-01-03  Jonathan Pryor  <jonpryor@vt.edu>
 
+	* fstab.c: Remove some sparc compiler warnings.
+
+2005-01-03  Jonathan Pryor  <jonpryor@vt.edu>
+
 	* fstab.c: Solaris doesn't support getfsent(3), but it provides equivalent
 	  functionality in getvfsent(3C).  Implement Solaris support.
 

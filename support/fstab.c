@@ -177,7 +177,7 @@ getfsfile (const char *mount_point)
 	int close = 0;
 	if (etc_fstab == 0) {
 		close = 1;
-		if (setfsfile() != 1)
+		if (setfsent () != 1)
 			return NULL;
 	}
 	rewind (etc_fstab);
@@ -196,7 +196,7 @@ getfsspec (const char *special_file)
 	int close = 0;
 	if (etc_fstab == 0) {
 		close = 1;
-		if (setfsfile() != 1)
+		if (setfsent () != 1)
 			return NULL;
 	}
 	rewind (etc_fstab);
@@ -213,7 +213,7 @@ getfsspec (const char *special_file)
 #if defined (HAVE_FSTAB_H) || defined (HAVE_SYS_VFSTAB_H)
 
 void
-Mono_Posix_Syscall_endfsent ()
+Mono_Posix_Syscall_endfsent (void)
 {
 	endfsent ();
 }
