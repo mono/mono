@@ -1,5 +1,8 @@
 2005-01-06  Zoltan Varga  <vargaz@freemail.hu>
 
+	* mini-sparc.c (mono_arch_emit_exceptions): Fix typo in previous patch. Remove
+	dead code.
+
 	* mini-amd64.c (mono_arch_emit_exceptions): Remove duplicate epilog stuff
 	left in by mistake.
 
