@@ -1,3 +1,10 @@
+2003-08-27  Zoltan Varga  <vargaz@freemail.hu>
+
+	* object.c appdomain.h: Get rid of metadata_section. 
+	It is no longer needed and it was causing deadlocks with domain->lock.
+
+	* appdomain.c (add_assemblies_to_domain): Make it thread safe.
+
 2003-08-26  Martin Baulig  <martin@ximian.com>
 
 	* pedump.c (main): Don't call mono_image_close() if `verify_pe'.
