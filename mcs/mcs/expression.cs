@@ -7972,6 +7972,11 @@ namespace Mono.CSharp {
 				Error (1511, "Keyword base is not allowed in static method");
 				return null;
 			}
+
+			if (ec.IsFieldInitializer){
+				Error (1512, "Keyword base is not available in the current context");
+				return null;
+			}
 			
 			member_lookup = MemberLookup (ec, ec.ContainerType, null, base_type, member,
 						      AllMemberTypes, AllBindingFlags, loc);

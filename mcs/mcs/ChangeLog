@@ -1,5 +1,10 @@
 2004-04-27  Martin Baulig  <martin@ximian.com>
 
+	* expression.cs (BaseAccess.CommonResolve): Don't allow `base' in
+	a field initializer.  Fixes #56459.
+
+2004-04-27  Martin Baulig  <martin@ximian.com>
+
 	* ecore.cs (PropertyExpr.DoResolve/DoResolveLValue): Check whether
 	we're not attempting to use an indexer.  Fixes #52154.
 
