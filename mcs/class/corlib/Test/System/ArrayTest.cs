@@ -312,10 +312,6 @@ public class ArrayTest : TestCase
 				Array.Copy(o1, c1, 1);
 			} catch (InvalidCastException) {
 				errorThrown = true;
-			} catch (ArrayTypeMismatchException) {
-				// FIXME: Our implementation currently doesn't distinguish
-				//        between InvalidCastException and ArrayTypeMismatchException
-				errorThrown = true;
 			}
 			Assert("#E05", errorThrown);
 		}
