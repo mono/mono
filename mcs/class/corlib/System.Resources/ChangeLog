@@ -1,3 +1,9 @@
+2003-05-04  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* ResourceManager.cs: fixed the name for the file when the culture is
+	not de invariant culture. Commented out the GetSatelliteAssembly code
+	to avoid NotImplementedException being thrown.
+
 2002-08-19  Dick Porter  <dick@ximian.com>
 
 	* ResourceWriter.cs: Implemented all methods

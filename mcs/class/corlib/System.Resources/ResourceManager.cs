@@ -240,7 +240,7 @@ namespace System.Resources
 			if(culture.Equals(CultureInfo.InvariantCulture)) {
 				return(BaseNameField + ".resources");
 			} else {
-				return(BaseNameField + culture.Name + ".resources");
+				return(BaseNameField + "." +  culture.Name + ".resources");
 			}
 		}
 		
@@ -262,9 +262,11 @@ namespace System.Resources
 				stream=MainAssembly.GetManifestResourceStream(filename);
 				if(stream==null) {
 					/* Try a satellite assembly */
+					/* Commented out. It's not implemented yet
 					Version sat_version=GetSatelliteContractVersion(MainAssembly);
 					Assembly a=MainAssembly.GetSatelliteAssembly(culture, sat_version);
 					stream=a.GetManifestResourceStream(filename);
+					*/
 				}
 
 				if(stream!=null && Createifnotexists==true) {
