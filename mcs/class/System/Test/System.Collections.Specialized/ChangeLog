@@ -1,3 +1,7 @@
+2004-01-01  Nick Drochak  <ndrochak@gol.com>
+
+	* BitVector32Test.cs: Test some more values less than 1.
+
 2003-09-04  Duncan Mak  <duncan@ximian.com>
 
 	* BitVector32Test.cs (TestNegativeIndexer, TestSectionIndexer,

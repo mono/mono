@@ -144,11 +144,24 @@ namespace MonoTests.System.Collections.Specialized
                 }
 
                 [Test, ExpectedException (typeof (ArgumentException))]
-                public void TestCreateSection ()
+                public void TestCreateSection1 ()
                 {
                         BitVector32.Section section = BitVector32.CreateSection (Int16.MaxValue);
-                        section = BitVector32.CreateSection (Int16.MaxValue, section);
-                        Console.WriteLine (section);
+                        section = BitVector32.CreateSection (0, section);
+                }
+
+                [Test, ExpectedException (typeof (ArgumentException))]
+                public void TestCreateSection2 ()
+                {
+                        BitVector32.Section section = BitVector32.CreateSection (Int16.MaxValue);
+                        section = BitVector32.CreateSection (-1, section);
+                }
+
+                [Test, ExpectedException (typeof (ArgumentException))]
+                public void TestCreateSection3 ()
+                {
+                        BitVector32.Section section = BitVector32.CreateSection (Int16.MaxValue);
+                        section = BitVector32.CreateSection (Int16.MinValue, section);
                 }
 
 		private void Print (BitVector32.Section s)
