@@ -1,4 +1,8 @@
 2004-08-31  Tim Coleman <tim@timcoleman.com>
+	* XmlDsigExcC14NTransform.cs XmlDsigExcC14NWithCommentsTransform.cs:
+		Add new stub classes
+	* SignedXml.cs Transform.cs:
+		New methods for 2.0
 	* EncryptedXml.cs SymmetricKeyWrap.cs: 
 		Get symmetric key wrap to work for AES keys.
 

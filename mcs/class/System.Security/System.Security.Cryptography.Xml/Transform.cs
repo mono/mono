@@ -4,8 +4,10 @@
 // Author:
 //	Sebastien Pouliot <sebastien@ximian.com>
 //	Atsushi Enomoto <atsushi@ximian.com>
+//      Tim Coleman <tim@timcoleman.com>
 //
 // (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
+// Copyright (C) Tim Coleman, 2004
 // (C) 2004 Novell (http://www.novell.com)
 //
 
@@ -30,6 +32,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Collections;
 using System.Runtime.InteropServices;
 using System.Security.Policy;
 using System.Xml;
@@ -51,6 +54,8 @@ namespace System.Security.Cryptography.Xml {
 #endif
 		}
 
+		#region Properties
+
 		public string Algorithm {
 			get { return algo; }
 			set { algo = value; }
@@ -63,6 +68,38 @@ namespace System.Security.Cryptography.Xml {
 		public abstract Type[] OutputTypes {
 			get;
 		}
+
+#if NET_1_1
+		[ComVisible(false)]
+		public XmlResolver Resolver {
+			set { xmlResolver = value; }
+		}
+#endif
+
+#if NET_2_0
+		[MonoTODO]
+		public XmlElement Context {
+			get { throw new NotImplementedException (); }
+			set { throw new NotImplementedException (); }
+		}
+
+		[MonoTODO]
+		public Hashtable PropagatedNamespaces {
+			get { throw new NotImplementedException (); }
+			set { throw new NotImplementedException (); }
+		}
+#endif
+
+		#endregion // Properties
+
+		#region Methods
+#if NET_2_0
+		[MonoTODO]
+		public virtual byte[] GetDigestedOutput (HashAlgorithm hash)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
 
 		protected abstract XmlNodeList GetInnerXml ();
 
@@ -95,11 +132,6 @@ namespace System.Security.Cryptography.Xml {
 			return xmlResolver;
 		}
 
-#if NET_1_1
-		[ComVisible(false)]
-		public XmlResolver Resolver {
-			set { xmlResolver = value; }
-		}
-#endif
+		#endregion // Methods
 	}
 }
