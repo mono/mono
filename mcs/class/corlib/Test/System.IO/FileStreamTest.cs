@@ -17,6 +17,7 @@ using System.Text;
 
 namespace MonoTests.System.IO
 {
+	[TestFixture]
         public class FileStreamTest : Assertion
         {
 		string TempFolder = Path.Combine (Path.GetTempPath (), "MonoTests.System.IO.Tests");

@@ -14,7 +14,8 @@ using System;
 
 namespace MonoTests.System.IO {
 
-public class StringReaderTest : TestCase {
+[TestFixture]
+public class StringReaderTest : Assertion {
 	public  void TestReadLine() {
 		string testme = "a\nb\nc\n";
 		StringReader sr = new StringReader (testme);

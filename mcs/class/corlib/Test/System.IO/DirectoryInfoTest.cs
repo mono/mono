@@ -10,7 +10,7 @@ using System.IO;
 namespace MonoTests.System.IO
 {
 	[TestFixture]
-    	public class DirectoryInfoTest
+    	public class DirectoryInfoTest : Assertion
     	{
 		string TempFolder = Path.Combine (Path.GetTempPath (), "MonoTests.System.IO.Tests");
 
@@ -34,10 +34,10 @@ namespace MonoTests.System.IO
         		DeleteDir (path);
             	
         	    	FileInfo info = new FileInfo (path);
-        	    	Assertion.AssertEquals ("test#01", true, info.DirectoryName.EndsWith (".Tests"));
-        	    	Assertion.AssertEquals ("test#02", false, info.Exists);
-        	    	Assertion.AssertEquals ("test#03", ".Test", info.Extension);
-        	    	Assertion.AssertEquals ("test#05", "DIT.Ctr.Test", info.Name);            
+        	    	AssertEquals ("test#01", true, info.DirectoryName.EndsWith (".Tests"));
+        	    	AssertEquals ("test#02", false, info.Exists);
+        	    	AssertEquals ("test#03", ".Test", info.Extension);
+        	    	AssertEquals ("test#05", "DIT.Ctr.Test", info.Name);            
         	}
 
         	[Test]
@@ -80,12 +80,12 @@ namespace MonoTests.System.IO
             
             	try {
             	    	DirectoryInfo info = new DirectoryInfo (path);
-                	Assertion.AssertEquals ("test#01", false, info.Exists);
+                	AssertEquals ("test#01", false, info.Exists);
             
                 	Directory.CreateDirectory (path);
-                	Assertion.AssertEquals ("test#02", false, info.Exists);
+                	AssertEquals ("test#02", false, info.Exists);
                 	info = new DirectoryInfo (path);
-                	Assertion.AssertEquals ("test#03", true, info.Exists);            
+                	AssertEquals ("test#03", true, info.Exists);            
             	} finally {
                 	DeleteDir (path);
             	}
@@ -99,10 +99,10 @@ namespace MonoTests.System.IO
         		
         		try {
         			DirectoryInfo info = new DirectoryInfo (path);        			
-        			Assertion.AssertEquals ("test#01", "DIT.Name.Test", info.Name);
+        			AssertEquals ("test#01", "DIT.Name.Test", info.Name);
         			
         			info = Directory.CreateDirectory (path);
-        			Assertion.AssertEquals ("test#02", "DIT.Name.Test", info.Name);
+        			AssertEquals ("test#02", "DIT.Name.Test", info.Name);
         			
         			
         		} finally {
@@ -118,10 +118,10 @@ namespace MonoTests.System.IO
         		
         		try {
         			DirectoryInfo info = new DirectoryInfo (path);
-        			Assertion.AssertEquals ("test#01", "MonoTests.System.IO.Tests", info.Parent.Name);
+        			AssertEquals ("test#01", "MonoTests.System.IO.Tests", info.Parent.Name);
         			
         			info = Directory.CreateDirectory (path);
-        			Assertion.AssertEquals ("test#02", "MonoTests.System.IO.Tests", info.Parent.Name);
+        			AssertEquals ("test#02", "MonoTests.System.IO.Tests", info.Parent.Name);
         			        			
         		} finally {
         			DeleteDir (path);
@@ -136,11 +136,11 @@ namespace MonoTests.System.IO
             
             	try {
                 	DirectoryInfo info = new DirectoryInfo (path);
-                	Assertion.AssertEquals ("test#01", false, info.Exists);
+                	AssertEquals ("test#01", false, info.Exists);
                 	info.Create ();                
-                	Assertion.AssertEquals ("test#02", false, info.Exists);
+                	AssertEquals ("test#02", false, info.Exists);
                 	info = new DirectoryInfo (path);
-                	Assertion.AssertEquals ("test#03", true, info.Exists);
+                	AssertEquals ("test#03", true, info.Exists);
             	} finally {
                 	DeleteDir (path);
             	}
@@ -155,13 +155,13 @@ namespace MonoTests.System.IO
 			try {
 				Directory.CreateDirectory (path);
 				DirectoryInfo info = new DirectoryInfo (path);
-				Assertion.AssertEquals ("test#01", true, info.Exists);
+				AssertEquals ("test#01", true, info.Exists);
 				
 				info.Delete ();
-				Assertion.AssertEquals ("test#02", true, info.Exists);
+				AssertEquals ("test#02", true, info.Exists);
 				
 				info = new DirectoryInfo (path);
-				Assertion.AssertEquals ("test#03", false, info.Exists);
+				AssertEquals ("test#03", false, info.Exists);
 			} finally {
 				DeleteDir (path);
 			}
@@ -177,13 +177,13 @@ namespace MonoTests.System.IO
 				Directory.CreateDirectory (path);
 				File.Create (path + "/test").Close ();
 				DirectoryInfo info = new DirectoryInfo (path);
-				Assertion.AssertEquals ("test#01", true, info.Exists);
+				AssertEquals ("test#01", true, info.Exists);
 				
 				info.Delete (true);
-				Assertion.AssertEquals ("test#02", true, info.Exists);
+				AssertEquals ("test#02", true, info.Exists);
 				
 				info = new DirectoryInfo (path);
-				Assertion.AssertEquals ("test#03", false, info.Exists);
+				AssertEquals ("test#03", false, info.Exists);
 			} finally {
 				DeleteDir (path);
 			}
@@ -230,15 +230,15 @@ namespace MonoTests.System.IO
 			
 			try {
 				DirectoryInfo info = Directory.CreateDirectory (path);
-				Assertion.AssertEquals ("test#01", 0, info.GetDirectories ().Length);
+				AssertEquals ("test#01", 0, info.GetDirectories ().Length);
 				
 				Directory.CreateDirectory (path + "/" + "1");
 				Directory.CreateDirectory (path + "/" + "2");				
 				File.Create (path + "/" + "filetest").Close ();
-				Assertion.AssertEquals ("test#02", 2, info.GetDirectories ().Length);
+				AssertEquals ("test#02", 2, info.GetDirectories ().Length);
 				
 				Directory.Delete (path + "/" + 2);
-				Assertion.AssertEquals ("test#02", 1, info.GetDirectories ().Length);				
+				AssertEquals ("test#02", 1, info.GetDirectories ().Length);				
 				
 			} finally {
 				DeleteDir (path);
@@ -252,7 +252,7 @@ namespace MonoTests.System.IO
 			
 			try {
 				DirectoryInfo info = Directory.CreateDirectory (path);
-				Assertion.AssertEquals ("test#01", 0, info.GetDirectories ("*").Length);
+				AssertEquals ("test#01", 0, info.GetDirectories ("*").Length);
 				
 				Directory.CreateDirectory (path + "/" + "test120");
 				Directory.CreateDirectory (path + "/" + "test210");
@@ -260,13 +260,13 @@ namespace MonoTests.System.IO
 				Directory.CreateDirectory (path + "/" + "test220");
 				File.Create (path + "/" + "filetest").Close ();
 				
-				Assertion.AssertEquals ("test#02", 4, info.GetDirectories ("*").Length);
-				Assertion.AssertEquals ("test#03", 3, info.GetDirectories ("test*").Length);
-				Assertion.AssertEquals ("test#04", 2, info.GetDirectories ("test?20").Length);
-				Assertion.AssertEquals ("test#05", 0, info.GetDirectories ("test?").Length);
-				Assertion.AssertEquals ("test#06", 0, info.GetDirectories ("test[12]*").Length);
-				Assertion.AssertEquals ("test#07", 2, info.GetDirectories ("test2*0").Length);
-				Assertion.AssertEquals ("test#08", 4, info.GetDirectories ("*test*").Length);
+				AssertEquals ("test#02", 4, info.GetDirectories ("*").Length);
+				AssertEquals ("test#03", 3, info.GetDirectories ("test*").Length);
+				AssertEquals ("test#04", 2, info.GetDirectories ("test?20").Length);
+				AssertEquals ("test#05", 0, info.GetDirectories ("test?").Length);
+				AssertEquals ("test#06", 0, info.GetDirectories ("test[12]*").Length);
+				AssertEquals ("test#07", 2, info.GetDirectories ("test2*0").Length);
+				AssertEquals ("test#08", 4, info.GetDirectories ("*test*").Length);
 				
 			} finally {
 				DeleteDir (path);
@@ -326,11 +326,11 @@ namespace MonoTests.System.IO
 			
 			try {
 				DirectoryInfo info = Directory.CreateDirectory (path);
-				Assertion.AssertEquals ("test#01", 0, info.GetFiles ().Length);
+				AssertEquals ("test#01", 0, info.GetFiles ().Length);
 				File.Create (path + "/" + "file1").Close ();
 				File.Create (path + "/" + "file2").Close ();
 				Directory.CreateDirectory (path + "/" + "directory1");
-				Assertion.AssertEquals ("test#02", 2, info.GetFiles ().Length);
+				AssertEquals ("test#02", 2, info.GetFiles ().Length);
 				                        
 			} finally {
 				DeleteDir (path);
@@ -345,7 +345,7 @@ namespace MonoTests.System.IO
 			
 			try {
 				DirectoryInfo info = Directory.CreateDirectory (path);
-				Assertion.AssertEquals ("test#01", 0, info.GetFiles ("*").Length);
+				AssertEquals ("test#01", 0, info.GetFiles ("*").Length);
 				File.Create (path + "/" + "file120file").Close ();
 				File.Create (path + "/" + "file220file").Close ();
 				File.Create (path + "/" + "afile330file").Close ();
@@ -354,12 +354,12 @@ namespace MonoTests.System.IO
 				File.Create (path + "/" + "test.abcdef").Close ();				
 				Directory.CreateDirectory (path + "/" + "dir");
 				
-				Assertion.AssertEquals ("test#02", 6, info.GetFiles ("*").Length);
-				Assertion.AssertEquals ("test#03", 2, info.GetFiles ("file*file").Length);
-				Assertion.AssertEquals ("test#04", 3, info.GetFiles ("*file*").Length);
-				Assertion.AssertEquals ("test#05", 2, info.GetFiles ("file?20file").Length);
-				Assertion.AssertEquals ("test#07", 1, info.GetFiles ("*.abcd").Length);
-				Assertion.AssertEquals ("test#08", 2, info.GetFiles ("*.abcd*").Length);				                        
+				AssertEquals ("test#02", 6, info.GetFiles ("*").Length);
+				AssertEquals ("test#03", 2, info.GetFiles ("file*file").Length);
+				AssertEquals ("test#04", 3, info.GetFiles ("*file*").Length);
+				AssertEquals ("test#05", 2, info.GetFiles ("file?20file").Length);
+				AssertEquals ("test#07", 1, info.GetFiles ("*.abcd").Length);
+				AssertEquals ("test#08", 2, info.GetFiles ("*.abcd*").Length);				                        
 			} finally {
 				DeleteDir (path);
 			}
@@ -424,17 +424,17 @@ namespace MonoTests.System.IO
 				DirectoryInfo info1 = Directory.CreateDirectory (path1);
 				DirectoryInfo info2 = new DirectoryInfo (path2);
 				
-				Assertion.AssertEquals ("test#01", true, info1.Exists);
-				Assertion.AssertEquals ("test#02", false, info2.Exists);
+				AssertEquals ("test#01", true, info1.Exists);
+				AssertEquals ("test#02", false, info2.Exists);
 												
 				info1.MoveTo (path2);				
-				Assertion.AssertEquals ("test#03", true, info1.Exists);
-				Assertion.AssertEquals ("test#04", false, info2.Exists);
+				AssertEquals ("test#03", true, info1.Exists);
+				AssertEquals ("test#04", false, info2.Exists);
 				
 				info1 = new DirectoryInfo (path1);
 				info2 = new DirectoryInfo (path2);
-				Assertion.AssertEquals ("test#05", false, info1.Exists);
-				Assertion.AssertEquals ("test#06", true, info2.Exists);
+				AssertEquals ("test#05", false, info1.Exists);
+				AssertEquals ("test#06", true, info2.Exists);
 				
 			} finally {
 				DeleteDir (path1);

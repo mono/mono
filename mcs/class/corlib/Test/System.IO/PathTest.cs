@@ -35,7 +35,8 @@ namespace MonoTests.System.IO
 	}
 
 #if NUNIT
-	public class PathTest : TestCase
+	[TestFixture]
+	public class PathTest : Assertion
 	{
 #else
 	public class PathTest
@@ -48,7 +49,8 @@ namespace MonoTests.System.IO
 		static char DSC = Path.DirectorySeparatorChar;
 	     
 #if NUNIT
-		protected override void SetUp ()
+		[SetUp]
+		public void SetUp ()
 		{
 #else
 		static PathTest ()

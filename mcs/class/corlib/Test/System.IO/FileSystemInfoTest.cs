@@ -14,7 +14,6 @@ using System.Threading;
 
 namespace MonoTests.System.IO
 {
-
 	[TestFixture]
         public class FileSystemInfoTest : Assertion
 	{

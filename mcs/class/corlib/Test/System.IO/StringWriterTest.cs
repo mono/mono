@@ -16,14 +16,15 @@ using System.Text;
 
 namespace MonoTests.System.IO {
 
-public class StringWriterTest : TestCase {
+[TestFixture]
+public class StringWriterTest : Assertion {
 	public void TestConstructors() {
                 StringBuilder sb = new StringBuilder("Test String");
 
                 StringWriter writer = new StringWriter( sb );
                 AssertEquals( sb, writer.GetStringBuilder() );
         }
-	
+
         public void TestCultureInfoConstructor() {
 
 		StringWriter writer = new StringWriter(CultureInfo.InvariantCulture);

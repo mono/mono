@@ -17,7 +17,7 @@ using System.Threading;
 namespace MonoTests.System.IO {
 
 [TestFixture]
-public class DirectoryTest {
+public class DirectoryTest : Assertion {
 	
 	string TempFolder = Path.Combine (Path.GetTempPath (), "MonoTests.System.IO.Tests");
 	
@@ -44,10 +44,10 @@ public class DirectoryTest {
 		DeleteDirectory (path);
 		
 		DirectoryInfo info = Directory.CreateDirectory (path);
-		Assertion.AssertEquals ("test#01", true, info.Exists);
-		Assertion.AssertEquals ("test#02", ".1", info.Extension);
-		Assertion.AssertEquals ("test#03", true, info.FullName.EndsWith ("DirectoryTest.Test.1"));
-		Assertion.AssertEquals ("test#04", "DirectoryTest.Test.1", info.Name);
+		AssertEquals ("test#01", true, info.Exists);
+		AssertEquals ("test#02", ".1", info.Extension);
+		AssertEquals ("test#03", true, info.FullName.EndsWith ("DirectoryTest.Test.1"));
+		AssertEquals ("test#04", "DirectoryTest.Test.1", info.Name);
 
 		DeleteDirectory (path);		
 	}
@@ -103,27 +103,27 @@ public class DirectoryTest {
 		DeleteDirectory (path);
 		
 		Directory.CreateDirectory (path);
-		Assertion.AssertEquals ("test#01", true, Directory.Exists (path));
+		AssertEquals ("test#01", true, Directory.Exists (path));
 		
 		Directory.CreateDirectory (path + "/DirectoryTest.Test.Delete.1.2");
-		Assertion.AssertEquals ("test#02", true, Directory.Exists (path + "/DirectoryTest.Test.Delete.1.2"));
+		AssertEquals ("test#02", true, Directory.Exists (path + "/DirectoryTest.Test.Delete.1.2"));
 		
 		Directory.Delete (path + "/DirectoryTest.Test.Delete.1.2");
-		Assertion.AssertEquals ("test#03", false, Directory.Exists (path + "/DirectoryTest.Test.Delete.1.2"));
-		Assertion.AssertEquals ("test#04", true, Directory.Exists (path));
+		AssertEquals ("test#03", false, Directory.Exists (path + "/DirectoryTest.Test.Delete.1.2"));
+		AssertEquals ("test#04", true, Directory.Exists (path));
 		
 		Directory.Delete (path);
-		Assertion.AssertEquals ("test#05", false, Directory.Exists (path + "/DirectoryTest.Test.Delete.1.2"));
-		Assertion.AssertEquals ("test#06", false, Directory.Exists (path));		
+		AssertEquals ("test#05", false, Directory.Exists (path + "/DirectoryTest.Test.Delete.1.2"));
+		AssertEquals ("test#06", false, Directory.Exists (path));		
 	
 		Directory.CreateDirectory (path);
 		Directory.CreateDirectory (path + "/DirectoryTest.Test.Delete.1.2");
-		Assertion.AssertEquals ("test#07", true, Directory.Exists (path + "/DirectoryTest.Test.Delete.1.2"));
-		Assertion.AssertEquals ("test#08", true, Directory.Exists (path));
+		AssertEquals ("test#07", true, Directory.Exists (path + "/DirectoryTest.Test.Delete.1.2"));
+		AssertEquals ("test#08", true, Directory.Exists (path));
 		
 		Directory.Delete (path, true);
-		Assertion.AssertEquals ("test#09", false, Directory.Exists (path + "/DirectoryTest.Test.Delete.1.2"));
-		Assertion.AssertEquals ("test#10", false, Directory.Exists (path));
+		AssertEquals ("test#09", false, Directory.Exists (path + "/DirectoryTest.Test.Delete.1.2"));
+		AssertEquals ("test#10", false, Directory.Exists (path));
 	}
 
 	[Test]	
@@ -184,7 +184,7 @@ public class DirectoryTest {
 	[Test]
 	public void Exists ()
 	{
-		Assertion.AssertEquals ("test#01", false, Directory.Exists (null as string));
+		AssertEquals ("test#01", false, Directory.Exists (null as string));
 	}
 	
 	[Test]
@@ -424,11 +424,11 @@ public class DirectoryTest {
 		
 		Directory.CreateDirectory (path);
 		Directory.CreateDirectory (path + "/" + "dir");
-		Assertion.AssertEquals ("test#01", true, Directory.Exists (path + "/" + "dir"));
+		AssertEquals ("test#01", true, Directory.Exists (path + "/" + "dir"));
 		
 		Directory.Move (path, path2);
-		Assertion.AssertEquals ("test#02", false, Directory.Exists (path + "/" + "dir"));		
-		Assertion.AssertEquals ("test#03", true, Directory.Exists (path2 + "/" + "dir"));
+		AssertEquals ("test#02", false, Directory.Exists (path + "/" + "dir"));		
+		AssertEquals ("test#03", true, Directory.Exists (path2 + "/" + "dir"));
 		
 		if (Directory.Exists (path2 + "/" + "dir"))
 			Directory.Delete (path2 + "/" + "dir", true);
@@ -524,37 +524,37 @@ public class DirectoryTest {
 		Directory.SetCreationTime (path, new DateTime (2003, 6, 4, 6, 4, 0));
 
 		DateTime time = Directory.GetCreationTime (path);		
-		Assertion.AssertEquals ("test#01", 2003, time.Year);
-		Assertion.AssertEquals ("test#02", 6, time.Month);
-		Assertion.AssertEquals ("test#03", 4, time.Day);
-		Assertion.AssertEquals ("test#04", 6, time.Hour);
-		Assertion.AssertEquals ("test#05", 4, time.Minute);
-		Assertion.AssertEquals ("test#06", 0, time.Second);
+		AssertEquals ("test#01", 2003, time.Year);
+		AssertEquals ("test#02", 6, time.Month);
+		AssertEquals ("test#03", 4, time.Day);
+		AssertEquals ("test#04", 6, time.Hour);
+		AssertEquals ("test#05", 4, time.Minute);
+		AssertEquals ("test#06", 0, time.Second);
 		
 		time = TimeZone.CurrentTimeZone.ToLocalTime (Directory.GetCreationTimeUtc (path));
-		Assertion.AssertEquals ("test#07", 2003, time.Year);
-		Assertion.AssertEquals ("test#08", 6, time.Month);
-		Assertion.AssertEquals ("test#09", 4, time.Day);
-		Assertion.AssertEquals ("test#10", 6, time.Hour);
-		Assertion.AssertEquals ("test#11", 4, time.Minute);
-		Assertion.AssertEquals ("test#12", 0, time.Second);
+		AssertEquals ("test#07", 2003, time.Year);
+		AssertEquals ("test#08", 6, time.Month);
+		AssertEquals ("test#09", 4, time.Day);
+		AssertEquals ("test#10", 6, time.Hour);
+		AssertEquals ("test#11", 4, time.Minute);
+		AssertEquals ("test#12", 0, time.Second);
 
 		Directory.SetCreationTimeUtc (path, new DateTime (2003, 6, 4, 6, 4, 0));
 		time = TimeZone.CurrentTimeZone.ToUniversalTime (Directory.GetCreationTime (path));
-		Assertion.AssertEquals ("test#13", 2003, time.Year);
-		Assertion.AssertEquals ("test#14", 6, time.Month);
-		Assertion.AssertEquals ("test#15", 4, time.Day);
-		Assertion.AssertEquals ("test#16", 6, time.Hour);
-		Assertion.AssertEquals ("test#17", 4, time.Minute);
-		Assertion.AssertEquals ("test#18", 0, time.Second);
+		AssertEquals ("test#13", 2003, time.Year);
+		AssertEquals ("test#14", 6, time.Month);
+		AssertEquals ("test#15", 4, time.Day);
+		AssertEquals ("test#16", 6, time.Hour);
+		AssertEquals ("test#17", 4, time.Minute);
+		AssertEquals ("test#18", 0, time.Second);
 
 		time = Directory.GetCreationTimeUtc (path);		
-		Assertion.AssertEquals ("test#19", 2003, time.Year);
-		Assertion.AssertEquals ("test#20", 6, time.Month);
-		Assertion.AssertEquals ("test#21", 4, time.Day);
-		Assertion.AssertEquals ("test#22", 6, time.Hour);
-		Assertion.AssertEquals ("test#23", 4, time.Minute);
-		Assertion.AssertEquals ("test#24", 0, time.Second);
+		AssertEquals ("test#19", 2003, time.Year);
+		AssertEquals ("test#20", 6, time.Month);
+		AssertEquals ("test#21", 4, time.Day);
+		AssertEquals ("test#22", 6, time.Hour);
+		AssertEquals ("test#23", 4, time.Minute);
+		AssertEquals ("test#24", 0, time.Second);
 
 		DeleteDirectory (path);	
 	}
@@ -569,37 +569,37 @@ public class DirectoryTest {
 		Directory.SetLastAccessTime (path, new DateTime (2003, 6, 4, 6, 4, 0));
 
 		DateTime time = Directory.GetLastAccessTime (path);		
-		Assertion.AssertEquals ("test#01", 2003, time.Year);
-		Assertion.AssertEquals ("test#02", 6, time.Month);
-		Assertion.AssertEquals ("test#03", 4, time.Day);
-		Assertion.AssertEquals ("test#04", 6, time.Hour);
-		Assertion.AssertEquals ("test#05", 4, time.Minute);
-		Assertion.AssertEquals ("test#06", 0, time.Second);
+		AssertEquals ("test#01", 2003, time.Year);
+		AssertEquals ("test#02", 6, time.Month);
+		AssertEquals ("test#03", 4, time.Day);
+		AssertEquals ("test#04", 6, time.Hour);
+		AssertEquals ("test#05", 4, time.Minute);
+		AssertEquals ("test#06", 0, time.Second);
 		
 		time = TimeZone.CurrentTimeZone.ToLocalTime (Directory.GetLastAccessTimeUtc (path));
-		Assertion.AssertEquals ("test#07", 2003, time.Year);
-		Assertion.AssertEquals ("test#08", 6, time.Month);
-		Assertion.AssertEquals ("test#09", 4, time.Day);
-		Assertion.AssertEquals ("test#10", 6, time.Hour);
-		Assertion.AssertEquals ("test#11", 4, time.Minute);
-		Assertion.AssertEquals ("test#12", 0, time.Second);
+		AssertEquals ("test#07", 2003, time.Year);
+		AssertEquals ("test#08", 6, time.Month);
+		AssertEquals ("test#09", 4, time.Day);
+		AssertEquals ("test#10", 6, time.Hour);
+		AssertEquals ("test#11", 4, time.Minute);
+		AssertEquals ("test#12", 0, time.Second);
 
 		Directory.SetLastAccessTimeUtc (path, new DateTime (2003, 6, 4, 6, 4, 0));
 		time = TimeZone.CurrentTimeZone.ToUniversalTime (Directory.GetLastAccessTime (path));
-		Assertion.AssertEquals ("test#13", 2003, time.Year);
-		Assertion.AssertEquals ("test#14", 6, time.Month);
-		Assertion.AssertEquals ("test#15", 4, time.Day);
-		Assertion.AssertEquals ("test#16", 6, time.Hour);
-		Assertion.AssertEquals ("test#17", 4, time.Minute);
-		Assertion.AssertEquals ("test#18", 0, time.Second);
+		AssertEquals ("test#13", 2003, time.Year);
+		AssertEquals ("test#14", 6, time.Month);
+		AssertEquals ("test#15", 4, time.Day);
+		AssertEquals ("test#16", 6, time.Hour);
+		AssertEquals ("test#17", 4, time.Minute);
+		AssertEquals ("test#18", 0, time.Second);
 
 		time = Directory.GetLastAccessTimeUtc (path);		
-		Assertion.AssertEquals ("test#19", 2003, time.Year);
-		Assertion.AssertEquals ("test#20", 6, time.Month);
-		Assertion.AssertEquals ("test#21", 4, time.Day);
-		Assertion.AssertEquals ("test#22", 6, time.Hour);
-		Assertion.AssertEquals ("test#23", 4, time.Minute);
-		Assertion.AssertEquals ("test#24", 0, time.Second);
+		AssertEquals ("test#19", 2003, time.Year);
+		AssertEquals ("test#20", 6, time.Month);
+		AssertEquals ("test#21", 4, time.Day);
+		AssertEquals ("test#22", 6, time.Hour);
+		AssertEquals ("test#23", 4, time.Minute);
+		AssertEquals ("test#24", 0, time.Second);
 
 		DeleteDirectory (path);
 	}
@@ -614,37 +614,37 @@ public class DirectoryTest {
 		Directory.SetLastWriteTime (path, new DateTime (2003, 6, 4, 6, 4, 0));
 
 		DateTime time = Directory.GetLastWriteTime (path);		
-		Assertion.AssertEquals ("test#01", 2003, time.Year);
-		Assertion.AssertEquals ("test#02", 6, time.Month);
-		Assertion.AssertEquals ("test#03", 4, time.Day);
-		Assertion.AssertEquals ("test#04", 6, time.Hour);
-		Assertion.AssertEquals ("test#05", 4, time.Minute);
-		Assertion.AssertEquals ("test#06", 0, time.Second);
+		AssertEquals ("test#01", 2003, time.Year);
+		AssertEquals ("test#02", 6, time.Month);
+		AssertEquals ("test#03", 4, time.Day);
+		AssertEquals ("test#04", 6, time.Hour);
+		AssertEquals ("test#05", 4, time.Minute);
+		AssertEquals ("test#06", 0, time.Second);
 		
 		time = TimeZone.CurrentTimeZone.ToLocalTime (Directory.GetLastWriteTimeUtc (path));
-		Assertion.AssertEquals ("test#07", 2003, time.Year);
-		Assertion.AssertEquals ("test#08", 6, time.Month);
-		Assertion.AssertEquals ("test#09", 4, time.Day);
-		Assertion.AssertEquals ("test#10", 6, time.Hour);
-		Assertion.AssertEquals ("test#11", 4, time.Minute);
-		Assertion.AssertEquals ("test#12", 0, time.Second);
+		AssertEquals ("test#07", 2003, time.Year);
+		AssertEquals ("test#08", 6, time.Month);
+		AssertEquals ("test#09", 4, time.Day);
+		AssertEquals ("test#10", 6, time.Hour);
+		AssertEquals ("test#11", 4, time.Minute);
+		AssertEquals ("test#12", 0, time.Second);
 
 		Directory.SetLastWriteTimeUtc (path, new DateTime (2003, 6, 4, 6, 4, 0));
 		time = TimeZone.CurrentTimeZone.ToUniversalTime (Directory.GetLastWriteTime (path));
-		Assertion.AssertEquals ("test#13", 2003, time.Year);
-		Assertion.AssertEquals ("test#14", 6, time.Month);
-		Assertion.AssertEquals ("test#15", 4, time.Day);
-		Assertion.AssertEquals ("test#16", 6, time.Hour);
-		Assertion.AssertEquals ("test#17", 4, time.Minute);
-		Assertion.AssertEquals ("test#18", 0, time.Second);
+		AssertEquals ("test#13", 2003, time.Year);
+		AssertEquals ("test#14", 6, time.Month);
+		AssertEquals ("test#15", 4, time.Day);
+		AssertEquals ("test#16", 6, time.Hour);
+		AssertEquals ("test#17", 4, time.Minute);
+		AssertEquals ("test#18", 0, time.Second);
 
 		time = Directory.GetLastWriteTimeUtc (path);		
-		Assertion.AssertEquals ("test#19", 2003, time.Year);
-		Assertion.AssertEquals ("test#20", 6, time.Month);
-		Assertion.AssertEquals ("test#21", 4, time.Day);
-		Assertion.AssertEquals ("test#22", 6, time.Hour);
-		Assertion.AssertEquals ("test#23", 4, time.Minute);
-		Assertion.AssertEquals ("test#24", 0, time.Second);
+		AssertEquals ("test#19", 2003, time.Year);
+		AssertEquals ("test#20", 6, time.Month);
+		AssertEquals ("test#21", 4, time.Day);
+		AssertEquals ("test#22", 6, time.Hour);
+		AssertEquals ("test#23", 4, time.Minute);
+		AssertEquals ("test#24", 0, time.Second);
 
 		DeleteDirectory (path);		
 	}
@@ -1002,7 +1002,7 @@ public class DirectoryTest {
 					return;
 			}
 		
-			Assertion.Assert ("Directory Not Found", false);
+			Assert ("Directory Not Found", false);
 		} finally {
 			DeleteDirectory (DirPath);
 		}
@@ -1025,7 +1025,7 @@ public class DirectoryTest {
 					return;
 			}
 		
-			Assertion.Assert ("File Not Found", false);
+			Assert ("File Not Found", false);
 		} finally {
 			if (File.Exists (DirPath))
 				File.Delete (DirPath);

@@ -12,18 +12,12 @@ using System.Text;
 
 namespace MonoTests.System.IO
 {
+	[TestFixture]
 	public class BinaryReaderTest : Assertion
 	{		
 		static string TempFolder = Path.Combine (Path.GetTempPath (), "MonoTests.System.IO.Tests");
-		private string _codeFileName = TempFolder + Path.DirectorySeparatorChar + "AFile.txt";
+		static string _codeFileName = TempFolder + Path.DirectorySeparatorChar + "AFile.txt";
 			
-                [TearDown]
-		public void TearDown ()
-		{
-			if (Directory.Exists (TempFolder))
-				Directory.Delete (TempFolder, true);
-		}
-
                 [SetUp]
 		public void SetUp() {
 			if (Directory.Exists (TempFolder))
@@ -32,6 +26,13 @@ namespace MonoTests.System.IO
 			if (!File.Exists (_codeFileName))
 				File.Create (_codeFileName).Close ();
                 }
+
+                [TearDown]
+		public void TearDown ()
+		{
+			if (Directory.Exists (TempFolder))
+				Directory.Delete (TempFolder, true);
+		}
 
 		public void TestCtor1() 
 		{

@@ -1,5 +1,15 @@
 2003-05-29  Nick Drochak <ndrochak@gol.com>
 
+	* ms_run_test.sh: added .NET verion of helper script
+	* BinaryReaderTest.cs: fix my oversight
+	* BinaryWriterTest.cs: cleanups
+	* BufferedStreamTest.cs: cleanups
+	* DirectoryInfoTest.cs: cleanups
+	* DirectoryTest.cs: cleanups
+	* FileStreamTest.cs: cleanups
+
+2003-05-29  Nick Drochak <ndrochak@gol.com>
+
 	* BinaryReaderTest.cs:
 	* BinaryWriterTest.cs:
 	* DirectoryInfoTest.cs:
