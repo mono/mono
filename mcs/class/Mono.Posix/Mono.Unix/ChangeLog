@@ -1,5 +1,12 @@
 2004-12-28  Jonathan Pryor <jonpryor@vt.edu>
 
+	* UnixFileSystemInfo.cs: Add a link(2) wrapper, CreateLink().  Strictly
+	  speaking it's only "safe" to do this on files, but an exception will be 
+	  returned if the user tries to hard link directories (because of EPERM), 
+	  unless the user is root, in which case it should be allowed anyway...
+
+2004-12-28  Jonathan Pryor <jonpryor@vt.edu>
+
 	* CdeclFunctions.cs: Correct the comments for AMD64
 	* UnixDirectoryInfo.cs: override Name; add Parent & Root properties; 
 	  Correct Path usage (s/Path/FullPath/g).

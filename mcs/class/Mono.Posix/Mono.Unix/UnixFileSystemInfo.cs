@@ -211,6 +211,13 @@ namespace Mono.Unix {
 			return r == 0;
 		}
 
+		public UnixFileSystemInfo CreateLink (string path)
+		{
+			int r = Syscall.link (FullName, path);
+			UnixMarshal.ThrowExceptionForLastErrorIf (r);
+			return Create (path);
+		}
+
 		public UnixSymbolicLinkInfo CreateSymbolicLink (string path)
 		{
 			int r = Syscall.symlink (FullName, path);
