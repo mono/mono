@@ -1,3 +1,9 @@
+2004-04-29  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* MonoProperty.cs: Property.GetGetMethod() does not return the method if it
+	is private (it did until now because of a bug). Make sure it works as it 
+	worked before the fix.
+	
 2004-04-27  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* ICustomAttributeProvider.cs, IReflect.cs, MemberInfo.cs, AssemblyName.cs: 

@@ -174,7 +174,7 @@ namespace System.Reflection {
 		{
 			object ret = null;
 
-			MethodInfo method = GetGetMethod (false);
+			MethodInfo method = GetGetMethod (true);
 			if (method == null)
 				throw new ArgumentException ("Get Method not found for '" + Name + "'");
 			
@@ -188,7 +188,7 @@ namespace System.Reflection {
 
 		public override void SetValue (object obj, object value, BindingFlags invokeAttr, Binder binder, object[] index, CultureInfo culture)
 		{
-			MethodInfo method = GetSetMethod (false);
+			MethodInfo method = GetSetMethod (true);
 			if (method == null)
 				throw new ArgumentException ("Set Method not found for '" + Name + "'");
 			
