@@ -50,6 +50,7 @@
 		<copy file="../lib/System.Data.dll" tofile="Test/System.Data.dll"/>
 		<copy file="../lib/Mono.Data.MySql.dll" tofile="Test/Mono.Data.MySql.dll"/>
 		<copy file="../lib/Mono.Data.MySql.dll" tofile="Mono.Data.MySql/Mono.Data.MySql.dll"/>
+		<copy file="../lib/Mono.Data.MySql.dll" tofile="../System.Data/Test/Mono.Data.MySql.dll"/>
 	</target>
 	<target name="test" depends="build">
 		<nant basedir="Test" target="test"/>

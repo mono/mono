@@ -1,4 +1,10 @@
 2002-05-30  Daniel Morgan <danmorg@sc.rr.com>
+
+	* Mono.Data.MySql.build: modified
+	need to copy Mono.Data.MySql.dll to mcs/class/System.Data/Test
+	so the SqlSharpCli test program can use MySql too
+
+2002-05-30  Daniel Morgan <danmorg@sc.rr.com>
 	
 	* Test/TestMySqlInsert.cs: added test
 	to do an SQL INSERT to insert a row into table.
