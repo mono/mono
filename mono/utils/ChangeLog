@@ -1,4 +1,10 @@
 
+Wed Feb 11 15:26:18 CET 2004 Paolo Molaro <lupus@ximian.com>
+
+	* Makefile.am, mono-codeman.h, mono-codeman.c: new support code
+	to deal with buffers of native code (handles exec bits and other
+	details).
+
 2004-01-22  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* strenc.c:
