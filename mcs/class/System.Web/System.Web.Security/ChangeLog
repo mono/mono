@@ -1,3 +1,9 @@
+2005-02-06 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* FormsAuthentication.cs: fixed typo when getting the hash for the 
+	password in SHA1 and MD5. Thanks to Tadas Dailyda.
+	Lock on a static object instead of typeof(FormsAuthentication).
+
 2005-02-01 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* FormsAuthenticationModule.cs: allow accessing other files in the

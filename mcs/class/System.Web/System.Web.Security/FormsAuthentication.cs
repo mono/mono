@@ -47,6 +47,7 @@ namespace System.Web.Security
 		static string cookiePath;
 		static int timeout;
 		static FormsProtectionEnum protection;
+		static object locker = new object ();
 #if NET_1_1
 		static bool requireSSL;
 		static bool slidingExpiration;
@@ -80,10 +81,10 @@ namespace System.Web.Security
 				/* Do nothing */
 				break;
 			case FormsAuthPasswordFormat.MD5:
-				stored = HashPasswordForStoringInConfigFile (stored, "MD5");
+				password = HashPasswordForStoringInConfigFile (password, "MD5");
 				break;
 			case FormsAuthPasswordFormat.SHA1:
-				stored = HashPasswordForStoringInConfigFile (stored, "SHA1");
+				password = HashPasswordForStoringInConfigFile (password, "SHA1");
 				break;
 			}
 
@@ -251,7 +252,7 @@ namespace System.Web.Security
 			if (initialized)
 				return;
 
-			lock (typeof (FormsAuthentication)) {
+			lock (locker) {
 				if (initialized)
 					return;
 
