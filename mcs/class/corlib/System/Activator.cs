@@ -64,7 +64,13 @@ namespace System
 			//TODO: when Assembly implements security, use it.
 			//Assembly assembly = Assembly.LoadFrom (assemblyFile, securityInfo);
 			Assembly assembly = Assembly.LoadFrom (assemblyFile);
+			if (assembly == null)
+				return null;
+
 			Type type = assembly.GetType (typeName, true, ignoreCase);
+			if (type == null)
+				return null;
+
 			object obj = CreateInstance (type, bindingAttr, binder, args, culture, activationAttributes);
 			return (obj != null) ? new ObjectHandle (obj) : null;
 		}
@@ -125,11 +131,12 @@ namespace System
 			if (type == null)
 				throw new ArgumentNullException ("type");
 
-			if (args == null)
-				throw new ArgumentNullException ("args");
+			int length = 0;
+			if (args != null)
+				length = args.Length;
 
-			Type [] atypes = new Type [args.Length];
-			for (int i = 0; i < args.Length; ++i) {
+			Type [] atypes = new Type [length];
+			for (int i = 0; i < length; ++i) {
 				atypes [i] = args [i].GetType ();
 			}
 			ConstructorInfo ctor = type.GetConstructor (atypes);
@@ -157,15 +164,23 @@ namespace System
 						     object [] activationAttributes)
 		{
 			// activationAttributes?
-			Type[] atypes = new Type [args.Length];
-			for (int i = 0; i < args.Length; ++i) {
+			int length = 0;
+			if (args != null)
+				length = args.Length;
+
+			Type[] atypes = new Type [length];
+			for (int i = 0; i < length; ++i) {
 				atypes [i] = args [i].GetType ();
 			}
-			ConstructorInfo ctor = type.GetConstructor (bindingAttr, binder, atypes, null);
+			//FIXME: when GetConstructor works with this parameter list, use it
+			//ConstructorInfo ctor = type.GetConstructor (bindingAttr, binder, atypes, null);
+			ConstructorInfo ctor = type.GetConstructor (atypes);
 			if (ctor == null)
 				return null;
 
-			return ctor.Invoke (args, bindingAttr, binder, args, culture);
+			//FIXME: when Invoke allows this parameter list, use it
+			//return ctor.Invoke (args, bindingAttr, binder, args, culture);
+			return ctor.Invoke (args);
 		}
 
 		public static object CreateInstance (Type type, bool nonPublic)
