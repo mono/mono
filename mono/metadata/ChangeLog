@@ -1,3 +1,8 @@
+2002-04-14	Patrik Torstensson <patrik.torstensson@labs2.com>
+
+	* threads: added icall support for getting current domain for
+	           the thread.
+ 
 2002-04-13  Martin Baulig  <martin@gnome.org>
 
 	* debug-symfile.h (MonoDebugLocalInfo): Renamed to MonoDebugVarInfo.
