@@ -819,17 +819,18 @@ namespace System {
 			if (startIndex < 0 || count < 0 || startIndex + count > this.length)
 				throw new ArgumentOutOfRangeException ();
 
-			return BoyerMoore (this.c_str, value, startIndex, count);
 #if XXX
+			return BoyerMoore (this.c_str, value, startIndex, count);
+#endif
 			int i;
-			for (i = startIndex; i - startIndex + value.Length <= count; ) {
-				if (this.c_str[i] == value[0]) {
+			for (i = startIndex; i - startIndex + value.length <= count; ) {
+				if (this.c_str[i] == value.c_str [0]) {
 					bool equal = true;
 					int j, nexti = 0;
 
-					for (j = 1; equal && j < value.Length; j++) {
-						equal = this.c_str[i + j] == value[j];
-						if (this.c_str[i + j] == value[0] && nexti == 0)
+					for (j = 1; equal && j < value.length; j++) {
+						equal = this.c_str[i + j] == value.c_str [j];
+						if (this.c_str [i + j] == value.c_str [0] && nexti == 0)
 							nexti = i + j;
 					}
 
@@ -845,7 +846,6 @@ namespace System {
 			}
 
 			return -1;
-#endif
 		}
 
 		public int IndexOfAny (char[] values)

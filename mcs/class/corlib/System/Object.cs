@@ -63,7 +63,7 @@ namespace System {
 		// </summary>
 		public virtual int GetHashCode ()
 		{
-			return 0;
+			return ((int)obj_address ()) >> 2;
 		}
 
 		// <summary>

@@ -1,4 +1,10 @@
 
+Fri Mar 8 18:49:19 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* Object.cs: commit my hacked GetHashCode(): it's good enough for now.
+	* String.cs: use the dumb code for IndexOf(string): this is worth
+	15-20 % speedup in mcs compile with mint.
+
 Fri Mar 8 12:45:44 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	* String.cs: revert change to Split() that broke the compiler (hi martin!:-).
