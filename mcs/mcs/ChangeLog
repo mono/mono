@@ -1,5 +1,25 @@
 2004-04-27  Martin Baulig  <martin@ximian.com>
 
+	According to the spec, `goto' can only leave a nested scope, but
+	never enter it.
+
+	* statement.cs (Block.LookupLabel): Only lookup in the current
+	block, don't recurse into parent or child blocks.
+	(Block.AddLabel): Check in parent and child blocks, report
+	CS0140/CS0158 if we find a duplicate.
+	(Block): Removed this indexer for label lookups.
+	(Goto.Resolve): Call LookupLabel() on our current FlowBranching;
+	this already does the error reporting for us.
+
+	* flowanalysis.cs
+	(FlowBranching.UsageVector.Block): New public variable; may be null.
+	(FlowBranching.CreateSibling): Added `Block' argument.
+	(FlowBranching.LookupLabel): New public virtual method.  Lookup a
+	label for the target of a `goto' and check whether we're not
+	leaving a `finally'.
+
+2004-04-27  Martin Baulig  <martin@ximian.com>
+
 	* flowanalysis.cs (FlowBranching.UsageVector.MergeChild): If we're
 	a finite loop block, also do the ALWAYS->SOMETIMES for throws (not
 	just for returns).

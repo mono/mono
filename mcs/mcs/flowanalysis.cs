@@ -435,6 +435,11 @@ namespace Mono.CSharp
 			public readonly Location Location;
 
 			// <summary>
+			//   This is only valid for SwitchSection, Try, Catch and Finally.
+			// </summary>
+			public readonly Block Block;
+
+			// <summary>
 			//   If this is true, then the usage vector has been modified and must be
 			//   merged when we're done with this branching.
 			// </summary>
@@ -474,9 +479,12 @@ namespace Mono.CSharp
 			//
 			// Normally, you should not use any of these constructors.
 			//
-			public UsageVector (SiblingType type, UsageVector parent, Location loc, int num_params, int num_locals)
+			public UsageVector (SiblingType type, UsageVector parent,
+					    Block block, Location loc,
+					    int num_params, int num_locals)
 			{
 				this.Type = type;
+				this.Block = block;
 				this.Location = loc;
 				this.InheritsFrom = parent;
 				this.CountParameters = num_params;
@@ -503,15 +511,19 @@ namespace Mono.CSharp
 				id = ++next_id;
 			}
 
-			public UsageVector (SiblingType type, UsageVector parent, Location loc)
-				: this (type, parent, loc, parent.CountParameters, parent.CountLocals)
+			public UsageVector (SiblingType type, UsageVector parent,
+					    Block block, Location loc)
+				: this (type, parent, block, loc,
+					parent.CountParameters, parent.CountLocals)
 			{ }
 
 			public UsageVector (MyBitVector parameters, MyBitVector locals,
-					    Reachability reachability, Location loc)
+					    Reachability reachability, Block block,
+					    Location loc)
 			{
 				this.Type = SiblingType.Block;
 				this.Location = loc;
+				this.Block = block;
 
 				this.reachability = reachability;
 				this.parameters = parameters;
@@ -525,7 +537,9 @@ namespace Mono.CSharp
 			// </summary>
 			public UsageVector Clone ()
 			{
-				UsageVector retval = new UsageVector (Type, null, Location, CountParameters, CountLocals);
+				UsageVector retval = new UsageVector (
+					Type, null, Block, Location,
+					CountParameters, CountLocals);
 
 				if (retval.locals != null)
 					retval.locals = locals.Clone ();
@@ -938,13 +952,14 @@ namespace Mono.CSharp
 				local_map = Block.LocalMap;
 
 				UsageVector parent_vector = parent != null ? parent.CurrentUsageVector : null;
-				vector = new UsageVector (stype, parent_vector, loc, param_map.Length, local_map.Length);
-				
-
+				vector = new UsageVector (
+					stype, parent_vector, Block, loc,
+					param_map.Length, local_map.Length);
 			} else {
 				param_map = Parent.param_map;
 				local_map = Parent.local_map;
-				vector = new UsageVector (stype, Parent.CurrentUsageVector, loc);
+				vector = new UsageVector (
+					stype, Parent.CurrentUsageVector, null, loc);
 			}
 
 			AddSibling (vector);
@@ -957,14 +972,32 @@ namespace Mono.CSharp
 		// <summary>
 		//   Creates a sibling of the current usage vector.
 		// </summary>
-		public virtual void CreateSibling (SiblingType type)
+		public virtual void CreateSibling (Block block, SiblingType type)
 		{
-			AddSibling (new UsageVector (type, Parent.CurrentUsageVector, Location));
+			UsageVector vector = new UsageVector (
+				type, Parent.CurrentUsageVector, block, Location);
+			AddSibling (vector);
 
 			Report.Debug (1, "  CREATED SIBLING", CurrentUsageVector);
 		}
 
+		public void CreateSibling ()
+		{
+			CreateSibling (null, SiblingType.Conditional);
+		}
+
 		protected abstract void AddSibling (UsageVector uv);
+
+		public virtual LabeledStatement LookupLabel (string name, Location loc)
+		{
+			if (Parent != null)
+				return Parent.LookupLabel (name, loc);
+
+			Report.Error (
+				159, loc,
+				"No such label `" + name + "' in this scope");
+			return null;
+		}
 
 		public abstract void Label (UsageVector origin_vectors);
 
@@ -1075,7 +1108,8 @@ namespace Mono.CSharp
 			Report.Debug (2, "  MERGING SIBLINGS DONE", parameters, locals,
 				      reachability, Infinite);
 
-			return new UsageVector (parameters, locals, reachability, Location);
+			return new UsageVector (
+				parameters, locals, reachability, null, Location);
 		}
 
 		protected abstract UsageVector Merge ();
@@ -1097,7 +1131,8 @@ namespace Mono.CSharp
 				throw new NotSupportedException ();
 
 			UsageVector vector = new UsageVector (
-				SiblingType.Conditional, null, Location, param_map.Length, local_map.Length);
+				SiblingType.Conditional, null, Block, Location,
+				param_map.Length, local_map.Length);
 
 			UsageVector result = vector.MergeChild (this);
 
@@ -1269,6 +1304,18 @@ namespace Mono.CSharp
 			sibling_list = sibling;
 		}
 
+		public override LabeledStatement LookupLabel (string name, Location loc)
+		{
+			if (Block == null)
+				return base.LookupLabel (name, loc);
+
+			LabeledStatement s = Block.LookupLabel (name);
+			if (s != null)
+				return s;
+
+			return base.LookupLabel (name, loc);
+		}
+
 		public override void Label (UsageVector origin_vectors)
 		{
 			if (!CurrentUsageVector.Reachability.IsUnreachable) {
@@ -1372,6 +1419,22 @@ namespace Mono.CSharp
 			vector = vector.Clone ();
 			vector.Next = finally_origins;
 			finally_origins = vector;
+		}
+
+		public override LabeledStatement LookupLabel (string name, Location loc)
+		{
+			LabeledStatement s = current_vector.Block.LookupLabel (name);
+			if (s != null)
+				return s;
+
+			if (finally_vector != null) {
+				Report.Error (
+					157, loc, "Control can not leave the body " +
+					"of the finally block");
+				return null;
+			}
+
+			return base.LookupLabel (name, loc);
 		}
 
 		public override void Label (UsageVector origin_vectors)

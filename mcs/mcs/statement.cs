@@ -171,7 +171,7 @@ namespace Mono.CSharp {
 
 			is_true_ret = ec.CurrentBranching.CurrentUsageVector.Reachability.IsUnreachable;
 
-			ec.CurrentBranching.CreateSibling (FlowBranching.SiblingType.Conditional);
+			ec.CurrentBranching.CreateSibling ();
 
 			if ((FalseStatement != null) && !FalseStatement.Resolve (ec))
 				ok = false;
@@ -440,7 +440,7 @@ namespace Mono.CSharp {
 
 			ec.StartFlowBranching (FlowBranching.BranchingType.Loop, loc);
 			if (!infinite)
-				ec.CurrentBranching.CreateSibling (FlowBranching.SiblingType.Conditional);
+				ec.CurrentBranching.CreateSibling ();
 
 			if (!Statement.Resolve (ec))
 				ok = false;
@@ -625,13 +625,9 @@ namespace Mono.CSharp {
 		
 		public override bool Resolve (EmitContext ec)
 		{
-			label = block.LookupLabel (target);
-			if (label == null){
-				Report.Error (
-					159, loc,
-					"No such label `" + target + "' in this scope");
+			label = ec.CurrentBranching.LookupLabel (target, loc);
+			if (label == null)
 				return false;
-			}
 
 			// If this is a forward goto.
 			if (!label.IsDefined)
@@ -1235,13 +1231,16 @@ namespace Mono.CSharp {
 				return switch_block.AddLabel (name, target, loc);
 
 			Block cur = this;
-			while (cur != null && cur.Implicit) {
+			while (cur != null) {
 				if (cur.LookupLabel (name) != null) {
 					Report.Error (
 						140, loc, "The label '{0}' is a duplicate",
 						name);
 					return false;
 				}
+
+				if (!Implicit)
+					break;
 
 				cur = cur.Parent;
 			}
@@ -1255,6 +1254,23 @@ namespace Mono.CSharp {
 						name);
 					return false;
 				}
+
+				if (children != null) {
+					foreach (Block b in children) {
+						LabeledStatement s = b.LookupLabel (name);
+						if (s == null)
+							continue;
+
+						Report.Error (
+							158, s.Location,
+							"The label '{0}' shadows another " +
+							"label by the same name in a " +
+							"containing scope.",
+							name);
+						return false;
+					}
+				}
+
 
 				cur = cur.Parent;
 			}
@@ -1290,17 +1306,6 @@ namespace Mono.CSharp {
 			if (labels != null)
 				if (labels.Contains (name))
 					return ((LabeledStatement) labels [name]);
-
-			if (children != null){
-				foreach (Block b in children){
-					LabeledStatement s = b.LookupLabel (name, seen);
-					if (s != null)
-						return s;
-				}
-			}
-
-			if (Parent != null)
-				return Parent.LookupLabel (name, seen);
 
 			return null;
 		}
@@ -1496,15 +1501,6 @@ namespace Mono.CSharp {
 			return e != null;
 		}
 		
-		/// <summary>
-		///   Use to fetch the statement associated with this label
-		/// </summary>
-		public Statement this [string name] {
-			get {
-				return (Statement) labels [name];
-			}
-		}
-
 		Parameters parameters = null;
 		public Parameters Parameters {
 			get {
@@ -2617,7 +2613,8 @@ namespace Mono.CSharp {
 			bool first = true;
 			foreach (SwitchSection ss in Sections){
 				if (!first)
-					ec.CurrentBranching.CreateSibling (FlowBranching.SiblingType.SwitchSection);
+					ec.CurrentBranching.CreateSibling (
+						null, FlowBranching.SiblingType.SwitchSection);
 				else
 					first = false;
 
@@ -2627,7 +2624,8 @@ namespace Mono.CSharp {
 
 
 			if (!got_default)
-				ec.CurrentBranching.CreateSibling (FlowBranching.SiblingType.SwitchSection);
+				ec.CurrentBranching.CreateSibling (
+					null, FlowBranching.SiblingType.SwitchSection);
 
 			FlowBranching.Reachability reachability = ec.EndFlowBranching ();
 			ec.Switch = old_switch;
@@ -3191,7 +3189,9 @@ namespace Mono.CSharp {
 			Report.Debug (1, "START OF CATCH BLOCKS", vector);
 
 			foreach (Catch c in Specific){
-				ec.CurrentBranching.CreateSibling (FlowBranching.SiblingType.Catch);
+				ec.CurrentBranching.CreateSibling (
+					c.Block, FlowBranching.SiblingType.Catch);
+
 				Report.Debug (1, "STARTED SIBLING FOR CATCH", ec.CurrentBranching);
 
 				if (c.Name != null) {
@@ -3209,7 +3209,9 @@ namespace Mono.CSharp {
 			Report.Debug (1, "END OF CATCH BLOCKS", ec.CurrentBranching);
 
 			if (General != null){
-				ec.CurrentBranching.CreateSibling (FlowBranching.SiblingType.Catch);
+				ec.CurrentBranching.CreateSibling (
+					General.Block, FlowBranching.SiblingType.Catch);
+
 				Report.Debug (1, "STARTED SIBLING FOR GENERAL", ec.CurrentBranching);
 
 				if (!General.Resolve (ec))
@@ -3220,7 +3222,9 @@ namespace Mono.CSharp {
 
 			if (Fini != null) {
 				if (ok)
-					ec.CurrentBranching.CreateSibling (FlowBranching.SiblingType.Finally);
+					ec.CurrentBranching.CreateSibling (
+						Fini, FlowBranching.SiblingType.Finally);
+
 				Report.Debug (1, "STARTED SIBLING FOR FINALLY", ec.CurrentBranching, vector);
 
 				if (!Fini.Resolve (ec))
@@ -3585,7 +3589,7 @@ namespace Mono.CSharp {
 			bool ok = true;
 
 			ec.StartFlowBranching (FlowBranching.BranchingType.Loop, loc);
-			ec.CurrentBranching.CreateSibling (FlowBranching.SiblingType.Conditional);
+			ec.CurrentBranching.CreateSibling ();
 
  			//
 			//
