@@ -33,14 +33,16 @@ namespace System.Windows.Forms {
 
 	internal class HandleData : IDisposable {
 
-		private Queue message_queue;
-		private Rectangle invalid = Rectangle.Empty;
-		private Object dc;
-		private bool has_expose;
+		private Queue		message_queue;
+		private Rectangle	invalid = Rectangle.Empty;
+		private Object		dc;
+		private bool		has_expose;
+		private bool		is_visible;
 
 		#region Constructors and destructors
 		public HandleData ()
 		{
+			is_visible = true;
 		}
 
 		public void Dispose () {
@@ -67,6 +69,15 @@ namespace System.Windows.Forms {
 			}
 			set {
 				has_expose = value;
+			}
+		}
+
+		public bool IsVisible {
+			get {
+				return is_visible;
+			}
+			set {
+				is_visible = value;
 			}
 		}
 
