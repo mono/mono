@@ -146,7 +146,7 @@ namespace Mono.CSharp {
 				
 				if (t is TypeBuilder){
 					Interface iface;
-					
+
 					iface = TypeManager.LookupInterface (t);
 					
 					mi = iface.GetMethods (container);
