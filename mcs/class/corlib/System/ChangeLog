@@ -1,3 +1,6 @@
+2002-04-24	Patrik Torstensson <patrik.torstensson@labs2.com>
+
+	* AppDomain.cs (GetValue): usage of the correct icall (bug)
 
 Wed Apr 24 21:15:44 CEST 2002 Paolo Molaro <lupus@ximian.com>
 

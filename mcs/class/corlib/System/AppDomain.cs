@@ -298,11 +298,8 @@ namespace System {
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern Assembly [] GetAssemblies ();
 
-		[MonoTODO]
-		public object GetData (string name)
-		{
-			throw new NotImplementedException ();			
-		}
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		public extern object GetData (string name);
 		
 		public override int GetHashCode ()
 		{
@@ -437,9 +434,6 @@ namespace System {
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public static extern void Unload (AppDomain domain);
 		
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern object GetData ();
-
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern void SetData (string name, object data);
 
