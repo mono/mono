@@ -52,8 +52,7 @@ namespace System.Net
 			this.statusCode = 0;
 			do {
 				if (statusCode == HttpStatusCode.Continue)
-					while ((line = ReadHttpLine (responseStream)) != "")
-						Console.WriteLine ("Ignoro: " + line);
+					while ((line = ReadHttpLine (responseStream)) != "");
 
 				line = ReadHttpLine (responseStream);
 
