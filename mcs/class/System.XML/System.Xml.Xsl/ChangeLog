@@ -1,5 +1,9 @@
 2004-08-30  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XsltException.cs : added NET_2_0 constructors too.
+
+2004-08-30  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XsltCompileException.cs : added NET_2_0 constructors.
 	  Hide property Message under NET_2_0.
 

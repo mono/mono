@@ -49,6 +49,18 @@ namespace System.Xml.Xsl
 
 		#region Constructors
 
+#if NET_2_0
+		public XsltException ()
+			: base (String.Empty, null)
+		{
+		}
+
+		public XsltException (string message)
+			: base (message, null)
+		{
+		}
+#endif
+
 		public XsltException (string message, Exception innerException)
 			: base (message, innerException)
 		{
