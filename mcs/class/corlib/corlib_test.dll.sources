@@ -160,6 +160,8 @@ System.Security.Policy/EvidenceTest.cs
 System.Security.Policy/PermissionRequestEvidenceTest.cs 
 System.Security.Policy/PublisherMembershipConditionTest.cs
 System.Security.Policy/PublisherTest.cs
+System.Security.Policy/SiteMembershipConditionTest.cs
+System.Security.Policy/SiteTest.cs
 System.Security.Policy/StrongNameTest.cs
 System.Security.Policy/ZoneTest.cs
 System.Security.Principal/GenericIdentityTest.cs
