@@ -1,3 +1,6 @@
+2003-10-22  Eran Domb  <erand@miansoft.com>
+	* DbDataAdapter.cs : Check if there is mapping to avoid exception.
+
 2003-11-26  Tim Coleman <tim@timcoleman.com>
 	* DbDataReader.cs: Add new stub class
 
