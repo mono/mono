@@ -4,10 +4,9 @@
 // Author:
 //   Miguel de Icaza (miguel@ximian.com)
 //   Daniel Stodden (stodden@in.tum.de)
+//   Dietmar Maurer (dietmar@ximian.com)
 //
 // (C) Ximian, Inc.  http://www.ximian.com
-//
-// TODO:  Mucho left to implement
 //
 
 using System;
@@ -72,14 +71,40 @@ namespace System {
 		// Methods
 		//
 
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		internal static extern Delegate CreateDelegate_internal (Type type, object target, MethodInfo info);
+
 		[MonoTODO]
-		public static Delegate CreateDelegate (Type type, MethodInfo methodinfo)
+		public static Delegate CreateDelegate (Type type, MethodInfo info)
 		{
-			throw new NotImplementedException();
+			if (type == null)
+				throw new ArgumentNullException (Locale.GetText ("Type is null"));
+
+			if (info == null)
+				throw new ArgumentNullException (Locale.GetText ("MethodInfo is null"));
+
+			return CreateDelegate_internal (type, null, info);
 		}
 		
 		[MonoTODO]
 		public static Delegate CreateDelegate (Type type, object target, string method)
+		{
+			if (type == null)
+				throw new ArgumentNullException (Locale.GetText ("Type is null"));
+
+			if (target == null)
+				throw new ArgumentNullException (Locale.GetText ("Target object is null"));
+
+			if (method == null)
+				throw new ArgumentNullException (Locale.GetText ("method string is null"));
+
+			BindingFlags flags =  BindingFlags.Public | BindingFlags.Instance;
+			MethodInfo info = target.GetType ().GetMethod (method, flags);
+			return CreateDelegate_internal (type, target, info);
+		}
+
+		[MonoTODO]
+ 		public static Delegate CreateDelegate (Type type, Type target, string method)
 		{
 			if (type == null)
 				throw new ArgumentNullException (Locale.GetText ("Type is null"));
@@ -90,38 +115,28 @@ namespace System {
 			if (method == null)
 				throw new ArgumentNullException (Locale.GetText ("method string is null"));
 
-			MethodInfo info = target.GetType ().GetMethod (method);
-			IntPtr ptr = CreateDelegate_internal (info);
-			Delegate d = CreateDelegate (type, target, ptr);
-			d.m_target = target;
-			d.method_name = method;
-			return d;
-		}
-
-		[MonoTODO]
- 		public static Delegate CreateDelegate (Type type, Type target, string method)
-		{
-			throw new NotImplementedException();
+			BindingFlags flags =  BindingFlags.Public | BindingFlags.Static;
+			MethodInfo info = target.GetMethod (method, flags);
+			return CreateDelegate_internal (type, null, info);
 		}
 
 		[MonoTODO]
 		public static Delegate CreateDelegate (Type type, object target, string method, bool ignorecase)
 		{
-			throw new NotImplementedException();
-		}
+			if (type == null)
+				throw new ArgumentNullException (Locale.GetText ("Type is null"));
 
-		private static Delegate CreateDelegate (Type type, object target, IntPtr method)
-		{
-			object[] args = new object [2];
-			args [0] = target; args [1] = method;
-			Type[] argtypes = new Type [2];
-			argtypes[0] = typeof (System.Object); argtypes[1] = typeof (System.IntPtr);
-			ConstructorInfo ctor = type.GetConstructor (argtypes);
-			return (Delegate)ctor.Invoke (args);
-		}
+			if (target == null)
+				throw new ArgumentNullException (Locale.GetText ("Target object is null"));
 
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		internal static extern IntPtr CreateDelegate_internal (MethodInfo info);
+			if (method == null)
+				throw new ArgumentNullException (Locale.GetText ("method string is null"));
+			
+			Type target_type = target.GetType ();
+			BindingFlags flags =  BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase;
+			MethodInfo info = target_type.GetMethod (method, flags);
+			return CreateDelegate_internal (type, target, info);			
+		}
 
 		public object DynamicInvoke( object[] args )
 		{

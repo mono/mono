@@ -554,22 +554,11 @@ namespace System {
 
 		public abstract MemberInfo[] GetMembers (BindingFlags bindingAttr);
 
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private static extern MethodInfo get_method (Type type, string name, Type[] types);
-
 		public MethodInfo GetMethod (string name)
 		{
 			if (name == null)
 				throw new ArgumentNullException ("name");
-			//return GetMethodImpl (
-				//name, DefaultBindingFlags, null, CallingConventions.Any, null, null);
-			// This is a hack to find the MethodInfo.  Once GetMethodImpl works, we won't need this.
-			foreach (MethodInfo i in GetMethods ()) {
-				if (i.Name == name) {
-					return i;
-				}
-			}
-			return null;
+			return GetMethodImpl (name, DefaultBindingFlags, null, CallingConventions.Any, null, null);
 		}
 
 		public MethodInfo GetMethod (string name, BindingFlags bindingAttr)
@@ -583,9 +572,7 @@ namespace System {
 		[MonoTODO]
 		public MethodInfo GetMethod (string name, Type[] types)
 		{
-			//TODO: return GetMethod (
-			//      name, DefaultBindingFlags, null, CallingConventions.Any, types, null);
-			return get_method (this, name, types);
+			return GetMethod (name, DefaultBindingFlags, null, CallingConventions.Any, types, null);
 		}
 
 		public MethodInfo GetMethod( string name, Type[] types, ParameterModifier[] modifiers)

@@ -110,13 +110,17 @@ namespace System
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern override MethodInfo[] GetMethods (BindingFlags bindingAttr);
 
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		private static extern MethodInfo get_method (Type type, string name, Type[] types);
+
+
+		[MonoTODO]
 		protected override MethodInfo GetMethodImpl (string name, BindingFlags bindingAttr,
 							     Binder binder,
 							     CallingConventions callConvention,
 							     Type[] types, ParameterModifier[] modifiers)
 		{
-			// FIXME
-			throw new NotImplementedException ();
+			return get_method (this, name, types);
 		}
 		
 		public override Type GetNestedType( string name, BindingFlags bindingAttr)
