@@ -1,5 +1,10 @@
 2004-03-15  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* Process.cs: patch by Gert Driesen that fixes WaitForExit when the
+	timeout is int.MaxValue.
+
+2004-03-15  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* Process.cs: added environment variables setting support and also
 	send useShellExecute to the runtime.
 

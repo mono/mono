@@ -795,8 +795,10 @@ namespace System.Diagnostics {
 		}
 
 		public bool WaitForExit(int milliseconds) {
-			return(WaitForExit_internal(process_handle,
-						    milliseconds));
+			if (milliseconds == int.MaxValue)
+				milliseconds = -1;
+
+			return WaitForExit_internal (process_handle, milliseconds);
 		}
 
 		[MonoTODO]
