@@ -1,3 +1,8 @@
+2003-03-20  Dick Porter  <dick@ximian.com>
+
+	* sockets.c (_wapi_connect): If connect() fails with EACCES, try
+	setting SO_BROADCAST and connecting again.  Fixes bug 39178.
+
 2003-03-13  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* processes.c: included Jerome Laban's patch and call SetLastError when
