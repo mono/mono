@@ -26,6 +26,7 @@ namespace System.Xml
 		protected bool documentStarted = false;
 		protected bool namespaces = true;
 		protected bool openAttribute = false;
+		protected bool attributeWrittenForElement = false;
 		protected Stack openElements = new Stack ();
 		protected Formatting formatting = Formatting.None;
 		protected int indentation = 2;
@@ -125,7 +126,6 @@ namespace System.Xml
 			}
 		}
 
-		[MonoTODO]
 		public char QuoteChar {
 			get { return quoteChar; }
 			set {
@@ -213,6 +213,7 @@ namespace System.Xml
 				w.Write(">");
 				ws = WriteState.Content;
 				openStartElement = false;
+				attributeWrittenForElement = false;
 			}
 		}
 
@@ -408,6 +409,9 @@ namespace System.Xml
 
 			CheckState ();
 
+			if (ws == WriteState.Content)
+				throw new InvalidOperationException ("Token StartAttribute in state " + WriteState + " would result in an invalid XML document.");
+
 			if (prefix == null)
 				prefix = String.Empty;
 
@@ -415,6 +419,7 @@ namespace System.Xml
 				ns = String.Empty;
 
 			string formatPrefix = "";
+			string formatSpace = "";
 
 			if (ns != String.Empty) 
 			{
@@ -429,9 +434,13 @@ namespace System.Xml
 				formatPrefix = prefix + ":";
 			}
 
-			w.Write (" {0}{1}={2}", formatPrefix, localName, quoteChar);
+			if (openStartElement || attributeWrittenForElement)
+				formatSpace = " ";
+
+			w.Write ("{0}{1}{2}={3}", formatSpace, formatPrefix, localName, quoteChar);
 
 			openAttribute = true;
+			attributeWrittenForElement = true;
 			ws = WriteState.Attribute;
 		}
 

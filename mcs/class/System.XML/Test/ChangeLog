@@ -1,3 +1,8 @@
+2002-03-31  Kral Ferch <kral_ferch@hotmail.com>
+
+	* XmlTextWriterTests.cs: Finished XmlLang, XmlSpace, and
+	Attribute namespace declaration tests.
+	
 2002-03-29  Kral Ferch <kral_ferch@hotmail.com>
 
 	* XmlTextWriterTests.cs: XmlLang and XmlSpace tests.

@@ -1,3 +1,8 @@
+2002-03-31  Kral Ferch  <kral_ferch@hotmail.com>
+
+	* XmlTextWriter.cs: Some tweaks for WriteAttibuteString
+	in different states (no open start element, in WriteState.Content mode).
+	
 2002-03-29  Kral Ferch  <kral_ferch@hotmail.com>
 
 	* XmlTextWriter.cs: XmlLang and XmlSpace properties
