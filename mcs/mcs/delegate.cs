@@ -489,11 +489,6 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public void CloseDelegate ()
-		{
-			TypeBuilder.CreateType ();
-		}
-		
 		public Expression InstanceExpression {
 			get {
 				return instance_expr;

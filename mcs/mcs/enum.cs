@@ -258,6 +258,129 @@ namespace Mono.CSharp {
 		}
 
 		/// <summary>
+		///  Determines if a standard implicit conversion exists from
+		///  expr_type to target_type
+		/// </summary>
+		public static bool ImplicitConversionExists (Type expr_type, Type target_type)
+		{
+			expr_type = TypeManager.TypeToCoreType (expr_type);
+
+			if (expr_type == TypeManager.void_type)
+				return false;
+			
+			if (expr_type == target_type)
+				return true;
+
+			// First numeric conversions 
+
+			if (expr_type == TypeManager.sbyte_type){
+				//
+				// From sbyte to short, int, long, float, double.
+				//
+				if ((target_type == TypeManager.int32_type) || 
+				    (target_type == TypeManager.int64_type) ||
+				    (target_type == TypeManager.double_type) ||
+				    (target_type == TypeManager.float_type)  ||
+				    (target_type == TypeManager.short_type) ||
+				    (target_type == TypeManager.decimal_type))
+					return true;
+				
+			} else if (expr_type == TypeManager.byte_type){
+				//
+				// From byte to short, ushort, int, uint, long, ulong, float, double
+				// 
+				if ((target_type == TypeManager.short_type) ||
+				    (target_type == TypeManager.ushort_type) ||
+				    (target_type == TypeManager.int32_type) ||
+				    (target_type == TypeManager.uint32_type) ||
+				    (target_type == TypeManager.uint64_type) ||
+				    (target_type == TypeManager.int64_type) ||
+				    (target_type == TypeManager.float_type) ||
+				    (target_type == TypeManager.double_type) ||
+				    (target_type == TypeManager.decimal_type))
+					return true;
+	
+			} else if (expr_type == TypeManager.short_type){
+				//
+				// From short to int, long, float, double
+				// 
+				if ((target_type == TypeManager.int32_type) ||
+				    (target_type == TypeManager.int64_type) ||
+				    (target_type == TypeManager.double_type) ||
+				    (target_type == TypeManager.float_type) ||
+				    (target_type == TypeManager.decimal_type))
+					return true;
+					
+			} else if (expr_type == TypeManager.ushort_type){
+				//
+				// From ushort to int, uint, long, ulong, float, double
+				//
+				if ((target_type == TypeManager.uint32_type) ||
+				    (target_type == TypeManager.uint64_type) ||
+				    (target_type == TypeManager.int32_type) ||
+				    (target_type == TypeManager.int64_type) ||
+				    (target_type == TypeManager.double_type) ||
+				    (target_type == TypeManager.float_type) ||
+				    (target_type == TypeManager.decimal_type))
+					return true;
+				    
+			} else if (expr_type == TypeManager.int32_type){
+				//
+				// From int to long, float, double
+				//
+				if ((target_type == TypeManager.int64_type) ||
+				    (target_type == TypeManager.double_type) ||
+				    (target_type == TypeManager.float_type) ||
+				    (target_type == TypeManager.decimal_type))
+					return true;
+					
+			} else if (expr_type == TypeManager.uint32_type){
+				//
+				// From uint to long, ulong, float, double
+				//
+				if ((target_type == TypeManager.int64_type) ||
+				    (target_type == TypeManager.uint64_type) ||
+				    (target_type == TypeManager.double_type) ||
+				    (target_type == TypeManager.float_type) ||
+				    (target_type == TypeManager.decimal_type))
+					return true;
+					
+			} else if ((expr_type == TypeManager.uint64_type) ||
+				   (expr_type == TypeManager.int64_type)) {
+				//
+				// From long/ulong to float, double
+				//
+				if ((target_type == TypeManager.double_type) ||
+				    (target_type == TypeManager.float_type) ||
+				    (target_type == TypeManager.decimal_type))
+					return true;
+				    
+			} else if (expr_type == TypeManager.char_type){
+				//
+				// From char to ushort, int, uint, long, ulong, float, double
+				// 
+				if ((target_type == TypeManager.ushort_type) ||
+				    (target_type == TypeManager.int32_type) ||
+				    (target_type == TypeManager.uint32_type) ||
+				    (target_type == TypeManager.uint64_type) ||
+				    (target_type == TypeManager.int64_type) ||
+				    (target_type == TypeManager.float_type) ||
+				    (target_type == TypeManager.double_type) ||
+				    (target_type == TypeManager.decimal_type))
+					return true;
+
+			} else if (expr_type == TypeManager.float_type){
+				//
+				// float to double
+				//
+				if (target_type == TypeManager.double_type)
+					return true;
+			}	
+			
+			return false;
+		}
+
+		/// <summary>
 		///  This is used to lookup the value of an enum member. If the member is undefined,
 		///  it attempts to define it and return its value
 		/// </summary>
@@ -318,24 +441,30 @@ namespace Mono.CSharp {
 				val = val.Resolve (ec);
 				in_transit.Remove (name);
 				ec.InEnumContext = old;
-				
+
 				if (val == null)
 					return null;
 
-				if (IsValidEnumConstant (val)) {
-					c = (Constant) val;
-					default_value = c.GetValue ();
-					
-					if (default_value == null) {
-						Error_ConstantValueCannotBeConverted (c, loc);
-						return null;
-					}
-					
-				} else {
+				if (!IsValidEnumConstant (val)) {
 					Report.Error (
 						1008, loc,
 						"Type byte, sbyte, short, ushort, int, uint, long, or " +
 						"ulong expected (have: " + val + ")");
+					return null;
+				}
+
+				c = (Constant) val;
+				default_value = c.GetValue ();
+
+				if (default_value == null) {
+					Error_ConstantValueCannotBeConverted (c, loc);
+					return null;
+				}
+
+				if ((val is EnumConstant) &&
+				    !ImplicitConversionExists (default_value.GetType (), UnderlyingType)) {
+					Expression.Error_CannotConvertImplicit (
+						loc, default_value.GetType (), UnderlyingType);
 					return null;
 				}
 			}

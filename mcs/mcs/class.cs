@@ -1531,7 +1531,7 @@ namespace Mono.CSharp {
 
 			if (Delegates != null)
 				foreach (Delegate d in Delegates)
-					d.CloseDelegate ();
+					d.CloseType ();
 		}
 
 		public string MakeName (string n)

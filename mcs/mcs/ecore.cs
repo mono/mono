@@ -1043,7 +1043,7 @@ namespace Mono.CSharp {
 
 			return false;
 		}
-		
+
 		/// <summary>
 		///  Determines if a standard implicit conversion exists from
 		///  expr_type to target_type
@@ -3572,8 +3572,6 @@ namespace Mono.CSharp {
 				// it's a field or a type of the same name.
 				if (!me.IsStatic && (me.InstanceExpression == null))
 					return e;
-
-				Report.Debug (8, "RESOLVE", e, me, me.InstanceExpression, right_side);
 
 				if (!me.IsStatic &&
 				    TypeManager.IsNestedChildOf (me.InstanceExpression.Type, me.DeclaringType)) {

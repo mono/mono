@@ -5,6 +5,21 @@
 
 2002-09-12  Martin Baulig  <martin@gnome.org>
 
+	* cfold.cs (ConstantFold.DoConstantNumericPromotions): Check whether an
+	implicit conversion can be done between enum types.
+
+	* enum.cs (Enum.LookupEnumValue): If the value is an EnumConstant,
+	check whether an implicit conversion to the current enum's UnderlyingType
+	exists and report an error if not.
+
+	* codegen.cs (CodeGen.Init): Delete the symbol file when compiling
+	without debugging support.
+
+	* delegate.cs (Delegate.CloseDelegate): Removed, use CloseType instead.
+	Fixes bug #30235.  Thanks to Ricardo Fernández Pascual.
+
+2002-09-12  Martin Baulig  <martin@gnome.org>
+
 	* typemanager.cs (TypeManager.IsNestedChildOf): New method.
 
 	* ecore.cs (IMemberExpr.DeclaringType): New property.

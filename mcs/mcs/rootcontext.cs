@@ -414,7 +414,7 @@ namespace Mono.CSharp {
 			
 			if (root.Delegates != null)
 				foreach (Delegate d in root.Delegates)
-					d.CloseDelegate ();
+					d.CloseType ();
 
 
 			//

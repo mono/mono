@@ -8,6 +8,7 @@
 //
 
 using System;
+using System.IO;
 using System.Collections;
 using System.Reflection;
 using System.Reflection.Emit;
@@ -65,11 +66,9 @@ namespace Mono.CSharp {
 		//
 		// This routine initializes the Mono runtime SymbolWriter.
 		//
-		static bool InitMonoSymbolWriter (string basename, string output_file,
-						  string[] debug_args)
+		static bool InitMonoSymbolWriter (string basename, string symbol_output,
+						  string exe_output_file, string[] debug_args)
 		{
-			string symbol_output = basename + ".dbg";
-
 			Type itype = SymbolWriter.GetType ();
 			if (itype == null)
 				return false;
@@ -84,7 +83,7 @@ namespace Mono.CSharp {
 				return false;
 
 			object[] args = new object [3];
-			args [0] = output_file;
+			args [0] = exe_output_file;
 			args [1] = symbol_output;
 			args [2] = debug_args;
 
@@ -95,8 +94,8 @@ namespace Mono.CSharp {
 		//
 		// Initializes the symbol writer
 		//
-		static void InitializeSymbolWriter (string basename, string output_file,
-						    string[] args)
+		static void InitializeSymbolWriter (string basename, string symbol_output,
+						    string exe_output_file, string[] args)
 		{
 			SymbolWriter = ModuleBuilder.GetSymWriter ();
 
@@ -123,7 +122,8 @@ namespace Mono.CSharp {
 			
 			switch (sym_type.Name){
 			case "MonoSymbolWriter":
-				if (!InitMonoSymbolWriter (basename, output_file, args))
+				if (!InitMonoSymbolWriter (basename, symbol_output,
+							   exe_output_file, args))
 					Report.Error (
 						-18, "Cannot initialize the symbol writer");
 				break;
@@ -161,16 +161,24 @@ namespace Mono.CSharp {
 			ModuleBuilder = AssemblyBuilder.DefineDynamicModule (
 				Basename (name), Basename (output), want_debugging_support);
 
-			if (want_debugging_support) {
-				int pos = output.LastIndexOf (".");
+			int pos = output.LastIndexOf (".");
 
-				string basename;
-				if (pos > 0)
-					basename = output.Substring (0, pos);
-				else
-					basename = output;
+			string basename;
+			if (pos > 0)
+				basename = output.Substring (0, pos);
+			else
+				basename = output;
 
-				InitializeSymbolWriter (basename, output, debug_args);
+			string symbol_output = basename + ".dbg";
+
+			if (want_debugging_support)
+				InitializeSymbolWriter (basename, symbol_output, output, debug_args);
+			else {
+				try {
+					File.Delete (symbol_output);
+				} catch {
+					// Ignore errors.
+				}
 			}
 		}
 

@@ -27,7 +27,7 @@ namespace Mono.CSharp {
 		//   (uint, uint)
 		//   (int, int)
 		//
-		static void DoConstantNumericPromotions (Binary.Operator oper,
+		static void DoConstantNumericPromotions (EmitContext ec, Binary.Operator oper,
 							 ref Constant left, ref Constant right,
 							 Location loc)
 		{
@@ -116,6 +116,39 @@ namespace Mono.CSharp {
 				}
 
 				return;
+			} else if (left is EnumConstant || right is EnumConstant){
+				//
+				// If either operand is an enum constant, the other one must
+				// be implicitly convertable to that enum's underlying type.
+				//
+				EnumConstant match;
+				Constant other;
+				if (left is EnumConstant){
+					other = right;
+					match = (EnumConstant) left;
+				} else {
+					other = left;
+					match = (EnumConstant) right;
+				}
+
+				bool need_check = (other is EnumConstant) ||
+					((oper != Binary.Operator.Addition) &&
+					 (oper != Binary.Operator.Subtraction));
+
+				if (need_check &&
+				    !Expression.ImplicitConversionExists (ec, match, other.Type)) {
+					Expression.Error_CannotConvertImplicit (loc, match.Type, other.Type);
+					left = null;
+					right = null;
+					return;
+				}
+
+				if (left is EnumConstant)
+					left = ((EnumConstant) left).Child;
+				if (right is EnumConstant)
+					right = ((EnumConstant) right).Child;
+				return;
+
 			} else {
 				//
 				// Force conversions to int32
@@ -165,7 +198,7 @@ namespace Mono.CSharp {
 			
 			switch (oper){
 			case Binary.Operator.BitwiseOr:
-				DoConstantNumericPromotions (oper, ref left, ref right, loc);
+				DoConstantNumericPromotions (ec, oper, ref left, ref right, loc);
 				if (left == null || right == null)
 					return null;
 				
@@ -210,7 +243,7 @@ namespace Mono.CSharp {
 				break;
 				
 			case Binary.Operator.BitwiseAnd:
-				DoConstantNumericPromotions (oper, ref left, ref right, loc);
+				DoConstantNumericPromotions (ec, oper, ref left, ref right, loc);
 				if (left == null || right == null)
 					return null;
 				
@@ -255,7 +288,7 @@ namespace Mono.CSharp {
 				break;
 
 			case Binary.Operator.ExclusiveOr:
-				DoConstantNumericPromotions (oper, ref left, ref right, loc);
+				DoConstantNumericPromotions (ec, oper, ref left, ref right, loc);
 				if (left == null || right == null)
 					return null;
 				
@@ -340,7 +373,7 @@ namespace Mono.CSharp {
 				}
 
 				result = null;
-				DoConstantNumericPromotions (oper, ref left, ref right, loc);
+				DoConstantNumericPromotions (ec, oper, ref left, ref right, loc);
 				if (left == null || right == null)
 					return null;
 
@@ -424,7 +457,7 @@ namespace Mono.CSharp {
 					return result;
 
 			case Binary.Operator.Subtraction:
-				DoConstantNumericPromotions (oper, ref left, ref right, loc);
+				DoConstantNumericPromotions (ec, oper, ref left, ref right, loc);
 				if (left == null || right == null)
 					return null;
 
@@ -504,7 +537,7 @@ namespace Mono.CSharp {
 				break;
 				
 			case Binary.Operator.Multiply:
-				DoConstantNumericPromotions (oper, ref left, ref right, loc);
+				DoConstantNumericPromotions (ec, oper, ref left, ref right, loc);
 				if (left == null || right == null)
 					return null;
 
@@ -584,7 +617,7 @@ namespace Mono.CSharp {
 				break;
 
 			case Binary.Operator.Division:
-				DoConstantNumericPromotions (oper, ref left, ref right, loc);
+				DoConstantNumericPromotions (ec, oper, ref left, ref right, loc);
 				if (left == null || right == null)
 					return null;
 
@@ -668,7 +701,7 @@ namespace Mono.CSharp {
 				break;
 				
 			case Binary.Operator.Modulus:
-				DoConstantNumericPromotions (oper, ref left, ref right, loc);
+				DoConstantNumericPromotions (ec, oper, ref left, ref right, loc);
 				if (left == null || right == null)
 					return null;
 
@@ -837,7 +870,7 @@ namespace Mono.CSharp {
 					
 				}
 				
-				DoConstantNumericPromotions (oper, ref left, ref right, loc);
+				DoConstantNumericPromotions (ec, oper, ref left, ref right, loc);
 				if (left == null || right == null)
 					return null;
 
@@ -877,7 +910,7 @@ namespace Mono.CSharp {
 						((StringConstant) right).Value);
 					
 				}
-				DoConstantNumericPromotions (oper, ref left, ref right, loc);
+				DoConstantNumericPromotions (ec, oper, ref left, ref right, loc);
 				if (left == null || right == null)
 					return null;
 
@@ -906,7 +939,7 @@ namespace Mono.CSharp {
 				return new BoolConstant (bool_res);
 
 			case Binary.Operator.LessThan:
-				DoConstantNumericPromotions (oper, ref left, ref right, loc);
+				DoConstantNumericPromotions (ec, oper, ref left, ref right, loc);
 				if (left == null || right == null)
 					return null;
 
@@ -935,7 +968,7 @@ namespace Mono.CSharp {
 				return new BoolConstant (bool_res);
 				
 			case Binary.Operator.GreaterThan:
-				DoConstantNumericPromotions (oper, ref left, ref right, loc);
+				DoConstantNumericPromotions (ec, oper, ref left, ref right, loc);
 				if (left == null || right == null)
 					return null;
 
@@ -964,7 +997,7 @@ namespace Mono.CSharp {
 				return new BoolConstant (bool_res);
 
 			case Binary.Operator.GreaterThanOrEqual:
-				DoConstantNumericPromotions (oper, ref left, ref right, loc);
+				DoConstantNumericPromotions (ec, oper, ref left, ref right, loc);
 				if (left == null || right == null)
 					return null;
 
@@ -993,7 +1026,7 @@ namespace Mono.CSharp {
 				return new BoolConstant (bool_res);
 
 			case Binary.Operator.LessThanOrEqual:
-				DoConstantNumericPromotions (oper, ref left, ref right, loc);
+				DoConstantNumericPromotions (ec, oper, ref left, ref right, loc);
 				if (left == null || right == null)
 					return null;
 
