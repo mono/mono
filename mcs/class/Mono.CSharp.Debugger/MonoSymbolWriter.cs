@@ -13,6 +13,7 @@
 using System;
 using System.Reflection;
 using System.Reflection.Emit;
+using System.Runtime.CompilerServices;
 using System.Diagnostics.SymbolStore;
 using System.Collections;
 using System.IO;
@@ -22,7 +23,11 @@ namespace Mono.CSharp.Debugger
 
 	public class MonoSymbolWriter : IMonoSymbolWriter
 	{
+		protected Assembly assembly;
+		protected ModuleBuilder module_builder;
 		protected string output_filename = null;
+		protected ArrayList locals = null;
+		protected ArrayList orphant_methods = null;
 		protected Hashtable methods = null;
 		protected Hashtable sources = null;
 
@@ -191,22 +196,23 @@ namespace Mono.CSharp.Debugger
 
 		protected class LocalVariable : ILocalVariable
 		{
-			public LocalVariable (string name, Type type, int token, int index)
-				: this (name, type, token, index, null)
+			public LocalVariable (string name, byte[] signature, int token, int index)
+				: this (name, signature, token, index, null)
 			{ }
 
-			public LocalVariable (string name, Type type, int token, int index,
+			public LocalVariable (string name, byte[] signature, int token, int index,
 					      ISourceLine line)
 			{
 				this._name = name;
-				this._type = type;
+				this._signature = signature;
 				this._token = token;
 				this._index = index;
 				this._line = line;
 			}
 
 			private readonly string _name;
-			private readonly Type _type;
+			internal Type _type;
+			private readonly byte[] _signature;
 			private readonly int _token;
 			private readonly int _index;
 			private readonly ISourceLine _line;
@@ -224,12 +230,6 @@ namespace Mono.CSharp.Debugger
 				}
 			}
 
-			public Type Type {
-				get {
-					return _type;
-				}
-			}
-
 			public int Token {
 				get {
 					return _token;
@@ -239,6 +239,18 @@ namespace Mono.CSharp.Debugger
 			public int Index {
 				get {
 					return _index;
+				}
+			}
+
+			public Type Type {
+				get {
+					return _type;
+				}
+			}
+
+			public byte[] Signature {
+				get {
+					return _signature;
 				}
 			}
 
@@ -256,27 +268,31 @@ namespace Mono.CSharp.Debugger
 			private Hashtable _block_hash = new Hashtable ();
 			private Stack _block_stack = new Stack ();
 
-			private readonly MethodInfo _method_info;
-			private readonly SourceFile _source_file;
+			internal MethodInfo _method_info;
+			internal ISourceFile _source_file;
 			private readonly int _token;
 
 			private SourceBlock _implicit_block;
 
-			public SourceMethod (int token, MethodInfo method_info, SourceFile source_file) {
+			public SourceMethod (int token, MethodInfo method_info, ISourceFile source_file)
+				: this (token)
+			{
 				this._method_info = method_info;
 				this._source_file = source_file;
+			}
+
+			internal SourceMethod (int token)
+			{
 				this._token = token;
 
 				this._implicit_block = new SourceBlock (this, 0);
 			}
 
-			public void SetSourceRange (int startLine, int startColumn,
+			public void SetSourceRange (ISourceFile sourceFile,
+						    int startLine, int startColumn,
 						    int endLine, int endColumn)
 			{
-				Console.WriteLine ("SOURCE RANGE: " + MethodInfo.Name + " " +
-						   startLine + ":" + startColumn + " " +
-						   endLine + ":" + endColumn);
-
+				_source_file = sourceFile;
 				_implicit_block._start = new SourceLine (startLine, startColumn);
 				_implicit_block._end = new SourceLine (endLine, endColumn);
 			}
@@ -386,9 +402,18 @@ namespace Mono.CSharp.Debugger
 		{
 			methods = new Hashtable ();
 			sources = new Hashtable ();
+			orphant_methods = new ArrayList ();
+			locals = new ArrayList ();
 		}
 
 		public void Close () {
+			if (assembly == null)
+				throw new NotSupportedException ("You must give me a reference " +
+								 "to an assembly by calling " +
+								 "SetAssembly()");
+
+			DoFixups (assembly);
+
 			CreateDwarfFile (output_filename);
 		}
 
@@ -442,20 +467,21 @@ namespace Mono.CSharp.Debugger
 
 			int token = current_method.Token;
 
-			LocalVariable local_info = new LocalVariable (name, typeof (int), token, addr1);
+			LocalVariable local_info = new LocalVariable (name, signature, token, addr1);
 
 			current_method.CurrentBlock.AddLocal (local_info);
+			locals.Add (local_info);
 		}
 
-		public void DefineParameter (
-			string name,
-			ParameterAttributes attributes,
-			int sequence,
-			SymAddressKind addrKind,
-			int addr1,
-			int addr2,
-			int addr3)
+		public void DefineParameter (string name,
+					     ParameterAttributes attributes,
+					     int sequence,
+					     SymAddressKind addrKind,
+					     int addr1,
+					     int addr2,
+					     int addr3)
 		{
+			throw new NotSupportedException ();
 		}
 
 		public void DefineSequencePoints (ISymbolDocumentWriter document,
@@ -479,40 +505,27 @@ namespace Mono.CSharp.Debugger
 		}
 
 		// This is documented in IMonoSymbolWriter.cs
-		public void Initialize (string filename)
+		public void Initialize (ModuleBuilder module_builder, string filename)
 		{
+			this.module_builder = module_builder;
 			this.output_filename = filename;
 		}
 
-		public void OpenMethod (SymbolToken method)
+		public void SetAssembly (Assembly assembly)
 		{
-			// do nothing
+			this.assembly = assembly;
 		}
 
-		// This is documented in IMonoSymbolWriter.cs
-		public void OpenMethod (SymbolToken symbol_token, MethodInfo method_info,
-					string source_file)
+		public void OpenMethod (SymbolToken symbol_token)
 		{
 			int token = symbol_token.GetToken ();
-			SourceFile source_info;
 
 			if (methods.ContainsKey (token))
 				methods.Remove (token);
 
-			if (sources.ContainsKey (source_file))
-				source_info = (SourceFile) sources [source_file];
-			else {
-				source_info = new SourceFile (source_file);
-				sources.Add (source_file, source_info);
-			}
-
-			current_method = new SourceMethod (token, method_info, source_info);
-
-			source_info.AddMethod (current_method);
+			current_method = new SourceMethod (token);
 
 			methods.Add (token, current_method);
-
-			OpenMethod (symbol_token);
 		}
 
 		public void SetMethodSourceRange (ISymbolDocumentWriter startDoc,
@@ -520,6 +533,9 @@ namespace Mono.CSharp.Debugger
 						  ISymbolDocumentWriter endDoc,
 						  int endLine, int endColumn)
 		{
+			if (current_method == null)
+				return;
+
 			if ((startDoc == null) || (endDoc == null))
 				throw new NullReferenceException ();
 
@@ -530,9 +546,20 @@ namespace Mono.CSharp.Debugger
 			if (!startDoc.Equals (endDoc))
 				throw new NotSupportedException ("startDoc and endDoc must be the same");
 
-			if (current_method != null)
-				current_method.SetSourceRange (startLine, startColumn,
-							       endLine, endColumn);
+			string source_file = ((MonoSymbolDocumentWriter) startDoc).FileName;
+			SourceFile source_info;
+
+			if (sources.ContainsKey (source_file))
+				source_info = (SourceFile) sources [source_file];
+			else {
+				source_info = new SourceFile (source_file);
+				sources.Add (source_file, source_info);
+			}
+
+			current_method.SetSourceRange (source_info, startLine, startColumn,
+						       endLine, endColumn);
+
+			source_info.AddMethod (current_method);
 		}
 
 		public void CloseMethod () {
@@ -575,6 +602,7 @@ namespace Mono.CSharp.Debugger
 
 		public void SetUnderlyingWriter (IntPtr underlyingWriter)
 		{
+			throw new NotSupportedException ();
 		}
 
 		public void SetUserEntryPoint (SymbolToken entryMethod)
@@ -592,7 +620,7 @@ namespace Mono.CSharp.Debugger
 		{
 			DwarfFileWriter.DieMethodVariable die;
 
-			Console.WriteLine ("WRITE LOCAL: " + (LocalVariable) local);
+			Console.WriteLine ("WRITE LOCAL: " + (LocalVariable) local + " " + local.Type);
 
 			die = new DwarfFileWriter.DieMethodVariable (parent_die, local);
 		}
@@ -615,7 +643,7 @@ namespace Mono.CSharp.Debugger
 
 			die = new DwarfFileWriter.DieSubProgram (parent_die, method);
 
-			Console.WriteLine ("WRITE METHOD: " + method.MethodInfo.Name);
+			Console.WriteLine ("WRITE METHOD: " + method.MethodInfo.Name + " " + method.Token);
 
 			foreach (ILocalVariable local in method.Locals)
 				WriteLocal (die, local);
@@ -635,12 +663,48 @@ namespace Mono.CSharp.Debugger
 				WriteMethod (die, method);
 		}
 
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		internal extern static Type get_local_type_from_sig (Assembly module, byte[] sig);
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		internal extern static MethodInfo get_method (Assembly module, int token);
+
+		protected void DoFixups (Assembly assembly)
+		{
+			foreach (SourceMethod method in methods.Values) {
+				method._method_info = get_method (assembly, method.Token);
+
+				if (method.SourceFile == null)
+					orphant_methods.Add (method);
+			}
+
+			foreach (LocalVariable local in locals) {
+				byte[] signature = local.Signature;
+
+				Type type = get_local_type_from_sig (assembly, signature);
+
+				((LocalVariable) local)._type = type;
+			}
+		}
+
 		protected void CreateDwarfFile (string filename)
 		{
 			DwarfFileWriter writer = new DwarfFileWriter (filename);
 
 			foreach (ISourceFile source in sources.Values)
 				WriteSource (writer, source);
+
+			if (orphant_methods.Count > 0) {
+				SourceFile source = new SourceFile ("<unknown>");
+
+				foreach (SourceMethod orphant in orphant_methods) {
+					orphant._source_file = source;
+					source.AddMethod (orphant);
+				}
+
+				WriteSource (writer, source);
+			}
 
 			writer.Close ();
 		}

@@ -1,3 +1,19 @@
+2002-03-24  Martin Baulig  <martin@gnome.org>
+
+	* IMonoSymbolWriter.cs (IMonoSymbolWriter): Removed my custom OpenMethod(),
+	we're now using the ISymbolWriter's method.
+	(IVariable): Added `byte[] Signature' property.
+
+	* MonoSymbolWriter.cs (SetAssembly): New method. This must be called before
+	Close(); the assembly parameter is the already-written assembly, ie. it must
+	contain the full metadata.
+	(OpenMethod): Only take the token argument and set MethodInfo later in DoFixups.
+	(SetMethodSourceRange): You must call this function to tell the symbol writer
+	in which source file the method is defined.
+	(DefineLocal): Store the signature in the local.
+	(DoFixups): Use two new interncalls to set the SourceMethod's MethodInfo field
+	and the LocalVariable's Type field.
+
 2002-03-23  Martin Baulig  <martin@gnome.org>
 
 	* IMonoSymbolWriter.cs (ISourceBlock): New interface.

@@ -29,11 +29,7 @@ namespace Mono.CSharp.Debugger
 		// Since I want this interface to be usable on the Windows platform as
 		// well, I added this custom constructor. You should use this version
 		// of `Initialize' to make sure you're actually using this implementation.
-		void Initialize (string filename);
-
-		// This is some kind of a hack - there isn't any way yet to get the
-		// method name and source file back from a token.
-		void OpenMethod (SymbolToken token, MethodInfo method_info, string source_file);
+		void Initialize (ModuleBuilder module_builder, string filename);
 	}
 
 	public interface ISourceFile
@@ -148,6 +144,10 @@ namespace Mono.CSharp.Debugger
 		}
 
 		ISourceLine Line {
+			get;
+		}
+
+		byte[] Signature {
 			get;
 		}
 
