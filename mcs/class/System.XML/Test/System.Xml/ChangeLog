@@ -1,3 +1,7 @@
+2004-06-18  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlSecureResolverTests.cs : [TestFixture] was missing.
+
 2004-06-14  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlTextWriterTests.cs : Avoid CR/CRLF testing complexity.

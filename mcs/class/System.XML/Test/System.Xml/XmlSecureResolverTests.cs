@@ -15,6 +15,7 @@ using NUnit.Framework;
 
 namespace MonoTestsXml
 {
+	[TestFixture]
 	public class XmlSecureResolverTests : Assertion
 	{
 		[Test]
