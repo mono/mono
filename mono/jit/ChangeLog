@@ -1,3 +1,11 @@
+
+Thu Mar 28 11:58:53 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* Makefile.am, mono.c, jit.h, jit.c: build the libmono library
+	with the jit runtime to easy embedding. main() is moved to mono.c, now.
+	* jit.c: use opcode names from libmetadata.
+	* debug.h, debug.c: constify char* argument.
+
 2002-03-28  Dietmar Maurer  <dietmar@ximian.com>
 
 	* jit.c: catching SIGSEGV again, added proxy support
