@@ -31,6 +31,7 @@
 using System.Collections;
 using System.Diagnostics;
 using System.Reflection;
+using System.Text;
 using System.Runtime.InteropServices;
 using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
@@ -145,8 +146,42 @@ namespace System
 
 		public virtual string StackTrace {
 			get {
-				if (stack_trace == null)
-					stack_trace = get_trace ();
+				if (trace_ips == null)
+					/* Not thrown yet */
+					return null;
+
+				if (stack_trace == null) {
+					StackTrace st = new StackTrace (this, true);
+
+					StringBuilder sb = new StringBuilder ();
+
+					string newline = String.Format ("{0}{1} ", Environment.NewLine, Locale.GetText ("in"));
+					string unknown = Locale.GetText ("<unknown method>");
+
+					for (int i = 0; i < st.FrameCount; i++) {
+						StackFrame frame = st.GetFrame (i);
+						if (i == 0)
+							sb.AppendFormat ("{0} ", Locale.GetText ("in"));
+						else
+							sb.Append (newline);
+
+						if (frame.GetMethod () == null)
+							sb.Append (unknown);
+						else {
+							if (frame.GetILOffset () == -1)
+								sb.AppendFormat ("<0x{0:x5}> ", frame.GetNativeOffset ());
+							else
+								sb.AppendFormat ("[0x{0:x5}] ", frame.GetILOffset ());
+							string fileName = frame.GetFileName ();
+							if (fileName != null)
+								sb.AppendFormat ("(at {0}:{1}) ", fileName, frame.GetFileLineNumber ());
+
+							sb.Append (GetFullNameForStackTrace (frame.GetMethod ()));
+						}
+					}
+					stack_trace = sb.ToString ();
+				}
+
 				return stack_trace;
 			}
 		}
@@ -242,7 +277,35 @@ namespace System
 			return this;
 		}
 
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		extern string get_trace ();
+		internal string GetFullNameForStackTrace (MethodBase mi)
+		{
+			string parms = "";
+			ParameterInfo[] p = mi.GetParameters ();
+			for (int i = 0; i < p.Length; ++i) {
+				if (i > 0)
+					parms = parms + ", ";
+				string paramName = (p [i].Name == null) ? "" : (" " + p [i].Name);
+				Type pt = p[i].ParameterType;
+				if (pt.IsClass && pt.Namespace != "")
+					parms = parms + pt.Namespace + "." + pt.Name + paramName;
+				else
+					parms = parms + pt.Name + paramName;
+			}
+
+			string generic = "";
+#if NET_2_0 || BOOTSTRAP_NET_2_0
+			if (mi.HasGenericParameters) {
+				Type[] gen_params = mi.GetGenericArguments ();
+				generic = "[";
+				for (int j = 0; j < gen_params.Length; j++) {
+					if (j > 0)
+						generic += ",";
+					generic += gen_params [j].Name;
+				}
+				generic += "]";
+			}
+#endif
+			return mi.DeclaringType.ToString () + ":" + mi.Name + generic + " (" + parms + ")";
+		}				
 	}
 }

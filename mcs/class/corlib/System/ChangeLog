@@ -1,3 +1,8 @@
+2005-02-18  Zoltan Varga  <vargaz@freemail.hu>
+
+	* Exception.cs (StackTrace): Implement this in managed code since it is
+	needed by CAS. Fixes #72146.
+
 2005-02-15 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* WindowsConsoleDriver.cs: implemented MoveBufferArea.
