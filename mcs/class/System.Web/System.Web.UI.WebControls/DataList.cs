@@ -12,6 +12,7 @@
  */
 
 using System;
+using System.Collections;
 using System.Web;
 using System.Web.UI;
 
@@ -22,7 +23,7 @@ namespace System.Web.UI.WebControls
 		//
 		public const string CancelCommandName = "Cancel";
 		public const string DeleteCommandName = "Delete";
-		public const string EditCommandName = "Edit";
+		public const string EditCommandName   = "Edit";
 		public const string SelectCommandName = "Select";
 		public const string UpdateCommandName = "Update";
 
@@ -40,6 +41,8 @@ namespace System.Web.UI.WebControls
 		private int editItemIndex;
 		private bool extractTemplateRows;
 		
+		private ArrayList itemsArray;
+		
 		public DataList()
 		{
 			alternatingItemStyle = new TableItemStyle();
@@ -52,6 +55,8 @@ namespace System.Web.UI.WebControls
 			headerTemplate          = null;
 			
 			extractTemplateRows = false;
+			
+			itemsArray = null;
 		}
 		
 		public virtual TableItemStyle AlternatingItemStyle
@@ -172,11 +177,10 @@ namespace System.Web.UI.WebControls
 			}
 		}
 		
-		//TODO: To implement the following functions found in the BaseDataList abstract class
-		/*
-		 * PrepareControlHierarchy()
-		 * CreateControlHeirarchy(bool)
-		 */
+		private DataListItem GetItem(ListItemType itemType, int repeatIndex)
+		{
+			throw new NotImplementedException();
+		}
 		
 		/// <summary>
 		/// Undocumented
@@ -216,6 +220,31 @@ namespace System.Web.UI.WebControls
 			{
 				return (separatorTemplate!=null);
 			}
+		}
+		
+		int IRepeatInfoUser.RepeatedItemCount
+		{
+			get
+			{
+				if(itemsArray!=null)
+					return itemsArray.Count;
+				return 0;
+			}
+		}
+		
+		void IRepeatInfoUser.RenderItem(ListItemType itemType, int repeatIndex, RepeatInfo repeatInfo, HtmlTextWriter writer)
+		{
+			DataListItem item = GetItem(itemType, repeatIndex);
+			if(item!=null)
+			{
+				item.RenderItem(writer, extractTemplateRows, repeatInfo.RepeatLayout == RepeatLayout.Table);
+			}
+		}
+		
+		Style IRepeatInfoUser.GetItemStyle(ListItemType itemType, int repeatIndex)
+		{
+			if(GetItem(itemType, repeatIndex)!=null && ControlStyleCreated)
+				return ControlStyle;
 		}
 	}
 }

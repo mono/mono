@@ -115,7 +115,7 @@ namespace System.Web.UI
 
                 public Control()
                 {
-                        if (this is NamingContainer) isNamingContainer = true;
+                        if (this is INamingContainer) _isNamingContainer = true;
                 }
                 public virtual string ClientID //DIT
                 {
@@ -150,7 +150,7 @@ namespace System.Web.UI
                 {
                         get //DIT
                         {
-                                return _userID;
+                                return _userId;
                         }
                         set
                         {
@@ -217,6 +217,7 @@ namespace System.Web.UI
                         {
                                 //TODO: Some Naming container methods here. What are they? Why arnt they declared?
                                 //Note: Nuked the old stuff here. Was total crap. :)
+                                throw new NotImplementedException();
                         }
                 }
                 public virtual bool Visible
@@ -262,8 +263,11 @@ namespace System.Web.UI
                 {
                         get
                         {
-                                if (_events != null) return _events;
-                                _events = new EventHandlerList();
+                                if (_events == null)
+                                {
+                                	_events = new EventHandlerList();
+                                }
+                                return _events;
                         }
                 }
                 protected bool HasChildViewState //DIT
@@ -278,15 +282,20 @@ namespace System.Web.UI
                 {
                         get
                         {
-                                return _trackingViewState;
+                                return _trackViewState;
                         }
                 }
                 protected virtual StateBag ViewState
                 {
                         get
                         {
-                                if (_viewState == null) _viewState = new StateBag(ViewStateIgnoreCase);
-                                return _viewState;
+                        	if(_viewState == null)
+                        	{
+	                        	_viewState = new StateBag(ViewStateIgnoresCase);
+    	                    	if(IsTrackingViewState)
+        	                		_viewState.TrackViewState();
+                        	}
+                        	return _viewState;
                         }
                 }
                 protected virtual bool ViewStateIgnoresCase //DIT

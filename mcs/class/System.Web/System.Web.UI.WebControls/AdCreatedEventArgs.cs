@@ -26,16 +26,15 @@ namespace System.Web.UI.WebControls
 		private string      imageUrl;
 		private string      navigateUrl;
 
-		public AdCreatedEventArgs(IDictionary adProperties)
+		public AdCreatedEventArgs(IDictionary adProperties): base()
 		{
-			super();
 			Initialize();
 			this.adProperties = adProperties;
 			if(adProperties!=null)
 			{
-				imageUrl = (string)adProperties.Item["ImageUrl"];
-				navigateUrl = (string)adProperties.Item["NavigateUrl"];
-				alternateText = (string)adProperties.Item["AlternateText"];
+				imageUrl = (string)adProperties["ImageUrl"];
+				navigateUrl = (string)adProperties["NavigateUrl"];
+				alternateText = (string)adProperties["AlternateText"];
 			}
 		}
 
