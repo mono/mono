@@ -80,6 +80,8 @@ System.Security.Permissions/FileIOPermissionTest.cs
 System.Text/AllTests.cs
 System.Text/StringBuilderTest.cs
 System.Text/ASCIIEncodingTest.cs
+System.Runtime.CompilerServices/AllTests.cs
+System.Runtime.CompilerServices/RuntimeHelpersTest.cs
 System.Runtime.Serialization/AllTests.cs
 System.Runtime.Serialization/FormatterServicesTests.cs
 System.Runtime.Serialization/ObjectIDGeneratorTests.cs
