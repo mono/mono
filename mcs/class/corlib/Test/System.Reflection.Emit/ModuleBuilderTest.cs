@@ -15,6 +15,7 @@ using System.Reflection.Emit;
 using System.IO;
 using System.Collections;
 using System.Diagnostics.SymbolStore;
+using System.Runtime.InteropServices;
 
 using NUnit.Framework;
 
@@ -105,6 +106,24 @@ public class ModuleBuilderTest : Assertion
 		AssertEquals (module.GetField ("DATA4") != null, true);
 		AssertEquals (module.GetField ("DATA_PRIVATE"), null);
 		AssertEquals (module.GetField ("DATA_PRIVATE", BindingFlags.NonPublic | BindingFlags.Static) != null, true);
+	}
+
+	[Test]
+	public void TestGlobalMethods () {
+		AssemblyName an = new AssemblyName();
+		an.Name = "TestGlobalMethods";
+		AssemblyBuilder builder = 
+			AppDomain.CurrentDomain.DefineDynamicAssembly(an, AssemblyBuilderAccess.Run);
+		ModuleBuilder module = builder.DefineDynamicModule("MessageModule");
+		MethodBuilder method = module.DefinePInvokeMethod("printf", "libc.so",
+														  MethodAttributes.PinvokeImpl | MethodAttributes.Static | MethodAttributes.Public, 
+														  CallingConventions.Standard, typeof(void), new Type[]{typeof(string)}, CallingConvention.Winapi, 
+														  CharSet.Auto);
+		method.SetImplementationFlags (MethodImplAttributes.PreserveSig | 
+									   method.GetMethodImplementationFlags());
+		module.CreateGlobalFunctions();
+
+		Assert (module.GetMethod ("printf") != null);
 	}
 
 	[Test]
