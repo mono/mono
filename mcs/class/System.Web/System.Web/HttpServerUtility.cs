@@ -161,8 +161,8 @@ namespace System.Web
 			int qmark = path.IndexOf ('?');
 			string query;
 			if (qmark != -1) {
-				path = path.Substring (0, qmark);
 				query = path.Substring (qmark + 1);
+				path = path.Substring (0, qmark);
 			} else {
 				query = "";
 			}
