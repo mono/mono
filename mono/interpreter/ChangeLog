@@ -1,3 +1,9 @@
+2004-12-02  Bernie Solomon  <bernard@ugsolutions.com>
+
+	* mintops.def:
+	* transform.c:
+	* interp.c: cope with new thread interruption icall
+
 2004-11-12  Ben Maurer  <bmaurer@ximian.com>
 
 	* transform.c: Fix bug with delegates in interp.
