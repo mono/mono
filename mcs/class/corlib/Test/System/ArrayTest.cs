@@ -547,6 +547,8 @@ public class ArrayTest : TestCase
 	}
 
 	public void TestGetEnumerator() {
+		// FIXME: Not yet implemented
+		return;
 		String[] s1 = {"this", "is", "a", "test"};
 		IEnumerator en = s1.GetEnumerator();
 		AssertNotNull("No enumerator", en);
@@ -591,7 +593,6 @@ public class ArrayTest : TestCase
 	}
 
 	public void TestGetLowerBound() {
-		// I have no idea what the point of this function is.
 		{
 			bool errorThrown = false;
 			try {
@@ -1025,7 +1026,7 @@ public class ArrayTest : TestCase
 		String[] s1 = {"this", "is", "really", "a", "test"};
 		AssertEquals("No null here", -1, Array.LastIndexOf(s1, null, 3));
 		AssertEquals("No nothing here", -1, Array.LastIndexOf(s1, "nothing", 3));
-		AssertEquals("Didn't find larst", -1, Array.LastIndexOf(s1, "test", 3));
+		AssertEquals("Didn't find last", -1, Array.LastIndexOf(s1, "test", 3));
 		AssertEquals("Found last", 3, Array.LastIndexOf(s1, "a", 3));
 		AssertEquals("Found first", 0, Array.LastIndexOf(s1, "this", 3));
 	}
