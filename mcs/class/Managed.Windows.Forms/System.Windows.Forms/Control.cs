@@ -29,9 +29,12 @@
 //	Jaak Simm		jaaksimm@firm.ee
 //	John Sohn		jsohn@columbus.rr.com
 //
-// $Revision: 1.70 $
+// $Revision: 1.71 $
 // $Modtime: $
 // $Log: Control.cs,v $
+// Revision 1.71  2004/10/18 06:27:39  ravindra
+// Default value of visible property must be true.
+//
 // Revision 1.70  2004/10/18 04:16:29  pbartok
 // - Fixed/implemented flat list of controls
 //
@@ -748,7 +751,7 @@ namespace System.Windows.Forms
 			prev_size = Size.Empty;
 			anchor_style = AnchorStyles.Top | AnchorStyles.Left;
 
-			is_visible = false;
+			is_visible = true;
 			is_captured = false;
 			is_disposed = false;
 			is_enabled = true;
