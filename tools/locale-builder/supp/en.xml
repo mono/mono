@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE ldml SYSTEM "http://www.openi18n.org/spec/ldml/1.0/ldml.dtd" 
+[
+      <!ENTITY % icu SYSTEM "http://www.openi18n.org/spec/ldml/1.0/ldmlICU.dtd"> 
+%icu;
+]
+>
+<ldml>
+	<numbers>
+		<decimalFormats>
+			<decimalFormatLength >
+				<decimalFormat >
+					<pattern>#,###0.##;-#,###0.##</pattern>
+				</decimalFormat>
+			</decimalFormatLength >
+		</decimalFormats>
+		<scientificFormats>
+			<scientificFormatLength >
+				<scientificFormat >
+					<pattern>#E0</pattern>
+				</scientificFormat>
+			</scientificFormatLength >
+		</scientificFormats>
+		<percentFormats>
+			<percentFormatLength >
+				<percentFormat >
+					<pattern>#,###.##0%</pattern>
+				</percentFormat>
+			</percentFormatLength >
+		</percentFormats>
+		<currencyFormats>
+			<currencyFormatLength >
+				<currencyFormat >
+					<pattern>¤#,###0.00;-¤#,###0.00</pattern>
+				</currencyFormat>
+			</currencyFormatLength >
+		</currencyFormats>
+	</numbers>
+	<dates>
+		<calendars>
+			<calendar type="gregorian">
+				<dateFormats>
+					<default type="medium"/>
+					<dateFormatLength type="long">
+						<dateFormat >
+							<pattern>dddd, MMMM dd, yyyy</pattern>
+						</dateFormat>
+					</dateFormatLength >
+					<dateFormatLength type="short">
+						<dateFormat >
+							<pattern>M/d/yyyy</pattern>
+						</dateFormat>
+					</dateFormatLength >
+				</dateFormats>
+			        <timeFormats>
+					<default type="medium"/>
+					<timeFormatLength type="long">
+						<timeFormat >
+							<pattern>h:mm:ss tt</pattern>
+						</timeFormat>
+					</timeFormatLength >
+					<timeFormatLength type="medium">
+						<timeFormat >
+							<pattern>h:mm:ss a</pattern>
+						</timeFormat>
+					</timeFormatLength >
+					<timeFormatLength type="short">
+						<timeFormat >
+							<pattern>h:mm tt</pattern>
+						</timeFormat>
+					</timeFormatLength >
+				</timeFormats>
+			</calendar>
+		</calendars>
+	</dates>
+</ldml>
