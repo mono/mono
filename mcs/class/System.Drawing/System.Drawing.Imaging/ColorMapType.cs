@@ -1,14 +1,14 @@
 //
-// System.Drawing.ColorMapType.cs
+// System.Drawing.Imaging.ColorMapType.cs
 //
-// (C) 2001 Ximian, Inc.  http://www.ximian.com
+// (C) 2002 Ximian, Inc.  http://www.ximian.com
 // Author: Dennis Hayes (dennish@raytek.com)
 //
 using System;
 namespace System.Drawing.Imaging
 {
-	public enum  ColorMapType{
+	public enum  ColorMapType{//check
 		Brush = 1,
-		Default = 2
+		Default = 0
 	}
 }

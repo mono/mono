@@ -1,21 +1,21 @@
 //
-// System.Drawing.ImageCodecFlags.cs
+// System.Drawing.Imaging.ImageCodecFlags.cs
 //
-// (C) 2001 Ximian, Inc.  http://www.ximian.com
+// (C) 2002 Ximian, Inc.  http://www.ximian.com
 // Author: Dennis Hayes (dennish@raytek.com)
 //
 using System;
-namespace System.Drawing 
+namespace System.Drawing.Imaging
 {
 	public enum ImageCodecFlags {
-		BlockingDecode,
-		Builtin,
-		Decoder,
-		Encoder,
-		SeekableEncode,
-		SupportBitmap,
-		SupportVector,
-		System,
-		User
+		BlockingDecode = 32,
+		Builtin = 65536,
+		Decoder = 2,
+		Encoder = 1,
+		SeekableEncode = 16,
+		SupportBitmap = 4,
+		SupportVector = 8,
+		System = 131072,
+		User = 262144
 	}
 }

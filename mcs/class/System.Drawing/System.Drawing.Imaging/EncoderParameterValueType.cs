@@ -1,20 +1,20 @@
 //
-// System.Drawing.EncoderParameterValueType.cs
+// System.Drawing.Imaging.EncoderParameterValueType.cs
 //
-// (C) 2001 Ximian, Inc.  http://www.ximian.com
+// (C) 2002 Ximian, Inc.  http://www.ximian.com
 // Author: Dennis Hayes (dennish@raytek.com)
 //
 using System;
 namespace System.Drawing.Imaging 
 {
 	public enum EncoderParameterValueType {
-		ValueTypeAscii,
-		ValueTypeByte,
-		ValueTypeLong,
-		ValueTypeLongRange,
-		ValueTypeRational,
-		ValueTypeRationalRange,
-		ValueTypeShort,
-		ValueTypeUndefined
+		ValueTypeAscii = 2,
+		ValueTypeByte = 1,
+		ValueTypeLong = 4,
+		ValueTypeLongRange = 6,
+		ValueTypeRational = 5,
+		ValueTypeRationalRange = 8,
+		ValueTypeShort = 3,
+		ValueTypeUndefined = 7
 	}
 }

@@ -1,18 +1,18 @@
 //
-// System.Drawing.MetafileFrameUnit.cs
+// System.Drawing.Imaging.MetafileFrameUnit.cs
 //
-// (C) 2001 Ximian, Inc.  http://www.ximian.com
+// (C) 2002 Ximian, Inc.  http://www.ximian.com
 // Author: Dennis Hayes (dennish@raytek.com)
 //
 using System;
 namespace System.Drawing.Imaging 
 {
 	public enum MetafileFrameUnit {
-		Document,
-		GdiCompatible,
-		Inch,
-		Millimeter,
-		Pixel,
-		Point
+		Document = 5,
+		GdiCompatible = 7,
+		Inch = 4,
+		Millimeter = 6,
+		Pixel = 2,
+		Point = 3
 	}
 }

@@ -1,5 +1,5 @@
 //
-// System.Drawing.Design.ColorAdjustType.cs
+// System.Drawing.Imaging.ColorAdjustType.cs
 //
 // (C) 2002 Ximian, Inc.  http://www.ximian.com
 // Author: Dennis Hayes (dennish@raytek.com)
@@ -8,12 +8,12 @@ using System;
 namespace System.Drawing.Imaging 
 {
 	public enum ColorAdjustType {
-		Any,
-		Bitmap,
-		Brush,
-		Count,
-		Default,
-		Pen,
-		Text
+		Any = 6,
+		Bitmap = 1,
+		Brush = 2,
+		Count = 5,
+		Default = 0,
+		Pen = 3,
+		Text = 4
 	}
 }

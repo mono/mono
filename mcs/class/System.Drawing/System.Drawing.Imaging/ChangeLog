@@ -2,4 +2,7 @@
 
 	* ChangeLog: created.
 	* Metafile.cs: Added. Wrote some ctors. No impl done, yet.
+2002-04-21 Dennis Hayes <dennish@raytek.com>
+
+	* corrected emum values.
 
