@@ -14,6 +14,7 @@ namespace Mono.CSharp
 	using System.Text;
 	using System.Reflection;
 	using System.Collections;
+	using System.Collections.Specialized;
 	using System.Diagnostics;
 	using System.Text.RegularExpressions;
 
@@ -40,11 +41,25 @@ namespace Mono.CSharp
 		{
 			string[] fileNames=new string[ea.Length];
 			int i=0;
+			if (options == null)
+				options = new CompilerParameters ();
+			
+			if (options.ReferencedAssemblies == null)
+				options.ReferencedAssemblies = new StringCollection ();
+
+			StringCollection assemblies = options.ReferencedAssemblies;
+
 			foreach (CodeCompileUnit e in ea)
 			{
 				fileNames[i]=Path.ChangeExtension(Path.GetTempFileName(),"cs");
 				FileStream f=new FileStream(fileNames[i],FileMode.OpenOrCreate);
 				StreamWriter s=new StreamWriter(f);
+				if (e.ReferencedAssemblies != null) {
+					foreach (string str in e.ReferencedAssemblies) {
+						if (!assemblies.Contains (str))
+							assemblies.Add (str);
+					}
+				}
 
 				GenerateCodeFromCompileUnit(e,s,new CodeGeneratorOptions());
 				s.Close();
