@@ -1,5 +1,5 @@
 // 
-// System.Web.Hosting
+// System.Web.Hosting.SimpleWorkerRequest.cs
 //
 // Authors:
 // 	Patrik Torstensson (Patrik.Torstensson@labs2.com)
@@ -9,11 +9,13 @@
 using System;
 using System.IO;
 using System.Text;
+using System.Runtime.InteropServices;
 using System.Web.Util;
 
 namespace System.Web.Hosting
 {
 	[MonoTODO("Implement security demands on the path usage functions (and review)")]
+	[ComVisible (false)]
 	public class SimpleWorkerRequest : HttpWorkerRequest
 	{
 		private string _Page;

@@ -1,3 +1,9 @@
+2004-01-11  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* SimpleWorkerRequest.cs: Added missing attribute
+	* IISAPIRuntime.cs: Added attributes, fixed signature
+	* IAppDomainFactory.cs: Added attributes, fixed signature
+
 2003-08-29  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* ApplicationHost.cs: set hostingInstallDir.
