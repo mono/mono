@@ -42,47 +42,60 @@ namespace Mono.Security {
 			if (dt.Year < 2050) {
 				// UTCTIME
 				return new ASN1 (0x17, Encoding.ASCII.GetBytes (
-					dt.ToString ("yyMMddHHmmss", CultureInfo.InvariantCulture) + "Z"));
+					dt.ToUniversalTime ().ToString ("yyMMddHHmmss",
+					CultureInfo.InvariantCulture) + "Z"));
 			}
 			else {
 				// GENERALIZEDTIME
 				return new ASN1 (0x18, Encoding.ASCII.GetBytes (
-					dt.ToString ("yyyyMMddHHmmss", CultureInfo.InvariantCulture) + "Z"));
+					dt.ToUniversalTime ().ToString ("yyyyMMddHHmmss", 
+					CultureInfo.InvariantCulture) + "Z"));
 			}
 		}
 
 		static public ASN1 FromInt32 (Int32 value) 
 		{
 			byte[] integer = BitConverterLE.GetBytes (value);
-			int x = 3;
-			while (integer [x] == 0x00)
-				x--;
+			Array.Reverse (integer);
+			int x = 0;
+			while ((x < integer.Length) && (integer [x] == 0x00))
+				x++;
 			ASN1 asn1 = new ASN1 (0x02);
-
-			byte[] smallerInt = new byte [x + 1];
-			int index = smallerInt.Length - 1;
-			for (int i = 0; i < smallerInt.Length; i++) {
-				smallerInt [index] = integer [i];
-				index--;
+			switch (x) {
+			case 0:
+				asn1.Value = integer;
+				break;
+			case 4:
+				asn1.Value = new byte [0];
+				break;
+			default:
+				byte[] smallerInt = new byte [4 - x];
+				Buffer.BlockCopy (integer, x, smallerInt, 0, smallerInt.Length);
+				asn1.Value = smallerInt;
+				break;
 			}
-			asn1.Value = smallerInt;
-
 			return asn1;
 		}
 
 		static public ASN1 FromOid (string oid) 
 		{
+			if (oid == null)
+				throw new ArgumentNullException ("oid");
+
 			return new ASN1 (CryptoConfig.EncodeOID (oid));
 		}
 
 		static public ASN1 FromUnsignedBigInteger (byte[] big) 
 		{
-			if (big [0] == 0x00) {
-				// this first byte is added so we're sure it's an unsigned integer
+			if (big == null)
+				throw new ArgumentNullException ("big");
+				
+			if (big [0] != 0x00) {
+				// this first byte is added so we're sure this is an unsigned integer
 				// however we can't feed it into RSAParameters or DSAParameters
 				int length = big.Length + 1;
 				byte[] uinteger = new byte [length];
-				Buffer.BlockCopy (big, 0, uinteger, 1, length);
+				Buffer.BlockCopy (big, 0, uinteger, 1, length - 1);
 				big = uinteger;
 			}
 			return new ASN1 (0x02, big);
@@ -90,8 +103,11 @@ namespace Mono.Security {
 
 		static public int ToInt32 (ASN1 asn1) 
 		{
+			if (asn1 == null)
+				throw new ArgumentNullException ("asn1");
 			if (asn1.Tag != 0x02)
-				throw new NotSupportedException ("Only integer can be converted");
+				throw new FormatException ("Only integer can be converted");
+
 			int x = 0;
 			for (int i=0; i < asn1.Value.Length; i++)
 				x = (x << 8) + asn1.Value [i];
@@ -102,6 +118,9 @@ namespace Mono.Security {
 		// an OID (IETF style). Based on DUMPASN1.C from Peter Gutmann.
 		static public string ToOid (ASN1 asn1) 
 		{
+			if (asn1 == null)
+				throw new ArgumentNullException ("asn1");
+
 			byte[] aOID = asn1.Value;
 			StringBuilder sb = new StringBuilder ();
 			// Pick apart the OID
@@ -129,6 +148,9 @@ namespace Mono.Security {
 
 		static public DateTime ToDateTime (ASN1 time) 
 		{
+			if (time == null)
+				throw new ArgumentNullException ("time");
+
 			string t = Encoding.ASCII.GetString (time.Value);
 			// to support both UTCTime and GeneralizedTime (and not so common format)
 			string mask = null;

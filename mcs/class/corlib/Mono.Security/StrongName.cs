@@ -116,7 +116,7 @@ namespace Mono.Security {
 			}
 		}
 
-		public StrongName (RSA rsa) : base ()
+		public StrongName (RSA rsa)
 		{
 			if (rsa == null)
 				throw new ArgumentNullException ("rsa");
@@ -242,7 +242,7 @@ namespace Mono.Security {
 
 		public byte[] GetBytes () 
 		{
-			return CryptoConvert.ToCapiPrivateKeyBlob (rsa);
+			return CryptoConvert.ToCapiPrivateKeyBlob (RSA);
 		}
 
 		private UInt32 RVAtoPosition (UInt32 r, int sections, byte[] headers) 
@@ -408,8 +408,9 @@ namespace Mono.Security {
 				sn = StrongHash (fs, StrongNameOptions.Signature);
 				fs.Close ();
 			}
-			if (sn.Hash == null)
+			if (sn.Hash == null) {
 				return false;
+			}
 
 			try {
 				AssemblyHashAlgorithm algorithm = AssemblyHashAlgorithm.SHA1;
