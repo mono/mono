@@ -257,8 +257,19 @@ namespace System.Windows.Forms
 
 			MENUITEM select_item = GetNextItem (hMenu, ItemNavigation.First);
 
-			if (select_item != null)
+			if (select_item != null) {
 				MenuAPI.SelectItem (hMenu, select_item, false, tracker);
+			}
+
+			// Make sure the menu is always visible and does not 'leave' the screen
+			// What is menu.Width/Height? It seemed to be 0/0
+			if ((pnt.X + menu.Wnd.Width) > SystemInformation.WorkingArea.Width) {
+				pnt.X -= menu.Wnd.Width;
+			}
+
+			if ((pnt.X + menu.Wnd.Height) > SystemInformation.WorkingArea.Height) {
+				pnt.Y -= menu.Wnd.Height;
+			}
 
 			menu.Wnd.Location =  menu.Wnd.PointToClient (pnt);			
 			
@@ -1079,22 +1090,24 @@ namespace System.Windows.Forms
 			Paint += new PaintEventHandler (OnPaintPUW);
 			SetStyle (ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint, true);
 			SetStyle (ControlStyles.ResizeRedraw | ControlStyles.Opaque, true);
+			is_visible = false;
 		}
 
 		protected override CreateParams CreateParams
 		{
 			get {
 				CreateParams cp = base.CreateParams;
-				cp.Style = unchecked ((int)(WindowStyles.WS_POPUP | WindowStyles.WS_VISIBLE | WindowStyles.WS_CLIPSIBLINGS | WindowStyles.WS_CLIPCHILDREN));
-				cp.ExStyle |= (int)WindowStyles.WS_EX_TOOLWINDOW;
+				cp.Caption = "Menu PopUp";
+				cp.Style = unchecked ((int)(WindowStyles.WS_POPUP));
+				cp.ExStyle |= (int)(WindowStyles.WS_EX_TOOLWINDOW | WindowStyles.WS_EX_TOPMOST);
 				return cp;
 			}
 		}
 
 		public void ShowWindow ()
 		{
-			Capture = true;
 			Show ();
+			Capture = true;
 			Refresh ();
 		}
 		

@@ -19,8 +19,10 @@ System.Windows.Forms/AccessibleStates.cs
 System.Windows.Forms/AmbientProperties.cs
 System.Windows.Forms/AnchorStyles.cs
 System.Windows.Forms/Appearance.cs
-System.Windows.Forms/ApplicationContext.cs
 System.Windows.Forms/Application.cs
+System.Windows.Forms/ApplicationContext.cs
+System.Windows.Forms/ArrangeDirection.cs
+System.Windows.Forms/ArrangeStartingPosition.cs
 System.Windows.Forms/AsyncMethodData.cs
 System.Windows.Forms/AsyncMethodResult.cs
 System.Windows.Forms/BaseCollection.cs

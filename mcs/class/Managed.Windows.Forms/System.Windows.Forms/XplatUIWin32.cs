@@ -563,6 +563,97 @@ namespace System.Windows.Forms {
 				}
 			}
 		}
+
+		internal override Size CursorSize {
+			get {
+				return new Size(Win32GetSystemMetrics(SystemMetrics.SM_CXCURSOR), Win32GetSystemMetrics(SystemMetrics.SM_CYCURSOR));
+			}
+		}
+
+		internal override bool DragFullWindows {
+			get {
+				return true;
+			}
+		}
+
+		internal override Size DragSize {
+			get {
+				return new Size(Win32GetSystemMetrics(SystemMetrics.SM_CXDRAG), Win32GetSystemMetrics(SystemMetrics.SM_CYDRAG));
+			}
+		}
+
+		internal override Size IconSize {
+			get {
+				return new Size(Win32GetSystemMetrics(SystemMetrics.SM_CXICON), Win32GetSystemMetrics(SystemMetrics.SM_CYICON));
+			}
+		}
+
+		internal override Size MaxWindowTrackSize {
+			get {
+				return new Size(Win32GetSystemMetrics(SystemMetrics.SM_CXMAXTRACK), Win32GetSystemMetrics(SystemMetrics.SM_CYMAXTRACK));
+			}
+		}
+
+		internal override Size MinimizedWindowSize {
+			get {
+				return new Size(Win32GetSystemMetrics(SystemMetrics.SM_CXMINIMIZED), Win32GetSystemMetrics(SystemMetrics.SM_CYMINIMIZED));
+			}
+		}
+
+		internal override Size MinimizedWindowSpacingSize {
+			get {
+				return new Size(Win32GetSystemMetrics(SystemMetrics.SM_CXMINSPACING), Win32GetSystemMetrics(SystemMetrics.SM_CYMINSPACING));
+			}
+		}
+
+		internal override Size MinimumWindowSize {
+			get {
+				return new Size(Win32GetSystemMetrics(SystemMetrics.SM_CXMIN), Win32GetSystemMetrics(SystemMetrics.SM_CYMIN));
+			}
+		}
+
+		internal override Size MinWindowTrackSize {
+			get {
+				return new Size(Win32GetSystemMetrics(SystemMetrics.SM_CXMINTRACK), Win32GetSystemMetrics(SystemMetrics.SM_CYMINTRACK));
+			}
+		}
+
+		internal override Size SmallIconSize {
+			get {
+				return new Size(Win32GetSystemMetrics(SystemMetrics.SM_CXSMICON), Win32GetSystemMetrics(SystemMetrics.SM_CYSMICON));
+			}
+		}
+
+		internal override int MouseButtonCount {
+			get {
+				return Win32GetSystemMetrics(SystemMetrics.SM_CMOUSEBUTTONS);
+			}
+		}
+
+		internal override bool MouseButtonsSwapped {
+			get {
+				return Win32GetSystemMetrics(SystemMetrics.SM_SWAPBUTTON) != 0;
+			}
+		}
+
+		internal override bool MouseWheelPresent {
+			get {
+				return Win32GetSystemMetrics(SystemMetrics.SM_MOUSEWHEELPRESENT) != 0;
+			}
+		}
+
+		internal override Rectangle VirtualScreen {
+			get {
+				return new Rectangle(	Win32GetSystemMetrics(SystemMetrics.SM_XVIRTUALSCREEN), Win32GetSystemMetrics(SystemMetrics.SM_YVIRTUALSCREEN),
+							Win32GetSystemMetrics(SystemMetrics.SM_CXVIRTUALSCREEN), Win32GetSystemMetrics(SystemMetrics.SM_CYVIRTUALSCREEN));
+			}
+		}
+
+		internal override Rectangle WorkingArea {
+			get {
+				return new Rectangle(0, 0, Win32GetSystemMetrics(SystemMetrics.SM_CXSCREEN), Win32GetSystemMetrics(SystemMetrics.SM_CYSCREEN));
+			}
+		}
 		#endregion	// Static Properties
 
 		#region Singleton Specific Code
@@ -983,6 +1074,7 @@ namespace System.Windows.Forms {
 		}
 
 		internal override bool SetVisible(IntPtr handle, bool visible) {
+Console.WriteLine("Win32 Driver called, setting {0} visible: {1}", Control.FromHandle(handle).Text, visible);
 			if (visible) {
 				Win32ShowWindow(handle, WindowPlacementFlags.SW_SHOWNORMAL);
 			} else {

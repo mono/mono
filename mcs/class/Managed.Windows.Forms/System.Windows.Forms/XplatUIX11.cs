@@ -209,6 +209,234 @@ namespace System.Windows.Forms {
 				return 1; // ie, 500 ms
 			}
 		}
+
+		internal override Size CursorSize {
+			get {
+				int	x;
+				int	y;
+
+				if (XQueryBestCursor(DisplayHandle, root_window, 32, 32, out x, out y) != 0) {
+					return new Size(x, y);
+				} else {
+					return new Size(16, 16);
+				}
+			}
+		}
+
+		internal override bool DragFullWindows {
+			get {
+				return true;
+			}
+		}
+
+		internal override Size DragSize {
+			get {
+				return new Size(4, 4);
+			}
+		}
+
+		internal override Size IconSize {
+			get {
+				IntPtr		list;
+				XIconSize	size;
+				int		count;
+
+				if (XGetIconSizes(DisplayHandle, root_window, out list, out count) != 0) {
+					long		current;
+					int		largest;
+
+					current = (long)list;
+					largest = 0;
+
+					size = new XIconSize();
+
+					for (int i = 0; i < count; i++) {
+						size = (XIconSize)Marshal.PtrToStructure((IntPtr)current, size.GetType());
+						current += Marshal.SizeOf(size);
+
+						// Look for our preferred size
+						if (size.min_width == 32) {
+							XFree(list);
+							return new Size(32, 32);
+						}
+
+						if (size.max_width == 32) {
+							XFree(list);
+							return new Size(32, 32);
+						}
+
+						if (size.min_width < 32 && size.max_width > 32) {
+							int	x;
+
+							// check if we can fit one
+							x = size.min_width;
+							while (x < size.max_width) {
+								x += size.width_inc;
+								if (x == 32) {
+									XFree(list);
+									return new Size(32, 32);
+								}
+							}
+						}
+
+						if (largest < size.max_width) {
+							largest = size.max_width;
+						}
+					}
+
+					// We didn't find a match or we wouldn't be here
+					return new Size(largest, largest);
+
+				} else {
+					return new Size(32, 32);
+				}
+			}
+		}
+
+		internal override Size MaxWindowTrackSize {
+			get {
+				return new Size (WorkingArea.Width, WorkingArea.Height);
+			}
+		}
+
+		[MonoTODO]
+		internal override Size MinimizedWindowSize {
+			get {
+				return new Size(1, 1);
+			}
+		}
+
+		[MonoTODO]
+		internal override Size MinimizedWindowSpacingSize {
+			get {
+				return new Size(1, 1);
+			}
+		}
+
+		[MonoTODO]
+		internal override Size MinimumWindowSize {
+			get {
+				return new Size(1, 1);
+			}
+		}
+
+		[MonoTODO]
+		internal override Size MinWindowTrackSize {
+			get {
+				return new Size(1, 1);
+			}
+		}
+
+		internal override Size SmallIconSize {
+			get {
+				IntPtr		list;
+				XIconSize	size;
+				int		count;
+
+				if (XGetIconSizes(DisplayHandle, root_window, out list, out count) != 0) {
+					long		current;
+					int		smallest;
+
+					current = (long)list;
+					smallest = 0;
+
+					size = new XIconSize();
+
+					for (int i = 0; i < count; i++) {
+						size = (XIconSize)Marshal.PtrToStructure((IntPtr)current, size.GetType());
+						current += Marshal.SizeOf(size);
+
+						// Look for our preferred size
+						if (size.min_width == 16) {
+							XFree(list);
+							return new Size(16, 16);
+						}
+
+						if (size.max_width == 16) {
+							XFree(list);
+							return new Size(16, 16);
+						}
+
+						if (size.min_width < 16 && size.max_width > 16) {
+							int	x;
+
+							// check if we can fit one
+							x = size.min_width;
+							while (x < size.max_width) {
+								x += size.width_inc;
+								if (x == 16) {
+									XFree(list);
+									return new Size(16, 16);
+								}
+							}
+						}
+
+						if (smallest == 0 || smallest > size.min_width) {
+							smallest = size.min_width;
+						}
+					}
+
+					// We didn't find a match or we wouldn't be here
+					return new Size(smallest, smallest);
+
+				} else {
+					return new Size(16, 16);
+				}
+			}
+		}
+
+		internal override int MouseButtonCount {
+			get {
+				return 3;
+			}
+		}
+
+		internal override bool MouseButtonsSwapped {
+			get {
+				return false;	// FIXME - how to detect?
+			}
+		}
+
+		internal override bool MouseWheelPresent {
+			get {
+				return true;	// FIXME - how to detect?
+			}
+		}
+
+		internal override Rectangle VirtualScreen {
+			get {
+				return WorkingArea;
+			}
+		}
+
+		internal override Rectangle WorkingArea {
+			get {
+				Atom			actual_atom;
+				int			actual_format;
+				int			nitems;
+				int			bytes_after;
+				IntPtr			prop = IntPtr.Zero;
+				int			width;
+				int			height;
+
+				XGetWindowProperty(DisplayHandle, root_window, XInternAtom(DisplayHandle, "_NET_DESKTOP_GEOMETRY", false), 0, 256, false, Atom.XA_CARDINAL, out actual_atom, out actual_format, out nitems, out bytes_after, ref prop);
+				if ((nitems == 2) && (prop != IntPtr.Zero)) {
+					width = Marshal.ReadInt32(prop, 0);
+					height = Marshal.ReadInt32(prop, 4);
+
+					XFree(prop);
+					return new Rectangle(0, 0, width, height);
+				} else {
+					int	x;
+					int	y;
+					int	client_width;
+					int	client_height;
+
+					GetWindowPos(root_window, true, out x, out y, out width, out height, out client_width, out client_height);
+					return new Rectangle(x, y, width, height);
+				}
+			}
+		}
 		#endregion	// Properties
 
 		#region Constructor & Destructor
@@ -2494,6 +2722,9 @@ namespace System.Windows.Forms {
 
 		[DllImport ("libX11", EntryPoint="XSync")]
 		internal extern static void XSync(IntPtr display, IntPtr window);
+
+		[DllImport ("libX11", EntryPoint="XGetIconSizes")]
+		internal extern static int XGetIconSizes(IntPtr display, IntPtr window, out IntPtr size_list, out int count);
 		#endregion
 	}
 }

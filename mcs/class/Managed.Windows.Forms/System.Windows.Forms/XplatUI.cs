@@ -35,7 +35,7 @@ using System.Runtime.InteropServices;
 
 /// X11 Version
 namespace System.Windows.Forms {
-	public class XplatUI {
+	internal class XplatUI {
 		#region Local Variables
 		static XplatUIDriver		driver;
 		static String			default_class_name;
@@ -71,6 +71,7 @@ namespace System.Windows.Forms {
 					driver.DropTarget=value;
 				}
 			}
+
 		}
 		#endregion	// Subclasses
 
@@ -104,6 +105,96 @@ namespace System.Windows.Forms {
 
 			set {
 				default_class_name=value;
+			}
+		}
+
+		static public Size CursorSize {
+			get {
+				return driver.CursorSize;
+			}
+		}
+
+		static public bool DragFullWindows {
+			get {
+				return driver.DragFullWindows;
+			}
+		}
+
+		static public Size DragSize {
+			get {
+				return driver.DragSize;
+			}
+		}
+
+		static public Size IconSize {
+			get {
+				return driver.IconSize;
+			}
+		}
+
+		static public Size MaxWindowTrackSize {
+			get {
+				return driver.MaxWindowTrackSize;
+			}
+		}
+
+		static public Size MinimizedWindowSize {
+			get {
+				return driver.MinimizedWindowSize;
+			}
+		}
+
+		static public Size MinimizedWindowSpacingSize {
+			get {
+				return driver.MinimizedWindowSpacingSize;
+			}
+		}
+
+		static public Size MinimumWindowSize {
+			get {
+				return driver.MinimumWindowSize;
+			}
+		}
+
+		static public Size MinWindowTrackSize {
+			get {
+				return driver.MinWindowTrackSize;
+			}
+		}
+
+		static public Size SmallIconSize {
+			get {
+				return driver.SmallIconSize;
+			}
+		}
+
+		static public int MouseButtonCount {
+			get {
+				return driver.MouseButtonCount;
+			}
+		}
+
+		static public bool MouseButtonsSwapped {
+			get {
+				return driver.MouseButtonsSwapped;
+			}
+		}
+
+		static public bool MouseWheelPresent {
+			get {
+				return driver.MouseWheelPresent;
+			}
+		}
+
+		static public Rectangle VirtualScreen {
+			get {
+				return driver.VirtualScreen;
+			}
+		}
+
+		static public Rectangle WorkingArea {
+			get {
+				return driver.WorkingArea;
 			}
 		}
 		#endregion	// Public Static Properties

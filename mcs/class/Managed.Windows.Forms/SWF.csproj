@@ -189,12 +189,22 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Windows.Forms\Application.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Windows.Forms\ApplicationContext.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "System.Windows.Forms\Application.cs"
+                    RelPath = "System.Windows.Forms\ArrangeDirection.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms\ArrangeStartingPosition.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

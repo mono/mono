@@ -1,5 +1,19 @@
 2005-01-29  Peter Bartok  <pbartok@novell.com>
 
+	* ArrangeDirection.cs: Added
+	* ArrangeStartingPositon.cs: Added
+	* SystemInformation.cs: Implemented
+	* XplatUI.cs, XplatUIDriver.cs, XplatUIOSX.cs, XplatUIWin32.cs,
+	  XplatUIX11.cs, Theme.cs: Added/implemented new static properties 
+	  used by SystemInformation class
+	* X11Strucs.cs: Added XSizeHints structure
+	* MenuAPI.cs:
+	  - Fixed CreateParams to make sure the menu window is always visible
+	  - TrackPopupMenu: Added check to make sure we don't draw the
+	    menu offscreen
+
+2005-01-29  Peter Bartok  <pbartok@novell.com>
+
 	* HandleData.cs: Added method for altering invalid area
 	* TextBoxBase.cs: Implemented TextLength
 

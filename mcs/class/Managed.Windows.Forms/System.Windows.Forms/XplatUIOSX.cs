@@ -111,6 +111,111 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[MonoTODO]
+		internal override Size CursorSize {
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+
+		[MonoTODO]
+		internal override bool DragFullWindows {
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+
+		[MonoTODO]
+		internal override Size DragSize {
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+
+		[MonoTODO]
+		internal override Size IconSize {
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+
+		[MonoTODO]
+		internal override Size MaxWindowTrackSize {
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+
+		[MonoTODO]
+		internal override Size MinimizedWindowSize {
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+
+		[MonoTODO]
+		internal override Size MinimizedWindowSpacingSize {
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+
+		[MonoTODO]
+		internal override Size MinimumWindowSize {
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+
+		[MonoTODO]
+		internal override Size MinWindowTrackSize {
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+
+		[MonoTODO]
+		internal override Size SmallIconSize {
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+
+		[MonoTODO]
+		internal override int MouseButtonCount {
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+
+		[MonoTODO]
+		internal override bool MouseButtonsSwapped {
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+
+		[MonoTODO]
+		internal override bool MouseWheelPresent {
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+
+		[MonoTODO]
+		internal override Rectangle VirtualScreen {
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+
+		[MonoTODO]
+		internal override Rectangle WorkingArea {
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+
 		private XplatUIOSX() {
 			viewEventHandler = new CarbonEventHandler (ViewHandler);
 			windowEventHandler = new CarbonEventHandler (WindowHandler);

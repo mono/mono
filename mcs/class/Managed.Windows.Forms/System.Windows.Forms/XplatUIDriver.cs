@@ -80,6 +80,22 @@ namespace System.Windows.Forms {
 			set {
 			}
 		}
+
+		internal abstract Size CursorSize { get; }
+		internal abstract bool DragFullWindows { get; }
+		internal abstract Size DragSize { get; }
+		internal abstract Size IconSize { get; }
+		internal abstract Size MaxWindowTrackSize { get; }
+		internal abstract Size MinimizedWindowSize { get; }
+		internal abstract Size MinimizedWindowSpacingSize { get; }
+		internal abstract Size MinimumWindowSize { get; }
+		internal abstract Size MinWindowTrackSize { get; }
+		internal abstract Size SmallIconSize { get; }
+		internal abstract int MouseButtonCount { get; }
+		internal abstract bool MouseButtonsSwapped { get; }
+		internal abstract bool MouseWheelPresent { get; }
+		internal abstract Rectangle VirtualScreen { get; }
+		internal abstract Rectangle WorkingArea { get; }
 		#endregion	// XplatUI Driver Properties
 
                 internal abstract event EventHandler Idle;

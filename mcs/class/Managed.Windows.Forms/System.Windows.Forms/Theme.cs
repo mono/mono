@@ -226,6 +226,156 @@ namespace System.Windows.Forms
 			syscolors.SetValue (color, (int) idx);
 		}
 
+		// Theme/UI specific defaults
+		public virtual ArrangeDirection ArrangeDirection  {
+			get {
+				return ArrangeDirection.Down;
+			}
+		}
+
+		public virtual ArrangeStartingPosition ArrangeStartingPosition {
+			get {
+				return ArrangeStartingPosition.BottomLeft;
+			}
+		}
+
+		public virtual Size Border3DSize {
+			get {
+				return new Size(2, 2);
+			}
+		}
+
+		public virtual Size BorderSize {
+			get {
+				return new Size(1, 1);
+			}
+		}
+
+		public virtual Size CaptionButtonSize {
+			get {
+				return new Size(18, 18);
+			}
+		}
+
+		public virtual int CaptionHeight {
+			get {
+				return 19;
+			}
+		}
+
+		public virtual Size DoubleClickSize {
+			get {
+				return new Size(4, 4);
+			}
+		}
+
+		public virtual int DoubleClickTime {
+			get {
+				return 500;
+			}
+		}
+
+		public virtual Size FixedFrameBorderSize {
+			get {
+				return new Size(3, 3);
+			}
+		}
+
+		public virtual Size FrameBorderSize {
+			get {
+				return new Size(4, 4);
+			}
+		}
+
+		public virtual int HorizontalScrollBarArrowWidth {
+			get {
+				return 12;
+			}
+		}
+
+		public virtual int HorizontalScrollBarHeight {
+			get {
+				return 12;
+			}
+		}
+
+		public virtual int HorizontalScrollBarThumbWidth {
+			get {
+				return 12;
+			}
+		}
+
+		public virtual Size IconSpacingSize {
+			get {
+				return new Size(75, 75);
+			}
+		}
+
+		public virtual Size MenuButtonSize {
+			get {
+				return new Size(18, 18);
+			}
+		}
+
+		public virtual Size MenuCheckSize {
+			get {
+				return new Size(13, 13);
+			}
+		}
+
+		public virtual Font MenuFont {
+			get {
+				return default_font;
+			}
+		}
+
+		public virtual int MenuHeight {
+			get {
+				return 19;
+			}
+		}
+
+		public virtual int MouseWheelScrollLines {
+			get {
+				return 3;
+			}
+		}
+
+		public virtual bool RightAlignedMenus {
+			get {
+				return false;
+			}
+		}
+
+		public virtual Size ToolWindowCaptionButtonSize {
+			get {
+				return new Size(15, 15);
+			}
+		}
+
+		public virtual Size ToolWindowCaptionHeight {
+			get {
+				return new Size(16, 16);
+			}
+		}
+
+		public virtual int VerticalScrollBarArrowHeight {
+			get {
+				return 12;
+			}
+		}
+
+		public virtual int VerticalScrollBarThumbHeight {
+			get {
+				return 12;
+			}
+		}
+
+		public virtual int VerticalScrollBarWidth {
+			get {
+				return 12;
+			}
+		}
 		#region Principal Theme Methods
 		// To let the theme now that a change of defaults (colors, etc) was detected and force a re-read (and possible recreation of cached resources)
 		public abstract void ResetDefaults();
