@@ -1,15 +1,15 @@
-// cs0214: Pointer can only be used in unsafe context
+// cs0214: pointers can only be used in an unsafe context
 // Line: 9
-// Compiler options: -unsafe
-
-class X {
-	static void Main ()
-	{
-		int b = 0;
-		method ((int *) b);
-	}
-        
-        unsafe static void method (int* i)
+// This error shows how cs214 is produced at the *call site*
+//
+public class Test
+{
+        public void Foo ()
         {
+                Foo (null);
         }
+
+        public static unsafe void Foo (int* buf) { }
 }
+
+
