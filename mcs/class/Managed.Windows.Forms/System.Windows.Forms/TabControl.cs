@@ -395,13 +395,66 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		private void CalcTabRows (int row_width)
+		{
+			int xpos = 4;
+			Size spacing = TabSpacing;
+
+			row_count = 1;
+
+			for (int i = 0; i < TabPages.Count; i++) {
+				TabPage page = TabPages [i];
+				int width;
+
+				page.Row = 1;
+
+				if (!multiline)
+					continue;
+
+				if (SizeMode == TabSizeMode.Fixed) {
+					width = item_size.Width;
+				} else {
+					width = (int) DeviceContext.MeasureString (page.Text, Font).Width + (Padding.X * 2);
+				}
+
+				if (width < MinimumTabWidth)
+					width = MinimumTabWidth;
+
+				if (xpos + width > row_width && multiline) {
+					xpos = 4;
+					for (int j = 0; j < i; j++) {
+						TabPages [j].Row++;
+					}
+					row_count++;
+				}
+
+				xpos += width + 1 + spacing.Width;
+			}
+
+			if (SelectedIndex != -1 && TabPages [SelectedIndex].Row != 1)
+				DropRow (TabPages [SelectedIndex].Row);
+		}
+
+		private void DropRow (int row)
+		{
+			foreach (TabPage page in TabPages) {
+				if (page.Row == row) {
+					page.Row = 1;
+				} else {
+					page.Row++;
+				}
+			}
+		}
+
 		private void SizeTabs (int row_width)
 		{
 			int xpos = 4;
 			int ypos = 1;
-			row_count = 1;
+			int prev_row = 1;
 			Size spacing = TabSpacing;
-			
+
+			CalcTabRows (row_width);
+
 			for (int i = 0; i < TabPages.Count; i++) {
 				TabPage page = TabPages [i];
 				int width;
@@ -414,25 +467,19 @@ namespace System.Windows.Forms {
 				if (width < MinimumTabWidth)
 					width = MinimumTabWidth;
 
-				if (xpos + width > row_width && multiline) {
+				if (page.Row != prev_row) {
 					xpos = 4;
-					// Move everything
-					for (int j = 0; j < i; j++) {
-						TabPages [j].TabBounds = new Rectangle (
-							TabPages [j].TabBounds.X,
-							TabPages [j].TabBounds.Y + item_size.Height + spacing.Height,
-							TabPages [j].TabBounds.Width,
-							TabPages [j].TabBounds.Height);
-					}
-					row_count++;
 				}
 
-				page.TabBounds = new Rectangle (xpos, ypos, width, item_size.Height);
+				page.TabBounds = new Rectangle (xpos,
+						ypos + (row_count - page.Row) * (item_size.Height + spacing.Height),
+						width, item_size.Height);
 				
 				if (i == SelectedIndex)
 					 ExpandSelected (page, xpos == 4 || xpos == row_width, row_width);
 
 				xpos += width + 1 + spacing.Width;
+				prev_row = page.Row;
 			}
 		}
 

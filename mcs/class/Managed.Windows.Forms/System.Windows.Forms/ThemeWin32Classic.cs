@@ -26,9 +26,12 @@
 //
 //
 //
-// $Revision: 1.53 $
+// $Revision: 1.54 $
 // $Modtime: $
 // $Log: ThemeWin32Classic.cs,v $
+// Revision 1.54  2004/11/02 20:40:54  jackson
+// Move the row with the selected tab to the bottom
+//
 // Revision 1.53  2004/11/02 02:47:55  jackson
 // New rendering and sizing code for tab controls
 //
@@ -1547,11 +1550,15 @@ namespace System.Windows.Forms
 				CPDrawBorder3D (dc, panel_rect, Border3DStyle.Raised, Border3DSide.Right | Border3DSide.Bottom, ColorButtonFace);
 			}
 
-			for (int i = tab.TabPages.Count - 1; i >= 0; --i) {
-				if (i == tab.SelectedIndex)
-					continue;
-				Rectangle r = tab.GetTabRect (i);
-				DrawTab (dc, tab.TabPages [i], tab, r, false);
+			for (int r = tab.RowCount; r > 0; r--) {
+				for (int i = 0; i < tab.TabPages.Count; i++) {
+					if (i == tab.SelectedIndex)
+						continue;
+					if (r != tab.TabPages [i].Row)
+						continue;
+					Rectangle rect = tab.GetTabRect (i);
+					DrawTab (dc, tab.TabPages [i], tab, rect, false);
+				}
 			}
 
 			if (tab.SelectedIndex != -1) {
