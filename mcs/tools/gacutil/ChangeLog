@@ -1,3 +1,9 @@
+2004-05-17  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* gacutil.cs:
+	(InstallAssembly): use Array.IndexOf to search for "/f", "-f" or
+	"--force" instead of expecting it in a fixed place.
+
 2004-05-14  Todd Berman  <tberman@sevenl.net>
 
 	* gacutil.cs: Remove old file/symlink, thanks urs. 

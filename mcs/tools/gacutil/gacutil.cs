@@ -297,7 +297,8 @@ namespace Mono.Tools
 
 			bool force = false;
 
-			if (args.Length == 2 && (args[1] == "-f" || args[1] == "--force" || args[1] == "/f")) {
+			if (Array.IndexOf (args, "/f") != -1 || Array.IndexOf (args, "-f") != -1 ||
+			    Array.IndexOf (args, "--force") != -1) {
 				force = true;
 			}
 			
