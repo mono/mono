@@ -1,27 +1,16 @@
 thisdir := .
 SUBDIRS := build jay mcs monoresgen class mbas nunit20 ilasm tools tests errors docs
-OVERRIDE_BARE_TARGETS = hells yeah
+OVERRIDE_TARGET_ALL = yes
 include build/rules.make
 
-# Define these ourselves to that the platform checks come first
+all-recursive $(STD_TARGETS:=-recursive): platform-check profile-check
 
-#all: platform-check profile-check all-recursive #all-local
+all.override:
+	$(MAKE) NO_SIGN_ASSEMBLY=yes all.real
+	$(MAKE) all.real
 
-.PHONY: all clean all-profiles clean-profiles install uninstall test run-test testcorlib
-
-all: platform-check profile-check all-recursive
-
-install: platform-check profile-check install-recursive #install-local
-
-uninstall: platform-check profile-check uninstall-recursive #uninstall-local
-
-test: platform-check profile-check test-recursive #test-local
-
-run-test: run-test-recursive #run-test-local
-
-run-test-ondotnet: run-test-ondotnet-recursive # run-test-ondotnet-local
-
-clean: clean-recursive #clean-local
+all-local $(STD_TARGETS:=-local):
+	@:
 
 # fun specialty targets
 

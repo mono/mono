@@ -1,5 +1,27 @@
 2004-07-02  Raja R Harinath  <rharinath@novell.com>
 
+	* rules.make (OVERRIDE_BARE_TARGETS): Remove.
+	(OVERRIDE_TARGET_ALL): New control for overriding the default all:
+	rule.  If set, 'make all' will run 'all.override' from the client
+	Makefile.
+	(all): Move commands ...
+	(all.real): ... here.  Make ordering assumptions explicit, and
+	parallel-safe.
+	(test,run-test,run-test-ondotnet,clean,install,uninstall):
+	Consolidate into ...
+	(STD_TARGETS): ... this new variable.  Make ordering assumption
+	between -recursive and -local targets explicit.
+	(%-recursive): Handle W32 GNU make that has --unix as the first
+	argument in $(MAKE).
+	* README.makefiles (Special recursion needs): Update to reflect
+	changes.
+	* library.make (all-local): Build $(the_lib_signature_stamp) when
+	NO_SIGN_ASSEMBLY is defined.
+	($(gacutil),$(sn)): Consolidate rules.
+	(test-local,run-test-local,run-test-ondotnet-local): Likewise.
+
+2004-07-02  Raja R Harinath  <rharinath@novell.com>
+	
 	* config-default.make (TEST_RUNTIME): Use 'mono' by default.
 	* platforms/win32.make (TEST_RUNTIME): Remove.
 	* profiles/default.make (TEST_RUNTIME): Remove.

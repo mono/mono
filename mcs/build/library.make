@@ -87,9 +87,7 @@ else
 GACDIR = $(DESTDIR)$(prefix)/lib
 endif
 
-all-local: $(the_lib)
-
-install-local: $(the_lib) 
+all-local install-local test-local: $(the_lib)
 
 ifdef LIBRARY_INSTALL_DIR
 install-local:
@@ -107,13 +105,10 @@ install-local: $(gacutil)
 uninstall-local: $(gacutil)
 	MONO_PATH="$(topdir)/class/lib/$(PROFILE):$$MONO_PATH" $(RUNTIME) $(gacutil) /u $(LIBRARY_NAME:.dll=)
 
-$(gacutil):
-	cd $(topdir)/tools/gacutil && $(MAKE)
-
 endif
 
 ifndef NO_SIGN_ASSEMBLY
-install-local: $(the_lib_signature_stamp)
+all-local install-local: $(the_lib_signature_stamp)
 
 ifndef LIBRARY_SNK
 LIBRARY_SNK = $(topdir)/class/mono.snk
@@ -124,17 +119,10 @@ $(the_lib_signature_stamp): $(the_lib) $(sn)
 	echo stamp > $@
 endif
 
-$(sn):
-	cd $(topdir)/tools/security && $(MAKE) sn.exe
-
 clean-local:
 	-rm -f $(library_CLEAN_FILES) $(CLEAN_FILES)
 
-test-local: $(the_lib)
-	@:
-run-test-local:
-	@:
-run-test-ondotnet-local:
+test-local run-test-local run-test-ondotnet-local:
 	@:
 
 ifndef NO_TEST
@@ -205,7 +193,10 @@ ifndef BTEST_COMPILE
 BTEST_COMPILE = $(BASCOMPILE)
 endif
 
-# Fun with dependency tracking
+$(gacutil) $(sn):
+	cd $(@D) && $(MAKE) $(@F)
+
+# The library
 
 $(the_lib): $(response)
 	$(LIBRARY_COMPILE) $(LIBRARY_FLAGS) $(LIB_MCS_FLAGS) /target:library /out:$@ @$(response)

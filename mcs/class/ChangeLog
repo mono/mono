@@ -1,3 +1,8 @@
+2004-07-02  Raja R Harinath  <rharinath@novell.com>
+
+	* IBM.Data.DB2/Makefile (all-local $(STD_TARGETS:=-local)):
+	Simplify dummy rule somewhat.
+
 2004-06-24  Raja R Harinath  <rharinath@novell.com>
 
 	* IBM.Data.DB2/Makefile: Disable for 'net_2_0'.

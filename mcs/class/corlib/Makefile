@@ -93,13 +93,12 @@ net20bootstraplib = $(topdir)/class/lib/net_2_0_bootstrap/mscorlib.dll
 
 ifeq (net_2_0, $(PROFILE))
 $(the_lib): $(gmcs)
-endif
 
 # The in-tree 'gmcs' needs at least a stripped-down version of the net 2.0 corlib.dll.  We build that first.
 # make sure that $(gmcs) is up-to-date
 FORCE:
 $(gmcs): $(net20bootstraplib) FORCE
-	cd $(topdir)/gmcs && $(MAKE)
+	cd $(@D) && $(MAKE) $(@F)
 
 #net_2_0_bootstrap
 
@@ -113,6 +112,7 @@ $(net20bootstrap_makefrag): $(response)
 	@sed 's,^,$(net20bootstraplib): ,' $< >$@
 
 -include $(net20bootstrap_makefrag)
+endif
 
 # corlib_cmp
 

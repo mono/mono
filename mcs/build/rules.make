@@ -54,6 +54,7 @@ export RESGEN
 # Get this so the platform.make platform-check rule doesn't become the
 # default target
 
+.DEFAULT: all
 default: all
 
 # Get initial configuration. pre-config is so that the builder can
@@ -94,46 +95,33 @@ endif
 include $(topdir)/build/profiles/$(PROFILE).make
 -include $(topdir)/build/config.make
 
-# Simple rules
+ifdef OVERRIDE_TARGET_ALL
+all: all.override
+else
+all: all.real
+endif
+
+all.real: all-recursive
+	$(MAKE) all-local
+
+STD_TARGETS = test run-test run-test-ondotnet clean install uninstall
+
+$(STD_TARGETS): %: %-recursive
+	$(MAKE) $@-local
 
 %-recursive:
 	@set . $$MAKEFLAGS; \
+	case $$2 in --unix) shift ;; esac; \
 	case $$2 in *=*) dk="exit 1" ;; *k*) dk=: ;; *) dk="exit 1" ;; esac; \
 	list='$(SUBDIRS)'; for d in $$list ; do \
 	    (cd $$d && $(MAKE) $*) || $$dk ; \
 	done
 
-# note: dist-local dep, extra subdirs, $* has become $@
-
+# note: dist-local dep, extra subdirs, we invoke dist-recursive in the subdir too
 dist-recursive: dist-local
 	@list='$(SUBDIRS) $(DIST_ONLY_SUBDIRS)'; for d in $$list ; do \
 	    (cd $$d && $(MAKE) $@) || exit 1 ; \
 	done
-
-# We do this manually to not have a make[1]: blah message (That is,
-# instead of using a '%: %-recursive %-local' construct.)
-#
-# Let the makefile override these for special situations (running checks
-# in the toplevel makefile, or a directory that needs to be built before
-# its subdirectories).
-
-ifndef OVERRIDE_BARE_TARGETS
-
-all: all-recursive all-local
-
-install: install-recursive install-local
-
-test: test-recursive test-local
-
-run-test: run-test-recursive test-local run-test-local
-
-run-test-ondotnet: run-test-ondotnet-recursive test-local run-test-ondotnet-local
-
-clean: clean-recursive clean-local
-
-uninstall: uninstall-recursive uninstall-local
-
-endif
 
 # Can only do this from the top dir
 # ## dist: dist-recursive dist-local

@@ -8,7 +8,8 @@ LIB_MCS_FLAGS = /unsafe /r:$(corlib) /r:System.dll \
 NO_TEST = yes
 
 ifeq (net_2_0, $(PROFILE))
-all-local install-local test-local run-test-local clean-local dist-local uninstall-local:
+all-local $(STD_TARGETS:=-local):
+	@:
 else
 include ../../build/library.make
 endif

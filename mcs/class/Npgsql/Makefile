@@ -1,9 +1,6 @@
 thisdir = class/Npgsql
 SUBDIRS = 
 
-OVERRIDE_BARE_TARGETS = 1
-
-
 include ../../build/rules.make
 
 LIBRARY = Npgsql.dll
@@ -36,22 +33,7 @@ include ../../build/library.make
 
 RESX_RES = Npgsql/NpgsqlState.resources Npgsql/NpgsqlClosedState.resources Npgsql/NpgsqlParameterCollection.resources Npgsql/NpgsqlCommand.resources Npgsql/NpgsqlConnectedState.resources Npgsql/NpgsqlParameter.resources Npgsql/NpgsqlConnection.resources Npgsql/NpgsqlReadyState.resources Npgsql/NpgsqlTransaction.resources Npgsql/NpgsqlEventLog.resources Npgsql/NpgsqlException.resources Npgsql/PGUtil.resources NpgsqlTypes/NpgsqlTypesHelper.resources Npgsql/Design/ConnectionStringEditorForm.resources
 
-all: $(RESX_RES) $(the_lib)
+$(the_lib): $(RESX_RES)
 
 %.resources: %.resx
 	$(RESGEN) $<
-
-clean: clean-recursive clean-local
-
-install: install-recursive install-local
-
-uninstall: uninstall-recursive uninstall-local
-
-test: test-recursive test-local
-
-run-test: run-test-recursive test-local run-test-local
-
-clean: clean-recursive clean-local
-
-uninstall: uninstall-recursive uninstall-local
-

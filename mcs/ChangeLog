@@ -1,3 +1,12 @@
+2004-07-02  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile (OVERRIDE_BARE_TARGETS): Remove.
+	(OVERRIDE_TARGET_ALL): Define.
+	(all-recursive,$(STD_TARGETS:=-recursive)): Depend on
+	'platform-check' and 'profile-check'.
+	(all.override): New.  Run two passes: once to build, and once to
+	sign libraries.
+
 2004-06-22  Todd Berman  <tberman@off.net>
 
 	* configure: Patch from Mariano Suárez-Alvarez 

@@ -1,3 +1,8 @@
+2004-07-02  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile (OVERRIDE_BARE_TARGETS): Remove.
+	($(the_lib)): Make dependency explicit.
+
 2004-06-28  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile (%.resources): Use $(RESGEN).

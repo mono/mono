@@ -587,12 +587,13 @@ include ../../../build/executable.make
 
 
 
-* Special recursion needs? Use OVERRIDE_BARE_TARGETS
+* Special recursion needs?
 
 By default, rules.make defines the all, install, clean, etc. targets
 to look something like this:
 
-   all: all-recursive all-local
+   all: all-recursive
+	$(MAKE) all-local
 
 Sometimes that doesn't cut it; say for example you want to check for
 something before doing a lengthy recursive build (see
@@ -611,15 +612,15 @@ strongly discouraged.)
 Anyway, to solve this problem you can do
 
 ========================================
-OVERRIDE_BARE_TARGETS = yes
 thisdir = class/MyLibrary
 SUBDIRS = Test
 include ../../build/rules.make
 
-# This is normally "all-recursive all-local"
-all: all-local all-recursive
+# Normally, make runs 'all-recursive' first, and then 'all-local'
+# With this, we ensure that 'all-local' is executed first.
+all-recursive: all-local
 
-test: test-local test-recursive
+test-recursive: test-local
 ...
 ========================================
 
@@ -630,16 +631,13 @@ test: test-local test-recursive
 ** A few implementation details
 
 The way rules.make does its recursion is very standard; it maps
-{all,install,clean, dist,test} to $@-recursive, which executes that
-rule in each directory in $(SUBDIRS), and then calls $@-local in the
-current directory. So something that gets built in a subdirectory
-cannot rely on something that gets built in its parent directory. If
-this is a problem, see the bit about using OVERRIDE_BARE_TARGETS;
-since the recursive rules do $(MAKE) $* in their subdirectories,
-changing the 'all' target will do the right thing in a recursive
-build. Note that the recursive rule for 'dist' is different; it makes
-dist-recursive in subdirectories, so you at least have to define that
-rule, even if you use OVERRIDE_BARE_TARGETS.
+{all,install,clean, dist,test} to $@-recursive, which executes that rule
+in each directory in $(SUBDIRS), and then calls $@-local in the current
+directory. So something that gets built in a subdirectory cannot rely on
+something that gets built in its parent directory. If this is a problem,
+see the previous section.  Note that the recursive rule for 'dist' is
+different; it makes dist-recursive in subdirectories, so you at least
+have to define that rule.
 
 Note that even a directory that doesn't, for example, have any tests
 must still define test-local; otherwise 'make test' run from the
