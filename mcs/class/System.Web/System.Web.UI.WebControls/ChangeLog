@@ -1,17 +1,20 @@
+2004-07-27 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* DataList.cs: style.
+
 2004-07-27 Alon Gazit <along@mainsoft.com>
-        * DataList.cs: Replaced foreach statement with for statement, 
+	* DataList.cs: Replaced foreach statement with for statement, 
 	in order to improve performence.
 
 2004-07-27 Alon Gazit <along@mainsoft.com>
-        * WebControl.cs: changed RenderBeginTag()to use TagKey instead of 
-        TagName.
-        * Unit.cs : changed GetTypeFromString() and GetStringFromPixel() to use 
-        switch statements in order to improve performance.
-        
+	* WebControl.cs: changed RenderBeginTag()to use TagKey instead of 
+	TagName.
+	* Unit.cs : changed GetTypeFromString() and GetStringFromPixel() to use 
+	switch statements in order to improve performance.
 
 2004-06-10 Alon Gazit <along@mainsoft.com>
-        * WebControl.cs: fixed LoadViewState(). 
-        Creates new attributes state bag only when the current is null.
+	* WebControl.cs: fixed LoadViewState(). 
+	Creates new attributes state bag only when the current is null.
 
 2004-06-07  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
@@ -51,16 +54,16 @@
 	compliance as System.Data is now CLS compliant
 
 2004-05-06 Alon Gazit <along@mainsoft.com>
-        * WebControl.cs: fixed LoadViewState() and SaveViewState(). 
-        Before the change the Enabled property wasn't updated when a postback
-        event was raised.
-        * ListControl.cs: fixed SelectedIndex property implementation.
-        Prevents throwing ArgumentOutOfRangeException (that should not be thrown),
-        when the list is empty.     
+	* WebControl.cs: fixed LoadViewState() and SaveViewState(). 
+	Before the change the Enabled property wasn't updated when a postback
+	event was raised.
+	* ListControl.cs: fixed SelectedIndex property implementation.
+	Prevents throwing ArgumentOutOfRangeException (that should not be
+	thrown), when the list is empty.
 
 2004-04-28 Alon Gazit <along@mainsoft.com>
-        * WebControl.cs: fixed LoadViewState(). 
-        Always loading the saved attributes collection.
+	* WebControl.cs: fixed LoadViewState(). 
+	Always loading the saved attributes collection.
 
 2004-04-18 Alon Gazit <along@mainsoft.com>
 	* Repeater.cs: fixed InstantiateItem() and DataSource property.
@@ -679,8 +682,8 @@
 	bug #48671.
 
 2003-09-19  Gonzalo Paniagua Javier <gonzalo@ximian.com>
-                                                                                
-        * FontInfo.cs: fixed Name property as suggested by Rich Alimi
+
+	* FontInfo.cs: fixed Name property as suggested by Rich Alimi
 	<rich@velvetsea.net>.
 
 2003-09-14  Gonzalo Paniagua Javier <gonzalo@ximian.com>
@@ -858,8 +861,8 @@
 	* DataGrid.cs: Fixed SaveViewState and type of ItemDataBound.
 
 2003-03-17  George Kodinov <gkodinov@openlinksw.co.uk>
-        
-        * Unit.cs: Called the correct method to get the Numeric locale for the
+
+	* Unit.cs: Called the correct method to get the Numeric locale for the
 	double conversion
 
 2003-02-15  Gonzalo Paniagua Javier <gonzalo@ximian.com>

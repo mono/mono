@@ -895,12 +895,10 @@ namespace System.Web.UI.WebControls
 					continue;
 				}
 				
-				if (current.HasChildren)
-				{
+				if (current.HasChildren) {
 					int len = current.Controls.Count;
-					for (int i = 0 ; i < len ; i++)
-					{
-						Control currentCtrl = current.Controls[i];
+					for (int i = 0 ; i < len ; i++) {
+						Control currentCtrl = current.Controls [i];
 						if (!(currentCtrl is Table))
 							continue;
 
