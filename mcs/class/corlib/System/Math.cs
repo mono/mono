@@ -348,7 +348,7 @@ namespace System
                 public extern static double Log10 (double x);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-                private extern static double Pow (double x, double y);
+                public extern static double Pow (double x, double y);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
                 public extern static double Sqrt (double x);
