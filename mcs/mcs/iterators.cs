@@ -72,7 +72,7 @@ namespace Mono.CSharp {
 				return false;
 
 			in_exc = ec.CurrentBranching.InTryOrCatch (false);
-			Type iterator_type = IteratorHandler.Current.IteratorType;
+			Type iterator_type = ec.CurrentIterator.IteratorType;
 			if (expr.Type != iterator_type){
 				expr = Convert.ImplicitConversionRequired (ec, expr, iterator_type, loc);
 				if (expr == null)
@@ -83,7 +83,7 @@ namespace Mono.CSharp {
 
 		protected override void DoEmit (EmitContext ec)
 		{
-			IteratorHandler.Current.MarkYield (ec, expr, in_exc);
+			ec.CurrentIterator.MarkYield (ec, expr, in_exc);
 		}
 	}
 
@@ -105,63 +105,19 @@ namespace Mono.CSharp {
 
 		protected override void DoEmit (EmitContext ec)
 		{
-			IteratorHandler.Current.EmitYieldBreak (ec.ig, true);
+			ec.CurrentIterator.EmitYieldBreak (ec.ig, true);
 		}
 	}
 
-	public class IteratorHandler {
-		//
-		// Points to the current iterator handler, will be probed by
-		// Yield and YieldBreak to get their context information
-		//
-		public static IteratorHandler Current;
-		
-		//
-		// The typebuilder to the proxy class we create
-		//
-		TypeBuilder enumerator_proxy_class;
-		TypeBuilder enumerable_proxy_class;
+	public class Iterator : Class {
+		Block original_block;
+		Block block;
 
-		//
-		// The type of this iterator, object by default.
-		//
-		public Type IteratorType;
-		
-		//
-		// The members we create on the proxy class
-		//
-		MethodBuilder move_next_method;
-		MethodBuilder reset_method;
-		MethodBuilder get_current_method;
-		MethodBuilder dispose_method;
-		MethodBuilder getenumerator_method;
-		PropertyBuilder current_property;
-		ConstructorBuilder enumerator_proxy_constructor;
-		ConstructorBuilder enumerable_proxy_constructor;
+		Type iterator_type;
+		TypeExpr iterator_type_expr;
+		bool is_enumerable;
+		bool is_static;
 
-		//
-		// The PC for the state machine.
-		//
-		FieldBuilder pc_field;
-
-		//
-		// The value computed for Current
-		//
-		FieldBuilder current_field;
-
-		//
-		// Used to reference fields on the container class (instance methods)
-		//
-		public FieldBuilder this_field;
-		public FieldBuilder enumerable_this_field;
-
-		//
-		// References the parameters
-		//
-
-		public FieldBuilder [] parameter_fields;
-		FieldBuilder [] enumerable_parameter_fields;
-		
 		//
 		// The state as we generate the iterator
 		//
@@ -171,14 +127,10 @@ namespace Mono.CSharp {
 		//
 		// Context from the original method
 		//
-		string name;
 		TypeContainer container;
 		Type return_type;
 		Type [] param_types;
 		InternalParameters parameters;
-		Block original_block;
-		Location loc;
-		int modifiers;
 
 		static int proxy_count;
 
@@ -186,32 +138,16 @@ namespace Mono.CSharp {
 		{
 			ig.Emit (OpCodes.Ldarg_0);
 			IntConstant.EmitInt (ig, -1);
-			ig.Emit (OpCodes.Stfld, pc_field);
+			ig.Emit (OpCodes.Stfld, pc_field.FieldBuilder);
 			if (add_return){
 				ig.Emit (OpCodes.Ldc_I4_0);
 				ig.Emit (OpCodes.Ret);
 			}
 		}
 
-		void EmitThrowInvalidOp (ILGenerator ig)
+		public void EmitMoveNext (EmitContext ec)
 		{
-			ig.Emit (OpCodes.Newobj, TypeManager.invalid_operation_ctor);
-			ig.Emit (OpCodes.Throw);
-		}
-		
-		void Create_MoveNext ()
-		{
-			move_next_method = enumerator_proxy_class.DefineMethod (
-				"System.IEnumerator.MoveNext",
-				MethodAttributes.HideBySig | MethodAttributes.NewSlot |
-				MethodAttributes.Virtual,
-				CallingConventions.HasThis, TypeManager.bool_type, TypeManager.NoTypes);
-			enumerator_proxy_class.DefineMethodOverride (move_next_method, TypeManager.bool_movenext_void);
-
-			ILGenerator ig = move_next_method.GetILGenerator ();
-			EmitContext ec = new EmitContext (
-				container, loc, ig,
-				TypeManager.void_type, modifiers);
+			ILGenerator ig = ec.ig;
 
 			Label dispatcher = ig.DefineLabel ();
 			ig.Emit (OpCodes.Br, dispatcher);
@@ -219,33 +155,23 @@ namespace Mono.CSharp {
 			ig.MarkLabel (entry_point);
 			resume_labels.Add (entry_point);
 			
-			Current = this;
-			SymbolWriter sw = CodeGen.SymbolWriter;
-			if ((sw != null) && !Location.IsNull (loc) && !Location.IsNull (original_block.EndLocation)) {
-				sw.OpenMethod (container, move_next_method, loc, original_block.EndLocation);
-
-				ec.EmitTopBlock (original_block, parameters, loc);
-
-				sw.CloseMethod ();
-			} else {
-				ec.EmitTopBlock (original_block, parameters, loc);
-			}
-			Current = null;
+			ec.EmitTopBlock (original_block, parameters, Location);
 
 			EmitYieldBreak (ig, true);
 
 			//
-			// FIXME: Split the switch in blocks that can be consumed by switch.
+			// FIXME: Split the switch in blocks that can be consumed
+			//        by switch.
 			//
 			ig.MarkLabel (dispatcher);
-			
+
 			Label [] labels = new Label [resume_labels.Count];
 			resume_labels.CopyTo (labels);
 			ig.Emit (OpCodes.Ldarg_0);
-			ig.Emit (OpCodes.Ldfld, pc_field);
+			ig.Emit (OpCodes.Ldfld, pc_field.FieldBuilder);
 			ig.Emit (OpCodes.Switch, labels);
 			ig.Emit (OpCodes.Ldc_I4_0); 
-			ig.Emit (OpCodes.Ret); 
+			ig.Emit (OpCodes.Ret);
 		}
 
 		// 
@@ -258,100 +184,9 @@ namespace Mono.CSharp {
 		//
 		public FieldBuilder MapVariable (string pfx, string name, Type t)
 		{
-			return enumerator_proxy_class.DefineField (pfx + name, t, FieldAttributes.Public);
+			return TypeBuilder.DefineField (pfx + name, t, FieldAttributes.Public);
 		}
 		
-		void Create_Reset ()
-		{
-			reset_method = enumerator_proxy_class.DefineMethod (
-				"System.IEnumerator.Reset",
-				MethodAttributes.HideBySig | MethodAttributes.NewSlot |
-				MethodAttributes.Virtual,
-				CallingConventions.HasThis, TypeManager.void_type, TypeManager.NoTypes);
-			enumerator_proxy_class.DefineMethodOverride (reset_method, TypeManager.void_reset_void);
-			ILGenerator ig = reset_method.GetILGenerator ();
-			EmitThrowInvalidOp (ig);
-		}
-
-		void Create_Current ()
-		{
-			get_current_method = enumerator_proxy_class.DefineMethod (
-				"System.IEnumerator.get_Current",
-				MethodAttributes.HideBySig | MethodAttributes.SpecialName |
-				MethodAttributes.NewSlot | MethodAttributes.Virtual,
-				CallingConventions.HasThis, TypeManager.object_type, TypeManager.NoTypes);
-			enumerator_proxy_class.DefineMethodOverride (get_current_method, TypeManager.object_getcurrent_void);
-
-			current_property = enumerator_proxy_class.DefineProperty (
-				"Current",
-				PropertyAttributes.RTSpecialName | PropertyAttributes.SpecialName,
-				TypeManager.object_type, null);
-
-			current_property.SetGetMethod (get_current_method);
-			
-			ILGenerator ig = get_current_method.GetILGenerator ();
-
-			ig.Emit (OpCodes.Ldarg_0);
-			ig.Emit (OpCodes.Ldfld, pc_field);
-			ig.Emit (OpCodes.Ldc_I4_0);
-			Label return_current = ig.DefineLabel ();
-			ig.Emit (OpCodes.Bgt, return_current);
-			EmitThrowInvalidOp (ig);
-			
-			ig.MarkLabel (return_current);
-			ig.Emit (OpCodes.Ldarg_0);
-			ig.Emit (OpCodes.Ldfld, current_field);
-			ig.Emit (OpCodes.Ret);
-		}
-
-		void Create_Dispose ()
-		{
-			dispose_method = enumerator_proxy_class.DefineMethod (
-				"System.IDisposable.Dispose",
-				MethodAttributes.HideBySig | MethodAttributes.SpecialName |
-				MethodAttributes.NewSlot | MethodAttributes.Virtual,
-				CallingConventions.HasThis, TypeManager.void_type, TypeManager.NoTypes);
-			enumerator_proxy_class.DefineMethodOverride (dispose_method, TypeManager.void_dispose_void);
-			ILGenerator ig = dispose_method.GetILGenerator (); 
-
-			EmitYieldBreak (ig, false);
-			ig.Emit (OpCodes.Ret);
-		}
-		
-		void Create_GetEnumerator ()
-		{
-			getenumerator_method = enumerable_proxy_class.DefineMethod (
-				"IEnumerable.GetEnumerator",
-				MethodAttributes.HideBySig | MethodAttributes.SpecialName |
-				MethodAttributes.NewSlot | MethodAttributes.Virtual,
-				CallingConventions.HasThis, TypeManager.ienumerator_type, TypeManager.NoTypes);
-
-			enumerable_proxy_class.DefineMethodOverride  (getenumerator_method, TypeManager.ienumerable_getenumerator_void);
-			ILGenerator ig = getenumerator_method.GetILGenerator ();
-
-			ig.Emit (OpCodes.Newobj, (ConstructorInfo) enumerator_proxy_constructor);
-			if (enumerable_this_field != null || parameters.Count > 0){
-				LocalBuilder obj = ig.DeclareLocal (enumerator_proxy_class);
-				ig.Emit (OpCodes.Stloc, obj);
-				if (enumerable_this_field != null){
-					ig.Emit (OpCodes.Ldloc, obj);
-					ig.Emit (OpCodes.Ldarg_0);
-					ig.Emit (OpCodes.Ldfld, enumerable_this_field);
-					ig.Emit (OpCodes.Stfld, this_field);
-				}
-				
-				for (int i = 0; i < parameters.Count; i++){
-					ig.Emit (OpCodes.Ldloc, obj);	
-					ig.Emit (OpCodes.Ldarg_0);
-					ig.Emit (OpCodes.Ldfld, enumerable_parameter_fields [i]);
-					ig.Emit (OpCodes.Stfld, parameter_fields [i]);
-				}
-				ig.Emit (OpCodes.Ldloc, obj);
-			}
-			
-			ig.Emit (OpCodes.Ret);
-		}
-
 		//
 		// Called back from Yield
 		//
@@ -362,13 +197,13 @@ namespace Mono.CSharp {
 			// Store the new current
 			ig.Emit (OpCodes.Ldarg_0);
 			expr.Emit (ec);
-			ig.Emit (OpCodes.Stfld, current_field);
+			ig.Emit (OpCodes.Stfld, current_field.FieldBuilder);
 
 			// increment pc
 			pc++;
 			ig.Emit (OpCodes.Ldarg_0);
 			IntConstant.EmitInt (ig, pc);
-			ig.Emit (OpCodes.Stfld, pc_field);
+			ig.Emit (OpCodes.Stfld, pc_field.FieldBuilder);
 
 			// Return ok
 			ig.Emit (OpCodes.Ldc_I4_1);
@@ -397,240 +232,401 @@ namespace Mono.CSharp {
 		}
 
 		//
-		// Creates the IEnumerator Proxy class
-		//
-		void MakeEnumeratorProxy ()
-		{
-			TypeExpr [] proxy_base_interfaces = new TypeExpr [2];
-			proxy_base_interfaces [0] = new TypeExpression (TypeManager.ienumerator_type, loc);
-			proxy_base_interfaces [1] = new TypeExpression (TypeManager.idisposable_type, loc);
-			Type [] proxy_base_itypes = new Type [2];
-			proxy_base_itypes [0] = TypeManager.ienumerator_type;
-			proxy_base_itypes [1] = TypeManager.idisposable_type;
-			TypeBuilder container_builder = container.TypeBuilder;
-
-			//
-			// Create the class
-			//
-			enumerator_proxy_class = container_builder.DefineNestedType (
-				"<Enumerator:" + name + ":" + (proxy_count++) + ">",
-				TypeAttributes.AutoLayout | TypeAttributes.Class |TypeAttributes.NestedPrivate,
-				TypeManager.object_type, proxy_base_itypes);
-
-			TypeManager.RegisterBuilder (enumerator_proxy_class, proxy_base_interfaces);
-
-			//
-			// Define our fields
-			//
-			pc_field = enumerator_proxy_class.DefineField ("PC", TypeManager.int32_type, FieldAttributes.Assembly);
-			current_field = enumerator_proxy_class.DefineField ("current", IteratorType, FieldAttributes.Assembly);
-			if ((modifiers & Modifiers.STATIC) == 0)
-				this_field = enumerator_proxy_class.DefineField ("THIS", container.TypeBuilder, FieldAttributes.Assembly);
-
-			parameter_fields = new FieldBuilder [parameters.Count];
-			for (int i = 0; i < parameters.Count; i++){
-				parameter_fields [i] = enumerator_proxy_class.DefineField (
-					String.Format ("tor{0}_{1}", i, parameters.ParameterName (i)),
-					parameters.ParameterType (i), FieldAttributes.Assembly);
-			}
-			
-			//
-			// Define a constructor 
-			//
-
-			enumerator_proxy_constructor = enumerator_proxy_class.DefineConstructor (
-				MethodAttributes.Public | MethodAttributes.HideBySig |
-				MethodAttributes.SpecialName | MethodAttributes.RTSpecialName,
-				CallingConventions.HasThis, TypeManager.NoTypes);
-			InternalParameters parameter_info = new InternalParameters (
-				TypeManager.NoTypes, Parameters.EmptyReadOnlyParameters);
-			TypeManager.RegisterMethod (enumerator_proxy_constructor, parameter_info, TypeManager.NoTypes);
-
-			//
-			// Our constructor
-			//
-			ILGenerator ig = enumerator_proxy_constructor.GetILGenerator ();
-			ig.Emit (OpCodes.Ldarg_0);
-			ig.Emit (OpCodes.Call, TypeManager.object_ctor);
-
-			ig.Emit (OpCodes.Ret);
-		}
-
-		//
-		// Creates the IEnumerable proxy class
-		//
-		void MakeEnumerableProxy ()
-		{
-			TypeBuilder container_builder = container.TypeBuilder;
-			Type [] proxy_base_interfaces = new Type [1];
-			proxy_base_interfaces [0] = TypeManager.ienumerable_type;
-
-			//
-			// Creates the Enumerable proxy class.
-			//
-			enumerable_proxy_class = container_builder.DefineNestedType (
-				"<Enumerable:" + name + ":" + (proxy_count++)+ ">",
-				TypeAttributes.AutoLayout | TypeAttributes.Class |TypeAttributes.NestedPublic,
-				TypeManager.object_type, proxy_base_interfaces);
-
-			//
-			// Constructor
-			//
-			if ((modifiers & Modifiers.STATIC) == 0){
-				enumerable_this_field = enumerable_proxy_class.DefineField (
-					"THIS", container.TypeBuilder, FieldAttributes.Assembly);
-			}
-			enumerable_parameter_fields = new FieldBuilder [parameters.Count];
-			for (int i = 0; i < parameters.Count; i++){
-				enumerable_parameter_fields [i] = enumerable_proxy_class.DefineField (
-					String.Format ("able{0}_{1}", i, parameters.ParameterName (i)),
-					parameters.ParameterType (i), FieldAttributes.Assembly);
-			}
-			
-			enumerable_proxy_constructor = enumerable_proxy_class.DefineConstructor (
-				MethodAttributes.Public | MethodAttributes.HideBySig |
-				MethodAttributes.SpecialName | MethodAttributes.RTSpecialName,
-				CallingConventions.HasThis, TypeManager.NoTypes);
-			InternalParameters parameter_info = new InternalParameters (
-				TypeManager.NoTypes, Parameters.EmptyReadOnlyParameters);
-			TypeManager.RegisterMethod (enumerable_proxy_constructor, parameter_info, TypeManager.NoTypes);
-			
-			ILGenerator ig = enumerable_proxy_constructor.GetILGenerator ();
-			ig.Emit (OpCodes.Ldarg_0);
-			ig.Emit (OpCodes.Call, TypeManager.object_ctor);
-
-			ig.Emit (OpCodes.Ret);
-		}
-
-		//
-		// Populates the Enumerator Proxy class
-		//
-		void PopulateProxy ()
-		{
-			RootContext.RegisterHelperClass (enumerator_proxy_class);
-			
-			Create_MoveNext ();
-			Create_Reset ();
-			Create_Current ();
-			Create_Dispose ();
-
-			if (IsIEnumerable (return_type)){
-				Create_GetEnumerator ();
-				RootContext.RegisterHelperClass (enumerable_proxy_class);
-			}
-		}
-		
-
-		//
-		// This is invoked by the EmitCode hook
-		//
-		void SetupIterator ()
-		{
-			PopulateProxy ();
-		}
-
-		//
 		// Our constructor
 		//
-		public IteratorHandler (string name, TypeContainer container, Type return_type, Type [] param_types,
-					InternalParameters parameters, int modifiers, Location loc)
+		public Iterator (TypeContainer container, string name, Type return_type,
+				 Type [] param_types, InternalParameters parameters,
+				 int modifiers, Block block, Location loc)
+			: base (container.NamespaceEntry, container,
+				"<Iterator:" + name + (proxy_count++) + ":>",
+				Modifiers.PRIVATE, null, loc)
 		{
-			this.name = name;
 			this.container = container;
 			this.return_type = return_type;
 			this.param_types = param_types;
 			this.parameters = parameters;
-			this.modifiers = modifiers;
-			this.loc = loc;
+			this.original_block = block;
+			this.block = new Block (null);
 
-			IteratorType = TypeManager.object_type;
-			
-			RootContext.EmitCodeHook += new RootContext.Hook (SetupIterator);
+			is_static = (modifiers & Modifiers.STATIC) != 0;
+
+			container.AddIterator (this);
+		}
+
+		public bool Define ()
+		{
+			if (!CheckType (return_type)) {
+				Report.Error (
+					1624, Location,
+					"The body of `{0}' cannot be an iterator block " +
+					"because '{1}' is not an iterator interface type",
+					Name, TypeManager.CSharpName (return_type));
+				return false;
+			}
+
+			for (int i = 0; i < parameters.Count; i++){
+				Parameter.Modifier mod = parameters.ParameterModifier (i);
+				if ((mod & (Parameter.Modifier.REF | Parameter.Modifier.OUT)) != 0){
+					Report.Error (
+						1623, Location,
+						"Iterators cannot have ref or out parameters");
+					return false;
+				}
+			}
+
+			ArrayList list = new ArrayList ();
+			if (is_enumerable)
+				list.Add (new TypeExpression (
+						  TypeManager.ienumerable_type, Location));
+			list.Add (new TypeExpression (TypeManager.ienumerator_type, Location));
+			list.Add (new TypeExpression (TypeManager.idisposable_type, Location));
+
+			iterator_type_expr = new TypeExpression (iterator_type, Location);
+
+			Bases = list;
+			return true;
 		}
 
 		//
-		// This class is just an expression that evaluates to a type, and the
-		// type is our internal proxy class.  Used in the generated new body
-		// of the original method
+		// Returns the new block for the method, or null on failure
 		//
-		class NewInnerType : Expression {
-			IteratorHandler handler;
-			
-			public NewInnerType (IteratorHandler handler, Location l) 
+		protected override bool DoDefineType ()
+		{
+			Define_Fields ();
+			Define_Constructor ();
+			Define_Current ();
+			Define_MoveNext ();
+			Define_Reset ();
+			Define_Dispose ();
+
+			if (is_enumerable)
+				Define_GetEnumerator ();
+
+			Create_Block ();
+
+			return true;
+		}
+
+
+		Field pc_field;
+		Field current_field;
+		public Field this_field;
+		public Field[] parameter_fields;
+
+		void Create_Block ()
+		{
+			int first = is_static ? 0 : 1;
+
+			ArrayList args = new ArrayList ();
+			if (!is_static) {
+				Type t = container.TypeBuilder;
+				args.Add (new Argument (
+					new SimpleParameterReference (t, 0, Location),
+					Argument.AType.Expression));
+			}
+
+			for (int i = 0; i < parameters.Count; i++) {
+				Type t = parameters.ParameterType (i);
+				args.Add (new Argument (
+					new SimpleParameterReference (t, first + i, Location),
+					Argument.AType.Expression));
+			}
+
+			Expression new_expr = new New (
+				new TypeExpression (TypeBuilder, Location), args, Location);
+
+			block.AddStatement (new NoCheckReturn (new_expr, Location));
+		}
+
+		void Define_Fields ()
+		{
+			Location loc = Location.Null;
+
+			pc_field = new Field (
+				TypeManager.system_int32_expr, Modifiers.PRIVATE, "PC",
+				null, null, loc);
+			AddField (pc_field);
+
+			current_field = new Field (
+				iterator_type_expr, Modifiers.PRIVATE, "current",
+				null, null, loc);
+			AddField (current_field);
+
+			if (!is_static) {
+				this_field = new Field (
+					new TypeExpression (container.TypeBuilder, Location),
+					Modifiers.PRIVATE, "this", null, null, loc);
+				AddField (this_field);
+			}
+
+			parameter_fields = new Field [parameters.Count];
+			for (int i = 0; i < parameters.Count; i++) {
+				string fname = String.Format (
+					"field{0}_{1}", i, parameters.ParameterName (i));
+
+				parameter_fields [i] = new Field (
+					new TypeExpression (parameters.ParameterType (i), loc),
+					Modifiers.PRIVATE, fname, null, null, loc);
+				AddField (parameter_fields [i]);
+			}
+		}
+
+		void Define_Constructor ()
+		{
+			Parameters ctor_params;
+
+			if (!is_static) {
+				Parameter this_param = new Parameter (
+					new TypeExpression (container.TypeBuilder, Location),
+					"this", Parameter.Modifier.NONE, null);
+
+				Parameter[] old_fixed = parameters.Parameters.FixedParameters;
+				Parameter[] fixed_params = new Parameter [old_fixed.Length + 1];
+				fixed_params [0] = this_param;
+				old_fixed.CopyTo (fixed_params, 1);
+
+				ctor_params = new Parameters (
+					fixed_params, parameters.Parameters.ArrayParameter,
+					Location);
+			} else
+				ctor_params = parameters.Parameters;
+
+			Constructor ctor = new Constructor (
+				this, Name, Modifiers.PUBLIC, ctor_params,
+				new ConstructorBaseInitializer (
+					null, Parameters.EmptyReadOnlyParameters, Location),
+				Location);
+			AddConstructor (ctor);
+
+			Block block = ctor.Block = new Block (null);
+
+			if (!is_static) {
+				Type t = container.TypeBuilder;
+
+				Assign assign = new Assign (
+					new FieldExpression (this_field),
+					new SimpleParameterReference (t, 1, Location),
+					Location);
+
+				block.AddStatement (new StatementExpression (assign, Location));
+			}
+
+			int first = is_static ? 1 : 2;
+
+			for (int i = 0; i < parameters.Count; i++) {
+				Type t = parameters.ParameterType (i);
+
+				Assign assign = new Assign (
+					new FieldExpression (parameter_fields [i]),
+					new SimpleParameterReference (t, first + i, Location),
+					Location);
+
+				block.AddStatement (new StatementExpression (assign, Location));
+			}
+		}
+
+		Statement Create_ThrowInvalidOperation ()
+		{
+			TypeExpr ex_type = new TypeExpression (
+				TypeManager.invalid_operation_exception_type, Location);
+
+			return new Throw (new New (ex_type, null, Location), Location);
+		}
+
+		Statement Create_ThrowNotSupported ()
+		{
+			TypeExpr ex_type = new TypeExpression (
+				TypeManager.not_supported_exception_type, Location);
+
+			return new Throw (new New (ex_type, null, Location), Location);
+		}
+
+		void Define_Current ()
+		{
+			Block get_block = new Block (null);
+
+			get_block.AddStatement (new If (
+				new Binary (
+					Binary.Operator.LessThanOrEqual,
+					new FieldExpression (pc_field),
+					new IntLiteral (0), Location),
+				Create_ThrowInvalidOperation (),
+				new Return (
+					new FieldExpression (current_field), Location),
+				Location));
+
+			Accessor getter = new Accessor (get_block, null);
+
+			Property current = new Property (
+				this, iterator_type_expr, Modifiers.PUBLIC,
+				false, "Current", null, getter, null, Location);
+			AddProperty (current);
+		}
+
+		void Define_MoveNext ()
+		{
+			Method move_next = new Method (
+				this, TypeManager.system_boolean_expr,
+				Modifiers.PUBLIC, false, "MoveNext",
+				Parameters.EmptyReadOnlyParameters, null,
+				Location.Null);
+			AddMethod (move_next);
+
+			Block block = move_next.Block = new Block (null);
+
+			MoveNextMethod inline = new MoveNextMethod (this, Location);
+			block.AddStatement (inline);
+		}
+
+		void Define_GetEnumerator ()
+		{
+			Method get_enumerator = new Method (
+				this,
+				new TypeExpression (TypeManager.ienumerator_type, Location),
+				Modifiers.PUBLIC, false, "GetEnumerator",
+				Parameters.EmptyReadOnlyParameters, null,
+				Location.Null);
+			AddMethod (get_enumerator);
+
+			get_enumerator.Block = new Block (null);
+
+			This the_this = new This (block, Location);
+			get_enumerator.Block.AddStatement (new Return (the_this, Location));
+		}
+
+		protected class SimpleParameterReference : Expression
+		{
+			int idx;
+
+			public SimpleParameterReference (Type type, int idx, Location loc)
 			{
-				this.handler = handler;
-				eclass = ExprClass.Value;
-				loc = l;
+				this.idx = idx;
+				this.loc = loc;
+				this.type = type;
+				eclass = ExprClass.Variable;
 			}
 
 			public override Expression DoResolve (EmitContext ec)
 			{
-				// Create the proxy class type.
-				handler.MakeEnumeratorProxy ();
-
-				if (IsIEnumerable (handler.return_type))
-					handler.MakeEnumerableProxy ();
-
-				type = handler.return_type;
 				return this;
-			}
-
-			public override Expression ResolveAsTypeStep (EmitContext ec)
-			{
-				return DoResolve (ec);
 			}
 
 			public override void Emit (EmitContext ec)
 			{
-				ILGenerator ig = ec.ig;
-				FieldBuilder this_field = null;
-				bool is_ienumerable = IsIEnumerable (handler.return_type);
-				Type temp_type;
-				
-				if (is_ienumerable){
-					temp_type = handler.enumerable_proxy_class;
-					ig.Emit (OpCodes.Newobj, (ConstructorInfo) handler.enumerable_proxy_constructor);
-					this_field = handler.enumerable_this_field;
-				} else {
-					temp_type = handler.enumerator_proxy_class;
-					ig.Emit (OpCodes.Newobj, (ConstructorInfo) handler.enumerator_proxy_constructor);
-					this_field = handler.this_field;
-				}
-
-				if (this_field == null && handler.parameters.Count == 0)
-					return;
-				
-				LocalBuilder temp = ec.GetTemporaryLocal (temp_type);
-
-				ig.Emit (OpCodes.Stloc, temp);
-				//
-				// Initialize This
-				//
-				int first = 0;
-				if (this_field != null){
-					ig.Emit (OpCodes.Ldloc, temp);
-					ig.Emit (OpCodes.Ldarg_0);
-					if (handler.container is Struct)
-						ig.Emit (OpCodes.Ldobj, handler.container.TypeBuilder);
-					ig.Emit (OpCodes.Stfld, this_field);
-					first = 1;
-				}
-
-				for (int i = 0; i < handler.parameters.Count; i++){
-					ig.Emit (OpCodes.Ldloc, temp);
-					ParameterReference.EmitLdArg (ig, i + first);
-					if (is_ienumerable)
-						ig.Emit (OpCodes.Stfld, handler.enumerable_parameter_fields [i]);
-					else
-						ig.Emit (OpCodes.Stfld, handler.parameter_fields [i]);
-				}
-				
-				//
-				// Initialize fields
-				//
-				ig.Emit (OpCodes.Ldloc, temp);
-				ec.FreeTemporaryLocal (temp, handler.container.TypeBuilder);
+				ParameterReference.EmitLdArg (ec.ig, idx);
 			}
+		}
+
+		protected class FieldExpression : Expression
+		{
+			Field field;
+
+			public FieldExpression (Field field)
+			{
+				this.field = field;
+			}
+
+			public override Expression DoResolve (EmitContext ec)
+			{
+				FieldExpr fexpr = new FieldExpr (field.FieldBuilder, loc);
+				fexpr.InstanceExpression = ec.GetThis (loc);
+				return fexpr.Resolve (ec);
+			}
+
+			public override void Emit (EmitContext ec)
+			{
+				throw new InvalidOperationException ();
+			}
+		}
+
+		public class MoveNextMethod : Statement {
+			Iterator iterator;
+
+			public MoveNextMethod (Iterator iterator, Location loc)
+			{
+				this.loc = loc;
+				this.iterator = iterator;
+			}
+
+			public override bool Resolve (EmitContext ec)
+			{
+				ec.CurrentBranching.CurrentUsageVector.Return ();
+				return true;
+			}
+
+			protected override void DoEmit (EmitContext ec)
+			{
+				int code_flags = Modifiers.METHOD_YIELDS;
+				if (iterator.is_static)
+					code_flags |= Modifiers.STATIC;
+
+				EmitContext new_ec = new EmitContext (
+					iterator, loc, ec.ig, iterator.return_type,
+					code_flags);
+
+				new_ec.CurrentIterator = iterator;
+
+				iterator.EmitMoveNext (new_ec);
+			}
+		}
+
+		protected class DoYieldBreak : Statement
+		{
+			Iterator iterator;
+			bool add_return;
+
+			public DoYieldBreak (Iterator iterator, bool add_return,
+					     Location loc)
+			{
+				this.iterator = iterator;
+				this.add_return = add_return;
+				this.loc = loc;
+			}
+
+			public override bool Resolve (EmitContext ec)
+			{
+				if (add_return)
+					ec.CurrentBranching.CurrentUsageVector.Return ();
+				return true;
+			}
+
+			protected override void DoEmit (EmitContext ec)
+			{
+			       iterator.EmitYieldBreak (ec.ig, add_return);
+			}
+		}
+
+		void Define_Reset ()
+		{
+			Method reset = new Method (
+				this, TypeManager.system_void_expr, Modifiers.PUBLIC,
+				false, "Reset", Parameters.EmptyReadOnlyParameters,
+				null, Location);
+			AddMethod (reset);
+
+			reset.Block = new Block (null);
+			reset.Block.AddStatement (Create_ThrowNotSupported ());
+		}
+
+		void Define_Dispose ()
+		{
+			Method dispose = new Method (
+				this, TypeManager.system_void_expr, Modifiers.PUBLIC,
+				false, "Dispose", Parameters.EmptyReadOnlyParameters,
+				null, Location);
+			AddMethod (dispose);
+
+			dispose.Block = new Block (null);
+			dispose.Block.AddStatement (new DoYieldBreak (this, false, Location));
+			dispose.Block.AddStatement (new Return (null, Location));
+		}
+
+		public Block Block {
+			get { return block; }
+		}
+
+		public Type IteratorType {
+			get { return iterator_type; }
 		}
 
 		//
@@ -641,7 +637,7 @@ namespace Mono.CSharp {
 			public NoCheckReturn (Expression expr, Location loc) : base (expr, loc)
 			{
 			}
-			
+
 			public override bool Resolve (EmitContext ec)
 			{
 				ec.InIterator = false;
@@ -652,44 +648,19 @@ namespace Mono.CSharp {
 			}
 		}
 
-		static bool IsIEnumerable (Type t)
+		bool CheckType (Type t)
 		{
-			return t == TypeManager.ienumerable_type;
-		}
-
-		static bool IsIEnumerator (Type t)
-		{
-			return t == TypeManager.ienumerator_type;
-		}
-		
-		//
-		// Returns the new block for the method, or null on failure
-		//
-		public Block Setup (Block block)
-		{
-			if (!(IsIEnumerator (return_type) || IsIEnumerable (return_type))){
-				Report.Error (
-					1624, loc, "The body of `{0}' cannot be an iterator " +
-					"block because '{1}' is not an iterator interface type",
-					name, TypeManager.CSharpName (return_type));
-				return null;
+			if (t == TypeManager.ienumerable_type) {
+				iterator_type = TypeManager.object_type;
+				is_enumerable = true;
+				return true;
+			} else if (t == TypeManager.ienumerator_type) {
+				iterator_type = TypeManager.object_type;
+				is_enumerable = false;
+				return true;
 			}
 
-			for (int i = 0; i < parameters.Count; i++){
-				Parameter.Modifier mod = parameters.ParameterModifier (i);
-				if ((mod & (Parameter.Modifier.REF | Parameter.Modifier.OUT)) != 0){
-					Report.Error (1623, loc, "Iterators cannot have ref " +
-						      "or out parameters");
-					return null;
-				}
-			}
-
-			original_block = block;
-			Block b = new Block (null);
-
-			// return new InnerClass ()
-			b.AddStatement (new NoCheckReturn (new NewInnerType (this, loc), loc));
-			return b;
+			return false;
 		}
 	}
 }

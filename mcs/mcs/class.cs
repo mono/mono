@@ -88,6 +88,9 @@ namespace Mono.CSharp {
 		// Holds the operators
 		ArrayList operators;
 
+		// Holds the iterators
+		ArrayList iterators;
+
 		// The emit context for toplevel objects.
 		EmitContext ec;
 		
@@ -417,6 +420,14 @@ namespace Mono.CSharp {
 			return AdditionResult.Success;
 		}
 
+		public void AddIterator (Iterator i)
+		{
+			if (iterators == null)
+				iterators = new ArrayList ();
+
+			iterators.Add (i);
+		}
+
 		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb)
 		{
 			if (a.Type == TypeManager.default_member_type) {
@@ -466,6 +477,12 @@ namespace Mono.CSharp {
 		public ArrayList Interfaces {
 			get {
 				return interfaces;
+			}
+		}
+
+		public ArrayList Iterators {
+			get {
+				return iterators;
 			}
 		}
 		
@@ -872,9 +889,14 @@ namespace Mono.CSharp {
 
 			if ((parent != null) && parent.IsAttribute) {
 				RootContext.RegisterAttribute (this);
-			} else
+			} else if (!(this is Iterator))
 				RootContext.RegisterOrder (this); 
-				
+
+			if (!DoDefineType ()) {
+				error = true;
+				return null;
+			}
+
 			if (Interfaces != null) {
 				foreach (Interface iface in Interfaces)
 					if (iface.DefineType () == null) {
@@ -909,6 +931,11 @@ namespace Mono.CSharp {
 
 			InTransit = false;
 			return TypeBuilder;
+		}
+
+		protected virtual bool DoDefineType ()
+		{
+			return true;
 		}
 
 
@@ -1179,7 +1206,18 @@ namespace Mono.CSharp {
 			member_cache = new MemberCache (this);
 #endif
 
-			
+			if (iterators != null) {
+				foreach (Iterator iterator in iterators) {
+					if (iterator.DefineType () == null)
+						return false;
+				}
+
+				foreach (Iterator iterator in iterators) {
+					if (!iterator.DefineMembers (this))
+						return false;
+				}
+			}
+
 			return true;
 		}
 
@@ -1846,6 +1884,10 @@ namespace Mono.CSharp {
 					return;
 
 			VerifyMembers (ec);
+
+			if (iterators != null)
+				foreach (Iterator iterator in iterators)
+					iterator.Emit ();
 			
 //			if (types != null)
 //				foreach (TypeContainer tc in types)
@@ -1881,7 +1923,7 @@ namespace Mono.CSharp {
 		{
 			if ((caching_flags & Flags.CloseTypeCreated) != 0)
 				return;
-			
+
 			try {
 				caching_flags |= Flags.CloseTypeCreated;
 				TypeBuilder.CreateType ();
@@ -1918,6 +1960,10 @@ namespace Mono.CSharp {
 			if (Delegates != null)
 				foreach (Delegate d in Delegates)
 					d.CloseType ();
+
+			if (Iterators != null)
+				foreach (Iterator i in Iterators)
+					i.CloseType ();
 			
 			types = null;
 			properties = null;
@@ -1933,6 +1979,7 @@ namespace Mono.CSharp {
 			events = null;
 			indexers = null;
 			operators = null;
+			iterators = null;
 			ec = null;
 			default_constructor = null;
 			default_static_constructor = null;
@@ -2992,15 +3039,14 @@ namespace Mono.CSharp {
 			// Setup iterator if we are one
 			//
 			if ((ModFlags & Modifiers.METHOD_YIELDS) != 0){
-				IteratorHandler ih = new  IteratorHandler (
-					    Name, container, MemberType,
-					    ParameterTypes, ParameterInfo,
-					    ModFlags, Location);
+				Iterator iterator = new Iterator (
+					container, Name, MemberType, ParameterTypes,
+					ParameterInfo, ModFlags, block, Location);
 
-				Block new_block = ih.Setup (block);
-				if (new_block == null)
+				if (!iterator.Define ())
 					return false;
-				block = new_block;
+
+				block = iterator.Block;
 			}
 
 			MethodBuilder = MethodData.MethodBuilder;
@@ -3895,7 +3941,6 @@ namespace Mono.CSharp {
 		public void Emit (TypeContainer container, Attributable kind)
 		{
 			EmitContext ec;
-
 			if ((flags & MethodAttributes.PinvokeImpl) == 0)
 				ec = method.CreateEmitContext (container, builder.GetILGenerator ());
 			else
@@ -5113,7 +5158,7 @@ namespace Mono.CSharp {
 			}
 
 			MemberInfo parent_member = null;
-			
+
 			//
 			// Explicit implementations do not have `parent' methods, however,
 			// the member cache stores them there. Without this check, we get
@@ -5255,14 +5300,14 @@ namespace Mono.CSharp {
 				// Setup iterator if we are one
 				//
 				if ((ModFlags & Modifiers.METHOD_YIELDS) != 0){
-					IteratorHandler ih = new  IteratorHandler (
-										   "get", container, MemberType,
-										   TypeManager.NoTypes, Get.ParameterInfo, ModFlags, Location);
+					Iterator iterator = new Iterator (
+						container, "get", MemberType,
+						TypeManager.NoTypes, Get.ParameterInfo,
+						ModFlags, block, Location);
 					
-					Block new_block = ih.Setup (block);
-					if (new_block == null)
+					if (!iterator.Define ())
 						return false;
-					block = new_block;
+					block = iterator.Block;
 				}
 			}
 

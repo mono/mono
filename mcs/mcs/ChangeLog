@@ -1,3 +1,19 @@
+2004-07-16  Martin Baulig  <martin@ximian.com>
+
+	* iterators.cs: Rewrote this.  We're now using one single Proxy
+	class for both the IEnumerable and the IEnumerator interface and
+	`Iterator' derives from Class so we can use the high-level API.
+
+	* class.cs (TypeContainer.AddIterator): New method.
+	(TypeContainer.DoDefineType): New protected virtual method, which
+	is called from DefineType().
+	(TypeContainer.DoDefineMembers): Call DefineType() and
+	DefineMembers() on all our iterators.
+	(TypeContainer.Emit): Call Emit() on all our iterators.
+	(TypeContainer.CloseType): Call CloseType() on all our iterators.
+
+	* codegen.cs (EmitContext.CurrentIterator): New public field.
+
 2004-07-15  Martin Baulig  <martin@ximian.com>
 
 	* typemanager.cs
