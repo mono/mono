@@ -23,9 +23,13 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.19 $
+// $Revision: 1.20 $
 // $Modtime: $
 // $Log: XplatUIWin32.cs,v $
+// Revision 1.20  2004/08/20 01:37:47  pbartok
+// - Added generation of MouseEnter, MouseLeave and MouseHover events
+// - Added cleanup on EndPaint
+//
 // Revision 1.19  2004/08/18 19:16:53  jordi
 // Move colors to a table
 //
@@ -112,8 +116,10 @@ namespace System.Windows.Forms {
 		internal static MouseButtons	mouse_state;
 		internal static Point		mouse_position;
 		internal static WndProc		wnd_proc;
+		internal static IntPtr		prev_mouse_hwnd;
 
 		internal static bool		themes_enabled;
+		private static Hashtable	handle_data;
 		#endregion	// Local Variables
 
 		#region Private Structs
@@ -171,6 +177,22 @@ namespace System.Windows.Forms {
 			internal POINT			ptMinPosition;
 			internal POINT			ptMaxPosition;
 			internal RECT			rcNormalPosition;
+		}
+
+		[Flags]
+		private enum TMEFlags {
+			TME_HOVER		= 0x00000001,
+			TME_LEAVE		= 0x00000002,
+			TME_QUERY		= unchecked((int)0x40000000),
+			TME_CANCEL		= unchecked((int)0x80000000)
+		}
+
+		[StructLayout(LayoutKind.Sequential)]
+		private struct TRACKMOUSEEVENT {
+			internal int		size;
+			internal TMEFlags	dwFlags;
+			internal IntPtr		hWnd;
+			internal int		dwHoverTime;
 		}
 
 		[StructLayout(LayoutKind.Sequential)]
@@ -410,7 +432,7 @@ namespace System.Windows.Forms {
 				Win32MessageBox(IntPtr.Zero, "Could not create foster window, win32 error " + Win32GetLastError().ToString(), "Oops", 0);
 			}
 
-			Console.WriteLine("#region #line XplatUI WIN32 Constructor called, result {0}", result);
+			handle_data = new Hashtable ();
 		}
 
 		~XplatUIWin32() {
@@ -510,7 +532,6 @@ namespace System.Windows.Forms {
 				// We need to use our foster parent window until this poor child gets it's parent assigned
 				ParentHandle=FosterParent;
 			}
-Console.WriteLine("Creating window at {0}:{1} {2}x{3}", cp.X, cp.Y, cp.Width, cp.Height);
 			WindowHandle = Win32CreateWindow((uint)cp.ExStyle, cp.ClassName, cp.Caption, (uint)cp.Style, cp.X, cp.Y, cp.Width, cp.Height, ParentHandle, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero);
 
 			if (WindowHandle==IntPtr.Zero) {
@@ -563,8 +584,17 @@ Console.WriteLine("Creating window at {0}:{1} {2}x{3}", cp.X, cp.Y, cp.Width, cp
 			ps = new PAINTSTRUCT();
 
 			if (Win32GetUpdateRect(handle, ref rect, false)) {
+				HandleData	data;
+
 				hdc = Win32BeginPaint(handle, ref ps);
-				// FIXME: Add the DC to internal list
+
+				data = (HandleData) handle_data [0];
+				if (data == null) {
+					data = new HandleData();
+					handle_data[0] = data;
+				}
+
+				data.DeviceContext=(Object)ps;
 
 				// FIXME: Figure out why the rectangle is always 0 size
 				clip_rect = new Rectangle(ps.rcPaint.left, ps.rcPaint.top, ps.rcPaint.right-ps.rcPaint.left, ps.rcPaint.bottom-ps.rcPaint.top);
@@ -572,7 +602,6 @@ Console.WriteLine("Creating window at {0}:{1} {2}x{3}", cp.X, cp.Y, cp.Width, cp
 			} else {
 				hdc = Win32GetDC(handle);
 				// FIXME: Add the DC to internal list
-
 				clip_rect = new Rectangle(rect.top, rect.left, rect.right-rect.left, rect.bottom-rect.top);
 			}
 
@@ -582,9 +611,19 @@ Console.WriteLine("Creating window at {0}:{1} {2}x{3}", cp.X, cp.Y, cp.Width, cp
 		}
 
 		internal override void PaintEventEnd(IntPtr handle) {
-			// FIXME: Lookup in the internal list how to clean
-			;
-			// paintEventArgs.Dispose();
+			HandleData	data;
+			PAINTSTRUCT	ps;
+			PaintEventArgs	paint_event;
+
+			data = (HandleData) handle_data [0];
+			if (data == null) {
+				data = new HandleData();
+				handle_data[0] = data;
+			}
+
+			//paint_event.Graphics.Dispose();
+			ps = (PAINTSTRUCT)data.DeviceContext;
+			Win32EndPaint(handle, ref ps);
 		}
 
 
@@ -654,7 +693,53 @@ Console.WriteLine("Creating window at {0}:{1} {2}x{3}", cp.X, cp.Y, cp.Width, cp
 		}
 
 		internal override bool GetMessage(ref MSG msg, IntPtr hWnd, int wFilterMin, int wFilterMax) {
-			return Win32GetMessage(ref msg, hWnd, wFilterMin, wFilterMax);
+			HandleData	data;
+			bool		result;
+
+			data = (HandleData) handle_data [0];
+			if ((data!=null) && data.GetMessage(ref msg)) {
+				return true;
+			}
+
+			result = Win32GetMessage(ref msg, hWnd, wFilterMin, wFilterMax);
+
+			// We need to fake WM_MOUSE_ENTER/WM_MOUSE_LEAVE
+			switch (msg.message) {
+				case Msg.WM_MOUSEMOVE: {
+					if (msg.hwnd != prev_mouse_hwnd) {
+						TRACKMOUSEEVENT	tme;
+
+						if (data == null) {
+							data = new HandleData();
+							handle_data[0] = data;
+						}
+
+						// The current message will be sent out next time around
+						data.StoreMessage(ref msg);
+
+						// This is the message we want to send at this point
+						msg.message = Msg.WM_MOUSE_ENTER;
+
+						prev_mouse_hwnd = msg.hwnd;
+
+						tme = new TRACKMOUSEEVENT();
+						tme.size = Marshal.SizeOf(tme);
+						tme.hWnd = msg.hwnd;
+						tme.dwFlags = TMEFlags.TME_LEAVE | TMEFlags.TME_HOVER;
+						Win32TrackMouseEvent(ref tme);
+						return result;
+					}
+					break;
+				}
+
+				case Msg.WM_MOUSELEAVE: {
+					prev_mouse_hwnd = IntPtr.Zero;
+					msg.message=Msg.WM_MOUSE_LEAVE;
+					break;
+				}
+			}
+
+			return result;
 		}
 
 		internal override bool TranslateMessage(ref MSG msg) {
@@ -851,6 +936,9 @@ Console.WriteLine("Creating window at {0}:{1} {2}x{3}", cp.X, cp.Y, cp.Width, cp
 
 		[DllImport ("user32.dll", EntryPoint="GetWindowPlacement", CharSet=CharSet.Ansi, CallingConvention=CallingConvention.StdCall)]
 		private extern static bool Win32GetWindowPlacement(IntPtr hWnd, ref WINDOWPLACEMENT lpwndpl);
+
+		[DllImport ("user32.dll", EntryPoint="TrackMouseEvent", CharSet=CharSet.Ansi, CallingConvention=CallingConvention.StdCall)]
+		private extern static bool Win32TrackMouseEvent(ref TRACKMOUSEEVENT tme);
 		#endregion
 
 	}
