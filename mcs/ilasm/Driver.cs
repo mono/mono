@@ -153,6 +153,7 @@ namespace Mono.ILASM {
                                         }
                                         switch (GetCommand (str, out command_arg)) {
                                         case "out":
+                                        case "output":
                                                 output_file = command_arg;
                                                 break;
                                         case "exe":
