@@ -124,6 +124,13 @@ namespace System.Xml.Schema
 			get{ return  isMixed; }
 			set{ isMixed = value; } 
 		}
+
+#if NET_2_0
+		[MonoTODO]
+		public XmlTypeCode TypeCode {
+			get { throw new NotImplementedException (); }
+		}
+#endif
 		#endregion
 
 #if NET_2_0
@@ -138,21 +145,15 @@ namespace System.Xml.Schema
 			return null;
 		}
 
-#if NET_2_0_in_the_future
+#if NET_2_0
+		[MonoTODO]
 		public static XmlSchemaSimpleType GetBuiltInSimpleType (XmlQualifiedName qualifiedName)
-		{
-			if (qualifiedName.Name == "anySimpleType" && qualifiedName.Namespace == XmlSchema.Namespace)
-				return XmlSchemaSimpleType.AnySimpleType;
-
-			return null;
-		}
-
-		public virtual IXmlInfosetReader Validate (IXmlInfosetReader reader, object schemas)
 		{
 			throw new NotImplementedException ();
 		}
 
-		public virtual IXmlInfosetWriter Validate (IXmlInfosetWriter reader, object schemas)
+		[MonoTODO]
+		public static bool IsDerivedFrom (XmlSchemaType derivedType, XmlSchemaType baseType, XmlSchemaDerivationMethod except)
 		{
 			throw new NotImplementedException ();
 		}

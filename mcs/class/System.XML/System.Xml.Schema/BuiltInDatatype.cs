@@ -35,6 +35,13 @@ using System.Xml.Schema;
 using System.Globalization;
 using System.Security.Cryptography;
 
+#if NET_2_0
+using NSResolver = System.Xml.IXmlNamespaceResolver;
+#else
+using NSResolver = System.Xml.XmlNamespaceManager;
+#endif
+
+
 namespace Mono.Xml.Schema
 {
 	internal enum XsdWhitespaceFacet
@@ -71,7 +78,13 @@ namespace Mono.Xml.Schema
 			get { return instance; }
 		}
 
-		readonly char [] whitespaceArray = new char [] {' '};
+#if NET_2_0
+		public override XmlTypeCode TypeCode {
+			get { return XmlTypeCode.AnyAtomicType; }
+		}
+#endif
+
+		static readonly char [] whitespaceArray = new char [] {' '};
 
 		// Fundamental Facets
 		public virtual bool Bounded {
@@ -105,13 +118,13 @@ namespace Mono.Xml.Schema
 		}
 
 		public override object ParseValue (string s,
-			XmlNameTable nameTable, XmlNamespaceManager nsmgr)
+			XmlNameTable nameTable, NSResolver nsmgr)
 		{
 			return Normalize (s);
 		}
 
 		internal override ValueType ParseValueType (string s,
-			XmlNameTable nameTable, XmlNamespaceManager nsmgr)
+			XmlNameTable nameTable, NSResolver nsmgr)
 		{
 			return new StringValueType (Normalize (s));
 		}
@@ -197,6 +210,12 @@ namespace Mono.Xml.Schema
 			get { return XmlTokenizedType.CDATA; }
 		}
 
+#if NET_2_0
+		public override XmlTypeCode TypeCode {
+			get { return XmlTypeCode.String; }
+		}
+#endif
+
 		public override Type ValueType {
 			get { return typeof (string); }
 		}
@@ -230,6 +249,12 @@ namespace Mono.Xml.Schema
 			get { return XmlTokenizedType.CDATA; }
 		}
 
+#if NET_2_0
+		public override XmlTypeCode TypeCode {
+			get { return XmlTypeCode.NormalizedString; }
+		}
+#endif
+
 		public override Type ValueType {
 			get { return typeof (string); }
 		}
@@ -249,6 +274,12 @@ namespace Mono.Xml.Schema
 			get { return XmlTokenizedType.CDATA; }
 		}
 
+#if NET_2_0
+		public override XmlTypeCode TypeCode {
+			get { return XmlTypeCode.Token; }
+		}
+#endif
+
 		public override Type ValueType {
 			get { return typeof (string); }
 		}
@@ -266,6 +297,12 @@ namespace Mono.Xml.Schema
 		public override XmlTokenizedType TokenizedType {
 			get { return XmlTokenizedType.CDATA; }
 		}
+
+#if NET_2_0
+		public override XmlTypeCode TypeCode {
+			get { return XmlTypeCode.Language; }
+		}
+#endif
 
 		public override Type ValueType {
 			get { return typeof (string); }
@@ -285,19 +322,25 @@ namespace Mono.Xml.Schema
 			get { return XmlTokenizedType.NMTOKEN; }
 		}
 
+#if NET_2_0
+		public override XmlTypeCode TypeCode {
+			get { return XmlTypeCode.NmToken; }
+		}
+#endif
+
 		public override Type ValueType {
 			get { return typeof (string); }
 		}
 
 		public override object ParseValue (string s,
-			XmlNameTable nameTable, XmlNamespaceManager nsmgr)
+			XmlNameTable nameTable, NSResolver nsmgr)
 		{
 			if (!XmlChar.IsNmToken (s))
 				throw new ArgumentException ("'" + s + "' is an invalid NMTOKEN.");
 			return s;
 		}
 
-		internal override ValueType ParseValueType (string s, XmlNameTable nameTable, XmlNamespaceManager nsmgr) 
+		internal override ValueType ParseValueType (string s, XmlNameTable nameTable, NSResolver nsmgr) 
 		{
 			return new StringValueType (ParseValue (s, nameTable, nsmgr) as string);
 		}
@@ -314,16 +357,23 @@ namespace Mono.Xml.Schema
 			get { return XmlTokenizedType.NMTOKENS; }
 		}
 
+#if NET_2_0
+		[MonoTODO]
+		public override XmlTypeCode TypeCode {
+			get { return XmlTypeCode.Item; }
+		}
+#endif
+
 		public override Type ValueType {
 			get { return typeof (string []); }
 		}
 
-		public override object ParseValue (string value, XmlNameTable nt, XmlNamespaceManager nsmgr)
+		public override object ParseValue (string value, XmlNameTable nt, NSResolver nsmgr)
 		{
 			return GetValidatedArray (value, nt);
 		}
 
-		internal override ValueType ParseValueType (string s, XmlNameTable nameTable, XmlNamespaceManager nsmgr) 
+		internal override ValueType ParseValueType (string s, XmlNameTable nameTable, NSResolver nsmgr) 
 		{
 			return new StringArrayValueType (GetValidatedArray (s, nameTable));
 		}
@@ -349,19 +399,25 @@ namespace Mono.Xml.Schema
 			get { return XmlTokenizedType.CDATA; }
 		}
 
+#if NET_2_0
+		public override XmlTypeCode TypeCode {
+			get { return XmlTypeCode.Name; }
+		}
+#endif
+
 		public override Type ValueType {
 			get { return typeof (string); }
 		}
 
 		public override object ParseValue (string s,
-			XmlNameTable nameTable, XmlNamespaceManager nsmgr)
+			XmlNameTable nameTable, NSResolver nsmgr)
 		{
 			if (!XmlChar.IsName (s))
 				throw new ArgumentException ("'" + s + "' is an invalid name.");
 			return s;
 		}
 
-		internal override ValueType ParseValueType (string s, XmlNameTable nameTable, XmlNamespaceManager nsmgr) 
+		internal override ValueType ParseValueType (string s, XmlNameTable nameTable, NSResolver nsmgr) 
 		{
 			return new StringValueType (ParseValue (s, nameTable, nsmgr) as string);
 		}
@@ -378,19 +434,25 @@ namespace Mono.Xml.Schema
 			get { return XmlTokenizedType.NCName; }
 		}
 
+#if NET_2_0
+		public override XmlTypeCode TypeCode {
+			get { return XmlTypeCode.NCName; }
+		}
+#endif
+
 		public override Type ValueType {
 			get { return typeof (string); }
 		}
 
 		public override object ParseValue (string s,
-			XmlNameTable nameTable, XmlNamespaceManager nsmgr)
+			XmlNameTable nameTable, NSResolver nsmgr)
 		{
 			if (!XmlChar.IsNCName (s))
 				throw new ArgumentException ("'" + s + "' is an invalid NCName.");
 			return s;
 		}
 
-		internal override ValueType ParseValueType (string s, XmlNameTable nameTable, XmlNamespaceManager nsmgr) 
+		internal override ValueType ParseValueType (string s, XmlNameTable nameTable, NSResolver nsmgr) 
 		{
 			return new StringValueType (ParseValue (s, nameTable, nsmgr) as string);
 		}
@@ -407,11 +469,17 @@ namespace Mono.Xml.Schema
 			get { return XmlTokenizedType.ID; }
 		}
 
+#if NET_2_0
+		public override XmlTypeCode TypeCode {
+			get { return XmlTypeCode.Id; }
+		}
+#endif
+
 		public override Type ValueType {
 			get { return typeof (string); }
 		}
 
-		public override object ParseValue (string s, XmlNameTable nt, XmlNamespaceManager nsmgr)
+		public override object ParseValue (string s, XmlNameTable nt, NSResolver nsmgr)
 		{
 			if (!XmlChar.IsNCName (s))
 				throw new ArgumentException ("'" + s + "' is an invalid NCName.");
@@ -430,11 +498,17 @@ namespace Mono.Xml.Schema
 			get { return XmlTokenizedType.IDREF; }
 		}
 
+#if NET_2_0
+		public override XmlTypeCode TypeCode {
+			get { return XmlTypeCode.Idref; }
+		}
+#endif
+
 		public override Type ValueType {
 			get { return typeof (string); }
 		}
 
-		public override object ParseValue (string s, XmlNameTable nt, XmlNamespaceManager nsmgr)
+		public override object ParseValue (string s, XmlNameTable nt, NSResolver nsmgr)
 		{
 			if (!XmlChar.IsNCName (s))
 				throw new ArgumentException ("'" + s + "' is an invalid NCName.");
@@ -453,16 +527,23 @@ namespace Mono.Xml.Schema
 			get { return XmlTokenizedType.IDREFS; }
 		}
 
+#if NET_2_0
+		[MonoTODO]
+		public override XmlTypeCode TypeCode {
+			get { return XmlTypeCode.Item; }
+		}
+#endif
+
 		public override Type ValueType {
 			get { return typeof (string []); }
 		}
 
-		public override object ParseValue (string value, XmlNameTable nt, XmlNamespaceManager nsmgr)
+		public override object ParseValue (string value, XmlNameTable nt, NSResolver nsmgr)
 		{
 			return GetValidatedArray (value, nt);
 		}
 
-		internal override ValueType ParseValueType (string s, XmlNameTable nameTable, XmlNamespaceManager nsmgr) 
+		internal override ValueType ParseValueType (string s, XmlNameTable nameTable, NSResolver nsmgr) 
 		{
 			return new StringArrayValueType (GetValidatedArray (s, nameTable));
 		}
@@ -487,6 +568,12 @@ namespace Mono.Xml.Schema
 			get { return XmlTokenizedType.ENTITY; }
 		}
 
+#if NET_2_0
+		public override XmlTypeCode TypeCode {
+			get { return XmlTypeCode.Entity; }
+		}
+#endif
+
 		public override Type ValueType {
 			get { return typeof (string); }
 		}
@@ -506,16 +593,23 @@ namespace Mono.Xml.Schema
 			get { return XmlTokenizedType.ENTITIES; }
 		}
 
+#if NET_2_0
+		[MonoTODO]
+		public override XmlTypeCode TypeCode {
+			get { return XmlTypeCode.Item; }
+		}
+#endif
+
 		public override Type ValueType {
 			get { return typeof (string []); }
 		}
 
-		public override object ParseValue (string value, XmlNameTable nt, XmlNamespaceManager nsmgr)
+		public override object ParseValue (string value, XmlNameTable nt, NSResolver nsmgr)
 		{
 			return GetValidatedArray (value, nt);
 		}
 
-		internal override ValueType ParseValueType (string s, XmlNameTable nameTable, XmlNamespaceManager nsmgr) 
+		internal override ValueType ParseValueType (string s, XmlNameTable nameTable, NSResolver nsmgr) 
 		{
 			return new StringArrayValueType (GetValidatedArray (s, nameTable));
 		}
@@ -545,12 +639,18 @@ namespace Mono.Xml.Schema
 			get { return XmlTokenizedType.NOTATION; }
 		}
 
+#if NET_2_0
+		public override XmlTypeCode TypeCode {
+			get { return XmlTypeCode.Notation; }
+		}
+#endif
+
 		public override Type ValueType {
 			get { return typeof (string); }
 		}
 
 		public override object ParseValue (string s,
-			XmlNameTable nameTable, XmlNamespaceManager nsmgr)
+			XmlNameTable nameTable, NSResolver nsmgr)
 		{
 			return Normalize (s);
 		}
@@ -587,17 +687,23 @@ namespace Mono.Xml.Schema
 			get { return XmlTokenizedType.None; }
 		}
 
+#if NET_2_0
+		public override XmlTypeCode TypeCode {
+			get { return XmlTypeCode.Decimal; }
+		}
+#endif
+
 		public override Type ValueType {
 			get { return typeof (decimal); }
 		}
 
 		public override object ParseValue (string s,
-			XmlNameTable nameTable, XmlNamespaceManager nsmgr)
+			XmlNameTable nameTable, NSResolver nsmgr)
 		{
 			return ParseValueType (s, nameTable, nsmgr);
 		}
 
-		internal override ValueType ParseValueType (string s, XmlNameTable nameTable, XmlNamespaceManager nsmgr) 
+		internal override ValueType ParseValueType (string s, XmlNameTable nameTable, NSResolver nsmgr) 
 		{
 			return XmlConvert.ToDecimal (this.Normalize (s));
 		}
@@ -641,18 +747,24 @@ namespace Mono.Xml.Schema
 		{
 		}
 
+#if NET_2_0
+		public override XmlTypeCode TypeCode {
+			get { return XmlTypeCode.Integer; }
+		}
+#endif
+
 		// Here it may be bigger than int's (or long's) MaxValue.
 		public override Type ValueType {
 			get { return typeof (decimal); }
 		}
 
 		public override object ParseValue (string s,
-			XmlNameTable nameTable, XmlNamespaceManager nsmgr)
+			XmlNameTable nameTable, NSResolver nsmgr)
 		{
 			return ParseValueType (s, nameTable, nsmgr);
 		}
 
-		internal override ValueType ParseValueType (string s, XmlNameTable nameTable, XmlNamespaceManager nsmgr) 
+		internal override ValueType ParseValueType (string s, XmlNameTable nameTable, NSResolver nsmgr) 
 		{
 			decimal d = XmlConvert.ToDecimal (Normalize (s));
 			if (Decimal.Floor (d) != d)
@@ -667,17 +779,23 @@ namespace Mono.Xml.Schema
 	// xs:Long
 	internal class XsdLong : XsdInteger
 	{
+#if NET_2_0
+		public override XmlTypeCode TypeCode {
+			get { return XmlTypeCode.Long; }
+		}
+#endif
+
 		public override Type ValueType {
 			get { return typeof (long); }
 		}
 
 		public override object ParseValue (string s,
-			XmlNameTable nameTable, XmlNamespaceManager nsmgr)
+			XmlNameTable nameTable, NSResolver nsmgr)
 		{
 			return ParseValueType (s, nameTable, nsmgr);
 		}
 
-		internal override ValueType ParseValueType (string s, XmlNameTable nameTable, XmlNamespaceManager nsmgr) 
+		internal override ValueType ParseValueType (string s, XmlNameTable nameTable, NSResolver nsmgr) 
 		{
 			return XmlConvert.ToInt64 (Normalize (s));
 		}
@@ -701,17 +819,23 @@ namespace Mono.Xml.Schema
 	// xs:Int
 	internal class XsdInt : XsdLong
 	{
+#if NET_2_0
+		public override XmlTypeCode TypeCode {
+			get { return XmlTypeCode.Int; }
+		}
+#endif
+
 		public override Type ValueType {
 			get { return typeof (int); }
 		}
 
 		public override object ParseValue (string s,
-			XmlNameTable nameTable, XmlNamespaceManager nsmgr)
+			XmlNameTable nameTable, NSResolver nsmgr)
 		{
 			return ParseValueType (s, nameTable, nsmgr);
 		}
 
-		internal override ValueType ParseValueType (string s, XmlNameTable nameTable, XmlNamespaceManager nsmgr) 
+		internal override ValueType ParseValueType (string s, XmlNameTable nameTable, NSResolver nsmgr) 
 		{
 			return XmlConvert.ToInt32 (Normalize (s));
 		}
@@ -736,17 +860,23 @@ namespace Mono.Xml.Schema
 	// xs:Short
 	internal class XsdShort : XsdInt
 	{
+#if NET_2_0
+		public override XmlTypeCode TypeCode {
+			get { return XmlTypeCode.Short; }
+		}
+#endif
+
 		public override Type ValueType {
 			get { return typeof (short); }
 		}
 
 		public override object ParseValue (string s,
-			XmlNameTable nameTable, XmlNamespaceManager nsmgr)
+			XmlNameTable nameTable, NSResolver nsmgr)
 		{
 			return ParseValueType (s, nameTable, nsmgr);
 		}
 
-		internal override ValueType ParseValueType (string s, XmlNameTable nameTable, XmlNamespaceManager nsmgr) 
+		internal override ValueType ParseValueType (string s, XmlNameTable nameTable, NSResolver nsmgr) 
 		{
 			return XmlConvert.ToInt16 (Normalize (s));
 		}
@@ -770,17 +900,23 @@ namespace Mono.Xml.Schema
 	// xs:Byte
 	internal class XsdByte : XsdShort
 	{
+#if NET_2_0
+		public override XmlTypeCode TypeCode {
+			get { return XmlTypeCode.Byte; }
+		}
+#endif
+
 		public override Type ValueType {
 			get { return typeof (sbyte); }
 		}
 
 		public override object ParseValue (string s,
-			XmlNameTable nameTable, XmlNamespaceManager nsmgr)
+			XmlNameTable nameTable, NSResolver nsmgr)
 		{
 			return ParseValueType (s, nameTable, nsmgr);
 		}
 
-		internal override ValueType ParseValueType (string s, XmlNameTable nameTable, XmlNamespaceManager nsmgr) 
+		internal override ValueType ParseValueType (string s, XmlNameTable nameTable, NSResolver nsmgr) 
 		{
 			return XmlConvert.ToSByte (Normalize (s));
 		}
@@ -802,41 +938,53 @@ namespace Mono.Xml.Schema
 	}
 
 	// xs:nonNegativeInteger
-	[CLSCompliant (false)]
+//	[CLSCompliant (false)]
 	internal class XsdNonNegativeInteger : XsdInteger
 	{
+#if NET_2_0
+		public override XmlTypeCode TypeCode {
+			get { return XmlTypeCode.NonNegativeInteger; }
+		}
+#endif
+
 		public override Type ValueType {
 			get { return typeof (decimal); }
 		}
 
-		[CLSCompliant (false)]
+//		[CLSCompliant (false)]
 		public override object ParseValue (string s,
-			XmlNameTable nameTable, XmlNamespaceManager nsmgr)
+			XmlNameTable nameTable, NSResolver nsmgr)
 		{
 			return ParseValueType (s, nameTable, nsmgr);
 		}
 
-		internal override ValueType ParseValueType (string s, XmlNameTable nameTable, XmlNamespaceManager nsmgr) 
+		internal override ValueType ParseValueType (string s, XmlNameTable nameTable, NSResolver nsmgr) 
 		{
 			return XmlConvert.ToDecimal (Normalize (s));
 		}
 	}
 
 	// xs:unsignedLong
-	[CLSCompliant (false)]
+//	[CLSCompliant (false)]
 	internal class XsdUnsignedLong : XsdNonNegativeInteger
 	{
+#if NET_2_0
+		public override XmlTypeCode TypeCode {
+			get { return XmlTypeCode.UnsignedLong; }
+		}
+#endif
+
 		public override Type ValueType {
 			get { return typeof (ulong); }
 		}
 
 		public override object ParseValue (string s,
-			XmlNameTable nameTable, XmlNamespaceManager nsmgr)
+			XmlNameTable nameTable, NSResolver nsmgr)
 		{
 			return ParseValueType (s, nameTable, nsmgr);
 		}
 
-		internal override ValueType ParseValueType (string s, XmlNameTable nameTable, XmlNamespaceManager nsmgr) 
+		internal override ValueType ParseValueType (string s, XmlNameTable nameTable, NSResolver nsmgr) 
 		{
 			return XmlConvert.ToUInt64 (Normalize (s));
 		}
@@ -858,20 +1006,26 @@ namespace Mono.Xml.Schema
 	}
 
 	// xs:unsignedInt
-	[CLSCompliant (false)]
+//	[CLSCompliant (false)]
 	internal class XsdUnsignedInt : XsdUnsignedLong
 	{
+#if NET_2_0
+		public override XmlTypeCode TypeCode {
+			get { return XmlTypeCode.UnsignedInt; }
+		}
+#endif
+
 		public override Type ValueType {
 			get { return typeof (uint); }
 		}
 
 		public override object ParseValue (string s,
-			XmlNameTable nameTable, XmlNamespaceManager nsmgr)
+			XmlNameTable nameTable, NSResolver nsmgr)
 		{
 			return ParseValueType (s, nameTable, nsmgr);
 		}
 
-		internal override ValueType ParseValueType (string s, XmlNameTable nameTable, XmlNamespaceManager nsmgr) 
+		internal override ValueType ParseValueType (string s, XmlNameTable nameTable, NSResolver nsmgr) 
 		{
 			return XmlConvert.ToUInt32 (Normalize (s));
 		}
@@ -894,20 +1048,26 @@ namespace Mono.Xml.Schema
 
 
 	// xs:unsignedShort
-	[CLSCompliant (false)]
+//	[CLSCompliant (false)]
 	internal class XsdUnsignedShort : XsdUnsignedInt
 	{
+#if NET_2_0
+		public override XmlTypeCode TypeCode {
+			get { return XmlTypeCode.UnsignedShort; }
+		}
+#endif
+
 		public override Type ValueType {
 			get { return typeof (ushort); }
 		}
 
 		public override object ParseValue (string s,
-			XmlNameTable nameTable, XmlNamespaceManager nsmgr)
+			XmlNameTable nameTable, NSResolver nsmgr)
 		{
 			return ParseValueType (s, nameTable, nsmgr);
 		}
 
-		internal override ValueType ParseValueType (string s, XmlNameTable nameTable, XmlNamespaceManager nsmgr) 
+		internal override ValueType ParseValueType (string s, XmlNameTable nameTable, NSResolver nsmgr) 
 		{
 			return XmlConvert.ToUInt16 (Normalize (s));
 		}
@@ -929,20 +1089,26 @@ namespace Mono.Xml.Schema
 	}
 
 	// xs:unsignedByte
-	[CLSCompliant (false)]
+//	[CLSCompliant (false)]
 	internal class XsdUnsignedByte : XsdUnsignedShort
 	{
+#if NET_2_0
+		public override XmlTypeCode TypeCode {
+			get { return XmlTypeCode.UnsignedByte; }
+		}
+#endif
+
 		public override Type ValueType {
 			get { return typeof (byte); }
 		}
 
 		public override object ParseValue (string s,
-			XmlNameTable nameTable, XmlNamespaceManager nsmgr)
+			XmlNameTable nameTable, NSResolver nsmgr)
 		{
 			return ParseValueType (s, nameTable, nsmgr);
 		}
 
-		internal override ValueType ParseValueType (string s, XmlNameTable nameTable, XmlNamespaceManager nsmgr) 
+		internal override ValueType ParseValueType (string s, XmlNameTable nameTable, NSResolver nsmgr) 
 		{
 			return XmlConvert.ToByte(Normalize (s));
 		}
@@ -965,9 +1131,15 @@ namespace Mono.Xml.Schema
 
 
 	// xs:positiveInteger
-	[CLSCompliant (false)]
+//	[CLSCompliant (false)]
 	internal class XsdPositiveInteger : XsdNonNegativeInteger
 	{
+#if NET_2_0
+		public override XmlTypeCode TypeCode {
+			get { return XmlTypeCode.PositiveInteger; }
+		}
+#endif
+
 		// It returns decimal, instead of int or long.
 		// Maybe MS developers thought about big integer...
 		public override Type ValueType {
@@ -975,12 +1147,12 @@ namespace Mono.Xml.Schema
 		}
 
 		public override object ParseValue (string s,
-			XmlNameTable nameTable, XmlNamespaceManager nsmgr)
+			XmlNameTable nameTable, NSResolver nsmgr)
 		{
 			return ParseValueType (s, nameTable, nsmgr);
 		}
 
-		internal override ValueType ParseValueType (string s, XmlNameTable nameTable, XmlNamespaceManager nsmgr) 
+		internal override ValueType ParseValueType (string s, XmlNameTable nameTable, NSResolver nsmgr) 
 		{
 			return XmlConvert.ToDecimal (Normalize (s));
 		}
@@ -989,17 +1161,23 @@ namespace Mono.Xml.Schema
 	// xs:nonPositiveInteger
 	internal class XsdNonPositiveInteger : XsdInteger
 	{
+#if NET_2_0
+		public override XmlTypeCode TypeCode {
+			get { return XmlTypeCode.NonPositiveInteger; }
+		}
+#endif
+
 		public override Type ValueType {
 			get { return typeof (decimal); }
 		}
 
 		public override object ParseValue (string s,
-			XmlNameTable nameTable, XmlNamespaceManager nsmgr)
+			XmlNameTable nameTable, NSResolver nsmgr)
 		{
 			return ParseValueType (s, nameTable, nsmgr);
 		}
 
-		internal override ValueType ParseValueType (string s, XmlNameTable nameTable, XmlNamespaceManager nsmgr) 
+		internal override ValueType ParseValueType (string s, XmlNameTable nameTable, NSResolver nsmgr) 
 		{
 			return XmlConvert.ToDecimal (Normalize (s));
 		}
@@ -1008,18 +1186,24 @@ namespace Mono.Xml.Schema
 	// xs:negativeInteger
 	internal class XsdNegativeInteger : XsdNonPositiveInteger
 	{
+#if NET_2_0
+		public override XmlTypeCode TypeCode {
+			get { return XmlTypeCode.NegativeInteger; }
+		}
+#endif
+
 		public override Type ValueType {
 
 			get { return typeof (decimal); }
 		}
 
 		public override object ParseValue (string s,
-			XmlNameTable nameTable, XmlNamespaceManager nsmgr)
+			XmlNameTable nameTable, NSResolver nsmgr)
 		{
 			return ParseValueType (s, nameTable, nsmgr);
 		}
 
-		internal override ValueType ParseValueType (string s, XmlNameTable nameTable, XmlNamespaceManager nsmgr) 
+		internal override ValueType ParseValueType (string s, XmlNameTable nameTable, NSResolver nsmgr) 
 		{
 			return XmlConvert.ToDecimal (Normalize (s));
 		}
@@ -1028,6 +1212,12 @@ namespace Mono.Xml.Schema
 	// xs:float
 	internal class XsdFloat : XsdAnySimpleType
 	{
+#if NET_2_0
+		public override XmlTypeCode TypeCode {
+			get { return XmlTypeCode.Float; }
+		}
+#endif
+
 		internal XsdFloat ()
 		{
 			this.WhitespaceValue = XsdWhitespaceFacet.Collapse;
@@ -1056,12 +1246,12 @@ namespace Mono.Xml.Schema
 		}
 
 		public override object ParseValue (string s,
-			XmlNameTable nameTable, XmlNamespaceManager nsmgr)
+			XmlNameTable nameTable, NSResolver nsmgr)
 		{
 			return ParseValueType (s, nameTable, nsmgr);
 		}
 
-		internal override ValueType ParseValueType (string s, XmlNameTable nameTable, XmlNamespaceManager nsmgr) 
+		internal override ValueType ParseValueType (string s, XmlNameTable nameTable, NSResolver nsmgr) 
 		{
 			return XmlConvert.ToSingle (Normalize (s));
 		}
@@ -1109,17 +1299,23 @@ namespace Mono.Xml.Schema
 			get { return XsdOrderedFacet.Total; }
 		}
 
+#if NET_2_0
+		public override XmlTypeCode TypeCode {
+			get { return XmlTypeCode.Double; }
+		}
+#endif
+
 		public override Type ValueType {
 			get { return typeof (double); }
 		}
 
 		public override object ParseValue (string s,
-			XmlNameTable nameTable, XmlNamespaceManager nsmgr)
+			XmlNameTable nameTable, NSResolver nsmgr)
 		{
 			return ParseValueType (s, nameTable, nsmgr);
 		}
 
-		internal override ValueType ParseValueType (string s, XmlNameTable nameTable, XmlNamespaceManager nsmgr) 
+		internal override ValueType ParseValueType (string s, XmlNameTable nameTable, NSResolver nsmgr) 
 		{
 			return XmlConvert.ToDouble (Normalize (s));
 		}
@@ -1148,12 +1344,18 @@ namespace Mono.Xml.Schema
 		{
 		}
 
+#if NET_2_0
+		public override XmlTypeCode TypeCode {
+			get { return XmlTypeCode.Base64Binary; }
+		}
+#endif
+
 		public override Type ValueType {
 			get { return typeof (byte[]); }
 		}
 
 		public override object ParseValue (string s,
-			XmlNameTable nameTable, XmlNamespaceManager nsmgr)
+			XmlNameTable nameTable, NSResolver nsmgr)
 		{
 		        // If it isnt ASCII it isnt valid base64 data
 			byte[] inArr = new System.Text.ASCIIEncoding().GetBytes(s);
@@ -1219,7 +1421,7 @@ namespace Mono.Xml.Schema
 		}
 
 
-		internal override ValueType ParseValueType (string s, XmlNameTable nameTable, XmlNamespaceManager nsmgr) 
+		internal override ValueType ParseValueType (string s, XmlNameTable nameTable, NSResolver nsmgr) 
 		{
 			return new StringValueType (ParseValue (s, nameTable, nsmgr) as string);
 		}
@@ -1238,6 +1440,12 @@ namespace Mono.Xml.Schema
 			get { return stringAllowedFacets; } 
 		}
 
+#if NET_2_0
+		public override XmlTypeCode TypeCode {
+			get { return XmlTypeCode.HexBinary; }
+		}
+#endif
+
 		public override XmlTokenizedType TokenizedType {
 			get { return XmlTokenizedType.None; }
 		}
@@ -1247,7 +1455,7 @@ namespace Mono.Xml.Schema
 		}
 
 		public override object ParseValue (string s,
-			XmlNameTable nameTable, XmlNamespaceManager nsmgr)
+			XmlNameTable nameTable, NSResolver nsmgr)
 		{
 			return XmlConvert.FromBinHexString (Normalize (s));
 		}
@@ -1256,7 +1464,7 @@ namespace Mono.Xml.Schema
 		  return s.Length / 2 + s.Length % 2 ;   // Not sure if odd lengths are even allowed
     }
 
-		internal override ValueType ParseValueType (string s, XmlNameTable nameTable, XmlNamespaceManager nsmgr) 
+		internal override ValueType ParseValueType (string s, XmlNameTable nameTable, NSResolver nsmgr) 
 		{
 			return new StringValueType (ParseValue (s, nameTable, nsmgr) as string);
 		}
@@ -1277,13 +1485,19 @@ namespace Mono.Xml.Schema
 			get { return XmlTokenizedType.QName; }
 		}
 
+#if NET_2_0
+		public override XmlTypeCode TypeCode {
+			get { return XmlTypeCode.QName; }
+		}
+#endif
+
 		public override Type ValueType {
 			get { return typeof (XmlQualifiedName); }
 		}
 
 		// ParseValue () method is as same as that of xs:string
 		public override object ParseValue (string s,
-			XmlNameTable nameTable, XmlNamespaceManager nsmgr)
+			XmlNameTable nameTable, NSResolver nsmgr)
 		{
 			if (nameTable == null)
 				throw new ArgumentNullException ("name table");
@@ -1297,7 +1511,7 @@ namespace Mono.Xml.Schema
 				false));
 		}
 
-		internal override ValueType ParseValueType (string s, XmlNameTable nameTable, XmlNamespaceManager nsmgr) 
+		internal override ValueType ParseValueType (string s, XmlNameTable nameTable, NSResolver nsmgr) 
 		{
 			return new QNameValueType (ParseValue (s, nameTable, nsmgr) as XmlQualifiedName);
 		}
@@ -1323,17 +1537,23 @@ namespace Mono.Xml.Schema
 #endif
 		}
 
+#if NET_2_0
+		public override XmlTypeCode TypeCode {
+			get { return XmlTypeCode.Boolean; }
+		}
+#endif
+
 		public override Type ValueType {
 			get { return typeof (bool); }
 		}
 
 		public override object ParseValue (string s,
-			XmlNameTable nameTable, XmlNamespaceManager nsmgr)
+			XmlNameTable nameTable, NSResolver nsmgr)
 		{
 			return ParseValueType (s, nameTable, nsmgr);
 		}
 
-		internal override ValueType ParseValueType (string s, XmlNameTable nameTable, XmlNamespaceManager nsmgr) 
+		internal override ValueType ParseValueType (string s, XmlNameTable nameTable, NSResolver nsmgr) 
 		{
 			return XmlConvert.ToBoolean (this.Normalize (s));
 		}
@@ -1363,17 +1583,23 @@ namespace Mono.Xml.Schema
 			get { return XmlTokenizedType.CDATA; }
 		}
 
+#if NET_2_0
+		public override XmlTypeCode TypeCode {
+			get { return XmlTypeCode.AnyUri; }
+		}
+#endif
+
 		public override Type ValueType {
 			get { return typeof (Uri); }
 		}
 
 		public override object ParseValue (string s,
-			XmlNameTable nameTable, XmlNamespaceManager nsmgr)
+			XmlNameTable nameTable, NSResolver nsmgr)
 		{
 			return ParseValueType (s, nameTable, nsmgr);
 		}
 
-		internal override ValueType ParseValueType (string s, XmlNameTable nameTable, XmlNamespaceManager nsmgr) 
+		internal override ValueType ParseValueType (string s, XmlNameTable nameTable, NSResolver nsmgr) 
 		{
 			return new UriValueType (Normalize (s));
 		}
@@ -1395,17 +1621,23 @@ namespace Mono.Xml.Schema
 			get { return XmlTokenizedType.CDATA; }
 		}
 
+#if NET_2_0
+		public override XmlTypeCode TypeCode {
+			get { return XmlTypeCode.Duration; }
+		}
+#endif
+
 		public override Type ValueType {
 			get { return typeof (TimeSpan); }
 		}
 
 		public override object ParseValue (string s,
-			XmlNameTable nameTable, XmlNamespaceManager nsmgr)
+			XmlNameTable nameTable, NSResolver nsmgr)
 		{
 			return ParseValueType (s, nameTable, nsmgr);
 		}
 
-		internal override ValueType ParseValueType (string s, XmlNameTable nameTable, XmlNamespaceManager nsmgr) 
+		internal override ValueType ParseValueType (string s, XmlNameTable nameTable, NSResolver nsmgr) 
 		{
 			return XmlConvert.ToTimeSpan (Normalize (s));
 		}
@@ -1465,17 +1697,23 @@ namespace Mono.Xml.Schema
 			get { return XmlTokenizedType.CDATA; }
 		}
 
+#if NET_2_0
+		public override XmlTypeCode TypeCode {
+			get { return XmlTypeCode.DateTime; }
+		}
+#endif
+
 		public override Type ValueType {
 			get { return typeof (DateTime); }
 		}
 
 		public override object ParseValue (string s,
-			XmlNameTable nameTable, XmlNamespaceManager nsmgr)
+			XmlNameTable nameTable, NSResolver nsmgr)
 		{
 			return ParseValueType (s, nameTable, nsmgr);
 		}
 
-		internal override ValueType ParseValueType (string s, XmlNameTable nameTable, XmlNamespaceManager nsmgr) 
+		internal override ValueType ParseValueType (string s, XmlNameTable nameTable, NSResolver nsmgr) 
 		{
 			return XmlConvert.ToDateTime (Normalize (s));
 		}
@@ -1529,17 +1767,23 @@ namespace Mono.Xml.Schema
 			get { return XmlTokenizedType.CDATA; }
 		}
 
+#if NET_2_0
+		public override XmlTypeCode TypeCode {
+			get { return XmlTypeCode.Date; }
+		}
+#endif
+
 		public override Type ValueType {
 			get { return typeof (DateTime); }
 		}
 
 		public override object ParseValue (string s,
-			XmlNameTable nameTable, XmlNamespaceManager nsmgr)
+			XmlNameTable nameTable, NSResolver nsmgr)
 		{
 			return ParseValueType (s, nameTable, nsmgr);
 		}
 
-		internal override ValueType ParseValueType (string s, XmlNameTable nameTable, XmlNamespaceManager nsmgr) 
+		internal override ValueType ParseValueType (string s, XmlNameTable nameTable, NSResolver nsmgr) 
 		{
 			return DateTime.ParseExact (Normalize (s), "yyyy-MM-dd", null);
 		}
@@ -1610,17 +1854,23 @@ namespace Mono.Xml.Schema
 			get { return XmlTokenizedType.CDATA; }
 		}
 
+#if NET_2_0
+		public override XmlTypeCode TypeCode {
+			get { return XmlTypeCode.Time; }
+		}
+#endif
+
 		public override Type ValueType {
 			get { return typeof (DateTime); }
 		}
 
 		public override object ParseValue (string s,
-			XmlNameTable nameTable, XmlNamespaceManager nsmgr)
+			XmlNameTable nameTable, NSResolver nsmgr)
 		{
 			return ParseValueType (s, nameTable, nsmgr);
 		}
 
-		internal override ValueType ParseValueType (string s, XmlNameTable nameTable, XmlNamespaceManager nsmgr) 
+		internal override ValueType ParseValueType (string s, XmlNameTable nameTable, NSResolver nsmgr) 
 		{
 			return DateTime.ParseExact (Normalize (s), timeFormats, null, DateTimeStyles.None);
 		}
@@ -1660,17 +1910,23 @@ namespace Mono.Xml.Schema
 			get { return durationAllowedFacets; } 
 		}
 		
+#if NET_2_0
+		public override XmlTypeCode TypeCode {
+			get { return XmlTypeCode.GYearMonth; }
+		}
+#endif
+
 		public override Type ValueType {
 			get { return typeof (DateTime); }
 		}
 
 		public override object ParseValue (string s,
-			XmlNameTable nameTable, XmlNamespaceManager nsmgr)
+			XmlNameTable nameTable, NSResolver nsmgr)
 		{
 			return ParseValueType (s, nameTable, nsmgr);
 		}
 
-		internal override ValueType ParseValueType (string s, XmlNameTable nameTable, XmlNamespaceManager nsmgr) 
+		internal override ValueType ParseValueType (string s, XmlNameTable nameTable, NSResolver nsmgr) 
 		{
 			return DateTime.ParseExact (Normalize (s), "yyyy-MM", null);
 		}
@@ -1705,17 +1961,23 @@ namespace Mono.Xml.Schema
 			get { return durationAllowedFacets; } 
 		}
 		
+#if NET_2_0
+		public override XmlTypeCode TypeCode {
+			get { return XmlTypeCode.GMonthDay; }
+		}
+#endif
+
 		public override Type ValueType {
 			get { return typeof (DateTime); }
 		}
 
 		public override object ParseValue (string s,
-			XmlNameTable nameTable, XmlNamespaceManager nsmgr)
+			XmlNameTable nameTable, NSResolver nsmgr)
 		{
 			return ParseValueType (s, nameTable, nsmgr);
 		}
 
-		internal override ValueType ParseValueType (string s, XmlNameTable nameTable, XmlNamespaceManager nsmgr) 
+		internal override ValueType ParseValueType (string s, XmlNameTable nameTable, NSResolver nsmgr) 
 		{
 			return DateTime.ParseExact (Normalize (s), "--MM-dd", null);
 		}
@@ -1750,19 +2012,25 @@ namespace Mono.Xml.Schema
 			get { return durationAllowedFacets; } 
 		}
 		
-    public override Type ValueType {
+#if NET_2_0
+		public override XmlTypeCode TypeCode {
+			get { return XmlTypeCode.GYear; }
+		}
+#endif
+
+		public override Type ValueType {
 			get { return typeof (DateTime); }
 		}
 
 		// LAMESPEC: XML Schema Datatypes allows leading '-' to identify B.C. years,
 		// but CLR DateTime does not allow such expression.
 		public override object ParseValue (string s,
-			XmlNameTable nameTable, XmlNamespaceManager nsmgr)
+			XmlNameTable nameTable, NSResolver nsmgr)
 		{
 			return ParseValueType (s, nameTable, nsmgr);
 		}
 
-		internal override ValueType ParseValueType (string s, XmlNameTable nameTable, XmlNamespaceManager nsmgr) 
+		internal override ValueType ParseValueType (string s, XmlNameTable nameTable, NSResolver nsmgr) 
 		{
 			return DateTime.ParseExact (Normalize(s), "yyyy", null);
 		}
@@ -1797,17 +2065,23 @@ namespace Mono.Xml.Schema
 			get { return durationAllowedFacets; } 
 		}
 		
+#if NET_2_0
+		public override XmlTypeCode TypeCode {
+			get { return XmlTypeCode.GMonth; }
+		}
+#endif
+
 		public override Type ValueType {
 			get { return typeof (DateTime); }
 		}
 
 		public override object ParseValue (string s,
-			XmlNameTable nameTable, XmlNamespaceManager nsmgr)
+			XmlNameTable nameTable, NSResolver nsmgr)
 		{
 			return ParseValueType (s, nameTable, nsmgr);
 		}
 
-		internal override ValueType ParseValueType (string s, XmlNameTable nameTable, XmlNamespaceManager nsmgr) 
+		internal override ValueType ParseValueType (string s, XmlNameTable nameTable, NSResolver nsmgr) 
 		{
 			return DateTime.ParseExact (Normalize(s), "--MM--", null);
 		}
@@ -1842,17 +2116,23 @@ namespace Mono.Xml.Schema
 			get { return durationAllowedFacets; } 
 		}
 		
+#if NET_2_0
+		public override XmlTypeCode TypeCode {
+			get { return XmlTypeCode.GDay; }
+		}
+#endif
+
 		public override Type ValueType {
 			get { return typeof (DateTime); }
 		}
 
 		public override object ParseValue (string s,
-			XmlNameTable nameTable, XmlNamespaceManager nsmgr)
+			XmlNameTable nameTable, NSResolver nsmgr)
 		{
 			return ParseValueType (s, nameTable, nsmgr);
 		}
 
-		internal override ValueType ParseValueType (string s, XmlNameTable nameTable, XmlNamespaceManager nsmgr) 
+		internal override ValueType ParseValueType (string s, XmlNameTable nameTable, NSResolver nsmgr) 
 		{
 			return DateTime.ParseExact (Normalize(s), "---dd", null);
 		}

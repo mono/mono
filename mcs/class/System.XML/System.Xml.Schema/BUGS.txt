@@ -1,4 +1,4 @@
-Bugs in Implementation:
+Bugs in Mono Implementation of XmlSchema:
 
 1.
 None of the XmlSchemaObjects except the XmlSchema populate XmlSerializerNamespaces.
@@ -16,7 +16,11 @@ about unique particle attribution. Appendix H tried to describe about
 that, but it is too incomplete.
 
 5.
-Currently ContentTypeParticle was not eliminated "pointless" (see 3.9.6 of
-xml schema part 1) XmlSchemaChoice, like MS.NET. It causes incorrect DBR
-validation.
+Currently ContentTypeParticle does not eliminate "pointless" (see 3.9.6 of
+xml schema structures spec) XmlSchemaChoice, like MS.NET. It causes
+incorrect DBR validation.
+
+6.
+See MS-BUGS.txt 008 and 014. There are some correction and we should fix our
+implementation based on those wrong premises.
 

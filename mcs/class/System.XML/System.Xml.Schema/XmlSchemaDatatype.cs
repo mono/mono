@@ -48,15 +48,53 @@ namespace System.Xml.Schema
 			get { return WhitespaceValue; }
 		}
 
+#if NET_2_0
+		public abstract XmlTypeCode TypeCode { get; }
+
+		public virtual XmlSchemaDatatypeVariety Variety {
+			get {
+				return XmlSchemaDatatypeVariety.Atomic;
+			}
+		}
+#endif
+
 		public abstract XmlTokenizedType TokenizedType {  get; }
 		public abstract Type ValueType {  get; }
 
 		// Methods
+#if NET_2_0
+		[MonoTODO]
+		public virtual object ChangeType (object value, Type targetType)
+		{
+			return ChangeType (value, targetType, null);
+		}
+
+		[MonoTODO]
+		public virtual object ChangeType (object value, Type targetType, IXmlNamespaceResolver nsResolver)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public virtual bool IsDerivedFrom (XmlSchemaDatatype datatype)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
+
+#if NET_2_0
+		public abstract object ParseValue (string s, 
+			XmlNameTable nameTable, IXmlNamespaceResolver nsmgr);
+
+		internal abstract ValueType ParseValueType (string s,
+			XmlNameTable nameTable, IXmlNamespaceResolver nsmgr);
+#else
 		public abstract object ParseValue (string s, 
 			XmlNameTable nameTable, XmlNamespaceManager nsmgr);
 
 		internal abstract ValueType ParseValueType (string s,
 			XmlNameTable nameTable, XmlNamespaceManager nsmgr);
+#endif
 
 		static char [] wsChars = new char [] {' ', '\t', '\n', '\r'};
 
