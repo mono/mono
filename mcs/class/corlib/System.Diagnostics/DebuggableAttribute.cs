@@ -3,6 +3,7 @@
 //
 // Author:
 //   Nick Drochak II (ndrochak@gol.com)
+//   Ben S. Stahlhood II (bstahlhood@gmail.com)
 //
 // (C) 2001 Nick Drochak II
 //
@@ -37,12 +38,44 @@ namespace System.Diagnostics {
 
 		private bool JITTrackingEnabledFlag;
 		private bool JITOptimizerDisabledFlag;
+#if NET_2_0
+		[Flags]
+		public enum DebuggingModes {
+			// Fields
+			None = 0,
+			Default = 1,
+			IgnoreSymbolStoreSequencePoints = 2,
+			EnableEditAndContinue = 4,
+			DisableOptimizations = 256
+		}
+
+		private DebuggingModes debuggingModes = DebuggingModes.None;
+#endif
 
 		// Public Instance Constructors
-		public DebuggableAttribute(bool isJITTrackingEnabled, bool isJITOptimizerDisabled) {
+		public DebuggableAttribute(bool isJITTrackingEnabled, bool isJITOptimizerDisabled)
+		{
 			JITTrackingEnabledFlag = isJITTrackingEnabled;
 			JITOptimizerDisabledFlag = isJITOptimizerDisabled;
+
+#if NET_2_0
+			if (isJITTrackingEnabled) 
+				debuggingModes |= DebuggingModes.Default;
+			
+			if (isJITOptimizerDisabled) 
+                               debuggingModes |= DebuggingModes.DisableOptimizations;
+#endif
 		}
+
+#if NET_2_0
+		public DebuggableAttribute(DebuggingModes modes) 
+		{
+			debuggingModes = modes;
+			JITTrackingEnabledFlag = (debuggingModes & DebuggingModes.Default) != 0;
+			JITOptimizerDisabledFlag = (debuggingModes & DebuggingModes.DisableOptimizations) != 0;
+		}
+#endif
+		
 		
 		// Public Instance Properties
 		public bool IsJITTrackingEnabled { get { return JITTrackingEnabledFlag; } }
