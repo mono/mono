@@ -89,17 +89,16 @@ namespace System {
 				throw new ArgumentException ("The method should be static.", "info");
 
 			ParameterInfo[] delargs = type.GetMethod ("Invoke").GetParameters ();
-			Type[] delargtypes = new Type [delargs.Length];
 			ParameterInfo[] args = info.GetParameters ();
 
-			for (int i=0; i<delargs.Length; i++)
-				delargtypes [i] = delargs [i].ParameterType;
-			if (args.Length != delargtypes.Length)
+			if (args.Length != delargs.Length)
 				throw new ArgumentException ("info");
-			for (int i=0; i<delargs.Length; i++) {
-				if (delargtypes [i] != args [i].ParameterType)
+			
+			int length = delargs.Length;
+			for (int i = 0; i < length; i++)
+				if (delargs [i].ParameterType != args [i].ParameterType)
 					throw new ArgumentException ("info");
-			}
+
 			return CreateDelegate_internal (type, null, info);
 		}
 

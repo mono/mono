@@ -2,6 +2,11 @@
 
 	* DateTime.cs: Handle '-' as a date separator when parsing formats.
 
+2003-10-20  Duncan Mak  <duncan@ximian.com>
+
+	* Delegate.cs (CreateDelegate): Avoid creating an extra Type array
+	and merge the two iterations into one.
+
 2003-10-15  Zoltan Varga  <vargaz@freemail.hu>
 
 	* TypedReference.cs: Add new field used by the runtime.
