@@ -1,3 +1,16 @@
+2004-01-06  Miguel de Icaza  <miguel@ximian.com>
+
+	* appdomain.c: Use messages in NotImplementedException.
+
+	* exception.c (mono_get_exception_not_implemented): Now this takes
+	a message argument.
+
+	* marshal.c (emit_str_to_ptr_conv): g_warning and throw an
+	exception instead of g_asserting an aborting when something is not
+	implemented.
+
+	Add some inline docs.
+
 2004-01-05  Zoltan Varga  <vargaz@freemail.hu>
 
 	* reflection.h: Update after changes to object layout.
