@@ -1,5 +1,10 @@
 2005-01-20  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* Numeric.cs : Fixed ToSameType(). It should let conversion result to
+	  reference values.
+
+2005-01-20  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* Parser.jay : let's use debug flag when MONO_DEBUG_SQLEXPRESSIONS
 	  environment variable is set.
 	  Fixed substring() function. C# cast does not allow implicit

@@ -71,9 +71,9 @@ namespace Mono.Data.SqlExpressions {
 
 			// is it ok to make such assumptions about the order of an enum?
 			if (tc1 < tc2)
-				Convert.ChangeType (o1, tc2);
+				o1 = (IConvertible) Convert.ChangeType (o1, tc2);
 			else
-				Convert.ChangeType (o2, tc1);
+				o2 = (IConvertible) Convert.ChangeType (o2, tc1);
 		}
 		
 		internal static IConvertible Add (IConvertible o1, IConvertible o2)
