@@ -1,3 +1,8 @@
+2002-02-07  Nick Drochak  <ndrochak@gol.com>
+
+	* CodeGroup.cs: Went as far as I can for now.  Need to look at
+	the (To|From)XML methods when I understand PolicyLevels better.
+
 2002-02-02  Nick Drochak  <ndrochak@gol.com>
 
 	* CodeGroup.cs: Not done, but checking in now just in case
