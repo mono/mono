@@ -1,3 +1,8 @@
+2002-08-28  Nick Drochak  <ndrochak@gol.com>
+
+	* interp.c: check and throw exception if needed for overflow on 
+	multiplication of integer types.
+
 2002-08-07  Dietmar Maurer  <dietmar@ximian.com>
 
 	* interp.c (interp_walk_stack): removed the createdelegate icall
