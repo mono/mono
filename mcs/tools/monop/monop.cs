@@ -34,7 +34,7 @@ class MonoP {
 		o.WriteLine ();
 		
 		foreach (MethodInfo m in t.GetMethods ()) {
-			if ((m.Attributes & MethodAttributes.HideBySig) != 0)
+			if ((m.Attributes & MethodAttributes.SpecialName) != 0)
 				continue;
 			
 			o.WriteLine (PPMethod (m));
