@@ -2,6 +2,7 @@
 
 	* Decimal.cs: Fixed remainder (and optimized some cases not to call 
 	unmanaged code). Simplified divide. Removed workaround for bug #59793.
+	Fixed GetHashCode to return different result for X and -X.
 
 2004-06-08  Atsushi Enomoto  <atsushi@ximian.com>
 

@@ -220,10 +220,10 @@ namespace System
                 throw new OverflowException(Locale.GetText ("Overflow on subtracting decimal numbers ("+result+")"));
         }
 
-        public override int GetHashCode() 
-        {
-            return (int)lo32;
-        }
+	public override int GetHashCode () 
+	{
+		return (int) (ss32 ^ hi32 ^ lo32 ^ mid32);
+	}
 
         public static Decimal operator +(Decimal d1, Decimal d2)
         {
