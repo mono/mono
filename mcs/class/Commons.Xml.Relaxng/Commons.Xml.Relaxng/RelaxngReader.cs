@@ -481,7 +481,8 @@ namespace Commons.Xml.Relaxng
 		{
 			RngExternalRef r = new RngExternalRef ();
 			expect ("externalRef");
-			r.Href = GetAttribute ("href");
+			string href = GetAttribute ("href");
+			r.Href = Util.ResolveUri (BaseURI, href);
 			r.NSContext = NS;
 			if (!IsEmptyElement) {
 				Read ();
