@@ -1,3 +1,8 @@
+2004-05-10  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlTextWriter.cs : comment not in the content state is indented.
+	  This fixes bug #58247.
+
 2004-05-07  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* XmlTextWriter.cs: In WriteStartAttribute, when the prefix is xmlns and
