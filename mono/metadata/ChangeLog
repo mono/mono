@@ -1,3 +1,16 @@
+2003-11-16  Zoltan Varga  <vargaz@freemail.hu>
+
+	* assembly.c (mono_assembly_fill_assembly_name): New function to
+	fill out the MonoAssemblyName structure.
+	(mono_assembly_open): Use the new function.
+
+	* icall.c (fill_reflection_assembly_name): New helper function.
+
+	* icall.c (ves_icall_System_Reflection_Assembly_FillName): Use the
+	new function.
+
+	* icall.c (ves_icall_System_Reflection_Assembly_InternalGetAssemblyName): New icall.
+
 2003-11-15  Martin Baulig  <martin@ximian.com>
 
 	* class.c (mono_class_is_open_constructed_type): New public
