@@ -22,12 +22,11 @@ namespace System.Data.Common
 
 		public const string DefaultSourceTableName = "default";
 
-		IDbCommand selectCommand;
-		IDbCommand insertCommand;
-		IDbCommand deleteCommand;
-		IDbCommand updateCommand;
-
-		bool isDirty;
+		protected IDbCommand selectCommand;
+		protected IDbCommand insertCommand;
+		protected IDbCommand deleteCommand;
+		protected IDbCommand updateCommand;
+		protected bool isDirty;
 
 		#endregion
 
@@ -71,30 +70,28 @@ namespace System.Data.Common
 
                 public override int Fill (DataSet dataSet)
                 {
-			return this.Fill (dataSet, "Table", selectCommand.ExecuteReader (), 0, 0);
+			return Fill (dataSet, "Table", selectCommand.ExecuteReader (), 0, 0);
                 }
 
-		[MonoTODO]
-		public int Fill (DataTable dt) 
+		public int Fill (DataTable dataTable) 
 		{
-			throw new NotImplementedException ();
+			return Fill (dataTable, selectCommand.ExecuteReader ());
 		}
 
 		public int Fill (DataSet dataSet, string srcTable) 
 		{
-			return this.Fill (dataSet, srcTable, selectCommand.ExecuteReader (), 0, 0);
+			return Fill (dataSet, srcTable, selectCommand.ExecuteReader (), 0, 0);
 		}
 
 		[MonoTODO]
-		protected virtual int Fill (DataTable dt, IDataReader idr) 
+		protected virtual int Fill (DataTable dataTable, IDataReader dataReader) 
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
-		protected virtual int Fill (DataTable dt, IDbCommand idc, CommandBehavior behavior) 
+		protected virtual int Fill (DataTable dataTable, IDbCommand command, CommandBehavior behavior) 
 		{
-			throw new NotImplementedException ();
+			return Fill (dataTable, command.ExecuteReader (behavior));
 		}
 
 		public int Fill (DataSet dataSet, int startRecord, int maxRecords, string srcTable) 
@@ -171,38 +168,37 @@ namespace System.Data.Common
                         return changeCount;
 		}
 
+		protected virtual int Fill (DataSet dataSet, int startRecord, int maxRecords, string srcTable, IDbCommand command, CommandBehavior behavior) 
+		{
+			return Fill (dataSet, srcTable, command.ExecuteReader (behavior), startRecord, maxRecords);
+		}
+
 		[MonoTODO]
-		protected virtual int Fill (DataSet dataSet, int startRecord, int maxRecords, string srcTable, IDbCommand idc, CommandBehavior behavior) 
+		public override DataTable[] FillSchema (DataSet dataSet, SchemaType schemaType) 
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public override DataTable[] FillSchema (DataSet ds, SchemaType type) 
+		public DataTable FillSchema (DataTable dataTable, SchemaType schemaType) 
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public DataTable FillSchema (DataTable dt, SchemaType type) 
+		public DataTable[] FillSchema (DataSet dataSet, SchemaType schemaType, string srcTable) 
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public DataTable[] FillSchema (DataSet ds, SchemaType type, string s) 
+		protected virtual DataTable FillSchema (DataTable dataTable, SchemaType schemaType, IDbCommand command, CommandBehavior behavior) 
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		protected virtual DataTable FillSchema (DataTable dt, SchemaType type, IDbCommand idc, CommandBehavior behavior) 
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		protected virtual DataTable[] FillSchema (DataSet ds, SchemaType type, IDbCommand idc, string s, CommandBehavior behavior) 
+		protected virtual DataTable[] FillSchema (DataSet dataSet, SchemaType schemaType, IDbCommand command, string srcTable, CommandBehavior behavior) 
 		{
 			throw new NotImplementedException ();
 		}

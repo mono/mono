@@ -37,7 +37,8 @@ namespace System.Data
 		public virtual void Add (DataTable table) {
 			DataTable[] tmp = new DataTable[size + 1];
 
-			Array.Copy (tables, tmp, size);
+			if (size > 0)
+				Array.Copy (tables, tmp, size);
 			size++;
 			tables = tmp;
 			tables[size - 1] = table;

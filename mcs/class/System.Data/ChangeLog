@@ -1,4 +1,17 @@
 2002-05-13  Tim Coleman
+	* System.Data/DataTableCollection.cs:
+		Fix an issue when adding a DataTable and size == 0.
+		Now explicitly checks if size > 0 before doing Array.Copy ()
+	* System.Data.Common/DbDataAdapter.cs:
+		Move closer to a working implementation.
+		Make the IDbCommand fields protected so that they can
+		be inherited.
+	* System.Data.SqlClient/SqlDataAdapter.cs:
+		This should inherit the IDbCommands instead of having its
+		own.  An explicit cast is used to force conversion between
+		IDbCommand and SqlCommand
+
+2002-05-13  Tim Coleman
 	* System.Data.Common/DataTableMappingCollection.cs:
 		Some implementation to allow progress with DbDataAdapter
 

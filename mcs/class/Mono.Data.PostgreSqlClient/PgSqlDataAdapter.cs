@@ -4,8 +4,10 @@
 // Author:
 //   Rodrigo Moya (rodrigo@ximian.com)
 //   Daniel Morgan (danmorg@sc.rr.com)
+//   Tim Coleman (tim@timcoleman.com)
 //
 // (C) Ximian, Inc 2002
+// Copyright (C) 2002 Tim Coleman
 //
 
 using System;
@@ -22,17 +24,6 @@ namespace System.Data.SqlClient
 	/// </summary>
 	public sealed class SqlDataAdapter : DbDataAdapter 
 	{
-		#region Fields
-
-		SqlCommand deleteCommand;
-		SqlCommand insertCommand;
-		SqlCommand selectCommand;
-		SqlCommand updateCommand;
-
-		bool isDirty;  // indicates if query has changed since last SELECT
-
-		#endregion
-
 		#region Constructors
 		
 		public SqlDataAdapter () 	
@@ -40,7 +31,7 @@ namespace System.Data.SqlClient
 		{
 		}
 
-		public SqlDataAdapter (SqlCommand selectCommand) : base ()
+		public SqlDataAdapter (SqlCommand selectCommand) 
 		{
 			this.deleteCommand = new SqlCommand ();
 			this.insertCommand = new SqlCommand ();
@@ -64,17 +55,17 @@ namespace System.Data.SqlClient
 		#region Properties
 
 		public new SqlCommand DeleteCommand {
-			get { return deleteCommand; }
+			get { return (SqlCommand)deleteCommand; }
 			set { deleteCommand = value; }
 		}
 
 		public new SqlCommand InsertCommand {
-			get { return insertCommand; }
+			get { return (SqlCommand)insertCommand; }
 			set { insertCommand = value; }
 		}
 
 		public new SqlCommand SelectCommand {
-			get { return selectCommand; }
+			get { return (SqlCommand)selectCommand; }
 			set { 
 				this.isDirty = true;
 				selectCommand = value; 
@@ -82,7 +73,7 @@ namespace System.Data.SqlClient
 		}
 
 		public new SqlCommand UpdateCommand {
-			get { return updateCommand; }
+			get { return (SqlCommand)updateCommand; }
 			set { updateCommand = value; }
 		}
 
