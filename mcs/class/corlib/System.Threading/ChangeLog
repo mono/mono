@@ -1,3 +1,9 @@
+
+Wed Aug 20 12:01:36 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* Thread.cs: put all the fields at the start and add
+	more fields needed by the runtime.
+
 2003-08-14  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* Thread.cs: SetData() method: use Hashtable.Contains to check

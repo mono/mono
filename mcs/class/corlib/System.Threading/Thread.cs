@@ -34,6 +34,12 @@ namespace System.Threading
 		private IntPtr start_notify;
 		private IntPtr stack_ptr;
 		private IntPtr static_data;
+		private IntPtr jit_data;
+		private IntPtr lock_data;
+		
+		private ThreadStart threadstart;
+		private string thread_name=null;
+		
 		
 		public static Context CurrentContext {
 			get {
@@ -215,8 +221,6 @@ namespace System.Threading
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern IntPtr Thread_internal(ThreadStart start);
 
-		private ThreadStart threadstart;
-		
 		public Thread(ThreadStart start) {
 			if(start==null) {
 				throw new ArgumentNullException("Null ThreadStart");
@@ -319,8 +323,6 @@ namespace System.Threading
 			}
 		}
 
-		private string thread_name=null;
-		
 		public string Name {
 			get {
 				return(thread_name);
