@@ -16,6 +16,12 @@ namespace System.Xml.Schema
 		private ValidationEventArgs()
 		{}
 
+		internal ValidationEventArgs(XmlSchemaException ex, string message, XmlSeverityType severity)
+		{
+			this.exception = ex;
+			this.message = message;
+			this.severity = severity;
+		}
 		public XmlSchemaException Exception 
 		{
 			get{ return exception; }
@@ -29,9 +35,4 @@ namespace System.Xml.Schema
 			get{ return severity; }
 		}
 	}
-	/// <summary>
-	/// 
-	/// </summary>
-	public delegate void ValidationEventHandler(object sender,ValidationEventArgs e);
-
 }

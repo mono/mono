@@ -21,7 +21,7 @@ namespace System.Xml.Schema
 		[MonoTODO]
 		protected XmlSchemaException(SerializationInfo info, StreamingContext context){}
 		
-		protected XmlSchemaException(string message, int lineNumber, int linePosition,
+		internal XmlSchemaException(string message, int lineNumber, int linePosition,
 			XmlSchemaObject sourceObject, string sourceUri, Exception innerException)
 			: base(message, innerException)
 		{
@@ -30,7 +30,7 @@ namespace System.Xml.Schema
 			this.sourceObj		= sourceObject;
 			this.sourceUri		= sourceUri;
 		}
-		protected XmlSchemaException(string message, XmlSchemaObject sourceObject,
+		internal XmlSchemaException(string message, XmlSchemaObject sourceObject,
 			Exception innerException)
 			: base(message, innerException)
 		{
@@ -51,10 +51,6 @@ namespace System.Xml.Schema
 		public int LinePosition 
 		{ 
 			get{ return this.linePosition;} 
-		}
-		public override string Message 
-		{  
-			get{ return this.Message; } 
 		}
 		public XmlSchemaObject SourceSchemaObject 
 		{

@@ -119,5 +119,17 @@ namespace System.Xml.Schema
 			get{ return contentTypeParticle; }
 		}
 		#endregion
+
+		[MonoTODO]
+		internal bool Compile(ValidationEventHandler h, XmlSchemaInfo info)
+		{
+			return false;
+		}
+		
+		[MonoTODO]
+		internal bool Validate(ValidationEventHandler h)
+		{
+			return false;
+		}
 	}
 }

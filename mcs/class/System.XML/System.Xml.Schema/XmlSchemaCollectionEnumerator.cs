@@ -9,7 +9,7 @@ namespace System.Xml.Schema
 	/// <summary>
 	/// Summary description for XmlSchemaCollectionEnumerator.
 	/// </summary>
-	public sealed class XmlSchemaCollectionEnumerator : IEnumerator
+	public class XmlSchemaCollectionEnumerator : IEnumerator
 	{
 		private IDictionaryEnumerator xenum;
 		internal XmlSchemaCollectionEnumerator(Hashtable htable)

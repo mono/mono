@@ -15,9 +15,7 @@ namespace System.Xml.Schema
 	public class XmlSchema : XmlSchemaObject
 	{
 		//public constants
-		[XmlIgnore]
 		public const string InstanceNamespace = "http://www.w3.org/2001/XMLSchema-instance";
-		[XmlIgnore]
 		public const string Namespace = "http://www.w3.org/2001/XMLSchema";
 
 		//private fields
@@ -40,6 +38,9 @@ namespace System.Xml.Schema
 		private string version;
 		private string language;
 
+		// Compiler specific things
+		private XmlSchemaInfo info;
+
 		public XmlSchema()
 		{
 			attributeFormDefault= XmlSchemaForm.None;
@@ -49,6 +50,12 @@ namespace System.Xml.Schema
 			includes			= new XmlSchemaObjectCollection();
 			isCompiled			= false;
 			items				= new XmlSchemaObjectCollection();
+			attributeGroups		= new XmlSchemaObjectTable();
+			attributes			= new XmlSchemaObjectTable();
+			elements			= new XmlSchemaObjectTable();
+			groups				= new XmlSchemaObjectTable();
+			notations			= new XmlSchemaObjectTable();
+			schemaTypes			= new XmlSchemaObjectTable();
 		}
 
 		#region Properties
@@ -189,11 +196,150 @@ namespace System.Xml.Schema
 		#endregion
 
 		// Methods
+		/// <summary>
+		/// This compile method does two things:
+		/// 1. It compiles and fills the PSVI dataset
+		/// 2. Validates the schema by calling Validate method.
+		/// Every XmlSchemaObject has a Compile Method which gets called.
+		/// </summary>
 		[MonoTODO]
-		public void Compile(ValidationEventHandler validationEventHandler)
+		public void Compile(ValidationEventHandler handler)
 		{
-			attributeGroups = null;
+			// Create the xmlschemainfo object which we use to pass variables like targetnamespace;
+			info = new XmlSchemaInfo();
+			info.targetNS = this.TargetNamespace;
+			info.finalDefault = this.FinalDefault;
 
+			foreach(XmlSchemaObject obj in Includes)
+			{
+				if(obj is XmlSchemaExternal)
+				{
+					//FIXME: Kuch to karo (Do Something ;)
+				}
+				else
+				{
+					ValidationHandler.RaiseValidationError(handler,this,
+						"Object of Type "+obj.GetType().Name+" is not valid in Includes Property of Schema");
+				}
+			}
+			foreach(XmlSchemaObject obj in Items)
+			{
+				if(obj is XmlSchemaAnnotation)
+				{
+					if(((XmlSchemaAnnotation)obj).Compile(handler,info))
+					{
+						//FIXME: What PSVI set do we add this to?
+					}
+				}
+				else if(obj is XmlSchemaAttribute)
+				{
+					XmlSchemaAttribute attr = (XmlSchemaAttribute) obj;
+					if(attr.Compile(handler,info))
+					{
+						Attributes.Add(attr.QualifiedName, attr);
+					}
+				}
+				else if(obj is XmlSchemaAttributeGroup)
+				{
+					XmlSchemaAttributeGroup attrgrp = (XmlSchemaAttributeGroup) obj;
+					if(attrgrp.Compile(handler,info))
+					{
+						AttributeGroups.Add(XmlQualifiedName.Empty, attrgrp);
+					}
+				}
+				else if(obj is XmlSchemaComplexType)
+				{
+					XmlSchemaComplexType ctype = (XmlSchemaComplexType) obj;
+					if(ctype.Compile(handler,info))
+					{
+						schemaTypes.Add(ctype.QualifiedName, ctype);
+					}
+				}
+				else if(obj is XmlSchemaSimpleType)
+				{
+					XmlSchemaSimpleType stype = (XmlSchemaSimpleType) obj;
+					if(stype.Compile(handler,info))
+					{
+						SchemaTypes.Add(stype.QualifiedName, stype);
+					}
+				}
+				else if(obj is XmlSchemaElement)
+				{
+					XmlSchemaElement elem = (XmlSchemaElement) obj;
+					if(elem.Compile(handler,info))
+					{
+						Elements.Add(elem.QualifiedName,elem);
+					}
+				}
+				else if(obj is XmlSchemaGroup)
+				{
+					XmlSchemaGroup grp = (XmlSchemaGroup) obj;
+					if(grp.Compile(handler,info))
+					{
+						Groups.Add(XmlQualifiedName.Empty,grp);
+					}
+				}
+				else if(obj is XmlSchemaNotation)
+				{
+					XmlSchemaNotation ntn = (XmlSchemaNotation) obj;
+					if(ntn.Compile(handler,info))
+					{
+						Notations.Add(XmlQualifiedName.Empty, ntn);
+					}
+				}
+				else
+				{
+					ValidationHandler.RaiseValidationError(handler,this,
+						"Object of Type "+obj.GetType().Name+" is not valid in Item Property of Schema");
+				}
+			}
+			Validate(handler);
+		}
+
+		[MonoTODO]
+		protected void Validate(ValidationEventHandler handler)
+		{
+
+			foreach(XmlSchemaObject obj in Includes)
+			{
+			}
+			foreach(XmlSchemaObject obj in Items)
+			{
+//				foreach(XmlSchemaAnnotation ann in ??????)
+//				{
+//					ann.Validate(handler);
+//				}
+				foreach(XmlSchemaAttribute attr in Attributes)
+				{
+					attr.parentIsSchema = true;
+					attr.Validate(handler);
+				}
+				foreach(XmlSchemaAttributeGroup attrgrp in AttributeGroups)
+				{
+					attrgrp.Validate(handler);
+				}
+				foreach(XmlSchemaType type in SchemaTypes)
+				{
+					if(type is XmlSchemaComplexType)
+					{
+						((XmlSchemaComplexType)type).Validate(handler);
+					}
+					else
+						((XmlSchemaSimpleType)type).Validate(handler);
+				}
+				foreach(XmlSchemaElement elem in Elements)
+				{
+					elem.Validate(handler);
+				}
+				foreach(XmlSchemaGroup grp in Groups)
+				{
+					grp.Validate(handler);
+				}
+				foreach(XmlSchemaNotation ntn in Notations)
+				{
+					ntn.Validate(handler);
+				}
+			}
 		}
 
 		public static XmlSchema Read(TextReader reader, ValidationEventHandler validationEventHandler)
@@ -204,45 +350,12 @@ namespace System.Xml.Schema
 		{
 			return Read(new XmlTextReader(stream),validationEventHandler);
 		}
-		//<ToBeRemoved>
-		private static void Serializer_UnknownAttribute(object sender, XmlAttributeEventArgs e)
-		{
-			Console.WriteLine("Unknown Attribute");
-			Console.WriteLine("\t" + e.Attr.Name + " " + e.Attr.InnerXml);
-			Console.WriteLine("\t LineNumber: " + e.LineNumber);
-			Console.WriteLine("\t LinePosition: " + e.LinePosition);
-		}
-		private static void Serializer_UnknownElement(object sender, XmlElementEventArgs e)
-		{
-			Console.WriteLine("Unknown Element");
-			Console.WriteLine("\t" + e.Element.Name + " " + e.Element.InnerXml);
-			Console.WriteLine("\t LineNumber: " + e.LineNumber);
-			Console.WriteLine("\t LinePosition: " + e.LinePosition);
-		}
-		private static void Serializer_UnknownNode(object sender, XmlNodeEventArgs e)
-		{
-			Console.WriteLine("Unknown Node");
-			Console.WriteLine("\t" + e.Name + " " + e.Text);
-			Console.WriteLine("\t LineNumber: " + e.LineNumber);
-			Console.WriteLine("\t LinePosition: " + e.LinePosition);
-		}
-		private static void Serializer_UnknownAttribute(object sender, UnreferencedObjectEventArgs e)
-		{
-			Console.WriteLine("Unknown");
-			Console.WriteLine("\t" + e.UnreferencedId);
-			Console.WriteLine("\t" + e.UnreferencedObject);
-		}
-		//</ToBeRemoved>
+
 		[MonoTODO]
+		//FIXME: Use the validationeventhandler. Probably needs the parser
 		public static XmlSchema Read(XmlReader reader, ValidationEventHandler validationEventHandler)
 		{
 			XmlSerializer xser = new XmlSerializer(typeof(XmlSchema));
-			//<ToBeRemoved>
-			xser.UnknownAttribute +=  new XmlAttributeEventHandler(Serializer_UnknownAttribute);
-			xser.UnknownElement +=  new XmlElementEventHandler(Serializer_UnknownElement);
-			xser.UnknownNode +=  new XmlNodeEventHandler(Serializer_UnknownNode);
-			xser.UnreferencedObject +=  new UnreferencedObjectEventHandler(Serializer_UnknownAttribute);
-			//</ToBeRemoved>
 			return (XmlSchema) xser.Deserialize(reader);
 		}
 		public void Write(System.IO.Stream stream)
@@ -264,7 +377,6 @@ namespace System.Xml.Schema
 		public void Write(System.IO.TextWriter writer, System.Xml.XmlNamespaceManager namespaceManager)
 		{
 			XmlTextWriter xwriter = new XmlTextWriter(writer);
-			// This is why the Write was not writing schema with line breaks
 			xwriter.Formatting = Formatting.Indented;
 			Write(xwriter,namespaceManager);
 		}

@@ -15,8 +15,11 @@ namespace System.Xml.Schema
 		private XmlSchemaSimpleType baseType;
 		private XmlQualifiedName baseTypeName;
 		private XmlSchemaObjectCollection facets;
+		bool errorOccured;
+
 		public XmlSchemaSimpleTypeRestriction()
 		{
+			baseTypeName = XmlQualifiedName.Empty;
 			facets = new XmlSchemaObjectCollection();
 		}
 
@@ -49,6 +52,41 @@ namespace System.Xml.Schema
 		public XmlSchemaObjectCollection Facets 
 		{
 			get{ return facets; }
+		}
+
+		/// <remarks>
+		/// 1. One of base or simpletype must be present but not both
+		/// </remarks>
+		[MonoTODO]
+		internal bool Compile(ValidationEventHandler h, XmlSchemaInfo info)
+		{
+			if(this.baseType != null && !this.BaseTypeName.IsEmpty) // 1
+				error(h, "both base and simpletype can't be set");
+			if(this.baseType == null && this.BaseTypeName.IsEmpty)
+				error(h, "one of basetype or simpletype must be present");
+			if(this.baseType != null)
+			{
+				this.baseType.islocal = true;
+				this.baseType.Compile(h,info);
+			}
+			if(!this.baseTypeName.IsEmpty)
+			{
+				// Do nothing.
+			}
+			
+			return this.errorOccured;
+		}
+		
+		[MonoTODO]
+		internal bool Validate(ValidationEventHandler h)
+		{
+			return false;
+		}
+
+		internal void error(ValidationEventHandler handle,string message)
+		{
+			this.errorOccured = true;
+			ValidationHandler.RaiseValidationError(handle,this,message);
 		}
 	}
 }

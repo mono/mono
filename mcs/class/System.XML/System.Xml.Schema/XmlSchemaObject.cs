@@ -23,6 +23,7 @@ namespace System.Xml.Schema
 
 		protected XmlSchemaObject()
 		{
+			namespaces = new XmlSerializerNamespaces();
 		}
 		[XmlIgnore]
 		public int LineNumber 

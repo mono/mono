@@ -42,5 +42,10 @@ namespace System.Xml.Schema
 		{
 			return table.GetEnumerator();
 		}
+
+		internal void Add(XmlQualifiedName name, XmlSchemaObject value)
+		{
+			table.Add(name,value);
+		}
 	}
 }

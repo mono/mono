@@ -1,3 +1,11 @@
+2002-04-26  Duncan Mak  <duncan@ximian.com>
+
+	* ValidationHandler.cs: New file.
+
+	* XmlSchemaInfo.cs: New file.
+
+	* *.cs: More updates from Ajay.
+
 2002-03-27  Duncan Mak  <duncan@ximian.com>
 
 	* *.cs: Updates from Ajay Dwivedi <AjayKumar.Dwivedi@dresdner-bank.com>.

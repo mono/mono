@@ -40,5 +40,17 @@ namespace System.Xml.Schema
 			get{ return  unhandledAttributes; } 
 			set{ unhandledAttributes = value; }
 		}
+
+		[MonoTODO]
+		internal bool Compile(ValidationEventHandler h, XmlSchemaInfo info)
+		{
+			return false;
+		}
+		
+		[MonoTODO]
+		internal bool Validate(ValidationEventHandler h)
+		{
+			return false;
+		}
 	}
 }

@@ -174,5 +174,17 @@ namespace System.Xml.Schema
 
 
 		#endregion
+
+		[MonoTODO]
+		internal bool Compile(ValidationEventHandler h, XmlSchemaInfo info)
+		{
+			return false;
+		}
+		
+		[MonoTODO]
+		internal bool Validate(ValidationEventHandler h)
+		{
+			return false;
+		}
 	}
 }

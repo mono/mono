@@ -10,17 +10,16 @@ namespace System.Xml.Schema
 	/// <summary>
 	/// Summary description for XmlSchemaType.
 	/// </summary>
-	[XmlInclude(typeof(XmlSchemaSimpleType))]
 	public class XmlSchemaType : XmlSchemaAnnotated
 	{
 		private object baseSchemaType;
 		private XmlSchemaDatatype datatype;
 		private XmlSchemaDerivationMethod derivedBy;
 		private XmlSchemaDerivationMethod final;
-		private XmlSchemaDerivationMethod finalResolved;
+		protected XmlSchemaDerivationMethod finalResolved;
 		private bool isMixed;
 		private string name;
-		private XmlQualifiedName qName;
+		protected XmlQualifiedName qName;
 
 		public XmlSchemaType()
 		{
