@@ -1,3 +1,10 @@
+2002-10-25  Zoltan Varga  <vargaz@freemail.hu>
+
+	* corlib_linux_test.args AllTests.cs: Added beginnings of
+	System.Threading testcases.
+
+	* run_test.sh: fixed paths.
+
 2002-10-19  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* corlib_test.build: Removed all excluded cryptographic test code as 

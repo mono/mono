@@ -10,11 +10,11 @@ if [ $# -eq 0 ]; then
 fi
 
 topdir=../../..
-NUNITCONSOLE=${topdir}/nunit/src/NUnitConsole/NUnitConsole_mono.exe
-NUNIT_MONO_PATH=${topdir}/nunit/src/NUnitCore:.
+NUNITCONSOLE=${topdir}/class/lib/NUnitConsole_mono.exe
+NUNIT_MONO_PATH=${topdir}/class/lib/:.
 
 for i in $@; do
-	MONO_PATH=../../../nunit/src/NUnitCore:. \
+	MONO_PATH=../../../class/lib:. \
 		mono ${NUNITCONSOLE} MonoTests.${i},corlib_linux_test.dll
 done
 
