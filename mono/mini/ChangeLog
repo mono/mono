@@ -1,3 +1,9 @@
+
+Thu May 27 12:36:53 CEST 2004 Paolo Molaro <lupus@ximian.com>
+
+	* Makefile.am: fix miguel's change to build mono statically against
+	libmono (track build dependencies).
+
 2004-05-26  Zoltan Varga  <vargaz@freemail.hu>
 
 	* cfold.c: Some glib versions do not have G_MININT32.
