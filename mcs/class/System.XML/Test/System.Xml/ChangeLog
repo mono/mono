@@ -1,3 +1,12 @@
+2003-07-06  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* added XmlValidatingReaderTests.cs.
+
+2003-07-05  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* XmlNodeReaderTests.cs : Fixed ReadInnerXmlWrongInit() for correct 
+	  ReadState check.
+
 2003-07-01  Martin Willemoes Hansen <mwh@sysrq.dk>
 
 	* XmlTextWriterTests.cs: Made use of ExpectedException
