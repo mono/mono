@@ -5185,6 +5185,12 @@ namespace Mono.CSharp {
 			ExplicitInterfaceName = int_type;
 		}
 
+		void CheckIndexerName (string name)
+		{
+			if (name.IndexOf (' ') != -1)
+				Report.Error (633, Location, "The IndexerName specified is an invalid identifier");
+		}
+		       
 		public override bool Define (TypeContainer container)
 		{
 			PropertyAttributes prop_attr =
@@ -5197,10 +5203,13 @@ namespace Mono.CSharp {
 			IndexerName = Attribute.ScanForIndexerName (ec, OptAttributes);
 			if (IndexerName == null)
 				IndexerName = "Item";
-			else if (IsExplicitImpl)
-				Report.Error (592, Location,
-					      "Attribute 'IndexerName' is not valid on this declaration " +
-					      "type. It is valid on `property' declarations only.");
+			else {
+				CheckIndexerName (IndexerName);
+				if (IsExplicitImpl)
+					Report.Error (592, Location,
+						      "Attribute 'IndexerName' is not valid on explicit " +
+						      "implementations.");
+			}
 
 			ShortName = IndexerName;
 			if (IsExplicitImpl) {

@@ -1,3 +1,7 @@
+2004-04-05  Miguel de Icaza  <miguel@ximian.com>
+
+	* class.cs (Indexer.Define): Check indexername declaration
+
 2004-04-05  Marek Safar  <marek.safar@seznam.cz>
 
 	* attribute.cs (IsClsCompliant): Fixed problem with handling

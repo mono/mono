@@ -976,6 +976,13 @@ namespace Mono.CSharp {
 
 			ia.CacheTemporaries (ec);
 
+			//
+			// NOTE: We should probably handle three cases:
+			//
+			//     * method invocation required.
+			//     * direct stack manipulation possible
+			//     * the object requires an "instance" field
+			//
 			if (temp_storage == null){
 				//
 				// Temporary improvement: if we are dealing with something that does
