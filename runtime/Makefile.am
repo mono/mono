@@ -2,6 +2,8 @@
 # being compiled on windows.
 #
 
+mcs_topdir=$(top_srcdir)/../mcs
+
 assemblies_DATA =	\
 	Accessibility.dll					\
 	ByteFX.Data.dll						\
@@ -18,7 +20,7 @@ assemblies_DATA =	\
 	Microsoft.VisualBasic.dll				\
 	Microsoft.VisualC.dll					\
 	Microsoft.Vsa.dll					\
-	Mono.Cairo.dll	                		\
+	Mono.Cairo.dll			\
 	Mono.CSharp.Debugger.dll				\
 	Mono.Data.SqliteClient.dll				\
 	Mono.Data.SybaseClient.dll				\
@@ -65,30 +67,39 @@ assembliesdir = $(libdir)
 monobinsdir = $(bindir)
 
 $(assemblies_DATA):
-	-cp $(top_srcdir)/../mcs/class/lib/$@ . || cp $(assembliesdir)/$@ . 
+	@f=$(mcs_topdir)/class/lib/$@; \
+	if test -f $$f; then :; else f=$(assembliesdir)/$@; fi ; \
+	echo "cp -f $$f $(srcdir)"; \
+	cp -f $$f $(srcdir)
 
 $(monobins_DATA):
-	-cp $(top_srcdir)/../mcs/mcs/mcs.exe . || cp $(monobinsdir)/mcs.exe . 
-	-cp $(top_srcdir)/../mcs/mbas/mbas.exe . || cp $(monobinsdir)/mbas.exe .
-	-cp $(top_srcdir)/../mcs/tools/security/secutil.exe . || cp $(monobinsdir)/secutil.exe . 
-	-cp $(top_srcdir)/../mcs/monoresgen/monoresgen.exe . || cp $(monobinsdir)/monoresgen.exe . 
-	-cp $(top_srcdir)/../mcs/ilasm/ilasm.exe . || cp $(monobinsdir)/ilasm.exe .
-	-cp $(top_srcdir)/../mcs/tools/cilc/cilc.exe . || cp $(monobinsdir)/cilc.exe .
-	-cp $(top_srcdir)/../mcs/tools/mono-xsd/xsd.exe . || cp $(monobinsdir)/xsd.exe .
-	-cp $(top_srcdir)/../mcs/tools/wsdl/wsdl.exe . || cp $(monobinsdir)/wsdl.exe .
-	-cp $(top_srcdir)/../mcs/tools/genxs/genxs.exe . || cp $(monobinsdir)/genxs.exe .
-	-cp $(top_srcdir)/../mcs/tools/al/al.exe . || cp $(monobinsdir)/al.exe .
-	-cp $(top_srcdir)/../mcs/tools/disco/disco.exe . || cp $(monobinsdir)/disco.exe .
-	-cp $(top_srcdir)/../mcs/tools/soapsuds/soapsuds.exe . || cp $(monobinsdir)/soapsuds.exe .
-	-cp $(top_srcdir)/../mcs/tools/SqlSharp/sqlsharp.exe . || cp $(monobinsdir)/sqlsharp.exe .
-	-cp $(top_srcdir)/../mcs/tools/security/chktrust.exe . || cp $(monobinsdir)/chktrust.exe .
-	-cp $(top_srcdir)/../mcs/tools/security/signcode.exe . || cp $(monobinsdir)/signcode.exe .
-	-cp $(top_srcdir)/../mcs/tools/security/MakeCert.exe . || cp $(monobinsdir)/MakeCert.exe .
-	-cp $(top_srcdir)/../mcs/tools/security/cert2spc.exe . || cp $(monobinsdir)/cert2spc.exe .
-	-cp $(top_srcdir)/../mcs/tools/security/certmgr.exe . || cp $(monobinsdir)/certmgr.exe .
-	-cp $(top_srcdir)/../mcs/tools/security/setreg.exe . || cp $(monobinsdir)/setreg.exe .
-	-cp $(top_srcdir)/../mcs/tools/monop/monop.exe . || cp $(monobinsdir)/monop.exe .
-	-cp $(top_srcdir)/../mcs/tools/browsercaps-updater/browsercaps-updater.exe . || cp $(monobinsdir)/browsercaps-updater.exe .
+	@case "$@" in \
+	mcs.exe)                 d=mcs                          ;; \
+	mbas.exe)                d=mbas                         ;; \
+	secutil.exe)             d=tools/security               ;; \
+	monoresgen.exe)          d=monoresgen                   ;; \
+	ilasm.exe)               d=ilasm                        ;; \
+	cilc.exe)                d=tools/cilc                   ;; \
+	xsd.exe)                 d=tools/mono-xsd               ;; \
+	wsdl.exe)                d=tools/wsdl                   ;; \
+	genxs.exe)               d=tools/genxs                  ;; \
+	al.exe)                  d=tools/al                     ;; \
+	disco.exe)               d=tools/disco                  ;; \
+	soapsuds.exe)            d=tools/soapsuds               ;; \
+	sqlsharp.exe)            d=tools/SqlSharp               ;; \
+	chktrust.exe)            d=tools/security               ;; \
+	signcode.exe)            d=tools/security               ;; \
+	MakeCert.exe)            d=tools/security               ;; \
+	cert2spc.exe)            d=tools/security               ;; \
+	certmgr.exe)             d=tools/security               ;; \
+	setreg.exe)              d=tools/security               ;; \
+	monop.exe)               d=tools/monop                  ;; \
+	browsercaps-updater.exe) d=tools/browsercaps-updater    ;; \
+	esac; \
+	f=$(mcs_topdir)/$$d/$@; \
+	if test -f $$f; then :; else f=$(monobinsdir)/$@; fi ; \
+	echo "cp -f $$f $(srcdir)"; \
+	cp -f $$f $(srcdir)
 
 dist-hook:
 	for i in $(monobins_DATA) $(assemblies_DATA); do	\
