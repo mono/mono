@@ -5134,9 +5134,17 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		static bool InferType (Type pt, Type at, ref Type[] infered)
+		static bool InferType (Type pt, Type at, Type[] class_infered, Type[] method_infered)
 		{
-			if (pt.IsGenericParameter && (pt.DeclaringMethod != null)) {
+			if (pt.IsGenericParameter) {
+				Type[] infered;
+				if (pt.DeclaringMethod != null)
+					infered = method_infered;
+				else if (class_infered != null)
+					infered = class_infered;
+				else
+					return false;
+
 				int pos = pt.GenericParameterPosition;
 
 				if (infered [pos] == null) {
@@ -5157,8 +5165,12 @@ namespace Mono.CSharp {
 				return true;
 			}
 
-			if (!pt.ContainsGenericParameters)
-				return true;
+			if (!pt.ContainsGenericParameters) {
+				if (at.ContainsGenericParameters)
+					return InferType (at, pt, class_infered, method_infered);
+				else
+					return true;
+			}
 
 			if (at.IsArray) {
 				if (!pt.IsArray ||
@@ -5166,7 +5178,7 @@ namespace Mono.CSharp {
 					return false;
 
 				return InferType (pt.GetElementType (), at.GetElementType (),
-						  ref infered);
+						  class_infered, method_infered);
 			}
 
 			if (pt.IsArray) {
@@ -5175,12 +5187,15 @@ namespace Mono.CSharp {
 					return false;
 
 				return InferType (pt.GetElementType (), at.GetElementType (),
-						  ref infered);
+						  class_infered, method_infered);
 			}
 
 			if (pt.IsByRef && at.IsByRef)
 				return InferType (pt.GetElementType (), at.GetElementType (),
-						  ref infered);
+						  class_infered, method_infered);
+
+			if (method_infered == null)
+				return false;
 
 			ArrayList list = new ArrayList ();
 			if (at.IsGenericInstance)
@@ -5198,18 +5213,18 @@ namespace Mono.CSharp {
 				if (!type.IsGenericInstance)
 					continue;
 
-				Type[] infered_types = new Type [infered.Length];
+				Type[] infered_types = new Type [method_infered.Length];
 
 				if (!InferGenericInstance (pt, type, infered_types))
 					continue;
 
 				for (int i = 0; i < infered_types.Length; i++) {
-					if (infered [i] == null) {
-						infered [i] = infered_types [i];
+					if (method_infered [i] == null) {
+						method_infered [i] = infered_types [i];
 						continue;
 					}
 
-					if (infered [i] != infered_types [i])
+					if (method_infered [i] != infered_types [i])
 						return false;
 				}
 
@@ -5228,7 +5243,7 @@ namespace Mono.CSharp {
 				return false;
 
 			for (int i = 0; i < at_args.Length; i++) {
-				if (!InferType (pt_args [i], at_args [i], ref infered_types))
+				if (!InferType (pt_args [i], at_args [i], null, infered_types))
 					return false;
 			}
 
@@ -5286,7 +5301,7 @@ namespace Mono.CSharp {
 				Type pt = pd.ParameterType (i);
 				Type at = a.Type;
 
-				if (!InferType (pt, at, ref infered_types))
+				if (!InferType (pt, at, null, infered_types))
 					return false;
 			}
 
@@ -5298,7 +5313,7 @@ namespace Mono.CSharp {
 				if ((a.Expr is NullLiteral) || (a.Expr is MethodGroupExpr))
 					continue;
 
-				if (!InferType (element_type, a.Type, ref infered_types))
+				if (!InferType (element_type, a.Type, null, infered_types))
 					return false;
 			}
 
@@ -5311,22 +5326,30 @@ namespace Mono.CSharp {
 		}
 
 		public static bool InferTypeArguments (Type[] param_types, Type[] arg_types,
-						       ref Type[] infered_types)
+						       Type[] infered_class_types, Type[] infered_types)
 		{
-			if (infered_types == null)
+			if ((infered_class_types == null) && (infered_types == null))
 				return false;
 
 			for (int i = 0; i < arg_types.Length; i++) {
 				if (arg_types [i] == null)
 					continue;
 
-				if (!InferType (param_types [i], arg_types [i], ref infered_types))
+				if (!InferType (param_types [i], arg_types [i], infered_class_types, infered_types))
 					return false;
 			}
 
-			for (int i = 0; i < infered_types.Length; i++)
-				if (infered_types [i] == null)
-					return false;
+			if (infered_class_types != null) {
+				for (int i = 0; i < infered_class_types.Length; i++)
+					if (infered_class_types [i] == null)
+						return false;
+			}
+
+			if (infered_types != null) {
+				for (int i = 0; i < infered_types.Length; i++)
+					if (infered_types [i] == null)
+						return false;
+			}
 
 			return true;
 		}
@@ -5374,7 +5397,7 @@ namespace Mono.CSharp {
 				arg_types [i] = a.Type;
 			}
 
-			if (!InferTypeArguments (param_types, arg_types, ref infered_types))
+			if (!InferTypeArguments (param_types, arg_types, null, infered_types))
 				return false;
 
 			method = method.BindGenericParameters (infered_types);
@@ -5402,7 +5425,7 @@ namespace Mono.CSharp {
 				arg_types [i] = apd.ParameterType (i);
 			}
 
-			if (!InferTypeArguments (param_types, arg_types, ref infered_types))
+			if (!InferTypeArguments (param_types, arg_types, null, infered_types))
 				return false;
 
 			method = method.BindGenericParameters (infered_types);

@@ -3488,6 +3488,34 @@ namespace Mono.CSharp {
 			return true;
 		}
 
+		bool MayUnify (MethodCore first, MethodCore second)
+		{
+			int a_type_params = 0;
+			if (first.GenericMethod != null)
+				a_type_params = first.GenericMethod.CountTypeParameters;
+
+			int b_type_params = 0;
+			if (second.GenericMethod != null)
+				b_type_params = second.GenericMethod.CountTypeParameters;
+
+			if (a_type_params != b_type_params)
+				return false;
+
+			Type[] class_infered, method_infered;
+			if (Parent.CountTypeParameters > 0)
+				class_infered = new Type [Parent.CountTypeParameters];
+			else
+				class_infered = null;
+
+			if (a_type_params > 0)
+				method_infered = new Type [a_type_params];
+			else
+				method_infered = null;
+
+			return Invocation.InferTypeArguments (
+				first.ParameterTypes, second.ParameterTypes, class_infered, method_infered);
+		}
+
 		protected bool IsDuplicateImplementation (MethodCore method)
 		{
 			if ((method == this) ||
@@ -3501,38 +3529,8 @@ namespace Mono.CSharp {
 			if (param_types.Length != ParameterTypes.Length)
 				return false;
 
-			int type_params = 0;
-			if (GenericMethod != null)
-				type_params = GenericMethod.CountTypeParameters;
-
-			int m_type_params = 0;
-			if (method.GenericMethod != null)
-				m_type_params = method.GenericMethod.CountTypeParameters;
-
-			if (type_params != m_type_params)
-				return false;
-
 			bool equal = true;
-			bool may_unify;
-
-			Type[] infered_types;
-			if (type_params > 0)
-				infered_types = new Type [type_params];
-			else
-				infered_types = null;
-
-			may_unify = Invocation.InferTypeArguments (
-				param_types, ParameterTypes, ref infered_types);
-
-			if (!may_unify) {
-				if (type_params > 0)
-					infered_types = new Type [type_params];
-				else
-					infered_types = null;
-
-				may_unify = Invocation.InferTypeArguments (
-					ParameterTypes, param_types, ref infered_types);
-			}
+			bool may_unify = MayUnify (this, method);
 
 			for (int i = 0; i < param_types.Length; i++) {
 				if (param_types [i] != ParameterTypes [i])
@@ -3567,7 +3565,7 @@ namespace Mono.CSharp {
 				Report.Error (408, Location,
 					      "`{0}' cannot define overload members that " +
 					      "may unify for some type parameter substitutions",
-					      Parent.Name);
+					      Parent.MemberName);
 				return true;
 			}
 

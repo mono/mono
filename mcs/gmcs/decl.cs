@@ -183,9 +183,6 @@ namespace Mono.CSharp {
 
 		public override string ToString ()
 		{
-			throw new Exception ("This exception is thrown because someone is miss-using\n" +
-					     "MemberName.ToString in the compiler.  Please report this bug");
-
 			string full_name;
 			if (TypeArguments != null)
 				full_name = Name + "<" + TypeArguments + ">";

@@ -1,3 +1,14 @@
+2004-12-06  Martin Baulig  <martin@ximian.com>
+
+	* class.cs (MethodCore.MayUnify): Moved the CS0408 check here from
+	IsDuplicateImplementation() and improved it.
+
+	* expression.cs (Invocation.InferTypeArguments): Added
+	`Type[] inferred_class_types' argument (for MethodCore.MayUnify)
+	and removed the "ref" modifier from `infered_types'.
+
+	* decl.cs (MemberName.ToString): Removed the exception.
+
 2004-12-03  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* cs-tokenizer.cs : Only '////' is rejected. Other non-whitespace
