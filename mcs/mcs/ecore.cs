@@ -341,67 +341,6 @@ namespace Mono.CSharp {
 		}
 
 		//
-		// Returns whether the array of memberinfos contains the given method
-		//
-		static bool ArrayContainsMethod (MemberInfo [] array, MethodBase new_method)
-		{
-			Type [] new_args = TypeManager.GetArgumentTypes (new_method);
-
-			foreach (MethodBase method in array){
-				if (method.Name != new_method.Name)
-					continue;
-				
-				Type [] old_args = TypeManager.GetArgumentTypes (method);
-				int old_count = old_args.Length;
-				int i;
-
-				if (new_args.Length != old_count)
-					continue;
-				
-				for (i = 0; i < old_count; i++){
-					if (old_args [i] != new_args [i])
-						break;
-				}
-				if (i != old_count)
-					continue;
-
-				if (!(method is MethodInfo && new_method is MethodInfo))
-					return true;
-				
-				if (((MethodInfo) method).ReturnType == ((MethodInfo) new_method).ReturnType)
-					return true;
-			}
-			return false;
-		}
-		
-		//
-		// We copy methods from `new_members' into `target_list' if the signature
-		// for the method from in the new list does not exist in the target_list
-		//
-		// The name is assumed to be the same.
-		//
-		public static ArrayList CopyNewMethods (ArrayList target_list, MemberInfo [] new_members)
-		{
-			if (target_list == null){
-				target_list = new ArrayList ();
-
-				target_list.AddRange (new_members);
-				return target_list;
-			}
-			
-			MemberInfo [] target_array = new MemberInfo [target_list.Count];
-			target_list.CopyTo (target_array, 0);
-			
-			foreach (MemberInfo mi in new_members){
-				MethodBase new_method = (MethodBase) mi;
-
-				if (!ArrayContainsMethod (target_array, new_method))
-					target_list.Add (new_method);
-			}
-			return target_list;
-		}
-		
-		//
 		// FIXME: Probably implement a cache for (t,name,current_access_set)?
 		//
 		// This code could use some optimizations, but we need to do some
@@ -432,99 +371,20 @@ namespace Mono.CSharp {
 		public static Expression MemberLookup (EmitContext ec, Type t, string name,
 						       MemberTypes mt, BindingFlags bf, Location loc)
 		{
-			Type source_type = ec.ContainerType;
+			MemberInfo [] mi = TypeManager.MemberLookup (ec.ContainerType, t, mt, bf, name);
 
-			if (source_type != null){
-				if (source_type == t || source_type.IsSubclassOf (t))
-					bf |= BindingFlags.NonPublic;
-			}
-
-			//
-			// Lookup for members starting in the type requested and going
-			// up the hierarchy until a match is found.
-			//
-			// As soon as a non-method match is found, we return.
-			//
-			// If methods are found though, then the search proceeds scanning
-			// for more public methods in the hierarchy with signatures that
-			// do not match any of the signatures found so far.
-			//
-			ArrayList method_list = null;
-			Type current_type = t;
-			bool searching = true;
-			do {
-				MemberInfo [] mi;
-
-				mi = TypeManager.FindMembers (
-					current_type, mt, bf | BindingFlags.DeclaredOnly,
-					System.Type.FilterName, name);
-				
-				if (current_type == TypeManager.object_type)
-					searching = false;
-				else {
-					current_type = current_type.BaseType;
-
-					//
-					// Only do private searches on the current type,
-					// never in our parents.
-					//
-					// bf &= ~BindingFlags.NonPublic;
-					
-					//
-					// This happens with interfaces, they have a null
-					// basetype
-					//
-					if (current_type == null)
-						searching = false;
-				}
-
-				if (mi == null)
-					continue;
-				
-				int count = mi.Length;
-
-				if (count == 0)
-					continue;
-
-				//
-				// Events are returned by both `static' and `instance'
-				// searches, which means that our above FindMembers will
-				// return two copies of the same.
-				//
-				if (count == 1 && !(mi [0] is MethodBase))
-					return Expression.ExprClassFromMemberInfo (ec, mi [0], loc);
-				if (count == 2 && (mi [0] is EventInfo))
-					return Expression.ExprClassFromMemberInfo (ec, mi [0], loc);
-
-				//
-				// We found methods, turn the search into "method scan"
-				// mode.
-				//
-				method_list = CopyNewMethods (method_list, mi);
-				mt &= (MemberTypes.Method | MemberTypes.Constructor);
-			} while (searching);
-
-			if (method_list != null && method_list.Count > 0)
-				return new MethodGroupExpr (method_list, loc);
-
-			//
-			// Interfaces do not list members they inherit, so we have to
-			// scan those.
-			// 
-			if (!t.IsInterface)
+			if (mi == null)
 				return null;
 
-			Type [] ifaces = t.GetInterfaces ();
+			int count = mi.Length;
 
-			foreach (Type itype in ifaces){
-				Expression x;
+			if (count > 1)
+				return new MethodGroupExpr (mi, loc);
 
-				x = MemberLookup (ec, itype, name, mt, bf, loc);
-				if (x != null)
-					return x;
-			}
-					
-			return null;
+			if (mi [0] is MethodBase)
+				return new MethodGroupExpr (mi, loc);
+
+			return ExprClassFromMemberInfo (ec, mi [0], loc);
 		}
 
 		public const MemberTypes AllMemberTypes =

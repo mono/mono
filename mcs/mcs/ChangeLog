@@ -1,3 +1,14 @@
+2002-04-25  Miguel de Icaza  <miguel@ximian.com>
+
+	* class.cs (Property): use the new typemanager.MemberLookup
+
+	(TypeContainer.MemberLookup): Implement using the
+	TypeManager.MemberLookup now. 
+	
+	* typemanager.cs: Make MemberLookup a function of the TypeManager,
+	and return MemberInfos, so that these can be used without an
+	EmitContext (what we had before).
+
 2002-04-24  Miguel de Icaza  <miguel@ximian.com>
 
 	* expression.cs: Fix the case where the argument to params if the

@@ -603,7 +603,7 @@ namespace Mono.CSharp {
 				if (count == 1 && !(mi [0] is MethodBase))
 					searching = false;
 				else 
-					list = Expression.CopyNewMethods (list, mi);
+					list = TypeManager.CopyNewMethods (list, mi);
 			} while (searching);
 
 			if (list == null)
@@ -2818,25 +2818,18 @@ namespace Mono.CSharp {
 			// Find properties with the same name on the base class
 			//
 
-			
-			//
-			// Ok, this code is broken.  We should use the same concept
-			// that is available in `MemberLookup', because that does the
-			// right thing (ie, stops when it finds something).
-			//
-			// Currently we return multiple matches from the type hierarchy
-			// of properties
-			//
 			MemberInfo [] props;
-			MemberInfo [] props_static = TypeContainer.FindMembers (
+			MemberInfo [] props_static = TypeManager.MemberLookup (
+				parent.TypeBuilder, 
 				parent.TypeBuilder.BaseType,
 				MemberTypes.Property, BindingFlags.Public | BindingFlags.Static,
-				System.Type.FilterName, Name);
+				Name);
 
-			MemberInfo [] props_instance = TypeContainer.FindMembers (
+			MemberInfo [] props_instance = TypeManager.MemberLookup (
+				parent.TypeBuilder, 
 				parent.TypeBuilder.BaseType,
 				MemberTypes.Property, BindingFlags.Public | BindingFlags.Instance,
-				System.Type.FilterName, Name);
+				Name);
 
 			//
 			// Find if we have anything
@@ -2851,14 +2844,8 @@ namespace Mono.CSharp {
 			//
 			// If we have something on the base.
 			if (props != null && props.Length > 0){
-				//
-				// FIXME:
-				// Currently we expect only to get 1 match at most from our
-				// base class, maybe we can get more than one, investigate
-				// whether this is possible
-				//
 				if (props.Length > 1)
-					throw new Exception ("How do we handle this?");
+					throw new Exception ("Should not happen");
 				
 				PropertyInfo pi = (PropertyInfo) props [0];
 

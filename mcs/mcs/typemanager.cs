@@ -1090,6 +1090,170 @@ public class TypeManager {
 		// pinned.  Figure out API.
 		//
 	}
+
+
+	//
+	// Returns whether the array of memberinfos contains the given method
+	//
+	static bool ArrayContainsMethod (MemberInfo [] array, MethodBase new_method)
+	{
+		Type [] new_args = TypeManager.GetArgumentTypes (new_method);
+		
+		foreach (MethodBase method in array){
+			if (method.Name != new_method.Name)
+				continue;
+			
+			Type [] old_args = TypeManager.GetArgumentTypes (method);
+			int old_count = old_args.Length;
+			int i;
+			
+			if (new_args.Length != old_count)
+				continue;
+			
+			for (i = 0; i < old_count; i++){
+				if (old_args [i] != new_args [i])
+					break;
+			}
+			if (i != old_count)
+				continue;
+			
+			if (!(method is MethodInfo && new_method is MethodInfo))
+				return true;
+			
+			if (((MethodInfo) method).ReturnType == ((MethodInfo) new_method).ReturnType)
+				return true;
+		}
+		return false;
+	}
+	
+	//
+	// We copy methods from `new_members' into `target_list' if the signature
+	// for the method from in the new list does not exist in the target_list
+	//
+	// The name is assumed to be the same.
+	//
+	public static ArrayList CopyNewMethods (ArrayList target_list, MemberInfo [] new_members)
+	{
+		if (target_list == null){
+			target_list = new ArrayList ();
+			
+			target_list.AddRange (new_members);
+			return target_list;
+		}
+		
+		MemberInfo [] target_array = new MemberInfo [target_list.Count];
+		target_list.CopyTo (target_array, 0);
+		
+		foreach (MemberInfo mi in new_members){
+			MethodBase new_method = (MethodBase) mi;
+			
+			if (!ArrayContainsMethod (target_array, new_method))
+				target_list.Add (new_method);
+		}
+		return target_list;
+	}
+
+	//
+	// Looks up a member called `name' in the `queried_type'.  This lookup
+	// is done by code that is contained in the definition for `invocation_type'.
+	//
+	// The binding flags are `bf' and the kind of members being looked up are `mt'
+	//
+	// Returns an array of a single element for everything but Methods/Constructors
+	// that might return multiple matches.
+	//
+	public static MemberInfo [] MemberLookup (Type invocation_type, Type queried_type, 
+						  MemberTypes mt, BindingFlags bf, string name)
+	{
+		if (invocation_type != null){
+			if (invocation_type == queried_type || invocation_type.IsSubclassOf (queried_type))
+				bf |= BindingFlags.NonPublic;
+		}
+
+		ArrayList method_list = null;
+		Type current_type = queried_type;
+		bool searching = true;
+		do {
+			MemberInfo [] mi;
+			
+			mi = TypeManager.FindMembers (
+				current_type, mt, bf | BindingFlags.DeclaredOnly,
+				System.Type.FilterName, name);
+			
+			if (current_type == TypeManager.object_type)
+				searching = false;
+			else {
+				current_type = current_type.BaseType;
+				
+				//
+				// Only do private searches on the current type,
+				// never in our parents.
+				//
+				// FIXME: we should really be checking the actual
+				// permissions on the members returned, rather than 
+				// depend on NonPublic/Public in the BindingFlags,
+				// as the BindingFlags is basically useless (does not
+				// give us the granularity we need)
+				//
+				// bf &= ~BindingFlags.NonPublic;
+				
+				//
+				// This happens with interfaces, they have a null
+				// basetype
+				//
+				if (current_type == null)
+					searching = false;
+			}
+			
+			if (mi == null)
+				continue;
+			
+			int count = mi.Length;
+			
+			if (count == 0)
+				continue;
+			
+			//
+			// Events are returned by both `static' and `instance'
+			// searches, which means that our above FindMembers will
+			// return two copies of the same.
+			//
+			if (count == 1 && !(mi [0] is MethodBase))
+				return mi;
+			if (count == 2 && (mi [0] is EventInfo))
+				return mi;
+			
+			//
+			// We found methods, turn the search into "method scan"
+			// mode.
+			//
+			
+			method_list = CopyNewMethods (method_list, mi);
+			mt &= (MemberTypes.Method | MemberTypes.Constructor);
+		} while (searching);
+
+		if (method_list != null && method_list.Count > 0)
+			return (MemberInfo []) method_list.ToArray (typeof (MemberInfo));
+	
+		//
+		// Interfaces do not list members they inherit, so we have to
+		// scan those.
+		// 
+		if (!queried_type.IsInterface)
+			return null;
+
+		Type [] ifaces = queried_type.GetInterfaces ();
+
+		foreach (Type itype in ifaces){
+			MemberInfo [] x;
+
+			x = MemberLookup (null, itype, mt, bf, name);
+			if (x != null)
+				return x;
+		}
+					
+		return null;
+	}
 }
 
 }
