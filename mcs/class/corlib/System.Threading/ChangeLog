@@ -1,3 +1,7 @@
+2004-08-20  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Thread.cs: Added Fx 2.0 properties/methods/attributes.
+
 2004-08-12  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* CompressedStackSwitcher.cs: Added missing [ComVisible] and 

@@ -38,6 +38,11 @@ using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Collections;
 
+#if NET_2_0
+using System.Runtime.ConstrainedExecution;
+using System.Runtime.InteropServices;
+#endif
+
 namespace System.Threading
 {
 	public sealed class Thread
@@ -108,6 +113,9 @@ namespace System.Threading
 		private extern static Thread CurrentThread_internal();
 		
 		public static Thread CurrentThread {
+#if NET_2_0
+			[ReliabilityContract (Consistency.WillNotCorruptState, CER.MayFail)]
+#endif
 			get {
 				return(CurrentThread_internal());
 			}
@@ -279,6 +287,9 @@ namespace System.Threading
 		}
 
 		[MonoTODO]
+#if NET_2_0
+		[Obsolete ("")]
+#endif
 		public ApartmentState ApartmentState {
 			get {
 				return(ApartmentState.Unknown);
@@ -508,6 +519,9 @@ namespace System.Threading
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern void Resume_internal();
 
+#if NET_2_0
+		[Obsolete ("")]
+#endif
 		public void Resume () 
 		{
 			if ((state & ThreadState.Unstarted) != 0 || !IsAlive || 
@@ -558,6 +572,9 @@ namespace System.Threading
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern void Suspend_internal();
 
+#if NET_2_0
+		[Obsolete ("")]
+#endif
 		public void Suspend() {
 			if((state & ThreadState.Unstarted) != 0 || !IsAlive) {
 				throw new ThreadStateException("Thread has not been started, or is dead");
@@ -676,6 +693,127 @@ namespace System.Threading
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		extern public static void VolatileWrite (ref UIntPtr address, UIntPtr value);
 		
+#endif
+
+#if NET_2_0
+		[MonoTODO ("stack size is ignored")]
+		public Thread (ThreadStart start, int maxStackSize)
+		{
+			if (start == null)
+				throw new ArgumentNullException ("start");
+			if (maxStackSize < 131072)
+				throw new ArgumentException ("< 128 kb", "maxStackSize");
+
+			threadstart=start;
+		}
+
+		[MonoTODO]
+		public Thread (ParameterizedThreadStart start)
+		{
+			if (start == null)
+				throw new ArgumentNullException ("start");
+
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public Thread (ParameterizedThreadStart start, int maxStackSize)
+		{
+			if (start == null)
+				throw new ArgumentNullException ("start");
+			if (maxStackSize < 131072)
+				throw new ArgumentException ("< 128 kb", "maxStackSize");
+
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public ExecutionContext ExecutionContext {
+			[ReliabilityContract (Consistency.WillNotCorruptState, CER.MayFail)]
+			get { throw new NotImplementedException (); }
+		}
+
+		public int ManagedThreadId {
+			get { return thread_id; }
+		}
+
+		[MonoTODO]
+		[ReliabilityContract (Consistency.WillNotCorruptState, CER.MayFail)]
+		public static void BeginCriticalRegion ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		[ReliabilityContract (Consistency.WillNotCorruptState, CER.Success)]
+		public static void EndCriticalRegion ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public static void BeginThreadAffinity ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public static void EndThreadAffinity ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public ApartmentState GetApartmentState ()
+		{
+			return this.ApartmentState;
+		}
+
+		[MonoTODO]
+		public void SetApartmentState (ApartmentState state)
+		{
+			this.ApartmentState = state;
+		}
+
+		[MonoTODO]
+		public bool TrySetApartmentState (ApartmentState state)
+		{
+			try {
+				this.ApartmentState = state;
+				return true;
+			}
+			catch (ArgumentException) {
+				throw;
+			}
+			catch {
+				return false;
+			}
+		}
+
+		[MonoTODO]
+		public CompressedStack GetCompressedStack ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public void SetCompressedStack (CompressedStack stack)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[ComVisible (false)]
+		public override int GetHashCode ()
+		{
+			// ??? overridden but not guaranteed to be unique ???
+			return thread_id;
+		}
+
+		[MonoTODO]
+		public void Start (object parameter)
+		{
+			throw new NotImplementedException ();
+		}
 #endif
 		
 	}
