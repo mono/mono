@@ -1,3 +1,8 @@
+2003-02-12  Zoltan Varga  <vargaz@freemail.hu>
+
+	* MethodBuilderTest.cs: Added test for setting MethodImplAttributes
+	using a custom attribute.
+
 2003-02-10  Zoltan Varga  <vargaz@freemail.hu>
 
 	* ConstructorBuilderTest.cs: added SetCustomAttribute() tests.

@@ -14,6 +14,7 @@ using System;
 using System.Threading;
 using System.Reflection;
 using System.Reflection.Emit;
+using System.Runtime.CompilerServices;
 
 using NUnit.Framework;
 
@@ -383,8 +384,9 @@ public class MethodBuilderTest : Assertion
 
 	public void TestSetCustomAttribute () {
 		TypeBuilder tb = module.DefineType ("class21", TypeAttributes.Public);
+		string name = genMethodName ();
 		MethodBuilder mb = tb.DefineMethod (
-			genMethodName (), 0, typeof (void), 
+			name, MethodAttributes.Public, typeof (void), 
 			new Type [1] {typeof(int)});
 
 		// Null argument
@@ -403,6 +405,16 @@ public class MethodBuilderTest : Assertion
 			attrType.GetConstructor(paramTypes);
 
 		mb.SetCustomAttribute (ctorInfo, custAttrData);
+
+		// Test MethodImplAttribute
+		mb.SetCustomAttribute (new CustomAttributeBuilder (typeof (MethodImplAttribute).GetConstructor (new Type[1] { typeof (short) }), new object[1] {(short)MethodImplAttributes.Synchronized}));
+		mb.GetILGenerator ().Emit (OpCodes.Ret);
+
+		Type t = tb.CreateType ();
+
+		AssertEquals ("Setting MethodImplAttributes works",
+					  MethodImplAttributes.Synchronized,
+					  t.GetMethod (name).GetMethodImplementationFlags ());
 
 		// Null arguments again
 		try {
