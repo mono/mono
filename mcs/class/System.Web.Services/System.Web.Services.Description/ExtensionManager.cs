@@ -40,6 +40,9 @@ namespace System.Web.Services.Description
 			RegisterExtensionType (typeof (SoapHeaderBinding));
 			RegisterExtensionType (typeof (SoapHeaderFaultBinding));
 			RegisterExtensionType (typeof (SoapOperationBinding));
+			
+			foreach (Type type in WSConfig.Instance.FormatExtensionTypes)
+				RegisterExtensionType (type);
 		}
 	
 		public static void RegisterExtensionType (Type type)
@@ -62,7 +65,7 @@ namespace System.Web.Services.Description
 				ext.ElementName = at.ElementName;
 				if (at.Namespace != null) ext.Namespace = at.Namespace;
 			}
-			
+
 			XmlRootAttribute root = new XmlRootAttribute ();
 			root.ElementName = ext.ElementName;
 			if (ext.Namespace != null) root.Namespace = ext.Namespace;
@@ -111,6 +114,45 @@ namespace System.Web.Services.Description
 				else
 					throw new InvalidOperationException ("XmlFormatExtensionPointAttribute: Member " + at.MemberName + " not found");
 			}
+		}
+		
+		public static ArrayList BuildExtensionImporters ()
+		{
+			return BuildExtensionList (WSConfig.Instance.ExtensionImporterTypes);
+		}
+		
+		public static ArrayList BuildExtensionReflectors ()
+		{
+			return BuildExtensionList (WSConfig.Instance.ExtensionReflectorTypes);
+		}
+		
+		public static ArrayList BuildExtensionList (ArrayList exts)
+		{
+			ArrayList extensionTypes = new ArrayList ();
+			
+			if (exts != null)
+			{
+				foreach (WSExtensionConfig econf in exts)
+				{
+					bool added = false;
+					for (int n=0; n<extensionTypes.Count && !added; n++)
+					{
+						WSExtensionConfig cureconf = (WSExtensionConfig) extensionTypes [n];
+	
+						if ((econf.Group < cureconf.Group) || ((econf.Group == cureconf.Group) && (econf.Priority < cureconf.Priority))) {
+							extensionTypes.Insert (n, econf);
+							added = true;
+						}
+					}
+					if (!added) extensionTypes.Add (econf);
+				}
+			}
+
+			ArrayList extensions = new ArrayList (extensionTypes.Count);
+			foreach (WSExtensionConfig econf in extensionTypes)
+				extensions.Add (Activator.CreateInstance (econf.Type));
+				
+			return extensions;
 		}
 	}
 	

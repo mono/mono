@@ -3,6 +3,7 @@
 //
 // Author:
 //   Tim Coleman (tim@timcoleman.com)
+//   Lluis Sanchez Gual (lluis@ximian.com)
 //
 // Copyright (C) Tim Coleman, 2002
 //
@@ -36,10 +37,7 @@ namespace System.Web.Services.Description {
 
 		public ServiceDescription this [string ns] {
 			get { 
-				int index = IndexOf ((ServiceDescription) Table[ns]);
-				if (index >= 0)
-					return this[index]; 
-				return null;
+				return (ServiceDescription) Table[ns];
 			}
 		}
 
@@ -65,45 +63,51 @@ namespace System.Web.Services.Description {
 
 		public Binding GetBinding (XmlQualifiedName name)
 		{
-			foreach (object value in List) 
-				foreach (Binding binding in ((ServiceDescription) value).Bindings) 
+			ServiceDescription desc = (ServiceDescription) Table[name.Namespace];
+			if (desc != null) {
+				foreach (Binding binding in desc.Bindings) 
 					if (binding.Name == name.Name)
 						return binding;
-			throw new Exception ();
+			}
+			throw new InvalidOperationException ("Binding '" + name + "' not found");
 		}
 
 		protected override string GetKey (object value) 
 		{
-			if (!(value is ServiceDescription))
-				throw new InvalidCastException ();
 			return ((ServiceDescription) value).TargetNamespace;
 		}
 
 		public Message GetMessage (XmlQualifiedName name)
 		{
-			foreach (object value in List) 
-				foreach (Message message in ((ServiceDescription) value).Messages) 
+			ServiceDescription desc = (ServiceDescription) Table[name.Namespace];
+			if (desc != null) {
+				foreach (Message message in desc.Messages) 
 					if (message.Name == name.Name)
 						return message;
-			throw new Exception ();
+			}
+			throw new InvalidOperationException ("Message '" + name + "' not found");
 		}
 
 		public PortType GetPortType (XmlQualifiedName name)
 		{
-			foreach (object value in List) 
-				foreach (PortType portType in ((ServiceDescription) value).PortTypes) 
+			ServiceDescription desc = (ServiceDescription) Table[name.Namespace];
+			if (desc != null) {
+				foreach (PortType portType in desc.PortTypes) 
 					if (portType.Name == name.Name)
 						return portType;
-			throw new Exception ();
+			}
+			throw new InvalidOperationException ("Port type '" + name + "' not found");
 		}
 
 		public Service GetService (XmlQualifiedName name)
 		{
-			foreach (object value in List) 
-				foreach (Service service in ((ServiceDescription) value).Services) 
+			ServiceDescription desc = (ServiceDescription) Table[name.Namespace];
+			if (desc != null) {
+				foreach (Service service in desc.Services) 
 					if (service.Name == name.Name)
 						return service;
-			throw new Exception ();
+			}
+			throw new InvalidOperationException ("Service '" + name + "' not found");
 		}
 
 		public int IndexOf (ServiceDescription serviceDescription)

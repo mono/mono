@@ -1,3 +1,20 @@
+2003-09-28  Lluis Sanchez Gual  <lluis@ximian.com>
+	
+	* ExtensionManager.cs: Read extension types from the configuration file.
+	  Added methods for getting extension importers and reflectors.
+	* ProtocolImporter.cs: Implemented.
+	* ProtocolReflector.cs: Implemented.
+	* ServiceDescriptionCollection.cs: Fixed some methods for finding wsdl
+	  elements.
+	* ServiceDescriptionImporter.cs: moved most of the code to ProtocolImporter.
+	* ServiceDescriptionReflector.cs: moved most of the code to 
+	  ProtocolReflector and SoapProtocolReflector.
+	* SoapProtocolImporter.cs: Implemented.
+	* SoapProtocolReflector.cs: Implemented.
+	* SoapTransportImporter.cs: Implemented.
+	* SoapHttpTransportImporter.cs: Implemented.
+	* wsdl.genxs: Added.
+
 2003-09-14  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* DocumentableItem.cs MimeContentBinding.cs OperationMessage.cs 
