@@ -99,5 +99,50 @@ namespace MonoTests.System.Data
 			AssertEquals ("RowFilter", "", v.RowFilter);
 			AssertEquals ("Sort", "", v.Sort);
 		}
+
+		[Test]
+		public void IsEdit ()
+		{
+			DataTable dt = new DataTable ("table");
+			dt.Columns.Add ("col");
+			dt.Rows.Add ((new object [] {"val"}));
+
+			DataView dv = new DataView (dt);
+			DataRowView drv = dv [0];
+			dt.Rows [0].BeginEdit ();
+			AssertEquals ("DataView.Item", true, drv.IsEdit);
+
+			drv = dv.AddNew ();
+			drv.Row ["col"] = "test";
+			drv.Row.CancelEdit ();
+			AssertEquals ("AddNew", false, drv.IsEdit);
+		}
+
+		[Test]
+		public void Item ()
+		{
+			DataTable dt = new DataTable ("table");
+			dt.Columns.Add ("col");
+			dt.Rows.Add ((new object [] {"val"}));
+			DataView dv = new DataView (dt);
+			DataRowView drv = dv [0];
+			dt.Rows [0].BeginEdit ();
+			AssertEquals ("DataView.Item", "val", drv ["col"]);
+		}
+
+		[Test]
+		[ExpectedException (typeof (RowNotInTableException))]
+		[NUnit.Framework.Category ("NotWorking")]
+		public void ItemException ()
+		{
+			DataTable dt = new DataTable ("table");
+			dt.Columns.Add ("col");
+			dt.Rows.Add ((new object [] {"val"}));
+			DataView dv = new DataView (dt);
+			DataRowView drv = dv.AddNew ();
+			drv.Row ["col"] = "test";
+			drv.Row.CancelEdit ();
+			AssertEquals ("AddNew", false, drv ["col"]);
+		}
 	}
 }

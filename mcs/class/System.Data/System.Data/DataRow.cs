@@ -310,6 +310,10 @@ namespace System.Data {
 			}
 		}
 
+		internal bool IsEditing {
+			get { return editing; }
+		}
+
 		/// <summary>
 		/// Gets the current state of the row in regards to its relationship to the
 		/// DataRowCollection.

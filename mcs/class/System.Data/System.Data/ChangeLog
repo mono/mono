@@ -1,5 +1,10 @@
 2005-01-25  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* DataRowView.cs : Fixed IsEdit to reflect correct status of DataRow.
+	* DataRow.cs : Expose editing status internally.
+
+2005-01-25  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* DataView.cs : missing attributes.
 
 2005-01-24  Atsushi Enomoto  <atsushi@ximian.com>

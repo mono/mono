@@ -51,8 +51,7 @@ namespace System.Data
 		DataRow dataRow;
 		DataRowVersion rowVersion = DataRowVersion.Default;
 
-		// FIXME: what are the defaults?
-		bool isEdit = false;
+		// FIXME: what is the default?
 		bool isNew = false;
 
 		#endregion // Fields
@@ -80,20 +79,14 @@ namespace System.Data
 					((DataRowView)other).dataRow.Equals(this.dataRow));
 		}
 
-		[MonoTODO]
 		public void BeginEdit ()
 		{
-			// FIXME:
-			dataRow.BeginEdit();
-			isEdit = true;
+			dataRow.BeginEdit ();
 		}
 
-		[MonoTODO]
 		public void CancelEdit ()
 		{
-			// FIXME:
-			dataRow.CancelEdit();
-			isEdit = false;
+			dataRow.CancelEdit ();
 		}
 
 		public DataView CreateChildView (DataRelation relation)
@@ -115,12 +108,9 @@ namespace System.Data
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public void EndEdit ()
 		{
-			// FIXME:
-			dataRow.EndEdit();
-			isEdit = false;
+			dataRow.EndEdit ();
 		}
 
 		#endregion // Methods
@@ -136,10 +126,7 @@ namespace System.Data
 		}
 
 		public bool IsEdit {
-			[MonoTODO]
-			get {
-				return isEdit;
-			}
+			get { return dataRow.IsEditing; }
 		}
 
 		public bool IsNew {

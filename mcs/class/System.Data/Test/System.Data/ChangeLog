@@ -1,3 +1,7 @@
+2005-01-25  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DataRowViewTest.cs : added IsEdit tests and Item tess (not working).
+
 2005-01-24  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DataRowViewTest.cs : added new file.
