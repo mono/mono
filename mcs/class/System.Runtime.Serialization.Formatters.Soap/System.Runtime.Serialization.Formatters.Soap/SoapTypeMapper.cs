@@ -87,7 +87,7 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 		public static readonly string SoapEncodingPrefix = "SOAP-ENC";
 		public static readonly string SoapEnvelopeNamespace = "http://schemas.xmlsoap.org/soap/envelope/";
 		public static readonly string SoapEnvelopePrefix = "SOAP-ENV";
-		internal static readonly string SoapEnvelope;
+		//internal static readonly string SoapEnvelope;
 		private XmlTextWriter _xmlWriter;
 		private long _prefixNumber;
 		private Hashtable namespaceToPrefixTable = new Hashtable();
@@ -112,7 +112,6 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 			_xmlWriter = xmlWriter;
 			_assemblyFormat = assemblyFormat;
 			_prefixNumber = 1;
-			Element element;
 			Type elementType;
 			elementType = typeof(string);
 			if(typeFormat == FormatterTypeStyle.XsdString)

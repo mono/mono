@@ -1,3 +1,8 @@
+2004-05-10  Gert Driesen (drieseng@users.sourceforge.net)
+	* SoapFormatter.cs: sealed class and added ComVisible attribute
+	to FilterLevel property to match MS.NET
+	* SoapTypeMapper.cs: fixed compiler warnings
+
 2004-05-07  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* SoapWriter.cs: Fixed string formatting.

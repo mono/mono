@@ -9,6 +9,7 @@
 using System;
 using System.IO;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Runtime.Remoting;
 using System.Runtime.Serialization;
 using System.Runtime.Remoting.Messaging;
@@ -22,7 +23,7 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 		MethodCall, MethodResponse, ServerFault, NotRecognize
 	}
 	
-	public class SoapFormatter: IRemotingFormatter, IFormatter {
+	public sealed class SoapFormatter: IRemotingFormatter, IFormatter {
 		private SoapWriter _soapWriter;
 		private SerializationBinder _binder;
 		private StreamingContext _context;
@@ -134,6 +135,7 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 		
 #if NET_1_1
 		[MonoTODO ("Interpret this")]
+		[ComVisible(false)]
 		public TypeFilterLevel FilterLevel {
 			get {
 				return _filterLevel;
