@@ -127,5 +127,12 @@ namespace System.Runtime.Remoting.Proxies
 			_ctorCall.CopyFrom (request);
 			return ActivationServices.Activate (this, _ctorCall);
 		}
+		
+		~RemotingProxy()
+		{
+			if (_objectIdentity != null)
+				RemotingServices.DisposeIdentity (_objectIdentity);
+		}
+		
 	}
 }
