@@ -1,4 +1,7 @@
 2002-11-13  Tim Coleman <tim@timcoleman.com>
+	* Mono.Data.TdsClient.Internal/Tds.cs:
+		Fix GetStringValue, GetTextValue when handling NULL
+		values.
 	* Mono.Data.TdsClient.Internal/TdsComm.cs:
 		Comment out asynchronous socket connect
 		because it doesn't work properly yet on 

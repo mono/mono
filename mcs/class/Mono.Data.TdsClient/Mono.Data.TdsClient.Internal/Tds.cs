@@ -560,6 +560,7 @@ namespace Mono.Data.TdsClient.Internal {
 		private object GetImageValue ()
 		{
 			byte hasValue = comm.GetByte ();
+
 			if (hasValue == 0)
 				return null;
 			
@@ -642,14 +643,13 @@ namespace Mono.Data.TdsClient.Internal {
 
 			int len = shortLen ? comm.GetTdsShort () : (comm.GetByte () & 0xff);
 
-			if ((tdsVersion < TdsVersion.tds70 && len == 0) || (tdsVersion == TdsVersion.tds70 && len == 0xffff))
+			if ((tdsVersion < TdsVersion.tds70 && len == 0) || (tdsVersion == TdsVersion.tds70 && len == 0xff))
 				result = null;
 			else if (len >= 0) {
 				if (wideChars)
 					result = comm.GetString (len / 2);
 				else
 					result = comm.GetString (len, false);
-
 				if (tdsVersion < TdsVersion.tds70 && ((string) result).Equals (" "))
 					result = "";
 			}
@@ -668,22 +668,25 @@ namespace Mono.Data.TdsClient.Internal {
 			string result = null;
 			byte hasValue = comm.GetByte ();
 
-			if (hasValue == 0)
+			if (hasValue != 16)
 				return null;
 
+			// 16 Byte TEXTPTR, 8 Byte TIMESTAMP
 			comm.Skip (24);
+
 			int len = comm.GetTdsInt ();
 
-			if (len >= 0) {
-				if (wideChars)
-					result = comm.GetString (len / 2);
-				else
-					result = comm.GetString (len, false);
-					len /= 2;
+			if (len == 0)
+				return null;
 
-				if ((byte) tdsVersion < (byte) TdsVersion.tds70 && result == " ")
-					result = "";
-			} 
+			if (wideChars)
+				result = comm.GetString (len / 2);
+			else
+				result = comm.GetString (len, false);
+				len /= 2;
+
+			if ((byte) tdsVersion < (byte) TdsVersion.tds70 && result == " ")
+				result = "";
 
 			return result;
 		}
