@@ -1,3 +1,9 @@
+2003-01-21  Dietmar Maurer  <dietmar@ximian.com>
+
+	* added the following fix from Jackson Harper <jackson@latitudegeo.com>
+	* class.c (mono_ptr_class_get): correctly set access levels of pointers
+	(mono_array_class_get): correctly set access levels of arrays
+
 2003-01-20	Patrik Torstensson
 	* image.h (MonoAssemblyName): changed major, minor, build, revision
 	from signed to unsigned.
