@@ -1,3 +1,7 @@
+2003-09-04  Martin Baulig  <martin@ximian.com>
+
+	* Makefile.am (INCLUDES): Added $(LIBGC_CFLAGS).
+
 2003-09-04  Zoltan Varga  <vargaz@freemail.hu>
 
 	* TODO: Some new optimization ideas.
