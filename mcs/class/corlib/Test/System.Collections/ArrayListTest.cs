@@ -965,25 +965,36 @@ public class ArrayListTest : TestCase {
 		//Assert("past-end lastindexof error not thrown", 
 		//errorThrown);
 		//}
-		{
+		int iTest = 0;
+		try {
 			char[] c = {'a', 'b', 'c', 'd', 'e'};
 			ArrayList a = new ArrayList(c);
 			AssertEquals("never find null", 
 				     -1, a.LastIndexOf(null));
+			iTest++;
 			AssertEquals("never find null", 
 				     -1, a.LastIndexOf(null, 4));
+			iTest++;
 			AssertEquals("never find null", 
 				     -1, a.LastIndexOf(null, 4, 5));
+			iTest++;
 			AssertEquals("can't find elem", 
 				     2, a.LastIndexOf('c'));
+			iTest++;
 			AssertEquals("can't find elem", 
 				     2, a.LastIndexOf('c', 4));
+			iTest++;
 			AssertEquals("can't find elem", 
 				     2, a.LastIndexOf('c', 3, 2));
+			iTest++;
 			AssertEquals("shouldn't find elem", 
 				     -1, a.LastIndexOf('c', 4, 2));
+			iTest++;
 			AssertEquals("shouldn't find", -1, a.LastIndexOf('?'));
+			iTest++;
 			AssertEquals("shouldn't find", -1, a.LastIndexOf(1));
+		} catch (Exception e) {
+			Fail ("Unexpected exception caught when iTest=" + iTest + ". e=" + e);
 		}
 	}
 

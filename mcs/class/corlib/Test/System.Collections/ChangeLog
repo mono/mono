@@ -1,3 +1,8 @@
+2002-05-27  Nick Drochak  <ndrochak@gol.com>
+
+	* ArrayListTest.cs (TestLastIndexOf): Add try-catch block to report
+	where we are throwing.
+
 2002-05-21  Lawrence Pit  <loz@cable.a2000.nl>
 
 	* ArrayListTest.cs: Added several tests to test for 0 capacity
