@@ -551,20 +551,47 @@ namespace System.Xml.Serialization {
 
 		protected void UnknownAttribute (object o, XmlAttribute attr)
 		{
-			// TODO: line numbers
-			eventSource.OnUnknownAttribute (new XmlAttributeEventArgs (attr,0,0,o));
+			int line_number, line_position;
+			
+			if (Reader is XmlTextReader){
+				line_number = ((XmlTextReader)Reader).LineNumber;
+				line_position = ((XmlTextReader)Reader).LinePosition;
+			} else {
+				line_number = 0;
+				line_position = 0;
+			}
+			
+			eventSource.OnUnknownAttribute (new XmlAttributeEventArgs (attr, line_number, line_position, o));
 		}
 
 		protected void UnknownElement (object o, XmlElement elem)
 		{
-			// TODO: line numbers
-			eventSource.OnUnknownElement (new XmlElementEventArgs(elem,0,0,o));
+			int line_number, line_position;
+			
+			if (Reader is XmlTextReader){
+				line_number = ((XmlTextReader)Reader).LineNumber;
+				line_position = ((XmlTextReader)Reader).LinePosition;
+			} else {
+				line_number = 0;
+				line_position = 0;
+			}
+			
+			eventSource.OnUnknownElement (new XmlElementEventArgs (elem, line_number, line_position,o));
 		}
 
 		protected void UnknownNode (object o)
 		{
-			// TODO: line numbers
-			eventSource.OnUnknownNode (new XmlNodeEventArgs(0, 0, Reader.LocalName, Reader.Name, Reader.NamespaceURI, Reader.NodeType, o, Reader.Value));
+			int line_number, line_position;
+			
+			if (Reader is XmlTextReader){
+				line_number = ((XmlTextReader)Reader).LineNumber;
+				line_position = ((XmlTextReader)Reader).LinePosition;
+			} else {
+				line_number = 0;
+				line_position = 0;
+			}
+			
+			eventSource.OnUnknownNode (new XmlNodeEventArgs(line_number, line_position, Reader.LocalName, Reader.Name, Reader.NamespaceURI, Reader.NodeType, o, Reader.Value));
 			if (Reader.NodeType != XmlNodeType.Attribute)
 			{
 				Reader.Skip();

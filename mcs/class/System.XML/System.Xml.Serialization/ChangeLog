@@ -1,3 +1,8 @@
+2003-06-01  Miguel de Icaza  <miguel@ximian.com>
+
+	* XmlSerializationReader.cs (UnknownAttribute, UnknownNode,
+	UnknownElement): Add line number information.
+
 2003-05-29  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* TypeData.cs, TypeTranslator.cs: Renamed some properties.
