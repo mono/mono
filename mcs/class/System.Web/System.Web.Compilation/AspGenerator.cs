@@ -939,10 +939,11 @@ class AspGenerator
 		string control_type_string = controls.PeekType ().ToString ();
 		StringBuilder db_function = controls.DataBindFunction;
 		string container;
-		if (controls.Container == null)
+		if (controls.Container == null || !typeof (INamingContainer).IsAssignableFrom (controls.Container))
 			container = "System.Web.UI.Control";
-		else
+		else {
 			container = controls.Container.ToString ();
+		}
 
 		if (db_function.Length == 0)
 			db_function.AppendFormat ("\t\tpublic void __DataBind_{0} (object sender, " + 

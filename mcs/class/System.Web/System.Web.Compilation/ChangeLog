@@ -1,5 +1,10 @@
 2003-01-10  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* AspGenerator.cs: cast to Control if the container does not implement
+	INamingContainer.
+
+2003-01-10  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* AspGenerator.cs: fixed a couple of thinkos related to IsSubclassOf.
 
 2003-01-08  Gonzalo Paniagua Javier <gonzalo@ximian.com>
