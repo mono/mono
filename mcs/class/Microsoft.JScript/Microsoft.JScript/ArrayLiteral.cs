@@ -30,6 +30,7 @@
 
 using System;
 using System.Collections;
+using System.Reflection;
 using System.Reflection.Emit;
 
 namespace Microsoft.JScript {
@@ -37,11 +38,12 @@ namespace Microsoft.JScript {
 	public class ArrayLiteral : AST {
 
 		internal ASTList elems;
-		internal int size;
+		int skip_count;
 
-		public ArrayLiteral (Context context, ASTList elems)
+		public ArrayLiteral (Context context, ASTList elems, int skip_count)
 		{
 			this.elems = elems;
+			this.skip_count = skip_count;
 		}
 
 		internal ArrayLiteral (AST parent)
@@ -52,9 +54,10 @@ namespace Microsoft.JScript {
 
 		internal override bool Resolve (IdentificationTable context)
 		{
-			bool r = true;
-			foreach (AST ast in elems.elems)
-				r &= ast.Resolve (context);
+			 bool r = true;
+			 foreach (AST ast in elems.elems)
+				 if (ast != null)
+					 r &= ast.Resolve (context);
 			return r;
 		}
 
@@ -63,12 +66,18 @@ namespace Microsoft.JScript {
 			int i = 0;
 			ILGenerator ig = ec.ig;
 			ArrayList exps = elems.elems;
-			ig.Emit (OpCodes.Ldc_I4, size);
+			FieldInfo missing = null;
+			if (skip_count != 0)
+				missing = typeof (Missing).GetField ("Value");
+			ig.Emit (OpCodes.Ldc_I4, elems.Size);
 			ig.Emit (OpCodes.Newarr, typeof (object));
 			foreach (AST ast in exps) {
 				ig.Emit (OpCodes.Dup);
- 				ig.Emit (OpCodes.Ldc_I4, i);				
- 				ast.Emit (ec);
+ 				ig.Emit (OpCodes.Ldc_I4, i);
+				if (ast != null)
+					ast.Emit (ec);
+				else 
+					ig.Emit (OpCodes.Ldsfld, missing);
  				ig.Emit (OpCodes.Stelem_Ref);
 				i++;
 			}

@@ -28,10 +28,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-namespace Microsoft.JScript.Tmp
-{
-	public sealed class Missing
-	{
+namespace Microsoft.JScript {
+	public sealed class Missing {
 		public static readonly Missing Value;
 	}
 }

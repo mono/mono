@@ -1,3 +1,11 @@
+2004-08-23  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
+
+	* Parser.cs: pass the skip_count to ArrayLiteral constructor.
+	* Missing.cs: back to Microsoft.JScript namespace.
+	* ArrayLiteral.cs: added field skip_count, it tells us if this is
+	a spaced-arrayliteral, in which case we add a null value in the
+	list, added null check in the resolve and code generation process.
+
 2004-08-21  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
 
 	* expression.cs: added interface ICallable and and function AddArg

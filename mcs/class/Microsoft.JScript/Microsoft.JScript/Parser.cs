@@ -984,7 +984,7 @@ namespace Microsoft.JScript {
 					}
 				}
 				// FIXME: pass a real Context
-				return new ArrayLiteral (null, elems);
+				return new ArrayLiteral (null, elems, skip_count);
 			} else if (tt == Token.LC) {
 				ArrayList elems = new ArrayList ();
 
