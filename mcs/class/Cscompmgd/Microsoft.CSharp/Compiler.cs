@@ -36,6 +36,9 @@ using System.Text.RegularExpressions;
 
 namespace Microsoft.CSharp {
 
+#if NET_2_0
+	[System.Obsolete]
+#endif
 	public class Compiler {
 		
 		private Compiler()
