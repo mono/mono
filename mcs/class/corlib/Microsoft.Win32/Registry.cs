@@ -8,8 +8,9 @@ using System;
 
 namespace Microsoft.Win32
 {
-	public class Registry
+	public sealed class Registry
 	{
+		private Registry () { }
 		public static readonly RegistryKey ClassesRoot;
 		public static readonly RegistryKey CurrentConfig;
 		public static readonly RegistryKey CurrentUser;
