@@ -63,6 +63,15 @@ namespace MonoTests.System
 
 		public void Overload () { }
 		public void Overload (int i) { }
+
+		public NewVTable (out int i) {
+			i = 0;
+		}
+
+		public void byref_method (out int i) {
+			i = 0;
+		}
+
 	}
 
 	class Base1 {
@@ -171,6 +180,11 @@ namespace MonoTests.System
 
 			// Test overload resolution
 			AssertEquals ("#05", 0, typeof (NewVTable).GetMethod ("Overload", new Type [0]).GetParameters ().Length);
+
+			// Test byref parameters
+			AssertEquals ("#06", null, typeof (NewVTable).GetMethod ("byref_method", new Type [] { typeof (int) }));
+			Type byrefInt = typeof (NewVTable).GetMethod ("byref_method").GetParameters ()[0].ParameterType;
+			AssertNotNull ("#07", typeof (NewVTable).GetMethod ("byref_method", new Type [] { byrefInt }));
 		}
 
 		[Test]
