@@ -1075,6 +1075,19 @@ namespace Mono.CSharp
 			case Token.TYPEOF:
 			case Token.UNCHECKED:
 			case Token.UNSAFE:
+
+				//
+				// These can be part of a member access
+				//
+			case Token.INT:
+			case Token.UINT:
+			case Token.SHORT:
+			case Token.USHORT:
+			case Token.LONG:
+			case Token.ULONG:
+			case Token.DOUBLE:
+			case Token.FLOAT:
+			case Token.CHAR:
 				return true;
 
 			default:

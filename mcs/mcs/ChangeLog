@@ -1,3 +1,12 @@
+2004-01-09  Miguel de Icaza  <miguel@ximian.com>
+
+	* cs-tokenizer.cs (IsCastToken): Allow the various native types
+	here to return true, as they can be used like this:
+
+		(XXX) int.MEMBER ()
+
+	Fixed 49836 and all the other dups
+	
 2004-01-09  Zoltan Varga  <vargaz@freemail.hu>
 
 	* driver.cs: Implement /win32res and /win32icon.
