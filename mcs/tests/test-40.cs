@@ -73,6 +73,11 @@ public class Blah {
 		if (j != 30)
 			return 1;
 
+		Enum e = Bar.d;
+		if (e.ToString () != "d")
+			return 15;
+
+		Console.WriteLine ("Value: " + e.ToString ());
 		Console.WriteLine ("Enum emission test okay");
 		return 0;
 	}
