@@ -1,3 +1,12 @@
+2004-11-25  Miguel de Icaza  <miguel@ximian.com>
+
+	* convert.cs (ImplicitReferenceConversionExists): A surprisingly
+	old bug: when converting from the null literal to a pointer,
+	return an EmptyCast, not the NullLiteral.
+
+	This fixes #69921, the recent null_type changes probably made this
+	bug more prominent.
+
 2004-12-03  Martin Baulig  <martin@ximian.com>
 
 	* delegate.cs (NewDelegate.DoResolve): If we have an anonymous
