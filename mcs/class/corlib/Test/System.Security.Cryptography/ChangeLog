@@ -1,3 +1,8 @@
+2003-08-05  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* CryptoStreamTest.cs: Added test case from bugzilla #40689 from 
+	Henning Westerholt.
+
 2003-07-31  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* CryptoStreamTest.cs: New. Very basic test for CryptoStream + the 

@@ -166,6 +166,94 @@ namespace MonoTests.System.Security.Cryptography {
 	                }
 		}
 
+		// bugzilla: 40689 (adapted from test case by Henning Westerholt)
+		[Test]
+		public void WriteOnBlockWithFinal () 
+		{
+			byte[] desKey = {0, 1, 2, 3, 4, 5, 6, 7};
+			byte[] desIV = {0, 1, 2, 3, 4, 5, 6, 7};
+			DES des = DES.Create ();
+
+			MemoryStream msin = new MemoryStream ();
+			CryptoStream enc = new CryptoStream (msin, des.CreateEncryptor (desKey, desIV), CryptoStreamMode.Write);
+			byte[] data = new byte [2200];
+			enc.Write (data, 0, 2200);
+			enc.FlushFinalBlock ();
+			msin.Position = 0;
+			AssertEquals ("Encryped Write Length", 2208, msin.Length); // 2200 + padding
+
+			MemoryStream msout = new MemoryStream ();
+			msout.SetLength (0);
+
+			byte[] tmp = new byte [1024];
+			long readlen = 0;
+			long totallen = msin.Length;
+
+			CryptoStream dec = new CryptoStream (msout, des.CreateDecryptor (desKey, desIV), CryptoStreamMode.Write);
+			int len = msin.Read (tmp, 0, 1024);
+			while (len > 0) {
+				dec.Write (tmp, 0, len);
+				readlen += len;
+				len = msin.Read (tmp, 0, 1024);
+			}
+			AssertEquals ("Decryped Write Length", 2200, msout.Length);
+
+			dec.Close ();
+			dec.Clear ();
+			msout.Close ();
+			msin.Close ();
+
+			AssertEquals ("Read Length", 2208, readlen); // 2200 + padding
+		}
+
+		[Test]
+		public void PreGeneratedStreams ()
+		{
+			byte[] desKey = {0, 1, 2, 3, 4, 5, 6, 7};
+			byte[] desIV = {0, 1, 2, 3, 4, 5, 6, 7};
+			DES des = DES.Create ();
+	
+			for (int i=0; i < 9; i++) {
+				MemoryStream msin = new MemoryStream ();
+				CryptoStream enc = new CryptoStream (msin, des.CreateEncryptor (desKey, desIV), CryptoStreamMode.Write);
+				byte[] data = new byte [i];
+				enc.Write (data, 0, i);
+				enc.FlushFinalBlock ();
+
+				string msg = "PreGeneratedStream #" + i;
+				string result = BitConverter.ToString (msin.ToArray ());
+				switch (i) {
+					case 0:
+						AssertEquals (msg, "92-C9-DB-45-30-0B-93-2F", result); 
+						break;
+					case 1:
+						AssertEquals (msg, "08-CF-A1-37-BD-56-D0-65", result); 
+						break;
+					case 2:
+						AssertEquals (msg, "58-87-D4-9B-2C-27-97-0C", result); 
+						break;
+					case 3:
+						AssertEquals (msg, "07-35-90-94-68-7D-51-FB", result); 
+						break;
+					case 4:
+						AssertEquals (msg, "BF-00-98-C5-20-71-D0-DB", result); 
+						break;
+					case 5:
+						AssertEquals (msg, "1A-55-C8-6E-C1-9B-31-82", result); 
+						break;
+					case 6:
+						AssertEquals (msg, "2D-2B-76-41-61-0E-00-0C", result); 
+						break;
+					case 7:
+						AssertEquals (msg, "DC-FF-73-D2-7F-D7-48-5D", result); 
+						break;
+					case 8:
+						AssertEquals (msg, "E1-B2-46-E5-A7-C7-4C-BC-0E-40-4A-FC-08-92-B1-EB", result); 
+						break;
+				}
+			}
+		}
+
 		// TODO: Test with Hash object
 	}
 }
