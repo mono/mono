@@ -1,3 +1,7 @@
+2002-10-12  Vladimir Vukicevic  <vladimir@pobox.com>
+
+	* sources.list: whoops, fix dir name
+
 2002-10-13  Daniel Morgan <danmorg@sc.rr.com>
 
 	* Test: added new directory to hold
