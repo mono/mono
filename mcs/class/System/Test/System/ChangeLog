@@ -1,3 +1,8 @@
+2005-02-02  Ben Maurer  <bmaurer@ximian.com>
+
+	* UriTest2.cs: Make this file use resources, not files. Helps with
+	distcheck.
+
 2005-01-20  Miguel de Icaza  <miguel@ximian.com>
 
 	* UriTest.cs: Add test for bugs 71050 and 71051.

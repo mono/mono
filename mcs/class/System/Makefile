@@ -10,7 +10,10 @@ LIBRARY_USE_INTERMEDIATE_FILE = yes
 # 2nd pass - build System.dll with System.Xml.dll and System.Security.dll references
 
 LIB_MCS_FLAGS = /r:$(corlib)
-TEST_MCS_FLAGS = -nowarn:1595 -nowarn:0618 -nowarn:219 -nowarn:67
+TEST_MCS_FLAGS = -nowarn:1595 -nowarn:0618 -nowarn:219 -nowarn:67 \
+	-resource:Test/System/test-uri-props.txt,test-uri-props.txt \
+	-resource:Test/System/test-uri-props-manual.txt,test-uri-props-manual.txt \
+	-resource:Test/System/test-uri-relative-props.txt,test-uri-relative-props.txt 
 
 XML_DEP := System.Xml.dll
 XML_DEP_FILE := $(wildcard ../lib/$(PROFILE)/$(XML_DEP))
@@ -76,7 +79,7 @@ LIB_MCS_FLAGS += /define:SECURITY_DEP /r:$(SECURITY_DEP)
 $(the_lib): $(SECURITY_DEP_FILE)
 endif
 
-$(test_lib): $(test_lib).config
+$(test_lib): $(test_lib).config Test/System/test-uri-props.txt Test/System/test-uri-props-manual.txt Test/System/test-uri-relative-props.txt
 
 $(test_lib).config: Test/test-config-file
 	cp $< $@

@@ -1,3 +1,7 @@
+2005-02-02  Ben Maurer  <bmaurer@ximian.com>
+
+	* Makefile: Embed the uri stuff as a resource.
+
 2005-01-24  Raja R Harinath  <rharinath@novell.com>
 
 	Add circular dependency on System.Security.dll.

@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Reflection;
 using System.Text;
 using NUnit.Framework;
 
@@ -52,25 +53,27 @@ namespace MonoTests.System
 		[Test]
 		public void AbsoluteUriFromFile ()
 		{
-			FromFile ("Test/System/test-uri-props.txt", null);
+			FromResource ("test-uri-props.txt", null);
 		}
 		
 		[Test]
 		[Category("NotDotNet")]
 		public void AbsoluteUriFromFileManual ()
 		{
-			FromFile ("Test/System/test-uri-props-manual.txt", null);
+			FromResource ("test-uri-props-manual.txt", null);
 		}
 		
 		[Test]
 		public void RelativeUriFromFile ()
 		{
-			FromFile ("Test/System/test-uri-relative-props.txt", new Uri ("http://www.go-mono.com"));
+			FromResource ("test-uri-relative-props.txt", new Uri ("http://www.go-mono.com"));
 		}
 		
-		private void FromFile (string testFile, Uri baseUri)
+		private void FromResource (string res, Uri baseUri)
 		{
-			StreamReader sr = new StreamReader (testFile, Encoding.UTF8);
+			Assembly a = Assembly.GetExecutingAssembly ();
+			Stream s = a.GetManifestResourceStream (res);
+			StreamReader sr = new StreamReader (s, Encoding.UTF8);
 			while (sr.Peek () > 0) {
 				sr.ReadLine (); // skip
 				string uriString = sr.ReadLine ();
