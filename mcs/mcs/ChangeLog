@@ -1,5 +1,11 @@
 2004-04-28  Martin Baulig  <martin@ximian.com>
 
+	* expression.cs (ConditionalLogicalOperator): Use a temporary
+	variable for `left' to avoid that we evaluate it more than once;
+	bug #52588.
+
+2004-04-28  Martin Baulig  <martin@ximian.com>
+
 	* expression.cs (ComposedCast.DoResolveAsTypeStep): Don't allow
 	`void[]' (CS1547).
 
