@@ -1,3 +1,7 @@
+2001-11-29  Radek Doulik  <rodo@ximian.com>
+
+	* Makefile.am (libmonoarch_la_LIBADD): added ppc to DIST_SUBDIRS
+	generate libmonoarch for ppc
 
 Tue Nov 27 15:24:07 CET 2001 Paolo Molaro <lupus@ximian.com>
 
