@@ -1,3 +1,7 @@
+2002-11-11  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Timer.cs: implemented more stuff. It works now.
+
 2002-10-25  Zoltan Varga  <vargaz@freemail.hu>
 
 	* Thread.cs: Implement GetDomain() and GetDomainID().
