@@ -1,3 +1,7 @@
+2001-12-04  Ravi Pratap <ravi@ximian.com>
+
+	* test-45.cs : Update for string initialization tests.
+
 2001-12-03  Miguel de Icaza  <miguel@ximian.com>
 
 	* test-49.cs: Updated to test `goto default'

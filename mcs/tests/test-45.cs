@@ -5,6 +5,10 @@ public class Blah {
 	private static int[] array = {0, 1, 2, 3};
 
 	private static int [,] bar = { {0,1}, {4,5}, {10,20} };
+
+	static string [] names = {
+		"Miguel", "Paolo", "Dietmar", "Dick", "Ravi"
+	};
 	
 	public static int Main ()
 	{
@@ -45,6 +49,12 @@ public class Blah {
 			return 1;
 
 		if (boo [0,1] != 11)
+			return 1;
+
+		foreach (string s in names)
+			Console.WriteLine ("Hello, " + s);
+
+		if (names [0] != "Miguel")
 			return 1;
 		
 		Console.WriteLine ("Array initialization test okay.");
