@@ -1,3 +1,8 @@
+2005-03-18  Stefan Buehler  <sbuehler@gmx.ch>
+
+	* TabPage.cs: Don't use Owner.DisplayRectangle unless owner is valid, 
+	  fixes bug #72588.
+
 2005-03-28  Alexander Olk  <xenomorph2@onlinehome.de>
 
 	* FileDialog.cs, SaveFileDialog.cs OpenFileDialog.cs:

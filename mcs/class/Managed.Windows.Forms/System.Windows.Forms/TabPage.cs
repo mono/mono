@@ -194,9 +194,9 @@ namespace System.Windows.Forms {
 
 		protected override void SetBoundsCore (int x, int y, int width, int height, BoundsSpecified specified) 
 		{
-			Rectangle display = Owner.DisplayRectangle;
-
 			if (Owner != null && Owner.IsHandleCreated) {
+				Rectangle display = Owner.DisplayRectangle;
+
 				base.SetBoundsCore (display.X, display.Y,
 							display.Width, display.Height,
 							BoundsSpecified.All);
