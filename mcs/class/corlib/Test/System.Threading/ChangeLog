@@ -1,3 +1,7 @@
+2004-04-09  Zoltan Varga  <vargaz@freemail.hu>
+
+	* TimerTest.cs: Beginnings of regression tests for the Timer class.
+
 2004-04-07  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* ReaderWriterLockTest.cs: Added one more test.
