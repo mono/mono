@@ -1,8 +1,0 @@
-2001-08-01  Matthew S. Ford  <Matthew.S.Ford@Rose-Hulman.Edu>
-
-	* MD5Test.cs: Initial version.
-	* SHA1Test.cs: Initial version.
-	* SHA256Test.cs: Initial version.
-	* SHA384Test.cs: Initial version.
-	* SHA512Test.cs: Initial version.
-
