@@ -616,12 +616,14 @@ namespace MonoTests.System.Security.Policy {
 			// loaded from a string - no store
 			Assert.IsNull (pl.StoreLocation, "StoreLocation(string)");
 
-			string filename = Path.GetFullPath ("unittest.config");
+			string filename = Path.GetFullPath (Environment.UserName + "-unittest.config");
 			using (StreamWriter sw = new StreamWriter (filename, false)) {
 				sw.Write (minimal);
 			}
 			pl = SecurityManager.LoadPolicyLevelFromFile (filename, PolicyLevelType.Machine);
 			Assert.AreEqual (filename, pl.StoreLocation, "StoreLocation(file)");
+
+			File.Delete (filename);
 		}
 
 		[Test]

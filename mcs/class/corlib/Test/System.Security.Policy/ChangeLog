@@ -1,3 +1,10 @@
+2005-02-16  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* PolicyLevelTest.cs: Renamed the file created by the StoreLocation 
+	test case to include the username. This way multiple users sharing
+	/tmp cannot block the test execution (e.g. buildbot). Also tries to
+	remove the file after the test.
+
 2005-01-31  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* HashTest.cs: Oops, changed "NotWorking" to "NotDotNet".
