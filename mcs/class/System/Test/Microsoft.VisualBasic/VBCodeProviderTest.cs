@@ -90,7 +90,10 @@ namespace MonoTests.System.Microsoft.VisualBasic
 				MyOutStr += MyStr + Environment.NewLine + Environment.NewLine;
 			}
 
-			AssertEquals ("#JW31 - Hello world compilation: " + MyOutStr, 0, MyVBCodeCompilerResults.Errors.Count);
+			if (MyVBCodeCompilerResults.Errors.Count != 0) {
+				System.Console.WriteLine (MyVBCodeCompilerResults);
+				Assert ("#JW31 - Hello world compilation: " + MyOutStr, false);
+			}
 
 			try
 			{
