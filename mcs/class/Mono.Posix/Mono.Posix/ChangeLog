@@ -1,3 +1,8 @@
+2003-11-11  Wojciech Polak <polak@gnu.org
+
+	* Syscall.cs: Applied patch from Wojciech Polak <polak@gnu.org> to
+	support IsAtty.
+
 2003-05-16  Dick Porter  <dick@ximian.com>
 
 	* UnixEndPoint.cs: New property to get and set the filename, like
