@@ -1382,31 +1382,35 @@ constructor_declaration
 		c.OptAttributes = (Attributes) $1;
 		c.ModFlags = (int) $2;
 	
-		if ((c.ModFlags & Modifiers.STATIC) != 0){
-			if ((c.ModFlags & Modifiers.Accessibility) != 0){
-				Report.Error (
-					515, c.Location, String.Format (
-					"`{0}.{1}': static constructor can not have access modifiers",
-					c.Name, current_container.Name));
-			}
-
-			c.ModFlags = Modifiers.Check (Constructor.AllowedModifiers, (int) $2, 0, c.Location);	
-
-			if (c.Initializer != null){
-				Report.Error (
-					514, c.Location, 
-					"Static constructors can not have an explicit this or base " +
-					"constructor invocations");
-			}
-
-			if (!c.Parameters.Empty){
-				Report.Error (
-					132, c.Location, "Static constructors should not have parameters");
+		if (c.ShortName == current_container.Name){
+			if ((c.ModFlags & Modifiers.STATIC) != 0){
+				if ((c.ModFlags & Modifiers.Accessibility) != 0){
+					Report.Error (
+						515, c.Location, String.Format (
+						"`{0}.{1}': static constructor can not have access modifiers",
+						c.Name, current_container.Name));
+				}
+	
+				c.ModFlags = Modifiers.Check (Constructor.AllowedModifiers, (int) $2, 0, c.Location);	
+	
+				if (c.Initializer != null){
+					Report.Error (
+						514, c.Location, 
+						"Static constructors can not have an explicit this or base " +
+						"constructor invocations");
+				}
+	
+				if (!c.Parameters.Empty){
+					Report.Error (
+						132, c.Location, "Static constructors should not have parameters");
+				}
+			} else {
+				c.ModFlags = Modifiers.Check (Constructor.AllowedModifiers, (int) $2, Modifiers.PRIVATE, c.Location);
 			}
 		} else {
-			c.ModFlags = Modifiers.Check (Constructor.AllowedModifiers, (int) $2, Modifiers.PRIVATE, c.Location);
+			// We let another layer check the validity of the constructor.
 		}
-		
+
 		CheckDef (current_container.AddConstructor (c), c.Name, c.Location);
 
 		current_local_parameters = null;
