@@ -278,7 +278,7 @@ namespace System
 		{
 			get	
 			{
-				return new DateTime (true, (GetNow () / TimeSpan.TicksPerDay) * TimeSpan.TicksPerDay);
+				return new DateTime (false, (GetNow () / TimeSpan.TicksPerDay) * TimeSpan.TicksPerDay);
 			}
 		}
 
@@ -502,12 +502,10 @@ namespace System
 		{
 			int number = 0, i;
 
-			if (!leadingzero)
-			{
+			if (!leadingzero) {
 				int real_digits = 0;
-				for (i = 0; i < digits; i++)
-				{
-					if (!Char.IsDigit (s[i]))
+				for (i = 0; i < digits; i++) {
+					if ((i >= s.Length) || !Char.IsDigit (s[i]))
 						break;
 
 					real_digits++;
@@ -516,11 +514,9 @@ namespace System
 				digits = real_digits;
 			}
 
-			for (i = 0; i < digits; i++)
-			{
+			for (i = 0; i < digits; i++) {
 				char c = s[i];
-				if (!Char.IsDigit (c))
-				{
+				if (!Char.IsDigit (c)) {
 					num_parsed = -1;
 					return 0;
 				}
@@ -589,32 +585,27 @@ namespace System
 
 			while (pos+num < len)
 			{
-				if (chars[pos] == '\'')
-				{
+				if (chars[pos] == '\'') {
 					num = 1;
-					s = s.Substring (1);
-					while (pos+num < len)
-					{
-						if (s[0] != chars[pos+num])
-							return false;
-						s = s.Substring (1);
-						if (s.Length == 0)
-							return false;
-
+					while (pos+num < len) {
 						if (chars[pos+num] == '\'')
 							break;
 
-						num = num + 1;
+						if (s.Length == 0)
+							return false;
+						if (s[0] != chars[pos+num])
+							return false;
+						s = s.Substring (1);
+
+						num++;
 					}
 					if (pos+num > len)
 						return false;
 
-					pos = pos + num + 1;
+					pos += num + 1;
 					num = 0;
 					continue;
-				}
-				else if (chars[pos] == '\\')
-				{
+				} else if (chars[pos] == '\\') {
 					if (pos+1 >= len)
 						return false;
 
@@ -624,18 +615,15 @@ namespace System
 					if (s.Length == 0)
 						return false;
 
-					pos = pos + 1;
+					pos++;
 					continue;
-				}
-				else if (chars[pos] == '%')
-				{
-					pos = pos + 1;
+				} else if (chars[pos] == '%') {
+					pos++;
 					continue;
 				}
 
-				if ((pos+num+1 < len) && (chars[pos+num+1] == chars[pos+num]))
-				{
-					num = num + 1;
+				if ((pos+num+1 < len) && (chars[pos+num+1] == chars[pos+num])) {
+					num++;
 					continue;
 				}
 
@@ -664,12 +652,12 @@ namespace System
 					if (num == 0)
 						month = _ParseNumber (s, 2, false, out num_parsed);
 					else if (num == 1)
-						month = _ParseNumber (s, 2, false, out num_parsed);
+						month = _ParseNumber (s, 2, true, out num_parsed);
 					else if (num == 2)
-						month = _ParseEnum (s, dfi.AbbreviatedMonthNames , out num_parsed);
+						month = _ParseEnum (s, dfi.AbbreviatedMonthNames , out num_parsed) + 1;
 					else
 					{
-						month = _ParseEnum (s, dfi.MonthNames, out num_parsed);
+						month = _ParseEnum (s, dfi.MonthNames, out num_parsed) + 1;
 						num = 3;
 					}
 					if ((month < 1) || (month > 12))
@@ -832,29 +820,56 @@ namespace System
 				second = 0;
 			if (millisecond == -1)
 				millisecond = 0;
+
+			// If no date was given
+			if ((day == -1) && (month == -1) && (year == -1)) {
+				if ((style & DateTimeStyles.NoCurrentDateDefault) != 0) {
+					day = 1;
+					month = 1;
+					year = 1;
+				} else {
+					day = Today.Day;
+					month = Today.Month;
+					year = Today.Year;
+				}
+			}
+
 			if (day == -1)
-				day = 0;
+				day = 1;
 			if (month == -1)
-				month = 0;
-			if (year == -1)
-				year = 0;
+				month = 1;
+			if (year == -1) {
+				if ((style & DateTimeStyles.NoCurrentDateDefault) != 0)
+					year = 1;
+				else
+					year = Today.Year;
+			}
 
 			if (ampm == 1)
 				hour = hour + 12;
 
-			if (tzoffmin == -1)
-				tzoffmin = 0;
-			if (tzoffset == -1)
-				tzoffset = 0;
-			if (tzsign == 1)
-				tzoffset = -tzoffset;
-
-			TimeSpan utcoffset = new TimeSpan (tzoffset, tzoffmin, 0);
-
-			result = new DateTime (year, month, day-1, hour, minute, second, millisecond);
+			result = new DateTime (year, month, day, hour, minute, second, millisecond);
 
 			if ((dayofweek != -1) && (dayofweek != (int) result.DayOfWeek))
 				throw new FormatException (Locale.GetText ("String was not recognized as valid DateTime because the day of week was incorrect."));
+
+			// If no timezone was specified, default to the local timezone.
+			TimeSpan utcoffset;
+			if (useutc)
+				utcoffset = new TimeSpan (0, 0, 0);
+			else if (tzsign == -1) {
+				TimeZone tz = TimeZone.CurrentTimeZone;
+				utcoffset = tz.GetUtcOffset (result);
+			} else {
+				if (tzoffmin == -1)
+					tzoffmin = 0;
+				if (tzoffset == -1)
+					tzoffset = 0;
+				if (tzsign == 1)
+					tzoffset = -tzoffset;
+
+				utcoffset = new TimeSpan (tzoffset, tzoffmin, 0);
+			}
 
 			long newticks = (result.ticks - utcoffset).Ticks;
 
@@ -1008,8 +1023,10 @@ namespace System
 				pattern = dfi.LongTimePattern;
 				break;
 			case 'u':
+				// FIXME: The Microsoft runtime doesn't seem to convert
+				//        this to universal time here, but just assume that
+				//        the time is already in universal time.
 				pattern = dfi.UniversalSortableDateTimePattern;
-				useutc = true;
 				break;
 			case 'U':
 				pattern = dfi.LongDatePattern + " " + dfi.LongTimePattern;
