@@ -406,7 +406,8 @@ namespace Mono.CSharp {
 			bool old_inloop = ec.InLoop;
 			bool old_breaks = ec.Breaks;
 			Label loop = ig.DefineLabel ();
-
+			Label test = ig.DefineLabel ();
+			
 			if (InitStatement != null)
 				if (! (InitStatement is EmptyStatement))
 					InitStatement.Emit (ec);
@@ -415,15 +416,8 @@ namespace Mono.CSharp {
 			ec.LoopEnd = ig.DefineLabel ();
 			ec.InLoop = true;
 
+			ig.Emit (OpCodes.Br, test);
 			ig.MarkLabel (loop);
-
-			//
-			// If test is null, there is no test, and we are just
-			// an infinite loop
-			//
-			if (Test != null)
-				EmitBoolExpression (ec, Test, ec.LoopEnd, false);
-
 			ec.Breaks = false;
 			Statement.Emit (ec);
 			bool breaks = ec.Breaks;
@@ -431,6 +425,14 @@ namespace Mono.CSharp {
 			ig.MarkLabel (ec.LoopBegin);
 			if (!(Increment is EmptyStatement))
 				Increment.Emit (ec);
+
+			ig.MarkLabel (test);
+			//
+			// If test is null, there is no test, and we are just
+			// an infinite loop
+			//
+			if (Test != null)
+				EmitBoolExpression (ec, Test, ec.LoopEnd, false);
 			ig.Emit (OpCodes.Br, loop);
 			ig.MarkLabel (ec.LoopEnd);
 

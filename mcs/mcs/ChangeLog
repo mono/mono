@@ -1,8 +1,11 @@
 2002-07-09  Miguel de Icaza  <miguel@ximian.com>
 
-	* statement.cs (Break): We can be breaking out of a Try/Catch
-	controlled section (foreach might have an implicit try/catch
-	clause), so we need to use Leave instead of Br.
+	* statement.cs (For): Implement loop inversion for the For
+	statement. 
+
+	(Break): We can be breaking out of a Try/Catch controlled section
+	(foreach might have an implicit try/catch clause), so we need to
+	use Leave instead of Br.
 
 	* ecore.cs (FieldExpr.AddressOf): Fix for test-139 (augmented
 	now).  If the instace expression supports IMemoryLocation, we use
