@@ -1388,11 +1388,11 @@ namespace Commons.Xml.Relaxng.Derivative
 		internal override RdpPattern ExpandRef (Hashtable defs)
 		{
 			if (!isExpanded) {
+				isExpanded = true;
 				if (expanding == 100)
 					throw new RelaxngException (String.Format ("Invalid recursion was found. Name is {0}", nameClass));
 				expanding++;
 				children = children.ExpandRef (defs);
-				isExpanded = true;
 				expanding--;
 			}
 			return this;
