@@ -78,7 +78,7 @@ Help.cs
 HelpProvider.cs
 HScrollBar.cs			Need CE - 10-28-2002- Dennis Hayes <dennish@raytek.com>
 ImageIndexConverter.cs
-ImageList.cs			Need CE
+ImageList.cs			Need CE	- 10-28-2002 - Javier Alvarez <jamaa@tid.es>
 ImageListStreamer.cs
 InputLanguage.cs
 InputLanguageCollection.cs
@@ -101,7 +101,7 @@ MessageBox.cs			Need CE
 MethodInvoker.cs
 MonthCalendar.cs
 NativeWindow.cs
-NotifyIcon.cs
+NotifyIcon.cs			Javier - 10-28-2002 - Alvarez <jamaa@tid.es>
 NumericUpDown.cs			Need CE
 OpacityConverter.cs
 OpenFileDialog.cs			Need CE
@@ -139,7 +139,7 @@ TabPage.cs				Need CE
 TextBox.cs				Need CE	- 10-28-2002 - Joshua Perry <jperry@1800contacts.com
 TextBoxBase.cs			Need CE	- 10-28-2002 - Joshua Perry <jperry@1800contacts.com 
 ThreadExceptionDialog.cs
-Timer.cs				Need CE
+Timer.cs				Need CE - 10-28-2002 - Javier Alvarez <jamaa@tid.es>
 ToolBar.cs				Need CE
 ToolBarButton.cs			Need CE
 tooltip.cs
@@ -180,6 +180,53 @@ PropertyTab.cs			Needs stubbing
 ScrollableControlDesigner.cs	Needs stubbing
 SelectionRules.cs			Needs enumeration! easy task for someone.
 UITypeEditor.cs			Needs stubbing
+
+===================================================
+
+System.Drawing.Drawing2D
+CE Complete
+Much work left for full .NET
+
+=============================
+
+
+===================================================
+
+System.Drawing.Drawing2D
+Much work left for full .NET
+
+=============================
+
+ImageAttributes.cs	Needs CE (2 functions)
+
+===================================================
+
+System.Drawing
+Much work left for full .NET
+
+=============================
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
