@@ -1,4 +1,9 @@
 
+Wed Apr 14 18:15:55 CEST 2004 Paolo Molaro <lupus@ximian.com>
+
+	* exceptions-ppc.c: missing fixes in mono_jit_walk_stack (need
+	to init the context to setup the regs pointer).
+
 Wed Apr 14 17:59:09 CEST 2004 Paolo Molaro <lupus@ximian.com>
 
 	* exceptions-ppc.c: more exceptions work.
