@@ -90,7 +90,7 @@ namespace System
 			if (obj == null || !(obj is System.Boolean))
 				return false;
 
-			return ((bool) obj) == m_value;
+			return ((m_value) ? ((bool) obj) : !((bool) obj));
 		}
 
 		/// <summary>

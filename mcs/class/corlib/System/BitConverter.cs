@@ -101,8 +101,12 @@ namespace System
 				throw new ArgumentNullException ("value"); // gets called from methods with value params
 			}
 
-			if (src.Length < start_index + count) {
-				throw new ArgumentException (Locale.GetText (
+			if (start_index < 0)
+				throw new ArgumentOutOfRangeException ("startIndex < 0");
+
+			// avoid integer overflow (with large pos/neg start_index values)
+			if (src.Length - count < start_index) {
+				throw new ArgumentOutOfRangeException (Locale.GetText (
 					"Value is too big to return the requested type."), "startIndex");
 			}
 
