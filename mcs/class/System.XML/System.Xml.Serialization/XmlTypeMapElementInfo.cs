@@ -28,7 +28,7 @@ namespace System.Xml.Serialization
 		XmlTypeMapping _mappedType;
 		TypeData _type;
 		bool _wrappedElement = true;
-
+		
 		public XmlTypeMapElementInfo (XmlTypeMapMember member, TypeData type)
 		{
 			_member = member;

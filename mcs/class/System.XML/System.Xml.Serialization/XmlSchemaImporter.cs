@@ -166,7 +166,7 @@ namespace System.Xml.Serialization {
 				mapping[n] = ImportMemberMapping (members[n].MemberName, members[n].MemberType.Namespace, td);
 			}
 			BuildPendingMaps ();
-			return new XmlMembersMapping (name, ns, hasWrapperElement, mapping);
+			return new XmlMembersMapping (name, ns, hasWrapperElement, false, mapping);
 		}
 		
 		public XmlMembersMapping ImportEncodedMembersMapping (string name, string ns, SoapSchemaMember member)

@@ -143,6 +143,7 @@ namespace System.Xml.Serialization
 		XmlTypeMapMemberAnyAttribute _defaultAnyAttribute;
 		XmlTypeMapMemberNamespaces _namespaceDeclarations;
 		XmlTypeMapMember _xmlTextCollector;
+		bool _ignoreMemberNamespace;
 
 		public void AddMember (XmlTypeMapMember member)
 		{
@@ -151,7 +152,7 @@ namespace System.Xml.Serialization
 			{
 				XmlTypeMapMemberAttribute atm = (XmlTypeMapMemberAttribute)member;
 				if (_attributeMembers == null) _attributeMembers = new Hashtable();
-				string key = atm.AttributeName + "/" + atm.Namespace;
+				string key = BuildKey (atm.AttributeName, atm.Namespace);
 				if (_attributeMembers.ContainsKey (key))
 					throw new InvalidOperationException ("The XML attribute named '" + atm.AttributeName + "' from namespace '" + atm.Namespace + "' already present in the current scope. Use XML attributes to specify another XML name or namespace for the attribute.");
 				_attributeMembers.Add (key, member);
@@ -195,7 +196,7 @@ namespace System.Xml.Serialization
 			ICollection elemsInfo = ((XmlTypeMapMemberElement)member).ElementInfo;
 			foreach (XmlTypeMapElementInfo elem in elemsInfo)
 			{
-				string key = elem.ElementName+"/"+elem.Namespace;
+				string key = BuildKey (elem.ElementName, elem.Namespace);
 				if (_elements.ContainsKey (key)) 
 					throw new InvalidOperationException ("The XML element named '" + elem.ElementName + "' from namespace '" + elem.Namespace + "' already present in the current scope. Use XML attributes to specify another XML name or namespace for the element.");
 				_elements.Add (key, elem);
@@ -212,13 +213,13 @@ namespace System.Xml.Serialization
 		public XmlTypeMapMemberAttribute GetAttribute (string name, string ns)
 		{
 			if (_attributeMembers == null) return null;
-			return (XmlTypeMapMemberAttribute)_attributeMembers[name + "/" + ns];
+			return (XmlTypeMapMemberAttribute)_attributeMembers [BuildKey(name,ns)];
 		}
 
 		public XmlTypeMapElementInfo GetElement (string name, string ns)
 		{
 			if (_elements == null) return null;
-			return (XmlTypeMapElementInfo)_elements[name + "/" + ns];
+			return (XmlTypeMapElementInfo)_elements [BuildKey(name,ns)];
 		}
 		
 		public XmlTypeMapElementInfo GetElement (int index)
@@ -240,11 +241,23 @@ namespace System.Xml.Serialization
 			return _elementsByIndex [index];
 		}
 		
+		private string BuildKey (string name, string ns)
+		{
+			if (_ignoreMemberNamespace) return name;
+			else return name + " / " + ns;
+		}
+		
 		public ICollection AllElementInfos
 		{
 			get { return _elements.Values; }
 		}
 		
+		
+		public bool IgnoreMemberNamespace
+		{
+			get { return _ignoreMemberNamespace; }
+			set { _ignoreMemberNamespace = value; }
+		}
 
 		public XmlTypeMapMember FindMember (string name)
 		{

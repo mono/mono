@@ -22,15 +22,15 @@ namespace System.Xml.Serialization {
 		{
 		}
 
-		internal XmlMembersMapping (XmlMemberMapping[] mapping): this ("", null, false, mapping)
+		internal XmlMembersMapping (XmlMemberMapping[] mapping): this ("", null, false, false, mapping)
 		{
 		}
 
-		internal XmlMembersMapping (string elementName, string ns, XmlMemberMapping[] mapping): this (elementName, ns, true, mapping)
+		internal XmlMembersMapping (string elementName, string ns, XmlMemberMapping[] mapping): this (elementName, ns, true, false, mapping)
 		{
 		}
 
-		internal XmlMembersMapping (string elementName, string ns, bool hasWrapperElement, XmlMemberMapping[] mapping)
+		internal XmlMembersMapping (string elementName, string ns, bool hasWrapperElement, bool writeAccessors, XmlMemberMapping[] mapping)
 		{
 			_elementName = elementName;
 			_namespace = ns;
@@ -38,6 +38,7 @@ namespace System.Xml.Serialization {
 			_mapping = mapping;
 
 			ClassMap map = new ClassMap ();
+			map.IgnoreMemberNamespace = writeAccessors;
 			foreach (XmlMemberMapping mm in mapping)
 				map.AddMember (mm.TypeMapMember);
 			ObjectMap = map;

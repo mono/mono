@@ -66,7 +66,7 @@ namespace System.Xml.Serialization {
 				XmlTypeMapMember mapMem = CreateMapMember (members[n], ns);
 				mapping[n] = new XmlMemberMapping (members[n].MemberName, ns, mapMem, true);
 			}
-			XmlMembersMapping mps = new XmlMembersMapping (elementName, ns, hasWrapperElement, mapping);
+			XmlMembersMapping mps = new XmlMembersMapping (elementName, ns, hasWrapperElement, writeAccessors, mapping);
 			mps.RelatedMaps = relatedMaps;
 			mps.Format = SerializationFormat.Encoded;
 			return mps;
