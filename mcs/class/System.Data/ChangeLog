@@ -1,3 +1,7 @@
+2003-11-25  Tim Coleman <tim@timcoleman.com>
+	* System.Data.dll.sources:
+		Add System.Data/IDataSources.cs to build
+
 2003-07-18  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
 	* System.Data.dll.sources: Assembly/Locale.cs added, Assembly/AssemblyInfo.cs added

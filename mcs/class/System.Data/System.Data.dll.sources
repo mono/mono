@@ -51,6 +51,7 @@ System.Data/IDataParameter.cs
 System.Data/IDataParameterCollection.cs
 System.Data/IDataReader.cs
 System.Data/IDataRecord.cs
+System.Data/IDataSources.cs
 System.Data/IDbCommand.cs
 System.Data/IDbConnection.cs
 System.Data/IDbDataAdapter.cs
