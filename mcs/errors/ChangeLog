@@ -1,3 +1,8 @@
+2004-06-03  Raja R Harinath  <rharinath@novell.com>
+
+	* cs0038-1.cs, cs1540-3.cs, cs1540-4.cs, cs1540-5.cs:
+	New testcases for bug #50820.
+
 2004-06-01 Marek Safar <marek.safar@seznam.cz>
 
 	* cs1555.cs,
