@@ -2,6 +2,8 @@
 	* makefile.gnu: Fixed name of assembly was changed
 			from Mono.Xml.Relaxng to
 			Commons.Xml.Relaxng.
+	* RdpPatternTests.cs, RelaxngReaderTests.cs: 
+	  Removed Assertion. prefixes and made them inherit from Assertion.
 
 2003-04-29  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 

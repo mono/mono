@@ -17,7 +17,7 @@ using NUnit.Framework;
 namespace MonoTests.Commons.Xml.Relaxng
 {
 	[TestFixture]
-	public class RdpPatternTests
+	public class RdpPatternTests : Assertion
 	{
 		RelaxngValidatingReader reader;
 		RdpPattern result;
@@ -31,7 +31,7 @@ namespace MonoTests.Commons.Xml.Relaxng
 		
 		private void AssertPattern (string s, RngPatternType expected, RdpPattern p)
 		{
-			Assertion.AssertEquals (s, expected, p.PatternType);
+			AssertEquals (s, expected, p.PatternType);
 		}
 
 		[Test]

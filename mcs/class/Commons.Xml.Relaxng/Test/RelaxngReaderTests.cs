@@ -16,7 +16,7 @@ using NUnit.Framework;
 namespace MonoTests.Commons.Xml.Relaxng
 {
 	[TestFixture]
-	public class RelaxngReaderTests
+	public class RelaxngReaderTests : Assertion
 	{
 		RelaxngReader reader;
 
@@ -36,7 +36,7 @@ namespace MonoTests.Commons.Xml.Relaxng
 			loadGrammarFromUrl ("XmlFiles/SimpleElementPattern1.rng");
 			RngPattern p = reader.ReadPattern ();
 
-			Assertion.AssertEquals (RngPatternType.Element, p.PatternType);
+			AssertEquals (RngPatternType.Element, p.PatternType);
 		}
 
 /*
@@ -46,7 +46,7 @@ namespace MonoTests.Commons.Xml.Relaxng
 			loadGrammarFromUrl ("XmlFiles/relaxng.rng");
 			RngPattern p = reader.ReadPattern ();
 
-			Assertion.AssertEquals (RngPatternType.Grammar, p.PatternType);
+			AssertEquals (RngPatternType.Grammar, p.PatternType);
 		}
 */
 
