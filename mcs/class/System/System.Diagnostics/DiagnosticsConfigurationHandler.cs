@@ -128,7 +128,7 @@ namespace System.Diagnostics
 				ThrowUnrecognizedElement (node.ChildNodes[0]);
 		}
 
-		// name attribute is required, value is optional
+		// name and value attributes are required
 		// Docs do not define "remove" or "clear" elements, but .NET recognizes
 		// them
 		private void AddSwitchesNode (IDictionary d, XmlNode node)
@@ -149,7 +149,7 @@ namespace System.Diagnostics
 					switch (child.Name) {
 						case "add":
 							name = GetAttribute (attributes, "name", true, child);
-							value = GetAttribute (attributes, "value", false, child);
+							value = GetAttribute (attributes, "value", true, child);
 							newNodes[name] = AsString (value);
 							break;
 						case "remove":

@@ -94,6 +94,7 @@ namespace MonoTests.System.Diagnostics {
 			string[] badElements = {
 				// not enough arguments
 				"<add />",
+				"<add name=\"a\"/>",
 				"<add value=\"b\"/>",
 				// too many arguments
 				"<add name=\"a\" value=\"b\" extra=\"c\"/>",
@@ -113,7 +114,6 @@ namespace MonoTests.System.Diagnostics {
 
 			string[] goodElements = {
 				"<add name=\"a\" value=\"b\"/>",
-				"<add name=\"a\"/>",
 				"<remove name=\"a\"/>",
 				"<clear/>"
 			};

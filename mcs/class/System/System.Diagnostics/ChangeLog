@@ -1,3 +1,8 @@
+2005-01-17 Jonathan Pryor  <jonpryor@vt.edu>
+
+	* DiagnosticsConfigurationHandler.cs: The /switch/add/@value attribute 
+	  isn't optional under .NET 1.1, so make sure it exists.
+
 2005-01-13 Jonathan Pryor  <jonpryor@vt.edu>
 
 	* DiagnosticsConfigurationHandler.cs: Make DiagnosticsConfiguration.Settings
