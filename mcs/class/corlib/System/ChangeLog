@@ -1,3 +1,9 @@
+2004-05-26  Gert Driesen (drieseng@users.sourceforge.net)
+
+	* MonoCustomAttrs.cs: Fixed issue with AllowMultiple, as MS
+	seems to allow multiple attributes with AllowMultiple at
+	runtime.
+
 2004-05-26  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Byte.cs: Throw an OverflowException for negative numbers.

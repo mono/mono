@@ -13,10 +13,11 @@ using System.Reflection;
 using System.Collections;
 using System.Runtime.CompilerServices;
 
-namespace System {
-	internal class MonoCustomAttrs {
-
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+namespace System
+{
+	internal class MonoCustomAttrs
+	{
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal static extern object[] GetCustomAttributes (ICustomAttributeProvider obj);
 
 		internal static Attribute GetCustomAttribute (ICustomAttributeProvider obj,
@@ -27,7 +28,8 @@ namespace System {
 			if (res.Length == 0)
 			{
 				return null;
-			} else if (res.Length > 1)
+			}
+			else if (res.Length > 1)
 			{
 				string msg = "'{0}' has more than one attribute of type '{1}";
 				msg = String.Format (msg, obj, attributeType);
@@ -81,15 +83,18 @@ namespace System {
 
 			int initialSize = res.Length < 16 ? res.Length : 16;
 
-			Hashtable attributeUsages = new Hashtable (initialSize);
+			Hashtable attributeInfos = new Hashtable (initialSize);
 			ArrayList a = new ArrayList (initialSize);
 			ICustomAttributeProvider btype = obj;
 
 			int inheritanceLevel = 0;
 
-			do {
+			do
+			{
 				foreach (object attr in res)
 				{
+					AttributeUsageAttribute usage;
+
 					Type attrType = attr.GetType ();
 					if (attributeType != null)
 					{
@@ -99,21 +104,36 @@ namespace System {
 						}
 					}
 
-					AttributeUsageAttribute usage = (AttributeUsageAttribute)
-						attributeUsages[attrType];
-					if (usage == null)
+					AttributeInfo firstAttribute = (AttributeInfo) attributeInfos[attrType];
+					if (firstAttribute != null)
+					{
+						usage = firstAttribute.Usage;
+					}
+					else
 					{
 						usage = RetrieveAttributeUsage (attrType);
-						attributeUsages.Add (attrType, usage);
-					} else if (!usage.AllowMultiple) 
-					{
-						// we already have an attribute of this type and AllowMultiple
-						// is false, so skip this attribute
-						continue;
 					}
 
-					if (inheritanceLevel == 0 || usage.Inherited)
+					// only add attribute to the list of attributes if 
+					// - we are on the first inheritance level, or the attribute can be inherited anyway
+					// and (
+					// - multiple attributes of the type are allowed
+					// or (
+					// - this is the first attribute we've discovered
+					// or
+					// - the attribute is on same inheritance level than the first 
+					//   attribute that was discovered for this attribute type ))
+					if ((inheritanceLevel == 0 || usage.Inherited) && (usage.AllowMultiple || 
+						(firstAttribute == null || (firstAttribute != null 
+							&& firstAttribute.InheritanceLevel == inheritanceLevel))))
+					{
 						a.Add (attr);
+					}
+
+					if (firstAttribute == null)
+					{
+						attributeInfos.Add (attrType, new AttributeInfo (usage, inheritanceLevel));
+					}
 				}
 
 				if ((btype = GetBase (btype)) != null)
@@ -139,7 +159,7 @@ namespace System {
 			return array;
 		}
 
-		internal static object [] GetCustomAttributes (ICustomAttributeProvider obj, bool inherit)
+		internal static object[] GetCustomAttributes (ICustomAttributeProvider obj, bool inherit)
 		{
 			if (obj == null)
 				throw new ArgumentNullException ("obj");
@@ -153,7 +173,8 @@ namespace System {
 		internal static bool IsDefined (ICustomAttributeProvider obj, Type attributeType, bool inherit)
 		{
 			object[] res = GetCustomAttributes (obj);
-			foreach (object attr in res) {
+			foreach (object attr in res)
+			{
 				if (attributeType.Equals (attr.GetType ()))
 					return true;
 			}
@@ -177,13 +198,16 @@ namespace System {
 				return ((Type) obj).BaseType;
 
 			MethodInfo method = null;
-			if (obj is MonoProperty) {
+			if (obj is MonoProperty)
+			{
 				MonoProperty prop = (MonoProperty) obj;
 				method = prop.GetGetMethod (true);
 				if (method == null)
 					method = prop.GetSetMethod (true);
-			} else if (obj is MonoMethod) {
-				method = (MethodInfo) obj; 
+			}
+			else if (obj is MonoMethod)
+			{
+				method = (MethodInfo) obj;
 			}
 
 			/**
@@ -205,7 +229,7 @@ namespace System {
 		private static AttributeUsageAttribute RetrieveAttributeUsage (Type attributeType)
 		{
 			AttributeUsageAttribute usageAttribute = null;
-			object[] attribs = GetCustomAttributes (attributeType, 
+			object[] attribs = GetCustomAttributes (attributeType,
 				MonoCustomAttrs.AttributeUsageType, false);
 			if (attribs.Length == 0)
 			{
@@ -239,8 +263,36 @@ namespace System {
 		}
 
 		private static readonly Type AttributeUsageType = typeof(AttributeUsageAttribute);
-		private static readonly AttributeUsageAttribute DefaultAttributeUsage = 
+		private static readonly AttributeUsageAttribute DefaultAttributeUsage =
 			new AttributeUsageAttribute (AttributeTargets.All);
+
+		private class AttributeInfo
+		{
+			private AttributeUsageAttribute _usage;
+			private int _inheritanceLevel;
+
+			public AttributeInfo (AttributeUsageAttribute usage, int inheritanceLevel)
+			{
+				_usage = usage;
+				_inheritanceLevel = inheritanceLevel;
+			}
+
+			public AttributeUsageAttribute Usage
+			{
+				get
+				{
+					return _usage;
+				}
+			}
+
+			public int InheritanceLevel
+			{
+				get
+				{
+					return _inheritanceLevel;
+				}
+			}
+		}
 	}
 }
 
