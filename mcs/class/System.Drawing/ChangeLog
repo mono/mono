@@ -1,9 +1,12 @@
+2003-04-26 Alexandre Pigolkine <pigolkine@gmx.de>
+	* list.unix		changed
+
 2003-03-31  Martin Willemoes Hansen <mwh@sysrq.dk>
 
 	* System.Drawing.Printing/PrinterUnitConvert.cs stubed
 
 2003-03-31  Martin Willemoes Hansen <mwh@sysrq.dk>
- 
+
         * System.Drawing.Design/ToolboxItemCollection.cs stubed
 
 2003-03-31  Alan Tam <Tam@SiuLung.com>
