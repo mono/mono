@@ -1,3 +1,7 @@
+2004-12-26  Patrik Torstensson  <patrik.torstensson@gmail.com>
+
+	* interlocked.cs: added reg test for bug 70784
+
 2004-12-18  Zoltan Varga  <vargaz@freemail.hu>
 
 	* Makefile.am (libtest_la_LDFLAGS): Add -no-undefined so a windows dll is built on windows.
