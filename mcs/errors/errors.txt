@@ -72,6 +72,11 @@ numbers, as they look nicer on the debugging output.
 		[DefaultValue (CollectionChangeAction.Add)]
 		class X { static void Main () {	} }
 
+
+-24     .NET runtime bug when trying to set custom attributes on the
+	return type of a method
+
+
 6024    Unused `using' statement
 
 	Sample:
