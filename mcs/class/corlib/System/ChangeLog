@@ -1,3 +1,7 @@
+2004-12-08  Zoltan Varga  <vargaz@freemail.hu>
+
+	* AppDomain.cs: Add new DefineInternalDynamicAssembly () method.
+
 2004-12-06  Ben Maurer  <bmaurer@ximian.com>
 
 	* Exception.cs: Prevent stringifying the type name on the

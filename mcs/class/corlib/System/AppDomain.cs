@@ -397,9 +397,14 @@ namespace System
 		{
 			// FIXME: examine all other parameters
 			
-			AssemblyBuilder ab = new AssemblyBuilder (name, dir, access);
+			AssemblyBuilder ab = new AssemblyBuilder (name, dir, access, false);
 			ab.AddPermissionRequests (requiredPermissions, optionalPermissions, refusedPermissions);
 			return ab;
+		}
+
+		internal AssemblyBuilder DefineInternalDynamicAssembly (AssemblyName name, AssemblyBuilderAccess access)
+		{
+			return new AssemblyBuilder (name, null, access, true);
 		}
 
 		public void DoCallBack (CrossAppDomainDelegate theDelegate)
