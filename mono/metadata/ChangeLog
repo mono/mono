@@ -1,5 +1,16 @@
 2004-02-09  Martin Baulig  <martin@ximian.com>
 
+	* class.h (MonoGenericMethod): Added `MonoMethod *declaring'.
+
+	* reflection.h (MonoReflectionInflatedMethod): Removed the
+	`declaring' field, it's now in the unmanaged MonoGenericMethod.
+
+	* reflection.c (method_encode_methodspec): Removed the `method'
+	argument; we get it from `gmethod->declaring'.
+	(inflated_method_get_object): Removed the `declaring' argument.
+
+2004-02-09  Martin Baulig  <martin@ximian.com>
+
 	* class.h (MonoGenericMethod): New type.
 	(MonoGenericInst): Remove `mtype_argc', `mtype_argv' and
 	`generic_method'.
