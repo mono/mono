@@ -53,7 +53,6 @@ namespace System.Windows.Forms {
 		private CarbonEventHandler viewEventHandler;
 		private CarbonEventHandler windowEventHandler;
 		private static Hashtable view_window_mapping;
-		private static IntPtr cgContext;
 		private static IntPtr grabWindow;
 
 		private static EventTypeSpec [] viewEvents = new EventTypeSpec [] {
@@ -200,7 +199,7 @@ namespace System.Windows.Forms {
 				IntPtr rect = IntPtr.Zero;
 				IntPtr viewHnd = IntPtr.Zero;
 				SetRect (ref rect, (short)cp.X, (short)cp.Y, (short)(cp.Width+cp.X), (short)(cp.Height+cp.Y));
-				CheckError (CreateNewWindow (6, 33554432 | 31 | 524288, ref rect, ref windowHnd), "CreateNewWindow ()");
+				CheckError (CreateNewWindow (6, 33554432 | 31 | 524288 , ref rect, ref windowHnd), "CreateNewWindow ()");
 				CheckError (InstallEventHandler (GetWindowEventTarget (windowHnd), windowEventHandler, (uint)windowEvents.Length, windowEvents, windowHnd, IntPtr.Zero), "InstallEventHandler ()");
 				CheckError (HIViewFindByID (HIViewGetRoot (windowHnd), new HIViewID (2003398244, 1), ref viewHnd), "HIViewFindByID ()");
 				parentHnd = viewHnd;
@@ -255,8 +254,6 @@ namespace System.Windows.Forms {
 		internal override void RefreshWindow(IntPtr handle) {
 			IntPtr outEvent = IntPtr.Zero;
 			HIViewSetNeedsDisplay (handle, true);
-//                        CheckError (CreateEvent (IntPtr.Zero, 1668183148, 4, 0, 0, ref outEvent));
-//			ViewHandler (IntPtr.Zero, outEvent, handle);
 		}
 
 		[MonoTODO("Find a way to make all the views do this; not just the window view")]
@@ -269,7 +266,6 @@ namespace System.Windows.Forms {
 
 				CheckError (SetWindowContentColor ((IntPtr) view_window_mapping [handle], ref backColor));
 			}
-
 		}
 
 		[MonoTODO]
@@ -281,17 +277,7 @@ namespace System.Windows.Forms {
 				throw new Exception ("null data on paint event start: " + handle);
 			}
 
-			HIRect bounds = new HIRect ();
-			HIViewGetBounds (handle, ref bounds); 
-			CGContextTranslateCTM (cgContext, 0, bounds.size.height);
-			CGContextScaleCTM (cgContext, 1.0, -1.0);
-			IntPtr gHnd = IntPtr.Zero;
-			QuartzContext qc = new QuartzContext (cgContext, (int)bounds.size.width, (int)bounds.size.height);
-			gHnd = Marshal.AllocHGlobal (Marshal.SizeOf (typeof (QuartzContext)));
-			Marshal.StructureToPtr (qc, gHnd, true);
-			data.DeviceContext = Graphics.FromHwnd (gHnd);
-			Marshal.DestroyStructure (gHnd, typeof (QuartzContext));
-			Marshal.FreeHGlobal (gHnd);
+			data.DeviceContext = Graphics.FromHwnd (handle);
 			paint_event = new PaintEventArgs((Graphics)data.DeviceContext, data.InvalidArea);
 
 			return paint_event;
@@ -407,7 +393,7 @@ namespace System.Windows.Forms {
 										msg.wParam = IntPtr.Zero;
 										msg.lParam = IntPtr.Zero;
 										carbonEvents.Enqueue (msg);
-										return -9874;
+										return 0;
 									}
 								}
 								break;
@@ -580,11 +566,8 @@ namespace System.Windows.Forms {
 								msg.message = Msg.WM_PAINT;
 								msg.wParam = IntPtr.Zero;
 								msg.lParam = IntPtr.Zero;
-								cgContext = IntPtr.Zero;
-								GetEventParameter (inEvent, 1668183160, 1668183160, IntPtr.Zero, (uint)Marshal.SizeOf (typeof (IntPtr)), IntPtr.Zero, ref cgContext);
-								CGContextSaveGState (cgContext);
 								DispatchMessage (ref msg);
-								CGContextRestoreGState (cgContext);
+////								carbonEvents.Enqueue (msg);
 								return 0;
 							}
 						}
@@ -597,7 +580,7 @@ namespace System.Windows.Forms {
 			return 0;
 		}
 
-		[MonoTODO]
+		//FIXME: If there are timers; we can loop really hard churning cpu
 		internal override bool GetMessage(ref MSG msg, IntPtr hWnd, int wFilterMin, int wFilterMax) {
 			IntPtr evtRef = IntPtr.Zero;
 			IntPtr target = GetEventDispatcherTarget();
@@ -610,6 +593,15 @@ namespace System.Windows.Forms {
 			
 			lock (carbonEvents) {
 				if (carbonEvents.Count <= 0) {
+					if (Idle != null) 
+						Idle (this, EventArgs.Empty);
+					else if (timer_list.Count == 0) {
+						ReceiveNextEvent (0, IntPtr.Zero, 0x7FFFFFFF, true, ref evtRef);
+						if (evtRef != IntPtr.Zero && target != IntPtr.Zero) {
+							SendEventToEventTarget (evtRef, target);
+							ReleaseEvent (evtRef);
+						}
+					}
 					msg.hwnd = IntPtr.Zero;
 					msg.message = Msg.WM_ENTERIDLE;
 					return true;
@@ -828,6 +820,8 @@ namespace System.Windows.Forms {
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		internal static extern int HIViewSetFrame (IntPtr viewHnd, ref HIRect rect);
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
+		internal static extern int HIViewPlaceInSuperviewAt (IntPtr view, float x, float y);
+		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		internal static extern int HIViewAddSubview (IntPtr parentHnd, IntPtr childHnd);
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		internal static extern IntPtr HIViewGetNextView (IntPtr aView);
@@ -998,16 +992,4 @@ namespace System.Windows.Forms {
 		public short right;
 	}
 
-	internal struct QuartzContext
-	{
-		public IntPtr cgContext;
-		public int width;
-		public int height;
-
-		public QuartzContext (IntPtr cgContext, int width, int height) {
-			this.cgContext = cgContext;
-			this.width = width;
-			this.height = height;
-		}
-	}
 }	
