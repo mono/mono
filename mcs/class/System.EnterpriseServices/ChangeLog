@@ -1,0 +1,5 @@
+2002-07-22 Tim Coleman  <tim@timcoleman.com>
+	* System.EnterpriseServices: New namespace created
+		to provide enum needed by Web Services
+	* System.EnterpriseServices.build: New file
+	* list: New file
