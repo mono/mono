@@ -405,6 +405,12 @@ namespace Mono.CSharp {
 		/// </remarks>
 		public abstract void Emit (EmitContext ec);
 
+		public virtual void EmitBranchable (EmitContext ec, Label target, bool onTrue)
+		{
+			Emit (ec);
+			ec.ig.Emit (onTrue ? OpCodes.Brtrue : OpCodes.Brfalse, target);
+		}
+
 		/// <summary>
 		///   Protected constructor.  Only derivate types should
 		///   be able to be created

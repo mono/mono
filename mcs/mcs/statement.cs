@@ -44,51 +44,6 @@ namespace Mono.CSharp {
 			DoEmit (ec);
 		}
 		
-		/// <remarks>
-		///    Encapsulates the emission of a boolean test and jumping to a
-		///    destination.
-		///
-		///    This will emit the bool expression in `bool_expr' and if
-		///    `target_is_for_true' is true, then the code will generate a 
-		///    brtrue to the target.   Otherwise a brfalse. 
-		/// </remarks>
-		public static void EmitBoolExpression (EmitContext ec, Expression bool_expr,
-						       Label target, bool target_is_for_true)
-		{
-			ILGenerator ig = ec.ig;
-			
-			bool invert = false;
-			if (bool_expr is Unary){
-				Unary u = (Unary) bool_expr;
-				
-				if (u.Oper == Unary.Operator.LogicalNot){
-					invert = true;
-
-					u.EmitLogicalNot (ec);
-				}
-			} else if (bool_expr is Binary){
-				Binary b = (Binary) bool_expr;
-
-				if (b.EmitBranchable (ec, target, target_is_for_true))
-					return;
-			}
-
-			if (!invert)
-				bool_expr.Emit (ec);
-
-			if (target_is_for_true){
-				if (invert)
-					ig.Emit (OpCodes.Brfalse, target);
-				else
-					ig.Emit (OpCodes.Brtrue, target);
-			} else {
-				if (invert)
-					ig.Emit (OpCodes.Brtrue, target);
-				else
-					ig.Emit (OpCodes.Brfalse, target);
-			}
-		}
-
 		public static void Warning_DeadCodeFound (Location loc)
 		{
 			Report.Warning (162, loc, "Unreachable code detected");
@@ -195,8 +150,8 @@ namespace Mono.CSharp {
 				}
 			}
 			
-			EmitBoolExpression (ec, expr, false_target, false);
-
+			expr.EmitBranchable (ec, false_target, false);
+			
 			TrueStatement.Emit (ec);
 
 			if (FalseStatement != null){
@@ -283,7 +238,7 @@ namespace Mono.CSharp {
 				if (res)
 					ec.ig.Emit (OpCodes.Br, loop); 
 			} else
-				EmitBoolExpression (ec, expr, loop, true);
+				expr.EmitBranchable (ec, loop, true);
 			
 			ig.MarkLabel (ec.LoopEnd);
 
@@ -386,7 +341,8 @@ namespace Mono.CSharp {
 			
 				ig.MarkLabel (ec.LoopBegin);
 
-				EmitBoolExpression (ec, expr, while_loop, true);
+				expr.EmitBranchable (ec, while_loop, true);
+				
 				ig.MarkLabel (ec.LoopEnd);
 			}	
 
@@ -506,7 +462,8 @@ namespace Mono.CSharp {
 				if (Test is BoolConstant)
 					ig.Emit (OpCodes.Br, loop);
 				else
-					EmitBoolExpression (ec, Test, loop, true);
+					Test.EmitBranchable (ec, loop, true);
+				
 			} else
 				ig.Emit (OpCodes.Br, loop);
 			ig.MarkLabel (ec.LoopEnd);

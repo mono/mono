@@ -1,5 +1,21 @@
 2004-01-03 Ben Maurer  <bmaurer@users.sourceforge.net>
 
+	* ecore.cs, expression.cs, statement.cs:
+	Total rewrite of how we handle branching. We
+	now handle complex boolean expressions with fewer
+	jumps. As well if (x == 0) no longer emits a ceq.
+
+	if (x is Foo) is much faster now, because we generate
+	better code.
+
+	Overall, we get a pretty big improvement on our benchmark
+	tests. The code we generate is smaller and more readable.
+
+	I did a full two-stage bootstrap. The patch was reviewed
+	by Martin and Miguel.
+
+2004-01-03 Ben Maurer  <bmaurer@users.sourceforge.net>
+
 	* cs-parser.jay: Make primary_expression not take a QI.
 	we dont need this because the member_access rule covers
 	us here. So we replace the rule with just IDENTIFIER.
