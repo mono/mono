@@ -45,15 +45,20 @@ Mono_Posix_Syscall_telldir (DIR *dir)
 static void
 copy_dirent (struct Mono_Posix_Syscall__Dirent *to, struct dirent *from)
 {
+	memset (to, 0, sizeof(*to));
+
 	to->d_ino    = from->d_ino;
-#ifdef MPH_ON_BSD
-	to->d_off    = 0;
-#else
+	to->d_name   = strdup (from->d_name);
+
+#ifdef HAVE_STRUCT_DIRENT_D_OFF
 	to->d_off    = from->d_off;
 #endif
+#ifdef HAVE_STRUCT_DIRENT_D_RECLEN
 	to->d_reclen = from->d_reclen;
+#endif
+#ifdef HAVE_STRUCT_DIRENT_D_TYPE
 	to->d_type   = from->d_type;
-	to->d_name   = strdup (from->d_name);
+#endif
 }
 
 gint32
