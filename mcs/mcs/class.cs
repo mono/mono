@@ -692,6 +692,62 @@ namespace CIR {
 		{
 			return RootContext.LookupType (this, name, silent);
 		}
+
+		// <summary>
+		// This method returns the members of this type just like Type.FindMembers would
+		// Only, we need to use this for types which are _being_ defined because MS' brain
+		// dead implementation can't take care of that ;-)
+		// </summary>
+		public MemberInfo [] FindMembers (MemberTypes mt, BindingFlags bf, MemberFilter filter, object criteria)
+		{
+			// FIXME : Need to actually take care of all the various
+			// arguments being passed in but for now, we only bother with
+			// the MemberTypes and criteria arguments.
+
+			switch (mt) {
+
+			case MemberTypes.All:
+
+				break;
+
+			case MemberTypes.Constructor:
+
+				break;
+				
+			case MemberTypes.Custom:
+
+				break;
+
+			case MemberTypes.Event:
+
+				break;
+
+			case MemberTypes.Field:
+
+				break;
+
+			case MemberTypes.Method:
+
+				break;
+				
+			case MemberTypes.NestedType:
+
+				break;
+				
+			case MemberTypes.Property:
+
+				break;
+				
+			case MemberTypes.TypeInfo:
+
+				break;
+
+			}
+
+			return null;
+			
+		}
+		
 	}
 
 	public class Class : TypeContainer {

@@ -14,6 +14,8 @@ using System.Collections;
 using System.Reflection;
 using System.Reflection.Emit;
 
+namespace CIR {
+
 public class TypeManager {
 	static public Type object_type;
 	static public Type string_type;
@@ -42,6 +44,12 @@ public class TypeManager {
 	Hashtable types;
 
 	// <remarks>
+	//  This is used to hotld the corresponding TypeContainer objects
+	//  since we need this in FindMembers
+	// </remarks>
+	Hashtable typecontainers;
+
+	// <remarks>
 	//   Keeps track of those types that are defined by the
 	//   user's program
 	// </remarks>
@@ -52,12 +60,19 @@ public class TypeManager {
 		assemblies = new ArrayList ();
 		user_types = new ArrayList ();
 		types = new Hashtable ();
+		typecontainers = new Hashtable ();
+	}
+
+	public void AddUserType (string name, TypeBuilder t, TypeContainer tc)
+	{
+		types.Add (t.FullName, t);
+		user_types.Add (t);
+		typecontainers.Add (t.FullName, tc);
 	}
 
 	public void AddUserType (string name, TypeBuilder t)
 	{
-		types.Add (t.FullName, t);
-		user_types.Add (t);
+		this.AddUserType (name, t, null);
 	}
 	
 	// <summary>
@@ -115,6 +130,19 @@ public class TypeManager {
 		bool_type    = LookupType ("System.Bool");
 	}
 	
+	public MemberInfo [] FindMembers (Type t, MemberTypes mt, BindingFlags bf, MemberFilter filter, object criteria)
+	{
+		TypeContainer tc;
+
+		tc = (TypeContainer) typecontainers [t.FullName];
+
+		if (tc == null)
+			return t.FindMembers (mt, bf, filter, criteria);
+		else
+			return tc.FindMembers (mt, bf, filter, criteria);
+
+	}
+
 	// <summary>
 	//   Returns the User Defined Types
 	// </summary>
@@ -123,5 +151,13 @@ public class TypeManager {
 			return user_types;
 		}
 	}
+
+	public Hashtable TypeContainers {
+		get {
+			return typecontainers;
+		}
+	}
+
 }
 
+}

@@ -455,7 +455,7 @@ namespace CIR {
 					    ifaces);
 
 			tc.TypeBuilder = tb;
-			type_manager.AddUserType (name, tb);
+			type_manager.AddUserType (name, tb, tc);
 			tc.InTransit = false;
 			
 			return tb;
@@ -536,7 +536,7 @@ namespace CIR {
 			// a simple direct lookup without adding any namespace names
 
 			// FIXME : We need to determine the exact order in which
-			// we peform the lookups.
+			// we perform the lookups.
 			
 			t = type_manager.LookupType (name); 
 			if (t != null)

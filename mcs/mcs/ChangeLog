@@ -1,3 +1,19 @@
+2001-09-12  Ravi Pratap  <ravi@ximian.com>
+
+	* class.cs (TypeContainer::FindMembers): Method which does exactly
+	what Type.FindMembers does, only we don't have to use reflection. No
+	implementation yet.
+
+	* typemanager.cs (typecontainers): New hashtable to hold the corresponding
+	typecontainer objects as we need to get at them.
+	(TypeManager::AddUserType): Overload to take an extra argument, the TypeContainer.
+
+	* rootcontext.cs : Correspondingly modify called to AddUserType to pass the
+	typecontainer object.
+
+	* expression.cs (MemberLookup): Modify signature to take a RootContext object instead
+	of just a Report object.
+
 2001-09-11  Ravi Pratap  <ravi@ximian.com>
 
 	* class.cs (Event::Define): Go back to using the prefixes "add_" and

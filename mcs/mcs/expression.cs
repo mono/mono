@@ -112,7 +112,7 @@ namespace CIR {
 		// This is so we can catch correctly attempts to invoke instance methods
 		// from a static body (scan for error 120 in ResolveSimpleName).
 		// 
-		protected static Expression MemberLookup (Report r, Type t, string name, bool same_type)
+		protected static Expression MemberLookup (RootContext rc, Type t, string name, bool same_type)
 		{
 			MemberTypes mt =
 				// MemberTypes.Constructor |
@@ -130,15 +130,15 @@ namespace CIR {
 			if (same_type)
 				bf |= BindingFlags.NonPublic;
 
-			
-			MemberInfo [] mi = t.FindMembers (mt, bf, Type.FilterName, name);
+			MemberInfo [] mi = rc.TypeManager.FindMembers (t, mt, bf, Type.FilterName, name);
 
 			if (mi.Length == 1 && !(mi [0] is MethodInfo))
 				return Expression.ExprClassFromMemberInfo (mi [0]);
 
 			for (int i = 0; i < mi.Length; i++)
 				if (!(mi [i] is MethodInfo)){
-					r.Error (-5, "Do not know how to reproduce this case: Methods and non-Method with the same name, report this please");
+					rc.Report.Error (-5, "Do not know how to reproduce this case: " + 
+							 "Methods and non-Method with the same name, report this please");
 					
 				}
 
@@ -180,7 +180,7 @@ namespace CIR {
 
 			switch (left_e.ExprClass){
 			case ExprClass.Type:
-				return  MemberLookup (tc.RootContext.Report,
+				return  MemberLookup (tc.RootContext,
 						      left_e.Type, right,
 						      left_e.Type == tc.TypeBuilder);
 				
@@ -537,7 +537,7 @@ namespace CIR {
 			Expression e;
 			Report r = tc.RootContext.Report;
 
-			e = MemberLookup (tc.RootContext.Report, tc.TypeBuilder, name, true);
+			e = MemberLookup (tc.RootContext, tc.TypeBuilder, name, true);
 			if (e != null){
 				if (e is TypeExpr)
 					return e;
