@@ -1,3 +1,7 @@
+2004-04-13  Atsushi Enomoto <atsushi@ximian.com>
+
+	* Added XmlDataDocumentTest2.cs (XmlDataDocumentTest.cs is too big)
+
 2004-03-18  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlDataDocumentTest.cs : file path fixes.
