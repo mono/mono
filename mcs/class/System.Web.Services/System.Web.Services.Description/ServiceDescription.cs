@@ -128,7 +128,7 @@ namespace System.Web.Services.Description {
 			set { targetNamespace = value; }
 		}
 
-		[XmlElement ("type")]
+		[XmlElement ("types")]
 		public Types Types {
 			get { return types; }
 			set { types = value; }
