@@ -23,9 +23,13 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.9 $
+// $Revision: 1.10 $
 // $Modtime: $
 // $Log: XplatUIWin32.cs,v $
+// Revision 1.10  2004/08/11 18:55:46  pbartok
+// - Added method to calculate difference between decorated window and raw
+//   client area
+//
 // Revision 1.9  2004/08/10 18:47:16  jordi
 // Calls InvalidateRect before UpdateWindow
 //
@@ -613,6 +617,23 @@ namespace System.Windows.Forms {
 			Win32ReleaseCapture();
 		}
 
+		internal override bool CalculateWindowRect(IntPtr hWnd, ref Rectangle ClientRect, int Style, bool HasMenu, out Rectangle WindowRect) {
+			RECT	rect;
+
+			rect.left=ClientRect.Left;
+			rect.top=ClientRect.Top;
+			rect.right=ClientRect.Right;
+			rect.bottom=ClientRect.Bottom;
+
+			if (!Win32AdjustWindowRectEx(ref rect, Style, HasMenu, 0)) {
+				WindowRect = new Rectangle(ClientRect.Left, ClientRect.Top, ClientRect.Width, ClientRect.Height);
+				return false;
+			}
+
+			WindowRect = new Rectangle(rect.left, rect.top, rect.right-rect.left, rect.bottom-rect.top);
+			return true;
+		}
+
 		// Santa's little helper
 		static void Where() {
 			Console.WriteLine("Here: {0}", new StackTrace().ToString());
@@ -703,6 +724,12 @@ namespace System.Windows.Forms {
 
 		[DllImport ("user32.dll", EntryPoint="SetActiveWindow", CharSet=CharSet.Ansi, CallingConvention=CallingConvention.StdCall)]
 		private extern static IntPtr Win32SetActiveWindow(IntPtr hWnd);
+
+		[DllImport ("user32.dll", EntryPoint="PostQuitMessage", CharSet=CharSet.Ansi, CallingConvention=CallingConvention.StdCall)]
+		private extern static IntPtr Win32PostQuitMessage(IntPtr hWnd);
+
+		[DllImport ("user32.dll", EntryPoint="AdjustWindowRectEx", CharSet=CharSet.Ansi, CallingConvention=CallingConvention.StdCall)]
+		private extern static bool Win32AdjustWindowRectEx(ref RECT lpRect, int dwStyle, bool bMenu, int dwExStyle);
 		#endregion
 
 	}

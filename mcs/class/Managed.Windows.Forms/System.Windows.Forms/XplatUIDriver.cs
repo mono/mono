@@ -23,9 +23,13 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.7 $
+// $Revision: 1.8 $
 // $Modtime: $
 // $Log: XplatUIDriver.cs,v $
+// Revision 1.8  2004/08/11 18:55:46  pbartok
+// - Added method to calculate difference between decorated window and raw
+//   client area
+//
 // Revision 1.7  2004/08/10 17:39:22  pbartok
 // - Added GetWindowPos method
 //
@@ -135,6 +139,8 @@ namespace System.Windows.Forms {
 		internal abstract bool TranslateMessage(ref MSG msg);
 		internal abstract bool MoveWindow(IntPtr hWnd, int x, int y, int width, int height);
 		internal abstract bool DispatchMessage(ref MSG msg);
+
+		internal abstract bool CalculateWindowRect(IntPtr hWnd, ref Rectangle ClientRect, int Style, bool HasMenu, out Rectangle WindowRect);
 
 		internal abstract void GrabWindow(IntPtr hWnd);
 		internal abstract void ReleaseWindow(IntPtr hWnd);

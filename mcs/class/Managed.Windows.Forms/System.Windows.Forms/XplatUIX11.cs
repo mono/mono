@@ -23,9 +23,13 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.16 $
+// $Revision: 1.17 $
 // $Modtime: $
 // $Log: XplatUIX11.cs,v $
+// Revision 1.17  2004/08/11 18:55:46  pbartok
+// - Added method to calculate difference between decorated window and raw
+//   client area
+//
 // Revision 1.16  2004/08/10 17:39:22  pbartok
 // - Added GetWindowPos method
 //
@@ -715,6 +719,11 @@ namespace System.Windows.Forms {
 
 		internal override void ReleaseWindow(IntPtr hWnd) {
 			XUngrabPointer(DisplayHandle, 0);
+		}
+
+		internal override bool CalculateWindowRect(IntPtr hWnd, ref Rectangle ClientRect, int Style, bool HasMenu, out Rectangle WindowRect) {
+			WindowRect = new Rectangle(ClientRect.Left, ClientRect.Top, ClientRect.Width, ClientRect.Height);
+			return true;
 		}
 
 		// Santa's little helper

@@ -23,9 +23,13 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.7 $
+// $Revision: 1.8 $
 // $Modtime: $
 // $Log: XplatUI.cs,v $
+// Revision 1.8  2004/08/11 18:55:46  pbartok
+// - Added method to calculate difference between decorated window and raw
+//   client area
+//
 // Revision 1.7  2004/08/10 17:39:22  pbartok
 // - Added GetWindowPos method
 //
@@ -248,8 +252,13 @@ namespace System.Windows.Forms {
 		internal static void GrabWindow(IntPtr hWnd) {
 			driver.GrabWindow(hWnd);
 		}
+
 		internal static void ReleaseWindow(IntPtr hWnd) {
 			driver.ReleaseWindow(hWnd);
+		}
+
+		internal static bool CalculateWindowRect(IntPtr hWnd, ref Rectangle ClientRect, int Style, bool HasMenu, out Rectangle WindowRect) {
+			return driver.CalculateWindowRect(hWnd, ref ClientRect, Style, HasMenu, out WindowRect);
 		}
 
 		// Santa's little helper
