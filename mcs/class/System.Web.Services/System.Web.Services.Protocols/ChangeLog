@@ -1,3 +1,32 @@
+2003-07-04  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* LogicalMethodInfo.cs: Fixed Invoke method. If return type is void,
+	  then the result object array only contain output parameters.
+
+	* Methods.cs: In class MethodStubInfo, added support from some server properties
+	  taken from WebMethodAttribute. Now MethodStubInfo can be created without SoapDocument*
+	  or SoapRpc* attributes, in which case takes default values from TypeStubInfo.
+	  Added method for getting header info.
+	  In class Fault: added constructor for creating a fault from a SoapException.
+	  In class TypeStubInfo: new way to manage serializers for headers. Now it is possible to
+	  get a header using a name and namespace (used when deserializing).
+
+	* SoapHttpClientProtocol.cs: moved WriteSoapEnvelope method to WebServiceHelper (so it can be shared).
+	  Also moved other serialization stuff to WebServiceHelper.
+
+	* SoapMessage.cs: Added some convenient constructors and internal properties.
+	  Implemented GetOutParameterValue and GetReturnValue.
+
+	* SoapServerMessage.cs: Implemented.
+
+	* WebServiceHandler.cs: Implemented method Invoke.
+
+	* WebServiceHandlerFactory.cs: Basic implementation.
+
+	* WebServiceHelper.cs: Added. Has some methods shared between client and server classes.
+
+	* HttpSoapWebServiceHandler.cs: Added. IHttpHandler implementation for HttpSoap requests.
+
 2003-06-21  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpWebClientProtocol.cs: handle cookies if the request is a

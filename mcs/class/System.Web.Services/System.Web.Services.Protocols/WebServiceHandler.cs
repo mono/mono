@@ -3,33 +3,26 @@
 //
 // Author:
 //   Tim Coleman (tim@timcoleman.com)
+//   Lluis Sanchez Gual (lluis@ximian.com)
 //
 // Copyright (C) Tim Coleman, 2002
 //
 
 using System;
+using System.Reflection;
 using System.Web.Services;
 
 namespace System.Web.Services.Protocols {
-	internal class WebServiceHandler {
+	internal class WebServiceHandler: IHttpHandler {
 
-		#region Fields
-
-		ServerProtocol protocol;
-
-		#endregion // Fields
-
-		#region Constructors
-
-		[MonoTODO]
-		public WebServiceHandler (ServerProtocol protocol)
+		public virtual bool IsReusable 
 		{
-			this.protocol = protocol;
+			get { return false; }
 		}
 
-		#endregion // Constructors
-
-		#region Methods
+		public virtual void ProcessRequest (HttpContext context)
+		{
+		}
 
 		[MonoTODO]
 		protected IAsyncResult BeginCoreProcessRequest (AsyncCallback callback, object o)
@@ -40,7 +33,6 @@ namespace System.Web.Services.Protocols {
 		[MonoTODO]
 		protected void CoreProcessRequest ()
 		{
-			Invoke ();
 			throw new NotImplementedException ();
 		}
 
@@ -50,11 +42,44 @@ namespace System.Web.Services.Protocols {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
-		private void Invoke ()
+		protected SoapServerMessage Invoke (SoapServerMessage requestMessage)
 		{
-			//WriteReturns (returnValues);
-			throw new NotImplementedException ();
+			MethodStubInfo methodInfo = requestMessage.MethodStubInfo;
+
+			// Assign header values to web service members
+			foreach (SoapHeader header in requestMessage.Headers)
+			{
+				HeaderInfo hinfo = methodInfo.GetHeaderInfo (header.GetType ());
+				if (hinfo != null)
+					hinfo.SetHeaderValue (requestMessage.Server, header);
+				else
+					if (header.MustUnderstand)
+						throw new SoapHeaderException ("Unknown header", SoapException.MustUnderstandFaultCode);
+      			header.DidUnderstand = false;
+			}
+
+			// Fill an array with the input parameters at the right position
+			
+
+			object[] parameters = new object[methodInfo.MethodInfo.Parameters.Length];
+			ParameterInfo[] inParams = methodInfo.MethodInfo.InParameters;
+			for (int n=0; n<inParams.Length; n++)
+				parameters [inParams[n].Position - 1] = requestMessage.InParameters [n];
+
+			// Invoke the method
+									
+			object[] results = methodInfo.MethodInfo.Invoke (requestMessage.Server, parameters);
+			requestMessage.OutParameters = results;
+
+			// Check that headers with MustUnderstand flag have been understood
+			
+			foreach (SoapHeader header in requestMessage.Headers)
+			{
+				if (header.MustUnderstand && !header.DidUnderstand)
+					throw new SoapHeaderException ("Header not understood: " + header.GetType(), SoapException.MustUnderstandFaultCode);
+			}
+
+			return requestMessage;
 		}
 
 		[MonoTODO]
@@ -63,7 +88,5 @@ namespace System.Web.Services.Protocols {
 			//protocol.WriteReturns (returnValues, outputStream);
 			throw new NotImplementedException ();
 		}
-
-		#endregion // Methods
 	}
 }

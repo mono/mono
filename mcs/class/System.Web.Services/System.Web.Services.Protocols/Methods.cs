@@ -3,6 +3,7 @@
 //
 // Author:
 //   Miguel de Icaza
+//   Lluis Sanchez Gual (lluis@ximian.com)
 //
 // (C) 2003 Ximian, Inc.
 //
@@ -43,6 +44,11 @@ namespace System.Web.Services.Protocols {
 		internal bool   OneWay;
 		internal SoapParameterStyle ParameterStyle;
 
+		internal bool BufferResponse;
+		internal int CacheDuration;
+		internal string Description;
+		internal bool EnableSession;
+
 		internal XmlSerializer RequestSerializer;
 		internal XmlSerializer ResponseSerializer;
 
@@ -57,8 +63,17 @@ namespace System.Web.Services.Protocols {
 
 			XmlElementAttribute optional_ns = null;
 			SoapBindingUse use;
-			
-			if (kind is SoapDocumentMethodAttribute){
+
+			if (kind == null) {
+				use = parent.Use;
+				RequestName = "";
+				RequestNamespace = parent.WebServiceNamespace;
+				ResponseName = "";
+				ResponseNamespace = parent.WebServiceNamespace;
+				ParameterStyle = parent.ParameterStyle;
+				OneWay = false;
+			}
+			else if (kind is SoapDocumentMethodAttribute){
 				SoapDocumentMethodAttribute dma = (SoapDocumentMethodAttribute) kind;
 				
 				use = dma.Use;
@@ -91,11 +106,7 @@ namespace System.Web.Services.Protocols {
 				optional_ns = new XmlElementAttribute ();
 				optional_ns.Namespace = "";
 			}
-			if (Binding == "")
-				Binding = parent.BindingName;
-			if (RequestName == "")
-				RequestName = source.Name;
-			
+
 			if (OneWay){
 				if (source.ReturnType != typeof (void))
 					throw new Exception ("OneWay methods should not have a return value");
@@ -106,12 +117,19 @@ namespace System.Web.Services.Protocols {
 			object [] o = source.GetCustomAttributes (typeof (WebMethodAttribute));
 			if (o.Length == 1){
 				WebMethodAttribute wma = (WebMethodAttribute) o [0];
-
+				BufferResponse = wma.BufferResponse;
+				CacheDuration = wma.CacheDuration;
+				Description = wma.Description;
+				EnableSession = wma.EnableSession;
 				Name = wma.MessageName;
+
 				if (Name == "")
 					Name = source.Name;
 			} else
 				Name = source.Name;
+
+			if (RequestName == "")
+				RequestName = Name;
 
 			if (ResponseName == "")
 				ResponseName = Name + "Response";
@@ -157,19 +175,22 @@ namespace System.Web.Services.Protocols {
 				if (mems.Length == 0) throw new InvalidOperationException ("Member " + att.MemberName + " not found in class " + source.DeclaringType.FullName);
 				
 				Type headerType = (mems[0] is FieldInfo) ? ((FieldInfo)mems[0]).FieldType : ((PropertyInfo)mems[0]).PropertyType;
-				Headers [i] = new HeaderInfo (parent.GetCommonSerializer (headerType), mems[0], att);
+				Headers [i] = new HeaderInfo (mems[0], att);
+				parent.RegisterHeaderType (headerType);
 			}
 		}
 
 		static internal MethodStubInfo Create (TypeStubInfo parent, LogicalMethodInfo lmi, XmlReflectionImporter xmlImporter, SoapReflectionImporter soapImporter)
 		{
 			object [] o = lmi.GetCustomAttributes (typeof (SoapDocumentMethodAttribute));
-			if (o.Length == 0){
-				o = lmi.GetCustomAttributes (typeof (SoapRpcMethodAttribute));
-				if (o.Length == 0)
-					return null;
-				return new MethodStubInfo (parent, lmi, o [0], xmlImporter, soapImporter);
-			} else 
+			if (o.Length == 0) o = lmi.GetCustomAttributes (typeof (SoapRpcMethodAttribute));
+
+			if (o.Length == 0)
+			{
+				if (lmi.GetCustomAttributes (typeof (WebMethodAttribute)).Length == 0) return null;
+				return new MethodStubInfo (parent, lmi, null, xmlImporter, soapImporter);
+			}
+			else
 				return new MethodStubInfo (parent, lmi, o [0], xmlImporter, soapImporter);
 		}
 
@@ -238,19 +259,27 @@ namespace System.Web.Services.Protocols {
 			}
 			return out_members;
 		}
+
+		public HeaderInfo GetHeaderInfo (Type headerType)
+		{
+			foreach (HeaderInfo headerInfo in Headers)
+				if (headerInfo.HeaderType == headerType) return headerInfo;
+			return null;
+		}
 	}
 
 	internal class HeaderInfo
 	{
-		internal XmlSerializer Serializer;
 		internal MemberInfo Member;
 		internal SoapHeaderAttribute AttributeInfo;
+		internal Type HeaderType;
 
-		public HeaderInfo (XmlSerializer serializer, MemberInfo member, SoapHeaderAttribute attributeInfo)
+		public HeaderInfo (MemberInfo member, SoapHeaderAttribute attributeInfo)
 		{
-			Serializer = serializer;
 			Member = member;
 			AttributeInfo = attributeInfo;
+			if (Member is PropertyInfo) HeaderType = ((PropertyInfo)Member).PropertyType;
+			else HeaderType = ((FieldInfo)Member).FieldType;
 		}
 		
 		public object GetHeaderValue (object ob)
@@ -258,10 +287,26 @@ namespace System.Web.Services.Protocols {
 			if (Member is PropertyInfo) return ((PropertyInfo)Member).GetValue (ob, null);
 			else return ((FieldInfo)Member).GetValue (ob);
 		}
+
+		public void SetHeaderValue (object ob, object value)
+		{
+			if (Member is PropertyInfo) ((PropertyInfo)Member).SetValue (ob, value, null);
+			else ((FieldInfo)Member).SetValue (ob, value);
+		}
 	}
 
 	internal class Fault
 	{
+		public Fault () {}
+
+		public Fault (SoapException ex) 
+		{
+			faultcode = ex.Code;
+			faultstring = ex.Message;
+			faultactor = ex.Actor;
+			detail = ex.Detail;
+		}
+
 		public XmlQualifiedName faultcode;
 		public string faultstring;
 		public string faultactor;
@@ -274,7 +319,9 @@ namespace System.Web.Services.Protocols {
 	//
 	internal class TypeStubInfo {
 		Hashtable name_to_method = new Hashtable ();
-		Hashtable common_serializers = new Hashtable ();
+		Hashtable header_serializers = new Hashtable ();
+		Hashtable header_serializers_byname = new Hashtable ();
+		Hashtable bindings = new Hashtable ();
 
 		// Precomputed
 		internal SoapParameterStyle      ParameterStyle;
@@ -282,9 +329,6 @@ namespace System.Web.Services.Protocols {
 		internal SoapBindingUse          Use;
 		internal string                  WebServiceName;
 		internal string                  WebServiceNamespace;
-		internal string                  BindingLocation;
-		internal string                  BindingName;
-		internal string                  BindingNamespace;
 		internal XmlSerializer           FaultSerializer;
 
 		void GetTypeAttributes (Type t)
@@ -292,14 +336,11 @@ namespace System.Web.Services.Protocols {
 			object [] o;
 
 			o = t.GetCustomAttributes (typeof (WebServiceBindingAttribute), false);
-			if (o.Length != 1)
-				throw new Exception ("Expected WebServiceBindingAttribute on "+ t.Name);
-			WebServiceBindingAttribute b = (WebServiceBindingAttribute) o [0];
-			BindingLocation = b.Location;
-			BindingName = b.Name;
-			BindingNamespace = b.Namespace;
 
-			o = t.GetCustomAttributes (typeof (WebService), false);
+			foreach (WebServiceBindingAttribute at in o)
+				bindings.Add (((WebServiceBindingAttribute)at).Name, at);
+
+			o = t.GetCustomAttributes (typeof (WebServiceAttribute), false);
 			if (o.Length == 1){
 				WebServiceAttribute a = (WebServiceAttribute) o [0];
 
@@ -331,7 +372,7 @@ namespace System.Web.Services.Protocols {
 					Use = SoapBindingUse.Literal;
 				}
 			}
-			FaultSerializer = GetCommonSerializer (typeof(Fault));
+			FaultSerializer = new XmlSerializer (typeof(Fault));
 		}
 
 		//
@@ -366,13 +407,29 @@ namespace System.Web.Services.Protocols {
 			return (MethodStubInfo) name_to_method [name];
 		}
 
-		internal XmlSerializer GetCommonSerializer (Type type)
+
+
+		internal void RegisterHeaderType (Type type)
 		{
-			XmlSerializer s = (XmlSerializer) common_serializers [type];
-			if (s != null) return s;
+			XmlSerializer s = (XmlSerializer) header_serializers [type];
+			if (s != null) return;
+
+			XmlReflectionImporter ri = new XmlReflectionImporter ();
+			XmlTypeMapping tm = ri.ImportTypeMapping (type);
 			s = new XmlSerializer (type);
-			common_serializers [type] = s;
-			return s;
+
+			header_serializers [type] = s;
+			header_serializers_byname [new XmlQualifiedName (tm.ElementName, tm.Namespace)] = s;
+		}
+
+		internal XmlSerializer GetHeaderSerializer (Type type)
+		{
+			return (XmlSerializer) header_serializers [type];
+		}
+	
+		internal XmlSerializer GetHeaderSerializer (XmlQualifiedName qname)
+		{
+			return (XmlSerializer) header_serializers_byname [qname];
 		}
 	}
 	

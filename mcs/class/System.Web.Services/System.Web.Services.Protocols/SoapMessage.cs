@@ -3,6 +3,7 @@
 //
 // Author:
 //   Tim Coleman (tim@timcoleman.com)
+//   Lluis Sanchez Gual (lluis@ximian.com)
 //
 // Copyright (C) Tim Coleman, 2002
 //
@@ -20,9 +21,11 @@ namespace System.Web.Services.Protocols {
 
 		string content_type = "text/xml";
 		SoapException exception = null;
-		SoapHeaderCollection headers = new SoapHeaderCollection ();
+		SoapHeaderCollection headers;
 		SoapMessageStage stage;
 		Stream stream;
+		object[] inParameters;
+		object[] outParameters;
 		
 		#endregion // Fields
 
@@ -30,13 +33,40 @@ namespace System.Web.Services.Protocols {
 
 		internal SoapMessage ()
 		{
+			headers = new SoapHeaderCollection ();
+		}
+
+		internal SoapMessage (Stream stream, SoapHeaderCollection headers)
+		{
+			this.headers = headers;
+			this.stream = stream;
+		}
+
+		internal SoapMessage (Stream stream, SoapException exception)
+		{
+			this.exception = exception;
+			this.stream = stream;
+			headers = new SoapHeaderCollection ();
 		}
 
 		#endregion
 
 		#region Properties
 
-		public abstract string Action {
+		internal object[] InParameters 
+		{
+			get { return inParameters; }
+			set { inParameters = value; }
+		}
+
+		internal object[] OutParameters 
+		{
+			get { return outParameters; }
+			set { outParameters = value; }
+		}
+
+		public abstract string Action 
+		{
 			get;
 		}
 
@@ -93,22 +123,21 @@ namespace System.Web.Services.Protocols {
 				throw new InvalidOperationException ("The current SoapMessageStage is not the asserted stage or stages.");
 		}
 
-		[MonoTODO]
 		public object GetInParameterValue (int index) 
 		{
-			throw new NotImplementedException ();
+			return inParameters [index];
 		}
 
-		[MonoTODO]
 		public object GetOutParameterValue (int index) 
 		{
-			throw new NotImplementedException ();
+			if (MethodInfo.IsVoid) return outParameters [index];
+			else return outParameters [index + 1];
 		}
 
-		[MonoTODO]
 		public object GetReturnValue ()
 		{
-			throw new NotImplementedException ();
+			if (MethodInfo.IsVoid) return null;
+			else return outParameters [0];
 		}
 
 		#endregion // Methods

@@ -3,11 +3,13 @@
 //
 // Author:
 //   Tim Coleman (tim@timcoleman.com)
+//   Lluis Sanchez Gual (lluis@ximian.com)
 //
 // Copyright (C) Tim Coleman, 2002
 //
 
 using System.Web.Services;
+using System.IO;
 
 namespace System.Web.Services.Protocols {
 	public sealed class SoapServerMessage : SoapMessage {
@@ -15,48 +17,59 @@ namespace System.Web.Services.Protocols {
 		#region Fields
 
 		string action;
-		LogicalMethodInfo methodInfo;
-		bool oneWay;
+		MethodStubInfo stubInfo;
 		object server;
 		string url;
-		SoapServerProtocol protocol;
+		object[] parameters;
 
 		#endregion
 
 		#region Constructors
 
-		[MonoTODO ("Determine what this constructor does.")]
-		internal SoapServerMessage (SoapServerProtocol protocol)
+		internal SoapServerMessage (HttpRequest request, SoapHeaderCollection headers, MethodStubInfo stubInfo, object server, Stream stream)
+			: base (stream, headers)
 		{
+			this.action = request.Headers ["SOAPAction"];
+			this.stubInfo = stubInfo;
+			this.server = server;
+			this.url = request.Url.ToString();
+		}
+
+		internal SoapServerMessage (HttpRequest request, SoapException exception, MethodStubInfo stubInfo, object server, Stream stream)
+			: base (stream, exception)
+		{
+			this.action = request.Headers ["SOAPAction"];
+			this.stubInfo = stubInfo;
+			this.server = server;
+			this.url = request.Url.ToString();
 		}
 
 		#endregion
 
 		#region Properties
 
-		public override string Action {
-			[MonoTODO]
-			get { throw new NotImplementedException (); }
+		public override LogicalMethodInfo MethodInfo {
+			get { return stubInfo.MethodInfo; }
 		}
 
-		public override LogicalMethodInfo MethodInfo {
-			[MonoTODO]
-			get { throw new NotImplementedException (); }
+		public override string Action {
+			get { return action; }
+		}
+
+		internal MethodStubInfo MethodStubInfo {
+			get { return stubInfo; }
 		}
 
 		public override bool OneWay {
-			[MonoTODO]
-			get { throw new NotImplementedException (); }
+			get { return stubInfo.OneWay; }
 		}
 
 		public object Server {
-			[MonoTODO]
-			get { throw new NotImplementedException (); }
+			get { return server; }
 		}	
 
 		public override string Url {
-			[MonoTODO]
-			get { throw new NotImplementedException (); }
+			get { return url; }
 		}
 
 		#endregion // Properties

@@ -4,6 +4,7 @@
 // Authors:
 //   Miguel de Icaza (miguel@ximian.com)
 //   Tim Coleman (tim@timcoleman.com)
+//   Lluis Sanchez Gual (lluis@ximian.com)
 //
 // Copyright (C) Tim Coleman, 2002
 // Copyright (C) Ximian, Inc,  2003
@@ -269,6 +270,8 @@ namespace System.Web.Services.Protocols {
 					}
 				}
 			}
+
+
 			if (sync != null)
 				foreach (MethodInfo mi in sync){
 					res [dest++] = new LogicalMethodInfo (mi);
@@ -297,11 +300,13 @@ namespace System.Web.Services.Protocols {
 		{
 			if (parameters == null)
 				ComputeParameters ();
-			
-			object [] ret = new object [1 + out_parameters.Length];
-			ret [0] = method_info.Invoke (target, values);
 
-			int j = 1;
+			int retc = IsVoid ? 0 : 1;
+			object [] ret = new object [retc + out_parameters.Length];
+			object res = method_info.Invoke (target, values);
+			if (retc == 1) ret [0] = res;
+
+			int j = retc;
 			for (int i = 0; i < parameters.Length; i++){
 				if (parameters [i].ParameterType.IsByRef)
 					ret [j++] = values [i];
