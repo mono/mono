@@ -1,5 +1,16 @@
 2004-07-21  Bernie Solomon  <bernard@ugsolutions.com>
 
+	* mintops.def: rename the ICALL op codes to give a better
+	clue about their signature.
+
+	* transform.c (generate): use new ICALL types and add
+	a case for two args + a result
+
+	* interp.c (ves_exec_method_with_context): new ICALL
+	op codes.
+
+2004-07-21  Bernie Solomon  <bernard@ugsolutions.com>
+
 	* mintops.def: add MINT_DUP_VT
 
 	* transform.c (generate): cope with CEE_DUP on value type
