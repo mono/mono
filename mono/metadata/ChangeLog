@@ -1,3 +1,17 @@
+2005-03-10  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* exception.c|h: Added mono_get_exception_reflection_type_load to
+	create a ReflectionTypeLoadException object.
+	* icall.c: Updated ves_icall_System_Reflection_Assembly_InternalGetType
+	to return NULL is a InheritanceDemand fails during reflection. Updated
+	ves_icall_System_Reflection_Assembly_GetTypes to throw a 
+	ReflectionTypeLoadException if an InheritanceDemand fails during 
+	reflection. Added icall mapping for GetLinkDemandSecurity.
+	* security-manager.c|h: Added ves_icall_System_Security_
+	SecurityManager_GetLinkDemandSecurity internal call to return the
+	class and methods permissions set for a LinkDemand. Removed unused
+	fields in MonoSecurityManager.
+
 2005-03-10  Martin Baulig  <martin@ximian.com>
 
 	* class.c (mono_bounded_array_class_get): Initialize `eclass' if
