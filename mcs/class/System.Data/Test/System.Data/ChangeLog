@@ -1,5 +1,10 @@
 2005-02-04  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* DataSetTest.cs : WriteDifferentNamespaceSchema() is NotWorking.
+	  It is impossible to fix (see code comment).
+
+2005-02-04  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* DataSetTest.cs : Fixed strict type name under .NET 2.0.
 
 2005-02-03  Sureshkumar T  <tsureshkumar@novell.com>
