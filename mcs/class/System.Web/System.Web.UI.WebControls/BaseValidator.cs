@@ -282,7 +282,6 @@ namespace System.Web.UI.WebControls
 			return true;
 		}
 
-		[MonoTODO]
 		protected virtual bool DetermineRenderUplevel()
 		{
 			Page page = Page;
@@ -293,11 +292,11 @@ namespace System.Web.UI.WebControls
 
 			if(EnableClientScript)
 			{
-				// By now, return false
+				if(page.Request.Browser.MSDomVersion.Major > 4)
+				{
+					return page.Request.Browser.EcmaScriptVersion.CompareTo(new Version(1,2)) >= 0;
+				}
 				return false;
-				//throw new NotImplementedException();
-				////TODO: I need to get the (Browser->Dom_version_major >= 4 &&
-				////                         Brower->Ecma_script_version >= 1.2)
 			}
 			return false;
 		}
@@ -366,17 +365,22 @@ namespace System.Web.UI.WebControls
 			if(Page.IsClientScriptBlockRegistered("ValidatorIncludeScript"))
 				return;
 			
+			string jsDirectory = System.Web.UI.Utils.GetScriptLocation(Context);
+			string jsFile = jsDirectory + "/WebUIValidation.js";
+			//TODO: Ok, now add the <script language="javascript"> etc
+			//FIXME: Should I check for 'Explorer'? MS-Net seems to do it!
 			throw new NotImplementedException();
 		}
 
 		[MonoTODO("I_have_to_know_javascript_for_this_I_know_it_but_for_ALL_browsers_NO")]
 		protected virtual void RegisterValidatorDeclaration()
 		{
-			throw new NotImplementedException();
-			//TODO: Since I have to access document.<ClientID> and register
-			// as page validator. Now this is Browser dependent :((
-
-			// This does not render anything on Mozilla, and does on IE
+			//FIXME: How to make is more abstract?
+			//Browser Info... but future browsers???
+			//I'm confused! This will make it work, at least on IE
+			string val = "document.all[\"" + ClientID;
+			val += "\"]";
+			Page.RegisterArrayDeclaration("Page_Validators", val);
 		}
 
 		[MonoTODO("Render_ing_always_left")]

@@ -1,3 +1,12 @@
+
+2002-10-08  Gaurav Vaish <gvaish_mono AT lycos.com>
+
+	* BaseValidator.cs      : DetermineRenderUplevel()  - Completed.
+	                        : RegisterValidatorCommonScript()
+	                                       - More code, I need HELP!
+	                        : RegisterValidatorDeclaration()
+	                                       - More code, I need HELP!
+
 2003-09-29  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* CheckBoxList.cs: don't lose state when enabling/disabling. See bug
