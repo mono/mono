@@ -18,14 +18,14 @@ namespace System
 		string type_name;
 
 		// Constructors
-		public TypeInitializationException (string type_name, Exception inner)
-			: base (Locale.GetText ("An exception was thrown by the type initializer for ") + type_name, inner)
+		public TypeInitializationException (string fullTypeName, Exception innerException)
+			: base (Locale.GetText ("An exception was thrown by the type initializer for ") + fullTypeName, innerException)
 		{
-			this.type_name = type_name;
+			this.type_name = fullTypeName;
 		}
 
-		internal TypeInitializationException (SerializationInfo info, StreamingContext sc)
-			: base (info, sc)
+		internal TypeInitializationException (SerializationInfo info, StreamingContext context)
+			: base (info, context)
 		{
 			type_name = info.GetString ("TypeName");
 		}

@@ -1,3 +1,20 @@
+2004-03-14  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* TypeInitializationException.cs
+	* SystemException.cs
+	* StackOverflowException.cs
+	* RankException.cs
+	* OverflowExceptionException.cs
+	* OutOfMemoryException.cs
+	* NullReferenceException.cs
+	* NotSupportedException.cs
+	* NotFiniteNumberException.cs
+	* InvalidOperationException.cs
+	* InvalidCastException.cs
+	* IndexOutOfRangeException.cs
+	* FormatException.cs
+	* ExecutionEngineException.cs: improved parameter names
+
 2004-03-13  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
 	* Enum.cs

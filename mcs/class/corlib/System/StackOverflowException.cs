@@ -26,8 +26,8 @@ namespace System
 		{
 		}
 
-		public StackOverflowException (string message, Exception inner)
-			: base (message, inner)
+		public StackOverflowException (string message, Exception innerException)
+			: base (message, innerException)
 		{
 		}
 

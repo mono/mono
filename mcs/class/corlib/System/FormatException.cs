@@ -30,8 +30,8 @@ namespace System
 			HResult = Result;
 		}
 
-		public FormatException (string message, Exception inner)
-			: base (message, inner)
+		public FormatException (string message, Exception innerException)
+			: base (message, innerException)
 		{
 			HResult = Result;
 		}

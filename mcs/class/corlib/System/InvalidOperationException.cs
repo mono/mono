@@ -31,8 +31,8 @@ namespace System
 			HResult = Result;
 		}
 
-		public InvalidOperationException (string message, Exception inner)
-			: base (message, inner)
+		public InvalidOperationException (string message, Exception innerException)
+			: base (message, innerException)
 		{
 			HResult = Result;
 		}

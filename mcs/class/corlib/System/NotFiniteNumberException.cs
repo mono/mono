@@ -26,9 +26,9 @@ namespace System
 		{
 		}
 
-		public NotFiniteNumberException (double offending_number)
+		public NotFiniteNumberException (double offendingNumber)
 		{
-			this.offending_number = offending_number;
+			this.offending_number = offendingNumber;
 			HResult = Result;
 		}
 
@@ -38,17 +38,17 @@ namespace System
 			HResult = Result;
 		}
 
-		public NotFiniteNumberException (string message, double offending_number)
+		public NotFiniteNumberException (string message, double offendingNumber)
 			: base (message)
 		{
-			this.offending_number = offending_number;
+			this.offending_number = offendingNumber;
 			HResult = Result;
 		}
 
-		public NotFiniteNumberException (string message, double offending_number, Exception inner)
-			: base (message, inner)
+		public NotFiniteNumberException (string message, double offendingNumber, Exception innerException)
+			: base (message, innerException)
 		{
-			this.offending_number = offending_number;
+			this.offending_number = offendingNumber;
 			HResult = Result;
 		}
 

@@ -31,8 +31,8 @@ namespace System
 			HResult = Result;
 		}
 
-		public RankException (string message, Exception inner)
-			: base (message, inner)
+		public RankException (string message, Exception innerException)
+			: base (message, innerException)
 		{
 			HResult = Result;
 		}

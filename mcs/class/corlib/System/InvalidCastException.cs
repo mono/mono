@@ -31,8 +31,8 @@ namespace System
 			HResult = Result;
 		}
 
-		public InvalidCastException (string message, Exception inner)
-			: base (message, inner)
+		public InvalidCastException (string message, Exception innerException)
+			: base (message, innerException)
 		{
 			HResult = Result;
 		}

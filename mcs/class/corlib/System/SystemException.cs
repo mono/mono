@@ -34,8 +34,8 @@ namespace System
 		{
 		}
 
-		public SystemException (string message, Exception inner)
-			: base (message, inner)
+		public SystemException (string message, Exception innerException)
+			: base (message, innerException)
 		{
 			HResult = Result;
 		}

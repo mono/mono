@@ -25,8 +25,8 @@ namespace System
 		{
 		}
 
-		public IndexOutOfRangeException (string message, Exception inner)
-			: base (message, inner)
+		public IndexOutOfRangeException (string message, Exception innerException)
+			: base (message, innerException)
 		{
 		}
 		

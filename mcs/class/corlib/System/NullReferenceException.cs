@@ -31,8 +31,8 @@ namespace System
 			HResult = Result;
 		}
 
-		public NullReferenceException (string message, Exception inner)
-			: base (message, inner)
+		public NullReferenceException (string message, Exception innerException)
+			: base (message, innerException)
 		{
 			HResult = Result;
 		}

@@ -23,8 +23,8 @@ namespace System
 		{
 		}
 
-		public ExecutionEngineException (string message, Exception inner)
-			: base (message, inner)
+		public ExecutionEngineException (string message, Exception innerException)
+			: base (message, innerException)
 		{
 		}
 	}

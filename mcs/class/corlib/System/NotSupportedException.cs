@@ -31,8 +31,8 @@ namespace System
 			HResult = Result;
 		}
 
-		public NotSupportedException (string message, Exception inner)
-			: base (message, inner)
+		public NotSupportedException (string message, Exception innerException)
+			: base (message, innerException)
 		{
 			HResult = Result;
 		}
