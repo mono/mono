@@ -1,4 +1,10 @@
 
+Thu Apr 29 20:15:41 CEST 2004 Paolo Molaro <lupus@ximian.com>
+
+	* mini-ppc.c, exceptions-ppc.c: more code saves registers
+	at the top of the stack. Fixed typos. Use a frame registers
+	for all the methods with exception clauses.
+
 Thu Apr 29 18:52:09 CEST 2004 Paolo Molaro <lupus@ximian.com>
 
 	* exceptions-ppc.c: restore fp registers.
