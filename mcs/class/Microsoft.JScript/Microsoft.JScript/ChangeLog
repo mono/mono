@@ -1,5 +1,9 @@
 2003-09-20    <cesar@ciencias.unam.mx>
 
+	* ScriptBlock.cs,Block.cs: Added ToString function.
+
+2003-09-20    <cesar@ciencias.unam.mx>
+
 	* ASTList.cs, ArrayLiteral.cs, BitwiseBinary.cs, Block.cs,
 	DebugBreak.cs, Enum.cs, Equality.cs, Eval.cs, ForIn.cs,
 	FunctionExpression.cs, Import.cs, In.cs, InstanceOf.cs,
