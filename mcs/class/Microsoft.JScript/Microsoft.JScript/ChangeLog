@@ -1,5 +1,7 @@
 2004-10-25  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
 
+	* StringObject.cs: add value field
+
 	* expression.cs: implement LateBinding. Added methods:
 	emit_late_binding, init_late_binding, emit_late_get_or_set,
 	get_global_scope_or_this, setup_late_call_args, load_script_func, emit_late_call

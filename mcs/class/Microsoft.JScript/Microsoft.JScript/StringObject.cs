@@ -33,6 +33,8 @@ namespace Microsoft.JScript {
 
 	public class StringObject : JSObject {
 
+		internal string value;
+
 		public int length {
 			get { throw new NotImplementedException (); }
 		}
