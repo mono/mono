@@ -96,6 +96,35 @@ namespace MonoTests.System.Xml
 			xtw.WriteNode (xtr, false); // does not report any errors
 		}
 
+		[Test]
+		public void WriteSurrogateCharEntity ()
+		{
+			setupWriter ();
+			xtw.WriteSurrogateCharEntity ('\udfff', '\udb00');
+			AssertEquals ("&#xd03ff;", writer.ToString ());
+
+			try {
+				xtw.WriteSurrogateCharEntity ('\ud800', '\udc00');
+				Fail ();
+			} catch {
+			}
+			try {
+				xtw.WriteSurrogateCharEntity ('\udbff', '\ud800');
+				Fail ();
+			} catch {
+			}
+			try {
+				xtw.WriteSurrogateCharEntity ('\ue000', '\ud800');
+				Fail ();
+			} catch {
+			}
+			try {
+				xtw.WriteSurrogateCharEntity ('\udfff', '\udc00');
+				Fail ();
+			} catch {
+			}
+		}
+
 		// MS.NET's not-overriden XmlWriter.WriteStartElement(name)
 		// invokes WriteStartElement(null, name, null). 
 		// WriteStartElement(name, ns) invokes (null, name, ns), too.

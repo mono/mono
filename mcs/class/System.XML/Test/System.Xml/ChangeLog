@@ -1,5 +1,9 @@
 2003-10-13  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
+	* XmlWriterTests.cs : Added WriteSurrogateCharEntity().
+
+2003-10-13  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
 	* XmlElementTests.cs : Added more tests on 
 	  RemoveDoesNotRemoveDefaultAttributes().
 	* XmlNodeTests.cs : Added Normalize(), GetNamespaceOfPrefix() and
