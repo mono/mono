@@ -1,3 +1,8 @@
+
+Tue Mar 19 18:17:21 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* class.c: set image for pointer classes.
+
 2002/03/19  Nick Drochak <ndrochak@gol.com>
 
 	* sysmath.c: Forgot one.
