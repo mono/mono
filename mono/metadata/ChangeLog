@@ -1,3 +1,8 @@
+2004-03-04  Zoltan Varga  <vargaz@freemail.hu>
+
+	* appdomain.c (unload_thread_main): Increase unloading timeout to
+	10 sec as a temporary workaround for Nant problems.
+
 2004-02-29  Zoltan Varga  <vargaz@freemail.hu>
 
 	* gc.c: Add checks for GC_enable and GC_disable.
