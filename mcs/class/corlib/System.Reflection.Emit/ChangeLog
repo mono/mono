@@ -1,3 +1,8 @@
+
+Thu Feb 13 18:40:52 CET 2003 Paolo Molaro <lupus@ximian.com>
+
+	* ModuleBuilder.cs: add the basic initialization call.
+
 2003-02-13  Zoltan Varga  <vargaz@freemail.hu>
 
 	* AssemblyBuilder.cs: Added basic error checking to some methods

@@ -32,6 +32,9 @@ namespace System.Reflection.Emit {
 		internal IMonoSymbolWriter symbol_writer;
 		Hashtable name_cache;
 
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		private static extern void basic_init (ModuleBuilder ab);
+
 		internal ModuleBuilder (AssemblyBuilder assb, string name, string fullyqname, bool emitSymbolInfo, bool isMainModule) {
 			this.name = this.scopename = name;
 			this.fqname = fullyqname;
@@ -43,6 +46,7 @@ namespace System.Reflection.Emit {
 
 			if (emitSymbolInfo)
 				GetSymbolWriter (fullyqname);
+			basic_init (this);
 		}
 
 		internal void GetSymbolWriter (string filename)
