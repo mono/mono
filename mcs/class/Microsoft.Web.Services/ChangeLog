@@ -1,5 +1,10 @@
 2003-09-06  Sebastien Pouliot  <spouliot@videotron.ca>
 
+	* Microsoft.Web.Services.dll.sources: Added stubbed input/output soap 
+	filters for Routing and Referral so Configuration can be compiled.
+
+2003-09-06  Sebastien Pouliot  <spouliot@videotron.ca>
+
 	* Microsoft.Web.Services.dll.sources: Added another shared (and 
 	renamed) file from System.Security assembly (Signature.cs ->
 	SignedXmlSignature.cs).

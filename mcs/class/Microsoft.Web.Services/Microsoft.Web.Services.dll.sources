@@ -35,6 +35,8 @@ Microsoft.Web.Services.Referral/ReferralException.cs
 Microsoft.Web.Services.Referral/For.cs
 Microsoft.Web.Services.Referral/If.cs
 Microsoft.Web.Services.Referral/Desc.cs
+Microsoft.Web.Services.Referral/ReferralInputFilter.cs
+Microsoft.Web.Services.Referral/ReferralOutputFilter.cs
 Microsoft.Web.Services.Policy/PolicyEnforcementException.cs
 Microsoft.Web.Services.Messaging/ISoapFormatter.cs
 Microsoft.Web.Services.Messaging/ISoapTransport.cs
@@ -51,6 +53,8 @@ Microsoft.Web.Services.Routing/Path.cs
 Microsoft.Web.Services.Routing/RoutingFormatException.cs
 Microsoft.Web.Services.Routing/Via.cs
 Microsoft.Web.Services.Routing/ViaCollection.cs
+Microsoft.Web.Services.Routing/RoutingInputFilter.cs
+Microsoft.Web.Services.Routing/RoutingOutputFilter.cs
 Microsoft.Web.Services.Security/AsymmetricDecryptionKey.cs
 Microsoft.Web.Services.Security/AsymmetricEncryptionKey.cs
 Microsoft.Web.Services.Security/AuthenticationKey.cs
