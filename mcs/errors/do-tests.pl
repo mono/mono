@@ -74,7 +74,7 @@ foreach (glob ($files)) {
 	print "...";
 
 	my $testlogfile="$_.log";
-	system "$compile $options $_ --expect-error $error_number > $testlogfile 2>&1";
+	system "$compile --expect-error $error_number $options $_ > $testlogfile 2>&1";
 	
 	exit 1 if $? & 127;
 	

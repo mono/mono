@@ -1,5 +1,10 @@
 2004-06-10 Marek Safar <marek.safar@seznam.cz>
 
+	* do-test.pl: --expect-error must be at the
+	first place (mcs parses options by order).
+
+2004-06-10 Marek Safar <marek.safar@seznam.cz>
+
 	* do-test.pl: Added simple error logging.
 	* Makefile (clean): Remove .dll & .log files
 
