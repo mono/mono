@@ -269,6 +269,14 @@ namespace System.Resources
 			}
 		}
 		
+		static Stream GetManifestResourceStreamNoCase (Assembly ass, string fn)
+		{
+			foreach (string s in ass.GetManifestResourceNames ())
+				if (String.Compare (fn, s, true, CultureInfo.InvariantCulture) == 0)
+					return ass.GetManifestResourceStream (s);
+			return null;
+		}
+		
 		protected virtual ResourceSet InternalGetResourceSet (CultureInfo culture, bool Createifnotexists, bool tryParents)
 		{
 			ResourceSet set;
@@ -292,6 +300,9 @@ namespace System.Resources
 				string filename=GetResourceFileName(culture);
 				
 				stream=MainAssembly.GetManifestResourceStream(filename);
+				if (stream == null)
+					stream = GetManifestResourceStreamNoCase (MainAssembly, filename);
+				
 				if(stream==null) {
 					/* Try a satellite assembly */
 					Version sat_version=GetSatelliteContractVersion(MainAssembly);
@@ -299,6 +310,9 @@ namespace System.Resources
 					try {
 						a = MainAssembly.GetSatelliteAssembly (culture, sat_version);
 						stream=a.GetManifestResourceStream(filename);
+						if (stream == null)
+							stream = GetManifestResourceStreamNoCase (a, filename);
+					
 					} catch (Exception) {} // Ignored
 				}
 

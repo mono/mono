@@ -1,3 +1,8 @@
+2004-12-06  Ben Maurer  <bmaurer@ximian.com>
+
+	* ResourceManager.cs (InternalResourceManager): on msft, they
+	search for a case-insenstitive match too here.
+
 2004-05-02  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* ResourceManager.cs: Avoid endless recursion when a resource file
