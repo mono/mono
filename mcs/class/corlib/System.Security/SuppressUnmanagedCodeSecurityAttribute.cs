@@ -9,5 +9,7 @@
 
 namespace System.Security {
 
+	[AttributeUsage (AttributeTargets.Class | AttributeTargets.Method |
+			 AttributeTargets.Interface)]
 	public sealed class SuppressUnmanagedCodeSecurityAttribute : Attribute {}
 }

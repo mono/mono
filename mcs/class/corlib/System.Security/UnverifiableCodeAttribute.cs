@@ -9,5 +9,6 @@
 
 namespace System.Security {
 
+	[AttributeUsage (AttributeTargets.Module)]
 	public sealed class UnverifiableCodeAttribute : Attribute {}
 }

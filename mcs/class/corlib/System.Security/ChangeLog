@@ -1,3 +1,11 @@
+2002-06-10  Duncan Mak  <duncan@ximian.com>
+
+	* IEvidenceFactory.cs (Evidence): Added missing method.
+	
+	* SuppressUnmanagedCodeSecurityAttribute.cs:
+	* UnverifiableCodeAttribute.cs: Added missing
+	AttributeUsage attribute.
+
 2002-06-05  Nick Drochak  <ndrochak@gol.com>
 
 	* SecurityElement.cs: Fixed couple of hard to spot typos which were

@@ -8,5 +8,6 @@ namespace System.Security
 {
 	public interface IEvidenceFactory
 	{
+		Evidence Evidence { get; }
 	}
 }
