@@ -1,3 +1,10 @@
+2003-04-20  Miguel de Icaza  <miguel@ximian.com>
+
+	* ILGenerator.cs (EmitCall): Implement.
+
+	Flag a few unimplemented methods with MonoTODO, make coding style
+	for method definitions Mono consistent.
+
 2003-04-17  Zoltan Varga  <vargaz@freemail.hu>
 
 	* ILGenerator.cs: Implement EmitWriteLine methods.

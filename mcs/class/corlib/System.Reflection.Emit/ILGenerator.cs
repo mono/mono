@@ -44,11 +44,13 @@ namespace System.Reflection.Emit {
 		int len;
 		internal Label end;
 
-		internal int NumHandlers () {
+		internal int NumHandlers ()
+		{
 			return handlers.Length;
 		}
 		
-		internal void AddCatch (Type extype, int offset) {
+		internal void AddCatch (Type extype, int offset)
+		{
 			int i;
 			End (offset);
 			add_block (offset);
@@ -58,7 +60,8 @@ namespace System.Reflection.Emit {
 			handlers [i].extype = extype;
 		}
 
-		internal void AddFinally (int offset) {
+		internal void AddFinally (int offset)
+		{
 			int i;
 			End (offset);
 			add_block (offset);
@@ -68,7 +71,8 @@ namespace System.Reflection.Emit {
 			handlers [i].extype = null;
 		}
 
-		internal void End (int offset) {
+		internal void End (int offset)
+		{
 			if (handlers == null)
 				return;
 			int i = handlers.Length - 1;
@@ -76,14 +80,16 @@ namespace System.Reflection.Emit {
 				handlers [i].len = offset - handlers [i].start;
 		}
 
-		internal int LastClauseType () {
+		internal int LastClauseType ()
+		{
 			if (handlers != null)
 				return handlers [handlers.Length-1].type;
 			else
 				return ILExceptionBlock.CATCH;
 		}
 
-		internal void Debug (int b) {
+		internal void Debug (int b)
+		{
 #if NO
 			System.Console.WriteLine ("Handler {0} at {1}, len: {2}", b, start, len);
 			for (int i = 0; i < handlers.Length; ++i)
@@ -91,7 +97,8 @@ namespace System.Reflection.Emit {
 #endif
 		}
 
-		void add_block (int offset) {
+		void add_block (int offset)
+		{
 			if (handlers != null) {
 				int i = handlers.Length;
 				ILExceptionBlock[] new_b = new ILExceptionBlock [i + 1];
@@ -139,7 +146,8 @@ namespace System.Reflection.Emit {
 		private int cur_block;
 		private Stack open_blocks;
 
-		internal ILGenerator (MethodBase mb, int size) {
+		internal ILGenerator (MethodBase mb, int size)
+		{
 			if (size < 0)
 				size = 128;
 			code_len = 0;
@@ -162,7 +170,8 @@ namespace System.Reflection.Emit {
 			open_blocks = new Stack ();
 		}
 
-		private void add_token_fixup (MemberInfo mi) {
+		private void add_token_fixup (MemberInfo mi)
+		{
 			if (num_token_fixups == token_fixups.Length) {
 				ILTokenInfo[] ntf = new ILTokenInfo [num_token_fixups * 2];
 				token_fixups.CopyTo (ntf, 0);
@@ -172,21 +181,26 @@ namespace System.Reflection.Emit {
 			token_fixups [num_token_fixups++].code_pos = code_len;
 		}
 
-		private void make_room (int nbytes) {
+		private void make_room (int nbytes)
+		{
 			if (code_len + nbytes < code.Length)
 				return;
 			byte[] new_code = new byte [(code_len + nbytes) * 2 + 128];
 			System.Array.Copy (code, 0, new_code, 0, code.Length);
 			code = new_code;
 		}
-		private void emit_int (int val) {
+
+		private void emit_int (int val)
+		{
 			code [code_len++] = (byte) (val & 0xFF);
 			code [code_len++] = (byte) ((val >> 8) & 0xFF);
 			code [code_len++] = (byte) ((val >> 16) & 0xFF);
 			code [code_len++] = (byte) ((val >> 24) & 0xFF);
 		}
+
 		/* change to pass by ref to avoid copy */
-		private void ll_emit (OpCode opcode) {
+		private void ll_emit (OpCode opcode)
+		{
 			/* 
 			 * there is already enough room allocated in code.
 			 */
@@ -248,13 +262,15 @@ namespace System.Reflection.Emit {
 			}
 		}
 
-		private static int target_len (OpCode opcode) {
+		private static int target_len (OpCode opcode)
+		{
 			if (opcode.operandType == OperandType.InlineBrTarget)
 				return 4;
 			return 1;
 		}
 
-		private void InternalEndClause () {
+		private void InternalEndClause ()
+		{
 			switch (ex_handlers [cur_block].LastClauseType ()) {
 			case ILExceptionBlock.CATCH:
 				// how could we optimize code size here?
@@ -270,7 +286,8 @@ namespace System.Reflection.Emit {
 			}
 		}
 
-		public virtual void BeginCatchBlock (Type exceptionType) {
+		public virtual void BeginCatchBlock (Type exceptionType)
+		{
 			if (open_blocks.Count <= 0)
 				throw new NotSupportedException ("Not in an exception block");
 			InternalEndClause ();
@@ -281,10 +298,15 @@ namespace System.Reflection.Emit {
 			//System.Console.WriteLine ("Begin catch Block: {0} {1}",exceptionType.ToString(), max_stack);
 			//throw new NotImplementedException ();
 		}
-		public virtual void BeginExceptFilterBlock () {
+
+		[MonoTODO]
+		public virtual void BeginExceptFilterBlock ()
+		{
 			throw new NotImplementedException ();
 		}
-		public virtual Label BeginExceptionBlock () {
+
+		public virtual Label BeginExceptionBlock ()
+		{
 			//System.Console.WriteLine ("Begin Block");
 			
 			if (ex_handlers != null) {
@@ -300,27 +322,35 @@ namespace System.Reflection.Emit {
 			ex_handlers [cur_block].start = code_len;
 			return ex_handlers [cur_block].end = DefineLabel ();
 		}
-		public virtual void BeginFaultBlock() {
+
+		public virtual void BeginFaultBlock()
+		{
 			if (open_blocks.Count <= 0)
 				throw new NotSupportedException ("Not in an exception block");
 			//System.Console.WriteLine ("Begin fault Block");
 			//throw new NotImplementedException ();
 		}
-		public virtual void BeginFinallyBlock() {
+		
+		public virtual void BeginFinallyBlock()
+		{
 			if (open_blocks.Count <= 0)
 				throw new NotSupportedException ("Not in an exception block");
 			InternalEndClause ();
 			//System.Console.WriteLine ("Begin finally Block");
 			ex_handlers [cur_block].AddFinally (code_len);
 		}
-		public virtual void BeginScope () {
+		
+		public virtual void BeginScope ()
+		{
 			if (sym_writer != null) {
 				if (scopes == null)
 					scopes = new Stack ();
 				scopes.Push (sym_writer.OpenScope (code_len));
 			}
 		}
-		public LocalBuilder DeclareLocal (Type localType) {
+		
+		public LocalBuilder DeclareLocal (Type localType)
+		{
 			LocalBuilder res = new LocalBuilder (module, localType, this);
 			if (locals != null) {
 				LocalBuilder[] new_l = new LocalBuilder [locals.Length + 1];
@@ -334,7 +364,9 @@ namespace System.Reflection.Emit {
 			res.position = (uint)(locals.Length - 1);
 			return res;
 		}
-		public virtual Label DefineLabel () {
+		
+		public virtual Label DefineLabel ()
+		{
 			if (num_labels >= label_to_addr.Length) {
 				int[] new_l = new int [label_to_addr.Length * 2];
 				System.Array.Copy (label_to_addr, new_l, label_to_addr.Length);
@@ -347,16 +379,22 @@ namespace System.Reflection.Emit {
 			label_to_max_stack [num_labels] = 0;
 			return new Label (num_labels++);
 		}
-		public virtual void Emit (OpCode opcode) {
+		
+		public virtual void Emit (OpCode opcode)
+		{
 			make_room (2);
 			ll_emit (opcode);
 		}
-		public virtual void Emit (OpCode opcode, Byte val) {
+		
+		public virtual void Emit (OpCode opcode, Byte val)
+		{
 			make_room (3);
 			ll_emit (opcode);
 			code [code_len++] = val;
 		}
-		public virtual void Emit (OpCode opcode, ConstructorInfo constructor) {
+		
+		public virtual void Emit (OpCode opcode, ConstructorInfo constructor)
+		{
 			int token = abuilder.GetToken (constructor);
 			make_room (6);
 			ll_emit (opcode);
@@ -367,7 +405,9 @@ namespace System.Reflection.Emit {
 			if ((opcode.StackBehaviourPop == StackBehaviour.Varpop) && (mparams != null))
 				cur_stack -= mparams.Length;
 		}
-		public virtual void Emit (OpCode opcode, double val) {
+		
+		public virtual void Emit (OpCode opcode, double val)
+		{
 			byte[] s = System.BitConverter.GetBytes (val);
 			make_room (10);
 			ll_emit (opcode);
@@ -385,7 +425,9 @@ namespace System.Reflection.Emit {
 				code [code_len++] = s [0];				
 			}
 		}
-		public virtual void Emit (OpCode opcode, FieldInfo field) {
+		
+		public virtual void Emit (OpCode opcode, FieldInfo field)
+		{
 			int token = abuilder.GetToken (field);
 			make_room (6);
 			ll_emit (opcode);
@@ -393,18 +435,24 @@ namespace System.Reflection.Emit {
 				add_token_fixup (field);
 			emit_int (token);
 		}
-		public virtual void Emit (OpCode opcode, Int16 val) {
+		
+		public virtual void Emit (OpCode opcode, Int16 val)
+		{
 			make_room (4);
 			ll_emit (opcode);
 			code [code_len++] = (byte) (val & 0xFF);
 			code [code_len++] = (byte) ((val >> 8) & 0xFF);
 		}
-		public virtual void Emit (OpCode opcode, int val) {
+		
+		public virtual void Emit (OpCode opcode, int val)
+		{
 			make_room (6);
 			ll_emit (opcode);
 			emit_int (val);
 		}
-		public virtual void Emit (OpCode opcode, long val) {
+		
+		public virtual void Emit (OpCode opcode, long val)
+		{
 			make_room (10);
 			ll_emit (opcode);
 			code [code_len++] = (byte) (val & 0xFF);
@@ -416,7 +464,9 @@ namespace System.Reflection.Emit {
 			code [code_len++] = (byte) ((val >> 48) & 0xFF);
 			code [code_len++] = (byte) ((val >> 56) & 0xFF);
 		}
-		public virtual void Emit (OpCode opcode, Label label) {
+		
+		public virtual void Emit (OpCode opcode, Label label)
+		{
 			int tlen = target_len (opcode);
 			make_room (6);
 			ll_emit (opcode);
@@ -435,7 +485,9 @@ namespace System.Reflection.Emit {
 			code_len += tlen;
 
 		}
-		public virtual void Emit (OpCode opcode, Label[] labels) {
+		
+		public virtual void Emit (OpCode opcode, Label[] labels)
+		{
 			/* opcode needs to be switch. */
 			int count = labels.Length;
 			make_room (6 + count * 4);
@@ -461,7 +513,9 @@ namespace System.Reflection.Emit {
 				code_len += 4;
 			}
 		}
-		public virtual void Emit (OpCode opcode, LocalBuilder lbuilder) {
+
+		public virtual void Emit (OpCode opcode, LocalBuilder lbuilder)
+		{
 			uint pos = lbuilder.position;
 			bool load_addr = false;
 			bool is_store = false;
@@ -518,7 +572,9 @@ namespace System.Reflection.Emit {
 				}
 			}
 		}
-		public virtual void Emit (OpCode opcode, MethodInfo method) {
+
+		public virtual void Emit (OpCode opcode, MethodInfo method)
+		{
 			if (method == null)
 				throw new ArgumentNullException ("method");
 
@@ -534,20 +590,25 @@ namespace System.Reflection.Emit {
 			if ((opcode.StackBehaviourPop == StackBehaviour.Varpop) && (mparams != null))
 				cur_stack -= mparams.Length;
 		}
+
 		[CLSCompliant(false)]
-		public void Emit (OpCode opcode, sbyte val) {
+		public void Emit (OpCode opcode, sbyte val)
+		{
 			make_room (3);
 			ll_emit (opcode);
 			code [code_len++] = (byte)val;
 		}
 
-		public virtual void Emit (OpCode opcode, SignatureHelper shelper) {
+		public virtual void Emit (OpCode opcode, SignatureHelper shelper)
+		{
 			int token = abuilder.GetToken (shelper);
 			make_room (6);
 			ll_emit (opcode);
 			emit_int (token);
 		}
-		public virtual void Emit (OpCode opcode, float val) {
+
+		public virtual void Emit (OpCode opcode, float val)
+		{
 			byte[] s = System.BitConverter.GetBytes (val);
 			make_room (6);
 			ll_emit (opcode);
@@ -561,29 +622,47 @@ namespace System.Reflection.Emit {
 				code [code_len++] = s [0];				
 			}
 		}
-		public virtual void Emit (OpCode opcode, string val) {
+
+		public virtual void Emit (OpCode opcode, string val)
+		{
 			int token = abuilder.GetToken (val);
 			make_room (6);
 			ll_emit (opcode);
 			emit_int (token);
 		}
-		public virtual void Emit (OpCode opcode, Type type) {
+
+		public virtual void Emit (OpCode opcode, Type type)
+		{
 			make_room (6);
 			ll_emit (opcode);
 			emit_int (abuilder.GetToken (type));
 		}
 
-		public void EmitCall (OpCode opcode, MethodInfo methodinfo, Type[] optionalParamTypes) {
-			throw new NotImplementedException ();
+		[MonoTODO ("Do something about varargs method")]
+		public void EmitCall (OpCode opcode, MethodInfo methodinfo, Type[] optionalParamTypes)
+		{
+			if (methodinfo == null)
+				throw new ArgumentNullException ("methodinfo can not be null");
+			short value = opcode.Value;
+			if (!(value == OpCodes.Call.Value || value == OpCodes.Callvirt.Value))
+				throw new NotSupportedException ("Only Call and CallVirt are allowed");
+			if (optionalParamTypes != null){
+				if ((methodinfo.CallingConvention & CallingConventions.VarArgs)  == 0){
+					throw new InvalidOperationException ("Method is not VarArgs method and optional types were passed");
+				}
+			}
+			Emit (opcode, methodinfo);
 		}
 
-		public void EmitCalli (OpCode opcode, CallingConvention unmanagedCallConv, Type returnType, Type[] paramTypes) {
+		public void EmitCalli (OpCode opcode, CallingConvention unmanagedCallConv, Type returnType, Type[] paramTypes)
+		{
 			SignatureHelper helper 
 				= SignatureHelper.GetMethodSigHelper (module, 0, unmanagedCallConv, returnType, paramTypes);
 			Emit (opcode, helper);
 		}
 
-		public void EmitCalli (OpCode opcode, CallingConventions callConv, Type returnType, Type[] paramTypes, Type[] optionalParamTypes) {
+		public void EmitCalli (OpCode opcode, CallingConventions callConv, Type returnType, Type[] paramTypes, Type[] optionalParamTypes)
+		{
 			if (optionalParamTypes != null)
 				throw new NotImplementedException ();
 
@@ -592,9 +671,11 @@ namespace System.Reflection.Emit {
 			Emit (opcode, helper);
 		}
 		
-		public virtual void EmitWriteLine (FieldInfo field) {
+		public virtual void EmitWriteLine (FieldInfo field)
+		{
 			if (field == null)
 				throw new ArgumentNullException ("field");
+			
 			// The MS implementation does not check for valuetypes here but it
 			// should. Also, it should check that if the field is not static,
 			// then it is a member of this type.
@@ -608,7 +689,9 @@ namespace System.Reflection.Emit {
 				  typeof (Console).GetMethod ("WriteLine",
 											  new Type[1] { field.FieldType }));
 		}
-		public virtual void EmitWriteLine (LocalBuilder lbuilder) {
+
+		public virtual void EmitWriteLine (LocalBuilder lbuilder)
+		{
 			if (lbuilder == null)
 				throw new ArgumentNullException ("lbuilder");
 			if (lbuilder.LocalType is TypeBuilder)
@@ -620,14 +703,17 @@ namespace System.Reflection.Emit {
 				  typeof (Console).GetMethod ("WriteLine",
 											  new Type[1] { lbuilder.LocalType }));
 		}
-		public virtual void EmitWriteLine (string val) {
+		
+		public virtual void EmitWriteLine (string val)
+		{
 			Emit (OpCodes.Ldstr, val);
 			Emit (OpCodes.Call, 
 				  typeof (Console).GetMethod ("WriteLine",
 											  new Type[1] { typeof(string)}));
 		}
 
-		public virtual void EndExceptionBlock () {
+		public virtual void EndExceptionBlock ()
+		{
 			if (open_blocks.Count <= 0)
 				throw new NotSupportedException ("Not in an exception block");
 			InternalEndClause ();
@@ -641,7 +727,9 @@ namespace System.Reflection.Emit {
 			//Console.WriteLine ("curblock restored to {0}", cur_block);
 			//throw new NotImplementedException ();
 		}
-		public virtual void EndScope () {
+
+		public virtual void EndScope ()
+		{
 			if (sym_writer != null) {
 				sym_writer.CloseScope (code_len);
 				if (scopes == null)
@@ -649,7 +737,9 @@ namespace System.Reflection.Emit {
 				scopes.Pop ();
 			}
 		}
-		public virtual void MarkLabel (Label loc) {
+
+		public virtual void MarkLabel (Label loc)
+		{
 			if (loc.label < 0 || loc.label >= num_labels)
 				throw new System.ArgumentException ("The label is not valid");
 			if (label_to_addr [loc.label] >= 0)
@@ -658,15 +748,18 @@ namespace System.Reflection.Emit {
 			if (label_to_max_stack [loc.label] > cur_stack)
 				cur_stack = label_to_max_stack [loc.label];
 		}
+
 		public virtual void MarkSequencePoint (ISymbolDocumentWriter document, int startLine,
-						       int startColumn, int endLine, int endColumn) {
+						       int startColumn, int endLine, int endColumn)
+		{
 			if (sym_writer == null)
 				return;
 
 			sym_writer.MarkSequencePoint (code_len, startLine, startColumn);
 		}
 
-		public virtual void ThrowException (Type exceptionType) {
+		public virtual void ThrowException (Type exceptionType)
+		{
 			if (exceptionType == null)
 				throw new ArgumentNullException ("exceptionType");
 			if (! ((exceptionType == typeof (Exception)) || 
@@ -679,11 +772,14 @@ namespace System.Reflection.Emit {
 			Emit (OpCodes.Throw);
 		}
 
-		public void UsingNamespace (String usingNamespace) {
+		[MonoTODO]
+		public void UsingNamespace (String usingNamespace)
+		{
 			throw new NotImplementedException ();
 		}
 
-		internal void label_fixup () {
+		internal void label_fixup ()
+		{
 			int i;
 			for (i = 0; i < num_fixups; ++i) {
 				int diff = label_to_addr [fixups [i].label_idx] - fixups [i].label_base;
