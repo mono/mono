@@ -20,6 +20,7 @@ namespace System.Globalization
 		bool use_user_override;
 		NumberFormatInfo number_format;
 		DateTimeFormatInfo datetime_format;
+		TextInfo textinfo;
 
 		private static readonly string MSG_READONLY = "This instance is read only";
 		
@@ -1180,7 +1181,9 @@ namespace System.Globalization
 		public virtual TextInfo TextInfo
 		{
 			get {
-				return(null);
+				if (textinfo == null) 
+					textinfo = new TextInfo ();
+				return textinfo;
 			}
 		}
 

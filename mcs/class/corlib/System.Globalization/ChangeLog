@@ -1,3 +1,10 @@
+2002-10-17  Duncan Mak  <duncan@ximian.com>
+
+	* CultureInfo.cs (TextInfo): return a TextInfo in the property.
+
+	* TextInfo.cs (ToLower):
+	(ToTitleCase): Implemented.
+
 2002-09-12  Dick Porter  <dick@ximian.com>
 
 	* ThaiBuddhistCalendar.cs: 

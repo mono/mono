@@ -3,6 +3,7 @@
 //
 // Author:
 //	Dick Porter (dick@ximian.com)
+// 	Duncan Mak (duncan@ximian.com)
 //
 // (C) 2002 Ximian, Inc.
 //
@@ -13,7 +14,11 @@ using System.Runtime.Serialization;
 namespace System.Globalization {
 
 	[Serializable]
-	public class TextInfo: IDeserializationCallback {
+	public class TextInfo: IDeserializationCallback
+	{
+		public TextInfo ()
+		{
+		}
 
 		[MonoTODO]
 		public virtual int ANSICodePage
@@ -70,7 +75,7 @@ namespace System.Globalization {
 		[MonoTODO]
 		public virtual char ToLower(char c)
 		{
-			return('X');
+			return Char.ToLower (c);
 		}
 		
 		[MonoTODO]
@@ -80,7 +85,13 @@ namespace System.Globalization {
 				throw new ArgumentNullException("string is null");
 			}
 			
-			return("");
+			Text.StringBuilder s = new Text.StringBuilder ();
+
+			foreach (char c in str) {
+				s.Append (Char.ToLower (c));
+			}
+
+			return s.ToString ();
 		}
 		
 		[MonoTODO]
@@ -89,14 +100,19 @@ namespace System.Globalization {
 			return("TextInfo");
 		}
 
-		[MonoTODO]
-		public string ToTitleCase(string str)
+		public string ToTitleCase (string str)
 		{
-			if(str==null) {
+			if(str == null)
 				throw new ArgumentNullException("string is null");
-			}
 			
-			return("");
+			Text.StringBuilder s = new Text.StringBuilder ();
+
+			s.Append (Char.ToUpper (str [0]));
+
+			for (int i = 1; i < str.Length; i ++)
+				s.Append (str [i]);
+
+			return s.ToString ();
 		}
 
 		[MonoTODO]
