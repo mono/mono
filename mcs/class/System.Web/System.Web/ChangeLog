@@ -1,5 +1,10 @@
 2004-05-18  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* HttpUtility.cs: use lower case in UrlEncode like MS does. Delay
+	entities hashtable creation until it's really needed.
+
+2004-05-18  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* HttpApplicationFactory.cs: if no module matches the name found for a
 	possible event, ignore it. Fixes bug #58542.
 

@@ -22,12 +22,24 @@ namespace System.Web {
 		const string _hex = "0123456789ABCDEF";
 		const string _chars = "<>;:.?=&@*+%/\\";
 		static Hashtable entities;
+		static object lock_ = new object ();
 	
 		#endregion // Fields
 	
+		static Hashtable Entities {
+			get {
+				lock (lock_) {
+					if (entities == null)
+						InitEntities ();
+
+					return entities;
+				}
+			}
+		}
+		
 		#region Constructors
 
-		static HttpUtility ()
+		static void InitEntities ()
 		{
 			// Build the hash table of HTML entity references.  This list comes
 			// from the HTML 4.01 W3C recommendation.
@@ -584,7 +596,7 @@ namespace System.Web {
 			return UrlEncodeToBytes (bytes, 0, bytes.Length);
 		}
 
-		static char [] hexChars = "0123456789ABCDEF".ToCharArray ();
+		static char [] hexChars = "0123456789abcdef".ToCharArray ();
 
 		public static byte [] UrlEncodeToBytes (byte [] bytes, int offset, int count)
 		{
@@ -705,8 +717,8 @@ namespace System.Web {
 					int length = entity.Length;
 					if (length >= 2 && entity[1] == '#' && entity[2] != ';')
 						entity = ((char) Int32.Parse (entity.Substring (2, entity.Length - 3))).ToString();
-					else if (length > 1 && entities.ContainsKey (entity.Substring (1, entity.Length - 2)))
-						entity = entities [entity.Substring (1, entity.Length - 2)].ToString ();
+					else if (length > 1 && Entities.ContainsKey (entity.Substring (1, entity.Length - 2)))
+						entity = Entities [entity.Substring (1, entity.Length - 2)].ToString ();
 					
 					output.Append (entity);
 					entity = String.Empty;
