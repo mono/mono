@@ -677,37 +677,7 @@ namespace System.Data {
 		/// Clears the DataTable of all data.
 		/// </summary>
 		public void Clear () {
-			// TODO: thow an exception if any rows that 
-			//       have enforced child relations 
-			//       that would result in child rows being orphaned
-			// now we check if any ForeignKeyConstraint is referncing 'table'.
-			if (DataSet != null)
-			{
-				if (DataSet._xmlDataDocument != null) 
-					throw new NotSupportedException ("Clear function on dataset and datatable is not supported on XmlDataDocument.");
-
-				IEnumerator tableEnumerator = DataSet.Tables.GetEnumerator();
-			
-				// loop on all tables in dataset
-				while (tableEnumerator.MoveNext())
-				{
-					IEnumerator constraintEnumerator = ((DataTable) tableEnumerator.Current).Constraints.GetEnumerator();
-					// loop on all constrains in the current table
-					while (constraintEnumerator.MoveNext())
-					{
-						Object o = constraintEnumerator.Current;
-						// we only check ForeignKeyConstraint
-						if (o is ForeignKeyConstraint)
-						{
-							ForeignKeyConstraint fc = (ForeignKeyConstraint) o;
-							if(fc.RelatedTable == this && fc.Table.Rows.Count > 0)
-								throw new InvalidConstraintException("Cannot clear table " + fc.RelatedTable + " because ForeignKeyConstraint " + fc.ConstraintName + " enforces constraints and there are child rows in " + fc.Table);
-						}
-					}
-				}
-			}
-			
-			
+                        // Foriegn key constraints are checked in _rows.Clear method
 			_rows.Clear ();
 		}
 

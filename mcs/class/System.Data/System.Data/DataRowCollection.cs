@@ -123,7 +123,7 @@ namespace System.Data
 		/// </summary>
 		public void Clear () 
 		{
-			if (this.table.DataSet != null)
+			if (this.table.DataSet != null && this.table.DataSet.EnforceConstraints)
 			{
 				foreach (DataTable table in this.table.DataSet.Tables)
 				{

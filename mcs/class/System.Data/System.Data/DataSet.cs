@@ -330,13 +330,19 @@ namespace System.Data {
 				tempTable.AcceptChanges ();
 		}
 
+                /// <summary>
+                /// Clears all the tables
+                /// </summary>
 		public void Clear ()
 		{
 			if (_xmlDataDocument != null)
 				throw new NotSupportedException ("Clear function on dataset and datatable is not supported when XmlDataDocument is bound to the DataSet.");
-			for (int t = 0; t < tableCollection.Count; t++) {
-				tableCollection[t].Clear ();
+                        bool enforceConstraints = this.EnforceConstraints;
+                        this.EnforceConstraints = false;
+                        for (int t = 0; t < tableCollection.Count; t++) {
+				tableCollection [t].Clear ();
 			}
+                        this.EnforceConstraints = enforceConstraints;
 		}
 
 		public virtual DataSet Clone ()
