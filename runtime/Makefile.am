@@ -54,12 +54,24 @@ else
 TEST_SUPPORT_FILES = $(tmpinst)/bin/mcs $(tmpinst)/bin/mbas $(tmpinst)/bin/ilasm
 endif
 
-check-local:
+if ENABLE_NUNIT_TESTS
+test_select =
+else
+test_select = TEST_SUBDIRS='tests errors'
+endif
+
+mcs-do-test-profiles:
+	d=`pwd`; cd $(mcs_topdir) && $(MAKE) RUNTIME=$$d/mono-wrapper PROFILES='$(build_profiles)' test-profiles
+
+mcs-do-run-test-profiles:
 	$(mkinstalldirs) $(tmpinst)/bin
 	$(MAKE) $(TEST_SUPPORT_FILES)
 	d=`pwd`; PATH=$$d/$(tmpinst)/bin:$$PATH ; export PATH ; \
 	( cd $(mcs_topdir) && $(MAKE) RUNTIME=$$d/mono-wrapper PROFILES='$(build_profiles)' run-test-profiles ) || ret=false ; \
 	rm -fr $(tmpinst) ; $$ret
+
+check-local: mcs-do-test-profiles
+	$(MAKE) $(test_select) mcs-do-run-test-profiles
 
 $(tmpinst)/bin/mcs:
 	$(MAKE) test-support-file target=$@ file=class/lib/default/mcs.exe
