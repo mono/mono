@@ -431,6 +431,7 @@ System.Runtime.InteropServices/FieldOffsetAttribute.cs
 System.Runtime.InteropServices/GCHandle.cs
 System.Runtime.InteropServices/GCHandleType.cs
 System.Runtime.InteropServices/GuidAttribute.cs
+System.Runtime.InteropServices/HandleRef.cs
 System.Runtime.InteropServices/ICustomAdapter.cs
 System.Runtime.InteropServices/ICustomFactory.cs
 System.Runtime.InteropServices/ICustomMarshaler.cs
