@@ -204,5 +204,17 @@ namespace MonoTests.System.Xml.Xsl
 			new XslTransform ().Load (new XPathDocument (
 				new StringReader (xsl)));
 		}
+
+		[Test]
+		[ExpectedException (typeof (XsltCompileException))]
+		public void ImportIncorrectlyLocated ()
+		{
+			string xsl = @"<xsl:transform xmlns:xsl='http://www.w3.org/1999/XSL/Transform' version='1.0'>
+<xsl:template match='/'></xsl:template>
+<xsl:import href='dummy.xsl' />
+</xsl:transform>";
+			new XslTransform ().Load (new XPathDocument (
+				new StringReader (xsl)));
+		}
 	}
 }
