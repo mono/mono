@@ -656,7 +656,11 @@ namespace System.Xml
 		internal void SetReaderFragment(TextReader fragment, XmlNodeType fragType)
 		{
 			this.reader = fragment;
-			can_seek = fragment != null && fragment.Peek () != -1;
+			StreamReader sr = fragment as StreamReader;
+			if (sr != null)
+				can_seek = sr.BaseStream.CanSeek;
+			else
+				can_seek = fragment != null && fragment.Peek () != -1;
 
 			if (fragType == XmlNodeType.Attribute)
 				value = "''";

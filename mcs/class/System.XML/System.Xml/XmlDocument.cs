@@ -552,14 +552,16 @@ namespace System.Xml
 
 		public virtual void Load (Stream inStream)
 		{
-			XmlReader xmlReader = new XmlTextReader (inStream);
+			XmlReader xmlReader = new XmlTextReader (new XmlInputStream (inStream));
 			Load (xmlReader);
 		}
 
 		public virtual void Load (string filename)
 		{
-			baseURI = filename;
-			XmlReader xmlReader = new XmlTextReader (new StreamReader (filename));
+			Uri uri = new Uri (filename);
+			baseURI = filename;	// FIXME: resolve base
+			Stream stream = new XmlUrlResolver ().GetEntity (uri, null, typeof(Stream)) as Stream;
+			XmlReader xmlReader = new XmlTextReader (new XmlStreamReader (new XmlInputStream (stream)));
 			Load (xmlReader);
 		}
 
@@ -697,10 +699,16 @@ namespace System.Xml
 			int startDepth = reader.Depth;
 			bool atStart = true;
 			bool ignoredWhitespace;
+			bool reachedEOF = false;
 
 			do {
 				ignoredWhitespace = false;
 				reader.Read ();
+				if (reader.NodeType == XmlNodeType.None)
+					if (reachedEOF)
+						throw new Exception ("XML Reader reached to end while reading node.");
+					else
+						reachedEOF = true;
 				// This complicated check is because we shouldn't make
 				// improper additional XmlReader.Read() by this method itself.
 				if(atStart && (reader.NodeType == XmlNodeType.EndElement || 
@@ -813,7 +821,7 @@ namespace System.Xml
 						ignoredWhitespace = true;
 					break;
 				}
-			} while(ignoredWhitespace ||
+			} while ((!reader.EOF && ignoredWhitespace) ||
 				reader.Depth > startDepth || 
 				// This complicated condition is because reader.Depth was set
 				// before XmlTextReader.depth increments ;-)
