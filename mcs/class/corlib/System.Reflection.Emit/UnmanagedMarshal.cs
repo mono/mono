@@ -1,4 +1,13 @@
 
+//
+// System.Reflection.Emit/UnmanagedMarshal.cs
+//
+// Author:
+//   Paolo Molaro (lupus@ximian.com)
+//
+// (C) 2001-2002 Ximian, Inc.  http://www.ximian.com
+//
+
 using System.Reflection.Emit;
 using System.Runtime.InteropServices;
 using System;
@@ -9,9 +18,25 @@ namespace System.Reflection.Emit {
 	public sealed class UnmanagedMarshal {
 		private int count;
 		private UnmanagedType t;
+		private UnmanagedType tbase;
+		
+		private UnmanagedMarshal (UnmanagedType maint, int cnt) {
+			count = cnt;
+			t = maint;
+			tbase = maint;
+		}
+		private UnmanagedMarshal (UnmanagedType maint, UnmanagedType elemt) {
+			count = 0;
+			t = maint;
+			tbase = elemt;
+		}
 		
 		public UnmanagedType BaseType {
-			get {return t;}
+			get {
+				if (t == UnmanagedType.LPArray || t == UnmanagedType.SafeArray)
+					throw new ArgumentException ();
+				return tbase;
+			}
 		}
 
 		public int ElementCount {
@@ -26,25 +51,24 @@ namespace System.Reflection.Emit {
 			get {return Guid.Empty;}
 		}
 
-		[MonoTODO]
 		public static UnmanagedMarshal DefineByValArray( int elemCount) {
-			throw new NotImplementedException ();
+			return new UnmanagedMarshal (UnmanagedType.ByValArray, elemCount);
 		}
-		[MonoTODO]
+
 		public static UnmanagedMarshal DefineByValTStr( int elemCount) {
-			throw new NotImplementedException ();
+			return new UnmanagedMarshal (UnmanagedType.ByValTStr, elemCount);
 		}
-		[MonoTODO]
+
 		public static UnmanagedMarshal DefineLPArray( UnmanagedType elemType) {
-			throw new NotImplementedException ();
+			return new UnmanagedMarshal (UnmanagedType.LPArray, elemType);
 		}
-		[MonoTODO]
+
 		public static UnmanagedMarshal DefineSafeArray( UnmanagedType elemType) {
-			throw new NotImplementedException ();
+			return new UnmanagedMarshal (UnmanagedType.SafeArray, elemType);
 		}
-		[MonoTODO]
+
 		public static UnmanagedMarshal DefineUnmanagedMarshal( UnmanagedType unmanagedType) {
-			throw new NotImplementedException ();
+			return new UnmanagedMarshal (unmanagedType, unmanagedType);
 		}
 		
 	}

@@ -1,12 +1,11 @@
 
-
 //
 // System.Reflection.Emit/FieldBuilder.cs
 //
 // Author:
 //   Paolo Molaro (lupus@ximian.com)
 //
-// (C) 2001 Ximian, Inc.  http://www.ximian.com
+// (C) 2001-2002 Ximian, Inc.  http://www.ximian.com
 //
 
 using System;
@@ -14,6 +13,7 @@ using System.Reflection;
 using System.Reflection.Emit;
 using System.Globalization;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
 namespace System.Reflection.Emit {
 	public sealed class FieldBuilder : FieldInfo {
@@ -26,6 +26,7 @@ namespace System.Reflection.Emit {
 		internal TypeBuilder typeb;
 		private byte[] rva_data;
 		private CustomAttributeBuilder[] cattrs;
+		private UnmanagedMarshal marshal_info;
 
 		internal FieldBuilder (TypeBuilder tb, string fieldName, Type type, FieldAttributes attributes) {
 			attrs = attributes;
@@ -78,6 +79,7 @@ namespace System.Reflection.Emit {
 				throw new ArgumentException ("Constant doesn't match field type");*/
 			def_value = defaultValue;
 		}
+
 		public void SetCustomAttribute( CustomAttributeBuilder customBuilder) {
 			string attrname = customBuilder.Ctor.ReflectedType.FullName;
 			if (attrname == "System.Runtime.InteropServices.FieldOffsetAttribute") {
@@ -90,6 +92,10 @@ namespace System.Reflection.Emit {
 			} else if (attrname == "System.NonSerializedAttribute") {
 				attrs |= FieldAttributes.NotSerialized;
 				return;
+			} else if (attrname == "System.Runtime.InteropServices.MarshalAsAttribute") {
+				marshal_info = CustomAttributeBuilder.get_umarshal (customBuilder, true);
+				/* FIXME: check for errors */
+				return;
 			}
 			if (cattrs != null) {
 				CustomAttributeBuilder[] new_array = new CustomAttributeBuilder [cattrs.Length + 1];
@@ -101,11 +107,16 @@ namespace System.Reflection.Emit {
 				cattrs [0] = customBuilder;
 			}
 		}
+
 		public void SetCustomAttribute( ConstructorInfo con, byte[] binaryAttribute) {
 			SetCustomAttribute (new CustomAttributeBuilder (con, binaryAttribute));
 		}
+
 		public void SetMarshal( UnmanagedMarshal unmanagedMarshal) {
+			marshal_info = unmanagedMarshal;
+			attrs |= FieldAttributes.HasFieldMarshal;
 		}
+
 		public void SetOffset( int iOffset) {
 			offset = iOffset;
 		}

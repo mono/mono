@@ -1,4 +1,11 @@
 
+Fri Jun 14 16:21:54 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* CustomAttributeBuilder.cs: added custom attribute related internal
+	helper methods.
+	* FieldBuilder.cs, ParameterBuilder.cs: handle MarshalAs attribute.
+	* UnmanagedMarshal.cs: implemented.
+
 Mon Jun 10 18:58:18 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* PropertyBuilder.cs: implemented ReflectedType and DeclaringType

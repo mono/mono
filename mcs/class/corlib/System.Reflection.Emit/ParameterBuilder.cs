@@ -14,12 +14,14 @@ using System.Reflection;
 using System.Reflection.Emit;
 using System.Globalization;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
 namespace System.Reflection.Emit {
 	public class ParameterBuilder {
 		private MethodBase methodb; /* MethodBuilder or ConstructorBuilder */
 		private string name;
 		private CustomAttributeBuilder[] cattrs;
+		private UnmanagedMarshal marshal_info;
 		private ParameterAttributes attrs;
 		private int position;
 		private int table_idx;
@@ -71,6 +73,10 @@ namespace System.Reflection.Emit {
 			} else if (attrname == "System.Runtime.InteropServices.OptionalAttribute") {
 				attrs |= ParameterAttributes.Optional;
 				return;
+			} else if (attrname == "System.Runtime.InteropServices.MarshalAsAttribute") {
+				marshal_info = CustomAttributeBuilder.get_umarshal (customBuilder, true);
+				/* FIXME: check for errors */
+				return;
 			}
 			if (cattrs != null) {
 				CustomAttributeBuilder[] new_array = new CustomAttributeBuilder [cattrs.Length + 1];
@@ -85,7 +91,10 @@ namespace System.Reflection.Emit {
 		public void SetCustomAttribute( ConstructorInfo con, byte[] binaryAttribute) {
 			SetCustomAttribute (new CustomAttributeBuilder (con, binaryAttribute));
 		}
+
 		public virtual void SetMarshal( UnmanagedMarshal unmanagedMarshal) {
+			marshal_info = unmanagedMarshal;
+			attrs |= ParameterAttributes.HasFieldMarshal;
 		}
 
 
