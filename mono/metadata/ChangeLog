@@ -1,3 +1,11 @@
+2003-09-04  Zoltan Varga  <vargaz@freemail.hu>
+
+	* class.h class.c (mono_class_needs_cctor_run): Moved this method
+	here from the JIT.
+
+	* assembly.h assembly.c: Moved the AOT loading code into an assembly
+	load hook.
+
 2003-09-03  Zoltan Varga  <vargaz@freemail.hu>
 
 	* reflection.h reflection.c class.h class.c: Delete duplicate 
