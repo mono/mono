@@ -35,9 +35,20 @@ namespace System.Web.Hosting
 
 			_Query = Query;
 			AppDomain current = AppDomain.CurrentDomain;
-			_AppVirtualPath = current.GetData (".appPath").ToString ();
-			_AppInstallPath = current.GetData (".hostingVirtualPath").ToString ();
-			_AppPhysicalPath = CheckAndAddSlash (current.GetData (".hostingInstallDir").ToString ());
+			object o = current.GetData (".appPath");
+			if (o == null)
+				throw new HttpException ("Cannot get .appPath");
+			_AppVirtualPath = o.ToString ();
+
+			o = current.GetData (".hostingVirtualPath");
+			if (o == null)
+				throw new HttpException ("Cannot get .hostingVirtualPath");
+			_AppInstallPath = o.ToString ();
+
+			o = current.GetData (".hostingInstallDir");
+			if (o == null)
+				throw new HttpException ("Cannot get .hostingInstallDir");
+			_AppPhysicalPath = CheckAndAddSlash (o.ToString ());
 			_Output = Output;
 
 			if (_AppPhysicalPath == null)

@@ -58,12 +58,17 @@ namespace System.Web.Hosting
 								 hTable);
 			
 			AppDomain domain = AppDomain.CreateDomain (nowHash, null, domainSetup);
-			foreach (string key in hTable.Keys)
+			foreach (string key in hTable.Keys) {
 				domain.SetData (key, (string) hTable [key]);
+				// [1] REMOVE THIS once bug #31245 is fixed
+				AppDomain.CurrentDomain.SetData (key, (string) hTable [key]);
+			}
 
 			domain.SetData (".hostingVirtualPath", virtualDir);
+			AppDomain.CurrentDomain.SetData (".hostingVirtualPath", virtualDir); // [1]
 			//FIXME: this should be the directory where dlls reside.
 			domain.SetData(".hostingInstallDir", "FIXME hostingInstallDir");
+			AppDomain.CurrentDomain.SetData (".hostingInstallDir", "FIXME hostingInstallDir"); // [1]
 			InitConfigInNewAppDomain (domain);
 			ObjectHandle o = domain.CreateInstance (hostType.Assembly.FullName,
 								hostType.FullName);
