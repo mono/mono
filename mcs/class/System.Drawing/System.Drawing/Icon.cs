@@ -4,6 +4,7 @@
 // Authors:
 //   Dennis Hayes (dennish@Raytek.com)
 //   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
+//   Sanjay Gupta (gsanjay@novell.com)
 //
 // (C) 2002 Ximian, Inc
 //
@@ -129,5 +130,17 @@ namespace System.Drawing
 		public int Width {
 			get {throw new NotImplementedException ();}
 		}
+
+		~Icon ()
+		{
+			Dispose ();
+		}
+		
+		[MonoTODO ("Implement")]
+		public static IntPtr GetHicnFromIcon () 
+		{
+			throw new NotImplementedException ();
+		}
+		
 	}
 }

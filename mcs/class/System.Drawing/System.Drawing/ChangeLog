@@ -1,3 +1,10 @@
+2004-03-03  Sanjay Gupta <gsanjay@novell.com>
+	* Icon.cs: Missing function stubs added
+	* IconConverter.cs: Missing function stubs added
+	* ImageAnimator.cs: Missing function stubs added
+	* ImageConverter.cs: Missing function stubs added
+	* ImageFormatConverter.cs: Missing function stubs added
+
 2004-03-02  Jordi Mas i Hernandez <jordi@ximian.com>
 	* Font.cs: Allow multiple styles
         
