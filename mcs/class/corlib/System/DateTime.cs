@@ -32,7 +32,10 @@ namespace System
 		// w32 file time starts counting from 1/1/1601 00:00 GMT
 		// which is the constant ticks from the .NET epoch
 		private const long w32file_epoch = 504911232000000000L;
-		private const long MAX_VALUE_TICKS = 3155378975400000000L;
+
+		//private const long MAX_VALUE_TICKS = 3155378975400000000L;
+		// -- Microsoft .NET has this value.
+		private const long MAX_VALUE_TICKS = 3155378975999999999L;
 
 		//
 		// The UnixEpoch, it begins on Jan 1, 1970 at 0:0:0, expressed
@@ -331,7 +334,7 @@ namespace System
 
 		public DateTime Add (TimeSpan ts)
 		{
-			return new DateTime (true, ticks) + ts;
+			return AddTicks (ts.Ticks);
 		}
 
 		public DateTime AddDays (double days)
@@ -341,7 +344,10 @@ namespace System
 		
 		public DateTime AddTicks (long t)
 		{
-			return Add (new TimeSpan (t));
+			if ((t + ticks.Ticks) > MAX_VALUE_TICKS || (t + ticks.Ticks) < 0) {
+				throw new ArgumentOutOfRangeException();
+			}
+			return new DateTime (t + ticks.Ticks);
 		}
 
 		public DateTime AddHours (double hours)
@@ -351,9 +357,11 @@ namespace System
 
 		public DateTime AddMilliseconds (double ms)
 		{
-			long msticks;
-			
-			msticks = (long) (ms += ms > 0 ? 0.5 : -0.5) * TimeSpan.TicksPerMillisecond ; 
+			if (((ms + (ms > 0 ? 0.5 : -0.5)) * TimeSpan.TicksPerMillisecond) > long.MaxValue ||
+					((ms + (ms > 0 ? 0.5 : -0.5)) * TimeSpan.TicksPerMillisecond) < long.MinValue) {
+				throw new ArgumentOutOfRangeException();
+			}
+			long msticks = (long) (ms += ms > 0 ? 0.5 : -0.5) * TimeSpan.TicksPerMillisecond;
 
 			return AddTicks (msticks);
 		}

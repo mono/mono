@@ -1,3 +1,9 @@
+2003-11-01  Pedro Martínez Juliá  <yoros@wanadoo.es>
+
+	* DateTime.cs: Fixed Add* methods handling. Now it works properly
+	with extreme values (there is a bug with Overflow and Underflow in
+	long type).
+
 2003-10-31  Pedro Martínez Juliá  <yoros@wanadoo.es>
 
 	* DateTime.cs: Fixed a few format bugs.
