@@ -134,6 +134,8 @@ namespace Mono.Security.X509 {
 //					return streetAddress;
 				case "UID":
 //					return domainComponent;
+					return null;
+
 				default:
 					return null;
 			}
