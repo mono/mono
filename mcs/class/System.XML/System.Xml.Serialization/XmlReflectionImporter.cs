@@ -22,6 +22,7 @@ namespace System.Xml.Serialization {
 		ReflectionHelper helper = new ReflectionHelper();
 		int arrayChoiceCount = 1;
 		ArrayList relatedMaps = new ArrayList ();
+		bool allowPrivateTypes = false;
 
 		static readonly string errSimple = "Cannot serialize object of type '{0}'. Base " +
 			"type '{1}' has simpleContent and can be only extended by adding XmlAttribute " +
@@ -61,6 +62,12 @@ namespace System.Xml.Serialization {
 		{
 			helper = new ReflectionHelper();
 			arrayChoiceCount = 1;
+		}
+		
+		internal bool AllowPrivateTypes
+		{
+			get { return allowPrivateTypes; }
+			set { allowPrivateTypes = value; }
 		}
 
 		#endregion // Constructors
@@ -188,7 +195,8 @@ namespace System.Xml.Serialization {
 			XmlTypeMapping map = helper.GetRegisteredClrType (type, GetTypeNamespace (typeData, root, defaultNamespace));
 			if (map != null) return map;
 
-			ReflectionHelper.CheckSerializableType (type);
+			if (!allowPrivateTypes)
+				ReflectionHelper.CheckSerializableType (type);
 			
 			map = CreateTypeMapping (typeData, root, null, defaultNamespace);
 			helper.RegisterClrType (map, type, map.Namespace);
@@ -281,7 +289,8 @@ namespace System.Xml.Serialization {
 			TypeData typeData = TypeTranslator.GetTypeData (type);
 			ListMap obmap = new ListMap ();
 
-			ReflectionHelper.CheckSerializableType (type);
+			if (!allowPrivateTypes)
+				ReflectionHelper.CheckSerializableType (type);
 			
 			if (atts == null) atts = new XmlAttributes();
 			Type itemType = typeData.ListItemType;

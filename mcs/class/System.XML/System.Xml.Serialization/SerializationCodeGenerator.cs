@@ -36,7 +36,9 @@ namespace System.Xml.Serialization
 			StreamReader sr = new StreamReader (configFileName);
 			try
 			{
-				XmlSerializer ser = new XmlSerializer (typeof (SerializationCodeGeneratorConfiguration));
+				XmlReflectionImporter ri = new XmlReflectionImporter ();
+				ri.AllowPrivateTypes = true;
+				XmlSerializer ser = new XmlSerializer (ri.ImportTypeMapping (typeof (SerializationCodeGeneratorConfiguration)));
 				cnf = (SerializationCodeGeneratorConfiguration) ser.Deserialize (sr);
 			}
 			finally
