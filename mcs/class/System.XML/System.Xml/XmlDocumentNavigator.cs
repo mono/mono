@@ -18,10 +18,11 @@ namespace System.Xml
 	{
 		#region Constructors
 
-		[MonoTODO]
 		internal XmlDocumentNavigator(XmlNode node)
 		{
 			this.node = node;
+			this.document = node.NodeType == XmlNodeType.Document ?
+				node as XmlDocument : node.OwnerDocument;
 		}
 
 		#endregion
@@ -29,6 +30,7 @@ namespace System.Xml
 		#region Fields
 
 		private XmlNode node;
+		private XmlDocument document;
 		private IEnumerator attributesEnumerator;
 
 		#endregion
@@ -97,7 +99,7 @@ namespace System.Xml
 
 		public override XmlNameTable NameTable {
 			get {
-				return node.OwnerDocument.NameTable;
+				return document.NameTable;
 			}
 		}
 
@@ -173,7 +175,7 @@ namespace System.Xml
 		{
 			XmlDocumentNavigator otherDocumentNavigator = other as XmlDocumentNavigator;
 			if (otherDocumentNavigator != null) {
-				if (node.OwnerDocument == otherDocumentNavigator.node.OwnerDocument) {
+				if (document == otherDocumentNavigator.document) {
 					node = otherDocumentNavigator.node;
 					return true;
 				}
@@ -215,9 +217,27 @@ namespace System.Xml
 		public override bool MoveToFirstChild ()
 		{
 			if (HasChildren) {
-				node = (NodeType == XPathNodeType.Root) ?
-					((XmlDocument) node).DocumentElement :
-					node.FirstChild;
+				if (node == document) {
+					XmlNode n = node.FirstChild;
+					if (n == null)
+						return false;
+					bool loop = true;
+					do {
+						switch (node.NodeType) {
+						case XmlNodeType.XmlDeclaration:
+						case XmlNodeType.DocumentType:
+							n = node.NextSibling;
+							if (n == null)
+								return false;
+							break;
+						default:
+							loop = false;
+							break;
+						}
+					} while (loop);
+				}
+				else
+					node = node.FirstChild;
 				return true;
 			}
 			return false;
@@ -231,14 +251,7 @@ namespace System.Xml
 
 		public override bool MoveToId (string id)
 		{
-			XmlDocument doc;
-			
-			if (node.NodeType == XmlNodeType.Document)
-				doc = (XmlDocument) node;
-			else
-				doc = node.OwnerDocument;
-
-			XmlElement eltNew = doc.GetElementById (id);
+			XmlElement eltNew = document.GetElementById (id);
 			if (eltNew == null)
 				return false;
 
@@ -302,8 +315,7 @@ namespace System.Xml
 
 		public override void MoveToRoot ()
 		{
-			if (node.NodeType != XmlNodeType.Document)
-				node = node.OwnerDocument;
+			node = document;
 		}
 
 		internal XmlNode Node { get { return node; } }

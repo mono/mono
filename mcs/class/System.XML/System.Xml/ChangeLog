@@ -1,3 +1,8 @@
+2003-06-01  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* XmlDocumentNavigator.cs : Compute document node one time.
+	  MoveToFirstChild() should move to PIs and comments.
+
 2003-05-30  Miguel de Icaza  <miguel@ximian.com>
 
 	* XmlReader.cs (ReadStartElement): Improve error message.  
