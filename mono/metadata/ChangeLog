@@ -1,5 +1,8 @@
 2004-10-25  Zoltan Varga  <vargaz@freemail.hu>
 
+	* image.c: Avoid overwriting values in the loaded_images_hash when an
+	assembly is loaded multiple times. Fixes #61152.
+
 	* assembly.c (mono_assembly_names_equal): Compare the cultures as well,
 	so multiple satellite assemblies for the same name can be loaded.
 	Fixes #68259.
