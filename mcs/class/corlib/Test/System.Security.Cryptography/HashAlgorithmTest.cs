@@ -147,6 +147,187 @@ public class HashAlgorithmTest : Assertion {
 		hash.Initialize ();
 		hash.ComputeHash (new byte [0]);
 	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentNullException))]
+	public void ComputeHash_ArrayNull ()
+	{
+		byte[] array = null;
+		hash.ComputeHash (array);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentNullException))]
+	public void ComputeHash_ArrayNullIntInt ()
+	{
+		byte[] array = null;
+		hash.ComputeHash (array, 0, 0);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentOutOfRangeException))]
+	public void ComputeHash_OffsetNegative ()
+	{
+		byte[] array = new byte [0];
+		hash.ComputeHash (array, -1, 0);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentException))]
+	public void ComputeHash_OffsetOverflow ()
+	{
+		byte[] array = new byte [1];
+		hash.ComputeHash (array, Int32.MaxValue, 1);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentException))]
+	public void ComputeHash_CountNegative ()
+	{
+		byte[] array = new byte [0];
+		hash.ComputeHash (array, 0, -1);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentException))]
+	public void ComputeHash_CountOverflow ()
+	{
+		byte[] array = new byte [1];
+		hash.ComputeHash (array, 1, Int32.MaxValue);
+	}
+
+	[Test]
+// not checked in Fx 1.1
+//	[ExpectedException (typeof (ObjectDisposedException))]
+	public void TransformBlock_Disposed () 
+	{
+		hash.ComputeHash (new byte [0]);
+		hash.Initialize ();
+		byte[] input = new byte [8];
+		byte[] output = new byte [8];
+		hash.TransformBlock (input, 0, input.Length, output, 0);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentNullException))]
+	public void TransformBlock_InputBuffer_Null ()
+	{
+		byte[] output = new byte [8];
+		hash.TransformBlock (null, 0, output.Length, output, 0);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentOutOfRangeException))]
+	public void TransformBlock_InputOffset_Negative ()
+	{
+		byte[] input = new byte [8];
+		byte[] output = new byte [8];
+		hash.TransformBlock (input, -1, input.Length, output, 0);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentException))]
+	public void TransformBlock_InputOffset_Overflow ()
+	{
+		byte[] input = new byte [8];
+		byte[] output = new byte [8];
+		hash.TransformBlock (input, Int32.MaxValue, input.Length, output, 0);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentException))]
+	public void TransformBlock_InputCount_Negative ()
+	{
+		byte[] input = new byte [8];
+		byte[] output = new byte [8];
+		hash.TransformBlock (input, 0, -1, output, 0);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentException))]
+	public void TransformBlock_InputCount_Overflow ()
+	{
+		byte[] input = new byte [8];
+		byte[] output = new byte [8];
+		hash.TransformBlock (input, 0, Int32.MaxValue, output, 0);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentNullException))]
+	[Ignore ("System.ExecutionEngineException on MS runtime (1.1)")]
+	public void TransformBlock_OutputBuffer_Null ()
+	{
+		byte[] input = new byte [8];
+		hash.TransformBlock (input, 0, input.Length, null, 0);
+	}
+
+	[Test]
+	[ExpectedException (typeof (IndexOutOfRangeException))]
+	public void TransformBlock_OutputOffset_Negative ()
+	{
+		byte[] input = new byte [8];
+		byte[] output = new byte [8];
+		hash.TransformBlock (input, 0, input.Length, output, -1);
+	}
+
+	[Test]
+	[ExpectedException (typeof (IndexOutOfRangeException))]
+	public void TransformBlock_OutputOffset_Overflow ()
+	{
+		byte[] input = new byte [8];
+		byte[] output = new byte [8];
+		hash.TransformBlock (input, 0, input.Length, output, Int32.MaxValue);
+	}
+
+	[Test]
+// not checked in Fx 1.1
+//	[ExpectedException (typeof (ObjectDisposedException))]
+	public void TransformFinalBlock_Disposed () 
+	{
+		hash.ComputeHash (new byte [0]);
+		hash.Initialize ();
+		byte[] input = new byte [8];
+		hash.TransformFinalBlock (input, 0, input.Length);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentNullException))]
+	public void TransformFinalBlock_InputBuffer_Null ()
+	{
+		hash.TransformFinalBlock (null, 0, 8);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentOutOfRangeException))]
+	public void TransformFinalBlock_InputOffset_Negative ()
+	{
+		byte[] input = new byte [8];
+		hash.TransformFinalBlock (input, -1, input.Length);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentException))]
+	public void TransformFinalBlock_InputOffset_Overflow ()
+	{
+		byte[] input = new byte [8];
+		hash.TransformFinalBlock (input, Int32.MaxValue, input.Length);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentException))]
+	public void TransformFinalBlock_InputCount_Negative ()
+	{
+		byte[] input = new byte [8];
+		hash.TransformFinalBlock (input, 0, -1);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentException))]
+	public void TransformFinalBlock_InputCount_Overflow ()
+	{
+		byte[] input = new byte [8];
+		hash.TransformFinalBlock (input, 0, Int32.MaxValue);
+	}
 }
 
 }
