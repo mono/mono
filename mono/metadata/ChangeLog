@@ -1,3 +1,7 @@
+2004-05-01  Jackson Harper  <jackson@ximian.com>
+
+	* appdomain.c: If the culture is neutral we set it to "".
+	
 2004-04-29  Jackson Harper  <jackson@ximian.com>
 
 	* locales.c: Add some missing MONO_ARCH_SAVE_REGS'.
