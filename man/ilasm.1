@@ -37,8 +37,24 @@ Display method information when a method is defined.
 .B \//show_method_ref
 Display method information when a method is referenced
 .TP
+.B \//key:KEYFILE
+Strongname (sign) the output assembly using the key pair present in 
+the specified strong name key file (snk). A full key pair is required
+(i.e. delay signing is done using a .publickey directive in the sources).
+.TP
+.B \//key:@CONTAINER
+Strongname (sign) the output assembly using the key pair present in 
+the specified container.
+.TP
 .B \--about
 Display information about ilasm
 .TP
 .B \--version
 Display ilasm version
+.SH COPYRIGHT
+Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+.SH MAILING LISTS
+Visit http://mail.ximian.com/mailman/mono-list for details.
+.SH WEB SITE
+Visit: http://www.mono-project.com for details
+
