@@ -1,13 +1,16 @@
 //
 // System.ComponentModel.AttributeCollection.cs
 //
-// Author: Rodrigo Moya (rodrigo@ximian.com)
+// Authors:
+// 	Rodrigo Moya (rodrigo@ximian.com)
+// 	Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
-// (C) Ximian, Inc.
+// (C) 2002 Ximian, Inc. (http://www.ximian.com)
 //
 
 using System;
 using System.Collections;
+using System.Reflection;
 
 namespace System.ComponentModel
 {
@@ -16,46 +19,71 @@ namespace System.ComponentModel
 		private ArrayList attrList = new ArrayList ();
 		public static readonly AttributeCollection Empty = new AttributeCollection (null);
 		
-		public AttributeCollection (Attribute[] attributes) {
-			for (int i = 0; i < attributes.Length; i++)
-				attrList.Add (attributes[i]);
+		public AttributeCollection (Attribute[] attributes)
+		{
+			if (attributes != null)
+				for (int i = 0; i < attributes.Length; i++)
+					attrList.Add (attributes[i]);
 		}
 
-		public bool Contains (Attribute attr) {
-			for (int i = 0; i < attrList.Count; i++) {
-				if (attrList[i] == attr)
-					return true;
-			}
-
-			return false;
+		public bool Contains (Attribute attr)
+		{
+			return attrList.Contains (attr);
 		}
 
-		[MonoTODO]
-		public bool Contains (Attribute[] attributes) {
-			throw new NotImplementedException ();
+		public bool Contains (Attribute [] attributes)
+		{
+			if (attributes == null)
+				return true;
+
+			foreach (Attribute attr in attributes)
+				if (!Contains (attr))
+					return false;
+
+			return true;
 		}
 
-		public void CopyTo (Array array, int index) {
+		public void CopyTo (Array array, int index)
+		{
 			attrList.CopyTo (array, index);
 		}
 
-		public IEnumerator GetEnumerator () {
+		public IEnumerator GetEnumerator ()
+		{
 			return attrList.GetEnumerator ();
 		}
 
-		[MonoTODO]
-		public bool Matches (Attribute attr) {
-			throw new NotImplementedException ();
+		public bool Matches (Attribute attr)
+		{
+			foreach (Attribute a in attrList)
+				if (a.Match (attr))
+					return true;
+			return false;
 		}
 
-		[MonoTODO]
-		public bool Matches (Attribute[] attributes) {
-			throw new NotImplementedException ();
+		public bool Matches (Attribute [] attributes)
+		{
+			foreach (Attribute a in attributes)
+				if (!(Matches (a)))
+					return false;
+			return true;
 		}
 
-		[MonoTODO]
-		protected Attribute GetDefaultAttribute (Type attributeType) {
-			throw new NotImplementedException ();
+		protected Attribute GetDefaultAttribute (Type attributeType)
+		{
+			Attribute attr;
+			BindingFlags bf = BindingFlags.Public | BindingFlags.Static;
+
+			FieldInfo def = attributeType.GetField ("Default", bf);
+			if (def == null) {
+				attr = Activator.CreateInstance (attributeType) as Attribute;
+				if (attr != null && !attr.IsDefaultAttribute ())
+					attr = null;
+			} else {
+				attr = (Attribute) def.GetValue (null);
+			}
+
+			return attr;
 		}
 
 		public bool IsSynchronized {
@@ -77,15 +105,24 @@ namespace System.ComponentModel
 		}
 
 		public virtual Attribute this[Type type] {
-			[MonoTODO]
 			get {
-				throw new NotImplementedException ();
+				Attribute attr = null;
+				foreach (Attribute a in attrList) {
+					if (a.GetType () == type)
+						attr = a;
+						break;
+				}
+
+				if (attr == null)
+					attr = GetDefaultAttribute (type);
+
+				return attr;
 			}
 		}
 
 		public virtual Attribute this[int index] {
 			get {
-				return (Attribute) attrList[index];
+				return (Attribute) attrList [index];
 			}
 		}
 	}

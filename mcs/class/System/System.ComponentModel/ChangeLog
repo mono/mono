@@ -1,3 +1,8 @@
+2002-07-07  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* AttributeCollection.cs: finished implementation.
+	* TypeDescriptor.cs: implemented GetAttributes (object).
+
 2002-07-06  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* AttributeCollection.cs: initialize member variables.

@@ -14,7 +14,6 @@ using System.Reflection;
 namespace System.ComponentModel
 {
 
-[MonoTODO]
 public sealed class TypeDescriptor
 {
 	[MonoTODO]
@@ -66,10 +65,9 @@ public sealed class TypeDescriptor
 		return new AttributeCollection ((Attribute []) atts);
 	}
 
-	[MonoTODO]
 	public static AttributeCollection GetAttributes (object component)
 	{
-		throw new NotImplementedException ();
+		return GetAttributes (component.GetType ());
 	}
 
 	[MonoTODO]
