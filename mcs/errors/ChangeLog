@@ -1,3 +1,7 @@
+2004-03-08 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* cs0111-{6,7}.cs: new test cases.
+
 2004-03-02 Marek Safar <marek.safar@seznam.cz>
 
 	* cs0246-5.cs: New error test.
