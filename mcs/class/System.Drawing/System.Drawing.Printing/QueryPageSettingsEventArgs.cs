@@ -17,7 +17,7 @@ namespace System.Drawing.Printing
 	{
 		private PageSettings pageSettings;
 
-		public QueryPageSettingEventArgs(PageSettings pageSettings)
+		public QueryPageSettingsEventArgs(PageSettings pageSettings)
 		{
 			this.pageSettings = pageSettings;
 		}
