@@ -1,4 +1,4 @@
-// cs8206.cs: Return not allowed in iterator method
+// cs1622.cs: Return not allowed in iterator method
 // Line: 11
 using System.Collections;
 
