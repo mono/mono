@@ -25,6 +25,7 @@ namespace System.Web.UI.Design.WebControls
 	{
 		private BaseDataList baseDataList;
 		private DataTable    desTimeDataTable;
+		private DataTable    dummyDataTable;
 
 		private static readonly string[] validNames = new string[] {
 			"AlternatingItemStyle",
@@ -197,17 +198,34 @@ namespace System.Web.UI.Design.WebControls
 		protected IEnumerable GetDesignTimeDataSource(int minimumRows,
 		                                      out bool dummyDataSource)
 		{
-			IEnumerable retVal = GetResolvedSelectedDataSource();
-			return GetDesignTimeDataSource(retVal, minimumRows,
+			return GetDesignTimeDataSource(GetResolvedSelectedDataSource(),
+			                               minimumRows,
 			                               out dummyDataSource);
 		}
 
-		[MonoTODO]
 		protected IEnumerable GetDesignTimeDataSource(IEnumerable selectedDataSource,
 		                                              int minimumRows,
 		                                              out bool dummyDataSource)
 		{
-			throw new NotImplementedException();
+			DataTable toDeploy = desTimeDataTable;
+			dummyDataSource = false;
+			if(minimumRows == 0)
+			{
+				if(selectedDataSource != null)
+				{
+					desTimeDataTable = DesignTimeData.CreateSampleDataTable(
+					                                  selectedDataSource);
+					toDeploy = desTimeDataTable;
+				}
+				if(toDeploy == null)
+				{
+					if(dummyDataTable == null)
+						dummyDataTable = DesignTimeData.CreateDummyDataTable();
+					toDeploy = dummyDataTable;
+					dummyDataSource = true;
+				}
+			}
+			return DesignTimeData.GetDesignTimeDataSource(toDeploy, minimumRows);
 		}
 	}
 }
