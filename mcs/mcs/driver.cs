@@ -79,6 +79,11 @@ namespace Mono.CSharp
 		static ArrayList defines;
 
 		//
+		// Output file
+		//
+		static string output_file = null;
+		
+		//
 		// Last time we took the time
 		//
 		static DateTime last_time;
@@ -444,6 +449,443 @@ namespace Mono.CSharp
 			foreach (string def in default_config)
 				soft_references.Insert (p++, def);
 		}
+
+		static void SetOutputFile (string name)
+		{
+			output_file = name;
+			string bname = CodeGen.Basename (output_file);
+			if (bname.IndexOf (".") == -1)
+				output_file += ".exe";
+		}
+
+		static void SetWarningLevel (string s)
+		{
+			int level = 0;
+
+			try {
+				level = Int32.Parse (s);
+			} catch {
+				Report.Error (
+					1900,
+					"--wlevel requires an value from 0 to 4");
+				Environment.Exit (1);
+			}
+			if (level < 0 || level > 4){
+				Report.Error (1900, "Warning level must be 0 to 4");
+				Environment.Exit (1);
+			} else
+				RootContext.WarningLevel = level;
+		}
+		//
+		// Currently handles the Unix-like command line options, but will be
+		// deprecated in favor of the CSCParseOption, which will also handle the
+		// options that start with a dash in the future.
+		//
+		static bool UnixParseOption (string arg, ref string [] args, ref int i)
+		{
+			switch (arg){
+			case "-v":
+				yacc_verbose = true;
+				return true;
+				
+			case "--parse":
+				parse_only = true;
+				return true;
+				
+			case "--main": case "-m":
+				if ((i + 1) >= args.Length){
+					Usage ();
+					Environment.Exit (1);
+				}
+				RootContext.MainClass = args [++i];
+				return true;
+				
+			case "--unsafe":
+				RootContext.Unsafe = true;
+				return true;
+				
+			case "/?": case "/h": case "/help":
+			case "--help":
+				Usage ();
+				Environment.Exit (0);
+				return true;
+				
+			case "--define":
+				if ((i + 1) >= args.Length){
+					Usage ();
+					Environment.Exit (1);
+				}
+				defines.Add (args [++i]);
+				return true;
+				
+			case "--expect-error": {
+				int code = 0;
+				
+				try {
+					code = Int32.Parse (
+						args [++i], NumberStyles.AllowLeadingSign);
+					Report.ExpectedError = code;
+				} catch {
+					Report.Error (-14, "Invalid number specified");
+				} 
+				return true;
+			}
+				
+			case "--tokenize": 
+				tokenize = true;
+				return true;
+				
+			case "-o": 
+			case "--output":
+				if ((i + 1) >= args.Length){
+					Usage ();
+					Environment.Exit (1);
+				}
+				SetOutputFile (args [++i]);
+				return true;
+				
+			case "--checked":
+				RootContext.Checked = true;
+				return true;
+				
+			case "--stacktrace":
+				Report.Stacktrace = true;
+				return true;
+				
+			case "--resource":
+				if ((i + 1) >= args.Length){
+					Usage ();
+					Console.WriteLine("Missing argument to --resource"); 
+					Environment.Exit (1);
+				}
+				if (resources == null)
+					resources = new ArrayList ();
+				
+				resources.Add (args [++i]);
+				return true;
+				
+			case "--target":
+				if ((i + 1) >= args.Length){
+					Environment.Exit (1);
+					return true;
+				}
+				
+				string type = args [++i];
+				switch (type){
+				case "library":
+					target = Target.Library;
+					target_ext = ".dll";
+					break;
+					
+				case "exe":
+					target = Target.Exe;
+					break;
+					
+				case "winexe":
+					target = Target.WinExe;
+					break;
+					
+				case "module":
+					target = Target.Module;
+					target_ext = ".dll";
+					break;
+				default:
+					Usage ();
+					Environment.Exit (1);
+					break;
+				}
+				return true;
+				
+			case "-r":
+				if ((i + 1) >= args.Length){
+					Usage ();
+					Environment.Exit (1);
+				}
+				
+				references.Add (args [++i]);
+				return true;
+				
+			case "-L":
+				if ((i + 1) >= args.Length){
+					Usage ();	
+					Environment.Exit (1);
+				}
+				link_paths.Add (args [++i]);
+				return true;
+				
+			case "--nostdlib":
+				RootContext.StdLib = false;
+				return true;
+				
+			case "--fatal":
+				Report.Fatal = true;
+				return true;
+				
+			case "--werror":
+				Report.WarningsAreErrors = true;
+				return true;
+				
+			case "--nowarn":
+				if ((i + 1) >= args.Length){
+					Usage ();
+					Environment.Exit (1);
+				}
+				int warn = 0;
+				
+				try {
+					warn = Int32.Parse (args [++i]);
+				} catch {
+					Usage ();
+					Environment.Exit (1);
+				}
+				Report.SetIgnoreWarning (warn);
+				return true;
+				
+			case "--wlevel":
+				if ((i + 1) >= args.Length){
+					Report.Error (
+						1900,
+						"--wlevel requires an value from 0 to 4");
+					Environment.Exit (1);
+				}
+
+				SetWarningLevel (args [++i]);
+				return true;
+				
+			case "--about":
+				About ();
+				return true;
+				
+			case "--recurse":
+				if ((i + 1) >= args.Length){
+					Console.WriteLine ("--recurse requires an argument");
+					Environment.Exit (1);
+				}
+				CompileFiles (args [++i], true); 
+				return true;
+				
+			case "--timestamp":
+				timestamps = true;
+				last_time = DateTime.Now;
+				debug_arglist.Add ("timestamp");
+				return true;
+				
+			case "--debug": case "-g":
+				want_debugging_support = true;
+				return true;
+				
+			case "--debug-args":
+				if ((i + 1) >= args.Length){
+					Console.WriteLine ("--debug-args requires an argument");
+					Environment.Exit (1);
+				}
+				char[] sep = { ',' };
+				debug_arglist.AddRange (args [++i].Split (sep));
+				return true;
+				
+			case "--noconfig":
+				load_default_config = false;
+				return true;
+				
+			default:
+				Report.Warning(666, "Unknown option: " + arg);
+				return true;
+			}
+		}
+
+		//
+		// Currently it is very basic option parsing, but eventually, this will
+		// be the complete option parser
+		//
+		static bool CSCParseOption (string option, ref string [] args, ref int i)
+		{
+			int idx = option.IndexOf (":");
+			string arg, value;
+
+			if (idx == -1){
+				arg = option;
+				value = "";
+			} else {
+				arg = option.Substring (0, idx);
+
+				value = option.Substring (idx + 1);
+			}
+
+			switch (arg){
+			case "/nologo":
+				return true;
+
+			case "/t":
+			case "/target":
+				switch (value){
+				case "exe":
+					target = Target.Exe;
+					break;
+
+				case "winexe":
+					target = Target.WinExe;
+					break;
+
+				case "library":
+					target = Target.Library;
+					target_ext = ".dll";
+					break;
+
+				case "module":
+					target = Target.Module;
+					target_ext = ".dll";
+					break;
+
+				default:
+					Usage ();
+					Environment.Exit (1);
+					break;
+				}
+				return true;
+
+			case "/out:":
+				if (value == ""){
+					Usage ();
+					Environment.Exit (1);
+				}
+				SetOutputFile (value);
+				return true;
+
+			case "/optimize":
+			case "/optimize+":
+			case "/optimize-":
+			case "/incremental":
+			case "/incremental+":
+			case "/incremental-":
+				// nothing.
+				return true;
+
+			case "/d":
+			case "/define": {
+				string [] defs;
+
+				if (value == ""){
+					Usage ();
+					Environment.Exit (1);
+				}
+				
+				defs = value.Split (new Char [] {';'});
+				foreach (string d in defs)
+					defines.Add (d);
+				return true;
+			}
+
+			case "/recurse":
+				if (value == ""){
+					Console.WriteLine ("/recurse requires an argument");
+					Environment.Exit (1);
+				}
+				CompileFiles (args [++i], true); 
+				return true;
+
+			case "/r":
+			case "/reference":
+				Console.WriteLine ("/r and /reference not supported, use -r which will give you MCS semantics");
+				Console.WriteLine ("this will be fixed shortly");
+				Environment.Exit (1);
+				return true;
+
+			case "/lib":
+				Console.WriteLine ("/lib is not  supported, use -L which will give you MCS semantics");
+				Console.WriteLine ("this will be fixed shortly");
+				Environment.Exit (1);
+				return true;
+				
+			case "/debug":
+			case "/debug+":
+				want_debugging_support = true;
+				return true;
+
+			case "/checked":
+			case "/checked+":
+				RootContext.Checked = true;
+				return true;
+
+			case "/checked-":
+				RootContext.Checked = false;
+				return true;
+
+			case "/unsafe":
+			case "/unsafe+":
+				RootContext.Unsafe = true;
+				return true;
+
+			case "/unsafe-":
+				RootContext.Unsafe = false;
+				return true;
+
+			case "/warnaserror":
+			case "/warnaserror+":
+				Report.WarningsAreErrors = true;
+				return true;
+
+			case "/warnaserror-":
+				Report.WarningsAreErrors = false;
+				return true;
+
+			case "/warn":
+				SetWarningLevel (value);
+				return true;
+
+			case "/nowarn": {
+				string [] warns;
+
+				if (value == ""){
+					Usage ();
+					Environment.Exit (1);
+				}
+				
+				warns = value.Split (new Char [] {','});
+				foreach (string wc in warns){
+					int warn = 0;
+					
+					try {
+						warn = Int32.Parse (wc);
+					} catch {
+						Usage ();
+						Environment.Exit (1);
+					}
+					Report.SetIgnoreWarning (warn);
+				}
+				return true;
+			}
+
+			case "/noconfig":
+				load_default_config = false;
+				return true;
+
+			case "/help":
+			case "/?":
+				Usage ();
+				Environment.Exit (0);
+				return true;
+
+			case "/main":
+			case "/m":
+				if (value == ""){
+					Usage ();
+					Environment.Exit (1);
+				}
+				RootContext.MainClass = value;
+				return true;
+
+			case "/nostdlib":
+			case "/nostdlib+":
+				RootContext.StdLib = false;
+				return true;
+
+			case "/nostdlib-":
+				RootContext.StdLib = true;
+				return true;
+
+			}
+			return false;
+		}
 		
 		/// <summary>
 		///    Parses the arguments, and drives the compilation
@@ -458,7 +900,6 @@ namespace Mono.CSharp
 		static bool MainDriver (string [] args)
 		{
 			int i;
-			string output_file = null;
 			bool parsing_options = true;
 			
 			references = new ArrayList ();
@@ -510,237 +951,19 @@ namespace Mono.CSharp
 					continue;
 				}
 
-				//
-				// Prepare to recurse
-				//
-				
-				if (parsing_options && (arg.StartsWith ("-"))){
-					switch (arg){
-					case "-v":
-						yacc_verbose = true;
-						continue;
-
-					case "--":
+				if (parsing_options){
+					if (arg == "--"){
 						parsing_options = false;
-						continue;
-
-					case "--parse":
-						parse_only = true;
-						continue;
-
-					case "--main": case "-m":
-						if ((i + 1) >= argc){
-							Usage ();
-							return false;
-						}
-						RootContext.MainClass = args [++i];
-						continue;
-
-					case "--unsafe":
-						RootContext.Unsafe = true;
-						continue;
-						
-					case "/?": case "/h": case "/help":
-					case "--help":
-						Usage ();
-						return true;
-
-					case "--define":
-						if ((i + 1) >= argc){
-							Usage ();
-							return false;
-						}
-						defines.Add (args [++i]);
-						continue;
-						
-					case "--expect-error": {
-						int code = 0;
-
-						try {
-							code = Int32.Parse (
-								args [++i], NumberStyles.AllowLeadingSign);
-							Report.ExpectedError = code;
-						} catch {
-							Report.Error (-14, "Invalid number specified");
-						} 
-						continue;
-					}
-
-					case "--tokenize": {
-						tokenize = true;
 						continue;
 					}
 					
-					case "-o": 
-					case "--output":
-						if ((i + 1) >= argc){
-							Usage ();
-							return false;
-						}
-						output_file = args [++i];
-						string bname = CodeGen.Basename (output_file);
-						if (bname.IndexOf (".") == -1)
-							output_file += ".exe";
-						continue;
-
-					case "--checked":
-						RootContext.Checked = true;
-						continue;
-
-					case "--stacktrace":
-						Report.Stacktrace = true;
-						continue;
-
-					case "--resource":
-						if ((i + 1) >= argc){
-							Usage ();
-							Console.WriteLine("Missing argument to --resource"); 
-							return false;
-						}
-						if (resources == null)
-							resources = new ArrayList ();
-						
-						resources.Add (args [++i]);
-						continue;
-							
-					case "--target":
-						if ((i + 1) >= argc){
-							Usage ();
-							return false;
-						}
-
-						string type = args [++i];
-						switch (type){
-						case "library":
-							target = Target.Library;
-							target_ext = ".dll";
-							break;
-							
-						case "exe":
-							target = Target.Exe;
-							break;
-							
-						case "winexe":
-							target = Target.WinExe;
-							break;
-							
-						case "module":
-							target = Target.Module;
-							target_ext = ".dll";
-							break;
-						default:
-							Usage ();
-							return false;
-						}
-						continue;
-
-					case "-r":
-						if ((i + 1) >= argc){
-							Usage ();
-							return false;
-						}
-						
-						references.Add (args [++i]);
-						continue;
-						
-					case "-L":
-						if ((i + 1) >= argc){
-							Usage ();	
-							return false;
-						}
-						link_paths.Add (args [++i]);
-						continue;
-						
-					case "--nostdlib":
-						RootContext.StdLib = false;
-						continue;
-						
-					case "--fatal":
-						Report.Fatal = true;
-						continue;
-
-					case "--werror":
-						Report.WarningsAreErrors = true;
-						continue;
-
-					case "--nowarn":
-						if ((i + 1) >= argc){
-							Usage ();
-							return false;
-						}
-						int warn;
-						
-						try {
-							warn = Int32.Parse (args [++i]);
-						} catch {
-							Usage ();
-							return false;
-						}
-						Report.SetIgnoreWarning (warn);
-						continue;
-
-					case "--wlevel":
-						if ((i + 1) >= argc){
-							Report.Error (
-								1900,
-								"--wlevel requires an value from 0 to 4");
-							return false;
-						}
-						int level;
-						
-						try {
-							level = Int32.Parse (args [++i]);
-						} catch {
-							Report.Error (
-								1900,
-								"--wlevel requires an value from 0 to 4");
-							return false;
-						}
-						if (level < 0 || level > 4){
-							Report.Error (1900, "Warning level must be 0 to 4");
-							return false;
-						} else
-							RootContext.WarningLevel = level;
-						continue;
-						
-					case "--about":
-						About ();
-						return true;
-
-					case "--recurse":
-						if ((i + 1) >= argc){
-							Console.WriteLine ("--recurse requires an argument");
-							return false;
-						}
-						CompileFiles (args [++i], true); 
-						continue;
-						
-					case "--timestamp":
-						timestamps = true;
-						last_time = DateTime.Now;
-						debug_arglist.Add ("timestamp");
-						continue;
-
-					case "--debug": case "-g":
-						want_debugging_support = true;
-						continue;
-
-					case "--debug-args":
-						if ((i + 1) >= argc){
-							Console.WriteLine ("--debug-args requires an argument");
-							return false;
-						}
-						char[] sep = { ',' };
-						debug_arglist.AddRange (args [++i].Split (sep));
-						continue;
-
-					case "--noconfig":
-						load_default_config = false;
-						continue;
-
-					default:
-						Report.Warning(666, "Unknown option: " + arg);
-						continue;
+					if (arg.StartsWith ("-")){
+						if (UnixParseOption (arg, ref args, ref i))
+							continue;
+					} else {
+						if (arg.StartsWith ("/"))
+							if (CSCParseOption (arg, ref args, ref i))
+								continue;
 					}
 				}
 

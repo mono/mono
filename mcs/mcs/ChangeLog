@@ -1,5 +1,17 @@
 2002-07-11  Miguel de Icaza  <miguel@ximian.com>
 
+	* driver.cs (UnixParseOption): Move the option parsing here.  
+	(CSCParseOption): Implement CSC-like parsing of options.
+
+	We now support both modes of operation, the old Unix way, and the
+	new CSC-like way.  This should help those who wanted to make cross
+	platform makefiles.
+
+	The only thing broken is that /r:, /reference: and /lib: are not
+	implemented, because I want to make those have the same semantics
+	as the CSC compiler has, and kill once and for all the confussion
+	around this.   Will be doing this tomorrow.
+
 	* statement.cs (Unsafe.Resolve): The state is checked during
 	resolve, not emit, so we have to set the flags for IsUnsfe here.
 
