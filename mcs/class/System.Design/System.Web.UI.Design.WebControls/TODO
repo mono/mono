@@ -1,12 +1,16 @@
-All Classes, Interfaces, Structures, Delegates and Enumerations
-
+All Classes.
+Documented + Undocumented.
 
 <legends>
 *: Completed
 &: Work in progress. See <item-name>.cs file for maintainer's name
 </legends>
 
-& AdRotatorDesigner
+--------------------
+ Documented Classes
+--------------------
+
+* AdRotatorDesigner
 BaseDataListComponentEditor
 BaseDataListDesigner
 BaseValidatorDesigner
@@ -30,3 +34,11 @@ RegexTypeEditor
 TableCellsCollectionEditor
 TableDesigner
 TableRowsCollectionEditor
+
+------------------------------------------------------
+ Found new classes. Not documented in MSDN otherwise.
+------------------------------------------------------
+
+RegexEditorDialog
+RepeatDesigner
+XmlDesigner
