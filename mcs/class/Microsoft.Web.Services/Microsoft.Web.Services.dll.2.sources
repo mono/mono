@@ -21,6 +21,9 @@ Microsoft.Web.Services/HttpSoapContext.cs
 Microsoft.Web.Services.Configuration/ConfigurationBase.cs
 Microsoft.Web.Services.Configuration/FilterConfiguration.cs
 Microsoft.Web.Services.Configuration/WebServicesConfiguration.cs
+Microsoft.Web.Services.Diagnostics/TraceFilter.cs 
+Microsoft.Web.Services.Diagnostics/TraceInputFilter.cs
+Microsoft.Web.Services.Diagnostics/TraceOutputFilter.cs
 Microsoft.Web.Services.Timestamp/TimestampFormatException.cs
 Microsoft.Web.Services.Timestamp/WSTimestamp.cs
 Microsoft.Web.Services.Timestamp/TimestampOutputFilter.cs

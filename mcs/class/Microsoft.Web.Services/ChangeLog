@@ -1,3 +1,9 @@
+2003-10-05  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* Microsoft.Web.Services.Diagnostics: Added new namespace with 
+	internal TraceFilter.cs and public TraceInputFilter.cs and
+	TraceOutputFilter.cs
+
 2003-10-05  Todd Berman <tberman@gentoo.org>
 
 	* Microsoft.Web.Services.dll.2.sources: Added QualifiedName.cs
