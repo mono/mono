@@ -45,7 +45,8 @@ namespace System.Xml
 		private XmlNode node;
 		private XmlDocument document;
 		// Current namespace node (ancestor's attribute of current node).
-		private XmlNode nsNode;
+		private XmlAttribute nsNode;
+		private ArrayList iteratedNsNames = new ArrayList ();
 
 		#endregion
 
@@ -59,7 +60,7 @@ namespace System.Xml
 
 		public override bool HasAttributes {
 			get {
-				if (nsNode != null)
+				if (NsNode != null)
 					return false;
 
 				if (node.Attributes != null)
@@ -72,7 +73,7 @@ namespace System.Xml
 
 		public override bool HasChildren {
 			get {
-				if (nsNode != null)
+				if (NsNode != null)
 					return false;
 
 				XPathNodeType nodeType = NodeType;
@@ -83,7 +84,7 @@ namespace System.Xml
 
 		public override bool IsEmptyElement {
 			get {
-				if (nsNode != null)
+				if (NsNode != null)
 					return false;
 
 				return node.NodeType == XmlNodeType.Element 
@@ -91,8 +92,20 @@ namespace System.Xml
 			}
 		}
 
+		public XmlAttribute NsNode {
+			get { return nsNode; }
+			set {
+				if (value == null)
+					iteratedNsNames.Clear ();
+				else
+					iteratedNsNames.Add (value.Name);
+				nsNode = value;
+			}
+		}
+
 		public override string LocalName {
 			get {
+				XmlAttribute nsNode = NsNode;
 				if (nsNode != null) {
 					if (nsNode == nsNodeXml)
 						return "xml";
@@ -112,7 +125,7 @@ namespace System.Xml
 
 		public override string Name {
 			get {
-				if (nsNode != null)
+				if (NsNode != null)
 					return LocalName;
 
 				XPathNodeType nodeType = NodeType;
@@ -126,7 +139,7 @@ namespace System.Xml
 		}
 
 		public override string NamespaceURI {
-			get { return (nsNode != null) ? String.Empty : node.NamespaceURI; }
+			get { return (NsNode != null) ? String.Empty : node.NamespaceURI; }
 		}
 
 		public override XmlNameTable NameTable {
@@ -136,11 +149,11 @@ namespace System.Xml
 		}
 
 		public override XPathNodeType NodeType {
-			get { return (nsNode != null) ? XPathNodeType.Namespace : node.XPathNodeType; }
+			get { return (NsNode != null) ? XPathNodeType.Namespace : node.XPathNodeType; }
 		}
 
 		public override string Prefix {
-			get { return (nsNode != null) ? String.Empty : node.Prefix; }
+			get { return (NsNode != null) ? String.Empty : node.Prefix; }
 		}
 
 		public override string Value {
@@ -169,7 +182,7 @@ namespace System.Xml
 				case XPathNodeType.Root:
 					return node.InnerText;
 				case XPathNodeType.Namespace:
-					return nsNode == nsNodeXml ? XmlnsXML : nsNode.Value;
+					return NsNode == nsNodeXml ? XmlnsXML : NsNode.Value;
 				}
 				return String.Empty;
 			}
@@ -185,10 +198,24 @@ namespace System.Xml
 
 		#region Methods
 
+		private bool CheckNsNameAppearance (string name, string ns)
+		{
+			if (iteratedNsNames.Contains (name))
+				return true;
+			// default namespace erasure - just add name and never return this node
+			if (ns == String.Empty) {
+				iteratedNsNames.Add ("xmlns");
+				return true;
+			}
+
+			return false;
+		}
+
 		public override XPathNavigator Clone ()
 		{
 			XmlDocumentNavigator clone = new XmlDocumentNavigator (node, nsNodeXml);
 			clone.nsNode = nsNode;
+			clone.iteratedNsNames = (ArrayList) iteratedNsNames.Clone ();
 			return clone;
 		}
 
@@ -215,7 +242,7 @@ namespace System.Xml
 			XmlDocumentNavigator otherDocumentNavigator = other as XmlDocumentNavigator;
 			if (otherDocumentNavigator != null)
 				return node == otherDocumentNavigator.node
-					&& nsNode == otherDocumentNavigator.nsNode;
+					&& NsNode == otherDocumentNavigator.NsNode;
 			return false;
 		}
 
@@ -225,7 +252,7 @@ namespace System.Xml
 			if (otherDocumentNavigator != null) {
 				if (document == otherDocumentNavigator.document) {
 					node = otherDocumentNavigator.node;
-					nsNode = otherDocumentNavigator.nsNode;
+					NsNode = otherDocumentNavigator.NsNode;
 					return true;
 				}
 			}
@@ -240,7 +267,7 @@ namespace System.Xml
 					if (attr.LocalName == localName
 						&& attr.NamespaceURI == namespaceURI) {
 						node = attr;
-						nsNode = null;
+						NsNode = null;
 						return true;
 					}
 				}
@@ -250,7 +277,7 @@ namespace System.Xml
 
 		public override bool MoveToFirst ()
 		{
-			if (nsNode == null && node.NodeType != XmlNodeType.Attribute && node.ParentNode != null) {
+			if (NsNode == null && node.NodeType != XmlNodeType.Attribute && node.ParentNode != null) {
 				if (!MoveToParent ())
 					return false;
 				// Follow these 2 steps so that we can skip 
@@ -270,7 +297,7 @@ namespace System.Xml
 					XmlAttribute attr = node.Attributes [i];
 					if (attr.NamespaceURI != Xmlns) {
 						node = attr;
-						nsNode = null;
+						NsNode = null;
 						return true;
 					}
 				}
@@ -325,7 +352,9 @@ namespace System.Xml
 					for (int i = 0; i < el.Attributes.Count; i++) {
 						XmlAttribute attr = el.Attributes [i];
 						if (attr.NamespaceURI == Xmlns) {
-							nsNode = attr;
+							if (CheckNsNameAppearance (attr.Name, attr.Value))
+								continue;
+							NsNode = attr;
 							return true;
 						}
 					}
@@ -336,7 +365,9 @@ namespace System.Xml
 			}
 
 			if (namespaceScope == XPathNamespaceScope.All) {
-				nsNode = nsNodeXml;
+				if (CheckNsNameAppearance (nsNodeXml.Name, nsNodeXml.Value))
+					return false;
+				NsNode = nsNodeXml;
 				return true;
 			}
 			else
@@ -356,7 +387,7 @@ namespace System.Xml
 		public override bool MoveToNamespace (string name)
 		{
 			if (name == "xml") {
-				nsNode = nsNodeXml;
+				NsNode = nsNodeXml;
 				return true;
 			}
 
@@ -369,7 +400,7 @@ namespace System.Xml
 					for (int i = 0; i < el.Attributes.Count; i++) {
 						XmlAttribute attr = el.Attributes [i];
 						if (attr.NamespaceURI == Xmlns && attr.Name == name) {
-							nsNode = attr;
+							NsNode = attr;
 							return true;
 						}
 					}
@@ -381,7 +412,7 @@ namespace System.Xml
 
 		public override bool MoveToNext ()
 		{
-			if (nsNode != null)
+			if (NsNode != null)
 				return false;
 
 			if (node.NextSibling != null) {
@@ -441,7 +472,7 @@ namespace System.Xml
 			for(pos++; pos < count; pos++) {
 				if (owner.Attributes [pos].NamespaceURI != Xmlns) {
 					node = owner.Attributes [pos];
-					nsNode = null;
+					NsNode = null;
 					return true;
 				}
 			}
@@ -450,22 +481,22 @@ namespace System.Xml
 
 		public override bool MoveToNextNamespace (XPathNamespaceScope namespaceScope)
 		{
-			if (nsNode == nsNodeXml)
+			if (NsNode == nsNodeXml)
 				// Current namespace is "xml", so there should be no more namespace nodes.
 				return false;
 
-			if (nsNode == null)
+			if (NsNode == null)
 				return false;
 
 			// Get current attribute's position.
 			int pos = 0;
-			XmlElement owner = ((XmlAttribute) nsNode).OwnerElement;
+			XmlElement owner = ((XmlAttribute) NsNode).OwnerElement;
 			if (owner == null)
 				return false;
 
 			int count = owner.Attributes.Count;
 			for(; pos < count; pos++)
-				if (owner.Attributes [pos] == nsNode)
+				if (owner.Attributes [pos] == NsNode)
 					break;
 			if (pos == count)
 				return false;	// Where is current attribute? Maybe removed.
@@ -473,7 +504,10 @@ namespace System.Xml
 			// Find next namespace from the same element as current ns node.
 			for(pos++; pos < count; pos++) {
 				if (owner.Attributes [pos].NamespaceURI == Xmlns) {
-					nsNode = owner.Attributes [pos];
+					XmlAttribute a = owner.Attributes [pos];
+					if (CheckNsNameAppearance (a.Name, a.Value))
+						continue;
+					NsNode = a;
 					return true;
 				}
 			}
@@ -487,7 +521,9 @@ namespace System.Xml
 				for (int i = 0; i < owner.Attributes.Count; i++) {
 					XmlAttribute attr = owner.Attributes [i];
 					if (attr.NamespaceURI == Xmlns) {
-						nsNode = attr;
+						if (CheckNsNameAppearance (attr.Name, attr.Value))
+							continue;
+						NsNode = attr;
 						return true;
 					}
 				}
@@ -495,29 +531,30 @@ namespace System.Xml
 			}
 
 			if (namespaceScope == XPathNamespaceScope.All) {
-				nsNode = nsNodeXml;
+				if (CheckNsNameAppearance (nsNodeXml.Name, nsNodeXml.Value))
+					return false;
+				NsNode = nsNodeXml;
 				return true;
 			}
-			else
-				return false;
+			return false;
 		}
 
 		public override bool MoveToParent ()
 		{
-			if (nsNode != null) {
-				nsNode = null;
+			if (NsNode != null) {
+				NsNode = null;
 				return true;
 			}
 			else if (node.NodeType == XmlNodeType.Attribute) {
 				XmlElement ownerElement = ((XmlAttribute)node).OwnerElement;
 				if (ownerElement != null) {
 					node = ownerElement;
-					nsNode = null;
+					NsNode = null;
 					return true;
 				}
 			} else if (node.ParentNode != null) {
 				node = node.ParentNode;
-				nsNode = null;
+				NsNode = null;
 				return true;
 			}
 			return false;
@@ -525,7 +562,7 @@ namespace System.Xml
 
 		public override bool MoveToPrevious ()
 		{
-			if (nsNode != null)
+			if (NsNode != null)
 				return false;
 
 			if (node.PreviousSibling != null) {
@@ -561,10 +598,10 @@ namespace System.Xml
 			while (tmp.ParentNode != null)
 				tmp = tmp.ParentNode;
 			node = tmp;
-			nsNode = null;
+			NsNode = null;
 		}
 
-		internal XmlNode Node { get { return nsNode != null ? nsNode : node; } }
+		internal XmlNode Node { get { return NsNode != null ? NsNode : node; } }
 
                 XmlNode IHasXmlNode.GetNode ()
                 {

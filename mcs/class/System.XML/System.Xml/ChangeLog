@@ -1,5 +1,12 @@
 2004-03-24  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlDocumentNavigator.cs : MoveTo*Namespace() should not iterate
+	  namespace nodes which has the same name as already-iterated nodes.
+	  Also xmlns='' should not be selected, and once it appeared, default 
+	  namespace should not be selected anymore.
+
+2004-03-24  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlCharacterData.cs : ReplaceData() should reject negative integer
 	  value for count argument.
 	* XmlAttribute.cs, XmlAttributeCollection.cs, XmlNamedNodeMap.cs :
