@@ -1,4 +1,8 @@
 
+Tue Jul 29 12:43:08 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c: more opcodes implemented and better support for generics.
+
 Fri Jul 25 18:51:45 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
 	* cpu-g4.md, cpu-pentium.md: updates for new instructions.
