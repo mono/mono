@@ -1,3 +1,7 @@
+2004-07-30  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mono-logger.c (mono_trace_set_mask_string): Fix AOT tracing constant.
+
 2004-07-28  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mono-codeman.c (mono_code_manager_invalidate): Invalidate with
