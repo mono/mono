@@ -4857,7 +4857,7 @@ namespace Mono.CSharp {
 
 			factor = GetTypeSize (underlying_type);
 			if (factor == 0)
-				throw new Exception ("Unrecognized type in MakeByteBlob");
+				throw new Exception ("Unrecognized type in MakeByteBlob: " + underlying_type);
 
 			data = new byte [(count * factor + 4) & ~3];
 			int idx = 0;

@@ -1,5 +1,8 @@
 We use negative numbers for the compiler, and leave the possitive
-numbers to match the Microsoft numbers:
+numbers to match the Microsoft numbers.
+
+NOTE: I am now moving to use numbers above 6000 instead of negative
+numbers, as they look nicer on the debugging output.
 
 -1	An Primary Expression was parsed, when a Type was expected.
 	This happens because my parser knowledge is limited, and I
@@ -69,7 +72,7 @@ numbers to match the Microsoft numbers:
 		[DefaultValue (CollectionChangeAction.Add)]
 		class X { static void Main () {	} }
 
--24     Unused `using' statement
+6024    Unused `using' statement
 
 	Sample:
 		using System;

@@ -2764,6 +2764,8 @@ namespace Mono.CSharp {
 				 t == TypeManager.char_type ||
 				 t == TypeManager.ushort_type)
 				return 2;
+			else if (t == TypeManager.decimal_type)
+				return 16;
 			else
 				return 0;
 		}
