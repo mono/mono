@@ -1,3 +1,11 @@
+2004-08-08  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* corlib.dll.sources: Added System/AppDomainInitializer.cs,
+	AppDomainManager.cs, ApplicationActivator.cs and
+	DomainManagerInitializationFlags.cs. Added System.Threading/
+	HostExecutionContext.cs, HostExecutionContextManager.cs and
+	HostExecutionContextSwitcher.cs for NET_2_0.
+
 2004-08-04  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* corlib.dll.sources: Added System.Security.Permissions/

@@ -51,8 +51,11 @@ Mono.Xml/SecurityParser.cs
 System/ActivationContext.cs
 System/Activator.cs
 System/AppDomain.cs
+System/AppDomainInitializer.cs
+System/AppDomainManager.cs
 System/AppDomainSetup.cs
 System/AppDomainUnloadedException.cs
+System/ApplicationActivator.cs
 System/ApplicationException.cs
 System/ApplicationIdentity.cs
 System/ArgIterator.cs
@@ -91,6 +94,7 @@ System/Delegate.cs
 System/DelegateSerializationHolder.cs
 System/DivideByZeroException.cs
 System/DllNotFoundException.cs
+System/DomainManagerInitializationFlags.cs
 System/Double.cs
 System/DoubleFormatter.cs
 System/DuplicateWaitObjectException.cs
@@ -1046,6 +1050,9 @@ System.Threading/CompressedStackSwitcher.cs
 System.Threading/ContextCallback.cs
 System.Threading/ExecutionContext.cs
 System.Threading/ExecutionContextSwitcher.cs
+System.Threading/HostExecutionContext.cs
+System.Threading/HostExecutionContextManager.cs
+System.Threading/HostExecutionContextSwitcher.cs
 System.Threading/Interlocked.cs
 System.Threading/IOCompletionCallback.cs
 System.Threading/LockCookie.cs
