@@ -68,6 +68,32 @@ namespace CIR {
 		}
 
 		//
+		// Returns the list of interfaces that this interface implements
+		// Null on error
+		//
+		Type [] GetInterfaces (Interface iface)
+		{
+			ArrayList bases = iface.Bases;
+			Type [] tbases = new Type [bases.Count];
+			int i = 0;
+			Hashtable source_ifaces = tree.Interfaces;
+			
+			foreach (string name in iface.Bases){
+				Type t = type_manager.LookupType (name);
+
+				if (t != null){
+					tbases [i++] = t;
+					continue;
+				}
+				n = source_ifaces [name];
+				if (n == null){
+				}
+			}
+
+			return tbases;
+		}
+		
+		//
 		// Creates the Interface @iface using the ModuleBuilder
 		//
 		// TODO:
@@ -76,24 +102,25 @@ namespace CIR {
 		bool CreateInterface (Interface iface)
 		{
 			TypeBuilder tb;
-			string name = iface.Name;
 
 			if (iface.InTransit)
 				return false;
-			
 			iface.InTransit = true;
+
+			string name = iface.Name;
+			Type [] ifaces = GetInterfaces (iface);
+			
 			tb = mb.DefineType (name,
 					    TypeAttributes.Interface |
 					    TypeAttributes.Public |
 					    TypeAttributes.Abstract);
-			tb.CreateType ();
 			iface.Definition = tb;
 
 			//
 			// if Recursive_Def (child) == false
 			//      error (child.Name recursive def with iface.Name)
 			//
-			type_manager.AddType (name, tb);
+			type_manager.AddUserType (name, tb);
 
 			iface.InTransit = false;
 			return true;
@@ -112,6 +139,21 @@ namespace CIR {
 
 		public void ResolveClassBases ()
 		{
+		}
+
+		// <summary>
+		//   Closes all open types
+		// </summary>
+		//
+		// <remarks>
+		//   We usually use TypeBuilder types.  When we are done
+		//   creating the type (which will happen after we have addded
+		//   methods, fields, etc) we need to "Define" them before we
+		//   can save the Assembly
+		// </remarks>
+		public void CloseTypes ()
+		{
+			
 		}
 	}
 }

@@ -36,17 +36,17 @@ namespace CIR
 		// <summary>
 		//   Keeps track of the interfaces defined in the source code
 		// </summary>
-		ArrayList ifaces;
+		Hashtable ifaces;
 
 		// <summary>
 		//   Keeps track of the structs defined in the source code
 		// </summary>
-		ArrayList structs;
+		Hashtable structs;
 
 		// <summary>
 		//   Keeps track of the classes defined in the source code
 		// </summary>
-		ArrayList classes;
+		Hashtable classes;
 
 		public Tree ()
 		{
@@ -57,25 +57,25 @@ namespace CIR
 		public void RecordInterface (string name, Interface iface)
 		{
 			if (ifaces == null)
-				ifaces = new ArrayList ();
+				ifaces = new Hashtable ();
 
-			ifaces.Add (iface);
+			ifaces.Add (name, iface);
 		}
 		
 		public void RecordStruct (string name, Struct s)
 		{
 			if (structs == null)
-				structs = new ArrayList ();
+				structs = new Hashtable ();
 
-			structs.Add (s);
+			structs.Add (name, s);
 		}
 		
 		public void RecordClass (string name, Class c)
 		{
 			if (classes == null)
-				classes = new ArrayList ();
+				classes = new Hashtable ();
 
-			classes.Add (c);
+			classes.Add (name, c);
 		}
 		
 		public TypeContainer Types {
@@ -84,19 +84,19 @@ namespace CIR
 			}
 		}
 
-		public ArrayList Interfaces {
+		public Hashtable Interfaces {
 			get {
 				return ifaces;
 			}
 		}
 
-		public ArrayList Classes {
+		public Hashtable Classes {
 			get {
 				return classes;
 			}
 		}
 
-		public ArrayList Structs {
+		public Hashtable Structs {
 			get {
 				return structs;
 			}

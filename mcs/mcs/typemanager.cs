@@ -16,22 +16,29 @@ using System.Reflection.Emit;
 
 public class TypeManager {
 
-	// <summary>
+	// <remarks>
 	//   Holds the Array of Assemblies that have been loaded
 	//   (either because it is the default or the user used the
 	//   -r command line option)
-	// </summary>
+	// </remarks>
 	ArrayList assemblies;
 
-	// <summary>
+	// <remarks>
 	//   This is used to map defined FQN to Types
 	// </summary>
 	Hashtable types;
+
+	// <remarks>
+	//   Keeps track of those types that are defined by the
+	//   user's program
+	// </remarks>
+	ArrayList user_types;
 
 	public TypeManager ()
 	{
 		assemblies = new ArrayList ();
 		types = new Hashtable ();
+		user_types = new ArrayList ();
 	}
 
 	// <summary>
@@ -43,6 +50,12 @@ public class TypeManager {
 		types.Add (t.FullName, t);
 	}
 
+	public void AddUserType (string name, TypeBuilder t)
+	{
+		types.Add (t.FullName, t);
+		user_types.Add (t);
+	}
+	
 	// <summary>
 	//   Registers an assembly to load types from.
 	// </summary>
@@ -62,6 +75,15 @@ public class TypeManager {
 		Type t = (Type) types [name];
 		
 		return t;
+	}
+
+	// <summary>
+	//   Returns the User Defined Types
+	// </summary>
+	public ArrayList UserTypes {
+		get {
+			return user_types;
+		}
 	}
 }
 
