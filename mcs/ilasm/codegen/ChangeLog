@@ -1,5 +1,9 @@
 2003-03-13 Jackson Harper <jackson@latitudegeo.com>
 
+	* InstrTable.cs: Fix instructions that have dots in their name
+
+2003-03-13 Jackson Harper <jackson@latitudegeo.com>
+
 	* CodeGen.cs: Add code buffer for il instructions when a new method is added.
 	* InstrTable.cs: New file, this is a table of all the instructions (just simple 
 	instructions right now)
