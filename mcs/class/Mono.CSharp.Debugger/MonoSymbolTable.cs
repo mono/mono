@@ -536,7 +536,7 @@ namespace Mono.CSharp.Debugger
 		}
 
 		public MethodBase MethodBase {
-			get { return SymbolFile.Assembly.MonoDebugger_GetMethod (Token); }
+			get { return MonoDebuggerSupport.GetMethod (SymbolFile.Assembly, Token); }
 		}
 
 		internal MethodEntry (MonoSymbolFile file, BinaryReader reader, int index)
@@ -589,8 +589,8 @@ namespace Mono.CSharp.Debugger
 
 				for (int i = 0; i < NumLocals; i++) {
 					Locals [i] = new LocalVariableEntry (reader);
-					LocalTypes [i] = ass.MonoDebugger_GetLocalTypeFromSignature (
-						Locals [i].Signature);
+					LocalTypes [i] = MonoDebuggerSupport.GetLocalTypeFromSignature (
+						ass, Locals [i].Signature);
 				}
 
 				reader.BaseStream.Position = old_pos;

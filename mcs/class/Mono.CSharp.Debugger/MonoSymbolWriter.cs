@@ -254,7 +254,7 @@ namespace Mono.CSharp.Debugger
 		}
 	}
 
-	public class MonoSymbolWriter : IMonoSymbolWriter
+	public class MonoSymbolWriter
 	{
 		protected ModuleBuilder module_builder;
 		protected ArrayList locals = null;

@@ -1,3 +1,9 @@
+2004-01-15  Martin Baulig  <martin@ximian.com>
+
+	* MonoSymbolFile.cs (MonoDebuggerSupport): New public class
+	containing static wrappers for calling the `MonoDebugger_*'
+	function in S.R.Assembly.
+
 2004-01-13  Martin Baulig  <martin@ximian.com>
 
 	* MonoSymbolTable.cs: Added more #region's and a comment at the

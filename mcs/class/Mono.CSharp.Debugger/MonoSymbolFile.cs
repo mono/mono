@@ -170,6 +170,57 @@ namespace Mono.CSharp.Debugger
 		}
 	}
 
+	public class MonoDebuggerSupport
+	{
+		static MethodInfo get_token;
+		static MethodInfo get_method_token;
+		static MethodInfo get_method;
+		static MethodInfo local_type_from_sig;
+
+		static MonoDebuggerSupport ()
+		{
+			Type type = typeof (Assembly);
+			get_method_token = type.GetMethod ("MonoDebugger_GetMethodToken",
+							   BindingFlags.Instance |
+							   BindingFlags.NonPublic);
+			if (get_method_token == null)
+				throw new Exception (
+					"Can't find Assembly.MonoDebugger_GetMethodToken");
+
+			get_method = type.GetMethod ("MonoDebugger_GetMethod",
+						     BindingFlags.Instance |
+						     BindingFlags.NonPublic);
+			if (get_method == null)
+				throw new Exception (
+					"Can't find Assembly.MonoDebugger_GetMethod");
+
+			local_type_from_sig = type.GetMethod (
+				"MonoDebugger_GetLocalTypeFromSignature",
+				BindingFlags.Instance | BindingFlags.NonPublic);
+			if (local_type_from_sig == null)
+				throw new Exception (
+					"Can't find Assembly.MonoDebugger_GetLocalTypeFromSignature");
+		}
+
+		public static int GetMethodToken (MethodBase method)
+		{
+			object[] args = new object[] { method };
+			return (int) get_method_token.Invoke (method.ReflectedType.Assembly, args);
+		}
+
+		public static MethodBase GetMethod (Assembly assembly, int token)
+		{
+			object[] args = new object[] { token };
+			return (MethodBase) get_method.Invoke (assembly, args);
+		}
+
+		public static Type GetLocalTypeFromSignature (Assembly assembly, byte[] sig)
+		{
+			object[] args = new object[] { sig };
+			return (Type) local_type_from_sig.Invoke (assembly, args);
+		}
+	}
+
 	public class MonoSymbolFile : IDisposable
 	{
 		ArrayList methods = new ArrayList ();
@@ -458,7 +509,7 @@ namespace Mono.CSharp.Debugger
 		{
 			if (reader == null)
 				throw new InvalidOperationException ();
-			int token = assembly.MonoDebugger_GetMethodToken (method);
+			int token = MonoDebuggerSupport.GetMethodToken (method);
 			return GetMethodByToken (token);
 		}
 
