@@ -1,3 +1,24 @@
+2001-10-10  Derek Holden  <dholden@draper.com>
+
+	* IntegerFormatter.cs: Added. Implements ToString for all
+	the integer data types for all the format types.
+
+	* Byte.cs: Using IntegerFormatter for ToString's.
+
+	* SByte.cs: Using IntegerFormatter for ToString's.
+
+	* Int16.cs: Using IntegerFormatter for ToString's.
+
+	* Int32.cs: Using IntegerFormatter for ToString's.
+
+	* Int64.cs: Using IntegerFormatter for ToString's.
+
+	* UInt16.cs: Using IntegerFormatter for ToString's.
+
+	* UInt32.cs: Using IntegerFormatter for ToString's.
+
+	* UInt64.cs: Using IntegerFormatter for ToString's.
+
 2001-10-07  Miguel de Icaza  <miguel@ximian.com>
 
 	* Exception.cs: Implement bits of serialization.
@@ -468,4 +489,3 @@ Fri Sep 7 12:28:01 CEST 2001 Paolo Molaro <lupus@ximian.com>
 	* TODO: Add file to keep track of pending tasks.
 
 	* Object.cs, ValueType.cs: Implement.
-
