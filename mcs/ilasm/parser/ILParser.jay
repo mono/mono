@@ -992,7 +992,10 @@ instr_r_head            : INSTR_R OPEN_PARENS
 methodSpec              : K_METHOD 
 			;
 
-instr                   : INSTR_NONE		{/* currentInstr = new InstrNone ((OpCode) $1);*/}
+instr                   : INSTR_NONE		
+			  { 
+   			    	codegen.CodeBuffer.Inst ((Op) $1); 
+			  }
 			| INSTR_VAR int32	{/* currentInstr = new InstrVar ((OpCode) $1, $2);*/}
 			| INSTR_VAR id		{/* currentInstr = new InstrVar ((OpCode) $1, $2); */}
 			| INSTR_I int32		{/* currentInstr = new InstrI ((OpCode) $1, (Int32) $2);*/}
