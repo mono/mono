@@ -1,3 +1,7 @@
+2003-03-21  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* XmlNodeArrayList.cs, XmlNodeListChildren.cs : bugzilla #39920 fix.
+
 2003-03-19  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* XmlDeclaration.cs : quick fix, not to use regex for set_Value.

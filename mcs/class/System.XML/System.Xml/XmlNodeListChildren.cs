@@ -118,6 +118,10 @@ namespace System.Xml
 		{
 			XmlNode requestedNode = null;
 
+			// Return null if index is out of range. by  DOM design.
+			if (Count <= index)
+				return null;
+
 			// Instead of checking for && index < Count which has to walk
 			// the whole list to get a count, we'll just keep a count since
 			// we have to walk the list anyways to get to index.

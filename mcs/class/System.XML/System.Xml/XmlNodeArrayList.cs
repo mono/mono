@@ -30,6 +30,10 @@ namespace System.Xml
 
 		public override XmlNode Item (int index)
 		{
+			// Return null if index is out of range. by  DOM design.
+			if (index < 0 || _rgNodes.Count <= index)
+				return null;
+
 			return (XmlNode) _rgNodes [index];
 		}
 	}
