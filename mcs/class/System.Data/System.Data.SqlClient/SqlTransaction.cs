@@ -54,6 +54,7 @@ namespace System.Data.SqlClient {
 			this.connection = connection;
 			this.isolationLevel = isolevel;
 			isOpen = true;
+			isRolledBack = false;
 		}
 
 		#endregion // Constructors
