@@ -1,5 +1,9 @@
 2002-09-19  Nick Drochak <ndrochak@gol.com>
 
+	* TraceImpl.cs: Remove debug prints
+
+2002-09-19  Nick Drochak <ndrochak@gol.com>
+
 	* TraceListenerCollection.cs: Set Indet level and size to default 
 	values.  The values from TraceImpl might have been changed.
 
