@@ -853,25 +853,23 @@ namespace Mono.CSharp {
 			if (e == null)
 				return null;
 
-			Expression converted = e;
-			if (e.Type != TypeManager.bool_type)
-				converted = Convert.ImplicitConversion (ec, e, TypeManager.bool_type, new Location (-1));
+			if (e.Type == TypeManager.bool_type)
+				return e;
+
+			Expression converted = Convert.ImplicitConversion (ec, e, TypeManager.bool_type, new Location (-1));
+
+			if (converted != null)
+				return converted;
 
 			//
 			// If no implicit conversion to bool exists, try using `operator true'
 			//
-			if (converted == null){
-				Expression operator_true = Expression.GetOperatorTrue (ec, e, loc);
-				if (operator_true == null){
-					Report.Error (
-						31, loc, "Can not convert the expression to a boolean");
-					return null;
-				}
-				e = operator_true;
-			} else
-				e = converted;
-
-			return e;
+			Expression operator_true = Expression.GetOperatorTrue (ec, e, loc);
+			if (operator_true == null){
+				Report.Error (31, loc, "Can not convert the expression to a boolean");
+				return null;
+			}
+			return operator_true;
 		}
 		
 		static string ExprClassName (ExprClass c)

@@ -2705,16 +2705,27 @@ namespace Mono.CSharp {
 				}
 			} else
 				left = left.Resolve (ec);
-			right = right.Resolve (ec);
 
-			if (left == null || right == null)
+			if (left == null)
+				return null;
+
+			Constant lc = left as Constant;
+			if (lc != null && lc.Type == TypeManager.bool_type && 
+				((oper == Operator.LogicalAnd && (bool)lc.GetValue () == false) ||
+				 (oper == Operator.LogicalOr && (bool)lc.GetValue () == true))) {
+
+				// TODO: make a sence to resolve unreachable expression as we do for statement
+				Report.Warning (429, 4, loc, "Unreachable expression code detected");
+				return left;
+			}
+
+			right = right.Resolve (ec);
+			if (right == null)
 				return null;
 
 			eclass = ExprClass.Value;
 
 			Constant rc = right as Constant;
-			Constant lc = left as Constant;
-
 			if (rc != null & lc != null){
 				Expression e = ConstantFold.BinaryFold (
 					ec, oper, lc, rc, loc);
