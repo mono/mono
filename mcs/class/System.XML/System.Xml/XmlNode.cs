@@ -206,28 +206,48 @@ namespace System.Xml
 		{
 			XmlDocument ownerDoc = (NodeType == XmlNodeType.Document) ? (XmlDocument)this : OwnerDocument;
 
-			ownerDoc.onNodeInserting (newChild, this);
-
-			if (NodeType == XmlNodeType.Document || NodeType == XmlNodeType.Element || NodeType == XmlNodeType.Attribute) {
+			if (NodeType == XmlNodeType.Document || NodeType == XmlNodeType.Element || NodeType == XmlNodeType.Attribute || NodeType == XmlNodeType.DocumentFragment) {
 				
+				ownerDoc.onNodeInserting (newChild, this);
+
+				// If newChild is already on the tree, then it was removed from current position.
+				// But test fails, so kept alive in the meantime;)
+				if(newChild.ParentNode != null)
+					newChild.ParentNode.RemoveChild(newChild);
+
 				if (newChild.OwnerDocument != ownerDoc)
 					throw new ArgumentException ("Can't append a node created by another document.");
 
-				XmlLinkedNode newLinkedChild = (XmlLinkedNode) newChild;
-				XmlLinkedNode lastLinkedChild = LastLinkedChild;
+				if(newChild.NodeType == XmlNodeType.DocumentFragment)
+				{
+					int x = newChild.ChildNodes.Count;
+					for(int i=0; i<x; i++)
+					{
+						// When this logic became to remove children in order, then index will have never to increments.
+						XmlNode n = newChild.ChildNodes[0];
+						this.AppendChild(n);	// recursively invokes events. (It is compatible with MS implementation.)
+					}
+				}
+				else
+				{
+					XmlLinkedNode newLinkedChild = (XmlLinkedNode) newChild;
+					XmlLinkedNode lastLinkedChild = LastLinkedChild;
 
-				newLinkedChild.parentNode = this;
+					newLinkedChild.parentNode = this;
 				
-				if (lastLinkedChild != null) {
-					newLinkedChild.NextLinkedSibling = lastLinkedChild.NextLinkedSibling;
-					lastLinkedChild.NextLinkedSibling = newLinkedChild;
-				} else
-					newLinkedChild.NextLinkedSibling = newLinkedChild;
+					if (lastLinkedChild != null) 
+					{
+						newLinkedChild.NextLinkedSibling = lastLinkedChild.NextLinkedSibling;
+						lastLinkedChild.NextLinkedSibling = newLinkedChild;
+					} 
+					else
+						newLinkedChild.NextLinkedSibling = newLinkedChild;
 				
-				LastLinkedChild = newLinkedChild;
+					LastLinkedChild = newLinkedChild;
 
-				ownerDoc.onNodeInserted (newChild, newChild.ParentNode);
+					ownerDoc.onNodeInserted (newChild, newChild.ParentNode);
 
+				}
 				return newChild;
 			} else
 				throw new InvalidOperationException();
@@ -311,7 +331,7 @@ namespace System.Xml
 		{
 			OwnerDocument.onNodeRemoving (oldChild, oldChild.ParentNode);
 
-			if (NodeType == XmlNodeType.Document || NodeType == XmlNodeType.Element || NodeType == XmlNodeType.Attribute) 
+			if (NodeType == XmlNodeType.Document || NodeType == XmlNodeType.Element || NodeType == XmlNodeType.Attribute || NodeType == XmlNodeType.DocumentFragment) 
 			{
 				if (IsReadOnly)
 					throw new ArgumentException();
@@ -333,6 +353,7 @@ namespace System.Xml
 				 }
 
 				OwnerDocument.onNodeRemoved (oldChild, oldChild.ParentNode);
+				oldChild.parentNode = null;	// clear parent 'after' above logic.
 
 				return oldChild;
 			} 
@@ -401,7 +422,7 @@ namespace System.Xml
 		public abstract void WriteTo (XmlWriter w);
 
 		// It parses with XmlReader and then construct DOM of the parsed contents.
-		internal protected void ConstructDOM(XmlReader xmlReader, XmlNode currentNode)
+		internal void ConstructDOM(XmlReader xmlReader, XmlNode currentNode)
 		{
 			// I am not confident whether this method should be placed in this class or not...
 			// Please verify its validity and then erase this comment;-)
@@ -412,7 +433,6 @@ namespace System.Xml
 			{
 				switch (xmlReader.NodeType) 
 				{
-
 					case XmlNodeType.CDATA:
 						newNode = doc.CreateCDataSection(xmlReader.Value);
 						currentNode.AppendChild (newNode);
@@ -458,10 +478,21 @@ namespace System.Xml
 						break;
 
 					case XmlNodeType.XmlDeclaration:
-						// String Empties are dummy, then gives over setting value contents to setter.
-						newNode = doc.CreateNode(XmlNodeType.XmlDeclaration, String.Empty, String.Empty);
+						// empty strings are dummy, then gives over setting value contents to setter.
+						newNode = doc.CreateXmlDeclaration("1.0" , String.Empty, String.Empty);
 						((XmlDeclaration)newNode).Value = xmlReader.Value;
 						this.AppendChild(newNode);
+						break;
+
+					case XmlNodeType.DocumentType:
+						XmlTextReader xmlTextReader = xmlReader as XmlTextReader;
+						if(xmlTextReader != null)
+						{
+							XmlDocumentType dtdNode = doc.CreateDocumentType(xmlTextReader.Name, xmlTextReader.publicId, xmlTextReader.systemId, xmlTextReader.Value);
+							this.AppendChild(dtdNode);
+						}
+						else
+							throw new XmlException("construction of DocumentType node from this XmlReader is not supported.");
 						break;
 				}
 			}

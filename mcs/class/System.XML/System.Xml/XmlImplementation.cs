@@ -10,11 +10,17 @@ namespace System.Xml
 {
 	public class XmlImplementation
 	{
+		#region Constructor
 		public XmlImplementation ()
 			: base ()
 		{
+			// The following keys are default of MS .NET Framework
+			NameTable nt = new NameTable();
+			internalNameTable = nt;
 		}
+		#endregion
 
+		#region Public Methods
 		public virtual XmlDocument CreateDocument ()
 		{
 			return new XmlDocument (this);
@@ -28,5 +34,10 @@ namespace System.Xml
 			else
 				return false;
 		}
+		#endregion
+
+		#region Internals
+		internal XmlNameTable internalNameTable;
+		#endregion
 	}
 }

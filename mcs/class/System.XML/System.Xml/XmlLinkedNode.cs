@@ -30,7 +30,10 @@ namespace System.Xml
 		public override XmlNode NextSibling
 		{
 			get {
-				if (Object.ReferenceEquals(nextSibling, ParentNode.LastLinkedChild.NextLinkedSibling) == false) {
+				if(ParentNode == null) {
+					return null;
+				}
+				else if (Object.ReferenceEquals(nextSibling, ParentNode.LastLinkedChild.NextLinkedSibling) == false) {
 					return nextSibling;
 				}
 				else {

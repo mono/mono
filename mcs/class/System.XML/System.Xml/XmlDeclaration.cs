@@ -58,10 +58,15 @@ namespace System.Xml
 		public string Standalone {
 			get { return standalone; }
 			set {
-				if (value.ToUpper() == "YES")
-					standalone = "yes";
-				if (value.ToUpper() == "NO")
-					standalone = "no";
+				if(value != null)
+				{
+					if (value.ToUpper() == "YES")
+						standalone = "yes";
+					if (value.ToUpper() == "NO")
+						standalone = "no";
+				}
+				else
+					standalone = String.Empty;
 			}
 		}
 
@@ -106,7 +111,7 @@ namespace System.Xml
 			Match m = XmlDeclRegex.Match(input);
 			if(!m.Success)
 				throw new XmlException("illegal XML declaration format.");
-			// Version = m.Result("${ver}");
+//			Version = m.Result("${ver}");
 			Encoding = m.Result("${enc}");
 			Standalone = m.Result("${sta}");
 		}

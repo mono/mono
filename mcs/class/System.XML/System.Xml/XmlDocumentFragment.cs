@@ -12,6 +12,12 @@ namespace System.Xml
 {
 	public class XmlDocumentFragment : XmlNode
 	{
+		#region Fields
+
+		private XmlLinkedNode lastLinkedChild;
+
+		#endregion
+
 		#region Constructor
 
 		protected internal XmlDocumentFragment (XmlDocument doc)
@@ -49,6 +55,12 @@ namespace System.Xml
 			get { return null; } // it's always null here.
 		}
 
+		// copied this way from XmlElement
+		internal override XmlLinkedNode LastLinkedChild
+		{
+			get { return lastLinkedChild; }
+			set { lastLinkedChild = value; }
+		}
 		#endregion
 
 		#region Methods		

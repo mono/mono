@@ -28,6 +28,7 @@ namespace System.Xml
 		XmlLinkedNode lastLinkedChild;
 		XmlNameTable nameTable;
 		string baseURI = String.Empty;
+		XmlImplementation implementation;
 
 		#endregion
 
@@ -35,33 +36,24 @@ namespace System.Xml
 
 		public XmlDocument () : base (null)
 		{
-			System.Xml.NameTable nt = new NameTable();
-			// keys below are default of MS .NET Framework
-			nt.Add("#text");
-			nt.Add("xml");
-			nt.Add("xmlns");
-			nt.Add("#entity");
-			nt.Add("#document-fragment");
-			nt.Add("#comment");
-			nt.Add("space");
-			nt.Add("id");
-			nt.Add("#whitespace");
-			nt.Add("http://www.w3.org/2000/xmlns/");
-			nt.Add("#cdata-section");
-			nt.Add("lang");
-
-			nameTable = nt;
+			implementation = new XmlImplementation();
+			nameTable = implementation.internalNameTable;
+			AddDefaultNameTableKeys();
 		}
 
-		[MonoTODO]
 		protected internal XmlDocument (XmlImplementation imp) : base (null)
 		{
-			throw new NotImplementedException ();
+			implementation = imp;
+			nameTable = imp.internalNameTable;
+			AddDefaultNameTableKeys();
 		}
 
 		public XmlDocument (XmlNameTable nt) : base (null)
 		{
+			implementation = new XmlImplementation();
+			implementation.internalNameTable = nt;
 			nameTable = nt;
+			AddDefaultNameTableKeys();
 		}
 
 		#endregion
@@ -104,20 +96,26 @@ namespace System.Xml
 			}
 		}
 
-		[MonoTODO]
+		[MonoTODO("It doesn't have internal subset object model.")]
 		public virtual XmlDocumentType DocumentType {
-			get { throw new NotImplementedException(); }
+			get {
+				foreach(XmlNode n in this.ChildNodes) {
+					if(n.NodeType == XmlNodeType.DocumentType)
+						return (XmlDocumentType)n;
+				}
+				return null;
+			}
 		}
 
-		[MonoTODO]
 		public XmlImplementation Implementation {
-			get { throw new NotImplementedException(); }
+			get { return implementation; }
 		}
 
 		[MonoTODO ("Setter.")]
 		public override string InnerXml {
 			get {
 				// Not sure why this is an override.  Passing through for now.
+				// ... Maybe its setter may be an override :-) [ginga]
 				return base.InnerXml;
 			}
 			set { throw new NotImplementedException(); }
@@ -223,10 +221,11 @@ namespace System.Xml
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+//		[MonoTODO]
 		public virtual XmlDocumentFragment CreateDocumentFragment ()
 		{
-			throw new NotImplementedException ();
+			return new XmlDocumentFragment(this);
+//			throw new NotImplementedException ();
 		}
 
 		public virtual XmlDocumentType CreateDocumentType (string name, string publicId,
@@ -358,9 +357,9 @@ namespace System.Xml
 			if (version != "1.0")
 				throw new ArgumentException ("version string is not correct.");
 
-			if  ((standalone != null) && !((standalone == "yes") || (standalone == "no")))
+			if  ((standalone != null && standalone != String.Empty) && !((standalone == "yes") || (standalone == "no")))
 				throw new ArgumentException ("standalone string is not correct.");
-			
+
 			return new XmlDeclaration (version, encoding, standalone, this);
 		}
 
@@ -428,18 +427,16 @@ namespace System.Xml
 			}
 		}
 
-		[MonoTODO]
+		[MonoTODO("default attributes (of imported doc); EntityReferences; Entity; Notation")]
 		public virtual XmlNode ImportNode (XmlNode node, bool deep)
 		{
-			// How to resolve default attribute values?
 			switch(node.NodeType)
 			{
 				case XmlNodeType.Attribute:
 					{
 						XmlAttribute src_att = node as XmlAttribute;
 						XmlAttribute dst_att = this.CreateAttribute(src_att.Prefix, src_att.LocalName, src_att.NamespaceURI);
-						// TODO: resolve default attribute values
-						dst_att.Value = src_att.Value;
+						dst_att.Value = src_att.Value;	// always explicitly specified (whether source is specified or not)
 						return dst_att;
 					}
 
@@ -474,8 +471,12 @@ namespace System.Xml
 						XmlElement dst = this.CreateElement(src.Prefix, src.LocalName, src.NamespaceURI);
 						foreach(XmlAttribute attr in src.Attributes)
 						{
-							// TODO: create default attribute values
-							dst.SetAttributeNode((XmlAttribute)this.ImportNode(attr, deep));
+							if(attr.Specified)	// copies only specified attributes
+								dst.SetAttributeNode((XmlAttribute)this.ImportNode(attr, deep));
+							if(DocumentType != null)
+							{
+								// TODO: create default attribute values
+							}
 						}
 						if(deep)
 						{
@@ -489,8 +490,9 @@ namespace System.Xml
 					throw new XmlException ("Illegal ImportNode call for NodeType.EndElement");
 				case XmlNodeType.EndEntity:
 					throw new XmlException ("Illegal ImportNode call for NodeType.EndEntity");
+
 				case XmlNodeType.Entity:
-					throw new NotImplementedException ();
+					throw new NotImplementedException ();	// TODO
 
 				// [2002.10.14] CreateEntityReference not implemented.
 				case XmlNodeType.EntityReference:
@@ -499,8 +501,9 @@ namespace System.Xml
 
 				case XmlNodeType.None:
 					throw new XmlException ("Illegal ImportNode call for NodeType.None");
+
 				case XmlNodeType.Notation:
-					throw new NotImplementedException ();
+					throw new NotImplementedException ();	// TODO
 
 				case XmlNodeType.ProcessingInstruction:
 					XmlProcessingInstruction pi = node as XmlProcessingInstruction;
@@ -515,10 +518,9 @@ namespace System.Xml
 				case XmlNodeType.Whitespace:
 					return this.CreateWhitespace(node.Value);
 
-				// I don't know how to test it...
 				case XmlNodeType.XmlDeclaration:
-				//	return this.CreateNode(XmlNodeType.XmlDeclaration, String.Empty, node.Value);
-					throw new NotImplementedException ();
+					XmlDeclaration srcDecl = node as XmlDeclaration;
+					return this.CreateXmlDeclaration(srcDecl.Version, srcDecl.Encoding, srcDecl.Standalone);
 
 				default:
 					throw new NotImplementedException ();
@@ -552,61 +554,10 @@ namespace System.Xml
 			RemoveAll ();
 
 			XmlNode currentNode = this;
-			XmlNode newNode;
 
-#if true
+			// This method of XmlNode is previously written here.
+			// Then I(ginga) moved them to use this logic with XmlElement.
 			this.ConstructDOM(xmlReader, currentNode);
-#else
-			// Below are copied to XmlNode.Construct(currentNode, xmlReader)
-			while (xmlReader.Read ()) 
-			{
-				switch (xmlReader.NodeType) {
-
-				case XmlNodeType.CDATA:
-					newNode = CreateCDataSection(xmlReader.Value);
-					currentNode.AppendChild (newNode);
-					break;
-
-				case XmlNodeType.Comment:
-					newNode = CreateComment (xmlReader.Value);
-					currentNode.AppendChild (newNode);
-					break;
-
-				case XmlNodeType.Element:
-					XmlElement element = CreateElement (xmlReader.Prefix, xmlReader.LocalName, xmlReader.NamespaceURI);
-					currentNode.AppendChild (element);
-
-					// set the element's attributes.
-					while (xmlReader.MoveToNextAttribute ()) {
-						XmlAttribute attribute = CreateAttribute (xmlReader.Prefix, xmlReader.LocalName, xmlReader.NamespaceURI);
-						attribute.Value = xmlReader.Value;
-						element.SetAttributeNode (attribute);
-					}
-
-					xmlReader.MoveToElement ();
-
-					// if this element isn't empty, push it onto our "stack".
-					if (!xmlReader.IsEmptyElement)
-						currentNode = element;
-
-					break;
-
-				case XmlNodeType.EndElement:
-					currentNode = currentNode.ParentNode;
-					break;
-
-				case XmlNodeType.ProcessingInstruction:
-					newNode = CreateProcessingInstruction (xmlReader.Name, xmlReader.Value);
-					currentNode.AppendChild (newNode);
-					break;
-
-				case XmlNodeType.Text:
-					newNode = CreateTextNode (xmlReader.Value);
-					currentNode.AppendChild (newNode);
-					break;
-				}
-			}
-#endif
 		}
 
 		public virtual void LoadXml (string xml)
@@ -685,6 +636,7 @@ namespace System.Xml
 		[MonoTODO ("Verify what encoding is used by default;  Should use PreserveWhiteSpace")]
 		public virtual void Save(Stream outStream)
 		{
+			// To implementor: utf-8 is OK, at least for (ginga's) Japanese environment.
 			XmlTextWriter xmlWriter = new XmlTextWriter (outStream, Encoding.UTF8);
 			WriteContentTo (xmlWriter);
 			xmlWriter.Close ();
@@ -693,6 +645,7 @@ namespace System.Xml
 		[MonoTODO ("Verify what encoding is used by default; Should use PreseveWhiteSpace")]
 		public virtual void Save (string filename)
 		{
+			// To implementor: utf-8 is OK, at least for (ginga's) Japanese environment.
 			XmlTextWriter xmlWriter = new XmlTextWriter (filename, Encoding.UTF8);
 			WriteContentTo (xmlWriter);
 			xmlWriter.Close ();
@@ -727,6 +680,24 @@ namespace System.Xml
 			WriteContentTo(w);
 		}
 
+		private void AddDefaultNameTableKeys()
+		{
+			// The following keys are default of MS .NET Framework
+			nameTable.Add("#text");
+			nameTable.Add("xml");
+			nameTable.Add("xmlns");
+			nameTable.Add("#entity");
+			nameTable.Add("#document-fragment");
+			nameTable.Add("#comment");
+			nameTable.Add("space");
+			nameTable.Add("id");
+			nameTable.Add("#whitespace");
+			nameTable.Add("http://www.w3.org/2000/xmlns/");
+			nameTable.Add("#cdata-section");
+			nameTable.Add("lang");
+			nameTable.Add("#document");
+			nameTable.Add("#significant-whitespace");
+		}
 		#endregion
 	}
 }

@@ -21,6 +21,7 @@ namespace System.Xml
 		private string localName;
 		private string namespaceURI;
 		private string prefix;
+		internal bool isDefault;
 
 		#endregion
 
@@ -147,10 +148,10 @@ namespace System.Xml
 			}
 		}
 
-		[MonoTODO]
+		[MonoTODO("There are no code which sets 'specified = true', so this logic is without checking.")]
 		public virtual bool Specified {
 			get {
-				throw new NotImplementedException ();
+				return !isDefault;
 			}
 		}
 

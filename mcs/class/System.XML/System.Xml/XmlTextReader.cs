@@ -629,6 +629,9 @@ namespace System.Xml
 		private int line = 1;
 		private int column = 1;
 
+		internal string publicId;
+		internal string systemId;
+
 		private void Init ()
 		{
 			readState = ReadState.Initial;
