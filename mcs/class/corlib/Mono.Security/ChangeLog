@@ -1,3 +1,8 @@
+2003-10-18  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* StrongName.cs: Added from Mono.Security assembly for StrongName
+	support in AssemblyBuilder.
+
 2003-10-12  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* PKCS7.cs: Added from Mono.Security assembly for Authenticode
