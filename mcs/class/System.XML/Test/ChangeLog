@@ -1,3 +1,11 @@
+2002-03-28  Duncan Mak  <duncan@ximian.com>
+
+	* XmlDeclarationTests.cs (TestConstructor): 
+	* XmlDocumentTypeTests.cs (TestAppendChild): 
+	* XmlSignificantWhitespaceTests.cs (TestXmlWhitespaceConstructor): 
+	* XmlWhiteSpaceTests.cs (TestXmlWhitespaceConstructor): Fixed the
+	test for catching Exceptions.
+
 2002-03-26  Jason Diamond  <jason@injektilo.org>
 
 	* AllTests.cs:

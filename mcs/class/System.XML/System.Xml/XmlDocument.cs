@@ -294,7 +294,7 @@ namespace System.Xml
 
 		public virtual XmlSignificantWhitespace CreateSignificantWhitespace (string text)
 		{
-			foreach (char c in text.ToCharArray ())
+			foreach (char c in text)
 				if ((c != ' ') && (c != '\r') && (c != '\n') && (c != '\t'))
 				    throw new ArgumentException ("Invalid whitespace characters.");
 			 
@@ -308,7 +308,7 @@ namespace System.Xml
 
 		public virtual XmlWhitespace CreateWhitespace (string text)
 		{
-			foreach (char c in text.ToCharArray ())
+			foreach (char c in text)
 				if ((c != ' ') && (c != '\r') && (c != '\n') && (c != '\t'))
 				    throw new ArgumentException ("Invalid whitespace characters.");
 			 

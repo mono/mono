@@ -57,9 +57,12 @@ namespace Ximian.Mono.Tests
 		{
 			try {
 				broken = document.CreateSignificantWhitespace ("black");				
+
+			} catch (ArgumentException) {
+				return;
+
 			} catch (Exception e) {
-				AssertEquals ("Incorrect Exception thrown",
-					      e.GetType (), Type.GetType ("System.ArgumentException"));
+				Fail ("Incorrect Exception thrown.");
 			}
 		}
 

@@ -32,7 +32,6 @@ namespace System.Xml
 			get { return XmlNodeType.SignificantWhitespace; }
 		}
 
-		[MonoTODO]
 		public override string Value {
 			get { return Data; }
 			set {}

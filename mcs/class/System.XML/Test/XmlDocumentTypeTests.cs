@@ -66,11 +66,13 @@ namespace Ximian.Mono.Tests
 		{
 			try {
 				XmlDocumentType type1 = document.CreateDocumentType ("book", null, null, null);
-										     
 				document.AppendChild (type1);
-			} catch (Exception e) {
-				AssertEquals ("Incorrect Exception thrown",
-					      e.GetType (), Type.GetType ("System.InvalidOperationException"));
+
+			} catch (InvalidOperationException) {
+				return;
+
+			} catch (Exception e) {				
+				Fail ("Incorrect Exception thrown.");
 			}
 		}
 

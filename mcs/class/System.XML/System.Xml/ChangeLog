@@ -1,3 +1,11 @@
+2002-03-28  Duncan Mak  <duncan@ximian.com>
+
+	* XmlDocument.cs (CreateWhitespace):
+	(CreateSignificantWhitespace): Removed extraneous call to the ToCharArray
+	method.
+
+	* XmlSignificantWhitespace.cs (Value): Removed MonoTODO attribute.
+
 2002-03-26  Duncan Mak  <duncan@ximian.com>
 
 	* XmlDocument.cs (CreateDocumentType): Implemented.

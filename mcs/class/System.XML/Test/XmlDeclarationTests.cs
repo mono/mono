@@ -53,9 +53,11 @@ namespace Ximian.Mono.Tests
 		{
 			try {
 				XmlDeclaration broken = document.CreateXmlDeclaration ("2.0", null, null);
+			} catch (ArgumentException) {
+				return;
+
 			} catch (Exception e) {
-				AssertEquals ("Wrong exception was thrown",
-					      e.GetType (), Type.GetType ("System.ArgumentException"));
+				Fail("first arg null, wrong exception: " + e.ToString());
 			}
 		}
 
