@@ -1,3 +1,8 @@
+2004-11-10  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* RC4.cs: Fixed RC4 for compatibility with .NET 2.0. The algorithm is 
+	OK but the check for IV, unused for stream ciphers, has changed.
+
 2004-10-28  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* KeyPairPersistence.cs: Added localization for exceptions messages.
