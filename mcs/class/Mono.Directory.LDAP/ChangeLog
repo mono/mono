@@ -1,3 +1,10 @@
+2003-07-17  Peter Williams  <peter@newton.cx>
+
+	* Test/Mono.Directory.LDAP/BindSimpleTest.cs: csc interprets the bare LDAP
+	as a namespace, not as the class. Give it the fully qualified name.
+
+	* Test/Mono.Directory.LDAP/QueryRootDSETest.cs: Same.
+
 2003-05-13  Martin Willemoes Hansen <mwh@sysrq.dk>
 	* Test/Mono.Directory.LDAP/BindSimpleTest.cs: Removed unused setup and teardown methods
 	  Test/Mono.Directory.LDAP/QueryRootDSETest.cs: Removed unused setup and teardown methods

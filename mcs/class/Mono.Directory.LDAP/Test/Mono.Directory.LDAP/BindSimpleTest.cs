@@ -21,7 +21,7 @@ namespace MonoTests.Directory.LDAP
 			string myLDAPPath = "ldap://ldap.toshok.org";
 			string username = "cn=Manager,dc=toshok,dc=org", passwd = "evotest";
 			try {
-				LDAP ld = new LDAP (myLDAPPath);
+				Mono.Directory.LDAP.LDAP ld = new Mono.Directory.LDAP.LDAP (myLDAPPath);
 
 				ld.BindSimple (username, passwd);
 

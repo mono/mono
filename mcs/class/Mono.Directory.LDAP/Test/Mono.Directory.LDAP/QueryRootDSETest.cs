@@ -20,7 +20,7 @@ namespace MonoTests.Directory.LDAP
 		{
 			string myLDAPPath = "ldap://ldap.toshok.org";
 			try {
-				LDAP ld = new LDAP (myLDAPPath);
+				Mono.Directory.LDAP.LDAP ld = new Mono.Directory.LDAP.LDAP (myLDAPPath);
 				LDAPMessage res, entry;
 				string[] attrs = { "+", null };
 
