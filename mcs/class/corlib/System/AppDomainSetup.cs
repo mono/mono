@@ -34,7 +34,7 @@ namespace System
 		bool disallow_code_downloads;
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		private static extern AppDomainSetup InitAppDomainSetup (AppDomainSetup setup);
+		private static extern void InitAppDomainSetup (AppDomainSetup setup);
 
 		public AppDomainSetup ()
 		{
