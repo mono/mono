@@ -4,7 +4,7 @@ class A
 {
 	class C : IDisposable 
 	{
-		void IDisposable.Dispose () { throw new Exception ("really bad"); }
+		void IDisposable.Dispose () { throw new Exception ("'using' and 'new' didn't resolve C as A+B+C"); }
 	}
 
 	public class B

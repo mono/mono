@@ -25,7 +25,8 @@ USE_MCS_FLAGS :=
 # He may also move some to TEST_EXCLUDE_net_2_0 if some of the merges are inappropriate for GMCS.
 #
 NEW_TEST_SOURCES_common = \
-	test-297 test-287 test-294 test-299 test-300
+	test-297 test-287 test-294 test-299 test-300 \
+	test-301 test-302 test-303 test-304 test-305 test-306 test-307
 
 #
 # Please do _not_ add any tests here - all new tests should go into NEW_TEST_SOURCES_common
@@ -91,7 +92,7 @@ TEST_SOURCES_net_2_0 = \
 	        gen-62  gen-63  gen-64  gen-65  gen-66  gen-67  gen-68  gen-69  gen-70 \
 	gen-71  gen-72  gen-73  gen-74  gen-75  gen-76  gen-77  gen-78
 
-TEST_EXCLUDES_net_2_0 = test-55 test-289
+TEST_EXCLUDES_net_2_0 = test-55 test-289 test-259
 
 TEST_SOURCES = $(filter-out $(TEST_EXCLUDES_common) $(TEST_EXCLUDES_$(PROFILE)) $(TEST_EXCLUDES_$(PLATFORM)), \
 	$(TEST_SOURCES_common) $(TEST_SOURCES_$(PROFILE)) $(TEST_SOURCES_$(PLATFORM)))
@@ -147,7 +148,11 @@ clean-local:
 dist-local: dist-default
 	rm -f $(distdir)/casts.cs
 
-TEST_TAG = $(PROFILE)
+TEST_TAG = mcs
+
+ifeq (net_2_0, $(PROFILE))
+TEST_TAG = gmcs
+endif
 
 test-compiler-jit-real:
 	@rm -f *.exe *.dll *.netmodule $(TEST_TAG).log $(TEST_TAG)-*.log ; \

@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 
 class A
 {
@@ -11,12 +12,16 @@ class A
 		public B() {
 			string error = "";
 
-			object o1 = new C ();
-			if (o1.GetType() != typeof (A.B.C))
-				error += " 'new' keyword,";
-
 			if (typeof (C) != typeof (A.B.C))
 				error += " 'typeof' keyword,";
+
+			object o0 = new C ();
+			if (o0.GetType() != typeof (A.B.C))
+				error += " 'new' keyword,";
+
+			C o1 = new C ();
+			if (o1.GetType () != typeof (A.B.C))
+				error += " local declaration,";
 
 			object o2 = new A.B.C ();
 			if (!(o2 is C))
@@ -29,22 +34,39 @@ class A
 			try {
 				object o4 = (C) o2;
 			}
-			catch (Exception e) {
-				error += " type cast";
+			catch {
+				error += " type cast,";
 			}
 
 			try {
-				object o4 = (C) (o2);
+				object o5 = (C) (o2);
 			}
-			catch (Exception e) {
-				error += " invocation-or-cast";
+			catch {
+				error += " invocation-or-cast,";
+			}
+
+			object o6 = new C [1];
+
+			if (o6.GetType ().GetElementType () != typeof (A.B.C))
+				error += " array creation,";
+
+			if (typeof (C []).GetElementType () != typeof (A.B.C))
+				error += " composed cast (array),";
+
+			ArrayList a = new ArrayList ();
+			a.Add (new A.B.C ());
+
+			try {
+				foreach (C c in a)
+				{ 
+				}
+			}
+			catch {
+				error += " 'foreach' statement,";
 			}
 
 			if (error.Length != 0)
-				throw new Exception ("The following couldn't resolve C as A+B+C:" + 
-						     error);
-
-
+				throw new Exception ("The following couldn't resolve C as A+B+C:" + error);
 		}
 	}
 

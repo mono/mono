@@ -1,3 +1,18 @@
+2004-10-07  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile (TEST_TAG): Rename back to 'mcs' and 'gmcs' to keep in
+	sync with errors/Makefile.
+	Reported by K Sathyasudha <ksathyasudha@novell.com>.
+
+	Testcases for type-resolution.
+	* test-300.cs: Add tests for local declarations and 'foreach'.
+	* test-301.cs: New testcase: several 'unsafe' related keywords.
+	* test-302.cs: New testcase: 'catch' clause parameters.
+	* test-303.cs: New testcase: 'using' keyword.
+	* test-304.cs, test-305.cs, test-306.cs, test-307.cs: New.
+	Variants that use namespace aliases.
+	* Makefile (NEW_TEST_SOURCES_common): Add new testcases.
+	
 2004-10-03  Marek Safar <marek.safar@seznam.cz>
 
 	* test-297.cs: Incorporated test for #67108
