@@ -1,5 +1,10 @@
 2003-09-27  Zoltan Varga  <vargaz@freemail.hu>
 
+	* regalloc.h regalloc.c (MonoRegState): Change the type of 
+	iassign and fassign to int*, since they can contain large negative
+	values if the register is spilled. Also added some comments. Fixes
+	#45817.
+
 	* exceptions-x86.c (seh_handler): Fix handling of system exceptions
 	under Win32. Fixes #42964.
 
