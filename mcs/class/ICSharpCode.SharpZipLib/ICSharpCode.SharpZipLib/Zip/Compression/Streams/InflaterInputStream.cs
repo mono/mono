@@ -243,7 +243,9 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression.Streams {
 		/// </summary>
 		public override void Close()
 		{
-			baseInputStream.Close();
+			// Do not close the parent, it might be used by a ZipFile, and
+			// we do not want to close the "master" source.
+			// baseInputStream.Close();
 		}
 		
 		/// <summary>
