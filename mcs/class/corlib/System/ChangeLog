@@ -1,3 +1,10 @@
+2004-06-14  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* TimeSpan.cs: Fixed timespan with large values for hours or minutes
+	(overflow is only checked for days but can also occurs in hours and
+	minutes which uses Int32 when multiplying). The new results match MS
+	implementation.
+
 2004-06-14  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* FloatingPointFormatter.cs : Recognize '%' and '\u2030' and replace

@@ -71,14 +71,14 @@ namespace System
 
 		internal static long CalculateTicks (int days, int hours, int minutes, int seconds, int milliseconds)
 		{
+			// there's no overflow checks for hours, minutes, ...
+			// so big hours/minutes values can overflow at some point and change expected values
+			int hrssec = (hours * 3600); // break point at (Int32.MaxValue - 596523)
+			int minsec = (minutes * 60);
+			long t = ((long)(hrssec + minsec + seconds) * 1000L + (long)milliseconds);
+			t *= 10000;
+
 			bool overflow = false;
-
-			// this part cannot overflow Int64
-			long t = checked (TimeSpan.TicksPerHour * hours +
-				TimeSpan.TicksPerMinute * minutes +
-				TimeSpan.TicksPerSecond * seconds + 
-				TimeSpan.TicksPerMillisecond * milliseconds);
-
 			// days is problematic because it can overflow but that overflow can be 
 			// "legal" (i.e. temporary) (e.g. if other parameters are negative) or 
 			// illegal (e.g. sign change).
