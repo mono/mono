@@ -1,3 +1,20 @@
+2001-09-25  Ravi Pratap  <ravi@ximian.com>
+
+	* expression.cs (Binary::ResolveOperator): Had forgottten to set 
+	the type of the expression to the return type of the method if
+	we have an overloaded operator match ! The regression tests pass again !
+	(Unary::ResolveOperator): Ditto.
+
+	* expression.cs (Invocation::ConversionExists): Correct the member lookup
+	to find "op_Implicit", not "implicit" ;-)
+	(UserImplicitCast): New class to take care of user-defined implicit conversions.
+	(ConvertImplicit, ForceConversion): Take TypeContainer argument
+
+	* everywhere : Correct calls to the above accordingly.
+
+	* expression.cs (UserImplicitCast::Resolve, ::Emit): Implement.
+	(ConvertImplicit): Do user-defined conversion if it exists.
+
 2001-09-24  Miguel de Icaza  <miguel@ximian.com>
 
 	* assign.cs: track location.

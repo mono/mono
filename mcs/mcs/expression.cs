@@ -265,7 +265,7 @@ namespace CIR {
 		//   `target_type'.  It returns a new expression that can be used
 		//   in a context that expects a `target_type'. 
 		// </summary>
-		static public Expression ConvertImplicit (Expression expr, Type target_type)
+		static public Expression ConvertImplicit (Expression expr, Type target_type, TypeContainer tc)
 		{
 			Type expr_type = expr.Type;
 
@@ -275,6 +275,14 @@ namespace CIR {
 			//
 			// Step 1: Perform implicit conversions as found on expr.Type
 			//
+			Expression imp;
+
+			imp = new UserImplicitCast (expr, target_type);
+
+			imp = imp.Resolve (tc);
+
+			if (imp != null)
+				return imp;
 
 			//
 			// Step 2: Built-in conversions.
@@ -412,9 +420,9 @@ namespace CIR {
 		{
 			Expression e;
 			
-			e = ConvertImplicit (target, type);
+			e = ConvertImplicit (target, type, tc);
 			if (e == null){
-				string msg = "Can not convert implicity from `"+
+				string msg = "Can not convert implicitly from `"+
 					TypeManager.CSharpName (target.Type) + "' to `" +
 					TypeManager.CSharpName (type) + "'";
 
@@ -655,12 +663,12 @@ namespace CIR {
 			return oper.ToString ();
 		}
 
-		Expression ForceConversion (Expression expr, Type target_type)
+		Expression ForceConversion (Expression expr, Type target_type, TypeContainer tc)
 		{
 			if (expr.Type == target_type)
 				return expr;
 
-			return ConvertImplicit (expr, target_type);
+			return ConvertImplicit (expr, target_type, tc);
 		}
 
 		void report23 (Report r, Type t)
@@ -715,7 +723,9 @@ namespace CIR {
 				Arguments.Add (new Argument (expr, Argument.AType.Expression));
 				
 				method = Invocation.OverloadResolve ((MethodGroupExpr) mg, Arguments, tc, location);
-				if (method != null){
+				if (method != null) {
+					Method m = (Method) TypeContainer.LookupMethodByBuilder (method);
+					type = m.GetReturnType (tc);
 					return this;
 				}
 			}
@@ -810,7 +820,7 @@ namespace CIR {
 					// bt written as a decimal interger literal
 					//
 					type = TypeManager.int64_type;
-					expr = ConvertImplicit (expr, type);
+					expr = ConvertImplicit (expr, type, tc);
 					return this;
 				}
 
@@ -824,21 +834,21 @@ namespace CIR {
 					return null;
 				}
 
-				e = ConvertImplicit (expr, TypeManager.int32_type);
+				e = ConvertImplicit (expr, TypeManager.int32_type, tc);
 				if (e != null){
 					expr = e;
 					type = e.Type;
 					return this;
 				} 
 
-				e = ConvertImplicit (expr, TypeManager.int64_type);
+				e = ConvertImplicit (expr, TypeManager.int64_type, tc);
 				if (e != null){
 					expr = e;
 					type = e.Type;
 					return this;
 				}
 
-				e = ConvertImplicit (expr, TypeManager.double_type);
+				e = ConvertImplicit (expr, TypeManager.double_type, tc);
 				if (e != null){
 					expr = e;
 					type = e.Type;
@@ -1198,12 +1208,12 @@ namespace CIR {
 			return oper.ToString ();
 		}
 
-		Expression ForceConversion (Expression expr, Type target_type)
+		Expression ForceConversion (Expression expr, Type target_type, TypeContainer tc)
 		{
 			if (expr.Type == target_type)
 				return expr;
 
-			return ConvertImplicit (expr, target_type);
+			return ConvertImplicit (expr, target_type, tc);
 		}
 		
 		//
@@ -1218,9 +1228,9 @@ namespace CIR {
 				// conveted to type double.
 				//
 				if (r != TypeManager.double_type)
-					right = ConvertImplicit (right, TypeManager.double_type);
+					right = ConvertImplicit (right, TypeManager.double_type, tc);
 				if (l != TypeManager.double_type)
-					left = ConvertImplicit (left, TypeManager.double_type);
+					left = ConvertImplicit (left, TypeManager.double_type, tc);
 				
 				type = TypeManager.double_type;
 			} else if (l == TypeManager.float_type || r == TypeManager.float_type){
@@ -1229,9 +1239,9 @@ namespace CIR {
 				// converd to type float.
 				//
 				if (r != TypeManager.double_type)
-					right = ConvertImplicit (right, TypeManager.float_type);
+					right = ConvertImplicit (right, TypeManager.float_type, tc);
 				if (l != TypeManager.double_type)
-					left = ConvertImplicit (left, TypeManager.float_type);
+					left = ConvertImplicit (left, TypeManager.float_type, tc);
 				type = TypeManager.float_type;
 			} else if (l == TypeManager.uint64_type || r == TypeManager.uint64_type){
 				//
@@ -1265,9 +1275,9 @@ namespace CIR {
 				// to type long.
 				//
 				if (l != TypeManager.int64_type)
-					left = ConvertImplicit (left, TypeManager.int64_type);
+					left = ConvertImplicit (left, TypeManager.int64_type, tc);
 				if (r != TypeManager.int64_type)
-					right = ConvertImplicit (right, TypeManager.int64_type);
+					right = ConvertImplicit (right, TypeManager.int64_type, tc);
 
 				type = TypeManager.int64_type;
 			} else if (l == TypeManager.uint32_type || r == TypeManager.uint32_type){
@@ -1286,21 +1296,21 @@ namespace CIR {
 				if ((other == TypeManager.sbyte_type) ||
 				    (other == TypeManager.short_type) ||
 				    (other == TypeManager.int32_type)){
-					left = ForceConversion (left, TypeManager.int64_type);
-					right = ForceConversion (right, TypeManager.int64_type);
+					left = ForceConversion (left, TypeManager.int64_type, tc);
+					right = ForceConversion (right, TypeManager.int64_type, tc);
 					type = TypeManager.int64_type;
 				} else {
 					//
 					// if either operand is of type uint, the other
 					// operand is converd to type uint
 					//
-					left = ForceConversion (left, TypeManager.uint32_type);
-					right = ForceConversion (left, TypeManager.uint32_type);
+					left = ForceConversion (left, TypeManager.uint32_type, tc);
+					right = ForceConversion (left, TypeManager.uint32_type, tc);
 					type = TypeManager.uint32_type;
 				} 
 			} else {
-				left = ForceConversion (left, TypeManager.int32_type);
-				right = ForceConversion (right, TypeManager.int32_type);
+				left = ForceConversion (left, TypeManager.int32_type, tc);
+				right = ForceConversion (right, TypeManager.int32_type, tc);
 				type = TypeManager.int32_type;
 			}
 		}
@@ -1321,17 +1331,17 @@ namespace CIR {
 			Type l = left.Type;
 			Type r = right.Type;
 
-			e = ForceConversion (right, TypeManager.int32_type);
+			e = ForceConversion (right, TypeManager.int32_type, tc);
 			if (e == null){
 				error19 (tc);
 				return null;
 			}
 			right = e;
 
-			if (((e = ConvertImplicit (left, TypeManager.int32_type)) != null) ||
-			    ((e = ConvertImplicit (left, TypeManager.uint32_type)) != null) ||
-			    ((e = ConvertImplicit (left, TypeManager.int64_type)) != null) ||
-			    ((e = ConvertImplicit (left, TypeManager.uint64_type)) != null)){
+			if (((e = ConvertImplicit (left, TypeManager.int32_type, tc)) != null) ||
+			    ((e = ConvertImplicit (left, TypeManager.uint32_type, tc)) != null) ||
+			    ((e = ConvertImplicit (left, TypeManager.int64_type, tc)) != null) ||
+			    ((e = ConvertImplicit (left, TypeManager.uint64_type, tc)) != null)){
 				left = e;
 
 				return this;
@@ -1388,8 +1398,11 @@ namespace CIR {
 
 			
 				method = Invocation.OverloadResolve (union, Arguments, tc, location);
-				if (method != null) 
+				if (method != null) {
+					Method m = (Method) TypeContainer.LookupMethodByBuilder (method);
+					type = m.GetReturnType (tc);
 					return this;
+				}
 			}
 
 			//
@@ -2156,7 +2169,7 @@ namespace CIR {
 
 			Expression mg;
 			
-			mg = MemberLookup (tc.RootContext, to, "implicit", false);
+			mg = MemberLookup (tc.RootContext, to, "op_Implicit", false);
 
 			if (mg != null) {
 				MethodGroupExpr me = (MethodGroupExpr) mg;
@@ -2171,7 +2184,7 @@ namespace CIR {
 				}
 			}
 
-			mg = MemberLookup (tc.RootContext, from, "implicit", false);
+			mg = MemberLookup (tc.RootContext, from, "op_Implicit", false);
 
 			if (mg != null) {
 				MethodGroupExpr me = (MethodGroupExpr) mg;
@@ -2463,7 +2476,7 @@ namespace CIR {
 				Argument a = (Argument) Arguments [j];
 				Expression a_expr = a.Expr;
 				
-				Expression conv = ConvertImplicit (a.Expr, pd.ParameterType (j));
+				Expression conv = ConvertImplicit (a_expr, pd.ParameterType (j), tc);
 
 				if (conv == null) {
 					tc.RootContext.Report.Error (1502, loc,
@@ -2471,7 +2484,7 @@ namespace CIR {
 					       "' has some invalid arguments");
 					tc.RootContext.Report.Error (1503, loc,
 					       "Argument " + (j+1) +
-					       " : Cannot convert from '" + TypeManager.CSharpName (a.Expr.Type)
+					       " : Cannot convert from '" + TypeManager.CSharpName (a_expr.Type)
 					       + "' to '" + TypeManager.CSharpName (pd.ParameterType (j)) + "'");
 					return null;
 				}
@@ -2656,11 +2669,11 @@ namespace CIR {
 			method = Invocation.OverloadResolve ((MethodGroupExpr) ml, Arguments, tc, Location);
 
 			if (method == null) {
-				tc.RootContext.Report.Error (-6,
+				tc.RootContext.Report.Error (-6, Location,
 				"New invocation: Can not find a constructor for this argument list");
 				return null;
 			}
-
+			
 			return this;
 		}
 
@@ -3170,5 +3183,79 @@ namespace CIR {
 		{
 			throw new Exception ("Unimplemented");
 		}
+	}
+
+	public class UserImplicitCast : Expression {
+
+		Expression source;
+		Type       target; 
+		MethodBase method;
+		ArrayList  arguments;
+		
+		public UserImplicitCast (Expression source, Type target)
+		{
+			this.source = source;
+			this.target = target;
+		}
+
+		public override Expression Resolve (TypeContainer tc)
+		{
+			source = source.Resolve (tc);
+
+			if (source == null)
+				return null;
+
+			Expression mg;
+
+			mg = MemberLookup (tc.RootContext, source.Type, "op_Implicit", false);
+
+			if (mg != null) {
+				
+				MethodGroupExpr me = (MethodGroupExpr) mg;
+
+				arguments = new ArrayList ();
+				arguments.Add (new Argument (source, Argument.AType.Expression));
+
+				method = Invocation.OverloadResolve (me, arguments, tc, new Location ("", 0,0));
+			
+				if (method != null) {
+					Method m = (Method) TypeContainer.LookupMethodByBuilder (method);
+					type = m.GetReturnType (tc);
+
+					if (type != target)
+						return null;
+					
+					return this;
+				} else
+					return null;
+
+			} else
+				return null;
+		}
+		
+		public override bool Emit (EmitContext ec)
+		{
+			ILGenerator ig = ec.ig;
+			
+			if (method != null) {
+
+				// Note that operators are static anyway
+				
+				if (arguments != null) 
+					Invocation.EmitArguments (ec, method, arguments);
+				
+				if (method is MethodInfo)
+					ig.Emit (OpCodes.Call, (MethodInfo) method);
+				else
+					ig.Emit (OpCodes.Call, (ConstructorInfo) method);
+				
+				return true;
+			}
+
+			return false;
+			
+
+		}
+
 	}
 }

@@ -51,8 +51,9 @@ namespace CIR {
 				return null;
 
 			Type target_type = target.Type;
-			Type source_type = source.Type;
 			
+			Type source_type = source.Type;
+
 			if (target_type != source_type){
 				source = ConvertImplicitRequired (tc, source, target_type, l);
 				if (source == null)
