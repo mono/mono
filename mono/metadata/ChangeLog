@@ -1,3 +1,11 @@
+2004-08-05  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* appdomain.c: Bumped MONO_CORLIB_VERSION to 23. Added new icall
+	ves_icall_System_AppDomain_getDomainByID to get an AppDomain by Id.
+	* domain-internals.h: icall declaration.
+	* icall.c: icall registration.
+	* object-internals.h: New fields in MonoAssembly for CAS.
+
 2004-08-05  Duncan Mak  <duncan@ximian.com>
 
 	* verify.c: Renamed CEE_STELEM to CEE_STELEM_ANY and CEE_LDELEM to
