@@ -9,6 +9,9 @@
 	<property name="nunit_home" value="..\..\..\nunit"/>
 
 	<target name="build">
+	</target>
+
+	<target name="assemblies">
 		<csc target="library" output="System_test.dll" debug="${debug}">
 			<sources>
 				<includes name="**/*.cs"/>
@@ -41,7 +44,7 @@
 
 	</target>
 
-	<target name="test" depends="build">
+	<target name="test" depends="assemblies">
 		<exec program="..\..\..\nunit\NUnitConsole" commandline="Ximian.Mono.Tests.AllTests,System_test.dll" failonerror="false"/>
 	</target>
 

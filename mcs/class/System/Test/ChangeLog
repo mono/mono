@@ -1,3 +1,8 @@
+2002/03/08  Nick Drochak <ndrochak@gol.com>
+
+	* System.XML_test.build: Don't build test dll by default.  Only build
+	it when 'make test' is specified.
+
 2002-02-27  Martin Baulig  <martin@gnome.org>
 
 	* System.Text.RegularExpressions/*.cs: Put everything into namespace
