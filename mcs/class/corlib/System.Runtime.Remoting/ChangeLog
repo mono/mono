@@ -1,3 +1,7 @@
+2003-12-03  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* SoapServices.cs: Little fix in namespace construction.
+	
 2003-11-28  Dick Porter  <dick@ximian.com>
 
 	* TypeInfo.cs: 

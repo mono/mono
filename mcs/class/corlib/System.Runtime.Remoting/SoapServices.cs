@@ -65,7 +65,7 @@ namespace System.Runtime.Remoting {
 			// If assemblyName is empty, then use the corlib namespace
 
 			if (assemblyName == string.Empty)
-				return XmlNsForClrTypeWithNs + typeNamespace + "/" + assemblyName;
+				return XmlNsForClrTypeWithNs + typeNamespace;
 			else
 				return XmlNsForClrTypeWithNsAndAssembly + typeNamespace + "/" + assemblyName;
 		}
