@@ -1,3 +1,10 @@
+2001-07-19  Marcin Szczepanski <marcins@zipworld.com.au>
+
+	* System.IO.MemoryStream.cs: Added.  Had quite a few cases of
+	"LAMESPEC", but the tests work against the MS implementation so
+	the major functions are right (ie. Read/Write/Seek).  Some more
+	tests required for the various constructors and exceptions.
+
 2001-07-16  Marcin Szczepanski <marcins@zipworld.com.au>
 
 	* StringReader.cs, StringWriter.cs, TextReader.cs, TextWriter.cs:
