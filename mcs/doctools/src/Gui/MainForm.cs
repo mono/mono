@@ -846,7 +846,7 @@ namespace Mono.Doc.Gui
 		{
 			GenericEditorForm generic = new GenericEditorForm();
 			generic.MdiParent         = this;
-			
+			generic.Tag               = "mditoolbarimageindex[1]";
 			generic.Show();
 		}
 

@@ -26,7 +26,6 @@ using System.Windows.Forms;
 
 namespace Mono.Doc.Gui
 {
-	// TODO: Dynamic resize of buttons?
 	public class MdiToolBar : ToolBar
 	{
 		private Hashtable mdiChildren     = null;
@@ -34,8 +33,7 @@ namespace Mono.Doc.Gui
 
 		public MdiToolBar() : base()
 		{
-			mdiChildren         = new Hashtable();
-			this.ParentChanged += new EventHandler(this.toolBar_ParentChanged);
+			this.mdiChildren = new Hashtable();
 		}
 
 		private void mdiParent_MdiChildActivate(object sender, EventArgs args)
@@ -44,13 +42,13 @@ namespace Mono.Doc.Gui
 
 			if (activeMdiChild != null)
 			{
-				if (mdiChildren[activeMdiChild] == null) 
+				if (this.mdiChildren[activeMdiChild] == null) 
 				{
 					// need a new button
-					ToolBarButton newButton     = new ToolBarButton(activeMdiChild.Text);
-					newButton.Style             = ToolBarButtonStyle.ToggleButton;
-					mdiChildren[activeMdiChild] = newButton;
-					activeMdiChild.Closing     += new CancelEventHandler(this.mdiChild_Closing);
+					ToolBarButton newButton           = new ToolBarButton(activeMdiChild.Text);
+					newButton.Style                   = ToolBarButtonStyle.ToggleButton;
+					this.mdiChildren[activeMdiChild]  = newButton;
+					activeMdiChild.Closing           += new CancelEventHandler(this.mdiChild_Closing);
 
 					// tooltip
 					newButton.ToolTipText = activeMdiChild.Text;
@@ -64,8 +62,40 @@ namespace Mono.Doc.Gui
 						this.Buttons.Add(sep);
 					}
 
-					// FIXME: image hack
-					newButton.ImageIndex = 3; // everything has a class image for the moment
+					// image index.  if the mdi child form's Tag property is a string
+					// and contains the text "mditoolbarimageindex[n]", where n is
+					// an integer, the associated button's ImageIndex property will be
+					// set to n.
+
+					String formTag = activeMdiChild.Tag as string;
+
+					if (formTag != null)
+					{
+						string lookFor = "mditoolbarimageindex[";
+						int    index   = formTag.IndexOf(lookFor);
+
+						if (index != -1)
+						{
+							int    startIndex    = index + lookFor.Length;
+							int    endIndex      = formTag.IndexOf("]", startIndex);
+							string imageIndexStr = formTag.Substring(startIndex, endIndex - startIndex);
+
+							MessageBox.Show("mditoolbar: imageIndexStr: " + imageIndexStr);
+						
+							try
+							{
+								newButton.ImageIndex = int.Parse(imageIndexStr);
+							}
+							catch
+							{
+							}
+						}
+					}
+					else
+					{
+						// use default index
+						newButton.ImageIndex = 0;
+					}
 
 					this.Buttons.Add(newButton);
 				}
@@ -75,15 +105,15 @@ namespace Mono.Doc.Gui
 			else
 			{
 				// last MDI child removed; clean up
-				mdiChildren.Clear();
+				this.mdiChildren.Clear();
 				this.Buttons.Clear();
-				currentMdiChild = null;
+				this.currentMdiChild = null;
 			}
 		}
 
 		private void mdiChild_Closing(object sender, CancelEventArgs args)
 		{
-			ToolBarButton b = (ToolBarButton) mdiChildren[sender];
+			ToolBarButton b = (ToolBarButton) this.mdiChildren[sender];
 
 			// deal with separators
 			if ((this.Appearance == ToolBarAppearance.Flat) && (this.Buttons.Count > 1))
@@ -108,40 +138,41 @@ namespace Mono.Doc.Gui
 		{
 			base.OnButtonClick(args);
 
+			args.Button.Pushed = true;
+
 			// linear search, but double-hashing seems worthless.
-			foreach (Form keyChild in mdiChildren.Keys) 
+			foreach (Form keyChild in this.mdiChildren.Keys) 
 			{
-				if (args.Button == mdiChildren[keyChild])
+				if (args.Button == this.mdiChildren[keyChild])
 				{
 					keyChild.Activate();
 					break;
 				}
 			}
-
 		}
 
-		private void toolBar_ParentChanged(object sender, EventArgs args)
+		protected override void OnParentChanged(EventArgs args)
 		{
-			// FIXME: potential for bugs here and multiple registration for events.
-			
+			base.OnParentChanged(args);
+
+			// TODO: potential for multiple registration of event handler?
 			if (this.Parent is Form && ((Form) this.Parent).IsMdiContainer) 
 			{
 				((Form) this.Parent).MdiChildActivate
 					+= new EventHandler(this.mdiParent_MdiChildActivate);
-
-				// FIXME: hack to show icons
-				this.ImageList = AssemblyTreeImages.List;
 			}
 		}
 
+		#region Private Instance Properties
+
 		private Form CurrentMdiChild 
 		{
-			get { return currentMdiChild; }
+			get { return this.currentMdiChild; }
 			set 
 			{
-				if (currentMdiChild != null) 
+				if (this.currentMdiChild != null) 
 				{
-					ToolBarButton child = mdiChildren[currentMdiChild] as ToolBarButton;
+					ToolBarButton child = this.mdiChildren[this.currentMdiChild] as ToolBarButton;
 
 					if (child != null)
 					{
@@ -149,9 +180,11 @@ namespace Mono.Doc.Gui
 					}
 				}
 
-				((ToolBarButton) mdiChildren[value]).Pushed = true;
-				currentMdiChild = value;
+				((ToolBarButton) this.mdiChildren[value]).Pushed = true;
+				this.currentMdiChild = value;
 			}
 		}
+
+		#endregion // Private Instance Properties
 	}
 }
