@@ -878,7 +878,20 @@ namespace System.Collections {
 		}
 
 		public virtual void RemoveAt (int index) {
-			RemoveRange (index, 1);
+			if (readOnly) {
+				throw new NotSupportedException
+					("Collection is read-only.");
+			}
+
+			if (fixedSize) {
+				throw new NotSupportedException
+					("Collection is fixed size.");
+			}
+			if ((index < 0) || (index >= this.count))
+				throw new ArgumentOutOfRangeException ("index", "Index was out of range.  Must be non-negative and less than the size of the collection.");
+			shiftElements (index, -1);
+			this.count -= 1;
+			version ++;
 		}
 
 		public virtual void RemoveRange (int index, int count) {
@@ -892,16 +905,16 @@ namespace System.Collections {
 					("Collection is fixed size.");
 			}
 
-                       if (index < 0)
-                               throw new ArgumentOutOfRangeException ("index", "Non-negative number required.");
+			if (index < 0)
+				throw new ArgumentOutOfRangeException ("index", "Non-negative number required.");
 
-                       if (count < 0)
-                               throw new ArgumentOutOfRangeException ("count", "Non-negative number required.");
+			if (count < 0)
+				throw new ArgumentOutOfRangeException ("count", "Non-negative number required.");
 
-                       if (index + count > this.count)
-                               throw new ArgumentException ("Offset and length were out of bounds for the array " +
-							    "or count is greater than the number of elements from index " +
-							    "to the end of the source collection.");
+			if (index + count > this.count)
+				throw new ArgumentException ("Offset and length were out of bounds for the array " +
+											 "or count is greater than the number of elements from index " +
+											 "to the end of the source collection.");
  
 			shiftElements (index, - count);
 			this.count -= count;

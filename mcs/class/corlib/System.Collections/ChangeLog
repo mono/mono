@@ -1,3 +1,11 @@
+2003-01-31  Zoltan Varga  <vargaz@freemail.hu>
+
+	* ArrayList.cs (RemoveAt): duplicated the the code from RemoveRange
+	here, since RemoveAt raises a different exception than RemoveRange
+	when the index is out-of-range. Fixes the ArrayList unit tests.
+
+	* ArrayList.cs (RemoveRange): fixed indentation.
+
 2003-01-12  Varga Zoltan <vargaz@freemail.hu>
 
 	* ArrayList.cs (RemoveRange): Patch for allowing zero-size
