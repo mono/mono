@@ -142,6 +142,12 @@ namespace System.Drawing.Win32Impl {
 		[DllImport ("gdi32.dll", 
 			 CallingConvention = CallingConvention.StdCall, 
 			 CharSet = CharSet.Ansi)]
+		internal static extern int Ellipse(IntPtr hdc, int nLeftRect, int nTopRect,
+			int nRightRect, int nBottomRect);
+
+		[DllImport ("gdi32.dll", 
+			 CallingConvention = CallingConvention.StdCall, 
+			 CharSet = CharSet.Ansi)]
 		internal static extern int GdiFlush();
 
 		[DllImport ("gdi32.dll", 
@@ -160,7 +166,6 @@ namespace System.Drawing.Win32Impl {
 
 		[DllImport("user32.dll", CharSet=CharSet.Auto)]
 		internal static extern int ReleaseDC(IntPtr hwnd, IntPtr hdc);
-		
 		#endregion
 		
 		#region Kernel32.dll functions

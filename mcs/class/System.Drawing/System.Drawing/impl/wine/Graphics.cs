@@ -254,28 +254,42 @@ namespace System.Drawing
 				throw new NotImplementedException ();
 			}
 
-			[MonoTODO]
+
+			void DrawEllipse(Pen winePen, int top, int left, int bottom, int right)
+			{
+				IntPtr oldBrush = Win32.SelectObject(hdc_, Win32.GetStockObject (GSO_.NULL_BRUSH));
+				IntPtr oldPen = Win32.SelectObject(hdc_, winePen.hpen_);
+				Win32.Ellipse(hdc_, top, left, bottom, right);
+				Win32.SelectObject(hdc_, oldPen);
+				Win32.SelectObject(hdc_, oldBrush);
+			}
+
 			void IGraphics.DrawEllipse (System.Drawing.Pen pen, Rectangle rect)
 			{
-				throw new NotImplementedException ();
+				DrawEllipse(ConvertPen(pen), rect.Top, rect.Left, rect.Bottom, rect.Right);
 			}
 
-			[MonoTODO]
 			void IGraphics.DrawEllipse (System.Drawing.Pen pen, RectangleF rect)
 			{
-				throw new NotImplementedException ();
+				DrawEllipse(ConvertPen(pen),
+					(int)Math.Round(rect.Top),
+					(int)Math.Round(rect.Left),
+					(int)Math.Round(rect.Bottom),
+					(int)Math.Round(rect.Right));
 			}
 
-			[MonoTODO]
 			void IGraphics.DrawEllipse (System.Drawing.Pen pen, int x, int y, int width, int height)
 			{
-				throw new NotImplementedException ();
+				DrawEllipse(ConvertPen(pen), x, y, x+width, y+height);
 			}
 
-			[MonoTODO]
 			void IGraphics.DrawEllipse (System.Drawing.Pen pen, float x, float y, float width, float height)
 			{
-				throw new NotImplementedException ();
+				DrawEllipse(ConvertPen(pen),
+					(int)Math.Round(x),
+					(int)Math.Round(y),
+					(int)Math.Round(x+width),
+					(int)Math.Round(y+height));
 			}
 
 			[MonoTODO]

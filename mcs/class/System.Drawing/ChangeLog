@@ -1,3 +1,7 @@
+2003-08-31  Jerome Laban <jlaban@wanadoo.fr>
+	* Graphics.cs:
+	* win32functions.cs: Added Win32 Ellipse implementation. 
+
 2003-08-24  Duncan Mak  <duncan@ximian.com>
 
 	* System.Drawing.dll.sources: Add Cairo implementation.
