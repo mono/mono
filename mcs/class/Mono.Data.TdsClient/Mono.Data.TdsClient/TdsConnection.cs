@@ -28,7 +28,7 @@ namespace Mono.Data.TdsClient {
 		bool disposed = false;
 
 		// The set of SQL connection pools
-		static Hashtable TdsConnectionPools = new Hashtable ();
+		static TdsConnectionPoolManager tdsConnectionPools = new TdsConnectionPoolManager (TdsVersion.tds42);
 
 		// The current connection pool
 		TdsConnectionPool pool;
@@ -295,13 +295,10 @@ namespace Mono.Data.TdsClient {
 					tds = new Tds42 (serverName, port, PacketSize, ConnectionTimeout);
 				}
 				else {
-					pool = (TdsConnectionPool) TdsConnectionPools [connectionString];
-					if (pool == null) {
-						ParseDataSource (dataSource, out port, out serverName);
-						pool = new TdsConnectionPool (serverName, port, packetSize, ConnectionTimeout, minPoolSize, maxPoolSize);
-						TdsConnectionPools [connectionString] = pool;
-					}
-					tds = pool.AllocateConnection ();
+					ParseDataSource (dataSource, out port, out serverName);
+ 					TdsConnectionInfo info = new TdsConnectionInfo (serverName, port, packetSize, ConnectionTimeout, minPoolSize, maxPoolSize);
+					pool = tdsConnectionPools.GetConnectionPool (connectionString, info);
+					tds = pool.GetConnection ();
 				}
 			}
 			catch (TdsTimeoutException e) {
@@ -312,9 +309,16 @@ namespace Mono.Data.TdsClient {
 			tds.TdsInfoMessage += new TdsInternalInfoMessageEventHandler (MessageHandler);
 
 			if (!tds.IsConnected) {
-				tds.Connect (parms);
-				ChangeState (ConnectionState.Open);
-				ChangeDatabase (parms.Database);
+				try {
+					tds.Connect (parms);
+					ChangeState (ConnectionState.Open);
+					ChangeDatabase (parms.Database);
+				}
+				catch {
+					if (pooling)
+						pool.ReleaseConnection (tds);
+					throw;
+				}
 			}
 			else if (connectionReset) {
 				// tds.ExecuteNonQuery ("EXEC sp_reset_connection"); FIXME
