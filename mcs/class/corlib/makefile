@@ -1,4 +1,4 @@
-DIRS=System System.Collections System.Globalization System.Net System.Text System.IO System.Diagnostics
+DIRS=System System.Collections System.Configuration.Assemblies System.Globalization System.Net System.Text System.IO System.Diagnostics
 
 all:
 	@echo "You must use 'make windows' or 'make unix'."
