@@ -1,3 +1,8 @@
+2004-06-24  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* CSharpCodeCompiler.cs : On windows we use fixed mono.exe and mcs.exe
+	  located by mscorlib.dll.
+
 2004-06-23  Jackson Harper  <jackson@ximian.com>
 
 	* CSharpCodeGenerator.cs (GenerateLabeledStatement): Append a ": "

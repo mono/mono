@@ -44,6 +44,27 @@ namespace Mono.CSharp
 
 	internal class CSharpCodeCompiler : CSharpCodeGenerator, ICodeCompiler
 	{
+		static string windowsMcsPath;
+		static string windowsMonoPath;
+
+		static CSharpCodeCompiler ()
+		{
+			if (Path.DirectorySeparatorChar == '\\') {
+				// FIXME: right now we use "fixed" version 1.0
+				// mcs at any time.
+				PropertyInfo gac = typeof (Environment).GetProperty ("GacPath", BindingFlags.Static|BindingFlags.NonPublic);
+				MethodInfo get_gac = gac.GetGetMethod (true);
+				string p = Path.GetDirectoryName (
+					(string) get_gac.Invoke (null, null));
+				windowsMonoPath = Path.Combine (
+					Path.GetDirectoryName (
+						Path.GetDirectoryName (p)),
+					"bin\\mono.exe");
+				windowsMcsPath =
+					Path.Combine (p, "1.0\\mcs.exe");
+			}
+		}
+
 		//
 		// Constructors
 		//
@@ -107,8 +128,15 @@ namespace Mono.CSharp
 
 			string mcs_output;
 			string[] mcs_output_lines;
-			mcs.StartInfo.FileName="mcs";
-			mcs.StartInfo.Arguments=BuildArgs(options,fileNames);
+			// FIXME: these lines had better be platform independent.
+			if (Path.DirectorySeparatorChar == '\\') {
+				mcs.StartInfo.FileName = windowsMonoPath;
+				mcs.StartInfo.Arguments = windowsMcsPath + ' ' + BuildArgs (options, fileNames);
+			}
+			else {
+				mcs.StartInfo.FileName="mcs";
+				mcs.StartInfo.Arguments=BuildArgs(options,fileNames);
+			}
 			mcs.StartInfo.CreateNoWindow=true;
 			mcs.StartInfo.UseShellExecute=false;
 			mcs.StartInfo.RedirectStandardOutput=true;
