@@ -1,4 +1,4 @@
-2003-05-24  Philip Van Hoof  <spamfrommailing@freax.org>
+2003-05-24  Philip Van Hoof  <me@freax.org>
 
 	* Math.cs: Add the MS.NET 1.1 methods (BigMul, DivRem, DivRem).
 
