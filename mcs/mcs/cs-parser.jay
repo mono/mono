@@ -1033,6 +1033,16 @@ formal_parameter_list
 
 		$$ = new Parameters (pars, true, lexer.Location);
 	  }
+	| parameter_array COMMA fixed_parameters
+	  {
+		Report.Error (231, lexer.Location, "A params parameter must be the last parameter in a formal parameter list");
+		$$ = null;
+	  }
+	| ARGLIST COMMA fixed_parameters
+	  {
+		Report.Error (257, lexer.Location, "An __arglist parameter must be the last parameter in a formal parameter list");
+		$$ = null;
+	  }
 	| parameter_array 
 	  {
 		$$ = new Parameters (null, (Parameter) $1, lexer.Location);
