@@ -3,6 +3,11 @@
 	* Delegate.cs (Equals): Do not compare method_ptr, since it might
 	point to a trampoline.
 
+2004-02-12  Jackson Harper  <jackson@ximian.com>
+
+	* AppDomainSetup.cs: If relative paths are used they should be
+	rooted in the temp directory.
+	
 2004-02-11  Marek Safar  <marek.safar@seznam.cz>
 
         * Type.cs (FilterNameIgnoreCase_impl): Added extra check for speedup.
