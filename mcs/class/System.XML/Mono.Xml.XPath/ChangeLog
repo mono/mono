@@ -1,5 +1,9 @@
 2004-02-17  Atsushi Enomoto <atsushi@ximian.com>
 
+	* KeyPattern.cs, Pattern.cs : removed using decls.
+
+2004-02-17  Atsushi Enomoto <atsushi@ximian.com>
+
 	* LocationPathPattern.cs : Optimized Matches(). For non-positional
 	  patterns, it never iterates predicate, just evaluate boolean.
 

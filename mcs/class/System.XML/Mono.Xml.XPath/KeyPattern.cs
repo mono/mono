@@ -15,11 +15,11 @@ using System.Xml.Schema;
 using System.Xml.XPath;
 using System.Xml.Xsl;
 using Mono.Xml.Xsl;
-using Mono.Xml.Xsl.Functions;
 
-namespace Mono.Xml.XPath {
-	internal class KeyPattern : LocationPathPattern {
-
+namespace Mono.Xml.XPath 
+{
+	internal class KeyPattern : LocationPathPattern 
+	{
 		XmlQualifiedName keyName;
 		string arg0, arg1;
 		XsltKey key;

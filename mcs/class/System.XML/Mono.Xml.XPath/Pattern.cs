@@ -15,11 +15,11 @@ using System.Xml.Schema;
 using System.Xml.XPath;
 using System.Xml.Xsl;
 using Mono.Xml.Xsl;
-using Mono.Xml.Xsl.Functions;
 
-namespace Mono.Xml.XPath {
-	public abstract class Pattern {
-		
+namespace Mono.Xml.XPath 
+{
+	public abstract class Pattern 
+	{
 		internal static Pattern Compile (string s, Compiler comp)
 		{		
 			return Compile (comp.parser.Compile (s));
