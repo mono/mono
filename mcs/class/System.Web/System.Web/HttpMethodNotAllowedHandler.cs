@@ -13,15 +13,11 @@ namespace System.Web
 	{
 		public void ProcessRequest (HttpContext context)
 		{
-			throw new HttpException (405, "Forbidden");
+			throw new HttpException (405, "Method not allowed");
 		}
 
-
-		public bool IsReusable
-		{
-			get {
-				return true;
-			}
+		public bool IsReusable {
+			get { return true; }
 		}
 	}
 }

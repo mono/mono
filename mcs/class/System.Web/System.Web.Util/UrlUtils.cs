@@ -236,6 +236,9 @@ namespace System.Web.Util
 				result.Add (current);
 			}
 
+			if (result.Count == 0)
+				return "/";
+
 			result.Insert (0, "");
 			return String.Join ("/", (string []) result.ToArray (typeof (string)));
 		}

@@ -474,6 +474,7 @@ namespace System.Web
 			IStateHandler [] _handlers;
 			int _currentStateIdx;
 			int _endStateIdx;
+			int _endRequestStateIdx;
 			int _countSteps;
 			int _countSyncSteps;
 
@@ -561,6 +562,7 @@ namespace System.Web
 				GetAsStates (HttpApplication.UpdateRequestCacheId, states);
 
 				// EndRequest
+				_endRequestStateIdx = states.Count;
 				if (null != _app._endRequestAsync)
 					_app._endRequestAsync.GetAsStates (_app, states);
 				GetAsStates (HttpApplication.EndRequestId, states);
@@ -609,8 +611,10 @@ namespace System.Web
 
 							// Check if request flow is to be stopped
 							if (_app.GetLastError () != null || _app._CompleteRequest) {
-								_currentStateIdx = _endStateIdx;
-								break;
+								if (_currentStateIdx >= _endRequestStateIdx)
+									break;
+
+								_currentStateIdx = _endRequestStateIdx;
 							} else if (_currentStateIdx < _endStateIdx) {
 								// Get next state handler
 								_currentStateIdx++;

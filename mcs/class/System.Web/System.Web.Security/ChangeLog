@@ -1,3 +1,7 @@
+2003-08-27  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* UrlAuthorizationModule.cs: fixed description for status code.
+
 2003-07-31  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* FormsAuthenticationModule.cs: really renew the ticket. Thanks to

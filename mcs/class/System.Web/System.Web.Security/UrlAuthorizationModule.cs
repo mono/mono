@@ -41,7 +41,7 @@ namespace System.Web.Security
 				return;
 
 			if (!config.IsValidUser (context.User, context.Request.HttpMethod)) {
-				HttpException e =  new HttpException (401, "Forbidden");
+				HttpException e =  new HttpException (401, "Unauthorized");
 				
 				context.Response.StatusCode = 401;
 				context.Response.Write (e.GetHtmlErrorMessage ());

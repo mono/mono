@@ -1,3 +1,12 @@
+2003-08-27  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpApplication.cs: when the request is completed or an
+	error happens, execute all the delegates attached to EndRequest, not
+	only the last one. This makes xsp/test/authtest work again.
+	
+	* HttpMethodNotAllowedHandler.cs: fixed description for http
+	status code.
+
 2003-08-22  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpRequest.cs: quick way of checking that the path is within the
