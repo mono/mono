@@ -1,5 +1,8 @@
 2002-07-08  Radek Doulik  <rodo@ximian.com>
 
+	* reflection.c (method_encode_code): use non-translated values to
+	compute finally_start, this fixes exception handling on ppc, yay!
+
 	* decimal.h (struct signscale): fix endianess
 
 2002-07-07  Radek Doulik  <rodo@ximian.com>
