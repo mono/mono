@@ -1,3 +1,9 @@
+2004-01-28  Martin Baulig  <martin@ximian.com>
+
+	* typemanager.cs (TypeManager.IsEqual): New static method.
+	(TypeManager.FilterWithClosure): Call TypeManager.IsEqual() to
+	check for equality instead of using `=='.
+
 2004-01-26  Martin Baulig  <martin@ximian.com>
 
 	* decl.cs (DeclSpace.CurrentType): New public field.

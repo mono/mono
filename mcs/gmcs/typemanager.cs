@@ -1503,6 +1503,14 @@ public class TypeManager {
 		return false;
 	}
 
+	public static bool IsEqual (Type a, Type b)
+	{
+		if (a.Equals (b))
+			return true;
+		else
+			return IsEqualGenericType (a, b);
+	}
+
 	//
 	// Checks whether `type' is a subclass or nested child of `parent'.
 	//
@@ -2377,7 +2385,7 @@ public class TypeManager {
 			return false;
 
 		if (((closure_qualifier_type == null) || (closure_qualifier_type == closure_invocation_type)) &&
-		    (m.DeclaringType == closure_invocation_type))
+		    IsEqual (m.DeclaringType, closure_invocation_type))
 			return true;
 
 		//
@@ -2389,7 +2397,8 @@ public class TypeManager {
 			MethodAttributes ma = mb.Attributes & MethodAttributes.MemberAccessMask;
 
 			if (ma == MethodAttributes.Private)
-				return closure_private_ok || (closure_invocation_type == m.DeclaringType) ||
+				return closure_private_ok ||
+					IsEqual (closure_invocation_type, m.DeclaringType) ||
 					IsNestedChildOf (closure_invocation_type, m.DeclaringType);
 
 			//
@@ -2438,7 +2447,8 @@ public class TypeManager {
 			FieldAttributes fa = fi.Attributes & FieldAttributes.FieldAccessMask;
 
 			if (fa == FieldAttributes.Private)
-				return closure_private_ok || (closure_invocation_type == m.DeclaringType) ||
+				return closure_private_ok ||
+					IsEqual (closure_invocation_type, m.DeclaringType) ||
 					IsNestedChildOf (closure_invocation_type, m.DeclaringType);
 
 			//
