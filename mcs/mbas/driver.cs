@@ -123,7 +123,7 @@ namespace Mono.Languages
 							
 				case "module":
 					target = Target.Module;
-					target_ext = ".dll";
+					target_ext = ".netmodule";
 					break;
 			}
 			return WhatToDoNext.GoAhead;
@@ -659,6 +659,22 @@ namespace Mono.Languages
 				ShowTime("References loaded");
 
 			InitializeDebuggingSupport();
+
+			// target is Module 
+			if (target == Target.Module) {
+				PropertyInfo module_only = typeof (AssemblyBuilder).GetProperty ("IsModuleOnly", BindingFlags.Instance|BindingFlags.Public|BindingFlags.NonPublic);
+				if (module_only == null) {
+					Report.Error (0, new Location (-1, -1), "Cannot use /target:module on this runtime: try the Mono runtime instead.");
+					Environment.Exit (1);
+				}
+
+				MethodInfo set_method = module_only.GetSetMethod (true);
+				set_method.Invoke (CodeGen.AssemblyBuilder, BindingFlags.Default, null, new object[]{true}, null);
+
+				TypeManager.AddModule (CodeGen.ModuleBuilder);
+			}
+
+			
 
 			//
 			// Before emitting, we need to get the core
