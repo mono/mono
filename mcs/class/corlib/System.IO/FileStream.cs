@@ -115,6 +115,14 @@ namespace System.IO
 			    (mode != FileMode.Open && mode != FileMode.OpenOrCreate))
 				throw new ArgumentException ("access and mode not compatible");
 
+			if (access == FileAccess.Read && mode != FileMode.Create && mode != FileMode.OpenOrCreate &&
+					mode != FileMode.CreateNew && !File.Exists (name))
+				throw new FileNotFoundException ("Could not find file \"" + name + "\".");
+
+			if (mode == FileMode.CreateNew &&
+					!Directory.Exists (Path.GetFullPath (Path.GetDirectoryName (name))))
+				throw new DirectoryNotFoundException ("Could not find a part of the path \"" + name + "\".");
+
 			this.name = name;
 
 			// TODO: demand permissions

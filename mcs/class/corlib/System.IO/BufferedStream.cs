@@ -26,7 +26,9 @@ namespace System.IO {
 				throw new ArgumentNullException ("stream was null");
 			if (buffer_size < 0)
 				throw new ArgumentOutOfRangeException ();
-						
+			if (!stream.CanRead && !stream.CanWrite)
+				throw new ObjectDisposedException ("Cannot access a closed Stream.");
+
 			m_stream = stream;
 			m_buffer = new byte[buffer_size];
 		}

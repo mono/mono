@@ -1,4 +1,10 @@
+2004-02-13  Jackson Harper  <jackson@ximian.com>
 
+	* FileStream.cs: Throw some more exceptions for invalid
+	params. Fixes some unit test failures.
+	* BufferedStream.cs: If the stream is closed (can't read from it
+	or write to it) throw an ObjectDisposedException.
+	
 Tue Jan 20 23:10:22 CET 2004 Paolo Molaro <lupus@ximian.com>
 
 	* StreamWriter.cs, TextWriter.cs: comply with the documented
