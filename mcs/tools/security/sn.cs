@@ -108,6 +108,95 @@ namespace Mono.Tools {
 			return sb.ToString ();
 		}
 
+		// is assembly signed (or delayed signed) ?
+		static bool IsStrongNamed (Assembly assembly) 
+		{
+			if (assembly == null)
+				return false;
+
+			object[] attrs = assembly.GetCustomAttributes (true);
+			foreach (object o in attrs) {
+				if (o is AssemblyKeyFileAttribute)
+					return true;
+				else if (o is AssemblyKeyNameAttribute)
+					return true;
+			}
+			return false;
+		}
+
+		static RSA GetAssemblyPublicKey (Assembly assembly) 
+		{
+			if (assembly == null)
+				return null;
+
+			;
+
+			return null;
+		}
+
+		static void ReSign (string assemblyName, RSA key) 
+		{
+			// this doesn't load the assembly (well it unloads it ;)
+			// http://weblogs.asp.net/nunitaddin/posts/9991.aspx
+			AssemblyName an = AssemblyName.GetAssemblyName (assemblyName);
+			if (an == null) {
+				Console.WriteLine ("Unable to load assembly: {0}", assemblyName);
+				return;
+			}
+
+			StrongName sign = new StrongName (key);
+			// try to compare public key
+			bool same = Compare (sign.PublicKey, an.GetPublicKey ());
+			if (!same) {
+				// second chance, try to compare public key token
+				same = Compare (sign.PublicKeyToken, an.GetPublicKeyToken ());
+			}
+
+			if ((same) && (an.Flags == AssemblyNameFlags.PublicKey)) {
+				if (sign.Sign (assemblyName))
+					Console.WriteLine ("Assembly signed");
+				else
+					Console.WriteLine ("Couldn't sign the assembly");
+			}
+			else
+				Console.WriteLine ("There is no public key present in assembly {0}", assemblyName);
+		}
+
+		static void Verify (string assemblyName, StrongName sn) 
+		{
+			// this doesn't load the assembly (well it unloads it ;)
+			// http://weblogs.asp.net/nunitaddin/posts/9991.aspx
+			AssemblyName an = AssemblyName.GetAssemblyName (assemblyName);
+			if (an == null) {
+				Console.WriteLine ("Unable to load assembly: {0}", assemblyName);
+				return;
+			}
+
+			if (an.Flags != AssemblyNameFlags.PublicKey) {
+				Console.WriteLine ("There is no public key present in assembly {0}", assemblyName);
+				return;
+			}
+
+			if (sn.Verify (assemblyName))
+				Console.WriteLine ("Assembly {0} is strongnamed.", assemblyName);
+			else
+				Console.WriteLine ("Assembly {0} isn't strongnamed", assemblyName);
+		}
+
+		static bool Compare (byte[] value1, byte[] value2) 
+		{
+			if ((value1 == null) || (value2 == null))
+				return false;
+			bool result = (value1.Length == value2.Length);
+			if (result) {
+				for (int i=0; i < value1.Length; i++) {
+					if (value1 [i] != value2 [i])
+						return false;
+				}
+			}
+			return result;
+		}
+
 		static void Help (string details) 
 		{
 			Console.WriteLine ("Usage: sn [-q | -quiet] options [parameters]{0}", Environment.NewLine);
@@ -141,7 +230,7 @@ namespace Mono.Tools {
 					Console.WriteLine (" -k keypair.snk{0}\tCreate a new keypair in the specified file", Environment.NewLine);
 					Console.WriteLine (" -R assembly keypair.snk{0}\tResign the assembly with the specified StrongName key file", Environment.NewLine);
 					Console.WriteLine (" -Rc assembly container{0}\tResign the assembly with the specified CSP container", Environment.NewLine);
-					Console.WriteLine (" -t file{0}\tShow the public key from the specified file [1]", Environment.NewLine);
+					Console.WriteLine (" -t file{0}\tShow the public key from the specified file <1>", Environment.NewLine);
 					Console.WriteLine (" -tp file{0}\tShow the public key and pk token from the specified file <1>", Environment.NewLine);
 					Console.WriteLine (" -T assembly{0}\tShow the public key from the specified assembly", Environment.NewLine);
 					Console.WriteLine (" -Tp assembly{0}\tShow the public key and pk token from the specified assembly", Environment.NewLine);
@@ -200,7 +289,16 @@ namespace Mono.Tools {
 						Console.WriteLine ("Keypair in container {0} has been deleted", args [i]);
 					break;
 				case "-D":
-					Console.WriteLine ("Unimplemented option");
+					StrongName a1 = new StrongName ();
+					byte[] h1 = a1.Hash (args [i++]);
+					StrongName a2 = new StrongName ();
+					byte[] h2 = a2.Hash (args [i++]);
+					if (Compare (h1, h2)) {
+						Console.WriteLine ("Both assembly are identical (same digest for metadata)");
+						// TODO: if equals then compare signatures
+					}
+					else
+						Console.WriteLine ("Assemblies are not identical (different digest for metadata)");
 					break;
 				case "-e":
 					// Export public key from assembly
@@ -252,10 +350,15 @@ namespace Mono.Tools {
 						Console.WriteLine ("Public Key extracted to file {0}", args [i]);
 					break;
 				case "-R":
-					Console.WriteLine ("Unimplemented option");
+					string filename = args [i++];
+					sn = new StrongName (ReadFromFile (args [i]));
+					ReSign (filename, sn.RSA);
 					break;
 				case "-Rc":
-					Console.WriteLine ("Unimplemented option");
+					filename = args [i++];
+					csp.KeyContainerName = args [i];
+					rsa = new RSACryptoServiceProvider (csp);
+					ReSign (filename, rsa);
 					break;
 				case "-t":
 					// Show public key token from file
@@ -283,10 +386,16 @@ namespace Mono.Tools {
 					Console.WriteLine ("Public Key:" + ToString (an.GetPublicKey ()));
 					Console.WriteLine ("{0}Public Key Token: " + ToString (an.GetPublicKeyToken ()), Environment.NewLine);
 					break;
-				case "-V":
-					Console.WriteLine ("Unimplemented option");
+				case "-v":
+					filename = args [i++];
+					an = AssemblyName.GetAssemblyName (filename);
+					byte[] akey = an.GetPublicKey ();
+					byte[] pkey = new byte [akey.Length - 12];
+					Buffer.BlockCopy (akey, 12, pkey, 0, pkey.Length);
+					sn = new StrongName (pkey);
+					Verify (filename, sn);
 					break;
-				case "-Vf":
+				case "-vf":
 					Console.WriteLine ("Unimplemented option");
 					break;
 				case "-Vl":
