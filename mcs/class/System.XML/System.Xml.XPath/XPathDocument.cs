@@ -1,9 +1,11 @@
 //
 // System.Xml.XPath.XPathDocument
 //
-// Author:
-//	Atsushi Enomoto (ginga@kit.hi-ho.ne.jp)
+// Authors:
+//   Tim Coleman (tim@timcoleman.com)
+//   Atsushi Enomoto (ginga@kit.hi-ho.ne.jp)
 //
+// (C) Copyright 2002 Tim Coleman
 // (C) 2003 Atsushi Enomoto
 //
 using System;
@@ -15,15 +17,6 @@ using Mono.Xml.XPath;
 
 namespace System.Xml.XPath
 {
-
-	public class Driver
-	{
-		public static void Main (string [] args)
-		{
-			XPathDocument pd = new XPathDocument ("test.xml");
-			XPathNavigator nav = pd.CreateNavigator ();
-		}
-	}
 
 	public class XPathDocument : IXPathNavigable
 	{

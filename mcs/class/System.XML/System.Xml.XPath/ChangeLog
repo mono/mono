@@ -1,5 +1,10 @@
 2003-06-30  Atsushi Enomoto  <ginga@kit.hi-ho.ne.jp>
 
+	* XPathDocument.cs : removed Driver class and restored authors' name
+	  (though it is completely rewrote).
+
+2003-06-30  Atsushi Enomoto  <ginga@kit.hi-ho.ne.jp>
+
 	* XPathDocument.cs : Replaced existing stub class with real
 	  XPathDocument implementation.
 
