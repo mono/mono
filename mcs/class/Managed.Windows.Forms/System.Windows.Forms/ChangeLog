@@ -1,3 +1,37 @@
+2004-12-11  Peter Bartok  <pbartok@novell.com>
+
+	* X11Structs.cs:
+	  - Added XKeyboardState (moved from XplatUIX11.cs)
+	  - Added XCreateGC related enums and structures
+	  - Added GXFunction for XSetFunction
+
+	* XplatUIStructs.cs: Added missing WS_EX_xxx definitions
+
+	* XplatUI.cs: Added CreateCaret(), DestroyCaret(), SetCaretPos() and
+	  CaretVisible() calls
+
+	* ToolTip.cs: Added code to prevent stealing focus from app windows
+
+	* XplatUIDriver.cs: Added abstracts for caret functions (CreateCaret,
+	  DestroyCaret, SetCaretPos and CaretVisible)
+
+	* XplatUIX11.cs:
+	  - Added implementation for caret functions
+	  - Moved hover variables into a struct, to make it a bit easier
+	    on the eyes and to debug
+	  - Removed XKeyboardState (moved to XplatUIX11.cs)
+	  - Moved Keyboard properties into the properties region
+
+	* Control.cs (get_Region): Control.CreateGraphics is the appropriate
+	  call to get a graphics context for our control
+
+	* XplatUIOSX.cs: Added empty overrides for the new caret functions
+
+	* TreeView.cs: Fixed bug. No matter what color was set it would always
+	  return SystemColors.Window
+
+	* XplatUIWin32.cs: Implemented caret overrides
+
 2004-12-10  Jordi Mas i Hernandez <jordi@ximian.com>
 
 	* ListBox.cs: fire events, implement missing methods and properties,

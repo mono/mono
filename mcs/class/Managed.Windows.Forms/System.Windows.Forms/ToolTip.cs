@@ -129,6 +129,17 @@ namespace System.Windows.Forms {
 				base.Dispose (disposing);
 			}
 
+			protected override void WndProc(ref Message m) {
+				if (m.Msg == (int)Msg.WM_SETFOCUS) {
+					if (m.WParam != IntPtr.Zero) {
+						// FIXME - still need to teach XplatUI this call
+						//XplatUI.SetFocus(m.WParam);
+					}
+				}
+				base.WndProc (ref m);
+			}
+
+
 			#endregion	// ToolTipWindow Class Protected Instance Methods
 
 			#region ToolTipWindow Class Private Methods

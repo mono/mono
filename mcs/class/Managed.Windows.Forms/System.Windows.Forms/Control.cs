@@ -1600,7 +1600,7 @@ namespace System.Windows.Forms
 				Graphics	g;
 				RectangleF	r;
 
-				g = Graphics.FromHwnd(this.window.Handle);
+				g = this.CreateGraphics();
 				r = value.GetBounds(g);
 
 				SetBounds((int)r.X, (int)r.Y, (int)r.Width, (int)r.Height);

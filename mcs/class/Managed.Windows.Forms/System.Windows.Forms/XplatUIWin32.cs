@@ -1089,6 +1089,31 @@ namespace System.Windows.Forms {
 			}
 		}
 
+
+		private void CaretCallback(object sender, EventArgs e) {
+			Console.WriteLine("CaretCallback hit");
+		}
+
+		internal override void CreateCaret(IntPtr hwnd, int width, int height) {
+			Win32CreateCaret(hwnd, IntPtr.Zero, width, height);
+		}
+
+		internal override void DestroyCaret(IntPtr hwnd) {
+			Win32DestroyCaret();
+		}
+
+		internal override void SetCaretPos(IntPtr hwnd, int x, int y) {
+			Win32SetCaretPos(x, y);
+		}
+
+		internal override void CaretVisible(IntPtr hwnd, bool visible) {
+			if (visible) {
+				Win32ShowCaret(hwnd);
+			} else {
+				Win32HideCaret(hwnd);
+			}
+		}
+
 		internal override int KeyboardSpeed {
 			get {
 				Console.WriteLine ("KeyboardSpeed: need to query Windows");
@@ -1282,7 +1307,24 @@ namespace System.Windows.Forms {
 
 		[DllImport ("user32.dll", EntryPoint="SetFocus", CharSet=CharSet.Ansi, CallingConvention=CallingConvention.StdCall)]
 		internal extern static IntPtr Win32SetFocus(IntPtr hwnd);
-		#endregion
 
+		[DllImport ("user32.dll", EntryPoint="CreateCaret", CharSet=CharSet.Ansi, CallingConvention=CallingConvention.StdCall)]
+		internal extern static bool Win32CreateCaret(IntPtr hwnd, IntPtr hBitmap, int nWidth, int nHeight);
+
+		[DllImport ("user32.dll", EntryPoint="DestroyCaret", CharSet=CharSet.Ansi, CallingConvention=CallingConvention.StdCall)]
+		internal extern static bool Win32DestroyCaret();
+
+		[DllImport ("user32.dll", EntryPoint="ShowCaret", CharSet=CharSet.Ansi, CallingConvention=CallingConvention.StdCall)]
+		internal extern static bool Win32ShowCaret(IntPtr hwnd);
+
+		[DllImport ("user32.dll", EntryPoint="HideCaret", CharSet=CharSet.Ansi, CallingConvention=CallingConvention.StdCall)]
+		internal extern static bool Win32HideCaret(IntPtr hwnd);
+
+		[DllImport ("user32.dll", EntryPoint="SetCaretPos", CharSet=CharSet.Ansi, CallingConvention=CallingConvention.StdCall)]
+		internal extern static bool Win32SetCaretPos(int X, int Y);
+
+		[DllImport ("user32.dll", EntryPoint="GetCaretBlinkTime", CharSet=CharSet.Ansi, CallingConvention=CallingConvention.StdCall)]
+		internal extern static uint Win32GetCaretBlinkTime();
+		#endregion
 	}
 }

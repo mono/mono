@@ -44,6 +44,30 @@ using Mono.Unix;
 /// X11 Version
 namespace System.Windows.Forms {
 	internal class XplatUIX11 : XplatUIDriver {
+		#region Structure Definitions
+		internal struct Caret {
+			internal Timer	timer;				// Blink interval
+			internal IntPtr	hwnd;				// Window owning the caret
+			internal int	x;				// X position of the caret
+			internal int	y;				// Y position of the caret
+			internal int	width;				// Width of the caret; if no image used
+			internal int	height;				// Height of the caret, if no image used
+			internal int	visible;			// Counter for visible/hidden
+			internal bool	on;				// Caret blink display state: On/Off
+			internal IntPtr	gc;				// Graphics context
+			internal bool	paused;				// Don't update right now
+		}
+
+		internal struct Hover {
+			internal Timer	timer;				// for hovering
+			internal IntPtr	hwnd;				// Last window we entered; used to generate WM_MOUSEHOVER
+			internal int	x;				// Last MouseMove X coordinate; used to generate WM_MOUSEHOVER
+			internal int	y;				// Last MouseMove Y coordinate; used to generate WM_MOUSEHOVER
+			internal int	interval;			// in milliseconds, how long to hold before hover is generated
+			internal int	hevent;				// X Atom
+		}
+		#endregion	// Structure Definitions
+
 		#region Local Variables
 		private static XplatUIX11	instance;
 		private static int		ref_count;
@@ -61,7 +85,6 @@ namespace System.Windows.Forms {
 		private static int		atom;			// X Atom
 		private static int		net_wm_state;		// X Atom
 		private static int		async_method;
-		private static int		hover_event;
 		private static uint		default_colormap;	// X Colormap ID
 		internal static Keys		key_state;
 		internal static MouseButtons	mouse_state;
@@ -76,11 +99,9 @@ namespace System.Windows.Forms {
 		internal static int		click_pending_time;	// Last time we received a mouse click
 		internal static bool		click_pending;		// True if we haven't sent the last mouse click
 		internal static int		double_click_interval;	// in milliseconds, how fast one has to click for a double click
-		internal static int		hover_interval;		// in milliseconds, how long to hold before hover is generated
-		internal static Timer		hover_timer;		// for hovering
-		internal static	int		hover_x;		// Last MouseMove X coordinate; used to generate WM_MOUSEHOVER
-		internal static	int		hover_y;		// Last MouseMove Y coordinate; used to generate WM_MOUSEHOVER
-		internal static IntPtr		hover_hwnd;		// Last window we entered; used to generate WM_MOUSEHOVER
+		internal static Hover		hover;
+
+		internal static Caret		caret;			// To display a blinking caret
 
 		private static Hashtable	handle_data;
 		private XEventQueue		message_queue;
@@ -110,6 +131,7 @@ namespace System.Windows.Forms {
 
 		#endregion	// Local Variables
 
+		#region	Properties
 		internal override Keys ModifierKeys {
 			get {
 				return key_state;
@@ -139,6 +161,34 @@ namespace System.Windows.Forms {
 				}
 			}
 		}
+		// Keyboard
+		internal override int KeyboardSpeed {
+			get {
+				//
+				// A lot harder: need to do:
+				// XkbQueryExtension(0x08051008, 0xbfffdf4c, 0xbfffdf50, 0xbfffdf54, 0xbfffdf58)       = 1
+				// XkbAllocKeyboard(0x08051008, 0xbfffdf4c, 0xbfffdf50, 0xbfffdf54, 0xbfffdf58)        = 0x080517a8
+				// XkbGetControls(0x08051008, 1, 0x080517a8, 0xbfffdf54, 0xbfffdf58)                   = 0
+				//
+				// And from that we can tell the repetition rate
+				//
+				// Notice, the values must map to:
+				//   [0, 31] which maps to 2.5 to 30 repetitions per second.
+				//
+				return 0;
+			}
+		}
+
+		internal override int KeyboardDelay {
+			get {
+				//
+				// Return values must range from 0 to 4, 0 meaning 250ms,
+				// and 4 meaning 1000 ms.
+				//
+				return 1; // ie, 500 ms
+			}
+		}
+		#endregion	// Properties
 
 		#region Constructor & Destructor
                 // This is always called from a locked context
@@ -161,14 +211,14 @@ namespace System.Windows.Forms {
 			wake.Connect (listen.LocalEndPoint);
 
 			double_click_interval = 500;
-			hover_interval = 500;
+			hover.interval = 500;
 
-			hover_timer = new Timer();
-			hover_timer.Enabled = false;
-			hover_timer.Interval = hover_interval;		// FIXME - read this from somewhere
-			hover_timer.Tick +=new EventHandler(MouseHover);
-			hover_x = -1;
-			hover_y = -1;
+			hover.timer = new Timer();
+			hover.timer.Enabled = false;
+			hover.timer.Interval = hover.interval;		// FIXME - read this from somewhere
+			hover.timer.Tick +=new EventHandler(MouseHover);
+			hover.x = -1;
+			hover.y = -1;
 
 #if __MonoCS__
 			pollfds = new Pollfd [2];
@@ -180,6 +230,10 @@ namespace System.Windows.Forms {
 			pollfds [1].fd = wake.Handle.ToInt32 ();
 			pollfds [1].events = PollEvents.POLLIN;
 #endif
+
+			caret.timer = new Timer();
+			caret.timer.Interval = 500;		// FIXME - where should this number come from?
+			caret.timer.Tick += new EventHandler(CaretCallback);
 		}
 
 		~XplatUIX11() {
@@ -210,23 +264,27 @@ namespace System.Windows.Forms {
 		}
 		#endregion
 
-		internal override event EventHandler Idle;
-		
 
+		#region Events
+		internal override event EventHandler Idle;
+		#endregion	// Events
+
+
+		#region	Callbacks
 		private void MouseHover(object sender, EventArgs e) {
-			if ((hover_x == mouse_position.X) && (hover_y == mouse_position.Y)) {
+			if ((hover.x == mouse_position.X) && (hover.y == mouse_position.Y)) {
 				XEvent xevent;
 
-				hover_timer.Enabled = false;
+				hover.timer.Enabled = false;
 
-				if (hover_hwnd != IntPtr.Zero) {
+				if (hover.hwnd != IntPtr.Zero) {
 					xevent = new XEvent ();
 					xevent.type = XEventName.ClientMessage;
 					xevent.ClientMessageEvent.display = DisplayHandle;
-					xevent.ClientMessageEvent.window = (IntPtr)hover_hwnd;
-					xevent.ClientMessageEvent.message_type = (IntPtr)hover_event;
+					xevent.ClientMessageEvent.window = (IntPtr)hover.hwnd;
+					xevent.ClientMessageEvent.message_type = (IntPtr)hover.hevent;
 					xevent.ClientMessageEvent.format = 32;
-					xevent.ClientMessageEvent.ptr1 = (IntPtr) (hover_y << 16 | hover_x);
+					xevent.ClientMessageEvent.ptr1 = (IntPtr) (hover.y << 16 | hover.x);
 
 					message_queue.EnqueueLocked (xevent);
 
@@ -234,6 +292,16 @@ namespace System.Windows.Forms {
 				}
 			}
 		}
+
+		private void CaretCallback(object sender, EventArgs e) {
+			if (caret.paused) {
+				return;
+			}
+			caret.on = !caret.on;
+
+			XDrawLine(DisplayHandle, caret.hwnd, caret.gc, caret.x, caret.y, caret.x, caret.y + caret.height);
+		}
+		#endregion	// Callbacks
 
 		#region Public Static Methods
 		internal override IntPtr InitializeDriver() {
@@ -292,7 +360,7 @@ namespace System.Windows.Forms {
 				wm_state_above=XInternAtom(display_handle, "_NET_WM_STATE_ABOVE", false);
 				atom=XInternAtom(display_handle, "ATOM", false);
 				async_method = XInternAtom(display_handle, "_SWF_AsyncAtom", false);
-				hover_event = XInternAtom(display_handle, "_SWF_HoverAtom", false);
+				hover.hevent = XInternAtom(display_handle, "_SWF_HoverAtom", false);
 
 				handle_data = new Hashtable ();
 			} else {
@@ -549,6 +617,11 @@ namespace System.Windows.Forms {
 
 			}
 
+			if (caret.visible == 1) {
+				caret.paused = true;
+				HideCaret();
+			}
+
 			data.DeviceContext = Graphics.FromHwnd (handle);
 			paint_event = new PaintEventArgs((Graphics)data.DeviceContext, data.InvalidArea);
 
@@ -563,6 +636,11 @@ namespace System.Windows.Forms {
 			Graphics g = (Graphics) data.DeviceContext;
 			g.Flush ();
 			g.Dispose ();
+
+			if (caret.visible == 1) {
+				ShowCaret();
+				caret.paused = false;
+			}
 		}
 
 		internal override void SetWindowPos(IntPtr handle, int x, int y, int width, int height) {
@@ -1028,9 +1106,9 @@ namespace System.Windows.Forms {
 					msg.lParam = (IntPtr) (xevent.MotionEvent.y << 16 | xevent.MotionEvent.x);
 					mouse_position.X = xevent.MotionEvent.x;
 					mouse_position.Y = xevent.MotionEvent.y;
-					hover_x = mouse_position.X;
-					hover_y = mouse_position.Y;
-					hover_timer.Interval = hover_interval;
+					hover.x = mouse_position.X;
+					hover.y = mouse_position.Y;
+					hover.timer.Interval = hover.interval;
 					break;
 				}
 
@@ -1039,8 +1117,8 @@ namespace System.Windows.Forms {
 						return true;
 					}
 					msg.message=Msg.WM_MOUSE_ENTER;
-					hover_timer.Enabled = true;
-					hover_hwnd = msg.hwnd;
+					hover.timer.Enabled = true;
+					hover.hwnd = msg.hwnd;
 					break;
 				}
 
@@ -1049,8 +1127,8 @@ namespace System.Windows.Forms {
 						return true;
 					}
 					msg.message=Msg.WM_MOUSE_LEAVE;
-					hover_timer.Enabled = false;
-					hover_hwnd = IntPtr.Zero;
+					hover.timer.Enabled = false;
+					hover.hwnd = IntPtr.Zero;
 					break;
 				}
 
@@ -1077,7 +1155,17 @@ namespace System.Windows.Forms {
 				}
 
 				case XEventName.Expose: {
+					if (caret.visible == 1) {
+						caret.paused = true;
+						HideCaret();
+					}
+
 					NativeWindow.WndProc(msg.hwnd, Msg.WM_ERASEBKGND, msg.hwnd, IntPtr.Zero);
+
+					if (caret.visible == 1) {
+						ShowCaret();
+						caret.paused = false;
+					}
 
 					msg.message=Msg.WM_PAINT;
 					msg.wParam=IntPtr.Zero;
@@ -1101,7 +1189,7 @@ namespace System.Windows.Forms {
 						if (result != null)
 							result.Complete (ret);
 						handle.Free ();
-					} else if (xevent.ClientMessageEvent.message_type == (IntPtr)hover_event) {
+					} else if (xevent.ClientMessageEvent.message_type == (IntPtr)hover.hevent) {
 						msg.message = Msg.WM_MOUSEHOVER;
 						msg.wParam = GetMousewParam(0);
 						msg.lParam = (IntPtr) (xevent.ClientMessageEvent.ptr1);
@@ -1407,6 +1495,104 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		internal static void ShowCaret() {
+			if ((caret.gc == IntPtr.Zero) || caret.on) {
+				return;
+			}
+			caret.on = true;
+
+			XDrawLine(DisplayHandle, caret.hwnd, caret.gc, caret.x, caret.y, caret.x, caret.y + caret.height);
+		}
+
+		internal static void HideCaret() {
+			if ((caret.gc == IntPtr.Zero) || !caret.on) {
+				return;
+			}
+			caret.on = false;
+
+			XDrawLine(DisplayHandle, caret.hwnd, caret.gc, caret.x, caret.y, caret.x, caret.y + caret.height);
+		}
+
+		// Automatically destroys any previous caret
+		internal override void CreateCaret(IntPtr hwnd, int width, int height) {
+			XGCValues	gc_values;
+
+			if (caret.hwnd != IntPtr.Zero) {
+				DestroyCaret(caret.hwnd);
+			}
+			caret.hwnd = hwnd;
+			caret.width = width;
+			caret.height = height;
+			caret.visible = 0;
+			caret.on = false;
+
+			gc_values = new XGCValues();
+
+			gc_values.line_width = caret.width;
+			caret.gc = XCreateGC(DisplayHandle, hwnd, GCFunction.GCLineWidth, ref gc_values);
+			if (caret.gc == IntPtr.Zero) {
+				caret.hwnd = IntPtr.Zero;
+				return;
+			}
+
+			XSetFunction(DisplayHandle, caret.gc, GXFunction.GXinvert);
+		}
+
+		// Only destroy if the hwnd is the hwnd of the current caret
+		internal override void DestroyCaret(IntPtr hwnd) {
+			if (caret.hwnd == hwnd) {
+				if (caret.visible == 1) {
+					caret.timer.Stop();
+					HideCaret();
+				}
+				if (caret.gc != IntPtr.Zero) {
+					XFreeGC(DisplayHandle, caret.gc);
+					caret.gc = IntPtr.Zero;
+				}
+				caret.hwnd = IntPtr.Zero;
+				caret.visible = 0;
+				caret.on = false;
+			}
+		}
+
+		// When setting the position we restart the blink interval
+		internal override void SetCaretPos(IntPtr hwnd, int x, int y) {
+			if (caret.hwnd == hwnd) {
+				caret.timer.Stop();
+				HideCaret();
+
+				caret.x = x;
+				caret.y = y;
+
+				if (caret.visible == 1) {
+					ShowCaret();
+					caret.timer.Start();
+				}
+			}
+		}
+
+		// Visible is cumulative; two hides require two shows before the caret is visible again
+		internal override void CaretVisible(IntPtr hwnd, bool visible) {
+			if (caret.hwnd == hwnd) {
+				if (visible) {
+					if (caret.visible < 1) {
+						caret.visible++;
+						caret.on = false;
+						if (caret.visible == 1) {
+							ShowCaret();
+							caret.timer.Start();
+						}
+					}
+				} else {
+					caret.visible--;
+					if (caret.visible == 0) {
+						caret.timer.Stop();
+						HideCaret();
+					}
+				}
+			}
+		}
+
 		// Santa's little helper
 		static void Where() 
 		{
@@ -1602,66 +1788,24 @@ namespace System.Windows.Forms {
 		[DllImport ("libX11.so", EntryPoint="XDeleteProperty")]
 		internal extern static int XDeleteProperty(IntPtr display, IntPtr window, int property);
 
-		// Drawing
-		[DllImport ("libX11", EntryPoint="XCreateGC")]
-		internal extern static IntPtr XCreateGC(IntPtr display, IntPtr window, int valuemask, IntPtr values);
-		[DllImport ("libX11", EntryPoint="XFreeGC")]
-		internal extern static int XFreeGC(IntPtr display, IntPtr gc);
-		[DllImport ("libX11", EntryPoint="XDrawLine")]
-		internal extern static int XDrawLine(IntPtr display, IntPtr drawable, IntPtr gc, int x1, int y1, int x2, int y2);
-		[DllImport ("libX11", EntryPoint="XSetWindowBackground")]
-		internal extern static int XSetWindowBackground(IntPtr display, IntPtr window, uint background);
-
-		// Keyboard
-
-		[StructLayout (LayoutKind.Sequential)]
-		internal struct XKeyBoardState {
-			int key_click_percent;
-			int bell_percent;
-			uint bell_pitch, bell_duration;
-			uint led_mask;
-			int global_auto_repeat;
-			AutoRepeats auto_repeats;
-
-			[StructLayout (LayoutKind.Explicit)]
-			struct AutoRepeats {
-				[FieldOffset (0)]
-					byte first;
-				
-				[FieldOffset (31)]
-				byte last;
-			}
-		}
-		
 		[DllImport ("libX11", EntryPoint="XGetKeyboardControl")]
 		internal extern static int XGetKeyboardControl (IntPtr display, out XKeyBoardState state);
 
-		internal override int KeyboardSpeed {
-			get {
-				//
-				// A lot harder: need to do:
-				// XkbQueryExtension(0x08051008, 0xbfffdf4c, 0xbfffdf50, 0xbfffdf54, 0xbfffdf58)       = 1
-				// XkbAllocKeyboard(0x08051008, 0xbfffdf4c, 0xbfffdf50, 0xbfffdf54, 0xbfffdf58)        = 0x080517a8
-				// XkbGetControls(0x08051008, 1, 0x080517a8, 0xbfffdf54, 0xbfffdf58)                   = 0
-				//
-				// And from that we can tell the repetition rate
-				//
-				// Notice, the values must map to:
-				//   [0, 31] which maps to 2.5 to 30 repetitions per second.
-				//
-				return 0;
-			}
-		}
+		// Drawing
+		[DllImport ("libX11", EntryPoint="XCreateGC")]
+		internal extern static IntPtr XCreateGC(IntPtr display, IntPtr window, GCFunction valuemask, ref XGCValues values);
 
-		internal override int KeyboardDelay {
-			get {
-				//
-				// Return values must range from 0 to 4, 0 meaning 250ms,
-				// and 4 meaning 1000 ms.
-				//
-				return 1; // ie, 500 ms
-			}
-		}
+		[DllImport ("libX11", EntryPoint="XFreeGC")]
+		internal extern static int XFreeGC(IntPtr display, IntPtr gc);
+
+		[DllImport ("libX11", EntryPoint="XSetFunction")]
+		internal extern static int XSetFunction(IntPtr display, IntPtr gc, GXFunction function);
+
+		[DllImport ("libX11", EntryPoint="XDrawLine")]
+		internal extern static int XDrawLine(IntPtr display, IntPtr drawable, IntPtr gc, int x1, int y1, int x2, int y2);
+
+		[DllImport ("libX11", EntryPoint="XSetWindowBackground")]
+		internal extern static int XSetWindowBackground(IntPtr display, IntPtr window, uint background);
 		#endregion
 	}
 }

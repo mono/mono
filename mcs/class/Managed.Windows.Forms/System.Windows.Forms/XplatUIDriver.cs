@@ -228,6 +228,11 @@ namespace System.Windows.Forms {
 		internal abstract void SetTimer (Timer timer);
 		internal abstract void KillTimer (Timer timer);
 
+		internal abstract void CreateCaret(IntPtr hwnd, int width, int height);
+		internal abstract void DestroyCaret(IntPtr hwnd);
+		internal abstract void SetCaretPos(IntPtr hwnd, int x, int y);
+		internal abstract void CaretVisible(IntPtr hwnd, bool visible);
+
 		// System information
 
 		internal abstract int KeyboardSpeed { get; } 

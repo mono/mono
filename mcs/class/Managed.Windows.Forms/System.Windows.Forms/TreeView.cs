@@ -157,7 +157,7 @@ namespace System.Windows.Forms {
 		}
 
 		public override Color BackColor {
-			get { return SystemColors.Window; }
+			get { return base.BackColor;}
 			set { base.BackColor = value; }
 		}
 

@@ -779,6 +779,23 @@ namespace System.Windows.Forms {
 		}
 
 		[MonoTODO]
+		internal override void CreateCaret(IntPtr hwnd, int width, int height) {
+		}
+
+		[MonoTODO]
+		internal override void DestroyCaret(IntPtr hwnd) {
+		}
+
+		[MonoTODO]
+		internal override void SetCaretPos(IntPtr hwnd, int x, int y) {
+		}
+
+		[MonoTODO]
+		internal override void CaretVisible(IntPtr hwnd, bool visible) {
+		}
+
+
+		[MonoTODO]
 		internal override int KeyboardSpeed {
 			get {
 				throw new NotImplementedException ();

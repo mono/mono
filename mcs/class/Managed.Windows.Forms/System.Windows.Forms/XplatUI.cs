@@ -385,6 +385,22 @@ namespace System.Windows.Forms {
 			driver.SendAsyncMethod (data);
 		}
 
+		internal static void CreateCaret(IntPtr hwnd, int width, int height) {
+			driver.CreateCaret(hwnd, width, height);
+		}
+
+		internal static void DestroyCaret(IntPtr hwnd) {
+			driver.DestroyCaret(hwnd);
+		}
+
+		internal static void SetCaretPos(IntPtr hwnd, int x, int y) {
+			driver.SetCaretPos(hwnd, x, y);
+		}
+
+		internal static void CaretVisible(IntPtr hwnd, bool visible) {
+			driver.CaretVisible(hwnd, visible);
+		}
+
 		internal static void SetTimer (Timer timer)
 		{
 			driver.SetTimer (timer);
