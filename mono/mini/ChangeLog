@@ -1,3 +1,10 @@
+
+Mon Dec 20 10:58:28 EST 2004 Paolo Molaro <lupus@ximian.com>
+
+	* mini-ops.h, inssel-x86.brg, cpu-amd64.md, inssel.brg, inssel-amd64.brg,
+	 mini-amd64.c, mini-x86.c, cpu-pentium.md: renamed OP_X86_TLS_GET
+	to OP_TLS_GET.
+
 2004-12-20  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* declsec.c|h: Added functions to cache the declarative stack modifiers
