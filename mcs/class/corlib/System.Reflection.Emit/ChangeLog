@@ -1,4 +1,9 @@
 
+Thu May 16 16:09:51 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* TypeBuilder.cs: complete special acse support for CharSet, Size and
+	Pack named args in StructLayout attribute.
+
 Tue May 14 17:13:48 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* MethodBuilder.cs: revert change in accessibility of
