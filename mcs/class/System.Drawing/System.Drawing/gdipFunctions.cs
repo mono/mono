@@ -1012,7 +1012,7 @@ namespace System.Drawing
 		[DllImport("gdiplus.dll")]
 		internal static extern Status GdipDrawImageI (IntPtr graphics, IntPtr image, int x, int y);
 		[DllImport("gdiplus.dll")]
-		internal static extern Status GdipGetImageGraphicsContext (IntPtr image, out int graphics);		
+		internal static extern Status GdipGetImageGraphicsContext (IntPtr image, out IntPtr graphics);		
 		[DllImport("gdiplus.dll")]
 		internal static extern Status GdipDrawImage (IntPtr graphics, IntPtr image, float x, float y);
 		[DllImport("gdiplus.dll")]	

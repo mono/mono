@@ -1,5 +1,9 @@
 2005-02-11  Peter Bartok  <pbartok@novell.com>
 
+	* gdipFunctions.cs: Fixed prototype to match previous checkin
+
+2005-02-11  Peter Bartok  <pbartok@novell.com>
+
 	* Graphics.cs (FromImage): Fixed type of graphics to be IntPtr (since
 	  it really is a pointer)
 
