@@ -209,8 +209,8 @@ namespace System.Reflection.Emit {
 		internal static UnmanagedMarshal get_umarshal (CustomAttributeBuilder customBuilder, bool is_field) {
 			byte[] data = customBuilder.Data;
 			UnmanagedType subtype = (UnmanagedType)0x50; /* NATIVE_MAX */
-			int sizeConst = 0;
-			int sizeParamIndex = 0;
+			int sizeConst = -1;
+			int sizeParamIndex = -1;
 			bool hasSize = false;
 			int value;
 			int utype; /* the (stupid) ctor takes a short or an enum ... */

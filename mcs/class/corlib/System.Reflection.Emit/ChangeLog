@@ -1,5 +1,8 @@
 2005-03-01  Zoltan Varga  <vargaz@freemail.hu>
 
+	* CustomAttributeBuilder.cs UnmanagedMarshal.cs: Allow sizeConst and
+	sizeParamIndex to be -1, which means they are not given.
+	
 	* CustomAttributeBuilder.cs (get_umarshal): Only call the internal
 	LPArray creation method if sizeConst of sizeParamIndex is given.
 

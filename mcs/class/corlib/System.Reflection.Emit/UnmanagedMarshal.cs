@@ -113,6 +113,7 @@ namespace System.Reflection.Emit {
 			return res;
 		}
 
+		// sizeConst and sizeParamIndex can be -1 meaning they are not specified
 		internal static UnmanagedMarshal DefineLPArrayInternal (UnmanagedType elemType, int sizeConst, int sizeParamIndex) {
 			UnmanagedMarshal res = new UnmanagedMarshal (UnmanagedType.LPArray, elemType);
 			res.count = sizeConst;
@@ -128,8 +129,14 @@ namespace System.Reflection.Emit {
 			attr.MarshalCookie = mcookie;
 			attr.MarshalType = marshaltype;
 			attr.MarshalTypeRef = marshaltyperef;
-			attr.SizeConst = count;
-			attr.SizeParamIndex = (short)param_num;
+			if (count == -1)
+				attr.SizeConst = 0;
+			else
+				attr.SizeConst = count;
+			if (param_num == -1)
+				attr.SizeParamIndex = 0;
+			else
+				attr.SizeParamIndex = (short)param_num;
 			return attr;
 		}
 	}
