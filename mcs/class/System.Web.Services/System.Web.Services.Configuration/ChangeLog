@@ -1,3 +1,8 @@
+2003-07-02  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* WebServicesConfigurationSectionHandler.cs: New file that handles
+	system.web/webServices section.
+
 2002-07-21 Tim Coleman  <tim@timcoleman.com>
 	* ChangeLog:
 	* XmlFormatExtensionAttribute.cs:

@@ -4,6 +4,7 @@ System.Web.Services/WebService.cs
 System.Web.Services/WebServiceAttribute.cs
 System.Web.Services/WebServiceBindingAttribute.cs
 System.Web.Services/WebServicesDescriptionAttribute.cs
+System.Web.Services.Configuration/WebServicesConfigurationSectionHandler.cs
 System.Web.Services.Configuration/XmlFormatExtensionAttribute.cs
 System.Web.Services.Configuration/XmlFormatExtensionPointAttribute.cs
 System.Web.Services.Configuration/XmlFormatExtensionPrefixAttribute.cs
