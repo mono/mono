@@ -38,7 +38,11 @@ using System.Runtime.CompilerServices;
 namespace System {
 	
 	[Serializable]
-	public struct Double : IComparable, IFormattable, IConvertible {
+	public struct Double : IComparable, IFormattable, IConvertible
+#if NET_2_0
+		, IComparable <double>
+#endif
+	{
 		public const double Epsilon = 4.9406564584124650e-324;
 		public const double MaxValue =  1.7976931348623157e308;
 		public const double MinValue = -1.7976931348623157e308;
@@ -98,6 +102,45 @@ namespace System {
 
 			return ((double) o) == m_value;
 		}
+
+#if NET_2_0
+		public int CompareTo (double value)
+		{
+			if (IsPositiveInfinity(m_value) && IsPositiveInfinity(value))
+				return 0;
+
+			if (IsNegativeInfinity(m_value) && IsNegativeInfinity(value))
+				return 0;
+
+			if (IsNaN(value))
+				if (IsNaN(m_value))
+					return 0;
+				else
+					return 1;
+
+			if (IsNaN(m_value))
+				if (IsNaN(value))
+					return 0;
+				else
+					return -1;
+
+			if (m_value > value) return 1;
+			else if (m_value < value) return -1;
+			else return 0;
+		}
+
+		public bool Equals (double value)
+		{
+			if (IsNaN (value)) {
+				if (IsNaN(m_value))
+					return true;
+				else
+					return false;
+			}
+
+			return value == m_value;
+		}
+#endif
 
 		public override unsafe int GetHashCode ()
 		{

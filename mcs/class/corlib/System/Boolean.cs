@@ -49,6 +49,9 @@ namespace System
 	/// </summary>
 	[Serializable]
 	public struct Boolean : IComparable, IConvertible
+#if NET_2_0
+		, IComparable <bool>
+#endif
 	{
 		/// <value>
 		/// The String representation of Boolean False
@@ -115,6 +118,18 @@ namespace System
 
 			return ((m_value) ? ((bool) obj) : !((bool) obj));
 		}
+
+#if NET_2_0
+		public int CompareTo (bool value)
+		{
+			return (m_value == value) ? 0 : -1;
+		}
+
+		public bool Equals (bool value)
+		{
+			return m_value == value;
+		}
+#endif
 
 		/// <summary>
 		/// Generates a hashcode for this object.

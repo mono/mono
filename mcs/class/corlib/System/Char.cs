@@ -48,6 +48,9 @@ namespace System
 {
 	[Serializable]
 	public struct Char : IComparable, IConvertible
+#if NET_2_0
+		, IComparable <char>
+#endif
 	{
 		public const char MaxValue = (char) 0xffff;
 		public const char MinValue = (char) 0;
@@ -101,6 +104,24 @@ namespace System
 
 			return ((Char) o).m_value == m_value;
 		}
+
+#if NET_2_0
+		public int CompareTo (char value)
+		{
+			if (m_value == value)
+				return 0;
+
+			if (m_value > value)
+				return 1;
+			else
+				return -1;
+		}
+
+		public bool Equals (char value)
+		{
+			return m_value == value;
+		}
+#endif
 
 		public override int GetHashCode ()
 		{

@@ -36,6 +36,9 @@ namespace System
 {
 	[Serializable]
 	public struct Single : IComparable, IFormattable, IConvertible
+#if NET_2_0
+		, IComparable <float>
+#endif
 	{
 		public const float Epsilon = 1.4e-45f;
 		public const float MaxValue =  3.40282346638528859e38f;
@@ -93,6 +96,44 @@ namespace System
 
 			return ((float) o) == m_value;
 		}
+
+#if NET_2_0
+		public int CompareTo (float value)
+		{
+			if (IsPositiveInfinity (m_value) && IsPositiveInfinity (value))
+				return 0;
+
+			if (IsNegativeInfinity (m_value) && IsNegativeInfinity (value))
+				return 0;
+
+			if (IsNaN (value))
+				if (IsNaN (m_value))
+					return 0;
+				else
+					return 1;
+
+			if (IsNaN (m_value))
+				if (IsNaN (value))
+					return 0;
+				else
+					return -1;
+
+			if (this.m_value == value)
+				return 0;
+			else if (this.m_value > value)
+				return 1;
+			else
+				return -1;
+		}
+
+		public bool Equals (float value)
+		{
+			if (IsNaN (value))
+				return IsNaN (m_value);
+
+			return value == m_value;
+		}
+#endif
 
 		public unsafe override int GetHashCode ()
 		{
