@@ -22,7 +22,36 @@ namespace Mono.Xml.XPath
 
 #region ctor.
 
-		public DTMXPathDocument (XmlNameTable nameTable, int [] firstChild__, int [] parent__, int [] firstAttribute__, int [] previousSibling__, int [] nextSibling__, int [] depth__, int [] position__, XPathNodeType [] nodeType__, string [] baseUri__, bool [] isEmptyElement__, string [] localName__, string [] namespaceUri__, string [] prefix__, string [] value__, string [] xmlLang__, int [] namespaceNode__, object [] schemaType__, int [] ownerElement__, int [] nextAttribute__, string [] attrLocalName__, string [] attrPrefix__, string [] attrNsUri__, string [] attrValue__, object [] attrSchemaType__, int [] nsDeclaredElement__, int [] nextNsNode__, string [] nsNodeName__, string [] nsNodeUri__)
+		public DTMXPathDocument (XmlNameTable nameTable,
+			int [] firstChild__,
+			int [] parent__,
+			int [] firstAttribute__,
+			int [] previousSibling__,
+			int [] nextSibling__,
+			int [] depth__,
+			int [] position__,
+			XPathNodeType [] nodeType__,
+			string [] baseUri__,
+			bool [] isEmptyElement__,
+			string [] localName__,
+			string [] namespaceUri__,
+			string [] prefix__,
+			string [] value__,
+			string [] xmlLang__,
+			int [] namespaceNode__,
+			object [] schemaType__,
+			int [] ownerElement__,
+			int [] nextAttribute__,
+			string [] attrLocalName__,
+			string [] attrPrefix__,
+			string [] attrNsUri__,
+			string [] attrValue__,
+			object [] attrSchemaType__,
+			int [] nsDeclaredElement__,
+			int [] nextNsNode__,
+			string [] nsNodeName__,
+			string [] nsNodeUri__,
+			Hashtable idTable__)
 		{
 			firstChild_ = firstChild__;
 			parent_ = parent__;
@@ -57,6 +86,8 @@ namespace Mono.Xml.XPath
 			nsNodeName_ = nsNodeName__;
 			nsNodeUri_ = nsNodeUri__;
 
+			idTable_ = idTable__;
+
 			this.nameTable = nameTable;
 		}
 
@@ -67,7 +98,7 @@ namespace Mono.Xml.XPath
 		public XPathNavigator CreateNavigator ()
 		{
 			if (root == null) {
-				root = new DTMXPathNavigator (this, nameTable, firstChild_, parent_, firstAttribute_, previousSibling_, nextSibling_, depth_, position_, nodeType_, baseUri_, isEmptyElement_, localName_, namespaceUri_, prefix_, value_, xmlLang_, namespaceNode_, schemaType_, ownerElement_, nextAttribute_, attrLocalName_, attrPrefix_, attrNsUri_, attrValue_, attrSchemaType_, nsDeclaredElement_, nextNsNode_, nsNodeName_, nsNodeUri_);
+				root = new DTMXPathNavigator (this, nameTable, firstChild_, parent_, firstAttribute_, previousSibling_, nextSibling_, depth_, position_, nodeType_, baseUri_, isEmptyElement_, localName_, namespaceUri_, prefix_, value_, xmlLang_, namespaceNode_, schemaType_, ownerElement_, nextAttribute_, attrLocalName_, attrPrefix_, attrNsUri_, attrValue_, attrSchemaType_, nsDeclaredElement_, nextNsNode_, nsNodeName_, nsNodeUri_, idTable_);
 				return root;
 			} else
 				return root.Clone ();
@@ -116,10 +147,8 @@ namespace Mono.Xml.XPath
 		string [] nsNodeName_;		// NS prefix.
 		string [] nsNodeUri_;		// NS uri.
 
-		// ID-Key
-		// [string attribute-name] -> idTable
 		// idTable [string value] -> int nodeId
-		readonly Hashtable idTableTable;
+		readonly Hashtable idTable_;
 
 #endregion
 

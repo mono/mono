@@ -1,3 +1,11 @@
+2003-08-14  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* DTMXPathDocument.cs,
+	  DTMXPathDocumentBuilder.cs,
+	  DTMXPathNavigator.cs :
+	  - Implemented ID support using XmlValidatingReader.
+	  - Prefix should be String.Empty even if XmlReader.Prefix is null.
+
 2003-07-23  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* DTMXPathDocumentBuilder.cs :

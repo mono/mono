@@ -19,29 +19,43 @@ namespace Mono.Xml.XPath
 	public class DTMXPathDocumentBuilder
 	{
 		public DTMXPathDocumentBuilder (string url)
-			: this (url, XmlSpace.None)
+			: this (url, XmlSpace.None, false)
 		{
 		}
 
 		public DTMXPathDocumentBuilder (string url, XmlSpace space)
-			: this (new XmlTextReader (url), space)
+			: this (url, space, false)
+		{
+		}
+
+		public DTMXPathDocumentBuilder (string url, XmlSpace space, bool supportID)
+			: this (new XmlTextReader (url), space, supportID)
 		{
 		}
 
 		public DTMXPathDocumentBuilder (XmlReader reader)
-			: this (reader, XmlSpace.None)
+			: this (reader, XmlSpace.None, false)
 		{
 		}
 
 		public DTMXPathDocumentBuilder (XmlReader reader, XmlSpace space)
+			: this (reader, space, false)
+		{
+		}
+
+		public DTMXPathDocumentBuilder (XmlReader reader, XmlSpace space, bool supportID)
 		{
 			this.xmlReader = reader;
+			if (supportID)
+				this.validatingReader = reader as XmlValidatingReader;
 			this.xmlSpace = xmlSpace;
 			this.nameTable = reader.NameTable;
 			Compile ();
 		}
 		
+		bool supportID;
 		XmlReader xmlReader;
+		XmlValidatingReader validatingReader;
 		XmlSpace xmlSpace;
 		XmlNameTable nameTable;
 		int defaultCapacity = 100;
@@ -88,6 +102,9 @@ namespace Mono.Xml.XPath
 		int [] nextNsNode_ = new int [100];
 		string [] nsNodeName_ = new string [100];
 		string [] nsNodeUri_ = new string [100];
+
+		// idTable [string value] -> int nodeId
+		Hashtable idTable_;
 #endregion
 
 		int nodeIndex;
@@ -129,12 +146,15 @@ namespace Mono.Xml.XPath
 				nsDeclaredElement_,
 				nextNsNode_,
 				nsNodeName_,
-				nsNodeUri_
+				nsNodeUri_,
+				idTable_
 			);
 		}
 
 		public void Compile ()
 		{
+			idTable_ = new Hashtable ();
+
 			// index 0 is dummy. No node (including Root) is assigned to this index
 			// So that we can easily compare index != 0 instead of index < 0.
 			// (Difference between jnz or jbe in 80x86.)
@@ -284,20 +304,31 @@ namespace Mono.Xml.XPath
 						if (lastNsIndexInCurrent == 0)
 							namespaceNode_ [nodeIndex] = nsIndex;
 						this.AddNsNode (nodeIndex,
-							xmlReader.Prefix == "" ?
+							(xmlReader.Prefix == null || xmlReader.Prefix == String.Empty) ?
 								"" : xmlReader.LocalName,
 							xmlReader.Value);
 						lastNsIndexInCurrent = nsIndex;
 					} else {
 						// add attribute node.
 						attributeIndex ++;
-						this.AddAttribute (nodeIndex, xmlReader.LocalName, xmlReader.NamespaceURI, xmlReader.Prefix, xmlReader.Value, null);
+						this.AddAttribute (nodeIndex, xmlReader.LocalName, xmlReader.NamespaceURI, xmlReader.Prefix != null ? xmlReader.Prefix : String.Empty, xmlReader.Value, null);
 						if (firstAttributeIndex == 0)
 							firstAttributeIndex = attributeIndex;
 						else
 							nextAttribute_ [attributeIndex - 1] = attributeIndex;
 						// dummy for "current" attribute.
 						nextAttribute_ [attributeIndex] = 0;
+
+						// Identity infoset
+						if (validatingReader != null) {
+							XmlSchemaDatatype dt = validatingReader.SchemaType as XmlSchemaDatatype;
+							if (dt == null) {
+								XmlSchemaType xsType = validatingReader.SchemaType as XmlSchemaType;
+								dt = xsType.Datatype;
+							}
+							if (dt != null && dt.TokenizedType == XmlTokenizedType.ID)
+								idTable_.Add (xmlReader.Value, nodeIndex);
+						}
 					}
 				} while (xmlReader.MoveToNextAttribute ());
 				xmlReader.MoveToElement ();
@@ -326,35 +357,35 @@ namespace Mono.Xml.XPath
 		private void SetObjectArrayLength (ref object [] a, int length)
 		{
 			object [] arr = new object [length];
-			Array.Copy (a, arr, System.Math.Min (a.Length, length));
+			Array.Copy (a, arr, Math.Min (a.Length, length));
 			a = arr;
 		}
 
 		private void SetBoolArrayLength (ref bool [] a, int length)
 		{
 			bool [] bArr = new bool [length];
-			Array.Copy (a, bArr, System.Math.Min (a.Length, length));
+			Array.Copy (a, bArr, Math.Min (a.Length, length));
 			a = bArr;
 		}
 
 		private void SetXPathNodeTypeArrayLength (ref XPathNodeType [] a, int length)
 		{
 			XPathNodeType [] arr = new XPathNodeType [length];
-			Array.Copy (a, arr, System.Math.Min (a.Length, length));
+			Array.Copy (a, arr, Math.Min (a.Length, length));
 			a = arr;
 		}
 
 		private void SetIntArrayLength (ref int [] a, int length)
 		{
 			int [] intArr = new int [length];
-			Array.Copy (a, intArr, System.Math.Min (a.Length, length));
+			Array.Copy (a, intArr, Math.Min (a.Length, length));
 			a = intArr;
 		}
 
 		private void SetStringArrayLength (ref string [] a, int length)
 		{
 			string [] strArr = new string [length];
-			Array.Copy (a, strArr, System.Math.Min (a.Length, length));
+			Array.Copy (a, strArr, Math.Min (a.Length, length));
 			a = strArr;
 		}
 

@@ -19,7 +19,23 @@ namespace Mono.Xml.XPath
 	{
 
 #region Copy of XPathDocument
-		public DTMXPathNavigator (DTMXPathDocument document, XmlNameTable nameTable, int [] firstChild__, int [] parent__, int [] firstAttribute__, int [] previousSibling__, int [] nextSibling__, int [] depth__, int [] position__, XPathNodeType [] nodeType__, string [] baseUri__, bool [] isEmptyElement__, string [] localName__, string [] namespaceUri__, string [] prefix__, string [] value__, string [] xmlLang__, int [] namespaceNode__, object [] schemaType__, int [] ownerElement__, int [] nextAttribute__, string [] attrLocalName__, string [] attrPrefix__, string [] attrNsUri__, string [] attrValue__, object [] attrSchemaType__, int [] nsDeclaredElement__, int [] nextNsNode__, string [] nsNodeName__, string [] nsNodeUri__)
+		public DTMXPathNavigator (DTMXPathDocument document,
+			XmlNameTable nameTable, 
+			int [] firstChild__, int [] parent__, 
+			int [] firstAttribute__, int [] previousSibling__, 
+			int [] nextSibling__, int [] depth__, 
+			int [] position__, XPathNodeType [] nodeType__,
+			string [] baseUri__, bool [] isEmptyElement__, 
+			string [] localName__, string [] namespaceUri__, 
+			string [] prefix__, string [] value__, 
+			string [] xmlLang__, int [] namespaceNode__, 
+			object [] schemaType__, int [] ownerElement__, 
+			int [] nextAttribute__, string [] attrLocalName__, 
+			string [] attrPrefix__, string [] attrNsUri__, 
+			string [] attrValue__, object [] attrSchemaType__, 
+			int [] nsDeclaredElement__, int [] nextNsNode__, 
+			string [] nsNodeName__, string [] nsNodeUri__,
+			Hashtable idTable__)
 		{
 			firstChild_ = firstChild__;
 			parent_ = parent__;
@@ -54,6 +70,8 @@ namespace Mono.Xml.XPath
 			nsNodeName_ = nsNodeName__;
 			nsNodeUri_ = nsNodeUri__;
 
+			idTable_ = idTable__;
+
 			this.nameTable = nameTable;
 			this.MoveToRoot ();
 			this.document = document;
@@ -61,7 +79,17 @@ namespace Mono.Xml.XPath
 
 		// Copy constructor including position informations.
 		public DTMXPathNavigator (DTMXPathNavigator org)
-			: this (org.document, org.nameTable, org.firstChild_, org.parent_, org.firstAttribute_, org.previousSibling_, org.nextSibling_, org.depth_, org.position_, org.nodeType_, org.baseUri_, org.isEmptyElement_, org.localName_, org.namespaceUri_, org.prefix_, org.value_, org.xmlLang_, org.namespaceNode_, org.schemaType_, org.ownerElement_, org.nextAttribute_, org.attrLocalName_, org.attrPrefix_, org.attrNsUri_, org.attrValue_, org.attrSchemaType_, org.nsDeclaredElement_, org.nextNsNode_, org.nsNodeName_, org.nsNodeUri_)
+			: this (org.document, org.nameTable,
+			org.firstChild_, org.parent_, org.firstAttribute_,
+			org.previousSibling_, org.nextSibling_, org.depth_,
+			org.position_, org.nodeType_, org.baseUri_,
+			org.isEmptyElement_, org.localName_, org.namespaceUri_,
+			org.prefix_, org.value_, org.xmlLang_,
+			org.namespaceNode_, org.schemaType_, org.ownerElement_, 
+			org.nextAttribute_, org.attrLocalName_, org.attrPrefix_, 
+			org.attrNsUri_, org.attrValue_, org.attrSchemaType_, 
+			org.nsDeclaredElement_, org.nextNsNode_, org.nsNodeName_,
+			org.nsNodeUri_, org.idTable_)
 		{
 			currentIsNode = org.currentIsNode;
 			currentIsAttr = org.currentIsAttr;
@@ -110,10 +138,12 @@ namespace Mono.Xml.XPath
 		string [] nsNodeName_;		// NS prefix.
 		string [] nsNodeUri_;		// NS uri.
 
-		// ID-Key (considered xsd:keyref for XPath 2.0)
+		// ID table
+		Hashtable idTable_;
+
+		// Key table (considered xsd:keyref for XPath 2.0)
 		Hashtable keyRefTable;	// [string key-name] -> idTable
 					// idTable [string value] -> int nodeId
-					// keyname="" for ID
 #endregion
 
 		bool currentIsNode;
@@ -448,9 +478,19 @@ namespace Mono.Xml.XPath
 			return moveToSpecifiedNamespace (cur, namespaceScope);
 		}
 
+		// Note that this support is extension to XPathDocument.
+		// XPathDocument does not support ID reference.
 		public override bool MoveToId (string id)
 		{
-			return MoveToKeyRef ("", id);
+//			return MoveToKeyRef ("", id);
+			if (idTable_.ContainsKey (id)) {
+				currentNode = (int) idTable_ [id];
+				currentIsNode = true;
+				currentIsAttr = false;
+				return true;
+			}
+			else
+				return false;
 		}
 
 		// This is extension for XPath 2.0
