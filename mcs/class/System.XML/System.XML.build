@@ -16,6 +16,7 @@
 			<sources>
 				<includes name="**/*.cs"/> 
 				<excludes name="Test/**"/>
+				<excludes name="System.Xml.Serialization\standalone_tests/**"/>
 				<!--excludes name="System.Xml.Serialization/**"/--> 
 			</sources>
 		</csc>

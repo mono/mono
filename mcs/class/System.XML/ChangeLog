@@ -1,3 +1,7 @@
+2003-05-15  Nick Drochak  <ndrochak@gol.com>
+
+	* System.XML.build: exclude standalone tests from dll build.
+
 2003-03-18  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* added XmlParserInput.cs and DTDObjectModel.cs to list.unix and 
