@@ -457,10 +457,79 @@ namespace System.Xml
 			return more;
 		}
 
-		[MonoTODO("This method should check position validity; consider entity references")]
 		public override bool ReadAttributeValue ()
 		{
-			value = ReadAttribute ();
+			// reading attribute value phase now stopped
+			if(attributeStringCurrentPosition < 0 ||
+					attributeString.Length < attributeStringCurrentPosition) {
+				attributeStringCurrentPosition = 0;
+				attributeString = String.Empty;
+				return false;
+			}
+
+			// If not started, then initialize attributeString when parsing is at start.
+			if(attributeStringCurrentPosition == 0)
+				attributeString = value;
+
+			bool returnEntity = false;
+			value = String.Empty;
+			int nextPosition = attributeString.IndexOf ('&',
+				attributeStringCurrentPosition);
+
+			// if attribute string starts from '&' then it may be (unparsable) entity reference.
+			if(nextPosition == 0) {
+				string parsed = ReadAttributeValueEntityReference ();
+				if(parsed == null) {
+					// return entity (It is only this case to return entity reference.)
+					int endEntityPosition = attributeString.IndexOf (';',
+						attributeStringCurrentPosition);
+					SetProperties (XmlNodeType.EntityReference,
+						attributeString.Substring (attributeStringCurrentPosition + 1,
+						endEntityPosition - attributeStringCurrentPosition - 1),
+						false,
+						String.Empty,
+						false);
+					attributeStringCurrentPosition = endEntityPosition + 1;
+
+					return true;
+				}
+				else
+					value += parsed;
+			}
+
+			// Other case always set text node.
+			while(!returnEntity) {
+				nextPosition = attributeString.IndexOf ('&', attributeStringCurrentPosition);
+				if(nextPosition < 0) {
+					// Reached to the end of value string.
+					value += attributeString.Substring (attributeStringCurrentPosition);
+					attributeStringCurrentPosition = -1;
+					break;
+				} else if(nextPosition == attributeStringCurrentPosition) {
+					string parsed = ReadAttributeValueEntityReference ();
+					if(parsed != null)
+						value += parsed;
+					else {
+						// Found that an entity reference starts from this point.
+						// Then once stop to parse attribute value and then return text.
+						value += attributeString.Substring (attributeStringCurrentPosition,
+							nextPosition - attributeStringCurrentPosition);
+						break;
+					}
+				} else {
+					value += attributeString.Substring (attributeStringCurrentPosition,
+						nextPosition - attributeStringCurrentPosition);
+					attributeStringCurrentPosition = nextPosition;
+					break;
+				}
+			}
+
+			SetProperties(XmlNodeType.Text,
+				"#text",
+				false,
+				value,
+				false);
+
 			return true;
 		}
 
@@ -551,7 +620,44 @@ namespace System.Xml
 
 		#endregion
 
-		// privates
+		#region Internals
+		internal string publicId;
+		internal string systemId;
+
+		internal void SetReaderContext (string url, XmlParserContext context)
+		{
+			parserContext = context;
+			parserContext.BaseURI = url;
+			Init ();
+		}
+
+		internal void SetReaderFragment(TextReader fragment, XmlNodeType fragType)
+		{
+			this.reader = fragment;
+			can_seek = fragment != null && fragment.Peek () != -1;
+/*	for future use
+			switch(fragType)
+			{
+			case XmlNodeType.Attribute:	// attribute content
+				parserContext.InputState = XmlParserInputState.AttributeValue;
+				break;
+			case XmlNodeType.DocumentFragment:	// element content
+				parserContext.InputState = XmlParserInputState.Content;
+				break;
+			case XmlNodeType.Element:	// one element
+				parserContext.InputState = XmlParserInputState.StartTag;
+				break;
+			case XmlNodeType.Document:	// document content
+				parserContext.InputState = XmlParserInputState.Start;
+				break;
+			default:
+				throw new InvalidOperationException("setting this xml node type not allowed.");
+			}
+*/
+		}
+		#endregion
+
+		#region Privates
 
 		private XmlParserContext parserContext;
 
@@ -605,40 +711,8 @@ namespace System.Xml
 		private bool can_seek;
 		private int peek_char;
 
-		internal string publicId;
-		internal string systemId;
-
-		internal void SetReaderContext (string url, XmlParserContext context)
-		{
-			parserContext = context;
-			parserContext.BaseURI = url;
-			Init ();
-		}
-
-		internal void SetReaderFragment(TextReader fragment, XmlNodeType fragType)
-		{
-			this.reader = fragment;
-			can_seek = fragment != null && fragment.Peek () != -1;
-/*	for future use
-			switch(fragType)
-			{
-			case XmlNodeType.Attribute:	// attribute content
-				parserContext.InputState = XmlParserInputState.AttributeValue;
-				break;
-			case XmlNodeType.DocumentFragment:	// element content
-				parserContext.InputState = XmlParserInputState.Content;
-				break;
-			case XmlNodeType.Element:	// one element
-				parserContext.InputState = XmlParserInputState.StartTag;
-				break;
-			case XmlNodeType.Document:	// document content
-				parserContext.InputState = XmlParserInputState.Start;
-				break;
-			default:
-				throw new InvalidOperationException("setting this xml node type not allowed.");
-			}
-*/
-		}
+		private string attributeString = String.Empty;
+		private int attributeStringCurrentPosition;
 
 		private void Init ()
 		{
@@ -1557,5 +1631,94 @@ namespace System.Xml
 
 			return (PeekChar () != -1);
 		}
+
+		// read entity reference from attribute string and if parsable then return the value.
+		private string ReadAttributeValueEntityReference ()
+		{
+			int endEntityPosition = attributeString.IndexOf(';',
+				attributeStringCurrentPosition);
+			string entityName = attributeString.Substring (attributeStringCurrentPosition + 1,
+				endEntityPosition - attributeStringCurrentPosition - 1);
+
+			attributeStringCurrentPosition = endEntityPosition + 1;
+
+			if(entityName [0] == '#') {
+				char c;
+				// character entity
+				if(entityName [1] == 'x') {
+					// hexadecimal
+					c = (char) int.Parse ("0" + entityName.Substring (2),
+						System.Globalization.NumberStyles.HexNumber);
+				} else {
+					// decimal
+					c = (char) int.Parse (entityName.Substring (1));
+				}
+				return c.ToString();
+			}
+			else {
+				switch(entityName)
+				{
+				case "lt": return "<";
+				case "gt": return ">";
+				case "amp": return "&";
+				case "quot": return "\"";
+				case "apos": return "'";
+				default: return null;
+				}
+			}
+		}
+
+		private string ResolveAttributeValue (string unresolved)
+		{
+			if(unresolved == null) return null;
+			StringBuilder resolved = new StringBuilder();
+			int pos = 0;
+
+			int next = unresolved.IndexOf ('&');
+			if(next < 0)
+				return unresolved;
+
+			while(next >= 0) {
+				if(pos < next)
+					resolved.Append (unresolved.Substring (pos, next - pos));// - 1);
+				int endPos = unresolved.IndexOf (';', next+1);
+				string entityName =
+					unresolved.Substring (next + 1, endPos - next - 1);
+				if(entityName [0] == '#') {
+					char c;
+					// character entity
+					if(entityName [1] == 'x') {
+						// hexadecimal
+						c = (char) int.Parse ("0" + entityName.Substring (2),
+							System.Globalization.NumberStyles.HexNumber);
+					} else {
+						// decimal
+						c = (char) int.Parse (entityName.Substring (1));
+					}
+					resolved.Append (c);
+				} else {
+					switch(entityName) {
+					case "lt": resolved.Append ("<"); break;
+					case "gt": resolved.Append (">"); break;
+					case "amp": resolved.Append ("&"); break;
+					case "quot": resolved.Append ("\""); break;
+					case "apos": resolved.Append ("'"); break;
+					// With respect to "Value", MS document is helpless
+					// and the implemention returns inconsistent value
+					// (e.g. XML: "&ent; &amp;ent;" ---> Value: "&ent; &ent;".)
+					default: resolved.Append ("&" + entityName + ";"); break;
+					}
+				}
+				pos = endPos + 1;
+				if(pos > unresolved.Length)
+					break;
+				next = unresolved.IndexOf('&', pos);
+			}
+			resolved.Append (unresolved.Substring(pos));
+
+			return resolved.ToString();
+		}
+
+		#endregion
 	}
 }

@@ -1,5 +1,16 @@
 2002-12-24  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
+	* XmlAttribute.cs, XmlDocument.cs, XmlTextReader.cs:
+		Implemented XmlTextReader.ReadAttributeValue().
+		Added internal ReadAttributeNodeValue().
+		Fixed XmlAttribute.InnerXml to use these methods.
+	
+	* XmlDocument.cs, XmlDocumentFragment.cs, XmlElement.cs, XmlNode.cs:
+		Implemented XmlDocument.ReadNode() and removed ConstructDOM().
+		Other changes are replacing them.
+
+2002-12-24  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
 	* XmlDocument.cs: patch by Ville (fixed default PreserveWhitespace)
 
 2002-12-21  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>

@@ -88,8 +88,8 @@ namespace System.Xml
 				XmlTextReader xtr = OwnerDocument.ReusableReader;
 				xtr.SetReaderContext (BaseURI, ctx);
 				xtr.SetReaderFragment (new System.IO.StringReader ("'" + value.Replace ("'", "&apos;") + "'"), XmlNodeType.Attribute);
-				xtr.ReadAttributeValue ();
-				Value = xtr.Value;
+
+				OwnerDocument.ReadAttributeNodeValue (xtr, this);
 			}
 		}
 

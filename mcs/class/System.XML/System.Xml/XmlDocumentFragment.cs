@@ -47,7 +47,12 @@ namespace System.Xml
 				XmlTextReader xmlReader = OwnerDocument.ReusableReader;
 				xmlReader.SetReaderContext (String.Empty, ctx);
 				xmlReader.SetReaderFragment (new StringReader (value), XmlNodeType.Element);
-				this.ConstructDOM (xmlReader, this);
+
+				do {
+					XmlNode n = OwnerDocument.ReadNode (xmlReader);
+					if(n == null) break;
+					AppendChild (n);
+				} while (true);
 			}
 			get {
 				StringBuilder sb = new StringBuilder ();
