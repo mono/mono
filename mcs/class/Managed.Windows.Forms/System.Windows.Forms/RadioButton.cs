@@ -23,6 +23,9 @@
 //	Peter Bartok	pbartok@novell.com
 //
 // $Log: RadioButton.cs,v $
+// Revision 1.6  2004/10/05 18:23:54  jackson
+// Fix ctor
+//
 // Revision 1.5  2004/09/30 17:34:08  jackson
 // Fix typo. Patch by John BouAntoun.
 //
@@ -72,8 +75,8 @@ namespace System.Windows.Forms {
 			#endregion	// RadioButtonAccessibleObject Local Variables
 
 			#region RadioButtonAccessibleObject Constructors
-			public RadioButtonAccessibleObject(Control owner) : base(owner) {
-				this.owner = (RadioButton)owner;
+			public RadioButtonAccessibleObject(RadioButton owner) : base(owner) {
+				this.owner = owner;
 			}
 			#endregion	// RadioButtonAccessibleObject Constructors
 
