@@ -1,4 +1,9 @@
 2002-07-23  Tim Coleman <tim@timcoleman.com>
+	* SoapException.cs: modified constructors to
+		call base class correctly.
+	* WebClientAsyncResult: some implementation
+
+2002-07-23  Tim Coleman <tim@timcoleman.com>
 	* HttpGetClientProtocol.cs:
 	* HttpPostClientProtocol.cs
 		Implemented the GetWebRequest method

@@ -12,16 +12,21 @@ using System.Threading;
 namespace System.Web.Services.Protocols {
 	public class WebClientAsyncResult : IAsyncResult {
 
+		#region Fields
+
+		object asyncState;
+		WaitHandle waitHandle;
+
+		#endregion // Fields
+
 		#region Properties
 
 		public object AsyncState {
-			[MonoTODO]
-			get { throw new NotImplementedException (); }
+			get { return asyncState; }
 		}
 
 		public WaitHandle AsyncWaitHandle {
-			[MonoTODO]
-			get { throw new NotImplementedException (); }
+			get { return waitHandle; }
 		}
 
 		public bool CompletedSynchronously {

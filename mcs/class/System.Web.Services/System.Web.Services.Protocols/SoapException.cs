@@ -29,35 +29,45 @@ namespace System.Web.Services.Protocols {
 		#region Constructors
 
 		public SoapException (string message, XmlQualifiedName code)
+			: base (message)
 		{
 			this.code = code;
 		}
 
 		public SoapException (string message, XmlQualifiedName code, Exception innerException)
-			: this (message, code)
+			: base (message, innerException)
 		{
+			this.code = code;
 		}
 
 		public SoapException (string message, XmlQualifiedName code, string actor)
-			: this (message, code)
+			: base (message)
 		{
+			this.code = code;
 			this.actor = actor;
 		}
 
 		public SoapException (string message, XmlQualifiedName code, string actor, Exception innerException)
-			: this (message, code, actor)
+			: base (message, innerException)
 		{
+			this.code = code;
+			this.actor = actor;
 		}
 
 		public SoapException (string message, XmlQualifiedName code, string actor, XmlNode detail)
-			: this (message, code, actor)
+			: base (message)
 		{
+			this.code = code;
+			this.actor = actor;
 			this.detail = detail;
 		}
 
 		public SoapException (string message, XmlQualifiedName code, string actor, XmlNode detail, Exception innerException)
-			: this (message, code, actor, detail)
+			: base (message, innerException)
 		{
+			this.code = code;
+			this.actor = actor;
+			this.detail = detail;
 		}
 
 		#endregion // Constructors
