@@ -422,7 +422,6 @@ namespace MonoTests.System.Data.SqlTypes
 
                         // > -operator
                         Assert ("#O08", (Test1 > Test2).Value);
-			System.Console.WriteLine ("NYT");
                         Assert ("#O09", !(Test1 > Test3).Value);
                         Assert ("#O10", !(Test2 > Test22).Value);
                         Assert ("#O11", (Test1 > SqlSingle.Null).IsNull);
