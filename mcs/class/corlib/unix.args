@@ -833,6 +833,7 @@ System.Security.Policy/ApplicationDirectoryMembershipCondition.cs
 System.Security.Policy/CodeGroup.cs
 System.Security.Policy/Evidence.cs
 System.Security.Policy/FileCodeGroup.cs
+System.Security.Policy/IBuiltInEvidence.cs
 System.Security.Policy/IIdentityPermissionFactory.cs
 System.Security.Policy/IMembershipCondition.cs
 System.Security.Policy/PolicyException.cs
@@ -842,6 +843,7 @@ System.Security.Policy/PolicyStatementAttribute.cs
 System.Security.Policy/Publisher.cs 
 System.Security.Policy/PublisherMembershipCondition.cs
 System.Security.Policy/StrongName.cs 
+System.Security.Policy/Zone.cs 
 System.Security.Principal/GenericIdentity.cs
 System.Security.Principal/GenericPrincipal.cs
 System.Security.Principal/IIdentity.cs
