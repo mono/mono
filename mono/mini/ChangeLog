@@ -1,6 +1,11 @@
+2003-12-30  Patrik Torstensson <p@rxc.se>
+
+	* mini-x86.h: Decreased number of availiable fp regs.
+	Solves corner cases with FP spilling.
+
 2003-12-23  Patrik Torstensson <p@rxc.se>
 
-	* mini.x86.c, mini-ops.h, cpu-pentium.md: Added support
+	* mini-x86.c, mini-ops.h, cpu-pentium.md: Added support
 	for floating point stack tracking / spilling on x86. 
 	Fixes bug #49012.
 	
