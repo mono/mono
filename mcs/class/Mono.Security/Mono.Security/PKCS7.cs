@@ -527,7 +527,7 @@ namespace Mono.Security {
 			private X509CertificateCollection certs;
 			private ArrayList crls;
 			private SignerInfo signerInfo;
-			private ASN1 mda;
+			private bool mda;
 
 			public SignedData () 
 			{
@@ -536,6 +536,7 @@ namespace Mono.Security {
 				certs = new X509CertificateCollection ();
 				crls = new ArrayList ();
 				signerInfo = new SignerInfo ();
+				mda = true;
 			}
 
 			public SignedData (byte[] data) 
@@ -551,8 +552,6 @@ namespace Mono.Security {
 				if (asn1[0][0].Tag != 0x02)
 					throw new ArgumentException ("Invalid version");
 				version = asn1[0][0].Value[0];
-
-				// digestInfo
 
 				contentInfo = new ContentInfo (asn1[0][2]);
 
@@ -575,6 +574,14 @@ namespace Mono.Security {
 					signerInfo = new SignerInfo (asn1[0][n]);
 				else
 					signerInfo = new SignerInfo ();
+
+				// Exchange hash algorithm Oid from SignerInfo
+				if (signerInfo.HashName != null) {
+					HashName = OidToName(signerInfo.HashName);
+				}
+				
+				// Check if SignerInfo has authenticated attributes
+				mda = (signerInfo.AuthenticatedAttributes.Count > 0);
 			}
 
 			public ASN1 ASN1 {
@@ -611,6 +618,62 @@ namespace Mono.Security {
 				set { version = value; }
 			}
 
+			public bool UseAuthenticatedAttributes {
+				get { return mda; }
+				set { mda = value; }
+			}
+
+			public bool VerifySignature (AsymmetricAlgorithm aa)
+			{
+				if (aa == null) {
+					return false;
+				}
+
+				RSAPKCS1SignatureDeformatter r = new RSAPKCS1SignatureDeformatter (aa);
+				r.SetHashAlgorithm (hashAlgorithm);
+				HashAlgorithm ha = HashAlgorithm.Create (hashAlgorithm);
+
+				byte[] signature = signerInfo.Signature;
+				byte[] hash = null;
+
+				if (mda) {
+					ASN1 asn = new ASN1 (0x31);
+					foreach (ASN1 attr in signerInfo.AuthenticatedAttributes)
+						asn.Add (attr);
+
+					hash = ha.ComputeHash (asn.GetBytes ());
+				} else {
+					hash = ha.ComputeHash (contentInfo.Content[0].Value);
+				}
+
+				if (hash != null && signature != null) {
+					return r.VerifySignature (hash, signature);
+				}
+				return false;
+			}
+
+			internal string OidToName (string oid)
+			{
+				switch (oid) {
+				case "1.3.14.3.2.26" :
+					return "SHA1";
+				case "1.2.840.113549.2.2" :
+					return "MD2";
+				case "1.2.840.113549.2.5" :
+					return "MD5";
+				case "2.16.840.1.101.3.4.1" :
+					return "SHA256";
+				case "2.16.840.1.101.3.4.2" :
+					return "SHA384";
+				case "2.16.840.1.101.3.4.3" :
+					return "SHA512";
+				default :
+					break;
+				}
+				// Unknown Oid
+				return oid;
+			}
+
 			internal ASN1 GetASN1 () 
 			{
 				// SignedData ::= SEQUENCE {
@@ -628,13 +691,28 @@ namespace Mono.Security {
 				// contentInfo ContentInfo,
 				ASN1 ci = contentInfo.ASN1;
 				signedData.Add (ci);
-				if ((mda == null) && (hashAlgorithm != null)) {
-					// automatically add the messageDigest authenticated attribute
-					HashAlgorithm ha = HashAlgorithm.Create (hashAlgorithm);
-					byte[] idcHash = ha.ComputeHash (ci[1][0].Value);
-					ASN1 md = new ASN1 (0x30);
-					mda = Attribute (Oid.messageDigest, md.Add (new ASN1 (0x04, idcHash)));
-					signerInfo.AuthenticatedAttributes.Add (mda);
+				if (hashAlgorithm != null) {
+					if (mda) {
+						// Use authenticated attributes for signature
+						
+						// Automatically add the contentType authenticated attribute
+						ASN1 ctattr = Attribute (Oid.contentType, ci[0]);
+						signerInfo.AuthenticatedAttributes.Add (ctattr);
+						
+						// Automatically add the messageDigest authenticated attribute
+						HashAlgorithm ha = HashAlgorithm.Create (hashAlgorithm);
+						byte[] idcHash = ha.ComputeHash (ci[1][0].Value);
+						ASN1 md = new ASN1 (0x30);
+						ASN1 mdattr = Attribute (Oid.messageDigest, md.Add (new ASN1 (0x04, idcHash)));
+						signerInfo.AuthenticatedAttributes.Add (mdattr);
+					} else {
+						// Don't use authenticated attributes for signature -- signature is content
+						RSAPKCS1SignatureFormatter r = new RSAPKCS1SignatureFormatter (signerInfo.Key);
+						r.SetHashAlgorithm (hashAlgorithm);
+						HashAlgorithm ha = HashAlgorithm.Create (hashAlgorithm);
+						byte[] sig = ha.ComputeHash (ci[1][0].Value);
+						signerInfo.Signature = r.CreateSignature (sig);
+					}
 				}
 
 				// certificates [0] IMPLICIT ExtendedCertificatesAndCertificates OPTIONAL,
@@ -798,6 +876,12 @@ namespace Mono.Security {
 						return null;
 					return (byte[]) signature.Clone (); 
 				}
+
+				set {
+					if (value != null) {
+						signature = (byte[]) value.Clone ();
+					}
+				}
 			}
 
 			public ArrayList UnauthenticatedAttributes {
@@ -823,8 +907,9 @@ namespace Mono.Security {
 				string hashOid = CryptoConfig.MapNameToOID (hashAlgorithm);
 				signerInfo.Add (AlgorithmIdentifier (hashOid));
 				// authenticatedAttributes [0] IMPLICIT Attributes OPTIONAL,
-				ASN1 aa = signerInfo.Add (new ASN1 (0xA0));
+				ASN1 aa = null;
 				if (authenticatedAttributes.Count > 0) {
+					aa = signerInfo.Add (new ASN1 (0xA0));
 					foreach (ASN1 attr in authenticatedAttributes)
 						aa.Add (attr);
 				}
@@ -832,13 +917,16 @@ namespace Mono.Security {
 				if (key is RSA) {
 					signerInfo.Add (AlgorithmIdentifier (PKCS7.Oid.rsaEncryption));
 
-					RSAPKCS1SignatureFormatter r = new RSAPKCS1SignatureFormatter (key);
-					r.SetHashAlgorithm (hashAlgorithm);
-					byte[] tbs = aa.GetBytes ();
-					tbs [0] = 0x31; // not 0xA0 for signature
-					HashAlgorithm ha = HashAlgorithm.Create (hashAlgorithm);
-					byte[] tbsHash = ha.ComputeHash (tbs);
-					signature = r.CreateSignature (tbsHash);
+					if (aa != null) {
+						// Calculate the signature here; otherwise it must be set from SignedData
+						RSAPKCS1SignatureFormatter r = new RSAPKCS1SignatureFormatter (key);
+						r.SetHashAlgorithm (hashAlgorithm);
+						byte[] tbs = aa.GetBytes ();
+						tbs [0] = 0x31; // not 0xA0 for signature
+						HashAlgorithm ha = HashAlgorithm.Create (hashAlgorithm);
+						byte[] tbsHash = ha.ComputeHash (tbs);
+						signature = r.CreateSignature (tbsHash);
+					}
 				}
 				else if (key is DSA) {
 					throw new NotImplementedException ("not yet");
