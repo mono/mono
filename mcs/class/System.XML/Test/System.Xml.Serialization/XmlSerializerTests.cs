@@ -700,6 +700,22 @@ namespace MonoTests.System.XmlSerialization
 			AssertEquals(Infoset("<NodeContainer xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><node>text</node></NodeContainer>"), WriterText);
 		}
 		
+		[Test]
+		public void TestSerializeChoice ()
+		{
+			Choices ch = new Choices ();
+			ch.MyChoice = "choice text";
+			ch.ItemType = ItemChoiceType.ChoiceZero;
+			Serialize (ch); 
+			AssertEquals(Infoset("<Choices xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><ChoiceZero>choice text</ChoiceZero></Choices>"), WriterText);
+			ch.ItemType = ItemChoiceType.StrangeOne;
+			Serialize (ch); 
+			AssertEquals(Infoset("<Choices xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><ChoiceOne>choice text</ChoiceOne></Choices>"), WriterText);
+			ch.ItemType = ItemChoiceType.ChoiceTwo;
+			Serialize (ch); 
+			AssertEquals(Infoset("<Choices xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'><ChoiceTwo>choice text</ChoiceTwo></Choices>"), WriterText);
+		}
+		
 		public static string Infoset (string sx)
 		{
 			XmlDocument doc = new XmlDocument ();

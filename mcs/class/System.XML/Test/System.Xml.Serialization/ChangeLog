@@ -1,3 +1,10 @@
+2005-03-30  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* XmlSerializerTests.cs:
+	* XmlReflectionImporterTests.cs:
+	* DeserializeTests.cs:
+	* XmlSerializerTestClasses.cs: Added tests for serialization of choices.
+
 2005-03-29  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* XmlSerializerTests.cs:

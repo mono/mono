@@ -429,7 +429,13 @@ namespace MonoTests.System.XmlSerialization
 			AssertEquals("Int32", tm.TypeName);
 			AssertEquals("System.Int32", tm.TypeFullName);
 		}
-
+		
+		[Test]
+		[ExpectedException (typeof (InvalidOperationException))]
+		public void TestSerializeWrongChoice ()
+		{
+			new XmlSerializer (typeof(WrongChoices));
+		}
 	}
 }
 

@@ -177,5 +177,21 @@ namespace MonoTests.System.XmlSerialization
 			Assertion.Assert ("#1", c.node is XmlText);
 			Assertion.AssertEquals ("#2", "text", c.node.Value);
 		}
+		
+		[Test]
+		public void TestDeserializeChoices ()
+		{
+			Choices ch = (Choices) Deserialize (typeof(Choices), "<Choices><ChoiceZero>choice text</ChoiceZero></Choices>");
+			Assertion.AssertEquals ("#1", "choice text", ch.MyChoice);
+			Assertion.AssertEquals ("#2", ItemChoiceType.ChoiceZero, ch.ItemType);
+			
+			ch = (Choices) Deserialize (typeof(Choices), "<Choices><ChoiceOne>choice text</ChoiceOne></Choices>");
+			Assertion.AssertEquals ("#1", "choice text", ch.MyChoice);
+			Assertion.AssertEquals ("#2", ItemChoiceType.StrangeOne, ch.ItemType);
+			
+			ch = (Choices) Deserialize (typeof(Choices), "<Choices><ChoiceTwo>choice text</ChoiceTwo></Choices>");
+			Assertion.AssertEquals ("#1", "choice text", ch.MyChoice);
+			Assertion.AssertEquals ("#2", ItemChoiceType.ChoiceTwo, ch.ItemType);
+		}
 	}
 }

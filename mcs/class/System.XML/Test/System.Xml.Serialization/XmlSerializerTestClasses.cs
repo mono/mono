@@ -148,4 +148,37 @@ namespace MonoTests.System.Xml.TestClasses
 	{
 		public XmlNode node;
 	}
+	
+	public class Choices
+	{
+		[XmlElementAttribute("ChoiceZero", typeof(string), IsNullable=false)]
+		[XmlElementAttribute("ChoiceOne", typeof(string), IsNullable=false)]
+		[XmlElementAttribute("ChoiceTwo", typeof(string), IsNullable=false)]
+		[XmlChoiceIdentifier("ItemType")]
+		public string MyChoice;
+
+		[XmlIgnore]
+		public ItemChoiceType ItemType;
+	}
+	
+	[XmlType(IncludeInSchema = false)]
+	public enum ItemChoiceType
+	{
+		ChoiceZero,
+		[XmlEnum ("ChoiceOne")]
+		StrangeOne,
+		ChoiceTwo,
+	}
+	
+	public class WrongChoices
+	{
+		[XmlElementAttribute("ChoiceZero", typeof(string), IsNullable=false)]
+		[XmlElementAttribute("StrangeOne", typeof(string), IsNullable=false)]
+		[XmlElementAttribute("ChoiceTwo", typeof(string), IsNullable=false)]
+		[XmlChoiceIdentifier("ItemType")]
+		public string MyChoice;
+
+		[XmlIgnore]
+		public ItemChoiceType ItemType;
+	}
 }
