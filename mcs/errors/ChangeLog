@@ -1,5 +1,10 @@
 2004-12-02  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* cs1589.inc : plus one.
+	* Makefile : remove dummy.xml (in case of error test failures)
+
+2004-12-02  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* cs1570.cs, cs1570-2.cs, cs1570-3.cs, cs1570-4.cs, cs1570-5.cs,
 	  cs1570-6.cs, cs1570-7.cs, cs1570-8.cs, cs1570-9.cs, cs1570-10.cs,
 	  cs1570-11.cs, cs1571.cs, cs1572.cs, cs1573.cs, cs1574.cs,

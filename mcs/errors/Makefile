@@ -86,6 +86,7 @@ clean-local:
 	rm -f *.dll
 	rm -f *.log
 	rm -f *.mdb
+	rm -f dummy.xml
 
 dist-local: dist-default
 
