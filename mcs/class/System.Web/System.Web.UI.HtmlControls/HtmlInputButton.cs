@@ -56,7 +56,7 @@ namespace System.Web.UI.HtmlControls{
 		protected virtual void OnServerClick(EventArgs e){
 			EventHandler handler = (EventHandler) Events[EventServerClick];
 			if (handler != null){
-				handler.Invoke(this, e);
+				handler (this, e);
 			}
 		}
 		

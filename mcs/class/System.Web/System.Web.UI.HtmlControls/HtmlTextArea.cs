@@ -92,7 +92,7 @@ namespace System.Web.UI.HtmlControls{
 			EventHandler handler;
 			handler = (EventHandler) Events[EventServerChange];
 			if(handler != null){
-				handler.Invoke(this, e);
+				handler (this, e);
 			}
 		}
 		

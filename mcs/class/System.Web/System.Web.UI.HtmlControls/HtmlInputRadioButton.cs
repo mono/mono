@@ -31,7 +31,7 @@ namespace System.Web.UI.HtmlControls{
 		protected virtual void OnServerChange(EventArgs e){
 			EventHandler handler = (EventHandler) Events[EventServerChange];
 			if (handler != null){
-				handler.Invoke(this, e);
+				handler (this, e);
 			}
 		}
 		

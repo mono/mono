@@ -1,3 +1,9 @@
+2003-07-25  Ravi Pratap  <ravi@ximian.com>
+
+	* everywhere: Remove uses of direct invocation of the 'Invoke'
+	method on a delegate type - that is error cs1533 now flagged by
+	mcs.
+
 2003-07-17  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
 	* System.Web.dll.sources:

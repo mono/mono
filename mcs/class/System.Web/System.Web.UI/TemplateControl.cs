@@ -135,21 +135,21 @@ namespace System.Web.UI {
 		{
 			EventHandler eh = Events [error] as EventHandler;
 			if (eh != null)
-				eh.Invoke (this, e);
+				eh (this, e);
 		}
 
 		protected virtual void OnCommitTransaction (EventArgs e)
 		{
 			EventHandler eh = Events [commitTransaction] as EventHandler;
 			if (eh != null)
-				eh.Invoke (this, e);
+				eh (this, e);
 		}
 
 		protected virtual void OnError (EventArgs e)
 		{
 			EventHandler eh = Events [abortTransaction] as EventHandler;
 			if (eh != null)
-				eh.Invoke (this, e);
+				eh (this, e);
 		}
 
 		[MonoTODO]

@@ -29,9 +29,10 @@ namespace System.Web.UI.HtmlControls{
 		protected virtual void OnServerClick(EventArgs e){
 			EventHandler handler;
 			handler = (EventHandler) Events[EventServerClick];
-			if(handler != null){
-				handler.Invoke(this, e);
-			}
+			if (handler != null)
+				handler (this, e);
+
+                        
 		}
 		
 		protected override void RenderAttributes (HtmlTextWriter writer)
