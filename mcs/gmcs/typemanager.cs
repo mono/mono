@@ -3144,7 +3144,7 @@ public sealed class TypeHandle : IMemberContainer {
 		this.type = type;
 		if (type.BaseType != null)
 			BaseType = GetTypeHandle (type.BaseType);
-		this.is_interface = type.IsInterface;
+		this.is_interface = type.IsInterface || type.IsGenericParameter;
 		this.member_cache = new MemberCache (this);
 	}
 

@@ -1407,7 +1407,7 @@ namespace Mono.CSharp {
 			// If this is neither a dynamic type nor an interface, create a special
 			// method cache with all declared and inherited methods.
 			Type type = container.Type;
-			if (!(type is TypeBuilder) && !type.IsInterface) {
+			if (!(type is TypeBuilder) && !type.IsInterface && !type.IsGenericParameter) {
 				method_hash = new Hashtable ();
 				AddMethods (type);
 			}
