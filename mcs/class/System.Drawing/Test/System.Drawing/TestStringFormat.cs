@@ -15,7 +15,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Drawing{
 
 	[TestFixture]	
-	public class StringFormatTest : Assertion {
+	public class StringFormatTest {
 		
 		[TearDown]
 		public void Clean() {}
@@ -39,11 +39,11 @@ namespace MonoTests.System.Drawing{
 			StringFormat smf = new StringFormat();						
 			StringFormat smfclone = (StringFormat) smf.Clone();			
 			
-			AssertEquals (smf.LineAlignment, smfclone.LineAlignment);			
-			AssertEquals (smf.FormatFlags, smfclone.FormatFlags);			
-			AssertEquals (smf.LineAlignment, smfclone.LineAlignment);			
-			AssertEquals (smf.Alignment, smfclone.Alignment);			
-			AssertEquals (smf.Trimming, smfclone.Trimming);			
+			Assert.AreEqual (smf.LineAlignment, smfclone.LineAlignment);			
+			Assert.AreEqual (smf.FormatFlags, smfclone.FormatFlags);			
+			Assert.AreEqual (smf.LineAlignment, smfclone.LineAlignment);			
+			Assert.AreEqual (smf.Alignment, smfclone.Alignment);			
+			Assert.AreEqual (smf.Trimming, smfclone.Trimming);			
 		}
 			
 		[Test]
@@ -52,10 +52,10 @@ namespace MonoTests.System.Drawing{
 			StringFormat	smf = new StringFormat ();
 			
 			smf.LineAlignment = StringAlignment.Center;									
-			AssertEquals (StringAlignment.Center, smf.LineAlignment);			
+			Assert.AreEqual (StringAlignment.Center, smf.LineAlignment);			
 			
 			smf.Alignment = StringAlignment.Far;									
-			AssertEquals (StringAlignment.Far, smf.Alignment);						 
+			Assert.AreEqual (StringAlignment.Far, smf.Alignment);						 
 		}		
 			
 		[Test]
@@ -64,7 +64,7 @@ namespace MonoTests.System.Drawing{
 			StringFormat	smf = new StringFormat ();
 			
 			smf.FormatFlags = StringFormatFlags.DisplayFormatControl;									
-			AssertEquals (StringFormatFlags.DisplayFormatControl, smf.FormatFlags);						 
+			Assert.AreEqual (StringFormatFlags.DisplayFormatControl, smf.FormatFlags);						 
 		}		
 		
 		[Test]
@@ -79,12 +79,12 @@ namespace MonoTests.System.Drawing{
 			smf.SetTabStops(200, tabsSrc);
 			tabStops = smf.GetTabStops(out firstTabOffset);
 			
-			AssertEquals (200, firstTabOffset);						 
-			AssertEquals (tabsSrc.Length, tabStops.Length);						 
-			AssertEquals (tabsSrc[0], tabStops[0]);					
-			AssertEquals (tabsSrc[1], tabStops[1]);					
-			AssertEquals (tabsSrc[2], tabStops[2]);					
-			AssertEquals (tabsSrc[3], tabStops[3]);					
+			Assert.AreEqual (200, firstTabOffset);						 
+			Assert.AreEqual (tabsSrc.Length, tabStops.Length);						 
+			Assert.AreEqual (tabsSrc[0], tabStops[0]);					
+			Assert.AreEqual (tabsSrc[1], tabStops[1]);					
+			Assert.AreEqual (tabsSrc[2], tabStops[2]);					
+			Assert.AreEqual (tabsSrc[3], tabStops[3]);					
 		}	
 		
 	}

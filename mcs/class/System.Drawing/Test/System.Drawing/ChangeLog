@@ -1,5 +1,10 @@
 2004-06-09  Sanjay Gupta <gsanjay@novell.com>
 
+	* TestImageFormatConverter.cs, TestStringFormat.cs: Removed 
+	dependency on obsolete class, Assertion from NUnit.
+
+2004-06-09  Sanjay Gupta <gsanjay@novell.com>
+
 	* TestImageConverter.cs: Removed dependency on obsolete class, 
 	Assertion from NUnit.
 
