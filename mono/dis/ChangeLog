@@ -1,3 +1,10 @@
+2001-08-01  Dietmar Maurer  <dietmar@ximian.com>
+
+	* get.c (get_token): decode typedef and typeref tokens
+
+	* main.c (dis_method_list): don't decode the next row, that is
+	totally unnecessary
+
 Tue Jul 31 17:48:11 CEST 2001 Paolo Molaro <lupus@ximian.com>
 
 	* dis-cil.c, dis-cil.h, dump.c, dump.h, get.c, get.h, main.c, push-pop.h:
