@@ -1,5 +1,9 @@
 2003-12-05  Martin Baulig  <martin@ximian.com>
 
+	* profiles/generics.make: Define `GENERICS'.
+
+2003-12-05  Martin Baulig  <martin@ximian.com>
+
 	* profiles/net_1_2.make: New profile; uses the .NET 1.2 API's, but
 	without generics and with mcs instead of gmcs.
 
