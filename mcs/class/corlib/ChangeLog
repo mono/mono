@@ -1,3 +1,8 @@
+2005-02-26  Kazuki Oikawa  <kazuki@panicode.com>
+
+	* corlib.dll.sources: Removed DoubleFormatter and SingleFormatter.
+	Added System.Runtime.InteropServices.ComTypes
+
 2005-02-24  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* corlib_test.dll.sources : Added new 2.0 unit tests for X.509 
@@ -669,7 +674,7 @@
 	* corlib_test.dll.sources: Added unit tests PaddingMode and X509 
 	using CryptoAPI.
 
-2003-12-14  Pedro Martínez Juliá  <yoros@wanadoo.es>
+2003-12-14  Pedro Martú‹ez JuliE <yoros@wanadoo.es>
 
 	* DateTime.cs: Be sure that the array access is not out of range
 	when looking for ArgumentOutOfRangeException in the year value.
@@ -760,7 +765,7 @@
 	* corlib.dll.sources: Added classes for Authenticode support.
 	* corlib_test.dll.sources: Added unit test for SPC certificates.
 
-2003-09-26  Pedro Martínez Julá  <yoros@wanadoo.es>
+2003-09-26  Pedro Martú‹ez JulE <yoros@wanadoo.es>
 
 	* corlib_test.dll.sources: Remove tests that generate compile
 	errors. The tests are still there but its name is rmoved here.
@@ -918,7 +923,7 @@
 
 	* unix.args: Added System.Runtime.Remoting.Activation/AppDomainLevelActivator.cs
 
-2003-03-16  Pedro Martínez Juliá  <yoros@wanadoo.es>
+2003-03-16  Pedro Martú‹ez JuliE <yoros@wanadoo.es>
 
 	* unix.args: Added "System.FloatingPointFormatter.cs".
 
@@ -930,7 +935,7 @@
 	* unix.args: Added
 		System.Runtime.InteropServices/HandleRef.cs
 
-2003-03-04  Pedro Martínez Juliá  <yoros@wanadoo.es>
+2003-03-04  Pedro Martú‹ez JuliE <yoros@wanadoo.es>
 
 	* unix.args: Added "DoubleFormatter.cs" and "SingleFormatter.cs"
 
