@@ -1,10 +1,14 @@
+2004-09-30  Zoltan Varga  <vargaz@freemail.hu>
+
+	* libtest.c pinvoke2.cs: Add test for returning delegates.
+
 2004-09-28  Zoltan Varga  <vargaz@freemail.hu>
 
 	* Makefile.am: Add marshal.cs.
 
 	* marshal.cs: New file for Marshal tests.
 
-2004-09-21    <vargaz@freemail.hu>
+2004-09-21 Zoltan Varga <vargaz@freemail.hu>
 
 	* libtest.c: Free memory using CoTaskMemFree on windows.
 	* libtest.c (mono_test_stdcall_name_mangling): Remove declspec(dllimport).
