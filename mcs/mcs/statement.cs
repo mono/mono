@@ -46,16 +46,14 @@ namespace Mono.CSharp {
 			// in unreachable code, for instance.
 			//
 
+			if (warn && (RootContext.WarningLevel >= 2))
+				Report.Warning (162, loc, "Unreachable code detected");
+
 			ec.StartFlowBranching (FlowBranching.BranchingType.Block, loc);
 			bool ok = Resolve (ec);
 			ec.KillFlowBranching ();
 
-			if (!ok)
-				return false;
-
-			if (warn && (RootContext.WarningLevel >= 2))
-				Report.Warning (162, loc, "Unreachable code detected");
-			return true;
+			return ok;
 		}
 		
 		protected void CheckObsolete (Type type)
