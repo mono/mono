@@ -370,14 +370,23 @@ namespace Mono.Tools {
 					// Show public key token from assembly
 					an = AssemblyName.GetAssemblyName (args [i++]);
 					// note: ignore quiet
-					Console.WriteLine ("Public Key Token: " + ToString (an.GetPublicKeyToken ()));
+					byte [] pkt = an.GetPublicKeyToken ();
+					if (pkt == null) {
+						Console.WriteLine ("{0} does not represent a strongly named assembly.", args [i - 1]);
+					} else {
+						Console.WriteLine ("Public Key Token: " + ToString (pkt));
+					}
 					break;
 				case "-Tp":
 					// Show public key and public key token from assembly
 					an = AssemblyName.GetAssemblyName (args [i++]);
-					// note: ignore quiet
-					Console.WriteLine ("Public Key:" + ToString (an.GetPublicKey ()));
-					Console.WriteLine ("{0}Public Key Token: " + ToString (an.GetPublicKeyToken ()), Environment.NewLine);
+					byte [] token = an.GetPublicKeyToken ();
+					if (token == null) {
+						Console.WriteLine ("{0} does not represent a strongly named assembly.", args [i - 1]);
+					} else {
+						Console.WriteLine ("Public Key:" + ToString (an.GetPublicKey ()));
+						Console.WriteLine ("{0}Public Key Token: " + ToString (token), Environment.NewLine);
+					}
 					break;
 				case "-v":
 					filename = args [i++];
