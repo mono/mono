@@ -5,7 +5,7 @@ class BazAttribute : System.Attribute
 	public BazAttribute () {}
 	public BazAttribute (Foo foo1) {}
 	public Foo foo2;
-	public Foo foo3 { set {} }
+	public Foo foo3 { set {} get { return Foo.Bar; } }
 };
 
 class Test 
