@@ -1,5 +1,13 @@
 2003-08-28  Martin Baulig  <martin@ximian.com>
 
+	* sample-stack.il: Compile this with ilasm: "ilasm /dll
+	sample-stack.il".
+
+	* sample-hello.cs: Compile this with gmcs: "gmcs
+	/r:sample-stack.dll sample-hello.cs".
+
+2003-08-28  Martin Baulig  <martin@ximian.com>
+
 	* generic.cs (ConstructedType.ResolveAsTypeStep): Actually bind
 	the parameters to the generic type.
 
