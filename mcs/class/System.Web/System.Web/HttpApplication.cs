@@ -1145,10 +1145,8 @@ namespace System.Web
 				if (null != _Session)
 					return _Session;
 
-				if (null != _Context && null != _Context.Session) {
-					_Session = _Context.Session;
-					return _Session;
-				}
+				if (null != _Context && null != _Context.Session)
+					return _Context.Session;
 
 				throw new HttpException ("Failed to get session object");
 			}

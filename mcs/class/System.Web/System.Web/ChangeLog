@@ -1,3 +1,8 @@
+2004-07-07 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpApplication.cs: don't keep the session around if we got it from
+	the context. Fixes bug #61232.
+
 2004-07-06 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpUtility.cs: fixed stupid bug in UrlDecode from bytes. Closes bug
