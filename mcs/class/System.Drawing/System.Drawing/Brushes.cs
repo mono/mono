@@ -1,5 +1,5 @@
 //
-// System.Windows.drawing.Brushes.cs
+// System.Windows.Drawing.Brushes.cs
 //
 // Author:
 //   Dennis Hayes (dennish@Raytek.com)
@@ -10,827 +10,854 @@
 using System;
 
 namespace System.Drawing {
-	/// <summary>
-	/// Summary description for Brushes.
-	/// </summary>
 	public sealed class Brushes {
+		private Brushes()
+		{
+		}
+		
 		public static Brush AliceBlue{
 			get{
-				throw new NotImplementedException ();
+				return new SolidBrush( Color.AliceBlue );
 			}
 		}
 	
 		public static Brush AntiqueWhite{
 			get{
-				throw new NotImplementedException ();
+				return new SolidBrush( Color.AntiqueWhite );
 			}
 		}
 
 		public static Brush Aqua{
 			get{
-				throw new NotImplementedException ();
+				return new SolidBrush( Color.Aqua );
 			}
 		}
 
 		public static Brush Aquamarine{
 			get{
-				throw new NotImplementedException ();
+				return new SolidBrush( Color.Aquamarine );
 			}
 		}
 
 		public static Brush Azure{
 			get{
-				throw new NotImplementedException ();
+				return new SolidBrush( Color.Azure );
 			}
 		}
 
 		public static Brush Beige{
 			get{
-				throw new NotImplementedException ();
+				return new SolidBrush( Color.Beige );
 			}
 		}
 
 		public static Brush Bisque{
 			get{
-				throw new NotImplementedException ();
+				return new SolidBrush( Color.Bisque );
 			}
 		}
 
 		public static Brush Black{
 			get{
-				throw new NotImplementedException ();
+				return new SolidBrush( Color.Black );
 			}
 		}
 
-		public static Brush blanchedAlmond{
+		public static Brush BlanchedAlmond{
 			get{
-				throw new NotImplementedException ();
+				return new SolidBrush( Color.BlanchedAlmond );
 			}
 		}
 
 		public static Brush Blue{
 			get{
-				throw new NotImplementedException ();
+				return new SolidBrush( Color.Blue );
 			}
 		}
 
 		public static Brush BlueViolet{
 			get{
-				throw new NotImplementedException ();
+				return new SolidBrush( Color.BlueViolet );
 			}
 		}
 
 		public static Brush Brown{
 			get{
-				throw new NotImplementedException ();
+				return new SolidBrush( Color.Brown );
 			}
 		}
 
 		public static Brush BurlyWood{
 			get{
-				throw new NotImplementedException ();
+				return new SolidBrush( Color.BurlyWood );
 			}
 		}
 
 		public static Brush CadetBlue{
 			get{
-				throw new NotImplementedException ();
+				return new SolidBrush( Color.CadetBlue );
 			}
 		}
 
 		public static Brush Chartreuse{
 			get{
-				throw new NotImplementedException ();
+				return new SolidBrush( Color.Chartreuse );
 			}
 		}
 
 		public static Brush Chocolate{
 			get{
-				throw new NotImplementedException ();
+				return new SolidBrush( Color.Chocolate );
 			}
 		}
 
 		public static Brush Coral{
 			get{
-				throw new NotImplementedException ();
+				return new SolidBrush( Color.Coral );
 			}
 		}
 
-		public static Brush CornFlowerBlue{
+		public static Brush CornflowerBlue{
 			get{
-				throw new NotImplementedException ();
+				return new SolidBrush( Color.CornflowerBlue );
 			}
 		}
 
-		public static Brush cornsilk{
+		public static Brush Cornsilk{
 			get{
-				throw new NotImplementedException ();
+				return new SolidBrush( Color.Cornsilk );
 			}
 		}
 
-		public static Brush Crimsion{
+		public static Brush Crimson{
 			get{
-				throw new NotImplementedException ();
+				return new SolidBrush( Color.Crimson );
 			}
 		}
 
 		public static Brush Cyan{
 			get{
-				throw new NotImplementedException ();
+				return new SolidBrush( Color.Cyan );
 			}
 		}
 
 		public static Brush DarkBlue{
 			get{
-				throw new NotImplementedException ();
+				return new SolidBrush( Color.DarkBlue );
 			}
 		}
 
 		public static Brush DarkCyan{
 			get{
-				throw new NotImplementedException ();
+				return new SolidBrush( Color.DarkCyan );
 			}
 		}
 
-		public static Brush Darkgoldenrod{
+		public static Brush DarkGoldenrod{
 			get{
-				throw new NotImplementedException ();
+				return new SolidBrush( Color.DarkGoldenrod );
 			}
 		}
 
 		public static Brush DarkGray{
 			get{
-				throw new NotImplementedException ();
+				return new SolidBrush( Color.DarkGray );
 			}
 		}
 
 		public static Brush DarkGreen{
 			get{
-				throw new NotImplementedException ();
+				return new SolidBrush( Color.DarkGreen );
 			}
 		}
 
 		public static Brush DarkKhaki{
 			get{
-				throw new NotImplementedException ();
+				return new SolidBrush( Color.DarkKhaki );
 			}
 		}
 
 		public static Brush DarkMagenta{
 			get{
-				throw new NotImplementedException ();
+				return new SolidBrush( Color.DarkMagenta );
 			}
 		}
 
-		public static Brush OliveGreen{
+		public static Brush DarkOliveGreen
+		{
 			get{
-				throw new NotImplementedException ();
+				return new SolidBrush( Color.DarkOliveGreen );
 			}
 		}
-
+		
 		public static Brush DarkOrange{
 			get{
-				throw new NotImplementedException ();
+				return new SolidBrush( Color.DarkOrange );
 			}
 		}
 
-		public static Brush DarkOrchard{
+		public static Brush DarkOrchid{
 			get{
-				throw new NotImplementedException ();
+				return new SolidBrush( Color.DarkOrchid );
 			}
 		}
 
 		public static Brush DarkRed{
 			get{
-				throw new NotImplementedException ();
+				return new SolidBrush( Color.DarkRed );
 			}
 		}
 
 		public static Brush DarkSalmon{
 			get{
-				throw new NotImplementedException ();
+				return new SolidBrush( Color.DarkSalmon );
 			}
 		}
 
 		public static Brush DarkSeaGreen{
 			get{
-				throw new NotImplementedException ();
+				return new SolidBrush( Color.DarkSeaGreen );
 			}
 		}
 
 		public static Brush DarkSlateBlue{
 			get{
-				throw new NotImplementedException ();
+				return new SolidBrush( Color.DarkSlateBlue );
 			}
 		}
 
 		public static Brush DarkSlateGray{
 			get{
-				throw new NotImplementedException ();
+				return new SolidBrush( Color.DarkSlateGray );
 			}
 		}
 
 		public static Brush DarkTurquoise{
 			get{
-				throw new NotImplementedException ();
+				return new SolidBrush( Color.DarkTurquoise );
 			}
 		}
 
 		public static Brush DarkViolet{
 			get{
-				throw new NotImplementedException ();
+				return new SolidBrush( Color.DarkViolet );
 			}
 		}
 
 		public static Brush DeepPink{
 			get{
-				throw new NotImplementedException ();
+				return new SolidBrush( Color.DeepPink );
 			}
 		}
 
 		public static Brush DeepSkyBlue{
 			get{
-				throw new NotImplementedException ();
+				return new SolidBrush( Color.DeepSkyBlue );
 			}
 		}
 
 		public static Brush DimGray{
 			get{
-				throw new NotImplementedException ();
+				return new SolidBrush( Color.DimGray );
 			}
 		}
 
 		public static Brush DodgerBlue{
 			get{
-				throw new NotImplementedException ();
+				return new SolidBrush( Color.DodgerBlue );
 			}
 		}
 
 		public static Brush Firebrick{
 			get{
-				throw new NotImplementedException ();
+				return new SolidBrush( Color.Firebrick );
 			}
 		}
 
 		public static Brush FloralWhite{
 			get{
-				throw new NotImplementedException ();
+				return new SolidBrush( Color.FloralWhite );
 			}
 		}
 
 		public static Brush ForestGreen{
 			get{
-				throw new NotImplementedException ();
+				return new SolidBrush( Color.ForestGreen );
 			}
 		}
 
 		public static Brush Fuchsia{
 			get{
-				throw new NotImplementedException ();
+				return new SolidBrush( Color.Fuchsia );
 			}
 		}
 
 		public static Brush Gainsboro {
 			get{
-				throw new NotImplementedException ();
+				return new SolidBrush( Color.Gainsboro );
 			}
 		}
 
 		public static Brush GhostWhite{
 			get{
-				throw new NotImplementedException ();
+				return new SolidBrush( Color.GhostWhite );
 			}
 		}
 
 		public static Brush Gold{
 			get{
-				throw new NotImplementedException ();
+				return new SolidBrush( Color.Gold );
 			}
 		}
 
 		public static Brush Goldenrod{
 			get{
-				throw new NotImplementedException ();
+				return new SolidBrush( Color.Goldenrod );
 			}
 		}
 
 		public static Brush Gray{
 			get{
-				throw new NotImplementedException ();
+				return new SolidBrush( Color.Gray );
 			}
 		}
 
 		public static Brush Green{
 			get{
-				throw new NotImplementedException ();
+				return new SolidBrush( Color.Green );
 			}
 		}
 
 		public static Brush GreenYellow{
 			get{
-				throw new NotImplementedException ();
+				return new SolidBrush( Color.GreenYellow );
 			}
 		}
 
 		public static Brush Honeydew{
 			get{
-				throw new NotImplementedException ();
+				return new SolidBrush( Color.Honeydew );
 			}
 		}
 
 		public static Brush HotPink{
 			get{
-				throw new NotImplementedException ();
+				return new SolidBrush( Color.HotPink );
 			}
 		}
 
 		public static Brush IndianRed{
 			get{
-				throw new NotImplementedException ();
+				return new SolidBrush( Color.IndianRed );
 			}
 		}
 
 		public static Brush Indigo{
 			get{
-				throw new NotImplementedException ();
+				return new SolidBrush( Color.Indigo );
 			}
 		}
 
 		public static Brush Ivory{
 			get{
-				throw new NotImplementedException ();
+				return new SolidBrush( Color.Ivory );
 			}
 		}
 
 		public static Brush Khaki{
 			get{
-				throw new NotImplementedException ();
+				return new SolidBrush( Color.Khaki );
 			}
 		}
 
 		public static Brush Lavender{
 			get{
-				throw new NotImplementedException ();
+				return new SolidBrush( Color.Lavender );
 			}
 		}
 
 		public static Brush LavenderBlush{
 			get{
-				throw new NotImplementedException ();
+				return new SolidBrush( Color.LavenderBlush );
 			}
 		}
 
 		public static Brush LawnGreen{
 			get{
-				throw new NotImplementedException ();
+				return new SolidBrush( Color.LawnGreen );
 			}
 		}
 
 		public static Brush LemonChiffon{
 			get{
-				throw new NotImplementedException ();
+				return new SolidBrush( Color.LemonChiffon );
 			}
 		}
 
 		public static Brush LightBlue{
 			get{
-				throw new NotImplementedException ();
+				return new SolidBrush( Color.LightBlue );
 			}
 		}
 
 		public static Brush LightCoral{
 			get{
-				throw new NotImplementedException ();
+				return new SolidBrush( Color.LightCoral );
 			}
 		}
 
 		public static Brush LightCyan{
 			get{
-				throw new NotImplementedException ();
+				return new SolidBrush( Color.LightCyan );
 			}
 		}
 
 		public static Brush LightGoldenrodYellow{
 			get{
-				throw new NotImplementedException ();
+				return new SolidBrush( Color.LightGoldenrodYellow );
 			}
 		}
 
 		public static Brush LightGray{
 			get{
-				throw new NotImplementedException ();
+				return new SolidBrush( Color.LightGray );
 			}
 		}
 
 		public static Brush LightGreen{
 			get{
-				throw new NotImplementedException ();
+				return new SolidBrush( Color.LightGreen );
 			}
 		}
 
 		public static Brush LightPink{
 			get{
-				throw new NotImplementedException ();
+				return new SolidBrush( Color.LightPink );
 			}
 		}
 
 		public static Brush LightSalmon{
 			get{
-				throw new NotImplementedException ();
+				return new SolidBrush( Color.LightSalmon );
 			}
 		}
 
 		public static Brush LightSeaGreen{
 			get{
-				throw new NotImplementedException ();
+				return new SolidBrush( Color.LightSeaGreen );
 			}
 		}
 
 		public static Brush LightSkyBlue{
 			get{
-				throw new NotImplementedException ();
+				return new SolidBrush( Color.LightSkyBlue );
 			}
 		}
 
 		public static Brush LightSlateGray{
 			get{
-				throw new NotImplementedException ();
+				return new SolidBrush( Color.LightSlateGray );
 			}
 		}
 
 		public static Brush LightSteelBlue{
 			get{
-				throw new NotImplementedException ();
+				return new SolidBrush( Color.LightSteelBlue );
 			}
 		}
 
 		public static Brush LightYellow{
 			get{
-				throw new NotImplementedException ();
+				return new SolidBrush( Color.LightYellow );
 			}
 		}
 
 		public static Brush Lime{
 			get{
-				throw new NotImplementedException ();
+				return new SolidBrush( Color.Lime );
+			}
+		}
+
+		public static Brush LimeGreen{
+			get{
+				return new SolidBrush( Color.LimeGreen );
 			}
 		}
 
 		public static Brush Linen{
 			get{
-				throw new NotImplementedException ();
+				return new SolidBrush( Color.Linen );
 			}
 		}
 
 		public static Brush Magenta{
 			get{
-				throw new NotImplementedException ();
+				return new SolidBrush( Color.Magenta );
 			}
 		}
 
 		public static Brush Maroon{
 			get{
-				throw new NotImplementedException ();
+				return new SolidBrush( Color.Maroon );
 			}
 		}
 
 		public static Brush MediumAquamarine{
 			get{
-				throw new NotImplementedException ();
+				return new SolidBrush( Color.MediumAquamarine );
 			}
 		}
 
 		public static Brush MediumBlue{
 			get{
-				throw new NotImplementedException ();
+				return new SolidBrush( Color.MediumBlue );
 			}
 		}
 
 		public static Brush MediumOrchid{
 			get{
-				throw new NotImplementedException ();
+				return new SolidBrush( Color.MediumOrchid );
 			}
 		}
 
 		public static Brush MediumPurple{
 			get{
-				throw new NotImplementedException ();
+				return new SolidBrush( Color.MediumPurple );
 			}
 		}
 
 		public static Brush MediumSeaGreen{
 			get{
-				throw new NotImplementedException ();
+				return new SolidBrush( Color.MediumSeaGreen );
+			}
+		}
+
+		public static Brush MediumSlateBlue{
+			get{
+				return new SolidBrush( Color.MediumSlateBlue );
 			}
 		}
 
 		public static Brush MediumSpringGreen{
 			get{
-				throw new NotImplementedException ();
+				return new SolidBrush( Color.MediumSpringGreen );
 			}
 		}
 
 		public static Brush MediumTurquoise{
 			get{
-				throw new NotImplementedException ();
+				return new SolidBrush( Color.MediumTurquoise );
 			}
 		}
 
 		public static Brush MediumVioletRed{
 			get{
-				throw new NotImplementedException ();
+				return new SolidBrush( Color.MediumVioletRed );
 			}
 		}
 
 		public static Brush MidnightBlue{
 			get{
-				throw new NotImplementedException ();
+				return new SolidBrush( Color.MidnightBlue );
 			}
 		}
 
 		public static Brush MintCream{
 			get{
-				throw new NotImplementedException ();
+				return new SolidBrush( Color.MintCream );
 			}
 		}
 
 		public static Brush MistyRose{
 			get{
-				throw new NotImplementedException ();
+				return new SolidBrush( Color.MistyRose );
 			}
 		}
 
 		public static Brush Moccasin{
 			get{
-				throw new NotImplementedException ();
+				return new SolidBrush( Color.Moccasin );
 			}
 		}
 
 		public static Brush NavajoWhite{
 			get{
-				throw new NotImplementedException ();
+				return new SolidBrush( Color.NavajoWhite );
 			}
 		}
 
 		public static Brush Navy{
 			get{
-				throw new NotImplementedException ();
+				return new SolidBrush( Color.Navy );
 			}
 		}
 
 		public static Brush OldLace{
 			get{
-				throw new NotImplementedException ();
+				return new SolidBrush( Color.OldLace );
 			}
 		}
 
 		public static Brush Olive{
 			get{
-				throw new NotImplementedException ();
+				return new SolidBrush( Color.Olive );
 			}
 		}
 
 		public static Brush OliveDrab{
 			get{
-				throw new NotImplementedException ();
+				return new SolidBrush( Color.OliveDrab );
 			}
 		}
 
 		public static Brush Orange{
 			get{
-				throw new NotImplementedException ();
+				return new SolidBrush( Color.Orange );
 			}
 		}
 
 		public static Brush OrangeRed{
 			get{
-				throw new NotImplementedException ();
+				return new SolidBrush( Color.OrangeRed );
 			}
 		}
 
 		public static Brush Orchid{
 			get{
-				throw new NotImplementedException ();
+				return new SolidBrush( Color.Orchid );
 			}
 		}
 
 		public static Brush PaleGoldenrod{
 			get{
-				throw new NotImplementedException ();
+				return new SolidBrush( Color.PaleGoldenrod );
 			}
 		}
 
 		public static Brush PaleGreen{
 			get{
-				throw new NotImplementedException ();
+				return new SolidBrush( Color.PaleGreen );
 			}
 		}
 
 		public static Brush PaleTurquoise{
 			get{
-				throw new NotImplementedException ();
+				return new SolidBrush( Color.PaleTurquoise );
 			}
 		}
-		public static Brush PalevioletRed{
+		
+		public static Brush PaleVioletRed{
 			get{
-				throw new NotImplementedException ();
+				return new SolidBrush( Color.PaleVioletRed );
 			}
 		}
 
 		public static Brush PapayaWhip{
 			get{
-				throw new NotImplementedException ();
+				return new SolidBrush( Color.PapayaWhip );
 			}
 		}
 
 		public static Brush PeachPuff{
 			get{
-				throw new NotImplementedException ();
+				return new SolidBrush( Color.PeachPuff );
 			}
 		}
 
 		public static Brush Peru{
 			get{
-				throw new NotImplementedException ();
+				return new SolidBrush( Color.Peru );
 			}
 		}
 
 		public static Brush Pink{
 			get{
-				throw new NotImplementedException ();
+				return new SolidBrush( Color.Pink );
 			}
 		}
 
 		public static Brush Plum{
 			get{
-				throw new NotImplementedException ();
+				return new SolidBrush( Color.Plum );
 			}
 		}
 
 		public static Brush PowderBlue{
 			get{
-				throw new NotImplementedException ();
+				return new SolidBrush( Color.PowderBlue );
 			}
 		}
 
 		public static Brush Purple{
 			get{
-				throw new NotImplementedException ();
+				return new SolidBrush( Color.Purple );
 			}
 		}
-
+				
 		public static Brush Red{
 			get{
-				throw new NotImplementedException ();
+				return new SolidBrush( Color.Red );
 			}
 		}
 
 		public static Brush RosyBrown{
 			get{
-				throw new NotImplementedException ();
+				return new SolidBrush( Color.RosyBrown );
 			}
 		}
 
 		public static Brush RoyalBlue{
 			get{
-				throw new NotImplementedException ();
+				return new SolidBrush( Color.RoyalBlue );
 			}
 		}
 
 		public static Brush SaddleBrown{
 			get{
-				throw new NotImplementedException ();
+				return new SolidBrush( Color.SaddleBrown );
 			}
 		}
 
+		public static Brush Salmon{
+			get{
+				return new SolidBrush( Color.Salmon );
+			}
+		}
+		
 		public static Brush SandyBrown{ 
 			get{
-				throw new NotImplementedException ();
+				return new SolidBrush( Color.SandyBrown );
 			}
 		}
 
 		public static Brush SeaGreen{
 			get{
-				throw new NotImplementedException ();
+				return new SolidBrush( Color.SeaGreen );
 			}
 		}
 
 		public static Brush SeaShell{
 			get{
-				throw new NotImplementedException ();
+				return new SolidBrush( Color.SeaShell );
 			}
 		}
 
+		public static Brush Sienna{
+			get{
+				return new SolidBrush( Color.Sienna );
+			}
+		}
+		
 		public static Brush Silver{
 			get{
-				throw new NotImplementedException ();
+				return new SolidBrush( Color.Silver );
 			}
 		}
 
 		public static Brush SkyBlue{
 			get{
-				throw new NotImplementedException ();
+				return new SolidBrush( Color.SkyBlue );
 			}
 		}
 
 		public static Brush SlateBlue{
 			get{
-				throw new NotImplementedException ();
+				return new SolidBrush( Color.SlateBlue );
 			}
 		}
 
 		public static Brush SlateGray{
 			get{
-				throw new NotImplementedException ();
+				return new SolidBrush( Color.SlateGray );
 			}
 		}
 		public static Brush Snow{
 			get{
-				throw new NotImplementedException ();
+				return new SolidBrush( Color.Snow );
 			}
 		}
 
 		public static Brush SpringGreen{
 			get{
-				throw new NotImplementedException ();
+				return new SolidBrush( Color.SpringGreen );
 			}
 		}
 
 		public static Brush SteelBlue{
 			get{
-				throw new NotImplementedException ();
+				return new SolidBrush( Color.SteelBlue );
 			}
 		}
 
 		public static Brush Tan{
 			get{
-				throw new NotImplementedException ();
+				return new SolidBrush( Color.Tan );
 			}
 		}
 
 		public static Brush Teal{
 			get{
-				throw new NotImplementedException ();
+				return new SolidBrush( Color.Teal );
 			}
 		}
 
 		public static Brush Thistle{
 			get{
-				throw new NotImplementedException ();
+				return new SolidBrush( Color.Thistle );
 			}
 		}
 
 		public static Brush Tomato{
 			get{
-				throw new NotImplementedException ();
+				return new SolidBrush( Color.Tomato );
 			}
 		}
 
 		public static Brush Transparent{
 			get{
-				throw new NotImplementedException ();
+				return new SolidBrush( Color.Transparent );
 			}
 		}
 
 		public static Brush Turquoise{
 			get{
-				throw new NotImplementedException ();
+				return new SolidBrush( Color.Turquoise );
 			}
 		}
 
 		public static Brush Violet{
 			get{
-				throw new NotImplementedException ();
+				return new SolidBrush( Color.Violet );
 			}
 		}
 
 		public static Brush Wheat{
 			get{
-				throw new NotImplementedException ();
+				return new SolidBrush( Color.Wheat );
 			}
 		}
 
 		public static Brush White{
 			get{
-				throw new NotImplementedException ();
+				return new SolidBrush( Color.White );
 			}
 		}
 
 		public static Brush WhiteSmoke{
 			get{
-				throw new NotImplementedException ();
+				return new SolidBrush( Color.WhiteSmoke );
 			}
 		}
 
 		public static Brush Yellow{
 			get{
-				throw new NotImplementedException ();
+				return new SolidBrush( Color.Yellow );
 			}
 		}
 
 		public static Brush YellowGreen{
 			get{
-				throw new NotImplementedException ();
+				return new SolidBrush( Color.YellowGreen );
 			}
 		}
 	
