@@ -15,3 +15,7 @@ class O: Base
     public sealed class InnerAttribute: Attribute {
     }        
 }
+
+class D {
+	static void Main () {}
+}
