@@ -146,7 +146,167 @@ namespace System.Web.Services.Description
 				foreach (MessagePart part in msg.Parts)
 					checker.Check (ctx, part);
 			}
+			
+			if (sd.Types != null) {
+				checker.Check (ctx, sd.Types);
+				if (sd.Types.Schemas != null) {
+					foreach (XmlSchema s in sd.Types.Schemas) {
+						checker.Check (ctx, s);
+						CheckObjects (ctx, checker, new Hashtable (), s.Items);
+					}
+				}
+			}
 		}
+		
+		void CheckObjects (ConformanceCheckContext ctx, ConformanceChecker checker, Hashtable visitedObjects, XmlSchemaObjectCollection col)
+		{
+			foreach (XmlSchemaObject item in col)
+				Check (ctx, checker, visitedObjects, item);
+		}
+		
+		void Check (ConformanceCheckContext ctx, ConformanceChecker checker, Hashtable visitedObjects, XmlSchemaObject value)
+		{
+			if (value == null) return;
+			
+			if (visitedObjects.Contains (value)) return;
+			visitedObjects.Add (value, value);
+			
+			if (value is XmlSchemaImport) {
+				XmlSchemaImport so = (XmlSchemaImport) value;
+				checker.Check (ctx, so);
+			}
+			else if (value is XmlSchemaAll) {
+				XmlSchemaAll so = (XmlSchemaAll) value;
+				checker.Check (ctx, so);
+				CheckObjects (ctx, checker, visitedObjects, so.Items);
+			}
+			else if (value is XmlSchemaAnnotation) {
+				XmlSchemaAnnotation so = (XmlSchemaAnnotation) value;
+				checker.Check (ctx, so);
+				CheckObjects (ctx, checker, visitedObjects, so.Items);
+			}
+			else if (value is XmlSchemaAttribute) {
+				XmlSchemaAttribute so = (XmlSchemaAttribute) value;
+				checker.Check (ctx, so);
+			}
+			else if (value is XmlSchemaAttributeGroup) {
+				XmlSchemaAttributeGroup so = (XmlSchemaAttributeGroup) value;
+				checker.Check (ctx, so);
+				CheckObjects (ctx, checker, visitedObjects, so.Attributes);
+				Check (ctx, checker, visitedObjects, so.AnyAttribute);
+				Check (ctx, checker, visitedObjects, so.RedefinedAttributeGroup);
+			}
+			else if (value is XmlSchemaAttributeGroupRef) {
+				XmlSchemaAttributeGroupRef so = (XmlSchemaAttributeGroupRef) value;
+				checker.Check (ctx, so);
+			}
+			else if (value is XmlSchemaChoice) {
+				XmlSchemaChoice so = (XmlSchemaChoice) value;
+				checker.Check (ctx, so);
+				CheckObjects (ctx, checker, visitedObjects, so.Items);
+			}
+			else if (value is XmlSchemaComplexContent) {
+				XmlSchemaComplexContent so = (XmlSchemaComplexContent) value;
+				checker.Check (ctx, so);
+				Check (ctx, checker, visitedObjects, so.Content);
+			}
+			else if (value is XmlSchemaComplexContentExtension) {
+				XmlSchemaComplexContentExtension so = (XmlSchemaComplexContentExtension) value;
+				checker.Check (ctx, so);
+				Check (ctx, checker, visitedObjects, so.Particle);
+				CheckObjects (ctx, checker, visitedObjects, so.Attributes);
+				Check (ctx, checker, visitedObjects, so.AnyAttribute);
+			}
+			else if (value is XmlSchemaComplexContentRestriction) {
+				XmlSchemaComplexContentRestriction so = (XmlSchemaComplexContentRestriction) value;
+				checker.Check (ctx, so);
+				Check (ctx, checker, visitedObjects, so.Particle);
+				CheckObjects (ctx, checker, visitedObjects, so.Attributes);
+				Check (ctx, checker, visitedObjects, so.AnyAttribute);
+			}
+			else if (value is XmlSchemaComplexType) {
+				XmlSchemaComplexType so = (XmlSchemaComplexType) value;
+				checker.Check (ctx, so);
+				Check (ctx, checker, visitedObjects, so.ContentModel);
+				Check (ctx, checker, visitedObjects, so.Particle);
+				CheckObjects (ctx, checker, visitedObjects, so.Attributes);
+				Check (ctx, checker, visitedObjects, so.AnyAttribute);
+				Check (ctx, checker, visitedObjects, so.ContentTypeParticle);
+				Check (ctx, checker, visitedObjects, so.AttributeWildcard);
+			}
+			else if (value is XmlSchemaElement) {
+				XmlSchemaElement so = (XmlSchemaElement) value;
+				checker.Check (ctx, so);
+				Check (ctx, checker, visitedObjects, so.SchemaType);
+				CheckObjects (ctx, checker, visitedObjects, so.Constraints);
+			}
+			else if (value is XmlSchemaGroup) {
+				XmlSchemaGroup so = (XmlSchemaGroup) value;
+				checker.Check (ctx, so);
+				Check (ctx, checker, visitedObjects, so.Particle);
+			}
+			else if (value is XmlSchemaGroupRef) {
+				XmlSchemaGroupRef so = (XmlSchemaGroupRef) value;
+				checker.Check (ctx, so);
+			}
+			else if (value is XmlSchemaIdentityConstraint) {
+				XmlSchemaIdentityConstraint so = (XmlSchemaIdentityConstraint) value;
+				checker.Check (ctx, so);
+				CheckObjects (ctx, checker, visitedObjects, so.Fields);
+				Check (ctx, checker, visitedObjects, so.Selector);
+			}
+			else if (value is XmlSchemaKeyref) {
+				XmlSchemaKeyref so = (XmlSchemaKeyref) value;
+				checker.Check (ctx, so);
+			}
+			else if (value is XmlSchemaRedefine) {
+				XmlSchemaRedefine so = (XmlSchemaRedefine) value;
+				checker.Check (ctx, so);
+				CheckObjects (ctx, checker, visitedObjects, so.Items);
+			}
+			else if (value is XmlSchemaSequence) {
+				XmlSchemaSequence so = (XmlSchemaSequence) value;
+				checker.Check (ctx, so);
+				CheckObjects (ctx, checker, visitedObjects, so.Items);
+			}
+			else if (value is XmlSchemaSimpleContent) {
+				XmlSchemaSimpleContent so = (XmlSchemaSimpleContent) value;
+				checker.Check (ctx, so);
+				Check (ctx, checker, visitedObjects, so.Content);
+			}
+			else if (value is XmlSchemaSimpleContentExtension) {
+				XmlSchemaSimpleContentExtension so = (XmlSchemaSimpleContentExtension) value;
+				checker.Check (ctx, so);
+				CheckObjects (ctx, checker, visitedObjects, so.Attributes);
+				Check (ctx, checker, visitedObjects, so.AnyAttribute);
+			}
+			else if (value is XmlSchemaSimpleContentRestriction) {
+				XmlSchemaSimpleContentRestriction so = (XmlSchemaSimpleContentRestriction) value;
+				checker.Check (ctx, so);
+				CheckObjects (ctx, checker, visitedObjects, so.Attributes);
+				Check (ctx, checker, visitedObjects, so.AnyAttribute);
+				CheckObjects (ctx, checker, visitedObjects, so.Facets);
+			}
+			else if (value is XmlSchemaSimpleType) {
+				XmlSchemaSimpleType so = (XmlSchemaSimpleType) value;
+				checker.Check (ctx, so);
+				Check (ctx, checker, visitedObjects, so.Content);
+			}
+			else if (value is XmlSchemaSimpleTypeList) {
+				XmlSchemaSimpleTypeList so = (XmlSchemaSimpleTypeList) value;
+				checker.Check (ctx, so);
+			}
+			else if (value is XmlSchemaSimpleTypeRestriction) {
+				XmlSchemaSimpleTypeRestriction so = (XmlSchemaSimpleTypeRestriction) value;
+				checker.Check (ctx, so);
+				CheckObjects (ctx, checker, visitedObjects, so.Facets);
+			}
+			else if (value is XmlSchemaSimpleTypeUnion) {
+				XmlSchemaSimpleTypeUnion so = (XmlSchemaSimpleTypeUnion) value;
+				checker.Check (ctx, so);
+			}
+		}
+				
 		
 		static void CheckExtensions (ConformanceCheckContext ctx, ConformanceChecker checker, ServiceDescriptionFormatExtensionCollection extensions)
 		{

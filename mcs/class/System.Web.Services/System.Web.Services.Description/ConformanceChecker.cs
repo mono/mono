@@ -37,6 +37,7 @@ namespace System.Web.Services.Description
 	internal abstract class ConformanceChecker
 	{
 		public abstract WsiClaims Claims { get; }
+
 		public virtual void Check (ConformanceCheckContext ctx, Binding value) { }
 		public virtual void Check (ConformanceCheckContext ctx, MessageBinding value) { }
 		public virtual void Check (ConformanceCheckContext ctx, Import value) { }
@@ -52,6 +53,32 @@ namespace System.Web.Services.Description
 		public virtual void Check (ConformanceCheckContext ctx, Types value) { }
 		public virtual void Check (ConformanceCheckContext ctx, ServiceDescriptionFormatExtension value) {}
 		public virtual void Check (ConformanceCheckContext ctx, XmlSchemaObject value) {}
+		
+		public virtual void Check (ConformanceCheckContext ctx, XmlSchemaImport value) {}
+		public virtual void Check (ConformanceCheckContext ctx, XmlSchemaAll value) {}
+		public virtual void Check (ConformanceCheckContext ctx, XmlSchemaAnnotation value) {}
+		public virtual void Check (ConformanceCheckContext ctx, XmlSchemaAttribute value) {}
+		public virtual void Check (ConformanceCheckContext ctx, XmlSchemaAttributeGroup value) {}
+		public virtual void Check (ConformanceCheckContext ctx, XmlSchemaAttributeGroupRef value) {}
+		public virtual void Check (ConformanceCheckContext ctx, XmlSchemaComplexContentExtension value) {}
+		public virtual void Check (ConformanceCheckContext ctx, XmlSchemaChoice value) {}
+		public virtual void Check (ConformanceCheckContext ctx, XmlSchemaComplexContent value) {}
+		public virtual void Check (ConformanceCheckContext ctx, XmlSchemaComplexContentRestriction value) {}
+		public virtual void Check (ConformanceCheckContext ctx, XmlSchemaComplexType value) {}
+		public virtual void Check (ConformanceCheckContext ctx, XmlSchemaElement value) {}
+		public virtual void Check (ConformanceCheckContext ctx, XmlSchemaGroup value) {}
+		public virtual void Check (ConformanceCheckContext ctx, XmlSchemaGroupRef value) {}
+		public virtual void Check (ConformanceCheckContext ctx, XmlSchemaIdentityConstraint value) {}
+		public virtual void Check (ConformanceCheckContext ctx, XmlSchemaKeyref value) {}
+		public virtual void Check (ConformanceCheckContext ctx, XmlSchemaRedefine value) {}
+		public virtual void Check (ConformanceCheckContext ctx, XmlSchemaSequence value) {}
+		public virtual void Check (ConformanceCheckContext ctx, XmlSchemaSimpleContent value) {}
+		public virtual void Check (ConformanceCheckContext ctx, XmlSchemaSimpleContentExtension value) {}
+		public virtual void Check (ConformanceCheckContext ctx, XmlSchemaSimpleContentRestriction value) {}
+		public virtual void Check (ConformanceCheckContext ctx, XmlSchemaSimpleType value) {}
+		public virtual void Check (ConformanceCheckContext ctx, XmlSchemaSimpleTypeList value) {}
+		public virtual void Check (ConformanceCheckContext ctx, XmlSchemaSimpleTypeRestriction value) {}
+		public virtual void Check (ConformanceCheckContext ctx, XmlSchemaSimpleTypeUnion value) {}
 	}
 	
 	internal class ConformanceRule
@@ -73,19 +100,36 @@ namespace System.Web.Services.Description
 		BasicProfileViolationCollection violations;
 		ServiceDescriptionCollection collection;
 		WebReference webReference;
-		ConformanceChecker checker;		
+		ConformanceChecker checker;
 		public ServiceDescription ServiceDescription;
+		public XmlSchema CurrentSchema;
+		XmlSchemas schemas = new XmlSchemas ();
 		
 		public ConformanceCheckContext (ServiceDescriptionCollection collection, BasicProfileViolationCollection violations)
 		{
 			this.collection = collection;
 			this.violations = violations;
+			foreach (ServiceDescription sd in collection) {
+				if (sd.Types != null && sd.Types.Schemas != null)
+					schemas.Add (s.Types.Schemas);
+			}
 		}
 		
 		public ConformanceCheckContext (WebReference webReference, BasicProfileViolationCollection violations)
 		{
 			this.webReference = webReference;
 			this.violations = violations;
+			
+			foreach (object doc in webReference.Documents.Values) 
+			{
+				if (doc is XmlSchema)
+					schemas.Add (doc);
+				else if (doc is ServiceDescription) {
+					ServiceDescription sd = (ServiceDescription) doc;
+					if (sd.Types != null && sd.Types.Schemas != null)
+						schemas.Add (s.Types.Schemas);
+				}
+			}
 		}
 		
 		public ConformanceChecker Checker {
@@ -95,6 +139,10 @@ namespace System.Web.Services.Description
 		
 		public BasicProfileViolationCollection Violations {
 			get { return violations; }
+		}
+		
+		public XmlSchemas Schemas {
+			get { return schemas; }
 		}
 		
 		public object GetDocument (string url)
@@ -160,6 +208,15 @@ namespace System.Web.Services.Description
 			else if (obj is ServiceDescriptionFormatExtension) {
 				ServiceDescriptionFormatExtension ext = (ServiceDescriptionFormatExtension) obj;
 				return GetItemDescription (ext, ext.Parent, ext.GetType().Name);
+			}
+			else if (obj is XmlSchema) {
+				if (ServiceDescription == null) 
+					return "Schema '" + ((XmlSchema)obj).TargetNamespace + "'";
+				else
+					return "Schema '" + ((XmlSchema)obj).TargetNamespace + "', in " + GetDescription (ServiceDescription);
+			}
+			else if (obj is XmlSchemaObject) {
+				return obj.GetType().Name + " in Schema " + GetDescription (CurrentSchema);
 			}
 			return obj.GetType().Name;
 		}
