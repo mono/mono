@@ -1,3 +1,7 @@
+2002-01-14  Dietmar Maurer  <dietmar@ximian.com>
+
+	* x86.brg: bug fix in CONV_OVF_I1_UN
+	impl. ADD_OVF, MUL_OVF
 
 Fri Jan 11 20:06:22 CET 2002 Paolo Molaro <lupus@ximian.com>
 
