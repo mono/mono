@@ -78,4 +78,13 @@ namespace System.Data.Odbc
 		VarBinary=-3,	// SQL_VARBINARY
 		VarChar=12		// SQL_VARCHAR
 	}
+
+        // This internal enum is used as mapping types into database drivers.
+        // This is essentially a map between public OdbcType to C types for 
+        // Odbc to call into driver.
+        internal enum OdbcCType
+        {
+                SignedBigInt=-25	// SQL_C_SBIGINT
+        }
+        
 }

@@ -1,3 +1,17 @@
+2005-01-19  Sureshkumar T  <tsureshkumar@novell.com>
+
+	* OdbcDataReader.cs: Pass OdbcCType.SignedBigInt for accessing big
+	int columns.
+
+	* OdbcType.cs: Added a new enum for Odbc C DataTypes. This should
+	essentially be passed to drivers, since the public OdbcType types
+	differs from types expected in drivers in some cases.
+
+	* libodbc.cs : Added a ODBC method which takes OdbcCType
+	enumeration for SQLGetData for BigInt fields.
+
+	fixes bug #65342.
+
 2005-01-11  Sureshkumar T  <tsureshkumar@novell.com>
 
 	* OdbcDataReader.cs: Connection has to be closed only after
