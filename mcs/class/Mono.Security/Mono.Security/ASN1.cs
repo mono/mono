@@ -1,14 +1,18 @@
 //
 // ASN1.cs: Abstract Syntax Notation 1 - micro-parser and generator
 //
-// Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+// Authors:
+//	Sebastien Pouliot  <sebastien@ximian.com>
+//	Jesper Pedersen  <jep@itplus.dk>
 //
 // (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
+// (C) 2004 Novell (http://www.novell.com)
+// (C) 2004 IT+ A/S (http://www.itplus.dk)
 //
 
 using System;
 using System.Collections;
+using System.Text;
 
 namespace Mono.Security {
 
@@ -16,7 +20,12 @@ namespace Mono.Security {
 	// a.	ITU ASN.1 standards (free download)
 	//	http://www.itu.int/ITU-T/studygroups/com17/languages/
 
-	public class ASN1 {
+#if INSIDE_CORLIB
+	internal
+#else
+	public
+#endif
+	class ASN1 {
 
 		protected byte m_nTag;
 		protected byte[] m_aValue;
@@ -252,6 +261,34 @@ namespace Mono.Security {
 			catch {
 				return null;
 			}
+		}
+
+
+		public override string ToString()
+		{
+			string lineSeperator = Environment.NewLine;
+
+			StringBuilder hexLine = new StringBuilder ();
+            
+			// Add tag
+			hexLine.Append ("Tag: ");
+			hexLine.Append (System.Convert.ToString (Tag, 16));
+			hexLine.Append (lineSeperator);
+
+			// Add value
+			hexLine.Append ("Value: ");
+			hexLine.Append (lineSeperator);
+			for (int i = 0; i < Value.Length; i++) {
+				if (Value[i] < 16) {
+					hexLine.Append ("0");
+				}
+				hexLine.Append (System.Convert.ToString (Value [i], 16));
+				hexLine.Append (" ");
+				if ((i+1) % 16 == 0) {
+					hexLine.Append (lineSeperator);
+				}
+			}
+			return hexLine.ToString ();
 		}
 	}
 }
