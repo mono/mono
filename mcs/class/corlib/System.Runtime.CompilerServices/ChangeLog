@@ -1,3 +1,7 @@
+2004-10-15  Zoltan Varga  <vargaz@freemail.hu>
+
+	* IsVolatile.cs: Remove #ifdef NET_2_0.
+
 2004-10-04  Zoltan Varga  <vargaz@freemail.hu>
 
 	* NGenAttribute.cs: Add ComVisible (false).
