@@ -1,3 +1,13 @@
+2002-01-09  Ravi Pratap  <ravi@ximian.com>
+
+	* typemanager.cs (IndexerPropertyName): If we have a TypeBuilder, use
+	TypeBuilder.GetCustomAttributes to retrieve what we need.
+
+	Get rid of redundant default_member_attr_type as this is the same as
+	default_member_type which already exists.
+
+	* interface.cs, attribute.cs : Update accordingly.
+	
 2002-01-08  Miguel de Icaza  <miguel@ximian.com>
 
 	* typemanager.cs: Enable IndexerPropertyName again.  It does not

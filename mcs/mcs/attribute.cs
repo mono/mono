@@ -454,7 +454,7 @@ namespace Mono.CSharp {
 							RootContext.TypeManager.RegisterAttrType (
 										 (TypeBuilder) builder, tc);
 
-						} else if (a.Type == TypeManager.default_member_attr_type) {
+						} else if (a.Type == TypeManager.default_member_type) {
 							if (tc.Indexers != null) {
 								Report.Error (646, loc,
 								      "Cannot specify the DefaultMember attribute on " +

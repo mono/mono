@@ -56,7 +56,6 @@ public class TypeManager {
 	static public Type attribute_usage_type;
 	static public Type dllimport_type;
 	static public Type methodimpl_attr_type;
-	static public Type default_member_attr_type;
 	static public Type param_array_type;
 	
 	//
@@ -419,7 +418,6 @@ public class TypeManager {
 		attribute_usage_type = CoreLookupType ("System.AttributeUsageAttribute");
 		dllimport_type       = CoreLookupType ("System.Runtime.InteropServices.DllImportAttribute");
 		methodimpl_attr_type = CoreLookupType ("System.Runtime.CompilerServices.MethodImplAttribute");
-		default_member_attr_type = CoreLookupType ("System.Reflection.DefaultMemberAttribute");
 		param_array_type     = CoreLookupType ("System.ParamArrayAttribute");
 		
 		//
@@ -882,15 +880,32 @@ public class TypeManager {
 	public static string IndexerPropertyName (Type t)
 	{
 		
-		//
-		// FIXME: Replace with something that works around S.R.E failure
-		//
-		System.Attribute attr;
+		if (t is TypeBuilder) {
+			TypeContainer tc = (TypeContainer) builder_to_container [t];
 
-		if (t is TypeBuilder)
+			Attributes attrs = tc.OptAttributes;
+			
+			if (attrs == null || attrs.AttributeSections == null)
+				return "Item";
+
+			foreach (AttributeSection asec in attrs.AttributeSections) {
+
+				if (asec.Attributes == null)
+					continue;
+
+				foreach (Attribute a in asec.Attributes) {
+					if (a.Name.IndexOf ("DefaultMember") != -1) {
+						ArrayList pos_args = (ArrayList) a.Arguments [0];
+
+						return (string) pos_args [0];
+					}
+				}
+			}
+
 			return "Item";
+		}
 		
-		attr = System.Attribute.GetCustomAttribute (t, TypeManager.default_member_type);
+		System.Attribute attr = System.Attribute.GetCustomAttribute (t, TypeManager.default_member_type);
 		
 		if (attr != null)
 		{
