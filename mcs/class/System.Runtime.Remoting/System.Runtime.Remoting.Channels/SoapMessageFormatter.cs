@@ -108,7 +108,14 @@ namespace System.Runtime.Remoting.Channels {
 					n++;
 				}
 				
-				rtnMsg = new ReturnMessage (rtnObject, outParams, outParams.Length, mcm.LogicalCallContext, mcm);
+				Header[] headers = new Header [2 + (soapMsg.Headers != null ? soapMsg.Headers.Length : 0)];
+				headers [0] = new Header ("__Return", rtnObject);
+				headers [1] = new Header ("__OutArgs", outParams);
+				
+				if (soapMsg.Headers != null)
+					soapMsg.Headers.CopyTo (headers, 2);
+					
+				rtnMsg = new MethodResponse (headers, mcm);
 			}
 			return rtnMsg;
 		}
@@ -145,8 +152,9 @@ namespace System.Runtime.Remoting.Channels {
 			soapMsg.ParamNames = (string[]) paramNames.ToArray(typeof(string));
 			soapMsg.ParamTypes = (Type[]) paramTypes.ToArray(typeof(Type));
 			soapMsg.ParamValues = (object[]) paramValues.ToArray(typeof(object));
-			soapMsg.XmlNameSpace = SoapServices.GetXmlNamespaceForMethodCall(_methodCallInfo);    
-			
+			soapMsg.XmlNameSpace = SoapServices.GetXmlNamespaceForMethodCall(_methodCallInfo);
+			soapMsg.Headers = BuildMessageHeaders (mcm);
+
 			// Format the transport headers
 			requestHeaders["Content-Type"] = "text/xml; charset=\"utf-8\"";
 			requestHeaders["SOAPAction"] = "\""+
@@ -158,8 +166,10 @@ namespace System.Runtime.Remoting.Channels {
 		}
 		
 		// used by the server
-		internal IMessage BuildMethodCallFromSoapMessage(SoapMessage soapMessage, string uri) {
+		internal IMessage BuildMethodCallFromSoapMessage(SoapMessage soapMessage, string uri) 
+		{
 			ArrayList headersList = new ArrayList();
+			Type[] signature = null;
 			
 			headersList.Add(new Header("__Uri", uri));
 			headersList.Add(new Header("__MethodName", soapMessage.MethodName));
@@ -167,11 +177,25 @@ namespace System.Runtime.Remoting.Channels {
 			bool b = SoapServices.DecodeXmlNamespaceForClrTypeNamespace(soapMessage.XmlNameSpace, out typeNamespace, out assemblyName);
 
 			_serverType = RemotingServices.GetServerTypeForUri(uri);
-				
 			headersList.Add(new Header("__TypeName", _serverType.FullName, false));
+			
+			if (soapMessage.Headers != null) {
+				foreach (Header h in soapMessage.Headers) {
+					headersList.Add (h);
+					if (h.Name == "__MethodSignature")
+						signature = (Type[]) h.Value;
+				}
+			}
+			
 			_xmlNamespace = soapMessage.XmlNameSpace;
 			RemMessageType messageType;
-			_methodCallInfo = _serverType.GetMethod(soapMessage.MethodName); 
+			
+			BindingFlags bflags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
+			
+			if (signature == null)
+				_methodCallInfo = _serverType.GetMethod(soapMessage.MethodName, bflags); 
+			else
+				_methodCallInfo = _serverType.GetMethod(soapMessage.MethodName, bflags, null, signature, null); 
 
 			// the *out* parameters aren't serialized
 			// have to add them here
@@ -196,6 +220,7 @@ namespace System.Runtime.Remoting.Channels {
 			}
 			
 			headersList.Add(new Header("__Args", args, false));
+						
 			Header[] headers = (Header[])headersList.ToArray(typeof(Header));
 
 			// build the MethodCall from the headers
@@ -236,6 +261,7 @@ namespace System.Runtime.Remoting.Channels {
 				soapMessage.ParamValues = (object[]) paramValues.ToArray(typeof(object));
 				soapMessage.ParamTypes = (Type[]) paramTypes.ToArray(typeof(Type));
 				soapMessage.XmlNameSpace = _xmlNamespace;
+				soapMessage.Headers = BuildMessageHeaders (mrm);
 				return soapMessage;
 			}
 			else {
@@ -310,7 +336,24 @@ namespace System.Runtime.Remoting.Channels {
 
 			_methodCallParameters = _methodCallInfo.GetParameters();
 		}	
-	
+		
+		Header[] BuildMessageHeaders (IMessage msg)
+		{
+			ArrayList headers = new ArrayList (1);
+			foreach (string key in msg.Properties.Keys) 
+			{
+				if (key=="__Uri" || key=="__MethodName" || key=="__TypeName" ||
+					key=="__Args" || key=="__OutArgs" || key=="__Return")
+					continue;
+					
+				object value = msg.Properties [key];
+				if (value != null)
+					headers.Add (new Header (key, value, false, "http://schemas.microsoft.com/clr/soap/messageProperties"));
+			}
+			if (headers.Count == 0) return null;
+			return (Header[]) headers.ToArray (typeof(Header));
+		}
+		
 		object GetNullValue (Type paramType)
 		{
 			switch (Type.GetTypeCode (paramType))
