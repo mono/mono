@@ -16,10 +16,6 @@ namespace System.Xml
 	public class XmlDocumentType  : XmlLinkedNode
 	{
 		// Fields
-//		string name;            // name of the document type
-//		string publicId;        // public identifier on the DOCTYPE
-//		string systemId;        // system identifier on the DOCTYPE
-//		string internalSubset;  // value of the DTD internal subset
 		internal XmlNamedNodeMap entities;
 		internal XmlNamedNodeMap notations;
 		DTDObjectModel dtd;
@@ -53,8 +49,6 @@ namespace System.Xml
 			foreach (DTDEntityDeclaration decl in DTD.EntityDecls.Values) {
 				XmlNode n = new XmlEntity (decl.Name, decl.NotationName,
 					decl.PublicId, decl.SystemId, OwnerDocument);
-				// FIXME: Value is more complex, similar to Attribute.
-				n.insertBeforeIntern (OwnerDocument.CreateTextNode (decl.LiteralEntityValue), null);
 				entities.Nodes.Add (n);
 			}
 			foreach (DTDNotationDeclaration decl in DTD.NotationDecls.Values) {
@@ -118,8 +112,6 @@ namespace System.Xml
 		public override XmlNode CloneNode (bool deep)
 		{
 			// deep is ignored
-//			return new XmlDocumentType (Name, PublicId, SystemId,
-//						    InternalSubset, OwnerDocument);
 			return new XmlDocumentType (dtd, OwnerDocument);
 		}
 		

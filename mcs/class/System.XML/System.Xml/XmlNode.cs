@@ -24,6 +24,7 @@ namespace System.Xml
 		XmlDocument ownerDocument;
 		XmlNode parentNode;
 		StringBuilder tmpBuilder;
+		XmlLinkedNode lastLinkedChild;
 
 		#endregion
 
@@ -152,8 +153,8 @@ namespace System.Xml
 		}
 
 		internal virtual XmlLinkedNode LastLinkedChild {
-			get { return null; }
-			set { }
+			get { return lastLinkedChild; }
+			set { lastLinkedChild = value; }
 		}
 
 		public abstract string LocalName { get;	}
@@ -359,6 +360,95 @@ namespace System.Xml
 
 		public virtual XmlNode InsertBefore (XmlNode newChild, XmlNode refChild)
 		{
+			return InsertBefore (newChild, refChild, true);
+		}
+
+		// check for the node to be one of node ancestors
+		internal bool IsAncestor (XmlNode newChild)
+		{
+			XmlNode currNode = this.ParentNode;
+			while(currNode != null)
+			{
+				if(currNode == newChild)
+					return true;
+				currNode = currNode.ParentNode;
+			}
+			return false;
+		}
+
+		internal XmlNode InsertBefore (XmlNode newChild, XmlNode refChild, bool checkNodeType)
+		{
+			if (checkNodeType)
+				CheckNodeInsertion (newChild, refChild);
+
+			XmlDocument ownerDoc = (NodeType == XmlNodeType.Document) ? (XmlDocument)this : OwnerDocument;
+
+			ownerDoc.onNodeInserting (newChild, this);
+
+			if(newChild.ParentNode != null)
+				newChild.ParentNode.RemoveChild (newChild, checkNodeType);
+
+			if(newChild.NodeType == XmlNodeType.DocumentFragment) {
+				int x = newChild.ChildNodes.Count;
+				for(int i=0; i<x; i++) {
+					XmlNode n = newChild.ChildNodes [0];
+					this.InsertBefore (n, refChild);	// recursively invokes events. (It is compatible with MS implementation.)
+				}
+			}
+			else {
+				XmlLinkedNode newLinkedChild = (XmlLinkedNode) newChild;
+				XmlLinkedNode lastLinkedChild = LastLinkedChild;
+
+				newLinkedChild.parentNode = this;
+
+				if(refChild == null) {
+					// append last, so:
+					// * set nextSibling of previous lastchild to newChild
+					// * set lastchild = newChild
+					// * set next of newChild to firstChild
+					if(LastLinkedChild != null) {
+						XmlLinkedNode formerFirst = FirstChild as XmlLinkedNode;
+						LastLinkedChild.NextLinkedSibling = newLinkedChild;
+						LastLinkedChild = newLinkedChild;
+						newLinkedChild.NextLinkedSibling = formerFirst;
+					}
+					else {
+						LastLinkedChild = newLinkedChild;
+						LastLinkedChild.NextLinkedSibling = newLinkedChild;	// FirstChild
+					}
+				}
+				else {
+					// append not last, so:
+					// * if newchild is first, then set next of lastchild is newChild.
+					//   otherwise, set next of previous sibling to newChild
+					// * set next of newChild to refChild
+					XmlLinkedNode prev = refChild.PreviousSibling as XmlLinkedNode;
+					if(prev == null)
+						LastLinkedChild.NextLinkedSibling = newLinkedChild;
+					else
+						prev.NextLinkedSibling = newLinkedChild;
+					newLinkedChild.NextLinkedSibling = refChild as XmlLinkedNode;
+				}
+				switch (newChild.NodeType) {
+				case XmlNodeType.EntityReference:
+					((XmlEntityReference) newChild).SetReferencedEntityContent ();
+					break;
+				case XmlNodeType.Entity:
+					((XmlEntity) newChild).SetEntityContent ();
+					break;
+				case XmlNodeType.DocumentType:
+					foreach (XmlEntity ent in ((XmlDocumentType)newChild).Entities)
+						ent.SetEntityContent ();
+					break;
+				}
+
+				ownerDoc.onNodeInserted (newChild, newChild.ParentNode);
+			}
+			return newChild;
+		}
+
+		private void CheckNodeInsertion (XmlNode newChild, XmlNode refChild)
+		{
 			XmlDocument ownerDoc = (NodeType == XmlNodeType.Document) ? (XmlDocument)this : OwnerDocument;
 
 			if (NodeType != XmlNodeType.Element &&
@@ -407,78 +497,9 @@ namespace System.Xml
 			// checking validity finished. then appending...
 
 			
-			if (newChild == this || isAncestorIntern(newChild))
+			if (newChild == this || IsAncestor (newChild))
 				throw new ArgumentException("Cannot insert a node or any ancestor of that node as a child of itself.");
 
-			return insertBeforeIntern (newChild, refChild);
-		}
-
-		// check for the node to be one of node ancestors
-		internal bool isAncestorIntern(XmlNode newChild)
-		{
-			XmlNode currNode = this.ParentNode;
-			while(currNode != null)
-			{
-				if(currNode == newChild)
-					return true;
-				currNode = currNode.ParentNode;
-			}
-			return false;
-		}
-
-		internal XmlNode insertBeforeIntern (XmlNode newChild, XmlNode refChild)
-		{
-			XmlDocument ownerDoc = (NodeType == XmlNodeType.Document) ? (XmlDocument)this : OwnerDocument;
-
-			ownerDoc.onNodeInserting (newChild, this);
-
-			if(newChild.ParentNode != null)
-				newChild.ParentNode.RemoveChild (newChild);
-
-			if(newChild.NodeType == XmlNodeType.DocumentFragment) {
-				int x = newChild.ChildNodes.Count;
-				for(int i=0; i<x; i++) {
-					XmlNode n = newChild.ChildNodes [0];
-					this.InsertBefore (n, refChild);	// recursively invokes events. (It is compatible with MS implementation.)
-				}
-			}
-			else {
-				XmlLinkedNode newLinkedChild = (XmlLinkedNode) newChild;
-				XmlLinkedNode lastLinkedChild = LastLinkedChild;
-
-				newLinkedChild.parentNode = this;
-
-				if(refChild == null) {
-					// append last, so:
-					// * set nextSibling of previous lastchild to newChild
-					// * set lastchild = newChild
-					// * set next of newChild to firstChild
-					if(LastLinkedChild != null) {
-						XmlLinkedNode formerFirst = FirstChild as XmlLinkedNode;
-						LastLinkedChild.NextLinkedSibling = newLinkedChild;
-						LastLinkedChild = newLinkedChild;
-						newLinkedChild.NextLinkedSibling = formerFirst;
-					}
-					else {
-						LastLinkedChild = newLinkedChild;
-						LastLinkedChild.NextLinkedSibling = newLinkedChild;	// FirstChild
-					}
-				}
-				else {
-					// append not last, so:
-					// * if newchild is first, then set next of lastchild is newChild.
-					//   otherwise, set next of previous sibling to newChild
-					// * set next of newChild to refChild
-					XmlLinkedNode prev = refChild.PreviousSibling as XmlLinkedNode;
-					if(prev == null)
-						LastLinkedChild.NextLinkedSibling = newLinkedChild;
-					else
-						prev.NextLinkedSibling = newLinkedChild;
-					newLinkedChild.NextLinkedSibling = refChild as XmlLinkedNode;
-				}
-				ownerDoc.onNodeInserted (newChild, newChild.ParentNode);
-			}
-			return newChild;
 		}
 
 		public virtual void Normalize ()
@@ -559,12 +580,11 @@ namespace System.Xml
 
 		public virtual XmlNode RemoveChild (XmlNode oldChild)
 		{
-			XmlDocument ownerDoc = (NodeType == XmlNodeType.Document) ? (XmlDocument)this : OwnerDocument;
-			if(oldChild.ParentNode != this)
-				throw new XmlException ("specified child is not child of this node.");
+			return RemoveChild (oldChild, true);
+		}
 
-			ownerDoc.onNodeRemoving (oldChild, oldChild.ParentNode);
-
+		private void CheckNodeRemoval ()
+		{
 			if (NodeType != XmlNodeType.Attribute && 
 				NodeType != XmlNodeType.Element && 
 				NodeType != XmlNodeType.Document && 
@@ -573,6 +593,18 @@ namespace System.Xml
 
 			if (IsReadOnly)
 				throw new ArgumentException (String.Format ("This {0} node is read only.", NodeType));
+		}
+
+		internal XmlNode RemoveChild (XmlNode oldChild, bool checkNodeType)
+		{
+			XmlDocument ownerDoc = (NodeType == XmlNodeType.Document) ? (XmlDocument)this : OwnerDocument;
+			if(oldChild.ParentNode != this)
+				throw new XmlException ("specified child is not child of this node.");
+
+			ownerDoc.onNodeRemoving (oldChild, oldChild.ParentNode);
+
+			if (checkNodeType)
+				CheckNodeRemoval ();
 
 			if (Object.ReferenceEquals (LastLinkedChild, LastLinkedChild.NextLinkedSibling) && Object.ReferenceEquals (LastLinkedChild, oldChild))
 				// If there is only one children, simply clear.
@@ -609,7 +641,7 @@ namespace System.Xml
 			if(oldChild.ParentNode != this)
 				throw new InvalidOperationException ("oldChild is not a child of this node.");
 			
-			if (newChild == this || isAncestorIntern(newChild))
+			if (newChild == this || IsAncestor (newChild))
 				throw new ArgumentException("Cannot insert a node or any ancestor of that node as a child of itself.");
 			
 			foreach(XmlNode n in ChildNodes) {

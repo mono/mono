@@ -29,7 +29,6 @@ namespace System.Xml
 	{
 		#region Fields
 
-		XmlLinkedNode lastLinkedChild;
 		XmlNameTable nameTable;
 		string baseURI = String.Empty;
 		XmlImplementation implementation;
@@ -141,16 +140,6 @@ namespace System.Xml
 			}
 		}
 
-		internal override XmlLinkedNode LastLinkedChild {
-			get	{
-				return lastLinkedChild;
-			}
-
-			set {
-				lastLinkedChild = value;
-			}
-		}
-		
 		public override string LocalName {
 			get { return "#document"; }
 		}
@@ -263,7 +252,7 @@ namespace System.Xml
 			if ((localName == null) || (localName == String.Empty))
 				throw new ArgumentException ("The attribute local name cannot be empty.");
 
-			return new XmlAttribute (prefix, localName, namespaceURI, this, false);
+			return new XmlAttribute (prefix, localName, namespaceURI, this, false, true);
 		}
 
 		public virtual XmlCDataSection CreateCDataSection (string data)

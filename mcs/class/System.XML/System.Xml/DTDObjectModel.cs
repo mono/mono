@@ -925,7 +925,6 @@ namespace Mono.Xml
 				Root.AddError (new XmlSchemaException ("Invalid reference character '&' is specified.",
 					this.LineNumber, this.LinePosition, null, this.BaseURI, null));
 			scanned = true;
-			entityValue = value;
 			recursed = false;
 		}
 	}

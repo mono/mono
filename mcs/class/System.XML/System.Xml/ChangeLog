@@ -1,3 +1,33 @@
+2004-02-04  Atsushi Enomoto <atsushi@ximian.com>
+
+	* DTDObjectModel.cs : Never expand entity on ScanEntityValue().
+	* DTDValidatingReader.cs : XmlDeclaration node requires attributes
+	  to be movable.
+	* XmlAttribute.cs,
+	  XmlDocument.cs,
+	  XmlDocumentFragment.cs,
+	  XmlElement.cs,
+	  XmlEntity.cs,
+	  XmlLinkedNode.cs,
+	  XmlNode.cs,
+	  XmlNotation.cs : 
+	  Added namespace checking flag (required for such xml readers
+	  that holds Namespaces=false). Now only XmlNode holds LastLinkedNode.
+	* XmlDocumentType.cs,
+	  XmlEntity.cs,
+	  XmlEntityReference.cs : The children of Entity and EntityReference
+	  became correct. They now holds parsed nodes, but it is only when
+	  they are appended to the document.
+	* XmlNode.cs : Modified insertBeforeIntern() to InsertBefore() with
+	  boolean checkNodeType argument.  This method also tries to create
+	  Entity's and EntityReference's child nodes.  Also added internal
+	  RemoveChild() with boolean checkNodeType argument.
+	* XmlNodeReader.cs : Quick hack for ResolveEntity() that became 
+	  broken with these changes. use InnerXml as input to entityReader.
+	* XmlTextReader.cs : XmlDeclaration's value LocalName should be the
+	  same as Name.  The names of DTD's pseudo attributes should be empty.
+	  Fixed DTD node's Depth (was regarded as attribute value's depth).
+
 2004-02-03  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlTextReader.cs, DTDReader.cs : fixity fix ;)

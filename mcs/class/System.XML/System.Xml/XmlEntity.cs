@@ -3,9 +3,12 @@
 //
 // Author:
 // 	Duncan Mak  (duncan@ximian.com)
+//	Atsushi Enomoto  (atsushi@ximian.com)
 //
 // (C) Ximian, Inc.
+// (C) 2004 Novell Inc.
 //
+using Mono.Xml;
 
 namespace System.Xml
 {
@@ -49,18 +52,12 @@ namespace System.Xml
 		}
 
 		public override string InnerXml {
-			get { return String.Empty; }
+			get { return base.InnerXml; }
 			set { throw new InvalidOperationException ("This operation is not supported."); }
 		}
 
 		public override bool IsReadOnly {
 			get { return true; } // always read-only.
-		}
-
-		internal override XmlLinkedNode LastLinkedChild {
-			get { return lastChild; }
-
-			set { lastChild = value; }
 		}
 
 		public override string LocalName {
@@ -124,6 +121,34 @@ namespace System.Xml
 			// No effect.
 		}
 
+		internal void SetEntityContent ()
+		{
+			if (FirstChild != null)
+				return;
+
+			XmlDocumentType doctype = OwnerDocument.DocumentType;
+
+			if (doctype == null)
+				return;
+
+			DTDEntityDeclaration decl = doctype.DTD.EntityDecls [name];
+			if (decl == null)
+				return;
+
+			XmlNameTable nt = this.OwnerDocument.NameTable;
+			XmlNamespaceManager nsmgr = this.ConstructNamespaceManager ();
+			XmlParserContext ctx = new XmlParserContext (OwnerDocument.NameTable, nsmgr,
+				doctype != null ? doctype.DTD : null,
+				BaseURI, XmlLang, XmlSpace, null);
+			XmlTextReader xmlReader = new XmlTextReader (decl.EntityValue, XmlNodeType.Element, ctx);
+			xmlReader.XmlResolver = OwnerDocument.Resolver;
+
+			do {
+				XmlNode n = OwnerDocument.ReadNode (xmlReader);
+				if(n == null) break;
+				InsertBefore (n, null, false);
+			} while (true);
+		}
 		#endregion
 	}
 }

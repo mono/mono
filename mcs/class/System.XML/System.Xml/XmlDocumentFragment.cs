@@ -16,11 +16,6 @@ namespace System.Xml
 {
 	public class XmlDocumentFragment : XmlNode
 	{
-		#region Fields
-
-		private XmlLinkedNode lastLinkedChild;
-
-		#endregion
 
 		#region Constructor
 
@@ -82,14 +77,6 @@ namespace System.Xml
 
 		public override XmlNode ParentNode {
 			get { return null; } // it's always null here.
-		}
-
-		// It is really not a type of XmlLinkedNode,
-		//   but I copied this way from XmlElement. It looks good.
-		internal override XmlLinkedNode LastLinkedChild
-		{
-			get { return lastLinkedChild; }
-			set { lastLinkedChild = value; }
 		}
 
 		internal override XPathNodeType XPathNodeType

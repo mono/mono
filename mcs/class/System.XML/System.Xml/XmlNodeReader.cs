@@ -905,12 +905,11 @@ namespace System.Xml
 		{
 			if (NodeType != XmlNodeType.EntityReference)
 				throw new InvalidOperationException ("The current node is not an Entity Reference");
-			XmlEntity entity = document.DocumentType != null ?
-				document.DocumentType.Entities.GetNamedItem (Name) as XmlEntity : null;
 
-			// MS.NET seems simply ignoring undeclared entity reference ;-(
-			string replacementText =
-				(entity != null) ? entity.InnerText : String.Empty;
+			// FIXME: Now that XmlEntityReference holds the target 
+			// entity's child nodes, we don't have to use 
+			// XmlTextReader and simply use those nodes directly.
+			string replacementText = current.InnerXml;
 
 			XmlNodeType xmlReaderNodeType = 
 				(current.ParentNode != null && current.ParentNode.NodeType == XmlNodeType.Attribute) ?

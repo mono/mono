@@ -113,7 +113,7 @@ namespace System.Xml
 				while (FirstChild != null)
 					this.RemoveChild (FirstChild);
 
-				// I hope there are any well-performance logic...
+				// TODO: Can we optimize it?
 				XmlNameTable nt = this.OwnerDocument.NameTable;
 				XmlNamespaceManager nsmgr = this.ConstructNamespaceManager ();
 				XmlParserContext ctx = new XmlParserContext (OwnerDocument.NameTable, nsmgr,
@@ -346,7 +346,7 @@ namespace System.Xml
 		public virtual XmlAttribute SetAttributeNode (string localName, string namespaceURI)
 		{
 			XmlDocument xmlDoc = this.OwnerDocument;
-			XmlAttribute xmlAttribute = new XmlAttribute (String.Empty, localName, namespaceURI, xmlDoc, false);
+			XmlAttribute xmlAttribute = new XmlAttribute (String.Empty, localName, namespaceURI, xmlDoc, false, true);
 			return this.attributes.Append (xmlAttribute);
 		}
 

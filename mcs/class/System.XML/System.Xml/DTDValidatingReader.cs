@@ -377,6 +377,7 @@ namespace Mono.Xml
 			case XmlNodeType.XmlDeclaration:
 				if (GetAttribute ("standalone") == "yes")
 					isStandalone = true;
+				ValidateAttributes (null, false);
 				break;
 
 			case XmlNodeType.DocumentType:

@@ -17,7 +17,6 @@ namespace System.Xml
 		#region Fields
 
 		XmlLinkedNode nextSibling;
-		XmlLinkedNode lastLinkedChild;
 
 		#endregion
 
@@ -71,13 +70,6 @@ namespace System.Xml
 				}
 				return null;
 			}
-		}
-
-		// copied this way from XmlElement
-		internal override XmlLinkedNode LastLinkedChild
-		{
-			get { return lastLinkedChild; }
-			set { lastLinkedChild = value; }
 		}
 
 		#endregion

@@ -1682,7 +1682,8 @@ namespace System.Xml
 				currentAttributeToken.LineNumber = line;
 				currentAttributeToken.LinePosition = column;
 
-				currentAttributeToken.Name = ReadName ();
+				currentAttributeToken.LocalName = 
+					currentAttributeToken.Name = ReadName ();
 				ExpectAfterWhitespace ('=');
 				SkipWhitespace ();
 				ReadAttributeValueTokens (-1);
@@ -1719,7 +1720,7 @@ namespace System.Xml
 			IncrementAttributeValueToken ();
 			XmlTokenInfo vti = attributeValueTokens [currentAttributeValue];
 			vti.Value = value;
-			SetProperties (vti, XmlNodeType.Text, name, false, value, false);
+			SetProperties (vti, XmlNodeType.Text, String.Empty, false, value, false);
 			attributeCount++;
 		}
 
@@ -2220,6 +2221,7 @@ namespace System.Xml
 				AddAttribute ("PUBLIC", publicId);
 			if (systemId != null)
 				AddAttribute ("SYSTEM", systemId);
+			currentAttribute = currentAttributeValue = -1;
 		}
 
 		internal DTDObjectModel GenerateDTDObjectModel (string name, string publicId,

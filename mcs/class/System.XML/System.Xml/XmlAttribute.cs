@@ -19,7 +19,6 @@ namespace System.Xml
 	{
 		#region Fields
 
-		private XmlLinkedNode lastChild;
 		private string localName;
 		private string namespaceURI;
 		private string prefix;
@@ -34,7 +33,7 @@ namespace System.Xml
 			string prefix, 
 			string localName, 
 			string namespaceURI,
-			XmlDocument doc) : this (prefix, localName, namespaceURI, doc, false)
+			XmlDocument doc) : this (prefix, localName, namespaceURI, doc, false, true)
 		{
 		}
 
@@ -43,7 +42,7 @@ namespace System.Xml
 			string localName, 
 			string namespaceURI,
 			XmlDocument doc,
-			bool atomizedNames) : base (doc)
+			bool atomizedNames, bool checkNamespace) : base (doc)
 		{
 			if (prefix == null)
 				prefix = String.Empty;
@@ -230,7 +229,7 @@ namespace System.Xml
 		public override XmlNode CloneNode (bool deep)
 		{
 			XmlNode node = new XmlAttribute (prefix, localName, namespaceURI,
-							 OwnerDocument, true);
+							 OwnerDocument, true, false);
 			if (deep) {
 				foreach (XmlNode child in this.ChildNodes)
 					node.AppendChild (child.CloneNode (deep));
@@ -263,11 +262,5 @@ namespace System.Xml
 		}
 
 		#endregion
-
-		internal override XmlLinkedNode LastLinkedChild {
-			get { return lastChild; }
-
-			set { lastChild = value; }
-		}
 	}
 }

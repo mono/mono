@@ -2,11 +2,13 @@
 // System.Xml.XmlEntityReference.cs
 // Author:
 //	Duncan Mak  (duncan@ximian.com)
+//	Atsushi Enomoto  (atsushi@ximian.com)
 //
 // (C) Ximian, Inc. http://www.ximian.com
+// (C) 2004 Novell inc.
 //
-
 using System;
+using Mono.Xml;
 
 namespace System.Xml
 {
@@ -19,14 +21,6 @@ namespace System.Xml
 			: base (doc)
 		{
 			entityName = doc.NameTable.Add (name);
-			// fetch entity reference value from document dtd
-			// and add it as a text child to entity reference
-			string entityValueText = (doc.DocumentType != null) ? doc.DocumentType.DTD.ResolveEntity (name) : null;
-			if (entityValueText != null && entityValueText.Length > 0) {
-				XmlNode entityValueNode = new XmlText (entityValueText,doc);
-				//can't just AppendChild because EntityReference node is always read-only
-				this.insertBeforeIntern (entityValueNode,null);
-			}
 		}
 
 		// Properties
@@ -69,7 +63,8 @@ namespace System.Xml
 
 		public override void WriteContentTo (XmlWriter w)
 		{
-			// nothing to write for this object.
+			foreach (XmlNode n in ChildNodes)
+				n.WriteTo (w);
 		}
 
 		public override void WriteTo (XmlWriter w)
@@ -77,6 +72,25 @@ namespace System.Xml
 			w.WriteRaw("&");
 			w.WriteName(Name);
 			w.WriteRaw(";");
+		}
+
+		internal void SetReferencedEntityContent ()
+		{
+			if (FirstChild != null)
+				return;
+
+			XmlDocumentType doctype = OwnerDocument.DocumentType;
+			if (doctype == null)
+				return;
+
+			XmlEntity ent = doctype.Entities.GetNamedItem (Name) as XmlEntity;
+			if (ent == null)
+				InsertBefore (OwnerDocument.CreateTextNode (String.Empty), null, false);
+			else {
+				ent.SetEntityContent ();
+				for (int i = 0; i < ent.ChildNodes.Count; i++)
+					InsertBefore (ent.ChildNodes [i].CloneNode (true), null, false);
+			}
 		}
 	}
 }
