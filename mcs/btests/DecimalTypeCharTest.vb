@@ -1,3 +1,4 @@
+Imports System
 Module DecimalTypeCharTest
     Sub Main()
         Try

@@ -1,3 +1,4 @@
+Imports System
 Module SingleTypeCharTest
     Sub Main()
         Try

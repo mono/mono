@@ -1,3 +1,4 @@
+Imports System
 Module IntegerTypeCharTest
     Sub Main()
         Try

@@ -1,3 +1,4 @@
+Imports System
 Module StringTypeCharTest
     Sub Main()
         Try

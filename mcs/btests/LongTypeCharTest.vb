@@ -1,3 +1,4 @@
+Imports System
 Module LongTypeCharTest
     Sub Main()
         Try
