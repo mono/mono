@@ -1,3 +1,11 @@
+Mon Jul  9 16:39:41 CEST 2001 Paolo Molaro <lupus@ximian.com>
+
+	* dump.c: write stuff to output, not stderr. Give more info for properties.
+	* dump.c,dump.h,main.c: implement dump_table_event(), dump_table_file(),
+	dump_table_moduleref().
+	* get.c: first attempt to decode string constants, need to find if and where
+	this is actually specified.
+
 Fri Jul  6 19:49:21 CEST 2001 Paolo Molaro <lupus@ximian.com>
 
 	* dump.c,dump.h: implement dump_table_property().
