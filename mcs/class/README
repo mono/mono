@@ -25,7 +25,7 @@ testing.
 		throw new NotImplementedException ();
 	}
 
-* Supporting both .NET 1.2, .NET 1.1 and .NET 1.0 builds
+* Supporting .NET 1.2, .NET 1.1 and .NET 1.0 builds
 
 	The defines NET_1_1 and NET_1_2 are used to include
 	features.   When NET_1_2 is defined, it also implies that the
