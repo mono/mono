@@ -14,12 +14,14 @@ using GLib;
 using Gnome;
 
 namespace System.Windows.Forms
+
+
 {
 	[MonoTODO]
 	internal class ShortcutHelper {
 		public static void AddShortcutToWidget (Gtk.Widget widget, Gtk.AccelGroup group, Shortcut shortcut, string signal) {
 			switch (shortcut) {
-			case Shortcut.CtrlA : widget.AddAccelerator(signal, group, (uint)Gdk.Key.N, Gdk.ModifierType.ControlMask, Gtk.AccelFlags.Visible); break;
+			case Shortcut.CtrlA : widget.AddAccelerator(signal, group, (uint)Gdk.Key.A, Gdk.ModifierType.ControlMask, Gtk.AccelFlags.Visible); break;
 			case Shortcut.CtrlB : widget.AddAccelerator(signal, group, (uint)Gdk.Key.B, Gdk.ModifierType.ControlMask, Gtk.AccelFlags.Visible); break;
 			case Shortcut.CtrlC : widget.AddAccelerator(signal, group, (uint)Gdk.Key.C, Gdk.ModifierType.ControlMask, Gtk.AccelFlags.Visible); break;
 			case Shortcut.CtrlD : widget.AddAccelerator(signal, group, (uint)Gdk.Key.D, Gdk.ModifierType.ControlMask, Gtk.AccelFlags.Visible); break;
@@ -45,6 +47,7 @@ namespace System.Windows.Forms
 			case Shortcut.CtrlX : widget.AddAccelerator(signal, group, (uint)Gdk.Key.X, Gdk.ModifierType.ControlMask, Gtk.AccelFlags.Visible); break;
 			case Shortcut.CtrlY : widget.AddAccelerator(signal, group, (uint)Gdk.Key.Y, Gdk.ModifierType.ControlMask, Gtk.AccelFlags.Visible); break;
 			case Shortcut.CtrlZ : widget.AddAccelerator(signal, group, (uint)Gdk.Key.Z, Gdk.ModifierType.ControlMask, Gtk.AccelFlags.Visible); break;
+
 
 			case Shortcut.Ctrl0 : widget.AddAccelerator(signal, group, (uint)Gdk.Key.KP_0, Gdk.ModifierType.ControlMask, Gtk.AccelFlags.Visible); break;
 			case Shortcut.Ctrl1 : widget.AddAccelerator(signal, group, (uint)Gdk.Key.KP_1, Gdk.ModifierType.ControlMask, Gtk.AccelFlags.Visible); break;

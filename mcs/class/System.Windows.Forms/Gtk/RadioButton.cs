@@ -17,7 +17,7 @@ namespace System.Windows.Forms {
 	/// </summary>
 	
 	
-	public	class RadioButton : ButtonBase {
+	public	class RadioButton : CheckBox {
 
         	private static int initialized;
   				static Gtk.RadioButton first_radio_button;

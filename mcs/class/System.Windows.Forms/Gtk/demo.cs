@@ -32,18 +32,18 @@ namespace demo
 		
 	    	private void InitializeWidgets()
 	    	{
-    		  	button1.Location = new Point(150, 28);
+    		button1.Location = new Point(150, 28);
        	  	button1.Name = "button1";
-    	  	  	button1.Size = new Size(128, 44);
+    	  	button1.Size = new Size(128, 44);
        	 	button1.Text = "Apply";
-    	  		button1.Click += new EventHandler(this.button1_Click);    
+    	  	button1.Click += new EventHandler(this.button1_Click);    
          	button1.Enabled = false;
   
-				button2.Location = new Point(150, 85);
+			button2.Location = new Point(150, 85);
        	  	button2.Name = "button2";
-    	  	  	button2.Size = new Size(128, 44);
+    	  	button2.Size = new Size(128, 44);
        	 	button2.Text = "File";
-    	  		button2.Click += new EventHandler(this.button2_Click); 
+    	  	button2.Click += new EventHandler(this.button2_Click); 
 
   	  	copybutton.Click += new EventHandler(this.copybutton_Click); 
   	  	pastebutton.Click += new EventHandler(this.pastebutton_Click); 
@@ -63,7 +63,7 @@ namespace demo
 
     	    	text1.Location = new Point(320,48);
     	    	text1.Name = "textBox1";
-   	    	text1.Size = new Size(150, 22);
+   	    		text1.Size = new Size(150, 22);
 	 			text1.Text = this.button1.Name;
 
 	    		bar1.Location = new Point(0, 230);
@@ -74,22 +74,22 @@ namespace demo
   	    		label1.Location = new Point(330, 20);
 	    		label1.Text = "This is a Label";	
 			
-				check1.Location = new Point(28, 140);
+				check1.Location = new Point(150, 160);
 				check1.Size = new Size(180, 20);
-				check1.Text = "Stretch Image";
+				check1.Text = "arbitrary CheckBox";
 				check1.Checked = false;
 		
-				opt1.Location = new Point(280, 155);
+				opt1.Location = new Point(20, 160);
 				opt1.Size = new Size(180, 20);
-				opt1.Text = "Option";
+				opt1.Text = "CenterImage";
 
-				opt2.Location = new Point(280,180);
+				opt2.Location = new Point(20,200);
 				opt2.Size = new Size(180, 20);
-				opt2.Text = "Option2";
+				opt2.Text = "StretchImage";
 
-				frame1.Location = new Point(260, 130);
+				frame1.Location = new Point(15, 140);
 				frame1.Size = new Size (110, 85);
-				frame1.Text = "Frame1";
+				frame1.Text = "Properties";
 				
 				pbox.Location = new Point (25, 28);
 				pbox.Size = new Size(100, 100);
@@ -103,7 +103,7 @@ namespace demo
 									this.copybutton,
 									this.pastebutton,
 									this.cutbutton,
-                     	this.text1, 
+                     				this.text1, 
 									this.bar1, 
 									this.check1,
 									this.opt1,
@@ -137,11 +137,11 @@ namespace demo
 
 		private void button1_Click(object sender, EventArgs e){ 
 			pbox.File = fdialog.OpenFile;
-				if (this.check1.Checked) { 
-					this.pbox.Stretch = true;
+				if (this.opt2.Checked) { 
+					this.pbox.SizeMode = PictureBoxSizeMode.StretchImage;
 				}
-				if (!this.check1.Checked){
-					this.pbox.Stretch = false;
+				if (this.opt1.Checked){
+					this.pbox.SizeMode = PictureBoxSizeMode.CenterImage;
 				}			
   		}
 

@@ -33,6 +33,7 @@ SOURCES = \
 	MenuItem.cs	\
 	MainMenu.cs	\
 	Shortcut.cs	\
+	PictureBoxSizeMode.cs	\
 	ScrollableControl.cs
 
 all: demo.exe Demo2.exe

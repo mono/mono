@@ -1,5 +1,11 @@
 2003-05-25  Joel Basson  <jstrike@mweb.co.za>
 
+* PictureBoxSizeMode.cs
+* Added relevent functions to PictureBox.cs
+* Updated demo.cs 
+
+2003-05-25  Joel Basson  <jstrike@mweb.co.za>
+
 * Added Shortcut and Checked property to MenuItem.cs
 * Updated Demo2.cs to demonstrate new properties 
 
