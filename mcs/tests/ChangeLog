@@ -1,5 +1,9 @@
 2004-02-20  Martin Baulig  <martin@ximian.com>
 
+	* gen-39.cs: New generics test.
+
+2004-02-20  Martin Baulig  <martin@ximian.com>
+
 	* gen-test.pl: Enable gen-38.
 
 2004-02-18  Martin Baulig  <martin@ximian.com>
