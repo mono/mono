@@ -915,16 +915,27 @@ _loop15_breakloop:			;
 		
 		match(LITERAL_switch);
 		match(OPEN_PARENS);
-		exp=expr(parent);
+		exp=expr(sw);
 		match(CLOSE_PARENS);
-		clauses=case_block(parent);
+		clauses=case_block(sw);
 		if (0==inputState.guessing)
 		{
 			
 					  sw.exp = exp;
+					  exp.parent = sw;            
+			
 					  sw.case_clauses = clauses [0];
 					  sw.default_clauses = clauses [1];
 					  sw.sec_case_clauses = clauses [2];
+			
+					  foreach (Clause cc in sw.case_clauses)
+						  foreach (AST ast in cc.stm_list)
+						  	  ast.parent = sw;
+					  foreach (AST dc in sw.default_clauses)
+						  	  dc.parent = sw;
+					  foreach (Clause cc in sw.case_clauses)
+						  foreach (AST ast in cc.stm_list)
+						  	  ast.parent = sw;
 				
 		}
 		return sw;
