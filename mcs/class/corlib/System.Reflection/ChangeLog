@@ -2,6 +2,8 @@
 
 	* AssemblyFlagsAttribute.cs: Added new constructor from NET 1.1.
 
+	* AssemblyFlagsAttribute.cs: Added new property from NET 1.1.
+
 2003-07-10  Zoltan Varga  <vargaz@freemail.hu>
 
 	* Assembly.cs: Implemented ImageRuntimeVersion property from NET 1.1.

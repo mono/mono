@@ -34,5 +34,12 @@ namespace System.Reflection
 		{
 			get { return flags; }
 		}
+
+#if NET_1_1
+		public int AssemblyFlags
+		{
+			get { return (int)flags; }
+		}
+#endif
 	}
 }
