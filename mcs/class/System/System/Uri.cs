@@ -646,7 +646,6 @@ namespace System
 
 			int stage = 0;
 			int c = 0;
-			byte [] bytes = new byte [6];
 			do {
 				if (((index + 3) > pattern.Length) ||
 				    (pattern [index] != '%') || 

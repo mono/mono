@@ -417,7 +417,6 @@ namespace Microsoft.VisualBasic
 		protected override void GenerateTryCatchFinallyStatement (CodeTryCatchFinallyStatement statement)
 		{
 			TextWriter output = Output;
-			CodeGeneratorOptions options = Options;
 
 			output.WriteLine ("Try");
 			++Indent;

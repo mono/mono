@@ -65,9 +65,9 @@ namespace System.CodeDom
 			}
 			string[] args = baseType.Split (',');
 
+#if NET_2_0
 			int array_end = baseType.LastIndexOf (']');
 
-#if NET_2_0
 			if ((array_end - array_start) != args.Length) {
 				arrayType = new CodeTypeReference (baseType.Substring (0, array_start));
 				array_start++;
