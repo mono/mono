@@ -1,3 +1,10 @@
+Wed Aug 1 22:51:38 CEST 2001 Paolo Molaro <lupus@ximian.com>
+
+	* interp.c: handle also MONO_TYPE_CLASS to/from the stack.
+	Change locals to be a memory blob, instead of the structured
+	(but wrong) stackval. Implement bne.un.s opcode. Make the program
+	exit with the error code from Main().
+
 2001-08-01  Dietmar Maurer  <dietmar@ximian.com>
 
 	* interp.c (ves_exec_method): implemented LDSTR

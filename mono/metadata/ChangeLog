@@ -1,3 +1,11 @@
+
+Wed Aug 1 22:54:08 CEST 2001 Paolo Molaro <lupus@ximian.com>
+
+	* assembly.c: how could mono_assembly_close () had ever worked?
+	* metadata.c, metadata.h: provide offset info for local vars.
+	Implement mono_type_size () to take care of alignment as well
+	as size (it was mono_field_type_size in cli/class.c before).
+
 2001-08-01  Dietmar Maurer  <dietmar@ximian.com>
 
 	* image.h (MONO_IMAGE_IS_CORLIB): new macro to check root image

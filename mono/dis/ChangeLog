@@ -1,3 +1,8 @@
+
+Wed Aug 1 22:46:45 CEST 2001 Paolo Molaro <lupus@ximian.com>
+
+	* dis-cil.c: properly decode the switch opcode.
+	
 2001-08-01  Dietmar Maurer  <dietmar@ximian.com>
 
 	* get.c (get_token): decode typedef and typeref tokens
