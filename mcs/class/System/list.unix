@@ -88,6 +88,7 @@ System.CodeDom/CodeNamespaceCollection.cs
 System.CodeDom.Compiler/CodeDomProvider.cs
 System.CodeDom.Compiler/CodeGenerator.cs
 System.CodeDom.Compiler/CodeGeneratorOptions.cs
+System.CodeDom.Compiler/CompilerError.cs
 System.CodeDom.Compiler/CompilerErrorCollection.cs
 System.CodeDom.Compiler/CompilerOptions.cs
 System.CodeDom.Compiler/CompilerParameters.cs
