@@ -2517,10 +2517,14 @@ namespace System.Xml
 				case -1:
 					throw new XmlException (this as IXmlLineInfo,"unexpected end of file at DTD.");
 				case '<':
-					if (State == DtdInputState.InsideDoubleQuoted ||
-						State == DtdInputState.InsideSingleQuoted)
+					switch (State) {
+					case DtdInputState.InsideDoubleQuoted:
+					case DtdInputState.InsideSingleQuoted:
+					case DtdInputState.Comment:
 						continue;	// well-formed
-					switch (ReadChar ()) {
+					}
+					int c = ReadChar ();
+					switch (c) {
 					case '?':
 						stateStack.Push (DtdInputState.PI);
 						break;
@@ -2555,7 +2559,7 @@ namespace System.Xml
 						}
 						break;
 					default:
-						throw new XmlException (this as IXmlLineInfo,"unexpected '>'.");
+						throw new XmlException (this as IXmlLineInfo, String.Format ("unexpected '<{0}'.", (char) c));
 					}
 					break;
 				case '\'':
@@ -2582,9 +2586,7 @@ namespace System.Xml
 						stateStack.Pop ();
 						break;
 					case DtdInputState.InsideDoubleQuoted:
-						continue;
 					case DtdInputState.InsideSingleQuoted:
-						continue; // well-formed
 					case DtdInputState.Comment:
 						continue;
 					default:
