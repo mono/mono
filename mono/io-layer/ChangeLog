@@ -1,3 +1,8 @@
+2004-04-28  Dick Porter  <dick@ximian.com>
+
+	* daemon-messages.c: Avoid a deadlock when a thread is killed while
+	waiting for the daemon by using a recursive mutex.  Helps bug 56699.
+
 2004-04-28  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* io.c: fixed leak in async_notifier().
