@@ -11,7 +11,7 @@ Documented + Undocumented.
 --------------------
 
 * AdRotatorDesigner
-BaseDataListComponentEditor
+* BaseDataListComponentEditor
 BaseDataListDesigner
 BaseValidatorDesigner
 * ButtonDesigner
@@ -33,12 +33,12 @@ PanelDesigner
 RegexTypeEditor
 * TableCellsCollectionEditor
 & TableDesigner
-TableRowsCollectionEditor
+& TableRowsCollectionEditor
 
 ------------------------------------------------------
  Found new classes. Not documented in MSDN otherwise.
 ------------------------------------------------------
 
-RegexEditorDialog
+& RegexEditorDialog
 RepeatDesigner
 XmlDesigner
