@@ -749,8 +749,10 @@ namespace Npgsql {
 				for (i = 0; i < parameters.Count; i++) {
 					//result = result.Replace(":" + parameterName, parameters[i].Value.ToString());
 					parameterName = parameters[i].ParameterName;
-					//textCommand = textCommand.Replace(':' + parameterName, "$" + (i+1));
-					textCommand = ReplaceParameterValue(textCommand, parameterName, "$" + (i+1));
+					// The space in front of '$' fixes a parsing problem in 7.3 server 
+					// which gives errors of operator when finding the caracters '=$' in 
+					// prepare text
+					textCommand = ReplaceParameterValue(textCommand, parameterName, " $" + (i+1));
 				  
 				}
 				
