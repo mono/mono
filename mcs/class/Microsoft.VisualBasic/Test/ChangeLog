@@ -1,4 +1,9 @@
-2003/04/15  Nick Drochak <ndrochak@gol.com>
+2003-04-17  Nick Drochak  <ndrochak@gol.com>
+
+	* makefile.gnu: get the nunit dll from class/lib now.
+	* DateAndTimeTest.cs: Ignore test that hangs mono.
+
+2003-04-15  Nick Drochak <ndrochak@gol.com>
 
 	* Microsoft.VisualBasic_test.build: use nunit version 2
 

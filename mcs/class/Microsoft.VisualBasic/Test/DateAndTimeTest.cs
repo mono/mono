@@ -273,6 +273,7 @@ namespace MonoTests.Microsoft.VisualBasic
 		}
 
 		[Test]
+		[Ignore ("Hangs Mono")]
 		public void DateValue () 
 		{
 			try {
