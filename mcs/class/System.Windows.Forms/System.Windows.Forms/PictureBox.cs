@@ -132,24 +132,24 @@ namespace System.Windows.Forms {
 			base.OnEnabledChanged(e);
 		}
 
-		protected override void OnPaint(PaintEventArgs e) 
+		protected override void OnPaint(PaintEventArgs pevent) 
 		{
 			if ( Image != null ) {
 				switch ( SizeMode ) {
 				case PictureBoxSizeMode.StretchImage:
-					e.Graphics.DrawImage ( Image, ClientRectangle );
+					pevent.Graphics.DrawImage ( Image, ClientRectangle );
 				break;
 				case PictureBoxSizeMode.CenterImage:
 					int dx = (ClientRectangle.Width - Image.Width)/2;
 					int dy = (ClientRectangle.Height- Image.Height)/2;
-					e.Graphics.DrawImage ( Image, dx, dy );
+					pevent.Graphics.DrawImage ( Image, dx, dy );
 				break;
 				default:
-					e.Graphics.DrawImage ( Image, 0, 0 );
+					pevent.Graphics.DrawImage ( Image, 0, 0 );
 				break;
 				}
 			}
-			base.OnPaint(e);
+			base.OnPaint(pevent);
 		}
 
 		protected override void OnParentChanged(EventArgs e) 

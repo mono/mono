@@ -338,15 +338,15 @@ namespace System.Windows.Forms {
 			throw new NotImplementedException ();
 		}
 		[MonoTODO]
-		public int IndexFromPoint(Point pt) {
+		public int IndexFromPoint(Point p) {
 			throw new NotImplementedException ();
 		}
 		[MonoTODO]
-		public int IndexFromPoint(int val1, int val2) {
+		public int IndexFromPoint(int x, int y) {
 			throw new NotImplementedException ();
 		}
 		[MonoTODO]
-		public void SetSelected(int index, bool val) {
+		public void SetSelected(int index, bool value) {
 			//FIXME:
 		}
 		[MonoTODO]
@@ -514,7 +514,7 @@ namespace System.Windows.Forms {
 			base.SetBoundsCore(x, y, width, height, specified);
 		}
 		[MonoTODO]
-		protected void Sort() {
+		protected virtual void Sort() {
 			//FIXME:
 		}
 		

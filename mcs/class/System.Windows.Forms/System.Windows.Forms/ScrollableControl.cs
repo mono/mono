@@ -26,6 +26,7 @@ namespace System.Windows.Forms {
 		protected  const int ScrollStateUserHasSCrolled = 8;
 		protected  const int ScrollStateVScrollVisible = 4;
 
+
 		//
 		//  --- Constructor
 		//
@@ -151,9 +152,13 @@ namespace System.Windows.Forms {
 			//FIXME:
 		}
 
-		protected override void OnLayout (LayoutEventArgs e) {
+		protected bool GetScrollState(int bit){
+			throw new NotImplementedException ();
+		}
+
+		protected override void OnLayout (LayoutEventArgs levent) {
 			//FIXME:
-			base.OnLayout (e);
+			base.OnLayout (levent);
 		}
 
 		protected override void OnMouseWheel (MouseEventArgs e) {
@@ -169,6 +174,14 @@ namespace System.Windows.Forms {
 		protected override void ScaleCore (float dx, float dy) {
 			//FIXME:
 			base.ScaleCore (dx, dy);
+		}
+
+		[MonoTODO]
+		protected void SetAutoScrollMargin(int x,int y){
+		}
+
+		[MonoTODO]
+		protected void SetScrollState(int bit,bool value){
 		}
 
 		protected override void WndProc (ref Message m) {

@@ -845,6 +845,11 @@
 			else
     				window.DefWndProc (ref m);
     		}
+  			//Compact Framework
+    		protected virtual void OnActivated (EventArgs e)
+    		{
+				Activated(this,e);
+			}
 
   			//Compact Framework
     		protected virtual void OnClosed (EventArgs e)
@@ -893,7 +898,7 @@
     			base.OnHandleDestroyed (e);
     		}
     
- 		protected virtual void OnInputLanguageChanged (
+			protected virtual void OnInputLanguageChanged (
  			InputLanguageChangedEventArgs e)
     		{
     			if (InputLanguageChanged != null)

@@ -114,17 +114,17 @@ namespace System.Windows.Forms {
 		}
 		
 		[MonoTODO]
-		protected override void OnPaint(PaintEventArgs e) 
+		protected override void OnPaint(PaintEventArgs pevent) 
 		{
 			//FIXME:
-			base.OnPaint(e);
+			base.OnPaint(pevent);
 		}
 		
 		[MonoTODO]
-		protected override void OnResize(EventArgs e) 
+		protected override void OnResize(EventArgs eventargs) 
 		{
 			//FIXME:
-			base.OnResize(e);
+			base.OnResize(eventargs);
 		}
 		
 		[MonoTODO]

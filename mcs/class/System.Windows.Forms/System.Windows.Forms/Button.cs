@@ -128,10 +128,10 @@ namespace System.Windows.Forms {
 		//	base.OnMouseLeave(mevent);
 		//}
 
-		protected virtual void OnPaint (PaintEventArgs e) {
+		protected virtual void OnPaint (PaintEventArgs pevent) {
 
 			Rectangle paintBounds = ClientRectangle;
-			Bitmap bmp = new Bitmap( paintBounds.Width, paintBounds.Height,e.Graphics);
+			Bitmap bmp = new Bitmap( paintBounds.Width, paintBounds.Height,pevent.Graphics);
 			Graphics paintOn = Graphics.FromImage(bmp);
 			
 			Color controlColor = BackColor; //SystemColors.Control;
@@ -271,7 +271,7 @@ namespace System.Windows.Forms {
 				// FIXME: Draw focus rectangle in different colors
 				ControlPaint.DrawFocusRectangle( paintOn, focusRC);
 			}
-			e.Graphics.DrawImage(bmp, 0, 0, paintBounds.Width, paintBounds.Height);
+			pevent.Graphics.DrawImage(bmp, 0, 0, paintBounds.Width, paintBounds.Height);
 			paintOn.Dispose ();
 			bmp.Dispose();
 		}
