@@ -1331,7 +1331,14 @@ namespace Mono.CSharp {
 			}
 
 			Pending = GetPendingImplementations ();
-			
+
+			if (parts != null) {
+				foreach (ClassPart part in parts) {
+					if (!part.DefineMembers (this))
+						return false;
+				}
+			}
+		
 			//
 			// Constructors are not in the defined_names array
 			//
@@ -1364,13 +1371,6 @@ namespace Mono.CSharp {
 			
 			if (delegates != null)
 				DefineMembers (delegates, defined_names);
-
-			if (parts != null) {
-				foreach (ClassPart part in parts) {
-					if (!part.DefineMembers (this))
-						return false;
-				}
-			}
 
 #if CACHE
 			if (!(this is ClassPart))
@@ -2070,7 +2070,7 @@ namespace Mono.CSharp {
 					part.Emit ();
 			}
 
-			if (Pending != null)
+			if ((Pending != null) && !(this is ClassPart))
 				if (Pending.VerifyPendingMethods ())
 					return;
 
@@ -2324,7 +2324,8 @@ namespace Mono.CSharp {
 		///   checks whether the `interface_type' is a base inteface implementation.
 		///   Then it checks whether `name' exists in the interface type.
 		/// </summary>
-		public bool VerifyImplements (Type interface_type, string full, string name, Location loc)
+		public virtual bool VerifyImplements (Type interface_type, string full,
+						      string name, Location loc)
 		{
 			bool found = false;
 
@@ -2679,6 +2680,13 @@ namespace Mono.CSharp {
 		public override PendingImplementation GetPendingImplementations ()
 		{
 			return PartialContainer.Pending;
+		}
+
+		public override bool VerifyImplements (Type interface_type, string full,
+						       string name, Location loc)
+		{
+			return PartialContainer.VerifyImplements (
+				interface_type, full, name, loc);
 		}
 	}
 

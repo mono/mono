@@ -1,5 +1,13 @@
 2004-07-25  Martin Baulig  <martin@ximian.com>
 
+	* class.cs (TypeContainer.DefineMembers): Call DefineMembers() on
+	our parts before defining any methods.
+	(TypeContainer.VerifyImplements): Make this virtual.
+	(ClassPart.VerifyImplements): Override and call VerifyImplements()
+	on our PartialContainer.
+
+2004-07-25  Martin Baulig  <martin@ximian.com>
+
 	* iterators.cs (Iterator.Define): Renamed to DefineIterator().
 
 	* decl.cs (DeclSpace.Define): Removed the `TypeContainer'
