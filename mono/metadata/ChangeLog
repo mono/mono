@@ -1,3 +1,11 @@
+2004-11-01  Zoltan Varga  <vargaz@freemail.hu>
+
+	* string-icalls.c (ves_icall_System_String_ctor_encoding): 
+	Implement this. Fixes #67264.
+
+	* debug-helpers.h debug-helpers.c marshal.c: Move 
+	mono_find_method_by_name to debug-helpers.c.
+
 2004-10-31  Zoltan Varga  <vargaz@freemail.hu>
 
 	* object.c (mono_release_type_locks): type_initialization_hash is
