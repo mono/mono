@@ -6,7 +6,7 @@ namespace Mine {
 
 		public int i;
 
-		public static void Main ()
+		public static int Main ()
 		{
 			Console.WriteLine ("Blah ");
 			Blah k;
@@ -22,6 +22,8 @@ namespace Mine {
 			// Console.WriteLine (k);
 			
 			//Console.WriteLine ("This is : " + number);
+	
+			return 0;
 			
 		}
 		

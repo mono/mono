@@ -1,3 +1,9 @@
+2001-09-26  Ravi Pratap  <ravi@ximian.com>
+
+	* test-7.cs : Update to return an exit code
+
+	* test-8.cs : Added by Miguel.
+
 2001-09-25  Ravi Pratap  <ravi@ximian.com>
 
 	* test-7.cs : Update to include implicit conversion tests.
