@@ -1,4 +1,9 @@
 
+Tue Apr 15 11:16:05 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* class.c: just setup supertypes in the proper place instead of
+	initializing the full element class for arrays.
+
 Tue Apr 15 11:03:25 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
 	* class.c: ensure the element class of arrays is initialized.
