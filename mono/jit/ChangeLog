@@ -1,5 +1,17 @@
 2002-03-28  Martin Baulig  <martin@gnome.org>
 
+	* debug-private.h (MonoDebugHandle): Renamed `format' to `default_format'.
+	(AssemblyDebugInfo): Added `format'.
+
+	* debug.c: Use the AssemblyDebugInfo's `format' field to determine the format,
+	this allows us choose the format on a per-assembly basis.
+	(mono_debug_open_assembly): When using MONO_DEBUG_FORMAT_DWARF2_PLUS, fall back
+	to MONO_DEBUG_FORMAT_DWARF2 if the symbol file does not exist, but the IL file
+	exists.
+	(debug_generate_method_lines): Generate correct IL offsets.
+
+2002-03-28  Martin Baulig  <martin@gnome.org>
+
 	* jit.h (MonoFlowGraph): Added `prologue_end' and `epilogue_start' fields.
 
 	* emit-x86.c (arch_compile_method): Set prologue_end and epilogue_start.
