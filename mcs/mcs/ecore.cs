@@ -118,49 +118,6 @@ namespace Mono.CSharp {
 		bool VerifyFixed (bool is_expression);
 	}
 
-	/// <summary>
-	///   This interface denotes an expression which evaluates to a member
-	///   of a struct or a class.
-	/// </summary>
-	public interface IMemberExpr
-	{
-		/// <summary>
-		///   The name of this member.
-		/// </summary>
-		string Name {
-			get;
-		}
-
-		/// <summary>
-		///   Whether this is an instance member.
-		/// </summary>
-		bool IsInstance {
-			get;
-		}
-
-		/// <summary>
-		///   Whether this is a static member.
-		/// </summary>
-		bool IsStatic {
-			get;
-		}
-
-		/// <summary>
-		///   The type which declares this member.
-		/// </summary>
-		Type DeclaringType {
-			get;
-		}
-
-		/// <summary>
-		///   The instance expression associated with this member, if it's a
-		///   non-static member.
-		/// </summary>
-		Expression InstanceExpression {
-			get; set;
-		}
-	}
-
 	/// <remarks>
 	///   Base class for expressions
 	/// </remarks>
@@ -788,13 +745,6 @@ namespace Mono.CSharp {
 			}
 		}
 
-		static public MemberInfo GetFieldFromEvent (EventExpr event_expr)
-		{
-			EventInfo ei = event_expr.EventInfo;
-
-			return TypeManager.GetPrivateFieldOfEvent (ei);
-		}
-		
 		/// <summary>
 		///   Returns an expression that can be used to invoke operator true
 		///   on the expression if it exists.
@@ -2020,25 +1970,6 @@ namespace Mono.CSharp {
 				resolved_to.Type.Name == Name &&
 				(ec.DeclSpace.LookupType (Name, loc, /* ignore_cs0104 = */ true) != null);
 		}
-		
-		//
-		// Checks whether we are trying to access an instance
-		// property, method or field from a static body.
-		//
-		Expression MemberStaticCheck (EmitContext ec, Expression e, bool intermediate)
-		{
-			if (e is IMemberExpr){
-				IMemberExpr member = (IMemberExpr) e;
-				
-				if (!member.IsStatic &&
-				    (!intermediate || !IdenticalNameAndTypeName (ec, e, loc))) {
-					Error_ObjectRefRequired (ec, loc, Name);
-					return null;
-				}
-			}
-
-			return e;
-		}
 
 		public override Expression DoResolve (EmitContext ec)
 		{
@@ -2186,21 +2117,24 @@ namespace Mono.CSharp {
 			if (e is TypeExpr)
 				return e;
 
-			if (e is IMemberExpr) {
-				e = MemberAccess.ResolveMemberAccess (ec, e, null, loc, this);
+			if (e is MemberExpr) {
+				MemberExpr me = (MemberExpr) e;
+				Expression left = (ec.IsStatic || ec.IsFieldInitializer)
+					? (Expression) new TypeExpression (ec.ContainerType, loc)
+					: (Expression) ec.GetThis (loc);
+			
+				e = me.ResolveMemberAccess (ec, left, loc, (intermediate ? this : null), true);
 				if (e == null)
 					return null;
 
-				IMemberExpr me = e as IMemberExpr;
+				me = e as MemberExpr;
 				if (me == null)
 					return e;
 
-				// This fails if ResolveMemberAccess() was unable to decide whether
-				// it's a field or a type of the same name.
-				
-				if (!me.IsStatic && (me.InstanceExpression == null))
+				if (!me.IsStatic && me.InstanceExpression == null && 
+				    (intermediate && IdenticalNameAndTypeName (ec, e, loc)))
 					return e;
-				
+
 				if (!me.IsStatic &&
 				    TypeManager.IsNestedFamilyAccessible (me.InstanceExpression.Type, me.DeclaringType) &&
 				    me.InstanceExpression.Type != me.DeclaringType &&
@@ -2213,14 +2147,11 @@ namespace Mono.CSharp {
 				}
 
 				return (right_side != null)
-					? e.DoResolveLValue (ec, right_side)
-					: e.DoResolve (ec);
+					? me.DoResolveLValue (ec, right_side)
+					: me.DoResolve (ec);
 			}
 
-			if (ec.IsStatic || ec.IsFieldInitializer){
-				return MemberStaticCheck (ec, e, intermediate);
-			} else
-				return e;
+			return e;
 		}
 		
 		public override void Emit (EmitContext ec)
@@ -2481,14 +2412,97 @@ namespace Mono.CSharp {
 	}
 
 	/// <summary>
+	///   This class denotes an expression which evaluates to a member
+	///   of a struct or a class.
+	/// </summary>
+	public abstract class MemberExpr : Expression
+	{
+		/// <summary>
+		///   The name of this member.
+		/// </summary>
+		public abstract string Name {
+			get;
+		}
+
+		/// <summary>
+		///   Whether this is an instance member.
+		/// </summary>
+		public abstract bool IsInstance {
+			get;
+		}
+
+		/// <summary>
+		///   Whether this is a static member.
+		/// </summary>
+		public abstract bool IsStatic {
+			get;
+		}
+
+		/// <summary>
+		///   The type which declares this member.
+		/// </summary>
+		public abstract Type DeclaringType {
+			get;
+		}
+
+		/// <summary>
+		///   The instance expression associated with this member, if it's a
+		///   non-static member.
+		/// </summary>
+		public Expression InstanceExpression;
+
+		public static void error176 (Location loc, string name)
+		{
+			Report.Error (176, loc, "Static member `" + name + "' cannot be accessed " +
+				      "with an instance reference, qualify with a type name instead");
+		}
+
+
+		// TODO: possible optimalization
+		// Cache resolved constant result in FieldBuilder <-> expression map
+		public virtual Expression ResolveMemberAccess (EmitContext ec, Expression left, Location loc,
+								SimpleName original, bool left_is_inferred)
+		{
+			//
+			// Precondition:
+			//   original == null || original.Resolve (...) === (left_is_inferred ? this : left)
+			//
+
+			if (left is TypeExpr) {
+				if (!IsStatic) {
+					if ((ec.IsFieldInitializer || ec.IsStatic) && left_is_inferred &&
+					    original != null && original.IdenticalNameAndTypeName (ec, this, loc))
+						return this;
+
+					SimpleName.Error_ObjectRefRequired (ec, loc, Name);
+					return null;
+				}
+
+				return this;
+			}
+				
+			if (!IsInstance) {
+				if (left_is_inferred ||
+				    (original != null && original.IdenticalNameAndTypeName (ec, left, loc)))
+					return this;
+
+				error176 (loc, Name);
+				return null;
+			}
+
+			InstanceExpression = left;
+
+			return this;
+		}
+	}
+
+	/// <summary>
 	///   MethodGroup Expression.
 	///  
 	///   This is a fully resolved expression that evaluates to a type
 	/// </summary>
-	public class MethodGroupExpr : Expression, IMemberExpr {
+	public class MethodGroupExpr : MemberExpr {
 		public MethodBase [] Methods;
-		Expression instance_expression = null;
-		bool is_explicit_impl = false;
 		bool identical_type_name = false;
 		bool is_base;
 		
@@ -2522,36 +2536,13 @@ namespace Mono.CSharp {
 			type = TypeManager.object_type;
 		}
 
-		public Type DeclaringType {
+		public override Type DeclaringType {
 			get {
                                 //
                                 // The methods are arranged in this order:
                                 // derived type -> base type
                                 //
 				return Methods [0].DeclaringType;
-			}
-		}
-		
-		//
-		// `A method group may have associated an instance expression' 
-		// 
-		public Expression InstanceExpression {
-			get {
-				return instance_expression;
-			}
-
-			set {
-				instance_expression = value;
-			}
-		}
-
-		public bool IsExplicitImpl {
-			get {
-				return is_explicit_impl;
-			}
-
-			set {
-				is_explicit_impl = value;
 			}
 		}
 
@@ -2574,13 +2565,13 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public string Name {
+		public override string Name {
 			get {
                                 return Methods [0].Name;
 			}
 		}
 
-		public bool IsInstance {
+		public override bool IsInstance {
 			get {
 				foreach (MethodBase mb in Methods)
 					if (!mb.IsStatic)
@@ -2590,7 +2581,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public bool IsStatic {
+		public override bool IsStatic {
 			get {
 				foreach (MethodBase mb in Methods)
 					if (mb.IsStatic)
@@ -2599,15 +2590,26 @@ namespace Mono.CSharp {
 				return false;
 			}
 		}
+
+		public override Expression ResolveMemberAccess (EmitContext ec, Expression left, Location loc,
+								 SimpleName original, bool left_is_inferred)
+		{
+			if (!left_is_inferred &&
+			    !(left is TypeExpr) &&
+			    original != null && original.IdenticalNameAndTypeName (ec, left, loc))
+				IdenticalTypeName = true;
+
+			return base.ResolveMemberAccess (ec, left, loc, original, left_is_inferred);
+		}
 		
 		override public Expression DoResolve (EmitContext ec)
 		{
 			if (!IsInstance)
-				instance_expression = null;
+				InstanceExpression = null;
 
-			if (instance_expression != null) {
-				instance_expression = instance_expression.DoResolve (ec);
-				if (instance_expression == null)
+			if (InstanceExpression != null) {
+				InstanceExpression = InstanceExpression.DoResolve (ec);
+				if (InstanceExpression == null)
 					return null;
 			}
 
@@ -2665,9 +2667,8 @@ namespace Mono.CSharp {
 	/// <summary>
 	///   Fully resolved expression that evaluates to a Field
 	/// </summary>
-	public class FieldExpr : Expression, IAssignMethod, IMemoryLocation, IMemberExpr, IVariable {
+	public class FieldExpr : MemberExpr, IAssignMethod, IMemoryLocation, IVariable {
 		public readonly FieldInfo FieldInfo;
-		Expression instance_expr;
 		VariableInfo variable_info;
 
 		LocalTemporary temp;
@@ -2681,37 +2682,27 @@ namespace Mono.CSharp {
 			loc = l;
 		}
 
-		public string Name {
+		public override string Name {
 			get {
 				return FieldInfo.Name;
 			}
 		}
 
-		public bool IsInstance {
+		public override bool IsInstance {
 			get {
 				return !FieldInfo.IsStatic;
 			}
 		}
 
-		public bool IsStatic {
+		public override bool IsStatic {
 			get {
 				return FieldInfo.IsStatic;
 			}
 		}
 
-		public Type DeclaringType {
+		public override Type DeclaringType {
 			get {
 				return FieldInfo.DeclaringType;
-			}
-		}
-
-		public Expression InstanceExpression {
-			get {
-				return instance_expr;
-			}
-
-			set {
-				instance_expr = value;
 			}
 		}
 
@@ -2721,10 +2712,98 @@ namespace Mono.CSharp {
 			}
 		}
 
+		public override Expression ResolveMemberAccess (EmitContext ec, Expression left, Location loc,
+								 SimpleName original, bool left_is_inferred)
+		{
+			bool left_is_type = left is TypeExpr;
+
+			Type decl_type = FieldInfo.DeclaringType;
+			
+			bool is_emitted = FieldInfo is FieldBuilder;
+			Type t = FieldInfo.FieldType;
+			
+			if (is_emitted) {
+				Const c = TypeManager.LookupConstant ((FieldBuilder) FieldInfo);
+				
+				if (c != null) {
+					object o;
+					if (!c.LookupConstantValue (out o))
+						return null;
+
+					object real_value = ((Constant) c.Expr).GetValue ();
+
+					Expression exp = Constantify (real_value, t);
+					
+					if (!left_is_inferred && !left_is_type && 
+					    (original == null || !original.IdenticalNameAndTypeName (ec, left, loc))) {
+						Report.SymbolRelatedToPreviousError (c);
+						error176 (loc, c.GetSignatureForError ());
+						return null;
+					}
+					
+					return exp;
+				}
+			}
+			
+			// IsInitOnly is because of MS compatibility, I don't know why but they emit decimal constant as InitOnly
+			if (FieldInfo.IsInitOnly && !is_emitted && t == TypeManager.decimal_type) {
+				object[] attrs = FieldInfo.GetCustomAttributes (TypeManager.decimal_constant_attribute_type, false);
+				if (attrs.Length == 1)
+					return new DecimalConstant (((System.Runtime.CompilerServices.DecimalConstantAttribute) attrs [0]).Value);
+			}
+			
+			if (FieldInfo.IsLiteral) {
+				object o;
+				
+				if (is_emitted)
+					o = TypeManager.GetValue ((FieldBuilder) FieldInfo);
+				else
+					o = FieldInfo.GetValue (FieldInfo);
+				
+				if (decl_type.IsSubclassOf (TypeManager.enum_type)) {
+					if (!left_is_inferred && !left_is_type &&
+					    (original == null || !original.IdenticalNameAndTypeName (ec, left, loc))) {
+						error176 (loc, FieldInfo.Name);
+						return null;
+					}					
+					
+					Expression enum_member = MemberLookup (
+					       ec, decl_type, "value__", MemberTypes.Field,
+					       AllBindingFlags | BindingFlags.NonPublic, loc); 
+					
+					Enum en = TypeManager.LookupEnum (decl_type);
+					
+					Constant c;
+					if (en != null)
+						c = Constantify (o, en.UnderlyingType);
+					else 
+						c = Constantify (o, enum_member.Type);
+					
+					return new EnumConstant (c, decl_type);
+				}
+				
+				Expression exp = Constantify (o, t);
+				
+				if (!left_is_inferred && !left_is_type) {
+					error176 (loc, FieldInfo.Name);
+					return null;
+				}
+				
+				return exp;
+			}
+			
+			if (t.IsPointer && !ec.InUnsafe) {
+				UnsafeError (loc);
+				return null;
+			}
+
+			return base.ResolveMemberAccess (ec, left, loc, original, left_is_inferred);
+		}
+
 		override public Expression DoResolve (EmitContext ec)
 		{
 			if (!FieldInfo.IsStatic){
-				if (instance_expr == null){
+				if (InstanceExpression == null){
 					//
 					// This can happen when referencing an instance field using
 					// a fully qualified type expression: TypeName.InstanceField = xxx
@@ -2736,9 +2815,9 @@ namespace Mono.CSharp {
 				// Resolve the field's instance expression while flow analysis is turned
 				// off: when accessing a field "a.b", we must check whether the field
 				// "a.b" is initialized, not whether the whole struct "a" is initialized.
-				instance_expr = instance_expr.Resolve (ec, ResolveFlags.VariableOrValue |
+				InstanceExpression = InstanceExpression.Resolve (ec, ResolveFlags.VariableOrValue |
 								       ResolveFlags.DisableFlowAnalysis);
-				if (instance_expr == null)
+				if (InstanceExpression == null)
 					return null;
 			}
 
@@ -2767,7 +2846,7 @@ namespace Mono.CSharp {
 			}
 			
 			// If the instance expression is a local variable or parameter.
-			IVariable var = instance_expr as IVariable;
+			IVariable var = InstanceExpression as IVariable;
 			if ((var == null) || (var.VariableInfo == null))
 				return this;
 
@@ -2795,7 +2874,7 @@ namespace Mono.CSharp {
 		
 		override public Expression DoResolveLValue (EmitContext ec, Expression right_side)
 		{
-			IVariable var = instance_expr as IVariable;
+			IVariable var = InstanceExpression as IVariable;
 			if ((var != null) && (var.VariableInfo != null))
 				var.VariableInfo.SetFieldAssigned (ec, FieldInfo.Name);
 
@@ -2804,7 +2883,7 @@ namespace Mono.CSharp {
 			if (e == null)
 				return null;
 
-			if (!FieldInfo.IsStatic && (instance_expr.Type.IsValueType && !(instance_expr is IMemoryLocation))) {
+			if (!FieldInfo.IsStatic && (InstanceExpression.Type.IsValueType && !(InstanceExpression is IMemoryLocation))) {
 				// FIXME: Provide better error reporting.
 				Error (1612, "Cannot modify expression because it is not a variable.");
 				return null;
@@ -2844,7 +2923,7 @@ namespace Mono.CSharp {
 
 		public bool VerifyFixed (bool is_expression)
 		{
-			IVariable variable = instance_expr as IVariable;
+			IVariable variable = InstanceExpression as IVariable;
 			if ((variable == null) || !variable.VerifyFixed (true))
 				return false;
 
@@ -2972,22 +3051,22 @@ namespace Mono.CSharp {
 			// This happens in cases like 'string String', 'int Int32', etc.
 			// where the "IdenticalTypeAndName" mechanism is fooled.
 			//
-			if (instance_expr == null) {
+			if (InstanceExpression == null) {
 				SimpleName.Error_ObjectRefRequired (ec, loc, FieldInfo.Name);
 				return;
 			}
 
-			if (instance_expr.Type.IsValueType) {
-				if (instance_expr is IMemoryLocation) {
-					((IMemoryLocation) instance_expr).AddressOf (ec, AddressOp.LoadStore);
+			if (InstanceExpression.Type.IsValueType) {
+				if (InstanceExpression is IMemoryLocation) {
+					((IMemoryLocation) InstanceExpression).AddressOf (ec, AddressOp.LoadStore);
 				} else {
-					LocalTemporary t = new LocalTemporary (ec, instance_expr.Type);
-					instance_expr.Emit (ec);
+					LocalTemporary t = new LocalTemporary (ec, InstanceExpression.Type);
+					InstanceExpression.Emit (ec);
 					t.Store (ec);
 					t.AddressOf (ec, AddressOp.Store);
 				}
 			} else
-				instance_expr.Emit (ec);
+				InstanceExpression.Emit (ec);
 		}
 
 		public override void Emit (EmitContext ec)
@@ -3071,7 +3150,7 @@ namespace Mono.CSharp {
 	///   This is not an LValue because we need to re-write the expression, we
 	///   can not take data from the stack and store it.  
 	/// </summary>
-	public class PropertyExpr : Expression, IAssignMethod, IMemberExpr {
+	public class PropertyExpr : MemberExpr, IAssignMethod {
 		public readonly PropertyInfo PropertyInfo;
 
 		//
@@ -3081,7 +3160,6 @@ namespace Mono.CSharp {
 		MethodInfo getter, setter;
 		bool is_static;
 		
-		Expression instance_expr;
 		LocalTemporary temp;
 		bool prepared;
 
@@ -3099,40 +3177,27 @@ namespace Mono.CSharp {
 			ResolveAccessors (ec);
 		}
 
-		public string Name {
+		public override string Name {
 			get {
 				return PropertyInfo.Name;
 			}
 		}
 
-		public bool IsInstance {
+		public override bool IsInstance {
 			get {
 				return !is_static;
 			}
 		}
 
-		public bool IsStatic {
+		public override bool IsStatic {
 			get {
 				return is_static;
 			}
 		}
 		
-		public Type DeclaringType {
+		public override Type DeclaringType {
 			get {
 				return PropertyInfo.DeclaringType;
-			}
-		}
-
-		//
-		// The instance expression associated with this expression
-		//
-		public Expression InstanceExpression {
-			set {
-				instance_expr = value;
-			}
-
-			get {
-				return instance_expr;
 			}
 		}
 
@@ -3203,26 +3268,26 @@ namespace Mono.CSharp {
 
 		bool InstanceResolve (EmitContext ec, bool must_do_cs1540_check)
 		{
-			if ((instance_expr == null) && ec.IsStatic && !is_static) {
+			if ((InstanceExpression == null) && ec.IsStatic && !is_static) {
 				SimpleName.Error_ObjectRefRequired (ec, loc, PropertyInfo.Name);
 				return false;
 			}
 
-			if (instance_expr != null) {
-				instance_expr = instance_expr.DoResolve (ec);
-				if (instance_expr == null)
+			if (InstanceExpression != null) {
+				InstanceExpression = InstanceExpression.DoResolve (ec);
+				if (InstanceExpression == null)
 					return false;
 
-				instance_expr.CheckMarshallByRefAccess (ec.ContainerType);
+				InstanceExpression.CheckMarshallByRefAccess (ec.ContainerType);
 			}
 
-			if (must_do_cs1540_check && (instance_expr != null)) {
-				if ((instance_expr.Type != ec.ContainerType) &&
-				    ec.ContainerType.IsSubclassOf (instance_expr.Type)) {
+			if (must_do_cs1540_check && (InstanceExpression != null)) {
+				if ((InstanceExpression.Type != ec.ContainerType) &&
+				    ec.ContainerType.IsSubclassOf (InstanceExpression.Type)) {
 					Report.Error (1540, loc, "Cannot access protected member `" +
 						      PropertyInfo.DeclaringType + "." + PropertyInfo.Name + 
 						      "' via a qualifier of type `" +
-						      TypeManager.CSharpName (instance_expr.Type) +
+						      TypeManager.CSharpName (InstanceExpression.Type) +
 						      "'; the qualifier must be of type `" +
 						      TypeManager.CSharpName (ec.ContainerType) +
 						      "' (or derived from it)");
@@ -3351,7 +3416,7 @@ namespace Mono.CSharp {
 			//
 			// Check that we are not making changes to a temporary memory location
 			//
-			if (instance_expr != null && instance_expr.Type.IsValueType && !(instance_expr is IMemoryLocation)) {
+			if (InstanceExpression != null && InstanceExpression.Type.IsValueType && !(InstanceExpression is IMemoryLocation)) {
 				// FIXME: Provide better error reporting.
 				Error (1612, "Cannot modify expression because it is not a variable.");
 				return null;
@@ -3377,22 +3442,22 @@ namespace Mono.CSharp {
 			// This happens in cases like 'string String', 'int Int32', etc.
 			// where the "IdenticalTypeAndName" mechanism is fooled.
 			//
-			if (instance_expr == null) {
+			if (InstanceExpression == null) {
 				SimpleName.Error_ObjectRefRequired (ec, loc, PropertyInfo.Name);
 				return;
 			}
 
-			if (instance_expr.Type.IsValueType) {
-				if (instance_expr is IMemoryLocation) {
-					((IMemoryLocation) instance_expr).AddressOf (ec, AddressOp.LoadStore);
+			if (InstanceExpression.Type.IsValueType) {
+				if (InstanceExpression is IMemoryLocation) {
+					((IMemoryLocation) InstanceExpression).AddressOf (ec, AddressOp.LoadStore);
 				} else {
-					LocalTemporary t = new LocalTemporary (ec, instance_expr.Type);
-					instance_expr.Emit (ec);
+					LocalTemporary t = new LocalTemporary (ec, InstanceExpression.Type);
+					InstanceExpression.Emit (ec);
 					t.Store (ec);
 					t.AddressOf (ec, AddressOp.Store);
 				}
 			} else
-				instance_expr.Emit (ec);
+				InstanceExpression.Emit (ec);
 			
 			if (prepared)
 				ec.ig.Emit (OpCodes.Dup);
@@ -3409,7 +3474,7 @@ namespace Mono.CSharp {
 			//
 			if ((getter == TypeManager.system_int_array_get_length) ||
 			    (getter == TypeManager.int_array_get_length)){
-				Type iet = instance_expr.Type;
+				Type iet = InstanceExpression.Type;
 
 				//
 				// System.Array.Length can be called, but the Type does not
@@ -3465,9 +3530,8 @@ namespace Mono.CSharp {
 	/// <summary>
 	///   Fully resolved expression that evaluates to an Event
 	/// </summary>
-	public class EventExpr : Expression, IMemberExpr {
+	public class EventExpr : MemberExpr {
 		public readonly EventInfo EventInfo;
-		Expression instance_expr;
 
 		bool is_static;
 		MethodInfo add_accessor, remove_accessor;
@@ -3492,50 +3556,69 @@ namespace Mono.CSharp {
 				type = EventInfo.EventHandlerType;
 		}
 
-		public string Name {
+		public override string Name {
 			get {
 				return EventInfo.Name;
 			}
 		}
 
-		public bool IsInstance {
+		public override bool IsInstance {
 			get {
 				return !is_static;
 			}
 		}
 
-		public bool IsStatic {
+		public override bool IsStatic {
 			get {
 				return is_static;
 			}
 		}
 
-		public Type DeclaringType {
+		public override Type DeclaringType {
 			get {
 				return EventInfo.DeclaringType;
 			}
 		}
 
-		public Expression InstanceExpression {
-			get {
-				return instance_expr;
+		public override Expression ResolveMemberAccess (EmitContext ec, Expression left, Location loc,
+								 SimpleName original, bool left_is_inferred)
+		{
+			//
+			// If the event is local to this class, we transform ourselves into a FieldExpr
+			//
+
+			if (EventInfo.DeclaringType == ec.ContainerType ||
+			    TypeManager.IsNestedChildOf(ec.ContainerType, EventInfo.DeclaringType)) {
+				MemberInfo mi = TypeManager.GetPrivateFieldOfEvent (EventInfo);
+
+				if (mi != null) {
+					MemberExpr ml = (MemberExpr) ExprClassFromMemberInfo (ec, mi, loc);
+
+					if (ml == null) {
+						Report.Error (-200, loc, "Internal error!!");
+						return null;
+					}
+				
+					InstanceExpression = left_is_inferred ? null : left;
+				
+					return ml.ResolveMemberAccess (ec, left, loc, original, left_is_inferred);
+				}
 			}
 
-			set {
-				instance_expr = value;
-			}
+			return base.ResolveMemberAccess (ec, left, loc, original, left_is_inferred);
 		}
+
 
 		bool InstanceResolve (EmitContext ec, bool must_do_cs1540_check)
 		{
-			if ((instance_expr == null) && ec.IsStatic && !is_static) {
+			if ((InstanceExpression == null) && ec.IsStatic && !is_static) {
 				SimpleName.Error_ObjectRefRequired (ec, loc, EventInfo.Name);
 				return false;
 			}
 
-			if (instance_expr != null) {
-				instance_expr = instance_expr.DoResolve (ec);
-				if (instance_expr == null)
+			if (InstanceExpression != null) {
+				InstanceExpression = InstanceExpression.DoResolve (ec);
+				if (InstanceExpression == null)
 					return false;
 			}
 
@@ -3543,9 +3626,9 @@ namespace Mono.CSharp {
 			// This is using the same mechanism as the CS1540 check in PropertyExpr.
 			// However, in the Event case, we reported a CS0122 instead.
 			//
-			if (must_do_cs1540_check && (instance_expr != null)) {
-				if ((instance_expr.Type != ec.ContainerType) &&
-					ec.ContainerType.IsSubclassOf (instance_expr.Type)) {
+			if (must_do_cs1540_check && (InstanceExpression != null)) {
+				if ((InstanceExpression.Type != ec.ContainerType) &&
+					ec.ContainerType.IsSubclassOf (InstanceExpression.Type)) {
 					Report.Error (122, loc, "'{0}' is inaccessible due to its protection level",
 						DeclaringType.Name + "." + EventInfo.Name);
 
@@ -3563,9 +3646,9 @@ namespace Mono.CSharp {
 
 		public override Expression DoResolve (EmitContext ec)
 		{
-			if (instance_expr != null) {
-				instance_expr = instance_expr.DoResolve (ec);
-				if (instance_expr == null)
+			if (InstanceExpression != null) {
+				InstanceExpression = InstanceExpression.DoResolve (ec);
+				if (InstanceExpression == null)
 					return null;
 			}
 
@@ -3586,7 +3669,7 @@ namespace Mono.CSharp {
 
 		public override void Emit (EmitContext ec)
 		{
-			if (instance_expr is This)
+			if (InstanceExpression is This)
 				Report.Error (79, loc, "The event `{0}' can only appear on the left hand side of += or -=, try calling the actual delegate", Name);
 			else
 				Report.Error (70, loc, "The event `{0}' can only appear on the left hand side of += or -= "+
@@ -3605,10 +3688,10 @@ namespace Mono.CSharp {
 			
 			if (source_del.IsAddition)
 				Invocation.EmitCall (
-					ec, false, IsStatic, instance_expr, add_accessor, args, loc);
+					ec, false, IsStatic, InstanceExpression, add_accessor, args, loc);
 			else
 				Invocation.EmitCall (
-					ec, false, IsStatic, instance_expr, remove_accessor, args, loc);
+					ec, false, IsStatic, InstanceExpression, remove_accessor, args, loc);
 		}
 	}
 }	

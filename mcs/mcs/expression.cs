@@ -4226,8 +4226,8 @@ namespace Mono.CSharp {
 			if (Expr == null)
 				return false;
 
-			if (Expr is IMemberExpr) {
-				IMemberExpr me = Expr as IMemberExpr;
+			if (Expr is MemberExpr) {
+				MemberExpr me = Expr as MemberExpr;
 
 				//
 				// This can happen with the following code:
@@ -5247,7 +5247,7 @@ namespace Mono.CSharp {
 			MethodInfo mi = method as MethodInfo;
 			if (mi != null) {
 				type = TypeManager.TypeToCoreType (mi.ReturnType);
-				if (!mi.IsStatic && !mg.IsExplicitImpl && (mg.InstanceExpression == null)) {
+				if (!mi.IsStatic && mg.InstanceExpression == null) {
 					SimpleName.Error_ObjectRefRequired (ec, loc, mi.Name);
 					return null;
 				}
@@ -5257,7 +5257,7 @@ namespace Mono.CSharp {
 					if (mg.IdenticalTypeName)
 						mg.InstanceExpression = null;
 					else {
-						MemberAccess.error176 (loc, mi.Name);
+						MemberExpr.error176 (loc, mi.Name);
 						return null;
 					}
 				}
@@ -7232,227 +7232,6 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public static void error176 (Location loc, string name)
-		{
-			Report.Error (176, loc, "Static member `" +
-				      name + "' cannot be accessed " +
-				      "with an instance reference, qualify with a " +
-				      "type name instead");
-		}
-
-		public static bool IdenticalNameAndTypeName (EmitContext ec, Expression left_original, Expression left, Location loc)
-		{
-			SimpleName sn = left_original as SimpleName;
-			return sn != null && sn.IdenticalNameAndTypeName (ec, left, loc);
-		}
-		
-		// TODO: possible optimalization
-		// Cache resolved constant result in FieldBuilder <-> expresion map
-		public static Expression ResolveMemberAccess (EmitContext ec, Expression member_lookup,
-							      Expression left, Location loc,
-							      Expression left_original)
-		{
-			bool left_is_type, left_is_explicit;
-
-			// If `left' is null, then we're called from SimpleNameResolve and this is
-			// a member in the currently defining class.
-			if (left == null) {
-				left_is_type = ec.IsStatic || ec.IsFieldInitializer;
-				left_is_explicit = false;
-
-				// Implicitly default to `this' unless we're static.
-				if (!ec.IsStatic && !ec.IsFieldInitializer && !ec.InEnumContext)
-					left = ec.GetThis (loc);
-			} else {
-				left_is_type = left is TypeExpr;
-				left_is_explicit = true;
-			}
-
-			if (member_lookup is FieldExpr){
-				FieldExpr fe = (FieldExpr) member_lookup;
-				FieldInfo fi = fe.FieldInfo;
-				Type decl_type = fi.DeclaringType;
-
-				bool is_emitted = fi is FieldBuilder;
-				Type t = fi.FieldType;
-
-				if (is_emitted) {
-					Const c = TypeManager.LookupConstant ((FieldBuilder) fi);
-					
-					if (c != null) {
-						object o;
-						if (!c.LookupConstantValue (out o))
-							return null;
-
-						object real_value = ((Constant) c.Expr).GetValue ();
-
-						Expression exp = Constantify (real_value, t);
-
-						if (left_is_explicit && !left_is_type && !IdenticalNameAndTypeName (ec, left_original, left, loc)) {
-							Report.SymbolRelatedToPreviousError (c);
-							error176 (loc, c.GetSignatureForError ());
-							return null;
-						}
-					
-						return exp;
-					}
-				}
-
-				// IsInitOnly is because of MS compatibility, I don't know why but they emit decimal constant as InitOnly
-				if (fi.IsInitOnly && !is_emitted && t == TypeManager.decimal_type) {
-					object[] attrs = fi.GetCustomAttributes (TypeManager.decimal_constant_attribute_type, false);
-					if (attrs.Length == 1)
-						return new DecimalConstant (((System.Runtime.CompilerServices.DecimalConstantAttribute) attrs [0]).Value);
-				}
-
-				if (fi.IsLiteral) {
-					object o;
-
-					if (is_emitted)
-						o = TypeManager.GetValue ((FieldBuilder) fi);
-					else
-						o = fi.GetValue (fi);
-					
-					if (decl_type.IsSubclassOf (TypeManager.enum_type)) {
-						if (left_is_explicit && !left_is_type &&
-						    !IdenticalNameAndTypeName (ec, left_original, member_lookup, loc)) {
-							error176 (loc, fe.FieldInfo.Name);
-							return null;
-						}					
-						
-						Expression enum_member = MemberLookup (
-							ec, decl_type, "value__", MemberTypes.Field,
-							AllBindingFlags | BindingFlags.NonPublic, loc); 
-
-						Enum en = TypeManager.LookupEnum (decl_type);
-
-						Constant c;
-						if (en != null)
-							c = Constantify (o, en.UnderlyingType);
-						else 
-							c = Constantify (o, enum_member.Type);
-						
-						return new EnumConstant (c, decl_type);
-					}
-					
-					Expression exp = Constantify (o, t);
-
-					if (left_is_explicit && !left_is_type) {
-						error176 (loc, fe.FieldInfo.Name);
-						return null;
-					}
-					
-					return exp;
-				}
-
-				if (t.IsPointer && !ec.InUnsafe){
-					UnsafeError (loc);
-					return null;
-				}
-			}
-
-			if (member_lookup is EventExpr) {
-				EventExpr ee = (EventExpr) member_lookup;
-				
-				//
-				// If the event is local to this class, we transform ourselves into
-				// a FieldExpr
-				//
-
-				if (ee.EventInfo.DeclaringType == ec.ContainerType ||
-				    TypeManager.IsNestedChildOf(ec.ContainerType, ee.EventInfo.DeclaringType)) {
-					MemberInfo mi = GetFieldFromEvent (ee);
-
-					if (mi == null) {
-						//
-						// If this happens, then we have an event with its own
-						// accessors and private field etc so there's no need
-						// to transform ourselves.
-						//
-						ee.InstanceExpression = left;
-						return ee;
-					}
-
-					Expression ml = ExprClassFromMemberInfo (ec, mi, loc);
-					
-					if (ml == null) {
-						Report.Error (-200, loc, "Internal error!!");
-						return null;
-					}
-
-					if (!left_is_explicit)
-						left = null;
-
-					ee.InstanceExpression = left;
-
-					return ResolveMemberAccess (ec, ml, left, loc, left_original);
-				}
-			}
-
-			if (member_lookup is IMemberExpr) {
-				IMemberExpr me = (IMemberExpr) member_lookup;
-				MethodGroupExpr mg = me as MethodGroupExpr;
-
-				if (left_is_type){
-					if ((mg != null) && left_is_explicit && left.Type.IsInterface)
-						mg.IsExplicitImpl = left_is_explicit;
-
-					if (!me.IsStatic){
-						if ((ec.IsFieldInitializer || ec.IsStatic) &&
-						    IdenticalNameAndTypeName (ec, left_original, member_lookup, loc))
-							return member_lookup;
-						
-						SimpleName.Error_ObjectRefRequired (ec, loc, me.Name);
-						return null;
-					}
-
-				} else {
-					if (!me.IsInstance) {
-						if (IdenticalNameAndTypeName (ec, left_original, left, loc))
-							return member_lookup;
-
-						if (left_is_explicit) {
-							error176 (loc, me.Name);
-							return null;
-						}
-					}			
-
-					//
-					// Since we can not check for instance objects in SimpleName,
-					// becaue of the rule that allows types and variables to share
-					// the name (as long as they can be de-ambiguated later, see 
-					// IdenticalNameAndTypeName), we have to check whether left 
-					// is an instance variable in a static context
-					//
-					// However, if the left-hand value is explicitly given, then
-					// it is already our instance expression, so we aren't in
-					// static context.
-					//
-
-					if (ec.IsStatic && !left_is_explicit && left is IMemberExpr){
-						IMemberExpr mexp = (IMemberExpr) left;
-
-						if (!mexp.IsStatic){
-							SimpleName.Error_ObjectRefRequired (ec, loc, mexp.Name);
-							return null;
-						}
-					}
-
-					if ((mg != null) && IdenticalNameAndTypeName (ec, left_original, left, loc))
-						mg.IdenticalTypeName = true;
-
-					me.InstanceExpression = left;
-				}
-
-				return member_lookup;
-			}
-
-			Console.WriteLine ("Left is: " + left);
-			Report.Error (-100, loc, "Support for [" + member_lookup + "] is not present yet");
-			Environment.Exit (1);
-			return null;
-		}
-		
 		public Expression DoResolve (EmitContext ec, Expression right_side, ResolveFlags flags)
 		{
 			if (type != null)
@@ -7465,7 +7244,7 @@ namespace Mono.CSharp {
 			// definite assignment check on the actual field and not on the whole struct.
 			//
 
-			Expression original = expr;
+			SimpleName original = expr as SimpleName;
 			expr = expr.Resolve (ec, flags | ResolveFlags.Intermediate | ResolveFlags.DisableFlowAnalysis);
 			if (expr == null)
 				return null;
@@ -7540,7 +7319,7 @@ namespace Mono.CSharp {
 
 			if (member_lookup is TypeExpr) {
 				if (!(expr is TypeExpr) && 
-				    !IdenticalNameAndTypeName (ec, original, expr, loc)) {
+				    (original == null || !original.IdenticalNameAndTypeName (ec, expr, loc))) {
 					Error (572, "Can't reference type `" + Identifier + "' through an expression; try `" +
 					       member_lookup.Type + "' instead");
 					return null;
@@ -7548,8 +7327,9 @@ namespace Mono.CSharp {
 
 				return member_lookup;
 			}
-			
-			member_lookup = ResolveMemberAccess (ec, member_lookup, expr, loc, original);
+
+			MemberExpr me = (MemberExpr) member_lookup;
+			member_lookup = me.ResolveMemberAccess (ec, expr, loc, original, false);
 			if (member_lookup == null)
 				return null;
 
@@ -8590,7 +8370,6 @@ namespace Mono.CSharp {
 			Expression member_lookup;
 			Type current_type = ec.ContainerType;
 			Type base_type = current_type.BaseType;
-			Expression e;
 
 			if (ec.IsStatic){
 				Error (1511, "Keyword base is not allowed in static method");
@@ -8615,10 +8394,12 @@ namespace Mono.CSharp {
 				left = new TypeExpression (base_type, loc);
 			else
 				left = ec.GetThis (loc);
-			
-			e = MemberAccess.ResolveMemberAccess (ec, member_lookup, left, loc, null);
 
-			if (e is PropertyExpr){
+			MemberExpr me = (MemberExpr) member_lookup;
+			
+			Expression e = me.ResolveMemberAccess (ec, left, loc, null, false);
+
+			if (e is PropertyExpr) {
 				PropertyExpr pe = (PropertyExpr) e;
 
 				pe.IsBase = true;
