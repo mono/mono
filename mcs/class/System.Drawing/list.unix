@@ -116,7 +116,7 @@ System.Drawing.Printing/PrintingPermissionLevel.cs
 System.Drawing.Printing/PrintPageEventArgs.cs
 System.Drawing.Printing/PrintPageEventHandler.cs
 System.Drawing.Printing/PrintRange.cs
-System.Drawing.Printing/QueryPageSettingEventArgs.cs
+System.Drawing.Printing/QueryPageSettingsEventArgs.cs
 System.Drawing.Printing/QueryPageSettingsEventHandler.cs
 System.Drawing.Printing/StandardPrintController.cs
 System.Drawing/RectangleConverter.cs
