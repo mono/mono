@@ -1,3 +1,12 @@
+2004-12-04 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* WebConnection.cs: handle errors on chunked streams. Fixes bug #66858.
+	* ChunkStream.cs: added error checking all over.
+
+	* HttpWebRequest.cs: throw the exception received in SetResponseError
+	if we already have a response.
+	(SetRequestData): Don't nest the exception if it's a WebException.
+
 2004-12-03 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* WebConnection.cs: remove prevStream and don't set busy to false in
