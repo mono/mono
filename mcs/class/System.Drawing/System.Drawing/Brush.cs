@@ -13,30 +13,29 @@ using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 
-namespace System.Drawing {
-
-	public abstract class Brush : MarshalByRefObject, ICloneable, IDisposable {
-
+namespace System.Drawing
+{
+	public abstract class Brush : MarshalByRefObject, ICloneable, IDisposable
+	{
 		internal IntPtr nativeObject;
 		abstract public object Clone ();
 
                 internal Brush ()
                 { }
-        
+
 		internal Brush (IntPtr ptr)
 		{
                         nativeObject = ptr;
 		}
 		
-		internal IntPtr NativeObject{
-			get{
+		internal IntPtr NativeObject {
+			get {
 				return nativeObject;
 			}
-			set	{
+			set {
 				nativeObject = value;
 			}
 		}
-	
 
                 internal Brush CreateBrush (IntPtr brush, System.Drawing.BrushType type)
                 {

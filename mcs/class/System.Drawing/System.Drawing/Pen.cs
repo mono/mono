@@ -328,6 +328,22 @@ namespace System.Drawing {
                                 
                 }
 
+                public PenType PenType {
+
+                        get {
+                                if (brush is TextureBrush)
+                                        return PenType.TextureFill;
+                                else if (brush is HatchBrush)
+                                        return PenType.HatchFill;
+                                else if (brush is LinearGradientBrush)
+                                        return PenType.LinearGradient;
+                                else if (brush is PathGradientBrush)
+                                        return PenType.PathGradient;
+                                else
+                                        return PenType.SolidColor;
+                        }
+                }
+
                 public Matrix Transform {
 
                         get {
