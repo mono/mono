@@ -9,17 +9,10 @@
 
 namespace System.Runtime.Remoting.MetadataServices
 {
-        public class SUDSGeneratorException : Exception
+	public class SUDSGeneratorException : Exception
 	{
-		[MonoTODO]
-		public override string ToString()
+		internal SUDSGeneratorException ()
 		{
-			throw new NotImplementedException();
-		}
-
-		[MonoTODO]
-		~SUDSGeneratorException()
-	        {
 		}
 	}
 }

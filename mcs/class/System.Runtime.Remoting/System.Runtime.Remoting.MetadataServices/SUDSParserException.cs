@@ -9,16 +9,9 @@
 
 namespace System.Runtime.Remoting.MetadataServices
 {
-        public class SUDSParserException : Exception
+	public class SUDSParserException : Exception
 	{
-		[MonoTODO]
-		public override string ToString()
-		{
-			throw new NotImplementedException();
-		}
-
-		[MonoTODO]
-		~SUDSParserException()
+		internal SUDSParserException ()
 		{
 		}
 	}

@@ -1,3 +1,10 @@
+2004-05-13  Lluis Sanchez Gual <lluis@ximian.com>
+
+	* SUDSGeneratorException.cs, SUDSParserException.cs: Removed unneeded
+	  methods and added internal constructor.
+	* SdlChannelSink.cs: Fixed public constructor.
+	* SdlChannelSinkProvider.cs: Added missing constructor.
+
 2003-12-10  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* MetaDataExporter.cs: Several fixes.

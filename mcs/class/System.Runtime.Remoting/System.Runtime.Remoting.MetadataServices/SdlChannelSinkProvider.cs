@@ -8,6 +8,7 @@
 //
 
 using System.Runtime.Remoting.Channels;
+using System.Collections;
 
 namespace System.Runtime.Remoting.MetadataServices
 {
@@ -16,6 +17,10 @@ namespace System.Runtime.Remoting.MetadataServices
 		IServerChannelSinkProvider _next;
 		
 		public SdlChannelSinkProvider()
+		{
+		}
+
+		public SdlChannelSinkProvider (IDictionary properties, ICollection providerData)
 		{
 		}
 

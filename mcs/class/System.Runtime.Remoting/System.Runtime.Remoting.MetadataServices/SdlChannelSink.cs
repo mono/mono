@@ -20,11 +20,7 @@ namespace System.Runtime.Remoting.MetadataServices
 		IServerChannelSink _next;
 		IChannelReceiver _channel;
 		
-		public SdlChannelSink()
-		{
-		}
-
-		internal SdlChannelSink (IChannelReceiver channel, IServerChannelSink next)
+		public SdlChannelSink (IChannelReceiver channel, IServerChannelSink next)
 		{
 			_next = next;
 			_channel = channel;
