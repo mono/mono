@@ -42,7 +42,6 @@
 
 	<target name="test" depends="assemblies">
 		<exec program="..\..\..\nunit\NUnitConsole" commandline="MonoTests.System.Xml.AllTests,System.XML_test.dll" failonerror="false"/>
-		<exec program="..\..\..\nunit\NUnitConsole" commandline="MonoTests.System.Xml.XPathScannerTests,System.XML_test.dll" failonerror="false"/>
 	</target>
 
 	<target name="clean">

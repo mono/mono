@@ -1,3 +1,9 @@
+2002-06-24  Jason Diamond  <jason@injektilo.org>
+
+	* XPathScannerTests.cs: Removed.
+
+	* System.XML_test.build: Removed tests for XPathScanner.
+
 2002-05-27  Jason Diamond  <jason@injektilo.org>
 
 	* XPathNavigatorTests.cs: Added file to directory.
