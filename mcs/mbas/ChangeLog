@@ -1,4 +1,7 @@
 2004-04-14 Anirban Bhattacharjee <banirban@novell.com>
+	* class.cs: Added support for Shadows modifier in Variables
+
+2004-04-14 Anirban Bhattacharjee <banirban@novell.com>
 	* const.cs: Added support for Shadows modifier in constant
 
 2004-04-14 Anirban Bhattacharjee <banirban@novell.com>

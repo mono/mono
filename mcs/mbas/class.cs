@@ -3542,14 +3542,14 @@ namespace Mono.MonoBASIC {
 		//   Modifiers allowed in a class declaration
 		// </summary>
 		const int AllowedModifiers =
-			Modifiers.NEW |
+			Modifiers.SHADOWS |
 			Modifiers.PUBLIC |
 			Modifiers.PROTECTED |
 			Modifiers.INTERNAL |
 			Modifiers.PRIVATE |
 			Modifiers.STATIC |
-		        Modifiers.VOLATILE |
-		        Modifiers.UNSAFE |
+		   //     Modifiers.VOLATILE |
+		   //     Modifiers.UNSAFE |
 			Modifiers.READONLY;
 
 		public Field (Expression type, int mod, string name, Object expr_or_array_init,
@@ -3581,11 +3581,21 @@ namespace Mono.MonoBASIC {
 
 				// ptype is only null for System.Object while compiling corlib.
 				if (ptype != null){
-					TypeContainer.FindMembers (
-						ptype, MemberTypes.Method,
+					MemberList list = TypeContainer.FindMembers (
+						ptype, MemberTypes.Field,
 						BindingFlags.Public |
 						BindingFlags.Static | BindingFlags.Instance,
 						System.Type.FilterName, Name);
+
+					if ((list.Count > 0) && ((ModFlags & Modifiers.SHADOWS) == 0)) {
+						Report.Warning (
+							40004, 2, Location, 
+							"Variable '" + Name + "' should be declared " +
+							"Shadows since the base type '" + ptype.Name + 
+							"' has a variable with same name");
+
+						ModFlags |= Modifiers.SHADOWS;
+					}
 				}
 			}
 
