@@ -1,3 +1,7 @@
+2004-02-02  Zoltan Varga  <vargaz@freemail.hu>
+
+	* Environment.cs: Bump corlib version.
+
 2004-02-02  Sebastien Pouliot  <sebastien@ximian.ca>
 
 	* DateTime.cs: Corrected support for "Z" in the mask (Parse). This
