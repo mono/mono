@@ -1,3 +1,13 @@
+2004-09-21  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile (net20bootstrapcorlib): Rename from net20bootstraplib.
+	Build 'mscorlib.dll' using the 'net_2_0_bootstrap' profile.
+	(net20bootstrapSystem): New.  Build 'System.dll' using the
+	'net_2_0_bootstrap' profile.
+	($(gmcs)): Depend on both the above.
+	(CLEAN_FILES) [PROFILE=net_2_0]: Clean the 'net_2_0_bootstrap'
+	profile and 'gmcs' too.
+
 2004-09-20  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* corlib.dll.sources: Removed ReadOnlyCollections.cs and Collection.cs

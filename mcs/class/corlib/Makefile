@@ -22,7 +22,6 @@ LIBRARY_USE_INTERMEDIATE_FILE = yes
 LIBRARY_INSTALL_DIR = $(prefix)/lib/mono/$(FRAMEWORK_VERSION)
 
 CLEAN_FILES = $(cmplib) $(reslib) $(plattestlib) $(plattestlib).sources \
-	       $(net20bootstrap_makefrag) \
 	       $(cmp_response) $(cmp_makefrag) \
 	       $(res_response) $(res_makefrag) \
 	       $(cmppdb) $(respdb) $(plattestpdb)
@@ -86,7 +85,8 @@ endif
 include ../../build/library.make
 
 gmcs = $(topdir)/gmcs/gmcs.exe
-net20bootstraplib = $(topdir)/class/lib/net_2_0_bootstrap/mscorlib.dll
+net20bootstrapcorlib = $(topdir)/class/lib/net_2_0_bootstrap/mscorlib.dll
+net20bootstrapSystem = $(topdir)/class/lib/net_2_0_bootstrap/System.dll
 
 ifeq (net_2_0, $(PROFILE))
 $(the_lib): $(gmcs)
@@ -94,21 +94,23 @@ $(the_lib): $(gmcs)
 # The in-tree 'gmcs' needs at least a stripped-down version of the net 2.0 corlib.dll.  We build that first.
 # make sure that $(gmcs) is up-to-date
 FORCE:
-$(gmcs): $(net20bootstraplib) FORCE
+$(gmcs): $(net20bootstrapcorlib) $(net20bootstrapSystem) FORCE
 	cd $(@D) && $(MAKE) $(@F)
 
 #net_2_0_bootstrap
 
-net20bootstrap_makefrag = $(depsdir)/net_2_0_bootstrap_corlib.dll.makefrag
+$(net20bootstrapcorlib): FORCE
+	$(MAKE) PROFILE=net_2_0_bootstrap
 
-$(net20bootstraplib): $(net20bootstrap_makefrag) $(response)
-	$(BOOTSTRAP_MCS) $(LOCAL_MCS_FLAGS) $(LIBRARY_FLAGS) /define:NET_1_1 /define:BOOTSTRAP_NET_2_0 $(corlib_flags) /target:library /out:$(net20bootstraplib) @$(response)
+$(net20bootstrapSystem): FORCE
+	cd $(topdir)/class/System && $(MAKE) PROFILE=net_2_0_bootstrap
 
-$(net20bootstrap_makefrag): $(response)
-	@echo Creating $@ ...
-	@sed 's,^,$(net20bootstraplib): ,' $< >$@
+clean-local: clean-net20bootstrap
+clean-net20bootstrap:
+	$(MAKE) PROFILE=net_2_0_bootstrap clean
+	cd $(topdir)/class/System && $(MAKE) PROFILE=net_2_0_bootstrap clean
+	cd $(topdir)/gmcs && $(MAKE) clean
 
--include $(net20bootstrap_makefrag)
 endif
 
 # corlib_cmp
