@@ -54,19 +54,19 @@ namespace System.Web.Mail
 			// .NET sdk throws HttpException
 			// for some reason so to be compatible
 			// we have to do it to :(
-			throw new HttpException (ex.Message);
+			throw new HttpException (ex.Message, ex);
 		    
 		    } catch (IOException ex) {
 			
-			throw new HttpException (ex.Message);
+			throw new HttpException (ex.Message, ex);
 			
 		    } catch (FormatException ex) {
 			
-			throw new HttpException (ex.Message);
+			throw new HttpException (ex.Message, ex);
 		    
 		    } catch (SocketException ex) {
 			
-			throw new HttpException (ex.Message);
+			throw new HttpException (ex.Message, ex);
 			
 		    }
 		    

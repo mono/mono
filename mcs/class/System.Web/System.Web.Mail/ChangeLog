@@ -1,3 +1,14 @@
+2003-07-03  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* MailAddress.cs: return null instead of exception when the address is
+	empty.
+	
+	* MailAddressCollection.cs: ignore null addresses.
+	* SmtpMail.cs: add the exception we get as inner exception so we know
+	where the error is.
+
+	Fixes bug #45746.
+
 2003-03-24  Per Arneng <pt99par@student.bth.se>
 	* MailUtil: Added for some functions that didnt fit in other classes
 	

@@ -47,6 +47,9 @@ namespace System.Web.Mail {
 	}
 
 	public static MailAddress Parse( string str ) {
+	    if (str == null || str.Trim () == "")
+	    	return null;
+
 	    MailAddress addr = new MailAddress();
 	    string address = null;
 	    string nameString = null;

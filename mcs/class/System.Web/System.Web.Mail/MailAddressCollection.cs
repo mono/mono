@@ -53,7 +53,11 @@ namespace System.Web.Mail {
 	    string[] parts = str.Split( new char[] { ',' , ';' } );
 	    
 	    foreach( string part in parts ) {
-		list.Add( MailAddress.Parse( part ) );
+	    	MailAddress add = MailAddress.Parse (part);
+		if (add == null)
+			continue;
+
+		list.Add (add);
 	    }
 	
 	    return list;
