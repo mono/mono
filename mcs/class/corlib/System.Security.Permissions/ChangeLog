@@ -1,5 +1,7 @@
 2004-08-04  Sebastien Pouliot  <sebastien@ximian.com>
 
+	* GacIdentityPermission.cs: New. for NET_2_0
+	* GacIdentityPermissionAttribute.cs: New. for NET_2_0
 	* ZoneIdentityPermission.cs: NoZone is a subset of all SecurityZone.
 
 2004-08-03  Sebastien Pouliot  <sebastien@ximian.com>
