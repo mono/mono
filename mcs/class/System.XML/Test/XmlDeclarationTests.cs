@@ -108,9 +108,32 @@ namespace MonoTests.System.Xml
 
 		public void TestValueProperty ()
 		{
-			XmlDeclaration d = document.CreateXmlDeclaration ("1.0", "UTF-8", "yes");
-			AssertEquals ("Value property", "version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"",
-				      d.Value);
+			string expected = "version=\"1.0\" encoding=\"ISO-8859-1\" standalone=\"yes\"" ;
+
+			XmlDeclaration d = document.CreateXmlDeclaration ("1.0", "ISO-8859-1", "yes");
+			AssertEquals ("Value property", expected, d.Value);
+
+			d.Value = expected;
+			AssertEquals ("Value round-trip", expected, d.Value);
+
+			d.Value = "   " + expected;
+			AssertEquals ("Value round-trip (padded)", expected, d.Value);
+
+			d.Value = "version=\"1.0\"     encoding=\"ISO-8859-1\" standalone=\"yes\"" ;
+			AssertEquals ("Value round-trip (padded 2)", expected, d.Value);
+
+			d.Value = "version=\"1.0\"\tencoding=\"ISO-8859-1\" standalone=\"yes\"" ;
+			AssertEquals ("Value round-trip (\\t)", expected, d.Value);
+
+			d.Value = "version=\"1.0\"\n    encoding=\"ISO-8859-1\" standalone=\"yes\"" ;
+			AssertEquals ("Value round-trip (\\n)", expected, d.Value);
+
+			d.Value = "version=\"1.0\"    encoding	=   \"ISO-8859-1\" standalone = \"yes\"" ;
+			AssertEquals ("Value round-trip (spaces)", expected, d.Value);
+
+			d.Value = "version='1.0' encoding='ISO-8859-1' standalone='yes'" ;
+			AssertEquals ("Value round-trip ('s)", expected, d.Value);
+
 		}
 
 		public void TestXmlCommentCloneNode ()

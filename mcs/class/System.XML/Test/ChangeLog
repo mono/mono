@@ -1,3 +1,8 @@
+2002-12-01  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* XmlDeclarationTests.cs (TestValueProperty):
+		applied patch by David Sheldon
+
 2002-11-13  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* AllTests.cs : added XmlEntityReferenceTests
