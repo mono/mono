@@ -720,8 +720,8 @@ struct_declaration
 		Struct new_struct = (Struct) current_container;
 
 		if ($8 != null && $6 == null)
-			Report.Error (-200, new_struct.Location,
-				      "Type parameter constraints only valid if there is a type parameter list");
+			Report.Error (80, lexer.Location,
+				      "Contraints are not allowed on non-generic declarations");
 		if ($6 != null)
 			CheckDef (new_struct.SetParameterInfo ((ArrayList) $6, (ArrayList) $8), new_struct.Name, new_struct.Location);
 
@@ -948,7 +948,9 @@ method_header
 
 		MemberName name = (MemberName) $4;
 
-		if ($9 != null && name.TypeArguments != null)
+		Report.Debug (64, "METHOD HEADER", name, name.TypeArguments, $9 != null);
+
+		if ($9 != null && name.TypeArguments == null)
 			Report.Error (80, lexer.Location,
 				      "Contraints are not allowed on non-generic declarations");
 
@@ -987,7 +989,7 @@ method_header
 
 		MemberName name = (MemberName) $4;
 
-		if ($9 != null && name.TypeArguments != null)
+		if ($9 != null && name.TypeArguments == null)
 			Report.Error (80, lexer.Location,
 				      "Contraints are not allowed on non-generic declarations");
 
@@ -1274,9 +1276,8 @@ interface_declaration
 		Interface new_interface = (Interface) current_interface;
 
 		if ($8 != null && $6 == null)
-			Report.Error (-200, new_interface.Location,
-				      "Type parameter constraints only valid if there is a type parameter list");
-
+			Report.Error (80, lexer.Location,
+				      "Contraints are not allowed on non-generic declarations");
 		if ($6 != null)
 			CheckDef (new_interface.SetParameterInfo ((ArrayList) $6, (ArrayList) $8), new_interface.Name, new_interface.Location);
 		if ($7 != null)
@@ -1997,8 +1998,8 @@ delegate_declaration
 	  SEMICOLON
 	  {
 		if ($11 != null && $6 == null)
-			Report.Error (-200, current_delegate.Location,
-				      "Type parameter constraints only valid if there is a type parameter list");
+			Report.Error (80, lexer.Location,
+				      "Contraints are not allowed on non-generic declarations");
 
 		if ($6 != null)
 			CheckDef (current_delegate.SetParameterInfo ((ArrayList) $6, (ArrayList) $11), current_delegate.Name, current_delegate.Location);
@@ -2030,8 +2031,8 @@ delegate_declaration
 	  SEMICOLON
 	  {
 		if ($11 != null && $6 == null)
-			Report.Error (-200, current_delegate.Location,
-				      "Type parameter constraints only valid if there is a type parameter list");
+			Report.Error (80, lexer.Location,
+				      "Contraints are not allowed on non-generic declarations");
 
 		if ($6 != null)
 			CheckDef (current_delegate.SetParameterInfo ((ArrayList) $6, (ArrayList) $11), current_delegate.Name, current_delegate.Location);
@@ -3031,8 +3032,8 @@ class_declaration
 		Class new_class = (Class) current_container;
 
 		if ($8 != null && $6 == null)
-			Report.Error (-200, new_class.Location,
-				      "Type parameter constraints only valid if there is a type parameter list");
+			Report.Error (80, lexer.Location,
+				      "Contraints are not allowed on non-generic declarations");
 
 		if ($6 != null)
 			CheckDef (new_class.SetParameterInfo ((ArrayList) $6, (ArrayList) $8), new_class.Name, new_class.Location);
@@ -3055,8 +3056,8 @@ class_declaration
 		lexer.ConstraintsParsing = true;
 	  }
 	  WHERE {
-		Report.Error (-200, lexer.Location,
-			"Type parameter constraints only valid if there is a type parameter list");
+		Report.Error (80, lexer.Location,
+			      "Contraints are not allowed on non-generic declarations");
 		yyErrorFlag = 0;
 		$$ = null;
 	  }

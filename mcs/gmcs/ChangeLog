@@ -1,5 +1,10 @@
 2004-03-29  Martin Baulig  <martin@ximian.com>
 
+	* cs-parser.jay: Report CS0080 instead of -200 ("Constraints are
+	not allowed on non-generic declarations").
+
+2004-03-29  Martin Baulig  <martin@ximian.com>
+
 	* expression.cs (Invocation.InferTypeArguments): Added overloaded
 	public version of this method.
 
