@@ -43,6 +43,7 @@ namespace System.Xml.XPath
 		{
 			_nsm = nsManager;
 		}
+		internal XmlNamespaceManager NamespaceManager { get { return _nsm; } }
 		public override String Expression { get { return _expr.ToString (); }}
 		public override XPathResultType ReturnType { get { return _expr.ReturnType; }}
 		[MonoTODO]
@@ -94,6 +95,7 @@ namespace System.Xml.XPath
 	/// </summary>
 	internal abstract class Expression
 	{
+		private static XsltContext _ctxDefault = new DefaultContext ();
 		public Expression ()
 		{
 		}
@@ -107,6 +109,7 @@ namespace System.Xml.XPath
 				return (BaseIterator) Evaluate (iter);
 			throw new XPathException ("expected nodeset: "+ToString ());
 		}
+		protected static XsltContext DefaultContext { get { return _ctxDefault; } }
 		[MonoTODO]
 		public double EvaluateNumber (BaseIterator iter)
 		{
@@ -539,7 +542,7 @@ namespace System.Xml.XPath
 		{
 			XPathNavigator navRoot = iter.Current.Clone ();
 			navRoot.MoveToRoot ();
-			return new SelfIterator (navRoot, iter.Context);
+			return new SelfIterator (navRoot, iter.NamespaceManager);
 		}
 	}
 
@@ -664,7 +667,7 @@ namespace System.Xml.XPath
 		{
 			_axis = new AxisSpecifier (axis);
 		}
-		public abstract bool Match (XsltContext context, XPathNavigator nav);
+		public abstract bool Match (XmlNamespaceManager nsm, XPathNavigator nav);
 		public AxisSpecifier Axis { get { return _axis; }}
 		public virtual BaseIterator Evaluate (BaseIterator iter)
 		{
@@ -721,7 +724,7 @@ namespace System.Xml.XPath
 					throw new NotImplementedException ();
 			}
 		}
-		public override bool Match (XsltContext context, XPathNavigator nav)
+		public override bool Match (XmlNamespaceManager nsm, XPathNavigator nav)
 		{
 			XPathNodeType nodeType = nav.NodeType;
 			switch (_type)
@@ -750,7 +753,7 @@ namespace System.Xml.XPath
 		}
 		public override String ToString () { return _axis.ToString () + "::" + _name.ToString (); }
 		[MonoTODO]
-		public override bool Match (XsltContext context, XPathNavigator nav)
+		public override bool Match (XmlNamespaceManager nsm, XPathNavigator nav)
 		{
 			// must be the correct node type
 			if (nav.NodeType != _axis.NodeType)
@@ -765,9 +768,9 @@ namespace System.Xml.XPath
 
 			// get the prefix for the given name
 			String strURI1 = "";
-			if (_name.Prefix != null)
+			if (_name.Prefix != null && nsm != null)
 			{
-				strURI1 = context.LookupNamespace (_name.Prefix);	// TODO: check to see if this returns null or ""
+				strURI1 = nsm.LookupNamespace (_name.Prefix);	// TODO: check to see if this returns null or ""
 				if (strURI1 == null)
 					throw new XPathException ("Invalid namespace prefix: "+_name.Prefix);
 			}
@@ -921,7 +924,12 @@ namespace System.Xml.XPath
 		public override XPathResultType ReturnType { get { return XPathResultType.Any; }}
 		public override XPathResultType GetReturnType (BaseIterator iter)
 		{
-			IXsltContextVariable var = iter.Context.ResolveVariable (_name.Prefix, _name.Local);
+			IXsltContextVariable var = null;
+			XsltContext context = iter.NamespaceManager as XsltContext;
+			if (context != null)
+				var = context.ResolveVariable (_name.Prefix, _name.Local);
+			if (var == null)
+				throw new XPathException ("variable "+_name.Prefix+":"+_name.Local+" not found");
 			return var.VariableType;
 		}
 	}
@@ -971,12 +979,17 @@ namespace System.Xml.XPath
 		public override XPathResultType ReturnType { get { return XPathResultType.Any; }}
 		public override XPathResultType GetReturnType (BaseIterator iter)
 		{
-			IXsltContextFunction func = iter.Context.ResolveFunction (_name.Prefix, _name.Local, GetArgTypes (iter));
+			IXsltContextFunction func = null;
+			XsltContext context = iter.NamespaceManager as XsltContext;
+			if (context != null)
+				func = context.ResolveFunction (_name.Prefix, _name.Local, GetArgTypes (iter));
+			if (func == null)
+				throw new XPathException ("function "+_name.Prefix+":"+_name.Local+" not found");
 			return func.ReturnType;
 		}
 		private XPathResultType [] GetArgTypes (BaseIterator iter)
 		{
-			// TODO: can we cache these? what if the types depend on the context?
+			// TODO: can we cache these? what if the types depend on the nsm?
 			XPathResultType [] rgArgs = new XPathResultType [_args.Count];
 			for (int iArg = 0; iArg < _args.Count; iArg++)
 				rgArgs [iArg] = ((Expression) _args [iArg]).GetReturnType (iter);
@@ -999,11 +1012,22 @@ namespace System.Xml.XPath
 
 			XPathResultType [] rgTypes = GetArgTypes (iter);
 			//FIXME: what if func == null after next line?
-			IXsltContextFunction func = iter.Context.ResolveFunction (_name.Prefix, _name.Local, rgTypes);
+			IXsltContextFunction func = null;
+			XsltContext context = iter.NamespaceManager as XsltContext;
+			if (context != null)
+				func = context.ResolveFunction (_name.Prefix, _name.Local, rgTypes);
+			if (func == null)
+			{
+				context = DefaultContext;
+				func = context.ResolveFunction (_name.Prefix, _name.Local, rgTypes);
+			}
+			if (func == null)
+				throw new XPathException ("function "+_name.Prefix+":"+_name.Local+" not found");
+
 			object [] rgArgs = new object [_args.Count];
 			for (int iArg = 0; iArg < _args.Count; iArg ++)
 				rgArgs [iArg] = ((Expression) _args [iArg]).Evaluate (iter);
-			return func.Invoke (iter.Context, rgArgs, iter.Current);
+			return func.Invoke (context, rgArgs, iter.Current);
 		}
 	}
 }

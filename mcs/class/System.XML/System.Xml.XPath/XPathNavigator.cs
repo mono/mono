@@ -81,9 +81,10 @@ namespace System.Xml.XPath
 
 		public virtual object Evaluate (XPathExpression expr, XPathNodeIterator context)
 		{
+			CompiledExpression cexpr = (CompiledExpression) expr;
 			if (context == null)
-				context = new NullIterator (this, new DefaultContext ());
-			return ((CompiledExpression) expr).Evaluate ((BaseIterator) context);
+				context = new NullIterator (this, cexpr.NamespaceManager);
+			return cexpr.Evaluate ((BaseIterator) context);
 		}
 
 		public abstract string GetAttribute (string localName, string namespaceURI);
@@ -184,8 +185,9 @@ namespace System.Xml.XPath
 
 		public virtual XPathNodeIterator Select (XPathExpression expr)
 		{
-			BaseIterator iter = new NullIterator (this, new DefaultContext ());
-			return ((CompiledExpression) expr).EvaluateNodeSet (iter);
+			CompiledExpression cexpr = (CompiledExpression) expr;
+			BaseIterator iter = new NullIterator (this, cexpr.NamespaceManager);
+			return cexpr.EvaluateNodeSet (iter);
 		}
 
 		public virtual XPathNodeIterator SelectAncestors (XPathNodeType type, bool matchSelf)
@@ -247,7 +249,7 @@ namespace System.Xml.XPath
 		internal XPathNodeIterator SelectTest (NodeTest test)
 		{
 			Expression expr = new ExprStep (test, null);
-			BaseIterator iter = new NullIterator (this, new DefaultContext ());
+			BaseIterator iter = new NullIterator (this, null);
 			return expr.EvaluateNodeSet (iter);
 		}
 

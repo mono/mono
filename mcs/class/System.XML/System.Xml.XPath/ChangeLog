@@ -1,3 +1,9 @@
+2003-02-09  Piers Haken  <piersh@friskit.com>
+
+	* XPathNavigator.cs:
+	* Iterator.cs:
+	* Expression.cs: fix namespace handling
+
 2003-01-04  Piers Haken  <piersh@friskit.com>
 
 	* Parser.*: Remove extraneous "using" that was stopping the build. Permanently thisi time ;-)

@@ -17,18 +17,18 @@ namespace System.Xml.XPath
 {
 	internal abstract class BaseIterator : XPathNodeIterator
 	{
-		private XsltContext _context;
+		private XmlNamespaceManager _nsm;
 
 		internal BaseIterator (BaseIterator other)
 		{
-			_context = other._context;
+			_nsm = other._nsm;
 		}
-		internal BaseIterator (XsltContext context)
+		internal BaseIterator (XmlNamespaceManager nsm)
 		{
-			_context = context;
+			_nsm = nsm;
 		}
 
-		public XsltContext Context { get { return _context; } }
+		public XmlNamespaceManager NamespaceManager { get { return _nsm; } }
 		
 		public override string ToString ()
 		{
@@ -98,7 +98,7 @@ namespace System.Xml.XPath
 			_nav = other._nav.Clone ();
 			_pos = other._pos;
 		}
-		public SimpleIterator (XPathNavigator nav, XsltContext context) : base (context)
+		public SimpleIterator (XPathNavigator nav, XmlNamespaceManager nsm) : base (nsm)
 		{
 			_nav = nav.Clone ();
 		}
@@ -110,7 +110,7 @@ namespace System.Xml.XPath
 	internal class SelfIterator : SimpleIterator
 	{
 		public SelfIterator (BaseIterator iter) : base (iter) {}
-		public SelfIterator (XPathNavigator nav, XsltContext context) : base (nav, context) {}
+		public SelfIterator (XPathNavigator nav, XmlNamespaceManager nsm) : base (nav, nsm) {}
 		protected SelfIterator (SimpleIterator other) : base (other) {}
 		public override XPathNodeIterator Clone () { return new SelfIterator (this); }
 		public override bool MoveNext ()
@@ -127,7 +127,7 @@ namespace System.Xml.XPath
 	internal class NullIterator : SelfIterator
 	{
 		public NullIterator (BaseIterator iter) : base (iter) {}
-		public NullIterator (XPathNavigator nav, XsltContext context) : base (nav, context) {}
+		public NullIterator (XPathNavigator nav, XmlNamespaceManager nsm) : base (nav, nsm) {}
 		protected NullIterator (SimpleIterator other) : base (other) {}
 		public override XPathNodeIterator Clone () { return new NullIterator (this); }
 		public override bool MoveNext ()
@@ -412,7 +412,7 @@ namespace System.Xml.XPath
 		{
 			while (_iter.MoveNext ())
 			{
-				if (_test.Match (Context, Current))
+				if (_test.Match (NamespaceManager, Current))
 				{
 					_pos ++;
 					return true;
