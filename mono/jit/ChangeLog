@@ -1,5 +1,7 @@
 2001-09-27  Dietmar Maurer  <dietmar@ximian.com>
 
+	* x86.brg: cleanup
+
 	* testjit.c: impl. LDIND/STIND/LDLOCA, use g_malloc to alloc static
 	data.
 	(map_stind_type): support enum types
