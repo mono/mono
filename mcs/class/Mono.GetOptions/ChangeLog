@@ -1,3 +1,6 @@
+2005-02-03  Manjula GHM  <mmanjula@novell.com>
+	* Mono.GetOptions.csproj modifed to reflect new changes
+
 2005-01-04  Rafael Teixeira  <rafaelteixeirabr@hotmail.com>
 	* Mono.GetOptions/OptionList.cs: Corrected wrong assumption on string length that caused a exception when a single-dash argument
 	  was being normalized. Now a single-dash is returned a non-processed argument. 
