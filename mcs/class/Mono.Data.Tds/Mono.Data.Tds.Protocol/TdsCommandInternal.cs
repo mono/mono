@@ -21,6 +21,8 @@ namespace Mono.Data.TdsClient.Internal {
 		CommandType commandType;
 		TdsConnectionInternal connection;
 		TdsTransactionInternal transaction;
+		TdsInternal tds;
+		int updateCount;
 
 		#endregion // Fields
 
@@ -150,9 +152,21 @@ namespace Mono.Data.TdsClient.Internal {
                 }
 
 		[System.MonoTODO]
+		private bool GetMoreResults (TdsInternal tds, bool allowTdsRelease)
+		{
+			return false;
+		}
+
+		[System.MonoTODO]
 		public void Prepare ()
 		{
 			throw new NotImplementedException ();
+		}
+
+		internal void SkipToEnd ()
+		{
+			if (tds != null)
+				while (GetMoreResults (tds, false) || updateCount != 1);
 		}
 
                 #endregion // Methods
