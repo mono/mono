@@ -690,11 +690,9 @@ namespace Mono.CSharp
 			case "--noconfig":
 				load_default_config = false;
 				return true;
-				
-			default:
-				Report.Warning(666, "Unknown option: " + arg);
-				return true;
 			}
+
+			return false;
 		}
 
 		//
@@ -772,10 +770,11 @@ namespace Mono.CSharp
 					Usage ();
 					Environment.Exit (1);
 				}
-				
+
 				defs = value.Split (new Char [] {';'});
-				foreach (string d in defs)
+				foreach (string d in defs){
 					defines.Add (d);
+				}
 				return true;
 			}
 
@@ -799,7 +798,7 @@ namespace Mono.CSharp
 			case "/lib": {
 				string [] libdirs;
 				
-				if (value = ""){
+				if (value == ""){
 					Usage ();	
 					Environment.Exit (1);
 				}
@@ -972,6 +971,11 @@ namespace Mono.CSharp
 					
 					if (arg.StartsWith ("-")){
 						if (UnixParseOption (arg, ref args, ref i))
+							continue;
+
+						// Try a -CSCOPTION
+						string csc_opt = "/" + arg.Substring (1);
+						if (CSCParseOption (csc_opt, ref args, ref i))
 							continue;
 					} else {
 						if (arg.StartsWith ("/"))
