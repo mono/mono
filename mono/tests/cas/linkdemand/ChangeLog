@@ -1,0 +1,13 @@
+2005-02-08  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* aptc1.cs: New. Partial trust test case.
+	* aptc2.cs: New. Partial trust test case.
+	* aptclib.cs: Library for partial trust test case.
+	* cas1.cs: New. New. "Normal" LinkDemand test case.
+	* ecma.pub: New. The ECMA "key" to test icalls.
+	* icall1.cs: New. Internal call test case.
+	* icall2.cs: New. Internal call test case (reflection).
+	* Makefile: New. Makefile to build and execute tests.
+	* pinvoke1.cs: New. P/Invoke test case.
+	* pinvoke2.cs: New. P/Invoke test case.
+	* README: New. Instruction and details about the tests.

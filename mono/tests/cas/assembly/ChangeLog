@@ -1,0 +1,21 @@
+2005-02-08  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* all.cs: New. Test file with attributes for RequestMinimum, 
+	RequestOptional and RequestRefuse.
+	* all.net_1_1.txt: New. Expected output when "make test" is used in
+	the NET_1_1 profile.
+	* Makefile: New. Makefile to build and execute tests.
+	* min.cs: New. Test file with attribute for RequestMinimum (only).
+	* min.net_1_1.txt: New. Expected output when "make test" is used in
+	the NET_1_1 profile.
+	* none.cs: New. Test file with no security declarative attribute on
+	assembly.
+	* none.net_1_1.txt: New. Expected output when "make test" is used in
+	the NET_1_1 profile.
+	* opt.cs: New. Test file with attribute for RequestOptional (only).
+	* opt.net_1_1.txt: New. Expected output when "make test" is used in
+	the NET_1_1 profile.
+	* README: Instruction and details about the tests.
+	* ref.cs: New. Test file with attribute for RequestRefuse (only).
+	* ref.net_1_1.txt: New. Expected output when "make test" is used in
+	the NET_1_1 profile.
