@@ -1,3 +1,7 @@
+2004-09-24  Zoltan Varga  <vargaz@freemail.hu>
+
+	* FieldBuilder.cs: Add dummy GetFieldOffset method.
+
 2004-09-24  Martin Baulig  <martin@ximian.com>
 
 	* GenericTypeParameterBuilder.cs

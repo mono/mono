@@ -111,6 +111,11 @@ namespace System.Reflection.Emit {
 			throw CreateNotSupportedException ();
 		}
 
+		internal override int GetFieldOffset () {
+			/* FIXME: */
+			return 0;
+		}
+
 		internal void SetRVAData (byte[] data) {
 			rva_data = (byte[])data.Clone ();
 		}
