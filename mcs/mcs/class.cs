@@ -766,8 +766,9 @@ namespace CIR {
 		public void Emit (TypeContainer parent)
 		{
 			ILGenerator ig = MethodBuilder.GetILGenerator ();
-
-			CodeGen.EmitCode (parent, ig, block);
+			EmitContext ec = new EmitContext (parent, ig);
+			
+			ec.EmitTopBlock (block);
 		}
 	}
 

@@ -453,7 +453,7 @@ namespace Generator {
 			output ("; ");
 			output (GetExpression (s.Test, 0));
 			output ("; ");
-			if (! (s.InitStatement is EmptyStatement))
+			if (! (s.Increment is EmptyStatement))
 				GenerateStatement (s.Increment, true, true, true);
 			output (") ");
 			GenerateStatement (s.Statement, true, true, false);

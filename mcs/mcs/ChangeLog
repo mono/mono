@@ -1,3 +1,20 @@
+2001-08-24  Miguel de Icaza  <miguel@ximian.com>
+
+	* codegen.cs: Lots of code generation pieces.  This is only the
+	beginning, will continue tomorrow with more touches of polish.  We
+	handle the fundamentals of if, while, do, for, return.  Others are
+	trickier and I need to start working on invocations soon.
+	
+	* gen-treedump.cs: Bug fix, use s.Increment here instead of
+	s.InitStatement. 
+
+	* codegen.cs (EmitContext): New struct, used during code
+	emission to keep a context.   Most of the code generation will be
+	here. 
+
+	* cs-parser.jay: Add embedded blocks to the list of statements of
+	this block.  So code generation proceeds in a top down fashion.
+
 2001-08-23  Miguel de Icaza  <miguel@ximian.com>
 
 	* statement.cs: Add support for multiple child blocks.

@@ -416,10 +416,15 @@ namespace CIR {
 		}
 
 		// <summary>
-		//   Emits the variable declarations
+		//   Emits the variable declarations and labels.
 		// </summary>
-
-		public void EmitVariables (TypeContainer tc, ILGenerator ig)
+		//
+		// tc: is our typecontainer (to resolve type references)
+		// ig: is the code generator:
+		// toplevel: the toplevel block.  This is used for checking 
+		//           that no two labels with the same name are used.
+		//
+		public void EmitMeta (TypeContainer tc, ILGenerator ig, Block toplevel)
 		{
 			//
 			// Process this block variables
@@ -445,7 +450,7 @@ namespace CIR {
 			//
 			if (children != null){
 				foreach (Block b in children)
-					b.EmitVariables (tc, ig);
+					b.EmitMeta (tc, ig, toplevel);
 			}
 		}
 	}

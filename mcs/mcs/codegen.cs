@@ -47,18 +47,182 @@ namespace CIR {
 		{
 			assembly_builder.Save (name);
 		}
-		
-		public static void EmitCode (TypeContainer parent, ILGenerator ig, Block block)
-		{
-			foreach (Statement s in block.Statements){
+	}
+
+	public struct EmitContext {
+		TypeContainer parent;
+		ILGenerator   ig;
+
+		// FIXME: FIXME: FIXME!
+		// This structure has to be kept small.  We need to figure
+		// out ways of moving the CheckState somewhere else
+		//
+		// tracks the state of checked/unchecked arithmetic
+		// generation.
+		//
+		bool check_state;
+		public bool CheckState {
+			get {
+				return check_state;
+			}
+
+			set {
+				check_state = value;
 			}
 		}
-
-		public static void EmitTopBlock (TypeContainer parent, ILGenerator ig, Block block)
+		
+		public EmitContext (TypeContainer parent, ILGenerator ig)
 		{
-			block.EmitVariables (parent, ig);
+			this.parent = parent;
+			this.ig = ig;
+			check_state = false;
+		}
 
-			EmitCode (parent, ig, block);
+		public void EmitBoolExpression (Expression e)
+		{
+			//
+			// Sample: for now we just load true on the stack
+			//
+			ig.Emit (OpCodes.Ldc_I4_1);
+		}
+
+		public void EmitExpression (Expression e)
+		{
+			//
+			// Sample: for now just load an integer on the stack
+			//
+			ig.Emit (OpCodes.Ldc_I4_1);
+		}
+		
+		public void EmitIf (If s)
+		{
+			Label false_target = ig.DefineLabel ();
+			Label end;
+			Statement false_stat = s.FalseStatement;
+
+			EmitBoolExpression (s.Expr);
+			ig.Emit (OpCodes.Brfalse, false_target);
+			EmitStatement (s.TrueStatement);
+
+			if (false_stat != null){
+				end = ig.DefineLabel ();
+				ig.Emit (OpCodes.Br, end);
+			
+				ig.MarkLabel (false_target);
+				EmitStatement (s.FalseStatement);
+
+				if (false_stat != null)
+					ig.MarkLabel (end);
+			} else
+				ig.MarkLabel (false_target);
+		}
+
+		public void EmitDo (Do s)
+		{
+			Label loop = ig.DefineLabel ();
+
+			ig.MarkLabel (loop);
+			EmitStatement (s.EmbeddedStatement);
+			EmitBoolExpression (s.Expr);
+			ig.Emit (OpCodes.Brtrue, loop);
+		}
+
+		public void EmitWhile (While s)
+		{
+			Label while_eval = ig.DefineLabel ();
+			Label exit = ig.DefineLabel ();
+			
+			ig.MarkLabel (while_eval);
+			EmitBoolExpression (s.Expr);
+			ig.Emit (OpCodes.Brfalse, exit);
+			EmitStatement (s.Statement);
+			ig.Emit (OpCodes.Br, while_eval);
+			ig.MarkLabel (exit);
+		}
+
+		public void EmitFor (For s)
+		{
+			Statement init = s.InitStatement;
+			Statement incr = s.Increment;
+			Label loop = ig.DefineLabel ();
+			Label exit = ig.DefineLabel ();
+			
+			if (! (init is EmptyStatement))
+				EmitStatement (init);
+
+			ig.MarkLabel (loop);
+			EmitBoolExpression (s.Test);
+			ig.Emit (OpCodes.Brfalse, exit);
+			EmitStatement (s.Statement);
+			if (!(incr is EmptyStatement))
+				EmitStatement (incr);
+			ig.Emit (OpCodes.Br, loop);
+			ig.MarkLabel (exit);
+		}
+
+		void EmitReturn (Return s)
+		{
+			Expression ret_expr = s.Expr;
+			
+			if (ret_expr != null)
+				EmitExpression (ret_expr);
+			ig.Emit (OpCodes.Ret);
+		}
+
+		void EmitSwitch (Switch s)
+		{
+		}
+
+		void EmitChecked (Checked s)
+		{
+			bool previous_state = CheckState;
+
+			CheckState = true;
+			EmitBlock (s.Block);
+			CheckState = previous_state;
+		}
+
+
+		void EmitUnChecked (Unchecked s)
+		{
+			bool previous_state = CheckState;
+
+			CheckState = false;
+			EmitBlock (s.Block);
+			CheckState = previous_state;
+		}
+		
+		void EmitStatement (Statement s)
+		{
+			if (s is If)
+				EmitIf ((If) s);
+			else if (s is Do)
+				EmitDo ((Do) s);
+			else if (s is While)
+				EmitWhile ((While) s);
+			else if (s is For)
+				EmitFor ((For) s);
+			else if (s is Return)
+				EmitReturn ((Return) s);
+			else if (s is Switch)
+				EmitSwitch ((Switch) s);
+			else if (s is Checked)
+				EmitChecked ((Checked) s);
+			else if (s is Unchecked)
+				EmitUnChecked ((Unchecked) s);
+		}
+
+		void EmitBlock (Block block)
+		{
+			foreach (Statement s in block.Statements)
+				EmitStatement (s);
+		}
+		
+		public void EmitTopBlock (Block block)
+		{
+			block.EmitMeta (parent, ig, block);
+
+			EmitBlock (block);
 
 			ig.Emit (OpCodes.Ret);
 		}
