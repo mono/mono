@@ -28,6 +28,10 @@ class X {
 		if (y != "nice")
 			return 6;
 		
+		string [] blah = { "A"+'B'+"C" };
+		if (blah [0] != "ABC")
+			return 7;
+		
 		Console.WriteLine (c);
 		return 0;
 	}
