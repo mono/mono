@@ -29,9 +29,12 @@
 //	Jaak Simm		jaaksimm@firm.ee
 //	John Sohn		jsohn@columbus.rr.com
 //
-// $Revision: 1.11 $
+// $Revision: 1.12 $
 // $Modtime: $
 // $Log: Control.cs,v $
+// Revision 1.12  2004/08/09 15:54:51  jackson
+// Get default properties from the theme.
+//
 // Revision 1.11  2004/08/06 21:30:56  pbartok
 // - Fixed recursive loop when resizing
 // - Improved/fixed redrawing on expose messages
@@ -497,19 +500,19 @@ namespace System.Windows.Forms
 		#region Public Static Properties
 		public static Color DefaultBackColor {
 			get {
-				return XplatUI.Defaults.BackColor;
+				return ThemeEngine.Current.DefaultBackColor;
 			}
 		}
 
 		public static Font DefaultFont {
 			get {
-				return XplatUI.Defaults.Font;
+				return ThemeEngine.Current.DefaultFont;
 			}
 		}
 
 		public static Color DefaultForeColor {
 			get {
-				return XplatUI.Defaults.ForeColor;
+				return ThemeEngine.Current.DefaultForeColor;
 			}
 		}
 
