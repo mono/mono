@@ -14,7 +14,7 @@ namespace System.Windows.Forms {
 	//
 	// </summary>
 
-        //public class RadioButton : ButtonBase {
+    public class RadioButton : ButtonBase {
 
 		//
 		//  --- Constructor
@@ -316,5 +316,5 @@ namespace System.Windows.Forms {
 		//{
 		//	throw new NotImplementedException ();
 		//}
-	// }
+	 }
 }

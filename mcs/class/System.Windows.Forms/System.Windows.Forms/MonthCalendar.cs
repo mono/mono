@@ -1,24 +1,24 @@
-////
-//// System.Windows.Forms.MonthCalendar.cs
-////
-//// Author:
-////   stubbed out by Paul Osman (paul.osman@sympatico.ca)
-////
-//// (C) 2002 Ximian, Inc
-////
 //
-//namespace System.Windows.Forms {
+// System.Windows.Forms.MonthCalendar.cs
 //
-//	// <summary>
-//	//	This is only a template.  Nothing is implemented yet.
-//	//
-//	// </summary>
+// Author:
+//   stubbed out by Paul Osman (paul.osman@sympatico.ca)
 //
-//        public class MonthCalendar : Control {
+// (C) 2002 Ximian, Inc
 //
-//		//
-//		//  --- Constructor
-//		//
+
+namespace System.Windows.Forms {
+
+	// <summary>
+	//	This is only a template.  Nothing is implemented yet.
+	//
+	// </summary>
+
+        public class MonthCalendar : Control {
+
+		//
+		//  --- Constructor
+		//
 //		[MonoTODO]
 //		public MonthCalendar()
 //		{
@@ -1999,25 +1999,25 @@
 //		{
 //			throw new NotImplementedException ();
 //		}
-////
-//// System.Windows.Forms.MonthCalendar.HitTestInfo.cs
-////
-//// Author:
-////   stubbed out by Paul Osman (paul.osman@sympatico.ca)
-////
-//// (C) 2002 Ximian, Inc
-////
 //
-//	// <summary>
-//	//	This is only a template.  Nothing is implemented yet.
-//	//
-//	// </summary>
+// System.Windows.Forms.MonthCalendar.HitTestInfo.cs
 //
-//        public sealed class MonthCalendar.HitTestInfo {
+// Author:
+//   stubbed out by Paul Osman (paul.osman@sympatico.ca)
 //
-//		//
-//		//  --- Public Properties
-//		//
+// (C) 2002 Ximian, Inc
+//
+
+	// <summary>
+	//	This is only a template.  Nothing is implemented yet.
+	//
+	// </summary>
+
+        public sealed class HitTestInfo {
+
+		//
+		//  --- Public Properties
+		//
 //		[MonoTODO]
 //		public MonthCalendar.HitArea HitArea {
 //			get {
@@ -2083,7 +2083,7 @@
 //		{
 //			throw new NotImplementedException ();
 //		}
-//	 }
+	 }
 
-//	 }
-//}
+	 }
+}

@@ -1,38 +1,39 @@
-////
-//// System.Windows.Forms.NodeLabelEditEventArgs.cs
-////
-//// Author:
-////   stubbed out by Paul Osman (paul.osman@sympatico.ca)
-////
-//// (C) 2002 Ximian, Inc
-////
 //
-//namespace System.Windows.Forms {
+// System.Windows.Forms.NodeLabelEditEventArgs.cs
 //
-//	// <summary>
-//	//	This is only a template.  Nothing is implemented yet.
-//	//
-//	// </summary>
+// Author:
+//   stubbed out by Paul Osman (paul.osman@sympatico.ca)
+//	Partially completed by Dennis Hayes (dennish@raytek.com)
 //
-//        public class NodeLabelEditEventArgs : EventArgs {
+// (C) 2002 Ximian, Inc
 //
-//		//
-//		//  --- Constructor
-//		//
-//		[MonoTODO]
-//		public NodeLabelEditEventArgs(TreeNode)
-//		{
-//			throw new NotImplementedException ();
-//		}
-//		[MonoTODO]
-//		public NodeLabelEditEventArgs(TreeNode, string)
-//		{
-//			throw new NotImplementedException ();
-//		}
-//
-//		//
-//		//  --- Public Properties
-//		//
+
+namespace System.Windows.Forms {
+
+	// <summary>
+	//	This is only a template.  Nothing is implemented yet.
+	//
+	// </summary>
+
+        public class NodeLabelEditEventArgs : EventArgs {
+			private TreeNode node;
+			private string label;
+		//
+		//  --- Constructor
+		//
+		public NodeLabelEditEventArgs(TreeNode node)
+		{
+			this.node = node;
+		}
+		public NodeLabelEditEventArgs(TreeNode node, string label)
+		{
+			this.node = node;
+			this.label = label;
+		}
+
+		//
+		//  --- Public Properties
+		//
 //		[MonoTODO]
 //		public bool CancelEdit {
 //			get {
@@ -42,22 +43,20 @@
 //				throw new NotImplementedException ();
 //			}
 //		}
-//		[MonoTODO]
-//		public string Label {
-//			get {
-//				throw new NotImplementedException ();
-//			}
-//		}
-//		[MonoTODO]
-//		public TreeNode Node {
-//			get {
-//				throw new NotImplementedException ();
-//			}
-//		}
-//
-//		//
-//		//  --- Public Methods
-//		//
+		public string Label {
+			get {
+				return label;
+			}
+		}
+		public TreeNode Node {
+			get {
+				return node;
+			}
+		}
+
+		//
+		//  --- Public Methods
+		//
 //		[MonoTODO]
 //		public virtual bool Equals(object o)
 //		{
@@ -101,5 +100,5 @@
 //		{
 //			throw new NotImplementedException ();
 //		}
-//	 }
-//}
+	 }
+}

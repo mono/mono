@@ -14,10 +14,10 @@ namespace System.Windows.Forms {
 	public struct Message { 
 
 		private int msg;
-		private intptr hwnd;
-		private intptr lparam;
-		private intptr wparam;
-		private intptr result;
+		private IntPtr hwnd;
+		private IntPtr lparam;
+		private IntPtr wparam;
+		private IntPtr result;
 
 
 		// -----------------------
@@ -76,7 +76,7 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		public intptr HWnd {
+		public IntPtr HWnd {
 			get{
 				return hwnd;
 			}
@@ -85,7 +85,7 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		public intptr LParam {
+		public IntPtr LParam {
 			get{
 				return lparam;
 			}
@@ -94,7 +94,7 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		public intptr WParam {
+		public IntPtr WParam {
 			get{
 				return wparam;
 			}
@@ -103,7 +103,7 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		public intptr Result {
+		public IntPtr Result {
 			get{
 				return result;
 			}

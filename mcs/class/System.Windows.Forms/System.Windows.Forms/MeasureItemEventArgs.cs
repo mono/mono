@@ -1,47 +1,52 @@
-////
-//// System.Windows.Forms.MeasureItemEventArgs.cs
-////
-//// Author:
-////   stubbed out by Paul Osman (paul.osman@sympatico.ca)
-////
-//// (C) 2002 Ximian, Inc
-////
 //
-//using System;
-//using System.Reflection;
-//using System.Globalization;
-////using System.Windows.Forms.AccessibleObject.IAccessible;
-//using System.Drawing;
+// System.Windows.Forms.MeasureItemEventArgs.cs
 //
-//namespace System.Windows.Forms  {
+// Author:
+//   stubbed out by Paul Osman (paul.osman@sympatico.ca)
+//	Partially completed by Dennis Hayes (dennish@raytek.com)
 //
+// (C) 2002 Ximian, Inc
 //
-//	/// <summary>
-//	/// ToDo note:
-//	///  - Nothing is implemented
-//	/// </summary>
-//
-//	public class MeasureItemEventArgs : EventArgs {
-//
-//
-//		//
-//		//  --- Constructors
-//		//
-//		
-//		public MeasureItemEventArgs(Graphics g, int i)
-//		{
-//			throw new NotImplementedException();
-//		}
-//
-//		public MeasureItemEventArgs(Graphics g, int i, int i) 
-//		{
-//			throw new NotImplementedException();
-//		}
-//		
-//		//
-//		// -- Public Methods
-//		//
-//
+
+using System;
+using System.Reflection;
+using System.Globalization;
+//using System.Windows.Forms.AccessibleObject.IAccessible;
+using System.Drawing;
+
+namespace System.Windows.Forms  {
+
+
+	/// <summary>
+	/// </summary>
+
+	public class MeasureItemEventArgs : EventArgs {
+		private Graphics graphics;
+		private int index;
+		private int itemheight;
+		private int itemwidth;
+
+		//
+		//  --- Constructors
+		//
+		
+		public MeasureItemEventArgs(Graphics graphics, int index)
+		{
+			this.index = index;
+			this.graphics = graphics;
+		}
+
+		public MeasureItemEventArgs(Graphics graphics, int index, int itemheight) 
+		{
+			this.index = index;
+			this.graphics = graphics;
+			itenheight = ItemHeight;
+		}
+		
+		//
+		// -- Public Methods
+		//
+
 //		public virtual bool Equals(object o) 
 //		{
 //			throw new NotImplementedException();
@@ -80,50 +85,40 @@
 //		{
 //			throw new NotImplementedException();
 //		}
-//
-//		//
-//		// -- Public Properties
-//		//
-//
-//		public Graphics Graphics  {
-//
-//			get 
-//			{ 
-//				throw new NotImplementedException();
-//			}
-//		}
-//
-//		public int Index  {
-//
-//			get
-//			{
-//				throw new NotImplementedException();
-//			}
-//		}
-//
-//		public int ItemHeight  {
-//
-//			get
-//			{
-//				throw new NotImplementedException();
-//			}
-//			set
-//			{
-//				throw new NotImplementedException();
-//			}
-//		}
-//
-//		public int ItemWidth  {
-//
-//			get
-//			{
-//				throw new NotImplementedException();
-//			}
-//			set
-//			{
-//				throw new NotImplementedException();
-//			}
-//		}
-//	}
-//}
+
+		//
+		// -- Public Properties
+		//
+
+		public Graphics Graphics  {
+			get { 
+				return graphics;
+			}
+		}
+
+		public int Index  {
+			get {
+				return index;
+			}
+		}
+
+		public int ItemHeight  {
+			get {
+				return itemheight;
+			}
+			set {
+				itemheight = value;
+			}
+		}
+
+		public int ItemWidth  {
+			get {
+				return itemwidth;
+			}
+			set {
+				itemwidth = value;
+			}
+		}
+	}
+}
 		

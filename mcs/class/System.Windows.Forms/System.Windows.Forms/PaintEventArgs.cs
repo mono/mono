@@ -1,24 +1,24 @@
-////
-//// System.Windows.Forms.PaintEventArgs.cs
-////
-//// Author:
-////   stubbed out by Paul Osman (paul.osman@sympatico.ca)
-////
-//// (C) 2002 Ximian, Inc
-////
 //
-//namespace System.Windows.Forms {
+// System.Windows.Forms.PaintEventArgs.cs
 //
-//	// <summary>
-//	//	This is only a template.  Nothing is implemented yet.
-//	//
-//	// </summary>
+// Author:
+//   stubbed out by Paul Osman (paul.osman@sympatico.ca)
 //
-//        public class PaintEventArgs : EventArgs, IDisposable {
+// (C) 2002 Ximian, Inc
 //
-//		//
-//		//  --- Constructor
-//		//
+
+namespace System.Windows.Forms {
+
+	// <summary>
+	//	This is only a template.  Nothing is implemented yet.
+	//
+	// </summary>
+
+        public class PaintEventArgs : EventArgs, IDisposable {
+
+		//
+		//  --- Constructor
+		//
 //		[MonoTODO]
 //		public PaintEventArgs()
 //		{
@@ -97,5 +97,5 @@
 //		{
 //			throw new NotImplementedException ();
 //		}
-//	 }
-//}
+	 }
+}

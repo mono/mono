@@ -1,24 +1,24 @@
-////
-//// System.Windows.Forms.Panel.cs
-////
-//// Author:
-////   stubbed out by Paul Osman (paul.osman@sympatico.ca)
-////
-//// (C) 2002 Ximian, Inc
-////
 //
-//namespace System.Windows.Forms {
+// System.Windows.Forms.Panel.cs
 //
-//	// <summary>
-//	//	This is only a template.  Nothing is implemented yet.
-//	//
-//	// </summary>
+// Author:
+//   stubbed out by Paul Osman (paul.osman@sympatico.ca)
 //
-//        public class Panel : ScrollableControl {
+// (C) 2002 Ximian, Inc
 //
-//		//
-//		//  --- Constructor
-//		//
+
+namespace System.Windows.Forms {
+
+	// <summary>
+	//	This is only a template.  Nothing is implemented yet.
+	//
+	// </summary>
+
+        public class Panel : ScrollableControl {
+
+		//
+		//  --- Constructor
+		//
 //		[MonoTODO]
 //		public Panel()
 //		{
@@ -1752,5 +1752,5 @@
 //		{
 //			throw new NotImplementedException ();
 //		}
-//	 }
-//}
+	 }
+}

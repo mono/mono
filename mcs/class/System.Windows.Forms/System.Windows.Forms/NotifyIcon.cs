@@ -1,24 +1,23 @@
-////
-//// System.Windows.Forms.NotifyIcon.cs
-////
-//// Author:
-////   stubbed out by Paul Osman (paul.osman@sympatico.ca)
-////
-//// (C) 2002 Ximian, Inc
-////
 //
-//namespace System.Windows.Forms {
+// System.Windows.Forms.NotifyIcon.cs
 //
-//	// <summary>
-//	//	This is only a template.  Nothing is implemented yet.
-//	//
-//	// </summary>
+// Author:
+//   stubbed out by Paul Osman (paul.osman@sympatico.ca)
 //
-//        public sealed class NotifyIcon : Component {
+// (C) 2002 Ximian, Inc
 //
-//		//
-//		//  --- Constructor
-//		//
+using System.ComponentModel;
+namespace System.Windows.Forms {
+
+	// <summary>
+	//	This is only a template.  Nothing is implemented yet.
+	//
+	// </summary>
+    public sealed class NotifyIcon : Component {
+
+		//
+		//  --- Constructor
+		//
 //		[MonoTODO]
 //		public NotifyIcon()
 //		{
@@ -209,5 +208,5 @@
 //		{
 //			throw new NotImplementedException ();
 //		}
-//	 }
-//}
+	 }
+}

@@ -3,6 +3,7 @@
 //
 // Author:
 //   stubbed out by Daniel Carrera (dcarrera@math.toronto.edu)
+//	Partially completed by Dennis Hayes (dennish@raytek.com)
 //
 // (C) 2002 Ximian, Inc
 //
@@ -14,52 +15,54 @@ namespace System.Windows.Forms {
 	//
 	// </summary>
 
-        //public class QueryAccessibilityHelpEventArgs : EventArgs {
-
+    public class QueryAccessibilityHelpEventArgs : EventArgs {
+		string helpnamespace;
+		string helpstring;
+		string helpkeyword;
 		//
 		//  --- Constructor
 		//
-		//[MonoTODO]
-		//public QueryAccessibilityHelpEventArgs()
-		//{
-		//	throw new NotImplementedException ();
-		//}
-		//[MonoTODO]
-		//public QueryAccessibilityHelpEventArgs(string str1, string str2, string str3)
-		//{
-		//	throw new NotImplementedException ();
-		//}
+		public QueryAccessibilityHelpEventArgs()
+		{
+			//
+		}
+		public QueryAccessibilityHelpEventArgs(string helpNamespace, string helpString, string helpKeyword)
+		{
+			helpkeyword = helpKeyword;
+			helpnamespace = helpNamespace;
+			helpstring =helpString;
+		}
 
 		//
 		//  --- Public Properties
 		//
-		//[MonoTODO]
-		//[ComVisible(true)] public string HelpKeyword {
-		//	get {
-		//		throw new NotImplementedException ();
-		//	}
-		//	set {
-		//		throw new NotImplementedException ();
-		//	}
-		//}
-		//[MonoTODO]
-		//[ComVisible(true)] public string HelpNamespace {
-		//	get {
-		//		throw new NotImplementedException ();
-		//	}
-		//	set {
-		//		throw new NotImplementedException ();
-		//	}
-		//}
-		//[MonoTODO]
-		//[ComVisible(true)] public string HelpString {
-		//	get {
-		//		throw new NotImplementedException ();
-		//	}
-		//	set {
-		//		throw new NotImplementedException ();
-		//	}
-		//}
+		[ComVisible(true)] 
+		public string HelpKeyword {
+			get {
+				return helpkeyword;
+			}
+			set {
+				helpkeyword = value;
+			}
+		}
+		[ComVisible(true)] 
+		public string HelpNamespace {
+			get {
+				return helpnamespace;
+			}
+			set {
+				helpnamespace = value;
+			}
+		}
+		[ComVisible(true)] 
+		public string HelpString {
+			get {
+				return helpstring;
+			}
+			set {
+				helpstring = value;
+			}
+		}
 
 		//
 		//  --- Public Methods
@@ -74,5 +77,5 @@ namespace System.Windows.Forms {
 		//{
 		//	throw new NotImplementedException ();
 		//}
-	// }
+	 }
 }

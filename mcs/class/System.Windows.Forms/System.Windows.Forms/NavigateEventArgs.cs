@@ -1,43 +1,42 @@
-////
-//// System.Windows.Forms.NavigateEventArgs.cs
-////
-//// Author:
-////   stubbed out by Paul Osman (paul.osman@sympatico.ca)
-////
-//// (C) 2002 Ximian, Inc
-////
 //
-//namespace System.Windows.Forms {
+// System.Windows.Forms.NavigateEventArgs.cs
 //
-//	// <summary>
-//	//	This is only a template.  Nothing is implemented yet.
-//	//
-//	// </summary>
+// Author:
+//   stubbed out by Paul Osman (paul.osman@sympatico.ca)
+//	Partially completed by Dennis Hayes (dennish@raytek.com)
 //
-//        public class NavigateEventArgs : EventArgs {
+// (C) 2002 Ximian, Inc
 //
-//		//
-//		//  --- Constructor
-//		//
-//		[MonoTODO]
-//		public NavigateEventArgs(bool isForward)
-//		{
-//			throw new NotImplementedException ();
-//		}
-//
-//		//
-//		//  --- Public Properties
-//		//
-//		[MonoTODO]
-//		public bool Forward {
-//			get {
-//				throw new NotImplementedException ();
-//			}
-//		}
-//
-//		//
-//		//  --- Public Methods
-//		//
+
+namespace System.Windows.Forms {
+
+	// <summary>
+	//	This is only a template.  Nothing is implemented yet.
+	//
+	// </summary>
+
+        public class NavigateEventArgs : EventArgs {
+			private bool isforward;
+		//
+		//  --- Constructor
+		//
+		public NavigateEventArgs(bool isForward)
+		{
+			isforward = isForward;
+		}
+
+		//
+		//  --- Public Properties
+		//
+		public bool Forward {
+			get {
+				return isforward;
+			}
+		}
+
+		//
+		//  --- Public Methods
+		//
 //		[MonoTODO]
 //		public virtual bool Equals(object o)
 //		{
@@ -80,5 +79,5 @@
 //		{
 //			throw new NotImplementedException ();
 //		}
-//	 }
-//}
+	 }
+}

@@ -1,66 +1,65 @@
-////
-//// System.Windows.Forms.MouseEventArgs.cs
-////
-//// Author:
-////   stubbed out by Paul Osman (paul.osman@sympatico.ca)
-////
-//// (C) 2002 Ximian, Inc
-////
 //
-//namespace System.Windows.Forms {
+// System.Windows.Forms.MouseEventArgs.cs
 //
-//	// <summary>
-//	//	This is only a template.  Nothing is implemented yet.
-//	//
-//	// </summary>
+// Author:
+//   stubbed out by Paul Osman (paul.osman@sympatico.ca)
+//	Partially completed by Dennis Hayes (dennish@raytek.com)
 //
-//        public class MouseEventArgs : EventArgs {
+// (C) 2002 Ximian, Inc
 //
-//		[MonoTODO]
-//		public MouseEventArgs()
-//		{
-//			throw new NotImplementedException ();
-//		}
-//		[MonoTODO]
-//		public MouseEventArgs(MouseButtons button, int clicks, int x, int y, int delta)
-//		{
-//			throw new NotImplementedException ();
-//		}
-//
-//		//
-//		//  --- Public Properties
-//		//
-//		[MonoTODO]
-//		public MouseButtons Button {
-//			get {
-//				throw new NotImplementedException ();
-//			}
-//		}
-//		[MonoTODO]
-//		public int Clicks {
-//			get {
-//				throw new NotImplementedException ();
-//			}
-//		}
-//		[MonoTODO]
-//		public int Delta {
-//			get {
-//				throw new NotImplementedException ();
-//			}
-//		}
-//		[MonoTODO]
-//		public int X {
-//			get {
-//				throw new NotImplementedException ();
-//			}
-//		}
-//		[MonoTODO]
-//		public int Y {
-//			get {
-//				throw new NotImplementedException ();
-//			}
-//		}
-//
+
+namespace System.Windows.Forms {
+
+	// <summary>
+	//	This is only a template.  Nothing is implemented yet.
+	//
+	// </summary>
+
+    public class MouseEventArgs : EventArgs {
+		private MouseButtons button;
+		private int clicks;
+		private int x;
+		private int y;
+		private int delta;
+
+		public MouseEventArgs(MouseButtons button, int clicks, int x, int y, int delta)
+		{
+			this.button = button;
+			this.clicks = clicks;
+			this.x = x;
+			this.y = y;
+			this.delta = delta;
+		}
+
+		//
+		//  --- Public Properties
+		//
+		public MouseButtons Button {
+			get {
+				return button;
+			}
+		}
+		public int Clicks {
+			get {
+				return clicks;
+			}
+		}
+		public int Delta {
+			get {
+				return delta;
+			}
+		}
+		public int X {
+			get {
+				return x;
+			}
+		}
+		public int Y {
+			get {
+				return y;
+			}
+		}
+
 //		//
 //		//  --- Public Methods
 //		//
@@ -107,5 +106,5 @@
 //		{
 //			throw new NotImplementedException ();
 //		}
-//	 }
-//}
+	 }
+}

@@ -3,6 +3,7 @@
 //
 // Author:
 //   stubbed out by Daniel Carrera (dcarrera@math.toronto.edu)
+//	Partially completed by Dennis Hayes (dennish@raytek.com)
 //
 // (C) 2002 Ximian, Inc
 //
@@ -10,58 +11,58 @@
 namespace System.Windows.Forms {
 
 	// <summary>
-	//	This is only a template.  Nothing is implemented yet.
-	//
 	// </summary>
 
-        //public class QueryContinueDragEventArgs : EventArgs {
-
+    public class QueryContinueDragEventArgs : EventArgs {
+		private int keystate;
+		private bool escapepressed;
+		private DragAction action;
 		//
 		//  --- Constructor
 		//
-		//[MonoTODO]
-		//[ComVisible(true)] public QueryContinueDragEventArgs(int keyState, book escapePressed, DragAction action)
-		//{
-		//	throw new NotImplementedException ();
-		//}
+		[ComVisible(true)] 
+		public QueryContinueDragEventArgs(int keyState, bool escapePressed, DragAction action)
+		{
+			keystate = keyState;
+			escapepressed = escapePressed;
+			this.action = action;
+		}
 
 		//
 		//  --- Public Properties
 		//
-		//[MonoTODO]
-		//[ComVisible(true)] public DragAction Action {
-		//	get {
-		//		throw new NotImplementedException ();
-		//	}
-		//	set {
-		//		throw new NotImplementedException ();
-		//	}
-		//}
-		//[MonoTODO]
-		//[ComVisible(true)] public bool EscapePressed {
-		//	get {
-		//		throw new NotImplementedException ();
-		//	}
-		//}
-		//[MonoTODO]
-		//[ComVisible(true)] public int KeyState {
-		//	get {
-		//		throw new NotImplementedException ();
-		//	}
-		//}
+		[ComVisible(true)]
+		public DragAction Action {
+			get {
+				return action;
+			}
+			set {
+				action = value;
+			}
+		}
+		[ComVisible(true)] 
+		public bool EscapePressed {
+			get {
+				return escapepressed;
+			}
+		}
+		[ComVisible(true)]
+		public int KeyState {
+			get {
+				return keystate;
+			}
+		}
 
 		//
 		//  --- Public Methods
 		//
-		//[MonoTODO]
 		//public virtual bool Equals(object o);
 		//{
 		//	throw new NotImplementedException ();
 		//}
-		//[MonoTODO]
 		//public static bool Equals(object o1, object o2);
 		//{
 		//	throw new NotImplementedException ();
 		//}
-	// }
+	 }
 }

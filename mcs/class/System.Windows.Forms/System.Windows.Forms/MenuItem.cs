@@ -1,32 +1,29 @@
-////
-//// System.Windows.Forms.Menu.MenuItem.cs
-////
-//// Author:
-////   stubbed out by Paul Osman (paul.osman@sympatico.ca)
-////
-//// (C) 2002 Ximian, Inc
-////
 //
-//using System;
-//using System.Reflection;
-//using System.Globalization;
-////using System.Windows.Forms.AccessibleObject.IAccessible;
-//using System.Drawing;
+// System.Windows.Forms.Menu.MenuItem.cs
 //
-//namespace System.Windows.Forms {
+// Author:
+//   stubbed out by Paul Osman (paul.osman@sympatico.ca)
 //
-//	/// <summary>
-//	/// ToDo note:
-//        ///  - Nothing is implemented
-//        /// </summary>
-//        
-//        public class MenuItem : Menu {
+// (C) 2002 Ximian, Inc
 //
-//                
-//                //
-//                // - Constructor
-//                //
-//                
+
+using System;
+using System.Reflection;
+using System.Globalization;
+//using System.Windows.Forms.AccessibleObject.IAccessible;
+using System.Drawing;
+
+namespace System.Windows.Forms {
+
+	/// <summary>
+	/// ToDo note:
+        ///  - Nothing is implemented
+        /// </summary>
+        
+        public class MenuItem : Menu {
+                //
+                // - Constructor
+                //
 //                public MenuItem()
 //                {
 //                        throw new NotImplementedException ();
@@ -511,5 +508,5 @@
 //
 //                        throw new NotImplementedException ();
 //                }
-//        }
-//}
+        }
+}

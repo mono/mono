@@ -1,32 +1,32 @@
-////
-//// System.Windows.Forms.Menu.cs
-////
-//// Author:
-////   stubbed out by Paul Osman (paul.osman@sympatico.ca)
-////
-//// (C) 2002 Ximian, Inc
-////
 //
-//using System;
-//using System.Reflection;
-//using System.Globalization;
-////using System.Windows.Forms.AccessibleObject.IAccessible;
-//using System.Drawing;
+// System.Windows.Forms.Menu.cs
 //
-//namespace System.Windows.Forms 
-//{
+// Author:
+//   stubbed out by Paul Osman (paul.osman@sympatico.ca)
 //
-//	/// <summary>
-//	/// ToDo note:
-//	///  - Nothing is implemented
-//	/// </summary>
-//	
-//	public abstract class Menu : Component
-//	{
-//		//
-//		// -- Public Methods
-//		//
+// (C) 2002 Ximian, Inc
 //
+
+using System;
+using System.Reflection;
+using System.Globalization;
+//using System.Windows.Forms.AccessibleObject.IAccessible;
+using System.Drawing;
+
+namespace System.Windows.Forms 
+{
+
+	/// <summary>
+	/// ToDo note:
+	///  - Nothing is implemented
+	/// </summary>
+using System.ComponentModel;
+	public abstract class Menu : Component
+	{
+		//
+		// -- Public Methods
+		//
+
 //		public virtual ObjRef CreateObjRef(Type t) 
 //		{
 //			throw new NotImplementedException();
@@ -207,33 +207,25 @@
 //				throw new NotImplementedException();
 //			}
 //		}
-////
-//// System.Windows.Forms.Menu.MenuItemCollection.cs
-////
-//// Author:
-////   stubbed out by Paul Osman (paul.osman@sympatico.ca)
-////
-//// (C) 2002 Ximian, Inc
-////
 //
-//using System;
-//using System.Reflection;
-//using System.Globalization;
-////using System.Windows.Forms.AccessibleObject.IAccessible;
-//using System.Drawing;
+// System.Windows.Forms.Menu.MenuItemCollection.cs
 //
-//	/// <summary>
-//	/// ToDo note:
-//        ///  - Nothing is implemented
-//        /// </summary>
+// Author:
+//   stubbed out by Paul Osman (paul.osman@sympatico.ca)
 //
-//        public class Menu.MenuItemCollection : IList, ICollection, IEnumerable {
+// (C) 2002 Ximian, Inc
 //
-//	
-//		//
-//		// -- Constructor
-//		//
-//
+	/// <summary>
+	/// ToDo note:
+        ///  - Nothing is implemented
+        /// </summary>
+
+        public class MenuItemCollection : IList, ICollection, IEnumerable {
+	
+		//
+		// -- Constructor
+		//
+
 //		public Menu.MenuItemCollection(Menu m)
 //		{
 //			throw new NotImplementedException ();
@@ -366,8 +358,8 @@
 //				throw new NotImplementedException ();
 //			}
 //		}
-//	}
+	}
 
-//	}
-//}
-//			
+	}
+}
+			

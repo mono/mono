@@ -1,24 +1,24 @@
-////
-//// System.Windows.Forms.NumericUpDown.cs
-////
-//// Author:
-////   stubbed out by Paul Osman (paul.osman@sympatico.ca)
-////
-//// (C) 2002 Ximian, Inc
-////
 //
-//namespace System.Windows.Forms {
+// System.Windows.Forms.NumericUpDown.cs
 //
-//	// <summary>
-//	//	This is only a template.  Nothing is implemented yet.
-//	//
-//	// </summary>
+// Author:
+//   stubbed out by Paul Osman (paul.osman@sympatico.ca)
 //
-//        public class NumericUpDown : UpDownBase, ISupportInitialize {
+// (C) 2002 Ximian, Inc
 //
-//		//
-//		//  --- Constructor
-//		//
+
+namespace System.Windows.Forms {
+
+	// <summary>
+	//	This is only a template.  Nothing is implemented yet.
+	//
+	// </summary>
+
+    public class NumericUpDown : UpDownBase, ISupportInitialize {
+
+		//
+		//  --- Constructor
+		//
 //		[MonoTODO]
 //		public NumericUpDown()
 //		{
@@ -1997,5 +1997,5 @@
 //		{
 //			throw new NotImplementedException ();
 //		}
-//	 }
-//}
+	 }
+}
