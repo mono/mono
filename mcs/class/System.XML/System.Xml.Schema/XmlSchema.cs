@@ -362,6 +362,7 @@ namespace System.Xml.Schema
 							stream = resolver.GetEntity (new Uri (url), null, typeof (Stream)) as Stream;
 						} catch (Exception) {
 						// LAMESPEC: This is not good way to handle errors, but since we cannot know what kind of XmlResolver will come, so there are no mean to avoid this ugly catch.
+							warn (handler, "Could not resolve schema location URI: " + url);
 							stream = null;
 						}
 					}

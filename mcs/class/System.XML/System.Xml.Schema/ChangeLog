@@ -1,3 +1,17 @@
+2004-01-26  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlSchema.cs : Raise warning event when external schema could not 
+	  be resolved.
+	* XmlSchemaAll.cs : Fixed incorrect IsEmptiable computation.
+	* XmlSchemaAny.cs : Fixed incorrect occurence computation.
+	* XmlSchemaChoice.cs : compiledItems were incorrectly appended.
+	* XmlSchemaComplexType.cs : Now validatableParticle became extraneous.
+	* XmlSchemaGroupBase.cs : Here we should not get optimized particle
+	  because it might cause infinite loop.
+	* XmlSchemaGroupRef.cs : Fixed Validate() to avoid null reference 
+	  exception (only occur with ValidationEventHandler).  Fixed Occurence
+	  embedding logic that was useless because of particle optimization.
+
 2004-01-22  Atsushi Enomoto <atsushi@ximian.com>
 
 	* BuiltInDatatype.cs : On parsing QName, we don't have to spend costs

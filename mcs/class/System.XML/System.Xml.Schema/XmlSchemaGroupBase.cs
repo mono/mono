@@ -98,7 +98,7 @@ namespace System.Xml.Schema
 				// get non-empty derived particle
 				XmlSchemaParticle pd = null;
 				while (this.CompiledItems.Count > index) {
-					pd = ((XmlSchemaParticle) this.CompiledItems [index]).GetOptimizedParticle (false);
+					pd = ((XmlSchemaParticle) this.CompiledItems [index]);//.GetOptimizedParticle (false);
 					if (pd != XmlSchemaParticle.Empty)// && pd.ValidatedMaxOccurs > 0)
 						break;
 					else
@@ -113,7 +113,7 @@ namespace System.Xml.Schema
 				// get non-empty base particle
 				XmlSchemaParticle pb = null;
 				while (baseGroup.CompiledItems.Count > baseIndex) {
-					pb = ((XmlSchemaParticle) baseGroup.CompiledItems [baseIndex]).GetOptimizedParticle (false);
+					pb = ((XmlSchemaParticle) baseGroup.CompiledItems [baseIndex]);//.GetOptimizedParticle (false);
 					if (pb == XmlSchemaParticle.Empty && pb.ValidatedMaxOccurs > 0)
 						continue;
 					if (!pd.ValidateDerivationByRestriction (pb, h, schema, false)) {

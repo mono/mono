@@ -84,7 +84,7 @@ namespace System.Xml.Schema
 						XmlSchemaChoice pc = p as XmlSchemaChoice;
 						for (int ci = 0; ci < pc.Items.Count; ci++) {
 							c.Items.Add (pc.Items [ci]);
-							c.CompiledItems.Add (c.Items [ci]);
+							c.CompiledItems.Add (pc.Items [ci]);
 						}
 					}
 					else {

@@ -157,7 +157,8 @@ namespace System.Xml.Schema
 
 		internal XmlSchemaParticle ValidatableParticle 
 		{
-			get{ return validatableParticle; }
+//			get{ return validatableParticle; }
+			get{ return contentTypeParticle; }
 		}
 
 		/// <remarks>

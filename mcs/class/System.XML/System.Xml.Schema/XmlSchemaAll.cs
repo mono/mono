@@ -101,7 +101,6 @@ namespace System.Xml.Schema
 						seq.Items.Add (p);
 						seq.CompiledItems.Add (p);
 						seq.Compile (null, schema);
-//						seq.Validate (null, schema);
 						OptimizedParticle = seq;
 					}
 					return OptimizedParticle;
@@ -112,6 +111,7 @@ namespace System.Xml.Schema
 			CopyInfo (all);
 			CopyOptimizedItems (all);
 			OptimizedParticle = all;
+			all.ComputeEmptiable ();
 
 			return OptimizedParticle;
 		}
@@ -126,20 +126,29 @@ namespace System.Xml.Schema
 			if (!this.parentIsGroupDefinition && ValidatedMaxOccurs != 1)
 				error (h, "-all- group is limited to be content of a model group, or that of a complex type with maxOccurs to be 1.");
 
-			emptiable = true;
 			CompiledItems.Clear ();
-			foreach (XmlSchemaElement obj in Items) {
+			foreach (XmlSchemaParticle obj in Items) {
 				errorCount += obj.Validate (h, schema);
 				if (obj.ValidatedMaxOccurs != 0 &&
 					obj.ValidatedMaxOccurs != 1)
 					error (h, "MaxOccurs of a particle inside -all- compositor must be either 0 or 1.");
 				CompiledItems.Add (obj);
-				if (obj.ValidatedMinOccurs > 0)
-					emptiable = false;
 			}
+			ComputeEmptiable ();
 
 			ValidationId = schema.ValidationId;
 			return errorCount;
+		}
+
+		private void ComputeEmptiable ()
+		{
+			emptiable = true;
+			for (int i = 0; i < Items.Count; i++) {
+				if (((XmlSchemaParticle) Items [i]).ValidatedMinOccurs > 0) {
+					emptiable = false;
+					break;
+				}
+			}
 		}
 
 		internal override bool ValidateDerivationByRestriction (XmlSchemaParticle baseParticle,

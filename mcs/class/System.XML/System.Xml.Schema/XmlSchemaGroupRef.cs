@@ -88,8 +88,10 @@ namespace System.Xml.Schema
 
 			referencedGroup = schema.Groups [RefName] as XmlSchemaGroup;
 			// it might be missing sub components.
-			if (referencedGroup == null && !schema.IsNamespaceAbsent (RefName.Namespace))
-				error (h, "Referenced group " + RefName + " was not found in the corresponding schema.");
+			if (referencedGroup == null) {
+				if (!schema.IsNamespaceAbsent (RefName.Namespace))
+					error (h, "Referenced group " + RefName + " was not found in the corresponding schema.");
+			}
 			// See Errata E1-26: minOccurs=0 is now allowed.
 			else if (referencedGroup.Particle is XmlSchemaAll && ValidatedMaxOccurs != 1)
 				error (h, "Group reference to -all- particle must have schema component {maxOccurs}=1.");
@@ -111,13 +113,13 @@ namespace System.Xml.Schema
 			XmlSchemaGroup g = referencedGroup != null ? referencedGroup : schema.Groups [RefName] as XmlSchemaGroup;
 			if (g != null && g.Particle != null) {
 				OptimizedParticle = g.Particle;
+					OptimizedParticle = OptimizedParticle.GetOptimizedParticle (isTop);
 				if (OptimizedParticle != XmlSchemaParticle.Empty && (ValidatedMinOccurs != 1 || ValidatedMaxOccurs != 1)) {
 					OptimizedParticle = OptimizedParticle.GetShallowClone ();
 					OptimizedParticle.MinOccurs = this.MinOccurs;
 					OptimizedParticle.MaxOccurs = this.MaxOccurs;
 					OptimizedParticle.CompileOccurence (null, null);
 				}
-				OptimizedParticle = OptimizedParticle.GetOptimizedParticle (isTop);
 			}
 			else
 				OptimizedParticle = XmlSchemaParticle.Empty;

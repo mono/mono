@@ -140,6 +140,7 @@ namespace System.Xml.Schema
 
 			XmlSchemaAny any = new XmlSchemaAny ();
 			CopyInfo (any);
+			any.CompileOccurence (null, null);
 			any.wildcard = this.wildcard;
 			OptimizedParticle = any;
 
