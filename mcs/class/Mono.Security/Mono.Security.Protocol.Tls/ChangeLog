@@ -1,3 +1,10 @@
+2005-02-02  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* SslClientStream.cs: Throw exception when we receive a null record.
+	* RecordProtocol.cs: Added code to avoid blocking and endless loops
+	if the data is incomplete or missing - even in the case the server
+	side doesn't close the connection (see new cutcli tool).
+
 2004-12-15  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* CipherSuite.cs: Removed unused MD5 and SHA1 instances created in 

@@ -708,7 +708,10 @@ namespace Mono.Security.Protocol.Tls
 					while (this.context.LastHandshakeMsg != HandshakeType.ServerHelloDone)
 					{
 						// Read next record
-						this.protocol.ReceiveRecord();
+						if (this.protocol.ReceiveRecord () == null)
+						{
+							throw new TlsException (AlertLevel.Fatal, AlertDescription.CloseNotify);
+						}
 					}
 
 					// Send client certificate if requested
@@ -738,7 +741,11 @@ namespace Mono.Security.Protocol.Tls
 						// If all goes well this will process messages:
 						// 		Change Cipher Spec
 						//		Server finished
-						this.protocol.ReceiveRecord();
+						// Read next record
+						if (this.protocol.ReceiveRecord () == null)
+						{
+							throw new TlsException (AlertLevel.Fatal, AlertDescription.CloseNotify);
+						}
 					}
 
 					// Clear Key Info
