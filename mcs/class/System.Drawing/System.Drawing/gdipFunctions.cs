@@ -1294,6 +1294,10 @@ namespace System.Drawing
 		[DllImport("gdi32.dll", EntryPoint="SelectObject", CallingConvention = CallingConvention.StdCall, CharSet = CharSet.Ansi)]
 		internal static extern IntPtr SelectObject(IntPtr hdc, IntPtr obj);	
 
+		// Some special X11 stuff
+		[DllImport("libX11.so", EntryPoint="XOpenDisplay")]
+		internal extern static IntPtr XOpenDisplay(IntPtr display);	
+
 		// FontCollection
 		[DllImport ("gdiplus.dll")]
 		internal static extern Status GdipGetFontCollectionFamilyCount (IntPtr collection, out int found);

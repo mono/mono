@@ -48,6 +48,7 @@ namespace System.Drawing
 		private bool disposed = false;
 		private static float defDpiX = 0;
 		private static float defDpiY = 0;
+		private static IntPtr display = IntPtr.Zero;
 	
 		[ComVisible(false)]
 		public delegate bool EnumerateMetafileProc (EmfPlusRecordType recordType,
@@ -1253,9 +1254,29 @@ namespace System.Drawing
 		{
 			IntPtr graphics;
 			
+			// This needs some working over to support wine in the future
+			if (Environment.OSVersion.Platform==(PlatformID)128) {
+
+				if (display==IntPtr.Zero) {
+					display=GDIPlus.XOpenDisplay(IntPtr.Zero);
+				}
+				return FromHwnd(hwnd, display);
+			}
 			Status status = GDIPlus.GdipCreateFromHWND (hwnd, out graphics); 				GDIPlus.CheckStatus (status);
  			
 			return new Graphics (graphics); 
+		}
+
+		[EditorBrowsable (EditorBrowsableState.Advanced)]		
+		public static Graphics FromHwnd (IntPtr hwnd, IntPtr display)
+		{
+			lock (typeof (Graphics))
+			{
+				IntPtr graphics;
+				Status s = GDIPlus.GdipCreateFromXDrawable_linux (hwnd, display, out graphics);
+				GDIPlus.CheckStatus (s);
+				return new Graphics (graphics);
+			}
 		}
 
 		[MonoTODO]

@@ -1,3 +1,7 @@
+2004-07-09  Peter Bartok <pbartok@novell.com>
+	* Graphics.cs: Added support required for new managed SWF library
+	* gdipFunctions.cs: Added XOpenDisplay definition/import
+
 2004-07-02 Jordi Mas i Hernandez <jordi@ximian.com>
 
 	* gdipFunctions.cs: fixes bug 61050
