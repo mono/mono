@@ -63,7 +63,7 @@ namespace MonoTests.System.Security.Permissions {
 		private X509Certificate x509;
 
 		[SetUp]
-		private void SetUp () 
+		public void SetUp () 
 		{
 			x509 = new X509Certificate (cert);
 		}
