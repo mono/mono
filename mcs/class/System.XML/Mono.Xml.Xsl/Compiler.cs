@@ -85,7 +85,7 @@ namespace Mono.Xml.Xsl {
 	public class Compiler : IStaticXsltContext {
 		public const string XsltNamespace = "http://www.w3.org/1999/XSL/Transform";
 			
-		Stack inputStack = new Stack ();
+		ArrayList inputStack = new ArrayList ();
 		XPathNavigator currentInput;
 		
 		Stack styleStack = new Stack ();
@@ -176,13 +176,26 @@ namespace Mono.Xml.Xsl {
 		
 		private void PushInputDocument (XPathNavigator nav)
 		{
-			inputStack.Push (currentInput);
+			for (int i = 0; i < inputStack.Count; i++) {
+				XPathNavigator cur = (XPathNavigator) inputStack [i];
+				if (cur.BaseURI == nav.BaseURI) {
+					IXmlLineInfo li = currentInput as IXmlLineInfo;
+					throw new XsltCompileException (null,
+						currentInput.BaseURI, 
+						li != null ? li.LineNumber : 0,
+						li != null ? li.LinePosition : 0);
+				}
+			}
+			if (currentInput != null)
+				inputStack.Add (currentInput);
 			currentInput = nav;
 		}
 		
 		public void PopInputDocument ()
 		{
-			currentInput = (XPathNavigator)inputStack.Pop ();
+			int last = inputStack.Count - 1;
+			currentInput = (XPathNavigator) inputStack [last];
+			inputStack.RemoveAt (last);
 		}
 		
 		public QName ParseQNameAttribute (string localName)
@@ -296,7 +309,12 @@ namespace Mono.Xml.Xsl {
 		
 		public XslOperation CompileTemplateContent ()
 		{
-			return new XslTemplateContent (this);
+			return CompileTemplateContent (XPathNodeType.All);
+		}
+
+		public XslOperation CompileTemplateContent (XPathNodeType parentType)
+		{
+			return new XslTemplateContent (this, parentType);
 		}
 #endregion
 #region Variables
@@ -422,6 +440,12 @@ namespace Mono.Xml.Xsl {
 		public void CompileDecimalFormat ()
 		{
 			QName nm = ParseQNameAttribute ("name");
+			try {
+				if (nm.Name != String.Empty)
+					XmlConvert.VerifyNCName (nm.Name);
+			} catch (XmlException ex) {
+				throw new XsltCompileException ("Invalid qualified name.", ex, Input);
+			}
 			XslDecimalFormat df = new XslDecimalFormat (this);
 			
 			if (decimalFormats.Contains (nm))

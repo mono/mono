@@ -55,6 +55,10 @@ namespace Mono.Xml.Xsl {
 			WriteImpl (data);
 		}
 
+		public override void WriteWhitespace (string text) {
+			WriteImpl (text);
+		}
+
 		private void WriteImpl(string text) {
 			if (!_ignoreNestedText || _depth==0) _writer.Write (text);
 		}

@@ -111,6 +111,10 @@ namespace Mono.Xml.Xsl {
 			get { return keys; }
 		}
 
+		public string Version {
+			get { return version; }
+		}
+
 		public XslStylesheet (Compiler c)
 		{
 			this.c = c;
@@ -222,6 +226,10 @@ namespace Mono.Xml.Xsl {
 				case "param":
 					c.AddGlobalVariable (new XslGlobalParam (c));
 					break;
+				default:
+					if (version == "1.0")
+						throw new XsltCompileException ("Unrecognized top level element.", null, c.Input);
+					break;
 				}
 				break;
 			case MSXsltNamespace:
@@ -252,8 +260,9 @@ namespace Mono.Xml.Xsl {
 
 		private void AddSpaceControls (QName [] names, XmlSpace result,	XPathNavigator styleElem)
 		{
+			// XSLT 3.4 - This implementation recovers from errors.
 			foreach (QName name in names)
-				spaceControls.Add (name, result);
+				spaceControls [name] = result;
 		}
 
 		public string PrefixInEffect (string prefix, ArrayList additionalExcluded)

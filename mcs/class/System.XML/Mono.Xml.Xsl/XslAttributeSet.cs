@@ -42,14 +42,23 @@ namespace Mono.Xml.Xsl {
 			
 			QName [] attrSets = c.ParseQNameListAttribute ("use-attribute-sets");
 			if (attrSets != null)
-				foreach (QName q in c.ParseQNameListAttribute ("use-attribute-sets"))
+				foreach (QName q in attrSets)
 					usedAttributeSets.Add (q);
 
 			
 			if (!c.Input.MoveToFirstChild ()) return;
 				
 			do {
-				if (c.Input.NodeType != XPathNodeType.Element) continue;
+				switch (c.Input.NodeType) {
+				case XPathNodeType.Element:
+					break;
+				case XPathNodeType.Whitespace:
+					continue;
+				default:
+					if (c.CurrentStylesheet.Version == "1.0")
+						throw new XsltCompileException ("Content " + c.Input.NodeType + " is not allowed in XSLT attribute-set element.", null, c.Input);
+					break;
+				}
 					
 				if (c.Input.NamespaceURI != XsltNamespace || c.Input.LocalName != "attribute")
 					throw new Exception ("Invalid attr set content");
@@ -77,10 +86,10 @@ namespace Mono.Xml.Xsl {
 				{
 					XslAttributeSet s = p.ResolveAttributeSet (set);
 					if (s == null)
-						throw new Exception ("Could not resolve attribute set");
+						throw new XsltException ("Could not resolve attribute set", null, p.CurrentNode);
 					
 					if (p.IsBusy (s))
-						throw new Exception ("circular dependency");
+						throw new XsltException ("circular dependency", null, p.CurrentNode);
 					
 					s.Evaluate (p);
 				}

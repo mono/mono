@@ -1,3 +1,21 @@
+2003-12-07 Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* Compiler.cs : Check stylesheet recursion. Check decimal-format name.
+	* GenericOutputter.cs, Outputter.cs, TextOutputter.cs :
+	  Added WriteWhitespace() to assure not writing whitespaces as cdata.
+	* XslAttributeSet.cs : Error check if attribute-set contains other than
+	  xsl:attribute.  Error should be XsltException.
+	* XslDecimalFormat.cs : Complete equality check.  Allow just one
+	  character value for some attributes.
+	* XslStylesheet.cs : Made whitespace control setting overridable.
+	  Added Version property (for the future compatibility mode).
+	  Check unrecongnized top level element.
+	* XslTemplate.cs : Check priority as a number.
+	* XslTransformProcessor.cs : PushCDataState is now PushElementState, 
+	  for xsl:preserve-space and xsl:strip-space support.
+	* XsltCompiledContext.cs : Implemented PreserveWhitespace() (far from
+	  incomplete), PushScope and Pop
+
 2003-12-03 Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* HtmlEmitter.cs : CloseStartElement is needed almost everywhere.

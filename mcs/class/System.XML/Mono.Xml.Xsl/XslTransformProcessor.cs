@@ -30,7 +30,6 @@ namespace Mono.Xml.Xsl {
 		Stack currentTemplateStack = new Stack ();
 		
 		XPathNavigator root;
-		XsltContext ctx;
 		XsltArgumentList args;
 		XmlResolver resolver;
 		bool outputStylesheetXmlns;
@@ -78,7 +77,6 @@ namespace Mono.Xml.Xsl {
 			this.PopOutput ();
 		}
 		
-		public XsltContext Context { get { return ctx; }}
 		public CompiledStylesheet CompiledStyle { get { return compiledStyle; }}
 		public XsltArgumentList Arguments {get{return args;}}
 		
@@ -86,7 +84,6 @@ namespace Mono.Xml.Xsl {
 			get { return compiledStyle.ScriptManager; }
 		}
 
-		
 		#region Document Resolution
 		public XmlResolver Resolver {get{return resolver;}}
 		
@@ -137,7 +134,7 @@ namespace Mono.Xml.Xsl {
 
 		public string CurrentOutputUri { get { return currentOutputUri; } }
 
-		public bool InsideCDataElement { get { return insideCDataSectionElements; } }
+		public bool InsideCDataElement { get { return this.XPathContext.IsCData; } }
 		#endregion
 		
 		#region AVT StringBuilder
@@ -473,26 +470,30 @@ namespace Mono.Xml.Xsl {
 		}
 		#endregion
 
-		public bool PushCDataState (string name, string ns)
+		public bool PushElementState (string name, string ns, bool preserveWhitespace)
 		{
-//			if (insideCDataSectionElements)
-//				return false;
+			bool b = IsCData (name, ns);
+			XPathContext.PushScope ();
+			Out.InsideCDataSection = XPathContext.IsCData = b;
+			XPathContext.WhitespaceHandling = preserveWhitespace;
+			return b;
+		}
+
+		bool IsCData (string name, string ns)
+		{
 			for (int i = 0; i < Output.CDataSectionElements.Length; i++) {
 				XmlQualifiedName qname = Output.CDataSectionElements [i];
 				if (qname.Name == name && qname.Namespace == ns) {
-					this.insideCDataSectionElements = true;
-					Out.InsideCDataSection = true;
 					return true;
 				}
 			}
-			this.insideCDataSectionElements = false;
-			Out.InsideCDataSection = false; //
 			return false;
 		}
 
 		public void PopCDataState (bool isCData)
 		{
-			Out.InsideCDataSection = this.insideCDataSectionElements = isCData;
+			XPathContext.PopScope ();
+			Out.InsideCDataSection = XPathContext.IsCData;
 		}
 
 		public bool PreserveWhitespace ()

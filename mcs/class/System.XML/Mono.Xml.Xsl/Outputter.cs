@@ -47,6 +47,7 @@ namespace Mono.Xml.Xsl {
 		
 		public abstract void WriteString (string text);
 		public abstract void WriteRaw (string data);
+		public abstract void WriteWhitespace (string text);
 		
 		public abstract void Done ();
 

@@ -21,7 +21,6 @@ namespace Mono.Xml.Xsl {
 		
 		NumberFormatInfo info = new NumberFormatInfo ();
 		char digit = '#', zeroDigit = '0', patternSeparator = ';';
-		XPathNavigator source;
 		string baseUri;
 		int lineNumber;
 		int linePosition;
@@ -46,39 +45,55 @@ namespace Mono.Xml.Xsl {
 						continue;
 					
 					switch (n.LocalName) {
-						case "name": break; // already handled
-						case "decimal-separator":
-							info.NumberDecimalSeparator = n.Value;
-							break;
+					case "name": break; // already handled
+					case "decimal-separator":
+						if (n.Value.Length != 1)
+							throw new XsltCompileException ("XSLT decimal-separator value must be exact one character.", null, n);
+						info.NumberDecimalSeparator = n.Value;
+						break;
 						
-						case "grouping-separator":
-							info.NumberGroupSeparator = n.Value;
-							break;
+					case "grouping-separator":
+						if (n.Value.Length != 1)
+							throw new XsltCompileException ("XSLT grouping-separator value must be exact one character.", null, n);
+						info.NumberGroupSeparator = n.Value;
+						break;
 						
-						case "infinity":
-							info.PositiveInfinitySymbol = n.Value;
-							break;
-						case "minus-sign":
-							info.NegativeSign = n.Value;
-							break;
-						case "NaN":
-							info.NaNSymbol = n.Value;
-							break;
-						case "percent":
-							info.PercentSymbol = n.Value;
-							break;
-						case "per-mille":
-							info.PerMilleSymbol = n.Value;
-							break;
-						case "digit":
-							digit = n.Value [0];
-							break;
-						case "zero-digit":
-							zeroDigit = n.Value [0];
-							break;
-						case "pattern-separator":
-							patternSeparator = n.Value [0];
-							break;
+					case "infinity":
+						info.PositiveInfinitySymbol = n.Value;
+						break;
+					case "minus-sign":
+						if (n.Value.Length != 1)
+							throw new XsltCompileException ("XSLT minus-sign value must be exact one character.", null, n);
+						info.NegativeSign = n.Value;
+						break;
+					case "NaN":
+						info.NaNSymbol = n.Value;
+						break;
+					case "percent":
+						if (n.Value.Length != 1)
+							throw new XsltCompileException ("XSLT percent value must be exact one character.", null, n);
+						info.PercentSymbol = n.Value;
+						break;
+					case "per-mille":
+						if (n.Value.Length != 1)
+							throw new XsltCompileException ("XSLT per-mille value must be exact one character.", null, n);
+						info.PerMilleSymbol = n.Value;
+						break;
+					case "digit":
+						if (n.Value.Length != 1)
+							throw new XsltCompileException ("XSLT digit value must be exact one character.", null, n);
+						digit = n.Value [0];
+						break;
+					case "zero-digit":
+						if (n.Value.Length != 1)
+							throw new XsltCompileException ("XSLT zero-digit value must be exact one character.", null, n);
+						zeroDigit = n.Value [0];
+						break;
+					case "pattern-separator":
+						if (n.Value.Length != 1)
+							throw new XsltCompileException ("XSLT pattern-separator value must be exact one character.", null, n);
+						patternSeparator = n.Value [0];
+						break;
 					}
 				} while (n.MoveToNextAttribute ());
 				n.MoveToParent ();
@@ -87,12 +102,18 @@ namespace Mono.Xml.Xsl {
 			}
 		}
 
-		// TODO: complete comparison for XSLT spec. 12.3.
 		public void CheckSameAs (XslDecimalFormat other)
 		{
 			if (this.digit != other.digit ||
 				this.patternSeparator != other.patternSeparator ||
-				this.zeroDigit != other.zeroDigit)
+				this.zeroDigit != other.zeroDigit ||
+				this.info.NumberDecimalSeparator != other.info.NumberDecimalSeparator ||
+				this.info.NumberGroupSeparator != other.info.NumberGroupSeparator ||
+				this.info.PositiveInfinitySymbol != other.info.PositiveInfinitySymbol ||
+				this.info.NegativeSign != other.info.NegativeSign ||
+				this.info.NaNSymbol != other.info.NaNSymbol ||
+				this.info.PercentSymbol != other.info.PercentSymbol ||
+				this.info.PerMilleSymbol != other.info.PerMilleSymbol)
 				throw new XsltCompileException (null, other.baseUri, other.lineNumber, other.linePosition);
 		}
 		

@@ -32,7 +32,7 @@ namespace Mono.Xml.Xsl {
 			
 		public XslTransformProcessor Processor { get { return p; }}
 			
-		public XsltCompiledContext (XslTransformProcessor p)
+		public XsltCompiledContext (XslTransformProcessor p) : base (new NameTable ())
 		{
 			this.p = p;
 		}
@@ -153,6 +153,7 @@ namespace Mono.Xml.Xsl {
 
 		public override bool PreserveWhitespace (XPathNavigator nav) 
 		{
+			/*
 			XPathNavigator tmp = nav.Clone ();
 			switch (tmp.NodeType) {
 			case XPathNodeType.Root:
@@ -166,8 +167,11 @@ namespace Mono.Xml.Xsl {
 
 			for (; tmp.NodeType == XPathNodeType.Element; tmp.MoveToParent ()) {
 				object o = p.CompiledStyle.Style.SpaceControls [new XmlQualifiedName (tmp.LocalName, tmp.NamespaceURI)];
+			*/
+				object o = p.CompiledStyle.Style.SpaceControls [new XmlQualifiedName (nav.LocalName, nav.NamespaceURI)];
 				if (o == null)
-					continue;
+//					continue;
+					return true;
 				XmlSpace space = (XmlSpace) o;
 				switch ((XmlSpace) o) {
 				case XmlSpace.Preserve:
@@ -176,11 +180,62 @@ namespace Mono.Xml.Xsl {
 					return false;
 				// None: continue.
 				}
+			return true; // temporary
+			/*
 			}
+			return true;
+			*/
+		}
+
+		public override bool Whitespace { get { return WhitespaceHandling; } }
+
+		// Below are mimicking XmlNamespaceManager ;-)
+		public bool IsCData {
+			get { return scopes [scopeAt].IsCData; }
+			set { scopes [scopeAt].IsCData = value; }
+		}
+		public bool WhitespaceHandling {
+			get { return scopes [scopeAt].PreserveWhitespace; }
+			set { scopes [scopeAt].PreserveWhitespace = value; }
+		}
+
+		struct XsltContextInfo
+		{
+			public bool IsCData;
+			public bool PreserveWhitespace;
+		}
+		
+		// TODO: set 40 or so. It is set to 2 only for test.
+		XsltContextInfo [] scopes = new XsltContextInfo [2];
+		int scopeAt = 0;
+		
+		// precondition scopeAt == scopes.Length
+		void ExtendScope ()
+		{
+			XsltContextInfo [] old = scopes;
+			scopes = new XsltContextInfo [scopeAt * 2 + 1];
+			if (scopeAt > 0)
+				Array.Copy (old, 0, scopes, 0, scopeAt);
+		}
+
+		public override bool PopScope ()
+		{
+			base.PopScope ();
+
+			if (scopeAt == -1)
+				return false;
+			scopeAt--;
 			return true;
 		}
 
-		public override bool Whitespace { get { throw new NotImplementedException (); }}
+		public override void PushScope ()
+		{
+			base.PushScope ();
+
+			scopeAt++;
+			if (scopeAt == scopes.Length)
+				ExtendScope ();
+		}
 	}
 
 

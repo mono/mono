@@ -243,8 +243,13 @@ namespace Mono.Xml.Xsl {
 				this.mode = c.ParseQNameAttribute ("mode");
 				
 				string pri = c.GetAttribute ("priority");
-				if (pri != null && pri != "")
-					this.priority = double.Parse (pri);
+				if (pri != null) {
+					try {
+						this.priority = double.Parse (pri);
+					} catch (FormatException ex) {
+						throw new XsltException ("Invalid priority number format.", ex, c.Input);
+					}
+				}
 				Parse (c);
 			}
 			
@@ -379,6 +384,8 @@ namespace Mono.Xml.Xsl {
 		
 		public override void Evaluate (XslTransformProcessor p, Hashtable withParams)
 		{
+			if (p.CurrentNode.NodeType == XPathNodeType.Whitespace && !p.PreserveWhitespace ())
+				return;
 			p.Out.WriteString (p.CurrentNode.Value);
 		}
 	}
