@@ -114,7 +114,7 @@ namespace Mono.CSharp {
 		/// </summary>
 		public void Error (int error, string s)
 		{
-			if (Location.IsNull (loc))
+			if (!Location.IsNull (loc))
 				Report.Error (error, loc, s);
 			else
 				Report.Error (error, s);
@@ -125,7 +125,7 @@ namespace Mono.CSharp {
 		/// </summary>
 		protected void Warning (int warning, string s)
 		{
-			if (Location.IsNull (loc))
+			if (!Location.IsNull (loc))
 				Report.Warning (warning, loc, s);
 			else
 				Report.Warning (warning, s);
