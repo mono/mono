@@ -1,3 +1,7 @@
+2002-07-05  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* XmlTextReader.cs: implemented .ctor (Stream).
+
 2002-06-26  Duncan Mak  <duncan@ximian.com>
 
 	* XmlNodeReader.cs: Implementation of most of the properties, and

@@ -49,7 +49,12 @@ namespace System.Xml
 		[MonoTODO]
 		public XmlTextReader (Stream input)
 		{
-			throw new NotImplementedException ();
+			// We can share some code in the constructors (at least for this one and next 2)
+			XmlNameTable nt = new NameTable ();
+			XmlNamespaceManager nsMgr = new XmlNamespaceManager (nt);
+			parserContext = new XmlParserContext (null, nsMgr, null, XmlSpace.None);
+			Init ();
+			reader = new StreamReader (input);
 		}
 
 		[MonoTODO]
