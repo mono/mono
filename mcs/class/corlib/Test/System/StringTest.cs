@@ -929,6 +929,14 @@ public class StringTest : TestCase
 		AssertEquals("basic trim failed", "original", s1.Trim());
 		AssertEquals("basic trim failed", "original", s1.Trim(null));
 
+		s1 = "original";
+		AssertEquals("basic trim failed", "original", s1.Trim());
+		AssertEquals("basic trim failed", "original", s1.Trim(null));
+
+		s1 = "   \t \n  ";
+		AssertEquals("empty trim failed", "", s1.Trim());
+		AssertEquals("empty trim failed", "", s1.Trim(null));
+
 		s1 = "aaaoriginalbbb";
 		char[] delims = {'a', 'b'};
 		AssertEquals("custom trim failed", 
@@ -939,6 +947,14 @@ public class StringTest : TestCase
 		string s1 = "  original\t\n";
 		AssertEquals("basic TrimEnd failed", 
 			     "  original", s1.TrimEnd(null));
+
+		s1 = "  original";
+		AssertEquals("basic TrimEnd failed", 
+			     "  original", s1.TrimEnd(null));
+
+		s1 = "  \t  \n  \n    ";
+		AssertEquals("empty TrimEnd failed", 
+			     "", s1.TrimEnd(null));
 
 		s1 = "aaaoriginalbbb";
 		char[] delims = {'a', 'b'};
@@ -951,12 +967,19 @@ public class StringTest : TestCase
 		AssertEquals("basic TrimStart failed", 
 			     "original\t\n", s1.TrimStart(null));
 
+		s1 = "original\t\n";
+		AssertEquals("basic TrimStart failed", 
+			     "original\t\n", s1.TrimStart(null));
+
+		s1 = "    \t \n \n  ";
+		AssertEquals("empty TrimStart failed", 
+			     "", s1.TrimStart(null));
+
 		s1 = "aaaoriginalbbb";
 		char[] delims = {'a', 'b'};
 		AssertEquals("custom TrimStart failed", 
 			     "originalbbb", s1.TrimStart(delims));
 	}
-
 
 }
 
