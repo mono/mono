@@ -1,3 +1,8 @@
+2004-10-27 Jordi Mas i Hernandez <jordi@ximian.com>
+
+	* gdipFunctions.cs: calls GdiplusShutdown to propery signal GDI+ 
+	termination
+
 2004-11-03  Miguel de Icaza  <miguel@ximian.com>
 
 	* TextureBrush.cs (Clone): While cloning, it is not enough to let

@@ -56,11 +56,18 @@ namespace System.Drawing
 		static internal extern void GdiplusShutdown(ref ulong token);
 		
 		static ulong GdiPlusToken;
+
+		static void ProcessExit (object sender, EventArgs e)
+		{			
+			GdiplusShutdown (ref GdiPlusToken);
+		}
+
 		static GDIPlus ()
 		{
 			GdiplusStartupInput input = GdiplusStartupInput.MakeGdiplusStartupInput();
 			GdiplusStartupOutput output = GdiplusStartupOutput.MakeGdiplusStartupOutput();
 			GdiplusStartup (ref GdiPlusToken, ref input, ref output);
+			AppDomain.CurrentDomain.ProcessExit += new EventHandler (ProcessExit);
 		}
 		
 		// Copies a Ptr to an array of Points and releases the memory
