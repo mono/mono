@@ -150,6 +150,7 @@ namespace demo
 
 		private void set_Text1_to_scrollbarvalues() {
 			this.text1.Text = String.Format ("{0}, {1}", this.vScrollBar1.Value, this.hScrollBar1.Value);
+			this.bar1.Value = this.hScrollBar1.Value;
 		}
 
 		private void vScrollBar1_ValueChanged (object sender, EventArgs e) { 
