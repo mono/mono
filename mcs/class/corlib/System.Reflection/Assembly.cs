@@ -231,6 +231,9 @@ namespace System.Reflection {
 
 			return InternalGetType (null, name, throwOnError, ignoreCase);
 		}
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		internal extern static void InternalGetAssemblyName (string assemblyFile, AssemblyName aname);
 		
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		static extern void FillName (Assembly ass, AssemblyName aname);

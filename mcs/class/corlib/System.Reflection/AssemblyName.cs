@@ -17,6 +17,7 @@ using System.Runtime.Serialization;
 using System.Security.Cryptography;
 using System.Text;
 using System.Runtime.InteropServices;
+using System.Runtime.CompilerServices;
 
 namespace System.Reflection {
 
@@ -222,8 +223,12 @@ namespace System.Reflection {
 
 		public static AssemblyName GetAssemblyName (string assemblyFile) 
 		{
-			Assembly a = Assembly.LoadFrom (assemblyFile);
-			return a.GetName ();
+			if (assemblyFile == null)
+				throw new ArgumentNullException ("assemblyFile");
+
+			AssemblyName aname = new AssemblyName ();
+			Assembly.InternalGetAssemblyName (assemblyFile, aname);
+			return aname;
 		}
 	}
 }
