@@ -20,7 +20,7 @@ namespace System.Web.UI.WebControls
 		GreaterThan,
 		GreaterThanEqual,
 		LessThan,
-		LessThenEqual,
+		LessThanEqual,
 		DataTypeCheck
 	}
 }

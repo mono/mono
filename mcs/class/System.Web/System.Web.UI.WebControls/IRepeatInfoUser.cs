@@ -23,5 +23,7 @@ namespace System.Web.UI.WebControls
 		bool HasHeader { get; }
 		bool HasSeparators { get; }
 		int  RepeatedItemCount { get; }
+		void RenderItem(ListItemType itemType, int repeatIndex, RepeatInfo repeatInfo, HtmlTextWriter writer);
+		Style GetItemStyle(ListItemType itemType, int repeatIndex);
 	}
 }

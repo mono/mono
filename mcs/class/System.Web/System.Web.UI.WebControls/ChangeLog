@@ -1,6 +1,10 @@
+2001-12-17	Gaurav Vaish <gvaish@iitk.ac.in>
+
+	BaseCompareValidator.cs     - Almost done. Only one method left.
+
 2001-12-15	Gaurav Vaish <gvaish@iitk.ac.in>
 
-	CommandEventArgs.cs        - Completed
+	CommandEventArgs.cs         - Completed
 	DataGridCommandEventArgs.cs - Completed
 	RepeaterCommandEventArgs.cs - Completed
 	DataListCommandEventArgs.cs - Completed

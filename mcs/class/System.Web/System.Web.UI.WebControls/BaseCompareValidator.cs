@@ -70,17 +70,21 @@ namespace System.Web.UI.WebControls
 		
 		protected override void AddAttributesToRender(HtmlTextWriter writer)
 		{
-			/*
-			ValidationDataType vdt;
-			NumberFormatInfo   nfi;
-			DateTime           dt;
-			*/
 			base.AddAttributesToRender(writer);
-			if(base.RenderUplevel)
+			if(RenderUplevel)
 			{
-				// TODO: The Lost World
+				//writer.AddAttribute("type", 
 			}
 			throw new NotImplementedException();
+		}
+		
+		protected override bool DetermineRenderUplevel()
+		{
+			if(Type == ValidationDataType.Date && DateTimeFormatInfo.CurrentInfo.Calendar.GetType() != typeof(GregorianCalendar))
+			{
+				return false;
+			}
+			return base.DetermineRenderUplevel();
 		}
 		
 		/// <summary>
@@ -101,14 +105,40 @@ namespace System.Web.UI.WebControls
 			{
 				return true;
 			}
-			int compareResult;
+			int compareResult = 0;
 			switch(type)
 			{
 				case ValidationDataType.String:
 					compareResult = ((String)left).CompareTo(right);
 					break;
+				case ValidationDataType.Integer:
+					compareResult = ((int)left).CompareTo(right);
+					break;
+				case ValidationDataType.Double:
+					compareResult = ((Double)left).CompareTo(right);
+					break;
+				case ValidationDataType.Date:
+					compareResult = ((DateTime)left).CompareTo(right);
+					break;
+				case ValidationDataType.Currency:
+					compareResult = ((Decimal)left).CompareTo(right);
+					break;
 			}
-			throw new NotImplementedException();
+			switch(op)
+			{
+				case ValidationCompareOperator.Equal:
+					return (compareResult == 0);
+				case ValidationCompareOperator.NotEqual:
+					return (compareResult != 0);
+				case ValidationCompareOperator.GreaterThan:
+					return (compareResult > 0);
+				case ValidationCompareOperator.GreaterThanEqual:
+					return (compareResult >= 0);
+				case ValidationCompareOperator.LessThan:
+					return (compareResult < 0);
+				case ValidationCompareOperator.LessThanEqual:
+					return (compareResult == 0);
+			}
 			return false;
 		}
 		

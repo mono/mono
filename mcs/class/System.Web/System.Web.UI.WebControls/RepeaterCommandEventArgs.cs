@@ -35,7 +35,7 @@ namespace System.Web.UI.WebControls
 			}
 		}
 		
-		public RepaterItem Item
+		public RepeaterItem Item
 		{
 			get
 			{
