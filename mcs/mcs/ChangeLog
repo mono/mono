@@ -1,5 +1,7 @@
 2003-11-29  Miguel de Icaza  <miguel@ximian.com>
 
+	* expression.cs: Removed redundant line.
+
 	* statement.cs (Block.Resolve, Block.Emit): Avoid foreach on
 	ArrayLists, use for loops with bounds.  
 

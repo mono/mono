@@ -4564,7 +4564,6 @@ namespace Mono.CSharp {
 
                         bool found_applicable = false;
 
-			MethodBase [] methods = me.Methods;
 			foreach (MethodBase candidate in me.Methods){
                                 Type decl_type = candidate.DeclaringType;
 
