@@ -1,4 +1,8 @@
 
+Fri Jun 27 11:19:10 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c, mini-ops.h, inssel.brg: optimized a couple of Array methods.
+
 Wed Jun 25 13:19:25 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
 	* mini.c, mini.h, mini.x86.c, mini-ppc.c: added facility so that
