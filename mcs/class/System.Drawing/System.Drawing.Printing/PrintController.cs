@@ -21,21 +21,22 @@ namespace System.Drawing.Printing
 			// TODO: Add constructor logic here
 			//
 		}
+
+		[MonoTODO]
+		public virtual void OnEndPage(PrintDocument document, PrintPageEventArgs e){
+			throw new NotImplementedException ();
+		}
+		[MonoTODO]
+		public virtual void OnStartPrint(PrintDocument document, PrintPageEventArgs e){
+			throw new NotImplementedException ();
+		}
+		[MonoTODO]
+		public virtual void OnEndPrint(PrintDocument document, PrintPageEventArgs e){
+			throw new NotImplementedException ();
+		}
 		//[MonoTODO]
-//		public override void OnEndPage(PrintDocument document, PrintPageEventArgs e){
-//			throw new NotImplementedException ();
-//		}
-//		//[MonoTODO]
-//		public override void OnStartPrint(PrintDocument document, PrintPageEventArgs e){
-//			throw new NotImplementedException ();
-//		}
-//		//[MonoTODO]
-//		public override void OnEndPrint(PrintDocument document, PrintPageEventArgs e){
-//			throw new NotImplementedException ();
-//		}
-		//[MonoTODO]
-//		public override Graphics OnStartPage(PrintDocument document, PrintPageEventArgs e){
-//			throw new NotImplementedException ();
-//		}
+		public virtual Graphics OnStartPage(PrintDocument document, PrintPageEventArgs e){
+			throw new NotImplementedException ();
+		}
 	}
 }
