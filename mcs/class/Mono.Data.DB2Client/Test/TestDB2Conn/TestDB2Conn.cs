@@ -21,8 +21,9 @@ namespace TestDB2Conn {
 	{
 		static void DoTest(string database, string userid, string password) 
 		{
+			IDbCommand command = null;
 			string connectionString = String.Format(
-				"Database={0};User ID={1};Password={2}",
+				"DSN={0};UID={1};PWD={2}",
 				database, userid, password);
 			try {
 				Console.WriteLine("Create DB2 client Connection...");
@@ -44,15 +45,14 @@ namespace TestDB2Conn {
 				Console.WriteLine("SQL:\n" + createTestTableSQL);
 				
 				Console.WriteLine("Create a command using sql and connection...");
-				IDbCommand command = new DB2ClientCommand(createTestTableSQL,DB2Conn);
+				command = new DB2ClientCommand(createTestTableSQL,DB2Conn);
 				Console.WriteLine("Execute Non Query...");
 				command.ExecuteNonQuery();
-/*				
+
 				string selectSQL = "select * from employee";
 				Console.WriteLine("SQL:\n" + selectSQL);
 				Console.WriteLine("create command and set connection and connection string...");
-				IDbCommand command = new DB2ClientCommand(selectSQL,DB2Conn);
-				command.CommandText = selectSQL;
+				command = new DB2ClientCommand(selectSQL,DB2Conn);
 				Console.WriteLine("ExecuteReader...");
 				IDataReader dr = command.ExecuteReader();
 				Console.WriteLine("Read row...");
@@ -66,7 +66,6 @@ namespace TestDB2Conn {
 				Console.WriteLine("s: " + s);
 				DateTime t = dr.GetDateTime(6);
 				Console.WriteLine("t: " + t);
-*/
 				
 				Console.WriteLine("Close connection...");
 				DB2Conn.Close();
