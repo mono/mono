@@ -1,3 +1,8 @@
+2004-02-05  Jackson Harper  <jackson@ximian.com>
+
+	* UriBuilder.cs: Do not call Uri::ToString for uri builders
+	ToString. UriBuilder's ToString is a little more primitive.
+	
 2004-01-12  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Uri.cs : should not escape already-escaped string (Patch by 

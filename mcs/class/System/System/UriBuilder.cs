@@ -240,7 +240,24 @@ namespace System
 		
 		public override string ToString ()
 		{
-			return this.Uri.ToString ();
+			StringBuilder builder = new StringBuilder ();
+
+			builder.Append (scheme);
+			builder.Append ("://");
+
+			if (username != String.Empty) {
+				builder.Append (username);
+				if (password != String.Empty)
+					builder.Append (":" + password);
+				builder.Append ('@');
+			}
+
+			builder.Append (host);
+			builder.Append (":" + port);
+			builder.Append (path);
+			builder.Append (query);
+
+			return builder.ToString ();
 		}
 	} 
 } 
