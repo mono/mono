@@ -1,3 +1,16 @@
+2002-01-01  Ravi Pratap  <ravi@ximian.com> 
+
+	* parameters.cs (AddVariable, AddConstant): Pass in current_local_parameters
+	so that we can check for name clashes there too.
+
+	* typemanager.cs (default_member_attr_type): The attribute that we need to emit
+	for interface indexers.
+
+	* interfaces.cs (Define): Emit the default member attribute.
+
+	* expression.cs (MakeByteBlob): Fix extremely trivial bug where the wrong
+	variable was being referred to while setting the value ;-)
+
 2002-01-01  Miguel de Icaza  <miguel@ximian.com>
 
 	* expression.cs (MakeByteBlob): Optimize: we do not need to fill
@@ -52,7 +65,7 @@
 	* attribute.cs (Resolve): Remember if the attribute is a MethodImplAttribute
 	so we can quickly store the state.
 
-	(ApplyAttributes): Set the current implementation flags
+	(ApplyAttributes): Set the correct implementation flags
 	for InternalCall methods.
 
 2001-12-29  Miguel de Icaza  <miguel@ximian.com>

@@ -747,7 +747,7 @@ namespace Mono.CSharp {
 			return null;
 		}
 		
-		public bool AddVariable (string type, string name, Location l)
+		public bool AddVariable (string type, string name, Parameters pars, Location l)
 		{
 			if (variables == null)
 				variables = new Hashtable ();
@@ -755,6 +755,13 @@ namespace Mono.CSharp {
 			if (GetVariableType (name) != null)
 				return false;
 
+			if (pars != null) {
+				int idx = 0;
+				Parameter p = pars.GetParameterByName (name, out idx);
+				if (p != null) 
+					return false;
+			}
+			
 			VariableInfo vi = new VariableInfo (type, l);
 
 			variables.Add (name, vi);
@@ -762,9 +769,9 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		public bool AddConstant (string type, string name, Expression value, Location l)
+		public bool AddConstant (string type, string name, Expression value, Parameters pars, Location l)
 		{
-			if (!AddVariable (type, name, l))
+			if (!AddVariable (type, name, pars, l))
 				return false;
 			
 			if (constants == null)

@@ -479,6 +479,7 @@ namespace Mono.CSharp {
 							i + 1,
 							p [i].Attributes, p [i].Name);
 				}
+				
 				set_item.DefineParameter (i + 1, ParameterAttributes.None, "value");
 			}
 		}
@@ -675,11 +676,38 @@ namespace Mono.CSharp {
 				foreach (InterfaceEvent ie in defined_events)
 					PopulateEvent (ie);
 
-			if (defined_indexer != null)
+			if (defined_indexer != null) {
 				foreach (InterfaceIndexer ii in defined_indexer)
 					PopulateIndexer (ii);
 
+				CustomAttributeBuilder cb = EmitDefaultMemberAttr (parent);
+				TypeBuilder.SetCustomAttribute (cb);
+			}
+			
 			return true;
+		}
+
+		CustomAttributeBuilder EmitDefaultMemberAttr (TypeContainer parent)
+		{
+			EmitContext ec = new EmitContext (parent, Location, null, null, ModFlags);
+
+			Expression ml = Expression.MemberLookup (ec, TypeManager.default_member_attr_type,
+								    ".ctor", false, MemberTypes.Constructor,
+								    BindingFlags.Public | BindingFlags.Instance,
+								    Location.Null);
+
+			if (!(ml is MethodGroupExpr))
+				Console.WriteLine ("Internal error !!!!");
+
+			MethodGroupExpr mg = (MethodGroupExpr) ml;
+
+			MethodBase constructor = mg.Methods [0];
+
+			string [] vals = { "Item" };
+
+			CustomAttributeBuilder cb = new CustomAttributeBuilder ((ConstructorInfo) constructor, vals);
+
+			return cb;
 		}
 
 	}

@@ -2846,38 +2846,39 @@ for_statement
 			ArrayList var_declarators = (ArrayList) de.Value;
 
 			foreach (VariableDeclaration decl in var_declarators){
-				if (!current_block.AddVariable (type, decl.identifier, decl.Location)){
+
+				if (!current_block.AddVariable (type, decl.identifier, current_local_parameters,
+								decl.Location)) {
 					Report.Error (128, decl.Location, 
-					"A local variable `" + decl.identifier + "' is already" +
-					"defined in this scope");
-				}
-			}
-			Location l = lexer.Location;
-
-			foreach (VariableDeclaration decl in var_declarators){
-
-				Expression expr;
-				if (decl.expression_or_array_initializer is Expression){
-					expr = (Expression) decl.expression_or_array_initializer;
-					
+						      "A local variable `" + decl.identifier + "' is already" +
+						      "defined in this scope");
 				} else {
 
-					ArrayList init = (ArrayList) decl.expression_or_array_initializer;
+					Location l = lexer.Location;
+					Expression expr;
+					if (decl.expression_or_array_initializer is Expression){
+						expr = (Expression) decl.expression_or_array_initializer;
+						
+					} else {
+						
+						ArrayList init = (ArrayList) decl.expression_or_array_initializer;
+						
+						string base_type = type.Substring (0, type.IndexOf ("["));
+						string rank = type.Substring (type.IndexOf ("["));
+						
+						expr = new ArrayCreation (base_type, rank, init, decl.Location);
+					}
 					
-					string base_type = type.Substring (0, type.IndexOf ("["));
-					string rank = type.Substring (type.IndexOf ("["));
+					LocalVariableReference var;
+					var = new LocalVariableReference (
+									  assign_block, decl.identifier, l);
 					
-					expr = new ArrayCreation (base_type, rank, init, decl.Location);
+					Assign a = new Assign (var, expr, decl.Location);
+					
+					assign_block.AddStatement (new StatementExpression (a));
 				}
-
-				LocalVariableReference var;
-				var = new LocalVariableReference (
-					assign_block, decl.identifier, l);
-
-				Assign a = new Assign (var, expr, decl.Location);
-				
-				assign_block.AddStatement (new StatementExpression (a));
 			}
+			
 			$3 = null;
 		} 
 	  } 
@@ -2947,7 +2948,11 @@ foreach_statement
 		LocalVariableReference v;
 		Location l = lexer.Location;
 
-		foreach_block.AddVariable ((string) $3, (string) $4, l);
+		if (!foreach_block.AddVariable ((string) $3, (string) $4, current_local_parameters, l))
+			Report.Error (128, l, 
+				      "A local variable `" + (string) $4 + "' is already" +
+				      "defined in this scope");
+		
 		v = new LocalVariableReference (foreach_block, (string) $4, l);
 
 		current_block.AddStatement (foreach_block);
@@ -3179,7 +3184,8 @@ using_statement
 			ArrayList var_declarators = (ArrayList) de.Value;
 
 			foreach (VariableDeclaration decl in var_declarators){
-				if (!current_block.AddVariable (type, decl.identifier, decl.Location)){
+				if (!current_block.AddVariable (type, decl.identifier, current_local_parameters,
+								decl.Location)){
 					Report.Error (128, decl.Location, 
 					"A local variable `" + decl.identifier + "' is already" +
 					"defined in this scope");
@@ -3452,7 +3458,8 @@ Block declare_local_variables (string type, ArrayList variable_declarators, Loca
 		implicit_block = current_block;
 
 	foreach (VariableDeclaration decl in variable_declarators){
-		if (implicit_block.AddVariable (type, decl.identifier, decl.Location)){
+
+		if (implicit_block.AddVariable (type, decl.identifier, current_local_parameters, decl.Location)) {
 			if (decl.expression_or_array_initializer != null){
 				if (inits == null)
 					inits = new ArrayList ();
@@ -3505,7 +3512,7 @@ Block declare_local_constant (string type, VariableDeclaration decl)
 		implicit_block = current_block;
 
 	if (!(implicit_block.AddConstant (type, decl.identifier, (Expression) decl.expression_or_array_initializer,
-					  decl.Location))){
+					  current_local_parameters, decl.Location))){
 		Report.Error (128, decl.Location, "A local variable `" + decl.identifier +
 			      "' is already defined in this scope");
 	}

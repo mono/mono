@@ -3043,6 +3043,7 @@ namespace Mono.CSharp {
 					continue;
 
 				candidates.Add (candidate);
+
 				x = BetterFunction (ec, Arguments, candidate, method, false, loc);
 				
 				if (x == 0)
@@ -3621,7 +3622,6 @@ namespace Mono.CSharp {
 
 			foreach (Expression e in exprs)
 				Arguments.Add (new Argument (e, Argument.AType.Expression));
-
 		}
 
 		public ArrayCreation (string requested_type, string rank, ArrayList initializers, Location l)
@@ -3800,6 +3800,10 @@ namespace Mono.CSharp {
 		{
 			int arg_count;
 
+			//
+			// First step is to validate the initializers and fill
+			// in any missing bits
+			//
 			if (!ValidateInitializers (ec))
 				return null;
 
@@ -3836,7 +3840,7 @@ namespace Mono.CSharp {
 			IsBuiltinType = TypeManager.IsBuiltinType (type);
 			
 			if (IsBuiltinType) {
-				
+
 				Expression ml;
 				
 				ml = MemberLookup (ec, type, ".ctor", false, MemberTypes.Constructor,
@@ -3854,7 +3858,7 @@ namespace Mono.CSharp {
 				}
 				
 				method = Invocation.OverloadResolve (ec, (MethodGroupExpr) ml, Arguments, loc);
-				
+
 				if (method == null) {
 					Report.Error (-6, loc, "New invocation: Can not find a constructor for " +
 						      "this argument list");
@@ -3865,6 +3869,7 @@ namespace Mono.CSharp {
 				return this;
 				
 			} else {
+
 				ModuleBuilder mb = RootContext.ModuleBuilder;
 
 				ArrayList args = new ArrayList ();
@@ -3886,7 +3891,7 @@ namespace Mono.CSharp {
 				
 				method = mb.GetArrayMethod (type, ".ctor", CallingConventions.HasThis, null,
 							    arg_types);
-				
+
 				if (method == null) {
 					Report.Error (-6, loc, "New invocation: Can not find a constructor for " +
 						      "this argument list");
@@ -3981,9 +3986,10 @@ namespace Mono.CSharp {
 					}
 #endif
 				} else if (underlying_type == TypeManager.char_type){
+
 					if (!(v is Expression)){
 						int val = (int) ((char) v);
-
+						
 						data [idx] = (byte) (val & 0xff);
 						data [idx+1] = (byte) (val >> 8);
 					}
@@ -4022,13 +4028,11 @@ namespace Mono.CSharp {
 				} else if (underlying_type == TypeManager.sbyte_type) {
 					if (!(v is Expression)){
 						sbyte val = (sbyte) v;
-					
 						data [idx] = (byte) val;
 					}
 				} else if (underlying_type == TypeManager.byte_type) {
 					if (!(v is Expression)){
 						byte val = (byte) v;
-					
 						data [idx] = (byte) val;
 					}
 				} else
@@ -4157,12 +4161,12 @@ namespace Mono.CSharp {
 			} else {
 				Invocation.EmitArguments (ec, null, Arguments);
 
-				if (IsBuiltinType)
+				if (IsBuiltinType) 
 					ig.Emit (OpCodes.Newobj, (ConstructorInfo) method);
-				else
+				else 
 					ig.Emit (OpCodes.Newobj, (MethodInfo) method);
 			}
-
+			
 			if (Initializers != null){
 				//
 				// FIXME: Set this variable correctly.
