@@ -239,6 +239,10 @@ namespace System.IO {
 		{
 			if (path == null)
 				throw new ArgumentNullException ();
+			
+			if (path.Length == 0)
+				throw new ArgumentException ("empty path");
+			
 			if (path.IndexOfAny (Path.InvalidPathChars) != -1)
 				throw new ArgumentException ("Invalid characters in path.");
 		}

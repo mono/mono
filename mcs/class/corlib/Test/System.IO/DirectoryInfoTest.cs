@@ -161,6 +161,13 @@ namespace MonoTests.System.IO
 			}
 				
 		}
+		
+		[Test]
+		[ExpectedException(typeof(ArgumentException))]
+		public void CreateSubdirectoryEmptyString ()
+		{
+			new DirectoryInfo (".").CreateSubdirectory ("");
+		}
 
 		[Test]
 		public void Delete1 ()

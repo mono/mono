@@ -1,3 +1,7 @@
+2004-12-04  Ben Maurer  <bmaurer@ximian.com>
+
+	* DirectoryInfoTest.cs: Check for CreateSubdirectory with empty string.
+
 2004-08-31  Nick Drochak <ndrochak@gol.com>
 
 	* StringWriterTest.cs: Eliminate ambiguity so csc can compile.

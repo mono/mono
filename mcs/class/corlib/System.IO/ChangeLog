@@ -1,3 +1,9 @@
+2004-12-04  Ben Maurer  <bmaurer@ximian.com>
+
+	* DirectoryInfo.cs (CreateSubDirectory): Check the input here.
+	
+	* FileSystemInfo.cs (CheckPath): Empty paths are invalid.
+
 2004-11-19  Dick Porter  <dick@ximian.com>
 
 	* MonoIOError.cs: 

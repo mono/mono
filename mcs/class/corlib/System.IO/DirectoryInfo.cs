@@ -100,6 +100,8 @@ namespace System.IO {
 		}
 
 		public DirectoryInfo CreateSubdirectory (string name) {
+			CheckPath (name);
+			
 			string path = Path.Combine (FullPath, name);
 			Directory.CreateDirectory (path);
 
