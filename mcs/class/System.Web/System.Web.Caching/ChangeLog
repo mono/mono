@@ -1,3 +1,7 @@
+2004-02-02  Jackson Harper <jackson@ximian.com>
+
+	* OutputCacheModule.cs: We can use file dependancies now.
+	
 2004-01-14  Jackson Harper <jackson@ximian.com>
 
 	* Cache.cs: Return null when items are expired but have not been

@@ -125,7 +125,7 @@ namespace System.Web.Caching {
 			
 			if (prev == null) {
 				CachedRawResponse c = context.Response.GetCachedResponse ();
-				string [] files = new string [0];
+				string [] files = new string [] { vary_key };
 				string [] keys = new string [] { vary_key };
 				bool sliding = context.Response.Cache.Sliding;
 
