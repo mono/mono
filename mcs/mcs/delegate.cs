@@ -335,7 +335,8 @@ namespace Mono.CSharp {
 			for (int i = pd_count; i > 0; ) {
 				i--;
 
-				if (invoke_pd.ParameterType (i) == pd.ParameterType (i))
+				if (invoke_pd.ParameterType (i) == pd.ParameterType (i) &&
+				    invoke_pd.ParameterModifier (i) == pd.ParameterModifier (i))
 					continue;
 				else
 					return null;
