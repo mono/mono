@@ -547,6 +547,10 @@ namespace System {
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal static extern Context InternalGetContext ();
 
+		// Returns the current context
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		internal static extern Context InternalGetDefaultContext ();
+
 		public static AppDomain CreateDomain (string friendlyName)
 		{
 			return CreateDomain (friendlyName, new Evidence (), new AppDomainSetup ());

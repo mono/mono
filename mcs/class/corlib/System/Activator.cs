@@ -12,6 +12,7 @@
 using System.Globalization;
 using System.Reflection;
 using System.Runtime.Remoting;
+using System.Runtime.Remoting.Activation;
 using System.Runtime.CompilerServices;
 using System.Security.Policy;
 
@@ -128,7 +129,6 @@ namespace System
 		[MonoTODO]
 		public static object CreateInstance (Type type, object [] args, object [] activationAttributes)
 		{
-			// activationAttributes?
 			if (type == null)
 				throw new ArgumentNullException ("type");
 
@@ -151,6 +151,11 @@ namespace System
 				throw new MissingMethodException ("Constructor not found");
 			}
 
+			if (activationAttributes != null && activationAttributes.Length > 0) {
+				object newOb = ActivationServices.CreateProxyFromAttributes (type, activationAttributes);
+				if (newOb != null)
+					return ctor.Invoke (newOb, args);
+			}
 
 			return ctor.Invoke (args);
 		}
@@ -178,7 +183,6 @@ namespace System
 			if (type.IsAbstract)
 				throw new MemberAccessException ("Cannot create an abstract class");
 
-			// activationAttributes?
 			int length = 0;
 			if (args != null)
 				length = args.Length;
@@ -195,6 +199,12 @@ namespace System
 				}
 
 				throw new MissingMethodException ("Constructor not found");
+			}
+
+			if (activationAttributes != null && activationAttributes.Length > 0) {
+				object newOb = ActivationServices.CreateProxyFromAttributes (type, activationAttributes);
+				if (newOb != null)
+					return ctor.Invoke (newOb, bindingAttr, binder, args, culture);
 			}
 
 			return ctor.Invoke (bindingAttr, binder, args, culture);

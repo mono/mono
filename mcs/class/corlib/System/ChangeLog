@@ -1,3 +1,8 @@
+2003-03-03  Lluis Sanchez Gual <lluis@ideary.com>
+
+	* Activator.cs: Added support for activation using activation attributes.
+	* AppDomain.cs: Added internal method to get the default context from the runtime.
+
 2003-02-28  Elan Feingold  <efeingold@mn.rr.com>
 
 	* DateTime.cs: FileTime is expressed in Universal time, and as such must
