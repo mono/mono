@@ -1,3 +1,9 @@
+
+Wed Apr 2 18:37:35 CEST 2003 Paolo Molaro <lupus@ximian.com>
+
+	* reflection.c: set table_idx in MonoReflectionArrayMethod object even 
+	if the array method was already assigned a token (fixes bug#40646).
+
 2003-04-02  Zoltan Varga  <vargaz@freemail.hu>
 
 	* reflection.c (mono_reflection_get_type): Attempt type resolve even
