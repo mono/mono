@@ -1,3 +1,7 @@
+2005-03-18  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile (DISTFILES): Don't distribute TestRunner.exe.
+
 2005-03-17  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile (test-local): Depend on TestRunner-$(PROFILE).cs.
