@@ -1,5 +1,9 @@
 2003-03-06 Jackson Harper <jackson@latitudegeo.com>
 
+	* ClassTable.cs: Add method to check for undefined types
+
+2003-03-06 Jackson Harper <jackson@latitudegeo.com>
+
 	* CodeGen.cs: Use class table for adding type definitions
 	* ClassTable.cs: Return ClassDef when defining types
 	

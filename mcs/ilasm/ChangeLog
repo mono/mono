@@ -1,5 +1,9 @@
 2003-03-06 Jackson Harper <jackson@latitudegeo.com>
 
+	* Driver.cs: Check that all types are defined before writing pe file
+	
+2003-03-06 Jackson Harper <jackson@latitudegeo.com>
+
 	* makefile, makefile.gnu: Include PEAPI.cs instead of linking to it, this fixes build but is not ideal.
 
 2003-03-06 Jackson Harper <jackson@latitudegeo.com>

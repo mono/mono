@@ -99,6 +99,20 @@ namespace Mono.ILASM {
 			return klass;
 		}
 
+		/// <summary>
+		///  When there is no code left to compile, check to make sure referenced types where defined
+		///  TODO: Proper error reporting
+		/// </summary>
+		public void CheckForUndefined ()
+		{
+			foreach (DictionaryEntry dic_entry in table) {
+				ClassTableItem table_item = (ClassTableItem) dic_entry.Value;
+				if (table_item.Defined)
+					continue;
+				throw new Exception (String.Format ("Type: {0} is not defined.", dic_entry.Key));
+			}
+		}
+
 		protected void AddDefined (string full_name, Class klass, Location location)
 		{
 			if (table.Contains (full_name))

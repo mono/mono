@@ -56,6 +56,7 @@ namespace Mono.ILASM {
 					ProcessFile (file_path);
 				if (scan_only)
 					return;
+				codegen.ClassTable.CheckForUndefined ();
 				codegen.PEFile.WritePEFile ();
 			}
 
