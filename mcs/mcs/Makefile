@@ -70,7 +70,7 @@ mcs.exe: $(all_sources)
 	$(BOOT_COMPILE) /target:exe /out:$@ $^
 
 cs-parser.cs: cs-parser.jay $(topdir)/jay/skeleton.cs
-	$(topdir)/jay/jay -ctv < $(topdir)/jay/skeleton.cs $< >$@
+	$(topdir)/jay/jay -ctv < $(topdir)/jay/skeleton.cs $< > jay-tmp.out && mv jay-tmp.out $@
 
 # Testing targets
 
