@@ -460,7 +460,7 @@ namespace System.Data {
 		        \*/
 
 			// FIXME: is this always true: "if we have tables we have to have schema also"
-			if (DataSet.Tables.Count > 0)				
+			if (Tables.Count > 0)				
 				return ReadXml (r, XmlReadMode.ReadSchema);
 
 			/*\
