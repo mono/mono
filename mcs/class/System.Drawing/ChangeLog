@@ -1,3 +1,8 @@
+2004-09-16  Ravindra <rkumar@novell.com>
+
+	* SD.csproj: Added a VS.NET project file. It can be used to build
+	System.Drawing library on MS.
+
 2004-09-09  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* System.Drawing_test.dll.sources: Added unit tests for 
