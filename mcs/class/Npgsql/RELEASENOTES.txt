@@ -1,0 +1,40 @@
+
+2002-06-10
+    Npgsql 0.2 development release.
+    
+    In this version we got many things working...
+    
+    - You can send insert, update, delete queries through NpgsqlCommand.ExecuteNonQuery() method.
+    - You can send queries like, select count(*) from table, select version() with 
+      NpgsqlCommand.ExecuteScalar() method.
+    - There is logging support. (Thanks Dave Page)
+      To use it, place code like that in your program:
+      
+      // Enable logging.
+	  NpgsqlEventLog.Level = LogLevel.Debug;            // LogLevel.
+	  NpgsqlEventLog.LogName = "NpgsqlTests.LogFile";   // LogFile.
+    
+    - You can use Npgsql with Mono (Thanks Kristis Makris). It is not working perfectly. :( 
+    - There is a winforms test suite (Thanks Dave Page).
+    - Clearer code in NpgsqlConnection removing *magic* numbers and constants. (Thanks Kristis Makris)
+    - Better support of ODBC-like ConnectionString in NpgsqlConnection (Thanks Dave Page)
+    - Thanks Ulrich Sprick for all discussion and ideas.
+    
+    And much more to come! 
+    Thanks all team !
+
+2002-05-18
+	
+	First Npgsql beta release.
+	In this version there is a limited functionality. It is only possible to
+connect and disconnect from server.
+	Only clear text authentication is supported right now.
+	To compile you can use the SharpDevelop to open the Combine file (Npgsql.cmbx) or
+type at command console: csc /t:library /out:Npgsql.dll NpgsqlConnection.cs AssemblyInfo.cs NpgsqlException.cs
+This will create the file Npgsql.dll that can be copied to the application directory.
+
+	I will be working in the Command functionality now.
+	
+	
+	Play with it and send your bugs and comments :)
+	(fxjr)

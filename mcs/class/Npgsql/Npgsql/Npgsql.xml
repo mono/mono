@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Npgsql</name>
+    </assembly>
+    <members>
+        <member name="T:Npgsql.NpgsqlConnection">
+            <summary>
+            	This class represents a connection to a
+            PostgreSQL server.
+            </summary>
+            
+        </member>
+        <member name="M:Npgsql.NpgsqlConnection.ProcessConnectionString(System.String)">
+            <summary>
+            	This method processes the connection string.
+            It translates it to a list of key-value pairs.
+            </summary>
+        </member>
+    </members>
+</doc>
