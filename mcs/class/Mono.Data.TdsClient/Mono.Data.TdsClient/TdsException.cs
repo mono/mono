@@ -4,40 +4,35 @@
 // Author:
 //   Tim Coleman (tim@timcoleman.com)
 //
-// Copyright (C) 2002 Tim Coleman
+// Copyright (C) Tim Coleman, 2002
 //
 
 using Mono.Data.Tds.Protocol;
 using System;
+using System.Data;
 using System.Runtime.Serialization;
+using System.Text;
 
 namespace Mono.Data.TdsClient {
-        public class TdsException : SystemException
+	[Serializable]
+	public sealed class TdsException : SystemException
 	{
 		#region Fields
 
-		byte theClass;
-		TdsErrorCollection errors;
-		int lineNumber;
-		string message;
-		int number;
-		string procedure;
-		string server;
-		string source;
-		byte state;
+		TdsErrorCollection errors; 
 
-		#endregion // Fields
+		#endregion Fields
 
 		#region Constructors
 
-		internal TdsException ()
-                       : base ("a TDS Exception has occurred.")
+		internal TdsException () 
+			: base ("a SQL Exception has occurred.") 
 		{
 			errors = new TdsErrorCollection();
 		}
 
-		internal TdsException (byte theClass, int lineNumber, string message, int number, string procedure, string server, string source, byte state)
-			: base (message)
+		internal TdsException (byte theClass, int lineNumber, string message, int number, string procedure, string server, string source, byte state) 
+			: base (message) 
 		{
 			errors = new TdsErrorCollection (theClass, lineNumber, message, number, procedure, server, source, state);
 		}
@@ -47,7 +42,7 @@ namespace Mono.Data.TdsClient {
 		#region Properties
 
 		public byte Class {
-			get { return theClass; }
+			get { return errors [0].Class; }
 		}
 
 		public TdsErrorCollection Errors {
@@ -55,31 +50,39 @@ namespace Mono.Data.TdsClient {
 		}
 
 		public int LineNumber {
-			get { return lineNumber; }
+			get { return errors [0].LineNumber; }
 		}
-
-		public override string Message {
-			get { return message; }
+		
+		public override string Message 	{
+			get {
+				StringBuilder result = new StringBuilder ();
+				foreach (TdsError error in Errors) {
+					if (result.Length > 0)
+						result.Append ('\n');
+					result.Append (error.Message);
+				}
+				return result.ToString ();
+			}                                                                
 		}
-
+		
 		public int Number {
-			get { return number; }
+			get { return errors [0].Number; }
 		}
-
+		
 		public string Procedure {
-			get { return procedure; }
+			get { return errors [0].Procedure; }
 		}
 
 		public string Server {
-			get { return server; }
+			get { return errors [0].Server; }
 		}
-
+		
 		public override string Source {
-			get { return source; }
+			get { return errors [0].Source; }
 		}
 
 		public byte State {
-			get { return state; }
+			get { return errors [0].State; }
 		}
 
 		#endregion // Properties
@@ -87,9 +90,14 @@ namespace Mono.Data.TdsClient {
 		#region Methods
 
 		[MonoTODO]
-		public override void GetObjectData (SerializationInfo si, StreamingContext context)
+		public override void GetObjectData (SerializationInfo si, StreamingContext context) 
 		{
 			throw new NotImplementedException ();
+		}
+
+		internal static TdsException FromTdsInternalException (TdsInternalException e)
+		{
+			return new TdsException (e.Class, e.LineNumber, e.Message, e.Number, e.Procedure, e.Server, "Mono TdsClient Data Provider", e.State);
 		}
 
 		#endregion // Methods

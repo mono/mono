@@ -4,24 +4,25 @@
 // Author:
 //   Tim Coleman (tim@timcoleman.com)
 //
-// Copyright (C) 2002 Tim Coleman
+// Copyright (C) Tim Coleman, 2002
 //
 
-using Mono.Data.Tds.Protocol;
 using System;
-using System.ComponentModel;
 using System.Data;
+using System.Data.Common;
 
 namespace Mono.Data.TdsClient {
-        public class TdsTransaction : Component, ICloneable, IDbTransaction
+	public sealed class TdsTransaction : MarshalByRefObject, IDbTransaction, IDisposable
 	{
 		#region Fields
+
+		bool disposed = false;
 
 		TdsConnection connection;
 		IsolationLevel isolationLevel;
 		bool isOpen;
 
-		#endregion // Fields
+		#endregion
 
 		#region Constructors
 
@@ -29,8 +30,6 @@ namespace Mono.Data.TdsClient {
 		{
 			this.connection = connection;
 			this.isolationLevel = isolevel;
-
-			connection.Tds.ExecuteNonQuery ("BEGIN TRAN");
 			isOpen = true;
 		}
 
@@ -38,54 +37,70 @@ namespace Mono.Data.TdsClient {
 
 		#region Properties
 
-		TdsConnection Connection {
+		public TdsConnection Connection {
 			get { return connection; }
 		}
 
-		IDbConnection IDbTransaction.Connection {
-			get { return Connection; }
-		}
-
-		IsolationLevel IDbTransaction.IsolationLevel {
-			get { return isolationLevel; }
-		}
-
-		public bool IsOpen {	
+		internal bool IsOpen {
 			get { return isOpen; }
 		}
 
-		#endregion // Properties
+		public IsolationLevel IsolationLevel {
+			get { return isolationLevel; }
+		}
+		
+		IDbConnection IDbTransaction.Connection	{
+			get { return Connection; }
+		}
 
-                #region Methods
+		#endregion // Properties
+               
+		#region Methods
 
 		public void Commit ()
 		{
 			if (!isOpen)
-				throw new InvalidOperationException ("This TdsTransaction has completed; it is no longer usable.");
-			connection.Tds.ExecuteNonQuery ("IF @@TRANCOUNT>0 COMMIT TRAN");
+				throw new InvalidOperationException ("The Transaction was not open.");
+			connection.Tds.Execute ("COMMIT TRANSACTION");
+			connection.Transaction = null;
 			isOpen = false;
+		}		
+
+		private void Dispose (bool disposing)
+		{
+			if (!disposed) {
+				if (disposing)
+					Rollback ();
+				disposed = true;
+			}
 		}
 
-                object ICloneable.Clone()
-                {
-                        throw new NotImplementedException ();
-                }
+		public void Dispose ()
+		{
+			Dispose (true);
+			GC.SuppressFinalize (this);
+		}
 
 		public void Rollback ()
 		{
+			Rollback (String.Empty);
+		}
+
+		public void Rollback (string transactionName)
+		{
 			if (!isOpen)
-				throw new InvalidOperationException ("This TdsTransaction has completed; it is no longer usable.");
-			connection.Tds.ExecuteNonQuery ("IF @@TRANCOUNT>0 ROLLBACK TRAN");
+				throw new InvalidOperationException ("The Transaction was not open.");
+			connection.Tds.Execute (String.Format ("ROLLBACK TRANSACTION {0}", transactionName));
 			isOpen = false;
 		}
 
 		public void Save (string savePointName)
 		{
 			if (!isOpen)
-				throw new InvalidOperationException ("This TdsTransaction has completed; it is no longer usable.");
-			connection.Tds.ExecuteNonQuery (String.Format ("SAVE TRAN {0}", savePointName));
+				throw new InvalidOperationException ("The Transaction was not open.");
+			connection.Tds.Execute (String.Format ("SAVE TRANSACTION {0}", savePointName));
 		}
 
-                #endregion // Methods
+		#endregion // Methods
 	}
 }

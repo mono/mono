@@ -1,3 +1,19 @@
+2002-11-26  Tim Coleman <tim@timcoleman.com>
+	* Mono.Data.TdsClient.build:
+	* makefile.gnu
+		Add System.EnterpriseServices to build.
+	* Mono.Data.TdsClient/TdsCommand.cs:
+	* Mono.Data.TdsClient/TdsConnection.cs:
+	* Mono.Data.TdsClient/TdsDataReader.cs:
+	* Mono.Data.TdsClient/TdsException.cs:
+	* Mono.Data.TdsClient/TdsParameter.cs:
+	* Mono.Data.TdsClient/TdsParameterCollection.cs:
+	* Mono.Data.TdsClient/TdsTransaction.cs:
+	* Mono.Data.TdsTypes/TdsDecimal.cs:
+		Copied over from the Sybase classes because the
+		whole world is changing and I want generic
+		TDS to keep up.
+
 2002-11-21  Tim Coleman <tim@timcoleman.com>
 	* Mono.Data.TdsClient.build:
 	* Mono.Data.TdsClient/TdsCommand.cs:

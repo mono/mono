@@ -2,11 +2,16 @@
 // Mono.Data.TdsClient.TdsDataReader.cs
 //
 // Author:
+//   Rodrigo Moya (rodrigo@ximian.com)
+//   Daniel Morgan (danmorg@sc.rr.com)
 //   Tim Coleman (tim@timcoleman.com)
 //
-// Copyright (C) 2002 Tim Coleman
+// (C) Ximian, Inc 2002
+// (C) Daniel Morgan 2002
+// Copyright (C) Tim Coleman, 2002
 //
 
+using Mono.Data.TdsTypes;
 using Mono.Data.Tds.Protocol;
 using System;
 using System.Collections;
@@ -15,22 +20,20 @@ using System.Data;
 using System.Data.Common;
 
 namespace Mono.Data.TdsClient {
-        public class TdsDataReader : MarshalByRefObject, IEnumerable, IDataReader, IDisposable, IDataRecord
+	public sealed class TdsDataReader : MarshalByRefObject, IEnumerable, IDataReader, IDisposable, IDataRecord
 	{
 		#region Fields
 
-		int fieldCount;
-		bool hasRows;
-		bool isClosed;
-		int recordsAffected;
-		bool moreResults;
-
-		ArrayList dataTypeNames;
-		ArrayList dataTypes;
-
 		TdsCommand command;
-
-		DataTable schemaTable = ConstructSchemaTable ();
+		ArrayList dataTypeNames;
+		bool disposed = false;
+		int fieldCount;
+		bool isClosed;
+		bool isSelect;
+		bool moreResults;
+		int resultsRead;
+		int rowsRead;
+		DataTable schemaTable;
 
 		#endregion // Fields
 
@@ -39,8 +42,12 @@ namespace Mono.Data.TdsClient {
 		internal TdsDataReader (TdsCommand command)
 		{
 			this.command = command;
-			this.fieldCount = 0;
-			this.isClosed = false;
+			schemaTable = ConstructSchemaTable ();
+			resultsRead = 0;
+			fieldCount = 0;
+			isClosed = false;
+			isSelect = (command.CommandText.Trim ().ToUpper ().StartsWith ("SELECT"));
+			command.Tds.RecordsAffected = 0;
 			NextResult ();
 		}
 
@@ -56,10 +63,6 @@ namespace Mono.Data.TdsClient {
 			get { return fieldCount; }
 		}
 
-		public bool HasRows {
-			get { return hasRows; }
-		}
-
 		public bool IsClosed {
 			get { return isClosed; }
 		}
@@ -73,19 +76,22 @@ namespace Mono.Data.TdsClient {
 		}
 	
 		public int RecordsAffected {
-			get { return recordsAffected; }
+			get { 
+				if (isSelect) 
+					return -1;
+				else
+					return command.Tds.RecordsAffected; 
+			}
 		}
 
 		#endregion // Properties
 
-                #region Methods
+		#region Methods
 
-		[MonoTODO]
 		public void Close ()
 		{
 			isClosed = true;
-
-			throw new NotImplementedException (); 
+			command.CloseDataReader (moreResults);
 		}
 
 		private static DataTable ConstructSchemaTable ()
@@ -94,13 +100,14 @@ namespace Mono.Data.TdsClient {
 			Type stringType = Type.GetType ("System.String");
 			Type intType = Type.GetType ("System.Int32");
 			Type typeType = Type.GetType ("System.Type");
+			Type shortType = Type.GetType ("System.Int16");
 
 			DataTable schemaTable = new DataTable ("SchemaTable");
 			schemaTable.Columns.Add ("ColumnName", stringType);
 			schemaTable.Columns.Add ("ColumnOrdinal", intType);
 			schemaTable.Columns.Add ("ColumnSize", intType);
-			schemaTable.Columns.Add ("NumericPrecision", intType);
-			schemaTable.Columns.Add ("NumericScale", intType);
+			schemaTable.Columns.Add ("NumericPrecision", shortType);
+			schemaTable.Columns.Add ("NumericScale", shortType);
 			schemaTable.Columns.Add ("IsUnique", booleanType);
 			schemaTable.Columns.Add ("IsKey", booleanType);
 			schemaTable.Columns.Add ("BaseServerName", stringType);
@@ -110,7 +117,7 @@ namespace Mono.Data.TdsClient {
 			schemaTable.Columns.Add ("BaseTableName", stringType);
 			schemaTable.Columns.Add ("DataType", typeType);
 			schemaTable.Columns.Add ("AllowDBNull", booleanType);
-			schemaTable.Columns.Add ("ProviderType", booleanType);
+			schemaTable.Columns.Add ("ProviderType", intType);
 			schemaTable.Columns.Add ("IsAliased", booleanType);
 			schemaTable.Columns.Add ("IsExpression", booleanType);
 			schemaTable.Columns.Add ("IsIdentity", booleanType);
@@ -123,46 +130,68 @@ namespace Mono.Data.TdsClient {
 			return schemaTable;
 		}
 
-		[MonoTODO]
+		private void Dispose (bool disposing) 
+		{
+			if (!disposed) {
+				if (disposing) {
+					schemaTable.Dispose ();
+					Close ();
+				}
+				disposed = true;
+			}
+		}
+
 		public bool GetBoolean (int i)
 		{
-			throw new NotImplementedException (); 
+			object value = GetValue (i);
+			if (!(value is bool))
+				throw new InvalidCastException ();
+			return (bool) value;
 		}
 
-		[MonoTODO]
 		public byte GetByte (int i)
 		{
-			throw new NotImplementedException (); 
+			object value = GetValue (i);
+			if (!(value is byte))
+				throw new InvalidCastException ();
+			return (byte) value;
 		}
 
-		[MonoTODO]
 		public long GetBytes (int i, long dataIndex, byte[] buffer, int bufferIndex, int length)
 		{
-			throw new NotImplementedException (); 
+			object value = GetValue (i);
+			if (!(value is byte []))
+				throw new InvalidCastException ();
+			Array.Copy ((byte []) value, (int) dataIndex, buffer, bufferIndex, length);
+			return ((byte []) value).Length - dataIndex;
 		}
 
-		[MonoTODO]
 		public char GetChar (int i)
 		{
-			throw new NotImplementedException (); 
+			object value = GetValue (i);
+			if (!(value is char))
+				throw new InvalidCastException ();
+			return (char) value;
 		}
 
-		[MonoTODO]
 		public long GetChars (int i, long dataIndex, char[] buffer, int bufferIndex, int length)
 		{
-			throw new NotImplementedException (); 
+			object value = GetValue (i);
+			if (!(value is char[]))
+				throw new InvalidCastException ();
+			Array.Copy ((char []) value, (int) dataIndex, buffer, bufferIndex, length);
+			return ((char []) value).Length - dataIndex;
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Implement GetData")]
 		public IDataReader GetData (int i)
 		{
-			throw new NotImplementedException (); 
+			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public string GetDataTypeName (int i)
 		{
-			throw new NotImplementedException (); 
+			return (string) dataTypeNames [i];
 		}
 
 		public DateTime GetDateTime (int i)
@@ -191,7 +220,7 @@ namespace Mono.Data.TdsClient {
 
 		public Type GetFieldType (int i)
 		{
-			return GetValue (i).GetType ();
+			return (Type) schemaTable.Rows[i]["DataType"];
 		}
 
 		public float GetFloat (int i)
@@ -202,10 +231,12 @@ namespace Mono.Data.TdsClient {
 			return (float) value;
 		}
 
-		[MonoTODO]
 		public Guid GetGuid (int i)
 		{
-			throw new NotImplementedException (); 
+			object value = GetValue (i);
+			if (!(value is Guid))
+				throw new InvalidCastException ();
+			return (Guid) value;
 		}
 
 		public short GetInt16 (int i)
@@ -237,13 +268,12 @@ namespace Mono.Data.TdsClient {
 			return (string) schemaTable.Rows[i]["ColumnName"];
 		}
 
-		[MonoTODO]
 		public int GetOrdinal (string name)
 		{
-			foreach (DataRow schemaRow in schemaTable.Rows) 
+			foreach (DataRow schemaRow in schemaTable.Rows)
 				if (((string) schemaRow ["ColumnName"]).Equals (name))
 					return (int) schemaRow ["ColumnOrdinal"];
-			foreach (DataRow schemaRow in schemaTable.Rows) 
+			foreach (DataRow schemaRow in schemaTable.Rows)
 				if (String.Compare (((string) schemaRow ["ColumnName"]), name, true) == 0)
 					return (int) schemaRow ["ColumnOrdinal"];
 			throw new IndexOutOfRangeException ();
@@ -260,13 +290,12 @@ namespace Mono.Data.TdsClient {
 			fieldCount = 0;
 
 			dataTypeNames = new ArrayList ();
-			dataTypes = new ArrayList ();
 
 			foreach (TdsSchemaInfo schema in command.Tds.Schema) {
 				DataRow row = schemaTable.NewRow ();
 
 				row ["ColumnName"]		= GetSchemaValue (schema, "ColumnName");
-				row ["ColumnSize"]		= GetSchemaValue (schema, "ColumnSize");
+				row ["ColumnSize"]		= GetSchemaValue (schema, "ColumnSize"); 
 				row ["ColumnOrdinal"]		= GetSchemaValue (schema, "ColumnOrdinal");
 				row ["NumericPrecision"]	= GetSchemaValue (schema, "NumericPrecision");
 				row ["NumericScale"]		= GetSchemaValue (schema, "NumericScale");
@@ -286,145 +315,148 @@ namespace Mono.Data.TdsClient {
 				row ["IsHidden"]		= GetSchemaValue (schema, "IsHidden");
 				row ["IsReadOnly"]		= GetSchemaValue (schema, "IsReadOnly");
 
+				// We don't always get the base column name.
+				if (row ["BaseColumnName"] == DBNull.Value)
+					row ["BaseColumnName"] = row ["ColumnName"];
+
 				switch ((TdsColumnType) schema ["ColumnType"]) {
-				case TdsColumnType.Image :
-					dataTypeNames.Add ("image");
-					row ["ProviderType"] = (int) TdsType.Image;
-					row ["DataType"] = typeof (byte[]);
-					row ["IsLong"] = true;
-					break;
-				case TdsColumnType.Text :
-					dataTypes.Add (typeof (string));
-					dataTypeNames.Add ("text");
-					row ["ProviderType"] = (int) TdsType.Text;
-					row ["DataType"] = typeof (string);
-					row ["IsLong"] = true;
-					break;
-				case TdsColumnType.UniqueIdentifier :
-					dataTypeNames.Add ("uniqueidentifier");
-					row ["ProviderType"] = (int) TdsType.UniqueIdentifier;
-					row ["DataType"] = typeof (Guid);
-					row ["IsLong"] = false;
-					break;
-				case TdsColumnType.VarBinary :
-				case TdsColumnType.BigVarBinary :
-					dataTypeNames.Add ("varbinary");
-					row ["ProviderType"] = (int) TdsType.VarBinary;
-					row ["DataType"] = typeof (byte[]);
-					row ["IsLong"] = true;
-					break;
-				case TdsColumnType.IntN :
-				case TdsColumnType.Int4 :
-					dataTypeNames.Add ("int");
-					row ["ProviderType"] = (int) TdsType.Int;
-					row ["DataType"] = typeof (int);
-					row ["IsLong"] = false;
-					break;
-				case TdsColumnType.VarChar :
-				case TdsColumnType.BigVarChar :
-					dataTypeNames.Add ("varchar");
-					row ["ProviderType"] = (int) TdsType.VarChar;
-					row ["DataType"] = typeof (string);
-					row ["IsLong"] = false;
-					break;
-				case TdsColumnType.Binary :
-				case TdsColumnType.BigBinary :
-					dataTypeNames.Add ("binary");
-					row ["ProviderType"] = (int) TdsType.Binary;
-					row ["DataType"] = typeof (byte[]);
-					row ["IsLong"] = true;
-					break;
-				case TdsColumnType.Char :
-				case TdsColumnType.BigChar :
-					dataTypeNames.Add ("char");
-					row ["ProviderType"] = (int) TdsType.Char;
-					row ["DataType"] = typeof (string);
-					row ["IsLong"] = false;
-					break;
-				case TdsColumnType.Int1 :
-					dataTypeNames.Add ("tinyint");
-					row ["ProviderType"] = (int) TdsType.TinyInt;
-					row ["DataType"] = typeof (byte);
-					row ["IsLong"] = false;
-					break;
-				case TdsColumnType.Bit :
-				case TdsColumnType.BitN :
-					dataTypeNames.Add ("bit");
-					row ["ProviderType"] = (int) TdsType.Bit;
-					row ["DataType"] = typeof (bool);
-					row ["IsLong"] = false;
-					break;
-				case TdsColumnType.Int2 :
-					dataTypeNames.Add ("smallint");
-					row ["ProviderType"] = (int) TdsType.SmallInt;
-					row ["DataType"] = typeof (short);
-					row ["IsLong"] = false;
-					break;
-				case TdsColumnType.DateTime4 :
-				case TdsColumnType.DateTime :
-				case TdsColumnType.DateTimeN :
-					dataTypeNames.Add ("datetime");
-					row ["ProviderType"] = (int) TdsType.DateTime;
-					row ["DataType"] = typeof (DateTime);
-					row ["IsLong"] = false;
-					break;
-				case TdsColumnType.Real :
-					dataTypeNames.Add ("real");
-					row ["ProviderType"] = (int) TdsType.Real;
-					row ["DataType"] = typeof (float);
-					break;
-				case TdsColumnType.Money :
-				case TdsColumnType.MoneyN :
-				case TdsColumnType.Money4 :
-					dataTypeNames.Add ("money");
-					row ["ProviderType"] = (int) TdsType.Money;
-					row ["DataType"] = typeof (decimal);
-					row ["IsLong"] = false;
-					break;
-				case TdsColumnType.Float8 :
-				case TdsColumnType.FloatN :
-					dataTypeNames.Add ("float");
-					row ["ProviderType"] = (int) TdsType.Float;
-					row ["DataType"] = typeof (double);
-					row ["IsLong"] = false;
-					break;
-				case TdsColumnType.NText :
-					dataTypeNames.Add ("ntext");
-					row ["ProviderType"] = (int) TdsType.NText;
-					row ["DataType"] = typeof (string);
-					row ["IsLong"] = true;
-					break;
-				case TdsColumnType.NVarChar :
-					dataTypeNames.Add ("nvarchar");
-					row ["ProviderType"] = (int) TdsType.NVarChar;
-					row ["DataType"] = typeof (string);
-					row ["IsLong"] = false;
-					break;
-				case TdsColumnType.Decimal :
-				case TdsColumnType.Numeric :
-					dataTypeNames.Add ("decimal");
-					row ["ProviderType"] = (int) TdsType.Decimal;
-					row ["DataType"] = typeof (decimal);
-					row ["IsLong"] = false;
-					break;
-				case TdsColumnType.NChar :
-					dataTypeNames.Add ("nchar");
-					row ["ProviderType"] = (int) TdsType.Char;
-					row ["DataType"] = typeof (string);
-					row ["IsLong"] = false;
-					break;
-				case TdsColumnType.SmallMoney :
-					dataTypeNames.Add ("smallmoney");
-					row ["ProviderType"] = (int) TdsType.SmallMoney;
-					row ["DataType"] = typeof (decimal);
-					row ["IsLong"] = false;
-					break;
-				default :
-					dataTypeNames.Add ("variant");
-					row ["ProviderType"] = (int) TdsType.Variant;
-					row ["DataType"] = typeof (object);
-					row ["IsLong"] = false;
-					break;
+					case TdsColumnType.Image :
+						dataTypeNames.Add ("image");
+						row ["ProviderType"] = (int) TdsType.Image;
+						row ["DataType"] = typeof (byte[]);
+						row ["IsLong"] = true;
+						break;
+					case TdsColumnType.Text :
+						dataTypeNames.Add ("text");
+						row ["ProviderType"] = (int) TdsType.Text;
+						row ["DataType"] = typeof (string);
+						row ["IsLong"] = true;
+						break;
+					case TdsColumnType.UniqueIdentifier :
+						dataTypeNames.Add ("uniqueidentifier");
+						row ["ProviderType"] = (int) TdsType.UniqueIdentifier;
+						row ["DataType"] = typeof (Guid);
+						row ["IsLong"] = false;
+						break;
+					case TdsColumnType.VarBinary :
+					case TdsColumnType.BigVarBinary :
+						dataTypeNames.Add ("varbinary");
+						row ["ProviderType"] = (int) TdsType.VarBinary;
+						row ["DataType"] = typeof (byte[]);
+						row ["IsLong"] = true;
+						break;
+					case TdsColumnType.IntN :
+					case TdsColumnType.Int4 :
+						dataTypeNames.Add ("int");
+						row ["ProviderType"] = (int) TdsType.Int;
+						row ["DataType"] = typeof (int);
+						row ["IsLong"] = false;
+						break;
+					case TdsColumnType.VarChar :
+					case TdsColumnType.BigVarChar :
+						dataTypeNames.Add ("varchar");
+						row ["ProviderType"] = (int) TdsType.VarChar;
+						row ["DataType"] = typeof (string);
+						row ["IsLong"] = false;
+						break;
+					case TdsColumnType.Binary :
+					case TdsColumnType.BigBinary :
+						dataTypeNames.Add ("binary");
+						row ["ProviderType"] = (int) TdsType.Binary;
+						row ["DataType"] = typeof (byte[]);
+						row ["IsLong"] = true;
+						break;
+					case TdsColumnType.Char :
+					case TdsColumnType.BigChar :
+						dataTypeNames.Add ("char");
+						row ["ProviderType"] = (int) TdsType.Char;
+						row ["DataType"] = typeof (string);
+						row ["IsLong"] = false;
+						break;
+					case TdsColumnType.Int1 :
+						dataTypeNames.Add ("tinyint");
+						row ["ProviderType"] = (int) TdsType.TinyInt;
+						row ["DataType"] = typeof (byte);
+						row ["IsLong"] = false;
+						break;
+					case TdsColumnType.Bit :
+					case TdsColumnType.BitN :
+						dataTypeNames.Add ("bit");
+						row ["ProviderType"] = (int) TdsType.Bit;
+						row ["DataType"] = typeof (bool);
+						row ["IsLong"] = false;
+						break;
+					case TdsColumnType.Int2 :
+						dataTypeNames.Add ("smallint");
+						row ["ProviderType"] = (int) TdsType.SmallInt;
+						row ["DataType"] = typeof (short);
+						row ["IsLong"] = false;
+						break;
+					case TdsColumnType.DateTime4 :
+					case TdsColumnType.DateTime :
+					case TdsColumnType.DateTimeN :
+						dataTypeNames.Add ("datetime");
+						row ["ProviderType"] = (int) TdsType.DateTime;
+						row ["DataType"] = typeof (DateTime);
+						row ["IsLong"] = false;
+						break;
+					case TdsColumnType.Real :
+						dataTypeNames.Add ("real");
+						row ["ProviderType"] = (int) TdsType.Real;
+						row ["DataType"] = typeof (float);
+						break;
+					case TdsColumnType.Money :
+					case TdsColumnType.MoneyN :
+					case TdsColumnType.Money4 :
+						dataTypeNames.Add ("money");
+						row ["ProviderType"] = (int) TdsType.Money;
+						row ["DataType"] = typeof (decimal);
+						row ["IsLong"] = false;
+						break;
+					case TdsColumnType.Float8 :
+					case TdsColumnType.FloatN :
+						dataTypeNames.Add ("float");
+						row ["ProviderType"] = (int) TdsType.Float;
+						row ["DataType"] = typeof (double);
+						row ["IsLong"] = false;
+						break;
+					case TdsColumnType.NText :
+						dataTypeNames.Add ("ntext");
+						row ["ProviderType"] = (int) TdsType.NText;
+						row ["DataType"] = typeof (string);
+						row ["IsLong"] = true;
+						break;
+					case TdsColumnType.NVarChar :
+						dataTypeNames.Add ("nvarchar");
+						row ["ProviderType"] = (int) TdsType.NVarChar;
+						row ["DataType"] = typeof (string);
+						row ["IsLong"] = false;
+						break;
+					case TdsColumnType.Decimal :
+					case TdsColumnType.Numeric :
+						dataTypeNames.Add ("decimal");
+						row ["ProviderType"] = (int) TdsType.Decimal;
+						row ["DataType"] = typeof (decimal);
+						row ["IsLong"] = false;
+						break;
+					case TdsColumnType.NChar :
+						dataTypeNames.Add ("nchar");
+						row ["ProviderType"] = (int) TdsType.NChar;
+						row ["DataType"] = typeof (string);
+						row ["IsLong"] = false;
+						break;
+					case TdsColumnType.SmallMoney :
+						dataTypeNames.Add ("smallmoney");
+						row ["ProviderType"] = (int) TdsType.SmallMoney;
+						row ["DataType"] = typeof (decimal);
+						row ["IsLong"] = false;
+						break;
+					default :
+						dataTypeNames.Add ("variant");
+						row ["ProviderType"] = (int) TdsType.Variant;
+						row ["DataType"] = typeof (object);
+						row ["IsLong"] = false;
+						break;
 				}
 
 				schemaTable.Rows.Add (row);
@@ -432,13 +464,207 @@ namespace Mono.Data.TdsClient {
 				fieldCount += 1;
 			}
 			return schemaTable;
-		}
+		}		
 
 		private static object GetSchemaValue (TdsSchemaInfo schema, object key)
 		{
 			if (schema.ContainsKey (key) && schema [key] != null)
 				return schema [key];
 			return DBNull.Value;
+		}
+
+		public TdsBinary GetTdsBinary (int i)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public TdsBoolean GetTdsBoolean (int i) 
+		{
+			object value = GetTdsValue (i);
+			if (!(value is TdsBoolean))
+				throw new InvalidCastException ();
+			return (TdsBoolean) value;
+		}
+
+		public TdsByte GetTdsByte (int i)
+		{
+			object value = GetTdsValue (i);
+			if (!(value is TdsByte))
+				throw new InvalidCastException ();
+			return (TdsByte) value;
+		}
+
+		public TdsDateTime GetTdsDateTime (int i)
+		{
+			object value = GetTdsValue (i);
+			if (!(value is TdsDateTime))
+				throw new InvalidCastException ();
+			return (TdsDateTime) value;
+		}
+
+		public TdsDecimal GetTdsDecimal (int i)
+		{
+			object value = GetTdsValue (i);
+			if (!(value is TdsDecimal))
+				throw new InvalidCastException ();
+			return (TdsDecimal) value;
+		}
+
+		public TdsDouble GetTdsDouble (int i)
+		{
+			object value = GetTdsValue (i);
+			if (!(value is TdsDouble))
+				throw new InvalidCastException ();
+			return (TdsDouble) value;
+		}
+
+		public TdsGuid GetTdsGuid (int i)
+		{
+			object value = GetTdsValue (i);
+			if (!(value is TdsGuid))
+				throw new InvalidCastException ();
+			return (TdsGuid) value;
+		}
+
+		public TdsInt16 GetTdsInt16 (int i)
+		{
+			object value = GetTdsValue (i);
+			if (!(value is TdsInt16))
+				throw new InvalidCastException ();
+			return (TdsInt16) value;
+		}
+
+		public TdsInt32 GetTdsInt32 (int i)
+		{
+			object value = GetTdsValue (i);
+			if (!(value is TdsInt32))
+				throw new InvalidCastException ();
+			return (TdsInt32) value;
+		}
+
+		public TdsInt64 GetTdsInt64 (int i)
+		{
+			object value = GetTdsValue (i);
+			if (!(value is TdsInt64))
+				throw new InvalidCastException ();
+			return (TdsInt64) value;
+		}
+
+		public TdsMoney GetTdsMoney (int i)
+		{
+			object value = GetTdsValue (i);
+			if (!(value is TdsMoney))
+				throw new InvalidCastException ();
+			return (TdsMoney) value;
+		}
+
+		public TdsSingle GetTdsSingle (int i)
+		{
+			object value = GetTdsValue (i);
+			if (!(value is TdsSingle))
+				throw new InvalidCastException ();
+			return (TdsSingle) value;
+		}
+
+		public TdsString GetTdsString (int i)
+		{
+			object value = GetTdsValue (i);
+			if (!(value is TdsString))
+				throw new InvalidCastException ();
+			return (TdsString) value;
+		}
+
+		[MonoTODO ("Implement TdsBigDecimal conversion.  TdsType.Real fails tests?")]
+		public object GetTdsValue (int i)
+		{
+			TdsType type = (TdsType) (schemaTable.Rows [i]["ProviderType"]);
+			object value = GetValue (i);
+
+			switch (type) {
+			case TdsType.BigInt:
+				if (value == null)
+					return TdsInt64.Null;
+				return (TdsInt64) ((long) value);
+			case TdsType.Binary:
+			case TdsType.Image:
+			case TdsType.VarBinary:
+			case TdsType.Timestamp:
+				if (value == null)
+					return TdsBinary.Null;
+				return (TdsBinary) ((byte[]) value);
+			case TdsType.Bit:
+				if (value == null)
+					return TdsBoolean.Null;
+				return (TdsBoolean) ((bool) value);
+			case TdsType.Char:
+			case TdsType.NChar:
+			case TdsType.NText:
+			case TdsType.NVarChar:
+			case TdsType.Text:
+			case TdsType.VarChar:
+				if (value == null)
+					return TdsString.Null;
+				return (TdsString) ((string) value);
+			case TdsType.DateTime:
+			case TdsType.SmallDateTime:
+				if (value == null)
+					return TdsDateTime.Null;
+				return (TdsDateTime) ((DateTime) value);
+			case TdsType.Decimal:
+				if (value == null)
+					return TdsDecimal.Null;
+				if (value is TdsBigDecimal)
+					return TdsDecimal.FromTdsBigDecimal ((TdsBigDecimal) value);
+				return (TdsDecimal) ((decimal) value);
+			case TdsType.Float:
+				if (value == null)
+					return TdsDouble.Null;
+				return (TdsDouble) ((double) value);
+			case TdsType.Int:
+				if (value == null)
+					return TdsInt32.Null;
+				return (TdsInt32) ((int) value);
+			case TdsType.Money:
+			case TdsType.SmallMoney:
+				if (value == null)
+					return TdsMoney.Null;
+				return (TdsMoney) ((decimal) value);
+			case TdsType.Real:
+				if (value == null)
+					return TdsSingle.Null;
+				return (TdsSingle) ((float) value);
+			case TdsType.UniqueIdentifier:
+				if (value == null)
+					return TdsGuid.Null;
+				return (TdsGuid) ((Guid) value);
+			case TdsType.SmallInt:
+				if (value == null)
+					return TdsInt16.Null;
+				return (TdsInt16) ((short) value);
+			case TdsType.TinyInt:
+				if (value == null)
+					return TdsByte.Null;
+				return (TdsByte) ((byte) value);
+			}
+
+			throw new InvalidOperationException ("The type of this column is unknown.");
+		}
+
+		public int GetTdsValues (object[] values)
+		{
+			int count = 0;
+			int columnCount = schemaTable.Rows.Count;
+			int arrayCount = values.Length;
+
+			if (arrayCount > columnCount)
+				count = columnCount;
+			else
+				count = arrayCount;
+
+			for (int i = 0; i < count; i += 1) 
+				values [i] = GetTdsValue (i);
+
+			return count;
 		}
 
 		public string GetString (int i)
@@ -451,45 +677,72 @@ namespace Mono.Data.TdsClient {
 
 		public object GetValue (int i)
 		{
-			return command.Tds.ColumnValues[i];
+			return command.Tds.ColumnValues [i];
 		}
 
 		public int GetValues (object[] values)
 		{
 			int len = values.Length;
+			int bigDecimalIndex = command.Tds.ColumnValues.BigDecimalIndex;
+
+			// If a four-byte decimal is stored, then we can't convert to
+			// a native type.  Throw an OverflowException.
+			if (bigDecimalIndex >= 0 && bigDecimalIndex < len)
+				throw new OverflowException ();
+
 			command.Tds.ColumnValues.CopyTo (0, values, 0, len);
 			return (len > FieldCount ? len : FieldCount);
 		}
 
-		[MonoTODO]
 		void IDisposable.Dispose ()
 		{
-			throw new NotImplementedException (); 
+			Dispose (true);
+			GC.SuppressFinalize (this);
 		}
 
-		[MonoTODO]
 		IEnumerator IEnumerable.GetEnumerator ()
 		{
-			throw new NotImplementedException (); 
+			return new DbEnumerator (this);
 		}
 
-		[MonoTODO]
 		public bool IsDBNull (int i)
 		{
-			throw new NotImplementedException (); 
+			return GetValue (i) == null;
 		}
 
 		public bool NextResult ()
 		{
+			if ((command.CommandBehavior & CommandBehavior.SingleResult) != 0 && resultsRead > 0)
+				return false;
+			if (command.Tds.DoneProc)
+				return false;
+
 			schemaTable.Rows.Clear ();
-			return command.Tds.NextResult ();
+
+			moreResults = command.Tds.NextResult ();
+			GetSchemaTable ();
+
+			rowsRead = 0;
+			resultsRead += 1;
+			return moreResults;
 		}
 
 		public bool Read ()
 		{
-			return command.Tds.NextRow ();
+			if ((command.CommandBehavior & CommandBehavior.SingleRow) != 0 && rowsRead > 0)
+				return false;
+			if ((command.CommandBehavior & CommandBehavior.SchemaOnly) != 0)
+				return false;
+			if (!moreResults)
+				return false;
+
+			bool result = command.Tds.NextRow ();
+
+			rowsRead += 1;
+
+			return result;
 		}
 
-                #endregion // Methods
+		#endregion // Methods
 	}
 }

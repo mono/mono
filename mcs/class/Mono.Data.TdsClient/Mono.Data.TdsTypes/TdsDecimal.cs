@@ -15,6 +15,7 @@ using System.Globalization;
 namespace Mono.Data.TdsTypes {
 	public struct TdsDecimal : INullable, IComparable
 	{
+
 		#region Fields
 
 		int[] value;
@@ -22,17 +23,18 @@ namespace Mono.Data.TdsTypes {
 		byte scale;
 		bool positive;
 
-		private bool notNull;
+		bool notNull;
 
 		// borrowed from System.Decimal
 		const int SCALE_SHIFT = 16;
 		const int SIGN_SHIFT = 31;
 		const int RESERVED_SS32_BITS = 0x7F00FFFF;
 
-		public static readonly byte MaxPrecision = 38; 
-		public static readonly byte MaxScale = 28;
-		public static readonly TdsDecimal MaxValue = new TdsDecimal (79228162514264337593543950335.0);
-		public static readonly TdsDecimal MinValue = new TdsDecimal (-79228162514264337593543950335.0);
+		public static readonly byte MaxPrecision = 38;
+		public static readonly byte MaxScale = 38;
+
+		public static readonly TdsDecimal MaxValue = new TdsDecimal (MaxPrecision, (byte)0, true, (int)716002642, Int32.MaxValue, (int)1518778966, (int)1262177448);
+		public static readonly TdsDecimal MinValue = new TdsDecimal (MaxPrecision, (byte)0, false, (int)716002642, Int32.MaxValue, (int)1518778966, (int)1262177448);
 		public static readonly TdsDecimal Null;
 
 		#endregion
@@ -192,6 +194,14 @@ namespace Mono.Data.TdsTypes {
 		{
 			throw new NotImplementedException ();
 		}
+
+		internal static TdsDecimal FromTdsBigDecimal (TdsBigDecimal x)
+		{
+			if (x == null)
+				return Null;
+			else
+				return new TdsDecimal (x.Precision, x.Scale, !x.IsNegative, x.Data);
+                }
 
 		public override int GetHashCode ()
 		{

@@ -15,6 +15,7 @@
 			<arg value="/unsafe"/>
 			<arg value="/noconfig"/>
 			<arg value="/r:System.dll"/>
+			<arg value="/r:System.EnterpriseServices.dll"/>
 			<arg value="/r:System.Xml.dll"/>
 			<arg value="/r:System.Data.dll"/>
 			<arg value="/r:../lib/Mono.Data.Tds.dll"/>
@@ -28,6 +29,7 @@
 			<references>
 				<includes name="../lib/corlib.dll"/>
 				<includes name="../lib/System.dll"/>
+				<includes name="../lib/System.EnterpriseServices.dll"/>
 				<includes name="../lib/System.Xml.dll"/>
 				<includes name="../lib/System.Data.dll"/>
 				<includes name="../lib/Mono.Data.Tds.dll"/>

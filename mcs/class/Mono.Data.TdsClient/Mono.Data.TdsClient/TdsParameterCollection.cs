@@ -2,139 +2,186 @@
 // Mono.Data.TdsClient.TdsParameterCollection.cs
 //
 // Author:
+//   Rodrigo Moya (rodrigo@ximian.com)
+//   Daniel Morgan (danmorg@sc.rr.com)
 //   Tim Coleman (tim@timcoleman.com)
 //
+// (C) Ximian, Inc 2002
 // Copyright (C) Tim Coleman, 2002
 //
 
-using Mono.Data.Tds.Protocol;
+using Mono.Data.Tds;
 using System;
-using System.Collections;
 using System.ComponentModel;
 using System.Data;
 using System.Data.Common;
-using System.Runtime.InteropServices;
+using System.Collections;
 
 namespace Mono.Data.TdsClient {
+	[ListBindable (false)]
 	public sealed class TdsParameterCollection : MarshalByRefObject, IDataParameterCollection, IList, ICollection, IEnumerable
 	{
 		#region Fields
 
-		ArrayList list = new ArrayList ();
+		ArrayList list = new ArrayList();
+		TdsMetaParameterCollection metaParameters;
+		TdsCommand command;
 
 		#endregion // Fields
+
+		#region Constructors
+
+		internal TdsParameterCollection (TdsCommand command)
+		{
+			this.command = command;
+			metaParameters = new TdsMetaParameterCollection ();
+		}
+
+		#endregion // Constructors
 
 		#region Properties
 
 		public int Count {
-			get { return list.Count; }
-		}
-
-		object IList.this [int index] {
-			get { return (TdsParameter) this[index]; }
-			set { this[index] = (TdsParameter) value; }
+			get { return list.Count; }			  
 		}
 
 		public TdsParameter this [int index] {
-			get { 
-				if (index >= Count)
-					throw new IndexOutOfRangeException ();
-				return (TdsParameter) list[index]; 
-			}
-			set { 
-				if (index >= Count)
-					throw new IndexOutOfRangeException ();
-				list[index] = (TdsParameter) value; 
-			}
+			get { return (TdsParameter) list [index]; }			  
+			set { list [index] = (TdsParameter) value; }			  
 		}
 
 		object IDataParameterCollection.this [string parameterName] {
-			get { return (TdsParameter) this[parameterName]; }
-			set { this [parameterName] = (TdsParameter) value; }
+			get { return this[parameterName]; }
+			set { 
+				if (!(value is TdsParameter))
+					throw new InvalidCastException ("Only SQLParameter objects can be used.");
+				this [parameterName] = (TdsParameter) value;
+			}
 		}
 
 		public TdsParameter this [string parameterName] {
-			get { return this[IndexOf (parameterName)]; }
-			set { this[IndexOf (parameterName)] = value; }
+			get {
+				foreach (TdsParameter p in list)
+					if (p.ParameterName.Equals (parameterName))
+						return p;
+				throw new IndexOutOfRangeException ("The specified name does not exist: " + parameterName);
+			}	  
+			set {	
+				if (!Contains (parameterName))
+					throw new IndexOutOfRangeException("The specified name does not exist: " + parameterName);
+				this [IndexOf (parameterName)] = value;
+			}			  
+		}
+
+		object IList.this [int index] {
+			get { return (TdsParameter) this [index]; }
+			set { this [index] = (TdsParameter) value; }
 		}
 
 		bool IList.IsFixedSize {
-			get { return false; }
+			get { return list.IsFixedSize; }
 		}
 
 		bool IList.IsReadOnly {
-			get { return false; }
+			get { return list.IsReadOnly; }
 		}
 
 		bool ICollection.IsSynchronized {
-			[MonoTODO]
-			get { throw new NotImplementedException (); }
+			get { return list.IsSynchronized; }
 		}
 
 		object ICollection.SyncRoot {
-			[MonoTODO]
-			get { throw new NotImplementedException (); }
+			get { return list.SyncRoot; }
 		}
 
+		internal TdsMetaParameterCollection MetaParameters {
+			get { return metaParameters; }
+		}
+		
 		#endregion // Properties
 
-		#region Methods 
+		#region Methods
 
 		public int Add (object value)
 		{
 			if (!(value is TdsParameter))
-				throw new InvalidCastException ();
+				throw new InvalidCastException ("The parameter was not an TdsParameter.");
 			Add ((TdsParameter) value);
 			return IndexOf (value);
 		}
-
+		
 		public TdsParameter Add (TdsParameter value)
 		{
+			if (value.Container != null)
+				throw new ArgumentException ("The TdsParameter specified in the value parameter is already added to this or another TdsParameterCollection.");
+			
+			value.Container = this;
 			list.Add (value);
-			return value; 
+			metaParameters.Add (value.MetaParameter);
+			return value;
 		}
-
+		
 		public TdsParameter Add (string parameterName, object value)
 		{
 			return Add (new TdsParameter (parameterName, value));
 		}
-
-		public void Clear ()
+		
+		public TdsParameter Add (string parameterName, TdsType sybaseType)
 		{
-			list.Clear ();
+			return Add (new TdsParameter (parameterName, sybaseType));
 		}
 
+		public TdsParameter Add (string parameterName, TdsType sybaseType, int size)
+		{
+			return Add (new TdsParameter (parameterName, sybaseType, size));
+		}
+
+		public TdsParameter Add (string parameterName, TdsType sybaseType, int size, string sourceColumn)
+		{
+			return Add (new TdsParameter (parameterName, sybaseType, size, sourceColumn));
+		}
+
+		public void Clear()
+		{
+			metaParameters.Clear ();
+			list.Clear ();
+		}
+		
 		public bool Contains (object value)
 		{
-			return list.Contains (value);
+			if (!(value is TdsParameter))
+				throw new InvalidCastException ("The parameter was not an TdsParameter.");
+			return Contains (((TdsParameter) value).ParameterName);
 		}
 
 		public bool Contains (string value)
 		{
-			return (IndexOf (value) >= 0);
+			foreach (TdsParameter p in list)
+				if (p.ParameterName.Equals (value))
+					return true;
+			return false;
 		}
 
 		public void CopyTo (Array array, int index)
 		{
-			throw new NotImplementedException ();
+			list.CopyTo (array, index);
 		}
 
-		public IEnumerator GetEnumerator ()
+		public IEnumerator GetEnumerator()
 		{
 			return list.GetEnumerator ();
 		}
-
+		
 		public int IndexOf (object value)
 		{
-			return list.IndexOf (value);
+			if (!(value is TdsParameter))
+				throw new InvalidCastException ("The parameter was not an TdsParameter.");
+			return IndexOf (((TdsParameter) value).ParameterName);
 		}
-
+		
 		public int IndexOf (string parameterName)
 		{
-			for (int i = 0; i < list.Count; i += 1) 
-				if (((TdsParameter) list[i]).ParameterName == parameterName)
-					return i;
-			return -1;
+			return list.IndexOf (parameterName);
 		}
 
 		public void Insert (int index, object value)
@@ -144,11 +191,13 @@ namespace Mono.Data.TdsClient {
 
 		public void Remove (object value)
 		{
+			metaParameters.Remove (((TdsParameter) value).MetaParameter);
 			list.Remove (value);
 		}
 
 		public void RemoveAt (int index)
 		{
+			metaParameters.RemoveAt (index);
 			list.RemoveAt (index);
 		}
 
@@ -157,8 +206,6 @@ namespace Mono.Data.TdsClient {
 			RemoveAt (IndexOf (parameterName));
 		}
 
-
-		#endregion // Methods
+		#endregion // Methods	
 	}
 }
-
