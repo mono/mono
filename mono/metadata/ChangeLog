@@ -1,3 +1,12 @@
+2003-12-07  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* domain.c, loader.h: Added IRemotingTypeInfo interface in MonoDefaults.
+	* icall.c: in, ves_icall_Remoting_RealProxy_GetTransparentProxy set
+	the custom_type_info flag of the transparent proxy.
+	* object.c: Added method mono_object_isinst_mbyref for casting mbyref
+	objects that supports IRemotingTypeInfo.
+	* object.h: Added custom_type_info field in transparent proxy.
+
 2003-12-06  Martin Baulig  <martin@ximian.com>
 
 	* class.c (mono_class_create_from_generic): Removed.
