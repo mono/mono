@@ -3,6 +3,7 @@
 //
 // Author:
 //   Matt Kimball (matt@kimball.net)
+//   Dick Porter (dick@ximian.com)
 //
 
 using System;
@@ -16,9 +17,6 @@ namespace System.IO {
 		int m_encoding_max_byte;
 
 		byte[] m_buffer;
-		int m_buffer_used;
-		int m_buffer_pos;
-
 
 		public BinaryReader(Stream input) : this(input, Encoding.UTF8) {
 		}
@@ -43,7 +41,6 @@ namespace System.IO {
 
 		public virtual void Close() {
 			Dispose (true);
-			m_stream.Close();
 		}
 		
 		protected virtual void Dispose (bool disposing)
@@ -52,7 +49,6 @@ namespace System.IO {
 				m_stream.Close ();
 
 			m_buffer = null;
-			m_buffer_used = 0;
 		}
 
 		void IDisposable.Dispose() 
@@ -61,162 +57,204 @@ namespace System.IO {
 		}
 
 		protected virtual void FillBuffer(int bytes) {
-			if (!EnsureBuffered(m_buffer_used - m_buffer_pos + bytes)) {
-				throw new EndOfStreamException();
+			if(m_stream==null) {
+				throw new IOException("Stream is invalid");
+			}
+			
+			CheckBuffer(bytes);
+
+			/* Cope with partial reads */
+			int pos=0;
+			while(pos<bytes) {
+				int n=m_stream.Read(m_buffer, pos, bytes-pos);
+				if(n==0) {
+					throw new EndOfStreamException();
+				}
+
+				pos+=n;
 			}
 		}
 
 		public virtual int PeekChar() {
-			EnsureBuffered(m_encoding_max_byte);
-			
-			int i;
-			for (i = 1; m_encoding.GetCharCount(m_buffer, m_buffer_pos, i) == 0; i++) {
-				if (m_buffer_pos + i >= m_buffer_used) {
-					return -1;
-				}
+			if(m_stream==null) {
+				throw new IOException("Stream is invalid");
 			}
 
-			char[] decode = m_encoding.GetChars(m_buffer, m_buffer_pos, i);
-			return decode[0];
+			if(!m_stream.CanSeek) {
+				return(-1);
+			}
+
+			long pos=m_stream.Position;
+			int ch=Read();
+			m_stream.Position=pos;
+
+			return(ch);
 		}
 
 		public virtual int Read() {
 			char[] decode = new char[1];
 
-			Read(decode, 0, 1);
+			int count=Read(decode, 0, 1);
+			if(count==0) {
+				/* No chars available */
+				return(-1);
+			}
+			
 			return decode[0];
 		}
 
 		public virtual int Read(byte[] buffer, int index, int count) {
+			if(m_stream==null) {
+				throw new IOException("Stream is invalid");
+			}
+			
 			if (buffer == null) {
-				throw new ArgumentNullException();
+				throw new ArgumentNullException("buffer is null");
 			}
 			if (buffer.Length - index < count) {
-				throw new ArgumentException();
+				throw new ArgumentException("buffer is too small");
 			}
-			if (index < 0 || count < 0) {
-				throw new ArgumentOutOfRangeException();
+			if (index < 0) {
+				throw new ArgumentOutOfRangeException("index is less than 0");
 			}
-
-			EnsureBuffered(count);
-			
-			if (m_buffer_used - m_buffer_pos < count) {
-				count = m_buffer_used - m_buffer_pos;
+			if (count < 0) {
+				throw new ArgumentOutOfRangeException("count is less than 0");
 			}
 
-			Array.Copy(m_buffer, m_buffer_pos, buffer, index, count);
+			int bytes_read=m_stream.Read(buffer, index, count);
 
-			ConsumeBuffered(count);
-			return count;
+			return(bytes_read);
 		}
 
 		public virtual int Read(char[] buffer, int index, int count) {
-			if (buffer == null) {
-				throw new ArgumentNullException();
-			}
-			if (buffer.Length - index < count) {
-				throw new ArgumentException();
-			}
-			if (index < 0 || count < 0) {
-				throw new ArgumentOutOfRangeException();
-			}
-
-			EnsureBuffered(m_encoding_max_byte * count);
-
-			int i;		
-			for (i = 1; m_encoding.GetCharCount(m_buffer, m_buffer_pos, i) < count; i++) {
-				if (m_buffer_pos + i >= m_buffer_used) {
-					break;
-				}
+			if(m_stream==null) {
+				throw new IOException("Stream is invalid");
 			}
 			
-			count = m_encoding.GetCharCount(m_buffer, m_buffer_pos, i);
+			if (buffer == null) {
+				throw new ArgumentNullException("buffer is null");
+			}
+			if (buffer.Length - index < count) {
+				throw new ArgumentException("buffer is too small");
+			}
+			if (index < 0) {
+				throw new ArgumentOutOfRangeException("index is less than 0");
+			}
+			if (count < 0) {
+				throw new ArgumentOutOfRangeException("count is less than 0");
+			}
 
-			char[] dec = m_encoding.GetChars(m_buffer, m_buffer_pos, i);
-			Array.Copy(dec, 0, buffer, index, count);
+			int chars_read=0;
+			int bytes_read=0;
+			
+			while(chars_read < count) {
+				CheckBuffer(bytes_read);
 
-			ConsumeBuffered(i);
-			return count;
+				int read_byte=m_stream.ReadByte();
+				if(read_byte==-1) {
+					/* EOF */
+					return(chars_read);
+				}
+
+				m_buffer[bytes_read]=(byte)read_byte;
+				bytes_read++;
+				
+				chars_read=m_encoding.GetChars(m_buffer, 0,
+							       bytes_read,
+							       buffer, index);
+				
+			}
+
+			return(chars_read);
 		}
 
 		protected int Read7BitEncodedInt() {
 			int ret = 0;
 			int shift = 0;
-			int count = 0;
 			byte b;
 
 			do {
-				if (!EnsureBuffered(++count)) {
-					throw new EndOfStreamException();
-				}
-				b = m_buffer[m_buffer_pos + count - 1];
+				b = ReadByte();
 				
 				ret = ret | ((b & 0x7f) << shift);
 				shift += 7;
 			} while ((b & 0x80) == 0x80);
 
-			ConsumeBuffered(count);
 			return ret;
 		}
 
 		public virtual bool ReadBoolean() {
-			if (!EnsureBuffered(1)) {
-				throw new EndOfStreamException();
-			}
+			FillBuffer(1);
 
 			// Return value:
 			//  true if the byte is non-zero; otherwise false.
-			bool ret = (m_buffer[m_buffer_pos] != 0);
-			ConsumeBuffered(1);
-			return ret;
+			return(m_buffer[0] != 0);
 		}
 
 		public virtual byte ReadByte() {
-			if (!EnsureBuffered(1)) {
-				throw new EndOfStreamException();
-			}
+			FillBuffer(1);
 
-			byte ret = m_buffer[m_buffer_pos];
-			ConsumeBuffered(1);
-			return ret;
+			return(m_buffer[0]);
 		}
 
 		public virtual byte[] ReadBytes(int count) {
+			if(m_stream==null) {
+				throw new IOException("Stream is invalid");
+			}
+			
 			if (count < 0) {
-				throw new ArgumentOutOfRangeException();
+				throw new ArgumentOutOfRangeException("count is less than 0");
 			}
 
-			EnsureBuffered(count);
-
-			if (count > m_buffer_used - m_buffer_pos) {
-				count = m_buffer_used - m_buffer_pos;
-			}
-
-			if (count == 0) {
-				throw new EndOfStreamException();
-			}
+			/* Can't use FillBuffer() here, because it's OK to
+			 * return fewer bytes than were requested
+			 */
 
 			byte[] buf = new byte[count];
-			Read(buf, 0, count);
-			return buf;
+			int pos=0;
+			
+			while(pos < count) {
+				int n=m_stream.Read(buf, pos, count-pos);
+				if(n==0) {
+					/* EOF */
+					break;
+				}
+
+				pos+=n;
+			}
+				
+			if (pos!=count) {
+				byte[] new_buffer=new byte[pos];
+				Array.Copy(buf, new_buffer, pos);
+				return(new_buffer);
+			}
+			
+			return(buf);
 		}
 
 		public virtual char ReadChar() {
-			char[] buf = ReadChars(1);
-			return buf[0];
+			int ch=Read();
+
+			if(ch==-1) {
+				throw new EndOfStreamException();
+			}
+
+			return((char)ch);
 		}
 
 		public virtual char[] ReadChars(int count) {
 			if (count < 0) {
-				throw new ArgumentOutOfRangeException();
+				throw new ArgumentOutOfRangeException("count is less than 0");
 			}
 
 			char[] full = new char[count];
-			count = Read(full, 0, count);
+			int chars = Read(full, 0, count);
 			
-			if (count != full.Length) {
-				char[] ret = new char[count];
-				Array.Copy(full, 0, ret, 0, count);
+			if (chars == 0) {
+				throw new EndOfStreamException();
+			} else if (chars != full.Length) {
+				char[] ret = new char[chars];
+				Array.Copy(full, 0, ret, 0, chars);
 				return ret;
 			} else {
 				return full;
@@ -224,179 +262,125 @@ namespace System.IO {
 		}
 
 		unsafe public virtual decimal ReadDecimal() {
-			if (!EnsureBuffered(16)) {
-				throw new EndOfStreamException();
-			}
+			FillBuffer(16);
 
 			decimal ret;
 			byte* ret_ptr = (byte *)&ret;
 			for (int i = 0; i < 16; i++) {
-				ret_ptr[i] = m_buffer[m_buffer_pos + i];
+				ret_ptr[i] = m_buffer[i];
 			}
 
-			ConsumeBuffered(16);
 			return ret;
 		}
 
 		public virtual double ReadDouble() {
-			if (!EnsureBuffered(8)) {
-				throw new EndOfStreamException();
-			}
+			FillBuffer(8);
 
-			double ret = BitConverter.ToDouble(m_buffer, m_buffer_pos);
-			ConsumeBuffered(8);
-			return ret;
+			return(BitConverter.ToDouble(m_buffer, 0));
 		}
 
 		public virtual short ReadInt16() {
-			if (!EnsureBuffered(2)) {
-				throw new EndOfStreamException();
-			}
+			FillBuffer(2);
 
-			short ret = (short) (m_buffer[m_buffer_pos] | (m_buffer[m_buffer_pos + 1] << 8));
-			ConsumeBuffered(2);
-			return ret;
+			return((short) (m_buffer[0] | (m_buffer[1] << 8)));
 		}
 
 		public virtual int ReadInt32() {
-			if (!EnsureBuffered(4)) {
-				throw new EndOfStreamException();
-			}
+			FillBuffer(4);
 
-			int ret = (m_buffer[m_buffer_pos]             |
-			           (m_buffer[m_buffer_pos + 1] << 8)  |
-			           (m_buffer[m_buffer_pos + 2] << 16) |
-			           (m_buffer[m_buffer_pos + 3] << 24)
-			          );
-			ConsumeBuffered(4);
-			return ret;
+			return(m_buffer[0] | (m_buffer[1] << 8) |
+			       (m_buffer[2] << 16) | (m_buffer[3] << 24));
 		}
 
 		public virtual long ReadInt64() {
-			if (!EnsureBuffered(8)) {
-				throw new EndOfStreamException();
-			}
+			FillBuffer(8);
 
-			uint ret_low  = (uint) (m_buffer[m_buffer_pos]            |
-			                       (m_buffer[m_buffer_pos + 1] << 8)  |
-			                       (m_buffer[m_buffer_pos + 2] << 16) |
-			                       (m_buffer[m_buffer_pos + 3] << 24)
+			uint ret_low  = (uint) (m_buffer[0]            |
+			                       (m_buffer[1] << 8)  |
+			                       (m_buffer[2] << 16) |
+			                       (m_buffer[3] << 24)
 			                       );
-			uint ret_high = (uint) (m_buffer[m_buffer_pos + 4]        |
-			                       (m_buffer[m_buffer_pos + 5] << 8)  |
-			                       (m_buffer[m_buffer_pos + 6] << 16) |
-			                       (m_buffer[m_buffer_pos + 7] << 24)
+			uint ret_high = (uint) (m_buffer[4]        |
+			                       (m_buffer[5] << 8)  |
+			                       (m_buffer[6] << 16) |
+			                       (m_buffer[7] << 24)
 			                       );
-			ConsumeBuffered(8);
 			return (long) ((((ulong) ret_high) << 32) | ret_low);
 		}
 
 		[CLSCompliant(false)]
-		unsafe public virtual sbyte ReadSByte() {
-			if (!EnsureBuffered(1)) {
-				throw new EndOfStreamException();
-			}
+		public virtual sbyte ReadSByte() {
+			FillBuffer(1);
 
-			sbyte ret;
-			byte* ret_ptr = (byte *)&ret;
-			ret_ptr[0] = m_buffer[m_buffer_pos];
-
-			ConsumeBuffered(1);
-			return ret;
+			return((sbyte)m_buffer[0]);
 		}
 
 		public virtual string ReadString() {
+			/* Inspection of BinaryWriter-written files
+			 * shows that the length is given in bytes,
+			 * not chars
+			 */
 			int len = Read7BitEncodedInt();
 
-			char[] str = ReadChars(len);
-			string ret = "";
-			for (int i = 0; i < str.Length; i++) {
-				ret = ret + str[i];
-			}
+			FillBuffer(len);
+			
+			char[] str = m_encoding.GetChars(m_buffer, 0, len);
 
-			return ret;
+			return(new String(str));
 		}
 
 		public virtual float ReadSingle() {
-			if (!EnsureBuffered(4)) {
-				throw new EndOfStreamException();
-			}
+			FillBuffer(4);
 
-			float ret = BitConverter.ToSingle(m_buffer, m_buffer_pos);
-			ConsumeBuffered(4);
-			return ret;
+			return(BitConverter.ToSingle(m_buffer, 0));
 		}
 
 		[CLSCompliant(false)]
 		public virtual ushort ReadUInt16() {
-			if (!EnsureBuffered(2)) {
-				throw new EndOfStreamException();
-			}
+			FillBuffer(2);
 
-			ushort ret = (ushort) (m_buffer[m_buffer_pos] | (m_buffer[m_buffer_pos + 1] << 8));
-			ConsumeBuffered(2);
-			return ret;
+			return((ushort) (m_buffer[0] | (m_buffer[1] << 8)));
 		}
 
 		[CLSCompliant(false)]
 		public virtual uint ReadUInt32() {
-			if (!EnsureBuffered(4)) {
-				throw new EndOfStreamException();
-			}
+			FillBuffer(4);
+				
 
-			uint ret = (uint) (m_buffer[m_buffer_pos]            |
-			                  (m_buffer[m_buffer_pos + 1] << 8)  |
-			                  (m_buffer[m_buffer_pos + 2] << 16) |
-			                  (m_buffer[m_buffer_pos + 3] << 24)
-			                  );
-			ConsumeBuffered(4);
-			return ret;
+			return((uint) (m_buffer[0] |
+				       (m_buffer[1] << 8) |
+				       (m_buffer[2] << 16) |
+				       (m_buffer[3] << 24)));
 		}
 
 		[CLSCompliant(false)]
 		public virtual ulong ReadUInt64() {
-			if (!EnsureBuffered(8)) {
-				throw new EndOfStreamException();
-			}
+			FillBuffer(8);
 
-			uint ret_low  = (uint) (m_buffer[m_buffer_pos]            |
-			                       (m_buffer[m_buffer_pos + 1] << 8)  |
-			                       (m_buffer[m_buffer_pos + 2] << 16) |
-			                       (m_buffer[m_buffer_pos + 3] << 24)
+			uint ret_low  = (uint) (m_buffer[0]            |
+			                       (m_buffer[1] << 8)  |
+			                       (m_buffer[2] << 16) |
+			                       (m_buffer[3] << 24)
 			                       );
-			uint ret_high = (uint) (m_buffer[m_buffer_pos + 4]        |
-			                       (m_buffer[m_buffer_pos + 5] << 8)  |
-			                       (m_buffer[m_buffer_pos + 6] << 16) |
-			                       (m_buffer[m_buffer_pos + 7] << 24)
+			uint ret_high = (uint) (m_buffer[4]        |
+			                       (m_buffer[5] << 8)  |
+			                       (m_buffer[6] << 16) |
+			                       (m_buffer[7] << 24)
 			                       );
-			ConsumeBuffered(8);
 			return (((ulong) ret_high) << 32) | ret_low;
 		}
 
-		
-		bool EnsureBuffered(int bytes) {
-			int needed = bytes - (m_buffer_used - m_buffer_pos);
-			if (needed < 0)
-				return true;
-
-			if (m_buffer_used + needed > m_buffer.Length) {
-				byte[] old_buffer = m_buffer;
-				m_buffer = new byte[m_buffer_used + needed];
-				Array.Copy(old_buffer, 0, m_buffer, 0, m_buffer_used);
-				m_buffer_pos = m_buffer_used;
+		/* Ensures that m_buffer is at least length bytes
+		 * long, growing it if necessary
+		 */
+		private void CheckBuffer(int length)
+		{
+			if(m_buffer.Length <= length) {
+				byte[] new_buffer=new byte[length];
+				Array.Copy(m_buffer, new_buffer,
+					   m_buffer.Length);
+				m_buffer=new_buffer;
 			}
-
-			int n = m_stream.Read(m_buffer, m_buffer_used, needed);
-			if (n == 0) return false;
-
-			m_buffer_used += n;
-
-			return (m_buffer_used >= m_buffer_pos + bytes);
-		}
-
-
-		void ConsumeBuffered(int bytes) {
-			m_buffer_pos += bytes;
 		}
 	}
 }
