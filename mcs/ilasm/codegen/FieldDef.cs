@@ -53,6 +53,15 @@ namespace Mono.ILASM {
                         get { return field_def; }
                 }
 
+                public bool IsStatic {
+                        get { return (attr & PEAPI.FieldAttr.Static) != 0; }
+                }
+
+                public PEAPI.FieldAttr Attributes {
+                        get { return attr; }
+                        set { attr = value; }
+                }
+
                 public void SetOffset (uint val)
                 {
                         offset_set = true;

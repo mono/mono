@@ -1,7 +1,17 @@
 2004-12-02  Jackson Harper  <jackson@ximian.com>
 
-	* FieldDef.cs: Set the underlying type for data constants. This
-	fixes bug #70153.
+	* MethodDef.cs: If the type is an interface auto set fields to
+	static (and give a warning if they are not static), and set
+	methods to abstract virtual (and give warning if they were not already).
+	* FieldDef.cs:
+	* TypeDef.cs: Accessors and convience properties for getting and
+	setting the method/field attributes.
+	
+	
+2004-12-02  Jackson Harper  <jackson@ximian.com>
+
+	* FieldDef.cs: Set the underlying type for bytearray data constants. This
+	fixes bug #70153 and #70154 which my previous fix caused.
 
 2004-08-01  Atsushi Enomoto  <atsushi@ximian.com>
 

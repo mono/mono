@@ -110,12 +110,25 @@ namespace Mono.ILASM {
                         get { return methoddef; }
                 }
 
+                public PEAPI.MethAttr Attributes {
+                        get { return meth_attr; }
+                        set { meth_attr = value; }
+                }
+
                 public bool IsVararg {
                         get { return (call_conv & PEAPI.CallConv.Vararg) != 0; }
                 }
 
                 public bool IsStatic {
                         get { return (meth_attr & PEAPI.MethAttr.Static) != 0; }
+                }
+
+                public bool IsVirtual {
+                        get { return (meth_attr & PEAPI.MethAttr.Virtual) != 0; }
+                }
+
+                public bool IsAbstract {
+                        get { return (meth_attr & PEAPI.MethAttr.Abstract) != 0; }
                 }
 
                 public ITypeRef[] ParamTypeList () {

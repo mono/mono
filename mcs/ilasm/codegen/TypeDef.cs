@@ -109,6 +109,9 @@ namespace Mono.ILASM {
                         get { return current_property; }
                 }
 
+                public bool IsInterface {
+                        get { return (attr & PEAPI.TypeAttr.Interface) != 0; }
+                }
 
                 public void AddOverride (MethodDef body, ITypeRef parent, string name)
                 {
@@ -148,12 +151,22 @@ namespace Mono.ILASM {
 
                 public void AddFieldDef (FieldDef fielddef)
                 {
+                        if (IsInterface && !fielddef.IsStatic) {
+                                Console.WriteLine ("warning -- Non-static field in interface, set to such");
+                                fielddef.Attributes |= PEAPI.FieldAttr.Static;
+                        }
+
                         field_table.Add (fielddef.Name, fielddef);
                         field_list.Add (fielddef);
                 }
 
                 public void AddMethodDef (MethodDef methoddef)
                 {
+                        if (IsInterface && !(methoddef.IsVirtual || methoddef.IsAbstract)) {
+                                Console.WriteLine ("warning -- Non-virtual, non-abstract instance method in interface, set to such");
+                                methoddef.Attributes |= PEAPI.MethAttr.Abstract | PEAPI.MethAttr.Virtual;
+                        }
+
                         method_table.Add (methoddef.Signature, methoddef);
                 }
 
