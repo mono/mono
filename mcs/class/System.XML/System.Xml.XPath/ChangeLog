@@ -1,3 +1,9 @@
+2004-05-20  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Expression.cs : We should not catch all kind of exception. Just
+	  throwing any kind of exception would be preferable.
+	  Added support for XPathNavigator values.
+
 2004-05-13  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DefaultContext.cs : Removed MonoTODO. done.

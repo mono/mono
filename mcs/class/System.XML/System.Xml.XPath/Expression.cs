@@ -72,12 +72,15 @@ namespace System.Xml.XPath
 		}
 		public XPathNodeIterator EvaluateNodeSet (BaseIterator iter)
 		{
+#if false
 			try
 			{
+#endif
 				BaseIterator iterResults = (BaseIterator) _expr.EvaluateNodeSet (iter);
 				if (_sorters != null)
 					return _sorters.Sort (iterResults);
 				return iterResults;
+#if false
 			}
 			catch (XPathException)
 			{
@@ -87,9 +90,13 @@ namespace System.Xml.XPath
 			{
 				throw new XPathException ("Error during evaluation", e);
 			}
+#endif
 		}
 		public double EvaluateNumber (BaseIterator iter)
 		{
+#if true
+			return _expr.EvaluateNumber (iter);
+#else
 			try
 			{
 				return _expr.EvaluateNumber (iter);
@@ -102,9 +109,13 @@ namespace System.Xml.XPath
 			{
 				throw new XPathException ("Error during evaluation", e);
 			}
+#endif
 		}
 		public string EvaluateString (BaseIterator iter)
 		{
+#if true
+			return _expr.EvaluateString (iter);
+#else
 			try
 			{
 				return _expr.EvaluateString (iter);
@@ -117,9 +128,13 @@ namespace System.Xml.XPath
 			{
 				throw new XPathException ("Error during evaluation", e);
 			}
+#endif
 		}
 		public bool EvaluateBoolean (BaseIterator iter)
 		{
+#if true
+			return _expr.EvaluateBoolean (iter);
+#else
 			try
 			{
 				return _expr.EvaluateBoolean (iter);
@@ -132,6 +147,7 @@ namespace System.Xml.XPath
 			{
 				throw new XPathException ("Error during evaluation", e);
 			}
+#endif
 		}
 
 		public override void AddSort (Object obj, IComparer cmp)
@@ -334,12 +350,20 @@ namespace System.Xml.XPath
 		public virtual BaseIterator EvaluateNodeSet (BaseIterator iter)
 		{
 			XPathResultType type = GetReturnType (iter);
-			if (type == XPathResultType.NodeSet ||
-				type == XPathResultType.Any)
-			{
-				BaseIterator iterResult = Evaluate (iter) as BaseIterator;
+			switch (type) {
+			case XPathResultType.NodeSet:
+			case XPathResultType.Any:
+			case XPathResultType.Navigator: // FIXME: It may pass not-allowed use of RTF
+				object o = Evaluate (iter);
+				BaseIterator iterResult = o as BaseIterator;
 				if (iterResult != null)
 					return iterResult;
+				XPathNavigator nav = o as XPathNavigator;
+				if (nav != null)
+					iterResult = nav.SelectChildren (XPathNodeType.All) as BaseIterator;
+				if (iterResult != null)
+					return iterResult;
+				break;
 			}
 			throw new XPathException ("expected nodeset: "+ToString ());
 		}
@@ -354,6 +378,8 @@ namespace System.Xml.XPath
 				return XPathResultType.NodeSet;
 			if (obj is double || obj is int)
 				return XPathResultType.Number;
+			if (obj is XPathNavigator)
+				return XPathResultType.Navigator;
 			throw new XPathException ("invalid node type: "+obj.GetType ().ToString ());
 		}
 
@@ -457,6 +483,7 @@ namespace System.Xml.XPath
 					throw new XPathException ("invalid node type");
 			}
 		}
+
 		public object EvaluateAs (BaseIterator iter, XPathResultType type)
 		{
 			switch (type)
@@ -1000,12 +1027,12 @@ namespace System.Xml.XPath
 			{
 				switch (_axis)
 				{
-					case Axes.Namespace:
-						return XPathNodeType.Namespace;
-					case Axes.Attribute:
-						return XPathNodeType.Attribute;
-					default:
-						return XPathNodeType.Element;
+				case Axes.Namespace:
+					return XPathNodeType.Namespace;
+				case Axes.Attribute:
+					return XPathNodeType.Attribute;
+				default:
+					return XPathNodeType.Element;
 				}
 			}
 		}
@@ -1219,7 +1246,7 @@ namespace System.Xml.XPath
 		public override String ToString () { return _axis.ToString () + "::" + _name.ToString (); }
 		
 		public XmlQualifiedName Name { get { return _name; } }
-		[MonoTODO]
+
 		public override bool Match (XmlNamespaceManager nsm, XPathNavigator nav)
 		{
 			// must be the correct node type
