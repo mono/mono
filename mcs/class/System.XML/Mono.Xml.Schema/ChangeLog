@@ -1,3 +1,8 @@
+2003-10-25  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* XsdValidatingReader.cs : Removed MonoTODO which was implemented in
+	  XmlValidatingreader as a result. Added xsi:nil normalization.
+
 2003-10-23  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* XsdParticleValidationState.cs : Default content processing shoule be

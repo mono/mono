@@ -266,12 +266,10 @@ namespace Mono.Xml.Schema
 			get { return GetAttribute (localName, ns); }
 		}
 
-		[MonoTODO ("Default values don't have line info.")]
 		int IXmlLineInfo.LineNumber {
 			get { return readerLineInfo != null ? readerLineInfo.LineNumber : 0; }
 		}
 
-		[MonoTODO ("Default values don't have line info.")]
 		int IXmlLineInfo.LinePosition {
 			get { return readerLineInfo != null ? readerLineInfo.LinePosition : 0; }
 		}
@@ -706,7 +704,6 @@ string each = normalized;
 		}
 
 		// Section 3.3.4 of the spec.
-		// [MonoTODO ("normalize xsi:* attributes; supply correct type for TypeDerivationOK()")]
 		private void AssessStartElementSchemaValidity ()
 		{
 			// If the reader is inside xsi:nil (and failed on validation),
@@ -726,6 +723,8 @@ string each = normalized;
 			}
 
 			string xsiNilValue = GetAttribute ("nil", XmlSchema.InstanceNamespace);
+			if (xsiNilValue != null)
+				xsiNilValue = xsiNilValue.Trim (XmlChar.WhitespaceChars);
 			bool isXsiNil = xsiNilValue == "true";
 			if (isXsiNil && this.xsiNilDepth < 0)
 				xsiNilDepth = reader.Depth;
@@ -771,20 +770,27 @@ string each = normalized;
 			// [Schema Validity Assessment (Element) 1.1]
 			if (context.Element == null)
 				context.Element = FindElement (reader.LocalName, reader.NamespaceURI);
-			if (xsiTypeName == null && context.Element != null) {
-				context.SchemaType = context.Element.ElementType;
-				AssessElementLocallyValidElement (context.Element, xsiNilValue);	// 1.1.2
-// FIXME: recover it after xs:any validation implementation.
+			if (context.Element != null) {
+				if (xsiTypeName == null) {
+					context.SchemaType = context.Element.ElementType;
+					AssessElementLocallyValidElement (context.Element, xsiNilValue);	// 1.1.2
+				}
 			} else {
+				XmlSchema schema;
 				switch (stateManager.ProcessContents) {
 				case XmlSchemaContentProcessing.Skip:
+					break;
 				case XmlSchemaContentProcessing.Lax:
+					/*
+					schema = schemas [reader.NamespaceURI];
+					if (schema != null && !schema.missedSubComponents)
+						HandleError ("Element declaration for " + reader.LocalName + " is missing.");
+					*/
 					break;
 				default:
-					XmlSchema schema = schemas [reader.NamespaceURI];
-					if (xsiTypeName == null && (schema == null || !schema.missedSubComponents)) {
+					schema = schemas [reader.NamespaceURI];
+					if (xsiTypeName == null && (schema == null || !schema.missedSubComponents))
 						HandleError ("Element declaration for " + reader.LocalName + " is missing.");
-					}
 					break;
 				}
 			}
@@ -1303,7 +1309,6 @@ string each = normalized;
 			return -1;
 		}
 
-		[MonoTODO ("When it is default attribute, does it works?")]
 		bool IXmlLineInfo.HasLineInfo ()
 		{
 			return readerLineInfo != null && readerLineInfo.HasLineInfo ();
