@@ -19,10 +19,10 @@
 			.maxstack 1	
 			.locals init (object obj)
 
-			newobj instance void [corlib]System.Object::.ctor()
+			newobj instance void [mscorlib]System.Object::.ctor()
 			stloc.0 
 			ldloc.0 
-			call void [corlib]System.Console::WriteLine(object)
+			call void [mscorlib]System.Console::WriteLine(object)
 		
 			ret
 		}		

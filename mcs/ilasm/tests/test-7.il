@@ -7,6 +7,7 @@
 // (C) 2003 Jackson Harper, All rights reserved
 //
 .assembly extern mscorlib { }
+.assembly extern Cscompmgd { }
 .assembly test_7 { }
 .module test_7.exe
 

@@ -6,19 +6,19 @@
 //
 // (C) 2003 Jackson Harper, All rights reserved
 //
-.assembly extern mscorlib { }
+.assembly extern corlib { }
 .assembly HelloWorld { }
 .module HelloWorld.exe
 
 .namespace Mono.ILASM.Tests {
 
-	.class public auto ansi Test_3 extends [mscorlib]System.Object {
+	.class public auto ansi Test_3 extends [corlib]System.Object {
 	
 		.method public static void check( ) cil managed {
 			.entrypoint
 			.maxstack 1	
 			
-			call void Test_3::print_hello()
+			call void Mono.ILASM.Tests.Test_3::print_hello()
 
 			ret
 		}

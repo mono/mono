@@ -16,7 +16,9 @@
 	
 	}
 	
-	.class public auto ansi A extends [mscorlib]System.Collections.ArrayList {
+	.class public auto ansi A 
+		extends [mscorlib]System.Collections.ArrayList 
+		implements [mscorlib]System.Collections.IList, [mscorlib]System.Object {
 
 	}
 }
