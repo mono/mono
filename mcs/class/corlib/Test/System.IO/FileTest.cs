@@ -423,6 +423,7 @@ namespace MonoTests.System.IO
 		{
                         try {
                                 FileStream stream = File.Open ("resources" + Path.DirectorySeparatorChar + "AFile.txt", FileMode.Open);
+				stream.Close ();
                         } catch (Exception e) {
                                 Fail ("Unable to open resources" + Path.DirectorySeparatorChar + "AFile.txt: e=" + e.ToString());
                         }
