@@ -1,3 +1,13 @@
+2005-03-28  Jonathan Pryor <jonpryor@vt.edu>
+
+	* UnixConvert.cs: Add ToFopenMode() methods, which convert FileMode/FileAccess
+	  into an fopen(3) mode string.  ToOpenFlags() should throw
+	  ArgumentOutOfRangeException for argument violations.
+	* StdioFileStream.cs: Add constructor overloads accepting filename and
+	  FileMode/FileAccess overloads; Compatibility fixes with regression tests;
+	  remove IDisposable implementation since System.IO.Stream already
+	  implements it (which calls Close() for us).
+
 2005-03-17  Jonathan Pryor <jonpryor@vt.edu>
 
 	* Stdlib.cs: Move Errno-related functionality into Stdlib from Syscall,

@@ -1,3 +1,7 @@
+2005-03-28  Jonathan Pryor  <jonpryor@vt.edu>
+
+	* StdioFileStreamTest.cs: Added; based on MonoTests.System.IO.FileStreamTest.
+
 2005-02-09  Jonathan Pryor  <jonpryor@vt.edu>
 
 	* StdlibTest.cs: Signal is currently ignored, but add Category(NotDotNet) so

@@ -34,7 +34,7 @@ using Mono.Unix;
 
 namespace Mono.Unix {
 
-	public class StdioFileStream : Stream, IDisposable
+	public class StdioFileStream : Stream
 	{
 		public static readonly IntPtr InvalidFileStream  = IntPtr.Zero;
 		public static readonly IntPtr StandardInput  = Stdlib.stdin;
@@ -46,22 +46,135 @@ namespace Mono.Unix {
 
 		public StdioFileStream (IntPtr fileStream, bool ownsHandle)
 		{
+			InitStream (fileStream, ownsHandle);
+		}
+
+		public StdioFileStream (IntPtr fileStream, FileAccess access)
+			: this (fileStream, access, true) {}
+
+		public StdioFileStream (IntPtr fileStream, FileAccess access, bool ownsHandle)
+		{
+			InitStream (fileStream, ownsHandle);
+			InitCanReadWrite (access);
+		}
+
+		public StdioFileStream (string path)
+		{
+			InitStream (Fopen (path, "r"), true);
+		}
+
+		public StdioFileStream (string path, string mode)
+		{
+			InitStream (Fopen (path, mode), true);
+		}
+
+		public StdioFileStream (string path, FileMode mode)
+		{
+			InitStream (Fopen (path, ToFopenMode (path, mode)), true);
+		}
+
+		public StdioFileStream (string path, FileAccess access)
+		{
+			InitStream (Fopen (path, ToFopenMode (path, access)), true);
+			InitCanReadWrite (access);
+		}
+
+		public StdioFileStream (string path, FileMode mode, FileAccess access)
+		{
+			InitStream (Fopen (path, ToFopenMode (path, mode, access)), true);
+			InitCanReadWrite (access);
+		}
+
+		private static IntPtr Fopen (string path, string mode)
+		{
+			if (path == null)
+				throw new ArgumentNullException ("path");
+			if (path.Length == 0)
+				throw new ArgumentException ("path");
+			if (mode == null)
+				throw new ArgumentNullException ("path");
+			IntPtr f = Stdlib.fopen (path, mode);
+			if (f == IntPtr.Zero)
+				throw new DirectoryNotFoundException ("path", 
+						UnixMarshal.CreateExceptionForLastError ());
+			return f;
+		}
+
+		private void InitStream (IntPtr fileStream, bool ownsHandle)
+		{
 			if (InvalidFileStream == fileStream)
 				throw new ArgumentException (Locale.GetText ("Invalid file stream"), "fileStream");
 			
 			this.file = fileStream;
 			this.owner = ownsHandle;
 			
-			long offset = Stdlib.fseek (file, 0, SeekFlags.SEEK_CUR);
-			if (offset != -1)
-				canSeek = true;
-			Stdlib.fread (IntPtr.Zero, 0, 0, file);
-			if (Stdlib.ferror (file) == 0)
-				canRead = true;
-			Stdlib.fwrite (IntPtr.Zero, 0, 0, file);
-			if (Stdlib.ferror (file) == 0)
-				canWrite = true;  
-			Stdlib.clearerr (file);
+			try {
+				long offset = Stdlib.fseek (file, 0, SeekFlags.SEEK_CUR);
+				if (offset != -1)
+					canSeek = true;
+				Stdlib.fread (IntPtr.Zero, 0, 0, file);
+				if (Stdlib.ferror (file) == 0)
+					canRead = true;
+				Stdlib.fwrite (IntPtr.Zero, 0, 0, file);
+				if (Stdlib.ferror (file) == 0)
+					canWrite = true;  
+				Stdlib.clearerr (file);
+			}
+			catch (Exception e) {
+				throw new ArgumentException (Locale.GetText ("Invalid file stream"), "fileStream");
+			}
+		}
+
+		private void InitCanReadWrite (FileAccess access)
+		{
+			canRead = canRead && 
+				(access == FileAccess.Read || access == FileAccess.ReadWrite);
+			canWrite = canWrite &&
+				(access == FileAccess.Write || access == FileAccess.ReadWrite);
+		}
+
+		private static string ToFopenMode (string file, FileMode mode)
+		{
+			string cmode = UnixConvert.ToFopenMode (mode);
+			AssertFileMode (file, mode);
+			return cmode;
+		}
+
+		private static string ToFopenMode (string file, FileAccess access)
+		{
+			return UnixConvert.ToFopenMode (access);
+		}
+
+		private static string ToFopenMode (string file, FileMode mode, FileAccess access)
+		{
+			string cmode = UnixConvert.ToFopenMode (mode, access);
+			bool exists = AssertFileMode (file, mode);
+			// HACK: for open-or-create & read, mode is "rb", which doesn't create
+			// files.  If the file doesn't exist, we need to use "w+b" to ensure
+			// file creation.
+			if (mode == FileMode.OpenOrCreate && access == FileAccess.Read && !exists)
+				cmode = "w+b";
+			return cmode;
+		}
+
+		private static bool AssertFileMode (string file, FileMode mode)
+		{
+			bool exists = FileExists (file);
+			if (mode == FileMode.CreateNew && exists)
+				throw new IOException ("File exists and FileMode.CreateNew specified");
+			if ((mode == FileMode.Open || mode == FileMode.Truncate) && !exists)
+				throw new FileNotFoundException ("File doesn't exist and FileMode.Open specified", file);
+			return exists;
+		}
+
+		private static bool FileExists (string file)
+		{
+			bool found = false;
+			IntPtr f = Stdlib.fopen (file, "r");
+			found = f != IntPtr.Zero;
+			if (f != IntPtr.Zero)
+				Stdlib.fclose (f);
+			return found;
 		}
 
 		private void AssertNotDisposed ()
@@ -71,7 +184,7 @@ namespace Mono.Unix {
 		}
 
 		public IntPtr Handle {
-			get {return file;}
+			get {AssertNotDisposed (); return file;}
 		}
 
 		public override bool CanRead {
@@ -119,18 +232,21 @@ namespace Mono.Unix {
 				return (long) pos;
 			}
 			set {
+				AssertNotDisposed ();
 				Seek (value, SeekOrigin.Begin);
 			}
 		}
 
 		public FilePosition FilePosition {
 			get {
+				AssertNotDisposed ();
 				FilePosition pos = new FilePosition ();
 				int r = Stdlib.fgetpos (file, pos);
 				UnixMarshal.ThrowExceptionForLastErrorIf (r);
 				return pos;
 			}
 			set {
+				AssertNotDisposed ();
 				if (value == null)
 					throw new ArgumentNullException ("value");
 				int r = Stdlib.fsetpos (file, value);
@@ -140,6 +256,7 @@ namespace Mono.Unix {
 
 		public override void Flush ()
 		{
+			AssertNotDisposed ();
 			int r = Stdlib.fflush (file);
 			if (r != 0)
 				UnixMarshal.ThrowExceptionForLastError ();
@@ -157,8 +274,6 @@ namespace Mono.Unix {
 				r = Stdlib.fread (buf, 1, (ulong) count, file);
 			}
 			if (r != (ulong) count) {
-				if (Stdlib.feof (file) != 0)
-					throw new EndOfStreamException ();
 				if (Stdlib.ferror (file) != 0)
 					throw new IOException ();
 			}
@@ -181,6 +296,7 @@ namespace Mono.Unix {
 
 		public void Rewind ()
 		{
+			AssertNotDisposed ();
 			Stdlib.rewind (file);
 		}
 
@@ -195,15 +311,18 @@ namespace Mono.Unix {
 				case SeekOrigin.Begin:   sf = SeekFlags.SEEK_SET; break;
 				case SeekOrigin.Current: sf = SeekFlags.SEEK_CUR; break;
 				case SeekOrigin.End:     sf = SeekFlags.SEEK_END; break;
+				default: throw new ArgumentException ("origin");
 			}
 
 			int r = Stdlib.fseek (file, offset, sf);
 			if (r != 0)
-				UnixMarshal.ThrowExceptionForLastError ();
+				throw new IOException ("Unable to seek",
+						UnixMarshal.CreateExceptionForLastError ());
 
 			long pos = Stdlib.ftell (file);
 			if (pos == -1)
-				UnixMarshal.ThrowExceptionForLastError ();
+				throw new IOException ("Unable to get current file position",
+						UnixMarshal.CreateExceptionForLastError ());
 
 			return pos;
 		}
@@ -237,23 +356,21 @@ namespace Mono.Unix {
 		{
 			if (file == InvalidFileStream)
 				return;
+
+			GC.SuppressFinalize (this);
 				
 			Flush ();
-			int r = Stdlib.fclose (file);
-			if (r != 0)
-				UnixMarshal.ThrowExceptionForLastError ();
+			if (owner) {
+				int r = Stdlib.fclose (file);
+				if (r != 0)
+					UnixMarshal.ThrowExceptionForLastError ();
+			}
 			file = InvalidFileStream;
+			canRead = false;
+			canSeek = false;
+			canWrite = false;
 		}
 		
-		void IDisposable.Dispose ()
-		{
-			AssertNotDisposed ();
-			GC.SuppressFinalize (this);
-			if (owner) {
-				Close ();
-			}
-		}
-
 		private bool canSeek  = false;
 		private bool canRead  = false;
 		private bool canWrite = false;

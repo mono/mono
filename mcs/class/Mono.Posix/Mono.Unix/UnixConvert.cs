@@ -745,10 +745,69 @@ namespace Mono.Unix {
 				flags |= OpenFlags.O_RDWR;
 				break;
 			default:
-				throw new ArgumentException (Locale.GetText ("Unsupported access value"), "access");
+				throw new ArgumentOutOfRangeException (Locale.GetText ("Unsupported access value"), "access");
 			}
 
 			return flags;
+		}
+
+		public static string ToFopenMode (FileAccess access)
+		{
+			switch (access) {
+				case FileAccess.Read:       return "rb";
+				case FileAccess.Write:      return "wb";
+				case FileAccess.ReadWrite:  return "r+b";
+				default:                    throw new ArgumentOutOfRangeException ("access");
+			}
+		}
+
+		public static string ToFopenMode (FileMode mode)
+		{
+			switch (mode) {
+				case FileMode.CreateNew: case FileMode.Create:        return "w+b";
+				case FileMode.Open:      case FileMode.OpenOrCreate:  return "r+b";
+				case FileMode.Truncate: return "w+b";
+				case FileMode.Append:   return "a+b";
+				default:                throw new ArgumentOutOfRangeException ("mode");
+			}
+		}
+
+		private static readonly string[][] fopen_modes = new string[][]{
+			//                                         Read                       Write ReadWrite
+			/*    FileMode.CreateNew: */  new string[]{"Can't Read+Create",       "wb", "w+b"},
+			/*       FileMode.Create: */  new string[]{"Can't Read+Create",       "wb", "w+b"},
+			/*         FileMode.Open: */  new string[]{"rb",                      "wb", "r+b"},
+			/* FileMode.OpenOrCreate: */  new string[]{"rb",                      "wb", "r+b"},
+			/*     FileMode.Truncate: */  new string[]{"Cannot Truncate and Read","wb", "w+b"},
+			/*       FileMode.Append: */  new string[]{"Cannot Append and Read",  "ab", "a+b"},
+		};
+
+		public static string ToFopenMode (FileMode mode, FileAccess access)
+		{
+			int fm = -1, fa = -1;
+			switch (mode) {
+				case FileMode.CreateNew:    fm = 0; break;
+				case FileMode.Create:       fm = 1; break;
+				case FileMode.Open:         fm = 2; break;
+				case FileMode.OpenOrCreate: fm = 3; break;
+				case FileMode.Truncate:     fm = 4; break;
+				case FileMode.Append:       fm = 5; break;
+			}
+			switch (access) {
+				case FileAccess.Read:       fa = 0; break;
+				case FileAccess.Write:      fa = 1; break;
+				case FileAccess.ReadWrite:  fa = 2; break;
+			}
+
+			if (fm == -1)
+				throw new ArgumentOutOfRangeException ("mode");
+			if (fa == -1)
+				throw new ArgumentOutOfRangeException ("access");
+
+			string fopen_mode = fopen_modes [fm][fa];
+			if (fopen_mode [0] != 'r' && fopen_mode [0] != 'w' && fopen_mode [0] != 'a')
+				throw new ArgumentException (fopen_mode);
+			return fopen_mode;
 		}
 	}
 }

@@ -1,3 +1,7 @@
+2005-02-28  Jonathan Pryor  <jonpryor@vt.edu>
+
+	* Mono.Posix_test.dll.sources: Added Test/Mono.Unix/StdioFileStreamTest.cs.
+
 2005-01-13  Jonathan Pryor  <jonpryor@vt.edu>
 
 	* Mono.Posix_test.dll.sources: Added Test/Mono.Unix/StdlibTest.cs.
