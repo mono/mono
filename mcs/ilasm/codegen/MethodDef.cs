@@ -17,6 +17,35 @@ namespace Mono.ILASM {
 
         public class MethodDef {
 
+                protected class LabelInfo : IComparable {
+
+                        public readonly string Name;
+                        public readonly int Pos;
+                        public PEAPI.CILLabel Label;
+
+                        public LabelInfo (string name, int pos)
+                        {
+                                Name = name;
+                                Pos = pos;
+                                Label = null;
+                        }
+
+                        public void Define (PEAPI.CILLabel label)
+                        {
+                                Label = label;
+                        }
+
+                        public int CompareTo (object obj)
+                        {
+                                LabelInfo other = obj as LabelInfo;
+
+                                if(other != null)
+                                        return Pos.CompareTo(other.Pos);
+
+                                throw new ArgumentException ("object is not a LabelInfo");
+                        }
+                }
+
                 private PEAPI.MethAttr meth_attr;
                 private PEAPI.ImplAttr impl_attr;
                 private string name;
@@ -24,6 +53,7 @@ namespace Mono.ILASM {
                 private ITypeRef ret_type;
                 private ArrayList param_list;
                 private ArrayList inst_list;
+                private Hashtable label_table;
                 private PEAPI.MethodDef methoddef;
                 private bool is_defined;
 
@@ -37,6 +67,8 @@ namespace Mono.ILASM {
                         this.param_list = param_list;
 
                         inst_list = new ArrayList ();
+                        label_table = new Hashtable ();
+
                         is_defined = false;
                         CreateSignature ();
                 }
@@ -72,6 +104,9 @@ namespace Mono.ILASM {
 
                         methoddef = code_gen.PEFile.AddMethod (meth_attr, impl_attr,
                                         name, ret_type.PeapiType, param_array);
+
+                        WriteCode (code_gen, methoddef);
+
                         is_defined = true;
                 }
 
@@ -95,11 +130,7 @@ namespace Mono.ILASM {
                         methoddef = classdef.AddMethod (meth_attr, impl_attr,
                                         name, ret_type.PeapiType, param_array);
 
-                        if (inst_list.Count > 0) {
-                                PEAPI.CILInstructions cil = methoddef.CreateCodeBuffer ();
-                                foreach (IInstr instr in inst_list)
-                                        instr.Emit (code_gen, cil);
-                        }
+                        WriteCode (code_gen, methoddef);
 
                         is_defined = true;
                 }
@@ -107,6 +138,53 @@ namespace Mono.ILASM {
                 public void AddInstr (IInstr instr)
                 {
                         inst_list.Add (instr);
+                }
+
+                protected void WriteCode (CodeGen code_gen, PEAPI.MethodDef methoddef)
+                {
+                        if (inst_list.Count < 1)
+                                return;
+
+                        PEAPI.CILInstructions cil = methoddef.CreateCodeBuffer ();
+                        /// Create all the labels
+                        /// TODO: Most labels don't actually need to be created so we could
+                        /// probably only create the ones that need to be
+                        LabelInfo[] label_info = new LabelInfo[label_table.Count];
+                        label_table.Values.CopyTo (label_info, 0);
+                        Array.Sort (label_info);
+
+                        foreach (LabelInfo label in label_info)
+                                label.Define (cil.NewLabel ());
+
+                        int label_pos = 0;
+                        int next_label_pos = (label_info.Length > 0 ? label_info[0].Pos : -1);
+
+                        for (int i=0; i<inst_list.Count; i++) {
+                                IInstr instr = (IInstr) inst_list[i];
+                                if (next_label_pos == i) {
+                                        cil.CodeLabel (label_info[label_pos].Label);
+                                        if (++label_pos < label_info.Length)
+                                                next_label_pos = label_info[label_pos].Pos;
+                                        else
+                                                next_label_pos = -1;
+                                }
+                                instr.Emit (code_gen, cil);
+                        }
+
+                }
+
+                public void AddLabel (string name)
+                {
+                        LabelInfo label_info = new LabelInfo (name, inst_list.Count);
+
+                        label_table.Add (name, label_info);
+                }
+
+                public PEAPI.CILLabel GetLabelDef (string name)
+                {
+                        LabelInfo label_info = (LabelInfo) label_table[name];
+
+                        return label_info.Label;
                 }
 
                 private void CreateSignature ()

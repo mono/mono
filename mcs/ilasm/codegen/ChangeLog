@@ -1,3 +1,8 @@
+2003-05-04 Jackson Harper <jackson@lattidegeo.com>
+
+	* MethodDef.cs: Add ability to add and emit labels
+	* BranchInstr.cs: New file - Branch instructions
+		
 2003-05-04 Jackson Harper <jackson@latitudegeo.com>
 
 	* LdcInstr.cs: New file - lcd* instructions
