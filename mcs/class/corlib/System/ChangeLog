@@ -1,3 +1,9 @@
+2005-01-08  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* AppDomain.cs: Add ApplicationIdentity property for 2.0;
+	* AppDomainManager.cs: Remove HostRefusedSet support (it does not 
+	exists anymore).
+
 2005-01-08  Zoltan Varga  <vargaz@freemail.hu>
 
 	* DateTime.cs: Create MaxValue and MinValue using a different constructor to avoid static 

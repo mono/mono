@@ -89,13 +89,6 @@ namespace System {
 					ad.SetAppDomainPolicy (pl);
 				}
 			}
-			// supply refused set ?
-			if ((HostSecurityManager.Flags & HostSecurityManagerFlags.HostRefusedSet) == HostSecurityManagerFlags.HostRefusedSet) {
-				PermissionSet ps = HostSecurityManager.RefusedSet;
-				if (ps != null) {
-//					ad._refused = new PermissionSet (ps); // copy
-				}
-			}
 
 			return ad;
 		}

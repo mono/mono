@@ -879,12 +879,17 @@ namespace System
 
 #if NET_2_0
 		private ActivationContext _activation;
+		private ApplicationIdentity _applicationIdentity;
 		private AppDomainManager _domain_manager;
 
 		// properties
 
 		public ActivationContext ActivationContext {
 			get { return _activation; }
+		}
+
+		public ApplicationIdentity ApplicationIdentity {
+			get { return _applicationIdentity; }
 		}
 
 		// default is null
