@@ -416,7 +416,7 @@ namespace System {
 
 		public override bool Equals (object obj)
 		{
-			if (null == obj)
+			if (null == obj || !(obj is Enum))
 				return false;
 
 			if (obj.GetType() != this.GetType())

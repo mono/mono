@@ -1,3 +1,8 @@
+2003-10-03  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Enum.cs:
+	(Equals): check that the object is an Enum before comparing the types.
+
 2003-09-30  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Array.cs: reduced xsp allocated memory by 1/2.
