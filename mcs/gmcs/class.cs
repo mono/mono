@@ -2561,14 +2561,34 @@ namespace Mono.CSharp {
 			if (param_types.Length != ParameterTypes.Length)
 				return false;
 
-			for (int i = 0; i < param_types.Length; i++)
-				if (param_types [i] != ParameterTypes [i])
-					return false;
+			bool equal = true;
+			bool may_unify = true;
 
-			Report.Error (111, Location, "Class `{0}' already defines a " +
-				      "member called `{1}' with the same parameter types",
-				      tc.Name, Name);
-			return true;
+			for (int i = 0; i < param_types.Length; i++) {
+				Type a = param_types [i];
+				Type b = ParameterTypes [i];
+
+				if (!TypeManager.MayBecomeEqualGenericTypes (a, b))
+					may_unify = false;
+				if (a != b)
+					equal = false;
+			}
+
+			if (equal) {
+				Report.Error (111, Location,
+					      "Class `{0}' already defines a member called " +
+					      "`{1}' with the same parameter types",
+					      tc.Name, Name);
+				return true;
+			} else if (may_unify) {
+				Report.Error (408, Location,
+					      "`{0}' cannot define overload members that " +
+					      "may unify for some type parameter substitutions",
+					      tc.Name);
+				return true;
+			}
+
+			return false;
 		}
 
 		public CallingConventions GetCallingConvention (bool is_class)
@@ -3131,12 +3151,13 @@ namespace Mono.CSharp {
 			//
 			ArrayList ar = container.InstanceConstructors;
 			if (ar != null) {
-			int arLen = ar.Count;
+				int arLen = ar.Count;
 					
-			for (int i = 0; i < arLen; i++) {
-				Constructor m = (Constructor) ar [i];
-				if (IsDuplicateImplementation (container, m))
-					return false;
+				for (int i = 0; i < arLen; i++) {
+					Constructor m = (Constructor) ar [i];
+					if (IsDuplicateImplementation (container, m))
+						return false;
+				}
 			}
 			
 			return true;

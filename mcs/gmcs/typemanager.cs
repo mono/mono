@@ -1607,7 +1607,7 @@ public class TypeManager {
 			return IsEqualGenericType (a, b);
 	}
 
-	static bool MayBecomeEqualGenericTypes (Type a, Type b)
+	public static bool MayBecomeEqualGenericTypes (Type a, Type b)
 	{
 		if (a.IsGenericParameter) {
 			//
