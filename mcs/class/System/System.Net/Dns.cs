@@ -1,6 +1,7 @@
 // System.Net.Dns.cs
 //
 // Author: Mads Pultz (mpultz@diku.dk)
+// Author: Lawrence Pit (loz@cable.a2000.nl)
 //
 // (C) Mads Pultz, 2001
 
@@ -10,113 +11,55 @@ using System.Text;
 using System.Collections;
 using System.Threading;
 using System.Runtime.CompilerServices;
+using System.Runtime.Remoting.Messaging;
 
 namespace System.Net {
         public sealed class Dns {
 
 		private Dns () {}
-                
-                /// <summary>
-                /// Helper class
-                /// </summary>
-                private sealed class DnsAsyncResult: IAsyncResult {
-                        private object state;
-                        private WaitHandle waitHandle;
-                        private bool completedSync, completed;
-                        private Worker worker;
-                
-                        public DnsAsyncResult(object state) {
-                                this.state = state;
-                                waitHandle = new ManualResetEvent(false);
-                                completedSync = completed = false;
-                        }       
-                        public object AsyncState {
-                                get { return state; }
-                        }
-                        public WaitHandle AsyncWaitHandle {
-                                set { waitHandle = value; }
-                                get { return waitHandle; }
-                        }
-                        public bool CompletedSynchronously {
-                                get { return completedSync; }
-                        }
-                        public bool IsCompleted {
-                                set { completed = value; }
-                                get { return completed; }
-                        }
-                        public Worker Worker {
-                                set { worker = value; }
-                                get { return worker; }
-                        }
-                }
 
-                /// <summary>
-                /// Helper class for asynchronous calls to DNS server
-                /// </summary>
-                private sealed class Worker {
-                        private AsyncCallback reqCallback;
-                        private DnsAsyncResult reqRes;
-                        private string req;
-                        private IPHostEntry result;
-                        
-                        public Worker(string req, AsyncCallback reqCallback, DnsAsyncResult reqRes) {
-                                this.req = req;
-                                this.reqCallback = reqCallback;
-                                this.reqRes = reqRes;
-                        }
-                        private void End() {
-                                reqCallback(reqRes);
-                                ((ManualResetEvent)reqRes.AsyncWaitHandle).Set();
-                                reqRes.IsCompleted = true;
-                        }
-                        public void GetHostByName() {
-                                lock(reqRes) {
-                                        result = Dns.GetHostByName(req);
-                                        End();
-                                }
-                        }
-                        public void Resolve() {
-                                lock(reqRes) {
-                                        result = Dns.Resolve(req);
-                                        End();
-                                }
-                        }
-                        public IPHostEntry Result {
-                                get { return result; }
-                        }
-                }
+                private delegate IPHostEntry GetHostByNameCallback (string hostName);
+                private delegate IPHostEntry ResolveCallback (string hostName);
                 
-                public static IAsyncResult BeginGetHostByName(string hostName,
+                public static IAsyncResult BeginGetHostByName (string hostName,
                 	AsyncCallback requestCallback, object stateObject)
                	{
-                        DnsAsyncResult requestResult = new DnsAsyncResult(stateObject);
-                        Worker worker = new Worker(hostName, requestCallback, requestResult);
-                        Thread child = new Thread(new ThreadStart(worker.GetHostByName));
-                        child.Start();
-                        return requestResult;
+                        if (hostName == null)
+                                throw new ArgumentNullException();
+			GetHostByNameCallback c = new GetHostByNameCallback (GetHostByName);
+			return c.BeginInvoke (hostName, requestCallback, stateObject);
                 }
 
-                public static IAsyncResult BeginResolve(string hostName,
+                public static IAsyncResult BeginResolve (string hostName,
                 	AsyncCallback requestCallback, object stateObject)
                 {
-                        DnsAsyncResult requestResult = new DnsAsyncResult(stateObject);
-                        Worker worker = new Worker(hostName, requestCallback, requestResult);
-                        Thread child = new Thread(new ThreadStart(worker.Resolve));
-                        child.Start();
-                        return requestResult;
+                        if (hostName == null)
+                                throw new ArgumentNullException();
+			ResolveCallback c = new ResolveCallback (Resolve);
+			return c.BeginInvoke (hostName, requestCallback, stateObject);
                 }
                 
-                public static IPHostEntry EndGetHostByName(IAsyncResult asyncResult) {
-                        return ((DnsAsyncResult)asyncResult).Worker.Result;
+                public static IPHostEntry EndGetHostByName (IAsyncResult asyncResult) {
+			if (asyncResult == null)
+				throw new ArgumentNullException ("asyncResult");
+			AsyncResult async = (AsyncResult) asyncResult;
+			GetHostByNameCallback cb = (GetHostByNameCallback) async.AsyncDelegate;
+			asyncResult.AsyncWaitHandle.WaitOne ();
+			return cb.EndInvoke(asyncResult);
                 }
 
-                public static IPHostEntry EndResolve(IAsyncResult asyncResult) {
-                        return ((DnsAsyncResult)asyncResult).Worker.Result;
+                public static IPHostEntry EndResolve (IAsyncResult asyncResult) {
+			if (asyncResult == null)
+				throw new ArgumentNullException ("asyncResult");
+			AsyncResult async = (AsyncResult) asyncResult;
+			ResolveCallback cb = (ResolveCallback) async.AsyncDelegate;
+			asyncResult.AsyncWaitHandle.WaitOne ();
+			return cb.EndInvoke(asyncResult);
                 }
-                
-                
+                                
                 [MethodImplAttribute(MethodImplOptions.InternalCall)]
                 private extern static bool GetHostByName_internal(string host, out string h_name, out string[] h_aliases, out string[] h_addr_list);
+
                 [MethodImplAttribute(MethodImplOptions.InternalCall)]
                 private extern static bool GetHostByAddr_internal(string addr, out string h_name, out string[] h_aliases, out string[] h_addr_list);
                 
@@ -160,9 +103,8 @@ namespace System.Net {
                 }
 
                 public static IPHostEntry GetHostByName(string hostName) {
-                        if (hostName == null) {
+                        if (hostName == null)
                                 throw new ArgumentNullException();
-                        }
                         
                         string h_name;
                         string[] h_aliases, h_addrlist;
@@ -170,9 +112,8 @@ namespace System.Net {
                         bool ret = GetHostByName_internal(hostName, out h_name,
                                                           out h_aliases,
                                                           out h_addrlist);
-                        if (ret == false) {
+                        if (ret == false)
                                 throw new SocketException(11001);
-                        }
 
                         return(hostent_to_IPHostEntry(h_name, h_aliases,
                                                       h_addrlist));

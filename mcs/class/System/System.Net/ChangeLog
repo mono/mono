@@ -1,3 +1,13 @@
+2002-05-13  Lawrence Pit <loz@cable.a2000.nl>
+
+	* Dns.cs: Reimplemented (simplified and fixed) asynchronous methods by
+	relying on standard asynchronous delegate features. Added checks for
+	null strings.
+	* HttpWebResponse.cs: implemented properties
+	* FileWebResponse.cs: improved the way resources are disposed.
+	* FileWebRequest.cs: started implementation of asynchronous methods
+	* ServicePointManager.cs: implemented properties
+
 2002-05-12  Lawrence Pit <loz@cable.a2000.nl>
 
 	* HttpWebRequest.cs: properties implemented

@@ -9,6 +9,7 @@ using System;
 using System.Collections;
 using System.IO;
 using System.Runtime.Serialization;
+using System.Runtime.Remoting.Messaging;
 
 namespace System.Net 
 {
@@ -110,28 +111,48 @@ namespace System.Net
 		
 		// Methods
 		
-		[MonoTODO]
+		private delegate Stream GetRequestStreamCallback ();
+		private delegate WebResponse GetResponseCallback ();
+
+// TODO: bit simplistic this, need to add code to check for exceptions..
+// TODO: use Timeout value
+// TODO: as the spec says GetResponse can throw an exception on timeout, 
+// and because in theory one could start an async GetResponse, change 
+// properties, and start a sync GetResponse it seems best that GetResponse 
+// actually works via the async methods and the async delegates delegate 
+// to a private get response method. timeout value probably isn't an 
+// issue here, but it is in HttpWebRequest.
+
 		public override IAsyncResult BeginGetRequestStream (AsyncCallback callback, object state) 
-		{
-			throw new NotImplementedException ();
+		{		
+			GetRequestStreamCallback c = new GetRequestStreamCallback (this.GetRequestStream);
+			return c.BeginInvoke (callback, state);
 		}
 		
-		[MonoTODO]
 		public override IAsyncResult BeginGetResponse (AsyncCallback callback, object state)
 		{
-			throw new NotImplementedException ();
+			GetResponseCallback c = new GetResponseCallback (this.GetResponse);
+			return c.BeginInvoke (callback, state);
 		}
 
-		[MonoTODO]
 		public override Stream EndGetRequestStream (IAsyncResult asyncResult)
 		{
-			throw new NotImplementedException ();
+			if (asyncResult == null)
+				throw new ArgumentNullException ("asyncResult");
+			AsyncResult async = (AsyncResult) asyncResult;
+			GetRequestStreamCallback cb = (GetRequestStreamCallback) async.AsyncDelegate;
+			asyncResult.AsyncWaitHandle.WaitOne ();
+			return cb.EndInvoke(asyncResult);
 		}
 		
-		[MonoTODO]
 		public override WebResponse EndGetResponse (IAsyncResult asyncResult)
 		{
-			throw new NotImplementedException ();
+			if (asyncResult == null)
+				throw new ArgumentNullException ("asyncResult");
+			AsyncResult async = (AsyncResult) asyncResult;
+			GetResponseCallback cb = (GetResponseCallback) async.AsyncDelegate;
+			asyncResult.AsyncWaitHandle.WaitOne ();
+			return cb.EndInvoke(asyncResult);		
 		}
 		
 		public override Stream GetRequestStream()

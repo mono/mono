@@ -8,10 +8,33 @@
 using System;
 using System.Security.Cryptography.X509Certificates;
 
+//
+// notes:
+// A service point manager manages service points (duh!).
+// A service point maintains a list of connections (per scheme + authority 
+// seems logical).
+// According to HttpWebRequest.ConnectionGroupName each connection group
+// creates additional connections. therefor, a service point has a hashtable
+// of connection groups where each value is a list of connections.
+// 
+// when we need to make an HttpWebRequest, we need to do the following:
+// 1. find service point, given Uri and Proxy 
+// 2. find connection group, given service point and group name
+// 3. find free connection in connection group, or create one (if ok due to limits)
+// 4. lease connection
+// 5. execute request
+// 6. when finished, return connection
+//
+
+
 namespace System.Net 
 {
 	public class ServicePointManager
 	{
+		private static ICertificatePolicy policy = null;
+		private static int defaultConnectionLimit = DefaultPersistentConnectionLimit;
+		private static int maxServicePointIdleTime = 900000; // 15 minutes
+		private static int maxServicePoints = 0;
 		
 		// Fields
 		
@@ -25,47 +48,61 @@ namespace System.Net
 		
 		// Properties
 		
-		[MonoTODO]
 		public static ICertificatePolicy CertificatePolicy {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { return policy; }
+			set { policy = value; }
 		}
 		
-		[MonoTODO]
 		public static int DefaultConnectionLimit {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { return defaultConnectionLimit; }
+			set { 
+				if (value < 0)
+					throw new ArgumentOutOfRangeException ("value");
+				defaultConnectionLimit = value; 
+			}
 		}
 		
-		[MonoTODO]
 		public static int MaxServicePointIdleTime {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { 
+				return maxServicePointIdleTime;
+			}
+			set { 
+				if (value < -2 || value > Int32.MaxValue)
+					throw new ArgumentOutOfRangeException ("value");
+				maxServicePointIdleTime = value;
+			}
 		}
 		
-		[MonoTODO]
 		public static int MaxServicePoints {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { 
+				return maxServicePoints; 
+			}
+			set {  
+				if (value < 0)
+					throw new ArgumentException ("value");
+				maxServicePoints = value;
+			}
 		}
 		
 		// Methods
 		
-		[MonoTODO]
 		public static ServicePoint FindServicePoint (Uri address) 
 		{
-			throw new NotImplementedException ();
+			return FindServicePoint (address, GlobalProxySelection.Select);
 		}
 		
-		[MonoTODO]
 		public static ServicePoint FindServicePoint (string uriString, IWebProxy proxy)
 		{
-			throw new NotImplementedException ();
+			return FindServicePoint (new Uri(uriString), proxy);
 		}
 		
-		[MonoTODO]
 		public static ServicePoint FindServicePoint (Uri address, IWebProxy proxy)
 		{
+			if (address == null)
+				throw new ArgumentNullException ("address");
+			// if ()
+			//	throw new InvalidOperationException ("maximum number of service points reached");
+			
 			throw new NotImplementedException ();
 		}
 	}

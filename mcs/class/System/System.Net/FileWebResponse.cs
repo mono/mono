@@ -75,46 +75,65 @@ namespace System.Net
 		}		
 
 		// Methods
-		
-		public override void Close()
+
+		[MonoTODO]
+		void ISerializable.GetObjectData (SerializationInfo serializationInfo,
+		   				  StreamingContext streamingContext)
 		{
-			this.fileStream.Close ();
-		}
-		
+			CheckDisposed ();
+			throw new NotImplementedException ();
+		}		
+
 		public override Stream GetResponseStream()
 		{
 			CheckDisposed ();
 			return this.fileStream;
 		}
+				
+		// Cleaning up stuff
 		
-		protected virtual void Dispose (bool disposing)
+		~FileWebResponse ()
 		{
-			if (disposing) {
-				this.disposed = true;
-				this.webRequest = null;
-				this.webHeaders = null;
-				this.Close ();
-				// this.fileStream.Dispose ();
-				this.fileStream = null;				
-			}
-		}
+			Dispose (false);
+		}		
 		
+		public override void Close()
+		{
+			((IDisposable) this).Dispose ();
+		}
+
 		void IDisposable.Dispose()
 		{
 			Dispose (true);
+			
+			// see spec, suppress finalization of this object.
+			GC.SuppressFinalize (this);  
+		}
+		
+		protected virtual void Dispose (bool disposing)
+		{
+			if (this.disposed)
+				return;
+			this.disposed = true;
+			
+			if (disposing) {
+				// release managed resources
+				this.disposed = true;
+				this.webRequest = null;
+				this.webHeaders = null;
+			}
+			
+			// release unmanaged resources
+			Stream stream = fileStream;
+			fileStream = null;
+			if (stream != null)
+				stream.Close ();	
 		}
 		
 		private void CheckDisposed ()
 		{
 			if (disposed)
 				throw new ObjectDisposedException ("stream");
-		}
-		
-		[MonoTODO]
-		void ISerializable.GetObjectData (SerializationInfo serializationInfo,
-		   				  StreamingContext streamingContext)
-		{
-			throw new NotImplementedException ();
 		}		
 	}
 }

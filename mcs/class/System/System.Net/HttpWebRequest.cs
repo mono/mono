@@ -49,8 +49,8 @@ namespace System.Net
 			this.requestUri = uri;
 			this.actualUri = uri;
 			this.webHeaders = new WebHeaderCollection (true);
-			this.webHeaders.SetInternal ("Host", uri.Authority);
-			this.webHeaders.SetInternal ("Date", DateTime.Now.ToUniversalTime ().ToString ("r", null));
+			// this.webHeaders.SetInternal ("Host", uri.Authority);
+			// this.webHeaders.SetInternal ("Date", DateTime.Now.ToUniversalTime ().ToString ("r", null));
 			// this.webHeaders.SetInternal ("Expect", "100-continue");
 			this.method = "GET";
 			this.version = HttpVersion.Version11;
@@ -400,6 +400,17 @@ namespace System.Net
 		[MonoTODO]
 		public override IAsyncResult BeginGetRequestStream (AsyncCallback callback, object state) 
 		{
+			if (!method.Equals ("PUT") && !method.Equals ("POST"))
+				throw new ProtocolViolationException ("Invalid method");
+//			if (putting)
+//				throw new WebException ("Stream already open");
+/*				
+                        HttpWebRequestAsyncResult requestResult = new HttpWebRequestAsyncResult (stateObject);				
+                        Worker worker = new Worker (hostName, requestCallback, requestResult);
+                        Thread child = new Thread (new ThreadStart (worker.GetRequestStream));
+                        child.Start();
+                        return requestResult;				
+*/
 			throw new NotImplementedException ();
 		}
 		
@@ -452,5 +463,8 @@ namespace System.Net
 			if (requestStarted)
 				throw new InvalidOperationException ("request started");
 		}
+
+
+		// Private Classes
 	}
 }
