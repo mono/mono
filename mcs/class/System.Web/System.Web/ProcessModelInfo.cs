@@ -1,5 +1,5 @@
 // 
-// System.Web.ProcessModelInfo
+// System.Web.ProcessModelInfo.cs
 //
 // Author:
 //   Tim Coleman (tim@timcoleman.com)
@@ -42,7 +42,7 @@ namespace System.Web {
 		}
 
 		[MonoTODO ("Retrieve process information.")]
-		public static ProcessInfo[] GetHistory ()
+		public static ProcessInfo[] GetHistory (int numRecords)
 		{
 			throw new NotImplementedException ();
 		}

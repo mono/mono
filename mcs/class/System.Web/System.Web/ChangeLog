@@ -1,3 +1,7 @@
+2003-08-01  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* ProcessModelInfo.cs: Fixed signature
+
 2003-07-30  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
 	* WebCategoryAttribute.cs: Implemented localization
