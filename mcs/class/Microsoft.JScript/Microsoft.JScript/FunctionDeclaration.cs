@@ -66,9 +66,15 @@ namespace Microsoft.JScript {
 		internal override void Emit (EmitContext ec)
 		{			
 			string name = Function.name;
-			string full_name = prefix == String.Empty ? full_name = name : full_name = prefix + "." + name;
+			string full_name;
 			TypeBuilder type = ec.type_builder;
-			ILGenerator ig = ec.ig;
+			ILGenerator ig = ec.ig;			
+			
+			if (prefix == String.Empty) 
+				full_name = name;
+			else 
+				full_name = prefix + "." + name;
+
 			MethodBuilder method_builder = type.DefineMethod (full_name, Function.attr, 
 									  Function.return_type,
 									  Function.params_types ());
@@ -107,8 +113,8 @@ namespace Microsoft.JScript {
 			ig.Emit (OpCodes.Ldfld, typeof (ScriptObject).GetField ("engine"));
 			ig.Emit (OpCodes.Call, typeof (FunctionDeclaration).GetMethod ("JScriptFunctionDeclaration"));
 
-			if (parent == null)
-				ig.Emit (OpCodes.Stsfld, ec.mod_builder.GetType ("JScript 0").GetField (name));
+			if (parent == null)				
+				ig.Emit (OpCodes.Stsfld, t.GetField (name));
 			else					
 				ig.Emit (OpCodes.Stloc, local_func);	
 		}
@@ -125,7 +131,8 @@ namespace Microsoft.JScript {
 				n = locals.Length;
 
 			Type t = typeof (JSLocalField);
-
+			ConstructorInfo ctr_info =  t.GetConstructor (new Type [] { 
+							typeof (string), typeof (RuntimeTypeHandle), typeof (Int32) });
 			ig.Emit (OpCodes.Ldc_I4, n);
 			ig.Emit (OpCodes.Newarr, t);
 
@@ -144,10 +151,7 @@ namespace Microsoft.JScript {
 					ig.Emit (OpCodes.Ldtoken, typeof (ScriptFunction));
 
 				ig.Emit (OpCodes.Ldc_I4, i);
-				ig.Emit (OpCodes.Newobj, t.GetConstructor (new Type [] { 
-										typeof (string), 
-										typeof (RuntimeTypeHandle),
-										typeof (Int32) }));
+				ig.Emit (OpCodes.Newobj, ctr_info);
 				ig.Emit (OpCodes.Stelem_Ref);
 			}
 		}
