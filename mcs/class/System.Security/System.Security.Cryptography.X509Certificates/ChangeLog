@@ -1,3 +1,8 @@
+2004-07-07  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* X509Store.cs: Removed old store code (as it has changed a lot in 
+	Mono.Security).
+
 2003-12-07  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* PublicKey.cs: New (1.2). Class that encapsulate an ASN.1 encoded 

@@ -2,11 +2,10 @@
 // X509Store.cs - System.Security.Cryptography.X509Certificates.X509Store
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
-//
-
+// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -33,11 +32,8 @@
 using System;
 
 using Mono.Security.X509;
-using Mono.Security.X509.Stores;
 
 namespace System.Security.Cryptography.X509Certificates {
-
-	// Note: Match the definition of framework version 1.2.3400.0 on http://longhorn.msdn.microsoft.com
 
 	public sealed class X509Store {
 
@@ -45,26 +41,36 @@ namespace System.Security.Cryptography.X509Certificates {
 		private StoreLocation _location;
 		private X509CertificateExCollection _certs;
 		private OpenFlags _flags;
-		private ICertificateStore _store;
 
 		// constructors
 
 		// BUG: MY when using this constructor - My when using StoreName.My
 		public X509Store () 
-			: this ("MY", StoreLocation.CurrentUser) {}
+			: this ("MY", StoreLocation.CurrentUser) 
+		{
+		}
 
 		public X509Store (string storeName) 
-			: this (storeName, StoreLocation.CurrentUser) {}
+			: this (storeName, StoreLocation.CurrentUser) 
+		{
+		}
 
 		public X509Store (StoreName storeName) 
-			: this (StoreNameToString (storeName), StoreLocation.CurrentUser) {}
+			: this (StoreNameToString (storeName), StoreLocation.CurrentUser)
+		{
+		}
 
 		public X509Store (StoreLocation storeLocation) 
-			: this ("MY", storeLocation) {}
+			: this ("MY", storeLocation)
+		{
+		}
 
 		public X509Store (StoreName storeName, StoreLocation storeLocation)
-			: this (StoreNameToString (storeName), StoreLocation.CurrentUser) {}
+			: this (StoreNameToString (storeName), StoreLocation.CurrentUser)
+		{
+		}
 
+		[MonoTODO ("call Mono.Security.X509.X509Store*")]
 		public X509Store (string storeName, StoreLocation storeLocation)
 		{
 			if (storeName == null)
@@ -72,7 +78,6 @@ namespace System.Security.Cryptography.X509Certificates {
 
 			_name = storeName;
 			_location = storeLocation;
-			_store = new Mono.Security.X509.Stores.FileCertificateStore ();
 		}
 
 		// properties
@@ -109,15 +114,16 @@ namespace System.Security.Cryptography.X509Certificates {
 			}
 		}
 
+		[MonoTODO ("call Mono.Security.X509.X509Store*")]
 		public void Add (X509CertificateEx certificate)
 		{
 			if (certificate == null)
 				throw new ArgumentNullException ("certificate");
 
-			if ((!ReadOnly) && (_store != null)) {
+			if (!ReadOnly) {
 				try {
 					Mono.Security.X509.X509Certificate x = new Mono.Security.X509.X509Certificate (certificate.RawData);
-					_store.Add (x);
+					// TODO
 				}
 				catch {
 					throw new CryptographicException ("couldn't add certificate");
@@ -137,30 +143,31 @@ namespace System.Security.Cryptography.X509Certificates {
 			}
 		}
 
+		[MonoTODO ("call Mono.Security.X509.X509Store*")]
 		public void Close () 
 		{
-			if (_store != null)
-				_store.Close ();
 		}
 
+		[MonoTODO ("call Mono.Security.X509.X509Store*")]
 		public void Open (OpenFlags flags)
 		{
 			_flags = flags;
 			bool readOnly = ((flags & OpenFlags.ReadOnly) == OpenFlags.ReadOnly);
 			bool create = !((flags & OpenFlags.OpenExistingOnly) == OpenFlags.OpenExistingOnly);
 			bool archive = ((flags & OpenFlags.IncludeArchived) == OpenFlags.IncludeArchived);
-			_store.Open (_name, _location.ToString (), readOnly, create, archive);
+			// TODO
 		}
 
+		[MonoTODO ("call Mono.Security.X509.X509Store*")]
 		public void Remove (X509CertificateEx certificate) 
 		{
 			if (certificate == null)
 				throw new ArgumentNullException ("certificate");
 
-			if ((!ReadOnly) && (_store != null)) {
+			if (!ReadOnly) {
 				try {
 					Mono.Security.X509.X509Certificate x = new Mono.Security.X509.X509Certificate (certificate.RawData);
-					_store.Remove (x);
+					// TODO
 				}
 				catch {
 					throw new CryptographicException ("couldn't remove certificate");
