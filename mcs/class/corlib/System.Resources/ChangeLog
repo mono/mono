@@ -1,3 +1,7 @@
+2005-03-22 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* ResourceManager.cs: use culture.Equals in InternalGetResourceSet().
+
 2005-02-12  Geoff Norton  <gnorton@customerdna.com>
 
 	* ResourceReader.cs: If a resource type index is -1 return null 

@@ -327,11 +327,13 @@ namespace System.Resources
 					 * with it?
 					 */
 					set=(ResourceSet)Activator.CreateInstance(resourceSetType, args);
-				} else if (culture == CultureInfo.InvariantCulture) {
+				} else if (culture.Equals (CultureInfo.InvariantCulture)) {
 					string msg = "Could not find any resource appropiate for the " +
-						     "specified culture or its parents (assembly:{0})";
+						     "specified culture or its parents. " +
+						     "Make sure \"{1}\" was correctly embedded or " +
+						     "linked into assembly \"{0}\".";
 						     
-					msg = String.Format (msg, MainAssembly != null ? MainAssembly.GetName ().Name : "");
+					msg = String.Format (msg, MainAssembly != null ? MainAssembly.GetName ().Name : "", filename);
 							    
 					throw new MissingManifestResourceException (msg);
 				}
