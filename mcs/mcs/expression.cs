@@ -5046,6 +5046,7 @@ namespace Mono.CSharp {
 		{
 			ILGenerator ig = ec.ig;
 			bool struct_call = false;
+			bool this_call = false;
 
 			Type decl_type = method.DeclaringType;
 
@@ -5084,7 +5085,8 @@ namespace Mono.CSharp {
 				//
 				// If this is ourselves, push "this"
 				//
-				if (instance_expr == null){
+				if (instance_expr == null) {
+					this_call = true;
 					ig.Emit (OpCodes.Ldarg_0);
 				} else {
 					//
@@ -5127,8 +5129,14 @@ namespace Mono.CSharp {
 			}
 
 			EmitArguments (ec, method, Arguments);
-
-			if (is_static || struct_call || is_base || !method.IsVirtual){
+			
+			//
+			// If you have:
+			// this.DoFoo ();
+			// and DoFoo is not virtual, you can omit the callvirt,
+			// because you don't need the null checking behavior.
+			//
+			if (is_static || struct_call || is_base || (this_call && !method.IsVirtual)){
 				if (method is MethodInfo) {
 					ig.Emit (OpCodes.Call, (MethodInfo) method);
 				} else

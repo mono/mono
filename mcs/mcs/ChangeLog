@@ -1,3 +1,13 @@
+2004-02-27 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* expression.cs (Invocation.EmitCall): Miguel's last commit
+	caused a regression. If you had:
+	
+	    T t = null;
+	    t.Foo ();
+
+	In Foo the implict this would be null.
+	
 2004-02-27  Miguel de Icaza  <miguel@ximian.com>
 
 	* expression.cs (Invocation.EmitCall): If the method is not
