@@ -1,4 +1,11 @@
-2005-02-16  Atsushi Enomoto <atsushi@ximian.com>
+2005-02-17  Atsushi Enomoto <atsushi@ximian.com>
+
+	* Compiler.cs : reverted previous fix, since it should be done
+	  in XslTransformProcessor with root stylesheet.
+	* XslTransformProcessor.cs : In TryElementNamespacesOutput(),
+	  don't output alias namespaces. And now consider null exclusions.
+
+2005-02-17  Atsushi Enomoto <atsushi@ximian.com>
 
 	* Compiler.cs : don't return alias namespaces in GetNamespacesToCopy().
 

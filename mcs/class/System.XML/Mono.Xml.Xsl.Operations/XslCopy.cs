@@ -41,20 +41,14 @@ namespace Mono.Xml.Xsl.Operations {
 		XslOperation children;
 		XmlQualifiedName [] useAttributeSets;
 		Hashtable nsDecls;
-		ArrayList excludedPrefixes;
 		
 		public XslCopy (Compiler c) : base (c) {}
 		
 		protected override void Compile (Compiler c)
 		{
 			this.nsDecls = c.GetNamespacesToCopy ();
-			if (nsDecls.Count == 0) nsDecls = null;
-			string excludeResultPrefixes;
-			string extensionElementPrefixes;
-			excludeResultPrefixes = c.Input.GetAttribute ("exclude-result-prefixes", XsltNamespace);
-			extensionElementPrefixes = c.Input.GetAttribute ("extension-element-prefixes", XsltNamespace);
-			excludedPrefixes = new ArrayList (excludeResultPrefixes.Split (XmlChar.WhitespaceChars));
-			excludedPrefixes.AddRange (extensionElementPrefixes.Split (XmlChar.WhitespaceChars));
+			if (nsDecls.Count == 0)
+				nsDecls = null;
 
 			if (c.Input.MoveToFirstAttribute ())
 			{
@@ -92,7 +86,7 @@ namespace Mono.Xml.Xsl.Operations {
 				p.PushElementState (p.CurrentNode.LocalName, p.CurrentNode.NamespaceURI, true);
 				p.Out.WriteStartElement (p.CurrentNode.Prefix, p.CurrentNode.LocalName, p.CurrentNode.NamespaceURI);
 				
-				p.TryElementNamespacesOutput (nsDecls, excludedPrefixes);
+				p.TryElementNamespacesOutput (nsDecls, null);
 				if (useAttributeSets != null)
 					foreach (XmlQualifiedName s in useAttributeSets)
 						p.ResolveAttributeSet (s).Evaluate (p);

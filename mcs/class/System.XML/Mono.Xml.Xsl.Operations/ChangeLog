@@ -1,3 +1,11 @@
+2005-02-17  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XslLiteralElement.cs,
+	  XslCopy.cs : Now that exclude-element-prefixes and extension-
+	  element-prefixes are handled in GetNamespacesToCopy(), we could
+	  just remove those collector routine. Also, literal elements were
+	  still trying to output namespaces outside TryElementNamespacesOutput.
+
 2005-02-16  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XslCopy.cs : According to the spec 7.5, namespace nodes should be

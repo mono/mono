@@ -467,7 +467,7 @@ namespace Mono.Xml.Xsl
 			
 			if (nav.MoveToFirstNamespace (XPathNamespaceScope.ExcludeXml)) {
 				do {
-					if (nav.Value != XsltNamespace && !ret.Contains (nav.Name) && currentStyle.NamespaceAliases [nav.Name] == null)
+					if (nav.Value != XsltNamespace && !ret.Contains (nav.Name))
 						ret.Add (nav.Name, nav.Value);
 				} while (nav.MoveToNextNamespace (XPathNamespaceScope.ExcludeXml));
 				nav.MoveToParent ();

@@ -44,9 +44,6 @@ namespace Mono.Xml.Xsl.Operations {
 		ArrayList attrs;
 		XmlQualifiedName [] useAttributeSets;
 		Hashtable nsDecls;
-		string excludeResultPrefixes;
-		string extensionElementPrefixes;
-		ArrayList excludedPrefixes;
 		bool requireNameFix;
 		XPathNavigator stylesheetNode;
 		XslStylesheet stylesheet;
@@ -83,10 +80,6 @@ namespace Mono.Xml.Xsl.Operations {
 			this.nsDecls = c.GetNamespacesToCopy ();
 			if (nsDecls.Count == 0) nsDecls = null;
 			this.isEmptyElement = c.Input.IsEmptyElement;
-			this.excludeResultPrefixes = c.Input.GetAttribute ("exclude-result-prefixes", XsltNamespace);
-			this.extensionElementPrefixes = c.Input.GetAttribute ("extension-element-prefixes", XsltNamespace);
-			excludedPrefixes = new ArrayList (excludeResultPrefixes.Split (XmlChar.WhitespaceChars));
-			excludedPrefixes.AddRange (extensionElementPrefixes.Split (XmlChar.WhitespaceChars));
 
 			if (c.Input.MoveToFirstAttribute ())
 			{
@@ -140,16 +133,8 @@ namespace Mono.Xml.Xsl.Operations {
 					((XslLiteralAttribute)attrs [i]).Evaluate (p);
 			}
 
-			p.TryElementNamespacesOutput (nsDecls, excludedPrefixes);
+			p.TryElementNamespacesOutput (nsDecls, null);
 
-			if (nsDecls != null) {
-				foreach (DictionaryEntry de in nsDecls) {
-					string actualPrefix = p.CompiledStyle.Style.PrefixInEffect (de.Key as String, excludedPrefixes);
-					if (actualPrefix != null)
-						p.Out.WriteNamespaceDecl (actualPrefix, (string)de.Value);
-				}
-			}
-			
 			if (children != null) children.Evaluate (p);
 
 			if (isEmptyElement)

@@ -325,6 +325,10 @@ namespace Mono.Xml.Xsl {
 			foreach (DictionaryEntry cur in nsDecls) {
 				string name = (string)cur.Key;
 				string value = (string)cur.Value;
+
+				if (style.NamespaceAliases [name] != null)
+					continue;
+
 				switch (value) {//FIXME: compare names by reference
 				case "http://www.w3.org/1999/XSL/Transform":
 					if ("xsl" == name)
@@ -342,7 +346,7 @@ namespace Mono.Xml.Xsl {
 					else
 						goto default;
 				default:
-					if (! excludedPrefixes.Contains (name))
+					if (excludedPrefixes == null || !excludedPrefixes.Contains (name))
 						Out.WriteNamespaceDecl (name, value);
 					break;
 				}
