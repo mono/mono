@@ -1,0 +1,9 @@
+2004-10-22  Atsushi Enomoto <atsushi@ximian.com>
+
+	DTMXPathDocument.cs,
+	DTMXPathDocumentBuilder.cs,
+	DTMXPathDocumentWriter.cs,
+	DTMXPathNavigator.cs,
+	DTMXPathNode.cs,
+	XPathEditableDocument.cs: Initial Checkin (it is not compiled as yet).
+
