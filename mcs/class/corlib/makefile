@@ -21,7 +21,10 @@ windows: make-list
 	$(CSC) /unsafe /target:library /out:corlibx.dll /nowarn:1595 @list
 
 monolib: make-list-mono
-	$(CSC) /unsafe /nostdlib /target:library /out:corlib.dll /nowarn:1595 System\\Object.cs System\\ValueType.cs @listmono
+	$(CSC) /unsafe /nostdlib /target:library /out:corlib.dll /nowarn:1595 @listmono
+
+monolib2: make-list-mono
+	$(CSC) /unsafe /target:library /out:corlib.dll /nowarn:1595 @listmono
 
 unix:
 	@echo "'make unix' is broken for now."
