@@ -118,21 +118,21 @@ namespace System.Xml.XPath
 
 		public virtual bool Matches (XPathExpression expr)
 		{
-			if (expr.Expression.StartsWith ("/")) {
-				XPathNodeIterator nodes = Select (expr);
+			XPathNodeIterator nodes = Select (expr);
+
+			while (nodes.MoveNext ()) {
+				if (IsSamePosition (nodes.Current))
+					return true;
+			}
+
+			XPathNavigator navigator = Clone ();
+
+			while (navigator.MoveToParent ()) {
+				nodes = navigator.Select (expr);
+
 				while (nodes.MoveNext ()) {
 					if (IsSamePosition (nodes.Current))
 						return true;
-				}
-			} else {
-				XPathNavigator navigator = Clone ();
-
-				while (navigator.MoveToParent ()) {
-					XPathNodeIterator nodes = navigator.Select (expr);
-					while (nodes.MoveNext ()) {
-						if (IsSamePosition (nodes.Current))
-							return true;
-					}
 				}
 			}
 
