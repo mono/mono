@@ -23,7 +23,7 @@ namespace System.Windows.Forms {
 		string text, name;
 		Size size;
 		int left, top, width, height, tabindex, index, tag;
-		ControlCollection controls;
+		public ControlCollection controls;
 		Point location = new System.Drawing.Point (0, 0);
 		Gtk.Layout layout = null;
 		AnchorStyles anchor = AnchorStyles.Top|AnchorStyles.Left;
@@ -59,21 +59,21 @@ namespace System.Windows.Forms {
 				  // we fill with the added Controls .. (question: how do I remove the
 				  // label and/or get the Gtk.Widget inside the button ?)
 				//
-				// Phillip : Here is some code that will remove the label normlly
-				// Gtk.Button mybut = new Gtk.Button("Test"); 
-				// GLib.List mylist = new GLib.List((IntPtr) 0, typeof (Gtk.Widget));
-				// mylist = mybutton.Children;
-				// foreach (Gtk.Widget awidget in mylist){mybut.Remove(awidget);}
+				// Phillip : I added in the code, but you will have to do do the
+				// positioning stuff. You understand that better than me :-)
+				// The Controls property has to be overriden in the base class
+				// (ie Button.cs) now
+				// if you want to be able to add controls to a control
 				//
-				// You can then add in the container with Add()
 				// We will also have to to create a way to add widgets to a
- 				//GroupBox 
+ 				// GroupBox 
 
 					Gtk.Button gtkbutton = (Gtk.Button)this.owner.widget;
 					GLib.List mylist = new GLib.List((IntPtr) 0, typeof (Gtk.Widget));
 					mylist = gtkbutton.Children;
 					foreach (Gtk.Widget awidget in mylist){gtkbutton.Remove(awidget);}
 					gtkbutton.Add (value.widget);
+					gtkbutton.ShowAll();
 					list.Add (value);
 				} 
 				else if (value.GetType() == typeof(System.Windows.Forms.StatusBar))
@@ -87,7 +87,7 @@ namespace System.Windows.Forms {
 					list.Add (value);
 				}
 				else if (value.GetType() == typeof(System.Windows.Forms.MainMenu))
-				{
+				{	
 					MainMenu m = (MainMenu)value;
 					this.owner.vbox.PackStart(m.mb, false, false, 0);
 					m.mb.ShowAll();
@@ -347,7 +347,7 @@ namespace System.Windows.Forms {
 		}
 		
 		
-		public ControlCollection Controls {
+		public virtual ControlCollection Controls {
 			get { if (controls == null) controls = new ControlCollection (this); return controls;}
 		}
 		

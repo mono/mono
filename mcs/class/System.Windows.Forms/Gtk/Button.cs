@@ -103,6 +103,11 @@ namespace System.Windows.Forms
 			button.Add (label.Widget);
 			return button;
 		}
+		
+		public override ControlCollection Controls {
+			get {if (controls == null) controls = new ControlCollection (this); return controls;}
+		}
+		
 	}
-//	
+	
 }
