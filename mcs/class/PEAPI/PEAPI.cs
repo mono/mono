@@ -319,6 +319,7 @@ namespace PEAPI
     uint flags;
     uint hashAlgId;
     uint keyIx = 0, cultIx = 0;
+    bool hasPublicKey = false;
     
     internal Assembly(string name, MetaData md) : base(name,md) {
       tabIx = MDTable.Assembly;
@@ -341,6 +342,7 @@ namespace PEAPI
       buildNo = (ushort)bldNo;
       revisionNo = (ushort)revNo;
       hashAlgId = hash;
+      hasPublicKey = (key != null);
       keyIx = metaData.AddToBlobHeap(key);
       cultIx = metaData.AddToStringsHeap(cult);
     }
@@ -378,6 +380,9 @@ namespace PEAPI
       return 0;
     }
 
+    internal bool HasPublicKey {
+      get { return hasPublicKey; }
+    }
   }     
   /**************************************************************************/  
 
@@ -529,8 +534,8 @@ namespace PEAPI
   /// <summary>
   /// flags for the assembly (.corflags)
   /// </summary>
-  public enum CorFlags {CF_IL_ONLY, CF_32_BITREQUIRED, CF_STRONGNAMESIGNED, 
-                        CF_TRACKDEBUGDATA}
+  public enum CorFlags {CF_IL_ONLY = 1, CF_32_BITREQUIRED = 2,
+                        CF_STRONGNAMESIGNED = 8, CF_TRACKDEBUGDATA = 0x10000 }
 
   /// <summary>
   /// subsystem for the assembly (.subsystem)
@@ -3246,6 +3251,9 @@ namespace PEAPI
     private static readonly uint CLIHeaderSize = 72;
     private uint runtimeFlags = 0x01;  // COMIMAGE_FLAGS_ILONLY
     // 32BITREQUIRED 0x02, STRONGNAMESIGNED 0x08, TRACKDEBUGDATA 0x10000
+    private static readonly uint StrongNameSignatureSize = 128;
+    private bool reserveStrongNameSignatureSpace = false;
+
                 private static readonly uint relocFlags = 0x42000040;
                 private static readonly ushort exeCharacteristics = 0x010E;
                 private static readonly ushort dllCharacteristics = 0x210E;
@@ -3269,6 +3277,7 @@ namespace PEAPI
     uint entryPointOffset, entryPointPadding, imageSize, headerSize, headerPadding, entryPointToken = 0;
     uint relocOffset, relocRVA, relocSize, relocPadding, relocTide, hintNameTableOffset;
     uint metaDataOffset, runtimeEngineOffset, initDataSize = 0, importTablePadding;
+    uint strongNameSigOffset;
     uint importTableOffset, importLookupTableOffset, totalImportTableSize;
     MetaData metaData;
     char[] runtimeEngine = runtimeEngineName.ToCharArray(), hintNameTable;
@@ -3326,9 +3335,15 @@ namespace PEAPI
       // Console.WriteLine("Code starts at " + metaDataOffset);
       metaDataOffset += metaData.CodeSize();
       // resourcesStart =
-      // strongNameSig = metaData.GetStrongNameSig();
-      // fixUps = RVA for vtable
-      importTableOffset = metaDataOffset + metaData.Size();
+      if (reserveStrongNameSignatureSpace) {
+        strongNameSigOffset = metaDataOffset + metaData.Size();
+        // fixUps = RVA for vtable
+        importTableOffset = strongNameSigOffset + StrongNameSignatureSize;
+      } else {
+        strongNameSigOffset = 0;
+        // fixUps = RVA for vtable
+        importTableOffset = metaDataOffset + metaData.Size();
+      }
       importTablePadding = NumToAlign(importTableOffset,16);
       importTableOffset += importTablePadding;
       importLookupTableOffset = importTableOffset + ImportTableSize;
@@ -3471,6 +3486,9 @@ if (rsrc != null)
       largeUS = metaData.LargeUSIndex();
       largeBlob = metaData.LargeBlobIndex();
       metaData.WriteMetaData(this);
+      if (reserveStrongNameSignatureSpace) {
+        WriteZeros(StrongNameSignatureSize);
+      }
       WriteImportTables();
                         WriteZeros(entryPointPadding);
                         Write((ushort)0x25FF);
@@ -3487,7 +3505,13 @@ if (rsrc != null)
       Write(runtimeFlags);
       Write(entryPointToken);
       WriteZeros(8);                     // Resources - used by Manifest Resources NYI
-      WriteZeros(8);                     // Strong Name stuff here!! NYI
+      // Strong Name Signature (RVA, size)
+      if (reserveStrongNameSignatureSpace) {
+        Write(text.RVA() + strongNameSigOffset); 
+        Write(StrongNameSignatureSize);
+      } else {
+        WriteZeros(8);
+      }
       WriteZeros(8);                     // CodeManagerTable
       WriteZeros(8);                     // VTableFixups NYI
       WriteZeros(16);                    // ExportAddressTableJumps, ManagedNativeHeader
@@ -3661,6 +3685,11 @@ if (rsrc != null)
       Write(b1);
       Write(b2);
       Write(b3);
+    }
+
+    internal bool ReserveStrongNameSignatureSpace {
+      get { return reserveStrongNameSignatureSpace; }
+      set { reserveStrongNameSignatureSpace = value; }
     }
 
         }
@@ -6301,6 +6330,7 @@ CalcHeapSizes ();
     /// Write out the PEFile (the "bake" function)
     /// </summary>
     public void WritePEFile() { /* the "bake" function */
+      fileImage.ReserveStrongNameSignatureSpace = thisAssembly.HasPublicKey;
       fileImage.MakeFile();
     }
 
