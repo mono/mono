@@ -1,3 +1,8 @@
+2004-06-09  Martin Baulig  <martin@ximian.com>
+
+	* loader.c (mono_get_method_constrained): Call `mono_class_init
+	(constrained_class)'.	
+
 2004-06-08  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* icall.c (ves_icall_MonoType_GetEvent): Handle events without
