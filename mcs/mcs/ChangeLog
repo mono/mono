@@ -1,3 +1,9 @@
+2002-12-29  Miguel de Icaza  <miguel@ximian.com>
+
+	* cs-tokenizer.cs (get_cmd_arg): Fixups to allow \r to terminate
+	the command.   This showed up while compiling the JANET source
+	code, which used \r as its only newline separator.
+
 2002-12-28  Miguel de Icaza  <miguel@ximian.com>
 
 	* class.cs (Method.Define): If we are an operator (because it
