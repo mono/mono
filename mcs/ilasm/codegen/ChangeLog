@@ -1,5 +1,11 @@
 2003-04-17 Jackson Harper <jackson@latitudegeo.com>
 
+	* PeapiTypeRef.cs: New file - base wrapper for type refs that are
+	just peapi types.
+	* PrimitiveTypeRef.cs: New file - A primitive type (char, int, string)
+		
+2003-04-17 Jackson Harper <jackson@latitudegeo.com>
+
 	* TypeRef.cs: Rewrite - Typerefs are now resolved after parsing.
 	* TypeManager.cs: Rewrite - Just a simple table for looking up
 	typedefs
