@@ -225,7 +225,7 @@ namespace MonoTests.System.Xml
 			doc.DocumentElement.LastChild.Attributes.SetNamedItem (attr);
 			AssertNotNull (doc.GetElementById ("id1"));
 			XmlElement elem2 = doc.GetElementById ("id2");
-			// MS.NET BUG: it doesn't removes replaced attribute with SetNamedItem!
+			// MS.NET BUG: it doesn't remove replaced attribute with SetNamedItem!
 //			AssertNull (elem2);
 //			AssertEquals ("2", elem2.GetAttribute ("bar"));
 //			elem2.RemoveAttribute ("foo");
@@ -257,6 +257,52 @@ namespace MonoTests.System.Xml
 			AssertNull (doc.GetElementById ("id1"));
 			AssertNull (doc.GetElementById ("id2"));
 			AssertNull (doc.GetElementById ("id3"));
+		}
+
+		int removeAllStep;
+		[Test]
+		public void DefaultAttributeRemoval ()
+		{
+			XmlDocument doc = new XmlDocument ();
+			doc.LoadXml ("<!DOCTYPE root [<!ELEMENT root (#PCDATA)><!ATTLIST root foo CDATA 'foo-def'>]><root></root>");
+			doc.NodeInserted += new XmlNodeChangedEventHandler (OnInsert);
+			doc.NodeChanged += new XmlNodeChangedEventHandler (OnChange);
+			doc.NodeRemoved += new XmlNodeChangedEventHandler (OnRemove);
+			doc.DocumentElement.RemoveAll ();
+		}
+		
+		private void OnInsert (object o, XmlNodeChangedEventArgs e)
+		{
+			if (removeAllStep == 1)
+				AssertEquals (XmlNodeType.Text, e.Node.NodeType);
+			else if (removeAllStep == 2) {
+				AssertEquals ("foo", e.Node.Name);
+				Assert (! ((XmlAttribute) e.Node).Specified);
+			}
+			else
+				Fail ();
+			removeAllStep++;
+		}
+		private void OnChange (object o, XmlNodeChangedEventArgs e)
+		{
+			Fail ("Should not be called.");
+		}
+		private void OnRemove (object o, XmlNodeChangedEventArgs e)
+		{
+			AssertEquals (0, removeAllStep);
+			AssertEquals ("foo", e.Node.Name);
+			removeAllStep++;
+		}
+
+		[Test]
+		public void EmptyStringHasTextNode ()
+		{
+			doc.LoadXml ("<root attr=''/>");
+			XmlAttribute attr = doc.DocumentElement.GetAttributeNode ("attr");
+			AssertNotNull (attr);
+			AssertEquals (1, attr.ChildNodes.Count);
+			AssertEquals (XmlNodeType.Text, attr.ChildNodes [0].NodeType);
+			AssertEquals (String.Empty, attr.ChildNodes [0].Value);
 		}
 	}
 }

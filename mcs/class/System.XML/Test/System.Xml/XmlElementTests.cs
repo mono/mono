@@ -244,6 +244,23 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
+		public void RemoveDoesNotRemoveDefaultAttributes ()
+		{
+			string dtd = "<!DOCTYPE root [<!ELEMENT root EMPTY><!ATTLIST root   foo CDATA 'def'   bar CDATA #IMPLIED>]>";
+			string xml = dtd + "<root bar='baz' />";
+			XmlValidatingReader xvr = new XmlValidatingReader (xml, XmlNodeType.Document, null);
+			document.Load (xvr);
+			AssertNotNull (document.DocumentElement);
+			AssertEquals (2, document.DocumentElement.Attributes.Count);
+			AssertEquals ("baz", document.DocumentElement.GetAttribute ("bar"));
+			AssertEquals ("def", document.DocumentElement.GetAttribute ("foo"));
+			document.DocumentElement.RemoveAll ();
+			AssertEquals (1, document.DocumentElement.Attributes.Count);
+			AssertEquals ("def", document.DocumentElement.GetAttribute ("foo"));
+			AssertEquals (String.Empty, document.DocumentElement.GetAttribute ("bar"));
+		}
+
+		[Test]
 		public void SetAttributeNode ()
 		{
 			XmlDocument xmlDoc = new XmlDocument ();

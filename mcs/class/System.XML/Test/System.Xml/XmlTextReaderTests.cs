@@ -647,5 +647,58 @@ namespace MonoTests.System.Xml
 			XmlDocument doc = new XmlDocument ();
 			doc.Load ("XmlFiles/nested-dtd-test.xml");
 		}
+
+		// MS.NET 1.0 fails this test.
+		[Test]
+		[ExpectedException (typeof (XmlException))]
+		public void NotAllowedCharRef ()
+		{
+			string xml = "<root>&#0;</root>";
+			XmlTextReader xtr = new XmlTextReader (xml, XmlNodeType.Document, null);
+			xtr.Read ();
+			xtr.Read ();
+		}
+
+		[Test]
+		[ExpectedException (typeof (XmlException))]
+		[Ignore ("MS.NET 1.0 fails this test. The related spec is XML rec. 4.1")]
+		public void UndeclaredEntityInIntSubsetOnlyXml ()
+		{
+			string ent2 = "<!ENTITY ent2 '<foo/><foo/>'>]>";
+			string dtd = "<!DOCTYPE root[<!ELEMENT root (#PCDATA|foo)*>" + ent2;
+			string xml = dtd + "<root>&ent;&ent2;</root>";
+			XmlTextReader xtr = new XmlTextReader (xml, XmlNodeType.Document, null);
+			while (!xtr.EOF)
+				xtr.Read ();
+		}
+
+		[Test]
+		[ExpectedException (typeof (XmlException))]
+		[Ignore ("MS.NET 1.0 fails this test. The related spec is XML rec. 4.1")]
+		public void UndeclaredEntityInStandaloneXml ()
+		{
+			string ent2 = "<!ENTITY ent2 '<foo/><foo/>'>]>";
+			string dtd = "<!DOCTYPE root[<!ELEMENT root (#PCDATA|foo)*>" + ent2;
+			string xml = "<?xml version='1.0' standalone='yes' ?>" 
+				+ dtd + "<root>&ent;</root>";
+			XmlTextReader xtr = new XmlTextReader (xml, XmlNodeType.Document, null);
+			while (!xtr.EOF)
+				xtr.Read ();
+		}
+
+		[Test]
+		public void ExpandParameterEntity ()
+		{
+			string ent = "<!ENTITY foo \"foo-def\">";
+			string pe = "<!ENTITY % pe '" + ent + "'>";
+			string eldecl = "<!ELEMENT root ANY>";
+			string dtd = "<!DOCTYPE root[" + eldecl + pe + "%pe;]>";
+			string xml = dtd + "<root/>";
+			XmlDocument doc = new XmlDocument ();
+			doc.LoadXml (xml);
+			XmlEntity foo = doc.DocumentType.Entities.GetNamedItem ("foo") as XmlEntity;
+			AssertNotNull (foo);
+			AssertEquals ("foo-def", foo.InnerText);
+		}
 	}
 }

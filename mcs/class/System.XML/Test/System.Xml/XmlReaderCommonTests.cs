@@ -76,8 +76,24 @@ namespace MonoTests.System.Xml
 			string value,
 			int attributeCount)
 		{
+			AssertNodeValues (xmlReader, nodeType, depth, isEmptyElement, name, prefix, localName, namespaceURI, value, value != String.Empty, attributeCount, attributeCount > 0);
+		}
+
+		private void AssertNodeValues (
+			XmlReader xmlReader,
+			XmlNodeType nodeType,
+			int depth,
+			bool isEmptyElement,
+			string name,
+			string prefix,
+			string localName,
+			string namespaceURI,
+			string value,
+			bool hasValue,
+			int attributeCount,
+			bool hasAttributes)
+		{
 			AssertEquals ("NodeType", nodeType, xmlReader.NodeType);
-			AssertEquals ("Depth", depth, xmlReader.Depth);
 			AssertEquals ("IsEmptyElement", isEmptyElement, xmlReader.IsEmptyElement);
 
 			AssertEquals ("name", name, xmlReader.Name);
@@ -88,11 +104,13 @@ namespace MonoTests.System.Xml
 
 			AssertEquals ("namespaceURI", namespaceURI, xmlReader.NamespaceURI);
 
-			AssertEquals ("hasValue", (value != String.Empty), xmlReader.HasValue);
+			AssertEquals ("Depth", depth, xmlReader.Depth);
+
+			AssertEquals ("hasValue", hasValue, xmlReader.HasValue);
 
 			AssertEquals ("Value", value, xmlReader.Value);
 
-			AssertEquals ("hasAttributes", attributeCount > 0, xmlReader.HasAttributes);
+			AssertEquals ("hasAttributes", hasAttributes, xmlReader.HasAttributes);
 
 			AssertEquals ("attributeCount", attributeCount, xmlReader.AttributeCount);
 		}
@@ -134,15 +152,15 @@ namespace MonoTests.System.Xml
 			xtr = new XmlTextReader (new StringReader (xml));
 			method (xtr);
 
-			document.XmlResolver = null;
-			document.LoadXml (xml);
-			xnr = new XmlNodeReader (document);
-			method (xnr);
-
 			xtr = new XmlTextReader (new StringReader (xml));
 			XmlValidatingReader xvr = new XmlValidatingReader (xtr);
 			xvr.EntityHandling = EntityHandling.ExpandCharEntities;
 			method (xvr);
+
+			document.XmlResolver = null;
+			document.LoadXml (xml);
+			xnr = new XmlNodeReader (document);
+			method (xnr);
 		}
 
 
@@ -194,6 +212,29 @@ namespace MonoTests.System.Xml
 			reader.Read ();
 			AssertEquals ("end.EOF", true, reader.EOF);
 			AssertEquals ("end.NodeType", XmlNodeType.None, reader.NodeType);
+		}
+
+		[Test]
+		public void ReadAttributeValue ()
+		{
+			RunTest ("<root attr=''/>", new TestMethod (ReadAttributeValue));
+		}
+
+		public void ReadAttributeValue (XmlReader reader)
+		{
+			reader.Read ();	// root
+			Assert (reader.MoveToFirstAttribute ());
+			// It looks like that MS.NET shows AttributeCount and
+			// HasAttributes as the same as element node!
+			this.AssertNodeValues (reader, XmlNodeType.Attribute,
+				1, false, "attr", "", "attr", "", "", true, 1, true);
+			Assert (reader.ReadAttributeValue ());
+			// MS.NET XmlNodeReader fails. Its Prefix returns "" instead of null.
+			this.AssertNodeValues (reader, XmlNodeType.Text,
+				2, false, "", null, "", null, "", true, 1, true);
+			reader.MoveToElement ();
+			this.AssertNodeValues (reader, XmlNodeType.Element,
+				0, true, "root", "", "root", "", "", false, 1, true);
 		}
 
 		[Test]
@@ -1192,7 +1233,7 @@ namespace MonoTests.System.Xml
 			Assert (xmlReader.Read ());
 			AssertEquals ("1.0", xmlReader ["version"]);
 			AssertEquals ("1.0", xmlReader.GetAttribute ("version"));
-			// XmlTextReader returns null, while XmlNodeReader returns "".
+			// .NET 1.1 BUG. XmlTextReader returns null, while XmlNodeReader returns "".
 			AssertEquals (null, xmlReader ["encoding"]);
 			AssertEquals (null, xmlReader.GetAttribute ("encoding"));
 			AssertEquals ("no", xmlReader ["standalone"]);

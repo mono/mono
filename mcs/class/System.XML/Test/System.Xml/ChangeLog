@@ -1,3 +1,18 @@
+2003-08-24  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* XmlAttributeTests.cs : Added DefaultAttributeRemoval() and
+	  EmptyStringHasTextNode().
+	* XmlElementTests.cs : Added RemoveDoesNotRemoveDefaultAttributes().
+	* XmlReaderCommonTests.cs : Added overroaded AssertNodeValues() and
+	  ReadAttributeValue().
+	* XmlTextReaderTests.cs :
+	  Added NotAllowedCharRef() and ExpandParameterEntity().
+	  Also added but ignored tests: UndeclaredEntityInIntSubsetOnlyXml()
+	  and UndeclaredEntityInStandaloneXml().
+	* XmlValidatingReaderTests.cs : TestAttributeDefaultContribution() 
+	  refactory.
+	* Added XsdParticleValidationTests.cs and XsdValidatingReaderTests.cs.
+
 2003-08-05  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* XmlReaderCommonTests.cs : Its XmlValidatingReader.EntityHandling

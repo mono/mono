@@ -347,45 +347,27 @@ namespace MonoTests.System.Xml
 			string intSubset = "<!ELEMENT root EMPTY><!ATTLIST root foo CDATA 'foo-def' bar CDATA 'bar-def'>";
 			string dtd = "<!DOCTYPE root [" + intSubset + "]>";
 			string xml = dtd + "<root />";
+
 			dvr = PrepareXmlReader (xml);
 			dvr.ValidationType = ValidationType.DTD;
-			dvr.Read ();	// DTD
-			dvr.Read ();
-			AssertEquals (XmlNodeType.Element, dvr.NodeType);
-			AssertEquals ("root", dvr.Name);
-			// foo
-			Assert (dvr.MoveToFirstAttribute ());
-			AssertEquals ("foo", dvr.Name);
-			AssertEquals ("foo-def", dvr ["foo"]);
-			AssertNotNull (dvr ["bar"]);
-			AssertEquals ("foo-def", dvr.Value);
-			Assert (dvr.ReadAttributeValue ());
-			AssertEquals (XmlNodeType.Text, dvr.NodeType);
-			AssertEquals ("", dvr.Name);
-			AssertEquals ("foo-def", dvr.Value);
-			// bar
-			Assert (dvr.MoveToNextAttribute ());
-			AssertEquals ("bar", dvr.Name);
-			AssertEquals ("foo-def", dvr ["foo"]);
-			AssertNotNull (dvr ["bar"]);
-			AssertEquals ("bar-def", dvr.Value);
-			Assert (dvr.ReadAttributeValue ());
-			AssertEquals (XmlNodeType.Text, dvr.NodeType);
-			AssertEquals ("", dvr.Name);
-			AssertEquals ("bar-def", dvr.Value);
-
-			// ValidationType = None
+			this.TestAttributeDefaultContributionInternal (dvr);
 
 			dvr = PrepareXmlReader (xml);
 			dvr.ValidationType = ValidationType.None;
+			this.TestAttributeDefaultContributionInternal (dvr);
+		}
+
+		private void TestAttributeDefaultContributionInternal (XmlReader dvr)
+		{
 			dvr.Read ();	// DTD
 			dvr.Read ();
 			AssertEquals (XmlNodeType.Element, dvr.NodeType);
 			AssertEquals ("root", dvr.Name);
+			AssertEquals (2, dvr.AttributeCount);
 			// foo
 			Assert (dvr.MoveToFirstAttribute ());
 			AssertEquals ("foo", dvr.Name);
-			AssertNotNull (dvr ["foo"]);
+			AssertEquals ("foo-def", dvr ["foo"]);
 			AssertNotNull (dvr ["bar"]);
 			AssertEquals ("foo-def", dvr.Value);
 			Assert (dvr.ReadAttributeValue ());
@@ -395,10 +377,9 @@ namespace MonoTests.System.Xml
 			// bar
 			Assert (dvr.MoveToNextAttribute ());
 			AssertEquals ("bar", dvr.Name);
-			AssertEquals ("bar-def", dvr.Value);
-			AssertNotNull (dvr ["foo"]);
+			AssertEquals ("foo-def", dvr ["foo"]);
 			AssertNotNull (dvr ["bar"]);
-			AssertEquals ("bar", dvr.Name);
+			AssertEquals ("bar-def", dvr.Value);
 			Assert (dvr.ReadAttributeValue ());
 			AssertEquals (XmlNodeType.Text, dvr.NodeType);
 			AssertEquals ("", dvr.Name);
