@@ -1,4 +1,12 @@
-2005-03-18  Stefan Buehler  <sbuehler@gmx.ch>
+2005-03-29  Peter Bartok  <pbartok@novell.com>
+
+	* Application.cs:
+	  - Properly implemented CompanyName property
+	  - Fixed LocalUserAppDataPath and UserAppDataPath, now properly 
+	    returns a path that includes CompanyName, ProductName and 
+	    Version (fixes bug #70330)
+
+2005-03-29  Stefan Buehler  <sbuehler@gmx.ch>
 
 	* TabPage.cs: Don't use Owner.DisplayRectangle unless owner is valid, 
 	  fixes bug #72588.

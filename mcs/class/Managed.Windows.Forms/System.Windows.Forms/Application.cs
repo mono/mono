@@ -146,21 +146,13 @@ namespace System.Windows.Forms {
 
 		public static string CompanyName {
 			get {
-				StackTrace	st;
-
-				if (Environment.OSVersion.Platform != (PlatformID)128) {
-					RegistryKey	key;
-					String		ret;
-
-					key=Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion", false);
-					ret=(String)key.GetValue("RegisteredOrganization");
-
-					return ret;
-					
+				AssemblyCompanyAttribute[] attrs = (AssemblyCompanyAttribute[]) Assembly.GetEntryAssembly().GetCustomAttributes(typeof(AssemblyCompanyAttribute), true);
+				
+				if ((attrs != null) && attrs.Length>0) {
+					return attrs[0].Company;
 				}
 
-				st=new StackTrace();
-				return st.GetFrame(st.FrameCount-1).GetMethod().DeclaringType.Namespace;
+				return Assembly.GetEntryAssembly().GetName().Name;
 			}
 		}
 
@@ -193,7 +185,7 @@ namespace System.Windows.Forms {
 
 		public static string LocalUserAppDataPath {
 			get {
-				return Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+				return Path.Combine(Path.Combine(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), CompanyName), ProductName), ProductVersion);
 			}
 		}
 
@@ -246,7 +238,7 @@ namespace System.Windows.Forms {
 
 		public static string UserAppDataPath {
 			get {
-				return Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+				return Path.Combine(Path.Combine(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), CompanyName), ProductName), ProductVersion);
 			}
 		}
 
