@@ -12,6 +12,11 @@ class X {
 		if (!t)
 			j = 1;
 	}
+
+	static void w (int x)
+	{
+		System.Console.WriteLine (" " + x);
+	}
 	
 	static int Main ()
 	{
@@ -22,11 +27,13 @@ class X {
 		else
 			error++;
 
+		w (1);
 		if (f)
 			error++;
 		else
 			ok |= 2;
 
+		w(2);
 		if (t)
 			ok |= 4;
 		else
@@ -43,6 +50,7 @@ class X {
 			ok |= 16;
 
 		int i = 0;
+		w(3);
 		do {
 			i++;
 		} while (!(i > 5));
@@ -51,6 +59,8 @@ class X {
 		else
 			ok |= 32;
 		
+		w(100);
+		System.Console.WriteLine ("Value: " + t);
 		do {
 			i++;
 		} while (!t);

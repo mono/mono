@@ -51,6 +51,7 @@ class X {
 	{
 		I.GetTextFn _ = I.GetText;
 
+	Console.WriteLine ("Value: " + I.GetText);
 		X x = new X ();
 
 		Thread thr = new Thread (new ThreadStart (x.Thread_func));
@@ -70,6 +71,8 @@ class X {
 		MemberInfo [] mi = t.FindMembers (MemberTypes.Method, BindingFlags.Static | BindingFlags.NonPublic,
 						  Type.FilterName, "MyFilter");
 
+		Console.WriteLine ("FindMembers called, mi = " + mi);
+		Console.WriteLine ("   Count: " + mi.Length);
 		if (!filter (mi [0], "MyFilter"))
 			return 1;
 		

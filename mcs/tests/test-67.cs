@@ -27,6 +27,20 @@ public struct Rect {
 	[FieldOffset (12)] public int bottom;
 }
 
+[StructLayout (LayoutKind.Explicit)]
+struct A {
+	[FieldOffset (0)]
+	public int a;
+	[FieldOffset (0)]
+	public byte b1;
+	[FieldOffset (1)]
+	public byte b2;
+	[FieldOffset (2)]
+	public byte b3;
+	[FieldOffset (3)]
+	public byte b4;
+}
+
 public class Blah {
 
 	[DllImport ("Kernel32.dll")]
@@ -58,6 +72,19 @@ public class Blah {
 
 		if (!PtInRect (ref r, p))
 			return 1;
+
+		A a = new A ();
+
+		a.a = 0x12345678;
+
+		if (a.b1 != 0x78)
+			return 2;
+		if (a.b2 != 0x56)
+			return 3;
+		if (a.b3 != 0x34)
+			return 4;
+		if (a.b4 != 0x12)
+			return 5;
 		
 		Console.WriteLine ("Point lies inside rect");
 		Console.WriteLine ("Test passes");
