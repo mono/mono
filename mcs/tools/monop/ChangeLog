@@ -1,3 +1,7 @@
+2004-09-03  John Luke  <john.luke@gmail.com>
+	
+	* monop.cs: report CLSCompliant for assemblies
+
 2004-08-15  John Luke  <john.luke@gmail.com>
 
 	* monop.cs: add declared-only option

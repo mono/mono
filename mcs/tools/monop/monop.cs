@@ -116,9 +116,17 @@ class MonoP {
 		Console.WriteLine ();
 		Console.WriteLine ("Assembly Information:");
 
+		object[] cls = a.GetCustomAttributes (typeof (CLSCompliantAttribute), false);
+		if (cls.Length > 0)
+		{
+			CLSCompliantAttribute cca = cls[0] as CLSCompliantAttribute;
+			if (cca.IsCompliant)
+				Console.WriteLine ("[CLSCompliant]");
+		}
+
 		foreach (string ai in a.ToString ().Split (','))
 			Console.WriteLine (ai.Trim ());
-
+			
 		Console.WriteLine ();
 		Type [] types = a.GetExportedTypes ();
 
