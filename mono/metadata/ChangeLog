@@ -1,3 +1,7 @@
+2004-05-05  Jackson Harper  <jackson@ximian.com>
+
+	* appdomain.c: Handle PublicKeyToken=null properly.
+	
 2004-05-05  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* environment.c|h: Added icall ves_icall_System_Environment_
