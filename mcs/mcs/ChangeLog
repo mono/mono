@@ -1,5 +1,8 @@
 2002-04-09  Miguel de Icaza  <miguel@ximian.com>
 
+	* parameter.cs (Parameters.ComputeParameterTypes): Flag the
+	failure, so we do not keep going afterwards.
+
 	* expression.cs: (Invocation.OverloadResolve): I believe Ravi
 	wanted to pass `false' as the `is_delegate' argument.  If this is
 	the case, why not use delegate_type == null to mean `is_delegate =

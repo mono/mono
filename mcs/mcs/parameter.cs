@@ -254,17 +254,22 @@ namespace Mono.CSharp {
 				return false;
 			}
 
+			bool failed = false;
 			if (FixedParameters != null){
 				foreach (Parameter p in FixedParameters){
 					Type t = null;
 					
 					if (p.Resolve (ds, loc))
 						t = p.ExternalType (ds, loc);
+					else
+						failed = true;
 					
 					types [i] = t;
 					i++;
 				}
 			}
+			if (failed)
+				return false;
 			
 			if (extra > 0){
 				if (ArrayParameter.Resolve (ds, loc))
