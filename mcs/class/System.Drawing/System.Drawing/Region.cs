@@ -483,7 +483,7 @@ namespace System.Drawing
                         
                         RectangleF[] rects = new RectangleF [cnt];					
                         
-			status = GDIPlus.GdipGetRegionScans (nativeRegion, ptr, cnt, matrix.NativeObject);
+			status = GDIPlus.GdipGetRegionScans (nativeRegion, rects, cnt, matrix.NativeObject);
 			GDIPlus.CheckStatus (status);                      	
 			
 			return rects;			

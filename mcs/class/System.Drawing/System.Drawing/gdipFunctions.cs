@@ -55,6 +55,17 @@ namespace System.Drawing {
 			Marshal.FreeHGlobal(prt);			
 		}
 		
+		// Copies a Ptr to an array of Points and releases the memory
+		static public void FromUnManagedMemoryToPoint (IntPtr prt, PointF [] pts)
+		{						
+			int nPointSize = Marshal.SizeOf(pts[0]);
+			int pos = prt.ToInt32();
+			for (int i=0; i<pts.Length; i++, pos+=nPointSize)
+				pts[i] = (PointF) Marshal.PtrToStructure((IntPtr)pos, typeof(Point));
+			
+			Marshal.FreeHGlobal(prt);			
+		}
+		
 		// Copies an array of Points to unmanaged memory
 		static public IntPtr FromPointToUnManagedMemoryI(Point [] pts)
 		{
