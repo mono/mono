@@ -2,10 +2,10 @@
 // System.Runtime.Remoting.SoapServices.cs
 //
 // Author: Jaime Anguiano Olarra (jaime@gnome.org)
+//         Lluis Sanchez Gual (lsg@ctv.es)
 //
 // (c) 2002, Jaime Anguiano Olarra
 // 
-// FIXME: This is just a skeleton for practical purposes.
 
 
 using System;
@@ -21,65 +21,67 @@ namespace System.Runtime.Remoting {
 	{
 		// properties
 	
-		[MonoTODO]
-		public static string XmlNsForClrType { 
-			get { 
-				throw new NotImplementedException (); 
-			}
+		public static string XmlNsForClrType 
+		{ 
+			get { return "http://schemas.microsoft.com/clr/"; }
 		}
 		
-		[MonoTODO]
-		public static string XmlNsForClrTypeWithAssembly { 	
-			get { 
-				throw new NotImplementedException (); 
-			}
+		public static string XmlNsForClrTypeWithAssembly 
+		{ 	
+			get { return "http://schemas.microsoft.com/clr/assem/"; }
 		}
 
-
-		[MonoTODO]
-		public static string XmlNsForClrTypeWithNs {
-			get { 
-				throw new NotImplementedException (); 
-			}
+		public static string XmlNsForClrTypeWithNs 
+		{
+			get { return "http://schemas.microsoft.com/clr/ns/"; }
 		}
 
-		[MonoTODO]
-		public static string XmlNsForClrTypeWithMsAndAssembly {		
-			get { 
-				throw new NotImplementedException (); 
-			}
+		public static string XmlNsForClrTypeWithMsAndAssembly 
+		{
+			get { return "http://schemas.microsoft.com/clr/nsassem/"; }
 		}
 
 		
 		// public methods
 
-		[MonoTODO]
 		public static string CodeXmlNamespaceForClrTypeNamespace (string typeNamespace, 
-									string assemblyName) {
-			
-			throw new NotImplementedException ();
+									string assemblyName) 
+		{
+			// If assemblyName is empty, then use the corlib namespace
+
+			if (assemblyName == string.Empty)
+				return XmlNsForClrTypeWithNs + typeNamespace + "/" + assemblyName;
+			else
+				return XmlNsForClrTypeWithMsAndAssembly + typeNamespace + "/" + assemblyName;
 		}
 
-		[MonoTODO]
 		public static bool DecodeXmlNamespaceForClrTypeNamespace (string inNamespace, 
 									out string typeNamespace, 
 									out string assemblyName) {
-			throw new NotImplementedException (); 
-		}
 
-		[MonoTODO]
-		public override bool Equals (object obj) {
-			throw new NotImplementedException (); 
-		}
+			if (inNamespace == null) throw new ArgumentNullException ("inNamespace");
 
-		[MonoTODO]
-		public new static bool Equals (object objectA, object objectB) {
-			throw new NotImplementedException (); 
-		}
-		
-		[MonoTODO]
-		public override int GetHashCode ( ) {
-			throw new NotImplementedException (); 
+			typeNamespace = null;
+			assemblyName = null;
+
+			if (inNamespace.StartsWith(XmlNsForClrTypeWithMsAndAssembly))
+			{
+				int typePos = XmlNsForClrTypeWithMsAndAssembly.Length;
+				if (typePos >= inNamespace.Length) return false;
+				int assemPos = inNamespace.IndexOf ('/', typePos+1);
+				if (assemPos == -1) return false;
+				typeNamespace = inNamespace.Substring (typePos, assemPos - typePos);
+				assemblyName = inNamespace.Substring (assemPos+1);
+				return true;
+			}
+			else if (inNamespace.StartsWith(XmlNsForClrTypeWithNs))
+			{
+				int typePos = XmlNsForClrTypeWithNs.Length;
+				typeNamespace = inNamespace.Substring (typePos);
+				return true;
+			}
+			else
+				return false;
 		}
 
 		[MonoTODO]
@@ -111,10 +113,18 @@ namespace System.Runtime.Remoting {
 			throw new NotImplementedException (); 
 		}
 
-		[MonoTODO]
-		public static string GetSoapActionFromMethodBase (MethodBase mb) {
-			throw new NotImplementedException (); 
+		private static string GetAssemblyName(MethodBase mb)
+		{
+			if (mb.DeclaringType.Assembly == typeof (object).Assembly)
+				return string.Empty;
+			else
+				return mb.DeclaringType.Assembly.GetName().Name;
+		}
 
+		public static string GetSoapActionFromMethodBase (MethodBase mb) 
+		{
+			string ns = CodeXmlNamespaceForClrTypeNamespace (mb.DeclaringType.Name, GetAssemblyName(mb));
+			return ns + "#" + mb.Name;
 		}
 
 		[MonoTODO]
@@ -122,12 +132,29 @@ namespace System.Runtime.Remoting {
 			throw new NotImplementedException (); 
 		}
 
-		[MonoTODO]
 		public static bool GetTypeAndMethodNameFromSoapAction (string soapAction, 
 									out string typeName, 
 									out string methodName) {
-			throw new NotImplementedException (); 
+			string type;
+			string assembly;
 
+			typeName = null;
+			methodName = null;
+
+			int i = soapAction.LastIndexOf ('#');
+			if (i == -1) return false;
+
+			methodName = soapAction.Substring (i+1);
+
+			if (!DecodeXmlNamespaceForClrTypeNamespace (soapAction.Substring (0,i), out type, out assembly) )
+				return false;
+
+			if (assembly == null) 
+				typeName = type + ", " + typeof (object).Assembly.GetName().Name;
+			else
+				typeName = type + ", " + assembly;
+
+			return true;
 		}
 
 		[MonoTODO]
@@ -138,16 +165,14 @@ namespace System.Runtime.Remoting {
 
 		}
 
-		[MonoTODO]
-		public static string GetXmlNamespaceForMethodCall (MethodBase mb) {
-			throw new NotImplementedException (); 
-
+		public static string GetXmlNamespaceForMethodCall (MethodBase mb) 
+		{
+			return CodeXmlNamespaceForClrTypeNamespace (mb.DeclaringType.Name, GetAssemblyName(mb));
 		}
 
-		[MonoTODO]
-		public static string GetXmlNamespaceForMethodResponse (MethodBase mb) {
-			throw new NotImplementedException (); 
-
+		public static string GetXmlNamespaceForMethodResponse (MethodBase mb) 
+		{
+			return CodeXmlNamespaceForClrTypeNamespace (mb.DeclaringType.Name, GetAssemblyName(mb));
 		}
 
 		[MonoTODO]
@@ -158,16 +183,21 @@ namespace System.Runtime.Remoting {
 
 		}
 
-		[MonoTODO]
-		public static bool IsClrTypeNamespace (string namespaceString) {
-			throw new NotImplementedException (); 
-
+		public static bool IsClrTypeNamespace (string namespaceString) 
+		{
+			return namespaceString.StartsWith (XmlNsForClrType);
 		}
 
-		[MonoTODO]
-		public static bool IsSoapActionValidForMethodBase (string soapAction, MethodBase mb) {
-			throw new NotImplementedException (); 
+		public static bool IsSoapActionValidForMethodBase (string soapAction, MethodBase mb) 
+		{
+			string typeName;
+			string methodName;
+			GetTypeAndMethodNameFromSoapAction (soapAction, out typeName, out methodName);
 
+			if (methodName != mb.Name) return false;
+
+			string methodClassType = mb.DeclaringType.FullName + ", " + mb.DeclaringType.Assembly.GetName().Name;
+			return typeName == methodClassType;
 		}
 
 		[MonoTODO]
@@ -208,24 +238,6 @@ namespace System.Runtime.Remoting {
 		public static void RegisterSoapActionForMethodBase (MethodBase mb, string soapAction) {
 			throw new NotImplementedException (); 
 		}
-
-		[MonoTODO]
-		public override string ToString ( ) {
-			throw new NotImplementedException (); 
-		}
-
-		// protected methods
-
-		[MonoTODO]
-		~SoapServices ( ) {
-			throw new NotImplementedException (); 
-		}
-			
-		[MonoTODO]
-		protected object MemberwiseClone ( ) {	
-			throw new NotImplementedException (); 
-		}
-
 	}
 }
 
