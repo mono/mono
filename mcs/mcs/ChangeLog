@@ -1,3 +1,10 @@
+2002-06-07  Martin Baulig  <martin@gnome.org>
+
+	* class.cs (TypeContainer): Added `have_nonstatic_fields' field.
+	(AddField): Set it to true when adding a non-static field.
+	(DefineType): Use `have_nonstatic_fields' to find out whether we
+	have non-static fields, not `Fields != null'.
+
 2002-06-02  Miguel de Icaza  <miguel@ximian.com>
 
 	* ecore.cs (SimpleNameResolve): Removed simple bug (we were
