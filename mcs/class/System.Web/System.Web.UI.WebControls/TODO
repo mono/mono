@@ -70,7 +70,7 @@ PagedDataSource
 PlaceHolder
 PlaceHolderControlBuilder
 * RadioButton
-RadioButtonList
+& RadioButtonList
 RangeValidator
 RegularExpressionValidator
 Repeater
