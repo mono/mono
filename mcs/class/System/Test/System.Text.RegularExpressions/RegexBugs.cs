@@ -4,7 +4,7 @@
 // Authors:
 // 	Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
-// (c) 2003 Novell, Inc. (http://www.novell.com)
+// (c) Copyright 2003,2004 Novell, Inc. (http://www.novell.com)
 //
 
 using NUnit.Framework;
@@ -152,6 +152,46 @@ namespace MonoTests.System.Text.RegularExpressions
 			Assert ("#4", !g.Success);
 			AssertNotNull ("#5", g.Captures);
 			AssertEquals ("#6", 0, g.Captures.Count);
+		}
+
+		[Test]
+		public void Quantifiers1 ()
+		{
+			Regex re = new Regex ("[\\w\\W]{8,32}");
+			Match m = re.Match (new string ('1', 7));
+			AssertEquals ("#01", false, m.Success);
+		}
+
+		[Test]
+		public void Quantifiers2 ()
+		{
+			Regex re = new Regex ("[\\w\\W]{8,32}");
+			Match m = re.Match (new string ('1', 8));
+			AssertEquals ("#01", true, m.Success);
+		}
+
+		[Test]
+		public void Quantifiers3 ()
+		{
+			Regex re = new Regex ("[\\w\\W]{8,32}");
+			Match m = re.Match (new string ('1', 16));
+			AssertEquals ("#01", true, m.Success);
+		}
+
+		[Test]
+		public void Quantifiers4 ()
+		{
+			Regex re = new Regex ("[\\w\\W]{8,32}");
+			Match m = re.Match (new string ('1', 32));
+			AssertEquals ("#01", true, m.Success);
+		}
+
+		[Test]
+		public void Quantifiers5 ()
+		{
+			Regex re = new Regex ("[\\w\\W]{8,32}");
+			Match m = re.Match (new string ('1', 33));
+			AssertEquals ("#01", true, m.Success);
 		}
 	}
 }

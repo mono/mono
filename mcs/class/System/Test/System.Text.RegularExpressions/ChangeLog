@@ -1,3 +1,7 @@
+2004-05-27  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* RegexBugs.cs: added tests from bug #59150.
+
 2004-04-19  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Test/System.Text.RegularExpressions/PerlTrials.cs:
