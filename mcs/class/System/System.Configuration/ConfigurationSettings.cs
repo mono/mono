@@ -374,7 +374,7 @@ namespace System.Configuration
 				removeValue = sectionName + '/' + removeValue;
 
 			object o = LookForFactory (removeValue);
-			if (o != null && o != removedMark)
+			if (o != null && o == removedMark)
 				ThrowException ("No factory for " + removeValue, reader);
 
 			factories [removeValue] = removedMark;
