@@ -1,9 +1,13 @@
+2004-01-31  Martin Baulig  <martin@ximian.com>
+
+	* get.c (get_methodspec): It's a methoddef or ref token.
+
 2004-01-26  Martin Baulig  <martin@ximian.com>
 
-	* dis/main.cs (--show-tokens): New command line argument to show
+	* main.cs (--show-tokens): New command line argument to show
 	type tokens in the disassembly.
 
-	* dis/get.c (get_typedef, get_typespec, get_typeref): If
+	* get.c (get_typedef, get_typespec, get_typeref): If
 	`show_tokens', include the token in the type name.
 	(get_type): Do some type parsing here and include the token in the
 	returned type name if requested.
