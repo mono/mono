@@ -1,3 +1,20 @@
+2002-03-10  Martin Baulig  <martin@gnome.org>
+
+	* emit-x86.c (arch_compile_method): When emitting stabs debugging
+	output, put a nop instruction at the start of all functions so that
+	the adresses won't change when using --debug.
+
+	* debug.c (mono_debug_add_method): `tree->cli_addr' is an offset into
+	the bytecode area, stabs needs a line number in the .il file. Use the
+	new info->moffsets to get the line number.
+	(AssemblyDebugInfo): Added `total_lines' and `moffsets' fields.
+	`moffsets' is an array of `total_lines' fields (total number of lines
+	in the .il file); for each line in the .il field, this array contains
+	the bytecode offset if it's an "IL_xxxx" line, -1 if it's the last line
+	of a method and 0 otherwise.
+	(debug_load_method_lines): Read the whole .il file and initialize the
+	info->moffsets field.
+
 2002-03-09  Martin Baulig  <martin@gnome.org>
 
 	* x86.brg (DIV_UN): Clear EDX before performing the division and remove
