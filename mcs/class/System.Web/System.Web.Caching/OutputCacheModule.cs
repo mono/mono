@@ -115,8 +115,10 @@ namespace System.Web.Caching {
 			
 			if (IsExpired (context, prev)) {
 				CachedRawResponse c = context.Response.GetCachedResponse ();
-				
-				context.Cache.InsertPrivate (key, c, null,
+				string [] files = new string [0];
+				string [] keys = new string [] { vary_key };
+
+				context.Cache.InsertPrivate (key, c, new CacheDependency (files, keys),
 						context.Response.Cache.Expires,
 						Cache.NoSlidingExpiration,
 						CacheItemPriority.Normal, null);

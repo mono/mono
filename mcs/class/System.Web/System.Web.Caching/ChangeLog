@@ -3,6 +3,8 @@
 	* CacheDependency.cs: Copy all the entries into the entries array,
 	set on removed callback for items that we are dependent on.
 	* Cache.cs: Add method to get CacheEntry objects.
+	* OutputCacheModule.cs: Make raw repsonse entries dependent on 
+	their varyby param entries.
 
 2004-01-04  Jackson Harper <jackson@ximian.com>
 
