@@ -44,7 +44,7 @@
 	</target>
 
 	<target name="clean">
-		<delete file="corlib.dll" failonerror="false"/>
+		<delete file="../lib/corlib.dll" failonerror="false"/>
 		<nant basedir="Test" target="clean"/>
 	</target>
 </project>
