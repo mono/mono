@@ -1,4 +1,8 @@
 
+Tue Mar 26 17:03:14 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* interp.c: support fieldrefs when accessing instance fields.
+
 Mon Mar 25 12:59:52 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	* interp.c: allow tracing to be done on a per-method basis.
