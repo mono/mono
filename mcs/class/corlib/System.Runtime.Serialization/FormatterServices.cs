@@ -1,0 +1,111 @@
+//
+// System.Runtime.Serialization.FormatterServices
+//
+// Authors:
+//	Gonzalo Paniagua Javier (gonzalo@ximian.com)
+//
+// (C) 2002 Ximian, Inc (http://www.ximian.com)
+//
+using System;
+using System.Reflection;
+
+namespace System.Runtime.Serialization
+{
+	public sealed class FormatterServices
+	{
+		private FormatterServices ()
+		{
+		}
+
+		public static object [] GetObjectData (object obj, MemberInfo [] members)
+		{
+			if (obj == null)
+				throw new ArgumentNullException ("obj");
+
+			if (members == null)
+				throw new ArgumentNullException ("members");
+
+			int n = members.Length;
+			object [] result = new object [n];
+			for (int i = 0; i < n; i++) {
+				MemberInfo member = members [i];
+				if (member == null)
+					throw new ArgumentNullException (String.Format ("members[{0}]", i));
+
+				if (member.MemberType != MemberTypes.Field)
+					throw new SerializationException (
+							String.Format ("members [{0}] is not a field.", i));
+
+				FieldInfo fi = member as FieldInfo; //FIXME: Can fi be null?
+				result [i] = fi.GetValue (obj);
+			}
+
+			return result;
+		}
+
+		public static MemberInfo [] GetSerializableMembers (Type type)
+		{
+			StreamingContext st = new StreamingContext (StreamingContextStates.All);
+			return GetSerializableMembers (type, st);
+		}
+
+		[MonoTODO]
+		public static MemberInfo [] GetSerializableMembers (Type type, StreamingContext context)
+		{
+			if (type == null)
+				throw new ArgumentNullException ("type");
+
+			throw new NotImplementedException ();
+
+		}
+
+		public static Type GetTypeFromAssembly (Assembly assem, string name)
+		{
+			if (assem == null)
+				throw new ArgumentNullException ("assem");
+
+			if (name == null)
+				throw new ArgumentNullException ("name");
+
+			return assem.GetType (name);
+		}
+
+		[MonoTODO]
+		public static object GetUninitializedObject (Type type)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public static object PopulateObjectMembers (object obj, MemberInfo [] members, object [] data)
+		{
+			if (obj == null)
+				throw new ArgumentNullException ("obj");
+
+			if (members == null)
+				throw new ArgumentNullException ("members");
+
+			if (data == null)
+				throw new ArgumentNullException ("data");
+
+			int length = members.Length;
+			if (length != data.Length)
+				throw new ArgumentException ("different length in members and data");
+
+			for (int i = 0; i < length; i++) {
+				MemberInfo member = members [i];
+				if (member == null)
+					throw new ArgumentNullException (String.Format ("members[{0}]", i));
+					
+				if (member.MemberType != MemberTypes.Field)
+					throw new SerializationException (
+							String.Format ("members [{0}] is not a field.", i));
+
+				FieldInfo fi = member as FieldInfo; //FIXME: can fi be null?
+				fi.SetValue (obj, data [i]);
+			}
+
+			return obj;
+		}
+	}
+}
+
