@@ -189,5 +189,9 @@ System.Drawing/impl/wine/win32Enums.cs
 System.Drawing/impl/wine/win32Structs.cs
 System.Drawing/impl/wine/win32functions.cs
 System.Drawing/Factories.cs
-
-
+System.Drawing/impl/Xr/Bitmap.cs
+System.Drawing/impl/Xr/Image.cs
+System.Drawing/impl/Xr/Xrfunctions.cs
+System.Drawing/impl/Xr/Graphics.cs
+System.Drawing/impl/Xr/Pen.cs
+System.Drawing/impl/Xr/GDKfunctions.cs
