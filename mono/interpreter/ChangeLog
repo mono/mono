@@ -1,3 +1,6 @@
+2001-11-23  Dietmar Maurer  <dietmar@ximian.com>
+
+	* interp.c (ves_exec_method): bug fix for exception5.cs
 
 Mon Nov 19 11:33:00 CET 2001 Paolo Molaro <lupus@ximian.com>
 
