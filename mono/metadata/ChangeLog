@@ -1,3 +1,11 @@
+2004-10-29 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* appdomain.c: call mono_thread_pool_init.
+	* threadpool.[ch]: new mono_thread_pool_init that sets the max. number
+	of worker threads based on the number of CPUs and the environment
+	variable MONO_THREADS_PER_CPU if present. The defaults are 50 (25)
+	for non-windows (windows) systems.
+
 2004-10-27  Chris Toshok  <toshok@ximian.com>
 
 	* mono-debug-debugger.c (write_class): don't call mono_class_init

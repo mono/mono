@@ -341,6 +341,10 @@ managed implementation (slow). If unset, mono will try to use FAM under
 Unix systems and native API calls on Windows, falling back to the
 managed implementation on error.
 .TP
+.I "MONO_THREADS_PER_CPU"
+Sets the maximum number of threads in the threadpool per CPU. The default is
+50 for non-windows systems and 25 for windows.
+.TP
 .I "MONO_TRACE"
 If set, enables the System.Diagnostics.DefaultTraceListener, which will 
 print the output of the System.Diagnostics Trace and Debug classes.  
