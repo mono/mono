@@ -302,7 +302,11 @@ namespace System.Windows.Forms {
 				Application.ThreadException(null, new ThreadExceptionEventArgs(t));
 				return;
 			}
-
+#if !later
+			 else {
+				XplatUI.HandleException(t);
+			}
+#else
 			// TODO: Missing implementation
 			//if (SystemInformation.UserInteractive)
 			{
@@ -311,6 +315,7 @@ namespace System.Windows.Forms {
 			}
 			//else
 				Console.WriteLine (t.ToString ());
+#endif
 		}
 
 		public static void RemoveMessageFilter(IMessageFilter filter) {
