@@ -10,5 +10,8 @@ using System;
 namespace System.Runtime.CompilerServices {
 	public sealed class IsVolatile
 	{
+		private IsVolatile() 
+		{
+		}
 	}
 }
