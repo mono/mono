@@ -1,3 +1,9 @@
+2005-01-09  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* HostSecurityManagerTest.cs: New. Unit tests for HostSecurityManager.
+	* PermissionSetCollectionTest.cs: New. Unit tests for PermissionSet
+	Collection.
+
 2005-01-04  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* PermissionSetTest.cs, SecurityManagerTest.cs: Adjusted unit tests so
