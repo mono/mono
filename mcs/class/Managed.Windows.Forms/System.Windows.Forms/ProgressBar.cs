@@ -23,9 +23,12 @@
 //		Jordi Mas i Hernandez	jordi@ximian.com
 //
 //
-// $Revision: 1.3 $
+// $Revision: 1.4 $
 // $Modtime: $
 // $Log: ProgressBar.cs,v $
+// Revision 1.4  2004/07/09 20:13:05  miguel
+// Spelling
+//
 // Revision 1.3  2004/07/09 17:25:23  pbartok
 // - Removed usage of Rectangle for drawing. Miguel pointed out it's faster
 //
@@ -76,8 +79,8 @@ namespace System.Windows.Forms
 			/* Draw background*/
 
 			while ((x - client_area.X) < barpos_pixels) {            		        
-				dc.FillRectangle (br_bar, x, client_area.Y, bloc_width, client_area.Height);
-				x  = x + bloc_width + space_betweenblocs;
+				dc.FillRectangle (br_bar, x, client_area.Y, block_width, client_area.Height);
+				x  = x + increment;
 			}			
             		
 			/* Draw border */
