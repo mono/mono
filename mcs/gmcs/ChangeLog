@@ -1,5 +1,15 @@
 2004-08-24  Martin Baulig  <martin@ximian.com>
 
+	* generic.cs (TypeParameter.IsSubclassOf): New public method.
+	(Constraints.IsSubclassOf): New internal method.
+
+	* typemanager.cs (TypeManager.FindMembers): Added special support
+	for GenericTypeParameterBuilder's.	
+	(TypeManager.IsSubclassOf, IsFamilyAccessible): Added support for
+	type parameters.
+
+2004-08-24  Martin Baulig  <martin@ximian.com>
+
 	* typemanager.cs
 	(TypeManager.IsSubclassOf): Renamed to IsFamilyAccessible; use
 	this for accessibility checks.

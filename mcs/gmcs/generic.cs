@@ -334,6 +334,23 @@ namespace Mono.CSharp {
 		Type[] GenericConstraints.InterfaceConstraints {
 			get { return iface_constraint_types; }
 		}
+
+		internal bool IsSubclassOf (Type t)
+		{
+			if ((class_constraint_type != null) &&
+			    class_constraint_type.IsSubclassOf (t))
+				return true;
+
+			if (iface_constraint_types == null)
+				return false;
+
+			foreach (Type iface in iface_constraint_types) {
+				if (TypeManager.IsSubclassOf (iface, t))
+					return true;
+			}
+
+			return false;
+		}
 	}
 
 	//
@@ -474,6 +491,17 @@ namespace Mono.CSharp {
 			}
 
 			return new MemberList (members);
+		}
+
+		public bool IsSubclassOf (Type t)
+		{
+			if (type.Equals (t))
+				return true;
+
+			if (constraints != null)
+				return constraints.IsSubclassOf (t);
+
+			return false;
 		}
 
 		public override string ToString ()

@@ -1430,6 +1430,16 @@ public class TypeManager {
 		if (t.IsSubclassOf (TypeManager.array_type))
 			return new MemberList (TypeManager.array_type.FindMembers (mt, bf, filter, criteria));
 
+		if (t is GenericTypeParameterBuilder) {
+			TypeParameter tparam = (TypeParameter) builder_to_type_param [t];
+
+			Timer.StartTimer (TimerType.FindMembers);
+			MemberList list = tparam.FindMembers (
+				mt, bf | BindingFlags.DeclaredOnly, filter, criteria);
+			Timer.StopTimer (TimerType.FindMembers);
+			return list;
+		}
+
 		//
 		// Since FindMembers will not lookup both static and instance
 		// members, we emulate this behaviour here.
@@ -1870,6 +1880,16 @@ public class TypeManager {
 
 	public static bool IsSubclassOf (Type type, Type parent)
 	{
+		TypeParameter tparam = LookupTypeParameter (type);
+		TypeParameter pparam = LookupTypeParameter (parent);
+
+		if ((tparam != null) && (pparam != null)) {
+			if (tparam == pparam)
+				return true;
+
+			return tparam.IsSubclassOf (parent);
+		}
+
 		do {
 			if (type.Equals (parent))
 				return true;
@@ -1882,6 +1902,16 @@ public class TypeManager {
 
 	public static bool IsFamilyAccessible (Type type, Type parent)
 	{
+		TypeParameter tparam = LookupTypeParameter (type);
+		TypeParameter pparam = LookupTypeParameter (parent);
+
+		if ((tparam != null) && (pparam != null)) {
+			if (tparam == pparam)
+				return true;
+
+			return tparam.IsSubclassOf (parent);
+		}
+
 		do {
 			if (IsEqualGenericInstance (type, parent))
 				return true;
