@@ -36,12 +36,14 @@ namespace System.Windows.Forms {
 			this.value = 0;
 			this.step_increment = 1;
 			this.page_increment = 100;
-			this.page_size = this.page_increment;
+			this.page_size = 100;
 
 			this.adj = new Gtk.Adjustment(value, lower, upper, step_increment, page_increment, page_size);
 
 			//spec says tabstop defaults to false.
 			base.TabStop = false;
+
+			ConnectToChanged ();
 		}
 
 		//
@@ -170,6 +172,15 @@ namespace System.Windows.Forms {
 
 		public event EventHandler ValueChanged;
 
+		internal protected void changed_cb (object o, EventArgs args)
+		{
+			ValueChanged (o, args);
+		}
+		
+		internal protected void ConnectToChanged ()
+		{
+			this.adj.ValueChanged += new EventHandler (changed_cb);
+		}
 
 		[MonoTODO]
 		protected override void OnEnabledChanged(EventArgs e)
