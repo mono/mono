@@ -1,3 +1,9 @@
+2002/04/30  Nick Drochak <ndrochak@gol.com>
+
+	* ArrayList.cs (Clear) : Throw exception if ReadOnly or FixedSize.
+		(InsertRange) : Implement.
+		(SetRange) : Implement.
+
 2002-04-30  Nick Drochak  <ndrochak@gol.com>
 
 	* ArrayList.cs (TrimToSize) : Implement.

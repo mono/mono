@@ -334,6 +334,9 @@ namespace System.Collections {
 		}
 
 		public virtual void Clear () {
+			if (readOnly || fixedSize)
+				throw new NotSupportedException();
+
 			count = 0;
 			setSize(capacity);
 			version++;
@@ -479,18 +482,24 @@ namespace System.Collections {
 			version++;
 		}
 
-		[MonoTODO]
 		public virtual void InsertRange (int index, ICollection c) {
 
 			if (c == null)
 				throw new ArgumentNullException ();
 
-			if (index < 0 || index > this.Count)
+			if (index < 0 || index > count)
 				throw new ArgumentOutOfRangeException ();
 
 			if (IsReadOnly || IsFixedSize)
 				throw new NotSupportedException ();
-			
+
+			shiftElements (index, c.Count);
+			count += c.Count;
+
+			IEnumerator en = c.GetEnumerator();
+			while (en.MoveNext())
+				dataArray[index++] = en.Current;
+
 			version++;
 		}
 
@@ -579,15 +588,16 @@ namespace System.Collections {
 			version++;
 		}
 
-		[MonoTODO]
 		public virtual void SetRange (int index, ICollection c)
 		{
-			if (index < 0 || (index + c.Count) > Count)
-				throw new ArgumentOutOfRangeException ();
 			if (c == null)
 				throw new ArgumentNullException ();
-			if (IsReadOnly)
+			if (readOnly)
 				throw new NotSupportedException ();
+			if (index < 0 || (index + c.Count) > count)
+				throw new ArgumentOutOfRangeException ();
+
+			c.CopyTo(dataArray, index);
 		}
 
 		public virtual void Sort () {
