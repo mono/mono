@@ -369,5 +369,11 @@ namespace System.Reflection.Emit {
 				assemblyb.EmbedResource (res_name, data, ResourceAttributes.Public);
 			}
 		}
+
+		internal string FileName {
+			get {
+				return fqname;
+			}
+		}
 	}
 }

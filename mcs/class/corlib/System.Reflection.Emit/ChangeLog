@@ -1,3 +1,10 @@
+2003-07-11  Zoltan Varga  <vargaz@freemail.hu>
+
+	* AssemblyBuilder.cs: Added argument checking to all methods according
+	to the MSDN docs. Also marked DefineUnmanagedResource and its friends
+	as not implemented.
+	* ModuleBuilder.cs: Added new property FileName used by AssemblyBuilder.
+
 2003-06-15  Zoltan Varga  <vargaz@freemail.hu>
 
 	* EventBuilder.cs: Add argument checking to methods.

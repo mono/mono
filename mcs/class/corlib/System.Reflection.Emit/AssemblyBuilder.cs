@@ -50,6 +50,7 @@ namespace System.Reflection.Emit {
 		private int[] table_indexes;
 		Hashtable us_string_cache = new Hashtable ();
 		ArrayList resource_writers = null;
+		bool created;
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private static extern void basic_init (AssemblyBuilder ab);
@@ -89,7 +90,7 @@ namespace System.Reflection.Emit {
 
 		public override string Location {
 			get {
-				return null;
+				throw not_supported ();
 			}
 		}
 
@@ -100,6 +101,18 @@ namespace System.Reflection.Emit {
 
 		public void AddResourceFile (string name, string fileName, ResourceAttributes attribute)
 		{
+			AddResourceFile (name, fileName, attribute, true);
+		}
+
+		private void AddResourceFile (string name, string fileName, ResourceAttributes attribute, bool fileNeedsToExists)
+		{
+			check_name_and_filename (name, fileName, fileNeedsToExists);
+
+			// Resource files are created/searched under the assembly storage
+			// directory
+			if (dir != null)
+				fileName = Path.Combine (dir, fileName);
+
 			if (resources != null) {
 				MonoResource[] new_r = new MonoResource [resources.Length + 1];
 				System.Array.Copy(resources, new_r, resources.Length);
@@ -158,22 +171,39 @@ namespace System.Reflection.Emit {
 
 		public ModuleBuilder DefineDynamicModule (string name)
 		{
-			return DefineDynamicModule (name, name, false);
+			return DefineDynamicModule (name, name, false, true);
 		}
 
 		public ModuleBuilder DefineDynamicModule (string name, bool emitSymbolInfo)
 		{
-			return DefineDynamicModule (name, name, emitSymbolInfo);
+			return DefineDynamicModule (name, name, emitSymbolInfo, true);
 		}
 
 		public ModuleBuilder DefineDynamicModule(string name, string fileName)
 		{
-			return DefineDynamicModule (name, fileName, false);
+			return DefineDynamicModule (name, fileName, false, false);
 		}
 
 		public ModuleBuilder DefineDynamicModule (string name, string fileName,
 							  bool emitSymbolInfo)
 		{
+			return DefineDynamicModule (name, fileName, emitSymbolInfo, false);
+		}
+
+		public ModuleBuilder DefineDynamicModule (string name, string fileName,
+							  bool emitSymbolInfo, bool transient)
+		{
+			check_name_and_filename (name, fileName, false);
+
+			if (!transient) {
+				if (Path.GetExtension (fileName) == String.Empty)
+					throw new ArgumentException ("Module file name '" + fileName + "' must have file extension.");
+				if (!IsSave)
+					throw new NotSupportedException ("Persistable modules are not supported in a dynamic assembly created with AssemblyBuilderAccess.Run");
+				if (created)
+					throw new InvalidOperationException ("Assembly was already saved.");
+			}
+
 			ModuleBuilder r = new ModuleBuilder (this, name, fileName, emitSymbolInfo, modules == null);
 
 			if (modules != null) {
@@ -199,7 +229,7 @@ namespace System.Reflection.Emit {
 			IResourceWriter writer;
 
 			// description seems to be ignored
-			AddResourceFile (name, fileName, attribute);
+			AddResourceFile (name, fileName, attribute, false);
 			writer = new ResourceWriter (fileName);
 			if (resource_writers == null)
 				resource_writers = new ArrayList ();
@@ -207,21 +237,39 @@ namespace System.Reflection.Emit {
 			return writer;
 		}
 
+		[MonoTODO]
 		public void DefineUnmanagedResource (byte[] resource)
 		{
+			if (resource == null)
+				throw new ArgumentNullException ("resource");
+
+			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		public void DefineUnmanagedResource (string resourceFileName)
 		{
+			if (resourceFileName == null)
+				throw new ArgumentNullException ("resourceFileName");
+			if (resourceFileName == String.Empty)
+				throw new ArgumentException ("resourceFileName");
+			if (!File.Exists (resourceFileName) || Directory.Exists (resourceFileName))
+				throw new FileNotFoundException ("File '" + resourceFileName + "' does not exists or is a directory.");
+
+			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		public void DefineVersionInfoResource ()
 		{
+			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		public void DefineVersionInfoResource (string product, string productVersion,
 						       string company, string copyright, string trademark)
 		{
+			throw new NotImplementedException ();
 		}
 
 		public ModuleBuilder GetDynamicModule (string name)
@@ -333,6 +381,8 @@ namespace System.Reflection.Emit {
 			}
 			file.Close ();
 
+			created = true;
+
 			//
 			// The constant 0x80000000 is internal to Mono, it means `make executable'
 			//
@@ -436,5 +486,47 @@ namespace System.Reflection.Emit {
 			// Strange message but this is what MS.NET prints...
 			return new NotSupportedException ("The invoked member is not supported in a dynamic module.");
 		}
+
+		private void check_name_and_filename (string name, string fileName,
+											  bool fileNeedsToExists) {
+			if (name == null)
+				throw new ArgumentNullException ("name");
+			if (fileName == null)
+				throw new ArgumentNullException ("fileName");
+			if (name == "")
+				throw new ArgumentException ("name cannot be empty", "name");
+			if (fileName == "")
+				throw new ArgumentException ("fileName cannot be empty", "fileName");
+			if (Path.GetFileName (fileName) != fileName)
+				throw new ArgumentException ("fileName '" + fileName + "' must not include a path.");
+
+			// Resource files are created/searched under the assembly storage
+			// directory
+			string fullFileName = fileName;
+			if (dir != null)
+				fullFileName = Path.Combine (dir, fileName);
+
+			if (fileNeedsToExists && !File.Exists (fullFileName))
+				throw new FileNotFoundException ("Could not find file '" + fileName + "'");
+
+			if (resources != null) {
+				for (int i = 0; i < resources.Length; ++i) {
+					if (resources [i].filename == fullFileName)
+						throw new ArgumentException ("Duplicate file name '" + fileName + "'");
+					if (resources [i].name == name)
+						throw new ArgumentException ("Duplicate name '" + name + "'");
+				}
+			}
+
+			if (modules != null) {
+				for (int i = 0; i < modules.Length; ++i) {
+					// Use fileName instead of fullFileName here
+					if (modules [i].FileName == fileName)
+						throw new ArgumentException ("Duplicate file name '" + fileName + "'");
+					if (modules [i].Name == name)
+						throw new ArgumentException ("Duplicate name '" + name + "'");
+				}
+			}
+		}			
 	}
 }
