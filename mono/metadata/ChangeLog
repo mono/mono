@@ -1,3 +1,8 @@
+2004-06-21  Martin Baulig  <martin@ximian.com>
+
+	* mono-debug-debugger.h (mono_debugger_unhandled_exception): New
+	public function.
+
 2004-06-21  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* reflection.c: Load the assembly in mono_reflection_type_from_name,
