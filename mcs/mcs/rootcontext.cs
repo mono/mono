@@ -555,6 +555,12 @@ namespace CIR {
 		{
 			return LookupType (tc, name, true);
 		}
+
+		public bool IsNamespace (string name)
+		{
+			Console.WriteLine ("FIXME: IsNamespace returns false always!");
+			return false;
+		}
 		
 		// <summary>
 		//   Populates the structs and classes with fields and methods

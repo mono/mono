@@ -1,3 +1,19 @@
+2001-09-02  Miguel de Icaza  <miguel@ximian.com>
+
+	* rootcontext.cs (RootContext::IsNamespace): new function, used to
+	tell whether an identifier represents a namespace.
+
+	* expression.cs (NamespaceExpr): A namespace expression, used only
+	temporarly during expression resolution.
+	(Expression::ResolveSimpleName, ::ResolvePrimary, ::ResolveName):
+	utility functions to resolve names on expressions.
+
+2001-09-01  Miguel de Icaza  <miguel@ximian.com>
+
+	* codegen.cs: Add hook for StatementExpressions. 
+
+	* class.cs: Fix inverted test for static flag in methods.
+
 2001-09-02  Ravi Pratap  <ravi@ximian.com>
 
 	* class.cs (Operator::CheckUnaryOperator): Correct error number used

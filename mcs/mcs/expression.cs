@@ -65,6 +65,45 @@ namespace CIR {
 			eclass = ExprClass.Invalid;
 			type = null;
 		}
+
+		static public Expression ResolveSimpleName (TypeContainer tc, string name)
+		{
+			return null;
+		}
+
+		// <summary>
+		//   Resolves the E in `E.I' side for a member_access
+		static Expression ResolvePrimary (TypeContainer tc, string name)
+		{
+			int dot_pos = name.LastIndexOf (".");
+
+			if (tc.RootContext.IsNamespace (name))
+				return new NamespaceExpr (name);
+
+			if (dot_pos != -1){
+			} else {
+			}
+
+			return null;
+		}
+			
+		static public Expression ResolveName (TypeContainer tc, string name)
+		{
+			int dot_pos = name.LastIndexOf (".");
+			
+			if (dot_pos == -1){
+				return ResolveSimpleName (tc, name);
+			} else {
+				Expression left_e;
+				string left = name.Substring (0, dot_pos);
+				string right = name.Substring (dot_pos + 1);
+
+				left_e = ResolvePrimary (tc, left);
+			}
+
+			return null;
+		}
+		
 	}
 
 	public class Unary : Expression {
@@ -304,9 +343,15 @@ namespace CIR {
 			}
 		}
 
+		//
+		// SimpleName needs to handle a multitude of cases:
+		//
+		// simple_names and qualified_identifiers are placed on
+		// the tree equally.
+		//
 		public override void Resolve (TypeContainer tc)
 		{
-			// FIXME: Implement;
+			ResolveName (tc, name);
 		}
 
 		public override void Emit (EmitContext ec)
@@ -426,7 +471,6 @@ namespace CIR {
 
 		public override void Resolve (TypeContainer tc)
 		{
-			// FIXME: Implement;
 		}
 
 		public override void Emit (EmitContext ec)
@@ -550,6 +594,31 @@ namespace CIR {
 
 	}
 
+	// <summary>
+	//   Nodes of type Namespace are created during the semantic
+	//   analysis to resolve member_access/qualified_identifier/simple_name
+	//   accesses.
+	//
+	//   They are born `resolved'. 
+	// </summary>
+	public class NamespaceExpr : Expression {
+		public readonly string Name;
+		
+		public NamespaceExpr (string name)
+		{
+			Name = name;
+			eclass = ExprClass.Namespace;
+		}
+
+		public override void Resolve (TypeContainer tc)
+		{
+		}
+
+		public override void Emit (EmitContext ec)
+		{
+		}
+	}
+	
 	public class BuiltinTypeAccess : Expression {
 		public readonly string AccessBase;
 		public readonly string Method;

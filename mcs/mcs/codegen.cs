@@ -212,10 +212,26 @@ namespace CIR {
 			EmitBlock (s.Block);
 			CheckState = previous_state;
 		}
+
+		void EmitInvocation (Invocation inv)
+		{
+			inv.Expr.Resolve (parent);
+		}
+
+		void EmitStatementExpression (StatementExpression s)
+		{
+			Expression e = s.Expr;
+
+			if (e is Invocation)
+				EmitInvocation ((Invocation) e);
+			else {
+				Console.WriteLine ("Unknown Expression type" + e);
+			}
+		}
 		
 		void EmitStatement (Statement s)
 		{
-			Console.WriteLine ("Emitting statement of type" + s.GetType ().ToString ());
+			Console.WriteLine ("Emitting statement of type " + s.GetType ());
 			
 			if (s is If)
 				EmitIf ((If) s);
@@ -235,6 +251,8 @@ namespace CIR {
 				EmitUnChecked ((Unchecked) s);
 			else if (s is Block)
 				EmitBlock ((Block) s);
+			else if (s is StatementExpression)
+				EmitStatementExpression ((StatementExpression) s);
 			else {
 				Console.WriteLine ("Unhandled Statement type: " +
 						   s.GetType ().ToString ());

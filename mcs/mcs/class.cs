@@ -788,7 +788,7 @@ namespace CIR {
 			cc = Parameters.GetCallingConvention ();
 
 			if (is_class)
-				if ((ModFlags & Modifiers.STATIC) != 0)
+				if ((ModFlags & Modifiers.STATIC) == 0)
 					cc |= CallingConventions.HasThis;
 
 			return cc;
