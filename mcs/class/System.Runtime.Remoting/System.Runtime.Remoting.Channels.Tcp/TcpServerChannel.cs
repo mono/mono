@@ -305,9 +305,19 @@ namespace System.Runtime.Remoting.Channels.Tcp
 			{
 //				Console.WriteLine (ex);
 			}
-
-			_stream.Close();
-			_serverChannel.ReleaseConnection (Thread.CurrentThread);
+			finally
+			{
+				_stream.Close();
+				_serverChannel.ReleaseConnection (Thread.CurrentThread);
+			}
+		}
+		
+		public bool IsLocal
+		{
+			get
+			{
+				return true;
+			}
 		}
 	}
 }

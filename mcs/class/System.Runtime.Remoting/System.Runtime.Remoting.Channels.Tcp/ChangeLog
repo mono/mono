@@ -1,3 +1,8 @@
+﻿2004-03-04  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* TcpServerChannel.cs: In the ProcessMessages() loop, moved the closing of
+	  the stream to the finally block, so it is called if the thread is aborted.
+
 ﻿2004-02-27  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* TcpClientTransportSink.cs: Set the RequestUri transport header before 
