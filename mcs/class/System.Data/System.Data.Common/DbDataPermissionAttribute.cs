@@ -13,7 +13,10 @@ using System;
 using System.Security.Permissions;
 
 namespace System.Data.Common {
-	[AttributeUsage (AttributeTargets.Assembly | AttributeTargets.Class | AttributeTargets.Struct | AttributeTargets.Constructor | AttributeTargets.Method)]
+	[AttributeUsage (AttributeTargets.Assembly | AttributeTargets.Class | 
+			 AttributeTargets.Struct | AttributeTargets.Constructor | 
+			 AttributeTargets.Method, AllowMultiple=true,
+			 Inherited=false)]
 	[Serializable]
 	public abstract class DBDataPermissionAttribute : CodeAccessSecurityAttribute
 	{
