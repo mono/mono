@@ -26,3 +26,4 @@ IFaceDisco.exe: IFaceDisco.cs XMLUtil.cs
 clean:
 	rm -f *.exe *.pdb *.dll
 	rm -f ../../mono/status/cormissing.xml
+	rm -f ../../mono/doc/pending-classes.in
