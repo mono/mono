@@ -33,7 +33,7 @@ namespace System.Web.UI
 		internal object GetCompiledInstance (string virtualPath, string inputFile, HttpContext context)
 		{
 			Context = context;
-			InputFile = Path.Combine (MapPath (virtualPath), inputFile);
+			InputFile = MapPath (UrlUtils.Combine (virtualPath, inputFile));
 			Type type = CompileIntoType ();
 			if (type == null)
 				return null;
@@ -86,8 +86,11 @@ namespace System.Web.UI
 				if (!src.EndsWith (".ascx"))
 					ThrowParseException ("Source file extension for controls must be .ascx");
 
-				
-				AddDependency (Path.Combine (MapPath (BaseVirtualDir), src));
+				try {
+					AddDependency (MapPath (src));
+				} catch (Exception e) {
+					throw new ParseException (Location, e.Message);
+				}
 				Type type = UserControlParser.GetCompiledType (BaseVirtualDir, src, Context);
 				AddAssembly (type.Assembly, true);
 				RootBuilder.Foundry.RegisterFoundry (tagprefix, tagname, type);

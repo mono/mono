@@ -23,7 +23,7 @@ namespace System.Web.UI
 								    HttpContext context)
 		{
 			PageParser pp = new PageParser ();
-			IHttpHandler h = (IHttpHandler) pp.GetCompiledInstance (virtualPath, inputFile, context);
+			IHttpHandler h = (IHttpHandler) pp.GetCompiledInstance (null, virtualPath, context);
 			return h;
 		}
 

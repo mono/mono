@@ -19,7 +19,7 @@ namespace System.Web.UI
 		internal UserControlParser (string virtualPath, string inputFile, HttpContext context)
 		{
 			Context = context;
-			InputFile = context.Request.MapPath (UrlUtils.Combine (virtualPath, inputFile));
+			InputFile = context.Request.MapPath (inputFile);
 		}
 		
 		public static Type GetCompiledType (string virtualPath, string inputFile, HttpContext context)

@@ -1,3 +1,14 @@
+2003-05-14  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* BaseParser.cs: fixed MapPath for non-rooted files.
+	* PageParser.cs: don't pass a non-virtual file around.
+	* TemplateControlParser.cs: InputFile uses MapPath now.  Take care of
+	the exception teh may be throw by MapPath on an invalid path.
+
+	* TemplateParser.cs: removed unused method.
+	* UserControlParser.cs: modified inputfile. The result is the same, but 
+	this one is better.
+
 2003-05-06  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* RootBuilder.cs: throw exception when the tagprefix is not valid or

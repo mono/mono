@@ -34,7 +34,7 @@ namespace System.Web.UI
 			if (context == null)
 				throw new HttpException ("context is null!!");
 
-			return context.Request.MapPath (path, context.Request.ApplicationPath, allowCrossAppMapping);
+			return context.Request.MapPath (path, BaseVirtualDir, allowCrossAppMapping);
 		}
 
 		internal string PhysicalPath (string path)

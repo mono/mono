@@ -107,12 +107,8 @@ namespace System.Web.Util
 		public static string Combine (string basePath, string relPath)
 		{
 			FailIfPhysicalPath (relPath);
-			if (IsRootUrl (relPath)) {
-				if (relPath != null && relPath.Length > 0)
-					return Reduce (relPath);
-
-				return String.Empty;
-			}
+			if (IsRooted (relPath))
+				return Reduce (relPath);
 
 			if (relPath.Length < 3 || relPath [0] != '~' || relPath [0] == '/' || relPath [0] == '\\') {
 				if (basePath == null || (basePath.Length == 1 && basePath [0] == '/'))
@@ -216,52 +212,32 @@ namespace System.Web.Util
 			return false;
 		}
 
-		public static string Reduce(string path)
+		public static string Reduce (string path)
 		{
-			int len = path.Length;
-			int dotIndex = -1;
-			path = path.Replace('\\','/');
-			while(true)
-			{
-				dotIndex++;
-				dotIndex = path.IndexOf('.', dotIndex);
-				if(dotIndex < 0)
-				{
-					return path;
+			path = path.Replace ('\\','/');
+
+			string [] parts = path.Split ('/');
+			ArrayList result = new ArrayList ();
+			
+			int end = parts.Length;
+			for (int i = 0; i < end; i++) {
+				string current = parts [i];
+				if (current == "" || current == ".")
+					continue;
+
+				if (current == "..") {
+					if (result.Count == 0)
+						throw new HttpException ("Invalid path.");
+
+					result.RemoveAt (result.Count - 1);
+					continue;
 				}
-				if(dotIndex != 0 && path[dotIndex -1]=='/')
-					continue;
-				if(dotIndex+1 == len || path[dotIndex+1]=='/')
-					break;
-				if(path[dotIndex+1]=='.')
-					continue;
-				if(dotIndex+2 == len || path[dotIndex+2]=='/')
-					break;
+
+				result.Add (current);
 			}
-			ArrayList list = new ArrayList();
-			StringBuilder sb = new StringBuilder();
-			dotIndex = 0;
-			int temp;
-			do
-			{
-				temp = dotIndex;
-				dotIndex = path.IndexOf('/', temp + 1);
-				if(dotIndex < 0)
-					dotIndex = len;
-				if( (dotIndex - temp) <= 3 && (dotIndex < 1 || path[dotIndex - 1]== '.') && ( (temp+1) >= len || path[temp+1]=='.') )
-				{
-					if(dotIndex - temp == 3)
-						continue;
-					if(list.Count == 0)
-						throw new System.Web.HttpException(System.Web.HttpRuntime.FormatResourceString("Cannot_exit_up_top_directory"));
-					sb.Length = (int) list[list.Count - 1];
-					list.RemoveRange(list.Count - 1, 1);
-					continue;
-				}
-				list.Add(sb.Length);
-				sb.Append(path, temp, dotIndex - temp);
-			} while(dotIndex != len);
-			return sb.ToString();
+
+			result.Insert (0, "");
+			return String.Join ("/", (string []) result.ToArray (typeof (string)));
 		}
 		
 		public static string GetDirectory(string url)
