@@ -1,3 +1,7 @@
+2004-08-05  Zoltan Varga  <vargaz@freemail.hu>
+
+	* assembly.c: Fix warnings.
+
 2004-08-04  Martin Baulig  <martin@ximian.com>
 
 	* class.c
