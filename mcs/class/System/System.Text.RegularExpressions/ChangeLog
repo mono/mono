@@ -1,3 +1,8 @@
+2005-01-10 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* quicksearch.cs: handle IgnoreCase when getting the shift distance.
+	Fixes bug #69065. Patch by mei@work.email.ne.jp.
+
 2005-01-08  Miguel de Icaza  <miguel@ximian.com>
 
 	* syntax.cs: Applied patch from mei@work.email.ne.jp to fix bug
@@ -24,9 +29,9 @@
 
 2004-10-21 Joerg Rosenkranz <joergr@voelcker.com>
 
-	* regex.cs: Fixed a bug introduced with the last patch which
-	prevented any replacements when a postive count is given.
-	This also happens in all overloads without count parameter.
+    * regex.cs: Fixed a bug introduced with the last patch which
+      prevented any replacements when a postive count is given.
+      This also happens in all overloads without count parameter.
 
 2004-10-18 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
