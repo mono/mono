@@ -1,3 +1,20 @@
+2005-01-03  Martin Baulig  <martin@ximian.com>
+
+	* loader.c (find_method): Removed the hack for generic instances.
+	(method_from_memberref): If our parent is a generic instance, pass
+	its generic type definition to find_method() and then inflate the
+	method.
+	(mono_get_method_constrained): Pass the generic type definition to
+	find_method() and inflate the method later.
+
+	* class-internals.h (MonoStats): Added `generic_class_count'.
+
+	* icall.c (ves_icall_MonoGenericMethod_get_reflected_type):
+	Renamed to ves_icall_MonoGenericMethod_get_ReflectedType().
+
+	* reflection.c (mono_custom_attrs_from_params): Don't ignore
+	generic type definitions.
+
 2004-12-30  Zoltan Varga  <vargaz@freemail.hu>
 
 	* loader.c icall.c: Fix warnings.
