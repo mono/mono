@@ -152,9 +152,9 @@ namespace System.Web.UI.WebControls
 			{
 				case GridLines.None:       gd = "";
 				                           break;
-				case GridLines.Horizontal: gd = "cols";
+				case GridLines.Horizontal: gd = "rows";
 				                           break;
-				case GridLines.Vertical:   gd = "rows";
+				case GridLines.Vertical:   gd = "cols";
 				                           break;
 				case GridLines.Both:       gd = "all";
 				                           break;

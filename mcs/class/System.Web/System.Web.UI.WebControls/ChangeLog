@@ -1,3 +1,7 @@
+2003-10-18 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* TableStyle.cs: fix #49740.
+
 2003-10-19  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* SelectedDatesCollection.cs: fix by Yaron for bug #49698.
