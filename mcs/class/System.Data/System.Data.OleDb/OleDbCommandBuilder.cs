@@ -48,28 +48,39 @@ namespace System.Data.OleDb
 		#region Properties
 
 		public OleDbDataAdapter DataAdapter {
-			get { return adapter; }
-			set { adapter = value; }
+			get {
+				return adapter;
+			}
+			set {
+				adapter = value;
+			}
 		}
 
 		public string QuotePrefix {
-			get { return quotePrefix; }
-			set { quotePrefix = value; }
+			get {
+				return quotePrefix;
+			}
+			set {
+				quotePrefix = value;
+			}
 		}
 
 		public string QuoteSuffix {
-			get { return quoteSuffix; }
-			set { quoteSuffix = value; }
+			get {
+				return quoteSuffix;
+			}
+			set {
+				quoteSuffix = value;
+			}
 		}
 
 		#endregion // Properties
 
 		#region Methods
 
-		[MonoTODO]
 		public static void DeriveParameters (OleDbCommand command) 
 		{
-			throw new NotImplementedException ();		
+			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
@@ -81,25 +92,25 @@ namespace System.Data.OleDb
 		[MonoTODO]
 		public OleDbCommand GetDeleteCommand ()
 		{
-			throw new NotImplementedException ();		
+			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
 		public OleDbCommand GetInsertCommand ()
 		{
-			throw new NotImplementedException ();		
+			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
 		public OleDbCommand GetUpdatetCommand ()
 		{
-			throw new NotImplementedException ();		
+			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
 		public void RefreshSchema ()
 		{
-			throw new NotImplementedException ();		
+			throw new NotImplementedException ();
 		}
 
 		#endregion // Methods
