@@ -3,8 +3,6 @@
 #
 
 gacutil=$(srcdir)/../gacutil.exe
-sn=$(srcdir)/../sn.exe
-mono_snk=../../../mcs/class/mono.snk
 
 if USE_JIT
 mono_runtime = $(top_builddir)/mono/mini/mono
@@ -65,13 +63,6 @@ gac_assemblies_list = \
 	System.Windows.Forms				\
 	System.Xml
 
-no_sign_list = \
-	ICSharpCode.SharpZipLib				\
-	Npgsql						\
-	nunit.util					\
-	nunit.core					\
-	nunit.framework
-
 gac_assemblies = $(gac_assemblies_list:=.dll)
 
 corlibdir = $(libdir)
@@ -82,17 +73,11 @@ MAINTAINERCLEANFILES = $(EXTRA_DIST)
 
 mscorlib.dll $(gac_assemblies):
 	cd $(srcdir) && $(LN_S) ../../../mcs/class/lib/default/$@ $@ ; \
-	cd $(srcdir) && $(LIBTOOL) --mode=execute $(mono_runtime) --config ../../data/config $(sn) -q -R $(srcdir)/$@ $(mono_snk) || exit 1 ;
 
 all-local: $(gac_assemblies)
 
 install-data-local:
 	@if test -n '$(gac_assemblies)'; then \
-	  for i in $(filter-out $(no_sign_list), $(gac_assemblies)) ; do \
-		echo "MONO_PATH=$(srcdir) $(mono_runtime) --config ../../data/config $(sn) -q -R $(srcdir)/$$i $(mono_snk)" ; \
-	    	MONO_PATH=$(srcdir) \
-	      	$(LIBTOOL) --mode=execute $(mono_runtime) --config ../../data/config $(sn) -q -R $(srcdir)/$$i $(mono_snk) || exit 1 ; \
-	  done; \
 	  for i in ''$(gac_assemblies); do \
 	    echo "MONO_PATH=$(srcdir) $(mono_runtime) --config ../../data/config $(gacutil) /i $(srcdir)/$$i /f /package 1.0 /root $(DESTDIR)$(libdir)" ; \
 	    MONO_PATH=$(srcdir) \
