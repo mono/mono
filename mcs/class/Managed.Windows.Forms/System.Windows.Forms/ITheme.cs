@@ -24,9 +24,12 @@
 //
 //
 //
-// $Revision: 1.7 $
+// $Revision: 1.8 $
 // $Modtime: $
 // $Log: ITheme.cs,v $
+// Revision 1.8  2004/08/10 19:21:27  jordi
+// scrollbar enhancements and standarize on win colors defaults
+//
 // Revision 1.7  2004/08/10 18:52:30  jackson
 // Implement DrawItem functionality
 //
@@ -55,15 +58,6 @@ namespace System.Windows.Forms
 {
 	internal interface ITheme
 	{
-		/* Internal colors to paint controls */
-		Color ColorLight {get;}
-		Color ColorDisabled {get;}
-		Color ColorDark {get;}
-		Color ColorMain {get;}
-		Color ColorFocus {get;}		
-		Color ColorShadow {get;}	
-		Color ColorLightTop {get;}
-
 		/* Default properties */
 		Color DefaultControlBackColor {get;}
 		Color DefaultControlForeColor {get;}
@@ -108,6 +102,7 @@ namespace System.Windows.Forms
 
 		int SizeGripWidth {get;}
 		int StatusBarHorzGapWidth {get;}
+		int ScrollBarButtonSize {get;}
 
 		/*
 			Methods that mimic ControlPaint signature and draw basic objects

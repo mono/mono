@@ -25,9 +25,12 @@
 //
 //
 //
-// $Revision: 1.15 $
+// $Revision: 1.16 $
 // $Modtime: $
 // $Log: ThemeWin32Classic.cs,v $
+// Revision 1.16  2004/08/10 19:21:27  jordi
+// scrollbar enhancements and standarize on win colors defaults
+//
 // Revision 1.15  2004/08/10 18:52:30  jackson
 // Implement DrawItem functionality
 //
@@ -82,26 +85,20 @@ using System.Drawing.Imaging;
 namespace System.Windows.Forms
 {
 	internal class ThemeWin32Classic : ITheme
-	{
-		static private SolidBrush br_light;
-		static private SolidBrush br_main;
-		static private SolidBrush br_dark;		
+	{		
 		static private Pen pen_ticks;
 		static private Pen pen_disabled;
 		static private SolidBrush br_arrow;
 		static private SolidBrush br_disabled;
-		static private HatchBrush br_focus;
-		static private SolidBrush br_shadow;
-		static private SolidBrush br_bar;
-		static private Pen pen_shadow;
-		static private HatchBrush br_backgr;
-		static private SolidBrush br_lighttop;
+		static private HatchBrush br_focus;		
+		static private SolidBrush br_progressbarblock;		
 		static private Pen pen_arrow;
 
 		static private SolidBrush br_buttonface;
 		static private SolidBrush br_buttonshadow;
 		static private SolidBrush br_buttondkshadow;
 		static private SolidBrush br_buttonhilight;		
+		static private SolidBrush br_buttonlight;
 		static private Pen pen_buttonshadow;
 		static private Pen pen_buttondkshadow;
 		static private Pen pen_buttonhilight;
@@ -113,32 +110,25 @@ namespace System.Windows.Forms
 		/* Cache */
 		static private SolidBrush label_br_fore_color;
 		static private SolidBrush label_br_back_color;		
+		static private HatchBrush br_scrollbar_backgr;
 
 		public ThemeWin32Classic ()
 		{
 			label_br_fore_color = null;
 			label_br_back_color = null;
+			br_scrollbar_backgr = null;
  
-			br_light = new SolidBrush (ColorLight);
-			br_main = new SolidBrush (ColorMain);
-			br_dark = new SolidBrush (ColorDark);
-			pen_ticks = new Pen (Color.Black);
-			pen_disabled = new Pen (ColorDisabled);
-			br_arrow = new SolidBrush (Color.Black);
-			br_disabled = new SolidBrush (ColorDisabled);
-			br_focus = new HatchBrush (HatchStyle.Percent50, ColorMain, ColorFocus);
-			br_shadow = new SolidBrush (ColorShadow);			
-			br_backgr = new HatchBrush (HatchStyle.Percent50, ColorLight, ColorMain);
-			pen_shadow = new Pen (ColorShadow);
-			br_lighttop = new SolidBrush (ColorLightTop);
+			pen_ticks = new Pen (Color.Black);			
+			br_arrow = new SolidBrush (Color.Black);			
+			br_focus = new HatchBrush (HatchStyle.Percent50, ColorButtonFace, Color.Black);
 			pen_arrow = new Pen (Color.Black);
-			br_bar = new  SolidBrush (Color.FromArgb (255, 49, 106, 197));
-			
+			br_progressbarblock = new  SolidBrush (Color.FromArgb (255, 49, 106, 197));			
 
 			br_buttonface = new SolidBrush (ColorButtonFace);
 			br_buttonshadow = new SolidBrush (ColorButtonShadow);
 			br_buttondkshadow = new SolidBrush (ColorButtonDkShadow);
 			br_buttonhilight = new SolidBrush (ColorButtonHilight);
+			br_buttonlight = new SolidBrush (ColorButtonLight);
 			pen_buttonshadow = new Pen (ColorButtonShadow);
 			pen_buttondkshadow = new Pen (ColorButtonDkShadow);
 			pen_buttonhilight = new Pen (ColorButtonHilight);
@@ -147,36 +137,6 @@ namespace System.Windows.Forms
 
 			default_font =	new Font (FontFamily.GenericSansSerif, 8.25f);
 		}
-
-		/* Internal colors to paint controls */
-		public Color ColorLight {
-			get {return Color.FromArgb (255, 255, 255, 255);}
-		}
-
-		public Color ColorDisabled {
-			get {return Color.FromArgb (255, 172, 168, 153);}
-		}
-
-		public Color ColorDark {
-			get {return Color.FromArgb (255, 113, 111, 100);}
-		}
-
-		public Color ColorMain {
-			get {return Color.FromArgb (255, 236, 233, 216);}
-		}
-
-		public Color ColorFocus {
-			get {return Color.Black;}
-		}
-
-		public Color ColorShadow {
-			get {return Color.FromArgb (255, 172, 168, 153);}
-		}
-
-		public Color ColorLightTop {
-			get {return Color.FromArgb (255, 241, 239, 226);}
-		}
-
 		/* Windows System Colors. Based on Wine */
 		public Color ColorScrollbar {
 			get {return Color.FromArgb (255, 192, 192, 192);}
@@ -320,6 +280,10 @@ namespace System.Windows.Forms
 
 		public int StatusBarHorzGapWidth {
 			get { return 3; }
+		}
+
+		public int ScrollBarButtonSize {
+			get { return 16; }
 		}
 
 		private enum DrawFrameControlStates
@@ -542,12 +506,12 @@ namespace System.Windows.Forms
 					Pen	pen;
 
 					if ((state & ButtonState.Inactive)!=0) {
-						pen=new Pen(SystemColors.ControlLightLight, lineWidth);
-						DrawCaptionHelper(graphics, SystemColors.ControlLightLight, pen, lineWidth, 1, captionRect, button);
+						pen=new Pen(ColorButtonHilight, lineWidth);
+						DrawCaptionHelper(graphics, ColorButtonHilight, pen, lineWidth, 1, captionRect, button);
 						pen.Dispose();
 
-						pen=new Pen(SystemColors.ControlDark, lineWidth);
-						DrawCaptionHelper(graphics, SystemColors.ControlDark, pen, lineWidth, 0, captionRect, button);
+						pen=new Pen(ColorButtonShadow, lineWidth);
+						DrawCaptionHelper(graphics, ColorButtonShadow, pen, lineWidth, 0, captionRect, button);
 						pen.Dispose();
 						return;
 					} else {
@@ -563,9 +527,9 @@ namespace System.Windows.Forms
 				case CaptionButton.Minimize:
 				case CaptionButton.Restore: {
 					if ((state & ButtonState.Inactive)!=0) {
-						DrawCaptionHelper(graphics, SystemColors.ControlLightLight, SystemPens.ControlLightLight, lineWidth, 1, captionRect, button);
+						DrawCaptionHelper(graphics, ColorButtonHilight, SystemPens.ControlLightLight, lineWidth, 1, captionRect, button);
 
-						DrawCaptionHelper(graphics, SystemColors.ControlDark, SystemPens.ControlDark, lineWidth, 0, captionRect, button);
+						DrawCaptionHelper(graphics, ColorButtonShadow, SystemPens.ControlDark, lineWidth, 0, captionRect, button);
 						return;
 					} else {
 						DrawCaptionHelper(graphics, SystemColors.ControlText, SystemPens.ControlText, lineWidth, 0, captionRect, button);
@@ -613,13 +577,13 @@ namespace System.Windows.Forms
 			Rectangle		rect;
 
 			if ((state & ButtonState.Checked)!=0) {
-				HatchBrush	hatchBrush=new HatchBrush(HatchStyle.Percent50, SystemColors.ControlLight, SystemColors.ControlLightLight);
+				HatchBrush	hatchBrush=new HatchBrush(HatchStyle.Percent50, SystemColors.ControlLight, ColorButtonHilight);
 				graphics.FillRectangle(hatchBrush,rectangle);
 				hatchBrush.Dispose();
 			}
 
 			if ((state & ButtonState.Flat)!=0) {
-				ControlPaint.DrawBorder(graphics, rectangle, SystemColors.ControlDark, ButtonBorderStyle.Solid);
+				ControlPaint.DrawBorder(graphics, rectangle, ColorButtonShadow, ButtonBorderStyle.Solid);
 			} else {
 				if ((state & (ButtonState.Pushed | ButtonState.Checked))!=0) {
 					DrawBorder3D(graphics, rectangle, Border3DStyle.Sunken, Border3DSide.Left | Border3DSide.Top | Border3DSide.Right | Border3DSide.Bottom);
@@ -966,8 +930,9 @@ namespace System.Windows.Forms
 		/* Scroll button: regular button + direction arrow */
 		public void DrawScrollButton (Graphics dc, Rectangle area, ScrollButton type, ButtonState state)
 		{
-			bool enabled = (state == ButtonState.Inactive) ? false: true;
-			DrawScroolButtonPrimitive (dc, area, state);
+			bool enabled = (state == ButtonState.Inactive) ? false: true;			
+					
+			DrawScrollButtonPrimitive (dc, area, state);
 
 			/* Paint arrows */
 			switch (type) {
@@ -1106,8 +1071,10 @@ namespace System.Windows.Forms
 			bool enabled, bool vertical)
 		{
 
-			if (vertical) {
-				scrollbutton_width = area.Width;
+			if (br_scrollbar_backgr == null)
+				br_scrollbar_backgr = new HatchBrush (HatchStyle.Percent50, ColorButtonHilight, ColorButtonFace);
+
+			if (vertical) {		
 
 				first_arrow_area.X = first_arrow_area. Y = 0;
 				first_arrow_area.Width = scrollbutton_width;
@@ -1120,16 +1087,14 @@ namespace System.Windows.Forms
 
 				/* Buttons */
 				DrawScrollButton (dc, first_arrow_area, ScrollButton.Up, first_arrow);
-				DrawScrollButton (dc, second_arrow_area, ScrollButton.Down, second_arrow);
+				DrawScrollButton (dc, second_arrow_area, ScrollButton.Down, second_arrow);				
 
 				/* Background */
-				dc.FillRectangle (br_backgr, 0,  scrollbutton_height, area.Width,
+				dc.FillRectangle (br_scrollbar_backgr, 0,  scrollbutton_height, area.Width,
 					area.Height - (scrollbutton_height * 2));
-
 			}
 			else {
-
-				scrollbutton_height = area.Height;
+				
 				first_arrow_area.X = first_arrow_area. Y = 0;
 				first_arrow_area.Width = scrollbutton_width;
 				first_arrow_area.Height = scrollbutton_height;
@@ -1139,20 +1104,18 @@ namespace System.Windows.Forms
 				second_arrow_area.Width = scrollbutton_width;
 				second_arrow_area.Height = scrollbutton_height;
 
-
 				/* Buttons */
 				DrawScrollButton (dc, first_arrow_area, ScrollButton.Left, first_arrow );
 				DrawScrollButton (dc, second_arrow_area, ScrollButton.Right, second_arrow);
 
 				/* Background */
-				dc.FillRectangle (br_backgr, scrollbutton_width, 0, area.Width - (scrollbutton_width * 2),
+				dc.FillRectangle (br_scrollbar_backgr, scrollbutton_width, 0, area.Width - (scrollbutton_width * 2),
 				 	area.Height);
 			}
 
 			/* Thumbail */
 			if (enabled)
-				DrawScroolButtonPrimitive (dc, thumb_pos, ButtonState.Normal);
-
+				DrawScrollButtonPrimitive (dc, thumb_pos, ButtonState.Normal);			
 		}
 
 		/*
@@ -1486,7 +1449,7 @@ namespace System.Windows.Forms
 			/* Draw background*/
 
 			while ((x - client_area.X) < barpos_pixels) {
-				dc.FillRectangle (br_bar, x, client_area.Y, block_width, client_area.Height);
+				dc.FillRectangle (br_progressbarblock, x, client_area.Y, block_width, client_area.Height);
 				x  = x + increment;
 			}
 
@@ -1499,8 +1462,7 @@ namespace System.Windows.Forms
 		public void DrawLabel (Graphics dc, Rectangle area, BorderStyle border_style, string text, 
 			Color fore_color, Color back_color, Font font, StringFormat string_format, bool Enabled)
 
-		{				
-
+		{
 			if (label_br_fore_color == null || label_br_fore_color.Color != fore_color) 
 				label_br_fore_color = new SolidBrush (fore_color);
 
@@ -1509,9 +1471,7 @@ namespace System.Windows.Forms
 
 			dc.FillRectangle (label_br_back_color, area);
 			
-			DrawBorderStyle (dc, area, border_style);
-
-			Console.WriteLine ("{0} - {1} - {2} - {3} - {4}",text, font, label_br_fore_color.Color, area, string_format);
+			DrawBorderStyle (dc, area, border_style);		
 
 			if (Enabled)
 				dc.DrawString (text, font, label_br_fore_color, area, string_format);
@@ -1551,7 +1511,7 @@ namespace System.Windows.Forms
 			}
 
 			if (sb.SizingGrip)
-				DrawSizeGrip (dc, ColorMain, area);
+				DrawSizeGrip (dc, ColorButtonFace, area);
 
 		}
 
@@ -1932,7 +1892,8 @@ namespace System.Windows.Forms
 		}
 
 		[MonoTODO("Finish drawing code for Caption, Menu and Scroll")]
-		private void DrawFrameControl(Graphics graphics, Rectangle rectangle, DrawFrameControlTypes Type, DrawFrameControlStates State) {
+		private void DrawFrameControl(Graphics graphics, Rectangle rectangle, DrawFrameControlTypes Type, DrawFrameControlStates State) 
+{
 			switch(Type) {
 				case DrawFrameControlTypes.Button: {
 					if ((State & DrawFrameControlStates.ButtonPush)!=0) {
@@ -1946,7 +1907,7 @@ namespace System.Windows.Forms
 						if ((State & DrawFrameControlStates.Pushed)!=0) {
 							DrawBorder3D(graphics, rectangle, Border3DStyle.Sunken, Border3DSide.Left | Border3DSide.Top | Border3DSide.Right | Border3DSide.Bottom);
 						} else if ((State & DrawFrameControlStates.Flat)!=0) {
-							ControlPaint.DrawBorder(graphics, rectangle, SystemColors.ControlDark, ButtonBorderStyle.Solid);
+							ControlPaint.DrawBorder(graphics, rectangle, ColorButtonShadow, ButtonBorderStyle.Solid);
 						} else if ((State & DrawFrameControlStates.Inactive)!=0) {
 							/* Same as normal, it would seem */
 							DrawBorder3D(graphics, rectangle, Border3DStyle.Raised, Border3DSide.Left | Border3DSide.Top | Border3DSide.Right | Border3DSide.Bottom);
@@ -1954,7 +1915,7 @@ namespace System.Windows.Forms
 							DrawBorder3D(graphics, rectangle, Border3DStyle.Raised, Border3DSide.Left | Border3DSide.Top | Border3DSide.Right | Border3DSide.Bottom);
 						}
 					} else if ((State & DrawFrameControlStates.ButtonRadio)!=0) {
-						Pen			penFatDark	= new Pen(SystemColors.ControlDarkDark, 2);
+						Pen			penFatDark	= new Pen(ColorButtonShadow, 2);
 						Pen			penFatLight	= new Pen(SystemColors.ControlLight, 2);
 						int			lineWidth;
 
@@ -1999,7 +1960,7 @@ namespace System.Windows.Forms
 
 						/* Draw the sunken frame */
 						if ((State & DrawFrameControlStates.Flat)!=0) {
-							ControlPaint.DrawBorder(graphics, rectangle, SystemColors.ControlDark, ButtonBorderStyle.Solid);
+							ControlPaint.DrawBorder(graphics, rectangle, ColorButtonShadow, ButtonBorderStyle.Solid);
 						} else {
 							DrawBorder3D(graphics, rectangle, Border3DStyle.Sunken, Border3DSide.Left | Border3DSide.Top | Border3DSide.Right | Border3DSide.Bottom);
 						}
@@ -2044,42 +2005,46 @@ namespace System.Windows.Forms
 			}
 		}
 
-		/* Generic button */
-		static public void DrawScroolButtonPrimitive (Graphics dc, Rectangle area, ButtonState state)
+		/* Generic scroll button */
+		static public void DrawScrollButtonPrimitive (Graphics dc, Rectangle area, ButtonState state)
 		{
 			if ((state & ButtonState.Pushed) == ButtonState.Pushed) {
-
-				dc.FillRectangle (br_main, area.X + 1,
+				dc.FillRectangle (br_buttonface, area.X + 1,
 					area.Y + 1, area.Width - 2 , area.Height - 2);
 
-				dc.DrawRectangle (pen_shadow, area.X,
+				dc.DrawRectangle (pen_buttonshadow, area.X,
 					area.Y, area.Width, area.Height);
 			}
 
 			if (state == ButtonState.Normal) {
 
-				dc.FillRectangle (br_lighttop, area.X, area.Y, area.Width, 1);
-				dc.FillRectangle (br_light, area.X, area.Y + 1, area.Width - 1, 1);
-				dc.FillRectangle (br_light, area.X, area.Y + 2, 1,
-					area.Height - 2 - 1);
+				dc.FillRectangle (new SolidBrush (Color.Blue), area);
+				
+				dc.FillRectangle (br_buttonface, area.X, area.Y, area.Width, 1);
+				dc.FillRectangle (br_buttonface, area.X, area.Y, 1, area.Height);
 
-				dc.FillRectangle (br_shadow, area.X, area.Y + area.Height - 1,
-					area.Width - 1, 1);
+				dc.FillRectangle (br_buttonhilight, area.X + 1, area.Y + 1, area.Width - 1, 1);
+				dc.FillRectangle (br_buttonhilight, area.X + 1, area.Y + 2, 1,
+					area.Height - 4);
 
-				dc.FillRectangle (br_dark, area.X, area.Y + area.Height,
-					area.Width, 1);
+				dc.FillRectangle (br_buttonshadow, area.X + 1, area.Y + area.Height - 2,
+					area.Width - 2, 1);
 
-				dc.FillRectangle (br_shadow, area.X + area.Width - 1,
-					area.Y + 1, 1, area.Height);
+				dc.FillRectangle (br_buttondkshadow, area.X, area.Y + area.Height -1,
+					area.Width , 1);
 
-				dc.FillRectangle (br_dark, area.X + area.Width,
-					area.Y, 1, area.Height);
+				dc.FillRectangle (br_buttonshadow, area.X + area.Width - 2,
+					area.Y + 1, 1, area.Height -3);
 
-				dc.FillRectangle (br_main, area.X + 1,
-					area.Y + 2, area.Width - 2, area.Height - 3);
+				dc.FillRectangle (br_buttondkshadow, area.X + area.Width -1,
+					area.Y, 1, area.Height - 1);
+
+				dc.FillRectangle (br_buttonface, area.X + 2,
+					area.Y + 2, area.Width - 4, area.Height - 4);
 			}
 		}
 
+		
 		private void DrawBorderStyle (Graphics dc, Rectangle area, BorderStyle border_style)
 		{
 			switch (border_style){
