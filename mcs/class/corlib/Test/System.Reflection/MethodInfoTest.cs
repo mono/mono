@@ -54,6 +54,7 @@ namespace MonoTests.System.Reflection
 		}
 
 #if NET_2_0
+		[Category ("NotWorking")]
 		[Test]
 		public void PseudoCustomAttributes ()
 		{

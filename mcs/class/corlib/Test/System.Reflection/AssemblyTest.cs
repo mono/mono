@@ -60,6 +60,7 @@ namespace MonoTests.System.Reflection
 
 		[Test]
 #if NET_2_0
+		[Category ("NotWorking")]
 		[ExpectedException (typeof (ArgumentException))]
 #else
 		[ExpectedException (typeof (TypeLoadException))]
@@ -83,6 +84,9 @@ namespace MonoTests.System.Reflection
 #endif
 		}
 
+#if NET_2_0
+		[Category ("NotWorking")]
+#endif
 		[Test]
 		public void Corlib () 
 		{

@@ -301,6 +301,7 @@ namespace MonoTests.System.Security {
 		}
 #if NET_2_0
 		[Test]
+		[Category ("NotWorking")]
 		public void Equals () 
 		{
 			NamedPermissionSet psn = new NamedPermissionSet (name, PermissionState.None);

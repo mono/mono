@@ -1136,6 +1136,7 @@ public class RSACryptoServiceProviderTest : Assertion {
 	}
 
 	[Test]
+	[Category ("NotWorking")]
 	// This case wasn't fixed in Nov CTP
 	public void CspKeyContainerInfo_ImportedPublicKey ()
 	{

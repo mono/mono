@@ -51,7 +51,7 @@ public class SByteTest : Assertion
 		Assert(MySByte1.CompareTo((SByte)(-42)) == 0);
 		Assert(MySByte2.CompareTo(MySByte3) < 0);
 		try {
-			MySByte2.CompareTo(100);
+			MySByte2.CompareTo((object)(int)100);
 			Fail("Should raise a System.ArgumentException");
 		}
 		catch (Exception e) {

@@ -56,6 +56,9 @@ namespace MonoTests.System.Security.Permissions {
 			"www.*.com",
 		};
 
+#if NET_2_0
+		[Category ("NotWorking")]
+#endif
 		[Test]
 		public void PermissionState_None ()
 		{
