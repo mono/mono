@@ -525,6 +525,22 @@ public class TypeManager {
 	{
 		return (TypeParameter) builder_to_type_param [t];
 	}
+
+	public static bool HasConstructorConstraint (Type t)
+	{
+		if (!t.IsGenericParameter)
+			throw new InvalidOperationException ();
+
+		TypeParameter tparam = LookupTypeParameter (t);
+		if (tparam != null)
+			return tparam.HasConstructorConstraint;
+		else {
+			object[] attrs = t.GetCustomAttributes (
+				TypeManager.new_constraint_attr_type, false);
+
+			return attrs.Length > 0;
+		}
+	}
 	
 	/// <summary>
 	///   Registers an assembly to load types from.

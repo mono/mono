@@ -545,26 +545,16 @@ namespace Mono.CSharp {
 			// Finally, check the constructor constraint.
 			//
 
-			bool has_ctor_constraint;
-			TypeParameter tparam = TypeManager.LookupTypeParameter (ptype);
-			if (tparam != null)
-				has_ctor_constraint = tparam.HasConstructorConstraint;
-			else {
-				object[] attrs = ptype.GetCustomAttributes (
-					TypeManager.new_constraint_attr_type, false);
-
-				has_ctor_constraint = attrs.Length > 0;
-			}
-
-			if (!has_ctor_constraint)
+			if (!TypeManager.HasConstructorConstraint (ptype))
 				return true;
 
 			MethodGroupExpr mg = Expression.MemberLookup (
 				ec, atype, ".ctor", MemberTypes.Constructor,
-				BindingFlags.Public | BindingFlags.Instance, loc)
+				BindingFlags.Public | BindingFlags.Instance |
+				BindingFlags.DeclaredOnly, loc)
 				as MethodGroupExpr;
 
-			if ((mg == null) || mg.IsInstance) {
+			if (atype.IsAbstract || (mg == null) || !mg.IsInstance) {
 				Report.Error (310, loc, "The type `{0}' must have a public " +
 					      "parameterless constructor in order to use it " +
 					      "as parameter `{1}' in the generic type or " +
