@@ -1,3 +1,17 @@
+2004-04-19  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* AppDomain.cs: Implemented DynamicDirectory and SetDynamicBase.
+	* Array.cs: Removed some TODOs in CreateInstance and IndexOf.
+	* BadImageFormatException.cs: TODO reformat.
+	* DateTime.cs: Implemented GetDateTimeFormats and GetDateTimeFormats.
+	* DelegateSerializationHolder.cs: Made class internal.
+	* Enum.cs: Removed TODO for localization, since this is something that has
+	  to be done for all classes.
+	* Environment.cs: Removed TODO.
+	* Exception.cs: Changed ToString to use StringBuilder.
+	* MonoDummy.cs: Made class internal.
+	* UnitySerializationHolder.cs: Added support for modules.
+
 2004-04-16  David Sheldon <dave-mono@earth.li>
 
   * DecimalFormatter.cs: Don't append a decimal point after the

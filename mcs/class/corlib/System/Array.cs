@@ -401,7 +401,6 @@ namespace System
 			return CreateInstanceImpl (elementType, lengths, bounds);
 		}
 
-		[MonoTODO ("Eliminate foreach")]
 		public static Array CreateInstance (Type elementType, int[] lengths, int [] bounds)
 		{
 			if (elementType == null)
@@ -417,15 +416,14 @@ namespace System
 			if (lengths.Length != bounds.Length)
 				throw new ArgumentException (Locale.GetText ("Arrays must be of same size."));
 
-			foreach (int i in lengths)
-				if (i < 0)
+			for (int j = 0; j < bounds.Length; j ++) {
+				if (lengths [j] < 0)
 					throw new ArgumentOutOfRangeException ("lengths", Locale.GetText (
 						"Each value has to be >= 0."));
-
-			for (int j = 0; j < bounds.Length; j ++)
-				if (bounds [j] + lengths [j] > Int32.MaxValue)
+				if ((long)bounds [j] + (long)lengths [j] > (long)Int32.MaxValue)
 					throw new ArgumentOutOfRangeException ("lengths", Locale.GetText (
 						"Length + bound must not exceed Int32.MaxValue."));
+			}
 
 			if (lengths.Length > 255)
 				throw new TypeLoadException ();
@@ -748,7 +746,6 @@ namespace System
 			return IndexOf (array, value, startIndex, array.Length - startIndex);
 		}
 
-		[MonoTODO ("Set startindex in the for loop to avoid excess additions (speedup)")]
 		public static int IndexOf (Array array, object value, int startIndex, int count)
 		{
 			if (array == null)
@@ -760,9 +757,10 @@ namespace System
 			if (count < 0 || startIndex < array.GetLowerBound (0) || startIndex + count - 1 > array.GetUpperBound (0))
 				throw new ArgumentOutOfRangeException ();
 
-			for (int i = 0; i < count; i++) {
-				if (Object.Equals (array.GetValueImpl (startIndex + i), value))
-					return startIndex + i;
+			int max = startIndex + count;
+			for (int i = startIndex; i < max; i++) {
+				if (Object.Equals (array.GetValueImpl (i), value))
+					return i;
 			}
 
 			return array.GetLowerBound (0) - 1;

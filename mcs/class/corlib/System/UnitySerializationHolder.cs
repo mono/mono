@@ -26,6 +26,7 @@ namespace System
 		{
 			DBNull = 2,
 			Type = 4,
+			Module = 5,
 			Assembly = 6
 		}
 
@@ -60,6 +61,14 @@ namespace System
 			info.SetType (typeof (UnitySerializationHolder));
 		}
 
+		public static void GetModuleData (Module instance, SerializationInfo info, StreamingContext ctx)
+		{
+			info.AddValue ("Data", instance.ScopeName);
+			info.AddValue ("UnityType", (int) UnityType.Module);
+			info.AddValue ("AssemblyName", instance.Assembly.FullName);
+			info.SetType (typeof (UnitySerializationHolder));
+		}
+
 		public virtual void GetObjectData (SerializationInfo info, StreamingContext context)
 		{
 			// Not needed.
@@ -69,11 +78,16 @@ namespace System
 		public virtual object GetRealObject (StreamingContext context)
 		{
 			switch (_unityType) {
-			case UnityType.Type:
+			case UnityType.Type: {
 				Assembly assembly = Assembly.Load (_assemblyName);
 				return assembly.GetType (_data);
+			}
 			case UnityType.DBNull:
 				return DBNull.Value;
+			case UnityType.Module: {
+				Assembly assembly = Assembly.Load (_assemblyName);
+				return assembly.GetModule (_data);
+			}
 			case UnityType.Assembly:
 				return Assembly.Load (_data);
 			default:

@@ -94,12 +94,11 @@ namespace System
 			// the directory class however that class has additional security requirements
 			// so the Directory class will call this class for its get/set current directory
 			
-			// [EnvironmentPermissionAttribute(SecurityAction.Demand, Unrestricted = true)]
+			[EnvironmentPermissionAttribute(SecurityAction.Demand, Unrestricted = true)]
 			get {
 				return Directory.GetCurrentDirectory ();
 			}
-			[MonoTODO("disabled because of compile error. Need mcs magic.")]
-			//[SecurityPermissionAttribute(SecurityAction.Demand, Flags = SecurityPermissionFlag.UnmanagedCode)]
+			[SecurityPermissionAttribute(SecurityAction.Demand, Flags = SecurityPermissionFlag.UnmanagedCode)]
 			set {
 				Directory.SetCurrentDirectory (value);
 			}

@@ -490,18 +490,16 @@ namespace System
 			return result;
 		}
 		
-		// TODO: implement me
-		[MonoTODO]
 		public string[] GetDateTimeFormats(IFormatProvider provider)
 		{
-			return null;
+			DateTimeFormatInfo info = (DateTimeFormatInfo) provider.GetFormat (typeof(DateTimeFormatInfo));
+			return info.GetAllDateTimePatterns ();
 		}
 
-		//TODO: implement me 
-		[MonoTODO]
 		public string[] GetDateTimeFormats(char format,IFormatProvider provider	)
 		{
-			return null;
+			DateTimeFormatInfo info = (DateTimeFormatInfo) provider.GetFormat (typeof(DateTimeFormatInfo));
+			return info.GetAllDateTimePatterns (format);
 		}
 
 		public override int GetHashCode ()

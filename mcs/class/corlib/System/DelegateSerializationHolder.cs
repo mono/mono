@@ -13,7 +13,7 @@ using System.Runtime.Serialization;
 namespace System
 {
 	[Serializable]
-	public class DelegateSerializationHolder: ISerializable, IObjectReference
+	internal class DelegateSerializationHolder: ISerializable, IObjectReference
 	{
 		Delegate _delegate; // The deserialized delegate
 

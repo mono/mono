@@ -14,7 +14,6 @@ using System.Runtime.Serialization;
 namespace System
 {
 	[Serializable]
-	[MonoTODO ("probably not entirely correct. fusionLog needs to be set somehow (we are probably missing internal constuctor)")]
 	public class BadImageFormatException : SystemException
 	{
 		const int Result = unchecked ((int)0x8007000B);
@@ -74,6 +73,7 @@ namespace System
 			get { return fileName; }
 		}
 
+		[MonoTODO ("Probably not entirely correct. fusionLog needs to be set somehow (we are probably missing internal constuctor)")]
 		public string FusionLog
 		{
 			get { return fusionLog; }

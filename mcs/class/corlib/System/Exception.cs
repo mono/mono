@@ -86,11 +86,10 @@ namespace System
 			message = s;
 		}
 
-		[MonoTODO ("Locale.GetText()")]
 		public virtual string Message {
 			get {
 				if (message == null)
-					message = "Exception of type " + GetType () + " was thrown.";
+					message = string.Format (Locale.GetText ("Exception of type {0} was thrown."), GetType ().ToString());
 
 				return message;
 			}
@@ -166,24 +165,24 @@ namespace System
 			info.AddValue ("ExceptionMethod", null);
 		}
 
-		[MonoTODO ("Locale.GetText(), use Stringbuilder?")]
 		public override string ToString ()
 		{
-			string result = this.GetType ().FullName + ": " + Message;
+			System.Text.StringBuilder result = new System.Text.StringBuilder (this.GetType ().FullName);
+			result.Append (": ").Append (Message);
 
 			if (null != remote_stack_trace)
-				result = result + remote_stack_trace;
+				result.Append (remote_stack_trace);
 				
 			if (inner_exception != null) 
 			{
-				result += " ---> " + inner_exception.ToString ();
-				result += "--- End of inner exception stack trace ---";
-				result += Environment.NewLine;
+				result.Append (" ---> ").Append (inner_exception.ToString ());
+				result.Append (Locale.GetText ("--- End of inner exception stack trace ---"));
+				result.Append (Environment.NewLine);
 			}
 
 			if (stack_trace != null)
-				result += Environment.NewLine + stack_trace;
-			return result;
+				result.Append (Environment.NewLine).Append (stack_trace);
+			return result.ToString();
 		}
 
 		internal Exception FixRemotingException ()

@@ -50,7 +50,6 @@ namespace System
 		}
 	};
 
-	[MonoTODO ("Locale.GetText")]
 	[Serializable]
 	public abstract class Enum : ValueType, IComparable, IConvertible, IFormattable
 	{

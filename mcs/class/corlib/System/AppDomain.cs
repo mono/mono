@@ -77,10 +77,10 @@ namespace System
 			}
 		}
 
-		[MonoTODO ("fixme: dont know if this is right?")]
 		public string DynamicDirectory {
 			get {
-				return SetupInformation.DynamicBase;
+				if (SetupInformation.DynamicBase == null) return null;
+				return Path.Combine (SetupInformation.DynamicBase, SetupInformation.ApplicationName);
 			}
 		}
 
@@ -364,6 +364,12 @@ namespace System
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		public extern int ExecuteAssembly (string assemblyFile, Evidence assemblySecurity, string[] args);
 
+		[MonoTODO]
+		public int ExecuteAssembly (string assemblyFile, Evidence assemblySecurity, string[] args, byte[] hashValue, AssemblyHashAlgorithm hashAlgorithm)
+		{
+			throw new NotImplementedException ();
+		}
+		
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		public extern Assembly [] GetAssemblies ();
 
@@ -631,10 +637,9 @@ namespace System
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		public extern void SetData (string name, object data);
 
-		[MonoTODO ("implement")]
 		public void SetDynamicBase (string path)
 		{
-			throw new NotImplementedException();
+			SetupInformation.DynamicBase = path;
 		}
 
 		public static int GetCurrentThreadId ()
