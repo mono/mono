@@ -10,6 +10,7 @@
 //
 
 using System;
+using System.Diagnostics;
 using System.Text;
 using System.Reflection;
 using System.Threading;
@@ -311,6 +312,8 @@ namespace System.Runtime.Remoting
 				throw new ArgumentException ("obj must be a proxy.","obj");			
 		}
 
+		[MonoTODO]
+		[Conditional ("REMOTING_PERF")]
 		public static void LogRemotingStage (int stage)
 		{
 			throw new NotImplementedException ();
