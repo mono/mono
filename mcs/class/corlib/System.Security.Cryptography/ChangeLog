@@ -1,3 +1,8 @@
+2004-06-23  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* CryptoStream.cs: Removed the block reduction. This seems to be done
+	only for Decryptor so it was moved to SymmetricTransform.
+
 2004-06-16  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* SignatureDescription.cs: Implemented .ctor(SecurityElement) using

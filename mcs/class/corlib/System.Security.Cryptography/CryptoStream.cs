@@ -278,8 +278,6 @@ namespace System.Security.Cryptography {
 					// transform all except the last block (which may be the last block
 					// of the stream and require TransformFinalBlock)
 					int numBlock = ((_partialCount + count) / _transform.InputBlockSize);
-					if (((_partialCount + count) % _transform.InputBlockSize) == 0) // partial block ?
-						numBlock--; // no then reduce
 					int multiSize = (numBlock * _transform.InputBlockSize);
 					if (numBlock > 0) {
 						byte[] multiBlocks = new byte [multiSize];
