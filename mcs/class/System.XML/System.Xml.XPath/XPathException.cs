@@ -14,7 +14,7 @@ namespace System.Xml.XPath
 	[Serializable]
 	public class XPathException : SystemException
 	{
-		#region Constructors
+#region Constructors
 
 		protected XPathException (SerializationInfo info, StreamingContext context) : base (info, context) {}
 
@@ -22,25 +22,25 @@ namespace System.Xml.XPath
 
 		internal XPathException (string message) : base (message, null) {}
 
-		#endregion
+#endregion
 
-                #region Properties
+#region Properties
 
-                public override string Message {
+		public override string Message {
 
-                        get { return base.Message; }
+			get { return base.Message; }
 
-                }
-                
-                #endregion
+		}
 
-                #region Methods
+#endregion
 
-                public override void GetObjectData (SerializationInfo info, StreamingContext context)
-                {
-                        base.GetObjectData (info, context);
-                }
-                
-                #endregion
+#region Methods
+
+		public override void GetObjectData (SerializationInfo info, StreamingContext context)
+		{
+			base.GetObjectData (info, context);
+		}
+
+#endregion
 	}
 }

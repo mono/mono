@@ -134,6 +134,7 @@ namespace System.Xml.XPath
 	internal class NullIterator : SelfIterator
 	{
 		public NullIterator (BaseIterator iter) : base (iter) {}
+		public NullIterator (XPathNavigator nav) : this (nav, null) {}
 		public NullIterator (XPathNavigator nav, XmlNamespaceManager nsm) : base (nav, nsm) {}
 		protected NullIterator (SimpleIterator other) : base (other) {}
 		public override XPathNodeIterator Clone () { return new NullIterator (this); }
@@ -435,10 +436,10 @@ namespace System.Xml.XPath
 	{
 		protected BaseIterator _iterLeft;
 		protected BaseIterator _iterRight;
-		protected Expression _expr;
+		protected NodeSet _expr;
 		protected int _pos;
 
-		public SlashIterator (BaseIterator iter, Expression expr) : base (iter)
+		public SlashIterator (BaseIterator iter, NodeSet expr) : base (iter)
 		{
 			_iterLeft = iter;
 			_expr = expr;
@@ -478,19 +479,19 @@ namespace System.Xml.XPath
 	internal class PredicateIterator : BaseIterator
 	{
 		protected BaseIterator _iter;
-		protected Expression [] _preds;
+		protected Expression _pred;
 		protected int _pos;
 
-		public PredicateIterator (BaseIterator iter, Expression [] preds) : base (iter)
+		public PredicateIterator (BaseIterator iter, Expression pred) : base (iter)
 		{
 			_iter = iter;
-			_preds = preds;
+			_pred = pred;
 		}
 
 		protected PredicateIterator (PredicateIterator other) : base (other)
 		{
 			_iter = (BaseIterator) other._iter.Clone ();
-			_preds = other._preds;
+			_pred = other._pred;
 			_pos = other._pos;
 		}
 		public override XPathNodeIterator Clone () { return new PredicateIterator (this); }
@@ -500,28 +501,17 @@ namespace System.Xml.XPath
 			while (_iter.MoveNext ())
 			{
 				bool fTrue = true;
-				foreach (Expression pred in _preds)
+				object result = _pred.Evaluate ((BaseIterator) _iter.Clone ());
+				if (result is double)
 				{
-					object result = pred.Evaluate ((BaseIterator) _iter.Clone ());
-					if (result is double)
-					{
-						if ((double) result != _iter.CurrentPosition)
-						{
-							fTrue = false;
-							break;
-						}
-					}
-					else if (!XPathFunctions.ToBoolean (result))
-					{
-						fTrue = false;
-						break;
-					}
+					if ((double) result != _iter.CurrentPosition)
+						continue;
 				}
-				if (fTrue)
-				{
-					_pos ++;
-					return true;
-				}
+				else if (!XPathFunctions.ToBoolean (result))
+					continue;
+
+				_pos ++;
+				return true;
 			}
 			return false;
 		}

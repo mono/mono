@@ -220,8 +220,26 @@ UnionExpr
 	;
 
 PathExpr
+	: LocationPath
+	| FilterExpr
+	| FilterExpr SLASH RelativeLocationPath
+	{
+		$$ = new ExprSLASH ((Expression) $1, (NodeSet) $3);
+	}
+	| FilterExpr SLASH2 RelativeLocationPath
+	{
+		NodeTest test = new NodeTypeTest (Axes.DescendantOrSelf, XPathNodeType.All);
+		$$ = new ExprSLASH (new ExprSLASH ((Expression) $1, test), (NodeSet) $3);
+	}
+	;
+
+LocationPath
 	: RelativeLocationPath
-	| SLASH
+	| AbsoluteLocationPath
+	;
+
+AbsoluteLocationPath
+	: SLASH
 	{
 		$$ = new ExprRoot ();
 	}
@@ -229,20 +247,10 @@ PathExpr
 	{
 		$$ = new ExprSLASH (new ExprRoot (), (NodeSet) $2);
 	}
-	| SLASH2 RelativeLocationPath 
+	| SLASH2 RelativeLocationPath
 	{
-		ExprStep exprStep = new ExprStep (new NodeTypeTest (Axes.DescendantOrSelf, XPathNodeType.All));
-		$$ = new ExprSLASH (new ExprSLASH (new ExprRoot (), exprStep), (NodeSet) $2);
-	}
-	| FilterExpr 
-	| FilterExpr SLASH RelativeLocationPath
-	{
-		$$ = new ExprSLASH ((Expression) $1, (NodeSet) $3);
-	}
-	| FilterExpr SLASH2 RelativeLocationPath
-	{
-		ExprStep exprStep = new ExprStep (new NodeTypeTest (Axes.DescendantOrSelf, XPathNodeType.All));
-		$$ = new ExprSLASH (new ExprSLASH ((Expression) $1, exprStep), (NodeSet) $3);
+		NodeTest test = new NodeTypeTest (Axes.DescendantOrSelf, XPathNodeType.All);
+		$$ = new ExprSLASH (new ExprSLASH (new ExprRoot (), test), (NodeSet) $2);
 	}
 	;
 
@@ -250,35 +258,47 @@ RelativeLocationPath
 	: Step
 	| RelativeLocationPath SLASH Step 
 	{
-		$$ = new ExprSLASH ((Expression) $1, (NodeSet) $3);
+		$$ = new ExprSLASH ((NodeSet) $1, (NodeSet) $3);
 	}
 	| RelativeLocationPath SLASH2 Step 
 	{
-		ExprStep exprStep = new ExprStep (new NodeTypeTest (Axes.DescendantOrSelf, XPathNodeType.All));
-		$$ = new ExprSLASH (new ExprSLASH ((Expression) $1, exprStep), (NodeSet) $3);
+		NodeTest test = new NodeTypeTest (Axes.DescendantOrSelf, XPathNodeType.All);
+		$$ = new ExprSLASH (new ExprSLASH ((NodeSet) $1, test), (NodeSet) $3);
 	}
 	;
 
 Step
-	: AxisSpecifier QName ZeroOrMorePredicates
-	{
-		$$ = new ExprStep (new NodeNameTest ((Axes) $1, (XmlQualifiedName) $2), (ExprPredicates) $3);
-	}
-	| AxisSpecifier ASTERISK ZeroOrMorePredicates
-	{
-		$$ = new ExprStep (new NodeTypeTest ((Axes) $1), (ExprPredicates) $3);
-	}
-	| AxisSpecifier NodeType PAREN_OPEN OptionalLiteral PAREN_CLOSE ZeroOrMorePredicates
-	{
-		$$ = new ExprStep (new NodeTypeTest ((Axes) $1, (XPathNodeType) $2, (String) $4), (ExprPredicates) $6);
-	}
+	: PredicatedStep
 	| DOT
 	{
-		$$ = new ExprStep (new NodeTypeTest (Axes.Self, XPathNodeType.All));
+		$$ = new NodeTypeTest (Axes.Self, XPathNodeType.All);
 	}
 	| DOT2
 	{
-		$$ = new ExprStep (new NodeTypeTest (Axes.Parent, XPathNodeType.All));
+		$$ = new NodeTypeTest (Axes.Parent, XPathNodeType.All);
+	}
+	;
+
+PredicatedStep
+	: AxisTest
+	| PredicatedStep Predicate
+	{
+		$$ = new ExprFilter ((NodeSet) $1, (Expression) $2);
+	}
+	;
+
+AxisTest
+	: AxisSpecifier QName
+	{
+		$$ = new NodeNameTest ((Axes) $1, (XmlQualifiedName) $2);
+	}
+	| AxisSpecifier ASTERISK
+	{
+		$$ = new NodeTypeTest ((Axes) $1);
+	}
+	| AxisSpecifier NodeType PAREN_OPEN OptionalLiteral PAREN_CLOSE
+	{
+		$$ = new NodeTypeTest ((Axes) $1, (XPathNodeType) $2, (String) $4);
 	}
 	;
 
@@ -353,15 +373,6 @@ OptionalArgumentListTail
 	| COMMA Expr OptionalArgumentListTail
 	{
 		$$ = new FunctionArguments ((Expression) $2, (FunctionArguments) $3);
-	}
-	;
-
-
-ZeroOrMorePredicates
-	: /* empty */
-	| Predicate ZeroOrMorePredicates
-	{
-		$$ = new ExprPredicates ((Expression) $1, (ExprPredicates) $2);
 	}
 	;
 

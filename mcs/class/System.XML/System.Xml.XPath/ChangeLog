@@ -1,3 +1,21 @@
+2003-07-31 Piers Haken	<piersh@friskit.com>
+
+	* Parser.jay:
+		Nested predicates (uses ExprFilter instead)
+		more type safety
+		make grammar look more like w3c spec
+	* Expression.cs:
+		remove ExprStep, ExprPredicates
+		NodeTest is now a NodeSet
+		more type-safety
+	* Iterator.cs:
+		PredicateIterator now only takes a single predicate expression
+		more type-safety
+	* XPathNavigator.cs:
+		simplified SelectTest
+	* XPathException.cs:
+		fixed indenting
+
 2003-07-30  Duncan Mak  <duncan@ximian.com>
 
 	* XPathException.cs

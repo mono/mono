@@ -816,7 +816,8 @@ namespace System.Xml.XPath
 
 	internal class ExprSLASH : NodeSet
 	{
-		protected Expression _left, _right;
+		protected Expression _left;
+		protected NodeSet _right;
 		public ExprSLASH (Expression left, NodeSet right)
 		{
 			_left = left;
@@ -951,20 +952,16 @@ namespace System.Xml.XPath
 		}
 	}
 
-	internal abstract class NodeTest
+	internal abstract class NodeTest : NodeSet
 	{
 		protected AxisSpecifier _axis;
-		public NodeTest (AxisSpecifier axis)
-		{
-			_axis = axis;
-		}
 		public NodeTest (Axes axis)
 		{
 			_axis = new AxisSpecifier (axis);
 		}
 		public abstract bool Match (XmlNamespaceManager nsm, XPathNavigator nav);
 		public AxisSpecifier Axis { get { return _axis; }}
-		public virtual BaseIterator Evaluate (BaseIterator iter)
+		public override object Evaluate (BaseIterator iter)
 		{
 			BaseIterator iterAxis = _axis.Evaluate (iter);
 			return new AxisIterator (iterAxis, this);
@@ -1081,79 +1078,20 @@ namespace System.Xml.XPath
 		}
 	}
 
-	internal class ExprStep : NodeSet
-	{
-		protected NodeTest _test;
-		protected Expression [] _preds;
-		public ExprStep (NodeTest test, ExprPredicates preds)
-		{
-			_test = test;
-			if (preds != null)
-				_preds = preds.GetPredicates ();
-		}
-		public ExprStep (NodeTest test)
-		{
-			_test = test;
-		}
-		public override String ToString ()
-		{
-			String strExpr = _test.ToString ();
-			if (_preds != null)
-				foreach (Expression pred in _preds)
-					strExpr += '[' + pred.ToString () + ']';
-			return strExpr;
-		}
-		public override object Evaluate (BaseIterator iter)
-		{
-			BaseIterator iterStep = _test.Evaluate (iter);
-			if (_preds == null)
-				return iterStep;
-			return new PredicateIterator (iterStep, _preds);
-		}
-	}
-
-
-	internal class ExprPredicates
-	{
-		protected Expression _pred;
-		protected ExprPredicates _tail;
-		public ExprPredicates (Expression pred, ExprPredicates tail)
-		{
-			_pred = pred;
-			_tail = tail;
-		}
-		public ExprPredicates (Expression pred)
-		{
-			_pred = pred;
-		}
-		public Expression [] GetPredicates ()
-		{
-			ArrayList lstPreds = new ArrayList ();
-			ExprPredicates curr = this;
-			while (curr != null)
-			{
-				lstPreds.Add (curr._pred);
-				curr = curr._tail;
-			}
-			return (Expression []) lstPreds.ToArray (typeof (Expression));
-		}
-	}
-
-	internal class ExprFilter : Expression
+	internal class ExprFilter : NodeSet
 	{
 		protected Expression _expr;
-		protected Expression [] _preds = new Expression [1];
+		protected Expression _pred;
 		public ExprFilter (Expression expr, Expression pred)
 		{
 			_expr = expr;
-			_preds [0] = pred;
+			_pred = pred;
 		}
-		public override String ToString () { return "(" + _expr.ToString () + ")[" + _preds [0].ToString () + "]"; }
-		public override XPathResultType ReturnType { get { return XPathResultType.NodeSet; }}
+		public override String ToString () { return "(" + _expr.ToString () + ")[" + _pred.ToString () + "]"; }
 		public override object Evaluate (BaseIterator iter)
 		{
 			BaseIterator iterExpr = _expr.EvaluateNodeSet (iter);
-			return new PredicateIterator (iterExpr, _preds);
+			return new PredicateIterator (iterExpr, _pred);
 		}
 	}
 

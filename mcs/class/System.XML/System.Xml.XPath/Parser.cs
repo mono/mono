@@ -99,21 +99,26 @@ namespace Mono.Xml.XPath
     "UnaryExpr : MINUS UnaryExpr",
     "UnionExpr : PathExpr",
     "UnionExpr : UnionExpr BAR PathExpr",
-    "PathExpr : RelativeLocationPath",
-    "PathExpr : SLASH",
-    "PathExpr : SLASH RelativeLocationPath",
-    "PathExpr : SLASH2 RelativeLocationPath",
+    "PathExpr : LocationPath",
     "PathExpr : FilterExpr",
     "PathExpr : FilterExpr SLASH RelativeLocationPath",
     "PathExpr : FilterExpr SLASH2 RelativeLocationPath",
+    "LocationPath : RelativeLocationPath",
+    "LocationPath : AbsoluteLocationPath",
+    "AbsoluteLocationPath : SLASH",
+    "AbsoluteLocationPath : SLASH RelativeLocationPath",
+    "AbsoluteLocationPath : SLASH2 RelativeLocationPath",
     "RelativeLocationPath : Step",
     "RelativeLocationPath : RelativeLocationPath SLASH Step",
     "RelativeLocationPath : RelativeLocationPath SLASH2 Step",
-    "Step : AxisSpecifier QName ZeroOrMorePredicates",
-    "Step : AxisSpecifier ASTERISK ZeroOrMorePredicates",
-    "Step : AxisSpecifier NodeType PAREN_OPEN OptionalLiteral PAREN_CLOSE ZeroOrMorePredicates",
+    "Step : PredicatedStep",
     "Step : DOT",
     "Step : DOT2",
+    "PredicatedStep : AxisTest",
+    "PredicatedStep : PredicatedStep Predicate",
+    "AxisTest : AxisSpecifier QName",
+    "AxisTest : AxisSpecifier ASTERISK",
+    "AxisTest : AxisSpecifier NodeType PAREN_OPEN OptionalLiteral PAREN_CLOSE",
     "AxisSpecifier :",
     "AxisSpecifier : AT",
     "AxisSpecifier : AxisName COLON2",
@@ -133,8 +138,6 @@ namespace Mono.Xml.XPath
     "OptionalArgumentList : Expr OptionalArgumentListTail",
     "OptionalArgumentListTail :",
     "OptionalArgumentListTail : COMMA Expr OptionalArgumentListTail",
-    "ZeroOrMorePredicates :",
-    "ZeroOrMorePredicates : Predicate ZeroOrMorePredicates",
     "Predicate : BRACKET_OPEN Expr BRACKET_CLOSE",
     "AxisName : ANCESTOR",
     "AxisName : ANCESTOR_OR_SELF",
@@ -444,228 +447,228 @@ case 24:
 		yyVal = new ExprUNION ((Expression) yyVals[-2+yyTop], (Expression) yyVals[0+yyTop]);
 	}
   break;
-case 26:
-					// line 225 "Parser.jay"
-  {
-		yyVal = new ExprRoot ();
-	}
-  break;
 case 27:
-					// line 229 "Parser.jay"
+					// line 226 "Parser.jay"
   {
-		yyVal = new ExprSLASH (new ExprRoot (), (NodeSet) yyVals[0+yyTop]);
+		yyVal = new ExprSLASH ((Expression) yyVals[-2+yyTop], (NodeSet) yyVals[0+yyTop]);
 	}
   break;
 case 28:
-					// line 233 "Parser.jay"
+					// line 230 "Parser.jay"
   {
-		ExprStep exprStep = new ExprStep (new NodeTypeTest (Axes.DescendantOrSelf, XPathNodeType.All));
-		yyVal = new ExprSLASH (new ExprSLASH (new ExprRoot (), exprStep), (NodeSet) yyVals[0+yyTop]);
-	}
-  break;
-case 30:
-					// line 239 "Parser.jay"
-  {
-		yyVal = new ExprSLASH ((Expression) yyVals[-2+yyTop], (NodeSet) yyVals[0+yyTop]);
+		NodeTest test = new NodeTypeTest (Axes.DescendantOrSelf, XPathNodeType.All);
+		yyVal = new ExprSLASH (new ExprSLASH ((Expression) yyVals[-2+yyTop], test), (NodeSet) yyVals[0+yyTop]);
 	}
   break;
 case 31:
 					// line 243 "Parser.jay"
   {
-		ExprStep exprStep = new ExprStep (new NodeTypeTest (Axes.DescendantOrSelf, XPathNodeType.All));
-		yyVal = new ExprSLASH (new ExprSLASH ((Expression) yyVals[-2+yyTop], exprStep), (NodeSet) yyVals[0+yyTop]);
+		yyVal = new ExprRoot ();
+	}
+  break;
+case 32:
+					// line 247 "Parser.jay"
+  {
+		yyVal = new ExprSLASH (new ExprRoot (), (NodeSet) yyVals[0+yyTop]);
 	}
   break;
 case 33:
-					// line 252 "Parser.jay"
+					// line 251 "Parser.jay"
   {
-		yyVal = new ExprSLASH ((Expression) yyVals[-2+yyTop], (NodeSet) yyVals[0+yyTop]);
-	}
-  break;
-case 34:
-					// line 256 "Parser.jay"
-  {
-		ExprStep exprStep = new ExprStep (new NodeTypeTest (Axes.DescendantOrSelf, XPathNodeType.All));
-		yyVal = new ExprSLASH (new ExprSLASH ((Expression) yyVals[-2+yyTop], exprStep), (NodeSet) yyVals[0+yyTop]);
+		NodeTest test = new NodeTypeTest (Axes.DescendantOrSelf, XPathNodeType.All);
+		yyVal = new ExprSLASH (new ExprSLASH (new ExprRoot (), test), (NodeSet) yyVals[0+yyTop]);
 	}
   break;
 case 35:
-					// line 264 "Parser.jay"
+					// line 260 "Parser.jay"
   {
-		yyVal = new ExprStep (new NodeNameTest ((Axes) yyVals[-2+yyTop], (XmlQualifiedName) yyVals[-1+yyTop]), (ExprPredicates) yyVals[0+yyTop]);
+		yyVal = new ExprSLASH ((NodeSet) yyVals[-2+yyTop], (NodeSet) yyVals[0+yyTop]);
 	}
   break;
 case 36:
-					// line 268 "Parser.jay"
+					// line 264 "Parser.jay"
   {
-		yyVal = new ExprStep (new NodeTypeTest ((Axes) yyVals[-2+yyTop]), (ExprPredicates) yyVals[0+yyTop]);
-	}
-  break;
-case 37:
-					// line 272 "Parser.jay"
-  {
-		yyVal = new ExprStep (new NodeTypeTest ((Axes) yyVals[-5+yyTop], (XPathNodeType) yyVals[-4+yyTop], (String) yyVals[-2+yyTop]), (ExprPredicates) yyVals[0+yyTop]);
+		NodeTest test = new NodeTypeTest (Axes.DescendantOrSelf, XPathNodeType.All);
+		yyVal = new ExprSLASH (new ExprSLASH ((NodeSet) yyVals[-2+yyTop], test), (NodeSet) yyVals[0+yyTop]);
 	}
   break;
 case 38:
-					// line 276 "Parser.jay"
+					// line 273 "Parser.jay"
   {
-		yyVal = new ExprStep (new NodeTypeTest (Axes.Self, XPathNodeType.All));
+		yyVal = new NodeTypeTest (Axes.Self, XPathNodeType.All);
 	}
   break;
 case 39:
-					// line 280 "Parser.jay"
+					// line 277 "Parser.jay"
   {
-		yyVal = new ExprStep (new NodeTypeTest (Axes.Parent, XPathNodeType.All));
+		yyVal = new NodeTypeTest (Axes.Parent, XPathNodeType.All);
 	}
   break;
-case 40:
-					// line 287 "Parser.jay"
+case 41:
+					// line 285 "Parser.jay"
+  {
+		yyVal = new ExprFilter ((NodeSet) yyVals[-1+yyTop], (Expression) yyVals[0+yyTop]);
+	}
+  break;
+case 42:
+					// line 292 "Parser.jay"
+  {
+		yyVal = new NodeNameTest ((Axes) yyVals[-1+yyTop], (XmlQualifiedName) yyVals[0+yyTop]);
+	}
+  break;
+case 43:
+					// line 296 "Parser.jay"
+  {
+		yyVal = new NodeTypeTest ((Axes) yyVals[-1+yyTop]);
+	}
+  break;
+case 44:
+					// line 300 "Parser.jay"
+  {
+		yyVal = new NodeTypeTest ((Axes) yyVals[-4+yyTop], (XPathNodeType) yyVals[-3+yyTop], (String) yyVals[-1+yyTop]);
+	}
+  break;
+case 45:
+					// line 307 "Parser.jay"
   {
 		yyVal = Axes.Child;
 	}
   break;
-case 41:
-					// line 291 "Parser.jay"
+case 46:
+					// line 311 "Parser.jay"
   {
 		yyVal = Axes.Attribute;
 	}
   break;
-case 42:
-					// line 295 "Parser.jay"
+case 47:
+					// line 315 "Parser.jay"
   {
 		yyVal = yyVals[-1+yyTop];
 	}
-  break;
-case 43:
-					// line 301 "Parser.jay"
-  { yyVal = XPathNodeType.Comment; }
-  break;
-case 44:
-					// line 302 "Parser.jay"
-  { yyVal = XPathNodeType.Text; }
-  break;
-case 45:
-					// line 303 "Parser.jay"
-  { yyVal = XPathNodeType.ProcessingInstruction; }
-  break;
-case 46:
-					// line 304 "Parser.jay"
-  { yyVal = XPathNodeType.All; }
   break;
 case 48:
-					// line 311 "Parser.jay"
-  {
-		yyVal = new ExprFilter ((Expression) yyVals[-1+yyTop], (Expression) yyVals[0+yyTop]);
-	}
+					// line 321 "Parser.jay"
+  { yyVal = XPathNodeType.Comment; }
   break;
 case 49:
-					// line 318 "Parser.jay"
-  {
-		yyVal = new ExprVariable ((XmlQualifiedName) yyVals[0+yyTop]);
-	}
+					// line 322 "Parser.jay"
+  { yyVal = XPathNodeType.Text; }
   break;
 case 50:
-					// line 322 "Parser.jay"
-  {
-		yyVal = yyVals[-1+yyTop];
-	}
+					// line 323 "Parser.jay"
+  { yyVal = XPathNodeType.ProcessingInstruction; }
   break;
 case 51:
-					// line 326 "Parser.jay"
-  {
-		yyVal = new ExprLiteral ((String) yyVals[0+yyTop]);
-	}
+					// line 324 "Parser.jay"
+  { yyVal = XPathNodeType.All; }
   break;
-case 52:
-					// line 330 "Parser.jay"
+case 53:
+					// line 331 "Parser.jay"
   {
-		yyVal = new ExprNumber ((double) yyVals[0+yyTop]);
+		yyVal = new ExprFilter ((Expression) yyVals[-1+yyTop], (Expression) yyVals[0+yyTop]);
 	}
   break;
 case 54:
 					// line 338 "Parser.jay"
   {
-		yyVal = new ExprFunctionCall ((XmlQualifiedName) yyVals[-3+yyTop], (FunctionArguments) yyVals[-1+yyTop]);
+		yyVal = new ExprVariable ((XmlQualifiedName) yyVals[0+yyTop]);
+	}
+  break;
+case 55:
+					// line 342 "Parser.jay"
+  {
+		yyVal = yyVals[-1+yyTop];
 	}
   break;
 case 56:
 					// line 346 "Parser.jay"
   {
-		yyVal = new FunctionArguments ((Expression) yyVals[-1+yyTop], (FunctionArguments) yyVals[0+yyTop]);
+		yyVal = new ExprLiteral ((String) yyVals[0+yyTop]);
 	}
   break;
-case 58:
-					// line 354 "Parser.jay"
+case 57:
+					// line 350 "Parser.jay"
   {
-		yyVal = new FunctionArguments ((Expression) yyVals[-1+yyTop], (FunctionArguments) yyVals[0+yyTop]);
+		yyVal = new ExprNumber ((double) yyVals[0+yyTop]);
 	}
   break;
-case 60:
-					// line 363 "Parser.jay"
+case 59:
+					// line 358 "Parser.jay"
   {
-		yyVal = new ExprPredicates ((Expression) yyVals[-1+yyTop], (ExprPredicates) yyVals[0+yyTop]);
+		yyVal = new ExprFunctionCall ((XmlQualifiedName) yyVals[-3+yyTop], (FunctionArguments) yyVals[-1+yyTop]);
 	}
   break;
 case 61:
-					// line 370 "Parser.jay"
+					// line 366 "Parser.jay"
+  {
+		yyVal = new FunctionArguments ((Expression) yyVals[-1+yyTop], (FunctionArguments) yyVals[0+yyTop]);
+	}
+  break;
+case 63:
+					// line 374 "Parser.jay"
+  {
+		yyVal = new FunctionArguments ((Expression) yyVals[-1+yyTop], (FunctionArguments) yyVals[0+yyTop]);
+	}
+  break;
+case 64:
+					// line 381 "Parser.jay"
   {
 		yyVal = yyVals[-1+yyTop];
 	}
   break;
-case 62:
-					// line 376 "Parser.jay"
+case 65:
+					// line 387 "Parser.jay"
   { yyVal = Axes.Ancestor; }
   break;
-case 63:
-					// line 377 "Parser.jay"
+case 66:
+					// line 388 "Parser.jay"
   { yyVal = Axes.AncestorOrSelf; }
   break;
-case 64:
-					// line 378 "Parser.jay"
+case 67:
+					// line 389 "Parser.jay"
   { yyVal = Axes.Attribute; }
   break;
-case 65:
-					// line 379 "Parser.jay"
+case 68:
+					// line 390 "Parser.jay"
   { yyVal = Axes.Child; }
   break;
-case 66:
-					// line 380 "Parser.jay"
+case 69:
+					// line 391 "Parser.jay"
   { yyVal = Axes.Descendant; }
   break;
-case 67:
-					// line 381 "Parser.jay"
+case 70:
+					// line 392 "Parser.jay"
   { yyVal = Axes.DescendantOrSelf; }
   break;
-case 68:
-					// line 382 "Parser.jay"
+case 71:
+					// line 393 "Parser.jay"
   { yyVal = Axes.Following; }
   break;
-case 69:
-					// line 383 "Parser.jay"
+case 72:
+					// line 394 "Parser.jay"
   { yyVal = Axes.FollowingSibling; }
   break;
-case 70:
-					// line 384 "Parser.jay"
+case 73:
+					// line 395 "Parser.jay"
   { yyVal = Axes.Namespace; }
   break;
-case 71:
-					// line 385 "Parser.jay"
+case 74:
+					// line 396 "Parser.jay"
   { yyVal = Axes.Parent; }
   break;
-case 72:
-					// line 386 "Parser.jay"
+case 75:
+					// line 397 "Parser.jay"
   { yyVal = Axes.Preceding; }
   break;
-case 73:
-					// line 387 "Parser.jay"
+case 76:
+					// line 398 "Parser.jay"
   { yyVal = Axes.PrecedingSibling; }
   break;
-case 74:
-					// line 388 "Parser.jay"
+case 77:
+					// line 399 "Parser.jay"
   { yyVal = Axes.Self; }
   break;
-					// line 669
+					// line 672
         }
         yyTop -= yyLen[yyN];
         yyState = yyStates[yyTop];
@@ -698,132 +701,132 @@ case 74:
    static  short [] yyLhs  = {              -1,
     0,    1,    1,    2,    2,    3,    3,    3,    4,    4,
     4,    4,    4,    5,    5,    5,    6,    6,    6,    6,
-    7,    7,    8,    8,    9,    9,    9,    9,    9,    9,
-    9,   10,   10,   10,   12,   12,   12,   12,   12,   13,
-   13,   13,   15,   15,   15,   15,   11,   11,   18,   18,
-   18,   18,   18,   20,   21,   21,   22,   22,   14,   14,
-   19,   17,   17,   17,   17,   17,   17,   17,   17,   17,
-   17,   17,   17,   17,   16,   16,
+    7,    7,    8,    8,    9,    9,    9,    9,   10,   10,
+   13,   13,   13,   12,   12,   12,   14,   14,   14,   15,
+   15,   16,   16,   16,   18,   18,   18,   19,   19,   19,
+   19,   11,   11,   22,   22,   22,   22,   22,   23,   24,
+   24,   25,   25,   17,   21,   21,   21,   21,   21,   21,
+   21,   21,   21,   21,   21,   21,   21,   20,   20,
   };
    static  short [] yyLen = {           2,
     1,    1,    3,    1,    3,    1,    3,    3,    1,    3,
     3,    3,    3,    1,    3,    3,    1,    3,    3,    3,
-    1,    2,    1,    3,    1,    1,    2,    2,    1,    3,
-    3,    1,    3,    3,    3,    3,    6,    1,    1,    0,
-    1,    2,    1,    1,    1,    1,    1,    2,    2,    3,
-    1,    1,    1,    4,    0,    2,    0,    3,    0,    2,
-    3,    1,    1,    1,    1,    1,    1,    1,    1,    1,
-    1,    1,    1,    1,    0,    1,
+    1,    2,    1,    3,    1,    1,    3,    3,    1,    1,
+    1,    2,    2,    1,    3,    3,    1,    1,    1,    1,
+    2,    2,    2,    5,    0,    1,    2,    1,    1,    1,
+    1,    1,    2,    2,    3,    1,    1,    1,    4,    0,
+    2,    0,    3,    3,    1,    1,    1,    1,    1,    1,
+    1,    1,    1,    1,    1,    1,    1,    0,    1,
   };
    static  short [] yyDefRed = {            0,
-    0,    0,   38,   39,   41,    0,    0,    0,    0,   62,
-   63,   64,   65,   66,   67,   68,   69,   70,   71,   72,
-   73,   74,   52,   51,    0,    0,    0,    0,    0,    0,
-    0,   17,    0,   23,    0,    0,   32,    0,    0,   47,
-   53,    0,    0,    0,    0,   22,   49,    0,    0,    0,
-    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
-    0,    0,    0,    0,    0,    0,   48,    0,   43,   44,
-   45,   46,    0,    0,   42,    0,    0,   50,    0,    0,
-    0,    0,    0,    0,    0,    0,    0,    0,   19,   20,
-   18,   24,   33,   34,    0,    0,    0,   36,    0,   35,
-    0,    0,   56,   54,   61,   60,   76,    0,    0,    0,
-   58,   37,
+    0,    0,   38,   39,   46,    0,    0,    0,    0,   65,
+   66,   67,   68,   69,   70,   71,   72,   73,   74,   75,
+   76,   77,   57,   56,    0,    0,    0,    0,    0,    0,
+    0,   17,    0,   23,   25,    0,    0,   30,   34,    0,
+   40,    0,    0,   52,   58,    0,    0,    0,    0,   22,
+   54,    0,    0,    0,    0,    0,    0,    0,    0,    0,
+    0,    0,    0,    0,    0,    0,    0,    0,   53,    0,
+    0,   41,   43,   48,   49,   50,   51,   42,    0,   47,
+    0,    0,   55,    0,    0,    0,    0,    0,    0,    0,
+    0,    0,    0,   19,   20,   18,   24,    0,    0,    0,
+   35,   36,    0,    0,   61,   59,   64,   79,    0,    0,
+   44,   63,
   };
   protected static  short [] yyDgoto  = {            25,
    26,   27,   28,   29,   30,   31,   32,   33,   34,   35,
-   36,   37,   38,   98,   74,  108,   39,   40,   99,   41,
-   77,  103,
+   36,   37,   38,   39,   40,   41,   69,   42,   79,  109,
+   43,   44,   45,   82,  105,
   };
   protected static  short [] yySindex = {         -254,
- -124, -124,    0,    0,    0, -272, -254, -254, -330,    0,
+ -130, -130,    0,    0,    0, -270, -254, -254, -326,    0,
     0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
-    0,    0,    0,    0,    0, -269, -246, -255, -204, -248,
- -258,    0, -270,    0, -165, -249,    0, -200, -229,    0,
-    0, -165, -165, -254, -235,    0,    0, -254, -254, -254,
- -254, -254, -254, -254, -254, -254, -254, -254, -254, -254,
- -189, -124, -124, -124, -124, -254,    0, -230,    0,    0,
-    0,    0, -230, -227,    0, -224, -226,    0, -246, -255,
- -204, -204, -248, -248, -248, -248, -258, -258,    0,    0,
-    0,    0,    0,    0, -165, -165, -222,    0, -230,    0,
- -281, -254,    0,    0,    0,    0,    0, -220, -224, -230,
+    0,    0,    0,    0,    0, -266, -262, -271, -256, -201,
+ -267,    0, -258,    0,    0, -238, -169,    0,    0, -250,
+    0, -178, -235,    0,    0, -169, -169, -254, -233,    0,
+    0, -254, -254, -254, -254, -254, -254, -254, -254, -254,
+ -254, -254, -254, -254, -189, -130, -130, -254,    0, -130,
+ -130,    0,    0,    0,    0,    0,    0,    0, -237,    0,
+ -224, -228,    0, -262, -271, -256, -256, -201, -201, -201,
+ -201, -267, -267,    0,    0,    0,    0, -169, -169, -222,
+    0,    0, -285, -254,    0,    0,    0,    0, -220, -224,
     0,    0,
   };
-  protected static  short [] yyRindex = {         -176,
-    1, -176,    0,    0,    0,    0, -176, -176,    0,    0,
+  protected static  short [] yyRindex = {         -168,
+    1, -168,    0,    0,    0,    0, -168, -168,    0,    0,
     0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
     0,    0,    0,    0,    0,   19,   93,   37,   27,  357,
-  276,    0,  250,    0,   85,  114,    0,    0,    0,    0,
-    0,  140,  169, -192,    0,    0,    0, -176, -176, -176,
- -176, -176, -176, -176, -176, -176, -176, -176, -176, -176,
- -176, -176, -176, -176, -176, -176,    0,   59,    0,    0,
-    0,    0,   59,    0,    0, -218,    0,    0,  336,  484,
-  458,  476,  383,  393,  419,  429,  302,  328,    0,    0,
-    0,    0,    0,    0,  195,  224,    0,    0,   59,    0,
- -216, -176,    0,    0,    0,    0,    0,    0, -218,   59,
+  276,    0,  250,    0,    0,   85,  114,    0,    0,   59,
+    0,    0,    0,    0,    0,  140,  169, -198,    0,    0,
+    0, -168, -168, -168, -168, -168, -168, -168, -168, -168,
+ -168, -168, -168, -168, -168, -168, -168, -168,    0, -168,
+ -168,    0,    0,    0,    0,    0,    0,    0,    0,    0,
+ -218,    0,    0,  336,  484,  458,  476,  383,  393,  419,
+  429,  302,  328,    0,    0,    0,    0,  195,  224,    0,
+    0,    0, -216, -168,    0,    0,    0,    0,    0, -218,
     0,    0,
   };
-  protected static  short [] yyGindex = {           -5,
-    0,   15,   16,   48,  -29,   44,    9,    0,   21,   11,
-    0,   40,    0,  -69,    0,    0,    0,    0,   51,    0,
-    0,  -20,
+  protected static  short [] yyGindex = {           -7,
+    0,   -1,   12,   40,  -33,   38,   25,    0,    7,    0,
+    0,    2,    0,   30,    0,    0,   36,    0,    0,    0,
+    0,    0,    0,    0,  -43,
   };
-  protected static  short [] yyTable = {            44,
-   26,   45,   47,  100,    1,    2,   48,    3,    4,   64,
-   65,   42,   43,    5,    6,   61,   46,    7,    1,   58,
-   66,   59,   83,   84,   85,   86,    6,   49,    8,  106,
-    9,   50,   51,   56,   57,   75,    4,   78,   76,   66,
-  112,   10,  102,   11,  101,   12,  104,   13,  105,   14,
-  107,   15,  110,   16,   57,   17,   75,   18,   59,   19,
-   97,   20,   79,   21,   80,   22,   89,   90,   91,    1,
-    2,   60,    3,    4,   95,   96,   23,   24,    5,    6,
-   55,   92,    7,   68,   25,   52,   67,   53,  111,   54,
-   55,   40,    2,   62,   63,    9,  109,   81,   82,   87,
-   88,   93,   94,    0,    0,    0,   10,   40,   11,    0,
-   12,    0,   13,   29,   14,    0,   15,    0,   16,    0,
-   17,   69,   18,   70,   19,   71,   20,   72,   21,   40,
-   22,   40,   73,   40,    0,   40,    0,    3,    4,   27,
-   40,   23,   24,    5,    0,   40,    0,   40,    0,   40,
-    0,   40,    0,    0,    0,    0,   40,    0,    0,    0,
-    0,    0,    0,    0,    0,    0,    0,    0,   28,    0,
-    0,   10,    0,   11,    0,   12,    0,   13,    0,   14,
-    0,   15,    0,   16,    0,   17,    0,   18,    0,   19,
-    0,   20,    0,   21,   30,   22,    0,    0,    0,    0,
+  protected static  short [] yyTable = {            49,
+   31,   48,   46,   47,    1,    2,   51,    3,    4,   52,
+   62,   53,   63,    5,    6,   54,   55,    7,    1,   68,
+   66,   67,   88,   89,   90,   91,    6,   65,    8,   80,
+    9,   68,   50,   56,  103,   57,    4,   58,   59,   83,
+   81,   10,  104,   11,  106,   12,  108,   13,  107,   14,
+   84,   15,  111,   16,   62,   17,   78,   18,   37,   19,
+  100,   20,   64,   21,   85,   22,  112,   98,   99,    1,
+    2,   97,    3,    4,   60,   72,   23,   24,    5,    6,
+   60,   61,    7,    0,   26,   45,   94,   95,   96,   70,
+   71,    0,    2,   86,   87,    9,  110,   92,   93,  101,
+  102,    0,    0,    0,    0,   73,   10,    0,   11,    0,
+   12,    0,   13,   29,   14,   45,   15,    0,   16,    0,
+   17,    0,   18,   45,   19,   45,   20,   45,   21,   45,
+   22,    3,    4,    0,   45,    0,    0,    5,    0,   32,
+    0,   23,   24,   74,    0,   75,    0,   76,    0,   77,
+    0,    0,    0,   45,   78,   45,    0,   45,    0,   45,
+    0,    0,    0,    0,   45,   10,    0,   11,   33,   12,
+    0,   13,    0,   14,    0,   15,    0,   16,    0,   17,
+    0,   18,    0,   19,    0,   20,    0,   21,    0,   22,
+    0,    0,    0,    0,   27,    0,    0,    0,    0,    0,
     0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
     0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
-    0,    0,    0,   31,    0,    0,    0,    0,    0,    0,
+    0,    0,    0,   28,    0,    0,    0,    0,    0,    0,
     0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
     0,    0,    0,    0,    0,    0,    0,    0,    0,   21,
     0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
-    0,    0,    0,    0,    0,    0,    0,   26,    0,    0,
-    0,   26,    0,   26,   26,   14,   26,    0,   26,    0,
-   26,    0,   26,   26,   40,    1,   26,   26,   26,    1,
-   26,    1,   26,    6,   26,   26,    0,    6,    0,    6,
+    0,    0,    0,    0,    0,    0,    0,   31,    0,    0,
+    0,   31,    0,   31,   31,   14,   31,    0,   31,    0,
+   31,    0,   31,   31,   45,    1,   31,   31,   31,    1,
+   31,    1,   31,    6,   31,   31,    0,    6,    0,    6,
     6,   15,    6,    4,    0,    0,    0,    4,    0,    4,
-    4,    0,    4,    6,    6,    0,    0,   59,   59,    0,
-    0,    0,   40,    0,   40,   59,   40,   16,   40,   59,
-   26,   59,   59,   40,   59,    3,   59,    0,   59,    0,
-   59,   59,    0,    0,   59,   59,   59,    0,   59,    0,
-   59,   25,   59,   59,    0,   25,    9,   25,   25,    2,
-   25,    0,   25,    2,   25,    2,   25,   25,    2,    0,
-   25,   25,   25,    0,   25,    0,   25,    0,   25,   25,
-   29,    0,   12,    0,   29,    0,   29,   29,   59,   29,
+    4,    0,    4,    6,    6,    0,    0,   37,   37,    0,
+    0,    0,   45,    0,   45,   37,   45,   16,   45,   37,
+   31,   37,   37,   45,   37,    3,   37,    0,   37,    0,
+   37,   37,    0,    0,   37,   37,   37,    0,   37,    0,
+   37,   26,   37,   37,    0,   26,    9,   26,   26,    2,
+   26,    0,   26,    2,   26,    2,   26,   26,    2,    0,
+   26,   26,   26,    0,   26,    0,   26,    0,   26,   26,
+   29,    0,   12,    0,   29,    0,   29,   29,   37,   29,
     0,   29,   13,   29,    0,   29,   29,    0,    0,   29,
-   29,   29,    0,   29,    0,   29,   27,   29,   29,    0,
-   27,    0,   27,   27,   25,   27,    0,   27,   10,   27,
-    0,   27,   27,    0,    0,   27,   27,   27,   11,   27,
-    0,   27,    0,   27,   27,   28,    0,    0,    0,   28,
-    0,   28,   28,   29,   28,    0,   28,    0,   28,    0,
-   28,   28,    0,    0,   28,   28,   28,    7,   28,    0,
-   28,   30,   28,   28,    0,   30,    0,   30,   30,   27,
-   30,    0,   30,    0,   30,    8,   30,   30,    0,    0,
-   30,   30,   30,    5,   30,    0,   30,    0,   30,   30,
-   31,    0,    0,    0,   31,    0,   31,   31,   28,   31,
-    0,   31,    0,   31,    0,   31,   31,    0,    0,   31,
-   31,   31,    0,   31,    0,   31,   21,   31,   31,    0,
-   21,    0,   21,   21,   30,   21,    0,   21,    0,   21,
+   29,   29,    0,   29,    0,   29,   32,   29,   29,    0,
+   32,    0,   32,   32,   26,   32,    0,   32,   10,   32,
+    0,   32,   32,    0,    0,   32,   32,   32,   11,   32,
+    0,   32,    0,   32,   32,   33,    0,    0,    0,   33,
+    0,   33,   33,   29,   33,    0,   33,    0,   33,    0,
+   33,   33,    0,    0,   33,   33,   33,    7,   33,    0,
+   33,   27,   33,   33,    0,   27,    0,   27,   27,   32,
+   27,    0,   27,    0,   27,    8,   27,   27,    0,    0,
+   27,   27,   27,    5,   27,    0,   27,    0,   27,   27,
+   28,    0,    0,    0,   28,    0,   28,   28,   33,   28,
+    0,   28,    0,   28,    0,   28,   28,    0,    0,   28,
+   28,   28,    0,   28,    0,   28,   21,   28,   28,    0,
+   21,    0,   21,   21,   27,   21,    0,   21,    0,   21,
     0,   21,   21,    0,    0,    0,   21,   21,    0,   21,
     0,   21,   14,   21,   21,    0,   14,    0,   14,   14,
-    0,   14,    0,   31,    0,    0,    0,   14,   14,    0,
+    0,   14,    0,   28,    0,    0,    0,   14,   14,    0,
     0,    0,   14,   14,    0,   14,    0,   14,   15,   14,
    14,    0,   15,    0,   15,   15,    0,   15,    0,   21,
     0,    0,    0,   15,   15,    0,    0,    0,   15,   15,
@@ -846,27 +849,27 @@ case 74:
     5,    8,    0,    0,    5,    0,    5,    5,    0,    5,
     0,    0,    8,    8,
   };
-  protected static  short [] yyCheck = {           272,
-    0,    7,  333,   73,  259,  260,  276,  262,  263,  259,
-  260,    1,    2,  268,  269,  286,    8,  272,    0,  278,
-  270,  280,   52,   53,   54,   55,    0,  274,  283,   99,
-  285,  287,  288,  282,  283,  265,    0,  273,   44,  270,
-  110,  296,  267,  298,  272,  300,  273,  302,  271,  304,
-  332,  306,  273,  308,  273,  310,  273,  312,    0,  314,
-   66,  316,   48,  318,   49,  320,   58,   59,   60,  259,
-  260,  330,  262,  263,   64,   65,  331,  332,  268,  269,
-  273,   61,  272,  284,    0,  290,   36,  292,  109,  294,
-  295,  284,    0,  259,  260,  285,  102,   50,   51,   56,
-   57,   62,   63,   -1,   -1,   -1,  296,  284,  298,   -1,
-  300,   -1,  302,    0,  304,   -1,  306,   -1,  308,   -1,
-  310,  322,  312,  324,  314,  326,  316,  328,  318,  322,
-  320,  324,  333,  326,   -1,  328,   -1,  262,  263,    0,
-  333,  331,  332,  268,   -1,  322,   -1,  324,   -1,  326,
-   -1,  328,   -1,   -1,   -1,   -1,  333,   -1,   -1,   -1,
-   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,    0,   -1,
-   -1,  296,   -1,  298,   -1,  300,   -1,  302,   -1,  304,
-   -1,  306,   -1,  308,   -1,  310,   -1,  312,   -1,  314,
-   -1,  316,   -1,  318,    0,  320,   -1,   -1,   -1,   -1,
+  protected static  short [] yyCheck = {             7,
+    0,  272,    1,    2,  259,  260,  333,  262,  263,  276,
+  278,  274,  280,  268,  269,  287,  288,  272,    0,  270,
+  259,  260,   56,   57,   58,   59,    0,  286,  283,  265,
+  285,  270,    8,  290,  272,  292,    0,  294,  295,  273,
+   48,  296,  267,  298,  273,  300,  332,  302,  271,  304,
+   52,  306,  273,  308,  273,  310,  273,  312,    0,  314,
+   68,  316,  330,  318,   53,  320,  110,   66,   67,  259,
+  260,   65,  262,  263,  273,   40,  331,  332,  268,  269,
+  282,  283,  272,   -1,    0,  284,   62,   63,   64,  259,
+  260,   -1,    0,   54,   55,  285,  104,   60,   61,   70,
+   71,   -1,   -1,   -1,   -1,  284,  296,   -1,  298,   -1,
+  300,   -1,  302,    0,  304,  284,  306,   -1,  308,   -1,
+  310,   -1,  312,  322,  314,  324,  316,  326,  318,  328,
+  320,  262,  263,   -1,  333,   -1,   -1,  268,   -1,    0,
+   -1,  331,  332,  322,   -1,  324,   -1,  326,   -1,  328,
+   -1,   -1,   -1,  322,  333,  324,   -1,  326,   -1,  328,
+   -1,   -1,   -1,   -1,  333,  296,   -1,  298,    0,  300,
+   -1,  302,   -1,  304,   -1,  306,   -1,  308,   -1,  310,
+   -1,  312,   -1,  314,   -1,  316,   -1,  318,   -1,  320,
+   -1,   -1,   -1,   -1,    0,   -1,   -1,   -1,   -1,   -1,
    -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,
    -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,   -1,
    -1,   -1,   -1,    0,   -1,   -1,   -1,   -1,   -1,   -1,
@@ -926,9 +929,9 @@ case 74:
    -1,   -1,  287,  288,
   };
 
-					// line 397 "Parser.jay"
+					// line 408 "Parser.jay"
 	}
-					// line 932
+					// line 935
 namespace yydebug {
         using System;
 	 public interface yyDebug {

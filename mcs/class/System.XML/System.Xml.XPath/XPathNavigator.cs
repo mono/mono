@@ -319,8 +319,7 @@ namespace System.Xml.XPath
 		public virtual XPathNodeIterator SelectAncestors (XPathNodeType type, bool matchSelf)
 		{
 			Axes axis = (matchSelf) ? Axes.AncestorOrSelf : Axes.Ancestor;
-			NodeTest test = new NodeTypeTest (axis, type);
-			return SelectTest (test);
+			return SelectTest (new NodeTypeTest (axis, type));
 		}
 
 		[MonoTODO]
@@ -331,14 +330,12 @@ namespace System.Xml.XPath
 
 			Axes axis = (matchSelf) ? Axes.AncestorOrSelf : Axes.Ancestor;
 			XmlQualifiedName qname = new XmlQualifiedName (name);
-			NodeTest test = new NodeNameTest (axis, qname);
-			return SelectTest (test);
+			return SelectTest (new NodeNameTest (axis, qname));
 		}
 
 		public virtual XPathNodeIterator SelectChildren (XPathNodeType type)
 		{
-			NodeTest test = new NodeTypeTest (Axes.Child, type);
-			return SelectTest (test);
+			return SelectTest (new NodeTypeTest (Axes.Child, type));
 		}
 
 		[MonoTODO]
@@ -349,15 +346,13 @@ namespace System.Xml.XPath
 
 			Axes axis = Axes.Child;
 			XmlQualifiedName qname = new XmlQualifiedName (name);
-			NodeTest test = new NodeNameTest (axis, qname);
-			return SelectTest (test);
+			return SelectTest (new NodeNameTest (axis, qname));
 		}
 
 		public virtual XPathNodeIterator SelectDescendants (XPathNodeType type, bool matchSelf)
 		{
 			Axes axis = (matchSelf) ? Axes.DescendantOrSelf : Axes.Descendant;
-			NodeTest test = new NodeTypeTest (axis, type);
-			return SelectTest (test);
+			return SelectTest (new NodeTypeTest (axis, type));
 		}
 
 		[MonoTODO]
@@ -368,15 +363,12 @@ namespace System.Xml.XPath
 
 			Axes axis = (matchSelf) ? Axes.DescendantOrSelf : Axes.Descendant;
 			XmlQualifiedName qname = new XmlQualifiedName (name);
-			NodeTest test = new NodeNameTest (axis, qname);
-			return SelectTest (test);
+			return SelectTest (new NodeNameTest (axis, qname));
 		}
 
 		internal XPathNodeIterator SelectTest (NodeTest test)
 		{
-			Expression expr = new ExprStep (test, null);
-			BaseIterator iter = new NullIterator (this, null);
-			return expr.EvaluateNodeSet (iter);
+			return test.EvaluateNodeSet (new NullIterator (this));
 		}
 
 		public override string ToString ()
