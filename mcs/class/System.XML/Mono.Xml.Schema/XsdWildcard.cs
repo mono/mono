@@ -41,8 +41,8 @@ namespace Mono.Xml.Schema
 			string actualNamespace = nss == null ? "##any" : nss;
 			string[] nslist = XmlSchemaUtil.SplitList(actualNamespace);
 			ResolvedNamespaces = new StringCollection ();
-			foreach(string ns in nslist)
-			{
+			for (int i = 0; i < nslist.Length; i++) {
+				string ns = nslist [i];
 				switch(ns) {
 				case "##any": 
 					if (HasValueAny)
@@ -99,8 +99,8 @@ namespace Mono.Xml.Schema
 				this.HasValueTargetNamespace == other.HasValueTargetNamespace &&
 				this.ResolvedProcessing == other.ResolvedProcessContents) {
 				bool notEqual = false;
-				foreach (string ns in this.ResolvedNamespaces) {
-					if (!other.ResolvedNamespaces.Contains (ns))
+				for (int i = 0; i < this.ResolvedNamespaces.Count; i++) {
+					if (!other.ResolvedNamespaces.Contains (this.ResolvedNamespaces [i]))
 						notEqual = true;
 				}
 				if (!notEqual)
@@ -141,8 +141,8 @@ namespace Mono.Xml.Schema
 			}
 			// 4.
 			if (this.ResolvedNamespaces.Count > 0) {
-				foreach (string ns in this.ResolvedNamespaces)
-					if (other.ResolvedNamespaces.Contains (ns))
+				for (int i = 0; i < this.ResolvedNamespaces.Count; i++)
+					if (other.ResolvedNamespaces.Contains (this.ResolvedNamespaces [i]))
 						return false;
 			}
 			return true;
@@ -160,8 +160,8 @@ namespace Mono.Xml.Schema
 				return true;
 			if (HasValueLocal && ns == "")
 				return true;
-			foreach (string rns in ResolvedNamespaces)
-				if (ns == rns)
+			for (int i = 0; i < ResolvedNamespaces.Count; i++)
+				if (ns == ResolvedNamespaces [i])
 					return true;
 			if (raiseError)
 				xsobj.error (h, "This wildcard does not allow the namespace: " + ns);
@@ -204,8 +204,8 @@ namespace Mono.Xml.Schema
 						xsobj.error (h, "Invalid wildcard subset was found.");
 					return false;
 				} else {
-					foreach (string ns in ResolvedNamespaces) {
-						if (ns == other.TargetNamespace) {
+					for (int i = 0; i < ResolvedNamespaces.Count; i++) {
+						if (ResolvedNamespaces [i] == other.TargetNamespace) {
 							if (raiseError)
 								xsobj.error (h, "Invalid wildcard subset was found.");
 							return false;
@@ -220,17 +220,12 @@ namespace Mono.Xml.Schema
 						xsobj.error (h, "Invalid wildcard subset was found.");
 					return false;
 				} else if (this.HasValueOther) {
-//					if (
-//						(other.HasValueLocal && !(this.TargetNamespace == null || this.TargetNamespace.Length == 0)) || 
-//						other.ResolvedNamespaces.Count > 1 || 
-//						other.ResolvedNamespaces.Count == 1 && other.ResolvedNamespaces [0] != other.TargetNamespace) {
-						if (raiseError)
-							xsobj.error (h, "Invalid wildcard subset was found.");
-						return false;
-//					}
+					if (raiseError)
+						xsobj.error (h, "Invalid wildcard subset was found.");
+					return false;
 				} else {
-					foreach (string ns in ResolvedNamespaces)
-						if (!other.ResolvedNamespaces.Contains (ns)) {
+					for (int i = 0; i < this.ResolvedNamespaces.Count; i++)
+						if (!other.ResolvedNamespaces.Contains (this.ResolvedNamespaces [i])) {
 							if (raiseError)
 								xsobj.error (h, "Invalid wildcard subset was found.");
 							return false;

@@ -1,3 +1,11 @@
+2004-02-08  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XsdIdentityState.cs,
+	  XsdKeyTable.cs,
+	  XsdParticleValidationState.cs,
+	  XsdValidatingReader.cs,
+	  XsdWildcard.cs : foreach elimination.
+
 2004-02-04  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XsdValidatingReader.cs : When the reader points at XmlDeclaration,

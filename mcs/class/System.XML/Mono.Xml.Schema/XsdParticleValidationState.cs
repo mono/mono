@@ -206,7 +206,8 @@ namespace Mono.Xml.Schema
 			if (this.name == name && this.ns == ns && !element.IsAbstract) {
 				return this.CheckOccurence (element);
 			} else {
-				foreach (XmlSchemaElement subst in element.SubstitutingElements) {
+				for (int i = 0; i < element.SubstitutingElements.Count; i++) {
+					XmlSchemaElement subst = (XmlSchemaElement) element.SubstitutingElements [i];
 					if (subst.QualifiedName.Name == name &&
 						subst.QualifiedName.Namespace == ns) {
 						return this.CheckOccurence (subst);
@@ -404,7 +405,8 @@ namespace Mono.Xml.Schema
 		{
 			emptiableComputed = false;
 
-			foreach (XmlSchemaParticle xsobj in choice.CompiledItems) {
+			for (int i = 0; i < choice.CompiledItems.Count; i++) {
+				XmlSchemaParticle xsobj = (XmlSchemaParticle) choice.CompiledItems [i];
 				XsdValidationState xa = Manager.Create (xsobj);
 				XsdValidationState result = xa.EvaluateStartElement (localName, ns);
 				if (result != XsdValidationState.Invalid) {
@@ -432,9 +434,11 @@ namespace Mono.Xml.Schema
 			else if (choice.ValidatedMinOccurs <= Occured)
 				return true;
 
-			foreach (XmlSchemaParticle p in choice.CompiledItems)
+			for (int i = 0; i < choice.CompiledItems.Count; i++) {
+				XmlSchemaParticle p = (XmlSchemaParticle) choice.CompiledItems [i];
 				if (Manager.Create (p).EvaluateIsEmptiable ())
 					return true;
+			}
 			return false;
 		}
 
@@ -450,7 +454,8 @@ namespace Mono.Xml.Schema
 
 			for (int i = Occured; i < choice.ValidatedMinOccurs; i++) {
 				bool next = false;
-				foreach (XmlSchemaParticle p in choice.CompiledItems) {
+				for (int pi = 0; pi < choice.CompiledItems.Count; pi++) {
+					XmlSchemaParticle p = (XmlSchemaParticle) choice.CompiledItems [pi];
 					if (Manager.Create (p).EvaluateIsEmptiable ()) {
 						next = true;
 						break;
@@ -481,7 +486,8 @@ namespace Mono.Xml.Schema
 
 			// We don't have to keep element validation state, since 
 			// it must occur only 0 or 1.
-			foreach (XmlSchemaElement xsElem in all.CompiledItems) {
+			for (int i = 0; i < all.CompiledItems.Count; i++) {
+				XmlSchemaElement xsElem = (XmlSchemaElement) all.CompiledItems [i];
 				if (xsElem.QualifiedName.Name == localName &&
 					xsElem.QualifiedName.Namespace == ns) {
 					if (consumed.Contains (xsElem))
@@ -503,9 +509,11 @@ namespace Mono.Xml.Schema
 				return false;
 			if (all.CompiledItems.Count == consumed.Count)
 				return true;
-			foreach (XmlSchemaElement el in all.CompiledItems)
+			for (int i = 0; i < all.CompiledItems.Count; i++) {
+				XmlSchemaElement el = (XmlSchemaElement) all.CompiledItems [i];
 				if (el.ValidatedMinOccurs > 0 && !consumed.Contains (el))
 					return false;
+			}
 			return true;
 		}
 
@@ -513,9 +521,11 @@ namespace Mono.Xml.Schema
 		{
 			if (all.Emptiable || all.ValidatedMinOccurs == 0)
 				return true;
-			foreach (XmlSchemaElement el in all.CompiledItems)
+			for (int i = 0; i < all.CompiledItems.Count; i++) {
+				XmlSchemaElement el = (XmlSchemaElement) all.CompiledItems [i];
 				if (el.ValidatedMinOccurs > 0 && !consumed.Contains (el))
 					return false;
+			}
 			return true;
 		}
 	}
@@ -556,8 +566,8 @@ namespace Mono.Xml.Schema
 				return true;
 			if (any.HasValueTargetNamespace && any.TargetNamespace == ns)
 				return true;
-			foreach (string iter in any.ResolvedNamespaces)
-				if (iter == ns)
+			for (int i = 0; i < any.ResolvedNamespaces.Count; i++)
+				if (any.ResolvedNamespaces [i] == ns)
 					return true;
 			return false;
 		}

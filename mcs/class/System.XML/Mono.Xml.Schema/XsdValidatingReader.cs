@@ -645,7 +645,8 @@ namespace Mono.Xml.Schema
 					values = normalized.Split (wsChars);
 					itemDatatype = listContent.ValidatedListItemType as XmlSchemaDatatype;
 					itemSimpleType = listContent.ValidatedListItemType as XmlSchemaSimpleType;
-					foreach (string each in values) {
+					for (int vi = 0; vi < values.Length; vi++) {
+						string each = values [vi];
 						if (each == String.Empty)
 							continue;
 						// validate against ValidatedItemType
@@ -1041,8 +1042,8 @@ namespace Mono.Xml.Schema
 				return true;
 			if (anyAttr.HasValueLocal && reader.NamespaceURI == "")
 				return true;
-			foreach (string ns in anyAttr.ResolvedNamespaces)
-				if (ns == reader.NamespaceURI)
+			for (int i = 0; i < anyAttr.ResolvedNamespaces.Count; i++)
+				if (anyAttr.ResolvedNamespaces [i] == reader.NamespaceURI)
 					return true;
 			return false;
 		}
@@ -1144,7 +1145,9 @@ namespace Mono.Xml.Schema
 					missingIDReferences.Add (normalized);
 				break;
 			case XmlTokenizedType.IDREFS:
-				foreach (string id in (string []) parsedValue) {
+				string [] idrefs = (string []) parsedValue;
+				for (int i = 0; i < idrefs.Length; i++) {
+					string id = idrefs [i];
 					if (missingIDReferences.Contains (id))
 						missingIDReferences.Remove (id);
 					else
@@ -1197,7 +1200,8 @@ namespace Mono.Xml.Schema
 						}
 						// Pop validated key depth to find two or more fields.
 						else {
-							foreach (XsdKeyEntryField kf in entry.KeyFields) {
+							for (int j = 0; j < entry.KeyFields.Count; j++) {
+								XsdKeyEntryField kf = entry.KeyFields [j];
 								if (!kf.FieldFound && kf.FieldFoundDepth == reader.Depth) {
 									kf.FieldFoundDepth = 0;
 									kf.FieldFoundPath = null;
@@ -1227,7 +1231,8 @@ namespace Mono.Xml.Schema
 			tmpKeyrefPool.Clear ();
 			if (context.Element != null && context.Element.Constraints.Count > 0) {
 				// (a) Create new key sequences, if required.
-				foreach (XmlSchemaIdentityConstraint ident in context.Element.Constraints) {
+				for (int i = 0; i < context.Element.Constraints.Count; i++) {
+					XmlSchemaIdentityConstraint ident = (XmlSchemaIdentityConstraint) context.Element.Constraints [i];
 					XsdKeyTable seq = CreateNewKeyTable (ident);
 					if (ident is XmlSchemaKeyref)
 						tmpKeyrefPool.Add (seq);
@@ -1235,7 +1240,8 @@ namespace Mono.Xml.Schema
 			}
 
 			// (b) Evaluate current key sequences.
-			foreach (XsdKeyTable seq in this.keyTables) {
+			for (int i = 0; i < keyTables.Count; i++) {
+				XsdKeyTable seq  = (XsdKeyTable) keyTables [i];
 				if (seq.SelectorMatches (this.elementQNameStack, reader) != null) {
 					// creates and registers new entry.
 					XsdKeyEntry entry = new XsdKeyEntry (seq, reader);
@@ -1244,10 +1250,11 @@ namespace Mono.Xml.Schema
 			}
 
 			// (c) Evaluate field paths.
-			foreach (XsdKeyTable seq in this.keyTables) {
+			for (int i = 0; i < keyTables.Count; i++) {
+				XsdKeyTable seq  = (XsdKeyTable) keyTables [i];
 				// If possible, create new field entry candidates.
-				for (int i = 0; i < seq.Entries.Count; i++) {
-					XsdKeyEntry entry = seq.Entries [i] as XsdKeyEntry;
+				for (int j = 0; j < seq.Entries.Count; j++) {
+					XsdKeyEntry entry = seq.Entries [j] as XsdKeyEntry;
 //					if (entry.KeyFound)
 // FIXME: it should not be skipped for multiple key check!!
 //						continue;
@@ -1272,7 +1279,8 @@ namespace Mono.Xml.Schema
 		private void EndIdentityValidation (XsdKeyTable seq)
 		{
 			ArrayList errors = new ArrayList ();
-			foreach (XsdKeyEntry entry in seq./*NotFound*/Entries) {
+			for (int i = 0; i < seq.Entries.Count; i++) {
+				XsdKeyEntry entry = (XsdKeyEntry) seq.Entries [i];
 				if (entry.KeyFound)
 					continue;
 				if (seq.SourceSchemaIdentity is XmlSchemaKey)
@@ -1290,8 +1298,10 @@ namespace Mono.Xml.Schema
 					XsdKeyTable target = this.keyTables [i] as XsdKeyTable;
 					if (target.SourceSchemaIdentity == xsdKeyref.Target) {
 						seq.ReferencedKey = target;
-						foreach (XsdKeyEntry entry in seq.FinishedEntries) {
-							foreach (XsdKeyEntry targetEntry in target.FinishedEntries) {
+						for (int j = 0; j < seq.FinishedEntries.Count; j++) {
+							XsdKeyEntry entry = (XsdKeyEntry) seq.FinishedEntries [j];
+							for (int k = 0; k < target.FinishedEntries.Count; k++) {
+								XsdKeyEntry targetEntry = (XsdKeyEntry) target.FinishedEntries [k];
 								if (entry.CompareIdentity (targetEntry)) {
 									entry.KeyRefFound = true;
 									break;
@@ -1302,7 +1312,8 @@ namespace Mono.Xml.Schema
 				}
 				if (seq.ReferencedKey == null)
 					HandleError ("Target key was not found.");
-				foreach (XsdKeyEntry entry in seq.FinishedEntries) {
+				for (int i = 0; i < seq.FinishedEntries.Count; i++) {
+					XsdKeyEntry entry = (XsdKeyEntry) seq.FinishedEntries [i];
 					if (!entry.KeyRefFound)
 						errors.Add (" line " + entry.SelectorLineNumber + ", position " + entry.SelectorLinePosition);
 				}

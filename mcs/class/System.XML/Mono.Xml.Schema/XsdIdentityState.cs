@@ -67,14 +67,9 @@ namespace Mono.Xml.Schema
 			}
 
 			if (!(this.entry.KeySequence.SourceSchemaIdentity is XmlSchemaKeyref)) {
-				foreach (XsdKeyEntry other in entry.KeySequence.FinishedEntries) {
-					// TODO: XmlSchemaDatatypeEquals
+				for (int i = 0; i < entry.KeySequence.FinishedEntries.Count; i++) {
+					XsdKeyEntry other = (XsdKeyEntry) entry.KeySequence.FinishedEntries [i];
 					XsdKeyEntryField of = other.KeyFields [field.Index];
-					/*
-					if (XmlSchemaUtil.IsSchemaDatatypeEquals (
-						type, identity, of.FieldType, of.Identity))
-						return false;
-					*/
 					if (this.entry.CompareIdentity (other))
 						return false;
 				}
@@ -86,7 +81,8 @@ namespace Mono.Xml.Schema
 		// It might throw Exception including other than XmlSchemaException (ReadTypedValue).
 		internal XsdIdentityPath FieldMatches (ArrayList qnameStack, XsdValidatingReader reader)
 		{
-			foreach (XsdIdentityPath path in field.Paths) {
+			for (int i = 0; i < field.Paths.Length; i++) {
+				XsdIdentityPath path = field.Paths [i];
 				if (FieldFound && (reader.Depth > this.FieldFoundDepth && this.FieldFoundPath == path))
 					continue;
 
@@ -309,7 +305,8 @@ namespace Mono.Xml.Schema
 			get {
 				if (keyFound)
 					return true;
-				foreach (XsdKeyEntryField kf in KeyFields) {
+				for (int i = 0; i < KeyFields.Count; i++) {
+					XsdKeyEntryField kf = KeyFields [i];
 					if (kf.FieldFound) {
 						keyFound = true;
 						return true;
@@ -323,8 +320,8 @@ namespace Mono.Xml.Schema
 		{
 			KeySequence = keyseq;
 			KeyFields = new XsdKeyEntryFieldCollection ();
-			foreach (XsdIdentityField f in keyseq.Selector.Fields)
-				KeyFields.Add (new XsdKeyEntryField (this, f));
+			for (int i = 0; i < keyseq.Selector.Fields.Length; i++)
+				KeyFields.Add (new XsdKeyEntryField (this, keyseq.Selector.Fields [i]));
 			StartDepth = reader.Depth;
 			IXmlLineInfo li = reader as IXmlLineInfo;
 			if (li != null) {
@@ -354,7 +351,8 @@ namespace Mono.Xml.Schema
 		// It might throw Exception including non-XmlSchemaException.
 		public void FieldMatches (ArrayList qnameStack, XsdValidatingReader reader)
 		{
-			foreach (XsdKeyEntryField keyField in KeyFields) {
+			for (int i = 0; i < KeyFields.Count; i++) {
+				XsdKeyEntryField keyField = KeyFields [i];
 				XsdIdentityField fieldDef = keyField.Field;
 				XsdIdentityPath path = keyField.FieldMatches (qnameStack, reader);
 				if (path != null) {

@@ -63,7 +63,8 @@ namespace Mono.Xml.Schema
 		// In this method, attributes are ignored.
 		public XsdIdentityPath SelectorMatches (ArrayList qnameStack, XmlReader reader)
 		{
-			foreach (XsdIdentityPath path in Selector.Paths) {
+			for (int i = 0; i < Selector.Paths.Length; i++) {
+				XsdIdentityPath path = Selector.Paths [i];
 				// Only "." hits.
 				if (reader.Depth == this.StartDepth) {
 					if (path.OrderedSteps.Length == 0)
