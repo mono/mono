@@ -1,3 +1,13 @@
+2004-02-26  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* ServicePoint.cs: SendContinue is always false for HTTP/1.0
+
+	* WebConnection.cs: get rid of WaitForContinue() (yes!) and prevent
+	calling more the ContinueDelegate more than once when we get the
+	headers in several packets.
+
+	* WebConnectionStream.cs: removed call to WaitForContinue.
+
 2004-02-25  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* WebConnection.cs: Update previous patch to use HttpsClientStream

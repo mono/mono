@@ -388,7 +388,7 @@ namespace System.Net
 			request.SendRequestHeaders ();
 			requestWritten = true;
 			while (true) {
-				cnc.WaitForContinue (headers, 0, headers.Length);
+				cnc.Write (headers, 0, headers.Length);
 				if (!cnc.Connected) {
 					if (!cnc.TryReconnect ())
 						return;

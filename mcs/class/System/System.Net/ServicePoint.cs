@@ -105,7 +105,8 @@ namespace System.Net
 		}
 		
 		internal bool SendContinue {
-			get { return sendContinue; }
+			get { return sendContinue &&
+				     (protocolVersion == null || protocolVersion == HttpVersion.Version11); }
 			set { sendContinue = value; }
 		}
 		// Methods

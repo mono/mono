@@ -43,9 +43,7 @@ namespace System.Net
 		WebConnectionStream prevStream;
 		bool chunkedRead;
 		ChunkStream chunkStream;
-		AutoResetEvent waitForContinue;
 		AutoResetEvent goAhead;
-		bool waitingForContinue;
 		Queue queue;
 		bool reused;
 		int position;
@@ -172,29 +170,6 @@ namespace System.Net
 			Close (true);
 		}
 		
-		internal bool WaitForContinue (byte [] headers, int offset, int size)
-		{
-			waitingForContinue = sPoint.SendContinue;
-			if (waitingForContinue && waitForContinue == null)
-				waitForContinue = new AutoResetEvent (false);
-
-			Write (headers, offset, size);
-			if (!waitingForContinue)
-				return false;
-
-			bool result = waitForContinue.WaitOne (2000, false);
-			waitingForContinue = false;
-			if (result) {
-				sPoint.SendContinue = true;
-				if (Data.request.ExpectContinue)
-					Data.request.DoContinueDelegate (Data.StatusCode, Data.Headers);
-			} else {
-				sPoint.SendContinue = false;
-			}
-
-			return result;
-		}
-		
 		static void ReadDone (IAsyncResult result)
 		{
 			WebConnection cnc = (WebConnection) result.AsyncState;
@@ -232,18 +207,6 @@ namespace System.Net
 				Exception exc = null;
 				try {
 					pos = cnc.GetResponse (cnc.buffer, nread);
-					if (pos != -1 && data.StatusCode == 100) {
-						cnc.readState = ReadState.None;
-						InitRead (cnc);
-						cnc.sPoint.SendContinue = true;
-						if (cnc.waitingForContinue) {
-							cnc.waitForContinue.Set ();
-						} else if (data.request.ExpectContinue) {
-							data.request.DoContinueDelegate (data.StatusCode, data.Headers);
-						}
-
-						return;
-					}
 				} catch (Exception e) {
 					exc = e;
 				}
@@ -393,8 +356,14 @@ namespace System.Net
 						sPoint.SendContinue = true;
 						if (pos >= max)
 							return pos;
-						if (Data.request.ExpectContinue)
+
+						if (Data.request.ExpectContinue) {
 							Data.request.DoContinueDelegate (Data.StatusCode, Data.Headers);
+							// Prevent double calls when getting the
+							// headers in several packets.
+							Data.request.ExpectContinue = false;
+						}
+
 						readState = ReadState.None;
 						isContinue = true;
 					}
