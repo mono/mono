@@ -42,5 +42,15 @@ namespace System.Web.UI.MobileControls
 				throw new NotImplementedException();
 			}
 		}
+
+		public void Add(string item)
+		{
+			throw new NotImplementedException();
+		}
+
+		public void Add(MobileListItem item)
+		{
+			throw new NotImplementedException();
+		}
 	}
 }
