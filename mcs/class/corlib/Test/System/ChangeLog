@@ -1,5 +1,10 @@
 2004-03-10  Sebastien Pouliot  <sebastien@ximian.com>
 
+	* ConvertTest.cs: Added another test showing that input length 
+	can't easily be used to check for valid base64 encoding.
+
+2004-03-10  Sebastien Pouliot  <sebastien@ximian.com>
+
 	* ConvertTest.cs: Added a new unit tests for FromBase64String and 
 	FromBase64CharArray to check for ignored characters (tab, lf, cr 
 	and spaces). Splitted existing tests into smaller tests.

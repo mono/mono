@@ -2801,6 +2801,13 @@ namespace MonoTests.System
 			Convert.FromBase64String (tryStr);
 		}
 
+		[Test]
+		public void FromBase64String_InvalidLengthBecauseOfIgnoredChars () 
+		{
+			byte[] result = Convert.FromBase64String ("AAAA\t");
+			AssertEquals ("InvalidLengthBecauseOfIgnoredChars", 3, result.Length);
+		}
+
 		private const string ignored = "\t\r\n ";
 		private const string base64data = "AAAAAAAAAAAAAAAAAAAA"; // 15 bytes 0x00
 
