@@ -1,4 +1,8 @@
+2005-01-29  Zoltan Varga  <vargaz@freemail.hu>
 
+	* object.c (mono_runtime_get_main_args): Return an array from the
+	current domain here. Fixes #71938.
+	
 Wed Jan 26 17:49:45 CET 2005 Paolo Molaro <lupus@ximian.com>
 
 	* domain.c: fixed long standing bug in mono_string_equal().
