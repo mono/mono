@@ -2280,8 +2280,8 @@ namespace Mono.CSharp {
 							// if possible.
 							//
 							if (b.oper == Operator.Addition &&
-							    (b.method == TypeManager.string_concat_string_string_string ||
-							     b.method == TypeManager.string_concat_string_string_string_string)){
+							    (b.method == TypeManager.string_concat_string_string ||
+							     b.method == TypeManager.string_concat_string_string_string)){
 								ArrayList bargs = b.Arguments;
 								int count = bargs.Count;
 								
