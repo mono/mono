@@ -37,15 +37,10 @@ public class Int64Test : TestCase
 	private string[] ResultsNfi2 = {""+NumberFormatInfo.InvariantInfo.CurrencySymbol+"9,223,372,036,854,775,807.00000", "9223372036854775807", "9.22337e+018", "9223372036854775807.00000",
 	                                  "9.2234e+18", "9,223,372,036,854,775,807.00000", "922,337,203,685,477,580,700.00000 %", "7fffffffffffffff"};
 
-	// FIXME: This is failing with an ArgumentException.  Seems to be related to the number of elements in the arrary,
-	// not the values themselves
-/*	private long[] vals
+	private long[] vals
         = { 0, Int64.MaxValue, Int64.MinValue,
               1L, 12L, 123L, 1234L, -123L, 
               1234567890123456L, 6543210987654321L };
-*/
-	private long[] vals
-		= { 0, Int64.MaxValue, Int64.MinValue };
 
 	private const long val1 = -1234567L;
 	private const long val2 = 1234567L;

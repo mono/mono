@@ -1,3 +1,10 @@
+2002-09-11  Nick Drochak  <ndrochak@gol.com>
+
+	* DoubleTest.cs: Add test for bad format string passed to ToString().
+	* Int64Test.cs: Re-enable broad range of test values.
+	* MulticastDeletegateTest.cs: Re-enable test for correct order of
+	delegate firing.
+
 2002-09-08  Nick Drochak  <ndrochak@gol.com>
 
 	* DateTimeTest.cs: Disable test bug file it in bugzilla.

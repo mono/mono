@@ -185,6 +185,16 @@ public class DoubleTest : TestCase
 	public void TestToString() {
 		//ToString is not yet Implemented......
 		//AssertEquals("ToString Failed", "1234.9999", d_pos.ToString());
+		double d;
+		try {
+			d = 3.1415;
+			d.ToString ("X");
+			Fail ("Should have thrown FormatException");
+		} catch (FormatException) {
+			/* do nothing, this is what we expect */
+		} catch (Exception e) {
+			Fail ("Unexpected exception e: " + e);
+		}
 	}
 
 }
