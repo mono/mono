@@ -1,3 +1,7 @@
+2005-02-22  Lluis Sanchez Gual <lluis@novell.com>
+
+	* FilterableAttribute.cs: Fix endless loop.
+
 2005-02-18  Lluis Sanchez Gual <lluis@novell.com>
 
 	* Page.cs: Implemented missing events.

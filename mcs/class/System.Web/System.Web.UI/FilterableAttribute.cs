@@ -50,7 +50,7 @@ namespace System.Web.UI {
 		public static readonly FilterableAttribute Yes = new FilterableAttribute (true);
 		
 		public bool Filterable { 
-			get { return Filterable; } 
+			get { return filterable; } 
 		}
 
 		public void Dispose ()
