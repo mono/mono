@@ -2,6 +2,7 @@
 
 	* x86.brg: impl. CONV_I4 (freg) with correct rounding
 	(lreg): impl CALL_I8(INTF_ADDR)
+	impl. CONV_R_UN (reg)
 
 2002-02-27  Dietmar Maurer  <dietmar@ximian.com>
 
