@@ -70,7 +70,7 @@ namespace System.IO {
 
 					op.Argument = pattern.Substring (ptr, end - ptr);
 					if (ignore)
-						op.Argument = op.Argument.ToLower ();
+						op.Argument = op.Argument.ToLowerInvariant ();
 
 					ptr = end;
 					break;
@@ -110,7 +110,7 @@ namespace System.IO {
 
 					string str = text.Substring (ptr, length);
 					if (ignore)
-						str = str.ToLower ();
+						str = str.ToLowerInvariant ();
 
 					if (str != op.Argument)
 						return false;
