@@ -3,8 +3,11 @@
 //
 // Authors:
 //   Miguel de Icaza (miguel@ximian.com)
+//   Duncan Mak (duncan@ximian.com)
 //
 // (C) 2002 Ximian, Inc.
+//
+
 using GLib;
 using Gtk;
 using Gdk;
@@ -20,6 +23,7 @@ using System.Collections;
 using Mono.Document.Library;
 
 class DocumentationEditor {
+
 	static void Main (string[] args)
 	{
 		DocumentationEditor de = new DocumentationEditor (args);
@@ -97,6 +101,11 @@ class DocumentationEditor {
 		fsel_window.ShowAll ();
 	}
 
+	void OnQuitActivate (object sender, EventArgs a)
+	{
+		program.Quit ();
+	}
+
 	void OnAboutActivate (object sender, EventArgs a)
 	{
 		Pixbuf pixbuf = new Pixbuf (null, "mono.png");
@@ -104,7 +113,7 @@ class DocumentationEditor {
 		About about = new About ("Mono Documentation Editor", "0.1",
 					 "Copyright (C) 2002 Ximian, Inc.",
 					 "",
-					 new string [] { "Miguel de Icaza (miguel@ximian.com)" },
+					 new string [] { "Miguel de Icaza (miguel@ximian.com)", "Duncan Mak (duncan@ximian.com" },
 					 new string [] { },
 					 "", pixbuf);
 		about.Run ();
@@ -123,11 +132,12 @@ class DocumentationEditor {
 		// Pull out all the namespaces first
 		//
 		namespaces = new Hashtable ();
-		
+
 		foreach (DocType type in parser.DocTypes){
 			string ns = type.Namespace;
 
 			Hashtable h;
+
 			if (!namespaces.Contains (ns)){
 				h = new Hashtable ();
 				namespaces [ns] = h;
@@ -196,7 +206,7 @@ class DocumentationEditor {
 	
 	void FileSelectionOk (object o, EventArgs args)
 	{
-		string filename = fsel_window.SelectionEntry.Text;
+		string filename = fsel_window.Filename;
 
 		if (File.Exists (filename)){
 			DocParser parser = new DocParser (filename);

@@ -7,6 +7,7 @@
 
 <widget class="GnomeApp" id="main-window">
   <property name="visible">True</property>
+  <property name="title" translatable="yes">Gtk-monodoc</property>
   <property name="type">GTK_WINDOW_TOPLEVEL</property>
   <property name="window_position">GTK_WIN_POS_NONE</property>
   <property name="modal">False</property>
@@ -72,6 +73,7 @@
 			<widget class="GtkImageMenuItem" id="quit1">
 			  <property name="visible">True</property>
 			  <property name="stock_item">GNOMEUIINFO_MENU_EXIT_ITEM</property>
+			  <signal name="activate" handler="OnQuitActivate" last_modification_time="Fri, 04 Oct 2002 21:11:57 GMT"/>
 			</widget>
 		      </child>
 		    </widget>
