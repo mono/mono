@@ -6,8 +6,9 @@
 //   Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //   Eric Lindvall (eric@5stops.com)
 //
-// C) Christopher Podurgiel
+// (c) Christopher Podurgiel
 // (c) 2002 Ximian, Inc. (http://www.ximian.com)
+// (c) 2003 Novell, Inc. (http://www.novell.com)
 //
 
 using System;
@@ -30,8 +31,10 @@ namespace System.Configuration
 
 		public static object GetConfig (string sectionName)
 		{
-			if (config == null)
-				config = DefaultConfig.GetInstance ();
+			lock (typeof (ConfigurationSettings)) {
+				if (config == null)
+					config = DefaultConfig.GetInstance ();
+			}
 
 			return config.GetConfig (sectionName);
 		}
@@ -47,6 +50,18 @@ namespace System.Configuration
 			}
 		}
 
+		// Invoked from System.Web
+		static IConfigurationSystem ChangeConfigurationSystem (IConfigurationSystem newSystem)
+		{
+			if (newSystem == null)
+				throw new ArgumentNullException ("newSystem");
+
+			lock (typeof (ConfigurationSettings)) {
+				IConfigurationSystem old = config;
+				config = newSystem;
+				return old;
+			}
+		}
 	}
 
 	//
@@ -55,10 +70,13 @@ namespace System.Configuration
 	//
 	class DefaultConfig : IConfigurationSystem
 	{
-		static object creatingInstance = new object ();
-		static object buildingData = new object ();
 		static DefaultConfig instance;
 		ConfigurationData config;
+
+		static DefaultConfig ()
+		{
+			instance = new DefaultConfig ();
+		}
 
 		private DefaultConfig ()
 		{
@@ -66,53 +84,43 @@ namespace System.Configuration
 
 		public static DefaultConfig GetInstance ()
 		{
-			if (instance == null) {
-				lock (creatingInstance) {
-					if (instance == null) {
-						instance = new DefaultConfig ();
-						instance.Init ();
-					}
-					
-				}
-			}
-
 			return instance;
 		}
 
 		public object GetConfig (string sectionName)
 		{
-			if (config == null) 
-				return null;
-
+			Init ();
 			return config.GetConfig (sectionName);
 		}
 
 		public void Init ()
 		{
-			if (config == null){
-				lock (buildingData) {
-					if (config != null)
-						return;
+			lock (this) {
+				if (config != null)
+					return;
 
-					ConfigurationData data = new ConfigurationData ();
-					if (data.Load (GetMachineConfigPath ())) {
-						ConfigurationData appData = new ConfigurationData (data);
-						appData.Load (GetAppConfigPath ());
-						config = appData;
-					} else {
-						Console.WriteLine ("** Warning **: cannot find " + GetMachineConfigPath ());
-						Console.WriteLine ("Trying to load app config file...");
-						data.Load (GetAppConfigPath ());
-						config = data;
-					}
+				ConfigurationData data = new ConfigurationData ();
+				if (!data.Load (GetMachineConfigPath ()))
+					throw new ConfigurationException ("Cannot find " + GetMachineConfigPath ());
+
+				string appfile = GetAppConfigPath ();
+				if (appfile == null) {
+					config = data;
+					return;
 				}
+
+				ConfigurationData appData = new ConfigurationData (data);
+				if (appData.Load (appfile))
+					config = appData;
+				else
+					config = data;
 			}
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		extern private static string get_machine_config_path ();
 
-		private static string GetMachineConfigPath ()
+		internal static string GetMachineConfigPath ()
 		{
 			return get_machine_config_path ();
 		}
@@ -180,24 +188,50 @@ namespace System.Configuration
 		}
         }
 
+	enum AllowDefinition
+	{
+		Everywhere,
+		MachineOnly,
+		MachineToApplication
+	}
+	
+	class SectionData
+	{
+		public readonly string SectionName;
+		public readonly string TypeName;
+		public readonly bool AllowLocation;
+		public readonly AllowDefinition AllowDefinition;
+		public string FileName;
+
+		public SectionData (string sectionName, string typeName,
+				    bool allowLocation, AllowDefinition allowDefinition)
+		{
+			SectionName = sectionName;
+			TypeName = typeName;
+			AllowLocation = allowLocation;
+			AllowDefinition = allowDefinition;
+		}
+	}
+	
+
 	class ConfigurationData
 	{
 		ConfigurationData parent;
 		Hashtable factories;
+		Hashtable pending;
 		string fileName;
 		static object removedMark = new object ();
 		static object groupMark = new object ();
                 static object emptyMark = new object ();
-                FileWatcherCache fileCache = null;
+                FileWatcherCache fileCache;
 
-                private FileWatcherCache FileCache {
+                FileWatcherCache FileCache {
                         get {
-                                if (fileCache == null) {
-                                        if (fileName != null) {
-                                                fileCache = new FileWatcherCache (fileName);
-                                        } else {
-                                                fileCache = parent.FileCache;
-                                        }
+				lock (this) {
+					if (fileCache != null)
+						return fileCache;
+
+					fileCache = new FileWatcherCache (fileName);
                                 }
 
                                 return fileCache;
@@ -216,22 +250,21 @@ namespace System.Configuration
 
 		public bool Load (string fileName)
 		{
+			this.fileName = fileName;
 			if (fileName == null || !File.Exists (fileName))
 				return false;
 
-			this.fileName = fileName;
 			XmlTextReader reader = null;
 
 			try {
-				try {
-					FileStream fs = new FileStream (fileName, FileMode.Open, FileAccess.Read);
-					reader = new XmlTextReader (fs);
-				} catch (Exception) {
-					return false;
-				}
-
+				FileStream fs = new FileStream (fileName, FileMode.Open, FileAccess.Read);
+				reader = new XmlTextReader (fs);
 				InitRead (reader);
 				ReadConfigFile (reader);
+			} catch (ConfigurationException) {
+				throw;
+			} catch (Exception e) {
+				throw new ConfigurationException ("Error reading " + fileName, e);
 			} finally {
 				if (reader != null)
 					reader.Close();
@@ -242,83 +275,82 @@ namespace System.Configuration
 
 		object GetHandler (string sectionName)
 		{
-			object o = factories [sectionName];
-			if (o == null || o == removedMark) {
-				if (parent != null)
-					return parent.GetHandler (sectionName);
+			lock (factories) {
+				object o = factories [sectionName];
+				if (o == null || o == removedMark) {
+					if (parent != null)
+						return parent.GetHandler (sectionName);
 
-				return null;
+					return null;
+				}
+
+				if (o is IConfigurationSectionHandler)
+					return (IConfigurationSectionHandler) o;
+
+				o = CreateNewHandler (sectionName, (SectionData) o);
+				factories [sectionName] = o;
+				return o;
 			}
+		}
 
-			if (o is IConfigurationSectionHandler)
-				return (IConfigurationSectionHandler) o;
-
-			Type t = Type.GetType ((string) o);
+		object CreateNewHandler (string sectionName, SectionData section)
+		{
+			Type t = Type.GetType (section.TypeName);
 			if (t == null)
-				throw new ConfigurationException ("Cannot get Type for " + o);
+				throw new ConfigurationException ("Cannot get Type for " + section.TypeName);
 
 			Type iconfig = typeof (IConfigurationSectionHandler);
 			if (!iconfig.IsAssignableFrom (t))
 				throw new ConfigurationException (sectionName + " does not implement " + iconfig);
 			
-			o = Activator.CreateInstance (t, true);
+			object o = Activator.CreateInstance (t, true);
 			if (o == null)
 				throw new ConfigurationException ("Cannot get instance for " + t);
 
-			factories [sectionName] = o;
-			
 			return o;
 		}
 
-		//TODO: Should use XPath when it works properly for this.
+		XmlDocument GetInnerDoc (XmlDocument doc, int i, string [] sectionPath)
+		{
+			if (++i >= sectionPath.Length)
+				return doc;
+
+			if (doc.DocumentElement == null)
+				return null;
+
+			XmlNode node = doc.DocumentElement.FirstChild;
+			while (node != null) {
+				if (node.Name == sectionPath [i]) {
+					ConfigXmlDocument result = new ConfigXmlDocument ();
+					result.Load (new StringReader (node.OuterXml));
+					return GetInnerDoc (result, i, sectionPath);
+				}
+				node = node.NextSibling;
+			}
+
+			return null;
+		}
+
 		XmlDocument GetDocumentForSection (string sectionName)
 		{
-			if (fileName == null || !File.Exists (fileName))
-				return null;
-
-			XmlTextReader reader = null;
-			try {
-				FileStream fs = new FileStream (fileName, FileMode.Open, FileAccess.Read);
-				reader = new XmlTextReader (fs);
-			} catch {
-				return null;
-			}
-
 			ConfigXmlDocument doc = new ConfigXmlDocument ();
-			InitRead (reader);
+			if (pending == null)
+				return doc;
+
 			string [] sectionPath = sectionName.Split ('/');
-			int i = 0;
-			if (!reader.EOF) {
-				if (reader.Name == "configSections")
-					reader.Skip ();
-
-				while (!reader.EOF) {
-					if (reader.NodeType == XmlNodeType.Element &&
-					    reader.Name == sectionPath [i]) {
-						if (++i == sectionPath.Length) {
-							doc.LoadSingleElement (fileName, reader);
-							break;
-						}
-						MoveToNextElement (reader);
-						continue;
-					}
-					reader.Skip ();
-					if (reader.NodeType != XmlNodeType.Element)
-						MoveToNextElement (reader);
-				}
-			}
-
-			reader.Close ();
-			return doc;
+			string outerxml = pending [sectionPath [0]] as string;
+			if (outerxml == null)
+				return doc;
+			
+			doc.Load (new StringReader (outerxml));
+			return GetInnerDoc (doc, 0, sectionPath);
 		}
 		
 		object GetConfigInternal (string sectionName)
 		{
 			object handler = GetHandler (sectionName);
-			if (handler == null)
-				return null;
-
-			if (!(handler is IConfigurationSectionHandler))
+			IConfigurationSectionHandler iconf = handler as IConfigurationSectionHandler;
+			if (iconf == null)
 				return handler;
 
 			object parentConfig = null;
@@ -326,14 +358,10 @@ namespace System.Configuration
 				parentConfig = parent.GetConfig (sectionName);
 
 			XmlDocument doc = GetDocumentForSection (sectionName);
-			if (doc == null || doc.DocumentElement == null) {
-				if (parentConfig == null)
-					return null;
-
+			if (doc == null || doc.DocumentElement == null)
 				return parentConfig;
-			}
 			
-			return ((IConfigurationSectionHandler) handler).Create (parentConfig, fileName, doc.DocumentElement);
+			return iconf.Create (parentConfig, fileName, doc.DocumentElement);
 		}
 
 		public object GetConfig (string sectionName)
@@ -346,8 +374,11 @@ namespace System.Configuration
                         if (config != null)
                                 return config;
 
-			config = GetConfigInternal (sectionName);
-			this.FileCache [sectionName] = (config == null) ? emptyMark : config;
+			lock (this) {
+				config = GetConfigInternal (sectionName);
+				this.FileCache [sectionName] = (config == null) ? emptyMark : config;
+			}
+
 			return config;
                 }
 
@@ -395,14 +426,41 @@ namespace System.Configuration
 			string attName;
 			string nameValue = null;
 			string typeValue = null;
+			string allowLoc = null, allowDef = null;
+			bool allowLocation = true;
+			AllowDefinition allowDefinition = AllowDefinition.Everywhere;
 
 			while (reader.MoveToNextAttribute ()) {
 				attName = reader.Name;
 				if (attName == null)
 					continue;
 
-				if (attName == "allowLocation" || attName == "allowDefinition")
+				if (attName == "allowLocation") {
+					if (allowLoc != null)
+						ThrowException ("Duplicated allowLocation attribute.", reader);
+
+					allowLoc = reader.Value;
+					allowLocation = (allowLoc == "true");
+					if (!allowLocation && allowLoc != "false")
+						ThrowException ("Invalid attribute value", reader);
+
 					continue;
+				}
+
+				if (attName == "allowDefinition") {
+					if (allowDef != null)
+						ThrowException ("Duplicated allowDefinition attribute.", reader);
+
+					allowDef = reader.Value;
+					try {
+						allowDefinition = (AllowDefinition) Enum.Parse (
+								   typeof (AllowDefinition), allowDef);
+					} catch {
+						ThrowException ("Invalid attribute value", reader);
+					}
+
+					continue;
+				}
 
 				if (attName == "type")  {
 					if (typeValue != null)
@@ -415,6 +473,8 @@ namespace System.Configuration
 					if (nameValue != null)
 						ThrowException ("Duplicated name attribute.", reader);
 					nameValue = reader.Value;
+					if (nameValue == "location")
+						ThrowException ("location is a reserved section name", reader);
 					continue;
 				}
 
@@ -431,8 +491,10 @@ namespace System.Configuration
 			object o = LookForFactory (nameValue);
 			if (o != null && o != removedMark)
 				ThrowException ("Already have a factory for " + nameValue, reader);
+			SectionData section = new SectionData (nameValue, typeValue, allowLocation, allowDefinition);
+			section.FileName = fileName;
+			factories [nameValue] = section;
 
-			factories [nameValue] = typeValue;
 			MoveToNextElement (reader);
 		}
 
@@ -470,6 +532,9 @@ namespace System.Configuration
 				ThrowException ("Unrecognized attribute.", reader);
 
 			string value = reader.Value;
+			if (value == "location")
+				ThrowException ("location is a reserved section name", reader);
+			
 			if (configSection != null)
 				value = configSection + '/' + value;
 
@@ -516,20 +581,31 @@ namespace System.Configuration
 			}
 		}
 
+		void StorePending (string name, XmlTextReader reader)
+		{
+			if (pending == null)
+				pending = new Hashtable ();
+
+			pending [name] = reader.ReadOuterXml ();
+		}
+
 		private void ReadConfigFile (XmlTextReader reader)
 		{
 			int depth = reader.Depth;
-			while (reader.Depth == depth) {
+			while (!reader.EOF && reader.Depth == depth) {
 				string name = reader.Name;
 				if (name == "configSections") {
 					if (reader.HasAttributes)
-						ThrowException ("Unrecognized attribute in configSections element.", reader);
+						ThrowException ("Unrecognized attribute in <configSections>.", reader);
+
 					MoveToNextElement (reader);
 					ReadSections (reader, null);
-					return;
+				} else if (name != null && name != "") {
+					StorePending (name, reader);
+					MoveToNextElement (reader);
+				} else {
+					MoveToNextElement (reader);
 				}
-
-				MoveToNextElement (reader);
 			}
 		}
 				

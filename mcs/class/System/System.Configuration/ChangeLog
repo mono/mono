@@ -1,3 +1,9 @@
+2003-12-02  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* ConfigurationSettings.cs: handle allowdefinition and allowlocation,
+	added locks, don't reopen the file for every new section to be read,
+	but keep them as strings and build the section handlers with that.
+
 2003-11-17 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* ConfigurationSettings.cs: make the *Mark objects static
