@@ -1,4 +1,8 @@
 
+Sat Jun 1 13:27:11 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* atomic.h: inline asm fixes from Dennis Haney (davh@davh.dk).
+
 Fri May 31 16:21:54 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* daemon.c, handles.c: rename "sun" local var since it's apparently
