@@ -8,6 +8,7 @@
 // (C) Martin Weindel (martin.weindel@t-online.de)
 
 using System;
+using System.Collections;
 using System.Threading;
 
 namespace System.Globalization
@@ -483,21 +484,94 @@ namespace System.Globalization
 		}
 		
 		// LAMESPEC: this is not in ECMA specs
-		[MonoTODO]
+		[MonoTODO ("Not complete depending on GetAllDateTimePatterns(char); Order of the values are not confirmed")]
 		public string[] GetAllDateTimePatterns()
 		{
-			notImplemented();
-			//FIXME: implement me
-			return null;
+			Hashtable table = new Hashtable ();
+			foreach (string s in GetAllDateTimePatterns ('G'))
+				table [s] = s;
+			foreach (string s in GetAllDateTimePatterns ('g'))
+				table [s] = s;
+			foreach (string s in GetAllDateTimePatterns ('F'))
+				table [s] = s;
+			foreach (string s in GetAllDateTimePatterns ('f'))
+				table [s] = s;
+			foreach (string s in GetAllDateTimePatterns ('D'))
+				table [s] = s;
+			foreach (string s in GetAllDateTimePatterns ('d'))
+				table [s] = s;
+			foreach (string s in GetAllDateTimePatterns ('T'))
+				table [s] = s;
+			foreach (string s in GetAllDateTimePatterns ('t'))
+				table [s] = s;
+			foreach (string s in GetAllDateTimePatterns ('M'))
+				table [s] = s;
+			foreach (string s in GetAllDateTimePatterns ('Y'))
+				table [s] = s;
+			foreach (string s in GetAllDateTimePatterns ('R'))
+				table [s] = s;
+			foreach (string s in GetAllDateTimePatterns ('s'))
+				table [s] = s;
+			foreach (string s in GetAllDateTimePatterns ('u'))
+				table [s] = s;
+			// FIXME: this is not implemented as yet.
+//			foreach (string s in GetAllDateTimePatterns ('U'))
+//				table [s] = s;
+			string [] ret = new string [table.Count];
+			table.Values.CopyTo (ret, 0);
+			return ret;
 		}
 
 		// LAMESPEC: this is not in ECMA specs
 		[MonoTODO]
+		// FIXME: Actually, this method should return more than one
+		// pattern string for each locales. But at this point we have
+		// only one pattern string, so here we just return one element
+		// array.
 		public string[] GetAllDateTimePatterns(char format)
 		{
-			notImplemented();
-			//FIXME: implement me
-			return null;
+			switch (format) {
+			// Date
+			case 'D':
+				return new string [] {LongDatePattern};
+			case 'd':
+				return new string [] {ShortDatePattern};
+			// Time
+			case 'T':
+				return new string [] {LongTimePattern};
+			case 't':
+				return new string [] {ShortTimePattern};
+			// {Short|Long}Date + {Short|Long}Time
+			// FIXME: they should be the agglegation of the
+			// combination of the Date patterns and Time patterns.
+			case 'G':
+				return new string [] {ShortDatePattern + ' ' + LongTimePattern};
+			case 'g':
+				return new string [] {ShortDatePattern + ' ' + ShortTimePattern};
+			case 'F':
+				return new string [] {LongDatePattern + ' ' + LongTimePattern};
+			case 'f':
+				return new string [] {LongDatePattern + ' ' + ShortTimePattern};
+			// MonthDay
+			case 'm':
+			case 'M':
+				return new string [] {MonthDayPattern};
+			// YearMonth
+			case 'Y':
+			case 'y':
+				return new string [] {YearMonthPattern};
+			// RFC1123
+			case 'r':
+			case 'R':
+				return new string [] {RFC1123Pattern};
+			case 's':
+				return new string [] {SortableDateTimePattern};
+			case 'u':
+				return new string [] {UniversalSortableDateTimePattern};
+			case 'U': // FIXME: what to return?
+				throw new NotImplementedException ();
+			}
+			throw new ArgumentException ("Format specifier was invalid.");
 		}
 
 		// LAMESPEC: this is not in ECMA specs
