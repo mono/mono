@@ -1,3 +1,8 @@
+2003-09-23  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* XmlNamespaceManager.cs: Rewrote PopScope() because its namespace
+	  recovery was still not enough. Fixed GrowScopes() (incorrect index).
+
 2003-09-21  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* XmlTextReader.cs : 

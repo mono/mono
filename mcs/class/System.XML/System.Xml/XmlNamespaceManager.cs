@@ -54,7 +54,7 @@ namespace System.Xml
 		{
 			NsScope [] old = scopes;
 			scopes = new NsScope [scopePos * 2 + 1];
-			if (declPos > 0)
+			if (scopePos > 0)
 				Array.Copy (old, 0, scopes, 0, scopePos);
 		}
 		
@@ -230,18 +230,13 @@ namespace System.Xml
 
 		public virtual bool PopScope ()
 		{
-			if (scopePos == -1) return false;
-			scopePos --;
-			
+			if (scopePos == -1)
+				return false;
+
 			declPos -= count;
-			if (scopePos == -1) {
-				defaultNamespace = string.Empty;
-				count = declPos + 1;
-			} else {
-				defaultNamespace = scopes [scopePos].DefaultNamespace;
-				count = scopes [scopePos].DeclCount;
-				declPos += count;
-			}
+			defaultNamespace = scopes [scopePos].DefaultNamespace;
+			count = scopes [scopePos].DeclCount;
+			scopePos --;
 			return true;
 		}
 
