@@ -1,3 +1,40 @@
+2004-04-15 Carlos Guzman Alvarez  <carlosga@telefonica.net>
+
+	* Mono.Security.Protocol.Tls/SslClientStream.cs:
+	* Mono.Security.Protocol.Tls/SslServerStream.cs:
+	* Mono.Security.Protocol.Tls/Alert.cs:
+	* Mono.Security.Protocol.Tls/RecordProtocol.cs:
+	* Mono.Security.Protocol.Tls/ClientRecordProtocol.cs:
+	* Mono.Security.Protocol.Tls/ServerRecordProtocol.cs:
+	* Mono.Security.Protocol.Tls/Context.cs:
+	* Mono.Security.Protocol.Tls/TlsException.cs:
+	* Mono.Security.Protocol.Tls.Handshake.Client/TlsClientCertificate.cs:
+	* Mono.Security.Protocol.Tls.Handshake.Client/TlsClientCertificateVerify.cs:
+	* Mono.Security.Protocol.Tls.Handshake.Client/TlsServerCertificate.cs:
+	* Mono.Security.Protocol.Tls.Handshake.Client/TlsServerHello.cs:
+	* Mono.Security.Protocol.Tls.Handshake.Client/TlsServerKeyExchange.cs:
+	* Mono.Security.Protocol.Tls.Handshake.Server/TlsClientCertificateVerify.cs:
+	* Mono.Security.Protocol.Tls.Handshake.Server/TlsClientFinished.cs:
+	* Mono.Security.Protocol.Tls.Handshake.Server/TlsClientHello.cs:
+
+		- Reworked Alert and Exception (TlsException) handling.
+
+	* Mono.Security.Protocol.Tls/TlsClientSettings.cs:
+
+		- Added new CertificateRSA property.
+
+	* Mono.Security.Protocol.Tls/SslHandshakeHash.cs:
+		
+		- Added two new methods: CreateSignature and VerifySignature.
+
+	* Mono.Security.Protocol.Tls.Handshake.Client/TlsClientCertificateVerify.cs:
+
+		- Added Ssl3 implementation.
+
+	* Mono.Security.Protocol.Tls.Handshake.Server/TlsClientCertificateVerify.cs:	
+
+		- Added initial implementation.
+
 2004-03-23  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Mono.Security_test.dll.sources: Added unit tests for CryptoConvert.
