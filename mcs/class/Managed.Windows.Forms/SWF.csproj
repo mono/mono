@@ -854,6 +854,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Windows.Forms\NotifyIcon.cs"
+                    SubType = "Component"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Windows.Forms\NumericUpDown.cs"
                     SubType = "Component"
                     BuildAction = "Compile"
