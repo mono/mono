@@ -347,6 +347,9 @@ namespace Mono.Tools
 			if (package_name != String.Empty) {
 				string ref_file = libdir + package_name +
 						Path.DirectorySeparatorChar + filename;
+				if (File.Exists (ref_file)) {
+					File.Delete (ref_file);
+				}
 				if (Path.DirectorySeparatorChar == '/') {
 					try {
 						Directory.CreateDirectory (libdir + package_name);
@@ -355,7 +358,7 @@ namespace Mono.Tools
 					symlink (linkPath + an.Name + ".dll", ref_file);
 				} else {
 					
-					File.Copy (path, ref_file, true);
+					File.Copy (path, ref_file);
 				}
 				Console.WriteLine ("Package exported to: " + libdir + package_name);
 			}

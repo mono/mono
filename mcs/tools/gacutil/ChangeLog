@@ -1,3 +1,7 @@
+2004-05-14  Todd Berman  <tberman@sevenl.net>
+
+	* gacutil.cs: Remove old file/symlink, thanks urs. 
+
 2004-05-14  Jackson Harper  <jackson@ximian.com>
 
 	* gacutil.cs: Always install the package files.
