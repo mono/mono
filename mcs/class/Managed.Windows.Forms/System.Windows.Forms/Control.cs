@@ -29,9 +29,12 @@
 //	Jaak Simm		jaaksimm@firm.ee
 //	John Sohn		jsohn@columbus.rr.com
 //
-// $Revision: 1.2 $
+// $Revision: 1.3 $
 // $Modtime: $
 // $Log: Control.cs,v $
+// Revision 1.3  2004/07/15 17:03:35  jordi
+// added basic mouse handeling events
+//
 // Revision 1.2  2004/07/13 15:31:45  jordi
 // commit: new properties and fixes form size problems
 //
@@ -1216,8 +1219,6 @@ namespace System.Windows.Forms
 			switch((Msg)m.Msg) {
 #if notyet
 				// Mouse handling
-				case Msg.WM_LBUTTONDOWN:	throw new NotImplementedException();	break;
-				case Msg.WM_LBUTTONUP:		throw new NotImplementedException();	break;
 				case Msg.WM_LBUTTONDBLCLK:	throw new NotImplementedException();	break;
 
 				case Msg.WM_RBUTTONDOWN:	throw new NotImplementedException();	break;
@@ -1226,8 +1227,7 @@ namespace System.Windows.Forms
 
 				case Msg.WM_MOUSEHOVER:		throw new NotImplementedException();	break;
 				case Msg.WM_MOUSELEAVE:		throw new NotImplementedException();	break;
-				case Msg.WM_MOUSEMOVE:		throw new NotImplementedException();	break;
-
+				
 
 				// Keyboard handling
 				case Msg.WM_CHAR:		throw new NotImplementedException();	break;
@@ -1242,17 +1242,84 @@ namespace System.Windows.Forms
 					paint_event = XplatUI.PaintEventStart(Handle);
 					OnPaint(paint_event);
 					XplatUI.PaintEventEnd(Handle);
-
+					DefWndProc(ref m);	
 					break;
 				}
+				
+				case Msg.WM_ERASEBKGND:{					
+					
+					if (GetStyle (ControlStyles.UserPaint)){						
+	    					PaintEventArgs eraseEventArgs = new PaintEventArgs (Graphics.FromHdc (m.WParam), new Rectangle (new Point (0,0),Size));
+		    				OnPaintBackground (eraseEventArgs);												
+	    					m.Result = (IntPtr)1;
+    					}	
+    					else {
+    						m.Result = (IntPtr)0;
+    						DefWndProc (ref m);	
+    					}    					
+    					
+					break;
+				}
+				
+				case Msg.WM_LBUTTONUP: {					
+					
+					int clicks = 1;
+					int delta = 1;			
+					
+					OnMouseUp (new MouseEventArgs (FromParamToMouseButtons ((int) m.WParam.ToInt32()), 
+						clicks, LowOrder ((int) m.LParam.ToInt32 ()),
+							HighOrder ((int) m.LParam.ToInt32 ()), delta));
+					
+					break;
+				}
+				
+				case Msg.WM_LBUTTONDOWN: {					
+					
+					int clicks = 1;
+					int delta = 1;					
+					
+					OnMouseDown (new MouseEventArgs (FromParamToMouseButtons ((int) m.WParam.ToInt32()), 
+						clicks, LowOrder ((int) m.LParam.ToInt32 ()),
+							HighOrder ((int) m.LParam.ToInt32 ()), delta));
+					
+					break;
+				}
+				
+				
+				case Msg.WM_MOUSEMOVE: {					
+										
+					int clicks = 1;
+					int delta = 1;								
+					
+					OnMouseMove  (new MouseEventArgs (FromParamToMouseButtons ((int) m.WParam.ToInt32()), 
+						clicks, LowOrder ((int) m.LParam.ToInt32 ()),
+							HighOrder ((int) m.LParam.ToInt32 ()), delta));
+					break;
+				}
+				
+				case Msg.WM_SIZE: {					
+					
+					UpdateBounds (bounds.X, bounds.Y, LowOrder ((int) m.LParam.ToInt32 ()),
+						HighOrder ((int) m.LParam.ToInt32 ()));					
+					
+					DefWndProc(ref m);	
+					break;				
+				}
+				
 
-#if notyet
-				case Msg.WM_SIZE:		throw new NotImplementedException();	break;
+#if notyet				
 				case Msg.WM_WINDOWPOSCHANGED:	throw new NotImplementedException();	break;
 				case Msg.WM_SYSCOLORCHANGE:	throw new NotImplementedException();	break;
+				
 #endif
+
+				default:
+					DefWndProc(ref m);	
+					break;
 			}
-			DefWndProc(ref m);
+			
+			
+			
 		}
 		#endregion	// Public Instance Methods
 
@@ -1476,7 +1543,8 @@ namespace System.Windows.Forms
 			if (Invalidated!=null) Invalidated(this, e);
 		}
 
-		protected virtual void OnKeyDown(KeyEventArgs e) {
+
+		protected virtual void OnKeyDown(KeyEventArgs e) {			
 			if (KeyDown!=null) KeyDown(this, e);
 		}
 
@@ -1516,7 +1584,7 @@ namespace System.Windows.Forms
 			if (MouseLeave!=null) MouseLeave(this, e);
 		}
 
-		protected virtual void OnMouseMove(MouseEventArgs e) {
+		protected virtual void OnMouseMove(MouseEventArgs e) {			
 			if (MouseMove!=null) MouseMove(this, e);
 		}
 
@@ -1716,5 +1784,34 @@ namespace System.Windows.Forms
 		public event CancelEventHandler		Validating;
 		public event EventHandler		VisibleChanged;
 		#endregion	// Events
+		
+		#region Private Methods
+		internal static int LowOrder (int param) 
+		{
+			return (param & 0xffff);
+		}
+
+		internal static int HighOrder (int param) 
+		{
+			return (param >> 16);
+		}
+		
+		internal static MouseButtons FromParamToMouseButtons (int param) 
+		{		
+			MouseButtons buttons = MouseButtons.None;
+					
+			if ((param & (int) MsgButtons.MK_LBUTTON) != 0)
+				buttons |= MouseButtons.Left;
+			
+			if ((param & (int) MsgButtons.MK_MBUTTON) != 0)
+				buttons |= MouseButtons.Middle;
+				
+			if ((param & (int) MsgButtons.MK_RBUTTON) != 0)
+				buttons |= MouseButtons.Right;    	
+				
+			return buttons;
+
+		}
+		#endregion	
 	}
 }
