@@ -1,5 +1,10 @@
 2002-10-29  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* Type.cs: fixed GetProperty (string, Type []) and removed get_property
+	internal call. Closes bug #32992.
+
+2002-10-29  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* Exception.cs: display the inner exception, if any, in ToString ().
 
 2002-10-24  Gonzalo Paniagua Javier <gonzalo@ximian.com>

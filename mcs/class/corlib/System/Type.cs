@@ -644,9 +644,6 @@ namespace System {
 
 		public abstract PropertyInfo[] GetProperties (BindingFlags bindingAttr);
 
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private static extern PropertyInfo get_property (Type type, string name, Type[] types);
-		
 
 		public PropertyInfo GetProperty (string name)
 		{
@@ -670,11 +667,9 @@ namespace System {
 			return GetPropertyImpl (name, DefaultBindingFlags, null, returnType, new Type[0], null);
 		}
 
-		[MonoTODO]
 		public PropertyInfo GetProperty (string name, Type[] types)
 		{
-			// TODO: return GetProperty (name, DefaultBindingFlags, null, null, types, null);
-			return get_property (this, name, types);
+			return GetProperty (name, DefaultBindingFlags, null, null, types, null);
 		}
 
 		public PropertyInfo GetProperty (string name, Type returnType, Type[] types)
