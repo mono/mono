@@ -1,9 +1,13 @@
+2002-9-14 Dennis Hayes (dennish@raytek.com)
+* sample.cs
+* removed personal template that should not have been checked in
+
 2002-09-13  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* ColorConverter.cs: readded MonoTODOs and implemented a couple of
 	methods.
 
-2002-9-2  DennisHayes <dennish@raytek.com>
+2002-9-14  DennisHayes <dennish@raytek.com>
 
 	* FontConverter.cs
 	* FontFamily.cs
