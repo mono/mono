@@ -28,6 +28,7 @@
 //
 
 using System;
+using System.ComponentModel;
 
 namespace System.Web.UI {
 
@@ -35,6 +36,20 @@ namespace System.Web.UI {
 	public sealed class TemplateContainerAttribute : Attribute
 	{
 		Type containerType;
+		
+#if NET_2_0
+		BindingDirection direction;
+		
+		public TemplateContainerAttribute (Type containerType, BindingDirection direction)
+		{
+			this.containerType = containerType;
+			this.direction = direction;
+		}
+		
+		public BindingDirection BindingDirection {
+			get { return direction; }
+		}
+#endif
 		
 		public TemplateContainerAttribute (Type containerType)
 		{

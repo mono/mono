@@ -30,20 +30,34 @@
 
 using System;
 using System.Collections;
+using System.Reflection;
 
 namespace System.Web.UI
 {
 	public class TemplateBuilder : ControlBuilder, ITemplate
 	{
 		string text;
+		TemplateContainerAttribute containerAttribute;
 
 		public TemplateBuilder ()
 		{
 		}
 
+		internal TemplateBuilder (ICustomAttributeProvider prov)
+		{
+			object[] ats = prov.GetCustomAttributes (typeof(TemplateContainerAttribute), true);
+			if (ats.Length > 0) {
+				containerAttribute = (TemplateContainerAttribute) ats [0];
+			}
+		}
+
 		public virtual string Text {
 			get { return text; }
 			set { text = value; }
+		}
+		
+		public Type ContainerType {
+			get { return containerAttribute != null ? containerAttribute.ContainerType : null; }
 		}
 
 		public override void Init (TemplateParser parser,

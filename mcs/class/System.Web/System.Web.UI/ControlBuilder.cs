@@ -313,7 +313,7 @@ namespace System.Web.UI {
 			if (typeof (ICollection).IsAssignableFrom (propType)) {
 				builder = new CollectionBuilder ();
 			} else if (typeof (ITemplate).IsAssignableFrom (propType)) {
-				builder = new TemplateBuilder ();
+				builder = new TemplateBuilder (prop);
 			} else {
 				builder = CreateBuilderFromType (parser, parentBuilder, propType, prop.Name,
 								 null, atts, line, fileName);
