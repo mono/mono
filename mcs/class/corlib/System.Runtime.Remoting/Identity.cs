@@ -139,5 +139,10 @@ namespace System.Runtime.Remoting
 		{
 			return _objRef;
 		}
+
+		public string TargetUri
+		{
+			get { return _objRef.URI; }
+		}
 	}
 }
