@@ -1,4 +1,9 @@
 
+Fri Sep 7 18:34:48 CEST 2001 Paolo Molaro <lupus@ximian.com>
+
+	* Delegate.cs: we need a pointer to the method thunk in
+	the delegate object.
+
 Fri Sep 7 12:28:01 CEST 2001 Paolo Molaro <lupus@ximian.com>
 
 	* AsyncCallback.cs, common.src: add AsyncCallback delegate.

@@ -18,6 +18,7 @@ namespace System {
 		protected Type target_type;
 		protected object target;
 		protected string method;
+		protected IntPtr method_ptr;
 		
 		protected Delegate (object target, string method)
 		{
@@ -28,6 +29,7 @@ namespace System {
 				throw new ArgumentNullException ("method name is null");
 
 			this.target_type = null;
+			this.method_ptr = IntPtr.Zero;
 			this.target = target;
 			this.method = method;
 		}
@@ -41,6 +43,7 @@ namespace System {
 				throw new ArgumentNullException ("method string is null");
 
 			this.target_type = target_type;
+			this.method_ptr = IntPtr.Zero;
 			this.target = null;
 			this.method = method;
 		}
