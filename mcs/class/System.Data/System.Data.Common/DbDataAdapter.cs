@@ -362,6 +362,8 @@ namespace System.Data.Common {
 		
 		protected virtual int Fill (DataSet dataSet, int startRecord, int maxRecords, string srcTable, IDbCommand command, CommandBehavior behavior) 
 		{
+			if (MissingSchemaAction == MissingSchemaAction.AddWithKey)
+			    behavior |= CommandBehavior.KeyInfo;
 			CommandBehavior commandBehavior = behavior;
 			if (command.Connection.State == ConnectionState.Closed) {
 				command.Connection.Open ();
@@ -516,8 +518,7 @@ namespace System.Data.Common {
 				// generate DataSetColumnName from DataTableMapping, if any
 				string dsColumnName = realSourceColumnName;
 				DataTableMapping tableMapping = null;
-				if (schemaType == SchemaType.Mapped)
-					tableMapping = DataTableMappingCollection.GetTableMappingBySchemaAction (TableMappings, table.TableName, table.TableName, MissingMappingAction); 
+				tableMapping = DataTableMappingCollection.GetTableMappingBySchemaAction (TableMappings, table.TableName, table.TableName, MissingMappingAction); 
 				if (tableMapping != null) 
 				{
 					
@@ -552,7 +553,7 @@ namespace System.Data.Common {
 				}
 				readerIndex++;
 			}
-			if (MissingSchemaAction == MissingSchemaAction.AddWithKey && primaryKey.Count > 0)
+			if (primaryKey.Count > 0)
 				table.PrimaryKey = (DataColumn[])(primaryKey.ToArray(typeof (DataColumn)));
 
 			return mapping;
@@ -697,7 +698,6 @@ namespace System.Data.Common {
 
 						parameter.Value = row [dsColumnName, rowVersion];
 					}
-					row.AcceptChanges ();
 				}
 
 				if (command.Connection.State == ConnectionState.Closed) 
@@ -711,6 +711,7 @@ namespace System.Data.Common {
 						throw new DBConcurrencyException("Concurrency violation: the " + commandName +"Command affected 0 records.");
 					updateCount += tmp;
 					OnRowUpdated (CreateRowUpdatedEvent (row, command, statementType, tableMapping));
+					row.AcceptChanges ();
 				}
 				catch (Exception e)
 				{

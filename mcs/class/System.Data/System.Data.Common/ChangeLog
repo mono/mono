@@ -1,3 +1,10 @@
+2003-12-30  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* DbDataAdapter.cs: handle MissingShemaAction.AddWithKey, call
+	AcceptChanges in Update when a CommandBuilder is used and
+	correctly fill information about primary keys in FillSchema.
+	Patch from Sergei Malinin (smalinin@amurnet.ru).
+
 2003-12-23  Tim Coleman <tim@timcoleman.com>
 	* DbConnectionString.cs:
 		Some implementation
