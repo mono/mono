@@ -48,8 +48,9 @@ namespace System.Threading
 		public static bool WaitAll(WaitHandle[] waitHandles,
 					   TimeSpan timeout,
 					   bool exitContext) {
-			if(timeout.Milliseconds < 0 ||
-			   timeout.Milliseconds > Int32.MaxValue) {
+			int ms=Convert.ToInt32(timeout.TotalMilliseconds);
+			
+			if(ms < 0 || ms > Int32.MaxValue) {
 				throw new ArgumentOutOfRangeException("Timeout out of range");
 			}
 			if(waitHandles.Length>64) {
@@ -61,9 +62,7 @@ namespace System.Threading
 				}
 			}
 			
-			return(WaitAll_internal(waitHandles,
-						timeout.Milliseconds,
-						exitContext));
+			return(WaitAll_internal(waitHandles, ms, exitContext));
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
@@ -103,8 +102,9 @@ namespace System.Threading
 
 		public static int WaitAny(WaitHandle[] waitHandles,
 					  TimeSpan timeout, bool exitContext) {
-			if(timeout.Milliseconds < 0 ||
-			   timeout.Milliseconds > Int32.MaxValue) {
+			int ms=Convert.ToInt32(timeout.TotalMilliseconds);
+			
+			if(ms < 0 || ms > Int32.MaxValue) {
 				throw new ArgumentOutOfRangeException("Timeout out of range");
 			}
 			if(waitHandles.Length>64) {
@@ -116,9 +116,7 @@ namespace System.Threading
 				}
 			}
 			
-			return(WaitAny_internal(waitHandles,
-						timeout.Milliseconds,
-						exitContext));
+			return(WaitAny_internal(waitHandles, ms, exitContext));
 		}
 
 		[MonoTODO]
@@ -160,9 +158,9 @@ namespace System.Threading
 		}
 
 		public virtual bool WaitOne(TimeSpan timeout, bool exitContext) {
-			return(WaitOne_internal(os_handle,
-						timeout.Milliseconds,
-						exitContext));
+			int ms=Convert.ToInt32(timeout.TotalMilliseconds);
+			
+			return(WaitOne_internal(os_handle, ms, exitContext));
 		}
 
 		protected static readonly IntPtr InvalidHandle;

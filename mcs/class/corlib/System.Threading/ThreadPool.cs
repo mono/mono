@@ -207,10 +207,12 @@ namespace System.Threading
 		[MonoTODO]
 		public static RegisteredWaitHandle RegisterWaitForSingleObject(WaitHandle waitObject, WaitOrTimerCallback callback, object state, TimeSpan timeout, bool executeOnlyOnce) {
 			// LAMESPEC: I assume it means "timeout" when it says "millisecondsTimeOutInterval"
-			if (timeout.Milliseconds < -1) {
+			int ms=Convert.ToInt32(timeout.TotalMilliseconds);
+			
+			if (ms < -1) {
 				throw new ArgumentOutOfRangeException("timeout < -1");
 			}
-			if (timeout.Milliseconds > Int32.MaxValue) {
+			if (ms > Int32.MaxValue) {
 				throw new NotSupportedException("timeout too large");
 			}
 

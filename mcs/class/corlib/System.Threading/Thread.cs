@@ -166,14 +166,16 @@ namespace System.Threading
 
 		public static void Sleep(TimeSpan timeout) {
 			// LAMESPEC: says to throw ArgumentException too
-			if(timeout.Milliseconds < 0 || timeout.Milliseconds > Int32.MaxValue) {
+			int ms=Convert.ToInt32(timeout.TotalMilliseconds);
+			
+			if(ms < 0 || ms > Int32.MaxValue) {
 				throw new ArgumentOutOfRangeException("Timeout out of range");
 			}
 
 			Thread thread=CurrentThread;
 				
 			thread.set_state(ThreadState.WaitSleepJoin);
-			Sleep_internal(timeout.Milliseconds);
+			Sleep_internal(ms);
 			thread.clr_state(ThreadState.WaitSleepJoin);
 		}
 
@@ -359,7 +361,9 @@ namespace System.Threading
 
 		public bool Join(TimeSpan timeout) {
 			// LAMESPEC: says to throw ArgumentException too
-			if(timeout.Milliseconds < 0 || timeout.Milliseconds > Int32.MaxValue) {
+			int ms=Convert.ToInt32(timeout.TotalMilliseconds);
+			
+			if(ms < 0 || ms > Int32.MaxValue) {
 				throw new ArgumentOutOfRangeException("timeout out of range");
 			}
 			if((state & ThreadState.Unstarted) != 0) {
@@ -369,8 +373,7 @@ namespace System.Threading
 			Thread thread=CurrentThread;
 
 			thread.set_state(ThreadState.WaitSleepJoin);
-			bool ret=Join_internal(timeout.Milliseconds,
-					       system_thread_handle);
+			bool ret=Join_internal(ms, system_thread_handle);
 			thread.clr_state(ThreadState.WaitSleepJoin);
 
 			return(ret);

@@ -153,7 +153,7 @@ namespace System.Threading
 		}
 
 		public Timer (TimerCallback callback, object state, TimeSpan dueTime, TimeSpan period)
-			: this (callback, state, dueTime.Milliseconds, period.Milliseconds)
+			: this (callback, state, Convert.ToInt32(dueTime.TotalMilliseconds), Convert.ToInt32(period.TotalMilliseconds))
 		{
 		}
 
@@ -201,7 +201,7 @@ namespace System.Threading
 
 		public bool Change (TimeSpan dueTime, TimeSpan period)
 		{
-			return Change (dueTime.Milliseconds, period.Milliseconds);
+			return Change (Convert.ToInt32(dueTime.TotalMilliseconds), Convert.ToInt32(period.TotalMilliseconds));
 		}
 
 		[CLSCompliant(false)]

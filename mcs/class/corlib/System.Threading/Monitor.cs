@@ -134,17 +134,18 @@ namespace System.Threading
 
 			// LAMESPEC: should throw an exception when ms<0, but
 			// Timeout.Infinite is -1
-			if(timeout.Milliseconds == Timeout.Infinite) {
+			int ms=Convert.ToInt32(timeout.TotalMilliseconds);
+			
+			if(ms == Timeout.Infinite) {
 				Enter(obj);
 				return(true);
 			}
 
-			if(timeout.Milliseconds < 0 ||
-			   timeout.Milliseconds > Int32.MaxValue) {
+			if(ms < 0 || ms > Int32.MaxValue) {
 				throw new ArgumentOutOfRangeException("timeout out of range");
 			}
 			
-			return(Monitor_try_enter(obj, timeout.Milliseconds));
+			return(Monitor_try_enter(obj, ms));
 		}
 
 		// Waits for a signal on object 'obj' with maximum
@@ -181,14 +182,16 @@ namespace System.Threading
 				throw new ArgumentNullException("Object is null");
 			}
 			// LAMESPEC: says to throw ArgumentException too
-			if(timeout.Milliseconds < 0 || timeout.Milliseconds > Int32.MaxValue) {
+			int ms=Convert.ToInt32(timeout.TotalMilliseconds);
+			
+			if(ms < 0 || ms > Int32.MaxValue) {
 				throw new ArgumentOutOfRangeException("timeout out of range");
 			}
 			if(Monitor_test_synchronised(obj)==false) {
 				throw new SynchronizationLockException("Object is not synchronised");
 			}
 
-			return(Monitor_wait(obj, timeout.Milliseconds));
+			return(Monitor_wait(obj, ms));
 		}
 
 		[MonoTODO]
@@ -207,7 +210,9 @@ namespace System.Threading
 				throw new ArgumentNullException("Object is null");
 			}
 			// LAMESPEC: says to throw ArgumentException too
-			if(timeout.Milliseconds < 0 || timeout.Milliseconds > Int32.MaxValue) {
+			int ms=Convert.ToInt32(timeout.TotalMilliseconds);
+			
+			if(ms < 0 || ms > Int32.MaxValue) {
 				throw new ArgumentOutOfRangeException("timeout out of range");
 			}
 			

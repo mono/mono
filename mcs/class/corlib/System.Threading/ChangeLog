@@ -1,3 +1,12 @@
+2002-12-10  Dick Porter  <dick@ximian.com>
+
+	* Monitor.cs:
+	* Thread.cs:
+	* ThreadPool.cs:
+	* Timer.cs:
+	* WaitHandle.cs: Use TotalMilliseconds to convert a TimeSpan to
+	ms, not Milliseconds.
+
 2002-12-07  Martin Baulig  <martin@ximian.com>
 
 	* Timer.cs: Make it actually work; now it no longer sets your
