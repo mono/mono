@@ -47,7 +47,6 @@ cs0657-17.cs NO ERROR
 cs1501-5.cs
 cs1513.cs
 cs1518.cs
-cs1521-2.cs # Probably not a real regression.  The actual error message is correct
 cs1525.cs
 cs1528.cs
 cs1535.cs

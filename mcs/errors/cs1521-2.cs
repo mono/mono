@@ -2,7 +2,7 @@
 // Line: 9
 // Compiler options: -unsafe
 
-class C
+struct C
 {
 }
 

@@ -1,3 +1,9 @@
+2005-04-04  Raja R Harinath  <rharinath@novell.com>
+
+	* cs1521-2.cs: Change 'class' to a 'struct' to narrow down the
+	testcase to having only the mentioned error.  With the previous
+	code, CS0208 was also appropriate.
+
 2005-04-01  Raja R Harinath  <rharinath@novell.com>
 
 	* TestRunner.cs (TestRunner): Make "KNOWN ISSUE" messages slightly
