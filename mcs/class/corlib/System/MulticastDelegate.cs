@@ -9,6 +9,7 @@
 //
 
 using System.Collections;
+using System.Runtime.Serialization;
 
 namespace System
 {
@@ -28,6 +29,12 @@ namespace System
 		{
 			prev = null;
 		}
+		
+		public override void GetObjectData (SerializationInfo info, StreamingContext context)
+		{
+			base.GetObjectData  (info, context);
+		}
+
 
 		internal override object DynamicInvokeImpl (object[] args)
 		{

@@ -173,194 +173,28 @@ namespace System {
 
 		// ============ Public Interface to all the integer types ============ //
 		
-		public static string NumberToString (string format, NumberFormatInfo nfi, byte value)
-		{
-			char specifier;
-			int precision;
-			bool custom;
-
-			if (!ParseFormat (format, out specifier, out precision, out custom))
-				throw new FormatException (Locale.GetText ("The specified format '" + format + "' is invalid"));
-			
-			if (custom){
-				return FormatCustom (format, value, nfi);
-			}
-
-			switch(specifier) {
-			case 'c': return FormatCurrency (value, precision, nfi);
-			case 'C': return FormatCurrency (value, precision, nfi);
-			case 'd': return FormatDecimal (value, precision);
-			case 'D': return FormatDecimal (value, precision);
-			case 'e': return FormatExponential (value, precision, false);
-			case 'E': return FormatExponential (value, precision, true);
-			case 'f': return FormatFixedPoint (value, precision, nfi);	
-			case 'F': return FormatFixedPoint (value, precision, nfi);	
-			case 'g': return FormatGeneral (value, precision, nfi, false);
-			case 'G': return FormatGeneral (value, precision, nfi, true);
-			case 'n': return FormatNumber (value, precision, nfi);
-			case 'N': return FormatNumber (value, precision, nfi);
-			case 'p': return FormatPercent (value, precision, nfi);
-			case 'P': return FormatPercent (value, precision, nfi);
-			case 'r': throw new FormatException (Locale.GetText ("The specified format cannot be used in this instance"));
-			case 'R': throw new FormatException (Locale.GetText ("The specified format cannot be used in this instance"));
-			case 'x': return FormatHexadecimal (value, precision, false);
-			case 'X': return FormatHexadecimal (value, precision, true);
-			default: 
-				throw new FormatException (Locale.GetText ("The specified format '" + format + "' is invalid"));
-			}
-		}		
-
 		public static string NumberToString (string format, NumberFormatInfo nfi, short value)
 		{
-			char specifier;
-			int precision;
-			bool custom;
-			
-			if (!ParseFormat (format, out specifier, out precision, out custom))
-				throw new FormatException (Locale.GetText ("The specified format '" + format + "' is invalid"));
-			
-			if (custom){
-				return FormatCustom (format, value, nfi);
-			}
-
-			switch(specifier) {
-			case 'c': return FormatCurrency (value, precision, nfi);
-			case 'C': return FormatCurrency (value, precision, nfi);
-			case 'd': return FormatDecimal (value, precision);
-			case 'D': return FormatDecimal (value, precision);
-			case 'e': return FormatExponential (value, precision, false);
-			case 'E': return FormatExponential (value, precision, true);
-			case 'f': return FormatFixedPoint (value, precision, nfi);	
-			case 'F': return FormatFixedPoint (value, precision, nfi);	
-			case 'g': return FormatGeneral (value, precision, nfi, false);
-			case 'G': return FormatGeneral (value, precision, nfi, true);
-			case 'n': return FormatNumber (value, precision, nfi);
-			case 'N': return FormatNumber (value, precision, nfi);
-			case 'p': return FormatPercent (value, precision, nfi);
-			case 'P': return FormatPercent (value, precision, nfi);
-			case 'r': throw new FormatException (Locale.GetText ("The specified format cannot be used in this instance"));
-			case 'R': throw new FormatException (Locale.GetText ("The specified format cannot be used in this insance"));
-			case 'x': return FormatHexadecimal (value, precision, false);
-			case 'X': return FormatHexadecimal (value, precision, true);
-			default: 
-				throw new FormatException (Locale.GetText ("The specified format '" + format + "' is invalid"));
-			}
+			return NumberToString (format, nfi, maxIntLength, 2, (long)value);
 		}
 
 		public static string NumberToString (string format, NumberFormatInfo nfi, int value)
 		{
-			char specifier;
-			int precision;
-			bool custom;
-			
-			if (!ParseFormat (format, out specifier, out precision, out custom))
-				throw new FormatException (Locale.GetText ("The specified format '" + format + "' is invalid"));
-			
-			if (custom){
-				return FormatCustom (format, value, nfi);
-			}
-
-			switch(specifier) {
-			case 'c': return FormatCurrency (value, precision, nfi);	
-			case 'C': return FormatCurrency (value, precision, nfi);	
-			case 'd': return FormatDecimal (value, precision);
-			case 'D': return FormatDecimal (value, precision);
-			case 'e': return FormatExponential (value, precision, false);
-			case 'E': return FormatExponential (value, precision, true);
-			case 'f': return FormatFixedPoint (value, precision, nfi);	
-			case 'F': return FormatFixedPoint (value, precision, nfi);	
-			case 'g': return FormatGeneral (value, precision, nfi, false);
-			case 'G': return FormatGeneral (value, precision, nfi, true);
-			case 'n': return FormatNumber (value, precision, nfi);
-			case 'N': return FormatNumber (value, precision, nfi);
-			case 'p': return FormatPercent (value, precision, nfi);
-			case 'P': return FormatPercent (value, precision, nfi);
-			case 'r': throw new FormatException (Locale.GetText ("The specified format cannot be used in this instance"));
-			case 'R': throw new FormatException (Locale.GetText ("The specified format cannot be used in this instance"));
-			case 'x': return FormatHexadecimal (value, precision, false);
-			case 'X': return FormatHexadecimal (value, precision, true);
-			default: 
-				throw new FormatException (Locale.GetText ("The specified format '" + format + "' is invalid"));
-			}
+			return NumberToString (format, nfi, maxIntLength, 4, (long)value);
 		}
 
 		public static string NumberToString (string format, NumberFormatInfo nfi, long value)
 		{
-			char specifier;
-			int precision;
-			bool custom;
-			
-			if (!ParseFormat (format, out specifier, out precision, out custom))
-				throw new FormatException (Locale.GetText ("The specified format '" + format + "' is invalid"));
-			
-			if (custom){
-				return FormatCustom (format, value, nfi);
-			}
-
-			switch(specifier) {
-			case 'c': return FormatCurrency (value, precision, nfi);
-			case 'C': return FormatCurrency (value, precision, nfi);
-			case 'd': return FormatDecimal (value, precision);
-			case 'D': return FormatDecimal (value, precision);
-			case 'e': return FormatExponential (value, precision, false);
-			case 'E': return FormatExponential (value, precision, true);
-			case 'f': return FormatFixedPoint (value, precision, nfi);	
-			case 'F': return FormatFixedPoint (value, precision, nfi);	
-			case 'g': return FormatGeneral (value, precision, nfi, false);
-			case 'G': return FormatGeneral (value, precision, nfi, true);
-			case 'n': return FormatNumber (value, precision, nfi);
-			case 'N': return FormatNumber (value, precision, nfi);
-			case 'p': return FormatPercent (value, precision, nfi);
-			case 'P': return FormatPercent (value, precision, nfi);
-			case 'r': throw new FormatException (Locale.GetText ("The specified format cannot be used in this instance"));
-			case 'R': throw new FormatException (Locale.GetText ("The specified format cannot be used in this instance"));
-			case 'x': return FormatHexadecimal (value, precision, false);
-			case 'X': return FormatHexadecimal (value, precision, true);
-			default: 
-				throw new FormatException (Locale.GetText ("The specified format '" + format + "' is invalid"));
-			}			
+			return NumberToString (format, nfi, maxLongLength, 8, value);
 		}
 
 		[CLSCompliant (false)]
 		public static string NumberToString (string format, NumberFormatInfo nfi, sbyte value)
 		{
-			char specifier;
-			int precision;
-			bool custom;
-			
-			if (!ParseFormat (format, out specifier, out precision, out custom))
-				throw new FormatException (Locale.GetText ("The specified format '" + format + "' is invalid"));
-			
-			if (custom){
-				return FormatCustom (format, value, nfi);
-			}
-			
-			switch(specifier) {
-			case 'c': return FormatCurrency (value, precision, nfi);
-			case 'C': return FormatCurrency (value, precision, nfi);
-			case 'd': return FormatDecimal (value, precision);
-			case 'D': return FormatDecimal (value, precision);
-			case 'e': return FormatExponential (value, precision, false);
-			case 'E': return FormatExponential (value, precision, true);
-			case 'f': return FormatFixedPoint (value, precision, nfi);	
-			case 'F': return FormatFixedPoint (value, precision, nfi);	
-			case 'g': return FormatGeneral (value, precision, nfi, false);
-			case 'G': return FormatGeneral (value, precision, nfi, true);
-			case 'n': return FormatNumber (value, precision, nfi);
-			case 'N': return FormatNumber (value, precision, nfi);
-			case 'p': return FormatPercent (value, precision, nfi);
-			case 'P': return FormatPercent (value, precision, nfi);
-			case 'r': throw new FormatException (Locale.GetText ("The specified format cannot be used in this instance"));
-			case 'R': throw new FormatException (Locale.GetText ("The specified format cannot be used in this instance"));
-			case 'x': return FormatHexadecimal (value, precision, false);
-			case 'X': return FormatHexadecimal (value, precision, true);
-			default: 
-				throw new FormatException (Locale.GetText ("The specified format '" + format + "' is invalid"));
-			}
+			return NumberToString (format, nfi, maxIntLength, 1, (long)value);
 		}
-
-		[CLSCompliant (false)]
-		public static string NumberToString (string format, NumberFormatInfo nfi, ushort value)
+		
+		public static string NumberToString (string format, NumberFormatInfo nfi, int maxLength, int integerSize, long value)
 		{
 			char specifier;
 			int precision;
@@ -370,73 +204,58 @@ namespace System {
 				throw new FormatException (Locale.GetText ("The specified format '" + format + "' is invalid"));
 			
 			if (custom){
-				return FormatCustom (format, value, nfi);
+				return FormatCustom (format, value, nfi, maxLength);
 			}
-			
+
 			switch(specifier) {
-			case 'c': return FormatCurrency (value, precision, nfi);
-			case 'C': return FormatCurrency (value, precision, nfi);
-			case 'd': return FormatDecimal (value, precision);
-			case 'D': return FormatDecimal (value, precision);
-			case 'e': return FormatExponential (value, precision, false);
-			case 'E': return FormatExponential (value, precision, true);
-			case 'f': return FormatFixedPoint (value, precision, nfi);	
-			case 'F': return FormatFixedPoint (value, precision, nfi);	
-			case 'g': return FormatGeneral (value, precision, nfi, false);
-			case 'G': return FormatGeneral (value, precision, nfi, true);
-			case 'n': return FormatNumber (value, precision, nfi);
-			case 'N': return FormatNumber (value, precision, nfi);
-			case 'p': return FormatPercent (value, precision, nfi);
-			case 'P': return FormatPercent (value, precision, nfi);
+			case 'c': return FormatCurrency (value, precision, nfi, maxLength);
+			case 'C': return FormatCurrency (value, precision, nfi, maxLength);
+			case 'd': return FormatDecimal (value, precision, maxLength);
+			case 'D': return FormatDecimal (value, precision, maxLength);
+			case 'e': return FormatExponential (value, precision, false, maxLength);
+			case 'E': return FormatExponential (value, precision, true, maxLength);
+			case 'f': return FormatFixedPoint (value, precision, nfi, maxLength);	
+			case 'F': return FormatFixedPoint (value, precision, nfi, maxLength);	
+			case 'g': return FormatGeneral (value, precision, nfi, false, maxLength);
+			case 'G': return FormatGeneral (value, precision, nfi, true, maxLength);
+			case 'n': return FormatNumber (value, precision, nfi, maxLength);
+			case 'N': return FormatNumber (value, precision, nfi, maxLength);
+			case 'p': return FormatPercent (value, precision, nfi, maxLength);
+			case 'P': return FormatPercent (value, precision, nfi, maxLength);
 			case 'r': throw new FormatException (Locale.GetText ("The specified format cannot be used in this instance"));
 			case 'R': throw new FormatException (Locale.GetText ("The specified format cannot be used in this instance"));
-			case 'x': return FormatHexadecimal (value, precision, false);
-			case 'X': return FormatHexadecimal (value, precision, true);
+			case 'x': return FormatHexadecimal (value, precision, false, maxLength, integerSize);
+			case 'X': return FormatHexadecimal (value, precision, true, maxLength, integerSize);
 			default: 
 				throw new FormatException (Locale.GetText ("The specified format '" + format + "' is invalid"));
-			}
+			}			
+		}
+
+		public static string NumberToString (string format, NumberFormatInfo nfi, byte value)
+		{
+			return NumberToString (format, nfi, maxIntLength, 1, (ulong)value);
+		}		
+
+		[CLSCompliant (false)]
+		public static string NumberToString (string format, NumberFormatInfo nfi, ushort value)
+		{
+			return NumberToString (format, nfi, maxIntLength, 2, (ulong)value);
 		}
 
 		[CLSCompliant (false)]
 		public static string NumberToString (string format, NumberFormatInfo nfi, uint value)
 		{
-			char specifier;
-			int precision;
-			bool custom;
-			
-			if (!ParseFormat (format, out specifier, out precision, out custom))
-				throw new FormatException (Locale.GetText ("The specified format '" + format + "' is invalid"));
-			
-			if (custom){
-				return FormatCustom (format, value, nfi);
-			}
-			
-			switch(specifier) {
-			case 'c': return FormatCurrency (value, precision, nfi);
-			case 'C': return FormatCurrency (value, precision, nfi);
-			case 'd': return FormatDecimal (value, precision);
-			case 'D': return FormatDecimal (value, precision);
-			case 'e': return FormatExponential (value, precision, false);
-			case 'E': return FormatExponential (value, precision, true);
-			case 'f': return FormatFixedPoint (value, precision, nfi);	
-			case 'F': return FormatFixedPoint (value, precision, nfi);	
-			case 'g': return FormatGeneral (value, precision, nfi, false);
-			case 'G': return FormatGeneral (value, precision, nfi, true);
-			case 'n': return FormatNumber (value, precision, nfi);
-			case 'N': return FormatNumber (value, precision, nfi);
-			case 'p': return FormatPercent (value, precision, nfi);
-			case 'P': return FormatPercent (value, precision, nfi);
-			case 'r': throw new FormatException (Locale.GetText ("The specified format cannot be used in this instance"));
-			case 'R': throw new FormatException (Locale.GetText ("The specified format cannot be used in this instance"));
-			case 'x': return FormatHexadecimal (value, precision, false);
-			case 'X': return FormatHexadecimal (value, precision, true);
-			default: 
-				throw new FormatException (Locale.GetText ("The specified format '" + format + "' is invalid"));
-			}
+			return NumberToString (format, nfi, maxIntLength, 4, (ulong)value);
 		}
 
 		[CLSCompliant (false)]
 		public static string NumberToString (string format, NumberFormatInfo nfi, ulong value)
+		{
+			return NumberToString (format, nfi, maxLongLength, 8, value);
+		}
+		
+		[CLSCompliant (false)]
+		public static string NumberToString (string format, NumberFormatInfo nfi, int maxLength, int integerSize, ulong value)
 		{
 			char specifier;
 			int precision;
@@ -446,28 +265,28 @@ namespace System {
 				throw new FormatException (Locale.GetText ("The specified format '" + format + "' is invalid"));
 			
 			if (custom){
-				return FormatCustom (format, value, nfi);
+				return FormatCustom (format, value, nfi, maxLength);
 			}
 			
 			switch(specifier) {
-			case 'c': return FormatCurrency (value, precision, nfi);
-			case 'C': return FormatCurrency (value, precision, nfi);
-			case 'd': return FormatDecimal (value, precision);
-			case 'D': return FormatDecimal (value, precision);
-			case 'e': return FormatExponential (value, precision, false);
-			case 'E': return FormatExponential (value, precision, true);
-			case 'f': return FormatFixedPoint (value, precision, nfi);	
-			case 'F': return FormatFixedPoint (value, precision, nfi);	
-			case 'g': return FormatGeneral (value, precision, nfi, false);
-			case 'G': return FormatGeneral (value, precision, nfi, true);
-			case 'n': return FormatNumber (value, precision, nfi);
-			case 'N': return FormatNumber (value, precision, nfi);
-			case 'p': return FormatPercent (value, precision, nfi);
-			case 'P': return FormatPercent (value, precision, nfi);
+			case 'c': return FormatCurrency (value, precision, nfi, maxLength);
+			case 'C': return FormatCurrency (value, precision, nfi, maxLength);
+			case 'd': return FormatDecimal (value, precision, maxLength);
+			case 'D': return FormatDecimal (value, precision, maxLength);
+			case 'e': return FormatExponential (value, precision, false, maxLength);
+			case 'E': return FormatExponential (value, precision, true, maxLength);
+			case 'f': return FormatFixedPoint (value, precision, nfi, maxLength);	
+			case 'F': return FormatFixedPoint (value, precision, nfi, maxLength);	
+			case 'g': return FormatGeneral (value, precision, nfi, false, maxLength);
+			case 'G': return FormatGeneral (value, precision, nfi, true, maxLength);
+			case 'n': return FormatNumber (value, precision, nfi, maxLength);
+			case 'N': return FormatNumber (value, precision, nfi, maxLength);
+			case 'p': return FormatPercent (value, precision, nfi, maxLength);
+			case 'P': return FormatPercent (value, precision, nfi, maxLength);
 			case 'r': throw new FormatException (Locale.GetText ("The specified format cannot be used in this instance"));
 			case 'R': throw new FormatException (Locale.GetText ("The specified format cannot be used in this instance"));
-			case 'x': return FormatHexadecimal (value, precision, false);
-			case 'X': return FormatHexadecimal (value, precision, true);
+			case 'x': return FormatHexadecimal (value, precision, false, maxLength);
+			case 'X': return FormatHexadecimal (value, precision, true, maxLength);
 			default: 
 				throw new FormatException (Locale.GetText ("The specified format '" + format + "' is invalid"));
 			}
@@ -496,17 +315,7 @@ namespace System {
 		//  I have them commented out in the large switch statement
 		//
 
-		private static string FormatCurrency (byte value, int precision, NumberFormatInfo nfi) 
-		{
-			return FormatCurrency ((uint)value, precision, nfi);
-		}
-
-		private static string FormatCurrency (short value, int precision, NumberFormatInfo nfi) 
-		{
-			return FormatCurrency ((int)value, precision, nfi);			
-		}
-			
-		private static string FormatCurrency (int value, int precision, NumberFormatInfo nfi) 
+		private static string FormatCurrency (long value, int precision, NumberFormatInfo nfi, int maxLength)
 		{
 			int i, j, k;
 			bool negative = (value < 0);
@@ -519,269 +328,7 @@ namespace System {
 			int symbolLength = currencySymbol.Length;
 			
 			int padding = (precision >= 0) ? precision : nfi.CurrencyDecimalDigits;	     
-			int size = maxIntLength + (groupSeparator.Length * maxIntLength) + padding + 2 + 
-			decimalSeparator.Length + symbolLength;	
-			char[] buffy = new char[size];
-			int position = size;
-
-			// set up the pattern from IFormattible
-			if (negative) {
-				i = symbolLength; 
- 
-				switch (pattern) {
-				case 0: // ($nnn)
-					buffy[--position] = ')'; 
-					break;
-				// case 1: // -$nnn
-				//	break;
-				// case 2: // $-nnn
-				//	break;
-				case 3: // $nnn-
-					buffy[--position] = '-';
-					break;
-				case 4:	// (nnn$)
-					buffy[--position] = ')'; 
-					do {
-						buffy[--position] = currencySymbol[--i];
-					} while (i > 0);
-					break;
-				case 5:	// -nnn$
-					do {
-						buffy[--position] = currencySymbol[--i];
-					} while (i > 0);
-					break;
-				case 6:	// nnn-$
-					do {
-						buffy[--position] = currencySymbol[--i];
-					} while (i > 0);
-					buffy[--position] = '-'; 
-					break;
-				case 7: // nnn$-
-					buffy[--position] = '-'; 
-					do {
-						buffy[--position] = currencySymbol[--i];
-					} while (i > 0);
-					break;
-				case 8: // -nnn $
-					do {
-						buffy[--position] = currencySymbol[--i];
-					} while (i > 0);
-					buffy[--position] = ' '; 
-					break;
-				// case 9: // -$ nnn
-				//	break;
-				case 10: // nnn $-
-					buffy[--position] = '-'; 
-					do {
-						buffy[--position] = currencySymbol[--i];
-					} while (i > 0);
-					buffy[--position] = ' '; 
-					break;
-				case 11: // $ nnn-
-					buffy[--position] = '-'; 
-					break;
-				// case 12: // $ -nnn
-				//	break;
-				case 13: // nnn- $
-					do {
-						buffy[--position] = currencySymbol[--i];
-					} while (i > 0);
-					buffy[--position] = ' '; 
-					buffy[--position] = '-'; 
-					break;
-				case 14: // ($ nnn)
-					buffy[--position] = ')'; 
-					break;
-				case 15: // (nnn $)
-					buffy[--position] = ')'; 
-					do {
-						buffy[--position] = currencySymbol[--i];
-					} while (i > 0);
-					break;				
-				}
-			} else {
-				i = symbolLength; 
-				switch (pattern) {
-				// case 0: // $nnn
-				//	break;
-				case 1: // nnn$
-					do {
-						buffy[--position] = currencySymbol[--i];
-					} while (i > 0);
-					break;
-				// case 2: // $ nnn
-				//	break;
-				case 3: // nnn $
-					do {
-						buffy[--position] = currencySymbol[--i];
-					} while (i > 0);
-					buffy[--position] = ' '; 
-					break;
-				}
-			}
-			
-			// right pad it w/ precision 0's
-			while (padding-- > 0)
-				buffy[--position] = '0';
-
-			// put on decimal separator if we moved over and put a 0 
-			if (position < size && buffy[position] == '0') {
-				i = decimalSeparator.Length; 
-				do {
-					buffy[--position] = decimalSeparator[--i];
-				} while (i > 0);			
-			}
-
-			// loop through, keeping track of where you are in the
-			// group sizes array and putting out the group separator
-			// when needed
-			j = 0;
-			k = groupSizes[j++];
-
-			// just in place to take care of the negative boundries (Int32.MinValue)
-			if (negative) {
-				if (value <= -10) {
-					buffy[--position] = digitLowerTable[-(value % 10)];
-					value = value / -10;
-					
-					if (--k == 0) {
-						i = groupSeparator.Length; 
-						do {
-							buffy[--position] = groupSeparator[--i];
-						} while (i > 0);
-						
-						k = (j < groupSizes.Length) ? 
-						groupSizes[j++] : groupSizes[(groupSizes.Length - 1)];
-					}
-				} else value = -value;
-			}
-
-			while (value >= 10) {
-				buffy[--position] = digitLowerTable[(value % 10)];
-				value /= 10;
-
-				if (--k == 0) {
-					i = groupSeparator.Length; 
-					do {
-						buffy[--position] = groupSeparator[--i];
-					} while (i > 0);
-					
-					k = (j < groupSizes.Length) ? 
-					groupSizes[j++] : groupSizes[(groupSizes.Length - 1)];
-				}
-			}		 
-
-			buffy[--position] = digitLowerTable[value];
-
-			// end the pattern on the left hand side
-			if (negative) {
-				i = symbolLength; 
- 
-				switch (pattern) {
-				case 0: // ($nnn)
-					do {
-						buffy[--position] = currencySymbol[--i];
-					} while (i > 0);
-					buffy[--position] = '('; 
-					break;
-				case 1: // -$nnn
-					do {
-						buffy[--position] = currencySymbol[--i];
-					} while (i > 0);
-					buffy[--position] = '-'; 
-					break;
-				case 2: // $-nnn
-					buffy[--position] = '-'; 
-					do {
-						buffy[--position] = currencySymbol[--i];
-					} while (i > 0);
-					break;
-				case 3: // $nnn-
-					do {
-						buffy[--position] = currencySymbol[--i];
-					} while (i > 0);
-					break;
-				case 4:	// (nnn$)
-					buffy[--position] = '('; 
-					break;
-				case 5:	// -nnn$
-					buffy[--position] = '-'; 
-					break;
-				// case 6: // nnn-$
-				//	break;
-				// case 7: // nnn$-
-				//	break;
-				case 8: // -nnn $
-					buffy[--position] = '-'; 
-					break;
-				// case 9: // -$ nnn
-				//	break;
-				// case 10: // nnn $-
-				//	break;
-				case 11: // $ nnn-
-					buffy[--position] = ' '; 
-					do {
-						buffy[--position] = currencySymbol[--i];
-					} while (i > 0);
-					break;
-				case 12: // $ -nnn
-					buffy[--position] = '-'; 
-					buffy[--position] = ' '; 
-					do {
-						buffy[--position] = currencySymbol[--i];
-					} while (i > 0);
-					break;
-				// case 13: // nnn- $
-				//	break;
-				case 14: // ($ nnn)
-					buffy[--position] = ' '; 
-					do {
-						buffy[--position] = currencySymbol[--i];
-					} while (i > 0);
-					buffy[--position] = '('; 
-					break;
-				case 15: // (nnn $)
-					buffy[--position] = '('; 
-					break;				
-				}
-			} else {
-				i = symbolLength; 
-				switch (pattern) {
-				case 0: // $nnn
-					do {
-						buffy[--position] = currencySymbol[--i];
-					} while (i > 0);
-					break;
-				// case 1: // nnn$
-				//	break;
-				case 2: // $ nnn
-					buffy[--position] = ' '; 
-					do {
-						buffy[--position] = currencySymbol[--i];
-					} while (i > 0);
-					break;
-				// case 3: // nnn $
-				//	break;
-				}
-			}
-			
-			return new string (buffy, position, (size - position));
-		}
-
-		private static string FormatCurrency (long value, int precision, NumberFormatInfo nfi) 
-		{
-			int i, j, k;
-			bool negative = (value < 0);
-
-			char[] groupSeparator = nfi.CurrencyGroupSeparator.ToCharArray ();
-			char[] decimalSeparator = nfi.CurrencyDecimalSeparator.ToCharArray ();
-			char[] currencySymbol = nfi.CurrencySymbol.ToCharArray ();
-			int[] groupSizes = nfi.CurrencyGroupSizes;
-			int pattern = negative ? nfi.CurrencyNegativePattern : nfi.CurrencyPositivePattern;
-			int symbolLength = currencySymbol.Length;
-			
-			int padding = (precision >= 0) ? precision : nfi.CurrencyDecimalDigits;	     
-			int size = maxLongLength + (groupSeparator.Length * maxLongLength) + padding + 2 + 
+			int size = maxLength + (groupSeparator.Length * maxLength) + padding + 2 + 
 			decimalSeparator.Length + symbolLength;	
 			char[] buffy = new char[size];
 			int position = size;
@@ -1029,17 +576,7 @@ namespace System {
 			return new string (buffy, position, (size - position));
 		}
 
-		private static string FormatCurrency (sbyte value, int precision, NumberFormatInfo nfi) 
-		{
-			return FormatCurrency ((int)value, precision, nfi);
-		}
-
-		private static string FormatCurrency (ushort value, int precision, NumberFormatInfo nfi) 
-		{
-			return FormatCurrency ((uint)value, precision, nfi);			
-		}
-
-		private static string FormatCurrency (uint value, int precision, NumberFormatInfo nfi) 
+		private static string FormatCurrency (ulong value, int precision, NumberFormatInfo nfi, int maxLength) 
 		{
 			int i, j, k;
 
@@ -1051,102 +588,7 @@ namespace System {
 			int symbolLength = currencySymbol.Length;
 			
 			int padding = (precision >= 0) ? precision : nfi.CurrencyDecimalDigits;	     
-			int size = maxIntLength + (groupSeparator.Length * maxIntLength) + padding + 2 + 
-			decimalSeparator.Length + symbolLength;	
-			char[] buffy = new char[size];
-			int position = size;
-
-			// set up the pattern from IFormattible, no negative
-			i = symbolLength; 
-			switch (pattern) {
-			// case 0: // $nnn
-			//	break;
-			case 1: // nnn$
-				do {
-					buffy[--position] = currencySymbol[--i];
-				} while (i > 0);
-				break;
-			// case 2: // $ nnn
-			//	break;
-			case 3: // nnn $
-				do {
-					buffy[--position] = currencySymbol[--i];
-				} while (i > 0);
-				buffy[--position] = ' '; 
-				break;
-			}
-			
-			// right pad it w/ precision 0's
-			while (padding-- > 0)
-				buffy[--position] = '0';
-
-			// put on decimal separator if we moved over and put a 0 
-			if (position < size && buffy[position] == '0') {
-				i = decimalSeparator.Length; 
-				do {
-					buffy[--position] = decimalSeparator[--i];
-				} while (i > 0);			
-			}
-
-			// loop through, keeping track of where you are in the
-			// group sizes array and putting out the group separator
-			// when needed
-			j = 0;
-			k = groupSizes[j++];
-		       
-			while (value >= 10) {
-				buffy[--position] = digitLowerTable[(value % 10)];
-				value /= 10;
-
-				if (--k == 0) {
-					i = groupSeparator.Length; 
-					do {
-						buffy[--position] = groupSeparator[--i];
-					} while (i > 0);
-					
-					k = (j < groupSizes.Length) ? 
-					groupSizes[j++] : groupSizes[(groupSizes.Length - 1)];
-				}
-			}		 
-
-			buffy[--position] = digitLowerTable[value];
-
-			// end the pattern on the left hand side
-			i = symbolLength; 
-			switch (pattern) {
-			case 0: // $nnn
-				do {
-					buffy[--position] = currencySymbol[--i];
-				} while (i > 0);
-				break;
-			// case 1: // nnn$
-			//	break;
-			case 2: // $ nnn
-				buffy[--position] = ' '; 
-				do {
-					buffy[--position] = currencySymbol[--i];
-				} while (i > 0);
-				break;
-			// case 3: // nnn $
-				//	break;
-			}
-			
-			return new string (buffy, position, (size - position));
-		}
-
-		private static string FormatCurrency (ulong value, int precision, NumberFormatInfo nfi) 
-		{
-			int i, j, k;
-
-			char[] groupSeparator = nfi.CurrencyGroupSeparator.ToCharArray ();
-			char[] decimalSeparator = nfi.CurrencyDecimalSeparator.ToCharArray ();
-			char[] currencySymbol = nfi.CurrencySymbol.ToCharArray ();
-			int[] groupSizes = nfi.CurrencyGroupSizes;
-			int pattern = nfi.CurrencyPositivePattern;
-			int symbolLength = currencySymbol.Length;
-			
-			int padding = (precision >= 0) ? precision : nfi.CurrencyDecimalDigits;	     
-			int size = maxLongLength + (groupSeparator.Length * maxLongLength) + padding + 2 + 
+			int size = maxLength + (groupSeparator.Length * maxLength) + padding + 2 + 
 			decimalSeparator.Length + symbolLength;	
 			char[] buffy = new char[size];
 			int position = size;
@@ -1243,51 +685,9 @@ namespace System {
 		// over, pad w/ zeros.
 		//
 
-		private static string FormatDecimal (byte value, int precision) 
+		private static string FormatDecimal (long value, int precision, int maxLength)
 		{
-			return FormatDecimal ((uint)value, precision);
-		}
-
-		private static string FormatDecimal (short value, int precision) 
-		{
-			return FormatDecimal ((int)value, precision);
-		}
-	
-		private static string FormatDecimal (int value, int precision)
-		{
-			int size = (precision > 0) ? (maxIntLength + precision) : maxIntLength;
-			char[] buffy = new char[size];
-			int position = size;
-			bool negative = (value < 0);
-			
-			if (negative) 
-				if (value <= -10) {
-					buffy[--position] = digitLowerTable[-(value % 10)];
-					value = value / -10;
-				} else value = -value;
-			
-			// get our value into a buffer from right to left
-			while (value >= 10) {
-				buffy[--position] = digitLowerTable[(value % 10)];
-				value /= 10;
-			}
-				
-			buffy[--position] = digitLowerTable[value];
-
-			// if we have precision left over, fill with 0's
-			precision -= (size - position); 
-			while (precision-- > 0 && position > 1) 
-				buffy[--position] = '0';
-
-			if (negative) 
-				buffy[--position] = '-';
-			
-			return new string (buffy, position, (size - position));  
-		}
-
-		private static string FormatDecimal (long value, int precision)
-		{
-			int size = (precision > 0) ? (maxLongLength + precision) : maxLongLength;
+			int size = (precision > 0) ? (maxLength + precision) : maxLength;
 			char[] buffy = new char[size];
 			int position = size;
 			bool negative = (value < 0);
@@ -1317,41 +717,9 @@ namespace System {
 			return new string (buffy, position, (size - position));  
 		}
 
-		private static string FormatDecimal (sbyte value, int precision) 
+		private static string FormatDecimal (ulong value, int precision, int maxLength)
 		{
-			return FormatDecimal ((int)value, precision);
-		}
-
-		private static string FormatDecimal (ushort value, int precision) 
-		{
-			return FormatDecimal ((uint)value, precision);
-		}
-
-		private static string FormatDecimal (uint value, int precision)
-		{
-			int size = (precision > 0) ? (maxIntLength + precision) : maxIntLength;
-			char[] buffy = new char[size];
-			int position = size;
-
-			// get our value into a buffer from right to left
-			while (value >= 10) {
-				buffy[--position] = digitLowerTable[(value % 10)];
-				value /= 10;
-			}
-				
-			buffy[--position] = digitLowerTable[value];
-			
-			// if we have precision left over, fill with 0's
-			precision -= (size - position); 
-			while (precision-- > 0 && position > 1) 
-				buffy[--position] = '0';
-
-			return new string (buffy, position, (size - position));  
-		}
-
-		private static string FormatDecimal (ulong value, int precision)
-		{
-			int size = (precision > 0) ? (maxLongLength + precision) : maxLongLength;
+			int size = (precision > 0) ? (maxLength + precision) : maxLength;
 			char[] buffy = new char[size];
 			int position = size;
 
@@ -1395,113 +763,13 @@ namespace System {
 		// have a positive exponential.
 		//
 		
-		private static string FormatExponential (byte value, int precision, bool upper) 
-		{
-			return FormatExponential ((uint)value, precision, upper);
-		}
-
-		private static string FormatExponential (short value, int precision, bool upper) 
-		{
-			return FormatExponential ((int)value, precision, upper);
-		}
-
-		private static string FormatExponential (int value, int precision, bool upper)
+		private static string FormatExponential (long value, int precision, bool upper, int maxLength)
 		{
 			bool negative = (value < 0);
 			int padding = (precision >= 0) ? precision : 6;
 			char[] buffy = new char[(padding + 8)];
-			char[] tmp = new char [maxIntLength];
-			int exponent = 0, position = maxIntLength;
-			int exp = 0, idx = 0;
-			ulong pow = 10;
-
-			// ugly, but doing it since abs(Int32.MinValue) > Int.MaxValue
-			uint number = (negative) ? (uint)((-(value + 1)) + 1) : (uint)value;
-
-			// need to calculate the number of places to know if we need to round later
-			if (negative && value <= -10) {
-				value /= -10;
-				exp++;
-			}
-
-			while (value >= 10) {
-				value /= 10;
-				exp++;
-			}
-							
-			if (exp > padding) {
-
-				// highest number we should goto before we round
-				while (idx++ <= padding)
-					pow *= 10;
-
-				// get our value into a buffer
-				while (number > pow) {
-					tmp[--position] = digitLowerTable[(number % 10)];
-					number /= 10;
-					exponent++;
-				}
-			
-				number += 5;
-			}
-
-			while (number >= 10) {
-				tmp[--position] = digitLowerTable[(number% 10)];
-				number /= 10;
-				exponent++;
-			}		       
-
-			tmp[--position] = digitLowerTable[number];
-			idx = 0;
-			
-			// go left to right in filling up new string
-			if (negative)
-				buffy[idx++] = '-';
-
-			// we know we have at least one in there, followed 
-			// by a decimal point
-			buffy[idx++] = tmp[position++];
-			if (precision != 0)
-				buffy[idx++] = '.';
-
-			// copy over the remaining digits until we run out,
-			// or we've passed our specified precision
-			while (padding > 0 && position < maxIntLength) {
-				buffy[idx++] = tmp[position++];
-				padding--;
-			}
-			
-			// if we still have more precision to go, add some
-			// zeros
-			while (padding > 0) {
-				buffy[idx++] = '0';
-				padding--;
-			}
-			
-			// we know these next 3 spots
-			buffy[idx++] = upper ? 'E' : 'e';
-			buffy[idx++] = '+';
-			buffy[idx++] = '0';
-			
-			// next two digits depend on our length
-			if (exponent >= 10) {
-				buffy[idx++] = digitLowerTable[(exponent / 10)];
-				buffy[idx] = digitLowerTable[(exponent % 10)];
-			} else { 
-				buffy[idx++] = '0';
-				buffy[idx] = digitLowerTable[exponent];
-			}
-
-			return new string(buffy, 0, ++idx); 
-		}
-
-		private static string FormatExponential (long value, int precision, bool upper)
-		{
-			bool negative = (value < 0);
-			int padding = (precision >= 0) ? precision : 6;
-			char[] buffy = new char[(padding + 8)];
-			char[] tmp = new char [maxLongLength];
-			int exponent = 0, position = maxLongLength;
+			char[] tmp = new char [maxLength];
+			int exponent = 0, position = maxLength;
 			int exp = 0, idx = 0;
 			ulong pow = 10;
 
@@ -1556,7 +824,7 @@ namespace System {
 
 			// copy over the remaining digits until we run out,
 			// or we've passed our specified precision
-			while (padding > 0 && position < maxLongLength) {
+			while (padding > 0 && position < maxLength) {
 				buffy[idx++] = tmp[position++];
 				padding--;
 			}
@@ -1585,100 +853,12 @@ namespace System {
 			return new string(buffy, 0, ++idx); 
 		}
 
-		private static string FormatExponential (sbyte value, int precision, bool upper) 
-		{
-			return FormatExponential ((int)value, precision, upper);
-		}
-
-		private static string FormatExponential (ushort value, int precision, bool upper) 
-		{
-			return FormatExponential ((uint)value, precision, upper);
-		}
-
-		private static string FormatExponential (uint value, int precision, bool upper)
+		private static string FormatExponential (ulong value, int precision, bool upper, int maxLength)
 		{
 			int padding = (precision >= 0) ? precision : 6;
 			char[] buffy = new char[(padding + 8)];
-			char[] tmp = new char [maxIntLength];
-			int exponent = 0, position = maxIntLength;
-			int exp = 0, idx = 0;
-			ulong pow = 10;
-			ulong number = (ulong)value;
-
-			// need to calculate the number of places to know if we need to round later
-			while (value >= 10) {
-				value /= 10;
-				exp++;
-			}
-							
-			if (exp > padding) {
-
-				// highest number we should goto before we round
-				while (idx++ <= padding)
-					pow *= 10;
-				
-				// get our value into a buffer
-				while (number > pow) {
-					tmp[--position] = digitLowerTable[(number % 10)];
-					number /= 10;
-					exponent++;
-				}
-				
-				number += 5;
-			}
-
-			while (number >= 10) {
-				tmp[--position] = digitLowerTable[(number% 10)];
-				number /= 10;
-				exponent++;
-			}		       
-
-			tmp[--position] = digitLowerTable[number];
-			idx = 0;
-
-			// we know we have at least one in there, followed 
-			// by a decimal point
-			buffy[idx++] = tmp[position++];
-			if (precision != 0)
-				buffy[idx++] = '.';
-
-			// copy over the remaining digits until we run out,
-			// or we've passed our specified precision
-			while (padding > 0 && position < maxIntLength) {
-				buffy[idx++] = tmp[position++];
-				padding--;
-			}
-			
-			// if we still have more precision to go, add some
-			// zeros
-			while (padding > 0) {
-				buffy[idx++] = '0';
-				padding--;
-			}
-			
-			// we know these next 3 spots
-			buffy[idx++] = upper ? 'E' : 'e';
-			buffy[idx++] = '+';
-			buffy[idx++] = '0';
-			
-			// next two digits depend on our length
-			if (exponent >= 10) {
-				buffy[idx++] = digitLowerTable[(exponent / 10)];
-				buffy[idx] = digitLowerTable[(exponent % 10)];
-			} else { 
-				buffy[idx++] = '0';
-				buffy[idx] = digitLowerTable[exponent];
-			}
-
-			return new string(buffy, 0, ++idx); 
-		}
-
-		private static string FormatExponential (ulong value, int precision, bool upper)
-		{
-			int padding = (precision >= 0) ? precision : 6;
-			char[] buffy = new char[(padding + 8)];
-			char[] tmp = new char [maxLongLength];
-			int exponent = 0, position = maxLongLength;
+			char[] tmp = new char [maxLength];
+			int exponent = 0, position = maxLength;
 			int exp = 0, idx = 0;
 			ulong pow = 10;
 			ulong number = value;
@@ -1722,7 +902,7 @@ namespace System {
 
 			// copy over the remaining digits until we run out,
 			// or we've passed our specified precision
-			while (padding > 0 && position < maxLongLength) {
+			while (padding > 0 && position < maxLength) {
 				buffy[idx++] = tmp[position++];
 				padding--;
 			}
@@ -1766,24 +946,15 @@ namespace System {
 		// plop a . down, then go for our number. 
 		//
 
-		private static string FormatFixedPoint (byte value, int precision, NumberFormatInfo nfi)
+		private static string FormatFixedPoint (long value, int precision, NumberFormatInfo nfi, int maxLength)
 		{
-			return FormatFixedPoint ((uint)value, precision, nfi);
-		}
-
-		private static string FormatFixedPoint (short value, int precision, NumberFormatInfo nfi)
-		{
-			return FormatFixedPoint ((int)value, precision, nfi);
-		}
-
-		private static string FormatFixedPoint (int value, int precision, NumberFormatInfo nfi)
-		{
-			int padding = (precision >= 0) ? (precision + maxIntLength) : (nfi.NumberDecimalDigits + maxIntLength);
+			int padding = (precision >= 0) ? (precision + maxLength) : (nfi.NumberDecimalDigits + maxLength);
 			char[] buffy = new char[padding];
 			int position = padding;
 			bool negative = (value < 0);
+			
 			// fill up w/ precision # of 0's
-			while (position > (maxIntLength - 1)) 
+			while (position > (maxLength - 1)) 
 				buffy[--position] = '0';
 
 			if (precision != 0)
@@ -1809,82 +980,15 @@ namespace System {
 			return new string (buffy, position, (padding - position));
 		}
 
-		private static string FormatFixedPoint (long value, int precision, NumberFormatInfo nfi)
+
+		private static string FormatFixedPoint (ulong value, int precision, NumberFormatInfo nfi, int maxLength)
 		{
-			int padding = (precision >= 0) ? (precision + maxLongLength) : (nfi.NumberDecimalDigits + maxLongLength);
-			char[] buffy = new char[padding];
-			int position = padding;
-			bool negative = (value < 0);
-			
-			// fill up w/ precision # of 0's
-			while (position > (maxLongLength - 1)) 
-				buffy[--position] = '0';
-
-			if (precision != 0)
-				buffy[position--] = '.';
-
-			if (negative)
-				if (value <= -10) {
-					buffy[position--] = digitLowerTable[-(value % 10)];
-					value = value / -10;
-				} else value = -value;
-			
-			// fill up w/ the value
-			while (value >= 10) {
-				buffy[position--] = digitLowerTable[(value % 10)];
-				value = value / 10;
-			}
-
-			buffy[position] = digitLowerTable[value];
-
-			if (negative) 
-				buffy[--position] = '-';
-			
-			return new string (buffy, position, (padding - position));
-		}
-
-		private static string FormatFixedPoint (sbyte value, int precision, NumberFormatInfo nfi)
-		{
-			return FormatFixedPoint ((int)value, precision, nfi);
-		}
-
-		private static string FormatFixedPoint (ushort value, int precision, NumberFormatInfo nfi)
-		{
-			return FormatFixedPoint ((uint)value, precision, nfi);
-		}
-
-		private static string FormatFixedPoint (uint value, int precision, NumberFormatInfo nfi)
-		{
-			int padding = (precision >= 0) ? (precision + maxIntLength) : (nfi.NumberDecimalDigits + maxIntLength);
+			int padding = (precision >= 0) ? (precision + maxLength) : (nfi.NumberDecimalDigits + maxLength);
 			char[] buffy = new char[padding];
 			int position = padding;
 
 			// fill up w/ precision # of 0's
-			while (position > (maxIntLength - 1)) 
-				buffy[--position] = '0';
-
-			if (precision != 0)
-				buffy[position--] = '.';
-
-			// fill up w/ the value
-			while (value >= 10) {
-				buffy[position--] = digitLowerTable[(value % 10)];
-				value = value / 10;
-			}
-
-			buffy[position] = digitLowerTable[value];
-			
-			return new string (buffy, position, (padding - position));
-		}
-
-		private static string FormatFixedPoint (ulong value, int precision, NumberFormatInfo nfi)
-		{
-			int padding = (precision >= 0) ? (precision + maxLongLength) : (nfi.NumberDecimalDigits + maxLongLength);
-			char[] buffy = new char[padding];
-			int position = padding;
-
-			// fill up w/ precision # of 0's
-			while (position > (maxLongLength - 1)) 
+			while (position > (maxLength - 1)) 
 				buffy[--position] = '0';
 
 			if (precision != 0)
@@ -1939,127 +1043,17 @@ namespace System {
 		// discarded.
 		//
 
-		internal static string FormatGeneral (byte value, int precision, NumberFormatInfo nfi, bool upper) {
-			return FormatGeneral ((uint)value, precision, nfi, upper);
-		}
-
-		internal static string FormatGeneral (short value, int precision, NumberFormatInfo nfi, bool upper) {
-			return FormatGeneral ((int)value, precision, nfi, upper);
-		}
-
-		internal static string FormatGeneral (int value, int precision, NumberFormatInfo nfi, bool upper) 
-		{
-			bool negative = (value < 0);
-			char[] tmp = new char [maxIntLength];
-			int exponent = 0;
-			int position = maxIntLength;
-			
-			// ugly, but doing it since abs(Int32.MinValue) > Int.MaxValue
-			uint number = (negative) ? (uint)((-(value + 1)) + 1) : (uint)value;
-
-			// get number into a buffer, going to be doing this no matter what
-			if (negative)
-				if (value <= -10) {
-					tmp[--position] = digitLowerTable[-(value % 10)];
-					value /= -10;
-					exponent++;
-				} else value = -value;
-
-			while (value >= 10) {
-				tmp[--position] = digitLowerTable[(value % 10)];
-				value /= 10;
-				exponent++;
-			}
-			
-			tmp[--position] = digitLowerTable[value];
-
-			// integral values are formatted using fixed point when precision
-			// is not specified. But also trailing decimal point and zeros are
-			// discared. So for int's it will always be .00, so just compute
-			// here and save the call to FormatFixedPoint & trim.
-			if (precision <= 0 || exponent < precision) {
-				if (negative) 
-					tmp[--position] = '-';
-				
-				return new string (tmp, position, (maxIntLength - position)); 
-			}
-
-			// else our exponent was > precision, use exponential format
-			// precision = number of digits to show. 
-			int idx = 0;
-			ulong pow = 1;
-
-			exponent = 0;
-			position = maxIntLength;
-			
-			// Loop through while our number is less than the 10 ^ precision, then
-			// add 5 to that to round it out, and keep continuing
-			while (idx++ <= precision)
-				pow *= 10;
-			
-			while (number > pow) {
-				tmp[--position] = digitLowerTable[(number % 10)];
-				number /= 10;
-				exponent++;
-			}
-
-			number += 5;
-
-			while (number >= 10) {
-				tmp[--position] = digitLowerTable[(number % 10)];
-				number /= 10;
-				exponent++;
-			}
-
-			tmp[--position] = digitLowerTable[number];
-
-			// finally, make our final buffer, at least precision + 6 for 'E+XX' and '-'
-			// and reuse pow for size
-			idx = position;
-			position = 0;
-			pow = (ulong)(precision + 6);
-			char[] buffy = new char[pow];
-
-			if (negative)
-				buffy[position++] = '-';
-			
-			buffy[position++] = tmp[idx++];
-			buffy[position] = '.';
-
-			// for the remaining precisions copy over rounded tmp
-			precision--;
-			while (precision-- > 0)
-				buffy[++position] = tmp[idx++];
-
-			// get rid of ending zeros
-			while (buffy[position] == '0')
-				position--;
-
-			// if we backed up all the way to the ., over write it
-			if (buffy[position] != '.')
-				position++;			
-
-			// ints can only be +, e or E depending on format, plus XX
-			buffy[position++] = upper ? 'E' : 'e';
-			buffy[position++] = '+';
-
-			if (exponent >= 10) {
-				buffy[position++] = digitLowerTable[(exponent / 10)];
-				buffy[position++] = digitLowerTable[(exponent % 10)];
-			} else { 
-				buffy[position++] = '0';
-				buffy[position++] = digitLowerTable[exponent];
-			}
-			
-			return new string (buffy, 0, position);
-		}
-
 		internal static string FormatGeneral (long value, int precision, NumberFormatInfo nfi, bool upper) 
 		{
+			return FormatGeneral (value, precision, nfi, upper, maxIntLength);
+		}
+		
+		internal static string FormatGeneral (long value, int precision, NumberFormatInfo nfi, bool upper, int maxLength) 
+		{
 			bool negative = (value < 0);
-			char[] tmp = new char [maxLongLength];
+			char[] tmp = new char [maxLength];
 			int exponent = 0;
-			int position = maxLongLength;
+			int position = maxLength;
 
 			// ugly, but doing it since abs(Int32.MinValue) > Int.MaxValue
 			ulong number = (negative) ? (ulong)(-(value + 1) + 1) : (ulong)value;
@@ -2077,7 +1071,7 @@ namespace System {
 			}
 			
 			tmp[--position] = digitLowerTable[value];
-			exponent = (maxLongLength - position) - 1;
+			exponent = (maxLength - position) - 1;
 
 			// integral values are formatted using fixed point when precision
 			// is not specified. But also trailing decimal point and zeros are
@@ -2087,7 +1081,7 @@ namespace System {
 				if (negative) 
 					tmp[--position] = '-';
 				
-				return new string (tmp, position, (maxLongLength - position)); 
+				return new string (tmp, position, (maxLength - position)); 
 			}
 
 			// else our exponent was > precision, use exponential format
@@ -2096,7 +1090,7 @@ namespace System {
 			ulong pow = 1;
 
 			exponent = 0;
-			position = maxLongLength;
+			position = maxLength;
 
 			// Loop through while our number is less than the 10 ^ precision, then
 			// add 5 to that to round it out, and keep continuing
@@ -2160,109 +1154,11 @@ namespace System {
 			return new string (buffy, 0, position);
 		}
 
-		internal static string FormatGeneral (sbyte value, int precision, NumberFormatInfo nfi, bool upper) {
-			return FormatGeneral ((int)value, precision, nfi, upper);
-		}
-
-		internal static string FormatGeneral (ushort value, int precision, NumberFormatInfo nfi, bool upper) {
-			return FormatGeneral ((uint)value, precision, nfi, upper);
-		}
-
-		internal static string FormatGeneral (uint value, int precision, NumberFormatInfo nfi, bool upper) 
+		internal static string FormatGeneral (ulong value, int precision, NumberFormatInfo nfi, bool upper, int maxLength)
 		{
-			char[] tmp = new char [maxIntLength];
+			char[] tmp = new char [maxLength];
 			int exponent = 0;
-			int position = maxIntLength;
-			ulong number = (ulong)value;
-
-			// get number into a buffer, going to be doing this no matter what
-			while (value >= 10) {
-				tmp[--position] = digitLowerTable[(value % 10)];
-				value /= 10;
-			}
-			
-			tmp[--position] = digitLowerTable[value];
-			exponent = (maxIntLength - position) - 1;
-
-			// integral values are formatted using fixed point when precision
-			// is not specified. But also trailing decimal point and zeros are
-			// discared. So for int's it will always be .00, so just compute
-			// here and save the call to FormatFixedPoint & trim.
-			if (precision <= 0 || exponent < precision) 
-				return new string (tmp, position, (maxIntLength - position)); 
-
-			// else our exponent was > precision, use exponential format
-			// precision = number of digits to show. 
-			int idx = 0;
-			ulong pow = 1;
-
-			exponent = 0;
-			position = maxIntLength;
-						
-			// Loop through while our number is less than the 10 ^ precision, then
-			// add 5 to that to round it out, and keep continuing
-			while (idx++ <= precision)
-				pow *= 10;
-
-			while (number > pow) {
-				tmp[--position] = digitLowerTable[(number % 10)];
-				number /= 10;
-				exponent++;
-			}
-
-			number += 5;
-
-			while (number >= 10) {
-				tmp[--position] = digitLowerTable[(number % 10)];
-				number /= 10;
-				exponent++;
-			}
-
-			tmp[--position] = digitLowerTable[number]; 	
-
-			// finally, make our final buffer, at least precision + 6 for 'E+XX' and '-'
-			// and reuse pow for size
-			idx = position;
-			position = 0;
-			pow = (ulong)(precision + 6);
-			char[] buffy = new char[pow];
-
-			buffy[position++] = tmp[idx++];
-			buffy[position] = '.';
-
-			// for the remaining precisions copy over rounded tmp
-			precision--;
-			while (precision-- > 0)
-				buffy[++position] = tmp[idx++];
-
-			// get rid of ending zeros
-			while (buffy[position] == '0')
-				position--;
-
-			// if we backed up all the way to the ., over write it
-			if (buffy[position] != '.')
-				position++;			
-
-			// ints can only be +, e or E depending on format, plus XX
-			buffy[position++] = upper ? 'E' : 'e';
-			buffy[position++] = '+';
-
-			if (exponent >= 10) {
-				buffy[position++] = digitLowerTable[(exponent / 10)];
-				buffy[position++] = digitLowerTable[(exponent % 10)];
-			} else { 
-				buffy[position++] = '0';
-				buffy[position++] = digitLowerTable[exponent];
-			}
-			
-			return new string (buffy, 0, position);
-		}
-
-		internal static string FormatGeneral (ulong value, int precision, NumberFormatInfo nfi, bool upper) 
-		{
-			char[] tmp = new char [maxLongLength];
-			int exponent = 0;
-			int position = maxLongLength;
+			int position = maxLength;
 			ulong number = value;
 
 			// get number into a buffer, going to be doing this no matter what
@@ -2279,7 +1175,7 @@ namespace System {
 			// discared. So for int's it will always be .00, so just compute
 			// here and save the call to FormatFixedPoint & trim.
 			if (precision <= 0 || exponent < precision) 
-				return new string (tmp, position, (maxLongLength - position)); 
+				return new string (tmp, position, (maxLength - position)); 
 
 			// else our exponent was > precision, use exponential format
 			// precision = number of digits to show. 
@@ -2287,7 +1183,7 @@ namespace System {
 			ulong pow = 1;
 
 			exponent = 0;
-			position = maxLongLength;
+			position = maxLength;
 
 			// Loop through while our number is less than the 10 ^ precision, then
 			// add 5 to that to round it out, and keep continuing
@@ -2382,15 +1278,7 @@ namespace System {
 		// and a spot for decimal separator.
 		//
 
-		private static string FormatNumber (byte value, int precision, NumberFormatInfo nfi) {
-			return FormatNumber ((uint)value, precision, nfi);
-		}
-
-		private static string FormatNumber (short value, int precision, NumberFormatInfo nfi) {
-			return FormatNumber ((int)value, precision, nfi);
-		}
-
-		private static string FormatNumber (int value, int precision, NumberFormatInfo nfi) 
+		private static string FormatNumber (long value, int precision, NumberFormatInfo nfi, int maxLength) 
 		{
 			int i, j, k;
 			char[] groupSeparator = nfi.NumberGroupSeparator.ToCharArray ();
@@ -2399,117 +1287,7 @@ namespace System {
 
 			int padding = (precision >= 0) ? precision : nfi.NumberDecimalDigits;
 			int pattern = nfi.NumberNegativePattern;
-			int size = maxIntLength + (maxIntLength * groupSeparator.Length) + padding +
-			decimalSeparator.Length + 4;
-			char[] buffy = new char[size];
-			int position = size;
-			bool negative = (value < 0);
-			
-			// pattern for negative values, defined in NumberFormatInfo
-			if (negative) {
-				switch (pattern) {
-				case 0: // (nnn)
-					buffy[--position] = ')'; 
-					break;
-				// case 1: // -nnn
-				//	break;
-				// case 2: // - nnn
-				//	break;
-				case 3: // nnn-
-					buffy[--position] = '-'; 
-					break;
-				case 4:	// nnn -
-					buffy[--position] = '-'; 
-					buffy[--position] = ' '; 
-					break;
-				}
-			}
-
-			// right pad it w/ precision 0's
-			while (padding-- > 0)
-				buffy[--position] = '0';
-
-			// put on decimal separator
-			if (position != size) {
-				i = decimalSeparator.Length; 
-				do {
-					buffy[--position] = decimalSeparator[--i];
-				} while (i > 0);			
-			}
-
-			// loop through, keeping track of where you are in the
-			// group sizes array and putting out the group separator
-			// when needed
-			j = 0;
-			k = groupSizes[j++];
-
-			// negative hack for numbers past MinValue
-			if (negative)
-				if (value <= -10) {
-					buffy[--position] = digitLowerTable[-(value % 10)];
-					value = value / -10;
-					
-					if (--k == 0) {
-						i = groupSeparator.Length; 
-						do {
-							buffy[--position] = groupSeparator[--i];
-						} while (i > 0);
-						
-						k = (j < groupSizes.Length) ? 
-						groupSizes[j++] : groupSizes[(groupSizes.Length - 1)];
-					}
-				} else value = -value;
-
-			while (value >= 10) {
-				buffy[--position] = digitLowerTable[(value % 10)];
-				value /= 10;
-
-				if (--k == 0) {
-					i = groupSeparator.Length; 
-					do {
-						buffy[--position] = groupSeparator[--i];
-					} while (i > 0);
-					
-					k = (j < groupSizes.Length) ? 
-					groupSizes[j++] : groupSizes[(groupSizes.Length - 1)];
-				}
-			}		 
-
-			buffy[--position] = digitLowerTable[value];
-
-			// pattern for negative values, defined in NumberFormatInfo
-			if (negative) {
-				switch (pattern) {
-				case 0: // (nnn)
-					buffy[--position] = '('; 
-					break;
-				case 1: // -nnn
-					buffy[--position] = '-'; 
-					break;
-				case 2: // - nnn
-					buffy[--position] = ' '; 
-					buffy[--position] = '-'; 
-					break;
-				// case 3: // nnn-
-				//	break;
-				// case 4: // nnn -
-				//	break;
-				}
-			}
-			
-			return new string (buffy, position, (size - position));
-		}
-
-		private static string FormatNumber (long value, int precision, NumberFormatInfo nfi) 
-		{
-			int i, j, k;
-			char[] groupSeparator = nfi.NumberGroupSeparator.ToCharArray ();
-			char[] decimalSeparator = nfi.NumberDecimalSeparator.ToCharArray ();
-			int[] groupSizes = nfi.NumberGroupSizes;
-
-			int padding = (precision >= 0) ? precision : nfi.NumberDecimalDigits;
-			int pattern = nfi.NumberNegativePattern;
-			int size = maxLongLength + (maxLongLength * groupSeparator.Length) + padding +
+			int size = maxLength + (maxLength * groupSeparator.Length) + padding +
 			decimalSeparator.Length + 4;
 			char[] buffy = new char[size];
 			int position = size;
@@ -2610,15 +1388,7 @@ namespace System {
 			return new string (buffy, position, (size - position));
 		}
 
-		private static string FormatNumber (sbyte value, int precision, NumberFormatInfo nfi) {
-			return FormatNumber ((int)value, precision, nfi);
-		}
-
-		private static string FormatNumber (ushort value, int precision, NumberFormatInfo nfi) {
-			return FormatNumber ((uint)value, precision, nfi);
-		}
-
-		private static string FormatNumber (uint value, int precision, NumberFormatInfo nfi) 
+		private static string FormatNumber (ulong value, int precision, NumberFormatInfo nfi, int maxLength)
 		{
 			int i, j, k;
 			char[] groupSeparator = nfi.NumberGroupSeparator.ToCharArray ();
@@ -2626,58 +1396,7 @@ namespace System {
 			int[] groupSizes = nfi.NumberGroupSizes;
 
 			int padding = (precision >= 0) ? precision : nfi.NumberDecimalDigits;
-			int size = maxIntLength + (maxIntLength * groupSeparator.Length) + padding +
-			decimalSeparator.Length + 2;
-			char[] buffy = new char[size];
-			int position = size;
-			
-			// right pad it w/ precision 0's
-			while (padding-- > 0)
-				buffy[--position] = '0';
-						
-			// put on decimal separator
-			if (position != size) {
-				i = decimalSeparator.Length; 
-				do {
-					buffy[--position] = decimalSeparator[--i];
-				} while (i > 0);			
-			}
-
-			// loop through, keeping track of where you are in the
-			// group sizes array and putting out the group separator
-			// when needed
-			j = 0;
-			k = groupSizes[j++];
-
-			while (value >= 10) {
-				buffy[--position] = digitLowerTable[(value % 10)];
-				value /= 10;
-
-				if (--k == 0) {
-					i = groupSeparator.Length; 
-					do {
-						buffy[--position] = groupSeparator[--i];
-					} while (i > 0);
-					
-					k = (j < groupSizes.Length) ? 
-					groupSizes[j++] : groupSizes[(groupSizes.Length - 1)];
-				}
-			}		 
-
-			buffy[--position] = digitLowerTable[value];
-
-			return new string (buffy, position, (size - position));
-		}
-
-		private static string FormatNumber (ulong value, int precision, NumberFormatInfo nfi) 
-		{
-			int i, j, k;
-			char[] groupSeparator = nfi.NumberGroupSeparator.ToCharArray ();
-			char[] decimalSeparator = nfi.NumberDecimalSeparator.ToCharArray ();
-			int[] groupSizes = nfi.NumberGroupSizes;
-
-			int padding = (precision >= 0) ? precision : nfi.NumberDecimalDigits;
-			int size = maxLongLength + (maxLongLength * groupSeparator.Length) + padding +
+			int size = maxLength + (maxLength * groupSeparator.Length) + padding +
 			decimalSeparator.Length + 2;
 			char[] buffy = new char[size];
 			int position = size;
@@ -2743,17 +1462,7 @@ namespace System {
 		//  I have them commented out in the switch statement
 		//
 
-		private static string FormatPercent (byte value, int precision, NumberFormatInfo nfi) 
-		{
-			return FormatPercent ((uint)value, precision, nfi);
-		}
-
-		private static string FormatPercent (short value, int precision, NumberFormatInfo nfi) 
-		{
-			return FormatPercent ((int)value, precision, nfi);
-		}
-
-		private static string FormatPercent (int value, int precision, NumberFormatInfo nfi) 
+		private static string FormatPercent (long value, int precision, NumberFormatInfo nfi, int maxLength)
 		{
 			int i, j, k;
 			bool negative = (value < 0);
@@ -2766,7 +1475,7 @@ namespace System {
 			int symbolLength = percentSymbol.Length;
 			
 			int padding = (precision >= 0) ? precision : nfi.PercentDecimalDigits;	     
-			int size = maxIntLength + (groupSeparator.Length * maxIntLength) + padding + 2 + 
+			int size = maxLength + (groupSeparator.Length * maxLength) + padding + 2 + 
 			decimalSeparator.Length + symbolLength;	
 			char[] buffy = new char[size];
 			int position = size;
@@ -2913,177 +1622,7 @@ namespace System {
 			return new string (buffy, position, (size - position));
 		}
 
-		private static string FormatPercent (long value, int precision, NumberFormatInfo nfi) 
-		{
-			int i, j, k;
-			bool negative = (value < 0);
-
-			char[] groupSeparator = nfi.PercentGroupSeparator.ToCharArray ();
-			char[] decimalSeparator = nfi.PercentDecimalSeparator.ToCharArray ();
-			char[] percentSymbol = nfi.PercentSymbol.ToCharArray ();
-			int[] groupSizes = nfi.PercentGroupSizes;
-			int pattern = negative ? nfi.PercentNegativePattern : nfi.PercentPositivePattern;
-			int symbolLength = percentSymbol.Length;
-			
-			int padding = (precision >= 0) ? precision : nfi.PercentDecimalDigits;	     
-			int size = maxLongLength + (groupSeparator.Length * maxLongLength) + padding + 2 + 
-			decimalSeparator.Length + symbolLength;	
-			char[] buffy = new char[size];
-			int position = size;
-
-			// set up the pattern from IFormattible
-			if (negative) {
-				i = symbolLength; 
- 
-				switch (pattern) {
-				case 0: // -nnn %
-					do {
-						buffy[--position] = percentSymbol[--i];
-					} while (i > 0);
-					buffy[--position] = ' '; 
-					break;
-				case 1: // -nnn%
-					do {
-						buffy[--position] = percentSymbol[--i];
-					} while (i > 0);
-					break;
-				// case 2: // -%nnn
-				//	break;
-				}
-			} else {
-				i = symbolLength; 
-				switch (pattern) {
-				case 0: // nnn %
-					do {
-						buffy[--position] = percentSymbol[--i];
-					} while (i > 0);
-					buffy[--position] = ' ';					
-					break;
-				case 1: // nnn%
-					do {
-						buffy[--position] = percentSymbol[--i];
-					} while (i > 0);
-					break;
-				// case 2: // %nnn
-				//	break;
-				}
-			}
-			
-			// right pad it w/ precision 0's
-			while (padding-- > 0)
-				buffy[--position] = '0';
-
-			// put on decimal separator if we moved over and put a 0 
-			if (position < size && buffy[position] == '0') {
-				i = decimalSeparator.Length; 
-				do {
-					buffy[--position] = decimalSeparator[--i];
-				} while (i > 0);			
-			}
-
-			// loop through, keeping track of where you are in the
-			// group sizes array and putting out the group separator
-			// when needed
-			j = 0;
-			k = groupSizes[j++];
-
-			// all values are multiplied by 100, so tack on two 0's
-			if (value != 0) 
-				for (int c = 0; c < 2; c++) {
-					buffy[--position] = '0';
-					
-					if (--k == 0) {
-						i = groupSeparator.Length; 
-						do {
-							buffy[--position] = groupSeparator[--i];
-						} while (i > 0);
-						
-						k = (j < groupSizes.Length) ? 
-						groupSizes[j++] : groupSizes[(groupSizes.Length - 1)];
-					}
-				}
-
-			// negative hack for numbers past MinValue
-			if (negative)
-				if (value <= -10) {
-					buffy[--position] = digitLowerTable[-(value % 10)];
-					value = value / -10;
-					
-					if (--k == 0) {
-						i = groupSeparator.Length; 
-						do {
-							buffy[--position] = groupSeparator[--i];
-						} while (i > 0);
-						
-						k = (j < groupSizes.Length) ? 
-						groupSizes[j++] : groupSizes[(groupSizes.Length - 1)];
-					}
-				} else value = -value;
-
-			while (value >= 10) {
-				buffy[--position] = digitLowerTable[(value % 10)];
-				value /= 10;
-
-				if (--k == 0) {
-					i = groupSeparator.Length; 
-					do {
-						buffy[--position] = groupSeparator[--i];
-					} while (i > 0);
-					
-					k = (j < groupSizes.Length) ? 
-					groupSizes[j++] : groupSizes[(groupSizes.Length - 1)];
-				}
-			}		 
-
-			buffy[--position] = digitLowerTable[value];
-
-			// end the pattern on the left hand side
-			if (negative) {
-				i = symbolLength; 
- 
-				switch (pattern) {
-				case 0: // -nnn %
-					buffy[--position] = '-'; 
-					break;
-				case 1: // -nnn%
-					buffy[--position] = '-'; 
-					break;
-				case 2: // -%nnn
-					do {
-						buffy[--position] = percentSymbol[--i];
-					} while (i > 0);
-					buffy[--position] = '-'; 
-					break;
-				}
-			} else {
-				i = symbolLength; 
-				switch (pattern) {
-				// case 0: // nnn %
-				//	break;
-				// case 1: // nnn%
-				//	break;
-				case 2: // %nnn
-					do {
-						buffy[--position] = percentSymbol[--i];
-					} while (i > 0);
-					break;
-				}
-			}
-			
-			return new string (buffy, position, (size - position));
-		}
-
-		private static string FormatPercent (sbyte value, int precision, NumberFormatInfo nfi) 
-		{
-			return FormatPercent ((int)value, precision, nfi);
-		}
-
-		private static string FormatPercent (ushort value, int precision, NumberFormatInfo nfi) 
-		{
-			return FormatPercent ((uint)value, precision, nfi);
-		}
-
-		private static string FormatPercent (uint value, int precision, NumberFormatInfo nfi) 
+		private static string FormatPercent (ulong value, int precision, NumberFormatInfo nfi, int maxLength) 
 		{
 			int i, j, k;
 
@@ -3095,108 +1634,7 @@ namespace System {
 			int symbolLength = percentSymbol.Length;
 			
 			int padding = (precision >= 0) ? precision : nfi.PercentDecimalDigits;	     
-			int size = maxIntLength + (groupSeparator.Length * maxIntLength) + padding + 2 + 
-			decimalSeparator.Length + symbolLength;	
-			char[] buffy = new char[size];
-			int position = size;
-
-			// set up the pattern from IFormattible
-			i = symbolLength; 			
-			switch (pattern) {
-			case 0: // -nnn %
-				do {
-					buffy[--position] = percentSymbol[--i];
-				} while (i > 0);
-				buffy[--position] = ' '; 
-				break;
-			case 1: // -nnn%
-				do {
-					buffy[--position] = percentSymbol[--i];
-				} while (i > 0);
-				break;
-			// case 2: // -%nnn
-			//	break;
-			}
-
-			// right pad it w/ precision 0's
-			while (padding-- > 0)
-				buffy[--position] = '0';
-
-			// put on decimal separator if we moved over and put a 0 
-			if (position < size && buffy[position] == '0') {
-				i = decimalSeparator.Length; 
-				do {
-					buffy[--position] = decimalSeparator[--i];
-				} while (i > 0);			
-			}
-
-			// loop through, keeping track of where you are in the
-			// group sizes array and putting out the group separator
-			// when needed
-			j = 0;
-			k = groupSizes[j++];
-
-			if (value != 0) 
-				for (int c = 0; c < 2; c++) {
-					buffy[--position] = '0';
-					
-					if (--k == 0) {
-						i = groupSeparator.Length; 
-						do {
-							buffy[--position] = groupSeparator[--i];
-						} while (i > 0);
-						
-						k = (j < groupSizes.Length) ? 
-						groupSizes[j++] : groupSizes[(groupSizes.Length - 1)];
-					}
-				}
-
-			while (value >= 10) {
-				buffy[--position] = digitLowerTable[(value % 10)];
-				value /= 10;
-
-				if (--k == 0) {
-					i = groupSeparator.Length; 
-					do {
-						buffy[--position] = groupSeparator[--i];
-					} while (i > 0);
-					
-					k = (j < groupSizes.Length) ? 
-					groupSizes[j++] : groupSizes[(groupSizes.Length - 1)];
-				}
-			}		 
-
-			buffy[--position] = digitLowerTable[value];
-
-			i = symbolLength; 
-			switch (pattern) {
-			// case 0: // nnn %
-			//	break;
-			// case 1: // nnn%
-			//	break;
-			case 2: // %nnn
-				do {
-					buffy[--position] = percentSymbol[--i];
-				} while (i > 0);
-				break;
-			}
-			
-			return new string (buffy, position, (size - position));
-		}
-
-		private static string FormatPercent (ulong value, int precision, NumberFormatInfo nfi) 
-		{
-			int i, j, k;
-
-			char[] groupSeparator = nfi.PercentGroupSeparator.ToCharArray ();
-			char[] decimalSeparator = nfi.PercentDecimalSeparator.ToCharArray ();
-			char[] percentSymbol = nfi.PercentSymbol.ToCharArray ();
-			int[] groupSizes = nfi.PercentGroupSizes;
-			int pattern = nfi.PercentPositivePattern;
-			int symbolLength = percentSymbol.Length;
-			
-			int padding = (precision >= 0) ? precision : nfi.PercentDecimalDigits;	     
-			int size = maxLongLength + (groupSeparator.Length * maxLongLength) + padding + 2 + 
+			int size = maxLength + (groupSeparator.Length * maxLength) + padding + 2 + 
 			decimalSeparator.Length + symbolLength;	
 			char[] buffy = new char[size];
 			int position = size;
@@ -3301,99 +1739,22 @@ namespace System {
 		// which will loop forever when you hit -1;
 		//
 
-		private static string FormatHexadecimal (byte value, int precision, bool upper)
-		{		     
-			if (precision < 0) precision = 0;
-			int size = maxByteLength + precision;
-			char[] buffy = new char[size];
-			char[] table = upper ? digitUpperTable : digitLowerTable;
-			int position = size;
-			const ushort mask = (1 << 4) - 1;
-
-			// loop through right to left, shifting and looking up
-			// our value. Don't worry about negative
-			do {
-				buffy[--position] = table[(value & mask)];
-				value = (byte)(value >> 4);
-			} while (value != 0);
-
-			// pad w/ 0's if they want more length, if not, ignore
-			precision -= (size - position);				
-			while (precision > 0 && position > 1) {
-				buffy[--position] = '0';
-				precision--;
-			}
-			
-			return new string(buffy, position, (size - position));
-		}
-
-		private static string FormatHexadecimal (short value, int precision, bool upper)
+		private static string FormatHexadecimal (long value, int precision, bool upper, int maxLength, int integerSize)
 		{
 			if (precision < 0) precision = 0;
-			int size = maxShortLength + precision;
-			char[] buffy = new char[size];
-			char[] table = upper ? digitUpperTable : digitLowerTable;
-			int position = size;
-			const short mask = (1 << 4) - 1;
-
-			// loop through right to left, shifting and looking up
-			// our value. If value is negavite stop after 4 F's
-			do {
-				buffy[--position] = table[(value & mask)];
-				value = (short)(value >> 4);
-			} while (value != 0 && position > (size - 4));
-
-			// pad w/ 0's if they want more length, if not, ignore
-			precision -= (size - position);				
-			while (precision > 0 && position > 1) {
-				buffy[--position] = '0';
-				precision--;
-			}
-			
-			return new string(buffy, position, (size - position));
-		}
-
-		private static string FormatHexadecimal (int value, int precision, bool upper)
-		{
-			if (precision < 0) precision = 0;
-			int size = maxIntLength + precision;
-			char[] buffy = new char[size];
-			char[] table = upper ? digitUpperTable : digitLowerTable;
-			int position = size;
-			const int mask = (1 << 4) - 1;
-
-			// loop through right to left, shifting and looking up
-			// our value. If value is negavite stop after 8 F's
-			do {
-				buffy[--position] = table[(value & mask)];
-				value = value >> 4;
-			} while (value != 0 && position > (size - 8));
-
-			// pad w/ 0's if they want more length, if not, ignore
-			precision -= (size - position);				
-			while (precision > 0 && position > 1) {
-				buffy[--position] = '0';
-				precision--;
-			}
-			
-			return new string(buffy, position, (size - position));
-		}
-
-		private static string FormatHexadecimal (long value, int precision, bool upper)
-		{
-			if (precision < 0) precision = 0;
-			int size = maxLongLength + precision;
+			int size = maxLength + precision;
 			char[] buffy = new char[size];
 			char[] table = upper ? digitUpperTable : digitLowerTable;
 			int position = size;
 			const long mask = (1 << 4) - 1;
+			integerSize *= 2;
 			
 			// loop through right to left, shifting and looking up
 			// our value. If value is negavite stop after 16 F's
 			do {
 				buffy[--position] = table[(value & mask)];
 				value = value >> 4;
-			} while (value != 0 && position > (size - 16));
+			} while (value != 0 && position > (size - integerSize));
 
 			// pad w/ 0's if they want more length, if not, ignore
 			precision -= (size - position);				
@@ -3405,88 +1766,10 @@ namespace System {
 			return new string(buffy, position, (size - position));
 		}
 
-		private static string FormatHexadecimal (sbyte value, int precision, bool upper)
-		{
-			if (precision < 0) precision = 0;
-			int size = maxByteLength + precision;
-			char[] buffy = new char[size];
-			char[] table = upper ? digitUpperTable : digitLowerTable;
-			int position = size;
-			const short mask = (1 << 4) - 1;
-
-			// loop through right to left, shifting and looking up
-			// our value. If value is negavite stop after 2 F's
-			do {
-				buffy[--position] = table[(value & mask)];
-				value = (sbyte)(value >> 4);
-			} while (value != 0 && position > (size - 2));
-
-			// pad w/ 0's if they want more length, if not, ignore
-			precision -= (size - position);				
-			while (precision > 0 && position > 1) {
-				buffy[--position] = '0';
-				precision--;
-			}
-			
-			return new string(buffy, position, (size - position));
-		}
-
-		private static string FormatHexadecimal (ushort value, int precision, bool upper)
+		private static string FormatHexadecimal (ulong value, int precision, bool upper, int maxLength)
 		{			
 			if (precision < 0) precision = 0;
-			int size = maxShortLength + precision;
-			char[] buffy = new char[size];
-			char[] table = upper ? digitUpperTable : digitLowerTable;
-			int position = size;
-			const int mask = (1 << 4) - 1;
-
-			// loop through right to left, shifting and looking up
-			// our value. Don't worry about negative
-			do {
-				buffy[--position] = table[(value & mask)];
-				value = (ushort)(value >> 4);
-			} while (value != 0);
-
-			// pad w/ 0's if they want more length, if not, ignore
-			precision -= (size - position);				
-			while (precision > 0 && position > 1) {
-				buffy[--position] = '0';
-				precision--;
-			}
-			
-			return new string(buffy, position, (size - position));
-		}
-
-		private static string FormatHexadecimal (uint value, int precision, bool upper)
-		{			
-			if (precision < 0) precision = 0;
-			int size = maxIntLength + precision;
-			char[] buffy = new char[size];
-			char[] table = upper ? digitUpperTable : digitLowerTable;
-			int position = size;
-			const uint mask = (1 << 4) - 1;
-
-			// loop through right to left, shifting and looking up
-			// our value. Don't worry about negative
-			do {
-				buffy[--position] = table[(value & mask)];
-				value = value >> 4;
-			} while (value != 0);
-
-			// pad w/ 0's if they want more length, if not, ignore
-			precision -= (size - position);				
-			while (precision > 0 && position > 1) {
-				buffy[--position] = '0';
-				precision--;
-			}
-			
-			return new string(buffy, position, (size - position));
-		}
-
-		private static string FormatHexadecimal (ulong value, int precision, bool upper)
-		{			
-			if (precision < 0) precision = 0;
-			int size = maxLongLength + precision;
+			int size = maxLength + precision;
 			char[] buffy = new char[size];
 			char[] table = upper ? digitUpperTable : digitLowerTable;
 			int position = size;
@@ -3511,63 +1794,18 @@ namespace System {
 
 		// ============ Format Custom ============ //
 
-		private static string FormatCustom (string format, sbyte number, NumberFormatInfo nfi)
+		private static string FormatCustom (string format, long number, NumberFormatInfo nfi, int maxLength)
 		{
-			string strnum = FormatGeneral (number, -1, nfi, true);
-			FormatParse fp = new FormatParse (format); // FIXME: use nfi!
+			string strnum = FormatGeneral (number, -1, nfi, true, maxLength);
+			FormatParse fp = new FormatParse (format, nfi);
 			int sign = (number < 0) ? -1 : (number > 0) ? 1 : 0;
 			return fp.FormatNumber (strnum, sign);
 		}
 
-		private static string FormatCustom (string format, short number, NumberFormatInfo nfi)
+		private static string FormatCustom (string format, ulong number, NumberFormatInfo nfi, int maxLength)
 		{
-			string strnum = FormatGeneral (number, -1, nfi, true);
-			FormatParse fp = new FormatParse (format); // FIXME: use nfi!
-			int sign = (number < 0) ? -1 : (number > 0) ? 1 : 0;
-			return fp.FormatNumber (strnum, sign);
-		}
-
-		private static string FormatCustom (string format, int number, NumberFormatInfo nfi)
-		{
-			string strnum = FormatGeneral (number, -1, nfi, true);
-			FormatParse fp = new FormatParse (format); // FIXME: use nfi!
-			int sign = (number < 0) ? -1 : (number > 0) ? 1 : 0;
-			return fp.FormatNumber (strnum, sign);
-		}
-
-		private static string FormatCustom (string format, long number, NumberFormatInfo nfi)
-		{
-			string strnum = FormatGeneral (number, -1, nfi, true);
-			FormatParse fp = new FormatParse (format); // FIXME: use nfi!
-			int sign = (number < 0) ? -1 : (number > 0) ? 1 : 0;
-			return fp.FormatNumber (strnum, sign);
-		}
-
-		private static string FormatCustom (string format, byte number, NumberFormatInfo nfi)
-		{
-			string strnum = FormatGeneral (number, -1, nfi, true);
-			FormatParse fp = new FormatParse (format); // FIXME: use nfi!
-			return fp.FormatNumber (strnum, (number == 0) ? 0 : 1);
-		}
-
-		private static string FormatCustom (string format, ushort number, NumberFormatInfo nfi)
-		{
-			string strnum = FormatGeneral (number, -1, nfi, true);
-			FormatParse fp = new FormatParse (format); // FIXME: use nfi!
-			return fp.FormatNumber (strnum, (number == 0) ? 0 : 1);
-		}
-
-		private static string FormatCustom (string format, uint number, NumberFormatInfo nfi)
-		{
-			string strnum = FormatGeneral (number, -1, nfi, true);
-			FormatParse fp = new FormatParse (format); // FIXME: use nfi!
-			return fp.FormatNumber (strnum, (number == 0) ? 0 : 1);
-		}
-
-		private static string FormatCustom (string format, ulong number, NumberFormatInfo nfi)
-		{
-			string strnum = FormatGeneral (number, -1, nfi, true);
-			FormatParse fp = new FormatParse (format); // FIXME: use nfi!
+			string strnum = FormatGeneral (number, -1, nfi, true, maxLength);
+			FormatParse fp = new FormatParse (format, nfi);
 			return fp.FormatNumber (strnum, (number == 0) ? 0 : 1);
 		}
 	}
@@ -3603,13 +1841,15 @@ class FormatParse {
 	private int pos; // Position in the format string
 	private int group = 0; // Used in FormatPlain to insert a comma between groups of digits
 	private bool isNegative;
+	private NumberFormatInfo nfi;
 
 	private FormatParse ()
 	{
 	}
 	
-	public FormatParse (string format)
+	public FormatParse (string format, NumberFormatInfo nfi)
 	{
+		this.nfi = nfi;
 		parseFormat (format);
 	}
 
@@ -3626,7 +1866,7 @@ class FormatParse {
 		int exponent = digits.Length - sec.nph;
 		outputList.Add ((string) exponent.ToString ());
 		if (sec.sciSignAlways && exponent > 0)
-			outputList.Add ("+");
+			outputList.Add (nfi.PositiveSign);
 		outputList.Add ((string) sec.tokens [tokidx--]);
 
 		if (exponent < 0) {
@@ -3688,7 +1928,7 @@ class FormatParse {
 				int i = sec.tokens [tokidx].Length - 1;
 				while (i >= 0) {
 					if (insertComma && group == 3) {
-						outputList.Add (","); // FIXME: from NumberFormatInfo
+						outputList.Add (nfi.NumberGroupSeparator);
 						group = 0;
 					}
 
@@ -3704,7 +1944,7 @@ class FormatParse {
 					while (sec.nph == 0 && digitIdx < digits.Length) {
 						// Flush the numbers left
 						if (insertComma && group == 3){
-							outputList.Add (","); // FIXME: from NumberFormatInfo
+							outputList.Add (nfi.NumberGroupSeparator);
 							group = 0;
 						}
 						outputList.Add ((string) digits [digitIdx++].ToString ());
@@ -3713,7 +1953,7 @@ class FormatParse {
 					}
 
 					if (sec.nph == 0 && isNegative)
-						outputList.Add ("-");
+						outputList.Add (nfi.NegativeSign);
 				}
 			} else {
 				outputList.Add ((string) sec.tokens [tokidx]);
@@ -3943,12 +2183,12 @@ class FormatParse {
 		}
 		else if (current == '%') {
 			type = PERCENT;
-			result = "%";
+			result = nfi.PercentSymbol;
 			pos++;
 		}
 		else if (current == '.') {
 			type = DOT;
-			result = ".";
+			result = nfi.NumberDecimalSeparator;
 			pos++;
 		}
 		else if (current == ',') {

@@ -1556,11 +1556,9 @@ namespace System
 			throw new InvalidCastException();
 		}
 
-		// TODO Implement me
-		[MonoTODO]
 		System.DateTime IConvertible.ToDateTime(IFormatProvider provider)
 		{
-			return new System.DateTime (true,this.ticks);
+			return this;
 		} 
 		
 		decimal IConvertible.ToDecimal(IFormatProvider provider)

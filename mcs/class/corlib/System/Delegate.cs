@@ -220,7 +220,7 @@ namespace System
 		}
 
 		// This is from ISerializable
-		public void GetObjectData (SerializationInfo info, StreamingContext context)
+		public virtual void GetObjectData (SerializationInfo info, StreamingContext context)
 		{
 			DelegateSerializationHolder.GetDelegateData (this, info, context);
 		}
