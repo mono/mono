@@ -6,8 +6,10 @@
 //
 // Author:
 //    Brad Merrill <zbrad@cybercom.net>
+//    Daniel Morgan <danmorg@sc.rr.com>
 //
 // (C)Copyright 2002 Brad Merril
+// (C)Copyright 2002 Daniel Morgan
 //
 // http://www.cybercom.net/~zbrad/DotNet/MySql/
 //
@@ -22,7 +24,28 @@
 
 
 namespace Mono.Data.MySql {
+	using System;
 	using System.Runtime.InteropServices;
+
+	[Flags]
+	internal enum MySqlFieldFlags {
+		NOT_NULL_FLAG = 1,
+		PRI_KEY_FLAG = 2,
+		UNIQUE_KEY_FLAG = 4,
+		MULTIPLE_KEY_FLAG = 8,
+		BLOB_FLAG = 16,
+		UNSIGNED_FLAG = 32,
+		ZEROFILL_FLAG = 64,
+		BINARY_FLAG = 128,
+		ENUM_FLAG = 256,
+		AUTO_INCREMENT_FLAG = 512,
+		TIMESTAMP_FLAG = 1024,
+		SET_FLAG = 2048,
+		NUM_FLAG = 32768,
+		PART_KEY_FLAG = 16384,
+		GROUP_FLAG = 32768,
+		UNIQUE_FLAG = 65536
+	}
 
 	///<remarks>
 	///<para>
@@ -43,6 +66,8 @@ namespace Mono.Data.MySql {
 	///</remarks>
 	[StructLayout(LayoutKind.Sequential)]
 	public class Field {
+
+		#region Marshalled members from MySQL struct
 		///<value>name of column</value>
 		[MarshalAs(UnmanagedType.LPStr)]
 		public string Name;
@@ -53,7 +78,7 @@ namespace Mono.Data.MySql {
 		[MarshalAs(UnmanagedType.LPStr)]
 		public string Def;
 		///<value>type of field</value>
-		public int FieldTypes;
+		public int FieldType;
 		///<value>width of column</value>
 		public uint Length;
 		///<value>max width of selected set</value>
@@ -62,5 +87,46 @@ namespace Mono.Data.MySql {
 		public uint Flags;
 		///<value>number of decimals in field</value>
 		public uint Decimals;	
+
+		#endregion
+
+		#region Methods
+
+		internal MySqlFieldFlags FlagsEnum {
+			get {
+				string s = Flags.ToString();
+				MySqlFieldFlags f;
+				f = (MySqlFieldFlags) Enum.Parse(typeof(MySqlFieldFlags), s);
+				return f;
+			}
+		}
+		
+		public bool IsPrimaryKey {
+			get {
+				if((this.FlagsEnum & MySqlFieldFlags.PRI_KEY_FLAG).Equals(MySqlFieldFlags.PRI_KEY_FLAG))
+					return true;
+				else
+					return false;
+			}
+		}
+		public bool IsNotNull {
+			get {
+				if((this.FlagsEnum & MySqlFieldFlags.NOT_NULL_FLAG).Equals(MySqlFieldFlags.NOT_NULL_FLAG))
+					return true;
+				else
+					return false;
+			}
+		}
+		public bool IsBlob {
+			get {
+				if((this.FlagsEnum & MySqlFieldFlags.BLOB_FLAG).Equals(MySqlFieldFlags.BLOB_FLAG))
+					return true;
+				else
+					return false;
+			}
+		}
+
+		#endregion
+
 	}
 }

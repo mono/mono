@@ -1,3 +1,32 @@
+2002-10-09  Daniel Morgan <danmorg@sc.rr.com>
+
+	* Mono.Data.MySql/MySqlDataReader.cs: added
+	  started implementing Reader for MySQL provider
+	  
+	* Mono.Data.MySql/MySqlTypes.cs: added
+	  to hold internal helper methods, enums, structs, classes
+	  for handling MySQL data types
+
+	* Test/TestMySqlExecuteReader.cs
+	* Test/TestMySqlExecuteScalar.cs: added simple tests
+	  for ExecuteScalar() and ExecuteReader() methods
+	  in MySqlCommand.  We are able to retrieve data
+	  from MySQL now.
+
+	* Mono.Data.MySql.build: took out exclude
+      so MySqlExecuteReader.cs will build
+      
+    * Mono.Data.MySql/Field.cs: added enum to file
+      and added helper methods field flags
+      
+    * Mono.Data.MySql/MySqlCommand.cs: started
+      implementation of ExecuteScalar nd ExecuteReader methods
+      to retrieve data.  Also, added internal method rowVal
+      for marshalling field data.
+      
+    * Mono.Data.MySql/Test.cs: take out a bunch of
+      Console.WriteLines'
+ 
 2002-08-13  Daniel Morgan <danmorg@sc.rr.com>
 
 	* Mono.Data.MySql/MySqlCommand.cs: modified

@@ -117,39 +117,85 @@ namespace Mono.Data.MySql {
 		
 		[MonoTODO]
 		IDataReader IDbCommand.ExecuteReader () {
-			//return ExecuteReader ();
-			// FIXME: just a quick hack
-			ExecuteNonQuery();
-			return null;
-
+			return ExecuteReader ();
 		}
 
-		/*
 		[MonoTODO]
 		public MySqlDataReader ExecuteReader () {
 			return ExecuteReader(CommandBehavior.Default);
 		}
-		*/
-
+		
 		[MonoTODO]
 		IDataReader IDbCommand.ExecuteReader (
 			CommandBehavior behavior) {
-			//return ExecuteReader (behavior);
-			return null;
-		}
 
-		/*
+			return ExecuteReader (behavior);
+		}
+		
 		[MonoTODO]
 		public MySqlDataReader ExecuteReader (CommandBehavior behavior) {	
-			
-		}
-		*/
 
+			MySqlDataReader reader = null;
+
+			// TODO: check to see if you everything you need
+			//       and the connection is open, etc...
+			//       and through any exceptions if not
+			
+			// execute query
+			int rcq = MySql.Query(conn.NativeMySqlInitStruct, sql);
+			if (rcq != 0) {
+				// TODO: throw an exception here
+				Console.WriteLine("Error: Couldn't execute ["+sql+"] on server.");
+				Console.Out.Flush();
+				Console.WriteLine("MySql Error: " + MySql.Error(conn.NativeMySqlInitStruct));
+				Console.Out.Flush();
+				return null;
+
+			}
+
+			reader = new MySqlDataReader(this);
+			reader.NextResult();
+
+			return reader;
+		}
+		
 		[MonoTODO]
 		public object ExecuteScalar () {
-			// FIXME: just a quick hack
-			ExecuteNonQuery();
-			return null;
+			object obj = null;
+			
+			int rcq = MySql.Query(conn.NativeMySqlInitStruct, sql);
+			if (rcq != 0) {
+				// TODO: throw an exception here
+				Console.WriteLine("Error: Couldn't execute ["+sql+"] on server.");
+				Console.Out.Flush();
+				Console.WriteLine("MySql Error: " + MySql.Error(conn.NativeMySqlInitStruct));
+				Console.Out.Flush();
+				return 0; 
+			}
+
+			IntPtr res = MySql.StoreResult(conn.NativeMySqlInitStruct);
+			int numRows = MySql.NumRows(res);
+			
+			int numFields = MySql.NumFields(res);
+						
+			Field fd = (Field) Marshal.PtrToStructure(MySql.FetchField(res), typeof(Field));
+			string fieldName = fd.Name;
+			int fieldType = fd.FieldType; 
+
+			Console.WriteLine("*** DEBUG: MySql FieldType: " + fieldType);
+						
+			IntPtr row;
+			row = MySql.FetchRow(res);
+			if(row == IntPtr.Zero) {
+				Console.WriteLine("*** Error: Row returned IntPtr.Zero");
+			}
+			else {
+				
+				obj = rowVal(row, 0); // only get first column/first row
+			}
+			MySql.FreeResult(res);
+
+			return obj;
 		}
 
 		[MonoTODO]
@@ -166,6 +212,16 @@ namespace Mono.Data.MySql {
 		[MonoTODO]
 		public MySqlCommand Clone () {
 			throw new NotImplementedException ();
+		}
+
+		// Used to marshal a field value from the database result set.
+		// the indexed column data on the current result set row
+		internal string rowVal(IntPtr res, int index) {
+			IntPtr str = Marshal.ReadIntPtr(res, index*IntPtr.Size);
+			if (str == IntPtr.Zero)
+				return "NULL";
+			string s = Marshal.PtrToStringAnsi(str);
+			return s;
 		}
 
 		#endregion // Methods

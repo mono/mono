@@ -176,11 +176,7 @@ public class Test {
 		while ((row = MySql.FetchRow(res)) != IntPtr.Zero) {
 			Console.WriteLine("Record #" + recCnt + ":");
 			for (int i = 0, j = 1; i < numFields; i++, j++) {
-				Console.WriteLine(" Going to WriteLine Fld...\n");
-				Console.Out.Flush();
 				Console.WriteLine(" theField[[[" + fields[i] + "]]]\n");
-				Console.Out.Flush();
-				Console.WriteLine(" after theField... \n");
 				Console.Out.Flush();
 				Console.WriteLine("  Fld #"+j+" ("+fields[i]+"): "+rowVal(row, i));
 				Console.Out.Flush();
@@ -191,18 +187,10 @@ public class Test {
 	}
 
 	static string rowVal(IntPtr res, int index) {
-		Console.WriteLine("...Marshal.ReadIntPtr() BEFORE...\n");
-		Console.Out.Flush();
 		IntPtr str = Marshal.ReadIntPtr(res, index*IntPtr.Size);
-		Console.WriteLine("...Marshal.ReadIntPtr() AFTER...\n");
-		Console.Out.Flush();
 		if (str == IntPtr.Zero)
 			return "NULL";
-		Console.WriteLine("...Marshal.PtrToStringAnsi() BEFORE...");
-		Console.Out.Flush();
 		string s = Marshal.PtrToStringAnsi(str);
-		Console.WriteLine("...Marshal.PtrToStringAnsi() AFTER...");
-		Console.Out.Flush();
 		return s;
 	}
 
@@ -213,7 +201,7 @@ public class Test {
 			return;
 		}
 		int numRows = MySql.NumRows(res);
-		//    Console.WriteLine("Number of records found: "+i);
+		Console.WriteLine("Number of records found: " + numRows);
 		int numFields = MySql.NumFields(res);
 		string[] fields = new string[numFields];
 		for (int i = 0; i < numFields; i++) {
@@ -237,7 +225,7 @@ public class Test {
 		if (res == IntPtr.Zero)
 			return;
 		int numRows = MySql.NumRows(res);
-		//    Console.WriteLine("Number of records found: "+i);
+		Console.WriteLine("Number of records found: " + numRows);
 		int numFields = MySql.NumFields(res);
 		string[] fields = new string[numFields];
 		for (int i = 0; i < numFields; i++) {
