@@ -23,9 +23,12 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.8 $
+// $Revision: 1.9 $
 // $Modtime: $
 // $Log: XplatUIWin32.cs,v $
+// Revision 1.9  2004/08/10 18:47:16  jordi
+// Calls InvalidateRect before UpdateWindow
+//
 // Revision 1.8  2004/08/10 17:36:17  pbartok
 // - Implemented several methods
 //
@@ -463,7 +466,8 @@ namespace System.Windows.Forms {
 			return;
 		}
 
-		internal override void RefreshWindow(IntPtr handle) {
+		internal override void RefreshWindow(IntPtr handle) {			
+			Win32InvalidateRect(handle, IntPtr.Zero, true);
 			Win32UpdateWindow(handle);
 		}
 
@@ -678,6 +682,9 @@ namespace System.Windows.Forms {
 
 		[DllImport ("user32.dll", EntryPoint="InvalidateRect", CharSet=CharSet.Ansi, CallingConvention=CallingConvention.StdCall)]
 		private extern static IntPtr Win32InvalidateRect(IntPtr hWnd, ref RECT lpRect, bool bErase);
+
+		[DllImport ("user32.dll", EntryPoint="InvalidateRect", CharSet=CharSet.Ansi, CallingConvention=CallingConvention.StdCall)]
+		private extern static IntPtr Win32InvalidateRect(IntPtr hWnd, IntPtr lpRect, bool bErase);
 
 		[DllImport ("user32.dll", EntryPoint="SetCapture", CharSet=CharSet.Ansi, CallingConvention=CallingConvention.StdCall)]
 		private extern static IntPtr Win32SetCapture(IntPtr hWnd);
