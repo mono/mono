@@ -104,7 +104,7 @@ namespace System.Resources
 			if (!gotelement)
 				return null;
 			while (reader.Read ()) {
-				if (reader.NodeType == XmlNodeType.Text) {
+				if (reader.NodeType == XmlNodeType.Text || reader.NodeType == XmlNodeType.CDATA) {
 					string v = reader.Value;
 					return v;
 				}
