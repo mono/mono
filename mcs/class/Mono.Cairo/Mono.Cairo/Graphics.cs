@@ -20,7 +20,7 @@ namespace Cairo {
 
         public class Graphics : IDisposable 
         {
-                IntPtr state;
+                internal IntPtr state = IntPtr.Zero;
 
                 public Graphics ()
                 {
@@ -308,9 +308,9 @@ namespace Cairo {
 			CairoAPI.cairo_set_target_drawable (state, dpy, drawable);
 		}
 
-		public void SetPattern (Surface pattern)
+		public void SetPattern (Pattern pattern)
 		{
-			CairoAPI.cairo_set_pattern (state, pattern.Handle);
+			CairoAPI.cairo_set_pattern (state, pattern.Pointer);
 		}
 #endregion
 
@@ -365,5 +365,100 @@ namespace Cairo {
                                 return new Cairo.Matrix (p);
                         }
                 }
+
+                public Font Font {
+                        set {
+                                CairoAPI.cairo_set_font (state, value.Pointer);
+
+                        }
+
+                        get {
+                                IntPtr fnt = IntPtr.Zero;
+
+                                fnt = CairoAPI.cairo_current_font (state);
+
+                                return new Font (fnt);
+                        }
+                }
+
+
+                public void ScaleFont (double scale)
+                {
+                        CairoAPI.cairo_scale_font (state, scale);
+                }
+
+                public void SetText (string str)
+                {
+                        /* Use UTF8 encoding*/
+                        CairoAPI.cairo_show_text (state, str);
+                }
+                
+                public void TransformFont (Matrix matrix)
+                {
+                        CairoAPI.cairo_transform_font (state, matrix.Pointer);
+                }
+
+
+                
+		static internal IntPtr FromGlyphToUnManagedMemory(Glyph [] glyphs)
+		{
+			int size =  Marshal.SizeOf (glyphs[0]);
+			IntPtr dest = Marshal.AllocHGlobal (size * glyphs.Length);
+			int pos = dest.ToInt32();
+
+			for (int i=0; i < glyphs.Length; i++, pos += size)
+				Marshal.StructureToPtr (glyphs[i], (IntPtr)pos, false);
+
+			return dest;
+		}
+
+
+                public void ShowGlyphs (Matrix matrix, Glyph[] glyphs)
+                {
+
+                        IntPtr ptr;
+
+                        ptr = FromGlyphToUnManagedMemory (glyphs);
+                        
+                        CairoAPI.cairo_show_glyphs (state, ptr, glyphs.Length);
+
+                        Marshal.FreeHGlobal (ptr);		
+                     
+                }
+
+                public void TextPath (string str)
+                {
+                        CairoAPI.cairo_text_path  (state, str);
+                }
+
+                public void GlyphPath (Matrix matrix, Glyph[] glyphs)
+                {
+
+                        IntPtr ptr;
+
+                        ptr = FromGlyphToUnManagedMemory (glyphs);
+
+                        CairoAPI.cairo_glyph_path (state, ptr, glyphs.Length);
+
+                        Marshal.FreeHGlobal (ptr);
+
+                }
+
+                public void SelectFont (string key, FontSlant slant, FontWeight weight)
+                {
+                        CairoAPI.cairo_select_font (state, key, slant, weight);
+                }
+
+
+
+                public Extents Extents {
+                        get {
+
+                                Extents extents = new Extents();
+                                CairoAPI.cairo_current_font_extents (state, ref extents);
+                                return extents;
+                        }
+                }
+
         }
 }

@@ -17,7 +17,7 @@ namespace Cairo {
 
         public class Matrix
         {
-                IntPtr matrix;
+                internal IntPtr matrix;
 
                 public Matrix ()
                         : this (Create ())

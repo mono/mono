@@ -22,7 +22,7 @@ namespace Cairo {
 	public class Surface : IDisposable 
         {
 		static Hashtable surfaces = new Hashtable ();
-                IntPtr surface;
+                internal IntPtr surface = IntPtr.Zero;
 
                 private Surface (IntPtr ptr, bool owns)
                 {
@@ -44,7 +44,7 @@ namespace Cairo {
 				return (Surface) o;
 			}
 		}
-		
+
                 public static Cairo.Surface CreateForImage (
                         string data, Cairo.Format format, int width, int height, int stride)
                 {
@@ -53,6 +53,16 @@ namespace Cairo {
                         
                         return new Cairo.Surface (p, true);
                 }
+
+                public static Cairo.Surface CreateForImage (
+                        Cairo.Format format, int width, int height)
+                {
+                        IntPtr p = CairoAPI.cairo_image_surface_create (
+                                format, width, height);
+
+                        return new Cairo.Surface (p, true);
+                }
+
 
                 public static Cairo.Surface CreateSimilar (
                         Cairo.Surface surface, Cairo.Format format, int width, int height)
@@ -124,5 +134,12 @@ namespace Cairo {
                                 CairoAPI.cairo_surface_set_filter (surface, value);
                         }
                 }
+
+                public IntPtr Pointer {
+                        get { return surface; }
+                }
+
+
+
         }
 }

@@ -18,7 +18,8 @@ namespace Cairo {
 
 	public class CairoAPI
         {
-                const string CairoImp = "cairo";
+                internal const string CairoImp = "cairo";
+
                 //
                 // Manipulating state objects
                 //
@@ -176,30 +177,55 @@ namespace Cairo {
                 // Font / Text
                 //
                 [DllImport (CairoImp)]
-                public static extern void cairo_select_font (IntPtr cr, string key);
+                public static extern void cairo_select_font (IntPtr cr, string key, FontSlant slant, FontWeight weight);
 
                 [DllImport (CairoImp)]
                 public static extern void cairo_scale_font (IntPtr cr, double scale);
 
                 [DllImport (CairoImp)]
-                public static extern void cairo_transform_font (
-                        IntPtr cr, double a, double b, double c, double d);
-
-                [DllImport (CairoImp)]
-                public static extern void cairo_text_extents (
-                        IntPtr cr, string utf8,
-                        ref double x, ref double y,
-                        ref double width, ref double height,
-                        ref double dx, ref double dy);
+                public static extern void cairo_transform_font (IntPtr cr, IntPtr matrix);
 
                 [DllImport (CairoImp)]
                 public static extern void cairo_show_text (IntPtr cr, string utf8);
 
+                [DllImport (CairoImp)]
+                public static extern void cairo_font_set_transform (IntPtr font, IntPtr matrix);
+
+                [DllImport (CairoImp)]
+                public static extern void cairo_font_current_transform (IntPtr font, IntPtr matrix);
+
+                [DllImport (CairoImp)]
+                public static extern void cairo_font_reference (IntPtr font);
+
+                [DllImport (CairoImp)]
+                public static extern void cairo_font_destroy (IntPtr font);
+
+                [DllImport (CairoImp)]
+                public static extern void cairo_current_font_extents (IntPtr source, ref Extents extents);
+
+                [DllImport (CairoImp)]
+                public static extern void cairo_show_glyphs (IntPtr ct, IntPtr glyphs, int num_glyphs);
+
+                [DllImport (CairoImp)]
+                public static extern void cairo_text_path  (IntPtr ct, string utf8);
+
+                [DllImport (CairoImp)]
+                public static extern void cairo_glyph_path (IntPtr ct, IntPtr glyphs, int num_glyphs);
+
+
+                // Cairo's font manipulation platform-specific Unix Fontconfig/Freetype interface
+
+                [DllImport (CairoImp)]
+                public static extern IntPtr cairo_ft_font_create (IntPtr ft_library, IntPtr ft_pattern);
+
+        
                 //
                 // Image
                 //                
                 [DllImport (CairoImp)]
                 public static extern void cairo_show_surface (IntPtr cr, IntPtr surface, int width, int height);
+
+
 
                 //
                 // query
@@ -258,6 +284,11 @@ namespace Cairo {
                 [DllImport (CairoImp)]                
                 public static extern IntPtr cairo_surface_create_for_image (
                         string data, Cairo.Format format, int width, int height, int stride);
+
+                [DllImport (CairoImp)]
+                public static extern IntPtr cairo_image_surface_create (Cairo.Format format, int width,
+                        int height);
+
 
                 [DllImport (CairoImp)]
                 public static extern IntPtr cairo_surface_create_similar (
@@ -345,7 +376,96 @@ namespace Cairo {
                 public static extern Cairo.Status cairo_matrix_transform_point (
                         IntPtr matrix, ref double x, ref double y);
 
+                [DllImport (CairoImp)]
+                public static extern void cairo_set_font (IntPtr ct, IntPtr font);
+
+                [DllImport (CairoImp)]
+                public static extern IntPtr cairo_current_font (IntPtr ct);
+
+                //
+                // Pattern functions
+                //
+                [DllImport (CairoImp)]
+                public static extern IntPtr cairo_pattern_create_for_surface (IntPtr surface);
+
+                [DllImport (CairoImp)]
+                public static extern IntPtr cairo_pattern_create_linear (double x0, double y0,
+		        double x1, double y1);
+
+                [DllImport (CairoImp)]
+                public static extern IntPtr cairo_pattern_create_radial (double cx0, double cy0,
+                        double radius0, double cx1, double cy1, double radius1);
+
+                [DllImport (CairoImp)]
+                public static extern void cairo_pattern_reference (IntPtr pattern);
+
+                [DllImport (CairoImp)]
+                public static extern void cairo_pattern_destroy (IntPtr pattern);
+
+                [DllImport (CairoImp)]
+                public static extern Status cairo_pattern_add_color_stop (IntPtr pattern,
+		        double offset, double red, double green, double blue, double alpha);
+
+                [DllImport (CairoImp)]
+                public static extern Status cairo_pattern_set_matrix (IntPtr pattern, IntPtr matrix);
+
+                [DllImport (CairoImp)]
+                public static extern Status cairo_pattern_get_matrix (IntPtr pattern, out IntPtr matrix);
+
+                [DllImport (CairoImp)]
+                public static extern Status cairo_pattern_set_extend (IntPtr pattern, Extend extend);
+
+                [DllImport (CairoImp)]
+                public static extern Extend cairo_pattern_get_extend (IntPtr pattern);
+
+                [DllImport (CairoImp)]
+                public static extern Status cairo_pattern_set_filter (IntPtr pattern, Filter filter);
+
+                [DllImport (CairoImp)]
+                public static extern Filter cairo_pattern_get_filter (IntPtr pattern);
+
         }
+
+        //
+        // Freetype interface need it by cairo_ft interface calls
+        //
+        public class FreeType
+        {
+                internal const string FreeTypeImp = "freetype";
+
+                [DllImport (FreeTypeImp)]
+                public static extern int FT_Init_FreeType (out IntPtr library);
+
+                [DllImport (FreeTypeImp)]
+                public static extern int FT_Set_Char_Size (IntPtr face, long width, long height, uint horz_res, uint vert_res);
+        }
+
+        //
+        // Fontconfig interface need it by cairo_ft interface calls
+        //
+        public class FontConfig
+        {
+                internal const string FontConfigImp = "fontconfig";
+
+                public const string FC_FAMILY = "family";
+                public const string FC_STYLE = "style";
+                public const string FC_SLANT = "slant";
+                public const string FC_WEIGHT = "weight";
+
+                [DllImport (FontConfigImp)]
+                public static extern bool FcPatternAddString (IntPtr pattern, string obj, string value);
+
+                [DllImport (FontConfigImp)]
+                public static extern bool FcPatternAddInteger (IntPtr pattern, string obj, int value);
+
+                [DllImport (FontConfigImp)]
+                public static extern IntPtr FcPatternCreate ();
+
+                [DllImport (FontConfigImp)]
+                public static extern bool FcPatternDestroy (IntPtr pattern); 
+                
+        }
+
 
         //
         // Enumerations
@@ -427,6 +547,46 @@ namespace Cairo {
                 Good,
                 Best,
                 Nearest,
-                Bilinear
+                Bilinear,
+                Gaussian,
         }
+
+        public enum FontSlant {
+                Normal  = 0,
+                Italic  = 1,
+                Oblique = 2
+        }
+
+        public enum FontWeight {
+                Normal  = 0,
+                Bold    = 1,
+        }
+
+        public enum Extend {
+                None,
+                Repetat,
+                Reflect,
+        }
+
+       
+        [StructLayout(LayoutKind.Sequential)]
+        public struct Extents
+        {
+                public  double x_bearing;
+                public  double y_bearing;
+                public  double width;
+                public  double height;
+                public  double x_advance;
+                public  double y_advance;
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        public struct Glyph
+        {
+                public  long index;
+                public  double x;
+                public  double y;
+        }
+
+
 }

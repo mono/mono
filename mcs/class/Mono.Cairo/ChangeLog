@@ -1,3 +1,12 @@
+2004-04-25  Jordi Mas i Hernandez <jordi@ximian.com>
+	* Mono.Cairo/Pattern.cs: implemented all the new pattern API 
+	introduced in Cairo 0.1.20
+	* Font.cs: created class that encapsulates a font object creation
+	and managment.
+	* Cairo.cs: new dllexports, structs, and enums.
+	* Graphics.cs: added all the font functions, fixed the signature
+	of the methods that have changed, added new methods
+
 2003-11-28  Miguel de Icaza  <miguel@ximian.com>
 
 	* Mono.Cairo/Object.cs: 
