@@ -1,3 +1,8 @@
+2003-02-27  Dietmar Maurer  <dietmar@ximian.com>
+
+	* marshal.c (mono_string_to_byvalstr): clear the memory as
+	suggested by Jerome Laban <jlaban@wanadoo.fr>
+
 2003-02-26  Dick Porter  <dick@ximian.com>
 
 	* process.c: Cope with padding in .rsrc blocks
