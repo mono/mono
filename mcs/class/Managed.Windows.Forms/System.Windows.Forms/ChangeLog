@@ -1,3 +1,10 @@
+2004-12-28  Peter Bartok  <pbartok@novell.com>
+
+	* CommonDialog.cs: 
+	  - Made DialogForm.owner variable internal
+	  - Added check to ensure owner form is set before setting 
+	    owner properties in CreateParams
+
 2004-12-28  Geoff Norton  <gnorton@customerdna.com>
 
 	* XplatUIOSX.cs: Implement mouse hovering.  Fix QDPoint struct to avoid

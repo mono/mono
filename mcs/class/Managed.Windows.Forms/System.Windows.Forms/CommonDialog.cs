@@ -39,9 +39,11 @@ namespace System.Windows.Forms {
 					get {
 						CreateParams	cp;
 
-						owner.ControlBox = true;
-						owner.MinimizeBox = false;
-						owner.MaximizeBox = false;
+						if (owner != null) {
+							owner.ControlBox = true;
+							owner.MinimizeBox = false;
+							owner.MaximizeBox = false;
+						}
 
 						cp = base.CreateParams;
 
@@ -54,7 +56,7 @@ namespace System.Windows.Forms {
 			#endregion
 
 			#region DialogForm Local Variables
-			CommonDialog	owner;
+			protected CommonDialog	owner;
 			#endregion DialogForm Local Variables
 
 			#region DialogForm Constructors
