@@ -1,3 +1,8 @@
+2005-02-07  Jackson Harper  <jackson@ximian.com>
+
+	* ScrollBar.cs: Give the correct clipping rect to the theme. Dirty
+	the scrollbar buttons when they are depressed.
+
 2005-02-07  Geoff Norton  <gnorton@customerdna.com>
 
 	* XplatUIOSX.cs: Really fix working at resolutions not 1024x768.

@@ -494,9 +494,9 @@ namespace System.Windows.Forms
 			}
 		}
 		
-		private void Draw ()
+		private void Draw (Rectangle clip)
 		{
-			ThemeEngine.Current.DrawScrollBar(DeviceContext, this.ClientRectangle, this);
+			ThemeEngine.Current.DrawScrollBar(DeviceContext, clip, this);
 		}
 
 		private void LargeIncrement ()
@@ -534,12 +534,8 @@ namespace System.Windows.Forms
 			if (Width <= 0 || Height <=  0 || Visible == false)
     				return;
 
-			Console.WriteLine ("clipping rect:   " + pevent.ClipRectangle);
-			/* Copies memory drawing buffer to screen*/			
-			Draw ();
-
+			Draw (pevent.ClipRectangle);
 			pevent.Graphics.DrawImage (ImageBuffer, pevent.ClipRectangle, pevent.ClipRectangle, GraphicsUnit.Pixel);
-
 		}
 
 		private void OnTimer (Object source, EventArgs e)
@@ -852,11 +848,13 @@ namespace System.Windows.Forms
 					SmallDecrement ();
 				}
 				firstbutton_pressed = false;
+				Dirty (first_arrow_area);
 			} else if (secondbutton_pressed) {
 				secondbutton_state = ButtonState.Normal;
 				if (second_arrow_area.Contains (e.X, e.Y)) {
 					SmallIncrement ();
 				}
+				Dirty (second_arrow_area);
 				secondbutton_pressed = false;
 			} else if (thumb_pressed == true) {
 				OnScroll (new ScrollEventArgs (ScrollEventType.ThumbPosition, position));
