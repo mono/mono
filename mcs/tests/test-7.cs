@@ -35,9 +35,8 @@ namespace Mine {
 
 			k = new Blah ();
 
-			float f = (float) k;
+			double f = (double) k;
 
-			// Note that the following will not be printed out for now
 			if (f == 2.0)
 				Console.WriteLine ("Explicit conversion correct.");
 
@@ -106,10 +105,10 @@ namespace Mine {
 			return null;
 		}
 
-		public static explicit operator float (Blah i)
+		public static explicit operator double (Blah i)
 		{
-			Console.WriteLine ("Converting explicitly from Blah->float");
-			return 2;
+			Console.WriteLine ("Converting explicitly from Blah->double");
+			return 2.0;
 		}
 
 	}
