@@ -1,3 +1,9 @@
+2004-03-25  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* AssemblyBuilder.cs: Changed strongname support to match MS 
+	implementation (i.e. attributes are used by the compiler - not by
+	AssemblyBuilder).
+
 2004-03-24  Zoltan Varga  <vargaz@freemail.hu>
 
 	* TypeBuilder.cs (GetMethod): Implement.

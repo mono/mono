@@ -85,7 +85,6 @@ namespace System.Reflection.Emit {
 		Win32VersionResource version_res;
 		bool created;
 		bool is_module_only;
-		string keyfile_name;
 		private Mono.Security.StrongName sn;
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
@@ -106,6 +105,10 @@ namespace System.Reflection.Emit {
 			Version v = n.Version;
 			if (v != null) {
 				version = v.ToString ();
+			}
+
+			if (n.KeyPair != null) {
+				sn = n.KeyPair.StrongName ();
 			}
 
 			basic_init (this);
@@ -568,34 +571,11 @@ namespace System.Reflection.Emit {
 			if (version_res != null)
 				DefineVersionInfoResourceImpl (assemblyFileName);
 
-			if ((keyfile_name != null) && (keyfile_name != String.Empty)) {
-				// the StrongName key file may be relative to (a) the compiled
-				// file or (b) to the output assembly. See bugzilla #55320
-				// http://bugzilla.ximian.com/show_bug.cgi?id=55320
-
-				// (a) relative to the compiled file
-				string filename = Path.GetFullPath (keyfile_name);
-				bool exist = File.Exists (filename);
-				if ((!exist) && (AssemblyDir != null)) {
-					// (b) relative to the outputed assembly
-					filename = Path.GetFullPath (Path.Combine (AssemblyDir, keyfile_name));
-					exist = File.Exists (filename);
-				}
-
-				if (exist) {
-					using (FileStream fs = new FileStream (filename, FileMode.Open)) {
-						byte[] snkeypair = new byte [fs.Length];
-						fs.Read (snkeypair, 0, snkeypair.Length);
-
-						// this will import public or private/public keys
-						RSA rsa = CryptoConvert.FromCapiKeyBlob (snkeypair);
-						// and export only the public part
-						sn = new Mono.Security.StrongName (rsa);
-						public_key = sn.PublicKey;
-					}
-				}
+			if (sn != null) {
+				// runtime needs to value to embed it into the assembly
+				public_key = sn.PublicKey;
 			}
-			
+
 			foreach (ModuleBuilder module in modules)
 				if (module != mainModule)
 					module.Save ();
@@ -604,8 +584,7 @@ namespace System.Reflection.Emit {
 			// contain the hash of the other modules
 			mainModule.Save ();
 
-			// if not delayed then we directly strongname the assembly
-			if ((sn != null) && (!delay_sign)) {
+			if ((sn != null) && (sn.CanSign)) {
 				sn.Sign (System.IO.Path.Combine (this.AssemblyDir, assemblyFileName));
 			}
 
@@ -640,19 +619,6 @@ namespace System.Reflection.Emit {
 			if (attrname == "System.Reflection.AssemblyVersionAttribute") {
 				version = create_assembly_version (customBuilder.string_arg ());
 				return;
-			} else if (attrname == "System.Reflection.AssemblyKeyFileAttribute") {
-				keyfile_name = customBuilder.string_arg ();
-				return;
-			} else if (attrname == "System.Reflection.AssemblyKeyNameAttribute") {
-				string key_name = customBuilder.string_arg ();
-				if (key_name == String.Empty)
-					return;
-				CspParameters csparam = new CspParameters ();
-				csparam.KeyContainerName = key_name;
-				RSA rsacsp = new RSACryptoServiceProvider (csparam);
-				sn = new Mono.Security.StrongName (rsacsp);
-				public_key = sn.PublicKey;
-				return;
 			} else if (attrname == "System.Reflection.AssemblyCultureAttribute") {
 				culture = customBuilder.string_arg ();
 			} else if (attrname == "System.Reflection.AssemblyAlgorithmIdAttribute") {
@@ -670,11 +636,8 @@ namespace System.Reflection.Emit {
 				flags |= ((uint)data [pos + 2]) << 16;
 				flags |= ((uint)data [pos + 3]) << 24;
 				return;
-			} else if (attrname == "System.Reflection.AssemblyDelaySignAttribute") {
-				data = customBuilder.Data;
-				pos = 2;
-				delay_sign = data [2] != 0;
 			}
+
 			if (cattrs != null) {
 				CustomAttributeBuilder[] new_array = new CustomAttributeBuilder [cattrs.Length + 1];
 				cattrs.CopyTo (new_array, 0);
@@ -685,6 +648,7 @@ namespace System.Reflection.Emit {
 				cattrs [0] = customBuilder;
 			}
 		}
+
 		public void SetCustomAttribute ( ConstructorInfo con, byte[] binaryAttribute) {
 			if (con == null)
 				throw new ArgumentNullException ("con");
