@@ -1,3 +1,8 @@
+2003-09-14  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* RegularExpressionValidator.cs: fix for EvaluateIsValid by Juraj
+	Skripsky <juraj@hotfeet.ch>
+
 2003-09-13  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* BaseValidator.cs: patch by Juraj Skripsky (juraj@hotfeet.ch) that

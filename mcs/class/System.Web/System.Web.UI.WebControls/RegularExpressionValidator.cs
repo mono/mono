@@ -75,12 +75,7 @@ namespace System.Web.UI.WebControls
 
 			bool retVal;
 			try {
-				Match match = Regex.Match (ctrl, ValidationExpression);
-				if (match.Success && match.Index == 0) {
-					retVal = true;
-				} else {
-					retVal = false;
-				}
+				retVal = Regex.IsMatch (ctrl, "^" + ValidationExpression + "$");
 			} catch (Exception) {
 				retVal = true;
 			}
