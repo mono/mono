@@ -198,29 +198,40 @@ namespace Mono.CSharp
 			}
 			return CompileAssemblyFromFileBatch (options, fileNames);
 		}
-		private static string BuildArgs(
-			CompilerParameters options,string[] fileNames)
+
+
+		private static string BuildArgs(CompilerParameters options,string[] fileNames)
 		{
 			StringBuilder args=new StringBuilder();
 			if (options.GenerateExecutable)
-				args.AppendFormat("/target:exe ");
+				args.Append("/target:exe ");
 			else
-				args.AppendFormat("/target:library ");
-			if (options.IncludeDebugInformation)
-				args.AppendFormat("/debug ");
-			if (options.TreatWarningsAsErrors)
-				args.AppendFormat("/warnaserror ");
+				args.Append("/target:library ");
 
-			if (options.WarningLevel != -1)
+			if (options.IncludeDebugInformation)
+				args.Append("/debug+ /optimize- ");
+			else
+				args.Append("/debug- /optimize+ ");
+
+			if (options.TreatWarningsAsErrors)
+				args.Append("/warnaserror ");
+
+			if (options.WarningLevel >= 0)
 				args.AppendFormat ("/warn:{0} ", options.WarningLevel);
 
 			if (options.OutputAssembly==null)
 				options.OutputAssembly = GetTempFileNameWithExtension (options.TempFiles, "dll");
 			args.AppendFormat("/out:\"{0}\" ",options.OutputAssembly);
+
 			if (null != options.ReferencedAssemblies)
 			{
 				foreach (string import in options.ReferencedAssemblies)
 					args.AppendFormat("/r:\"{0}\" ",import);
+			}
+
+			if (options.CompilerOptions != null) {
+				args.Append (options.CompilerOptions);
+				args.Append (" ");
 			}
 			
 			args.Append (" -- ");
