@@ -1,3 +1,9 @@
+
+Mon Jul 12 20:25:57 CEST 2004 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c: load value when emitting box operation in
+	constrained calls.
+
 2004-07-12  Ben Maurer  <bmaurer@ximian.com>
 
 	* mini-x86.c (OP_CHECK_THIS): cmp DWORD PTR [eax], eax
