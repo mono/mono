@@ -1,4 +1,10 @@
 
+Mon Jun 17 14:57:03 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* reflection.h, reflection.c: change order of nested type emission
+	to avoid table corruption. The NestedTypes table is sorted.
+	* icall.c: change order of GetConstructor results to workaround mcs bug.
+
 Fri Jun 14 16:24:30 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* reflection.h, reflection.c: handle field and param marshal
