@@ -23,9 +23,12 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.12 $
+// $Revision: 1.13 $
 // $Modtime: $
 // $Log: Form.cs,v $
+// Revision 1.13  2004/10/01 17:53:26  jackson
+// Implement the Close method so work on MessageBox can continue.
+//
 // Revision 1.12  2004/09/23 19:08:59  jackson
 // Temp build fixage
 //
@@ -363,6 +366,17 @@ namespace System.Windows.Forms {
 
 		public DialogResult ShowDialog(IWin32Window owner) {
 			return ShowDialog(Control.FromHandle(owner.Handle));
+		}
+
+		public void Close ()
+		{
+			CancelEventArgs args = new CancelEventArgs (true);
+			OnClosing (args);
+			if (!args.Cancel) {
+				OnClosed (EventArgs.Empty);
+				return;
+			}
+			closing = true;
 		}
 
 		#endregion	// Public Instance Methods
