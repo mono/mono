@@ -3,8 +3,10 @@
 //
 // Author:
 //   Rodrigo Moya (rodrigo@ximian.com)
+//   Tim Coleman (tim@timcoleman.com)
 //
 // (C) Ximian, Inc
+// (C) Copyright 2002 Tim Coleman
 //
 
 using System.Data;
@@ -16,50 +18,74 @@ namespace System.Data.Common
 	/// </summary>
 	public sealed class DataTableMapping : MarshalByRefObject // , ITableMapping, ICloneable
 	{
-		[MonoTODO]
-		public DataTableMapping() {
-			throw new NotImplementedException ();
+		#region Fields
+
+		string sourceTable;
+		string dataSetTable;
+		DataColumnMappingCollection columnMappings;
+
+		#endregion
+
+		#region Constructors
+
+		public DataTableMapping () 
+		{
+			dataSetTable = String.Empty;
+			sourceTable = String.Empty;
+			columnMappings = new DataColumnMappingCollection ();
 		}
 
-		[MonoTODO]
-		public DataTableMapping (string a, string b) {
-			throw new NotImplementedException ();
+		public DataTableMapping (string sourceTable, string dataSetTable) 
+			: this ()
+		{
+			this.sourceTable = sourceTable;
+			this.dataSetTable = dataSetTable;
+		}
+		
+		public DataTableMapping (string sourceTable, string dataSetTable, DataColumnMapping[] columnMappings) 
+			: this (sourceTable, dataSetTable)
+		{
+			this.columnMappings.AddRange (columnMappings);
 		}
 
-		[MonoTODO]
-		public DataTableMapping(string a, string b, DataColumnMapping[] c) {
-			throw new NotImplementedException ();
-		}
+		#endregion
 
-		[MonoTODO]
-		public DataColumnMapping GetColumnMappingBySchemaAction(
-			string sourceColumn,
-			MissingMappingAction mappingAction) {
-			throw new NotImplementedException ();
-		}
+		#region Properties
 
-		[MonoTODO]
-		public DataTable GetDataTableBySchemaAction(
-			DataSet dataSet,
-			MissingSchemaAction schemaAction) {
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
 		public DataColumnMappingCollection ColumnMappings {
-			get { throw new NotImplementedException (); }
+			get { return columnMappings; }
 		}
 
-		[MonoTODO]
 		public string DataSetTable {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { return dataSetTable; } 
+			set { dataSetTable = value; }
+		}
+
+		public string SourceTable {
+			get { return sourceTable; }
+			set { sourceTable = value; }
+		}
+	
+		#endregion
+
+		#region Methods
+
+		public DataColumnMapping GetColumnMappingBySchemaAction (string sourceColumn, MissingMappingAction mappingAction) 
+		{
+			return DataColumnMappingCollection.GetColumnMappingBySchemaAction (columnMappings, sourceColumn, mappingAction);
 		}
 
 		[MonoTODO]
-		public string SourceTable {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+		public DataTable GetDataTableBySchemaAction (DataSet dataSet, MissingSchemaAction schemaAction) 
+		{
+			throw new NotImplementedException ();
 		}
+
+		public override string ToString ()
+		{
+			return SourceTable; 
+		}
+		
+		#endregion
 	}
 }

@@ -21,38 +21,68 @@ namespace System.Data.Common
 	MarshalByRefObject, // ITableMappingCollection, IList,
 	        IEnumerable //ICollection, 
 	{
-		private ArrayList mappingList;
-		private ArrayList sourceTableList;
-		private ArrayList dataSetTableList;
+
+		#region Fields
+
+		ArrayList mappings;
+		Hashtable sourceTables;
+		Hashtable dataSetTables;
+
+		#endregion
+
+		#region Constructors 
 
 		public DataTableMappingCollection() 
 		{
-			sourceTableList = new ArrayList ();
-			dataSetTableList = new ArrayList ();
-			mappingList = new ArrayList ();
+			mappings = new ArrayList ();
+			sourceTables = new Hashtable ();
+			dataSetTables = new Hashtable ();
 		}
+
+		#endregion
+
+		#region Properties
+
+		public int Count 
+		{
+			get { return mappings.Count; }
+		}
+
+		public DataTableMapping this[int index] {
+			get { return (DataTableMapping)(mappings[index]); }
+			set { 
+				DataTableMapping mapping = (DataTableMapping)(mappings[index]);
+				sourceTables[mapping.SourceTable] = value;
+				dataSetTables[mapping.DataSetTable] = value;
+				mappings[index] = value; 
+			}
+		}
+
+		[MonoTODO]
+		public DataTableMapping this[string sourceTable] {
+			get { return (DataTableMapping)(sourceTables[sourceTable]); }
+			set { this[mappings.IndexOf(sourceTables[sourceTable])] = value; }
+		}
+
+		#endregion
+
+		#region Methods
 
 		public int Add (object value) 
 		{
 			if (!(value is System.Data.Common.DataTableMapping))
 				throw new SystemException ("The object passed in was not a DataTableMapping object.");
 
-			string sourceTable = ((DataTableMapping)value).SourceTable;
-			string dataSetTable = ((DataTableMapping)value).DataSetTable;
-			mappingList.Add (value);
-			dataSetTableList.Add (dataSetTable);
-			return sourceTableList.Add (sourceTable);
+			sourceTables[((DataTableMapping)value).SourceTable] = value;	
+			dataSetTables[((DataTableMapping)value).DataSetTable] = value;	
+			return mappings.Add (value);
 		}
 
 		public DataTableMapping Add (string sourceTable, string dataSetTable) 
 		{
-			DataTableMapping dataTableMapping = new DataTableMapping (sourceTable, dataSetTable);
-
-			mappingList.Add (dataTableMapping);
-			sourceTableList.Add (sourceTable);
-			dataSetTableList.Add (dataSetTable);
-
-			return dataTableMapping ;
+			DataTableMapping mapping = new DataTableMapping (sourceTable, dataSetTable);
+			Add (mapping);
+			return mapping;
 		}
 
 		public void AddRange(DataTableMapping[] values) 
@@ -63,19 +93,19 @@ namespace System.Data.Common
 
 		public void Clear() 
 		{
-			sourceTableList.Clear ();
-			dataSetTableList.Clear ();
-			mappingList.Clear ();
+			sourceTables.Clear ();
+			dataSetTables.Clear ();
+			mappings.Clear ();
 		}
 
 		public bool Contains (object value) 
 		{
-			return mappingList.Contains (value);
+			return mappings.Contains (value);
 		}
 
 		public bool Contains (string value) 
 		{
-			return sourceTableList.Contains (value);
+			return sourceTables.Contains (value);
 		}
 
 		[MonoTODO]
@@ -86,28 +116,38 @@ namespace System.Data.Common
 
 		public DataTableMapping GetByDataSetTable (string dataSetTable) 
 		{
-			return (DataTableMapping)mappingList[dataSetTableList.IndexOf(dataSetTable)];
+			return (DataTableMapping)(dataSetTables[dataSetTable]);
 		}
 
-		[MonoTODO]
 		public static DataTableMapping GetTableMappingBySchemaAction (DataTableMappingCollection tableMappings, string sourceTable, string dataSetTable, MissingMappingAction mappingAction) 
 		{
-			throw new NotImplementedException ();
+			if (tableMappings.Contains (sourceTable))
+				return tableMappings[sourceTable];
+			if (mappingAction == MissingMappingAction.Error)
+				throw new InvalidOperationException ();
+			if (mappingAction == MissingMappingAction.Ignore)
+				return null;
+			return new DataTableMapping (sourceTable, dataSetTable);
+		}
+
+		public IEnumerator GetEnumerator ()
+		{
+			return mappings.GetEnumerator ();
 		}
 
 		public int IndexOf (object value) 
 		{
-			return mappingList.IndexOf (value);
+			return mappings.IndexOf (value);
 		}
 
-		public int IndexOf (string value) 
+		public int IndexOf (string sourceTable) 
 		{
-			return sourceTableList.IndexOf (value);
+			return IndexOf (sourceTables[sourceTable]);
 		}
 
 		public int IndexOfDataSetTable (string dataSetTable) 
 		{
-			return dataSetTableList.IndexOf (dataSetTable);
+			return IndexOf ((DataTableMapping)(dataSetTables[dataSetTable]));
 		}
 
 		[MonoTODO]
@@ -134,28 +174,8 @@ namespace System.Data.Common
 			throw new NotImplementedException ();
 		}
 		
-		[MonoTODO]
-		public int Count 
-		{
-			get { throw new NotImplementedException (); }
-		}
 
-		[MonoTODO]
-		public DataTableMapping this[int i] {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
-		}
 
-		[MonoTODO]
-		public DataTableMapping this[string s] {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
-		}
-
-		[MonoTODO]
-		public IEnumerator GetEnumerator ()
-		{
-			throw new NotImplementedException ();
-		}
+		#endregion
 	}
 }

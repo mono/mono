@@ -750,6 +750,7 @@ namespace System.Data.SqlClient {
 				schemaRow["IsUnique"] = false; // ? tim
 				schemaRow["IsKey"] = false; // ? tim
 				schemaRow["BaseCatalogName"] = ""; // ? tim
+				schemaRow["BaseColumnName"] = PostgresLibrary.PQfname (pgResult, i);
 				schemaRow["BaseSchemaName"] = ""; // ? tim
 				schemaRow["BaseTableName"]  = ""; // ? tim
 				

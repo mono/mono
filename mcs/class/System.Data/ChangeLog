@@ -1,3 +1,15 @@
+2002-05-23  Tim Coleman <tim@timcoleman.com>
+	* System.Data.SqlClient/SqlCommand.cs: include
+	the BaseColumnName in the schema table.  Was missed before.
+	* System.Data.Common/DbDataAdapter.cs: Use DataTable
+	mappings so that the DataSet and DataTable are more closely tied.
+	Get schema information from the DataTable using GetSchemaTable ()
+	Various other little fixes
+	* System.Data.Common/DataColumnMappingCollection.cs:
+	* System.Data.Common/DataTableMapping.cs:
+	* System.Data.Common/DataTableMappingCollection.cs: Some
+	implementation, enough to be used by DbDataAdapter.
+
 2002-05-23  Daniel Morgan <danmorg@sc.rr.com>
 
 	* System.Data.SqlClient/SqlCommand.cs: set
