@@ -193,11 +193,49 @@ namespace System.Windows.Forms {
 			}
 
 			while (next != null) {
-				current.Combine(next);
+				// Take out 0 length tags
+				if (next.length == 0) {
+					current.next = next.next;
+					if (current.next != null) {
+						current.next.previous = current;
+					}
+					next = current.next;
+					continue;
+				}
+
+				if (current.Combine(next)) {
+					next = current.next;
+					continue;
+				}
+
 				current = current.next;
 				next = current.next;
 			}
 		}
+
+		// Find the tag on a line based on the character position
+		public LineTag FindTag(int pos) {
+			LineTag tag;
+
+			if (pos == 0) {
+				return tags;
+			}
+
+			tag = this.tags;
+
+			if (pos > text.Length) {
+				pos = text.Length;
+			}
+
+			while (tag != null) {
+				if ((tag.start <= pos) && (pos < (tag.start + tag.length))) {
+					return tag;
+				}
+				tag = tag.next;
+			}
+			return null;
+		}
+
 
 		//
 		// Go through all tags on a line and recalculate all size-related values
@@ -464,6 +502,68 @@ namespace System.Windows.Forms {
 		#endregion	// Public Properties
 
 		#region Private Methods
+		// For debugging
+		internal void DumpTree(Line line, bool with_tags) {
+			Console.Write("Line {0}, Y: {1} Text {2}", line.line_no, line.Y, line.text.ToString());
+
+			if (line.left == sentinel) {
+				Console.Write(", left = sentinel");
+			} else if (line.left == null) {
+				Console.Write(", left = NULL");
+			}
+
+			if (line.right == sentinel) {
+				Console.Write(", right = sentinel");
+			} else if (line.right == null) {
+				Console.Write(", right = NULL");
+			}
+
+			Console.WriteLine("");
+
+			if (with_tags) {
+				LineTag	tag;
+				int	count;
+
+				tag = line.tags;
+				count = 1;
+				Console.Write("   Tags: ");
+				while (tag != null) {
+					Console.Write("{0} <{1}>-<{2}> ", count++, tag.start, tag.length);
+					if (tag.line != line) {
+						Console.Write("BAD line link");
+						throw new Exception("Bad line link in tree");
+					}
+					tag = tag.next;
+					if (tag != null) {
+						Console.Write(", ");
+					}
+				}
+				Console.WriteLine("");
+			}
+			if (line.left != null) {
+				if (line.left != sentinel) {
+					DumpTree(line.left, with_tags);
+				}
+			}
+
+			if (line.right != null) {
+				if (line.right != sentinel) {
+					DumpTree(line.right, with_tags);
+				}
+			}
+		}
+
+		private void DecrementLines(int line_no) {
+			int	current;
+
+			current = line_no;
+			while (current <= lines) {
+				GetLine(current).line_no--;
+				current++;
+			}
+			return;
+		}
+
 		private void IncrementLines(int line_no) {
 			int	current;
 
@@ -653,7 +753,7 @@ namespace System.Windows.Forms {
 					owner.Invalidate();
 				}
 			} else {
-				owner.Invalidate(new Rectangle((int)line.widths[pos] - viewport_x, line.Y - viewport_y, (int)line.widths[line.text.Length], line.height));
+				owner.Invalidate(new Rectangle((int)line.widths[pos] - viewport_x, line.Y - viewport_y, (int)owner.Width, line.height));
 			}
 		}
 
@@ -688,6 +788,17 @@ namespace System.Windows.Forms {
 		#endregion	// Private Methods
 
 		#region Public Methods
+		public void PositionCaret(Line line, int pos) {
+			caret.tag = line.FindTag(pos);
+			caret.line = line;
+			caret.pos = pos;
+			caret.height = caret.tag.height;
+
+			XplatUI.DestroyCaret(owner.Handle);
+			XplatUI.CreateCaret(owner.Handle, 2, caret.height);
+			XplatUI.SetCaretPos(owner.Handle, (int)caret.tag.line.widths[caret.pos], caret.tag.line.Y + caret.tag.line.height - caret.height);
+		}
+
 		public void PositionCaret(int x, int y) {
 			caret.tag = FindCursor(x, y, out caret.pos);
 			caret.line = caret.tag.line;
@@ -855,7 +966,7 @@ namespace System.Windows.Forms {
 				}
 
 				case CaretDirection.LineDown: {
-					if ((caret.line.line_no + 1) < lines) {
+					if (caret.line.line_no < lines) {
 						int	pixel;
 
 						pixel = (int)caret.line.widths[caret.pos];
@@ -942,6 +1053,12 @@ namespace System.Windows.Forms {
 			}
 		}
 
+
+		// Inserts a character at the given position
+		public void InsertChar(Line line, int pos, char ch) {
+			InsertChar(line.FindTag(pos), pos, ch);
+		}
+
 		// Inserts a character at the given position
 		public void InsertChar(LineTag tag, int pos, char ch) {
 			Line	line;
@@ -949,8 +1066,11 @@ namespace System.Windows.Forms {
 			line = tag.line;
 			line.text.Insert(pos, ch);
 			tag.length++;
-			if (tag.next != null) {
-				tag.next.start++;
+
+			tag = tag.next;
+			while (tag != null) {
+				tag.start++;
+				tag = tag.next;
 			}
 			line.Grow(1);
 			line.recalc = true;
@@ -973,6 +1093,102 @@ namespace System.Windows.Forms {
 				caret.pos++;
 				UpdateCaret();
 			}
+		}
+
+
+		// Inserts a character at the given position; it will not delete past line limits
+		public void DeleteChar(LineTag tag, int pos, bool forward) {
+			Line	line;
+			bool	streamline;
+
+
+			streamline = false;
+			line = tag.line;
+
+			if ((pos == 0 && forward == false) || (pos == line.text.Length && forward == true)) {
+				return;
+			}
+
+			if (forward) {
+				line.text.Remove(pos, 1);
+				tag.length--;
+
+				if (tag.length == 0) {
+					streamline = true;
+				}
+			} else {
+				pos--;
+				line.text.Remove(pos, 1);
+				if (pos >= (tag.start - 1)) {
+					tag.length--;
+					if (tag.length == 0) {
+						streamline = true;
+					}
+				} else if (tag.previous != null) {
+					tag.previous.length--;
+					if (tag.previous.length == 0) {
+						streamline = true;
+					}
+				}
+			}
+
+			tag = tag.next;
+			while (tag != null) {
+				tag.start--;
+				tag = tag.next;
+			}
+			line.recalc = true;
+			line.Streamline();
+
+			UpdateView(line, pos);
+		}
+
+		// Combine two lines
+		public void Combine(int FirstLine, int SecondLine) {
+			Combine(GetLine(FirstLine), GetLine(SecondLine));
+		}
+
+		public void Combine(Line first, Line second) {
+			LineTag	last;
+			int	shift;
+
+			// Combine the two tag chains into one
+			last = first.tags;
+
+			while (last.next != null) {
+				last = last.next;
+			}
+
+			last.next = second.tags;
+			last.next.previous = last;
+
+			shift = last.start + last.length - 1;
+
+			// Fix up references within the chain
+			last = last.next;
+			while (last != null) {
+				last.line = first;
+				last.start += shift;
+				last = last.next;
+			}
+
+			// Combine both lines' strings
+			first.text.Insert(first.text.Length, second.text.ToString());
+			first.Grow(first.text.Length);
+
+			// Remove the reference to our (now combined) tags from the doomed line
+			second.tags = null;
+
+			// Renumber lines
+			DecrementLines(first.line_no + 2);	// first.line_no + 1 will be deleted, so we need to start renumbering one later
+
+			// Mop up
+			first.recalc = true;
+			first.height = 0;	// This forces RecalcDocument/UpdateView to redraw from this line on
+			first.Streamline();
+
+			this.Delete(second);
+
 		}
 
 		// Split the line at the position into two
@@ -1137,7 +1353,7 @@ namespace System.Windows.Forms {
 		}
 
 		public void Delete(Line line1) {
-			Line	line2 = new Line();
+			Line	line2;// = new Line();
 			Line	line3;
 
 			if ((line1.left == sentinel) || (line1.right == sentinel)) {
@@ -1167,12 +1383,28 @@ namespace System.Windows.Forms {
 			}
 
 			if (line3 != line1) {
+				LineTag	tag;
+
 				line1.line_no = line3.line_no;
 				line1.text = line3.text;
+				line1.tags = line3.tags;
+				line1.height = line3.height;
+				line1.recalc = line3.recalc;
+				line1.space = line3.space;
+				line1.widths = line3.widths;
+				line1.Y = line3.Y;
+
+				tag = line1.tags;
+				while (tag != null) {
+					tag.line = line1;
+					tag = tag.next;
+				}
 			}
 
 			if (line3.color == LineColor.Black)
 				RebalanceAfterDelete(line2);
+
+			this.lines--;
 
 			last_found = sentinel;
 		}
@@ -1566,9 +1798,9 @@ namespace System.Windows.Forms {
 		//
 		// Combines 'this' tag with 'other' tag.
 		//
-		public void Combine(LineTag other) {
+		public bool Combine(LineTag other) {
 			if (!this.Equals(other)) {
-				return;
+				return false;
 			}
 
 			this.width += other.width;
@@ -1577,6 +1809,8 @@ namespace System.Windows.Forms {
 			if (this.next != null) {
 				this.next.previous = this;
 			}
+
+			return true;
 		}
 
 

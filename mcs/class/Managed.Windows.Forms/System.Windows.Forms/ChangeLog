@@ -1,3 +1,22 @@
+2004-12-16  Peter Bartok  <pbartok@novell.com>
+
+	* TextControl.cs:
+	- Fixed Streamline method
+	- Added FindTag method to Line
+	- Added DumpTree method for debugging
+	- Added DecrementLines() method for deleting lines
+	- Fixed UpdateView to update the cursor to end-of-line on single-line
+	  updates
+	- Added PositionCaret() method
+	- Fixed MoveCaret(LineDown) to move into the last line, too
+	- Added InsertChar overload
+	- Fixed InsertChar tag offset calculations
+	- Added DeleteChar() method
+	- Added Combine() method for folding lines
+	- Fixed Delete() method, no longer allocates wasted Line object and
+	  now copies all properties when swapping nodes
+	- Delete() method now updates document line counter
+
 2004-12-15  Jackson Harper  <jackson@ximian.com>
 
 	* XplatUIX11.cs: Get the modifier keys from the keyboard driver
