@@ -1,3 +1,7 @@
+2003-08-03 Jackson Harper <jackson@latitudegeo.com>
+
+	* NumberHelper.cs: All numbers should allways be Int64
+	
 2003-07-30 Jackson Harper <jackson@latitudegeo.com>
 
 	* ILReader.cs: Incremint colums while reading

@@ -124,13 +124,13 @@ namespace Mono.ILASM {
                                         result.val = d;
                                 } else {
                                         long i = Int64.Parse (num, nstyles);
-                                        if (i < Int32.MinValue || i > Int32.MaxValue) {
+                                        // if (i < Int32.MinValue || i > Int32.MaxValue) {
                                                 result.token = Token.INT64;
                                                 result.val = i;
-                                        } else {
-                                                result.token = Token.INT32;
-                                                result.val = (int) i;
-                                        }
+                                        // } else {
+                                        //        result.token = Token.INT32;
+                                        //        result.val = (int) i;
+                                        // }
                                 }
                         } catch {
                                 reader.Unread (num.ToCharArray ());
@@ -179,13 +179,13 @@ namespace Mono.ILASM {
 
                         try {
                                 long i = (long) UInt64.Parse (num, nstyles);
-                                if (i < Int32.MinValue || i > Int32.MaxValue) {
+                                //if (i < Int32.MinValue || i > Int32.MaxValue) {
                                         result.token = Token.INT64;
                                         result.val = i;
-                                } else {
-                                        result.token = Token.INT32;
-                                        result.val = (int) i;
-                                }
+                                //} else {
+                                //        result.token = Token.INT32;
+                                //        result.val = (int) i;
+                                //}
                         } catch {
                                 string tnum = num;
                                 reader.Unread (num.ToCharArray ());
@@ -194,7 +194,6 @@ namespace Mono.ILASM {
                                 Reset ();
                                 throw new ILSyntaxError ("Bad hex number format! '" + tnum + "'");
                         }
-
                         return num;
                 }
 
