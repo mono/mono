@@ -20,7 +20,8 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 
 	public class SignedXmlEx : SignedXml {
 
-		public AsymmetricAlgorithm GetPublicKey () 
+		// required to test protected GetPublicKey in SignedXml
+		public AsymmetricAlgorithm PublicGetPublicKey () 
 		{
 			return base.GetPublicKey ();
 		}
@@ -356,10 +357,10 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			SignedXmlEx sxe = new SignedXmlEx ();
 			sxe.LoadXml (doc.DocumentElement);
 			
-			AsymmetricAlgorithm aa1 = sxe.GetPublicKey ();
+			AsymmetricAlgorithm aa1 = sxe.PublicGetPublicKey ();
 			Assert ("First Public Key is RSA", (aa1 is RSA));
 			
-			AsymmetricAlgorithm aa2 = sxe.GetPublicKey ();
+			AsymmetricAlgorithm aa2 = sxe.PublicGetPublicKey ();
 			AssertNull ("Second Public Key is null", aa2);
 		}
 
