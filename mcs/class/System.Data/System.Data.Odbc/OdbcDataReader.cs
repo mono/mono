@@ -199,8 +199,13 @@ namespace System.Data.Odbc
 			int i=0;
 			foreach (OdbcColumn col in cols)
 			{
-				if (col != null && col.ColumnName==colname)
-					return i;
+				if (col != null) {
+                                        if (col.ColumnName == colname)
+                                                return i;
+                                        if (String.Compare (col.ColumnName, colname, true) == 0)
+                                                return i;
+                                }
+                                                
 				i++;
 			}
 			return -1;
