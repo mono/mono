@@ -1,3 +1,8 @@
+2002-03-26  Gaurav Vaish <gvaish@iitk.ac.in>
+
+	* System.Web.Security: Removed all files. Will do it later.
+	          May be someone else like to do it for the time being.
+
 2002-03-17  Gaurav Vaish <gvaish@iitk.ac.in>
 
 	* System.Web -- Assembly build.
