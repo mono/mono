@@ -1,3 +1,8 @@
+2003-10-03  Zoltan Varga  <vargaz@freemail.hu>
+
+	* TypeBuilder.cs (CreateType): Fire TypeResolve events for unfinished 
+	nested value types. Fixes #47022.
+
 2003-09-29  Zoltan Varga  <vargaz@freemail.hu>
 
 	* TypeBuilder.cs: Really fix #48695.

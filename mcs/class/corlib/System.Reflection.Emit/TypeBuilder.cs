@@ -477,11 +477,42 @@ namespace System.Reflection.Emit {
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern Type create_runtime_class (TypeBuilder tb);
+
+		private bool is_nested_in (Type t) {
+			while (t != null) {
+				if (t == this)
+					return true;
+				else
+					t = t.DeclaringType;
+			}
+			return false;
+		}
 		
 		public Type CreateType() {
 			/* handle nesting_type */
 			if (is_created)
 				throw not_after_created ();
+
+			// Fire TypeResolve events for fields whose type is an unfinished
+			// value type.
+			if (fields != null) {
+				foreach (FieldBuilder fb in fields) {
+					Type ft = fb.FieldType;
+					if (!fb.IsStatic && (ft is TypeBuilder) && ft.IsValueType && (ft != this) && is_nested_in (ft)) {
+						TypeBuilder tb = (TypeBuilder)ft;
+						if (!tb.is_created) {
+							AppDomain.CurrentDomain.DoTypeResolve (tb);
+							if (!tb.is_created) {
+								// FIXME: We should throw an exception here,
+								// but mcs expects that the type is created
+								// even if the exception is thrown
+								//throw new TypeLoadException ("Could not load type " + tb);
+							}
+						}
+					}
+				}
+			}
+
 			if (methods != null) {
 				foreach (MethodBuilder method in methods) {
 					method.fixup ();
@@ -498,7 +529,7 @@ namespace System.Reflection.Emit {
 				foreach (ConstructorBuilder ctor in ctors) 
 					ctor.fixup ();
 			}
-			
+
 			created = create_runtime_class (this);
 			if (created != null)
 				return created;
