@@ -9,6 +9,7 @@
 ./Mono.Security.Authenticode/PrivateKey.cs
 ./Mono.Security.Cryptography/ARC4Managed.cs
 ./Mono.Security.Cryptography/CryptoConvert.cs
+./Mono.Security.Cryptography/KeyPairPersistence.cs
 ./Mono.Security.Cryptography/MD2.cs
 ./Mono.Security.Cryptography/MD2Managed.cs
 ./Mono.Security.Cryptography/MD4.cs
@@ -78,3 +79,5 @@
 ./Mono.Security.Protocol.Tls.Handshake.Client/TlsServerHello.cs
 ./Mono.Security.Protocol.Tls.Handshake.Client/TlsServerHelloDone.cs
 ./Mono.Security.Protocol.Tls.Handshake.Client/TlsServerKeyExchange.cs
+./Mono.Xml/MiniParser.cs
+./Mono.Xml/SecurityParser.cs

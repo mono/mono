@@ -2,6 +2,7 @@ Mono.Security/StrongNameTest.cs
 Mono.Security.Authenticode/PrivateKeyTest.cs
 Mono.Security.Authenticode/SoftwarePublisherCertificateTest.cs
 Mono.Security.Cryptography/ARC4ManagedTest.cs
+Mono.Security.Cryptography/KeyPairPersistenceTest.cs
 Mono.Security.Cryptography/MD2ManagedTest.cs
 Mono.Security.Cryptography/MD2Test.cs
 Mono.Security.Cryptography/MD4ManagedTest.cs
