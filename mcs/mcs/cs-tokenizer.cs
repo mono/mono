@@ -1712,10 +1712,26 @@ namespace Mono.CSharp
 			val = null;
 			// optimization: eliminate col and implement #directive semantic correctly.
 			for (;(c = getChar ()) != -1; col++) {
-				if (c == ' ' || c == '\t' || c == '\f' || c == '\v' || c == '\r' || c == 0xa0){
-					
-					if (c == '\t')
-						col = (((col + 8) / 8) * 8) - 1;
+				if (c == ' ')
+					continue;
+				
+				if (c == '\t') {
+					col = (((col + 8) / 8) * 8) - 1;
+					continue;
+				}
+				
+				if (c == ' ' || c == '\f' || c == '\v' || c == 0xa0)
+					continue;
+
+				if (c == '\r') {
+					if (peekChar () == '\n')
+						getChar ();
+
+					line++;
+					ref_line++;
+					col = 0;
+					any_token_seen |= tokens_seen;
+					tokens_seen = false;
 					continue;
 				}
 

@@ -1,3 +1,7 @@
+2004-01-31  Miguel de Icaza  <miguel@ximian.com>
+
+	* cs-tokenizer.cs: Applied patch from Marek Safar to fix bug 53386
+
 2004-01-26  Miguel de Icaza  <miguel@ximian.com>
 
 	* cs-tokenizer.cs: Handle #line hidden from PDC bits.
