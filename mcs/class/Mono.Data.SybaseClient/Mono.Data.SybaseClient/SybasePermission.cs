@@ -18,6 +18,7 @@ namespace Mono.Data.SybaseClient {
 	{
 		[MonoTODO]
 		public SybasePermission () 
+			: this (PermissionState.None)
 		{
 			// FIXME: do constructor
 		}

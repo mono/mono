@@ -1,3 +1,7 @@
+2003-12-19  Tim Coleman <tim@timcoleman.com>
+	* Mono.Data.SybaseClient/SybasePermission.cs:
+		Change constructor.
+
 2003-07-17  Peter Williams  <peter@newton.cx>
 
 	* Mono.Data.SybaseTypes/SybaseDecimal.cs: csc.exe is more
