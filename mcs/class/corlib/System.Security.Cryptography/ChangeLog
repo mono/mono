@@ -1,3 +1,8 @@
+2002-09-22  Andrew Birkett  <andy@nobugs.org>
+
+	* RijndaelManaged.cs: BlockSize now reports size in bytes.
+	* ICryptoTransform.cs: Updated comments - BlockSizes are in bytes, unlike elsewhere.
+
 2002-09-19  Andrew Birkett  <andy@nobugs.org>
 
 	* Rijndael.cs: Create() now gives you a RijndaelManaged object

@@ -84,7 +84,7 @@ namespace System.Security.Cryptography {
 	internal class RijndaelController : ICryptoTransform
 	{
 		private bool encrypt;
-		private int blocksize;
+		private int blocksize; // In bits
 		private byte[] iv;
 		private byte[] key;
 		private CipherMode ciphermode;
@@ -137,13 +137,13 @@ namespace System.Security.Cryptography {
 
 		public int InputBlockSize {
 			get {
-				return blocksize;				
+				return blocksize / 8;
 			}
 		}
 		
 		public int OutputBlockSize {
 			get {
-				return blocksize;
+				return blocksize / 8;
 			}
 		}
 

@@ -25,12 +25,12 @@ namespace System.Security.Cryptography {
 		bool CanTransformMultipleBlocks {get;}
 
 		/// <summary>
-		/// Size of input blocks for the function.
+		/// Size of input blocks for the function in bytes.
 		/// </summary>
 		int InputBlockSize {get;}
 
 		/// <summary>
-		/// Size of the output blocks of the function.
+		/// Size of the output blocks of the function in bytes.
 		/// </summary>
 		int OutputBlockSize {get;}
 
