@@ -6,9 +6,6 @@
 //      Dietmar Maurer (dietmar@ximian.com)
 //
 // (C) 2001
-//
-
-//
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -32,11 +29,13 @@
 //
 
 using System;
+using System.Collections;
+using System.Globalization;
 using System.Reflection;
-using System.Threading;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using System.Collections;
+using System.Text;
+using System.Threading;
 
 namespace System.Diagnostics {
 
@@ -70,6 +69,9 @@ namespace System.Diagnostics {
 
 		void init_frames (int skipFrames, bool needFileInfo)
 		{
+			if (skipFrames < 0)
+				throw new ArgumentOutOfRangeException ("< 0", "skipFrames");
+
 			StackFrame sf;
 			ArrayList al = new ArrayList ();
 
@@ -89,22 +91,27 @@ namespace System.Diagnostics {
 		extern static StackFrame [] get_trace (Exception e, int skipFrames, bool needFileInfo);
 
 		public StackTrace (Exception e)
+			: this (e, METHODS_TO_SKIP, false)
 		{
-			frames = get_trace (e, METHODS_TO_SKIP, false);
 		}
 
 		public StackTrace (Exception e, bool needFileInfo)
+			: this (e, METHODS_TO_SKIP, needFileInfo)
 		{
-			frames = get_trace (e, METHODS_TO_SKIP, needFileInfo);
 		}
 
 		public StackTrace (Exception e, int skipFrames)
+			: this (e, skipFrames, false)
 		{
-			frames = get_trace (e, skipFrames, false);
 		}
 
 		public StackTrace (Exception e, int skipFrames, bool needFileInfo)
 		{
+			if (e == null)
+				throw new ArgumentNullException ("e");
+			if (skipFrames < 0)
+				throw new ArgumentOutOfRangeException ("< 0", "skipFrames");
+
 			frames = get_trace (e, skipFrames, needFileInfo);
 		}
 
@@ -117,14 +124,14 @@ namespace System.Diagnostics {
 		[MonoTODO]
 		public StackTrace (Thread targetThread, bool needFileInfo)
 		{
-			throw new NotImplementedException();
+			throw new NotImplementedException ();
 		}
 
 		public virtual int FrameCount {
 			get {
 				return (frames == null) ? 0 : frames.Length;
 			}
-		}	     
+		}
 
 		public virtual StackFrame GetFrame (int index)
 		{
@@ -139,7 +146,7 @@ namespace System.Diagnostics {
 		[ComVisibleAttribute (false)]
 		public virtual
 #else
-		// used for CAS implementation
+		// used for CAS implementation (before Fx 2.0)
 		internal
 #endif
 		StackFrame[] GetFrames ()
@@ -149,13 +156,24 @@ namespace System.Diagnostics {
 
 		public override string ToString ()
 		{
-			string result = "";
+			string newline = String.Format ("{0}\t {1} ", Environment.NewLine, Locale.GetText ("at"));
+			string unknown = Locale.GetText ("<unknown method>");
+			StringBuilder sb = new StringBuilder ();
 			for (int i = 0; i < FrameCount; i++) {
 				StackFrame frame = GetFrame (i);
-				result += "\n\tat " + FrameToString (frame);
+				sb.Append (newline);
+				MethodBase method = frame.GetMethod ();
+				if (method != null) {
+					// Method information available
+					sb.AppendFormat ("{0}.{1} ()", method.DeclaringType.FullName, method.Name);
+				}
+				else {
+					// Method information not available
+					sb.Append (unknown);
+				}
 			}
 
-			return result;
+			return sb.ToString ();
 		}
 
 		//
@@ -188,19 +206,5 @@ namespace System.Diagnostics {
 			return FrameCount;
 		}
 #endif
-
-		private static string FrameToString (StackFrame frame)
-		{
-			MethodBase method = frame.GetMethod ();
-			if (method != null) {
-				// Method information available
-				return  method.DeclaringType.FullName
-					+ "." + method.Name + "()";
-			}
-			else {
-				// Method information not available
-				return "<unknown method>";
-			}
-		}
 	}
 }

@@ -1,3 +1,8 @@
+2004-08-05  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* StackTrace.cs: Added missing exceptions. Added globalization. Now 
+	using StringBuilder in ToString (fusioned FrameToString).
+
 2004-08-04  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* StackTrace.cs: Implemented GetFrames as public virtual for NET_2_0
