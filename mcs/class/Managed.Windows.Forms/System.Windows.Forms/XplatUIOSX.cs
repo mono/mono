@@ -1190,13 +1190,17 @@ namespace System.Windows.Forms {
 		}
 
 		internal override void SetFocus(IntPtr hwnd) {
-			throw new NotImplementedException();
+			IntPtr window = GetControlOwner (hwnd);
+			SetKeyboardFocus (window, hwnd, 1); 
 		}
 
 		internal override IntPtr GetActive() {
-			throw new NotImplementedException();
-		}
+			foreach (DictionaryEntry entry in view_window_mapping)
+				if (IsWindowActive ((IntPtr)(entry.Value)))
+					return (IntPtr)(entry.Key);
 
+			return IntPtr.Zero;
+		}
 
 		internal override bool GetFontMetrics(Graphics g, Font font, out int ascent, out int descent) {
 			return GetFontMetrics(g.GetHdc(), font.ToHfont(), out ascent, out descent);
@@ -1307,6 +1311,8 @@ namespace System.Windows.Forms {
                 static extern int InstallEventHandler (IntPtr window, CarbonEventHandler handlerProc, uint numtypes, EventTypeSpec [] typeList, IntPtr userData, IntPtr handlerRef);
 		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		internal static extern IntPtr GetControlOwner (IntPtr aView);
+		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
+		static extern bool IsWindowActive (IntPtr windowHnd);
 		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		static extern int SetKeyboardFocus (IntPtr windowHdn, IntPtr cntrlHnd, ushort partcode);
 		[DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
