@@ -1,5 +1,12 @@
 2005-02-18  Peter Bartok  <pbartok@novell.com>
 
+	* MethodInvoker.cs: Added
+	* MdiLayout.cs: Added
+	* SendKeys.cs: Started implementation
+	* ErrorIconAlignment.cs: Added
+
+2005-02-18  Peter Bartok  <pbartok@novell.com>
+
 	* XplatUIWin32.cs: Implemented SetMenu(); fixed GetMenuDC()
 	* Form.cs: Added handling for Menu-related Non-client messages
 

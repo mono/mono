@@ -1,3 +1,8 @@
+2005-02-18  Peter Bartok  <pbartok@novell.com>
+
+	* System.Windows.Forms.dll.sources: Added MethodInvoker.cs,
+	  ErrorIconAlignment.cs, MdiLayout.cs, SendKeys.cs
+
 2005-02-18  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile (EXTRA_DISTFILES): Distribute all *.resx and
