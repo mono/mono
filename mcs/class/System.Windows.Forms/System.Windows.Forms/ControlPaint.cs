@@ -19,7 +19,7 @@ namespace System.Windows.Forms {
 	/// </summary>
 	
 	[MonoTODO]
-  public sealed class ControlPaint {
+	public sealed class ControlPaint {
 
 		#region Properties
 		[MonoTODO]
@@ -132,18 +132,29 @@ namespace System.Windows.Forms {
 
 		#region Methods
 		/// following methods were not stubbed out, because they only support .NET framework:
-		/// - public static IntPtr CreateHBitmap16Bit(Bitmap bitmap,Color background)
-		/// - public static IntPtr CreateHBitmapColorMask(Bitmap bitmap,IntPtr monochromeMask);
-		/// - public static IntPtr CreateHBitmapTransparencyMask(Bitmap bitmap);
+		
 		[MonoTODO]
-		public static Color Dark(Color baseColor) 
-		{
+		public static IntPtr CreateHBitmap16Bit(Bitmap bitmap,Color background){
+			throw new NotImplementedException ();
+		}
+		
+		[MonoTODO]
+		public static IntPtr CreateHBitmapColorMask(Bitmap bitmap,IntPtr monochromeMask){
+			throw new NotImplementedException ();
+		}
+		
+		[MonoTODO]
+		public static IntPtr CreateHBitmapTransparencyMask(Bitmap bitmap){
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public static Color Dark(Color baseColor) {
 			return Dark(baseColor, 10.0f);
 		}
 		
 		[MonoTODO]
-		public static Color Dark(Color baseColor,float percOfDarkDark) 
-		{
+		public static Color Dark(Color baseColor,float percOfDarkDark) {
 			double H, I, S;
 			ControlPaint.Color2HIS(baseColor, out H, out I, out S);
 			double NewIntensity = Math.Max( 0.0, I - (percOfDarkDark / 100.0));
@@ -151,8 +162,7 @@ namespace System.Windows.Forms {
 		}
 		
 		[MonoTODO]
-		public static Color DarkDark(Color baseColor) 
-		{
+		public static Color DarkDark(Color baseColor) {
 			return Dark(baseColor, 20.0f);
 		}
 		
@@ -204,19 +214,19 @@ namespace System.Windows.Forms {
 		}
 		
 		[MonoTODO]
-		public static void DrawBorder3D(Graphics graphics, Rectangle rectangle, Border3DStyle Style) {
-			DrawBorder3D(graphics, rectangle, Style, Border3DSide.All);
+		public static void DrawBorder3D(Graphics graphics, Rectangle rectangle, Border3DStyle style) {
+			DrawBorder3D(graphics, rectangle, style, Border3DSide.All);
 		}
 		
 		[MonoTODO]
-		public static void DrawBorder3D( Graphics graphics, Rectangle rectangle, Border3DStyle Style, Border3DSide Sides) {
+		public static void DrawBorder3D( Graphics graphics, Rectangle rectangle, Border3DStyle style, Border3DSide sides) {
 			RECT rc = new RECT();
 			rc.left = rectangle.Left;
 			rc.top = rectangle.Top;
 			rc.right = rectangle.Right;
 			rc.bottom = rectangle.Bottom;
 			IntPtr hdc = graphics.GetHdc();
-			int res = Win32.DrawEdge( hdc, ref rc, Style, Sides);
+			int res = Win32.DrawEdge( hdc, ref rc, style, sides);
 			graphics.ReleaseHdc(hdc);
 		}
 
@@ -244,7 +254,7 @@ namespace System.Windows.Forms {
 
 		[MonoTODO]
 		public static void DrawBorder3D( Graphics graphics, int x, int y, int width, int height,
-											Border3DStyle style,Border3DSide sides) {
+			Border3DStyle style,Border3DSide sides) {
 			DrawBorder3D( graphics, new Rectangle(x, y, width, height), style, sides);
 		}
 
@@ -269,7 +279,8 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public static void DrawCaptionButton(
 			Graphics graphics,
-			Rectangle rectangle) {
+			Rectangle rectangle,
+			ButtonState state) {
 			//FIXME:
 		}
 		
@@ -297,7 +308,8 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public static void DrawComboButton(
 			Graphics graphics,
-			Rectangle rectangle) {
+			Rectangle rectangle,
+			ButtonState state) {
 			//FIXME:
 		}
 		
@@ -313,8 +325,7 @@ namespace System.Windows.Forms {
 		}
 		
 		[MonoTODO]
-		public static void DrawContainerGrabHandle(Graphics graphics,Rectangle bounds) 
-		{
+		public static void DrawContainerGrabHandle(Graphics graphics,Rectangle bounds) {
 			//FIXME:
 		}
 		
@@ -485,7 +496,8 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public static void DrawReversibleFrame(
 			Rectangle rectangle,
-			Color backColor) {
+			Color backColor,
+			FrameStyle style) {
 			//FIXME:
 		}
 		
@@ -501,7 +513,8 @@ namespace System.Windows.Forms {
 		public static void DrawScrollButton(
 			Graphics graphics,
 			Rectangle rectangle,
-			ScrollButton button) {
+			ScrollButton button,
+			ButtonState state) {
 			//FIXME:
 		}
 		
@@ -530,7 +543,8 @@ namespace System.Windows.Forms {
 		[MonoTODO]
 		public static void DrawSizeGrip(
 			Graphics graphics,
-			Color backColor) {
+			Color backColor,
+			Rectangle bounds) {
 			//FIXME:
 		}
 		
@@ -587,22 +601,19 @@ namespace System.Windows.Forms {
 		}
 		
 		[MonoTODO]
-		public static Color Light(Color baseColor) 
-		{
+		public static Color Light(Color baseColor) {
 			return Light( baseColor, 10.0f);
 		}
 		
 		[MonoTODO]
-		public static Color Light(Color baseColor,float percOfLightLight) 
-		{
+		public static Color Light(Color baseColor,float percOfLightLight) {
 			double H, I, S;
 			ControlPaint.Color2HIS(baseColor, out H, out I, out S);
 			double NewIntensity = Math.Min( 1.0, I + (percOfLightLight / 100.0));
 			return ControlPaint.HIS2Color(H, NewIntensity, S);
 		}
 		[MonoTODO]
-		public static Color LightLight(Color baseColor) 
-		{
+		public static Color LightLight(Color baseColor) {
 			return Light( baseColor, 20.0f);
 		}
 		#endregion

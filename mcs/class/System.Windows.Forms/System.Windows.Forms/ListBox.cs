@@ -517,6 +517,10 @@ namespace System.Windows.Forms {
 		protected virtual void Sort() {
 			//FIXME:
 		}
+
+		protected virtual void WmReflectCommand(ref Message m){
+			throw new NotImplementedException ();
+		}
 		
 		[MonoTODO]
 		protected override void WndProc(ref Message m) {

@@ -147,15 +147,19 @@ namespace System.Windows.Forms {
 		}
 		
 		// --- CheckedListBox methods ---
-		// following methods were not stubbed out, because they only support .NET framework:
-		// - protected virtual void OnItemCheck(ItemCheckEventArgs ice)
-		// - protected override void WmReflectCommand(ref Message m)
+		// following methods only support .NET framework:
+		protected virtual void OnItemCheck(ItemCheckEventArgs ice){
+			throw new NotImplementedException ();
+		}
 
-		// I do not think this is part of the spec.
-		//protected override AccessibleObject CreateAccessibilityInstance() 
-		//{
-		//	throw new NotImplementedException ();
-		//}
+		protected override void WmReflectCommand(ref Message m){
+			throw new NotImplementedException ();
+		}
+
+		protected override AccessibleObject CreateAccessibilityInstance() 
+		{
+			throw new NotImplementedException ();
+		}
 		
 		[MonoTODO]
 		protected override ListBox.ObjectCollection CreateItemCollection() {

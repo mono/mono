@@ -135,13 +135,13 @@ namespace System.Windows.Forms {
 				}
     		}
     
-    		public int PreferredHeight {
+    		public virtual int PreferredHeight {
     			get {
     				return preferred_height;
     			}
     		}
     
-    		public int PreferredWidth {
+    		public virtual int PreferredWidth {
     			get {
     				return preferred_width;
     			}
@@ -207,14 +207,14 @@ namespace System.Windows.Forms {
     			}
     		}
     
-    		protected virtual bool RenderTransparent {
-    			get {
-    				return render_transparent;
-    			}
-    			set {
+			protected new virtual bool RenderTransparent {
+				get {
+					return render_transparent;
+				}
+				set {
 					//FIXME:
+				}
 			}
-    		}
     
     		protected override ImeMode DefaultImeMode {
     			get {
@@ -234,8 +234,13 @@ namespace System.Windows.Forms {
     		}
 
     		[MonoTODO]
-    		protected  Rectangle CalcImageRenderBounds (
-    			Image image, Rectangle rect, ContentAlignment align)
+			protected override void Dispose(bool disposing){
+				base.Dispose(disposing);
+			}
+
+    		[MonoTODO]
+    		protected Rectangle CalcImageRenderBounds (
+    			Image image, Rectangle r, ContentAlignment align)
     		{
     			throw new NotImplementedException ();
     		}
@@ -248,7 +253,7 @@ namespace System.Windows.Forms {
       		}
 
     		[MonoTODO]
-    		protected  void DrawImage (Graphics g, Image img, 
+    		protected  void DrawImage (Graphics g, Image image, 
     					   Rectangle r, ContentAlignment align)
     		{
 				//FIXME:
@@ -361,32 +366,32 @@ namespace System.Windows.Forms {
     			return base.ProcessMnemonic (charCode);
     		}
     
-    		[MonoTODO]
-    		protected new ContentAlignment RtlTranslateAlignment (
-    			ContentAlignment alignment)
-    		{
-    			throw new NotImplementedException ();
-    		}
-    
-    		[MonoTODO]
-    		protected new HorizontalAlignment RtlTranslateAlignment (
-    			HorizontalAlignment alignment)
-    		{
-    			throw new NotImplementedException ();
-    		}
-    		
-    		[MonoTODO]
-    		protected new LeftRightAlignment RtlTranslateAlignment (
-    			LeftRightAlignment align)
-    		{
-    			throw new NotImplementedException ();
-    		}
-    
-    		[MonoTODO]
-    		protected new virtual void Select (bool directed, bool forward)
-    		{
-				//FIXME:
-			}
+//    		[MonoTODO]
+//    		protected new ContentAlignment RtlTranslateAlignment (
+//    			ContentAlignment alignment)
+//    		{
+//    			throw new NotImplementedException ();
+//    		}
+//    
+//    		[MonoTODO]
+//    		protected new HorizontalAlignment RtlTranslateAlignment (
+//    			HorizontalAlignment alignment)
+//    		{
+//    			throw new NotImplementedException ();
+//    		}
+//    		
+//    		[MonoTODO]
+//    		protected new LeftRightAlignment RtlTranslateAlignment (
+//    			LeftRightAlignment align)
+//    		{
+//    			throw new NotImplementedException ();
+//    		}
+//    
+//    		[MonoTODO]
+//    		protected new virtual void Select (bool directed, bool forward)
+//    		{
+//				//FIXME:
+//			}
     
     		protected override void SetBoundsCore (
     			int x, int y, int width, int height,
@@ -395,24 +400,24 @@ namespace System.Windows.Forms {
     			base.SetBoundsCore (x, y, width, height, specified);
     		}
     
-    		protected new void UpdateBounds()
-    		{
-    			base.UpdateBounds ();
-    		}
-    
-    		protected new void UpdateBounds (int x, int y,
-    					     int width, int height)
-    		{
-    			base.UpdateBounds (x, y, width, height);
-    		}
-    
-    
-    		protected new void UpdateBounds (int x, int y, int width,
-						 int height, int clientWidth,
-						 int clientHeight)
-		{
-    			base.UpdateBounds (x, y, width, height, clientWidth, clientHeight);
-		}
+//    		protected new void UpdateBounds()
+//    		{
+//    			base.UpdateBounds ();
+//    		}
+//    
+//    		protected new void UpdateBounds (int x, int y,
+//    					     int width, int height)
+//    		{
+//    			base.UpdateBounds (x, y, width, height);
+//    		}
+//    
+//    
+//    		protected new void UpdateBounds (int x, int y, int width,
+//						 int height, int clientWidth,
+//						 int clientHeight)
+//		{
+//    			base.UpdateBounds (x, y, width, height, clientWidth, clientHeight);
+//		}
 
     		protected override void WndProc(ref Message m)
     		{

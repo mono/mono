@@ -99,7 +99,7 @@ namespace System.Windows.Forms {
 		}
 		
 		[ComVisible(true)]
-		public bool Shift 
+		public virtual bool Shift 
 		{
 			get {
 				return (keydata == Keys.Shift);

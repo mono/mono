@@ -56,7 +56,7 @@ namespace System.Windows.Forms {
     		}
     		
     		// FIXME: not sure if dervied classes should have access
-    		protected ControlNativeWindow window;
+    		protected internal ControlNativeWindow window;
     		private ControlCollection childControls;
     		private Control parent;
     		static private Hashtable controlsCollection = new Hashtable ();

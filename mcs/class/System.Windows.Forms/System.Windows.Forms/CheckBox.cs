@@ -187,13 +187,13 @@ namespace System.Windows.Forms {
 			Win32.SendMessage(Handle, (int)ButtonMessages.BM_SETCHECK, (int)checkState, 0);
 		}
 		
-		protected override void OnMouseDown (MouseEventArgs e) 
-		{
-			base.OnMouseDown (e);
-		}
+//		protected override void OnMouseDown (MouseEventArgs e) 
+//		{
+//			base.OnMouseDown (e);
+//		}
 		
 		[MonoTODO]
-		protected override void OnMouseUp(MouseEventArgs e) 
+		protected override void OnMouseUp(MouseEventArgs mevent) 
 		{
 			if (ThreeState) {
 				switch (CheckState) {
@@ -212,7 +212,7 @@ namespace System.Windows.Forms {
 				Checked = Checked ? false : true;
 			}
 			Invalidate ();
-			base.OnMouseUp(e);
+			base.OnMouseUp(mevent);
 		}
 		// end of [event methods]
 		
