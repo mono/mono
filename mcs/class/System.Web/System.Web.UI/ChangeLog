@@ -1,3 +1,7 @@
+2003-09-18  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* LosFormatter.cs: fixed Deserialize for empty viewstate.
+
 2003-08-26  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Page.cs: check if controls that require postback have

@@ -96,6 +96,9 @@ namespace System.Web.UI
 			if (input == null)
 				throw new ArgumentNullException ("input");
 
+			if (input == "")
+				return null;
+
 			string real_input = WebEncoding.Encoding.GetString (Convert.FromBase64String (input));
 			return DeserializeObject (real_input);
 		}
