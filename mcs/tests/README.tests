@@ -264,3 +264,8 @@ the method.
 verify-6.cs
 -----------
 Casts from/to System.Enum.
+
+unsafe-6.cs:
+------------
+Tests the correct computation of compound operators in the context of a pointer 
+dereference on the left side.

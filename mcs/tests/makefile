@@ -39,7 +39,7 @@ TEST_SOURCES = \
 #
 #
 UNSAFE_SOURCES = \
-	unsafe-1 unsafe-2 unsafe-3 test-58 test-171 unsafe-5
+	unsafe-1 unsafe-2 unsafe-3 test-58 test-171 unsafe-5 unsafe-6
 
 WINDOWS_SOURCES = \
 	test-50 test-67
