@@ -1,3 +1,8 @@
+2005-01-14  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* System.Runtime.Remoting_test.dll.sources: Added:
+		System.Runtime.Remoting.Channels/RemotingThreadPool.cs
+
 2004-10-25  Zoltan Varga  <vargaz@freemail.hu>
 
 	* Makefile: Add '.' to MONO_PATH during test. Fixes #68377.
