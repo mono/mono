@@ -1,3 +1,8 @@
+2005-02-22  Raja R Harinath  <rharinath@novell.com>
+
+	* library.make (BUILT_SOURCES_cmdline): Don't define if
+	BUILT_SOURCES is empty.
+
 2005-02-21  Michal Moskal  <malekith@pld-linux.org>
 	    Raja R Harinath  <rharinath@novell.com>
 

@@ -225,10 +225,12 @@ $(sn):
 	cd $(topdir) && $(MAKE) PROFILE=net_1_1_bootstrap
 endif
 
+ifdef BUILT_SOURCES
 ifeq (cat, $(PLATFORM_CHANGE_SEPARATOR_CMD))
 BUILT_SOURCES_cmdline = $(BUILT_SOURCES)
 else
 BUILT_SOURCES_cmdline = `echo $(BUILT_SOURCES) | $(PLATFORM_CHANGE_SEPARATOR_CMD)`
+endif
 endif
 
 # The library
