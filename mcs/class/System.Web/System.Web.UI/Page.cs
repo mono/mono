@@ -833,8 +833,6 @@ public class Page : TemplateControl, IHttpHandler
 		throw new NotImplementedException ();
 	}
 
-
-	[MonoTODO]
 	[EditorBrowsable (EditorBrowsableState.Advanced)]
 	public void RegisterOnSubmitStatement (string key, string script)
 	{

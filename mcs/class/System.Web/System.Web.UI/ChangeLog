@@ -1,3 +1,7 @@
+2004-06-07  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Page.cs: removed obsolete MonoTODO from RegisterOnSubmitStatement.
+
 2004-06-05  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Page.cs: IsPostBack also returns true when method is GET and we have
