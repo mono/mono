@@ -101,7 +101,7 @@ namespace System.Windows.Forms {
 			DateTime now = DateTime.Now.Date;
 			selection_range = new SelectionRange (now, now);
 			today_date = now;
-			current_month = now;
+			current_month = new DateTime (now.Year , now.Month, 1);
 
 			// iniatialise local members
 			annually_bolded_dates = null;
@@ -405,16 +405,16 @@ namespace System.Windows.Forms {
 					} else {
 						selection_range = value;
 					}
-
 					SelectionRange visible_range = this.GetDisplayRange(true);
 					if(visible_range.Start > selection_range.End) {
-						current_month = new DateTime (selection_range.Start.Year, selection_range.Start.Month, 1);
+						this.current_month = new DateTime (selection_range.Start.Year, selection_range.Start.Month, 1);
+						this.Invalidate ();
 					} else if (visible_range.End < selection_range.Start) {
 						int year_diff = selection_range.End.Year - visible_range.End.Year;
 						int month_diff = selection_range.End.Month - visible_range.End.Month;
-						current_month = current_month.AddMonths(year_diff * 12 + month_diff);
+						this.current_month = current_month.AddMonths(year_diff * 12 + month_diff);
+						this.Invalidate ();
 					}
-					
 					// invalidate the selected range changes
 					DateTime diff_start = old_range.Start;
 					DateTime diff_end = old_range.End;
@@ -437,7 +437,7 @@ namespace System.Windows.Forms {
 							diff_end = old_range.Start;
 						}
 					}
-				
+
 					// invalidate the region required
 					this.InvalidateDateRange (new SelectionRange (diff_start, diff_end));
 					// raise date changed event
@@ -465,8 +465,13 @@ namespace System.Windows.Forms {
 						SelectionRange.End = value.AddDays(MaxSelectionCount-1);
 					}
 					SelectionRange.Start = value;
-					current_month = value;
-					this.InvalidateDateRange (new SelectionRange (old_start, SelectionRange.Start));
+					DateTime new_month = new DateTime(value.Year, value.Month, 1);
+					if (current_month != new_month) {
+						current_month = new_month;
+						this.Invalidate ();
+					} else {
+						this.InvalidateDateRange (new SelectionRange (old_start, SelectionRange.Start));
+					}
 					this.OnDateChanged (new DateRangeEventArgs (SelectionStart, SelectionEnd));
 				}
 			}
@@ -1550,25 +1555,30 @@ namespace System.Windows.Forms {
 				range = new SelectionRange (range.Start, bounds.End);
 			}
 			// now invalidate the date rectangles as series of rows
-			DateTime last_month = this.current_month.AddMonths ((CalendarDimensions.Width * CalendarDimensions.Height) - 1);
+			DateTime last_month = this.current_month.AddMonths ((CalendarDimensions.Width * CalendarDimensions.Height)).AddDays (-1);
 			DateTime current = range.Start;
 			while (current <= range.End) {
-				DateTime month_end = new DateTime (current.Year, current.Month, 1).AddMonths (1).AddDays (-1);
-				month_end.AddMonths (1).AddDays (-1);
+				DateTime month_end = new DateTime (current.Year, current.Month, 1).AddMonths (1).AddDays (-1);;
 				Rectangle start_rect;
 				Rectangle end_rect;
-				start_rect = GetDateRowRect (current, current);
-				if (range.End < month_end)	{
+				// see if entire selection is in this current month
+				if (range.End <= month_end && current < last_month)	{
 					// the end is the last date
-					end_rect = GetDateRowRect (current, range.End);
-				} else {
-					// the end needs to be the last row of this month
-					if (last_month.Year == month_end.Year && last_month.Month == month_end.Month) {
-						// which may be the trailing months
-						end_rect = GetDateRowRect (current, bounds.End);
+					if (current < this.current_month) {
+						start_rect = GetDateRowRect (current_month, current_month);
 					} else {
-						end_rect = GetDateRowRect (current, month_end);
+						start_rect = GetDateRowRect (current, current);
 					}
+					end_rect = GetDateRowRect (current, range.End);
+				} else if (current < last_month) {
+					// otherwise it simply means we have a selection spaning
+					// multiple months simply set rectangle inside the current month
+					start_rect = GetDateRowRect (current, current);
+					end_rect = GetDateRowRect (last_month, month_end);
+				} else {
+					// it's outside the visible range
+					start_rect = GetDateRowRect (last_month, last_month.AddDays (1));
+					end_rect = GetDateRowRect (last_month, range.End);
 				}
 				// push to the next month
 				current = month_end.AddDays (1);

@@ -1,3 +1,8 @@
+2004-12-10  John BouAntoun <jba-mono@optusnet.com.au>
+
+	* MonthCalendar.cs: invalidation bug fixing 
+	* ThemeWin32Classic.cs: paint fixing
+
 2004-12-09  Geoff Norton  <gnorton@customerdna.com>
 
 	* XplatUIOSX.cs: Refactor to pass the real hwnd into Graphics.FromHwnd, we 

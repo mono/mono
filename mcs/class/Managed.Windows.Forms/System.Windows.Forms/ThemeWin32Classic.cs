@@ -1555,7 +1555,7 @@ namespace System.Windows.Forms
 
 
 			// draw the actual date items in the grid (including the week numbers)
-			Rectangle date_rect = new Rectangle(
+			Rectangle date_rect = new Rectangle (
 				rectangle.X,
 				rectangle.Y + title_size.Height + date_cell_size.Height,
 				date_cell_size.Width,
@@ -1587,7 +1587,9 @@ namespace System.Windows.Forms
 				
 				// draw the week number if required
 				if (mc.ShowWeekNumbers && month_row_count == i) {
-					draw_week_num_divider = draw_row;
+					if (!draw_week_num_divider) {
+						draw_week_num_divider = draw_row;
+					}
 					// get the week for this row
 					int week = mc.GetWeekOfYear (current_date);	
 
