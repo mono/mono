@@ -2,6 +2,7 @@
 
 	* tramp-x86.c (x86_magic_trampoline): Disable code patching when
 	running under valgrind.
+	(x86_magic_trampoline): Fix build bustage.
 
 	* debug-mini.c: Modify the debug info serialize/deserialize code so it handles
 	negative values as well. This is needed for the encoding of the line number
