@@ -1,5 +1,9 @@
 2002-09-20  Martin Baulig  <martin@gnome.org>
 
+	* debug-mono-symfile.c: Provide information about params and locals.
+
+2002-09-20  Martin Baulig  <martin@gnome.org>
+
 	* icall.c ("System.Reflection.Assembly::MonoDebugger_GetMethod"):
 	New interncall.
 
