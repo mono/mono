@@ -1,4 +1,8 @@
 
+Mon Apr 29 12:12:35 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* dump.c, dump.h, main.c: support for dumping the manifest resource table.
+
 Mon Apr 15 11:35:05 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* dump.c, dump.h, get.c, get.h, main.c: support for dumping the
