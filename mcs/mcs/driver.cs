@@ -152,6 +152,7 @@ namespace Mono.CSharp
 				"   --optimize      Optimizes\n" +
 				"   --parse         Only parses the source file\n" +
 				"   --probe X       Probes for the source to generate code X on line L\n" +
+				"   --recurse SPEC  Recursively compiles the files in SPEC ([dir]/file)\n" + 
 				"   --resource FILE Addds FILE as a resource\n" + 
 				"   --stacktrace    Shows stack trace at error location\n" +
 				"   --target KIND   Specifies the target (KIND is one of: exe, winexe, " +
@@ -332,6 +333,9 @@ namespace Mono.CSharp
 
 		static int ProcessFile (string f)
 		{
+			if (first_source == null)
+				first_source = f;
+
 			if (source_files.Contains (f)){
 				Report.Error (
 					1516,
@@ -347,9 +351,37 @@ namespace Mono.CSharp
 			return 0;
 		}
 
-		static void RecurseOn (string pattern)
+		static int CompileFiles (string spec, bool recurse)
 		{
-			// FIXME: implement.
+			string path, pattern;
+			int errors = 0;
+
+			SplitPathAndPattern (spec, out path, out pattern);
+			string [] files = null;
+			try {
+				files = Directory.GetFiles (path, pattern);
+			} catch (System.IO.DirectoryNotFoundException) {
+				Report.Error (2001, "Source file `" + spec + "' could not be found");
+				return 1;
+			}
+				
+			foreach (string f in files)
+				errors += ProcessFile (f);
+
+			if (!recurse)
+				return errors;
+			
+			string [] dirs = null;
+
+			try {
+				dirs = Directory.GetDirectories (path);
+			} catch {
+			}
+			
+			foreach (string d in dirs)
+				errors += CompileFiles (path + "\\" + d + "\\" + pattern, true);
+
+			return errors;
 		}
 		
 		/// <summary>
@@ -587,7 +619,9 @@ namespace Mono.CSharp
 
 					case "--wlevel":
 						if ((i + 1) >= argc){
-							Usage (true);
+							Report.Error (
+								1900,
+								"--wlevel requires an value from 0 to 4");
 							error_count++;
 							return;
 						}
@@ -596,7 +630,9 @@ namespace Mono.CSharp
 						try {
 							level = Int32.Parse (args [++i]);
 						} catch {
-							Usage (true);
+							Report.Error (
+								1900,
+								"--wlevel requires an value from 0 to 4");
 							return;
 						}
 						if (level < 0 || level > 4){
@@ -612,11 +648,11 @@ namespace Mono.CSharp
 
 					case "--recurse":
 						if ((i + 1) >= argc){
-							Usage (true);
+							Console.WriteLine ("--recurse requires an argument");
 							error_count++;
 							return;
 						}
-						RecurseOn (args [++i]);
+						errors += CompileFiles (args [++i], true);
 						continue;
 						
 					case "--timestamp":
@@ -626,22 +662,7 @@ namespace Mono.CSharp
 					}
 				}
 
-				if (first_source == null)
-					first_source = arg;
-
-				string path, pattern;
-				SplitPathAndPattern (arg, out path, out pattern);
-				Console.WriteLine ("using: {0} and {1}", path, pattern);
-				string [] files = null;
-				try {
-					files = Directory.GetFiles (path, pattern);
-				} catch (System.IO.DirectoryNotFoundException) {
-					Report.Error (2001, "Source file `" + arg + "' could not be found");
-					continue;
-				}
-				
-				foreach (string f in files)
-					errors += ProcessFile (f);
+				CompileFiles (arg, false); 
 			}
 
 			if (tokenize)

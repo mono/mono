@@ -1,5 +1,7 @@
 2002-03-19  Miguel de Icaza  <miguel@ximian.com>
 
+	* driver.cs: Implement --recurse for Mike.
+
 	* driver.cs (SplitPathAndPattern): Small bug fix, I was not
 	correctly splitting out the paths.
 
