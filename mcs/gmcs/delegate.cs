@@ -1,4 +1,3 @@
-// -*- coding: dos -*-
 //
 // delegate.cs: Delegate Handler
 //
@@ -36,7 +35,7 @@ namespace Mono.CSharp {
 		Type ret_type;
 
 		static string[] attribute_targets = new string [] { "type", "return" };
-
+		
 		Expression instance_expr;
 		MethodBase delegate_method;
 		ReturnParameter return_attributes;
@@ -303,13 +302,14 @@ namespace Mono.CSharp {
 				
 				for (i = 0 ; i < top; i++) {
 					p = Parameters.FixedParameters [i];
+
 					p.DefineParameter (ec, BeginInvokeBuilder, null, i + 1, Location);
 				}
 			}
 			if (Parameters.ArrayParameter != null){
 				Parameter p = Parameters.ArrayParameter;
 				p.DefineParameter (ec, BeginInvokeBuilder, null, i + 1, Location);
-				
+
 				i++;
 			}
 
@@ -390,16 +390,16 @@ namespace Mono.CSharp {
 			return true;
 		}
 
- 		public override void Emit (TypeContainer tc)
- 		{
- 			if (OptAttributes != null) {
- 				EmitContext ec = new EmitContext (tc, this, Location, null, null, ModFlags, false);
+		public override void Emit (TypeContainer tc)
+		{
+			if (OptAttributes != null) {
+				EmitContext ec = new EmitContext (tc, this, Location, null, null, ModFlags, false);
 				Parameters.LabelParameters (ec, InvokeBuilder, Location);
 				OptAttributes.Emit (ec, this);
- 			}
+			}
 
 			base.Emit (tc);
- 		}
+		}
 
 		protected override string[] ValidAttributeTargets {
 			get {
@@ -407,18 +407,18 @@ namespace Mono.CSharp {
 			}
 		}
 
- 		//TODO: duplicate
- 		protected override bool VerifyClsCompliance (DeclSpace ds)
- 		{
+		//TODO: duplicate
+		protected override bool VerifyClsCompliance (DeclSpace ds)
+		{
 			if (!base.VerifyClsCompliance (ds)) {
- 				return false;
- 			}
+				return false;
+			}
 
- 			AttributeTester.AreParametersCompliant (Parameters.FixedParameters, Location);
+			AttributeTester.AreParametersCompliant (Parameters.FixedParameters, Location);
 
 			if (!AttributeTester.IsClsCompliant (ReturnType.Type)) {
- 				Report.Error_T (3002, Location, GetSignatureForError ());
- 			}
+				Report.Error_T (3002, Location, GetSignatureForError ());
+			}
 			return true;
 		}
 
@@ -426,8 +426,7 @@ namespace Mono.CSharp {
 		///  Verifies whether the method in question is compatible with the delegate
 		///  Returns the method itself if okay and null if not.
 		/// </summary>
-		public static MethodBase VerifyMethod (EmitContext ec, Type delegate_type,
-						       MethodGroupExpr mg, MethodBase mb,
+		public static MethodBase VerifyMethod (EmitContext ec, Type delegate_type, MethodBase mb,
 						       Location loc)
 		{
 			Expression ml = Expression.MemberLookup (
@@ -439,6 +438,7 @@ namespace Mono.CSharp {
 			}
 
 			MethodBase invoke_mb = ((MethodGroupExpr) ml).Methods [0];
+
 			ParameterData invoke_pd = Invocation.GetParameterData (invoke_mb);
 
 			if (!mg.HasTypeArguments &&
@@ -529,7 +529,7 @@ namespace Mono.CSharp {
 				ans = Invocation.VerifyArgumentsCompat (ec, args, arg_count, mb, true,  delegate_type, loc);
 			return ans;
 		}
-
+		
 		/// <summary>
 		///  Verifies whether the delegate in question is compatible with this one in
 		///  order to determine if instantiation from the same is possible.
@@ -691,7 +691,7 @@ namespace Mono.CSharp {
 				ec, type, "Invoke", MemberTypes.Method,
 				Expression.AllBindingFlags, loc);
 			MethodBase method = ((MethodGroupExpr) invoke_method).Methods [0];
- 			ParameterData param = Invocation.GetParameterData (method);
+			ParameterData param = Invocation.GetParameterData (method);
 			string delegate_desc = Delegate.FullDelegateDesc (type, method, param);
 
 			if (!mg.HasTypeArguments &&
@@ -705,7 +705,7 @@ namespace Mono.CSharp {
 					      "match delegate '{1}'", method_desc,
 					      delegate_desc);
 		}
-
+		
 		public override void Emit (EmitContext ec)
 		{
 			if (delegate_instance_expr == null ||
@@ -844,7 +844,7 @@ namespace Mono.CSharp {
 				return null;
 
 			Argument a = (Argument) Arguments [0];
-
+			
 			Expression invoke_method = Expression.MemberLookup (
 				ec, type, "Invoke", MemberTypes.Method,
 				Expression.AllBindingFlags, loc);
