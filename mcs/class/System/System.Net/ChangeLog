@@ -1,3 +1,9 @@
+2005-01-20  Jonathan Pryor  <jonpryor@vt.edu>
+
+	* WebHeaderCollection.cs: Fix GetValues(string) to split the values on
+	  commas if the header is a Multi-Value header.  This matches
+	  MonoTests.System.Net.WebHeaderCollectionTest.
+
 2005-01-19  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* WebPermissionAttribute.cs: Fixed NET_1_1 behaviour.

@@ -165,6 +165,30 @@ namespace System.Net
 			if (values == null || values.Length == 0)
 				return null;
 
+			if (IsMultiValue (header)) {
+				values = GetMultipleValues (values);
+			}
+
+			return values;
+		}
+
+		private static string[] GetMultipleValues (string[] values)
+		{
+			ArrayList mvalues = new ArrayList (values.Length);
+			for (int i = 0; i < values.Length; ++i) {
+				string val = values [i];
+				if (val.IndexOf (',') == -1) {
+					mvalues.Add (val);
+					continue;
+				}
+				string[] vals = val.Split (',');
+				for (int j = 0; j < vals.Length; ++j)
+					mvalues.Add (vals [j].Trim ());
+			}
+			if (mvalues.Count != values.Length) {
+				values = new string [mvalues.Count];
+				mvalues.CopyTo (values);
+			}
 			return values;
 		}
 
