@@ -1,3 +1,24 @@
+2004-01-23  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlWriter.cs, XmlTextWriter.cs :
+	  Several namespace related fixes.
+	  - Current element's NamespaceURI should be immediately available
+	    after the call of WriteStartElement() for LookupPrefix(), so 
+	    AddMissingElementXmlns() only affects on output. This is 
+	    now identified by shouldCheckElementXmlns field.
+	  - Attribute's overraped xmlns should be ignored for LookupPrefix(),
+	    Especially, when the owner element is written with the default
+	    namespace. HOWEVER, the attribute should be *written*. This is
+	    identified by shouldAddSavedNsToManager field.
+	  - In AddMissingElementXmlns(), non-empty prefix namespace was not
+	    checked user-written attributes.
+	  - XmlWriter.WriteAttributeString() never supplies namespace URI for
+	    xmlns attributes for other versions than NET_1_0. Instead, added
+	    ns check logic in WriteStartAttribute() only with NET_1_0.
+	  - WriteEndAttribute() should reject zero-length namespace for 
+	    non-default xmlns declarations.
+	  - LookupPrefix() should reject argument null and empty.
+
 2004-01-22  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlElement.cs : Reverted previous fix since it broke monodoc web 

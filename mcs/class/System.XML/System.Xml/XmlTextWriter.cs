@@ -8,7 +8,6 @@
 // (C) 2002 Kral Ferch
 // (C) 2003 Atsushi Enomoto
 //
-
 using System;
 using System.Collections;
 using System.IO;
@@ -52,8 +51,10 @@ namespace System.Xml
 
 		XmlNamespaceManager namespaceManager = new XmlNamespaceManager (new NameTable ());
 		string savingAttributeValue = String.Empty;
-		bool saveAttributeValue = false;
+		bool saveAttributeValue;
 		string savedAttributePrefix;
+		bool shouldAddSavedNsToManager;
+		bool shouldCheckElementXmlns;
 
 		#endregion
 
@@ -196,32 +197,20 @@ namespace System.Xml
 
 			// LAMESPEC: If prefix was already assigned another nsuri, then this element's nsuri goes away!
 
-			if (ns != null) 
-			{
+			if (this.shouldCheckElementXmlns) {
 				string formatXmlns = String.Empty;
-				if (ns != String.Empty)
-				{
-					string existingPrefix = namespaceManager.LookupPrefix (ns);
-
-					if (existingPrefix != prefix)
-					{
-						if (prefix != string.Empty)
-							formatXmlns = String.Format ("xmlns:{0}={1}{2}{1}", prefix, quoteChar, EscapeString (ns, false));
-						else
-							formatXmlns = String.Format ("xmlns={0}{1}{0}", quoteChar, EscapeString (ns, false));
-						namespaceManager.AddNamespace (prefix, ns);
-					}
-				} 
-				else if ((prefix == String.Empty) && 
-					(namespaceManager.LookupNamespace (prefix) != ns) &&
-					userWrittenNamespaces [prefix] == null) {
-					namespaceManager.AddNamespace (prefix, ns);
-					formatXmlns = String.Format ("xmlns={0}{0}", quoteChar);
+				if (userWrittenNamespaces [prefix] == null) {
+					if (prefix != string.Empty)
+						formatXmlns = String.Concat (new object [] {"xmlns:", prefix, "=", quoteChar, EscapeString (ns, false), quoteChar});
+					else
+						formatXmlns = String.Concat ("xmlns=", quoteChar, EscapeString (ns, false), quoteChar);
 				}
+
 				if(formatXmlns != String.Empty) {
 					w.Write (' ');
 					w.Write(formatXmlns);
 				}
+				shouldCheckElementXmlns = false;
 			}
 
 			if (newAttributeNamespaces.Count > 0)
@@ -237,8 +226,8 @@ namespace System.Xml
 					string formatXmlns = String.Format (" xmlns:{0}={1}{2}{1}", aprefix, quoteChar, EscapeString (ans, false));
 					w.Write(formatXmlns);
 				}
+				newAttributeNamespaces.Clear ();
 			}
-			newAttributeNamespaces.Clear ();
 		}
 
 		private void CheckState ()
@@ -300,6 +289,9 @@ namespace System.Xml
 
 		public override string LookupPrefix (string ns)
 		{
+			if (ns == null || ns == String.Empty)
+				throw new ArgumentException ("The Namespace cannot be empty.");
+
 			string prefix = namespaceManager.LookupPrefix (ns);
 
 			// XmlNamespaceManager has changed to return null when NSURI not found.
@@ -471,9 +463,12 @@ namespace System.Xml
 			openAttribute = false;
 
 			if (saveAttributeValue) {
+				if (savedAttributePrefix.Length > 0 && savingAttributeValue.Length == 0)
+					throw new ArgumentException ("Cannot use prefix with an empty namespace.");
+
 				// add namespace
-				namespaceManager.AddNamespace (
-					savedAttributePrefix, savingAttributeValue);
+				if (shouldAddSavedNsToManager) // not OLD one
+					namespaceManager.AddNamespace (savedAttributePrefix, savingAttributeValue);
 				userWrittenNamespaces [savedAttributePrefix] = savingAttributeValue;
 				saveAttributeValue = false;
 				savedAttributePrefix = String.Empty;
@@ -621,20 +616,31 @@ namespace System.Xml
 
 		public override void WriteStartAttribute (string prefix, string localName, string ns)
 		{
-			if ((prefix == "xml") && (localName == "lang")) {
+			if (prefix == "xml") {
+				// MS.NET looks to allow other names than 
+				// lang and space (e.g. xml:link, xml:hack).
 				ns = XmlNamespaceManager.XmlnsXml;
-				openXmlLang = true;
+				if (localName == "lang")
+					openXmlLang = true;
+				else if (localName == "space")
+					openXmlSpace = true;
 			}
+			if (prefix == null)
+				prefix = String.Empty;
 
-			if ((prefix == "xml") && (localName == "space")) {
-				ns = XmlNamespaceManager.XmlnsXml;
-				openXmlSpace = true;
-			}
+			if (prefix.Length > 0 && (ns == null || ns.Length == 0))
+				if (prefix != "xmlns")
+					throw new ArgumentException ("Cannot use prefix with an empty namespace.");
 
 			if ((prefix == "xmlns") && (localName.ToLower ().StartsWith ("xml")))
 				throw new ArgumentException ("Prefixes beginning with \"xml\" (regardless of whether the characters are uppercase, lowercase, or some combination thereof) are reserved for use by XML: " + prefix + ":" + localName);
 
-			if ((prefix == "xmlns") && (ns != XmlnsNamespace))
+			// Note that null namespace with "xmlns" are allowed.
+#if NET_1_0
+			if ((prefix == "xmlns" || localName == "xmlns" && prefix == String.Empty) && ns != XmlnsNamespace)
+#else
+			if ((prefix == "xmlns" || localName == "xmlns" && prefix == String.Empty) && ns != null && ns != XmlnsNamespace)
+#endif
 				throw new ArgumentException (String.Format ("The 'xmlns' attribute is bound to the reserved namespace '{0}'", XmlnsNamespace));
 
 			CheckState ();
@@ -651,12 +657,10 @@ namespace System.Xml
 			string formatPrefix = "";
 			string formatSpace = "";
 
-			if (ns != String.Empty && prefix != "xmlns") 
-			{
+			if (ns != String.Empty && prefix != "xmlns") {
 				string existingPrefix = namespaceManager.LookupPrefix (ns);
 
-				if (existingPrefix == null || existingPrefix == "") 
-				{
+				if (existingPrefix == null || existingPrefix == "") {
 					bool createPrefix = false;
 					if (prefix == "")
 						createPrefix = true;
@@ -704,6 +708,8 @@ namespace System.Xml
 			ws = WriteState.Attribute;
 
 			if (prefix == "xmlns" || prefix == String.Empty && localName == "xmlns") {
+				if (prefix != openElementPrefix || openElementNS == null)
+					shouldAddSavedNsToManager = true; 
 				saveAttributeValue = true;
 				savedAttributePrefix = (prefix == "xmlns") ? localName : String.Empty;
 				savingAttributeValue = String.Empty;
@@ -769,6 +775,7 @@ namespace System.Xml
 			CloseStartElement ();
 			newAttributeNamespaces.Clear ();
 			userWrittenNamespaces.Clear ();
+			shouldCheckElementXmlns = false;
 
 			if (prefix == null && ns != null)
 				prefix = namespaceManager.LookupPrefix (ns);
@@ -791,6 +798,21 @@ namespace System.Xml
 
 			namespaceManager.PushScope ();
 			indentLevel++;
+
+			if (ns != null) {
+				if (ns.Length > 0) {
+					string existing = LookupPrefix (ns);
+					if (existing != prefix) {
+						shouldCheckElementXmlns = true;
+						namespaceManager.AddNamespace (prefix, ns);
+					}
+				} else {
+					if (ns != namespaceManager.DefaultNamespace) {
+						shouldCheckElementXmlns = true;
+						namespaceManager.AddNamespace ("", ns);
+					}
+				}
+			}
 		}
 
 		public override void WriteString (string text)

@@ -13,7 +13,11 @@ using System;
 
 namespace System.Xml
 {
+#if NET_1_2
+	public abstract class XmlWriter : IDisposable
+#else
 	public abstract class XmlWriter
+#endif
 	{
 		#region Constructors
 
@@ -34,6 +38,13 @@ namespace System.Xml
 		#region Methods
 
 		public abstract void Close ();
+
+#if NET_1_2
+		public virtual void Dispose ()
+		{
+			Close ();
+		}
+#endif
 
 		public abstract void Flush ();
 
@@ -87,7 +98,7 @@ namespace System.Xml
 
 		public void WriteAttributeString (string localName, string value)
 		{
-			WriteAttributeString ("", localName, "", value);
+			WriteAttributeString ("", localName, null, value);
 		}
 
 		public void WriteAttributeString (string localName, string ns, string value)
@@ -99,9 +110,11 @@ namespace System.Xml
 		{
 			// In MS.NET (1.0), this check is done *here*, not at WriteStartAttribute.
 			// (XmlTextWriter.WriteStartAttribute("xmlns", "anyname", null) throws an exception.
-			if ((prefix == "xmlns") || (prefix == "" && localName == "xmlns"))
-				if (ns == null)
-					ns = "http://www.w3.org/2000/xmlns/";
+
+#if NET_1_0
+			if ((prefix == "xmlns" || (prefix == "" && localName == "xmlns")) && ns == null)
+				ns = "http://www.w3.org/2000/xmlns/";
+#endif
 
 			WriteStartAttribute (prefix, localName, ns);
 			WriteString (value);
