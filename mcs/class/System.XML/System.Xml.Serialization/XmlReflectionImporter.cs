@@ -492,31 +492,18 @@ namespace System.Xml.Serialization {
 			XmlTypeMapping map = helper.GetRegisteredClrType (type, GetTypeNamespace (TypeTranslator.GetTypeData (type), root, defaultNamespace));
 			if (map != null) return map;
 
-			// Registers the maps for XmlNode and XmlElement
+			map = CreateTypeMapping (TypeTranslator.GetTypeData (type), root, null, defaultNamespace);
+			helper.RegisterClrType (map, type, map.XmlTypeNamespace);
+			
+			if (type.BaseType != null)
+			{
+				XmlTypeMapping bmap = ImportTypeMapping (type.BaseType, root, defaultNamespace);
+				if (type.BaseType != typeof (object))
+					map.BaseMap = bmap;
+				
+				RegisterDerivedMap (bmap, map);
+			}
 
-			XmlTypeMapping nodeMap = CreateTypeMapping (TypeTranslator.GetTypeData (typeof(XmlNode)), root, null, defaultNamespace);
-			helper.RegisterClrType (nodeMap, typeof(XmlNode), nodeMap.XmlTypeNamespace);
-
-			XmlTypeMapping elemMap = CreateTypeMapping (TypeTranslator.GetTypeData (typeof(XmlElement)), root, null, defaultNamespace);
-			helper.RegisterClrType (elemMap, typeof(XmlElement), elemMap.XmlTypeNamespace);
-
-			XmlTypeMapping textMap = CreateTypeMapping (TypeTranslator.GetTypeData (typeof(XmlText)), root, null, defaultNamespace);
-			helper.RegisterClrType (textMap, typeof(XmlText), textMap.XmlTypeNamespace);
-
-			XmlTypeMapping docMap = CreateTypeMapping (TypeTranslator.GetTypeData (typeof(XmlDocument)), root, null, defaultNamespace);
-			helper.RegisterClrType (docMap, typeof(XmlDocument), textMap.XmlTypeNamespace);
-
-			XmlTypeMapping obmap = ImportTypeMapping (typeof(object));
-			obmap.DerivedTypes.Add (nodeMap);
-			obmap.DerivedTypes.Add (elemMap);
-			obmap.DerivedTypes.Add (textMap);
-			obmap.DerivedTypes.Add (docMap);
-			nodeMap.DerivedTypes.Add (elemMap);
-			nodeMap.DerivedTypes.Add (textMap);
-			nodeMap.DerivedTypes.Add (docMap);
-
-			map = helper.GetRegisteredClrType (type, GetTypeNamespace (TypeTranslator.GetTypeData (type), root, defaultNamespace));
-			if (map == null) throw new InvalidOperationException ("Objects of type '" + type + "' can't be serialized");
 			return map;
 		}
 

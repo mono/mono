@@ -1,3 +1,12 @@
+2005-03-29  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* XmlReflectionImporter.cs: Added support for subclasses of XmlNode.
+	This fixes bug #73901 and should fix #70384.
+	* XmlSerializationReader.cs: When reading an object element, return
+	an Object instance if the element has no children. This fixes bug #73974.
+	* XmlSerializationWriter.cs: Support writing XmlNode[] as a primitive
+	type (it is written as an element with those nodes as children). 
+
 2005-03-08  Lluis Sanchez Gual <lluis@novell.com>
 
 	* XmlSchemaImporter.cs: Support importing schemas that define

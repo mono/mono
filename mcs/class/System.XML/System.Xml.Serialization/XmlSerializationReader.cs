@@ -706,9 +706,13 @@ namespace System.Xml.Serialization
 			{
 				// Put everything into a node array
 				XmlNode node = Document.ReadNode (reader);
+
+				if (node.ChildNodes.Count == 0 && node.Attributes.Count == 0)
+					return new Object ();
+
 				XmlElement elem = node as XmlElement;
 				
-				if (elem == null) 
+				if (elem == null)
 					return new XmlNode[] {node};
 				else {
 					XmlNode[] nodes = new XmlNode[elem.Attributes.Count + elem.ChildNodes.Count];
