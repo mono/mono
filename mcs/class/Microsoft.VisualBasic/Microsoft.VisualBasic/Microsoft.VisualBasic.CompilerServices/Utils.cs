@@ -429,33 +429,82 @@ namespace Microsoft.VisualBasic.CompilerServices {
 //			return DestinationArray;
 //		}
 //
-//		[MonoTODO]
-//		public static System.string MethodToString (System.Reflection.MethodBase Method)
-//		{
-//			 throw new NotImplementedException (); 
-//		}
+
 		/**
 		 * This method copy the information from one array to another.
 		 */
-		public static object CopyArray(object arySrc, object aryDest) {
-			if (arySrc == null || ((Array)arySrc).Length == 0)
-				return aryDest;
+		public static object CopyArray(Array source, Array destination) {
+			if (source == null || destination == null)
+				return destination;
 
-			//int sourceRank = ArrayStaticWrapper.get_Rank(arySrc);
-			int sourceRank = ((Array)arySrc).Rank;
-			//if( sourceRank != ArrayStaticWrapper.get_Rank(aryDest))
-			if( sourceRank != ((Array)aryDest).Rank)
+#if NET_1_1
+			long lengthToCopy = source.LongLength;
+			if (lengthToCopy == 0)
+				return destination;
+
+			int totalRanks = source.Rank;
+			if (totalRanks != destination.Rank)
 				throw (InvalidCastException)ExceptionUtils.VbMakeException(new InvalidCastException(GetResourceString("Array_RankMismatch")), 9);
 
-			Array.Copy(((Array)arySrc),((Array)aryDest),((Array)arySrc).Length);
-        
-			return aryDest;
+			int ranksThatMustBeEqual = (totalRanks - 1);
+			for (int rank = 0; rank < ranksThatMustBeEqual; rank++) {
+				if (destination.GetUpperBound(rank) != source.GetUpperBound(rank)) 
+					throw (ArrayTypeMismatchException)ExceptionUtils.VbMakeException(new ArrayTypeMismatchException(GetResourceString("Array_TypeMismatch")), 9);
+			}
+
+			if (totalRanks == 1) {
+				if (lengthToCopy > destination.LongLength)
+					lengthToCopy = destination.LongLength;		
+				Array.Copy(source, destination, lengthToCopy);
+			} else {
+				long sourceLengthInLastRank = source.GetLongLength(totalRanks - 1);
+				long destinationLengthInLastRank = destination.GetLongLength(totalRanks - 1);
+				if (destinationLengthInLastRank > 0) {
+					long lengthToCopyInLastRank = Math.Min(destinationLengthInLastRank, sourceLengthInLastRank);
+					long lowerRankBlocksToCopy = ((source.LongLength / sourceLengthInLastRank) - 1);
+					for (long block = 0; block <= lowerRankBlocksToCopy; block++)
+						Array.Copy(source, (block * sourceLengthInLastRank), destination, (block * destinationLengthInLastRank), lengthToCopyInLastRank);
+				}
+			}
+#else
+			int lengthToCopy = source.Length;
+			if (lengthToCopy == 0)
+				return destination;
+
+			int totalRanks = source.Rank;
+			if (totalRanks != destination.Rank)
+				throw (InvalidCastException)ExceptionUtils.VbMakeException(new InvalidCastException(GetResourceString("Array_RankMismatch")), 9);
+
+			int ranksThatMustBeEqual = (totalRanks - 1);
+			for (int rank = 0; rank < ranksThatMustBeEqual; rank++) {
+				if (destination.GetUpperBound(rank) != source.GetUpperBound(rank)) 
+					throw (ArrayTypeMismatchException)ExceptionUtils.VbMakeException(new ArrayTypeMismatchException(GetResourceString("Array_TypeMismatch")), 9);
+			}
+
+			if (totalRanks == 1) {
+				if (lengthToCopy > destination.Length)
+					lengthToCopy = destination.Length;		
+				Array.Copy(source, destination, lengthToCopy);
+			} else {
+				int sourceLengthInLastRank = source.GetLength(totalRanks - 1);
+				int destinationLengthInLastRank = destination.GetLength(totalRanks - 1);
+				if (destinationLengthInLastRank > 0) {
+					int lengthToCopyInLastRank = Math.Min(destinationLengthInLastRank, sourceLengthInLastRank);
+					int lowerRankBlocksToCopy = ((source.Length / sourceLengthInLastRank) - 1);
+					for (int block = 0; block <= lowerRankBlocksToCopy; block++)
+						Array.Copy(source, (block * sourceLengthInLastRank), destination, (block * destinationLengthInLastRank), lengthToCopyInLastRank);
+				}
+			}
+#endif 
+			return destination;
 		}
 
+		[MonoTODO]
 		public static string MethodToString(MethodBase Method) {
 			throw new NotImplementedException("The method MethodToString in class VisualBasic.CompilerServices.Utils is not supported");
 		}
 
+		[MonoTODO]
 		public static string FieldToString(FieldInfo fieldinfo) {
 			throw new NotImplementedException("The method FieldToString in class VisualBasic.CompilerServices.Utils is not supported");
 		}

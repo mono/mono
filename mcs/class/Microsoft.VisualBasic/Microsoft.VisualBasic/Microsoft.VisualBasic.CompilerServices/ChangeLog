@@ -1,3 +1,8 @@
+2004-05-13  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
+	* Utils.cs: 
+		Finally implement fully method CopyArray
+		Progression: all nunit-tests for this method now pass on Mono, as they do in .NET
+
 2004-04-17	Dennis Hayes <dennish@raytek.com>
  More Java code converted from Mainsoft.
 
