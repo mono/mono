@@ -1379,6 +1379,13 @@ namespace System
 					return true;
 			return false;
 		}
+
+		[CLSCompliant (false)]
+		[MonoTODO]
+		public static IList<T> AsReadOnly<T> (T[] array)
+		{
+			throw new NotImplementedException ();
+		}
 		
 #if FIXME
 		[CLSCompliant (false)]

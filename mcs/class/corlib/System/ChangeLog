@@ -1,3 +1,7 @@
+2004-09-27  Zoltan Varga  <vargaz@freemail.hu>
+
+	* Array.cs: Add stub for AsReadOnly<T>.
+	
 2004-09-25  Zoltan Varga  <vargaz@freemail.hu>
 
 	* Type.cs: Add MakePointerType && stub for ReflectionOnlyGetType.
