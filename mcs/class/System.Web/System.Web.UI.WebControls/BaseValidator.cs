@@ -351,7 +351,7 @@ namespace System.Web.UI.WebControls
 			if(Page.IsClientScriptBlockRegistered("ValidatorIncludeScript"))
 				return;
 			
-			//throw new NotImplementedException();
+			throw new NotImplementedException();
 		}
 
 		[MonoTODO("I_have_to_know_javascript_for_this_I_know_it_but_for_ALL_browsers_NO")]

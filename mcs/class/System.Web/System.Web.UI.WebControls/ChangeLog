@@ -1,6 +1,10 @@
 
 2002-10-28      Gaurav Vaish <gvaish_mono@lycos.com>
 
+	* BaseValidator.cs      - Uncomment NotImplementedException.
+
+2002-10-28      Gaurav Vaish <gvaish_mono@lycos.com>
+
 	* BaseValidator.cs      - Minor changes in TODO comments.
 
 2002-10-28      Gaurav Vaish <gvaish_mono@lycos.com>
