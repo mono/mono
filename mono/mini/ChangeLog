@@ -1,3 +1,15 @@
+2005-1-20  Massimiliano Mantione  <massi@ximian.com>
+
+	* mini.c: Added a new functionality to optimize_branches, the removal
+	of useless basic blocks, and fixed some problem in the removal of
+	critical edges; some utility functions added for both purposes.
+	* ssapre.c: Added complex expression support, and fixed bug 70637.
+	* ssapre.h: Likewise.
+	* ssapre-cee-ops.h: Added file with list of "CEE_*" opcodes
+	enabled in SSAPRE.
+	* ssapre-mini-ops.h: Likewise, but for "OP_*" opcodes.
+	* driver.c: Re-enabled SSAPRE.
+
 2005-01-19  Martin Baulig  <martin@ximian.com>
 
 	* mini.c (mono_method_to_ir): Call mono_get_inflated_method() on
