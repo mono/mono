@@ -88,27 +88,19 @@ namespace Mono.Tools
 					searchString += (string) paramInfo["version"] + "*";
 				}
 			} else {
-				//FIXME: Is this code really needed? No refcounting here yet.
-				if (Directory.Exists (gac_path + paramInfo["assembly"])) {
-					Directory.Delete (gac_path + Path.DirectorySeparatorChar + paramInfo["assembly"], true);
-					Console.WriteLine ("All assemblies with the name '" + paramInfo["assembly"] + " removed from the GAC");
-					return;
-				} else {
-					Console.WriteLine ("ERROR: No assemblies named '" + paramInfo["assembly"] + "' in the GAC");
-					return;
-				}
+				searchString += "*";
 			}
 
 			string[] directories = Directory.GetDirectories (gac_path, searchString);
 
 			foreach (string dir in directories) {
-				Hashtable info = GetAssemblyInfo (dir + Path.DirectorySeparatorChar + "__AssemblyInfo__");
+				Hashtable info = GetAssemblyInfo (Path.Combine (dir, "__AssemblyInfo__"));
 				if(Convert.ToInt32 (info["RefCount"]) == 1) {
 					Directory.Delete (dir, true);
 					Console.WriteLine ("Assembly removed from the gac.");
 				} else {
 					info["RefCount"] = ((int) Convert.ToInt32 (info["RefCount"]) - 1).ToString ();
-					WriteAssemblyInfo (dir + Path.DirectorySeparatorChar + "__AssemblyInfo__", info);
+					WriteAssemblyInfo (Path.Combine (dir, "__AssemblyInfo__"), info);
 					Console.WriteLine ("Assembly was not deleted because its still needed by other applications");
 				}
 			}
@@ -121,7 +113,7 @@ namespace Mono.Tools
 			DirectoryInfo d = new DirectoryInfo (gac_path);
 			foreach (DirectoryInfo namedDir in d.GetDirectories ()) {
 				foreach (DirectoryInfo assemblyDir in namedDir.GetDirectories ()) {
-					Hashtable assemblyInfo = GetAssemblyInfo (assemblyDir.FullName + Path.DirectorySeparatorChar + "__AssemblyInfo__");
+					Hashtable assemblyInfo = GetAssemblyInfo (Path.Combine (assemblyDir.FullName, "__AssemblyInfo__"));
 					Console.WriteLine ("\t" + assemblyInfo["DisplayName"]);
 				}
 			}
@@ -215,7 +207,7 @@ namespace Mono.Tools
 				DirectoryInfo d = new DirectoryInfo (gac_path);
 
 				d.CreateSubdirectory (name);
-				d = new DirectoryInfo (gac_path + Path.DirectorySeparatorChar + name);
+				d = new DirectoryInfo (Path.Combine (gac_path, name));
 				d.CreateSubdirectory (tok);
 			} catch {
 				return false;

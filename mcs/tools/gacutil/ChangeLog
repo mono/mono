@@ -2,6 +2,10 @@
 	
 	* gacutil.cs: Added reference counting for installation and deletion.
 	An assembly will have a RefCount of 1 if --force is used.
+	* gacutil.cs: Changed ... + Path.DirSepChar + ... to Path.Combine
+	Thanks to Ben Maurer. Turns out code marked as potentially not
+	needed was not needed, now refcounting with /u assemblyname works
+	as well.
 
 2003-11-14  Todd Berman  <tberman@gentoo.org>
 
