@@ -1,5 +1,7 @@
 2004-12-08  Zoltan Varga  <vargaz@freemail.hu>
 
+	* Environment.cs: Bump corlib version.
+
 	* AppDomain.cs: Add new DefineInternalDynamicAssembly () method.
 
 2004-12-06  Ben Maurer  <bmaurer@ximian.com>
