@@ -1,3 +1,7 @@
+2004-05-05  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini-sparc.c: Update status.
+
 2004-05-04  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini-exceptions.c (ves_icall_get_frame_info): Flush register windows
