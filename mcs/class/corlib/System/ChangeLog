@@ -1,3 +1,9 @@
+
+Thu Jun 20 17:51:44 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* TimeSpan.cs: do not pollute the namespace with the
+	System.Parser name.
+
 2002-06-18  Nick Drochak  <ndrochak@gol.com>
 
 	* ArgumentException.cs: Use the message given in the constructor when

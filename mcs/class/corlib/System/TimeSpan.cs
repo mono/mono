@@ -364,7 +364,6 @@ public struct TimeSpan :  IComparable  {
 	{
 		return t;
 	}
-}
 
 // Class Parser implements simple parser for TimeSpan::Parse
 internal class Parser {
@@ -546,6 +545,7 @@ internal class Parser {
 
 }
 
+} /* TimeSpan */
 }
 
 
