@@ -1,5 +1,11 @@
 2004-02-12  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* BasicClient.cs:
+	* DigestClient.cs: use IndexOf instead of StartsWith to deal with
+	servers that provide several authentication schemas.
+
+2004-02-12  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* ChunkStream.cs: use an array of buffers instead of a MemoryStream for
 	storing the chunks. This way, we won't miss traling data from the
 	previous chunk when a new one is received before the other is fully

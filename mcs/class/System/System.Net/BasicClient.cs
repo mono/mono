@@ -18,7 +18,7 @@ namespace System.Net
 				return null;
 
 			string header = challenge.Trim ();
-			if (!header.ToLower ().StartsWith ("basic "))
+			if (!header.ToLower ().IndexOf ("basic"))
 				return null;
 
 			return InternalAuthenticate (webRequest, credentials);
