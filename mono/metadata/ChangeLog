@@ -1,4 +1,9 @@
-2005-05-28  Jackson Harper  <jackson@ximian.com>
+2004-05-28  Jackson Harper  <jackson@ximian.com>
+
+	* reflection.c: The modified type encoding was causing build
+	problems. Reverted for now.
+	
+2004-05-28  Jackson Harper  <jackson@ximian.com>
 
 	* reflection.c/h: Take an assembly ref so that we dont create
 	fully qualified names when encoding types in the same assembly as
