@@ -4,24 +4,37 @@
 #
 
 assemblies_DATA =	\
-	corlib.dll	\
-	System.dll	\
-	System.Data.dll	\
-	System.Xml.dll	\
-	System.Web.dll	\
-	System.Web.Services.dll	\
-	System.Drawing.dll	\
-	System.EnterpriseServices.dll	\
-	System.Configuration.Install.dll	\
-	System.Runtime.Remoting.dll	\
+	Accessibility.dll					\
+	corlib.dll						\
+	Cscompmgd.dll						\
+	I18N.CJK.dll						\
+	I18N.dll						\
+	I18N.MidEast.dll					\
+	I18N.Other.dll						\
+	I18N.Rare.dll						\
+	I18N.West.dll						\
+	Microsoft.VisualBasic.dll				\
+	Mono.CSharp.Debugger.dll				\
+	Mono.Data.MySql.dll					\
+	Mono.Data.PostgreSqlClient.dll				\
+	Mono.Data.SqliteClient.dll				\
+	Mono.Data.SybaseClient.dll				\
+	Mono.Data.TdsClient.dll					\
+	Mono.Data.Tds.dll					\
+	Mono.GetOptions.dll					\
+	Mono.PEToolkit.dll					\
+	NUnitCore_mono.dll					\
+	System.Configuration.Install.dll			\
+	System.Data.dll						\
+	System.dll						\
+	System.Drawing.dll					\
+	System.EnterpriseServices.dll				\
+	System.Runtime.Remoting.dll				\
 	System.Runtime.Serialization.Formatters.Soap.dll	\
-	Mono.CSharp.Debugger.dll	\
-	I18N.dll	\
-	I18N.West.dll	\
-	I18N.Rare.dll	\
-	I18N.Other.dll	\
-	I18N.MidEast.dll	\
-	I18N.CJK.dll
+	System.Web.dll						\
+	System.Web.Services.dll					\
+	System.Windows.Forms.dll				\
+	System.Xml.dll
 
 monobins_DATA = mcs.exe monoresgen.exe
 
