@@ -2282,9 +2282,6 @@ namespace Mono.CSharp {
 
                 void Report28 (MethodInfo b)
                 {
-			if (RootContext.WarningLevel < 4) 
-				return;
-				
                         Report.Warning (
                                 28, Location,
                                 "`" + TypeManager.CSharpSignature(b) +
