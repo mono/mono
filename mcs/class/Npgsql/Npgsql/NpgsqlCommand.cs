@@ -231,7 +231,7 @@ namespace Npgsql
 		{
 		  NpgsqlEventLog.LogMsg("Entering " + CLASSNAME + ".ExecuteNonQuery()", LogLevel.Debug);
 		  
-			// Check the connection state.
+		  // Check the connection state.
 			CheckConnectionState();
 			
 			if ((type == CommandType.Text) || (type == CommandType.StoredProcedure))
@@ -249,8 +249,13 @@ namespace Npgsql
 			CheckNotification();
 		  
 		  
-			// The only expected result is the CompletedResponse result.
 			
+		  // The only expected result is the CompletedResponse result.
+		  // If nothing is returned, just return -1.
+		  
+		  if(connection.Mediator.GetCompletedResponses().Count == 0)
+			  return -1;
+		  		  
 			String[] ret_string_tokens = ((String)connection.Mediator.GetCompletedResponses()[0]).Split(null);	// whitespace separator.
 						
 			// Check if the command was insert, delete or update.
@@ -300,7 +305,7 @@ namespace Npgsql
 			
 			NpgsqlEventLog.LogMsg("Entering " + CLASSNAME + ".ExecuteReader(CommandBehavior)", LogLevel.Debug);
 		  
-			// Check the connection state.
+		  // Check the connection state.
 			CheckConnectionState();
 			
 			if ((type == CommandType.Text) || (type == CommandType.StoredProcedure))
@@ -362,36 +367,6 @@ namespace Npgsql
 						
 			NpgsqlAsciiRow ascii_row = (NpgsqlAsciiRow)firstResultSet[0];
 			
-			// Now convert the string to the field type.
-			
-			// [FIXME] Hardcoded values for int types and string.
-			// Change to NpgsqlDbType.
-			// For while only int4 and string are strong typed.
-			// Any other type will be returned as string.
-			
-			/*switch (rd[0].type_oid)
-			{
-				case 20:	// int8, integer.
-					result = Convert.ToInt64(ascii_row[0]);
-					break;
-				case 23:	// int4, integer.
-					result = Convert.ToInt32(ascii_row[0]);
-					break;
-				case 25:  // text
-					// Get only the first column.
-					result = ascii_row[0];
-					break;
-				default:
-					NpgsqlEventLog.LogMsg("Unrecognized datatype returned by ExecuteScalar():" + 
-					                      rd[0].type_oid + " Returning String...", LogLevel.Debug);
-					result = ascii_row[0];
-					break;
-			}
-			
-			
-			return result;*/
-			
-			//return NpgsqlTypesHelper.ConvertNpgsqlTypeToSystemType(connection.OidToNameMapping, ascii_row[0], rd[0].type_oid);
 			return ascii_row[0];
 			
 			
@@ -482,15 +457,16 @@ namespace Npgsql
 				return result;
 						
 			
-			CheckParameters();
+			//CheckParameters();
 			
 			String parameterName;
 						
 			for (Int32 i = 0; i < parameters.Count; i++)
 			{
 				parameterName = parameters[i].ParameterName;
-				//result = result.Replace(":" + parameterName, parameters[i].Value.ToString());
-				result = result.Replace(":" + parameterName, NpgsqlTypesHelper.ConvertNpgsqlParameterToBackendStringValue(parameters[i]));
+			  
+			 	result = ReplaceParameterValue(result, parameterName, NpgsqlTypesHelper.ConvertNpgsqlParameterToBackendStringValue(parameters[i]));
+			  
 			}
 			
 			return result;
@@ -506,16 +482,13 @@ namespace Npgsql
 			if (parameters.Count == 0)
 				return "execute " + planName;
 			
-			CheckParameters();
-			
+					
 			StringBuilder result = new StringBuilder("execute " + planName + '(');
 			
 			
 			for (Int32 i = 0; i < parameters.Count; i++)
 			{
-				//result.Append(parameters[i].Value.ToString() + ',');
 				result.Append(NpgsqlTypesHelper.ConvertNpgsqlParameterToBackendStringValue(parameters[i]) + ',');
-				//result = result.Replace(":" + parameterName, parameters[i].Value.ToString());
 			}
 			
 			result = result.Remove(result.Length - 1, 1);
@@ -544,28 +517,27 @@ namespace Npgsql
 			
 			if (parameters.Count > 0)
 			{
-				CheckParameters();
-				
-				command.Append('(');
+				// The ReplaceParameterValue below, also checks if the parameter is present.
+			  
+			  String parameterName;
 				Int32 i;
+			  
 				for (i = 0; i < parameters.Count; i++)
 				{
-					//[TODO] Add support for all types. 
-					
-					/*switch (parameters[i].DbType)
-					{
-						case DbType.Int32:
-							command.Append("int4");
-							break;
-														
-						case DbType.Int64:
-							command.Append("int8");
-							break;
-						
-						default:
-							throw new InvalidOperationException("Only DbType.Int32, DbType.Int64 datatypes supported");
-							
-					}*/
+					//result = result.Replace(":" + parameterName, parameters[i].Value.ToString());
+					parameterName = parameters[i].ParameterName;
+					//textCommand = textCommand.Replace(':' + parameterName, "$" + (i+1));
+				  textCommand = ReplaceParameterValue(textCommand, parameterName, "$" + (i+1));
+				  
+				}
+				
+				//[TODO] Check if there is any missing parameters in the query.
+				// For while, an error is thrown saying about the ':' char.
+				
+				command.Append('(');
+				
+				for (i = 0; i < parameters.Count; i++)
+				{
 					command.Append(NpgsqlTypesHelper.GetBackendTypeNameFromDbType(parameters[i].DbType));
 					
 					command.Append(',');
@@ -574,18 +546,7 @@ namespace Npgsql
 				command = command.Remove(command.Length - 1, 1);
 				command.Append(')');
 				
-				
-				String parameterName;
-				
-				for (i = 0; i < parameters.Count; i++)
-				{
-					//result = result.Replace(":" + parameterName, parameters[i].Value.ToString());
-					parameterName = parameters[i].ParameterName;
-					textCommand = textCommand.Replace(':' + parameterName, "$" + (i+1));
-				}
-				
 			}
-			
 			
 			command.Append(" as ");
 			command.Append(textCommand);
@@ -595,20 +556,47 @@ namespace Npgsql
 					
 		}
 		
-		private void CheckParameters()
+		
+		private String ReplaceParameterValue(String result, String parameterName, String paramVal)
 		{
-			String parameterName;
+			Int32 resLen = result.Length;
+			Int32 paramStart = result.IndexOf(parameterName);
+			Int32 paramLen = parameterName.Length;
+			Int32 paramEnd = paramStart + paramLen;
+			Boolean found = false;
 			
-			for (Int32 i = 0; i < parameters.Count; i++)
+			while(paramStart > -1)
 			{
-				parameterName = parameters[i].ParameterName;
-				if (text.IndexOf(':' + parameterName) <= 0)
-					throw new NpgsqlException("Parameter :" + parameterName + " wasn't found in the query.");
-			}
+				if((resLen > paramEnd) &&
+				   (result[paramEnd] == ' ' ||
+				    result[paramEnd] == ',' ||
+				    result[paramEnd] == ')' ||
+				    result[paramEnd] == ';'))
+				{
+					result = result.Substring(0, paramStart) + paramVal + result.Substring(paramEnd);
+					found = true;
+				}
+				else if(resLen == paramEnd)
+				{
+					result = result.Substring(0, paramStart)+ paramVal;
+					found = true;
+				}
+				else 
+				  break;
+				resLen = result.Length;
+				paramStart = result.IndexOf(parameterName, paramStart);
+				paramEnd = paramStart + paramLen;
+				
+			}//while
+			if(!found)	
+			  throw new NpgsqlException(String.Format("Parameter {0} not found in query.", parameterName));
 			
-			
-			
-		}
+			return result;
+		}//ReplaceParameterValue
+		
+		
+		
+		
 	}
 	
 }

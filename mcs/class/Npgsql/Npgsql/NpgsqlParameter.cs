@@ -67,6 +67,9 @@ namespace Npgsql
 		public NpgsqlParameter(String parameterName, DbType parameterType)
 		{
 			name = parameterName;
+		  if (name[0] != ':') // Support both ':'paramname and paramname constructions.
+		    name = ':' + name;
+		  
 			db_type = parameterType;
 			
 		}
@@ -74,6 +77,8 @@ namespace Npgsql
 		public NpgsqlParameter(String parameterName, DbType parameterType, Int32 size, String sourceColumn)
 		{
 			name = parameterName;
+		  if (name[0] != ':') // Support both ':'paramname and paramname constructions.
+		    name = ':' + name;
 			db_type = parameterType;
 			this.size = size;
 			source_column = sourceColumn;
@@ -180,6 +185,8 @@ namespace Npgsql
 			set
 			{
 				name = value;
+			  if (name[0] != ':')
+			    name = ':' + name;
 				NpgsqlEventLog.LogMsg("Set " + CLASSNAME + ".ParameterName = " + value, LogLevel.Normal);
 			}
 		}

@@ -56,8 +56,8 @@ namespace Npgsql
 	  	_connection 				= connection;
 	  	_rowIndex						= -1;
 	  	_resultsetIndex			= 0;
-	  	
-	  	_currentResultset 	= (NpgsqlResultSet)_resultsets[_resultsetIndex];
+	  	if (_resultsets.Count > 0)
+	  		_currentResultset 	= (NpgsqlResultSet)_resultsets[_resultsetIndex];
 	  	
 	  	
 	  	
