@@ -170,8 +170,6 @@ namespace Mono.PEToolkit {
 			}
 		}
 
-
-
 		/// <summary>
 		/// </summary>
 		public void Read(BinaryReader reader)
@@ -194,6 +192,19 @@ namespace Mono.PEToolkit {
 			reader.BaseStream.Position += 8 - len - 1;
 
 			hdr = new Header (reader);
+		}
+
+		public void Write (BinaryWriter writer)
+		{
+			sbyte[] name_bytes =  new sbyte[8];
+	
+			for (int i=0; i<name.Length; i++)
+				writer.Write ((sbyte) name[i]);
+			
+			for (int i=name.Length; i<8; i++)
+				writer.Write ((sbyte) 0);
+
+			hdr.Write (writer);
 		}
 
 	}

@@ -1,3 +1,7 @@
+2003-02-22 Jackson Harper <jackson@latitudegeo.com>
+
+	* Section.cs: Add method for writing Sections
+
 2003-02-21 Jackson Harper <jackson@latitudegeo.com>
 
 	* Section.cs: Add Method to write Headers
