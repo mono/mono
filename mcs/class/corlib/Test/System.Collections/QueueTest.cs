@@ -307,6 +307,15 @@ namespace MonoTests.System.Collections {
 			AssertNotNull (e.Current);
 		}
 
+		[Test]
+		public void EnumeratorFalseAfterMoveNextAll () 
+		{
+			IEnumerator e = q1.GetEnumerator();
+			while (e.MoveNext ()) {
+			}
+			Assert (!e.MoveNext ());
+		}
+
 		public void TestClone () {
 			SetUp();
 			Queue q3 = (Queue) q2.Clone ();
