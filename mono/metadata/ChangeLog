@@ -29,10 +29,6 @@ Mon Aug 26 16:47:37 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 2002-08-24  Martin Baulig  <martin@gnome.org>
 
-	* rawbuffer.c (mono_raw_buffer_load): Added `int is_shared'
-	argument.  This is a flag which specifies whether we do a private
-	copy-on-write mapping even when a writable mapping was requested.
-
 	* debug-mono-symfile.c (mono_debug_update_mono_symbol_file): New
 	function to update the symbol file.  The symbol file is mmap()ed
 	writable, but private.  This allows us to install the symbol file
