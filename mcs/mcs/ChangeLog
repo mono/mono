@@ -1,3 +1,11 @@
+2001-09-02  Ravi Pratap  <ravi@ximian.com>
+
+	* class.cs (TypeContainer::AddDelegate): New method to add a delegate.
+	(TypeContainer.delegates): New member to hold list of delegates.
+
+	* cs-parser.jay (delegate_declaration): Implement the action correctly 
+	this time as I seem to be on crack ;-)
+
 2001-09-02  Miguel de Icaza  <miguel@ximian.com>
 
 	* rootcontext.cs (RootContext::IsNamespace): new function, used to

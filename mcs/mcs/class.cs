@@ -28,6 +28,9 @@ namespace CIR {
 		// Holds the list of enumerations
 		ArrayList enums;
 
+		// Holds the list of delegates
+		ArrayList delegates;
+		
 		// Holds the list of constructors
 		ArrayList constructors;
 
@@ -167,6 +170,23 @@ namespace CIR {
 
 			DefineName (name, s);
 			types.Add (s);
+
+			return AdditionResult.Success;
+		}
+
+		public AdditionResult AddDelegate (Delegate d)
+		{
+			AdditionResult res;
+			string name = d.Name;
+
+			if ((res = IsValid (name)) != AdditionResult.Success)
+				return res;
+
+			if (delegates == null)
+				delegates = new ArrayList ();
+			
+			DefineName (name, d);
+			delegates.Add (d);
 
 			return AdditionResult.Success;
 		}

@@ -1361,8 +1361,10 @@ delegate_declaration
 	  CLOSE_PARENS 
 	  SEMICOLON
 	  {
-		$$ = new Delegate ((string) $4, (int) $2, (string) $5, (Parameters) $7);
-	  }
+		Delegate del = new Delegate ((string) $4, (int) $2, (string) $5, (Parameters) $7);
+
+		CheckDef (current_container.AddDelegate (del), del.Name);
+	  }	
 	| opt_attributes
 	  opt_modifiers
 	  DELEGATE VOID	  
@@ -1371,7 +1373,9 @@ delegate_declaration
 	  CLOSE_PARENS 
 	  SEMICOLON
 	  {
-		$$ = new Delegate (null, (int) $2, (string) $5, (Parameters) $7);
+		Delegate del = new Delegate (null, (int) $2, (string) $5, (Parameters) $7);
+
+		CheckDef (current_container.AddDelegate (del), del.Name);
 	  }
 	;
 
