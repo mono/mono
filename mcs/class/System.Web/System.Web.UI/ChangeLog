@@ -1,3 +1,7 @@
+2002-10-29  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* DataBinder.cs: implemented Eval and GetIndexedPropertyValue methods.
+
 2002-10-27  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* LosFormatter.cs: Use WebEncoding.Encoding.
