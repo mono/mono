@@ -1,3 +1,8 @@
+2003-01-11  Martin Baulig  <martin@ximian.com>
+
+	* debug-mono-symfile.h (MONO_SYMBOL_FILE_DYNAMIC_VERSION): Incremented
+	this to 20 for the release.
+
 2003-01-10  Dietmar Maurer  <dietmar@ximian.com>
 
 	* marshal.c (emit_struct_conv): added support for EXPLICIT_LAYOUT
