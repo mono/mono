@@ -222,7 +222,7 @@ namespace System.Windows.Forms
     			contextMenu = null;
     			dock = DockStyle.None;
     			enabled = true;
-    			// font = Control.DefaultFont;
+    			font = Control.DefaultFont;
     			foreColor = Control.DefaultForeColor;
     			imeMode = ImeMode.Inherit;
     			isAccessible = false;
@@ -1726,10 +1726,11 @@ namespace System.Windows.Forms
     		
     		protected virtual void OnHandleCreated (EventArgs e) 
     		{
-			//if (font != null) {
-			//	Win32.SendMessage (Handle, Msg.WM_SETFONT, font.ToHfont ().ToInt32 (), 0);
-			//}
-			Win32.SendMessage (Handle, Msg.WM_SETFONT, Font.ToHfont ().ToInt32 (), 0);
+			if (font != null) {
+				Win32.SendMessage (Handle, Msg.WM_SETFONT, font.ToHfont ().ToInt32 (), 0);
+			} else {
+				Win32.SendMessage (Handle, Msg.WM_SETFONT, Font.ToHfont ().ToInt32 (), 0);
+			}
 			Win32.SetWindowText (Handle, text);
 
     			if (HandleCreated != null)
@@ -2117,7 +2118,7 @@ namespace System.Windows.Forms
     		[MonoTODO]
 		public virtual bool PreProcessMessage (ref Message msg) 
     		{
-			if (msg.Msg == (int) Msg.WM_KEYDOWN){
+			if ((uint)msg.Msg == (uint)Msg.WM_KEYDOWN){
 				Keys keyData = (Keys)msg.WParam.ToInt32 ();
     				if (!ProcessCmdKey (ref msg, keyData)) {
 					if (IsInputKey (keyData))
@@ -2127,7 +2128,7 @@ namespace System.Windows.Forms
 				}
 				return true;
 			}
-			else if (msg.Msg == (int) Msg.WM_CHAR){
+			else if ((uint)msg.Msg == (uint) Msg.WM_CHAR){
 				if (IsInputChar ( (char) msg.WParam))
 					return false;
 
@@ -2738,7 +2739,7 @@ namespace System.Windows.Forms
 					}
 					return;
 				}
-				else if (m.Msg == (int) Msg.WM_COMMAND) {
+				else if ((uint)m.Msg == (uint) Msg.WM_COMMAND) {
 					// Notification
 					m.Result = (IntPtr)1;
 					OnWmCommand (ref m);

@@ -33,6 +33,7 @@
 using System;
 using System.Threading;
 using System.Drawing;
+using System.Drawing.Text;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Diagnostics;
@@ -1134,7 +1135,7 @@ namespace System.Windows.Forms{
 			return sysButtonStyle;
 		}
 
-		internal static StringFormat ContentAlignment2StringFormat( ContentAlignment contentAlign) {
+		internal static StringFormat ContentAlignment2StringFormat( ContentAlignment contentAlign, HotkeyPrefix hotkey) {
 			StringAlignment	alignment = 0;
 			StringAlignment	lineAlignment = 0;
 			
@@ -1168,6 +1169,7 @@ namespace System.Windows.Forms{
 			StringFormat result = new StringFormat();
 			result.Alignment = alignment;
 			result.LineAlignment = lineAlignment;
+			result.HotkeyPrefix = hotkey;
 			return result;
 		}
 		
@@ -1289,9 +1291,22 @@ namespace System.Windows.Forms{
 			return 0;
 		}
 
-		// FIXME - should not use absolute path
+#if DotNetCtlEnabled
+		#region DotNetCtl definitions
+		[DllImport ("dotnetctl.dll", CallingConvention = CallingConvention.StdCall, CharSet = CharSet.Ansi, EntryPoint="DotNetCtlInitialize")]
+		internal static extern bool DotNetCtlInitialize(IntPtr hInstance);
+		#endregion
+#endif
+
+
+		#region Winelib connection
+		static IntPtr  WineInstance=IntPtr.Zero;
+
 		[DllImport ("winelib.exe.so", EntryPoint="WineLoadLibrary")]
 		extern static void WineLoadLibrary(string s);
+		[DllImport ("winelib.exe.so", EntryPoint="WineGetInstance")]
+		extern static IntPtr WineGetInstance();
+		#endregion
 
 		static string[] WinColors = 	{
 									"COLOR_SCROLLBAR",
@@ -1377,14 +1392,24 @@ namespace System.Windows.Forms{
 			//
 			Thread.GetDomain ().SetData ("Mono.Running.Windows.Forms", true);
 
-			if (!RunningOnUnix)
+			if (!RunningOnUnix) {
+#if DotNetCtlEnabled
+				Win32.DotNetCtlInitialize(WineInstance);
+#endif
 				return;
+			}
 
 			WineLoadLibrary("gdi32.dll");
 			WineLoadLibrary("kernel32.dll");
 			WineLoadLibrary("comctl32.dll");
 			WineLoadLibrary("user32.dll");
 			WineLoadLibrary("advapi32.dll");
+
+#if DotNetCtlEnabled
+			/* For Unix this must run after user32 is loaded */
+			WineInstance=WineGetInstance();
+			Win32.DotNetCtlInitialize(WineInstance);
+#endif
 
 			string gtk_colors = Environment.GetEnvironmentVariable ("SWF_GTK_COLORS");
 			if (gtk_colors == "1") {
