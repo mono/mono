@@ -1,10 +1,12 @@
 2003-02-12  Miguel de Icaza  <miguel@ximian.com>
 
-	* ecore.cs (ImplicitReferenceConversion,
-	ImplicitReferenceConversionExists): enum_type has to be handled
-	like an object reference (implicit conversions exists from this to
-	object), but the regular IsClass and IsValueType tests will never
-	return true for this one. 
+	* ecore.cs (FieldExpr.AddressOf): In the particular case of This
+	and structs, we do not want to load the instance variable
+
+	(ImplicitReferenceConversion, ImplicitReferenceConversionExists):
+	enum_type has to be handled like an object reference (implicit
+	conversions exists from this to object), but the regular IsClass
+	and IsValueType tests will never return true for this one.
 
 	Also we use TypeManager.IsValueType instead of type.IsValueType,
 	just for consistency with the rest of the code (this is only
