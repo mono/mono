@@ -1,3 +1,8 @@
+2004-09-28  Dick Porter  <dick@ximian.com>
+
+	* io.c (pipe_close_private): Fix one small typo in the last change
+	that totally hosed process creation with redirected pipes.
+
 2004-09-24  Dick Porter  <dick@ximian.com>
 
 	* wapi-private.h: 
