@@ -1,3 +1,18 @@
+2003-11-21  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* appdomain.h: Added support for context static fields. Added static_data
+	  field to MonoAppContext and renamed thread_static_fields to a more
+	  generic special_static_fields in MonoAppDomain, since it can now contain
+	  context static fields.
+	* domain.c: Updated hashtable name.
+	* object.c: Replaced field_is_thread_static() for a more generic
+	  field_is_special_static() which also checks for context static attribute.
+	  In mono_class_vtable(), added support for static context fields.
+	* threads.c: Changed methods that manage thread static fields to more
+	  generic methods so they can be reused both for thread and context static
+	  data.
+	* threads.h: Declared some new methods.
+
 2003-11-21  Zoltan Varga  <vargaz@freemail.hu>
 
 	* reflection.h: Update after changes to the managed types.
