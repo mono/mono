@@ -1,0 +1,601 @@
+   0  $accept : compilation_unit $end
+
+   1  compilation_unit : opt_imports_directives opt_attributes opt_namespace_member_declarations EOF
+
+   2  qualified_identifier : IDENTIFIER
+   3                       | qualified_identifier DOT IDENTIFIER
+
+   4  opt_imports_directives :
+   5                         | imports_directives
+
+   6  imports_directives : imports_directive
+   7                     | imports_directives imports_directive
+
+   8  imports_directive : imports_namespace_directive
+
+   9  imports_namespace_directive : IMPORTS namespace_name EOL
+
+  10  opt_attributes :
+
+  11  $$1 :
+
+  12  namespace_declaration : NAMESPACE qualified_identifier EOL $$1 opt_imports_directives opt_namespace_member_declarations END NAMESPACE EOL
+
+  13  namespace_name : qualified_identifier
+
+  14  opt_namespace_member_declarations :
+  15                                    | namespace_member_declarations
+
+  16  namespace_member_declarations : namespace_member_declaration
+  17                                | namespace_member_declarations namespace_member_declaration
+
+  18  namespace_member_declaration : namespace_declaration
+  19                               | type_declaration
+
+  20  type_declaration : class_declaration
+
+  21  $$2 :
+
+  22  class_declaration : CLASS IDENTIFIER EOL $$2 opt_class_member_declarations END CLASS EOL
+
+  23  opt_class_member_declarations :
+  24                                | class_member_declarations
+
+  25  class_member_declarations : class_member_declaration
+  26                            | class_member_declarations class_member_declaration
+
+  27  class_member_declaration : type_declaration
+  28                           | sub_declaration
+
+  29  sub_declaration : SUB qualified_identifier OPEN_PARENS opt_formal_parameters CLOSE_PARENS EOL opt_statements END SUB EOL
+
+  30  opt_statements :
+  31                 | qualified_identifier OPEN_PARENS opt_actual_parameters CLOSE_PARENS EOL
+
+  32  opt_formal_parameters :
+  33                        | qualified_identifier AS qualified_identifier
+
+  34  opt_actual_parameters :
+  35                        | qualified_identifier
+  36                        | LITERAL_STRING
+
+state 0
+	$accept : . compilation_unit $end  (0)
+	opt_imports_directives : .  (4)
+
+	IMPORTS  shift 1
+	EOF  reduce 4
+	CLASS  reduce 4
+	NAMESPACE  reduce 4
+
+	compilation_unit  goto 2
+	opt_imports_directives  goto 3
+	imports_directives  goto 4
+	imports_directive  goto 5
+	imports_namespace_directive  goto 6
+
+
+state 1
+	imports_namespace_directive : IMPORTS . namespace_name EOL  (9)
+
+	IDENTIFIER  shift 7
+	.  error
+
+	qualified_identifier  goto 8
+	namespace_name  goto 9
+
+
+state 2
+	$accept : compilation_unit . $end  (0)
+
+	$end  accept
+
+
+state 3
+	compilation_unit : opt_imports_directives . opt_attributes opt_namespace_member_declarations EOF  (1)
+	opt_attributes : .  (10)
+
+	.  reduce 10
+
+	opt_attributes  goto 10
+
+
+state 4
+	opt_imports_directives : imports_directives .  (5)
+	imports_directives : imports_directives . imports_directive  (7)
+
+	IMPORTS  shift 1
+	EOF  reduce 5
+	CLASS  reduce 5
+	END  reduce 5
+	NAMESPACE  reduce 5
+
+	imports_directive  goto 11
+	imports_namespace_directive  goto 6
+
+
+state 5
+	imports_directives : imports_directive .  (6)
+
+	.  reduce 6
+
+
+state 6
+	imports_directive : imports_namespace_directive .  (8)
+
+	.  reduce 8
+
+
+state 7
+	qualified_identifier : IDENTIFIER .  (2)
+
+	.  reduce 2
+
+
+state 8
+	qualified_identifier : qualified_identifier . DOT IDENTIFIER  (3)
+	namespace_name : qualified_identifier .  (13)
+
+	DOT  shift 12
+	EOL  reduce 13
+
+
+state 9
+	imports_namespace_directive : IMPORTS namespace_name . EOL  (9)
+
+	EOL  shift 13
+	.  error
+
+
+state 10
+	compilation_unit : opt_imports_directives opt_attributes . opt_namespace_member_declarations EOF  (1)
+	opt_namespace_member_declarations : .  (14)
+
+	CLASS  shift 14
+	NAMESPACE  shift 15
+	EOF  reduce 14
+
+	opt_namespace_member_declarations  goto 16
+	namespace_declaration  goto 17
+	namespace_member_declarations  goto 18
+	namespace_member_declaration  goto 19
+	type_declaration  goto 20
+	class_declaration  goto 21
+
+
+state 11
+	imports_directives : imports_directives imports_directive .  (7)
+
+	.  reduce 7
+
+
+state 12
+	qualified_identifier : qualified_identifier DOT . IDENTIFIER  (3)
+
+	IDENTIFIER  shift 22
+	.  error
+
+
+state 13
+	imports_namespace_directive : IMPORTS namespace_name EOL .  (9)
+
+	.  reduce 9
+
+
+state 14
+	class_declaration : CLASS . IDENTIFIER EOL $$2 opt_class_member_declarations END CLASS EOL  (22)
+
+	IDENTIFIER  shift 23
+	.  error
+
+
+state 15
+	namespace_declaration : NAMESPACE . qualified_identifier EOL $$1 opt_imports_directives opt_namespace_member_declarations END NAMESPACE EOL  (12)
+
+	IDENTIFIER  shift 7
+	.  error
+
+	qualified_identifier  goto 24
+
+
+state 16
+	compilation_unit : opt_imports_directives opt_attributes opt_namespace_member_declarations . EOF  (1)
+
+	EOF  shift 25
+	.  error
+
+
+state 17
+	namespace_member_declaration : namespace_declaration .  (18)
+
+	.  reduce 18
+
+
+state 18
+	opt_namespace_member_declarations : namespace_member_declarations .  (15)
+	namespace_member_declarations : namespace_member_declarations . namespace_member_declaration  (17)
+
+	CLASS  shift 14
+	NAMESPACE  shift 15
+	EOF  reduce 15
+	END  reduce 15
+
+	namespace_declaration  goto 17
+	namespace_member_declaration  goto 26
+	type_declaration  goto 20
+	class_declaration  goto 21
+
+
+state 19
+	namespace_member_declarations : namespace_member_declaration .  (16)
+
+	.  reduce 16
+
+
+state 20
+	namespace_member_declaration : type_declaration .  (19)
+
+	.  reduce 19
+
+
+state 21
+	type_declaration : class_declaration .  (20)
+
+	.  reduce 20
+
+
+state 22
+	qualified_identifier : qualified_identifier DOT IDENTIFIER .  (3)
+
+	.  reduce 3
+
+
+state 23
+	class_declaration : CLASS IDENTIFIER . EOL $$2 opt_class_member_declarations END CLASS EOL  (22)
+
+	EOL  shift 27
+	.  error
+
+
+state 24
+	qualified_identifier : qualified_identifier . DOT IDENTIFIER  (3)
+	namespace_declaration : NAMESPACE qualified_identifier . EOL $$1 opt_imports_directives opt_namespace_member_declarations END NAMESPACE EOL  (12)
+
+	EOL  shift 28
+	DOT  shift 12
+	.  error
+
+
+state 25
+	compilation_unit : opt_imports_directives opt_attributes opt_namespace_member_declarations EOF .  (1)
+
+	.  reduce 1
+
+
+state 26
+	namespace_member_declarations : namespace_member_declarations namespace_member_declaration .  (17)
+
+	.  reduce 17
+
+
+state 27
+	class_declaration : CLASS IDENTIFIER EOL . $$2 opt_class_member_declarations END CLASS EOL  (22)
+	$$2 : .  (21)
+
+	.  reduce 21
+
+	$$2  goto 29
+
+
+state 28
+	namespace_declaration : NAMESPACE qualified_identifier EOL . $$1 opt_imports_directives opt_namespace_member_declarations END NAMESPACE EOL  (12)
+	$$1 : .  (11)
+
+	.  reduce 11
+
+	$$1  goto 30
+
+
+state 29
+	class_declaration : CLASS IDENTIFIER EOL $$2 . opt_class_member_declarations END CLASS EOL  (22)
+	opt_class_member_declarations : .  (23)
+
+	CLASS  shift 14
+	SUB  shift 31
+	END  reduce 23
+
+	type_declaration  goto 32
+	class_declaration  goto 21
+	opt_class_member_declarations  goto 33
+	class_member_declarations  goto 34
+	class_member_declaration  goto 35
+	sub_declaration  goto 36
+
+
+state 30
+	namespace_declaration : NAMESPACE qualified_identifier EOL $$1 . opt_imports_directives opt_namespace_member_declarations END NAMESPACE EOL  (12)
+	opt_imports_directives : .  (4)
+
+	IMPORTS  shift 1
+	CLASS  reduce 4
+	END  reduce 4
+	NAMESPACE  reduce 4
+
+	opt_imports_directives  goto 37
+	imports_directives  goto 4
+	imports_directive  goto 5
+	imports_namespace_directive  goto 6
+
+
+state 31
+	sub_declaration : SUB . qualified_identifier OPEN_PARENS opt_formal_parameters CLOSE_PARENS EOL opt_statements END SUB EOL  (29)
+
+	IDENTIFIER  shift 7
+	.  error
+
+	qualified_identifier  goto 38
+
+
+state 32
+	class_member_declaration : type_declaration .  (27)
+
+	.  reduce 27
+
+
+state 33
+	class_declaration : CLASS IDENTIFIER EOL $$2 opt_class_member_declarations . END CLASS EOL  (22)
+
+	END  shift 39
+	.  error
+
+
+state 34
+	opt_class_member_declarations : class_member_declarations .  (24)
+	class_member_declarations : class_member_declarations . class_member_declaration  (26)
+
+	CLASS  shift 14
+	SUB  shift 31
+	END  reduce 24
+
+	type_declaration  goto 32
+	class_declaration  goto 21
+	class_member_declaration  goto 40
+	sub_declaration  goto 36
+
+
+state 35
+	class_member_declarations : class_member_declaration .  (25)
+
+	.  reduce 25
+
+
+state 36
+	class_member_declaration : sub_declaration .  (28)
+
+	.  reduce 28
+
+
+state 37
+	namespace_declaration : NAMESPACE qualified_identifier EOL $$1 opt_imports_directives . opt_namespace_member_declarations END NAMESPACE EOL  (12)
+	opt_namespace_member_declarations : .  (14)
+
+	CLASS  shift 14
+	NAMESPACE  shift 15
+	END  reduce 14
+
+	opt_namespace_member_declarations  goto 41
+	namespace_declaration  goto 17
+	namespace_member_declarations  goto 18
+	namespace_member_declaration  goto 19
+	type_declaration  goto 20
+	class_declaration  goto 21
+
+
+state 38
+	qualified_identifier : qualified_identifier . DOT IDENTIFIER  (3)
+	sub_declaration : SUB qualified_identifier . OPEN_PARENS opt_formal_parameters CLOSE_PARENS EOL opt_statements END SUB EOL  (29)
+
+	OPEN_PARENS  shift 42
+	DOT  shift 12
+	.  error
+
+
+state 39
+	class_declaration : CLASS IDENTIFIER EOL $$2 opt_class_member_declarations END . CLASS EOL  (22)
+
+	CLASS  shift 43
+	.  error
+
+
+state 40
+	class_member_declarations : class_member_declarations class_member_declaration .  (26)
+
+	.  reduce 26
+
+
+state 41
+	namespace_declaration : NAMESPACE qualified_identifier EOL $$1 opt_imports_directives opt_namespace_member_declarations . END NAMESPACE EOL  (12)
+
+	END  shift 44
+	.  error
+
+
+state 42
+	sub_declaration : SUB qualified_identifier OPEN_PARENS . opt_formal_parameters CLOSE_PARENS EOL opt_statements END SUB EOL  (29)
+	opt_formal_parameters : .  (32)
+
+	IDENTIFIER  shift 7
+	CLOSE_PARENS  reduce 32
+
+	qualified_identifier  goto 45
+	opt_formal_parameters  goto 46
+
+
+state 43
+	class_declaration : CLASS IDENTIFIER EOL $$2 opt_class_member_declarations END CLASS . EOL  (22)
+
+	EOL  shift 47
+	.  error
+
+
+state 44
+	namespace_declaration : NAMESPACE qualified_identifier EOL $$1 opt_imports_directives opt_namespace_member_declarations END . NAMESPACE EOL  (12)
+
+	NAMESPACE  shift 48
+	.  error
+
+
+state 45
+	qualified_identifier : qualified_identifier . DOT IDENTIFIER  (3)
+	opt_formal_parameters : qualified_identifier . AS qualified_identifier  (33)
+
+	AS  shift 49
+	DOT  shift 12
+	.  error
+
+
+state 46
+	sub_declaration : SUB qualified_identifier OPEN_PARENS opt_formal_parameters . CLOSE_PARENS EOL opt_statements END SUB EOL  (29)
+
+	CLOSE_PARENS  shift 50
+	.  error
+
+
+state 47
+	class_declaration : CLASS IDENTIFIER EOL $$2 opt_class_member_declarations END CLASS EOL .  (22)
+
+	.  reduce 22
+
+
+state 48
+	namespace_declaration : NAMESPACE qualified_identifier EOL $$1 opt_imports_directives opt_namespace_member_declarations END NAMESPACE . EOL  (12)
+
+	EOL  shift 51
+	.  error
+
+
+state 49
+	opt_formal_parameters : qualified_identifier AS . qualified_identifier  (33)
+
+	IDENTIFIER  shift 7
+	.  error
+
+	qualified_identifier  goto 52
+
+
+state 50
+	sub_declaration : SUB qualified_identifier OPEN_PARENS opt_formal_parameters CLOSE_PARENS . EOL opt_statements END SUB EOL  (29)
+
+	EOL  shift 53
+	.  error
+
+
+state 51
+	namespace_declaration : NAMESPACE qualified_identifier EOL $$1 opt_imports_directives opt_namespace_member_declarations END NAMESPACE EOL .  (12)
+
+	.  reduce 12
+
+
+state 52
+	qualified_identifier : qualified_identifier . DOT IDENTIFIER  (3)
+	opt_formal_parameters : qualified_identifier AS qualified_identifier .  (33)
+
+	DOT  shift 12
+	CLOSE_PARENS  reduce 33
+
+
+state 53
+	sub_declaration : SUB qualified_identifier OPEN_PARENS opt_formal_parameters CLOSE_PARENS EOL . opt_statements END SUB EOL  (29)
+	opt_statements : .  (30)
+
+	IDENTIFIER  shift 7
+	END  reduce 30
+
+	qualified_identifier  goto 54
+	opt_statements  goto 55
+
+
+state 54
+	qualified_identifier : qualified_identifier . DOT IDENTIFIER  (3)
+	opt_statements : qualified_identifier . OPEN_PARENS opt_actual_parameters CLOSE_PARENS EOL  (31)
+
+	OPEN_PARENS  shift 56
+	DOT  shift 12
+	.  error
+
+
+state 55
+	sub_declaration : SUB qualified_identifier OPEN_PARENS opt_formal_parameters CLOSE_PARENS EOL opt_statements . END SUB EOL  (29)
+
+	END  shift 57
+	.  error
+
+
+state 56
+	opt_statements : qualified_identifier OPEN_PARENS . opt_actual_parameters CLOSE_PARENS EOL  (31)
+	opt_actual_parameters : .  (34)
+
+	LITERAL_STRING  shift 58
+	IDENTIFIER  shift 7
+	CLOSE_PARENS  reduce 34
+
+	qualified_identifier  goto 59
+	opt_actual_parameters  goto 60
+
+
+state 57
+	sub_declaration : SUB qualified_identifier OPEN_PARENS opt_formal_parameters CLOSE_PARENS EOL opt_statements END . SUB EOL  (29)
+
+	SUB  shift 61
+	.  error
+
+
+state 58
+	opt_actual_parameters : LITERAL_STRING .  (36)
+
+	.  reduce 36
+
+
+state 59
+	qualified_identifier : qualified_identifier . DOT IDENTIFIER  (3)
+	opt_actual_parameters : qualified_identifier .  (35)
+
+	DOT  shift 12
+	CLOSE_PARENS  reduce 35
+
+
+state 60
+	opt_statements : qualified_identifier OPEN_PARENS opt_actual_parameters . CLOSE_PARENS EOL  (31)
+
+	CLOSE_PARENS  shift 62
+	.  error
+
+
+state 61
+	sub_declaration : SUB qualified_identifier OPEN_PARENS opt_formal_parameters CLOSE_PARENS EOL opt_statements END SUB . EOL  (29)
+
+	EOL  shift 63
+	.  error
+
+
+state 62
+	opt_statements : qualified_identifier OPEN_PARENS opt_actual_parameters CLOSE_PARENS . EOL  (31)
+
+	EOL  shift 64
+	.  error
+
+
+state 63
+	sub_declaration : SUB qualified_identifier OPEN_PARENS opt_formal_parameters CLOSE_PARENS EOL opt_statements END SUB EOL .  (29)
+
+	.  reduce 29
+
+
+state 64
+	opt_statements : qualified_identifier OPEN_PARENS opt_actual_parameters CLOSE_PARENS EOL .  (31)
+
+	.  reduce 31
+
+
+233 terminals, 24 nonterminals
+37 grammar rules, 65 states

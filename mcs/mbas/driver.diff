@@ -1,0 +1,504 @@
+--- driver.cs	Tue Mar 19 19:15:50 2002
++++ ../mcs/driver.cs	Sat Mar 16 13:22:44 2002
+@@ -1,15 +1,14 @@
+ //
+ // driver.cs: The compiler command line driver.
+ //
+-// Author: Rafael Teixeira (rafaelteixeirabr@hotmail.com)
+-// Based on mcs by : Miguel de Icaza (miguel@gnu.org)
++// Author: Miguel de Icaza (miguel@gnu.org)
+ //
+ // Licensed under the terms of the GNU GPL
+ //
+-// (C) 2002 Rafael Teixeira
++// (C) 2001 Ximian, Inc (http://www.ximian.com)
+ //
+ 
+-namespace Mono.Languages
++namespace Mono.CSharp
+ {
+ 	using System;
+ 	using System.Reflection;
+@@ -17,7 +16,7 @@
+ 	using System.Collections;
+ 	using System.IO;
+ 	using System.Globalization;
+-	using Mono.CSharp;
++	using Mono.Languages;
+ 	
+ 	enum Target {
+ 		Library, Exe, Module, WinExe
+@@ -28,14 +27,18 @@
+ 	/// </summary>
+ 	public class Driver
+ 	{
++		
+ 		//
+ 		// Assemblies references to be linked.   Initialized with
+-		// mscorlib.dll elsewhere.
++		// mscorlib.dll here.
+ 		static ArrayList references;
+ 
+ 		// Lookup paths
+ 		static ArrayList link_paths;
+ 
++		// Whether we want Yacc to output its progress
++		static bool yacc_verbose = false;
++
+ 		// Whether we want to only run the tokenizer
+ 		static bool tokenize = false;
+ 		
+@@ -53,14 +56,14 @@
+ 		static Hashtable source_files = new Hashtable ();
+ 		
+ 		//
+-		// An array of the defines from the command line
++		// A list of resource files
+ 		//
+-		static ArrayList defines;
++		static ArrayList resources;
+ 
+ 		//
+-		// A list of resource files
++		// An array of the defines from the command line
+ 		//
+-		static ArrayList resources;
++		static ArrayList defines;
+ 
+ 		//
+ 		// Last time we took the time
+@@ -77,17 +80,75 @@
+ 				span.Seconds, span.Milliseconds, msg);
+ 		}
+ 				
++		static int tokenize_file (string input_file)
++		{
++			Stream input;
++
++			try {
++				input = File.OpenRead (input_file);
++
++			} catch {
++				Report.Error (2001, "Source file '" + input_file + "' could not be opened");
++				return 1;
++			}
++
++			using (input){
++				Tokenizer lexer = new Tokenizer (input, input_file, defines);
++				int token, tokens = 0, errors = 0;
++
++				while ((token = lexer.token ()) != Token.EOF){
++					Location l = lexer.Location;
++					tokens++;
++					if (token == Token.ERROR)
++						errors++;
++				}
++				Console.WriteLine ("Tokenized: " + tokens + " found " + errors + " errors");
++			}
++			
++			return 0;
++		}
++		
++		static int parse (string input_file)
++		{
++			CSharpParser parser;
++			Stream input;
++			int errors;
++
++			try {
++				input = File.OpenRead (input_file);
++			} catch {
++				Report.Error (2001, "Source file '" + input_file + "' could not be opened");
++				return 1;
++			}
++
++			parser = new CSharpParser (input_file, input, defines);
++			parser.yacc_verbose = yacc_verbose;
++			try {
++				errors = parser.parse ();
++			} catch (Exception ex) {
++				Console.WriteLine (ex);
++				Console.WriteLine ("Compilation aborted");
++				return 1;
++			} finally {
++				input.Close ();
++			}
++			
++			return errors;
++		}
++		
+ 		static void Usage (bool is_error)
+ 		{
+ 			Console.WriteLine (
+-				"MonoBASIC compiler, (C) 2001 Rafael Teixeira.\n" +
++				"Mono C# compiler, (C) 2001 Ximian, Inc.\n" +
+ 				"mcs [options] source-files\n" +
++				"   --about         About the Mono C# compiler\n" +
+ 				"   --checked       Set default context to checked\n" +
+ 				"   --define SYM    Defines the symbol SYM\n" + 
+ 				"   --fatal         Makes errors fatal\n" +
+ 				"   -L PATH         Adds PATH to the assembly link path\n" +
+ 				"   --nostdlib      Does not load core libraries\n" +
+ 				"   --nowarn XXX    Ignores warning number XXX\n" +
++				"   -o FNAME        Specifies output file\n" +
+ 				"   --optimize      Optimizes\n" +
+ 				"   --parse         Only parses the source file\n" +
+ 				"   --probe X       Probes for the source to generate code X on line L\n" +
+@@ -109,13 +170,13 @@
+ 		static void About ()
+ 		{
+ 			Console.WriteLine (
+-				"The MonoBASIC compiler is (C) 2002 Rafael Teixeira\n\n" +
++				"The Mono C# compiler is (C) 2001 Ximian, Inc.\n\n" +
+ 				"The compiler source code is released under the terms of the GNU GPL\n\n" +
+ 
+ 				"For more information on Mono, visit the project Web site\n" +
+ 				"   http://www.go-mono.com\n\n" +
+ 
+-				"The compiler was written by Rafael Teixeira and Miguel de Icaza and Ravi Pratap");
++				"The compiler was written by Miguel de Icaza and Ravi Pratap");
+  		}
+ 
+ 		static void error (string msg)
+@@ -128,11 +189,11 @@
+ 			Console.WriteLine (msg);
+ 		}
+ 		
+-		static int Main(string[] args)
++		public static int Main (string[] args)
+ 		{
+-			MainDriver(args);
++			MainDriver (args);
+ 
+-			return error_count;
++			return (error_count + Report.Errors) != 0 ? 1 : 0;
+ 		}
+ 
+ 		static public int LoadAssembly (string assembly)
+@@ -183,19 +244,16 @@
+ 		{
+ 			int errors = 0;
+ 			
+-			foreach (string r in references){
++			foreach (string r in references)
+ 				errors += LoadAssembly (r);
+-			}
+ 
+ 			return errors;
+ 		}
+ 
+-
+ 		static void SetupDefaultDefines ()
+ 		{
+ 			defines = new ArrayList ();
+ 			defines.Add ("__MonoCS__");
+-			defines.Add ("__MonoBASIC__");
+ 		}
+ 
+ 		static string [] LoadArgs (string file)
+@@ -228,9 +286,70 @@
+ 		static string GetSystemDir ()
+ 		{
+ 			Assembly [] assemblies = AppDomain.CurrentDomain.GetAssemblies ();
+-			string s = assemblies [0].CodeBase;
+ 			
+-			return s.Substring (0, s.LastIndexOf ("/"));
++			foreach (Assembly a in assemblies){
++				string codebase = a.CodeBase;
++				if (codebase.EndsWith ("corlib.dll")){
++					return codebase.Substring (0, codebase.LastIndexOf ("/"));
++				}
++			}
++
++			Report.Error (-15, "Can not compute my system path");
++			return "";
++		}
++
++		//
++		// Given a path specification, splits the path from the file/pattern
++		//
++		static void SplitPathAndPattern (string spec, out string path, out string pattern)
++		{
++			int p = spec.LastIndexOf ("/");
++			if (p != -1){
++				//
++				// Windows does not like /file.cs, switch that to:
++				// "\", "file.cs"
++				//
++				if (p == 0){
++					path = "\\";
++					pattern = spec.Substring (1);
++				} else {
++					path = spec.Substring (0, p);
++					pattern = spec.Substring (p + 1);
++				}
++				return;
++			}
++
++			p = spec.LastIndexOf ("\\");
++			if (p != -1){
++				path = spec.Substring (0, p - 1);
++				pattern = spec.Substring (p);
++				return;
++			}
++
++			path = ".";
++			pattern = spec;
++		}
++
++		static int ProcessFile (string f)
++		{
++			if (source_files.Contains (f)){
++				Report.Error (
++					1516,
++					"Source file `" + f + "' specified multiple times");
++				Environment.Exit (1);
++			} else
++				source_files.Add (f, f);
++					
++			if (tokenize)
++				tokenize_file (f);
++			else
++				return parse (f);
++			return 0;
++		}
++
++		static void RecurseOn (string pattern)
++		{
++			// FIXME: implement.
+  		}
+ 
+ 		/// <summary>
+@@ -246,20 +365,26 @@
+ 		{
+ 			int errors = 0, i;
+ 			string output_file = null;
++			bool parsing_options = true;
+ 
+ 			references = new ArrayList ();
+ 			link_paths = new ArrayList ();
+ 
+ 			SetupDefaultDefines ();
++			
++			//
++			// Setup defaults
++			//
++			// This is not required because Assembly.Load knows about this
++			// path.
++			//
+ 			link_paths.Add (GetSystemDir ());
+ 			
+ 			int argc = args.Length;
+-			for (i = 0; i < argc; i++)
+-			{
++			for (i = 0; i < argc; i++){
+ 				string arg = args [i];
+ 				
+- 				if (arg.StartsWith ("@"))
+-				{
++				if (arg.StartsWith ("@")){
+ 					string [] new_args, extra_args;
+ 					string response_file = arg.Substring (1);
+ 
+@@ -290,13 +415,18 @@
+ 					continue;
+ 				}
+ 
+-				try 
+-				{
+-					if (arg.StartsWith ("-"))
+-					{
++				//
++				// Prepare to recurse
++				//
++				
++				if (parsing_options && (arg.StartsWith ("-") || arg.StartsWith ("/"))){
+ 						switch (arg){
+ 						case "-v":
+-							GenericParser.yacc_verbose_flag = true;
++						yacc_verbose = true;
++						continue;
++
++					case "--":
++						parsing_options = false;
+ 							continue;
+ 
+ 						case "--parse":
+@@ -319,13 +449,13 @@
+ 							RootContext.Optimize = true;
+  							continue;
+ 
++					case "/?": case "/h": case "/help":
+ 						case "--help":
+ 							Usage (false);
+ 							return;
+ 	
+ 						case "--define":
+-							if ((i + 1) >= argc)
+-							{
++						if ((i + 1) >= argc){
+ 								Usage (true);
+ 								return;
+  							}
+@@ -334,6 +464,7 @@
+  						
+ 						case "--probe": {
+ 							int code = 0;
++
+ 							try {
+ 								code = Int32.Parse (
+ 									args [++i], NumberStyles.AllowLeadingSign);
+@@ -349,12 +480,16 @@
+  							continue;
+  						}
+  					
+-						case "-o": case "--output":
++					case "-o": 
++					case "--output":
+ 							if ((i + 1) >= argc){
+ 								Usage (true);
+ 								return;
+  							}
+ 							output_file = args [++i];
++						string bname = CodeGen.Basename (output_file);
++						if (bname.IndexOf (".") == -1)
++							output_file += ".exe";
+ 							continue;
+ 						
+ 						case "--checked":
+@@ -365,6 +500,18 @@
+ 							Report.Stacktrace = true;
+  							continue;
+ 						
++					case "--resource":
++						if ((i + 1) >= argc){
++							Usage (true);
++							Console.WriteLine("Missing argument to --resource"); 
++							return;
++						}
++						if (resources == null)
++							resources = new ArrayList ();
++						
++						resources.Add (args [++i]);
++						continue;
++							
+ 						case "--target":
+ 							if ((i + 1) >= argc){
+ 								Usage (true);
+@@ -463,51 +610,39 @@
+ 							About ();
+ 							return;
+ 
++					case "--recurse":
++						if ((i + 1) >= argc){
++							Usage (true);
++							error_count++;
++							return;
++						}
++						RecurseOn (args [++i]);
++						continue;
++						
+ 						case "--timestamp":
+ 							timestamps = true;
+ 							last_time = DateTime.Now;
+ 							continue;
+-						
+-						default:
+-							Usage (true);
+- 							return;
+-						}
+ 					}
+-				} catch (System.IndexOutOfRangeException){
+-					Usage (true);
+-					error_count++;
+-					return;
+-				} catch (System.FormatException) {
+-					Usage (true);
+-					error_count++;
+-					return;
+ 				}
+ 
+ 				if (first_source == null)
+ 					first_source = arg;
+ 
+-				string [] files = Directory.GetFiles (".", arg);
+-				
+-				foreach (string f in files)
+-				{
+-					if (source_files.Contains(f))
+-					{
+-						Report.Error (
+-							1516,
+-							"Source file `" + f + "' specified multiple times");
+-						Environment.Exit(1);
++				string path, pattern;
++				SplitPathAndPattern (arg, out path, out pattern);
++				string [] files = null;
++				try {
++					files = Directory.GetFiles (path, pattern);
++				} catch (System.IO.DirectoryNotFoundException) {
++					Report.Error (2001, "Source file `" + arg + "' could not be found");
++					continue;
+ 					} 
+-					else
+-						source_files.Add(f, f);
+ 					
+-					if (tokenize)
+-						GenericParser.Tokenize(f);
+-					else 
+-						errors += GenericParser.Parse(f);
+-				}
++				foreach (string f in files)
++					errors += ProcessFile (f);
+ 			}
+ 
+- 
+ 			if (tokenize)
+ 				return;
+ 
+@@ -565,6 +700,8 @@
+ 
+ 			RootContext.CodeGen = new CodeGen (output_file, output_file);
+ 
++			RootContext.TypeManager.AddModule (RootContext.CodeGen.ModuleBuilder);
++
+ 			//
+ 			// Before emitting, we need to get the core
+ 			// types emitted from the user defined types
+@@ -576,8 +713,6 @@
+ 			if (timestamps)
+ 				ShowTime ("   Core Types done");
+ 
+-			RootContext.TypeManager.AddModule (RootContext.CodeGen.ModuleBuilder);
+-			
+ 			//
+ 			// The second pass of the compiler
+ 			//
+@@ -586,12 +721,6 @@
+ 			RootContext.ResolveTree ();
+ 			if (timestamps)
+ 				ShowTime ("Populate tree");
+-
+-			if (Report.Errors > 0){
+-				error ("Compilation failed");
+-				return;
+-			}
+-
+ 			RootContext.PopulateTypes ();
+ 			
+ 			if (Report.Errors > 0){
+@@ -637,6 +766,14 @@
+ 				}
+ 				
+ 				RootContext.CodeGen.AssemblyBuilder.SetEntryPoint (ep, k);
++			}
++
++			//
++			// Add the resources
++			//
++			if (resources != null){
++				foreach (string file in resources)
++					RootContext.CodeGen.AssemblyBuilder.AddResourceFile (file, file);
+ 			}
+ 			
+ 			RootContext.CodeGen.Save (output_file);
