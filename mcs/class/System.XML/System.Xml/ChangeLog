@@ -1,3 +1,13 @@
+2002-11-13  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	XmlAttribute.cs : set_InnerText, set_InnerXml, some check for set_Prefix
+	XmlAttributeCollection.cs : (indexer) this[localName, namespaceURI]
+	XmlCharacterData.cs : exchanged Data and Value
+		(for processing events and inheritance)
+	XmlDocumentFragment.cs : set_InnerXml
+	XmlSignificantWhitespace.cs : set_Value
+	XmlTextReader.cs : ReadAttributeValue
+
 2002-11-04  Atsushi Enomoto <gigna@kit.hi-ho.ne.jp>
 
 	XmlAttribute.cs: fixed missing internal 'OwnerElement''SetOwnerElement'

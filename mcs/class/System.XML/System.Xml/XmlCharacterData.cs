@@ -34,13 +34,22 @@ namespace System.Xml
 		public virtual string Data {
 			get { return data; }
 			
-			set { data = value; }
+			set {
+				OwnerDocument.onNodeChanging (this, this.ParentNode);
+
+				if (IsReadOnly)
+					throw new ArgumentException ("Node is read-only.");
+
+				data = value;
+
+				OwnerDocument.onNodeChanged (this, this.ParentNode);
+			}
 		}
 
 		public override string InnerText {
 			get { return data; }
 
-			set { data = value; }
+			set { Data = value; }	// invokes events
 		}
 
 		public virtual int Length {
@@ -51,14 +60,7 @@ namespace System.Xml
 			get { return data; }
 
 			set {
-				OwnerDocument.onNodeChanging (this, this.ParentNode);
-
-				if (IsReadOnly)
-					throw new ArgumentException ("Node is read-only.");
-
-				data = value;
-
-				OwnerDocument.onNodeChanged (this, this.ParentNode);
+				Data = value;
 			}
 		}
 

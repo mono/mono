@@ -44,6 +44,16 @@ namespace MonoTests.System.Xml
 			AssertEquals (String.Empty, whitespace.InnerXml);
 			AssertEquals ("\r\n\t ", whitespace.OuterXml);
 		}
+
+		public void TestDataAndValue ()
+		{
+			string val = "\t\t\r\n ";
+			whitespace = doc2.CreateSignificantWhitespace (val);
+			AssertEquals ("#DataValue.1", val, whitespace.Data);
+			AssertEquals ("#DataValue.2", val, whitespace.Value);
+			whitespace.Value = val + "\t";
+			AssertEquals ("#DataValue.3", val + "\t", whitespace.Data);
+		}
 			
 		internal void TestXmlNodeBaseProperties (XmlNode original, XmlNode cloned)
 		{

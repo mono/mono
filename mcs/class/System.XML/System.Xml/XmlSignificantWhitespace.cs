@@ -41,10 +41,10 @@ namespace System.Xml
 		
 		public override string Value {
 			get { return Data; }
-			[MonoTODO]
 			set {
 				if (IsValidWhitespaceChar (value) == false)
 					throw new ArgumentException ("Invalid whitespace characters.");
+				base.Data = value;
 			}
 		}
 

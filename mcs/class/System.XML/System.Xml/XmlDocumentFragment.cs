@@ -29,14 +29,30 @@ namespace System.Xml
 		#endregion
 		#region Properties
 
-		[MonoTODO]
+		[MonoTODO("Setter is as incomplete as that of XmlElement.InnerXml")]
 		public override string InnerXml {
-			set { throw new NotImplementedException (); }
-			get {
-				StringBuilder sb = new StringBuilder();
+			set {
+				// Copied from XmlElement.InnerXml (in the meantime;-))
 				foreach(XmlNode n in ChildNodes)
-					sb.Append(n.OuterXml);
-				return sb.ToString();
+				{
+					this.RemoveChild (n);
+				}		  
+
+				// How to get xml:lang and xml:space? Create logic as ConstructNamespaceManager()?
+				XmlNameTable nt = this.OwnerDocument.NameTable;
+				XmlNamespaceManager nsmgr = this.ConstructNamespaceManager (); //new XmlNamespaceManager(nt);
+				string lang = "";
+				XmlSpace space = XmlSpace.Default;
+
+				XmlParserContext ctx = new XmlParserContext (nt, nsmgr, lang, space);
+				XmlTextReader xmlReader = new XmlTextReader (value, this.NodeType, ctx);
+				this.ConstructDOM (xmlReader, this);
+			}
+			get {
+				StringBuilder sb = new StringBuilder ();
+				foreach(XmlNode n in ChildNodes)
+					sb.Append (n.OuterXml);
+				return sb.ToString ();
 			}
 		}
 		
@@ -86,20 +102,16 @@ namespace System.Xml
 				return new XmlDocumentFragment (OwnerDocument);
 		}
 
-//		[MonoTODO]
 		public override void WriteContentTo (XmlWriter w)
 		{
 			foreach(XmlNode n in ChildNodes)
-				n.WriteContentTo(w);
-//			throw new NotImplementedException ();
+				n.WriteContentTo (w);
 		}
 
-//		[MonoTODO]
 		public override void WriteTo (XmlWriter w)
 		{
 			foreach(XmlNode n in ChildNodes)
-				n.WriteTo(w);
-//			throw new NotImplementedException ();
+				n.WriteTo (w);
 		}
 
 		#endregion

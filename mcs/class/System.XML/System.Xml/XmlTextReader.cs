@@ -492,10 +492,11 @@ namespace System.Xml
 			return more;
 		}
 
-		[MonoTODO]
+		[MonoTODO("This method should check position validity; consider entity references")]
 		public override bool ReadAttributeValue ()
 		{
-			throw new NotImplementedException ();
+			value = ReadAttribute ();
+			return true;
 		}
 
 		[MonoTODO]

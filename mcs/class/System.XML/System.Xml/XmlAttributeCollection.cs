@@ -3,8 +3,10 @@
 //
 // Author:
 //   Jason Diamond (jason@injektilo.org)
+//   Atsushi Enomoto (ginga@kit.hi-ho.ne.jp)
 //
 // (C) 2002 Jason Diamond  http://injektilo.org/
+// (C) 2002 Atsushi Enomoto
 //
 
 using System;
@@ -20,7 +22,7 @@ namespace System.Xml
 		{
 			ownerElement = parent as XmlElement;
 			if(ownerElement == null)
-				throw new XmlException("invalid construction for XmlAttributeCollection.");
+				throw new XmlException ("invalid construction for XmlAttributeCollection.");
 		}
 
 		bool ICollection.IsSynchronized {
@@ -55,7 +57,7 @@ namespace System.Xml
 		[System.Runtime.CompilerServices.IndexerName ("ItemOf")]
 		public virtual XmlAttribute this [string localName, string namespaceURI] {
 			get {
-				throw new NotImplementedException ();
+				return (XmlAttribute) GetNamedItem (localName, namespaceURI);
 			}
 		}
 
@@ -76,29 +78,29 @@ namespace System.Xml
 		{
 			// assuming that Nodes is a correct collection.
 			for(int i=0; i<Nodes.Count; i++)
-				array[index+i] = Nodes[i] as XmlAttribute;
+				array [index + i] = Nodes [i] as XmlAttribute;
 		}
 
 		[MonoTODO] // I don't know why this method is required...
 		void ICollection.CopyTo (Array array, int index)
 		{
 			// assuming that Nodes is a correct collection.
-			array.CopyTo(Nodes.ToArray(typeof(XmlAttribute)), index);
+			array.CopyTo (Nodes.ToArray (typeof(XmlAttribute)), index);
 		}
 
 		public virtual XmlAttribute InsertAfter (XmlAttribute newNode, XmlAttribute refNode)
 		{
 			if(newNode.OwnerDocument != this.ownerElement.OwnerDocument)
-				throw new ArgumentException("different document created this newNode.");
+				throw new ArgumentException ("different document created this newNode.");
 
-			ownerElement.OwnerDocument.onNodeInserting(newNode, null);
+			ownerElement.OwnerDocument.onNodeInserting (newNode, null);
 
 			int pos = Nodes.Count + 1;
 			if(refNode != null)
 			{
 				for(int i=0; i<Nodes.Count; i++)
 				{
-					XmlNode n = Nodes[i] as XmlNode;
+					XmlNode n = Nodes [i] as XmlNode;
 					if(n == refNode)
 					{
 						pos = i + 1;
@@ -106,13 +108,13 @@ namespace System.Xml
 					}
 				}
 				if(pos > Nodes.Count)
-					throw new XmlException("refNode not found in this collection.");
+					throw new XmlException ("refNode not found in this collection.");
 			}
 			else
 				pos = 0;
-			SetNamedItem(newNode, pos);
+			SetNamedItem (newNode, pos);
 
-			ownerElement.OwnerDocument.onNodeInserted(newNode, null);
+			ownerElement.OwnerDocument.onNodeInserted (newNode, null);
 
 			return newNode;
 		}
@@ -120,16 +122,16 @@ namespace System.Xml
 		public virtual XmlAttribute InsertBefore (XmlAttribute newNode, XmlAttribute refNode)
 		{
 			if(newNode.OwnerDocument != this.ownerElement.OwnerDocument)
-				throw new ArgumentException("different document created this newNode.");
+				throw new ArgumentException ("different document created this newNode.");
 
-			ownerElement.OwnerDocument.onNodeInserting(newNode, null);
+			ownerElement.OwnerDocument.onNodeInserting (newNode, null);
 
 			int pos = Nodes.Count;
 			if(refNode != null)
 			{
 				for(int i=0; i<Nodes.Count; i++)
 				{
-					XmlNode n = Nodes[i] as XmlNode;
+					XmlNode n = Nodes [i] as XmlNode;
 					if(n == refNode)
 					{
 						pos = i;
@@ -137,24 +139,24 @@ namespace System.Xml
 					}
 				}
 				if(pos == Nodes.Count)
-					throw new XmlException("refNode not found in this collection.");
+					throw new XmlException ("refNode not found in this collection.");
 			}
-			SetNamedItem(newNode, pos);
+			SetNamedItem (newNode, pos);
 
-			ownerElement.OwnerDocument.onNodeInserted(newNode, null);
+			ownerElement.OwnerDocument.onNodeInserted (newNode, null);
 
 			return newNode;
 		}
 
 		public virtual XmlAttribute Prepend (XmlAttribute node) 
 		{
-			return this.InsertAfter(node, null);
+			return this.InsertAfter (node, null);
 		}
 
 		public virtual XmlAttribute Remove (XmlAttribute node) 
 		{
 			if(node == null || node.OwnerDocument != this.ownerElement.OwnerDocument)
-				throw new ArgumentException("node is null or different document created this node.");
+				throw new ArgumentException ("node is null or different document created this node.");
 
 			XmlAttribute retAttr = null;
 			foreach(XmlAttribute attr in Nodes)
@@ -168,9 +170,9 @@ namespace System.Xml
 
 			if(retAttr != null)
 			{
-				ownerElement.OwnerDocument.onNodeRemoving(node, null);
-				base.RemoveNamedItem(retAttr.LocalName, retAttr.NamespaceURI);
-				ownerElement.OwnerDocument.onNodeRemoved(node, null);
+				ownerElement.OwnerDocument.onNodeRemoving (node, null);
+				base.RemoveNamedItem (retAttr.LocalName, retAttr.NamespaceURI);
+				ownerElement.OwnerDocument.onNodeRemoved (node, null);
 			}
 			return retAttr;
 		}
@@ -178,14 +180,14 @@ namespace System.Xml
 		public virtual void RemoveAll () 
 		{
 			while(Count > 0)
-				Remove((XmlAttribute)Nodes[0]);
+				Remove ((XmlAttribute)Nodes [0]);
 		}
 
 		public virtual XmlAttribute RemoveAt (int i) 
 		{
 			if(Nodes.Count <= i)
 				return null;
-			return Remove((XmlAttribute)Nodes[i]);
+			return Remove ((XmlAttribute)Nodes [i]);
 		}
 
 		public override XmlNode SetNamedItem (XmlNode node)
@@ -194,10 +196,10 @@ namespace System.Xml
 		}
 
 		[MonoTODO("event handling")]
-		internal new XmlNode SetNamedItem(XmlNode node, int pos)
+		internal new XmlNode SetNamedItem (XmlNode node, int pos)
 		{
 			if(IsReadOnly)
-				throw new XmlException("this AttributeCollection is read only.");
+				throw new XmlException ("this AttributeCollection is read only.");
 
 			return base.SetNamedItem (node, pos);
 		}

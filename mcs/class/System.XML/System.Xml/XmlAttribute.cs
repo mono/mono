@@ -35,6 +35,8 @@ namespace System.Xml
 			string namespaceURI, 
 			XmlDocument doc) : base (doc)
 		{
+			// What to be recognized is: xml:space, xml:lang, xml:base, and
+			// xmlns and xmlns:* (when XmlDocument.Namespaces = true only)
 			this.prefix = prefix;
 			this.localName = localName;
 			this.namespaceURI = namespaceURI;
@@ -50,7 +52,6 @@ namespace System.Xml
 			}
 		}
 
-		[MonoTODO ("Setter")]
 		public override string InnerText {
 			get {
 				StringBuilder builder = new StringBuilder ();
@@ -59,7 +60,7 @@ namespace System.Xml
                         }
 
 			set {
-				throw new NotImplementedException ();
+				Value = value;
 			}
 		}
 
@@ -74,7 +75,7 @@ namespace System.Xml
                         }
                 }
 		
-		[MonoTODO ("Setter.")]
+		[MonoTODO ("Setter is incomplete(XmlTextReader.ReadAttribute is incomplete;No resolution for xml:lang/space")]
 		public override string InnerXml {
 			get {
 				// Not sure why this is an override.  Passing through for now.
@@ -82,7 +83,11 @@ namespace System.Xml
 			}
 
 			set {
-				throw new NotImplementedException ();
+				XmlNamespaceManager nsmgr = ConstructNamespaceManager ();
+				XmlParserContext ctx = new XmlParserContext (OwnerDocument.NameTable, nsmgr, String.Empty, XmlSpace.Default);
+				XmlTextReader xtr = new XmlTextReader ("'" + value.Replace ("'", "&apos;") + "'", XmlNodeType.Attribute, ctx);
+				xtr.ReadAttributeValue ();
+				Value = xtr.Value;
 			}
 		}
 
@@ -128,19 +133,31 @@ namespace System.Xml
 			}
 		}
 
-		[MonoTODO]
 		public override XmlNode ParentNode {
 			get {
+				// It always returns null (by specification).
 				return null;
 			}
 		}
 
-		[MonoTODO]
+		[MonoTODO("setter incomplete (name character check, format check, wrong prefix&nsURI)")]
 		// We gotta do more in the set block here
 		// We need to do the proper tests and throw
 		// the correct Exceptions
+		//
+		// Wrong cases are: (1)check readonly, (2)check character validity,
+		// (3)check format validity, (4)this is attribute and qualifiedName != "xmlns"
+		// (5)when argument is 'xml' or 'xmlns' and namespaceURI doesn't match
 		public override string Prefix {
 			set {
+				if(IsReadOnly)
+					throw new XmlException ("This node is readonly.");
+
+				XmlNamespaceManager nsmgr = ConstructNamespaceManager ();
+				string nsuri = nsmgr.LookupNamespace (value);
+				if(nsuri == null)
+					throw new XmlException ("Namespace URI not found for this prefix");
+
 				prefix = value;
 			}
 			
@@ -192,7 +209,7 @@ namespace System.Xml
 		}
 
 		// Parent of XmlAttribute must be null
-		internal void SetOwnerElement(XmlElement el) {
+		internal void SetOwnerElement (XmlElement el) {
 			ownerElement = el;
 		}
 
