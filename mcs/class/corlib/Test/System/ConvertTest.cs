@@ -3096,5 +3096,23 @@ namespace MonoTests.System {
 			Convert.ToUInt64 ("-0");
 			Convert.ToUInt64 ("-0", null);
 		}
+
+		[Test]
+		public void ToInt16_MaxValue ()
+		{
+			AssertEquals ("7FFF,16", Int16.MaxValue, Convert.ToInt16 ("7fff", 16));
+			AssertEquals ("32767,10", Int16.MaxValue, Convert.ToInt16 ("32767", 10));
+			AssertEquals ("77777,8", Int16.MaxValue, Convert.ToInt16 ("77777", 8));
+			AssertEquals ("111111111111111,2", Int16.MaxValue, Convert.ToInt16 ("111111111111111", 2));
+		}
+
+		[Test]
+		public void ToInt16_MinValue ()
+		{
+			AssertEquals ("8000,16", Int16.MinValue, Convert.ToInt16 ("8000", 16));
+			AssertEquals ("-32768,10", Int16.MinValue, Convert.ToInt16 ("-32768", 10));
+			AssertEquals ("100000,8", Int16.MinValue, Convert.ToInt16 ("100000", 8));
+			AssertEquals ("10000000000000000,2", Int16.MinValue, Convert.ToInt16 ("10000000000000000", 2));
+		}
 	}
 }

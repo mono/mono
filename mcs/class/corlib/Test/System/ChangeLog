@@ -1,7 +1,7 @@
 2004-05-27  Sebastien Pouliot  <sebastien@ximian.com>
 
-	* ConvertTest.cs: Mode complete tests for unsigned type convertion wrt
-	-0, base != 10, ...
+	* ConvertTest.cs: More complete tests for unsigned type convertion wrt
+	-0, base != 10, ... Added tests for int16 limits in various bases.
 
 2004-05-26  Sebastien Pouliot  <sebastien@ximian.com>
 
