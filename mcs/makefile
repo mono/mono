@@ -1,4 +1,4 @@
-DIRS=jay mcs class
+DIRS=jay mcs class tools
 
 all:
 	@echo "You must use 'make windows' or 'make unix'."
