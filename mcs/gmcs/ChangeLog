@@ -1,5 +1,9 @@
 2004-03-29  Martin Baulig  <martin@ximian.com>
 
+	* generic.cs (GenericMethod.Define): Resolve our type parameters.
+
+2004-03-29  Martin Baulig  <martin@ximian.com>
+
 	* cs-parser.jay: Report CS0080 instead of -200 ("Constraints are
 	not allowed on non-generic declarations").
 

@@ -617,11 +617,18 @@ namespace Mono.CSharp {
 
 		public override bool Define (TypeContainer parent)
 		{
+			for (int i = 0; i < TypeParameters.Length; i++)
+				if (!TypeParameters [i].Resolve (parent))
+					return false;
+
 			return true;
 		}
 
-		public bool Define (MethodBuilder mb)
+		public bool Define (TypeContainer parent, MethodBuilder mb)
 		{
+			if (!Define (parent))
+				return false;
+
 			Type[] gen_params = new Type [TypeParameters.Length];
 			for (int i = 0; i < TypeParameters.Length; i++)
 				gen_params [i] = TypeParameters [i].DefineMethod (mb);

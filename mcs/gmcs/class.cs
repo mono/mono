@@ -2912,7 +2912,7 @@ namespace Mono.CSharp {
 			MethodBuilder mb = null;
 			if (GenericMethod != null) {
 				mb = container.TypeBuilder.DefineGenericMethod (Name, flags);
-				if (!GenericMethod.Define (mb))
+				if (!GenericMethod.Define (container, mb))
 					return false;
 				decl = GenericMethod;
 			} else
