@@ -326,8 +326,20 @@ namespace ICSharpCode.SharpZipLib.Zip.Compression.Streams {
 			if (n < len) {
 				len = (int) n;
 			}
-			byte[] tmp = new byte[len];
-			return (long)baseInputStream.Read(tmp, 0, tmp.Length);
+			if (false && baseInputStream.CanSeek){
+				baseInputStream.Seek (len, SeekOrigin.Current);
+			} else {
+				byte[] tmp = new byte[8192];
+
+				for (long i = 0; i < len; ){
+					long left = len - i;
+					int count = left < 8192 ? ((int) left) : 8192;
+					
+					baseInputStream.Read (tmp, 0, count);
+					i += count;
+				}
+			}
+			return (long) len;
 		}
 	}
 }
