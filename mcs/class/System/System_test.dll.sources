@@ -36,3 +36,4 @@ System.Net.Sockets/TcpListenerTest.cs
 System.Text.RegularExpressions/PerlTest.cs
 System.Text.RegularExpressions/PerlTrials.cs
 System.Text.RegularExpressions/RegexTrial.cs
+System.Text.RegularExpressions/RegexBugs.cs

@@ -327,6 +327,12 @@ namespace System.Text.RegularExpressions {
 					break;
 			
 				splits.Add (input.Substring (ptr, m.Index - ptr));
+				int gcount = m.Groups.Count;
+				for (int gindex = 1; gindex < gcount; gindex++) {
+					Group grp = m.Groups [gindex];
+					splits.Add (input.Substring (grp.Index, grp.Length));
+				}
+
 				ptr = m.Index + m.Length;
 			}
 

@@ -1,3 +1,9 @@
+2003-11-19  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* regex.cs:
+	(Split): include capture groups in the results, if any. Fixes bug
+	#51146.
+
 2003-07-09  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* regex.cs: patch from Eric Lindvall <eric@5stops.com> that fixes bug
