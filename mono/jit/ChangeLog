@@ -1,3 +1,8 @@
+2002-02-15  Dietmar Maurer  <dietmar@ximian.com>
+
+	* emit-x86.c (arch_compile_method): bug fix in static delegate
+	Invoke code.
+
 2002-02-14  Dietmar Maurer  <dietmar@ximian.com>
 
 	* jit.c (mono_analyze_stack): do a LDIND after NEWOBJ for value types.
