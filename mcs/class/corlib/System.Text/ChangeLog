@@ -1,3 +1,11 @@
+2003-08-21 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* StringBuilder.cs
+	(AppendFormat) Use FormatHelper in System.String to avoid
+	allocating an extra StringBuilder.
+	(Append string, int, int), (Append char, int): Both were
+	allocating extra strings.
+
 2003-06-05  Nick Drochak  <ndrochak@gol.com>
 
 	* UTF8Encoding.cs: Cleanups according to class status page

@@ -566,11 +566,15 @@ namespace System {
 		}
 	
 		public static string Format (IFormatProvider provider, string format, params object[] args) {
+			StringBuilder b = new StringBuilder ();
+			FormatHelper (b, provider, format, args);
+			return b.ToString ();
+		}
+		
+		internal static void FormatHelper (StringBuilder result, IFormatProvider provider, string format, params object[] args) {
 			if (format == null || args == null)
 				throw new ArgumentNullException ();
-		
-			StringBuilder result = new StringBuilder ();
-
+			
 			int ptr = 0;
 			int start = ptr;
 			while (ptr < format.length) {
@@ -638,8 +642,6 @@ namespace System {
 
 			if (start < format.length)
 				result.Append (format.Substring (start));
-
-			return result.ToString ();
 		}
 
 		public static String Copy (String str) {

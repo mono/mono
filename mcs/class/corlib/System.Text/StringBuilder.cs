@@ -431,8 +431,20 @@ namespace System.Text {
 			if( repeatCount < 0 ) {
 				throw new ArgumentOutOfRangeException();
 			}
-
-			return Append( new String( value, repeatCount) );
+			
+			if( sLength + repeatCount > sCapacity ) {
+				// Need more capacity, double the capacity StringBuilder 
+				// and make sure we have at least enough for the value 
+				// if that's going to go over double. 
+					 
+				Capacity = repeatCount + ( sCapacity + sCapacity);
+			}
+			
+			for (int i = 0; i < repeatCount; i++)
+				sString [sLength++] = value;
+			
+			thestring = null;
+			return this;
 		}
 
 		public StringBuilder Append( char[] value, int startIndex, int charCount ) {
@@ -461,40 +473,43 @@ namespace System.Text {
 				( startIndex + count > value.Length ) ) { 
 				throw new ArgumentOutOfRangeException();
 			}
+			
+			int new_size = sLength + count;
+			if (new_size > sCapacity)
+				Capacity = count + sCapacity * 2;
 
-			return Append (value.Substring (startIndex, count));
+			value.CopyTo (startIndex, sString, sLength, count);
+			sLength = new_size;
+			thestring = null;
+			return this;
 		}
 
 		public StringBuilder AppendFormat (string format, object arg0 )
 		{
-			string result = String.Format (format, arg0);
-			return Append (result);
+			return AppendFormat (null, format, new object [] { arg0 });
 		}
 
 		public StringBuilder AppendFormat (string format, params object[] args )
 		{
-			string result = String.Format (format, args);
-			return Append (result);
+			return AppendFormat (null, format, args);
 		}
 
 		public StringBuilder AppendFormat (IFormatProvider provider,
 						   string format,
 						   params object[] args)
 		{
-			string result = String.Format (provider, format, args);
-			return Append (result);
+			String.FormatHelper (this, provider, format, args);
+			return this;
 		}
 
 		public StringBuilder AppendFormat (string format, object arg0, object arg1 )
 		{
-			string result = String.Format (format, arg0, arg1);
-			return Append (result);
+			return AppendFormat (null, format, new object [] { arg0, arg1 });
 		}
 
 		public StringBuilder AppendFormat (string format, object arg0, object arg1, object arg2 )
 		{
-			string result = String.Format (format, arg0, arg1, arg2);
-			return Append (result);
+			return AppendFormat (null, format, new object [] { arg0, arg1, arg2 });
 		}
 
 		/*  The Insert Functions */
