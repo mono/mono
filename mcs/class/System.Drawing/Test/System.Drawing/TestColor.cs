@@ -342,8 +342,9 @@ namespace MonoTests.System.Drawing
 			color = Color.Green;
 			AssertEquals ("#Green.A", 255, color.A);
 			AssertEquals ("#Green.R", 0, color.R);
-			// This test fails on MS, because they have wrong value for Green.G
-			AssertEquals ("#Green.G", 255, color.G);
+			// This test should compare Green.G with 255, but
+			// MS is using a value of 128 for Green.G
+			AssertEquals ("#Green.G", 128, color.G);
 			AssertEquals ("#Green.B", 0, color.B);
 
 			color = Color.GreenYellow;
@@ -877,9 +878,7 @@ namespace MonoTests.System.Drawing
 	}
 }
 
-// Following code was used to generate the TestArgbValues method on MS. Value for
-// Green color is A:255, R:0, G:128, B:0 on MS, which is obviously wrong. So, we
-// have modified the related test to A:255, R:0, G:255, B:0.
+// Following code was used to generate the TestArgbValues method on MS. 
 //
 //		Type cType = typeof (Color);
 //		PropertyInfo [] properties = cType.GetProperties (BindingFlags.Public | BindingFlags.Static);
