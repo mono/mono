@@ -15,6 +15,10 @@ namespace System.Runtime.Remoting.Channels
 	{
 		private static ArrayList registeredChannels = new ArrayList ();
 		
+		private ChannelServices ()
+		{
+		}
+		
 		public static IChannel[] RegisteredChannels
 		{
 			get {
