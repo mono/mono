@@ -1,5 +1,8 @@
 2003-11-11  Zoltan Varga  <vargaz@freemail.hu>
 
+	* reflection.c (resolution_scope_from_image): Use the assembly table
+	from the manifest module, since other modules don't have it.
+
 	* debug-helpers.c (mono_type_full_name): New helper function.
 
 	* image.h (MonoAssembly): Change 'dynamic' to a boolean.
