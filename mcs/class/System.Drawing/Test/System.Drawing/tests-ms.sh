@@ -17,3 +17,7 @@ nunit-console TestSizeF.dll
 
 mcs /target:library  TestSize.cs /r:NUnit.Framework.dll /r:System.Drawing.dll 
 nunit-console TestSize.dll
+
+mcs /target:library  TestStringFormat.cs /r:NUnit.Framework.dll /r:System.Drawing.dll 
+nunit-console TestStringFormat.dll
+

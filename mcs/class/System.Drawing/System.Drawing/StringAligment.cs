@@ -11,8 +11,8 @@ namespace System.Drawing
 {
 	[Serializable]
 	public enum StringAlignment {
+		Near = 0,
 		Center = 1,
-		Far = 2,
-		Near = 3
+		Far = 2	
 	}
 }

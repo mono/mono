@@ -4,12 +4,15 @@
 // Authors:
 //   Dennis Hayes (dennish@Raytek.com)
 //   Miguel de Icaza (miguel@ximian.com)
+//	 Jordi Mas i Hernandez (jordi@ximian.com)
 //
 // (C) 2002 Ximian, Inc
 // (C) 2003 Novell, Inc.
 //
 using System;
 using System.Drawing.Text;
+using System.IO;// temp
+
 
 namespace System.Drawing
 {
@@ -19,114 +22,148 @@ namespace System.Drawing
 	public sealed class StringFormat : MarshalByRefObject, IDisposable, ICloneable
 	{
 		private static StringFormat genericDefault;
-		StringAlignment alignment;
-		StringAlignment line_alignment;
-		StringFormatFlags format_flags;
-		HotkeyPrefix hotkey_prefix;
-		StringTrimming trimming;
+		IntPtr nativeStrFmt = IntPtr.Zero;
 		
 		public StringFormat()
+		{						   
+			Status status = GDIPlus.GdipCreateStringFormat (0, GDIPlus.LANG_NEUTRAL, out nativeStrFmt);        			
+			
+			if (status != Status.Ok)
+				throw new ArgumentException ("Could not allocate string format: " + status);
+				
+			LineAlignment =  StringAlignment.Near;
+			Alignment =  StringAlignment.Near;			
+		}
+		
+		internal StringFormat(IntPtr native)
 		{
-			//
-			// TODO: Add constructor logic here
-			//
-			alignment = StringAlignment.Center;
-			line_alignment = StringAlignment.Center;
-			format_flags = 0;
+			nativeStrFmt = native;
+		}
+		
+		~StringFormat()
+		{	
+			Dispose ();
+		}
+		
+		public void Dispose()
+		{	
+			Dispose (true);
+			System.GC.SuppressFinalize (this);
 		}
 
-		public void Dispose()
+		void Dispose (bool disposing)
 		{
+			if (disposing)
+				GDIPlus.GdipDeleteStringFormat (nativeStrFmt);			
 		}
 
 		public StringFormat (StringFormat source)
-		{
-			alignment = source.alignment;
-			line_alignment = source.line_alignment;
-			format_flags = source.format_flags;
-			hotkey_prefix = source.hotkey_prefix;
+		{			
+			Status status = GDIPlus.GdipCloneStringFormat (source.NativeObject, out nativeStrFmt);
+			
+			if (status != Status.Ok)
+				throw new ArgumentException ("Could not allocate string format: " + status);
 		}
 
 		public StringFormat (StringFormatFlags flags)
 		{
-			alignment = StringAlignment.Center;
-			line_alignment = StringAlignment.Center;
-			format_flags = flags;
+			Status status = GDIPlus.GdipCreateStringFormat (flags, GDIPlus.LANG_NEUTRAL, out nativeStrFmt);        
+			
+			if (status != Status.Ok)
+				throw new ArgumentException ("Could not allocate string format: " + status);
 		}
 		
 		public StringAlignment Alignment {
 			get {
-				return alignment;
+					StringAlignment align;
+					GDIPlus.GdipGetStringFormatAlign (nativeStrFmt, out align);
+        			return align;
 			}
 
-			set {
-				alignment = value;
+			set {					
+					GDIPlus.GdipSetStringFormatAlign (nativeStrFmt, value);				
 			}
 		}
 
 		public StringAlignment LineAlignment {
 			get {
-				return line_alignment;
+					StringAlignment align;
+					GDIPlus.GdipGetStringFormatLineAlign (nativeStrFmt, out align);        
+					return align;
 			}
 
-			set {
-				line_alignment = value;
+			set {				
+					GDIPlus.GdipSetStringFormatLineAlign (nativeStrFmt, value);
 			}
 		}
 
 		public StringFormatFlags FormatFlags {
-			get {
-				return format_flags;
+			get {				
+					StringFormatFlags flags;
+					
+					GDIPlus.GdipGetStringFormatFlags (nativeStrFmt, out flags);
+        			return flags;			
 			}
 
 			set {
-				format_flags = value;
+					GDIPlus.GdipSetStringFormatFlags (nativeStrFmt, value);					
 			}
 		}
 
 		public HotkeyPrefix HotkeyPrefix {
-			get {
-				return hotkey_prefix;
+			get {				
+					HotkeyPrefix hotkeyPrefix;
+					GDIPlus.GdipGetStringFormatHotkeyPrefix (nativeStrFmt, out hotkeyPrefix);           
+        			return hotkeyPrefix;
 			}
 
 			set {
-				hotkey_prefix = value;
+								
+					GDIPlus.GdipSetStringFormatHotkeyPrefix (nativeStrFmt, value);
 			}
 		}
 
 		public void SetMeasurableCharacterRanges (CharacterRange [] range)
 		{
+				
 		}
 
 		public StringTrimming Trimming {
 			get {
-				return trimming;
+					StringTrimming trimming;
+					GDIPlus.GdipGetStringFormatTrimming (nativeStrFmt, out trimming);
+        			return trimming;
 			}
 
 			set {
-				trimming = value;
+					GDIPlus.GdipSetStringFormatTrimming (nativeStrFmt, value);        
 			}
 		}
 
 		public static StringFormat GenericDefault {
 			get {
-				lock (typeof (StringFormat)) {
-					if (genericDefault == null)  {
-						genericDefault = new StringFormat ();
-						genericDefault.Alignment = StringAlignment.Near;
-						//genericDefault.DigitSubstitutionMethod = StringDigitSubstitute.User;
-						genericDefault.LineAlignment = StringAlignment.Near;
-						genericDefault.Trimming = StringTrimming.Character;
-					}
-				}
-				return(genericDefault);
+					IntPtr ptr;
+					
+					Status status = GDIPlus.GdipStringFormatGetGenericDefault (out ptr);        
+					
+					if (status != Status.Ok)
+						throw new ArgumentException ("Could not allocate string format: " + status);
+						
+					return new StringFormat (ptr);
 			}
 		}
 
-		[MonoTODO("Just to return a valid result")]
+		
 		public static StringFormat GenericTypographic {
 			get {
-				return GenericDefault;
+					IntPtr ptr;
+					
+					Status status = GDIPlus.GdipStringFormatGetGenericTypographic (out ptr);        
+					
+					if (status != Status.Ok)
+						throw new ArgumentException ("Could not allocate string format: " + status);
+						
+					return new StringFormat (ptr);				
 			}
 		}
 
@@ -134,5 +171,15 @@ namespace System.Drawing
 		public object Clone () {
 			throw new NotImplementedException ();
 		}
+		
+		internal IntPtr NativeObject{            
+			get{
+					return nativeStrFmt;
+			}
+			set	{
+					nativeStrFmt = value;
+			}
+		}
+		
 	}
 }

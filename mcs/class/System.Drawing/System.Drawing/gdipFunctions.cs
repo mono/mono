@@ -13,6 +13,7 @@ using System.Text;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.Drawing.Text;
+//using System.Drawing;
 
 namespace System.Drawing {
 	/// <summary>
@@ -21,6 +22,7 @@ namespace System.Drawing {
 	public class GDIPlus {
 		
 		public const int FACESIZE = 32;
+		public const int LANG_NEUTRAL = 0;
 		
 		#region gdiplus.dll functions
 
@@ -816,6 +818,41 @@ namespace System.Drawing {
 
 		[DllImport ("gdiplus.dll")]
 		internal static extern Status GdipDeleteFontFamily (IntPtr fontFamily);
+		
+		// String Format
+		[DllImport ("gdiplus.dll")]
+		internal static extern Status GdipCreateStringFormat(int formatAttributes, int language, out IntPtr  format);
+		[DllImport ("gdiplus.dll")]
+		internal static extern Status GdipStringFormatGetGenericDefault(out IntPtr format);
+		[DllImport ("gdiplus.dll")]
+		internal static extern Status GdipStringFormatGetGenericTypographic(out IntPtr format);
+		[DllImport ("gdiplus.dll")]
+		internal static extern Status GdipDeleteStringFormat(IntPtr format);
+		[DllImport ("gdiplus.dll")]
+		internal static extern Status GdipCloneStringFormat(IntPtr srcformat, out IntPtr format);
+		[DllImport ("gdiplus.dll")]
+		internal static extern Status GdipSetStringFormatFlags(IntPtr format, StringFormatFlags flags);
+		[DllImport ("gdiplus.dll")]
+		internal static extern Status GdipGetStringFormatFlags(IntPtr format, out StringFormatFlags flags);
+		[DllImport ("gdiplus.dll")]
+		internal static extern Status GdipSetStringFormatAlign(IntPtr format, StringAlignment align);
+		[DllImport ("gdiplus.dll")]
+		internal static extern Status GdipGetStringFormatAlign(IntPtr format, out StringAlignment align);
+		[DllImport ("gdiplus.dll")]
+		internal static extern Status GdipSetStringFormatLineAlign(IntPtr format, StringAlignment align);
+		[DllImport ("gdiplus.dll")]
+		internal static extern Status GdipGetStringFormatLineAlign(IntPtr format, out StringAlignment align);
+		[DllImport ("gdiplus.dll")]
+		internal static extern Status GdipSetStringFormatTrimming(IntPtr format, StringTrimming trimming);
+		[DllImport ("gdiplus.dll")]
+		internal static extern Status GdipGetStringFormatTrimming(IntPtr format, out StringTrimming trimming);
+		[DllImport ("gdiplus.dll")]
+		internal static extern Status GdipSetStringFormatHotkeyPrefix(IntPtr format, HotkeyPrefix hotkeyPrefix);
+		[DllImport ("gdiplus.dll")]
+		internal static extern Status GdipGetStringFormatHotkeyPrefix(IntPtr format, out HotkeyPrefix hotkeyPrefix);
+		
+		
+		
 #endregion      
 	}               
 }               
