@@ -1,3 +1,12 @@
+2004-02-13  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* declsec.c: Added statistics counter for different kinds of 
+	LinkDemands.
+	* mini.h: Added CAS statistic counters to MonoJitStats. Removed unused
+	(and commented) declaration.
+	* mini.c: Added statistics counter for security Demand code 
+	generation. Added display of security statistics.
+
 2005-02-13  Zoltan Varga  <vargaz@freemail.hu>
 
 	* declsec.c (mono_declsec_linkdemand_aptc): Applied patch from Robert Jordan (robertj@gmx.net).
