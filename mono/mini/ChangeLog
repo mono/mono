@@ -1,6 +1,6 @@
 2005-2-1  Massimiliano Mantione  <massi@ximian.com>
 
-	* driver.c: Re-enabled SSAPRE.
+	* driver.c: Re-enabled SSAPRE (two commits, I was just dumb).
 
 2005-2-1  Massimiliano Mantione  <massi@ximian.com>
 
