@@ -1,3 +1,7 @@
+2002-10-05  Andrew Birkett  <andy@nobugs.org>
+
+	* corlib_linux_test.args: Added RC2Test
+
 2002-09-23  Andrew Birkett  <andy@nobugs.org>
 
 	* corlib_linux_test.args: Added MD5Test
