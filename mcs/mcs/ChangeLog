@@ -1,5 +1,9 @@
 2002-10-30  Miguel de Icaza  <miguel@ximian.com>
 
+	* expression.cs (ParameterReference.DoResolve, DoResolveLValue):
+	Do not use ISBYREF because that is a flag that says that either
+	REF or OUT are set, use REF when we mean ref.
+
 	* delegate.cs (FullDelegateDesc): use ParameterDesc to get the
 	full type signature instead of calling TypeManger.CSharpName
 	ourselves. 

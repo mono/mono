@@ -94,8 +94,16 @@ namespace Mono.CSharp {
 					return Parameter.Modifier.PARAMS;
 			
 			Type t = pi [pos].ParameterType;
-			if (t.IsByRef)
+			if (t.IsByRef){
+				//
+				// FIXME: this is broken, it should return one of:
+				//  ISBYREF | REF
+				//  ISBYREF | OUT
+				//
+				// How can we tell them apart?
+				//
 				return Parameter.Modifier.ISBYREF;
+			}
 			
 			return Parameter.Modifier.NONE;
 		}
