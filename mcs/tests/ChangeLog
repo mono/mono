@@ -1,7 +1,13 @@
+2001-10-28  Ravi Pratap  <ravi@ximian.com>
+
+	* test-32.cs : Added to test array definition and creation.
+
+	* makefile : Updated accordingly.
+
 2001-10-22  Ravi Pratap  <ravi@ximian.com>
 
 	* makefile : New target 'verify' which uses the verifier to check
-	that executables produced by us are identical to the MS' produced ones.
+	that executables produced by us are identical to the MSC produced ones.
 
 	* test-7.cs : Update to exercise more overloadable operators.
 
