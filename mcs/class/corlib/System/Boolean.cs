@@ -30,9 +30,7 @@ namespace System {
 	/// <summary>
 	/// Represents the boolean values of logical true and false.
 	/// </summary>
-	// The .NET Framework SDK lists this as implementing IConvertible,
-	// though it's not done in the ECMA spec.
-	public struct Boolean : IComparable { //, IConvertible {
+	public struct Boolean : IComparable, IConvertible {
 		
 		/// <value>
 		/// The String representation of Boolean False
@@ -177,6 +175,91 @@ namespace System {
 			return TypeCode.Boolean;
 		}
 
+		public object ToType (Type conversionType, IFormatProvider provider)
+		{
+			return System.Convert.ToType(value, conversionType, provider);
+		}
+		
+		public bool ToBoolean (IFormatProvider provider)
+		{
+			return value;
+		}
+		
+		public byte ToByte (IFormatProvider provider)
+		{
+			return System.Convert.ToByte(value);
+		}
+		
+		public char ToChar (IFormatProvider provider)
+		{
+			throw new InvalidCastException();
+		}
+		
+		[CLSCompliant(false)]
+		public DateTime ToDateTime (IFormatProvider provider)
+		{
+			throw new InvalidCastException();
+		}
+		
+		public decimal ToDecimal (IFormatProvider provider)
+		{
+			return System.Convert.ToDecimal(value);
+		}
+		
+		public double ToDouble (IFormatProvider provider)
+		{
+			return System.Convert.ToDouble(value);
+		}
+		
+		public short ToInt16 (IFormatProvider provider)
+		{
+			return System.Convert.ToInt16(value);
+		}
+		
+		public int ToInt32 (IFormatProvider provider)
+		{
+			return System.Convert.ToInt32(value);
+		}
+		
+		public long ToInt64 (IFormatProvider provider)
+		{
+			return System.Convert.ToInt64(value);
+		}
+		
+		[CLSCompliant(false)] 
+		public sbyte ToSByte (IFormatProvider provider)
+		{
+			return System.Convert.ToSByte(value);
+		}
+		
+		public float ToSingle (IFormatProvider provider)
+		{
+			return System.Convert.ToSingle(value);
+		}
+		
+		public string ToString (IFormatProvider provider)
+		{
+			return System.Convert.ToString(value);
+		}
+		
+		[CLSCompliant(false)]
+		public ushort ToUInt16 (IFormatProvider provider)
+		{
+			return System.Convert.ToUInt16(value);
+		}
+		
+		[CLSCompliant(false)]
+		public uint ToUInt32 (IFormatProvider provider)
+		{
+			return System.Convert.ToUInt32(value);
+		}
+		
+		[CLSCompliant(false)]
+		public ulong ToUInt64 (IFormatProvider provider)
+		{
+			return System.Convert.ToUInt64(value);
+		}
+		
 	} // System.Boolean
 
 } // Namespace System
