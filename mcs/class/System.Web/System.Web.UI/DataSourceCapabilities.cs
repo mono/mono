@@ -28,6 +28,7 @@
 
 #if NET_2_0
 namespace System.Web.UI {
+	[Flags]
 	public enum DataSourceCapabilities {
 		None = 0,
 		Sort = 1,

@@ -81,6 +81,7 @@ namespace System.Web.UI
 		{
 			if (!(obj is DataSourceSelectArguments))
 				return false;
+			return false;
 		}
 
 		[MonoTODO]
@@ -91,7 +92,7 @@ namespace System.Web.UI
 
 		public void RaiseUnsupportedCapabilitiesError (DataSourceView view)
 		{
-			view.RaiseUnsupportedCapabilitiesError (this);
+			view.RaiseUnsupportedCapabilityError (this.dsc);
 		}
 
 		public bool IsEmpty {
