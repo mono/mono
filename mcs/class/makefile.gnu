@@ -13,8 +13,8 @@ DIRS =	corlib				\
 	Mono.GetOptions			\
 	System.Web			\
 	System.Web.Services		\
-	System.Runtime.Remoting		\
 	System.Runtime.Serialization.Formatters.Soap \
+	System.Runtime.Remoting		\
 	System.Configuration.Install 	\
 	System.Management		\
 	Mono.CSharp.Debugger		\
