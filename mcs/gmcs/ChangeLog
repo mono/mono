@@ -1,3 +1,8 @@
+2004-03-30  Martin Baulig  <martin@ximian.com>
+
+	* generic.cs (Constraints): Completed error checking, use correct
+	error numbers.
+
 2004-03-29  Martin Baulig  <martin@ximian.com>
 
 	* delegate.cs (Delegate.VerifyMethod): Infer type arguments.

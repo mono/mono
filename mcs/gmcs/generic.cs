@@ -19,39 +19,33 @@ namespace Mono.CSharp {
 	// Tracks the constraints for a type parameter
 	//
 	public class Constraints : GenericConstraints {
-		string type_parameter;
+		string name;
 		ArrayList constraints;
 		Location loc;
 		
 		//
-		// type_parameter is the identifier, constraints is an arraylist of
+		// name is the identifier, constraints is an arraylist of
 		// Expressions (with types) or `true' for the constructor constraint.
 		// 
-		public Constraints (string type_parameter, ArrayList constraints,
+		public Constraints (string name, ArrayList constraints,
 				    Location loc)
 		{
-			this.type_parameter = type_parameter;
+			this.name = name;
 			this.constraints = constraints;
 			this.loc = loc;
 		}
 
 		public string TypeParameter {
 			get {
-				return type_parameter;
+				return name;
 			}
-		}
-
-		protected void Error (string message)
-		{
-			Report.Error (-218, "Invalid constraints clause for type " +
-				      "parameter `{0}': {1}", type_parameter, message);
 		}
 
 		bool has_ctor_constraint;
 		TypeExpr class_constraint;
 		ArrayList iface_constraints;
 		TypeExpr[] constraint_types;
-		int num_constraints;
+		int num_constraints, first_constraint;
 		Type[] types;
 
 		public bool HasConstructorConstraint {
@@ -64,8 +58,8 @@ namespace Mono.CSharp {
 
 			foreach (object obj in constraints) {
 				if (has_ctor_constraint) {
-					Error ("can only use one constructor constraint and " +
-					       "it must be the last constraint in the list.");
+					Report.Error (401, loc,
+						      "The new() constraint must be last.");
 					return false;
 				}
 
@@ -78,10 +72,20 @@ namespace Mono.CSharp {
 				if (expr == null)
 					return false;
 
+				if (expr is TypeParameterExpr) {
+					Report.Error (700, loc,
+						      "`{0}': naked type parameters cannot " +
+						      "be used as bounds", expr.Name);
+					return false;
+				}
+
 				if (expr.IsInterface)
 					iface_constraints.Add (expr);
 				else if (class_constraint != null) {
-					Error ("can have at most one class constraint.");
+					Report.Error (406, loc,
+						      "`{0}': the class constraint for `{1}' " +
+						      "must come before any other constraints.",
+						      expr.Name, name);
 					return false;
 				} else
 					class_constraint = expr;
@@ -90,10 +94,9 @@ namespace Mono.CSharp {
 			}
 
 			constraint_types = new TypeExpr [num_constraints];
-			int pos = 0;
 			if (class_constraint != null)
-				constraint_types [pos++] = class_constraint;
-			iface_constraints.CopyTo (constraint_types, pos);
+				constraint_types [first_constraint++] = class_constraint;
+			iface_constraints.CopyTo (constraint_types, first_constraint);
 
 			return true;
 		}
@@ -102,8 +105,42 @@ namespace Mono.CSharp {
 		{
 			types = new Type [constraint_types.Length];
 
-			for (int i = 0; i < constraint_types.Length; i++)
+			for (int i = 0; i < constraint_types.Length; i++) {
 				types [i] = constraint_types [i].ResolveType (ec);
+				if (types [i] == null)
+					return null;
+
+				for (int j = first_constraint; j < i; j++) {
+					if (!types [j].Equals (types [i]))
+						continue;
+
+					Report.Error (405, loc,
+						      "Duplicate constraint `{0}' for type " +
+						      "parameter `{1}'.", types [i], name);
+					return null;
+				}
+			}
+
+			if (class_constraint != null) {
+				if (types [0].IsSealed) {
+					Report.Error (701, loc,
+						      "`{0}' is not a valid bound.  Bounds " +
+						      "must be interfaces or non sealed " +
+						      "classes", types [0]);
+					return null;
+				}
+
+				if ((types [0] == TypeManager.array_type) ||
+				    (types [0] == TypeManager.delegate_type) ||
+				    (types [0] == TypeManager.enum_type) ||
+				    (types [0] == TypeManager.value_type) ||
+				    (types [0] == TypeManager.object_type)) {
+					Report.Error (702, loc,
+						      "Bound cannot be special class `{0}'",
+						      types [0]);
+					return null;
+				}
+			}
 
 			return types;
 		}
