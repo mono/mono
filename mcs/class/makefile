@@ -1,13 +1,15 @@
+NANT	= ../nant/NAnt.exe
+
 all: linux
 
 linux:
-	../nant/NAnt.exe
+	$(NANT)
 
 push:
 	scp lib/*.dll mono-cvs:libs
 
 test:
-	../nant/NAnt.exe test
+	$(NANT) test
 
 clean:
-	../nant/NAnt.exe clean
+	$(NANT) clean

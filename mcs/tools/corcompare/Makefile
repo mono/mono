@@ -1,3 +1,5 @@
+NANT	= ../../nant/NAnt.exe
+
 all: linux
 
 windows: linux
@@ -5,7 +7,7 @@ windows: linux
 linux: CorCompare.exe
 
 CorCompare.exe: *.cs
-	../../nant/NAnt.exe linux
+	$(NANT) linux
 
 clean:
 	rm -f *.exe *.pdb *.dll

@@ -1,3 +1,5 @@
+NANT	= ../nant/NAnt.exe
+
 all: build
 
 linux: build
@@ -5,8 +7,8 @@ linux: build
 windows: build
 
 build:
-	../nant/NAnt.exe build
+	$(NANT) build
 
 clean:
-	../nant/NAnt.exe clean
+	$(NANT) clean
 
