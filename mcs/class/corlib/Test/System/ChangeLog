@@ -1,3 +1,7 @@
+2003-11-14  Nick Drochak <ndrochak@gol.com>
+
+	* FloatingPointFormatterTest.cs: Make test pass on .NET 1.1.
+
 2003-11-14  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* ValueTypeTest.cs: New tests.
