@@ -233,6 +233,194 @@ namespace MonoTests.System.Data
 
                 }
 
+		public void TestSelectExceptions ()
+		{
+			DataTable T = new DataTable ("test");
+			DataColumn C = new DataColumn ("name");
+			T.Columns.Add (C);
+			C = new DataColumn ("age");
+			C.DataType = typeof (int);
+			T.Columns.Add (C);
+			C = new DataColumn ("id");
+			T.Columns.Add (C);
+			
+			for (int i = 0; i < 100; i++) {
+				DataRow Row = T.NewRow ();
+				Row [0] = "human" + i;
+				Row [1] = i;
+				Row [2] = i;
+				T.Rows.Add (Row);
+			}
+			
+			try {
+				T.Select ("name = human1");
+				Fail ("test#01");
+			} catch (Exception e) {
+				
+				// column name human not found
+				AssertEquals ("test#02", typeof (EvaluateException), e.GetType ());
+			}
+			
+			AssertEquals ("test#04", 1, T.Select ("id = '12'").Length);
+			AssertEquals ("test#05", 1, T.Select ("id = 12").Length);
+			
+			try {
+				T.Select ("id = 1k3");
+				Fail ("test#06");
+			} catch (Exception e) {
+				
+				// no operands after k3 operator
+				AssertEquals ("test#07", typeof (SyntaxErrorException), e.GetType ());
+			}						
+		}
+		
+		public void TestSelectStringOperators ()
+		{
+			DataTable T = new DataTable ("test");
+			DataColumn C = new DataColumn ("name");
+			T.Columns.Add (C);
+			C = new DataColumn ("age");
+			C.DataType = typeof (int);
+			T.Columns.Add (C);
+			C = new DataColumn ("id");
+			T.Columns.Add (C);
+			
+			DataSet Set = new DataSet ("TestSet");
+			Set.Tables.Add (T);
+			
+			DataRow Row = null;
+			for (int i = 0; i < 100; i++) {
+				Row = T.NewRow ();
+				Row [0] = "human" + i;
+				Row [1] = i;
+				Row [2] = i;
+				T.Rows.Add (Row);
+			}
+			Row = T.NewRow ();
+			Row [0] = "h*an";
+			Row [1] = 1;
+			Row [2] = 1;
+			T.Rows.Add (Row);
+					
+			AssertEquals ("test#01", 1, T.Select ("name = 'human' + 1").Length);
+			AssertEquals ("test#02", "human1", T.Select ("name = 'human' + 1") [0] ["name"]);			
+			AssertEquals ("test#03", 1, T.Select ("name = 'human' + '1'").Length);
+			AssertEquals ("test#04", "human1", T.Select ("name = 'human' + '1'") [0] ["name"]);			
+			AssertEquals ("test#05", 1, T.Select ("name = 'human' + 1 + 2").Length);
+			AssertEquals ("test#06", "human12", T.Select ("name = 'human' + '1' + '2'") [0] ["name"]);
+			
+			AssertEquals ("test#07", 1, T.Select ("name = 'huMAn' + 1").Length);
+
+			Set.CaseSensitive = true;
+			AssertEquals ("test#08", 0, T.Select ("name = 'huMAn' + 1").Length);
+			
+			T.CaseSensitive = false;
+			AssertEquals ("test#09", 1, T.Select ("name = 'huMAn' + 1").Length);
+			
+			T.CaseSensitive = true;
+			AssertEquals ("test#10", 0, T.Select ("name = 'huMAn' + 1").Length);
+			
+			Set.CaseSensitive = false;
+			AssertEquals ("test#11", 0, T.Select ("name = 'huMAn' + 1").Length);
+			
+			T.CaseSensitive = false;
+			AssertEquals ("test#12", 1, T.Select ("name = 'huMAn' + 1").Length);
+			
+			AssertEquals ("test#13", 0, T.Select ("name = 'human1*'").Length);
+			AssertEquals ("test#14", 11, T.Select ("name like 'human1*'").Length);
+			AssertEquals ("test#15", 11, T.Select ("name like 'human1%'").Length);
+			
+			try {
+				AssertEquals ("test#16", 11, T.Select ("name like 'h*an1'").Length);
+				Fail ("test#16");
+			} catch (Exception e) {
+				
+				// 'h*an1' is invalid
+				AssertEquals ("test#17", typeof (EvaluateException), e.GetType ());
+			}
+			
+			try {
+				AssertEquals ("test#18", 11, T.Select ("name like 'h%an1'").Length);
+				Fail ("test#19");
+			} catch (Exception e) {
+				
+				// 'h%an1' is invalid
+				AssertEquals ("test#20", typeof (EvaluateException), e.GetType ());
+			}
+			
+			AssertEquals ("test#21", 0, T.Select ("name like 'h[%]an'").Length);
+			AssertEquals ("test#22", 1, T.Select ("name like 'h[*]an'").Length);
+		}
+
+		public void TestSelectAggregates ()
+		{
+			DataTable T = new DataTable ("test");
+			DataColumn C = new DataColumn ("name");
+			T.Columns.Add (C);
+			C = new DataColumn ("age");
+			C.DataType = typeof (int);
+			T.Columns.Add (C);
+			C = new DataColumn ("id");
+			T.Columns.Add (C);
+			DataRow Row = null;
+			
+			for (int i = 0; i < 1000; i++) {
+				Row = T.NewRow ();
+				Row [0] = "human" + i;
+				Row [1] = i;
+				Row [2] = i;
+				T.Rows.Add (Row);
+			}
+			
+			AssertEquals ("test#01", 1000, T.Select ("Sum(age) > 10").Length);
+			AssertEquals ("test#02", 1000, T.Select ("avg(age) = 499").Length);
+			AssertEquals ("test#03", 1000, T.Select ("min(age) = 0").Length);
+			AssertEquals ("test#04", 1000, T.Select ("max(age) = 999").Length);
+			AssertEquals ("test#05", 1000, T.Select ("count(age) = 1000").Length);
+			AssertEquals ("test#06", 1000, T.Select ("stdev(age) > 287 and stdev(age) < 289").Length);
+			AssertEquals ("test#07", 1000, T.Select ("var(age) < 83417 and var(age) > 83416").Length);
+		}
+		
+		public void TestSelectFunctions ()
+		{
+			DataTable T = new DataTable ("test");
+			DataColumn C = new DataColumn ("name");
+			T.Columns.Add (C);
+			C = new DataColumn ("age");
+			C.DataType = typeof (int);
+			T.Columns.Add (C);
+			C = new DataColumn ("id");
+			T.Columns.Add (C);
+			DataRow Row = null;
+			
+			for (int i = 0; i < 1000; i++) {
+				Row = T.NewRow ();
+				Row [0] = "human" + i;
+				Row [1] = i;
+				Row [2] = i;
+				T.Rows.Add (Row);
+			}
+			
+			Row = T.NewRow ();
+			Row [0] = "human" + "test";
+			Row [1] = DBNull.Value;
+			Row [2] = DBNull.Value;
+			T.Rows.Add (Row);
+
+			//TODO: How to test Convert-function
+			AssertEquals ("test#01", 25, T.Select ("age = 5*5") [0]["age"]);
+			AssertEquals ("test#02", 901, T.Select ("len(name) > 7").Length);
+			AssertEquals ("test#03", 125, T.Select ("age = 5*5*5 AND len(name)>7") [0]["age"]);
+			AssertEquals ("test#04", 1, T.Select ("isnull(id, 'test') = 'test'").Length);
+			AssertEquals ("test#05", 1000, T.Select ("iif(id = '56', 'test', 'false') = 'false'").Length);
+			AssertEquals ("test#06", 1, T.Select ("iif(id = '56', 'test', 'false') = 'test'").Length);
+			AssertEquals ("test#07", 9, T.Select ("substring(id, 2, 3) = '23'").Length);
+			AssertEquals ("test#08", "123", T.Select ("substring(id, 2, 3) = '23'") [0] ["id"]);
+			AssertEquals ("test#09", "423", T.Select ("substring(id, 2, 3) = '23'") [3] ["id"]);
+			AssertEquals ("test#10", "923", T.Select ("substring(id, 2, 3) = '23'") [8] ["id"]);
+			
+		}
+
 		public void TestToString()
 		{
 			DataTable dt = new DataTable();

@@ -1,3 +1,7 @@
+2003-31-01  Ville Palo <vi64pa@koti.soon.fi>
+
+	* DataTableTest.cs: Added more tests for Select (string) -method
+	
 2003-27-01  Ville Palo <vi64pa@koti.soon.fi>
 
 	* DataRelationTest.cs: Added more tests
