@@ -1,3 +1,8 @@
+2004-07-28  Dick Porter  <dick@ximian.com>
+
+	* locales.c (string_invariant_compare_char): Fix invariant char
+	compares between upper and lower cases.  Fixes bug 61458.
+
 2004-07-27  Ben Maurer  <bmaurer@ximain.com>
 	
 	* marshal.c: actually cache stelem.ref wrappers.
