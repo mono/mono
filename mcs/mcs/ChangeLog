@@ -1,3 +1,9 @@
+2002-04-19  Miguel de Icaza  <miguel@ximian.com>
+
+	* constant.cs (DecimalConstant.Emit): Emit decimal value.
+
+	* typemanager.cs: Locate the decimal constructor.
+
 2002-04-17  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* attribute.cs: use the new property of TypeOf.

@@ -93,6 +93,7 @@ public class TypeManager {
 	// The attribute constructors.
 	//
 	static public ConstructorInfo cons_param_array_attribute;
+	static public ConstructorInfo void_decimal_ctor_five_args;
 	
 	// <remarks>
 	//   Holds the Array of Assemblies that have been loaded
@@ -519,9 +520,9 @@ public class TypeManager {
 		marshal_as_attr_type  = CoreLookupType ("System.Runtime.InteropServices.MarshalAsAttribute");
 		param_array_type      = CoreLookupType ("System.ParamArrayAttribute");
 
-		unverifiable_code_type = CoreLookupType ("System.Security.UnverifiableCodeAttribute");
+		unverifiable_code_type= CoreLookupType ("System.Security.UnverifiableCodeAttribute");
 
-		void_ptr_type        = CoreLookupType ("System.Void*");
+		void_ptr_type         = CoreLookupType ("System.Void*");
 
 	}
 
@@ -568,7 +569,7 @@ public class TypeManager {
 			idisposable_type, "Dispose", void_arg);
 		int_get_offset_to_string_data = GetMethod (
 			runtime_helpers_type, "get_OffsetToStringData", void_arg);
-
+		
 		//
 		// object arguments
 		//
@@ -589,6 +590,13 @@ public class TypeManager {
 		Type [] int_arg = { int32_type };
 		int_getlength_int = GetMethod (
 			array_type, "GetLength", int_arg);
+
+		//
+		// Decimal constructors
+		//
+		Type [] dec_arg = { int32_type, int32_type, int32_type, bool_type, byte_type };
+		void_decimal_ctor_five_args = GetConstructor (
+			decimal_type, dec_arg);
 		
 		//
 		// Attributes
