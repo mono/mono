@@ -1,5 +1,7 @@
 2004-10-21    <vargaz@freemail.hu>
 
+	* objects.cs: Add another test for unbox trampolines.
+
 	* tramp-amd64.c (amd64_magic_trampoline): Disable patching of trampolines for 
 	valuetype methods.
 
