@@ -54,8 +54,26 @@
   Classes F-L and Q-R were updated.
 * Added the classes SaveFileDialog.cs and Screen.cs
 
-2002-5-7 Dennis hayes <dennish@raytek.com>
+2002-5-7 Dennis Hayes <dennish@raytek.com>
 * Added duplicate values
 * System.Windows.Forms.Keys.cs
+
+2002-5-7 Dennis Hayes <dennish@raytek.com>
+* LeftRightAlignment.cs
+* LinkBehavior.cs
+* LinkState.cs
+* ListViewAlignment.cs
+* MdiLayout.cs
+* MenuGlyph.cs
+* MenuMerge.cs
+* MessageBoxButtons.cs
+* MessageBoxDefaultButton.cs
+* MessageBoxIcon.cs
+* MessageBoxOptions.cs
+* MouseButtons.cs
+* Orientation.cs
+* PictureBoxSizeMode.cs
+* PropertySort.cs
+* Added some more enums. All have correct values.
 
 
