@@ -1,3 +1,7 @@
+2003-01-06 Jackson Harper <jackson@latitudegeo.com>
+
+	* cs-tokenizer.cs: Add REGION flag to #region directives, and add checks to make sure that regions are being poped correctly
+
 2002-12-29  Miguel de Icaza  <miguel@ximian.com>
 
 	* cs-tokenizer.cs (get_cmd_arg): Fixups to allow \r to terminate
