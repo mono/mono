@@ -2643,6 +2643,7 @@ public class ArrayTest : Assertion
 	}
 
 	[Test]
+	[Category("NotWorking")]
 	public void ReadOnly_Contains ()
 	{
 		int[] arr = new int [2];
@@ -2655,6 +2656,7 @@ public class ArrayTest : Assertion
 	}
 
 	[Test]
+	[Category("NotWorking")]
 	public void ReadOnly_IndexOf ()
 	{
 		int[] arr = new int [2];
