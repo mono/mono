@@ -48,6 +48,16 @@ TEST_SOURCES = \
 	cls-test-0 cls-test-1 cls-test-2 cls-test-3 cls-test-5 cls-test-6 cls-test-7 cls-test-10  \
 	cls-test-11 cls-test-14 cls-test-15 cls-test-16
 
+GENERIC_SOURCES = \
+	gen-1   gen-2   gen-3   gen-4   gen-5   gen-6   gen-7   gen-8   gen-9   gen-10 \
+	gen-11  gen-12          gen-14  gen-15  gen-16          gen-18  gen-19  gen-20 \
+	gen-21  gen-22  gen-23  gen-24  gen-25  gen-26  gen-27  gen-28  gen-29  gen-30 \
+	        gen-32  gen-33  gen-34  gen-35  gen-36  gen-37  gen-38  gen-39  gen-40 \
+	gen-41  gen-42  gen-43  gen-44  gen-45  gen-46          gen-48  gen-49  gen-50 \
+	gen-51  gen-52  gen-53  gen-54  gen-55  gen-56          gen-58  gen-59  gen-60 \
+	        gen-62  gen-63  gen-64
+
+
 #
 # C# 2.0 tests 
 #
@@ -99,7 +109,7 @@ test-local:
 
 run-test-local: test-compiler-jit test-unsafe-compiler-jit test-casts test-2
 
-test-everything: run-test-local test-generic test-generic-2
+test-everything: run-test-local test-generic test-generic-2 test-generic-3
 
 clean-local:
 	rm -f *.exe *.netmodule *.out *.pdb casts.cs
@@ -153,7 +163,8 @@ test-generic:
 test-generic-2:
 	make MONO_PATH="../class/lib/net_2_0$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" TEST_RUNTIME="MONO_PATH=$$MONO_PATH $(RUNTIME) --debug" INTERNAL_MCS="mono ../gmcs/gmcs.exe" test-compiler-jit-real TEST_SOURCES="$(TEST2_SOURCES)" TEST_TAG=gmcs-v2
 
-
+test-generic-3:
+	make MONO_PATH="../class/lib/net_2_0$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" TEST_RUNTIME="MONO_PATH=$$MONO_PATH $(RUNTIME) --debug" INTERNAL_MCS="mono ../gmcs/gmcs.exe" test-compiler-jit-real TEST_SOURCES="$(GENERIC_SOURCES)" TEST_TAG=gmcs-v3
 
 #
 # Tests the 2.0 features

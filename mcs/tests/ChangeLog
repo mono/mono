@@ -1,3 +1,8 @@
+2004-08-04  Martin Baulig  <martin@ximian.com>
+
+	* Makefile (test-generic-3): New target to run all the generic
+	tests.	
+
 2004-08-03  Ben Maurer  <bmaurer@ximian.com>
 
 	* test-283.cs: for 62275.
