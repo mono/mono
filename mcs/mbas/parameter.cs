@@ -21,6 +21,8 @@ namespace Mono.MonoBASIC {
 	///   Represents a single method parameter
 	/// </summary>
 	public class Parameter : Attributable {
+		ParameterBuilder builder;
+		
 		[Flags]
 		public enum Modifier : byte {
 			NONE    = 0,
@@ -62,9 +64,13 @@ namespace Mono.MonoBASIC {
 
 		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb)
 		{
-			throw new Exception ("FIXME: I am just a placeholder implementation");
+			if (a.Type == TypeManager.marshal_as_attr_type) {
+				UnmanagedMarshal marshal = UnmanagedMarshal.DefineUnmanagedMarshal (a.UnmanagedType);
+				builder.SetMarshal (marshal);
+			} else 
+				builder.SetCustomAttribute (cb);
 		}
-		
+
 		public Parameter (Expression type, string name, Modifier mod, Attributes attrs, Expression pi, bool opt)
 			: base (attrs)
 		{
@@ -147,6 +153,31 @@ namespace Mono.MonoBASIC {
 			}
 
 			return ExternalType (ds, loc).FullName;
+		}
+
+		public void DefineParameter (EmitContext ec, MethodBuilder mb, ConstructorBuilder cb, int index, Location loc)
+		{
+			if (mb == null)
+				builder = cb.DefineParameter (index, Attributes, Name);
+			else 
+				builder = mb.DefineParameter (index, Attributes, Name);
+
+			if (ParameterInitializer != null)	{
+				if (ParameterInitializer is MemberAccess) {
+					MemberAccess ma = ParameterInitializer as MemberAccess;
+
+					Expression const_ex = ma.Resolve(ec);
+					if (const_ex is EnumConstant)
+						builder.SetConstant (((EnumConstant) const_ex).Child.GetValue());
+					else
+						Report.Error(-1, "Internal error - Non supported argument type in optional parameter");
+				}
+				else
+					builder.SetConstant (((Constant) ParameterInitializer).GetValue());
+			}
+
+			if (OptAttributes != null)
+				OptAttributes.Emit (ec, this);
 		}
 	}
 
@@ -541,5 +572,43 @@ namespace Mono.MonoBASIC {
 			// For now this is the only correc thing to do
 			return CallingConventions.Standard;
 		}
+		
+		public void LabelParameters (EmitContext ec, MethodBase builder, Location loc)
+		{
+			//
+			// Define each type attribute (in/out/ref) and
+			// the argument names.
+			//
+			Parameter [] p = FixedParameters;
+			int i = 0;
+			
+			MethodBuilder mb = null;
+			ConstructorBuilder cb = null;
+
+			if (builder is MethodBuilder)
+				mb = (MethodBuilder) builder;
+			else
+				cb = (ConstructorBuilder) builder;
+			
+			if (p != null){
+				for (i = 0; i < p.Length; i++) {
+					p [i].DefineParameter (ec, mb, cb, i + 1, loc);
+				}
+			}
+
+			if (ArrayParameter != null) {
+				ParameterBuilder pb;
+				Parameter array_param = ArrayParameter;
+				
+				if (mb == null)
+					pb = cb.DefineParameter (i + 1, array_param.Attributes,	array_param.Name);
+				else
+					pb = mb.DefineParameter (i + 1, array_param.Attributes, array_param.Name);
+					
+				CustomAttributeBuilder a = new CustomAttributeBuilder (TypeManager.cons_param_array_attribute, new object [0]);
+				pb.SetCustomAttribute (a);
+			}
+		}
+		
 	}
 }

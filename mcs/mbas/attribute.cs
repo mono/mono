@@ -75,7 +75,7 @@ namespace Mono.MonoBASIC {
 		bool usage_attr = false;
 		
 		MethodImplOptions ImplOptions;
-		UnmanagedType     UnmanagedType;
+		public UnmanagedType     UnmanagedType;
 		CustomAttributeBuilder cb;
 
 		public Attribute (string name, ArrayList args, Location loc)

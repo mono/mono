@@ -2141,80 +2141,6 @@ namespace Mono.MonoBASIC {
 			
 			return cc;
 		}
-
-		public void LabelParameters (EmitContext ec, Type [] parameters, MethodBase builder)
-		{
-			LabelParameters (ec, parameters, builder, null);
-		}
-
-		public void LabelParameters (EmitContext ec, Type [] parameters, MethodBase builder, Parameters p_params)
-		{
-			//
-			// Define each type attribute (in/out/ref) and
-			// the argument names.
-			//
-			Parameter [] p = p_params == null ? Parameters.FixedParameters : p_params.FixedParameters;
-			int i = 0;
-			
-			MethodBuilder mb = null;
-			ConstructorBuilder cb = null;
-
-			if (builder is MethodBuilder)
-				mb = (MethodBuilder) builder;
-			else
-				cb = (ConstructorBuilder) builder;
-
-			if (p != null){
-				for (i = 0; i < p.Length; i++) {
-					ParameterBuilder pb;
-					
-					if (mb == null)
-						pb = cb.DefineParameter (
-							i + 1, p [i].Attributes, p [i].Name);
-					else 
-						pb = mb.DefineParameter (
-							i + 1, p [i].Attributes, p [i].Name);
-
-					if (p [i].ParameterInitializer != null)	{
-						if (p [i].ParameterInitializer is MemberAccess) {
-							MemberAccess ma = p [i].ParameterInitializer as MemberAccess;
-
-							Expression const_ex = ma.Resolve(ec);
-							if (const_ex is EnumConstant)
-								pb.SetConstant (((EnumConstant) const_ex).Child.GetValue());
-							else
-								Report.Error(-1,
-									"Internal error - Non supported argument type in optional parameter");
-						}
-						else
-							pb.SetConstant (((Constant) p [i].ParameterInitializer).GetValue());
-					}
-
-					Attributes attr = p [i].OptAttributes;
-					if (attr != null)
-						Attribute.ApplyAttributes (ec, pb, pb, attr, Location);
-				}
-			}
-
-			if (Parameters.ArrayParameter != null){
-				ParameterBuilder pb;
-				Parameter array_param = Parameters.ArrayParameter;
-				
-				if (mb == null)
-					pb = cb.DefineParameter (
-						i + 1, array_param.Attributes,
-						array_param.Name);
-				else
-					pb = mb.DefineParameter (
-						i + 1, array_param.Attributes,
-						array_param.Name);
-					
-				CustomAttributeBuilder a = new CustomAttributeBuilder (
-					TypeManager.cons_param_array_attribute, new object [0]);
-				
-				pb.SetCustomAttribute (a);
-			}
-		}
 	}
 	
 	public class Method : MethodCore {
@@ -2772,7 +2698,7 @@ namespace Mono.MonoBASIC {
 				ec.IsStatic = false;
 			}
 
-			LabelParameters (ec, ParameterTypes, ConstructorBuilder);
+			Parameters.LabelParameters (ec, ConstructorBuilder, Location);
 			
 			//
 			// Classes can have base initializers and instance field initializers.
@@ -3283,7 +3209,7 @@ namespace Mono.MonoBASIC {
 				Attribute.ApplyAttributes (ec, builder, kind, OptAttributes, Location);
 
 			if (member is MethodCore)
-				((MethodCore) member).LabelParameters (ec, ParameterTypes, MethodBuilder);
+				((MethodCore) member).Parameters.LabelParameters (ec, MethodBuilder, ((MethodCore) member).Location);
 
 			//
 			// abstract or extern methods have no bodies

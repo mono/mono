@@ -1,4 +1,16 @@
 2004-11-17  Jambunathan K  <kjambunathan@novell.com>
+	* attribute.cs: Temporarily made Attribute.UnManagedType public.
+	
+	* class.cs: Removed the instance method
+	MethodCore.LabelParameters() and moved it's functionality to the
+	new instance methods Parameters.LabelParameters() and
+	Parameter.DefineParameter().
+	
+	* parameter.cs: Introduced new instance methods
+	Parameters.LabelParameters() and Parameter.DefineParameter() and
+	slightly improved Parameter.ApplyAttributeBuilder().
+	
+2004-11-17  Jambunathan K  <kjambunathan@novell.com>
 	* mb-parser.jay: During multi-file compilation, global attributes
 	were not getting parsed properly. Fixed the same.
 	
