@@ -17,7 +17,9 @@ namespace System.Net
 {
 	[ComVisible(true)]
 	public sealed class WebClient : Component
-	{		
+	{
+
+		ICredentials credentials;
 	
 		// Constructors
 		
@@ -33,10 +35,9 @@ namespace System.Net
 			set { throw new NotImplementedException (); }
 		}
 		
-		[MonoTODO]
 		public ICredentials Credentials {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { return credentials; }
+			set { credentials = value; }
 		}
 		
 		[MonoTODO]
