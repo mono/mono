@@ -227,7 +227,11 @@ namespace System {
 				throw new ArgumentNullException();
 			}
 
-			if (start_index < 0 || length < 0 || start_index + length > value.Length) {
+			// The 4th and last clause (start_index >= value.Length)
+			// was added as a small fix to a very obscure bug.
+			// It makes a small difference when start_index is
+			// outside the range and length==0. 
+			if (start_index < 0 || length < 0 || start_index + length > value.Length || start_index >= value.Length) {
 				throw new ArgumentOutOfRangeException();
 			}
 

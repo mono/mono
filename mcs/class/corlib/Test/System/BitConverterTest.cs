@@ -515,19 +515,29 @@ public class BitConverterTest : TestCase {
                         s = BitConverter.ToString (b, 20, 3);
                         exception = false;
                 }
-                catch (ArgumentException) {
+                catch (ArgumentOutOfRangeException) {
                         exception = true;
                 }
                 Assert ("A7", exception);
 
                 try {
-                        s = BitConverter.ToString ((byte[]) null, 20, 3);
+                	s = BitConverter.ToString ((byte[]) null, 20, 3);
                         exception = false;
                 }
                 catch (ArgumentNullException) {
                         exception = true;
                 }
                 Assert ("A8", exception);
+
+                try {
+                        s = BitConverter.ToString (b, 16, 0);
+                        exception = false;
+                }
+                catch (ArgumentOutOfRangeException) {
+                        exception = true;
+                }
+                Assert ("A9", exception);
+
 
 	}
 
