@@ -1,3 +1,7 @@
+2005-01-16  Nick Drochak  <ndrochak@ieee.org>
+
+	* AssemblyTest.cs: Try loading assembly from .NET tests and mono tests
+
 2004-11-05  Zoltan Varga  <vargaz@freemail.hu>
 
 	* AssemblyTest.cs: Reenable GetFiles (true) test. Add a LoadWithPartialName () test.

@@ -181,7 +181,8 @@ namespace MonoTests.System.Reflection
 		public void LoadWithPartialName ()
 		{
 			Assembly corlib = Assembly.LoadWithPartialName ("corlib_test_default");
-			Assert.IsNotNull (corlib);
+			Assembly corlib2 = Assembly.LoadWithPartialName ("corlib_plattest");
+			Assert.IsTrue (corlib != null || corlib2 != null);
 		}
 	}
 }
