@@ -297,7 +297,7 @@ namespace System.Windows.Forms
 
 		protected override void Dispose (bool disposing)
 		{
-			// Nothing to dispose
+			base.Dispose (disposing);			
 		}
 
 		public virtual void MergeMenu ()
@@ -370,6 +370,7 @@ namespace System.Windows.Forms
 			IntPtr hSubMenu = IntPtr.Zero;
 
 			menuid = index = MenuAPI.InsertMenuItem (Parent.Handle, -1, true, this, ref hSubMenu);
+			IsDirty = false;
 
 			if (IsPopup) {
 				menu_handle = hSubMenu;

@@ -64,7 +64,7 @@ namespace System.Windows.Forms
 		
 		protected override IntPtr CreateMenuHandle ()
 		{				
-			return MenuAPI.CreateMenu ();						
+			return MenuAPI.CreateMenu (this);						
 		}
 
 		protected void Dispose (bool disposing)

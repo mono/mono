@@ -43,7 +43,7 @@ namespace System.Windows.Forms
 		static StringFormat string_format_text = new StringFormat ();
 		static StringFormat string_format_shortcut = new StringFormat ();
 		static StringFormat string_format_menubar_text = new StringFormat ();
-		static ArrayList menu_list = new ArrayList ();
+		static ArrayList menu_list = new ArrayList ();		
 		static Font MENU_FONT = new Font (FontFamily.GenericSansSerif, 8.25f);
 		static int POPUP_ARROW_WITDH;
 		static int POPUP_ARROW_HEIGHT;
@@ -69,8 +69,9 @@ namespace System.Windows.Forms
 			public IntPtr		hParent;			
 			public MENUITEM		SelectedItem;	// Currently focused item
 			public bool 		bMenubar;
+			public Menu		menu;		// SWF.Menu 
 
-			public MENU ()
+			public MENU (Menu menu_obj)
 			{
 				Wnd = null;
 				hParent = IntPtr.Zero;
@@ -78,6 +79,7 @@ namespace System.Windows.Forms
 				Flags = MF.MF_INSERT;
 				Width = Height = FocusedItem = 0;				
 				bMenubar = false;
+				menu = menu_obj;
 			}
 
 		}
@@ -168,9 +170,9 @@ namespace System.Windows.Forms
 
 			string_format_menubar_text.LineAlignment = StringAlignment.Center;
 			string_format_menubar_text.Alignment = StringAlignment.Center;
-			string_format_menubar_text.HotkeyPrefix = HotkeyPrefix.Show;
-		}
-
+			string_format_menubar_text.HotkeyPrefix = HotkeyPrefix.Show;			
+		}		
+		
 		static public IntPtr StoreMenuID (MENU menu)
 		{
 			int id = menu_list.Add (menu);
@@ -188,23 +190,23 @@ namespace System.Windows.Forms
 			return (MENU) menu_list[id];
 		}
 
-		static public IntPtr CreateMenu ()
+		static public IntPtr CreateMenu (Menu menu_obj)
 		{
-			MENU menu = new MENU ();
+			MENU menu = new MENU (menu_obj);			
 			return StoreMenuID (menu);
 		}
 
-		static public IntPtr CreatePopupMenu ()
+		static public IntPtr CreatePopupMenu (Menu menu_obj)
 		{
-			MENU popMenu = new MENU ();
-			popMenu.Flags |= MF.MF_POPUP;
+			MENU popMenu = new MENU (menu_obj);
+			popMenu.Flags |= MF.MF_POPUP;			
 			return StoreMenuID (popMenu);
 		}
 
 		static public int InsertMenuItem (IntPtr hMenu, int uItem, bool fByPosition, MenuItem item, ref IntPtr hSubMenu)
 		{
 			int id;
-
+			
 			if (fByPosition == false)
 				throw new NotImplementedException ();
 
@@ -216,7 +218,7 @@ namespace System.Windows.Forms
 			menu_item.item = item;
 
 			if (item.IsPopup) {
-				menu_item.hSubMenu = CreatePopupMenu ();
+				menu_item.hSubMenu = CreatePopupMenu (menu_item.item);
 				MENU submenu = GetMenuFromID (menu_item.hSubMenu);
 				submenu.hParent = hMenu;
 			}
@@ -245,7 +247,15 @@ namespace System.Windows.Forms
 			if (select_item != null)
 				MenuAPI.SelectItem (hMenu, select_item, false, tracker);
 
-			menu.Wnd.Location =  menu.Wnd.PointToClient (pnt);
+			menu.Wnd.Location =  menu.Wnd.PointToClient (pnt);			
+			
+			if (menu.menu.IsDirty) {				
+				menu.items.Clear ();
+				menu.menu.CreateItems ();
+				((PopUpWindow)menu.Wnd).RefreshItems ();
+				menu.menu.IsDirty = false;
+			}
+			
 			((PopUpWindow)menu.Wnd).ShowWindow ();
 
 			Application.Run ();
@@ -574,23 +584,24 @@ namespace System.Windows.Forms
 		{
 			MENU menu = GetMenuFromID (hMenu);
 			MENUITEM previous_selitem = null;
-
+			
 			/* Already selected */
 			for (int i = 0; i < menu.items.Count; i++) {
 				MENUITEM it = (MENUITEM) menu.items[i];
 
 				if ((it.fState & MF.MF_HILITE) == MF.MF_HILITE) {
-					if (item.rect == it.rect)
+					if (item.rect == it.rect) {						
 						return;
+					}
 
 					/* Unselect previous item*/
 					previous_selitem = it;
 					it.fState = it.fState & ~MF.MF_HILITE;
-					menu.Wnd.Invalidate (previous_selitem.rect);
+					menu.Wnd.Invalidate (previous_selitem.rect);					
 					break;
 				}
 			}
-
+			
 			// If the previous item had subitems, hide them
 			if (previous_selitem != null && previous_selitem.item.IsPopup)
 				HideSubPopups (hMenu);
@@ -605,8 +616,8 @@ namespace System.Windows.Forms
 			item.fState |= MF.MF_HILITE;
 			menu.Wnd.Invalidate (item.rect);
 
-			item.item.PerformSelect ();
-
+			item.item.PerformSelect ();					
+			
 			if (execute)
 				ExecFocusedItem (hMenu, item, tracker);
 		}
@@ -616,7 +627,10 @@ namespace System.Windows.Forms
 		//	or a sub-popup menu has to be shown
 		static public void ExecFocusedItem (IntPtr hMenu, MENUITEM item, TRACKER tracker)
 		{
-			if (item.item.IsPopup) {
+			if (item.item.Enabled == false)
+			 	return;			 	
+			
+			if (item.item.IsPopup) {				
 				ShowSubPopup (hMenu, item.hSubMenu, item, tracker);
 			}
 			else {
@@ -650,15 +664,17 @@ namespace System.Windows.Forms
 			if (select_item != null)
 				MenuAPI.SelectItem (hMenu, select_item, false, tracker);
 
-			((PopUpWindow)menu.Wnd).ShowWindow ();			
+			((PopUpWindow)menu.Wnd).ShowWindow ();		
+			Console.WriteLine ("ShowSubPopup end {0} {1}", ((PopUpWindow)menu.Wnd).Location,
+				((PopUpWindow)menu.Wnd).Size);	
 		}
 
 		/* Hides all the submenus open in a menu */
 		static public void HideSubPopups (IntPtr hMenu)
 		{
 			MENU menu = GetMenuFromID (hMenu);
-			MENUITEM item;
-
+			MENUITEM item;						
+			
 			for (int i = 0; i < menu.items.Count; i++) {
 				item = (MENUITEM) menu.items[i];
 				if (!item.item.IsPopup)
@@ -667,7 +683,7 @@ namespace System.Windows.Forms
 				MENU sub_menu = GetMenuFromID (item.hSubMenu);
 
 				if (sub_menu.Wnd != null) {
-					HideSubPopups (item.hSubMenu);
+					HideSubPopups (item.hSubMenu);					
 					((PopUpWindow)sub_menu.Wnd).Hide ();
 				}
 			}
@@ -676,7 +692,7 @@ namespace System.Windows.Forms
 		static public void DestroyMenu (IntPtr hMenu)
 		{
 			if (hMenu == IntPtr.Zero)
-				return;
+				return;				
 
 			MENU menu = GetMenuFromID (hMenu);
 			MENUITEM item;
@@ -764,7 +780,7 @@ namespace System.Windows.Forms
 
 					MenuAPI.MENUITEM item = MenuAPI.FindItemByCoords (hMenu, new Point (e.X, e.Y));
 
-					if (item != null && menu.SelectedItem != item)
+					if (item != null)
 						MenuBarMove (hMenu, item, tracker);
 
 					break;
@@ -977,6 +993,12 @@ namespace System.Windows.Forms
 
 					break;
 				}
+				
+				case Keys.Return: {
+					Console.WriteLine ("Return key: "+ menu.SelectedItem.item.Text);
+					MenuAPI.ExecFocusedItem (hMenu, menu.SelectedItem, tracker);
+					break;
+				}
 
 				default:
 					break;
@@ -1030,15 +1052,15 @@ namespace System.Windows.Forms
 		{
 			Capture = true;
 			Show ();
-			//Refresh ();
+			Refresh ();
 		}
 		
 		public void LostFocus ()
-		{
+		{			
 			Capture = false;
 		}
 
-		protected override void OnResize(EventArgs e)
+		protected override void OnResize (EventArgs e)
 		{
 			base.OnResize (e);
 		}
@@ -1053,7 +1075,7 @@ namespace System.Windows.Forms
 		}
 
 		private void OnMouseDownPUW (object sender, MouseEventArgs e)
-    		{
+    		{    			
     			/* Click outside the client area*/
     			if (ClientRectangle.Contains (e.X, e.Y) == false) {
     				Capture = false;
@@ -1067,22 +1089,19 @@ namespace System.Windows.Forms
 			MenuAPI.MENUITEM item = MenuAPI.FindItemByCoords (hMenu, new Point (e.X, e.Y));
 			MenuAPI.MENU menu = MenuAPI.GetMenuFromID (hMenu);
 
-			if (item != null && item.item.Enabled) {
+			if (item != null) {
 				item.item.PerformClick ();
-				MenuAPI.DestroyMenu (tracker.hTopMenu);
-
-				Capture = false;
-				//Refresh ();
+				Hide ();
+				Capture = false;				
 			}
-
 		}
 
 		private void OnMouseMovePUW (object sender, MouseEventArgs e)
-		{								
+		{	
 			MenuAPI.MENUITEM item = MenuAPI.FindItemByCoords (hMenu, new Point (e.X, e.Y));
 			MenuAPI.MENU menu = MenuAPI.GetMenuFromID (hMenu);
 			
-			if (item != null) {
+			if (item != null) {				
 				MenuAPI.SelectItem (hMenu, item, true, tracker);
 			} else {					
 
@@ -1118,14 +1137,18 @@ namespace System.Windows.Forms
 		protected override void CreateHandle ()
 		{
 			base.CreateHandle ();
-
+			RefreshItems ();			
+		}		
+		
+		// Called when the number of items has changed
+		internal void RefreshItems ()
+		{
 			MenuAPI.MENU menu = MenuAPI.GetMenuFromID (hMenu);
 			MenuAPI.CalcPopupMenuSize (DeviceContext, hMenu);
 
 			Width = menu.Width;
-			Height = menu.Height;
+			Height = menu.Height;			
 		}
-
 
 		private void Draw (Rectangle clip)
 		{
@@ -1134,5 +1157,4 @@ namespace System.Windows.Forms
 	}
 
 }
-
 

@@ -56,15 +56,14 @@ namespace System.Windows.Forms
 		#region Public Properties
 		public IntPtr Handle {
 			get {
-				if (is_dirty && creating == false) {
+				if (IsDirty && creating == false) {					
 					Dispose (true);
 				}
 
-				if (menu_handle == IntPtr.Zero) {
-					Console.WriteLine ("Create Handle");
+				if (menu_handle == IntPtr.Zero) {					
 					menu_handle = CreateMenuHandle ();
 					CreateItems ();
-					is_dirty = false;
+					IsDirty = false;
 				}
 
 				return menu_handle;
@@ -117,12 +116,12 @@ namespace System.Windows.Forms
 		{
 			IntPtr menu;
 
-			menu = MenuAPI.CreatePopupMenu ();
+			menu = MenuAPI.CreatePopupMenu (this);
 			return menu;
 		}
 
 		protected override void Dispose (bool disposing)
-		{
+		{		
 			if (disposing) {
 				if (menu_handle != IntPtr.Zero)
 					MenuAPI.DestroyMenu (menu_handle);

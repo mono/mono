@@ -1,3 +1,10 @@
+2004-11-26  Jordi Mas i Hernandez <jordi@ximian.com>
+
+	* Menu.cs, MainMenu.cs, MenuItem.cs, MenuAPI.cs
+	 - Fixes menu destroying
+	 - Support adding and removing items on already created menus
+	 	
+
 2004-11-26  John BouAntoun <jba-mono@optusnet.com.au>
 
 	* MonthCalendar.cs: 
