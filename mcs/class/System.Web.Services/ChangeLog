@@ -1,3 +1,8 @@
+2003-07-04  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* list: added System.Web.Services.Protocols.HttpSoapWebServiceHandler.cs and
+	  System.Web.Services.Protocols.WebServiceHelper.cs.
+
 2003-02-25  Dave Bettin <dave@opendotnet.com>
 	* Test: Modified test cases to conform to nunit2 guidelines
 
