@@ -1,3 +1,8 @@
+2002-11-16  Tim Coleman <tim@timcoleman.com>
+	* makefile.gnu:
+		Add MONO_PATH_PREFIX so build doesn't
+		fail if System.Data has not yet been installed.
+
 2002-11-01  Daniel Morgan <danmorg@sc.rr.com>
 
 	* Mono.Data.SqliteClient/SqliteDataReader.cs: redid the
