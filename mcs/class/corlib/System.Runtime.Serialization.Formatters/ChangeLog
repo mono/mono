@@ -1,3 +1,11 @@
+2003-11-18  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* ServerFault.cs: Added missing attribute
+	* SoapFault.cs: Added missing attribute
+	* InternalRM.cs: Added
+	* InternalST.cs: Added
+	* TypeFilterLevel.cs: Added (complete)
+
 2003-05-28  Jean-Marc Andre <jean-marc.andre@polymtl.ca>
 
 	* SoapFault.cs: finishing implementation

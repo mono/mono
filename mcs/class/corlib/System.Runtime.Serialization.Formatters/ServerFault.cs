@@ -8,11 +8,13 @@
 //
 
 using System;
+using System.Runtime.Remoting.Metadata;
 using System.Runtime.Serialization;
 
 namespace System.Runtime.Serialization.Formatters {
 
 	[Serializable]
+	[SoapType()]
 	public sealed class ServerFault
 	{
 		string exceptionType;
