@@ -1,8 +1,10 @@
 
-attribset_attribset45
+attribset_attribset15
 attribset_attribset42
+attribset_attribset45
 
 idkey_idkey08
+idkey_idkey18
 idkey_idkey43
 idkey_idkey49
 idkey_idkey50
@@ -65,6 +67,10 @@ output_output105
 output_output106
 output_output107
 
+reluri_reluri09
+reluri_reluri10
+reluri_reluri11
+
 select_select67
 select_select68
 
@@ -72,13 +78,14 @@ variable_variable24
 
 whitespace_whitespace35
 
-Text_78273
-Text_78274
-Text_78276
-Text_78281
-Text_78308
-Text_78311
-Text_modified_78308
-Text_modified_78309
-Text_modified_78311
-
+Text__78273
+Text__78274
+Text__78275
+Text__78276
+Text__78281
+Text__78308
+Text__78311
+Text_modified78308
+Text_modified78309
+Text_modified78311
+Text_DoeWithCdataInText

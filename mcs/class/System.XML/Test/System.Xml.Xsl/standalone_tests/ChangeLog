@@ -1,5 +1,9 @@
 2005-02-25  Atsushi Enomoto <atsushi@ximian.com>
 
+	* ignore.lst : more ignored cases. fixed some test IDs.
+
+2005-02-25  Atsushi Enomoto <atsushi@ximian.com>
+
 	* ignore.lst : new file. It is used to exclude buggy MS results from
 	  tests.
 	* xslttest.cs, alltest.cs : Ignore testcases written in "ignore.lst".
