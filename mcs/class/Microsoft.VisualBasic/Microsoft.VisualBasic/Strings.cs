@@ -82,7 +82,7 @@ namespace Microsoft.VisualBasic
 			 * This can be 0 through 65535. The returned value is independent 
 			 * of the culture and code page settings for the current thread.
 			 */
-			return (int) String;
+				return (int) String;
 		}
 		
 		/// <summary>
@@ -292,16 +292,16 @@ namespace Microsoft.VisualBasic
 									case "true":
 									case "On":
 										if (style.ToLower ()=="yes/no")
-											returnstr="Yes"; // TODO : must be translated
+											returnstr="Yes";
 										else
-											returnstr="On"; // TODO : must be translated
+											returnstr="On";
 										break;
 									case "false":
 									case "off":
 										if (style.ToLower ()=="yes/no")
-											returnstr="No"; // TODO : must be translated
+											returnstr="No";
 										else
-											returnstr="Off"; // TODO : must be translated
+											returnstr="Off";
 										break;
 									default:
 										throw new System.ArgumentException();
@@ -318,15 +318,31 @@ namespace Microsoft.VisualBasic
 					if ( style=="")
 					{
 						if ( Convert.ToBoolean(expression)==true)
-							returnstr="True"; // must not be translated
+							returnstr="True"; 
 						else
-							returnstr="False"; // must not be translated
+							returnstr="False";
 					}
 					else
 						returnstr=style;
 					break;
 				case "System.DateTime":
-					returnstr=Convert.ToDateTime(expression).ToString (style) ;
+					switch (style.ToLower ()){
+						case "general date":
+							style = "G"; break;
+						case "long date":
+							style = "D"; break;
+						case "medium date":
+							style = "D"; break;
+						case "short date":
+							style = "d"; break;
+						case "long time":
+							style = "T"; break;
+						case "medium time":
+							style = "T"; break;
+						case "short time":
+							style = "t"; break;
+					}
+					returnstr=Convert.ToDateTime(expression).ToString(style) ;
 					break;
 				case "System.Decimal":	case "System.Byte":	case "System.SByte":
 				case "System.Int16":	case "System.Int32":	case "System.Int64":
@@ -342,12 +358,11 @@ namespace Microsoft.VisualBasic
 								switch (style)
 								{
 									case "on/off":
-										returnstr= "Off";break; // TODO : must be translated
+										returnstr= "Off";break; 
 									case "yes/no":
-										returnstr= "No";break; // TODO : must be translated
-									case "true":
-									case "false":
-										returnstr= "False";break; // must not be translated
+										returnstr= "No";break; 
+									case "true/false":
+										returnstr= "False";break;
 								}
 							}
 							else
@@ -355,31 +370,16 @@ namespace Microsoft.VisualBasic
 								switch (style)
 								{
 									case "on/off":
-										returnstr="On";break; // TODO : must be translated
+										returnstr="On";break;
 									case "yes/no":
-										returnstr="Yes";break; // TODO : must be translated
-									case "true":
-									case "false":
-										returnstr="True";break; // must not be translated
+										returnstr="Yes";break;
+									case "true/false":
+										returnstr="True";break;
 								}
 							}
 							break;
 						default:
-							switch (expstring)
-							{
-								case "System.Byte": returnstr=Convert.ToByte(expression).ToString (style);break;
-								case "System.SByte": returnstr=Convert.ToSByte(expression).ToString (style);break;
-								case "System.Int16": returnstr=Convert.ToInt16(expression).ToString (style);break;
-								case "System.UInt16": returnstr=Convert.ToUInt16(expression).ToString (style);break;
-								case "System.Int32":  returnstr=Convert.ToInt32(expression).ToString (style);break;
-								case "System.UInt32":  returnstr=Convert.ToUInt32(expression).ToString (style);break;
-								case "System.Int64":  returnstr=Convert.ToUInt64(expression).ToString (style);break;
-								case "System.UInt64":returnstr=Convert.ToUInt64(expression).ToString (style);break;
-								case "System.Single": returnstr=Convert.ToSingle(expression).ToString (style);break;
-								case "System.Double":  returnstr=Convert.ToDouble(expression).ToString (style);break;
-								case "System.Decimal": returnstr=Convert.ToDecimal(expression).ToString (style);break;
-
-							}
+							returnstr=Convert.ToDouble(expression).ToString (style);
 							break;
 					}
 					break;
@@ -476,16 +476,15 @@ namespace Microsoft.VisualBasic
 		{
 			switch(NamedFormat) {
 				case DateFormat.GeneralDate:
-					//FIXME: WTF should I do with it?
-					throw new NotImplementedException(); 	
+					return Expression.ToString("G");
 				case DateFormat.LongDate:  
-					return Expression.ToLongDateString();
+					return Expression.ToString("D");
 				case DateFormat.ShortDate:
-					return Expression.ToShortDateString();
+					return Expression.ToString("d");
 				case DateFormat.LongTime:
-					return Expression.ToLongTimeString();
+					return Expression.ToString("T");
 				case DateFormat.ShortTime:
-					return Expression.ToShortTimeString();
+					return Expression.ToString("t");
 				default:
 					throw new ArgumentException("Argument 'NamedFormat' must be a member of DateFormat", "NamedFormat");
 			}
@@ -706,7 +705,7 @@ namespace Microsoft.VisualBasic
 				case CompareMethod.Text:
 					return System.Globalization.CultureInfo.CurrentCulture.CompareInfo.IndexOf(String1, String2, Start - 1) + 1;
 				case CompareMethod.Binary:
-					return String1.IndexOf(String2, Start - 1) + 1;
+					return (String1.IndexOf(String2, Start - 1)) + 1;
 				default:
 					throw new System.ArgumentException("Argument 'Compare' must be CompareMethod.Binary or CompareMethod.Text.", "Compare");
 			}
@@ -1016,10 +1015,14 @@ namespace Microsoft.VisualBasic
 		{
 			if (Length < 0)
 				throw new ArgumentOutOfRangeException("Length", "Length must be must be non-negative.");
+
 			if (Source == null)
 				Source = String.Empty;
 
-			return Source.PadRight(Length);
+			if (Length > Source.Length)
+				return Source.PadRight(Length);
+
+			return Source.Substring(0, Length);
 		}
 
 		/// <summary>
@@ -1254,18 +1257,22 @@ namespace Microsoft.VisualBasic
 			[DefaultValue(CompareMethod.Binary)] 
 			CompareMethod Compare)
 		{
-			
+			if (String1 == null)
+				String1 = string.Empty;
+			if (String2 == null)
+				String2 = string.Empty;
+
 			switch (Compare)
 			{
 				case CompareMethod.Binary:
-					return string.Compare(String1, String2, true);
+					return string.Compare(String2, String1, false);
 				case CompareMethod.Text:
-					//FIXME: someone with a non US setup should test this.
-					return System.Globalization.CultureInfo.CurrentCulture.CompareInfo.Compare(String1, String2);
+                    return System.Globalization.CultureInfo.CurrentCulture.CompareInfo.Compare(
+						String1.ToLower(System.Globalization.CultureInfo.CurrentCulture), 
+						String2.ToLower(System.Globalization.CultureInfo.CurrentCulture));
 				default:
 					throw new System.ArgumentException("Argument 'Compare' must be CompareMethod.Binary or CompareMethod.Text", "Compare");
 			}
-
 		}
 
 		/// <summary>
