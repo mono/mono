@@ -1,4 +1,9 @@
 
+Tue Jul 27 16:56:55 CEST 2004 Paolo Molaro <lupus@ximian.com>
+
+	* class.c, image.c, loader.c, cil-coff.h: lazily mmap the image 
+	sections and remove the mono_cli_rva_map () function.
+
 Tue Jul 27 15:58:19 CEST 2004 Paolo Molaro <lupus@ximian.com>
 
 	* debug-mono-symfile.c: fix one more endianess issue, from a patch
