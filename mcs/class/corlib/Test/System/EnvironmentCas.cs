@@ -47,6 +47,31 @@ namespace MonoCasTests.System {
 				Assert.Ignore ("SecurityManager.SecurityEnabled is OFF");
 		}
 
+		// Partial Trust Tests - i.e. call "normal" unit with reduced privileges
+
+		[Test]
+		[EnvironmentPermission (SecurityAction.PermitOnly, Unrestricted = true)]
+		public void PartialTrust_PermitOnly_Environment ()
+		{
+			MonoTests.System.EnvironmentTest et = new MonoTests.System.EnvironmentTest ();
+			// call most (all but arguments checking) unit tests from EnvironmentTest
+			et.ExpandEnvironmentVariables_UnknownVariable ();
+			et.ExpandEnvironmentVariables_KnownVariable ();
+			et.ExpandEnvironmentVariables_NotVariable ();
+			et.ExpandEnvironmentVariables_Alone ();
+			et.ExpandEnvironmentVariables_End ();
+			et.ExpandEnvironmentVariables_None ();
+			et.ExpandEnvironmentVariables_EmptyVariable ();
+			et.ExpandEnvironmentVariables_Double ();
+			et.ExpandEnvironmentVariables_ComplexExpandable ();
+			et.ExpandEnvironmentVariables_ExpandableAndNonExpandable ();
+			et.ExpandEnvironmentVariables_ExpandableWithTrailingPercent ();
+			et.ExpandEnvironmentVariables_ComplexExpandable2 ();
+			et.GetEnvironmentVariables ();
+			et.GetCommandLineArgs ();
+		}		
+
+		// test Demand by denying it's caller from the required privileges
 
 		[Test]
 		[EnvironmentPermission (SecurityAction.Deny, Read = "PATH")]
@@ -98,8 +123,22 @@ namespace MonoCasTests.System {
 		}
 
 		[Test]
-		[FileIOPermission (SecurityAction.Deny, Unrestricted = true)]
 		public void CurrentDirectory_Set_FileIOPermission ()
+		{
+			// this test will change the current directory
+			// and cause tests failures elsewhere...
+			string cd = Environment.CurrentDirectory;
+			try {
+				CurrentDirectory_Set_FileIOPermission_Restricted ();
+			}
+			finally {
+				// ... unless we return to the original directory
+				Environment.CurrentDirectory = cd;
+			}
+		}
+
+		[FileIOPermission (SecurityAction.Deny, Unrestricted = true)]
+		private void CurrentDirectory_Set_FileIOPermission_Restricted ()
 		{
 			// now that the stack is set, call the method
 #if WINDOWS

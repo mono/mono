@@ -45,6 +45,19 @@ namespace MonoCasTests.System {
 				Assert.Ignore ("SecurityManager.SecurityEnabled is OFF");
 		}
 
+		// Partial Trust Tests - i.e. call "normal" unit with reduced privileges
+
+		[Test]
+		[PermissionSet (SecurityAction.Deny, Unrestricted = true)]
+		public void PartialTrust_DenyUnrestricted_Success ()
+		{
+			MonoTests.System.ExceptionTest et = new MonoTests.System.ExceptionTest ();
+			// call most (all but arguments checking) unit tests from ExceptionTest
+			et.TestThrowOnBlockBoundaries ();
+			et.InnerExceptionSource ();
+		}
+
+		// CAS tests
 
 		[Test]
 		public void NoRestriction ()

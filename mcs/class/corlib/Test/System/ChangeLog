@@ -1,3 +1,13 @@
+2005-03-24  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ActivatorCas.cs: New. CAS unit tests for Activator.
+	* ConsoleCas.cs: New. CAS unit tests for Console.
+	* EnvironmentCas.cs: Added partial trust test cases.
+	* ExceptionCas.cs: Added partial trust test cases.
+	* MarshalByRefObjectCas.cs: New. CAS unit tests for MarshalByRefObject.
+	* RuntimeMethodHandleCas.cs: New. CAS unit tests RuntimeMethodHandle.
+	* TypedReferenceCas.cs: New. CAS unit tests for TypedReference.
+
 2005-03-15  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* BadImageFormatExceptionCas.cs: New. Permission tests for 
