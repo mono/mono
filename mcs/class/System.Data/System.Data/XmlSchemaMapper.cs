@@ -87,8 +87,6 @@ namespace System.Data {
 
 		private void ReadXmlSchemaChoice (XmlSchemaChoice Choice)
 		{
-			//MaxOccurs
-
 			XmlSchemaObject SchemaObject;
 			foreach (XmlSchemaObject TempObject in Choice.Items) {
 				
@@ -127,9 +125,11 @@ namespace System.Data {
 				DataTable TempTable = new DataTable (Element.Name);
 				DSet.Tables.Add (TempTable);
 				
-				// FIXME: if this element comes before types
+				// If type is already defined in schema read it...
 				if (TypeCollection.Contains (Element.SchemaTypeName.ToString ()))
 					ReadXmlSchemaType ((XmlSchemaType)TypeCollection [Element.SchemaTypeName.ToString ()], TempTable);
+				else // but if it's not yet defined put it safe to wait if we need it later. 
+					ElementCollection.Add (Element.SchemaTypeName.Name, TempTable);
 
 			}
 			else if (Element.RefName != null && Element.RefName.Name != string.Empty) { // if there is a ref=
@@ -358,7 +358,20 @@ namespace System.Data {
 		{
 			XmlSchemaComplexType ComplexType = Type as XmlSchemaComplexType;
 
-			if (ComplexType.Name != null && !TypeCollection.Contains (ComplexType.Name)) {
+			if (ElementCollection.Contains (ComplexType.Name)) {
+
+				XmlSchemaParticle Particle;
+				if ((Particle = ComplexType.Particle as XmlSchemaChoice) != null) {
+					ReadXmlSchemaChoice (Particle as XmlSchemaChoice);
+				}
+				else if ((Particle = ComplexType.Particle as XmlSchemaSequence) != null) {
+					DataTable TempTable = ElementCollection [ComplexType.Name] as DataTable;
+					ElementCollection.Remove (ComplexType.Name);
+					ReadXmlSchemaSequence (Particle as XmlSchemaSequence, TempTable);
+				}
+
+			}
+			else if (ComplexType.Name != null && !TypeCollection.Contains (ComplexType.Name)) {
 				TypeCollection.Add (ComplexType.Name, ComplexType);
 			}
 			else {

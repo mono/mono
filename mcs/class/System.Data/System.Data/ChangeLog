@@ -1,3 +1,7 @@
+2003-01-14  Ville Palo <vi64pa@koti.soon.fi>
+
+	* XmlSchemaMapper.cs: Some improvments
+	
 2003-01-13  Ville Palo <vi64pa@koti.soon.fi>
 
 	* DataRowCollection.cs: Added IndexOutOfRangeException
