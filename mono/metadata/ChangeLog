@@ -1,3 +1,7 @@
+2002-04-17  Dietmar Maurer  <dietmar@ximian.com>
+
+	* object.c (mono_object_isinst): use the same code as in the
+	optimized x86 version.
 
 Wed Apr 17 14:14:36 CEST 2002 Paolo Molaro <lupus@ximian.com>
 

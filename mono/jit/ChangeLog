@@ -1,3 +1,6 @@
+2002-04-17  Dietmar Maurer  <dietmar@ximian.com>
+
+	* x86.brg: optimized version of castclass and isinst
 
 Wed Apr 17 12:34:56 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
