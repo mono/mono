@@ -1,3 +1,8 @@
+2003-03-15  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* XmlTextWriterTests.cs : fixed AttributeWriteAttributeString() in
+	  related to MS bugs. "\r\n" are replaced with Environment.NewLine.
+
 2003-03-13  Martin Willemoes Hansen <mwh@sysrq.dk>
 	* Removed AllTests.cs and TheTests.cs
 	* NUnit20ified NameTableTests.cs, SelectNodesTests.cs,

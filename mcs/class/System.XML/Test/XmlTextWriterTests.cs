@@ -114,13 +114,23 @@ namespace MonoTests.System.Xml
 			xtw.WriteAttributeString ("baz", null);
 			Assertion.AssertEquals ("<foo foo='bar' bar='' baz=''", StringWriterText);
 
-			// TODO: Why does this pass Microsoft?
-			xtw.WriteAttributeString ("", "quux");
-			Assertion.AssertEquals ("<foo foo='bar' bar='' baz='' ='quux'", StringWriterText);
+			try {
+				// Why does this pass Microsoft?
+				// Anyway, Mono should not allow such code.
+				xtw.WriteAttributeString ("", "quux");
+//				Assertion.AssertEquals ("<foo foo='bar' bar='' baz='' ='quux'", StringWriterText);
+				Assertion.Fail ("empty name not allowed.");
+			} catch (Exception) {
+			}
 
-			// TODO: Why does this pass Microsoft?
-			xtw.WriteAttributeString (null, "quuux");
-			Assertion.AssertEquals ("<foo foo='bar' bar='' baz='' ='quux' ='quuux'", StringWriterText);
+			try {
+				// Why does this pass Microsoft?
+				// Anyway, Mono should not allow such code.
+				xtw.WriteAttributeString (null, "quuux");
+//				Assertion.AssertEquals ("<foo foo='bar' bar='' baz='' ='quux' ='quuux'", StringWriterText);
+				Assertion.Fail ("null name not allowed.");
+			} catch (Exception) {
+			}
 		}
 
 		[Test]
@@ -374,7 +384,7 @@ namespace MonoTests.System.Xml
 			xtw.WriteStartElement ("foo");
 			xtw.WriteElementString ("bar", "");
 			xtw.Close ();
-			Assertion.AssertEquals ("<?xml version='1.0' encoding='utf-16'?>\r\n<foo>\r\n  <bar />\r\n</foo>", StringWriterText);
+ 			Assertion.AssertEquals (String.Format ("<?xml version='1.0' encoding='utf-16'?>{0}<foo>{0}  <bar />{0}</foo>", Environment.NewLine), StringWriterText);
 		}
 
 		[Test]
@@ -387,7 +397,7 @@ namespace MonoTests.System.Xml
 			xtw.WriteStartElement ("bar");
 			xtw.WriteElementString ("baz", "");
 			xtw.Close ();
-			Assertion.AssertEquals ("<?xml version='1.0' encoding='utf-16'?>\r\n<foo>\r\nxx<bar>\r\nxxxx<baz />\r\nxx</bar>\r\n</foo>", StringWriterText);
+ 			Assertion.AssertEquals (String.Format ("<?xml version='1.0' encoding='utf-16'?>{0}<foo>{0}xx<bar>{0}xxxx<baz />{0}xx</bar>{0}</foo>", Environment.NewLine), StringWriterText);
 		}
 
 		[Test]
@@ -403,7 +413,7 @@ namespace MonoTests.System.Xml
 			xtw.WriteString (" walks slowly."); 
 			xtw.WriteEndElement (); 
 			xtw.WriteEndElement ();
-			Assertion.AssertEquals ("<ol>\r\n  <li>The big <b>E</b><i>lephant</i> walks slowly.</li>\r\n</ol>", StringWriterText);
+ 			Assertion.AssertEquals (String.Format ("<ol>{0}  <li>The big <b>E</b><i>lephant</i> walks slowly.</li>{0}</ol>", Environment.NewLine), StringWriterText);
 		}
 
 		[Test]
