@@ -108,6 +108,20 @@ key containers. The option is equivalent to including [assembly:
 AssemblyKeyName ("CONTAINER")] in your source code. Compiler option 
 takes precedence over the attributes.
 .TP
+.I \-langversion:TEXT
+The option specifies the version of the language to use. The feature
+set is different in each C# version. This switch can be used to force
+the compiler to allow only a subset of the features.
+The possible values are:
+.nf
+
+Default - Instruct compiler to use the latest version. Equivalent
+is to omit the switch.
+
+ISO-1   - Restrict compiler to use only ISO standardized features.
+The usage of features such as generics, static classes, anonymous
+methods will lead to error.
+.TP
 .I -lib:PATHLIST
 Each path specified in the comma-separated list will direct the
 compiler to look for libraries in that specified path.
