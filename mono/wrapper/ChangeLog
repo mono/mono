@@ -1,5 +1,10 @@
 2002-01-23  Miguel de Icaza  <miguel@ximian.com>
 
+	* genwrapper.pl: Added wrappers for the mono_glob functions.
+
+	* glob.c: New file, with globing functions used by the Directory
+	code. 
+
 	* wrapper.c: Changed things so that we can propagate ERRNO back. 
 
 	Include stdio.h and unistd.h to remove a couple of warnings.

@@ -1,3 +1,8 @@
+2002-01-23  Miguel de Icaza  <miguel@ximian.com>
+
+	* x86/tramp.c (mono_create_trampoline): Do not try to create a
+	mono_string_new if the return value from the PInvoke code is
+	NULL. 
 
 Mon Jan 14 11:50:16 CET 2002 Paolo Molaro <lupus@ximian.com>
 
