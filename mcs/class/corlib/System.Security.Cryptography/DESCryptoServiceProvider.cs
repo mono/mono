@@ -137,7 +137,6 @@ namespace System.Security.Cryptography {
 		public virtual byte [] TransformFinalBlock (byte [] inputBuffer, int inputOffset, int inputCount)
 		{
 			// TODO: add decryption support
-			// FIXME: use compatible padding mode
 
 			int num = (inputCount + DESCore.BLOCK_BYTE_SIZE) & (~(DESCore.BLOCK_BYTE_SIZE-1));
 			byte [] res = new byte [num];
@@ -146,11 +145,24 @@ namespace System.Security.Cryptography {
 			TransformBlock (inputBuffer, inputOffset, full, res, 0);
 
 			int rem = inputCount & (DESCore.BLOCK_BYTE_SIZE-1);
-			res [num - 1] = (byte) rem;
+
+			// PKCS-5 padding
+			for (int i = num; --i >= (num - rem);) {
+				res [i] = (byte) rem;
+			}
+
 			Array.Copy (inputBuffer, inputOffset + full, res, full, rem);
 
 			// the last padded block will be transformed in-place
 			TransformBlock (res, full, DESCore.BLOCK_BYTE_SIZE, res, full);
+
+			/*
+			byte [] workBuff = new byte [DESCore.BLOCK_BYTE_SIZE];
+			Array.Copy (res, full, workBuff, 0, DESCore.BLOCK_BYTE_SIZE);
+			preprocess (workBuff);
+			cryptFn (workBuff, null);
+			Array.Copy (workBuff, 0, res, full, DESCore.BLOCK_BYTE_SIZE);
+			*/
 
 			return res;
 		}
