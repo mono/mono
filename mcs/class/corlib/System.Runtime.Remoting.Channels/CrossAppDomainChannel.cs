@@ -132,6 +132,10 @@ namespace System.Runtime.Remoting.Channels
 	{
 		private static Hashtable s_sinks = new Hashtable();
 
+		private static MethodInfo processMessageMethod =
+			typeof (CrossAppDomainSink).GetMethod ("ProcessMessageInDomain", BindingFlags.NonPublic|BindingFlags.Static);
+
+
 		private int _domainID;
 
 		internal CrossAppDomainSink(int domainID) 
@@ -157,6 +161,29 @@ namespace System.Runtime.Remoting.Channels
 			}
 		}
 
+		private struct ProcessMessageRes {
+			public byte[] arrResponse;
+			public CADMethodReturnMessage cadMrm;
+		}
+
+		private static ProcessMessageRes ProcessMessageInDomain (
+			byte[] arrRequest,
+			CADMethodCallMessage cadMsg)
+	    {
+			ProcessMessageRes res = new ProcessMessageRes ();
+
+			try 
+			{
+				AppDomain.CurrentDomain.ProcessMessageInDomain (arrRequest, cadMsg, out res.arrResponse, out res.cadMrm);
+			}
+			catch (Exception e) 
+			{
+				IMessage errorMsg = new MethodResponse (e, new ErrorMessage());
+				res.arrResponse = CADSerializer.SerializeMessage (errorMsg).GetBuffer(); 
+			}
+			return res;
+		}
+
 		public virtual IMessage SyncProcessMessage(IMessage msgRequest) 
 		{
 			IMessage retMessage = null;
@@ -179,23 +206,19 @@ namespace System.Runtime.Remoting.Channels
 
 				object threadStatus = Thread.ResetDataStoreStatus ();
 				Context currentContext = Thread.CurrentContext;
-				AppDomain currentDomain = AppDomain.InternalSetDomainByID ( _domainID );
 
-				try 
-				{
- 					AppDomain.CurrentDomain.ProcessMessageInDomain (arrRequest, cadMsg, out arrResponse, out cadMrm);
+				try {
+					// InternalInvoke can't handle out arguments, this is why
+					// we return the results in a structure
+					ProcessMessageRes res = (ProcessMessageRes)AppDomain.InvokeInDomainByID (_domainID, processMessageMethod, null, new object [] { arrRequest, cadMsg });
+					arrResponse = res.arrResponse;
+					cadMrm = res.cadMrm;
 				}
-				catch (Exception e) 
-				{
-					IMessage errorMsg = new MethodResponse (e, new ErrorMessage());
-					arrResponse = CADSerializer.SerializeMessage (errorMsg).GetBuffer(); 
-				}   
-				finally 
-				{
-					AppDomain.InternalSetDomain (currentDomain);
+				finally {
 					AppDomain.InternalSetContext (currentContext);
 					Thread.RestoreDataStoreStatus (threadStatus);
-				}
+				}					
+
 				
 				if (null != arrResponse) {
 					// Time to deserialize the message
@@ -210,7 +233,6 @@ namespace System.Runtime.Remoting.Channels
 			{
 				try
 				{
-					Console.WriteLine("Exception in base domain");
 					retMessage = new ReturnMessage (e, msgRequest as IMethodCallMessage);
 				}
 				catch (Exception)
