@@ -12,7 +12,7 @@ using System.IO;
 
 namespace System.CodeDom.Compiler
 {
-	[ToolboxItem (""), DesignerCategory ("Component")]
+	[ToolboxItem ("")]
 	public abstract class CodeDomProvider : Component
 	{
 		//

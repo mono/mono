@@ -1,3 +1,8 @@
+2003-07-07  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+
+	* CodeDomProvider.cs: Removed unneccesary attribute according to corecompare
+	* Executor.cs: Fixed signature with ref calls according to corecompare and made neccessary changes
+
 2003-06-20  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
 	* CodeCompiler.cs: Nearly completely implemented

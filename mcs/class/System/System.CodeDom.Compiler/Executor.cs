@@ -22,28 +22,30 @@ namespace System.CodeDom.Compiler
 
 		public static void ExecWait (string cmd, TempFileCollection tempFiles)
 		{
-			ExecWaitWithCapture (IntPtr.Zero, cmd, Environment.CurrentDirectory, tempFiles, string.Empty, string.Empty);
+			string outputName = null;
+			string errorName = null;
+			ExecWaitWithCapture (IntPtr.Zero, cmd, Environment.CurrentDirectory, tempFiles, ref outputName, ref errorName);
 		}
 
 		[MonoTODO]
-		public static Int32 ExecWaitWithCapture (IntPtr userToken, string cmd, string currentDir, TempFileCollection tempFiles, string outputName, string errorName)
+		public static Int32 ExecWaitWithCapture (IntPtr userToken, string cmd, string currentDir, TempFileCollection tempFiles, ref string outputName, ref string errorName)
 		{
 			throw new NotImplementedException();
 		}
 
-		public static Int32 ExecWaitWithCapture (IntPtr userToken, string cmd, TempFileCollection tempFiles, string outputName, string errorName)
+		public static Int32 ExecWaitWithCapture (IntPtr userToken, string cmd, TempFileCollection tempFiles, ref string outputName, ref string errorName)
 		{
-			return ExecWaitWithCapture (userToken, cmd, Environment.CurrentDirectory, tempFiles, outputName, errorName);
+			return ExecWaitWithCapture (userToken, cmd, Environment.CurrentDirectory, tempFiles, ref outputName, ref errorName);
 		}
 
-		public static Int32 ExecWaitWithCapture (string cmd, string currentDir, TempFileCollection tempFiles, string outputName, string errorName )
+		public static Int32 ExecWaitWithCapture (string cmd, string currentDir, TempFileCollection tempFiles, ref string outputName, ref string errorName )
 		{
-			return ExecWaitWithCapture (IntPtr.Zero, cmd, currentDir, tempFiles, outputName, errorName);
+			return ExecWaitWithCapture (IntPtr.Zero, cmd, currentDir, tempFiles, ref outputName, ref errorName);
 		}
 
-		public static Int32 ExecWaitWithCapture (string cmd, TempFileCollection tempFiles, string outputName, string errorName)
+		public static Int32 ExecWaitWithCapture (string cmd, TempFileCollection tempFiles, ref string outputName, ref string errorName)
 		{
-			return ExecWaitWithCapture (IntPtr.Zero, cmd, Environment.CurrentDirectory, tempFiles, outputName, errorName);
+			return ExecWaitWithCapture (IntPtr.Zero, cmd, Environment.CurrentDirectory, tempFiles, ref outputName, ref errorName);
 		}
 	}
 }
