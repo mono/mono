@@ -916,10 +916,43 @@ namespace System.Data {
 		[MonoTODO]
 		private string MapType( Type type )
 		{
-			string Result;
+			string Result = "xs:string";
 
-			Result = "xs:string";
+			// TODO: More types to map?
 
+			if (typeof (string) == type)
+				Result = "xs:string";
+			else if (typeof (short) == type)
+				Result = "xs:short";
+			else if (typeof (int) == type)
+				Result = "xs:int";
+			else if (typeof (long) == type)
+				Result = "xs:long";
+			else if (typeof (bool) == type)
+				Result = "xs:boolean";
+			else if (typeof (byte) == type)
+				Result = "xs:unsignedByte";
+			else if (typeof (char) == type)
+				Result = "xs:char";
+			else if (typeof (DateTime) == type)
+				Result = "xs:dateTime";
+			else if (typeof (decimal) == type)
+				Result = "xs:decimal";
+			else if (typeof (double) == type)
+				Result = "xs:double";
+			else if (typeof (sbyte) == type)
+				Result = "xs:sbyte";
+			else if (typeof (Single) == type)
+				Result = "xs:float";
+			else if (typeof (TimeSpan) == type)
+				Result = "xs:duration";
+			else if (typeof (ushort) == type)
+				Result = "xs:usignedShort";
+			else if (typeof (uint) == type)
+				Result = "xs:unsignedInt";
+			else if (typeof (ulong) == type)
+				Result = "xs:unsignedLong";
+		
 			return Result;
 		}
 
