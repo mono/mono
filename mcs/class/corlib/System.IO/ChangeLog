@@ -1,3 +1,7 @@
+2002-05-07  Mike Gray     <mikeg_us@hotmail.com> 
+
+	* FileInfo.cs (Create): Implement missing method.
+
 2002-05-07  Mike Gray     <mikeg_us@hotmail.com>
 
 	* File.cs: Implemented CreateText method, and fixed dst compares

@@ -82,6 +82,12 @@ namespace System.IO {
 		}
 
 		// filestream methods
+
+		public FileStream Create ()
+		{
+			return File.Create (FullPath);
+		}
+		
 		
 		public FileStream OpenRead () {
 			return Open (FileMode.Open, FileAccess.Read);
