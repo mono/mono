@@ -1,3 +1,25 @@
+2003-01-22  Martin Baulig  <martin@ximian.com>
+
+	* debug.c: Reverted Gonzalo's last change since it is wrong.
+	We're also using the debugging code on Windows, for instance the
+	stabs stuff when running in gdb.  I hope this code still builds on
+	Windows; if not, we need to fix this.
+	Moved all the mono debugger support code into the debugger itself;
+	when debugging a managed application, the debugger new launches a
+	small unmanaged wrapper application which contains this stuff.
+
+	* debug.h (MonoDebuggerIOLayer): New public typedef; this is just
+	initialized to an array of function pointers to the io-layer
+	function; they don't seem to be public in the `libmono' library.
+	(mono_debugger_event): New public function.  Sends the debugger an
+	event if we're running in the Mono Debugger and does nothing otherwise.
+
+	* mono.c: Don't initialize the Mono Debugger here.
+
+	* jit.c (mono_debug_insert_breakpoint): Removed, this isn't used anymore.
+	(mono_thread_start_cb, mono_thread_attach_cb): Call
+	mono_debugger_event() to send the debugger a callback.
+
 2003-01-20  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* debug.c: make all public symbols just dummy for windows.
