@@ -1598,7 +1598,7 @@ namespace Mono.CSharp {
 
 				Type declaring_type = member.DeclaringType;
 				if (declaring_type == type) {
-					list.Add (new CacheEntry (Container, member, MemberTypes.Method, bf));
+					list.Add (new CacheEntry (Container, member, MemberTypes.Method, bf | BindingFlags.DeclaredOnly));
 					continue;
 				}
 
