@@ -26,6 +26,7 @@ Microsoft.JScript/ErrorConstructor.cs
 Microsoft.JScript/ErrorObject.cs
 Microsoft.JScript/Eval.cs
 Microsoft.JScript/ForIn.cs
+Microsoft.JScript/FormalParameterList.cs
 Microsoft.JScript/FunctionConstructor.cs
 Microsoft.JScript/FunctionDeclaration.cs
 Microsoft.JScript/FunctionExpression.cs
@@ -59,13 +60,17 @@ Microsoft.JScript/RegExpObject.cs
 Microsoft.JScript/ScriptBlock.cs
 Microsoft.JScript/ScriptFunction.cs
 Microsoft.JScript/ScriptObject.cs
+Microsoft.JScript/Statement.cs
 Microsoft.JScript/StringConstructor.cs
 Microsoft.JScript/StringObject.cs
 Microsoft.JScript/TODOAttribute.cs
 Microsoft.JScript/Throw.cs
 Microsoft.JScript/Try.cs
 Microsoft.JScript/UnaryOp.cs
+Microsoft.JScript/VariableDeclaration.cs
+Microsoft.JScript/VariableStatement.cs
 Microsoft.JScript/VBArrayConstructor.cs
+Microsoft.JScript/Visitor.cs
 Microsoft.JScript/VsaEngine.cs
 Microsoft.JScript/With.cs
 Antlr.Runtime/antlr/ANTLRException.cs
