@@ -2,6 +2,7 @@
 //
 // Author:
 //   Lluis Sanchez Gual (lluis@ideary.com)
+//   Patrik Torstensson
 //
 // (C) 2003 Lluis Sanchez Gual
 
@@ -26,6 +27,8 @@ namespace System.Runtime.Serialization.Formatters.Binary
 		Hashtable _typeMetadataCache = new Hashtable();
 
 		object _lastObject = null;
+		long _lastObjectID = 0;
+		long _rootObjectID = 0;
 
 		class TypeMetadata
 		{
@@ -51,7 +54,6 @@ namespace System.Runtime.Serialization.Formatters.Binary
 
 		public object ReadObjectGraph (BinaryReader reader, bool readHeaders, HeaderHandler headerHandler)
 		{
-			object rootObject = null;
 			Header[] headers = null;
 
 			// Reads the objects. The first object in the stream is the
@@ -62,13 +64,13 @@ namespace System.Runtime.Serialization.Formatters.Binary
 				if (readHeaders && (headers == null))
 					headers = (Header[])CurrentObject;
 				else
-					if (rootObject == null) rootObject = CurrentObject;
+					if (_rootObjectID == 0) _rootObjectID = _lastObjectID;
 			}
 
 			if (readHeaders && headerHandler != null)
 				headerHandler (headers);
 
-			return rootObject;
+			return _manager.GetObject (_rootObjectID);
 		}
 
 		public bool ReadNextObject (BinaryReader reader)
@@ -86,9 +88,11 @@ namespace System.Runtime.Serialization.Formatters.Binary
 
 			ReadObject (element, reader, out objectId, out _lastObject, out info);
 
-			if (objectId != 0) 
+			if (objectId != 0) {
 				RegisterObject (objectId, _lastObject, info, 0, null, null);
-
+				_lastObjectID = objectId;		
+			}
+	
 			return true;
 		}
 

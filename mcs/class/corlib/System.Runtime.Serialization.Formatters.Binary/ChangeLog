@@ -1,3 +1,8 @@
+2003-02-11  Patrik Torstensson
+
+    * ObjectReader.cs: Fixed root object bug causing object reader to return root object 
+	  before fixup. Closes bug #37842.
+
 2003-02-04  Lluis Sanchez Gual <lluis@ideary.com>
 
     * MessageFormatter.cs: Corrected some bugs that affected serialization of exceptions
