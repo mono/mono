@@ -1,3 +1,8 @@
+2004-09-02  Marek Safar  <marek.safar@seznam.cz>
+
+	* attribute.cs (Attribute.GetAttributeArgumentExpression):
+	Fixed bug #65170.
+
 2004-09-02  Martin Baulig  <martin@ximian.com>
 
 	* statement.cs (Using.EmitLocalVariableDeclFinally): Use

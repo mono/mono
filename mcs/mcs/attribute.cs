@@ -229,11 +229,7 @@ namespace Mono.CSharp {
 				if (result != null)
 					return true;
 			} else if (e is EmptyCast) {
-				result = e;
-				if (((EmptyCast) e).Child is Constant) {
-					result = ((Constant) ((EmptyCast)e).Child).GetValue();
-				}
-				return true;
+				return GetAttributeArgumentExpression (((EmptyCast)e).Child, loc, arg_type, out result);
 			}
 
 			result = null;
