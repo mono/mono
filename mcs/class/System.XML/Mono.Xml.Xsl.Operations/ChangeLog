@@ -1,3 +1,7 @@
+2005-02-09  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XslForEach.cs : Don't bork at <xsl:for-each/>. Patch by Andrew Skiba.
+
 2005-02-08  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XslProcessingInstruction.cs : MS.NET recovers from invalid PI name

@@ -72,6 +72,9 @@ namespace Mono.Xml.Xsl.Operations {
 		
 		public override void Evaluate (XslTransformProcessor p)
 		{
+			if (children == null)
+				return;
+
 			p.PushNodeset (p.Select (select));
 			p.PushForEachContext ();
 			
