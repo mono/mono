@@ -449,9 +449,9 @@ namespace Mono.CSharp {
 					//    target_type
 					//
 					
-					source = Convert.ExplicitConversion (ec, source, target_type, loc);
+					source = Convert.WideningAndNarrowingConversion (ec, source, target_type, loc);
 					if (source == null){
-						Convert.Error_CannotImplicitConversion (loc, source_type, target_type);
+						Convert.Error_CannotWideningConversion (loc, source_type, target_type);
 						return null;
 					}
 				
@@ -459,7 +459,7 @@ namespace Mono.CSharp {
 					// 2. and the original right side is implicitly convertible to
 					// the type of target
 					//
-					if (Convert.ImplicitStandardConversionExists (ec, a.original_source, target_type))
+					if (Convert.WideningStandardConversionExists (ec, a.original_source, target_type))
 						return this;
 
 					//
@@ -470,12 +470,12 @@ namespace Mono.CSharp {
 					    (b.Oper == Binary.Operator.LeftShift || b.Oper == Binary.Operator.RightShift))
 						return this;
 
-					Convert.Error_CannotImplicitConversion (loc, a.original_source.Type, target_type);
+					Convert.Error_CannotWideningConversion (loc, a.original_source.Type, target_type);
 					return null;
 				}
 			}
 
-			source = Convert.ImplicitConversionRequired (ec, source, target_type, loc);
+			source = Convert.WideningConversionRequired (ec, source, target_type, loc);
 			if (source == null)
 				return null;
 

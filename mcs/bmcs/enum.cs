@@ -366,7 +366,7 @@ namespace Mono.CSharp {
 		///  Determines if a standard implicit conversion exists from
 		///  expr_type to target_type
 		/// </summary>
-		public static bool ImplicitConversionExists (Type expr_type, Type target_type)
+		public static bool WideningConversionExists (Type expr_type, Type target_type)
 		{
 			expr_type = TypeManager.TypeToCoreType (expr_type);
 
@@ -589,8 +589,8 @@ namespace Mono.CSharp {
 				if (val is EnumConstant){
 					Type etype = TypeManager.EnumToUnderlying (c.Type);
 					
-					if (!ImplicitConversionExists (etype, UnderlyingType)){
-						Convert.Error_CannotImplicitConversion (
+					if (!WideningConversionExists (etype, UnderlyingType)){
+						Convert.Error_CannotWideningConversion (
 							loc, c.Type, UnderlyingType);
 						return null;
 					}

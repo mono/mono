@@ -1,5 +1,14 @@
 2005-02-28  Jambunathan K  <kjambunathan.devel@gmail.com>
 
+	* assign.cs, attribute.cs, cfold.cs, const.cs, constant.cs,
+	* convert.cs, ecore.cs, enum.cs, expression.cs, generic.cs,
+	* iterator.cs, statement.cs : Broadly, what C# spec terms as
+	"Implicit" & "Explicit", VB.NET spec terms as "Widening" &
+	"Narrowing" respectively. So renamed exisiting methods to reflect
+	the VB.NET nomenclature. These are just first renamings.
+	
+2005-02-28  Jambunathan K  <kjambunathan.devel@gmail.com>
+
 	* convert.cs :
 	* expression.cs :	
 	* statement.cs: VB.NET has no notion of User defined

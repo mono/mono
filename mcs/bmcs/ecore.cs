@@ -862,7 +862,7 @@ namespace Mono.CSharp {
 			if (e.Type == TypeManager.bool_type)
 				return e;
 
-			Expression converted = Convert.ImplicitConversion (ec, e, TypeManager.bool_type, new Location (-1));
+			Expression converted = Convert.WideningConversion (ec, e, TypeManager.bool_type, new Location (-1));
 
 			if (converted != null)
 				return converted;
@@ -973,8 +973,8 @@ namespace Mono.CSharp {
 		/// </summary>
 		public static object ConvertIntLiteral (Constant c, Type target_type, Location loc)
 		{
-			if (!Convert.ImplicitStandardConversionExists (Convert.ConstantEC, c, target_type)){
-				Convert.Error_CannotImplicitConversion (loc, c.Type, target_type);
+			if (!Convert.WideningStandardConversionExists (Convert.ConstantEC, c, target_type)){
+				Convert.Error_CannotWideningConversion (loc, c.Type, target_type);
 				return null;
 			}
 			
@@ -1346,15 +1346,15 @@ namespace Mono.CSharp {
 			bool old_checked = ec.CheckState;
 			ec.CheckState = true;
 			
-			target = Convert.ImplicitConversion (ec, source, TypeManager.int32_type, loc);
+			target = Convert.WideningConversion (ec, source, TypeManager.int32_type, loc);
 			if (target == null){
-				target = Convert.ImplicitConversion (ec, source, TypeManager.uint32_type, loc);
+				target = Convert.WideningConversion (ec, source, TypeManager.uint32_type, loc);
 				if (target == null){
-					target = Convert.ImplicitConversion (ec, source, TypeManager.int64_type, loc);
+					target = Convert.WideningConversion (ec, source, TypeManager.int64_type, loc);
 					if (target == null){
-						target = Convert.ImplicitConversion (ec, source, TypeManager.uint64_type, loc);
+						target = Convert.WideningConversion (ec, source, TypeManager.uint64_type, loc);
 						if (target == null)
-							Convert.Error_CannotImplicitConversion (loc, source.Type, TypeManager.int32_type);
+							Convert.Error_CannotWideningConversion (loc, source.Type, TypeManager.int32_type);
 					}
 				}
 			} 

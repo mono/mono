@@ -138,7 +138,7 @@ namespace Mono.CSharp {
 		}
 
 		static EmptyExpression MyEmptyExpr;
-		static public Expression ImplicitReferenceConversion (EmitContext ec, Expression expr, Type target_type)
+		static public Expression WideningReferenceConversion (EmitContext ec, Expression expr, Type target_type)
 		{
 			Type expr_type = expr.Type;
 
@@ -193,7 +193,7 @@ namespace Mono.CSharp {
 				return new EmptyCast (expr, target_type);
 			}
 
-			// This code is kind of mirrored inside ImplicitStandardConversionExists
+			// This code is kind of mirrored inside WideningStandardConversionExists
 			// with the small distinction that we only probe there
 			//
 			// Always ensure that the code here and there is in sync
@@ -248,7 +248,7 @@ namespace Mono.CSharp {
 					Type target_element_type = TypeManager.GetElementType (target_type);
 
 					if (!expr_element_type.IsValueType && !target_element_type.IsValueType)
-						if (ImplicitStandardConversionExists (ConstantEC, MyEmptyExpr,
+						if (WideningStandardConversionExists (ConstantEC, MyEmptyExpr,
 										      target_element_type))
 							return new EmptyCast (expr, target_type);
 				}
@@ -280,7 +280,7 @@ namespace Mono.CSharp {
 		// Tests whether an implicit reference conversion exists between expr_type
 		// and target_type
 		//
-		public static bool ImplicitReferenceConversionExists (EmitContext ec, Expression expr, Type target_type)
+		public static bool WideningReferenceConversionExists (EmitContext ec, Expression expr, Type target_type)
 		{
 			Type expr_type = expr.Type;
 
@@ -301,7 +301,7 @@ namespace Mono.CSharp {
 				return true;
 
 			// Please remember that all code below actually comes
-			// from ImplicitReferenceConversion so make sure code remains in sync
+			// from WideningReferenceConversion so make sure code remains in sync
 				
 			// from any class-type S to any interface-type T.
 			if (target_type.IsInterface) {
@@ -337,7 +337,7 @@ namespace Mono.CSharp {
 					Type target_element_type = TypeManager.GetElementType (target_type);
 						
 					if (!expr_element_type.IsValueType && !target_element_type.IsValueType)
-						if (ImplicitStandardConversionExists (ConstantEC, MyEmptyExpr,
+						if (WideningStandardConversionExists (ConstantEC, MyEmptyExpr,
 										      target_element_type))
 							return true;
 				}
@@ -381,7 +381,7 @@ namespace Mono.CSharp {
 		///   expr is the expression to convert, returns a new expression of type
 		///   target_type or null if an implicit conversion is not possible.
 		/// </summary>
-		static public Expression ImplicitNumericConversion (EmitContext ec, Expression expr,
+		static public Expression WideningNumericConversion (EmitContext ec, Expression expr,
 								    Type target_type, Location loc)
 		{
 			Type expr_type = expr.Type;
@@ -393,7 +393,7 @@ namespace Mono.CSharp {
 				if (expr is IntConstant){
 					Expression e;
 					
-					e = TryImplicitIntConversion (target_type, (IntConstant) expr);
+					e = TryWideningIntConversion (target_type, (IntConstant) expr);
 					
 					if (e != null)
 						return e;
@@ -543,15 +543,15 @@ namespace Mono.CSharp {
 
 
 		/// <summary>
-		///  Same as ImplicitStandardConversionExists except that it also looks at
+		///  Same as WideningStandardConversionExists except that it also looks at
 		///  implicit user defined conversions - needed for overload resolution
 		/// </summary>
-		public static bool ImplicitConversionExists (EmitContext ec, Expression expr, Type target_type)
+		public static bool WideningConversionExists (EmitContext ec, Expression expr, Type target_type)
 		{
 			if ((expr is NullLiteral) && target_type.IsGenericParameter)
 				return TypeParameter_to_Null (target_type);
 
-			if (ImplicitStandardConversionExists (ec, expr, target_type))
+			if (WideningStandardConversionExists (ec, expr, target_type))
 				return true;
 
 			//
@@ -583,7 +583,7 @@ namespace Mono.CSharp {
 		///
 		///  ec should point to a real EmitContext if expr.Type is TypeManager.anonymous_method_type.
 		/// </summary>
-		public static bool ImplicitStandardConversionExists (EmitContext ec, Expression expr, Type target_type)
+		public static bool WideningStandardConversionExists (EmitContext ec, Expression expr, Type target_type)
 		{
 			Type expr_type = expr.Type;
 
@@ -716,7 +716,7 @@ namespace Mono.CSharp {
 				}
 			}
 			
-			if (ImplicitReferenceConversionExists (ec, expr, target_type))
+			if (WideningReferenceConversionExists (ec, expr, target_type))
 				return true;
 
 			//
@@ -776,7 +776,7 @@ namespace Mono.CSharp {
 
 			//
 			// If `expr_type' implements `target_type' (which is an iface)
-			// see TryImplicitIntConversion
+			// see TryWideningIntConversion
 			// 
 			if (target_type.IsInterface && target_type.IsAssignableFrom (expr_type))
 				return true;
@@ -824,7 +824,7 @@ namespace Mono.CSharp {
 					continue;
 				}
 				
-				if (ImplicitStandardConversionExists (ec, priv_fmet_param, best))
+				if (WideningStandardConversionExists (ec, priv_fmet_param, best))
 					best = t;
 			}
 
@@ -857,7 +857,7 @@ namespace Mono.CSharp {
 					continue;
 				}
 
-				if (ImplicitStandardConversionExists (ec, priv_fmee_ret, t))
+				if (WideningStandardConversionExists (ec, priv_fmee_ret, t))
 					best = t;
 			}
 			
@@ -904,17 +904,17 @@ namespace Mono.CSharp {
 					// or encompassed by S to a type encompassing or encompassed by T
 					//
 					priv_fms_expr.SetType (param_type);
-					if (ImplicitStandardConversionExists (ec, priv_fms_expr, source_type))
+					if (WideningStandardConversionExists (ec, priv_fms_expr, source_type))
 						src_types_set.Add (param_type);
 					else {
-						if (ImplicitStandardConversionExists (ec, source, param_type))
+						if (WideningStandardConversionExists (ec, source, param_type))
 							src_types_set.Add (param_type);
 					}
 				} else {
 					//
 					// Only if S is encompassed by param_type
 					//
-					if (ImplicitStandardConversionExists (ec, source, param_type))
+					if (WideningStandardConversionExists (ec, source, param_type))
 						src_types_set.Add (param_type);
 				}
 			}
@@ -926,7 +926,7 @@ namespace Mono.CSharp {
 				ArrayList candidate_set = new ArrayList ();
 
 				foreach (Type param_type in src_types_set){
-					if (ImplicitStandardConversionExists (ec, source, param_type))
+					if (WideningStandardConversionExists (ec, source, param_type))
 						candidate_set.Add (param_type);
 				}
 
@@ -980,11 +980,11 @@ namespace Mono.CSharp {
 					// or encompassed by S to a type encompassing or encompassed by T
 					//
 					priv_fms_expr.SetType (ret_type);
-					if (ImplicitStandardConversionExists (ec, priv_fms_expr, target))
+					if (WideningStandardConversionExists (ec, priv_fms_expr, target))
 						tgt_types_set.Add (ret_type);
 					else {
 						priv_fms_expr.SetType (target);
-						if (ImplicitStandardConversionExists (ec, priv_fms_expr, ret_type))
+						if (WideningStandardConversionExists (ec, priv_fms_expr, ret_type))
 							tgt_types_set.Add (ret_type);
 					}
 				} else {
@@ -992,7 +992,7 @@ namespace Mono.CSharp {
 					// Only if T is encompassed by param_type
 					//
 					priv_fms_expr.SetType (ret_type);
-					if (ImplicitStandardConversionExists (ec, priv_fms_expr, target))
+					if (WideningStandardConversionExists (ec, priv_fms_expr, target))
 						tgt_types_set.Add (ret_type);
 				}
 			}
@@ -1006,7 +1006,7 @@ namespace Mono.CSharp {
 				foreach (Type ret_type in tgt_types_set){
 					priv_fmt_expr.SetType (ret_type);
 					
-					if (ImplicitStandardConversionExists (ec, priv_fmt_expr, target))
+					if (WideningStandardConversionExists (ec, priv_fmt_expr, target))
 						candidate_set.Add (ret_type);
 				}
 
@@ -1181,9 +1181,9 @@ namespace Mono.CSharp {
 			// by target.
 			//
 			if (look_for_explicit)
-				source = ExplicitConversionStandard (ec, source, most_specific_source, loc);
+				source = WideningAndNarrowingConversionStandard (ec, source, most_specific_source, loc);
 			else
-				source = ImplicitConversionStandard (ec, source, most_specific_source, loc);
+				source = WideningConversionStandard (ec, source, most_specific_source, loc);
 
 			if (source == null)
 				return null;
@@ -1192,9 +1192,9 @@ namespace Mono.CSharp {
 			e =  new UserCast ((MethodInfo) method, source, loc);
 			if (e.Type != target){
 				if (!look_for_explicit)
-					e = ImplicitConversionStandard (ec, e, target, loc);
+					e = WideningConversionStandard (ec, e, target, loc);
 				else
-					e = ExplicitConversionStandard (ec, e, target, loc);
+					e = WideningAndNarrowingConversionStandard (ec, e, target, loc);
 			}
 
 			return e;
@@ -1205,7 +1205,7 @@ namespace Mono.CSharp {
 		///   `target_type'.  It returns a new expression that can be used
 		///   in a context that expects a `target_type'. 
 		/// </summary>
-		static public Expression ImplicitConversion (EmitContext ec, Expression expr,
+		static public Expression WideningConversion (EmitContext ec, Expression expr,
 							     Type target_type, Location loc)
 		{
 			Expression e;
@@ -1213,7 +1213,7 @@ namespace Mono.CSharp {
 			if (target_type == null)
 				throw new Exception ("Target type is null");
 
-			e = ImplicitConversionStandard (ec, expr, target_type, loc);
+			e = WideningConversionStandard (ec, expr, target_type, loc);
 			if (e != null)
 				return e;
 
@@ -1236,10 +1236,10 @@ namespace Mono.CSharp {
 		///   that can be used in a context that expects a
 		///   `target_type'.
 		///
-		///   This is different from `ImplicitConversion' in that the
+		///   This is different from `WideningConversion' in that the
 		///   user defined implicit conversions are excluded. 
 		/// </summary>
-		static public Expression ImplicitConversionStandard (EmitContext ec, Expression expr,
+		static public Expression WideningConversionStandard (EmitContext ec, Expression expr,
 								     Type target_type, Location loc)
 		{
 			Type expr_type = expr.Type;
@@ -1266,11 +1266,11 @@ namespace Mono.CSharp {
 			if (expr_type.Equals (target_type) && !TypeManager.IsNullType (expr_type))
 				return expr;
 
-			e = ImplicitNumericConversion (ec, expr, target_type, loc);
+			e = WideningNumericConversion (ec, expr, target_type, loc);
 			if (e != null)
 				return e;
 
-			e = ImplicitReferenceConversion (ec, expr, target_type);
+			e = WideningReferenceConversion (ec, expr, target_type);
 			if (e != null)
 				return e;
 			
@@ -1339,7 +1339,7 @@ namespace Mono.CSharp {
 		///   into a different data type using casts (See Implicit Constant
 		///   Expression Conversions)
 		/// </summary>
-		static public Expression TryImplicitIntConversion (Type target_type, IntConstant ic)
+		static public Expression TryWideningIntConversion (Type target_type, IntConstant ic)
 		{
 			int value = ic.Value;
 
@@ -1397,7 +1397,7 @@ namespace Mono.CSharp {
 			return null;
 		}
 
-		static public void Error_CannotImplicitConversion (Location loc, Type source, Type target)
+		static public void Error_CannotWideningConversion (Location loc, Type source, Type target)
 		{
 			if (source.Name == target.Name){
 				Report.ExtraInformation (loc,
@@ -1414,16 +1414,16 @@ namespace Mono.CSharp {
 
 		/// <summary>
 		///   Attempts to implicitly convert `source' into `target_type', using
-		///   ImplicitConversion.  If there is no implicit conversion, then
+		///   WideningConversion.  If there is no implicit conversion, then
 		///   an error is signaled
 		/// </summary>
-		static public Expression ImplicitConversionRequired (EmitContext ec, Expression source,
+		static public Expression WideningConversionRequired (EmitContext ec, Expression source,
 								     Type target_type, Location loc)
 		{
 			Expression e;
 
 			int errors = Report.Errors;
-			e = ImplicitConversion (ec, source, target_type, loc);
+			e = WideningConversion (ec, source, target_type, loc);
 			if (Report.Errors > errors)
 				return null;
 			if (e != null)
@@ -1447,7 +1447,7 @@ namespace Mono.CSharp {
 				return null;
 			}
 			
-			Error_CannotImplicitConversion (loc, source.Type, target_type);
+			Error_CannotWideningConversion (loc, source.Type, target_type);
 
 			return null;
 		}
@@ -1461,7 +1461,7 @@ namespace Mono.CSharp {
 		/// <summary>
 		///   Performs the explicit numeric conversions
 		/// </summary>
-		static Expression ExplicitNumericConversion (EmitContext ec, Expression expr, Type target_type, Location loc)
+		static Expression NarrowingNumericConversion (EmitContext ec, Expression expr, Type target_type, Location loc)
 		{
 			Type expr_type = expr.Type;
 
@@ -1475,8 +1475,8 @@ namespace Mono.CSharp {
 			if (TypeManager.IsEnumType (real_target_type))
 				real_target_type = TypeManager.EnumToUnderlying (real_target_type);
 
-			if (ImplicitStandardConversionExists (ec, expr, real_target_type)){
- 				Expression ce = ImplicitConversionStandard (ec, expr, real_target_type, loc);
+			if (WideningStandardConversionExists (ec, expr, real_target_type)){
+ 				Expression ce = WideningConversionStandard (ec, expr, real_target_type, loc);
 
 				if (real_target_type != target_type)
 					return new EmptyCast (ce, target_type);
@@ -1678,7 +1678,7 @@ namespace Mono.CSharp {
 		///  Returns whether an explicit reference conversion can be performed
 		///  from source_type to target_type
 		/// </summary>
-		public static bool ExplicitReferenceConversionExists (Type source_type, Type target_type)
+		public static bool NarrowingReferenceConversionExists (Type source_type, Type target_type)
 		{
 			bool target_is_type_param = target_type.IsGenericParameter;
 			bool target_is_value_type = target_type.IsValueType;
@@ -1743,7 +1743,7 @@ namespace Mono.CSharp {
 					Type target_element_type = TypeManager.GetElementType (target_type);
 					
 					if (!source_element_type.IsValueType && !target_element_type.IsValueType)
-						if (ExplicitReferenceConversionExists (source_element_type,
+						if (NarrowingReferenceConversionExists (source_element_type,
 										       target_element_type))
 							return true;
 				}
@@ -1777,7 +1777,7 @@ namespace Mono.CSharp {
 		/// <summary>
 		///   Implements Explicit Reference conversions
 		/// </summary>
-		static Expression ExplicitReferenceConversion (Expression source, Type target_type)
+		static Expression NarrowingReferenceConversion (Expression source, Type target_type)
 		{
 			Type source_type = source.Type;
 			bool target_is_type_param = target_type.IsGenericParameter;
@@ -1860,7 +1860,7 @@ namespace Mono.CSharp {
 					Type target_element_type = TypeManager.GetElementType (target_type);
 					
 					if (!source_element_type.IsValueType && !target_element_type.IsValueType)
-						if (ExplicitReferenceConversionExists (source_element_type,
+						if (NarrowingReferenceConversionExists (source_element_type,
 										       target_element_type))
 							return new ClassCast (source, target_type);
 				}
@@ -1895,7 +1895,7 @@ namespace Mono.CSharp {
 		///   Performs an explicit conversion of the expression `expr' whose
 		///   type is expr.Type to `target_type'.
 		/// </summary>
-		static public Expression ExplicitConversion (EmitContext ec, Expression expr,
+		static public Expression WideningAndNarrowingConversion (EmitContext ec, Expression expr,
 							     Type target_type, Location loc)
 		{
 			Type expr_type = expr.Type;
@@ -1924,14 +1924,14 @@ namespace Mono.CSharp {
 			}
 
 			int errors = Report.Errors;
-			Expression ne = ImplicitConversionStandard (ec, expr, target_type, loc);
+			Expression ne = WideningConversionStandard (ec, expr, target_type, loc);
 			if (Report.Errors > errors)
 				return null;
 
 			if (ne != null)
 				return ne;
 
-			ne = ExplicitNumericConversion (ec, expr, target_type, loc);
+			ne = NarrowingNumericConversion (ec, expr, target_type, loc);
 			if (ne != null)
 				return ne;
 
@@ -1942,12 +1942,12 @@ namespace Mono.CSharp {
 				return new UnboxCast (expr, target_type);
 
 			//
-			// Skip the ExplicitReferenceConversion because we can not convert
+			// Skip the NarrowingReferenceConversion because we can not convert
 			// from Null to a ValueType, and ExplicitReference wont check against
 			// null literal explicitly
 			//
 			if (expr_type != TypeManager.null_type){
-				ne = ExplicitReferenceConversion (expr, target_type);
+				ne = NarrowingReferenceConversion (expr, target_type);
 				if (ne != null)
 					return ne;
 			}
@@ -1992,12 +1992,12 @@ namespace Mono.CSharp {
 					if (e != null){
 						Expression ci, ce;
 
-						ci = ImplicitConversionStandard (ec, e, target_type, loc);
+						ci = WideningConversionStandard (ec, e, target_type, loc);
 
 						if (ci != null)
 							return ci;
 
-						ce = ExplicitNumericConversion (ec, e, target_type, loc);
+						ce = NarrowingNumericConversion (ec, e, target_type, loc);
 						if (ce != null)
 							return ce;
 						//
@@ -2029,24 +2029,24 @@ namespace Mono.CSharp {
 		}
 
 		/// <summary>
-		///   Same as ExplicitConversion, only it doesn't include user defined conversions
+		///   Same as WideningAndNarrowingConversion, only it doesn't include user defined conversions
 		/// </summary>
-		static public Expression ExplicitConversionStandard (EmitContext ec, Expression expr,
+		static public Expression WideningAndNarrowingConversionStandard (EmitContext ec, Expression expr,
 								     Type target_type, Location l)
 		{
 			int errors = Report.Errors;
-			Expression ne = ImplicitConversionStandard (ec, expr, target_type, l);
+			Expression ne = WideningConversionStandard (ec, expr, target_type, l);
 			if (Report.Errors > errors)
 				return null;
 
 			if (ne != null)
 				return ne;
 
-			ne = ExplicitNumericConversion (ec, expr, target_type, l);
+			ne = NarrowingNumericConversion (ec, expr, target_type, l);
 			if (ne != null)
 				return ne;
 
-			ne = ExplicitReferenceConversion (expr, target_type);
+			ne = NarrowingReferenceConversion (expr, target_type);
 			if (ne != null)
 				return ne;
 

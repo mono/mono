@@ -72,7 +72,7 @@ namespace Mono.CSharp {
 
 			Iterator iterator = ec.CurrentIterator;
 			if (expr.Type != iterator.IteratorType){
-				expr = Convert.ImplicitConversionRequired (
+				expr = Convert.WideningConversionRequired (
 					ec, expr, iterator.IteratorType, loc);
 				if (expr == null)
 					return false;

@@ -262,16 +262,16 @@ namespace Mono.CSharp {
 				      (expr_type.IsSubclassOf (TypeManager.enum_type)))){
 
 					result = null;
-					if (Convert.ImplicitConversionExists (ec, e, TypeManager.int32_type)){
+					if (Convert.WideningConversionExists (ec, e, TypeManager.int32_type)){
 						result = new Cast (new TypeExpression (TypeManager.int32_type, loc), e, loc);
 						result = result.Resolve (ec);
-					} else if (Convert.ImplicitConversionExists (ec, e, TypeManager.uint32_type)){
+					} else if (Convert.WideningConversionExists (ec, e, TypeManager.uint32_type)){
 						result = new Cast (new TypeExpression (TypeManager.uint32_type, loc), e, loc);
 						result = result.Resolve (ec);
-					} else if (Convert.ImplicitConversionExists (ec, e, TypeManager.int64_type)){
+					} else if (Convert.WideningConversionExists (ec, e, TypeManager.int64_type)){
 						result = new Cast (new TypeExpression (TypeManager.int64_type, loc), e, loc);
 						result = result.Resolve (ec);
-					} else if (Convert.ImplicitConversionExists (ec, e, TypeManager.uint64_type)){
+					} else if (Convert.WideningConversionExists (ec, e, TypeManager.uint64_type)){
 						result = new Cast (new TypeExpression (TypeManager.uint64_type, loc), e, loc);
 						result = result.Resolve (ec);
 					}
@@ -389,22 +389,22 @@ namespace Mono.CSharp {
 				      (expr_type.IsSubclassOf (TypeManager.enum_type)))){
 					Expression e;
 
-					e = Convert.ImplicitConversion (ec, Expr, TypeManager.int32_type, loc);
+					e = Convert.WideningConversion (ec, Expr, TypeManager.int32_type, loc);
 					if (e != null){
 						type = TypeManager.int32_type;
 						return this;
 					}
-					e = Convert.ImplicitConversion (ec, Expr, TypeManager.uint32_type, loc);
+					e = Convert.WideningConversion (ec, Expr, TypeManager.uint32_type, loc);
 					if (e != null){
 						type = TypeManager.uint32_type;
 						return this;
 					}
-					e = Convert.ImplicitConversion (ec, Expr, TypeManager.int64_type, loc);
+					e = Convert.WideningConversion (ec, Expr, TypeManager.int64_type, loc);
 					if (e != null){
 						type = TypeManager.int64_type;
 						return this;
 					}
-					e = Convert.ImplicitConversion (ec, Expr, TypeManager.uint64_type, loc);
+					e = Convert.WideningConversion (ec, Expr, TypeManager.uint64_type, loc);
 					if (e != null){
 						type = TypeManager.uint64_type;
 						return this;
@@ -510,7 +510,7 @@ namespace Mono.CSharp {
 				//
 				//
 				// The following is inneficient, because we call
-				// ImplicitConversion too many times.
+				// WideningConversion too many times.
 				//
 				// It is also not clear if we should convert to Float
 				// or Double initially.
@@ -522,7 +522,7 @@ namespace Mono.CSharp {
 					// bt wrote as a decimal interger literal
 					//
 					type = TypeManager.int64_type;
-					Expr = Convert.ImplicitConversion (ec, Expr, type, loc);
+					Expr = Convert.WideningConversion (ec, Expr, type, loc);
 					return this;
 				}
 
@@ -541,21 +541,21 @@ namespace Mono.CSharp {
 					return this;
 				}
 				
-				expr = Convert.ImplicitConversion (ec, Expr, TypeManager.int32_type, loc);
+				expr = Convert.WideningConversion (ec, Expr, TypeManager.int32_type, loc);
 				if (expr != null){
 					Expr = expr;
 					type = expr.Type;
 					return this;
 				} 
 
-				expr = Convert.ImplicitConversion (ec, Expr, TypeManager.int64_type, loc);
+				expr = Convert.WideningConversion (ec, Expr, TypeManager.int64_type, loc);
 				if (expr != null){
 					Expr = expr;
 					type = expr.Type;
 					return this;
 				}
 
-				expr = Convert.ImplicitConversion (ec, Expr, TypeManager.double_type, loc);
+				expr = Convert.WideningConversion (ec, Expr, TypeManager.double_type, loc);
 				if (expr != null){
 					Expr = expr;
 					type = expr.Type;
@@ -1156,7 +1156,7 @@ namespace Mono.CSharp {
 			// First case, if at compile time, there is an implicit conversion
 			// then e != null (objects) or true (value types)
 			//
-			e = Convert.ImplicitConversionStandard (ec, expr, probe_type, loc);
+			e = Convert.WideningConversionStandard (ec, expr, probe_type, loc);
 			if (e != null){
 				expr = e;
 				if (etype.IsValueType)
@@ -1165,7 +1165,7 @@ namespace Mono.CSharp {
 					action = Action.LeaveOnStack;
 
 				warning_always_matches = true;
-			} else if (Convert.ExplicitReferenceConversionExists (etype, probe_type)){
+			} else if (Convert.NarrowingReferenceConversionExists (etype, probe_type)){
 				if (etype.IsGenericParameter)
 					expr = new BoxedCast (expr, etype);
 
@@ -1239,14 +1239,14 @@ namespace Mono.CSharp {
 			
 			}
 			
-			e = Convert.ImplicitConversion (ec, expr, probe_type, loc);
+			e = Convert.WideningConversion (ec, expr, probe_type, loc);
 			if (e != null){
 				expr = e;
 				do_isinst = false;
 				return this;
 			}
 
-			if (Convert.ExplicitReferenceConversionExists (etype, probe_type)){
+			if (Convert.NarrowingReferenceConversionExists (etype, probe_type)){
 				if (etype.IsGenericParameter)
 					expr = new BoxedCast (expr, etype);
 
@@ -1813,7 +1813,7 @@ namespace Mono.CSharp {
 				UnsafeError (loc);
 				return null;
 			}
-			expr = Convert.ExplicitConversion (ec, expr, type, loc);
+			expr = Convert.WideningAndNarrowingConversion (ec, expr, type, loc);
 			return expr;
 		}
 
@@ -1968,7 +1968,7 @@ namespace Mono.CSharp {
 			if (expr.Type == target_type)
 				return expr;
 
-			return Convert.ImplicitConversion (ec, expr, target_type, loc);
+			return Convert.WideningConversion (ec, expr, target_type, loc);
 		}
 
 		public static void Error_OperatorAmbiguous (Location loc, Operator oper, Type l, Type r)
@@ -2020,9 +2020,9 @@ namespace Mono.CSharp {
 				// conveted to type double.
 				//
 				if (r != TypeManager.double_type)
-					right = Convert.ImplicitConversion (ec, right, TypeManager.double_type, loc);
+					right = Convert.WideningConversion (ec, right, TypeManager.double_type, loc);
 				if (l != TypeManager.double_type)
-					left = Convert.ImplicitConversion (ec, left, TypeManager.double_type, loc);
+					left = Convert.WideningConversion (ec, left, TypeManager.double_type, loc);
 				
 				type = TypeManager.double_type;
 			} else if (IsOfType (ec, l, r, TypeManager.float_type, check_user_conv)){
@@ -2031,9 +2031,9 @@ namespace Mono.CSharp {
 				// converted to type float.
 				//
 				if (r != TypeManager.double_type)
-					right = Convert.ImplicitConversion (ec, right, TypeManager.float_type, loc);
+					right = Convert.WideningConversion (ec, right, TypeManager.float_type, loc);
 				if (l != TypeManager.double_type)
-					left = Convert.ImplicitConversion (ec, left, TypeManager.float_type, loc);
+					left = Convert.WideningConversion (ec, left, TypeManager.float_type, loc);
 				type = TypeManager.float_type;
 			} else if (IsOfType (ec, l, r, TypeManager.uint64_type, check_user_conv)){
 				Expression e;
@@ -2048,7 +2048,7 @@ namespace Mono.CSharp {
 						if (right is IntConstant){
 							IntConstant ic = (IntConstant) right;
 							
-							e = Convert.TryImplicitIntConversion (l, ic);
+							e = Convert.TryWideningIntConversion (l, ic);
 							if (e != null)
 								right = e;
 						} else if (right is LongConstant){
@@ -2057,7 +2057,7 @@ namespace Mono.CSharp {
 							if (ll >= 0)
 								right = new ULongConstant ((ulong) ll);
 						} else {
-							e = Convert.ImplicitNumericConversion (ec, right, l, loc);
+							e = Convert.WideningNumericConversion (ec, right, l, loc);
 							if (e != null)
 								right = e;
 						}
@@ -2065,7 +2065,7 @@ namespace Mono.CSharp {
 					other = right.Type;
 				} else {
 					if (left is IntConstant){
-						e = Convert.TryImplicitIntConversion (r, (IntConstant) left);
+						e = Convert.TryWideningIntConversion (r, (IntConstant) left);
 						if (e != null)
 							left = e;
 					} else if (left is LongConstant){
@@ -2074,7 +2074,7 @@ namespace Mono.CSharp {
 						if (ll > 0)
 							left = new ULongConstant ((ulong) ll);
 					} else {
-						e = Convert.ImplicitNumericConversion (ec, left, r, loc);
+						e = Convert.WideningNumericConversion (ec, left, r, loc);
 						if (e != null)
 							left = e;
 					}
@@ -2097,9 +2097,9 @@ namespace Mono.CSharp {
 				// to type long.
 				//
 				if (l != TypeManager.int64_type)
-					left = Convert.ImplicitConversion (ec, left, TypeManager.int64_type, loc);
+					left = Convert.WideningConversion (ec, left, TypeManager.int64_type, loc);
 				if (r != TypeManager.int64_type)
-					right = Convert.ImplicitConversion (ec, right, TypeManager.int64_type, loc);
+					right = Convert.WideningConversion (ec, right, TypeManager.int64_type, loc);
 				
 				type = TypeManager.int64_type;
 			} else if (IsOfType (ec, l, r, TypeManager.uint32_type, check_user_conv)){
@@ -2155,10 +2155,10 @@ namespace Mono.CSharp {
 				} 
 			} else if (l == TypeManager.decimal_type || r == TypeManager.decimal_type){
 				if (l != TypeManager.decimal_type)
-					left = Convert.ImplicitConversion (ec, left, TypeManager.decimal_type, loc);
+					left = Convert.WideningConversion (ec, left, TypeManager.decimal_type, loc);
 
 				if (r != TypeManager.decimal_type)
-					right = Convert.ImplicitConversion (ec, right, TypeManager.decimal_type, loc);
+					right = Convert.WideningConversion (ec, right, TypeManager.decimal_type, loc);
 				type = TypeManager.decimal_type;
 			} else {
 				left = ForceConversion (ec, left, TypeManager.int32_type);
@@ -2205,16 +2205,16 @@ namespace Mono.CSharp {
 			if (t == TypeManager.int32_type || t == TypeManager.uint32_type ||
 			    t == TypeManager.int64_type || t == TypeManager.uint64_type)
 				return e;
-			Expression ee = Convert.ImplicitConversion (ec, e, TypeManager.int32_type, loc);
+			Expression ee = Convert.WideningConversion (ec, e, TypeManager.int32_type, loc);
 			if (ee != null)
 				return ee;
-			ee = Convert.ImplicitConversion (ec, e, TypeManager.uint32_type, loc);
+			ee = Convert.WideningConversion (ec, e, TypeManager.uint32_type, loc);
 			if (ee != null)
 				return ee;
-			ee = Convert.ImplicitConversion (ec, e, TypeManager.int64_type, loc);
+			ee = Convert.WideningConversion (ec, e, TypeManager.int64_type, loc);
 			if (ee != null)
 				return ee;
-			ee = Convert.ImplicitConversion (ec, e, TypeManager.uint64_type, loc);
+			ee = Convert.WideningConversion (ec, e, TypeManager.uint64_type, loc);
 			if (ee != null)
 				return ee;
 			return null;
@@ -2231,10 +2231,10 @@ namespace Mono.CSharp {
 			}
 			right = e;
 
-			if (((e = Convert.ImplicitConversion (ec, left, TypeManager.int32_type, loc)) != null) ||
-			    ((e = Convert.ImplicitConversion (ec, left, TypeManager.uint32_type, loc)) != null) ||
-			    ((e = Convert.ImplicitConversion (ec, left, TypeManager.int64_type, loc)) != null) ||
-			    ((e = Convert.ImplicitConversion (ec, left, TypeManager.uint64_type, loc)) != null)){
+			if (((e = Convert.WideningConversion (ec, left, TypeManager.int32_type, loc)) != null) ||
+			    ((e = Convert.WideningConversion (ec, left, TypeManager.uint32_type, loc)) != null) ||
+			    ((e = Convert.WideningConversion (ec, left, TypeManager.int64_type, loc)) != null) ||
+			    ((e = Convert.WideningConversion (ec, left, TypeManager.uint64_type, loc)) != null)){
 				left = e;
 				type = e.Type;
 
@@ -2421,8 +2421,8 @@ namespace Mono.CSharp {
 					//
 					// Also, a standard conversion must exist from either one
 					//
-					if (!(Convert.ImplicitStandardConversionExists (ec, left, r) ||
-					      Convert.ImplicitStandardConversionExists (ec, right, l))){
+					if (!(Convert.WideningStandardConversionExists (ec, left, r) ||
+					      Convert.WideningStandardConversionExists (ec, right, l))){
 						Error_OperatorCannotBeApplied ();
 						return null;
 					}
@@ -2457,7 +2457,7 @@ namespace Mono.CSharp {
 					if (((right.eclass == ExprClass.MethodGroup) ||
 					     (r == TypeManager.anonymous_method_type))){
 						if ((RootContext.Version != LanguageVersion.ISO_1)){
-						Expression tmp = Convert.ImplicitConversionRequired (ec, right, l, loc);
+						Expression tmp = Convert.WideningConversionRequired (ec, right, l, loc);
 						if (tmp == null)
 							return null;
 						right = tmp;
@@ -2555,7 +2555,7 @@ namespace Mono.CSharp {
 					Type underlying_type = TypeManager.EnumToUnderlying (enum_type);
 					
 					if (underlying_type != other_type){
-						temp = Convert.ImplicitConversion (ec, lie ? right : left, underlying_type, loc);
+						temp = Convert.WideningConversion (ec, lie ? right : left, underlying_type, loc);
 						if (temp != null){
 							if (lie)
 								right = temp;
@@ -2574,7 +2574,7 @@ namespace Mono.CSharp {
 				}
 				
 				if (!rie){
-					temp = Convert.ImplicitConversion (ec, right, l, loc);
+					temp = Convert.WideningConversion (ec, right, l, loc);
 					if (temp != null)
 						right = temp;
 					else {
@@ -2582,7 +2582,7 @@ namespace Mono.CSharp {
 						return null;
 					}
 				} if (!lie){
-					temp = Convert.ImplicitConversion (ec, left, r, loc);
+					temp = Convert.WideningConversion (ec, left, r, loc);
 					if (temp != null){
 						left = temp;
 						l = r;
@@ -3174,7 +3174,7 @@ namespace Mono.CSharp {
 			// Conversion to object
 			//
 			if (operand.Type != TypeManager.string_type) {
-				Expression no = Convert.ImplicitConversion (ec, operand, TypeManager.object_type, loc);
+				Expression no = Convert.WideningConversion (ec, operand, TypeManager.object_type, loc);
 				
 				if (no == null) {
 					Binary.Error_OperatorCannotBeApplied (loc, "+", TypeManager.string_type, operand.Type);
@@ -3535,12 +3535,12 @@ namespace Mono.CSharp {
 				// First, if an implicit conversion exists from trueExpr
 				// to falseExpr, then the result type is of type falseExpr.Type
 				//
-				conv = Convert.ImplicitConversion (ec, trueExpr, false_type, loc);
+				conv = Convert.WideningConversion (ec, trueExpr, false_type, loc);
 				if (conv != null){
 					//
 					// Check if both can convert implicitl to each other's type
 					//
-					if (Convert.ImplicitConversion (ec, falseExpr, true_type, loc) != null){
+					if (Convert.WideningConversion (ec, falseExpr, true_type, loc) != null){
 						Error (172,
 						       "Can not compute type of conditional expression " +
 						       "as `" + TypeManager.CSharpName (trueExpr.Type) +
@@ -3550,7 +3550,7 @@ namespace Mono.CSharp {
 					}
 					type = false_type;
 					trueExpr = conv;
-				} else if ((conv = Convert.ImplicitConversion(ec, falseExpr, true_type,loc))!= null){
+				} else if ((conv = Convert.WideningConversion(ec, falseExpr, true_type,loc))!= null){
 					type = true_type;
 					falseExpr = conv;
 				} else {
@@ -4387,8 +4387,8 @@ namespace Mono.CSharp {
 			Expression p_tmp = new EmptyExpression (p);
 			Expression q_tmp = new EmptyExpression (q);
 			
-			bool p_to_q = Convert.ImplicitConversionExists (ec, p_tmp, q);
-			bool q_to_p = Convert.ImplicitConversionExists (ec, q_tmp, p);
+			bool p_to_q = Convert.WideningConversionExists (ec, p_tmp, q);
+			bool q_to_p = Convert.WideningConversionExists (ec, q_tmp, p);
 
 			if (p_to_q && !q_to_p)
 				return p;
@@ -4687,7 +4687,7 @@ namespace Mono.CSharp {
 				if (a_mod == p_mod) {
 
 					if (a_mod == Parameter.Modifier.NONE)
-						if (!Convert.ImplicitConversionExists (ec,
+						if (!Convert.WideningConversionExists (ec,
                                                                                        a.Expr,
                                                                                        pd.ParameterType (i)))
 							return false;
@@ -4719,7 +4719,7 @@ namespace Mono.CSharp {
 			for (int i = pd_count - 1; i < arg_count; i++) {
 				Argument a = (Argument) arguments [i];
 				
-				if (!Convert.ImplicitConversionExists (ec, a.Expr, element_type))
+				if (!Convert.WideningConversionExists (ec, a.Expr, element_type))
 					return false;
 			}
 			
@@ -4763,7 +4763,7 @@ namespace Mono.CSharp {
 				if (a_mod == p_mod ||
 				    (a_mod == Parameter.Modifier.NONE && p_mod == Parameter.Modifier.PARAMS)) {
 					if (a_mod == Parameter.Modifier.NONE) {
-                                                if (!Convert.ImplicitConversionExists (ec,
+                                                if (!Convert.WideningConversionExists (ec,
                                                                                        a.Expr,
                                                                                        pd.ParameterType (i)))
 							return false;
@@ -5123,7 +5123,7 @@ namespace Mono.CSharp {
 				if (!TypeManager.IsEqual (a.Type, parameter_type)){
 					Expression conv;
 
-					conv = Convert.ImplicitConversion (ec, a_expr, parameter_type, loc);
+					conv = Convert.WideningConversion (ec, a_expr, parameter_type, loc);
 
 					if (conv == null) {
 						if (!may_fail)
@@ -6201,7 +6201,7 @@ namespace Mono.CSharp {
 					// Console.WriteLine ("I got: " + tmp);
 					// Handle initialization from vars, fields etc.
 
-					Expression conv = Convert.ImplicitConversionRequired (
+					Expression conv = Convert.WideningConversionRequired (
 						ec, tmp, underlying_type, loc);
 					
 					if (conv == null) 
@@ -6301,15 +6301,15 @@ namespace Mono.CSharp {
 			bool old_checked = ec.CheckState;
 			ec.CheckState = true;
 			
-			target = Convert.ImplicitConversion (ec, source, TypeManager.int32_type, loc);
+			target = Convert.WideningConversion (ec, source, TypeManager.int32_type, loc);
 			if (target == null){
-				target = Convert.ImplicitConversion (ec, source, TypeManager.uint32_type, loc);
+				target = Convert.WideningConversion (ec, source, TypeManager.uint32_type, loc);
 				if (target == null){
-					target = Convert.ImplicitConversion (ec, source, TypeManager.int64_type, loc);
+					target = Convert.WideningConversion (ec, source, TypeManager.int64_type, loc);
 					if (target == null){
-						target = Convert.ImplicitConversion (ec, source, TypeManager.uint64_type, loc);
+						target = Convert.WideningConversion (ec, source, TypeManager.uint64_type, loc);
 						if (target == null)
-							Convert.Error_CannotImplicitConversion (loc, source.Type, TypeManager.int32_type);
+							Convert.Error_CannotWideningConversion (loc, source.Type, TypeManager.int32_type);
 					}
 				}
 			} 
@@ -8981,7 +8981,7 @@ namespace Mono.CSharp {
 				return null;
 			
 			if (count.Type != TypeManager.int32_type){
-				count = Convert.ImplicitConversionRequired (ec, count, TypeManager.int32_type, loc);
+				count = Convert.WideningConversionRequired (ec, count, TypeManager.int32_type, loc);
 				if (count == null)
 					return null;
 			}

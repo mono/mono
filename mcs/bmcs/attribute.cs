@@ -1012,10 +1012,10 @@ namespace Mono.CSharp {
 
 		public object GetValue (EmitContext ec, Constant c, Type target)
 		{
-			if (Convert.ImplicitConversionExists (ec, c, target))
+			if (Convert.WideningConversionExists (ec, c, target))
 				return c.GetValue ();
 
-			Convert.Error_CannotImplicitConversion (Location, c.Type, target);
+			Convert.Error_CannotWideningConversion (Location, c.Type, target);
 			return null;
 		}
 		

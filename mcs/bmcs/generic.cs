@@ -386,8 +386,8 @@ namespace Mono.CSharp {
 				Type t2 = constraints.ClassConstraint;
 				TypeExpr e2 = constraints.class_constraint;
 
-				if (!Convert.ImplicitReferenceConversionExists (ec, e1, t2) &&
-				    !Convert.ImplicitReferenceConversionExists (ec, e2, t1)) {
+				if (!Convert.WideningReferenceConversionExists (ec, e1, t2) &&
+				    !Convert.WideningReferenceConversionExists (ec, e2, t1)) {
 					Report.Error (455, loc,
 						      "Type parameter `{0}' inherits " +
 						      "conflicting constraints `{1}' and `{2}'",
@@ -1109,7 +1109,7 @@ namespace Mono.CSharp {
 				ctype = ct.Type;
 			}
 
-			return Convert.ImplicitStandardConversionExists (ec, expr, ctype);
+			return Convert.WideningStandardConversionExists (ec, expr, ctype);
 		}
 
 		protected bool CheckConstraints (EmitContext ec, int index)

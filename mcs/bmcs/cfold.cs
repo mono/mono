@@ -160,8 +160,8 @@ namespace Mono.CSharp {
 					 (oper != Binary.Operator.Subtraction));
 
 				if (need_check &&
-				    !Convert.ImplicitConversionExists (ec, match, other.Type)) {
-					Convert.Error_CannotImplicitConversion (loc, match.Type, other.Type);
+				    !Convert.WideningConversionExists (ec, match, other.Type)) {
+					Convert.Error_CannotWideningConversion (loc, match.Type, other.Type);
 					left = null;
 					right = null;
 					return;

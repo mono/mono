@@ -584,7 +584,7 @@ namespace Mono.CSharp {
 					return false;
 
 				if (Expr.Type != ec.ReturnType) {
-					Expr = Convert.ImplicitConversionRequired (
+					Expr = Convert.WideningConversionRequired (
 						ec, Expr, ec.ReturnType, loc);
 					if (Expr == null)
 						return false;
@@ -3441,7 +3441,7 @@ namespace Mono.CSharp {
 					//
 					ArrayPtr array_ptr = new ArrayPtr (e, loc);
 					
-					Expression converted = Convert.ImplicitConversionRequired (
+					Expression converted = Convert.WideningConversionRequired (
 						ec, array_ptr, vi.VariableType, loc);
 					if (converted == null)
 						return false;
@@ -3471,7 +3471,7 @@ namespace Mono.CSharp {
 				// For other cases, flag a `this is already fixed expression'
 				//
 				if (e is LocalVariableReference || e is ParameterReference ||
-				    Convert.ImplicitConversionExists (ec, e, vi.VariableType)){
+				    Convert.WideningConversionExists (ec, e, vi.VariableType)){
 				    
 					Report.Error (245, loc, "right hand expression is already fixed, no need to use fixed statement ");
 					return false;
@@ -3541,7 +3541,7 @@ namespace Mono.CSharp {
 					ig.Emit (OpCodes.Stloc, pinned_string);
 
 					Expression sptr = new StringPtr (pinned_string, loc);
-					Expression converted = Convert.ImplicitConversionRequired (
+					Expression converted = Convert.WideningConversionRequired (
 						ec, sptr, vi.VariableType, loc);
 					
 					if (converted == null)
@@ -3844,7 +3844,7 @@ namespace Mono.CSharp {
 					continue;
 				}
 
-				converted_vars [i] = Convert.ImplicitConversionRequired (
+				converted_vars [i] = Convert.WideningConversionRequired (
 					ec, var, TypeManager.idisposable_type, loc);
 
 				if (converted_vars [i] == null)
@@ -3876,7 +3876,7 @@ namespace Mono.CSharp {
 		bool ResolveExpression (EmitContext ec)
 		{
 			if (!TypeManager.ImplementsInterface (expr_type, TypeManager.idisposable_type)){
-				conv = Convert.ImplicitConversionRequired (
+				conv = Convert.WideningConversionRequired (
 					ec, expr, TypeManager.idisposable_type, loc);
 
 				if (conv == null)
@@ -4170,7 +4170,7 @@ namespace Mono.CSharp {
 			// Although it is not as important in this case, as the type
 			// will not likely be object (what the enumerator will return).
 			//
-			conv = Convert.ExplicitConversion (ec, empty, var_type, loc);
+			conv = Convert.WideningAndNarrowingConversion (ec, empty, var_type, loc);
 			if (conv == null)
 				ok = false;
 
