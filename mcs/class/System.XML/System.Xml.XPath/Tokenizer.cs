@@ -140,67 +140,93 @@ namespace System.Xml.XPath
 			return Token.LITERAL;
 		}
 
-		private int ParseIdentifier ()
+		private string ReadIdentifier ()
 		{
 			StringBuilder sb = new StringBuilder ();
 
-			char ch;
+			char ch = Peek ();
+			if (!Char.IsLetter (ch) && ch != '_')
+				return null;
+
+			sb.Append ((char) GetChar ());
+
 			while ((ch = Peek ()) == '_' || ch == '-' || ch == '.' || Char.IsLetterOrDigit (ch))
 				sb.Append ((char) GetChar ());
 
-			String strToken = sb.ToString ();
+			SkipWhitespace ();
+			return sb.ToString ();
+		}
+
+		private int ParseIdentifier ()
+		{
+			string strToken = ReadIdentifier ();
 			Object objToken = s_mapTokens [strToken];
 
-			int iToken = (objToken != null) ? (int) objToken : Token.NCName;
+			int iToken = (objToken != null) ? (int) objToken : Token.QName;
 			m_objToken = strToken;
 
-			if (!IsFirstToken)
+			char ch = Peek ();
+			if (ch == ':')
 			{
-				// the second half of a QName is always an NCName
-				if (m_iTokenPrev == Token.COLON ||
-					m_iTokenPrev == Token.DOLLAR)
-					return Token.NCName;
-
-				// If there is a preceding token and the preceding
-				// token is not one of @, ::, (, [, , or an Operator,
-				// then a * must be recognized as a MultiplyOperator
-				// and an NCName must be recognized as an OperatorName.
-				if (!m_fPrevWasOperator)
+				if (Peek (1) == ':')
 				{
-					if (objToken == null || !IsOperatorName (iToken))
-						throw new XPathException ("invalid operator name: '"+strToken+"'");
+					// If the two characters following an NCName (possibly
+					// after intervening ExprWhitespace) are ::, then the
+					// token must be recognized as an AxisName.
+					if (objToken == null || !IsAxisName (iToken))
+						throw new XPathException ("invalid axis name: '"+strToken+"'");
 					return iToken;
 				}
+
+				GetChar ();
+				SkipWhitespace ();
+				ch = Peek ();
+
+				if (ch == '*')
+				{
+					GetChar ();
+					m_objToken = new XmlQualifiedName (null, strToken);
+					return Token.QName;
+				}
+				string strToken2 = ReadIdentifier ();
+				if (strToken2 == null)
+					throw new XPathException ("invalid QName: "+strToken+":"+(char)ch);
+
+				ch = Peek ();
+				m_objToken = new XmlQualifiedName (strToken2, strToken);
+				if (ch == '(')
+					return Token.FUNCTION_NAME;
+				return Token.QName;
 			}
 
-			SkipWhitespace ();
+			// If there is a preceding token and the preceding
+			// token is not one of @, ::, (, [, , or an Operator,
+			// then a * must be recognized as a MultiplyOperator
+			// and an NCName must be recognized as an OperatorName.
+			if (!IsFirstToken && !m_fPrevWasOperator)
+			{
+				if (objToken == null || !IsOperatorName (iToken))
+					throw new XPathException ("invalid operator name: '"+strToken+"'");
+				return iToken;
+			}
 
-			ch = Peek ();
-			if (ch == '(')					
+			if (ch == '(')
 			{
 				// If the character following an NCName (possibly
 				// after intervening ExprWhitespace) is (, then the
 				// token must be recognized as a NodeType or a FunctionName.
 				if (objToken == null)
+				{
+					m_objToken = new XmlQualifiedName (strToken, "");
 					return Token.FUNCTION_NAME;
+				}
 				if (IsNodeType (iToken))
 					return iToken;
 				throw new XPathException ("invalid function name: '"+strToken+"'");
 			}
-			else if (ch == ':' && Peek (1) == ':')
-			{
-				// If the two characters following an NCName (possibly
-				// after intervening ExprWhitespace) are ::, then the
-				// token must be recognized as an AxisName.
-				if (objToken == null || !IsAxisName (iToken))
-					throw new XPathException ("invalid axis name: '"+strToken+"'");
-				return iToken;
-			}
 
-			// Otherwise, the token must not be recognized as a
-			// MultiplyOperator, an OperatorName, a NodeType,
-			// a FunctionName, or an AxisName.
-			return Token.NCName;
+			m_objToken = new XmlQualifiedName (strToken, "");
+			return Token.QName;
 		}
 
 		private static bool IsWhitespace (char ch)
@@ -256,7 +282,7 @@ namespace System.Xml.XPath
 						GetChar ();
 						return Token.COLON2;
 					}
-					return Token.COLON;
+					return Token.ERROR;
 
 				case ',':
 					m_fThisIsOperator = true;
@@ -307,6 +333,7 @@ namespace System.Xml.XPath
 
 				case '$':
 					GetChar ();
+					m_fThisIsOperator = true;
 					return Token.DOLLAR;
 
 				case '|':

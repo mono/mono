@@ -110,6 +110,19 @@ namespace System.Xml.XPath
 			throw new XPathException ("expected nodeset: "+ToString ());
 		}
 		protected static XsltContext DefaultContext { get { return _ctxDefault; } }
+
+		static XPathResultType GetReturnType (object obj)
+		{
+			if (obj is double)
+				return XPathResultType.Number;
+			if (obj is string)
+				return XPathResultType.String;
+			if (obj is bool)
+				return XPathResultType.Boolean;
+			if (obj is XPathNodeIterator)
+				return XPathResultType.NodeSet;
+			throw new XPathException ("invalid node type: "+obj.GetType ().ToString ());
+		}
 		[MonoTODO]
 		public double EvaluateNumber (BaseIterator iter)
 		{
@@ -122,6 +135,9 @@ namespace System.Xml.XPath
 			}
 			else
 				result = Evaluate (iter);
+
+			if (type == XPathResultType.Any)
+				type = GetReturnType (result);
 
 			switch (type)
 			{
@@ -139,7 +155,10 @@ namespace System.Xml.XPath
 		public string EvaluateString (BaseIterator iter)
 		{
 			object result = Evaluate (iter);
-			switch (GetReturnType (iter))
+			XPathResultType type = GetReturnType (iter);
+			if (type == XPathResultType.Any)
+				type = GetReturnType (result);
+			switch (type)
 			{
 				case XPathResultType.Number:
 					return (string) XmlConvert.ToString ((double) result);	// TODO: spec? convert number to string
@@ -162,7 +181,10 @@ namespace System.Xml.XPath
 		public bool EvaluateBoolean (BaseIterator iter)
 		{
 			object result = Evaluate (iter);
-			switch (GetReturnType (iter))
+			XPathResultType type = GetReturnType (iter);
+			if (type == XPathResultType.Any)
+				type = GetReturnType (result);
+			switch (type)
 			{
 				case XPathResultType.Number:
 				{
@@ -483,7 +505,7 @@ namespace System.Xml.XPath
 	internal class ExprDIV : ExprNumeric
 	{
 		public ExprDIV (Expression left, Expression right) : base (left, right) {}
-		protected override String Operator { get { return "/"; }}
+		protected override String Operator { get { return " div "; }}
 		public override object Evaluate (BaseIterator iter)
 		{
 			return _left.EvaluateNumber (iter) / _right.EvaluateNumber (iter);
@@ -734,6 +756,7 @@ namespace System.Xml.XPath
 				case XPathNodeType.All:
 				case XPathNodeType.Attribute:
 				case XPathNodeType.Element:
+				case XPathNodeType.Namespace:
 					return "node";
 				default:
 					throw new NotImplementedException ();

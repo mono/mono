@@ -1,3 +1,13 @@
+2003-07-26  Piers Haken	<piersh@friskit.com>
+
+	* Tokenizer.cs:
+	* Parser.jay:
+		move QName parsing into tokenizer
+	* Expression.cs:
+		fix evaluating XPathResultType.Any
+		fix ExprDiv.ToString()
+		fix NodeTypeTest.ToString() (for namespace axis)
+
 2003-07-25  Piers Haken	<piersh@friskit.com>
 
 	* Expression.cs: return clone of $var evaluation

@@ -4,10 +4,6 @@
 // Author - Piers Haken <piersh@friskit.com>
 //
 
-// TODO: FUNCTION_CALL should be a QName, not just a NCName
-// TODO: PROCESSING_INSTRUCTION's optional parameter
-// TODO: flatten argument/predicate lists in place
-
 using System;
 using System.Xml;
 using System.Xml.XPath;
@@ -54,7 +50,6 @@ namespace Mono.Xml.XPath
 %token SLASH2			"//"
 %token DOT				"."
 %token DOT2				".."
-%token COLON			":"
 %token COLON2			"::"
 %token COMMA			","
 %token AT				"@"
@@ -105,7 +100,7 @@ namespace Mono.Xml.XPath
 
 %token NUMBER
 %token LITERAL
-%token NCName
+%token QName
 
 
 %start Expr
@@ -339,23 +334,10 @@ PrimaryExpr
 	;
 
 FunctionCall
-	: FunctionName PAREN_OPEN OptionalArgumentList PAREN_CLOSE
+	: FUNCTION_NAME PAREN_OPEN OptionalArgumentList PAREN_CLOSE
 	{
 		$$ = new ExprFunctionCall ((XmlQualifiedName) $1, (FunctionArguments) $3);
 	}
-	;
-
-FunctionName
-	: FUNCTION_NAME
-	{
-		$$ = new XmlQualifiedName ((string) $1);
-	}
-/*
-	| NCName
-	{
-		$$ = new XmlQualifiedName ((string) $1);
-	}
-*/
 	;
 
 OptionalArgumentList
@@ -409,21 +391,6 @@ AxisName
 OptionalLiteral
 	: /* empty */
 	| LITERAL
-	;
-
-QName
-	: NCName
-	{
-		$$ = new XmlQualifiedName ((String) $1);
-	}
-	| NCName COLON ASTERISK
-	{
-		$$ = new XmlQualifiedName (null, (String) $1);
-	}
-	| NCName COLON NCName
-	{
-		$$ = new XmlQualifiedName ((String) $3, (String) $1);
-	}
 	;
 
 %%
