@@ -602,8 +602,10 @@ namespace System.Web
 					_app.OnStateExecuteEnter ();
 					try {
 						do {
-							if (null != lasterror)
+							if (null != lasterror) {
 								_app.HandleError (lasterror);
+								lasterror = null;
+							}
 
 							// Check if request flow is to be stopped
 							if (_app._CompleteRequest)
@@ -811,6 +813,8 @@ namespace System.Web
 			} else {
 				if (null != _lastError)
 					fire = false;
+
+				_lastError = obj;
 			}
 
 			if (!fire)
@@ -839,6 +843,7 @@ namespace System.Web
 
 			// Initialize all IHttpModule(s)
 			InitModules ();
+			HttpApplicationFactory.AttachEvents (this);
 
 			// Initialize custom application
 			_InPreRequestResponseMode = true;

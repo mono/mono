@@ -1,5 +1,17 @@
 2003-01-10  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* HttpApplication.cs: keep _lasterror if no context. Attach
+	application events *after* modules initialization (if not, User is not
+	set when the user handler is called).
+	
+	* HttpApplicationFactory.cs: made all methods related to
+	AttachEvents static. I will fix OnStart/OnEnd for application and
+	session later.
+	
+	* HttpRequest.cs: don't initialize cookies twice.
+
+2003-01-10  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* HttpResponse.cs:
 	(ApplyAppPathModifiers): return the root directory for "".
 

@@ -450,7 +450,6 @@ namespace System.Web {
 			 *	',' as a separator produces errors.
 			 */
 
-			cookies = new HttpCookieCollection (_oContext.Response, false);
 			string [] name_values = header.Trim ().Split (';');
 			int length = name_values.Length;
 			HttpCookie cookie = null;

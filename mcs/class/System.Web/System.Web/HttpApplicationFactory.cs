@@ -32,7 +32,6 @@ namespace System.Web {
 		static private int	_appMaxFreePublicInstances = 32;
 
 		private HttpApplicationState _state;
-		Hashtable appTypeEventHandlers;
 		static Hashtable appEventNames;
 
 		static IHttpHandler custApplication;
@@ -42,8 +41,6 @@ namespace System.Web {
 		static HttpApplicationFactory ()
 		{
 			appEventNames = new Hashtable ();
-			appEventNames.Add ("Application_Start", null);
-			appEventNames.Add ("Application_End", null);
 			appEventNames.Add ("Application_BeginRequest", null);
 			appEventNames.Add ("Application_AuthenticateRequest", null);
 			appEventNames.Add ("Application_AuthorizeRequest", null);
@@ -58,8 +55,6 @@ namespace System.Web {
 			appEventNames.Add ("Application_PreSendRequestContent", null);
 			appEventNames.Add ("Application_Disposed", null);
 			appEventNames.Add ("Application_Error", null);
-			appEventNames.Add ("Session_Start", null);
-			appEventNames.Add ("Session_End", null);
 		}
 		
 		public HttpApplicationFactory() {
@@ -85,11 +80,9 @@ namespace System.Web {
 				_appType = typeof (System.Web.HttpApplication);
 				_state = new HttpApplicationState ();
 			}
-
-			GetApplicationTypeEvents ();
 		}
 
-		private bool IsEventHandler (MethodInfo m)
+		static bool IsEventHandler (MethodInfo m)
 		{
 			if (m.ReturnType != typeof (void))
 				return false;
@@ -105,7 +98,7 @@ namespace System.Web {
 			return appEventNames.ContainsKey (m.Name);
 		}
 
-		void AddEvent (MethodInfo method)
+		static void AddEvent (MethodInfo method, Hashtable appTypeEventHandlers)
 		{
 			string name = method.Name;
 			ArrayList list;
@@ -117,9 +110,10 @@ namespace System.Web {
 			list.Add (method);
 		}
 		
-		private void GetApplicationTypeEvents ()
+		static Hashtable GetApplicationTypeEvents (HttpApplication app)
 		{
-			appTypeEventHandlers = new Hashtable ();
+			Type appType = app.GetType ();
+			Hashtable appTypeEventHandlers = new Hashtable ();
 			ArrayList evtMethods = new ArrayList ();
 			BindingFlags flags = BindingFlags.Public    |
 					     BindingFlags.NonPublic | 
@@ -127,54 +121,56 @@ namespace System.Web {
 					     BindingFlags.Instance |
 					     BindingFlags.Static;
 
-			MethodInfo [] methods = _appType.GetMethods (flags);
+			MethodInfo [] methods = appType.GetMethods (flags);
 			foreach (MethodInfo m in methods) {
 				if (IsEventHandler (m))
-					AddEvent (m);
+					AddEvent (m, appTypeEventHandlers);
 			}
 
-			Type baseType = _appType.BaseType;
+			Type baseType = appType.BaseType;
 			if (baseType == typeof (HttpApplication))
-				return;
+				return appTypeEventHandlers;
 
 			flags = BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance;
 
-			methods = _appType.GetMethods (flags);
+			methods = appType.GetMethods (flags);
 			foreach (MethodInfo m in methods) {
 				if (IsEventHandler (m))
-					AddEvent (m);
+					AddEvent (m, appTypeEventHandlers);
 			}
+
+			return appTypeEventHandlers;
 		}
 
 		void FireEvents (string method_name, object state_context, object [] args)
 		{
-			//TODO: anything to do with the context or state?
-			ArrayList methods = appTypeEventHandlers [method_name] as ArrayList;
+			/*
 			if (methods == null || methods.Count == 0)
 				return;
 
 			foreach (MethodInfo method in methods)
 				method.Invoke (this, args);
+			*/
 		}
 		
 		void FireOnAppStart (HttpContext context)
 		{
-			FireEvents ("Application_Start", context, new object [] {this, EventArgs.Empty});
+			FireEvents ("Application_OnStart", context, new object [] {this, EventArgs.Empty});
 		}
 
 		void FireOnAppEnd ()
 		{
-			FireEvents ("Application_End", null, new object [] {this, EventArgs.Empty});
+			FireEvents ("Application_OnEnd", null, new object [] {this, EventArgs.Empty});
 		}
 
 		void FireOnSessionStart (HttpSessionState state, object source, EventArgs args)
 		{
-			FireEvents ("Session_Start", state, new object [] {source, args});
+			FireEvents ("Session_OnStart", state, new object [] {source, args});
 		}
 		
 		void FireOnSessionEnd (HttpSessionState state, object source, EventArgs args)
 		{
-			FireEvents ("Session_End", state, new object [] {source, args});
+			FireEvents ("Session_OnEnd", state, new object [] {source, args});
 		}
 	
 		private void InitializeFactory(HttpContext context) {
@@ -234,18 +230,20 @@ namespace System.Web {
 			s_Factory.RecyclePublicInstance(app);
 		}
 
-		void AttachEvents (HttpApplication app)
+		internal static void AttachEvents (HttpApplication app)
 		{
+			Type appType = app.GetType ();
+			Hashtable appTypeEventHandlers = GetApplicationTypeEvents (app);
 			foreach (string key in appTypeEventHandlers.Keys) {
-				if (key == "Application_Start" || key == "Application_End" ||
-				    key == "Sesssion_Start"    || key == "Session_End")
+				if (key == "Application_OnStart" || key == "Application_OnEnd" ||
+				    key == "Session_OnStart"     || key == "Session_OnEnd")
 				    continue;
 
 				int pos = key.IndexOf ('_');
 				if (pos == -1 || key.Length <= pos + 1)
 					continue;
 
-				EventInfo evt = _appType.GetEvent (key.Substring (pos + 1));
+				EventInfo evt = appType.GetEvent (key.Substring (pos + 1));
 				if (evt == null)
 					continue;
 			
@@ -272,7 +270,6 @@ namespace System.Web {
 				// Create non-public object
 				app = (HttpApplication) HttpRuntime.CreateInternalObject(_appType);
 
-				AttachEvents (app);
 				app.Startup(context, HttpApplicationFactory.ApplicationState);
 			}
 
