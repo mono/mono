@@ -95,11 +95,15 @@ public class Blah {
 				return 12;
 		}
 
-		// Remove this when bug 43682 is fixed:
-		//IntPtr [] arr = { new System.IntPtr (1) };
-		//if (arr [0] != (IntPtr) 1)
-		//return 13;
-		
+		IntPtr [] arr = { new System.IntPtr (1) };
+		if (arr [0] != (IntPtr) 1)
+                        return 13;
+
+                IntPtr [] arr_i = { System.IntPtr.Zero };
+
+                if (arr_i [0] != System.IntPtr.Zero)
+                        return 14;
+                
 		Console.WriteLine ("Array initialization test okay.");
 				   
 		return 0;

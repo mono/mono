@@ -1,3 +1,11 @@
+2003-05-27  Ravi Pratap  <ravi@ximian.com>
+
+	* test-45.cs : Enable code which tests IntPtr array
+	initialization. This automatically serves as a test case for bug
+	#36030.
+
+	Improve test.
+
 2003-05-17  Ravi Pratap  <ravi@ximian.com>
 
 	* test-194.cs: New test for bug #39108
