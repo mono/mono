@@ -1,5 +1,7 @@
 2004-09-24  Zoltan Varga  <vargaz@freemail.hu>
 
+	* ObfuscationAttribute.cs: Add ApplyToMembers.
+
 	* Assembly.cs: Add stub for ReflectionOnlyLoadFrom.
 	
 	* Assembly.cs (LoadWithPartialName): Add [ComVisible] attribute.

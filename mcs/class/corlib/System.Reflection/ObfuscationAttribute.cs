@@ -39,12 +39,14 @@ namespace System.Reflection
 
 		private bool exclude;
 		private bool strip;
+		private bool applyToMembers;
 		private string feature;
 
 		public ObfuscationAttribute ()
 		{
 			exclude = true;
 			strip = true;
+			applyToMembers = true;
 			feature = "all";
 		}
 		
@@ -63,6 +65,15 @@ namespace System.Reflection
 			}
 			set {
 				strip = value;
+			}
+		}
+
+		public bool ApplyToMembers {
+			get {
+				return applyToMembers;
+			}
+			set {
+				applyToMembers = value;
 			}
 		}
 
