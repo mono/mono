@@ -26,7 +26,7 @@ namespace MonoTests.System {
 		private ArrayList files = new ArrayList ();
 
 		[TearDown]
-		public void Unload () 
+		public void TearDown () 
 		{
 			if (ad != null) {
 				try {

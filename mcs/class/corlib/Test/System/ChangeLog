@@ -1,5 +1,7 @@
 2004-05-20  Sebastien Pouliot  <sebastien@ximian.com>
 
+	* AppDomainTest.cs: Renamed Unload to TearDown (like it's attribute)
+	to ease searches.
 	* ConvertTest.cs: Added new unit tests for integer overflow in To/From
 	Base64CharArray. Added new test for wide char. Exploded some tests in
 	NUnit2 format (to ease add new tests).
