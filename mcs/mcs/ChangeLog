@@ -1,5 +1,8 @@
 2003-04-09  Miguel de Icaza  <miguel@ximian.com>
 
+	* expression.cs (Unary.TryReduceNegative): Add missing minus sign
+	to the case where we reduced into a LongConstant.
+
 	* decl.cs (CheckAccessLevel): If the type is an array, we can not
 	depend on whether the information is acurrate, because the
 	Microsoft runtime will always claim that the array type is public,
