@@ -138,12 +138,32 @@ class MonoP {
 		}
 		
 	}
+
+	static void PrintUsage ()
+	{
+		Console.WriteLine ("Usage is: monop [-c] [-r:Assembly] [class-name] [option]");
+	}
+
+	static void PrintHelp ()
+	{
+		PrintUsage ();
+		Console.WriteLine ("");
+		Console.WriteLine ("options:");
+		Console.WriteLine ("\t--private,-p\t\tShow private members");
+	}
 	
 	static void Main (string [] args)
 	{
 		if (args.Length < 1) {
-			Console.WriteLine ("monop [-c] [-r:Assembly] [class-name]");
+			PrintUsage ();
 			return;
+		}
+
+		if (args.Length == 1 && (args[0] == "--help" || args[0] == "-h"))
+		{
+			PrintHelp ();
+			return;
+
 		}
 		
 		IndentedTextWriter o = new IndentedTextWriter (Console.Out, "    ");
@@ -170,7 +190,7 @@ class MonoP {
 		}
 
 		if (args.Length < i+1){
-			Console.WriteLine ("Usage is: monop [-r:Assembly] [class-name]");
+			PrintUsage ();
 			return;
 		}
 
