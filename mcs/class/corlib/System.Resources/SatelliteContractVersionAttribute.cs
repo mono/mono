@@ -8,7 +8,8 @@
 //
 
 namespace System.Resources {
-
+	   
+	   [AttributeUsage (AttributeTargets.Assembly)]
 	   public sealed class SatelliteContractVersionAttribute : Attribute {
 
 			 private Version ver; 

@@ -8,7 +8,7 @@
 //
 
 namespace System.Resources {
-
+	   [AttributeUsage (AttributeTargets.Assembly)]
 	   public sealed class NeutralResourcesLanguageAttribute : Attribute {
 
 			 string culture;
