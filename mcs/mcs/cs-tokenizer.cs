@@ -9,31 +9,7 @@
 //
 
 /*
-  Todo:
-
-  Do something with the integer and float suffixes, pass full datatype?
   Make sure we accept the proper Unicode ranges, per the spec.
-
-  * Error reporting.
-
-          I was returning Token.ERROR on errors and setting an
-          internal error string with the details, but it might make sense
-	  to just use exceptions.
-
-	  Change of mind: I think I want to keep returning errors *UNLESS* the
-	  parser is catching errors from the tokenizer (at that point, there is
-	  not really any reason to use exceptions) so that I can continue the
-	  parsing 
-
-  * IDEA
-
-          I think I have solved the problem.  The idea is to not even *bother*
-	  about handling data types a lot here (except for fitting data into
-	  the proper places), but let the upper layer handle it.
-
-	  Ie, treat LITERAL_CHARACTER, LITERAL_INTEGER, LITERAL_FLOAT, LITERAL_DOUBLE, and
-	  return then as `LITERAL_LITERAL' with maybe subdetail information
-
 */
 
 using System;
@@ -101,6 +77,11 @@ namespace Mono.CSharp
 		System.Text.StringBuilder number;
 		int putback_char;
 		Object val;
+
+		//
+		// Pre-processor
+		//
+		Hashtable defines;
 		
 		//
 		// Details about the error encoutered by the tokenizer
@@ -125,7 +106,7 @@ namespace Mono.CSharp
 			}
 		}
 		
-		static void initTokens ()
+		static void InitTokens ()
 		{
 			keywords = new Hashtable ();
 
@@ -215,7 +196,7 @@ namespace Mono.CSharp
 		// 
 		static Tokenizer ()
 		{
-			initTokens ();
+			InitTokens ();
 			csharp_format_info = new NumberFormatInfo ();
 			csharp_format_info.CurrencyDecimalSeparator = ".";
 			styles = NumberStyles.AllowExponent | NumberStyles.AllowDecimalPoint;
@@ -231,7 +212,7 @@ namespace Mono.CSharp
 			return res;
 		}
 
-		int getKeyword (string name)
+		int GetKeyword (string name)
 		{
 			return (int) (keywords [name]);
 		}
@@ -763,6 +744,150 @@ namespace Mono.CSharp
 			current_token = xtoken ();
 			return current_token;
 		}
+
+		static StringBuilder static_cmd_arg = new System.Text.StringBuilder ();
+		
+		void get_cmd_arg (out string cmd, out string arg)
+		{
+			int c;
+			
+			arg = "";
+			static_cmd_arg.Length = 0;
+				
+			while ((c = getChar ()) != -1 && (c != '\n') && (c != ' '))
+				static_cmd_arg.Append ((char) c);
+
+			cmd = static_cmd_arg.ToString ();
+
+			if (c == '\n')
+				return;
+
+			// skip over white space
+			while ((c = getChar ()) != -1 && (c != '\n') && (c == ' '))
+				;
+
+			if (c == '\n')
+				return;
+			
+			static_cmd_arg.Length = 0;
+			static_cmd_arg.Append ((char) c);
+			
+			while ((c = getChar ()) != -1 && (c != '\n'))
+				static_cmd_arg.Append ((char) c);
+
+			arg = static_cmd_arg.ToString ();
+		}
+
+		//
+		// Handles the #line directive
+		//
+		bool PreProcessLine (string arg)
+		{
+			if (arg == "")
+				return false;
+
+			if (arg == "default"){
+				line = ref_line = line;
+				return false;
+			}
+			
+			try {
+				int pos;
+
+				if ((pos = arg.IndexOf (' ')) != -1 && pos != 0){
+					ref_line = System.Int32.Parse (arg.Substring (0, pos));
+					pos++;
+					
+					char [] quotes = { '\"' };
+					
+					ref_name = arg.Substring (pos);
+					ref_name.TrimStart (quotes);
+					ref_name.TrimEnd (quotes);
+				} else {
+					ref_line = System.Int32.Parse (arg);
+				}
+			} catch {
+				return false;
+			}
+			
+			return true;
+		}
+
+		//
+		// Handles #define and #undef
+		//
+		void PreProcessDefinition (bool is_define, string arg)
+		{
+			if (arg == "" || arg == "true" || arg == "false"){
+				Report.Error(1001, Location, "Missing identifer to pre-processor directive");
+				return;
+			}
+
+			if (is_define){
+				if (defines == null)
+					defines = new Hashtable ();
+				defines [arg] = 1;
+			} else {
+				if (defines == null)
+					return;
+				if (defines.Contains (arg))
+					defines.Remove (arg);
+			}
+		}
+		
+		void handle_preprocessing_directive ()
+		{
+			char [] blank = { ' ', '\t' };
+			string cmd, arg;
+			
+			get_cmd_arg (out cmd, out arg);
+
+			switch (cmd){
+			case "line":
+				if (!PreProcessLine (arg))
+					Report.Error (
+						1576, Location,
+						"Argument to #line directive is missing or invalid");
+				return;
+
+			case "define":
+				PreProcessDefinition (true, arg);
+				return;
+
+			case "undef":
+				PreProcessDefinition (false, arg);
+				return;
+
+			case "error":
+				Report.Error (1029, Location, "#error: '" + arg + "'");
+				return;
+
+			case "warning":
+				Report.Warning (1030, Location, "#warning: '" + arg + "'");
+				return;
+
+			case "region":
+				arg = "true";
+				goto case "if";
+
+			case "endregion":
+				goto case "endif";
+				
+			case "if":
+				break;
+
+			case "endif":
+				break;
+
+			case "elif":
+				break;
+
+			case "else":
+				break;
+			}
+			
+			Report.Error (1024, "Preprocessor directive expected");
+		}
 		
 		public int xtoken ()
 		{
@@ -796,7 +921,7 @@ namespace Mono.CSharp
 					}
 
 					// true, false and null are in the hash anyway.
-					return getKeyword (ids);
+					return GetKeyword (ids);
 
 				}
 
@@ -840,28 +965,10 @@ namespace Mono.CSharp
 				}
 
 				/* For now, ignore pre-processor commands */
+				// FIXME: In C# the '#' is not limited to appear
+				// on the first column.
 				if (col == 1 && c == '#'){
-					System.Text.StringBuilder s = new System.Text.StringBuilder ();
-					
-					while ((c = getChar ()) != -1 && (c != '\n')){
-						s.Append ((char) c);
-					}
-					if (String.Compare (s.ToString (), 0, "line", 0, 4) == 0){
-						string arg = s.ToString ().Substring (5);
-						int pos;
-
-						if ((pos = arg.IndexOf (' ')) != -1 && pos != 0){
-							ref_line = System.Int32.Parse (arg.Substring (0, pos));
-							pos++;
-
-							char [] quotes = { '\"' };
-
-							ref_name = arg.Substring (pos);
-							ref_name.TrimStart (quotes);
-							ref_name.TrimEnd (quotes);
-						} else
-							ref_line = System.Int32.Parse (arg);
-					}
+					handle_preprocessing_directive ();
 					line++;
 					ref_line++;
 					continue;

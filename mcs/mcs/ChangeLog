@@ -1,3 +1,9 @@
+2001-12-18  Miguel de Icaza  <miguel@ximian.com>
+
+	* cs-tokenizer.cs: Begin implementation of pre-procesor. 
+
+	* expression.cs: Resolve the this instance before invoking the code.
+
 2001-12-17  Miguel de Icaza  <miguel@ximian.com>
 
 	* cs-parser.jay: Add a production in element_access that allows

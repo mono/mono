@@ -4550,7 +4550,7 @@ namespace Mono.CSharp {
 			if (ec.IsStatic)
 				left = new TypeExpr (base_type);
 			else
-				left = new This (loc);
+				left = new This (loc).Resolve (ec);
 			
 			return MemberAccess.ResolveMemberAccess (ec, member_lookup, left, loc);
 		}

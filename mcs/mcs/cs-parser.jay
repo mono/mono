@@ -2552,7 +2552,6 @@ declaration_statement
 	  {
 		DictionaryEntry de = (DictionaryEntry) $1;
 
-		Console.WriteLine ("Declaring: " + (string) de.Key);
 		$$ = declare_local_variables ((string) de.Key, (ArrayList) de.Value, lexer.Location);
 	  }
 
