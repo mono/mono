@@ -1,3 +1,8 @@
+2002-06-10  Jaroslaw Kowalski <jarek@atm.com.pl>
+
+	* sockets.c, daemon-messages.c: Prevent SIGPIPE from being raised
+	when writing to a closed socket.
+
 2002-06-08  Jeffrey Stedfast  <fejj@ximian.com>
 
 	* mono-mutex.c (mono_once): New convenience function for my
