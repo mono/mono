@@ -15,6 +15,10 @@ using System.Runtime.InteropServices;
 
 namespace System.Data.OleDb
 {
+	internal enum GdaConnectionOptions {
+		ReadOnly = 1 << 0
+	};
+	
 	internal enum GdaCommandOptions {
 		IgnoreErrors = 1,
 		StopOnErrors = 1 << 1,
@@ -212,12 +216,15 @@ namespace System.Data.OleDb
 		public static extern IntPtr gda_client_new ();
 
 		[DllImport("gda-2")]
-		public static extern IntPtr gda_client_open_connection (IntPtr client, string dsn, string username, string password);
+		public static extern IntPtr gda_client_open_connection (IntPtr client, string dsn,
+									string username, string password,
+									GdaConnectionOptions options);
 
 		[DllImport("gda-2")]
 		public static extern IntPtr gda_client_open_connection_from_string (IntPtr client,
 										    string provider,
-										    string cnc_string);
+										    string cnc_string,
+										    GdaConnectionOptions options);
 
 		[DllImport("gda-2")]
 		public static extern bool gda_connection_is_open (IntPtr cnc);

@@ -215,7 +215,7 @@ namespace System.Data.OleDb
 
 			gdaConnection = libgda.gda_client_open_connection (libgda.GdaClient,
                                                                           connectionString,
-                                                                          "", "");
+                                                                          "", "", 0);
 			
 			/* convert the connection string to its GDA equivalent */
 			//args = connectionString.Split (';');

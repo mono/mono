@@ -1,3 +1,8 @@
+2003-02-09  Rodrigo Moya <rodrigo@ximian.com>
+
+	* System.Data.OleDb/OleDbConnection.cs:
+	* System.Data.OleDb/libgda.cs: upgraded to libgda 0.10.
+
 2003-01-30  Ville Palo <vi64pa@koti.soon.fi>
 
 	* list: Added new file ExpressionElement.cs
