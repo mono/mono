@@ -1,5 +1,9 @@
 2003-03-15 Jackson Harper <jackson@latitudegeo.com>
 
+	* InstrTable.cs: Add FieldOp instructions
+
+2003-03-15 Jackson Harper <jackson@latitudegeo.com>
+
 	* InstrTable.cs: Add ldstr instruction
 
 2003-03-15 Jackson Harper <jackson@latitudegeo.com>

@@ -19,13 +19,15 @@ namespace Mono.ILASM {
 		private static Hashtable int_table;		
 		private static Hashtable type_table;
 		private static Hashtable method_table;
+		private static Hashtable field_table;
 
 		static InstrTable ()
 		{
 			CreateOpTable ();
 			CreateIntTable ();
 			CreateTypeTable ();
-			CreateMethodTable ();
+			CreateMethodTable ();	
+			CreateFieldTable ();
 		}
 		
 		public static ILToken GetToken (string str)
@@ -44,6 +46,9 @@ namespace Mono.ILASM {
 				return new ILToken (Token.INSTR_METHOD, op);
 			} else if (IsLdstrOp (str)) {
 				return new ILToken (Token.INSTR_STRING, str);
+			} else if (IsFieldOp (str)) {
+				FieldOp op = GetFieldOp (str);
+				return new ILToken (Token.INSTR_FIELD, op);
 			}
 
 			return null;
@@ -53,7 +58,7 @@ namespace Mono.ILASM {
 		{
 			return (IsOp (str) || IsIntOp (str) || 
 				IsTypeOp (str) || IsMethodOp (str) ||
-				IsLdstrOp (str));
+				IsLdstrOp (str) || IsFieldOp (str));
 		}
 
 		public static bool IsOp (string str)
@@ -81,6 +86,11 @@ namespace Mono.ILASM {
 			return (str == "ldstr");
 		}
 
+		public static bool IsFieldOp (string str)
+		{
+			return field_table.Contains (str);
+		}
+
 		public static Op GetOp (string str)
 		{
 			return (Op) op_table[str];
@@ -99,6 +109,11 @@ namespace Mono.ILASM {
 		public static MethodOp GetMethodOp (string str)
 		{
 			return (MethodOp) method_table[str];
+		}
+
+		public static FieldOp GetFieldOp (string str)
+		{
+			return (FieldOp) field_table[str];
 		}
 
 		private static void CreateOpTable ()
@@ -296,6 +311,19 @@ namespace Mono.ILASM {
 			method_table["ldtoken"] = MethodOp.ldtoken;
 			method_table["ldftn"] = MethodOp.ldftn;
 			method_table["ldvirtfn"] = MethodOp.ldvirtfn;
+		}
+
+		private static void CreateFieldTable ()
+		{
+			field_table = new Hashtable ();
+			
+			field_table["ldfld"] = FieldOp.ldfld;
+			field_table["ldflda"] = FieldOp.ldflda;
+			field_table["stfld"] = FieldOp.stfld;
+			field_table["ldsfld"] = FieldOp.ldsfld;
+			field_table["ldsflda"] = FieldOp.ldsflda;
+			field_table["stsfld"] = FieldOp.stsfld;
+			field_table["ldtoken"] = FieldOp.ldtoken;
 		}
 	}
 
