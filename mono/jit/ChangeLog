@@ -1,3 +1,9 @@
+2001-12-06  Miguel de Icaza  <miguel@ximian.com>
+
+	* jit.c (mono_analyze_stack), x86.brg: Implement CONV.OVF.I1,
+	CONV.OVF.I4, CONV.OVF.I1.UN, CONV.OVF.U1, CONV.OVF.U1.UN,
+	CONV.OVF.I2.UN, CONV.OVF.I8.UN
+
 2001-12-04  Dietmar Maurer  <dietmar@ximian.com>
 
 	* x86.brg: impl. UNBOX, NEWSTRUCT, removed VTYPE, bug fixes,
