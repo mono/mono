@@ -413,7 +413,7 @@ public class cilc
 
 		H.WriteLine ();
 
-		if (IsRegistered (t.BaseType))
+		if (IsRegistered (t.BaseType) && !IsExternal (t.BaseType))
 			H.WriteLine ("#include \"" + NsToFlat (t.BaseType.Namespace).ToLower () + t.BaseType.Name.ToLower () + ".h\"");
 
 		foreach (string ext_ns in namespaces)
@@ -668,18 +668,24 @@ public class cilc
 	//FIXME: clean up this mess with hits as the type registry uses strings
 
 	static ArrayList registered_types = new ArrayList ();
-	static ArrayList registered_byvals = new ArrayList ();
+	static ArrayList byval_types = new ArrayList ();
+	static ArrayList external_types = new ArrayList ();
 	static Hashtable registry_hits = new Hashtable ();
 
 	static bool IsRegisteredByVal (Type t)
 	{
-		return registered_byvals.Contains (CsTypeToFlat (t));
+		return byval_types.Contains (CsTypeToFlat (t));
+	}
+
+	static bool IsExternal (Type t)
+	{
+		return external_types.Contains (CsTypeToFlat (t));
 	}
 
 	static void RegisterByVal (string tn)
 	{
 		//TODO: warn on dupes
-		registered_byvals.Add (tn);
+		byval_types.Add (tn);
 	}
 
 	static void RegisterByVal (Type t)
@@ -733,6 +739,7 @@ public class cilc
 			return false;
 		}
 
+		external_types.Add (G);
 		registered_types.Add (G);
 		return true;
 	}

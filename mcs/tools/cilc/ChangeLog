@@ -5,6 +5,7 @@
 	Convert the type registry management and reporting methods to use strings,
 	making way for tie-in with native GObject hierarchies.
 	Recursive conflict avoidance for the GObject class struct etc.
+	Add check to see if a registered type IsExternal
 	Treat byref values properly.
 	Support tie-in with existing GObject hierarchy.
 	Use argc parity to decide the generation mode.
