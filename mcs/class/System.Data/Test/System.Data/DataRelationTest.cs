@@ -144,7 +144,6 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
-		[ExpectedException (typeof(InvalidConstraintException))]
 		public void InvalidConstraintException2 ()
 		{
 			// Parent Columns and Child Columns don't have type-matching columns.
@@ -152,6 +151,7 @@ namespace MonoTests.System.Data
 			
 			DataRelation Relation = new DataRelation ("Rel", Mom.Columns [1], Child.Columns [1], true);
 			Set.Relations.Add (Relation);
+			AssertEquals("test#01", 1, Set.Relations.Count);
 			
 			Child.Columns [1].DataType = Type.GetType ("System.Double");
 		}
