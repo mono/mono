@@ -215,8 +215,7 @@ namespace System
 					if (String.Compare (info.Name, name, ignoreCase) != 0) 
 						continue;
 
-					if (returnType != null)
-						if (info.GetGetMethod().ReturnType != returnType)
+					if (returnType != null && info.PropertyType != returnType)
 							continue;
 
 					if (types.Length > 0) {

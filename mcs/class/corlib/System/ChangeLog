@@ -1,3 +1,9 @@
+
+2003-06-11  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* MonoType.cs: don't throw nullref when the return type for a property
+	is specified and the property doesn't have a get accessor.
+
 2003-06-10  Duncan Mak  <duncan@ximian.com>
 
 	* Array.cs (CreateInstance): Fixed a typo. It should throw
