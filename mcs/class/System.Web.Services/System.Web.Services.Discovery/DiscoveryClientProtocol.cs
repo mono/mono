@@ -127,6 +127,7 @@ namespace System.Web.Services.Discovery {
 				doc = new DiscoveryDocument ();
 				refe = new ContractReference ();
 				doc.References.Add (refe);
+				refe.Url = url;
 				((ContractReference)refe).ResolveInternal (this, wsdl);
 			}
 			else

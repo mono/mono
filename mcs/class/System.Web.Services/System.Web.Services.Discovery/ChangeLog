@@ -1,3 +1,9 @@
+2004-05-24  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* ContractReference.cs: convert relative import uris to absolute uris.
+	* DiscoveryClientProtocol.cs: Before resolving a reference, always
+	  set the Url property.
+
 2004-03-10  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* ContractReference.cs, DiscoveryDocumentReference.cs: Delegate handling 

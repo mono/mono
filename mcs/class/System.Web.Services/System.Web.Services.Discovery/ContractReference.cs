@@ -114,10 +114,15 @@ namespace System.Web.Services.Discovery {
 			
 			foreach (Import import in wsdl.Imports)
 			{
-				if (prot.Documents.Contains (import.Location)) 	// Already resolved
-					continue;
+				// Make relative uris to absoulte
 				
-				string url = import.Location;
+				Uri uri = new Uri (Url);
+				uri = new Uri (uri, import.Location);
+				string url = uri.ToString ();
+
+				if (prot.Documents.Contains (url)) 	// Already resolved
+					continue;
+
 				try
 				{
 					string contentType = null;
