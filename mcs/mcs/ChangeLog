@@ -1,3 +1,9 @@
+2004-11-18  Martin Baulig  <martin@ximian.com>
+
+	Merged latest changes into gmcs.  Please keep this comment in
+	here, it makes it easier for me to see what changed in MCS since
+	the last time I merged.
+
 2004-11-17  Raja R Harinath  <rharinath@novell.com>
 
 	* typemanager.cs (TypeHandle.GetTypeHandle): Make private.
@@ -100,12 +106,6 @@
 2004-11-14  Ben Maurer  <bmaurer@ximian.com>
 
 	* statement.cs: Avoid adding bools to a hashtable.
-
-2004-11-10  Martin Baulig  <martin@ximian.com>
-
-	Merged latest changes into gmcs.  Please keep this comment in
-	here, it makes it easier for me to see what changed in MCS since
-	the last time I merged.
 
 2004-11-07  Miguel de Icaza  <miguel@ximian.com>
 
