@@ -1,3 +1,8 @@
+2004-06-02  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* TraceData.cs: html-encode the messages written to the trace. Fixes
+	bug #59431.
+
 2004-06-01  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpWorkerRequest.cs: the hashtables are now case-insensitive. Thanks

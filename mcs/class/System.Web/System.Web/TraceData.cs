@@ -114,7 +114,7 @@ namespace System.Web {
 
 			DataRow r = info.NewRow ();
 			r ["Category"] = category;
-			r ["Message"] = msg;
+			r ["Message"] = HtmlEncode (msg);
 			r ["Exception"] = (error != null ? error.ToString () : null);
 			r ["TimeSinceFirst"] = time;
 			r ["IsWarning"] = Warning;
@@ -122,6 +122,16 @@ namespace System.Web {
 			info.Rows.Add (r);
 		}
 
+		static string HtmlEncode (string s)
+		{
+			if (s == null)
+				return s;
+
+			string res = HttpUtility.HtmlEncode (s);
+			res = res.Replace ("\r\n", "<br />");
+			return res.Replace (" ", "&nbsp;");
+		}
+		
 		public void AddControlTree (Page page)
 		{
 			AddControl (page, 0);
