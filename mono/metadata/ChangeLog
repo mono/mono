@@ -1,5 +1,22 @@
 2003-10-14  Martin Baulig  <martin@ximian.com>
 
+	* icall.c: The generics API has changed in the spec since it was
+	added to System.Type; these modifications make it match the spec
+	again.
+	(ves_icall_Type_GetGenericParameters): Renamed to
+	`ves_icall_Type_GetGenericArguments'.
+	(ves_icall_Type_get_IsGenericTypeDefinition): New interncall.
+	(ves_icall_MonoType_get_HasGenericParameteres): Renamed to
+	`ves_icall_MonoType_get_HasGenericArguments'.
+	(ves_icall_MonoType_get_IsUnboundGenericParameter): Renamed to
+	`ves_icall_MonoType_get_IsGenericParameter'.
+	(ves_icall_MonoType_get_HasUnboundGenericParameters): Removed;
+	this is no interncall anymore.
+	(ves_icall_TypeBuilder_get_IsUnboundGenericParameter): Renamed to
+	`ves_icall_TypeBuilder_get_IsGenericParameter'.
+
+2003-10-14  Martin Baulig  <martin@ximian.com>
+
 	* reflection.c (mono_reflection_bind_generic_parameters): Also
 	inflate generic methods if we're reading the class from IL.
 
