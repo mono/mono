@@ -492,10 +492,9 @@ namespace System
 			}
 		}
 
-		public override Module Module {
-			get {
-				return null;
-			}
+		public extern override Module Module {
+			[MethodImplAttribute(MethodImplOptions.InternalCall)]
+			get;
 		}
 
 		public override Type DeclaringType {
