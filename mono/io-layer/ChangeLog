@@ -1,3 +1,8 @@
+2004-05-27  Dick Porter  <dick@ximian.com>
+
+	* io.h:
+	* io.c: Implemented LockFile() and UnlockFile()
+
 2004-05-21  Dick Porter  <dick@ximian.com>
 
 	* io.c (CreateFile): Check for existing share modes when opening

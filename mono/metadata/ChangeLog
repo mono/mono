@@ -1,3 +1,11 @@
+2004-05-27  Dick Porter  <dick@ximian.com>
+
+	* icall.c:
+	* file-io.c: Implemented icalls for locking and unlocking regions
+	in a file.
+	(ves_icall_System_IO_MonoIO_FindNextFile): FindNextFile() returns
+	FALSE on error (fixes both compiler warning and real bug.)
+
 2004-05-27  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* culture-info-tables.h: reflecting locale-builder updates.
