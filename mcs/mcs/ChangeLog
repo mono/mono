@@ -1,3 +1,22 @@
+2003-07-17  Miguel de Icaza  <miguel@ximian.com>
+
+	* expression.cs (LocalVariableReference.Emit, EmitAssign,
+	AddressOf): Do not use EmitThis, that was wrong, use the actual
+	this pointer.
+
+2003-07-15  Miguel de Icaza  <miguel@ximian.com>
+
+	* class.cs (MethodData.Define): While checking if a method is an
+	interface implementation, improve the test: If we are not public
+	(use new test here: use the computed MethodAttributes directly,
+	instead of the parsed modifier flags) check if the `implementing'
+	method comes from an interface or not.
+
+	* pending.cs (VerifyPendingMethods): Slightly better error
+	message.
+
+	* makefile: add test target that does the mcs bootstrap.
+
 2003-07-16  Ravi Pratap  <ravi@ximian.com>
 
 	* interface.cs (Define): Do nothing here since there are no

@@ -34,7 +34,6 @@ namespace Mono.CSharp {
 			
 		public NullLiteral ()
 		{
-			Driver.counter1++;
 			eclass = ExprClass.Value;
 		}
 		

@@ -3526,7 +3526,7 @@ namespace Mono.CSharp {
 			ILGenerator ig = ec.ig;
 
 			if (local_info.LocalBuilder == null){
-				ec.EmitThis ();
+				ig.Emit (OpCodes.Ldarg_0);
 				ig.Emit (OpCodes.Ldfld, local_info.FieldBuilder);
 			} else 
 				ig.Emit (OpCodes.Ldloc, local_info.LocalBuilder);
@@ -3541,7 +3541,7 @@ namespace Mono.CSharp {
 			local_info.Assigned = true;
 
 			if (local_info.LocalBuilder == null){
-				ec.EmitThis ();
+				ig.Emit (OpCodes.Ldarg_0);
 				source.Emit (ec);
 				ig.Emit (OpCodes.Stfld, local_info.FieldBuilder);
 			} else {
@@ -3552,11 +3552,13 @@ namespace Mono.CSharp {
 		
 		public void AddressOf (EmitContext ec, AddressOp mode)
 		{
+			ILGenerator ig = ec.ig;
+			
 			if (local_info.LocalBuilder == null){
-				ec.EmitThis ();
-				ec.ig.Emit (OpCodes.Ldflda, local_info.FieldBuilder);
+				ig.Emit (OpCodes.Ldarg_0);
+				ig.Emit (OpCodes.Ldflda, local_info.FieldBuilder);
 			} else
-				ec.ig.Emit (OpCodes.Ldloca, local_info.LocalBuilder);
+				ig.Emit (OpCodes.Ldloca, local_info.LocalBuilder);
 		}
 
 		public override string ToString ()
