@@ -29,9 +29,12 @@
 //	Jaak Simm		jaaksimm@firm.ee
 //	John Sohn		jsohn@columbus.rr.com
 //
-// $Revision: 1.41 $
+// $Revision: 1.42 $
 // $Modtime: $
 // $Log: Control.cs,v $
+// Revision 1.42  2004/08/21 19:28:22  pbartok
+// - Implemented ContainsFocus
+//
 // Revision 1.41  2004/08/21 19:26:24  pbartok
 // - Implemented CausesValidation
 //
@@ -840,7 +843,16 @@ namespace System.Windows.Forms
 
 		public bool ContainsFocus {
 			get {
-				throw new NotImplementedException();
+				if (this.Focused) {
+					return true;
+				}
+
+				for (int i=0; i < child_controls.Count; i++) {
+					if (child_controls[i].Focused) {
+						return true;
+					}
+				}
+				return false;
 			}
 		}
 #if notdef
