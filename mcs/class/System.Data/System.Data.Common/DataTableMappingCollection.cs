@@ -16,8 +16,8 @@ namespace System.Data.Common
 	/// A collection of DataTableMapping objects. This class cannot be inherited.
 	/// </summary>
 	public sealed class DataTableMappingCollection :
-		MarshalByRefObject, ITableMappingCollection, IList,
-		ICollection, IEnumerable
+	MarshalByRefObject, // ITableMappingCollection, IList,
+	        IEnumerable //ICollection, 
 	{
 		[MonoTODO]
 		public DataTableMappingCollection() {
@@ -123,6 +123,12 @@ namespace System.Data.Common
 		public DataTableMapping this[string s] {
 			get { throw new NotImplementedException (); }
 			set { throw new NotImplementedException (); }
+		}
+
+		[MonoTODO]
+		public IEnumerator GetEnumerator ()
+		{
+			throw new NotImplementedException ();
 		}
 	}
 }

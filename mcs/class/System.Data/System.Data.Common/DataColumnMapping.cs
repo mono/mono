@@ -14,7 +14,7 @@ namespace System.Data.Common
 	/// <summary>
 	/// Contains a generic column mapping for an object that inherits from DataAdapter. This class cannot be inherited.
 	/// </summary>
-	public sealed class DataColumnMapping : MarshalByRefObject, IColumnMapping, ICloneable
+	public sealed class DataColumnMapping : MarshalByRefObject //, IColumnMapping, ICloneable
 	{
 		private string srcColumn;
 		private string dsColumn;

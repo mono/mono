@@ -14,7 +14,7 @@ namespace System.Data.Common
 	/// <summary>
 	/// Contains a description of a mapped relationship between a source table and a DataTable. This class is used by a DataAdapter when populating a DataSet.
 	/// </summary>
-	public sealed class DataTableMapping : MarshalByRefObject, ITableMapping, ICloneable
+	public sealed class DataTableMapping : MarshalByRefObject // , ITableMapping, ICloneable
 	{
 		[MonoTODO]
 		public DataTableMapping() {

@@ -156,5 +156,11 @@ namespace System.Data.Common
 		protected abstract void OnRowUpdating(RowUpdatingEventArgs value);
 		
 		public event FillErrorEventHandler FillError;
+
+		[MonoTODO]
+		public object Clone ()
+		{
+			throw new NotImplementedException ();
+		}
 	}
 }

@@ -19,7 +19,7 @@ namespace System.Data.Common
 		private SecurityAction securityAction;
 		private bool allowBlankPassword;
 
-		protected DBDataPermissionAttribute (SecurityAction action) {
+		protected DBDataPermissionAttribute (SecurityAction action) : base (action) {
 			securityAction = action;
 			allowBlankPassword = false;
 		}

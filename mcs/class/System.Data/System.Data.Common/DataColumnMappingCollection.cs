@@ -17,8 +17,8 @@ namespace System.Data.Common
 	/// Contains a collection of DataColumnMapping objects. This class cannot be inherited.
 	/// </summary>
 	public sealed class DataColumnMappingCollection :
-		MarshalByRefObject, IColumnMappingCollection, IList,
-		ICollection, IEnumerable
+	MarshalByRefObject // IColumnMappingCollection, IList,
+	// ICollection, IEnumerable
 	{
 		private DataColumnMapping[] mappings = null;
 		private int size = 0;
@@ -33,7 +33,7 @@ namespace System.Data.Common
 				Array.Copy (mappings, tmp, size);
 			size++;
 			mappings = tmp;
-			mappings[size - 1] = obj;
+			mappings[size - 1] = (DataColumnMapping) obj;
 
 			return size;
 		}

@@ -15,7 +15,7 @@ namespace System.Data.Common
 	/// <summary>
 	/// Represents a set of data commands and a database connection that are used to fill the DataSet and update the data source.
 	/// </summary>
-	public abstract class DataAdapter : Component, IDataAdapter
+	public abstract class DataAdapter : Component // , IDataAdapter
 	{
 		private bool acceptChangesDuringFill;
 		private bool continueUpdateOnError;
@@ -40,13 +40,19 @@ namespace System.Data.Common
 
 		public abstract int Update (DataSet dataSet);
 
-		protected virtual DataAdapter CloneInternals () {
+		protected virtual DataAdapter CloneInternals ()
+		{
+			throw new NotImplementedException ();
 		}
 
-		protected virtual DataTableMappingCollection CreateTableMappings () {
+		protected virtual DataTableMappingCollection CreateTableMappings ()
+		{
+			throw new NotImplementedException ();
 		}
 
-		protected virtual bool ShouldSerializeTableMappings () {
+		protected virtual bool ShouldSerializeTableMappings ()
+		{
+			throw new NotImplementedException ();
 		}
 		
 		public bool AcceptChangesDuringFill {
