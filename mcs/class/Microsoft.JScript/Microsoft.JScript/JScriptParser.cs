@@ -4417,9 +4417,12 @@ _loop147_breakloop:				;
 		}
 	}
 	
-	public void function_expression() //throws RecognitionException, TokenStreamException
+	public FunctionExpression  function_expression() //throws RecognitionException, TokenStreamException
 {
+		FunctionExpression fe;
 		
+		Token  id = null;
+		fe = new FunctionExpression ();
 		
 		try {      // for error handling
 			match(LITERAL_function);
@@ -4428,7 +4431,12 @@ _loop147_breakloop:				;
 				{
 				case IDENTIFIER:
 				{
+					id = LT(1);
 					match(IDENTIFIER);
+					if (0==inputState.guessing)
+					{
+						fe.Function.Name = id.getText ();
+					}
 					break;
 				}
 				case LPAREN:
@@ -4447,7 +4455,7 @@ _loop147_breakloop:				;
 				{
 				case IDENTIFIER:
 				{
-					formal_parameter_list(null);
+					formal_parameter_list(fe.Function.Params);
 					break;
 				}
 				case RPAREN:
@@ -4462,7 +4470,7 @@ _loop147_breakloop:				;
 			}
 			match(RPAREN);
 			match(LBRACE);
-			function_body(null);
+			function_body(fe.Function.Body);
 			match(RBRACE);
 		}
 		catch (RecognitionException ex)
@@ -4478,6 +4486,7 @@ _loop147_breakloop:				;
 				throw;
 			}
 		}
+		return fe;
 	}
 	
 	public void argument_list() //throws RecognitionException, TokenStreamException

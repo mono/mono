@@ -628,9 +628,13 @@ property_name
 expression: assignment_expression (COMMA  expression | ) ;
 
 
-function_expression
+function_expression returns [FunctionExpression fe]
+{ fe = new FunctionExpression (); }
     :
-	"function" (IDENTIFIER | ) LPAREN (formal_parameter_list [null] | ) RPAREN LBRACE function_body [null] RBRACE
+	"function" 
+	(id:IDENTIFIER { fe.Function.Name = id.getText (); } | ) 
+	LPAREN (formal_parameter_list [fe.Function.Params] | ) RPAREN 
+	LBRACE function_body [fe.Function.Body] RBRACE
     ;
 
 

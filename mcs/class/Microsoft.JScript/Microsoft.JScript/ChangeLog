@@ -1,5 +1,15 @@
 2003-09-20    <cesar@ciencias.unam.mx>
 
+	* jscript-lexer-parser.g: Build ast for FunctionExpression.
+
+	* JSObject.cs: we don't throw NotImplementedException anymore,
+	this let us use FunctionExpression to build the ast.
+
+	* FunctionExpression.cs: Added a FunctionObject as field, a
+	default constructor.
+
+	* FunctionObject.cs: Added default constructor.
+
 	* driver.cs: Deleted the Jsc class. We are not generating code
 	now. I'm moving to provide something like mcs's EmitContext
 	instead of the CodeGenerator class having the Reflection.Emit

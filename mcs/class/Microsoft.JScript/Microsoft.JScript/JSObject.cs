@@ -16,9 +16,7 @@ namespace Microsoft.JScript.Tmp
 	public class JSObject : ScriptObject, IEnumerable, IExpando
 	{
 		public JSObject ()
-		{
-			throw new NotImplementedException ();
-		}
+		{}
 
 		public FieldInfo AddField (string name)
 		{
