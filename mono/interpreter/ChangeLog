@@ -1,4 +1,9 @@
 
+Wed Feb 13 16:17:38 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* interp.c: fixed newobj implementation for valuetypes bug found by
+	dietmar. sub.ovf dummy code.
+
 Tue Feb 12 14:08:47 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	* hacks.h: check against redefining preprocessor symbol.
