@@ -1,3 +1,7 @@
+2002-01-25  Nick Drochak  <ndrochak@gol.com>
+
+	* .cvsignore: ignore .dll files now since we build NUnitCore.dll ourselves
+
 2002-01-18  Duncan Mak  <duncan@ximian.com>
 
 	* EnumCheck.cs: A checkin for Miguel to make EnumCheck not hardcode
