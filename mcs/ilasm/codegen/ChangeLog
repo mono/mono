@@ -1,4 +1,10 @@
-2003-08-04 Jackson Harper <jackson@latitudegeo.com>
+2003-08-03 Jackson Harper <jackson@latitudegeo.com>
+
+	* TypeDef.cs: Make types into value types if specified. Also
+	add the functionality to make types into Enums.
+	TODO: Value types of nested classes.
+
+2003-08-03 Jackson Harper <jackson@latitudegeo.com>
 
 	* LabelInfo.cs: Move this type outside of MethodDef, because other
 	types use LabelInfos for label references now.

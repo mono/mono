@@ -39,6 +39,9 @@ namespace Mono.ILASM {
                 private int size;
                 private int pack;
 
+		private bool is_value_class;
+		private bool is_enum_class;
+
                 public TypeDef (PEAPI.TypeAttr attr, string name_space, string name,
                                 IClassRef parent, ArrayList impl_list, Location location)
                 {
@@ -56,6 +59,9 @@ namespace Mono.ILASM {
 
                         is_defined = false;
                         is_intransit = false;
+
+			is_value_class = false;
+			is_value_class = false;
                 }
 
                 public string Name {
@@ -94,6 +100,16 @@ namespace Mono.ILASM {
                 public PropertyDef CurrentProperty {
                         get { return current_property; }
                 }
+
+		public void MakeValueClass ()
+		{
+			is_value_class = true;
+		}
+
+		public void MakeEnumClass ()
+		{
+			is_enum_class = true;
+		}
 
                 public void SetSize (int size)
                 {
@@ -202,8 +218,14 @@ namespace Mono.ILASM {
                                         classdef = outer.PeapiType.AddNestedClass (attr,
                                                         name_space, name, parent.PeapiClass);
                                 } else {
-                                        classdef = code_gen.PEFile.AddClass (attr,
-                                                name_space, name, parent.PeapiClass);
+					if (is_value_class) {
+						// Should probably confirm that the parent is System.ValueType
+						classdef = code_gen.PEFile.AddValueClass (attr,
+                                                	name_space, name);
+					} else {
+                                        	classdef = code_gen.PEFile.AddClass (attr,
+                                                	name_space, name, parent.PeapiClass);
+					}
                                 }
                         } else {
                                 if (outer != null) {
@@ -212,8 +234,13 @@ namespace Mono.ILASM {
                                         classdef = outer.PeapiType.AddNestedClass (attr,
                                                 name_space, name);
                                 } else {
-                                        classdef = code_gen.PEFile.AddClass (attr,
-                                                name_space, name);
+					if (is_value_class) {
+                                        	classdef = code_gen.PEFile.AddValueClass (attr,
+                                                	name_space, name);
+					} else {
+						classdef = code_gen.PEFile.AddClass (attr,
+                                                	name_space, name);
+					}
                                 }
                         }
 
