@@ -164,7 +164,21 @@ namespace System.Data.Common {
 
 		public DataColumnMapping GetByDataSetColumn (string value) 
 		{
-			return (DataColumnMapping)(dataSetColumns[value]);
+			// this should work case-insenstive.
+			if (!(dataSetColumns[value] == null))
+				return (DataColumnMapping)(dataSetColumns[value]);
+			else {
+				string lowcasevalue = value.ToLower();
+				object [] keyarray = new object[dataSetColumns.Count];
+				dataSetColumns.Keys.CopyTo(keyarray,0);
+				for (int i=0; i<keyarray.Length; i++) {
+					string temp = (string) keyarray[i];
+					if (lowcasevalue.Equals(temp.ToLower()))
+						return (DataColumnMapping)(dataSetColumns[keyarray[i]]);
+				}
+				return null;
+			
+			}	
 		}
 
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
@@ -214,7 +228,24 @@ namespace System.Data.Common {
 
 		public int IndexOfDataSetColumn (string value) 
 		{
-			return list.IndexOf (dataSetColumns[value]);
+			// this should work case-insensitive
+					
+			 if (!(dataSetColumns[value] == null))
+                                return list.IndexOf (dataSetColumns[value]);
+                        else {
+	                        string lowcasevalue = value.ToLower();
+				object [] keyarray = new object[dataSetColumns.Count];
+                                dataSetColumns.Keys.CopyTo(keyarray,0);
+                                for (int i=0; i<keyarray.Length; i++) {
+					string temp = (string) keyarray[i];
+					if (lowcasevalue.Equals(temp.ToLower()))
+						return list.IndexOf (dataSetColumns[keyarray[i]]);
+
+                                }
+                                return -1;
+                                                                                                    
+                        }
+	
 		}
 
 		public void Insert (int index, object value) 

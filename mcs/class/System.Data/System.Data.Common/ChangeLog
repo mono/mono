@@ -1,3 +1,7 @@
+2004-06-09 Umadevi S <sumadevi@novell.com>
+	* DataColumnMappingCollection.cs - fixed nunit testcase errors
+	- GetByDataSetColumn,IndexOfDataSetColumn, Remove methods.	
+
 2004-06-08 Umadevi S <sumadevi@novell.com>
 	* DataColumnMappingCollection.cs - fixed nunit testcase errors.
 	- remove, removeat, contains methods.
