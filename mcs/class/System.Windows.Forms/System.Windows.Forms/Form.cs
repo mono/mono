@@ -901,7 +901,7 @@
     
     		protected override void ScaleCore (float x, float y)
     		{
-    			base.ScaleCore (x, y);
+			ClientSize = new Size ( (int) ( ClientSize.Width * x ), (int) ( ClientSize.Height * y) );
     		}
     
     		protected override void SetBoundsCore (

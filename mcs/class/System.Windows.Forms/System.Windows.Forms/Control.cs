@@ -2140,20 +2140,29 @@
     		[MonoTODO]
     		public void Scale (float ratio) 
     		{
-				//FIXME:
-			}
+			Scale ( ratio, ratio );
+		}
     		
     		[MonoTODO]
     		public void Scale (float dx,float dy) 
     		{
-				//FIXME:
+			SuspendLayout();
+			ScaleCore ( dx, dy );
+			IEnumerator cw = childControls.GetEnumerator();
+			while ( cw.MoveNext() ) {
+				Control control = (Control) cw.Current;
+				control.Scale ( dx, dy );
 			}
+			ResumeLayout();
+		}
     		
     		[MonoTODO]
     		protected virtual void ScaleCore (float dx, float dy) 
     		{
-				//FIXME:
-			}
+			Location   = new Point ( (int) (Left * dx), (int) (Top * dy) );
+			ClientSize = new Size  ((int) ( ClientSize.Width * dx ),
+						(int) ( ClientSize.Height * dy) );
+		}
     		
     		[MonoTODO]
     		public void Select () 
@@ -2979,8 +2988,8 @@
     			public virtual void Add (Control value) 
     			{
 					if( !Contains(value)) {
-						value.Parent = owner;
 						collection.Add (value);
+						value.Parent = owner;
 					}
 				}
     			
