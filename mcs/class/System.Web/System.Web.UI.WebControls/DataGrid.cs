@@ -958,7 +958,7 @@ namespace System.Web.UI.WebControls
 				if (headerStyle != null)
 					item.MergeStyle (headerStyle);
 
-				break;
+				goto case ListItemType.Separator;
 			case ListItemType.Footer:
 				if (!ShowFooter) {
 					item.Visible = false;
@@ -968,7 +968,7 @@ namespace System.Web.UI.WebControls
 				if (footerStyle != null)
 					item.MergeStyle (footerStyle);
 
-				break;
+				goto case ListItemType.Separator;
 			case ListItemType.Item  :
 				item.MergeStyle (itemStyle);
 				goto case ListItemType.Separator;
@@ -1033,8 +1033,11 @@ namespace System.Web.UI.WebControls
 							case ListItemType.Footer:
 								colStyle = cols [i].FooterStyleInternal;
 								break;
+							default:
+								colStyle = cols [i].ItemStyleInternal;
+								break;
 							}
-							item.MergeStyle (colStyle);
+							cells[i].MergeStyle (colStyle);
 						} else {
 							cells [i].Visible = false;
 						}

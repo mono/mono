@@ -1,3 +1,8 @@
+2004-01-07 Alon Gazit <along@mainsoft.com>
+	* DataGrid.cs: Fixed PrepareControlHierarchyForItem().
+	merge the column's style to the cell's style and not to
+	the item's(row) style.	
+
 2004-01-04 Alon Gazit <along@mainsoft.com>
 	* RangeValidator.cs: Fixed ControlPropertiesValid().
 	
