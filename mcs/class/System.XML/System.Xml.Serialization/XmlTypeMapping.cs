@@ -519,8 +519,9 @@ namespace System.Xml.Serialization
 				string[] enumNames = enumValue.ToString().Split (',');
 				foreach (string name in enumNames)
 				{
+					string tname = name.Trim();
 					foreach (EnumMapMember mem in _members)
-						if (mem.EnumName == name.Trim()) {
+						if (mem.EnumName == tname) {
 							sb.Append (mem.XmlName).Append (' ');
 							break;
 						}
@@ -558,13 +559,7 @@ namespace System.Xml.Serialization
 			foreach (EnumMapMember mem in _members)
 				if (mem.XmlName == xmlName) return mem.EnumName;
 				
-			try {
-				Int64.Parse (xmlName);
-				return xmlName;
-			}
-			catch {
-				throw new InvalidOperationException ("Invalid enumeration value: " + xmlName);
-			}
+			return null;
 		}
 	}
 }

@@ -158,7 +158,7 @@ namespace System.Xml.Serialization {
 		private string CurrentTag ()
 		{
 			switch (reader.NodeType) {
-			case XmlNodeType.None:
+			case XmlNodeType.Element:
 				return String.Format ("<{0} xmlns='{1}'>", reader.LocalName,
 									   reader.NamespaceURI);
 			case XmlNodeType.Attribute:
@@ -178,7 +178,7 @@ namespace System.Xml.Serialization {
 
 		protected Exception CreateAbstractTypeException (string name, string ns)
 		{
-			string message = "Error at " + name + " " + ns + ":" + CurrentTag ();
+			string message = "The specified type is abstrace: name='" + name + "' namespace='" + ns + "', at " + CurrentTag ();
 			return new InvalidOperationException (message);
 		}
 
@@ -204,13 +204,13 @@ namespace System.Xml.Serialization {
 
 		protected Exception CreateUnknownNodeException ()
 		{
-			string message = "Unknown xml node -> " + CurrentTag ();
+			string message = CurrentTag () + " was not expected";
 			return new InvalidOperationException (message);
 		}
 
 		protected Exception CreateUnknownTypeException (XmlQualifiedName type)
 		{
-			string message = "Unknown type " + type.Namespace + ":" + type.Name + " " + CurrentTag ();
+			string message = "The specified type was not recognized: name='" + type.Name + "' namespace='" + type.Namespace + "', at " + CurrentTag ();
 			return new InvalidOperationException (message);
 		}
 

@@ -61,7 +61,7 @@ namespace System.Xml.Serialization
 			if (_typeMap is XmlTypeMapping)
 			{
 				if (_format == SerializationFormat.Literal)
-					return ReadObject ((XmlTypeMapping)_typeMap, true, true);
+					return ReadRoot ((XmlTypeMapping)_typeMap);
 				else
 					return ReadEncodedObject ((XmlTypeMapping)_typeMap);
 			}
@@ -129,6 +129,15 @@ namespace System.Xml.Serialization
 
 			return parameters;
 		}
+
+		object ReadRoot (XmlTypeMapping rootMap)
+		{
+			if (Reader.LocalName != rootMap.ElementName || Reader.NamespaceURI != rootMap.Namespace)
+				throw CreateUnknownNodeException();
+				
+			return ReadObject (rootMap, true, true);
+		}		
+
 
 		protected virtual object ReadObject (XmlTypeMapping typeMap, bool isNullable, bool checkType)
 		{
@@ -624,7 +633,9 @@ namespace System.Xml.Serialization
 		object GetEnumValue (XmlTypeMapping typeMap, string val)
 		{
 			EnumMap map = (EnumMap) typeMap.ObjectMap;
-			return Enum.Parse (typeMap.TypeData.Type, map.GetEnumName (val));
+			string ev = map.GetEnumName (val);
+			if (ev == null) throw CreateUnknownConstantException (val, typeMap.TypeData.Type);
+			return Enum.Parse (typeMap.TypeData.Type, ev);
 		}
 
 		object ReadXmlSerializableElement (XmlTypeMapping typeMap, bool isNullable)

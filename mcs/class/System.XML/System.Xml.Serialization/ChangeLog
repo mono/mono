@@ -1,4 +1,17 @@
-2003-12-11  Lluis Sanchez Gual <lluis@ximian.com>
+2003-12-15  Lluis Sanchez Gual <lluis@ximian.com>
+	
+	* XmlReflectionImporter.cs: Type specified with XmlIncludeAttribute don't
+	  need to be derived types of the includer. This fixes bug #52152.
+	  Added null check for Name property of XmlEnumAttribute. This fixes
+	  bug #52155.
+	* XmlSerializationReader.cs: Fixed some error messages.
+	* XmlSerializationReaderInterpreter.cs: Check that the root element has
+	  the correct local name and namespace. This fixes bug #52038.
+	  Throw exception if enum value can't be parsed.
+	* XmlTypeMapping.cs: Don't try to parse numeric enum values. This fixes
+	  bug #52041.
+	
+2003-12-12  Lluis Sanchez Gual <lluis@ximian.com>
 	
 	* MapCodeGenerator.cs: Added support for [Flags] enum.
 	* XmlCodeExporter.cs: Do not add XmlElement attributes if the member is Any.
@@ -6,6 +19,15 @@
 	  encoded array type. Added support for enums with [Flags].
 	  In encoded format, unqualified types are schema types by default.
 	
+2003-12-11  Lluis Sanchez Gual <lluis@ximian.com>
+	
+	* XmlCodeExporter.cs: Little fix.
+	* XmlSchemaExporter.cs: In rpc format, make sure that parameters with the
+	  same name have the same type.
+	* XmlSchemaImporter.cs: Support xml:lang.
+	* XmlSerializationReader.cs, XmlSerializationWriterInterpreter.cs: 
+	  fixed wrong namespace for the arrayType attribute.
+
 2003-12-08  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* SoapReflectionImporter.cs, XmlMembersMapping.cs, XmlReflectionImporter.cs,

@@ -194,10 +194,10 @@ namespace System.Xml.Serialization {
 			helper.RegisterClrType (map, type, map.Namespace);
 			helper.RegisterSchemaType (map, map.XmlType, map.Namespace);
 
+			// Import members
+
 			ClassMap classMap = new ClassMap ();
 			map.ObjectMap = classMap;
-
-			// Import members
 
 //			try
 //			{
@@ -212,18 +212,9 @@ namespace System.Xml.Serialization {
 //				throw helper.CreateError (map, ex.Message);
 //			}
 
-			// Import derived classes
-
-			XmlIncludeAttribute[] includes = (XmlIncludeAttribute[])type.GetCustomAttributes (typeof (XmlIncludeAttribute), false);
-			for (int n=0; n<includes.Length; n++)
-			{
-				Type includedType = includes[n].Type;
-				if (!includedType.IsSubclassOf(type)) throw helper.CreateError (map, "Type '" + includedType.FullName + "' is not a subclass of '" + type.FullName + "'");
-
-				XmlTypeMapping derived = ImportTypeMapping (includedType, root, defaultNamespace);
-				map.DerivedTypes.Add (derived);
-				map.DerivedTypes.AddRange (derived.DerivedTypes);
-			}
+			ImportIncludedTypes (type, defaultNamespace);
+			
+			// Import extra classes
 
 			if (type == typeof (object) && includedTypes != null)
 			{
@@ -231,14 +222,21 @@ namespace System.Xml.Serialization {
 					map.DerivedTypes.Add (ImportTypeMapping (intype, defaultNamespace));
 			}
 
-			// Register this map as a derived class of object
+			// Register inheritance relations
 
-			if (typeData.Type != typeof(object))
-				ImportTypeMapping (typeof(object)).DerivedTypes.Add (map);
-
-			if (type.BaseType != null && type.BaseType != typeof(object)) {
-				map.BaseMap = ImportClassMapping (type.BaseType, root, defaultNamespace);
-				if (((ClassMap)map.BaseMap.ObjectMap).HasSimpleContent && classMap.ElementMembers.Count != 1)
+			if (type.BaseType != null)
+			{
+				XmlTypeMapping bmap = ImportClassMapping (type.BaseType, root, defaultNamespace);
+				
+				if (type != typeof (object))
+					map.BaseMap = bmap;
+				
+				// At this point, derived classes of this map must be already registered
+				
+				bmap.DerivedTypes.Add (map);
+				bmap.DerivedTypes.AddRange (map.DerivedTypes);
+				
+				if (((ClassMap)bmap.ObjectMap).HasSimpleContent && classMap.ElementMembers != null && classMap.ElementMembers.Count != 1)
 					throw new InvalidOperationException (String.Format (errSimple, map.TypeData.TypeName, map.BaseMap.TypeData.TypeName));
 			}
 			
@@ -368,6 +366,8 @@ namespace System.Xml.Serialization {
 			helper.RegisterSchemaType (map, name, defaultNamespace);
 			ImportTypeMapping (typeof(object)).DerivedTypes.Add (map);
 
+			ImportIncludedTypes (type, defaultNamespace);
+			
 			return map;
 		}
 
@@ -420,11 +420,12 @@ namespace System.Xml.Serialization {
 			foreach (string name in names)
 			{
 				MemberInfo[] mem = type.GetMember (name);
-				string xmlName = name;
+				string xmlName = null;
 				object[] atts = mem[0].GetCustomAttributes (typeof(XmlIgnoreAttribute), false);
 				if (atts.Length > 0) continue;
 				atts = mem[0].GetCustomAttributes (typeof(XmlEnumAttribute), false);
 				if (atts.Length > 0) xmlName = ((XmlEnumAttribute)atts[0]).Name;
+				if (xmlName == null) xmlName = name;
 				members.Add (new EnumMap.EnumMapMember (xmlName, name));
 			}
 
@@ -442,6 +443,16 @@ namespace System.Xml.Serialization {
 			map = CreateTypeMapping (typeData, root, null, defaultNamespace);
 			helper.RegisterClrType (map, type, map.Namespace);
 			return map;
+		}
+
+		void ImportIncludedTypes (Type type, string defaultNamespace)
+		{
+			XmlIncludeAttribute[] includes = (XmlIncludeAttribute[])type.GetCustomAttributes (typeof (XmlIncludeAttribute), false);
+			for (int n=0; n<includes.Length; n++)
+			{
+				Type includedType = includes[n].Type;
+				ImportTypeMapping (includedType, null, defaultNamespace);
+			}
 		}
 
 		public ICollection GetReflectionMembers (Type type)
