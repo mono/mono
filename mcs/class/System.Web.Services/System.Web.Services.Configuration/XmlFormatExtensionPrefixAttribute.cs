@@ -8,7 +8,7 @@
 //
 
 namespace System.Web.Services.Configuration {
-	[AttributeUsage (AttributeTargets.Class)]
+	[AttributeUsage (AttributeTargets.Class, AllowMultiple = true)]
 	public sealed class XmlFormatExtensionPrefixAttribute : Attribute {
 
 		#region Fields
