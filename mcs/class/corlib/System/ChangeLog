@@ -1,4 +1,9 @@
 
+Fri Sep 6 20:14:04 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* Delegate.cs: look also for non-public methods until we have the
+	security checks in place.
+
 Fri Sep 6 12:20:06 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* MonoType.cs: consider also the full name in GetInterface.

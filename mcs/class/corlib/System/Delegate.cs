@@ -107,7 +107,11 @@ namespace System {
 			for (int i=0; i<delargs.Length; i++)
 				delargtypes [i] = delargs [i].ParameterType;
 
-			BindingFlags flags =  BindingFlags.Public | BindingFlags.Static;
+			/* 
+			 * FIXME: we should check the caller has reflection permission
+			 * or if it lives in the same assembly...
+			 */
+			BindingFlags flags = BindingFlags.Public | BindingFlags.Static | BindingFlags.NonPublic;
 			MethodInfo info = target.GetMethod (method, flags, null, delargtypes, new ParameterModifier [0]);
 
 			if (info == null)
@@ -133,7 +137,11 @@ namespace System {
 			for (int i=0; i<delargs.Length; i++)
 				delargtypes [i] = delargs [i].ParameterType;
 
-			BindingFlags flags = BindingFlags.Public | BindingFlags.Instance;
+			/* 
+			 * FIXME: we should check the caller has reflection permission
+			 * or if it lives in the same assembly...
+			 */
+			BindingFlags flags = BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance;
 
 			if (ignorecase)
 				flags |= BindingFlags.IgnoreCase;
