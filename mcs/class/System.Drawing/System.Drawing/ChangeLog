@@ -1,3 +1,7 @@
+2004-02-12  Sanjay Gupta <gsanjay@novell.com>
+	* gdipFunctions.cs: Added Image class functions
+	* Image.cs: Added few methods 
+
 2004-02-10  Jordi Mas i Hernandez <jordi@ximian.com>
 	* graphics.cs: fixes parameters for DrawStrings functions
 

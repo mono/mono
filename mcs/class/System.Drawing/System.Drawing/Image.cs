@@ -6,7 +6,7 @@
 // eMail: Christian.Meyer@cs.tum.edu
 //
 // Alexandre Pigolkine (pigolkine@gmx.de)
-// 
+// Sanjay Gupta (gsanjay@novell.com)
 //
 namespace System.Drawing {
 
@@ -28,6 +28,7 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 	public delegate bool GetThumbnailImageAbort ();
 	
 	internal IntPtr nativeObject = IntPtr.Zero;
+	
 	protected Size image_size;
 	protected PixelFormat pixel_format;
 	protected ColorPalette colorPalette;
@@ -41,11 +42,14 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 		colorPalette = new ColorPalette();
 	}
 
+	internal Image ( IntPtr nativeObj)
+	{
+		nativeObject = nativeObj;
+	}
+
 	private Image (SerializationInfo info, StreamingContext context)
 	{
-	}
-	
-	
+	}		
 
 	void ISerializable.GetObjectData(SerializationInfo info, StreamingContext context)
 	{
@@ -53,26 +57,56 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
     
 	// public methods
 	// static
-	public static Image FromFile (string filename)
+	public static Image FromFile ( string filename ) 
 	{
-		return new Bitmap (filename);
+		if ( filename == null )
+			throw new Exception ( "Value cannot be null, Parameter name : filename" );
+		bool exists = File.Exists( filename );
+		if ( !exists )
+			throw new Exception ( "The path is not of a legal form" );
+		
+		IntPtr ptr;
+		Status status = GDIPlus.GdipLoadImageFromFile ( filename, out ptr );
+		GDIPlus.CheckStatus ( status );
+		Bitmap bmp = new Bitmap ( ptr );
+		return bmp;
 	}
 	
 	public static Image FromFile (string filename, bool useEmbeddedColorManagement)
 	{
-		return new Bitmap (filename, useEmbeddedColorManagement);
+		if ( filename == null )
+			throw new Exception ( "Value cannot be null, Parameter name : filename" );
+		bool exists = File.Exists( filename );
+		if ( !exists )
+			throw new Exception ( "The path is not of a legal form" );
+		
+		IntPtr ptr;
+		Status status;
+		if ( useEmbeddedColorManagement )
+			status = GDIPlus.GdipLoadImageFromFileICM ( filename, out ptr );
+		else
+			status = GDIPlus.GdipLoadImageFromFile ( filename, out ptr );
+		GDIPlus.CheckStatus ( status );
+		Bitmap bmp = new Bitmap ( ptr );
+		return bmp;
 	}
 	
 	public static Bitmap FromHbitmap (IntPtr hbitmap)
 	{
-		// Fixme: implement me
-		throw new NotImplementedException ();
+		IntPtr ptr;
+		Status status = GDIPlus.GdipCreateBitmapFromHBITMAP ( hbitmap, IntPtr.Zero, out ptr );
+		GDIPlus.CheckStatus ( status );
+		Bitmap bmp = new Bitmap ( ptr );
+		return bmp;
 	}
 
 	public static Bitmap FromHbitmap (IntPtr hbitmap, IntPtr hpalette)
 	{
-		// Fixme: implement me
-		throw new NotImplementedException ();
+		IntPtr ptr;
+		Status status = GDIPlus.GdipCreateBitmapFromHBITMAP ( hbitmap, hpalette, out ptr );
+		GDIPlus.CheckStatus ( status );
+		Bitmap bmp = new Bitmap ( ptr );
+		return bmp;
 	}
 
 	internal BitmapData Decode (Stream streamIn) 
@@ -174,23 +208,43 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 		return result;
 	}
 	
-//	public static bool IsCanonicalPixelFormat (PixelFormat pixfmt)
-//	{
-//		// Fixme: implement me
-//		throw new NotImplementedException ();
-//	}
-//	
-//	public static bool IsExtendedPixelFormat (PixelFormat pixfmt)
-//	{
-//		// Fixme: implement me
-//		throw new NotImplementedException ();
-//	}
+	public static bool IsCanonicalPixelFormat (PixelFormat pixfmt)
+	{
+		bool result = false;
+		switch (pixfmt) 
+		{
+			case PixelFormat.Canonical:
+				result = true;
+				break;
+			default:
+				result = false;
+				break;
+		}
+		return result;
+	}
+	
+	public static bool IsExtendedPixelFormat (PixelFormat pixfmt)
+	{
+		bool result = false;
+		switch (pixfmt) 
+		{
+			case PixelFormat.Extended:
+				result = true;
+				break;
+			default:
+				result = false;
+				break;
+		}
+		return result;
+	}
 
 	// non-static
 	public RectangleF GetBounds (ref GraphicsUnit pageUnit)
 	{
-		// Fixme: implement me
-		throw new NotImplementedException ();
+		RectangleF rectF;
+		Status status = GDIPlus.GdipGetImageBounds ( nativeObject, out rectF, ref pageUnit );
+		GDIPlus.CheckStatus ( status );
+		return rectF;
 	}
 	
 	//public EncoderParameters GetEncoderParameterList(Guid encoder);
@@ -204,14 +258,14 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 	
 	public void RemovePropertyItem (int propid)
 	{
-		// Fixme: implement me
-		throw new NotImplementedException ();
+		Status status = GDIPlus.GdipRemovePropertyItem ( nativeObject, propid );
+		GDIPlus.CheckStatus ( status );
 	}
 	
 	public void RotateFlip (RotateFlipType rotateFlipType)
 	{
-		// Fixme: implement me
-		throw new NotImplementedException ();
+		Status status = GDIPlus.GdipImageRotateFlip ( nativeObject, rotateFlipType );
+		GDIPlus.CheckStatus ( status );
 	}
 
 	public void Save (string filename)
@@ -248,13 +302,27 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 	//public void Save(string filename, ImageCodecInfo encoder, EncoderParameters encoderParams);
 	//public void SaveAdd(EncoderParameters_ encoderParams);
 	//public void SaveAdd(Image image, EncoderParameters_ encoderParams);
-	//public int SelectActiveFrame(FrameDimension dimension, int frameIndex);
-	//public void SetPropertyItem(PropertyItem propitem);
+	
+	public int SelectActiveFrame(FrameDimension dimension, int frameIndex)
+	{
+		Status status = GDIPlus.GdipImageSelectActiveFrame ( nativeObject, dimension.Guid, (uint) frameIndex );
+		GDIPlus.CheckStatus ( status );
+		return frameIndex;
+	}
+
+	public void SetPropertyItem(PropertyItem propItem)
+	{
+		/*Status status = GDIPlus.GdipSetPropertyItem ( nativeObject, propItem );
+		GDIPlus.CheckStatus ( status );*/
+	}
 
 	// properties
 	public int Flags {
 		get {
-			throw new NotImplementedException ();
+			uint flag;
+			Status status = GDIPlus.GdipGetImageFlags ( nativeObject , out flag );
+			GDIPlus.CheckStatus ( status );
+			return ( int ) flag;
 		}
 	}
 	
@@ -266,33 +334,52 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 	
 	public int Height {
 		get {
-			return image_size.Height;
+			uint height;
+			Status status = GDIPlus.GdipGetImageHeight ( nativeObject , out height );
+			GDIPlus.CheckStatus ( status );
+			return ( int ) height;
 		}
 	}
 	
 	public float HorizontalResolution {
 		get {
-			throw new NotImplementedException ();
+			float resolution;
+			Status status = GDIPlus.GdipGetImageHorizontalResolution ( nativeObject , out resolution );
+			GDIPlus.CheckStatus ( status );
+			return resolution;
 		}
 	}
 	
 	public ColorPalette Palette {
 		get {
-			return colorPalette;
+			int size;
+			Status status = GDIPlus.GdipGetImagePaletteSize ( nativeObject , out size );
+			GDIPlus.CheckStatus ( status );
+			ColorPalette palette;
+			status = GDIPlus.GdipGetImagePalette ( nativeObject , out palette, size );
+			GDIPlus.CheckStatus ( status );
+			return palette;
 		}
 		set {
-			colorPalette = value;
+			Status status = GDIPlus.GdipSetImagePalette ( nativeObject , value );
+			GDIPlus.CheckStatus ( status );
 		}
 	}
 	
 	public SizeF PhysicalDimension {
 		get {
-			throw new NotImplementedException ();
+			float height, width ;
+			Status status = GDIPlus.GdipGetImageDimension ( nativeObject , out width, out height);
+			GDIPlus.CheckStatus ( status );
+			SizeF size = new SizeF ( width, height );
+			return size;
 		}
 	}
 	
 	public PixelFormat PixelFormat {
 		get {
+			Status status = GDIPlus.GdipGetImagePixelFormat ( nativeObject, out pixel_format );
+			GDIPlus.CheckStatus ( status );
 			return pixel_format;
 		}
 	}
@@ -311,6 +398,10 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 
 	public ImageFormat RawFormat {
 		get {
+			Guid guid;
+			Status status = GDIPlus.GdipGetImageRawFormat ( nativeObject, out guid );
+			GDIPlus.CheckStatus ( status );
+			raw_format = new ImageFormat ( guid );
 			return raw_format;
 		}
 	}
@@ -322,19 +413,29 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 
 	public Size Size {
 		get {
-			return image_size;
+			int height = this.Height;
+			int width = this.Width;
+			Size size = new Size ( width, height );
+			return size;
 		}
 	}
 	
 	public float VerticalResolution {
 		get {
-			throw new NotImplementedException ();
+			float resolution;
+			Status status = GDIPlus.GdipGetImageVerticalResolution ( nativeObject , out resolution );
+			GDIPlus.CheckStatus ( status );
+			return resolution;
 		}
 	}
 	
 	public int Width {
 		get {
-			return image_size.Width;
+			uint width ;
+			Status status = GDIPlus.GdipGetImageWidth ( nativeObject , out width);
+			GDIPlus.CheckStatus ( status );
+			return (int) width;
+			//return image_size.Width;
 		}
 	}
 	

@@ -545,9 +545,15 @@ namespace System.Drawing {
 		internal static extern Status GdipBitmapSetPixel (IntPtr bmp, int x, int y, int argb);
 
 		// Image functions
-[DllImport("gdiplus.dll", CharSet=CharSet.Auto)]
+		[DllImport("gdiplus.dll", CharSet=CharSet.Auto)]
 		internal static extern Status GdipLoadImageFromFile ( [MarshalAs(UnmanagedType.LPWStr)] string filename, out IntPtr image );
  
+		[DllImport("gdiplus.dll", CharSet=CharSet.Auto)]
+		internal static extern Status GdipLoadImageFromFileICM ( [MarshalAs(UnmanagedType.LPWStr)] string filename, out IntPtr image );
+		
+		[DllImport("gdiplus.dll")]
+		internal static extern Status GdipCreateBitmapFromHBITMAP ( IntPtr hBitMap, IntPtr gdiPalette, out IntPtr image );
+		
 		[DllImport("gdiplus.dll")]
 		internal static extern Status GdipDisposeImage ( IntPtr image );
 
@@ -570,16 +576,16 @@ namespace System.Drawing {
 		internal static extern Status GdipGetImagePaletteSize ( IntPtr image, out int size );
 												   
 		[DllImport("gdiplus.dll")]
-		internal static extern Status GdipGetImagePalette ( IntPtr image, out IntPtr palette, int size );
+		internal static extern Status GdipGetImagePalette ( IntPtr image, out ColorPalette palette, int size );
 
 		[DllImport("gdiplus.dll")]
-		internal static extern Status GdipSetImagePalette ( IntPtr image, IntPtr palette );
+		internal static extern Status GdipSetImagePalette ( IntPtr image, ColorPalette palette );
 		
 		[DllImport("gdiplus.dll")]
 		internal static extern Status GdipGetImageDimension ( IntPtr image, out float width, out float height );
 												   
 		[DllImport("gdiplus.dll")]
-		internal static extern Status GdipGetImagePixelFormat ( IntPtr image, out IntPtr format );
+		internal static extern Status GdipGetImagePixelFormat ( IntPtr image, out PixelFormat format );
 
 		[DllImport("gdiplus.dll")]
 		internal static extern Status GdipGetPropertyCount ( IntPtr image, out uint propNumbers );
@@ -594,14 +600,53 @@ namespace System.Drawing {
 		internal static extern Status GdipGetAllPropertyItems ( IntPtr image, uint bufferSize, uint propNumbers, out IntPtr items );
 												   
 		[DllImport("gdiplus.dll")]
-		internal static extern Status GdipGetImageRawFormat ( IntPtr image, out IntPtr format );
+		internal static extern Status GdipGetImageRawFormat ( IntPtr image, out Guid format );
 
 		[DllImport("gdiplus.dll")]
 		internal static extern Status GdipGetImageVerticalResolution ( IntPtr image, out float resolution );
 		
 		[DllImport("gdiplus.dll")]
 		internal static extern Status GdipGetImageWidth ( IntPtr image, out uint width);
+		
+		[DllImport("gdiplus.dll")]
+		internal static extern Status GdipGetImageBounds ( IntPtr image, out RectangleF source, ref GraphicsUnit unit );
 
+		[DllImport("gdiplus.dll")]
+		internal static extern Status GdipGetEncoderParameterListSize ( IntPtr image, IntPtr encoder, out uint size );
+
+		[DllImport("gdiplus.dll")]
+		internal static extern Status GdipGetEncoderParameterList ( IntPtr image, IntPtr encoder, uint size, out IntPtr buffer );
+		
+		[DllImport("gdiplus.dll")]
+		internal static extern Status GdipImageGetFrameCount ( IntPtr image, IntPtr guidDimension, out uint count );
+		
+		[DllImport("gdiplus.dll")]
+		internal static extern Status GdipImageSelectActiveFrame ( IntPtr image, Guid guidDimension, uint frameIndex );
+		
+        [DllImport("gdiplus.dll")]
+		internal static extern Status GdipGetPropertyItemSize ( IntPtr image, int propertyID, out uint propertySize );
+
+		[DllImport("gdiplus.dll")]
+		internal static extern Status GdipGetPropertyItem ( IntPtr image, int propertyID, uint propertySize, out IntPtr buffer );
+		
+		[DllImport("gdiplus.dll")]
+		internal static extern Status GdipRemovePropertyItem ( IntPtr image, int propertyId );
+		
+		[DllImport("gdiplus.dll")]
+		internal static extern Status GdipSetPropertyItem ( IntPtr image, IntPtr propertyItem );
+		
+		[DllImport("gdiplus.dll")]
+		internal static extern Status GdipGetImageThumbnail ( IntPtr image, uint width, uint height, out IntPtr thumbImage, IntPtr callback, IntPtr callBackData );
+		
+		[DllImport("gdiplus.dll")]
+		internal static extern Status GdipImageRotateFlip ( IntPtr image, RotateFlipType rotateFlipType );
+		
+		[DllImport("gdiplus.dll", CharSet=CharSet.Auto)]
+		internal static extern Status GdipSaveImageToFile ( IntPtr image, [MarshalAs(UnmanagedType.LPWStr)] string filename, IntPtr encoderClsID, IntPtr encoderParameters );
+		
+		[DllImport("gdiplus.dll")]
+		internal static extern Status GdipSaveAdd ( IntPtr image, IntPtr encoderParameters );
+		
 		[DllImport("gdiplus.dll")]
 		internal static extern Status GdipDrawImageI (IntPtr graphics, IntPtr image, int x, int y);
 		[DllImport("gdiplus.dll")]
