@@ -1,5 +1,12 @@
 2002-07-29  Martin Baulig  <martin@gnome.org>
 
+	* support.cs (ParameterData.ParameterName): Added method to
+	get the name of a parameter.
+
+	* typemanager.cs (TypeManager.IsValueType): New public method.
+
+2002-07-29  Martin Baulig  <martin@gnome.org>
+
 	* parameter.cs (Parameter.Modifier): Added `ISBYREF = 8'.  This
 	is a flag which specifies that it's either ref or out.
 	(Parameter.GetParameterInfo (DeclSpace, int, out bool)): Changed

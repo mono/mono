@@ -950,6 +950,14 @@ public class TypeManager {
 			return false;
 	}
 	
+	public static bool IsValueType (Type t)
+	{
+		if (t.IsSubclassOf (TypeManager.value_type))
+			return true;
+		else
+			return false;
+	}
+	
 	public static bool IsInterfaceType (Type t)
 	{
 		Interface iface = (Interface) builder_to_interface [t];

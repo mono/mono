@@ -20,6 +20,7 @@ namespace Mono.CSharp {
 	public interface ParameterData {
 		Type ParameterType (int pos);
 		int  Count { get; }
+		string ParameterName (int pos);
 		string ParameterDesc (int pos);
 		Parameter.Modifier ParameterModifier (int pos);
 	}
@@ -55,6 +56,14 @@ namespace Mono.CSharp {
 				return pi [pi.Length - 1].ParameterType;
 			else 
 				return pi [pos].ParameterType;
+		}
+
+		public string ParameterName (int pos)
+		{
+			if (last_arg_is_params && pos >= pi.Length - 1)
+				return pi [pi.Length - 1].Name;
+			else 
+				return pi [pos].Name;
 		}
 
 		public string ParameterDesc (int pos)
@@ -138,6 +147,18 @@ namespace Mono.CSharp {
 					return parameters.ArrayParameter.ParameterType;
 			} else
 				return parameters.ArrayParameter.ParameterType;
+		}
+
+		public string ParameterName (int pos)
+		{
+			Parameter p;
+
+			if (pos >= parameters.FixedParameters.Length)
+				p = parameters.ArrayParameter;
+			else
+				p = parameters.FixedParameters [pos];
+
+			return p.Name;
 		}
 
 		public string ParameterDesc (int pos)
