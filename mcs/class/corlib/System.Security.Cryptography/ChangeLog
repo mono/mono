@@ -1,9 +1,16 @@
 2001-10-06  Thomas Neidhart <tome@sbox.tugraz.at>
 
-    * CryptographicException.cs: Initial version.
+    * AsymmetricAlgorithm.cs: Inital version
+	* AsymmetricKeyExchangeDeformatter.cs: Initial version
+	* AsymmetricKeyExchangeFormatter.cs: Initial version
+	* AsymmetricSignatureDeformatter.cs: Initial version
+	* AsymmetricSignatureFormatter.cs: Initial version
+	* PaddingMode.cs: Added PaddingMode.None
+	* SignatureDescription.cs: Initial version
+    * CryptographicException.cs: Initial version
 	* CryptographicUnknownOperationException.cs: Initial version
-	* SymmetricAlgorithm.cs: Implemented CreateDecryptor and CreateEncryptor
-	  methods.
+	* SymmetricAlgorithm.cs: Implemented CreateDecryptor, CreateEncryptor
+	  and Create() methods.
 	
 2001-08-20  Sergey Chaban <serge@wildwestsoftware.com>
 

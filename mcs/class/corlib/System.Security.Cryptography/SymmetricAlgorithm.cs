@@ -6,7 +6,6 @@
 //
 
 using System;
-using System.Security.Cryptography;
 
 namespace System.Security.Cryptography {
 	
@@ -239,8 +238,7 @@ namespace System.Security.Cryptography {
 		/// Creates the default implementation of the default symmetric algorithm (RC2).
 		/// </summary>
 		public static SymmetricAlgorithm Create () {
-			// TODO: default algorithm is RijndaelManaged
-			return null;
+			return Rijndael.Create();
 		}
 	
 		/// <summary>
@@ -248,7 +246,7 @@ namespace System.Security.Cryptography {
 		/// </summary>
 		/// <param name="algName">the given algorithm</param>
 		public static SymmetricAlgorithm Create (string algName) {
-			// TODO: use reflection to create a new instance of the given algorithm
+			// TODO: Use Reflection to create a new algorithm instance
 			return null;
 		}
 	}

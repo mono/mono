@@ -14,6 +14,7 @@ namespace System.Security.Cryptography {
 	/// How to pad the message processed by block ciphers when they don't come out to the being the size of the block.
 	/// </summary>
 	public enum PaddingMode {
+		None,
 		PKCS7, // Each byte contains the value of the number of padding bytes.
 		Zeros  // Append zeros to the message.
 	}
