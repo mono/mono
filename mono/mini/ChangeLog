@@ -1,5 +1,8 @@
 2005-01-06  Zoltan Varga  <vargaz@freemail.hu>
 
+	* tramp-*.c: Only patch vtable slots if the object is in the current
+	domain. Fixes appdomain-unload.exe.
+
 	* mini-amd64.c mini-amd64.h: Enable out-of-line bblock support.
 	
 	* mini-amd64.c (mono_arch_local_regalloc): Port regalloc fix from
