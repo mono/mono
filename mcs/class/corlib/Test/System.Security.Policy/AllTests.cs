@@ -19,10 +19,11 @@ namespace MonoTests.System.Security.Policy {
                         get 
                         {
                                 TestSuite suite = new TestSuite();
-                                suite.AddTest(CodeGroupTest.Suite);
-				suite.AddTest(EvidenceTest.Suite);
-                                suite.AddTest(PublisherTest.Suite);
-				suite.AddTest(PublisherMembershipConditionTest.Suite);
+                                suite.AddTest (CodeGroupTest.Suite);
+				suite.AddTest (EvidenceTest.Suite);
+                                suite.AddTest (PublisherTest.Suite);
+				suite.AddTest (PublisherMembershipConditionTest.Suite);
+				suite.AddTest (StrongNameTest.Suite);
                                 return suite;
                         }
                 }
