@@ -2,6 +2,7 @@
 
 	* x86.brg: bug fix in CLT(lreg,lreg)
 	(reg): bug fix in CONV_OVF_I4(lreg)
+	(lreg): replaced x86_call_reg with x86_call_code
 
 	* emit-x86.c (mono_add_jump_info): impl.
 	(mono_compute_branches): patch real jump address (instead of
