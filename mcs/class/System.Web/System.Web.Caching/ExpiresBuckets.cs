@@ -89,8 +89,7 @@ namespace System.Web.Caching
 		/// </summary>
 		private void Expand() 
 		{
-			//HACK: [DHC] MAJOR performance improvement by using Array.CopyTo method. Better locking added.
-			_lock.AcquireReaderLock(-1);
+			_lock.AcquireWriterLock(-1);
 			try
 			{
 				int oldsize = _intSize;
@@ -115,48 +114,13 @@ namespace System.Web.Caching
 				newlist[_intSize - 1]._intNext = -1;
 
 				// Replace the existing list.
-				_lock.UpgradeToWriterLock(-1);
 				_arrEntries = newlist;
 			}
 			finally
 			{
-				//Releases both reader & writer locks.
-				_lock.ReleaseReaderLock();
+				_lock.ReleaseWriterLock();
 			}
 
-			/* ORIGINAL CODE *
-			ExpiresEntry [] arrData;
-			int intPos = 0;
-			int intOldSize;
-
-			lock(this)	
-			{
-				intOldSize = _intSize;
-				_intSize *= 2;
-
-				// Create a new array and copy the old data into the new array
-				arrData = new ExpiresEntry[_intSize];
-
-				do 
-				{
-					arrData[intPos] = _arrEntries[intPos];
-					intPos++;
-				} while (intPos < intOldSize);
-
-				_intNext = intPos;
-
-				// Initialize the "new" positions.
-				do 
-				{
-					arrData[intPos]._intNext = intPos + 1;
-					intPos++;
-				} while (intPos < _intSize);
-
-				arrData[_intSize - 1]._intNext = -1;
-
-				_arrEntries = arrData;
-			}
-			*/
 		}
 
 		/// <summary>
@@ -181,9 +145,7 @@ namespace System.Web.Caching
 					{
 						// Elements may have been removed before the lock statement.
 						if (_freeidx.Count == 0)
-						{
 							dogrow = true;
-						}
 						else
 						{
 							_intNext = _freeidx[0];
@@ -197,7 +159,8 @@ namespace System.Web.Caching
 				}
 			}
 
-			if (dogrow) Expand();
+			if (dogrow) 
+				Expand();
 			
 			_lock.AcquireWriterLock(-1);
 			try
@@ -221,23 +184,6 @@ namespace System.Web.Caching
 			{
 				_lock.ReleaseWriterLock();
 			}
-
-			/* ORIGINAL CODE *
-			if (_intNext == -1) 
-			{
-				Expand();
-			}
-			
-			lock(this)	
-			{
-				_arrEntries[_intNext]._ticksExpires =  objEntry.Expires;
-				_arrEntries[_intNext]._objEntry = objEntry;
-
-				_intNext = _arrEntries[_intNext]._intNext;
-			
-				_intCount++;
-			}
-			*/
 		}
 
 		/// <summary>
@@ -246,17 +192,14 @@ namespace System.Web.Caching
 		/// <param name="objEntry">Cache entry to be removed.</param>
 		internal void Remove(CacheEntry objEntry)
 		{
-			//HACK: optimized locks. [DHC]
-			_lock.AcquireReaderLock(-1);
+			// Check if this is our bucket
+			if (objEntry.ExpiresIndex != _byteID) return;
+			if (objEntry.ExpiresIndex == CacheEntry.NoIndexInBucket) return;
+
+			_lock.AcquireWriterLock(-1);
 			try
 			{
-				// Check if this is our bucket
-				if (objEntry.ExpiresIndex != _byteID) return;
-				if (objEntry.ExpiresIndex == CacheEntry.NoIndexInBucket) return;
 				if (_arrEntries.Length < objEntry.ExpiresIndex) return;
-
-				// Proceed to removal.
-				_lock.UpgradeToWriterLock(-1);
 				_intCount--;
 
 				// Push the index as a free one.
@@ -270,7 +213,7 @@ namespace System.Web.Caching
 			finally
 			{
 				//Releases both reader & writer locks
-				_lock.ReleaseReaderLock();
+				_lock.ReleaseWriterLock();
 			}
 		}
 
@@ -283,24 +226,23 @@ namespace System.Web.Caching
 		/// <param name="ticksExpires">New expiration value for the cache entry.</param>
 		internal void Update(CacheEntry objEntry, long ticksExpires)
 		{
-			//HACK: optimized locks. [DHC]
-			_lock.AcquireReaderLock(-1);
+			// Check if this is our bucket
+			if (objEntry.ExpiresIndex != _byteID) return;
+			if (objEntry.ExpiresIndex == CacheEntry.NoIndexInBucket) return;
+
+			_lock.AcquireWriterLock(-1);
 			try
 			{
-				// Check if this is our bucket
-				if (objEntry.ExpiresIndex != _byteID) return;
-				if (objEntry.ExpiresIndex == CacheEntry.NoIndexInBucket) return;
 				if (_arrEntries.Length < objEntry.ExpiresIndex) return;
 
 				// Proceed to update.
-				_lock.UpgradeToWriterLock(-1);
 				_arrEntries[objEntry.ExpiresIndex]._ticksExpires = ticksExpires;
 				_arrEntries[objEntry.ExpiresIndex]._objEntry.Expires = ticksExpires;
 			}
 			finally
 			{
 				//Releases both read & write locks
-				_lock.ReleaseReaderLock();
+				_lock.ReleaseWriterLock();
 			}
 		}
 

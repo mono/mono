@@ -1,3 +1,11 @@
+2004-05-16	Patrik Torstensson <totte@hiddenpeaks.com>
+
+	* ExpiresBucket.cs: Style changes plus;
+	(Update): Fixed possible lock bug (bug 54531)
+	(Expand): remove lock optimization due to it can cause newly 
+	added items to be lost.
+	(Remove): fixed possible lock bug.
+		
 2004-04-16  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Cache.cs: fix from Jan Jaros for NullRef (bug #56996).
