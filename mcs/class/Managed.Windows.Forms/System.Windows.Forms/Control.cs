@@ -29,9 +29,12 @@
 //	Jaak Simm		jaaksimm@firm.ee
 //	John Sohn		jsohn@columbus.rr.com
 //
-// $Revision: 1.49 $
+// $Revision: 1.50 $
 // $Modtime: $
 // $Log: Control.cs,v $
+// Revision 1.50  2004/08/24 18:24:25  jordi
+// fire OnEnabledChanged event
+//
 // Revision 1.49  2004/08/23 21:22:53  pbartok
 // - Added InitLayout() method
 // - Added code to properly perform layout when Anchor or Dock property is
@@ -957,7 +960,11 @@ namespace System.Windows.Forms
 			}
 
 			set {
-				is_enabled = value;
+				if (is_enabled == value)
+					return;
+
+				is_enabled = value;	
+				OnEnabledChanged (EventArgs.Empty);				
 			}
 		}
 
