@@ -1,3 +1,8 @@
+
+Mon Jun 17 16:13:35 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* reflection.c, reflection.h, icall.c: fixes for multiple-nested types.
+
 2002-06-17  Dietmar Maurer  <dietmar@ximian.com>
 
 	* icall.c (ves_icall_Type_GetField): impl.
