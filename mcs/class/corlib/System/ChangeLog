@@ -1,4 +1,9 @@
 
+Thu Feb 14 18:54:09 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* MonoType.cs: fix IsValueTypeImpl.
+	* Type.cs: fix IsEnum. Implement Equals methods.
+
 Wed Feb 13 21:50:13 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	* Int32.cs: implement IConvertible interface.

@@ -170,7 +170,8 @@ namespace System {
 
 		public bool IsEnum {
 			get {
-				return type_is_subtype_of (this, typeof (System.Enum));
+				return type_is_subtype_of (this, typeof (System.Enum)) &&
+					this != typeof (System.Enum);
 			}
 		}
 
@@ -321,12 +322,16 @@ namespace System {
 		public abstract Type UnderlyingSystemType {get;}
 
 		public override bool Equals (object o) {
-			throw new NotImplementedException ();
+			if (o == null)
+				return false;
+			Type cmp = o as Type;
+			if (cmp == null)
+				return false;
+			return Equals (cmp);
 		}
 		
-		public bool Equals (Type type) {
-			throw new NotImplementedException ();
-		}
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		public extern bool Equals (Type type);
 		
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private static extern Type internal_from_handle (RuntimeTypeHandle handle);

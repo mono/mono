@@ -140,8 +140,9 @@ namespace System
 			return false;
 		}
 		protected override bool IsValueTypeImpl () {
-			// test this one
-			return (Attributes & TypeAttributes.ClassSemanticsMask) == TypeAttributes.ValueType;
+			return type_is_subtype_of (this, typeof (System.ValueType)) &&
+				this != typeof (System.ValueType) &&
+				this != typeof (System.Enum);
 		}
 		
 		public override object InvokeMember( string name, BindingFlags invokeAttr, Binder binder, object target, object[] args, ParameterModifier[] modifiers, CultureInfo culture, string[] namedParameters) {
