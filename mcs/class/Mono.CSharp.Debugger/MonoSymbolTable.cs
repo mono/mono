@@ -18,30 +18,30 @@ namespace Mono.CSharp.Debugger
 {
 	public struct OffsetTable
 	{
-		public const uint Version = 18;
+		public const int Version = 19;
 		public const long Magic   = 0x45e82623fd7fa614;
 
-		public uint total_file_size;
-		public uint source_table_offset;
-		public uint source_table_size;
-		public uint method_count;
-		public uint method_table_offset;
-		public uint method_table_size;
-		public uint line_number_table_offset;
-		public uint line_number_table_size;
-		public uint address_table_size;
+		public int total_file_size;
+		public int source_table_offset;
+		public int source_table_size;
+		public int method_count;
+		public int method_table_offset;
+		public int method_table_size;
+		public int line_number_table_offset;
+		public int line_number_table_size;
+		public int address_table_size;
 
 		public OffsetTable (BinaryReader reader)
 		{
-			total_file_size = reader.ReadUInt32 ();
-			source_table_offset = reader.ReadUInt32 ();
-			source_table_size = reader.ReadUInt32 ();
-			method_count = reader.ReadUInt32 ();
-			method_table_offset = reader.ReadUInt32 ();
-			method_table_size = reader.ReadUInt32 ();
-			line_number_table_offset = reader.ReadUInt32 ();
-			line_number_table_size = reader.ReadUInt32 ();
-			address_table_size = reader.ReadUInt32 ();
+			total_file_size = reader.ReadInt32 ();
+			source_table_offset = reader.ReadInt32 ();
+			source_table_size = reader.ReadInt32 ();
+			method_count = reader.ReadInt32 ();
+			method_table_offset = reader.ReadInt32 ();
+			method_table_size = reader.ReadInt32 ();
+			line_number_table_offset = reader.ReadInt32 ();
+			line_number_table_size = reader.ReadInt32 ();
+			address_table_size = reader.ReadInt32 ();
 		}
 
 		public void Write (BinaryWriter bw)
@@ -60,23 +60,23 @@ namespace Mono.CSharp.Debugger
 
 	public struct LineNumberEntry
 	{
-		public readonly uint Row;
-		public readonly uint Offset;
+		public readonly int Row;
+		public readonly int Offset;
 
-		public LineNumberEntry (uint row, uint offset)
+		public LineNumberEntry (int row, int offset)
 		{
 			this.Row = row;
 			this.Offset = offset;
 		}
 
 		internal LineNumberEntry (ISourceLine line)
-			: this ((uint) line.Row, (uint) line.Offset)
+			: this (line.Row, line.Offset)
 		{ }
 
 		public LineNumberEntry (BinaryReader reader)
 		{
-			Row = reader.ReadUInt32 ();
-			Offset = reader.ReadUInt32 ();
+			Row = reader.ReadInt32 ();
+			Offset = reader.ReadInt32 ();
 		}
 
 		internal void Write (BinaryWriter bw)
@@ -93,9 +93,9 @@ namespace Mono.CSharp.Debugger
 
 	public class MethodAddress
 	{
-		public readonly ulong StartAddress;
-		public readonly ulong EndAddress;
-		public readonly uint[] LineAddresses;
+		public readonly long StartAddress;
+		public readonly long EndAddress;
+		public readonly int[] LineAddresses;
 
 		public static int Size {
 			get {
@@ -105,11 +105,11 @@ namespace Mono.CSharp.Debugger
 
 		public MethodAddress (MethodEntry entry, BinaryReader reader)
 		{
-			StartAddress = reader.ReadUInt64 ();
-			EndAddress = reader.ReadUInt64 ();
-			LineAddresses = new uint [entry.NumLineNumbers];
+			StartAddress = reader.ReadInt64 ();
+			EndAddress = reader.ReadInt64 ();
+			LineAddresses = new int [entry.NumLineNumbers];
 			for (int i = 0; i < entry.NumLineNumbers; i++)
-				LineAddresses [i] = reader.ReadUInt32 ();
+				LineAddresses [i] = reader.ReadInt32 ();
 		}
 
 		public override string ToString ()
@@ -121,31 +121,38 @@ namespace Mono.CSharp.Debugger
 
 	public class MethodEntry
 	{
-		public readonly uint Token;
-		public readonly uint StartRow;
-		public readonly uint EndRow;
-		public readonly uint NumLineNumbers;
+		public readonly int Token;
+		public readonly int StartRow;
+		public readonly int EndRow;
+		public readonly int NumLineNumbers;
 
-		public readonly uint SourceFileOffset;
-		public readonly uint LineNumberTableOffset;
-		public readonly uint AddressTableOffset;
-		public readonly uint AddressTableSize;
+		public readonly int SourceFileOffset;
+		public readonly int LineNumberTableOffset;
+		public readonly int AddressTableOffset;
+		public readonly int AddressTableSize;
 
 		public readonly string SourceFile = null;
 		public readonly LineNumberEntry[] LineNumbers = null;
 		public readonly MethodAddress Address = null;
 
+		public static int Size
+		{
+			get {
+				return 32;
+			}
+		}
+
 		public MethodEntry (BinaryReader reader, BinaryReader address_reader)
 		{
-			Token = reader.ReadUInt32 ();
-			StartRow = reader.ReadUInt32 ();
-			EndRow = reader.ReadUInt32 ();
-			NumLineNumbers = reader.ReadUInt32 ();
+			Token = reader.ReadInt32 ();
+			StartRow = reader.ReadInt32 ();
+			EndRow = reader.ReadInt32 ();
+			NumLineNumbers = reader.ReadInt32 ();
 
-			SourceFileOffset = reader.ReadUInt32 ();
-			LineNumberTableOffset = reader.ReadUInt32 ();
-			AddressTableOffset = reader.ReadUInt32 ();
-			AddressTableSize = reader.ReadUInt32 ();
+			SourceFileOffset = reader.ReadInt32 ();
+			LineNumberTableOffset = reader.ReadInt32 ();
+			AddressTableOffset = reader.ReadInt32 ();
+			AddressTableSize = reader.ReadInt32 ();
 
 			if (SourceFileOffset != 0) {
 				long old_pos = reader.BaseStream.Position;
@@ -173,7 +180,7 @@ namespace Mono.CSharp.Debugger
 			if (AddressTableSize != 0) {
 				long old_pos = address_reader.BaseStream.Position;
 				address_reader.BaseStream.Position = AddressTableOffset;
-				uint is_valid = address_reader.ReadUInt32 ();
+				int is_valid = address_reader.ReadInt32 ();
 				if (is_valid != 0) {
 					Address = new MethodAddress (this, address_reader);
 					// Console.WriteLine ("ADDRESS: " + Address);
@@ -182,15 +189,15 @@ namespace Mono.CSharp.Debugger
 			}
 		}
 
-		internal MethodEntry (uint token, uint sf_offset, string source_file,
-				      LineNumberEntry[] lines, uint lnt_offset,
-				      uint addrtab_offset, uint addrtab_size,
-				      uint start_row, uint end_row)
+		internal MethodEntry (int token, int sf_offset, string source_file,
+				      LineNumberEntry[] lines, int lnt_offset,
+				      int addrtab_offset, int addrtab_size,
+				      int start_row, int end_row)
 		{
 			this.Token = token;
 			this.StartRow = start_row;
 			this.EndRow = end_row;
-			this.NumLineNumbers = (uint) lines.Length;
+			this.NumLineNumbers = lines.Length;
 			this.SourceFileOffset = sf_offset;
 			this.LineNumberTableOffset = lnt_offset;
 			this.AddressTableOffset = addrtab_offset;

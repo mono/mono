@@ -1,3 +1,10 @@
+2002-09-14  Martin Baulig  <martin@gnome.org>
+
+	* MonoSymbolTable.cs: Use only CLS-compliant types here, bumped version
+	number to 19.
+
+	* MonoSymbolTableReader.cs: Removed, this is now in the debugger.
+
 2002-09-03  Martin Baulig  <martin@gnome.org>
 
 	* AssemblerWriterI386.cs, IAssemblerWriter.cs, MonoDwarfFileWriter.cs,
