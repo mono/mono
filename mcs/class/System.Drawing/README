@@ -1,6 +1,6 @@
 
  This README gives some details about Nunit tests and samples for
- System.Drawing classe.
+ System.Drawing classes.
 
  Following is the directory structure for the tests and samples:
 
@@ -12,7 +12,6 @@
 		System.Drawing.Text
 
 	Samples/	(all the samples go here)
-
 		General (samples that affect more than a single area of SD)
 		System.Drawing
 		System.Drawing.Drawing2D
