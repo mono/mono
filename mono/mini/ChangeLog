@@ -1,3 +1,7 @@
+2004-03-15  Bernie Solomon  <bernard@ugsolutions.com>
+
+	* mini.c (mini_init): #warning is GNUC only
+
 2004-03-15  Zoltan Varga  <vargaz@freemail.hu>
 
 	* exceptions-sparc.c (mono_arch_has_unwind_info): Add missing function.
