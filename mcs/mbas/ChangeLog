@@ -1,4 +1,13 @@
 2004-11-06  Jambunathan K  <kjambunathan@novell.com>
+	* class.cs: 
+	* attribute.cs: Removed the incomplete and (for now) unnecessary
+	Mono.MonoBASIC.Operator class. Let us bother about this later.
+
+	Stripping off these unused bits will help me in 1) refactoring the
+	mbas Attributes related code 2) reusing the code from the mcs code
+	base.
+	
+2004-11-06  Jambunathan K  <kjambunathan@novell.com>
 	* class.cs: Removed the incomplete and (for now) unnecessary
 	operator methods. Let us bother about this later.
 

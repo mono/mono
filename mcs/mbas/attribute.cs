@@ -490,7 +490,7 @@ namespace Mono.MonoBASIC {
 					return true;
 				else
 					return false;
-			} else if (element is Method || element is Operator /*|| element is InterfaceMethod*/ || element is Accessor) {
+			} else if (element is Method || element is Accessor) {
 				if ((targets & AttributeTargets.Method) != 0)
 					return true;
 				else
@@ -652,7 +652,7 @@ namespace Mono.MonoBASIC {
 							return;
 					}
 
-				if (kind is Method || kind is Operator ||kind is Accessor) {
+				if (kind is Method || kind is Accessor) {
 					if (a.Type == TypeManager.methodimpl_attr_type) {
 						if (a.ImplOptions == MethodImplOptions.InternalCall)
 								((MethodBuilder) builder).SetImplementationFlags (MethodImplAttributes.InternalCall |	MethodImplAttributes.Runtime);
