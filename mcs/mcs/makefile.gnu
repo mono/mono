@@ -46,7 +46,7 @@ cs-parser.cs: cs-parser.jay
 	../jay/jay -ctv < ../jay/skeleton.cs $^ > $@
 
 clean:
-	-rm -f *.exe cs-parser.cs
+	-rm -f *.exe cs-parser.cs y.output
 
 install: all
 	mkdir -p $(prefix)/bin/
