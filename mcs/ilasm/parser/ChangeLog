@@ -1,5 +1,12 @@
 2003-05-31 Jackson Harper <jackson@latitudegeo.com>
 
+	* ILParser.jay: Set assembly names. When looking up types in the
+	form [assembly]name first check if the assembly is this
+	assembly. Implement scope_blocks, and implement scope block form
+	exception handling.
+		
+2003-05-31 Jackson Harper <jackson@latitudegeo.com>
+
 	* ILParser.jay: Use type instead of params for calli signatures.
 		
 2003-05-31 Jackson Harper <jackson@latitudegeo.com>

@@ -554,8 +554,13 @@ slashed_name		: comp_name
 
 class_ref		: OPEN_BRACKET comp_name CLOSE_BRACKET slashed_name
                           {
-                                ClassRef klass = codegen.ExternTable.GetClass ((string) $2, (string)$4);
-                                $$ = new ExternTypeRef (klass, (string) $4);
+                                if (codegen.IsThisAssembly ((string) $2)) {
+                                        $$ = new TypeRef ((string) $4, null);
+                                } else {
+                                        ClassRef klass = codegen.ExternTable.GetClass (
+                                                (string) $2, (string)$4);
+                                        $$ = new ExternTypeRef (klass, (string) $4);
+                                }
                           }
 			| OPEN_BRACKET D_MODULE comp_name CLOSE_BRACKET slashed_name
 			| slashed_name
@@ -1575,9 +1580,20 @@ type_spec		: class_ref
 			| type
 			;
 
-scope_block		: OPEN_BRACE method_decls CLOSE_BRACE
+scope_block		: scope_block_begin method_decls CLOSE_BRACE
+                          {
+                                $$ = new HandlerBlock ((string) $1,
+                                        codegen.CurrentMethodDef.RandomLabel ());
+                          }
 			;
 
+scope_block_begin       : OPEN_BRACE
+                          {
+                                $$ = codegen.CurrentMethodDef.RandomLabel ();
+                          }
+                        ;
+                        
+                        
 seh_block		: try_block seh_clauses
                           {
                                 TryBlock try_block = (TryBlock) $1;
@@ -1592,6 +1608,9 @@ seh_block		: try_block seh_clauses
 			;
 
 try_block		: D_TRY scope_block
+                          {
+                                $$ = new TryBlock ((HandlerBlock) $2);
+                          }
 			| D_TRY id K_TO id
                           {
                                 $$ = new TryBlock ((string) $2, (string) $4);
@@ -1639,6 +1658,11 @@ seh_clause		: K_CATCH class_ref handler_block
 			;
 
 filter_clause		: K_FILTER scope_block
+                          {
+                                HandlerBlock block = (HandlerBlock) $2;
+                                FilterBlock fb = new FilterBlock (block.from_label);
+                                $$ = fb;
+                          }
 			| K_FILTER id
                           {
                                 FilterBlock fb = new FilterBlock ((string) $2);
@@ -1648,6 +1672,9 @@ filter_clause		: K_FILTER scope_block
 			;
 
 handler_block		: scope_block
+                          {
+                                
+                          }
 			| K_HANDLER id K_TO id
                           {
                                 $$ = new HandlerBlock ((string) $2, (string) $4);
@@ -2026,6 +2053,9 @@ assembly_all		: assembly_head OPEN_BRACE assembly_decls CLOSE_BRACE
 			;
 
 assembly_head		: D_ASSEMBLY asm_attr comp_name
+                          {
+                                codegen.SetAssemblyName ((string) $3);
+                          }
 			;
 
 asm_attr		: /* EMPTY */
