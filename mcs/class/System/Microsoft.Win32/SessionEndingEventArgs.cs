@@ -35,6 +35,7 @@ public class SessionEndingEventArgs : System.EventArgs{
 			return mycancel;
 		}
 		set{
+		mycancel = value;
 		
 		}
 		
