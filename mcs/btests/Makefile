@@ -1,7 +1,8 @@
 thisdir = btests
 SUBDIRS = 
-INTERNAL_MBAS = $(TEST_RUNTIME) --debug ../mbas/mbas.exe --stacktrace  /libpath:../class/lib
-
+COMPILER_FLAGS = /libpath:../class/lib /import:System
+INTERNAL_MBAS = $(TEST_RUNTIME) ../mbas/mbas.exe --stacktrace $(COMPILER_FLAGS)
+#INTERNAL_MBAS = vbc $(COMPILER_FLAGS)
 all: test-compiler-jit 
 
 include ../build/rules.make
@@ -20,11 +21,11 @@ include Test.Sources
 
 all-local install-local:
 
-
 # compilation is part of the testing too, so we don't actually 
 # do anything in test-local.
 
 test-local: 
+
 
 run-test-local: test-compiler-jit 
 
@@ -35,77 +36,73 @@ test-compiler-jit-ngtive_run
 
 test-compiler-jit-real:
 	@rm -f *.exe *.out ; \
-	echo "Flags \"$(TEST_RUNTIME)\" ... " ; \
+	/usr/bin/echo "********** Positive Tests ************" > results.out; \
+	/usr/bin/echo "********** Positive Tests ************" ; \
 	for i in $(TEST_SOURCES) ; do \
-		echo -n -e "========================\n$$i: " >> results.out; \
-	    echo -n "$$i: "; \
+		/usr/bin/echo -n -e "========================\n$$i: " >> results.out; \
+	    /usr/bin/echo -n "$$i: "; \
 	    if $(INTERNAL_MBAS) $$i.vb 1>output ; then \
-            echo -n -e "COMPILED OK\n" >> results.out; \
-	        echo -n "COMPILED OK : " ;\
+            /usr/bin/echo -n "COMPILED OK : " >> results.out; \
+	        /usr/bin/echo -n "COMPILED OK : " ;\
 			true ; \
 	    else \
-			echo -n -e "FAILED COMPILATION\n---\n" >> results.out; \
+			/usr/bin/echo -n -e "FAILED COMPILATION\n---\n" >> results.out; \
 			cat output >> results.out; \
-	        echo FAILED COMPILATION ;  \
+	        /usr/bin/echo FAILED COMPILATION ;  \
 			continue;\
 	    fi ; \
-		echo -n -e "------------------------\n" >> results.out; \
 	    if $(TEST_RUNTIME) ./$$i.exe 1>output ; then \
-			echo -n -e "$$i : EXECUTED OK\n" >> results.out; \
-	        echo "EXECUTED OK" ; \
+			/usr/bin/echo "EXECUTED OK" >> results.out; \
+	        /usr/bin/echo "EXECUTED OK" ; \
 	    else \
-			echo -n -e "$$i : FAILED AT RUNTIME\n---\n" >> results.out; \
+			/usr/bin/echo -n -e "$$i : FAILED AT RUNTIME\n---\n" >> results.out; \
 			cat output >> results.out; \
-	        echo "FAILED AT RUNTIME"; \
+	        /usr/bin/echo "FAILED AT RUNTIME"; \
 	    fi ; \
 	    rm -f ./$$i.exe output; \
 	done; \
-	echo -n -e "========================\n$$i: " >> results.out
+	/usr/bin/echo "========================" >> results.out
 
 test-compiler-jit-ngtive_compile:
-	@rm -f *.exe \
-	echo "Flags \"$(TEST_RUNTIME)\" ... " ; \
+	@rm -f *.exe ; \
+	/usr/bin/echo "********** Negative Compilation Tests ************" >> results.out; \
+	/usr/bin/echo "********** Negative Compilation Tests ************" ; \
 	for i in $(TEST_NGTIVE_COMPILATION_SOURCES) ; do \
-	    echo -n "$$i: "; \
-	     if $(INTERNAL_MBAS) $$i.vb > /dev/null ; then \
-		echo -n -e "\n$$i : UNEXPECTED BEHAVIOUR\n " >> results.out; \
-		echo -n -e "\n========================" >> results.out; \
-	        echo UNEXPECTED BEHAVIOUR ; \
+		/usr/bin/echo -n -e "========================\n$$i: " >> results.out; \
+		/usr/bin/echo -n "$$i: "; \
+	    if $(INTERNAL_MBAS) $$i.vb > /dev/null ; then \
+			/usr/bin/echo "UNEXPECTED BEHAVIOUR" >> results.out; \
+	        /usr/bin/echo UNEXPECTED BEHAVIOUR ; \
 	    else \
-		echo OK; \
+			/usr/bin/echo OK >> results.out; \
+			/usr/bin/echo OK; \
 	        continue;\
 	    fi ; \
 	    rm -f ./$$i.exe output; \
 	done
 
-
 test-compiler-jit-ngtive_run:
-	@rm -f *.exe \
-	echo "Flags \"$(TEST_RUNTIME)\" ... " ; \
+	@rm -f *.exe; \
+	/usr/bin/echo "********** Negative Execution Tests ************" >> results.out; \
+	/usr/bin/echo "********** Negative Execution Tests ************" ; \
 	for i in $(TEST_NGTIVE_RUNTIME_SOURCES) ; do \
-	    echo -n "$$i: "; \
-	     if $(INTERNAL_MBAS) $$i.vb 1>output ; then \
-		true ; \
+	    /usr/bin/echo -n "$$i: "; \
+	    if $(INTERNAL_MBAS) $$i.vb 1>output ; then \
+			true ; \
 	    else \
-		echo -n -e "\n$$i : FAILED COMPILATION\n " >> results.out; \
-		cat output >> results.out; \
-		echo -n -e "\n========================" >> results.out; \
-	        echo FAILED COMPILATION ;  continue;\
+			/usr/bin/echo -n -e "\n$$i : FAILED COMPILATION\n " >> results.out; \
+			cat output >> results.out; \
+			/usr/bin/echo -n -e "\n========================" >> results.out; \
+	        /usr/bin/echo FAILED COMPILATION ; \
+	        continue;\
 	    fi ; \
 	    if $(TEST_RUNTIME) ./$$i.exe > /dev/null ; then \
-		echo -n -e "\n$$i : UNEXPECTED BEHAVIOUR\n " >> results.out; \
-		echo -n -e "\n========================" >> results.out; \
-	        echo UNEXPECTED BEHAVIOUR ; \
+			/usr/bin/echo -n -e "\n$$i : UNEXPECTED BEHAVIOUR\n " >> results.out; \
+			/usr/bin/echo -n -e "\n========================" >> results.out; \
+	        /usr/bin/echo UNEXPECTED BEHAVIOUR ; \
 	    else \
-		echo OK; \
+			/usr/bin/echo OK >> results.out; \
+			/usr/bin/echo OK; \
 	    fi ; \
 	    rm -f ./$$i.exe output; \
 	done
-
-
-
-
-
-#GENERIC_KNOWN_FAILURES = test-55
-
-

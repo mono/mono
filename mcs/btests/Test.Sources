@@ -2,21 +2,14 @@ TEST_SOURCES = BoolLiteralTest1 \
 BoolLiteralTest \
 DecimalTypeCharTest \
 DoubleTypeCharTest \
-IdentifierFail1 \
-IdentifierFail2 \
-IdentifierFail3 \
-IdentifierFail4 \
 Identifier \
+IdentifierFail1 \
 IntegerLiteral1Test \
 IntegerLiteral2Test \
 IntegerLiteralTest1 \
 IntegerLiteralTest2 \
 IntegerLiteralTest3 \
 IntegerLiteralTest4 \
-IntegerLiteralTestC1 \
-IntegerLiteralTestC2 \
-IntegerLiteralTestC3 \
-IntegerLiteralTestC4 \
 IntegerLiteralTest \
 IntegerTypeCharTest \
 LongTypeCharTest \
@@ -27,3 +20,12 @@ StringLiteralTest \
 StringTypeCharTest \
 Test1 \
 Test2
+
+TEST_NGTIVE_COMPILATION_SOURCES = IdentifierFail2 \
+IdentifierFail3 \
+IdentifierFail4 \
+IntegerLiteralTestC1 \
+IntegerLiteralTestC2 \
+IntegerLiteralTestC3 \
+IntegerLiteralTestC4
+
