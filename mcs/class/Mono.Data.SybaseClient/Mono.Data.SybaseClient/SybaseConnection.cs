@@ -430,9 +430,7 @@ namespace Mono.Data.SybaseClient {
 			if (!value.Equals (""))
 				parameters [name.ToUpper ().Trim ()] = value;
 
-			if (this.ConnectionString == null)
-				SetDefaultConnectionParameters (parameters);
-
+			SetDefaultConnectionParameters (parameters);
 			SetProperties (parameters);
 
 			this.connectionString = connectionString;
@@ -442,8 +440,10 @@ namespace Mono.Data.SybaseClient {
 		{
 			if (null == parameters.Get ("APPLICATION NAME"))
 				parameters["APPLICATION NAME"] = "Mono SybaseClient Data Provider";
-			if (null == parameters.Get ("CONNECT TIMEOUT") && null == parameters.Get ("CONNECTION TIMEOUT"))
+			if (null == parameters.Get ("CONNECT TIMEOUT") && null == parameters.Get ("CONNECTION TIMEOUT")) {
 				parameters["CONNECT TIMEOUT"] = "15";
+				connectionTimeout = 15;
+			}
 			if (null == parameters.Get ("CONNECTION LIFETIME"))
 				parameters["CONNECTION LIFETIME"] = "0";
 			if (null == parameters.Get ("CONNECTION RESET"))
@@ -452,14 +452,20 @@ namespace Mono.Data.SybaseClient {
 				parameters["ENLIST"] = "true";
 			if (null == parameters.Get ("INTEGRATED SECURITY") && null == parameters.Get ("TRUSTED_CONNECTION"))
 				parameters["INTEGRATED SECURITY"] = "false";
-			if (null == parameters.Get ("MAX POOL SIZE"))
+			if (null == parameters.Get ("MAX POOL SIZE")) {
 				parameters["MAX POOL SIZE"] = "100";
-			if (null == parameters.Get ("MIN POOL SIZE"))
+				maxPoolSize = 100;
+			}
+			if (null == parameters.Get ("MIN POOL SIZE")) {
 				parameters["MIN POOL SIZE"] = "0";
+				maxPoolSize = 0;
+			}
 			if (null == parameters.Get ("NETWORK LIBRARY") && null == parameters.Get ("NET"))
 				parameters["NETWORK LIBRARY"] = "dbmssocn";
-			if (null == parameters.Get ("PACKET SIZE"))
+			if (null == parameters.Get ("PACKET SIZE")) {
 				parameters["PACKET SIZE"] = "512";
+				packetSize = 512;
+			}
 			if (null == parameters.Get ("PERSIST SECURITY INFO"))
 				parameters["PERSIST SECURITY INFO"] = "false";
 			if (null == parameters.Get ("POOLING"))
