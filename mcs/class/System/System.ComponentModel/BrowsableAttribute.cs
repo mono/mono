@@ -10,7 +10,7 @@
 
 namespace System.ComponentModel {
 
-	[AttributeUsage (AttributeTargets.Property | AttributeTargets.Event)]
+	[AttributeUsage (AttributeTargets.All)]
 	public sealed class BrowsableAttribute : Attribute {
 		bool browsable;
 		

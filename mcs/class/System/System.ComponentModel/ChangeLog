@@ -1,3 +1,8 @@
+2003-01-30  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* BrowsableAttribute.cs: this attribute applies to All. Since the fix
+	to bug #37380, mcs complained about this when compiling System.Data.
+
 2003-01-08  Dick Porter  <dick@ximian.com>
 
 	* Win32Exception.cs (ComponentModel): Added EWOULDBLOCK
