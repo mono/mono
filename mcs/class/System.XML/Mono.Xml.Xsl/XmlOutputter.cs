@@ -60,7 +60,7 @@ namespace Mono.Xml.Xsl {
 		}
 
 		public override void WriteEndAttribute() {
-			_writer.WriteEndElement();	
+			_writer.WriteEndAttribute();	
 		}
 
 		public override void WriteComment(string text) {
