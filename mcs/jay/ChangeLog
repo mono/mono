@@ -1,3 +1,8 @@
+2004-03-13  Miguel de Icaza  <miguel@ximian.com>
+
+	* main.c (create_file_names): Try a few temp directories, since
+	Windows uses a different directory naming scheme apparently: #47696
+
 2004-03-05  Zoltan Varga  <vargaz@freemail.hu>
 
 	* main.c: Applied patch from Albert Strasheim (13640887@sun.ac.za).

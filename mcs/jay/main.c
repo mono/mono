@@ -263,6 +263,8 @@ create_file_names()
     tmpdir = ".";
 #else
     tmpdir = getenv("TMPDIR");
+    if (tmpdir == 0) tmpdir = getenv ("TMP");
+    if (tmpdir == 0) tmpdir = getenv ("TEMP");
     if (tmpdir == 0) tmpdir = "/tmp";
 #endif
 
