@@ -1,0 +1,25 @@
+2002-07-28  Dave Bettin <javabettin@yahoo.com>
+		* ContractReference.cs
+		* ContractSearchPattern.cs
+		* DiscoveryClientDocumentCollection.cs
+		* DiscoveryClientProtocol.cs
+		* DiscoveryClientReferenceCollection.cs
+		* DiscoveryClientResultCollection.cs
+		* DiscoveryClientResult.cs
+		* DiscoveryDocument.cs
+		* DiscoveryDocumentLinksPattern.cs
+		* DiscoveryDocumentReference.cs
+		* DiscoveryDocumentSearchPattern.cs
+		* DiscoveryExceptionDictionary.cs
+		* DiscoveryReferenceCollection.cs
+		* DiscoveryReference.cs
+		* DiscoveryRequestHandler.cs
+		* DiscoverySearchPattern.cs
+		* DynamicDiscoveryDocument.cs
+		* ExcludePathInfo.cs
+		* SchemaReference.cs
+		* SoapBinding.cs
+		* XmlSchemaSearchPattern.cs
+			[ Added stubs]
+
+	
