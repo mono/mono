@@ -646,37 +646,6 @@ namespace Mono.CSharp
 				return Token.CARRET;
 			}
 
-#if FIXME
-			if (c == '>'){
-				if (deambiguate_greater_than == 0)
-					return Token.OP_GT;
-
-				--deambiguate_greater_than;
-
-				// Save current position and parse next token.
-				int old = reader.Position;
-				int new_token = token ();
-				reader.Position = old;
-				putback_char = -1;
-
-				switch (new_token) {
-				case Token.OPEN_PARENS:
-				case Token.CLOSE_PARENS:
-				case Token.CLOSE_BRACKET:
-				case Token.OP_GT:
-				case Token.COLON:
-				case Token.SEMICOLON:
-				case Token.COMMA:
-				case Token.DOT:
-				case Token.INTERR:
-					return Token.OP_GENERICS_GT;
-
-				default:
-					return Token.OP_GT;
-				}
-			}
-#endif
-
 			return Token.ERROR;
 		}
 
