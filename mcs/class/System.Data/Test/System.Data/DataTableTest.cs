@@ -1247,5 +1247,28 @@ namespace MonoTests.System.Data
 			doc.LoadXml (sw.ToString ());
 			AssertEquals (5, doc.DocumentElement.FirstChild.ChildNodes.Count);
 		}
-	}
+
+		 [Test]
+                public void CloneSubClassTest()
+                {
+                        MyDataTable dt1 = new MyDataTable();
+                        MyDataTable dt = (MyDataTable)(dt1.Clone());
+                        AssertEquals("A#01",2,MyDataTable.count);
+                }
+                                                                                                    
+        }
+                                                                                                    
+                                                                                                    
+         public  class MyDataTable:DataTable {
+                                                                                                    
+             public static int count = 0;
+                                                                                                    
+             public MyDataTable() {
+                                                                                                    
+                    count++;
+             }
+                                                                                                    
+         }
+
+	
 }
