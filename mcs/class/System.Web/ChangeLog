@@ -1,3 +1,7 @@
+2004-11-29 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* System.Web.dll.sources: added ReusableMemoryStream.
+
 2004-06-08  Alon Gazit <along@mainsoft.com>
 
 	* System.Web.dll.sources: added ServerVariablesCollection.

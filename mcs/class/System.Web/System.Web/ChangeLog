@@ -1,3 +1,12 @@
+2004-11-29 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* ReusableMemoryStream.cs: copied from System.IO.MemoryStream and
+	slightly modified to allow expanding the buffer for cases on which the
+	regular MemoryStream don't allow it.
+
+	* HttpWriter.cs: use the new ReusableMemoryStream and fix bug #19841.
+	Otherwise we would have to allocate a new MemoryStream...
+
 2004-11-28 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpApplication.cs: Create() is now GetInstance().
