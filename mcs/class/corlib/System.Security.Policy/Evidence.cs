@@ -32,6 +32,7 @@
 //
 
 using System.Collections;
+using System.Globalization;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -270,7 +271,7 @@ namespace System.Security.Policy {
 			e.AddHost (new Hash (a));
 
 			// non local files (e.g. http://) also get a Site evidence
-			if (!aname.ToUpper ().StartsWith ("FILE://")) {
+			if (String.Compare ("FILE://", 0, aname, 0, 7, true, CultureInfo.InvariantCulture) != 0) {
 				e.AddHost (Site.CreateFromUrl (aname));
 			}
 

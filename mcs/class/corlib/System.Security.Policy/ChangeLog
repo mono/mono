@@ -1,3 +1,8 @@
+2005-01-18  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Evidence.cs: Fix problem with default evidence when ICU is enabled.
+	Fix bug #71366.
+
 2005-01-11  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Hash.cs: Fix regression in 2.0 to load default (hash) evidences.
