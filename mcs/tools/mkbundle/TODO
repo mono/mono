@@ -1,0 +1,24 @@
+Tasks necessary to complete the embedding:
+
+	* Allow --static flag (very important).
+
+		* Provide a mono-static .pc file that can be used with this tool.
+
+		* Provide a way to allow the user to pass extra options to gcc
+		  (to control how to get libicu statically linked for example).
+
+		* Warn if the user is using ICU?
+	
+	* Pass the main executable as the first argument to the
+	  mono_main routine so it starts executing it.
+
+Files:
+
+	* Need to trace a typical execution and locate the files that this
+	  will require at runtime, provide hooks of some form.
+
+Independently:
+
+	* Turn off ICU by default in Mono anyways?
+
+	
