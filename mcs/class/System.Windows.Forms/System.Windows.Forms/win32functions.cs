@@ -1211,7 +1211,7 @@ namespace System.Windows.Forms{
 		static Win32 ()
 		{
 			// FIXME: this is definitely not the right way to understand that we are on Linux
-			RunningOnUnix = System.IO.Path.PathSeparator == '/';
+			RunningOnUnix = System.IO.Path.DirectorySeparatorChar == '/';
 
 			//
 			// Tell System.Drawing to use the Wine function drawing.
