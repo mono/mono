@@ -33,7 +33,6 @@
 using System.Collections;
 using System.Xml;
 using System.Xml.Schema;
-using MS.Internal.Xml;
 
 namespace System.Xml.XPath
 {

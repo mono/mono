@@ -1,3 +1,7 @@
+2004-08-23  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XPathAtomicValue.cs, XPathNavigator.cs : Eliminate MS.Internal.Xml.*.
+
 2004-08-03  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XPathEditableNavigator.cs : implemented some editor support methods.

@@ -36,9 +36,6 @@ using System.IO;
 using System.Xml;
 using System.Xml.Schema;
 using Mono.Xml.XPath;
-#if NET_2_0
-using MS.Internal.Xml;
-#endif
 
 #if NET_2_0
 using NSResolver = System.Xml.IXmlNamespaceResolver;
