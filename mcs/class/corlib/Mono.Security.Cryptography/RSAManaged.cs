@@ -161,10 +161,10 @@ namespace Mono.Security.Cryptography {
 			get { return "RSA-PKCS1-KeyEx"; }
 		}
 
-		// note: this property will exist in RSACryptoServiceProvider in
-		// version 2.0 of the framework
+		// note: when (if) we generate a keypair then it will have both
+		// the public and private keys
 		public bool PublicOnly {
-			get { return ((d == null) || (n == null)); }
+			get { return (keypairGenerated && ((d == null) || (n == null))); }
 		}
 
 		public override string SignatureAlgorithm {

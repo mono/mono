@@ -1,3 +1,10 @@
+2005-01-11  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* DSAManaged.cs: PublicOnly now reports false when a key hasn't yet 
+	been generated.
+	* RSAManaged.cs: PublicOnly now reports false when a key hasn't yet 
+	been generated.
+
 2005-01-10  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* MACAlgorithm.cs: Added support for different padding modes (required

@@ -237,10 +237,10 @@ namespace Mono.Security.Cryptography {
 			get { return null; }
 		}
 
-		// note: this property will exist in DSACryptoServiceProvider in
-		// version 1.2 of the framework
+		// note: when (if) we generate a keypair then it will have both
+		// the public and private keys
 		public bool PublicOnly {
-			get { return (x == null); }
+			get { return ((keypairGenerated) && (x == null)); }
 		}
 
 		public override string SignatureAlgorithm {
