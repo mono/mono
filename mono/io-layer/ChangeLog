@@ -1,3 +1,6 @@
+2002-02-20  Dick Porter  <dick@ximian.com>
+
+	* io-layer.h: Always build without cygwin support on windows
 
 Mon Feb 18 15:50:59 CET 2002 Paolo Molaro <lupus@ximian.com>
 
