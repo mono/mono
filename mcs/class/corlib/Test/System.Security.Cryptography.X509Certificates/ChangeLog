@@ -1,3 +1,7 @@
+2005-02-24  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* X509Cert20Test.cs: Fx 2.0 specific certificate tests.
+
 2004-05-20  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* X509CapiTest.cs: SetUp and TearDown are now public (required for new
