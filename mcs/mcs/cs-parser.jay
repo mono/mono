@@ -1302,10 +1302,6 @@ interface_event_declaration
 		$$ = new InterfaceEvent ((Expression) $4, (string) $5, (bool) $2, (Attributes) $1,
 					 lexer.Location);
 	  }
-
-	//
-	// Catch a few mistakes
-	//
 	| opt_attributes opt_new EVENT type error {
 		CheckIdentifierToken (yyToken);
 		$$ = null;
@@ -1314,10 +1310,10 @@ interface_event_declaration
 		Report.Error (68, lexer.Location, "Event declarations on interfaces can not be initialized.");
 		$$ = null;
 	  }
-	| opt_attributes opt_new EVENT type IDENTIFIER event_accessor_declarations {
+	| opt_attributes opt_new EVENT type IDENTIFIER OPEN_BRACE event_accessor_declarations CLOSE_BRACE {
 		Report.Error (69, lexer.Location, "Event accessors not valid on interfaces");
-		$$ = null;
-	  }
+ 		$$ = null;
+ 	  }
 	;
 
 interface_indexer_declaration 

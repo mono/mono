@@ -669,10 +669,14 @@ namespace Mono.CSharp {
 				Report.Error (
 					122, loc, "`" + TypeManager.CSharpName (qualifier_type) + "." +
 					name + "' is inaccessible due to its protection level");
-			else
+			else if (name == ".ctor") {
+				Report.Error (143, loc, String.Format ("The type {0} has no constructors defined",
+								       TypeManager.CSharpName (queried_type)));
+			} else {
 				Report.Error (
 					122, loc, "`" + name + "' is inaccessible due to its " +
 					"protection level");
+			}
 		}
 
 		static public MemberInfo GetFieldFromEvent (EventExpr event_expr)
