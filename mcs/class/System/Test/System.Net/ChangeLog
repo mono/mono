@@ -1,5 +1,10 @@
 2002-05-05  Lawrence Pit <loz@cable.a2000.nl>
 
+	* CredentialCacheTest.cs: added
+	* AllTests.cs: added CredentialCacheTest
+
+2002-05-05  Lawrence Pit <loz@cable.a2000.nl>
+
 	* IPAddressTest.cs: added test for loopback
 
 2002-04-30  Nick Drochak  <ndrochak@gol.com>
