@@ -333,6 +333,7 @@ namespace System.IO {
 
 		public override string ReadLine()
 		{
+			bool foundCR = false;
 			StringBuilder text = new StringBuilder ();
 
 			while (true) {
@@ -342,14 +343,27 @@ namespace System.IO {
 					if (text.Length == 0)
 						return null;
 
+					if (foundCR)
+						text.Length--;
+
 					break;
 				}
 
 				if (c == '\n') {			// newline
 					if ((text.Length > 0) && (text [text.Length - 1] == '\r'))
 						text.Length--;
+
+					foundCR = false;
+					break;
+				} else if (foundCR) {
+					pos--;
+					text.Length--;
 					break;
 				}
+
+				if (c == '\r')
+					foundCR = true;
+					
 
 				text.Append ((char) c);
 			}

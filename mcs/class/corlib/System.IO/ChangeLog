@@ -1,3 +1,8 @@
+2002-10-21  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* StreamReader.cs: ReadLine now treats a \r not followed by a \n as a
+	\n (this is what MS does).
+
 2002-10-18  Dick Porter  <dick@ximian.com>
 
 	* FileStream.cs: SeekOrigin.End still calculates the offset from
