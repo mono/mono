@@ -1,6 +1,7 @@
 CSC=csc.exe
 
 MCS=../mcs/mcs.exe
+MCS2=mono ../mcs/mcs-mono2.exe
 VERIFY=../tools/verifier.exe
 
 TEST_SOURCES = \
@@ -83,6 +84,22 @@ test-windows:
 		echo -n "Running $$i ... "; \
 		if $(MCS) $$i.cs > /dev/null; then \
 			if ./$$i.exe > /dev/null; then \
+				echo OK; \
+			else \
+				echo FAILED; exit 1; \
+			fi; \
+		else \
+			echo FAILED TO COMPILE; exit 1; \
+		fi \
+	done
+
+# Compile with mono, run with mono jit
+test-compiler-mono:
+	@rm -f *.exe; \
+	for i in $(TEST_SOURCES); do \
+		echo -n "Running $$i ... "; \
+		if $(MCS2) $$i.cs > /dev/null; then \
+			if mono ./$$i.exe > /dev/null; then \
 				echo OK; \
 			else \
 				echo FAILED; exit 1; \

@@ -1,3 +1,8 @@
+2002-06-27  Martin Baulig  <martin@gnome.org>
+
+	* makefile (test-compiler-mono): New target to compile and run
+	the tests with mcs and the mono jit.
+
 2002-06-25  Andrew Birkett  <adb@tardis.ed.ac.uk>
 
 	* makefile: The following tests fail under linux and have been 
