@@ -1123,6 +1123,7 @@ System.Collections.Generic/KeyNotFoundException.cs
 System.Collections.Generic/Queue.cs
 System.Collections.Generic/Stack.cs
 System.Collections.Generic/List.cs
+System.Collections.Generic/Collection.cs
 System/Action.cs
 System/ArraySegment.cs
 System/Comparison.cs
