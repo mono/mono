@@ -513,13 +513,23 @@ namespace Mono.CSharp {
 			if (check_type.IsArray || check_type.IsPointer)
 				return CheckAccessLevel (check_type.GetElementType ());
 
-			if (check_attr == TypeAttributes.Public)
-				return true;
-			
-			if (check_attr == TypeAttributes.NestedPublic)
+			switch (check_attr){
+			case TypeAttributes.Public:
 				return true;
 
-			if (check_attr == TypeAttributes.NestedPrivate){
+			case TypeAttributes.NotPublic:
+				//
+				// This test should probably use the declaringtype.
+				//
+				if (check_type.Assembly == TypeBuilder.Assembly){
+					return true;
+				}
+				return false;
+				
+			case TypeAttributes.NestedPublic:
+				return true;
+
+			case TypeAttributes.NestedPrivate:
 				string check_type_name = check_type.FullName;
 				string type_name = TypeBuilder.FullName;
 				
@@ -538,17 +548,52 @@ namespace Mono.CSharp {
 				}
 
 				return false;
-			}
-			
-			if (check_type.Assembly == TypeBuilder.Assembly){
-				return true;
+
+			case TypeAttributes.NestedFamily:
+				//
+				// Only accessible to methods in current type or any subtypes
+				//
+				return FamilyAccessible (check_type);
+
+			case TypeAttributes.NestedFamANDAssem:
+				return (check_type.Assembly == TypeBuilder.Assembly) &&
+					FamilyAccessible (check_type);
+
+			case TypeAttributes.NestedFamORAssem:
+				return (check_type.Assembly == TypeBuilder.Assembly) ||
+					FamilyAccessible (check_type);
+
+			case TypeAttributes.NestedAssembly:
+				return check_type.Assembly == TypeBuilder.Assembly;
 			}
 
+			Console.WriteLine ("HERE: " + check_attr);
 			return false;
 
 		}
 
+		protected bool FamilyAccessible (Type check_type)
+		{
+			Type declaring = check_type.DeclaringType;
+			if (TypeBuilder.IsSubclassOf (declaring))
+				return true;
 
+			string check_type_name = check_type.FullName;
+			string type_name = TypeBuilder.FullName;
+			
+			int cio = check_type_name.LastIndexOf ("+");
+			string container = check_type_name.Substring (0, cio);
+			
+			//
+			// Check if the check_type is a nested class of the current type
+			//
+			if (check_type_name.StartsWith (container + "+"))
+				return true;
+
+			return false;
+		}
+		
+		
 		Type LookupInterfaceOrClass (string ns, string name, out bool error)
 		{
 			DeclSpace parent;

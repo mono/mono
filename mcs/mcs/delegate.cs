@@ -61,24 +61,22 @@ namespace Mono.CSharp {
 
 		public override TypeBuilder DefineType ()
 		{
-			TypeAttributes attr;
-
 			if (TypeBuilder != null)
 				return TypeBuilder;
-			
+
+			TypeAttributes attr = Modifiers.TypeAttr (ModFlags, IsTopLevel) |
+				TypeAttributes.Class | TypeAttributes.Sealed;
+
 			if (IsTopLevel) {
 				if (TypeManager.NamespaceClash (Name))
 					return null;
 				
 				ModuleBuilder builder = CodeGen.ModuleBuilder;
-				attr = TypeAttributes.Public | TypeAttributes.Class | TypeAttributes.Sealed;
 
 				TypeBuilder = builder.DefineType (
 					Name, attr, TypeManager.multicast_delegate_type);
 			} else {
 				TypeBuilder builder = Parent.TypeBuilder;
-				attr = TypeAttributes.NestedPublic | TypeAttributes.Class |
-					TypeAttributes.Sealed;
 
 				string name = Name.Substring (1 + Name.LastIndexOf ('.'));
 				TypeBuilder = builder.DefineNestedType (

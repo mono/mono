@@ -1,3 +1,12 @@
+2003-06-29  Miguel de Icaza  <miguel@ximian.com>
+
+	* decl.cs (DeclSpace.CheckAccessLevel): Make this routine
+	complete;  Fixes #37521.
+
+	* delegate.cs: Use Modifiers.TypeAttr to compute the
+	TypeAttributes, instead of rolling our own.  This makes the flags
+	correct for the delegates.
+
 2003-06-28  Miguel de Icaza  <miguel@ximian.com>
 
 	* class.cs (Constructor.Define): Set the private flag for static
