@@ -6473,7 +6473,8 @@ namespace Mono.CSharp {
 
 			MemberInfo [] mi = TypeManager.MemberLookup (
 				caller_type, lookup_type, MemberTypes.Property,
-				BindingFlags.Public | BindingFlags.Instance, p_name);
+				BindingFlags.Public | BindingFlags.Instance |
+				BindingFlags.DeclaredOnly, p_name);
 
 			if (mi == null || mi.Length == 0)
 				return null;
@@ -6504,9 +6505,6 @@ namespace Mono.CSharp {
 				}
 			}
 
-			Report.Error (21, loc,
-				      "Type `" + TypeManager.CSharpName (lookup_type) +
-				      "' does not have any indexers defined");
 			return null;
 		}
 	}
@@ -6562,22 +6560,52 @@ namespace Mono.CSharp {
 			//
 			// This is a group of properties, piles of them.  
 
-			if (ilist == null)
-				ilist = Indexers.GetIndexersForType (
-					current_type, indexer_type, loc);
+			bool found_any = false, found_any_getters = false;
+			Type lookup_type = indexer_type;
+			while (lookup_type != null) {
+				ilist = Indexers.GetIndexersForType (current_type, lookup_type, loc);
 
-			//
-			// Step 2: find the proper match
-			//
-			if (ilist != null && ilist.getters != null && ilist.getters.Count > 0)
-				get = (MethodInfo) Invocation.OverloadResolve (
-					ec, new MethodGroupExpr (ilist.getters, loc), arguments, loc);
+				if (ilist == null) {
+					lookup_type = lookup_type.BaseType;
+					continue;
+				}
 
-			if (get == null){
+				found_any = true;
+
+				//
+				// Step 2: find the proper match
+				//
+				if (ilist.getters != null && ilist.getters.Count > 0) {
+					found_any_getters = true;
+					get = (MethodInfo) Invocation.OverloadResolve (
+						ec, new MethodGroupExpr (ilist.getters, loc), arguments, loc);
+
+					if (get != null)
+						break;
+				}
+
+				lookup_type = lookup_type.BaseType;
+			}
+
+			if (!found_any) {
+				Report.Error (21, loc,
+					      "Type `" + TypeManager.CSharpName (indexer_type) +
+					      "' does not have any indexers defined");
+				return null;
+			}
+
+			if (!found_any_getters) {
 				Error (154, "indexer can not be used in this context, because " +
 				       "it lacks a `get' accessor");
 				return null;
 			}
+
+			if (get == null) {
+				Error (1501, "No Overload for method `this' takes `" +
+				       arguments.Count + "' arguments");
+				return null;
+			}
+
 			//
 			// Only base will allow this invocation to happen.
 			//
@@ -6603,21 +6631,50 @@ namespace Mono.CSharp {
 
 			Type right_type = right_side.Type;
 
-			if (ilist == null)
-				ilist = Indexers.GetIndexersForType (
-					current_type, indexer_type, loc);
+			bool found_any = false, found_any_setters = false;
+			Type lookup_type = indexer_type;
+			while (lookup_type != null) {
+				ilist = Indexers.GetIndexersForType (current_type, lookup_type, loc);
 
-			if (ilist != null && ilist.setters != null && ilist.setters.Count > 0){
-				set_arguments = (ArrayList) arguments.Clone ();
-				set_arguments.Add (new Argument (right_side, Argument.AType.Expression));
+				if (ilist == null) {
+					lookup_type = lookup_type.BaseType;
+					continue;
+				}
 
-				set = (MethodInfo) Invocation.OverloadResolve (
-					ec, new MethodGroupExpr (ilist.setters, loc), set_arguments, loc);
+				found_any = true;
+
+				if (ilist.setters != null && ilist.setters.Count > 0) {
+					found_any_setters = true;
+
+					set_arguments = (ArrayList) arguments.Clone ();
+					set_arguments.Add (new Argument (right_side, Argument.AType.Expression));
+					set = (MethodInfo) Invocation.OverloadResolve (
+						ec, new MethodGroupExpr (ilist.setters, loc), set_arguments, loc);
+
+					if (set != null)
+						break;
+				}
+
+
+				lookup_type = lookup_type.BaseType;
 			}
-			
-			if (set == null){
-				Error (200, "indexer X.this [" + TypeManager.CSharpName (right_type) +
-				       "] lacks a `set' accessor");
+
+			if (!found_any) {
+				Report.Error (21, loc,
+					      "Type `" + TypeManager.CSharpName (indexer_type) +
+					      "' does not have any indexers defined");
+				return null;
+			}
+
+			if (!found_any_setters) {
+				Error (154, "indexer can not be used in this context, because " +
+				       "it lacks a `set' accessor");
+				return null;
+			}
+
+			if (set == null) {
+				Error (1501, "No Overload for method `this' takes `" +
+				       arguments.Count + "' arguments");
 				return null;
 			}
 

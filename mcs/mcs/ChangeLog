@@ -1,5 +1,14 @@
 2002-11-14  Martin Baulig  <martin@ximian.com>
 
+	* expression.cs (IndexerAccess.DoResolve): Do a DeclaredOnly
+	iteration while looking for indexers, this is needed because the
+	indexer may have a different name in our base classes.  Fixed the
+	error reporting (no indexers at all, not get accessor, no
+	overloaded match).  Fixes bug #33089.
+	(IndexerAccess.DoResolveLValue): Likewise.
+
+2002-11-14  Martin Baulig  <martin@ximian.com>
+
 	* class.cs (PropertyBase.CheckBase): Make this work for multiple
 	indexers.  Fixes the first part of bug #33089.
 	(MethodSignature.InheritableMemberSignatureCompare): Added support
