@@ -1,3 +1,9 @@
+2002-06-22  Martin Baulig  <martin@gnome.org>
+
+	* debug.c (mono_debug_source_location_from_address): Small fix, an
+	unsigned number can never be smaller than zero, make that check
+	actually work.
+
 2002-06-19  Dietmar Maurer  <dietmar@ximian.com>
 
 	* exception.c (ves_icall_get_trace): new method to get the stack
