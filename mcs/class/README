@@ -28,8 +28,14 @@ the restricted dll found in the same directory.
 * Missing implementation bits
 
 	If you implement a class and you are missing implementation bits,
-	please put in the code the word "TODO" and a description of what
-	is missing to be implemented.
+	please use the attribute [MonoTODO].  This attribute can be used
+	to programatically generate our status web pages:
+
+	[MonoTODO]
+	int MyFunction ()
+	{
+		throw new Exception ("Unimplemented");
+	}
 
 * Tagging buggy code
 
@@ -40,21 +46,160 @@ the restricted dll found in the same directory.
 	Do not use XXX or obscure descriptions, because otherwise people
 	will not be able to understand what you mean.
 
-* Tagging Lame specs
+* Tagging Problematic specs.
+
+	If the documentation and the Microsoft implementation do
+	differ (you wrote a test case to prove this), I suggest that you edit
+	the file `mcs/class/doc/API-notes' so we can keep track of these problems
+	and submit our comments to ECMA or Microsoft and seek clarification.
+
+	Sometimes the documentation might be buggy, and sometimes the implementation
+	might be buggy.  Lets try to identify and pinpoint which one
+	is the correct one.
 
 	Sometimes the specification will be lame (consider Version.ToString (fieldCount)
 	where there is no way of knowing how many fields are available, making the API
 	not only stupid, but leading to unreliable code).
 
 	In those cases, use the keyword "LAMESPEC".
+	
 
-* Coding consideration
+* Coding considerations and style.
+
+	In order to keep the code consistent, please use the following
+	conventions.  From here on `good' and `bad' are used to attribute
+	things that would make the coding style match, or not match.  It is not
+	a judgement call on your coding abilities, but more of a style and 
+	look call.  Please try to follow these guidelines to ensure prettiness.
 
 	Use 8 space tabs for writing your code (hopefully we can keep
 	this consistent).  If you are modifying someone else's code, try
 	to keep the coding style similar.
 
-	Please use code that looks like this:
+	Since we are using 8-space tabs, you might want to consider the Linus
+	Torvals trick to reduce code nesting.  Many times in a loop, you will
+	find yourself doing a test, and if the test is true, you will nest.
+	Many times this can be changed.  Example:
+
+
+		for (i = 0; i < 10; i++) {
+			if (something (i)) {
+				do_more ();
+			}
+		}
+
+	This take precious space, instead write it like this:
+
+		for (i = 0; i < 10; i++) {
+			if (!something (i))
+				continue;
+			do_more ();
+		}
+
+	A few guidelines:
+
+		* Use a space before an opening parenthesis when calling
+		  functions, like this:
+
+			method (a);
+
+		* Do not put a space after the opening parenthesis and the 
+		  closing one, ie:
+
+			good: method (a);
+
+			bad:  method ( a );
+
+		* Inside a code block, put the opening brace on the same line
+	  	  as the statement:
+
+			good:
+				if (a) {
+					code ();
+					code ();
+				}
+
+			bad:
+				if (a) 
+				{
+					code ();
+					code ();
+				}
+
+		* Avoid using unecessary open/close braces, vertical space
+		  is usually limited:
+
+			good:
+				if (a)
+					code ();
+
+			bad:
+				if (a) {
+					code ();
+				}
+
+		* When defining a method, use the C style for brace placement, 
+		  that means, use a new line for the brace, like this:
+
+			good:
+				void Method ()
+				{
+				}
+
+			bad:
+				void Method () {
+				}
+
+		* Properties are an exception, keep the brace on the same line
+		  as the property declaration.   Rationale: this makes it visually
+		  simple to distinguish them.
+
+			good:
+				int Property {
+					get {
+						return value;
+					}
+				}
+
+			bad:
+				int Property 
+				{
+					get {
+						return value;
+					}
+				}
+
+		  Notice how the accessor "get" also keeps its brace on the same
+		  line.
+
+		* Use white space in expressions liberally, except in the presence
+		  of parenthesis:
+
+			good:
+
+				if (a + 5 > method (blah () + 4))
+
+			bad:
+				if (a+5>method(blah()+4))
+
+		* For any new files, please use a descriptive introduction, like
+		  this:
+
+			//
+			// System.Comment.cs: Handles comments in System files.
+			//
+			// Author:
+			//   Juan Perez (juan@address.com)
+			//
+			// (C) 2002 Address, Inc (http://www.address.com)
+			//
+
+		* If you are modyfing someone else's code, and your contribution
+		  is significant, please add yourself to the Authors list.
+
+	Here are a couple of examples:
+
+class X : Y {
 
 	bool Method (int argument_1, int argument_2)
 	{
@@ -67,4 +212,36 @@ the restricted dll found in the same directory.
 			else
 				return false;
 		}
+
+		//
+		// This sample helps keep your sanity while using 8-spaces for tabs
+		// 
+		VeryLongIdentifierWhichTakesManyArguments (
+			Argument1, Argument2, Argument3,
+			NestedCallHere (
+				MoreNested));
 	}
+
+	bool MyProperty {
+		get {
+			return x;
+		}
+
+		set {
+			x = value;
+		}
+	}
+
+	void AnotherMethod () 
+	{
+		if ((a + 5) != 4) {
+		}
+
+		while (blah) {
+			if (a)
+				continue;
+			b++;
+		}
+	}
+}
+	
