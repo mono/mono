@@ -1,3 +1,9 @@
+2002-04-27  Martin Baulig  <martin@gnome.org>
+
+	* corlib.build: Added new "mcs-build" target to compile corlib
+	with mcs. This doesn't work yet - it's just to test mcs to find
+	and fix the remaining bugs.
+
 2002-03-27  Dan Lewis  <dihlewis@yahoo.co.uk>
 
 	* corlib.build: removed seperate windows/linux builds. excluded

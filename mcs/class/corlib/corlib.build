@@ -6,6 +6,7 @@
 
 <project name="corlib" default="build">
 	<property name="debug" value="true"/>
+	<property name="verbose" value="true"/>
 
 	<target name="build">
 		<mkdir dir="../lib"/>
@@ -109,6 +110,30 @@
 			</sources>
 		</csc>
 		<nant basedir="Test" target="build"/>
+	</target>
+
+	<target name="mcs-build">
+		<mkdir dir="../lib"/>
+
+		<mcs target="library" output="../lib/corlib_mcs.dll" debug="false" verbose="${verbose}">
+			<arg value="--unsafe"/>
+
+			<arg value="--nostdlib"/> 	<!-- don't reference mscorlib -->
+			<arg value="--noconfig"/>	<!-- don't reference ms assemblies -->
+
+			<sources>
+				<includes name="**/*.cs"/>
+
+				<excludes name="Test/**"/>
+				<excludes name="System.Security.Permissions/SecurityPermissionAttribute.cs"/>	<!-- custom security attributes problem -->
+
+				<excludes name="Unix/**"/>
+				<excludes name="Linux/**"/>
+				<excludes name="Windows/**"/>
+				<excludes name="System.PAL/**"/>
+			</sources>
+		</mcs>
+
 	</target>
 
 	<target name="test" depends="build">
