@@ -28,7 +28,7 @@ namespace System.Reflection
 		{
 		}
 
-		public InvalidFilterCriteriaException (SerializationInfo info,
+		protected InvalidFilterCriteriaException (SerializationInfo info,
 						       StreamingContext context)
 			: base (info, context)
 		{

@@ -80,6 +80,8 @@ namespace System {
 		// Fields
 		public static readonly object DBNull;
 	
+		private Convert () {}
+
 		// ========== BASE 64 Conversions ========== //
 		// the BASE64 convert methods are using the Base64 converting methods
 		// from System.Security.Cryptography.ToBase64Transform and

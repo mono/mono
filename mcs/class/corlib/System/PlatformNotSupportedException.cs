@@ -27,7 +27,7 @@ namespace System
 			{
 			}
 		
-		public PlatformNotSupportedException (SerializationInfo info,
+		protected PlatformNotSupportedException (SerializationInfo info,
 						      StreamingContext context)
 			: base (info, context)
 			{

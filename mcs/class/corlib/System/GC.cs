@@ -13,6 +13,8 @@ using System;
 
 namespace System {
 	public sealed class GC {
+
+		private GC () {}
 		
 		[MonoTODO]
 		public static void SuppressFinalize (object obj)

@@ -21,7 +21,7 @@ namespace System.Security.Cryptography {
 		/// <summary>
 		/// Called from constructor of derived class.
 		/// </summary>
-		protected SHA256 () {
+		public SHA256 () {
 		
 		}
 	

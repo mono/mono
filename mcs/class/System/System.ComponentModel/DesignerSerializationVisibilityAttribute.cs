@@ -24,7 +24,7 @@ namespace System.ComponentModel {
 				DesignerSerializationVisibility.Visible);
 		}
 		
-		DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility vis)
+		public DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility vis)
 		{
 			visibility = vis;
 		}

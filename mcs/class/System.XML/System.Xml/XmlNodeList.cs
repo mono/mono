@@ -16,7 +16,7 @@ namespace System.Xml
 	{
 		#region Constructors
 
-		protected internal XmlNodeList() { }
+		protected XmlNodeList() { }
 
 		#endregion
 

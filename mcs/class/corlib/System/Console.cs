@@ -23,6 +23,8 @@ namespace System {
 			stdout = new StreamWriter (OpenStandardOutput ());
 			stdin  = new StreamReader (OpenStandardInput ());
 		}
+
+		private Console () {}
 		
 		public static TextWriter Error
 		{

@@ -12,6 +12,8 @@ namespace System.Threading
 {
 	public sealed class RegisteredWaitHandle
 	{
+		internal RegisteredWaitHandle () {}
+
 		[MonoTODO]
 		public bool Unregister(WaitHandle waitObject) {
 			// FIXME

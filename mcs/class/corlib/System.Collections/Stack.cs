@@ -49,7 +49,7 @@ namespace System.Collections {
 
 			Stack stack;
 
-			public SyncStack(Stack s) {
+			internal SyncStack(Stack s) {
 				stack = s;
 			}
 			

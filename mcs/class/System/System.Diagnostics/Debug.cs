@@ -20,6 +20,8 @@ namespace System.Diagnostics {
 	/// </summary>
 	public sealed class Debug {
 
+		private Debug () {}
+
 		/// <summary>
 		/// Gets or sets value indicating whether Flush should
 		/// be called on the listeners.

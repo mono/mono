@@ -14,17 +14,17 @@ namespace System.ComponentModel {
 
 	public abstract class PropertyDescriptor : MemberDescriptor {
 
-		public PropertyDescriptor (MemberDescriptor reference)
+		protected PropertyDescriptor (MemberDescriptor reference)
 			: base (reference)
 		{
 		}
 
-		public PropertyDescriptor (MemberDescriptor reference, Attribute [] attrs)
+		protected PropertyDescriptor (MemberDescriptor reference, Attribute [] attrs)
 			: base (reference, attrs)
 		{
 		}
 
-		public PropertyDescriptor (string name, Attribute [] attrs)
+		protected PropertyDescriptor (string name, Attribute [] attrs)
 			: base (name, attrs)
 		{
 		}

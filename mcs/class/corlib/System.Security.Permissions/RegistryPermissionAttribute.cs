@@ -27,7 +27,7 @@ namespace System.Security.Permissions
 		public RegistryPermissionAttribute (SecurityAction action) : base (action) {}
 		
 		// Properties
-		string All
+		public string All
 		{
 			set { all = value; }
 		}

@@ -12,6 +12,9 @@ using System.Runtime.CompilerServices;
 
 namespace System {
 	public sealed class Buffer {
+
+		private Buffer () {}
+
 		public static int ByteLength (Array array) {
 			// note: the other methods in this class also use ByteLength to test for
 			// null and non-primitive arguments as a side-effect.

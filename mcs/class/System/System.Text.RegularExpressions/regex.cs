@@ -335,7 +335,7 @@ namespace System.Text.RegularExpressions {
 			return factory.NewInstance ();
 		}
 
-		private string pattern;
+		protected internal string pattern;
 		private RegexOptions options;
 
 		private IMachineFactory factory;

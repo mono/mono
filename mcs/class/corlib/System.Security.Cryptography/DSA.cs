@@ -16,6 +16,7 @@ namespace System.Security.Cryptography
 	/// </summary>
 	public abstract class DSA : AsymmetricAlgorithm
 	{
+		internal DSA () {}
 	
 		public static new DSA Create()
 		{

@@ -13,6 +13,8 @@ namespace System.Threading
 {
 	public sealed class Monitor
 	{
+		private Monitor () {}
+
 		// Grabs the mutex on object 'obj', with a maximum
 		// wait time 'ms' but doesn't block - if it can't get
 		// the lock it returns false, true if it can

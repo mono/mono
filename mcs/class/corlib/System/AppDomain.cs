@@ -27,6 +27,8 @@ namespace System {
 		IntPtr _mono_app_domain;
 
 		// Evidence evidence;
+
+		private AppDomain () {}
 		
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern AppDomainSetup getSetup ();

@@ -8,5 +8,6 @@ namespace System.Reflection
 {
 	public class TargetInvocationException : ApplicationException
 	{
+		private TargetInvocationException () {}
 	}
 }

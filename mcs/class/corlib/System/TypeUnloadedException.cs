@@ -27,7 +27,7 @@ namespace System
 			{
 			}
 		
-		public TypeUnloadedException (SerializationInfo info,
+		protected TypeUnloadedException (SerializationInfo info,
 					      StreamingContext context)
 			: base (info, context)
 			{

@@ -10,6 +10,8 @@ namespace System.Runtime.InteropServices
 {
 	class Marshal
 	{
+		private Marshal () {}
+
 		[MethodImplAttribute(System.Runtime.CompilerServices.MethodImplOptions.InternalCall)]
 		public static extern string PtrToStringAuto (IntPtr ptr);	
 

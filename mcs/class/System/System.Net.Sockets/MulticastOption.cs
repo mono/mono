@@ -19,7 +19,7 @@ namespace System.Net.Sockets
 	{
 		// Don't change the names of these fields without also
 		// changing socket-io.c in the runtime
-		protected IPAddress group;
+		private IPAddress group;
 		protected IPAddress local;
 
 		public MulticastOption (IPAddress grp)

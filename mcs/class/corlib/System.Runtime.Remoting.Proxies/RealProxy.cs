@@ -22,15 +22,15 @@ namespace System.Runtime.Remoting.Proxies
 
 		Type class_to_proxy;
 
-		RealProxy () {
+		protected RealProxy () {
 			throw new NotImplementedException ();
 		}
 
-		RealProxy (Type classToProxy) {
+		protected RealProxy (Type classToProxy) {
 			this.class_to_proxy = classToProxy;
 		}
 
-		RealProxy (Type classToProxy, IntPtr stub, object stubData) {
+		protected RealProxy (Type classToProxy, IntPtr stub, object stubData) {
 			throw new NotImplementedException ();
 		}
 

@@ -73,6 +73,6 @@ namespace System.IO.IsolatedStorage
 		{
 		}
 
-		protected abstract void Remove ();
+		public abstract void Remove ();
 	}
 }

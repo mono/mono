@@ -12,6 +12,8 @@ namespace System.Threading
 {
 	public sealed class Interlocked 
 	{
+		private Interlocked () {}
+
 		public static int CompareExchange(ref int location1, int value, int comparand) {
 			// lock
 			if(comparand==location1) {

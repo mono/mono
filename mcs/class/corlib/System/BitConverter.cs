@@ -10,6 +10,8 @@ using System;
 namespace System {
 	public class BitConverter {
 
+		private BitConverter () {}
+
 		static bool AmILittleEndian()
 		{
 			byte[] one = GetBytes((int)1);

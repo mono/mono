@@ -27,7 +27,7 @@ namespace System
 			{
 			}
 		
-		public DllNotFoundException (SerializationInfo info,
+		protected DllNotFoundException (SerializationInfo info,
 					     StreamingContext context)
 			: base (info, context)
 			{

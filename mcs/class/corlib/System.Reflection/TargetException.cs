@@ -29,7 +29,7 @@ namespace System.Reflection
 		{
 		}
 
-		public TargetException (SerializationInfo info, StreamingContext context)
+		protected TargetException (SerializationInfo info, StreamingContext context)
 			: base (info, context)
 		{
 		}

@@ -13,7 +13,7 @@ namespace System.Xml.Schema
 	{
 		private Hashtable table;
 
-		protected XmlSchemaObjectTable()
+		internal XmlSchemaObjectTable()
 		{
 			table = new Hashtable(); 
 		}

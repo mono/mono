@@ -25,7 +25,7 @@ namespace System.Diagnostics {
 
 		private ArrayList listeners = new ArrayList ();
 
-		public TraceListenerCollection ()
+		internal TraceListenerCollection ()
 		{
 			Add (new DefaultTraceListener ());
 		}

@@ -10,7 +10,7 @@ namespace System.Xml
 		#endregion
 
 		#region Constructors
-		protected internal XmlLinkedNode(XmlDocument doc) : base(doc) { }
+		internal XmlLinkedNode(XmlDocument doc) : base(doc) { }
 
 		#endregion
 

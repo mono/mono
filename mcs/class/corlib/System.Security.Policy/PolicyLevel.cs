@@ -12,6 +12,8 @@ namespace System.Security.Policy
 	[Serializable]
 	public sealed class PolicyLevel
 	{
+		internal PolicyLevel () {}
+
 		public IList FullTrustAssemblies
 		{
 			get

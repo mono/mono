@@ -25,7 +25,7 @@ namespace System.Xml
 
 		#region Constructors
 
-		protected internal XmlNode (XmlDocument ownerDocument)
+		internal XmlNode (XmlDocument ownerDocument)
 		{
 			this.ownerDocument = ownerDocument;
 		}

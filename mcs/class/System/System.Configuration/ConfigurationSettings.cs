@@ -30,7 +30,7 @@ namespace System.Configuration
 		/// <summary>
 		///		ConfigurationSettings Constructor.
 		/// </summary>
-		public ConfigurationSettings ()
+		private ConfigurationSettings ()
 		{
 			
 		}

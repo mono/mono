@@ -29,7 +29,7 @@ namespace System.Reflection
 		{
 		}
 
-		public TargetParameterCountException (SerializationInfo info,
+		internal TargetParameterCountException (SerializationInfo info,
 						       StreamingContext context)
 			: base (info, context)
 		{

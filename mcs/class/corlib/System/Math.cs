@@ -19,6 +19,9 @@ namespace System
         {
                 public const double E = 2.7182818284590452354;
                 public const double PI = 3.14159265358979323846;
+
+		private Math () {}
+
                 public static decimal Abs(decimal value)
                 {
                         return (value < 0)? -value: value;

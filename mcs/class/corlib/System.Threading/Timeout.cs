@@ -12,6 +12,7 @@ namespace System.Threading
 {
 	public sealed class Timeout
 	{
+		private Timeout () {}
 		public const int Infinite=-1;
 	}
 }

@@ -29,7 +29,7 @@ namespace System.Reflection
 			{
 			}
 
-		public CustomAttributeFormatException (SerializationInfo info,
+		protected CustomAttributeFormatException (SerializationInfo info,
 						       StreamingContext context)
 			{
 			}

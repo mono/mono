@@ -31,7 +31,7 @@ namespace System.Runtime.Remoting {
 		}
 
 		[MonoTODO]
-		public ObjRef (SerializationInfo si, StreamingContext sc)
+		protected ObjRef (SerializationInfo si, StreamingContext sc)
 		{
 			// FIXME: Implement.
 			//

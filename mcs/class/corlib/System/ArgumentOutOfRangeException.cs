@@ -38,7 +38,7 @@ namespace System {
 			this.actual_value = actual_value;
 		}
 
-		public ArgumentOutOfRangeException (SerializationInfo info, StreamingContext context)
+		protected ArgumentOutOfRangeException (SerializationInfo info, StreamingContext context)
 			: base (info, context)
 		{
 			actual_value = info.GetString ("ActualValue");

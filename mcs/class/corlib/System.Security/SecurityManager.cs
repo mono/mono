@@ -16,6 +16,8 @@ namespace System.Security {
 		private static bool checkExecutionRights;
 		private static bool securityEnabled;
 
+		private SecurityManager () {}
+
 		public static bool CheckExecutionRights {
 			get{
 				return checkExecutionRights;

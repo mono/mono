@@ -39,7 +39,7 @@ namespace System {
 			msg = message;
 		}
 
-		public TypeLoadException (SerializationInfo info,
+		protected TypeLoadException (SerializationInfo info,
 					  StreamingContext context)
 			: base (info, context)
 		{

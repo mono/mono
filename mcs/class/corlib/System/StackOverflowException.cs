@@ -30,7 +30,7 @@ namespace System {
 		{
 		}
 
-		protected StackOverflowException (SerializationInfo info, StreamingContext context)
+		internal StackOverflowException (SerializationInfo info, StreamingContext context)
 			: base (info, context)
 		{
 		}

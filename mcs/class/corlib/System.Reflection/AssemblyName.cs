@@ -25,7 +25,7 @@ namespace System.Reflection {
 			name = null;
 		}
 
-		public AssemblyName (SerializationInfo si, StreamingContext sc)
+		internal AssemblyName (SerializationInfo si, StreamingContext sc)
 		{
 			name = si.GetString ("_Name");
 			codebase = si.GetString ("_CodeBase");

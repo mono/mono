@@ -24,6 +24,8 @@ namespace System.Reflection {
 		internal string name;
 		internal string scopename;
 
+		internal Module () {}
+
 		public Assembly Assembly {get {return assembly;}}
 		public virtual string FullyQualifiedName {get {return fqname;}}
 		public string Name {get {return name;}}

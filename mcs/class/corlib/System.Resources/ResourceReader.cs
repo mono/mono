@@ -190,7 +190,7 @@ namespace System.Resources
 			protected int index = -1;
 
 			
-			public ResourceEnumerator(ResourceReader readerToEnumerate){
+			internal ResourceEnumerator(ResourceReader readerToEnumerate){
 				reader = readerToEnumerate;
 			}
 

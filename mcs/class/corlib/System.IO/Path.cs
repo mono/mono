@@ -25,6 +25,8 @@ namespace System.IO
 
 		private static readonly char[] PathSeparatorChars;
 
+		private Path () {}
+
 		// class methods
 		public static string ChangeExtension (string path, string extension)
 		{

@@ -21,6 +21,8 @@ namespace System.IO
 {
 	public sealed class Directory : Object
 	{
+		private Directory () {}
+
 		public static DirectoryInfo CreateDirectory (string path)
 		{
 			if (path == null)

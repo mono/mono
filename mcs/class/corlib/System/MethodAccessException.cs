@@ -27,7 +27,7 @@ namespace System
 			{
 			}
 		
-		public MethodAccessException (SerializationInfo info,
+		protected MethodAccessException (SerializationInfo info,
 					      StreamingContext context)
 			: base (info, context)
 			{

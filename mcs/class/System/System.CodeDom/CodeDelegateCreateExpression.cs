@@ -33,7 +33,7 @@ namespace System.CodeDom {
 		// Properties
 		//
 
-		string DelegateType {
+		public string DelegateType {
 			get {
 				return delegateType;
 			}

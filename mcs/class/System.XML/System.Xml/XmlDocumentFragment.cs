@@ -14,7 +14,7 @@ namespace System.Xml
 	{
 		#region Constructor
 
-		internal XmlDocumentFragment (XmlDocument doc)
+		protected internal XmlDocumentFragment (XmlDocument doc)
 			: base (doc)
 		{
 		}

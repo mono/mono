@@ -25,7 +25,8 @@ namespace System.Security.Permissions
 	]
 	public abstract class CodeAccessSecurityAttribute : SecurityAttribute {
 
-		protected CodeAccessSecurityAttribute(SecurityAction action) : base(action) {}
+		public CodeAccessSecurityAttribute(SecurityAction action) : base(action) {}
 
 	}  // public abstract class CodeAccessSecurityAttribute
 }  // namespace System.Security.Permissions
+

@@ -29,7 +29,7 @@ namespace System {
 		{
 		}
 
-		public FormatException (SerializationInfo info,
+		protected FormatException (SerializationInfo info,
 					StreamingContext context)
 			: base (info, context)
 		{

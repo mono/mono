@@ -28,7 +28,7 @@ namespace System.Resources
 			{
 			}
 		
-		public MissingManifestResourceException (SerializationInfo info, StreamingContext context)
+		protected MissingManifestResourceException (SerializationInfo info, StreamingContext context)
 				    :base (info, context)
 			{
 			}

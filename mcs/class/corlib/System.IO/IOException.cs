@@ -29,7 +29,7 @@ namespace System.IO {
 		{
 		}
 
-		public IOException (SerializationInfo info, StreamingContext context)
+		protected IOException (SerializationInfo info, StreamingContext context)
 			: base (info, context)
 		{
 		}

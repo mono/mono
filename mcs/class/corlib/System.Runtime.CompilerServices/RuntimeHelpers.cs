@@ -9,6 +9,8 @@ namespace System.Runtime.CompilerServices
 {
 	public sealed class RuntimeHelpers
 	{
+		private RuntimeHelpers () {}
+
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public static extern void InitializeArray (Array array, RuntimeFieldHandle fldHandle);
 

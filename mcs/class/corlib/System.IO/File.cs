@@ -20,6 +20,8 @@ namespace System.IO
 	/// </summary>
 	public sealed class File : Object
 	{
+		private File () {}
+
 		public static StreamWriter AppendText (string path)
 		{	
 			return new StreamWriter (path, true);

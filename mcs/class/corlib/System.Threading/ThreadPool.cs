@@ -12,6 +12,8 @@ namespace System.Threading
 {
 	public sealed class ThreadPool
 	{
+		private ThreadPool () {}
+
 		[MonoTODO]
 		public static bool BindHandle(IntPtr osHandle) {
 			// FIXME

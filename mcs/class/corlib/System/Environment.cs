@@ -22,6 +22,8 @@ namespace System
 {
 	public sealed class Environment
 	{
+		private Environment () {}
+
 		[MonoTODO]
 		public enum SpecialFolder
 		{	// TODO: Determine if these windoze style folder identifiers 

@@ -21,6 +21,8 @@ namespace System.Reflection {
 		System.Security.IEvidenceFactory, System.Runtime.Serialization.ISerializable {
 		private IntPtr _mono_assembly;
 
+		internal Assembly () {}
+
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private extern string get_code_base ();
 		

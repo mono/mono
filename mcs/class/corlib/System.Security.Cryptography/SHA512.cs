@@ -20,7 +20,7 @@ namespace System.Security.Cryptography {
 		/// <summary>
 		/// Called from constructor of derived class.
 		/// </summary>
-		protected SHA512 () {
+		public SHA512 () {
 		
 		}
 

@@ -21,19 +21,19 @@ namespace System.Resources
 		
 		// Constructors
 		protected ResourceSet () {}
-		protected ResourceSet (IResourceReader reader)
+		public ResourceSet (IResourceReader reader)
 		{
 			if (reader == null)
 				throw new ArgumentNullException ("The reader is null.");
 			Reader = reader;
 		}
 
-		protected ResourceSet (Stream stream)
+		public ResourceSet (Stream stream)
 		{
 			Reader = new ResourceReader (stream);
 		 }
 		 
-		 protected ResourceSet (String fileName)
+		 public ResourceSet (String fileName)
 		 {
 			 Reader = new ResourceReader (fileName);
 		 }
@@ -48,7 +48,7 @@ namespace System.Resources
 			 Dispose (true);
 		 }
 			 
-		public void Dispose (bool disposing)
+		protected void Dispose (bool disposing)
 		{
 			if (disposing) {
 				Reader = null;
@@ -112,7 +112,7 @@ namespace System.Resources
 			 return null;
 		 }
 		
-		public virtual void ReadResources ()
+		protected virtual void ReadResources ()
 		{
 			IDictionaryEnumerator i = Reader.GetEnumerator();
 			

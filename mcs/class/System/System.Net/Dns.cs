@@ -13,6 +13,8 @@ using System.Runtime.CompilerServices;
 
 namespace System.Net {
         public sealed class Dns {
+
+		private Dns () {}
                 
                 /// <summary>
                 /// Helper class

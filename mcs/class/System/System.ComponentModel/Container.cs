@@ -128,7 +128,7 @@ namespace System.ComponentModel {
 
 		bool disposed = false;
 		
-		public virtual void Dispose (bool release_all)
+		protected virtual void Dispose (bool release_all)
 		{
 			if (disposed)
 				return;

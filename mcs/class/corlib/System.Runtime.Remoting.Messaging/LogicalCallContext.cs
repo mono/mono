@@ -15,6 +15,9 @@ namespace System.Runtime.Remoting.Messaging {
 
 	[MonoTODO]
 	public class LogicalCallContext : ISerializable, ICloneable {
+
+		internal LogicalCallContext () {}
+
 		public bool HasInfo {
 			get { return false; }
 		}

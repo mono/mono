@@ -27,7 +27,7 @@ namespace System.Resources
 		private Type resourceSetType;
 		
 		// constructors
-		public ResourceManager () {}
+		protected ResourceManager () {}
 		
 		public ResourceManager (Type resourceSource)
 		{

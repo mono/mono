@@ -16,12 +16,14 @@ namespace System.Runtime.Remoting
 {
 	public sealed class RemotingServices {
 
+		private RemotingServices () {}
+
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		internal extern static object InternalExecute (MonoMethod method, Object obj,
 							       Object[] parameters, out object [] out_args);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		internal extern static bool IsTransparentProxy (object proxy);
+		public extern static bool IsTransparentProxy (object proxy);
 		
 		public static IMethodReturnMessage ExecuteMessage (
 		        MarshalByRefObject target, IMethodCallMessage reqMsg)

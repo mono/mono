@@ -175,7 +175,7 @@ namespace System.Net.Sockets
 			Dispose (true);
 		}
 
-		public virtual void Dispose (bool disposing)
+		protected virtual void Dispose (bool disposing)
 		{
 			if (owns_socket)
 				if (socket != null)
