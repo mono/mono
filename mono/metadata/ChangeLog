@@ -21,6 +21,19 @@
 	
 2004-12-02  Martin Baulig  <martin@ximian.com>
 
+	* metadata-internals.h (MonoImage): Removed `generic_class_cache'.
+
+	* metadata.c (generic_class_cache): New static hashtable.
+	(mono_metadata_lookup_generic_class): New public method.
+
+2004-12-02  Martin Baulig  <martin@ximian.com>
+
+	* class.c (mono_class_create_from_typedef): Call
+	mono_class_setup_parent() and mono_class_create_mono_type() before
+	parsing the interfaces.
+
+2004-12-02  Martin Baulig  <martin@ximian.com>
+
 	* metadata.c (generic_inst_cache): New static hashtable.
 	(mono_metadata_lookup_generic_inst): New public function.
 	(mono_metadata_inflate_generic_inst): New public function.
