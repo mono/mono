@@ -1,3 +1,8 @@
+2003-06-11  Sebastien Pouliot <spouliot@videotron.ca>
+
+	* unix.args: added Mono.Security.Cryptography/DSAManaged.cs and
+	RSAManaged.cs
+
 2003-05-29  Nick Drochak <ndrochak@gol.com>
 
 	* makefile.gnu: turn on debug since it works again.

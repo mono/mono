@@ -14,9 +14,11 @@ Mono.Math.Prime.Generator/SequentialSearchPrimeGeneratorBase.cs
 Mono.Security/ASN1.cs
 Mono.Security/ASN1Convert.cs
 Mono.Security.Cryptography/CryptoTools.cs
+Mono.Security.Cryptography/DSAManaged.cs
 Mono.Security.Cryptography/PKCS1.cs
 Mono.Security.Cryptography/HMACAlgorithm.cs
 Mono.Security.Cryptography/MACAlgorithm.cs
+Mono.Security.Cryptography/RSAManaged.cs
 Mono.Security.X509/X501Name.cs
 Mono.Security.X509/X509Certificate.cs
 Mono.Security.X509/X509Extension.cs
