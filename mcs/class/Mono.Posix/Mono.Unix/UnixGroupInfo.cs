@@ -1,5 +1,5 @@
 //
-// Mono.Posix/PosixUserInfo.cs
+// Mono.Unix/UnixGroupInfo.cs
 //
 // Authors:
 //   Jonathan Pryor (jonpryor@vt.edu)
@@ -27,86 +27,69 @@
 //
 
 using System;
-using System.Collections;
 using System.Text;
-using Mono.Posix;
+using Mono.Unix;
 
-namespace Mono.Posix {
+namespace Mono.Unix {
 
-	public sealed class PosixUserInfo
+	public sealed class UnixGroupInfo
 	{
-		private Passwd passwd;
+		private Group group;
 
-		public PosixUserInfo (string user)
+		public UnixGroupInfo (string group)
 		{
-			passwd = new Passwd ();
-			Passwd pw;
-			int r = Syscall.getpwnam_r (user, passwd, out pw);
-			if (r != 0 || pw == null)
-				throw new ArgumentException (Locale.GetText ("invalid username"), "user");
+			this.group = new Group ();
+			Group gr;
+			int r = Syscall.getgrnam_r (group, this.group, out gr);
+			if (r != 0 || gr == null)
+				throw new ArgumentException (Locale.GetText ("invalid group name"), "group");
 		}
 
-		public PosixUserInfo (uint user)
+		public UnixGroupInfo (uint group)
 		{
-			passwd = new Passwd ();
-			Passwd pw;
-			int r = Syscall.getpwuid_r (user, passwd, out pw);
-			if (r != 0 || pw == null)
-				throw new ArgumentException (Locale.GetText ("invalid user id"), "user");
+			this.group = new Group ();
+			Group gr;
+			int r = Syscall.getgrgid_r (group, this.group, out gr);
+			if (r != 0 || gr == null)
+				throw new ArgumentException (Locale.GetText ("invalid group id"), "group");
 		}
 
-		public PosixUserInfo (Passwd passwd)
+		public UnixGroupInfo (Group group)
 		{
-			this.passwd = passwd;
-		}
-
-		public string UserName {
-			get {return passwd.pw_name;}
-		}
-
-		public string Password {
-			get {return passwd.pw_passwd;}
-		}
-
-		public uint UserId {
-			get {return passwd.pw_uid;}
-		}
-
-		public uint GroupId {
-			get {return passwd.pw_gid;}
+			this.group = group;
 		}
 
 		public string GroupName {
-			get {return PosixGroup.GetName (passwd.pw_gid);}
+			get {return group.gr_name;}
 		}
 
-		public string RealName {
-			get {return passwd.pw_gecos;}
+		public string Password {
+			get {return group.gr_passwd;}
 		}
 
-		public string HomeDirectory {
-			get {return passwd.pw_dir;}
+		public uint GroupId {
+			get {return group.gr_gid;}
 		}
 
-		public string ShellProgram {
-			get {return passwd.pw_shell;}
+		public string[] Members {
+			get {return group.gr_mem;}
 		}
 
 		public override int GetHashCode ()
 		{
-			return passwd.GetHashCode ();
+			return group.GetHashCode ();
 		}
 
 		public override bool Equals (object obj)
 		{
 			if (obj == null || GetType () != obj.GetType())
 				return false;
-			return passwd.Equals (((PosixUserInfo) obj).passwd);
+			return group.Equals (((UnixGroupInfo) obj).group);
 		}
 
 		public override string ToString ()
 		{
-			return passwd.ToString ();
+			return group.ToString();
 		}
 	}
 }

@@ -1,5 +1,5 @@
 //
-// Mono.Posix.Catalog.cs: Wrappers for the libintl library.
+// Mono.Unix.Catalog.cs: Wrappers for the libintl library.
 //
 // Author:
 //   Edd Dumbill (edd@usefulinc.com)
@@ -33,7 +33,7 @@
 using System;
 using System.Runtime.InteropServices;
 
-namespace Mono.Posix {
+namespace Mono.Unix {
 
 	public class Catalog {
 		[DllImport("libintl")]

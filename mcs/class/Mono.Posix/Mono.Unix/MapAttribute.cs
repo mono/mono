@@ -28,7 +28,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 using System;
-namespace Mono.Posix {
+namespace Mono.Unix {
 
 	[AttributeUsage (AttributeTargets.Enum)]
 	public class MapAttribute : Attribute {

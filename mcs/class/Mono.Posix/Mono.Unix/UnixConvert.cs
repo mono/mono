@@ -6,13 +6,13 @@
 
 using System;
 using System.Runtime.InteropServices;
-using Mono.Posix;
+using Mono.Unix;
 
-namespace Mono.Posix {
+namespace Mono.Unix {
 
-	public sealed /* static */ class PosixConvert
+	public sealed /* static */ class UnixConvert
 	{
-		private PosixConvert () {}
+		private UnixConvert () {}
 
 		private const string LIB = "MonoPosixHelper";
 

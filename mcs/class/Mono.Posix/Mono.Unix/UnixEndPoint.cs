@@ -1,5 +1,5 @@
 //
-// Mono.Posix.UnixEndPoint: EndPoint derived class for AF_UNIX family sockets.
+// Mono.Unix/UnixEndPoint: EndPoint derived class for AF_UNIX family sockets.
 //
 // Authors:
 //	Gonzalo Paniagua Javier (gonzalo@ximian.com)
@@ -32,7 +32,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 
-namespace Mono.Posix
+namespace Mono.Unix
 {
 	[Serializable]
 	public class UnixEndPoint : EndPoint

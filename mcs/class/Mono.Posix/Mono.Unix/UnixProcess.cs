@@ -1,5 +1,5 @@
 //
-// Mono.Posix/PosixProcess.cs
+// Mono.Unix/UnixProcess.cs
 //
 // Authors:
 //   Jonathan Pryor (jonpryor@vt.edu)
@@ -27,15 +27,15 @@
 //
 
 using System;
-using Mono.Posix;
+using Mono.Unix;
 
-namespace Mono.Posix {
+namespace Mono.Unix {
 
-	public sealed class PosixProcess
+	public sealed class UnixProcess
 	{
 		private int pid;
 
-		private PosixProcess (int pid)
+		private UnixProcess (int pid)
 		{
 			this.pid = pid;
 		}
@@ -56,7 +56,7 @@ namespace Mono.Posix {
 			int status;
 			int r = Syscall.waitpid (pid, out status, 
 					WaitOptions.WNOHANG | WaitOptions.WUNTRACED);
-			PosixMarshal.ThrowExceptionForLastErrorIf (r);
+			UnixMarshal.ThrowExceptionForLastErrorIf (r);
 			return r;
 		}
 
@@ -108,21 +108,21 @@ namespace Mono.Posix {
 			get {return Syscall.getpgid (pid);}
 			set {
 				int r = Syscall.setpgid (pid, value);
-				PosixMarshal.ThrowExceptionForLastErrorIf (r);
+				UnixMarshal.ThrowExceptionForLastErrorIf (r);
 			}
 		}
 
 		public int SessionId {
 			get {
 				int r = Syscall.getsid (pid);
-				PosixMarshal.ThrowExceptionForLastErrorIf (r);
+				UnixMarshal.ThrowExceptionForLastErrorIf (r);
 				return r;
 			}
 		}
 
-		public static PosixProcess GetCurrentProcess ()
+		public static UnixProcess GetCurrentProcess ()
 		{
-			return new PosixProcess (GetCurrentProcessId ());
+			return new UnixProcess (GetCurrentProcessId ());
 		}
 
 		public static int GetCurrentProcessId ()
@@ -138,7 +138,7 @@ namespace Mono.Posix {
 		public void Signal (Signum signal)
 		{
 			int r = Syscall.kill (pid, signal);
-			PosixMarshal.ThrowExceptionForLastErrorIf (r);
+			UnixMarshal.ThrowExceptionForLastErrorIf (r);
 		}
 
 		public void WaitForExit ()
@@ -149,7 +149,7 @@ namespace Mono.Posix {
 			do {
 				r = Syscall.waitpid (pid, out status, (WaitOptions) 0);
 			} while (r == -1 && (e = Syscall.GetLastError()) == Error.EINTR);
-			PosixMarshal.ThrowExceptionForLastErrorIf (r);
+			UnixMarshal.ThrowExceptionForLastErrorIf (r);
 		}
 	}
 }

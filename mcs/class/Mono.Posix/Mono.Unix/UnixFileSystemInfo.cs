@@ -1,5 +1,5 @@
 //
-// Mono.Posix/PosixFileSystemInfo.cs
+// Mono.Unix/UnixFileSystemInfo.cs
 //
 // Authors:
 //   Jonathan Pryor (jonpryor@vt.edu)
@@ -29,23 +29,23 @@
 using System;
 using System.IO;
 using System.Text;
-using Mono.Posix;
+using Mono.Unix;
 
-namespace Mono.Posix {
+namespace Mono.Unix {
 
-	public abstract class PosixFileSystemInfo
+	public abstract class UnixFileSystemInfo
 	{
 		private Stat stat;
 		private string path;
 		private bool valid = false;
 
-		protected PosixFileSystemInfo (string path)
+		protected UnixFileSystemInfo (string path)
 		{
 			this.path = path;
 			Refresh (true);
 		}
 
-		internal PosixFileSystemInfo (String path, Stat stat)
+		internal UnixFileSystemInfo (String path, Stat stat)
 		{
 			this.path = path;
 			this.stat = stat;
@@ -122,7 +122,7 @@ namespace Mono.Posix {
 		}
 
 		public DateTime LastAccessTime {
-			get {AssertValid (); return PosixConvert.ToDateTime (stat.st_atime);}
+			get {AssertValid (); return UnixConvert.ToDateTime (stat.st_atime);}
 		}
 
 		public DateTime LastAccessTimeUtc {
@@ -130,7 +130,7 @@ namespace Mono.Posix {
 		}
 
 		public DateTime LastWriteTime {
-			get {AssertValid (); return PosixConvert.ToDateTime (stat.st_mtime);}
+			get {AssertValid (); return UnixConvert.ToDateTime (stat.st_mtime);}
 		}
 
 		public DateTime LastWriteTimeUtc {
@@ -138,7 +138,7 @@ namespace Mono.Posix {
 		}
 
 		public DateTime LastStatusChangeTime {
-			get {AssertValid (); return PosixConvert.ToDateTime (stat.st_ctime);}
+			get {AssertValid (); return UnixConvert.ToDateTime (stat.st_ctime);}
 		}
 
 		public DateTime LastStatusChangeTimeUtc {
@@ -203,16 +203,16 @@ namespace Mono.Posix {
 			Syscall.SetLastError ((Error) 0);
 			long r = Syscall.pathconf (Path, name);
 			if (r == -1 && Syscall.GetLastError() != (Error) 0)
-				PosixMarshal.ThrowExceptionForLastError ();
+				UnixMarshal.ThrowExceptionForLastError ();
 			return r;
 		}
 
-		// TODO: Should ReadLink be in PosixSymbolicLinkInfo?
+		// TODO: Should ReadLink be in UnixSymbolicLinkInfo?
 		public string ReadLink ()
 		{
 			string r = TryReadLink ();
 			if (r == null)
-				PosixMarshal.ThrowExceptionForLastError ();
+				UnixMarshal.ThrowExceptionForLastError ();
 			return r;
 		}
 
@@ -245,20 +245,20 @@ namespace Mono.Posix {
 			int r;
 			do {
 				r = Syscall.truncate (path, length);
-			}	while (PosixMarshal.ShouldRetrySyscall (r));
-			PosixMarshal.ThrowExceptionForLastErrorIf (r);
+			}	while (UnixMarshal.ShouldRetrySyscall (r));
+			UnixMarshal.ThrowExceptionForLastErrorIf (r);
 		}
 
 		public void SetPermissions (FilePermissions perms)
 		{
 			int r = Syscall.chmod (path, perms);
-			PosixMarshal.ThrowExceptionForLastErrorIf (r);
+			UnixMarshal.ThrowExceptionForLastErrorIf (r);
 		}
 
 		public virtual void SetOwner (uint owner, uint group)
 		{
 			int r = Syscall.chown (path, owner, group);
-			PosixMarshal.ThrowExceptionForLastErrorIf (r);
+			UnixMarshal.ThrowExceptionForLastErrorIf (r);
 		}
 
 		public void SetOwner (string owner)
@@ -273,8 +273,8 @@ namespace Mono.Posix {
 
 		public void SetOwner (string owner, string group)
 		{
-			uint uid = PosixUser.GetUserId (owner);
-			uint gid = PosixGroup.GetGroupId (group);
+			uint uid = UnixUser.GetUserId (owner);
+			uint gid = UnixGroup.GetGroupId (group);
 
 			SetOwner (uid, gid);
 		}
@@ -284,14 +284,14 @@ namespace Mono.Posix {
 			return path;
 		}
 
-		internal static PosixFileSystemInfo Create (string path)
+		internal static UnixFileSystemInfo Create (string path)
 		{
-			Stat stat = PosixFile.GetFileStatus (path);
+			Stat stat = UnixFile.GetFileStatus (path);
 			if (IsType (stat.st_mode, FilePermissions.S_IFDIR))
-				return new PosixDirectoryInfo (path, stat);
+				return new UnixDirectoryInfo (path, stat);
 			else if (IsType (stat.st_mode, FilePermissions.S_IFLNK))
-				return new PosixSymbolicLinkInfo (path, stat);
-			return new PosixFileInfo (path, stat);
+				return new UnixSymbolicLinkInfo (path, stat);
+			return new UnixFileInfo (path, stat);
 		}
 	}
 }

@@ -1,5 +1,5 @@
 //
-// Mono.Posix/Stdlib.cs
+// Mono.Unix/Stdlib.cs
 //
 // Authors:
 //   Jonathan Pryor (jonpryor@vt.edu)
@@ -29,9 +29,9 @@
 using System;
 using System.IO;
 using System.Runtime.InteropServices;
-using Mono.Posix;
+using Mono.Unix;
 
-namespace Mono.Posix {
+namespace Mono.Unix {
 
 	public delegate void sighandler_t (int value);
 
@@ -64,7 +64,7 @@ namespace Mono.Posix {
 		// FIXME: signal returns sighandler_t.  What should we do?
 		public static int signal (Signum signum, sighandler_t handler)
 		{
-			int _sig = PosixConvert.FromSignum (signum);
+			int _sig = UnixConvert.FromSignum (signum);
 			IntPtr r = sys_signal (_sig, handler);
 			// handle `r'
 			return 0;
@@ -161,14 +161,14 @@ namespace Mono.Posix {
 
 		public static IntPtr sys_strerror (Error errnum)
 		{
-			int e = PosixConvert.FromError (errnum);
+			int e = UnixConvert.FromError (errnum);
 			return sys_strerror (e);
 		}
 
 		public static string strerror (Error errnum)
 		{
 			IntPtr r = sys_strerror (errnum);
-			return PosixMarshal.PtrToString (r);
+			return UnixMarshal.PtrToString (r);
 		}
 	}
 }

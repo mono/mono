@@ -1,5 +1,5 @@
 //
-// Mono.Posix/PosixStream.cs
+// Mono.Unix/UnixStream.cs
 //
 // Authors:
 //   Jonathan Pryor (jonpryor@vt.edu)
@@ -30,21 +30,21 @@ using System;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
-using Mono.Posix;
+using Mono.Unix;
 
-namespace Mono.Posix {
+namespace Mono.Unix {
 
-	public sealed class PosixStream : Stream, IDisposable
+	public sealed class UnixStream : Stream, IDisposable
 	{
 		public const int InvalidFileDescriptor = -1;
 		public const int StandardInputFileDescriptor = 0;
 		public const int StandardOutputFileDescriptor = 1;
 		public const int StandardErrorFileDescriptor = 2;
 
-		public PosixStream (int fileDescriptor)
+		public UnixStream (int fileDescriptor)
 			: this (fileDescriptor, true) {}
 
-		public PosixStream (int fileDescriptor, bool ownsHandle)
+		public UnixStream (int fileDescriptor, bool ownsHandle)
 		{
 			if (InvalidFileDescriptor == fileDescriptor)
 				throw new ArgumentException (Locale.GetText ("Invalid file descriptor"), "fileDescriptor");
@@ -94,7 +94,7 @@ namespace Mono.Posix {
 					throw new NotSupportedException ("File descriptor doesn't support seeking");
 				Stat stat;
 				int r = Syscall.fstat (fileDescriptor, out stat);
-				PosixMarshal.ThrowExceptionForLastErrorIf (r);
+				UnixMarshal.ThrowExceptionForLastErrorIf (r);
 				return (long) stat.st_size;
 			}
 		}
@@ -106,7 +106,7 @@ namespace Mono.Posix {
 					throw new NotSupportedException ("The stream does not support seeking");
 				long pos = Syscall.lseek (fileDescriptor, 0, SeekFlags.SEEK_CUR);
 				if (pos == -1)
-					PosixMarshal.ThrowExceptionForLastError ();
+					UnixMarshal.ThrowExceptionForLastError ();
 				return (long) pos;
 			}
 			set {
@@ -118,79 +118,79 @@ namespace Mono.Posix {
 			get {
 				Stat stat;
 				int r = Syscall.fstat (fileDescriptor, out stat);
-				PosixMarshal.ThrowExceptionForLastErrorIf (r);
+				UnixMarshal.ThrowExceptionForLastErrorIf (r);
 				return stat.st_mode;
 			}
 			set {
 				int r = Syscall.fchmod (fileDescriptor, value);
-				PosixMarshal.ThrowExceptionForLastErrorIf (r);
+				UnixMarshal.ThrowExceptionForLastErrorIf (r);
 			}
 		}
 
 		public void AdviseNormalAccess (long offset, long len)
 		{
-			PosixFile.AdviseNormalAccess (fileDescriptor, offset, len);
+			UnixFile.AdviseNormalAccess (fileDescriptor, offset, len);
 		}
 
 		public void AdviseNormalAccess ()
 		{
-			PosixFile.AdviseNormalAccess (fileDescriptor);
+			UnixFile.AdviseNormalAccess (fileDescriptor);
 		}
 
 		public void AdviseSequentialAccess (long offset, long len)
 		{
-			PosixFile.AdviseSequentialAccess (fileDescriptor, offset, len);
+			UnixFile.AdviseSequentialAccess (fileDescriptor, offset, len);
 		}
 
 		public void AdviseSequentialAccess ()
 		{
-			PosixFile.AdviseSequentialAccess (fileDescriptor);
+			UnixFile.AdviseSequentialAccess (fileDescriptor);
 		}
 
 		public void AdviseRandomAccess (long offset, long len)
 		{
-			PosixFile.AdviseRandomAccess (fileDescriptor, offset, len);
+			UnixFile.AdviseRandomAccess (fileDescriptor, offset, len);
 		}
 
 		public void AdviseRandomAccess ()
 		{
-			PosixFile.AdviseRandomAccess (fileDescriptor);
+			UnixFile.AdviseRandomAccess (fileDescriptor);
 		}
 
 		public void AdviseNeedAccess (long offset, long len)
 		{
-			PosixFile.AdviseNeedAccess (fileDescriptor, offset, len);
+			UnixFile.AdviseNeedAccess (fileDescriptor, offset, len);
 		}
 
 		public void AdviseNeedAccess ()
 		{
-			PosixFile.AdviseNeedAccess (fileDescriptor);
+			UnixFile.AdviseNeedAccess (fileDescriptor);
 		}
 
 		public void AdviseNoAccess (long offset, long len)
 		{
-			PosixFile.AdviseNoAccess (fileDescriptor, offset, len);
+			UnixFile.AdviseNoAccess (fileDescriptor, offset, len);
 		}
 
 		public void AdviseNoAccess ()
 		{
-			PosixFile.AdviseNoAccess (fileDescriptor);
+			UnixFile.AdviseNoAccess (fileDescriptor);
 		}
 
 		public void AdviseOnceAccess (long offset, long len)
 		{
-			PosixFile.AdviseOnceAccess (fileDescriptor, offset, len);
+			UnixFile.AdviseOnceAccess (fileDescriptor, offset, len);
 		}
 
 		public void AdviseOnceAccess ()
 		{
-			PosixFile.AdviseOnceAccess (fileDescriptor);
+			UnixFile.AdviseOnceAccess (fileDescriptor);
 		}
 
 		public override void Flush ()
 		{
 			int r = Syscall.fsync (fileDescriptor);
-			PosixMarshal.ThrowExceptionForLastErrorIf (r);
+			UnixMarshal.ThrowExceptionForLastErrorIf (r);
 		}
 
 		public override unsafe int Read ([In, Out] byte[] buffer, int offset, int count)
@@ -204,10 +204,10 @@ namespace Mono.Posix {
 			fixed (byte* buf = &buffer[offset]) {
 				do {
 					r = Syscall.read (fileDescriptor, buf, (ulong) count);
-				} while (PosixMarshal.ShouldRetrySyscall ((int) r));
+				} while (UnixMarshal.ShouldRetrySyscall ((int) r));
 			}
 			if (r == -1)
-				PosixMarshal.ThrowExceptionForLastError ();
+				UnixMarshal.ThrowExceptionForLastError ();
 			return (int) r;
 		}
 
@@ -237,10 +237,10 @@ namespace Mono.Posix {
 			fixed (byte* buf = &buffer[offset]) {
 				do {
 					r = Syscall.pread (fileDescriptor, buf, (ulong) count, fileOffset);
-				} while (PosixMarshal.ShouldRetrySyscall ((int) r));
+				} while (UnixMarshal.ShouldRetrySyscall ((int) r));
 			}
 			if (r == -1)
-				PosixMarshal.ThrowExceptionForLastError ();
+				UnixMarshal.ThrowExceptionForLastError ();
 			return (int) r;
 		}
 
@@ -261,7 +261,7 @@ namespace Mono.Posix {
 
 			long pos = Syscall.lseek (fileDescriptor, offset, sf);
 			if (pos == -1)
-				PosixMarshal.ThrowExceptionForLastError ();
+				UnixMarshal.ThrowExceptionForLastError ();
 			return (long) pos;
 		}
 
@@ -276,8 +276,8 @@ namespace Mono.Posix {
 			int r;
 			do {
 				r = Syscall.ftruncate (fileDescriptor, value);
-			} while (PosixMarshal.ShouldRetrySyscall (r));
-			PosixMarshal.ThrowExceptionForLastErrorIf (r);
+			} while (UnixMarshal.ShouldRetrySyscall (r));
+			UnixMarshal.ThrowExceptionForLastErrorIf (r);
 		}
 
 		public override unsafe void Write (byte[] buffer, int offset, int count)
@@ -291,10 +291,10 @@ namespace Mono.Posix {
 			fixed (byte* buf = &buffer[offset]) {
 				do {
 					r = Syscall.write (fileDescriptor, buf, (ulong) count);
-				} while (PosixMarshal.ShouldRetrySyscall ((int) r));
+				} while (UnixMarshal.ShouldRetrySyscall ((int) r));
 			}
 			if (r == -1)
-				PosixMarshal.ThrowExceptionForLastError ();
+				UnixMarshal.ThrowExceptionForLastError ();
 		}
 		
 		public unsafe void WriteAtOffset (byte[] buffer, 
@@ -309,18 +309,18 @@ namespace Mono.Posix {
 			fixed (byte* buf = &buffer[offset]) {
 				do {
 					r = Syscall.pwrite (fileDescriptor, buf, (ulong) count, fileOffset);
-				} while (PosixMarshal.ShouldRetrySyscall ((int) r));
+				} while (UnixMarshal.ShouldRetrySyscall ((int) r));
 			}
 			if (r == -1)
-				PosixMarshal.ThrowExceptionForLastError ();
+				UnixMarshal.ThrowExceptionForLastError ();
 		}
 
-		public void SendTo (PosixStream output)
+		public void SendTo (UnixStream output)
 		{
 			SendTo (output, (ulong) output.Length);
 		}
 
-		public void SendTo (PosixStream output, ulong count)
+		public void SendTo (UnixStream output, ulong count)
 		{
 			SendTo (output.FileDescriptor, count);
 		}
@@ -332,7 +332,7 @@ namespace Mono.Posix {
 			long offset = Position;
 			long r = Syscall.sendfile (out_fd, fileDescriptor, ref offset, count);
 			if (r == -1)
-				PosixMarshal.ThrowExceptionForLastError ();
+				UnixMarshal.ThrowExceptionForLastError ();
 		}
 		
 		public void SetOwner (uint user, uint group)
@@ -340,15 +340,15 @@ namespace Mono.Posix {
 			AssertNotDisposed ();
 
 			int r = Syscall.fchown (fileDescriptor, user, group);
-			PosixMarshal.ThrowExceptionForLastErrorIf (r);
+			UnixMarshal.ThrowExceptionForLastErrorIf (r);
 		}
 
 		public void SetOwner (string user, string group)
 		{
 			AssertNotDisposed ();
 
-			uint uid = PosixUser.GetUserId (user);
-			uint gid = PosixGroup.GetGroupId (group);
+			uint uid = UnixUser.GetUserId (user);
+			uint gid = UnixGroup.GetGroupId (group);
 			SetOwner (uid, gid);
 		}
 
@@ -370,11 +370,11 @@ namespace Mono.Posix {
 			Syscall.SetLastError ((Error) 0);
 			long r = Syscall.fpathconf (fileDescriptor, name);
 			if (r == -1 && Syscall.GetLastError() != (Error) 0)
-				PosixMarshal.ThrowExceptionForLastError ();
+				UnixMarshal.ThrowExceptionForLastError ();
 			return r;
 		}
 
-		~PosixStream ()
+		~UnixStream ()
 		{
 			Close ();
 		}
@@ -388,8 +388,8 @@ namespace Mono.Posix {
 			int r;
 			do {
 				r = Syscall.close (fileDescriptor);
-			} while (PosixMarshal.ShouldRetrySyscall (r));
-			PosixMarshal.ThrowExceptionForLastErrorIf (r);
+			} while (UnixMarshal.ShouldRetrySyscall (r));
+			UnixMarshal.ThrowExceptionForLastErrorIf (r);
 			fileDescriptor = InvalidFileDescriptor;
 		}
 		

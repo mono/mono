@@ -1,5 +1,5 @@
 //
-// Mono.Posix/PosixMarshal.cs
+// Mono.Unix/UnixMarshal.cs
 //
 // Authors:
 //   Jonathan Pryor (jonpryor@vt.edu)
@@ -32,9 +32,9 @@ using System.Net.Sockets;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 using System.Text;
-using Mono.Posix;
+using Mono.Unix;
 
-namespace Mono.Posix {
+namespace Mono.Unix {
 
 	// Scenario:  We want to be able to translate an Error to a string.
 	//  Problem:  Thread-safety.  Strerror(3) isn't thread safe (unless
@@ -53,7 +53,7 @@ namespace Mono.Posix {
 	//            class constructor lock.
 	//  Problem:  But if strerror_r() isn't present, we're not thread safe!
 	// Solution:  Tough.  It's still better than nothing.  I think.  
-	//            Check PosixMarshal.IsErrorDescriptionThreadSafe if you need to
+	//            Check UnixMarshal.IsErrorDescriptionThreadSafe if you need to
 	//            know which error translator is being used.
 	internal class ErrorMarshal
 	{
@@ -95,9 +95,9 @@ namespace Mono.Posix {
 		}
 	}
 
-	public sealed /* static */ class PosixMarshal
+	public sealed /* static */ class UnixMarshal
 	{
-		private PosixMarshal () {}
+		private UnixMarshal () {}
 
 		public static string GetErrorDescription (Error errno)
 		{
@@ -212,7 +212,7 @@ namespace Mono.Posix {
 		private static Exception CreateExceptionForError (Error errno)
 		{
 			string message = GetErrorDescription (errno);
-			PosixIOException p = new PosixIOException (errno);
+			UnixIOException p = new UnixIOException (errno);
 			switch (errno) {
 				case Error.EFAULT:        return new NullReferenceException (message, p);
 				case Error.EINVAL:        return new ArgumentException (message, p);

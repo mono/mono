@@ -1,5 +1,5 @@
 //
-// Mono.Posix/PosixDirectory.cs
+// Mono.Unix/UnixDirectory.cs
 //
 // Authors:
 //   Jonathan Pryor (jonpryor@vt.edu)
@@ -31,22 +31,22 @@ using System.Collections;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
-using Mono.Posix;
+using Mono.Unix;
 
-namespace Mono.Posix {
+namespace Mono.Unix {
 
-	public sealed class PosixDirectory
+	public sealed class UnixDirectory
 	{
-		private PosixDirectory () {}
+		private UnixDirectory () {}
 
-		public static PosixDirectoryInfo CreateDirectory (string path, FilePermissions mode)
+		public static UnixDirectoryInfo CreateDirectory (string path, FilePermissions mode)
 		{
 			int r = Syscall.mkdir (path, mode);
-			PosixMarshal.ThrowExceptionForLastErrorIf (r);
-			return new PosixDirectoryInfo (path);
+			UnixMarshal.ThrowExceptionForLastErrorIf (r);
+			return new UnixDirectoryInfo (path);
 		}
 
-		public static PosixDirectoryInfo CreateDirectory (string path)
+		public static UnixDirectoryInfo CreateDirectory (string path)
 		{
 			FilePermissions mode = FilePermissions.ACCESSPERMS;
 			return CreateDirectory (path, mode);
@@ -59,7 +59,7 @@ namespace Mono.Posix {
 
 		public static void Delete (string path, bool recursive)
 		{
-			new PosixDirectoryInfo (path).Delete (recursive);
+			new UnixDirectoryInfo (path).Delete (recursive);
 		}
 
 		public static bool Exists (string path)
@@ -72,37 +72,37 @@ namespace Mono.Posix {
 
 		public static Dirent[] GetEntries (string path)
 		{
-			return new PosixDirectoryInfo(path).GetEntries ();
+			return new UnixDirectoryInfo(path).GetEntries ();
 		}
 
 		public static Dirent[] GetEntries (string path, Regex regex)
 		{
-			return new PosixDirectoryInfo(path).GetEntries (regex);
+			return new UnixDirectoryInfo(path).GetEntries (regex);
 		}
 
 		public static Dirent[] GetEntries (string path, string regex)
 		{
-			return new PosixDirectoryInfo(path).GetEntries (regex);
+			return new UnixDirectoryInfo(path).GetEntries (regex);
 		}
 
-		public static PosixFileSystemInfo[] GetFileSystemEntries (string path)
+		public static UnixFileSystemInfo[] GetFileSystemEntries (string path)
 		{
-			return new PosixDirectoryInfo(path).GetFileSystemEntries ();
+			return new UnixDirectoryInfo(path).GetFileSystemEntries ();
 		}
 
-		public static PosixFileSystemInfo[] GetFileSystemEntries (string path, Regex regex)
+		public static UnixFileSystemInfo[] GetFileSystemEntries (string path, Regex regex)
 		{
-			return new PosixDirectoryInfo(path).GetFileSystemEntries (regex);
+			return new UnixDirectoryInfo(path).GetFileSystemEntries (regex);
 		}
 
-		public static PosixFileSystemInfo[] GetFileSystemEntries (string path, string regex)
+		public static UnixFileSystemInfo[] GetFileSystemEntries (string path, string regex)
 		{
-			return new PosixDirectoryInfo(path).GetFileSystemEntries (regex);
+			return new UnixDirectoryInfo(path).GetFileSystemEntries (regex);
 		}
 
 		public static Stat GetDirectoryStatus (string path)
 		{
-			return PosixFile.GetFileStatus (path);
+			return UnixFile.GetFileStatus (path);
 		}
 
 		public static string GetCurrentDirectory ()
@@ -114,14 +114,14 @@ namespace Mono.Posix {
 				r = Syscall.getcwd (buf, (ulong) buf.Capacity);
 			} while (r == IntPtr.Zero && Syscall.GetLastError() == Error.ERANGE);
 			if (r == IntPtr.Zero)
-				PosixMarshal.ThrowExceptionForLastError ();
+				UnixMarshal.ThrowExceptionForLastError ();
 			return buf.ToString ();
 		}
 
 		public static void SetCurrentDirectory (string path)
 		{
 			int r = Syscall.chdir (path);
-			PosixMarshal.ThrowExceptionForLastErrorIf (r);
+			UnixMarshal.ThrowExceptionForLastErrorIf (r);
 		}
 	}
 }

@@ -1,5 +1,5 @@
 //
-// Mono.Posix/PosixDirectoryInfo.cs
+// Mono.Unix/UnixDirectoryInfo.cs
 //
 // Authors:
 //   Jonathan Pryor (jonpryor@vt.edu)
@@ -31,18 +31,18 @@ using System.Collections;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
-using Mono.Posix;
+using Mono.Unix;
 
-namespace Mono.Posix {
+namespace Mono.Unix {
 
-	public class PosixDirectoryInfo : PosixFileSystemInfo
+	public class UnixDirectoryInfo : UnixFileSystemInfo
 	{
-		public PosixDirectoryInfo (string path)
+		public UnixDirectoryInfo (string path)
 			: base (path)
 		{
 		}
 
-		internal PosixDirectoryInfo (string path, Stat stat)
+		internal UnixDirectoryInfo (string path, Stat stat)
 			: base (path, stat)
 		{
 		}
@@ -50,7 +50,7 @@ namespace Mono.Posix {
 		public void Create (FilePermissions mode)
 		{
 			int r = Syscall.mkdir (Path, mode);
-			PosixMarshal.ThrowExceptionForLastErrorIf (r);
+			UnixMarshal.ThrowExceptionForLastErrorIf (r);
 			base.Refresh ();
 		}
 
@@ -68,8 +68,8 @@ namespace Mono.Posix {
 		public void Delete (bool recursive)
 		{
 			if (recursive) {
-				foreach (PosixFileSystemInfo e in GetFileSystemEntries ()) {
-					PosixDirectoryInfo d = e as PosixDirectoryInfo;
+				foreach (UnixFileSystemInfo e in GetFileSystemEntries ()) {
+					UnixDirectoryInfo d = e as UnixDirectoryInfo;
 					if (d != null)
 						d.Delete (true);
 					else
@@ -77,7 +77,7 @@ namespace Mono.Posix {
 				}
 			}
 			int r = Syscall.rmdir (Path);
-			PosixMarshal.ThrowExceptionForLastErrorIf (r);
+			UnixMarshal.ThrowExceptionForLastErrorIf (r);
 			base.Refresh ();
 		}
 
@@ -85,7 +85,7 @@ namespace Mono.Posix {
 		{
 			IntPtr dirp = Syscall.opendir (Path);
 			if (dirp == IntPtr.Zero)
-				PosixMarshal.ThrowExceptionForLastError ();
+				UnixMarshal.ThrowExceptionForLastError ();
 
 			bool complete = false;
 			try {
@@ -97,7 +97,7 @@ namespace Mono.Posix {
 				int r = Syscall.closedir (dirp);
 				// don't throw an exception if an exception is in progress
 				if (complete)
-					PosixMarshal.ThrowExceptionForLastErrorIf (r);
+					UnixMarshal.ThrowExceptionForLastErrorIf (r);
 			}
 		}
 
@@ -116,7 +116,7 @@ namespace Mono.Posix {
 						entries.Add (d);
 			} while  (r == 0 && result != IntPtr.Zero);
 			if (r != 0)
-				PosixMarshal.ThrowExceptionForLastErrorIf (r);
+				UnixMarshal.ThrowExceptionForLastErrorIf (r);
 
 			return (Dirent[]) entries.ToArray (typeof(Dirent));
 		}
@@ -125,14 +125,14 @@ namespace Mono.Posix {
 		{
 			IntPtr dirp = Syscall.opendir (Path);
 			if (dirp == IntPtr.Zero)
-				PosixMarshal.ThrowExceptionForLastError ();
+				UnixMarshal.ThrowExceptionForLastError ();
 
 			try {
 				return GetEntries (dirp, regex);
 			}
 			finally {
 				int r = Syscall.closedir (dirp);
-				PosixMarshal.ThrowExceptionForLastErrorIf (r);
+				UnixMarshal.ThrowExceptionForLastErrorIf (r);
 			}
 		}
 
@@ -152,7 +152,7 @@ namespace Mono.Posix {
 				}
 			} while  (r == 0 && result != IntPtr.Zero);
 			if (r != 0)
-				PosixMarshal.ThrowExceptionForLastError ();
+				UnixMarshal.ThrowExceptionForLastError ();
 
 			return (Dirent[]) entries.ToArray (typeof(Dirent));
 		}
@@ -163,27 +163,27 @@ namespace Mono.Posix {
 			return GetEntries (re);
 		}
 
-		public PosixFileSystemInfo[] GetFileSystemEntries ()
+		public UnixFileSystemInfo[] GetFileSystemEntries ()
 		{
 			Dirent[] dentries = GetEntries ();
 			return GetFileSystemEntries (dentries);
 		}
 
-		private PosixFileSystemInfo[] GetFileSystemEntries (Dirent[] dentries)
+		private UnixFileSystemInfo[] GetFileSystemEntries (Dirent[] dentries)
 		{
-			PosixFileSystemInfo[] entries = new PosixFileSystemInfo[dentries.Length];
+			UnixFileSystemInfo[] entries = new UnixFileSystemInfo[dentries.Length];
 			for (int i = 0; i != entries.Length; ++i)
-				entries [i] = PosixFileSystemInfo.Create (dentries[i].d_name);
+				entries [i] = UnixFileSystemInfo.Create (dentries[i].d_name);
 			return entries;
 		}
 
-		public PosixFileSystemInfo[] GetFileSystemEntries (Regex regex)
+		public UnixFileSystemInfo[] GetFileSystemEntries (Regex regex)
 		{
 			Dirent[] dentries = GetEntries (regex);
 			return GetFileSystemEntries (dentries);
 		}
 
-		public PosixFileSystemInfo[] GetFileSystemEntries (string regex)
+		public UnixFileSystemInfo[] GetFileSystemEntries (string regex)
 		{
 			Regex re = new Regex (regex);
 			return GetFileSystemEntries (re);

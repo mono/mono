@@ -29,7 +29,7 @@
 //
 using System;
 
-namespace Mono.Posix {
+namespace Mono.Unix {
 
 	[AttributeUsage (AttributeTargets.Assembly)]
 	public class IncludeAttribute : Attribute {

@@ -1,5 +1,5 @@
 //
-// Mono.Posix/PosixEnvironment.cs
+// Mono.Unix/UnixEnvironment.cs
 //
 // Authors:
 //   Jonathan Pryor (jonpryor@vt.edu)
@@ -28,20 +28,20 @@
 
 using System;
 using System.Text;
-using Mono.Posix;
+using Mono.Unix;
 
-namespace Mono.Posix {
+namespace Mono.Unix {
 
-	public sealed /* static */ class PosixEnvironment
+	public sealed /* static */ class UnixEnvironment
 	{
-		private PosixEnvironment () {}
+		private UnixEnvironment () {}
 
 		public static string CurrentDirectory {
 			get {
-				return PosixDirectory.GetCurrentDirectory ();
+				return UnixDirectory.GetCurrentDirectory ();
 			}
 			set {
-				PosixDirectory.SetCurrentDirectory (value);
+				UnixDirectory.SetCurrentDirectory (value);
 			}
 		}
 
@@ -56,7 +56,7 @@ namespace Mono.Posix {
 				} while (r == (-1) && ((e = Syscall.GetLastError()) == Error.EINVAL) || 
 						(e == Error.ENAMETOOLONG));
 				if (r == (-1))
-					PosixMarshal.ThrowExceptionForLastError ();
+					UnixMarshal.ThrowExceptionForLastError ();
 				return buf.ToString ();
 			}
 			set {
@@ -68,7 +68,7 @@ namespace Mono.Posix {
 		{
 			long r = Syscall.sysconf (name);
 			if (r == -1 && Syscall.GetLastError() == Error.EINVAL)
-				PosixMarshal.ThrowExceptionForLastError ();
+				UnixMarshal.ThrowExceptionForLastError ();
 			return r;
 		}
 
@@ -85,11 +85,11 @@ namespace Mono.Posix {
 		public static void SetNiceValue (int inc)
 		{
 			int r = Syscall.nice (inc);
-			PosixMarshal.ThrowExceptionForLastErrorIf (r);
+			UnixMarshal.ThrowExceptionForLastErrorIf (r);
 		}
 
 		public static string UserName {
-			get {return PosixUser.GetCurrentUserName();}
+			get {return UnixUser.GetCurrentUserName();}
 		}
 
 		public static int CreateSession ()
@@ -100,7 +100,7 @@ namespace Mono.Posix {
 		public static void SetProcessGroup ()
 		{
 			int r = Syscall.setpgrp ();
-			PosixMarshal.ThrowExceptionForLastErrorIf (r);
+			UnixMarshal.ThrowExceptionForLastErrorIf (r);
 		}
 
 		public static int GetProcessGroup ()
@@ -112,17 +112,17 @@ namespace Mono.Posix {
 		{
 			int ngroups = Syscall.getgroups (0, new uint[]{});
 			if (ngroups == -1)
-				PosixMarshal.ThrowExceptionForLastError ();
+				UnixMarshal.ThrowExceptionForLastError ();
 			uint[] groups = new uint[ngroups];
 			int r = Syscall.getgroups (groups);
-			PosixMarshal.ThrowExceptionForLastErrorIf (r);
+			UnixMarshal.ThrowExceptionForLastErrorIf (r);
 			return groups;
 		}
 
 		public static void SetSupplementaryGroups (uint[] list)
 		{
 			int r = Syscall.setgroups (list);
-			PosixMarshal.ThrowExceptionForLastErrorIf (r);
+			UnixMarshal.ThrowExceptionForLastErrorIf (r);
 		}
 	}
 }

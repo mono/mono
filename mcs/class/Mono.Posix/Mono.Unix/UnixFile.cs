@@ -1,5 +1,5 @@
 //
-// Mono.Posix/PosixFile.cs
+// Mono.Unix/UnixFile.cs
 //
 // Authors:
 //   Jonathan Pryor (jonpryor@vt.edu)
@@ -29,25 +29,25 @@
 using System;
 using System.IO;
 using System.Text;
-using Mono.Posix;
+using Mono.Unix;
 
-namespace Mono.Posix {
+namespace Mono.Unix {
 
-	public struct PosixPipes
+	public struct UnixPipes
 	{
-		public PosixPipes (PosixStream reading, PosixStream writing)
+		public UnixPipes (UnixStream reading, UnixStream writing)
 		{
 			Reading = reading;
 			Writing = writing;
 		}
 
-		public PosixStream Reading;
-		public PosixStream Writing;
+		public UnixStream Reading;
+		public UnixStream Writing;
 	}
 
-	public sealed /* static */ class PosixFile
+	public sealed /* static */ class UnixFile
 	{
-		private PosixFile () {}
+		private UnixFile () {}
 
 		public static bool CanAccess (string path, AccessMode mode)
 		{
@@ -58,7 +58,7 @@ namespace Mono.Posix {
 		public static void Delete (string path)
 		{
 			int r = Syscall.unlink (path);
-			PosixMarshal.ThrowExceptionForLastErrorIf (r);
+			UnixMarshal.ThrowExceptionForLastErrorIf (r);
 		}
 
 		public static bool Exists (string path)
@@ -74,43 +74,43 @@ namespace Mono.Posix {
 			Syscall.SetLastError ((Error) 0);
 			long r = Syscall.pathconf (path, name);
 			if (r == -1 && Syscall.GetLastError() != (Error) 0)
-				PosixMarshal.ThrowExceptionForLastError ();
+				UnixMarshal.ThrowExceptionForLastError ();
 			return r;
 		}
 
 		public static DateTime GetLastAccessTime (string path)
 		{
-			return new PosixFileInfo (path).LastAccessTime;
+			return new UnixFileInfo (path).LastAccessTime;
 		}
 
 		public static Stat GetFileStatus (string path)
 		{
 			Stat stat;
 			int r = Syscall.stat (path, out stat);
-			PosixMarshal.ThrowExceptionForLastErrorIf (r);
+			UnixMarshal.ThrowExceptionForLastErrorIf (r);
 			return stat;
 		}
 
 		public static DateTime GetLastWriteTime (string path)
 		{
-			return new PosixFileInfo(path).LastWriteTime;
+			return new UnixFileInfo(path).LastWriteTime;
 		}
 
 		public static DateTime GetLastStatusChangeTime (string path)
 		{
-			return new PosixFileInfo (path).LastStatusChangeTime;
+			return new UnixFileInfo (path).LastStatusChangeTime;
 		}
 
 		public static FilePermissions GetPermissions (string path)
 		{
-			return new PosixFileInfo (path).Permissions;
+			return new UnixFileInfo (path).Permissions;
 		}
 
 		public static string ReadLink (string path)
 		{
 			string r = TryReadLink (path);
 			if (r == null)
-				PosixMarshal.ThrowExceptionForLastError ();
+				UnixMarshal.ThrowExceptionForLastError ();
 			return r;
 		}
 
@@ -128,10 +128,10 @@ namespace Mono.Posix {
 		public static void SetPermissions (string path, FilePermissions perms)
 		{
 			int r = Syscall.chmod (path, perms);
-			PosixMarshal.ThrowExceptionForLastErrorIf (r);
+			UnixMarshal.ThrowExceptionForLastErrorIf (r);
 		}
 
-		public static PosixStream Create (string path)
+		public static UnixStream Create (string path)
 		{
 			FilePermissions mode = // 0644
 				FilePermissions.S_IRUSR | FilePermissions.S_IWUSR |
@@ -139,71 +139,71 @@ namespace Mono.Posix {
 			return Create (path, mode);
 		}
 
-		public static PosixStream Create (string path, FilePermissions mode)
+		public static UnixStream Create (string path, FilePermissions mode)
 		{
 			int fd = Syscall.creat (path, mode);
 			if (fd < 0)
-				PosixMarshal.ThrowExceptionForLastError ();
-			return new PosixStream (fd);
+				UnixMarshal.ThrowExceptionForLastError ();
+			return new UnixStream (fd);
 		}
 
-		public static PosixPipes CreatePipes ()
+		public static UnixPipes CreatePipes ()
 		{
 			int reading, writing;
 			int r = Syscall.pipe (out reading, out writing);
-			PosixMarshal.ThrowExceptionForLastErrorIf (r);
-			return new PosixPipes (new PosixStream (reading), new PosixStream (writing));
+			UnixMarshal.ThrowExceptionForLastErrorIf (r);
+			return new UnixPipes (new UnixStream (reading), new UnixStream (writing));
 		}
 
-		public static PosixStream Open (string path, OpenFlags flags)
+		public static UnixStream Open (string path, OpenFlags flags)
 		{
 			int fd = Syscall.open (path, flags);
 			if (fd < 0)
-				PosixMarshal.ThrowExceptionForLastError ();
-			return new PosixStream (fd);
+				UnixMarshal.ThrowExceptionForLastError ();
+			return new UnixStream (fd);
 		}
 
-		public static PosixStream Open (string path, OpenFlags flags, FilePermissions mode)
+		public static UnixStream Open (string path, OpenFlags flags, FilePermissions mode)
 		{
 			int fd = Syscall.open (path, flags, mode);
 			if (fd < 0)
-				PosixMarshal.ThrowExceptionForLastError ();
-			return new PosixStream (fd);
+				UnixMarshal.ThrowExceptionForLastError ();
+			return new UnixStream (fd);
 		}
 
-		public static PosixStream Open (string path, FileMode mode)
+		public static UnixStream Open (string path, FileMode mode)
 		{
 			OpenFlags flags = ToOpenFlags (mode, FileAccess.ReadWrite);
 			int fd = Syscall.open (path, flags);
 			if (fd < 0)
-				PosixMarshal.ThrowExceptionForLastError ();
-			return new PosixStream (fd);
+				UnixMarshal.ThrowExceptionForLastError ();
+			return new UnixStream (fd);
 		}
 
-		public static PosixStream Open (string path, FileMode mode, FileAccess access)
+		public static UnixStream Open (string path, FileMode mode, FileAccess access)
 		{
 			OpenFlags flags = ToOpenFlags (mode, access);
 			int fd = Syscall.open (path, flags);
 			if (fd < 0)
-				PosixMarshal.ThrowExceptionForLastError ();
-			return new PosixStream (fd);
+				UnixMarshal.ThrowExceptionForLastError ();
+			return new UnixStream (fd);
 		}
 
-		public static PosixStream Open (string path, FileMode mode, FileAccess access, FilePermissions perms)
+		public static UnixStream Open (string path, FileMode mode, FileAccess access, FilePermissions perms)
 		{
 			OpenFlags flags = ToOpenFlags (mode, access);
 			int fd = Syscall.open (path, flags, perms);
 			if (fd < 0)
-				PosixMarshal.ThrowExceptionForLastError ();
-			return new PosixStream (fd);
+				UnixMarshal.ThrowExceptionForLastError ();
+			return new UnixStream (fd);
 		}
 
-		public static PosixStream OpenRead (string path)
+		public static UnixStream OpenRead (string path)
 		{
 			return Open (path, FileMode.Open, FileAccess.Read);
 		}
 
-		public static PosixStream OpenWrite (string path)
+		public static UnixStream OpenWrite (string path)
 		{
 			return Open (path, FileMode.OpenOrCreate, FileAccess.Write);
 		}
@@ -211,7 +211,7 @@ namespace Mono.Posix {
 		public static void SetOwner (string path, uint owner, uint group)
 		{
 			int r = Syscall.chown (path, owner, group);
-			PosixMarshal.ThrowExceptionForLastErrorIf (r);
+			UnixMarshal.ThrowExceptionForLastErrorIf (r);
 		}
 
 		public static void SetOwner (string path, string owner)
@@ -226,8 +226,8 @@ namespace Mono.Posix {
 
 		public static void SetOwner (string path, string owner, string group)
 		{
-			uint uid = PosixUser.GetUserId (owner);
-			uint gid = PosixGroup.GetGroupId (group);
+			uint uid = UnixUser.GetUserId (owner);
+			uint gid = UnixGroup.GetGroupId (group);
 
 			SetOwner (path, uid, gid);
 		}
@@ -235,7 +235,7 @@ namespace Mono.Posix {
 		public static void SetLinkOwner (string path, uint owner, uint group)
 		{
 			int r = Syscall.lchown (path, owner, group);
-			PosixMarshal.ThrowExceptionForLastErrorIf (r);
+			UnixMarshal.ThrowExceptionForLastErrorIf (r);
 		}
 
 		public static void SetLinkOwner (string path, string owner)
@@ -250,8 +250,8 @@ namespace Mono.Posix {
 
 		public static void SetLinkOwner (string path, string owner, string group)
 		{
-			uint uid = PosixUser.GetUserId (owner);
-			uint gid = PosixGroup.GetGroupId (group);
+			uint uid = UnixUser.GetUserId (owner);
+			uint gid = UnixGroup.GetGroupId (group);
 
 			SetLinkOwner (path, uid, gid);
 		}
@@ -284,7 +284,7 @@ namespace Mono.Posix {
 
 			// Is O_LARGEFILE supported?
 			int _v;
-			if (PosixConvert.TryFromOpenFlags (OpenFlags.O_LARGEFILE, out _v))
+			if (UnixConvert.TryFromOpenFlags (OpenFlags.O_LARGEFILE, out _v))
 				flags |= OpenFlags.O_LARGEFILE;
 
 			switch (access) {
@@ -308,7 +308,7 @@ namespace Mono.Posix {
 		{
 			int r = Syscall.posix_fadvise (fd, offset, len,
 				PosixFadviseAdvice.POSIX_FADV_NORMAL);
-			PosixMarshal.ThrowExceptionForLastErrorIf (r);
+			UnixMarshal.ThrowExceptionForLastErrorIf (r);
 		}
 
 		public static void AdviseNormalAccess (int fd)
@@ -326,12 +326,12 @@ namespace Mono.Posix {
 			AdviseNormalAccess (file.Handle.ToInt32());
 		}
 
-		public static void AdviseNormalAccess (PosixStream stream, long offset, long len)
+		public static void AdviseNormalAccess (UnixStream stream, long offset, long len)
 		{
 			AdviseNormalAccess (stream.FileDescriptor, offset, len);
 		}
 
-		public static void AdviseNormalAccess (PosixStream stream)
+		public static void AdviseNormalAccess (UnixStream stream)
 		{
 			AdviseNormalAccess (stream.FileDescriptor);
 		}
@@ -340,7 +340,7 @@ namespace Mono.Posix {
 		{
 			int r = Syscall.posix_fadvise (fd, offset, len,
 				PosixFadviseAdvice.POSIX_FADV_SEQUENTIAL);
-			PosixMarshal.ThrowExceptionForLastErrorIf (r);
+			UnixMarshal.ThrowExceptionForLastErrorIf (r);
 		}
 
 		public static void AdviseSequentialAccess (int fd)
@@ -358,12 +358,12 @@ namespace Mono.Posix {
 			AdviseSequentialAccess (file.Handle.ToInt32());
 		}
 
-		public static void AdviseSequentialAccess (PosixStream stream, long offset, long len)
+		public static void AdviseSequentialAccess (UnixStream stream, long offset, long len)
 		{
 			AdviseSequentialAccess (stream.FileDescriptor, offset, len);
 		}
 
-		public static void AdviseSequentialAccess (PosixStream stream)
+		public static void AdviseSequentialAccess (UnixStream stream)
 		{
 			AdviseSequentialAccess (stream.FileDescriptor);
 		}
@@ -372,7 +372,7 @@ namespace Mono.Posix {
 		{
 			int r = Syscall.posix_fadvise (fd, offset, len,
 				PosixFadviseAdvice.POSIX_FADV_RANDOM);
-			PosixMarshal.ThrowExceptionForLastErrorIf (r);
+			UnixMarshal.ThrowExceptionForLastErrorIf (r);
 		}
 
 		public static void AdviseRandomAccess (int fd)
@@ -390,12 +390,12 @@ namespace Mono.Posix {
 			AdviseRandomAccess (file.Handle.ToInt32());
 		}
 
-		public static void AdviseRandomAccess (PosixStream stream, long offset, long len)
+		public static void AdviseRandomAccess (UnixStream stream, long offset, long len)
 		{
 			AdviseRandomAccess (stream.FileDescriptor, offset, len);
 		}
 
-		public static void AdviseRandomAccess (PosixStream stream)
+		public static void AdviseRandomAccess (UnixStream stream)
 		{
 			AdviseRandomAccess (stream.FileDescriptor);
 		}
@@ -404,7 +404,7 @@ namespace Mono.Posix {
 		{
 			int r = Syscall.posix_fadvise (fd, offset, len,
 				PosixFadviseAdvice.POSIX_FADV_WILLNEED);
-			PosixMarshal.ThrowExceptionForLastErrorIf (r);
+			UnixMarshal.ThrowExceptionForLastErrorIf (r);
 		}
 
 		public static void AdviseNeedAccess (int fd)
@@ -422,12 +422,12 @@ namespace Mono.Posix {
 			AdviseNeedAccess (file.Handle.ToInt32());
 		}
 
-		public static void AdviseNeedAccess (PosixStream stream, long offset, long len)
+		public static void AdviseNeedAccess (UnixStream stream, long offset, long len)
 		{
 			AdviseNeedAccess (stream.FileDescriptor, offset, len);
 		}
 
-		public static void AdviseNeedAccess (PosixStream stream)
+		public static void AdviseNeedAccess (UnixStream stream)
 		{
 			AdviseNeedAccess (stream.FileDescriptor);
 		}
@@ -436,7 +436,7 @@ namespace Mono.Posix {
 		{
 			int r = Syscall.posix_fadvise (fd, offset, len,
 				PosixFadviseAdvice.POSIX_FADV_DONTNEED);
-			PosixMarshal.ThrowExceptionForLastErrorIf (r);
+			UnixMarshal.ThrowExceptionForLastErrorIf (r);
 		}
 
 		public static void AdviseNoAccess (int fd)
@@ -454,12 +454,12 @@ namespace Mono.Posix {
 			AdviseNoAccess (file.Handle.ToInt32());
 		}
 
-		public static void AdviseNoAccess (PosixStream stream, long offset, long len)
+		public static void AdviseNoAccess (UnixStream stream, long offset, long len)
 		{
 			AdviseNoAccess (stream.FileDescriptor, offset, len);
 		}
 
-		public static void AdviseNoAccess (PosixStream stream)
+		public static void AdviseNoAccess (UnixStream stream)
 		{
 			AdviseNoAccess (stream.FileDescriptor);
 		}
@@ -468,7 +468,7 @@ namespace Mono.Posix {
 		{
 			int r = Syscall.posix_fadvise (fd, offset, len,
 				PosixFadviseAdvice.POSIX_FADV_NOREUSE);
-			PosixMarshal.ThrowExceptionForLastErrorIf (r);
+			UnixMarshal.ThrowExceptionForLastErrorIf (r);
 		}
 
 		public static void AdviseOnceAccess (int fd)
@@ -486,12 +486,12 @@ namespace Mono.Posix {
 			AdviseOnceAccess (file.Handle.ToInt32());
 		}
 
-		public static void AdviseOnceAccess (PosixStream stream, long offset, long len)
+		public static void AdviseOnceAccess (UnixStream stream, long offset, long len)
 		{
 			AdviseOnceAccess (stream.FileDescriptor, offset, len);
 		}
 
-		public static void AdviseOnceAccess (PosixStream stream)
+		public static void AdviseOnceAccess (UnixStream stream)
 		{
 			AdviseOnceAccess (stream.FileDescriptor);
 		}

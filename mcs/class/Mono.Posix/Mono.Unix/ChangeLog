@@ -1,3 +1,29 @@
+2004-11-16  Jonathan Pryor <jonpryor@vt.edu>
+
+	+ Lots o' Renames, as the namespace changed.
+	* PosixConvert.cs: Moved to UnixConvert.cs:
+	* PosixDirectory.cs: Moved to UnixDirectory.cs:
+	* PosixEnvironment.cs: Moved to UnixEnvironment.cs:
+	* PosixDirectoryInfo.cs: Moved to UnixDirectoryInfo.cs:
+	* PosixFile.cs: Moved to UnixFile.cs:
+	* PosixFileInfo.cs: Moved to UnixFileInfo.cs:
+	* PosixFileSystemInfo.cs: Moved to UnixFileSystemInfo.cs:
+	* PosixGroup.cs: Moved to UnixGroup.cs:
+	* PosixGroupInfo.cs: Moved to UnixGroupInfo.cs:
+	* PosixIOException.cs: Moved to UnixIOException.cs:
+	* PosixMarshal.cs: Moved to UnixMarshal.cs:
+	* PosixProcess.cs: Moved to UnixProcess.cs:
+	* PosixStream.cs: Moved to UnixStream.cs:
+	* PosixSymbolicLinkInfo.cs: Moved to UnixSymbolicLinkInfo.cs:
+	* PosixUser.cs: Moved to UnixUser.cs:
+	* PosixUserInfo.cs: Moved to UnixUserInfo.cs:
+	* Catalog.cs, IncludeAttribute.cs, MapAttribute.cs, PeerCred.cs, Stdlib.cs,
+	  Syscall.cs, UnixConvert.cs, UnixDirectory.cs, UnixDirectoryInfo.cs,
+	  UnixEndPoint.cs, UnixEnvironment.cs, UnixFile.cs, UnixFileInfo.cs,
+	  UnixFileSystemInfo.cs, UnixGroup.cs, UnixGroupInfo.cs, UnixIOException.cs,
+	  UnixMarshal.cs, UnixProcess.cs, UnixStream.cs, UnixSymbolicLinkInfo.cs,
+	  UnixUser.cs, UnixUserInfo.cs: Deal with renamed classes/members.
+
 2004-11-15  Jonathan Pryor <jonpryor@vt.edu>
 
 	* PosixUserInfo.cs: Make the PosixUserInfo(Passwd) constructor public;

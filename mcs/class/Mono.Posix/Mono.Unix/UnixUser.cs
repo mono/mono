@@ -1,5 +1,5 @@
 //
-// Mono.Posix/PosixUser.cs
+// Mono.Unix/UnixUser.cs
 //
 // Authors:
 //   Jonathan Pryor (jonpryor@vt.edu)
@@ -29,17 +29,17 @@
 using System;
 using System.Collections;
 using System.Text;
-using Mono.Posix;
+using Mono.Unix;
 
-namespace Mono.Posix {
+namespace Mono.Unix {
 
-	public sealed class PosixUser
+	public sealed class UnixUser
 	{
-		private PosixUser () {}
+		private UnixUser () {}
 
 		public static uint GetUserId (string user)
 		{
-			return new PosixUserInfo (user).UserId;
+			return new UnixUserInfo (user).UserId;
 		}
 
 		public static uint GetCurrentUser ()
@@ -62,84 +62,84 @@ namespace Mono.Posix {
 				buf.Capacity *= 2;
 				r = Syscall.getlogin_r (buf, (ulong) buf.Capacity);
 			} while (r == (-1) && Syscall.GetLastError() == Error.ERANGE);
-			PosixMarshal.ThrowExceptionForLastErrorIf (r);
+			UnixMarshal.ThrowExceptionForLastErrorIf (r);
 			return buf.ToString ();
 		}
 
 		public static uint GetGroupId (string user)
 		{
-			return new PosixUserInfo (user).GroupId;
+			return new UnixUserInfo (user).GroupId;
 		}
 
 		public static uint GetGroupId (uint user)
 		{
-			return new PosixUserInfo (user).GroupId;
+			return new UnixUserInfo (user).GroupId;
 		}
 
 		public static string GetRealName (string user)
 		{
-			return new PosixUserInfo (user).RealName;
+			return new UnixUserInfo (user).RealName;
 		}
 
 		public static string GetRealName (uint user)
 		{
-			return new PosixUserInfo (user).RealName;
+			return new UnixUserInfo (user).RealName;
 		}
 
 		public static string GetHomeDirectory (string user)
 		{
-			return new PosixUserInfo (user).HomeDirectory;
+			return new UnixUserInfo (user).HomeDirectory;
 		}
 
 		public static string GetHomeDirectory (uint user)
 		{
-			return new PosixUserInfo (user).HomeDirectory;
+			return new UnixUserInfo (user).HomeDirectory;
 		}
 
 		public static string GetName (uint user)
 		{
-			return new PosixUserInfo (user).UserName;
+			return new UnixUserInfo (user).UserName;
 		}
 
 		public static string GetPassword (string user)
 		{
-			return new PosixUserInfo (user).Password;
+			return new UnixUserInfo (user).Password;
 		}
 
 		public static string GetPassword (uint user)
 		{
-			return new PosixUserInfo (user).Password;
+			return new UnixUserInfo (user).Password;
 		}
 
 		public static string GetShellProgram (string user)
 		{
-			return new PosixUserInfo (user).ShellProgram;
+			return new UnixUserInfo (user).ShellProgram;
 		}
 
 		public static string GetShellProgram (uint user)
 		{
-			return new PosixUserInfo (user).ShellProgram;
+			return new UnixUserInfo (user).ShellProgram;
 		}
 
-		public static PosixUserInfo[] GetLocalUsers ()
+		public static UnixUserInfo[] GetLocalUsers ()
 		{
 			Syscall.SetLastError ((Error) 0);
 			Syscall.setpwent ();
 			if (Syscall.GetLastError () != (Error) 0) {
-				PosixMarshal.ThrowExceptionForLastError ();
+				UnixMarshal.ThrowExceptionForLastError ();
 			}
 			ArrayList entries = new ArrayList ();
 			try {
 				Passwd p;
 				while ((p = Syscall.getpwent()) != null)
-					entries.Add (new PosixUserInfo (p));
+					entries.Add (new UnixUserInfo (p));
 				if (Syscall.GetLastError () != (Error) 0)
-					PosixMarshal.ThrowExceptionForLastError ();
+					UnixMarshal.ThrowExceptionForLastError ();
 			}
 			finally {
 				Syscall.endpwent ();
 			}
-			return (PosixUserInfo[]) entries.ToArray (typeof(PosixUserInfo));
+			return (UnixUserInfo[]) entries.ToArray (typeof(UnixUserInfo));
 		}
 	}
 }

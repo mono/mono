@@ -1,5 +1,5 @@
 //
-// Mono.Posix/PosixIOException.cs
+// Mono.Unix/UnixSymbolicLinkInfo.cs
 //
 // Authors:
 //   Jonathan Pryor (jonpryor@vt.edu)
@@ -28,59 +28,34 @@
 
 using System;
 using System.IO;
-using System.Runtime.InteropServices;
-using System.Runtime.Serialization;
-using Mono.Posix;
+using System.Text;
+using Mono.Unix;
 
-namespace Mono.Posix {
+namespace Mono.Unix {
 
-	[Serializable]
-	public class PosixIOException : IOException
+	public class UnixSymbolicLinkInfo : UnixFileSystemInfo
 	{
-		public PosixIOException ()
-			: this (Marshal.GetLastWin32Error())
-		{}
-		
-		public PosixIOException (int error)
+		public UnixSymbolicLinkInfo (string path)
+			: base (path)
 		{
-			this.error = error;
-		}
-		
-		public PosixIOException (int error, Exception inner)
-			: base ("POSIX-generated exception", inner)
-		{
-			this.error = error;
 		}
 
-		public PosixIOException (Error error)
-		{
-			this.error = PosixConvert.FromError (error);
-		}
-
-		public PosixIOException (Error error, Exception inner)
-			: base ("POSIX-generated exception", inner)
-		{
-			this.error = PosixConvert.FromError (error);
-		}
-
-		protected PosixIOException (SerializationInfo info, StreamingContext context)
-			: base (info, context)
+		internal UnixSymbolicLinkInfo (string path, Stat stat)
+			: base (path, stat)
 		{
 		}
-		
-		public int NativeErrorCode {
-			get {return error;}
-		}
-		
-		public Error ErrorCode {
-			get {return PosixConvert.ToError (error);}
-		}
 
-		private int error;
-
-		public override string ToString ()
+		public override void Delete ()
 		{
-			return PosixMarshal.GetErrorDescription (ErrorCode);
+			int r = Syscall.unlink (Path);
+			UnixMarshal.ThrowExceptionForLastErrorIf (r);
+			base.Refresh ();
+		}
+
+		public override void SetOwner (uint owner, uint group)
+		{
+			int r = Syscall.lchown (Path, owner, group);
+			UnixMarshal.ThrowExceptionForLastErrorIf (r);
 		}
 	}
 }

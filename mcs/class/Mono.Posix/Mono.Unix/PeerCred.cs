@@ -1,5 +1,5 @@
 //
-// Mono.Posix.PeerCred: Peer credentials class for AF_UNIX sockets
+// Mono.Unix.PeerCred: Peer credentials class for AF_UNIX sockets
 //
 // Authors:
 //	Dick Porter (dick@ximian.com)
@@ -31,7 +31,7 @@
 using System;
 using System.Net.Sockets;
 
-namespace Mono.Posix
+namespace Mono.Unix
 {
 	public class PeerCred
 	{

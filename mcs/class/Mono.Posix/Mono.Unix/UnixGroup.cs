@@ -1,5 +1,5 @@
 //
-// Mono.Posix/PosixGroup.cs
+// Mono.Unix/UnixGroup.cs
 //
 // Authors:
 //   Jonathan Pryor (jonpryor@vt.edu)
@@ -28,62 +28,62 @@
 
 using System;
 using System.Collections;
-using Mono.Posix;
+using Mono.Unix;
 
-namespace Mono.Posix {
+namespace Mono.Unix {
 
-	public sealed class PosixGroup
+	public sealed class UnixGroup
 	{
-		private PosixGroup () {}
+		private UnixGroup () {}
 
 		public static uint GetGroupId (string group)
 		{
-			return new PosixGroupInfo (group).GroupId;
+			return new UnixGroupInfo (group).GroupId;
 		}
 
 		public static string[] GetMembers (string group)
 		{
-			return new PosixGroupInfo (group).Members;
+			return new UnixGroupInfo (group).Members;
 		}
 
 		public static string[] GetMembers (uint group)
 		{
-			return new PosixGroupInfo (group).Members;
+			return new UnixGroupInfo (group).Members;
 		}
 
 		public static string GetName (uint group)
 		{
-			return new PosixGroupInfo (group).GroupName;
+			return new UnixGroupInfo (group).GroupName;
 		}
 
 		public static string GetPassword (string group)
 		{
-			return new PosixGroupInfo (group).Password;
+			return new UnixGroupInfo (group).Password;
 		}
 
 		public static string GetPassword (uint group)
 		{
-			return new PosixGroupInfo (group).Password;
+			return new UnixGroupInfo (group).Password;
 		}
 
-		public static PosixGroupInfo[] GetLocalGroups ()
+		public static UnixGroupInfo[] GetLocalGroups ()
 		{
 			Syscall.SetLastError ((Error) 0);
 			Syscall.setgrent ();
 			if (Syscall.GetLastError () != (Error) 0)
-				PosixMarshal.ThrowExceptionForLastError ();
+				UnixMarshal.ThrowExceptionForLastError ();
 			ArrayList entries = new ArrayList ();
 			try {
 				Group g;
 				while ((g = Syscall.getgrent()) != null)
-					entries.Add (new PosixGroupInfo (g));
+					entries.Add (new UnixGroupInfo (g));
 				if (Syscall.GetLastError() != (Error) 0)
-					PosixMarshal.ThrowExceptionForLastError ();
+					UnixMarshal.ThrowExceptionForLastError ();
 			}
 			finally {
 				Syscall.endgrent ();
 			}
-			return (PosixGroupInfo[]) entries.ToArray (typeof(PosixGroupInfo));
+			return (UnixGroupInfo[]) entries.ToArray (typeof(UnixGroupInfo));
 		}
 	}
 }

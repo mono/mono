@@ -1,5 +1,5 @@
 //
-// Mono.Posix/PosixGroupInfo.cs
+// Mono.Unix/UnixIOException.cs
 //
 // Authors:
 //   Jonathan Pryor (jonpryor@vt.edu)
@@ -27,69 +27,60 @@
 //
 
 using System;
-using System.Text;
-using Mono.Posix;
+using System.IO;
+using System.Runtime.InteropServices;
+using System.Runtime.Serialization;
+using Mono.Unix;
 
-namespace Mono.Posix {
+namespace Mono.Unix {
 
-	public sealed class PosixGroupInfo
+	[Serializable]
+	public class UnixIOException : IOException
 	{
-		private Group group;
-
-		public PosixGroupInfo (string group)
+		public UnixIOException ()
+			: this (Marshal.GetLastWin32Error())
+		{}
+		
+		public UnixIOException (int error)
 		{
-			this.group = new Group ();
-			Group gr;
-			int r = Syscall.getgrnam_r (group, this.group, out gr);
-			if (r != 0 || gr == null)
-				throw new ArgumentException (Locale.GetText ("invalid group name"), "group");
+			this.error = error;
 		}
-
-		public PosixGroupInfo (uint group)
+		
+		public UnixIOException (int error, Exception inner)
+			: base ("Unix-generated exception", inner)
 		{
-			this.group = new Group ();
-			Group gr;
-			int r = Syscall.getgrgid_r (group, this.group, out gr);
-			if (r != 0 || gr == null)
-				throw new ArgumentException (Locale.GetText ("invalid group id"), "group");
+			this.error = error;
 		}
 
-		public PosixGroupInfo (Group group)
+		public UnixIOException (Error error)
 		{
-			this.group = group;
+			this.error = UnixConvert.FromError (error);
 		}
 
-		public string GroupName {
-			get {return group.gr_name;}
-		}
-
-		public string Password {
-			get {return group.gr_passwd;}
-		}
-
-		public uint GroupId {
-			get {return group.gr_gid;}
-		}
-
-		public string[] Members {
-			get {return group.gr_mem;}
-		}
-
-		public override int GetHashCode ()
+		public UnixIOException (Error error, Exception inner)
+			: base ("Unix-generated exception", inner)
 		{
-			return group.GetHashCode ();
+			this.error = UnixConvert.FromError (error);
 		}
 
-		public override bool Equals (object obj)
+		protected UnixIOException (SerializationInfo info, StreamingContext context)
+			: base (info, context)
 		{
-			if (obj == null || GetType () != obj.GetType())
-				return false;
-			return group.Equals (((PosixGroupInfo) obj).group);
 		}
+		
+		public int NativeErrorCode {
+			get {return error;}
+		}
+		
+		public Error ErrorCode {
+			get {return UnixConvert.ToError (error);}
+		}
+
+		private int error;
 
 		public override string ToString ()
 		{
-			return group.ToString();
+			return UnixMarshal.GetErrorDescription (ErrorCode);
 		}
 	}
 }

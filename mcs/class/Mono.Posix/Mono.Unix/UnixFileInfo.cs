@@ -1,5 +1,5 @@
 //
-// Mono.Posix/PosixFileInfo.cs
+// Mono.Unix/UnixFileInfo.cs
 //
 // Authors:
 //   Jonathan Pryor (jonpryor@vt.edu)
@@ -29,18 +29,18 @@
 using System;
 using System.IO;
 using System.Text;
-using Mono.Posix;
+using Mono.Unix;
 
-namespace Mono.Posix {
+namespace Mono.Unix {
 
-	public class PosixFileInfo : PosixFileSystemInfo
+	public class UnixFileInfo : UnixFileSystemInfo
 	{
-		public PosixFileInfo (string path)
+		public UnixFileInfo (string path)
 			: base (path)
 		{
 		}
 
-		internal PosixFileInfo (string path, Stat stat)
+		internal UnixFileInfo (string path, Stat stat)
 			: base (path, stat)
 		{
 		}
@@ -48,11 +48,11 @@ namespace Mono.Posix {
 		public override void Delete ()
 		{
 			int r = Syscall.unlink (Path);
-			PosixMarshal.ThrowExceptionForLastErrorIf (r);
+			UnixMarshal.ThrowExceptionForLastErrorIf (r);
 			base.Refresh ();
 		}
 
-		public PosixStream Create ()
+		public UnixStream Create ()
 		{
 			FilePermissions mode = // 0644
 				FilePermissions.S_IRUSR | FilePermissions.S_IWUSR |
@@ -60,64 +60,64 @@ namespace Mono.Posix {
 			return Create (mode);
 		}
 
-		public PosixStream Create (FilePermissions mode)
+		public UnixStream Create (FilePermissions mode)
 		{
 			int fd = Syscall.creat (Path, mode);
 			if (fd < 0)
-				PosixMarshal.ThrowExceptionForLastError ();
+				UnixMarshal.ThrowExceptionForLastError ();
 			base.Refresh ();
-			return new PosixStream (fd);
+			return new UnixStream (fd);
 		}
 
-		public PosixStream Open (OpenFlags flags)
+		public UnixStream Open (OpenFlags flags)
 		{
 			int fd = Syscall.open (Path, flags);
 			if (fd < 0)
-				PosixMarshal.ThrowExceptionForLastError ();
-			return new PosixStream (fd);
+				UnixMarshal.ThrowExceptionForLastError ();
+			return new UnixStream (fd);
 		}
 
-		public PosixStream Open (OpenFlags flags, FilePermissions mode)
+		public UnixStream Open (OpenFlags flags, FilePermissions mode)
 		{
 			int fd = Syscall.open (Path, flags, mode);
 			if (fd < 0)
-				PosixMarshal.ThrowExceptionForLastError ();
-			return new PosixStream (fd);
+				UnixMarshal.ThrowExceptionForLastError ();
+			return new UnixStream (fd);
 		}
 
-		public PosixStream Open (FileMode mode)
+		public UnixStream Open (FileMode mode)
 		{
 			OpenFlags flags = ToOpenFlags (mode, FileAccess.ReadWrite);
 			int fd = Syscall.open (Path, flags);
 			if (fd < 0)
-				PosixMarshal.ThrowExceptionForLastError ();
-			return new PosixStream (fd);
+				UnixMarshal.ThrowExceptionForLastError ();
+			return new UnixStream (fd);
 		}
 
-		public PosixStream Open (FileMode mode, FileAccess access)
+		public UnixStream Open (FileMode mode, FileAccess access)
 		{
 			OpenFlags flags = ToOpenFlags (mode, access);
 			int fd = Syscall.open (Path, flags);
 			if (fd < 0)
-				PosixMarshal.ThrowExceptionForLastError ();
-			return new PosixStream (fd);
+				UnixMarshal.ThrowExceptionForLastError ();
+			return new UnixStream (fd);
 		}
 
-		public PosixStream Open (FileMode mode, FileAccess access, FilePermissions perms)
+		public UnixStream Open (FileMode mode, FileAccess access, FilePermissions perms)
 		{
 			OpenFlags flags = ToOpenFlags (mode, access);
 			int fd = Syscall.open (Path, flags, perms);
 			if (fd < 0)
-				PosixMarshal.ThrowExceptionForLastError ();
-			return new PosixStream (fd);
+				UnixMarshal.ThrowExceptionForLastError ();
+			return new UnixStream (fd);
 		}
 
-		public PosixStream OpenRead ()
+		public UnixStream OpenRead ()
 		{
 			return Open (FileMode.Open, FileAccess.Read);
 		}
 
-		public PosixStream OpenWrite ()
+		public UnixStream OpenWrite ()
 		{
 			return Open (FileMode.OpenOrCreate, FileAccess.Write);
 		}
@@ -150,7 +150,7 @@ namespace Mono.Posix {
 			}
 
 			int _ignored;
-			if (PosixConvert.TryFromOpenFlags (OpenFlags.O_LARGEFILE, out _ignored))
+			if (UnixConvert.TryFromOpenFlags (OpenFlags.O_LARGEFILE, out _ignored))
 				flags |= OpenFlags.O_LARGEFILE;
 
 			switch (access) {

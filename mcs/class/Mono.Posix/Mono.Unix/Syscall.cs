@@ -1,5 +1,5 @@
 //
-// Mono.Posix/Syscall.cs
+// Mono.Unix/Syscall.cs
 //
 // Authors:
 //   Miguel de Icaza (miguel@novell.com)
@@ -26,7 +26,7 @@
 //    Bitfields are flagged with the [Map] attribute, and a helper program
 //    generates a set of routines that we can call to convert from our value 
 //    definitions to the value definitions expected by the OS; see
-//    PosixConvert for the conversion routines.
+//    UnixConvert for the conversion routines.
 //
 //    Methods that require tuning are bound as `private sys_NAME' methods
 //    and then a `NAME' method is exposed.
@@ -57,14 +57,14 @@ using System;
 using System.Collections;
 using System.Runtime.InteropServices;
 using System.Text;
-using Mono.Posix;
+using Mono.Unix;
 
-[assembly:Mono.Posix.IncludeAttribute (
+[assembly:Mono.Unix.IncludeAttribute (
 	new string [] {"sys/types.h", "sys/stat.h", "sys/poll.h", "sys/wait.h", "sys/mount.h",
 		"unistd.h", "fcntl.h", "signal.h", "poll.h", "grp.h", "errno.h"}, 
 	new string [] {"_GNU_SOURCE", "_XOPEN_SOURCE"})]
 
-namespace Mono.Posix {
+namespace Mono.Unix {
 
 	[Map]
 	public enum Error : int {
@@ -226,7 +226,7 @@ namespace Mono.Posix {
 		//
 		// (For example, "C-wrapped" system calls -- calls with implementation in
 		// MonoPosixHelper -- will return -1 with errno=EINVAL.  C#-wrapped system
-		// calls will generate an exception in PosixConvert, as the value can't be
+		// calls will generate an exception in UnixConvert, as the value can't be
 		// converted on the target platform.)
 		//
 		
@@ -940,13 +940,13 @@ namespace Mono.Posix {
 	//      function are related (e.g. getgroups(2))
 	//  (3) The return type SHOULD NOT be changed.  If you want to provide a
 	//      convenience function with a nicer return type, place it into one of
-	//      the Posix* wrapper classes, and give it a .NET-styled name.
+	//      the Unix* wrapper classes, and give it a .NET-styled name.
 	//  (4) Exceptions SHOULD NOT be thrown.  EXCEPTIONS: 
 	//      - If you're wrapping *broken* methods which make assumptions about 
 	//        input data, such as that an argument refers to N bytes of data.  
 	//        This is currently limited to cuserid(3) and encrypt(3).
 	//      - If you call functions which themselves generate exceptions.  
-	//        This is the case for using PosixConvert, which will throw an
+	//        This is the case for using UnixConvert, which will throw an
 	//        exception if an invalid/unsupported value is used.
 	//
 	public sealed class Syscall : Stdlib
@@ -964,7 +964,7 @@ namespace Mono.Posix {
 		// TODO: aio_cancel(3), aio_error(3), aio_fsync(3), aio_read(3), 
 		// aio_return(3), aio_suspend(3), aio_write(3)
 		//
-		// Then update PosixStream.BeginRead to use the aio* functions.
+		// Then update UnixStream.BeginRead to use the aio* functions.
 
 		//
 		// <dirent.h>
@@ -1008,7 +1008,7 @@ namespace Mono.Posix {
 				to.d_reclen = from.d_reclen;
 				to.d_type   = from.d_type;
 				if (from.d_name != IntPtr.Zero)
-					to.d_name = PosixMarshal.PtrToString (from.d_name);
+					to.d_name = UnixMarshal.PtrToString (from.d_name);
 				else 
 					to.d_name = null;
 			}
@@ -1065,7 +1065,7 @@ namespace Mono.Posix {
 		public static Error GetLastError ()
 		{
 			int errno = Marshal.GetLastWin32Error ();
-			return PosixConvert.ToError (errno);
+			return UnixConvert.ToError (errno);
 		}
 
 		[DllImport (MPH, EntryPoint="Mono_Posix_Syscall_SetLastError")]
@@ -1073,7 +1073,7 @@ namespace Mono.Posix {
 
 		public static void SetLastError (Error error)
 		{
-			int _error = PosixConvert.FromError (error);
+			int _error = UnixConvert.FromError (error);
 			SetLastError (_error);
 		}
 
@@ -1086,7 +1086,7 @@ namespace Mono.Posix {
 
 		public static int strerror_r (Error errnum, StringBuilder buf, ulong n)
 		{
-			int e = PosixConvert.FromError (errnum);
+			int e = UnixConvert.FromError (errnum);
 			return sys_strerror_r (e, buf, n);
 		}
 
@@ -1164,9 +1164,9 @@ namespace Mono.Posix {
 		{
 			try {
 				to.gr_gid    = from.gr_gid;
-				to.gr_name   = PosixMarshal.PtrToString (from.gr_name);
-				to.gr_passwd = PosixMarshal.PtrToString (from.gr_passwd);
-				to.gr_mem    = PosixMarshal.PtrToStringArray (from._gr_nmem_, from.gr_mem);
+				to.gr_name   = UnixMarshal.PtrToString (from.gr_name);
+				to.gr_passwd = UnixMarshal.PtrToString (from.gr_passwd);
+				to.gr_mem    = UnixMarshal.PtrToStringArray (from._gr_nmem_, from.gr_mem);
 			}
 			finally {
 				Stdlib.free (from.gr_mem);
@@ -1299,13 +1299,13 @@ namespace Mono.Posix {
 		private static void CopyPasswd (Passwd to, ref _Passwd from)
 		{
 			try {
-				to.pw_name   = PosixMarshal.PtrToString (from.pw_name);
-				to.pw_passwd = PosixMarshal.PtrToString (from.pw_passwd);
+				to.pw_name   = UnixMarshal.PtrToString (from.pw_name);
+				to.pw_passwd = UnixMarshal.PtrToString (from.pw_passwd);
 				to.pw_uid    = from.pw_uid;
 				to.pw_gid    = from.pw_gid;
-				to.pw_gecos  = PosixMarshal.PtrToString (from.pw_gecos);
-				to.pw_dir    = PosixMarshal.PtrToString (from.pw_dir);
-				to.pw_shell  = PosixMarshal.PtrToString (from.pw_shell);
+				to.pw_gecos  = UnixMarshal.PtrToString (from.pw_gecos);
+				to.pw_dir    = UnixMarshal.PtrToString (from.pw_dir);
+				to.pw_shell  = UnixMarshal.PtrToString (from.pw_shell);
 			}
 			finally {
 				Stdlib.free (from._pw_buf_);
@@ -1426,7 +1426,7 @@ namespace Mono.Posix {
 
 		public static void psignal (Signum sig, string s)
 		{
-			int signum = PosixConvert.FromSignum (sig);
+			int signum = UnixConvert.FromSignum (sig);
 			psignal (signum, s);
 		}
 
@@ -1437,7 +1437,7 @@ namespace Mono.Posix {
 
 		public static int kill (int pid, Signum sig)
 		{
-			int _sig = PosixConvert.FromSignum (sig);
+			int _sig = UnixConvert.FromSignum (sig);
 			return sys_kill (pid, _sig);
 		}
 
@@ -1446,14 +1446,14 @@ namespace Mono.Posix {
 
 		public static IntPtr sys_strsignal (Signum sig)
 		{
-			int s = PosixConvert.FromSignum (sig);
+			int s = UnixConvert.FromSignum (sig);
 			return sys_strsignal (s);
 		}
 
 		public static string strsignal (Signum sig)
 		{
 			IntPtr r = sys_strsignal (sig);
-			return PosixMarshal.PtrToString (r);
+			return UnixMarshal.PtrToString (r);
 		}
 
 		// TODO: sigaction(2)
@@ -1485,7 +1485,7 @@ namespace Mono.Posix {
 				throw new ArgumentOutOfRangeException ("string", "string.Capacity < L_cuserid");
 			}
 			IntPtr r = sys_cuserid (@string);
-			return PosixMarshal.PtrToString (r);
+			return UnixMarshal.PtrToString (r);
 		}
 
 		//
@@ -1526,7 +1526,7 @@ namespace Mono.Posix {
 
 		public static int umount2 (string target, UmountFlags flags)
 		{
-			int _flags = PosixConvert.FromUmountFlags (flags);
+			int _flags = UnixConvert.FromUmountFlags (flags);
 			return sys_umount2 (target, _flags);
 		}
 
@@ -1551,13 +1551,13 @@ namespace Mono.Posix {
 
 			for (int i = 0; i < send.Length; i++) {
 				send [i].fd     = fds [i].fd;
-				send [i].events = PosixConvert.FromPollEvents (fds [i].events);
+				send [i].events = UnixConvert.FromPollEvents (fds [i].events);
 			}
 
 			int r = sys_poll (send, nfds, timeout);
 
 			for (int i = 0; i < send.Length; i++) {
-				fds [i].revents = PosixConvert.ToPollEvents (send [i].revents);
+				fds [i].revents = UnixConvert.ToPollEvents (send [i].revents);
 			}
 
 			return r;
@@ -1611,7 +1611,7 @@ namespace Mono.Posix {
 
 		public static int chmod (string path, FilePermissions mode)
 		{
-			uint _mode = PosixConvert.FromFilePermissions (mode);
+			uint _mode = UnixConvert.FromFilePermissions (mode);
 			return sys_chmod (path, _mode);
 		}
 
@@ -1620,7 +1620,7 @@ namespace Mono.Posix {
 
 		public static int fchmod (int filedes, FilePermissions mode)
 		{
-			uint _mode = PosixConvert.FromFilePermissions (mode);
+			uint _mode = UnixConvert.FromFilePermissions (mode);
 			return sys_fchmod (filedes, _mode);
 		}
 
@@ -1629,7 +1629,7 @@ namespace Mono.Posix {
 
 		public static int umask (FilePermissions mask)
 		{
-			uint _mask = PosixConvert.FromFilePermissions (mask);
+			uint _mask = UnixConvert.FromFilePermissions (mask);
 			return sys_umask (_mask);
 		}
 
@@ -1638,7 +1638,7 @@ namespace Mono.Posix {
 
 		public static int mkdir (string oldpath, FilePermissions mode)
 		{
-			uint _mode = PosixConvert.FromFilePermissions (mode);
+			uint _mode = UnixConvert.FromFilePermissions (mode);
 			return sys_mkdir (oldpath, _mode);
 		}
 
@@ -1715,7 +1715,7 @@ namespace Mono.Posix {
 
 		public static int waitpid (int pid, out int status, WaitOptions options)
 		{
-			int _options = PosixConvert.FromWaitOptions (options);
+			int _options = UnixConvert.FromWaitOptions (options);
 			return waitpid (pid, out status, _options);
 		}
 
@@ -1744,7 +1744,7 @@ namespace Mono.Posix {
 		public static Signum WTERMSIG (int status)
 		{
 			int r = _WTERMSIG (status);
-			return PosixConvert.ToSignum (r);
+			return UnixConvert.ToSignum (r);
 		}
 
 		[DllImport (MPH, EntryPoint="Mono_Posix_Syscall_WIFSTOPPED")]
@@ -1761,7 +1761,7 @@ namespace Mono.Posix {
 		public static Signum WSTOPSIG (int status)
 		{
 			int r = _WSTOPSIG (status);
-			return PosixConvert.ToSignum (r);
+			return UnixConvert.ToSignum (r);
 		}
 
 		//
@@ -1798,7 +1798,7 @@ namespace Mono.Posix {
 
 		public static int access (string pathname, AccessMode mode)
 		{
-			int _mode = PosixConvert.FromAccessMode (mode);
+			int _mode = UnixConvert.FromAccessMode (mode);
 			return sys_access (pathname, _mode);
 		}
 
@@ -2095,7 +2095,7 @@ namespace Mono.Posix {
 		public static string ttyname (int fd)
 		{
 			IntPtr r = sys_ttyname (fd);
-			return PosixMarshal.PtrToString (r);
+			return UnixMarshal.PtrToString (r);
 		}
 
 		// ttyname_r(3)
@@ -2158,7 +2158,7 @@ namespace Mono.Posix {
 		public static string getlogin ()
 		{
 			IntPtr r = sys_getlogin ();
-			return PosixMarshal.PtrToString (r);
+			return UnixMarshal.PtrToString (r);
 		}
 
 		// getlogin_r(3)
@@ -2242,7 +2242,7 @@ namespace Mono.Posix {
 		public static string getusershell ()
 		{
 			IntPtr r = sys_getusershell ();
-			return PosixMarshal.PtrToString (r);
+			return UnixMarshal.PtrToString (r);
 		}
 
 		[DllImport (LIBC, SetLastError=true)]
@@ -2315,7 +2315,7 @@ namespace Mono.Posix {
 		public static string crypt (string key, string salt)
 		{
 			IntPtr r = sys_crypt (key, salt);
-			return PosixMarshal.PtrToString (r);
+			return UnixMarshal.PtrToString (r);
 		}
 
 		[DllImport (CRYPT, SetLastError=true, EntryPoint="encrypt")]
@@ -2359,16 +2359,6 @@ namespace Mono.Posix {
 		[DllImport (MPH, SetLastError=true, 
 				EntryPoint="Mono_Posix_Syscall_utimes")]
 		public static extern int utimes (string filename, ref Timeval tvp);
-
-		// Obsolete this after 1.2 is out:
-		//[Obsolete ("Use Mono.Posix.Stdlib.strerror")]
-		public static string strerror (int errnum)
-		{
-			IntPtr r = Stdlib.sys_strerror ((Error) errnum);
-			return PosixMarshal.PtrToString (r);
-		}
-
-
 	}
 }
 
