@@ -29,6 +29,7 @@ namespace Mono.CSharp {
 		public Expression Expr;
 		public Attributes  OptAttributes;
 		public FieldBuilder FieldBuilder;
+		EmitContext const_ec;
 
 		object ConstantValue = null;
 		Type type;
@@ -82,6 +83,8 @@ namespace Mono.CSharp {
 			if (type == null)
 				return false;
 
+			const_ec = new EmitContext (parent, Location, null, type, ModFlags);
+			
 			if (!TypeManager.IsBuiltinType (type) &&
 			    (!type.IsSubclassOf (TypeManager.enum_type))) {
 				Report.Error (
@@ -115,7 +118,7 @@ namespace Mono.CSharp {
 		///  Looks up the value of a constant field. Defines it if it hasn't
 		///  already been. Similar to LookupEnumValue in spirit.
 		/// </summary>
-		public object LookupConstantValue (EmitContext ec)
+		public object LookupConstantValue ()
 		{
 			if (ConstantValue != null)
 				return ConstantValue;
@@ -130,7 +133,7 @@ namespace Mono.CSharp {
 			in_transit = true;
 			int errors = Report.Errors;
 
-			Expr = Expr.Resolve (ec);
+			Expr = Expr.Resolve (const_ec);
 
 			in_transit = false;
 
@@ -229,8 +232,7 @@ namespace Mono.CSharp {
 		/// </summary>
 		public void EmitConstant (TypeContainer parent)
 		{
-			EmitContext ec = new EmitContext (parent, Location, null, type, ModFlags);
-			LookupConstantValue (ec);
+			LookupConstantValue ();
 			
 			return;
 		}

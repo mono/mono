@@ -6138,7 +6138,7 @@ namespace Mono.CSharp {
 					Const c = TypeManager.LookupConstant ((FieldBuilder) fi);
 					
 					if (c != null) {
-						object o = c.LookupConstantValue (ec);
+						object o = c.LookupConstantValue ();
 						if (o == null)
 							return null;
 						
