@@ -4,7 +4,7 @@ CSCFLAGS=/nologo /debug+ /debug:full
 
 windows: linux
 
-linux: monostyle.exe verifier.exe GenerateDelegate.exe EnumCheck.exe IFaceDisco.exe ./type-reflector/type-reflector.exe ./corcompare/CorCompare.exe
+linux: monostyle.exe verifier.exe GenerateDelegate.exe EnumCheck.exe IFaceDisco.exe ./type-reflector/type-reflector.exe ./corcompare/CorCompare.exe ./SqlSharp/SqlSharpCli.exe
 #linux: verifier.exe GenerateDelegate.exe EnumCheck.exe IFaceDisco.exe ./corcompare/CorCompare.exe update
 
 monostyle.exe: monostyle.cs
@@ -18,6 +18,9 @@ verifier.exe: verifier.cs
 
 ./type-reflector/type-reflector.exe: dummy
 	(cd type-reflector; make CSC=$(CSC))
+
+./SqlSharp/SqlSharpCli.exe: dummy
+	(cd SqlSharp; make CSC=$(CSC))
 
 ./corcompare/CorCompare.exe: dummy
 	(cd corcompare; make CorCompare.exe)
@@ -39,9 +42,11 @@ EnumCheck.exe: EnumCheck.cs EnumCheckAssemblyCollection.cs
 IFaceDisco.exe: IFaceDisco.cs XMLUtil.cs
 	$(CSC) $(CSCFLAGS) /out:IFaceDisco.exe IFaceDisco.cs XMLUtil.cs
 
+
 clean:
 	(cd corcompare; make clean)
 	(cd type-reflector; make clean)
+	(cd SqlSharp; make clean)
 	rm -f *.exe *.pdb *.dll
 	rm -f cormissing.xml
 	rm -f ../../mono/doc/pending-classes.in

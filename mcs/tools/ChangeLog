@@ -1,3 +1,11 @@
+2002-10-16  Daniel Morgan <danmorg@sc.rr.com>
+
+	* SqlSharpCli.cs: SQL query tool moved 
+	from mcs/class/System.Data/Test
+	to mcs/tools/SqlSharp.  Include it in the build
+	so people can have a place to test connection strings
+	and the ADO.NET providers
+
 2002-09-01  Jonathan Pryor <jonpryor@vt.edu>
 	* type-reflector: new tool.  See type-reflector/README for more information.
 
