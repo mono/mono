@@ -1,5 +1,7 @@
 2004-11-15  Zoltan Varga  <vargaz@freemail.hu>
 
+	* icall.c (ves_icall_type_isprimitive): Native int is a primitive type.
+
 	* reflection.c (mono_image_create_pefile): Free the assembly streams
 	after writing out the assembly file.
 
