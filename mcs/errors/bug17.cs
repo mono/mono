@@ -1,4 +1,5 @@
-// we do not flag the lack of member ToBoolean in double
+//
+// Fixed
 //
 class X {
 	static void Main ()
