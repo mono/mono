@@ -1,3 +1,10 @@
+2003-03-12 Jackson Harper <jackson@latitudegeo.com>
+
+	* ClassTable.cs: Add Method tables to Class tables, add method to get a 
+	class's method table.
+	* CodeGen.cs: Add Method to add methods :p
+	* MethodTable.cs: Add file, this class is used to add methods to a class.
+
 2003-03-11 Jackson Harper <jackson@latitudegeo.com>
 
 	* TypeRef.cs: New file, used for pairing types and their names.

@@ -23,13 +23,15 @@ namespace Mono.ILASM {
 
 			public ArrayList LocationList;
 			public Class Class;
+			public MethodTable method_table;
 
-			public ClassTableItem (Class klass, Location location)
+			public ClassTableItem (ClassDef klass, Location location)
 			{
 				flags = 0;
 				Class = klass;
 				LocationList = new ArrayList ();
 				LocationList.Add (location);
+				method_table = new MethodTable (klass);
 			}
 		
 			public bool Defined {
@@ -40,6 +42,10 @@ namespace Mono.ILASM {
 					else
 						flags ^= DefinedFlag;
 				}
+			}
+
+			public MethodTable MethodTable {
+				get { return method_table; }
 			}
 		}
 
@@ -75,11 +81,22 @@ namespace Mono.ILASM {
 			
 			string name_space, name;			
 			GetNameAndNamespace (full_name, out name_space, out name);
-			Class klass = pefile.AddClass (DefaultAttr, name_space, name);
+			ClassDef klass = pefile.AddClass (DefaultAttr, name_space, name);
 			AddReference (full_name, klass, location);
-			
 	
 			return klass;
+		}
+
+		public MethodTable GetMethodTable (string full_name, Location location)
+		{
+			ClassTableItem item = table[full_name] as ClassTableItem;
+			
+			if (item == null) {
+				GetReference (full_name, location);
+				return GetMethodTable (full_name, location);
+			}
+
+			return item.MethodTable;
 		}
 
 		public ClassDef AddDefinition (string name_space, string name, 
@@ -135,7 +152,7 @@ namespace Mono.ILASM {
 			}
 		}
 
-		protected void AddDefined (string full_name, Class klass, Location location)
+		protected void AddDefined (string full_name, ClassDef klass, Location location)
 		{
 			if (table.Contains (full_name))
 				return; 
@@ -146,7 +163,7 @@ namespace Mono.ILASM {
 			table[full_name] = item;
 		}
 
-		protected void AddReference (string full_name, Class klass, Location location)
+		protected void AddReference (string full_name, ClassDef klass, Location location)
 		{
 			if (table.Contains (full_name))
 				return;

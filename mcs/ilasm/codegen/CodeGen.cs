@@ -72,6 +72,14 @@ namespace Mono.ILASM {
 		 	current_class = class_table.AddDefinition (current_namespace, name, 
 				at, parent, location);
 		}
+		
+		public void AddMethod (MethAttr method_attr, ImplAttr impl_attr, CallConv call_conv, string name, 
+			TypeRef return_type, Param[] param_list, TypeRef[] param_type_list, Location location) 
+		{
+			MethodTable method_table = class_table.GetMethodTable (current_class.Name, location);
+			method_table.AddDefinition (method_attr, impl_attr, call_conv, name, return_type, 
+				param_list, param_type_list, location);
+		}
 	}
 
 }
