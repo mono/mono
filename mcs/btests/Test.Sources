@@ -229,7 +229,6 @@ LocalDeclarationA \
 WithStatementA \
 WithStatementB \
 WithStatementC \
-ForEachA \
 AssignmentStatementsA \
 AssignmentStatementsB \
 AssignmentStatementsC \
@@ -240,6 +239,7 @@ ConditionalStatementsD \
 ForA \
 ForB \
 ForC \
+ForEachA \
 ForEachB \
 LoopStatementsA \
 ExceptionHandlingA \
