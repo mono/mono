@@ -1,3 +1,9 @@
+
+Thu May 2 15:51:11 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* unicode.c: Char.IsNumber doesn't include hex digits as the ms
+	documentation says (the ECMA one is correct).
+
 2002-05-02  Dick Porter  <dick@ximian.com>
 
 	* threads.c: Use GC_debug_register_finalizer with GC_debug_malloc.
