@@ -1,3 +1,6 @@
+2001-09-21  Dick Porter  <dick@ximian.com>
+
+	* Makefile.am (mint_LDADD): Added PTHREAD_LIBS to the link line
 
 Thu Sep 20 16:32:42 CEST 2001 Paolo Molaro <lupus@ximian.com>
 
