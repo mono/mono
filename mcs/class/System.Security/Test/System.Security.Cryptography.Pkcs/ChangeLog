@@ -1,3 +1,9 @@
+2003-11-08  Sebastien Pouliot  <spouliot@videotron.ca>
+
+	* ContentInfoTest.cs: New. (Incomplete) Unit tests for ContentInfo.
+	* Pkcs7SignerTest.cs: New. New. Unit tests for Pkcs7Signer.
+	* RecipientInfoTest.cs: New. Unit tests for abstract class RecipientInfo.
+
 2003-11-07  Sebastien Pouliot  <spouliot@videotron.ca>
 
 	* AlgorithmIdentifierTest.cs: New. Unit tests for AlgorithmIdentifier.
