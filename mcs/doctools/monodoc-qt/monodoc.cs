@@ -9,6 +9,7 @@ namespace Mono.Util.MonoDoc.Qt {
 	using Qt;
 	using System;
 	using System.IO;
+	using System.Text;
 	using System.Reflection;
 	using System.Collections;
 	using Mono.Util.MonoDoc.Lib;
@@ -89,7 +90,12 @@ namespace Mono.Util.MonoDoc.Qt {
 
 		public void WriteInit (string filename)
 		{
-			Global.InitDir = filename;
+			StringBuilder builder = new StringBuilder ();
+			string [] s = filename.Split ('/');
+			for (int i = 0; i < s.Length - 1; i++) {
+				builder.Append (s[i]+"/");
+			}
+			Global.InitDir = builder.ToString ().TrimEnd ('/');
 			StreamWriter st = File.CreateText (Global.MonoDocDir+"/monodoc");
 			st.WriteLine (Global.InitDir);
 			st.Flush ();
@@ -118,6 +124,8 @@ namespace Mono.Util.MonoDoc.Qt {
 					SetUpdatesEnabled (false);
 					int i = 0;
 					foreach(DocType type in parser.DocTypes) {
+						type.FileRoot = Global.InitDir;
+						type.Language = "en";
 						progress.SetProgress (i++);
 						ListItem typeitem = new ListItem (GetNamespaceItem (type.Namespace), type.Name, type);
 						ProcessMember (type.Dtors, typeitem);
@@ -136,7 +144,7 @@ namespace Mono.Util.MonoDoc.Qt {
 			{
 				foreach (DocMember member in array) {
 					if (parent != null && member != null) {
-						new ListItem (parent, member.Name+" "+member.Args, member);
+						new ListItem (parent, member.FullName, member);
 					}
 				}
 			}
@@ -163,12 +171,19 @@ namespace Mono.Util.MonoDoc.Qt {
 
 			public void ListViewChanged (QListViewItem item)
 			{
-				ListItem listItem = (item as ListItem);
-				if (listItem.IsName)
+				ListItem listItem = item as ListItem;
+				
+				if (listItem.IsNamespace)
 					return;
 				if (listItem != null && !listItem.IsBuilt)
-					AddWidget (listItem.BuildEditForm ());
-				RaiseWidget (listItem.EditForm);
+					AddWidget (listItem.BuildEditForm () as QWidget);
+
+				IEditForm edit = VisibleWidget () as IEditForm;
+				if (edit != null)
+					edit.Flush ();
+
+				listItem.EditForm.Sync ();
+				RaiseWidget (listItem.EditForm as QWidget);
 			}
 		}
 
@@ -176,9 +191,9 @@ namespace Mono.Util.MonoDoc.Qt {
 
 			DocType type;
 			DocMember member;
-			public bool IsBuilt, IsName= false;
-			public QWidget EditForm;
-			
+			public bool IsBuilt, IsNamespace = false;
+			public IEditForm EditForm;
+
 			public ListItem (QListView parent, string text) : base (parent, text)
 			{
 				IsName = true;
@@ -214,41 +229,66 @@ namespace Mono.Util.MonoDoc.Qt {
 					SetPixmap (0, Global.IEnum);
 			}
 
-			public QWidget BuildEditForm ()
+			public IEditForm BuildEditForm ()
 			{
 				if (type != null)
-					EditForm = new TypeEdit (type.Name);
+					EditForm = new TypeEdit (type);
 				else if (member != null)
-					EditForm = new ParamEdit (member.Name+" "+member.Args, member.Params);
+					EditForm = new ParamEdit (member);
 				IsBuilt = true;
 				return EditForm;
 			}
 		}
 
-		private class TypeEdit : QVGroupBox {
+		[DeclareQtSignal ("SyncSum (String)")]
+		[DeclareQtSignal ("SyncRem (String)")]
+		private class TypeEdit : QVGroupBox, IEditForm {
 
-			public TypeEdit (string name) : base (name)
+			DocType reference;
+			DocType document;
+
+			public TypeEdit (DocType reference) : base (reference.Name)
 			{
+				this.reference = reference;
 				SetInsideMargin (20);
 				QLabel sum = new QLabel (
 					"<summary> Provide a brief (usually one sentence) description of a member or type.",
 					 this);
 				QLineEdit sumedit = new QLineEdit (this);
+				Connect (this, SIGNAL ("SyncSum (String)"), sumedit, SLOT ("SetText (String)"));
 
 				QLabel rem = new QLabel (
 					"<remarks> Provide verbose information for a type or member.",
 					this);
 				QTextEdit remedit = new QTextEdit (this);
-				remedit.SetTextFormat (Qt.TextFormat.RichText);
+				Connect (this, SIGNAL ("SyncRem (String)"), remedit, SLOT ("SetText (String)"));
+				//remedit.SetTextFormat (Qt.TextFormat.RichText);
+			}
 
+			public void Sync ()
+			{
+				if (!File.Exists (reference.FilePath))
+					return;
+				document = DocParser.GetDoc (reference.FilePath);
+				Emit ("SyncSum (String)", document.Summary);
+				Emit ("SyncRem (String)", document.Remarks);
+				Console.WriteLine ("Found doc for: "+document.Name);
+			}
+
+			public void Flush ()
+			{
+				Console.WriteLine ("Flush IO");
 			}
 		}
 
-		private class ParamEdit : QVGroupBox {
+		private class ParamEdit : QVGroupBox, IEditForm {
 
-			public ParamEdit (string name, ArrayList _params) : base (name)
+			DocMember member;
+
+			public ParamEdit (DocMember member) : base (member.FullName)
 			{
-				foreach (DocParam param in _params)
+				this.member = member;
+				foreach (DocParam param in member.Params)
 				{
 					QHBox hbox = new QHBox (this);
 					QLabel label = new QLabel (hbox);
@@ -256,12 +296,22 @@ namespace Mono.Util.MonoDoc.Qt {
 					QLineEdit edit = new QLineEdit (hbox);
 				}
 			}
+
+			public void Sync ()
+			{
+				Console.WriteLine (member.FullName);
+			}
+
+			public void Flush ()
+			{
+				Console.WriteLine ("Flush IO");
+			}
 		}
 
 		private class Progress : QProgressDialog {
-			
+
 			QPushButton pb;
-			
+
 			public Progress (QWidget parent) : base (parent, "", true)
 			{
 				SetLabelText ("Parsing Master.xml file");
@@ -276,6 +326,11 @@ namespace Mono.Util.MonoDoc.Qt {
 				ForceShow ();
 				SetProgress (1);
 			}
+		}
+
+		public interface IEditForm {
+			void Sync ();
+			void Flush ();
 		}
 	}
 }
