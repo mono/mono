@@ -1,5 +1,9 @@
 2004-08-20  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XQueryCommand.cs : use new XPathDocument() for empty contextdocument.
+
+2004-08-20  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XQueryCommand.cs : Now it delegates all implementation logic to
 	  Mono.Xml.XQuery.XQueryCommandImpl class (now Execute() is also
 	  invoked.)

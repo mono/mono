@@ -123,7 +123,7 @@ namespace System.Xml.Query
 			XmlResolver dataSources, 
 			XmlWriter results)
 		{
-			Execute ((IXPathNavigable) null, dataSources, null, results);
+			Execute (new XPathDocument (), dataSources, null, results);
 		}
 
 		[MonoTODO ("Null args allowed?")]
