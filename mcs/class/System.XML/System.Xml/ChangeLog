@@ -1,3 +1,8 @@
+2003-12-23  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlNamedNodeMap.cs : Fixed internal SetNamedItem(node, pos) to set
+	  replacing node correctly. This fixes bug #52453.
+
 2003-12-21  Atsushi Enomoto  <ginga@kit.hi-ho.ne.jp>
 
 	* XmlDocument.cs, XmlElement.cs, XmlNode.cs :

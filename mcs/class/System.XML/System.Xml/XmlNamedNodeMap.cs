@@ -99,7 +99,10 @@ namespace System.Xml
 			foreach (XmlNode x in nodeList)
 				if(x.LocalName == node.LocalName && x.NamespaceURI == node.NamespaceURI) {
 					nodeList.Remove (x);
-					nodeList.Add (node);
+					if (pos < 0)
+						nodeList.Add (node);
+					else
+						nodeList.Insert (pos, node);
 					return x;
 				}
 			
