@@ -1,5 +1,13 @@
 2002-06-12  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* Page.cs:
+	(Validators): if the collection is null, create one.
+	(GetPostBackEventReference 2): don't throw exception.
+	(GetPostBackClientEvent): return a string with containing the method
+	name, the control name and the argument.
+
+2002-06-12  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* Page.cs: SetPage is now called SetDefaults and also sets a default 
 	ID for controls that don't have one yet.
 

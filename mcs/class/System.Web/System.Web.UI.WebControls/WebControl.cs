@@ -412,13 +412,12 @@ namespace System.Web.UI.WebControls
 					ControlStyle.AddAttributesToRender(writer, this);
 				}
 			}
-			if(attributeState!=null)
-			{
-				IEnumerator ie = Attributes.Keys.GetEnumerator();
-				do
-				{
-					writer.AddAttribute((string)ie.Current, Attributes[(string)ie.Current]);
-				} while(ie.MoveNext());
+			if(attributeState != null){
+				IEnumerator ie = Attributes.Keys.GetEnumerator ();
+				while (ie.MoveNext ()){
+					string key = (string) ie.Current;
+					writer.AddAttribute (key, Attributes [key]);
+				}
 			}
 		}
 

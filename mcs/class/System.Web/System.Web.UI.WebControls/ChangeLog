@@ -1,5 +1,14 @@
 2002-06-12  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* LinkButton.cs: mono-stylized.
+	(AddParsedSubObject):
+	(RenderControls): little fixes.
+
+	* WebControl.cs:
+	(AddAttributesToRender): fixed usage of IEnumerator.
+
+2002-06-12  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* Literal.cs: beautified.
 
 2002-06-12  Gonzalo Paniagua Javier <gonzalo@ximian.com>

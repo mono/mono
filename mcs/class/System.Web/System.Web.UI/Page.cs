@@ -14,6 +14,7 @@ using System.Collections.Specialized;
 using System.IO;
 using System.Reflection;
 using System.Security.Principal;
+using System.Text;
 using System.Web;
 using System.Web.Caching;
 using System.Web.SessionState;
@@ -223,7 +224,11 @@ public class Page : TemplateControl, IHttpHandler
 
 	public ValidatorCollection Validators
 	{
-		get { return _validators; }
+		get { 
+			if (_validators == null)
+				_validators = new ValidatorCollection ();
+			return _validators;
+		}
 	}
 
 	public override bool Visible
@@ -280,7 +285,9 @@ public class Page : TemplateControl, IHttpHandler
 	{
 		// Don't throw the exception. keep going
 		//throw new NotImplementedException ();
-		return "";
+		StringBuilder result = new StringBuilder ();
+		result.AppendFormat ("GetPostBackClientEvent ('{0}', '{1}')", control.ID, argument);
+		return result.ToString ();
 	}
 
 	[MonoTODO]
@@ -292,13 +299,19 @@ public class Page : TemplateControl, IHttpHandler
 	[MonoTODO]
 	public string GetPostBackEventReference (Control control)
 	{
-		throw new NotImplementedException ();
+		// Don't throw the exception. keep going
+		//throw new NotImplementedException ();
+		return GetPostBackEventReference (control, "");
 	}
 	
 	[MonoTODO]
 	public string GetPostBackEventReference (Control control, string argument)
 	{
-		throw new NotImplementedException ();
+		// Don't throw the exception. keep going
+		//throw new NotImplementedException ();
+		StringBuilder result = new StringBuilder ();
+		result.AppendFormat ("GetPostBackEventReference ('{0}', '{1}')", control.ID, argument);
+		return result.ToString ();
 	}
 
 	public virtual int GetTypeHashCode ()
