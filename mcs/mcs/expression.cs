@@ -2420,7 +2420,7 @@ namespace Mono.CSharp {
 
 		static Invocation ()
 		{
-			method_parameter_cache = new Hashtable ();
+			method_parameter_cache = new PtrHashtable ();
 		}
 			
 		//

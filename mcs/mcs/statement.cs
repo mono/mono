@@ -429,8 +429,12 @@ namespace Mono.CSharp {
 				return false;
 			}
 
-			object val = ((Constant) expr).GetValue ();
+			object val = Expression.ConvertIntLiteral (
+				(Constant) expr, ec.Switch.SwitchType, loc);
 
+			if (val == null)
+				return false;
+					
 			SwitchLabel sl = (SwitchLabel) ec.Switch.Elements [val];
 
 			if (sl == null){
@@ -1263,11 +1267,11 @@ namespace Mono.CSharp {
 			else if (k is ulong)
 				LongConstant.EmitLong (ig, unchecked ((long) (ulong) k));
 			else if (k is char)
-				IntConstant.EmitInt (ig, (int) k);
+				IntConstant.EmitInt (ig, (int) ((char) k));
 			else if (k is sbyte)
-				IntConstant.EmitInt (ig, (sbyte) k);
+				IntConstant.EmitInt (ig, (int) ((sbyte) k));
 			else if (k is byte)
-				IntConstant.EmitInt (ig,(byte) k);
+				IntConstant.EmitInt (ig, (int) ((byte) k));
 			else 
 				throw new Exception ("Unhandled case");
 		}

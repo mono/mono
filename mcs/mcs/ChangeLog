@@ -1,3 +1,10 @@
+2001-12-23  Miguel de Icaza  <miguel@ximian.com>
+
+	* ecore.cs (ConvertIntLiteral): finished the implementation.
+
+	* statement.cs (SwitchLabel): Convert the value we are using as a
+	key before looking up the table.
+
 2001-12-22  Miguel de Icaza  <miguel@ximian.com>
 
 	* codegen.cs (EmitTopBlock): Require a Location argument now.

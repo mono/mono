@@ -752,8 +752,19 @@ public class TypeManager {
 			ret [1] = (MethodInfo) pair.Second;
 
 			return ret;
-		} else
-			return pi.GetAccessors ();
+		} else {
+			MethodInfo [] mi = new MethodInfo [2];
+
+			//
+			// Why this and not pi.GetAccessors?
+			// Because sometimes index 0 is the getter
+			// sometimes it is 1
+			//
+			mi [0] = pi.GetGetMethod ();
+			mi [1] = pi.GetSetMethod ();
+
+			return mi;
+		}
 	}
 
 	static public MethodInfo GetPropertyGetter (PropertyInfo pi)

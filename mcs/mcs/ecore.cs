@@ -1803,7 +1803,7 @@ namespace Mono.CSharp {
 			string s = "";
 
 			if (c.Type == target_type)
-				return c;
+				return ((Constant) c).GetValue ();
 
 			//
 			// Make into one of the literals we handle, we dont really care
@@ -1817,27 +1817,27 @@ namespace Mono.CSharp {
 				
 				if (target_type == TypeManager.uint32_type){
 					if (v >= 0)
-						return (object) ((uint) v);
+						return (uint) v;
 				} else if (target_type == TypeManager.char_type){
 					if (v >= Char.MinValue && v <= Char.MaxValue)
-						return (object) ((char) v);
+						return (char) v;
 				} else if (target_type == TypeManager.byte_type){
 					if (v >= Byte.MinValue && v <= Byte.MaxValue)
-						return (object) ((byte) v);
+						return (byte) v;
 				} else if (target_type == TypeManager.sbyte_type){
 					if (v >= SByte.MinValue && v <= SByte.MaxValue)
-						return (object) ((sbyte) v);
+						return (sbyte) v;
 				} else if (target_type == TypeManager.short_type){
 					if (v >= Int16.MinValue && v <= UInt16.MaxValue)
-						return (object) ((short) v);
+						return (short) v;
 				} else if (target_type == TypeManager.ushort_type){
 					if (v >= UInt16.MinValue && v <= UInt16.MaxValue)
-						return (object) ((ushort) v);
+						return (ushort) v;
 				} else if (target_type == TypeManager.int64_type)
-					return (object) ((long) v);
+					return (long) v;
 			        else if (target_type == TypeManager.uint64_type){
 					if (v > 0)
-						return (object) ((ulong) v);
+						return (ulong) v;
 				}
 
 				s = v.ToString ();
@@ -1846,95 +1846,208 @@ namespace Mono.CSharp {
 
 				if (target_type == TypeManager.int32_type){
 					if (v <= Int32.MaxValue)
-						return (object) ((int) v);
+						return (int) v;
 				} else if (target_type == TypeManager.char_type){
 					if (v >= Char.MinValue && v <= Char.MaxValue)
-						return (object) ((char) v);
+						return (char) v;
 				} else if (target_type == TypeManager.byte_type){
 					if (v <= Byte.MaxValue)
-						return (object) ((byte) v);
+						return (byte) v;
 				} else if (target_type == TypeManager.sbyte_type){
 					if (v <= SByte.MaxValue)
-						return (object) ((sbyte) v);
+						return (sbyte) v;
 				} else if (target_type == TypeManager.short_type){
 					if (v <= UInt16.MaxValue)
-						return (object) ((short) v);
+						return (short) v;
 				} else if (target_type == TypeManager.ushort_type){
 					if (v <= UInt16.MaxValue)
-						return (object) ((ushort) v);
+						return (ushort) v;
 				} else if (target_type == TypeManager.int64_type)
-					return (object) ((long) v);
+					return (long) v;
 			        else if (target_type == TypeManager.uint64_type)
-					return (object) ((ulong) v);
+					return (ulong) v;
 				s = v.ToString ();
-			} else if (c is	LongLiteral){ 
-				long v = ((LongLiteral) c).Value;
+			} else if (c is	LongConstant){ 
+				long v = ((LongConstant) c).Value;
 
 				if (target_type == TypeManager.int32_type){
 					if (v >= UInt32.MinValue && v <= UInt32.MaxValue)
-						return (object) ((int) v);
+						return (int) v;
 				} else if (target_type == TypeManager.uint32_type){
 					if (v >= 0 && v <= UInt32.MaxValue)
-						return (object) ((uint) v);
+						return (uint) v;
 				} else if (target_type == TypeManager.char_type){
 					if (v >= Char.MinValue && v <= Char.MaxValue)
-						return (object) ((char) v);
+						return (char) v;
 				} else if (target_type == TypeManager.byte_type){
 					if (v >= Byte.MinValue && v <= Byte.MaxValue)
-						return (object) ((byte) v);
+						return (byte) v;
 				} else if (target_type == TypeManager.sbyte_type){
 					if (v >= SByte.MinValue && v <= SByte.MaxValue)
-						return (object) ((sbyte) v);
+						return (sbyte) v;
 				} else if (target_type == TypeManager.short_type){
 					if (v >= Int16.MinValue && v <= UInt16.MaxValue)
-						return (object) ((short) v);
+						return (short) v;
 				} else if (target_type == TypeManager.ushort_type){
 					if (v >= UInt16.MinValue && v <= UInt16.MaxValue)
-						return (object) ((ushort) v);
+						return (ushort) v;
 			        } else if (target_type == TypeManager.uint64_type){
 					if (v > 0)
-						return (object) ((ulong) v);
+						return (ulong) v;
 				}
 				s = v.ToString ();
-			} else if (c is	ULongLiteral){
-				ulong v = ((ULongLiteral) c).Value;
+			} else if (c is	ULongConstant){
+				ulong v = ((ULongConstant) c).Value;
 
 				if (target_type == TypeManager.int32_type){
 					if (v <= Int32.MaxValue)
-						return (object) ((int) v);
+						return (int) v;
 				} else if (target_type == TypeManager.uint32_type){
 					if (v <= UInt32.MaxValue)
-						return (object) ((uint) v);
+						return (uint) v;
 				} else if (target_type == TypeManager.char_type){
 					if (v >= Char.MinValue && v <= Char.MaxValue)
-						return (object) ((char) v);
+						return (char) v;
 				} else if (target_type == TypeManager.byte_type){
 					if (v >= Byte.MinValue && v <= Byte.MaxValue)
-						return (object) ((byte) v);
+						return (byte) v;
 				} else if (target_type == TypeManager.sbyte_type){
 					if (v <= (int) SByte.MaxValue)
-						return (object) ((sbyte) v);
+						return (sbyte) v;
 				} else if (target_type == TypeManager.short_type){
 					if (v <= UInt16.MaxValue)
-						return (object) ((short) v);
+						return (short) v;
 				} else if (target_type == TypeManager.ushort_type){
 					if (v <= UInt16.MaxValue)
-						return (object) ((ushort) v);
+						return (ushort) v;
 			        } else if (target_type == TypeManager.int64_type){
 					if (v <= Int64.MaxValue)
-						return (object) ((long) v);
+						return (long) v;
 				}
 				s = v.ToString ();
 			} else if (c is ByteConstant){
-				throw new Exception ("Implement me");
+				byte v = ((ByteConstant) c).Value;
+				
+				if (target_type == TypeManager.int32_type)
+					return (int) v;
+				else if (target_type == TypeManager.uint32_type)
+					return (uint) v;
+				else if (target_type == TypeManager.char_type)
+					return (char) v;
+				else if (target_type == TypeManager.sbyte_type){
+					if (v <= SByte.MaxValue)
+						return (sbyte) v;
+				} else if (target_type == TypeManager.short_type)
+					return (short) v;
+				else if (target_type == TypeManager.ushort_type)
+					return (ushort) v;
+			        else if (target_type == TypeManager.int64_type)
+					return (long) v;
+				else if (target_type == TypeManager.uint64_type)
+					return (ulong) v;
+				s = v.ToString ();
 			} else if (c is SByteConstant){
-				throw new Exception ("Implement me");
+				sbyte v = ((SByteConstant) c).Value;
+				
+				if (target_type == TypeManager.int32_type)
+					return (int) v;
+				else if (target_type == TypeManager.uint32_type){
+					if (v >= 0)
+						return (uint) v;
+				} else if (target_type == TypeManager.char_type){
+					if (v >= 0)
+						return (char) v;
+				} else if (target_type == TypeManager.byte_type){
+					if (v >= 0)
+						return (byte) v;
+				} else if (target_type == TypeManager.short_type)
+					return (short) v;
+				else if (target_type == TypeManager.ushort_type){
+					if (v >= 0)
+						return (ushort) v;
+			        } else if (target_type == TypeManager.int64_type)
+					return (long) v;
+				else if (target_type == TypeManager.uint64_type){
+					if (v >= 0)
+						return (ulong) v;
+				}
+				s = v.ToString ();
 			} else if (c is ShortConstant){
-				throw new Exception ("Implement me");
+				short v = ((ShortConstant) c).Value;
+				
+				if (target_type == TypeManager.int32_type){
+					return (int) v;
+				} else if (target_type == TypeManager.uint32_type){
+					if (v >= 0)
+						return (uint) v;
+				} else if (target_type == TypeManager.char_type){
+					if (v >= 0)
+						return (char) v;
+				} else if (target_type == TypeManager.byte_type){
+					if (v >= Byte.MinValue && v <= Byte.MaxValue)
+						return (byte) v;
+				} else if (target_type == TypeManager.sbyte_type){
+					if (v >= SByte.MinValue && v <= SByte.MaxValue)
+						return (sbyte) v;
+				} else if (target_type == TypeManager.ushort_type){
+					if (v >= 0)
+						return (ushort) v;
+			        } else if (target_type == TypeManager.int64_type)
+					return (long) v;
+				else if (target_type == TypeManager.uint64_type)
+					return (ulong) v;
+
+				s = v.ToString ();
 			} else if (c is UShortConstant){
-				throw new Exception ("Implement me");
+				ushort v = ((UShortConstant) c).Value;
+				
+				if (target_type == TypeManager.int32_type)
+					return (int) v;
+				else if (target_type == TypeManager.uint32_type)
+					return (uint) v;
+				else if (target_type == TypeManager.char_type){
+					if (v >= Char.MinValue && v <= Char.MaxValue)
+						return (char) v;
+				} else if (target_type == TypeManager.byte_type){
+					if (v >= Byte.MinValue && v <= Byte.MaxValue)
+						return (byte) v;
+				} else if (target_type == TypeManager.sbyte_type){
+					if (v <= SByte.MaxValue)
+						return (byte) v;
+				} else if (target_type == TypeManager.short_type){
+					if (v <= Int16.MaxValue)
+						return (short) v;
+			        } else if (target_type == TypeManager.int64_type)
+					return (long) v;
+				else if (target_type == TypeManager.uint64_type)
+					return (ulong) v;
+
+				s = v.ToString ();
+			} else if (c is CharConstant){
+				char v = ((CharConstant) c).Value;
+				
+				if (target_type == TypeManager.int32_type)
+					return (int) v;
+				else if (target_type == TypeManager.uint32_type)
+					return (uint) v;
+				else if (target_type == TypeManager.byte_type){
+					if (v >= Byte.MinValue && v <= Byte.MaxValue)
+						return (byte) v;
+				} else if (target_type == TypeManager.sbyte_type){
+					if (v <= SByte.MaxValue)
+						return (sbyte) v;
+				} else if (target_type == TypeManager.short_type){
+					if (v <= Int16.MaxValue)
+						return (short) v;
+				} else if (target_type == TypeManager.ushort_type)
+					return (short) v;
+			        else if (target_type == TypeManager.int64_type)
+					return (long) v;
+				else if (target_type == TypeManager.uint64_type)
+					return (ulong) v;
+
+				s = v.ToString ();
 			}
-			
 			error31 (loc, s, target_type);
 			return null;
 		}		
