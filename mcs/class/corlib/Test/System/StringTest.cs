@@ -13,13 +13,10 @@ using System.Globalization;
 namespace MonoTests.System
 {
 
-public class StringTest : TestCase
+[TestFixture]
+public class StringTest : Assertion
 {
 	public StringTest() {}
-
-	protected override void SetUp ()
-	{
-	}
 
 	[Test]
 	[ExpectedException (typeof (ArgumentNullException))]
@@ -416,6 +413,8 @@ public class StringTest : TestCase
 		
 		AssertEquals("basic string index", 1, s1.IndexOf("rig"));
 		AssertEquals("basic string index", 2, s1.IndexOf("i"));
+		AssertEquals("basic string index", 0, "".IndexOf(""));
+		AssertEquals("basic string index", 0, "ABC".IndexOf(""));
 		AssertEquals("basic string index - no", -1, s1.IndexOf("rag"));
 
 		AssertEquals("stepped char index", 1, s1.IndexOf('r', 1));
@@ -442,6 +441,8 @@ public class StringTest : TestCase
 			     9, s1.IndexOf("original", 1));
 		AssertEquals("stepped string index 3", 
 			     -1, s1.IndexOf("original", 10));
+		AssertEquals("stepped string index 4", 
+					 3, s1.IndexOf("", 3));
 		AssertEquals("stepped limited string index 1",
 			     1, s1.IndexOf("rig", 0, 5));
 		AssertEquals("stepped limited string index 2",
@@ -450,6 +451,8 @@ public class StringTest : TestCase
 			     10, s1.IndexOf("rig", 2, 15));
 		AssertEquals("stepped limited string index 4",
 			     -1, s1.IndexOf("rig", 2, 3));
+		AssertEquals("stepped limited string index 5",
+			     2, s1.IndexOf("", 2, 3));
 	}
 
 	public void TestIndexOfAny() {
@@ -699,6 +702,10 @@ public class StringTest : TestCase
 			     -1, s1.LastIndexOf("original", s1.Length-11));
 		AssertEquals("stepped string index #4",
 			     -1, s1.LastIndexOf("translator", 2));
+		AssertEquals("stepped string index #5",
+			     0, "".LastIndexOf("", 0));
+		AssertEquals("stepped string index #6",
+			     -1, "".LastIndexOf("A", -1));
 		AssertEquals("stepped limited string index #1",
 			     10, s1.LastIndexOf("rig", s1.Length-1, 10));
 		AssertEquals("stepped limited string index #2",
