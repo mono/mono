@@ -1,3 +1,8 @@
+2002-09-12  Miguel de Icaza  <miguel@ximian.com>
+
+	* marshal.c (mono_marshal_get_managed_wrapper): Added
+	MONO_TYPE_BOOLEAN 
+
 2002-09-11  Martin Baulig  <martin@gnome.org>
 
 	* gc.c: Call GC_unregister_disappearing_link() on all links when
