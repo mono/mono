@@ -42,11 +42,19 @@ namespace System.Web {
       private TraceMode _Mode;
       private TraceData data;
       private bool data_saved;
+      private bool _haveTrace = false;
            
       public TraceContext(HttpContext Context) {
 	 _Context = Context;
 	 _Enabled = false;
       }
+
+
+	internal bool HaveTrace {
+		get {
+			return _haveTrace;
+		}
+	}
 
       public bool IsEnabled {
 	 get {
@@ -56,6 +64,7 @@ namespace System.Web {
 	 set {
 		 if (value && data == null)
 			 data = new TraceData ();
+	     _haveTrace = true;
 	    _Enabled = value;
 	 }
       }
