@@ -374,7 +374,7 @@ public class Regions
 			rgn2 = new Region (rect3);	
 			rgn2.Union (rect4);
 			
-			dc.DrawRectangle (Pen.Red, rect1);				
+			dc.DrawRectangle (Pens.Red, rect1);				
 			dc.DrawRectangle (Pens.Red, rect2);
 			dc.DrawRectangle (Pens.Green, rect3);
 			dc.DrawRectangle (Pens.Green, rect4);
