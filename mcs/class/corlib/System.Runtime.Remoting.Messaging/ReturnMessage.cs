@@ -10,6 +10,7 @@
 using System;
 using System.Collections;
 using System.Reflection;
+using System.IO;
 
 namespace System.Runtime.Remoting.Messaging {
 
@@ -17,6 +18,8 @@ namespace System.Runtime.Remoting.Messaging {
 	public class ReturnMessage : IMethodReturnMessage, IMethodMessage, IInternalMessage 
 	{
 		object[] _outArgs;
+		object[] _args;
+		int _outArgsCount;
 		LogicalCallContext _callCtx;
 		object _returnValue;
 		string _uri;
@@ -36,13 +39,15 @@ namespace System.Runtime.Remoting.Messaging {
 			// fixme: why do we need outArgCount?
 
 			_returnValue = returnValue;
+			_args = outArgs;
+			_outArgsCount = outArgCount;
 			_callCtx = callCtx;
 			_uri = request.Uri;
-			_outArgs = outArgs;
 			_methodBase = request.MethodBase;
 			_methodName = request.MethodName;
 			_methodSignature = request.MethodSignature;
 			_typeName = request.TypeName;
+			if (_args == null) _args = new object [outArgCount];
 		}
 
 		public ReturnMessage (Exception exc, IMethodCallMessage request)
@@ -56,18 +61,18 @@ namespace System.Runtime.Remoting.Messaging {
 				_methodSignature = request.MethodSignature;
 				_typeName = request.TypeName;
 			}
-			_outArgs = new object[0];	// .NET does this
+			_args = new object[0];	// .NET does this
 		}
 		
 		public int ArgCount {
 			get {
-				return (_outArgs != null) ? _outArgs.Length : 0;
+				return _args.Length;
 			}
 		}
 		
 		public object [] Args {
 			get {
-				return _outArgs;
+				return _args;
 			}
 		}
 		
@@ -127,7 +132,7 @@ namespace System.Runtime.Remoting.Messaging {
 
 		public object GetArg (int arg_num)
 		{
-			return _outArgs [arg_num];
+			return _args [arg_num];
 		}
 		
 		public string GetArgName (int arg_num)
@@ -143,12 +148,17 @@ namespace System.Runtime.Remoting.Messaging {
 
 		public int OutArgCount {
 			get {
-				return (_outArgs != null) ? _outArgs.Length : 0;
+				if (_inArgInfo == null) _inArgInfo = new ArgInfo (MethodBase, ArgInfoType.Out);
+				return _inArgInfo.GetInOutArgCount ();
 			}
 		}
 
 		public object [] OutArgs {
 			get {
+				if (_outArgs == null) {
+					_outArgs = new object [OutArgCount];
+					Array.Copy (_args, _outArgs, OutArgCount);
+				}					
 				return _outArgs;
 			}
 		}
@@ -161,7 +171,7 @@ namespace System.Runtime.Remoting.Messaging {
 
 		public object GetOutArg (int arg_num)
 		{
-			return _outArgs[arg_num];
+			return _args[arg_num];
 		}
 
 		public string GetOutArgName (int arg_num)
@@ -185,16 +195,13 @@ namespace System.Runtime.Remoting.Messaging {
 			}
 			else
 			{
-				if (_outArgs != null)
+				for (int n=0; n<OutArgs.Length; n++)
 				{
-					for (int n=0; n<_outArgs.Length; n++)
-					{
-						if (n>0) s+= ", ";
-						if (_outArgs[n] != null) s += _outArgs[n].GetType().Name + " ";
-						s += GetOutArgName (n);
-						if (_outArgs[n] != null) s += " = {" + _outArgs[n] + "}";
-						else s+=" = {null}";
-					}
+					if (n>0) s+= ", ";
+					if (OutArgs[n] != null) s += OutArgs[n].GetType().Name + " ";
+					s += GetOutArgName (n);
+					if (OutArgs[n] != null) s += " = {" + OutArgs[n] + "}";
+					else s+=" = {null}";
 				}
 				s += ")";
 			}

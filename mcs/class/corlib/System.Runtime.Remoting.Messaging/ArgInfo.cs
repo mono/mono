@@ -29,11 +29,12 @@ namespace System.Runtime.Remoting.Messaging
 
 			if (type == ArgInfoType.In) {
 				for (int n=0; n<parameters.Length; n++)
-					if(!parameters[n].ParameterType.IsByRef) { _paramMap[_inoutArgCount++] = n; }
+					if (!parameters[n].ParameterType.IsByRef) { _paramMap [_inoutArgCount++] = n; }
 			}
 			else {
 				for (int n=0; n<parameters.Length; n++)
-					if(parameters[n].ParameterType.IsByRef) { _paramMap[_inoutArgCount++] = n; }
+					if (parameters[n].ParameterType.IsByRef || parameters[n].IsOut) 
+					{ _paramMap [_inoutArgCount++] = n; }
 			}
 		}
 

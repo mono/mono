@@ -1,3 +1,11 @@
+2003-09-11  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* ArgInfo.cs: Include parameters with the Out flag in the out parameters list.
+	* CallContext.cs: SetCurrentCallContext now returns the old context, so it
+	  can be later restored with new new method RestoreCallContext().
+	* ReturnMessage.cs: Some fixes in the way the class deals with output parameters,
+	  to match MS.NET behavior.
+
 2003-08-28  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* MonoMethodMessage.cs: Moved CallType into namespace declaration.
