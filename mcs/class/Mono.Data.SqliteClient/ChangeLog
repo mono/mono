@@ -1,3 +1,9 @@
+2002-11-01  Daniel Morgan <danmorg@sc.rr.com>
+
+	* Mono.Data.SqliteClient/SqliteDataReader.cs: redid the
+	implementation for GetSchemaTable() and
+	implemented IEnumerator IEnumerable.GetEnumerator ()
+
 2002-10-16  Miguel de Icaza  <miguel@ximian.com>
 
 	* Mono.Data.SqliteClient/SqliteCommand.cs: Reworked to return the

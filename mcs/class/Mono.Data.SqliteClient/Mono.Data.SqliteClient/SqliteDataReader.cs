@@ -11,10 +11,12 @@ using System;
 using System.Runtime.InteropServices;
 using System.Collections;
 using System.Data;
+using System.Data.Common;
 
 namespace Mono.Data.SqliteClient
 {
-        public class SqliteDataReader : IDataReader
+	public class SqliteDataReader : MarshalByRefObject,
+		IEnumerable, IDataReader, IDisposable, IDataRecord
         {
                 SqliteCommand command;
                 ArrayList rows;
@@ -52,41 +54,107 @@ namespace Mono.Data.SqliteClient
                         // nothing to do
                 }
 
-                public DataTable GetSchemaTable ()
-                {
+		IEnumerator IEnumerable.GetEnumerator () {
+			return new DbEnumerator (this);
+		}
 
-#if NOTDEF
-                        // We sort of cheat here since sqlite treats all types as strings
-                        // we -could- parse the table definition (since that's the only info
-                        // that we can get out of sqlite about the table), but it's probably
-                        // not worth it.
-                        DataTable data_table = new DataTable ();
+		public DataTable GetSchemaTable () {
+			
+			// We sort of cheat here since sqlite treats all types as strings
+			// we -could- parse the table definition (since that's the only info
+			// that we can get out of sqlite about the table), but it's probably
+			// not worth it.
 
-                        DataColumn col;
-                        DataRow row;
+			DataTable dataTableSchema  = null;
 
-                        // first create the columns
-                        for (int i = 0; i < column_names.Count; i++) {
-                                col = new DataColumn ();
-                                col.DataType = System.Type.GetType("System.String");
-                                col.ColumnName = columns[i];
-                                data_table.Columns.Add (col);
-                        }
+			DataColumn dc;
+			DataRow schemaRow;
 
-                        // then loop through the rows
-                        for (int i = 0; i < rows.Length; i++) {
-                                row = data_table.NewRow ();
-                                for (int j = 0; j < column_names.Count; j++) {
-                                        row[columns[j]] = rows[i][j];
-                                }
-                                data_table.Rows.Add (row);
-                        }
+			// only create the schema DataTable if
+			// there is fields in a result set due
+			// to the result of a query; otherwise,
+			// a null needs to be returned
+			if(this.FieldCount > 0) {
+				
+				dataTableSchema = new DataTable ();
+				
+				dataTableSchema.Columns.Add ("ColumnName", typeof (string));
+				dataTableSchema.Columns.Add ("ColumnOrdinal", typeof (int));
+				dataTableSchema.Columns.Add ("ColumnSize", typeof (int));
+				dataTableSchema.Columns.Add ("NumericPrecision", typeof (int));
+				dataTableSchema.Columns.Add ("NumericScale", typeof (int));
+				dataTableSchema.Columns.Add ("IsUnique", typeof (bool));
+				dataTableSchema.Columns.Add ("IsKey", typeof (bool));
+				dc = dataTableSchema.Columns["IsKey"];
+				dc.AllowDBNull = true; // IsKey can have a DBNull
+				dataTableSchema.Columns.Add ("BaseCatalogName", typeof (string));
+				dataTableSchema.Columns.Add ("BaseColumnName", typeof (string));
+				dataTableSchema.Columns.Add ("BaseSchemaName", typeof (string));
+				dataTableSchema.Columns.Add ("BaseTableName", typeof (string));
+				dataTableSchema.Columns.Add ("DataType", typeof(Type));
+				dataTableSchema.Columns.Add ("AllowDBNull", typeof (bool));
+				dataTableSchema.Columns.Add ("ProviderType", typeof (int));
+				dataTableSchema.Columns.Add ("IsAliased", typeof (bool));
+				dataTableSchema.Columns.Add ("IsExpression", typeof (bool));
+				dataTableSchema.Columns.Add ("IsIdentity", typeof (bool));
+				dataTableSchema.Columns.Add ("IsAutoIncrement", typeof (bool));
+				dataTableSchema.Columns.Add ("IsRowVersion", typeof (bool));
+				dataTableSchema.Columns.Add ("IsHidden", typeof (bool));
+				dataTableSchema.Columns.Add ("IsLong", typeof (bool));
+				dataTableSchema.Columns.Add ("IsReadOnly", typeof (bool));
 
-                        return data_table;
-#else
-                        return null;
-#endif
-                }
+				for (int i = 0; i < this.FieldCount; i += 1 ) {
+					
+					schemaRow = dataTableSchema.NewRow ();
+										
+					schemaRow["ColumnName"] = columns[i];
+					schemaRow["ColumnOrdinal"] = i + 1;
+					
+					// FIXME: how do you determine the column size
+					//        using SQL Lite?
+					int columnSize = 8192; // pulled out of the air
+					schemaRow["ColumnSize"] = columnSize;
+					schemaRow["NumericPrecision"] = 0;
+					schemaRow["NumericScale"] = 0;
+
+					schemaRow["IsUnique"] = false;
+					schemaRow["IsKey"] = DBNull.Value;
+					
+					schemaRow["BaseCatalogName"] = "";
+					
+					schemaRow["BaseColumnName"] = columns[i];
+					schemaRow["BaseSchemaName"] = "";
+					schemaRow["BaseTableName"] = "";
+
+					// FIXME: don't know how to determine
+					// the .NET type based on the
+					// SQL Lite data type
+					// Use string
+					schemaRow["DataType"] = typeof(string);
+
+					schemaRow["AllowDBNull"] = true;
+					
+					// FIXME: don't know how to get the
+					//  SQL Lite data type
+					int providerType = 0; // out of the air
+					schemaRow["ProviderType"] = providerType;
+					
+					schemaRow["IsAliased"] = false;
+					schemaRow["IsExpression"] = false;
+					schemaRow["IsIdentity"] = false;
+					schemaRow["IsAutoIncrement"] = false;
+					schemaRow["IsRowVersion"] = false;
+					schemaRow["IsHidden"] = false;
+					schemaRow["IsLong"] = false;
+					schemaRow["IsReadOnly"] = false;
+					
+					schemaRow.AcceptChanges();
+					
+					dataTableSchema.Rows.Add (schemaRow);
+				}
+			}
+			return dataTableSchema;
+		}
 
                 public bool NextResult ()
                 {
@@ -185,7 +253,7 @@ namespace Mono.Data.SqliteClient
 
 		public string GetDataTypeName (int i)
                 {
-                        return "System.String";
+                        return "text"; // SQL Lite data type
                 }
 
 		public DateTime GetDateTime (int i)
@@ -205,7 +273,7 @@ namespace Mono.Data.SqliteClient
 
 		public Type GetFieldType (int i)
                 {
-                        return System.Type.GetType ("System.String");
+                        return System.Type.GetType ("System.String"); // .NET data type
                 }
 
 		public float GetFloat (int i)
