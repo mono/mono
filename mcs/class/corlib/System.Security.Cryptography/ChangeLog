@@ -1,5 +1,9 @@
 2004-03-09  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* DSA.cs : fixed incorrectly modified catch for debugging.
+
+2004-03-09  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* DSA.cs : In ToXmlString(), sequence of Seed and PgenCounter is
 	  optional.
 

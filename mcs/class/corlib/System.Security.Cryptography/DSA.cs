@@ -150,7 +150,7 @@ namespace System.Security.Cryptography {
 
 				sb.Append ("</DSAKeyValue>");
 			}
-			catch (NotImplementedException ex) {
+			catch {
 				ZeroizePrivateKey (dsaParams);
 				throw;
 			}
