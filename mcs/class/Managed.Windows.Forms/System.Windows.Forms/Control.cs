@@ -29,9 +29,12 @@
 //	Jaak Simm		jaaksimm@firm.ee
 //	John Sohn		jsohn@columbus.rr.com
 //
-// $Revision: 1.40 $
+// $Revision: 1.41 $
 // $Modtime: $
 // $Log: Control.cs,v $
+// Revision 1.41  2004/08/21 19:26:24  pbartok
+// - Implemented CausesValidation
+//
 // Revision 1.40  2004/08/21 19:21:50  pbartok
 // - Implemented CanFocus
 // - Implemented CanSelect
@@ -208,8 +211,9 @@ namespace System.Windows.Forms
 		internal bool			is_entered;		// is the mouse inside the control?
 		internal bool			is_enabled;		// true if control is enabled (usable/not grayed out)
 		internal bool			is_captured;		// tracks if the control has captured the mouse
+		internal bool			causes_validation;	// tracks if validation is executed on changes
 		internal int			tab_index;		// position in tab order of siblings
-		internal bool			tab_stop = true;
+		internal bool			tab_stop = true;	// is the control a tab stop?
 		internal bool			is_disposed;		// has the window already been disposed?
 		internal Size			client_size;		// size of the client area (window excluding decorations)
 		internal ControlStyles		control_style;		// rather win32-specific, style bits for control
@@ -520,6 +524,7 @@ namespace System.Windows.Forms
 			is_disposed = false;
 			is_enabled = true;
 			is_entered = false;
+			causes_validation = true;
 			has_focus = false;
 			layout_suspended = 0;		
 			double_buffering = true;
@@ -800,11 +805,14 @@ namespace System.Windows.Forms
 
 		public bool CausesValidation {
 			get {
-				throw new NotImplementedException();
+				return this.causes_validation;
 			}
 
 			set {
-				throw new NotImplementedException();
+				if (this.causes_validation != value) {
+					causes_validation = value;
+					OnCausesValidationChanged(EventArgs.Empty);
+				}
 			}
 		}
 
