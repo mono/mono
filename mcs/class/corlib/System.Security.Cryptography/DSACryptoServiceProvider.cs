@@ -21,8 +21,11 @@ using Mono.Math;
 
 namespace System.Security.Cryptography {
 
+#if USE_VERSION_1_0
 	public class DSACryptoServiceProvider : DSA {
-
+#else
+	public sealed class DSACryptoServiceProvider : DSA {
+#endif
 		private CspParameters cspParams;
 		private RandomNumberGenerator rng;
 

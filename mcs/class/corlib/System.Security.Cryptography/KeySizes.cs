@@ -14,7 +14,11 @@ namespace System.Security.Cryptography {
 	/// <summary>
 	/// This class represents valid ranges of key sizes for ciphers.  It is also used to represent block sizes in the same fashion for block ciphers.
 	/// </summary>
+#if USE_VERSION_1_0
 	public class KeySizes {
+#else
+	public sealed class KeySizes {
+#endif
 		private int _maxSize;
 		private int _minSize;
 		private int _skipSize;

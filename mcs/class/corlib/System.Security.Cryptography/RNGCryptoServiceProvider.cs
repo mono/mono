@@ -1,7 +1,9 @@
 //
 // System.Security.Cryptography.RNGCryptoServiceProvider
 //
-// Author: Mark Crichton (crichton@gimp.org)
+// Authors:
+//	Mark Crichton (crichton@gimp.org)
+//	Sebastien Pouliot (spouliot@motus.com)
 //
 // (C) 2002
 //
@@ -16,26 +18,34 @@ using System.Runtime.CompilerServices;
 
 namespace System.Security.Cryptography {
 	
+#if USE_VERSION_1_0
 	public class RNGCryptoServiceProvider : RandomNumberGenerator {
+#else
+	public sealed class RNGCryptoServiceProvider : RandomNumberGenerator {
+#endif
 		
 		[MonoTODO]
-		public RNGCryptoServiceProvider () {
+		public RNGCryptoServiceProvider () 
+		{
 			// This will get some meaning when I figure out what the other
 			// three constructors do.
 		}
 		
 		[MonoTODO]
-		public RNGCryptoServiceProvider (byte[] rgb) {
+		public RNGCryptoServiceProvider (byte[] rgb) 
+		{
 			// Ok, not called by app code... someone must call it, though.
 		}
 		
 		[MonoTODO]
-		public RNGCryptoServiceProvider (CspParameters cspParams) {
-			// Why do I have this feeling this is the MS CryptAPI...
+		public RNGCryptoServiceProvider (CspParameters cspParams) 
+		{
+			// Why do I have this feeling this is the MS CryptoAPI...
 		}
 		
 		[MonoTODO]
-		public RNGCryptoServiceProvider (string str) {
+		public RNGCryptoServiceProvider (string str) 
+		{
 			// More !application code.  Interesting...
 		}
 		
@@ -55,8 +65,9 @@ namespace System.Security.Cryptography {
 			InternalGetNonZeroBytes (data);
 		}
 		
-		~RNGCryptoServiceProvider () {
-			// FIN?
+		~RNGCryptoServiceProvider () 
+		{
+			// in our case we have nothing unmamanged to dispose
 		}
 	}
 }

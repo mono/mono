@@ -2,7 +2,8 @@
 // System.Security.Cryptography MD5CryptoServiceProvider Class implementation
 //
 // Authors:
-//   Matthew S. Ford (Matthew.S.Ford@Rose-Hulman.Edu)
+//	Matthew S. Ford (Matthew.S.Ford@Rose-Hulman.Edu)
+//	Sebastien Pouliot (spouliot@motus.com)
 //
 // Copyright 2001 by Matthew S. Ford.
 //
@@ -12,7 +13,11 @@ namespace System.Security.Cryptography {
 	/// <summary>
 	/// C# implementation of the MD5 cryptographic hash function.
 	/// </summary>
+#if USE_VERSION_1_0
 	public class MD5CryptoServiceProvider : MD5 {
+#else
+	public sealed class MD5CryptoServiceProvider : MD5 {
+#endif
 		private const int BLOCK_SIZE_BYTES =  64;
 		private const int HASH_SIZE_BYTES  =  16;
 		private const int HASH_SIZE_BITS   = 128;
