@@ -18,6 +18,7 @@ namespace System.Data {
 	/// <summary>
 	/// Represents the collection of tables for the DataSet.
 	/// </summary>
+	[Editor]
 	[DefaultEvent ("CollectionChanged")]
 	[ListBindable (false)]
 	[Serializable]

@@ -16,6 +16,8 @@ using System.Collections;
 using System.ComponentModel;
 
 namespace System.Data {
+	[Editor]
+	[Serializable]
 	[DefaultEvent ("CollectionChanged")]
 	public class DataColumnCollection : InternalDataCollectionBase
 	{

@@ -79,7 +79,6 @@ namespace System.Data
 		/// <summary>
 		/// Clears the collection of all rows.
 		/// </summary>
-		[MonoTODO]
 		public void Clear () 
 		{
 			list.Clear ();
@@ -89,20 +88,18 @@ namespace System.Data
 		/// Gets a value indicating whether the primary key of any row in the collection contains
 		/// the specified value.
 		/// </summary>
-		[MonoTODO]
 		public bool Contains (object key) 
 		{
-			throw new NotImplementedException ();
+			return Find (key) != null;
 		}
 
 		/// <summary>
 		/// Gets a value indicating whether the primary key column(s) of any row in the 
 		/// collection contains the values specified in the object array.
 		/// </summary>
-		[MonoTODO]
 		public bool Contains (object[] keys) 
 		{
-			throw new NotImplementedException ();
+			return Find (keys) != null;
 		}
 
 		/// <summary>

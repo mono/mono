@@ -27,6 +27,8 @@ namespace System.Data {
 	/// <summary>
 	/// an in-memory cache of data 
 	/// </summary>
+	[Designer]
+	[ToolboxItem (false)]
 	[DefaultProperty ("DataSetName")]
 	[Serializable]
 	public class DataSet : MarshalByValueComponent, IListSource,
@@ -44,15 +46,14 @@ namespace System.Data {
 		
 		#region Constructors
 
-		[MonoTODO]
 		public DataSet() : this ("NewDataSet") {		
 		}
 
-		[MonoTODO]
 		public DataSet(string name) {
 			dataSetName = name;
 			tableCollection = new DataTableCollection (this);
 			relationCollection = new DataRelationCollection.DataSetRelationCollection (this);
+			properties = new PropertyCollection();
 		}
 
 		[MonoTODO]
@@ -101,7 +102,6 @@ namespace System.Data {
 		[DataCategory ("Data")]
 		[DataSysDescription ("The collection that holds custom user information.")]
 		public PropertyCollection ExtendedProperties {
-			[MonoTODO]
 			get { return properties; }
 		}
 
@@ -129,28 +129,25 @@ namespace System.Data {
 			}
 		}
 
-		[MonoTODO]
 		public void Merge (DataRow[] rows)
 		{
-			throw new NotImplementedException();
+			Merge (rows, false, MissingSchemaAction.Add);
 		}
 		
-		[MonoTODO]
 		public void Merge (DataSet dataSet)
 		{
-			throw new NotImplementedException();
+			Merge (dataSet, false, MissingSchemaAction.Add);
 		}
 		
-		[MonoTODO]
 		public void Merge (DataTable table)
 		{
-			throw new NotImplementedException();
+			Merge (table, false, MissingSchemaAction.Add);
 		}
 		
 		[MonoTODO]
 		public void Merge (DataSet dataSet, bool preserveChanges)
 		{
-			throw new NotImplementedException();
+			Merge (dataSet, preserveChanges, MissingSchemaAction.Add);
 		}
 		
 		[MonoTODO]
@@ -311,6 +308,43 @@ namespace System.Data {
 			StringWriter Writer = new StringWriter ();
 			WriteXmlSchema (Writer);
 			return Writer.ToString ();
+		}
+
+		[MonoTODO]
+		public bool HasChanges()
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public bool HasChanges(DataRowState rowState)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public void InferXmlSchema(XmlReader reader, string[] nsArray)
+		{
+		}
+
+		public void InferXmlSchema(Stream stream, string[] nsArray)
+		{
+			InferXmlSchema (new XmlTextReader(stream), nsArray);
+		}
+
+		public void InferXmlSchema(TextReader reader, string[] nsArray)
+		{
+			InferXmlSchema (new XmlTextReader(reader), nsArray);
+		}
+
+		public void InferXmlSchema(string fileName, string[] nsArray)
+		{
+			XmlTextReader reader = new XmlTextReader(fileName);
+			try {
+				InferXmlSchema (reader, nsArray);
+			} finally {
+				reader.Close ();
+			}
 		}
 
 		public virtual void RejectChanges()
@@ -600,6 +634,7 @@ namespace System.Data {
 			if (s != null) ReadXmlSerializable (new XmlTextReader(new StringReader(s)));
 		}
 		
+		
 		protected virtual System.Xml.Schema.XmlSchema GetSchemaSerializable()
 		{
 			return null; // FIXME
@@ -618,6 +653,26 @@ namespace System.Data {
 		protected virtual bool ShouldSerializeTables ()
 		{
 			return true;
+		}
+
+		[MonoTODO]
+		protected virtual void OnPropertyChanging (PropertyChangedEventArgs pcevent)
+		{
+		}
+
+		[MonoTODO]
+		protected virtual void OnRemoveRelation (DataRelation relation)
+		{
+		}
+
+		[MonoTODO]
+		protected virtual void OnRemoveTable (DataTable table)
+		{
+		}
+
+		[MonoTODO]
+		protected void RaisePropertyChanging (string name)
+		{
 		}
 		#endregion
 
@@ -1031,7 +1086,7 @@ namespace System.Data {
 		
 			return Result;
 		}
-
+		
 		#endregion //Private Xml Serialisation
 	}
 }

@@ -16,9 +16,13 @@ namespace System.Data
 	{
 		DataTable table;
 
-		public DataTablePropertyDescriptor (DataTable table) : base (table.TableName, null)
+		internal DataTablePropertyDescriptor (DataTable table) : base (table.TableName, null)
 		{
 			this.table = table;
+		}
+
+		public DataTable Table {
+			get { return table; }
 		}
 
 		public override object GetValue (object component)

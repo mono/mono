@@ -16,7 +16,9 @@ using System.ComponentModel;
 using System.Runtime.InteropServices;
 
 namespace System.Data {
+	[Editor]
 	[DefaultProperty ("ConstraintName")]
+	[Serializable]
 	public class UniqueConstraint : Constraint 
 	{
 		private bool _isPrimaryKey = false;

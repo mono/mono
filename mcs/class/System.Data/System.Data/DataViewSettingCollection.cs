@@ -18,6 +18,7 @@ namespace System.Data {
 	/// <summary>
 	/// Contains a read-only collection of DataViewSetting objects for each DataTable in a DataSet.
 	/// </summary>
+	[Editor]
 	[Serializable]
 	public class DataViewSettingCollection : ICollection, IEnumerable 
 	{

@@ -19,6 +19,7 @@ namespace System.Data
 	/// DataRelation is used for a parent/child relationship 
 	/// between two DataTable objects
 	/// </summary>
+	[Editor]
 	[DefaultProperty ("RelationName")]
 	[Serializable]
 	public class DataRelation {

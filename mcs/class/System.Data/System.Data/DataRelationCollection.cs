@@ -20,6 +20,7 @@ namespace System.Data {
 	/// <summary>
 	/// Represents the collection of DataRelation objects for this DataSet.
 	/// </summary>
+	[Editor]
 	[DefaultEvent ("CollectionChanged")]
 	[Serializable]
 	public abstract class DataRelationCollection : InternalDataCollectionBase

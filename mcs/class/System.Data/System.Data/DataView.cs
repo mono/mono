@@ -21,6 +21,8 @@ namespace System.Data {
 	/// a view of a DataTable for editing, filtering,
 	/// navigation, searching, and sorting.
 	/// </summary>
+	[Designer]
+	[Editor]
 	[DefaultEvent ("PositionChanged")]
 	[DefaultProperty ("Table")]
 	public class DataView : MarshalByValueComponent, IBindingList, IList, ICollection, IEnumerable, ITypedList, ISupportInitialize

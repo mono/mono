@@ -33,15 +33,14 @@ namespace System.Data
 	{
 		#region Fields
 
-		protected ArrayList list = null;
-		protected bool readOnly = false;
-		protected bool synchronized = false; 
+		private ArrayList list = null;
+		private bool readOnly = false;
+		private bool synchronized = false; 
 
 		#endregion
 
 		#region Constructors
 
-		[MonoTODO]
 		public InternalDataCollectionBase() 
 		{
 			list = new ArrayList();
@@ -87,10 +86,8 @@ namespace System.Data
 		/// </summary>
 		[Browsable (false)]
 		public object SyncRoot {
-			[MonoTODO]
 			get {
-				// FIXME: how do we sync?	
-				throw new NotImplementedException ();
+				return this;
 			}
 		}
 

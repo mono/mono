@@ -18,6 +18,7 @@ namespace System.Data
 	/// <summary>
 	/// Contains a default DataViewSettingCollection for each DataTable in a DataSet.
 	/// </summary>
+	[Designer]
 	public class DataViewManager : MarshalByValueComponent, IBindingList, ICollection, IList, ITypedList, IEnumerable
 	{
 		#region Fields

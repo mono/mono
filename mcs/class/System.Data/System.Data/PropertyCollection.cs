@@ -21,7 +21,6 @@ namespace System.Data
 	/// retrieve a PropertyCollection.
 	/// </summary>
 	public class PropertyCollection : Hashtable {
-		[MonoTODO]
 		public PropertyCollection() {
 		}
 

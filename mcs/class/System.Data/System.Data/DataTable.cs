@@ -21,6 +21,8 @@ using System.Globalization;
 using System.Runtime.Serialization;
 
 namespace System.Data {
+	[Designer]
+	[ToolboxItem (false)]
 	[DefaultEvent ("RowChanging")]
 	[DefaultProperty ("TableName")]
 	[DesignTimeVisible (false)]
@@ -138,7 +140,6 @@ namespace System.Data {
 		/// <summary>
 		/// Gets the collection of child relations for this DataTable.
 		/// </summary>
-		[MonoTODO]	
 		[Browsable (false)]
 		[DataSysDescription ("Returns the child relations for this table.")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
@@ -261,7 +262,6 @@ namespace System.Data {
 		/// Gets the collection of parent relations for 
 		/// this DataTable.
 		/// </summary>
-		[MonoTODO]
 		[Browsable (false)]
 		[DataSysDescription ("Returns the parent relations for this table.")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
@@ -399,6 +399,7 @@ namespace System.Data {
 		/// constraints while loading data.
 		/// </summary>
 		
+		[MonoTODO]
 		public void BeginLoadData()
 		{
 		}
@@ -502,6 +503,7 @@ namespace System.Data {
 		/// constraints after loading data.
 		/// </summary>
 		
+		[MonoTODO]
 		public void EndLoadData()
 		{
 		}
@@ -624,11 +626,9 @@ namespace System.Data {
 		/// This member supports the .NET Framework infrastructure
 		///  and is not intended to be used directly from your code.
 		/// </summary>
-		[MonoTODO]
 		protected internal DataRow[] NewRowArray(int size)
 		{
-			DataRow[] dataRows = {null};
-			return dataRows;
+			return (DataRow[]) Array.CreateInstance (GetRowType(), size);
 		}
 
 		/// <summary>

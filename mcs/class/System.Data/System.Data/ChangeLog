@@ -1,3 +1,21 @@
+2003-02-18  Alan Tam <Tam@SiuLung.com>
+
+	* DataRow.cs: Implemented GetParentRow and GetParentRows.
+	* DataSet.cs: Added stub for HasChanges, InferXmlSchema,
+		      OnPropertyChanging, OnRemoveRelation, OnRemoveTable,
+		      RaisePropertyChanging.
+	* DataTable.cs: Implemented NewRowArray.
+	* DataTablePropertyDescriptor: Fixed a modifier.
+	* InternalDataCollectionBase.cs: Fixed modifiers. Implemented SyncRoot.
+	* PropertyCollection.cs: Minor fix.
+	* ConstraintCollection.cs DataColumn.cs DataColumnCollection.cs 
+	* DataRelation.cs DataRelationCollection.cs DataRow.cs
+	* DataRowCollection.cs DataRowState.cs DataSet.cs DataTable.cs
+	* DataTableCollection.cs DataTablePropertyDescriptor.cs DataView.cs
+	* DataViewManager.cs DataViewRowState.cs DataViewSettingCollection.cs
+	* ForeignKeyConstraint.cs InternalDataCollectionBase.cs
+	* PropertyCollection.cs UniqueConstraint.cs: Added missing attributes
+	
 2003-02-08  Ville Palo <vi64pa@koti.soon.fi>
 
 	* ExpressionElement.cs: More implementation

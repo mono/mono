@@ -15,6 +15,7 @@ using System.ComponentModel;
 using System.Runtime.InteropServices;
 
 namespace System.Data {
+	[Editor]
 	[DefaultProperty ("ConstraintName")]
 	[Serializable]
 	public class ForeignKeyConstraint : Constraint 

@@ -26,6 +26,8 @@ namespace System.Data {
 	/// Summary description for DataColumn.
 	/// </summary>
 
+	[Editor]
+	[ToolboxItem (false)]
 	[DefaultMember ("Item")]
 	[DefaultProperty ("ColumnName")]
 	[DesignTimeVisible (false)]
@@ -265,6 +267,7 @@ namespace System.Data {
 		[DataCategory ("Data")]
 		[DataSysDescription ("Indicates the name used to look up this column in the Columns collection of a DataTable.")]
 		[RefreshProperties (RefreshProperties.All)]
+		[DefaultValue ("")]
 		public string ColumnName
 		{
 			get {

@@ -6,6 +6,7 @@
 //   Daniel Morgan <danmorg@sc.rr.com>
 //   Tim Coleman <tim@timcoleman.com>
 //   Ville Palo <vi64pa@koti.soon.fi>
+//   Alan Tam Siu Lung <Tam@SiuLung.com>
 //
 // (C) Ximian, Inc 2002
 // (C) Daniel Morgan 2002, 2003
@@ -584,7 +585,7 @@ namespace System.Data {
 			foreach (DataRow row in relation.ChildTable.Rows) {
 				bool allColumnsMatch = true;
 				for (int columnCnt = 0; columnCnt < numColumn; ++columnCnt) {
-					if (!this [parentColumns[columnCnt], version].Equals(
+					if (!this[parentColumns[columnCnt], version].Equals(
 					    row[childColumns[columnCnt], version])) {
 						allColumnsMatch = false;
 						break;
@@ -650,20 +651,18 @@ namespace System.Data {
 		/// <summary>
 		/// Gets the parent row of a DataRow using the specified DataRelation.
 		/// </summary>
-		[MonoTODO]
 		public DataRow GetParentRow (DataRelation relation) 
 		{
-			throw new NotImplementedException ();
+			return GetParentRow (relation, DataRowVersion.Current);
 		}
 
 		/// <summary>
 		/// Gets the parent row of a DataRow using the specified RelationName of a
 		/// DataRelation.
 		/// </summary>
-		[MonoTODO]
 		public DataRow GetParentRow (string relationName) 
 		{
-			throw new NotImplementedException ();
+			return GetParentRow (relationName, DataRowVersion.Current);
 		}
 
 		/// <summary>
@@ -673,56 +672,69 @@ namespace System.Data {
 		[MonoTODO]
 		public DataRow GetParentRow (DataRelation relation, DataRowVersion version) 
 		{
-			throw new NotImplementedException ();
+			DataRow[] rows = GetParentRows(relation, version);
+			if (rows.Length == 0) return null;
+			return rows[0];
 		}
 
 		/// <summary>
 		/// Gets the parent row of a DataRow using the specified RelationName of a 
 		/// DataRelation, and DataRowVersion.
 		/// </summary>
-		[MonoTODO]
 		public DataRow GetParentRow (string relationName, DataRowVersion version) 
 		{
-			throw new NotImplementedException ();
+			return GetParentRow (Table.DataSet.Relations[relationName], version);
 		}
 
 		/// <summary>
 		/// Gets the parent rows of a DataRow using the specified DataRelation.
 		/// </summary>
-		[MonoTODO]
 		public DataRow[] GetParentRows (DataRelation relation) 
 		{
-			throw new NotImplementedException ();
+			return GetParentRows (relation, DataRowVersion.Current);
 		}
 
 		/// <summary>
 		/// Gets the parent rows of a DataRow using the specified RelationName of a 
 		/// DataRelation.
 		/// </summary>
-		[MonoTODO]
 		public DataRow[] GetParentRows (string relationName) 
 		{
-			throw new NotImplementedException ();
+			return GetParentRows (relationName, DataRowVersion.Current);
 		}
 
 		/// <summary>
 		/// Gets the parent rows of a DataRow using the specified DataRelation, and
 		/// DataRowVersion.
 		/// </summary>
-		[MonoTODO]
 		public DataRow[] GetParentRows (DataRelation relation, DataRowVersion version) 
 		{
-			throw new NotImplementedException ();
+			// TODO: Caching for better preformance
+			ArrayList rows = new ArrayList();
+			DataColumn[] parentColumns = relation.ParentColumns;
+			DataColumn[] childColumns = relation.ChildColumns;
+			int numColumn = parentColumns.Length;
+			foreach (DataRow row in relation.ParentTable.Rows) {
+				bool allColumnsMatch = true;
+				for (int columnCnt = 0; columnCnt < numColumn; ++columnCnt) {
+					if (!this[parentColumns[columnCnt], version].Equals(
+					    row[childColumns[columnCnt], version])) {
+						allColumnsMatch = false;
+						break;
+					}
+				}
+				if (allColumnsMatch) rows.Add(row);
+			}
+			return rows.ToArray(typeof(DataRow)) as DataRow[];
 		}
 
 		/// <summary>
 		/// Gets the parent rows of a DataRow using the specified RelationName of a 
 		/// DataRelation, and DataRowVersion.
 		/// </summary>
-		[MonoTODO]
 		public DataRow[] GetParentRows (string relationName, DataRowVersion version) 
 		{
-			throw new NotImplementedException ();
+			return GetParentRows (Table.DataSet.Relations[relationName], version);
 		}
 
 		/// <summary>
