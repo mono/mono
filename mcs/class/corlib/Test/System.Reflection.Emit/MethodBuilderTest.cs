@@ -20,13 +20,15 @@ using NUnit.Framework;
 namespace MonoTests.System.Reflection.Emit
 {
 
-public class MethodBuilderTest : TestCase
+[TestFixture]
+public class MethodBuilderTest : Assertion
 {	
     private TypeBuilder genClass;
 
 	private ModuleBuilder module;
 
-	protected override void SetUp () {
+	[SetUp]
+	protected void SetUp () {
 		AssemblyName assemblyName = new AssemblyName();
 		assemblyName.Name = "MonoTests.System.Reflection.Emit.MethodBuilderTest";
 
