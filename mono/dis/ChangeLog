@@ -1,3 +1,7 @@
+2005-04-05  Zoltan Varga  <vargaz@freemail.hu>
+
+	* dump.c dis-cil.c: Apply patches from freebsd ports collection.
+
 2005-04-04  Zoltan Varga  <vargaz@freemail.hu>
 
 	* get.c (get_constant): Applied patch from Ankit Jain (radical@gmail.com). Fixes #74367.
