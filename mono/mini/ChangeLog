@@ -1,5 +1,7 @@
 2004-03-31  Zoltan Varga  <vargaz@freemail.hu>
 
+	* mini-ppc.c (mono_arch_patch_code): Fix ppc build.
+
 	* inssel-sparc.brg mini-sparc.c aot.c: Implement AOT support.
 
 	* inssel-long32.brg (OP_LNEG): Use ADC instead of ADD here. Fixes
