@@ -104,8 +104,10 @@ namespace Microsoft.JScript {
 			if (parent == null || parent.GetType () == typeof (ScriptBlock))
 				type.DefineField (name, typeof (Microsoft.JScript.ScriptFunction),
 						  FieldAttributes.Public | FieldAttributes.Static);
-			else
+			else {
 				local_func = ig.DeclareLocal (typeof (Microsoft.JScript.ScriptFunction));
+				TypeManager.AddLocal (name, local_func);
+			}
 			build_closure (ec, full_name);
 			func_obj.body.Emit (new_ec);
 			new_ec.ig.Emit (OpCodes.Ret);
@@ -129,7 +131,7 @@ namespace Microsoft.JScript {
 			ig.Emit (OpCodes.Ldstr, "STRING_REPRESENTATION_OF_THE_FUNCTION"); // FIXME
 			ig.Emit (OpCodes.Ldnull); // FIXME: this hard coded for now.
 
-			CodeGenerator.load_engine (parent, ig);
+			CodeGenerator.load_engine (InFunction, ig);
 
 			ig.Emit (OpCodes.Call, typeof (FunctionDeclaration).GetMethod ("JScriptFunctionDeclaration"));
 

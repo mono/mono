@@ -1,3 +1,19 @@
+2005-02-06  Cesar Lopez Nataren  <cnataren@novell.com>
+
+	* expression.cs: (load_script_func) Load localbuilder in an
+	invocation when needed, this let us have higher order functions,
+	which is lovely (Fixes #71129). Update calls to load_engine to new signature. 
+	* FunctionDeclaration.cs: Add LocalBuilder to TypeManager.locals
+	* Statement.cs: Changed ctr to Init, so we can track correctly the
+	parent hierarchy when building the ast of the program.
+	* TypeManager.cs: Added field locals. Factored code for
+	handling the tables. Added enums ManagedType and Operation.
+	* Parser.cs: Track correctly the parent of return.
+	* ast.cs (class Function): add ScriptBlock as possible parent of a
+	global expression.
+	* CodeGenerator.cs: change signature of load_engine. Instead of a
+	AST a boolean. So we can call it with InFunction as parameter.
+
 2005-02-05  Cesar Lopez Nataren  <cnataren@novell.com>
 
 	* expression.cs: rework the late binding algorithm, we directly

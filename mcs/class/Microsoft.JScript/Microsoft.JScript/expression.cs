@@ -745,13 +745,13 @@ namespace Microsoft.JScript {
 		void emit_func_call (MethodBuilder mb, EmitContext ec)
 		{
 			ILGenerator ig = ec.ig;
-			CodeGenerator.load_engine (parent, ig);
+			CodeGenerator.load_engine (InFunction, ig);
 			ig.Emit (OpCodes.Call, typeof (VsaEngine).GetMethod ("ScriptObjectStackTop"));
 			Type iact_obj = typeof (IActivationObject);
 			ig.Emit (OpCodes.Castclass, iact_obj);
 			ig.Emit (OpCodes.Callvirt, iact_obj.GetMethod ("GetDefaultThisObject"));
 
-			CodeGenerator.load_engine (parent, ig);
+			CodeGenerator.load_engine (InFunction, ig);
 
 			args.Emit (ec);
 
@@ -999,13 +999,13 @@ namespace Microsoft.JScript {
 
 		void load_script_func (EmitContext ec, FunctionDeclaration binding)
 		{
-			ILGenerator ig = ec.ig;
-			TypeBuilder type = ec.type_builder;
-			FieldInfo method = type.GetField (binding.func_obj.name);
-			if (method != null)
-				ig.Emit (OpCodes.Ldsfld, method);
-			else
-				throw new Exception ("method " + binding.func_obj.name + " not found");
+			if (InFunction)
+				ec.ig.Emit (OpCodes.Ldloc, TypeManager.GetLocal (binding.func_obj.name));
+			else {
+				TypeBuilder type = ec.type_builder;
+				FieldInfo method = type.GetField (binding.func_obj.name);
+				ec.ig.Emit (OpCodes.Ldsfld, method);
+			}
 		}
 
 		internal FieldInfo extract_field_info (AST a)

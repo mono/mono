@@ -571,6 +571,7 @@ namespace Microsoft.JScript {
 					CheckWellTerminated ();
 			} else if (tt == Token.RETURN) {
 				AST ret_expr = null;
+				pn = new Return ();
 
 				if (!InsideFunction)
 					ReportError ("msg.bad.return");
@@ -582,11 +583,11 @@ namespace Microsoft.JScript {
 				
 				int line_number = ts.LineNumber;
 				if (tt != Token.EOF && tt != Token.EOL && tt != Token.SEMI && tt != Token.RC) {
-					ret_expr = Expr (parent, false);
+					ret_expr = Expr (pn, false);
 					if (ts.LineNumber == line_number)
 						CheckWellTerminated ();
 				}
-				pn = new Return (parent, ret_expr, line_number);
+				((Return) pn).Init (parent, ret_expr, line_number);
 			} else if (tt == Token.LC) { 
 				skip_semi = true;
 				pn = Statements (parent);
@@ -656,7 +657,7 @@ namespace Microsoft.JScript {
 
 		AST Expr (AST parent, bool in_for_init)
 		{
-			Expression pn = new Expression (null);
+			Expression pn = new Expression (parent);
 			AST init = AssignExpr (parent, in_for_init);
 			pn.Add (init);
 
@@ -666,7 +667,7 @@ namespace Microsoft.JScript {
 			while (ts.MatchToken (Token.COMMA))
 				pn.Add (AssignExpr (parent, in_for_init));
 			return pn;
-		}				   
+		}
 
 		AST AssignExpr (AST parent, bool in_for_init)
 		{
@@ -1110,7 +1111,7 @@ namespace Microsoft.JScript {
 				return pn;
 			} else if (tt == Token.NAME) {
 				string name = ts.GetString;
-				return new Identifier (null, name);
+				return new Identifier (parent, name);
 			} else if (tt == Token.NUMBER) {
 				double n = ts.GetNumber;
 				return new NumericLiteral (parent, n);

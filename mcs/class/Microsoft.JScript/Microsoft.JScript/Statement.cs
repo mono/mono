@@ -190,7 +190,7 @@ namespace Microsoft.JScript {
 				not_void_return (this, args);
 		}
 
-		internal Return (AST parent, AST exp, int line_number)
+		internal void Init (AST parent, AST exp, int line_number)
 		{
 			this.parent = parent;
 			expression = exp;

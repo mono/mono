@@ -463,18 +463,19 @@ namespace Microsoft.JScript {
 		//
 		// Loads a current VsaEngine
 		//
-		internal static void load_engine (AST parent, ILGenerator ig)
+		internal static void load_engine (bool in_function, ILGenerator ig)
 		{
 			//
 			// If we are in a function declaration at global level,
 			// we must load the engine associated to the current 'JScript N' instance,
 			// otherwise pick up the engine at second place in method's signature.
 			//
-			if (parent == null ||  parent.GetType () == typeof (ScriptBlock)) {
+			if (in_function)
+				ig.Emit (OpCodes.Ldarg_1);
+			else {
 				ig.Emit (OpCodes.Ldarg_0);
 				ig.Emit (OpCodes.Ldfld, typeof (ScriptObject).GetField ("engine"));
-			} else if (parent != null &&  parent.GetType () == typeof (FunctionDeclaration )) 
-				ig.Emit (OpCodes.Ldarg_1);
+			}
 		}
 	}
 }

@@ -75,7 +75,7 @@ namespace Microsoft.JScript {
 
 		internal bool InFunction {
 			get {
-				if (parent == null)
+				if (parent == null || parent.GetType () == typeof (ScriptBlock))
 					return false;
 				else if (parent is FunctionDeclaration || parent is FunctionExpression)
 					return true;
