@@ -1,3 +1,8 @@
+2003-08-20  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Color.cs: fixed FromArgb to handle alpha value correctly. Closes
+	bug #47727.
+
 2003-08-08  Duncan Mak  <duncan@ximian.com>
 
 	* Graphics.cs (DrawBezier): Fixed.

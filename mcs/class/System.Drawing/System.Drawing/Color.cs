@@ -117,7 +117,7 @@ namespace System.Drawing
 
 		public static Color FromArgb (int argb)
 		{
-			return FromArgb (argb >> 24, (argb >> 16) & 0x0FF, (argb >> 8) & 0x0FF, argb & 0x0FF);
+			return FromArgb ((argb >> 24) & 0x0FF, (argb >> 16) & 0x0FF, (argb >> 8) & 0x0FF, argb & 0x0FF);
 		}
 
 		public static Color FromKnownColor (KnownColor knownColorToConvert)
