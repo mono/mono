@@ -1,5 +1,10 @@
 2001-09-20  Miguel de Icaza  <miguel@ximian.com>
 
+	* statement.cs (Block::EmitMeta): Reuse the count across all the variables,
+	otherwise nested blocks end up with the same index.
+
+	* codegen.cs (CodeGen::EmitTopBlock): Pass initial sequence
+
 	* expression.cs:  Instead of having FIXMEs in the Resolve
 	functions, throw exceptions so it is obvious that we are facing a
 	bug. 

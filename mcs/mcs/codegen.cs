@@ -304,7 +304,7 @@ namespace CIR {
 			bool has_ret = false;
 			
 			if (block != null){
-				block.EmitMeta (parent, ig, block);
+				block.EmitMeta (parent, ig, block, 0);
 				has_ret = EmitBlock (block);
 			}
 

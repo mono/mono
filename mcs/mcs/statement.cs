@@ -226,11 +226,14 @@ namespace CIR {
 		{
 			Type = type;
 			LocalBuilder = null;
-			idx = 0;
+			idx = -1;
 		}
 
 		public int Idx {
 			get {
+				if (idx == -1)
+					throw new Exception ("Unassigned idx for variable");
+				
 				return idx;
 			}
 
@@ -453,14 +456,13 @@ namespace CIR {
 		// toplevel: the toplevel block.  This is used for checking 
 		//           that no two labels with the same name are used.
 		//
-		public void EmitMeta (TypeContainer tc, ILGenerator ig, Block toplevel)
+		public void EmitMeta (TypeContainer tc, ILGenerator ig, Block toplevel, int count)
 		{
 			//
 			// Process this block variables
 			//
 			if (variables != null){
 				local_builders = new Hashtable ();
-				int count = 0;
 				
 				foreach (DictionaryEntry de in variables){
 					string name = (string) de.Key;
@@ -482,7 +484,7 @@ namespace CIR {
 			//
 			if (children != null){
 				foreach (Block b in children)
-					b.EmitMeta (tc, ig, toplevel);
+					b.EmitMeta (tc, ig, toplevel, count);
 			}
 		}
 	}
