@@ -1,3 +1,7 @@
+2004-02-22  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* AttributeTest.cs: added test for bug 54518.
+
 2004-02-20  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* CharCategoryTest.cs : csc build fix (line length excess.)

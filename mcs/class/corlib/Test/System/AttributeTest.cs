@@ -1,14 +1,17 @@
 //
 // AttributeTest.cs - NUnit Test Cases for the System.Attribute class
 //
-// author:
-//   Duco Fijma (duco@lorentz.xs4all.nl)
+// Authors:
+// 	Duco Fijma (duco@lorentz.xs4all.nl)
+//	Gonzalo Paniagua (gonzalo@ximian.com)
 //
-//   (C) 2002 Duco Fijma
+//	(C) 2002 Duco Fijma
+//	(c) 2004 Novell, Inc. (http://www.novell.com)
 //
 
 using NUnit.Framework;
 using System;
+using System.Reflection;
 
 namespace MonoTests.System
 {
@@ -72,7 +75,8 @@ internal class MyDerivedClass : MyClass {
 
 } // Namespace MonoTests.System.AttributeTestInternals
 
-public class AttributeTest : TestCase {
+[TestFixture]
+public class AttributeTest : Assertion {
 		
 	public AttributeTest () {}
 
@@ -154,6 +158,62 @@ public class AttributeTest : TestCase {
 
 */
 
+	/* Test for bug 54518 */
+	[AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
+	public class PropTestAttribute : Attribute
+	{
+		public PropTestAttribute() {}
+	}
+
+	public class TestBase
+	{
+		public TestBase() {}
+			
+		[PropTest]
+		public int PropBase1 
+		{
+			get { return 0; }
+			set { }
+		}
+		
+		[PropTest]
+		public string PropBase2
+		{
+			get { return ""; }
+			set { }
+		}
+	}
+
+	public class TestSub : TestBase
+	{
+		public TestSub() {}
+			
+		[PropTest]
+		public int PropSub1 
+		{
+			get { return 0; }
+			set { }
+		}
+		
+		[PropTest]
+		public string PropSub2
+		{
+			get { return ""; }
+			set { }
+		}
+	}
+
+	[Test]
+	public void BaseAttributes ()
+	{
+		object [] attrs;
+		PropertyInfo [] props = typeof (TestSub).GetProperties (BindingFlags.Public | BindingFlags.Instance);
+		
+		foreach (PropertyInfo prop in props) {
+			attrs = prop.GetCustomAttributes (typeof(PropTestAttribute), true);
+			AssertEquals (prop.Name, true, attrs.Length > 0);
+		}
+	}
 }
 
 }
