@@ -102,10 +102,9 @@ namespace System {
 		/// <summary>
 		///
 		/// </summary>
-		[MonoTODO]
 		public static Binder DefaultBinder {
 			get {
-				return null;
+				return Binder.DefaultBinder;
 			}
 		}
 		
@@ -766,10 +765,14 @@ namespace System {
 		
 		public abstract ConstructorInfo[] GetConstructors (BindingFlags bindingAttr);
 
-		[MonoTODO]
 		public virtual MemberInfo[] GetDefaultMembers ()
 		{
-			throw new NotImplementedException ();
+			object [] att = GetCustomAttributes (typeof (DefaultMemberAttribute), true);
+			if (att.Length == 0)
+				return new MemberInfo [0];
+
+			MemberInfo [] member = GetMember (((DefaultMemberAttribute) att [0]).MemberName);
+			return (member != null) ? member : new MemberInfo [0];
 		}
 
 		public virtual MemberInfo[] FindMembers (MemberTypes memberType, BindingFlags bindingAttr,
