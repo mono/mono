@@ -122,11 +122,9 @@ namespace Microsoft.JScript {
 		internal override void Emit (EmitContext ec)
 		{
 			ILGenerator ig = ec.ig;
-			if (parent is Unary) {
-				Unary tmp = parent as Unary;
-				if (tmp.oper == JSToken.Minus)
-					ig.Emit (OpCodes.Ldc_R8, (double) (val * -1));
-			} else
+			if (parent is Unary && (parent as Unary).oper == JSToken.Minus)
+				ig.Emit (OpCodes.Ldc_R8, (double) (val * -1));
+			else
 				ig.Emit (OpCodes.Ldc_R8, (double) val);
 			ig.Emit (OpCodes.Box, typeof (System.Double));
 			if (no_effect)

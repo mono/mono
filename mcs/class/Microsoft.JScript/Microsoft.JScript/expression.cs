@@ -83,8 +83,20 @@ namespace Microsoft.JScript {
 		internal override void Emit (EmitContext ec)
 		{
 			if (operand != null)
-				operand.Emit (ec);			
-		}			
+				operand.Emit (ec);
+			if (oper != JSToken.Minus)
+				emit_unary_op (ec);
+		}
+
+		internal void emit_unary_op (EmitContext ec)
+		{
+			ILGenerator ig = ec.ig;
+			switch (oper) {
+			case JSToken.Typeof:
+				ig.Emit (OpCodes.Call, typeof (Typeof).GetMethod ("JScriptTypeof"));
+				break;
+			}
+		}
 	}
 
 	internal class Binary : BinaryOp, IAssignable {

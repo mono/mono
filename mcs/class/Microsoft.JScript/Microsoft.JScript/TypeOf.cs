@@ -30,11 +30,11 @@
 
 using System;
 
-namespace Microsoft.JScript.Tmp {
+namespace Microsoft.JScript {
 
-	public sealed class TypeOf : UnaryOp {
+	public sealed class Typeof : UnaryOp {
 
-		public static string JScriptTypeOf (object value)
+		public static string JScriptTypeof (object value)
 		{
 			throw new NotImplementedException ();
 		}

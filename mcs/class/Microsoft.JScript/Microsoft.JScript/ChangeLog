@@ -1,5 +1,9 @@
 2004-11-08  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
 
+	* expression.cs: emit unary operator code.
+	* TypeOf.cs: back to Microsoft.JScript namespace. fix typo.
+	* Literal.cs: constrain more the case of negative numeric literal.
+
 	* expression.cs (emit_func_call): pop if function's return type is
 	non-void and has no effect. 
 
