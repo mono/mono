@@ -1904,6 +1904,13 @@ namespace_or_type_name
 	: qualified_identifier
 	;
 
+type_name_expression
+	: IDENTIFIER { $$ = new SimpleName ((string) $1, lexer.Location);}
+	| type_name_expression DOT IDENTIFIER { 
+	 	$$ = new MemberAccess ((Expression) $1, (string) $3, lexer.Location);
+	  }
+	;
+
 /* 
  * Before you think of adding a return_type, notice that we have been
  * using two rules in the places where it matters (one rule using type
@@ -1911,12 +1918,11 @@ namespace_or_type_name
  * gets rid of a shift/reduce couple
  */
 type
-	: type_name {  	/* class_type */
+	: type_name_expression {  	/* class_type */
 		/* 
 	           This does interfaces, delegates, struct_types, class_types, 
 	           parent classes, and more! 4.2 
 	         */
-		$$ = DecomposeQI ((QualifiedIdentifier) $1, lexer.Location);
 	  }
 	| builtin_types
 	| array_type

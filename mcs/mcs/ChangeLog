@@ -1,3 +1,10 @@
+2004-01-18  Miguel de Icaza  <miguel@ximian.com>
+
+	* cs-parser.jay: Applied patch from Ben Maurer to the "type" rule
+	to use a special "type_name_expression" rule which reduces the
+	number of "QualifiedIdentifier" classes created, and instead
+	directly creates MemberAccess expressions.
+
 2004-01-17  Miguel de Icaza  <miguel@ximian.com>
 
 	* convert.cs: Applied patch from Benjamin Jemlich (pcgod@gmx.net)
