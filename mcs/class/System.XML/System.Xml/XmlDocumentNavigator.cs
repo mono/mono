@@ -480,10 +480,29 @@ namespace System.Xml
 				return false;
 
 			if (node.PreviousSibling != null) {
-				node = node.PreviousSibling;
+				if (node.ParentNode != null && node.ParentNode.NodeType == XmlNodeType.Document) {
+					XmlNode n = node.PreviousSibling;
+					while (n != null) {
+						switch (n.NodeType) {
+						case XmlNodeType.DocumentType:
+						case XmlNodeType.XmlDeclaration:
+							n = n.PreviousSibling;
+							continue;
+						}
+						break;
+					}
+					if (n != null)
+						node = n;
+					else
+						return false;
+				}
+				else
+					node = node.PreviousSibling;
+				
 				return true;
 			}
-			return false;
+			else
+				return false;
 		}
 
 		public override void MoveToRoot ()

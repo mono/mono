@@ -1,3 +1,9 @@
+2003-09-25 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* XmlNode.cs (XPathNodeType): Give more useful debugging message.
+	* XmlDocumentNavigator.cs (MoveToPrevious): Needs same checks as
+	in MoveToNext.
+
 2003-09-23  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* XmlNamespaceManager.cs: Rewrote PopScope() because its namespace

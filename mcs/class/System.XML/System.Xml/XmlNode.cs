@@ -172,7 +172,7 @@ namespace System.Xml
 
 		internal virtual XPathNodeType XPathNodeType {
 			get {
-				throw new InvalidOperationException ();
+				throw new InvalidOperationException ("Can not get XPath node type from " + this.GetType ().ToString ());
 			}
 		}
 
