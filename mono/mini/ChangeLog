@@ -1,3 +1,9 @@
+2004-05-21  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini-sparc.c exceptions-sparc.c: Applied patch from Mark Crichton
+	(crichton@gimp.org). Beginning of support for sparc/linux.
+
+	* mini-sparc.c: Optimize retrieval of LMF address.
 
 Fri May 21 08:00:12 EDT 2004 Paolo Molaro <lupus@ximian.com>
 
