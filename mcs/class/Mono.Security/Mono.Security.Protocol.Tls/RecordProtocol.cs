@@ -88,6 +88,9 @@ namespace Mono.Security.Protocol.Tls
 				return null;
 			}
 
+			// Set last handshake message received to None
+			this.context.LastHandshakeMsg = HandshakeType.ClientHello;
+
 			ContentType	contentType	= (ContentType)type;
 			byte[] buffer = this.ReadRecordBuffer(type);
 
@@ -107,9 +110,6 @@ namespace Mono.Security.Protocol.Tls
 				}
 			}
 
-			// Set last handshake message received to None
-			this.context.LastHandshakeMsg = HandshakeType.None;
-			
 			// Process record
 			byte[] result = message.ToArray();
 
@@ -540,9 +540,9 @@ namespace Mono.Security.Protocol.Tls
 				if (check == 0)
 				{
 					// SSL/TLS cipher spec
-					int index = 0;
-					short code = codes.ReadInt16();					
-					if ((index = this.Context.SupportedCiphers.IndexOf(code)) != -1)
+					short code = codes.ReadInt16();	
+					int index = this.Context.SupportedCiphers.IndexOf(code);
+					if (index != -1)
 					{
 						this.Context.Cipher	= this.Context.SupportedCiphers[index];
 						break;

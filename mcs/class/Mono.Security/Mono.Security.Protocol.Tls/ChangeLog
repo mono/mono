@@ -1,3 +1,7 @@
+2004-11-23  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* RecordProtocol.cs: Fixed ClientHelloV2 support.
+
 2004-11-10  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* CipherSuiteFactory.cs: Activated RSA_WITH_AES_256_CBC_SHA as it is
