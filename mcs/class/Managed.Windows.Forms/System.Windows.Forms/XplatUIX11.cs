@@ -23,9 +23,13 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.22 $
+// $Revision: 1.23 $
 // $Modtime: $
 // $Log: XplatUIX11.cs,v $
+// Revision 1.23  2004/08/13 21:25:32  pbartok
+// - Cleanup
+// - Fixed resizing/exposure handling
+//
 // Revision 1.22  2004/08/13 19:00:15  jordi
 // implements PointToClient (ScreenToClient)
 //
@@ -289,7 +293,6 @@ namespace System.Windows.Forms {
 				EventMask.LeaveWindowMask |
 				EventMask.ExposureMask |
 				EventMask.PointerMotionMask | 
-				EventMask.ResizeRedirectMask |
 				EventMask.VisibilityChangeMask |
 				EventMask.StructureNotifyMask);
 			XSetWindowBackground(DisplayHandle, WindowHandle, (uint)this.BackColor.ToArgb());
@@ -325,19 +328,25 @@ namespace System.Windows.Forms {
 		}
 
 		internal override void RefreshWindow(IntPtr handle) {
-			XWindowAttributes	attributes=new XWindowAttributes();
-			XEvent			xevent = new XEvent();
+			XEvent	xevent = new XEvent();
+			IntPtr	root;
+			int	border_width;
+			int	depth;
+			int	x;
+			int	y;
+			int	width;
+			int	height;
 
 			// We need info about our window to generate the expose
-			XGetWindowAttributes(DisplayHandle, handle, ref attributes);
+			XGetGeometry(DisplayHandle, handle, out root, out x, out y, out width, out height, out border_width, out depth);
 
 			xevent.type=XEventName.Expose;
 			xevent.ExposeEvent.display=DisplayHandle;
 			xevent.ExposeEvent.window=handle;
 			xevent.ExposeEvent.x=0;
 			xevent.ExposeEvent.y=0;
-			xevent.ExposeEvent.width=attributes.width;
-			xevent.ExposeEvent.height=attributes.height;
+			xevent.ExposeEvent.width=width;
+			xevent.ExposeEvent.height=height;
 
 			XSendEvent(DisplayHandle, handle, false, EventMask.ExposureMask, ref xevent);
 			XFlush(DisplayHandle);
@@ -374,15 +383,14 @@ namespace System.Windows.Forms {
 		}
 
 		internal override void GetWindowPos(IntPtr handle, out int x, out int y, out int width, out int height, out int client_width, out int client_height) {
-			XWindowAttributes	attributes = new XWindowAttributes();
+			IntPtr	root;
+			int	border_width;
+			int	depth;
 
-			XGetWindowAttributes(DisplayHandle, handle, ref attributes);
-			x = attributes.x;
-			y = attributes.y;
-			width = attributes.width;
-			height = attributes.height;
-			client_width = attributes.width;
-			client_height = attributes.height;
+			XGetGeometry(DisplayHandle, handle, out root, out x, out y, out width, out height, out border_width, out depth);
+
+			client_width = width;
+			client_height = height;
 			return;
 		}
 
@@ -649,11 +657,11 @@ namespace System.Windows.Forms {
 				}
 
 				case XEventName.ConfigureNotify: {
+//XResizeWindow(DisplayHandle, xevent.ConfigureEvent.window, xevent.ConfigureEvent.width, xevent.ConfigureEvent.height);
 					msg.message=Msg.WM_WINDOWPOSCHANGED;
 					msg.wParam=IntPtr.Zero;
 					msg.lParam=IntPtr.Zero;
 
-Console.WriteLine("ConfigureNotify: Width:{0} Height:{1}", xevent.ConfigureEvent.width, xevent.ConfigureEvent.height);
 					break;
 				}
 
@@ -767,7 +775,7 @@ Console.WriteLine("ConfigureNotify: Width:{0} Height:{1}", xevent.ConfigureEvent
 			return true;
 		}
 
-		internal override void GetCursorPos(IntPtr handle, ref int x, ref int y) {
+		internal override void GetCursorPos(IntPtr handle, out int x, out int y) {
 			IntPtr	root;
 			IntPtr	child;
 			int	root_x;
@@ -788,12 +796,11 @@ Console.WriteLine("ConfigureNotify: Width:{0} Height:{1}", xevent.ConfigureEvent
 
 		internal override void ScreenToClient(IntPtr handle, ref int x, ref int y)
 		{
-			int dest_x_return = 0;
-			int dest_y_return = 0;
-			IntPtr child;
+			int	dest_x_return;
+			int	dest_y_return;
+			IntPtr	child;
 
-			XTranslateCoordinates (DisplayHandle, root_window, handle, x, y, out dest_x_return, 
-                            out dest_y_return, out child);			
+			XTranslateCoordinates (DisplayHandle, root_window, handle, x, y, out dest_x_return, out dest_y_return, out child);
 
 			x = dest_x_return;
 			y = dest_y_return;
@@ -879,6 +886,9 @@ Console.WriteLine("ConfigureNotify: Width:{0} Height:{1}", xevent.ConfigureEvent
 		[DllImport ("libX11.so", EntryPoint="XMoveResizeWindow")]
 		internal extern static int XMoveResizeWindow(IntPtr display, IntPtr window, int x, int y, int width, int height);
 
+		[DllImport ("libX11.so", EntryPoint="XResizeWindow")]
+		internal extern static int XResizeWindow(IntPtr display, IntPtr window, int width, int height);
+
 		[DllImport ("libX11.so", EntryPoint="XGetWindowAttributes")]
 		internal extern static int XGetWindowAttributes(IntPtr display, IntPtr window, ref XWindowAttributes attributes);
 
@@ -920,7 +930,10 @@ Console.WriteLine("ConfigureNotify: Width:{0} Height:{1}", xevent.ConfigureEvent
 
 		[DllImport ("libX11.so", EntryPoint="XTranslateCoordinates")]
 		internal extern static bool XTranslateCoordinates (IntPtr display, IntPtr src_w, IntPtr dest_w, int src_x, int src_y, out int intdest_x_return,  out int dest_y_return, out IntPtr child_return);
-		
+
+
+		[DllImport ("libX11.so", EntryPoint="XGetGeometry")]
+		internal extern static bool XGetGeometry(IntPtr display, IntPtr window, out IntPtr root, out int x, out int y, out int width, out int height, out int border_width, out int depth);
 
 		// Drawing
 		[DllImport ("libX11.so", EntryPoint="XCreateGC")]
