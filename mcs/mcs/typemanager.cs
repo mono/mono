@@ -1018,7 +1018,7 @@ public class TypeManager {
 		if (filter != FilterWithClosure_delegate)
 			return new MemberList (RealFindMembers (t, mt, bf, filter, criteria));
 
-		caching_finder = new TypeHandle (t);
+		caching_finder = TypeHandle.GetTypeHandle (t);
 		builder_to_member_finder.Add (t, caching_finder);
 
 		return caching_finder.FindMembers (mt, bf, (string) criteria, filter, null);
@@ -1065,7 +1065,7 @@ public class TypeManager {
 			return list;
 		}
 
-		caching_finder = new TypeHandle (t);
+		caching_finder = TypeHandle.GetTypeHandle (t);
 		builder_to_member_finder.Add (t, caching_finder);
 
 		searching = false;
@@ -2519,7 +2519,7 @@ public sealed class TypeHandle : IMemberContainer {
 	}
 
 	private static PtrHashtable type_hash = new PtrHashtable ();
-	private static bool initialized = false;
+	private static bool initialized = false; //Gonzalo: this field is never used
 
 	static TypeHandle object_type = null;
 	static TypeHandle array_type = null;
