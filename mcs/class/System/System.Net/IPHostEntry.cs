@@ -14,10 +14,6 @@ namespace System.Net {
 		private String hostName;
 		
 		public IPHostEntry() {
-			hostName = "localhost";
-			addressList = new IPAddress[1];
-			addressList[0] = IPAddress.Loopback;
-			aliases = new String[0];
 		}
 		
 		public IPAddress[] AddressList {
