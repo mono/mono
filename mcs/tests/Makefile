@@ -28,7 +28,7 @@ USE_MCS_FLAGS :=
 NEW_TEST_SOURCES_common = test-294 test-304 test-305 test-306 test-307 test-318 mtest-5-dll mtest-5-exe \
 			test-319-dll test-319-exe test-320 test-323 test-324 test-325 test-326 \
 			test-327 test-328 test-40 \
-			covariance-01.cs covariance-02.cs covariance-03.cs \
+			covariance-1 covariance-2 covariance-3 \
 			$(TEST_SOURCES_XML)
 
 #
