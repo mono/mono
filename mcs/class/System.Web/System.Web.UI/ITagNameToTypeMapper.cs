@@ -13,7 +13,7 @@ using System.Collections;
 
 namespace System.Web.UI
 {
-        public interface ITagNameToTypeMapper
+	interface ITagNameToTypeMapper
         {
                 Type GetControlType(string tagName, IDictionary attribs);
         }

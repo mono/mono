@@ -1,3 +1,11 @@
+2003-04-20  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* ITagNameToTypeMapper.cs: made it internal.
+
+	* ObjectTagBuilder.cs: builder for <object runat="server"> tag.
+	* ObjectTag.cs:
+	* RootBuilder.cs: initial builder.
+
 2003-04-15  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* CollectionBuilder.cs:

@@ -1,3 +1,7 @@
+2003-04-20  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* AspComponentFoundry.cs: added GetComponentType method.
+
 2003-03-28  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* AspTokenizer.cs: allow quotes inside server tags that are part of

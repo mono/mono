@@ -1,3 +1,7 @@
+2003-04-20  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* list: sorted, added a couple of missing files and 3 new ones.
+
 2003-04-15  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* list: added CollectionBuilder and TemplateBuilder.

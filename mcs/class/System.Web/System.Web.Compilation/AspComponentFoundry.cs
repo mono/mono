@@ -23,8 +23,10 @@ namespace System.Web.Compilation
 						   CaseInsensitiveComparer.Default);
 
 			RegisterFoundry ("asp", "System.Web", "System.Web.UI.WebControls");
+			RegisterFoundry ("", "object", "System.Web", "System.Web.UI", "ObjectTag");
 		}
 
+		// TODO: don't forget to remove this method...
 		public AspComponent MakeAspComponent (string foundryName, string componentName, Tag tag)
 		{
 			Foundry foundry = foundries [foundryName] as Foundry;
@@ -32,6 +34,15 @@ namespace System.Web.Compilation
 				throw new ApplicationException ("Foundry not found: " + foundryName);
 
 			return new AspComponent (tag, foundry.GetType (componentName));
+		}
+
+		public Type GetComponentType (string foundryName, string tag)
+		{
+			Foundry foundry = foundries [foundryName] as Foundry;
+			if (foundry == null)
+				return null;
+
+			return foundry.GetType (tag);
 		}
 
 		public void RegisterFoundry (string foundryName,
