@@ -1,3 +1,27 @@
+2003-04-24  Miguel de Icaza  <miguel@ximian.com>
+
+	* WebClient.cs (DownloadData): Instead of using a MemoryStream,
+	keep track of all the small chunks in an ArrayList.  The
+	MemoryStream had the property of reallocating itself, and the
+	problem was that MemoryStream.GetBuffer would return the buffer
+	(correctly), but not something of the right size.  So clients of
+	DownloadData would get the extra unused bytes as part of the
+	result.
+
+	The solution would have been to make another copy at this point,
+	instead, we only keep the small allocations around in the
+	ArrayList, and we only do one large allocation at the end.
+
+	* HttpWebResponse.cs: If there is a Content-Length header, pass
+	this information to our HttpWebResponseStream, so it knows when to
+	stop, instead of waiting for the stream to be shut down by the
+	other end.
+
+	* HttpWebRequest.cs: Only set the `delay-header-writing' mode on
+	the underlying stream if the method will do a content transfer and
+	no Content-Length was provided. If not (HEAD and GET or
+	Content-Length provided), keep going.
+	
 2003-04-23  Miguel de Icaza  <miguel@ximian.com>
 
 	* HttpWebRequest.cs: .NET Allows the HttpWebRequest to not have

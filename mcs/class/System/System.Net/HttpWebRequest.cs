@@ -652,15 +652,23 @@ namespace System.Net
 			{
 				this.onClose = onClose;
 				this.webRequest = webRequest;
-				
-				long content_length = webRequest.ContentLength;
-				if (content_length != -1)
-					WriteHeaders (content_length, false);
-				else
-					AccumulateOutput = new ArrayList ();
 
-				if (!socket.Poll (webRequest.Timeout, SelectMode.SelectWrite))
-					throw new WebException("The request timed out", WebExceptionStatus.Timeout);
+				bool need_content_length = false;
+				if (webRequest.method == "POST" || webRequest.method == "HEAD")
+					need_content_length = true;
+
+				long content_length = webRequest.ContentLength;				
+				if (need_content_length && content_length == -1){
+					//
+					// Turn on accumulation mode
+					//
+					AccumulateOutput = new ArrayList ();
+				} else {
+					if (!socket.Poll (webRequest.Timeout, SelectMode.SelectWrite))
+						throw new WebException("The request timed out", WebExceptionStatus.Timeout);
+					WriteHeaders (content_length, false);
+				}
+				
 
 				// FIXME: write cookie headers (CookieContainer not yet implemented)
 			}

@@ -62,17 +62,29 @@ namespace System.Net
 		[MonoTODO("depends on OpenRead")]
 		public byte [] DownloadData (string address)
 		{
-			const int readSize = 4096;
+			const int readSize = 8192;
 			Stream networkStream = OpenRead (address);
-			MemoryStream ms = new MemoryStream ();
+			ArrayList chunks = new ArrayList ();
 			byte[] buf = new byte [readSize];
 			int size = 0;
+			int total_size = 0;
 			do {
 				size = networkStream.Read (buf, 0, readSize);
-				ms.Write (buf, 0, size);
-			} while (size == readSize);
+				byte [] copy = new byte [size];
+				Array.Copy (buf, 0, copy,0, size);
+				chunks.Add (copy);
+				total_size += size;
+			} while (size != 0);
+
+			byte [] result = new byte [total_size];
+			int target = 0;
+			foreach (byte [] block in chunks){
+				int len = block.Length;
+				Array.Copy (block, 0, result, target, len);
+				target += len;
+			}
 			networkStream.Close ();
-			return ms.GetBuffer ();
+			return result;
 		}
 		
 		[MonoTODO("depends on DownloadData")]

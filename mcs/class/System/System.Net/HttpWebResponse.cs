@@ -96,6 +96,8 @@ namespace System.Net
 			
 			responseStream.Chunked = chunked;
 			this.webHeaders[last] = value.ToString(); // otherwise we miss the last header
+
+			responseStream.BytesLeft = ContentLength;
 		}
 		
 		protected HttpWebResponse (SerializationInfo serializationInfo, StreamingContext streamingContext)
@@ -425,6 +427,10 @@ namespace System.Net
 			int chunkLeft;
 			bool readingChunkSize;
 			EventHandler onClose;
+			//
+			// If ContentLength provided, the number of bytes left to read
+			//
+			internal long BytesLeft = -1;
 
 			public HttpWebResponseStream (Socket socket, EventHandler onClose)
 				: base (socket, FileAccess.Read, false)
@@ -557,11 +563,16 @@ namespace System.Net
 				CheckDisposed ();
 				int res;
 
+				if (BytesLeft == 0)
+					return 0;
+				
 				if (ar == null)
 					throw new ArgumentNullException ("async result is null");
 
 				try {
 					res = base.EndRead (ar);
+					if (BytesLeft != -1)
+						BytesLeft -= res;
 				} catch (Exception e) {
 					throw new IOException ("EndRead failure", e);
 				}
@@ -574,7 +585,6 @@ namespace System.Net
 			{
 				CheckDisposed ();
 				int res;
-
 				if (buffer == null)
 					throw new ArgumentNullException ("buffer is null");
 
@@ -588,7 +598,12 @@ namespace System.Net
 					size = GetMaxSizeFromChunkLeft (size);
 
 				try {
+					if (BytesLeft == 0)
+						return 0;
+				
 					res = base.Read (buffer, offset, size);
+					if (BytesLeft != -1)
+						BytesLeft -= res;
 				} catch (Exception e) {
 					throw new IOException ("Read failure", e);
 				}
