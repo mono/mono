@@ -70,15 +70,16 @@ namespace Microsoft.JScript {
 
 		internal override void Emit (EmitContext ec)
 		{
-			if (parent == null) {
-				FieldBuilder field;
-				TypeBuilder type  = ec.type_builder;
-
-				field = type.DefineField (id, Type,
-						  	  FieldAttributes.Public |
-						  	  FieldAttributes.Static);
-			} else
-				ec.ig.DeclareLocal (Type);
+			if (ec.no_global_code_method)
+				if (parent == null) {
+					FieldBuilder field;
+					TypeBuilder type  = ec.type_builder;
+					
+					field = type.DefineField (id, Type,
+								  FieldAttributes.Public |
+								  FieldAttributes.Static);
+				} else
+					ec.ig.DeclareLocal (Type);
 		}
 
 		internal override bool Resolve (IdentificationTable context)

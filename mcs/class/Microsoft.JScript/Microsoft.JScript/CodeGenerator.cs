@@ -18,10 +18,12 @@ namespace Microsoft.JScript {
 
 		internal TypeBuilder type_builder;
 		internal ILGenerator ig;
+		internal bool no_global_code_method;
 
 		internal EmitContext (TypeBuilder type)
 		{
 			type_builder = type;
+			no_global_code_method = true;
 		}
 	}
 
@@ -78,7 +80,23 @@ namespace Microsoft.JScript {
 			type_builder = module_builder.DefineType ("JScript 0");
 			EmitContext ec = new EmitContext (type_builder);
 
+			// here we only emit code for declarations.
 			prog.Emit (ec);
+
+			//
+			// statements and expression at global scope are emitted 
+			// inside 'Global Code' method.
+			//
+			type_builder = ec.type_builder;
+			MethodBuilder method = type_builder.DefineMethod ("Global Code",
+									  MethodAttributes.Public,
+									  typeof (System.Object),
+									  new Type [] {});
+									     
+			ec.ig = method.GetILGenerator ();
+			ec.no_global_code_method = false;
+
+			prog.Emit (ec);			       
 
 			ec.type_builder.CreateType ();
 		}

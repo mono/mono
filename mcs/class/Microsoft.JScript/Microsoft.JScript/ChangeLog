@@ -1,3 +1,16 @@
+2003-11-27  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
+
+	* FunctionDeclaration.cs: Check if values are not null first (at
+	Resolve). Ignore code generation is at 'Global Code'.
+
+	* VariableDeclaration.cs: Now I take care of IL generation when we
+	are at statements and expressions at global code, 'Global Code'
+	method is populated with that IL.  
+
+	* CodeGenerator.cs: Added flag for 'Global Code' method
+	emittion. Now I call 'Emit' twice. The first for declarations the
+	follower for statements and expressions at global scope.
+	
 2003-11-10 cesar lopez nataren <cesar@ciencias.unam.mx>
 
 	* Visitor.cs: Deleted.

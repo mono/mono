@@ -69,33 +69,41 @@ namespace Microsoft.JScript {
 			MethodBuilder method;
 			string name;
 
-			if (Function.parent == null) {
-				name = Function.name;
-				type.DefineField (name, typeof (Microsoft.JScript.ScriptFunction),
-						  FieldAttributes.Public | FieldAttributes.Static);
-
-			} else {
-				name = get_composite_name ();
-				ec.ig.DeclareLocal (typeof (Microsoft.JScript.ScriptFunction));
-			}
-
-			method = type.DefineMethod (name, Function.attr, 
-						    Function.return_type,
-						    Function.params_types ());
+			if (ec.no_global_code_method) {
+				if (Function.parent == null) {
+					name = Function.name;
+					type.DefineField (name, 
+							  typeof (Microsoft.JScript.ScriptFunction),
+							  FieldAttributes.Public | 
+							  FieldAttributes.Static);	       
+				} else {
+					name = get_composite_name ();
+					ec.ig.DeclareLocal (typeof (Microsoft.JScript.ScriptFunction));
+				}
+				method = type.DefineMethod (name, Function.attr, 
+							    Function.return_type,
+							    Function.params_types ());
+				
+				ec.ig = method.GetILGenerator ();
 			
-			ec.ig = method.GetILGenerator ();
-
-			Function.body.Emit (ec);
+				Function.body.Emit (ec);
+			}
 		}
 
 		internal override bool Resolve (IdentificationTable context)
 		{
 			context.Enter (Function.name, this);
-
 			context.OpenBlock ();
 
-			Function.parameters.Resolve (context);
-			Function.body.Resolve (context);
+			FormalParameterList p = Function.parameters;
+
+			if (p != null)
+				p.Resolve (context);
+
+			Block body = Function.body;
+
+			if (body != null)
+				body.Resolve (context);
 
 			context.CloseBlock ();
 		

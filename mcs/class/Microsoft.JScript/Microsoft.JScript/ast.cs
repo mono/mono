@@ -1,9 +1,10 @@
 //
 // ast.cs: Base class for the EcmaScript program tree representation.
 //
-// Author: Cesar Octavio Lopez Nataren
+// Author: 
+//	Cesar Lopez Nataren (cesar@ciencias.unam.mx)
 //
-// (C) 2003, Cesar Octavio Lopez Nataren, <cesar@ciencias.unam.mx>
+// (C) 2003, Cesar Lopez Nataren
 //
 
 namespace Microsoft.JScript {
@@ -11,7 +12,7 @@ namespace Microsoft.JScript {
 	public abstract class AST {
 
 		//
-		// Here the actual IL code generation happens
+		// Here the actual IL code generation happens.
 		//
 		internal virtual void Emit (EmitContext ec)
 		{
