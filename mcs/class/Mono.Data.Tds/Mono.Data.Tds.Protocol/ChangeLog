@@ -1,3 +1,11 @@
+2004-08-14 Geoff Norton <gnorton@customerdna.com>
+
+	* TdsComm.cs: 
+          Tds70.cs: 
+                Make Tds70 work on Big Endian machines.
+		BitConverter uses unsafe and returns things in host order; we need to 
+		swap some values to put them back into the approrpiate order for the wire.
+
 2004-08-09 Sureshkumar T <tsureshkumar@novell.com>
 	* Tds70.cs - Prepare Method stored procedure handle read problem fixed.
 

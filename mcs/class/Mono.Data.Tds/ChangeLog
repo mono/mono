@@ -1,3 +1,9 @@
+2004-08-14 Geoff Norton <gnorton@customerdna.com>
+
+        * Mono.Data.Tds.Protocol/TdsComm.cs: 
+          Mono.Data.Tds.Protocol/Tds70.cs: 
+		Make Tds70 work on Big Endian machines.
+
 2004-04-28  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Mono.Data.Tds.dll.sources: Added Assembly/AssemblyInfo.cs and

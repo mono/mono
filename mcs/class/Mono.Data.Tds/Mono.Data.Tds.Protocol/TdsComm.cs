@@ -133,6 +133,13 @@ namespace Mono.Data.Tds.Protocol {
 		
 		#region Methods
 
+		public byte[] Swap(byte[] toswap) {
+			byte[] ret = new byte[toswap.Length];
+			for(int i = 0; i < toswap.Length; i++)
+				ret [toswap.Length - i - 1] = toswap[i];
+
+			return ret;
+		}
 		public void Append (object o)
 		{
 			switch (o.GetType ().ToString ()) {
@@ -187,12 +194,18 @@ namespace Mono.Data.Tds.Protocol {
 
 		public void Append (short s)
 		{
-			Append (BitConverter.GetBytes (s));
+			if(!BitConverter.IsLittleEndian)
+				Append (Swap (BitConverter.GetBytes(s)));
+			else 
+				Append (BitConverter.GetBytes (s));
 		}
 
 		public void Append (int i)
 		{
-			Append (BitConverter.GetBytes (i));
+			if(!BitConverter.IsLittleEndian)
+				Append (Swap (BitConverter.GetBytes(i)));
+			else
+				Append (BitConverter.GetBytes (i));
 		}
 
 		public void Append (string s)
@@ -201,7 +214,10 @@ namespace Mono.Data.Tds.Protocol {
 				Append (encoder.GetBytes (s));
 			else 
 				foreach (char c in s)
-					Append (BitConverter.GetBytes (c));
+					if(!BitConverter.IsLittleEndian)
+						Append (Swap (BitConverter.GetBytes (c)));
+					else
+						Append (BitConverter.GetBytes (c));
 		}	
 
 		// Appends with padding
@@ -233,7 +249,10 @@ namespace Mono.Data.Tds.Protocol {
 				Append ((byte) (((byte) (l >> 0)) & 0xff));
 			}
 			else 
-				Append (BitConverter.GetBytes (l));
+				if (!BitConverter.IsLittleEndian)
+					Append (Swap (BitConverter.GetBytes (l)));
+				else
+					Append (BitConverter.GetBytes (l));
 		}
 
 		public void Close ()
@@ -335,8 +354,10 @@ namespace Mono.Data.Tds.Protocol {
 
 			for (int i = 0; i < 2; i += 1)
 				input[i] = GetByte ();
-
-			return (BitConverter.ToInt16 (input, 0));
+			if(!BitConverter.IsLittleEndian)
+				return (BitConverter.ToInt16 (Swap (input), 0));
+			else
+				return (BitConverter.ToInt16 (input, 0));
 		}
 
 
@@ -345,7 +366,10 @@ namespace Mono.Data.Tds.Protocol {
 			byte[] input = new byte[4];
 			for (int i = 0; i < 4; i += 1)
 				input[i] = GetByte ();
-			return (BitConverter.ToInt32 (input, 0));
+			if(!BitConverter.IsLittleEndian)
+				return (BitConverter.ToInt32 (Swap (input), 0));
+			else
+				return (BitConverter.ToInt32 (input, 0));
 		}
 
 		public long GetTdsInt64 ()
@@ -353,7 +377,10 @@ namespace Mono.Data.Tds.Protocol {
 			byte[] input = new byte[8];
 			for (int i = 0; i < 8; i += 1)
 				input[i] = GetByte ();
-			return (BitConverter.ToInt64 (input, 0));
+			if(!BitConverter.IsLittleEndian)
+				return (BitConverter.ToInt64 (Swap (input), 0));
+			else
+				return (BitConverter.ToInt64 (input, 0));
 		}
 
 		private void GetPhysicalPacket ()

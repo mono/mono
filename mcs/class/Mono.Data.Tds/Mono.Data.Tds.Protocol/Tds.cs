@@ -498,6 +498,18 @@ namespace Mono.Data.Tds.Protocol {
 				len = comm.GetByte () & 0xff;
 				if (len > 0) {
 					byte[] guidBytes = comm.GetBytes (len, true);
+					if (!BitConverter.IsLittleEndian) {
+						byte[] swappedguidBytes = new byte[len];
+						for (int i = 0; i < 4; i++)
+							swappedguidBytes[i] = guidBytes[4-i-1];
+						for (int i = 4; i < 6; i++)
+							swappedguidBytes[i] = guidBytes[6-(i-4)-1];
+						for (int i = 6; i < 8; i++)
+							swappedguidBytes[i] = guidBytes[8-(i-6)-1];
+						for (int i = 8; i < 16; i++)
+							swappedguidBytes[i] = guidBytes[i];
+						Array.Copy(swappedguidBytes, 0, guidBytes, 0, len);
+					}
 					element = new Guid (guidBytes);
 				}
 				break;
