@@ -172,6 +172,11 @@ namespace System.Web.Security
 			if (returnUrl != null)
 				return returnUrl;
 
+			AuthConfig authConfig = context.GetConfig (authConfigPath) as AuthConfig;
+			if (authConfig.LoginUrl != null) {
+				return authConfig.LoginUrl;
+			}
+
 			returnUrl = request.ApplicationPath;
 			string apppath = request.PhysicalApplicationPath;
 			bool found = false;
