@@ -1,3 +1,8 @@
+2003-11-06  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* ConfigurationSettings.cs: don't handle null or non-existent file in
+	the catch blocks.
+
 2003-10-03  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* ConfigurationSettings.cs: really make the cache work.

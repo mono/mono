@@ -216,7 +216,7 @@ namespace System.Configuration
 
 		public bool Load (string fileName)
 		{
-			if (fileName == null)
+			if (fileName == null || !File.Exists (fileName))
 				return false;
 
 			this.fileName = fileName;
@@ -273,6 +273,9 @@ namespace System.Configuration
 		//TODO: Should use XPath when it works properly for this.
 		XmlDocument GetDocumentForSection (string sectionName)
 		{
+			if (fileName == null || !File.Exists (fileName))
+				return null;
+
 			XmlTextReader reader = null;
 			try {
 				FileStream fs = new FileStream (fileName, FileMode.Open, FileAccess.Read);
