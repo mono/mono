@@ -102,5 +102,120 @@ namespace MonoTests.System.Security.Cryptography {
 			t.Clear ();
 			t.TransformFinalBlock (input, 0, input.Length);
 		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentOutOfRangeException))]
+		public void TransformBlock_InputOffset_Negative () 
+		{
+			byte[] input = new byte [15];
+			byte[] output = new byte [16];
+			using (ICryptoTransform t = new ToBase64Transform ()) {
+				t.TransformBlock (input, -1, input.Length, output, 0);
+			}
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void TransformBlock_InputOffset_Overflow () 
+		{
+			byte[] input = new byte [15];
+			byte[] output = new byte [16];
+			using (ICryptoTransform t = new ToBase64Transform ()) {
+				t.TransformBlock (input, Int32.MaxValue, input.Length, output, 0);
+			}
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void TransformBlock_InputCount_Negative () 
+		{
+			byte[] input = new byte [15];
+			byte[] output = new byte [16];
+			using (ICryptoTransform t = new ToBase64Transform ()) {
+				t.TransformBlock (input, 0, -1, output, 0);
+			}
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void TransformBlock_InputCount_Overflow () 
+		{
+			byte[] input = new byte [15];
+			byte[] output = new byte [16];
+			using (ICryptoTransform t = new ToBase64Transform ()) {
+				t.TransformBlock (input, 0, Int32.MaxValue, output, 0);
+			}
+		}
+
+		[Test]
+		[ExpectedException (typeof (IndexOutOfRangeException))]
+		public void TransformBlock_OutputOffset_Negative () 
+		{
+			byte[] input = new byte [15];
+			byte[] output = new byte [16];
+			using (ICryptoTransform t = new ToBase64Transform ()) {
+				t.TransformBlock (input, 0, input.Length, output, -1);
+			}
+		}
+
+		[Test]
+		[ExpectedException (typeof (IndexOutOfRangeException))]
+		public void TransformBlock_OutputOffset_Overflow () 
+		{
+			byte[] input = new byte [15];
+			byte[] output = new byte [16];
+			using (ICryptoTransform t = new ToBase64Transform ()) {
+				t.TransformBlock (input, 0, input.Length, output, Int32.MaxValue);
+			}
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void TransformFinalBlock_Input_Null () 
+		{
+			using (ICryptoTransform t = new ToBase64Transform ()) {
+				t.TransformFinalBlock (null, 0, 15);
+			}
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentOutOfRangeException))]
+		public void TransformFinalBlock_InputOffset_Negative () 
+		{
+			byte[] input = new byte [15];
+			using (ICryptoTransform t = new ToBase64Transform ()) {
+				t.TransformFinalBlock (input, -1, input.Length);
+			}
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void TransformFinalBlock_InputOffset_Overflow () 
+		{
+			byte[] input = new byte [15];
+			using (ICryptoTransform t = new ToBase64Transform ()) {
+				t.TransformFinalBlock (input, Int32.MaxValue, input.Length);
+			}
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void TransformFinalBlock_InputCount_Negative () 
+		{
+			byte[] input = new byte [15];
+			using (ICryptoTransform t = new ToBase64Transform ()) {
+				t.TransformFinalBlock (input, 0, -1);
+			}
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void TransformFinalBlock_InputCount_Overflow () 
+		{
+			byte[] input = new byte [15];
+			using (ICryptoTransform t = new ToBase64Transform ()) {
+				t.TransformFinalBlock (input, 0, Int32.MaxValue);
+			}
+		}
 	}
 }
