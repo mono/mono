@@ -33,10 +33,9 @@ namespace System.Runtime.Remoting.Activation {
 			return (((UrlAttribute) o).UrlValue == url);
 		}
 
-		[MonoTODO]
 		public override int GetHashCode ()
 		{
-			throw new NotImplementedException ();
+			return url.GetHashCode ();
 		}
 
 		[MonoTODO]

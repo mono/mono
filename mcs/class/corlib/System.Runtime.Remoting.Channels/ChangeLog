@@ -1,3 +1,17 @@
+2002-12-06  Duncan Mak  <duncan@ximian.com>
+
+	* BaseChannelObjectWithProperties.cs :
+	Implemented the Count, IsFixedSize, IsReadOnly, IsSynchronized,
+	Keys, Properties, SyncRoot, Values properties.
+	
+	Implemented the Contains and GetEnumerator methods.
+
+	Removed the unnecessary TODO attribute on the constructor, and the
+	Add method.
+	
+	* BaseChannelSinkWithProperties.cs (constructor): Implemented by
+	chaining on to the base constructor.
+
 2002-08-31  Dietmar Maurer  <dietmar@ximian.com>
 
 	* ChannelDataStore.cs: use a hash to store other keys

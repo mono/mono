@@ -2,6 +2,7 @@
 // System.Runtime.Remoting.Channels.BaseChannelObjectWithProperties.cs
 //
 // Author: Rodrigo Moya (rodrigo@ximian.com)
+// 	   Duncan Mak (duncan@ximian.com)
 //
 // 2002 (C) Copyright, Ximian, Inc.
 //
@@ -14,32 +15,37 @@ namespace System.Runtime.Remoting.Channels
 	public abstract class BaseChannelObjectWithProperties :
 		IDictionary, ICollection, IEnumerable
 	{
-		[MonoTODO]
+		Hashtable table;
+		
 		public BaseChannelObjectWithProperties ()
 		{
+			table = new Hashtable ();
 		}
 
 	        public virtual int Count
 		{
-			get { throw new NotImplementedException (); }
+			get { return table.Count; }
 		}
 
 		public virtual bool IsFixedSize
 		{
-			get { throw new NotImplementedException (); }
+			get { return true; }
 		}
 		
 		public virtual bool IsReadOnly
 		{
-			get { throw new NotImplementedException (); }
+			get { return false; }
 		}
 
 		public virtual bool IsSynchronized
 		{
-			get { throw new NotImplementedException (); }
+			get { return false; }
 		}
 
-		public virtual object this[object key]
+		//
+		// This is explicitly not implemented.
+		//
+		public virtual object this [object key]
 		{
 			get { throw new NotImplementedException (); }
 			set { throw new NotImplementedException (); }
@@ -47,25 +53,24 @@ namespace System.Runtime.Remoting.Channels
 
 		public virtual ICollection Keys
 		{
-			get { throw new NotImplementedException (); }
+			get { return table.Keys; }
 		}
 
 		public virtual IDictionary Properties
 		{
-			get { throw new NotImplementedException (); }
+			get { return this as IDictionary; }
 		}
 
 		public virtual object SyncRoot
 		{
-			get { throw new NotImplementedException (); }
+			get { return this; }
 		}
 
 		public virtual ICollection Values
 		{
-			get { throw new NotImplementedException (); }
+			get { return table.Values; }
 		}
 
-		[MonoTODO]
 		public virtual void Add (object key, object value)
 		{
 			// .NET says this method must not implemented
@@ -80,7 +85,7 @@ namespace System.Runtime.Remoting.Channels
 
 		public virtual bool Contains (object key)
 		{
-			throw new NotImplementedException ();
+			return table.Contains (key);
 		}
 
 		public virtual void CopyTo (Array array, int index)
@@ -91,12 +96,12 @@ namespace System.Runtime.Remoting.Channels
 		
 		public virtual IDictionaryEnumerator GetEnumerator ()
 		{
-			throw new NotImplementedException ();
+			return table.GetEnumerator ();
 		}
 
 		IEnumerator IEnumerable.GetEnumerator ()
 		{
-			throw new NotImplementedException ();
+			return table.GetEnumerator ();
 		}
 		
 		public virtual void Remove (object key)

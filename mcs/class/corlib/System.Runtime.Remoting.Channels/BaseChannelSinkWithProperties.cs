@@ -13,10 +13,10 @@ namespace System.Runtime.Remoting.Channels
 		: BaseChannelObjectWithProperties
 	{
 		
-		[MonoTODO]
 		protected BaseChannelSinkWithProperties ()
+		: base ()
 	        {
-			throw new NotImplementedException ();
+			
 		}
 	}
 }

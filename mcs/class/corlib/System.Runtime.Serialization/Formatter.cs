@@ -99,7 +99,6 @@ public abstract class Formatter : IFormatter
 	[CLSCompliant (false)]
 	protected abstract void WriteUInt64 (ulong val, string name);
 
-	[CLSCompliant (false)]
 	protected abstract void WriteValueType (object obj, string name, Type memberType);	
 }
 }
