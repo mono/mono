@@ -1,3 +1,9 @@
+2002-05-11  Miguel de Icaza  <miguel@ximian.com>
+
+	* statement.cs (GotoCase): Return true: Ammounts to giving up
+	knowledge on whether we return or not, and letting the other case
+	be responsible for it.
+
 2002-05-10  Miguel de Icaza  <miguel@ximian.com>
 
 	* driver.cs: Do not load directories for each file processed, only

@@ -679,7 +679,7 @@ namespace Mono.CSharp {
 			}
 
 			ec.ig.Emit (OpCodes.Br, sl.ILLabelCode);
-			return false;
+			return true;
 		}
 	}
 	
