@@ -38,7 +38,7 @@ namespace System.Data {
 		public ForeignKeyConstraint(DataColumn parentColumn, DataColumn childColumn) 
 		{
 			if (null == parentColumn || null == childColumn) {
-				throw new ArgumentNullException("Neither parentColumn or" +
+				throw new NullReferenceException("Neither parentColumn or" +
 					" childColumn can be null.");
 			}
 			_foreignKeyConstraint(null, new DataColumn[] {parentColumn},
@@ -53,7 +53,7 @@ namespace System.Data {
 		public ForeignKeyConstraint(string constraintName, DataColumn parentColumn, DataColumn childColumn) 
 		{
 			if (null == parentColumn || null == childColumn) {
-				throw new ArgumentNullException("Neither parentColumn or" +
+				throw new NullReferenceException("Neither parentColumn or" +
 					" childColumn can be null.");
 			}
 
@@ -211,7 +211,7 @@ namespace System.Data {
 				{
 					//LAMESPEC: spec says throw InvalidConstraintException
 					//		implementation throws InvalidOperationException
-					throw new ArgumentException("Parent column is not type compatible with it's child"
+					throw new InvalidConstraintException("Parent column is not type compatible with it's child"
 						+ " column.");
 				}
 					
@@ -329,7 +329,7 @@ namespace System.Data {
 					if (_parentColumns.Length > 0)
 						return _parentColumns[0].Table;
 
-				return null;
+				throw new InvalidOperationException ("Property not accessible because 'Object reference not set to an instance of an object'");
 			}
 		}
 
@@ -342,7 +342,7 @@ namespace System.Data {
 					if (_childColumns.Length > 0)
 						return _childColumns[0].Table;
 
-				return null;
+				throw new InvalidOperationException ("Property not accessible because 'Object reference not set to an instance of an object'");
 			}
 		}
 

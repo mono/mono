@@ -160,7 +160,6 @@ namespace MonoTests.System.Data
 		}
 		
 		[Test]
-		[Ignore ("table2.Constraints.AddRange (constraints) does not work.")]
                 public void TestCtor5()
                 {
                         DataTable table1 = new DataTable ("Table1");
@@ -209,7 +208,7 @@ namespace MonoTests.System.Data
                         }
                         catch(Exception e){
 #if NET_1_1
-                                Assertion.AssertEquals ("#A03", typeof (InvalidOperationException), e.GetType());
+                                Assertion.AssertEquals ("#A03", typeof (ArgumentException), e.GetType());
 #else
                                 Assertion.AssertEquals ("#A03", typeof (ArgumentException), e.GetType());
 #endif
@@ -321,9 +320,9 @@ namespace MonoTests.System.Data
 			try
 			{
 				fkc = new ForeignKeyConstraint(_ds.Tables[0].Columns[0], localTable.Columns[1]);
-				Fail("Failed to throw InvalidOperationException.");
+				Fail("Failed to throw InvalidConstraintException.");
 			}
-			catch (InvalidOperationException) {}
+			catch (InvalidConstraintException) {}
 			catch (AssertionException exc) {throw exc;}
 			catch (Exception exc)
 			{
