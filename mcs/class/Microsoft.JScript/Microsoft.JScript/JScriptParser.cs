@@ -1993,7 +1993,7 @@ _loop58_breakloop:			;
 			if (0==inputState.guessing)
 			{
 				
-						Identifier ident = new Identifier (id.getText ());
+						Identifier ident = new Identifier (parent, id.getText ());
 						prim_exp = (AST) ident;
 					
 			}
@@ -3799,7 +3799,7 @@ _loop140_breakloop:					;
 			if (0==inputState.guessing)
 			{
 				
-						  StringLiteral str = new StringLiteral (s.getText ());
+						  StringLiteral str = new StringLiteral (parent, s.getText ());
 						  l = str;
 					
 			}
