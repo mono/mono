@@ -73,7 +73,7 @@ namespace Microsoft.JScript {
 			}
 		}
 
-		private bool InFunction {
+		internal bool InFunction {
 			get {
 				if (parent == null)
 					return false;
@@ -84,7 +84,7 @@ namespace Microsoft.JScript {
 			}
 		}
 		
-		private Function GetContainerFunction {
+		internal Function GetContainerFunction {
 			get {
 				if (parent == null)
 					return null;
