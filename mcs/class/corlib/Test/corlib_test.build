@@ -15,7 +15,6 @@
 		<csc target="library" output="corlib_test.dll" debug="${debug}">
 			<sources>
 				<includes name="**/*.cs"/>
-				<excludes name="TheTests.cs"/>
 			</sources>
 			<references basedir="..\..\..\nunit">
 				<includes name="NUnitCore.dll"/>
@@ -27,7 +26,6 @@
 		<csc target="library" output="corlib_reference.dll" debug="${debug}">
 			<sources>
 				<includes name="**/*.cs"/>
-				<excludes name="TheTests.cs"/>
 			</sources>
 			<references basedir="..\..\..\nunit">
 				<includes name="NUnitCore.dll"/>
@@ -35,6 +33,20 @@
 			<arg value="/nowarn:1595"/>
 		</csc>
 
+		<csc target="library" output="corlib_linux_test.dll" debug="${debug}">
+			<sources>
+				<includes name="**/*.cs"/>
+				<excludes name="System.Security.Policy/*.cs"/>
+			</sources>
+			<references basedir="..\..\..\nunit">
+				<includes name="NUnitCore_mono.dll"/>
+			</references>
+			<arg value="/r:..\..\lib\corlib.dll"/>
+			<arg value="/r:..\..\lib\System.dll"/>
+			<arg value="/nowarn:1595"/>
+			<arg value="/nostdlib"/> 	<!-- don't reference mscorlib -->
+			<arg value="/noconfig"/>	<!-- don't reference ms assemblies -->
+		</csc>
 </target>
 
 
@@ -47,9 +59,11 @@
 
 	<target name="clean">
 		<delete file="corlib_test.dll" failonerror="false"/>
+		<delete file="corlib_linux_test.dll" failonerror="false"/>
 		<delete file="corlib_reference.dll" failonerror="false"/>
 
 		<delete file="corlib_test.pdb" failonerror="false"/>
+		<delete file="corlib_linux_test.pdb" failonerror="false"/>
 		<delete file="corlib_reference.pdb" failonerror="false"/>
 		
 	</target>
