@@ -1,4 +1,9 @@
 
+Tue Sep 24 11:28:46 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* image.c, image.h: more strong name helpers.
+	* monosn.c: more work: convert pem keys to cryptoapi format.
+
 Tue Sep 24 11:27:38 CEST 2002 Paolo Molaro <lupus@ximian.com>
 
 	* string-icalls.c: speedup IndexOf.
