@@ -29,23 +29,15 @@ namespace System.Runtime.Remoting.Messaging {
 			this.header_namespace = header_namespace;
 		}
 
-		// properties
+		// fields
 
-		public string HeaderNamespace {
-			get { return header_namespace; }
-		}
+		public string HeaderNamespace;
 
-		public bool MustUnderstand {
-			get { return must_understand; }
-		}
+		public bool MustUnderstand;
 
-		public string Name {
-			get { return name; }
-		}
+		public string Name;
 
-		public object Value {
-			get { return value; }
-		}
+		public object Value;
 
 		// private
 

@@ -1,0 +1,3 @@
+2002/03/04  Nick Drochak  <ndrochak@gol.com>
+
+	* Header.cs: Change properties into fields where they should be.
