@@ -1,3 +1,7 @@
+2002-07-05  Martin Baulig  <martin@gnome.org>
+
+	* debug-symfile.c: Reflect latest MonoDwarfFileWriter changes.
+
 2002-07-04  Dick Porter  <dick@ximian.com>
 
 	* threads.c (mono_thread_cleanup): Nasty kludge to get this to
