@@ -815,16 +815,19 @@ public class TypeManager {
 	///   Returns the MethodInfo for a method named `name' defined
 	///   in type `t' which takes arguments of types `args'
 	/// </summary>
-	static MethodInfo GetMethod (Type t, string name, Type [] args, bool report_errors)
+	static MethodInfo GetMethod (Type t, string name, Type [] args, bool is_private, bool report_errors)
 	{
 		MemberList list;
 		Signature sig;
+		BindingFlags flags = instance_and_static | BindingFlags.Public;
 
 		sig.name = name;
 		sig.args = args;
-		
-		list = FindMembers (t, MemberTypes.Method, instance_and_static | BindingFlags.Public,
-				    signature_filter, sig);
+
+		if (is_private)
+			flags |= BindingFlags.NonPublic;
+
+		list = FindMembers (t, MemberTypes.Method, flags, signature_filter, sig);
 		if (list.Count == 0) {
 			if (report_errors)
 				Report.Error (-19, "Can not find the core function `" + name + "'");
@@ -839,6 +842,11 @@ public class TypeManager {
 		}
 
 		return mi;
+	}
+
+	static MethodInfo GetMethod (Type t, string name, Type [] args, bool report_errors)
+	{
+		return GetMethod (t, name, args, false, report_errors);
 	}
 
 	static MethodInfo GetMethod (Type t, string name, Type [] args)
@@ -994,7 +1002,7 @@ public class TypeManager {
 
 			MethodInfo set_corlib_type_builders = GetMethod (
 				system_assemblybuilder_type, "SetCorlibTypeBuilders",
-				system_4_type_arg, false);
+				system_4_type_arg, true, false);
 
 			if (set_corlib_type_builders != null) {
 				object[] args = new object [4];
@@ -1008,7 +1016,7 @@ public class TypeManager {
 				// Compatibility for an older version of the class libs.
 				set_corlib_type_builders = GetMethod (
 					system_assemblybuilder_type, "SetCorlibTypeBuilders",
-					system_3_type_arg, true);
+					system_3_type_arg, true, true);
 
 				if (set_corlib_type_builders == null) {
 					Report.Error (-26, "Corlib compilation is not supported in Microsoft.NET due to bugs in it");

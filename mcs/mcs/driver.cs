@@ -1386,7 +1386,8 @@ namespace Mono.CSharp
 				object[] margs = new object [2];
 				Type[] argst = new Type [2];
 				argst [0] = argst [1] = typeof (string);
-				MethodInfo embed_res = typeof (AssemblyBuilder).GetMethod ("EmbedResourceFile", argst);
+
+				MethodInfo embed_res = typeof (AssemblyBuilder).GetMethod ("EmbedResourceFile", BindingFlags.Instance|BindingFlags.Public|BindingFlags.NonPublic, null, CallingConventions.Any, argst, null);
 				if (embed_res == null) {
 					Report.Warning (0, new Location (-1), "Cannot embed resources on this runtime: try the Mono runtime instead.");
 				} else {
