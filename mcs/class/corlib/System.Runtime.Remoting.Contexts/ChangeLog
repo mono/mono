@@ -1,0 +1,8 @@
+2002-07-24  Duncan Mak  <duncan@ximian.com>
+
+	* IContextPropertyActivator.cs: 
+	* IContributeClientContextSink.cs: 
+	* IContributeDynamicSink.cs: 
+	* IContributeEnvoySink.cs: 
+	* IContributeObjectSink.cs: 
+	* IContributeServerContentSink.cs: Added the missing interfaces.
