@@ -1,3 +1,8 @@
+
+Sat Jun 1 13:24:01 CEST 2002 Paolo Molaro <lupus@ximian.com>
+
+	* message.c, emit-x86.c: kill warnings.
+
 2002-05-31  Dietmar Maurer  <dietmar@ximian.com>
 
 	* x86.brg: buf fix in REMOTE_STIND_OBJ
