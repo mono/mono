@@ -10,32 +10,38 @@ using System;
 using System.Reflection;
 using System.Reflection.Emit;
 
-namespace CIR {
+namespace Mono.CSharp {
 
-	// <remarks>
-	//   This interface is implemented by Expressions whose values can not
-	//   store the result on the top of the stack.
-	//
-	//   Expressions implementing this (Properties, Indexers and Arrays) would
-	//   perform an assignment of the Expression "source" into its final
-	//   location.
-	//
-	//   No values on the top of the stack are expected to be left by
-	//   invoking this method.
-	// </remarks>
+	/// <summary>
+	///   This interface is implemented by expressions that can be assigned to.
+	/// </summary>
+	/// <remarks>
+	///   This interface is implemented by Expressions whose values can not
+	///   store the result on the top of the stack.
+	///
+	///   Expressions implementing this (Properties, Indexers and Arrays) would
+	///   perform an assignment of the Expression "source" into its final
+	///   location.
+	///
+	///   No values on the top of the stack are expected to be left by
+	///   invoking this method.
+	/// </remarks>
 	public interface IAssignMethod {
 		void EmitAssign (EmitContext ec, Expression source);
 	}
 
-	// <remarks>
-	//   The LocalTemporary class is used to hold temporary values of a given
-	//   type to "simulate" the expression semantics on property and indexer
-	//   access whose return values are void.
-	//
-	//   The local temporary is used to alter the normal flow of code generation
-	//   basically it creates a local variable, and its emit instruction generates
-	//   code to access this value, return its address or save its value.
-	// </remarks>
+	/// <summary>
+	///   An Expression to hold a temporary value.
+	/// </summary>
+	/// <remarks>
+	///   The LocalTemporary class is used to hold temporary values of a given
+	///   type to "simulate" the expression semantics on property and indexer
+	///   access whose return values are void.
+	///
+	///   The local temporary is used to alter the normal flow of code generation
+	///   basically it creates a local variable, and its emit instruction generates
+	///   code to access this value, return its address or save its value.
+	/// </remarks>
 	public class LocalTemporary : Expression, IMemoryLocation {
 		LocalBuilder builder;
 		
@@ -67,10 +73,10 @@ namespace CIR {
 		}
 	}
 
-	// <remarks>
-	//   The Assign node takes care of assigning the value of source into
-	//   the expression represented by target. 
-	// </remarks>
+	/// <summary>
+	///   The Assign node takes care of assigning the value of source into
+	///   the expression represented by target. 
+	/// </summary>
 	public class Assign : ExpressionStatement {
 		Expression target, source;
 		Location l;

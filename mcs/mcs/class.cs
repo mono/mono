@@ -14,8 +14,11 @@ using System.Reflection;
 using System.Reflection.Emit;
 using System;
 
-namespace CIR {
-	
+namespace Mono.CSharp {
+
+	/// <summary>
+	///   This is the base class for structs and classes.  
+	/// </summary>
 	public class TypeContainer : DeclSpace {
 		protected int mod_flags;
 
@@ -140,7 +143,7 @@ namespace CIR {
 			return AdditionResult.Success;
 		}
 
-		public AdditionResult AddEnum (CIR.Enum e)
+		public AdditionResult AddEnum (Mono.CSharp.Enum e)
 		{
 			AdditionResult res;
 			string name = e.Name;
@@ -699,16 +702,16 @@ namespace CIR {
 			return null;
 		}
 
-		//
-		// This function computes the Base class and also the
-		// list of interfaces that the class or struct @c implements.
-		//
-		// The return value is an array (might be null) of
-		// interfaces implemented (as Types).
-		//
-		// The @parent argument is set to the parent object or null
-		// if this is `System.Object'. 
-		//
+		/// <summary>
+		///   This function computes the Base class and also the
+		///   list of interfaces that the class or struct @c implements.
+		///   
+		///   The return value is an array (might be null) of
+		///   interfaces implemented (as Types).
+		///   
+		///   The @parent argument is set to the parent object or null
+		///   if this is `System.Object'. 
+		/// </summary>
 		Type [] GetClassBases (object builder, bool is_class, out Type parent, out bool error)
 		{
 			ArrayList bases = Bases;
@@ -901,9 +904,9 @@ namespace CIR {
 			return TypeBuilder;
 		}
 		
-		//
-		// Populates our TypeBuilder with fields and methods
-		//
+		/// <summary>
+		///   Populates our TypeBuilder with fields and methods
+		/// </summary>
 		public void Populate ()
 		{
 			if (Constants != null){
@@ -1034,48 +1037,51 @@ namespace CIR {
 		
 		}
 
-		// <summary>
-		//   Since System.Reflection.Emit can not retrieve parameter information
-		//   from methods that are dynamically defined, we have to look those
-		//   up ourselves using this
-		// </summary>
+		/// <summary>
+		///   Since System.Reflection.Emit can not retrieve parameter information
+		///   from methods that are dynamically defined, we have to look those
+		///   up ourselves using this
+		/// </summary>
 		static public ParameterData LookupParametersByBuilder (MethodBase mb)
 		{
 			return (ParameterData) method_builders_to_parameters [MakeKey (mb)];
 		}
 
-		// <summary>
-		//   Indexers and properties can register more than one method at once,
-		//   so we need to provide a mechanism for those to register their
-		//   various methods to parameter info mappers.
-		// </summary>
+		/// <summary>
+		///   Indexers and properties can register more than one method at once,
+		///   so we need to provide a mechanism for those to register their
+		///   various methods to parameter info mappers.
+		/// </summary>
 		static public void RegisterParameterForBuilder (MethodBase mb, InternalParameters pi)
 		{
 			method_builders_to_parameters.Add (MakeKey (mb), pi);
 		}
-		
+
 		public Type LookupType (string name, bool silent)
 		{
 			return RootContext.LookupType (this, name, silent);
 		}
 
-		public string LookupAlias (string Name)
+		/// <summary>
+		///   Looks up the alias for the name
+		/// </summary>
+		public string LookupAlias (string name)
 		{
 			//
 			// Read the comments on `mcs/mcs/TODO' for details
-			// 
+			//
+
 			return null;
 		}
 		
-		//
-		// This function is based by a delegate to the FindMembers routine
-		//
+		/// <summary>
+		///   This function is based by a delegate to the FindMembers routine
+		/// </summary>
 		static bool AlwaysAccept (MemberInfo m, object filterCriteria)
 		{
 			return true;
 		}
 		
-		//
 		static bool IsAbstractMethod (MemberInfo m, object filter_criteria)
 		{
 			MethodInfo mi = (MethodInfo) m;
@@ -1083,15 +1089,16 @@ namespace CIR {
 			return mi.IsAbstract;
 		}
 
-		// This filter is used by FindMembers, and we just keep
-		// a global for the filter to `AlwaysAccept'
-		//
+		/// <summary>
+		///   This filter is used by FindMembers, and we just keep
+		///   a global for the filter to `AlwaysAccept'
+		/// </summary>
 		static MemberFilter accepting_filter;
 		
-		// <summary>
-		//    This delegate is a MemberFilter used to extract the 
-		//    abstact methods from a type.  
-		// </summary>
+		/// <summary>
+		///    This delegate is a MemberFilter used to extract the 
+		///    abstact methods from a type.  
+		/// </summary>
 		static MemberFilter abstract_method_filter;
 
 		static TypeContainer ()
@@ -1100,11 +1107,11 @@ namespace CIR {
 			accepting_filter = new MemberFilter (AlwaysAccept);
 		}
 		
-		// <summary>
-		//   This method returns the members of this type just like Type.FindMembers would
-		//   Only, we need to use this for types which are _being_ defined because MS' 
-		//   implementation can't take care of that.
-		// </summary>
+		/// <summary>
+		///   This method returns the members of this type just like Type.FindMembers would
+		///   Only, we need to use this for types which are _being_ defined because MS' 
+		///   implementation can't take care of that.
+		/// </summary>
 		public MemberInfo [] FindMembers (MemberTypes mt, BindingFlags bf,
 						  MemberFilter filter, object criteria)
 		{
@@ -1217,10 +1224,10 @@ namespace CIR {
 
 		Hashtable pending_implementations;
 		
-		// <summary>
-		//   Requires that the methods in `mi' be implemented for this
-		//   class
-		// </summary>
+		/// <summary>
+		///   Requires that the methods in `mi' be implemented for this
+		///   class
+		/// </summary>
 		public void RequireMethods (MethodInfo [] mi, object data)
 		{
 			if (pending_implementations == null)
@@ -1235,16 +1242,16 @@ namespace CIR {
 			}
 		}
 
-		// <summary>
-		//   Used to set the list of interfaces that this typecontainer
-		//   must implement.
-		// </summary>
-		//
-		// <remarks>
-		//   For each element exposed by the type, we create a MethodSignature
-		//   struct that we will label as `implemented' as we define the various
-		//   methods.
-		// </remarks>
+		/// <summary>
+		///   Used to set the list of interfaces that this typecontainer
+		///   must implement.
+		/// </summary>
+		///
+		/// <remarks>
+		///   For each element exposed by the type, we create a MethodSignature
+		///   struct that we will label as `implemented' as we define the various
+		///   methods.
+		/// </remarks>
 		public void SetRequiredInterfaces (Type [] ifaces)
 		{
 			foreach (Type t in ifaces){
@@ -1261,15 +1268,19 @@ namespace CIR {
 			}
 		}
 
-		// <summary>
-		//   If a method with name `Name', return type `ret_type' and
-		//   arguments `args' implements an interface, this method will
-		//   return true.
-		//
-		//   This will remove the method from the list of "pending" methods
-		//   that are required to be implemented for this class as a side effect.
-		// 
-		// </summary>
+		/// <summary>
+		///   Whether the specified method is an interface method implementation
+		/// </summary>
+		///
+		/// <remarks>
+		///   If a method with name `Name', return type `ret_type' and
+		///   arguments `args' implements an interface, this method will
+		///   return true.
+		///
+		///   This will remove the method from the list of "pending" methods
+		///   that are required to be implemented for this class as a side effect.
+		/// 
+		/// </remarks>
 		public bool IsInterfaceMethod (string Name, Type ret_type, Type [] args)
 		{
 			MethodSignature query;
@@ -1287,10 +1298,10 @@ namespace CIR {
 			return false;
 		}
 
-		// <summary>
-		//   Verifies that any pending abstract methods or interface methods
-		//   were implemented.
-		// </summary>
+		/// <summary>
+		///   Verifies that any pending abstract methods or interface methods
+		///   were implemented.
+		/// </summary>
 		void VerifyPendingMethods ()
 		{
 			int pending = 0;
@@ -1315,10 +1326,10 @@ namespace CIR {
 			}
 		}
 		
-		// <summary>
-		//   Emits the code, this step is performed after all
-		//   the types, enumerations, constructors
-		// </summary>
+		/// <summary>
+		///   Emits the code, this step is performed after all
+		///   the types, enumerations, constructors
+		/// </summary>
 		public void Emit ()
 		{
 			if (Constructors != null)
@@ -1583,9 +1594,9 @@ namespace CIR {
 		public MethodBuilder MethodBuilder;
 		public readonly Attributes OptAttributes;
 
-		// <summary>
-		//   Modifiers allowed in a class declaration
-		// </summary>
+		/// <summary>
+		///   Modifiers allowed in a class declaration
+		/// </summary>
 		const int AllowedModifiers =
 			Modifiers.NEW |
 			Modifiers.PUBLIC |
@@ -1653,10 +1664,10 @@ namespace CIR {
 			return true;
 		}
 		
-		// <summary>
-		//    This delegate is used to extract methods which have the
-		//    same signature as the argument
-		// </summary>
+		/// <summary>
+		///    This delegate is used to extract methods which have the
+		///    same signature as the argument
+		/// </summary>
 		static MemberFilter method_signature_filter;
 		
 		static Method ()
@@ -1670,6 +1681,7 @@ namespace CIR {
 		// and actual code generation
 		//
 		Type type_return_type;
+		
 		public Type GetReturnType (TypeContainer parent)
 		{
 			if (type_return_type == null)

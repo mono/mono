@@ -7,7 +7,7 @@
 // (C) 2001 Ximian, Inc.
 //
 
-namespace CIR {
+namespace Mono.CSharp {
 
 	using System.Collections;
 	using System;

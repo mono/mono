@@ -8,16 +8,17 @@
 
 using System;
 
-namespace CIR {
+namespace Mono.CSharp {
 
+	/// <summary>
+	///   This class is used to report errors and warnings t te user.
+	/// </summary>
 	public class Report {
 		static int errors;
 		static int warnings;
 
-		//
 		// whether errors are fatal (they throw an exception), useful
 		// for debugging the compiler
-		//
 		static bool fatal;
 
 		//

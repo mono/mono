@@ -24,10 +24,9 @@
 //	 separate problem
 //
 using System.Text;
-using CIR;
 using System;
 
-namespace CIR
+namespace Mono.CSharp
 {
 	using System.Collections;
 	using Mono.Languages;

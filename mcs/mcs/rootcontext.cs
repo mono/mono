@@ -13,7 +13,7 @@ using System.Reflection;
 using System.Reflection.Emit;
 using System.Diagnostics;
 
-namespace CIR {
+namespace Mono.CSharp {
 
 	public class RootContext {
 

@@ -10,16 +10,18 @@
 using System;
 using System.Collections;
 
-namespace CIR {
-	// <summary>
-	//   Keeps track of the location in the program
-	//
-	//   This uses a compact representation and a couple of auxiliary
-	//   structures to keep track of tokens to (file,line) mappings.
-	//
-	//   We could probably also keep track of columns by storing those
-	//   in 8 bits (and say, map anything after char 255 to be `255+').
-	// </summary>
+namespace Mono.CSharp {
+	/// <summary>
+	///   Keeps track of the location in the program
+	/// </summary>
+	///
+	/// <remarks>
+	///   This uses a compact representation and a couple of auxiliary
+	///   structures to keep track of tokens to (file,line) mappings.
+	///
+	///   We could probably also keep track of columns by storing those
+	///   in 8 bits (and say, map anything after char 255 to be `255+').
+	/// </remarks>
 	public struct Location {
 		public int token; 
 
@@ -58,9 +60,9 @@ namespace CIR {
 			}
 		}
 		
-		//
-		// Whether the Location is Null
-		//
+		/// <summary>
+		///   Whether the Location is Null
+		/// </summary>
 		static public bool IsNull (Location l)
 		{
 			return l.token == -1;

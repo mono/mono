@@ -8,13 +8,14 @@
 //
 //
 
-namespace CIR {
+namespace Mono.CSharp {
 
 	using System;
 	using System.Reflection;
 	using System.Reflection.Emit;
 	using System.Collections;
-	
+
+
 	public class Constant : Expression {
 		string     name;
 		Expression expr;
@@ -73,9 +74,9 @@ namespace CIR {
 			throw new Exception ("Unimplemented");
 		}
 		       
-		// <summary>
-		//   Defines the constant in the @parent
-		// </summary>
+		/// <summary>
+		///   Defines the constant in the @parent
+		/// </summary>
 		public void EmitConstant (RootContext rc, TypeContainer parent)
 		{
 			FieldBuilder fb;

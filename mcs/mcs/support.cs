@@ -13,7 +13,7 @@ using System.Reflection;
 using System;
 using System.Text;
 
-namespace CIR {
+namespace Mono.CSharp {
 
 	public interface ParameterData {
 		Type ParameterType (int pos);

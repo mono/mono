@@ -11,24 +11,24 @@ using System;
 using System.Reflection;
 using System.Reflection.Emit;
 
-namespace CIR {
+namespace Mono.CSharp {
 
 	using System.Collections;
 	
 	public abstract class Statement {
 
-		//
-		// Return value indicates whether the last instruction
-		// was a return instruction
-		//
+		/// <summary>
+		///   Return value indicates whether the last instruction
+		///   was a return instruction
+		/// </summary>
 		public abstract bool Emit (EmitContext ec);
 
-		// <remarks>
-		//    Emits a bool expression.  Generates a jump to the `t' label if true
-		//    if defined, or to `f' if defined.
-		//
-		//    t and f can not be both non-null
-		// </remarks>
+		/// <remarks>
+		///    Emits a bool expression.  Generates a jump to the `t' label if true
+		///    if defined, or to `f' if defined.
+		///
+		///    t and f can not be both non-null
+		/// </remarks>
 		public static bool EmitBoolExpression (EmitContext ec, Expression e, Label l, bool isTrue)
 		{
 			e = e.Resolve (ec);
@@ -452,10 +452,10 @@ namespace CIR {
 
 	}
 		
-	// <summary>
-	//   Used for Label management
-	// </summary>
-	//
+	/// <summary>
+	///   Used for Label management
+	/// </summary>
+	///
 	public class Block : Statement {
 		public readonly Block  Parent;
 		public readonly bool   Implicit;
@@ -528,15 +528,15 @@ namespace CIR {
 			children.Add (b);
 		}
 
-		// <summary>
-		//   Adds a label to the current block. 
-		// </summary>
-		//
-		// <returns>
-		//   false if the name already exists in this block. true
-		//   otherwise.
-		// </returns>
-		//
+		/// <summary>
+		///   Adds a label to the current block. 
+		/// </summary>
+		///
+		/// <returns>
+		///   false if the name already exists in this block. true
+		///   otherwise.
+		/// </returns>
+		///
 		public bool AddLabel (string name, Block block)
 		{
 			if (labels == null)
@@ -595,27 +595,27 @@ namespace CIR {
 			return null;
 		}
 
-		// <summary>
-		//   True if the variable named @name has been defined
-		//   in this block
-		// </summary>
+		/// <summary>
+		///   True if the variable named @name has been defined
+		///   in this block
+		/// </summary>
 		public bool IsVariableDefined (string name)
 		{
 			return GetVariableType (name) != null;
 		}
 
-		// <summary>
-		//   Use to fetch the statement associated with this label
-		// </summary>
+		/// <summary>
+		///   Use to fetch the statement associated with this label
+		/// </summary>
 		public Statement this [string name] {
 			get {
 				return (Statement) labels [name];
 			}
 		}
 
-		// <returns>
-		//   A list of labels that were not used within this block
-		// </returns>
+		/// <returns>
+		///   A list of labels that were not used within this block
+		/// </returns>
 		public string [] GetUnreferenced ()
 		{
 			// FIXME: Implement me
@@ -651,11 +651,11 @@ namespace CIR {
 			used = true;
 		}
 		
-		// <summary>
-		//   Creates a compiler-internal identifier, this is
-		//   used to create temporary variables that should not
-		//   be seen by the application
-		// </summary
+		/// <summary>
+		///   Creates a compiler-internal identifier, this is
+		///   used to create temporary variables that should not
+		///   be seen by the application
+		/// </summary>
 		int internal_id_serial;
 		public string MakeInternalID () {
 			string ret = internal_id_serial.ToString ();
@@ -664,15 +664,15 @@ namespace CIR {
 			return "0_" + ret;
 		}
 
-		// <summary>
-		//   Emits the variable declarations and labels.
-		// </summary>
-		//
-		// tc: is our typecontainer (to resolve type references)
-		// ig: is the code generator:
-		// toplevel: the toplevel block.  This is used for checking 
-		//           that no two labels with the same name are used.
-		//
+		/// <summary>
+		///   Emits the variable declarations and labels.
+		/// </summary>
+		/// <remarks>
+		///   tc: is our typecontainer (to resolve type references)
+		///   ig: is the code generator:
+		///   toplevel: the toplevel block.  This is used for checking 
+		///   		that no two labels with the same name are used.
+		/// </remarks>
 		public void EmitMeta (TypeContainer tc, ILGenerator ig, Block toplevel, int count)
 		{
 			//
@@ -1080,10 +1080,10 @@ namespace CIR {
 			return false;
 		}
 		
-		// <summary>
-		//   This filter is used to find the GetEnumerator method
-		//   on which IEnumerator operates
-		// </summary>
+		/// <summary>
+		///   This filter is used to find the GetEnumerator method
+		///   on which IEnumerator operates
+		/// </summary>
 		static MemberFilter FilterEnumerator;
 		
 		static Foreach ()

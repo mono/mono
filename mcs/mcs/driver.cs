@@ -8,14 +8,13 @@
 // (C) 2001 Ximian, Inc (http://www.ximian.com)
 //
 
-namespace CIR
+namespace Mono.CSharp
 {
 	using System;
 	using System.Reflection;
 	using System.Reflection.Emit;
 	using System.Collections;
 	using System.IO;
-	using CIR;
 	using Mono.Languages;
 
 	/// <summary>
@@ -150,9 +149,9 @@ namespace CIR
 			return 0;
 		}
 
-		// <summary>
-		//   Loads all assemblies referenced on the command line
-		// </summary>
+		/// <summary>
+		///   Loads all assemblies referenced on the command line
+		/// </summary>
 		public int LoadReferences ()
 		{
 			int errors = 0;
@@ -164,13 +163,15 @@ namespace CIR
 			return errors;
 		}
 
-		// <summary>
-		//    Parses the arguments, and drives the compilation
-		//    process.
-		//
-		//    TODO: Mostly structured to debug the compiler
-		//    now, needs to be turned into a real driver soon.
-		// </summary>
+		/// <summary>
+		///    Parses the arguments, and drives the compilation
+		///    process.
+		/// </summary>
+		///
+		/// <remarks>
+		///    TODO: Mostly structured to debug the compiler
+		///    now, needs to be turned into a real driver soon.
+		/// </remarks>
 		public Driver (string [] args)
 		{
 			ITreeDump generator = null;

@@ -10,12 +10,15 @@
 //
 //
 
-namespace CIR {
+namespace Mono.CSharp {
 
 	using System;
 	using System.Reflection;
 	using System.Collections;
-	
+
+	/// <summary>
+	///   Represents a single method parameter
+	/// </summary>
 	public class Parameter {
 		public enum Modifier : byte {
 			NONE,
@@ -70,10 +73,10 @@ namespace CIR {
 			return (string) null;
 		}
 
-		// <summary>
-		//   Returns the signature for this parameter evaluating it on the
-		//   @tc context
-		// </summary>
+		/// <summary>
+		///   Returns the signature for this parameter evaluating it on the
+		///   @tc context
+		/// </summary>
 		public string GetSignature (TypeContainer tc)
 		{
 			Type t = tc.LookupType (Type, false);
@@ -85,6 +88,9 @@ namespace CIR {
 		}
 	}
 
+	/// <summary>
+	///   Represents the methods parameters
+	/// </summary>
 	public class Parameters {
 		public Parameter [] FixedParameters;
 		public readonly Parameter ArrayParameter;
@@ -99,10 +105,10 @@ namespace CIR {
 			ArrayParameter  = array_parameter;
 		}
 
-		// <summary>
-		//   This is used to reuse a set of empty parameters, because they
-		//   are common
-		// </summary>
+		/// <summary>
+		///   This is used to reuse a set of empty parameters, because they
+		///   are common
+		/// </summary>
 		public static Parameters GetEmptyReadOnlyParameters ()
 		{
 			if (empty_parameters == null)
@@ -155,10 +161,10 @@ namespace CIR {
 			return true;
 		}
 		
-		// <summary>
-		//    Returns the signature of the Parameters evaluated in
-		//    the @tc environment
-		// </summary>
+		/// <summary>
+		///    Returns the signature of the Parameters evaluated in
+		///    the @tc environment
+		/// </summary>
 		public string GetSignature (TypeContainer tc)
 		{
 			if (signature == null){
@@ -169,9 +175,9 @@ namespace CIR {
 			return signature;
 		}
 		
-		// <summary>
-		//    Returns the paramenter information based on the name
-		// </summary>
+		/// <summary>
+		///    Returns the paramenter information based on the name
+		/// </summary>
 		public Parameter GetParameterByName (string name, out int idx)
 		{
 			idx = 0;
@@ -198,9 +204,9 @@ namespace CIR {
 		}
 
 		
-		// <summary>
-		//   Returns the argument types as an array
-		// </summary>
+		/// <summary>
+		///   Returns the argument types as an array
+		/// </summary>
 		public Type [] GetParameterInfo (TypeContainer tc)
 		{
 			if (types != null)

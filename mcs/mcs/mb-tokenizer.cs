@@ -26,7 +26,7 @@ namespace Mono.Languages.MonoBASIC
 	using System.IO;
 	using System.Globalization;
 	using Mono.Languages.MonoBASIC;
-	using CIR;
+	using Mono.CSharp;
 	
 	/// <summary>
 	///    Tokenizer for MonoBASIC source code. 

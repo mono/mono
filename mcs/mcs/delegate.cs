@@ -15,8 +15,11 @@ using System.Reflection;
 using System.Reflection.Emit;
 using System.Text;
 
-namespace CIR {
-	
+namespace Mono.CSharp {
+
+	/// <summary>
+	///   Holds Delegates
+	/// </summary>
 	public class Delegate {
 
 		public readonly string Name;
@@ -277,10 +280,10 @@ namespace CIR {
 			return true;
 		}
 
-		// <summary>
-		//  Verifies whether the delegate in question is compatible with this one in
-		//  order to determine if instantiation from the same is possible.
-		// </summary>
+		/// <summary>
+		///  Verifies whether the delegate in question is compatible with this one in
+		///  order to determine if instantiation from the same is possible.
+		/// </summary>
 		public bool VerifyDelegate (Delegate del)
 		{
 			if (ret_type != del.TargetReturnType)

@@ -14,7 +14,7 @@ using System.Collections;
 using System.Reflection;
 using System.Reflection.Emit;
 
-namespace CIR {
+namespace Mono.CSharp {
 
 public class TypeManager {
 	//
@@ -197,10 +197,10 @@ public class TypeManager {
 		builder_to_attr.Add (t, tc);
 	}
 		
-	// <summary>
-	//   Returns the TypeContainer whose Type is `t' or null if there is no
-	//   TypeContainer for `t' (ie, the Type comes from a library)
-	// </summary>
+	/// <summary>
+	///   Returns the TypeContainer whose Type is `t' or null if there is no
+	///   TypeContainer for `t' (ie, the Type comes from a library)
+	/// </summary>
 	public static TypeContainer LookupTypeContainer (Type t)
 	{
 		return (TypeContainer) builder_to_container [t];
@@ -221,25 +221,25 @@ public class TypeManager {
 		return (TypeContainer) builder_to_attr [t];
 	}
 	
-	// <summary>
-	//   Registers an assembly to load types from.
-	// </summary>
+	/// <summary>
+	///   Registers an assembly to load types from.
+	/// </summary>
 	public void AddAssembly (Assembly a)
 	{
 		assemblies.Add (a);
 	}
 
-	// <summary>
-	//  Registers a module builder to lookup types from
-	// </summary>
+	/// <summary>
+	///  Registers a module builder to lookup types from
+	/// </summary>
 	public void AddModule (ModuleBuilder mb)
 	{
 		modules.Add (mb);
 	}
 
-	// <summary>
-	//   Returns the Type associated with @name
-	// </summary>
+	/// <summary>
+	///   Returns the Type associated with @name
+	/// </summary>
 	public Type LookupType (string name)
 	{
 		Type t;
@@ -272,9 +272,9 @@ public class TypeManager {
 		return null;
 	}
 
-	// <summary>
-	//   Returns the C# name of a type if possible, or the full type name otherwise
-	// </summary>
+	/// <summary>
+	///   Returns the C# name of a type if possible, or the full type name otherwise
+	/// </summary>
 	static public string CSharpName (Type t)
 	{
 		if (t == int32_type)
@@ -313,10 +313,10 @@ public class TypeManager {
 			return t.FullName;
 	}
 
-	// <summary>
-	//   Looks up a type, and aborts if it is not found.  This is used
-	//   by types required by the compiler
-	// </summary>
+	/// <summary>
+	///   Looks up a type, and aborts if it is not found.  This is used
+	///   by types required by the compiler
+	/// </summary>
 	Type CoreLookupType (string name)
 	{
 		Type t = LookupType (name);
@@ -327,10 +327,10 @@ public class TypeManager {
 		return t;
 	}
 
-	// <summary>
-	//   Returns the MethodInfo for a method named `name' defined
-	//   in type `t' which takes arguments of types `args'
-	// </summary>
+	/// <summary>
+	///   Returns the MethodInfo for a method named `name' defined
+	///   in type `t' which takes arguments of types `args'
+	/// </summary>
 	MethodInfo GetMethod (Type t, string name, Type [] args)
 	{
 		MethodInfo mi = t.GetMethod (name, args);
@@ -351,11 +351,11 @@ public class TypeManager {
 		return ci;
 	}
 	
-	// <remarks>
-	//   The types have to be initialized after the initial
-	//   population of the type has happened (for example, to
-	//   bootstrap the corlib.dll
-	// </remarks>
+	/// <remarks>
+	///   The types have to be initialized after the initial
+	///   population of the type has happened (for example, to
+	///   bootstrap the corlib.dll
+	/// </remarks>
 	public void InitCoreTypes ()
 	{
 		object_type   = CoreLookupType ("System.Object");
@@ -519,9 +519,9 @@ public class TypeManager {
 			return false;
 	}
 
-	// <summary>
-	//   Returns the User Defined Types
-	// </summary>
+	/// <summary>
+	///   Returns the User Defined Types
+	/// </summary>
 	public ArrayList UserTypes {
 		get {
 			return user_types;
@@ -562,13 +562,13 @@ public class TypeManager {
 		return true;
 	}
 
-	// <summary>
-	//    Returns the argument types for a method based on its methodbase
-	//
-	//    For dynamic methods, we use the compiler provided types, for
-	//    methods from existing assemblies we load them from GetParameters,
-	//    and insert them into the cache
-	// </summary>
+	/// <summary>
+	///    Returns the argument types for a method based on its methodbase
+	///
+	///    For dynamic methods, we use the compiler provided types, for
+	///    methods from existing assemblies we load them from GetParameters,
+	///    and insert them into the cache
+	/// </summary>
 	static public Type [] GetArgumentTypes (MethodBase mb)
 	{
 		string sig = GetSig (mb);
@@ -678,13 +678,15 @@ public class TypeManager {
 	}
 	
 
-	// <summary>
-	//   Returns the name of the indexer in a given type.  The default
-	//   is not always `Item'.  The user can change this behaviour by
-	//   using the DefaultMemberAttribute in the class.
-	//
-	//   For example, the String class indexer is named `Chars' not `Item' 
-	// </summary>
+	/// <summary>
+	///   Returns the name of the indexer in a given type.
+	/// </summary>
+	/// <remarks>
+	///   The default is not always `Item'.  The user can change this behaviour by
+	///   using the DefaultMemberAttribute in the class.
+	///
+	///   For example, the String class indexer is named `Chars' not `Item' 
+	/// </remarks>
 	public static string IndexerPropertyName (Type t)
 	{
 		

@@ -4,7 +4,7 @@
 using System;
 using System.Reflection;
 
-namespace CIR {
+namespace Mono.CSharp {
 	public class Modifiers {
 
 		//

@@ -12,8 +12,11 @@ using System.Collections;
 using System.Reflection;
 using System.Reflection.Emit;
 
-namespace CIR {
-	
+namespace Mono.CSharp {
+
+	/// <summary>
+	///    Code generator class.
+	/// </summary>
 	public class CodeGen {
 		AppDomain current_domain;
 		AssemblyBuilder assembly_builder;
@@ -82,36 +85,36 @@ namespace CIR {
 		}
 	}
 
-	// <summary>
-	//   An Emit Context is created for each body of code (from methods,
-	//   properties bodies, indexer bodies or constructor bodies)
-	// </summary>
+	/// <summary>
+	///   An Emit Context is created for each body of code (from methods,
+	///   properties bodies, indexer bodies or constructor bodies)
+	/// </summary>
 	public class EmitContext {
 		public TypeContainer TypeContainer;
 		public ILGenerator   ig;
 		public bool CheckState;
 
-		// <summary>
-		//   Whether we are emitting code inside a static or instance method
-		// </summary>
+		/// <summary>
+		///   Whether we are emitting code inside a static or instance method
+		/// </summary>
 		public bool IsStatic;
 
-		// <summary>
-		//   The value that is allowed to be returned or NULL if there is no
-		//   return type.
-		// </summary>
+		/// <summary>
+		///   The value that is allowed to be returned or NULL if there is no
+		///   return type.
+		/// </summary>
 		public Type ReturnType;
 
-		// <summary>
-		//   Whether this is generating code for a constructor
-		// </summary>
+		/// <summary>
+		///   Whether this is generating code for a constructor
+		/// </summary>
 		public bool IsConstructor;
 		
-		// <summary>
-		//   Keeps track of the Type to LocalBuilder temporary storage created
-		//   to store structures (used to compute the address of the structure
-		//   value on structure method invocations)
-		// </summary>
+		/// <summary>
+		///   Keeps track of the Type to LocalBuilder temporary storage created
+		///   to store structures (used to compute the address of the structure
+		///   value on structure method invocations)
+		/// </summary>
 		public Hashtable temporary_storage;
 
 		public Block CurrentBlock;
@@ -161,10 +164,10 @@ namespace CIR {
 			}
 		}
 
-		// <summary>
-		//   Returns a temporary storage for a variable of type t as 
-		//   a local variable in the current body.
-		// </summary>
+		/// <summary>
+		///   Returns a temporary storage for a variable of type t as 
+		///   a local variable in the current body.
+		/// </summary>
 		public LocalBuilder GetTemporaryStorage (Type t)
 		{
 			LocalBuilder location;
@@ -182,15 +185,14 @@ namespace CIR {
 			return location;
 		}
 
-		//
-		// Current loop begin and end labels.
-		//
+		/// <summary>
+		///   Current loop begin and end labels.
+		/// </summary>
 		public Label LoopBegin, LoopEnd;
 
-		//
-		// Whether we are inside a loop and break/continue are possible.
-		// 
+		/// <summary>
+		///   Whether we are inside a loop and break/continue are possible.
+		/// </summary>
 		public bool  InLoop;
-
 	}
 }

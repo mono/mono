@@ -42,7 +42,7 @@ using System.Collections;
 using System.IO;
 using System.Globalization;
 
-namespace CIR
+namespace Mono.CSharp
 {
 	/// <summary>
 	///    Tokenizer for C# source code. 

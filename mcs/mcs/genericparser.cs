@@ -5,7 +5,7 @@
 //
 // Licensed under the terms of the GNU GPL
 //
-// Copyright (C) 2001 A Rafael D Teixeira
+// Copyright (C) 2001 Ximian, Inc.
 //
 using System;
 using System.Text;
@@ -50,7 +50,7 @@ namespace Mono.Languages
 		// FIXME : Ideally, all error reporting should happen
 		// with Report.Error but how do you get at that non-static
 		// method everywhere you need it ?
-		static public void error (int code, CIR.Location l, string text)
+		static public void error (int code, Mono.CSharp.Location l, string text)
 		{
 			Console.WriteLine (l.Name + "(" + l.Row + "," + 
 					   "): Error CS" + code + ": " + text);

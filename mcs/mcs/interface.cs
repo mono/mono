@@ -14,8 +14,11 @@ using System.IO;
 using System.Reflection;
 using System.Reflection.Emit;
 
-namespace CIR {
+namespace Mono.CSharp {
 
+	/// <summary>
+	///   Interfaces
+	/// </summary>
 	public class Interface : DeclSpace {
 		const MethodAttributes interface_method_attributes =
 			MethodAttributes.Public |
@@ -54,9 +57,9 @@ namespace CIR {
 		// Hashtable defined_indexers;
 		// Hashtable defined_methods;
 		
-		// <summary>
-		//   Modifiers allowed in a class declaration
-		// </summary>
+		/// <summary>
+		///   Modifiers allowed in a class declaration
+		/// </summary>
 		public const int AllowedModifiers =
 			Modifiers.NEW |
 			Modifiers.PUBLIC |
@@ -464,10 +467,10 @@ namespace CIR {
 			}
 		}
 
-		// <summary>
-		//   Performs the semantic analysis for all the interface members
-		//   that were declared
-		// </summary>
+		/// <summary>
+		///   Performs the semantic analysis for all the interface members
+		///   that were declared
+		/// </summary>
 		bool SemanticAnalysis ()
 		{
 			Hashtable methods = new Hashtable ();
@@ -633,9 +636,9 @@ namespace CIR {
 			return TypeBuilder;
 		}
 		
-		// <summary>
-		//   Performs semantic analysis, and then generates the IL interfaces
-		// </summary>
+		/// <summary>
+		///   Performs semantic analysis, and then generates the IL interfaces
+		/// </summary>
 		public void Populate ()
 		{
 			if (!SemanticAnalysis ())
@@ -717,9 +720,9 @@ namespace CIR {
 			this.Parameters = args;
 		}
 
-		// <summary>
-		//   Returns the signature for this interface method
-		// </summary>
+		/// <summary>
+		///   Returns the signature for this interface method
+		/// </summary>
 		public string GetSignature (TypeContainer tc)
 		{
 			Type ret = tc.LookupType (ReturnType, false);

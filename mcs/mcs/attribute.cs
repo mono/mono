@@ -15,7 +15,7 @@ using System.Reflection;
 using System.Reflection.Emit;
 using System.Text;
 
-namespace CIR {
+namespace Mono.CSharp {
 
 	public class Attribute {
 		

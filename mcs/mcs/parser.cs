@@ -1,3 +1,4 @@
+
 namespace Compiler {
 
 	using System;
@@ -6,7 +7,7 @@ namespace Compiler {
 		public string name;
 		public System.IO.Stream input;
 		
-		public Parser (CIR.Tree tree, string name, System.IO.Stream stream) 
+		public Parser (Mono.CSharp.Tree tree, string name, System.IO.Stream stream) 
 		{
 			this.tree = tree;
 			this.name = name;

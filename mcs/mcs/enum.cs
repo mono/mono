@@ -14,8 +14,11 @@ using System.Collections;
 using System.Reflection;
 using System.Reflection.Emit;
 
-namespace CIR {
+namespace Mono.CSharp {
 
+	/// <summary>
+	///   Enumeration container
+	/// </summary>
 	public class Enum : DeclSpace {
 
 		ArrayList ordered_enums;
@@ -52,10 +55,10 @@ namespace CIR {
 			field_builders = new ArrayList ();
 		}
 
-		// <summary>
-		//   Adds @name to the enumeration space, with @expr
-		//   being its definition.  
-		// </summary>
+		/// <summary>
+		///   Adds @name to the enumeration space, with @expr
+		///   being its definition.  
+		/// </summary>
 		public AdditionResult AddEnumMember (string name, Expression expr, Location loc)
 		{
 			if (defined_names.Contains (name))

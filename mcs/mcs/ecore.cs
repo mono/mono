@@ -8,7 +8,7 @@
 //
 //
 
-namespace CIR {
+namespace Mono.CSharp {
 	using System;
 	using System.Collections;
 	using System.Diagnostics;
@@ -16,12 +16,12 @@ namespace CIR {
 	using System.Reflection.Emit;
 	using System.Text;
 
-	// <remarks>
-	//   The ExprClass class contains the is used to pass the 
-	//   classification of an expression (value, variable, namespace,
-	//   type, method group, property access, event access, indexer access,
-	//   nothing).
-	// </remarks>
+	/// <remarks>
+	///   The ExprClass class contains the is used to pass the 
+	///   classification of an expression (value, variable, namespace,
+	///   type, method group, property access, event access, indexer access,
+	///   nothing).
+	/// </remarks>
 	public enum ExprClass : byte {
 		Invalid,
 		
@@ -36,20 +36,20 @@ namespace CIR {
 		Nothing, 
 	}
 
-	// <summary>
-	//   This interface is implemented by variables
-	// </summary>
+	/// <summary>
+	///   This interface is implemented by variables
+	/// </summary>
 	public interface IMemoryLocation {
-		// <summary>
-		//   The AddressOf method should generate code that loads
-		//   the address of the object and leaves it on the stack
-		// </summary>
+		/// <summary>
+		///   The AddressOf method should generate code that loads
+		///   the address of the object and leaves it on the stack
+		/// </summary>
 		void AddressOf (EmitContext ec);
 	}
 
-	// <remarks>
-	//   Base class for expressions
-	// </remarks>
+	/// <remarks>
+	///   Base class for expressions
+	/// </remarks>
 	public abstract class Expression {
 		protected ExprClass eclass;
 		protected Type      type;
@@ -74,9 +74,9 @@ namespace CIR {
 			}
 		}
 
-		// <summary>
-		//   Utility wrapper routine for Error, just to beautify the code
-		// </summary>
+		/// <summary>
+		///   Utility wrapper routine for Error, just to beautify the code
+		/// </summary>
 		static protected void Error (int error, string s)
 		{
 			Report.Error (error, s);
@@ -87,9 +87,9 @@ namespace CIR {
 			Report.Error (error, loc, s);
 		}
 		
-		// <summary>
-		//   Utility wrapper routine for Warning, just to beautify the code
-		// </summary>
+		/// <summary>
+		///   Utility wrapper routine for Warning, just to beautify the code
+		/// </summary>
 		static protected void Warning (int warning, string s)
 		{
 			Report.Warning (warning, s);
@@ -102,34 +102,33 @@ namespace CIR {
 				      TypeManager.CSharpName (target) + "'");
 		}
 
-		// <summary>
-		//   Performs semantic analysis on the Expression
-		// </summary>
-		//
-		// <remarks>
-		//   The Resolve method is invoked to perform the semantic analysis
-		//   on the node.
-		//
-		//   The return value is an expression (it can be the
-		//   same expression in some cases) or a new
-		//   expression that better represents this node.
-		//   
-		//   For example, optimizations of Unary (LiteralInt)
-		//   would return a new LiteralInt with a negated
-		//   value.
-		//   
-		//   If there is an error during semantic analysis,
-		//   then an error should be reported (using Report)
-		//   and a null value should be returned.
-		//   
-		//   There are two side effects expected from calling
-		//   Resolve(): the the field variable "eclass" should
-		//   be set to any value of the enumeration
-		//   `ExprClass' and the type variable should be set
-		//   to a valid type (this is the type of the
-		//   expression).
-		// </remarks>
-		
+		/// <summary>
+		///   Performs semantic analysis on the Expression
+		/// </summary>
+		///
+		/// <remarks>
+		///   The Resolve method is invoked to perform the semantic analysis
+		///   on the node.
+		///
+		///   The return value is an expression (it can be the
+		///   same expression in some cases) or a new
+		///   expression that better represents this node.
+		///   
+		///   For example, optimizations of Unary (LiteralInt)
+		///   would return a new LiteralInt with a negated
+		///   value.
+		///   
+		///   If there is an error during semantic analysis,
+		///   then an error should be reported (using Report)
+		///   and a null value should be returned.
+		///   
+		///   There are two side effects expected from calling
+		///   Resolve(): the the field variable "eclass" should
+		///   be set to any value of the enumeration
+		///   `ExprClass' and the type variable should be set
+		///   to a valid type (this is the type of the
+		///   expression).
+		/// </remarks>
 		public abstract Expression DoResolve (EmitContext ec);
 
 		public virtual Expression DoResolveLValue (EmitContext ec, Expression right_side)
@@ -137,10 +136,14 @@ namespace CIR {
 			return DoResolve (ec);
 		}
 		
-		//
-		// Currently Resolve wraps DoResolve to perform sanity
-		// checking and assertion checking on what we expect from Resolve
-		//
+		/// <summary>
+		///   Resolves an expression and performs semantic analysis on it.
+		/// </summary>
+		///
+		/// <remarks>
+		///   Currently Resolve wraps DoResolve to perform sanity
+		///   checking and assertion checking on what we expect from Resolve.
+		/// </remarks>
 		public Expression Resolve (EmitContext ec)
 		{
 			Expression e = DoResolve (ec);
@@ -169,11 +172,15 @@ namespace CIR {
 			return e;
 		}
 
-		//
-		// Just like `Resolve' above, but this allows SimpleNames to be returned.
-		// This is used by MemberAccess to construct long names that can not be
-		// partially resolved (namespace-qualified names for example).
-		//
+		/// <summary>
+		///   Performs expression resolution and semantic analysis, but
+		///   allows SimpleNames to be returned.
+		/// </summary>
+		///
+		/// <remarks>
+		///   This is used by MemberAccess to construct long names that can not be
+		///   partially resolved (namespace-qualified names for example).
+		/// </remarks>
 		public Expression ResolveWithSimpleName (EmitContext ec)
 		{
 			Expression e = DoResolve (ec);
@@ -195,10 +202,14 @@ namespace CIR {
 			return e;
 		}
 		
-		//
-		// Currently ResolveLValue wraps DoResolveLValue to perform sanity
-		// checking and assertion checking on what we expect from Resolve
-		//
+		/// <summary>
+		///   Resolves an expression for LValue assignment
+		/// </summary>
+		///
+		/// <remarks>
+		///   Currently ResolveLValue wraps DoResolveLValue to perform sanity
+		///   checking and assertion checking on what we expect from Resolve
+		/// </remarks>
 		public Expression ResolveLValue (EmitContext ec, Expression right_side)
 		{
 			Expression e = DoResolveLValue (ec, right_side);
@@ -227,31 +238,29 @@ namespace CIR {
 			return e;
 		}
 		
-		// <summary>
-		//   Emits the code for the expression
-		// </summary>
-		//
-		// <remarks>
-		// 
-		//   The Emit method is invoked to generate the code
-		//   for the expression.  
-		//
-		// </remarks>
+		/// <summary>
+		///   Emits the code for the expression
+		/// </summary>
+		///
+		/// <remarks>
+		///   The Emit method is invoked to generate the code
+		///   for the expression.  
+		/// </remarks>
 		public abstract void Emit (EmitContext ec);
 
-		// <summary>
-		//   This method should perform a reduction of the expression.  This should
-		//   never return null.
-		// </summary>
+		/// <summary>
+		///   This method should perform a reduction of the expression.  This should
+		///   never return null.
+		/// </summary>
 		public virtual Expression Reduce (EmitContext ec)
 		{
 			return this;
 		}
 
-		// <summary>
-		//   Protected constructor.  Only derivate types should
-		//   be able to be created
-		// </summary>
+		/// <summary>
+		///   Protected constructor.  Only derivate types should
+		///   be able to be created
+		/// </summary>
 
 		protected Expression ()
 		{
@@ -259,9 +268,9 @@ namespace CIR {
 			type = null;
 		}
 
-		// <summary>
-		//   Returns a literalized version of a literal FieldInfo
-		// </summary>
+		/// <summary>
+		///   Returns a literalized version of a literal FieldInfo
+		/// </summary>
 		public static Expression Literalize (object v, Type t)
 		{
 			if (t == TypeManager.int32_type)
@@ -293,9 +302,9 @@ namespace CIR {
 						     "), details: " + v);
 		}
 
-		// 
-		// Returns a fully formed expression after a MemberLookup
-		//
+		/// <summary>
+		///   Returns a fully formed expression after a MemberLookup
+		/// </summary>
 		static Expression ExprClassFromMemberInfo (EmitContext ec, MemberInfo mi, Location loc)
 		{
 			if (mi is EventInfo)
@@ -467,10 +476,10 @@ namespace CIR {
 			return null;
 		}
 
-		// <summary>
-		//   Handles expressions like this: decimal d; d = 1;
-		//   and changes them into: decimal d; d = new System.Decimal (1);
-		// </summary>
+		/// <summary>
+		///   Handles expressions like this: decimal d; d = 1;
+		///   and changes them into: decimal d; d = new System.Decimal (1);
+		/// </summary>
 		static Expression InternalTypeConstructor (EmitContext ec, Expression expr, Type target)
 		{
 			ArrayList args = new ArrayList ();
@@ -483,13 +492,12 @@ namespace CIR {
 			return ne.Resolve (ec);
 		}
 
-		// <summary>
-		//   Implicit Numeric Conversions.
-		//
-		//   expr is the expression to convert, returns a new expression of type
-		//   target_type or null if an implicit conversion is not possible.
-		//
-		// </summary>
+		/// <summary>
+		///   Implicit Numeric Conversions.
+		///
+		///   expr is the expression to convert, returns a new expression of type
+		///   target_type or null if an implicit conversion is not possible.
+		/// </summary>
 		static public Expression ImplicitNumericConversion (EmitContext ec, Expression expr,
 								    Type target_type, Location loc)
 		{
@@ -654,10 +662,10 @@ namespace CIR {
 			return null;
 		}
 
-		// <summary>
-		//  Determines if a standard implicit conversion exists from
-		//  expr_type to target_type
-		// </summary>
+		/// <summary>
+		///  Determines if a standard implicit conversion exists from
+		///  expr_type to target_type
+		/// </summary>
 		public static bool StandardConversionExists (Type expr_type, Type target_type)
 		{
 			if (expr_type == target_type)
@@ -827,11 +835,11 @@ namespace CIR {
 			return false;
 		}
 		
-		// <summary>
-		//  Finds "most encompassed type" according to the spec (13.4.2)
-		//  amongst the methods in the MethodGroupExpr which convert from a
-		//  type encompassing source_type
-		// </summary>
+		/// <summary>
+		///  Finds "most encompassed type" according to the spec (13.4.2)
+		///  amongst the methods in the MethodGroupExpr which convert from a
+		///  type encompassing source_type
+		/// </summary>
 		static Type FindMostEncompassedType (MethodGroupExpr me, Type source_type)
 		{
 			Type best = null;
@@ -855,11 +863,11 @@ namespace CIR {
 			return best;
 		}
 		
-		// <summary>
-		//  Finds "most encompassing type" according to the spec (13.4.2)
-		//  amongst the methods in the MethodGroupExpr which convert to a
-		//  type encompassed by target_type
-		// </summary>
+		/// <summary>
+		///  Finds "most encompassing type" according to the spec (13.4.2)
+		///  amongst the methods in the MethodGroupExpr which convert to a
+		///  type encompassed by target_type
+		/// </summary>
 		static Type FindMostEncompassingType (MethodGroupExpr me, Type target)
 		{
 			Type best = null;
@@ -885,27 +893,27 @@ namespace CIR {
 		}
 		
 
-		// <summary>
-		//  User-defined Implicit conversions
-		// </summary>
+		/// <summary>
+		///  User-defined Implicit conversions
+		/// </summary>
 		static public Expression ImplicitUserConversion (EmitContext ec, Expression source,
 								 Type target, Location loc)
 		{
 			return UserDefinedConversion (ec, source, target, loc, false);
 		}
 
-		// <summary>
-		//  User-defined Explicit conversions
-		// </summary>
+		/// <summary>
+		///  User-defined Explicit conversions
+		/// </summary>
 		static public Expression ExplicitUserConversion (EmitContext ec, Expression source,
 								 Type target, Location loc)
 		{
 			return UserDefinedConversion (ec, source, target, loc, true);
 		}
 		
-		// <summary>
-		//   User-defined conversions
-		// </summary>
+		/// <summary>
+		///   User-defined conversions
+		/// </summary>
 		static public Expression UserDefinedConversion (EmitContext ec, Expression source,
 								Type target, Location loc,
 								bool look_for_explicit)
@@ -1030,11 +1038,11 @@ namespace CIR {
 			return null;
 		}
 		
-		// <summary>
-		//   Converts implicitly the resolved expression `expr' into the
-		//   `target_type'.  It returns a new expression that can be used
-		//   in a context that expects a `target_type'. 
-		// </summary>
+		/// <summary>
+		///   Converts implicitly the resolved expression `expr' into the
+		///   `target_type'.  It returns a new expression that can be used
+		///   in a context that expects a `target_type'. 
+		/// </summary>
 		static public Expression ConvertImplicit (EmitContext ec, Expression expr,
 							  Type target_type, Location loc)
 		{
@@ -1070,16 +1078,16 @@ namespace CIR {
 		}
 
 		
-		// <summary>
-		//   Attempts to apply the `Standard Implicit
-		//   Conversion' rules to the expression `expr' into
-		//   the `target_type'.  It returns a new expression
-		//   that can be used in a context that expects a
-		//   `target_type'.
-		//
-		//   This is different from `ConvertImplicit' in that the
-		//   user defined implicit conversions are excluded. 
-		// </summary>
+		/// <summary>
+		///   Attempts to apply the `Standard Implicit
+		///   Conversion' rules to the expression `expr' into
+		///   the `target_type'.  It returns a new expression
+		///   that can be used in a context that expects a
+		///   `target_type'.
+		///
+		///   This is different from `ConvertImplicit' in that the
+		///   user defined implicit conversions are excluded. 
+		/// </summary>
 		static public Expression ConvertImplicitStandard (EmitContext ec, Expression expr,
 								  Type target_type, Location loc)
 		{
@@ -1105,11 +1113,12 @@ namespace CIR {
 			}
 			return null;
 		}
-		// <summary>
-		//   Attemps to perform an implict constant conversion of the IntLiteral
-		//   into a different data type using casts (See Implicit Constant
-		//   Expression Conversions)
-		// </summary>
+
+		/// <summary>
+		///   Attemps to perform an implict constant conversion of the IntLiteral
+		///   into a different data type using casts (See Implicit Constant
+		///   Expression Conversions)
+		/// </summary>
 		static protected Expression TryImplicitIntConversion (Type target_type, IntLiteral il)
 		{
 			int value = il.Value;
@@ -1146,11 +1155,11 @@ namespace CIR {
 			return null;
 		}
 
-		// <summary>
-		//   Attemptes to implicityly convert `target' into `type', using
-		//   ConvertImplicit.  If there is no implicit conversion, then
-		//   an error is signaled
-		// </summary>
+		/// <summary>
+		///   Attemptes to implicityly convert `target' into `type', using
+		///   ConvertImplicit.  If there is no implicit conversion, then
+		///   an error is signaled
+		/// </summary>
 		static public Expression ConvertImplicitRequired (EmitContext ec, Expression target,
 								  Type type, Location loc)
 		{
@@ -1169,9 +1178,9 @@ namespace CIR {
 			return null;
 		}
 
-		// <summary>
-		//   Performs the explicit numeric conversions
-		// </summary>
+		/// <summary>
+		///   Performs the explicit numeric conversions
+		/// </summary>
 		static Expression ConvertNumericExplicit (EmitContext ec, Expression expr,
 							  Type target_type)
 		{
@@ -1372,10 +1381,10 @@ namespace CIR {
 			return null;
 		}
 
-		// <summary>
-		//  Returns whether an explicit reference conversion can be performed
-		//  from source_type to target_type
-		// </summary>
+		/// <summary>
+		///  Returns whether an explicit reference conversion can be performed
+		///  from source_type to target_type
+		/// </summary>
 		static bool ExplicitReferenceConversionExists (Type source_type, Type target_type)
 		{
 			bool target_is_value_type = target_type.IsValueType;
@@ -1464,9 +1473,9 @@ namespace CIR {
 			return false;
 		}
 
-		// <summary>
-		//   Implements Explicit Reference conversions
-		// </summary>
+		/// <summary>
+		///   Implements Explicit Reference conversions
+		/// </summary>
 		static Expression ConvertReferenceExplicit (Expression source, Type target_type)
 		{
 			Type source_type = source.Type;
@@ -1571,10 +1580,10 @@ namespace CIR {
 			return null;
 		}
 		
-		// <summary>
-		//   Performs an explicit conversion of the expression `expr' whose
-		//   type is expr.Type to `target_type'.
-		// </summary>
+		/// <summary>
+		///   Performs an explicit conversion of the expression `expr' whose
+		///   type is expr.Type to `target_type'.
+		/// </summary>
 		static public Expression ConvertExplicit (EmitContext ec, Expression expr,
 							  Type target_type, Location loc)
 		{
@@ -1599,9 +1608,9 @@ namespace CIR {
 			return null;
 		}
 
-		// <summary>
-		//   Same as ConverExplicit, only it doesn't include user defined conversions
-		// </summary>
+		/// <summary>
+		///   Same as ConverExplicit, only it doesn't include user defined conversions
+		/// </summary>
 		static public Expression ConvertExplicitStandard (EmitContext ec, Expression expr,
 								  Type target_type, Location l)
 		{
@@ -1649,9 +1658,9 @@ namespace CIR {
 			throw new Exception ("Should not happen");
 		}
 		
-		// <summary>
-		//   Reports that we were expecting `expr' to be of class `expected'
-		// </summary>
+		/// <summary>
+		///   Reports that we were expecting `expr' to be of class `expected'
+		/// </summary>
 		protected void report118 (Location loc, Expression expr, string expected)
 		{
 			string kind = "Unknown";
@@ -1663,10 +1672,10 @@ namespace CIR {
 			       "' where an " + expected + " was expected");
 		}
 
-		// <summary>
-		//   This function tries to reduce the expression performing
-		//   constant folding and common subexpression elimination
-		// </summary>
+		/// <summary>
+		///   This function tries to reduce the expression performing
+		///   constant folding and common subexpression elimination
+		/// </summary>
 		static public Expression Reduce (EmitContext ec, Expression e)
 		{
 			//Console.WriteLine ("Calling reduce");
@@ -1674,38 +1683,36 @@ namespace CIR {
 		}
 	}
 
-	// <summary>
-	//   This is just a base class for expressions that can
-	//   appear on statements (invocations, object creation,
-	//   assignments, post/pre increment and decrement).  The idea
-	//   being that they would support an extra Emition interface that
-	//   does not leave a result on the stack.
-	// </summary>
-
+	/// <summary>
+	///   This is just a base class for expressions that can
+	///   appear on statements (invocations, object creation,
+	///   assignments, post/pre increment and decrement).  The idea
+	///   being that they would support an extra Emition interface that
+	///   does not leave a result on the stack.
+	/// </summary>
 	public abstract class ExpressionStatement : Expression {
 
-		// <summary>
-		//   Requests the expression to be emitted in a `statement'
-		//   context.  This means that no new value is left on the
-		//   stack after invoking this method (constrasted with
-		//   Emit that will always leave a value on the stack).
-		// </summary>
+		/// <summary>
+		///   Requests the expression to be emitted in a `statement'
+		///   context.  This means that no new value is left on the
+		///   stack after invoking this method (constrasted with
+		///   Emit that will always leave a value on the stack).
+		/// </summary>
 		public abstract void EmitStatement (EmitContext ec);
 	}
 
-	// <summary>
-	//   This kind of cast is used to encapsulate the child
-	//   whose type is child.Type into an expression that is
-	//   reported to return "return_type".  This is used to encapsulate
-	//   expressions which have compatible types, but need to be dealt
-	//   at higher levels with.
-	//
-	//   For example, a "byte" expression could be encapsulated in one
-	//   of these as an "unsigned int".  The type for the expression
-	//   would be "unsigned int".
-	//
-	// </summary>
-	
+	/// <summary>
+	///   This kind of cast is used to encapsulate the child
+	///   whose type is child.Type into an expression that is
+	///   reported to return "return_type".  This is used to encapsulate
+	///   expressions which have compatible types, but need to be dealt
+	///   at higher levels with.
+	///
+	///   For example, a "byte" expression could be encapsulated in one
+	///   of these as an "unsigned int".  The type for the expression
+	///   would be "unsigned int".
+	///
+	/// </summary>
 	public class EmptyCast : Expression {
 		protected Expression child;
 
@@ -1731,10 +1738,9 @@ namespace CIR {
 
 	}
 
-	// <summary>
-	//  This class is used to wrap literals which belong inside Enums
-	// </summary>
-
+	/// <summary>
+	///  This class is used to wrap literals which belong inside Enums
+	/// </summary>
 	public class EnumLiteral : Literal {
 		Expression child;
 
@@ -1769,12 +1775,12 @@ namespace CIR {
 		}
 	}
 
-	// <summary>
-	//   This kind of cast is used to encapsulate Value Types in objects.
-	//
-	//   The effect of it is to box the value type emitted by the previous
-	//   operation.
-	// </summary>
+	/// <summary>
+	///   This kind of cast is used to encapsulate Value Types in objects.
+	///
+	///   The effect of it is to box the value type emitted by the previous
+	///   operation.
+	/// </summary>
 	public class BoxedCast : EmptyCast {
 
 		public BoxedCast (Expression expr)
@@ -1797,11 +1803,11 @@ namespace CIR {
 		}
 	}
 
-	// <summary>
-	//   This kind of cast is used to encapsulate a child expression
-	//   that can be trivially converted to a target type using one or 
-	//   two opcodes.  The opcodes are passed as arguments.
-	// </summary>
+	/// <summary>
+	///   This kind of cast is used to encapsulate a child expression
+	///   that can be trivially converted to a target type using one or 
+	///   two opcodes.  The opcodes are passed as arguments.
+	/// </summary>
 	public class OpcodeCast : EmptyCast {
 		OpCode op, op2;
 		bool second_valid;
@@ -1842,10 +1848,10 @@ namespace CIR {
 		
 	}
 
-	// <summary>
-	//   This kind of cast is used to encapsulate a child and cast it
-	//   to the class requested
-	// </summary>
+	/// <summary>
+	///   This kind of cast is used to encapsulate a child and cast it
+	///   to the class requested
+	/// </summary>
 	public class ClassCast : EmptyCast {
 		public ClassCast (Expression child, Type return_type)
 			: base (child, return_type)
@@ -1870,32 +1876,34 @@ namespace CIR {
 		
 	}
 	
-	//
-	// SimpleName expressions are initially formed of a single
-	// word and it only happens at the beginning of the expression.
-	//
-	// The expression will try to be bound to a Field, a Method
-	// group or a Property.  If those fail we pass the name to our
-	// caller and the SimpleName is compounded to perform a type
-	// lookup.  The idea behind this process is that we want to avoid
-	// creating a namespace map from the assemblies, as that requires
-	// the GetExportedTypes function to be called and a hashtable to
-	// be constructed which reduces startup time.  If later we find
-	// that this is slower, we should create a `NamespaceExpr' expression
-	// that fully participates in the resolution process. 
-	//
-	// For example `System.Console.WriteLine' is decomposed into
-	// MemberAccess (MemberAccess (SimpleName ("System"), "Console"), "WriteLine")
-	//
-	// The first SimpleName wont produce a match on its own, so it will
-	// be turned into:
-	// MemberAccess (SimpleName ("System.Console"), "WriteLine").
-	//
-	// System.Console will produce a TypeExpr match.
-	//
-	// The downside of this is that we might be hitting `LookupType' too many
-	// times with this scheme.
-	//
+	/// <summary>
+	///   SimpleName expressions are initially formed of a single
+	///   word and it only happens at the beginning of the expression.
+	/// </summary>
+	///
+	/// <remarks>
+	///   The expression will try to be bound to a Field, a Method
+	///   group or a Property.  If those fail we pass the name to our
+	///   caller and the SimpleName is compounded to perform a type
+	///   lookup.  The idea behind this process is that we want to avoid
+	///   creating a namespace map from the assemblies, as that requires
+	///   the GetExportedTypes function to be called and a hashtable to
+	///   be constructed which reduces startup time.  If later we find
+	///   that this is slower, we should create a `NamespaceExpr' expression
+	///   that fully participates in the resolution process. 
+	///   
+	///   For example `System.Console.WriteLine' is decomposed into
+	///   MemberAccess (MemberAccess (SimpleName ("System"), "Console"), "WriteLine")
+	///   
+	///   The first SimpleName wont produce a match on its own, so it will
+	///   be turned into:
+	///   MemberAccess (SimpleName ("System.Console"), "WriteLine").
+	///   
+	///   System.Console will produce a TypeExpr match.
+	///   
+	///   The downside of this is that we might be hitting `LookupType' too many
+	///   times with this scheme.
+	/// </remarks>
 	public class SimpleName : Expression {
 		public readonly string Name;
 		public readonly Location Location;
@@ -1945,12 +1953,12 @@ namespace CIR {
 			return e;
 		}
 		
+		// <remarks>
+		//   7.5.2: Simple Names. 
 		//
-		// 7.5.2: Simple Names. 
-		//
-		// Local Variables and Parameters are handled at
-		// parse time, so they never occur as SimpleNames.
-		//
+		//   Local Variables and Parameters are handled at
+		//   parse time, so they never occur as SimpleNames.
+		// </remarks>
 		public override Expression DoResolve (EmitContext ec)
 		{
 			Expression e;
@@ -2020,9 +2028,9 @@ namespace CIR {
 		}
 	}
 	
-	// <summary>
-	//   Fully resolved expression that evaluates to a type
-	// </summary>
+	/// <summary>
+	///   Fully resolved expression that evaluates to a type
+	/// </summary>
 	public class TypeExpr : Expression {
 		public TypeExpr (Type t)
 		{
@@ -2041,11 +2049,11 @@ namespace CIR {
 		}
 	}
 
-	// <summary>
-	//   MethodGroup Expression.
-	//  
-	//   This is a fully resolved expression that evaluates to a type
-	// </summary>
+	/// <summary>
+	///   MethodGroup Expression.
+	///  
+	///   This is a fully resolved expression that evaluates to a type
+	/// </summary>
 	public class MethodGroupExpr : Expression {
 		public MethodBase [] Methods;
 		Expression instance_expression = null;
@@ -2110,28 +2118,28 @@ namespace CIR {
 			return true;
 		}
 		
-		// <summary>
-		//   Removes any instance methods from the MethodGroup, returns
-		//   false if the resulting set is empty.
-		// </summary>
+		/// <summary>
+		///   Removes any instance methods from the MethodGroup, returns
+		///   false if the resulting set is empty.
+		/// </summary>
 		public bool RemoveInstanceMethods ()
 		{
 			return RemoveMethods (true);
 		}
 
-		// <summary>
-		//   Removes any static methods from the MethodGroup, returns
-		//   false if the resulting set is empty.
-		// </summary>
+		/// <summary>
+		///   Removes any static methods from the MethodGroup, returns
+		///   false if the resulting set is empty.
+		/// </summary>
 		public bool RemoveStaticMethods ()
 		{
 			return RemoveMethods (false);
 		}
 	}
 
-	// <summary>
-	//   Fully resolved expression that evaluates to a Field
-	// </summary>
+	/// <summary>
+	///   Fully resolved expression that evaluates to a Field
+	/// </summary>
 	public class FieldExpr : Expression, IAssignMethod, IMemoryLocation {
 		public readonly FieldInfo FieldInfo;
 		public Expression InstanceExpression;
@@ -2220,13 +2228,13 @@ namespace CIR {
 		}
 	}
 	
-	// <summary>
-	//   Expression that evaluates to a Property.  The Assign class
-	//   might set the `Value' expression if we are in an assignment.
-	//
-	//   This is not an LValue because we need to re-write the expression, we
-	//   can not take data from the stack and store it.  
-	// </summary>
+	/// <summary>
+	///   Expression that evaluates to a Property.  The Assign class
+	///   might set the `Value' expression if we are in an assignment.
+	///
+	///   This is not an LValue because we need to re-write the expression, we
+	///   can not take data from the stack and store it.  
+	/// </summary>
 	public class PropertyExpr : ExpressionStatement, IAssignMethod {
 		public readonly PropertyInfo PropertyInfo;
 		public readonly bool IsStatic;
@@ -2318,9 +2326,9 @@ namespace CIR {
 		}
 	}
 
-	// <summary>
-	//   Fully resolved expression that evaluates to a Expression
-	// </summary>
+	/// <summary>
+	///   Fully resolved expression that evaluates to a Expression
+	/// </summary>
 	public class EventExpr : Expression {
 		public readonly EventInfo EventInfo;
 		Location loc;
