@@ -41,7 +41,7 @@ namespace MonoTests.System.IO.IsolatedStorageTests {
 
 // naming a class with the same name as a namespace is a BAD idea
 #if NET_2_0
-	#if _MonoCS_
+	#if __MonoCS__
 	public class NonAbstractIsolatedStorage : IsolatedStorage {
 	#else
 	// VS.NET 2005 requires the class to be fully named - including global::

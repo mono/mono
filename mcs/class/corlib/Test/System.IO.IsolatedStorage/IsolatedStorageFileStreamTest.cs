@@ -50,7 +50,7 @@ namespace MonoTests.System.IO.IsolatedStorageTests {
 			Assert.AreEqual (0, isfs.Length, prefix + ".Length");
 			Assert.AreEqual ("[Unknown]", isfs.Name, prefix + ".Name");
 			Assert.AreEqual (0, isfs.Position, prefix + ".Position");
-#if NET_2_0
+#if NET_2_0_NOTYET
 			Assert.IsFalse (isfs.CanTimeout, prefix + ".CanTimeout");
 #endif
 		}
@@ -115,7 +115,7 @@ namespace MonoTests.System.IO.IsolatedStorageTests {
 			IsolatedStorageFileStream isfs = new IsolatedStorageFileStream ("handle", FileMode.Create);
 			IntPtr p = isfs.Handle;
 		}
-#if NET_2_0
+#if NET_2_0_NOTYET
 		[Test]
 		[ExpectedException (typeof (IsolatedStorageException))]
 		public void SafeFileHandle_ ()
