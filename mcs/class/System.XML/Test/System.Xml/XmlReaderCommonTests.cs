@@ -1372,5 +1372,35 @@ namespace MonoTests.System.Xml
 			AssertEquals (0xD800, (int) xmlReader.Value [0]);
 			AssertEquals (0xDD00, (int) xmlReader.Value [1]);
 		}
+
+		[Test]
+		public void ReadOuterXmlOnEndElement ()
+		{
+			string xml = "<root><foo></foo></root>";
+			RunTest (xml, new TestMethod (ReadOuterXmlOnEndElement));
+		}
+
+		public void ReadOuterXmlOnEndElement (XmlReader xmlReader)
+		{
+			xmlReader.Read ();
+			xmlReader.Read ();
+			xmlReader.Read ();
+			AssertEquals (String.Empty, xmlReader.ReadOuterXml ());
+		}
+
+		[Test]
+		public void ReadInnerXmlOnEndElement ()
+		{
+			string xml = "<root><foo></foo></root>";
+			RunTest (xml, new TestMethod (ReadInnerXmlOnEndElement));
+		}
+
+		public void ReadInnerXmlOnEndElement (XmlReader xmlReader)
+		{
+			xmlReader.Read ();
+			xmlReader.Read ();
+			xmlReader.Read ();
+			AssertEquals (String.Empty, xmlReader.ReadInnerXml ());
+		}
 	}
 }
