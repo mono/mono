@@ -148,6 +148,8 @@ namespace System.Windows.Forms {
 
 		protected override void OnCreateControl() {
 			base.OnCreateControl();
+			// MS seems to call this here, it gets the whole databinding process started
+			OnBindingContextChanged (EventArgs.Empty);
 		}
 
 		[EditorBrowsable (EditorBrowsableState.Advanced)]

@@ -21,7 +21,7 @@
 //
 // Authors:
 //	Peter Bartok	pbartok@novell.com
-//
+//      Jackson Harper  jackson@ximian.com
 //
 
 
@@ -33,8 +33,12 @@ using System.ComponentModel;
 namespace System.Windows.Forms {
 	[DefaultEvent("CollectionChanged")]
 	public class BindingsCollection : BaseCollection {
-		#region Public Constructors
-		internal BindingsCollection () {
+
+		private static int count = 0;
+		private int id = count++;
+#region Public Constructors
+		internal BindingsCollection ()
+		{
 		}
 		#endregion	// Public Constructors
 
@@ -105,6 +109,11 @@ namespace System.Windows.Forms {
 			}
 		}
 		#endregion	// Public Instance Methods
+
+		internal bool Contains (Binding binding)
+		{
+			return List.Contains (binding);
+		}
 
 		#region Events
 		public event CollectionChangeEventHandler	CollectionChanged;

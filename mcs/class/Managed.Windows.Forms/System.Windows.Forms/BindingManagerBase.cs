@@ -17,10 +17,11 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (c) 2004 Novell, Inc.
+// Copyright (c) 2004-2005 Novell, Inc.
 //
 // Authors:
 //	Peter Bartok	pbartok@novell.com
+//      Jackson Harper  jackson@ximian.com
 //
 
 
@@ -32,8 +33,12 @@ using System.Collections;
 namespace System.Windows.Forms {
 	public abstract class BindingManagerBase {
 		private BindingsCollection	bindings;
+		private bool pulling_data;
 
-		#region Public Constructors
+		private static int count = 0;
+		private int id = count++;
+
+#region Public Constructors
 		public BindingManagerBase() {
 		}
 		#endregion	// Public Constructors
@@ -46,10 +51,10 @@ namespace System.Windows.Forms {
 		#region Public Instance Properties
 		public BindingsCollection Bindings {
 			get {
-				if (this.bindings==null) {
-					this.bindings=new BindingsCollection();
+				if (bindings == null) {
+					bindings = new BindingsCollection ();
 				}
-				return this.bindings;
+				return bindings;
 			}
 		}
 
@@ -93,23 +98,47 @@ namespace System.Windows.Forms {
 			throw new NotImplementedException();
 		}
 
-		protected internal abstract string GetListName(System.Collections.ArrayList listAccessors);
+		protected internal abstract string GetListName (System.Collections.ArrayList listAccessors);
 
-		protected internal abstract void OnCurrentChanged(EventArgs e);
+		protected internal abstract void OnCurrentChanged (EventArgs e);
 
-		[MonoTODO]
-		protected void PullData() {
-			throw new NotImplementedException();
+		protected void PullData()
+		{
+			pulling_data = true;
+			try {
+				foreach (Binding binding in Bindings)
+					binding.PullData ();
+			} finally {
+				pulling_data = false;
+			}
 		}
 
-		[MonoTODO]
-		protected void PushData() {
-			throw new NotImplementedException();
+		protected void PushData()
+		{
+			if (pulling_data)
+				return;
+
+			foreach (Binding binding in Bindings)
+				binding.PushData ();
 		}
 
 		protected abstract void UpdateIsBinding();
 		#endregion	// Protected Instance Methods
 
+		internal void AddBinding (Binding binding)
+		{
+			if (Bindings.Contains (binding))
+				return;
+			Bindings.Add (binding);
+		}
+
+		internal void UpdateBindings ()
+		{
+			// TODO: Maybe I should do foreach (binding) pull; push
+			PullData ();
+			PushData ();
+		}
+		
 		#region Events
 		public event EventHandler CurrentChanged;
 		public event EventHandler PositionChanged;

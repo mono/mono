@@ -21,80 +21,134 @@
 //
 // Authors:
 //	Peter Bartok	pbartok@novell.com
+//      Jackson Harper  jackson@ximian.com
 //
 
-
-// COMPLETE
 
 using System.ComponentModel;
 
 namespace System.Windows.Forms {
-	[TypeConverter(typeof(ListBindingConverter))]
+
+	[TypeConverter (typeof (ListBindingConverter))]
 	public class Binding {
-		internal string			property_name;
-		internal object			data_source;
-		internal BindingManagerBase	binding_manager_base;
-		internal BindingMemberInfo	binding_member_info;
-		internal Control		control;
-		internal bool			is_binding;
+
+		private string property_name;
+		private object data_source;
+		private string data_member;
+		private BindingMemberInfo binding_member_info;
+		private Control control;
+
+		private BindingManagerBase manager;
+		private PropertyDescriptor prop_desc;
+		private object data;
 
 		#region Public Constructors
-		public Binding(string propertyName, object dataSource, string dataMember) {
-			this.property_name=propertyName;
-			this.data_source=dataSource;
-			this.binding_member_info=new BindingMemberInfo(dataMember);
+		public Binding (string propertyName, object dataSource, string dataMember)
+		{
+			property_name = propertyName;
+			data_source = dataSource;
+			data_member = dataMember;
+			binding_member_info = new BindingMemberInfo (dataMember);
 		}
 		#endregion	// Public Constructors
 
 		#region Public Instance Properties
 		public BindingManagerBase BindingManagerBase {
 			get {
-				return this.binding_manager_base;
+				return manager;
 			}
 		}
 
 		public BindingMemberInfo BindingMemberInfo {
 			get {
-				return this.binding_member_info;
+				return binding_member_info;
 			}
 		}
 
-		[DefaultValue(null)]
+		[DefaultValue (null)]
 		public Control Control {
 			get {
-				return this.control;
+				return control;
 			}
 		}
 
 		public object DataSource {
 			get {
-				return this.data_source;
+				return data_source;
 			}
 		}
 
+                [MonoTODO]
 		public bool IsBinding {
 			get {
-				return this.is_binding;
+				return false;
 			}
 		}
 
-		[DefaultValue("")]
+		[DefaultValue ("")]
 		public string PropertyName {
 			get {
-				return this.property_name;
+				return property_name;
 			}
 		}
 		#endregion	// Public Instance Properties
 
 		#region Protected Instance Methods
-		protected virtual void OnFormat(ConvertEventArgs cevent) {
-			if (Format!=null) Format(this, cevent);
+		protected virtual void OnFormat (ConvertEventArgs cevent)
+		{
+			if (Format!=null)
+				Format (this, cevent);
 		}
 
-		protected virtual void OnParse(ConvertEventArgs cevent) {
-			if (Parse!=null) Parse(this, cevent);
+		protected virtual void OnParse (ConvertEventArgs cevent)
+		{
+			if (Parse!=null)
+				Parse (this, cevent);
 		}
+
+
+
 		#endregion	// Protected Instance Methods
+
+		
+		internal void SetControl (Control control)
+		{
+			if (control == this.control)
+				return;
+
+			prop_desc = TypeDescriptor.GetProperties (control).Find (property_name, false);
+
+			if (prop_desc == null)
+				throw new ArgumentException (String.Concat ("Cannot bind to property '", property_name, "' on target control."));
+			if (prop_desc.IsReadOnly)
+				throw new ArgumentException (String.Concat ("Cannot bind to property '", property_name, "' because it is read only."));
+			this.control = control;
+		}
+
+		internal void Check (BindingContext binding_context)
+		{
+			if (control == null)
+				return;
+
+			manager = control.BindingContext [data_source, property_name];
+			manager.AddBinding (this);
+
+			PropertyDescriptor pd = TypeDescriptor.GetProperties (manager.Current).Find (data_member, false);
+			prop_desc.SetValue (control, pd.GetValue (manager.Current));
+
+			PullData ();
+		}
+
+		internal void PushData ()
+		{
+			prop_desc.SetValue (control, data);
+		}
+
+		internal void PullData ()
+		{
+			PropertyDescriptor pd = TypeDescriptor.GetProperties (manager.Current).Find (data_member, false);
+			data = pd.GetValue (manager.Current);
+		}
 
 		#region Events
 		public event ConvertEventHandler Format;

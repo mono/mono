@@ -1,3 +1,17 @@
+2005-02-22  Jackson Harper  <jackson@ximian.com>
+
+	* BindingContext.cs:
+	* ControlBindingsCollection.cs:
+	* CurrencyManager.cs:
+	* Binding.cs:
+	* BindingManagerBase.cs: Initial implementation
+	* BindingsCollection.cs: Add an internal contains method that the
+	BindingManagerBase uses to ensure bindings aren't added twice to
+	the collection.
+	* PropertyManager.cs: Stubbed out.
+	* Control.cs: 
+	* ContainerControl.cs: Hook up databinding
+	
 2005-02-22  Geoff Norton  <gnorton@customerdna.com>
 
 	* XplatUIOSX.cs:

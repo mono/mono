@@ -112,6 +112,8 @@ namespace System.Windows.Forms
 		private Graphics		dc_mem;			// Graphics context for double buffering
 		private Bitmap			bmp_mem;		// Bitmap for double buffering control
 
+		private ControlBindingsCollection data_bindings;
+
 		#endregion	// Local Variables
 
 		#region Private Classes
@@ -892,6 +894,18 @@ namespace System.Windows.Forms
 				}
 			}
 		}
+
+		private void CheckDataBindings ()
+		{
+			if (data_bindings == null)
+				return;
+
+			BindingContext binding_context = BindingContext;
+			foreach (Binding binding in data_bindings) {
+				binding.Check (binding_context);
+			}
+		}
+
 		#endregion	// Private & Internal Methods
 
 		#region Public Static Properties
@@ -1064,9 +1078,13 @@ namespace System.Windows.Forms
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public virtual BindingContext BindingContext {
 			get {
+				if (binding_context != null)
+					return binding_context;
+				if (Parent == null)
+					return null;
+				binding_context = Parent.BindingContext;
 				return binding_context;
 			}
-
 			set {
 				if (binding_context != value) {
 					binding_context = value;
@@ -1299,16 +1317,17 @@ namespace System.Windows.Forms
 			}
 		}
 
-#if haveDataBindings
+
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		[Browsable(false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public ControlBindingsCollection DataBindings {
 			get {
-				throw new NotImplementedException();
+				if (data_bindings == null)
+					data_bindings = new ControlBindingsCollection (this);
+				return data_bindings;
 			}
 		}
-#endif
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		[Browsable(false)]
@@ -3389,7 +3408,10 @@ namespace System.Windows.Forms
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void OnBindingContextChanged(EventArgs e) {
-			if (BindingContextChanged!=null) BindingContextChanged(this, e);
+			CheckDataBindings ();
+			if (BindingContextChanged!=null) {
+				BindingContextChanged(this, e);
+			}
 			for (int i=0; i<child_controls.Count; i++) child_controls[i].OnParentBindingContextChanged(e);
 		}
 

@@ -21,86 +21,168 @@
 //
 // Authors:
 //	Peter Bartok	pbartok@novell.com
-//
+//	Jackson Harper	jackson@ximian.com
 
-// NOT COMPLETE
 
 using System.Collections;
+using System.Globalization;
 using System.ComponentModel;
 
+
 namespace System.Windows.Forms {
+
 	[DefaultEvent("CollectionChanged")]
 	public class BindingContext : ICollection, IEnumerable {
-		#region Public Constructors
-		public BindingContext() {
-		}
-		#endregion	// Public Constructors
 
-		#region Public Instance Properties
-		[MonoTODO]
+		private Hashtable managers;
+
+		private class ManagerEntry {
+
+			private object source;
+			private string member;
+
+			private int member_hash;
+
+			public ManagerEntry (object source, string member)
+			{
+				this.source = source;
+				if (member == null)
+					member = String.Empty;
+				this.member = member.ToLower (CultureInfo.InvariantCulture);
+
+				
+				member_hash = this.member.GetHashCode ();
+				if (member_hash == 0)
+					member_hash = 1;
+			}
+
+			public override bool Equals (object b)
+			{
+				ManagerEntry o = (ManagerEntry) b;
+
+				return (o.source == source && o.member_hash == member_hash);
+			}
+
+			public override int GetHashCode ()
+			{
+				return member_hash * source.GetHashCode ();
+			}
+
+			public override string ToString ()
+			{
+				return source.ToString () + " + " + member.ToString ();
+			}
+		}
+
+		public BindingContext () 
+		{
+			managers = new Hashtable ();
+		}
+
 		public bool IsReadOnly {
 			get {
-				throw new NotImplementedException();
+				return false;
 			}
 		}
 
-		public BindingManagerBase this[object dataSource] {
+		public BindingManagerBase this [object dataSource] {
 			get {
-				return this[dataSource, String.Empty];
+				return this [dataSource, String.Empty];
 			}
 		}
 
-		[MonoTODO]
-		public BindingManagerBase this[object dataSource, string dataMember] {
+		public BindingManagerBase this [object data_source, string data_member] {
 			get {
-				throw new NotImplementedException();
+				ManagerEntry e = CreateEntry (data_source, data_member);
+				BindingManagerBase res = managers [e] as BindingManagerBase;
+
+				if (res != null)
+					return res;
+				res = AddManager (data_source, data_member);
+				return res;
 			}
 		}
 
-		
-		#endregion	// Public Instance Properties
+		private BindingManagerBase AddManager (object data_source, string data_member)
+		{
+			BindingManagerBase res = CreateBindingManager (data_source, data_member);
+			managers.Add (CreateEntry (data_source, data_member), res);
+			managers.Add (CreateEntry (data_source, String.Empty), res);
+
+			return res;
+		}
+
+		private BindingManagerBase CreateBindingManager (object data_source, 
+			string data_member)
+		{
+			if (data_source is IList || 
+				data_source is IListSource ||
+				data_source is IBindingList) {
+				CurrencyManager res = new CurrencyManager (data_source);
+				return res;
+			}
+
+			return new PropertyManager (data_source);
+		}
 
 		#region Public Instance Methods
-		public bool Contains(object dataSource) {
-			return Contains(dataSource, String.Empty);
+		public bool Contains(object dataSource)
+		{
+			return Contains (dataSource, String.Empty);
 		}
 
-		[MonoTODO]
-		public bool Contains(object dataSource, string dataMember) {
-			throw new NotImplementedException();
+		public bool Contains (object dataSource, string dataMember)
+		{
+			ManagerEntry entry = CreateEntry (dataSource, dataMember);
+
+			return managers.ContainsKey (entry);
 		}
 		#endregion	// Public Instance Methods
 
 		#region Protected Instance Methods
-		protected internal void Add(object dataSource, BindingManagerBase listManager) {
-			AddCore(dataSource, listManager);
+
+		protected internal void Add (object dataSource, BindingManagerBase listManager)
+		{
+			AddCore (dataSource, listManager);
+			OnCollectionChanged (new CollectionChangeEventArgs (CollectionChangeAction.Add, dataSource));
 		}
 
-		[MonoTODO]
-		protected virtual void AddCore(object dataSource, BindingManagerBase listManager) {
-			throw new NotImplementedException();
+		protected virtual void AddCore (object dataSource, BindingManagerBase listManager)
+		{
+			if (dataSource == null)
+				throw new ArgumentNullException ("dataSource");
+			if (listManager == null)
+				throw new ArgumentNullException ("listManager");
+			managers.Add (CreateEntry (dataSource, String.Empty), listManager);
 		}
 
-		protected internal void Clear() {
+		protected internal void Clear ()
+		{
 			ClearCore();
+			OnCollectionChanged (new CollectionChangeEventArgs (CollectionChangeAction.Refresh, null));
 		}
 
-		[MonoTODO]
-		protected virtual void ClearCore() {
-			throw new NotImplementedException();
+		protected virtual void ClearCore ()
+		{
+			managers.Clear ();
 		}
 
-		protected virtual void OnCollectionChanged(System.ComponentModel.CollectionChangeEventArgs ccevent) {
-			if (CollectionChanged!=null) CollectionChanged(this, ccevent);
+		protected virtual void OnCollectionChanged(System.ComponentModel.CollectionChangeEventArgs ccevent)
+		{
+			if (CollectionChanged != null) {
+				CollectionChanged (this, ccevent);
+			}
 		}
 
-		protected internal void Remove(object dataSource) {
-			RemoveCore(dataSource);
+		protected internal void Remove (object dataSource)
+		{
+			RemoveCore (dataSource);
+			OnCollectionChanged (new CollectionChangeEventArgs (CollectionChangeAction.Remove, dataSource));
 		}
 
-		[MonoTODO]
-		protected virtual void RemoveCore(object dataSource) {
-			throw new NotImplementedException();
+		protected virtual void RemoveCore (object dataSource)
+		{
+			managers.Remove (CreateEntry (dataSource, String.Empty));
 		}
 		#endregion	// Protected Instance Methods
 
@@ -109,15 +191,14 @@ namespace System.Windows.Forms {
 		#endregion	// Events
 
 		#region ICollection Interfaces
-		[MonoTODO]
-		void ICollection.CopyTo(Array array, int index) {
-			throw new NotImplementedException();
+		void ICollection.CopyTo (Array array, int index)
+		{
+			managers.CopyTo (array, index);
 		}
 
-		[MonoTODO]
 		int ICollection.Count {
 			get {
-				throw new NotImplementedException();
+				return managers.Count;
 			}
 		}
 
@@ -129,7 +210,7 @@ namespace System.Windows.Forms {
 
 		object ICollection.SyncRoot {
 			get {
-				return this;
+				return null;
 			}
 		}
 
@@ -141,5 +222,10 @@ namespace System.Windows.Forms {
 			throw new NotImplementedException();
 		}
 		#endregion	// IEnumerable Interfaces
+
+		private ManagerEntry CreateEntry (object dataSource, string dataMember)
+		{
+			return new ManagerEntry (dataSource, dataMember);
+		}
 	}
 }
