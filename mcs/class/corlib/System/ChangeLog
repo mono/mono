@@ -1,3 +1,7 @@
+2002-02-05  Duncan Mak  <duncan@ximian.com>
+
+	* DllNotFoundException.cs: Inherits from TypeLoadException, not SystemException.
+
 2002-02-05  Dietmar Maurer  <dietmar@ximian.com>
 
 	* Enum.cs: added more functionality (GetName, ToObject, Equals)
