@@ -1,3 +1,7 @@
+2003-05-18  Ben Maurer <bmaurer@users.sourceforge.net>
+	* *.cs Cleaned up tests to work around bug that prevented 
+	System.IO from seeing directories starting with '.'
+
 2003-05-15  Ville Palo <vi64pa@kolumbus.fi>
 
 	* FileStreamTest.cs: more cleaning

@@ -389,7 +389,7 @@ namespace MonoTests.System.IO
 	[ExpectedException(typeof(ArgumentException))]
 	public void CtorArgumentExceptionCannotWrite ()
 	{
-		string path = TempFolder + "/.BinaryReaderTestFile.1";
+		string path = TempFolder + "/BinaryReaderTestFile.1";
 		DeleteFile (path);
 
 		FileStream file = new FileStream (path, FileMode.CreateNew, FileAccess.Read);
@@ -406,7 +406,7 @@ namespace MonoTests.System.IO
 	[ExpectedException(typeof(ArgumentException))]
 	public void CtorArgumentExceptionClosedStream ()
 	{
-		string path = TempFolder + "/.BinaryReaderTestFile.2";
+		string path = TempFolder + "/BinaryReaderTestFile.2";
 		DeleteFile (path);
 
 		FileStream file = new FileStream (path, FileMode.CreateNew, FileAccess.Write);

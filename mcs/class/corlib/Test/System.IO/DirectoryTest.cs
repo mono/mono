@@ -47,14 +47,14 @@ public class DirectoryTest {
 	[Test]
 	public void CreateDirectory ()
 	{
-		string path = TempFolder + "/.DirectoryTest.Test.1";
+		string path = TempFolder + "/DirectoryTest.Test.1";
 		DeleteDirectory (path);
 		
 		DirectoryInfo info = Directory.CreateDirectory (path);
 		Assertion.AssertEquals ("test#01", true, info.Exists);
 		Assertion.AssertEquals ("test#02", ".1", info.Extension);
-		Assertion.AssertEquals ("test#03", true, info.FullName.EndsWith (".DirectoryTest.Test.1"));
-		Assertion.AssertEquals ("test#04", ".DirectoryTest.Test.1", info.Name);
+		Assertion.AssertEquals ("test#03", true, info.FullName.EndsWith ("DirectoryTest.Test.1"));
+		Assertion.AssertEquals ("test#04", "DirectoryTest.Test.1", info.Name);
 
 		DeleteDirectory (path);		
 	}
@@ -93,7 +93,7 @@ public class DirectoryTest {
 	[ExpectedException(typeof(ArgumentException))]
 	public void CreateDirectoryArgumentException3 ()
 	{
-		string path = TempFolder + "/.DirectoryTest.Test";
+		string path = TempFolder + "/DirectoryTest.Test";
 		DeleteDirectory (path);
 
 		path += Path.InvalidPathChars [0];
@@ -106,7 +106,7 @@ public class DirectoryTest {
 	[Test]
 	public void Delete ()
 	{
-		string path = TempFolder + "/.DirectoryTest.Test.Delete.1";
+		string path = TempFolder + "/DirectoryTest.Test.Delete.1";
 		DeleteDirectory (path);
 		
 		Directory.CreateDirectory (path);
@@ -151,7 +151,7 @@ public class DirectoryTest {
 	[ExpectedException(typeof(ArgumentException))]
 	public void DeleteArgumentException3 ()
 	{
-		string path = TempFolder + "/.DirectoryTest.Test.4";
+		string path = TempFolder + "/DirectoryTest.Test.4";
 		DeleteDirectory (path);
 		
 		path += Path.InvalidPathChars [0];
@@ -169,7 +169,7 @@ public class DirectoryTest {
 	[ExpectedException(typeof(DirectoryNotFoundException))]
 	public void DeleteDirectoryNotFoundException ()
 	{
-		string path = TempFolder + "/.DirectoryTest.Test.5";
+		string path = TempFolder + "/DirectoryTest.Test.5";
 		DeleteDirectory (path);
 		
 		Directory.Delete (path);		
@@ -179,11 +179,11 @@ public class DirectoryTest {
 	[ExpectedException(typeof(IOException))]
 	public void DeleteArgumentException4 ()
 	{
-		string path = TempFolder + "/.DirectoryTest.Test.6";
+		string path = TempFolder + "/DirectoryTest.Test.6";
 		DeleteDirectory (path);
 		
 		Directory.CreateDirectory (path);
-		File.Create (path + "/.DirectoryTest.Test.6");
+		File.Create (path + "/DirectoryTest.Test.6");
 
 		DeleteDirectory (path);	
 	}
@@ -212,7 +212,7 @@ public class DirectoryTest {
 	[ExpectedException(typeof(IOException))]
 	public void GetCreationTimeException3 ()
 	{
-		string path = TempFolder + "/.DirectoryTest.GetCreationTime.1";
+		string path = TempFolder + "/DirectoryTest.GetCreationTime.1";
 		DeleteDirectory (path);
 		
 		Directory.GetCreationTime (path);
@@ -250,7 +250,7 @@ public class DirectoryTest {
 	[ExpectedException(typeof(IOException))]
 	public void GetCreationTimeUtcException3 ()
 	{
-		string path = TempFolder + "/.DirectoryTest.GetCreationTimeUtc.1";
+		string path = TempFolder + "/DirectoryTest.GetCreationTimeUtc.1";
 		DeleteDirectory (path);
 		
 		Directory.GetCreationTimeUtc (path);
@@ -288,7 +288,7 @@ public class DirectoryTest {
 	[ExpectedException(typeof(IOException))]
 	public void GetLastAccessTimeException3 ()
 	{
-		string path = TempFolder + "/.DirectoryTest.GetLastAccessTime.1";
+		string path = TempFolder + "/DirectoryTest.GetLastAccessTime.1";
 		DeleteDirectory (path);
 		
 		Directory.GetLastAccessTime (path);
@@ -326,7 +326,7 @@ public class DirectoryTest {
 	[ExpectedException(typeof(IOException))]
 	public void GetLastAccessTimeUtcException3 ()
 	{
-		string path = TempFolder + "/.DirectoryTest.GetLastAccessTimeUtc.1";
+		string path = TempFolder + "/DirectoryTest.GetLastAccessTimeUtc.1";
 		DeleteDirectory (path);
 		
 		Directory.GetLastAccessTimeUtc (path);
@@ -364,7 +364,7 @@ public class DirectoryTest {
 	[ExpectedException(typeof(IOException))]
 	public void GetLastWriteTimeException3 ()
 	{
-		string path = TempFolder + "/.DirectoryTest.GetLastWriteTime.1";
+		string path = TempFolder + "/DirectoryTest.GetLastWriteTime.1";
 		DeleteDirectory (path);
 		
 		Directory.GetLastWriteTime (path);
@@ -402,7 +402,7 @@ public class DirectoryTest {
 	[ExpectedException(typeof(IOException))]
 	public void GetLastWriteTimeUtcException3 ()
 	{
-		string path = TempFolder + "/.DirectoryTest.GetLastWriteTimeUtc.1";
+		string path = TempFolder + "/DirectoryTest.GetLastWriteTimeUtc.1";
 		DeleteDirectory (path);
 		Directory.GetLastAccessTimeUtc (path);
 	}
@@ -424,8 +424,8 @@ public class DirectoryTest {
 	[Test]
 	public void Move ()
 	{
-		string path = TempFolder + "/.DirectoryTest.Test.9";
-		string path2 = TempFolder + "/.DirectoryTest.Test.10";
+		string path = TempFolder + "/DirectoryTest.Test.9";
+		string path2 = TempFolder + "/DirectoryTest.Test.10";
 		DeleteDirectory (path);
 		DeleteDirectory (path2);
 		
@@ -445,7 +445,7 @@ public class DirectoryTest {
 	[ExpectedException(typeof(IOException))]
 	public void MoveException1 ()
 	{
-		string path = TempFolder + "/.DirectoryTest.Test.8";
+		string path = TempFolder + "/DirectoryTest.Test.8";
 		DeleteDirectory (path);		
 		Directory.Move (path, path);		
 	}
@@ -454,7 +454,7 @@ public class DirectoryTest {
 	[ExpectedException(typeof(ArgumentException))]
 	public void MoveException2 ()
 	{
-		string path = TempFolder + "/.DirectoryTest.Test.11";
+		string path = TempFolder + "/DirectoryTest.Test.11";
 		DeleteDirectory (path);		
 		Directory.Move ("", path);		
 	}
@@ -463,7 +463,7 @@ public class DirectoryTest {
 	[ExpectedException(typeof(ArgumentException))]
 	public void MoveException3 ()
 	{
-		string path = TempFolder + "/.DirectoryTest.Test.12";
+		string path = TempFolder + "/DirectoryTest.Test.12";
 		DeleteDirectory (path);		
 		Directory.Move ("             ", path);		
 	}
@@ -472,9 +472,9 @@ public class DirectoryTest {
 	[ExpectedException(typeof(ArgumentException))]
 	public void MoveException4 ()
 	{
-		string path = TempFolder + "/.DirectoryTest.Test.13";
+		string path = TempFolder + "/DirectoryTest.Test.13";
 		path += Path.InvalidPathChars [0];
-		string path2 = TempFolder + "/.DirectoryTest.Test.13";		
+		string path2 = TempFolder + "/DirectoryTest.Test.13";		
 		DeleteDirectory (path);
 		DeleteDirectory (path2);
 
@@ -486,7 +486,7 @@ public class DirectoryTest {
 	[ExpectedException(typeof(DirectoryNotFoundException))]
 	public void MoveException5 ()
 	{
-		string path = TempFolder + "/.DirectoryTest.Test.14";
+		string path = TempFolder + "/DirectoryTest.Test.14";
 		DeleteDirectory (path);
 		
 		Directory.Move (path, path + "Test.Test");		
@@ -496,7 +496,7 @@ public class DirectoryTest {
 	[ExpectedException(typeof(IOException))]
 	public void MoveException6 ()
 	{
-		string path = TempFolder + "/.DirectoryTest.Test.15";
+		string path = TempFolder + "/DirectoryTest.Test.15";
 		DeleteDirectory (path);
 
 		Directory.CreateDirectory (path);		
@@ -507,8 +507,8 @@ public class DirectoryTest {
 	[ExpectedException(typeof(IOException))]
 	public void MoveException7 ()
 	{
-		string path = TempFolder + "/.DirectoryTest.Test.16";
-		string path2 = TempFolder + "/.DirectoryTest.Test.17";
+		string path = TempFolder + "/DirectoryTest.Test.16";
+		string path2 = TempFolder + "/DirectoryTest.Test.17";
 		
 		DeleteDirectory (path);
 		DeleteDirectory (path2);		
@@ -524,7 +524,7 @@ public class DirectoryTest {
 	[Test]
 	public void CreationTime ()
 	{
-		string path = TempFolder + "/.DirectoryTest.CreationTime.1";
+		string path = TempFolder + "/DirectoryTest.CreationTime.1";
 		DeleteDirectory (path);
 		
 		Directory.CreateDirectory (path);
@@ -569,7 +569,7 @@ public class DirectoryTest {
 	[Test]
 	public void LastAccessTime ()
 	{
-		string path = TempFolder + "/.DirectoryTest.AccessTime.1";
+		string path = TempFolder + "/DirectoryTest.AccessTime.1";
 		DeleteDirectory (path);
 		
 		Directory.CreateDirectory (path);
@@ -614,7 +614,7 @@ public class DirectoryTest {
 	[Test]
 	public void LastWriteTime ()
 	{
-		string path = TempFolder + "/.DirectoryTest.WriteTime.1";
+		string path = TempFolder + "/DirectoryTest.WriteTime.1";
 		DeleteDirectory (path);		
 		
 		Directory.CreateDirectory (path);
@@ -677,7 +677,7 @@ public class DirectoryTest {
 	public void SetLastWriteTimeException3 ()
 	{
 		DateTime time = new DateTime (2003, 4, 6, 6, 4, 2);		
-		string path = TempFolder + "/.DirectoryTest.SetLastWriteTime.2";
+		string path = TempFolder + "/DirectoryTest.SetLastWriteTime.2";
 		DeleteDirectory (path);
 		
 		Directory.SetLastWriteTime (path, time);
@@ -704,7 +704,7 @@ public class DirectoryTest {
 	public void SetLastWriteTimeException6 ()
 	{
 		DateTime time = new DateTime (1003, 4, 6, 6, 4, 2);
-		string path = TempFolder + "/.DirectoryTest.SetLastWriteTime.1";
+		string path = TempFolder + "/DirectoryTest.SetLastWriteTime.1";
 
 		if (!Directory.Exists (path))			
 			Directory.CreateDirectory (path);
@@ -734,7 +734,7 @@ public class DirectoryTest {
 	public void SetLastWriteTimeUtcException3 ()
 	{
 		DateTime time = new DateTime (2003, 4, 6, 6, 4, 2);		
-		string path = TempFolder + "/.DirectoryTest.SetLastWriteTimeUtc.2";
+		string path = TempFolder + "/DirectoryTest.SetLastWriteTimeUtc.2";
 		DeleteDirectory (path);
 		Directory.SetLastWriteTimeUtc (path, time);
 	}
@@ -760,7 +760,7 @@ public class DirectoryTest {
 	public void SetLastWriteTimeUtcException6 ()
 	{
 		DateTime time = new DateTime (1000, 4, 6, 6, 4, 2);
-		string path = TempFolder + "/.DirectoryTest.SetLastWriteTimeUtc.1";
+		string path = TempFolder + "/DirectoryTest.SetLastWriteTimeUtc.1";
 
 		if (!Directory.Exists (path))
 			Directory.CreateDirectory (path);
@@ -789,7 +789,7 @@ public class DirectoryTest {
 	public void SetLastAccessTimeException3 ()
 	{
 		DateTime time = new DateTime (2003, 4, 6, 6, 4, 2);		
-		string path = TempFolder + "/.DirectoryTest.SetLastAccessTime.2";
+		string path = TempFolder + "/DirectoryTest.SetLastAccessTime.2";
 		DeleteDirectory (path);
 		
 		Directory.SetLastAccessTime (path, time);
@@ -816,7 +816,7 @@ public class DirectoryTest {
 	public void SetLastAccessTimeException6 ()
 	{
 		DateTime time = new DateTime (1003, 4, 6, 6, 4, 2);
-		string path = TempFolder + "/.DirectoryTest.SetLastAccessTime.1";
+		string path = TempFolder + "/DirectoryTest.SetLastAccessTime.1";
 
 		if (!Directory.Exists (path))			
 			Directory.CreateDirectory (path);
@@ -846,7 +846,7 @@ public class DirectoryTest {
 	public void SetLastAccessTimeUtcException3 ()
 	{
 		DateTime time = new DateTime (2003, 4, 6, 6, 4, 2);		
-		string path = TempFolder + "/.DirectoryTest.SetLastAccessTimeUtc.2";
+		string path = TempFolder + "/DirectoryTest.SetLastAccessTimeUtc.2";
 		DeleteDirectory (path);
 		Directory.SetLastAccessTimeUtc (path, time);
 	}
@@ -872,7 +872,7 @@ public class DirectoryTest {
 	public void SetLastAccessTimeUtcException6 ()
 	{
 		DateTime time = new DateTime (1000, 4, 6, 6, 4, 2);
-		string path = TempFolder + "/.DirectoryTest.SetLastAccessTimeUtc.1";
+		string path = TempFolder + "/DirectoryTest.SetLastAccessTimeUtc.1";
 
 		if (!Directory.Exists (path))
 			Directory.CreateDirectory (path);
@@ -900,7 +900,7 @@ public class DirectoryTest {
 	public void SetCreationTimeException3 ()
 	{
 		DateTime time = new DateTime (2003, 4, 6, 6, 4, 2);		
-		string path = TempFolder + "/.DirectoryTest.SetCreationTime.2";
+		string path = TempFolder + "/DirectoryTest.SetCreationTime.2";
 		DeleteDirectory (path);
 		
 		Directory.SetCreationTime (path, time);
@@ -927,7 +927,7 @@ public class DirectoryTest {
 	public void SetCreationTimeException6 ()
 	{
 		DateTime time = new DateTime (1003, 4, 6, 6, 4, 2);
-		string path = TempFolder + "/.DirectoryTest.SetCreationTime.1";
+		string path = TempFolder + "/DirectoryTest.SetCreationTime.1";
 
 		if (!Directory.Exists (path))			
 			Directory.CreateDirectory (path);
@@ -957,7 +957,7 @@ public class DirectoryTest {
 	public void SetCreationTimeUtcException3 ()
 	{
 		DateTime time = new DateTime (2003, 4, 6, 6, 4, 2);		
-		string path = TempFolder + "/.DirectoryTest.SetLastAccessTimeUtc.2";
+		string path = TempFolder + "/DirectoryTest.SetLastAccessTimeUtc.2";
 		DeleteDirectory (path);
 		Directory.SetCreationTimeUtc (path, time);
 	}
@@ -983,7 +983,7 @@ public class DirectoryTest {
 	public void SetCreationTimeUtcException6 ()
 	{
 		DateTime time = new DateTime (1000, 4, 6, 6, 4, 2);
-		string path = TempFolder + "/.DirectoryTest.SetLastAccessTimeUtc.1";
+		string path = TempFolder + "/DirectoryTest.SetLastAccessTimeUtc.1";
 
 		if (!Directory.Exists (path))
 			Directory.CreateDirectory (path);

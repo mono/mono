@@ -98,7 +98,7 @@ public class BinaryWriterTest {
 	[ExpectedException(typeof(ArgumentException))]
 	public void CtorArgumentExceptionStreamCannotWrite ()
 	{
-		string path = TempFolder + "/.BinaryWriterTest.1";
+		string path = TempFolder + "/BinaryWriterTest.1";
 		DeleteFile (path);
 			
 		FileStream stream = new FileStream (path, FileMode.OpenOrCreate, FileAccess.Read);

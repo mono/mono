@@ -27,7 +27,7 @@ public class StreamWriterTest : TestCase
 		Directory.CreateDirectory (TempFolder);
 		
 		_thisCodeFileName = TempFolder + Path.DirectorySeparatorChar + "AFile.txt";
-		_codeFileName = TempFolder + "StreamWriterTest.temp";
+		_codeFileName = TempFolder + Path.DirectorySeparatorChar + "StreamWriterTest.temp";
 	}
 	
 	~StreamWriterTest ()
