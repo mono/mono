@@ -323,13 +323,16 @@ System.ComponentModel.Design.Serialization/IDesignerLoaderService.cs
 System.ComponentModel.Design.Serialization/InstanceDescriptor.cs
 System.Configuration/AppSettingsReader.cs
 System.Configuration/ConfigHelper.cs
+System.Configuration/ConfigurationAllowDefinition.cs
 System.Configuration/ConfigurationElement.cs
 System.Configuration/ConfigurationException.cs
 System.Configuration/ConfigurationProperty.cs
+System.Configuration/ConfigurationPropertyAttribute.cs
 System.Configuration/ConfigurationPropertyCollection.cs
 System.Configuration/ConfigurationPropertyFlags.cs
 System.Configuration/ConfigurationSettings.cs
 System.Configuration/ConfigurationUpdateMode.cs
+System.Configuration/ConfigurationUserLevel.cs
 System.Configuration/ConfigurationValidationAttribute.cs
 System.Configuration/ConfigXmlDocument.cs
 System.Configuration/DictionarySectionHandler.cs
@@ -339,6 +342,9 @@ System.Configuration/IConfigXmlNode.cs
 System.Configuration/IgnoreSectionHandler.cs
 System.Configuration/NameValueFileSectionHandler.cs
 System.Configuration/NameValueSectionHandler.cs
+System.Configuration/PathLevel.cs
+System.Configuration/ProtectedConfigurationProvider.cs
+System.Configuration/ProviderBase.cs
 System.Configuration/SingleTagSectionHandler.cs
 System.Diagnostics/AlphabeticalEnumConverter.cs
 System.Diagnostics/BooleanSwitch.cs

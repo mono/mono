@@ -1,5 +1,5 @@
 //
-// System.Configuration.ConfigurationUpdateMode.cs
+// System.Configuration.ConfigurationProperty.cs
 //
 // Authors:
 //	Duncan Mak (duncan@ximian.com)

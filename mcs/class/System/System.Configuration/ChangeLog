@@ -1,3 +1,14 @@
+2004-08-11  Duncan Mak  <duncan@ximian.com>
+
+	* ProtectedConfigurationProvider.cs:
+	* ProviderBase.cs: Implemented.
+
+	* ConfigurationPropertyAttribute.cs: Implemented attribute.
+
+	* ConfigurationAllowDefinition.cs:
+	* ConfigurationUserLevel.cs:
+	* PathLevel.cs: Added enumerations.
+
 2004-08-07  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ConfigurationElement.cs,
