@@ -125,5 +125,11 @@ namespace Mono.CSharp
 		{
 			throw new InvalidOperationException ();
 		}
+
+		public override bool IsClsCompliaceRequired (DeclSpace ds)
+		{
+			return true;
+		}
+
 	}
 }
