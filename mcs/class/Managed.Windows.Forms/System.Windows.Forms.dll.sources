@@ -84,6 +84,12 @@ System.Windows.Forms/InputLanguage.cs
 System.Windows.Forms/InvalidateEventArgs.cs
 System.Windows.Forms/InvalidateEventHandler.cs
 System.Windows.Forms/ItemBoundsPortion.cs
+System.Windows.Forms/ItemChangedEventArgs.cs
+System.Windows.Forms/ItemChangedEventHandler.cs
+System.Windows.Forms/ItemCheckEventArgs.cs
+System.Windows.Forms/ItemCheckEventHandler.cs
+System.Windows.Forms/ItemDragEventArgs.cs
+System.Windows.Forms/ItemDragEventHandler.cs
 System.Windows.Forms/IWin32Window.cs
 System.Windows.Forms/IWindowTarget.cs
 System.Windows.Forms/KeyEventArgs.cs
@@ -92,6 +98,8 @@ System.Windows.Forms/KeyPressEventArgs.cs
 System.Windows.Forms/KeyPressEventHandler.cs
 System.Windows.Forms/Keys.cs
 System.Windows.Forms/Label.cs
+System.Windows.Forms/LabelEditEventArgs.cs
+System.Windows.Forms/LabelEditEventHandler.cs
 System.Windows.Forms/LayoutEventArgs.cs
 System.Windows.Forms/LayoutEventHandler.cs
 System.Windows.Forms/LinkArea.cs
