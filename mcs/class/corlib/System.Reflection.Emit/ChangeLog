@@ -1,4 +1,8 @@
 
+Fri Jan 11 19:00:29 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* MethodBuilder.cs, ConstructorBuilder.cs: save parameter info.
+
 Thu Jan 10 21:07:54 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	* ILGenerator.cs: handle type tokens (used for box opcode).

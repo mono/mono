@@ -23,6 +23,7 @@ namespace System.Reflection.Emit {
 		private int table_idx;
 		private CallingConventions call_conv;
 		private TypeBuilder type;
+		private ParameterBuilder[] pinfo;
 
 		internal ConstructorBuilder (TypeBuilder tb, MethodAttributes attributes, CallingConventions callingConvention, Type[] parameterTypes) {
 			attrs = attributes;
@@ -79,7 +80,10 @@ namespace System.Reflection.Emit {
 		public ParameterBuilder DefineParameter(int iSequence, ParameterAttributes attributes, string strParamName)
 		{
 			ParameterBuilder pb = new ParameterBuilder (this, iSequence, attributes, strParamName);
-			/* FIXME: add it to pinfo */
+			// check iSequence
+			if (pinfo == null)
+				pinfo = new ParameterBuilder [parameters.Length + 1];
+			pinfo [iSequence] = pb;
 			return pb;
 		}
 

@@ -114,7 +114,10 @@ namespace System.Reflection.Emit {
 		public ParameterBuilder DefineParameter (int position, ParameterAttributes attributes, string strParamName)
 		{
 			ParameterBuilder pb = new ParameterBuilder (this, position, attributes, strParamName);
-			/* FIXME: add it to pinfo */
+			// check position
+			if (pinfo == null)
+				pinfo = new ParameterBuilder [parameters.Length + 1];
+			pinfo [position] = pb;
 			return pb;
 		}
 
