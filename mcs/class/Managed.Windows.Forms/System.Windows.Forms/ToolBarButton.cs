@@ -29,9 +29,12 @@
 //     - DropDownMenu
 //     - Adding a button to two toolbars
 //
-// $Revision: 1.6 $
+// $Revision: 1.7 $
 // $Modtime: $
 // $Log: ToolBarButton.cs,v $
+// Revision 1.7  2004/09/09 11:23:05  ravindra
+// Changes in ToolBarButton need to make it's parent redraw.
+//
 // Revision 1.6  2004/08/27 22:12:56  ravindra
 // Added TypeConverter attribute.
 //
@@ -147,6 +150,8 @@ namespace System.Windows.Forms
 					return;
 
 				enabled = value;
+				if (parent != null)
+					parent.Redraw (false);
 			}
 		}
 
@@ -164,6 +169,8 @@ namespace System.Windows.Forms
 					return;
 
 				imageIndex = value;
+				if (parent != null)
+					parent.Redraw (true);
 			}
 		}
 
@@ -180,6 +187,8 @@ namespace System.Windows.Forms
 					return;
 
 				partialPush = value;
+				if (parent != null)
+					parent.Redraw (false);
 			}
 		}
 
@@ -191,7 +200,10 @@ namespace System.Windows.Forms
 					return;
 
 				pushed = value;
-				if (pushed) hilight = false;
+				if (pushed)
+					hilight = false;
+				if (parent != null)
+					parent.Redraw (false);
 			}
 		}
 
@@ -215,6 +227,8 @@ namespace System.Windows.Forms
 					return;
 
 				style = value;
+				if (parent != null)
+					parent.Redraw (true);
 			}
 		}
 
@@ -236,6 +250,8 @@ namespace System.Windows.Forms
 					return;
 
 				text = value;
+				if (parent != null)
+					parent.Redraw (true);
 			}
 		}
 
@@ -255,6 +271,8 @@ namespace System.Windows.Forms
 					return;
 
 				visible = value;
+				if (parent != null)
+					parent.Redraw (true);
 			}
 		}
 		#endregion
