@@ -87,7 +87,7 @@ namespace Microsoft.JScript {
 		internal override void Emit (EmitContext ec)
 		{
 			int n = ids.Count;
-			ILGenerator ig = ec.gc_ig;
+			ILGenerator ig = ec.ig;
 				
 			ig.Emit (OpCodes.Ldc_I4, n);
 			ig.Emit (OpCodes.Newarr, typeof (string));
