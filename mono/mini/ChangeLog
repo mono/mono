@@ -114,8 +114,6 @@ Tue May 6 14:38:22 CEST 2003 Paolo Molaro <lupus@ximian.com>
 	* driver.c: s/MONO_OPT_SAHRED/MONO_OPT_SHARED/g.
 	s/mini_set_defaults/mono_set_defaults/g.
 
-	* Makefile.am: Install mini.h, regalloc.h and mini-ops.h.
-
 2003-05-04  Martin Baulig  <martin@ximian.com>
 
 	* driver.c: s/mini_parse_default_optimizations/mono_parse_default_optimizations/g.
