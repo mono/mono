@@ -89,8 +89,16 @@ namespace System
 
 		public override Type GetInterface (string name, bool ignoreCase)
 		{
-			// FIXME
-			throw new NotImplementedException ();
+			if (name == null)
+				throw new ArgumentNullException ();
+
+			Type[] interfaces = GetInterfaces();
+
+			foreach (Type type in interfaces)
+				if (String.Compare (type.Name, name, ignoreCase) == 0)
+					return type;
+
+			return null;
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
