@@ -1,3 +1,8 @@
+2003-04-26  Miguel de Icaza  <miguel@ximian.com>
+
+	* XmlIncludeAttribute.cs: Make XmlIncludeAttribute have the
+	`AllowMultiple' flags.  
+
 2003-03-17  Miguel de Icaza  <miguel@ximian.com>
 
 	* XmlSerializer.cs: Do not use Bubblesort, use ArrayList.Sort.
@@ -13,7 +18,6 @@
 	* XmlSerializer.cs : Serialize() don't write xmldecl when WriteState is
 	  not WriteState.Start, and never call WriteEndDocument().
 
->>>>>>> 1.26
 2003-03-12  Elan Feingold <efeingold@mn.rr.com>
 
 	* XmlCustomFormatter.cs: Correct signature, Implement

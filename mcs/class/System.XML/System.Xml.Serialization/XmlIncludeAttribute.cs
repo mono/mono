@@ -11,11 +11,7 @@ using System;
 
 namespace System.Xml.Serialization
 {
-	/// <summary>
-	/// Summary description for XmlIncludeAttribute.
-	/// </summary>
-	[AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct |
-		 AttributeTargets.Method)]
+	[AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct | AttributeTargets.Method, AllowMultiple=true)]
 	public class XmlIncludeAttribute : Attribute
 	{
 		private Type type;
