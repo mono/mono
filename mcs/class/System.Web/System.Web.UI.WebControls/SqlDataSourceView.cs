@@ -58,14 +58,29 @@ namespace System.Web.UI.WebControls {
 			return ExecuteDelete (keys, oldValues);
 		}
 		
-		[MonoTODO ("Handle keys and oldValues and parameters")]
+		[MonoTODO ("Handle keys, oldValues, parameters and check for path for AccessDBFile")]
 		protected override int ExecuteDelete(IDictionary keys, IDictionary oldValues)
 		{
+			if (!CanDelete)
+				throw new NotSupportedException("Delete operation is not supported");
+			if (oldValues == null && conflictOptions == ConflictOptions.CompareAllValues)
+				throw new InvalidOperationException ("oldValues parameters should be specified when ConflictOptions is set to CompareAllValues");
 			command = new SqlCommand (this.DeleteCommand, connection);
+			SqlDataSourceCommandEventArgs cmdEventArgs = new SqlDataSourceCommandEventArgs (command);
+			OnDeleting (cmdEventArgs);
 			connection.Open ();
-			int result = command.ExecuteNonQuery ();
-			connection.Close ();
-			return result;			
+			Exception exception = null; 
+			int result = -1;;
+			try {
+				result = command.ExecuteNonQuery();
+			} catch (Exception e) {
+				exception = e;
+			}
+			SqlDataSourceStatusEventArgs statusEventArgs = new SqlDataSourceStatusEventArgs (command, result, exception);
+			OnDeleted (statusEventArgs);
+			if (exception != null)
+				throw exception;
+			return result;
 		}
 		
 		public int Insert (IDictionary values)
@@ -76,10 +91,23 @@ namespace System.Web.UI.WebControls {
 		[MonoTODO ("Handle values and parameters")]
 		protected override int ExecuteInsert (IDictionary values)
 		{
+			if (!CanInsert)
+				throw new NotSupportedException ("Insert operation is not supported");
 			command = new SqlCommand (this.InsertCommand, connection);
-			connection.Open ();
-			int result = command.ExecuteNonQuery ();
-			connection.Close ();
+			SqlDataSourceCommandEventArgs cmdEventArgs = new SqlDataSourceCommandEventArgs (command);
+			OnInserting (cmdEventArgs);
+			connection.Open();
+			Exception exception = null;
+			int result = -1;
+			try {
+				result = command.ExecuteNonQuery();
+			}catch (Exception e) {
+				exception = e;
+			}
+			SqlDataSourceStatusEventArgs statusEventArgs = new SqlDataSourceStatusEventArgs (command, result, exception);
+			OnInserted (statusEventArgs);
+			if (exception != null)
+				throw exception;
 			return result;
 		}
 				
@@ -135,13 +163,27 @@ namespace System.Web.UI.WebControls {
 		protected override int ExecuteUpdate (IDictionary keys,
 					IDictionary values, IDictionary oldValues)
 		{
-			command = new SqlCommand (this.UpdateCommand, connection);
+			if (!CanUpdate)
+				throw new NotSupportedException ("Update operation is not supported");
+			if (oldValues == null && conflictOptions == ConflictOptions.CompareAllValues)
+				throw new InvalidOperationException ("oldValues parameters should be specified when ConflictOptions is set to CompareAllValues");
+			command = new SqlCommand(this.UpdateCommand, connection);
+			SqlDataSourceCommandEventArgs cmdEventArgs = new SqlDataSourceCommandEventArgs (command);
+			OnUpdating (cmdEventArgs);
 			connection.Open ();
-			int result = command.ExecuteNonQuery();
-			connection.Close();
+			Exception exception = null;
+			int result = -1;
+			try {
+			 	result = command.ExecuteNonQuery ();
+			}catch (Exception e) {
+				exception = e;
+			}
+			SqlDataSourceStatusEventArgs statusEventArgs = new SqlDataSourceStatusEventArgs (command, result, exception);
+			OnUpdated (statusEventArgs);
+			if (exception != null)
+				throw exception;
 			return result;
 		}
-
 
 		void IStateManager.LoadViewState (object savedState)
 		{
@@ -271,7 +313,13 @@ namespace System.Web.UI.WebControls {
 		public override bool CanUpdate {
 			get { return UpdateCommand != ""; }
 		}
-	
+
+		ConflictOptions conflictOptions = ConflictOptions.OverwriteChanges;
+		public ConflictOptions ConflictDetection {
+			get { return conflictOptions; }
+			set { conflictOptions = value; }
+		}
+
 		void ParametersChanged (object source, EventArgs args)
 		{
 			OnDataSourceViewChanged (EventArgs.Empty);

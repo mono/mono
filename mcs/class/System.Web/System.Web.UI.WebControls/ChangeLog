@@ -1,3 +1,7 @@
+2004-11-22 Sanjay Gupta <gsanjay@novell.com>
+
+	* SqlDataSourceView.cs: Updated methods and added one property.
+	 
 2004-11-19 Sanjay Gupta <gsanjay@novell.com>
 
 	* AccessDataSource.cs: 
