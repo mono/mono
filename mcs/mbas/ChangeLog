@@ -1,4 +1,8 @@
 2004-04-13 Anirban Bhattacharjee <banirban@novell.com>
+	* mb-parser.jay: Removed 'static_constructor_declaration' - this is not required as 'constructor_declaration' implementation is good enough to handle static constructors too
+	* class.cs: Handling couple of negative scenarios related to static constructors and bug fixes
+
+2004-04-13 Anirban Bhattacharjee <banirban@novell.com>
 	* class.cs: Couple of negative scenario handling
 
 2004-04-13 Anirban Bhattacharjee <banirban@novell.com>

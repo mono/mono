@@ -594,7 +594,7 @@ namespace Mono.MonoBASIC {
 			if (is_static)
 				mods = Modifiers.STATIC;
 
-			c.ModFlags = mods;
+			c.ModFlags |= mods;
 
 			AddConstructor (c);
 			
@@ -2692,10 +2692,28 @@ namespace Mono.MonoBASIC {
 			if (!DoDefineParameters (parent))
 				return false;
 
-			if ((ModFlags & Modifiers.STATIC) != 0)
+			if ((ModFlags & Modifiers.STATIC) != 0) {
 				ca |= MethodAttributes.Static;
+
+				if (this.Parameters != Parameters.EmptyReadOnlyParameters)
+					Report.Error (
+						30479, Location, 
+						"Shared constructor can not have parameters");
+
+				if ((ModFlags & Modifiers.Accessibility) != 0)
+					Report.Error (
+						30480, Location, 
+						"Shared constructor can not be declared " +
+						"explicitly as public, private, friend or protected");
+
+				if (this.Initializer != null)
+					Report.Error (
+						30043, Location, 
+						"Keywords like MyBase, MyClass, Me are not " +
+						"valid inside a Shared Constructor");
+			}
 			else {
-				if (parent is Struct && ParameterTypes.Length == 0){
+				if (parent is Struct && ParameterTypes.Length == 0)	{
 					Report.Error (
 						568, Location, 
 						"Structs can not contain explicit parameterless " +
@@ -2706,12 +2724,13 @@ namespace Mono.MonoBASIC {
 
 				if ((ModFlags & Modifiers.PUBLIC) != 0)
 					ca |= MethodAttributes.Public;
-				else if ((ModFlags & Modifiers.PROTECTED) != 0){
+				else if ((ModFlags & Modifiers.PROTECTED) != 0)	{
 					if ((ModFlags & Modifiers.INTERNAL) != 0)
 						ca |= MethodAttributes.FamORAssem;
 					else 
 						ca |= MethodAttributes.Family;
-				} else if ((ModFlags & Modifiers.INTERNAL) != 0)
+				}
+				else if ((ModFlags & Modifiers.INTERNAL) != 0)
 					ca |= MethodAttributes.Assembly;
 				else if (IsDefault ())
 					ca |= MethodAttributes.Public;
@@ -2772,13 +2791,14 @@ namespace Mono.MonoBASIC {
 					parent.EmitFieldInitializers (ec);
 			}
 
-			if (this.ConstructorBuilder.Equals (Initializer.ParentConstructor))
-				Report.Error (
-					30297, Location,
-					"A constructor can not call itself" );
+			if (Initializer != null) {
+				if (this.ConstructorBuilder.Equals (Initializer.ParentConstructor))
+					Report.Error (
+						30297, Location,
+						"A constructor can not call itself" );
 
-			if (Initializer != null)
 				Initializer.Emit (ec);
+			}
 			
 			if ((ModFlags & Modifiers.STATIC) != 0)
 				parent.EmitFieldInitializers (ec);

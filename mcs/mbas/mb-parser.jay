@@ -937,7 +937,7 @@ module_member_declaration
 	;
 
 module_member_declarator
-	:  static_constructor_declaration
+	:  constructor_declaration
 	|  method_declaration
 	   { 
 	   	Method method = (Method) $1;
@@ -1638,6 +1638,9 @@ field_declaration
 		// Structure members are Public by default			
 		if ((current_container is Struct) && (mod == 0))
 			mod = Modifiers.PUBLIC;			
+		
+		if ((mod & Modifiers.Accessibility) == 0)
+			mod |= Modifiers.PRIVATE;
 					
 		foreach (VariableDeclaration var in (ArrayList) $2){
 			Location l = var.Location;
@@ -1743,7 +1746,8 @@ opt_empty_parens
 	: /* empty */
 	| OPEN_PARENS CLOSE_PARENS
 	;	
-	
+
+/*	
 static_constructor_declaration
 	: SHARED SUB NEW opt_empty_parens EOL
 	  {
@@ -1765,6 +1769,7 @@ static_constructor_declaration
 		current_local_parameters = null;
 	  }
 	  END SUB EOL
+*/
 	
 constructor_declaration
 	: SUB NEW OPEN_PARENS opt_formal_parameter_list CLOSE_PARENS EOL
