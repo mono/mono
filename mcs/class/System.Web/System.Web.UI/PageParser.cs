@@ -175,6 +175,7 @@ namespace System.Web.UI
 			GetString (atts, "ErrorPage", null);
 			GetString (atts, "Trace", null);
 			GetString (atts, "TraceMode", null);
+			GetString (atts, "SmartNavigation", null);
 			GetBool (atts, "ValidateRequest", true);
 
 			base.ProcessMainAttributes (atts);

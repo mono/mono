@@ -1,3 +1,7 @@
+2003-12-08  Jackson Harper <jackson@ximian.com>
+
+	* PageParser.cs: Ignore the SmartNavigation attribute for now.
+	
 2003-12-05  Jackson Harper <jackson@ximian.com>
 
 	* DataBinder.cs (GetIndexedPropertyValue): Check if container is
