@@ -1,3 +1,7 @@
+2004-05-07  Raja R Harinath  <rharinath@novell.com>
+
+	* cs0625.cs, cs0626.cs, cs0636.cs: New tests.
+
 2004-05-07 Marek Safar <marek.safar@seznam.cz>
 
 	* cs0579-4.cs, CS0579-4-1.cs,

@@ -1,10 +1,9 @@
-// CS0625: Instance field of type marked with StructLayout(LayoutKind.Explicit) must have a FieldOffset attribute.
+// CS0636: The FieldOffset attribute can only be placed on members of types marked with the StructLayout(LayoutKind.Explicit)
 
 using System;
 using System.Runtime.InteropServices;
 
-namespace cs0625 {
-	[StructLayout(LayoutKind.Explicit)]
+namespace cs0636 {
 	struct GValue {
 		public string name;
 		[ FieldOffset (4) ] public int value;

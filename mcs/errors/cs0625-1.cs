@@ -1,3 +1,5 @@
+// CS0625: Instance field of type marked with StructLayout(LayoutKind.Explicit) must have a FieldOffset attribute.
+
 using System;
 using System.Runtime.InteropServices;
 
