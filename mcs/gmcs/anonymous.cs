@@ -52,7 +52,7 @@ namespace Mono.CSharp {
 		//
 		// The modifiers applied to the method, we aggregate them
 		//
-		int method_modifiers = Modifiers.INTERNAL;
+		int method_modifiers = Modifiers.PRIVATE;
 		
 		//
 		// During the resolve stage of the anonymous method body,
