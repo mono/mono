@@ -2,6 +2,7 @@
 
 	* IFormatter.cs : New file
 	* ISerializationSurrogate.cs : New file
+	* ISurrogateSelector.cs : New file
 
 2002-05-01  Ravi Pratap  <ravi@ximian.com>
 
