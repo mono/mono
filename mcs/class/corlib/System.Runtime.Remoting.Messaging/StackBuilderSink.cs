@@ -43,10 +43,10 @@ namespace System.Runtime.Remoting.Messaging
 		MarshalByRefObject _target;
 		RealProxy _rp;
 
-		public StackBuilderSink (MarshalByRefObject obj)
+		public StackBuilderSink (MarshalByRefObject obj, bool forceInternalExecute)
 		{
 			_target = obj;
-			if (RemotingServices.IsTransparentProxy (obj))
+			if (!forceInternalExecute && RemotingServices.IsTransparentProxy (obj))
 				_rp = RemotingServices.GetRealProxy (obj);
 		}
 
@@ -76,8 +76,7 @@ namespace System.Runtime.Remoting.Messaging
 			
 			IMessage res;
 			if (_rp != null) res = _rp.Invoke (msg);
-			else res = RemotingServices.InternalExecuteMessage (_target, (IMethodCallMessage)msg);
-			res = RemotingServices.InternalExecuteMessage (_target, msg);
+			else res = RemotingServices.InternalExecuteMessage (_target, msg);
 			
 			replySink.SyncProcessMessage (res);
 		}

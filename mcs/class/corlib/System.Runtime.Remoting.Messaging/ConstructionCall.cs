@@ -35,6 +35,7 @@ using System.Collections;
 using System.Runtime.Remoting.Activation;
 using System.Runtime.Serialization;
 using System.Runtime.Remoting.Contexts;
+using System.Runtime.Remoting.Proxies;
 
 namespace System.Runtime.Remoting.Messaging
 {
@@ -47,6 +48,7 @@ namespace System.Runtime.Remoting.Messaging
 		Type _activationType;
 		string _activationTypeName;
 		bool _isContextOk;
+		[NonSerialized] RemotingProxy _sourceProxy;
 
 		public ConstructionCall(IMessage msg): base (msg)
 		{
@@ -151,6 +153,12 @@ namespace System.Runtime.Remoting.Messaging
 		public override IDictionary Properties 
 		{
 			get { return base.Properties; }
+		}
+		
+		internal RemotingProxy SourceProxy
+		{
+			get { return _sourceProxy; }
+			set {_sourceProxy = value; }
 		}
 	}
 }

@@ -1,3 +1,10 @@
+2004-09-22  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* ConstructionCall.cs: Added a Proxy property (which is the proxy that
+	  will reference the object being created).
+	* StackBuilderSink.cs: Take into account the forceInternalExecute
+	  parameter.
+
 2004-09-11 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* CallContext.cs: Use [ThreadStatic], it is much faster than the
