@@ -16,7 +16,7 @@ namespace System.Data.SqlTypes
 	{
 		[MonoTODO]
 		bool IsNull {
-			get { throw new NotImplementedException (); }
+			get;
 		}
 	}
 }

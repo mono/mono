@@ -11,6 +11,8 @@
 using System;
 using System.Data;
 using System.Data.Common;
+using System.Security;
+using System.Security.Permissions;
 
 namespace System.Data.SqlClient {
 

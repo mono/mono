@@ -286,15 +286,5 @@ namespace System.Data.SqlTypes
 		[MonoTODO]
 		public static implicit operator SqlBoolean(bool x) {
 		}
-
-		[MonoTODO]
-		~SqlBoolean() {
-			// FIXME: do the destructor to release resources
-		}
-
-
-
-
-
 	}
 }

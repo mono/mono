@@ -295,10 +295,5 @@ namespace System.Data.SqlTypes
 		[MonoTODO]
 		public static implicit operator SqlInt32(SqlInt16 x) {
 		}
-
-		[MonoTODO]
-		~SqlInt32() {
-			// FIXME: does this class need a Finalize?
-		}
 	}
 }

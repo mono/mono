@@ -335,10 +335,5 @@ namespace System.Data.SqlTypes
 		[MonoTODO]
 		public static implicit operator SqlString(string x) {
 		}
-
-		[MonoTODO]
-		~SqlString() {
-			// FIXME: does SqlString need a destructor?
-		}
 	}
 }
