@@ -207,7 +207,7 @@ System.ComponentModel/ReadOnlyAttribute.cs
 System.ComponentModel/Win32Exception.cs
 System.ComponentModel/ITypeDescriptorContext.cs
 System.ComponentModel/TypeConverter.cs
-System.ComponentModel/TypeConverterattribute.cs
+System.ComponentModel/TypeConverterAttribute.cs
 System/UriPartial.cs
 System/TODOAttribute.cs
 System/UriFormatException.cs
