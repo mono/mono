@@ -1,4 +1,10 @@
 
+Tue Feb 19 20:36:04 CET 2002 Paolo Molaro <lupus@ximian.com>
+
+	* Assembly.cs, Module.cs, MonoField.cs, MonoMethod.cs,
+	MonoProperty.cs, ParameterInfo.cs: Implemented custom attributes
+	related methods.
+
 Thu Feb 14 18:55:23 CET 2002 Paolo Molaro <lupus@ximian.com>
 
 	* TypeAttributes.cs: update to latest spec.

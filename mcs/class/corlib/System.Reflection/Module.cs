@@ -34,10 +34,10 @@ namespace System.Reflection {
 			return null;
 		}
 		public virtual object[] GetCustomAttributes(bool inherit) {
-			return null;
+			return MonoCustomAttrs.GetCustomAttributes (this, inherit);
 		}
 		public virtual object[] GetCustomAttributes(Type attributeType, bool inherit) {
-			return null;
+			return MonoCustomAttrs.GetCustomAttributes (this, attributeType, inherit);
 		}
 		public FieldInfo GetField(string name) {
 			return null;
@@ -81,7 +81,7 @@ namespace System.Reflection {
 			return null;
 		}
 		public virtual bool IsDefined( Type attributeType, bool inherit) {
-			return false;
+			return MonoCustomAttrs.IsDefined (this, attributeType, inherit);
 		}
 		public bool IsResource() {
 			return false;

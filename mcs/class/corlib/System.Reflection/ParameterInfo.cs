@@ -60,24 +60,18 @@ namespace System.Reflection
 			get {return PositionImpl;}
 		}
 
-		[MonoTODO]
 		public virtual object[] GetCustomAttributes (bool inherit)
 		{
-			// FIXME
-			return null;
+			return MonoCustomAttrs.GetCustomAttributes (this, inherit);
 		}
 
-		[MonoTODO]
 		public virtual object[] GetCustomAttributes (Type attributeType, bool inherit)
 		{
-			// FIXME
-			return null;
+			return MonoCustomAttrs.GetCustomAttributes (this, attributeType, inherit);
 		}
 
-		[MonoTODO]
 		public virtual bool IsDefined( Type attributeType, bool inherit) {
-			// FIXME
-			return false;
+			return MonoCustomAttrs.IsDefined (this, attributeType, inherit);
 		}
 	}
 }

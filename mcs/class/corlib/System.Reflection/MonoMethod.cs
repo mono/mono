@@ -60,6 +60,13 @@ namespace System.Reflection {
 			return MonoMethodInfo.get_parameter_info (mhandle);
 		}
 
+		/*
+		 * InternalInvoke() receives the parameters corretcly converted by the binder
+		 * to match the types of the method signature.
+		 */
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		internal extern Object InternalInvoke (Object obj, Object[] parameters);
+		
 		[MonoTODO]
 		public override Object Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture) {
 			throw new NotImplementedException ();
@@ -98,15 +105,15 @@ namespace System.Reflection {
 			}
 		}
 		
-		public override bool IsDefined (Type attribute_type, bool inherit) {
-			return false;
+		public override bool IsDefined (Type attributeType, bool inherit) {
+			return MonoCustomAttrs.IsDefined (this, attributeType, inherit);
 		}
 
 		public override object[] GetCustomAttributes( bool inherit) {
-			return null;
+			return MonoCustomAttrs.GetCustomAttributes (this, inherit);
 		}
 		public override object[] GetCustomAttributes( Type attributeType, bool inherit) {
-			return null;
+			return MonoCustomAttrs.GetCustomAttributes (this, attributeType, inherit);
 		}
 
 		public override string ToString () {

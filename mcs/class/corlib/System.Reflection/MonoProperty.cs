@@ -129,15 +129,15 @@ namespace System.Reflection {
 			MonoPropertyInfo.get_property_info (this, out info);
 			return info.set_method;
 		}
-		public override bool IsDefined (Type attribute_type, bool inherit) {
-			return false;
+		public override bool IsDefined (Type attributeType, bool inherit) {
+			return MonoCustomAttrs.IsDefined (this, attributeType, inherit);
 		}
 
 		public override object[] GetCustomAttributes( bool inherit) {
-			return null;
+			return MonoCustomAttrs.GetCustomAttributes (this, inherit);
 		}
 		public override object[] GetCustomAttributes( Type attributeType, bool inherit) {
-			return null;
+			return MonoCustomAttrs.GetCustomAttributes (this, attributeType, inherit);
 		}
 		public override object GetValue( object obj, BindingFlags invokeAttr, Binder binder, object[] index, CultureInfo culture) {
 			return null;

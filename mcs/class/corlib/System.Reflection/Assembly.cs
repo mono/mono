@@ -68,34 +68,19 @@ namespace System.Reflection {
 		{
 		}
 
-		public virtual Boolean IsDefined (Type attributeType)
+		public virtual bool IsDefined (Type attributeType, bool inherit)
 		{
-			return false;
+			return MonoCustomAttrs.IsDefined (this, attributeType, inherit);
 		}
 
-		public virtual bool IsDefined (Type attribute_type, bool inherit)
-		{
-			return false;
-		}
-
-		public virtual Object[] GetCustomAttributes ()
-		{
-			return null;
-		}
-
-		public virtual Object[] GetCustomAttributes (Type attributeType)
-		{
-			return null;
-		}
-		
 		public virtual object [] GetCustomAttributes (bool inherit)
 		{
-			return null;
+			return MonoCustomAttrs.GetCustomAttributes (this, inherit);
 		}
 
-		public virtual object [] GetCustomAttributes (Type attribute_type, bool inherit)
+		public virtual object [] GetCustomAttributes (Type attributeType, bool inherit)
 		{
-			return null;
+			return MonoCustomAttrs.GetCustomAttributes (this, attributeType, inherit);
 		}
 
 		public virtual void RemoveOnTypeResolve (ResolveEventHandler handler)
