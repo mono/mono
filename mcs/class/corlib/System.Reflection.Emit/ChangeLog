@@ -1,3 +1,7 @@
+2004-06-15  Gert Driesen <drieseng@users.sourceforge.net>
+
+	* MethodRental.cs: fixed value of JitOnDemand
+
 2004-06-09  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* FieldBuilder.cs: fixed implementation to match MS.NET,

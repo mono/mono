@@ -35,7 +35,7 @@ namespace System.Reflection.Emit
 	public sealed class MethodRental {
 
 		public const int JitImmediate = 1;
-		public const int JitOnDemand = 1;
+		public const int JitOnDemand = 0;
 
 		private MethodRental() {
 		}
