@@ -11,7 +11,7 @@ using System.Text.RegularExpressions;
 
 using NUnit.Framework;
 
-namespace Ximian.Mono.Tests.System.Text.RegularExpressions {
+namespace MonoTests.System.Text.RegularExpressions {
 	
 	public class PerlTest : TestCase {
 		public static ITest Suite {

@@ -8,7 +8,7 @@
 
 using System.Text.RegularExpressions;
 
-namespace Ximian.Mono.Tests.System.Text.RegularExpressions {
+namespace MonoTests.System.Text.RegularExpressions {
 
 	class PerlTrials {
 		// ported from perl-5.6.1/t/op/re_tests

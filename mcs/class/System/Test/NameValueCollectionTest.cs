@@ -11,13 +11,13 @@ using NUnit.Framework;
 
 
 
-namespace Ximian.Mono.Tests.System.Collections.Specialized {
+namespace MonoTests.System.Collections.Specialized {
 
 
 	/// <summary>Microsoft NameValueCollection test.</summary>
 	public class NameValueCollectionTest : TestCase {
 
-		public NameValueCollectionTest() : base("Ximian.Mono.Tests.System.Collections.Specialized.NameValueCollectionTest testsuite") {}
+		public NameValueCollectionTest() : base("MonoTests.System.Collections.Specialized.NameValueCollectionTest testsuite") {}
 		public NameValueCollectionTest(String name) : base(name) {}
 
 		public static ITest Suite {

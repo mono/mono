@@ -1,4 +1,4 @@
-// Ximian.Mono.Tests.AllTests, System.dll
+// MonoTests.AllTests, System.dll
 //
 // Author:
 //   Mario Martinez (mariom925@home.com)
@@ -7,7 +7,7 @@
 //
 
 using NUnit.Framework;
-namespace Ximian.Mono.Tests.System
+namespace MonoTests
 {
 	/// <summary>
 	///   Combines all unit tests for the System.dll assembly
@@ -20,11 +20,11 @@ namespace Ximian.Mono.Tests.System
 		public static ITest Suite {
 			get {
 				TestSuite suite = new TestSuite();
-				suite.AddTest (DnsTest.Suite);
-				suite.AddTest (Collections.Specialized.NameValueCollectionTest.Suite);
-				suite.AddTest (Collections.Specialized.StringCollectionTest.Suite);
-				suite.AddTest (Text.RegularExpressions.AllTests.Suite);
-        suite.AddTest (MonoTests.System.Diagnostics.AllTests.Suite);
+				suite.AddTest (System.Net.DnsTest.Suite);
+				suite.AddTest (System.Collections.Specialized.NameValueCollectionTest.Suite);
+				suite.AddTest (System.Collections.Specialized.StringCollectionTest.Suite);
+				suite.AddTest (System.Text.RegularExpressions.AllTests.Suite);
+			        suite.AddTest (System.Diagnostics.AllTests.Suite);
 				return suite;
 			}
 		}

@@ -19,7 +19,7 @@ using System.Net.Sockets;
 using System.Threading;
 using System.Collections;
 
-namespace Ximian.Mono.Tests.System {
+namespace MonoTests.System.Net {
 
 public class DnsTest: TestCase {
         
@@ -30,7 +30,7 @@ public class DnsTest: TestCase {
                 noneExistingSite = "www.hopefullydoesnotexist.dk";
         private uint site1IP = 2180692201, site2IP = 2195808260; // Big-Endian
         
-        public DnsTest(): base("Ximian.Mono.Tests.System.Net.DnsTest testsuite") { }
+        public DnsTest(): base("MonoTests.System.Net.DnsTest testsuite") { }
         public DnsTest(String name): base(name) { }
 
         public static ITest Suite {

@@ -11,7 +11,7 @@ using NUnit.Framework;
 
 
 
-namespace Ximian.Mono.Tests.System.Collections.Specialized {
+namespace MonoTests.System.Collections.Specialized {
 
 
 	public class BasicOperationsTest : TestCase {
@@ -19,7 +19,7 @@ namespace Ximian.Mono.Tests.System.Collections.Specialized {
 		protected NameValueCollection nvc;
 		private static Random rnd;
 
-		public BasicOperationsTest() : base("Ximian.Mono.Tests.System.Collections.Specialized.BasicOperationsTest testsuite") {}
+		public BasicOperationsTest() : base("MonoTests.System.Collections.Specialized.BasicOperationsTest testsuite") {}
 		public BasicOperationsTest(String name) : base(name) {}
 
 		protected override void SetUp() {

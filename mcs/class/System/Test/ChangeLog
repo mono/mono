@@ -1,3 +1,17 @@
+2002-05-05  Nick Drochak  <ndrochak@gol.com>
+
+	* AllTests.cs:
+	* BasicOperationsTest.cs:
+	* DnsTest.cs:
+	* NameValueCollectionTest.cs:
+	* StringCollectionTest.cs:
+	* TheTests.cs:
+	* System.Text.RegularExpressions/AllTests.cs:
+	* System.Text.RegularExpressions/PerlTest.cs:
+	* System.Text.RegularExpressions/PerlTrials.cs:
+	* System.Text.RegularExpressions/RegexTrial.cs: Fix Namespace
+	inconsistancies.  Use MonoTests instead of Ximian.Mono.Tests
+
 2002-04-07  Jonathan Pryor  <jonpryor@vt.edu>
 
 	* AllTests.cs: Added System.Diagnostics tests, as they work now.

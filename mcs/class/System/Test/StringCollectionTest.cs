@@ -8,7 +8,7 @@
 using NUnit.Framework;
 using System.Collections.Specialized;
 
-namespace Ximian.Mono.Tests.System.Collections.Specialized {
+namespace MonoTests.System.Collections.Specialized {
 	public class StringCollectionTest : TestCase {
 
 		public static ITest Suite {
@@ -28,7 +28,7 @@ namespace Ximian.Mono.Tests.System.Collections.Specialized {
 			"ringo"
 		};
 		
-		public StringCollectionTest() : base("Ximian.Mono.Tests.System.Collections.Specialized.StringCollectionTest testsuite") {}
+		public StringCollectionTest() : base("MonoTests.System.Collections.Specialized.StringCollectionTest testsuite") {}
 		public StringCollectionTest(string name) : base(name) {}
 		
 		protected override void SetUp() {

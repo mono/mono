@@ -3,9 +3,9 @@ using System;
 using System.Threading;
 using System.Globalization;
 
-namespace Ximian.Mono.Tests.System
+namespace MonoTests.System
 {
-	public class RunDnsTest : DnsTest
+	public class RunDnsTest : Net.DnsTest
 	{
 		protected override void RunTest ()
 		{
@@ -20,7 +20,7 @@ namespace Ximian.Mono.Tests.System
 	}
 }
 
-namespace Ximian.Mono.Tests.System.Collections.Specialized.Collections.Specialized
+namespace MonoTests.System.Collections.Specialized.Collections.Specialized
 {
 	public class RunStringCollectionTest : StringCollectionTest
 	{
@@ -52,8 +52,8 @@ namespace MonoTests
 	{
 		public static void AddAllTests (TestSuite suite)
 		{
-			suite.AddTest (new Ximian.Mono.Tests.System.RunDnsTest ());
-			suite.AddTest (new Ximian.Mono.Tests.System.Collections.Specialized.Collections.Specialized.RunStringCollectionTest ());
+			suite.AddTest (new MonoTests.System.RunDnsTest ());
+			suite.AddTest (new MonoTests.System.Collections.Specialized.Collections.Specialized.RunStringCollectionTest ());
 		}
 	}
 }
