@@ -132,6 +132,9 @@ namespace CIR {
 
 			MemberInfo [] mi = rc.TypeManager.FindMembers (t, mt, bf, Type.FilterName, name);
 
+			if (mi == null)
+				return null;
+			
 			if (mi.Length == 1 && !(mi [0] is MethodInfo))
 				return Expression.ExprClassFromMemberInfo (mi [0]);
 
@@ -201,9 +204,292 @@ namespace CIR {
 			
 			return null;
 		}
+
+		static public Expression ImplicitReferenceConversion (Expression expr, Type target_type)
+		{
+			Type expr_type = expr.Type;
+			
+			if (target_type == TypeManager.object_type) {
+				if (expr_type.IsClass)
+					return new EmptyCast (expr, target_type);
+				if (expr_type.IsValueType)
+					return new BoxedCast (expr, target_type);
+			} else if (expr_type.IsSubclassOf (target_type))
+				return new EmptyCast (expr, target_type);
+			else 
+				// FIXME: missing implicit reference conversions:
+				// 
+				// from any class-type S to any interface-type T.
+				// from any interface type S to interface-type T.
+				// from an array-type S to an array-type of type T
+				// from an array-type to System.Array
+				// from any delegate type to System.Delegate
+				// from any array-type or delegate type into System.ICloneable.
+				// from the null type to any reference-type.
+				     
+				return null;
+
+			return null;
+		}
+		       
+		// <summary>
+		//   Converts implicitly the resolved expression `expr' into the
+		//   `target_type'.  It returns a new expression that can be used
+		//   in a context that expects a `target_type'. 
+		// </summary>
+		static public Expression ConvertImplicit (Expression expr, Type target_type)
+		{
+			Type expr_type = expr.Type;
+
+			if (expr_type == target_type){
+				Console.WriteLine ("Hey, ConvertImplicit was called with no job to do");
+				return expr;
+			}
+
+			//
+			// Step 1: Perform implicit conversions as found on expr.Type
+			//
+
+			//
+			// Step 2: Built-in conversions.
+			//
+			if (expr_type == TypeManager.sbyte_type){
+				//
+				// From sbyte to short, int, long, float, double.
+				//
+				if (target_type == TypeManager.int32_type)
+					return new OpcodeCast (expr, target_type, OpCodes.Conv_I4);
+				if (target_type == TypeManager.int64_type)
+					return new OpcodeCast (expr, target_type, OpCodes.Conv_U8);
+				if (target_type == TypeManager.double_type)
+					return new OpcodeCast (expr, target_type, OpCodes.Conv_R8);
+				if (target_type == TypeManager.float_type)
+					return new OpcodeCast (expr, target_type, OpCodes.Conv_R4);
+				if (target_type == TypeManager.short_type)
+					return new OpcodeCast (expr, target_type, OpCodes.Conv_I2);
+			} else if (expr_type == TypeManager.byte_type){
+				//
+				// From byte to short, ushort, int, uint, long, ulong, float, double
+				// 
+				if ((target_type == TypeManager.short_type) ||
+				    (target_type == TypeManager.ushort_type) ||
+				    (target_type == TypeManager.int32_type) ||
+				    (target_type == TypeManager.uint32_type))
+					return new EmptyCast (expr, target_type);
+
+				if (target_type == TypeManager.uint64_type)
+					return new OpcodeCast (expr, target_type, OpCodes.Conv_U8);
+				if (target_type == TypeManager.int64_type)
+					return new OpcodeCast (expr, target_type, OpCodes.Conv_I8);
+				
+				if (target_type == TypeManager.float_type)
+					return new OpcodeCast (expr, target_type, OpCodes.Conv_R4);
+				if (target_type == TypeManager.double_type)
+					return new OpcodeCast (expr, target_type, OpCodes.Conv_R8);
+			} else if (expr_type == TypeManager.short_type){
+				//
+				// From short to int, long, float, double
+				// 
+				if (target_type == TypeManager.int32_type)
+					return new EmptyCast (expr, target_type);
+				if (target_type == TypeManager.int64_type)
+					return new OpcodeCast (expr, target_type, OpCodes.Conv_I8);
+				if (target_type == TypeManager.double_type)
+					return new OpcodeCast (expr, target_type, OpCodes.Conv_R8);
+				if (target_type == TypeManager.float_type)
+					return new OpcodeCast (expr, target_type, OpCodes.Conv_R4);
+			} else if (expr_type == TypeManager.ushort_type){
+				//
+				// From ushort to int, uint, long, ulong, float, double
+				//
+				if ((target_type == TypeManager.uint32_type) ||
+				    (target_type == TypeManager.uint64_type))
+					return new EmptyCast (expr, target_type);
+					
+				if (target_type == TypeManager.int32_type)
+					return new OpcodeCast (expr, target_type, OpCodes.Conv_I4);
+				if (target_type == TypeManager.int64_type)
+					return new OpcodeCast (expr, target_type, OpCodes.Conv_I8);
+				if (target_type == TypeManager.double_type)
+					return new OpcodeCast (expr, target_type, OpCodes.Conv_R8);
+				if (target_type == TypeManager.float_type)
+					return new OpcodeCast (expr, target_type, OpCodes.Conv_R4);
+			} else if (expr_type == TypeManager.int32_type){
+				//
+				// From int to long, float, double
+				//
+				if (target_type == TypeManager.int64_type)
+					return new OpcodeCast (expr, target_type, OpCodes.Conv_I8);
+				if (target_type == TypeManager.double_type)
+					return new OpcodeCast (expr, target_type, OpCodes.Conv_R8);
+				if (target_type == TypeManager.float_type)
+					return new OpcodeCast (expr, target_type, OpCodes.Conv_R4);
+			} else if (expr_type == TypeManager.uint32_type){
+				//
+				// From uint to long, ulong, float, double
+				//
+				if (target_type == TypeManager.int64_type)
+					return new OpcodeCast (expr, target_type, OpCodes.Conv_I8);
+				if (target_type == TypeManager.uint64_type)
+					return new OpcodeCast (expr, target_type, OpCodes.Conv_U8);
+				if (target_type == TypeManager.double_type)
+					return new OpcodeCast (expr, target_type, OpCodes.Conv_R_Un,
+							       OpCodes.Conv_R8);
+				if (target_type == TypeManager.float_type)
+					return new OpcodeCast (expr, target_type, OpCodes.Conv_R_Un,
+							       OpCodes.Conv_R4);
+			} else if ((expr_type == TypeManager.uint64_type) ||
+				   (expr_type == TypeManager.int64_type)){
+				//
+				// From long to float, double
+				//
+				if (target_type == TypeManager.double_type)
+					return new OpcodeCast (expr, target_type, OpCodes.Conv_R_Un,
+							       OpCodes.Conv_R8);
+				if (target_type == TypeManager.float_type)
+					return new OpcodeCast (expr, target_type, OpCodes.Conv_R_Un,
+							       OpCodes.Conv_R4);	
+			} else if (expr_type == TypeManager.char_type){
+				//
+				// From char to ushort, int, uint, long, ulong, float, double
+				// 
+				if ((target_type == TypeManager.ushort_type) ||
+				    (target_type == TypeManager.int32_type) ||
+				    (target_type == TypeManager.uint32_type))
+					return new EmptyCast (expr, target_type);
+				if (target_type == TypeManager.uint64_type)
+					return new OpcodeCast (expr, target_type, OpCodes.Conv_U8);
+				if (target_type == TypeManager.int64_type)
+					return new OpcodeCast (expr, target_type, OpCodes.Conv_I8);
+				if (target_type == TypeManager.float_type)
+					return new OpcodeCast (expr, target_type, OpCodes.Conv_R4);
+				if (target_type == TypeManager.double_type)
+					return new OpcodeCast (expr, target_type, OpCodes.Conv_R8);
+			} else
+				return ImplicitReferenceConversion (expr, target_type);
+
+			
+
+			//
+			//  Could not find an implicit cast.
+			//
+			return null;
+		}
+
+		// <summary>
+		//   Performs an explicit conversion of the expression `expr' whose
+		//   type is expr.Type to `target_type'.
+		// </summary>
+		static public Expression ConvertExplicit (Expression expr, Type target_type)
+		{
+			return expr;
+		}
 		
 	}
 
+	// <summary>
+	//   This kind of cast is used to encapsulate the child
+	//   whose type is child.Type into an expression that is
+	//   reported to return "return_type".  This is used to encapsulate
+	//   expressions which have compatible types, but need to be dealt
+	//   at higher levels with.
+	//
+	//   For example, a "byte" expression could be encapsulated in one
+	//   of these as an "unsigned int".  The type for the expression
+	//   would be "unsigned int".
+	//
+	// </summary>
+	
+	public class EmptyCast : Expression {
+		protected Expression child;
+
+		public EmptyCast (Expression child, Type return_type)
+		{
+			ExprClass = child.ExprClass;
+			type = return_type;
+			this.child = child;
+		}
+
+		public override Expression Resolve (TypeContainer tc)
+		{
+			// This should never be invoked, we are born in fully
+			// initialized state.
+
+			return this;
+		}
+
+		public override void Emit (EmitContext ec)
+		{
+			child.Emit (ec);
+		}			
+	}
+
+	public class BoxedCast : EmptyCast {
+
+		public BoxedCast (Expression expr, Type target_type)
+			: base (expr, target_type)
+		{
+		}
+
+		public override Expression Resolve (TypeContainer tc)
+		{
+			// This should never be invoked, we are born in fully
+			// initialized state.
+
+			return this;
+		}
+
+		public override void Emit (EmitContext ec)
+		{
+			base.Emit (ec);
+			ec.ig.Emit (OpCodes.Box, child.Type);
+		}
+	}
+	
+
+	// <summary>
+	//   This kind of cast is used to encapsulate a child expression
+	//   that can be trivially converted to a target type using one or 
+	//   two opcodes.  The opcodes are passed as arguments.
+	// </summary>
+	public class OpcodeCast : EmptyCast {
+		OpCode op, op2;
+		
+		public OpcodeCast (Expression child, Type return_type, OpCode op)
+			: base (child, return_type)
+			
+		{
+			this.op = op;
+			this.op2 = OpCodes.Nop;
+		}
+
+		public OpcodeCast (Expression child, Type return_type, OpCode op, OpCode op2)
+			: base (child, return_type)
+			
+		{
+			this.op = op;
+			this.op2 = op2;
+		}
+
+		public override Expression Resolve (TypeContainer tc)
+		{
+			// This should never be invoked, we are born in fully
+			// initialized state.
+
+			return this;
+		}
+
+		public override void Emit (EmitContext ec)
+		{
+			base.Emit (ec);
+			ec.ig.Emit (op);
+			
+			if (!op2.Equals (OpCodes.Nop))
+				ec.ig.Emit (op2);
+		}			
+		
+	}
+	
 	public class Unary : Expression {
 		public enum Operator {
 			Plus, Minus, Negate, BitComplement,
@@ -349,8 +635,6 @@ namespace CIR {
 		Operator oper;
 		Expression left, right;
 
-		OpCode opcode, opcode_check;
-		
 		public Binary (Operator oper, Expression left, Expression right)
 		{
 			this.oper = oper;
@@ -385,30 +669,235 @@ namespace CIR {
 			}
 		}
 
-		Expression ResolveOperator (Operator oper, Type l, Type r)
+
+		// <summary>
+		//   Retruns a stringified representation of the Operator
+		// </summary>
+		string OperName ()
 		{
+			switch (oper){
+			case Operator.Multiply:
+				return "*";
+			case Operator.Divide:
+				return "/";
+			case Operator.Modulo:
+				return "%";
+			case Operator.Add:
+				return "+";
+			case Operator.Substract:
+				return "-";
+			case Operator.ShiftLeft:
+				return "<<";
+			case Operator.ShiftRight:
+				return ">>";
+			case Operator.LessThan:
+				return "<";
+			case Operator.GreatherThan:
+				return ">";
+			case Operator.LessOrEqual:
+				return "<=";
+			case Operator.GreatherOrEqual:
+				return ">=";
+			case Operator.Equal:
+				return "==";
+			case Operator.NotEqual:
+				return "!=";
+			case Operator.BitwiseAnd:
+				return "&";
+			case Operator.BitwiseOr:
+				return "|";
+			case Operator.ExclusiveOr:
+				return "^";
+			case Operator.LogicalOr:
+				return "||";
+			case Operator.LogicalAnd:
+				return "&&";
+			}
+
+			return oper.ToString ();
+		}
+
+		Expression ForceConversion (Expression expr, Type target_type)
+		{
+			if (expr.Type == target_type)
+				return expr;
+
+			return ConvertImplicit (expr, target_type);
+		}
+		
+		//
+		// Note that handling the case l == Decimal || r == Decimal
+		// is taken care of by the Step 1 Operator Overload resolution.
+		//
+		void DoNumericPromotions (TypeContainer tc, Type l, Type r)
+		{
+			if (l == TypeManager.double_type || r == TypeManager.double_type){
+				//
+				// If either operand is of type double, the other operand is
+				// conveted to type double.
+				//
+				if (r != TypeManager.double_type)
+					right = ConvertImplicit (right, TypeManager.double_type);
+				if (l != TypeManager.double_type)
+					left = ConvertImplicit (left, TypeManager.double_type);
+				
+				type = TypeManager.double_type;
+			} else if (l == TypeManager.float_type || r == TypeManager.float_type){
+				//
+				// if either operand is of type float, th eother operand is
+				// converd to type float.
+				//
+				if (r != TypeManager.double_type)
+					right = ConvertImplicit (right, TypeManager.float_type);
+				if (l != TypeManager.double_type)
+					left = ConvertImplicit (left, TypeManager.float_type);
+				type = TypeManager.float_type;
+			} else if (l == TypeManager.uint64_type || r == TypeManager.uint64_type){
+				//
+				// If either operand is of type ulong, the other operand is
+				// converted to type ulong.  or an error ocurrs if the other
+				// operand is of type sbyte, short, int or long
+				//
+				Type other = null;
+				
+				if (l == TypeManager.uint64_type)
+					other = r;
+				else if (r == TypeManager.uint64_type)
+					other = l;
+
+				if ((other == TypeManager.sbyte_type) ||
+				    (other == TypeManager.short_type) ||
+				    (other == TypeManager.int32_type) ||
+				    (other == TypeManager.int64_type)){
+					string oper = OperName ();
+					
+					tc.RootContext.Report.Error (34, "Operator `" + OperName ()
+								     + "' is ambiguous on operands of type `"
+								     + TypeManager.CSharpName (l) + "' "
+								     + "and `" + TypeManager.CSharpName (r)
+								     + "'");
+				}
+				type = TypeManager.uint64_type;
+			} else if (l == TypeManager.int64_type || r == TypeManager.int64_type){
+				//
+				// If either operand is of type long, the other operand is converted
+				// to type long.
+				//
+				if (l != TypeManager.int64_type)
+					left = ConvertImplicit (left, TypeManager.int64_type);
+				if (r != TypeManager.int64_type)
+					right = ConvertImplicit (right, TypeManager.int64_type);
+
+				type = TypeManager.int64_type;
+			} else if (l == TypeManager.uint32_type || r == TypeManager.uint32_type){
+				//
+				// If either operand is of type uint, and the other
+				// operand is of type sbyte, short or int, othe operands are
+				// converted to type long.
+				//
+				Type other = null;
+				
+				if (l == TypeManager.uint32_type)
+					other = r;
+				else if (r == TypeManager.uint32_type)
+					other = l;
+
+				if ((other == TypeManager.sbyte_type) ||
+				    (other == TypeManager.short_type) ||
+				    (other == TypeManager.int32_type)){
+					left = ForceConversion (left, TypeManager.int64_type);
+					right = ForceConversion (right, TypeManager.int64_type);
+					type = TypeManager.int64_type;
+				} else {
+					//
+					// if either operand is of type uint, the other
+					// operand is converd to type uint
+					//
+					left = ForceConversion (left, TypeManager.uint32_type);
+					right = ForceConversion (left, TypeManager.uint32_type);
+					type = TypeManager.uint32_type;
+				} 
+			} else {
+				left = ForceConversion (left, TypeManager.int32_type);
+				right = ForceConversion (right, TypeManager.int32_type);
+			}
+		}
+
+		void error19 (TypeContainer tc)
+		{
+			tc.RootContext.Report.Error (
+				19,
+				"Operator " + OperName () + " cannot be applied to operands of type `" +
+				TypeManager.CSharpName (left.Type) + "' and `" +
+				TypeManager.CSharpName (right.Type) + "'");
+						     
+		}
+		
+		Expression CheckShiftArguments (TypeContainer tc)
+		{
+			Expression e;
+			Type l = left.Type;
+			Type r = right.Type;
+
+			e = ForceConversion (right, TypeManager.int32_type);
+			if (e == null){
+				error19 (tc);
+				return null;
+			}
+			right = e;
+
+			if (((e = ConvertImplicit (left, TypeManager.int32_type)) != null) ||
+			    ((e = ConvertImplicit (left, TypeManager.uint32_type)) != null) ||
+			    ((e = ConvertImplicit (left, TypeManager.int64_type)) != null) ||
+			    ((e = ConvertImplicit (left, TypeManager.uint64_type)) != null)){
+				left = e;
+
+				return this;
+			}
+			error19 (tc);
+			return null;
+		}
+		
+		Expression ResolveOperator (TypeContainer tc)
+		{
+			Type l = left.Type;
+			Type r = right.Type;
+
 			//
 			// Step 1: Perform Operator Overload location
 			//
 
+			
 			//
-			// Step 2: Default operations
+			// Step 2: Default operations on CLI native types.
 			//
-			switch (oper){
-			case Operator.Multiply:
-				opcode = OpCodes.Mul;
-				if (l == TypeManager.int32_type)
-					opcode_check = OpCodes.Mul_Ovf;
-				else if (l == TypeManager.uint32_type)
-					opcode_check = OpCodes.Mul_Ovf_Un;
-				else if (l == TypeManager.uint64_type) 
-					opcode_check = OpCodes.Mul_Ovf_Un;
-				else if (l == TypeManager.int64_type) 
-					opcode_check = OpCodes.Mul_Ovf;
-				else
-					opcode_check = OpCodes.Mul;
-				break;
-			}
+
+			// Only perform numeric promotions on:
+			// +, -, *, /, %, &, |, ^, ==, !=, <, >, <=, >=
+			//
+			if (oper == Operator.ShiftLeft || oper == Operator.ShiftRight){
+				return CheckShiftArguments (tc);
+			} else if (oper == Operator.LogicalOr || oper == Operator.LogicalAnd){
+
+				if (l != TypeManager.bool_type || r != TypeManager.bool_type)
+					error19 (tc);
+			} else
+				DoNumericPromotions (tc, l, r);
+
+			if (oper == Operator.BitwiseAnd ||
+			    oper == Operator.BitwiseOr ||
+			    oper == Operator.ExclusiveOr){
+				if (!((l == TypeManager.int32_type) ||
+				      (l == TypeManager.uint32_type) ||
+				      (l == TypeManager.int64_type) ||
+				      (l == TypeManager.uint64_type))){
+					error19 (tc);
+					return null;
+				}
+			} else 
+			
+			if (left == null || right == null)
+				return null;
 
 			return this;
 		}
@@ -421,20 +910,220 @@ namespace CIR {
 			if (left == null || right == null)
 				return null;
 					
-			return ResolveOperator (oper, left.Type, right.Type);
+			return ResolveOperator (tc);
 		}
 
+		public bool IsBranchable ()
+		{
+			if (oper == Operator.Equal ||
+			    oper == Operator.NotEqual ||
+			    oper == Operator.LessThan ||
+			    oper == Operator.GreatherThan ||
+			    oper == Operator.LessOrEqual ||
+			    oper == Operator.GreatherOrEqual){
+				return true;
+			} else
+				return false;
+		}
+
+		// <summary>
+		//   This entry point is used by routines that might want
+		//   to emit a brfalse/brtrue after an expression, and instead
+		//   they could use a more compact notation.
+		//
+		//   Typically the code would generate l.emit/r.emit, followed
+		//   by the comparission and then a brtrue/brfalse.  The comparissions
+		//   are sometimes inneficient (there are not as complete as the branches
+		//   look for the hacks in Emit using double ceqs).
+		//
+		//   So for those cases we provide EmitBranchable that can emit the
+		//   branch with the test
+		// </summary>
+		public void EmitBranchable (EmitContext ec, int target)
+		{
+			OpCode opcode;
+			bool close_target = false;
+			
+			left.Emit (ec);
+			right.Emit (ec);
+			
+			switch (oper){
+			case Operator.Equal:
+				if (close_target)
+					opcode = OpCodes.Beq_S;
+				else
+					opcode = OpCodes.Beq;
+				break;
+
+			case Operator.NotEqual:
+				if (close_target)
+					opcode = OpCodes.Bne_Un_S;
+				else
+					opcode = OpCodes.Bne_Un;
+				break;
+
+			case Operator.LessThan:
+				if (close_target)
+					opcode = OpCodes.Blt_S;
+				else
+					opcode = OpCodes.Blt;
+				break;
+
+			case Operator.GreatherThan:
+				if (close_target)
+					opcode = OpCodes.Bgt_S;
+				else
+					opcode = OpCodes.Bgt;
+				break;
+
+			case Operator.LessOrEqual:
+				if (close_target)
+					opcode = OpCodes.Ble_S;
+				else
+					opcode = OpCodes.Ble;
+				break;
+
+			case Operator.GreatherOrEqual:
+				if (close_target)
+					opcode = OpCodes.Bge_S;
+				else
+					opcode = OpCodes.Ble;
+				break;
+
+			default:
+				Console.WriteLine ("EmitBranchable called for non-EmitBranchable operator: "
+						   + oper.ToString ());
+				opcode = OpCodes.Nop;
+				break;
+			}
+
+			ec.ig.Emit (opcode, target);
+		}
+		
 		public override void Emit (EmitContext ec)
 		{
 			ILGenerator ig = ec.ig;
-
+			Type l = left.Type;
+			Type r = right.Type;
+			OpCode opcode;
+			
 			left.Emit (ec);
 			right.Emit (ec);
 
-			if (ec.CheckState)
-				ec.ig.Emit (opcode_check);
-			else
-				ec.ig.Emit (opcode);
+			switch (oper){
+			case Operator.Multiply:
+				if (ec.CheckState){
+					if (l == TypeManager.int32_type || l == TypeManager.int64_type)
+						opcode = OpCodes.Mul_Ovf;
+					else if (l==TypeManager.uint32_type || l==TypeManager.uint64_type)
+						opcode = OpCodes.Mul_Ovf_Un;
+					else
+						opcode = OpCodes.Mul;
+				} else
+					opcode = OpCodes.Mul;
+
+				break;
+
+			case Operator.Divide:
+				if (l == TypeManager.uint32_type || l == TypeManager.uint64_type)
+					opcode = OpCodes.Div_Un;
+				else
+					opcode = OpCodes.Div;
+				break;
+
+			case Operator.Modulo:
+				if (l == TypeManager.uint32_type || l == TypeManager.uint64_type)
+					opcode = OpCodes.Rem_Un;
+				else
+					opcode = OpCodes.Rem;
+				break;
+
+			case Operator.Add:
+				if (ec.CheckState){
+					if (l == TypeManager.int32_type || l == TypeManager.int64_type)
+						opcode = OpCodes.Add_Ovf;
+					else if (l==TypeManager.uint32_type || l==TypeManager.uint64_type)
+						opcode = OpCodes.Add_Ovf_Un;
+					else
+						opcode = OpCodes.Mul;
+				} else
+					opcode = OpCodes.Add;
+				break;
+
+			case Operator.Substract:
+				if (ec.CheckState){
+					if (l == TypeManager.int32_type || l == TypeManager.int64_type)
+						opcode = OpCodes.Sub_Ovf;
+					else if (l==TypeManager.uint32_type || l==TypeManager.uint64_type)
+						opcode = OpCodes.Sub_Ovf_Un;
+					else
+						opcode = OpCodes.Sub;
+				} else
+					opcode = OpCodes.Sub;
+				break;
+
+			case Operator.ShiftRight:
+				opcode = OpCodes.Shr;
+				break;
+				
+			case Operator.ShiftLeft:
+				opcode = OpCodes.Shl;
+				break;
+
+			case Operator.Equal:
+				opcode = OpCodes.Ceq;
+				break;
+
+			case Operator.NotEqual:
+				ec.ig.Emit (OpCodes.Ceq);
+				ec.ig.Emit (OpCodes.Ldc_I4_0);
+				
+				opcode = OpCodes.Ceq;
+				break;
+
+			case Operator.LessThan:
+				opcode = OpCodes.Clt;
+				break;
+
+			case Operator.GreatherThan:
+				opcode = OpCodes.Cgt;
+				break;
+
+			case Operator.LessOrEqual:
+				ec.ig.Emit (OpCodes.Cgt);
+				ec.ig.Emit (OpCodes.Ldc_I4_0);
+				
+				opcode = OpCodes.Ceq;
+				break;
+
+			case Operator.GreatherOrEqual:
+				ec.ig.Emit (OpCodes.Clt);
+				ec.ig.Emit (OpCodes.Ldc_I4_1);
+				
+				opcode = OpCodes.Sub;
+				break;
+
+			case Operator.LogicalOr:
+			case Operator.BitwiseOr:
+				opcode = OpCodes.Or;
+				break;
+
+			case Operator.LogicalAnd:
+			case Operator.BitwiseAnd:
+				opcode = OpCodes.And;
+				break;
+
+			case Operator.ExclusiveOr:
+				opcode = OpCodes.Xor;
+				break;
+
+			default:
+				Console.WriteLine ("This should not happen: Operator = " + oper.ToString ());
+				opcode = OpCodes.Nop;
+				break;
+			}
+
+			ec.ig.Emit (opcode);
 		}
 	}
 

@@ -29,6 +29,9 @@ public class TypeManager {
 	static public Type short_type;
 	static public Type decimal_type;
 	static public Type bool_type;
+	static public Type sbyte_type;
+	static public Type byte_type;
+	static public Type ushort_type;
 	
 	// <remarks>
 	//   Holds the Array of Assemblies that have been loaded
@@ -109,6 +112,41 @@ public class TypeManager {
 		return null;
 	}
 
+	// <summary>
+	//   Returns the C# name of a type if possible, or the full type name otherwise
+	// </summary>
+	static public string CSharpName (Type t)
+	{
+		if (t == int32_type)
+			return "int";
+		else if (t == uint32_type)
+			return "uint";
+		else if (t == int64_type)
+			return "long";
+		else if (t == uint64_type)
+			return "ulong";
+		else if (t == float_type)
+			return "float";
+		else if (t == double_type)
+			return "double";
+		else if (t == char_type)
+			return "char";
+		else if (t == short_type)
+			return "short";
+		else if (t == decimal_type)
+			return "decimal";
+		else if (t == bool_type)
+			return "bool";
+		else if (t == sbyte_type)
+			return "sbyte";
+		else if (t == byte_type)
+			return "byte";
+		else if (t == short_type)
+			return "short";
+		else
+			return t.FullName;
+	}
+	
 	// <remarks>
 	//   The types have to be initialized after the initial
 	//   population of the type has happened (for example, to
@@ -124,6 +162,8 @@ public class TypeManager {
 		uint64_type  = LookupType ("System.UInt64"); 
 		float_type   = LookupType ("System.Single");
 		double_type  = LookupType ("System.Double");
+		byte_type    = LookupType ("System.Byte");
+		sbyte_type   = LookupType ("System.SByte");
 		char_type    = LookupType ("System.Char");
 		short_type   = LookupType ("System.Short");
 		decimal_type = LookupType ("System.Decimal");

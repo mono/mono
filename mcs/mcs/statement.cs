@@ -350,15 +350,6 @@ namespace CIR {
 			}
 		}
 
-		public string GetVariableType (string name)
-		{
-			VariableInfo vi = GetVariableInfo (name);
-
-			if (vi != null)
-				return vi.Type;
-			return null;
-		}
-
 		public VariableInfo GetVariableInfo (string name)
 		{
 			if (variables != null) {
@@ -373,12 +364,22 @@ namespace CIR {
 			return null;
 		}
 		
+		public string GetVariableType (string name)
+		{
+			VariableInfo vi = GetVariableInfo (name);
+
+			if (vi != null)
+				return vi.Type;
+			return null;
+		}
+
 		// <summary>
 		//   True if the variable named @name has been defined
 		//   in this block
 		// </summary>
 		public bool IsVariableDefined (string name)
 		{
+			Console.WriteLine ("Trying to figure if [" + name + "] is defined");
 			return GetVariableType (name) != null;
 		}
 

@@ -1,3 +1,32 @@
+2001-09-12  Miguel de Icaza  <miguel@ximian.com>
+
+	* typemanager.cs (CSharpName): Returns the C# name of a type if
+	possible. 
+
+	* expression.cs (Expression::ConvertImplicit): New function that
+	implements implicit type conversions.
+
+	(Expression::ImplicitReferenceConversion): Implements implicit
+	reference conversions.
+
+	(EmptyCast): New type for transparent casts.
+
+	(OpcodeCast): New type for casts of types that are performed with
+	a sequence of bytecodes.
+	
+	(BoxedCast): New type used for casting value types into reference
+	types.  Emits a box opcode.
+
+	(Binary::DoNumericPromotions): Implements numeric promotions of
+	and computation of the Binary::Type.
+
+	(Binary::EmitBranchable): Optimization.
+
+	(Binary::Emit): Implement code emission for expressions.
+	
+	* typemanager.cs (TypeManager): Added two new core types: sbyte
+	and byte.
+
 2001-09-12  Ravi Pratap  <ravi@ximian.com>
 
 	* class.cs (TypeContainer::FindMembers): Method which does exactly
