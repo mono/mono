@@ -1,4 +1,16 @@
+2003-05-20  Zoltan Varga  <vargaz@freemail.hu>
 
+	* reflection.c (mono_reflection_lookup_dynamic_token): Intern dynamic
+	literal strings.
+
+	* appdomain.c (set_domain_search_path): Recalculate search path when
+	AppDomainSetup.PrivateBinPath changes.
+
+	* object.c (mono_class_compute_gc_descriptor): It turns out some
+	parts of the class libs (like System.Thread) holds pointers to
+	GC_MALLOC()-d memory in IntPtrs, which is wrong. The workaround is
+	to treat native int a pointer type here.
+	
 Tue May 20 17:18:16 CEST 2003 Paolo Molaro <lupus@ximian.com>
 
 	* appdomain.h, domain.c: add hashtable for jump target resolution.
