@@ -452,3 +452,7 @@ gen-9.cs:
 
 `where T : ICloneable' and then calling t.Clone ().
 
+gen-10.cs:
+----------
+
+`where T : I, J' - I is an inferface, J a class.
