@@ -1,3 +1,7 @@
+2002-12-13  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* namespace.cs: fixed bug #35489.
+
 2002-12-12  Miguel de Icaza  <miguel@ximian.com>
 
 	* class.cs: Remove some dead code.
