@@ -3,12 +3,18 @@
 //
 // Authors: 
 //	Andrew Birkett (andy@nobugs.org)
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot (sebastien@ximian.com)
+//
+// (C) 2004 Novell (http://www.novell.com)
 //          
 
 using System;
 
 namespace System.Security.Cryptography {
+
+	// References:
+	// a.	IETF RFC2286: A Description of the RC2(r) Encryption Algorithm
+	//	http://www.ietf.org/rfc/rfc2268.txt
 
 	public abstract class RC2 : SymmetricAlgorithm {
 
@@ -31,17 +37,17 @@ namespace System.Security.Cryptography {
 				else
 					return EffectiveKeySizeValue;
 			}
-			set { 
-				if (!KeySizes.IsLegalKeySize (LegalKeySizesValue, value))
-					throw new CryptographicException ("key size not supported by algorithm");
+			set {
 				EffectiveKeySizeValue = value; 
 			}
 		}
 
-		// Overridden, which makes me suspect it changes effective keysize too?
 		public override int KeySize {
-			get { return KeySizeValue; }
-			set { KeySizeValue = value; }
+			get { return base.KeySize; }
+			set {
+				base.KeySize = value;
+				EffectiveKeySizeValue = value;
+			}
 		}
 				
 		public RC2 () 
@@ -52,11 +58,11 @@ namespace System.Security.Cryptography {
 
 			// The RFC allows keys of 1 to 128 bytes, but MS impl only supports
 			// 40 to 128 bits, sigh.
-			LegalKeySizesValue = new KeySizes[1];
-			LegalKeySizesValue[0] = new KeySizes(40, 128, 8);
+			LegalKeySizesValue = new KeySizes [1];
+			LegalKeySizesValue [0] = new KeySizes (40, 128, 8);
 
-			LegalBlockSizesValue = new KeySizes[1];
-			LegalBlockSizesValue[0] = new KeySizes(64, 64, 0);
+			LegalBlockSizesValue = new KeySizes [1];
+			LegalBlockSizesValue [0] = new KeySizes (64, 64, 0);
 		}
 	}
 }

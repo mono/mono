@@ -3,12 +3,15 @@
 //
 // Authors:
 //	Andrew Birkett (andy@nobugs.org)
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot (sebastien@ximian.com)
 //
 // Portions (C) 2002 Motus Technologies Inc. (http://www.motus.com)
+// (C) 2004 Novell (http://www.novell.com)
 //          
 
 using System;
+using System.Globalization;
+
 using Mono.Security.Cryptography;
 
 namespace System.Security.Cryptography {
@@ -19,22 +22,29 @@ namespace System.Security.Cryptography {
 	
 	public sealed class RC2CryptoServiceProvider : RC2 {
 	
-		public RC2CryptoServiceProvider() {}
-	
-		// included to (exactly) match corlib
-		public override int EffectiveKeySize {
-			get { return base.EffectiveKeySize; }
-			set { base.EffectiveKeySize = value; }
+		public RC2CryptoServiceProvider ()
+		{
 		}
 	
-		public override ICryptoTransform CreateDecryptor(byte[] rgbKey, byte[] rgbIV)
+		public override int EffectiveKeySize {
+			get { return base.EffectiveKeySize; }
+			set {
+				if (value != KeySizeValue) {
+					throw new CryptographicException (
+						Locale.GetText ("Effective key size must match key size for compatibility"));
+				}
+				base.EffectiveKeySize = value; 
+			}
+		}
+	
+		public override ICryptoTransform CreateDecryptor (byte[] rgbKey, byte[] rgbIV)
 		{
 			Key = rgbKey;
 			IV = rgbIV;
 			return new RC2Transform (this, false);
 		}
 	
-		public override ICryptoTransform CreateEncryptor(byte[] rgbKey, byte[] rgbIV)
+		public override ICryptoTransform CreateEncryptor (byte[] rgbKey, byte[] rgbIV)
 		{
 			Key = rgbKey;
 			IV = rgbIV;

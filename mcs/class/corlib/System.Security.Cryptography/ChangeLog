@@ -1,3 +1,11 @@
+2004-05-06  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* RC2.cs: Fixed KeySize to change it's value and the EffectiveKeySize
+	when the key is changed.
+	* RC2CryptoServiceProvider.cs: Added globalization to exceptions. 
+	Fixed the KeySize must be equal with EffectiveKeySize to match MS 
+	implementation.
+
 2004-05-05  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* HashAlgorithm.cs: Moved XML comments to monodoc. Added globalization
