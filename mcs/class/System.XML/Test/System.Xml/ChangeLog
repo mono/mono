@@ -1,3 +1,7 @@
+2003-05-05  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
+
+	* added XmlConvertTests.cs.
+
 2003-04-29  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* XmlAttributeTests.cs : added WriteTo.
