@@ -1,5 +1,14 @@
 2003-11-14  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* Array.cs:
+	* Delegate.cs: implemented 1.1 stuff.
+
+	* Enum.cs:
+	* IntPtr.cs: removed extra attribute.
+	* PlatformID.cs: added WinCE.
+
+2003-11-14  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* ValueType.cs:
 	(Equals): compare the fields of structs too.
 	(GetHashCode): combine the hash code of all the fields.

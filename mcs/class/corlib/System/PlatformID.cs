@@ -22,6 +22,9 @@ namespace System {
 		Win32Windows = 1,
 
 		Win32NT = 2,
+#if NET_1_1
+		WinCE = 3
+#endif
 
 		// We can not expose this to userland, since it would break bin compat
 		

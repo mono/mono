@@ -14,10 +14,14 @@ using System.Globalization;
 using System.Reflection;
 using System.Runtime.Serialization;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
 
 namespace System {
 
+#if NET_1_1
+	[ClassInterface (ClassInterfaceType.AutoDual)]
+#endif
 	[MonoTODO]
 	public abstract class Delegate : ICloneable, ISerializable {
 		protected Type target_type;
@@ -286,7 +290,16 @@ namespace System {
 		       
 			return this;
 		}
+#if NET_1_1
+		public static Delegate RemoveAll (Delegate source, Delegate value)
+		{
+			Delegate tmp = source;
+			while ((source = Delegate.Remove (source, value)) != tmp)
+				tmp = source;
 
+			return tmp;
+		}
+#endif
 		public static bool operator == (Delegate a, Delegate b)
 		{
 			if ((object)a == null) {

@@ -30,9 +30,6 @@ using System.Runtime.Serialization;
 
 namespace System {
 
-	[
-		CLSCompliant(true)
-	]
 	[Serializable]
 	public unsafe struct IntPtr : ISerializable {
 

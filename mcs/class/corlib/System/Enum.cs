@@ -56,7 +56,6 @@ namespace System {
 		
 		// IConvertible methods Start -->
 
-		[CLSCompliant(false)]
 		public TypeCode GetTypeCode () {
 			MonoEnumInfo info;
 			MonoEnumInfo.GetInfo (this.GetType (), out info);

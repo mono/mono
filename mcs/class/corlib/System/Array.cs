@@ -11,6 +11,7 @@
 
 using System.Collections;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
 namespace System
 {
@@ -39,6 +40,12 @@ namespace System
 			}
 		}
 
+#if NET_1_1
+		[ComVisible (false)]
+		public long LongLength {
+			get { return Length; }
+		}
+#endif
 		public int Rank 
 		{
 			get
@@ -121,6 +128,14 @@ namespace System
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern int GetLength (int dimension);
+
+#if NET_1_1
+		[ComVisible (false)]
+		public long GetLongLength (int dimension)
+		{
+			return GetLength (dimension);
+		}
+#endif
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern int GetLowerBound (int dimension);
@@ -221,6 +236,7 @@ namespace System
 		}
 
 #if NET_1_1
+		[ComVisible (false)]
 		public object GetValue (long idx)
 		{
 			if (idx < 0 || idx > Int32.MaxValue)
@@ -229,6 +245,7 @@ namespace System
 			return GetValue ((int) idx);
 		}
 
+		[ComVisible (false)]
 		public object GetValue (long idx1, long idx2)
 		{
 			if (idx1 < 0 || idx1 > Int32.MaxValue)
@@ -240,6 +257,7 @@ namespace System
 			return GetValue ((int) idx1, (int) idx2);
 		}
 
+		[ComVisible (false)]
 		public object GetValue (long idx1, long idx2, long idx3)
 		{
 			if (idx1 < 0 || idx1 > Int32.MaxValue)
@@ -254,6 +272,7 @@ namespace System
 			return GetValue ((int) idx1, (int) idx2, (int) idx3);
 		}
 
+		[ComVisible (false)]
 		public void SetValue (object value, long idx)
 		{
 			if (idx < 0 || idx > Int32.MaxValue)
@@ -262,6 +281,7 @@ namespace System
 			SetValue (value, (int) idx);
 		}
 		
+		[ComVisible (false)]
 		public void SetValue (object value, long idx1, long idx2)
 		{
 			if (idx1 < 0 || idx1 > Int32.MaxValue)
@@ -278,6 +298,7 @@ namespace System
 			SetValue (value, ind);
 		}
 
+		[ComVisible (false)]
 		public void SetValue (object value, long idx1, long idx2, long idx3)
 		{
 			if (idx1 < 0 || idx1 > Int32.MaxValue)
@@ -446,6 +467,7 @@ namespace System
 			return CreateInstance (elementType, GetIntArray (lengths));
 		}
 
+		[ComVisible (false)]
 		public object GetValue (long [] indices)
 		{
 			if (indices == null)
@@ -453,6 +475,7 @@ namespace System
 			return GetValue (GetIntArray (indices));
 		}
 
+		[ComVisible (false)]
 		public void SetValue (object value, long [] indices)
 		{
 			if (indices == null)
@@ -675,7 +698,41 @@ namespace System
 				}
 			}
 		}
-		
+#if NET_1_1
+		public static void Copy (Array sourceArray, long sourceIndex, Array destinationArray,
+					 long destinationIndex, long length)
+		{
+			if (sourceArray == null)
+				throw new ArgumentNullException ("sourceArray");
+
+			if (destinationArray == null)
+				throw new ArgumentNullException ("destinationArray");
+			
+			if (sourceIndex < Int32.MinValue || sourceIndex > Int32.MaxValue)
+				throw new ArgumentOutOfRangeException ("sourceIndex",
+							"Must be in the Int32 range");
+			
+			if (destinationIndex < Int32.MinValue || destinationIndex > Int32.MaxValue)
+				throw new ArgumentOutOfRangeException ("destinationIndex",
+							"Must be in the Int32 range");
+			
+			if (length < 0 || length > Int32.MaxValue)
+				throw new ArgumentOutOfRangeException ("length",
+							"Must be >= 0 and <= Int32.MaxValue");
+
+			Copy (sourceArray, (int) sourceIndex, destinationArray,
+					   (int) destinationIndex, (int) length);
+		}
+
+		public static void Copy (Array source, Array dest, long length)
+		{
+			if (length < 0 || length > Int32.MaxValue)
+				throw new ArgumentOutOfRangeException ("length",
+							"Must be >= 0 and <= Int32.MaxValue");
+
+			Copy (source, dest, (int) length);			
+		}
+#endif
 		public static int IndexOf (Array array, object value)
 		{
 			if (array == null)
@@ -948,7 +1005,17 @@ namespace System
 
 			Copy (this, this.GetLowerBound(0), array, index, this.GetLength (0));
 		}
+#if NET_1_1
+		[ComVisible (false)]
+		public virtual void CopyTo (Array array, long index)
+		{
+			if (index < 0 || index > Int32.MaxValue)
+				throw new ArgumentOutOfRangeException ("index",
+							"Must be >= 0 and <= Int32.MaxValue");
 
+			CopyTo (array, (int) index);
+		}
+#endif
 		internal class SimpleEnumerator : IEnumerator {
 			Array enumeratee;
 			int currentpos;
