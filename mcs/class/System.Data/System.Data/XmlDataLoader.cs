@@ -176,6 +176,8 @@ namespace System.Data
 						if (!table.Columns.Contains(newRelationColumnName)) {
 							DataColumn newRelationColumn = new DataColumn(newRelationColumnName, typeof(int));
 							newRelationColumn.AutoIncrement = true;
+							// we do not want to serialize this column so MappingType is Hidden.
+							newRelationColumn.ColumnMapping = MappingType.Hidden;
 							table.Columns.Add(newRelationColumn);
 						}
 						// Add a row to the new table we found.
@@ -221,9 +223,13 @@ namespace System.Data
 			if (relationColumn != null) {
 				if (!table.Columns.Contains(relationColumn.ColumnName)) {
 					DataColumn dc = new DataColumn(relationColumn.ColumnName, typeof(int));
-					dc.AutoIncrement = true;
+					// we do not want to serialize this column so MappingType is Hidden.
+					dc.ColumnMapping = MappingType.Hidden;
 					table.Columns.Add(dc);
-					DSet.Relations.Add(relationColumn, dc);
+					// Convention of relation name is: ParentTableName_ChildTableName
+					DataRelation dr = new DataRelation(relationColumn.Table.TableName + "_" + dc.Table.TableName, relationColumn, dc);
+					dr.Nested = true;
+					DSet.Relations.Add(dr);
 				}
 			}
 

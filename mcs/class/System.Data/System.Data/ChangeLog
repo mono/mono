@@ -1,3 +1,10 @@
+2004-01-21 Eran Domb <erand@mainsoft.com>
+
+	* XmlDataLoader.cs (AddRowToTable) : Give thre new relation correct name.
+	Do not set the child column to be AutoIncrement.
+	Create the new column for the relation as MappingType.Hidden so they will not be serialized
+	when writing the dataset to xml.
+
 2004-01-20 Atsushi Enomoto <atsushi@ximian.com>
 
 	* Added missing TypedDataSetGenerator.cs.
