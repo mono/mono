@@ -63,7 +63,7 @@ namespace ByteFX.Data.MySqlClient
 			IPEndPoint serverAddr = new IPEndPoint(he.AddressList[0], port);
 
 			socket.Connect(serverAddr);
-			stream = new NetworkStream(socket);
+			stream = new NetworkStream(socket, true);
 		}
 
 		private void Create( string host )

@@ -340,7 +340,7 @@ namespace ByteFX.Data.MySqlClient
 		{
 			// There must be a valid and open connection.
 			if (connection == null || connection.State != ConnectionState.Open)
-				throw new InvalidOperationException("Connection must valid and open");
+				throw new InvalidOperationException("Connection must be valid and open");
 
 			// Data readers have to be closed first
 			if (connection.Reader != null)
@@ -386,7 +386,7 @@ namespace ByteFX.Data.MySqlClient
 
 			// There must be a valid and open connection.
 			if (connection == null || connection.State != ConnectionState.Open)
-				throw new InvalidOperationException("Connection must valid and open");
+				throw new InvalidOperationException("Connection must be valid and open");
 
 			// make sure all readers on this connection are closed
 			if (connection.Reader != null)
@@ -447,7 +447,7 @@ namespace ByteFX.Data.MySqlClient
 		{
 			// There must be a valid and open connection.
 			if (connection == null || connection.State != ConnectionState.Open)
-				throw new InvalidOperationException("Connection must valid and open");
+				throw new InvalidOperationException("Connection must be valid and open");
 
 			// Data readers have to be closed first
 			if (connection.Reader != null)

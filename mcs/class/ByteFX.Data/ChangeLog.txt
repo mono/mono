@@ -1,3 +1,10 @@
+10/15/2003
+MySql - enclosed queries for max_allowed_packet and characterset inside try catch (and set defaults)
+MySql - fixed problem where socket was not getting closed properly (thanks Steve!)
+
+10/14/2003
+MySql - Fixed problem where ExecuteNonQuery was not always returning the right value
+
 10/13/2003
 MySql - Fixed InternalConnection to not use @@session.max_allowed_packet but use @@max_allowed_packet.  (Thanks Miguel)
 
