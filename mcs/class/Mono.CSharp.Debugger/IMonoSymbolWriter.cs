@@ -57,21 +57,22 @@ namespace Mono.CSharp.Debugger
 
 		void AddLine (ISourceLine line);
 
+		ISourceBlock[] Blocks {
+			get;
+		}
+
 		ILocalVariable[] Locals {
 			get;
 		}
 
 		void AddLocal (ILocalVariable local);
 
-		int FirstLine {
+
+		ISourceLine Start {
 			get;
 		}
 
-		int LastLine {
-			get;
-		}
-
-		int CodeSize {
+		ISourceLine End {
 			get;
 		}
 
@@ -88,20 +89,73 @@ namespace Mono.CSharp.Debugger
 		}
 	}
 
-	public interface ISourceLine
+	public interface ISourceBlock
 	{
-		int Offset {
+		ISourceMethod SourceMethod {
 			get;
 		}
 
-		int Line {
+		ILocalVariable[] Locals {
+			get;
+		}
+
+		void AddLocal (ILocalVariable local);
+
+		ISourceLine Start {
+			get;
+		}
+
+		ISourceLine End {
+			get;
+		}
+
+		int ID {
 			get;
 		}
 	}
 
-	public interface ILocalVariable
+	public enum SourceOffsetType
+	{
+		OFFSET_NONE,
+		OFFSET_IL,
+		OFFSET_LOCAL,
+		OFFSET_PARAMETER
+	}
+
+	public interface ISourceLine
+	{
+		SourceOffsetType OffsetType {
+			get;
+		}
+
+		int Offset {
+			get;
+		}
+
+		int Row {
+			get;
+		}
+
+		int Column {
+			get;
+		}
+	}
+
+	public interface IVariable
 	{
 		string Name {
+			get;
+		}
+
+		ISourceLine Line {
+			get;
+		}
+
+		Type Type {
+			get;
+		}
+
+		int Token {
 			get;
 		}
 
@@ -109,4 +163,10 @@ namespace Mono.CSharp.Debugger
 			get;
 		}
 	}
+
+	public interface ILocalVariable : IVariable
+	{ }
+
+	public interface IMethodParameter : IVariable
+	{ }
 }

@@ -1,3 +1,19 @@
+2002-03-23  Martin Baulig  <martin@gnome.org>
+
+	* IMonoSymbolWriter.cs (ISourceBlock): New interface.
+	(ILocalVariable): Renamed this interface to IVariable.
+	(IVariable): Added Line, Type, Token.
+	(ILocalVariable, IMethodParameter): New interfaces, derive from IVariable.
+	(ISourceMethod): Added Blocks. Renamed FirstLine and LastLine to Start and End,
+	changed their type to ISourceLine. Removed CodeSize.
+	(ISourceLine): Renamed Line to Row, added Column. Added OffsetType and Offset.
+
+	* MonoDwarfFileWriter.cs (MonoDwarfFileWriter.DieLexicalBlock): New class.
+	(MonoDwarfFileWriter.DieMethodVariable): New class.
+
+	* MonoSymbolWriter.cs (OpenScope, CloseScope): Implemented.
+	Reflected latest IMonoSymbolWriter interface changes.
+
 2002-03-20  Martin Baulig  <martin@gnome.org>
 
 	* IAssemblerWriter.cs: New interface.

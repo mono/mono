@@ -218,7 +218,7 @@ namespace Mono.CSharp.Debugger
 			private int next_directory_id;
 
 			private static int next_ref_index;
-			private static int next_method_id;
+			private int next_method_id;
 
 			private enum DW_LNS {
 				LNS_extended_op		= 0,
@@ -266,8 +266,9 @@ namespace Mono.CSharp.Debugger
 				get {
 					ISourceMethod[] retval = new ISourceMethod [_methods.Count];
 
-					foreach (ISourceMethod method in _methods.Keys)
+					foreach (ISourceMethod method in _methods.Keys) {
 						retval [(int) _methods [method] - 1] = method;
+					}
 
 					return retval;
 				}
@@ -322,7 +323,6 @@ namespace Mono.CSharp.Debugger
 
 			private void SetLine (int line)
 			{
-				Console.WriteLine ("LINE: " + st_line + " -> " + line);
 				aw.WriteInt8 ((int) DW_LNS.LNS_advance_line);
 				aw.WriteSLeb128 (line - st_line);
 				st_line = line;
@@ -369,6 +369,9 @@ namespace Mono.CSharp.Debugger
 				aw.WriteUInt8 (0);
 				aw.WriteUInt8 (1);
 				aw.WriteUInt8 ((int) DW_LNE.LNE_end_sequence);
+
+				st_line = 1;
+				st_address = 0;
 			}
 
 			private void Commit ()
@@ -408,26 +411,23 @@ namespace Mono.CSharp.Debugger
 				aw.EndSubsection (start_index);
 
 				foreach (ISourceMethod method in Methods) {
+					if (method.Start == null || method.Start.Row == 0)
+						continue;
+
 					SetFile (method.SourceFile);
-					SetLine (method.FirstLine);
+					SetLine (method.Start.Row);
 					SetStartAddress (method.Token);
 					SetBasicBlock ();
 					Commit ();
 
-					Console.WriteLine ("METHOD: " + method.MethodInfo.Name + " " +
-							   method.Token + " " + method.FirstLine + " " +
-							   method.LastLine);
-
 					foreach (ISourceLine line in method.Lines) {
-						Console.WriteLine ("WRITING LINE (" + method.Token + "): "
-								   + line.Line + " " + line.Offset);
-						SetLine (line.Line);
+						SetLine (line.Row);
 						SetAddress (method.Token, line.Offset);
 						SetBasicBlock ();
 						Commit ();
 					}
 
-					SetLine (method.LastLine);
+					SetLine (method.End.Row);
 					SetEndAddress (method.Token);
 					SetBasicBlock ();
 					Commit ();
@@ -442,14 +442,17 @@ namespace Mono.CSharp.Debugger
 
 		// DWARF tag from the DWARF 2 specification.
 		public enum DW_TAG {
+			TAG_lexical_block	= 0x0b,
 			TAG_pointer_type	= 0x0f,
 			TAG_compile_unit	= 0x11,
 			TAG_base_type		= 0x24,
-			TAG_subprogram		= 0x2e
+			TAG_subprogram		= 0x2e,
+			TAG_variable		= 0x34
 		}
 
 		// DWARF attribute from the DWARF 2 specification.
 		public enum DW_AT {
+			AT_location		= 0x02,
 			AT_name			= 0x03,
 			AT_byte_size		= 0x0b,
 			AT_stmt_list		= 0x10,
@@ -466,6 +469,8 @@ namespace Mono.CSharp.Debugger
 		// DWARF form from the DWARF 2 specification.
 		public enum DW_FORM {
 			FORM_addr		= 0x01,
+			FORM_block4		= 0x04,
+			FORM_data4		= 0x06,
 			FORM_string		= 0x08,
 			FORM_data1		= 0x0b,
 			FORM_flag		= 0x0c,
@@ -476,6 +481,22 @@ namespace Mono.CSharp.Debugger
 		public enum DW_LANG {
 			LANG_C_plus_plus	= 0x04,
 			LANG_C_sharp		= LANG_C_plus_plus
+		}
+
+		public enum DW_OP {
+			OP_const1u		= 0x08,
+			OP_const1s		= 0x09,
+			OP_const2u		= 0x0a,
+			OP_const2s		= 0x0b,
+			OP_const4u		= 0x0c,
+			OP_const4s		= 0x0d,
+			OP_const8u		= 0x0e,
+			OP_const8s		= 0x0f,
+			OP_constu		= 0x10,
+			OP_consts		= 0x11,
+			OP_plus			= 0x22,
+			OP_plus_uconst		= 0x23,
+			OP_fbreg		= 0x91,
 		}
 
 		// Abstract base class for a "debugging information entry" (die).
@@ -927,7 +948,130 @@ namespace Mono.CSharp.Debugger
 			}
 		}
 
-		protected const int reloc_table_version = 3;
+		// DW_TAG_lexical_block
+		public class DieLexicalBlock : Die
+		{
+			private static int my_abbrev_id;
+
+			static DieLexicalBlock ()
+			{
+				AbbrevEntry[] entries = {
+					new AbbrevEntry (DW_AT.AT_low_pc, DW_FORM.FORM_addr),
+					new AbbrevEntry (DW_AT.AT_high_pc, DW_FORM.FORM_addr)
+				};
+
+				AbbrevDeclaration decl = new AbbrevDeclaration (
+					DW_TAG.TAG_lexical_block, true, entries);
+
+				my_abbrev_id = RegisterAbbrevDeclaration (decl);
+			}
+
+			protected ISourceBlock block;
+
+			public DieLexicalBlock (Die parent_die, ISourceBlock block)
+				: base (parent_die, my_abbrev_id)
+			{
+				this.block = block;
+			}
+
+			public override void DoEmit ()
+			{
+				int token = block.SourceMethod.Token;
+				int start_offset = block.Start.Offset;
+				int end_offset = block.End.Offset;
+
+				Console.WriteLine ("BLOCK: " + token + " " + start_offset + " " +
+						   end_offset);
+
+				dw.AddRelocEntry (RelocEntryType.IL_OFFSET, token, start_offset);
+				aw.WriteAddress (0);
+				dw.AddRelocEntry (RelocEntryType.IL_OFFSET, token, end_offset);
+				aw.WriteAddress (0);
+			}
+		}
+
+		public abstract class DieVariable : Die
+		{
+			private static int my_abbrev_id;
+
+			static DieVariable ()
+			{
+				AbbrevEntry[] entries = {
+					new AbbrevEntry (DW_AT.AT_name, DW_FORM.FORM_string),
+					new AbbrevEntry (DW_AT.AT_type, DW_FORM.FORM_ref4),
+					new AbbrevEntry (DW_AT.AT_external, DW_FORM.FORM_flag),
+					new AbbrevEntry (DW_AT.AT_location, DW_FORM.FORM_block4),
+				};
+
+				AbbrevDeclaration decl = new AbbrevDeclaration (
+					DW_TAG.TAG_variable, true, entries);
+
+				my_abbrev_id = RegisterAbbrevDeclaration (decl);
+			}
+
+			protected string name;
+			protected Die type_die;
+			protected bool is_external;
+
+			public DieVariable (Die parent_die, string name, Type type, bool is_external)
+				: base (parent_die, my_abbrev_id)
+			{
+				this.name = name;
+				this.type_die = DieCompileUnit.RegisterType (type);
+				this.is_external = is_external;
+			}
+
+			public override void DoEmit ()
+			{
+				aw.WriteString (name);
+				DieCompileUnit.WriteRelativeDieReference (type_die);
+				aw.WriteUInt8 (is_external);
+				DoEmitLocation ();
+			}
+
+			protected abstract void DoEmitLocation ();
+		}
+
+		public class DieMethodVariable : DieVariable
+		{
+			public DieMethodVariable (Die parent_die, ILocalVariable local)
+				: base (parent_die, local.Name, local.Type, false)
+			{
+				this.var = local;
+				this.is_param = false;
+			}
+
+			public DieMethodVariable (Die parent_die, IMethodParameter param)
+				: base (parent_die, param.Name, param.Type, false)
+			{
+				this.var = param;
+				this.is_param = true;
+			}
+
+			protected IVariable var;
+			protected bool is_param;
+
+			protected override void DoEmitLocation ()
+			{
+				object end_index = aw.StartSubsectionWithSize ();
+				// This looks a bit strange, but OP_fbreg takes a sleb128
+				// agument and we can't fields of variable size.
+				aw.WriteUInt8 ((int) DW_OP.OP_fbreg);
+				aw.WriteSLeb128 (0);
+				aw.WriteUInt8 ((int) DW_OP.OP_const4s);
+				if (is_param)
+					dw.AddRelocEntry (RelocEntryType.METHOD_PARAMETER,
+							  var.Token, var.Index);
+				else
+					dw.AddRelocEntry (RelocEntryType.LOCAL_VARIABLE,
+							  var.Token, var.Index);
+				aw.WriteInt32 (0);
+				aw.WriteUInt8 ((int) DW_OP.OP_plus);
+				aw.EndSubsection (end_index);
+			}
+		}
+
+		protected const int reloc_table_version = 5;
 
 		protected enum Section {
 			DEBUG_INFO		= 0x01,
@@ -989,6 +1133,7 @@ namespace Mono.CSharp.Debugger
 				}
 			}
 		}
+
 	    
 		protected enum RelocEntryType {
 			NONE,
@@ -999,7 +1144,11 @@ namespace Mono.CSharp.Debugger
 			// Start address of machine code for this method
 			METHOD_START_ADDRESS	= 0x03,
 			// End address of machine code for this method
-			METHOD_END_ADDRESS	= 0x04
+			METHOD_END_ADDRESS	= 0x04,
+			// Stack offset of local variable
+			LOCAL_VARIABLE		= 0x05,
+			// Stack offset of method parameter
+			METHOD_PARAMETER	= 0x06
 		}
 
 		protected class RelocEntry {
@@ -1121,6 +1270,8 @@ namespace Mono.CSharp.Debugger
 					aw.WriteUInt32 (entry.Token);
 					break;
 				case RelocEntryType.IL_OFFSET:
+				case RelocEntryType.LOCAL_VARIABLE:
+				case RelocEntryType.METHOD_PARAMETER:
 					aw.WriteUInt32 (entry.Token);
 					aw.WriteUInt32 (entry.Original);
 					break;
@@ -1162,8 +1313,8 @@ namespace Mono.CSharp.Debugger
 				aw.WriteUInt8 (decl.HasChildren);
 
 				foreach (AbbrevEntry entry in decl.Entries) {
-					aw.WriteUInt8 ((int) entry.Attribute);
-					aw.WriteUInt8 ((int) entry.Form);
+					aw.WriteULeb128 ((int) entry.Attribute);
+					aw.WriteULeb128 ((int) entry.Form);
 				}
 
 				aw.WriteUInt8 (0);
