@@ -1,5 +1,9 @@
 2002-10-28 Jackson Harper <jackson@latitudegeo.com>
 
+	* ApplicationDirectoryMembershipCondition.cs: Implemented most methods
+
+2002-10-28 Jackson Harper <jackson@latitudegeo.com>
+
 	* ApplicationDirectory.cs: Added class
 
 2002-10-28 Jackson Harper <jackson@latitudegeo.com>

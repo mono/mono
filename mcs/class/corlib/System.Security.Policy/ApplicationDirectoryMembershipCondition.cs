@@ -2,6 +2,7 @@
 //
 // Author(s):
 //   Nick Drochak (ndrochak@gol.com)
+//   Jackson Harper (Jackson@LatitudeGeo.com)
 //
 // (C) 2002 Nick Drochak, All rights reserved.
 
@@ -10,57 +11,70 @@ using System.Security;
 namespace System.Security.Policy
 {
 
-	// FIXME: This class is mostly just method stubs.
-
 	[Serializable]
 	public sealed class ApplicationDirectoryMembershipCondition :
 		IMembershipCondition, 
 		ISecurityEncodable, 
 		ISecurityPolicyEncodable
 	{
+		// Tag for Xml Data
+		private static readonly string XmlTag = "IMembershipCondition";
+
 		// Methods
 		[MonoTODO]
 		public bool Check(Evidence evidence) { 
 			throw new NotImplementedException (); 
 		}
 
-		[MonoTODO]
 		public IMembershipCondition Copy() { 
-			throw new NotImplementedException (); 
+			return new ApplicationDirectoryMembershipCondition ();
 		}
 		
 		public override bool Equals(object o) { 
 			return o is ApplicationDirectoryMembershipCondition; 
 		}
 		
-		[MonoTODO]
 		public void FromXml(SecurityElement e) { 
-			throw new NotImplementedException (); 
+			FromXml (e, null);
 		}
 		
-		[MonoTODO]
 		public void FromXml(SecurityElement e, PolicyLevel level) { 
-			throw new NotImplementedException (); 
+			
+			if (null == e)
+				throw new ArgumentNullException ();
+			if (XmlTag != e.Tag)
+				throw new ArgumentException("e","The Tag of SecurityElement must be "
+					+ ApplicationDirectoryMembershipCondition.XmlTag);
 		}
 		
-		[MonoTODO]
-		public override int GetHashCode() { 
-			throw new NotImplementedException (); 
+		/// <summary>
+		///   All instances of ApplicationDirectoryMembershipCondition are equal so they should
+		///   have the same hashcode
+		/// </summary>
+		public override int GetHashCode() 
+		{ 
+			return typeof (ApplicationDirectoryMembershipCondition).GetHashCode ();
 		}
 		
-		[MonoTODO]
-		public override string ToString() { 
-			throw new NotImplementedException (); 
+		public override string ToString() 
+		{ 
+			return "ApplicationDirectory";
 		}
 		
-		[MonoTODO]
-		public SecurityElement ToXml() { 
-			throw new NotImplementedException (); 
+		public SecurityElement ToXml() 
+		{ 
+			return ToXml (null);
 		}
 		
-		[MonoTODO]
-		public SecurityElement ToXml(PolicyLevel level) { 
-			throw new NotImplementedException (); 
+		public SecurityElement ToXml(PolicyLevel level) 
+		{
+			SecurityElement element = new SecurityElement (XmlTag);
+			Type type = GetType ();
+			string classString = type.FullName + ", " + type.Assembly;
+			element.AddAttribute ("class", classString);
+			element.AddAttribute ("version", "1");
+
+			return element;
 		}
 	}
 }
