@@ -283,7 +283,7 @@ namespace System.Xml.Serialization {
 						else if (fieldType == typeof(System.Byte[]))
 							value = XmlCustomFormatter.ToByteArrayBase64(xmlReader.Value);
 						else
-							Console.WriteLine("Error (type is '{0})'", fieldType);
+							Console.WriteLine("XmlSerializer.DeserializeField Error (type is '{0}')", fieldType);
 						
 						break;
 					}
