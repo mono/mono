@@ -55,9 +55,8 @@ namespace MonoTests.System.Drawing{
 			sRslt = Path.GetFullPath (sSub);
 				
 			if (Directory.Exists(sRslt) == 	false) 
-				sRslt = "Test/System.Drawing/" + sSub;				
+				sRslt = "Test/System.Drawing/" + sSub;							
 			
-			Console.WriteLine("outdir: " + sRslt);	
 			return sRslt;
 		}
 		
@@ -69,9 +68,8 @@ namespace MonoTests.System.Drawing{
 			sRslt = Path.GetFullPath (file);
 				
 			if (File.Exists(file)==false) 
-				sRslt = "Test/System.Drawing/" + file;				
+				sRslt = "Test/System.Drawing/" + file;							
 			
-			Console.WriteLine (sRslt);	
 			return sRslt;
 		}
 		
@@ -99,7 +97,7 @@ namespace MonoTests.System.Drawing{
 			
 			Color color = bmpLoad.GetPixel(10,10);		
 			
-			Console.WriteLine("Color "+ color);			
+			
 			AssertEquals (Color.FromArgb(255,255,0,0), color);											
 		}
 
