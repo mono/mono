@@ -1,0 +1,8 @@
+2001-07-20	Patrik Torstensson (Patrik.Torstensson@labs2.com)
+
+	* Cache.cs:	Implemented. (90% ready)
+	* CacheDefinitions.cs: Implemented.
+	* CacheDependency.cs: Added. (20% ready)
+	* CacheExpires: Implemented.
+	* CacheEntry.cs: Implemented. (95% ready, going to be changed due to CacheDependecy support)
+	* ExpiresBuckets.cs: Implemented.
