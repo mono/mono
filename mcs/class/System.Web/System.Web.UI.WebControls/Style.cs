@@ -498,6 +498,11 @@ namespace System.Web.UI.WebControls
 		{
 			return String.Empty;
 		}
+
+		protected internal void SetBit (int bit)
+		{
+			Set (bit);
+		}
 	}
 }
 
