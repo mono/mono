@@ -2811,8 +2811,20 @@ namespace Mono.CSharp {
 					IMemoryLocation ml = (IMemoryLocation) instance_expr;
 
 					ml.AddressOf (ec, AddressOp.LoadStore);
-				} else
+				} else {
 					instance_expr.Emit (ec);
+
+					if (instance_expr.Type.IsValueType) {
+						LocalBuilder local = ig.DeclareLocal (instance_expr.Type);
+						ig.Emit(OpCodes.Stloc, local);
+						ig.Emit(OpCodes.Ldloca, local);
+						ig.Emit(OpCodes.Ldfld, FieldInfo);
+						LocalBuilder local2 = ig.DeclareLocal(type);
+						ig.Emit(OpCodes.Stloc, local2);
+						ig.Emit(OpCodes.Ldloca, local2);
+						return;
+					}
+				}
 				ig.Emit (OpCodes.Ldflda, FieldInfo);
 			}
 		}
