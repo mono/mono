@@ -1,3 +1,9 @@
+
+Wed Jan 5 16:40:18 CET 2005 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c: added support for statistical profiler 
+	(run with: --profile=default:stat).
+
 2005-01-04  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini-x86.h (MONO_ARCH_ENABLE_EMIT_STATE_OPT): Enable this on x86.
