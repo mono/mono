@@ -1,0 +1,5 @@
+2004-09-13  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ChangeLog: New.
+	* OleDbPermissionAttributeTest.cs: New. Unit tests for OleDbPermission
+	Attribute.
