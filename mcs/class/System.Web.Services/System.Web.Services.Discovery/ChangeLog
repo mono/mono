@@ -1,3 +1,9 @@
+2004-03-02  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* DiscoveryClientProtocol.cs: Now it can get alternate urls from HTML pages
+	  that include a link tag. Added support for loading files from a the
+	  file system.
+
 2004-01-24  Lluis Sanchez Gual <lluis@ximian.com>
 
 	* ContractReference.cs, DiscoveryClientProtocol.cs, 

@@ -16,6 +16,7 @@ using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Serialization;
 using System.Net;
+using System.Text.RegularExpressions;
 
 namespace System.Web.Services.Discovery {
 	public class DiscoveryClientProtocol : HttpWebClientProtocol {
@@ -81,7 +82,38 @@ namespace System.Web.Services.Discovery {
 
 		public DiscoveryDocument DiscoverAny (string url)
 		{
-			Stream stream = Download (ref url);
+			string contentType = null;
+			Stream stream = Download (ref url, ref contentType);
+
+			if (contentType.IndexOf ("text/html") != -1)
+			{
+				// Look for an alternate url
+				
+				StreamReader sr = new StreamReader (stream);
+				string str = sr.ReadToEnd ();
+				
+				string rex = "link\\s*rel\\s*=\\s*[\"']?alternate[\"']?\\s*";
+				rex += "type\\s*=\\s*[\"']?text/xml[\"']?\\s*href\\s*=\\s*(?:\"(?<1>[^\"]*)\"|'(?<1>[^']*)'|(?<1>\\S+))";
+				Regex rob = new Regex (rex, RegexOptions.IgnoreCase);
+				Match m = rob.Match (str);
+				if (!m.Success) 
+					throw new InvalidOperationException ("The HTML document does not contain Web service discovery information");
+				
+				if (url.StartsWith ("/"))
+				{
+					Uri uri = new Uri (url);
+					url = uri.GetLeftPart (UriPartial.Authority) + m.Groups[1];
+				}
+				else
+				{
+					int i = url.LastIndexOf ('/');
+					if (i == -1)
+						throw new InvalidOperationException ("The HTML document does not contain Web service discovery information");
+					url = url.Substring (0,i+1) + m.Groups[1];
+				}
+				stream = Download (ref url);
+			}
+			
 			XmlTextReader reader = new XmlTextReader (stream);
 			reader.MoveToContent ();
 			DiscoveryDocument doc;
@@ -132,10 +164,24 @@ namespace System.Web.Services.Discovery {
 		
 		public Stream Download (ref string url, ref string contentType)
 		{
-			WebRequest request = GetWebRequest (new Uri(url));
-			WebResponse resp = request.GetResponse ();
-			contentType = resp.ContentType;
-			return resp.GetResponseStream ();
+			if (url.StartsWith ("http://") || url.StartsWith ("https://"))
+			{
+				WebRequest request = GetWebRequest (new Uri(url));
+				WebResponse resp = request.GetResponse ();
+				contentType = resp.ContentType;
+				return resp.GetResponseStream ();
+			}
+			else
+			{
+				string ext = Path.GetExtension (url).ToLower();
+				if (ext == ".wsdl" || ext == ".xsd")
+				{
+					contentType = "text/xml";
+					return new FileStream (url, FileMode.Open, FileAccess.Read);
+				}
+				else
+					throw new InvalidOperationException ("Unrecognized file type '" + url + "'. Extension must be one of .wsdl or .xsd");
+			}
 		}
 		
 		public DiscoveryClientResultCollection ReadAll (string topLevelFilename)
