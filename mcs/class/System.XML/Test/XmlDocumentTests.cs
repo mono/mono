@@ -550,7 +550,7 @@ namespace MonoTests.System.Xml
 		public void TestGetElementsByTagNameUsingNameSpace ()
 		{
 			StringBuilder xml = new StringBuilder ();
-			xml.Append ("<?xml version=\"1.0\" ?><library xmlns:North=\"http://www.foo.com\"");
+			xml.Append ("<?xml version=\"1.0\" ?><library xmlns:North=\"http://www.foo.com\" ");
 			xml.Append ("xmlns:South=\"http://www.goo.com\"><North:book type=\"non-fiction\"> ");
 			xml.Append ("<North:title type=\"intro\">XML Fun</North:title> " );
 			xml.Append ("<North:author>John Doe</North:author> " );

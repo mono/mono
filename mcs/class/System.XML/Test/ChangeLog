@@ -1,4 +1,21 @@
-2002-09-96  Kral Ferch <kral_ferch@hotmail.com>
+2002-09-11  Kral Ferch <kral_ferch@hotmail.com>
+
+	* Added XPathNavigatorEvaluateTests.cs file to 
+	the MonoMicro.Test project.
+
+	* XPathNavigatorEvaluateTests.cs: New file. 
+
+	* AllTests.cs: Added XPathNavigatorEvaluateTests suite.
+
+	* XmlDocumentTests: Added space between namespace decls in
+	TestGetElementsByTagNameUsingNameSpace.  Was causing error
+	when testing against Microsoft assembly.
+	
+	* XmlElementTests: Added space between namespace decls in
+	TestGetElementsByTagNameUsingNameSpace.  Was causing error
+	when testing against Microsoft assembly.
+
+2002-09-06  Kral Ferch <kral_ferch@hotmail.com>
 
 	* Added XPathNavigatorMatchesTests.cs file to 
 	the MonoMicro.Test project.

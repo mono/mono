@@ -191,6 +191,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "XPathNavigatorEvaluateTests.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "XPathNavigatorMatchesTests.cs"
                     SubType = "Code"
                     BuildAction = "Compile"

@@ -41,6 +41,7 @@ namespace MonoTests.System.Xml
 				suite.AddTest (new TestSuite (typeof (XPathNavigatorTests)));
 				suite.AddTest (new TestSuite (typeof (SelectNodesTests)));
 				suite.AddTest (new TestSuite (typeof (XPathNavigatorMatchesTests)));
+				suite.AddTest (new TestSuite (typeof (XPathNavigatorEvaluateTests)));
 				return suite;
 			}
 		}
