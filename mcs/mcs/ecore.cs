@@ -302,7 +302,7 @@ namespace Mono.CSharp {
 
 			if ((e is TypeExpr) || (e is ComposedCast)) {
 				if ((flags & ResolveFlags.Type) == 0) {
-					e.Error_UnexpectedKind (flags);
+					e.Error_UnexpectedKind (flags, loc);
 					return null;
 				}
 
@@ -312,7 +312,7 @@ namespace Mono.CSharp {
 			switch (e.eclass) {
 			case ExprClass.Type:
 				if ((flags & ResolveFlags.VariableOrValue) == 0) {
-					e.Error_UnexpectedKind (flags);
+					e.Error_UnexpectedKind (flags, loc);
 					return null;
 				}
 				break;
@@ -337,7 +337,7 @@ namespace Mono.CSharp {
 					FieldInfo fi = ((FieldExpr) e).FieldInfo;
 					
 					Console.WriteLine ("{0} and {1}", fi.DeclaringType, fi.Name);
-					e.Error_UnexpectedKind (flags);
+					e.Error_UnexpectedKind (flags, loc);
 					return null;
 				}
 				break;
@@ -794,17 +794,17 @@ namespace Mono.CSharp {
 		/// <summary>
 		///   Reports that we were expecting `expr' to be of class `expected'
 		/// </summary>
-		public void Error_UnexpectedKind (string expected)
+		public void Error_UnexpectedKind (string expected, Location loc)
 		{
 			string kind = "Unknown";
 			
 			kind = ExprClassName (eclass);
 
-			Error (118, "Expression denotes a `" + kind +
+			Report.Error (118, loc, "Expression denotes a `" + kind +
 			       "' where a `" + expected + "' was expected");
 		}
 
-		public void Error_UnexpectedKind (ResolveFlags flags)
+		public void Error_UnexpectedKind (ResolveFlags flags, Location loc)
 		{
 			ArrayList valid = new ArrayList (10);
 

@@ -863,7 +863,7 @@ namespace Mono.CSharp {
 
 				return null;
 			} else {
-				expr.Error_UnexpectedKind ("variable, indexer or property access");
+				expr.Error_UnexpectedKind ("variable, indexer or property access", loc);
 				return null;
 			}
 
@@ -4949,7 +4949,7 @@ namespace Mono.CSharp {
 			}
 
 			if (!(expr is MethodGroupExpr)){
-				expr.Error_UnexpectedKind (ResolveFlags.MethodGroup);
+				expr.Error_UnexpectedKind (ResolveFlags.MethodGroup, loc);
 				return null;
 			}
 
@@ -5514,7 +5514,7 @@ namespace Mono.CSharp {
 			value_target = value;
 			value_target_set = true;
 			if (!(value_target is IMemoryLocation)){
-				Error_UnexpectedKind ("variable");
+				Error_UnexpectedKind ("variable", loc);
 				return false;
 			}
 			return true;
@@ -5611,7 +5611,7 @@ namespace Mono.CSharp {
 			
 			if (! (ml is MethodGroupExpr)){
 				if (!is_struct){
-					ml.Error_UnexpectedKind ("method group");
+					ml.Error_UnexpectedKind ("method group", loc);
 					return null;
 				}
 			}
@@ -6120,7 +6120,7 @@ namespace Mono.CSharp {
 						   AllBindingFlags, loc);
 				
 				if (!(ml is MethodGroupExpr)) {
-					ml.Error_UnexpectedKind ("method group");
+					ml.Error_UnexpectedKind ("method group", loc);
 					return null;
 				}
 				

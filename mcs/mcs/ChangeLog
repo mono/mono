@@ -1,3 +1,8 @@
+2004-09-20  John Luke <jluke@cfl.rr.com>
+
+	* assign.cs, delegate.cs, ecore.cs, expression.cs, statement.cs:
+	Pass location information that was available elsewhere.
+
 2004-09-19  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* codegen.cs: Fix bug #56621. It is now possible to use MCS on the MS

@@ -831,7 +831,7 @@ namespace Mono.CSharp {
 			Type e_type = e.Type;
 
 			if (!TypeManager.IsDelegateType (e_type)) {
-				e.Error_UnexpectedKind ("method");
+				e.Error_UnexpectedKind ("method", loc);
 				return null;
 			}
 

@@ -829,7 +829,7 @@ namespace Mono.CSharp {
 
 				if (!(eclass == ExprClass.Variable || eclass == ExprClass.PropertyAccess ||
 				      eclass == ExprClass.Value || eclass == ExprClass.IndexerAccess)) {
-					expr.Error_UnexpectedKind ("value, variable, property or indexer access ");
+					expr.Error_UnexpectedKind ("value, variable, property or indexer access ", loc);
 					return false;
 				}
 
