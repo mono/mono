@@ -1,4 +1,10 @@
 
+Thu Apr 22 18:08:37 CEST 2004 Paolo Molaro <lupus@ximian.com>
+
+	* mini-ppc.c, cpu-g4.md: made the branch macros more flexible.
+	Raise exception on integer divide by zero by hand since the hw
+	doesn't support it. Handle NaNs in FP compares.
+
 Thu Apr 22 16:10:31 CEST 2004 Paolo Molaro <lupus@ximian.com>
 
 	* exceptions-ppc.c, mini-ppc.h, mini.c: simplified some
