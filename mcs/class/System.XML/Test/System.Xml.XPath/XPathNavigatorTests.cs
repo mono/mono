@@ -190,5 +190,19 @@ namespace MonoTests.System.Xml
 			AssertEquals (XPathNodeType.Element, navigator.NodeType);
 			AssertEquals ("Root", navigator.Name);
 		}
+
+		[Test]
+		public void DocumentWithProcessingInstruction ()
+		{
+			document.LoadXml ("<?xml-stylesheet href='foo.xsl' type='text/xsl' ?><foo />");
+			navigator = document.CreateNavigator ();
+
+			Assert (navigator.MoveToFirstChild ());
+			AssertEquals (XPathNodeType.ProcessingInstruction, navigator.NodeType);
+			AssertEquals ("xml-stylesheet", navigator.Name);
+
+			XPathNodeIterator iter = navigator.SelectChildren (XPathNodeType.Element);
+			AssertEquals (0, iter.Count);
+		}
 	}
 }
