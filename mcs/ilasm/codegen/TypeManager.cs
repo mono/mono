@@ -40,7 +40,8 @@ namespace Mono.ILASM {
                         if (type_def == null)
                                 return null;
 
-                        type_def.Define (code_gen);
+                        if (!type_def.IsDefined)
+                                type_def.Define (code_gen);
 
                         return type_def.PeapiType;
                 }

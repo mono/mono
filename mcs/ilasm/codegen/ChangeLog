@@ -1,5 +1,9 @@
 2003-05-01 Jackson Harper <jackson@latitudegeo.com>
 
+	* TypeManager.cs: Check if type is defined before defining it.
+		
+2003-05-01 Jackson Harper <jackson@latitudegeo.com>
+
 	* CodeGen.cs: Add outer classes to typedefs if necesary
 	* InstrTable.cs: ldtoken instruction is a INSTR_TOK token
 	* TypeDef.cs: Add outer class property
