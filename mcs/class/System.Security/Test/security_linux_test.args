@@ -1,0 +1,5 @@
+--target library
+-o security_linux_test.dll
+--noconfig
+-r ../../lib/System.Xml.dll
+-r ../../../nunit20/NUnit.Framework.dll

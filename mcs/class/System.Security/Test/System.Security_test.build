@@ -16,8 +16,8 @@
 			<sources>
 				<includes name="**/*.cs"/>
 			</sources>
-			<references basedir="..\..\..\nunit">
-				<includes name="NUnitCore.dll"/>
+			<references basedir="..\..\..\nunit20">
+				<includes name="NUnit.Framework.dll"/>
 				<includes name="..\class\lib\corlib.dll"/>
 				<includes name="..\class\lib\System.XML.dll"/>
 				<includes name="..\class\lib\System.Security.dll"/>
@@ -28,7 +28,7 @@
 	</target>
 
 	<target name="test" depends="assemblies">
-		<exec program="..\..\..\nunit\NUnitConsole" commandline="MonoTests.System.Security.AllTests,System.Security_test.dll" failonerror="false"/>
+		<exec program="..\..\..\nunit20\nunit-console.exe" commandline="System.Security_test.dll" failonerror="false"/>
 	</target>
 
 	<target name="clean">
