@@ -173,11 +173,8 @@ namespace MonoTests.System.Reflection
 			Assert.AreEqual (prop1, prop2);
 		}
 
-		[Test][Category("NotWorking")]
-		public void Select1Match_NotWorking ()
+		public void Select1Match ()
 		{
-			// See bug 71297
-
 			Type type = typeof (SingleIndexer);
 			PropertyInfo [] props = type.GetProperties (BindingFlags.DeclaredOnly |
 								    BindingFlags.Public |
