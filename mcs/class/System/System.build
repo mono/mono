@@ -17,6 +17,7 @@
 			<!--arg value="/nostdlib"/--> 	<!-- don't reference mscorlib -->
 			<!--arg value="/r:corlib.dll"/-->
 			<arg value="/r:System.Xml.dll"/>
+			<arg value="/r:System.Drawing.dll"/>
 			<sources>
 				<includes name="**/*.cs"/> 
 				<excludes name="Test/**"/>

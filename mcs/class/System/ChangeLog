@@ -1,3 +1,7 @@
+2002-06-15  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* System.build: referenced System.Drawing.dll.
+
 2002-05-12  Lawrence Pit <loz@cable.a2000.nl>
 
 	* System.Security.Cryptography.X509Certificates: directory added
