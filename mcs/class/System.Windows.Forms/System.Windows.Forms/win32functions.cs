@@ -80,7 +80,7 @@ namespace System.Windows.Forms{
 			out int fileSystemFlags,
 			StringBuilder systemNameBuffer,
 			int systemNameBufferSize);
-		
+
 		[DllImport("kernel32.dll")]
 		internal static extern IntPtr LoadLibraryA(string filename);
 		

@@ -23,6 +23,7 @@ namespace System.Windows.Forms {
 		public GroupBox() {
 			//SubClassWndProc_ = true;
 			SetStyle ( ControlStyles.UserPaint, true);
+			TabStop = false;
 		}
 
 		//

@@ -207,7 +207,7 @@
     			name = "";
     			region = null;
     			rightToLeft = RightToLeft.Inherit;
-    			tabStop = false;
+    			tabStop = true;
     			text = "";
     			visible = true;
     			parent = null;
@@ -1284,10 +1284,22 @@
     		//}
     		
     		[MonoTODO]
-    		public Control GetNextControl (Control ctl, bool forward) 
+    		public Control GetNextControl ( Control ctl, bool forward ) 
     		{
-    			throw new NotImplementedException ();
+			if ( ctl == null || ctl.Parent == null )
+				return Controls.GetFirstControl ( forward );
+			else {
+				Control parent = ctl.Parent;
+
+				Control next = parent.Controls.GetNextControl ( ctl, forward );
+				if ( next != null )
+					return next;
+
+				return GetNextControl ( parent, forward );
+			}
+			return null;
     		}
+
     	
     		[MonoTODO]
     		protected bool GetStyle (ControlStyles flag) 
@@ -2817,6 +2829,20 @@
 			}
 		}
     		
+		internal static Control FocusedControl {
+			get {
+				IEnumerator cw = controlsCollection.GetEnumerator ( );
+
+				while ( cw.MoveNext ( ) ) {
+					Control c = ( (DictionaryEntry) cw.Current).Value as Control;
+
+					if ( c.Focused ) return c;
+				}
+
+				return null;
+			}
+		}
+
     		/// --- Control: events ---
     		public event EventHandler BackColorChanged;
     		public event EventHandler BackgroundImageChanged;
@@ -3118,6 +3144,29 @@
     		/// </summary>
     		public class ControlCollection : IList, ICollection, IEnumerable, ICloneable {
     
+			class ControlComparer : IComparer {
+				int greater;
+				int less;
+				internal ControlComparer ( bool dir )
+				{	
+					greater = dir ? 1 : -1;
+					less    = - greater;
+				}
+
+				int IComparer.Compare( object x, object y )
+				{
+					int tx = ( ( Control )x ).TabIndex;
+					int ty = ( ( Control )y ).TabIndex;
+
+					if ( tx > ty )
+						return greater;
+					else if ( tx < ty )
+						return less;
+					else
+						return 0;
+				}
+			}
+
     			private ArrayList collection = new ArrayList ();
     			protected Control owner;
     
@@ -3184,10 +3233,12 @@
 					return base.Equals(obj);
     			}
 
-    			[MonoTODO]
-    			public int GetChildIndex (Control child)
+    			public int GetChildIndex ( Control child )
     			{
-    				throw new NotImplementedException ();
+				int index = collection.IndexOf ( child );
+				if ( index == -1 )
+					throw new ArgumentException( "'child' is not a child control of this parent.");
+				return index;
     			}
     			
     			public IEnumerator GetEnumerator () 
@@ -3198,9 +3249,9 @@
     			[MonoTODO]
     			public override int GetHashCode () 
     			{
-					//FIXME:
-					return base.GetHashCode();
-				}
+				//FIXME:
+				return base.GetHashCode();
+			}
     			
     			public int IndexOf (Control control) 
     			{
@@ -3219,12 +3270,74 @@
     				//collection.RemoveAt (index);
     			}
     			
-    			[MonoTODO]
-    			public void SetChildIndex (Control child,int newIndex) 
+    			public void SetChildIndex ( Control child, int newIndex ) 
     			{
-					//FIXME:
+				int oldIndex = collection.IndexOf ( child );
+				if ( oldIndex == -1 )
+					throw new ArgumentException( "'child' is not a child control of this parent.");
+
+				if ( oldIndex != newIndex ) {
+					collection.Remove ( child );
+
+					if ( newIndex >= collection.Count )
+						collection.Add ( child );
+					else
+						collection.Insert ( newIndex, child );
+				}
     			}
-    			
+
+			internal Control GetFirstControl ( bool direction )
+			{
+				Control first = null;
+
+				if ( collection.Count > 0 ) {
+					ArrayList copy = collection.Clone ( ) as ArrayList;
+					copy.Sort ( new ControlComparer ( direction ) );
+
+					foreach ( Control c in copy ) {
+						first = c.Controls.GetFirstControl ( direction );
+
+						if ( first != null )
+							break;
+
+						if ( c.TabStop && c.CanFocus ) {
+							first = c;
+							break;
+						}
+					}
+				}								
+				return first;
+			}
+
+
+			internal Control GetNextControl ( Control ctl, bool forward )
+			{
+				if ( collection.Count == 0 )
+					return null;
+
+				ArrayList copy = collection.Clone ( ) as ArrayList;
+				copy.Sort ( new ControlComparer ( forward ) );
+				int index = copy.IndexOf ( ctl );
+
+				Control next = null;
+
+				for ( int i = index + 1; i < copy.Count ; i++ ) {
+					Control c = copy[i] as Control;
+
+					if ( c.TabStop && c.CanFocus ) {
+						next = c;
+						break;
+					}
+					else {
+						next = c.Controls.GetFirstControl ( forward );
+						if ( next != null )
+							break;
+					}
+				}
+
+				return next;
+			}
+
     			/// --- ControlCollection.IClonable methods ---
     			[MonoTODO]
     			object ICloneable.Clone ()

@@ -1,3 +1,10 @@
+2003-05-09  Aleksey Ryabchuk <ryabchuk@yahoo.com>
+	* Control.cs
+	* Form.cs
+	* GroupBox.cs
+	* Label.cs
+	* UpDownBase.cs : some new stuff related to focus movement by the TAB key
+
 2003-05-08  Aleksey Ryabchuk <ryabchuk@yahoo.com>
 	* Control.cs : started implementation of keyboard handling
 	* CroupBox.cs : set UserPaint style

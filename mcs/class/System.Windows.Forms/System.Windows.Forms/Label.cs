@@ -42,7 +42,7 @@
 				// Defaults in the Spec
 				autoSize = false;
 				borderStyle = BorderStyle.None;
-	
+				base.TabStop = false;
 				//Defaults not in the spec
 				Image backgroundImage;
 				Image image;

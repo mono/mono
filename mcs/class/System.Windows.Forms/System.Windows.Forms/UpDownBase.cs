@@ -21,6 +21,7 @@ namespace System.Windows.Forms {
 
 		public SpinnerControl() {
 			SubClassWndProc_ = true;
+			TabStop = false;
 			updownAlign = LeftRightAlignment.Right;
 		}
 		
@@ -123,6 +124,7 @@ namespace System.Windows.Forms {
 			Spinner_ = new SpinnerControl();
 			this.Controls.Add(EditBox_);
 			this.Controls.Add(Spinner_);
+			this.TabStop = false;
 		}
 
 		/// --- Destructor ---

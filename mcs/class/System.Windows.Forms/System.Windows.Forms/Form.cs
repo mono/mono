@@ -779,6 +779,9 @@
     		{
 			OnLoad ( EventArgs.Empty );
     			base.OnCreateControl ();
+			Control c = GetNextControl ( null, true );
+			if ( c != null )
+				c.Focus ( );
     		}
     
     		protected override void OnFontChanged (EventArgs e)
@@ -935,6 +938,12 @@
     
     		protected override bool ProcessDialogKey (Keys keyData)
     		{
+			if ( keyData == Keys.Tab ) {
+				Control newFocus = GetNextControl ( FocusedControl, true );
+				if ( newFocus != null ) {
+					return newFocus.Focus ( );
+				}
+			}
     			return base.ProcessDialogKey (keyData);
     		}
     
