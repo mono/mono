@@ -48,14 +48,12 @@ namespace System.Collections.Generic
 		const int defaultLength = 16;
 
 		T [] contents;
-		int capacity;
 		int count;
 		int modcount;
 
 		public Collection ()
 		{
 			contents = new T [defaultLength];
-			capacity = defaultLength;
 		}
 
 		public Collection (List <T> list)
@@ -67,13 +65,12 @@ namespace System.Collections.Generic
 			list.CopyTo (contents, 0);
 			count = list.Count;
 
-			capacity = contents.Length;
 		}
 		
 		public void Add (T item)
 		{
-			if (count >= capacity)
-				Array.Resize<T> (ref contents, capacity * 2);
+			if (count >= contents.Length) 
+				Array.Resize<T> (ref contents, contents.Length * 2);
 			
 			InsertItem (count, item);
 
@@ -185,8 +182,8 @@ namespace System.Collections.Generic
 			if (index < 0 || index > count)
 				throw new ArgumentOutOfRangeException ("index");
 
-			if (count >= capacity)
-				Array.Resize<T> (ref contents, capacity * 2);
+			if (count >= contents.Length)
+				Array.Resize<T> (ref contents, contents.Length * 2);
 
 			InsertItem (index, item);
 
