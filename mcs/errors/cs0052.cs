@@ -1,5 +1,5 @@
-// cs0052.cs: Accessibility levels inconsistent. Field type is less accessible than field.
-// Line: 
+// cs0052.cs: Accessibility levels inconsistent. Method type is less accessible than method.
+// Line: 10
 
 using System;
 
