@@ -5,7 +5,7 @@
 //   Martin Adoue (martin@cwanet.com)
 //   Chris J Breisch (cjbreisch@altavista.net)
 //   Francesco Delfino (pluto@tipic.com)
-//   Daniel Campos (danielcampos@myway.com)
+//   Daniel Campos (danielcampos@netcourrier.com)
 //   Rafael Teixeira (rafaelteixeirabr@hotmail.com)
 //
 // (C) 2002 Ximian Inc.
@@ -265,16 +265,128 @@ namespace Microsoft.VisualBasic
 		/// </summary>
 		/// <param name="Expression">Required. Any valid expression.</param>
 		/// <param name="Style">Optional. A valid named or user-defined format String expression. </param>
-		[MonoTODO]
-		public static string Format(object Expression, 
-			[Optional]
-			[DefaultValue("")] 
-			string Style)
+		[MonoTODO("Needs Testing")]
+		public static string Format(object expression, [Optional][DefaultValue("")]string style)
 		{
-			//FIXME
-			throw new NotImplementedException();
-		}
+			string returnstr=null;
+			string expstring=expression.GetType().ToString();;
+			switch(expstring)
+			{
+				case "System.Char":
+					if ( style!="")
+						throw new System.ArgumentException("'expression' argument has a not valid value");
+					returnstr=Convert.ToChar(expression).ToString();
+					break;
+				case "System.String":
+					if (style == "")
+						returnstr=expression.ToString();
+					else
+					{
+						switch ( style.ToLower ())
+						{
+							case "yes/no":
+							case "on/off":
+								switch (expression.ToString().ToLower())
+								{
+									case "true":
+									case "On":
+										if (style.ToLower ()=="yes/no")
+											returnstr="Yes"; // TODO : must be translated
+										else
+											returnstr="On"; // TODO : must be translated
+										break;
+									case "false":
+									case "off":
+										if (style.ToLower ()=="yes/no")
+											returnstr="No"; // TODO : must be translated
+										else
+											returnstr="Off"; // TODO : must be translated
+										break;
+									default:
+										throw new System.ArgumentException();
 
+								}
+								break;
+							default:
+								returnstr=style.ToString();
+								break;
+						}
+					}
+					break;
+				case "System.Boolean":
+					if ( style=="")
+					{
+						if ( Convert.ToBoolean(expression)==true)
+							returnstr="True"; // must not be translated
+						else
+							returnstr="False"; // must not be translated
+					}
+					else
+						returnstr=style;
+					break;
+				case "System.DateTime":
+					returnstr=Convert.ToDateTime(expression).ToString (style) ;
+					break;
+				case "System.Decimal":	case "System.Byte":	case "System.SByte":
+				case "System.Int16":	case "System.Int32":	case "System.Int64":
+				case "System.Double":	case "System.Single":	case "System.UInt16":
+				case "System.UInt32":	case "System.UInt64":
+					switch (style.ToLower ())
+					{
+						case "yes/no": case "true":	case "false": case "on/off":
+							style=style.ToLower();
+							double dblbuffer=Convert.ToDouble(expression);
+							if (dblbuffer == 0)
+							{
+								switch (style)
+								{
+									case "on/off":
+										returnstr= "Off";break; // TODO : must be translated
+									case "yes/no":
+										returnstr= "No";break; // TODO : must be translated
+									case "true":
+									case "false":
+										returnstr= "False";break; // must not be translated
+								}
+							}
+							else
+							{
+								switch (style)
+								{
+									case "on/off":
+										returnstr="On";break; // TODO : must be translated
+									case "yes/no":
+										returnstr="Yes";break; // TODO : must be translated
+									case "true":
+									case "false":
+										returnstr="True";break; // must not be translated
+								}
+							}
+							break;
+						default:
+							switch (expstring)
+							{
+								case "System.Byte": returnstr=Convert.ToByte(expression).ToString (style);break;
+								case "System.SByte": returnstr=Convert.ToSByte(expression).ToString (style);break;
+								case "System.Int16": returnstr=Convert.ToInt16(expression).ToString (style);break;
+								case "System.UInt16": returnstr=Convert.ToUInt16(expression).ToString (style);break;
+								case "System.Int32":  returnstr=Convert.ToInt32(expression).ToString (style);break;
+								case "System.UInt32":  returnstr=Convert.ToUInt32(expression).ToString (style);break;
+								case "System.Int64":  returnstr=Convert.ToUInt64(expression).ToString (style);break;
+								case "System.UInt64":returnstr=Convert.ToUInt64(expression).ToString (style);break;
+								case "System.Single": returnstr=Convert.ToSingle(expression).ToString (style);break;
+								case "System.Double":  returnstr=Convert.ToDouble(expression).ToString (style);break;
+								case "System.Decimal": returnstr=Convert.ToDecimal(expression).ToString (style);break;
+
+							}
+							break;
+					}
+					break;
+			}
+			if (returnstr==null)
+				throw new System.ArgumentException();
+			return returnstr;
+		}
 
 		/// <summary>
 		/// Returns an expression formatted as a currency value using the currency symbol defined in the system control panel.
