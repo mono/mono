@@ -45,7 +45,7 @@ namespace System
 		{
 			ClassName = info.GetString ("MMClassName");
 			MemberName = info.GetString ("MMMemberName");
-			Signature = (byte[]) info.GetValue ("MMSignature", Signature.GetType ());
+			Signature = (byte[]) info.GetValue ("MMSignature", typeof(byte[]));
 		}
 
 		public MissingMemberException (string className, string memberName)
