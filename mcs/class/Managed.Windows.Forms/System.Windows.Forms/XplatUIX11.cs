@@ -23,9 +23,12 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.13 $
+// $Revision: 1.14 $
 // $Modtime: $
 // $Log: XplatUIX11.cs,v $
+// Revision 1.14  2004/08/09 20:55:59  pbartok
+// - Removed Run method, was only required for initial development
+//
 // Revision 1.13  2004/08/09 20:51:25  pbartok
 // - Implemented GrabWindow/ReleaseWindow methods to allow pointer capture
 //
@@ -587,61 +590,6 @@ namespace System.Windows.Forms {
 		// Santa's little helper
 		static void Where() {
 			Console.WriteLine("Here: {0}", new StackTrace().ToString());
-		}
-
-		internal override void Run() {
-			XEvent	xevent = new XEvent();
-
-			//Console.WriteLine("Size of XEvent: {0}", Marshal.SizeOf(typeof(XEvent)));
-			//Where();
-			//XNextEvent(DisplayHandle, ref xevent);
-			//Where();
-
-			while (true==true) {
-				XNextEvent(DisplayHandle, ref xevent);
-				switch(xevent.type) {
-					case XEventName.KeyPress: {
-						IntPtr	buffer = Marshal.AllocHGlobal(24);
-						XKeySym	keysym;
-						string	keys;
-						int	len;
-
-						len=XLookupString(ref xevent, buffer, 24, out keysym, IntPtr.Zero);
-						if (len>0) {
-							keys=Marshal.PtrToStringAuto(buffer);
-							Console.WriteLine("Got char {0}", keys);
-						} else {
-							Console.WriteLine("Got special key {0}", keysym);
-						}
-						Marshal.FreeHGlobal(buffer);
-						break;
-					}
-
-					case XEventName.Expose: {
-						Rectangle	r = new Rectangle(xevent.ExposeEvent.x, xevent.ExposeEvent.y, xevent.ExposeEvent.width, xevent.ExposeEvent.height);
-						Graphics	g = Graphics.FromHwnd (xevent.ExposeEvent.window );
-						Font		f = new Font("Bitstream Vera Sans Mono", 20);
-						SolidBrush	b = new SolidBrush(Color.Red);
-						Rectangle	r2 = new Rectangle(0, 0, 300, 300);
-
-						g.FillRectangle(SystemBrushes.Window, r2);
-						g.DrawString("TestString", f, b, 0, 0);
-
-//						Console.WriteLine("XplatUI.Run(): Exposed {0}", r);
- 						break;
-					}
-
-					case XEventName.ButtonPress: {
-						Console.WriteLine("XplatUI.Run(): leaving loop");
-						return;
-					}
-
-					default: {
-						Console.WriteLine("Received event {0}", xevent.type);
-						break;
-					}
-				}
-			}
 		}
 		#endregion	// Public Static Methods
 

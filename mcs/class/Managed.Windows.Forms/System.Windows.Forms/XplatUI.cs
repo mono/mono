@@ -23,9 +23,12 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.5 $
+// $Revision: 1.6 $
 // $Modtime: $
 // $Log: XplatUI.cs,v $
+// Revision 1.6  2004/08/09 20:55:59  pbartok
+// - Removed Run method, was only required for initial development
+//
 // Revision 1.5  2004/08/09 20:51:25  pbartok
 // - Implemented GrabWindow/ReleaseWindow methods to allow pointer capture
 //
@@ -250,11 +253,6 @@ namespace System.Windows.Forms {
 		internal static void Where() {
 			Console.WriteLine("Here: {0}", new StackTrace().ToString());
 		}
-
-		internal static void Run() {
-			driver.Run();
-		}
-
 		#endregion	// Public Static Methods
 
 	}

@@ -23,9 +23,12 @@
 //	Peter Bartok	pbartok@novell.com
 //
 //
-// $Revision: 1.6 $
+// $Revision: 1.7 $
 // $Modtime: $
 // $Log: XplatUIWin32.cs,v $
+// Revision 1.7  2004/08/09 20:55:59  pbartok
+// - Removed Run method, was only required for initial development
+//
 // Revision 1.6  2004/08/09 20:51:25  pbartok
 // - Implemented GrabWindow/ReleaseWindow methods to allow pointer capture
 //
@@ -607,10 +610,6 @@ namespace System.Windows.Forms {
 		static void Where() {
 			Console.WriteLine("Here: {0}", new StackTrace().ToString());
 		}
-
-		internal override void Run() {
-		}
-
 		#endregion	// Public Static Methods
 
 		#region Win32 Imports
