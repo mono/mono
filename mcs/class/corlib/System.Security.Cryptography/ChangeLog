@@ -1,3 +1,9 @@
+2005-02-10  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* DSA.cs: Weekly fix to case where DSAParameters.Counter is 0 :-(
+	A new unit test was added for this specific case so it's hopefully
+	the last fix for this. Fixed exception reporting to match NET_2_0.
+
 2005-01-30  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* DSA.cs: Really fixed case where DSAParameters.Counter is 0.

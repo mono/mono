@@ -156,14 +156,13 @@ namespace System.Security.Cryptography {
 
 					sb.Append ("<PgenCounter>");
 					// the number of bytes is important (no matter == 0x00)
-					byte[] inArr = BitConverterLE.GetBytes (dsaParams.Counter);
-					int l = inArr.Length;
-					if (l > 0) {
+					if (dsaParams.Counter != 0) {
+						byte[] inArr = BitConverterLE.GetBytes (dsaParams.Counter);
+						int l = inArr.Length;
 						while (inArr[l-1] == 0x00)
 							l--;
-						byte[] c = new byte [l];
-						Buffer.BlockCopy (inArr, 0, c, 0, l);
-						sb.Append (Convert.ToBase64String (c));
+
+						sb.Append (Convert.ToBase64String (inArr, 0, l));
 					} else {
 						sb.Append ("AA==");	// base64 encoded 0
 					}
@@ -176,8 +175,12 @@ namespace System.Security.Cryptography {
 					sb.Append ("</X>");
 				}
 				else if (includePrivateParameters) {
+#if NET_2_0
+					throw new ArgumentNullException ("X");
+#else
 					throw new CryptographicException (
 						Locale.GetText ("Missing private key informations"));
+#endif
 				}
 
 				sb.Append ("</DSAKeyValue>");
