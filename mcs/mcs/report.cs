@@ -81,6 +81,9 @@ namespace Mono.CSharp {
 
 		static public void Error (int code, Location l, string text)
 		{
+			if (code < 0)
+				code = 8000-code;
+			
 			string msg = String.Format (
 				"{0}({1}) error CS{2:0000}: {3}", l.Name, l.Row, code, text);
 //				"{0}({1}) error CS{2}: {3}", l.Name, l.Row, code, text);
@@ -91,6 +94,9 @@ namespace Mono.CSharp {
 
 		static public void Warning (int code, Location l, string text)
 		{
+			if (code < 0)
+				code = 8000-code;
+			
 			if (warning_ignore_table != null){
 				if (warning_ignore_table.Contains (code))
 					return;

@@ -393,10 +393,8 @@ namespace Mono.CSharp {
 				if (!TypeManager.VerifyUnManaged (Expr.Type, loc)){
 					return null;
 				}
-				
-				string ptr_type_name = Expr.Type.FullName + "*";
-				type = TypeManager.LookupType (ptr_type_name);
-				
+
+				type = TypeManager.GetPointerType (Expr.Type);
 				return this;
 
 			case Operator.Indirection:
@@ -3611,7 +3609,7 @@ namespace Mono.CSharp {
 		public Type Type {
 			get {
 				if (ArgType == AType.Ref || ArgType == AType.Out)
-					return TypeManager.LookupType (Expr.Type.ToString () + "&");
+					return TypeManager.GetReferenceType (Expr.Type);
 				else
 					return Expr.Type;
 			}
@@ -4148,7 +4146,7 @@ namespace Mono.CSharp {
 						Type pt = pd.ParameterType (i);
 
 						if (!pt.IsByRef)
-							pt = TypeManager.LookupType (pt.FullName + "&");
+							pt = TypeManager.GetReferenceType (pt);
 						
 						if (pt != a.Type)
 							return false;
@@ -4210,7 +4208,7 @@ namespace Mono.CSharp {
 						Type pt = pd.ParameterType (i);
 
 						if (!pt.IsByRef)
-							pt = TypeManager.LookupType (pt.FullName + "&");
+							pt = TypeManager.GetReferenceType (pt);
 
 						if (pt != a.Type)
 							return false;
@@ -6694,19 +6692,10 @@ namespace Mono.CSharp {
 			int arg_count = ea.Arguments.Count;
 			Type [] args = new Type [arg_count];
 			MethodInfo address;
-			string ptr_type_name;
 			Type ret_type;
 			
-			ptr_type_name = type.FullName + "&";
-			ret_type = Type.GetType (ptr_type_name);
+			ret_type = TypeManager.GetReferenceType (type);
 			
-			//
-			// It is a type defined by the source code we are compiling
-			//
-			if (ret_type == null){
-				ret_type = mb.GetType (ptr_type_name);
-			}
-
 			for (int i = 0; i < arg_count; i++){
 				//args [i++] = a.Type;
 				args [i] = TypeManager.int32_type;
@@ -7417,16 +7406,8 @@ namespace Mono.CSharp {
 			Type array_type = array.Type.GetElementType ();
 
 			this.array = array;
-			
-			string array_ptr_type_name = array_type.FullName + "*";
-			
-			type = Type.GetType (array_ptr_type_name);
-			if (type == null){
-				ModuleBuilder mb = CodeGen.ModuleBuilder;
-				
-				type = mb.GetType (array_ptr_type_name);
-			}
 
+			type = TypeManager.GetPointerType (array_type);
 			eclass = ExprClass.Value;
 			loc = l;
 		}
@@ -7523,13 +7504,7 @@ namespace Mono.CSharp {
 			if (!TypeManager.VerifyUnManaged (otype, loc))
 				return null;
 
-			string ptr_name = otype.FullName + "*";
-			type = Type.GetType (ptr_name);
-			if (type == null){
-				ModuleBuilder mb = CodeGen.ModuleBuilder;
-				
-				type = mb.GetType (ptr_name);
-			}
+			type = TypeManager.GetPointerType (otype);
 			eclass = ExprClass.Value;
 
 			return this;

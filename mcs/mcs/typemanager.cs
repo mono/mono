@@ -470,6 +470,38 @@ public class TypeManager {
 	}
 
 	//
+	// Gets the reference to T version of the Type (T&)
+	//
+	public static Type GetReferenceType (Type t)
+	{
+		string tname = t.FullName + "&";
+		
+		Type ret = t.Assembly.GetType (tname);
+
+		// If the type comes from the assembly we are building
+		if (ret == null)
+			ret = t.Module.GetType (tname);
+
+		return ret;
+	}
+
+	//
+	// Gets the pointer to T version of the Type  (T*)
+	//
+	public static Type GetPointerType (Type t)
+	{
+		string tname = t.FullName + "*";
+		
+		Type ret = t.Assembly.GetType (tname);
+
+		// If the type comes from the assembly we are building
+		if (ret == null)
+			ret = t.Module.GetType (tname);
+
+		return ret;
+	}
+	
+	//
 	// Low-level lookup, cache-less
 	//
 	static Type LookupTypeReflection (string name)
@@ -513,6 +545,21 @@ public class TypeManager {
 
 		types [name] = t;
 		return t;
+	}
+
+	//
+	// This version tries to reduce the impact of calling LookupType by validating if
+	// the namespace exists
+	//
+	public static Type LookupType (string ns, string name, out string res)
+	{
+		if (!IsNamespace (ns)){
+			res = null;
+			return null;
+		}
+
+		res = DeclSpace.MakeFQN (ns, name);
+		return LookupType (res);
 	}
 	
 	/// <summary>
@@ -580,26 +627,12 @@ public class TypeManager {
 		return null;
 	}
 
-	static Hashtable assemblies_namespaces = new Hashtable ();
+	// Total list of known namespaces for the compilation 
+	static string [] namespaces;
+
+	// Only used on the MS runtime: the list of all namespaces, unique.
+	static Hashtable namespaces_hash;
 	
-	//
-	// Returns a list of all namespaces in the assemblies and types loaded.
-	//
-	static Hashtable ExtractAssemblyNamespaces ()
-	{
-		foreach (Assembly a in assemblies){
-			foreach (Type t in a.GetTypes ()){
-				string ns = t.Namespace;
-
-				if (assemblies_namespaces.Contains (ns))
-					continue;
-				assemblies_namespaces [ns] = ns;
-			}
-		}
-
-		return assemblies_namespaces;
-	}
-
 	static Hashtable AddModuleNamespaces (Hashtable h)
 	{
 		foreach (ModuleBuilder mb in modules){
@@ -616,127 +649,78 @@ public class TypeManager {
 	
 	
 	/// <summary>
-	///   Returns the list of namespaces that are active for this executable
+	///   Computes the namespaces that we import from the assemblies we reference.
 	/// </summary>
-	public static Hashtable GetAssemblyNamespaces (string executable_name)
+	public static void ComputeNamespaces ()
 	{
-		string cache_name = executable_name + ".nsc";
-		Hashtable cached_namespaces = LoadCache (cache_name);
+		MethodInfo assembly_get_namespaces = typeof (Assembly).GetMethod ("GetNamespaces");
 
-		if (cached_namespaces != null)
-			assemblies_namespaces = cached_namespaces;
-		else {
-			Console.WriteLine ("rebuilding namespace cache");
-			assemblies_namespaces = ExtractAssemblyNamespaces ();
-			SaveCache (cache_name);
-		}
+		//
+		// First add the assembly namespaces
+		//
+		Hashtable namespaces_hash = new Hashtable ();
+		if (assembly_get_namespaces != null){
+			int count = assemblies.Length;
+			int total;
 
-		return assemblies_namespaces;
-	}
-
-	public static Hashtable GetNamespaces ()
-	{
-		if (assemblies_namespaces == null)
-			assemblies_namespaces = ExtractAssemblyNamespaces ();
-
-		Hashtable nh = (Hashtable) assemblies_namespaces.Clone ();
-
-		return AddModuleNamespaces (nh);
-	}
-	
-	//
-	// Loads the namespace cache for the given executable name
-	//
-	static Hashtable LoadCache (string cache_file)
-	{
-		if (!File.Exists (cache_file)){
-			Console.WriteLine ("Cache not found");
-			return null;
-		}
-		
-
-		Hashtable cached_module_list, cached_namespaces;
-		try {
-			using (FileStream fs = File.OpenRead (cache_file)){
-				StreamReader reader = new StreamReader (fs);
-				
-				int assembly_count = Int32.Parse (reader.ReadLine ());
-
-				if (assembly_count != assemblies.Length){
-					Console.WriteLine ("Assembly missmatch ({0}, {1})", assembly_count, assemblies.Length);
-					return null;
-				}
-				
-				int namespace_count = Int32.Parse (reader.ReadLine ());
-				
-				cached_module_list = new Hashtable (assembly_count);
-				for (int i = 0; i < assembly_count; i++)
-					cached_module_list [reader.ReadLine ()] = true;
-
-				cached_namespaces = new Hashtable (namespace_count);
-				for (int i = 0; i < namespace_count; i++){
-					string s = reader.ReadLine ();
-					cached_namespaces [s] = s;
+			for (int i = 0; i < count; i++){
+				Assembly a = assemblies [i];
+				string [] namespaces = (string []) assembly_get_namespaces.Invoke (a, null);
+				foreach (string ns in namespaces){
+					if (ns == "")
+						continue;
+					if (namespaces_hash.Contains (ns))
+						continue;
+					namespaces_hash [ns] = true;
 				}
 			}
-
-			//
-			// Now, check that the cache is still valid
-			//
-			
-			foreach (Assembly a in assemblies)
-				if (cached_module_list [a.CodeBase] == null){
-					Console.WriteLine ("assembly not found in cache: " + a.CodeBase);
-					return null;
+		} else {
+			foreach (Assembly a in assemblies){
+				foreach (Type t in a.GetTypes ()){
+					string ns = t.Namespace;
+					
+					if (ns == "")
+						continue;
+					if (namespaces_hash.Contains (ns))
+						continue;
+					namespaces_hash [ns] = true;
 				}
-
-			return cached_namespaces;
-		} catch {
+			}
 		}
-		return null;
+		//
+		// Now insert all the namespaces defined by the application
+		//
+		foreach (Namespace ns in Namespace.UserDefinedNamespaces){
+			string name = ns.Name;
+			if (name == "")
+				continue;
+			if (name == null)
+				throw new Exception ();
+			if (namespaces_hash.Contains (name))
+				continue;
+			namespaces_hash [name] = true;
+		}
+
+		//
+		// Store it sorted
+		//
+		namespaces = new string [namespaces_hash.Count];
+		int idx = 0;
+		foreach (string ns in namespaces_hash.Keys){
+			namespaces [idx++] = ns;
+		}
+		Array.Sort (namespaces);
 	}
 
-	static void SaveCache (string cache_file)
+	public static bool IsNamespace (string name)
 	{
-		try {
-			using (FileStream fs = File.OpenWrite (cache_file)){
-				StreamWriter writer = new StreamWriter (fs);
-
-				writer.WriteLine (assemblies.Length);
-				writer.WriteLine (assemblies_namespaces.Count);
-
-				foreach (Assembly a in assemblies)
-					writer.WriteLine (a.CodeBase);
-
-				foreach (DictionaryEntry de in assemblies_namespaces){
-					writer.WriteLine ((string) de.Key);
-				}
-
-				writer.Flush ();
-				fs.Flush ();
-			}
-		} catch (Exception e) {
-			Console.WriteLine ("Failed: " + e);
+		foreach (string ns in namespaces){
+			if (name == ns)
+				return true;
 		}
+		return false;
 	}
-	
-#if false
-	public static void GetAllTypes ()
-	{
-		Hashtable namespaces = new Hashtable ();
 
-		foreach (Assembly a in assemblies){
-			foreach (Type t in a.GetTypes ()){
-			}
-		}
-
-		foreach (ModuleBuilder mb in modules){
-			foreach (Type t in mb.GetTypes ()){
-			}
-		}
-	}
-#endif
-	
 	/// <summary>
 	///   Returns the C# name of a type if possible, or the full type name otherwise
 	/// </summary>
@@ -981,19 +965,19 @@ public class TypeManager {
 
 			Type [] system_type_type_arg = { system_type_type, system_type_type, system_type_type };
 
-			try {
 			system_void_set_corlib_type_builders = GetMethod (
 				system_assemblybuilder_type, "SetCorlibTypeBuilders",
 				system_type_type_arg);
 
-			object[] args = new object [3];
-			args [0] = object_type;
-			args [1] = value_type;
-			args [2] = enum_type;
-
-			system_void_set_corlib_type_builders.Invoke (CodeGen.AssemblyBuilder, args);
-			} catch {
-				Console.WriteLine ("Corlib compilation is not supported in Microsoft.NET due to bugs in it");
+			if (system_void_set_corlib_type_builders != null){
+				object[] args = new object [3];
+				args [0] = object_type;
+				args [1] = value_type;
+				args [2] = enum_type;
+				
+				system_void_set_corlib_type_builders.Invoke (CodeGen.AssemblyBuilder, args);
+			} else {
+				Report.Error (-26, "Corlib compilation is not supported in Microsoft.NET due to bugs in it");
 			}
 		}
 	}

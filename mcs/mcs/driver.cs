@@ -1226,16 +1226,12 @@ namespace Mono.CSharp
 
 			TypeManager.AddModule (CodeGen.ModuleBuilder);
 
-#if false
 			DateTime start = DateTime.Now;
-			TypeManager.GetAssemblyNamespaces (output_file);
+			TypeManager.ComputeNamespaces ();
 			DateTime end = DateTime.Now;
-			//Console.WriteLine ("Loading namespaces: " + (end - start));
-			start = DateTime.Now;
-			//TypeManager.GetAllTypes ();
-			end = DateTime.Now;
-			//Console.WriteLine ("Getting Types: " + (end - start));
-#endif
+			if (!Namespace.VerifyUsing ())
+				return false;
+			
 			
 			//
 			// Before emitting, we need to get the core
@@ -1290,10 +1286,6 @@ namespace Mono.CSharp
 			if (timestamps)
 				ShowTime ("Closing types");
 
-			if (RootContext.WarningLevel >= 4)
-				if (!Namespace.VerifyUsing ())
-					return false;
-			
 			RootContext.CloseTypes ();
 
 			PEFileKinds k = PEFileKinds.ConsoleApplication;

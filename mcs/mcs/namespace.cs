@@ -35,14 +35,12 @@ namespace Mono.CSharp {
 		//
 		public class UsingEntry {
 			public string Name;
-			public bool Used;
 			public Location Location;
 			
 			public UsingEntry (string name, Location loc)
 			{
 				Name = name;
 				Location = loc;
-				Used = false;
 			}
 		}
 		
@@ -60,6 +58,12 @@ namespace Mono.CSharp {
 			all_namespaces.Add (this);
 		}
 
+		static public ArrayList UserDefinedNamespaces {
+			get {
+				return all_namespaces;
+			}
+		}
+		
 		/// <summary>
 		///   The qualified name of the current namespace
 		/// </summary>
@@ -184,8 +188,7 @@ namespace Mono.CSharp {
 		/// </summary>
 		public static bool VerifyUsing ()
 		{
-			ArrayList unused = new ArrayList ();
-			int errors = 0;
+			int errors = Report.Errors;
 			
 			foreach (Namespace ns in all_namespaces){
 				ArrayList uses = ns.UsingTable;
@@ -193,32 +196,14 @@ namespace Mono.CSharp {
 					continue;
 				
 				foreach (UsingEntry ue in uses){
-					if (ue.Used)
+					if (TypeManager.IsNamespace (ue.Name))
 						continue;
-					unused.Add (ue);
-				}
-			}
 
-			//
-			// If we have unused using aliases, load all namespaces and check
-			// whether it is unused, or it was missing
-			//
-			if (unused.Count > 0){
-				Hashtable namespaces = TypeManager.GetNamespaces ();
-
-				foreach (UsingEntry ue in unused){
-					if (namespaces.Contains (ue.Name)){
-						Report.Warning (6024, ue.Location, "Unused namespace in `using' declaration");
-						continue;
-					}
-
-					errors++;
 					Report.Error (246, ue.Location, "The namespace `" + ue.Name +
 						      "' can not be found (missing assembly reference?)");
 				}
 			}
-			
-			return errors == 0;
+			return errors == Report.Errors;
 		}
 
 	}

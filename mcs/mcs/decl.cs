@@ -553,8 +553,8 @@ namespace Mono.CSharp {
 			Type t;
 
 			error = false;
+
 			name = MakeFQN (ns, name);
-			
 			t  = TypeManager.LookupType (name);
 			if (t != null)
 				return t;
@@ -678,7 +678,6 @@ namespace Mono.CSharp {
 						}
 						
 						t = match;
-						ue.Used = true;
 					}
 				}
 				if (t != null)

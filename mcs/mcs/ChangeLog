@@ -1,3 +1,37 @@
+2003-04-18  Miguel de Icaza  <miguel@ximian.com>
+
+	* report.cs: Negative error codes are now mapped to 8000 - code,
+	so that the display is render more nicely.
+
+	* typemanager.cs: Do not use try/catch, instead report a regular
+	error. 
+
+	(GetPointerType, GetReferenceType): These methods provide
+	mechanisms to obtain the T* and T& from a T.  We had the code
+	previously scattered around the code base, and it also used
+	TypeManager.LookupType that would go through plenty of caches.
+	This one goes directly to the type source.
+
+	In some places we did the Type.GetType followed by
+	ModuleBuilder.GetType, but not in others, so this unifies the
+	processing as well.
+
+	* namespace.cs (VerifyUsing): Perform a non-lazy approach to using
+	statements now that we have namespace information.
+
+	* typemanager.cs (IsNamespace): New method, returns whether the
+	string presented is a namespace or not.
+
+	(ComputeNamespaces): New public entry point, computes the list of
+	available namespaces, using the GetNamespaces API call in Mono, or
+	the slower version in MS.NET.   
+
+	Now before we start the semantic analysis phase, we have a
+	complete list of namespaces including everything that the user has
+	provided.
+
+	Deleted old code to cache namespaces in .nsc files.
+
 2003-04-17  Miguel de Icaza  <miguel@ximian.com>
 
 	* class.cs: (TypeContainer.DefineDefaultConstructor): Use the

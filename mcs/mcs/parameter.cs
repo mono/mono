@@ -62,13 +62,8 @@ namespace Mono.CSharp {
 
 		public Type ExternalType (DeclSpace ds, Location l)
 		{
-			if ((ModFlags & Parameter.Modifier.ISBYREF) != 0){
-				string n = parameter_type.FullName + "&";
-
-				Type t = RootContext.LookupType (ds, n, false, l);
-
-				return t;
-			}
+			if ((ModFlags & Parameter.Modifier.ISBYREF) != 0)
+				return TypeManager.GetReferenceType (parameter_type);
 			
 			return parameter_type;
 		}

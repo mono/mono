@@ -503,7 +503,6 @@ namespace Mono.CSharp {
 						}
 						
 						t = match;
-						ue.Used = true;
 					}
 				}
 				if (t != null)
