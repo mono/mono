@@ -130,6 +130,12 @@ namespace System.IO
                         }
                 }
 
+		public virtual bool IsAsync {
+			get {
+				return (async);
+			}
+		}
+
 		public string Name {
 			get {
 				return name; 

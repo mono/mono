@@ -260,6 +260,8 @@ System.IO/TextWriter.cs
 System.IO.IsolatedStorage/INormalizeForIsolatedStorage.cs
 System.IO.IsolatedStorage/IsolatedStorage.cs
 System.IO.IsolatedStorage/IsolatedStorageException.cs
+System.IO.IsolatedStorage/IsolatedStorageFile.cs
+System.IO.IsolatedStorage/IsolatedStorageInfo.cs
 System.IO.IsolatedStorage/IsolatedStorageFileStream.cs
 System.IO.IsolatedStorage/IsolatedStorageScope.cs
 System.Reflection/AmbiguousMatchException.cs

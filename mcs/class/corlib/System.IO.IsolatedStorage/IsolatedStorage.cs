@@ -21,47 +21,40 @@ namespace System.IO.IsolatedStorage
 
 		// Properties
 		[MonoTODO]
-		public object AssemblyIdentity
-		{
-			get { return null; }
+		public object AssemblyIdentity {
+			get {return null;}
 		}
 
 		[CLSCompliant (false)]
 		[MonoTODO]
-		public virtual ulong CurrentSize
-		{
-			get { return 0; }
+		public virtual ulong CurrentSize {
+			get {return 0;}
 		}
 
 		[MonoTODO]
-		public object DomainIdentity
-		{
-			get { return null; }
+		public object DomainIdentity {
+			get {return null;}
 		}
 
 		[CLSCompliant (false)]
 		[MonoTODO]
-		public virtual ulong MaximumSize
-		{
-			get { return 0; }
+		public virtual ulong MaximumSize {
+			get {return 0;}
 		}
 
 		[MonoTODO]
-		public IsolatedStorageScope Scope
-		{
-			get { return 0; }
+		public IsolatedStorageScope Scope {
+			get {return 0;}
 		}
 
 		[MonoTODO]
-		protected virtual char SeparatorExternal
-		{
-			get { return Char.MinValue; }
+		protected virtual char SeparatorExternal {
+			get {return Char.MinValue;}
 		}
 
 		[MonoTODO]
-		protected virtual char SeparatorInternal
-		{
-			get { return Char.MinValue; }
+		protected virtual char SeparatorInternal {
+			get {return Char.MinValue;}
 		}
 
 		// Methods

@@ -1,3 +1,24 @@
+2003-01-18  Jonathan Pryor <jonpryor@vt.edu>
+
+	- General: Get a simple implementation working.  Simple, not-all-there, but
+	  sufficient to get "Programming C#" example 21-17 working under Mono.  This
+	  doesn't say much, as it's not a stress-test by any means.
+	* INormalizeForIsolatedStorage.cs: re-indent to fit mono code style
+	* IsolatedStorage.cs: match mono coding guidelines
+	* IsolatedStorageFileStream.cs: Add members that "C# In A Nutshell" claims
+	  the class should override.  Most of these members just delegate to the
+	  base class, though.  CreateIsolatedPath is used to get the actual filename
+	  for the IsolatedStorageFileStream.
+	* IsolatedStorageScope.cs: Documentation goes in monodoc, so there's no
+	  point in having C# doc-tags.  Add "Roaming" member, which "C# In A
+	  Nutshell" lists.
+	* IsolatedStorageFile.cs: Public class documented in "C# In A Nutshell".
+	  Simple implementation.  Will probably need work to conform with .NET,
+	  address security concerns.
+	* IsolatedStorageInfo.cs: Abstract IsolatedStorage information used by other
+	  classes, such as the directory isolated storage is located under, how to
+	  calculate the size of isolated storage, etc.
+
 2002-02-19  Duncan Mak  <duncan@ximian.com>
 
 	* IsolatedStorageFileStream.cs: Added MonoTODO here. This class

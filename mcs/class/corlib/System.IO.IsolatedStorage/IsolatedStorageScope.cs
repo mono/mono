@@ -13,26 +13,16 @@
 namespace System.IO.IsolatedStorage {
 
 
-	/// <summary>
-	/// </summary>
 	[Flags]
 	public enum IsolatedStorageScope {
 
-		/// <summary>
-		/// </summary>
 		None = 0,
-
-		/// <summary>
-		/// </summary>
 		User = 1,
-
-		/// <summary>
-		/// </summary>
 		Domain = 2,
-
-		/// <summary>
-		/// </summary>
 		Assembly = 4,
+
+		// Documented in "C# In A Nutshell"
+		Roaming = 8
 	} // IsolatedStorageScope
 
 } // System.IO.IsolatedStorage

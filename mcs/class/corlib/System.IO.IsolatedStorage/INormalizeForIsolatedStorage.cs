@@ -9,10 +9,10 @@
 
 namespace System.IO.IsolatedStorage {
 
-public interface INormalizeForIsolatedStorage {
+	public interface INormalizeForIsolatedStorage {
 
-	object Normalize ();
+		object Normalize ();
 
+	}
 }
 
-}
