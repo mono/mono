@@ -463,3 +463,4 @@ System.Web.UI.WebControls/XmlHierarchicalDataSourceView.cs
 System.Web.UI.WebControls/XmlHierarchicalEnumerable.cs
 System.Web.UI.WebControls/XmlHierarchyData.cs
 System.Web.UI/HierarchicalDataSourceControl.cs
+System.Web.UI.WebControls/DataBoundControl.cs

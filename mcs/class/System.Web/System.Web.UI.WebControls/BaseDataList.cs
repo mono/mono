@@ -52,6 +52,9 @@ namespace System.Web.UI.WebControls
 
 		public override void DataBind()
 		{
+			#if NET_1_2
+			RequiresDataBinding = false;
+			#endif
 			OnDataBinding(EventArgs.Empty);
 		}
 

@@ -1,5 +1,11 @@
 2003-11-09 Ben Maurer  <bmaurer@users.sourceforge.net>
 
+	* DataBoundControl.cs: Implement 
+	* ListControl.cs: inherit from the above.
+	* Repeater.cs, BaseDataList.cs: should reset whenever we databind.
+
+2003-11-09 Ben Maurer  <bmaurer@users.sourceforge.net>
+
 	* BaseDataList.cs:
 	* DataGrid.cs:
 	* DataList.cs:

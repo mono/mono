@@ -20,23 +20,39 @@ using System.Web.Util;
 namespace System.Web.UI.WebControls
 {
 	[DefaultEvent("SelectedIndexChanged")]
+	#if !NET_1_2
 	[DefaultProperty("DataSource")]
+	#endif
 	[Designer ("System.Web.UI.Design.WebControls.ListControlDesigner, " + Consts.AssemblySystem_Design, typeof (IDesigner))]
 	[DataBindingHandler("System.Web.UI.Design.ListControlDataBindingHandler, " + Consts.AssemblySystem_Design)]
 	[ParseChildren(true, "Items")]
-	public abstract class ListControl: WebControl
+	public abstract class ListControl : 
+		#if NET_1_2
+			DataBoundControl
+		#else
+			WebControl
+		#endif
 	{
 		private static readonly object SelectedIndexChangedEvent = new object();
 
+		#if !NET_1_2
 		private object             dataSource;
+		#endif
+		
 		private ListItemCollection items;
 
 		private int cachedSelectedIndex = -1;
 		private string cachedSelectedValue;
 
+		#if !NET_1_2
 		public ListControl(): base(HtmlTextWriterTag.Select)
 		{
 		}
+		#else
+		protected override HtmlTextWriterTag TagKey {
+			get { return HtmlTextWriterTag.Select; }
+		}
+		#endif
 
 		[WebCategory ("Action")]
 		[WebSysDescription ("Raised when the selected index entry has changed.")]
@@ -69,6 +85,7 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		#if !NET_1_2
 		[DefaultValue (""), WebCategory ("Data")]
 		[WebSysDescription ("The name of the table that is used for binding when a DataSource is specified.")]
 		public virtual string DataMember
@@ -105,6 +122,7 @@ namespace System.Web.UI.WebControls
 				throw new ArgumentException(HttpRuntime.FormatResourceString(ID, "Invalid DataSource Type"));
 			}
 		}
+		#endif
 
 		[DefaultValue (""), WebCategory ("Data")]
 		[WebSysDescription ("The field in the datatable that provides the text entry.")]
@@ -298,11 +316,17 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		#if NET_1_2
+		protected override void PerformDataBinding ()
+		{
+			base.PerformDataBinding ();
+			IEnumerable ds = GetResolvedDataSource ();
+		#else
 		protected override void OnDataBinding(EventArgs e)
 		{
 			base.OnDataBinding(e);
 			IEnumerable ds = DataSourceHelper.GetResolvedDataSource (DataSource, DataMember);
-
+		#endif
 			if(ds != null) {
 				string dtf = DataTextField;
 				string dvf = DataValueField;
