@@ -1,3 +1,7 @@
+2004-01-16  Cesar Lopez Nataren  <cesar@ciencias.unam.mx>
+
+	* Microsoft.JScript.dll.sources: added VsaScriptScope to the build.
+	
 2003-11-10    <cesar@ciencias.unam.mx>
 
 	* Microsoft.JScript.dll.sources: don't build Visitor.cs.

@@ -251,9 +251,10 @@ Antlr.Runtime/antlr.collections/AST.cs
 Antlr.Runtime/antlr.debug.misc/ASTFrame.cs  
 Antlr.Runtime/antlr.debug.misc/JTreeASTPanel.cs
 Antlr.Runtime/antlr.debug.misc/SupportClass.cs
+Microsoft.JScript/VsaCodeItem.cs
 Microsoft.JScript/VsaItem.cs
 Microsoft.JScript/VsaItems.cs
 Microsoft.JScript/VsaGlobalItem.cs
 Microsoft.JScript/VsaReferenceItem.cs
-Microsoft.JScript/VsaCodeItem.cs
+Microsoft.JScript/VsaScriptScope.cs
 Microsoft.JScript/expression.cs
