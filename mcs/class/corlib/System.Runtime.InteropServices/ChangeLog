@@ -1,3 +1,7 @@
+2003-11-18  Jackson Harper <jackson@ximian.com>
+
+	* CurrencyWrapper.cs: Fix file name.
+	
 2003-11-18  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
 	* BestFitMappingAttribute.cs: Signature fix
