@@ -269,12 +269,11 @@ namespace System.Collections.Generic
 
 			public T Current {
 				get {
-					if (list.modified != modified)
-						throw new InvalidOperationException ();
 					if (current < 0)
-						current = 0;
-					if (current > list.count)
-						throw new ArgumentException ();
+						throw new InvalidOperationException ("Enumeration has not been initialized; call MoveNext first.");
+					if (current >= list.count)
+						throw new InvalidOperationException ("Enumeration already finished.");
+					
 					return list.contents [current];
 				}
 			}
@@ -288,16 +287,16 @@ namespace System.Collections.Generic
 			public bool MoveNext ()
 			{
 				if (list.modified != modified)
-					throw new InvalidOperationException ();
+					throw new InvalidOperationException ("List was modified while enumerating.");
 
 				current++;
 				return current < list.count;
 			}
 
-			public void Reset ()
+			void IEnumerator.Reset ()
 			{
 				if (list.modified != modified)
-					throw new InvalidOperationException ();
+					throw new InvalidOperationException ("List was modified while enumerating.");
 
 				current = -1;
 			}
