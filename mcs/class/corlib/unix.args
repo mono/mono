@@ -694,6 +694,7 @@ System.Runtime.Serialization.Formatters.Binary/BinaryCommon.cs
 System.Runtime.Serialization.Formatters.Binary/ObjectReader.cs
 System.Runtime.Serialization.Formatters.Binary/ObjectWriter.cs
 System.Runtime.Serialization.Formatters.Binary/MessageFormatter.cs
+System.Security/AllowPartiallyTrustedCallersAttribute.cs
 System.Security/CodeAccessPermission.cs
 System.Security/IEvidenceFactory.cs
 System.Security/IPermission.cs
