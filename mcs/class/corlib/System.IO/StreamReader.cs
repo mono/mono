@@ -45,11 +45,6 @@ namespace System.IO {
 		//
 		private int buffer_size;
 
-		//
-		// Base stream's position where we start filling our buffer.
-		//
-		private long buffer_start;
-
 		int do_checks;
 		
 		private Encoding encoding;
@@ -255,11 +250,6 @@ namespace System.IO {
 
 		public void DiscardBufferedData ()
 		{
-			if (!base_stream.CanSeek)
-				throw new InvalidOperationException ();
-
-			buffer_start += pos;
-			base_stream.Position = buffer_start;
 			pos = decoded_count = 0;
 		}
 		
@@ -268,9 +258,6 @@ namespace System.IO {
 		{
 			pos = 0;
 			int cbEncoded = 0;
-
-			if (base_stream.CanSeek)
-				buffer_start = base_stream.Position;
 
 			// keep looping until the decoder gives us some chars
 			decoded_count = 0;

@@ -1,7 +1,8 @@
 2003-08-05  Martin Baulig  <martin@ximian.com>
 
-	* StreamReader.cs (DiscardBufferedData): This is only allowed on
-	seekable streams.
+	* StreamReader.cs (DiscardBufferedData): Do the same like on the
+	ms runtime: just discard the buffered data, but don't modify the
+	BaseStream.Position.
 
 2003-08-04  Martin Baulig  <martin@ximian.com>
 
