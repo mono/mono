@@ -462,7 +462,7 @@ namespace Mono.CSharp {
 				// handle "E operator - (Y y, E x)"
 				// handle "U operator - (E x, E y)"
 				//
-				wrap_as = null;
+				Type wrap_as = null;
 				if (left is EnumConstant){
 					if (right is EnumConstant){
 						if (left.Type == right.Type)
@@ -562,7 +562,6 @@ namespace Mono.CSharp {
 					return new EnumConstant (result, wrap_as);
 				else
 					return result;
-				break;
 				
 			case Binary.Operator.Multiply:
 				DoConstantNumericPromotions (ec, oper, ref left, ref right, loc);
