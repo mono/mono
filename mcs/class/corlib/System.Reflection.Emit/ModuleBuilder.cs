@@ -147,23 +147,7 @@ namespace System.Reflection.Emit {
 			return fb;
 		}
 
-		public MethodBuilder DefineGlobalMethod (string name, MethodAttributes attributes, Type returnType, Type[] parameterTypes)
-		{
-			return DefineGlobalMethod (name, attributes, CallingConventions.Standard, returnType, parameterTypes);
-		}
-		
-		public MethodBuilder DefineGlobalMethod (string name, MethodAttributes attributes, CallingConventions callingConvention, Type returnType, Type[] parameterTypes)
-		{
-			if (name == null)
-				throw new ArgumentNullException ("name");
-			if ((attributes & MethodAttributes.Static) == 0)
-				throw new ArgumentException ("global methods must be static");
-			if (global_type_created != null)
-				throw new InvalidOperationException ("global methods already created");
-			if (global_type == null)
-				global_type = new TypeBuilder (this, 0);
-			MethodBuilder mb = global_type.DefineMethod (name, attributes, callingConvention, returnType, parameterTypes);
-
+		private void addGlobalMethod (MethodBuilder mb) {
 			if (global_methods != null) {
 				MethodBuilder[] new_methods = new MethodBuilder [global_methods.Length+1];
 				System.Array.Copy (global_methods, new_methods, global_methods.Length);
@@ -173,13 +157,59 @@ namespace System.Reflection.Emit {
 				global_methods = new MethodBuilder [1];
 				global_methods [0] = mb;
 			}
+		}
+
+		public MethodBuilder DefineGlobalMethod (string name, MethodAttributes attributes, Type returnType, Type[] parameterTypes)
+		{
+			return DefineGlobalMethod (name, attributes, CallingConventions.Standard, returnType, parameterTypes);
+		}
+
+		public MethodBuilder DefineGlobalMethod (string name, MethodAttributes attributes, CallingConventions callingConvention, Type returnType, Type[] parameterTypes) {
+			return DefineGlobalMethod (name, attributes, callingConvention, returnType, null, null, parameterTypes, null, null);
+		}
+
+#if NET_1_2
+		public
+#else
+		internal
+#endif
+		MethodBuilder DefineGlobalMethod (string name, MethodAttributes attributes, CallingConventions callingConvention, Type returnType, Type[] requiredReturnTypeCustomModifiers, Type[] optionalReturnTypeCustomModifiers, Type[] parameterTypes, Type[][] requiredParameterTypeCustomModifiers, Type[][] optionalParameterTypeCustomModifiers)
+		{
+			if (name == null)
+				throw new ArgumentNullException ("name");
+			if ((attributes & MethodAttributes.Static) == 0)
+				throw new ArgumentException ("global methods must be static");
+			if (global_type_created != null)
+				throw new InvalidOperationException ("global methods already created");
+			if (global_type == null)
+				global_type = new TypeBuilder (this, 0);
+			MethodBuilder mb = global_type.DefineMethod (name, attributes, callingConvention, returnType, requiredReturnTypeCustomModifiers, optionalReturnTypeCustomModifiers, parameterTypes, requiredParameterTypeCustomModifiers, optionalParameterTypeCustomModifiers);
+
+			addGlobalMethod (mb);
 			return mb;
 		}
-		
-		[MonoTODO]
+
+		public MethodBuilder DefinePInvokeMethod (string name, string dllName, MethodAttributes attributes, CallingConventions callingConvention, Type returnType, Type[] parameterTypes, CallingConvention nativeCallConv, CharSet nativeCharSet) {
+			return DefinePInvokeMethod (name, dllName, name, attributes, callingConvention, returnType, parameterTypes, nativeCallConv, nativeCharSet);
+		}
+
+		public MethodBuilder DefinePInvokeMethod (string name, string dllName, string entryName, MethodAttributes attributes, CallingConventions callingConvention, Type returnType, Type[] parameterTypes, CallingConvention nativeCallConv, CharSet nativeCharSet) {
+			if (name == null)
+				throw new ArgumentNullException ("name");
+			if ((attributes & MethodAttributes.Static) == 0)
+				throw new ArgumentException ("global methods must be static");
+			if (global_type_created != null)
+				throw new InvalidOperationException ("global methods already created");
+			if (global_type == null)
+				global_type = new TypeBuilder (this, 0);
+			MethodBuilder mb = global_type.DefinePInvokeMethod (name, dllName, entryName, attributes, callingConvention, returnType, parameterTypes, nativeCallConv, nativeCharSet);
+
+			addGlobalMethod (mb);
+			return mb;
+		}			
+
 		public TypeBuilder DefineType (string name) {
-			// FIXME: LAMESPEC: what other attributes should we use here as default?
-			return DefineType (name, TypeAttributes.Public, typeof(object), null);
+			return DefineType (name, 0);
 		}
 
 		public TypeBuilder DefineType (string name, TypeAttributes attr) {
