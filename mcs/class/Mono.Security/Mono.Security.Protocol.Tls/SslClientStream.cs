@@ -322,9 +322,12 @@ namespace Mono.Security.Protocol.Tls
 				{
 					if (this.innerStream != null)
 					{
-						// Write close notify
-						TlsCloseNotifyAlert alert = new TlsCloseNotifyAlert(this.context);
-						this.SendAlert(alert);
+            			if (this.context.HandshakeFinished)
+                        {
+                            // Write close notify
+                            TlsCloseNotifyAlert alert = new TlsCloseNotifyAlert(this.context);
+                            this.SendAlert(alert);
+                        }
 
 						if (this.ownsStream)
 						{
@@ -332,8 +335,8 @@ namespace Mono.Security.Protocol.Tls
 							this.innerStream.Close();
 						}
 					}
-					this.ownsStream						= false;
-					this.innerStream					= null;
+					this.ownsStream    = false;
+					this.innerStream   = null;
 					if (this.ClientCertSelection != null)
 					{
 						this.ClientCertSelection -= this.clientCertSelectionDelegate;

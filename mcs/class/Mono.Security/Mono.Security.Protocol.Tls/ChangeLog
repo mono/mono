@@ -1,3 +1,11 @@
+2004-02-17 Carlos Guzmán Álvarez  <carlosga@telefonica.net>
+
+ 	* Mono.Security.Protocol.Tls/SslClientStream.cs:
+
+        - Fix for send the close notify alert in the Close method
+        only if the Handshake is fully negotiated.
+
+
 2004-02-16 Carlos Guzmán Álvarez  <carlosga@telefonica.net>
 
  	* Mono.Security.Protocol.Tls/TlsCipherSuiteFactory.cs:
