@@ -48,7 +48,7 @@ SUBDIRS = \
 	Accessibility			\
 	Microsoft.VisualC		\
 	Cscompmgd			\
-	System.Windows.Forms		\
+	Managed.Windows.Forms		\
 	Microsoft.VisualBasic		\
 	System.Design			\
 	PEAPI				\

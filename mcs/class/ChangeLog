@@ -1,3 +1,9 @@
+2004-12-26  Peter Bartok  <pbartok@novell.com>
+
+	* Makefile (SUBDIRS): Switched from System.Windows.Forms to
+	  Managed.Windows.Forms to build with the managed implementation
+	  by default.
+
 2004-12-08  Martin Baulig  <martin@ximian.com>
 
 	* Mono.CSharp.Debugger/: Renamed to Mono.CSharp.CompilerServices.
