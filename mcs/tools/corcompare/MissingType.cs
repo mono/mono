@@ -6,6 +6,7 @@
 // (C) 2001-2002 Nick Drochak
 
 using System;
+using System.Xml;
 
 namespace Mono.Util.CorCompare {
 
@@ -20,37 +21,82 @@ namespace Mono.Util.CorCompare {
 	{
 		// e.g. <class name="System.Byte" status="missing"/>
 		protected Type theType;
-		public MissingType(Type t) {
+		public MissingType(Type t) 
+		{
 			theType = t;
 		}
 
-		public override bool Equals(object o) {
-			if (o is MissingType) {
+		public override bool Equals(object o) 
+		{
+			if (o is MissingType) 
+			{
 				return o.GetHashCode() == this.GetHashCode();
 			}
 			return false;
 		}
 
-		public override int GetHashCode() {
+		public override int GetHashCode() 
+		{
 			return theType.GetHashCode();
 		}
 
-		public string Name {
-			get {
+		public string Name 
+		{
+			get 
+			{
 				return theType.Name;
 			}
 		}
 
-		public string NameSpace {
-			get {
+		public string NameSpace 
+		{
+			get 
+			{
 				return theType.Namespace;
 			}
 		}
 
-		public virtual string Status {
-			get {
+		public virtual string Status 
+		{
+			get 
+			{
 				return "missing";
 			}
+		}
+		public bool IsDelegate
+		{
+			get
+			{
+				if (theType.IsEnum || theType.IsInterface || theType.IsValueType)
+					return false;
+				Type type = theType.BaseType;
+				while (type != null)
+				{
+					if (type.FullName == "System.Delegate")
+						return true;
+					type = type.BaseType;
+				}
+				return false;
+			}
+		}
+		public virtual XmlElement CreateXML (XmlDocument doc)
+		{
+			XmlElement eltClass;
+			if (theType.IsEnum)
+				eltClass = doc.CreateElement ("enum");
+			else if (theType.IsInterface)
+				eltClass = doc.CreateElement ("interface");
+			else if (IsDelegate)
+				eltClass = doc.CreateElement ("delegate");
+			else if (theType.IsValueType)
+				eltClass = doc.CreateElement ("struct");
+			else
+				eltClass = doc.CreateElement ("class");
+
+			eltClass.SetAttribute ("name", Name);
+			eltClass.SetAttribute ("status", Status);
+
+			return eltClass;
 		}
 	}
 }

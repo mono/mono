@@ -8,6 +8,7 @@
 using System;
 using System.Reflection;
 using System.Collections;
+using System.Xml;
 
 namespace Mono.Util.CorCompare {
 
@@ -184,6 +185,80 @@ namespace Mono.Util.CorCompare {
 				default:
 					throw new Exception("Didn't code missing member type: " + info.MemberType.ToString());
 			}
+		}
+		public override XmlElement CreateXML (XmlDocument doc)
+		{
+			XmlElement eltClass = base.CreateXML (doc);
+			eltClass.SetAttribute ("missing", MissingCount.ToString());
+			eltClass.SetAttribute ("todo", ToDoCount.ToString());
+
+			XmlElement eltMember;
+			eltMember = CreateMemberCollectionElement ("methods", MissingMethods, ToDoMethods, doc);
+			if (eltMember != null) 
+			{
+				eltClass.AppendChild (eltMember);
+			}
+
+			eltMember = CreateMemberCollectionElement ("properties", MissingProperties, ToDoProperties, doc);
+			if (eltMember != null) 
+			{
+				eltClass.AppendChild (eltMember);
+			}
+
+			eltMember = CreateMemberCollectionElement ("events", MissingEvents, ToDoEvents, doc);
+			if (eltMember != null) 
+			{
+				eltClass.AppendChild (eltMember);
+			}
+
+			eltMember = CreateMemberCollectionElement ("fields", MissingFields, ToDoFields, doc);
+			if (eltMember != null) 
+			{
+				eltClass.AppendChild (eltMember);
+			}
+
+			eltMember = CreateMemberCollectionElement ("constructors", MissingConstructors, ToDoConstructors, doc);
+			if (eltMember != null) 
+			{
+				eltClass.AppendChild (eltMember);
+			}
+
+			eltMember = CreateMemberCollectionElement ("nestedTypes", MissingNestedTypes, ToDoNestedTypes, doc);
+			if (eltMember != null) 
+			{
+				eltClass.AppendChild (eltMember);
+			}
+			return eltClass;
+		}
+
+		static XmlElement CreateMemberCollectionElement (string name, ArrayList missingList, ArrayList todoList, XmlDocument doc) 
+		{
+			XmlElement element = null;
+			if (missingList.Count > 0 || todoList.Count > 0)
+			{
+				element = doc.CreateElement(name);
+				if (missingList.Count > 0) 
+				{
+					foreach (IMissingMember missing in missingList) 
+						element.AppendChild (missing.CreateXML (doc));
+				}
+				if (todoList.Count > 0) 
+				{
+					foreach (IMissingMember missing in todoList) 
+						element.AppendChild (missing.CreateXML (doc));
+				}
+				element.SetAttribute ("missing", missingList.Count.ToString());
+				element.SetAttribute ("todo", todoList.Count.ToString());
+			}
+			return element;
+		}
+
+		static XmlElement CreateMissingElement(IMissingMember member, XmlDocument doc) 
+		{
+			XmlElement missingElement  = doc.CreateElement(member.Type);
+			missingElement.SetAttribute("name", (member.Name));
+			missingElement.SetAttribute("status", (member.Status));
+			return missingElement;
 		}
 	}
 }

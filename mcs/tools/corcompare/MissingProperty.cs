@@ -18,18 +18,14 @@ namespace Mono.Util.CorCompare {
 	/// 	created by - Nick
 	/// 	created on - 2/20/2002 10:43:57 PM
 	/// </remarks>
-	class MissingProperty : IMissingMember 
+	class MissingProperty : MissingMember 
 	{
 		// e.g. <property name="Length" status="missing"/>
-		MemberInfo info;
+		public MissingProperty (MemberInfo info) : base (info) {}
 
-		public MissingProperty(MemberInfo pInfo) {
-			info = pInfo;
-		}
-
-		public string Name {
+		public override string Name {
 			get {
-				StringBuilder retVal = new StringBuilder(info.Name + "{");
+				StringBuilder retVal = new StringBuilder(mInfo.Name + "{");
 				if (this.NeedsGet) {
 					retVal.Append(" get;");
 				}
@@ -41,13 +37,8 @@ namespace Mono.Util.CorCompare {
 				return retVal.ToString();
 			}
 		}
-		public virtual string Status {
-			get {
-				return "missing";
-			}
-		}
 
-		public string Type {
+		public override string Type {
 			get {
 				return "property";
 			}

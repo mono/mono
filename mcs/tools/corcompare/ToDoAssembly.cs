@@ -135,6 +135,29 @@ namespace Mono.Util.CorCompare {
 			return output.ToString();
 		}
 
+		public XmlElement CreateXML (XmlDocument doc)
+		{
+			XmlElement assemblyElem = doc.CreateElement("assembly");
+			assemblyElem.SetAttribute("name", this.Name);
+			assemblyElem.SetAttribute("missing", this.MissingCount.ToString());
+			assemblyElem.SetAttribute("todo", this.ToDoCount.ToString());
+			assemblyElem.SetAttribute("complete", (100 - 100 * (this.MissingCount + this.ToDoCount) / this.ReferenceTypeCount).ToString());
+
+			if (todoNameSpaces.Count > 0)
+			{
+				XmlElement eltNamespaces = doc.CreateElement ("namespaces");
+				assemblyElem.AppendChild (eltNamespaces);
+
+				foreach (ToDoNameSpace ns in todoNameSpaces)
+				{
+					XmlElement eltNameSpace = ns.CreateXML (doc);
+					if (eltNameSpace != null)
+						eltNamespaces.AppendChild (eltNameSpace);
+				}
+			}
+			return assemblyElem;
+		}
+
 		public void CreateXMLReport(string filename) {
 			bool analyzedOK = Analyze();
 
@@ -143,126 +166,9 @@ namespace Mono.Util.CorCompare {
 			outDoc.AppendChild(outDoc.CreateXmlDeclaration("1.0", null, null));
 			XmlElement assembliesElem = outDoc.CreateElement("assemblies");
 			outDoc.AppendChild(assembliesElem);
-			XmlElement assemblyElem = outDoc.CreateElement("assembly");
-			assemblyElem.SetAttribute("name", this.Name);
-			assemblyElem.SetAttribute("missing", this.MissingCount.ToString());
-			assemblyElem.SetAttribute("todo", this.ToDoCount.ToString());
-			assemblyElem.SetAttribute("complete", (100 - 100 * (this.MissingCount + this.ToDoCount) / this.ReferenceTypeCount).ToString());
+			XmlElement assemblyElem = CreateXML (outDoc);
 			assembliesElem.AppendChild(assemblyElem);
-			XmlElement namespacesElem = outDoc.CreateElement("namespaces");
-			assemblyElem.AppendChild(namespacesElem);
-
-			if (analyzedOK && todoNameSpaces.Count > 0) {
-				XmlElement namespaceElem;
-				XmlElement classesElem;
-				XmlElement classElem;
-				XmlElement memberElem = null;
-				foreach (ToDoNameSpace ns in todoNameSpaces) {
-					namespaceElem = outDoc.CreateElement("namespace");
-					namespaceElem.SetAttribute("name", ns.name);
-					MissingType[] missingTypes = ns.MissingTypes;
-					classesElem = null;
-					if (missingTypes.Length > 0) {
-						classesElem = outDoc.CreateElement("classes");
-						namespaceElem.AppendChild(classesElem);
-
-						foreach (MissingType type in missingTypes) {
-							classElem = outDoc.CreateElement("class");
-							classElem.SetAttribute("name", type.Name);
-							classElem.SetAttribute("status", type.Status);
-							classesElem.AppendChild(classElem);
-						}
-
-						namespaceElem.SetAttribute("missing", ns.MissingCount.ToString());
-					}
-
-					ToDoType[] todoTypes = ns.ToDoTypes;
-					if (todoTypes.Length > 0) {
-						if (classesElem == null) {
-							classesElem = outDoc.CreateElement("classes");
-							namespaceElem.AppendChild(classesElem);
-						}
-						foreach (ToDoType type in todoTypes) {
-							classElem = outDoc.CreateElement("class");
-							classElem.SetAttribute("name", type.Name);
-							classElem.SetAttribute("status", type.Status);
-							classElem.SetAttribute("missing", type.MissingCount.ToString());
-							classElem.SetAttribute("todo", type.ToDoCount.ToString());
-							classesElem.AppendChild(classElem);
-							
-							memberElem = CreateMemberCollectionElement("methods", type.MissingMethods, type.ToDoMethods, outDoc);
-							if (memberElem != null) {
-								classElem.AppendChild(memberElem);
-							}
-
-							memberElem = CreateMemberCollectionElement("properties", type.MissingProperties, type.ToDoProperties, outDoc);
-							if (memberElem != null) {
-								classElem.AppendChild(memberElem);
-							}
-
-							memberElem = CreateMemberCollectionElement("events", type.MissingEvents, type.ToDoEvents, outDoc);
-							if (memberElem != null) {
-								classElem.AppendChild(memberElem);
-							}
-
-							memberElem = CreateMemberCollectionElement("fields", type.MissingFields, type.ToDoFields, outDoc);
-							if (memberElem != null) {
-								classElem.AppendChild(memberElem);
-							}
-
-							memberElem = CreateMemberCollectionElement("constructors", type.MissingConstructors, type.ToDoConstructors, outDoc);
-							if (memberElem != null) {
-								classElem.AppendChild(memberElem);
-							}
-
-							memberElem = CreateMemberCollectionElement("nestedTypes", type.MissingNestedTypes, type.ToDoNestedTypes, outDoc);
-							if (memberElem != null) {
-								classElem.AppendChild(memberElem);
-							}
-						}
-						namespaceElem.SetAttribute("todo", ns.ToDoCount.ToString());
-					}
-					if (ns.ReferenceTypeCount > 0) {
-						namespaceElem.SetAttribute("complete", (100 - 100 * (ns.MissingCount + ns.ToDoCount) / ns.ReferenceTypeCount).ToString());
-					}
-					else {
-						namespaceElem.SetAttribute("complete", "100");
-					}
-					namespacesElem.AppendChild(namespaceElem);
-				}
-			}
-			
 			outDoc.Save(filename);
-		}
-
-		static XmlElement CreateMemberCollectionElement(string name, ArrayList missingList, ArrayList todoList, XmlDocument doc) {
-			XmlElement element = null;
-			if (missingList.Count > 0) {
-				element = doc.CreateElement(name);
-				foreach (IMissingMember missing in missingList) {
-					element.AppendChild(CreateMissingElement(missing, doc));
-				}
-			}
-			if (todoList.Count > 0) {
-				if (element == null) {
-					element = doc.CreateElement(name);
-				}
-				foreach (IMissingMember missing in todoList) {
-					element.AppendChild(CreateMissingElement(missing, doc));
-				}
-			}
-			if (element != null) {
-				element.SetAttribute("missing", missingList.Count.ToString());
-				element.SetAttribute("todo", todoList.Count.ToString());
-			}
-			return element;
-		}
-
-		static XmlElement CreateMissingElement(IMissingMember member, XmlDocument doc) {
-			XmlElement missingElement  = doc.CreateElement(member.Type);
-			missingElement.SetAttribute("name", (member.Name));
-			missingElement.SetAttribute("status", (member.Status));
-			return missingElement;
 		}
 	}
 }

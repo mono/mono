@@ -4,6 +4,7 @@
 //   Nick Drochak (ndrochak@gol.com)
 //
 // (C) 2001-2002 Nick Drochak
+using System.Xml;
 
 namespace Mono.Util.CorCompare {
 
@@ -14,5 +15,7 @@ namespace Mono.Util.CorCompare {
 		string Status { get; }
 
 		string Type { get; }
+
+		XmlElement CreateXML (XmlDocument doc);
 	}
 }

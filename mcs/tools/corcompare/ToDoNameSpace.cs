@@ -8,6 +8,7 @@
 using System;
 using System.Collections;
 using System.Reflection;
+using System.Xml;
 
 namespace Mono.Util.CorCompare {
 
@@ -283,6 +284,35 @@ namespace Mono.Util.CorCompare {
 				}
 			}
 			return (string[])names.ToArray(typeof(string));
+		}
+		public XmlElement CreateXML (XmlDocument doc)
+		{
+			XmlElement eltNameSpace = doc.CreateElement("namespace");
+			eltNameSpace.SetAttribute("name", name);
+
+			if (MissingTypes.Length > 0 || ToDoTypes.Length > 0)
+			{
+				XmlElement eltClasses = doc.CreateElement("classes");
+				eltNameSpace.AppendChild (eltClasses);
+
+				foreach (MissingType type in missingTypes) 
+				{
+					XmlElement eltClass = type.CreateXML (doc);
+					if (eltClass != null)
+						eltClasses.AppendChild (eltClass);
+				}
+				foreach (ToDoType type in todoTypes)
+				{
+					XmlElement eltClass = type.CreateXML (doc);
+					if (eltClass != null)
+						eltClasses.AppendChild (eltClass);
+				}
+				eltNameSpace.SetAttribute ("missing", MissingCount.ToString());
+
+				int percentComplete = (ReferenceTypeCount == 0) ? 100 : (100 - 100 * (MissingCount + ToDoCount) / ReferenceTypeCount);
+				eltNameSpace.SetAttribute ("complete", percentComplete.ToString ());
+			}
+			return eltNameSpace;
 		}
 	}
 }

@@ -17,27 +17,11 @@ namespace Mono.Util.CorCompare {
 	/// 	created by - Nick
 	/// 	created on - 2/24/2002 10:43:57 PM
 	/// </remarks>
-	class MissingEvent : IMissingMember {
+	class MissingEvent : MissingMember {
 		// e.g. <method name="Equals" status="missing"/>
-		MemberInfo mInfo;
+		public MissingEvent (MemberInfo info) : base (info) {}
 
-		public MissingEvent(MemberInfo info) {
-			mInfo = info;
-		}
-
-		public string Name {
-			get {
-				return mInfo.Name;
-			}
-		}
-
-		public virtual string Status {
-			get {
-				return "missing";
-			}
-		}
-
-		public string Type {
+		public override string Type {
 			get {
 				return "event";
 			}
