@@ -5,10 +5,7 @@
 //   Miguel de Icaza (miguel@ximian.com)
 //
 // (C) Ximian, Inc.  http://www.ximian.com
-//
-
-//
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -32,11 +29,13 @@
 
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using System.Security.Permissions;
 
 namespace System.Reflection {
 
 	[Serializable]
 	[ClassInterface(ClassInterfaceType.None)]
+	[PermissionSet (SecurityAction.InheritanceDemand, Unrestricted = true)]
 	public abstract class MemberInfo : ICustomAttributeProvider {
 
 		protected MemberInfo ()
