@@ -133,7 +133,7 @@ namespace CIR {
 			if (e != null){
 				if (e is SimpleName)
 					return e;
-				
+
 				if (e.ExprClass == ExprClass.Invalid)
 					throw new Exception ("Expression " + e +
 							     " ExprClass is Invalid after resolve");
@@ -142,6 +142,9 @@ namespace CIR {
 					if (e.type == null)
 						throw new Exception ("Expression " + e +
 								     " did not set its type after Resolve");
+
+				if (e is LValue)
+					e = ((LValue) e).LValueResolve (ec);
 			}
 
 			return e;
@@ -2958,10 +2961,10 @@ namespace CIR {
 			Location = l;
 		}
 
-		public static void Error120 (string name)
+		public static void Error120 (Location l, string name)
 		{
 			Report.Error (
-				120,
+				120, l,
 				"An object reference is required " +
 				"for the non-static field `"+name+"'");
 		}
@@ -2976,20 +2979,20 @@ namespace CIR {
 				FieldInfo fi = ((FieldExpr) e).FieldInfo;
 				
 				if (!fi.IsStatic){
-					Error120 (Name);
+					Error120 (Location, Name);
 					return null;
 				}
 			} else if (e is MethodGroupExpr){
 				MethodGroupExpr mg = (MethodGroupExpr) e;
 
 				if (!mg.RemoveInstanceMethods ()){
-					Error120 (mg.Methods [0].Name);
+					Error120 (Location, mg.Methods [0].Name);
 					return null;
 				}
 				return e;
 			} else if (e is PropertyExpr){
 				if (!((PropertyExpr) e).IsStatic){
-					Error120 (Name);
+					Error120 (Location, Name);
 					return null;
 				}
 			}
@@ -3050,7 +3053,7 @@ namespace CIR {
 				FieldExpr fe = (FieldExpr) e;
 				
 				if (!fe.FieldInfo.IsStatic)
-					fe.InstanceExpression = new This ();
+					fe.InstanceExpression = new This (Location.Null);
 			} 				
 
 			if (ec.IsStatic)
@@ -3089,11 +3092,20 @@ namespace CIR {
 		//   the address of the LValue and leaves it on the stack
 		// </summary>
 		void AddressOf (EmitContext ec);
+
+		// <summary>
+		//   Allows an LValue to perform any necessary semantic
+		//   analysis in an lvalue-context.
+		// </summary>
+
+		Expression LValueResolve (EmitContext ec);
 	}
 	
 	public class LocalVariableReference : Expression, LValue {
 		public readonly string Name;
 		public readonly Block Block;
+
+		VariableInfo variable_info;
 		
 		public LocalVariableReference (Block block, string name)
 		{
@@ -3104,18 +3116,25 @@ namespace CIR {
 
 		public VariableInfo VariableInfo {
 			get {
-				return Block.GetVariableInfo (Name);
+				if (variable_info == null)
+					variable_info = Block.GetVariableInfo (Name);
+				return variable_info;
 			}
 		}
 		
 		public override Expression DoResolve (EmitContext ec)
 		{
-			VariableInfo vi = Block.GetVariableInfo (Name);
+			VariableInfo vi = VariableInfo;
 
 			type = vi.VariableType;
 			return this;
 		}
 
+		public Expression LValueResolve (EmitContext ec)
+		{
+			return this;
+		}
+		
 		public override void Emit (EmitContext ec)
 		{
 			VariableInfo vi = VariableInfo;
@@ -3257,6 +3276,11 @@ namespace CIR {
 				ec.ig.Emit (OpCodes.Ldarga_S, (byte) arg_idx);
 			else
 				ec.ig.Emit (OpCodes.Ldarga, arg_idx);
+		}
+
+		public Expression LValueResolve (EmitContext ec)
+		{
+			return this;
 		}
 	}
 	
@@ -4070,14 +4094,24 @@ namespace CIR {
 	// Represents the `this' construct
 	//
 	public class This : Expression, LValue {
+		Location loc;
+		
+		public This (Location loc)
+		{
+			this.loc = loc;
+		}
+		
 		public override Expression DoResolve (EmitContext ec)
 		{
 			eclass = ExprClass.Variable;
 			type = ec.TypeContainer.TypeBuilder;
 
-			//
-			// FIXME: Verify that this is only used in instance contexts.
-			//
+			if (ec.IsStatic){
+				Report.Error (26, loc,
+					      "Keyword this not valid in static code");
+				return null;
+			}
+			
 			return this;
 		}
 
@@ -4088,18 +4122,22 @@ namespace CIR {
 
 		public void Store (EmitContext ec)
 		{
-			//
-			// Assignment to the "this" variable.
-			//
-			// FIXME: Apparently this is a bug that we
-			// must catch as `this' seems to be readonly ;-)
-			//
 			ec.ig.Emit (OpCodes.Starg, 0);
 		}
 
 		public void AddressOf (EmitContext ec)
 		{
 			ec.ig.Emit (OpCodes.Ldarga_S, (byte) 0);
+		}
+
+		public Expression LValueResolve (EmitContext ec)
+		{
+			if (ec.TypeContainer is Class){
+				Report.Error (1604, loc, "Cannot assign to `this'");
+				return null;
+			}
+
+			return this;
 		}
 	}
 
@@ -4210,7 +4248,7 @@ namespace CIR {
 				//
 				if (expr is TypeExpr){
 					if (!mg.RemoveInstanceMethods ()){
-						error176 (loc, mg.Methods [0].Name); 
+						SimpleName.Error120 (loc, mg.Methods [0].Name); 
 						return null;
 					}
 
@@ -4221,7 +4259,7 @@ namespace CIR {
 				// Instance.MethodGroup
 				//
 				if (!mg.RemoveStaticMethods ()){
-					SimpleName.Error120 (mg.Methods [0].Name);
+					error176 (loc, mg.Methods [0].Name);
 					return null;
 				}
 				
@@ -4250,6 +4288,26 @@ namespace CIR {
 				}
 			}
 
+			if (member_lookup is PropertyExpr){
+				PropertyExpr pe = (PropertyExpr) member_lookup;
+
+				
+				if (expr is TypeExpr){
+					if (!pe.IsStatic){
+						SimpleName.Error120 (loc, pe.PropertyInfo.Name);
+						return null;
+					}
+				} else {
+					if (pe.IsStatic){
+						error176 (loc, pe.PropertyInfo.Name);
+						return null;
+					}
+					pe.InstanceExpression = expr;
+
+					return pe;
+				}
+			}
+			
 			Console.WriteLine ("Support for " + member_lookup + " is not present yet");
 			Environment.Exit (0);
 			return null;
@@ -4424,6 +4482,21 @@ namespace CIR {
 				ec.ig.Emit (OpCodes.Ldflda, FieldInfo);
 			}
 		}
+
+		public Expression LValueResolve (EmitContext ec)
+		{
+			if (!FieldInfo.IsInitOnly)
+				return this;
+
+			//
+			// InitOnly fields can only be assigned in constructors
+			//
+
+			if (ec.IsConstructor)
+				return this;
+
+			return null;
+		}
 	}
 	
 	// <summary>
@@ -4432,6 +4505,8 @@ namespace CIR {
 	public class PropertyExpr : Expression {
 		public readonly PropertyInfo PropertyInfo;
 		public readonly bool IsStatic;
+		
+		Expression instance_expr;
 		
 		public PropertyExpr (PropertyInfo pi)
 		{
@@ -4448,6 +4523,16 @@ namespace CIR {
 			type = pi.PropertyType;
 		}
 
+		public Expression InstanceExpression {
+			set {
+				instance_expr = value;
+			}
+
+			get {
+				return instance_expr;
+			}
+		}
+		
 		override public Expression DoResolve (EmitContext ec)
 		{
 			// We are born in resolved state. 
@@ -4623,7 +4708,11 @@ namespace CIR {
 		{
 			throw new Exception ("Implement me !");
 		}
-		
+
+		public Expression LValueResolve (EmitContext ec)
+		{
+			return this;
+		}
 	}
 	
 	public class BaseAccess : Expression {

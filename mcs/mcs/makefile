@@ -21,7 +21,6 @@ COMPILER_SOURCES = \
 	genericparser.cs		\
 	interface.cs			\
 	literal.cs			\
-	location.cs			\
 	modifiers.cs 			\
 	namespace.cs			\
 	parameter.cs			\
@@ -37,7 +36,6 @@ TEST_TOKENIZER_SOURCES = test-token.cs $(COMMON_SOURCES)
 all: cs-parser.cs
 	$(CSC) $(CSCFLAGS) /target:exe /r:System.dll /out:mcs.exe $(COMPILER_SOURCES)
 	-rm compiler.exe
-	-rm mcs.pdb
 
 windows: all
 

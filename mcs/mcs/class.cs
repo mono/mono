@@ -1917,7 +1917,7 @@ namespace CIR {
 		public void Emit (TypeContainer parent)
 		{
 			ILGenerator ig = ConstructorBuilder.GetILGenerator ();
-			EmitContext ec = new EmitContext (parent, ig, null, ModFlags);
+			EmitContext ec = new EmitContext (parent, ig, null, ModFlags, true);
 
 			if (parent is Class){
 				if (Initializer == null)

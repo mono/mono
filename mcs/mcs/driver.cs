@@ -50,22 +50,23 @@ namespace CIR
 
 		bool parse_only = false;
 		
-		public int parse (string inputFileName)
+		public int parse (string input_file)
 		{
-			GenericParser parser;
+			CSharpParser parser;
+			System.IO.Stream input;
 			int errors;
-			
-			// find a suitable parser
-			parser = GenericParser.GetSpecificParserFor(inputFileName);
-			if (parser == null) 			
-			{
-				Report.Error (2001, "Source file '" + inputFileName + "' could not be parsed");
+
+			try {
+				input = System.IO.File.OpenRead (input_file);
+			} catch {
+				Report.Error (2001, "Source file '" + input_file + "' could not be opened");
 				return 1;
 			}
 
+			parser = new CSharpParser (context, input_file, input);
 			parser.yacc_verbose = yacc_verbose;
 			try {
-				errors = parser.ParseFile(inputFileName, context);
+				errors = parser.parse ();
 			} catch (Exception ex) {
 				Console.WriteLine (ex);
 				Console.WriteLine ("Compilation aborted");
@@ -305,6 +306,12 @@ namespace CIR
 
 				if (first_source == null)
 					first_source = arg;
+
+				if (!arg.EndsWith (".cs")){
+					error ("Do not know how to compile " + arg);
+					errors++;
+					continue;
+				}
 				
 				errors += parse (arg);
 			}

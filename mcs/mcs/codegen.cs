@@ -98,13 +98,19 @@ namespace CIR {
 		public Type ReturnType;
 
 		// <summary>
+		//   Whether this is generating code for a constructor
+		// </summary>
+		public bool IsConstructor;
+		
+		// <summary>
 		//   Keeps track of the Type to LocalBuilder temporary storage created
 		//   to store structures (used to compute the address of the structure
 		//   value on structure method invocations)
 		// </summary>
 		public Hashtable temporary_storage;
 		
-		public EmitContext (TypeContainer parent, ILGenerator ig, Type return_type, int code_flags)
+		public EmitContext (TypeContainer parent, ILGenerator ig, Type return_type,
+				    int code_flags, bool is_constructor)
 		{
 			this.ig = ig;
 
@@ -112,9 +118,15 @@ namespace CIR {
 			CheckState = false;
 			IsStatic = (code_flags & Modifiers.STATIC) != 0;
 			ReturnType = return_type;
-
+			IsConstructor = is_constructor;
+			
 			if (ReturnType == TypeManager.void_type)
 				ReturnType = null;
+		}
+
+		public EmitContext (TypeContainer parent, ILGenerator ig, Type return_type, int code_flags)
+			: this (parent, ig, return_type, code_flags, false)
+		{
 		}
 
 		public void EmitTopBlock (Block block)

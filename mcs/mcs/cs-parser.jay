@@ -76,7 +76,8 @@ namespace CIR
 		//   Used to record all types defined
 		// </summary>
 		Tree tree;
-		// RootContext rc; Now on GenericParser
+
+		RootContext rc; 
 
 %}
 
@@ -1691,7 +1692,7 @@ expression_list
 this_access
 	: THIS
 	  {
-		$$ = new This ();
+		$$ = new This (lexer.Location);
 	  }
 	;
 
@@ -3164,14 +3165,21 @@ public Tokenizer Lexer {
 	}
 }		   
 
-public override int parse ()
+public CSharpParser(RootContext rc, string name, System.IO.Stream input)
 {
 	current_namespace = new Namespace (null, "");
+	this.rc = rc;
 	this.tree = rc.Tree;
+	this.name = name;
+	this.input = input;
 	current_container = tree.Types;
 	current_container.Namespace = current_namespace;
 
 	lexer = new Tokenizer (input, name);
+}
+
+public override int parse ()
+{
 	StringBuilder value = new StringBuilder ();
 
 	global_errors = 0;

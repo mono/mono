@@ -1,6 +1,16 @@
 2001-10-11  Miguel de Icaza  <miguel@ximian.com>
 
-	* expression.cs (Invocation::Emit): Deal with invocation of
+	* expression.cs (LValue::LValueResolve): New method in the
+	interface, used to perform a second resolution pass for LValues. 
+	
+	(This::DoResolve): Catch the use of this in static methods.
+
+	(This::LValueResolve): Implement.
+
+	(This::Store): Remove warning, assigning to `this' in structures
+	is 
+
+	(Invocation::Emit): Deal with invocation of
 	methods on value types.  We need to pass the address to structure
 	methods rather than the object itself.  (The equivalent code to
 	emit "this" for structures leaves the entire structure on the
