@@ -1,3 +1,8 @@
+2004-11-30 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* UrlUtils.cs: made (Insert|Get|Remove)SessionId use the appRoot +
+	SessionID + vpath format.
+
 2004-07-20 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* UrlUtils.cs: don't pass double slash when the path begins with a

@@ -112,6 +112,7 @@ namespace System.Web.SessionState
 			context.Request.SetCurrentExePath (UrlUtils.RemoveSessionId (base_path,
 								     context.Request.FilePath));
 			context.Request.SetHeader (HeaderName, id);
+			context.Response.SetAppPathModifier (String.Format ("({0})", id));
 		}
 		
 		void OnReleaseRequestState (object o, EventArgs args)

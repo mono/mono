@@ -333,31 +333,60 @@ namespace System.Web.Util
 			return url;
 		}
 
+		// appRoot + SessionID + vpath
 		public static string InsertSessionId (string id, string path)
 		{
 			string dir = GetDirectory (path);
 			if (!dir.EndsWith ("/"))
 				dir += "/";
 
-			return Reduce (dir + "(" + id + ")/" + GetFile (path));
+			string appvpath = HttpRuntime.AppDomainAppVirtualPath;
+			if (!appvpath.EndsWith ("/"))
+				appvpath += "/";
+
+			if (path.StartsWith (appvpath))
+				path = path.Substring (appvpath.Length);
+
+			if (path [0] == '/')
+				path = path.Length > 1 ? path.Substring (1) : "";
+
+			return Reduce (appvpath + "(" + id + ")/" + path);
 		}
 
 		public static string GetSessionId (string path)
 		{
-			int len = path.Length;
-			if ((len < SessionId.IdLength + 2) || (path [len - 1] != ')') ||
-			    (path [len - SessionId.IdLength - 2] != '('))
+			string appvpath = HttpRuntime.AppDomainAppVirtualPath;
+			if (path.Length <= appvpath.Length)
 				return null;
 
-			return path.Substring (len - SessionId.IdLength - 1, SessionId.IdLength);
+			path = path.Substring (appvpath.Length);
+			if (path.Length == 0 || path [0] != '/')
+				path = '/' + path;
+
+			int len = path.Length;
+			if ((len < SessionId.IdLength + 3) || (path [1] != '(') ||
+			    (path [SessionId.IdLength + 2] != ')'))
+				return null;
+
+			return path.Substring (2, SessionId.IdLength);
 		}
 
 		public static string RemoveSessionId (string base_path, string file_path)
 		{
-			int len = base_path.Length;
-			string dir = base_path.Substring (0, len - SessionId.IdLength - 2);
+			// Caller did a GetSessionId first
+			int idx = base_path.IndexOf ("/(");
+			string dir = base_path.Substring (0, idx + 1);
 			if (!dir.EndsWith ("/"))
 				dir += "/";
+
+			idx = base_path.IndexOf (")/");
+			if (idx != -1 && base_path.Length > idx + 2) {
+				string dir2 = base_path.Substring (idx + 2);
+				if (!dir2.EndsWith ("/"))
+					dir2 += "/";
+
+				dir += dir2;
+			}
 
 			return Reduce (dir + GetFile (file_path));
 		}

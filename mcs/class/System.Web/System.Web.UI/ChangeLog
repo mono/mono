@@ -1,3 +1,13 @@
+2004-11-30 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Control.cs: fixed ResolveUrl for relative URLs when using cookie-less
+	sessions.
+
+	* System.Web.Util/UrlUtils.cs: made (Insert|Get|Remove)SessionId use
+	the appRoot + SessionID + vpath format.
+
+	Fixes the 3 issues reported in bug #66623.
+
 2004-11-26 Lluis Sanchez Gual <lluis@novell.com>
 
 	* Page.cs: Moved code for managing client scripts to ClientScriptManager,

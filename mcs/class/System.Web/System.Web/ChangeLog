@@ -1,3 +1,7 @@
+2004-11-30 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpResponse.cs: fixed ApplyAppPathModifier to insert the session ID.
+
 2004-11-29 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpApplicationFactory.cs: monitor changes in global.asax and bin
