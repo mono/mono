@@ -15,6 +15,7 @@ using System.Data;
 using System.IO; // for Driver
 using System.Text; // for Driver
 using System.Xml;
+using System.Xml.Schema;
 using System.Xml.Serialization;
 
 namespace System.Data
@@ -165,9 +166,12 @@ namespace System.Data
 				dataset.DataSetName = localName;
 				dataset.Namespace = el.NamespaceURI;
 				dataset.Prefix = el.Prefix;
-				foreach (XmlNode n in el.ChildNodes)
+				foreach (XmlNode n in el.ChildNodes) {
+					if (n.NamespaceURI == XmlSchema.Namespace)
+						continue;
 					if (n.NodeType == XmlNodeType.Element)
 						InferTopLevelTable (n as XmlElement);
+				}
 			}
 
 			foreach (TableMapping map in tables) {

@@ -1,3 +1,8 @@
+2004-05-31  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlDataInferenceLoader.cs : XmlSchema elements should not be infered.
+	  Thanks to Boris for this fix.
+
 2004-05-30  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DataTable.cs : serialization .ctor() should use XmlReadMode.DiffGram
