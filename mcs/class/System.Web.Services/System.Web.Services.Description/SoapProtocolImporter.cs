@@ -108,12 +108,10 @@ namespace System.Web.Services.Description {
 			CodeTypeDeclaration codeClass = new CodeTypeDeclaration (ClassName);
 			
 			string location = null;
-			string url = null;
 			
 			if (Port != null) {
 				SoapAddressBinding sab = (SoapAddressBinding) Port.Extensions.Find (typeof(SoapAddressBinding));
 				if (sab != null) location = sab.Location;
-				url = GetServiceUrl (location); 
 			}
 			
 			string namspace = (Port != null ? Port.Binding.Namespace : Binding.ServiceDescription.TargetNamespace);
@@ -139,11 +137,7 @@ namespace System.Web.Services.Description {
 			if (Style == ServiceDescriptionImportStyle.Client) {
 				CodeConstructor cc = new CodeConstructor ();
 				cc.Attributes = MemberAttributes.Public;
-				if (url != null) {
-					CodeExpression ce = new CodeFieldReferenceExpression (new CodeThisReferenceExpression(), "Url");
-					CodeAssignStatement cas = new CodeAssignStatement (ce, new CodePrimitiveExpression (url));
-					cc.Statements.Add (cas);
-				}
+				GenerateServiceUrl (location, cc.Statements);
 				codeClass.Members.Add (cc);
 			}
 			

@@ -1,3 +1,10 @@
+2004-10-26  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* ProtocolImporter.cs, HttpSimpleProtocolImporter.cs,
+	  SoapProtocolImporter.cs: When appsettingurlkey is provided, generate
+	  code that reads the url from the config file, instead of doing it at
+	  the moment of generation. This fixes bug #68795.
+
 2004-10-01  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* HttpSimpleProtocolImporter.cs: Fix import of arrays of primitive types.
