@@ -1,3 +1,8 @@
+2004-11-02  Zoltan Varga  <vargaz@freemail.hu>
+
+	* reflection.c: Fix some spec conformance issues with the PE file
+	structures so mcs compiled apps run on the Net 2.0 beta.
+
 2004-11-01  Zoltan Varga  <vargaz@freemail.hu>
 
 	* string-icalls.c (ves_icall_System_String_ctor_encoding): 
