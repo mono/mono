@@ -4,7 +4,13 @@ include ../../build/rules.make
 
 LIBRARY = System.Xml.dll
 
-LIB_MCS_FLAGS = /unsafe /r:$(corlib) /r:System.dll /nowarn:649 /nowarn:169
+ifeq ($(PROFILE),atomic)
+SCARY_LIB=
+else
+SCARY_LIB=/lib:$(prefix)/lib /noconfig
+endif
+
+LIB_MCS_FLAGS = $(SCARY_LIB) /unsafe /r:$(corlib) /r:System.dll /nowarn:649 /nowarn:169
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS)
 
 EXTRA_DISTFILES = \
