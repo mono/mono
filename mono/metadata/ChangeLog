@@ -1,3 +1,25 @@
+2003-10-31  Martin Baulig  <martin@ximian.com>
+
+	* class.c (inflate_generic_type): Renamed to
+	mono_class_inflate_generic_type() and made it public.
+
+	* icall.c ("System.Reflection.MonoGenericInst::inflate_field"):
+	New interncall.
+
+	* loader.c (mono_field_from_memberref): Also set the retklass for
+	typespecs.
+
+	* fielder.c (mono_image_get_inflated_field_token): New static
+	method; creates a metadata token for an inflated field.
+	(mono_image_create_token, fixup_method): Added support for
+	"MonoInflatedField".
+	(fieldbuilder_to_mono_class_field): New static function.
+	(mono_reflection_inflate_field): New public function.
+
+	* reflection.h
+	(MonoReflectionGenericInst): Added `MonoArray *fields'.
+	(MonoReflectionInflatedField): New typedef.	
+
 2003-10-30  Bernie Solomon  <bernard@ugsolutions.com>
 
 	* socket-io.c (in6_addr ipaddress_to_struct_in6_addr): fix
