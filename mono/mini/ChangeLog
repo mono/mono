@@ -1,3 +1,7 @@
+2004-04-18 Ben Maurer  <bmaurer@users.sourceforge.net>
+
+	* iltests.il, basic.cs: more tests for regalloc.
+
 2004-04-17 Ben Maurer  <bmaurer@users.sourceforge.net>
 
 	* iltests.il: Some tests for register allocation modifications
