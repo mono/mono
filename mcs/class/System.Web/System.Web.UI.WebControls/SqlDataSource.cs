@@ -232,7 +232,7 @@ namespace System.Web.UI.WebControls {
 		SqlDataSourceView View {
 			get {
 				if (view == null) {
-					view = new SqlDataSourceView (this, "DefaultView");
+					view = new SqlDataSourceView (this, "DefaultView", this.Context);
 					view.DataSourceViewChanged += new EventHandler (ViewChanged);
 					if (IsTrackingViewState)
 						((IStateManager) view).TrackViewState ();

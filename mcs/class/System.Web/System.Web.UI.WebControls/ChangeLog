@@ -1,5 +1,10 @@
 2004-11-19 Sanjay Gupta <gsanjay@novell.com>
 
+	* SqlDataSource.cs: Updated call to constructor of SqlDataSourceView.cs.
+	* SqlDataSourceView.cs: Updated constructor.
+	 
+2004-11-19 Sanjay Gupta <gsanjay@novell.com>
+
 	* AccessDataSourceView.cs: Added new class.
 
 2004-11-19 Sanjay Gupta <gsanjay@novell.com>

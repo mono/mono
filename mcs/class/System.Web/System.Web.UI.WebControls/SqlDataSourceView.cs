@@ -43,11 +43,13 @@ namespace System.Web.UI.WebControls {
 
 		SqlCommand command;
 		SqlConnection connection;
+		HttpContext context;
 
-		public SqlDataSourceView (SqlDataSource owner, string name)
+		public SqlDataSourceView (SqlDataSource owner, string name, HttpContext context)
 		{
 			this.owner = owner;
 			this.name = name;
+			this.context = context;
 			connection = new SqlConnection (owner.ConnectionString);
 		}
 
@@ -87,11 +89,11 @@ namespace System.Web.UI.WebControls {
 			return ExecuteSelect (arguments);
 		}
 
-		/*[MonoTODO("Extra method to keep things compiling, need to remove later")]
+		[MonoTODO("Extra method to keep things compiling, need to remove later")]
 		public override IEnumerable Select()
 		{
 			throw new NotImplementedException ("Not required");
-		}*/
+		}
 
 		[MonoTODO ("Handle arguments")]
 		protected internal override IEnumerable ExecuteSelect (
