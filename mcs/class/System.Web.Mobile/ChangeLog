@@ -1,6 +1,10 @@
 
 2003-01-08	Gaurav Vaish <gvaish_mono AT lycos.com>
 
+	* System.Web.Mobile.Util                 : Added directory.
+
+2003-01-08	Gaurav Vaish <gvaish_mono AT lycos.com>
+
 	* System.Web.Mobile.build                : Also remove the pdb file.
 
 2003-01-08	Gaurav Vaish <gvaish_mono AT lycos.com>
