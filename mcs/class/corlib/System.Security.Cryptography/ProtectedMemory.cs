@@ -5,9 +5,6 @@
 //	Sebastien Pouliot (spouliot@motus.com)
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
-//
-
-//
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -41,6 +38,10 @@ namespace System.Security.Cryptography {
 	//	http://msdn.microsoft.com/library/en-us/dnsecure/html/windataprotection-dpapi.asp?frame=true
 
 	public sealed class ProtectedMemory {
+
+		private ProtectedMemory ()
+		{
+		}
 
 		[MonoTODO]
 		public static void Protect (byte[] userData, MemoryProtectionScope scope) 

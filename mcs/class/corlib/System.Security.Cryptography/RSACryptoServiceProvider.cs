@@ -7,10 +7,6 @@
 //
 // (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
 // Portions (C) 2003 Ben Maurer
-// (C) 2004 Novell (http://www.novell.com)
-//
-
-//
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -41,8 +37,11 @@ using Mono.Security.Cryptography;
 
 namespace System.Security.Cryptography {
 
+#if (NET_2_0)
+	public sealed class RSACryptoServiceProvider : RSA, ICspAsymmetricAlgorithm {
+#else
 	public sealed class RSACryptoServiceProvider : RSA {
-	
+#endif
 		private const int PROV_RSA_FULL = 1;	// from WinCrypt.h
 
 		private KeyPairPersistence store;
@@ -99,7 +98,7 @@ namespace System.Security.Cryptography {
 			persistKey = (p != null);
 			if (p == null) {
 				p = new CspParameters (PROV_RSA_FULL);
-#if ! NET_1_0
+#if NET_1_1
 				if (useMachineKeyStore)
 					p.Flags |= CspProviderFlags.UseMachineKeyStore;
 #endif
@@ -116,7 +115,7 @@ namespace System.Security.Cryptography {
 			}
 		}
 
-#if ! NET_1_0
+#if NET_1_1
 		private static bool useMachineKeyStore = false;
 
 		public static bool UseMachineKeyStore {
@@ -153,10 +152,10 @@ namespace System.Security.Cryptography {
 			}
 		}
 
-#if (NET_1_0 || NET_1_1)
-		internal
-#else
+#if (NET_2_0)
 		public 
+#else
+		internal
 #endif
 		bool PublicOnly {
 			get { return rsa.PublicOnly; }
@@ -359,5 +358,24 @@ namespace System.Security.Cryptography {
 				persisted = true;
 			}
 		}
+#if NET_2_0
+		// ICspAsymmetricAlgorithm
+
+		[MonoTODO ("call into KeyPairPersistence to get details")]
+		public CspKeyContainerInfo CspKeyContainerInfo {
+			get { return null; }
+		}
+
+		[MonoTODO ("call into CryptoConvert")]
+		public byte[] ExportCspBlob (bool includePrivateParameters)
+		{
+			return null;
+		}
+
+		[MonoTODO ("call into CryptoConvert")]
+		public void ImportCspBlob (byte[] rawData)
+		{
+		}
+#endif
 	}
 }

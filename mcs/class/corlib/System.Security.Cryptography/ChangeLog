@@ -1,3 +1,30 @@
+2004-07-07  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* CryptoAPITransform.cs: Added the new Reset method for NET_2_0. This
+	is a NOP as this class isn't used by Mono (all crypto transforms are 
+	managed).
+	* CryptographicException.cs: Added _Exception interface for NET_2_0 
+	profile.
+	* CspProviderFlags.cs: Added new enum's members for NET_2_0.
+	* DSA.cs: Changed constructor to protected for NET_2_0. It is now 
+	possible to inherit from DSA in other assemblies.
+	* DSACryptoServiceProvider.cs: NET_2_0 cleanup. Added interface 
+	ICspAsymmetricAlgorithm (stub),	removed (unrequired) LegalKeySizes 
+	override, fixed visibility of PublicOnly property.
+	* HMACSHA1.cs: Fixed #if for NET_2_0 profile.
+	* KeyNumber.cs: Fixed values for new enum in Fx 2.0.
+	* MACTripleDES.cs: Added new Padding property to NET_2_0 profile.
+	* ProtectedData.cs: Added missing private constructor.
+	* ProtectedMemory.cs: Added missing private constructor.
+	* RC2CryptoServiceProvider.cs: Added UseSalt property to NET_2_0 
+	profile. Salt usage must be added to the transforms.
+	* RIPEMD160Managed.cs: Removed unrequired [CLSCompliant] attributes.
+	* RSACryptoServiceProvider.cs: NET_2_0 cleanup. Added interface 
+	ICspAsymmetricAlgorithm (stub),	fixed visibility of PublicOnly 
+	property.
+	* RijndaelManaged.cs: Use the new RijndaelManagedTransform for Fx 2.0.
+	* RijndaelManagedTransform.cs: New. Class is now public in Fx 2.0.
+
 2004-06-23  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* CryptoStream.cs: Removed the block reduction. This seems to be done

@@ -1,12 +1,9 @@
 //
 // System.Security.Cryptography.CryptographicException.cs
 //
-// Author:
-//   Thomas Neidhart (tome@sbox.tugraz.at)
-//
-// (C) 2004 Novell (http://www.novell.com)
-//
-
+// Authors:
+//	Thomas Neidhart (tome@sbox.tugraz.at)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
@@ -33,47 +30,52 @@
 using System;
 using System.Globalization;
 using System.Runtime.Serialization;
+#if NET_2_0
+using System.Runtime.InteropServices;
+#endif
 
 namespace System.Security.Cryptography {
 
-[Serializable]
-public class CryptographicException : SystemException {
+	[Serializable]
+#if NET_2_0
+	public class CryptographicException : SystemException, _Exception {
+#else
+	public class CryptographicException : SystemException {
+#endif
+		public CryptographicException ()
+			: base (Locale.GetText ("Error occured during a cryptographic operation."))
+		{
+			// default to CORSEC_E_CRYPTO
+			// defined as EMAKEHR(0x1430) in CorError.h
+			HResult = unchecked ((int)0x80131430);
+		}
 
-	public CryptographicException ()
-		: base (Locale.GetText ("Error occured during a cryptographic operation."))
-	{
-		// default to CORSEC_E_CRYPTO
-		// defined as EMAKEHR(0x1430) in CorError.h
-		HResult = unchecked ((int)0x80131430);
+		public CryptographicException (int hr)
+		{
+			HResult = hr;
+		}
+
+		public CryptographicException (string message)
+			: base (message)
+		{
+			HResult = unchecked ((int)0x80131430);
+		}
+
+		public CryptographicException (string message, Exception inner)
+			: base (message, inner)
+		{
+			HResult = unchecked ((int)0x80131430);
+		}
+
+		public CryptographicException (string format, string insert)
+			: base (String.Format (format, insert))
+		{
+			HResult = unchecked ((int)0x80131430);
+		}
+
+		protected CryptographicException (SerializationInfo info, StreamingContext context)
+			: base (info, context) 
+		{
+		}
 	}
-
-	public CryptographicException (int hr)
-	{
-		HResult = hr;
-	}
-
-	public CryptographicException (string message)
-		: base (message)
-	{
-		HResult = unchecked ((int)0x80131430);
-	}
-
-	public CryptographicException (string message, Exception inner)
-		: base (message, inner)
-	{
-		HResult = unchecked ((int)0x80131430);
-	}
-
-	public CryptographicException (string format, string insert)
-		: base (String.Format (format, insert))
-	{
-		HResult = unchecked ((int)0x80131430);
-	}
-
-	protected CryptographicException (SerializationInfo info, StreamingContext context)
-		: base (info, context) 
-	{
-	}
-}
-
 }

@@ -2,11 +2,8 @@
 // System.Security.Cryptography CspProviderFlags enumeration
 //
 // Authors:
-//   Thomas Neidhart <tome@sbox.tugraz.at>
-//
-// (C) 2004 Novell (http://www.novell.com)
-//
-
+//	Thomas Neidhart <tome@sbox.tugraz.at>
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
@@ -37,6 +34,15 @@ namespace System.Security.Cryptography {
 	public enum CspProviderFlags {
 		UseMachineKeyStore = 1,
 		UseDefaultKeyContainer = 2
+#if NET_2_0
+		,
+		NoFlags = 0,
+		NoPrompt = 4,
+		UseArchivableKey = 8,
+		UseExistingKey = 16,
+		UseNonExportableKey = 32,
+		UseUserProtectedKey = 64
+#endif
 	}
 }
 

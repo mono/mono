@@ -6,10 +6,6 @@
 //	Sebastien Pouliot (sebastien@ximian.com)
 //
 // Portions (C) 2002 Motus Technologies Inc. (http://www.motus.com)
-// (C) 2004 Novell (http://www.novell.com)
-//          
-
-//
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -44,6 +40,8 @@ namespace System.Security.Cryptography {
 	//	http://www.ietf.org/rfc/rfc2268.txt
 	
 	public sealed class RC2CryptoServiceProvider : RC2 {
+
+		private bool _useSalt;
 	
 		public RC2CryptoServiceProvider ()
 		{
@@ -83,6 +81,13 @@ namespace System.Security.Cryptography {
 		{
 			KeyValue = KeyBuilder.Key (KeySizeValue >> 3);
 		}
+#if NET_2_0
+		[MonoTODO ("Use salt in algorithm")]
+		public bool UseSalt {
+			get { return _useSalt; }
+			set { _useSalt = value; }
+		}
+#endif
 	}
 	
 	internal class RC2Transform : SymmetricTransform {

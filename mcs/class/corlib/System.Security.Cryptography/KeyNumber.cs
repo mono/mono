@@ -5,9 +5,6 @@
 //	Sebastien Pouliot (spouliot@motus.com)
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
-//
-
-//
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -37,8 +34,8 @@ using System;
 namespace System.Security.Cryptography {
 
 	public enum KeyNumber {
-		Exchange,
-		Signature
+		Exchange = 1,
+		Signature = 2
 	} 
 }
 

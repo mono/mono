@@ -63,14 +63,22 @@ namespace System.Security.Cryptography {
 		{
 			Key = rgbKey;
 			IV = rgbIV;
+#if NET_2_0
+			return new RijndaelManagedTransform (this, false, rgbKey, rgbIV);
+#else
 			return new RijndaelTransform (this, false, rgbKey, rgbIV);
+#endif
 		}
 		
 		public override ICryptoTransform CreateEncryptor (byte[] rgbKey, byte[] rgbIV) 
 		{
 			Key = rgbKey;
 			IV = rgbIV;
+#if NET_2_0
+			return new RijndaelManagedTransform (this, true, rgbKey, rgbIV);
+#else
 			return new RijndaelTransform (this, true, rgbKey, rgbIV);
+#endif
 		}
 	}
 	
@@ -173,6 +181,11 @@ namespace System.Security.Cryptography {
 				expandedKey [k++] = (byte) ((exKey[i] >> 8) & 0xff);
 				expandedKey [k++] = (byte) (exKey[i] & 0xff);
 			}
+		}
+
+		public void Clear () 
+		{
+			Dispose (true);
 		}
 	
 		// note: this method is guaranteed to be called with a valid blocksize

@@ -43,10 +43,12 @@ using Mono.Security.Cryptography;
 
 namespace System.Security.Cryptography {
 
-#if NET_1_0
- 	public class DSACryptoServiceProvider : DSA {
-#else
+#if NET_2_0
+	public sealed class DSACryptoServiceProvider : DSA, ICspAsymmetricAlgorithm {
+#elif NET_1_1
 	public sealed class DSACryptoServiceProvider : DSA {
+#else
+ 	public class DSACryptoServiceProvider : DSA {
 #endif
 		private const int PROV_DSS_DH = 13;		// from WinCrypt.h
 
@@ -97,7 +99,7 @@ namespace System.Security.Cryptography {
 			persistKey = (parameters != null);
 			if (parameters == null) {
 				parameters = new CspParameters (PROV_DSS_DH);
-#if ! NET_1_0
+#if NET_1_1
 				if (useMachineKeyStore)
 					parameters.Flags |= CspProviderFlags.UseMachineKeyStore;
 #endif
@@ -128,19 +130,21 @@ namespace System.Security.Cryptography {
 			get { return dsa.KeySize; }
 		}
 
+#if !NET_2_0
 		public override KeySizes[] LegalKeySizes {
 			get { return LegalKeySizesValue; }
 		}
+#endif
 
 		public bool PersistKeyInCsp {
 			get { return persistKey; }
 			set { persistKey = value; }
 		}
 
-#if (NET_1_0 || NET_1_1)
-		internal
-#else
+#if NET_2_0
 		public 
+#else
+		internal
 #endif
 		bool PublicOnly {
 			get { return dsa.PublicOnly; }
@@ -150,7 +154,7 @@ namespace System.Security.Cryptography {
 			get { return "http://www.w3.org/2000/09/xmldsig#dsa-sha1"; }
 		}
 
-#if ! NET_1_0
+#if NET_1_1
 		private static bool useMachineKeyStore = false;
 
 		public static bool UseMachineKeyStore {
@@ -266,5 +270,24 @@ namespace System.Security.Cryptography {
 				persisted = true;
 			}
 		}
+#if NET_2_0
+		// ICspAsymmetricAlgorithm
+
+		[MonoTODO ("call into KeyPairPersistence to get details")]
+		public CspKeyContainerInfo CspKeyContainerInfo {
+			get { return null; }
+		}
+
+		[MonoTODO ("call into CryptoConvert (doesn't currently support DSA)")]
+		public byte[] ExportCspBlob (bool includePrivateParameters)
+		{
+			return null;
+		}
+
+		[MonoTODO ("call into CryptoConvert (doesn't currently support DSA)")]
+		public void ImportCspBlob (byte[] rawData)
+		{
+		}
+#endif
 	}
 }

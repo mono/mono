@@ -1,9 +1,8 @@
 //
-// System.Security.Cryptography CryptoAPITransform.cs
+// System.Security.Cryptography.RijndaelManagedTransform
 //
-// Authors:
-//	Thomas Neidhart (tome@sbox.tugraz.at)
-//	Sebastien Pouliot (sebastien@ximian.com)
+// Author:
+//	Sebastien Pouliot <sebastien@ximian.com>
 //
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
@@ -27,84 +26,73 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#if NET_2_0
+
 using System;
 
 namespace System.Security.Cryptography {
 
-	// Note: This class isn't used by Mono as all algorithms are provided with
-	// 100% managed implementations.
+	// Notes: This class is "publicly" new in Fx 2.0 but was already 
+	// existing in Fx 1.0. So this new class is only calling the old
+	// (and more general) one (RijndaelTransform) located in 
+	// RijndaelManaged.cs.
 
-	public sealed class CryptoAPITransform : ICryptoTransform {
+	public sealed class RijndaelManagedTransform: ICryptoTransform, IDisposable {
 
-		private bool m_disposed;
+		private RijndaelTransform _st;
+		private int _bs;
 
-		internal CryptoAPITransform () 
+		internal RijndaelManagedTransform (Rijndael algo, bool encryption, byte[] key, byte[] iv)
 		{
-			m_disposed = false;
+			_st = new RijndaelTransform (algo, encryption, key, iv);
+			_bs = algo.BlockSize;
 		}
 
-		~CryptoAPITransform () 
-		{
-			Dispose (false);
-		}
-
-		public bool CanReuseTransform {
-			get { return true; }
+		public int BlockSizeValue {
+			get { return _bs; }
 		}
 
 		public bool CanTransformMultipleBlocks {
-			get { return true; }
+			get { return _st.CanTransformMultipleBlocks; }
+		}
+
+		public bool CanReuseTransform {
+			get { return _st.CanReuseTransform; }
 		}
 
 		public int InputBlockSize {
-			get { return 0;	}
-		}
-
-		public IntPtr KeyHandle {
-			get { return IntPtr.Zero; }
+			get { return _st.InputBlockSize; }
 		}
 
 		public int OutputBlockSize {
-			get { return 0; }
+			get { return _st.OutputBlockSize; }
 		}
 
-		void IDisposable.Dispose () 
+		public void Clear ()
 		{
-			Dispose (true);
-			GC.SuppressFinalize (this);  // Finalization is now unnecessary
+			_st.Clear ();
 		}
 
-		public void Clear () 
+		[MonoTODO]
+		public void Reset ()
 		{
-			Dispose (false);
 		}
 
-		private void Dispose (bool disposing) 
+		void System.IDisposable.Dispose () 
 		{
-			if (!m_disposed) {
-				// dispose unmanaged objects
-				if (disposing) {
-					// dispose managed objects
-				}
-				m_disposed = true;
-			}
+			_st.Clear ();
 		}
 
 		public int TransformBlock (byte[] inputBuffer, int inputOffset, int inputCount, byte[] outputBuffer, int outputOffset)
 		{
-			return 0;
+			return _st.TransformBlock (inputBuffer, inputOffset, inputCount, outputBuffer, outputOffset);
 		}
 
-		public byte[] TransformFinalBlock (byte[] inputBuffer, int inputOffset, int inputCount)
+		public byte[] TransformFinalBlock (byte[] inputBuffer, int inputOffset, int inputCount) 
 		{
-			// Reset (); should be called here before returning final data
-			return null;
+			return _st.TransformFinalBlock (inputBuffer, inputOffset, inputCount);
 		}
-
-#if NET_2_0
-		public void Reset ()
-		{
-		}
-#endif
 	}
 }
+
+#endif

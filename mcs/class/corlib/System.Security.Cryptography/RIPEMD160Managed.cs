@@ -419,15 +419,15 @@ namespace System.Security.Cryptography {
 		/// <summary>
 		/// The X vectors.
 		/// </summary>
-		[CLSCompliant(false)] private uint[] _X;
+		private uint[] _X;
 		/// <summary>
 		/// The current value of the hash.
 		/// </summary>
-		[CLSCompliant(false)] private uint[] _HashValue;
+		private uint[] _HashValue;
 		/// <summary>
 		/// The number of bytes hashed.
 		/// </summary>
-		[CLSCompliant(false)] private ulong _Length;
+		private ulong _Length;
 
 		private int _ProcessingBufferCount; // Counts how much data we have stored that still needs processed.
 

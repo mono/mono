@@ -5,9 +5,6 @@
 //	Sebastien Pouliot (spouliot@motus.com)
 //
 // (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
-//
-
-//
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -47,6 +44,7 @@ namespace System.Security.Cryptography {
 		private TripleDES tdes;
 		private MACAlgorithm mac;
 		private bool m_disposed;
+		private PaddingMode _padding;
 	
 		public MACTripleDES ()
 		{
@@ -73,6 +71,8 @@ namespace System.Security.Cryptography {
 		private void Setup (string strTripleDES, byte[] rgbKey) 
 		{
 			tdes = TripleDES.Create (strTripleDES);
+			// default padding (as using in Fx 1.0 and 1.1)
+			tdes.Padding = PaddingMode.Zeros;
 			// if rgbKey is null we keep the randomly generated key
 			if (rgbKey != null) {
 				// this way we get the TripleDES key validation (like weak
@@ -91,7 +91,14 @@ namespace System.Security.Cryptography {
 		{
 			Dispose (false);
 		}
-	
+
+#if NET_2_0
+		public PaddingMode Padding {
+			get { return tdes.Padding; }
+			set { tdes.Padding = value; }
+		}
+#endif
+
 		protected override void Dispose (bool disposing) 
 		{
 			if (!m_disposed) {
