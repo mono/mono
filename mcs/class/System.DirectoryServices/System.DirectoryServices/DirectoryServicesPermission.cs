@@ -37,34 +37,38 @@ namespace System.DirectoryServices
 	[Serializable()]
 	public sealed class DirectoryServicesPermission : ResourcePermissionBase
 	{
-		DirectoryServicesPermissionEntryCollection entries;
+		DirectoryServicesPermissionEntryCollection innerCollection;
 
 		[MonoTODO]
 		public DirectoryServicesPermission ()
-		{ throw new NotImplementedException ("System.DirectoryServices.DirectoryServicesPermission()"); }
+		{
+			throw new NotImplementedException ("System.DirectoryServices.DirectoryServicesPermission()");
+		}
 
 		[MonoTODO]
 		public DirectoryServicesPermission (DirectoryServicesPermissionEntry[] entries)
 		{
-			this.entries = new DirectoryServicesPermissionEntryCollection ();
-			this.entries.AddRange (entries);
+			innerCollection = new DirectoryServicesPermissionEntryCollection ();
+			innerCollection.AddRange (entries);
 		}
 
  		[MonoTODO]
  		public DirectoryServicesPermission (PermissionState ps)
- 		{ throw new NotImplementedException ("System.DirectoryServices.DirectoryServicesPermission(permission_state)"); }
+ 		{ 
+			throw new NotImplementedException ("System.DirectoryServices.DirectoryServicesPermission(permission_state)");
+		}
 
 		[MonoTODO]
 		public DirectoryServicesPermission (DirectoryServicesPermissionAccess access, string path)
 		{
-			entries = new DirectoryServicesPermissionEntryCollection ();
-			entries.Add (new DirectoryServicesPermissionEntry (access, path));
+			innerCollection = new DirectoryServicesPermissionEntryCollection ();
+			innerCollection.Add (new DirectoryServicesPermissionEntry (access, path));
 		}
 
 		public DirectoryServicesPermissionEntryCollection PermissionEntries
 		{
 			[MonoTODO]
-			get { return entries; }
+			get { return innerCollection; }
 		}
 	}
 }

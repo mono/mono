@@ -34,19 +34,29 @@ using System.Security.Permissions;
 
 namespace System.DirectoryServices
 {
+	[Serializable]
 	public class DirectoryServicesPermissionEntry
 	{
-		DirectoryServicesPermissionAccess access;
+		DirectoryServicesPermissionAccess permissionAccess;
 		string path;
 
-		public DirectoryServicesPermissionEntry (DirectoryServicesPermissionAccess access, string path)
+		public DirectoryServicesPermissionEntry (DirectoryServicesPermissionAccess permissionAccess, string path)
 		{
-			this.access = access;
+			this.permissionAccess = permissionAccess;
 			this.path = path;
 		}
 
-		public string Path { get { return path; } }
-		public DirectoryServicesPermissionAccess PermissionAccess { get { return access; } }
+		public string Path {
+			get {
+				return path;
+			}
+		}
+
+		public DirectoryServicesPermissionAccess PermissionAccess {
+			get {
+				return permissionAccess;
+			}
+		}
 	}
 }
 

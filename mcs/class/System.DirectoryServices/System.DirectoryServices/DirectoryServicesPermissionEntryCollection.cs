@@ -22,7 +22,7 @@
 *******************************************************************************/
 
 //
-// System.DirectoryServices.DirectoryEntry.cs
+// System.DirectoryServices.DirectoryServicesPermissionEntryCollection.cs
 //
 // Copyright (C) 2004  Novell Inc.
 //
@@ -35,6 +35,10 @@ using System.Security.Permissions;
 
 namespace System.DirectoryServices
 {
+	// when deserializing an instance serialized by MS.NET, you get the following 
+	// error : Field "owner" not found in class ....
+	[Serializable]
+	[MonoTODO ("Fix serialization compatibility with MS.NET")]
 	public class DirectoryServicesPermissionEntryCollection : CollectionBase
 	{
 		internal DirectoryServicesPermissionEntryCollection () { }

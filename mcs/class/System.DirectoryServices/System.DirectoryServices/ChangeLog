@@ -1,3 +1,12 @@
+2004-06-15  Gert Driesen <drieseng@users.sourceforge.net>
+
+	* DirectoryServicesPermission.cs: renamed field to match MS.NET
+	* DirectoryServicesPermissionEntry.cs: fixed serialization 
+	compatibility with MS.NET
+	* DirectoryServicesPermissionEntryCollection.cs: marked serializable,
+	added TODO for serialization compatibility
+	* ReferralChasingOption.cs: changed enum field values to match MS.NET
+
 2004-06-03  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* DirectoryEntries.cs: flagged field private to fix public API
