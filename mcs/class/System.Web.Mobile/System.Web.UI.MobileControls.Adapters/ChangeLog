@@ -1,4 +1,10 @@
 
+2003-05-21	Gaurav Vaish <gvaish_mono AT lycos.com>
+
+	* HtmlControlAdapter.cs : Partial implementation.
+	* HtmlFormAdapter.cs    : Initial implementation.
+	* HtmlPageAdapter.cs    : Initial implementation.
+
 2003-04-29	Gaurav Vaish <gvaish_mono AT lycos.com>
 
 	* ControlAdapter.cs     : Some more methods.
