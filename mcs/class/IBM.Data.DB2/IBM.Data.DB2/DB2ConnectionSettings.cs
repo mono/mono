@@ -4,7 +4,7 @@ using System.Text;
 
 namespace IBM.Data.DB2
 {
-	internal sealed class Db2ConnectionSettings
+	internal sealed class DB2ConnectionSettings
 	{
 		private string	 connectionString;
 		private string	 userName = "";
@@ -12,49 +12,47 @@ namespace IBM.Data.DB2
 		private string	 databaseAlias = "";
 		private string	 server = "";
 		private bool	 pooling = true;
-		private TimeSpan connectTimeout = TimeSpan.Zero;
+		private TimeSpan connectTimeout = new TimeSpan(0, 0, 15);
 		private TimeSpan connectionLifeTime = new TimeSpan(0, 0, 15);	// 15 seconds
 		private int		 connectionPoolSizeMin = 0;
 		private int		 connectionPoolSizeMax = -1;	// no maximum
 
-		private Db2ConnectionPool pool;
+		private DB2ConnectionPool pool;
 
-		private Db2ConnectionSettings(string connectionString)
+		private DB2ConnectionSettings(string connectionString)
 		{
 			this.connectionString = connectionString;
 			this.Parse();
 		}
 
-		public static Db2ConnectionSettings GetConnectionSettings(string connectionString)
+		public static DB2ConnectionSettings GetConnectionSettings(string connectionString)
 		{
-			Db2ConnectionPool pool = Db2ConnectionPool.FindConnectionPool(connectionString);
+			DB2ConnectionPool pool = DB2ConnectionPool.FindConnectionPool(connectionString);
 			if(pool != null)
 			{
 				return pool.ConnectionSettings;
 			}
-			Db2ConnectionSettings settings = new Db2ConnectionSettings(connectionString);
+			DB2ConnectionSettings settings = new DB2ConnectionSettings(connectionString);
 			if(settings.Pooling)
 			{
-				settings.pool = Db2ConnectionPool.GetConnectionPool(settings);
+				settings.pool = DB2ConnectionPool.GetConnectionPool(settings);
 			}
 			return settings;
 		}
 
-		public Db2OpenConnection GetRealOpenConnection()
+		public DB2OpenConnection GetRealOpenConnection(DB2Connection connection)
 		{
 			if(pool != null)
 			{
-				Console.WriteLine("Getting DB2OpenConnection from connection pool");
-				return pool.GetOpenConnection();
+				return pool.GetOpenConnection(connection);
 			}
 			else
 			{
-				Console.WriteLine("Creating new DB2OpenConnection");
-				return new Db2OpenConnection(this);
+				return new DB2OpenConnection(this, connection);
 			}
 		}
 
-		public Db2ConnectionPool Pool
+		public DB2ConnectionPool Pool
 		{
 			get { return pool; }
 		}
@@ -68,7 +66,7 @@ namespace IBM.Data.DB2
 		{
 			get { return userName; }
 		}
-
+		
 		public string PassWord
 		{
 			get { return passWord; }
@@ -163,6 +161,10 @@ namespace IBM.Data.DB2
 						connectionLifeTime = new TimeSpan(0, 0, int.Parse(pairs[1]));
 						break;
 				}
+			}
+			if(connectionLifeTime.Ticks <= 0)
+			{
+				pooling = false;
 			}
 		}
 	
