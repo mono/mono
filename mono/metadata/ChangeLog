@@ -1,5 +1,11 @@
 2004-03-29  Martin Baulig  <martin@ximian.com>
 
+	* icall.c (ves_icall_MonoMethod_get_HasGenericParameters): Show
+	the "official" behavior here.
+	(ves_icall_MonoMethod_get_Mono_IsInflatedMethod): New interncall.
+
+2004-03-29  Martin Baulig  <martin@ximian.com>
+
 	* icall.c: Reflect latest API changes.
 
 2004-03-29  Martin Baulig  <martin@ximian.com>
