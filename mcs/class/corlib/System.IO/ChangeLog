@@ -1,3 +1,7 @@
+2003-03-20  Lluis Sanchez Gual <lluis@ideary.com>
+
+	* FileNotFoundException.cs: fixed serialization bug.
+
 2003-03-18  Atsushi Enomoto <ginga@kit.hi-ho.ne.jp>
 
 	* StringWriter.cs : don't release internalString on Dispose().
