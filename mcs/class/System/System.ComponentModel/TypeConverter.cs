@@ -35,10 +35,9 @@ public class TypeConverter
 		return CanConvertTo (null, destinationType);
 	}
 	
-	[MonoTODO]
 	public virtual bool CanConvertTo (ITypeDescriptorContext context, Type destinationType)
 	{
-		throw new NotImplementedException ();
+		return (destinationType == typeof (string));
 	}
 
 	public object ConvertFrom (object o)
@@ -79,24 +78,32 @@ public class TypeConverter
 		throw new NotImplementedException ();
 	}
 
-	[MonoTODO]
 	public object ConvertTo (object value, Type destinationType)
 	{
-		throw new NotImplementedException ();
+		return ConvertTo (null, null, value, destinationType);
 	}
-	[MonoTODO]
+
 	public virtual object ConvertTo (ITypeDescriptorContext context,
 					 CultureInfo culture,
 					 object value,
 					 Type destinationType)
 	{
-		throw new NotImplementedException ();
+		// context? culture?
+		if (destinationType == null)
+			throw new ArgumentNullException ("destinationType");
+
+		if (destinationType == typeof (string)) {
+			if (value != null)
+				return value.ToString();
+			return String.Empty;
+		}
+
+		throw new NotSupportedException ("Conversion not supported");
 	}
 
-	[MonoTODO]
 	public string ConvertToInvariantString (object value)
 	{
-		throw new NotImplementedException ();
+		return ConvertToInvariantString (null, value);
 	}
 
 	[MonoTODO]
@@ -105,22 +112,19 @@ public class TypeConverter
 		throw new NotImplementedException ();
 	}
 
-	[MonoTODO]
 	public string ConvertToString (object value)
 	{
-		throw new NotImplementedException ();
+		return (string) ConvertTo (null, CultureInfo.CurrentCulture, value, typeof (string));
 	}
 
-	[MonoTODO]
 	public string ConvertToString (ITypeDescriptorContext context, object value)
 	{
-		throw new NotImplementedException ();
+		return (string) ConvertTo (context, CultureInfo.CurrentCulture, value, typeof (string));
 	}
 
-	[MonoTODO]
 	public string ConvertToString (ITypeDescriptorContext context, CultureInfo culture, object value)
 	{
-		throw new NotImplementedException ();
+		return (string) ConvertTo (context, culture, value, typeof (string));
 	}
 
 	[MonoTODO]
@@ -159,84 +163,71 @@ public class TypeConverter
 		throw new NotImplementedException ();
 	}
 
-	[MonoTODO]
 	public PropertyDescriptorCollection GetProperties (object value)
 	{
-		throw new NotImplementedException ();
+		return GetProperties (null, value);
 	}
 
-	[MonoTODO]
 	public PropertyDescriptorCollection GetProperties (ITypeDescriptorContext context, object value)
 	{
-		throw new NotImplementedException ();
+		return GetProperties (context, value, null);
 	}
 
-	[MonoTODO]
 	public virtual PropertyDescriptorCollection GetProperties (ITypeDescriptorContext context,
 								   object value,
 								   Attribute[] attributes)
 	{
-		throw new NotImplementedException ();
+		return null;
 	}
 
-	[MonoTODO]
 	public bool GetPropertiesSupported ()
 	{
-		throw new NotImplementedException ();
+		return GetPropertiesSupported (null);
 	}
 
-	[MonoTODO]
 	public virtual bool GetPropertiesSupported (ITypeDescriptorContext context)
 	{
-		throw new NotImplementedException ();
+		return false;
 	}
 
-	[MonoTODO]
 	public ICollection GetStandardValues ()
 	{
-		throw new NotImplementedException ();
+		return GetStandardValues (null);
 	}
 
-	[MonoTODO]
 	public virtual StandardValuesCollection GetStandardValues (ITypeDescriptorContext context)
 	{
-		throw new NotImplementedException ();
+		return null;
 	}
 
-	[MonoTODO]
 	public bool GetStandardValuesExclusive ()
 	{
-		throw new NotImplementedException ();
+		return GetStandardValuesExclusive (null);
 	}
 
-	[MonoTODO]
 	public virtual bool GetStandardValuesExclusive (ITypeDescriptorContext context)
 	{
-		throw new NotImplementedException ();
+		return false;
 	}
 
-	[MonoTODO]
 	public bool GetStandardValuesSupported ()
 	{
-		throw new NotImplementedException ();
+		return GetStandardValuesSupported (null);
 	}
 
-	[MonoTODO]
 	public virtual bool GetStandardValuesSupported (ITypeDescriptorContext context)
 	{
-		throw new NotImplementedException ();
+		return false;
 	}
 
-	[MonoTODO]
 	public bool IsValid (object value)
 	{
-		throw new NotImplementedException ();
+		return IsValid (null, value);
 	}
 
-	[MonoTODO]
 	public virtual bool IsValid (ITypeDescriptorContext context, object value)
 	{
-		throw new NotImplementedException ();
+		return true;
 	}
 
 	public class StandardValuesCollection : ICollection, IEnumerable

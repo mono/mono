@@ -1,3 +1,12 @@
+2002-07-29  Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* EnumConverter.cs: new file.
+	
+	* TypeConverter.cs: implemented a few simple methods.
+
+	* TypeDescriptor.cs:
+	(GetConverter): initial support for converters of well-known types.
+
 2002-07-28  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* DerivedPropertyDescriptor.cs: New file. Internal class.

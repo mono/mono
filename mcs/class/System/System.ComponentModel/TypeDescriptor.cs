@@ -16,6 +16,9 @@ namespace System.ComponentModel
 
 public sealed class TypeDescriptor
 {
+	private static readonly string creatingDefaultConverters = "creatingDefaultConverters";
+	private static Hashtable defaultConverters;
+
 	[MonoTODO]
 	public static void AddEditorTable (Type editorBaseType, Hashtable table)
 	{
@@ -111,17 +114,45 @@ public sealed class TypeDescriptor
 		throw new NotImplementedException ();
 	}
 
+	private static Hashtable DefaultConverters
+	{
+		get {
+			if (defaultConverters != null)
+				return defaultConverters;
+
+			lock (creatingDefaultConverters) {
+				if (defaultConverters != null)
+					return defaultConverters;
+				
+				//FIXME: add more converters as we implement them
+				defaultConverters = new Hashtable ();
+				defaultConverters.Add (typeof (Enum), typeof (EnumConverter));
+				defaultConverters.Add (typeof (string), typeof (StringConverter));
+			}
+			return defaultConverters;
+		}
+	}
+	
 	public static TypeConverter GetConverter (Type type)
 	{
-		object [] attrs = type.GetCustomAttributes (false);
+		Type t = DefaultConverters [type] as Type;
+		if (t == null && type.IsEnum)
+			t = (Type) DefaultConverters [typeof (Enum)];
+
 		string converter_name = null;
-		foreach (object o in attrs){
-			if (o is TypeConverterAttribute){
-				TypeConverterAttribute tc = (TypeConverterAttribute) o;
-				converter_name = tc.ConverterTypeName;
-				break;
+		if (t == null) {
+			object [] attrs = type.GetCustomAttributes (false);
+			foreach (object o in attrs){
+				if (o is TypeConverterAttribute){
+					TypeConverterAttribute tc = (TypeConverterAttribute) o;
+					converter_name = tc.ConverterTypeName;
+					break;
+				}
 			}
+		} else {
+			converter_name = t.FullName;
 		}
+		
 
 		if (converter_name == null)
 			return null;
