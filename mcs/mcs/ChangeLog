@@ -1,3 +1,16 @@
+2002-05-20  Miguel de Icaza  <miguel@ximian.com>
+
+	* expression.cs (Is): Bandaid until we fix properly Switch (see
+	bug #24985 for details).
+
+	* typemanager.cs (ImplementsInterface): The hashtable will contain
+	a null if there are no interfaces implemented.
+
+2002-05-18  Miguel de Icaza  <miguel@ximian.com>
+
+	* cs-parser.jay (indexer_declarator): It is fine to have array
+	parameters
+
 2002-05-17  Miguel de Icaza  <miguel@ximian.com>
 
 	* typemanager.cs: (RegisterBuilder): New function used to register

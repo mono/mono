@@ -1045,17 +1045,22 @@ set_accessor_declaration
 		if (parsing_indexer == false) {
 			args  = new Parameter [1];
 			args [0] = implicit_value_parameter;
+			current_local_parameters = new Parameters (args, null, lexer.Location);
 		} else {
-			Parameter [] fp = indexer_parameters.FixedParameters;
-			int count = fp.Length;
+			Parameter [] fpars = indexer_parameters.FixedParameters;
 
-			args = new Parameter [count + 1];
-	
-			fp.CopyTo (args, 0);
-			args [count] = implicit_value_parameter;
+			if (fpars != null){
+				int count = fpars.Length;
+
+				args = new Parameter [count + 1];
+				fpars.CopyTo (args, 0);
+				args [count] = implicit_value_parameter;
+			} else 
+				args = null;
+			current_local_parameters = new Parameters (
+				args, indexer_parameters.ArrayParameter, lexer.Location);
 		}
 		
-		current_local_parameters = new Parameters (args, null, lexer.Location);
 		lexer.PropertyParsing = false;
 	  }
 	  accessor_body
@@ -1580,7 +1585,7 @@ indexer_declaration
 		parsing_indexer  = true;
 		
 		indexer_parameters = decl.param_list;
-		$$ = lexer.Location;
+		oob_stack.Push (lexer.Location);
 	  }
           accessor_declarations 
 	  {
@@ -1591,7 +1596,7 @@ indexer_declaration
 	  { 
 		// The signature is computed from the signature of the indexer.  Look
 	 	// at section 3.6 on the spec
-
+		Location loc = (Location) oob_stack.Pop ();
 		Indexer indexer;
 		IndexerDeclaration decl = (IndexerDeclaration) $3;
 		Pair pair = (Pair) $6;
@@ -1599,7 +1604,7 @@ indexer_declaration
 		Accessor set_block = (Accessor) pair.Second;
 
 		indexer = new Indexer (decl.type, decl.interface_type, (int) $2, decl.param_list,
-				       get_block, set_block, (Attributes) $1, (Location) $5);
+				       get_block, set_block, (Attributes) $1, loc);
 
 		// Note that there is no equivalent of CheckDef for this case
 		// We shall handle this in semantic analysis
@@ -1617,7 +1622,7 @@ indexer_declarator
 	  {
 		Parameters pars = (Parameters) $4;
 
-		if (pars.FixedParameters == null){
+		if (pars.FixedParameters == null && pars.ArrayParameter == null){
 			Report.Error (1551, lexer.Location, "Indexers must have at least one parameter");
 		}
 
@@ -1627,7 +1632,7 @@ indexer_declarator
 	  {
 		Parameters pars = (Parameters) $6;
 
-		if (pars.FixedParameters == null){
+		if (pars.FixedParameters == null && pars.ArrayParameter == null){
 			Report.Error (1551, lexer.Location, "Indexers must have at least one parameter");
 		}
 		$$ = new IndexerDeclaration ((string) $1, (string) $2, pars);

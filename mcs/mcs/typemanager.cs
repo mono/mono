@@ -1016,9 +1016,11 @@ public class TypeManager {
 		do {
 			interfaces = null;
 			
-			if (t is TypeBuilder)
+			if (t is TypeBuilder){
 				interfaces = (Type []) builder_to_ifaces [t];
-			else
+				if (interfaces == null)
+					return false;
+			} else
 				interfaces = t.GetInterfaces ();
 
 			for (int i = interfaces.Length; i > 0; ){

@@ -3728,7 +3728,24 @@ namespace Mono.CSharp {
 
 				Parameter [] fixed_parms = FormalParameters.FixedParameters;
 
+				if (fixed_parms == null){
+					throw new Exception ("We currently do not support only array arguments in an indexer");
+					// BUG BUG BUG BUG BUG BUG BUG BUG BUG BUG
+					// BUG BUG BUG BUG BUG BUG BUG BUG BUG BUG
+					//
+					// Here is the problem: the `value' parameter has
+					// to come *after* the array parameter in the declaration
+					// like this:
+					// X (object [] x, Type value)
+					// .param [0]
+					//
+					// BUG BUG BUG BUG BUG BUG BUG BUG BUG BUG
+					// BUG BUG BUG BUG BUG BUG BUG BUG BUG BUG
+					
+				}
+				
 				Parameter [] tmp = new Parameter [fixed_parms.Length + 1];
+
 
 				fixed_parms.CopyTo (tmp, 0);
 				tmp [fixed_parms.Length] = new Parameter (

@@ -997,6 +997,7 @@ namespace Mono.CSharp {
 				ig.Emit (OpCodes.Cgt_Un);
 				return;
 			}
+			throw new Exception ("never reached");
 		}
 
 		public override Expression DoResolve (EmitContext ec)
