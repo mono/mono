@@ -1,3 +1,8 @@
+2004-09-07  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* X509Chain.cs: Merge bug fixes from HEAD.
+	* X509Store.cs: Merge enhancements from HEAD.
+
 2004-07-15  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* X501Name.cs: Support for E (email) in FromString.

@@ -4,9 +4,7 @@
 // Author:
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
-// (C) 2004 Novell (http://www.novell.com)
-//
-
+// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -106,9 +104,7 @@ namespace Mono.Security.X509 {
 
 		public void Import (X509Certificate certificate) 
 		{
-			if (!Directory.Exists (_storePath)) {
-				Directory.CreateDirectory (_storePath);
-			}
+			CheckStore (_storePath, true);
 
 			string filename = Path.Combine (_storePath, GetUniqueName (certificate));
 			if (!File.Exists (filename)) {
@@ -183,14 +179,28 @@ namespace Mono.Security.X509 {
 			return crl;
 		}
 
+		private bool CheckStore (string path, bool throwException)
+		{
+			try {
+				if (Directory.Exists (path))
+					return true;
+				Directory.CreateDirectory (path);
+				return Directory.Exists (path);
+			}
+			catch {
+				if (throwException)
+					throw;
+				return false;
+			}
+		}
+
 		private X509CertificateCollection BuildCertificatesCollection (string storeName) 
 		{
-			string path = Path.Combine (_storePath, storeName);
-			if (!Directory.Exists (path)) {
-				Directory.CreateDirectory (path);
-			}
-
 			X509CertificateCollection coll = new X509CertificateCollection ();
+			string path = Path.Combine (_storePath, storeName);
+			if (!CheckStore (path, false))
+				return coll;	// empty collection
+
 			string[] files = Directory.GetFiles (path, "*.cer");
 			if ((files != null) && (files.Length > 0)) {
 				foreach (string file in files) {
@@ -213,6 +223,9 @@ namespace Mono.Security.X509 {
 		{
 			ArrayList list = new ArrayList ();
 			string path = Path.Combine (_storePath, storeName);
+			if (!CheckStore (path, false))
+				return list;	// empty list
+
 			string[] files = Directory.GetFiles (path, "*.crl");
 			if ((files != null) && (files.Length > 0)) {
 				foreach (string file in files) {
