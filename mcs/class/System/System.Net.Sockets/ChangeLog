@@ -1,3 +1,8 @@
+2004-12-03 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* NetworkStream.cs: Write should ensure that writes all the contents
+	of the buffer. Fixes bug #70123. Besos para Miguelito.
+
 2004-10-14  Dick Porter  <dick@ximian.com>
 
 	* Socket.cs (Sockets ): Set Accept()ed socket blocking status to
