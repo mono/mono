@@ -29,6 +29,7 @@ Int64.cs
 InvalidCastException.cs
 InvalidOperationException.cs
 InvalidProgramException.cs
+Math.cs
 MulticastNotSupportedException.cs
 NotFiniteNumberException.cs
 NotSupportedException.cs

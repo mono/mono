@@ -1,3 +1,7 @@
+2001-07-19  Bob Smith (bob@thestuff.net)
+
+	* Math.cs: Implemented. 
+
 2001-07-19  Miguel de Icaza  <miguel@ximian.com>
 
 	* String.cs: Removed tolower and toupper.
