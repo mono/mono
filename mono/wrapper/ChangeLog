@@ -1,3 +1,13 @@
+2002-02-16  Jeffrey Stedfast  <fejj@ximian.com>
+
+	* wrapper.c (mono_wrapper_fstat): The MonoWrapperStat namespace is
+	mst_ now, so update this code. Also fix a copy/paste-o that
+	assigned st.st_ctime to buf->mst_mtime.
+	(mono_wrapper_stat): Same here.
+
+	* genwrapper.pl: Solaris does some nasty macro hadckery action for
+	st_[a,c,m]time and so lets namespace our wrapper members as
+	mst_[a,c,m]time to avoid namespace problems.
 
 Sun Feb 10 14:18:50 CET 2002 Paolo Molaro <lupus@ximian.com>
 
