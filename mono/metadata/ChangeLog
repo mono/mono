@@ -1,6 +1,9 @@
 2004-06-10  Jackson Harper  <jackson@ximian.com>
 
-	* assembly.c: Use <path>/lib/mono/gac for the extra paths lookup.
+	* assembly.c: Use <path>/lib/mono/gac for the extra paths
+	lookup. Rename MONO_GAC_PATH to MONO_GAC_PREFIX, this is a more
+	logical name as the supplied path is just a prefix to the gac not
+	the direct path to it.
 	
 Thu Jun 10 20:10:16 CEST 2004 Paolo Molaro <lupus@ximian.com>
 
