@@ -340,7 +340,7 @@ namespace System.Windows.Forms {
 				if ( Multiline )
 					createParams.Style |= (int) TabControlStyles.TCS_MULTILINE;
 
-				if ( DrawMode == TabDrawMode.OwnerDrawfixed )
+				if (DrawMode == TabDrawMode.OwnerDrawFixed)
 					createParams.Style |= (int) TabControlStyles.TCS_OWNERDRAWFIXED;
 
 				if ( HotTrack )
