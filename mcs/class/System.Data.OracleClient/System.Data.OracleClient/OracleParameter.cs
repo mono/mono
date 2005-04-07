@@ -55,6 +55,25 @@ namespace System.Data.OracleClient {
 
 		#region Constructors
 
+		// constructor for cloning the object
+		internal OracleParameter (OracleParameter value) {
+			this.name = value.name;
+			this.oracleType = value.oracleType;
+			this.ociType = value.ociType;
+			this.size = value.size;
+			this.direction = value.direction;
+			this.isNullable = value.isNullable;
+			this.precision = value.precision;
+			this.scale = value.scale;
+			this.srcColumn = value.srcColumn;
+			this.srcVersion = value.srcVersion;
+			this.dbType = value.dbType;
+			this.offset = value.offset;
+			this.sizeSet = value.sizeSet;
+			this.value = value.value;
+			this.lobLocator = value.lobLocator;
+		}
+
 		public OracleParameter ()
 			: this (String.Empty, OracleType.VarChar, 0, ParameterDirection.Input, false, 0, 0, String.Empty, DataRowVersion.Current, null)
 		{
@@ -348,10 +367,9 @@ namespace System.Data.OracleClient {
 			bindHandle.SetHandle (tmpHandle);
 		}
 
-		[MonoTODO]
 		object ICloneable.Clone ()
 		{
-			throw new NotImplementedException ();
+			return new OracleParameter(this);
 		}
 
 		private void InferOracleType (object value)
