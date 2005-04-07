@@ -944,7 +944,7 @@ namespace Mono.CSharp {
 				sb.Append (valid [i]);
 			}
 
-			Error (119, "Expression denotes a `" + ExprClassName () + "' where " +
+			Report.Error (119, loc, "Expression denotes a `" + ExprClassName () + "' where " +
 			       "a `" + sb.ToString () + "' was expected");
 		}
 		
@@ -2278,6 +2278,11 @@ namespace Mono.CSharp {
 	///   section 10.8.1 (Fully Qualified Names).
 	/// </summary>
 	public abstract class FullNamedExpression : Expression {
+		public override FullNamedExpression ResolveAsTypeStep (EmitContext ec)
+		{
+			return this;
+		}
+
 		public abstract string FullName {
 			get;
 		}

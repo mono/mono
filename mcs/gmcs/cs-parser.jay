@@ -338,7 +338,8 @@ using_alias_directive
 	: USING IDENTIFIER ASSIGN 
 	  namespace_or_type_name SEMICOLON
 	  {
-		current_namespace.UsingAlias ((string) $2, (MemberName) $4, lexer.Location);
+		MemberName name = (MemberName) $4;
+		current_namespace.UsingAlias ((string) $2, name.GetTypeExpression (lexer.Location), lexer.Location);
 	  }
 	| USING error {
 		CheckIdentifierToken (yyToken);
@@ -348,7 +349,8 @@ using_alias_directive
 using_namespace_directive
 	: USING namespace_name SEMICOLON 
 	  {
-		current_namespace.Using ((string) $2, lexer.Location);
+		MemberName ns_name = (MemberName) $2;
+		current_namespace.Using (ns_name.GetTypeExpression (lexer.Location), lexer.Location);
           }
 	;
 
@@ -401,7 +403,7 @@ namespace_name
 		if (name.TypeArguments != null)
 			syntax_error (lexer.Location, "namespace name expected");
 
-		$$ = name.GetName ();
+		$$ = name;
 	  }
 	;
 
@@ -622,19 +624,23 @@ attribute
 	  }
 	  opt_attribute_arguments
 	  {
+		Location loc = (Location) $2;
 		MemberName mname = (MemberName) $1;
 		if (mname.IsGeneric) {
 			Report.Error (404, lexer.Location,
 				      "'<' unexpected: attributes cannot be generic");
 		}
 
-		string name = mname.GetName ();
+		MemberName left = mname.Left;
+		string identifier = mname.Name;
+
+		Expression left_expr = left == null ? null : left.GetTypeExpression (loc);
+
 		if (current_attr_target == "assembly" || current_attr_target == "module")
 			$$ = new GlobalAttribute (current_container, current_attr_target,
-						  name, (ArrayList) $3, (Location) $2);
+						  left_expr, identifier, (ArrayList) $3, loc);
 		else
-			$$ = new Attribute (current_attr_target, name, (ArrayList) $3,
-					    (Location) $2);
+			$$ = new Attribute (current_attr_target, left_expr, identifier, (ArrayList) $3, loc);
 	  }
 	;
 
