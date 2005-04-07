@@ -1,3 +1,9 @@
+2005-04-07  Lluis Sanchez Gual <lluis@novell.com>
+
+	* System.Web.dll.sources: Added new files:
+		System.Web.UI.WebControls/ObjectDataSourceFilteringEventArgs.cs
+		System.Web.UI.WebControls/ObjectDataSourceFilteringEventHandler.cs
+
 2005-04-01  Lluis Sanchez Gual <lluis@novell.com>
 
 	* System.Web.dll.sources: Added new files:

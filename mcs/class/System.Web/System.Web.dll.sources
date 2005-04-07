@@ -468,6 +468,8 @@ System.Web.UI.WebControls/ObjectDataSourceDisposingEventArgs.cs
 System.Web.UI.WebControls/ObjectDataSourceDisposingEventHandler.cs
 System.Web.UI.WebControls/ObjectDataSourceEventArgs.cs
 System.Web.UI.WebControls/ObjectDataSourceEventHandler.cs
+System.Web.UI.WebControls/ObjectDataSourceFilteringEventArgs.cs
+System.Web.UI.WebControls/ObjectDataSourceFilteringEventHandler.cs
 System.Web.UI.WebControls/ObjectDataSourceMethodEventArgs.cs
 System.Web.UI.WebControls/ObjectDataSourceMethodEventHandler.cs
 System.Web.UI.WebControls/ObjectDataSourceSelectingEventArgs.cs
