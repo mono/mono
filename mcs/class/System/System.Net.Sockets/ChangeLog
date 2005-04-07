@@ -1,3 +1,13 @@
+2005-04-07 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Socket.cs: added SocketOperation enum and 2 new fields to
+	SocketAsyncResult that are used by the runtime. Asynchronous read/write
+	are serialized so that only 1 of each kind is really 'active'.
+	Handle non-blocking connects in BeginConnect instead of doing 2 Poll()
+	in the threadpool.
+
+	* NetworkStream.cs: better message for the exception.
+
 2005-04-04 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Socket.cs: remove unused async IO code.

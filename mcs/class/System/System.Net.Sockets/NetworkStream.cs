@@ -64,7 +64,7 @@ namespace System.Net.Sockets
 			if (socket.SocketType != SocketType.Stream)
 				throw new ArgumentException ("Socket is not of type Stream", "socket");
 			if (!socket.Blocking)
-				throw new IOException ();
+				throw new IOException ("Operation not allowed on a non-blocking socket.");
 			
 			this.socket = socket;
 			this.owns_socket = owns_socket;

@@ -44,6 +44,15 @@ namespace System.Net.Sockets
 {
 	public class Socket : IDisposable 
 	{
+		enum SocketOperation {
+			Accept,
+			Connect,
+			Receive,
+			ReceiveFrom,
+			Send,
+			SendTo
+		}
+
 		[StructLayout (LayoutKind.Sequential)]
 		private sealed class SocketAsyncResult: IAsyncResult 
 		{
@@ -70,26 +79,17 @@ namespace System.Net.Sockets
 			bool completed;
 			AsyncCallback real_callback;
 			int error;
+			SocketOperation operation;
+			object ares;
 
-			public SocketAsyncResult (Socket sock, object state, AsyncCallback callback)
+			public SocketAsyncResult (Socket sock, object state, AsyncCallback callback, SocketOperation operation)
 			{
 				this.Sock = sock;
 				this.handle = sock.socket;
 				this.state = state;
 				this.real_callback = callback;
+				this.operation = operation;
 				SockFlags = SocketFlags.None;
-			}
-
-			public void CreateAsyncDelegate ()
-			{
-				if (real_callback != null)
-					this.callback = new AsyncCallback (FakeCB);
-			}
-
-			static void FakeCB (IAsyncResult result)
-			{
-				SocketAsyncResult ares = (SocketAsyncResult) result;
-				ares.real_callback.BeginInvoke (ares, null, null);
 			}
 
 			public void CheckIfThrowDelayedException ()
@@ -106,6 +106,52 @@ namespace System.Net.Sockets
 				IsCompleted = true;
 				if (real_callback != null)
 					real_callback (this);
+
+				Queue queue = null;
+				if (operation == SocketOperation.Receive || operation == SocketOperation.ReceiveFrom) {
+					queue = Sock.readQ;
+				} else if (operation == SocketOperation.Send || operation == SocketOperation.SendTo) {
+					queue = Sock.writeQ;
+				}
+
+				if (queue == null)
+					return;
+
+				SocketAsyncCall sac = null;
+				SocketAsyncResult req = null;
+				lock (queue) {
+					queue.Dequeue (); // remove ourselves
+					if (queue.Count > 0) {
+						req = (SocketAsyncResult) queue.Peek ();
+						Worker worker = new Worker (req);
+						sac = GetDelegate (worker, req.operation);
+					}
+				}
+
+				if (sac != null)
+					sac.BeginInvoke (null, req);
+			}
+
+			SocketAsyncCall GetDelegate (Worker worker, SocketOperation op)
+			{
+				switch (op) {
+				case SocketOperation.Receive:
+					return new SocketAsyncCall (worker.Receive);
+				case SocketOperation.ReceiveFrom:
+					return new SocketAsyncCall (worker.ReceiveFrom);
+				case SocketOperation.Send:
+					return new SocketAsyncCall (worker.Send);
+				case SocketOperation.SendTo:
+					return new SocketAsyncCall (worker.SendTo);
+				default:
+					return null; // never happens
+				}
+			}
+
+			public void Complete (bool synch)
+			{
+				completed_sync = synch;
+				Complete ();
 			}
 
 			public void Complete (int total)
@@ -113,7 +159,14 @@ namespace System.Net.Sockets
 				this.total = total;
 				Complete ();
 			}
-			
+
+			public void Complete (Exception e, bool synch)
+			{
+				completed_sync = synch;
+				delayedException = e;
+				Complete ();
+			}
+
 			public void Complete (Exception e)
 			{
 				delayedException = e;
@@ -193,9 +246,6 @@ namespace System.Net.Sockets
 				lock (result) {
 					Socket acc_socket = null;
 					try {
-						if (!result.Sock.blocking)
-							result.Sock.Poll (-1, SelectMode.SelectRead);
-
 						acc_socket = result.Sock.Accept ();
 					} catch (Exception e) {
 						result.Complete (e);
@@ -211,19 +261,6 @@ namespace System.Net.Sockets
 				lock (result) {
 					try {
 						result.Sock.Connect (result.EndPoint);
-					} catch (SocketException se) {
-						if (result.Sock.blocking || se.ErrorCode != 10036) {
-							result.Complete (se);
-							return;
-						}
-						
-						try {
-							result.Sock.Poll (-1, SelectMode.SelectWrite);
-							result.Sock.Connect (result.EndPoint);
-						} catch (Exception k) {
-							result.Complete (k);
-							return;
-						}
 					} catch (Exception e) {
 						result.Complete (e);
 						return;
@@ -238,9 +275,6 @@ namespace System.Net.Sockets
 				lock (result) {
 					int total = 0;
 					try {
-						if (!result.Sock.blocking)
-							result.Sock.Poll (-1, SelectMode.SelectRead);
-
 						total = result.Sock.Receive_nochecks (result.Buffer,
 									     result.Offset,
 									     result.Size,
@@ -259,9 +293,6 @@ namespace System.Net.Sockets
 				lock (result) {
 					int total = 0;
 					try {
-						if (!result.Sock.blocking)
-							result.Sock.Poll (-1, SelectMode.SelectRead);
-
 						total = result.Sock.ReceiveFrom_nochecks (result.Buffer,
 										 result.Offset,
 										 result.Size,
@@ -281,9 +312,6 @@ namespace System.Net.Sockets
 				lock (result) {
 					int total = 0;
 					try {
-						if (!result.Sock.blocking)
-							result.Sock.Poll (-1, SelectMode.SelectWrite);
-
 						total = result.Sock.Send_nochecks (result.Buffer,
 									  result.Offset,
 									  result.Size,
@@ -301,9 +329,6 @@ namespace System.Net.Sockets
 				lock (result) {
 					int total = 0;
 					try {
-						if (!result.Sock.blocking)
-							result.Sock.Poll (-1, SelectMode.SelectWrite);
-
 						total = result.Sock.SendTo_nochecks (result.Buffer,
 									    result.Offset,
 									    result.Size,
@@ -327,6 +352,8 @@ namespace System.Net.Sockets
 		internal bool blocking=true;
 		private int pendingEnds;
 		private int closeDelayed;
+		private Queue readQ = new Queue (2);
+		private Queue writeQ = new Queue (2);
 
 		delegate void SocketAsyncCall ();
 		/*
@@ -752,10 +779,10 @@ namespace System.Net.Sockets
 				throw new ObjectDisposedException (GetType ().ToString ());
 
 			Interlocked.Increment (ref pendingEnds);
-			SocketAsyncResult req = new SocketAsyncResult (this, state, callback);
+			SocketAsyncResult req = new SocketAsyncResult (this, state, callback, SocketOperation.Accept);
 			Worker worker = new Worker (req);
 			SocketAsyncCall sac = new SocketAsyncCall (worker.Accept);
-			sac.BeginInvoke (null, null);
+			sac.BeginInvoke (null, req);
 			return(req);
 		}
 
@@ -770,11 +797,28 @@ namespace System.Net.Sockets
 				throw new ArgumentNullException ("end_point");
 
 			Interlocked.Increment (ref pendingEnds);
-			SocketAsyncResult req = new SocketAsyncResult (this, state, callback);
+			SocketAsyncResult req = new SocketAsyncResult (this, state, callback, SocketOperation.Connect);
 			req.EndPoint = end_point;
-			Worker worker = new Worker (req);
-			SocketAsyncCall sac = new SocketAsyncCall (worker.Connect);
-			sac.BeginInvoke (null, null);
+			int error = 0;
+			if (!blocking) {
+				SocketAddress serial = end_point.Serialize ();
+				Connect_internal (socket, serial, out error);
+				if (error == 0) {
+					// succeeded synch
+					req.Complete (true);
+				} else if (error != 10036 && error != 10035) {
+					// error synch
+					req.Complete (new SocketException (error), true);
+				}
+			}
+
+			if (blocking || error == 10036 || error == 10035) {
+				// continue asynch
+				Worker worker = new Worker (req);
+				SocketAsyncCall sac = new SocketAsyncCall (worker.Connect);
+				sac.BeginInvoke (null, req);
+			}
+
 			return(req);
 		}
 
@@ -797,14 +841,20 @@ namespace System.Net.Sockets
 				throw new ArgumentOutOfRangeException ("size");
 
 			Interlocked.Increment (ref pendingEnds);
-			SocketAsyncResult req = new SocketAsyncResult (this, state, callback);
-			req.Buffer = buffer;
-			req.Offset = offset;
-			req.Size = size;
-			req.SockFlags = socket_flags;
-			Worker worker = new Worker (req);
-			SocketAsyncCall sac = new SocketAsyncCall (worker.Receive);
-			sac.BeginInvoke (null, null);
+			SocketAsyncResult req;
+			lock (readQ) {
+				req = new SocketAsyncResult (this, state, callback, SocketOperation.Receive);
+				req.Buffer = buffer;
+				req.Offset = offset;
+				req.Size = size;
+				req.SockFlags = socket_flags;
+				readQ.Enqueue (req);
+				if (readQ.Count == 1) {
+					Worker worker = new Worker (req);
+					SocketAsyncCall sac = new SocketAsyncCall (worker.Receive);
+					sac.BeginInvoke (null, req);
+				}
+			}
 
 			return req;
 		}
@@ -831,15 +881,21 @@ namespace System.Net.Sockets
 				throw new ArgumentOutOfRangeException ("offset + size exceeds the buffer length");
 
 			Interlocked.Increment (ref pendingEnds);
-			SocketAsyncResult req = new SocketAsyncResult (this, state, callback);
-			req.Buffer = buffer;
-			req.Offset = offset;
-			req.Size = size;
-			req.SockFlags = socket_flags;
-			req.EndPoint = remote_end;
-			Worker worker = new Worker (req);
-			SocketAsyncCall sac = new SocketAsyncCall (worker.ReceiveFrom);
-			sac.BeginInvoke (null, null);
+			SocketAsyncResult req;
+			lock (readQ) {
+				req = new SocketAsyncResult (this, state, callback, SocketOperation.ReceiveFrom);
+				req.Buffer = buffer;
+				req.Offset = offset;
+				req.Size = size;
+				req.SockFlags = socket_flags;
+				req.EndPoint = remote_end;
+				readQ.Enqueue (req);
+				if (readQ.Count == 1) {
+					Worker worker = new Worker (req);
+					SocketAsyncCall sac = new SocketAsyncCall (worker.ReceiveFrom);
+					sac.BeginInvoke (null, req);
+				}
+			}
 			return req;
 		}
 
@@ -862,14 +918,20 @@ namespace System.Net.Sockets
 				throw new ArgumentOutOfRangeException ("offset + size exceeds the buffer length");
 
 			Interlocked.Increment (ref pendingEnds);
-			SocketAsyncResult req = new SocketAsyncResult (this, state, callback);
-			req.Buffer = buffer;
-			req.Offset = offset;
-			req.Size = size;
-			req.SockFlags = socket_flags;
-			Worker worker = new Worker (req);
-			SocketAsyncCall sac = new SocketAsyncCall (worker.Send);
-			sac.BeginInvoke (null, null);
+			SocketAsyncResult req;
+			lock (writeQ) {
+				req = new SocketAsyncResult (this, state, callback, SocketOperation.Send);
+				req.Buffer = buffer;
+				req.Offset = offset;
+				req.Size = size;
+				req.SockFlags = socket_flags;
+				writeQ.Enqueue (req);
+				if (writeQ.Count == 1) {
+					Worker worker = new Worker (req);
+					SocketAsyncCall sac = new SocketAsyncCall (worker.Send);
+					sac.BeginInvoke (null, req);
+				}
+			}
 			return req;
 		}
 
@@ -895,15 +957,21 @@ namespace System.Net.Sockets
 				throw new ArgumentOutOfRangeException ("offset + size exceeds the buffer length");
 
 			Interlocked.Increment (ref pendingEnds);
-			SocketAsyncResult req = new SocketAsyncResult (this, state, callback);
-			req.Buffer = buffer;
-			req.Offset = offset;
-			req.Size = size;
-			req.SockFlags = socket_flags;
-			req.EndPoint = remote_end;
-			Worker worker = new Worker(req);
-			SocketAsyncCall sac = new SocketAsyncCall (worker.SendTo);
-			sac.BeginInvoke (null, null);
+			SocketAsyncResult req;
+			lock (writeQ) {
+				req = new SocketAsyncResult (this, state, callback, SocketOperation.SendTo);
+				req.Buffer = buffer;
+				req.Offset = offset;
+				req.Size = size;
+				req.SockFlags = socket_flags;
+				req.EndPoint = remote_end;
+				writeQ.Enqueue (req);
+				if (writeQ.Count == 1) {
+					Worker worker = new Worker (req);
+					SocketAsyncCall sac = new SocketAsyncCall (worker.SendTo);
+					sac.BeginInvoke (null, req);
+				}
+			}
 			return req;
 		}
 
@@ -958,8 +1026,9 @@ namespace System.Net.Sockets
 			
 			SocketAddress serial = remote_end.Serialize ();
 			Connect_internal(socket, serial, out error);
-			if (error != 0)
+			if (error != 0) {
 				throw new SocketException (error);
+			}
 			
 			connected=true;
 		}
@@ -1291,7 +1360,7 @@ namespace System.Net.Sockets
 
 				throw new SocketException (error);
 			}
-			
+
 			connected = true;
 
 			return ret;
