@@ -118,11 +118,11 @@ namespace Mono.Security.Protocol.Tls
 			block.Write(this.pad1);
 			if (this.Context is ClientContext)
 			{
-				block.Write(this.Context.ReadSequenceNumber);
+				block.Write(this.Context.WriteSequenceNumber);
 			}
 			else
 			{
-				block.Write(this.Context.WriteSequenceNumber);
+				block.Write(this.Context.ReadSequenceNumber);
 			}
 			block.Write((byte)contentType);
 			block.Write((short)fragment.Length);

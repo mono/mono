@@ -1,3 +1,8 @@
+2005-04-07  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* SslCipherSuite.cs: Fix calculation (sequence number) for the server
+	side stream. Patch by Brian Ritchie.
+
 2004-11-23  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* RecordProtocol.cs: Fixed ClientHelloV2 support.
