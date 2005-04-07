@@ -155,13 +155,44 @@ available in System.Data.dll.
 	DbProviderFactory - done
 	DbConnectionFactory
 	
-	Add nunit test cases for these.
+	Add nunit test cases for these. - done
 	
 * Create Factory classes & methods for Providers.
 	Factory methods for SqlClient - done.
 	Factory methods for Odbc provider - done.
 	Factory methods for OleDb provider
 
-** DbConnectionStringBuilder - done (not added to sources list).
-	This uses Generic.Collections.Dictionary, which has not yet
-   been implemented. Once it is done, this can be added to sources.
+* DbConnectionStringBuilder - done
+
+Asynchronous Command Execution ((target: mono 1.2 PROFILE=net_2_0)
+==================================================================
+
+* Implement the following Asynchronous Execution Commands for SqlClient
+
+   - BeginExecuteNonQuery (2 overrides) - done
+   - BeginExecuteReader   (3 overrides) - done
+   - BegineExecuteXmlReader             - done
+
+   - Implement corresponding asynchronous methods in Tds driver - done
+
+* Pending
+   
+   - Provide Stand Alone test cases
+   - Check whether the result column is xml while doing
+     EndExecuteXmlReader.
+
+
+Test Cases
+==========
+
+* Provide a single consistent test fixture for all data providers
+   available in Test/ProviderTests
+
+* NUnit-ize Provider Tests
+
+* Make these tests to be able to run by command
+   make run-test PROVIDER=mysql   # to run tests marked for mysql & SQL92.
+
+* Provide SQL92 complaint scripts for shema & data, to be loaded
+   irrelevant of data providers.
+
