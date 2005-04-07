@@ -1277,58 +1277,6 @@ public class Page : TemplateControl, IHttpHandler
 		_form = form;
 	}
 	
-	Stack dataItemCtx;
-	
-	internal void PushDataItemContext (object o)
-	{
-		if (dataItemCtx == null)
-			dataItemCtx = new Stack ();
-		
-		dataItemCtx.Push (o);
-	}
-	
-	internal void PopDataItemContext ()
-	{
-		if (dataItemCtx == null)
-			throw new InvalidOperationException ();
-		
-		dataItemCtx.Pop ();
-	}
-	
-	internal object CurrentDataItem {
-		get {
-			if (dataItemCtx == null)
-				throw new InvalidOperationException ("No data item");
-			
-			return dataItemCtx.Peek ();
-		}
-	}
-	
-	protected object Eval (string expression)
-	{
-		return DataBinder.Eval (CurrentDataItem, expression);
-	}
-	
-	protected object Eval (string expression, string format)
-	{
-		return DataBinder.Eval (CurrentDataItem, expression, format);
-	}
-	
-	protected object XPath (string xpathexpression)
-	{
-		return XPathBinder.Eval (CurrentDataItem, xpathexpression);
-	}
-	
-	protected object XPath (string xpathexpression, string format)
-	{
-		return XPathBinder.Eval (CurrentDataItem, xpathexpression, format);
-	}
-	
-	protected IEnumerable XPathSelect (string xpathexpression)
-	{
-		return XPathBinder.Select (CurrentDataItem, xpathexpression);
-	}
-	
     [BrowsableAttribute (false)]
     [DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 	public Page PreviousPage {

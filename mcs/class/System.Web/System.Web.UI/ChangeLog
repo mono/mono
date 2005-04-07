@@ -1,3 +1,10 @@
+2005-04-07  Lluis Sanchez Gual <lluis@novell.com>
+
+	* TemplateControl.cs:
+	* Page.cs: Moved Eval and XPath from Page
+	to TemplateControl.
+	* StateManagedCollection.cs: Avoid saving null state.
+
 2005-04-01  Lluis Sanchez Gual <lluis@novell.com>
 
 	* DataSourceView.cs: Rethrow exceptions not handled by operation

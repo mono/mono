@@ -78,6 +78,8 @@ namespace System.Web.UI {
 		#region IStateManager
 		void IStateManager.LoadViewState (object savedState)
 		{
+			if (savedState == null) return;
+
 			int pos = -1;
 			foreach (Pair p in (ArrayList)savedState) {
 				pos ++;
@@ -108,6 +110,7 @@ namespace System.Web.UI {
 		{
 			ArrayList saved = new ArrayList ();
 			Type [] knownTypes = GetKnownTypes ();
+			bool allNull = true;
 			
 			foreach (IStateManager itm in items) {
 				object state = itm.SaveViewState ();
@@ -130,9 +133,11 @@ namespace System.Web.UI {
 					p.Second = t;
 				
 				saved.Add (p);
+				allNull = false;
 			}
 			
-			return saved;
+			if (allNull) return null;
+			else return saved;
 		}
 		
 		void IStateManager.TrackViewState ()
