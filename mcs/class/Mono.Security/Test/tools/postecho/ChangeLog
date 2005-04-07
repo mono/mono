@@ -1,3 +1,9 @@
+2005-04-07  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* postmulti.cs: New. Async POST tests using HttpWebRequest.
+	* Makefile: Build postmulti tool.
+	* README: updated instructions with the new postmulti tool.
+
 2005-04-06  Sebastien Pouliot  <sebastien@ximian.com> 
  
 	* postecho.cs: Added an ICertificatePolicy to ease testing with 

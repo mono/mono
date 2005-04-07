@@ -15,13 +15,16 @@ run-test-local:
 clean-local:
 	rm -f *.exe *.mdb *.pdb
 
-sources = postecho.cs
+sources = postecho.cs postmulti.cs
 
 DISTFILES = $(sources)
 
 dist-local: dist-default
 
-all: postecho.exe
+all: postecho.exe postmulti.exe
 
-postecho.exe: $(sources)
-	$(CSCOMPILE) /target:exe /out:$@ $(sources)
+postecho.exe: postecho.cs
+	$(CSCOMPILE) /target:exe /out:$@ $^
+
+postmulti.exe: postmulti.cs
+	$(CSCOMPILE) /target:exe /out:$@ $^
