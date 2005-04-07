@@ -50,7 +50,7 @@ namespace Mono.CSharp {
 
 			if (mb.Mono_IsInflatedMethod) {
 				MethodInfo generic = mb.GetGenericMethodDefinition ();
-				gpd = Invocation.GetParameterData (generic);
+				gpd = TypeManager.GetParameterData (generic);
 
 				last_arg_is_params = gpd.HasParams;
 				return;
