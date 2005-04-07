@@ -492,12 +492,8 @@ namespace System.Web.UI.WebControls
 		
 		object GetBoundPropertyValue (string name)
 		{
-			if (boundProperties == null) {
-				ICustomTypeDescriptor desc = hierarchyData as ICustomTypeDescriptor;
-				if (desc == null)
-					throw new InvalidOperationException ("Property '" + name + "' not found in data bound item");
-				boundProperties = desc.GetProperties ();
-			}
+			if (boundProperties == null)
+				boundProperties = TypeDescriptor.GetProperties (hierarchyData);
 			
 			PropertyDescriptor prop = boundProperties.Find (name, true);
 			if (prop == null)

@@ -275,7 +275,7 @@ namespace System.Web.UI.WebControls
 			{
 				int first = currentPage / PageButtonCount;
 				int last = first + PageButtonCount;
-				if (last >= pageCount) last = pageCount - 1;
+				if (last >= pageCount) last = pageCount;
 				
 				if (first > 0) {
 					if (Mode == PagerButtons.NumericFirstLast)
@@ -284,7 +284,7 @@ namespace System.Web.UI.WebControls
 				}
 				
 				for (int n = first; n < last; n++)
-					row.Cells.Add (CreateCell (n.ToString(), string.Empty, (n != currentPage) ? "Page" : "", n.ToString()));
+					row.Cells.Add (CreateCell ((n+1).ToString(), string.Empty, (n != currentPage) ? "Page" : "", (n+1).ToString()));
 				
 				if (last < pageCount - 1) {
 					row.Cells.Add (CreateCell (NextPageText, NextPageImageUrl, "Page", "Next"));

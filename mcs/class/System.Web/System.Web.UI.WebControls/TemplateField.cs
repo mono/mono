@@ -30,11 +30,140 @@
 
 #if NET_2_0
 using System.Web.UI;
+using System.Security.Permissions;
+using System.ComponentModel;
 
 namespace System.Web.UI.WebControls
 {
+	[AspNetHostingPermissionAttribute (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
+	[AspNetHostingPermissionAttribute (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public class TemplateField : DataControlField
 	{
+		ITemplate alternatingItemTemplate;
+		ITemplate editItemTemplate;
+		ITemplate footerTemplate;
+		ITemplate headerTemplate;
+		ITemplate insertItemTemplate;
+		ITemplate itemTemplate;
+		
+		[DefaultValue (null)]
+		[TemplateContainer (typeof(IDataItemContainer), BindingDirection.TwoWay)]
+		[PersistenceMode (PersistenceMode.InnerProperty)]
+	    [Browsable (false)]
+		public ITemplate AlternatingItemTemplate {
+			get { return alternatingItemTemplate; }
+			set { alternatingItemTemplate = value; OnFieldChanged (); }
+		}
+		
+		[DefaultValueAttribute (true)]
+		[WebCategoryAttribute ("Behavior")]
+		public virtual bool ConvertEmptyStringToNull {
+			get {
+				object ob = ViewState ["ConvertEmptyStringToNull"];
+				if (ob != null) return (bool) ob;
+				return true;
+			}
+			set {
+				ViewState ["ConvertEmptyStringToNull"] = value;
+				OnFieldChanged ();
+			}
+		}
+
+		[DefaultValue (null)]
+		[TemplateContainer (typeof(IDataItemContainer), BindingDirection.TwoWay)]
+		[PersistenceMode (PersistenceMode.InnerProperty)]
+	    [Browsable (false)]
+		public ITemplate EditItemTemplate {
+			get { return editItemTemplate; }
+			set { editItemTemplate = value; OnFieldChanged (); }
+		}
+
+		[DefaultValue (null)]
+		[TemplateContainer (typeof(IDataItemContainer), BindingDirection.OneWay)]
+		[PersistenceMode (PersistenceMode.InnerProperty)]
+	    [Browsable (false)]
+		public ITemplate FooterTemplate {
+			get { return footerTemplate; }
+			set { footerTemplate = value; OnFieldChanged (); }
+		}
+
+		[DefaultValue (null)]
+		[TemplateContainer (typeof(IDataItemContainer), BindingDirection.OneWay)]
+		[PersistenceMode (PersistenceMode.InnerProperty)]
+	    [Browsable (false)]
+		public ITemplate HeaderTemplate {
+			get { return headerTemplate; }
+			set { headerTemplate = value; OnFieldChanged (); }
+		}
+
+		[DefaultValue (null)]
+		[TemplateContainer (typeof(IDataItemContainer), BindingDirection.TwoWay)]
+		[PersistenceMode (PersistenceMode.InnerProperty)]
+	    [Browsable (false)]
+		public ITemplate InsertItemTemplate {
+			get { return insertItemTemplate; }
+			set { insertItemTemplate = value; OnFieldChanged (); }
+		}
+
+		[DefaultValue (null)]
+		[TemplateContainer (typeof(IDataItemContainer), BindingDirection.TwoWay)]
+		[PersistenceMode (PersistenceMode.InnerProperty)]
+	    [Browsable (false)]
+		public ITemplate ItemTemplate {
+			get { return itemTemplate; }
+			set { itemTemplate = value; OnFieldChanged (); }
+		}
+		
+		public override void InitializeCell (DataControlFieldCell cell,
+			DataControlCellType cellType, DataControlRowState rowState, int rowIndex)
+		{
+			if (cellType == DataControlCellType.Header) {
+				if (headerTemplate != null && ShowHeader) {
+					headerTemplate.InstantiateIn (cell);
+					return;
+				}
+			} else if (cellType == DataControlCellType.Footer) {
+				if (footerTemplate != null) {
+					footerTemplate.InstantiateIn (cell);
+					return;
+				}
+			} else {
+				if ((rowState & DataControlRowState.Insert) != 0) {
+					if (headerTemplate != null) {
+						insertItemTemplate.InstantiateIn (cell);
+						return;
+					}
+				}
+				else if ((rowState & DataControlRowState.Edit) != 0) {
+					if (editItemTemplate != null) {
+						editItemTemplate.InstantiateIn (cell);
+						return;
+					}
+				}
+				else if ((rowState & DataControlRowState.Alternate) != 0 && alternatingItemTemplate != null) {
+					alternatingItemTemplate.InstantiateIn (cell);
+					return;
+				}
+				else if (itemTemplate != null) {
+					itemTemplate.InstantiateIn (cell);
+					return;
+				}
+			}
+			
+			base.InitializeCell (cell, cellType, rowState, rowIndex);
+		}
+		
+		[MonoTODO]
+		public override void ExtractValuesFromCell (IOrderedDictionary dictionary,
+			DataControlFieldCell cell, DataControlRowState rowState, bool includeReadOnly)
+		{
+		}
+		
+		public override void ValidateSupportsCallback ()
+		{
+			throw new NotSupportedException ("Callback not supported on TemplateField. Turn disable callbacks on '" + Control.Id + "'.");
+		}
+
 	}
 }
 #endif

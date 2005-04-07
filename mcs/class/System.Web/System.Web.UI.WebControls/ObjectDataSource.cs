@@ -67,6 +67,31 @@ namespace System.Web.UI.WebControls
 			}
 		}
 		
+		public event ObjectDataSourceStatusEventHandler Deleted {
+			add { DefaultView.Deleted += value; }
+			remove { DefaultView.Deleted -= value; }
+		}
+		
+		public event ObjectDataSourceMethodEventHandler Deleting {
+			add { DefaultView.Deleting += value; }
+			remove { DefaultView.Deleting -= value; }
+		}
+		
+		public event ObjectDataSourceFilteringEventHandler Filtering {
+			add { DefaultView.Filtering += value; }
+			remove { DefaultView.Filtering -= value; }
+		}
+		
+		public event ObjectDataSourceStatusEventHandler Inserted {
+			add { DefaultView.Inserted += value; }
+			remove { DefaultView.Inserted -= value; }
+		}
+		
+		public event ObjectDataSourceMethodEventHandler Inserting {
+			add { DefaultView.Inserting += value; }
+			remove { DefaultView.Inserting -= value; }
+		}
+		
 		public event ObjectDataSourceObjectEventHandler ObjectCreated {
 			add { DefaultView.ObjectCreated += value; }
 			remove { DefaultView.ObjectCreated -= value; }
@@ -107,6 +132,36 @@ namespace System.Web.UI.WebControls
 			remove { DefaultView.Updating -= value; }
 		}
 
+	    [WebCategoryAttribute ("Data")]
+	    [DefaultValueAttribute (ConflictOptions.OverwriteChanges)]
+		public ConflictOptions ConflictDetection {
+			get { return DefaultView.ConflictDetection; }
+			set { DefaultView.ConflictDetection = value; }
+		}
+		
+	    [WebCategoryAttribute ("Data")]
+	    [DefaultValueAttribute ("")]
+		public string DataObjectTypeName {
+			get { return DefaultView.DataObjectTypeName; }
+			set { DefaultView.DataObjectTypeName = value; }
+		}
+		
+	    [WebCategoryAttribute ("Data")]
+	    [DefaultValueAttribute ("")]
+		public string DeleteMethod {
+			get { return DefaultView.DeleteMethod; }
+			set { DefaultView.DeleteMethod = value; }
+		}
+		
+	    [WebCategoryAttribute ("Data")]
+	    [MergablePropertyAttribute (false)]
+	    [EditorAttribute ("System.Web.UI.Design.WebControls.ParameterCollectionEditor, System.Design, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
+	    [DefaultValueAttribute (null)]
+	    [PersistenceModeAttribute (PersistenceMode.InnerProperty)]
+		public ParameterCollection DeleteParameters {
+			get { return DefaultView.DeleteParameters; }
+		}
+		
 	    [WebCategoryAttribute ("Paging")]
 	    [DefaultValueAttribute (false)]
 		public virtual bool EnablePaging {
@@ -114,11 +169,50 @@ namespace System.Web.UI.WebControls
 			set { DefaultView.EnablePaging = value; }
 		}
 		
+	    [WebCategoryAttribute ("Data")]
+	    [DefaultValueAttribute ("")]
+		public string FilterExpression {
+			get { return DefaultView.FilterExpression; }
+			set { DefaultView.FilterExpression = value; }
+		}
+		
+	    [WebCategoryAttribute ("Data")]
+	    [MergablePropertyAttribute (false)]
+	    [EditorAttribute ("System.Web.UI.Design.WebControls.ParameterCollectionEditor, System.Design, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
+	    [DefaultValueAttribute (null)]
+	    [PersistenceModeAttribute (PersistenceMode.InnerProperty)]
+		public ParameterCollection FilterParameters {
+			get { return DefaultView.FilterParameters; }
+		}
+		
+	    [DefaultValueAttribute ("")]
+	    [WebCategoryAttribute ("Data")]
+		public virtual string InsertMethod {
+			get { return DefaultView.InsertMethod; }
+			set { DefaultView.InsertMethod = value; }
+		}
+		
+	    [WebCategoryAttribute ("Data")]
+	    [MergablePropertyAttribute (false)]
+	    [EditorAttribute ("System.Web.UI.Design.WebControls.ParameterCollectionEditor, System.Design, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
+	    [DefaultValueAttribute (null)]
+	    [PersistenceModeAttribute (PersistenceMode.InnerProperty)]
+		public ParameterCollection InsertParameters {
+			get { return DefaultView.InsertParameters; }
+		}
+		
 	    [WebCategoryAttribute ("Paging")]
 	    [DefaultValueAttribute ("maximumRows")]
 		public string MaximumRowsParameterName {
 			get { return DefaultView.MaximumRowsParameterName; }
 			set { DefaultView.MaximumRowsParameterName = value; }
+		}
+
+	    [WebCategoryAttribute ("Data")]
+	    [DefaultValueAttribute ("original_{0}")]
+		public string OldValuesParameterFormatString {
+			get { return DefaultView.OldValuesParameterFormatString; }
+			set { DefaultView.OldValuesParameterFormatString = value; }
 		}
 		
 	    [WebCategoryAttribute ("Paging")]
@@ -144,6 +238,13 @@ namespace System.Web.UI.WebControls
 			get { return DefaultView.SelectParameters; }
 		}
 
+	    [DefaultValueAttribute ("")]
+	    [WebCategoryAttribute ("Data")]
+		public string SortParameterName {
+			get { return DefaultView.SortParameterName; }
+			set { DefaultView.SortParameterName = value; }
+		}
+		
 	    [WebCategoryAttribute ("Paging")]
 	    [DefaultValueAttribute ("startRowIndex")]
 		public string StartRowIndexParameterName {
@@ -187,6 +288,24 @@ namespace System.Web.UI.WebControls
 		public IEnumerable Select ()
 		{
 			return DefaultView.Select (DataSourceSelectArguments.Empty);
+		}
+		
+		public int Update ()
+		{
+			Hashtable empty = new Hashtable ();
+			return DefaultView.Update (empty, empty, null);
+		}
+
+		public int Delete ()
+		{
+			Hashtable empty = new Hashtable ();
+			return DefaultView.Delete (empty, null);
+		}
+		
+		public int Insert ()
+		{
+			Hashtable empty = new Hashtable ();
+			return DefaultView.Insert (empty);
 		}
 		
 		protected override void LoadViewState (object savedState)

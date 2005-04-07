@@ -41,21 +41,33 @@ namespace System.Web.UI.WebControls {
 	[AspNetHostingPermissionAttribute (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public class CheckBoxField : BoundField
 	{
+	    [EditorBrowsableAttribute (EditorBrowsableState.Never)]
+	    [BrowsableAttribute (false)]
+	    [DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
 		public override bool ConvertEmptyStringToNull {
 			get { throw GetNotSupportedPropException ("ConvertEmptyStringToNull"); } 
 			set { throw GetNotSupportedPropException ("ConvertEmptyStringToNull"); } 
 		}
 		
+	    [EditorBrowsableAttribute (EditorBrowsableState.Never)]
+	    [BrowsableAttribute (false)]
+	    [DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
 		public override string DataFormatString {
 			get { throw GetNotSupportedPropException ("DataFormatString"); } 
 			set { throw GetNotSupportedPropException ("DataFormatString"); } 
 		}
 		
+	    [EditorBrowsableAttribute (EditorBrowsableState.Never)]
+	    [BrowsableAttribute (false)]
+	    [DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
 		public override bool HtmlEncode {
 			get { throw GetNotSupportedPropException ("HtmlEncode"); } 
 			set { throw GetNotSupportedPropException ("HtmlEncode"); } 
 		}
 		
+	    [EditorBrowsableAttribute (EditorBrowsableState.Never)]
+	    [BrowsableAttribute (false)]
+	    [DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
 		public override string NullDisplayText {
 			get { throw GetNotSupportedPropException ("NullDisplayText"); } 
 			set { throw GetNotSupportedPropException ("NullDisplayText"); } 

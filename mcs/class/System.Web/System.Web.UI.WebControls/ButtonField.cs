@@ -60,6 +60,7 @@ namespace System.Web.UI.WebControls {
 		
 	    [WebCategoryAttribute ("Data")]
 	    [DefaultValueAttribute ("")]
+		[TypeConverterAttribute ("System.Web.UI.Design.DataSourceViewSchemaConverter, System.Design, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
 		public virtual string DataTextField {
 			get {
 				object ob = ViewState ["DataTextField"];
@@ -155,7 +156,7 @@ namespace System.Web.UI.WebControls {
 				base.InitializeCell (cell, cellType, rowState, rowIndex);
 		}
 		
-		protected virtual void OnDataBindField (object sender, EventArgs e)
+		void OnDataBindField (object sender, EventArgs e)
 		{
 			DataControlFieldCell cell = (DataControlFieldCell) sender;
 			DataControlButton btn = (DataControlButton) cell.Controls [0]; 
@@ -168,17 +169,9 @@ namespace System.Web.UI.WebControls {
 		{
 			IDataItemContainer dic = controlContainer as IDataItemContainer;
 			if (boundProperty == null) {
-				ICustomTypeDescriptor desc = dic.DataItem as ICustomTypeDescriptor;
-				if (desc != null) {
-					boundProperty = desc.GetProperties () [DataTextField];
-					if (boundProperty != null)
-						return boundProperty.GetValue (dic.DataItem);
-				} else {
-					PropertyInfo pi = dic.DataItem.GetType ().GetProperty (DataTextField);
-					if (pi != null)
-						return pi.GetValue (dic.DataItem, null);
-				}
-				throw new InvalidOperationException ("Property '" + DataTextField + "' not found in data bound item");
+				boundProperty = TypeDescriptor.GetProperties (dic.DataItem) [DataTextField];
+				if (boundProperty == null)
+					new InvalidOperationException ("Property '" + DataTextField + "' not found in object of type " + dic.DataItem.GetType());
 			}
 			return boundProperty.GetValue (dic.DataItem);
 		}

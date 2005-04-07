@@ -112,6 +112,7 @@ namespace System.Web.UI.WebControls {
 			}
 			set { 
 				ViewState ["ReadOnly"] = value;
+				OnFieldChanged ();
 			}
 		}
 
@@ -124,6 +125,7 @@ namespace System.Web.UI.WebControls {
 			}
 			set { 
 				ViewState ["HtmlEncode"] = true;
+				OnFieldChanged ();
 			}
 		}
 		
@@ -193,19 +195,11 @@ namespace System.Web.UI.WebControls {
 			if (DataField == ThisExpression)
 				return controlContainer.ToString ();
 			else {
-				IDataItemContainer dic = controlContainer as IDataItemContainer;
+				IDataItemContainer dic = (IDataItemContainer) controlContainer;
 				if (boundProperty == null) {
-					ICustomTypeDescriptor desc = dic.DataItem as ICustomTypeDescriptor;
-					if (desc != null) {
-						boundProperty = desc.GetProperties () [DataField];
-						if (boundProperty != null)
-							return boundProperty.GetValue (dic.DataItem);
-					} else {
-						PropertyInfo pi = dic.DataItem.GetType ().GetProperty (DataField);
-						if (pi != null)
-							return pi.GetValue (dic.DataItem, null);
-					}
-					throw new InvalidOperationException ("Property '" + DataField + "' not found in data bound item");
+					boundProperty = TypeDescriptor.GetProperties (dic.DataItem) [DataField];
+					if (boundProperty == null)
+						new InvalidOperationException ("Property '" + DataField + "' not found in object of type " + dic.DataItem.GetType());
 				}
 				return boundProperty.GetValue (dic.DataItem);
 			}
@@ -216,7 +210,8 @@ namespace System.Web.UI.WebControls {
 			DataControlFieldCell cell = (DataControlFieldCell) sender;
 			if (cell.Controls.Count > 0) {
 				TextBox box = cell.Controls [0] as TextBox;
-				box.Text = FormatDataValue (GetValue (cell.BindingContainer), SupportsHtmlEncode && HtmlEncode);
+				object val = GetValue (cell.BindingContainer);
+				box.Text = val != null ? val.ToString() : "";
 			}
 			else
 				cell.Text = FormatDataValue (GetValue (cell.BindingContainer), SupportsHtmlEncode && HtmlEncode);
