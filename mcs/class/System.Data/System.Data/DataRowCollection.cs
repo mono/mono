@@ -109,7 +109,11 @@ namespace System.Data
 		/// <summary>
 		/// Creates a row using specified values and adds it to the DataRowCollection.
 		/// </summary>
+#if NET_2_0
+		public virtual DataRow Add (params object[] values) 
+#else
 		public virtual DataRow Add (object[] values) 
+#endif
 		{
 			if (values.Length > table.Columns.Count)
 				throw new ArgumentException ("The array is larger than the number of columns in the table.");

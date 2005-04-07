@@ -1,3 +1,8 @@
+2005-04-07  Lluis Sanchez Gual <lluis@novell.com>
+
+	* DataRowCollection.cs: Fix the signature of the Add method
+	for NET_2_0.
+
 2005-03-16  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DataRow.cs : on importing row, it was copying data from incorrect
