@@ -169,9 +169,9 @@ class MonoServiceRunner {
 		signal_event.Reset ();
 
 		// Hook up 
-		signal (UnixConvert.FromSignum (Signum.SIGTERM), my_handler);
-		signal (UnixConvert.FromSignum (Signum.SIGUSR1), my_handler);
-		signal (UnixConvert.FromSignum (Signum.SIGUSR2), my_handler);
+		signal (UnixConvert.FromSignum (Signum.SIGTERM), new sighandler_t (my_handler));
+		signal (UnixConvert.FromSignum (Signum.SIGUSR1), new sighandler_t (my_handler));
+		signal (UnixConvert.FromSignum (Signum.SIGUSR2), new sighandler_t (my_handler));
 
 		// Start up the service.
 

@@ -1,3 +1,7 @@
+2005-04-07  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mono-service.cs: Fix compilation with csc.
+
 2004-04-06  Joerg Rosenkranz  <joergr@voelcker.com>
 
 	* mono-service.cs: 
