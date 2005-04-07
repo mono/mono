@@ -1,3 +1,8 @@
+2005-04-07  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* tlsmulti.cs: New. Async GET tests using HttpWebRequest.
+	* Makefile: Build tlsmulti tool.
+
 2004-02-25  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* tlstest.cs: Updated to support Basic and Digest authentication. Also
