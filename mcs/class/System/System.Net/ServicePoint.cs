@@ -53,6 +53,7 @@ namespace System.Net
 		Hashtable groups;
 		bool sendContinue = true;
 		bool useConnect;
+		object locker = new object ();
 #if NET_1_1
 		bool useNagle;
 #endif
@@ -98,7 +99,7 @@ namespace System.Net
 
 		public int CurrentConnections {
 			get {
-				lock (this) {
+				lock (locker) {
 					return currentConnections;
 				}
 			}
@@ -106,7 +107,7 @@ namespace System.Net
 
 		public DateTime IdleSince {
 			get {
-				lock (this) {
+				lock (locker) {
 					return idleSince;
 				}
 			}
@@ -241,7 +242,7 @@ namespace System.Net
 		{
 			WebConnection cnc;
 			
-			lock (this) {
+			lock (locker) {
 				WebConnectionGroup cncGroup = GetConnectionGroup (groupName);
 				cnc = cncGroup.GetConnection ();
 			}
@@ -251,7 +252,7 @@ namespace System.Net
 
 		internal void IncrementConnection ()
 		{
-			lock (this) {
+			lock (locker) {
 				currentConnections++;
 				idleSince = DateTime.Now.AddMilliseconds (1000000);
 			}
@@ -259,7 +260,7 @@ namespace System.Net
 
 		internal void DecrementConnection ()
 		{
-			lock (this) {
+			lock (locker) {
 				currentConnections--;
 				if (currentConnections == 0)
 					idleSince = DateTime.Now;

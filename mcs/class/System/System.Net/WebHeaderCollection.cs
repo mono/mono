@@ -64,6 +64,7 @@ namespace System.Net
 			restricted.Add ("date", true);
 			restricted.Add ("expect", true);
 			restricted.Add ("host", true);
+			restricted.Add ("if-modified-since", true);
 			restricted.Add ("range", true);
 			restricted.Add ("referer", true);
 			restricted.Add ("transfer-encoding", true);
@@ -139,7 +140,7 @@ namespace System.Net
 			if (name == null)
 				throw new ArgumentNullException ("name");
 			if (internallyCreated && IsRestricted (name))
-				throw new ArgumentException ("restricted header");
+				throw new ArgumentException ("This header must be modified with the appropiate property.");
 			this.AddWithoutValidate (name, value);
 		}
 
