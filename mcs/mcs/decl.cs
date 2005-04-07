@@ -956,6 +956,10 @@ namespace Mono.CSharp {
 
 		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb)
 		{
+			if (a.Type == TypeManager.required_attr_type) {
+				Report.Error (1608, a.Location, "The RequiredAttribute attribute is not permitted on C# types");
+				return;
+			}
 			TypeBuilder.SetCustomAttribute (cb);
 		}
 

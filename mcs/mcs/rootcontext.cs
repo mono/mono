@@ -390,7 +390,8 @@ namespace Mono.CSharp {
 				"System.InvalidOperationException",
 				"System.NotSupportedException",
 				"System.MarshalByRefObject",
-				"System.Security.CodeAccessPermission"
+				"System.Security.CodeAccessPermission",
+				"System.Runtime.CompilerServices.RequiredAttributeAttribute"
 			};
 
 			foreach (string cname in classes_second_stage)

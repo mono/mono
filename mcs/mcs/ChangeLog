@@ -1,3 +1,13 @@
+2005-04-07  Marek Safar  <marek.safar@seznam.cz>
+
+	* class.cs (PropertyMethod.Define): Check private accessor in abstract
+	property.
+	
+	* decl.cs (DeclSpace.ApplyAttributeBuilder): Don't allow RequiredAttribute
+	
+	* rootcontext.cs,
+	* typemanager.cs: Registered RequiredAttributeAttribute.
+	
 2005-04-06  Marek Safar  <marek.safar@seznam.cz>
 
 	* class.cs (VerifyMembers): Doesn't need EmitContext argument.
