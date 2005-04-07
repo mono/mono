@@ -1,5 +1,12 @@
 2005-04-07 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* WebHeaderCollection.cs: added if-modified-since to the list of
+	restricted headers.
+
+	* ServicePoint.cs: use a field object when locking.
+
+2005-04-07 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* WebConnectionStream.cs: ForceCompletion actually calls NextRead. No
 	need to wait for a Close/ReadAll when we have no content.
 
