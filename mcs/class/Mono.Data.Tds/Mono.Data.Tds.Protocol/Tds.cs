@@ -1327,5 +1327,118 @@ namespace Mono.Data.Tds.Protocol {
 		}
 
 		#endregion // Private Methods
+
+#if NET_2_0
+                #region asynchronous methods
+                protected IAsyncResult BeginExecuteQueryInternal (string sql, bool wantResults, 
+                                                          AsyncCallback callback, object state)
+                {
+                        moreResults = true;
+			doneProc = false;
+			messages.Clear ();
+			outputParameters.Clear ();
+
+                        TdsAsyncResult ar = new TdsAsyncResult (callback, state);
+                        ar.TdsAsyncState.WantResults = wantResults;
+
+			Comm.StartPacket (TdsPacketType.Query);
+			Comm.Append (sql);
+			Comm.SendPacket ();
+
+                        Comm.BeginReadPacket (new AsyncCallback(OnBeginExecuteQueryCallback), 
+                                                                    ar);
+                        return ar;
+                }
+                
+                protected void EndExecuteQueryInternal (IAsyncResult ar)
+                {
+                        if (!ar.IsCompleted)
+                                ar.AsyncWaitHandle.WaitOne ();
+                        TdsAsyncResult result = (TdsAsyncResult) ar;
+                        if (result.IsCompletedWithException)
+                                throw result.Exception;
+                }
+
+                protected void OnBeginExecuteQueryCallback (IAsyncResult ar)
+                {
+                        TdsAsyncResult result = (TdsAsyncResult) ar.AsyncState;
+                        TdsAsyncState tdsState = (TdsAsyncState) result.TdsAsyncState;
+
+                        try {
+                                Comm.EndReadPacket (ar);
+                                if (!tdsState.WantResults)
+                                        SkipToEnd ();
+                        } catch (Exception e) {
+                                result.MarkComplete (e);
+                                return;
+                        }
+                        result.MarkComplete ();
+                }
+                
+
+                public virtual IAsyncResult BeginExecuteNonQuery (string sql,
+                                                                  TdsMetaParameterCollection parameters,
+                                                                  AsyncCallback callback,
+                                                                  object state)
+                {
+                        // abstract, kept to be backward compatiable.
+                        throw new NotImplementedException ("should not be called!");
+                }
+                
+                public virtual void EndExecuteNonQuery (IAsyncResult ar)
+                {
+                        // abstract method
+                        throw new NotImplementedException ("should not be called!");
+                }
+                
+                public virtual IAsyncResult BeginExecuteQuery (string sql,
+                                                                  TdsMetaParameterCollection parameters,
+                                                                  AsyncCallback callback,
+                                                                  object state)
+                {
+                        // abstract, kept to be backward compatiable.
+                        throw new NotImplementedException ("should not be called!");
+                }
+                
+                public virtual void EndExecuteQuery (IAsyncResult ar)
+                {
+                        // abstract method
+                        throw new NotImplementedException ("should not be called!");
+                }
+
+                public virtual IAsyncResult BeginExecuteProcedure (string prolog,
+                                                                    string epilog,
+                                                                    string cmdText,
+                                                                    bool IsNonQuery,
+                                                                    TdsMetaParameterCollection parameters,
+                                                                    AsyncCallback callback,
+                                                                    object state)
+                {
+                        throw new NotImplementedException ("should not be called!");
+                }
+                
+                public virtual void EndExecuteProcedure (IAsyncResult ar)
+                {
+                        // abstract method
+                        throw new NotImplementedException ("should not be called!");
+                }
+                
+                public void WaitFor (IAsyncResult ar)
+                {
+                        if (! ar.IsCompleted)
+                                ar.AsyncWaitHandle.WaitOne ();
+                }
+
+                public void CheckAndThrowException (IAsyncResult ar)
+                {
+                        TdsAsyncResult result = (TdsAsyncResult) ar;
+                        if (result.IsCompleted && result.IsCompletedWithException)
+                                throw result.Exception;
+                }
+
+                #endregion // asynchronous methods
+#endif // NET_2_0
+
+
 	}
 }

@@ -31,3 +31,5 @@ Mono.Data.Tds.Protocol/TdsPacketType.cs
 Mono.Data.Tds.Protocol/TdsTimeoutException.cs
 Mono.Data.Tds.Protocol/TdsVersion.cs
 Mono.Data.Tds.Protocol/TODOAttribute.cs
+Mono.Data.Tds.Protocol/TdsAsyncState.cs
+Mono.Data.Tds.Protocol/TdsAsyncResult.cs

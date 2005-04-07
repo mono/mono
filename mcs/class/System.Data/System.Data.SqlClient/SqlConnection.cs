@@ -719,6 +719,11 @@ namespace System.Data.SqlClient {
 				parameters["POOLING"] = "true";
 			if (null == parameters.Get ("WORKSTATION ID") && null == parameters.Get ("WSID"))
 				parameters["WORKSTATION ID"] = Dns.GetHostName();
+#if NET_2_0
+			if (null == parameters.Get ("ASYNC") &&
+                            null == parameters.Get ("ASYNCHRONOUS PROCESSING"))
+				parameters ["ASYNCHRONOUS PROCESSING"] = "false";
+#endif
 		}
 
 		private void SetProperties (NameValueCollection parameters)
@@ -789,6 +794,10 @@ namespace System.Data.SqlClient {
 #if NET_2_0
 				case "MULTIPLEACTIVERESULTSETS":
 					break;
+                                case "ASYNCHRONOUS PROCESSING" :
+                                case "ASYNC" :
+                                        async = ConvertToBoolean (name, value);
+                                        break;
 #endif
 					case "NET" :
 					case "NETWORK" :
@@ -918,5 +927,25 @@ namespace System.Data.SqlClient {
 		}
 
 		#endregion // Methods
+
+#if NET_2_0
+                #region Fields Net 2
+
+                bool async = false;
+
+                #endregion // Fields  Net 2
+
+                #region Properties Net 2
+
+                [DataSysDescription ("Enable Asynchronous processing, 'Asynchrouse Processing=true/false' in the ConnectionString.")]	
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		internal bool AsyncProcessing  {
+			get { return async; }
+		}
+
+                #endregion // Properties Net 2
+
+#endif // NET_2_0
+
 	}
 }

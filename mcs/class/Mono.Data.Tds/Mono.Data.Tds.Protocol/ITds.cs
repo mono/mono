@@ -104,5 +104,34 @@ namespace Mono.Data.Tds.Protocol {
 		event TdsInternalInfoMessageEventHandler TdsInfoMessage;
 
 		#endregion // Events
+
+#if NET_2_0
+                #region Asynchronous Methods
+                IAsyncResult BeginExecuteNonQuery (string sql,
+                                                   TdsMetaParameterCollection parameters,
+                                                   AsyncCallback callback,
+                                                   object state);
+                void EndExecuteNonQuery (IAsyncResult ar);
+                IAsyncResult BeginExecuteQuery (string sql,
+                                                   TdsMetaParameterCollection parameters,
+                                                   AsyncCallback callback,
+                                                   object state);
+                void EndExecuteQuery (IAsyncResult ar);
+
+                IAsyncResult BeginExecuteProcedure (string prolog,
+                                                                    string epilog,
+                                                                    string cmdText,
+                                                                    bool IsNonQuery,
+                                                                    TdsMetaParameterCollection parameters,
+                                                                    AsyncCallback callback,
+                                                                    object state);
+                void EndExecuteProcedure (IAsyncResult ar);
+
+                void WaitFor (IAsyncResult ar);
+                void CheckAndThrowException (IAsyncResult ar);
+
+                #endregion //Asynchronous Methods
+#endif // NET_2_0
+
 	}
 }

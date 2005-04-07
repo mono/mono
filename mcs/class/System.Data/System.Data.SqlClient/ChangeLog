@@ -1,3 +1,17 @@
+2005-04-07  Sureshkumar T  <tsureshkumar@novell.com>
+	    Ankit Jain     <radical@corewars.org>
+
+	* SqlConnection.cs: Implemented additional connection string
+	property "Asynchronous Processing".
+
+	* SqlCommand.cs: Implemented Asynchronous command execution API.
+
+	* SqlAsyncState.cs: A internal state object for asynchronous
+	operations.
+
+	* SqlAsyncResult.cs: Added. Class to hold result for asynchronous
+	queries.
+
 2005-03-28  Sureshkumar T  <tsureshkumar@novell.com>
 
 	* SqlCommand.cs: Execute: Add a semicolon at the end of

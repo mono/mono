@@ -385,8 +385,14 @@ namespace Mono.Data.Tds.Protocol {
 
 		private void GetPhysicalPacket ()
 		{
-			int nread = 0;
+                        int dataLength = GetPhysicalPacketHeader ();
+                        GetPhysicalPacketData (dataLength);
+		}
 
+                private int GetPhysicalPacketHeader ()
+                {
+                        int nread = 0;
+                                                
 			// read the header
 			while (nread < 8)
 				nread += stream.Read (tmpBuf, nread, 8 - nread);
@@ -406,19 +412,26 @@ namespace Mono.Data.Tds.Protocol {
 			if (len < 0) {
 				throw new Exception (String.Format ("Confused by a length of {0}", len));
 			}
+                        
+                        return len;
 
-			// now get the data
-			nread = 0;
-			while (nread < len) {
-				nread += stream.Read (inBuffer, nread, len - nread);
+                }
+                
+                private void GetPhysicalPacketData (int length)
+                {
+                        // now get the data
+			int nread = 0;
+			while (nread < length) {
+				nread += stream.Read (inBuffer, nread, length - nread);
 			}
 
 			packetsReceived++;
 
 			// adjust the bookkeeping info about the incoming buffer
-			inBufferLength = len;
+			inBufferLength = length;
 			inBufferIndex = 0;
-		}
+                }
+                
 
 		private static int Ntohs (byte[] buf, int offset)
 		{
@@ -519,6 +532,59 @@ namespace Mono.Data.Tds.Protocol {
 		}
 
 		#endregion // Methods
+#if NET_2_0
+                #region Async Methods
+
+                public IAsyncResult BeginReadPacket (AsyncCallback callback, object stateObject)
+		{
+                        TdsAsyncResult ar = new TdsAsyncResult (callback, stateObject);
+
+                        stream.BeginRead (tmpBuf, 0, 8, new AsyncCallback(OnReadPacketCallback), ar);
+                        return ar;
+		}
+                
+                /// <returns>Packet size in bytes</returns>
+                public int EndReadPacket (IAsyncResult ar)
+                {
+                        if (!ar.IsCompleted)
+                                ar.AsyncWaitHandle.WaitOne ();
+                        return (int) ((TdsAsyncResult) ar).ReturnValue;
+                }
+                
+
+                public void OnReadPacketCallback (IAsyncResult socketAsyncResult)
+                {
+                        TdsAsyncResult ar = (TdsAsyncResult) socketAsyncResult.AsyncState;
+                        int nread = stream.EndRead (socketAsyncResult);
+                        
+                        while (nread < 8)
+                                nread += stream.Read (tmpBuf, nread, 8 - nread);
+
+			TdsPacketType packetType = (TdsPacketType) tmpBuf[0];
+			if (packetType != TdsPacketType.Logon && packetType != TdsPacketType.Query && packetType != TdsPacketType.Reply) 
+			{
+				throw new Exception (String.Format ("Unknown packet type {0}", tmpBuf[0]));
+			}
+
+			// figure out how many bytes are remaining in this packet.
+			int len = Ntohs (tmpBuf, 2) - 8;
+
+			if (len >= inBuffer.Length) 
+				inBuffer = new byte[len];
+
+			if (len < 0) {
+				throw new Exception (String.Format ("Confused by a length of {0}", len));
+			}
+
+                        GetPhysicalPacketData (len);
+                        int value = len + 8;
+                        ar.ReturnValue = ((object)value); // packet size
+                        ar.MarkComplete ();
+                }
+                
+                #endregion // Async Methods
+#endif // NET_2_0
+
 	}
 
 }

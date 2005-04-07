@@ -1,3 +1,25 @@
+2005-04-07  Sureshkumar T  <tsureshkumar@novell.com>
+	    Ankit Jain     <radical@corewars.org>
+
+	* TdsComm.cs: GetPhysicalPacket is devided further into seperate
+	methods GetPhysicalPacketHeader and
+	GetPhysicalPacketData. Implemented asynchronous ReadPacket method.
+
+	* ITds.cs: Added additional methods for asynchronous operations.
+
+	* Tds.cs: Implemented base methods for asynchronous
+	operations. Version specific derivatives should override for
+	specific operations.
+
+	* Tds70.cs: For stored procedure, "exec" is prefixed by
+	default. Implemented asynchronous method for asynchronous command
+	execution.
+
+	* TdsAsyncState.cs: Added. Internal asynchronous state object.
+
+	* TdsAsyncResult.cs: Added. Internal asynchronous result
+	implementation.
+
 2005-04-04  Sureshkumar T  <tsureshkumar@novell.com>
 
 	* Tds50.cs: Pass parameters to the server. cut & paste from

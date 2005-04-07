@@ -1,3 +1,8 @@
+2005-04-07  Sureshkumar T  <tsureshkumar@novell.com>
+
+	* System.Data.dll.sources: In System.Data.SqlClient
+	Added SqlAsyncState.cs & SqlAsyncResult.cs
+
 2005-04-04  Sureshkumar T  <tsureshkumar@novell.com>
 
 	* System.Data_test.dll.sources: Added

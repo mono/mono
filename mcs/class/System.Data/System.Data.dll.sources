@@ -295,6 +295,8 @@ System.Data.SqlClient/SqlNotificationType.cs
 System.Data.SqlClient/SqlNotificationInfo.cs
 System.Data.SqlClient/SqlNotificationSource.cs
 System.Data.SqlClient/ISqlNotificationReceiver.cs
+System.Data.SqlClient/SqlAsyncState.cs
+System.Data.SqlClient/SqlAsyncResult.cs
 System.Data.SqlClient/SqlClientPermission.cs
 System.Data.SqlClient/SqlClientPermissionAttribute.cs
 System.Data.SqlClient/SqlCommand.cs

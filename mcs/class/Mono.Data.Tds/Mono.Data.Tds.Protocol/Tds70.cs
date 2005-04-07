@@ -144,10 +144,10 @@ namespace Mono.Data.Tds.Protocol {
 					}
 				}
 			}
-			if (count > 0 || exec.Length > 0)
-				exec = "exec " + exec;
-
-			return String.Format ("{0}{1}{2}{3} {4}\n{5}", declare.ToString (), set.ToString (), exec, procedure, BuildParameters (), select.ToString ());	
+                        exec = "exec " + exec;
+                        
+                        string sql = String.Format ("{0}{1}{2}{3} {4}\n{5}", declare.ToString (), set.ToString (), exec, procedure, BuildParameters (), select.ToString ());
+			return sql;
 		}
 
 		public override bool Connect (TdsConnectionParameters connectionParameters)
@@ -560,5 +560,75 @@ namespace Mono.Data.Tds.Protocol {
 		}
 
 		#endregion // Methods
+
+#if NET_2_0
+                #region Asynchronous Methods
+                public override IAsyncResult BeginExecuteNonQuery (string cmdText,
+                                                          TdsMetaParameterCollection parameters,
+                                                          AsyncCallback callback,
+                                                          object state)
+                {
+                        Parameters = parameters;
+                        string sql = cmdText;
+			if (Parameters != null && Parameters.Count > 0)
+				sql = BuildExec (cmdText);
+
+                        IAsyncResult ar = BeginExecuteQueryInternal (sql, false, callback, state);
+                        return ar;
+                }
+
+                public override void EndExecuteNonQuery (IAsyncResult ar)
+                {
+                        EndExecuteQueryInternal (ar);
+                }
+
+                public override IAsyncResult BeginExecuteQuery (string cmdText,
+                                                                TdsMetaParameterCollection parameters,
+                                                                AsyncCallback callback,
+                                                                object state)
+                {
+                        Parameters = parameters;
+                        string sql = cmdText;
+			if (Parameters != null && Parameters.Count > 0)
+				sql = BuildExec (cmdText);
+
+                        IAsyncResult ar = BeginExecuteQueryInternal (sql, true, callback, state);
+                        return ar;
+                }
+
+                public override void EndExecuteQuery (IAsyncResult ar)
+                {
+                        EndExecuteQueryInternal (ar);
+                }
+
+
+                public override IAsyncResult BeginExecuteProcedure (string prolog,
+                                                                    string epilog,
+                                                                    string cmdText,
+                                                                    bool IsNonQuery,
+                                                                    TdsMetaParameterCollection parameters,
+                                                                    AsyncCallback callback,
+                                                                    object state)
+                {
+
+                        
+                        Parameters = parameters;
+			string pcall = BuildProcedureCall (cmdText);
+                        string sql = String.Format ("{0};{1};{2};", prolog, pcall, epilog);
+
+                        IAsyncResult ar = BeginExecuteQueryInternal (sql, !IsNonQuery, callback, state);
+                        return ar;
+                }
+
+                public override void EndExecuteProcedure (IAsyncResult ar)
+                {
+                        EndExecuteQueryInternal (ar);
+                }
+
+
+
+                #endregion // Asynchronous Methods
+#endif // NET_2_0
+
 	}
 }

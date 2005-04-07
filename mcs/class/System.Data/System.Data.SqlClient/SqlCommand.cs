@@ -542,6 +542,12 @@ namespace System.Data.SqlClient {
 				throw new InvalidOperationException ("There is already an open DataReader associated with this Connection which must be closed first.");
 			if (Connection.XmlReader != null)
 				throw new InvalidOperationException ("There is already an open XmlReader associated with this Connection which must be closed first.");
+#if NET_2_0
+                        if (method.StartsWith ("Begin") && !Connection.AsyncProcessing)
+                                throw new InvalidOperationException ("This Connection object is not " + 
+                                                                     "in Asynchronous mode. Use 'Asynchronous" +
+                                                                     " Processing = true' to set it.");
+#endif // NET_2_0
 		}
 
 #if NET_2_0
@@ -579,5 +585,215 @@ namespace System.Data.SqlClient {
 #endif // NET_2_0
 
 		#endregion // Methods
+
+#if NET_2_0
+                #region Asynchronous Methods
+
+                internal IAsyncResult BeginExecuteInternal (CommandBehavior behavior, 
+                                                            bool wantResults,
+                                                            AsyncCallback callback, 
+                                                            object state)
+                {
+                        IAsyncResult ar = null;
+                        Connection.Tds.RecordsAffected = 0;
+			TdsMetaParameterCollection parms = Parameters.MetaParameters;
+			if (preparedStatement == null) {
+				bool schemaOnly = ((behavior & CommandBehavior.SchemaOnly) > 0);
+				bool keyInfo = ((behavior & CommandBehavior.KeyInfo) > 0);
+
+				StringBuilder sql1 = new StringBuilder ();
+				StringBuilder sql2 = new StringBuilder ();
+
+				if (schemaOnly || keyInfo)
+					sql1.Append ("SET FMTONLY OFF;");
+				if (keyInfo) {
+					sql1.Append ("SET NO_BROWSETABLE ON;");
+					sql2.Append ("SET NO_BROWSETABLE OFF;");
+				}
+				if (schemaOnly) {
+					sql1.Append ("SET FMTONLY ON;");
+					sql2.Append ("SET FMTONLY OFF;");
+				}
+
+				switch (CommandType) {
+				case CommandType.StoredProcedure:
+                                        string prolog = "";
+                                        string epilog = "";
+					if (keyInfo || schemaOnly)
+						prolog = sql1.ToString ();
+                                        if (keyInfo || schemaOnly)
+						epilog = sql2.ToString ();
+                                        Connection.Tds.BeginExecuteProcedure (prolog,
+                                                                              epilog,
+                                                                              CommandText,
+                                                                              !wantResults,
+                                                                              parms,
+                                                                              callback,
+                                                                              state);
+                                                                              
+					break;
+				case CommandType.Text:
+					string sql = String.Format ("{0}{1};{2}", sql1.ToString (), CommandText, sql2.ToString ());
+                                        if (wantResults)
+                                                ar = Connection.Tds.BeginExecuteQuery (sql, parms, 
+                                                                                       callback, state);
+                                        else
+                                                ar = Connection.Tds.BeginExecuteNonQuery (sql, parms, callback, state);
+					break;
+				}
+			}
+			else 
+				Connection.Tds.ExecPrepared (preparedStatement, parms, CommandTimeout, wantResults);
+
+                        return ar;
+
+                }
+
+                internal void EndExecuteInternal (IAsyncResult ar)
+                {
+                        SqlAsyncResult sqlResult = ( (SqlAsyncResult) ar);
+                        Connection.Tds.WaitFor (sqlResult.InternalResult);
+                        Connection.Tds.CheckAndThrowException (sqlResult.InternalResult);
+                }
+
+                public IAsyncResult BeginExecuteNonQuery ()
+                {
+                        return BeginExecuteNonQuery (null, null);
+                }
+
+                public IAsyncResult BeginExecuteNonQuery (AsyncCallback callback, object state)
+                {
+                        ValidateCommand ("BeginExecuteNonQuery");
+                        SqlAsyncResult ar = new SqlAsyncResult (callback, state);
+                        ar.EndMethod = "EndExecuteNonQuery";
+                        ar.InternalResult = BeginExecuteInternal (CommandBehavior.Default, false, ar.BubbleCallback, ar);
+                        return ar;
+                }
+
+                public int EndExecuteNonQuery (IAsyncResult ar)
+                {
+                        ValidateAsyncResult (ar, "EndExecuteNonQuery");
+                        EndExecuteInternal (ar);
+                        
+                        int ret;
+                        if (commandType == CommandType.StoredProcedure)
+                                ret = -1;
+                        else {
+                                // .NET documentation says that except for INSERT, UPDATE and
+                                // DELETE  where the return value is the number of rows affected
+                                // for the rest of the commands the return value is -1.	
+                                if ((CommandText.ToUpper().IndexOf("UPDATE")!=-1) ||
+                                    (CommandText.ToUpper().IndexOf("INSERT")!=-1) ||  	
+                                    (CommandText.ToUpper().IndexOf("DELETE")!=-1))	
+                                        ret = Connection.Tds.RecordsAffected;
+                                else
+                                        ret = -1;
+                        }
+                        GetOutputParameters ();
+                        ( (SqlAsyncResult) ar).Ended = true;
+                        return ret;
+                }
+
+                public IAsyncResult BeginExecuteReader ()
+                {
+                        return BeginExecuteReader (null, null, CommandBehavior.Default);
+                }
+
+                public IAsyncResult BeginExecuteReader (CommandBehavior behavior)
+                {
+                        return BeginExecuteReader (null, null, behavior);
+                }
+                
+                public IAsyncResult BeginExecuteReader (AsyncCallback callback, object state)
+                {
+                        return BeginExecuteReader (callback, state, CommandBehavior.Default);
+                }
+
+                public IAsyncResult BeginExecuteReader (AsyncCallback callback, object state, CommandBehavior behavior)
+                {
+                        ValidateCommand ("BeginExecuteReader");
+                        this.behavior = behavior;
+                        SqlAsyncResult ar = new SqlAsyncResult (callback, state);
+                        ar.EndMethod = "EndExecuteReader";
+                        IAsyncResult tdsResult = BeginExecuteInternal (behavior, true, 
+                                                                       ar.BubbleCallback, state);
+                        ar.InternalResult = tdsResult;
+                        return ar;
+                }
+
+                public SqlDataReader EndExecuteReader (IAsyncResult ar)
+                {
+                        ValidateAsyncResult (ar, "EndExecuteReader");
+                        EndExecuteInternal (ar);
+                        SqlDataReader reader = null;
+                        try {
+                                reader = new SqlDataReader (this);
+			}
+			catch (TdsTimeoutException e) {
+                                // if behavior is closeconnection, even if it throws exception
+                                // the connection has to be closed.
+                                if ((behavior & CommandBehavior.CloseConnection) != 0)
+                                        Connection.Close ();
+                                throw SqlException.FromTdsInternalException ((TdsInternalException) e);
+			} catch (SqlException) {
+                                // if behavior is closeconnection, even if it throws exception
+                                // the connection has to be closed.
+                                if ((behavior & CommandBehavior.CloseConnection) != 0)
+                                        Connection.Close ();
+
+                                throw;
+                        }
+
+                        ( (SqlAsyncResult) ar).Ended = true;
+                        return reader;
+                }
+
+                public IAsyncResult BeginExecuteXmlReader (AsyncCallback callback, object state)
+                {
+                        ValidateCommand ("BeginExecuteXmlReader");
+                        SqlAsyncResult ar = new SqlAsyncResult (callback, state);
+                        ar.EndMethod = "EndExecuteXmlReader";
+                        ar.InternalResult = BeginExecuteInternal (behavior, true, 
+                                                                       ar.BubbleCallback, state);
+                        return ar;
+                }
+
+                public XmlReader EndExecuteXmlReader (IAsyncResult ar)
+                {
+                        ValidateAsyncResult (ar, "EndExecuteXmlReader");
+                        EndExecuteInternal (ar);
+                        SqlDataReader reader = new SqlDataReader (this);
+                        SqlXmlTextReader textReader = new SqlXmlTextReader (reader);
+                        XmlReader xmlReader = new XmlTextReader (textReader);
+                        ( (SqlAsyncResult) ar).Ended = true;
+                        return xmlReader;
+                }
+
+
+                internal void ValidateAsyncResult (IAsyncResult ar, string endMethod)
+                {
+                        if (ar == null)
+                                throw new ArgumentException ("result passed is null!");
+                        if (! (ar is SqlAsyncResult))
+                                throw new ArgumentException (String.Format ("cannot test validity of types {0}",
+                                                                            ar.GetType ()
+                                                                            ));
+                        SqlAsyncResult result = (SqlAsyncResult) ar;
+                        
+                        if (result.EndMethod != endMethod)
+                                throw new InvalidOperationException (String.Format ("Mismatched {0} called for AsyncResult. " + 
+                                                                                    "Expected call to {1} but {0} is called instead.",
+                                                                                    endMethod,
+                                                                                    result.EndMethod
+                                                                                    ));
+                        if (result.Ended)
+                                throw new InvalidOperationException (String.Format ("The method {0}  cannot be called " + 
+                                                                                    "more than once for the same AsyncResult.",
+                                                                                    endMethod));
+
+                }
+
+                #endregion // Asynchronous Methods
+#endif // NET_2_0
 	}
 }
