@@ -1,3 +1,9 @@
+2005-04-07  Jordi Mas i Hernandez <jordi@ximian.com>
+
+	* LinkLabel.cs: move drawing code into the theme
+	* ThemeWin32Classic.cs: drawing code and painting background bugfix
+	* Theme.cs: define DrawLinkLabel method									    	
+
 2005-04-05  Jackson Harper  <jackson@ximian.com>
 
 	* BindingContext.cs: Use weak references so these bad actors don't

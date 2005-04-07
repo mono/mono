@@ -457,6 +457,7 @@ namespace System.Windows.Forms
 		#endregion	// Label
 
 		#region LinkLabel
+		public abstract void DrawLinkLabel (Graphics dc, Rectangle clip_rectangle, LinkLabel label);
 		#endregion	// LinkLabel
 		
 		#region ListBox

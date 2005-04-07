@@ -70,11 +70,11 @@ namespace System.Windows.Forms
 		private LinkArea link_area;
 		private LinkBehavior link_behavior;
 		private LinkCollection link_collection;
-		private bool link_visited;
-		private Font link_font;
+		private bool link_visited;		
 		private bool link_click;
-		private Piece[] pieces;
-		private int num_pieces;
+		internal Piece[] pieces;
+		internal int num_pieces;
+		internal Font link_font;
 		private Cursor override_cursor;
 		private DialogResult dialog_result;
 
@@ -497,7 +497,7 @@ namespace System.Windows.Forms
 			}
 		}
 
-		private Color GetLinkColor (Piece piece, int i)
+		internal Color GetLinkColor (Piece piece, int i)
 		{
 			Color color;
 
@@ -519,31 +519,7 @@ namespace System.Windows.Forms
 
 		internal new void Draw ()
 		{
-			Color color;
-
-			//dc.FillRectangle (label_br_back_color, area);
-			ThemeEngine.Current.CPDrawBorderStyle (DeviceContext, ClientRectangle, BorderStyle);
-
-			if (Links.Count == 1 && Links[0].Start == 0 &&	Links[0].Length == -1) {
-
-				color = GetLinkColor (pieces[0], 0);
-				DeviceContext.DrawString (Text, Font, ThemeEngine.Current.ResPool.GetSolidBrush (color),
-					ClientRectangle, string_format);
-				return;
-			}
-
-			for (int i = 0; i < num_pieces; i++)	{
-
-				color = GetLinkColor (pieces[i], i);
-
-				if (pieces[i].link == null)
-					DeviceContext.DrawString (pieces[i].text, Font, ThemeEngine.Current.ResPool.GetSolidBrush (Color.Black),
-						pieces[i].rect.X, pieces[i].rect.Y, string_format);
-				else
-					DeviceContext.DrawString (pieces[i].text, link_font, ThemeEngine.Current.ResPool.GetSolidBrush (color),
-						pieces[i].rect.X, pieces[i].rect.Y, string_format);
-			}
-
+			ThemeEngine.Current.DrawLinkLabel (DeviceContext, ClientRectangle, this);
 			DrawImage (DeviceContext, Image, ClientRectangle, image_align);
 		}
 
