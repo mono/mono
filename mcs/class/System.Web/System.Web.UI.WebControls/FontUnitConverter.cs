@@ -86,7 +86,7 @@ namespace System.Web.UI.WebControls
 
 		public override object ConvertTo(ITypeDescriptorContext context, CultureInfo culture, object value, Type destinationType)
 		{
-			if(value != null && value is FontUnit)
+			if(destinationType == typeof (string) && value is FontUnit)
 			{
 				FontUnit val = (FontUnit)value;
 				if(val.Type == FontSize.NotSet)
@@ -96,10 +96,15 @@ namespace System.Web.UI.WebControls
 				return val.ToString(culture);
 			}
 #if NET_2_0
-			if (destinationType == typeof (InstanceDescriptor) && value is Unit) {
+			if (destinationType == typeof (InstanceDescriptor) && value is FontUnit) {
 				FontUnit s = (FontUnit) value;
 				MethodInfo met = typeof(FontUnit).GetMethod ("Parse", new Type[] {typeof(string)});
 				return new InstanceDescriptor (met, new object[] {s.ToString ()});
+			}
+
+			if (destinationType == typeof (InstanceDescriptor) && value is string) {
+				MethodInfo met = typeof(FontUnit).GetMethod ("Parse", new Type[] {typeof(string)});
+				return new InstanceDescriptor (met, new object[] {value});
 			}
 #endif
 			return base.ConvertTo(context, culture, value, destinationType);

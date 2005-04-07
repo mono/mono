@@ -1,3 +1,13 @@
+2005-04-07 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* UnitConverter.cs:
+	* FontUnitConverter.cs: fixed ConvertTo to work with target
+	InstanceDescriptor and value as a string.
+
+	* Unit.cs: culture might be null.
+
+	Fixes bug #74431.
+
 2005-04-01  Lluis Sanchez Gual <lluis@novell.com>
 
 	* ButtonField.cs: Mostly implemented.

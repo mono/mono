@@ -102,6 +102,11 @@ namespace System.Web.UI.WebControls
 				MethodInfo met = typeof(Unit).GetMethod ("Parse", new Type[] {typeof(string)});
 				return new InstanceDescriptor (met, new object[] {s.ToString ()});
 			}
+
+			if (destinationType == typeof (InstanceDescriptor) && value is string) {
+				MethodInfo met = typeof(Unit).GetMethod ("Parse", new Type[] {typeof(string)});
+				return new InstanceDescriptor (met, new object[] {value});
+			}
 #endif
 			
 			return ConvertTo(context, culture, value, destinationType);
