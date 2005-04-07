@@ -1,3 +1,12 @@
+2005-04-07  Boris Kirzner  <borisk@mainsoft.com>
+
+	* DirectoryServicesDirectoryEntryTest.cs: 
+		- Rethrow AssertionException so the test will fail if Assert.Fail is called inside try/catch.
+		- Additional test case for Properties.
+		- Additional test case for DeleteTree.
+		- More testing for RefreshCache.
+
+
 2005-03-29  Boris Kirzner  <borisk@mainsoft.com>
 
 	* DirectoryServicesDirectoryEntryTest.cs: 

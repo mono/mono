@@ -679,6 +679,9 @@ namespace MonoTests.System.DirectoryServices
 				barakTsabariDE.CommitChanges();
 				Assert.Fail("Object " + barakTsabariDN + " was not deleted from server.");
 			}
+			catch(AssertionException ae) {
+				throw ae;
+			}
 			catch (Exception e) {
 				// do nothing
 			}
@@ -722,6 +725,9 @@ namespace MonoTests.System.DirectoryServices
 				barakTsabariDE.Properties["telephoneNumber"].Value = newTelephoneNumber;
 				barakTsabariDE.CommitChanges();
 				Assert.Fail("Object " + barakTsabariDN + " was not moved from old location on the server.");
+			}
+			catch(AssertionException ae) {
+				throw ae;
 			}
 			catch (Exception e) {
 				// do nothing
@@ -767,6 +773,9 @@ namespace MonoTests.System.DirectoryServices
 				barakTsabariDE.Properties["telephoneNumber"].Value = newTelephoneNumber;
 				barakTsabariDE.CommitChanges();
 				Assert.Fail("Object " + barakTsabariDN + " was not renamed on the server.");
+			}
+			catch(AssertionException ae) {
+				throw ae;
 			}
 			catch (Exception e) {
 				// do nothing
@@ -822,6 +831,9 @@ namespace MonoTests.System.DirectoryServices
 				barakTsabariDE.CommitChanges();
 				Assert.Fail("Object " + barakTsabariDN + " was not deleted from server.");
 			}
+			catch(AssertionException ae) {
+				throw ae;
+			}
 			catch (Exception e) {
 				// do nothing
 			}
@@ -865,6 +877,9 @@ namespace MonoTests.System.DirectoryServices
 				barakTsabariDE.Properties["telephoneNumber"].Value = newTelephoneNumber;
 				barakTsabariDE.CommitChanges();
 				Assert.Fail("Object " + barakTsabariDN + " was not moved from old location on the server.");
+			}
+			catch(AssertionException ae) {
+				throw ae;
 			}
 			catch (Exception e) {
 				// do nothing
@@ -910,6 +925,9 @@ namespace MonoTests.System.DirectoryServices
 				barakTsabariDE.Properties["telephoneNumber"].Value = newTelephoneNumber;
 				barakTsabariDE.CommitChanges();
 				Assert.Fail("Object " + barakTsabariDN + " was not renamed on the server.");
+			}
+			catch(AssertionException ae) {
+				throw ae;
 			}
 			catch (Exception e) {
 				// do nothing
@@ -1124,7 +1142,7 @@ namespace MonoTests.System.DirectoryServices
 
 
 		[Test]
-		public void DirectoryEntry_Properties()
+		public void DirectoryEntry_Properties1()
 		{
 			de = new DirectoryEntry(LDAPServerConnectionString);
 
@@ -1143,6 +1161,89 @@ namespace MonoTests.System.DirectoryServices
 			Assert.AreEqual(((PropertyValueCollection)de.Properties["dc"]).Value,"myhosting");
 			Assert.AreEqual(((PropertyValueCollection)de.Properties["description"]).Value,"My wonderful company as much text as you want to place in this line up to 32Kcontinuation data for the line above must have <CR> or <CR><LF> i.e. ENTER works on both Windows and *nix system - new line MUST begin with ONE SPACE");
 			Assert.AreEqual(((PropertyValueCollection)de.Properties["o"]).Value,"Example, Inc.");
+
+			// ensure that properties are not accessible after removing an entry from the server
+			string barakTsabariDN = LDAPServerRoot + "cn=Barak Tsabari,ou=Human Resources,ou=people,dc=myhosting,dc=example";
+			de = new DirectoryEntry(barakTsabariDN,
+									LDAPServerUsername,
+									LDAPServerPassword,
+									AuthenticationTypes.ServerBind);
+			
+			de.DeleteTree();
+			
+			try {
+				int i = de.Properties.Count;
+				Assert.Fail("Properties should not be accessible after deleting an entry from the server");
+			}
+			catch(AssertionException ae) {
+				throw ae;
+			}
+			catch(Exception e) {
+				// supress exception
+			}
+
+			try {
+				string s = (string)((PropertyValueCollection)de.Properties["dc"]).Value;
+				Assert.Fail("Properties should not be accessible after deleting an entry from the server");
+			}
+			catch(AssertionException ae) {
+				throw ae;
+			}
+			catch(Exception e) {
+				// supress exception
+			}
+		}
+
+		[Test]
+		public void DirectoryEntry_Properties2()
+		{
+			// delete entry, create a new one (the same) and access properties of the old object
+			string barakTsabariDN = LDAPServerRoot + "cn=Barak Tsabari,ou=Human Resources,ou=people,dc=myhosting,dc=example";
+			de = new DirectoryEntry(barakTsabariDN,
+									LDAPServerUsername,
+									LDAPServerPassword,
+									AuthenticationTypes.ServerBind);
+
+			// cause to properties loading
+			Assert.AreEqual(de.Properties.Count,6);
+			Assert.AreEqual(((PropertyValueCollection)de.Properties["sn"]).Value,"Tsabari");
+
+			// delete entry
+			de.DeleteTree();
+
+			// the local property chache is still accessible
+			Assert.AreEqual(de.Properties.Count,6);
+			Assert.AreEqual(((PropertyValueCollection)de.Properties["sn"]).Value,"Tsabari");
+
+			de.CommitChanges();
+
+			// the local property chache is still accessible
+			((PropertyValueCollection)de.Properties["sn"]).Value = "Barbari";
+
+			// create the entry back again
+			DirectoryEntry ouHumanResources = new DirectoryEntry(	LDAPServerRoot + "ou=Human Resources,ou=people,dc=myhosting,dc=example",
+																	LDAPServerUsername,
+																	LDAPServerPassword,
+																	AuthenticationTypes.ServerBind);
+			DirectoryEntry cnBarakTsabari = ouHumanResources.Children.Add("cn=Barak Tsabari","Class");
+			((PropertyValueCollection)cnBarakTsabari.Properties["objectClass"]).Add("person");
+			((PropertyValueCollection)cnBarakTsabari.Properties["objectClass"]).Add("organizationalPerson");
+			cnBarakTsabari.Properties["cn"].Value = "Barak Tsabari";
+			cnBarakTsabari.Properties["facsimileTelephoneNumber"].Value = "+1 906 777 8853";
+			((PropertyValueCollection)cnBarakTsabari.Properties["ou"]).Add("Human Resources");
+			((PropertyValueCollection)cnBarakTsabari.Properties["ou"]).Add("People");
+			cnBarakTsabari.Properties["sn"].Value = "Tsabari";
+			cnBarakTsabari.Properties["telephoneNumber"].Value = "+1 906 777 8854";
+			cnBarakTsabari.CommitChanges();
+			
+			// the local property chache is still accessible
+			Assert.AreEqual(((PropertyValueCollection)de.Properties["sn"]).Value,"Barbari");
+
+			// Refresh from server
+			de.RefreshCache();
+			// ensure the properties of an entry are still accessible through the old object
+			Assert.AreEqual(((PropertyValueCollection)de.Properties["sn"]).Value,"Tsabari");
+
 		}
 
 
@@ -1449,6 +1550,45 @@ namespace MonoTests.System.DirectoryServices
 				de.CommitChanges();					
 				Assert.Fail("Object " + johnSmithDN + " was not deleted from server");
 			}
+			catch(AssertionException ae) {
+				throw ae;
+			}
+			catch(Exception e) {
+				Console.WriteLine(e.StackTrace);
+				// do nothing
+			}
+		}
+
+		[Test]
+		public void DirectoryEntry_DeleteTree2()
+		{
+			string johnSmithDN = LDAPServerRoot + "cn=John Smith,ou=Human Resources,ou=people,dc=myhosting,dc=example";
+
+			Assert.IsTrue(DirectoryEntry.Exists(johnSmithDN));
+			// two objects refer to the same entry
+			de = new DirectoryEntry(johnSmithDN,
+									LDAPServerUsername,
+									LDAPServerPassword,
+									AuthenticationTypes.ServerBind);
+
+			DirectoryEntry johnSmithDE = new DirectoryEntry(johnSmithDN,
+															LDAPServerUsername,
+															LDAPServerPassword,
+															AuthenticationTypes.ServerBind);
+
+			johnSmithDE.Properties["telephoneNumber"].Value = "+972 3 9999999";
+
+			// check that the second entry is not accessible after the first is deleted
+			de.DeleteTree();
+			de.CommitChanges();
+
+			try {
+				johnSmithDE.CommitChanges();					
+				Assert.Fail("Object " + johnSmithDN + " should not be accessible");
+			}
+			catch(AssertionException ae) {
+				throw ae;
+			}
 			catch(Exception e) {
 				// do nothing
 			}
@@ -1557,7 +1697,47 @@ namespace MonoTests.System.DirectoryServices
 
 			de.RefreshCache();
 
-			Assert.AreEqual(((PropertyValueCollection)de.Properties["description"]).Value,oldValue);				
+			Assert.AreEqual(((PropertyValueCollection)de.Properties["description"]).Value,oldValue);
+			
+			// call RefeshCache on new entry prior to submitting it to the server shoud fail
+			string newEmployeeDN = LDAPServerRoot + "cn=New Employee,ou=Human Resources,ou=people,dc=myhosting,dc=example";
+			string humanResourcesDN = LDAPServerRoot + "ou=Human Resources,ou=people,dc=myhosting,dc=example";
+
+			DirectoryEntry humanResourcesDE = new DirectoryEntry(	humanResourcesDN,
+																	LDAPServerUsername,
+																	LDAPServerPassword,
+																	AuthenticationTypes.ServerBind);
+
+			DirectoryEntry newEmployeeDE = humanResourcesDE.Children.Add("cn=New Employee","Class");
+			Assert.AreEqual(newEmployeeDE.Properties["cn"].Value,null);
+
+			((PropertyValueCollection)newEmployeeDE.Properties["objectClass"]).Add("person");
+			((PropertyValueCollection)newEmployeeDE.Properties["objectClass"]).Add("organizationalPerson");
+			newEmployeeDE.Properties["cn"].Value = "New Employee";
+			newEmployeeDE.Properties["sn"].Value = "Employee";
+			newEmployeeDE.Properties["ou"].Value = "Human Resources";
+
+			Assert.AreEqual(newEmployeeDE.Properties["cn"].Value,"New Employee");
+
+			try {
+				newEmployeeDE.RefreshCache();
+				Assert.Fail("Call to RefreshCache did not fail");
+			}
+			catch(AssertionException ae) {
+				throw ae;
+			}
+			catch (Exception e) {
+				// supress exception
+			}
+
+			Assert.AreEqual(newEmployeeDE.Properties["cn"].Value,"New Employee");
+
+			newEmployeeDE.CommitChanges();
+
+			// now it should work without any problem
+			newEmployeeDE.RefreshCache();
+
+			Assert.AreEqual(newEmployeeDE.Properties["cn"].Value,"New Employee");
 		}
 
 		[Test]
