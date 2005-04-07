@@ -1,3 +1,7 @@
+2005-04-07  Andrew Skiba  <andrews@mainsoft.com>
+
+	* XslDecimalFormat.jvm.cs : added
+ 
 2005-03-31  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* MSXslScriptManager.cs : added TARGET_JVM switch (that does not
