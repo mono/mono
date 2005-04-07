@@ -124,7 +124,7 @@ class MonoServiceRunner {
 		
 		try {
 			a = Assembly.LoadFrom (assembly);
-		} catch (FileNotFoundException fnf) {
+		} catch (FileNotFoundException) {
 			error ("Could not find assembly {0}", assembly);
 			return 1;
 		} catch (BadImageFormatException){
@@ -175,7 +175,7 @@ class MonoServiceRunner {
 
 		// Start up the service.
 
-		ServiceBase service;
+		ServiceBase service = null;
 		
 		if (name != null){
 			foreach (ServiceBase svc in services){
