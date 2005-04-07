@@ -37,9 +37,11 @@ using System.Reflection;
 using System.Xml;
 using System.Xml.Schema;
 using System.Text;
+#if !TARGET_JVM
 using System.CodeDom;
 using System.CodeDom.Compiler;
 using Microsoft.CSharp;
+#endif
 using System.Configuration;
 using System.Security.Policy;
 
@@ -99,18 +101,14 @@ namespace System.Xml.Serialization
 		
 		static XmlSerializer ()
 		{
+			
+#if !TARGET_JVM
+			string db = null;
+			string th = null;
+			generationThreshold = -1;
+			backgroundGeneration = false;
+#else
 			string db = Environment.GetEnvironmentVariable ("MONO_XMLSERIALIZER_DEBUG");
-			deleteTempFiles = (db == null || db == "no");
-			
-			IDictionary table = (IDictionary) ConfigurationSettings.GetConfig("system.diagnostics");
-			if (table != null) {
-				table = (IDictionary) table["switches"];
-				if (table != null) {
-					string val = (string) table ["XmlSerialization.Compilation"];
-					if (val == "1") deleteTempFiles = false;
-				}
-			}
-			
 			string th = Environment.GetEnvironmentVariable ("MONO_XMLSERIALIZER_THS");
 			
 			if (th == null) {
@@ -123,6 +121,19 @@ namespace System.Xml.Serialization
 				generationThreshold = int.Parse (th, CultureInfo.InvariantCulture);
 				backgroundGeneration = (generationThreshold != 0);
 				if (generationThreshold < 1) generationThreshold = 1;
+			}
+#endif
+			deleteTempFiles = (db == null || db == "no");
+			
+			IDictionary table = (IDictionary) ConfigurationSettings.GetConfig("system.diagnostics");
+			if (table != null) 
+			{
+				table = (IDictionary) table["switches"];
+				if (table != null) 
+				{
+					string val = (string) table ["XmlSerialization.Compilation"];
+					if (val == "1") deleteTempFiles = false;
+				}
 			}
 		}
 
@@ -561,6 +572,20 @@ namespace System.Xml.Serialization
 			return new XmlSerializationReaderInterpreter (typeMapping);
 		}
 		
+#if TARGET_JVM
+ 		void CheckGeneratedTypes (XmlMapping typeMapping)
+ 		{
+			throw new NotImplementedException();
+		}
+		void GenerateSerializersAsync (GenerationBatch batch)
+		{
+			throw new NotImplementedException();
+		}
+		void RunSerializerGeneration (object obj)
+		{
+			throw new NotImplementedException();
+		}
+#else
 		void CheckGeneratedTypes (XmlMapping typeMapping)
 		{
 			lock (this)
@@ -715,6 +740,7 @@ namespace System.Xml.Serialization
 				
 			return res.CompiledAssembly;
 		}
+#endif
 		
 #if NET_2_0
 		GenerationBatch LoadFromSatelliteAssembly (GenerationBatch batch)
