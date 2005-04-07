@@ -29,6 +29,7 @@
 //
 
 #if NET_2_0
+using System.Collections.Specialized;
 using System.Web.UI;
 using System.Security.Permissions;
 using System.ComponentModel;
@@ -161,7 +162,7 @@ namespace System.Web.UI.WebControls
 		
 		public override void ValidateSupportsCallback ()
 		{
-			throw new NotSupportedException ("Callback not supported on TemplateField. Turn disable callbacks on '" + Control.Id + "'.");
+			throw new NotSupportedException ("Callback not supported on TemplateField. Turn disable callbacks on '" + Control.ID + "'.");
 		}
 
 	}
