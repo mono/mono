@@ -141,7 +141,6 @@ public class Installer : Component {
 			for (i = 0; i <= maxi; ++i) {
 				IDictionary ht = new Hashtable ();
 				try {
-					Installers [i].Context = this.Context;
 					Installers [i].Install (ht);
 				} finally {
 					state.Add (STATE_PREFIX + i.ToString(), ht);
@@ -181,7 +180,6 @@ public class Installer : Component {
 
 		for (int i = 0; i <= lastInstaller; ++i) {
 			try {
-				Installers [i].Context = this.Context;
 				Installers [i].Commit (states [i]);
 			} catch (Exception e) {
 				caught = e;
@@ -222,7 +220,6 @@ public class Installer : Component {
 
 		for (int i = 0; i <= lastInstaller; ++i) {
 			try {
-				Installers [i].Context = this.Context;
 				Installers [i].Rollback (states [i]);
 			} catch (Exception e) {
 				caught = e;
@@ -272,7 +269,6 @@ public class Installer : Component {
 
 		for (int i = 0; i <= lastInstaller; ++i) {
 			try {
-				Installers [i].Context = this.Context;
 				Installers [i].Uninstall (states [i]);
 			} catch (Exception e) {
 				caught = e;

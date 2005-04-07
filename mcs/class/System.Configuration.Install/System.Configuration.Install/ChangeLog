@@ -1,3 +1,13 @@
+2005-04-07  Muthu Kannan  <t.manki@gmail.com>
+
+	* AssemblyInstaller.cs (UseNewContext): Set default path.
+	(Install,Commit,Rollback,Uninstall): Log events.
+	* Installer.cs (Install, Commit, Rollback,Uninstall): 
+	Don't set installer context when invoking subinstallers.
+	* InstallContext.cs (ParseCommandLine): Fix handling of '--'
+	options.
+	* TransactedInstaller.cs (Install): Fix typo.
+
 2005-03-24  Muthu Kannan  <t.manki@gmail.com>
 
 	Near-complete implementation of System.Configuration.Install.

@@ -125,7 +125,7 @@ public class AssemblyInstaller : Installer {
 			if (value)
 				Context = new InstallContext (Path + ".InstallLog", null);
 			else
-				Context = new InstallContext (null, CommandLine);
+				Context = new InstallContext (Path + ".InstallLog", CommandLine);
 			useNewContext = value;
 		}
 	}
@@ -149,6 +149,7 @@ public class AssemblyInstaller : Installer {
 
 		foreach (Type t in getInstallersFromAssembly (Assembly)) {
 			Installer i = (Installer) Activator.CreateInstance (t);
+			i.Context = this.Context;
 			Installers.Add (i);
 		}
 	}
@@ -172,17 +173,32 @@ public class AssemblyInstaller : Installer {
 		return ret;
 	}
 
+	private bool isInstallable ()
+	{
+		try {
+			CheckIfInstallable (Path);
+		} catch (Exception e) {
+			Context.LogMessage ("Assembly " + Path + " does not have any public installers in it.");
+			return false;
+		}
+		return true;
+	}
+
 	public override void Install (IDictionary state)
 	{
 		// Make sure that the assembly is installable
-		CheckIfInstallable (Path);
+		if (! isInstallable ())
+			return;
 
 		addSubInstallers ();
 
 		state = new Hashtable ();
 		string stateFile = System.IO.Path.ChangeExtension (this.Path, STATE_FILE_EXT);
 		try {
-			Console.WriteLine ("Starting installation");
+			string logFilePath = Context.Parameters ["LogFile"];
+			if (logFilePath != null && logFilePath != "")
+				Console.WriteLine ("Installation log for assembly " + Path + " is found at " + logFilePath);
+			Context.LogMessage ("Starting installation of assembly: " + Path);
 			base.Install (state);
 		} finally {
 			// Serialise state
@@ -194,11 +210,15 @@ public class AssemblyInstaller : Installer {
 				file.Close ();
 			}
 		}
-		Console.WriteLine ("Completed installation");
+		Context.LogMessage ("Installation completed");
 	}
 
 	public override void Commit (IDictionary state)
 	{
+		// Make sure that the assembly is installable
+		if (! isInstallable ())
+			return;
+
 		addSubInstallers ();
 		string stateFile = System.IO.Path.ChangeExtension (this.Path, STATE_FILE_EXT);
 		// Read serialised state
@@ -210,11 +230,17 @@ public class AssemblyInstaller : Installer {
 			file.Close ();
 		}
 
+		Context.LogMessage ("Starting commit of assembly: " + Path);
 		base.Commit (state);
+		Context.LogMessage ("Commit completed");
 	}
 
 	public override void Rollback (IDictionary state)
 	{
+		// Make sure that the assembly is installable
+		if (! isInstallable ())
+			return;
+
 		addSubInstallers ();
 		string stateFile = System.IO.Path.ChangeExtension (this.Path, STATE_FILE_EXT);
 
@@ -227,13 +253,19 @@ public class AssemblyInstaller : Installer {
 			file.Close ();
 		}
 
+		Context.LogMessage ("Starting rollback of assembly: " + Path);
 		base.Rollback (state);
 
 		File.Delete (stateFile);
+		Context.LogMessage ("Rollback completed");
 	}
 
 	public override void Uninstall (IDictionary state)
 	{
+		// Make sure that the assembly is installable
+		if (! isInstallable ())
+			return;
+
 		addSubInstallers ();
 		string stateFile = System.IO.Path.ChangeExtension (this.Path, STATE_FILE_EXT);
 
@@ -247,9 +279,15 @@ public class AssemblyInstaller : Installer {
 			state = null;
 		}
 
+		string logFilePath = Context.Parameters ["LogFile"];
+		if (logFilePath != null && logFilePath != "")
+			Console.WriteLine ("Installation log for assembly " + Path + " is found at " + logFilePath);
+
+		Context.LogMessage ("Starting uninstallation of assembly: " + Path);
 		base.Uninstall (state);
 
 		File.Delete (stateFile);
+		Context.LogMessage ("Uninstallation completed");
 	}
 }
 

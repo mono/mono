@@ -63,7 +63,7 @@ public class TransactedInstaller : Installer {
 		}
 
 		try {
-			Context.LogMessage ("Installation phasing completed successfully -- starting commit.");
+			Context.LogMessage ("Installation phase completed successfully -- starting commit.");
 			Commit (state);
 		} catch (Exception e) {
 			Context.LogMessage ("Commit failed.");

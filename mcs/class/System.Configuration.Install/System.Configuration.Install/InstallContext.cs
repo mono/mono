@@ -116,10 +116,10 @@ public class InstallContext {
 		foreach (string a in args) {
 			// Remove leading / or - or --
 			string x = a;	// I am using x instead of a
-			if (x.StartsWith ("/") || x.StartsWith ("-"))
-				x = x.Substring (1);
-			else if (a.StartsWith ("--"))
+			if (a.StartsWith ("--"))
 				x = x.Substring (2);
+			else if (x.StartsWith ("/") || x.StartsWith ("-"))
+				x = x.Substring (1);
 
 			int index;
 			if ((index = x.IndexOf ("=")) == -1) {
