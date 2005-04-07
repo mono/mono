@@ -116,6 +116,9 @@ lib/monolite:
 $(monolite_files): lib/monolite/%: lib/basic/% lib/monolite
 	cp -p $< $@
 
+$(basic_files:%=lib/basic/%):
+	cd $(topdir) && $(MAKE) profile-do--basic--all
+
 dist-default: $(monolite_files)
 dist-local: dist-default
 	-$(MKINSTALLDIRS) $(DIST_PROFILE_DIRS:%=$(distdir)/lib/%)

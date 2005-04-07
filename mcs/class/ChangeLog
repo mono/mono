@@ -1,3 +1,9 @@
+2005-04-07  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile ($(basic_files:%=lib/basic/%)): Build the "basic"
+	profile if needed.  This is used when 'make dist' is invoked on a
+	clean tree.  Reported by Ben Maurer.
+
 2005-01-24  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile (bootstrap_dirs): Add Mono.Security and System.Security
