@@ -35,6 +35,9 @@ namespace Mono.CSharp {
 		// of methods above.
 		public Type [][]     args;
 
+		//This is used to store the modifiers of arguments
+		public Parameter.Modifier [][] mods;
+		
 		//
 		// This flag on the method says `We found a match, but
 		// because it was private, we could not use the match
@@ -166,6 +169,7 @@ namespace Mono.CSharp {
 				pending_implementations [i].optional = missing.Optional;
 				pending_implementations [i].methods = mi;
 				pending_implementations [i].args = new Type [count][];
+				pending_implementations [i].mods = new Parameter.Modifier [count][];
 				pending_implementations [i].found = new bool [count];
 				pending_implementations [i].need_proxy = new MethodInfo [count];
 				string indexer_name = TypeManager.IndexerPropertyName (t);
@@ -175,15 +179,24 @@ namespace Mono.CSharp {
 				
 				int j = 0;
 				foreach (MethodInfo m in mi){
-					Type [] types;
-					
+  					pending_implementations [i].args [j] = TypeManager.NoTypes;
+					pending_implementations [i].mods [j] = null;
+
 					// If there is a previous error, just ignore
 					if (m == null)
-						types = TypeManager.NoTypes;
-					else
-						types = TypeManager.GetArgumentTypes (m);
-					
-					pending_implementations [i].args [j] = types;
+						continue;
+
+					pending_implementations [i].args [j] = TypeManager.GetArgumentTypes (m);
+
+ 					ParameterData pd = TypeManager.GetParameterData (m);
+ 					
+ 					if (pd.Count > 0){
+ 						Parameter.Modifier [] pm = new Parameter.Modifier [pd.Count];
+ 						for (int k = 0; k < pd.Count; k++)
+ 							pm [k] = pd.ParameterModifier (k);
+ 						pending_implementations [i].mods [j] = pm;
+ 					}
+			
 					j++;
 				}
 				i++;
@@ -197,6 +210,7 @@ namespace Mono.CSharp {
 				abstract_methods.CopyTo (pending_implementations [i].methods, 0);
 				pending_implementations [i].found = new bool [count];
 				pending_implementations [i].args = new Type [count][];
+				pending_implementations [i].mods = new Parameter.Modifier [count][];
 				pending_implementations [i].type = type_builder;
 
 				string indexer_name = TypeManager.IndexerPropertyName (type_builder);
@@ -208,8 +222,17 @@ namespace Mono.CSharp {
 					MethodInfo mi = (MethodInfo) m;
 					
 					Type [] types = TypeManager.GetArgumentTypes (mi);
+					ParameterData pd = TypeManager.GetParameterData (mi);
 					
 					pending_implementations [i].args [j] = types;
+					pending_implementations [i].mods [j] = null;
+					if (pd.Count > 0){
+						Parameter.Modifier [] pm = new Parameter.Modifier [pd.Count];
+						for (int k = 0; k < pd.Count; k++)
+							pm [k] = pd.ParameterModifier (k);
+						pending_implementations [i].mods [j] = pm;
+					}
+						
 					j++;
 				}
 			}
@@ -318,23 +341,23 @@ namespace Mono.CSharp {
 		/// <summary>
 		///   Whether the specified method is an interface method implementation
 		/// </summary>
-		public MethodInfo IsInterfaceMethod (Type t, string name, Type ret_type, Type [] args)
+		public MethodInfo IsInterfaceMethod (Type t, string name, Type ret_type, ParameterData args)
 		{
 			return InterfaceMethod (t, name, ret_type, args, Operation.Lookup, null);
 		}
 
-		public MethodInfo IsInterfaceIndexer (Type t, Type ret_type, Type [] args)
+		public MethodInfo IsInterfaceIndexer (Type t, Type ret_type, ParameterData args)
 		{
 			return InterfaceMethod (t, null, ret_type, args, Operation.Lookup, null);
 		}
 
-		public void ImplementMethod (Type t, string name, Type ret_type, Type [] args, bool clear_one) 
+		public void ImplementMethod (Type t, string name, Type ret_type, ParameterData args, bool clear_one) 
 		{
 			InterfaceMethod (t, name, ret_type, args,
 					 clear_one ? Operation.ClearOne : Operation.ClearAll, null);
 		}
 
-		public void ImplementIndexer (Type t, MethodInfo mi, Type ret_type, Type [] args, bool clear_one) 
+		public void ImplementIndexer (Type t, MethodInfo mi, Type ret_type, ParameterData args, bool clear_one) 
 		{
 			InterfaceMethod (t, null, ret_type, args,
 					 clear_one ? Operation.ClearOne : Operation.ClearAll, mi);
@@ -357,10 +380,10 @@ namespace Mono.CSharp {
 		///   that was used in the interface, then we always need to create a proxy for it.
 		///
 		/// </remarks>
-		public MethodInfo InterfaceMethod (Type t, string name, Type ret_type, Type [] args,
+		public MethodInfo InterfaceMethod (Type t, string name, Type ret_type, ParameterData args,
 						   Operation op, MethodInfo need_proxy)
 		{
-			int arg_len = args.Length;
+			int arg_len = args.Count;
 
 			if (pending_implementations == null)
 				return null;
@@ -403,16 +426,13 @@ namespace Mono.CSharp {
 					if (tm.args [i].Length != arg_len)
 						continue;
 
-					int j, top = args.Length;
-					bool fail = false;
-					
-					for (j = 0; j < top; j++){
-						if (tm.args [i][j] != args[j]){
-							fail = true;
+					int j, top = args.Count;
+
+					for (j = 0; j < top; j++)
+						if (tm.args [i][j] != args.ParameterType (j) ||
+						    tm.mods [i][j] != args.ParameterModifier (j))
 							break;
-						}
-					}
-					if (fail)
+					if (j != top)
 						continue;
 
 					if (op != Operation.Lookup){

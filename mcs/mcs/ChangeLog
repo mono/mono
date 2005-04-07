@@ -1,3 +1,20 @@
+2005-04-07  Abin Thomas  <projectmonokochi@rediffmail.com>
+	    Anoob V E  <projectmonokochi@rediffmail.com>
+	    Harilal P R  <projectmonokochi@rediffmail.com>
+
+	Fix #58413.
+	* pending.cs (TypeAndMethods.mods): New.  Store the parameter
+	modifiers of pending methods.
+	(PendingImplementation.PendingImplementation): Initialize it.
+	Add Parameter.Modifier [][] mods and initialize it with ParameterData.
+	(PendingImplementation.InterFaceMethod): Repalce Type[] argument
+	with ParameterData.  Add check for modifiers.
+	* class.cs (MethodData.Define): Update to changes.
+
+2005-04-07  Raja R Harinath  <rharinath@novell.com>
+
+	* ecore.cs (Expression.IsAccessorAccessible): Clarify code somewhat.
+
 2005-04-07  Marek Safar  <marek.safar@seznam.cz>
 
 	* class.cs (PropertyMethod.Define): Check private accessor in abstract

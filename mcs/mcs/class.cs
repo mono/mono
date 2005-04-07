@@ -4573,10 +4573,10 @@ namespace Mono.CSharp {
 			if (container.Pending != null){
 				if (member is Indexer) // TODO: test it, but it should work without this IF
 					implementing = container.Pending.IsInterfaceIndexer (
-						member.InterfaceType, method.ReturnType, ParameterTypes);
+						member.InterfaceType, method.ReturnType, ParameterInfo);
 				else
 					implementing = container.Pending.IsInterfaceMethod (
-						member.InterfaceType, name, method.ReturnType, ParameterTypes);
+						member.InterfaceType, name, method.ReturnType, ParameterInfo);
 
 				if (member.InterfaceType != null){
 					if (implementing == null){
@@ -4691,11 +4691,11 @@ namespace Mono.CSharp {
 				if (member is Indexer) {
 					container.Pending.ImplementIndexer (
 						member.InterfaceType, builder, method.ReturnType,
-						ParameterTypes, member.IsExplicitImpl);
+						ParameterInfo, member.IsExplicitImpl);
 				} else
 					container.Pending.ImplementMethod (
 						member.InterfaceType, name, method.ReturnType,
-						ParameterTypes, member.IsExplicitImpl);
+						ParameterInfo, member.IsExplicitImpl);
 
 				if (member.IsExplicitImpl)
 					container.TypeBuilder.DefineMethodOverride (

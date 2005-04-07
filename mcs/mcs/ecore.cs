@@ -185,34 +185,23 @@ namespace Mono.CSharp {
 			//
 			// If only accessible to the current class or children
 			//
-			if (ma == MethodAttributes.Private) {
-				Type declaring_type = mi.DeclaringType;
+			if (ma == MethodAttributes.Private)
+				return invocation_type == mi.DeclaringType ||
+					TypeManager.IsNestedChildOf (invocation_type, mi.DeclaringType);
 
-				if (invocation_type != declaring_type)
-					return TypeManager.IsNestedChildOf (invocation_type, declaring_type);
-
-				return true;
-			}
-			//
-			// FamAndAssem requires that we not only derivate, but we are on the
-			// same assembly.  
-			//
-			if (ma == MethodAttributes.FamANDAssem){
-				return (mi.DeclaringType.Assembly != invocation_type.Assembly);
-			}
-
-			// Assembly and FamORAssem succeed if we're in the same assembly.
-			if ((ma == MethodAttributes.Assembly) || (ma == MethodAttributes.FamORAssem)){
-				if (mi.DeclaringType.Assembly == invocation_type.Assembly)
+			if (mi.DeclaringType.Assembly == invocation_type.Assembly) {
+				if (ma == MethodAttributes.Assembly || ma == MethodAttributes.FamORAssem)
 					return true;
+			} else {
+				if (ma == MethodAttributes.Assembly || ma == MethodAttributes.FamANDAssem)
+					return false;
 			}
-
-			// We already know that we aren't in the same assembly.
-			if (ma == MethodAttributes.Assembly)
-				return false;
 
 			// Family and FamANDAssem require that we derive.
-			if ((ma == MethodAttributes.Family) || (ma == MethodAttributes.FamANDAssem) || (ma == MethodAttributes.FamORAssem)){
+			// FamORAssem requires that we derive if in different assemblies.
+			if (ma == MethodAttributes.Family ||
+			    ma == MethodAttributes.FamANDAssem ||
+			    ma == MethodAttributes.FamORAssem) {
 				if (!TypeManager.IsNestedFamilyAccessible (invocation_type, mi.DeclaringType))
 					return false;
 
@@ -3641,8 +3630,8 @@ namespace Mono.CSharp {
 			}
 
 			bool must_do_cs1540_check;
-			if (!(IsAccessorAccessible (ec.ContainerType, add_accessor, out must_do_cs1540_check)
-				    && IsAccessorAccessible (ec.ContainerType, remove_accessor, out must_do_cs1540_check))) {
+			if (!(IsAccessorAccessible (ec.ContainerType, add_accessor, out must_do_cs1540_check) &&
+			      IsAccessorAccessible (ec.ContainerType, remove_accessor, out must_do_cs1540_check))) {
 				
                                Report.Error (122, loc, "'{0}' is inaccessible due to its protection level",
                                                DeclaringType.Name + "." + EventInfo.Name);
