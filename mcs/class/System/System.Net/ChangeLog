@@ -1,3 +1,8 @@
+2005-04-07 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* WebConnectionStream.cs: ForceCompletion actually calls NextRead. No
+	need to wait for a Close/ReadAll when we have no content.
+
 2005-04-04 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* NtlmClient.cs: fix typo in assembly name.
