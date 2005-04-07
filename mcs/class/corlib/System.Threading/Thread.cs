@@ -544,14 +544,14 @@ namespace System.Threading
 					throw new SystemException ("Thread creation failed");
 				}
 
-				// Launch this thread
-				Start_internal(system_thread_handle);
-
 				// Mark the thread state as Running
 				// (which is all bits
 				// cleared). Therefore just remove the
 				// Unstarted bit
 				clr_state(ThreadState.Unstarted);
+
+				// Launch this thread
+				Start_internal(system_thread_handle);
 			}
 		}
 

@@ -1,3 +1,8 @@
+2005-04-07 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Thread.cs: clear the Unstarted bit before calling Start_internal.
+	Fixes bug #72738.
+
 2004-12-21 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* ThreadAbortException.cs: added private serialization .ctor.
