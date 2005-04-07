@@ -1,3 +1,11 @@
+2005-04-07  Zoltan Varga  <vargaz@freemail.hu>
+
+	* errno.c: Use the GNU version of strerror_r if _GNU_SOURCE is defined
+	  (otherwise assume existence of XPG variant).  This allows proper
+	  compilation under Red Hat 9.
+	* fstab.c: protect against users calling setfsent(), setfsent(), ...  
+	  endfsent(), which would otherwise leak a FILE handle.
+
 2005-04-05  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mph.h: Apply patch from the freebsd ports collection.

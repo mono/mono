@@ -174,6 +174,9 @@ etc_fstab;
 static int
 setfsent (void)
 {
+	/* protect from bad users calling setfsent(), setfsent(), ... endfsent() */
+	if (etc_fstab != NULL)
+		fclose (etc_fstab);
 	etc_fstab = fopen ("/etc/vfstab", "r");
 	if (etc_fstab != NULL)
 		return 1;
