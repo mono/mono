@@ -1,3 +1,8 @@
+2005-04-07  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* SslCipherSuite.cs: Fix calculation (sequence number) for the server
+	side stream. Patch by Brian Ritchie.
+
 2005-02-04  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Reverting last changes in SslClientStream and RecordProtocol. This
