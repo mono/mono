@@ -1,3 +1,9 @@
+2005-04-08  Raja R Harinath  <rharinath@novell.com>
+
+	Fix #74510.
+	* class.cs (OperatorArrayList.CheckPairedOperators): Skip
+	operators that had errors reported on them.
+
 2005-04-08  Marek Safar  <marek.safar@seznam.cz>
 
 	* attribute.cs (Attribute.IsValidArgumentType): Test valid named
