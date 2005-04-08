@@ -8,7 +8,7 @@ SUBDIRS =
 include ../build/rules.make
 
 DISTFILES = README.tests harness.mk $(wildcard *.cs) $(wildcard *.il) $(wildcard *.xml) $(wildcard *.inc) \
-	test-353-2.cs
+	test-353-2.cs test-361-2.cs
 
 with_mono_path = MONO_PATH="$(topdir)/class/lib/$(PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH"
 
@@ -31,7 +31,7 @@ USE_MCS_FLAGS :=
 NEW_TEST_SOURCES_common = xml-033 xml-034 xml-035 xml-036 test-329 2test-16 test-330 a-parameter5 test-331 test-332 \
 			  test-333 test-311 test-335 test-336 test-337 test-287 test-338 test-339 test-341 test-334 test-342 \
 			  test-344 test-345 test-346 test-347 test-348 test-349 test-350 test-351 test-352 test-353 test-354 test-355 \
-			  test-356 test-357 test-358 test-359 test-360 \
+			  test-356 test-357 test-358 test-359 test-360 test-361 \
 	mtest-7-dll mtest-7-exe \
 	mtest-8-dll mtest-8-exe
 
@@ -152,7 +152,7 @@ TEST_ORDERING = \
 # Some tests may require additional files to be available in the current directory.
 # To promote interoperability, we prefer that those files not be referred to with ../ or ..\\
 # To that end, we will copy those files to the test-harness directory, so that we can refer to simple filenames.
-TEST_HARNESS_EXTRAS = $(wildcard *.inc) test-74.cs test-353-2.cs
+TEST_HARNESS_EXTRAS = $(wildcard *.inc) test-74.cs test-353-2.cs test-361-2.cs
 
 all-local install-local uninstall-local:
 

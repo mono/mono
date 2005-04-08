@@ -1,3 +1,12 @@
+2005-04-08  Raja R Harinath  <rharinath@novell.com>
+
+	Fix #74484.
+	* attribute.cs (Attribute.GetAttributeUsage): Resolve
+	AttributeUsageAttribute in the emitcontext of the attribute class,
+	not in the emitcontext of the attributable entity it was attached to.
+	* cs-parser.jay: Use 'current_class', not 'current_container',
+	when creating a GlobalAttribute.
+
 2005-04-08  Alp Toker  <alp@atoker.com>
 
 	* pending.cs: The fix to #58413 failed to compile methods implementing

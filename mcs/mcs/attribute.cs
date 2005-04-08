@@ -640,18 +640,14 @@ namespace Mono.CSharp {
 				return ua;
 			}
 
-			if (attr_class.OptAttributes == null) {
-				usage_attr_cache.Add (Type, DefaultUsageAttribute);
-				return DefaultUsageAttribute;
-			}
+			Attribute a = attr_class.OptAttributes == null
+				? null
+				: attr_class.OptAttributes.Search (TypeManager.attribute_usage_type, attr_class.EmitContext);
 
-			Attribute a = attr_class.OptAttributes.Search (TypeManager.attribute_usage_type, ec);
-			if (a == null) {
-				usage_attr_cache.Add (Type, DefaultUsageAttribute);
-				return DefaultUsageAttribute;
-			}
+			ua = a == null
+				? DefaultUsageAttribute 
+				: a.GetAttributeUsageAttribute (attr_class.EmitContext);
 
-			ua = a.GetAttributeUsageAttribute (ec);
 			usage_attr_cache.Add (Type, ua);
 			return ua;
 		}

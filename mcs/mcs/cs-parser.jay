@@ -598,7 +598,7 @@ attribute
 		Expression left_expr = left == null ? null : left.GetTypeExpression (loc);
 
 		if (current_attr_target == "assembly" || current_attr_target == "module")
-			$$ = new GlobalAttribute (current_container, current_attr_target,
+			$$ = new GlobalAttribute (current_class, current_attr_target,
 						  left_expr, identifier, (ArrayList) $3, loc);
 		else
 			$$ = new Attribute (current_attr_target, left_expr, identifier, (ArrayList) $3, loc);
@@ -4833,7 +4833,7 @@ public void parse ()
 		else
 			yyparse (lexer);
 		Tokenizer tokenizer = lexer as Tokenizer;
-		tokenizer.cleanup ();		
+		tokenizer.cleanup ();
 	} catch (Exception e){
 		// 
 		// Removed for production use, use parser verbose to get the output.
@@ -4843,6 +4843,8 @@ public void parse ()
 		if (yacc_verbose_flag > 0)
 			Console.WriteLine (e);
 	}
+
+	RootContext.Tree.Types.NamespaceEntry = null;
 }
 
 void CheckToken (int error, int yyToken, string msg)
