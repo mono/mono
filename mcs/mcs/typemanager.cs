@@ -1481,15 +1481,12 @@ public class TypeManager {
 	// This is like IsBuiltinType, but lacks decimal_type, we should also clean up
 	// the pieces in the code where we use IsBuiltinType and special case decimal_type.
 	// 
-	public static bool IsCLRType (Type t)
+	public static bool IsPrimitiveType (Type t)
 	{
-		if (t == object_type || t == int32_type || t == uint32_type ||
+		return (t == int32_type || t == uint32_type ||
 		    t == int64_type || t == uint64_type || t == float_type || t == double_type ||
 		    t == char_type || t == short_type || t == bool_type ||
-		    t == sbyte_type || t == byte_type || t == ushort_type)
-			return true;
-		else
-			return false;
+		    t == sbyte_type || t == byte_type || t == ushort_type);
 	}
 
 	public static bool IsDelegateType (Type t)

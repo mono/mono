@@ -2276,7 +2276,7 @@ namespace Mono.CSharp {
 			// Do not perform operator overload resolution when both sides are
 			// built-in types
 			//
-			if (!(TypeManager.IsCLRType (l) && TypeManager.IsCLRType (r))){
+			if (!(TypeManager.IsPrimitiveType (l) && TypeManager.IsPrimitiveType (r))){
 				//
 				// Step 1: Perform Operator Overload location
 				//

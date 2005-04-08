@@ -3857,11 +3857,11 @@ namespace Mono.CSharp {
 		bool ResolveExpression (EmitContext ec)
 		{
 			if (!TypeManager.ImplementsInterface (expr_type, TypeManager.idisposable_type)){
-				conv = Convert.ImplicitConversionRequired (
-					ec, expr, TypeManager.idisposable_type, loc);
-
-				if (conv == null)
+				if (Convert.ImplicitConversion (ec, expr, TypeManager.idisposable_type, loc) == null) {
+					Report.Error (1674, loc, "'{0}': type used in a using statement must be implicitly convertible to 'System.IDisposable'",
+						TypeManager.CSharpName (expr_type));
 					return false;
+				}
 			}
 
 			return true;

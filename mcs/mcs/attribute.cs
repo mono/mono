@@ -113,6 +113,11 @@ namespace Mono.CSharp {
 				      name);
 		}
 
+		void Error_InvalidNamedAgrumentType (string name)
+		{
+			Report.Error (655, Location, "'{0}' is not a valid named attribute argument because its type is not valid attribute type", name);
+		}
+
 		static void Error_AttributeArgumentNotValid (string extra, Location loc)
 		{
 			Report.Error (182, loc,
@@ -279,7 +284,17 @@ namespace Mono.CSharp {
 			Error_AttributeArgumentNotValid (loc);
 			return false;
 		}
-		
+
+		bool IsValidArgumentType (Type t)
+		{
+			return TypeManager.IsPrimitiveType (t) ||
+				(t.IsArray && TypeManager.IsPrimitiveType (t.GetElementType ())) ||
+				TypeManager.IsEnumType (t) ||
+				t == TypeManager.string_type ||
+				t == TypeManager.object_type ||
+				t == TypeManager.type_type;
+		}
+
 		// Cache for parameter-less attributes
 		static PtrHashtable att_cache = new PtrHashtable ();
 
@@ -427,6 +442,12 @@ namespace Mono.CSharp {
 						return null;
 					}
 
+					if (!IsValidArgumentType (pi.PropertyType)) {
+						Report.SymbolRelatedToPreviousError (pi);
+						Error_InvalidNamedAgrumentType (member_name);
+						return null;
+					}
+
 					object value;
 					if (!GetAttributeArgumentExpression (e, Location, pi.PropertyType, out value))
 						return null;
@@ -440,6 +461,12 @@ namespace Mono.CSharp {
 
 					if (fi.IsInitOnly) {
 						Error_InvalidNamedArgument (member_name);
+						return null;
+					}
+
+					if (!IsValidArgumentType (fi.FieldType)) {
+						Report.SymbolRelatedToPreviousError (fi);
+						Error_InvalidNamedAgrumentType (member_name);
 						return null;
 					}
 
@@ -498,7 +525,7 @@ namespace Mono.CSharp {
 				}
 
 				object value = pos_values [j];
-				if (value != null && a.Type != value.GetType () && a.Type.IsPrimitive) {
+				if (value != null && a.Type != value.GetType () && TypeManager.IsPrimitiveType (a.Type)) {
 					bool fail;
 					pos_values [j] = TypeManager.ChangeType (value, a.Type, out fail);
 					if (fail) {

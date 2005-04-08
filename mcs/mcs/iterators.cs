@@ -390,6 +390,16 @@ namespace Mono.CSharp {
 						"Iterators cannot have ref or out parameters");
 					return false;
 				}
+
+				if ((mod & Parameter.Modifier.ARGLIST) != 0) {
+					Report.Error (1636, Location, "__arglist is not allowed in parameter list of iterators");
+					return false;
+				}
+
+				if (parameters.ParameterType (i).IsPointer) {
+					Report.Error (1637, Location, "Iterators cannot have unsafe parameters or yield types");
+					return false;
+				}
 			}
 
 			ArrayList list = new ArrayList ();

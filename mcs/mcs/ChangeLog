@@ -1,3 +1,20 @@
+2005-04-08  Marek Safar  <marek.safar@seznam.cz>
+
+	* attribute.cs (Attribute.IsValidArgumentType): Test valid named
+	argument types.
+	(Attribute.Resolve): Add named argument type checking.
+	
+	* class.cs (FixedField.Define): Use IsPrimitiveType
+	
+	* expression.cs (Binary.ResolveOperator): Reflect IsCLRType renaming.
+	
+	* iterators.cs (Iterator.DefineIterator): Add check for arglist and
+	unsafe parameter types.
+	
+	* statement.cs (Using.ResolveExpression): Add better error description.
+	
+	* typemanager.cs (IsCLRType): Renamed to IsPrimitiveType.
+	
 2005-04-08  Raja R Harinath  <rharinath@novell.com>
 
 	Fix #74484.
