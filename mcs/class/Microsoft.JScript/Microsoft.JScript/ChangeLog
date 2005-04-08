@@ -1,3 +1,7 @@
+2005-04-08 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Literal.cs: fix the build and broke something else ;-).
+
 2005-04-08  Cesar Lopez Nataren  <cnataren@novell.com>
 
 	* Literal.cs: Implement the construction of regular expression literal.
