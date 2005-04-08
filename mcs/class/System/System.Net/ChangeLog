@@ -1,3 +1,7 @@
+2005-04-08 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpWebRequest.cs: moved redirection handling to a proper place.
+
 2005-04-07 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* WebHeaderCollection.cs: added if-modified-since to the list of

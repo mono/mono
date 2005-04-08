@@ -594,6 +594,7 @@ namespace System.Net
 				WebAsyncResult result = asyncWrite;
 				if (!requestSent) {
 					requestSent = true;
+					redirects = 0;
 					servicePoint = GetServicePoint ();
 					abortHandler = servicePoint.SendRequest (this, connectionGroup);
 				}
@@ -662,6 +663,7 @@ namespace System.Net
 			
 			if (!requestSent) {
 				requestSent = true;
+				redirects = 0;
 				servicePoint = GetServicePoint ();
 				abortHandler = servicePoint.SendRequest (this, connectionGroup);
 			}
@@ -679,25 +681,10 @@ namespace System.Net
 			if (result == null)
 				throw new ArgumentException ("Invalid IAsyncResult", "asyncResult");
 
-			redirects = 0;
-			bool redirected = false;
-			asyncRead = result;
-			do {
-				if (redirected) {
-					haveResponse = false;
-					webResponse = null;
-					result.Reset ();
-					servicePoint = GetServicePoint ();
-					abortHandler = servicePoint.SendRequest (this, connectionGroup);
-				}
-
-				if (!result.WaitUntilComplete (timeout, false)) {
-					Abort ();
-					throw new WebException("The request timed out", WebExceptionStatus.Timeout);
-				}
-
-				redirected = CheckFinalStatus (result);
-			} while (redirected);
+			if (!result.WaitUntilComplete (timeout, false)) {
+				Abort ();
+				throw new WebException("The request timed out", WebExceptionStatus.Timeout);
+			}
 			
 			return result.Response;
 		}
@@ -1035,10 +1022,33 @@ namespace System.Net
 			if (r != null) {
 				if (wexc != null) {
 					r.SetCompleted (false, wexc);
-				} else {
-					r.SetCompleted (false, webResponse);
+					r.DoCallback ();
+					return;
 				}
-				r.DoCallback ();
+
+				bool redirected;
+				try {
+					redirected = CheckFinalStatus (r);
+					if (!redirected) {
+						r.SetCompleted (false, webResponse);
+						r.DoCallback ();
+					} else {
+						haveResponse = false;
+						webResponse = null;
+						r.Reset ();
+						servicePoint = GetServicePoint ();
+						abortHandler = servicePoint.SendRequest (this, connectionGroup);
+					}
+				} catch (WebException wexc2) {
+					r.SetCompleted (false, wexc2);
+					r.DoCallback ();
+					return;
+				} catch (Exception ex) {
+					wexc = new WebException (ex.Message, ex, WebExceptionStatus.ProtocolError, null); 
+					r.SetCompleted (false, wexc);
+					r.DoCallback ();
+					return;
+				}
 			}
 		}
 
