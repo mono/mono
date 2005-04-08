@@ -159,7 +159,7 @@ namespace MonoTests.System.Reflection
 		public void InvokeOnRefOnlyAssembly ()
 		{
 			Assembly a = Assembly.ReflectionOnlyLoad (typeof (MethodInfoTest).Assembly.FullName);
-			Type t = a.GetType (typeof (RefOnlyClass).FullName);
+			Type t = a.GetType (typeof (RefOnlyMethodClass).FullName);
 			MethodInfo m = t.GetMethod ("RefOnlyMethod", BindingFlags.Static | BindingFlags.NonPublic);
 			
 			m.Invoke (null, new object [0]);
@@ -170,7 +170,7 @@ namespace MonoTests.System.Reflection
 	
 #if NET_2_0
 	// Helper class
-	class RefOnlyClass 
+	class RefOnlyMethodClass 
 	{
 		// Helper static method
 		static void RefOnlyMethod ()

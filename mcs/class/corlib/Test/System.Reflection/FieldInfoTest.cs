@@ -101,7 +101,7 @@ public class FieldInfoTest : Assertion
 	public void GetValueOnRefOnlyAssembly ()
 	{
 		Assembly assembly = Assembly.ReflectionOnlyLoad (typeof (FieldInfoTest).Assembly.FullName);
-		Type t = assembly.GetType (typeof (RefOnlyClass).FullName);
+		Type t = assembly.GetType (typeof (RefOnlyFieldClass).FullName);
 		FieldInfo f = t.GetField ("RefOnlyField", BindingFlags.Static | BindingFlags.NonPublic);
 
 		f.GetValue (null);
@@ -112,7 +112,7 @@ public class FieldInfoTest : Assertion
 	public void SetValueOnRefOnlyAssembly ()
 	{
 		Assembly assembly = Assembly.ReflectionOnlyLoad (typeof (FieldInfoTest).Assembly.FullName);
-		Type t = assembly.GetType (typeof (RefOnlyClass).FullName);
+		Type t = assembly.GetType (typeof (RefOnlyFieldClass).FullName);
 		FieldInfo f = t.GetField ("RefOnlyField", BindingFlags.Static | BindingFlags.NonPublic);
 
 		f.SetValue (null, 8);
@@ -122,7 +122,7 @@ public class FieldInfoTest : Assertion
 }		
 #if NET_2_0
 // Helper class
-class RefOnlyClass 
+class RefOnlyFieldClass 
 {
 	// Helper property
 	static int RefOnlyField;
