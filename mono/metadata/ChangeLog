@@ -1,5 +1,14 @@
 2005-04-07 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* file-io.c:
+	* file-io.h:
+	* threadpool.c:
+	* threadpool.h:
+	* icall.c:
+	* socket-io.c: removed dead code for async IO.
+
+2005-04-07 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* socket-io.h: 2 more fields in MonoSocketAsyncResult.
 
 	* threadpool.c: intercept socket async. calls and pass them to a thread
