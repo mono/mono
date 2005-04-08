@@ -95,6 +95,37 @@ public class FieldInfoTest : Assertion
 		AssertEquals (typeof (Marshal1), Type.GetType (attr.MarshalType));
 		*/
 	}
+
+	[Test]
+	[ExpectedException (typeof (InvalidOperationException))]
+	public void GetValueOnRefOnlyAssembly ()
+	{
+		Assembly assembly = Assembly.ReflectionOnlyLoad (typeof (FieldInfoTest).Assembly.FullName);
+		Type t = assembly.GetType (typeof (RefOnlyClass).FullName);
+		FieldInfo f = t.GetField ("RefOnlyField", BindingFlags.Static | BindingFlags.NonPublic);
+
+		f.GetValue (null);
+	}
+	
+	[Test]
+	[ExpectedException (typeof (InvalidOperationException))]
+	public void SetValueOnRefOnlyAssembly ()
+	{
+		Assembly assembly = Assembly.ReflectionOnlyLoad (typeof (FieldInfoTest).Assembly.FullName);
+		Type t = assembly.GetType (typeof (RefOnlyClass).FullName);
+		FieldInfo f = t.GetField ("RefOnlyField", BindingFlags.Static | BindingFlags.NonPublic);
+
+		f.SetValue (null, 8);
+	}
+	
 #endif
 }		
+#if NET_2_0
+// Helper class
+class RefOnlyClass 
+{
+	// Helper property
+	static int RefOnlyField;
+}
+#endif
 }

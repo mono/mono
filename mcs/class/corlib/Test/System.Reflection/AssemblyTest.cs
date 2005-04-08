@@ -188,6 +188,36 @@ namespace MonoTests.System.Reflection
 			Assembly corlib2 = Assembly.LoadWithPartialName ("corlib_plattest");
 			Assert.IsTrue (corlib != null || corlib2 != null);
 		}
+
+#if NET_2_0
+		[Test]
+		public void ReflectionOnlyLoad ()
+		{
+			Assembly assembly = Assembly.ReflectionOnlyLoad (typeof (AssemblyTest).Assembly.FullName);
+			
+			Assert.IsNotNull (assembly);
+			Assert.IsTrue (assembly.ReflectionOnly);
+		}
+
+		[Test]
+		public void ReflectionOnlyLoadFrom ()
+		{
+			string loc = typeof (AssemblyTest).Assembly.Location;
+			string filename = Path.GetFileName (loc);
+			Assembly assembly = Assembly.ReflectionOnlyLoadFrom (filename);
+
+			Assert.IsNotNull (assembly);
+			Assert.IsTrue (assembly.ReflectionOnly);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void CreateInstanceOnRefOnly ()
+		{
+			Assembly assembly = Assembly.ReflectionOnlyLoad (typeof (AssemblyTest).Assembly.FullName);
+			assembly.CreateInstance ("MonoTests.System.Reflection.AssemblyTest");
+		}
+#endif
 	}
 }
 

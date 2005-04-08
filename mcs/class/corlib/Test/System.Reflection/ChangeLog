@@ -1,3 +1,9 @@
+2005-04-08  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* AssemblyTest.cs: Added tests for ReflectionOnly support.
+	* MethodInfoTest.cs: Added test for Reflection Only support.
+	* FieldInfoTest.cs: Added tests for ReflectionOnly support.
+	
 2005-04-04  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* AssemblyNameTest.cs: Added tests for Clone and serialization without

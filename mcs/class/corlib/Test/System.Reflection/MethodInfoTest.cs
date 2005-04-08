@@ -153,7 +153,30 @@ namespace MonoTests.System.Reflection
 			else
 				AssertEquals (false, locals [1].IsPinned);
 		}
+
+		[Test]
+		[ExpectedException (typeof (InvalidOperationException))]
+		public void InvokeOnRefOnlyAssembly ()
+		{
+			Assembly a = Assembly.ReflectionOnlyLoad (typeof (MethodInfoTest).Assembly.FullName);
+			Type t = a.GetType (typeof (RefOnlyClass).FullName);
+			MethodInfo m = t.GetMethod ("RefOnlyMethod", BindingFlags.Static | BindingFlags.NonPublic);
+			
+			m.Invoke (null, new object [0]);
+		}
+
 #endif
 	}
+	
+#if NET_2_0
+	// Helper class
+	class RefOnlyClass 
+	{
+		// Helper static method
+		static void RefOnlyMethod ()
+		{
+		}
+	}
+#endif
 }
 
