@@ -6,7 +6,7 @@ LIBRARY = System.Configuration.Install.dll
 LIB_MCS_FLAGS = /r:$(corlib) /r:System.dll /r:System.Xml.dll /r:System.Runtime.Serialization.Formatters.Soap.dll
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS)
 
-EXTRA_DISTFILES = Test/ChangeLog
+EXTRA_DISTFILES = Test/ChangeLog Test/System.Configuration.Install/InstallerAssembly.cs
 
 include ../../build/library.make
 

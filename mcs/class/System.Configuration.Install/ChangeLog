@@ -1,3 +1,8 @@
+2005-04-08  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile (EXTRA_DISTFILES): Add support file
+	Test/.../InstallerAssembly.cs.
+
 2005-03-24  Muthu Kannan  <t.manki@gmail.com>
 
 	* Makefile (test-local): Create InstallerAssembly.dll for unit
