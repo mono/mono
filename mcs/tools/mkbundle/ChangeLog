@@ -1,3 +1,7 @@
+2005-04-08  Miguel de Icaza  <miguel@novell.com>
+
+	* mkbundle.cs: Add support for bundling also a machine.config
+
 2004-04-08  James Willcox  <james@ximian.com>
 
 	* mkbundle.cs: add a --static flag for statically linking to libmono
