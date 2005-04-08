@@ -1,8 +1,14 @@
+2005-04-08  Joerg Rosenkranz  <joergr@voelcker.com>
+
+	* mono-service.cs: Restructured code to run service main loop
+	in callback called by ServiceBase.Run. This matches Windows 
+	service behaviour better.
+
 2005-04-07  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mono-service.cs: Fix compilation with csc.
 
-2004-04-06  Joerg Rosenkranz  <joergr@voelcker.com>
+2005-04-06  Joerg Rosenkranz  <joergr@voelcker.com>
 
 	* mono-service.cs: 
 	    Pay attention to CanStop and CanPauseAndContinue. 

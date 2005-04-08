@@ -18,6 +18,7 @@ using System.Runtime.InteropServices;
 
 class MonoServiceRunner {
 	static string assembly, directory, lockfile, name, logname;
+	static ServiceBase service = null;
 
 	static void info (string format, params object [] args)
 	{
@@ -120,6 +121,22 @@ class MonoServiceRunner {
 		Syscall.write (lfp, buf, (ulong)pid.Length);
 		Marshal.FreeCoTaskMem (buf);
 
+		//
+		// Setup signals
+		//
+		signal_event = new AutoResetEvent (false);
+
+		// Invoke all the code used in the signal handler, so the JIT does
+		// not kick-in inside the signal handler
+		signal_event.Set ();
+		signal_event.Reset ();
+
+		// Hook up 
+		signal (UnixConvert.FromSignum (Signum.SIGTERM), new sighandler_t (my_handler));
+		signal (UnixConvert.FromSignum (Signum.SIGUSR1), new sighandler_t (my_handler));
+		signal (UnixConvert.FromSignum (Signum.SIGUSR2), new sighandler_t (my_handler));
+
+		// Load service assembly
 		Assembly a = null;
 		
 		try {
@@ -137,6 +154,16 @@ class MonoServiceRunner {
 			return 1;
 		}
 
+		// Hook up RunService callback
+		FieldInfo fi = typeof (ServiceBase).GetField ("RunService", BindingFlags.Static | BindingFlags.NonPublic);
+		if (fi == null){
+			error ("Internal Mono Error: Could not find RunService in ServiceBase");
+			return 1;
+		}
+		fi.SetValue (null, new EventHandler (RunService));
+		
+		// And run its Main. Our RunService handler is invoked from 
+		// ServiceBase.Run.
 		MethodInfo entry = a.EntryPoint;
 		if (entry == null){
 			error ("Entry point not defined in service");
@@ -146,36 +173,26 @@ class MonoServiceRunner {
 		string [] service_args = new string [0];
 		entry.Invoke (null, service_args);
 
+		return 0;
+	}
+	
+	// The main service loop
+	private static void RunService (object o, EventArgs e)
+	{
 		FieldInfo fi = typeof (ServiceBase).GetField ("RegisteredServices", BindingFlags.Static | BindingFlags.NonPublic);
 		if (fi == null){
 			error ("Internal Mono Error: Could not find RegisteredServices in ServiceBase");
-			return 1;
+			return;
 		}
 
 		ServiceBase [] services = (ServiceBase []) fi.GetValue (null);
 		if (services == null || services.Length == 0){
 			error ("No services were registered by this service");
-			return 1;
+			return;
 		}
-
-		//
-		// Setup signals
-		//
-		signal_event = new AutoResetEvent (false);
-
-		// Invoke all the code used in the signal handler, so the JIT does
-		// not kick-in inside the signal handler
-		signal_event.Set ();
-		signal_event.Reset ();
-
-		// Hook up 
-		signal (UnixConvert.FromSignum (Signum.SIGTERM), new sighandler_t (my_handler));
-		signal (UnixConvert.FromSignum (Signum.SIGUSR1), new sighandler_t (my_handler));
-		signal (UnixConvert.FromSignum (Signum.SIGUSR2), new sighandler_t (my_handler));
-
+		
 		// Start up the service.
-
-		ServiceBase service = null;
+		service = null;
 		
 		if (name != null){
 			foreach (ServiceBase svc in services){
@@ -222,10 +239,9 @@ class MonoServiceRunner {
 			}
 		}
 
+		// Clean up
 		foreach (ServiceBase svc in services){
 			svc.Dispose ();
 		}
-		
-		return 0;
 	}
 }
