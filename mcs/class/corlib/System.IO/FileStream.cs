@@ -82,6 +82,8 @@ namespace System.IO
 				this.canseek = true;
 			} else {
 				this.canseek = false;
+				noBuffering = true;
+				bufferSize = 0;
 			}
 
 			this.handle = handle;
@@ -89,9 +91,6 @@ namespace System.IO
 			this.owner = ownsHandle;
 			this.async = isAsync;
 			this.anonymous = false;
-
-			if (isAsync && MonoIO.SupportsAsync)
-				ThreadPool.BindHandle (handle);
 
 			InitBuffer (bufferSize, noBuffering);
 
@@ -198,8 +197,7 @@ namespace System.IO
 
 			MonoIOError error;
 
-			bool openAsync = (isAsync && MonoIO.SupportsAsync);
-			this.handle = MonoIO.Open (name, mode, access, share, openAsync, out error);
+			this.handle = MonoIO.Open (name, mode, access, share, false, out error);
 			if (handle == MonoIO.InvalidHandle) {
 				// don't leak the path information for isolated storage
 				string fname = (anonymous) ? Path.GetFileName (name) : name;
@@ -215,8 +213,6 @@ namespace System.IO
 			if (MonoIO.GetFileType (handle, out error) == MonoFileType.Disk) {
 				this.canseek = true;
 				this.async = isAsync;
-				if (openAsync)
-					ThreadPool.BindHandle (handle);
 			} else {
 				this.canseek = false;
 				this.async = false;
@@ -280,7 +276,7 @@ namespace System.IO
 				if (handle == MonoIO.InvalidHandle)
 					throw new ObjectDisposedException ("Stream has been closed");
 
-				if (!canseek)
+				if (!CanSeek)
 					throw new NotSupportedException ("The stream does not support seeking");
 
 				// Buffered data might change the length of the stream
@@ -480,28 +476,8 @@ namespace System.IO
 			if (!async)
 				return base.BeginRead (buffer, offset, count, cback, state);
 
-			if (!MonoIO.SupportsAsync) {
-				ReadDelegate r = new ReadDelegate (ReadInternal);
-				return r.BeginInvoke (buffer, offset, count, cback, state);			
-			}
-
-			FileStreamAsyncResult result = new FileStreamAsyncResult (cback, state);
-			result.Count = count;
-			result.OriginalCount = count;
-			int buffered = ReadSegment (buffer, offset, count);
-			if (buffered >= count) {
-				result.SetComplete (null, buffered, true);
-				return result;
-			}
-			
-			result.Buffer = buffer;
-			result.Offset = offset + buffered;
-			result.Count -= buffered;
-			
-			KeepReference (result);
-			MonoIO.BeginRead (handle, result);
-
-			return result;
+			ReadDelegate r = new ReadDelegate (ReadInternal);
+			return r.BeginInvoke (buffer, offset, count, cback, state);			
 		}
 		
 		public override int EndRead (IAsyncResult async_result)
@@ -512,35 +488,15 @@ namespace System.IO
 			if (!async)
 				return base.EndRead (async_result);
 
-			if (!MonoIO.SupportsAsync) {
-				AsyncResult ares = async_result as AsyncResult;
-				if (ares == null)
-					throw new ArgumentException ("Invalid IAsyncResult", "async_result");
-
-				ReadDelegate r = ares.AsyncDelegate as ReadDelegate;
-				if (r == null)
-					throw new ArgumentException ("Invalid IAsyncResult", "async_result");
-
-				return r.EndInvoke (async_result);
-			}
-
-			FileStreamAsyncResult result = async_result as FileStreamAsyncResult;
-			if (result == null || result.BytesRead == -1)
+			AsyncResult ares = async_result as AsyncResult;
+			if (ares == null)
 				throw new ArgumentException ("Invalid IAsyncResult", "async_result");
 
-			RemoveReference (result);
-			if (result.Done)
-				throw new InvalidOperationException ("EndRead already called.");
+			ReadDelegate r = ares.AsyncDelegate as ReadDelegate;
+			if (r == null)
+				throw new ArgumentException ("Invalid IAsyncResult", "async_result");
 
-			result.Done = true;
-			if (!result.IsCompleted)
-				result.AsyncWaitHandle.WaitOne ();
-
-			if (result.Exception != null)
-				throw result.Exception;
-
-			buf_start += result.BytesRead;
-			return result.OriginalCount - result.Count + result.BytesRead;
+			return r.EndInvoke (async_result);
 		}
 
 		public override void Write (byte[] src, int src_offset, int count)
@@ -648,24 +604,8 @@ namespace System.IO
 				bytes = buffer;
 			}
 
-			if (!MonoIO.SupportsAsync) {
-				WriteDelegate w = new WriteDelegate (WriteInternal);
-				return w.BeginInvoke (buffer, offset, count, cback, state);			
-			}
-
-			if (buffered >= count) {
-				result.SetComplete (null, buffered, true);
-				return result;
-			}
-			
-			result.Buffer = buffer;
-			result.Offset = offset;
-			result.Count = count;
-			
-			KeepReference (result);
-			MonoIO.BeginWrite (handle, result);
-
-			return result;
+			WriteDelegate w = new WriteDelegate (WriteInternal);
+			return w.BeginInvoke (buffer, offset, count, cback, state);			
 		}
 		
 		public override void EndWrite (IAsyncResult async_result)
@@ -678,36 +618,16 @@ namespace System.IO
 				return;
 			}
 
-			if (!MonoIO.SupportsAsync) {
-				AsyncResult ares = async_result as AsyncResult;
-				if (ares == null)
-					throw new ArgumentException ("Invalid IAsyncResult", "async_result");
-
-				WriteDelegate w = ares.AsyncDelegate as WriteDelegate;
-				if (w == null)
-					throw new ArgumentException ("Invalid IAsyncResult", "async_result");
-
-				w.EndInvoke (async_result);
-				return;
-			}
-
-			FileStreamAsyncResult result = async_result as FileStreamAsyncResult;
-			if (result == null || result.BytesRead != -1)
+			AsyncResult ares = async_result as AsyncResult;
+			if (ares == null)
 				throw new ArgumentException ("Invalid IAsyncResult", "async_result");
 
-			RemoveReference (result);
-			if (result.Done)
-				throw new InvalidOperationException ("EndWrite already called.");
+			WriteDelegate w = ares.AsyncDelegate as WriteDelegate;
+			if (w == null)
+				throw new ArgumentException ("Invalid IAsyncResult", "async_result");
 
-			result.Done = true;
-			if (!result.IsCompleted)
-				result.AsyncWaitHandle.WaitOne ();
-
-			if (result.Exception != null)
-				throw result.Exception;
-
-			buf_start += result.Count;
-			buf_offset = buf_length = 0;
+			w.EndInvoke (async_result);
+			return;
 		}
 
 		public override long Seek (long offset, SeekOrigin origin)
@@ -1061,30 +981,9 @@ namespace System.IO
 			buf_dirty = false;
 		}
 
-		static void KeepReference (object o)
-		{
-			lock (typeof (FileStream)) {
-				if (asyncObjects == null)
-					asyncObjects = new Hashtable ();
-
-				asyncObjects [o] = o;
-			}
-		}
-		
-		static void RemoveReference (object o)
-		{
-			lock (typeof (FileStream)) {
-				if (asyncObjects == null)
-					return;
-
-				asyncObjects.Remove (o);
-			}
-		}
-
 		// fields
 
 		internal const int DefaultBufferSize = 8192;
-		private static Hashtable asyncObjects;
 
 		private FileAccess access;
 		private bool owner;

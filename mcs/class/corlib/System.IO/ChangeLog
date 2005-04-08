@@ -1,3 +1,8 @@
+2005-04-07 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* FileStream.cs:
+	* MonoIO.cs: remove dead code related to async IO.
+
 2005-03-24  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Directory.cs: Added a Demand for Read/Write when creating a new 

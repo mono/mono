@@ -1,4 +1,3 @@
-//
 // System.IO.MonoIO.cs: static interface to native filesystem.
 //
 // Author:
@@ -45,10 +44,7 @@ namespace System.IO
 		public static readonly IntPtr
 			InvalidHandle = (IntPtr)(-1L);
 
-		public static readonly bool SupportsAsync = GetSupportsAsync ();
-
 		// error methods
-
 		public static Exception GetException (MonoIOError error)
 		{
 			return GetException (String.Empty, error);
@@ -154,10 +150,6 @@ namespace System.IO
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		public extern static MonoFileType GetFileType (IntPtr handle, out MonoIOError error);
-
-		// aio_* methods
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		extern static bool GetSupportsAsync ();
 
 		public static bool Exists (string path, out MonoIOError error)
 		{
@@ -392,13 +384,6 @@ namespace System.IO
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		public extern static int GetTempPath(out string path);
-
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		public extern static void BeginWrite (IntPtr handle,FileStreamAsyncResult ares);
-
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		public extern static void BeginRead (IntPtr handle, FileStreamAsyncResult ares);
-
 	}
 }
 
