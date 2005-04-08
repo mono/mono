@@ -35,8 +35,10 @@
     			         const pthread_attr_t *attr,
           			 void * (*thread_execp)(void *), void *arg);
   extern int GC_pthread_join(pthread_t wait_for, void **status);
+  extern int GC_pthread_detach(pthread_t thread);
 # define pthread_join GC_pthread_join
 # define pthread_create GC_pthread_create
+# define pthread_detach GC_pthread_detach
 #endif
 
 #if defined(GC_SOLARIS_PTHREADS) || defined(GC_SOLARIS_THREADS)

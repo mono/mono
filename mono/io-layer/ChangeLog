@@ -1,3 +1,21 @@
+2005-04-07 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* io-private.h:
+	* threads.c:
+	* threads.h:
+	* io.c:
+	* sockets.c:
+	* sockets.h: removed dead code that deals with async IO.
+
+2005-03-30  Zoltan Varga  <vargaz@freemail.hu>
+
+	* atomic.c (InterlockedIncrement): Fix fallback implementation of
+	InterlockedIncrement and InterlockedDecrement. Fixes #74228.
+
+2005-03-29  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* io-layer.h: Add required header files for compiling with VS.NET.
+
 2005-03-17 Miguel de Icaza <miguel@novell.com>
 
 	* io.c: don't fail on NFS when there are no more locks available.

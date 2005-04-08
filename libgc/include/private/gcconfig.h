@@ -1832,6 +1832,7 @@
 #   ifdef LINUX
 #	define OS_TYPE "LINUX"
 #       define LINUX_STACKBOTTOM
+#       define FALLBACK_TO_MMAP
 #       if !defined(GC_LINUX_THREADS) || !defined(REDIRECT_MALLOC)
 #	    define MPROTECT_VDB
 #	else

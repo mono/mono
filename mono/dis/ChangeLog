@@ -1,3 +1,28 @@
+2005-04-08  Ankit Jain  <radical@corewars.org>
+
+	Fix #74374.
+	* main.c (dis_type): Add 'is_nested' and 'forward' arguments.  If
+	'is_nested', don't emit .namespace directive even if namespace is
+	set.  If 'forward', print only types.
+	(dis_types): Update to allow emitting forward declarations.
+	(disassemble_file): Emit forward declarations if requested.
+	(main, usage): Add '--forward-decls' argument.
+	* get.c (get_typedef): When printing a nested type, don't include
+	the namespace again, even if it is set.
+
+2005-04-05  Zoltan Varga  <vargaz@freemail.hu>
+
+	* dump.c dis-cil.c: Apply patches from freebsd ports collection.
+
+2005-04-04  Zoltan Varga  <vargaz@freemail.hu>
+
+	* get.c (get_constant): Applied patch from Ankit Jain (radical@gmail.com). Fixes #74367.
+
+2005-03-29  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* dis-cil.c, dump.c: Add mono-compiler.h header to allow/ease 
+	compilation with non-GCC compilers.
+
 2005-03-04  Zoltan Varga  <vargaz@freemail.hu>
 
 	* get.c (dis_stringify_marshal_spec): Fix this after recent runtime

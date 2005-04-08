@@ -1,3 +1,23 @@
+2005-04-06  Zoltan Varga  <vargaz@freemail.hu>
+
+	* solaris_pthreads.c (GC_pthread_detach): Add locking.
+
+	* include/gc_pthread_redirects.h (pthread_detach): Override pthread_detach too.
+
+	* solaris_pthreads.c (GC_pthread_detach): Override pthread_detach too. Fixes
+	#74223.
+
+2005-03-29  Zoltan Varga  <vargaz@freemail.hu>
+
+	* os_dep.c: Add ability to fall back to mmap-ing memory when sbrk
+	fails.
+
+	* include/private/gcconfig.h: Enable FALLBACK_TO_MMAP on amd64. Fixes
+	#73882.
+
+	* config.guess config.sub ltmain.sh: Update these files with more
+	up-to-date versions. Fixes #74071.
+
 2005-03-09  Zoltan Varga  <vargaz@freemail.hu>
 
 	* solaris_threads.c (GC_thread_is_registered): Add this for solaris

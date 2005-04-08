@@ -1,0 +1,32 @@
+#!/bin/sh
+args="$@"
+assembly=
+while test x$1 != x; do
+	case $1 in
+		-[ldnm]:*) ;;
+		*) assembly=$1;;
+	esac
+	shift
+done
+
+if test x$assembly = x; then
+	echo You must specify at least the assembly name
+	echo 
+	echo 'Usage is: mono-service [options] service'
+	echo 
+	echo '    -d:<directory>         Working directory'
+	echo '    -l:<lock file>         Lock file (default is /tmp/<service>.log)'
+	echo '    -m:<syslog name>       Name to show in syslog'
+	echo '    -n:<service name>      Name of service to start (default is first defined)'
+	echo 
+	echo Controlling the service:
+	echo 
+	echo '    kill -USR1 `cat <lock file>`    Pausing service'
+	echo '    kill -USR2 `cat <lock file>`    Continuing service'
+	echo '    kill `cat <lock file>`          Ending service'
+	echo 
+	exit 1
+fi
+
+export MONO_DISABLE_SHM=1
+exec @bindir@/@mono_interp@ @mono_one_instdir@/@exe_file@ $args </dev/null >& /dev/null &

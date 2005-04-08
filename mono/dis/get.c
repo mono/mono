@@ -51,7 +51,7 @@ get_typedef (MonoImage *m, int idx)
                 
                 outer = get_typedef (m, mono_metadata_token_index (token));
                 result = g_strdup_printf (
-                        "%s%s%s/%s%s", ns, *ns?".":"", outer,
+                        "%s/%s%s", outer,
                         mono_metadata_string_heap (m, cols [MONO_TYPEDEF_NAME]),
 			tstring ? tstring : "");
 		g_free (outer);
@@ -1898,7 +1898,12 @@ get_constant (MonoImage *m, MonoTypeEnum t, guint32 blob_index)
 	case MONO_TYPE_STRING: {
 		gchar *str;
 		int i, j, tspaces = (len%16);
-		GString *res = g_string_new ("bytearray (\n\t");
+		GString *res;
+
+		if (len == 0)
+			return g_strdup_printf ("\"\"");
+
+		res = g_string_new ("bytearray (\n\t");
 
 		for(i = 1; i <= len; ++i) {
 			g_string_append_printf(res, "%02x ", ptr[i-1]);

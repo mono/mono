@@ -93,6 +93,166 @@ Wed Mar 16 16:24:11 CET 2005 Paolo Molaro <lupus@ximian.com>
 
 	This takes also care of parts of the leaks as seen by Joe.
 
+2005-2-1  Massimiliano Mantione  <massi@ximian.com>
+
+	* ssapre.c: Fix a subtle bug about availability, and limit SSAPRE
+	so that expressions that don't give much gain are not reduced.
+	* ssapre.h: Likewise.
+
+2005-04-04  Zoltan Varga  <vargaz@freemail.hu>
+
+	* exceptions-x86.c (mono_arch_find_jit_info): Remove last SC_EBP reference.
+
+	* mini-x86.c (mono_emit_stack_alloc): Fix localloc under windows.
+
+	* mini-x86.h exceptions-x86.c: Hopefully fix compilation on *BSD.
+
+2005-04-01  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini-sparc.c mini-sparc.h: Add asserts when running with sigaltstack.
+
+	* exceptions-x86.c (mono_arch_monoctx_to_sigctx): Fix cygwin build.
+
+2005-03-31  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini-x86.c: If sigaltstack support is enabled, perform win32 style
+	stack touching.
+
+	* mini.h (mono_arch_sigctx_to_monoctx): New arch-specific function.
+
+	* mini.h (mono_arch_monoctx_to_sigctx): New arch-specific function.
+
+	* mini.c: sigaltstack support requires MONO_ARCH_USE_SIGACTION.
+
+	* mini-x86.h mini-x86.c exceptions-x86.c: Add support for 
+	MONO_ARCH_USE_SIGACTION. Fixes #74252.
+
+	* mini-x86.h: Enable MONO_ARCH_USE_SIGACTION on linux.
+
+	* mini-x86.c: Fix up stack overflow handling.	
+
+	* exceptions.cs: Add new regression test.
+
+2005-03-30  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini-x86.c (mono_arch_emit_prolog): Adjust stack after calls to
+	mono_jit_thread_attach.
+
+	* mini.c (mono_method_to_ir): Verify called method is not abstract.
+
+2005-03-29  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini.c (mono_method_to_ir): Applied Ben's patch from bug #61441 to
+	avoid calling constructors using callvirt.
+
+	* inssel.brg: Fix #74073.
+
+2005-03-29  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* aot.c, mini.h: Added mono-compiler.h header to allow/ease 
+	compilation with non-GCC compilers.
+	* mini-exceptions.c, mini-x86.c|h: Patches to make compilation of mono
+	possible using VS.NET. Adapted from the work of J Lothian (for VC6).
+
+Tue Mar 29 11:43:01 CEST 2005 Paolo Molaro <lupus@ximian.com>
+
+	* inssel.brg, arrays.cs: fix long standing 64 bit issue in access to
+	klass->interface_offsets (will likely fix bug#74073).
+
+2005-03-29  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini-amd64.c (mono_arch_is_int_overflow): Fix rex handling.
+
+2005-03-28  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini-amd64.c (mono_arch_output_basic_block): Fix order of parameters
+	to amd64_div_reg_size ().
+	
+	* mini-amd64.c (mono_arch_emit_exceptions): Emit a near call here too.
+
+2005-03-27  Zoltan Varga  <vargaz@freemail.hu>
+
+	* cpu-amd64.md (store_membase_reg): Fix length of storer8 opcodes.
+
+2005-03-24  Zoltan Varga  <vargaz@freemail.hu>
+
+	* driver.c: Turn off automatic command line globbing under windows. Fixes #73763.
+
+2005-03-24  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini.c (mono_method_to_ir): Remove debugging stuff left in by mistake.
+	
+	* mini.c (mono_precompile_assembly): Load and precompile referenced
+	assemblies as well. Fixes #74015.
+
+2005-03-23  Zoltan Varga  <vargaz@freemail.hu>
+
+	* cpu-amd64.md (sin): Fix up maximum lengths of some opcodes.
+
+2005-03-23  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* declsec.c: Skip linkdemand checks for intra-corlib calls. This skips
+	a lot of checks	and (anyway) permissions cannot work until corlib is 
+	loaded.
+
+Wed Mar 23 14:29:49 CET 2005 Paolo Molaro <lupus@ximian.com>
+
+	* mini-ppc.c: fixed ABI issue on sysv/ppc.
+
+Tue Mar 22 19:03:17 CET 2005 Paolo Molaro <lupus@ximian.com>
+
+	* tramp-ppc.c, exceptions-ppc.c: added missing icache flush
+	calls (fixes bug#72824).
+
+Tue Mar 22 16:28:48 CET 2005 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c: fix tail recursion elimination (see test in bug#73936).
+
+2005-03-21  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini-amd64.c (mono_arch_output_basic_block): Add inline versions of
+	some fp functions in sse2 mode.
+
+2005-03-20  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini-x86.c (emit_tls_get): Move tls handling into a separate helper function.
+
+2005-03-19  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini.h mini.c: Add mono_get_jit_tls_key ().
+
+	* mini-x86.c: Enable fast TLS support on windows.
+
+2005-03-17  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* declsec.c: Renamed aptc to allowpartiallytrustedcallers.
+	* mini.c: Check for p/invoke method when generating code. If a
+	p/invoke method, or it's class, isn't decorated with [Suppress
+	UnmanagedCodeSecurity] then generate code to call System.Security.
+	UnmanagedDemand (only if the security manager is active).
+
+2005-03-16  Zoltan Varga  <vargaz@freemail.hu>
+
+	* tramp-amd64.c (create_specific_trampoline): Revert parts of the 
+	last change as it seems to cause strange crashes.
+	
+Wed Mar 16 16:24:11 CET 2005 Paolo Molaro <lupus@ximian.com>
+
+	* *.c: handle unsafe function pointers where needed.
+
+2005-03-16  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini.c (mono_jit_free_method): Remove the fixme too.
+
+2005-03-15  Miguel de Icaza  <miguel@novell.com>
+
+	* mini.c: As discussed, make the code actually free the delegate
+	thunk now, to enable the debugging of delegate problems, use
+	MONO_DEBUG=1 when running Mono. 
+
+	This takes also care of parts of the leaks as seen by Joe.
+
+>>>>>>> .merge-right.r42701
 2005-03-15  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini-amd64.c: Rework local register allocator to unify the fp+non fp

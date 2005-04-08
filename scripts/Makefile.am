@@ -1,7 +1,8 @@
-EXTRA_DIST = script.in script2.in mono-nunit.pc.in
+EXTRA_DIST = script.in script2.in mono-service.in mono-nunit.pc.in
 DISTCLEANFILES = mono-nunit.pc
 
 bin2dir = $(bindir)
+servicedir = $(bindir)
 
 bin_SCRIPTS = \
 	al			\
@@ -39,6 +40,8 @@ bin_SCRIPTS = \
 
 bin2_SCRIPTS = gmcs wsdl2
 
+service_SCRIPTS = mono-service
+
 CLEANFILES = $(bin_SCRIPTS) $(bin2_SCRIPTS)
 
 if USE_JIT
@@ -65,6 +68,10 @@ REWRITE = sed \
 	-e 's,@''gtkdir@,$(gtkdir),g'				\
 	-e 's,@''exe_file@,$@.exe,g'				\
 	-e 's,@''mono_interp@,$(MONO_INTERP),g'
+
+mono-service: mono-service.in Makefile
+	$(REWRITE) $(srcdir)/mono-service.in > $@.tmp
+	mv $@.tmp $@
 
 $(bin_SCRIPTS): script.in Makefile
 	$(REWRITE) $(srcdir)/script.in > $@.tmp

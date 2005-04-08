@@ -29,6 +29,8 @@
 #define ALLOCA _alloca
 #else
 #include <alloca.h>
+/* alloca is in stdlib.h on freebsd */
+#include <stdlib.h>
 #define ALLOCA alloca
 #endif
 

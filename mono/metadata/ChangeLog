@@ -1,3 +1,97 @@
+2005-04-08 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* threadpool.c: removed another unused function.
+
+2005-04-08  Ankit Jain  <radical@corewars.org>
+
+	* reflection.c (get_default_param_value_blobs): Add 'types'
+	parameter to get the types encoded in the constant table.
+	(mono_param_get_objects): Use the type from the constant table,
+	not the type of the parameter, when creating default values.
+	Handle null default values correctly.
+
+2005-04-07 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* file-io.c:
+	* file-io.h:
+	* threadpool.c:
+	* threadpool.h:
+	* icall.c:
+	* socket-io.c: removed dead code for async IO.
+
+2005-04-07 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* socket-io.h: 2 more fields in MonoSocketAsyncResult.
+
+	* threadpool.c: intercept socket async. calls and pass them to a thread
+	that is polling and dispatching the job items to the threadpool as
+	socket become ready. Fixes bugs #71217, #71933.
+
+	* icall.c: Removed AsyncReceive and AsyncSend. Speed up for copies
+	between char and short/ushort arrays.
+
+	* socket-io.c: remove dead code.
+
+2005-04-06  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* locales.c,
+	  icall.c : removed InternalToUpper_Comp() and
+	  InternalToLower_Comp().
+
+2005-04-06  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* char-conversions.h : The tables were incorrectly generated. Should
+	  be generated against invariant culture.
+
+2005-04-04  Zoltan Varga  <vargaz@freemail.hu>
+
+	* object.c (mono_runtime_invoke_array): Fix return value when 
+	passing pre-created valuetype objects to ctors.
+
+	* gc.c (mono_gchandle_is_in_domain): Applied patch from Jon Larimer 
+	(jlarimer@gmail.com). Avoid crashes when the wrapper object is null.
+	Fixes #74338.
+
+2005-03-30  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* domain.c: removed g_assert for runtimesecurityframe_class. This is 
+	only used with --security and hides the wrong corlib version error.
+
+2005-03-30  Joshua Tauberer  <tauberer@for.net>
+
+	* class.c: Changed mono_class_name_from_token so that types
+	outside of a namespace don't have an initial period.  Improved
+	the g_warning message used in _mono_class_get when loading
+	fails.
+	* assembly.c: In mono_assembly_load_reference, when an assembly
+	can't be found, "No such file or directory" is misleading and
+	unhelpful because a few paths were checked for the presence of
+	the assembly.  When that happens (ENOENT), display a nicer
+	message indicating the directories that were searched.  In all
+	cases, the warning is made easier to read for non-hackers.
+
+2005-03-29  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* assembly.c: Set MONO_ASSEMBLIES to NULL when compiling from a VS.NET
+	project/solution.
+	* appdomain.h|domain.c: Removed inline from functions.
+	* appdomain.c: Reduced warnings when compiling on windows.
+	* icall.c: Fixed output_debug declaration to gunichar2*.
+	* mono-config.c: Reduced warnings when compiling on windows.
+	* rand.c: Added missing "windows.h". Added missing return value.
+	* rawbuffer.c: Added missing winsock2.h for windows.
+	* sysmath.h: Added mono-compiler.h header to allow/ease 
+	compilation with non-GCC compilers.
+	* threads.c: Fixed declarations to compile with VS.NET C compiler.
+	Removed cast warnings.
+
+	Adapted from the work of J Lothian (for VC6).
+
+2005-03-29  Zoltan Varga  <vargaz@freemail.hu>
+
+	* assembly.c (mono_assembly_load_corlib): Do not try loading corlib
+	from default_path.
+
 2005-03-27  Zoltan Varga  <vargaz@freemail.hu>
 
 	* marshal.c (mono_marshal_get_managed_wrapper): Fix bogus assert on

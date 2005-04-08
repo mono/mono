@@ -1,3 +1,7 @@
+2005-03-28  Zoltan Varga  <vargaz@freemail.hu>
+
+	* amd64/amd64-codegen.h: Avoid emitting a rex in some places.
+
 2005-03-15  Zoltan Varga  <vargaz@freemail.hu>
 
 	* amd64/amd64-codegen.h (amd64_emit_rex): Emit a rex when accessing the

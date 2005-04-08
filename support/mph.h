@@ -35,7 +35,7 @@
 #include <stdint.h>             /* for SIZE_MAX */
 #endif
 
-#if __APPLE__ || __BSD__
+#if __APPLE__ || __BSD__ || __FreeBSD__
 #define MPH_ON_BSD
 #endif
 

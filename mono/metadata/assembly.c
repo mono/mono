@@ -28,6 +28,10 @@
 #include <mono/utils/mono-logger.h>
 #ifdef PLATFORM_WIN32
 #include <mono/os/util.h>
+#ifdef _MSC_VER
+	/* not used on Windows - see mono_set_rootdir () */
+	#define MONO_ASSEMBLIES		NULL
+#endif
 #endif
 
 /* AssemblyVersionMap: an assembly name and the assembly version set on which it is based */
@@ -492,7 +496,9 @@ mono_assembly_load_reference (MonoImage *image, int index)
 	if (reference == NULL){
 		char *extra_msg = g_strdup ("");
 
-		if (status == MONO_IMAGE_ERROR_ERRNO) {
+		if (status == MONO_IMAGE_ERROR_ERRNO && errno == ENOENT) {
+			extra_msg = g_strdup_printf ("The assembly was not found in the Global Assembly Cache, a path listed in the MONO_PATH environment variable, or in the location of the executing assembly (%s).\n", image->assembly->basedir);
+		} else if (status == MONO_IMAGE_ERROR_ERRNO) {
 			extra_msg = g_strdup_printf ("System error: %s\n", strerror (errno));
 		} else if (status == MONO_IMAGE_MISSING_ASSEMBLYREF) {
 			extra_msg = g_strdup ("Cannot find an assembly referenced from this one.\n");
@@ -500,13 +506,13 @@ mono_assembly_load_reference (MonoImage *image, int index)
 			extra_msg = g_strdup ("The file exists but is not a valid assembly.\n");
 		}
 		
-		g_warning ("Could not find assembly %s, references from %s (assemblyref_index=%d)\n"
-				   "     Major/Minor: %d,%d\n"
-				   "     Build:       %d,%d\n"
-				   "     Token:       %s\n%s",
-				   aname.name, image->name, index,
+		g_warning ("The following assembly referenced from %s could not be loaded:\n"
+				   "     Assembly:   %s    (assemblyref_index=%d)\n"
+				   "     Version:    %d.%d.%d.%d\n"
+				   "     Public Key: %s\n%s",
+				   image->name, aname.name, index,
 				   aname.major, aname.minor, aname.build, aname.revision,
-				   aname.public_key_token, extra_msg);
+				   strlen(aname.public_key_token) == 0 ? "(none)" : aname.public_key_token, extra_msg);
 		g_free (extra_msg);
 	}
 
@@ -1183,10 +1189,6 @@ mono_assembly_load_corlib (const MonoRuntimeInfo *runtime, MonoImageOpenStatus *
 		if (corlib)
 			return corlib;
 	}
-	corlib = load_in_path ("mscorlib.dll", default_path, status, FALSE);
-
-	if (corlib)
-		return corlib;
 
 	/* Load corlib from mono/<version> */
 	

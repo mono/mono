@@ -1,5 +1,6 @@
 #include <mono/jit/jit.h>
 #include <mono/metadata/environment.h>
+#include <stdlib.h>
 
 /*
  * Very simple mono embedding example.

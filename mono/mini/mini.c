@@ -3797,6 +3797,9 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 
 				g_assert (cmethod);
 
+				if (!virtual && (cmethod->flags & METHOD_ATTRIBUTE_ABSTRACT))
+					goto unverified;
+
 				if (!cmethod->klass->inited)
 					mono_class_init (cmethod->klass);
 
@@ -4649,7 +4652,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			MonoInst *iargs [2];
 			MonoMethodSignature *fsig;
 			int temp;
-
+			
 			CHECK_OPSIZE (5);
 			token = read32 (ip + 1);
 			if (method->wrapper_type != MONO_WRAPPER_NONE) {
@@ -4674,7 +4677,6 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			}
 
 			handle_loaded_temps (cfg, bblock, stack_start, sp);
-			
 
 			if (cmethod->klass->parent == mono_defaults.array_class) {
 				NEW_METHODCONST (cfg, *sp, cmethod);
@@ -4685,6 +4687,8 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				/* now call the string ctor */
 				temp = mono_emit_method_call_spilled (cfg, bblock, cmethod, fsig, sp, ip, NULL);
 			} else {
+				MonoInst* callvirt_this_arg = NULL;
+				
 				if (cmethod->klass->valuetype) {
 					iargs [0] = mono_compile_create_var (cfg, &cmethod->klass->byval_arg, OP_LOCAL);
 					temp = iargs [0]->inst_c0;
@@ -4702,6 +4706,10 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 					NEW_TEMPLOAD (cfg, *sp, temp);
 				}
 
+				/* Avoid virtual calls to ctors if possible */
+				if (cmethod->klass->marshalbyref)
+					callvirt_this_arg = sp [0];
+				
 				if ((cfg->opt & MONO_OPT_INLINE) && cmethod &&
 				    mono_method_check_inlining (cfg, cmethod) &&
 				    !mono_class_is_subclass_of (cmethod->klass, mono_defaults.exception_class, FALSE) &&
@@ -4728,11 +4736,11 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 						break;
 						
 					} else {
-						mono_emit_method_call_spilled (cfg, bblock, cmethod, fsig, sp, ip, sp[0]);
+						mono_emit_method_call_spilled (cfg, bblock, cmethod, fsig, sp, ip, callvirt_this_arg);
 					}
 				} else {
 					/* now call the actual ctor */
-					mono_emit_method_call_spilled (cfg, bblock, cmethod, fsig, sp, ip, sp[0]);
+					mono_emit_method_call_spilled (cfg, bblock, cmethod, fsig, sp, ip, callvirt_this_arg);
 				}
 			}
 
@@ -8517,8 +8525,16 @@ mono_codegen (MonoCompile *cfg)
 
 	/* emit code all basic blocks */
 	for (bb = cfg->bb_entry; bb; bb = bb->next_bb) {
+		static int inline_count = 0, out_of_line_count = 0;
+		guint32 last_offset = cfg->code_len;
+
 		bb->native_offset = cfg->code_len;
 		mono_arch_output_basic_block (cfg, bb);
+
+		if (bb->out_of_line)
+			out_of_line_count += cfg->code_len - last_offset;
+		else
+			inline_count += cfg->code_len - last_offset;
 
 		if (bb == cfg->bb_exit) {
 			cfg->epilog_begin = cfg->code_len;
@@ -8615,7 +8631,9 @@ mono_codegen (MonoCompile *cfg)
 			break;
 		}
 	}
-       
+
+	//printf ("B: %s %d\n", mono_method_full_name (cfg->method, TRUE), cfg->code_len);
+
 	if (cfg->verbose_level > 0) {
 		char* nm = mono_method_full_name (cfg->method, TRUE);
 		g_print ("Method %s emitted at %p to %p [%s]\n", 
@@ -9598,8 +9616,12 @@ SIG_HANDLER_SIGNATURE (sigill_signal_handler)
 
 #ifdef MONO_ARCH_SIGSEGV_ON_ALTSTACK
 
+#ifndef MONO_ARCH_USE_SIGACTION
+#error "Can't use sigaltstack without sigaction"
+#endif
+
 static void
-sigsegv_signal_handler (int _dummy, siginfo_t *info, void *context)
+SIG_HANDLER_SIGNATURE (sigsegv_signal_handler)
 {
 	MonoException *exc;
 	MonoJitTlsData *jit_tls = TlsGetValue (mono_jit_tls_id);

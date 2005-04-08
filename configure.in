@@ -6,7 +6,7 @@ AC_CANONICAL_SYSTEM
 m4_ifdef([_A][M_PROG_TAR],[_A][M_SET_OPTION([tar-ustar])])
 
 AM_CONFIG_HEADER(config.h)
-AM_INIT_AUTOMAKE(mono,1.1.5)
+AM_INIT_AUTOMAKE(mono,1.1.7)
 AM_MAINTAINER_MODE
 
 AC_PROG_LN_S
@@ -249,11 +249,18 @@ AM_CONDITIONAL(HAVE_ZLIB, test x$have_zlib = xyes)
 # for mono/metadata/debug-symfile.c
 AC_CHECK_HEADERS(elf.h)
 
+# for support
+AC_CHECK_HEADERS(poll.h)
+AC_CHECK_HEADERS(sys/poll.h)
+AC_CHECK_HEADERS(sys/wait.h)
+AC_CHECK_HEADERS(grp.h)
+AC_CHECK_HEADERS(syslog.h)
+
 # for mono/dis
 AC_CHECK_HEADERS(wchar.h)
 AC_CHECK_HEADERS(ieeefp.h)
 AC_MSG_CHECKING(for isinf)
-AC_TRY_COMPILE([#include <math.h>], [
+AC_TRY_LINK([#include <math.h>], [
 	int f = isinf (1);
 ], [
 	AC_MSG_RESULT(yes)
@@ -332,15 +339,15 @@ BUILD_GLIB_LIBS=`$PKG_CONFIG --libs glib-2.0 gthread-2.0`
 AC_SUBST(BUILD_GLIB_CFLAGS)
 AC_SUBST(BUILD_GLIB_LIBS)
 
-PKG_PATH=
+pkg_config_path=
 AC_ARG_WITH(crosspkgdir, [  --with-crosspkgdir=/path/to/pkg-config/dir],
 	if test x$with_crosspkgdir = "x"; then
 		if test -s $PKG_CONFIG_PATH; then
-			PKG_PATH=$PKG_CONFIG_PATH
+			pkg_config_path=$PKG_CONFIG_PATH
 		fi
 	else
-		PKG_PATH=$with_crosspkgdir
-		PKG_CONFIG_PATH=$PKG_PATH
+		pkg_config_path=$with_crosspkgdir
+		PKG_CONFIG_PATH=$pkg_config_path
 		export PKG_CONFIG_PATH
 	fi
 )
@@ -900,23 +907,23 @@ if test x$platform_win32 = xno; then
 
 				sa.sa_sigaction = sigsegv_signal_handler;
 				sigemptyset (&sa.sa_mask);
-				sa.sa_flags = SA_SIGINFO | SA_STACK;
+				sa.sa_flags = SA_SIGINFO | SA_ONSTACK;
 				if (sigaction (SIGSEGV, &sa, NULL) == -1) {
-					perror ("lala");
+					perror ("sigaction");
 					return;
 				}
 
 				sas.ss_sp = malloc (SIGSTKSZ);
 				sas.ss_size = SIGSTKSZ;
-				sas.ss_flags = SS_ONSTACK;
+				sas.ss_flags = 0;
 				if (sigaltstack (&sas, NULL) == -1) {
-					perror ("lala");
+					perror ("sigaltstack");
 					return;
 				}
 
 				pthread_attr_init (&attr);
 				if (pthread_create(&id, &attr, loop, &attr) != 0) {
-					printf ("failed\n");
+					printf ("pthread_create\n");
 					return;
 				}
 
@@ -1027,41 +1034,6 @@ if test x$platform_win32 = xno; then
 	], [
 		AC_MSG_RESULT(no)
 	]) 
-
-	dnl *********************
-	dnl *** Check for AIO ***
-	dnl *********************
-	AC_MSG_CHECKING([for SIGEV_THREAD definition])
-	dnl Some systems (FreeBSD at least) may have aio_read
-	dnl but don't support/define SIGEV_THREAD.
-	AC_TRY_COMPILE([
-	#include <sys/signal.h>
-	],[
-	int x = SIGEV_THREAD;
-	],[
-		ac_cv_c_sigev_thread=yes
-		AC_MSG_RESULT(yes)
-	],[
-		AC_MSG_RESULT(no)
-	])
-
-	if test "$ac_cv_c_sigev_thread" = "yes" ; then
-		AC_CHECK_HEADERS(aio.h sys/aio.h)
-		AC_CHECK_LIB(rt, aio_read, [ LIBS="$LIBS -lrt" ],)
-		SIGVAL_PTR="undefined"
-		if test "$ac_cv_header_aio_h" = "yes" -o "$ac_cv_header_sys_aio_h" = "yes" ; then
-			AC_CHECK_MEMBER(union sigval.sigval_ptr,SIGVAL_PTR="sigval_ptr",, [
-					#include <sys/signal.h>
-					])
-			AC_CHECK_MEMBER(union sigval.sival_ptr,SIGVAL_PTR="sival_ptr",, [
-					#include <sys/signal.h>
-					])
-			if test "$SIGVAL_PTR" = "undefined" ; then
-				AC_MSG_ERROR([Unable to detect field name in 'union sigval'])
-			fi
-		fi
-		AC_DEFINE_UNQUOTED(SIGVAL_PTR,$SIGVAL_PTR,[Pointer field name in 'union sigval'])
-	fi
 
 	dnl **********************************
 	dnl *** Checks for MonoPosixHelper ***

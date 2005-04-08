@@ -562,6 +562,7 @@ ves_icall_System_Array_FastCopy (MonoArray *source, int source_idx, MonoArray* d
 	MonoClass *src_class;
 	MonoClass *dest_class;
 	int i;
+	gboolean char_int16;
 
 	MONO_ARCH_SAVE_REGS;
 
@@ -606,7 +607,13 @@ ves_icall_System_Array_FastCopy (MonoArray *source, int source_idx, MonoArray* d
 		return TRUE;
 	}
 
-	if (src_class != dest_class) {
+	/* Check if we're copying a char[] <==> (u)short[] */
+	char_int16 = (src_class == mono_defaults.int16_class || src_class == mono_defaults.uint16_class ||
+				src_class == mono_defaults.char_class);
+	char_int16 = (char_int16 && (dest_class == mono_defaults.int16_class || dest_class == mono_defaults.uint16_class ||
+				dest_class == mono_defaults.char_class));
+
+	if (!char_int16 && src_class != dest_class) {
 		if (dest_class->valuetype || dest_class->enumtype || src_class->valuetype || src_class->enumtype)
 			return FALSE;
 
@@ -5488,7 +5495,7 @@ static void
 ves_icall_System_Diagnostics_DefaultTraceListener_WriteWindowsDebugString (MonoString *message)
 {
 #if defined (PLATFORM_WIN32)
-	static void (*output_debug) (gchar *);
+	static void (*output_debug) (gunichar2 *);
 	static gboolean tried_loading = FALSE;
 
 	MONO_ARCH_SAVE_REGS;
@@ -5903,9 +5910,7 @@ static const IcallEntry buffer_icalls [] = {
 };
 
 static const IcallEntry char_icalls [] = {
-	{"GetDataTablePointers", ves_icall_System_Char_GetDataTablePointers},
-	{"InternalToLower(char,System.Globalization.CultureInfo)", ves_icall_System_Char_InternalToLower_Comp},
-	{"InternalToUpper(char,System.Globalization.CultureInfo)", ves_icall_System_Char_InternalToUpper_Comp}
+	{"GetDataTablePointers", ves_icall_System_Char_GetDataTablePointers}
 };
 
 static const IcallEntry defaultconf_icalls [] = {
@@ -6055,8 +6060,6 @@ static const IcallEntry path_icalls [] = {
 };
 
 static const IcallEntry monoio_icalls [] = {
-	{"BeginRead", ves_icall_System_IO_MonoIO_BeginRead },
-	{"BeginWrite", ves_icall_System_IO_MonoIO_BeginWrite },
 	{"Close(intptr,System.IO.MonoIOError&)", ves_icall_System_IO_MonoIO_Close},
 	{"CopyFile(string,string,bool,System.IO.MonoIOError&)", ves_icall_System_IO_MonoIO_CopyFile},
 	{"CreateDirectory(string,System.IO.MonoIOError&)", ves_icall_System_IO_MonoIO_CreateDirectory},
@@ -6071,7 +6074,6 @@ static const IcallEntry monoio_icalls [] = {
 	{"GetFileStat(string,System.IO.MonoIOStat&,System.IO.MonoIOError&)", ves_icall_System_IO_MonoIO_GetFileStat},
 	{"GetFileType(intptr,System.IO.MonoIOError&)", ves_icall_System_IO_MonoIO_GetFileType},
 	{"GetLength(intptr,System.IO.MonoIOError&)", ves_icall_System_IO_MonoIO_GetLength},
-	{"GetSupportsAsync", ves_icall_System_IO_MonoIO_GetSupportsAsync},
 	{"GetTempPath(string&)", ves_icall_System_IO_MonoIO_GetTempPath},
 	{"Lock(intptr,long,long,System.IO.MonoIOError&)", ves_icall_System_IO_MonoIO_Lock},
 	{"MoveFile(string,string,System.IO.MonoIOError&)", ves_icall_System_IO_MonoIO_MoveFile},
@@ -6298,8 +6300,6 @@ static const IcallEntry dns_icalls [] = {
 
 static const IcallEntry socket_icalls [] = {
 	{"Accept_internal(intptr,int&)", ves_icall_System_Net_Sockets_Socket_Accept_internal},
-	{"AsyncReceiveInternal", ves_icall_System_Net_Sockets_Socket_AsyncReceive},
-	{"AsyncSendInternal", ves_icall_System_Net_Sockets_Socket_AsyncSend},
 	{"Available_internal(intptr,int&)", ves_icall_System_Net_Sockets_Socket_Available_internal},
 	{"Bind_internal(intptr,System.Net.SocketAddress,int&)", ves_icall_System_Net_Sockets_Socket_Bind_internal},
 	{"Blocking_internal(intptr,bool,int&)", ves_icall_System_Net_Sockets_Socket_Blocking_internal},
@@ -6307,7 +6307,6 @@ static const IcallEntry socket_icalls [] = {
 	{"Connect_internal(intptr,System.Net.SocketAddress,int&)", ves_icall_System_Net_Sockets_Socket_Connect_internal},
 	{"GetSocketOption_arr_internal(intptr,System.Net.Sockets.SocketOptionLevel,System.Net.Sockets.SocketOptionName,byte[]&,int&)", ves_icall_System_Net_Sockets_Socket_GetSocketOption_arr_internal},
 	{"GetSocketOption_obj_internal(intptr,System.Net.Sockets.SocketOptionLevel,System.Net.Sockets.SocketOptionName,object&,int&)", ves_icall_System_Net_Sockets_Socket_GetSocketOption_obj_internal},
-	{"GetSupportsAsync", ves_icall_System_IO_MonoIO_GetSupportsAsync},
 	{"Listen_internal(intptr,int,int&)", ves_icall_System_Net_Sockets_Socket_Listen_internal},
 	{"LocalEndPoint_internal(intptr,int&)", ves_icall_System_Net_Sockets_Socket_LocalEndPoint_internal},
 	{"Poll_internal", ves_icall_System_Net_Sockets_Socket_Poll_internal},
@@ -6496,8 +6495,6 @@ static const IcallEntry string_icalls [] = {
 	{"InternalStrcpy(string,int,char[],int,int)", ves_icall_System_String_InternalStrcpy_CharsN},
 	{"InternalStrcpy(string,int,string)", ves_icall_System_String_InternalStrcpy_Str},
 	{"InternalStrcpy(string,int,string,int,int)", ves_icall_System_String_InternalStrcpy_StrN},
-	{"InternalToLower(System.Globalization.CultureInfo)", ves_icall_System_String_InternalToLower_Comp},
-	{"InternalToUpper(System.Globalization.CultureInfo)", ves_icall_System_String_InternalToUpper_Comp},
 	{"InternalTrim", ves_icall_System_String_InternalTrim},
 	{"get_Chars", ves_icall_System_String_get_Chars}
 };
@@ -6602,7 +6599,6 @@ static const IcallEntry thread_icalls [] = {
 };
 
 static const IcallEntry threadpool_icalls [] = {
-	{"BindHandleInternal", ves_icall_System_Threading_ThreadPool_BindHandle},
 	{"GetAvailableThreads", ves_icall_System_Threading_ThreadPool_GetAvailableThreads},
 	{"GetMaxThreads", ves_icall_System_Threading_ThreadPool_GetMaxThreads},
 	{"GetMinThreads", ves_icall_System_Threading_ThreadPool_GetMinThreads},

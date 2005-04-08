@@ -18,6 +18,9 @@
 #include "dump.h"
 #include "dis-cil.h"
 #include "mono/metadata/opcodes.h"
+#include "mono/utils/mono-compiler.h"
+
+#ifndef HAVE_ISINF
 
 #ifdef HAVE_IEEEFP_H
 #include <ieeefp.h>
@@ -37,10 +40,11 @@ isinf (double num)
 	return 0;
 }
 #else
-#ifndef HAVE_ISINF
 #error "Don't know how to implement isinf for this platform."
 #endif
+
 #endif
+
 /*
  * Strings on the US heap are encoded using UTF-16.  Poor man's
  * UTF-16 to UTF-8.  I know its broken, use libunicode later.

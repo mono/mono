@@ -12,6 +12,11 @@
 #include <string.h>
 #include <math.h>
 
+#ifndef PLATFORM_WIN32
+#include <unistd.h>
+#include <sys/mman.h>
+#endif
+
 #include <mono/metadata/appdomain.h>
 #include <mono/metadata/debug-helpers.h>
 #include <mono/metadata/threads.h>
@@ -91,7 +96,7 @@ typedef struct {
 
 #define FLOAT_PARAM_REGS 0
 
-static X86_Reg_No param_regs [] = { };
+static X86_Reg_No param_regs [] = { 0 };
 
 #ifdef PLATFORM_WIN32
 static X86_Reg_No return_regs [] = { X86_EAX, X86_EDX };
@@ -469,6 +474,7 @@ static int
 cpuid (int id, int* p_eax, int* p_ebx, int* p_ecx, int* p_edx)
 {
 	int have_cpuid = 0;
+#ifndef _MSC_VER
 	__asm__  __volatile__ (
 		"pushfl\n"
 		"popl %%eax\n"
@@ -485,7 +491,21 @@ cpuid (int id, int* p_eax, int* p_ebx, int* p_ecx, int* p_edx)
 		:
 		: "%eax", "%edx"
 	);
-
+#else
+	__asm {
+		pushfd
+		pop eax
+		mov edx, eax
+		xor eax, 0x200000
+		push eax
+		popfd
+		pushfd
+		pop eax
+		xor eax, edx
+		and eax, 0x200000
+		mov have_cpuid, eax
+	}
+#endif
 	if (have_cpuid) {
 		/* Have to use the code manager to get around WinXP DEP */
 		MonoCodeManager *codeman = mono_code_manager_new_dynamic ();
@@ -516,14 +536,18 @@ cpuid (int id, int* p_eax, int* p_ebx, int* p_ecx, int* p_edx)
 void
 mono_arch_cpu_init (void)
 {
+	/* spec compliance requires running with double precision */
+#ifndef _MSC_VER
 	guint16 fpcw;
 
-	/* spec compliance requires running with double precision */
 	__asm__  __volatile__ ("fnstcw %0\n": "=m" (fpcw));
 	fpcw &= ~X86_FPCW_PRECC_MASK;
 	fpcw |= X86_FPCW_PREC_DOUBLE;
 	__asm__  __volatile__ ("fldcw %0\n": : "m" (fpcw));
 	__asm__  __volatile__ ("fnstcw %0\n": "=m" (fpcw));
+#else
+	_control87 (_PC_64, MCW_PC);
+#endif
 }
 
 /*
@@ -557,10 +581,12 @@ mono_arch_cpu_optimizazions (guint32 *exclude_mask)
 gboolean
 mono_arch_is_int_overflow (void *sigctx, void *info)
 {
-	struct sigcontext *ctx = (struct sigcontext*)sigctx;
+	MonoContext ctx;
 	guint8* ip;
 
-	ip = (guint8*)ctx->SC_EIP;
+	mono_arch_sigctx_to_monoctx (sigctx, &ctx);
+
+	ip = (guint8*)ctx.eip;
 
 	if ((ip [0] == 0xf7) && (x86_modrm_mod (ip [1]) == 0x3) && (x86_modrm_reg (ip [1]) == 0x7)) {
 		gint32 reg;
@@ -568,10 +594,10 @@ mono_arch_is_int_overflow (void *sigctx, void *info)
 		/* idiv REG */
 		switch (x86_modrm_rm (ip [1])) {
 		case X86_ECX:
-			reg = ctx->SC_ECX;
+			reg = ctx.ecx;
 			break;
 		case X86_EBX:
-			reg = ctx->SC_EBX;
+			reg = ctx.ebx;
 			break;
 		default:
 			g_assert_not_reached ();
@@ -2588,46 +2614,53 @@ static unsigned char*
 mono_emit_stack_alloc (guchar *code, MonoInst* tree)
 {
 	int sreg = tree->sreg1;
-#ifdef PLATFORM_WIN32
-	guint8* br[5];
+	int need_touch = FALSE;
 
-	/*
-	 * Under Windows:
-	 * If requested stack size is larger than one page,
-	 * perform stack-touch operation
-	 */
-	/*
-	 * Generate stack probe code.
-	 * Under Windows, it is necessary to allocate one page at a time,
-	 * "touching" stack after each successful sub-allocation. This is
-	 * because of the way stack growth is implemented - there is a
-	 * guard page before the lowest stack page that is currently commited.
-	 * Stack normally grows sequentially so OS traps access to the
-	 * guard page and commits more pages when needed.
-	 */
-	x86_test_reg_imm (code, sreg, ~0xFFF);
-	br[0] = code; x86_branch8 (code, X86_CC_Z, 0, FALSE);
-
-	br[2] = code; /* loop */
-	x86_alu_reg_imm (code, X86_SUB, X86_ESP, 0x1000);
-	x86_test_membase_reg (code, X86_ESP, 0, X86_ESP);
-	x86_alu_reg_imm (code, X86_SUB, sreg, 0x1000);
-	x86_alu_reg_imm (code, X86_CMP, sreg, 0x1000);
-	br[3] = code; x86_branch8 (code, X86_CC_AE, 0, FALSE);
-	x86_patch (br[3], br[2]);
-	x86_test_reg_reg (code, sreg, sreg);
-	br[4] = code; x86_branch8 (code, X86_CC_Z, 0, FALSE);
-	x86_alu_reg_reg (code, X86_SUB, X86_ESP, sreg);
-
-	br[1] = code; x86_jump8 (code, 0);
-
-	x86_patch (br[0], code);
-	x86_alu_reg_reg (code, X86_SUB, X86_ESP, sreg);
-	x86_patch (br[1], code);
-	x86_patch (br[4], code);
-#else /* PLATFORM_WIN32 */
-	x86_alu_reg_reg (code, X86_SUB, X86_ESP, tree->sreg1);
+#if defined(PLATFORM_WIN32) || defined(MONO_ARCH_SIGSEGV_ON_ALTSTACK)
+	need_touch = TRUE;
 #endif
+
+	if (need_touch) {
+		guint8* br[5];
+
+		/*
+		 * Under Windows:
+		 * If requested stack size is larger than one page,
+		 * perform stack-touch operation
+		 */
+		/*
+		 * Generate stack probe code.
+		 * Under Windows, it is necessary to allocate one page at a time,
+		 * "touching" stack after each successful sub-allocation. This is
+		 * because of the way stack growth is implemented - there is a
+		 * guard page before the lowest stack page that is currently commited.
+		 * Stack normally grows sequentially so OS traps access to the
+		 * guard page and commits more pages when needed.
+		 */
+		x86_test_reg_imm (code, sreg, ~0xFFF);
+		br[0] = code; x86_branch8 (code, X86_CC_Z, 0, FALSE);
+
+		br[2] = code; /* loop */
+		x86_alu_reg_imm (code, X86_SUB, X86_ESP, 0x1000);
+		x86_test_membase_reg (code, X86_ESP, 0, X86_ESP);
+		x86_alu_reg_imm (code, X86_SUB, sreg, 0x1000);
+		x86_alu_reg_imm (code, X86_CMP, sreg, 0x1000);
+		br[3] = code; x86_branch8 (code, X86_CC_AE, 0, FALSE);
+		x86_patch (br[3], br[2]);
+		x86_test_reg_reg (code, sreg, sreg);
+		br[4] = code; x86_branch8 (code, X86_CC_Z, 0, FALSE);
+		x86_alu_reg_reg (code, X86_SUB, X86_ESP, sreg);
+
+		br[1] = code; x86_jump8 (code, 0);
+
+		x86_patch (br[0], code);
+		x86_alu_reg_reg (code, X86_SUB, X86_ESP, sreg);
+		x86_patch (br[1], code);
+		x86_patch (br[4], code);
+	}
+	else
+		x86_alu_reg_reg (code, X86_SUB, X86_ESP, tree->sreg1);
+
 	if (tree->flags & MONO_INST_INIT) {
 		int offset = 0;
 		if (tree->dreg != X86_EAX && sreg != X86_EAX) {
@@ -4211,12 +4244,14 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 			x86_branch8 (code, X86_CC_NE, 0, 0);
 			x86_push_imm (code, cfg->domain);
 			code = emit_call (cfg, code, MONO_PATCH_INFO_INTERNAL_METHOD, (gpointer)"mono_jit_thread_attach");
+			x86_alu_reg_imm (code, X86_ADD, X86_ESP, 4);
 			x86_patch (buf, code);
 		}
 		else {
 			g_assert (!cfg->compile_aot);
 			x86_push_imm (code, cfg->domain);
 			code = emit_call (cfg, code, MONO_PATCH_INFO_INTERNAL_METHOD, (gpointer)"mono_jit_thread_attach");
+			x86_alu_reg_imm (code, X86_ADD, X86_ESP, 4);
 		}
 	}
 
@@ -4292,7 +4327,7 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 
 	if (alloc_size) {
 		/* See mono_emit_stack_alloc */
-#ifdef PLATFORM_WIN32
+#if defined(PLATFORM_WIN32) || defined(MONO_ARCH_SIGSEGV_ON_ALTSTACK)
 		guint32 remaining_size = alloc_size;
 		while (remaining_size >= 0x1000) {
 			x86_alu_reg_imm (code, X86_SUB, X86_ESP, 0x1000);
@@ -4636,6 +4671,66 @@ mono_arch_flush_register_windows (void)
 {
 }
 
+#ifdef MONO_ARCH_SIGSEGV_ON_ALTSTACK
+
+static void
+setup_stack (MonoJitTlsData *tls)
+{
+	pthread_t self = pthread_self();
+	pthread_attr_t attr;
+	size_t stsize = 0;
+	struct sigaltstack sa;
+	guint8 *staddr = NULL;
+	guint8 *current = (guint8*)&staddr;
+
+	if (mono_running_on_valgrind ())
+		return;
+
+	/* Determine stack boundaries */
+#ifdef HAVE_PTHREAD_GETATTR_NP
+	pthread_getattr_np( self, &attr );
+#else
+#ifdef HAVE_PTHREAD_ATTR_GET_NP
+	pthread_attr_get_np( self, &attr );
+#elif defined(sun)
+	pthread_attr_init( &attr );
+	pthread_attr_getstacksize( &attr, &stsize );
+#else
+#error "Not implemented"
+#endif
+#endif
+#ifndef sun
+	pthread_attr_getstack( &attr, (void**)&staddr, &stsize );
+#endif
+
+	g_assert (staddr);
+
+	g_assert ((current > staddr) && (current < staddr + stsize));
+
+	tls->end_of_stack = staddr + stsize;
+
+	/*
+	 * threads created by nptl does not seem to have a guard page, and
+	 * since the main thread is not created by us, we can't even set one.
+	 * Increasing stsize fools the SIGSEGV signal handler into thinking this
+	 * is a stack overflow exception.
+	 */
+	tls->stack_size = stsize + getpagesize ();
+
+	/* Setup an alternate signal stack */
+	tls->signal_stack = mmap (0, SIGNAL_STACK_SIZE, PROT_READ|PROT_WRITE|PROT_EXEC, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0);
+	tls->signal_stack_size = SIGNAL_STACK_SIZE;
+
+	g_assert (tls->signal_stack);
+
+	sa.ss_sp = tls->signal_stack;
+	sa.ss_size = SIGNAL_STACK_SIZE;
+	sa.ss_flags = SS_ONSTACK;
+	sigaltstack (&sa, NULL);
+}
+
+#endif
+
 /*
  * Support for fast access to the thread-local lmf structure using the GS
  * segment register on NPTL + kernel 2.6.x.
@@ -4646,14 +4741,6 @@ static gboolean tls_offset_inited = FALSE;
 void
 mono_arch_setup_jit_tls_data (MonoJitTlsData *tls)
 {
-#ifdef MONO_ARCH_SIGSEGV_ON_ALTSTACK
-	pthread_t self = pthread_self();
-	pthread_attr_t attr;
-	void *staddr = NULL;
-	size_t stsize = 0;
-	struct sigaltstack sa;
-#endif
-
 	if (!tls_offset_inited) {
 		if (!getenv ("MONO_NO_TLS")) {
 #ifdef PLATFORM_WIN32
@@ -4682,40 +4769,7 @@ mono_arch_setup_jit_tls_data (MonoJitTlsData *tls)
 	}		
 
 #ifdef MONO_ARCH_SIGSEGV_ON_ALTSTACK
-
-	/* Determine stack boundaries */
-	if (!mono_running_on_valgrind ()) {
-#ifdef HAVE_PTHREAD_GETATTR_NP
-		pthread_getattr_np( self, &attr );
-#else
-#ifdef HAVE_PTHREAD_ATTR_GET_NP
-		pthread_attr_get_np( self, &attr );
-#elif defined(sun)
-		pthread_attr_init( &attr );
-		pthread_attr_getstacksize( &attr, &stsize );
-#else
-#error "Not implemented"
-#endif
-#endif
-#ifndef sun
-		pthread_attr_getstack( &attr, &staddr, &stsize );
-#endif
-	}
-
-	/* 
-	 * staddr seems to be wrong for the main thread, so we keep the value in
-	 * tls->end_of_stack
-	 */
-	tls->stack_size = stsize;
-
-	/* Setup an alternate signal stack */
-	tls->signal_stack = g_malloc (SIGNAL_STACK_SIZE);
-	tls->signal_stack_size = SIGNAL_STACK_SIZE;
-
-	sa.ss_sp = tls->signal_stack;
-	sa.ss_size = SIGNAL_STACK_SIZE;
-	sa.ss_flags = SS_ONSTACK;
-	sigaltstack (&sa, NULL);
+	setup_stack (tls);
 #endif
 }
 
@@ -4731,7 +4785,7 @@ mono_arch_free_jit_tls_data (MonoJitTlsData *tls)
 	sigaltstack  (&sa, NULL);
 
 	if (tls->signal_stack)
-		g_free (tls->signal_stack);
+		munmap (tls->signal_stack, SIGNAL_STACK_SIZE);
 #endif
 }
 

@@ -2044,8 +2044,10 @@ class Tests {
 			}
 		}
 		catch (Exception) {
-			if (i != 5)
+			if (i != 5) {
+				Console.WriteLine ("FOO: " + i);
 				return i;
+			}
 		}
 
 		// Check that variables written in catch clauses are volatile
@@ -2197,6 +2199,28 @@ class Tests {
 			}
 		}
 		return (addr [0].ToInt64 () - addr [100].ToInt64 () < 100) ? 0 : 1;
-	}		
+	}
+
+	static int test_0_regress_73242 () {
+		int [] arr = new int [10];
+		for (int i = 0; i < 10; ++i)
+			arr [i] = 0;
+		try {
+			throw new Exception ();
+		}
+		catch {
+		}
+		return 0;
+    }
+
+	static int test_0_nullref () {
+		try {
+			Array foo = null;
+			foo.Clone();
+		} catch (NullReferenceException e) {
+			return 0;
+		}
+		return 1;
+	}
 }
 

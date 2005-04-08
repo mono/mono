@@ -63,6 +63,22 @@ int GC_pthread_join(pthread_t wait_for, void **status)
 	return GC_thr_join((thread_t)wait_for, NULL, status);
 }
 
+int GC_pthread_detach(pthread_t thread)
+{
+	GC_thread t;
+
+	LOCK();
+	t=GC_lookup_thread(thread);	
+	UNLOCK();
+	if (t) {
+		LOCK();
+		t->flags |= DETACHED;
+		UNLOCK();
+		return 0;
+	}
+	else
+		return pthread_detach(thread);
+}
 
 int
 GC_pthread_create(pthread_t *new_thread,

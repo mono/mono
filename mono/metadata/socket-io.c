@@ -15,18 +15,6 @@
 #include <unistd.h>
 #include <errno.h>
 
-#ifndef PLATFORM_WIN32
-#ifdef HAVE_AIO_H
-#include <aio.h>
-#define USE_AIO	1
-#elif defined(HAVE_SYS_AIO_H)
-#include <sys/aio.h>
-#define USE_AIO 1
-#else
-#undef USE_AIO
-#endif
-#endif
-
 #include <mono/metadata/object.h>
 #include <mono/io-layer/io-layer.h>
 #include <mono/metadata/socket-io.h>
@@ -2361,92 +2349,6 @@ extern MonoBoolean ves_icall_System_Net_Dns_GetHostName_internal(MonoString **h_
 
 	return(TRUE);
 }
-
-
-/* Async interface */
-#ifndef USE_AIO
-void
-ves_icall_System_Net_Sockets_Socket_AsyncReceive (MonoSocketAsyncResult *ares, gint *error)
-{
-	MONO_ARCH_SAVE_REGS;
-
-	*error = ERROR_NOT_SUPPORTED;
-}
-
-void
-ves_icall_System_Net_Sockets_Socket_AsyncSend (MonoSocketAsyncResult *ares, gint *error)
-{
-	MONO_ARCH_SAVE_REGS;
-
-	*error = ERROR_NOT_SUPPORTED;
-}
-#else
-static void
-wsa_overlapped_callback (guint32 error, guint32 numbytes, gpointer result)
-{
-	MonoSocketAsyncResult *ares = (MonoSocketAsyncResult *) result;
-	MonoThread *thread;
- 
-	ares->completed = TRUE;
-	ares->error = error;
-	ares->total = numbytes;
-
-	if (ares->callback != NULL) {
-		gpointer p [1];
-
-		*p = ares;
-		thread = mono_thread_attach (mono_object_domain (ares));
-		mono_runtime_invoke (ares->callback->method_info->method, NULL, p, NULL);
-
-		mono_thread_detach (thread);
-	}
-
-	if (ares->wait_handle != NULL)
-		SetEvent (ares->wait_handle->handle);
-}
-
-void
-ves_icall_System_Net_Sockets_Socket_AsyncReceive (MonoSocketAsyncResult *ares, gint *error)
-{
-	gint32 bytesread;
-
-	MONO_ARCH_SAVE_REGS;
-
-	if (_wapi_socket_async_read (ares->handle,
-					mono_array_addr (ares->buffer, gchar, ares->offset),
-					ares->size,
-					&bytesread,
-					ares,
-					wsa_overlapped_callback) == FALSE) {
-		*error = WSAGetLastError ();
-	} else {
-		*error = 0;
-		ares->completed_synch = TRUE;
-		wsa_overlapped_callback (0, bytesread, ares);
-	}
-}
-
-void
-ves_icall_System_Net_Sockets_Socket_AsyncSend (MonoSocketAsyncResult *ares, gint *error)
-{
-	gint32 byteswritten;
-
-	MONO_ARCH_SAVE_REGS;
-
-	if (_wapi_socket_async_write (ares->handle,
-					mono_array_addr (ares->buffer, gchar, ares->offset),
-					ares->size,
-					&byteswritten,
-					ares,
-					wsa_overlapped_callback) == FALSE) {
-		*error = WSAGetLastError ();
-	} else {
-		*error = 0;
-		ares->completed_synch = TRUE;
-		wsa_overlapped_callback (0, byteswritten, ares);
-	}
-}
-#endif /* USE_AIO */
 
 void mono_network_init(void)
 {

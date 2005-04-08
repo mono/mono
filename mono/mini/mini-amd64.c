@@ -3636,19 +3636,19 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		}
 		case OP_IDIV:
 			amd64_cdq_size (code, 4);
-			amd64_div_reg_size (code, ins->sreg2, 4, TRUE);
+			amd64_div_reg_size (code, ins->sreg2, TRUE, 4);
 			break;
 		case OP_IDIV_UN:
 			amd64_alu_reg_reg (code, X86_XOR, AMD64_RDX, AMD64_RDX);
-			amd64_div_reg_size (code, ins->sreg2, 4, FALSE);
+			amd64_div_reg_size (code, ins->sreg2, FALSE, 4);
 			break;
 		case OP_IREM:
 			amd64_cdq_size (code, 4);
-			amd64_div_reg_size (code, ins->sreg2, 4, TRUE);
+			amd64_div_reg_size (code, ins->sreg2, TRUE, 4);
 			break;
 		case OP_IREM_UN:
 			amd64_alu_reg_reg (code, X86_XOR, AMD64_RDX, AMD64_RDX);
-			amd64_div_reg_size (code, ins->sreg2, 4, FALSE);
+			amd64_div_reg_size (code, ins->sreg2, FALSE, 4);
 			break;
 		case OP_ICOMPARE:
 			amd64_alu_reg_reg_size (code, X86_CMP, ins->sreg1, ins->sreg2, 4);
@@ -5321,11 +5321,13 @@ mono_arch_emit_exceptions (MonoCompile *cfg)
 				patch_info->type = MONO_PATCH_INFO_INTERNAL_METHOD;
 				patch_info->ip.i = code - cfg->native_code;
 
-				if (mono_compile_aot)
+				if (mono_compile_aot) {
 					amd64_mov_reg_membase (code, GP_SCRATCH_REG, AMD64_RIP, 0, 8);
-				else
-					amd64_set_reg_template (code, GP_SCRATCH_REG);
-				amd64_call_reg (code, GP_SCRATCH_REG);
+					amd64_call_reg (code, GP_SCRATCH_REG);
+				} else {
+					/* The callee is in memory allocated using the code manager */
+					amd64_call_code (code, 0);
+				}
 
 				amd64_mov_reg_imm (buf, AMD64_RSI, (code - cfg->native_code) - throw_ip);
 				while (buf < buf2)
@@ -5599,7 +5601,7 @@ mono_arch_is_int_overflow (void *sigctx, void *info)
 	rip = (guint8*)ctx->uc_mcontext.gregs [REG_RIP];
 
 	if (IS_REX (rip [0])) {
-		reg = amd64_rex_r (rip [0]);
+		reg = amd64_rex_b (rip [0]);
 		rip ++;
 	}
 	else
