@@ -1,3 +1,8 @@
+2005-04-08  Cesar Lopez Nataren  <cnataren@novell.com>
+
+	* Literal.cs: Implement the construction of regular expression literal.
+	* Parser.cs: Pass the proper parent to RegExpLiteral.
+
 2005-03-30  Cesar Lopez Nataren  <cnataren@novell.com>
 
 	* TypeOf.cs: take into account Objects.

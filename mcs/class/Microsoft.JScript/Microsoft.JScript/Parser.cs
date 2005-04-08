@@ -1122,7 +1122,7 @@ namespace Microsoft.JScript {
 				string flags = ts.reg_exp_flags;
 				ts.reg_exp_flags = null;
 				string re = ts.GetString;
-				return new RegExpLiteral (re, flags);
+				return new RegExpLiteral (parent, re, flags);
 			} else if (tt == Token.NULL) {
 				// FIXME, build the null object;
 				return null;

@@ -5,6 +5,7 @@
 //	Cesar Lopez Nataren (cesar@ciencias.unam.mx)
 //
 // (C) 2003, 2004 Cesar Lopez Nataren 
+// (C) 2005, Novell Inc, (http://novell.com)
 //
 
 //
@@ -29,6 +30,7 @@
 //
 
 using System;
+using System.Reflection;
 using System.Reflection.Emit;
 using System.Collections;
 using Microsoft.JScript.Vsa;
@@ -224,7 +226,7 @@ namespace Microsoft.JScript {
 		internal string re;
 		internal string flags;
 
-		internal RegExpLiteral (string re, string flags)
+		internal RegExpLiteral (AST parent, string re, string flags)
 		{
 			this.re = re;
 			this.flags = flags;
@@ -232,12 +234,36 @@ namespace Microsoft.JScript {
 
 		internal override bool Resolve (IdentificationTable context)
 		{
-			throw new NotImplementedException ();
+			return true;
 		}
 
 		internal override void Emit (EmitContext ec)
 		{
-			throw new NotImplementedException ();
+			ILGenerator ig = ec.ig;
+			TypeBuilder type = ec.type_builder;
+
+			FieldBuilder field = type.DefineField (SemanticAnalyser.NextAnonymousRegExpObj, typeof (RegExpObject), FieldAttributes.Public | FieldAttributes.Static);
+
+			Label label = ig.DefineLabel ();
+
+			ig.Emit (OpCodes.Ldsfld, field);
+			ig.Emit (OpCodes.Brtrue, label);
+
+			CodeGenerator.load_engine (InFunction, ig);
+			
+			ig.Emit (OpCodes.Call, typeof (VsaEngine).GetMethod ("GetOriginalRegExpConstructor"));
+			ig.Emit (OpCodes.Ldstr, re);
+
+			ig.Emit (OpCodes.Ldc_I4_0);
+			ig.Emit (OpCodes.Ldc_I4_1);
+			ig.Emit (OpCodes.Ldc_I4_0);
+
+			ig.Emit (OpCodes.Call, typeof (RegExpConstructor).GetMethod ("Construct"));
+			ig.Emit (OpCodes.Castclass, typeof (RegExpObject));
+			ig.Emit (OpCodes.Stsfld, field);
+
+			ig.MarkLabel (label);			
+			ig.Emit (OpCodes.Ldsfld, field);
 		}
 	}		
 }
