@@ -100,11 +100,11 @@ namespace PEAPI
                           private Type type;
                           private bool is_value;
 
-            public ClassRefInst (Type type, bool is_value) : base (0x12) {
+            public ClassRefInst (Type type, bool is_value) : base (PrimitiveType.Class.GetTypeIndex ()) {
                     this.type = type;
                     this.is_value = is_value;
                     if (is_value)
-                            type.SetTypeIndex (0x11);
+                          typeIndex = PrimitiveType.ValueType.GetTypeIndex ();
                     tabIx = MDTable.TypeSpec;
             }
 
@@ -227,7 +227,7 @@ namespace PEAPI
     /// Create a new array  -   elementType[]
     /// </summary>
     /// <param name="elementType">the type of the array elements</param>
-    public ZeroBasedArray(Type elementType) : base (elementType,0x1D) { }
+    public ZeroBasedArray(Type elementType) : base (elementType, PrimitiveType.SZArray.GetTypeIndex ()) { }
 
     internal sealed override void TypeSig(MemoryStream str) {
       str.WriteByte(typeIndex);
@@ -481,7 +481,7 @@ namespace PEAPI
       ClassRef aClass = new ClassRef(nsName,name,metaData);
       metaData.AddToTable(MDTable.TypeRef,aClass);
       aClass.SetParent(this);
-      aClass.MakeValueClass();
+      aClass.MakeValueClass(ValueClass.ValueType);
       return aClass;
     }
 
@@ -735,7 +735,7 @@ namespace PEAPI
       PrimitiveType.IntPtr.GetName().GetHashCode(),
       PrimitiveType.UIntPtr.GetName().GetHashCode(),
       PrimitiveType.Object.GetName().GetHashCode(),
-      "ValueType".GetHashCode(),
+      PrimitiveType.ValueType.GetName ().GetHashCode(),
       "Enum".GetHashCode()
     };
 
@@ -787,12 +787,13 @@ namespace PEAPI
               systemClasses[i] = new SystemClass(systemTypes[i],this,metaData);
               if ((systemTypes[i] != PrimitiveType.Object) &&
                 (systemTypes[i] != PrimitiveType.String)) {
-                systemClasses[i].MakeValueClass();
+                systemClasses[i].MakeValueClass(ValueClass.ValueType);
               }
             } else {
               systemClasses[i] = new ClassRef(nsName,name,metaData);
               systemClasses[i].SetParent(this);
-              systemClasses[i].MakeValueClass();
+              if (!ClassDef.IsValueType (nsName, name) && !ClassDef.IsEnum (nsName, name))
+                systemClasses[i].MakeValueClass(ValueClass.ValueType);
             }
             metaData.AddToTable(MDTable.TypeRef,systemClasses[i]);
           }
@@ -817,7 +818,7 @@ namespace PEAPI
       if (systemClasses[ix] == null) {
         systemClasses[ix] = new ClassRef(systemName,name,metaData);
         systemClasses[ix].SetParent(this);
-        systemClasses[ix].MakeValueClass();
+        systemClasses[ix].MakeValueClass(ValueClass.ValueType);
         metaData.AddToTable(MDTable.TypeRef,systemClasses[ix]);
       }
       return systemClasses[ix];
@@ -827,11 +828,23 @@ namespace PEAPI
       if (systemClasses[valueTypeIx] == null) {
         ClassRef valType = new ClassRef("System","ValueType",metaData);
         valType.SetParent(this);
-        valType.MakeValueClass();
+        valType.MakeValueClass(ValueClass.ValueType);
         metaData.AddToTable(MDTable.TypeRef,valType);
         systemClasses[valueTypeIx] = valType;
       }
       return systemClasses[valueTypeIx];
+    }
+
+    internal ClassRef EnumType() {
+      //systemClasses [ valueTypeIx + 1] -> System.Enum
+      if (systemClasses[valueTypeIx + 1] == null) {
+        ClassRef valType = new ClassRef("System","Enum",metaData);
+        valType.SetParent(this);
+        valType.MakeValueClass(ValueClass.Enum);
+        metaData.AddToTable(MDTable.TypeRef,valType);
+        systemClasses[valueTypeIx + 1] = valType;
+      }
+      return systemClasses[valueTypeIx + 1];
     }
 
     /// <summary>
@@ -851,11 +864,17 @@ namespace PEAPI
       ClassRef aClass = new ClassRef(nsName,name,metaData);
       metaData.AddToTable(MDTable.TypeRef,aClass);
       aClass.SetParent(this);
-      aClass.MakeValueClass();
+      aClass.MakeValueClass(ValueClass.ValueType);
       return aClass;
     }
 
         }
+        public enum ValueClass
+        {
+                ValueType,
+                Enum
+        }
+
   /**************************************************************************/  
         /// <summary>
         /// Signature for calli instruction
@@ -1695,11 +1714,11 @@ namespace PEAPI
         public abstract class Class : Type
         {
     protected int row = 0;
-    protected string name, nameSpace;
+    public string name, nameSpace;
     protected uint nameIx, nameSpaceIx;
                 protected MetaData _metaData;
                 internal Class(string nameSpaceName, string className, MetaData md)
-                                                              : base(0x12) {
+                                                              : base(PrimitiveType.Class.GetTypeIndex ()) {
       nameSpace = nameSpaceName;
       name = className;
       nameIx = md.AddToStringsHeap(name);
@@ -1707,15 +1726,15 @@ namespace PEAPI
       _metaData = md;
     }
 
-    internal Class(uint nsIx, uint nIx) : base(0x12) {
+    internal Class(uint nsIx, uint nIx) : base(PrimitiveType.Class.GetTypeIndex ()) {
       nameSpaceIx = nsIx;
       nameIx = nIx;
     }
 
     internal virtual uint TypeDefOrRefToken() { return 0; }
 
-    internal virtual void MakeValueClass() {
-      typeIndex = 0x11;
+    internal virtual void MakeValueClass(ValueClass vClass) {
+      typeIndex = PrimitiveType.ValueType.GetTypeIndex ();
     }
         
     internal virtual string TypeName() {
@@ -1771,8 +1790,12 @@ namespace PEAPI
         typeIndexChecked = false;
     }
 
-    internal override void MakeValueClass() {
-      superType = metaData.mscorlib.ValueType();
+    internal override void MakeValueClass(ValueClass vClass) {
+      if (vClass == ValueClass.Enum)  
+        superType = metaData.mscorlib.EnumType();
+      else  
+        superType = metaData.mscorlib.ValueType();
+
       typeIndex = superType.GetTypeIndex();
     }
 
@@ -1902,12 +1925,33 @@ namespace PEAPI
     /// <returns>a descriptor for this new nested class</returns>
     public ClassDef AddNestedClass(TypeAttr attrSet, string nsName, 
                                    string name) {
-      ClassDef nClass = new ClassDef(attrSet,nsName,name,metaData);
+      ClassDef nClass = new ClassDef(attrSet,"",name,metaData);
       metaData.AddToTable(MDTable.TypeDef,nClass);
       metaData.AddToTable(MDTable.NestedClass,new MapElem(nClass,Row,MDTable.TypeDef));
       nClass.parentClass = this;
       return (nClass);
      }
+    public static bool IsValueType (Class type)
+    {
+        return IsValueType (type.nameSpace, type.name);
+    }
+
+    public static bool IsEnum (Class type)
+    {
+        return IsEnum (type.nameSpace, type.name);
+    }
+    
+    public static bool IsValueType (string nsName, string name)
+    {
+      return ((nsName.CompareTo ("System") == 0) && 
+        (name.CompareTo ("ValueType") == 0));
+    }
+
+    public static bool IsEnum (string nsName, string name)
+    {
+      return ((nsName.CompareTo ("System") == 0) && 
+        (name.CompareTo ("Enum") == 0));
+    }
 
     /// <summary>
     /// Add a nested class to this class
@@ -1919,12 +1963,17 @@ namespace PEAPI
     /// <returns>a descriptor for this new nested class</returns>
     public ClassDef AddNestedClass(TypeAttr attrSet, string nsName, 
                                    string name, Class sType) {
-      ClassDef nClass = new ClassDef(attrSet,nsName,name,metaData);
+      ClassDef nClass = AddNestedClass (attrSet, nsName, name);
       nClass.SetSuper(sType);
-      metaData.AddToTable(MDTable.TypeDef,nClass);
-      metaData.AddToTable(MDTable.NestedClass,
-                          new MapElem(nClass,Row,MDTable.TypeDef));
-      nClass.parentClass = this;
+      if (ClassDef.IsValueType (sType))
+        nClass.MakeValueClass (ValueClass.ValueType);
+      else
+      if (ClassDef.IsEnum (sType))
+        nClass.MakeValueClass (ValueClass.Enum);
+      
+      if (ClassDef.IsValueType (sType) || ClassDef.IsEnum (sType))
+        nClass.SetTypeIndex (PrimitiveType.ValueType.GetTypeIndex ());
+
       return (nClass);
     }
 
@@ -2268,6 +2317,7 @@ namespace PEAPI
     byte[] val;
 
     public ByteArrConst(byte[] val) {
+      type = PrimitiveType.String;
       this.val = val;
       size = (uint)val.Length;
     }
@@ -5840,7 +5890,7 @@ CalcHeapSizes ();
       ClassRef aClass = new ClassRef(nsName,name,metaData);
       metaData.AddToTable(MDTable.TypeRef,aClass);
       aClass.SetParent(this);
-      aClass.MakeValueClass();
+      aClass.MakeValueClass(ValueClass.ValueType);
       return aClass;
     }
 
@@ -5861,7 +5911,7 @@ CalcHeapSizes ();
       ExternClassRef cRef = new ExternClassRef(attrSet,nsName,name,declFile,metaData);
       metaData.AddToTable(MDTable.TypeRef,cRef);
       cRef.SetParent(this);
-      if (isValueClass) cRef.MakeValueClass();
+      if (isValueClass) cRef.MakeValueClass(ValueClass.ValueType);
       return cRef;
     }
 
@@ -6392,9 +6442,10 @@ CalcHeapSizes ();
     /// <param name="nsName">name space name</param>
     /// <param name="name">class name</param>
     /// <returns>a descriptor for this new class</returns>
-    public ClassDef AddValueClass(TypeAttr attrSet, string nsName, string name) {
+    public ClassDef AddValueClass(TypeAttr attrSet, string nsName, string name, ValueClass vClass) {
       ClassDef aClass = new ClassDef(attrSet,nsName,name,metaData);
-      aClass.MakeValueClass();
+      aClass.MakeValueClass(vClass);
+      aClass.SetTypeIndex (PrimitiveType.ValueType.GetTypeIndex ());
       metaData.AddToTable(MDTable.TypeDef,aClass);
       return aClass;
     }
@@ -6491,6 +6542,8 @@ CalcHeapSizes ();
     public static readonly PrimitiveType UIntPtr = new PrimitiveType(0x19,"UIntPtr",16);
     public static readonly PrimitiveType Object = new PrimitiveType(0x1C,"Object",17);
     internal static readonly PrimitiveType ClassType = new PrimitiveType(0x50);
+    internal static readonly PrimitiveType SZArray = new PrimitiveType(0x1D);
+    internal static readonly PrimitiveType ValueType = new PrimitiveType(0x11, "ValueType", 18);
     public static readonly PrimitiveType NativeInt = IntPtr;
     public static readonly PrimitiveType NativeUInt = UIntPtr;
 

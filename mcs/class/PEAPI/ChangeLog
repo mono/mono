@@ -1,3 +1,16 @@
+2005-04-08  Ankit Jain  <radical@corewars.org>
+
+	* PEAPI.cs (MSCorLib.GetSpecialClass): Don't encode
+	System.ValueType and System.Enum as value types.
+	(ValueClass): New enum.
+	(Class.MakeValueClass): Add a 'ValueClass' parameter.
+	(ClassDef.MakeValueClass): Set supertype to ValueType or Enum
+	according to ValueClass parameter.
+	(IsValueType,IsEnum): New.  Test if type is System.ValueType or
+	System.Enum.
+	(ClassDef.AddNestedClass): Don't encode	System.ValueType and
+	System.Enum as value types.
+
 2005-03-17  Ankit Jain  <radical@corewars.org>
 
 	* PEAPI.cs: Metadata tables that must be sorted are sorted now.

@@ -1,3 +1,13 @@
+2005-04-08  Ankit Jain  <radical@corewars.org>
+
+	* MethodDef.cs (named_param_table, CreateNamedParamTable): Remove.
+	(GetNamedParamPos): Implement using a linear scan.
+
+	* TypeDef.cs (TypeDef): Initialize 'is_enum_class'.
+	(Define): Set 'is_value_class' or 'is_enum_class' depending on
+	whether the parent is System.ValueType or System.Enum.  Update to
+	changes in PEAPI.cs.
+
 2005-03-17  Ankit Jain  <radical@corewars.org>
 
 	* MethodDef.cs: Added method AddParamDefaultValue for adding DefaultValue

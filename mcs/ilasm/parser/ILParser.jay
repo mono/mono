@@ -720,7 +720,7 @@ type			: K_CLASS class_ref
                           }
 			| K_VALUETYPE OPEN_BRACKET slashed_name CLOSE_BRACKET slashed_name
                           {
-                                ExternTypeRef ext_ref = codegen.ExternTable.GetTypeRef ((string) $3, (string) $5, false);
+                                ExternTypeRef ext_ref = codegen.ExternTable.GetTypeRef ((string) $3, (string) $5, true);
                                 ExternTypeRefInst inst = new ExternTypeRefInst (ext_ref, true);
                                 $$ = inst;
                           }
@@ -1254,11 +1254,11 @@ field_init		: K_FLOAT32 OPEN_PARENS float64 CLOSE_PARENS
                           }
 			| K_FLOAT32 OPEN_PARENS int64 CLOSE_PARENS
                           {
-                                $$ = new FloatConst (Convert.ToSingle ($3));
+                                $$ = new FloatConst (BitConverter.ToSingle (BitConverter.GetBytes ((long)$3), BitConverter.IsLittleEndian ? 0 : 4));
                           }
 			| K_FLOAT64 OPEN_PARENS int64 CLOSE_PARENS
                           {
-                                $$ = new DoubleConst (Convert.ToDouble ($3));
+                                $$ = new DoubleConst (BitConverter.Int64BitsToDouble ((long)$3));
                           }
 			| K_INT64 OPEN_PARENS int64 CLOSE_PARENS
                           {

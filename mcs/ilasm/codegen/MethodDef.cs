@@ -31,7 +31,6 @@ namespace Mono.ILASM {
                 private ITypeRef ret_type;
                 private ArrayList typar_list;
                 private ArrayList param_list;
-                private Hashtable named_param_table;
                 private ArrayList inst_list;
                 private ArrayList customattr_list;
                 private Hashtable label_table;
@@ -71,7 +70,6 @@ namespace Mono.ILASM {
                         label_list = new ArrayList ();
                         local_list = new ArrayList ();
                         named_local_table = new Hashtable ();
-                        named_param_table = new Hashtable ();
 
                         entry_point = false;
                         zero_init = false;
@@ -82,7 +80,6 @@ namespace Mono.ILASM {
                         is_defined = false;
                         is_resolved = false;
                         CreateSignature ();
-                        CreateNamedParamTable ();
 
 			codegen.BeginMethodDef (this);
 
@@ -211,7 +208,12 @@ namespace Mono.ILASM {
 
                 public int GetNamedParamPos (string name)
                 {
-                        int pos = (int) named_param_table[name];
+                        int pos = -1;
+                        foreach (ParamDef param in param_list) {
+                                pos ++;
+                                if (param.Name.CompareTo (name) == 0)
+                                        return pos;
+                        }
 
                         return pos;
                 }
@@ -662,20 +664,6 @@ namespace Mono.ILASM {
                         builder.Append (')');
 
                         return builder.ToString ();
-                }
-
-                private void CreateNamedParamTable ()
-                {
-                        if (param_list == null)
-                                return;
-
-                        int count = (IsStatic ? 0 : 1);
-                        
-                        foreach (ParamDef param in param_list) {
-                                if (param.Name != null)
-                                        named_param_table.Add (param.Name, count);
-                                count++;
-                        }
                 }
 
                 private void FixAttributes ()

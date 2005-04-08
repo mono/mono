@@ -1,3 +1,10 @@
+2005-04-08  Ankit Jain  <radical@corewars.org>
+
+	* ILParser.jay (type): When parsing K_VALUETYPE, mark the typeref
+	as a value type.
+	(field_init): The float32 and float64 constructor argument is
+	the hex representation, not the integer equivalent value.
+
 2005-03-17  Ankit Jain  <radical@corewars.org>
 
 	* ILParser.jay(method_decl): Add default value for a method param.

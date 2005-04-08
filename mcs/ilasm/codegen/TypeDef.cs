@@ -69,7 +69,7 @@ namespace Mono.ILASM {
                         is_intransit = false;
 
                         is_value_class = false;
-                        is_value_class = false;
+                        is_enum_class = false;
                 }
 
                 public string Name {
@@ -250,16 +250,27 @@ namespace Mono.ILASM {
                                         throw new Exception ("this type can not be a base type: "
                                                         + parent);
                                 }
+
+                                if (parent.PeapiClass.nameSpace != null && 
+                                        parent.PeapiClass.nameSpace.CompareTo ("System") == 0) {
+                                        
+                                        if (parent.PeapiClass.name.CompareTo ("ValueType") == 0)
+                                                is_value_class = true;
+                                        else
+                                        if (parent.PeapiClass.name.CompareTo ("Enum") == 0 )
+                                                is_enum_class = true;          
+                                } 
+
                                 if (outer != null) {
                                         if (!outer.IsDefined)
                                                 outer.Define (code_gen);
                                         classdef = outer.PeapiType.AddNestedClass (attr,
                                                         name_space, name, parent.PeapiClass);
                                 } else {
-                                        if (is_value_class) {
+                                        if (is_value_class || is_enum_class) {
                                                 // Should probably confirm that the parent is System.ValueType
                                                 classdef = code_gen.PEFile.AddValueClass (attr,
-                                                        name_space, name);
+                                                        name_space, name, is_value_class ? PEAPI.ValueClass.ValueType : PEAPI.ValueClass.Enum);
                                         } else {
                                                 classdef = code_gen.PEFile.AddClass (attr,
                                                         name_space, name, parent.PeapiClass);
@@ -272,9 +283,9 @@ namespace Mono.ILASM {
                                         classdef = outer.PeapiType.AddNestedClass (attr,
                                                 name_space, name);
                                 } else {
-                                        if (is_value_class) {
+                                        if (is_value_class || is_enum_class) {
                                                 classdef = code_gen.PEFile.AddValueClass (attr,
-                                                        name_space, name);
+                                                        name_space, name, is_value_class ? PEAPI.ValueClass.ValueType : PEAPI.ValueClass.Enum);
                                         } else {
                                                 classdef = code_gen.PEFile.AddClass (attr,
                                                         name_space, name);
