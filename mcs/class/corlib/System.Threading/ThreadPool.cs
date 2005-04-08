@@ -43,13 +43,9 @@ namespace System.Threading {
 			/* nothing to do */
 		}
 
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		static extern bool BindHandleInternal (IntPtr osHandle);
-
-		[SecurityPermission (SecurityAction.Demand, UnmanagedCode=true)]
 		public static bool BindHandle (IntPtr osHandle)
 		{
-			return BindHandleInternal (osHandle);
+			return true;
 		}
 		
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
