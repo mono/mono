@@ -1,3 +1,11 @@
+2005-04-08  Ankit Jain  <radical@corewars.org>
+
+	* reflection.c (get_default_param_value_blobs): Add 'types'
+	parameter to get the types encoded in the constant table.
+	(mono_param_get_objects): Use the type from the constant table,
+	not the type of the parameter, when creating default values.
+	Handle null default values correctly.
+
 2005-04-07 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* file-io.c:
