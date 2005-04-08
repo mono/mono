@@ -30,7 +30,8 @@ EXTRA_DISTFILES = \
 	Test/System.Xml/region.xml		\
 	Test/System.Xml/region.xsd		\
 	Test/System.Xml/store.xsd		\
-	Mono.Data.SqlExpressions/Parser.jay
+	Mono.Data.SqlExpressions/Parser.jay	\
+	app_test_2.0.config
 
 BUILT_SOURCES = Mono.Data.SqlExpressions/Parser.cs
 

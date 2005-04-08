@@ -1,3 +1,7 @@
+2005-04-08  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile (EXTRA_DISTFILES): Add app_test_2.0.config.
+
 2005-04-07  Sureshkumar T  <tsureshkumar@novell.com>
 
 	* System.Data.dll.sources: In System.Data.SqlClient
