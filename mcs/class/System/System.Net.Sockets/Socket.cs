@@ -77,7 +77,7 @@ namespace System.Net.Sockets
 
 			bool completed_sync;
 			bool completed;
-			AsyncCallback real_callback;
+			AsyncCallback real_callback; /* unused */
 			int error;
 			SocketOperation operation;
 			object ares;
@@ -87,7 +87,7 @@ namespace System.Net.Sockets
 				this.Sock = sock;
 				this.handle = sock.socket;
 				this.state = state;
-				this.real_callback = callback;
+				this.callback = callback;
 				this.operation = operation;
 				SockFlags = SocketFlags.None;
 			}
@@ -104,8 +104,8 @@ namespace System.Net.Sockets
 			public void Complete ()
 			{
 				IsCompleted = true;
-				if (real_callback != null)
-					real_callback (this);
+				if (callback != null)
+					callback (this);
 
 				Queue queue = null;
 				if (operation == SocketOperation.Receive || operation == SocketOperation.ReceiveFrom) {
@@ -261,6 +261,7 @@ namespace System.Net.Sockets
 				lock (result) {
 					try {
 						result.Sock.Connect (result.EndPoint);
+						result.Sock.connected = true;
 					} catch (Exception e) {
 						result.Complete (e);
 						return;
@@ -805,15 +806,18 @@ namespace System.Net.Sockets
 				Connect_internal (socket, serial, out error);
 				if (error == 0) {
 					// succeeded synch
+					connected = true;
 					req.Complete (true);
 				} else if (error != 10036 && error != 10035) {
 					// error synch
+					connected = false;
 					req.Complete (new SocketException (error), true);
 				}
 			}
 
 			if (blocking || error == 10036 || error == 10035) {
 				// continue asynch
+				connected = false;
 				Worker worker = new Worker (req);
 				SocketAsyncCall sac = new SocketAsyncCall (worker.Connect);
 				sac.BeginInvoke (null, req);

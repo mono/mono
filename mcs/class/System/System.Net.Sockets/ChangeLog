@@ -1,3 +1,9 @@
+2005-04-08 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Socket.cs: update socket connected status in an async request finishes
+	synchronously. Use 'callback' instead of 'real_callback' field, which is
+	now unused.
+
 2005-04-07 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Socket.cs: added SocketOperation enum and 2 new fields to
