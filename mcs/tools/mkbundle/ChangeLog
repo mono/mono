@@ -1,3 +1,6 @@
+2004-04-08  James Willcox  <james@ximian.com>
+
+	* mkbundle.cs: add a --static flag for statically linking to libmono
 
 Wed Mar 16 18:11:47 CET 2005 Paolo Molaro <lupus@ximian.com>
 

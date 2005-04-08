@@ -23,6 +23,7 @@ class MakeBundle {
 	static bool autodeps = false;
 	static bool keeptemp = false;
 	static bool compile_only = false;
+	static bool static_link = false;
 	
 	static int Main (string [] args)
 	{
@@ -75,7 +76,9 @@ class MakeBundle {
 			case "--keeptemp":
 				keeptemp = true;
 				break;
-				
+			case "--static":
+				static_link = true;
+				break;
 			default:
 				sources.Add (args [i]);
 				break;
@@ -208,9 +211,19 @@ class MakeBundle {
 
 			if (compile_only)
 				return;
-			
-			cmd = String.Format ("cc -o {2} -Wall {0} `pkg-config --cflags --libs mono` {1}",
-					     temp_c, temp_o, output);
+
+			if (static_link)
+				cmd = String.Format ("cc -o {2} -Wall `pkg-config --cflags mono` {0} " +
+						     "`pkg-config --libs-only-L mono` -Wl,-Bstatic " +
+						     "`pkg-config --libs-only-l mono | sed -e \"s/\\-lm //\" | " +
+						     "sed -e \"s/\\-ldl //\" | sed -e \"s/\\-lpthread //\"` " +
+						     "-Wl,-Bdynamic -ldl -lm -lrt {1}",
+						     temp_c, temp_o, output);
+			else
+				cmd = String.Format ("cc -o {2} -Wall {0} `pkg-config --cflags --libs mono` {1}",
+						     temp_c, temp_o, output);
+
+                            
 			Console.WriteLine (cmd);
 			ret = system (cmd);
 			if (ret != 0){
@@ -328,7 +341,8 @@ class MakeBundle {
 				   "    -L path     Adds `path' to the search path for assemblies\n" +
 				   "    --nodeps    Turns off automatic dependency embedding (default)\n" +
 				   "    --deps      Turns on automatic dependency embedding\n" +
-				   "    --keeptemp  Keeps the temporary files\n");
+				   "    --keeptemp  Keeps the temporary files\n" +
+				   "    --static    Statically link to mono libs\n");
 	}
 
 	[DllImport ("libc")]
