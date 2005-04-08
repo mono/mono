@@ -316,6 +316,7 @@ namespace System.Web.UI.WebControls
 			get {
 				if (deleteParameters == null) {
 					deleteParameters = new ParameterCollection ();
+					deleteParameters.ParametersChanged += new EventHandler (OnParametersChanged); 
 					if (((IStateManager)this).IsTrackingViewState)
 						((IStateManager)deleteParameters).TrackViewState ();
 				}
@@ -347,6 +348,7 @@ namespace System.Web.UI.WebControls
 			get {
 				if (filterParameters == null) {
 					filterParameters = new ParameterCollection ();
+					filterParameters.ParametersChanged += new EventHandler (OnParametersChanged); 
 					if (IsTrackingViewState)
 						((IStateManager)filterParameters).TrackViewState ();
 				}
@@ -368,6 +370,7 @@ namespace System.Web.UI.WebControls
 			get {
 				if (insertParameters == null) {
 					insertParameters = new ParameterCollection ();
+					insertParameters.ParametersChanged += new EventHandler (OnParametersChanged); 
 					if (IsTrackingViewState)
 						((IStateManager)insertParameters).TrackViewState ();
 				}
@@ -420,6 +423,7 @@ namespace System.Web.UI.WebControls
 			get {
 				if (selectParameters == null) {
 					selectParameters = new ParameterCollection ();
+					selectParameters.ParametersChanged += new EventHandler (OnParametersChanged); 
 					if (((IStateManager)this).IsTrackingViewState)
 						((IStateManager)selectParameters).TrackViewState ();
 				}
@@ -472,6 +476,7 @@ namespace System.Web.UI.WebControls
 			get {
 				if (updateParameters == null) {
 					updateParameters = new ParameterCollection ();
+					updateParameters.ParametersChanged += new EventHandler (OnParametersChanged); 
 					if (((IStateManager)this).IsTrackingViewState)
 						((IStateManager)updateParameters).TrackViewState ();
 				}
@@ -696,14 +701,16 @@ namespace System.Web.UI.WebControls
 				if (FilterExpression.Length > 0) {
 					OrderedDictionary fparams = new OrderedDictionary ();
 					foreach (Parameter p in FilterParameters)
-						fparams.Add (p.Name, p.GetValue (context, owner));
+						fparams.Add (p.Name, ConvertParameter (p.Type, p.GetValue (context, owner)));
 						
 					ObjectDataSourceFilteringEventArgs fargs = new ObjectDataSourceFilteringEventArgs (fparams);
 					OnFiltering (fargs);
 					if (!fargs.Cancel) {
 						object[] formatValues = new object[fargs.ParameterValues.Count];
-						for (int n=0; n<formatValues.Length; n++)
+						for (int n=0; n<formatValues.Length; n++) {
 							formatValues [n] = fargs.ParameterValues [n];
+							if (formatValues [n] == null) return dview;
+						}
 						dview.RowFilter = string.Format	(FilterExpression, formatValues);
 					}
 				}
@@ -938,6 +945,18 @@ namespace System.Web.UI.WebControls
 			return Convert.ChangeType (value, targetType);
 		}
 		
+		object ConvertParameter (TypeCode targetType, object value)
+		{
+			Console.WriteLine ("ConvertParameter:" + value);
+			if (value == null) {
+				if (targetType != TypeCode.Object && targetType != TypeCode.String)
+					value = 0;
+				else if (targetType == TypeCode.Object && ConvertNullToDBNull)
+					return DBNull.Value;
+			}
+			return Convert.ChangeType (value, targetType);
+		}
+		
 		string FormatOldParameter (string name)
 		{
 			string f = OldValuesParameterFormatString;
@@ -945,6 +964,12 @@ namespace System.Web.UI.WebControls
 				return String.Format (f, name);
 			else
 				return name;
+		}
+		
+		void OnParametersChanged (object sender, EventArgs args)
+		{
+			Console.WriteLine ("OnParametersChanged");
+			OnDataSourceViewChanged (EventArgs.Empty);
 		}
 		
 		protected virtual void LoadViewState (object savedState)

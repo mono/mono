@@ -38,10 +38,21 @@ namespace System.Web.UI.WebControls
 	public class DetailsViewUpdateEventArgs : CancelEventArgs
 	{
 		private object argument;
+		IOrderedDictionary keys;
+		IOrderedDictionary newValues;
+		IOrderedDictionary oldValues;
 		
 		public DetailsViewUpdateEventArgs (object argument)
 		{
 			this.argument = argument;
+		}
+		
+		internal DetailsViewUpdateEventArgs (object argument, IOrderedDictionary keys, IOrderedDictionary oldValues, IOrderedDictionary newValues)
+		{
+			this.argument = argument;
+			this.keys = keys;
+			this.newValues = newValues;
+			this.oldValues = oldValues;
 		}
 		
 		public object CommandArgument {
@@ -49,15 +60,15 @@ namespace System.Web.UI.WebControls
 		}
 
 		public IOrderedDictionary Keys {
-			get { throw new NotImplementedException(); }
+			get { return keys; }
 		}
 
 		public IOrderedDictionary NewValues {
-			get { throw new NotImplementedException(); }
+			get { return newValues; }
 		}
 
 		public IOrderedDictionary OldValues {
-			get { throw new NotImplementedException(); }
+			get { return oldValues; }
 		}
 	}
 }

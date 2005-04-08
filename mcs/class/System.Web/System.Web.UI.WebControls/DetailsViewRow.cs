@@ -1,12 +1,10 @@
 //
-// System.Web.UI.WebControls.ButtonFieldBase.cs
+// System.Web.UI.WebControls.DetailsViewRow.cs
 //
 // Authors:
 //	Lluis Sanchez Gual (lluis@novell.com)
 //
 // (C) 2005 Novell, Inc (http://www.novell.com)
-//
-
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -27,74 +25,58 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+//
 
 #if NET_2_0
+
+using System;
 using System.Collections;
-using System.Collections.Specialized;
-using System.Web.UI;
 using System.ComponentModel;
+using System.Web.UI;
 using System.Security.Permissions;
 
-namespace System.Web.UI.WebControls {
-
+namespace System.Web.UI.WebControls
+{
 	[AspNetHostingPermissionAttribute (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	[AspNetHostingPermissionAttribute (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
-	public abstract class ButtonFieldBase : DataControlField
+	public class DetailsViewRow: TableRow
 	{
-		[WebCategoryAttribute ("Appearance")]
-		[DefaultValueAttribute (ButtonType.Link)]
-		public virtual ButtonType ButtonType {
-			get {
-				object ob = ViewState ["ButtonType"];
-				if (ob != null) return (ButtonType) ob;
-				return ButtonType.Link;
-			}
-			set {
-				ViewState ["ButtonType"] = value;
-				OnFieldChanged ();
-			}
+		int rowIndex;
+		DataControlRowState rowState;
+		DataControlRowType rowType;
+		
+		public DetailsViewRow (int rowIndex, DataControlRowType rowType, DataControlRowState rowState)
+		{
+			this.rowIndex = rowIndex;
+			this.rowType = rowType;
+			this.rowState = rowState;
 		}
-
-		[DefaultValueAttribute (false)]
-		[WebCategoryAttribute ("Behavior")]
-		public virtual bool CausesValidation {
-			get {
-				object ob = ViewState ["CausesValidation"];
-				if (ob != null) return (bool) ob;
-				return false;
-			}
-			set {
-				ViewState ["CausesValidation"] = value;
-				OnFieldChanged ();
-			}
+		
+		public virtual int RowIndex {
+			get { return rowIndex; }
 		}
-
-		[WebCategoryAttribute ("Behavior")]
-		[DefaultValueAttribute (false)]
-		public override bool ShowHeader {
-			get {
-				object val = ViewState ["showHeader"];
-				return val != null ? (bool) val : false;
-			}
-			set { 
-				ViewState ["showHeader"] = value;
-				OnFieldChanged ();
-			}
+		
+		public virtual DataControlRowState RowState {
+			get { return rowState; }
 		}
-
-		[WebCategoryAttribute ("Behavior")]
-		[DefaultValueAttribute ("")]
-		public virtual string ValidationGroup {
-			get {
-				object ob = ViewState ["ValidationGroup"];
-				if (ob != null) return (string) ob;
-				return "";
+		
+		public virtual DataControlRowType RowType {
+			get { return rowType; }
+		}
+		
+		protected override bool OnBubbleEvent (object source, EventArgs e)
+		{
+			if (base.OnBubbleEvent (source, e)) return true;
+			
+			if (e is CommandEventArgs) {
+				DetailsViewCommandEventArgs args = new DetailsViewCommandEventArgs (source, (CommandEventArgs)e);
+				RaiseBubbleEvent (source, args);
+				return true;
 			}
-			set {
-				ViewState ["ValidationGroup"] = value;
-				OnFieldChanged ();
-			}
+			return false;
 		}
 	}
 }
+
 #endif

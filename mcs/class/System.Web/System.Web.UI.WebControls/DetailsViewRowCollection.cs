@@ -1,12 +1,10 @@
 //
-// System.Web.UI.WebControls.DetailsViewDeleteEventArgs.cs
+// System.Web.UI.WebControls.DetailsViewRowCollection.cs
 //
 // Authors:
-//   Sanjay Gupta (gsanjay@novell.com)
+//	Lluis Sanchez Gual (lluis@novell.com)
 //
-// (C) 2004 Novell, Inc (http://www.novell.com)
-//
-
+// (C) 2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -27,42 +25,59 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+//
 
 #if NET_2_0
 
-using System.Collections.Specialized;
-using System.ComponentModel;
+using System;
+using System.Web.UI;
+using System.Collections;
 
 namespace System.Web.UI.WebControls
 {
-	public class DetailsViewDeleteEventArgs : CancelEventArgs
+	public class DetailsViewRowCollection: ICollection, IEnumerable
 	{
-		private int rowIndex;
-		IOrderedDictionary keys;
-		IOrderedDictionary values;
+		ArrayList rows = new ArrayList ();
 		
-		public DetailsViewDeleteEventArgs (int index)
+		public DetailsViewRowCollection (ArrayList rows)
 		{
-			this.rowIndex = index;
+			this.rows = rows;
 		}
 		
-		internal DetailsViewDeleteEventArgs (int index, IOrderedDictionary keys, IOrderedDictionary values)
+		public DetailsViewRow this [int i] {
+			get { return (DetailsViewRow) rows [i]; }
+		}
+		
+		public void CopyTo (DetailsViewRow[] array, int index)
 		{
-			this.rowIndex = index;
-			this.keys = keys;
-			this.values = values;
+			rows.CopyTo (array, index);
 		}
 		
-		public int RowIndex {
-			get { return rowIndex; }
+		public IEnumerator GetEnumerator ()
+		{
+			return rows.GetEnumerator ();
 		}
-
-		public IOrderedDictionary Keys {
-			get { return keys; }
+		
+		public int Count {
+			get { return rows.Count; }
 		}
-
-		public IOrderedDictionary Values {
-			get { return values; }
+		
+		public bool IsSynchronized {
+			get { return false; }
+		}
+		
+		public object SyncRoot {
+			get { return rows.SyncRoot; }
+		}
+		
+		public bool IsReadOnly {
+			get { return false; }
+		}
+		
+		void System.Collections.ICollection.CopyTo (Array array, int index)
+		{
+			rows.CopyTo (array, index);
 		}
 	}
 }

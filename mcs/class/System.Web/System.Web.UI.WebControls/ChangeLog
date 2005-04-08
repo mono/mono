@@ -1,3 +1,17 @@
+2005-04-08  Lluis Sanchez Gual <lluis@novell.com>
+
+	* DetailsView.cs: Initial implementation.
+	* ObjectDataSourceView.cs: Notify changes in the parameters.
+	* DetailsViewDeletedEventArgs.cs, DetailsViewUpdatedEventArgs.cs,
+	  DetailsViewDeleteEventArgs.cs, DetailsViewUpdateEventArgs.cs:
+	  Implemented some properties.
+	* GridView.cs: Added null check in SelectedValue. Don't return null
+	  for empty DataKeyNames list.
+	* DetailsViewRowCollection.cs: Implemented.
+	* DetailsViewRow.cs: Implemented.
+	* ButtonFieldBase.cs: By default button field don't have headers.
+	* BoundField.cs: Don't bind header fields.	  
+
 2005-04-07  Lluis Sanchez Gual <lluis@novell.com>
 
 	* ButtonField.cs: Get data item properties using TypeDescriptor.

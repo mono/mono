@@ -39,12 +39,22 @@ namespace System.Web.UI.WebControls
 		private int rowsAffected;
 		private Exception e;
 		private bool exceptionHandled;
+		private bool keepEditMode;
+		private IOrderedDictionary keys;
+		private IOrderedDictionary values;
 		
 		public DetailsViewDeletedEventArgs (int affectedRows, Exception e)
 		{
 			this.rowsAffected = affectedRows;
 			this.e = e;
 			this.exceptionHandled = false;
+		}
+		
+		internal DetailsViewDeletedEventArgs (int affectedRows, Exception e, IOrderedDictionary keys, IOrderedDictionary values)
+		: this (affectedRows, e)
+		{
+			this.keys = keys;
+			this.values = values;
 		}
 		
 		public int AffectedRows {
@@ -61,11 +71,11 @@ namespace System.Web.UI.WebControls
 		}
 	
 		public IOrderedDictionary Keys {
-			get { throw new NotImplementedException(); }
+			get { return keys; }
 		}
 
 		public IOrderedDictionary Values {
-			get { throw new NotImplementedException(); }
+			get { return values; }
 		}
 	}
 }

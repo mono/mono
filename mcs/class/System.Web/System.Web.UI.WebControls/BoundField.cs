@@ -134,7 +134,7 @@ namespace System.Web.UI.WebControls {
 		{
 			if ((rowState & DataControlRowState.Edit) != 0 && !ReadOnly) {
 				if (cell.Controls.Count > 0) {
-					TextBox box = cell.Controls [0] as TextBox;
+					TextBox box = (TextBox) cell.Controls [0];
 					dictionary [DataField] = box.Text;
 				}
 			} else if (includeReadOnly) {
@@ -146,9 +146,10 @@ namespace System.Web.UI.WebControls {
 			DataControlCellType cellType, DataControlRowState rowState, int rowIndex)
 		{
 			base.InitializeCell (cell, cellType, rowState, rowIndex);
-			if (cellType == DataControlCellType.DataCell)
+			if (cellType == DataControlCellType.DataCell) {
 				InitializeDataCell (cell, rowState);
-			cell.DataBinding += new EventHandler (OnDataBindField);
+				cell.DataBinding += new EventHandler (OnDataBindField);
+			}
 		}
 		
 		public virtual void InitializeDataCell (DataControlFieldCell cell, DataControlRowState rowState)
@@ -209,7 +210,7 @@ namespace System.Web.UI.WebControls {
 		{
 			DataControlFieldCell cell = (DataControlFieldCell) sender;
 			if (cell.Controls.Count > 0) {
-				TextBox box = cell.Controls [0] as TextBox;
+				TextBox box = (TextBox) cell.Controls [0];
 				object val = GetValue (cell.BindingContainer);
 				box.Text = val != null ? val.ToString() : "";
 			}
