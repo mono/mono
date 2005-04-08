@@ -228,6 +228,7 @@ namespace Microsoft.JScript {
 
 		internal RegExpLiteral (AST parent, string re, string flags)
 		{
+			this.parent = parent;
 			this.re = re;
 			this.flags = flags;
 		}
