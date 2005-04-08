@@ -1,6 +1,6 @@
 thisdir = jtests
 SUBDIRS = 
-INTERNAL_MJS = $(TEST_RUNTIME) $(topdir)/class/Microsoft.JScript/Microsoft.JScript/mjs.exe
+INTERNAL_MJS = $(TEST_RUNTIME) $(topdir)/tools/mjs/mjs.exe
 all: test-compiler-jit
 include ../build/rules.make
 include Test.Sources
