@@ -33,9 +33,13 @@ do-profile-check:
 	    echo "*** The compiler '$(EXTERNAL_MCS)' doesn't appear to be usable." 1>&2 ; \
 	    if test -f $(topdir)/class/lib/monolite/mcs.exe; then \
 	        echo "*** Falling back to using pre-compiled binaries.  Be warned, this may not work." 1>&2 ; \
+		( cd $(topdir)/jay && $(MAKE) ); \
+		( cd $(topdir)/mcs && $(MAKE) PROFILE=basic cs-parser.cs ); \
 	        ( cd $(topdir)/class/lib/monolite/ && cp *.exe *.dll ../basic ); \
-		( cd $(topdir)/jay && $(MAKE) ); ( cd $(topdir)/mcs && $(MAKE) PROFILE=basic cs-parser.cs ); \
-	        touch $(topdir)/class/lib/basic/*; \
+		case `ls -1t $(topdir)/class/lib/basic/mcs.exe $(topdir)/mcs/cs-parser.cs | sed 1q` in \
+		$(topdir)/class/lib/basic/mcs.exe) : ;; \
+		*) sleep 5; cp $(topdir)/class/lib/monolite/mcs.exe $(topdir)/class/lib/basic ;; \
+		esac; \
 	    else \
                 echo "*** You need a C# compiler installed to build MCS. (make sure mcs works from the command line)" 1>&2 ; \
                 echo "*** Read INSTALL.txt for information on how to bootstrap a Mono installation." 1>&2 ; \

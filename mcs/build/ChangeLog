@@ -1,3 +1,8 @@
+2005-04-08  Raja R Harinath  <rharinath@novell.com>
+
+	* profiles/basic.make (do-profile-check): Handle some possible
+	timestamp problems.  Hopefully fix #74280.
+
 2005-03-30  Zoltan Varga  <vargaz@freemail.hu>
 
 	* rules.make (INSTALL_DATA): Pass -c to install.
