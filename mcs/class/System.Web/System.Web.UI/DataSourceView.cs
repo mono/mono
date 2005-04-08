@@ -110,9 +110,11 @@ namespace System.Web.UI {
 
 		protected virtual void OnDataSourceViewChanged (EventArgs eventArgs)
 		{
-			EventHandler evtHandler = eventsList [EventDataSourceViewChanged] as EventHandler;
-			if (evtHandler != null)
-				evtHandler(this, eventArgs);
+			if (eventsList != null) {
+				EventHandler evtHandler = eventsList [EventDataSourceViewChanged] as EventHandler;
+				if (evtHandler != null)
+					evtHandler(this, eventArgs);
+			}
 		}
 		
 		protected internal virtual void RaiseUnsupportedCapabilityError (
