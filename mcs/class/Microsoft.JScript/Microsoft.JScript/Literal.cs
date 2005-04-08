@@ -242,8 +242,7 @@ namespace Microsoft.JScript {
 			ILGenerator ig = ec.ig;
 			TypeBuilder type = ec.type_builder;
 
-			//FieldBuilder field = type.DefineField (SemanticAnalyser.NextAnonymousRegExpObj, typeof (RegExpObject), FieldAttributes.Public | FieldAttributes.Static);
-			FieldBuilder field = null;
+			FieldBuilder field = type.DefineField (SemanticAnalyser.NextAnonymousRegExpObj, typeof (RegExpObject), FieldAttributes.Public | FieldAttributes.Static);
 
 			Label label = ig.DefineLabel ();
 

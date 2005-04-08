@@ -43,6 +43,8 @@ namespace Microsoft.JScript {
 		static IdentificationTable label_set;
 
 		private static Hashtable obj_ctrs;
+		private static Hashtable prototypes;
+
 		//
 		// Type to GlobalObject
 		//
@@ -57,6 +59,17 @@ namespace Microsoft.JScript {
 			obj_ctrs.Add ("Math", typeof (MathObject));
 			obj_ctrs.Add ("Number", typeof (NumberConstructor));
 			obj_ctrs.Add ("String", typeof (StringConstructor));
+
+			prototypes = new Hashtable ();
+			prototypes.Add (typeof (object), typeof (ObjectPrototype));
+			prototypes.Add (typeof (FunctionObject), typeof (FunctionPrototype));
+			prototypes.Add (typeof (ArrayObject), typeof (ArrayPrototype));
+			prototypes.Add (typeof (StringObject), typeof (StringPrototype));
+			prototypes.Add (typeof (BooleanObject), typeof (BooleanPrototype));
+			prototypes.Add (typeof (NumberObject), typeof (NumberPrototype));
+			prototypes.Add (typeof (DateObject), typeof (DatePrototype));
+			prototypes.Add (typeof (RegExpObject), typeof (RegExpPrototype));
+			// FIXME: Error objects missing
 		}
 
 		internal static string ImplementationName (string name)
@@ -85,6 +98,14 @@ namespace Microsoft.JScript {
 			}
 		}
 
+		static int anon_regExp_counter = -1;
+		internal static string NextAnonymousRegExpObj {
+			get {
+				anon_regExp_counter++;
+				return "regexp " + anon_regExp_counter;
+			}
+		}
+		
 		internal static string CurrentAnonymousMethod {
 			get { return "anonymous " + anon_method_counter; }
 		}
@@ -159,6 +180,13 @@ namespace Microsoft.JScript {
 				}
 			}
 			return null;
+		}
+
+		internal static Type map_to_prototype (JSObject jsObj)
+		{
+			if (jsObj == null)
+				throw new Exception ("jsObj can't be null");
+			return (Type) prototypes [jsObj.GetType ()];
 		}
 	}
 }
