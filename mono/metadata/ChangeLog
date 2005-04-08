@@ -1,3 +1,8 @@
+2005-04-08  Miguel de Icaza  <miguel@novell.com>
+
+	* mono-config.c: Add new entry point for mkbundle
+	mono_config_parse_memory. 
+
 2005-04-08 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* threadpool.c: removed another unused function.
