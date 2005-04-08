@@ -1,3 +1,7 @@
+2005-04-08 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* WindowsConsoleDriver.cs: ignore key release events.
+
 2005-04-06  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Char.cs : ToUpper()/ToLower() comparison ranges were incorrect.

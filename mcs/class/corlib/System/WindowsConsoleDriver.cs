@@ -464,7 +464,7 @@ namespace System {
 				if (!ReadConsoleInput (inputHandle, out record, 1, out eventsRead))
 					throw new InvalidOperationException ("Error in ReadConsoleInput " +
 									Marshal.GetLastWin32Error ());
-			} while (record.EventType != 1);
+			} while (record.EventType != 1 && !record.KeyDown);
 
 			// RIGHT_ALT_PRESSED 1
 			// LEFT_ALT_PRESSED 2
