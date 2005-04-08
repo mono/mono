@@ -430,7 +430,10 @@ namespace Mono.CSharp {
 
 					for (j = 0; j < top; j++)
 						if (tm.args [i][j] != args.ParameterType (j) ||
-						    tm.mods [i][j] != args.ParameterModifier (j))
+								(tm.mods [i][j] != args.ParameterModifier (j) &&
+								 tm.mods [i][j] != Parameter.Modifier.PARAMS &&
+								 args.ParameterModifier (j) != Parameter.Modifier.PARAMS)
+							 )
 							break;
 					if (j != top)
 						continue;
