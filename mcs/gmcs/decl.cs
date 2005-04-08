@@ -1770,7 +1770,10 @@ namespace Mono.CSharp {
 			// If this is neither a dynamic type nor an interface, create a special
 			// method cache with all declared and inherited methods.
 			Type type = container.Type;
-			if (!(type is TypeBuilder) && !type.IsInterface && !type.IsGenericParameter) {
+			if (!(type is TypeBuilder) && !type.IsInterface &&
+			    // !(type.IsGenericInstance && (type.GetGenericTypeDefinition () is TypeBuilder)) &&
+			    !type.IsGenericInstance &&
+			    (Container.BaseCache == null || Container.BaseCache.method_hash != null)) {
 				method_hash = new Hashtable ();
 				AddMethods (type);
 			}
@@ -1813,6 +1816,15 @@ namespace Mono.CSharp {
 			 }
                                 
 			return hash;
+		}
+
+		void ClearDeclaredOnly (Hashtable hash)
+		{
+			IDictionaryEnumerator it = hash.GetEnumerator ();
+			while (it.MoveNext ()) {
+				foreach (CacheEntry ce in (ArrayList) it.Value)
+					ce.EntryType &= ~EntryType.Declared;
+			}
 		}
 
 		/// <summary>
@@ -1913,7 +1925,16 @@ namespace Mono.CSharp {
 
 		void AddMethods (BindingFlags bf, Type type)
 		{
-			MemberInfo [] members = type.GetMethods (bf);
+			//
+			// Consider the case:
+			//
+			//   class X { public virtual int f() {} }
+			//   class Y : X {}
+			// 
+			// When processing 'Y', the method_cache will already have a copy of 'f', 
+			// with ReflectedType == X.  However, we want to ensure that its ReflectedType == Y
+			// 
+			MethodBase [] members = type.GetMethods (bf);
 
 			Array.Reverse (members);
 
@@ -1926,6 +1947,52 @@ namespace Mono.CSharp {
 					list = new ArrayList ();
 					method_hash.Add (name, list);
 				}
+
+				if (member.IsVirtual &&
+				    (member.Attributes & MethodAttributes.NewSlot) == 0) {
+					MethodInfo base_method = ((MethodInfo) member).GetBaseDefinition ();
+
+					if (base_method == member) {
+						//
+						// Both mcs and CSC 1.1 seem to emit a somewhat broken
+						// ...Invoke () function for delegates: it's missing a 'newslot'.
+						// CSC 2.0 emits a 'newslot' for a delegate's Invoke.
+						//
+						if (member.Name != "Invoke" ||
+						    !TypeManager.IsDelegateType (type)) {
+							Report.SymbolRelatedToPreviousError (base_method);
+							Report.Warning (-28, 
+								"{0} contains a method '{1}' that is marked " + 
+								" virtual, but doesn't appear to have a slot." + 
+								"  The method may be ignored during overload resolution", 
+								type, base_method);
+						}
+						goto skip;
+					}
+
+					for (;;) {
+						list.Add (new CacheEntry (null, base_method, MemberTypes.Method, bf));
+						if ((base_method.Attributes & MethodAttributes.NewSlot) != 0)
+							break;
+
+						//
+						// Shouldn't get here.  Mono appears to be buggy.
+						//
+						MethodInfo new_base_method = base_method.GetBaseDefinition ();
+						if (new_base_method == base_method) {
+							Report.SymbolRelatedToPreviousError (base_method);
+							Report.Warning (-28, 
+								"{0} contains a method '{1}' that is marked " + 
+								" virtual, but doesn't appear to have a slot." + 
+								"  The method may be ignored during overload resolution", 
+								type, base_method);
+						}
+						base_method = new_base_method;
+					}
+
+
+				}
+			skip:
 
 				// Unfortunately, the elements returned by Type.GetMethods() aren't
 				// sorted so we need to do this check for every member.
@@ -2022,10 +2089,10 @@ namespace Mono.CSharp {
 			MaskType	= Constructor|Event|Field|Method|Property|NestedType
 		}
 
-		protected struct CacheEntry {
+		protected class CacheEntry {
 			public readonly IMemberContainer Container;
-			public readonly EntryType EntryType;
-			public readonly MemberInfo Member;
+			public EntryType EntryType;
+			public MemberInfo Member;
 
 			public CacheEntry (IMemberContainer container, MemberInfo member,
 					   MemberTypes mt, BindingFlags bf)

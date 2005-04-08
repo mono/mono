@@ -1,3 +1,40 @@
+2005-02-10  Raja R Harinath  <rharinath@novell.com>
+
+	Fix #52586, cs0121-4.cs.
+	* decl.cs (MemberCache.DeepCopy): Rename from SetupCache.  Take
+	and return a hashtable.
+	(MemberCache.ClearDeclaredOnly): New.
+	(MemberCache.MemberCache): Update to change.  Make a deep copy of
+	the method_hash of a base type too.
+	(MemberCache.AddMethods): Adapt to having a deep copy of the base
+	type methods.  Overwrite entries with the same MethodHandle so
+	that the ReflectedType is correct.  The process leaves in base
+	virtual functions and their overrides as distinct entries.
+	(CacheEntry): Now a class instead of a struct.  It shouldn't alter
+	matters since it was boxed in a ArrayList before.
+	(CacheEntry.Member, CacheEntry.EntryType): Remove 'readonly'
+	modifier.
+	* expression.cs (Invocation.BetterFunction): Simplify.  Handle the
+	case of a virtual function and its override (choose the overload
+	as better).
+	(Invocation.OverloadResolve): Avoid 'override' members during
+	'applicable_type' calculation.
+
+2005-03-28  Raja R Harinath  <rharinath@novell.com>
+
+	* typemanager.cs (TypeHandle.BaseType): Make into an IMemberContainer.
+	(TypeHandle.TypeHandle): Use LookupMemberCache rather than
+	GetTypeHandle.  It is possible for a reflected type to derive from
+	a TypeBuilder (e.g., int[] derives from the TypeBuilder
+	System.Array during mscorlib compilation).
+	* decl.cs (MemberCache.MemberCache): If the base cache doesn't
+	contain a method_hash, don't create one either.  Don't create a
+	deep copy of the base cache's method_hash.
+	(MemberCache.SetupCache): Rename back from DeepCopy.
+	(MemberCache.AddMethods): Rewrite, now that method_hash isn't
+	already initialized.  If we see an override function, add its
+	underlying base virtual function to the member_hash too.
+
 2005-02-09  Raja R Harinath  <rharinath@novell.com>
 
 	Combine two near-redundant caches.
