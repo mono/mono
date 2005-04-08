@@ -62,13 +62,19 @@ public class State {
 
 public class MultiTest {
 
+	static bool alone;
+
 	public static void Main (string[] args) 
 	{
-		if (args.Length > 64) {
+		if (args.Length == 0) {
+			Console.WriteLine ("usage: mono testmulti.exe url1 [url ...]");
+			return;
+		} else if (args.Length > 64) {
 			Console.WriteLine ("WaitHandle has a limit of 64 handles so you cannot process {0} URLs.", args.Length);
 			return;
 		}
 
+		alone = (args.Length == 1);
 		ServicePointManager.CertificatePolicy = new TestCertificatePolicy ();
 
 		int id = 1;
@@ -85,13 +91,15 @@ public class MultiTest {
 	private static void ResponseCallback (IAsyncResult result)
 	{
 		State state = ((State) result.AsyncState);
+		Console.WriteLine ("END #{0}", state.Id);
 		HttpWebResponse response = (HttpWebResponse) state.Request.EndGetResponse (result);
 
 		Stream stream = response.GetResponseStream ();
 		StreamReader sr = new StreamReader (stream, Encoding.UTF8);
-		sr.ReadToEnd ();
+		string data = sr.ReadToEnd ();
 
-		Console.WriteLine ("END #{0}", state.Id);
+		if (alone)
+			Console.WriteLine (data);
 		state.Complete ();
 	}
 

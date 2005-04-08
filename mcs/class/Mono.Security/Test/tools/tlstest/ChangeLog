@@ -1,3 +1,8 @@
+2005-04-08  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* tlsmulti.cs: Display the web page if only one URL is supplied. Show
+	usage if no URL is specified.
+
 2005-04-07  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* tlsmulti.cs: New. Async GET tests using HttpWebRequest.
