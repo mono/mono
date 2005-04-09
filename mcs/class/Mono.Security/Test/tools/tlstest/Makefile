@@ -15,16 +15,19 @@ run-test-local:
 clean-local:
 	rm -f *.exe *.pdb
 
-sources = tlstest.cs tlsmulti.cs
+sources = tlstest.cs tlsmulti.cs tlsasync.cs
 
 DISTFILES = $(sources)
 
 dist-local: dist-default
 
-all: tlstest.exe tlsmulti.exe
+all: tlstest.exe tlsmulti.exe tlsasync.exe
 
 tlstest.exe: tlstest.cs
 	$(CSCOMPILE) /target:exe /out:$@ $^
 
 tlsmulti.exe: tlsmulti.cs
+	$(CSCOMPILE) /target:exe /out:$@ $^
+
+tlsasync.exe: tlsasync.cs
 	$(CSCOMPILE) /target:exe /out:$@ $^

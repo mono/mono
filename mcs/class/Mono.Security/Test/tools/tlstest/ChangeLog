@@ -1,3 +1,9 @@
+2005-04-09  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* tlsasync.cs: New. Async HttpWebRequest and streams using HTTP or 
+	HTTPS GET. Display the web page if only one URL is supplied.
+	* Makefile: Build tlsasync tool.
+
 2005-04-08  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* tlsmulti.cs: Display the web page if only one URL is supplied. Show

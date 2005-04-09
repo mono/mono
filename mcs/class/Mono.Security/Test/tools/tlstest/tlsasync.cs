@@ -1,6 +1,6 @@
 //
-// tlsmulti.cs: Multi-sessions TLS/SSL Test Program with async HttpWebRequest
-//	based on tlstest.cs
+// tlsasync.cs: Multi-sessions TLS/SSL Test Program with async streams
+//	based on tlstest.cs and tlsmulti.cs
 //
 // Author:
 //	Sebastien Pouliot  <sebastien@ximian.com>
@@ -28,6 +28,9 @@ public class State {
 	private int id;
 	private HttpWebRequest request;
 	private ManualResetEvent handle;
+	private Stream stream;
+	private byte[] buffer;
+	private MemoryStream memory;
 
 	public State (int id, HttpWebRequest req)
 	{
@@ -43,6 +46,27 @@ public class State {
 
 	public HttpWebRequest Request {
 		get { return request; }
+	}
+
+	public Stream Stream {
+		get { return stream; }
+		set { stream = value; }
+	}
+
+	public byte[] Buffer {
+		get {
+			if (buffer == null)
+				buffer = new byte [256]; // really small on purpose
+			return buffer;
+		}
+	}
+
+	public Stream Memory {
+		get {
+			if (memory == null)
+				memory = new MemoryStream ();
+			return memory;
+		}
 	}
 
 	public void Complete ()
@@ -91,16 +115,28 @@ public class MultiTest {
 	private static void ResponseCallback (IAsyncResult result)
 	{
 		State state = ((State) result.AsyncState);
-		Console.WriteLine ("END #{0}", state.Id);
 		HttpWebResponse response = (HttpWebResponse) state.Request.EndGetResponse (result);
+		state.Stream = response.GetResponseStream ();
+		state.Stream.BeginRead (state.Buffer, 0, state.Buffer.Length, new AsyncCallback (StreamCallBack), state);
+	}
 
-		Stream stream = response.GetResponseStream ();
-		StreamReader sr = new StreamReader (stream, Encoding.UTF8);
-		string data = sr.ReadToEnd ();
-
-		if (alone)
-			Console.WriteLine (data);
-		state.Complete ();
+	private static void StreamCallBack (IAsyncResult result)
+	{
+		State state = ((State) result.AsyncState);
+		int length = state.Stream.EndRead (result);
+		if (length > 0) {
+			state.Memory.Write (state.Buffer, 0, length);
+			state.Stream.BeginRead (state.Buffer, 0, state.Buffer.Length, new AsyncCallback (StreamCallBack), state);
+		} else {
+			state.Stream.Close ();
+			if (alone) {
+				state.Memory.Position = 0;
+				StreamReader sr = new StreamReader (state.Memory, Encoding.UTF8);
+				Console.WriteLine (sr.ReadToEnd ());
+			}
+			Console.WriteLine ("END #{0}", state.Id);
+			state.Complete ();
+		}
 	}
 
 	public class TestCertificatePolicy : ICertificatePolicy {
