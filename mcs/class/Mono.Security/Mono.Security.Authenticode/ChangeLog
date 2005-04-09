@@ -1,3 +1,7 @@
+2005-04-08  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* AuthenticodeDeformatter.cs: In synch with corlib version.
+
 2004-11-05  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* AuthenticodeFormatter.cs: Now use BitConverterLE for explicit 
