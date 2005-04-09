@@ -99,14 +99,14 @@ sub: dest:i src1:i src2:i len:3 clob:1
 mul: dest:i src1:i src2:i len:4 clob:1
 div: dest:a src1:a src2:i len:16 clob:d
 div.un: dest:a src1:a src2:i len:16 clob:d
-rem: dest:d src1:a src2:i len:16 clob:d
-rem.un: dest:d src1:a src2:i len:16 clob:d
+rem: dest:d src1:a src2:i len:16 clob:a
+rem.un: dest:d src1:a src2:i len:16 clob:a
 and: dest:i src1:i src2:i len:3 clob:1
 or: dest:i src1:i src2:i len:3 clob:1
 xor: dest:i src1:i src2:i len:3 clob:1
-shl: dest:i src1:i src2:i clob:s len:3
-shr: dest:i src1:i src2:i clob:s len:3
-shr.un: dest:i src1:i src2:i clob:s len:3
+shl: dest:i src1:i src2:s clob:1 len:3
+shr: dest:i src1:i src2:s clob:1 len:3
+shr.un: dest:i src1:i src2:s clob:1 len:3
 neg: dest:i src1:i len:3 clob:1
 not: dest:i src1:i len:3 clob:1
 conv.i1: dest:i src1:i len:4
@@ -315,8 +315,8 @@ mul_imm: dest:i src1:i len:8
 # to allocate a symbolic reg for src2)
 div_imm: dest:a src1:i src2:i len:16 clob:d
 div_un_imm: dest:a src1:i src2:i len:16 clob:d
-rem_imm: dest:d src1:i src2:i len:16 clob:d
-rem_un_imm: dest:d src1:i src2:i len:16 clob:d
+rem_imm: dest:d src1:i src2:i len:16 clob:a
+rem_un_imm: dest:d src1:i src2:i len:16 clob:a
 and_imm: dest:i src1:i len:8 clob:1
 or_imm: dest:i src1:i len:8 clob:1
 xor_imm: dest:i src1:i len:8 clob:1
@@ -345,14 +345,14 @@ long_mul: dest:i src1:i src2:i clob:1 len:4
 long_mul_imm: dest:i src1:i src2:i clob:1 len:8
 long_div: dest:a src1:a src2:i len:16 clob:d
 long_div_un: dest:a src1:a src2:i len:16 clob:d
-long_rem: dest:d src1:a src2:i len:16 clob:d
-long_rem_un: dest:d src1:a src2:i len:16 clob:d
+long_rem: dest:d src1:a src2:i len:16 clob:a
+long_rem_un: dest:d src1:a src2:i len:16 clob:a
 long_and:
 long_or:
 long_xor:
-long_shl: dest:i src1:i src2:i clob:s len:31
-long_shr: dest:i src1:i src2:i clob:s len:32
-long_shr_un: dest:i src1:i src2:i clob:s len:32
+long_shl: dest:i src1:i src2:s clob:1 len:31
+long_shr: dest:i src1:i src2:s clob:1 len:32
+long_shr_un: dest:i src1:i src2:s clob:1 len:32
 long_neg:
 long_not:
 long_conv_to_i1:
@@ -548,14 +548,14 @@ int_mul_ovf: dest:i src1:i src2:i clob:1 len:64
 int_mul_ovf_un: dest:i src1:i src2:i clob:1 len:64
 int_div: dest:a src1:a src2:i clob:d len:64
 int_div_un: dest:a src1:a src2:i clob:d len:64
-int_rem: dest:d src1:a src2:i clob:d len:64
-int_rem_un: dest:d src1:a src2:i clob:d len:64
+int_rem: dest:d src1:a src2:i clob:a len:64
+int_rem_un: dest:d src1:a src2:i clob:a len:64
 int_and: dest:i src1:i src2:i clob:1 len:64
 int_or: dest:i src1:i src2:i clob:1 len:64
 int_xor: dest:i src1:i src2:i clob:1 len:64
-int_shl: dest:i src1:i src2:i clob:s len:64
-int_shr: dest:i src1:i src2:i clob:s len:64
-int_shr_un: dest:i src1:i src2:i clob:s len:64
+int_shl: dest:i src1:i src2:s clob:1 len:64
+int_shr: dest:i src1:i src2:s clob:1 len:64
+int_shr_un: dest:i src1:i src2:s clob:1 len:64
 int_adc: dest:i src1:i src2:i clob:1 len:64
 int_adc_imm: dest:i src1:i clob:1 len:64
 int_sbb: dest:i src1:i src2:i clob:1 len:64
@@ -567,8 +567,8 @@ int_sub_imm: dest:i src1:i clob:1 len:64
 int_mul_imm: dest:i src1:i clob:1 len:64
 int_div_imm: dest:a src1:i clob:d len:64
 int_div_un_imm: dest:a src1:i clob:d len:64
-int_rem_imm: dest:d src1:i clob:d len:64
-int_rem_un_imm: dest:d src1:i clob:d len:64
+int_rem_imm: dest:d src1:i clob:a len:64
+int_rem_un_imm: dest:d src1:i clob:a len:64
 int_and_imm: dest:i src1:i clob:1 len:64
 int_or_imm: dest:i src1:i clob:1 len:64
 int_xor_imm: dest:i src1:i clob:1 len:64
