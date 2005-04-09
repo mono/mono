@@ -1,5 +1,11 @@
 2005-04-09  Zoltan Varga  <vargaz@freemail.hu>
 
+	* mini-amd64.c (mono_arch_output_basic_block): Fix stack alignment
+	and leakage in CKFINITE.
+
+	* exceptions-amd64.c (mono_arch_get_throw_exception_by_name): Change
+	this to a null op since it is called on amd64 too.
+
 	* exceptions-amd64.c (get_throw_trampoline): Align stack.
 
 	* exceptions-amd64.c (mono_arch_get_throw_exception_by_name): Remove
