@@ -97,6 +97,9 @@ class MonoServiceRunner {
 				return 1;
 			}
 		}
+		
+		// Allow loading of dynamic assemblies
+		AppDomain.CurrentDomain.AppendPrivatePath (Environment.CurrentDirectory);
 
 		// Use lockfile to allow only one instance
 		if (lockfile == null)
@@ -155,12 +158,19 @@ class MonoServiceRunner {
 		}
 
 		// Hook up RunService callback
+		Type cbType = Type.GetType ("System.ServiceProcess.ServiceBase+RunServiceCallback, System.ServiceProcess");
+		if (cbType == null){
+			error ("Internal Mono Error: Could not find RunServiceCallback in ServiceBase");
+			return 1;			
+		}
+		
 		FieldInfo fi = typeof (ServiceBase).GetField ("RunService", BindingFlags.Static | BindingFlags.NonPublic);
 		if (fi == null){
 			error ("Internal Mono Error: Could not find RunService in ServiceBase");
 			return 1;
 		}
-		fi.SetValue (null, new EventHandler (RunService));
+		fi.SetValue (null, Delegate.CreateDelegate(cbType, 
+			typeof (MonoServiceRunner).GetMethod ("RunService", BindingFlags.Static | BindingFlags.NonPublic)));
 		
 		// And run its Main. Our RunService handler is invoked from 
 		// ServiceBase.Run.
@@ -177,15 +187,8 @@ class MonoServiceRunner {
 	}
 	
 	// The main service loop
-	private static void RunService (object o, EventArgs e)
+	private static void RunService (ServiceBase [] services)
 	{
-		FieldInfo fi = typeof (ServiceBase).GetField ("RegisteredServices", BindingFlags.Static | BindingFlags.NonPublic);
-		if (fi == null){
-			error ("Internal Mono Error: Could not find RegisteredServices in ServiceBase");
-			return;
-		}
-
-		ServiceBase [] services = (ServiceBase []) fi.GetValue (null);
 		if (services == null || services.Length == 0){
 			error ("No services were registered by this service");
 			return;
