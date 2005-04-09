@@ -18,6 +18,7 @@
 #	a  EAX register
 #   d  EDX register
 #	l  long reg (forced eax:edx)
+#   s  ECX register
 #   c  register which can be used as a byte register (RAX..RDX)
 #
 # len:number         describe the maximun length in bytes of the instruction
@@ -35,8 +36,7 @@
 #	c  clobbers caller-save registers
 #	1  clobbers the first source register
 #	a  EAX is clobbered
-#   d  EAX and EDX are clobbered
-#	s  the src2 operand needs to be in ECX (shift opcodes)
+#   d  EDX is clobbered
 #	x  both the source operands are clobbered (xchg)
 #   m  sets an XMM reg
 #

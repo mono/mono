@@ -1,5 +1,7 @@
 2005-04-09  Zoltan Varga  <vargaz@freemail.hu>
 
+	* cpu-amd64.md: Fix some comments.
+
 	* Makefile.am: Add mini-codegen.c to amd64 build.
 
 	* liveness.c: Merge from HEAD.
