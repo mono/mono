@@ -1,5 +1,7 @@
 2005-04-09  Zoltan Varga  <vargaz@freemail.hu>
 
+	* liveness.c: Merge from HEAD.
+
 	* genmdesc.c: Make the generated machine description non-static.
 
 	* mini-codegen.c: New file containing the arch independent local

@@ -10,7 +10,7 @@
 #include "mini.h"
 #include "inssel.h"
 
-// #define DEBUG_LIVENESS
+//#define DEBUG_LIVENESS
 
 extern guint8 mono_burg_arity [];
 
@@ -94,9 +94,6 @@ update_gen_kill_set (MonoCompile *cfg, MonoBasicBlock *bb, MonoInst *inst, int i
 			/*
 			 * Variables used in exception regions can't be allocated to 
 			 * registers.
-			 * In theory, only variables written need to be made volatile, but
-			 * bblocks in exception regions are missing some control flow
-			 * edges, so variables used in them have incomplete liveness info.
 			 */
 			cfg->varinfo [vi->idx]->flags |= MONO_INST_VOLATILE;
 		}
@@ -142,17 +139,13 @@ visit_bb (MonoCompile *cfg, MonoBasicBlock *bb, GSList **visited)
 
 	*visited = g_slist_append (*visited, bb);
 
-#ifndef MONO_ARCH_ENABLE_REGALLOC_IN_EH_BLOCKS
 	/* 
 	 * Need to visit all bblocks reachable from this one since they can be
-	 * reached during exception handling. This is not neccessary when
-	 * the back ends could guarantee that the variables are in the
-	 * correct registers when a handler is called.
+	 * reached during exception handling.
 	 */
 	for (i = 0; i < bb->out_count; ++i) {
 		visit_bb (cfg, bb->out_bb [i], visited);
 	}
-#endif
 }
 
 static void
@@ -162,8 +155,12 @@ handle_exception_clauses (MonoCompile *cfg)
 	GSList *visited = NULL;
 
 	/*
-	 * Variables in exception handler regions cannot be allocated to registers
-	 * so make them volatile. See bug #42136. 
+	 * Variables in exception handler register cannot be allocated to registers
+	 * so make them volatile. See bug #42136. This will not be neccessary when
+	 * the back ends could guarantee that the variables will be in the
+	 * correct registers when a handler is called.
+	 * This includes try blocks too, since a variable in a try block might be
+	 * accessed after an exception handler has been run.
 	 */
 	for (bb = cfg->bb_entry; bb; bb = bb->next_bb) {
 
