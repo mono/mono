@@ -1,3 +1,7 @@
+2005-04-09 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* sendback.ashx: yet another handler to test with.
+
 2005-04-07  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* postmulti.cs: New. Async POST tests using HttpWebRequest.
