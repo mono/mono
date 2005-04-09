@@ -1,3 +1,7 @@
+2005-04-09  Miguel de Icaza  <miguel@novell.com>
+
+	* StreamWriterTest.cs: New test for bug #74513.
+
 2005-03-24  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* DirectoryCas.cs: Added partial trust unit tests.

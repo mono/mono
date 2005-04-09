@@ -434,6 +434,23 @@ public class StreamWriterTest : Assertion
 		w.Write (s);
 	}
 
+	[Test]
+	public void NoPreambleOnAppend ()
+	{
+		MemoryStream ms = new MemoryStream ();
+		StreamWriter w = new StreamWriter (ms, Encoding.UTF8);
+		w.Write ("a");
+		w.Flush ();
+		AssertEquals ("Incorrect size after writing 1 byte plus header", ms.Position, 4);
+
+		// Append 1 byte, should skip the preamble now.
+		w.Write ("a");
+		w.Flush ();
+		w = new StreamWriter (ms, Encoding.UTF8);
+		AssertEquals ("Incorrect size after writing 1 byte, must have been 5", ms.Position, 5);
+		
+	}
+	
 	// TODO - Write - test errors, functionality tested in TestFlush.
 }
 }

@@ -72,6 +72,10 @@ namespace System.IO {
 			int BufferSize = Math.Max(bufferSize, MinimumBufferSize);
 			decode_buf = new char [BufferSize];
 			byte_buf = new byte [encoding.GetMaxByteCount (BufferSize)];
+
+			// Fixes bug http://bugzilla.ximian.com/show_bug.cgi?id=74513
+			if (internalStream.CanSeek && internalStream.Position > 0)
+				preamble_done = true;
 		}
 
 		//[MonoTODO("Nothing is done with bufferSize")]
