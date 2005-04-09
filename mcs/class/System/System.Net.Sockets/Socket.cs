@@ -104,8 +104,6 @@ namespace System.Net.Sockets
 			public void Complete ()
 			{
 				IsCompleted = true;
-				if (callback != null)
-					callback (this);
 
 				Queue queue = null;
 				if (operation == SocketOperation.Receive || operation == SocketOperation.ReceiveFrom) {
@@ -114,22 +112,24 @@ namespace System.Net.Sockets
 					queue = Sock.writeQ;
 				}
 
-				if (queue == null)
-					return;
-
-				SocketAsyncCall sac = null;
-				SocketAsyncResult req = null;
-				lock (queue) {
-					queue.Dequeue (); // remove ourselves
-					if (queue.Count > 0) {
-						req = (SocketAsyncResult) queue.Peek ();
-						Worker worker = new Worker (req);
-						sac = GetDelegate (worker, req.operation);
+				if (queue != null) {
+					SocketAsyncCall sac = null;
+					SocketAsyncResult req = null;
+					lock (queue) {
+						queue.Dequeue (); // remove ourselves
+						if (queue.Count > 0) {
+							req = (SocketAsyncResult) queue.Peek ();
+							Worker worker = new Worker (req);
+							sac = GetDelegate (worker, req.operation);
+						}
 					}
+
+					if (sac != null)
+						sac.BeginInvoke (null, req);
 				}
 
-				if (sac != null)
-					sac.BeginInvoke (null, req);
+				if (callback != null)
+					callback (this);
 			}
 
 			SocketAsyncCall GetDelegate (Worker worker, SocketOperation op)

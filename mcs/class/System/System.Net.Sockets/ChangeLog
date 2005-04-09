@@ -1,3 +1,8 @@
+2005-04-09 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Socket.cs: invoke the callback after scheduling the next request for
+	the socket. Fixes bug #74539.
+
 2005-04-08 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Socket.cs: update socket connected status in an async request finishes
