@@ -1,3 +1,7 @@
+2005-04-09  Peter Bartok  <pbartok@novell.com>
+
+	* System.Windows.Forms.dll.sources: Added FolderBrowserDialog.cs
+
 2005-03-11  Peter Bartok  <pbartok@novell.com>
 
 	* System.Windows.Forms.dll.sources: Added MdiClient.cs

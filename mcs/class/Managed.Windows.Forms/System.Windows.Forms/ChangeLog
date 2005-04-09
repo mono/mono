@@ -1,3 +1,7 @@
+2005-04-09  Peter Bartok  <pbartok@novell.com>
+
+	* FolderBrowserDialog: Added
+
 2005-04-07  Jordi Mas i Hernandez <jordi@ximian.com>
 
 	* LinkLabel.cs: move drawing code into the theme

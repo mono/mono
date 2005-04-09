@@ -105,6 +105,7 @@ System.Windows.Forms/FeatureSupport.cs
 System.Windows.Forms/FlatStyle.cs
 System.Windows.Forms/FontDialog.cs
 System.Windows.Forms/FileDialog.cs
+System.Windows.Forms/FolderBrowserDialog.cs
 System.Windows.Forms/Form.cs
 System.Windows.Forms/FormBorderStyle.cs
 System.Windows.Forms/FormStartPosition.cs
