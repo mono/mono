@@ -100,7 +100,7 @@ namespace System.Windows.Forms
 			: base (items)
 		{
 			CommonConstructor (text);
-			shortcut = shortcut;
+			this.shortcut = shortcut;
 			mergeorder = mergeOrder;
 			mergetype = mergeType;
 
