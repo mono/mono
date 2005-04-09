@@ -4,7 +4,7 @@ int mono_main (int argc, char* argv[]);
 
 int main (int argc, char* argv[])
 {
-	char **newargs = (char **) malloc (sizeof (char *) * argc + 2);
+	char **newargs = (char **) malloc (sizeof (char *) * (argc + 2));
 	int i;
 
 	newargs [0] = argv [0];

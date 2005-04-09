@@ -1,3 +1,7 @@
+2004-04-09  James Willcox  <james@ximian.com>
+
+	* template.c: allocate the correct amount of memory for newargs
+
 2005-04-08  Miguel de Icaza  <miguel@novell.com>
 
 	* mkbundle.cs: Add support for bundling also a machine.config
