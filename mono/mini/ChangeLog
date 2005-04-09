@@ -1,3 +1,16 @@
+2005-04-09  Zoltan Varga  <vargaz@freemail.hu>
+
+	* genmdesc.c: Make the generated machine description non-static.
+
+	* mini-codegen.c: New file containing the arch independent local
+	register allocator.
+
+	* mini-amd64.h: Add some defines needed by the new allocator.
+
+	* mini-amd64.c: Move local reg allocator to mini-codegen.c.
+
+	* cpu-amd64.md: Modify some instructions for use by the new allocator.
+
 2005-03-27  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini-amd64.c (mono_arch_local_regalloc): Optimize away reg->reg

@@ -826,6 +826,7 @@ MonoVTable*       mono_find_class_init_trampoline_by_addr (gconstpointer addr);
 gboolean          mono_running_on_valgrind (void);
 void*             mono_global_codeman_reserve (int size);
 gint32*           mono_allocate_stack_slots (MonoCompile *cfg, guint32 *stack_size, guint32 *stack_align);
+void              mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb);
 
 /* methods that must be provided by the arch-specific port */
 void      mono_arch_cpu_init                    (void);
@@ -837,6 +838,8 @@ MonoCallInst *mono_arch_call_opcode             (MonoCompile *cfg, MonoBasicBloc
 MonoInst *mono_arch_get_inst_for_method       (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig, MonoInst **args);
 void      mono_codegen                          (MonoCompile *cfg);
 const char *mono_arch_regname                   (int reg);
+const char *mono_arch_fregname                  (int reg);
+const char *mono_arch_regname_full              (int reg, gboolean fp);
 gpointer  mono_arch_get_throw_exception         (void);
 gpointer  mono_arch_get_rethrow_exception       (void);
 gpointer  mono_arch_get_throw_exception_by_name (void);
