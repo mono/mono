@@ -1,3 +1,8 @@
+2005-04-09 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpWebRequest.cs: throw the exception if we got an error, as now
+	it's catched in the redirection handling code.
+
 2005-04-08 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpWebRequest.cs: moved redirection handling to a proper place.

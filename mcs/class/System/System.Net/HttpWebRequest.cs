@@ -685,6 +685,9 @@ namespace System.Net
 				Abort ();
 				throw new WebException("The request timed out", WebExceptionStatus.Timeout);
 			}
+
+			if (result.GotException)
+				throw result.Exception;
 			
 			return result.Response;
 		}
