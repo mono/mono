@@ -1,3 +1,7 @@
+2005-04-09  Joerg Rosenkranz  <joergr@voelcker.com>
+
+	* ServiceBase.cs: Cleaned up callback code.
+	
 2005-04-08  Joerg Rosenkranz  <joergr@voelcker.com>
 
 	* ServiceBase.cs: Introduced static callback for interoperability

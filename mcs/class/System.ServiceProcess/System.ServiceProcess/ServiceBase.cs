@@ -40,9 +40,10 @@ namespace System.ServiceProcess
 {
 	public class ServiceBase : System.ComponentModel.Component
 	{
-		// These members are used for interoperation with mono-service
-		internal static ServiceBase [] RegisteredServices = null;
-		internal static EventHandler RunService = null;
+		internal delegate void RunServiceCallback (ServiceBase [] services);
+		
+		// This member is used for interoperation with mono-service
+		internal static RunServiceCallback RunService = null;
 		
 		public ServiceBase() { }
 
@@ -166,10 +167,8 @@ namespace System.ServiceProcess
 
 		public static void Run (ServiceBase [] servicesToRun) 
 		{
-			RegisteredServices = servicesToRun;
-			
 			if (RunService != null)
-				RunService (null, EventArgs.Empty);
+				RunService (servicesToRun);
 		}
 
 	}
