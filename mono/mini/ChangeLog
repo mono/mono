@@ -1,3 +1,7 @@
+2005-04-09  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini.c (print_method_from_ip): Fix debugging support.
+
 2005-2-1  Massimiliano Mantione  <massi@ximian.com>
 
 	* ssapre.c: Fix a subtle bug about availability, and limit SSAPRE
