@@ -296,7 +296,20 @@ public partial class TypeManager {
 	
 	static public MethodInfo msvbcs_stringtype_strcmp_string_string_boolean;
 	static public MethodInfo msvbcs_stringtype_strlike_string_string_comparemethod;
-		
+
+	static public MethodInfo 	msvbcs_booleantype_fromobject_object;
+	static public MethodInfo 	msvbcs_bytetype_fromobject_object;
+	static public MethodInfo 	msvbcs_shorttype_fromobject_object;
+	static public MethodInfo 	msvbcs_integertype_fromobject_object;
+	static public MethodInfo 	msvbcs_longtype_fromobject_object;
+	static public MethodInfo 	msvbcs_singletype_fromobject_object;
+	static public MethodInfo 	msvbcs_doubletype_fromobject_object;
+	static public MethodInfo 	msvbcs_decimaltype_fromobject_object;
+	static public MethodInfo 	msvbcs_chartype_fromobject_object;
+	static public MethodInfo 	msvbcs_datetype_fromobject_object;
+	static public MethodInfo 	msvbcs_stringtype_fromobject_object;
+
+
 	static public ConstructorInfo void_datetime_ctor_ticks_arg;
 	
 	// <remarks>
@@ -1606,6 +1619,7 @@ public partial class TypeManager {
 	//
 	public static void InitVisualBasicCodeHelpers ()
 	{
+		Type [] object_arg = { object_type };
 		Type [] boolean_arg = { bool_type };
 		Type [] byte_arg = { byte_type };
 		Type [] short_arg = { short_type };
@@ -1671,6 +1685,29 @@ public partial class TypeManager {
 		msvbcs_stringtype_strlike_string_string_comparemethod = GetMethod (
 			msvbcs_string_type, "StrLike", string_string_comparemethod_arg);
 
+		msvbcs_booleantype_fromobject_object = GetMethod (
+			msvbcs_boolean_type, "FromObject", object_arg);
+		msvbcs_bytetype_fromobject_object = GetMethod (
+			msvbcs_byte_type, "FromObject", object_arg);
+		msvbcs_shorttype_fromobject_object = GetMethod (
+			msvbcs_short_type, "FromObject", object_arg);
+		msvbcs_integertype_fromobject_object = GetMethod (
+			msvbcs_integer_type, "FromObject", object_arg);
+		msvbcs_longtype_fromobject_object = GetMethod (
+			msvbcs_long_type, "FromObject", object_arg);
+		msvbcs_singletype_fromobject_object = GetMethod (
+			msvbcs_single_type, "FromObject", object_arg);
+		msvbcs_doubletype_fromobject_object = GetMethod (
+			msvbcs_double_type, "FromObject", object_arg);
+		msvbcs_decimaltype_fromobject_object = 	GetMethod (
+			msvbcs_decimal_type, "FromObject", object_arg);
+		msvbcs_chartype_fromobject_object = GetMethod (
+			msvbcs_char_type, "FromObject", object_arg);
+		msvbcs_datetype_fromobject_object = GetMethod (
+			msvbcs_date_type, "FromObject", object_arg);
+		msvbcs_stringtype_fromobject_object = GetMethod (
+			msvbcs_string_type, "FromObject", object_arg);
+		
 	}
 
 	const BindingFlags instance_and_static = BindingFlags.Static | BindingFlags.Instance;

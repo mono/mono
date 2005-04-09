@@ -1942,6 +1942,61 @@ namespace Mono.CSharp {
 			return null;
 		}
 
+
+		/// <summary> 
+		/// VB.NET specific: Conversions from Object to Primitive Types
+		/// </summary>
+
+		static public Expression ObjectTypeToPrimitiveTypes (EmitContext ec, Expression expr,
+								    Type target_type, Location loc)
+		{
+			Type expr_type = expr.Type;
+ 			Type real_target_type = target_type;
+			MethodInfo helper_method = null;
+			Expression retexpr;
+
+			if (expr_type != TypeManager.object_type)
+				return null;
+
+			if (target_type.IsSubclassOf (TypeManager.enum_type))
+				real_target_type = TypeManager.EnumToUnderlying (target_type);
+			
+
+			if (real_target_type == TypeManager.bool_type)
+				helper_method = TypeManager.msvbcs_booleantype_fromobject_object;
+			if (real_target_type == TypeManager.byte_type)
+				helper_method = TypeManager.msvbcs_bytetype_fromobject_object;
+			if (real_target_type == TypeManager.short_type)
+				helper_method = TypeManager.msvbcs_shorttype_fromobject_object;
+			if (real_target_type == TypeManager.char_type)
+				helper_method = TypeManager.msvbcs_chartype_fromobject_object;
+			if (real_target_type == TypeManager.int32_type)
+				helper_method = TypeManager.msvbcs_integertype_fromobject_object;
+			if (real_target_type == TypeManager.int64_type)
+				helper_method = TypeManager.msvbcs_longtype_fromobject_object;
+			if (real_target_type == TypeManager.float_type)
+				helper_method = TypeManager.msvbcs_singletype_fromobject_object;
+			if (real_target_type == TypeManager.double_type)
+				helper_method = TypeManager.msvbcs_doubletype_fromobject_object;
+			if (real_target_type == TypeManager.decimal_type)
+				helper_method = TypeManager.msvbcs_decimaltype_fromobject_object;
+			if (real_target_type == TypeManager.date_type)
+				helper_method = TypeManager.msvbcs_datetype_fromobject_object;
+			if (real_target_type == TypeManager.string_type)
+				helper_method = TypeManager.msvbcs_stringtype_fromobject_object;
+
+			if (helper_method !=  null) {
+				retexpr = new HelperMethodInvocation (ec, loc, real_target_type, helper_method, expr);
+				if (target_type != real_target_type)
+					retexpr = new EmptyCast (retexpr, target_type);
+
+				return retexpr;
+			}
+
+			return null;
+		}
+		
+
 		/// <summary>
 		///  Returns whether an explicit reference conversion can be performed
 		///  from source_type to target_type
@@ -2217,6 +2272,17 @@ namespace Mono.CSharp {
 			//
 			// Unboxing conversion.
 			//
+
+			//
+			// VB.NET treats conversions from object to
+			// the primitive types using the helper
+			// routines in Microsoft.VisualBasic.dll
+			//
+
+			ne = ObjectTypeToPrimitiveTypes(ec, expr, target_type, loc);
+			if (ne != null)
+				return ne;
+			
 			if (expr_type == TypeManager.object_type && target_type.IsValueType)
 				return new UnboxCast (expr, target_type);
 

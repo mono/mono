@@ -1,3 +1,16 @@
+2005-04-09  Jambunathan K  <kjambunathan.devel@gmail.com>
+
+	* convert.cs (ObjectTypeToPrimitiveTypes): Added. Converts an
+	'Object' to a 'Primitive Type'.
+
+	(WideningAndNarrowingConversion): Inserted call to
+	'ObjectTypeToPrimitiveTypes' to convert from 'Object' to a
+	'Primitive Type'.
+
+	* typemanager.cs (InitVisualBasicCodeHelpers): Added helper
+	methods that handles above conversions to the TypeManager's method
+	cache.
+
 2005-04-02  Jambunathan K  <kjambunathan.devel@gmail.com>
 
 	* Makefile: Added '/r:Microsoft.VisualBasic.dll' to the compile
