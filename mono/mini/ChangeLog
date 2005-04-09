@@ -1,5 +1,7 @@
 2005-04-09  Zoltan Varga  <vargaz@freemail.hu>
 
+	* Makefile.am: Add mini-codegen.c to amd64 build.
+
 	* liveness.c: Merge from HEAD.
 
 	* genmdesc.c: Make the generated machine description non-static.
