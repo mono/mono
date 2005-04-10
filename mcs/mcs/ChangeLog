@@ -1,6 +1,9 @@
 2005-04-10  Miguel de Icaza  <miguel@novell.com>
 
-	* driver.cs (CompilerCallableEntryPoint.InvokeCompiler): Always
+	* driver.cs (MainDriver): Stop processing if the CLS stage found
+	errors. 
+
+	(CompilerCallableEntryPoint.InvokeCompiler): Always
 	reset after execution;   Take a TextWriter argument for the
 	output.
 

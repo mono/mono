@@ -1577,7 +1577,7 @@ namespace Mono.CSharp
 				return false;
 			}
 			
-			if (RootContext.VerifyClsCompliance) { 
+			if (RootContext.VerifyClsCompliance) {
 				CodeGen.Assembly.ResolveClsCompliance ();
 				if (CodeGen.Assembly.IsClsCompliant) {
 					AttributeTester.VerifyModulesClsCompliance ();
@@ -1585,6 +1585,8 @@ namespace Mono.CSharp
 					AttributeTester.VerifyTopLevelNameClsCompliance ();
 				}
 			}
+			if (Report.Errors > 0)
+				return false;
 			
 			//
 			// The code generator
