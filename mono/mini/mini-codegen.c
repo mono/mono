@@ -547,21 +547,51 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 		
 		DEBUG (print_ins (i, ins));
 
-		if (spec [MONO_INST_SRC1]) {
+		/*
+		 * TRACK FP STACK
+		 */
+		if (use_fpstack) {
+			GList *spill;
+
 			if (spec [MONO_INST_SRC1] == 'f') {
-				reginfo1 = reginfof;
+				spill = g_list_first (fspill_list);
+				if (spill && fpcount < MONO_ARCH_FPSTACK_SIZE) {
+					reginfof [ins->sreg1].flags |= MONO_X86_FP_NEEDS_LOAD;
+					fspill_list = g_list_remove (fspill_list, spill->data);
+				} else
+					fpcount--;
+			}
 
-				if (use_fpstack) {
-					GList *spill;
+			if (spec [MONO_INST_SRC2] == 'f') {
+				spill = g_list_first (fspill_list);
+				if (spill) {
+					reginfof [ins->sreg2].flags |= MONO_X86_FP_NEEDS_LOAD;
+					fspill_list = g_list_remove (fspill_list, spill->data);
+					if (fpcount >= MONO_ARCH_FPSTACK_SIZE) {
+						fspill++;
+						fspill_list = g_list_prepend (fspill_list, GINT_TO_POINTER(fspill));
+						reginfof [ins->sreg2].flags |= MONO_X86_FP_NEEDS_LOAD_SPILL;
+					}
+				} else
+					fpcount--;
+			}
 
-					spill = g_list_first (fspill_list);
-					if (spill && fpcount < MONO_ARCH_FPSTACK_SIZE) {
-						reginfo1 [ins->sreg1].flags |= MONO_X86_FP_NEEDS_LOAD;
-						fspill_list = g_list_remove (fspill_list, spill->data);
-					} else
+			if (spec [MONO_INST_DEST] == 'f') {
+				if (use_fpstack && (spec [MONO_INST_CLOB] != 'm')) {
+					if (fpcount >= MONO_ARCH_FPSTACK_SIZE) {
+						reginfof [ins->dreg].flags |= MONO_X86_FP_NEEDS_SPILL;
+						fspill++;
+						fspill_list = g_list_prepend (fspill_list, GINT_TO_POINTER(fspill));
 						fpcount--;
+					}
+					fpcount++;
 				}
 			}
+		}
+
+		if (spec [MONO_INST_SRC1]) {
+			if (spec [MONO_INST_SRC1] == 'f')
+				reginfo1 = reginfof;
 			else
 				reginfo1 = reginfo;
 			reginfo1 [ins->sreg1].prev_use = reginfo1 [ins->sreg1].last_use;
@@ -580,25 +610,8 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 			ins->sreg1 = -1;
 		}
 		if (spec [MONO_INST_SRC2]) {
-			if (spec [MONO_INST_SRC2] == 'f') {
+			if (spec [MONO_INST_SRC2] == 'f')
 				reginfo2 = reginfof;
-
-				if (use_fpstack) {
-					GList *spill;
-
-					spill = g_list_first (fspill_list);
-					if (spill) {
-						reginfo2 [ins->sreg2].flags |= MONO_X86_FP_NEEDS_LOAD;
-						fspill_list = g_list_remove (fspill_list, spill->data);
-						if (fpcount >= MONO_ARCH_FPSTACK_SIZE) {
-							fspill++;
-							fspill_list = g_list_prepend (fspill_list, GINT_TO_POINTER(fspill));
-							reginfo2 [ins->sreg2].flags |= MONO_X86_FP_NEEDS_LOAD_SPILL;
-						}
-					} else
-						fpcount--;
-				}
-			}
 			else
 				reginfo2 = reginfo;
 			reginfo2 [ins->sreg2].prev_use = reginfo2 [ins->sreg2].last_use;
@@ -618,18 +631,8 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 			ins->sreg2 = -1;
 		}
 		if (spec [MONO_INST_DEST]) {
-			if (spec [MONO_INST_DEST] == 'f') {
+			if (spec [MONO_INST_DEST] == 'f')
 				reginfod = reginfof;
-				if (use_fpstack && (spec [MONO_INST_CLOB] != 'm')) {
-					if (fpcount >= MONO_ARCH_FPSTACK_SIZE) {
-						reginfod [ins->dreg].flags |= MONO_X86_FP_NEEDS_SPILL;
-						fspill++;
-						fspill_list = g_list_prepend (fspill_list, GINT_TO_POINTER(fspill));
-						fpcount--;
-					}
-					fpcount++;
-				}
-			}
 			else
 				reginfod = reginfo;
 			if (spec [MONO_INST_DEST] != 'b') /* it's not just a base register */

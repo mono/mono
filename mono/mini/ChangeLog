@@ -1,3 +1,8 @@
+2005-04-10  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini-codegen.c (mono_local_regalloc): Move tracking of fp stack into
+	one place inside the function.
+
 2005-04-09  Zoltan Varga  <vargaz@freemail.hu>
 
 	* cpu-amd64.md: Fix some comments.
