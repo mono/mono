@@ -24,7 +24,7 @@ namespace TestRunner {
 				BindingFlags.Static | BindingFlags.Public);
 			if (ep == null)
 				throw new MissingMethodException ("static InvokeCompiler");
-			method_arg = new object [1];
+			method_arg = new object [2];
 		}
 
 		public string Output {
@@ -35,16 +35,10 @@ namespace TestRunner {
 
 		public bool Invoke(string[] args)
 		{
-			TextWriter old_writer = Console.Error;
 			output = new StringWriter ();
-			Console.SetError (output);
 			method_arg [0] = args;
-			try {
-				return (bool)ep.Invoke (null, method_arg);
-			}
-			finally {
-				Console.SetError (old_writer);
-			}
+			method_arg [1] = output;
+			return (bool)ep.Invoke (null, method_arg);
 		}
 	}
 
@@ -144,6 +138,7 @@ namespace TestRunner {
 			ReadWrongErrors (wrong_errors_file);
 			ITester tester;
 			try {
+				Console.WriteLine ("Loading:" + mcs);
 				tester = new ReflectionTester (Assembly.LoadFile (mcs));
 			}
 			catch (Exception) {

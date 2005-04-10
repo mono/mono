@@ -10,6 +10,7 @@
 // FIXME: currently our class library does not support custom number format strings
 //
 using System;
+using System.IO;
 using System.Text;
 using System.Collections;
 using System.Collections.Specialized;
@@ -47,6 +48,8 @@ namespace Mono.CSharp {
 		///   Whether to dump a stack trace on errors. 
 		/// </summary>
 		static public bool Stacktrace;
+
+		static public TextWriter Stderr = Console.Error;
 		
 		//
 		// If the 'expected' error code is reported then the
@@ -100,10 +103,10 @@ namespace Mono.CSharp {
 					msg.Append (' ');
 				}
 				msg.AppendFormat ("{0} CS{1:0000}: {2}", MessageType, code, text);
-				Console.Error.WriteLine (msg.ToString ());
+				Stderr.WriteLine (msg.ToString ());
 
 				foreach (string s in extra_information) 
-					Console.Error.WriteLine (s + MessageType);
+					Stderr.WriteLine (s + MessageType);
 
 				extra_information.Clear ();
 
@@ -279,7 +282,7 @@ namespace Mono.CSharp {
 		
 		static public void LocationOfPreviousError (Location loc)
 		{
-			Console.Error.WriteLine (String.Format ("{0}({1}) (Location of symbol related to previous error)", loc.Name, loc.Row));
+			Stderr.WriteLine (String.Format ("{0}({1}) (Location of symbol related to previous error)", loc.Name, loc.Row));
 		}    
         
 		static public void RuntimeMissingSupport (Location loc, string feature) 
