@@ -1,3 +1,8 @@
+2005-04-10  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* HttpsClientStream.cs: Added a TrustFailure property so a 
+	WebException can now report TrustFailure correctly. Fix bug 74286.
+
 2005-04-07  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* SslCipherSuite.cs: Fix calculation (sequence number) for the server
