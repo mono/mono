@@ -1,3 +1,7 @@
+2005-04-10  Cesar Lopez Nataren  <cnataren@novell.com>
+
+	* StackTrace.cs: Back to M.J namespace.
+
 2005-04-08 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Literal.cs: fix the build and broke something else ;-).

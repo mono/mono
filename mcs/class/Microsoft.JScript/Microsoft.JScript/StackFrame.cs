@@ -28,14 +28,14 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-namespace Microsoft.JScript.Tmp
-{
-	using System;
-	using System.Reflection;
-	using Microsoft.JScript.Vsa;
+using System;
+using System.Reflection;
+using Microsoft.JScript.Vsa;
 
-	public sealed class StackFrame : ScriptObject, IActivationObject
-	{
+namespace Microsoft.JScript {
+
+	public sealed class StackFrame : ScriptObject, IActivationObject {
+
 		public object [] localVars;
 		public object closureInstance;
 
