@@ -644,6 +644,7 @@ namespace System.Net
 			if (!chunkedRead || chunkStream.WantMore) {
 				try {
 					result = nstream.BeginRead (buffer, offset, size, cb, state);
+					cb = null;
 				} catch (Exception) {
 					HandleError (WebExceptionStatus.ReceiveFailure, null, "chunked BeginRead");
 					throw;
@@ -651,8 +652,13 @@ namespace System.Net
 			}
 
 			if (chunkedRead) {
-				WebAsyncResult wr = new WebAsyncResult (null, null, buffer, offset, size);
+				WebAsyncResult wr = new WebAsyncResult (cb, state, buffer, offset, size);
 				wr.InnerAsyncResult = result;
+				if (result == null) {
+					// Will be completed from the data in ChunkStream
+					wr.SetCompleted (true, (Exception) null);
+					wr.DoCallback ();
+				}
 				return wr;
 			}
 
@@ -666,9 +672,10 @@ namespace System.Net
 
 			if (chunkedRead) {
 				WebAsyncResult wr = (WebAsyncResult) result;
+				IAsyncResult inner = wr.InnerAsyncResult;
 				int nbytes = 0;
-				if (wr.InnerAsyncResult != null)
-					nbytes = nstream.EndRead (wr.InnerAsyncResult);
+				if (inner != null && !(inner is WebAsyncResult))
+					nbytes = nstream.EndRead (inner);
 
 				bool done = (nbytes == 0);
 				try {
@@ -688,7 +695,7 @@ namespace System.Net
 					throw new WebException ("Read error", null, WebExceptionStatus.ReceiveFailure, null);
 				}
 
-				return nbytes;
+				return (nbytes != 0) ? nbytes : -1;
 			}
 
 			return nstream.EndRead (result);

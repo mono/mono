@@ -57,6 +57,7 @@ namespace System.Net
 		byte [] headers;
 		bool disposed;
 		bool headersSent;
+		object locker = new object ();
 
 		public WebConnectionStream (WebConnection cnc)
 		{
@@ -139,7 +140,7 @@ namespace System.Net
 			}
 
 			pending.WaitOne ();
-			lock (this) {
+			lock (locker) {
 				if (totalRead >= contentLength)
 					return;
 				
@@ -227,7 +228,7 @@ namespace System.Net
 			if (size < 0 || offset < 0 || length < offset || length - offset < size)
 				throw new ArgumentOutOfRangeException ();
 
-			lock (this) {
+			lock (locker) {
 				pendingReads++;
 				pending.Reset ();
 			}
@@ -270,7 +271,7 @@ namespace System.Net
 			WebAsyncResult result = (WebAsyncResult) r;
 
 			if (!result.IsCompleted) {
-				int nbytes = cnc.EndRead (result.InnerAsyncResult);
+				int nbytes = cnc.EndRead (result);
 				bool finished = (nbytes == -1);
 				if (finished && result.NBytes > 0)
 					nbytes = 0;
@@ -281,7 +282,7 @@ namespace System.Net
 					contentLength = totalRead;
 			}
 
-			lock (this) {
+			lock (locker) {
 				pendingReads--;
 				if (pendingReads == 0)
 					pending.Set ();
@@ -307,7 +308,7 @@ namespace System.Net
 				throw new ArgumentOutOfRangeException ();
 
 			if (sendChunked) {
-				lock (this) {
+				lock (locker) {
 					pendingWrites++;
 					pending.Reset ();
 				}
@@ -364,7 +365,7 @@ namespace System.Net
 
 			cnc.EndWrite (result.InnerAsyncResult);
 			if (sendChunked) {
-				lock (this) {
+				lock (locker) {
 					pendingWrites--;
 					if (pendingWrites == 0)
 						pending.Set ();

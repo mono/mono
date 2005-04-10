@@ -1,3 +1,12 @@
+2005-04-10 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* WebConnection.cs: if we're reading chunked data and didn't use the
+	stream to read, we gotta set the async. result as complete and invoke
+	the callback. Don't call nstream.EndRead with the wrong IAsyncResult.
+
+	* WebConnectionStream.cs: in EndRead, pass the correct IAsyncResult to
+	cnc.EndRead. Lock on a field instead of 'this'.
+
 2005-04-09 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpWebRequest.cs: throw the exception if we got an error, as now
