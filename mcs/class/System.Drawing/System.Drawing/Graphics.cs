@@ -1225,7 +1225,7 @@ namespace System.Drawing
 			Status status = GDIPlus.GdipFlush (nativeObject, intention);
                         GDIPlus.CheckStatus (status);                    
 			if (GDIPlus.UseQuartzDrawable)
-				Carbon.CGContextFlush (GDIPlus.Display);
+				Carbon.CGContextSynchronize (GDIPlus.Display);
 		}
 
 		[EditorBrowsable (EditorBrowsableState.Advanced)]		

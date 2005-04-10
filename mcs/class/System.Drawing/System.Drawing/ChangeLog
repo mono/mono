@@ -1,3 +1,10 @@
+2005-04-10  Geoff Norton  <gnorton@customerdna.com>
+
+	* Graphics.cs:
+	  carbonFunctions.cs:
+		Use CGContextSynchronize instead of CGContextFlush.  This saves
+		on average 20000 ticks per drawing operation.
+
 2005-04-04 Jordi Mas i Hernandez <jordi@ximian.com>
 
 	* Color.cs: take into account the name color in == and != operators

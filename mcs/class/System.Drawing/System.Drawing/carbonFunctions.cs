@@ -82,6 +82,8 @@ namespace System.Drawing {
                 internal static extern void CGContextScaleCTM (IntPtr cgc, double x, double y);
                 [DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
                 internal static extern void CGContextFlush (IntPtr cgc);
+                [DllImport ("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
+                internal static extern void CGContextSynchronize (IntPtr cgc);
 	}
 
 	internal struct CGSize {
