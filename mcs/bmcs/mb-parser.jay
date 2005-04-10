@@ -4454,7 +4454,8 @@ exponentiation_expression
 	: primary_expression
 	| exponentiation_expression OP_EXP primary_expression
 	  {
-	  	//TODO
+		$$ = new Binary (Binary.Operator.Exponentiation,
+			         (Expression) $1, (Expression) $3, lexer.Location);
 	  }			  	
 	;
 	

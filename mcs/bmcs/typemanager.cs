@@ -109,7 +109,7 @@ public partial class TypeManager {
 	//
 	// Type cache of helper classes in Microsoft.VisualBasic.dll
 	//
-
+	static public Type msvbcs_object_type;
 	static public Type msvbcs_boolean_type;
 	static public Type msvbcs_byte_type;
 	static public Type msvbcs_short_type;
@@ -308,8 +308,31 @@ public partial class TypeManager {
 	static public MethodInfo 	msvbcs_chartype_fromobject_object;
 	static public MethodInfo 	msvbcs_datetype_fromobject_object;
 	static public MethodInfo 	msvbcs_stringtype_fromobject_object;
+	
+	static public MethodInfo msvbcs_objecttype_mulobj_object_object;
+	static public MethodInfo msvbcs_objecttype_divobj_object_object;
+	static public MethodInfo msvbcs_objecttype_idivobj_object_object;
+	static public MethodInfo msvbcs_objecttype_modobj_object_object;
+	static public MethodInfo msvbcs_objecttype_addobj_object_object;
+	static public MethodInfo msvbcs_objecttype_subobj_object_object;
+	static public MethodInfo msvbcs_objecttype_objtst_object_object_boolean;
+	static public MethodInfo msvbcs_objecttype_bitandobj_object_object;
+	static public MethodInfo msvbcs_objecttype_bitorobj_object_object;
+	static public MethodInfo msvbcs_objecttype_bitxorobj_object_object;
+	static public MethodInfo msvbcs_objecttype_likeobj_object_object_comparemethod;
+	static public MethodInfo msvbcs_objecttype_strcatobj_object_object;
+	static public MethodInfo msvbcs_objecttype_powobj_object_object;
+	static public MethodInfo msvbcs_objecttype_shiftleftobj_object_int32;
+	static public MethodInfo msvbcs_objecttype_shiftrightobj_object_int32;
 
+	static public MethodInfo math_pow_double_double;
 
+	static public MethodInfo decimal_add_decimal_decimal;
+	static public MethodInfo decimal_subtract_decimal_decimal;
+	static public MethodInfo decimal_multiply_decimal_decimal;
+	static public MethodInfo decimal_divide_decimal_decimal;
+	static public MethodInfo decimal_remainder_decimal_decimal;
+	
 	static public ConstructorInfo void_datetime_ctor_ticks_arg;
 	
 	// <remarks>
@@ -1215,6 +1238,8 @@ public partial class TypeManager {
 		short_type    = CoreLookupType ("System.Int16");
 		_ushort_type   = CoreLookupType ("System.UInt16");
 	}
+
+	public static Hashtable relative_type_order;
 	
 	/// <remarks>
 	///   The types have to be initialized after the initial
@@ -1399,6 +1424,17 @@ public partial class TypeManager {
 		//
 		system_date_expr.Type  = date_type;
 
+		relative_type_order = new Hashtable ();
+		relative_type_order[TypeManager.bool_type] = 1;
+		relative_type_order[TypeManager.byte_type] = 1;
+		relative_type_order[TypeManager.short_type] = 2;
+		relative_type_order[TypeManager.int32_type] = 3;
+		relative_type_order[TypeManager.int64_type] = 4;
+		relative_type_order[TypeManager.decimal_type] = 5;
+		relative_type_order[TypeManager.float_type] = 6;
+		relative_type_order[TypeManager.double_type] = 7;
+		relative_type_order[TypeManager.string_type] = 8;
+
 		//
 		// These are only used for compare purposes
 		//
@@ -1413,6 +1449,7 @@ public partial class TypeManager {
 	//
 	public static void InitVisualBasicHelperTypes ()
 	{
+		msvbcs_object_type = CoreLookupType ("Microsoft.VisualBasic.CompilerServices.ObjectType");
 		msvbcs_boolean_type = CoreLookupType ("Microsoft.VisualBasic.CompilerServices.BooleanType");
 		msvbcs_byte_type = CoreLookupType ("Microsoft.VisualBasic.CompilerServices.ByteType");
 		msvbcs_short_type = CoreLookupType ("Microsoft.VisualBasic.CompilerServices.ShortType");
@@ -1507,6 +1544,22 @@ public partial class TypeManager {
 		Type [] double_arg = { double_type };
 		math_round_double = GetMethod (
 				math_type, "Round", double_arg);
+		
+		Type [] double_double_arg = { double_type, double_type };
+		math_pow_double_double = GetMethod (
+			math_type, "Pow", double_double_arg);
+
+		Type [] decimal_decimal_arg = { decimal_type, decimal_type };
+		decimal_add_decimal_decimal = GetMethod (
+			decimal_type, "Add", decimal_decimal_arg);
+		decimal_subtract_decimal_decimal = GetMethod (
+			decimal_type, "Subtract", decimal_decimal_arg);
+		decimal_multiply_decimal_decimal = GetMethod (
+			decimal_type, "Multiply", decimal_decimal_arg);
+		decimal_divide_decimal_decimal = GetMethod (
+			decimal_type, "Divide", decimal_decimal_arg);
+		decimal_remainder_decimal_decimal = GetMethod (
+			decimal_type, "Remainder", decimal_decimal_arg);		
 		
 
 		//
@@ -1707,7 +1760,47 @@ public partial class TypeManager {
 			msvbcs_date_type, "FromObject", object_arg);
 		msvbcs_stringtype_fromobject_object = GetMethod (
 			msvbcs_string_type, "FromObject", object_arg);
+
+		Type [] object_object_arg = { object_type, object_type };
+		msvbcs_objecttype_mulobj_object_object = GetMethod (
+			msvbcs_object_type, "MulObj", object_object_arg);
+		msvbcs_objecttype_divobj_object_object = GetMethod (
+			msvbcs_object_type, "DivObj", object_object_arg);
+		msvbcs_objecttype_idivobj_object_object = GetMethod (
+			msvbcs_object_type, "IDivObj", object_object_arg);
+		msvbcs_objecttype_modobj_object_object = GetMethod (
+			msvbcs_object_type, "ModObj", object_object_arg);
+		msvbcs_objecttype_addobj_object_object = GetMethod (
+			msvbcs_object_type, "AddObj", object_object_arg);
+		msvbcs_objecttype_subobj_object_object = GetMethod (
+			msvbcs_object_type, "SubObj", object_object_arg);
+		msvbcs_objecttype_bitandobj_object_object = GetMethod (
+			msvbcs_object_type, "BitAndObj", object_object_arg);
+		msvbcs_objecttype_bitorobj_object_object = GetMethod (
+			msvbcs_object_type, "BitOrObj", object_object_arg);
+		msvbcs_objecttype_bitxorobj_object_object = GetMethod (
+			msvbcs_object_type, "BitXorObj", object_object_arg);
+		msvbcs_objecttype_strcatobj_object_object = GetMethod (
+			msvbcs_object_type, "StrCatObj", object_object_arg);
+		msvbcs_objecttype_powobj_object_object = GetMethod (
+			msvbcs_object_type, "PowObj", object_object_arg);
+
 		
+		Type [] object_object_boolean_arg = { object_type, object_type, bool_type };
+		msvbcs_objecttype_objtst_object_object_boolean = GetMethod (
+			msvbcs_object_type, "ObjTst", object_object_boolean_arg);
+		
+
+		Type [] object_object_comparemethod_arg = { object_type, object_type, msvbcs_comparemethod_type };
+		msvbcs_objecttype_likeobj_object_object_comparemethod = GetMethod (
+			msvbcs_object_type, "LikeObj", object_object_comparemethod_arg);
+		
+		Type [] object_int32_arg = { object_type, int32_type };
+		msvbcs_objecttype_shiftleftobj_object_int32 = GetMethod (
+			msvbcs_object_type, "ShiftLeftObj", object_int32_arg);
+		msvbcs_objecttype_shiftrightobj_object_int32 = GetMethod (
+			msvbcs_object_type, "ShiftRightObj", object_int32_arg);	
+
 	}
 
 	const BindingFlags instance_and_static = BindingFlags.Static | BindingFlags.Instance;

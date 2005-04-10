@@ -1,3 +1,36 @@
+2005-04-10  Jambunathan K  <kjambunathan.devel@gmail.com>
+
+	* First cut changes for suporting Binary Operators. All changes
+	need to be refined and reviewed.
+
+	* expression.cs (Error_OperatorCannotBeAppliedToObjectOperands):
+	(ResolveOperator): Commented out. The method is retained for later
+	reference.
+
+	(ResolveVisualBasicOperator): New method that replaces
+	ResolveOperator. The method takes care of VB.NET semantics for
+	Operator Resolution.
+
+	(DoResolve): Replaced call to ResolveOperator with
+	ResolveVisualBasicOperator.
+
+	(Emit, CheckShiftArguments): Updated to reflect VB.NET semantics
+
+	(HandleObjectOperands, CheckArguments, IsOperatorDefinedForType,
+	ConvertOperatorToDefinedType, GetWiderOfTypes,
+	DoOperandPromotions, IsArithmeticExpression,
+	IsRelationalExpression, IsShiftExpression,
+	IsShortCircuitedLogicalExpression, HelperMethod): New helper
+	routines to support binary operator resolution.
+
+	* mb-parser.jay: Added support for exponentiation operator.
+
+	* typemanager.cs (relative_type_order): Added.
+	(InitCoreTypes, InitCodeHelpers, InitVisualBasicHelperTypes,
+	InitVisualBasicCodeHelpers): Added more helper methods to method
+	cache.
+
+
 2005-04-09  Jambunathan K  <kjambunathan.devel@gmail.com>
 
 	* convert.cs (ObjectTypeToPrimitiveTypes): Added. Converts an
