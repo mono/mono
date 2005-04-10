@@ -93,7 +93,7 @@ namespace System.Net
 #if NET_1_1
 		int maxResponseHeadersLength;
 		static int defaultMaxResponseHeadersLength;
-		int readWriteTimeout;
+		int readWriteTimeout = 300000; // ms
 		
 		// Constructors
 		static HttpWebRequest ()
@@ -339,12 +339,22 @@ namespace System.Net
 			set { defaultMaxResponseHeadersLength = value; }
 		}
 
-		[MonoTODO ("Use this")]
-		public int ReadWriteTimeout {
-			get { return readWriteTimeout; }
-			set { readWriteTimeout = value; }
-		}
+		public
+#else
+		internal
 #endif
+		int ReadWriteTimeout {
+			get { return readWriteTimeout; }
+			set {
+				if (requestSent)
+					throw new InvalidOperationException ("The request has already been sent.");
+
+				if (value < -1)
+					throw new ArgumentOutOfRangeException ("value", "Must be >= -1");
+
+				readWriteTimeout = value;
+			}
+		}
 		
 		public string MediaType {
 			get { return mediaType; }

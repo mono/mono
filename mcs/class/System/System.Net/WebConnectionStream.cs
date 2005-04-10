@@ -63,6 +63,7 @@ namespace System.Net
 		{
 			isRead = true;
 			pending = new ManualResetEvent (true);
+			this.request = cnc.Data.request;
 			this.cnc = cnc;
 			string clength = cnc.Data.Headers ["Content-Length"];
 			if (clength != null && clength != "") {
@@ -211,7 +212,12 @@ namespace System.Net
 			if (totalRead >= contentLength)
 				return 0;
 
-			IAsyncResult res = BeginRead (buffer, offset, size, null, null);
+			WebAsyncResult res = (WebAsyncResult) BeginRead (buffer, offset, size, null, null);
+			if (!res.WaitUntilComplete (request.ReadWriteTimeout, false)) {
+				cnc.Close (true);
+				throw new IOException ("Read timed out.");
+			}
+
 			return EndRead (res);
 		}
 
@@ -378,7 +384,12 @@ namespace System.Net
 			if (isRead)
 				throw new NotSupportedException ("This stream does not allow writing");
 
-			IAsyncResult res = BeginWrite (buffer, offset, size, null, null);
+			WebAsyncResult res = (WebAsyncResult) BeginWrite (buffer, offset, size, null, null);
+			if (!res.WaitUntilComplete (request.ReadWriteTimeout, false)) {
+				cnc.Close (true);
+				throw new IOException ("Write timed out.");
+			}
+
 			EndWrite (res);
 		}
 
