@@ -1,3 +1,7 @@
+2005-04-10  Alexander Olk  <xenomorph2@onlinehome.de>
+
+	* FolderBrowserDialog.cs: First approach
+
 2005-04-09  Peter Bartok  <pbartok@novell.com>
 
 	* FolderBrowserDialog: Added
@@ -6,7 +10,7 @@
 
 	* LinkLabel.cs: move drawing code into the theme
 	* ThemeWin32Classic.cs: drawing code and painting background bugfix
-	* Theme.cs: define DrawLinkLabel method									    	
+	* Theme.cs: define DrawLinkLabel method
 
 2005-04-05  Jackson Harper  <jackson@ximian.com>
 
