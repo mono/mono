@@ -1,5 +1,10 @@
 2005-04-10 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* WebConnection.cs:
+	* HttpWebRequest.cs: now Abort() works properly. Fixes bug #74177.
+
+2005-04-10 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* WebConnection.cs: fix some breakage from my last patch.
 	* WebConnectionStream.cs: invoke the callback when done even in EndRead.
 

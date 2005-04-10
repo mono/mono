@@ -698,7 +698,7 @@ namespace System.Net
 
 			if (result.GotException)
 				throw result.Exception;
-			
+
 			return result.Response;
 		}
 
@@ -734,7 +734,7 @@ namespace System.Net
 			if (abortHandler != null) {
 				try {
 					abortHandler (this, EventArgs.Empty);
-				} catch {}
+				} catch (Exception) {}
 				abortHandler = null;
 			}
 
@@ -988,13 +988,9 @@ namespace System.Net
 
 		internal void SetResponseError (WebExceptionStatus status, Exception e, string where)
 		{
+			if (aborted)
+				return;
 			string msg = String.Format ("Error getting response stream ({0}): {1}", where, status);
-			if (webResponse != null) {
-				if (e is WebException)
-					throw e;
-				throw new WebException (msg, e, status, null);
-			}
-			
 			WebAsyncResult r = asyncRead;
 			if (r == null)
 				r = asyncWrite;

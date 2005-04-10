@@ -51,6 +51,7 @@ namespace System.Net
 		ServicePoint sPoint;
 		Stream nstream;
 		Socket socket;
+		object socketLock = new object ();
 		WebExceptionStatus status;
 		WebConnectionGroup group;
 		bool busy;
@@ -98,7 +99,7 @@ namespace System.Net
 		
 		void Connect ()
 		{
-			lock (this) {
+			lock (socketLock) {
 				if (socket != null && socket.Connected && status == WebExceptionStatus.Success) {
 					// Take the chunked stream to the expected state (State.None)
 					if (CanReuse () && CompleteChunkedRead ()) {
@@ -286,7 +287,8 @@ namespace System.Net
 				req = Data.request;
 
 			Close (true);
-			req.SetResponseError (st, e, where);
+			if (req != null)
+				req.SetResponseError (st, e, where);
 		}
 		
 		static void ReadDone (IAsyncResult result)
@@ -858,7 +860,26 @@ namespace System.Net
 
 		void Abort (object sender, EventArgs args)
 		{
-			HandleError (WebExceptionStatus.RequestCanceled, null, "Abort");
+			lock (this) {
+				if (Data.request == sender) {
+					HandleError (WebExceptionStatus.RequestCanceled, null, "Abort");
+					return;
+				}
+
+				lock (queue) {
+					if (queue.Count > 0 && queue.Peek () == sender) {
+						queue.Dequeue ();
+						return;
+					}
+
+					object [] old = queue.ToArray ();
+					queue.Clear ();
+					for (int i = old.Length - 1; i >= 0; i--) {
+						if (old [i] != sender)
+							queue.Enqueue (old [i]);
+					}
+				}
+			}
 		}
 
 		internal bool Busy {
