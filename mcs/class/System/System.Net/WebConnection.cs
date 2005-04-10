@@ -74,6 +74,7 @@ namespace System.Net
 		static Type sslStream;
 		static PropertyInfo piClient;
 		static PropertyInfo piServer;
+		static PropertyInfo piTrustFailure;
 
 		public WebConnection (WebConnectionGroup group, ServicePoint sPoint)
 		{
@@ -154,6 +155,7 @@ namespace System.Net
 				}
 				piClient = sslStream.GetProperty ("SelectedClientCertificate");
 				piServer = sslStream.GetProperty ("ServerCertificate");
+				piTrustFailure = sslStream.GetProperty ("TrustFailure");
 			}
 		}
 
@@ -813,8 +815,15 @@ namespace System.Net
 				if (e is WebException)
 					throw e;
 
-				HandleError (WebExceptionStatus.SendFailure, e, "Write");
-				throw new WebException ("Not connected", e, WebExceptionStatus.SendFailure, null);
+				WebExceptionStatus wes = WebExceptionStatus.SendFailure;
+
+				// if SSL is in use then check for TrustFailure
+				if (ssl && (bool) piTrustFailure.GetValue (nstream, null)) {
+					wes = WebExceptionStatus.TrustFailure;
+				}
+
+				HandleError (wes, e, "Write");
+				throw new WebException ("Not connected", e, wes, null);
 			}
 		}
 
