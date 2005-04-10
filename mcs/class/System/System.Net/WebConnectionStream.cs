@@ -283,6 +283,7 @@ namespace System.Net
 					nbytes = 0;
 
 				result.SetCompleted (false, nbytes + result.NBytes);
+				result.DoCallback ();
 				totalRead += nbytes;
 				if (finished || nbytes == 0)
 					contentLength = totalRead;

@@ -672,13 +672,20 @@ namespace System.Net
 			if (nstream == null)
 				return 0;
 
-			if (chunkedRead) {
-				WebAsyncResult wr = (WebAsyncResult) result;
+			int nbytes = 0;
+			WebAsyncResult wr = null;
+			IAsyncResult nsAsync = ((WebAsyncResult) result).InnerAsyncResult;
+			if (chunkedRead && (nsAsync is WebAsyncResult)) {
+				wr = (WebAsyncResult) nsAsync;
 				IAsyncResult inner = wr.InnerAsyncResult;
-				int nbytes = 0;
 				if (inner != null && !(inner is WebAsyncResult))
 					nbytes = nstream.EndRead (inner);
+			} else {
+				nbytes = nstream.EndRead (nsAsync);
+				wr = (WebAsyncResult) result;
+			}
 
+			if (chunkedRead) {
 				bool done = (nbytes == 0);
 				try {
 					chunkStream.WriteAndReadBack (wr.Buffer, wr.Offset, wr.Size, ref nbytes);
@@ -696,11 +703,9 @@ namespace System.Net
 					HandleError (WebExceptionStatus.ReceiveFailure, null, "chunked EndRead");
 					throw new WebException ("Read error", null, WebExceptionStatus.ReceiveFailure, null);
 				}
-
-				return (nbytes != 0) ? nbytes : -1;
 			}
 
-			return nstream.EndRead (result);
+			return (nbytes != 0) ? nbytes : -1;
 		}
 
 		// To be called on chunkedRead when we can read no data from the ChunkStream yet

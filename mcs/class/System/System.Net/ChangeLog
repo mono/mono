@@ -1,3 +1,8 @@
+2005-04-10 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* WebConnection.cs: fix some breakage from my last patch.
+	* WebConnectionStream.cs: invoke the callback when done even in EndRead.
+
 2005-04-10  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* WebConnection.cs: Added support for TrustFailure when throwing a
