@@ -102,7 +102,7 @@ namespace System.Xml.Serialization
 		static XmlSerializer ()
 		{
 			
-#if !TARGET_JVM
+#if TARGET_JVM
 			string db = null;
 			string th = null;
 			generationThreshold = -1;
