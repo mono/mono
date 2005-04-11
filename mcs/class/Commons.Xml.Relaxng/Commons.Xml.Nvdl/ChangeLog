@@ -1,3 +1,7 @@
+2005-04-11  Atsushi Enomoto <atsushi@ximian.com>
+
+	* NvdlRelaxngSupport.cs : added PlanAtt validation support.
+
 2005-04-06  Atsushi Enomoto <atsushi@ximian.com>
 
 	* NvdlValidator.cs : fixed warning.

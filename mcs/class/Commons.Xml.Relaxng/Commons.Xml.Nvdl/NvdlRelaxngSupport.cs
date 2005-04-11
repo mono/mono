@@ -46,14 +46,14 @@ namespace Commons.Xml.Nvdl
 
 	internal class NvdlRelaxngValidatorGenerator : NvdlValidatorGenerator
 	{
-		RelaxngPattern compiledPattern;
+		RelaxngPattern pattern;
+		RelaxngPattern attributePattern;
 
 		public NvdlRelaxngValidatorGenerator (RelaxngPattern p,
 			NvdlConfig config)
 		{
 			// FIXME: use XmlResolver
-			p.Compile ();
-			compiledPattern = p;
+			pattern = p;
 		}
 
 		public override XmlReader CreateValidator (XmlReader reader,
@@ -62,7 +62,24 @@ namespace Commons.Xml.Nvdl
 			// XmlResolver is never used.
 			RelaxngValidatingReader rvr = 
 				new RelaxngValidatingReader (
-					reader, compiledPattern);
+					reader, pattern);
+			rvr.ReportDetails = true;
+			return rvr;
+		}
+
+		public override XmlReader CreateAttributeValidator (
+			XmlReader reader,
+			XmlResolver resolver)
+		{
+			if (attributePattern == null) {
+				RelaxngElement el = new RelaxngElement ();
+				el.NameClass = new RelaxngAnyName ();
+				el.Patterns.Add (pattern);
+			}
+			// XmlResolver is never used.
+			RelaxngValidatingReader rvr = 
+				new RelaxngValidatingReader (
+					reader, attributePattern);
 			rvr.ReportDetails = true;
 			return rvr;
 		}
