@@ -1,3 +1,9 @@
+2005-04-11 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* WebConnectionStream.cs: provide a default callback when doing async.
+	read/write and waiting for a timeout so that the callback sets the
+	event and we don't block forever. Fixes bug #74539 take 3.
+
 2005-04-10 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* WebConnection.cs:

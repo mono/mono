@@ -196,12 +196,29 @@ namespace System.Net
 
 			cnc.NextRead ();
 		}
-		
-	   	static void CallbackWrapper (IAsyncResult r)
+
+	   	void WriteCallbackWrapper (IAsyncResult r)
 		{
-			WebAsyncResult result = (WebAsyncResult) r.AsyncState;
-			result.InnerAsyncResult = r;
-			result.DoCallback ();
+			WebAsyncResult result;
+			if (r.AsyncState != null) {
+				result = (WebAsyncResult) r.AsyncState;
+				result.InnerAsyncResult = r;
+				result.DoCallback ();
+			} else {
+				EndWrite (r);
+			}
+		}
+
+	   	void ReadCallbackWrapper (IAsyncResult r)
+		{
+			WebAsyncResult result;
+			if (r.AsyncState != null) {
+				result = (WebAsyncResult) r.AsyncState;
+				result.InnerAsyncResult = r;
+				result.DoCallback ();
+			} else {
+				EndRead (r);
+			}
 		}
 
 		public override int Read (byte [] buffer, int offset, int size)
@@ -212,7 +229,8 @@ namespace System.Net
 			if (totalRead >= contentLength)
 				return 0;
 
-			WebAsyncResult res = (WebAsyncResult) BeginRead (buffer, offset, size, null, null);
+			AsyncCallback cb = new AsyncCallback (ReadCallbackWrapper);
+			WebAsyncResult res = (WebAsyncResult) BeginRead (buffer, offset, size, cb, null);
 			if (!res.WaitUntilComplete (request.ReadWriteTimeout, false)) {
 				cnc.Close (true);
 				throw new IOException ("Read timed out.");
@@ -263,7 +281,7 @@ namespace System.Net
 			}
 
 			if (cb != null)
-				cb = new AsyncCallback (CallbackWrapper);
+				cb = new AsyncCallback (ReadCallbackWrapper);
 
 			if (contentLength != Int32.MaxValue && contentLength - totalRead < size)
 				size = contentLength - totalRead;
@@ -298,7 +316,8 @@ namespace System.Net
 			if (totalRead >= contentLength && !nextReadCalled)
 				ReadAll ();
 
-			return result.NBytes;
+			int nb = result.NBytes;
+			return (nb >= 0) ? nb : 0;
 		}
 		
 		public override IAsyncResult BeginWrite (byte [] buffer, int offset, int size,
@@ -333,7 +352,7 @@ namespace System.Net
 
 			AsyncCallback callback = null;
 			if (cb != null)
-				callback = new AsyncCallback (CallbackWrapper);
+				callback = new AsyncCallback (WriteCallbackWrapper);
 
 			if (sendChunked) {
 				WriteRequest ();
@@ -385,7 +404,8 @@ namespace System.Net
 			if (isRead)
 				throw new NotSupportedException ("This stream does not allow writing");
 
-			WebAsyncResult res = (WebAsyncResult) BeginWrite (buffer, offset, size, null, null);
+			AsyncCallback cb = new AsyncCallback (WriteCallbackWrapper);
+			WebAsyncResult res = (WebAsyncResult) BeginWrite (buffer, offset, size, cb, null);
 			if (!res.WaitUntilComplete (request.ReadWriteTimeout, false)) {
 				cnc.Close (true);
 				throw new IOException ("Write timed out.");
