@@ -383,6 +383,9 @@ namespace Mono.CSharp {
 		/// </summary>
 		public bool InFixedInitializer;
 
+		public bool InCatch;
+		public bool InFinally;
+
 		/// <summary>
 		///  Whether we are inside an anonymous method.
 		/// </summary>

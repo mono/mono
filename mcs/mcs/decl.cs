@@ -585,22 +585,6 @@ namespace Mono.CSharp {
 			return (MemberCore)defined_names [name];
 		}
 		
-		bool in_transit = false;
-		
-		/// <summary>
-		///   This function is used to catch recursive definitions
-		///   in declarations.
-		/// </summary>
-		public bool InTransit {
-			get {
-				return in_transit;
-			}
-
-			set {
-				in_transit = value;
-			}
-		}
-		
 		// 
 		// root_types contains all the types.  All TopLevel types
 		// hence have a parent that points to `root_types', that is

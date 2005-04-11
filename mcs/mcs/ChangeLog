@@ -1,3 +1,32 @@
+2005-04-11  Marek Safar  <marek.safar@seznam.cz>
+
+	Fix# 74565
+	* class.cs (TypeContainer.CircularDepException) New nested
+	exception class.
+	(GetPartialBases, GetNormalBases, GetClassBases): Removed error.
+	(TypeContainer.DefineType): Removed error, reset InTransit before
+	exit.
+	(Class.DefineType): Throw exception when is in Transit.
+	Catch exception and report error.
+	(Struct.DefineType): Throw exception when is in Transit.
+	Catch exception and report error.
+	(Interface.DefineType): Throw exception when is in Transit.
+	Catch exception and report error.
+	
+	* codegen.cs: Add InCatch,InFinally to EmitContext to easily
+	handle nested exception handlers.
+
+	* flowanalysis.cs (InTryWithCatch): New method, search for try with
+	a catch.
+	
+	* iterators.cs (Yield.CheckContext): Add CS1626 report. Updated
+	InFinally and InCatch storage.
+	
+	* statement.cs (Throw.Resolve): Use InCatch, InFinally from ec.
+	(Catch.Resolve): Set and Restore ec.InCatch.
+	(Try.Resolve): Set and Restore ec.InFinally.
+	(Try.HasCatch): True when try has catch.
+
 2005-04-10  Miguel de Icaza  <miguel@novell.com>
 
 	* driver.cs (MainDriver): Stop processing if the CLS stage found
@@ -468,8 +497,8 @@
 
 2005-03-15  Marek Safar  <marek.safar@seznam.cz>
 
-	* class.cs (TypeContainer.CircularDepException) New nested
-	(MethodCore.CheckBase): Report CS1715 for properties and indexers.
+	* class.cs (MethodCore.CheckBase): Report CS1715 for properties and
+	indexers.
 
 	* cs-parser.jay: Reports CS1527 for any namespace element.
 
