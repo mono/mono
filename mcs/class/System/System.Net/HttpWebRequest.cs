@@ -1042,6 +1042,10 @@ namespace System.Net
 						r.SetCompleted (false, webResponse);
 						r.DoCallback ();
 					} else {
+						if (webResponse != null) {
+							webResponse.Close ();
+							webResponse = null;
+						}
 						haveResponse = false;
 						webResponse = null;
 						r.Reset ();
