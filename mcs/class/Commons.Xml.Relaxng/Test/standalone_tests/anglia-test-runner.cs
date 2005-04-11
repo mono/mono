@@ -6,8 +6,25 @@ using Commons.Xml.Relaxng.Rnc;
 
 public class Driver
 {
-	public static void Main ()
+	public static void Main (string [] args)
 	{
+		bool outAll = false;
+		bool details = false;
+		bool stopOnError = false;
+		string filter = null;
+		foreach (string arg in args) {
+			switch (arg) {
+			case "--outall":
+				outAll = true; break;
+			case "--details":
+				details = true; break;
+			case "--stoponerror":
+				stopOnError = true; break;
+			default:
+				filter = arg; break;
+			}
+		}
+
 		try {
 			XmlDocument doc = new XmlDocument ();
 			doc.Load ("test/RNCTest.xml");
@@ -15,6 +32,10 @@ public class Driver
 			int failure = 0;
 			foreach (XmlElement el in doc.SelectNodes ("/RNCTestCases/TestCase")) {
 				string id = el.GetAttribute ("id");
+				if (filter != null && id.IndexOf (filter) < 0)
+					continue;
+				if (outAll)
+					Console.WriteLine ("testing " + id);
 				bool isValid = el.GetAttribute ("legal") == "true";
 				RncParser p = new RncParser (new NameTable ());
 				try {
@@ -29,8 +50,10 @@ public class Driver
 					}
 				} catch (Exception ex) {
 					if (isValid) {
+						if (stopOnError)
+							throw;
 						failure++;
-						Console.Error.WriteLine ("INCORRECTLY INVALID " + id + " --> " + ex.Message);
+						Console.Error.WriteLine ("INCORRECTLY INVALID " + id + " --> " + (details ? ex.ToString () : ex.Message));
 					} else {
 						success++;
 //						Console.Error.WriteLine ("invalid " + id);

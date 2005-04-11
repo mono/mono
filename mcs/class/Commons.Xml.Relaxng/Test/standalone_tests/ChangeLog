@@ -1,3 +1,8 @@
+2005-04-11  Atsushi Enomoto <atsushi@ximian.com>
+
+	* anglia-test-runner.cs : added some options.
+	* Makefile : clean is inconsistent.
+
 2004-06-17  Atsushi Enomoto <atsushi@ximian.com>
 
 	* relaxngtest.cs : Now we can test all cases (though resulting in 

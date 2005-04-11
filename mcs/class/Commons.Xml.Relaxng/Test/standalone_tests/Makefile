@@ -40,5 +40,6 @@ anglia-test : anglia-test-runner.exe
 	$(RUNTIME) anglia-test-runner.exe
 
 # be careful to use it. This removes ALL files in xml-test-suite!
-# clean:
+clean :
 #	rm -rf xml-test-suite
+	rm relaxngtest.exe anglia-test-runner.exe
