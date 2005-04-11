@@ -861,19 +861,6 @@ namespace Mono.WebServices
 		{
 			return s;
 		}
-
-		void GetOperationFormat (OperationBinding obin, out SoapBindingStyle style, out SoapBindingUse use)
-		{
-			style = SoapBindingStyle.Document;
-			use = SoapBindingUse.Literal;
-			SoapOperationBinding sob = obin.Extensions.Find (typeof(SoapOperationBinding)) as SoapOperationBinding;
-			if (sob != null) {
-				style = sob.Style;
-				SoapBodyBinding sbb = obin.Input.Extensions.Find (typeof(SoapBodyBinding)) as SoapBodyBinding;
-				if (sbb != null)
-					use = sbb.Use;
-			}
-		}
 	}
 	
 	
