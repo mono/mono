@@ -1,3 +1,7 @@
+2005-04-11  Zoltan Varga  <vargaz@freemail.hu>
+
+	* jni.c: Applied some freebsd patches from Bill Middleton <flashdict@gmail.com>.
+
 2005-04-05  Zoltan Varga  <vargaz@freemail.hu>
 
 	* jni.c: Apply patch from freebsd ports tree.
