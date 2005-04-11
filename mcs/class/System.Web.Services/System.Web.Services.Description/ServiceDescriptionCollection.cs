@@ -35,6 +35,8 @@ using System.Xml;
 namespace System.Web.Services.Description {
 	public sealed class ServiceDescriptionCollection : ServiceDescriptionBaseCollection {
 
+		ServiceDescriptionImporter importer;
+		
 		#region Constructors
 	
 		public ServiceDescriptionCollection () 
@@ -65,13 +67,28 @@ namespace System.Web.Services.Description {
 		#endregion // Properties
 
 		#region Methods
+		
+		internal void SetImporter (ServiceDescriptionImporter i)
+		{
+			importer = i;
+		}
 
 		public int Add (ServiceDescription serviceDescription) 
 		{
+			if (importer != null)
+				importer.OnServiceDescriptionAdded (serviceDescription, null, null);
 			Insert (Count, serviceDescription);
 			return (Count - 1);
 		}
 
+		internal int Add (ServiceDescription serviceDescription, string appSettingUrlKey, string appSettingBaseUrl)
+		{
+			if (importer != null)
+				importer.OnServiceDescriptionAdded (serviceDescription, appSettingUrlKey, appSettingBaseUrl);
+			Insert (Count, serviceDescription);
+			return (Count - 1);
+		}
+		
 		public bool Contains (ServiceDescription serviceDescription)
 		{
 			return List.Contains (serviceDescription);

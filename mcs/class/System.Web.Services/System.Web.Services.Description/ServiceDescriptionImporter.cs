@@ -70,6 +70,7 @@ namespace System.Web.Services.Description {
 			protocolName = String.Empty;
 			schemas = new XmlSchemas ();
 			serviceDescriptions = new ServiceDescriptionCollection ();
+			serviceDescriptions.SetImporter (this);
 			style = ServiceDescriptionImportStyle.Client;
 		}
 		
@@ -124,9 +125,13 @@ namespace System.Web.Services.Description {
 			if (appSettingUrlKey != null && appSettingUrlKey == string.Empty && style == ServiceDescriptionImportStyle.Server)
 				throw new InvalidOperationException ("Cannot set appSettingUrlKey if Style is Server");
 
+			serviceDescriptions.Add (serviceDescription, appSettingUrlKey, appSettingBaseUrl);
+		}
+
+		internal void OnServiceDescriptionAdded (ServiceDescription serviceDescription, string appSettingUrlKey, string appSettingBaseUrl)
+		{
 			ImportInfo info = new ImportInfo (serviceDescription, appSettingUrlKey, appSettingBaseUrl);
 			importInfo.Add (info);
-			serviceDescriptions.Add (serviceDescription);
 			
 			if (serviceDescription.Types != null)
 				schemas.Add (serviceDescription.Types.Schemas);

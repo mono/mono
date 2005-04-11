@@ -1,3 +1,10 @@
+2005-04-11  Lluis Sanchez Gual <lluis@novell.com>
+
+	* ServiceDescriptionCollection.cs: Notify the parent importer
+	  when a service description is added.
+	* ServiceDescriptionImporter.cs: Register wsdl docs added to the
+	  collection.
+
 2005-02-07  Lluis Sanchez Gual <lluis@novell.com>
 
 	* HttpSimpleProtocolImporter.cs: Fixed warning.
