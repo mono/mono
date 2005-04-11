@@ -80,6 +80,8 @@ struct sigcontext {
 
 #define MONO_MAX_FREGS AMD64_XMM_NREG
 
+#define MONO_ARCH_HAS_XP_LOCAL_REGALLOC
+
 /* xmm15 is reserved for use by some opcodes */
 #define MONO_ARCH_CALLEE_FREGS 0xef
 #define MONO_ARCH_CALLEE_SAVED_FREGS 0
@@ -95,6 +97,8 @@ struct sigcontext {
 
 /* RDX is clobbered by the opcode implementation before accessing sreg2 */
 #define MONO_ARCH_INST_SREG2_MASK(ins) (((ins [MONO_INST_CLOB] == 'a') || (ins [MONO_INST_CLOB] == 'd')) ? (1 << AMD64_RDX) : 0)
+
+#define MONO_ARCH_INST_IS_REGPAIR(desc) FALSE
 
 #define MONO_ARCH_FRAME_ALIGNMENT 16
 

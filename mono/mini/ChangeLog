@@ -1,3 +1,14 @@
+2005-04-12  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini.h mini-codegen.c mini-amd64.c: Rename mono_arch_regname_full () to
+	mono_regname_full () and move it to mini-codegen.c.
+
+	* mini-amd64.h: Add some defines needed by the new allocator.
+
+	* mini-codegen.c: Add sparc register pair support.
+
+	* mini-sparc.c mini-sparc.h Makefile.am: Use the new register allocator.
+
 2005-04-10  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini-codegen.c (mono_local_regalloc): Move tracking of fp stack into

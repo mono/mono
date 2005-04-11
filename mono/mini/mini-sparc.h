@@ -8,6 +8,38 @@
 #define MONO_MAX_IREGS 32
 #define MONO_MAX_FREGS 32
 
+/* Parameters used by the register allocator */
+
+#define MONO_ARCH_HAS_XP_LOCAL_REGALLOC
+
+/* Use %l4..%l7 as local registers */
+#define MONO_ARCH_CALLEE_REGS (0xf0<<16)
+
+#define MONO_ARCH_CALLEE_SAVED_REGS (~MONO_ARCH_CALLEE_REGS)
+
+#ifdef SPARCV9
+/* Use %d34..%d62 as the double precision floating point local registers */
+/* %d32 has the same encoding as %f1, so %d36%d38 == 0b1010 == 0xa */
+#define MONO_ARCH_CALLEE_FREGS (0xaaaaaaa8)
+#else
+/* Use %f2..%f30 as the double precision floating point local registers */
+#define MONO_ARCH_CALLEE_FREGS (0x55555554)
+#endif
+
+#define MONO_ARCH_CALLEE_SAVED_FREGS 0
+
+#define MONO_ARCH_USE_FPSTACK FALSE
+#define MONO_ARCH_FPSTACK_SIZE 0
+#define MONO_ARCH_INST_FIXED_REG(desc) (-1)
+#define MONO_ARCH_INST_SREG2_MASK(ins) (0)
+
+#ifdef SPARCV9
+#define MONO_ARCH_INST_IS_REGPAIR(desc) FALSE
+#else
+#define MONO_ARCH_INST_IS_REGPAIR(desc) (desc == 'l')
+#endif
+
+
 #define MONO_ARCH_FRAME_ALIGNMENT (sizeof (gpointer) * 2)
 
 #define MONO_ARCH_CODE_ALIGNMENT 32
