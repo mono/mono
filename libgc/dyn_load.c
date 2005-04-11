@@ -96,20 +96,28 @@
 /* Newer versions of GNU/Linux define this macro.  We
  * define it similarly for any ELF systems that don't.  */
 #  ifndef ElfW
-#    ifdef NETBSD
-#      if ELFSIZE == 32
+#    ifdef FREEBSD
+#      if __ELF_WORD_SIZE == 32
 #        define ElfW(type) Elf32_##type
 #      else
 #        define ElfW(type) Elf64_##type
 #      endif
 #    else
-#      if !defined(ELF_CLASS) || ELF_CLASS == ELFCLASS32
-#        define ElfW(type) Elf32_##type
+#      ifdef NETBSD
+#        if ELFSIZE == 32
+#          define ElfW(type) Elf32_##type
+#        else
+#          define ElfW(type) Elf64_##type
+#        endif
 #      else
-#        define ElfW(type) Elf64_##type
+#        if !defined(ELF_CLASS) || ELF_CLASS == ELFCLASS32
+#          define ElfW(type) Elf32_##type
+#        else
+#          define ElfW(type) Elf64_##type
+#        endif
 #      endif
 #    endif
-#  endif
+#  endif 
 
 #if defined(SUNOS5DL) && !defined(USE_PROC_FOR_LIBRARIES)
 

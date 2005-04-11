@@ -124,6 +124,17 @@ case "$THREADS" in
 		THREADLIBS="$PTHREAD_LIBS"
 	fi
       	;;
+	 *-*-freebsd6*)
+	 AC_DEFINE(GC_FREEBSD_THREADS)
+	 if test "x$PTHREAD_CFLAGS" != "x"; then
+		INCLUDES="$INCLUDES $PTHREAD_CFLAGS"
+	fi
+	if test "x$PTHREAD_LIBS" = "x"; then
+		THREADLIBS=-lpthread
+	else
+		THREADLIBS="$PTHREAD_LIBS"
+	fi
+	;;
      *-*-solaris*)
 	AC_DEFINE(GC_SOLARIS_THREADS)
 	AC_DEFINE(GC_SOLARIS_PTHREADS)

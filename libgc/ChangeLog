@@ -1,3 +1,8 @@
+2005-04-11  Zoltan Varga  <vargaz@freemail.hu>
+
+	* include/private/gcconfig.h configure.in os_dep.c dyn_load.c: 
+	Applied some freebsd patch from Bill Middleton <flashdict@gmail.com>.
+
 2005-04-06  Zoltan Varga  <vargaz@freemail.hu>
 
 	* solaris_pthreads.c (GC_pthread_detach): Add locking.
