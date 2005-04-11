@@ -75,6 +75,10 @@ distribute a self-contained image.
 .I "--keeptemp"
 By default mkbundle will delete the temporary files that it uses to
 produce the bundle.  This option keeps the file around.
+.TP
+.I "--static"
+By default mkbundle dynamically links to mono and glib.  This option
+causes it to statically link instead.
 .SH FILES
 This program will load referenced assemblies from the Mono assembly
 cache. 
