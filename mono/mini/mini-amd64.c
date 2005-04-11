@@ -117,15 +117,6 @@ mono_arch_fregname (int reg)
 		return "unknown";
 }
 
-const char*
-mono_arch_regname_full (int reg, gboolean fp)
-{
-	if (fp)
-		return mono_arch_fregname (reg);
-	else
-		return mono_arch_regname (reg);
-}
-
 static inline void 
 amd64_patch (unsigned char* code, gpointer target)
 {

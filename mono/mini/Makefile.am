@@ -128,7 +128,8 @@ sparc_sources = \
 	mini-sparc.c		\
 	mini-sparc.h		\
 	exceptions-sparc.c	\
-	tramp-sparc.c
+	tramp-sparc.c		\
+	mini-codegen.c
 
 s390_sources = \
 	mini-s390.c		\
