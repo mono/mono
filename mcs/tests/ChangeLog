@@ -1,3 +1,7 @@
+2005-04-11  Marek Safar <marek.safar@seznam.cz>
+
+	* test-362.cs: #74565 test case.
+
 2005-04-08  Raja R Harinath  <rharinath@novell.com>
 
 	* test-361.cs, test-361-2.cs: New test from #74484.
