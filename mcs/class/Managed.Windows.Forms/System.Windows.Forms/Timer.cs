@@ -73,9 +73,19 @@ namespace System.Windows.Forms {
 				return interval;
 			}
 			set {
+				if (interval == value) {
+					return;
+				}
+				
 				interval = value;
+								
 				// Use AddTicks so we get some rounding
 				expires = DateTime.Now.AddMilliseconds (interval > Minimum ? interval : Minimum);
+									
+				if (enabled == true) {				
+					XplatUI.KillTimer (this);
+					XplatUI.SetTimer (this);
+				}
 			}
 		}
 

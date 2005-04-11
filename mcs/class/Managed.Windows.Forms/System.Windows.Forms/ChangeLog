@@ -1,3 +1,7 @@
+2005-04-11  Jordi Mas i Hernandez <jordi@ximian.com>
+
+	* Timer.cs: fixes interval setting when the timer is already enabled
+	
 2005-04-10  Alexander Olk  <xenomorph2@onlinehome.de>
 
 	* FolderBrowserDialog.cs: First approach
