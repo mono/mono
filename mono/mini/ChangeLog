@@ -1,5 +1,7 @@
 2005-04-11  Zoltan Varga  <vargaz@freemail.hu>
 
+	* mini-x86.c (setup_stack): Unconditionally call pthread_attr_init ().
+
 	* exceptions-x86.c mini-x86.h mini-x86.c: Applied some freebsd patches 
 	from Bill Middleton <flashdict@gmail.com>.
 
