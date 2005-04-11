@@ -58,6 +58,7 @@ namespace System.Net
 		bool disposed;
 		bool headersSent;
 		object locker = new object ();
+		bool initRead;
 
 		public WebConnectionStream (WebConnection cnc)
 		{
@@ -429,6 +430,10 @@ namespace System.Net
 					throw new WebException ("Not connected", null, WebExceptionStatus.SendFailure, null);
 
 				cnc.Write (buffer, offset, size);
+				if (!initRead) {
+					initRead = true;
+					WebConnection.InitRead (cnc);
+				}
 			} else {
 				headers = new byte [size];
 				Buffer.BlockCopy (buffer, offset, headers, 0, size);
@@ -496,9 +501,15 @@ namespace System.Net
 						cnc.Close (true);
 				}
 				return;
+			} else if (!allowBuffering) {
+				if (!initRead) {
+					initRead = true;
+					WebConnection.InitRead (cnc);
+				}
+				return;
 			}
 
-			if (!allowBuffering || disposed)
+			if (disposed)
 				return;
 
 			disposed = true;
@@ -508,6 +519,10 @@ namespace System.Net
 				throw new IOException ("Cannot close the stream until all bytes are written");
 
 			WriteRequest ();
+			if (!initRead) {
+				initRead = true;
+				WebConnection.InitRead (cnc);
+			}
 		}
 
 		public override long Seek (long a, SeekOrigin b)

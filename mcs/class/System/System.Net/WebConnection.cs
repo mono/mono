@@ -396,7 +396,7 @@ namespace System.Net
 			certsAvailable = (server != null);
 		}
 		
-		static void InitRead (object state)
+		internal static void InitRead (object state)
 		{
 			WebConnection cnc = (WebConnection) state;
 			Stream ns = cnc.nstream;
@@ -541,7 +541,6 @@ namespace System.Net
 
 			readState = ReadState.None;
 			request.SetWriteStream (new WebConnectionStream (this, request));
-			InitRead (this);
 		}
 		
 		internal EventHandler SendRequest (HttpWebRequest request)

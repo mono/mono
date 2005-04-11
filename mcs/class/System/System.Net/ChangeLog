@@ -1,5 +1,12 @@
 2005-04-11 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* WebConnection.cs:
+	* WebConnectionStream.cs: don't start reading until we've sent at least
+	the headers. This way we ensure that a Write happens before any Read,
+	which is needed by the SSL code.
+
+2005-04-11 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* HttpWebRequest.cs: ensure we read everything before redirecting.
 
 2005-04-11 Gonzalo Paniagua Javier <gonzalo@ximian.com>
