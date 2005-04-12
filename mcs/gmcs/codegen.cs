@@ -560,7 +560,6 @@ namespace Mono.CSharp {
 
 		public void CaptureParameter (string name, Type t, int idx)
 		{
-			
 			capture_context.AddParameter (this, CurrentAnonymousMethod, name, t, idx);
 		}
 		
@@ -624,7 +623,7 @@ namespace Mono.CSharp {
 		public void EmitMeta (ToplevelBlock b, InternalParameters ip)
 		{
 			if (capture_context != null)
-				capture_context.EmitHelperClasses (this);
+				capture_context.EmitAnonymousHelperClasses (this);
 			b.EmitMeta (this);
 
 			if (HasReturnLabel)
@@ -768,7 +767,7 @@ namespace Mono.CSharp {
 			// Close pending helper classes if we are the toplevel
 			//
 			if (capture_context != null && capture_context.ParentToplevel == null)
-				capture_context.CloseHelperClasses ();
+				capture_context.CloseAnonymousHelperClasses ();
 		}
 
 		/// <summary>
