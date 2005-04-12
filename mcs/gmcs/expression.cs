@@ -854,16 +854,15 @@ namespace Mono.CSharp {
 
 			mg = MemberLookup (ec, expr_type, op_name, MemberTypes.Method, AllBindingFlags, loc);
 
-			if (mg == null && expr_type.BaseType != null)
-				mg = MemberLookup (ec, expr_type.BaseType, op_name,
-						   MemberTypes.Method, AllBindingFlags, loc);
-			
 			if (mg != null) {
 				method = StaticCallExpr.MakeSimpleCall (
 					ec, (MethodGroupExpr) mg, expr, loc);
 
 				type = method.Type;
-				return this;
+			} else if (!IsIncrementableNumber (expr_type)) {
+				Error (187, "No such operator '" + OperName (mode) + "' defined for type '" +
+				       TypeManager.CSharpName (expr_type) + "'");
+				   return null;
 			}
 
 			//
@@ -874,35 +873,20 @@ namespace Mono.CSharp {
 			type = expr_type;
 			if (expr.eclass == ExprClass.Variable){
 				LocalVariableReference var = expr as LocalVariableReference;
-				if ((var != null) && var.IsReadOnly)
+				if ((var != null) && var.IsReadOnly) {
 					Error (1604, "cannot assign to `" + var.Name + "' because it is readonly");
-				if (IsIncrementableNumber (expr_type) ||
-				    expr_type == TypeManager.decimal_type){
-					return this;
+					return null;
 				}
-			} else if (expr.eclass == ExprClass.IndexerAccess){
-				IndexerAccess ia = (IndexerAccess) expr;
-				
-				expr = ia.ResolveLValue (ec, this);
+			} else if (expr.eclass == ExprClass.IndexerAccess || expr.eclass == ExprClass.PropertyAccess){
+				expr = expr.ResolveLValue (ec, this);
 				if (expr == null)
 					return null;
-
-				return this;
-			} else if (expr.eclass == ExprClass.PropertyAccess){
-				PropertyExpr pe = (PropertyExpr) expr;
-
-				if (pe.VerifyAssignable ())
-					return this;
-
-				return null;
 			} else {
 				expr.Error_UnexpectedKind ("variable, indexer or property access", loc);
 				return null;
 			}
 
-			Error (187, "No such operator '" + OperName (mode) + "' defined for type '" +
-			       TypeManager.CSharpName (expr_type) + "'");
-			return null;
+			return this;
 		}
 
 		public override Expression DoResolve (EmitContext ec)

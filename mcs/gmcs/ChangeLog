@@ -1,3 +1,10 @@
+2005-02-16  Raja R Harinath  <rharinath@novell.com>
+
+	Fix parts of #63202.
+	* expression.cs (UnaryMutator.ResolveOperator): Remove redundant
+	lookup of operator in base type.  Ensure that all checks happen
+	when the operator resolves to an "op_..." method.
+
 2005-02-15  Raja R Harinath  <rharinath@novell.com>
 
 	Fix #71992.
