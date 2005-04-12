@@ -1,5 +1,14 @@
 2005-02-18  Raja R Harinath  <rharinath@novell.com>
 
+	Fix crasher in re-opened #72347.
+	* namespace.cs (Namespace.Lookup): Return null if
+	DeclSpace.DefineType returns null.
+
+	Fix #72678.
+	* expression.cs (Argument.Resolve): Handle a case of CS0120 here.
+
+2005-02-18  Raja R Harinath  <rharinath@novell.com>
+
 	Fix remainder of #63202.  Change semantics of DoResolveLValue: it
 	now returns null if it cannot resolve to an lvalue.
 	* ecore.cs (Expression.DoResolveLValue): Return 'null' by default.
@@ -17,7 +26,7 @@
 	(Unary.DoResolveLValue): Simplify.
 	(AddressOf.DoResolveLValue): New.
 	(ArrayAccess.DoResolveLValue): New.
-	
+
 2005-02-16  Marek Safar  <marek.safar@seznam.cz>
 
 	* attribute.cs (Attribute.Resolve): Add arguments casting for

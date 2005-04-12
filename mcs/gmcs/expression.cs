@@ -4244,6 +4244,32 @@ namespace Mono.CSharp {
 			if (Expr == null)
 				return false;
 
+			if (Expr is IMemberExpr) {
+				IMemberExpr me = Expr as IMemberExpr;
+
+				//
+				// This can happen with the following code:
+				//
+				//   class X {}
+				//   class Y {
+				//     public Y (X x) {}
+			        //   }
+				//   class Z : Y {
+				//     X X;
+				//     public Z () : base (X) {}
+				//   }
+				//
+				// SimpleNameResolve is conservative about flagging the X as
+				// an error since it has identical name and type.  However,
+				// because there's no MemberAccess, that is not really justified.
+				// It is still simpler to fix it here, rather than in SimpleNameResolve.
+				//
+				if (me.IsInstance && me.InstanceExpression == null) {
+					SimpleName.Error_ObjectRefRequired (ec, loc, me.Name);
+					return false;
+				}
+			}
+
 			if (ArgType == AType.Expression)
 				return true;
 			else {
