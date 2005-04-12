@@ -7767,7 +7767,7 @@ namespace Mono.CSharp {
 				       TypeManager.CSharpName (expr_type) + ")");
 				return null;
 			}
-			
+
 			Expression member_lookup = MemberLookup (ec, expr_type, expr_type, lookup_id, loc);
 			if (member_lookup == null) {
 				int errors = Report.Errors;
