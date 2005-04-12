@@ -1,3 +1,23 @@
+2005-02-18  Raja R Harinath  <rharinath@novell.com>
+
+	Fix remainder of #63202.  Change semantics of DoResolveLValue: it
+	now returns null if it cannot resolve to an lvalue.
+	* ecore.cs (Expression.DoResolveLValue): Return 'null' by default.
+	(Expression.ResolveLValue): Emit CS0131 error if DoResolveLValue
+	returned null.  Remove check for SimpleName.
+	(EventExpr.DoResolveLValue): New.
+	* iterators.cs (Iterator.FieldExpression.DoResolveLValue): New.
+	* expression.cs (Argument.Error_LValueRequired): New.  Move CS1510
+	error from ...
+	(Argument.Resolve): ... here.  Use it.  Use DoResolveLValue to
+	avoid CS0131 error.
+	(Unary.ResolveOperator): Move CS0211 check ...
+	(Unary.DoResolve): ... here.  Use DoResolveLValue to avoid
+	CS0131 error.
+	(Unary.DoResolveLValue): Simplify.
+	(AddressOf.DoResolveLValue): New.
+	(ArrayAccess.DoResolveLValue): New.
+	
 2005-02-16  Marek Safar  <marek.safar@seznam.cz>
 
 	* attribute.cs (Attribute.Resolve): Add arguments casting for

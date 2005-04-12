@@ -416,11 +416,6 @@ namespace Mono.CSharp {
 				return this;
 
 			case Operator.AddressOf:
-				if (Expr.eclass != ExprClass.Variable){
-					Error (211, "Cannot take the address of non-variables");
-					return null;
-				}
-				
 				if (!ec.InUnsafe) {
 					UnsafeError (loc); 
 					return null;
@@ -575,8 +570,14 @@ namespace Mono.CSharp {
 
 		public override Expression DoResolve (EmitContext ec)
 		{
-			if (Oper == Operator.AddressOf)
-				Expr = Expr.ResolveLValue (ec, new EmptyExpression ());
+			if (Oper == Operator.AddressOf) {
+				Expr = Expr.DoResolveLValue (ec, new EmptyExpression ());
+
+				if (Expr == null || Expr.eclass != ExprClass.Variable){
+					Error (211, "Cannot take the address of non-variables");
+					return null;
+				}
+			}
 			else
 				Expr = Expr.Resolve (ec);
 			
@@ -593,10 +594,8 @@ namespace Mono.CSharp {
 		public override Expression DoResolveLValue (EmitContext ec, Expression right)
 		{
 			if (Oper == Operator.Indirection)
-				return base.DoResolveLValue (ec, right);
+				return DoResolve (ec);
 
-			Error (131, "The left-hand side of an assignment must be a " +
-			       "variable, property or indexer");
 			return null;
 		}
 
@@ -723,6 +722,11 @@ namespace Mono.CSharp {
 		public void AddressOf (EmitContext ec, AddressOp Mode)
 		{
 			expr.Emit (ec);
+		}
+
+		public override Expression DoResolveLValue (EmitContext ec, Expression right_side)
+		{
+			return DoResolve (ec);
 		}
 
 		public override Expression DoResolve (EmitContext ec)
@@ -4204,6 +4208,11 @@ namespace Mono.CSharp {
 			return true;
 		}
 		
+		void Error_LValueRequired (Location loc)
+		{
+			Report.Error (1510, loc, "An lvalue is required as an argument to out or ref");
+		}
+
 		public bool Resolve (EmitContext ec, Location loc)
 		{
 			if (ArgType == AType.Ref) {
@@ -4221,9 +4230,14 @@ namespace Mono.CSharp {
 						return false;
 					}
 				}
-				Expr = Expr.ResolveLValue (ec, Expr);
-			} else if (ArgType == AType.Out)
-				Expr = Expr.ResolveLValue (ec, EmptyExpression.Null);
+				Expr = Expr.DoResolveLValue (ec, Expr);
+				if (Expr == null)
+					Error_LValueRequired (loc);
+			} else if (ArgType == AType.Out) {
+				Expr = Expr.DoResolveLValue (ec, EmptyExpression.Null);
+				if (Expr == null)
+					Error_LValueRequired (loc);
+			}
 			else
 				Expr = Expr.Resolve (ec);
 
@@ -4263,9 +4277,7 @@ namespace Mono.CSharp {
 						"A property or indexer can not be passed as an out or ref " +
 						"parameter");
 				} else {
-					Report.Error (
-						1510, loc,
-						"An lvalue is required as an argument to out or ref");
+					Error_LValueRequired (loc);
 				}
 				return false;
 			}
@@ -8024,6 +8036,11 @@ namespace Mono.CSharp {
 			ea = ea_data;
 			eclass = ExprClass.Variable;
 			loc = l;
+		}
+
+		public override Expression DoResolveLValue (EmitContext ec, Expression right_side)
+		{
+			return DoResolve (ec);
 		}
 
 		public override Expression DoResolve (EmitContext ec)
