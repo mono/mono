@@ -538,12 +538,13 @@ namespace Mono.CSharp {
 			Expression ml = Expression.MemberLookup (
 				ec, delegate_type, "Invoke", loc);
 
-			if (!(ml is MethodGroupExpr)) {
+			MethodGroupExpr me = ml as MethodGroupExpr;
+			if (me == null) {
 				Report.Error (-100, loc, "Internal error: could not find Invoke method!" + delegate_type);
 				return false;
 			}
 			
-			MethodBase mb = ((MethodGroupExpr) ml).Methods [0];
+			MethodBase mb = me.Methods [0];
 			ParameterData pd = TypeManager.GetParameterData (mb);
 
 			int pd_count = pd.Count;
@@ -551,38 +552,24 @@ namespace Mono.CSharp {
 			bool params_method = (pd_count != 0) &&
 				(pd.ParameterModifier (pd_count - 1) == Parameter.Modifier.PARAMS);
 
-			if (!params_method && pd_count != arg_count) {
+			bool is_params_applicable = false;
+			bool is_applicable = Invocation.IsApplicable (ec, me, args, arg_count, ref mb);
+
+			if (!is_applicable && params_method &&
+			    Invocation.IsParamsMethodApplicable (ec, me, args, arg_count, ref mb))
+				is_applicable = is_params_applicable = true;
+
+			if (!is_applicable && !params_method && arg_count != pd_count) {
 				Report.Error (1593, loc,
 					      "Delegate '{0}' does not take {1} arguments",
 					      delegate_type.ToString (), arg_count);
 				return false;
 			}
 
-			//
-			// Consider the case:
-			//   delegate void FOO(param object[] args);
-			//   FOO f = new FOO(...);
-			//   f(new object[] {1, 2, 3});
-			//
-			// This should be treated like f(1,2,3).  This is done by ignoring the 
-			// 'param' modifier for that invocation.  If that fails, then the
-			// 'param' modifier is considered.
-			//
-			// One issue is that 'VerifyArgumentsCompat' modifies the elements of
-			// the 'args' array.  However, the modifications appear idempotent.
-			// Normal 'Invocation's also have the same behaviour, implicitly.
-			//
-
-			bool ans = false;
-			if (arg_count == pd_count)
-				ans = Invocation.VerifyArgumentsCompat (
-					ec, args, arg_count, mb, false,
+			return Invocation.VerifyArgumentsCompat (
+					ec, args, arg_count, mb, 
+					is_params_applicable || (!is_applicable && params_method),
 					delegate_type, false, loc);
-			if (!ans && params_method)
-				ans = Invocation.VerifyArgumentsCompat (
-					ec, args, arg_count, mb, true,
-					delegate_type, false, loc);
-			return ans;
 		}
 		
 		/// <summary>

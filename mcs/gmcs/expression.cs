@@ -4665,9 +4665,9 @@ namespace Mono.CSharp {
 			return union;
 		}
 
-		static bool IsParamsMethodApplicable (EmitContext ec, MethodGroupExpr me,
-						      ArrayList arguments, int arg_count,
-						      ref MethodBase candidate)
+		public static bool IsParamsMethodApplicable (EmitContext ec, MethodGroupExpr me,
+							     ArrayList arguments, int arg_count,
+							     ref MethodBase candidate)
 		{
 			return IsParamsMethodApplicable (
 				ec, me, arguments, arg_count, false, ref candidate) ||
@@ -4777,9 +4777,9 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		static bool IsApplicable (EmitContext ec, MethodGroupExpr me,
-					  ArrayList arguments, int arg_count,
-					  ref MethodBase candidate)
+		public static bool IsApplicable (EmitContext ec, MethodGroupExpr me,
+						 ArrayList arguments, int arg_count,
+						 ref MethodBase candidate)
 		{
 			if (!me.HasTypeArguments &&
 			    !TypeManager.InferTypeArguments (ec, arguments, ref candidate))
