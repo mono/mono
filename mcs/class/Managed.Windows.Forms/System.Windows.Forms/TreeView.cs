@@ -620,8 +620,6 @@ namespace System.Windows.Forms {
 			return node != null && node.Bounds.Left <= x && node.Bounds.Right >= x;
 		}
 
-
-		// TODO: Update from supplied node down
 		internal void UpdateBelow (TreeNode node)
 		{
 			// We need to update the current node so the plus/minus block gets update too
@@ -991,8 +989,23 @@ namespace System.Windows.Forms {
 		{
 			int old_skip = skipped_nodes;
 			skipped_nodes = vbar.Value;
+			int diff = old_skip - skipped_nodes;
 
-			int y_move = (old_skip - skipped_nodes) * ItemHeight;
+                        if (top_node == null)
+                                top_node = nodes [0];
+
+			OpenTreeNodeEnumerator walk = new OpenTreeNodeEnumerator (TopNode);
+			if (diff < 0) {
+				for (int i = diff; i <= 0; i++)
+					walk.MoveNext ();
+				top_node = walk.CurrentNode;
+			} else {
+				for (int i = 0; i <= diff; i++)
+					walk.MovePrevious ();
+				top_node = walk.CurrentNode;
+			}
+
+			int y_move = diff * ItemHeight;
 			XplatUI.ScrollWindow (Handle, ViewportRectangle, 0, y_move, false);
 		}
 

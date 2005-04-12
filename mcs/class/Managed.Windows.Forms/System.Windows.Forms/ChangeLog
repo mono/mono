@@ -1,3 +1,11 @@
+2005-04-12  Jackson Harper  <jackson@ximian.com>
+
+	* TreeView.cs: Set the TopNode properly when scrolling
+	occurs. This has the added benifit of reducing the amount of
+	walking that needs to be done when drawing. Also removed an old
+	misleading TODO.
+	* OpenTreeNodeEnumerator.cs: Fix moving backwards.
+	
 2005-04-11  Jordi Mas i Hernandez <jordi@ximian.com>
 
 	* Timer.cs: fixes interval setting when the timer is already enabled

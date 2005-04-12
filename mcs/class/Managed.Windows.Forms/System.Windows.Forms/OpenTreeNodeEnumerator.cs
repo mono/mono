@@ -83,14 +83,23 @@ namespace System.Windows.Forms {
 			}
 
 			if (current.PrevNode != null) {
-				current = current.PrevNode;
+				// Drill down as far as possible
+				TreeNode prev = current.PrevNode;
+				TreeNode walk = prev;
+				while (walk != null) {
+					prev = walk;
+					if (!walk.IsExpanded)
+						break;
+					walk = walk.LastNode;
+				}
+				current = prev;
 				return true;
 			}
 
 			if (current.parent == null)
 				return false;
 
-			current = current.parent.LastNode;
+			current = current.parent;
 			return true;
 		}
 
