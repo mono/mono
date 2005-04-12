@@ -1,3 +1,14 @@
+2005-02-14  Raja R Harinath  <rharinath@novell.com>
+
+	Fix #59209.
+	* expression.cs (Invocation.BetterFunction): Remove support for
+	comparing virtual functions and their overrides.
+	(Invocation.IsOverride): New.
+	(Invocation.OverloadResolve): Don't consider 'override' functions
+	during candidate selection.  Store them in a lookaside list.
+	If the selected method is a 'virtual' function, use the list to
+	find any overrides that are closer to the LHS type.
+
 2005-02-14  Marek Safar  <marek.safar@seznam.cz>
 
 	* expression.cs (New.DoResolve): Add complex core type reduction.
