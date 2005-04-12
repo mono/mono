@@ -1,3 +1,16 @@
+2005-02-15  Raja R Harinath  <rharinath@novell.com>
+
+	Fix #71992.
+	* namespace.cs (NamespaceEntry.LookupNamespaceOrType): Add
+	'ignore_cs0104' parameter.  Pass it to ...
+	(NamespaceEntry.Lookup): ... this.
+	* decl.cs (DeclSpace.LookupType): Add 'ignore_cs0104' parameter.
+	* ecore.cs (SimpleName.ResolveAsTypeStep): Update.
+	(TypeLookupExpression.DoResolveAsTypeStep): Update.
+	* expression.cs (MemberAccess.IdenticalNameAndTypeName):
+	Update.  Request that cs0104 errors be ignored.
+	(ComposedCast.ResolveAsTypeStep): Update.
+
 2005-02-14  Raja R Harinath  <rharinath@novell.com>
 
 	Fix #59209.

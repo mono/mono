@@ -5022,17 +5022,6 @@ namespace Mono.CSharp {
 
 						candidates [k++] = candidates [i];
 
-#if false
-						//
-						// Methods marked 'override' don't take part in 'applicable_type'
-						// computation.
-						//
-						if (!me.IsBase &&
-						    candidate.IsVirtual &&
-						    (candidate.Attributes & MethodAttributes.NewSlot) == 0)
-							continue;
-#endif
-
 						if (next_applicable_type == null ||
 						    IsAncestralType (next_applicable_type, decl_type))
 							next_applicable_type = decl_type;
@@ -7348,7 +7337,7 @@ namespace Mono.CSharp {
 			if (sn == null || left == null || left.Type.Name != sn.Name)
 				return false;
 
-			return ec.DeclSpace.LookupType (sn.Name, true, loc) != null;
+			return ec.DeclSpace.LookupType (sn.Name, loc, /*silent=*/ true, /*ignore_cs0104*/ true) != null;
 		}
 		
 		// TODO: possible optimalization
@@ -9013,7 +9002,8 @@ namespace Mono.CSharp {
 					//
 					// For now, fall back to the full lookup in that case.
 					//
-					FullNamedExpression e = ec.DeclSpace.LookupType (cname, false, loc);
+					FullNamedExpression e = ec.DeclSpace.LookupType (
+						cname, loc, /*silent=*/ false, /*ignore_cs0104=*/ false);
 					if (e is TypeExpr)
 						type = ((TypeExpr) e).ResolveType (ec);
 					if (type == null)
