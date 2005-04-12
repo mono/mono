@@ -1,3 +1,18 @@
+2005-02-23  Marek Safar  <marek.safar@seznam.cz>
+
+	* anonymous.cs (AnonymousMethod.Compatible): Fixed to report
+	CS1677 for out and ref as well.
+
+	* class.cs (Method.Define): Add error CS1599 detection.
+	
+	* cs-parser.jay: Add CS1609, CS1670, CS1627 detection.
+	
+	* cs-tokenizer.cs (xtoken): Add error CS1646 detection.
+	
+	* delegate.cs (Delegate.Define): Add error CS1599 detection.
+	
+	* support.cs.cs (ModifierDesc): New helper method.
+
 2005-02-23  Raja R Harinath  <rharinath@novell.com>
 	    Abin Thomas  <projectmonokochi@rediffmail.com>
 	    Anoob V E  <projectmonokochi@rediffmail.com>

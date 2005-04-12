@@ -2301,7 +2301,7 @@ namespace Mono.CSharp
 				} else if (is_identifier_start_character ((char) c)){
 					return consume_identifier (c, true);
 				} else {
-					Report.Error (1033, Location, "'@' must be followed by string constant or identifier");
+					Report.Error (1646, Location, "Keyword, identifier, or string expected after verbatim specifier: @");
 				}
 			}
 
