@@ -220,6 +220,7 @@ namespace Mono.CSharp
 				"   -noconfig[+|-]     Disables implicit references to assemblies\n" +
 				"   -nostdlib[+|-]     Does not load core libraries\n" +
 				"   -nowarn:W1[,W2]    Disables one or more warnings\n" + 
+				"   -optimize[+|-]     Enables code optimalizations" + Environment.NewLine +
 				"   -out:FNAME         Specifies output file\n" +
 				"   -pkg:P1[,Pn]       References packages P1..Pn\n" + 
 				"   --expect-error X   Expect that error X will be encountered\n" +
@@ -950,7 +951,13 @@ namespace Mono.CSharp
 
 			case "/optimize":
 			case "/optimize+":
+				RootContext.Optimize = true;
+				return true;
+
 			case "/optimize-":
+				RootContext.Optimize = false;
+				return true;
+
 			case "/incremental":
 			case "/incremental+":
 			case "/incremental-":

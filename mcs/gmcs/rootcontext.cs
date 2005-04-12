@@ -71,6 +71,11 @@ namespace Mono.CSharp {
 
 		public static bool VerifyClsCompliance = true;
 
+		/// <summary>
+		/// Holds /optimize option
+		/// </summary>
+		public static bool Optimize;
+
 		public static LanguageVersion Version = LanguageVersion.Default;
 
 		//

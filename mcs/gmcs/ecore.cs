@@ -1500,6 +1500,12 @@ namespace Mono.CSharp {
 			child.Emit (ec);
 		}
 
+		public override bool IsDefaultValue {
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+
 		public override bool IsNegative {
 			get {
 				return false;
@@ -1636,7 +1642,13 @@ namespace Mono.CSharp {
 		{
 			return Child.ConvertToInt ();
 		}
-		
+
+		public override bool IsDefaultValue {
+			get {
+				return Child.IsDefaultValue;
+			}
+		}
+
 		public override bool IsZeroInteger {
 			get { return Child.IsZeroInteger; }
 		}
