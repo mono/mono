@@ -937,11 +937,9 @@ field_declaration
 		int mod = (int) $2;
 
 		foreach (VariableDeclaration var in (ArrayList) $4){
-			Location l = var.Location;
-
 			Field field = new Field (current_class, type, mod, var.identifier, 
 						 var.expression_or_array_initializer, 
-						 (Attributes) $1, l);
+						 (Attributes) $1, var.Location);
 
 			if (RootContext.Documentation != null) {
 				field.DocComment = Lexer.consume_doc_comment ();
@@ -952,11 +950,54 @@ field_declaration
 	  }
 	| opt_attributes
 	  opt_modifiers
+	  FIXED
+	  type 
+	  fixed_variable_declarators
+	  SEMICOLON
+	  { 
+			Expression type = (Expression) $4;
+			int mod = (int) $2;
+
+			foreach (VariableDeclaration var in (ArrayList) $5) {
+				FixedField field = new FixedField (current_class, type, mod, var.identifier,
+					(Expression)var.expression_or_array_initializer, (Attributes) $1, var.Location);
+
+				if (RootContext.Documentation != null) {
+					field.DocComment = Lexer.consume_doc_comment ();
+					Lexer.doc_state = XmlCommentState.Allowed;
+				}
+				current_container.AddField (field);
+			}
+	  }
+	| opt_attributes
+	  opt_modifiers
 	  VOID  
 	  variable_declarators
 	  SEMICOLON {
 		Report.Error (670, lexer.Location, "void type is not allowed for fields");
 	  }
+	;
+
+fixed_variable_declarators
+	: fixed_variable_declarator
+		{
+			ArrayList decl = new ArrayList (2);
+			decl.Add ($1);
+			$$ = decl;
+		}
+	| fixed_variable_declarators COMMA fixed_variable_declarator
+		{
+			ArrayList decls = (ArrayList) $1;
+			decls.Add ($3);
+			$$ = $1;
+		}
+	;
+
+fixed_variable_declarator
+	: IDENTIFIER OPEN_BRACKET expression CLOSE_BRACKET
+		{
+			$$ = new VariableDeclaration ((string) $1, $3, lexer.Location);
+		}
 	;
 
 variable_declarators
