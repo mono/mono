@@ -1,3 +1,22 @@
+2005-04-12  Dick Porter  <dick@ximian.com>
+	
+	The daemon-less io-layer.  Extensive lowlevel changes in
+	handles.c, requiring some corresponding changes in other files
+	calling these functions.  Private_foo structures have been
+	eliminated.
+
+	File descriptor handling differences account for most of the
+	changes in io.c and sockets.c.
+
+	Other highlights:
+	
+	* mutexes.c: Named mutexes are now a distinct type.
+	* atomic.h: Fix a PPC uninitialised variable warning.
+	* wait.c: Check conditions before waiting on a condition variable.
+	* processes.c: Handle process fork and wait without a daemon
+	(though this has the limitation of only being able to wait for
+	child processes.)
+
 2005-04-07 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* io-private.h:
