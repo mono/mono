@@ -766,8 +766,8 @@ namespace Mono.AssemblyInfo
 
 				if (parameter.IsOptional) {
 					AddAttribute (paramNode, "optional", "true");
-					if (parameter.DefaultValue != null)
-						AddAttribute (paramNode, "defaultValue", parameter.DefaultValue.ToString ());
+					if (parameter.DefaultValue != System.DBNull.Value)
+						AddAttribute (paramNode, "defaultValue", (parameter.DefaultValue == null) ? "NULL" : parameter.DefaultValue.ToString ());
 				}
 
 				if (direction != "in")

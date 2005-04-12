@@ -903,7 +903,7 @@ namespace Mono.AssemblyCompare
 		string direction;
 		bool isUnsafe;
 		bool isOptional;
-		string defaultValue;
+		object defaultValue;
 
 		public override void LoadData (XmlNode node)
 		{
@@ -948,7 +948,7 @@ namespace Mono.AssemblyCompare
 				AddWarning (parent, "Parameter optional wrong: {0} != {1}", isOptional, oparm.isOptional);
 
 			if (defaultValue != oparm.defaultValue)
-				AddWarning (parent, "Parameter default value wrong: {0} != {1}", defaultValue, oparm.defaultValue);
+				AddWarning (parent, "Parameter default value wrong: {0} != {1}", (defaultValue == null) ? "(no default value)" : defaultValue, (oparm.defaultValue == null) ? "(no default value)" : oparm.defaultValue);
 		}
 
 		public string Name {
