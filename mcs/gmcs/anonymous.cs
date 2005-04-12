@@ -666,6 +666,7 @@ namespace Mono.CSharp {
 		ToplevelBlock toplevel_owner;
 		Hashtable scopes = new Hashtable ();
 		bool have_captured_vars = false;
+		bool referenced_this = false;
 		ScopeInfo topmost = null;
 
 		//
@@ -910,7 +911,14 @@ namespace Mono.CSharp {
 			else
 				captured_fields [fe] = fe;
 		}
-		
+
+		public void CaptureThis ()
+		{
+			CaptureContext parent = ParentCaptureContext;
+			if (parent != null)
+				parent.CaptureThis ();
+			referenced_this = true;
+		}
 
 		public bool HaveCapturedVariables {
 			get {
@@ -952,7 +960,7 @@ namespace Mono.CSharp {
 		public void EmitAnonymousHelperClasses (EmitContext ec)
 		{
 			if (topmost != null){
-				topmost.NeedThis = HaveCapturedFields;
+				topmost.NeedThis = HaveCapturedFields || referenced_this;
 				topmost.EmitScopeType (ec);
 			} 
 		}

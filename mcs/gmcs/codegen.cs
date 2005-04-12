@@ -562,6 +562,12 @@ namespace Mono.CSharp {
 		{
 			capture_context.AddParameter (this, CurrentAnonymousMethod, name, t, idx);
 		}
+
+		public void CaptureThis ()
+		{
+			capture_context.CaptureThis ();
+		}
+		
 		
 		//
 		// Use to register a field as captured
