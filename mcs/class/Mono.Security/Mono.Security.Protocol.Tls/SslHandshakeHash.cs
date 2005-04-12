@@ -129,7 +129,7 @@ namespace Mono.Security.Protocol.Tls
 			}
 
 			RSASslSignatureFormatter f = new RSASslSignatureFormatter(rsa);
-			f.SetHashAlgorithm("SslHash");
+			f.SetHashAlgorithm("MD5SHA1");
 
 			return f.CreateSignature(this.Hash);
 		}
@@ -146,7 +146,7 @@ namespace Mono.Security.Protocol.Tls
 			}
 
 			RSASslSignatureDeformatter d = new RSASslSignatureDeformatter(rsa);
-			d.SetHashAlgorithm("SslHash");
+			d.SetHashAlgorithm("MD5SHA1");
 
 			return d.VerifySignature(this.Hash, rgbSignature);
 		}
