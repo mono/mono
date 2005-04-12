@@ -660,7 +660,7 @@ class_decl		: method_all
 			| extsource_spec
 			| customattr_decl
                           {
-                                codegen.CurrentTypeDef.AddCustomAttribute ((CustomAttr) $1);
+                                codegen.CurrentCustomAttrTarget.AddCustomAttribute ((CustomAttr) $1);
                           }
 			| D_SIZE int32
                           {
@@ -1146,6 +1146,7 @@ field_decl		: D_FIELD repeat_opt field_attr type id at_opt init_opt
                                 FieldDef field_def = new FieldDef((FieldAttr) $3, 
 					(string) $5, (ITypeRef) $4);
                                 codegen.AddFieldDef (field_def);
+                                codegen.CurrentCustomAttrTarget = field_def;
                                 
                                 if ($2 != null) {
                                         field_def.SetOffset ((uint) $2);
@@ -1716,6 +1717,7 @@ method_decl		: D_EMITBYTE int32
 			| D_PARAM OPEN_BRACKET int32 CLOSE_BRACKET init_opt
                           {
                                 codegen.CurrentMethodDef.AddParamDefaultValue ((int)$3 - 1, (Constant)$5);
+                                codegen.CurrentCustomAttrTarget = codegen.CurrentMethodDef.GetParam ((int)$3 - 1);
                           }
 			| id COLON
                           {
@@ -1728,7 +1730,7 @@ method_decl		: D_EMITBYTE int32
 			| language_decl
 			| customattr_decl
                           {
-                                codegen.CurrentMethodDef.AddCustomAttr ((CustomAttr) $1);
+                                codegen.CurrentCustomAttrTarget.AddCustomAttribute ((CustomAttr) $1);
                           }
 			| data_decl
 			;
@@ -2195,6 +2197,7 @@ event_head		: D_EVENT event_attr type_spec comp_name
                                 EventDef event_def = new EventDef ((FeatureAttr) $2,
                                         (ITypeRef) $3, (string) $4);
                                 codegen.CurrentTypeDef.BeginEventDef (event_def);
+                                codegen.CurrentCustomAttrTarget = event_def;
                           }
 			| D_EVENT event_attr id
 			;
@@ -2253,6 +2256,7 @@ prop_head		: D_PROPERTY prop_attr type comp_name OPEN_PARENS type_list CLOSE_PAR
                                 PropertyDef prop_def = new PropertyDef ((FeatureAttr) $2, (ITypeRef) $3,
                                         (string) $4, (ArrayList) $6);
                                 codegen.CurrentTypeDef.BeginPropertyDef (prop_def);
+                                codegen.CurrentCustomAttrTarget = prop_def;
 
                                 if ($8 != null) {
                                         prop_def.AddInitValue ((Constant) $8);
@@ -2294,6 +2298,9 @@ prop_decl		: D_SET method_ref
                                 codegen.CurrentTypeDef.CurrentProperty.AddOther ((MethodRef) $2);
                           }
 			| customattr_decl
+                         {
+                               codegen.CurrentCustomAttrTarget.AddCustomAttribute ((CustomAttr) $1);
+                         }
 			| extsource_spec
 			| language_decl
 			;
@@ -2524,7 +2531,7 @@ assemblyref_decl	: D_VER int32 COLON int32 COLON int32 COLON int32
                           }
                         | customattr_decl
                           {
-                                codegen.CurrentAssemblyRef.AddCustomAttribute ((CustomAttr) $1);
+                                codegen.CurrentCustomAttrTarget.AddCustomAttribute ((CustomAttr) $1);
                           }
 			;
 

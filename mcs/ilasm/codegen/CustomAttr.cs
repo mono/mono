@@ -9,9 +9,13 @@
 
 
 using System;
-
+using System.Collections;
 
 namespace Mono.ILASM {
+
+        public interface ICustomAttrTarget {
+                void AddCustomAttribute (CustomAttr customattr);
+        }
 
         public class CustomAttr {
 

@@ -15,7 +15,7 @@ using System.Collections;
 
 namespace Mono.ILASM {
 
-        public class MethodDef {
+        public class MethodDef : ICustomAttrTarget {
 
                 protected class GenericInfo {
                         public string Id;
@@ -64,7 +64,6 @@ namespace Mono.ILASM {
                         this.param_list = param_list;
 
                         inst_list = new ArrayList ();
-                        customattr_list = new ArrayList ();
                         label_table = new Hashtable ();
                         labelref_table = new Hashtable ();
                         label_list = new ArrayList ();
@@ -176,6 +175,15 @@ namespace Mono.ILASM {
                         }
                 }
 
+                public void AddCustomAttribute (CustomAttr customattr)
+                {
+                        if (customattr_list == null)
+                                customattr_list = new ArrayList ();
+
+                        customattr_list.Add (customattr);
+                }
+
+
                 public void AddLocals (ArrayList local_list)
                 {
                         int slot_pos = this.local_list.Count;
@@ -218,6 +226,14 @@ namespace Mono.ILASM {
                         return pos;
                 }
 
+                public ParamDef GetParam (int index)
+                {
+                        if (param_list [index] != null)
+                                return (ParamDef)param_list [index];
+                        else
+                                return null;
+                }
+
                 public void InitLocals ()
                 {
                         init_locals = true;
@@ -236,11 +252,6 @@ namespace Mono.ILASM {
                 public void SetMaxStack (int max_stack)
                 {
                         this.max_stack = max_stack;
-                }
-
-                public void AddCustomAttr (CustomAttr customattr)
-                {
-                        customattr_list.Add (customattr);
                 }
 
                 public PEAPI.MethodDef Resolve (CodeGen code_gen)
@@ -400,8 +411,9 @@ namespace Mono.ILASM {
                         methoddef.SetMaxStack (max_stack);
 
                         /// Add the custrom attributes to this method
-                        foreach (CustomAttr customattr in customattr_list)
-                                customattr.AddTo (code_gen, methoddef);
+                        if (customattr_list != null)
+                                foreach (CustomAttr customattr in customattr_list)
+                                        customattr.AddTo (code_gen, methoddef);
 
                         if (pinvoke_info) {
                                 methoddef.AddPInvokeInfo (pinvoke_mod.ModuleRef,

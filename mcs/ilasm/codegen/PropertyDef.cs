@@ -13,7 +13,7 @@ using System.Collections;
 
 namespace Mono.ILASM {
 
-        public class PropertyDef {
+        public class PropertyDef : ICustomAttrTarget {
 
                 private FeatureAttr attr;
                 private string name;
@@ -21,6 +21,7 @@ namespace Mono.ILASM {
                 private ArrayList arg_list;
                 private PEAPI.Property prop_def;
                 private bool is_resolved;
+                private ArrayList customattr_list;
 
                 private MethodRef _get;
                 private MethodRef _set;
@@ -34,6 +35,14 @@ namespace Mono.ILASM {
                         this.type = type;
                         this.arg_list = arg_list;
                         is_resolved = false;
+                }
+
+                public void AddCustomAttribute (CustomAttr customattr)
+                {
+                        if (customattr_list == null)
+                                customattr_list = new ArrayList ();
+
+                        customattr_list.Add (customattr);
                 }
 
                 public PEAPI.Property Resolve (CodeGen code_gen, PEAPI.ClassDef classdef)
@@ -57,6 +66,11 @@ namespace Mono.ILASM {
 
                         if ((attr & FeatureAttr.Specialname) != 0)
                                 prop_def.SetSpecialName ();
+
+                        if (customattr_list != null)
+                                foreach (CustomAttr customattr in customattr_list)
+                                        customattr.AddTo (code_gen, prop_def);
+
 
                         is_resolved = true;
 

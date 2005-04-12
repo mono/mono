@@ -13,11 +13,12 @@ using System.Reflection;
 
 namespace Mono.ILASM {
 
-        public abstract class ExternRef {
+        public abstract class ExternRef : ICustomAttrTarget {
 
                 protected string name;
                 protected Hashtable class_table;
                 protected Hashtable typeref_table;
+                protected ArrayList customattr_list;
 
                 public abstract void Resolve (CodeGen codegen);
                 public abstract PEAPI.IExternRef GetExternRef ();
@@ -27,6 +28,14 @@ namespace Mono.ILASM {
                         this.name = name;
                         typeref_table = new Hashtable ();
                         class_table = new Hashtable ();
+                }
+
+                public void AddCustomAttribute (CustomAttr customattr)
+                {
+                        if (customattr_list == null)
+                                customattr_list = new ArrayList ();
+
+                        customattr_list.Add (customattr);
                 }
 
                 public ExternTypeRef GetTypeRef (string full_name, bool is_valuetype, ExternTable table)
@@ -86,6 +95,9 @@ namespace Mono.ILASM {
                 public override void Resolve (CodeGen codegen)
                 {
                         ModuleRef = codegen.PEFile.AddExternModule (name);
+                        if (customattr_list != null)
+                                foreach (CustomAttr customattr in customattr_list)
+                                        customattr.AddTo (codegen, ModuleRef);
                 }
 
                 
@@ -104,8 +116,6 @@ namespace Mono.ILASM {
                 private byte [] public_key_token;
                 private string locale;
                 private byte [] hash;
-
-                private ArrayList cattrs_list;
 
                 public ExternAssembly (string name, AssemblyName asmb_name) : base (name)
                 {
@@ -127,10 +137,9 @@ namespace Mono.ILASM {
                         if (hash != null)
                                 AssemblyRef.AddHash (hash);
 
-                        if (cattrs_list != null) {
-                                foreach (CustomAttr cattr in cattrs_list)
-                                        cattr.AddTo (code_gen, AssemblyRef);
-                        }
+                        if (customattr_list != null)
+                                foreach (CustomAttr customattr in customattr_list)
+                                        customattr.AddTo (code_gen, AssemblyRef);
 
                         class_table = new Hashtable ();
                 }
@@ -168,12 +177,6 @@ namespace Mono.ILASM {
                         this.hash = hash;
                 }
 
-                public void AddCustomAttribute (CustomAttr cattr)
-                {
-                        if (cattrs_list == null)
-                                cattrs_list = new ArrayList ();
-                        cattrs_list.Add (cattr);
-                }
         }
 
         

@@ -1,3 +1,21 @@
+2005-04-12  Ankit Jain  <ankit@corewars.org>
+
+	* CustomAttr.cs (ICustomAttrTarget): New interface.
+	* TypeDef.cs: Implement ICustomAttrTarget.
+	* FieldDef.cs, PropertyDef.cs, ParamDef.cs, EventDef.cs
+	(AddCustomAttribute): Implement ICustomAttrTarget
+	(.Resolve): Add custom attributes.
+	* CodeGen.cs (CurrentCustomAttrTarget): New. Property for 
+	current CustomAttr target.
+	(BeginTypeDef, BeginMethodDef, BeginAssemblyRef): Set
+	current_customattrtarget accordingly.
+	* ExternTable.cs (ExternRef): Implement ICustomAttrTarget.
+	(ExternModule.Resolve): Add custom attributes to ModuleRef.
+	(ExternAssembly.Resolve): Add custom attributes to AssemblyRef.
+	* MethodDef.cs: Implement ICustomAttrTarget and add custom
+	attributes.
+	(GetParam): New. Get ParamDef by index.
+
 2005-04-08  Ankit Jain  <radical@corewars.org>
 
 	* MethodDef.cs (named_param_table, CreateNamedParamTable): Remove.

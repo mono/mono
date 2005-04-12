@@ -32,6 +32,7 @@ namespace Mono.ILASM {
                 private ArrayList typedef_stack;
 		private int typedef_stack_top;
 		private SymbolWriter symwriter;
+                private ICustomAttrTarget current_customattrtarget;
 
                 private byte [] assembly_public_key;
                 private int assembly_major_version;
@@ -133,6 +134,11 @@ namespace Mono.ILASM {
                         get { return current_moduleref; }
                 }
 
+                public ICustomAttrTarget CurrentCustomAttrTarget {
+                        get { return current_customattrtarget; }
+                        set { current_customattrtarget = value; }
+                }
+
                 public ExternTable ExternTable {
                         get { return extern_table; }
                 }
@@ -228,7 +234,7 @@ namespace Mono.ILASM {
                                 typedef.OuterType = outer;
 
                         type_manager[cache_name] = typedef;
-                        current_typedef = typedef;
+                        current_customattrtarget = current_typedef = typedef;
 			typedef_stack.Add (typedef);
 			typedef_stack_top++;
                 }
@@ -267,7 +273,7 @@ namespace Mono.ILASM {
                                                 methoddef);
                         }
 
-                        current_methoddef = methoddef;
+                        current_customattrtarget = current_methoddef = methoddef;
                 }
 
                 public void EndMethodDef (Location location)
@@ -292,7 +298,7 @@ namespace Mono.ILASM {
 
                 public void BeginAssemblyRef (string name, AssemblyName asmb_name)
                 {
-                        current_assemblyref = ExternTable.AddAssembly (name, asmb_name);
+                        current_customattrtarget = current_assemblyref = ExternTable.AddAssembly (name, asmb_name);
                 }
 
                 public void EndAssemblyRef ()

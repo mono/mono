@@ -13,13 +13,14 @@ using System.Collections;
 
 namespace Mono.ILASM {
 
-        public class EventDef {
+        public class EventDef : ICustomAttrTarget {
 
                 private FeatureAttr attr;
                 private string name;
                 private ITypeRef type;
                 private PEAPI.Event event_def;
                 private bool is_resolved;
+                private ArrayList customattr_list;
 
                 private MethodRef addon;
                 private MethodRef fire;
@@ -32,6 +33,14 @@ namespace Mono.ILASM {
                         this.name = name;
                         this.type = type;
                         is_resolved = false;
+                }
+
+                public void AddCustomAttribute (CustomAttr customattr)
+                {
+                        if (customattr_list == null)
+                                customattr_list = new ArrayList ();
+
+                        customattr_list.Add (customattr);
                 }
 
                 public PEAPI.Event Resolve (CodeGen code_gen, PEAPI.ClassDef classdef)
@@ -47,6 +56,10 @@ namespace Mono.ILASM {
 
                         if ((attr & FeatureAttr.Specialname) != 0)
                                 event_def.SetSpecialName ();
+                        
+                        if (customattr_list != null)
+                                foreach (CustomAttr customattr in customattr_list)
+                                        customattr.AddTo (code_gen, event_def);
 
                         is_resolved = true;
 

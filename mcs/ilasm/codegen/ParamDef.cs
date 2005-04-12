@@ -9,6 +9,7 @@
 
 
 using System;
+using System.Collections;
 
 
 namespace Mono.ILASM {
@@ -16,7 +17,7 @@ namespace Mono.ILASM {
         /// <summary>
         ///  Definition of a parameter passed to a method
         /// </summary>
-        public class ParamDef {
+        public class ParamDef : ICustomAttrTarget {
 
                 private PEAPI.ParamAttr attr;
                 private string name;
@@ -24,6 +25,7 @@ namespace Mono.ILASM {
                 private bool is_defined;
                 private PEAPI.Param peapi_param;
                 private PEAPI.Constant defval;
+                private ArrayList customattr_list;
 
                 public static readonly ParamDef Ellipsis = new ParamDef (new PEAPI.ParamAttr (), "ELLIPSIS", null);
 
@@ -39,6 +41,14 @@ namespace Mono.ILASM {
                 public void AddDefaultValue (PEAPI.Constant cVal)
                 {
                         defval = cVal;
+                }
+
+                public void AddCustomAttribute (CustomAttr customattr)
+                {
+                        if (customattr_list == null)
+                                customattr_list = new ArrayList ();
+
+                        customattr_list.Add (customattr);
                 }
 
                 public ITypeRef Type {
@@ -74,6 +84,10 @@ namespace Mono.ILASM {
                         if (defval != null) {
                                 peapi_param.AddDefaultValue (defval);
                         }
+
+                        if (customattr_list != null)
+                                foreach (CustomAttr customattr in customattr_list)
+                                        customattr.AddTo (code_gen, peapi_param);
 
                         is_defined = true;
                 }

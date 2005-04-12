@@ -13,7 +13,7 @@ using System.Collections;
 
 namespace Mono.ILASM {
 
-        public class TypeDef {
+        public class TypeDef : ICustomAttrTarget {
 
                 protected class GenericInfo {
                         public string Id;

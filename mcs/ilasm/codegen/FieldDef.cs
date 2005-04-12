@@ -9,15 +9,17 @@
 
 
 using System;
+using System.Collections;
 
 namespace Mono.ILASM {
 
-        public class FieldDef {
+        public class FieldDef : ICustomAttrTarget {
 
                 private string name;
                 private ITypeRef type;
                 private PEAPI.FieldAttr attr;
                 private PEAPI.FieldDef field_def;
+                private ArrayList customattr_list;
 
                 private bool offset_set;
                 private bool datavalue_set;
@@ -79,6 +81,14 @@ namespace Mono.ILASM {
                         this.at_data_id = at_data_id;
                 }
 
+                public void AddCustomAttribute (CustomAttr customattr)
+                {
+                        if (customattr_list == null)
+                                customattr_list = new ArrayList ();
+
+                        customattr_list.Add (customattr);
+                }
+
                 public PEAPI.FieldDef Resolve (CodeGen code_gen)
                 {
                         if (is_resolved)
@@ -99,6 +109,10 @@ namespace Mono.ILASM {
 
                         type.Resolve (code_gen);
                         field_def = classdef.AddField (attr, name, type.PeapiType);
+
+                        if (customattr_list != null)
+                                foreach (CustomAttr customattr in customattr_list)
+                                        customattr.AddTo (code_gen, field_def);
 
                         is_resolved = true;
 

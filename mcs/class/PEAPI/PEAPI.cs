@@ -2698,7 +2698,6 @@ namespace PEAPI
       type = constrType;
       cVal = val;
       tabIx = MDTable.CustomAttribute;
-      throw(new NotYetImplementedException("Custom Attributes "));
                 }
 
     internal CustomAttribute(MetaDataElement paren, Method constrType,
@@ -5716,7 +5715,7 @@ CalcHeapSizes ();
                 }
 
     internal override uint SortKey() {
-      return meth.Row;
+      return eventOrProp.Row;
     }
 
     internal sealed override uint Size(MetaData md) {

@@ -1,3 +1,10 @@
+2005-04-12  Ankit Jain  <ankit@corewars.org>
+
+	* PEAPI.cs (CustomAttribute.ctor): Dont throw 
+	NotYetImplementedException.
+	(MethodSemantics.SortKey): Should be sorted by 
+	'Association' column.
+	
 2005-04-08  Ankit Jain  <radical@corewars.org>
 
 	* PEAPI.cs (MSCorLib.GetSpecialClass): Don't encode

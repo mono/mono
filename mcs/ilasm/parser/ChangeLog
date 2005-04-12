@@ -1,3 +1,12 @@
+2005-04-12  Ankit Jain  <ankit@corewars.org>
+
+	* ILParser.jay (class_decl, method_decl, prop_decl, 
+	assemblyref_decl | customattr_decl): Use
+	codegen.CurrentCustomAttrTarget for adding custom
+	attributes.
+	(field_decl, method_decl, event_head, prop_head):
+	Set codegen.CurrentCustomAttrTarget 	
+
 2005-04-08  Ankit Jain  <radical@corewars.org>
 
 	* ILParser.jay (type): When parsing K_VALUETYPE, mark the typeref
