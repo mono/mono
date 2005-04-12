@@ -2363,13 +2363,6 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		public virtual bool IsAttribute {
-			get {
-				return Type == TypeManager.attribute_type ||
-					Type.IsSubclassOf (TypeManager.attribute_type);
-			}
-		}
-
 		protected abstract TypeExpr DoResolveAsTypeStep (EmitContext ec);
 
 		public virtual Type ResolveType (EmitContext ec)
@@ -2564,10 +2557,6 @@ namespace Mono.CSharp {
 
 		public override bool IsSealed {
 			get { return texpr.IsSealed; }
-		}
-
-		public override bool IsAttribute {
-			get { return texpr.IsAttribute; }
 		}
 	}
 

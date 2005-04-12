@@ -1413,10 +1413,6 @@ namespace Mono.CSharp {
 			get { return gt.IsSealed; }
 		}
 
-		public override bool IsAttribute {
-			get { return false; }
-		}
-
 		public override bool Equals (object obj)
 		{
 			ConstructedType cobj = obj as ConstructedType;

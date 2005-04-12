@@ -54,7 +54,6 @@ namespace Mono.CSharp {
 		// override).
 		//
 		static ArrayList type_container_resolve_order;
-		static ArrayList attribute_types;
 
 		//
 		// Holds a reference to the Private Implementation Details
@@ -74,7 +73,7 @@ namespace Mono.CSharp {
 		/// <summary>
 		/// Holds /optimize option
 		/// </summary>
-		public static bool Optimize;
+		public static bool Optimize = true;
 
 		public static LanguageVersion Version = LanguageVersion.Default;
 
@@ -118,14 +117,6 @@ namespace Mono.CSharp {
 		{
 			type_container_resolve_order.Add (tc);
 		}
-
-		public static void RegisterAttribute (TypeContainer tc)
-		{
-			if (attribute_types == null)
-				attribute_types = new ArrayList ();
-			
-			attribute_types.Add (tc);
-		}
 		
 		// 
 		// The default compiler checked state
@@ -153,13 +144,6 @@ namespace Mono.CSharp {
 		// </remarks>
 		static public void ResolveTree ()
 		{
-			//
-			// Process the attribute types separately and before anything else
-			//
-			if (attribute_types != null)
-				foreach (TypeContainer tc in attribute_types)
-					tc.DefineType ();
-			
 			//
 			// Interfaces are processed next, as classes and
 			// structs might inherit from an object or implement
@@ -303,6 +287,7 @@ namespace Mono.CSharp {
 			TypeManager.object_type = BootstrapCorlib_ResolveClass (root, "System.Object");
 			TypeManager.value_type = BootstrapCorlib_ResolveClass (root, "System.ValueType");
 			TypeManager.attribute_type = BootstrapCorlib_ResolveClass (root, "System.Attribute");
+			TypeManager.indexer_name_type = BootstrapCorlib_ResolveClass (root, "System.Runtime.CompilerServices.IndexerNameAttribute");
 			
 			string [] interfaces_first_stage = {
 				"System.IComparable", "System.ICloneable",
@@ -398,7 +383,6 @@ namespace Mono.CSharp {
 				"System.CLSCompliantAttribute",
 				"System.Security.UnverifiableCodeAttribute",
 				"System.Security.Permissions.SecurityAttribute",
-				"System.Runtime.CompilerServices.IndexerNameAttribute",
 				"System.Runtime.CompilerServices.DecimalConstantAttribute",
 				"System.Runtime.InteropServices.InAttribute",
 				"System.Runtime.InteropServices.OutAttribute",
@@ -442,10 +426,6 @@ namespace Mono.CSharp {
 				foreach (Enum en in root.Enums)
 					en.CloseType ();
 
-			if (attribute_types != null)
-				foreach (TypeContainer tc in attribute_types)
-					tc.CloseType ();
-			
 			//
 			// We do this in two passes, first we close the structs,
 			// then the classes, because it seems the code needs it this
@@ -478,7 +458,6 @@ namespace Mono.CSharp {
 				}
 			}
 			
-			attribute_types = null;
 			type_container_resolve_order = null;
 			helper_classes = null;
 			//tree = null;
@@ -517,6 +496,7 @@ namespace Mono.CSharp {
 			PopulateCoreType (root, "System.Object");
 			PopulateCoreType (root, "System.ValueType");
 			PopulateCoreType (root, "System.Attribute");
+			PopulateCoreType (root, "System.Runtime.CompilerServices.IndexerNameAttribute");
 		}
 		
 		// <summary>
@@ -529,10 +509,6 @@ namespace Mono.CSharp {
 		{
 			TypeContainer root = Tree.Types;
 
-			if (attribute_types != null)
-				foreach (TypeContainer tc in attribute_types)
-					tc.DefineMembers (root);
-
 			if (type_container_resolve_order != null){
 				if (RootContext.StdLib){
 					foreach (TypeContainer tc in type_container_resolve_order)
@@ -542,8 +518,9 @@ namespace Mono.CSharp {
 						// When compiling corlib, these types have already been
 						// populated from BootCorlib_PopulateCoreTypes ().
 						if (((tc.Name == "System.Object") ||
-						     (tc.Name == "System.Attribute") ||
-						     (tc.Name == "System.ValueType")))
+							(tc.Name == "System.Attribute") ||
+							(tc.Name == "System.ValueType") ||
+							(tc.Name == "System.Runtime.CompilerServices.IndexerNameAttribute")))
 						continue;
 
 						tc.DefineMembers (root);
@@ -596,10 +573,6 @@ namespace Mono.CSharp {
 		{
 			TypeContainer root = Tree.Types;
 
-			if (attribute_types != null)
-				foreach (TypeContainer tc in attribute_types)
-					tc.Define ();
-
 			if (type_container_resolve_order != null){
 				foreach (TypeContainer tc in type_container_resolve_order) {
 					// When compiling corlib, these types have already been
@@ -607,7 +580,8 @@ namespace Mono.CSharp {
 					if (!RootContext.StdLib &&
 					    ((tc.Name == "System.Object") ||
 					     (tc.Name == "System.Attribute") ||
-					     (tc.Name == "System.ValueType")))
+					     (tc.Name == "System.ValueType") ||
+					     (tc.Name == "System.Runtime.CompilerServices.IndexerNameAttribute")))
 						continue;
 
 					if ((tc.ModFlags & Modifiers.NEW) == 0)
@@ -632,13 +606,6 @@ namespace Mono.CSharp {
 
 		static public void EmitCode ()
 		{
-			if (attribute_types != null)
-				foreach (TypeContainer tc in attribute_types)
-					tc.EmitType ();
-
-			CodeGen.Assembly.Emit (Tree.Types);
-			CodeGen.Module.Emit (Tree.Types);
-                        
 			if (Tree.Types.Enums != null) {
 				foreach (Enum e in Tree.Types.Enums)
 					e.Emit ();
@@ -660,6 +627,9 @@ namespace Mono.CSharp {
 
 			if (EmitCodeHook != null)
 				EmitCodeHook ();
+
+			CodeGen.Assembly.Emit (Tree.Types);
+			CodeGen.Module.Emit (Tree.Types);
 		}
 		
 		//
