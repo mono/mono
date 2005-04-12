@@ -1,5 +1,11 @@
 2005-04-12 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* threadpool.c: added epoll() based implementation for asynchronous IO
+	that is used instead of the default poll() when available.
+	It can be disabled by setting MONO_DISABLE_AIO.
+
+2005-04-12 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* threadpool.c: windows needs 'closesocket' and instead of returning
 	0 when the stream is closed while in select, it returns -1. Fixes bug
 	#74573.
