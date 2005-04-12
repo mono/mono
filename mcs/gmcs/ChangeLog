@@ -1,3 +1,17 @@
+2005-02-14  Marek Safar  <marek.safar@seznam.cz>
+
+	* expression.cs (New.DoResolve): Add complex core type reduction.
+	(New.Constantify): Converts complex core type syntax like 'new int ()'
+	to simple constant.
+	
+2005-02-14  Raja R Harinath  <rharinath@novell.com>
+
+	* decl.cs (EntryType.EntryType): New constructor to create an
+	updated copy of a cache entry.
+	(MemberCache.AddMethods): Use it.
+	(MemberCache.ClearDeclaredOnly): Remove.
+	(MemberCache.MemberCache): Update.
+
 2005-02-11  Miguel de Icaza  <miguel@novell.com>
 
 	* codegen.cs (EmitContext): Introduce the `MethodIsStatic'
