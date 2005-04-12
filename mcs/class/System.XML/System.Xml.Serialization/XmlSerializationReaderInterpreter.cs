@@ -681,14 +681,6 @@ namespace System.Xml.Serialization
 			}
 		}
 
-		int GetListCount (TypeData listType, object ob)
-		{
-			if (listType.Type.IsArray)
-				return ((Array)ob).Length;
-			else
-				return (int) listType.Type.GetProperty ("Count").GetValue(ob,null);
-		}
-
 		object ReadXmlNodeElement (XmlTypeMapping typeMap, bool isNullable)
 		{
 			return ReadXmlNode (typeMap.TypeData, false);

@@ -61,43 +61,33 @@ namespace System.Xml.Serialization
 		int delayedFixupId = 0;
 
 		string w3SchemaNS;
-		string w3SchemaNS2000;
-		string w3SchemaNS1999;
 		string w3InstanceNS;
 		string w3InstanceNS2000;
 		string w3InstanceNS1999;
 		string soapNS;
-		string schema;
 		string wsdlNS;
-		string wsdlArrayType;
 		string nullX;
 		string nil;
 		string typeX;
 		string arrayType;
-		string anyType;
 		XmlQualifiedName arrayQName;
 		#endregion
 
 		internal void Initialize (XmlReader reader, XmlSerializer eventSource)
 		{
 			w3SchemaNS = reader.NameTable.Add (XmlSchema.Namespace);
-			w3SchemaNS2000 = reader.NameTable.Add ("http://www.w3.org/2000/10/XMLSchema");
-			w3SchemaNS1999 = reader.NameTable.Add ("http://www.w3.org/1999/XMLSchema");
 			w3InstanceNS = reader.NameTable.Add (XmlSchema.InstanceNamespace);
 			w3InstanceNS2000 = reader.NameTable.Add ("http://www.w3.org/2000/10/XMLSchema-instance");
 			w3InstanceNS1999 = reader.NameTable.Add ("http://www.w3.org/1999/XMLSchema-instance");
 			soapNS = reader.NameTable.Add (XmlSerializer.EncodingNamespace);
-			schema = reader.NameTable.Add ("schema");
 			wsdlNS = reader.NameTable.Add (XmlSerializer.WsdlNamespace);
-			wsdlArrayType = reader.NameTable.Add ("arrayType");
 			nullX = reader.NameTable.Add ("null");
 			nil = reader.NameTable.Add ("nil");
 			typeX = reader.NameTable.Add ("type");
 			arrayType = reader.NameTable.Add ("arrayType");
-			anyType = reader.NameTable.Add ("anyType");
 			this.reader = reader;
 			this.eventSource = eventSource;
-			arrayQName = new XmlQualifiedName ("Array", XmlSerializer.EncodingNamespace);
+			arrayQName = new XmlQualifiedName ("Array", soapNS);
 			InitIDs ();
 		}
 			
@@ -333,12 +323,12 @@ namespace System.Xml.Serialization
 
 		protected XmlQualifiedName GetXsiType ()
 		{
-			string typeName = Reader.GetAttribute ("type", XmlSchema.InstanceNamespace);
+			string typeName = Reader.GetAttribute (typeX, XmlSchema.InstanceNamespace);
 			
 			if (typeName == string.Empty || typeName == null) {
-				typeName = Reader.GetAttribute ("type", w3InstanceNS1999);
+				typeName = Reader.GetAttribute (typeX, w3InstanceNS1999);
 				if (typeName == string.Empty || typeName == null) {
-					typeName = Reader.GetAttribute ("type", w3InstanceNS2000);
+					typeName = Reader.GetAttribute (typeX, w3InstanceNS2000);
 					if (typeName == string.Empty || typeName == null)
 						return null;
 				}
@@ -371,7 +361,7 @@ namespace System.Xml.Serialization
 
 		protected void ParseWsdlArrayType (XmlAttribute attr)
 		{
-			if (attr.NamespaceURI == XmlSerializer.WsdlNamespace && attr.LocalName == "arrayType")
+			if (attr.NamespaceURI == wsdlNS && attr.LocalName == arrayType)
 			{
 				string ns = "", type, dimensions;
 				TypeTranslator.ParseArrayType (attr.Value, out type, out ns, out dimensions);
@@ -516,10 +506,10 @@ namespace System.Xml.Serialization
 
 		bool ReadList (out object resultList)
 		{
-			string arrayType = Reader.GetAttribute ("arrayType", XmlSerializer.EncodingNamespace);
-			if (arrayType == null) arrayType = Reader.GetAttribute ("arrayType", XmlSerializer.WsdlNamespace);
+			string arrayTypeAttr = Reader.GetAttribute (arrayType, soapNS);
+			if (arrayTypeAttr == null) arrayTypeAttr = Reader.GetAttribute (arrayType, wsdlNS);
 			
-			XmlQualifiedName qn = ToXmlQualifiedName (arrayType);
+			XmlQualifiedName qn = ToXmlQualifiedName (arrayTypeAttr);
 			int i = qn.Name.LastIndexOf ('[');
 			string dim = qn.Name.Substring (i);
 			string itemType = qn.Name.Substring (0,i);
@@ -531,7 +521,7 @@ namespace System.Xml.Serialization
 			string baseType = itemType.Substring (0,i);
 			string arrayTypeName;
 
-			if (qn.Namespace == XmlSchema.Namespace)
+			if (qn.Namespace == w3SchemaNS)
 				arrayTypeName = TypeTranslator.GetPrimitiveTypeData (baseType).Type.FullName + itemType.Substring (i);
 			else
 			{
@@ -639,9 +629,9 @@ namespace System.Xml.Serialization
 
 				XmlQualifiedName qname = GetXsiType ();
 				if (qname == null) qname = new XmlQualifiedName (name, ns);
-				string arrayType = Reader.GetAttribute ("arrayType", XmlSerializer.EncodingNamespace);
+				string arrayTypeAttr = Reader.GetAttribute (arrayType, soapNS);
 
-				if (qname == arrayQName || arrayType != null)
+				if (qname == arrayQName || arrayTypeAttr != null)
 				{
 					delayedListFixups = EnsureHashtable (delayedListFixups);
 					fixupReference = "__<" + (delayedFixupId++) + ">";

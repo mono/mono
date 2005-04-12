@@ -44,16 +44,11 @@ namespace System.Xml.Serialization
 	{
 		#region Fields
 
-		CodeNamespace codeNamespace;
-		CodeCompileUnit codeCompileUnit;
-
 #if NET_2_0
 		CodeGenerationOptions options;
 #else
 		XmlMapCodeGenerator codeGenerator;
 #endif
-
-		Hashtable exportedMaps = new Hashtable ();
 
 		#endregion
 
@@ -65,9 +60,6 @@ namespace System.Xml.Serialization
 
 		public XmlCodeExporter (CodeNamespace codeNamespace, CodeCompileUnit codeCompileUnit)
 		{
-			this.codeCompileUnit = codeCompileUnit;
-			this.codeNamespace = codeNamespace;
-			
 			codeGenerator = new XmlMapCodeGenerator (codeNamespace, codeCompileUnit);
 		}
 
@@ -96,9 +88,6 @@ namespace System.Xml.Serialization
 								CodeGenerationOptions options, 
 								Hashtable mappings)
 		{
-			this.codeCompileUnit = codeCompileUnit;
-			this.codeNamespace = codeNamespace;
-			
 			codeGenerator = new XmlMapCodeGenerator (codeNamespace, codeCompileUnit, codeGen, options, mappings);
 		}
 		

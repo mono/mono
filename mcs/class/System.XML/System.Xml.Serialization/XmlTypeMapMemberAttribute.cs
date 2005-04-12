@@ -39,7 +39,6 @@ namespace System.Xml.Serialization
 	internal class XmlTypeMapMemberAttribute: XmlTypeMapMember
 	{
 		string _attributeName;
-		string _dataType;
 		string _namespace = "";
 		XmlSchemaForm _form;
 		XmlTypeMapping _mappedType;

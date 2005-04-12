@@ -1,8 +1,26 @@
-2004-04-10  Andrew Skiba  <andrews@mainsoft.com>
+2005-04-12  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* XmlTypeMapping.cs: Added new XmlSerializableMapping class.
+	* XmlSchemaExporter.cs: When exporting an IXmlSerializable type,
+	export the schema that it defines. In ImportNamespace, removed
+	check for default namespace, since it may be included from a non
+	default namespace.
+	* XmlReflectionImporter.cs: Create a special map for IXmlSerializable
+	types. All this based on a patch by Andrew Skiba.
+	
+	* SerializationCodeGenerator.cs:
+	* XmlMapping.cs:
+	* XmlSerializationReaderInterpreter.cs:
+	* SoapCodeExporter.cs:
+	* XmlTypeMapMemberAttribute.cs:
+	* XmlSerializationReader.cs:
+	* XmlCodeExporter.cs: Fixed some warnings.
+
+2005-04-10  Andrew Skiba  <andrews@mainsoft.com>
 
 	* XmlSerializer.cs: fixed a typo - wrong TARGET_JVM condition.
 
-2004-04-03  Andrew Skiba  <andrews@mainsoft.com>
+2005-04-03  Andrew Skiba  <andrews@mainsoft.com>
 
 	* XmlSerializer.cs: added TARGET_JVM that does not support on-the-fly
 	code generation.

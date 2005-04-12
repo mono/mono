@@ -40,12 +40,13 @@ namespace System.Xml.Serialization
 		ArrayList relatedMaps;
 		SerializationFormat format;
 		SerializationSource source;
-		string key;
 		
 		internal string _elementName;
 		internal string _namespace;
 		
 #if NET_2_0
+		string key;
+		
 		internal XmlMapping ()
 		{
 		}

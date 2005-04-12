@@ -42,8 +42,6 @@ namespace System.Xml.Serialization
 	{
 		#region Fields
 
-		CodeNamespace codeNamespace;
-		CodeCompileUnit codeCompileUnit;
 #if !NET_2_0
 		SoapMapCodeGenerator codeGenerator;
 #endif
@@ -58,9 +56,6 @@ namespace System.Xml.Serialization
 
 		public SoapCodeExporter (CodeNamespace codeNamespace, CodeCompileUnit codeCompileUnit)
 		{
-			this.codeCompileUnit = codeCompileUnit;
-			this.codeNamespace = codeNamespace;
-			
 			codeGenerator = new SoapMapCodeGenerator (codeNamespace, codeCompileUnit);
 		}
 
@@ -89,9 +84,6 @@ namespace System.Xml.Serialization
 								CodeGenerationOptions options, 
 								Hashtable mappings)
 		{
-			this.codeCompileUnit = codeCompileUnit;
-			this.codeNamespace = codeNamespace;
-			
 			codeGenerator = new SoapMapCodeGenerator (codeNamespace, codeCompileUnit, codeGen, options, mappings);
 		}
 

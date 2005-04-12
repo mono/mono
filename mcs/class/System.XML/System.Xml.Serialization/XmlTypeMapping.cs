@@ -33,6 +33,7 @@ using System.Xml;
 using System;
 using System.Collections;
 using System.Globalization;
+using System.Xml.Schema;
 
 namespace System.Xml.Serialization
 {
@@ -168,6 +169,31 @@ namespace System.Xml.Serialization
 			}
 		}
 	}
+
+ 
+	// Mapping info for XmlSerializable
+	internal class XmlSerializableMapping : XmlTypeMapping
+	{
+		XmlSchema _schema;
+
+		internal XmlSerializableMapping(string elementName, string ns, TypeData typeData, string xmlType, string xmlTypeNamespace)
+			: base(elementName, ns, typeData, xmlType, xmlTypeNamespace)
+		{
+			IXmlSerializable serializable = (IXmlSerializable)Activator.CreateInstance(typeData.Type);
+			_schema = serializable.GetSchema();
+			if (_schema != null) 
+			{
+				if (_schema.Id == null || _schema.Id.Length == 0) 
+					throw new InvalidOperationException("Schema Id is missing. The schema returned from " + typeData.Type.FullName + ".GetSchema() must have an Id.");
+			}
+		}
+
+		internal XmlSchema Schema
+		{
+			get { return _schema; }
+		}
+	}
+ 
 
 	// Mapping info for classes and structs
 

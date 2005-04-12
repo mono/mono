@@ -83,11 +83,12 @@ namespace System.Xml.Serialization {
 				this.attributeOverrides = attributeOverrides;
 		}
 
-		void Reset ()
+/*		void Reset ()
 		{
 			helper = new ReflectionHelper();
 			arrayChoiceCount = 1;
 		}
+*/
 		
 		internal bool AllowPrivateTypes
 		{
@@ -242,7 +243,12 @@ namespace System.Xml.Serialization {
 			if (rootNamespace == null) rootNamespace = "";
 			if (typeNamespace == null || typeNamespace.Length == 0) typeNamespace = rootNamespace;
 			
-			XmlTypeMapping map = new XmlTypeMapping (elementName, rootNamespace, typeData, defaultXmlType, typeNamespace);
+			XmlTypeMapping map;
+			if (typeData.SchemaType == SchemaTypes.XmlSerializable)
+				map = new XmlSerializableMapping (elementName, rootNamespace, typeData, defaultXmlType, typeNamespace);
+			else
+				map = new XmlTypeMapping (elementName, rootNamespace, typeData, defaultXmlType, typeNamespace);
+				
 			map.IncludeInSchema = includeInSchema;
 			map.IsNullable = nullable;
 			relatedMaps.Add (map);

@@ -214,6 +214,26 @@ namespace System.Xml.Serialization {
 			CompileSchemas ();
 		}
 
+		void ExportXmlSerializableSchema (XmlSchema currentSchema, XmlSerializableMapping map)
+		{
+	        if (IsMapExported (map)) return;
+	        SetMapExported (map);
+	        
+	        if (map.Schema == null) return;
+
+			string targetNs = map.Schema.TargetNamespace;
+	        XmlSchema existingSchema = schemas [targetNs];
+	        if (existingSchema == null)
+	        {
+				schemas.Add (map.Schema);
+				ImportNamespace (currentSchema, targetNs);
+	        }
+	        else if (existingSchema != map.Schema)
+	        {
+				throw new InvalidOperationException("The namespace '" + targetNs +"' defined by the class '" + map.TypeFullName + "' is a duplicate.");
+	        }
+		}
+
 		void ExportClassSchema (XmlTypeMapping map)
 		{
 			if (IsMapExported (map)) return;
@@ -468,7 +488,8 @@ namespace System.Xml.Serialization {
 						break;
 
 					case SchemaTypes.XmlSerializable:
-						selem.SchemaType = GetSchemaXmlSerializableType ();
+						selem.SchemaType = GetSchemaXmlSerializableType (einfo.MappedType as XmlSerializableMapping);
+						ExportXmlSerializableSchema (currentSchema, einfo.MappedType as XmlSerializableMapping);
 						break;
 
 					case SchemaTypes.Enum:
@@ -513,7 +534,7 @@ namespace System.Xml.Serialization {
 
 		void ImportNamespace (XmlSchema schema, string ns)
 		{
-			if (ns == "" || ns == schema.TargetNamespace || ns == XmlSchema.Namespace) return;
+			if (ns == schema.TargetNamespace || ns == XmlSchema.Namespace) return;
 
 			foreach (XmlSchemaObject sob in schema.Includes)
 				if ((sob is XmlSchemaImport) && ((XmlSchemaImport)sob).Namespace == ns) return;
@@ -543,14 +564,20 @@ namespace System.Xml.Serialization {
 			return stype;
 		}
 
-		XmlSchemaType GetSchemaXmlSerializableType ()
+		XmlSchemaType GetSchemaXmlSerializableType (XmlSerializableMapping map)
 		{
 			XmlSchemaComplexType stype = new XmlSchemaComplexType ();
 			XmlSchemaSequence seq = new XmlSchemaSequence ();
-			XmlSchemaElement selem = new XmlSchemaElement ();
-			selem.RefName = new XmlQualifiedName ("schema",XmlSchema.Namespace);
-			seq.Items.Add (selem);
-			seq.Items.Add (new XmlSchemaAny ());
+			if (map.Schema == null) {
+				XmlSchemaElement selem = new XmlSchemaElement ();
+				selem.RefName = new XmlQualifiedName ("schema",XmlSchema.Namespace);
+				seq.Items.Add (selem);
+				seq.Items.Add (new XmlSchemaAny ());
+			} else {
+				XmlSchemaAny any = new XmlSchemaAny ();
+				any.Namespace = map.Schema.TargetNamespace;
+				seq.Items.Add (any);
+			}
 			stype.Particle = seq;
 			return stype;
 		}

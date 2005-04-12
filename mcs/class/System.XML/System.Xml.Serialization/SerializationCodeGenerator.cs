@@ -1912,12 +1912,6 @@ namespace System.Xml.Serialization
 			GenerateSetMemberValue (member, ob, value, isValueList);
 		}
 
-		object GenerateGetMemberValue (XmlTypeMapMember member, object ob, bool isValueList)
-		{
-			if (isValueList) return ob + "[" + member.Index + "]";
-			else return ob + ".@" + member.Name;
-		}
-
 		string GenerateReadObjectElement (XmlTypeMapElementInfo elem)
 		{
 			switch (elem.TypeData.SchemaType)
@@ -2288,7 +2282,6 @@ namespace System.Xml.Serialization
 		//
 		
 		ArrayList _listsToFill = new ArrayList ();
-		Hashtable _hooks;
 		Hashtable _hookVariables;
 		Stack _hookContexts;
 		Stack _hookOpenHooks;
@@ -2305,7 +2298,6 @@ namespace System.Xml.Serialization
 			_hookContexts = new Stack ();
 			_hookOpenHooks = new Stack ();
 			_hookVariables = new Hashtable ();
-			_hooks = new Hashtable ();
 		}
 		
 		void PushHookContext ()
@@ -2529,11 +2521,6 @@ namespace System.Xml.Serialization
 			return "typeof(" + td.FullName.Replace ('+','.') + ")";
 		}
 		
-		string GetString (string str)
-		{
-			return "\"" + str + "\"";
-		}
-		
 		string GetLiteral (object ob)
 		{
 			if (ob == null) return "null";
@@ -2592,11 +2579,6 @@ namespace System.Xml.Serialization
 			WriteLine (method + " (" + Params (pars) + ");");
 		}
 		
-		void Indent ()
-		{
-			_indent++;
-		}
-
 		void Unindent ()
 		{
 			_indent--;
