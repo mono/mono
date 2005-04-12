@@ -1,3 +1,9 @@
+2005-04-12  Ankit Jain  <ankit@corewars.org>
+	
+	Fix #74579.
+	* main.c (dis_mresource): New. Dump embedded managed resources.
+	(main, usage): Add '--mresources' argument.
+
 2005-04-08  Ankit Jain  <radical@corewars.org>
 
 	Fix #74374.
