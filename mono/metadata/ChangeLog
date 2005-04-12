@@ -1,3 +1,8 @@
+2005-04-12 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* threadpool.c: separate pool for socket async. IO.
+	* threadpool.h: mono_max_worker_threads is not a global any more.
+
 2005-04-10  Zoltan Varga  <vargaz@freemail.hu>
 
 	* class.c (class_compute_field_layout): Fix #74549.
