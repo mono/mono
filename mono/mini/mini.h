@@ -838,6 +838,7 @@ void     *mono_arch_instrument_epilog           (MonoCompile *cfg, void *func, v
 MonoCallInst *mono_arch_call_opcode             (MonoCompile *cfg, MonoBasicBlock* bb, MonoCallInst *call, int is_virtual);
 MonoInst *mono_arch_get_inst_for_method       (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig, MonoInst **args);
 void      mono_codegen                          (MonoCompile *cfg);
+void      mono_call_inst_add_outarg_reg         (MonoCallInst *call, int vreg, int hreg, gboolean fp);
 const char *mono_arch_regname                   (int reg);
 const char *mono_arch_fregname                  (int reg);
 gpointer  mono_arch_get_throw_exception         (void);

@@ -1,5 +1,9 @@
 2005-04-12  Zoltan Varga  <vargaz@freemail.hu>
 
+	* mini.h mini-amd64.c inssel-amd64.brg mini-codegen.c: Add new helper function
+	to add a register to the argument registers used for a call. Change the
+	encoding of the hreg-vreg pair to also work on 32 bit platforms.
+
 	* mini.h mini-codegen.c mini-amd64.c: Rename mono_arch_regname_full () to
 	mono_regname_full () and move it to mini-codegen.c.
 

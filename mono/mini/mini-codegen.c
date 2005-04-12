@@ -43,6 +43,18 @@ mono_regname_full (int reg, gboolean fp)
 		return mono_arch_regname (reg);
 }
 
+void
+mono_call_inst_add_outarg_reg (MonoCallInst *call, int vreg, int hreg, gboolean fp)
+{
+	guint32 regpair;
+
+	regpair = (((guint32)hreg) << 24) + vreg;
+	if (fp)
+		call->out_freg_args = g_slist_append (call->out_freg_args, (gpointer)(gssize)(regpair));
+	else
+		call->out_ireg_args = g_slist_append (call->out_ireg_args, (gpointer)(gssize)(regpair));
+}
+
 /*
  * returns the offset used by spillvar. It allocates a new
  * spill variable if necessary. 
@@ -681,12 +693,12 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 			list = call->out_ireg_args;
 			if (list) {
 				while (list) {
-					guint64 regpair;
+					guint32 regpair;
 					int reg, hreg;
 
-					regpair = (guint64) (list->data);
-					hreg = regpair >> 32;
-					reg = regpair & 0xffffffff;
+					regpair = (guint32)(gssize)(list->data);
+					hreg = regpair >> 24;
+					reg = regpair & 0xffffff;
 
 					reginfo [reg].prev_use = reginfo [reg].last_use;
 					reginfo [reg].last_use = i;
@@ -698,12 +710,12 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 			list = call->out_freg_args;
 			if (!use_fpstack && list) {
 				while (list) {
-					guint64 regpair;
+					guint32 regpair;
 					int reg, hreg;
 
-					regpair = (guint64) (list->data);
-					hreg = regpair >> 32;
-					reg = regpair & 0xffffffff;
+					regpair = (guint32)(gssize)(list->data);
+					hreg = regpair >> 24;
+					reg = regpair & 0xffffff;
 
 					reginfof [reg].prev_use = reginfof [reg].last_use;
 					reginfof [reg].last_use = i;
@@ -1065,12 +1077,12 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 			list = call->out_ireg_args;
 			if (list) {
 				while (list) {
-					guint64 regpair;
+					guint32 regpair;
 					int reg, hreg;
 
-					regpair = (guint64) (list->data);
-					hreg = regpair >> 32;
-					reg = regpair & 0xffffffff;
+					regpair = (guint32)(gssize)(list->data);
+					hreg = regpair >> 24;
+					reg = regpair & 0xffffff;
 
 					assign_reg (rs, reg, hreg, FALSE);
 
@@ -1084,12 +1096,12 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 			list = call->out_freg_args;
 			if (list && !use_fpstack) {
 				while (list) {
-					guint64 regpair;
+					guint32 regpair;
 					int reg, hreg;
 
-					regpair = (guint64) (list->data);
-					hreg = regpair >> 32;
-					reg = regpair & 0xffffffff;
+					regpair = (guint32)(gssize)(list->data);
+					hreg = regpair >> 24;
+					reg = regpair & 0xffffff;
 
 					assign_reg (rs, reg, hreg, TRUE);
 

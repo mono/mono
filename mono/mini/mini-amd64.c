@@ -4692,8 +4692,7 @@ mono_arch_emit_this_vret_args (MonoCompile *cfg, MonoCallInst *inst, int this_re
 			vtarg->dreg = mono_regstate_next_int (cfg->rs);
 			mono_bblock_add_inst (cfg->cbb, vtarg);
 
-			regpair = (((guint64)out_reg) << 32) + vtarg->dreg;
-			call->out_ireg_args = g_slist_append (call->out_ireg_args, (gpointer)(regpair));
+			mono_call_inst_add_outarg_reg (call, vtarg->dreg, out_reg, FALSE);
 
 			out_reg = param_regs [1];
 		}
@@ -4710,8 +4709,7 @@ mono_arch_emit_this_vret_args (MonoCompile *cfg, MonoCallInst *inst, int this_re
 		this->dreg = mono_regstate_next_int (cfg->rs);
 		mono_bblock_add_inst (cfg->cbb, this);
 
-		regpair = (((guint64)out_reg) << 32) + this->dreg;
-		call->out_ireg_args = g_slist_append (call->out_ireg_args, (gpointer)(regpair));
+		mono_call_inst_add_outarg_reg (call, this->dreg, out_reg, FALSE);
 	}
 }
 
