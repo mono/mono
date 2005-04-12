@@ -1,3 +1,8 @@
+2005-04-12  Joerg Rosenkranz  <joergr@voelcker.com>
+
+	* mono-service.cs: Service runs in its own AppDomain now.
+	Improved exception handling.
+
 2005-04-09  Joerg Rosenkranz  <joergr@voelcker.com>
 
 	* mono-service.cs: Fixed dynamic loading of assemblies

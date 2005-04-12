@@ -16,18 +16,18 @@ using System.ServiceProcess;
 using System.Threading;
 using System.Runtime.InteropServices;
 
-class MonoServiceRunner {
-	static string assembly, directory, lockfile, name, logname;
-	static ServiceBase service = null;
-
-	static void info (string format, params object [] args)
+class MonoServiceRunner : MarshalByRefObject
+{
+	string assembly, name, logname;
+	
+	static void info (string prefix, string format, params object [] args)
 	{
-		Syscall.syslog (SyslogLevel.LOG_INFO, String.Format ("{0}: {1}", assembly, String.Format (format, args)));
+		Syscall.syslog (SyslogLevel.LOG_INFO, String.Format ("{0}: {1}", prefix, String.Format (format, args)));
 	}
 	
-	static void error (string format, params object [] args)
+	static void error (string prefix, string format, params object [] args)
 	{
-		Syscall.syslog (SyslogLevel.LOG_ERR, String.Format ("{0}: {1}", assembly, String.Format (format, args)));
+		Syscall.syslog (SyslogLevel.LOG_ERR, String.Format ("{0}: {1}", prefix, String.Format (format, args)));
 	}
 	
 	static void Usage ()
@@ -40,14 +40,14 @@ class MonoServiceRunner {
 
 	delegate void sighandler_t (int arg);
 	
-	static AutoResetEvent signal_event;
+	AutoResetEvent signal_event;
 
 	[DllImport ("libc")]
 	extern static int signal (int signum, sighandler_t handler);
 
-	static int signum;
+	int signum;
 	
-	static void my_handler (int sig)
+	void my_handler (int sig)
 	{
 		signum = sig;
 		signal_event.Set ();
@@ -64,6 +64,12 @@ class MonoServiceRunner {
 	
 	static int Main (string [] args)
 	{
+		string assembly = null;
+		string directory = null;
+		string lockfile = null;
+		string name = null;
+		string logname = null;
+
 		foreach (string s in args){
 			if (s.Length > 3 && s [0] == '-' && s [2] == ':'){
 				string arg = s.Substring (3);
@@ -83,24 +89,21 @@ class MonoServiceRunner {
 			}
 		}
 
-		if (assembly == null){
-			error ("Assembly name is missing");
-			Usage ();
-		}
-
 		if (logname == null)
 			logname = assembly;
+
+		if (assembly == null){
+			error (logname, "Assembly name is missing");
+			Usage ();
+		}
 		
 		if (directory != null){
 			if (Syscall.chdir (directory) != 0){
-				error ("Could not change to directory {0}", directory);
+				error (logname, "Could not change to directory {0}", directory);
 				return 1;
 			}
 		}
 		
-		// Allow loading of dynamic assemblies
-		AppDomain.CurrentDomain.AppendPrivatePath (Environment.CurrentDirectory);
-
 		// Use lockfile to allow only one instance
 		if (lockfile == null)
 			lockfile = String.Format ("/tmp/{0}.lock", Path.GetFileName (assembly));
@@ -109,12 +112,12 @@ class MonoServiceRunner {
 			FilePermissions.S_IRUSR|FilePermissions.S_IWUSR|FilePermissions.S_IRGRP);
 	
 		if (lfp<0)  {
-			error ("Cannot open lock file.");
+			error (logname, "Cannot open lock file.");
 			return 1;
 		}
 	
 		if (Syscall.lockf(lfp, LockFlags.F_TLOCK,0)<0)  {
-			info ("Daemon is already running.");
+			info (logname, "Daemon is already running.");
 			return 0;
 		}
 		
@@ -124,127 +127,171 @@ class MonoServiceRunner {
 		Syscall.write (lfp, buf, (ulong)pid.Length);
 		Marshal.FreeCoTaskMem (buf);
 
-		//
-		// Setup signals
-		//
-		signal_event = new AutoResetEvent (false);
-
-		// Invoke all the code used in the signal handler, so the JIT does
-		// not kick-in inside the signal handler
-		signal_event.Set ();
-		signal_event.Reset ();
-
-		// Hook up 
-		signal (UnixConvert.FromSignum (Signum.SIGTERM), new sighandler_t (my_handler));
-		signal (UnixConvert.FromSignum (Signum.SIGUSR1), new sighandler_t (my_handler));
-		signal (UnixConvert.FromSignum (Signum.SIGUSR2), new sighandler_t (my_handler));
-
-		// Load service assembly
-		Assembly a = null;
+		// Create new AppDomain to run service
+		AppDomainSetup setup = new AppDomainSetup ();
+		setup.ApplicationBase = Environment.CurrentDirectory;
+		setup.ConfigurationFile = Path.Combine (Environment.CurrentDirectory, assembly + ".config");
+		setup.ApplicationName = logname;
 		
-		try {
-			a = Assembly.LoadFrom (assembly);
-		} catch (FileNotFoundException) {
-			error ("Could not find assembly {0}", assembly);
-			return 1;
-		} catch (BadImageFormatException){
-			error ("File {0} is not a valid assembly", assembly);
-			return 1;
-		} catch { }
-		
-		if (a == null){
-			error ("Could not load assembly {0}", assembly);
+		AppDomain newDomain = AppDomain.CreateDomain (logname, AppDomain.CurrentDomain.Evidence, setup);
+		MonoServiceRunner rnr = newDomain.CreateInstanceAndUnwrap(
+            typeof (MonoServiceRunner).Assembly.FullName,
+            typeof (MonoServiceRunner).FullName,
+            true,
+            BindingFlags.Default,
+            null,
+            new object [] {assembly, name, logname},
+            null, null, null) as MonoServiceRunner;
+			
+		if (rnr == null) {
+			error (logname, "Internal Mono Error: Could not create MonoServiceRunner.");
 			return 1;
 		}
 
-		// Hook up RunService callback
-		Type cbType = Type.GetType ("System.ServiceProcess.ServiceBase+RunServiceCallback, System.ServiceProcess");
-		if (cbType == null){
-			error ("Internal Mono Error: Could not find RunServiceCallback in ServiceBase");
-			return 1;			
-		}
-		
-		FieldInfo fi = typeof (ServiceBase).GetField ("RunService", BindingFlags.Static | BindingFlags.NonPublic);
-		if (fi == null){
-			error ("Internal Mono Error: Could not find RunService in ServiceBase");
+		return rnr.StartService ();
+	}
+	
+	public MonoServiceRunner (string assembly, string name, string logname)
+	{
+		this.assembly = assembly;
+		this.name = name;
+		this.logname = logname;
+	}
+	
+	public int StartService ()
+	{
+		try	{
+			//
+			// Setup signals
+			//
+			signal_event = new AutoResetEvent (false);
+	
+			// Invoke all the code used in the signal handler, so the JIT does
+			// not kick-in inside the signal handler
+			signal_event.Set ();
+			signal_event.Reset ();
+	
+			// Hook up 
+			signal (UnixConvert.FromSignum (Signum.SIGTERM), new sighandler_t (my_handler));
+			signal (UnixConvert.FromSignum (Signum.SIGUSR1), new sighandler_t (my_handler));
+			signal (UnixConvert.FromSignum (Signum.SIGUSR2), new sighandler_t (my_handler));
+	
+			// Load service assembly
+			Assembly a = null;
+			
+			try {
+				a = Assembly.LoadFrom (assembly);
+			} catch (FileNotFoundException) {
+				error (logname, "Could not find assembly {0}", assembly);
+				return 1;
+			} catch (BadImageFormatException){
+				error (logname, "File {0} is not a valid assembly", assembly);
+				return 1;
+			} catch { }
+			
+			if (a == null){
+				error (logname, "Could not load assembly {0}", assembly);
+				return 1;
+			}
+	
+			// Hook up RunService callback
+			Type cbType = Type.GetType ("System.ServiceProcess.ServiceBase+RunServiceCallback, System.ServiceProcess");
+			if (cbType == null){
+				error (logname, "Internal Mono Error: Could not find RunServiceCallback in ServiceBase");
+				return 1;			
+			}
+			
+			FieldInfo fi = typeof (ServiceBase).GetField ("RunService", BindingFlags.Static | BindingFlags.NonPublic);
+			if (fi == null){
+				error (logname, "Internal Mono Error: Could not find RunService in ServiceBase");
+				return 1;
+			}
+			fi.SetValue (null, Delegate.CreateDelegate(cbType, this, "MainLoop"));
+			
+			// And run its Main. Our RunService handler is invoked from 
+			// ServiceBase.Run.
+			MethodInfo entry = a.EntryPoint;
+			if (entry == null){
+				error (logname, "Entry point not defined in service");
+				return 1;
+			}
+	
+			string [] service_args = new string [0];
+			entry.Invoke (null, service_args);
+			
+			return 0;
+			
+		} catch ( Exception ex ) {
+			for (Exception e = ex; e != null; e = e.InnerException)
+				error (logname, e.Message);
+			
 			return 1;
 		}
-		fi.SetValue (null, Delegate.CreateDelegate(cbType, 
-			typeof (MonoServiceRunner).GetMethod ("RunService", BindingFlags.Static | BindingFlags.NonPublic)));
-		
-		// And run its Main. Our RunService handler is invoked from 
-		// ServiceBase.Run.
-		MethodInfo entry = a.EntryPoint;
-		if (entry == null){
-			error ("Entry point not defined in service");
-			return 1;
-		}
-
-		string [] service_args = new string [0];
-		entry.Invoke (null, service_args);
-
-		return 0;
 	}
 	
 	// The main service loop
-	private static void RunService (ServiceBase [] services)
+	private void MainLoop (ServiceBase [] services)
 	{
-		if (services == null || services.Length == 0){
-			error ("No services were registered by this service");
-			return;
-		}
-		
-		// Start up the service.
-		service = null;
-		
-		if (name != null){
-			foreach (ServiceBase svc in services){
-				if (svc.ServiceName == name){
-					service = svc;
-					break;
-				}
+		try {
+			ServiceBase service;
+	
+			if (services == null || services.Length == 0){
+				error (logname, "No services were registered by this service");
+				return;
 			}
-		} else {
-			service = services [0];
-		}
-
-		call (service, "OnStart", new string [0]);
-		info ("Service {0} started", service.ServiceName);
-
-		for (bool running = true; running; ){
-			signal_event.WaitOne ();
-			Signum v;
 			
-			if (UnixConvert.TryToSignum (signum, out v)){
-				signum = 0;
+			// Start up the service.
+			service = null;
+			
+			if (name != null){
+				foreach (ServiceBase svc in services){
+					if (svc.ServiceName == name){
+						service = svc;
+						break;
+					}
+				}
+			} else {
+				service = services [0];
+			}
+	
+			call (service, "OnStart", new string [0]);
+			info (logname, "Service {0} started", service.ServiceName);
+	
+			for (bool running = true; running; ){
+				signal_event.WaitOne ();
+				Signum v;
 				
-				switch (v){
-				case Signum.SIGTERM:
-					if (service.CanStop) {
-						info ("Stopping service {0}", service.ServiceName);
-						call (service, "OnStop", null);
-						running = false;
+				if (UnixConvert.TryToSignum (signum, out v)){
+					signum = 0;
+					
+					switch (v){
+					case Signum.SIGTERM:
+						if (service.CanStop) {
+							info (logname, "Stopping service {0}", service.ServiceName);
+							call (service, "OnStop", null);
+							running = false;
+						}
+						break;
+					case Signum.SIGUSR1:
+						if (service.CanPauseAndContinue) {
+							info (logname, "Pausing service {0}", service.ServiceName);
+							call (service, "OnPause", null);
+						}
+						break;
+					case Signum.SIGUSR2:
+						if (service.CanPauseAndContinue) {
+							info (logname, "Continuing service {0}", service.ServiceName);
+							call (service, "OnContinue", null);
+						}
+						break;
 					}
-					break;
-				case Signum.SIGUSR1:
-					if (service.CanPauseAndContinue) {
-						info ("Pausing service {0}", service.ServiceName);
-						call (service, "OnPause", null);
-					}
-					break;
-				case Signum.SIGUSR2:
-					if (service.CanPauseAndContinue) {
-						info ("Continuing service {0}", service.ServiceName);
-						call (service, "OnContinue", null);
-					}
-					break;
 				}
 			}
-		}
-
-		// Clean up
-		foreach (ServiceBase svc in services){
-			svc.Dispose ();
+		} finally {
+			// Clean up
+			foreach (ServiceBase svc in services){
+				svc.Dispose ();
+			}
 		}
 	}
 }
