@@ -1,3 +1,13 @@
+2005-02-23  Raja R Harinath  <rharinath@novell.com>
+	    Abin Thomas  <projectmonokochi@rediffmail.com>
+	    Anoob V E  <projectmonokochi@rediffmail.com>
+	    Harilal P R  <projectmonokochi@rediffmail.com>
+
+	Fix #57851, #72718.
+	* class.cs (ConstructorBuilder.Resolve): Make sure that the second
+	MemberLookup (used for error reporting) actually returns a result.
+	Fix error report number (122, not 112).
+
 2005-02-22  Abin Thomas  <projectmonokochi@rediffmail.com>
 	    Anoob V E  <projectmonokochi@rediffmail.com>
 	    Harilal P R  <projectmonokochi@rediffmail.com>
