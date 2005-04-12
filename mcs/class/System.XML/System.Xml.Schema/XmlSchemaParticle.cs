@@ -134,7 +134,10 @@ namespace System.Xml.Schema
 			get{ return  maxOccurs; } 
 			set
 			{
-				MaxOccursString = value.ToString (CultureInfo.InvariantCulture);
+				if (value == decimal.MaxValue)
+					MaxOccursString = "unbounded";
+				else
+					MaxOccursString = value.ToString (CultureInfo.InvariantCulture);
 			}
 		}
 

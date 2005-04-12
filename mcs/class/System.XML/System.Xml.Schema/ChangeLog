@@ -1,3 +1,8 @@
+2005-04-12  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* XmlSchemaParticle.cs: Set MaxOccurs to unbounded when set to
+	decimal.MaxValue.
+
 2005-03-22  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlSchemaChoice.cs : commented out warned code.
