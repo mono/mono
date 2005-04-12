@@ -79,7 +79,9 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 				RSA rsa = this.getClientCertRSA((RSA)privKey);
 
 				// Write message
-				this.Write(hash.CreateSignature(rsa));
+				byte[] signature = hash.CreateSignature(rsa);
+				this.Write((short)signature.Length);
+				this.Write(signature, 0, signature.Length);
 			}
 		}
 
@@ -110,7 +112,9 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 				RSA rsa = this.getClientCertRSA((RSA)privKey);
 
 				// Write message
-				this.Write(hash.CreateSignature(rsa));
+				byte[] signature = hash.CreateSignature(rsa);
+				this.Write((short)signature.Length);
+				this.Write(signature, 0, signature.Length);
 			}
 		}
 
