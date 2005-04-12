@@ -1,5 +1,11 @@
 2005-02-11  Miguel de Icaza  <miguel@novell.com>
 
+	* expression.cs (Cast): Overload DoResolveLValue so we can pass
+	resolve our casted expression as an LValue.  This triggers the
+	proper LValue processing that is later required by Assign.
+
+	This fixes 72347.
+
 	* cs-tokenizer.cs (pp_and): recurse on pp_and, fixes #61903.
 
 2005-02-11  Marek Safar  <marek.safar@seznam.cz>
