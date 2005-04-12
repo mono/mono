@@ -1,3 +1,9 @@
+2005-04-12  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* TlsClientCertificateVerify.cs: Add missing data length (16 bits - 
+	not to be confused with the record 24 bits length) before the RSA
+	signature of the MD5SHA1 hash. Fix #71696.
+
 2004-11-10  Sebastien Pouliot  <sebastien@ximian.com>
 
 	*.cs: Remove duplicate license header so sources matches with HEAD.
