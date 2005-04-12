@@ -1,5 +1,17 @@
 2005-02-11  Miguel de Icaza  <miguel@novell.com>
 
+	* codegen.cs (EmitContext): Introduce the `MethodIsStatic'
+	variable.  This one is represents the actual low-level declaration
+	of the method, as opposed to the semantic level `IsStatic'.   
+
+	An anonymous method which is hosted into a static method might be
+	actually an instance method.  IsStatic would reflect the
+	container, while MethodIsStatic represents the actual code
+	generated.
+
+	* expression.cs (ParameterReference): Use the new MethodIsStatic
+	instead of IsStatic.
+
 	* anonymous.cs (AnonymousMethod.Compatible): Pass the
 	Modifiers.STATIC to the Anonymous' Method EmitContext if static is
 	set on the current EmitContext. 

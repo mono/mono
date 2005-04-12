@@ -123,8 +123,9 @@ namespace Mono.CSharp {
 				throw new Exception ("Type host is null");
 			
 			if (current_type == type_host && ec.IsStatic){
-				if (ec.IsStatic)
+				if (ec.IsStatic){
 					method_modifiers |= Modifiers.STATIC;
+				}
 				current_type = null;
 			} 
 
@@ -134,7 +135,6 @@ namespace Mono.CSharp {
 				method_modifiers, false, new MemberName ("<#AnonymousMethod>" + anonymous_method_count++),
 				Parameters, null, loc);
 			method.Block = Block;
-
 			
 			//
 			// Swap the TypeBuilder while we define the method, then restore
@@ -310,8 +310,7 @@ namespace Mono.CSharp {
 			// Adjust based on the computed state of the
 			// method from CreateMethodHost
 			
-			if ((method_modifiers & Modifiers.STATIC) != 0)
-				aec.IsStatic = true;
+			aec.MethodIsStatic = (method_modifiers & Modifiers.STATIC) != 0;
 			
 			aec.EmitMeta (Block, amp);
 			aec.EmitResolvedTopBlock (Block, unreachable);
