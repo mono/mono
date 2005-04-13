@@ -1,3 +1,8 @@
+2005-04-13  Dick Porter  <dick@ximian.com>
+
+	* hps.c: Update to new daemon-less code
+	* Makefile.am: Don't bother to build shmdel or scratch any more
+
 2003-06-05  Dick Porter  <dick@ximian.com>
 
 	* hps.c:
