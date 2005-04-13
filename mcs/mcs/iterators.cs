@@ -46,7 +46,7 @@ namespace Mono.CSharp {
 					      "finally clause");
 				return false;
 			} else {
-				Console.WriteLine ("Not in finally");
+				Report.Debug ("Not in finally");
 			}
 			
 			if (ec.InUnsafe) {
