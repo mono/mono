@@ -1,3 +1,5 @@
+2005-04-13 Manjula GHM <mmanjula@novell.com>
+	* expression.cs : To support  'Or' argument of AttributeTargets in AttributeUsage
 2005-04-12 Satya Sudha K <ksathyasudha@novell.com>
 	* statement.cs :
 		Introduced a class 'StatementSequence', to translate a late-binding call to a block of statements

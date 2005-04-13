@@ -2628,12 +2628,14 @@ namespace Mono.MonoBASIC {
 					right + ") at Line: "+ loc.Row);
 
 			eclass = ExprClass.Value;
+			
+			// To support  'Or' argument of AttributeTargets in AttributeUsage
 
-			if (left is EnumConstant) {
+			if (left is EnumConstant && oper != Operator.BitwiseOr) {
 				left = ((EnumConstant) left).WidenToCompilerConstant();
 			}
 
-			if (right is EnumConstant) {
+			if (right is EnumConstant && oper != Operator.BitwiseOr) {
 				right = ((EnumConstant) right).WidenToCompilerConstant();
 			}
 
