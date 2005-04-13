@@ -1,5 +1,12 @@
 2005-04-13  Dick Porter  <dick@ximian.com>
 
+	* io.c (share_check): 
+	* handles.c (_wapi_handle_check_share): Refine the file check so
+	that sharing violations within the same process don't cause
+	assertion failures.
+
+2005-04-13  Dick Porter  <dick@ximian.com>
+
 	* io.c (FindFirstFile): Fix bugs introduced with the merge (bug
 	74586)
 
