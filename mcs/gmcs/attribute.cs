@@ -302,6 +302,9 @@ namespace Mono.CSharp {
 			return false;
 		}
 		
+		// Cache for parameter-less attributes
+		static PtrHashtable att_cache = new PtrHashtable ();
+
 		public virtual CustomAttributeBuilder Resolve (EmitContext ec)
 		{
 			if (resolve_error)
@@ -309,23 +312,23 @@ namespace Mono.CSharp {
 
 			resolve_error = true;
 
-			Type oldType = Type;
-			
-			// Sanity check.
-			Type = CheckAttributeType (ec); // TODO: I really don't think we need such expensive double check
+			if (Type == null)
+				Type = CheckAttributeType (ec);
 
-			if (oldType == null && Type == null)
+			if (Type == null)
 				return null;
-			if (oldType != null && oldType != Type){
-				Report.Error (-27, Location,
-					      "Attribute {0} resolved to different types at different times: {1} vs. {2}",
-					      Name, oldType, Type);
-				return null;
-			}
 
 			if (Type.IsAbstract) {
 				Report.Error (653, Location, "Cannot apply attribute class '{0}' because it is abstract", Name);
 				return null;
+			}
+
+			if (Arguments == null) {
+				object o = att_cache [Type];
+				if (o != null) {
+					resolve_error = false;
+					return (CustomAttributeBuilder)o;
+				}
 			}
 
 			bool MethodImplAttr = false;
@@ -615,9 +618,13 @@ namespace Mono.CSharp {
 						prop_info_arr, prop_values_arr,
 						field_info_arr, field_values_arr);
 				}
-				else
+				else {
 					cb = new CustomAttributeBuilder (
 						(ConstructorInfo) constructor, pos_values);
+
+					if (pos_values.Length == 0)
+						att_cache.Add (Type, cb);
+				}
 			} catch (Exception e) {
 				//
 				// Sample:
@@ -755,10 +762,10 @@ namespace Mono.CSharp {
 				Resolve (ec);
 
 			// Some error occurred
-			if (pos_values == null)
+			if (resolve_error)
 				return null;
 
-			if (pos_values.Length == 0)
+			if (pos_values == null || pos_values.Length == 0)
 				return new ObsoleteAttribute ();
 
 			if (pos_values.Length == 1)
