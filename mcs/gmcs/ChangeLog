@@ -1,3 +1,20 @@
+2005-02-28  Marek Safar  <marek.safar@seznam.cz>
+
+	* cs-parser.jay: Add errors 1617, 650, 1007, 531, 547, 548
+
+	* class.cs (MethodCore.IsDuplicateImplementation): Special error
+	for operators.
+	(Method.CheckBase): Catch wrong destructor here.
+	(MethodData.Define): Add errors 550, 668.
+
+	* cs-tokenizer.cs (PreProcessPragma): Add warning 1634.
+
+	* ecore.cs (PropertyExpr.DoResolveLValue): Fixed wrong error code.
+
+	* pending.cs (VerifyPendingMethods): Add error 551.
+
+	* typemanager.cs (CSharpName): Next error report helper.
+
 2005-02-25  Marek Safar  <marek.safar@seznam.cz>
 
 	* attribute.cs (Atttribute.Resolve): Add cache for parameter-less

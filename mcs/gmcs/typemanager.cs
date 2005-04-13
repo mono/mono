@@ -855,6 +855,17 @@ public partial class TypeManager {
 			@"(\W+|\b)", 
 			new MatchEvaluator (CSharpNameMatch)).Replace ('+', '.');
 	}	
+
+	static public string CSharpName (Type[] types)
+	{
+		StringBuilder sb = new StringBuilder ();
+		foreach (Type t in types) {
+			sb.Append (CSharpName (t));
+			sb.Append (',');
+		}
+		sb.Remove (sb.Length - 1, 1);
+		return sb.ToString ();
+	}
 	
 	static String CSharpNameMatch (Match match) 
 	{
