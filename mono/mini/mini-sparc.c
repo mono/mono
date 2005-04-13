@@ -50,8 +50,8 @@
  * Register usage:
  * - %i0..%i<n> hold the incoming arguments, these are never written by JITted 
  * code. Unused input registers are used for global register allocation.
- * - %l0..%l7 is used for local register allocation
- * - %o0..%o6 is used for outgoing arguments
+ * - %o0..%o5 and %l7 is used for local register allocation and passing arguments
+ * - %l0..%l6 is used for global register allocation
  * - %o7 and %g1 is used as scratch registers in opcodes
  * - all floating point registers are used for local register allocation except %f0. 
  *   Only double precision registers are used.
@@ -110,8 +110,6 @@
  * Possible optimizations:
  * - delay slot scheduling
  * - allocate large constants to registers
- * - use %o registers for local allocation
- * - implement unwinding through native frames
  * - add more mul/div/rem optimizations
  */
 
@@ -758,8 +756,8 @@ mono_arch_get_global_int_regs (MonoCompile *cfg)
 	for (i = cinfo->reg_usage; i < 6; ++i)
 		regs = g_list_prepend (regs, GUINT_TO_POINTER (sparc_i0 + i));
 
-	/* Use %l0..%l3 as global registers */
-	for (i = sparc_l0; i < sparc_l4; ++i)
+	/* Use %l0..%l6 as global registers */
+	for (i = sparc_l0; i < sparc_l7; ++i)
 		regs = g_list_prepend (regs, GUINT_TO_POINTER (i));
 
 	g_free (cinfo);
@@ -1001,6 +999,19 @@ mono_arch_allocate_vars (MonoCompile *m)
 	g_free (cinfo);
 }
 
+static MonoInst *
+make_group (MonoCompile *cfg, MonoInst *left, int basereg, int offset)
+{
+	MonoInst *group;
+
+	MONO_INST_NEW (cfg, group, OP_GROUP);
+	group->inst_left = left;
+	group->inst_basereg = basereg;
+	group->inst_imm = offset;
+
+	return group;
+}
+
 /* 
  * take the arguments and generate the arch-specific
  * instructions to properly call the function in call.
@@ -1044,8 +1055,7 @@ mono_arch_call_opcode (MonoCompile *cfg, MonoBasicBlock* bb, MonoCallInst *call,
 			cfg->disable_aot = TRUE;
 			/* We allways pass the signature on the stack for simplicity */
 			MONO_INST_NEW (cfg, arg, OP_SPARC_OUTARG_MEM);
-			arg->inst_basereg = sparc_sp;
-			arg->inst_imm = ARGS_OFFSET + cinfo->sig_cookie.offset;
+			arg->inst_right = make_group (cfg, (MonoInst*)call, sparc_sp, ARGS_OFFSET + cinfo->sig_cookie.offset);
 			MONO_INST_NEW (cfg, sig_arg, OP_ICONST);
 			sig_arg->inst_p0 = tmp_sig;
 			arg->inst_left = sig_arg;
@@ -1112,6 +1122,8 @@ mono_arch_call_opcode (MonoCompile *cfg, MonoBasicBlock* bb, MonoCallInst *call,
 				cinfo->stack_usage += pad;
 			}
 
+			arg->inst_right = make_group (cfg, (MonoInst*)call, sparc_sp, ARGS_OFFSET + ainfo->offset);
+
 			switch (ainfo->storage) {
 			case ArgInIReg:
 			case ArgInFReg:
@@ -1121,11 +1133,18 @@ mono_arch_call_opcode (MonoCompile *cfg, MonoBasicBlock* bb, MonoCallInst *call,
 				arg->unused = sparc_o0 + ainfo->reg;
 				call->used_iregs |= 1 << ainfo->reg;
 
-				if ((i >= sig->hasthis) && (sig->params [i - sig->hasthis]->type == MONO_TYPE_R8)) {
+				if ((i >= sig->hasthis) && !sig->params [i - sig->hasthis]->byref && ((sig->params [i - sig->hasthis]->type == MONO_TYPE_R8) || (sig->params [i - sig->hasthis]->type == MONO_TYPE_R4))) {
+					/* An fp value is passed in an ireg */
+
+					if (arg->opcode == OP_SPARC_OUTARG_REGPAIR)
+						arg->opcode = OP_SPARC_OUTARG_REGPAIR_FLOAT;
+					else
+						arg->opcode = OP_SPARC_OUTARG_FLOAT;
+
 					/*
 					 * The OUTARG (freg) implementation needs an extra dword to store
 					 * the temporary value.
-					 */
+					 */					
 					extra_space += 8;
 				}
 				break;
@@ -1151,9 +1170,6 @@ mono_arch_call_opcode (MonoCompile *cfg, MonoBasicBlock* bb, MonoCallInst *call,
 			default:
 				NOT_IMPLEMENTED;
 			}
-
-			arg->inst_basereg = sparc_sp;
-			arg->inst_imm = ARGS_OFFSET + ainfo->offset;
 		}
 	}
 
@@ -1958,13 +1974,20 @@ emit_move_return_value (MonoInst *ins, guint32 *code)
 	case OP_LCALL_MEMBASE:
 		/* 
 		 * ins->dreg is the least significant reg due to the lreg: LCALL rule
-		 * in inssel.brg.
+		 * in inssel-long32.brg.
 		 */
 #ifdef SPARCV9
 		sparc_mov_reg_reg (code, sparc_o0, ins->dreg);
 #else
-		sparc_mov_reg_reg (code, sparc_o0, ins->dreg + 1);
-		sparc_mov_reg_reg (code, sparc_o1, ins->dreg);
+		if (ins->dreg + 1 == sparc_o1) {
+			sparc_mov_reg_reg (code, sparc_o0, sparc_o7);
+			sparc_mov_reg_reg (code, sparc_o1, ins->dreg);
+			sparc_mov_reg_reg (code, sparc_o7, ins->dreg + 1);
+		}
+		else {
+			sparc_mov_reg_reg (code, sparc_o0, ins->dreg + 1);
+			sparc_mov_reg_reg (code, sparc_o1, ins->dreg);
+		}
 #endif
 		break;
 	case OP_FCALL:
@@ -2154,14 +2177,12 @@ mono_sparc_is_virtual_call (guint32 *code)
  *  Determine the vtable slot used by a virtual call.
  */
 gpointer*
-mono_sparc_get_vcall_slot_addr (guint32 *code, gpointer *fp)
+mono_sparc_get_vcall_slot_addr (guint32 *code, gpointer *regs)
 {
 	guint32 ins = code [0];
 	guint32 prev_ins = code [-1];
 
 	mono_sparc_flushw ();
-
-	fp = (gpointer*)((guint8*)fp + MONO_SPARC_STACK_BIAS);
 
 	if ((sparc_inst_op (ins) == 0x2) && (sparc_inst_op3 (ins) == 0x38)) {
 		if ((sparc_inst_op (prev_ins) == 0x3) && (sparc_inst_op3 (prev_ins) == 0 || sparc_inst_op3 (prev_ins) == 0xb)) {
@@ -2173,8 +2194,8 @@ mono_sparc_get_vcall_slot_addr (guint32 *code, gpointer *fp)
 			g_assert (sparc_inst_rd (prev_ins) == sparc_inst_rs1 (ins));
 
 			g_assert ((base >= sparc_o0) && (base <= sparc_i7));
-			
-			base_val = fp [base - 16];
+
+			base_val = regs [base - sparc_o0];
 
 			return (gpointer)((guint8*)base_val + disp);
 		}
@@ -4183,7 +4204,7 @@ mono_arch_free_jit_tls_data (MonoJitTlsData *tls)
 }
 
 void
-mono_arch_emit_this_vret_args (MonoCompile *cfg, MonoCallInst *inst, int this_reg, int this_type, int vt_reg)
+mono_arch_emit_this_vret_args (MonoCompile *cfg, MonoCallInst *call, int this_reg, int this_type, int vt_reg)
 {
 	int this_out_reg = sparc_o0;
 
@@ -4192,8 +4213,11 @@ mono_arch_emit_this_vret_args (MonoCompile *cfg, MonoCallInst *inst, int this_re
 		MonoInst *ins;
 		MONO_INST_NEW (cfg, ins, OP_SETREG);
 		ins->sreg1 = vt_reg;
-		ins->dreg = sparc_o0;
+		ins->dreg = mono_regstate_next_int (cfg->rs);
 		mono_bblock_add_inst (cfg->cbb, ins);
+
+		mono_call_inst_add_outarg_reg (call, ins->dreg, sparc_o0, FALSE);
+
 		this_out_reg = sparc_o1;
 #else
 		/* Set the 'struct/union return pointer' location on the stack */
@@ -4207,8 +4231,10 @@ mono_arch_emit_this_vret_args (MonoCompile *cfg, MonoCallInst *inst, int this_re
 		MONO_INST_NEW (cfg, this, OP_SETREG);
 		this->type = this_type;
 		this->sreg1 = this_reg;
-		this->dreg = this_out_reg;
+		this->dreg = mono_regstate_next_int (cfg->rs);
 		mono_bblock_add_inst (cfg->cbb, this);
+
+		mono_call_inst_add_outarg_reg (call, this->dreg, this_out_reg, FALSE);
 	}
 }
 

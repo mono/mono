@@ -12,8 +12,11 @@
 
 #define MONO_ARCH_HAS_XP_LOCAL_REGALLOC
 
-/* Use %l4..%l7 as local registers */
-#define MONO_ARCH_CALLEE_REGS (0xf0<<16)
+/* 
+ * Use %o0..%o5 as local registers, plus %l7 since we need an extra register for
+ * holding the sreg1 in call instructions.
+ */
+#define MONO_ARCH_CALLEE_REGS ((1 << sparc_o0) | (1 << sparc_o1) | (1 << sparc_o2) | (1 << sparc_o3) | (1 << sparc_o4) | (1 << sparc_o5) | (1 << sparc_l7))
 
 #define MONO_ARCH_CALLEE_SAVED_REGS (~MONO_ARCH_CALLEE_REGS)
 
@@ -153,7 +156,7 @@ static void * __builtin_frame_address(int depth)
 
 gboolean mono_sparc_is_virtual_call (guint32 *code);
 
-gpointer* mono_sparc_get_vcall_slot_addr (guint32 *code, gpointer *fp);
+gpointer* mono_sparc_get_vcall_slot_addr (guint32 *code, gpointer *regs);
 
 void mono_sparc_flushw (void);
 
