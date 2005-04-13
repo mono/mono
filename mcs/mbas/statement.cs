@@ -6,6 +6,7 @@
 //   Martin Baulig (martin@gnome.org)
 //	 Anirban Bhattacharjee (banirban@novell.com)
 //   Manjula GHM (mmanjula@novell.com)
+//   Satya Sudha K (ksathyasudha@novell.com)
 //
 // (C) 2001, 2002 Ximian, Inc.
 //
@@ -2689,6 +2690,13 @@ namespace Mono.MonoBASIC {
 		//
 		CaseInsensitiveHashtable local_builders;
 
+		// to hold names of variables required for late binding
+		public const string lateBindingArgs = "1_LBArgs";
+		public const string lateBindingArgNames = "1_LBArgsNames";
+		public const string lateBindingCopyBack = "1_LBCopyBack";
+
+		bool isLateBindingRequired = false;
+
 		bool used = false;
 
 		static int id;
@@ -2725,6 +2733,21 @@ namespace Mono.MonoBASIC {
 		{
 			if (parent != null)
 				parent.AddChild (this);
+			else {
+				// Top block
+				// Add variables that may be required for late binding
+				variables = new CaseInsensitiveHashtable ();
+				ArrayList rank_specifier = new ArrayList ();
+				ArrayList element = new ArrayList ();
+				element.Add (new EmptyExpression ());
+				rank_specifier.Add (element);
+				Expression e = Mono.MonoBASIC.Parser.DecomposeQI ("System.Object[]", start);
+				AddVariable (e, Block.lateBindingArgs, null, start);
+				e = Mono.MonoBASIC.Parser.DecomposeQI ("System.String[]", start);
+				AddVariable (e, Block.lateBindingArgNames, null, start);
+				e = Mono.MonoBASIC.Parser.DecomposeQI ("System.Boolean[]", start);
+				AddVariable (e, Block.lateBindingCopyBack, null, start);
+			}
 			
 			this.Parent = parent;
 			this.Implicit = implicit_block;
@@ -2734,6 +2757,15 @@ namespace Mono.MonoBASIC {
 			this.loc = start;
 			this_id = id++;
 			statements = new ArrayList ();
+		}
+
+		public bool IsLateBindingRequired {
+			get {
+				return isLateBindingRequired;
+			}
+			set {
+				isLateBindingRequired = true;
+			}
 		}
 
 		public int ID {
@@ -3129,6 +3161,14 @@ namespace Mono.MonoBASIC {
 				
 				foreach (DictionaryEntry de in variables){
 					string name = (string) de.Key;
+					/*
+					if (!isLateBindingRequired) {
+						if (name.Equals (Block.lateBindingArgs) || 
+						    name.Equals (Block.lateBindingArgNames) ||
+						    name.Equals (Block.lateBindingCopyBack))
+							continue;
+					}
+					*/
 					VariableInfo vi = (VariableInfo) de.Value;
 
 					if (vi.VariableType == null)
@@ -3210,12 +3250,13 @@ namespace Mono.MonoBASIC {
 			bool ok = true;
 
 			ec.CurrentBlock = this;
-			ec.StartFlowBranching (this);
-
-			Report.Debug (1, "RESOLVE BLOCK", StartLocation, ec.CurrentBranching);
 
 			if (!variables_initialized)
 				UpdateVariableInfo (ec);
+
+			ec.StartFlowBranching (this);
+
+			Report.Debug (1, "RESOLVE BLOCK", StartLocation, ec.CurrentBranching);
 
 			ArrayList new_statements = new ArrayList ();
 			bool unreachable = false, warning_shown = false;
@@ -3226,7 +3267,6 @@ namespace Mono.MonoBASIC {
 						warning_shown = true;
 						Warning_DeadCodeFound (s.loc);
 					}
-
 					continue;
 				}
 
@@ -3285,6 +3325,128 @@ namespace Mono.MonoBASIC {
 			
 			ec.CurrentBlock = prev_block;
 			return has_ret;
+		}
+	}
+
+	public class StatementSequence : Expression {
+		Block stmtBlock;
+		ArrayList args;
+		Expression expr;
+
+		public StatementSequence (Block parent, Location loc, Expression expr) 
+			: this (parent, loc, expr, null)
+		{ }
+
+		public StatementSequence (Block parent, Location loc, Expression expr, ArrayList a) 
+		{
+			stmtBlock = new Block (parent);
+			args = a;
+			this.expr = expr;
+			stmtBlock.IsLateBindingRequired = true;
+			this.loc = loc;
+		}
+		public Block StmtBlock {
+			get {
+				return stmtBlock;
+			}
+		}
+		
+		public override Expression DoResolve (EmitContext ec)
+		{
+			if (!stmtBlock.Resolve (ec))
+				return null;
+			eclass = ExprClass.Value;
+			type = TypeManager.object_type;
+			return this;
+		}
+
+		public void GenerateLateBindingStatements ()
+		{
+			int argCount = 0;
+			// Arguments for call Microsoft.VisualBasic.CompilerServices.LateBinding.LateCall
+			ArrayList invocationArgs = new ArrayList ();
+			invocationArgs.Add (new Argument (((MemberAccess)expr).Expr, Argument.AType.Expression));
+			invocationArgs.Add (new Argument (NullLiteral.Null, Argument.AType.Expression));
+			invocationArgs.Add (new Argument (new StringLiteral (((MemberAccess)expr).Identifier), Argument.AType.Expression));
+			// __LateBindingArgs = new Object () {arg1, arg2 ...}
+			ArrayList arrayInitializers = new ArrayList ();
+			ArrayList originalArgs = new ArrayList ();
+			if (args != null) {
+				//arrayInitializers = new ArrayList ();
+				argCount = args.Count;
+				foreach (Argument a in args) {
+					arrayInitializers.Add (a.Expr);
+					originalArgs.Add (a.Expr);
+				}
+			}
+
+			ArrayCreation new_expr = new ArrayCreation (Parser.DecomposeQI ("System.Object",  loc), "[]", arrayInitializers, loc);
+			Assign assign_stmt = null;
+
+			LocalVariableReference v1 = new LocalVariableReference (stmtBlock, Block.lateBindingArgs, loc);
+			assign_stmt = new Assign (v1, new_expr, loc);
+			stmtBlock.AddStatement (new StatementExpression ((ExpressionStatement) assign_stmt, loc));
+			invocationArgs.Add (new Argument (v1, Argument.AType.Expression));
+
+			// __LateBindingArgNames = nothing
+			//LocalVariableReference v2 = new LocalVariableReference (stmtBlock, Block.lateBindingArgNames, loc);
+			//assign_stmt = new Assign (v2, NullLiteral.Null, loc);
+			//stmtBlock.AddStatement (new StatementExpression ((ExpressionStatement) assign_stmt, loc));
+
+			invocationArgs.Add (new Argument (NullLiteral.Null, Argument.AType.Expression));
+
+			// __LateBindingCopyBack = new Boolean (no_of_args) {}
+			bool isCopyBackRequired = false;
+			for (int i = 0; i < argCount; i++) {
+				if (!(((Argument)args[i]).Expr is Constant)) 
+					isCopyBackRequired = true;
+			}
+
+			LocalVariableReference v3 = new LocalVariableReference (stmtBlock, Block.lateBindingCopyBack, loc);
+			if (isCopyBackRequired) {
+				ArrayList rank_specifier = new ArrayList ();
+				rank_specifier.Add (new IntLiteral (argCount));
+				arrayInitializers = new ArrayList ();
+				for (int i = 0; i < argCount; i++) {
+					if (((Argument)args[i]).Expr is Constant)
+						arrayInitializers.Add (new BoolLiteral (false));
+					else 
+						arrayInitializers.Add (new BoolLiteral (true));
+				}
+	
+				new_expr = new ArrayCreation (Parser.DecomposeQI ("System.Boolean",  loc), "[]", arrayInitializers, loc);
+				assign_stmt = new Assign (v3, new_expr, loc);
+				stmtBlock.AddStatement (new StatementExpression ((ExpressionStatement) assign_stmt, loc));
+				invocationArgs.Add (new Argument (v3, Argument.AType.Expression));
+			} else {
+				invocationArgs.Add (new Argument (NullLiteral.Null, Argument.AType.Expression));
+			}
+
+			Expression etmp = Parser.DecomposeQI ("Microsoft.VisualBasic.CompilerServices.LateBinding.LateCall", loc);
+			Invocation inv_stmt = new Invocation (etmp, invocationArgs, Location.Null);
+			stmtBlock.AddStatement (new StatementExpression ((ExpressionStatement) inv_stmt, loc));
+
+			for (int i = 0; i< argCount; i ++) {
+				Expression thisArg = (Expression) originalArgs [i];
+				if (thisArg is Constant)
+					continue;
+				Expression intExpr = new IntLiteral (i);
+				ArrayList argsLocal = new ArrayList ();
+				argsLocal.Add (new Argument (intExpr, Argument.AType.Expression));
+				Expression indexExpr = new Invocation (new SimpleName (Block.lateBindingCopyBack, loc), argsLocal, loc);
+				Expression varRef = (Expression) (originalArgs [i]);
+				Expression value = new Invocation (new SimpleName (Block.lateBindingArgs, loc), argsLocal, loc);
+				assign_stmt = new Assign (varRef, value,  loc);
+				Expression boolExpr = new Binary (Binary.Operator.Inequality, indexExpr, new BoolLiteral (false), loc);
+				Statement ifStmt = new If (boolExpr, new StatementExpression ((ExpressionStatement) assign_stmt, loc), loc);
+				stmtBlock.AddStatement (ifStmt);
+			}
+		}
+
+		public override void Emit (EmitContext ec)
+		{
+			stmtBlock.Emit (ec);
+			ec.ig.Emit (OpCodes.Ldloc_0);
 		}
 	}
 

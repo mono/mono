@@ -3556,6 +3556,7 @@ namespace Mono.MonoBASIC {
 		MethodBase method = null;
 		bool is_base;
 		bool is_left_hand; // Needed for late bound calls
+		bool is_retval_required; // Needed for late bound calls
 		static Hashtable method_parameter_cache;
 		static MemberFilter CompareName;
 
@@ -3574,6 +3575,7 @@ namespace Mono.MonoBASIC {
 		public Invocation (Expression expr, ArrayList arguments, Location l)
 		{
 			this.expr = expr;
+			this.is_retval_required = false;
 			Arguments = arguments;
 			loc = l;
 			CompareName = new MemberFilter (compare_name_filter);
@@ -3582,6 +3584,15 @@ namespace Mono.MonoBASIC {
 		public Expression Expr {
 			get {
 				return expr;
+			}
+		}
+
+		public bool IsRetvalRequired {
+			get {
+				return is_retval_required;
+			}
+			set {
+				is_retval_required = value;
 			}
 		}
 
@@ -4386,22 +4397,38 @@ namespace Mono.MonoBASIC {
 			// trigger the invocation
 			//
 			Expression expr_to_return = null;
+			Expression temp = null;
 
 			if (expr is BaseAccess)
 				is_base = true;
 
+			ResolveFlags flags;
 			if ((ec.ReturnType != null) && (expr.ToString() == ec.BlockName)) {
 				ec.InvokingOwnOverload = true;
-				expr = expr.Resolve (ec, ResolveFlags.MethodGroup);
+				flags = ResolveFlags.MethodGroup;
+				temp = expr.Resolve (ec, flags);
 				ec.InvokingOwnOverload = false;
 			}
 			else				
 			{
 				ec.InvokingOwnOverload = false;
-				expr = expr.Resolve (ec, ResolveFlags.VariableOrValue | ResolveFlags.MethodGroup);
+				flags = ResolveFlags.VariableOrValue | ResolveFlags.MethodGroup;
+				temp = expr.Resolve (ec, flags);
 			}	
-			if (expr == null)
+
+			if (temp == null) {
+				if (expr is MemberAccess) {
+					MemberAccess m = expr as MemberAccess;
+					if (m.Expr.Type == TypeManager.object_type) {
+						StatementSequence etmp = new StatementSequence (ec.CurrentBlock, loc, expr, Arguments);
+						etmp.GenerateLateBindingStatements();
+						return etmp.Resolve (ec);
+					}
+				}
 				return null;
+			}
+	
+			expr = temp;
 
 			if (expr is Invocation) {
 				// FIXME Calls which return an Array are not resolved (here or in the grammar)
@@ -6312,8 +6339,11 @@ namespace Mono.MonoBASIC {
 					expr_type, expr_type, AllMemberTypes, AllBindingFlags |
 					BindingFlags.NonPublic, Identifier);
 					
-				if (lookup == null)
-					Error (30456, "'" + expr_type + "' does not contain a definition for '" + Identifier + "'");
+				if (lookup == null) {
+					if (expr_type != TypeManager.object_type)
+						Error (30456, "'" + expr_type + "' does not contain a definition for '" + Identifier + "'");
+					return null;
+				}
 				else
 				{
 					if ((expr_type != ec.ContainerType) &&

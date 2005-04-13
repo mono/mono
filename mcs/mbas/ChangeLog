@@ -1,3 +1,9 @@
+2005-04-12 Satya Sudha K <ksathyasudha@novell.com>
+	* statement.cs :
+		Introduced a class 'StatementSequence', to translate a late-binding call to a block of statements
+	* expression.cs :
+		Support for late binding (Not complete yet. Some basic method invocations work as of now)
+	
 2005-04-06 Ritvik Mayank <mritvik@novell.com>
   	   by Sudharsan V <vsudharsan@novell.com>
 	* class.cs: correction for reflecting the correct Line No. in the Error message	
