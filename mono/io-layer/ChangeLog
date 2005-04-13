@@ -1,3 +1,8 @@
+2005-04-13  Dick Porter  <dick@ximian.com>
+
+	* io.c (FindFirstFile): Fix bugs introduced with the merge (bug
+	74586)
+
 2005-04-12  Dick Porter  <dick@ximian.com>
 	
 	The daemon-less io-layer.  Extensive lowlevel changes in
