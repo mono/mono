@@ -1,5 +1,12 @@
 2005-04-13 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* threadpool.c: release the semaphores with a count equals to the number
+	of working threads in both IO and regular pools. Fixed typo that messed
+	up the count of IO pool threads. Don't initialize the pipe handles if
+	we're using epoll.
+
+2005-04-13 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* threadpool.c: some systems don't like a NULL when deleting the socket
 	from epoll.
 
