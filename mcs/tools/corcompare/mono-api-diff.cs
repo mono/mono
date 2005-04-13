@@ -903,7 +903,7 @@ namespace Mono.AssemblyCompare
 		string direction;
 		bool isUnsafe;
 		bool isOptional;
-		object defaultValue;
+		string defaultValue;
 
 		public override void LoadData (XmlNode node)
 		{

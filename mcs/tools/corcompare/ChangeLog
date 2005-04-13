@@ -1,3 +1,8 @@
+2005-04-13 Ankit Jain <ankit@corewars.org>
+
+	* mono-api-diff.cs (XmlParameter): Revert type of defaultValue
+	from object to string, since the value is read from XML.
+	
 2005-04-12 Ankit Jain <ankit@corewars.org>
 
 	* mono-api-diff.cs: Handle null default values correctly.
