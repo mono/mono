@@ -809,6 +809,22 @@ namespace Mono.CSharp {
 			CodeGen.SymbolWriter.DefineLocalVariable (name, builder);
 		}
 
+		public void BeginScope ()
+		{
+			ig.BeginScope();
+
+			if (CodeGen.SymbolWriter != null)
+				CodeGen.SymbolWriter.OpenScope(ig);
+		}
+
+		public void EndScope ()
+		{
+			ig.EndScope();
+
+			if (CodeGen.SymbolWriter != null)
+				CodeGen.SymbolWriter.CloseScope(ig);
+		}
+
 		/// <summary>
 		///   Returns a temporary storage for a variable of type t as 
 		///   a local variable in the current body.
