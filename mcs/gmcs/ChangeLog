@@ -1,3 +1,8 @@
+2005-03-01  Zoltan Varga  <vargaz@freemail.hu>
+
+	* attribute.cs: Pass -1 to DefineLPArrayInternal if sizeConst or
+	sizeParamIndex is not specified.
+
 2005-03-01  Marek Safar  <marek.safar@seznam.cz>
 
 	Fix #73117

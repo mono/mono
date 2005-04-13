@@ -940,8 +940,8 @@ namespace Mono.CSharp {
 				
 					object [] args = new object [3];
 					args [0] = array_sub_type;
-					args [1] = size_const;
-					args [2] = size_param_index;
+					args [1] = size_const == null ? -1 : size_const;
+					args [2] = size_param_index == null ? -1 : size_param_index;
 					return (UnmanagedMarshal) define_array.Invoke (null, args);
 				}
 				else
