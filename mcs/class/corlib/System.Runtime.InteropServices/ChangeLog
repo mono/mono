@@ -1,3 +1,7 @@
+2005-04-13  Marek Safar  <marek.safar@seznam.cz>
+
+	* DefaultCharSetAttribute.cs: Removed useless using.
+
 2005-03-31  Alp Toker  <alp@atoker.com>
 
 	* GCHandle.cs: Clearer ArgumentException text in the case of a
