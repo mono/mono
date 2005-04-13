@@ -1,3 +1,8 @@
+2005-04-13  Marek Safar  <marek.safar@seznam.cz>
+
+	* TypeBuilder.cs (SetCustomAttribute): StructLayoutAttribute.CharSet
+	has to overwrite current settings.
+
 2005-04-05  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* AssemblyBuilder.cs: Don't call GetCurrentDirectory if building an 

@@ -1174,11 +1174,14 @@ namespace System.Reflection.Emit {
 						switch ((CharSet)value) {
 						case CharSet.None:
 						case CharSet.Ansi:
+							attrs &= ~(TypeAttributes.UnicodeClass | TypeAttributes.AutoClass);
 							break;
 						case CharSet.Unicode:
+							attrs &= ~TypeAttributes.AutoClass;
 							attrs |= TypeAttributes.UnicodeClass;
 							break;
 						case CharSet.Auto:
+							attrs &= ~TypeAttributes.UnicodeClass;
 							attrs |= TypeAttributes.AutoClass;
 							break;
 						default:
