@@ -370,9 +370,6 @@ namespace Mono.Security.Protocol.Tls
 
 		public byte[] PRF(byte[] secret, string label, byte[] data, int length)
 		{
-			HashAlgorithm md5	= MD5.Create();
-			HashAlgorithm sha1	= SHA1.Create();
-
 			/* Secret Length calc exmplain from the RFC2246. Section 5
 			 * 
 			 * S1 and S2 are the two halves of the secret and each is the same
