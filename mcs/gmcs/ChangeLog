@@ -1,3 +1,9 @@
+2005-02-25  Raja R Harinath  <rharinath@novell.com>
+
+	Fix #72924.
+	* statement.cs (ExpressionStatement.Resolve): Make robust to being
+	called twice in case of error.
+
 2005-02-23  Chris Toshok  <toshok@ximian.com>
 
 	Fix compiler portions of #72827.
