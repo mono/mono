@@ -1086,6 +1086,8 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 
 					assign_reg (rs, reg, hreg, FALSE);
 
+					sreg1_mask &= ~(1 << hreg);
+
 					DEBUG (g_print ("\tassigned arg reg %s to R%d\n", mono_arch_regname (hreg), reg));
 
 					list = g_slist_next (list);
