@@ -1,3 +1,10 @@
+2005-04-13  LLuis Sanchez Gual  <lluis@novell.com>
+
+	* TypeDescriptor.cs: When creating a converter, use a constructor that
+	takes a Type parameter if exists.
+	* PropertyDescriptor.cs: In the Converter property, check for a
+	TypeConverterAttribute in the property.
+
 2005-03-02  Jackson Harper  <jackson@ximian.com>
 
 	* ReflectionEventDescriptor.cs: Bind handlers to the actual event so that

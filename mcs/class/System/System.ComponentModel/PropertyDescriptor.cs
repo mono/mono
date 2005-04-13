@@ -40,6 +40,8 @@ namespace System.ComponentModel
 	[ComVisible (true)]
 	public abstract class PropertyDescriptor : MemberDescriptor
 	{
+		TypeConverter converter;
+
 		protected PropertyDescriptor (MemberDescriptor reference)
 		: base (reference)
 		{
@@ -58,7 +60,22 @@ namespace System.ComponentModel
 		public abstract Type ComponentType { get; }
 
 		public virtual TypeConverter Converter {
-			get { return TypeDescriptor.GetConverter (PropertyType); }
+			get {
+				if (converter == null) {
+					TypeConverterAttribute at = (TypeConverterAttribute) Attributes [typeof(TypeConverterAttribute)];
+					if (at == null || at == TypeConverterAttribute.Default)
+						converter = TypeDescriptor.GetConverter (PropertyType);
+					else {
+						Type t = Type.GetType (at.ConverterTypeName);
+						ConstructorInfo ci = t.GetConstructor (new Type[] { typeof(Type) });
+						if (ci != null)
+							converter = (TypeConverter) ci.Invoke (new object[] { PropertyType });
+						else
+							converter = (TypeConverter) Activator.CreateInstance (t);
+					}
+				}
+				return converter;
+			}
 		}
 
 		public virtual bool IsLocalizable {

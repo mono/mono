@@ -189,8 +189,13 @@ public sealed class TypeDescriptor
 				t = GetTypeFromName (component as IComponent, tca.ConverterTypeName);
 			}
 			
-			if (t != null)
-				return (TypeConverter) Activator.CreateInstance (t);
+			if (t != null) {
+				ConstructorInfo ci = t.GetConstructor (new Type[] { typeof(Type) });
+				if (ci != null)
+					return (TypeConverter) ci.Invoke (new object[] { component.GetType () });
+				else
+					return (TypeConverter) Activator.CreateInstance (t);
+			}
 			else
 				return GetConverter (component.GetType ());
 		}
