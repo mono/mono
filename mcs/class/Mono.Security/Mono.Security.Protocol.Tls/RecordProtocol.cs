@@ -72,7 +72,7 @@ namespace Mono.Security.Protocol.Tls
 
 		#region Reveive Record Methods
 
-		public byte[] ReceiveRecord()
+		public byte[] ReceiveRecord(Stream record)
 		{
 			if (this.context.ConnectionEnd)
 			{
@@ -80,9 +80,9 @@ namespace Mono.Security.Protocol.Tls
 					AlertDescription.InternalError,
 					"The session is finished and it's no longer valid.");
 			}
-	
+
 			// Try to read the Record Content Type
-			int type = this.innerStream.ReadByte();
+			int type = record.ReadByte ();
 			if (type == -1)
 			{
 				return null;
@@ -92,10 +92,13 @@ namespace Mono.Security.Protocol.Tls
 			this.context.LastHandshakeMsg = HandshakeType.ClientHello;
 
 			ContentType	contentType	= (ContentType)type;
-			byte[] buffer = this.ReadRecordBuffer(type);
+			byte[] buffer = this.ReadRecordBuffer(type, record);
+			if (buffer == null)
+			{
+				// record incomplete (at the moment)
+				return null;
+			}
 
-			TlsStream message = new TlsStream(buffer);
-		
 			// Decrypt message contents if needed
 			if (contentType == ContentType.Alert && buffer.Length == 2)
 			{
@@ -104,20 +107,22 @@ namespace Mono.Security.Protocol.Tls
 			{
 				if (this.context.IsActual && contentType != ContentType.ChangeCipherSpec)
 				{
-					message = this.decryptRecordFragment(contentType, message.ToArray());
-
-					DebugHelper.WriteLine("Decrypted record data", message.ToArray());
+					buffer = this.decryptRecordFragment(contentType, buffer);
+					DebugHelper.WriteLine("Decrypted record data", buffer);
 				}
 			}
 
 			// Process record
-			byte[] result = message.ToArray();
-
 			switch (contentType)
 			{
 				case ContentType.Alert:
-					this.ProcessAlert((AlertLevel)message.ReadByte(), (AlertDescription)message.ReadByte());
-					result = null;
+					this.ProcessAlert((AlertLevel)buffer [0], (AlertDescription)buffer [1]);
+					if (record.CanSeek) 
+					{
+						// don't reprocess that memory block
+						record.SetLength (0); 
+					}
+					buffer = null;
 					break;
 
 				case ContentType.ChangeCipherSpec:
@@ -128,13 +133,14 @@ namespace Mono.Security.Protocol.Tls
 					break;
 
 				case ContentType.Handshake:
+					TlsStream message = new TlsStream (buffer);
 					while (!message.EOF)
 					{
 						this.ProcessHandshakeMessage(message);
 					}
 
 					// Update handshakes of current messages
-					this.context.HandshakeMessages.Write(message.ToArray());
+					this.context.HandshakeMessages.Write(buffer);
 					break;
 
 // FIXME / MCS bug - http://bugzilla.ximian.com/show_bug.cgi?id=67711
@@ -149,34 +155,40 @@ namespace Mono.Security.Protocol.Tls
 							AlertDescription.UnexpectedMessage,
 							"Unknown record received from server.");
 					}
-					this.context.HandshakeMessages.Write (result);
+					this.context.HandshakeMessages.Write (buffer);
 					break;
 			}
 
-			return result;
+			return buffer;
 		}
 
-		private byte[] ReadRecordBuffer(int contentType)
+		private byte[] ReadRecordBuffer (int contentType, Stream record)
 		{
 			switch (contentType)
 			{
 				case 0x80:
-					return this.ReadClientHelloV2();
+					return this.ReadClientHelloV2(record);
 
 				default:
 					if (!Enum.IsDefined(typeof(ContentType), (ContentType)contentType))
 					{
 						throw new TlsException(AlertDescription.DecodeError);
 					}
-					return this.ReadStandardRecordBuffer();
+					return this.ReadStandardRecordBuffer(record);
 			}
 		}
 
-		private byte[] ReadClientHelloV2()
+		private byte[] ReadClientHelloV2 (Stream record)
 		{
-			int msgLength			= this.innerStream.ReadByte();
-			byte[] message = new byte [msgLength];
-			this.innerStream.Read (message, 0, msgLength);
+			int msgLength = record.ReadByte ();
+			// process further only if the whole record is available
+			if (record.CanSeek && (msgLength + 1 > record.Length)) 
+			{
+				return null;
+			}
+
+			byte[] message = new byte[msgLength];
+			record.Read (message, 0, msgLength);
 
 			int msgType		= message [0];
 			if (msgType != 1)
@@ -231,17 +243,24 @@ namespace Mono.Security.Protocol.Tls
 			return message;
 		}
 
-		private byte[] ReadStandardRecordBuffer()
+		private byte[] ReadStandardRecordBuffer (Stream record)
 		{
-			short protocol	= this.ReadShort();
-			short length	= this.ReadShort();
+			short protocol	= this.ReadShort(record);
+			short length	= this.ReadShort(record);
+
+			// process further only if the whole record is available
+			// note: the first 5 bytes aren't part of the length
+			if (record.CanSeek && (length + 5 > record.Length)) 
+			{
+				return null;
+			}
 			
 			// Read Record data
 			int		received	= 0;
 			byte[]	buffer		= new byte[length];
 			while (received != length)
 			{
-				received += this.innerStream.Read(buffer, received, buffer.Length - received);
+				received += record.Read(buffer, received, buffer.Length - received);
 			}
 
 			// Check that the message has a valid protocol version
@@ -256,10 +275,10 @@ namespace Mono.Security.Protocol.Tls
 			return buffer;
 		}
 
-		private short ReadShort()
+		private short ReadShort(Stream record)
 		{
 			byte[] b = new byte[2];
-			this.innerStream.Read(b, 0, b.Length);
+			record.Read(b, 0, b.Length);
 
 			short val = BitConverter.ToInt16(b, 0);
 
@@ -459,7 +478,7 @@ namespace Mono.Security.Protocol.Tls
 			return ecr;
 		}
 
-		private TlsStream decryptRecordFragment(
+		private byte[] decryptRecordFragment(
 			ContentType	contentType, 
 			byte[]		fragment)
 		{
@@ -520,7 +539,7 @@ namespace Mono.Security.Protocol.Tls
 			// Update sequence number
 			this.context.ReadSequenceNumber++;
 
-			return new TlsStream(dcrFragment);
+			return dcrFragment;
 		}
 
 		#endregion

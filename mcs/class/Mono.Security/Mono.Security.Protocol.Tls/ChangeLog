@@ -1,3 +1,11 @@
+2005-04-13  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* RecordProtocol.cs: Some API changes so a record can be decoded from
+	any supplied stream (not just the inner network stream).
+	* SslClientStream.cs: BeginRead is now truly async if the Negotiate is
+	called from BeginWrite (where it should be in most case).
+	* SslServerStream.cs: Adapted to API changes in RecordProtocol.cs.
+
 2005-04-12  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* SslHandshakeHash.cs: Changed "SslHash" to "MD5SHA1". Fix #71696.

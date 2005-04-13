@@ -29,6 +29,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
+using System.Threading;
 
 using Mono.Security.Protocol.Tls.Handshake;
 
@@ -65,12 +66,13 @@ namespace Mono.Security.Protocol.Tls
 		#region Fields
 
 		private Stream							innerStream;
-		private BufferedStream					inputBuffer;
+		private MemoryStream					inputBuffer;
 		private ClientContext					context;
 		private ClientRecordProtocol			protocol;
 		private bool							ownsStream;
 		private bool							disposed;
 		private bool							checkCertRevocationStatus;
+		private object							negotiate;
 		private object							read;
 		private object							write;
 
@@ -334,9 +336,10 @@ namespace Mono.Security.Protocol.Tls
 				targetHost, 
 				clientCertificates);
 
-			this.inputBuffer	= new BufferedStream(new MemoryStream());
+			this.inputBuffer	= new MemoryStream();
 			this.innerStream	= stream;
 			this.ownsStream		= ownsStream;
+			this.negotiate			= new object ();
 			this.read			= new object ();
 			this.write			= new object ();
 			this.protocol		= new ClientRecordProtocol(innerStream, context);
@@ -404,7 +407,7 @@ namespace Mono.Security.Protocol.Tls
 			AsyncCallback	callback,
 			object			state)
 		{
-			this.checkDisposed();
+			this.checkDisposed ();
 			
 			if (buffer == null)
 			{
@@ -427,15 +430,21 @@ namespace Mono.Security.Protocol.Tls
 				throw new ArgumentOutOfRangeException("count is less than the length of buffer minus the value of the offset parameter.");
 			}
 
-			lock (this)
+			if (this.context.HandshakeState == HandshakeState.None)
 			{
-				if (this.context.HandshakeState == HandshakeState.None)
+				// Note: Async code may have problem if they can't ensure that
+				// the Negotiate phase isn't done during a read operation.
+				// System.Net.HttpWebRequest protects itself from that problem
+				lock (this.negotiate)
 				{
-					this.NegotiateHandshake();
+					if (this.context.HandshakeState == HandshakeState.None)
+					{
+						this.NegotiateHandshake();
+					}
 				}
 			}
 
-			IAsyncResult asyncResult;
+			IAsyncResult asyncResult = null;
 
 			lock (this.read)
 			{
@@ -450,43 +459,28 @@ namespace Mono.Security.Protocol.Tls
 
 					if (!this.context.ConnectionEnd)
 					{
-						// Check if we have space in the middle buffer
-						// if not Read next TLS record and update the inputBuffer
-						while ((this.inputBuffer.Length - this.inputBuffer.Position) < count)
+						if ((this.inputBuffer.Length == this.inputBuffer.Position) && (count > 0))
 						{
-							// Read next record and write it into the inputBuffer
-							long	position	= this.inputBuffer.Position;					
-							byte[]	record		= this.protocol.ReceiveRecord();
-					
-							if (record != null && record.Length > 0)
-							{
-								// Write new data to the inputBuffer
-								this.inputBuffer.Seek(0, SeekOrigin.End);
-								this.inputBuffer.Write(record, 0, record.Length);
+							// bigger than max record length for SSL/TLS
+							byte[] recbuf = new byte[16384]; 
 
-								// Restore buffer position
-								this.inputBuffer.Seek(position, SeekOrigin.Begin);
-							}
-							else
-							{
-								if (record == null)
-								{
-									break;
-								}
-							}
+							// this will read data from the network until we have (at least) one
+							// record to send back to the caller
+							this.innerStream.BeginRead (recbuf, 0, recbuf.Length, 
+								new AsyncCallback (NetworkReadCallback), recbuf);
 
-							// TODO: Review if we need to check the Length
-							// property of the innerStream for other types
-							// of streams, to check that there are data available
-							// for read
-							if (this.innerStream is NetworkStream &&
-								!((NetworkStream)this.innerStream).DataAvailable)
+							if (!recordEvent.WaitOne (300000, false)) // 5 minutes
 							{
-								break;
+								// FAILSAFE
+								DebugHelper.WriteLine ("TIMEOUT length {0}, position {1}, count {2} - {3}\n{4}", 
+									this.inputBuffer.Length, this.inputBuffer.Position, count, GetHashCode (),
+									Environment.StackTrace);
+								throw new TlsException (AlertDescription.InternalError);
 							}
 						}
 					}
 
+					// return the record(s) to the caller
 					asyncResult = this.inputBuffer.BeginRead(
 						buffer, offset, count, callback, state);
 				}
@@ -501,9 +495,102 @@ namespace Mono.Security.Protocol.Tls
 				{
 					throw new IOException("IO exception during read.");
 				}
+
 			}
 
 			return asyncResult;
+		}
+
+		private ManualResetEvent recordEvent = new ManualResetEvent (false);
+		private MemoryStream recordStream = new MemoryStream ();
+
+		// read encrypted data until we have enough to decrypt (at least) one
+		// record and return are the records (may be more than one) we have
+		private void NetworkReadCallback (IAsyncResult result)
+		{
+			byte[] recbuf = (byte[])result.AsyncState;
+			int n = innerStream.EndRead (result);
+			if (n > 0)
+			{
+				// add the just received data to the waiting data
+				recordStream.Write (recbuf, 0, n);
+			}
+
+			bool dataToReturn = false;
+			long pos = recordStream.Position;
+
+			recordStream.Position = 0;
+			byte[] record = null;
+
+			// don't try to decode record unless we have at least 5 bytes
+			// i.e. type (1), protocol (2) and length (2)
+			if (recordStream.Length >= 5)
+			{
+				record = this.protocol.ReceiveRecord (recordStream);
+			}
+
+			// a record of 0 length is valid (and there may be more record after it)
+			while (record != null)
+			{
+				// we probably received more stuff after the record, and we must keep it!
+				long remainder = recordStream.Length - recordStream.Position;
+				byte[] outofrecord = null;
+				if (remainder > 0)
+				{
+					outofrecord = new byte[remainder];
+					recordStream.Read (outofrecord, 0, outofrecord.Length);
+				}
+
+				long position = this.inputBuffer.Position;
+
+				if (record.Length > 0)
+				{
+					// Write new data to the inputBuffer
+					this.inputBuffer.Seek (0, SeekOrigin.End);
+					this.inputBuffer.Write (record, 0, record.Length);
+
+					// Restore buffer position
+					this.inputBuffer.Seek (position, SeekOrigin.Begin);
+					dataToReturn = true;
+				}
+
+				recordStream.SetLength (0);
+				record = null;
+
+				if (remainder > 0)
+				{
+					recordStream.Write (outofrecord, 0, outofrecord.Length);
+					// type (1), protocol (2) and length (2)
+					if (recordStream.Length >= 5)
+					{
+						// try to see if another record is available
+						recordStream.Position = 0;
+						record = this.protocol.ReceiveRecord (recordStream);
+						if (record == null)
+							pos = recordStream.Length;
+					}
+					else
+						pos = remainder;
+				}
+				else
+					pos = 0;
+			}
+
+			if (!dataToReturn && (n > 0))
+			{
+				// there is no record to return to caller and (possibly) more data waiting
+				// so continue reading from network (and appending to stream)
+				recordStream.Position = recordStream.Length;
+				this.innerStream.BeginRead (recbuf, 0, recbuf.Length, 
+					new AsyncCallback (NetworkReadCallback), recbuf);
+			}
+			else
+			{
+				// we have record(s) to return -or- no more available to read from network
+				// reset position for further reading
+				recordStream.Position = pos;
+				recordEvent.Set ();
+			}
 		}
 
 		public override IAsyncResult BeginWrite(
@@ -536,11 +623,14 @@ namespace Mono.Security.Protocol.Tls
 				throw new ArgumentOutOfRangeException("count is less than the length of buffer minus the value of the offset parameter.");
 			}
 
-			lock (this)
+			if (this.context.HandshakeState == HandshakeState.None)
 			{
-				if (this.context.HandshakeState == HandshakeState.None)
+				lock (this.negotiate)
 				{
-					this.NegotiateHandshake();
+					if (this.context.HandshakeState == HandshakeState.None)
+					{
+						this.NegotiateHandshake();
+					}
 				}
 			}
 
@@ -583,7 +673,8 @@ namespace Mono.Security.Protocol.Tls
 				throw new ArgumentNullException("asyncResult is null or was not obtained by calling BeginRead.");
 			}
 
-			return this.inputBuffer.EndRead(asyncResult);
+			recordEvent.Reset ();
+			return this.inputBuffer.EndRead (asyncResult);
 		}
 
 		public override void EndWrite(IAsyncResult asyncResult)
@@ -689,75 +780,72 @@ namespace Mono.Security.Protocol.Tls
 
 		internal void NegotiateHandshake()
 		{
-			lock (this)
+			try
 			{
-				try
+				if (this.context.HandshakeState != HandshakeState.None)
 				{
-					if (this.context.HandshakeState != HandshakeState.None)
-					{
-						this.context.Clear();
-					}
+					this.context.Clear();
+				}
 
-					// Obtain supported cipher suites
-					this.context.SupportedCiphers = CipherSuiteFactory.GetSupportedCiphers(this.context.SecurityProtocol);
+				// Obtain supported cipher suites
+				this.context.SupportedCiphers = CipherSuiteFactory.GetSupportedCiphers(this.context.SecurityProtocol);
 
-					// Send client hello
-					this.protocol.SendRecord(HandshakeType.ClientHello);
+				// Send client hello
+				this.protocol.SendRecord(HandshakeType.ClientHello);
 
-					// Read server response
-					while (this.context.LastHandshakeMsg != HandshakeType.ServerHelloDone)
-					{
-						// Read next record
-						this.protocol.ReceiveRecord();
-					}
+				// Read server response
+				while (this.context.LastHandshakeMsg != HandshakeType.ServerHelloDone)
+				{
+					// Read next record
+					this.protocol.ReceiveRecord (this.innerStream);
+				}
 
-					// Send client certificate if requested
-					if (this.context.ServerSettings.CertificateRequest)
-					{
-						this.protocol.SendRecord(HandshakeType.Certificate);
-					}
+				// Send client certificate if requested
+				if (this.context.ServerSettings.CertificateRequest)
+				{
+					this.protocol.SendRecord(HandshakeType.Certificate);
+				}
 
-					// Send Client Key Exchange
-					this.protocol.SendRecord(HandshakeType.ClientKeyExchange);
+				// Send Client Key Exchange
+				this.protocol.SendRecord(HandshakeType.ClientKeyExchange);
 
-					// Now initialize session cipher with the generated keys
-					this.context.Cipher.InitializeCipher();
+				// Now initialize session cipher with the generated keys
+				this.context.Cipher.InitializeCipher();
 
-					// Send certificate verify if requested
-					if (this.context.ServerSettings.CertificateRequest)
-					{
-						this.protocol.SendRecord(HandshakeType.CertificateVerify);
-					}
+				// Send certificate verify if requested
+				if (this.context.ServerSettings.CertificateRequest)
+				{
+					this.protocol.SendRecord(HandshakeType.CertificateVerify);
+				}
 
-					// Send Cipher Spec protocol
-					this.protocol.SendChangeCipherSpec();			
+				// Send Cipher Spec protocol
+				this.protocol.SendChangeCipherSpec();			
 			
-					// Read record until server finished is received
-					while (this.context.HandshakeState != HandshakeState.Finished)
-					{
-						// If all goes well this will process messages:
-						// 		Change Cipher Spec
-						//		Server finished
-						this.protocol.ReceiveRecord();
-					}
-
-					// Clear Key Info
-					this.context.ClearKeyInfo();
-				}
-				catch (TlsException ex)
+				// Read record until server finished is received
+				while (this.context.HandshakeState != HandshakeState.Finished)
 				{
-					this.protocol.SendAlert(ex.Alert);
-					this.Close();
-
-					throw new IOException("The authentication or decryption has failed.");
+					// If all goes well this will process messages:
+					// 		Change Cipher Spec
+					//		Server finished
+					this.protocol.ReceiveRecord (this.innerStream);
 				}
-				catch (Exception)
-				{
-					this.protocol.SendAlert(AlertDescription.InternalError);
-					this.Close();
 
-					throw new IOException("The authentication or decryption has failed.");
-				}
+				// Clear Key Info
+				this.context.ClearKeyInfo();
+			}
+			catch (TlsException ex)
+			{
+				this.protocol.SendAlert(ex.Alert);
+				this.Close();
+
+				throw new IOException("The authentication or decryption has failed.");
+			}
+			catch (Exception)
+			{
+				this.protocol.SendAlert(AlertDescription.InternalError);
+				this.Close();
+
+				throw new IOException("The authentication or decryption has failed.");
 			}
 		}
 

@@ -402,7 +402,7 @@ namespace Mono.Security.Protocol.Tls
 						{
 							// Read next record and write it into the inputBuffer
 							long	position	= this.inputBuffer.Position;					
-							byte[]	record		= this.protocol.ReceiveRecord();
+							byte[]	record		= this.protocol.ReceiveRecord(this.innerStream);
 					
 							if (record != null && record.Length > 0)
 							{
@@ -650,7 +650,7 @@ namespace Mono.Security.Protocol.Tls
 				this.context.HandshakeState = HandshakeState.Started;
 
 				// Receive Client Hello message
-				this.protocol.ReceiveRecord();
+				this.protocol.ReceiveRecord (this.innerStream);
 
 				// If received message is not an ClientHello send a
 				// Fatal Alert
@@ -686,7 +686,7 @@ namespace Mono.Security.Protocol.Tls
 				// is received
 				while (this.context.LastHandshakeMsg != HandshakeType.Finished)
 				{
-					this.protocol.ReceiveRecord();
+					this.protocol.ReceiveRecord (this.innerStream);
 				}
 				
 				// Send ChangeCipherSpec and ServerFinished messages
