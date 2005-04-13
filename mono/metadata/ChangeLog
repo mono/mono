@@ -1,3 +1,65 @@
+2005-04-13  Zoltan Varga  <vargaz@freemail.hu>
+
+	* profiler.c (mono_profiler_install_simple): Add a 'jit' option to
+	the built-in profiler to measure just JIT compilation times.
+
+2005-04-13 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* threadpool.c: the epollfd might be closed by another thread at
+	any time, so ignore EBADF at treat it as a "we're closing" sign.
+
+2005-04-13 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* threadpool.c: release the semaphores with a count equals to the number
+	of working threads in both IO and regular pools. Fixed typo that messed
+	up the count of IO pool threads. Don't initialize the pipe handles if
+	we're using epoll.
+
+2005-04-13 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* threadpool.c: some systems don't like a NULL when deleting the socket
+	from epoll.
+
+2005-04-13 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* threadpool.c: fix semaphore allocation.
+
+2005-04-12 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* threadpool.c: added epoll() based implementation for asynchronous IO
+	that is used instead of the default poll() when available.
+	It can be disabled by setting MONO_DISABLE_AIO.
+
+2005-04-12 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* threadpool.c: windows needs 'closesocket' and instead of returning
+	0 when the stream is closed while in select, it returns -1. Fixes bug
+	#74573.
+
+2005-04-12  Zoltan Varga  <vargaz@freemail.hu>
+
+	* class.c (class_compute_field_layout): Fix the regression caused by
+	the previous try.
+
+2005-04-12 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* threadpool.c: separate pool for socket async. IO.
+	* threadpool.h: mono_max_worker_threads is not a global any more.
+
+2005-04-10  Zoltan Varga  <vargaz@freemail.hu>
+
+	* class.c (class_compute_field_layout): Fix #74549.
+
+2005-04-08 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* threadpool.c: select() on windows doesn't allow pipe handles, soooo
+	use 2 connected sockets instead.
+
+2005-04-08  Miguel de Icaza  <miguel@novell.com>
+
+	* mono-config.c: Add new entry point for mkbundle
+	mono_config_parse_memory. 
+
 2005-04-08 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* threadpool.c: removed another unused function.

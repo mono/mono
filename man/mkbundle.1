@@ -56,6 +56,11 @@ the bundle.
 .I "-L path"
 Adds the `path' do the search list for assemblies.  The rules are the
 same as for the compiler -lib: or -L flags.
+.TP "--config FILE"
+Specifies that a machine.config file must be bundled as well.
+Typically this is $prefix/etc/mono/1.0/machine.config or
+$prefix/etc/mono/2.0/machine.config depending on the profile that you
+are using (1.0 or 2.0)
 .TP
 .I  "--nodeps"
 This is the default: mkbundle will only include the assemblies that
@@ -70,6 +75,10 @@ distribute a self-contained image.
 .I "--keeptemp"
 By default mkbundle will delete the temporary files that it uses to
 produce the bundle.  This option keeps the file around.
+.TP
+.I "--static"
+By default mkbundle dynamically links to mono and glib.  This option
+causes it to statically link instead.
 .SH FILES
 This program will load referenced assemblies from the Mono assembly
 cache. 

@@ -375,7 +375,8 @@ to track down the source of the problems.
 .TP
 .I "MONO_DISABLE_AIO"
 If set, tells mono NOT to attempt using native asynchronous I/O services. In
-that case, the threadpool is used for asynchronous I/O on files and sockets.
+that case, a default select/poll implementation is used. Currently only epoll()
+is supported.
 .TP
 .I "MONO_DISABLE_SHM"
 If this variable is set, it disables the shared memory part of the

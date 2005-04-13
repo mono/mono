@@ -516,9 +516,6 @@ mono_get_inflated_method (MonoMethod *method)
  * @class: The class to initialize
  *
  * Initializes the class->fields.
- *
- * Currently we only support AUTO_LAYOUT, and do not even try to do
- * a good job at it.  This is temporary to get the code for Paolo.
  */
 static void
 class_compute_field_layout (MonoClass *class)
@@ -569,6 +566,9 @@ class_compute_field_layout (MonoClass *class)
 
 	if (layout == TYPE_ATTRIBUTE_AUTO_LAYOUT)
 		blittable = FALSE;
+
+	/* Prevent infinite loops if the class references itself */
+	class->size_inited = 1;
 
 	class->fields = g_new0 (MonoClassField, top);
 

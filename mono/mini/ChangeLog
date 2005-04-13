@@ -1,148 +1,37 @@
 2005-04-13  Zoltan Varga  <vargaz@freemail.hu>
 
-	* mini-ops.h: Add new sparc opcodes.
+	* trace.c (mono_trace_enter_method): Print enums as an int, not as a
+	valuetype.
 
-	* mini-sparc.h mini-sparc.c tramp-sparc.c inssel-sparc.brg: Allocate arguments
-	to registers using the same method as the amd64 port. Repartition registers
-	so the argument registers are used for local allocated, while l0..l6 is used
-	for global allocation.
+2005-04-11  Zoltan Varga  <vargaz@freemail.hu>
 
-	* mini-codegen.c (mono_local_regalloc): Avoid allocating sreg1 to an argument
-	register for calls.
+	* mini-x86.c (setup_stack): Unconditionally call pthread_attr_init ().
 
-2005-04-12  Zoltan Varga  <vargaz@freemail.hu>
-
-	* mini.h mini-amd64.c inssel-amd64.brg mini-codegen.c: Add new helper function
-	to add a register to the argument registers used for a call. Change the
-	encoding of the hreg-vreg pair to also work on 32 bit platforms.
-
-	* mini.h mini-codegen.c mini-amd64.c: Rename mono_arch_regname_full () to
-	mono_regname_full () and move it to mini-codegen.c.
-
-	* mini-amd64.h: Add some defines needed by the new allocator.
-
-	* mini-codegen.c: Add sparc register pair support.
-
-	* mini-sparc.c mini-sparc.h Makefile.am: Use the new register allocator.
+	* exceptions-x86.c mini-x86.h mini-x86.c: Applied some freebsd patches 
+	from Bill Middleton <flashdict@gmail.com>.
 
 2005-04-10  Zoltan Varga  <vargaz@freemail.hu>
 
-	* mini-codegen.c (mono_local_regalloc): Move tracking of fp stack into
-	one place inside the function.
+	* arrays.cs: Add new regression test. Fix warnings.
 
 2005-04-09  Zoltan Varga  <vargaz@freemail.hu>
 
-	* cpu-amd64.md: Fix some comments.
+	* mini-amd64.c (mono_arch_output_basic_block): Fix stack alignment
+	and leakage in CKFINITE.
 
-	* Makefile.am: Add mini-codegen.c to amd64 build.
+	* exceptions-amd64.c (mono_arch_get_throw_exception_by_name): Change
+	this to a null op since it is called on amd64 too.
 
-	* liveness.c: Merge from HEAD.
+	* exceptions-amd64.c (get_throw_trampoline): Align stack.
 
-	* genmdesc.c: Make the generated machine description non-static.
-
-	* mini-codegen.c: New file containing the arch independent local
-	register allocator.
-
-	* mini-amd64.h: Add some defines needed by the new allocator.
-
-	* mini-amd64.c: Move local reg allocator to mini-codegen.c.
-
-	* cpu-amd64.md: Modify some instructions for use by the new allocator.
-
-2005-03-27  Zoltan Varga  <vargaz@freemail.hu>
-
-	* mini-amd64.c (mono_arch_local_regalloc): Optimize away reg->reg
-	moves if possible.
-
-2005-03-21  Zoltan Varga  <vargaz@freemail.hu>
-
-	* mini-amd64.c (mono_arch_local_regalloc): Split the arch-dependent
-	and the arch independent parts of the allocator.
-
-	* mini-ops.h cpu-amd64.md mini-amd64.c: Implement a lowering pass to
-	decompose some opcodes into simpler ones.
-
-2005-03-27  Zoltan Varga  <vargaz@freemail.hu>
-
-	* cpu-amd64.md (store_membase_reg): Fix length of storer8 opcodes.
-
-2005-03-24  Zoltan Varga  <vargaz@freemail.hu>
-
-	* driver.c: Turn off automatic command line globbing under windows. Fixes #73763.
-
-2005-03-24  Zoltan Varga  <vargaz@freemail.hu>
-
-	* mini.c (mono_method_to_ir): Remove debugging stuff left in by mistake.
+	* exceptions-amd64.c (mono_arch_get_throw_exception_by_name): Remove
+	body since this is not used on amd64.
 	
-	* mini.c (mono_precompile_assembly): Load and precompile referenced
-	assemblies as well. Fixes #74015.
+	* mini-amd64.h (MONO_ARCH_NO_EMULATE_LONG_SHIFT_OPS): Remove duplicate define.
 
-2005-03-23  Zoltan Varga  <vargaz@freemail.hu>
+	* mini-amd64.c: Remove obsolete fixmes.
 
-	* cpu-amd64.md (sin): Fix up maximum lengths of some opcodes.
-
-2005-03-23  Sebastien Pouliot  <sebastien@ximian.com>
-
-	* declsec.c: Skip linkdemand checks for intra-corlib calls. This skips
-	a lot of checks	and (anyway) permissions cannot work until corlib is 
-	loaded.
-
-Wed Mar 23 14:29:49 CET 2005 Paolo Molaro <lupus@ximian.com>
-
-	* mini-ppc.c: fixed ABI issue on sysv/ppc.
-
-Tue Mar 22 19:03:17 CET 2005 Paolo Molaro <lupus@ximian.com>
-
-	* tramp-ppc.c, exceptions-ppc.c: added missing icache flush
-	calls (fixes bug#72824).
-
-Tue Mar 22 16:28:48 CET 2005 Paolo Molaro <lupus@ximian.com>
-
-	* mini.c: fix tail recursion elimination (see test in bug#73936).
-
-2005-03-21  Zoltan Varga  <vargaz@freemail.hu>
-
-	* mini-amd64.c (mono_arch_output_basic_block): Add inline versions of
-	some fp functions in sse2 mode.
-
-2005-03-20  Zoltan Varga  <vargaz@freemail.hu>
-
-	* mini-x86.c (emit_tls_get): Move tls handling into a separate helper function.
-
-2005-03-19  Zoltan Varga  <vargaz@freemail.hu>
-
-	* mini.h mini.c: Add mono_get_jit_tls_key ().
-
-	* mini-x86.c: Enable fast TLS support on windows.
-
-2005-03-17  Sebastien Pouliot  <sebastien@ximian.com>
-
-	* declsec.c: Renamed aptc to allowpartiallytrustedcallers.
-	* mini.c: Check for p/invoke method when generating code. If a
-	p/invoke method, or it's class, isn't decorated with [Suppress
-	UnmanagedCodeSecurity] then generate code to call System.Security.
-	UnmanagedDemand (only if the security manager is active).
-
-2005-03-16  Zoltan Varga  <vargaz@freemail.hu>
-
-	* tramp-amd64.c (create_specific_trampoline): Revert parts of the 
-	last change as it seems to cause strange crashes.
-	
-Wed Mar 16 16:24:11 CET 2005 Paolo Molaro <lupus@ximian.com>
-
-	* *.c: handle unsafe function pointers where needed.
-
-2005-03-16  Zoltan Varga  <vargaz@freemail.hu>
-
-	* mini.c (mono_jit_free_method): Remove the fixme too.
-
-2005-03-15  Miguel de Icaza  <miguel@novell.com>
-
-	* mini.c: As discussed, make the code actually free the delegate
-	thunk now, to enable the debugging of delegate problems, use
-	MONO_DEBUG=1 when running Mono. 
-
-	This takes also care of parts of the leaks as seen by Joe.
+	* mini.c (print_method_from_ip): Fix debugging support.
 
 2005-2-1  Massimiliano Mantione  <massi@ximian.com>
 
@@ -303,7 +192,6 @@ Wed Mar 16 16:24:11 CET 2005 Paolo Molaro <lupus@ximian.com>
 
 	This takes also care of parts of the leaks as seen by Joe.
 
->>>>>>> .merge-right.r42701
 2005-03-15  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini-amd64.c: Rework local register allocator to unify the fp+non fp

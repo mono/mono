@@ -72,7 +72,7 @@ case "$THREADS" in
     THREADS=posix
     THREADLIBS=-lpthread
     case "$host" in
-     x86-*-linux* | ia64-*-linux* | i586-*-linux* | i686-*-linux* | x86_64-*-linux* | alpha-*-linux* | s390*-*-linux* | powerpc-*-linux)
+     x86-*-linux* | ia64-*-linux* | i586-*-linux* | i686-*-linux* | x86_64-*-linux* | alpha-*-linux* | s390*-*-linux* | powerpc-*-linux*)
 	AC_DEFINE(GC_LINUX_THREADS)
 	AC_DEFINE(_REENTRANT)
         if test "${enable_parallel_mark}" = yes; then
@@ -124,6 +124,17 @@ case "$THREADS" in
 		THREADLIBS="$PTHREAD_LIBS"
 	fi
       	;;
+	 *-*-freebsd6*)
+	 AC_DEFINE(GC_FREEBSD_THREADS)
+	 if test "x$PTHREAD_CFLAGS" != "x"; then
+		INCLUDES="$INCLUDES $PTHREAD_CFLAGS"
+	fi
+	if test "x$PTHREAD_LIBS" = "x"; then
+		THREADLIBS=-lpthread
+	else
+		THREADLIBS="$PTHREAD_LIBS"
+	fi
+	;;
      *-*-solaris*)
 	AC_DEFINE(GC_SOLARIS_THREADS)
 	AC_DEFINE(GC_SOLARIS_PTHREADS)

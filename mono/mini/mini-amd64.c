@@ -60,15 +60,6 @@ static const char*const * ins_spec = amd64_desc;
  */
 
 /*
- * FIXME: 
- * - Use xmm registers instead of the x87 stack
- * - Allocate arguments to global registers
- * - implement emulated opcodes
- * - (all archs) do not store trampoline addresses in method->info since they
- *   are domain specific.   
- */
-
-/*
  * Floating point comparison results:
  *                  ZF PF CF
  * A > B            0  0  0
@@ -1717,7 +1708,7 @@ emit_float_to_int (MonoCompile *cfg, guchar *code, int dreg, int sreg, int size,
 		amd64_sse_cvttsd2si_reg_reg (code, dreg, sreg);
 	}
 	else {
-		amd64_alu_reg_imm (code, X86_SUB, AMD64_RSP, 8);
+		amd64_alu_reg_imm (code, X86_SUB, AMD64_RSP, 16);
 		x86_fnstcw_membase(code, AMD64_RSP, 0);
 		amd64_mov_reg_membase (code, dreg, AMD64_RSP, 0, 2);
 		amd64_alu_reg_imm (code, X86_OR, dreg, 0xc00);
@@ -1727,7 +1718,7 @@ emit_float_to_int (MonoCompile *cfg, guchar *code, int dreg, int sreg, int size,
 		amd64_fist_pop_membase (code, AMD64_RSP, 0, size == 8);
 		amd64_pop_reg (code, dreg);
 		amd64_fldcw_membase (code, AMD64_RSP, 0);
-		amd64_alu_reg_imm (code, X86_ADD, AMD64_RSP, 8);
+		amd64_alu_reg_imm (code, X86_ADD, AMD64_RSP, 16);
 	}
 
 	if (size == 1)
@@ -3502,7 +3493,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case CEE_CKFINITE: {
 			if (use_sse2) {
 				/* Transfer value to the fp stack */
-				amd64_alu_reg_imm (code, X86_SUB, AMD64_RSP, 8);
+				amd64_alu_reg_imm (code, X86_SUB, AMD64_RSP, 16);
 				amd64_movsd_membase_reg (code, AMD64_RSP, 0, ins->sreg1);
 				amd64_fld_membase (code, AMD64_RSP, 0, TRUE);
 			}
@@ -3516,6 +3507,8 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 				amd64_fstp (code, 0);
 			}				
 			EMIT_COND_SYSTEM_EXCEPTION (X86_CC_EQ, FALSE, "ArithmeticException");
+			if (use_sse2)
+				amd64_alu_reg_imm (code, X86_ADD, AMD64_RSP, 16);
 			break;
 		}
 		case OP_TLS_GET: {

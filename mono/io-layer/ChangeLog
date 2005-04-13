@@ -1,3 +1,42 @@
+
+Wed Apr 13 13:12:33 EDT 2005 Paolo Molaro <lupus@ximian.com>
+
+	* atomic.h: applied patch from mass@akuma.org (David Waite)
+	to fix InterlockedExchangeAdd.
+	Fixed a few other functions, including InterlockedCompareExchange()
+	which was miscompiled by gcc with optimizations enabled.
+
+2005-04-13  Dick Porter  <dick@ximian.com>
+
+	* io.c (share_check): 
+	* handles.c (_wapi_handle_check_share): Refine the file check so
+	that sharing violations within the same process don't cause
+	assertion failures.
+
+2005-04-13  Dick Porter  <dick@ximian.com>
+
+	* io.c (FindFirstFile): Fix bugs introduced with the merge (bug
+	74586)
+
+2005-04-12  Dick Porter  <dick@ximian.com>
+	
+	The daemon-less io-layer.  Extensive lowlevel changes in
+	handles.c, requiring some corresponding changes in other files
+	calling these functions.  Private_foo structures have been
+	eliminated.
+
+	File descriptor handling differences account for most of the
+	changes in io.c and sockets.c.
+
+	Other highlights:
+	
+	* mutexes.c: Named mutexes are now a distinct type.
+	* atomic.h: Fix a PPC uninitialised variable warning.
+	* wait.c: Check conditions before waiting on a condition variable.
+	* processes.c: Handle process fork and wait without a daemon
+	(though this has the limitation of only being able to wait for
+	child processes.)
+
 2005-04-07 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* io-private.h:

@@ -28,9 +28,9 @@
 #include <malloc.h>
 #define ALLOCA _alloca
 #else
+#if !defined(__FreeBSD__) && !defined(__NetBSD__)
 #include <alloca.h>
-/* alloca is in stdlib.h on freebsd */
-#include <stdlib.h>
+#endif
 #define ALLOCA alloca
 #endif
 
