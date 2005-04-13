@@ -440,7 +440,7 @@ namespace Mono.CSharp {
 					return null;
 				}
 			}
-			// here we still does not consider return type (to
+			// here we still don't consider return type (to
 			// detect CS1581 or CS1002+CS1584).
 			msig = new MethodSignature (oper, null, paramList);
 			mis = type.FindMembers (
@@ -562,7 +562,10 @@ namespace Mono.CSharp {
 			}
 
 			Type type = FindDocumentedType (mc, name, ds, cref);
-			if (type != null) {
+			if (type != null
+				// delegate must not be referenced with args
+				&& (!type.IsSubclassOf (typeof (System.Delegate))
+				|| parameterTypes.Length == 0)) {
 				xref.SetAttribute ("cref", "T:" + type.FullName.Replace ("+", "."));
 				return; // a type
 			}
