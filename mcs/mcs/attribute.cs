@@ -85,8 +85,6 @@ namespace Mono.CSharp {
 
 		static AttributeUsageAttribute DefaultUsageAttribute = new AttributeUsageAttribute (AttributeTargets.All);
 
-		CustomAttributeBuilder cb;
-	
 		// non-null if named args present after Resolve () is called
 		PropertyInfo [] prop_info_arr;
 		FieldInfo [] field_info_arr;
@@ -151,6 +149,12 @@ namespace Mono.CSharp {
                                       "Could not find a constructor for this argument list.");
 		}
 
+
+		protected virtual FullNamedExpression ResolveAsTypeStep (Expression expr, EmitContext ec)
+		{
+			return expr.ResolveAsTypeStep (ec);
+		}
+
 		void ResolvePossibleAttributeTypes (EmitContext ec, out Type t1, out Type t2)
 		{
 			t1 = null;
@@ -160,12 +164,12 @@ namespace Mono.CSharp {
 			FullNamedExpression n2 = null;
 			string IdentifierAttribute = Identifier + "Attribute";
 			if (LeftExpr == null) {
-				n1 = new SimpleName (Identifier, Location).ResolveAsTypeStep (ec);
+				n1 = ResolveAsTypeStep (new SimpleName (Identifier, Location), ec);
 
 				// FIXME: Shouldn't do this for quoted attributes: [@A]
-				n2 = new SimpleName (IdentifierAttribute, Location).ResolveAsTypeStep (ec);
+				n2 = ResolveAsTypeStep (new SimpleName (IdentifierAttribute, Location), ec);
 			} else {
-				FullNamedExpression l = LeftExpr.ResolveAsTypeStep (ec);
+				FullNamedExpression l = ResolveAsTypeStep (LeftExpr, ec);
 				if (l == null) {
 					Report.Error (246, Location, "Couldn't find namespace or type '{0}'", LeftExpr);
 					return;
@@ -298,18 +302,19 @@ namespace Mono.CSharp {
 		// Cache for parameter-less attributes
 		static PtrHashtable att_cache = new PtrHashtable ();
 
-		public virtual CustomAttributeBuilder Resolve (EmitContext ec)
+		public CustomAttributeBuilder Resolve (EmitContext ec)
 		{
 			if (resolve_error)
 				return null;
 
 			resolve_error = true;
 
-			if (Type == null)
+			if (Type == null) {
 				Type = CheckAttributeType (ec);
 
-			if (Type == null)
-				return null;
+				if (Type == null)
+					return null;
+			}
 
 			if (Type.IsAbstract) {
 				Report.Error (653, Location, "Cannot apply attribute class '{0}' because it is abstract", Name);
@@ -324,6 +329,34 @@ namespace Mono.CSharp {
 				}
 			}
 
+			ConstructorInfo ctor = ResolveArguments (ec);
+			CustomAttributeBuilder cb;
+
+			try {
+				if (prop_info_arr != null || field_info_arr != null) {
+					cb = new CustomAttributeBuilder (
+						ctor, pos_values,
+						prop_info_arr, prop_values_arr,
+						field_info_arr, field_values_arr);
+				} else {
+					cb = new CustomAttributeBuilder (
+						ctor, pos_values);
+
+					if (pos_values.Length == 0)
+						att_cache.Add (Type, cb);
+				}
+			}
+			catch (Exception) {
+				Error_AttributeArgumentNotValid (Location);
+				return null;
+			}
+
+			resolve_error = false;
+			return cb;
+		}
+
+		protected virtual ConstructorInfo ResolveArguments (EmitContext ec)
+		{
 			// Now we extract the positional and named arguments
 			
 			ArrayList pos_args = null;
@@ -555,44 +588,20 @@ namespace Mono.CSharp {
 				pos_values = new_pos_values;
 			}
 
-			try {
-				if (named_arg_count > 0) {
-					prop_info_arr = new PropertyInfo [prop_infos.Count];
-					field_info_arr = new FieldInfo [field_infos.Count];
-					field_values_arr = new object [field_values.Count];
-					prop_values_arr = new object [prop_values.Count];
+			if (named_arg_count > 0) {
+				prop_info_arr = new PropertyInfo [prop_infos.Count];
+				field_info_arr = new FieldInfo [field_infos.Count];
+				field_values_arr = new object [field_values.Count];
+				prop_values_arr = new object [prop_values.Count];
 
-					field_infos.CopyTo  (field_info_arr, 0);
-					field_values.CopyTo (field_values_arr, 0);
+				field_infos.CopyTo  (field_info_arr, 0);
+				field_values.CopyTo (field_values_arr, 0);
 
-					prop_values.CopyTo  (prop_values_arr, 0);
-					prop_infos.CopyTo   (prop_info_arr, 0);
-
-					cb = new CustomAttributeBuilder (
-						(ConstructorInfo) constructor, pos_values,
-						prop_info_arr, prop_values_arr,
-						field_info_arr, field_values_arr);
-				}
-				else {
-					cb = new CustomAttributeBuilder (
-						(ConstructorInfo) constructor, pos_values);
-
-					if (pos_values.Length == 0)
-						att_cache.Add (Type, cb);
-				}
-			} catch (Exception) {
-				//
-				// Sample:
-				// using System.ComponentModel;
-				// [DefaultValue (CollectionChangeAction.Add)]
-				// class X { static void Main () {} }
-				//
-				Error_AttributeArgumentNotValid (Location);
-				return null;
+				prop_values.CopyTo  (prop_values_arr, 0);
+				prop_infos.CopyTo   (prop_info_arr, 0);
 			}
-			
-			resolve_error = false;
-			return cb;
+
+			return (ConstructorInfo) constructor;
 		}
 
 		/// <summary>
@@ -982,6 +991,11 @@ namespace Mono.CSharp {
 			}
 		}
 
+		public CharSet GetCharSetValue ()
+		{
+			return (CharSet)System.Enum.Parse (typeof (CharSet), pos_values [0].ToString ());
+		}
+
 		public MethodImplOptions GetMethodImplOptions ()
 		{
 			return (MethodImplOptions)System.Enum.Parse (typeof (MethodImplOptions), pos_values [0].ToString ());
@@ -1084,7 +1098,7 @@ namespace Mono.CSharp {
 
 			// Default settings
 			CallingConvention cc = CallingConvention.Winapi;
-			CharSet charset = CharSet.Ansi;
+			CharSet charset = CodeGen.Module.DefaultCharSet;
 			bool preserve_sig = true;
 			string entry_point = name;
 			bool best_fit_mapping = false;
@@ -1232,20 +1246,26 @@ namespace Mono.CSharp {
 			RootContext.Tree.Types.NamespaceEntry = null;
 		}
 
-		public override Type ResolveType (EmitContext ec)
+		protected override FullNamedExpression ResolveAsTypeStep (Expression expr, EmitContext ec)
 		{
-			Enter ();
-			Type retval = base.ResolveType (ec);
-			Leave ();
-			return retval;
+			try {
+				Enter ();
+				return base.ResolveAsTypeStep (expr, ec);
+			}
+			finally {
+				Leave ();
+			}
 		}
 
-		public override CustomAttributeBuilder Resolve (EmitContext ec)
+		protected override ConstructorInfo ResolveArguments (EmitContext ec)
 		{
-			Enter ();
-			CustomAttributeBuilder retval = base.Resolve (ec);
-			Leave ();
-			return retval;
+			try {
+				Enter ();
+				return base.ResolveArguments (ec);
+			}
+			finally {
+				Leave ();
+			}
 		}
 	}
 

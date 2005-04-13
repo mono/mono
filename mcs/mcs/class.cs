@@ -846,9 +846,9 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public virtual TypeAttributes TypeAttr {
+		protected override TypeAttributes TypeAttr {
 			get {
-				return Modifiers.TypeAttr (ModFlags, this);
+				return Modifiers.TypeAttr (ModFlags, this) | base.TypeAttr;
 			}
 		}
 
@@ -2565,7 +2565,7 @@ namespace Mono.CSharp {
 			return PendingImplementation.GetPendingImplementations (this);
 		}
 
-		public override TypeAttributes TypeAttr {
+		protected override TypeAttributes TypeAttr {
 			get {
 				return base.TypeAttr | DefaultTypeAttributes;
 			}
@@ -2766,7 +2766,7 @@ namespace Mono.CSharp {
 			return tb;
 		}
 
-		public override TypeAttributes TypeAttr {
+		protected override TypeAttributes TypeAttr {
 			get {
 				return base.TypeAttr | TypeAttributes.Abstract | TypeAttributes.Sealed;
 			}
@@ -2883,7 +2883,7 @@ namespace Mono.CSharp {
 		// FIXME: How do we deal with the user specifying a different
 		// layout?
 		//
-		public override TypeAttributes TypeAttr {
+		protected override TypeAttributes TypeAttr {
 			get {
 				return base.TypeAttr | DefaultTypeAttributes;
 			}
@@ -2928,7 +2928,7 @@ namespace Mono.CSharp {
 		// in some cases (Sealed for example is mandatory for a class,
 		// but what SequentialLayout can be changed
 		//
-		public override TypeAttributes TypeAttr {
+		protected override TypeAttributes TypeAttr {
 			get {
 				return base.TypeAttr | DefaultTypeAttributes;
 			}
@@ -2995,7 +2995,7 @@ namespace Mono.CSharp {
 			TypeAttributes.Abstract |
 			TypeAttributes.Interface;
 
-		public override TypeAttributes TypeAttr {
+		protected override TypeAttributes TypeAttr {
 			get {
 				return base.TypeAttr | DefaultTypeAttributes;
 			}

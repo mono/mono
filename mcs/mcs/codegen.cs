@@ -1067,7 +1067,7 @@ namespace Mono.CSharp {
 			OptAttributes.Emit (ec, this);
 		}
                 
-		protected Attribute GetClsCompliantAttribute ()
+		protected Attribute ResolveAttribute (Type a_type)
 		{
 			if (OptAttributes == null)
 				return null;
@@ -1077,7 +1077,7 @@ namespace Mono.CSharp {
 				return null;
 
 			EmitContext temp_ec = new EmitContext (RootContext.Tree.Types, Mono.CSharp.Location.Null, null, null, 0, false);
-			Attribute a = OptAttributes.Search (TypeManager.cls_compliant_attribute_type, temp_ec);
+			Attribute a = OptAttributes.Search (a_type, temp_ec);
 			if (a != null) {
 				a.Resolve (temp_ec);
 			}
@@ -1119,7 +1119,7 @@ namespace Mono.CSharp {
 
 		public void ResolveClsCompliance ()
 		{
-			ClsCompliantAttribute = GetClsCompliantAttribute ();
+			ClsCompliantAttribute = ResolveAttribute (TypeManager.cls_compliant_attribute_type);
 			if (ClsCompliantAttribute == null)
 				return;
 
@@ -1327,6 +1327,9 @@ namespace Mono.CSharp {
 		public ModuleBuilder Builder;
 		bool m_module_is_unsafe;
 
+		public CharSet DefaultCharSet = CharSet.Ansi;
+		public TypeAttributes DefaultCharSetType = TypeAttributes.AnsiClass;
+
 		static string[] attribute_targets = new string [] { "module" };
 
 		public ModuleClass (bool is_unsafe)
@@ -1374,6 +1377,33 @@ namespace Mono.CSharp {
 			}
 
 			Builder.SetCustomAttribute (customBuilder);
+		}
+
+		/// <summary>
+		/// It is called very early therefore can resolve only predefined attributes
+		/// </summary>
+		public void ResolveAttributes ()
+		{
+#if NET_2_0
+			Attribute a = ResolveAttribute (TypeManager.default_charset_type);
+			if (a != null) {
+				DefaultCharSet = a.GetCharSetValue ();
+				switch (DefaultCharSet) {
+					case CharSet.Ansi:
+					case CharSet.None:
+						break;
+					case CharSet.Auto:
+						DefaultCharSetType = TypeAttributes.AutoClass;
+						break;
+					case CharSet.Unicode:
+						DefaultCharSetType = TypeAttributes.UnicodeClass;
+						break;
+					default:
+						Report.Error (1724, a.Location, "Value specified for the argument to 'System.Runtime.InteropServices.DefaultCharSetAttribute' is not valid");
+						break;
+				}
+			}
+#endif
 		}
 
 		public override string[] ValidAttributeTargets {

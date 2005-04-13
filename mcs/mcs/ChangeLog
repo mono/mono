@@ -1,3 +1,38 @@
+2005-04-13  Marek Safar  <marek.safar@seznam.cz>
+
+	C# 2.0 DefaultCharSetAttribute implementation
+	
+	* attribute.cs (Attribute.ResolveAsTypeStep): New protected method
+	which allows us to set GlobalNamespace for every resolve.
+	(Attribute.ResolveArguments): Cut from Resolve.
+	(Attribute.GetCharSetValue): Returns CharSet named argument.
+	(Attribute.DefinePInvokeMethod): Gets default charset from
+	module settings.
+	(GlobalAttribute.ResolveAsTypeStep): Override.
+	(GlobalAttribute.ResolveArguments): Override.
+	
+	* class.cs (TypeAttr): Is protected.
+	
+	* codegen.cs (ModuleClass.DefaultCharSet): New member.
+	(ModuleClass.DefaultCharSetType): New memeber.
+	(ModuleClass.ResolveAttributes): Resolves DefaultCharSetAttribute.
+	
+	* decl.cs (Decl.TypeAttr): New protected virtual. Returns default
+	charset from module.
+	
+	* delegate.cs (TypeAttr): Override.
+	(Delegate.DefineType): Use this TypeAttr.
+	
+	* driver.cs (Driver.MainDriver): Call Module.ResolveAttributes
+	at very early stage (before types are defined) to resolve model
+	module attributes. It will probably not work with corlib but it
+	should be ok.
+	
+	* enum.cs (Enum.TypeAttr): New protected virtual. Returns default
+	charset from module.
+	
+	* typemanager.cs (default_charset_type): New type.
+
 2005-04-13  Raja R Harinath  <rharinath@novell.com>
 
 	* decl.cs (MemberCache.AddMethods): Don't warn if

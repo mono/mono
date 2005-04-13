@@ -81,9 +81,6 @@ namespace Mono.CSharp {
 
 			ec = new EmitContext (this, this, Location, null, null, ModFlags, false);
 
-			TypeAttributes attr = Modifiers.TypeAttr (ModFlags, IsTopLevel) |
-				TypeAttributes.Class | TypeAttributes.Sealed;
-
 			if (TypeManager.multicast_delegate_type == null && !RootContext.StdLib) {
 				Namespace system = Namespace.LookupNamespace ("System", true);
 				TypeExpr expr = system.Lookup (this, "MulticastDelegate", Location) as TypeExpr;
@@ -100,13 +97,13 @@ namespace Mono.CSharp {
 				ModuleBuilder builder = CodeGen.Module.Builder;
 
 				TypeBuilder = builder.DefineType (
-					Name, attr, TypeManager.multicast_delegate_type);
+					Name, TypeAttr, TypeManager.multicast_delegate_type);
 			} else {
 				TypeBuilder builder = Parent.TypeBuilder;
 
 				string name = Name.Substring (1 + Name.LastIndexOf ('.'));
 				TypeBuilder = builder.DefineNestedType (
-					name, attr, TypeManager.multicast_delegate_type);
+					name, TypeAttr, TypeManager.multicast_delegate_type);
 			}
 
 			TypeManager.AddDelegateType (Name, TypeBuilder, this);
@@ -393,6 +390,14 @@ namespace Mono.CSharp {
 			}
 
 			base.Emit ();
+		}
+
+		protected override TypeAttributes TypeAttr {
+			get {
+				return Modifiers.TypeAttr (ModFlags, IsTopLevel) |
+					TypeAttributes.Class | TypeAttributes.Sealed |
+					base.TypeAttr;
+			}
 		}
 
 		public override string[] ValidAttributeTargets {

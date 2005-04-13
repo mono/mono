@@ -179,12 +179,8 @@ namespace Mono.CSharp {
 			if (TypeBuilder != null)
 				return TypeBuilder;
 
-			TypeAttributes attr = Modifiers.TypeAttr (ModFlags, IsTopLevel);
-
 			ec = new EmitContext (this, this, Location, null, null, ModFlags, false);
 			ec.InEnumContext = true;
-
-			attr |= TypeAttributes.Class | TypeAttributes.Sealed;
 
 			if (!(BaseType is TypeLookupExpression)) {
 				Report.Error (1008, Location,
@@ -217,12 +213,12 @@ namespace Mono.CSharp {
 				
 				ModuleBuilder builder = CodeGen.Module.Builder;
 
-				TypeBuilder = builder.DefineType (Name, attr, TypeManager.enum_type);
+				TypeBuilder = builder.DefineType (Name, TypeAttr, TypeManager.enum_type);
 			} else {
 				TypeBuilder builder = Parent.TypeBuilder;
 
 				TypeBuilder = builder.DefineNestedType (
-					Basename, attr, TypeManager.enum_type);
+					Basename, TypeAttr, TypeManager.enum_type);
 			}
 
 			ec.ContainerType = TypeBuilder;
@@ -724,6 +720,15 @@ namespace Mono.CSharp {
 				return AttributeTargets.Enum;
 			}
 		}
+
+		protected override TypeAttributes TypeAttr {
+			get {
+				return Modifiers.TypeAttr (ModFlags, IsTopLevel) |
+				TypeAttributes.Class | TypeAttributes.Sealed |
+				base.TypeAttr;
+			}
+		}
+
 
 		protected override void VerifyObsoleteAttribute()
 		{

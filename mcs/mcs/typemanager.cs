@@ -105,6 +105,7 @@ public class TypeManager {
 #if NET_2_0
 	static internal Type compiler_generated_attr_type;
 	static internal Type fixed_buffer_attr_type;
+	static internal Type default_charset_type;
 #endif
 
 	//
@@ -1089,6 +1090,7 @@ public class TypeManager {
 #if NET_2_0
 		compiler_generated_attr_type = CoreLookupType ("System.Runtime.CompilerServices.CompilerGeneratedAttribute");
 		fixed_buffer_attr_type = CoreLookupType ("System.Runtime.CompilerServices.FixedBufferAttribute");
+		default_charset_type = CoreLookupType ("System.Runtime.InteropServices.DefaultCharSetAttribute");
 #endif
 		//
 		// When compiling corlib, store the "real" types here.
