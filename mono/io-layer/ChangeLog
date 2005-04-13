@@ -1,3 +1,11 @@
+
+Wed Apr 13 13:12:33 EDT 2005 Paolo Molaro <lupus@ximian.com>
+
+	* atomic.h: applied patch from mass@akuma.org (David Waite)
+	to fix InterlockedExchangeAdd.
+	Fixed a few other functions, including InterlockedCompareExchange()
+	which was miscompiled by gcc with optimizations enabled.
+
 2005-04-13  Dick Porter  <dick@ximian.com>
 
 	* io.c (share_check): 
