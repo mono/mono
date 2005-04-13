@@ -1,5 +1,11 @@
 2005-04-13  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* DataTable.cs : Use GetRowType() for the base of the returning array 
+	  type of Select(). Fix by Gerhard Rittweger.
+	* CustomDataClassGenerator.cs : Fixed slightly harmless wrong code.
+
+2005-04-13  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* CustomDataClassGenerator.cs : custom relation was not added to
 	  Relations property. The second entry of bug #69276 was fixed.
 	  Patch by Daniel Rodriguez.

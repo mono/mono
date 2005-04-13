@@ -249,7 +249,7 @@ namespace System.Data
 			this.ds = ds;
 			this.cns = cns;
 			this.gen = gen;
-			this.opts = opts;
+			this.opts = options;
 
 			if (opts == null)
 				opts = DefaultOptions;

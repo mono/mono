@@ -1314,7 +1314,7 @@ namespace System.Data {
 				}
 			}
 
-			DataRow[] dataRows = (DataRow[])rowList.ToArray(typeof(DataRow));
+			DataRow[] dataRows = (DataRow[])rowList.ToArray(GetRowType ());
 
 			if (sortableColumns != null) {
 				RowSorter rowSorter = new RowSorter (this, sortableColumns);
