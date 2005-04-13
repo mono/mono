@@ -393,7 +393,9 @@ namespace System.IO
 			
 			// STEP 1: Check for empty string
 			if (path == null) return path;
-			path = path.Trim ();
+			if (Environment.IsRunningOnWindows)
+				path = path.Trim ();
+
 			if (path == String.Empty) return path;
 			
 			// STEP 2: Check to see if this is only a root

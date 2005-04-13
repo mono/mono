@@ -1,3 +1,8 @@
+2005-04-13 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Path.cs: don't trim the path in CanonicalizePath on non-windows
+	systems. Fixes bug #53173.
+
 2005-04-09  Miguel de Icaza  <miguel@novell.com>
 
 	* StreamWriter.cs (Initialize): Avoid echoing the preamble to a
