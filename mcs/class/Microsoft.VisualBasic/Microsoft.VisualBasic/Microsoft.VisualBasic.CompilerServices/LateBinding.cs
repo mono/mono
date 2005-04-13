@@ -404,22 +404,55 @@ namespace Microsoft.VisualBasic.CompilerServices {
 			object[] args,
 			string[] paramnames,
 			bool[] CopyBack) {
+
+				InternalLateCall (o, objType, name, args, paramnames, CopyBack, true);
+		}
+
+		[System.Diagnostics.DebuggerStepThroughAttribute]
+		[System.Diagnostics.DebuggerHiddenAttribute]
+		internal static object InternalLateCall( object o,
+							 Type objType,
+							 string name,
+							 object[] args,
+							 string[] paramnames,
+							 bool[] CopyBack, 
+							 bool IgnoreReturn) {
 			if (objType == null) {
-				if (o == null)
+				if (o == null) {
 					throw new NullReferenceException();
+				}
 				objType = o.GetType();
 			}
-			Type[] typeArr = null;
+
+			IReflect objReflect = (IReflect) objType;
+
+			BindingFlags flags = BindingFlags.FlattenHierarchy |
+					     BindingFlags.IgnoreCase |
+					     BindingFlags.Instance |
+					     BindingFlags.Public |
+					     BindingFlags.Static |
+					     BindingFlags.InvokeMethod;
+
+			if (name == null) {
+				name = "";
+			}
+			MemberInfo [] memberinfo = objReflect.GetMember (name, flags);
+
+			if (memberinfo == null || memberinfo.Length == 0) {
+				throw new MissingMemberException ("Public Member '" + name + "' not found on type '" + objType + "'");
+			}
+
 			if (args != null) {
-				typeArr = new Type[args.Length];
-				for (int i = 0; i < typeArr.Length; i++) {
-					typeArr[i] = args[i].GetType();
+				foreach (MemberInfo mi in memberinfo) {
+					if (mi.MemberType == MemberTypes.Field) 
+						throw new ArgumentException ("Expression '" + name + "' is not a procedure, but occurs as a target of a procedure call");
 				}
 			}
-			MethodInfo methodInfo = objType.GetMethod(name, typeArr);
-			if (methodInfo == null)
-				throw new NullReferenceException();
-			methodInfo.Invoke(o, args);
+
+			VBBinder binder = new VBBinder (CopyBack);
+			return binder.InvokeMember (name, flags, objType, objReflect, o, args, null, null, paramnames);
 		}
+
+		
 	}
 }

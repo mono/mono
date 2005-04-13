@@ -43,7 +43,7 @@ namespace Microsoft.VisualBasic {
 
                 public ForEachEnum (Collection Collection)
                 {
-                        this.collection = collection;
+                        this.collection = Collection;
                 }
 
                 public void AdjustIndex (int itemIndex, bool remove)

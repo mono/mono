@@ -657,7 +657,7 @@ namespace Microsoft.VisualBasic.CompilerServices {
 					continue;
 				}
 				else if (currentPatternChar == ']') {
-					string sub = pattern.Substring(patternIndex);
+					//string sub = pattern.Substring(patternIndex);
 					isMatch =
 						compareBinary(
 						isNotSignAppears,

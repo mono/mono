@@ -930,34 +930,30 @@ namespace Microsoft.VisualBasic.CompilerServices {
 		}
 
 		internal static object CTypeHelper(object obj, TypeCode toType) {
-			return CTypeHelper(obj, toType.GetType());//toType.getValue));
-		}
-
-		internal static object CTypeHelper(object obj, int toType) {
 			if (obj == null)
 				return null;
 			switch (toType) {
-				case (int)TypeCode.Boolean :
+				case TypeCode.Boolean :
 					return BooleanType.FromObject(obj);
-				case (int)TypeCode.Byte :
+				case TypeCode.Byte :
 					return ByteType.FromObject(obj);
-				case (int)TypeCode.Int16 :
+				case TypeCode.Int16 :
 					return ShortType.FromObject(obj);
-				case (int)TypeCode.Int32 :
+				case TypeCode.Int32 :
 					return IntegerType.FromObject(obj);
-				case (int)TypeCode.Int64 :
+				case TypeCode.Int64 :
 					return LongType.FromObject(obj);
-				case (int)TypeCode.Decimal :
+				case TypeCode.Decimal :
 					return DecimalType.FromObject(obj);
-				case (int)TypeCode.Single :
+				case TypeCode.Single :
 					return SingleType.FromObject(obj);
-				case (int)TypeCode.Double :
+				case TypeCode.Double :
 					return DoubleType.FromObject(obj);
-				case (int)TypeCode.String :
+				case TypeCode.String :
 					return StringType.FromObject(obj);
-				case (int)TypeCode.Char :
+				case TypeCode.Char :
 					return CharType.FromObject(obj);
-				case (int)TypeCode.DateTime :
+				case TypeCode.DateTime :
 					return DateType.FromObject(obj);
 
 			}
@@ -980,10 +976,9 @@ namespace Microsoft.VisualBasic.CompilerServices {
 			//	return obj;
 
 			Type type = obj.GetType();
-			//    if (toType.IsByRef) {
-			//        toType = toType.GetElementType();
-			//        local2 = true;
-			//    }
+			if (toType.IsByRef) {
+			        toType = toType.GetElementType();
+			}
 			//    if (type.IsByRef)
 			//        local1 = local1.GetElementType();
 			if (type == toType)
@@ -993,16 +988,16 @@ namespace Microsoft.VisualBasic.CompilerServices {
 			if (tc == TypeCode.Object) {
 				if (toType.IsAssignableFrom(type))
 					return obj;
-				//TODO:
-				//            if (obj is string
-				//                && toType == char[].class).GetType()
-				//                return CharArrayType.FromString((string) obj);
+				if (obj is string
+				    && toType == typeof (char[])) {
+					return CharArrayType.FromString((string) obj);
+				}
 				
-				            throw new InvalidCastException(
-				                Utils.GetResourceString(
-				                    "InvalidCast_FromTo",
-				                    Utils.VBFriendlyName(type),
-				                    Utils.VBFriendlyName(toType)));
+				throw new InvalidCastException(
+					Utils.GetResourceString(
+					"InvalidCast_FromTo",
+					Utils.VBFriendlyName(type),
+					Utils.VBFriendlyName(toType)));
 			}
 
 			object retVal = CTypeHelper(obj, tc);
@@ -1310,50 +1305,47 @@ namespace Microsoft.VisualBasic.CompilerServices {
 		internal static bool IsWideningConversion(Type FromType, Type ToType) {
 			TypeCode typeCode1 = Type.GetTypeCode(FromType);
 			TypeCode typeCode2 = Type.GetTypeCode(ToType);
-			if (typeCode1 == TypeCode.Object) {
-				//TODO:
-				//            if ((FromType == char[].class.GetType()) &&
-				//               (typeCode2 == TypeCode.String || ToType == char[].class).GetType())
-				//            {
-				//                return true;
-				//            }
-				//            if (typeCode2 != TypeCode.Object)
-				//            {
-				//                return false;
-				//            }
-				//            if (!FromType.IsArray() || !ToType.IsArray())
-				//            {
-				//                return ToType.IsAssignableFrom(FromType);
-				//            }
-				//            //if (FromType.GetArrayRank() == ToType.GetArrayRank())
-				//            //{
-				//            //    return ToType.GetElementType().IsAssignableFrom(FromType.GetElementType());
-				//            //}
-				//            //else
-				//            //{
-				//                return false;
-				//            //}
+			
+			if (typeCode1 == typeCode2)
+				return true;
+
+			if (IsWiderNumeric (ToType, FromType))
+				return true;
+
+			if (typeCode2 == TypeCode.String) {
+				if (FromType == typeof (char[]))
+					return true;
+				return false;
 			}
-			if (typeCode2 == TypeCode.Object) {
-				//TODO:
-				//            if (ToType == char[].class.GetType() && typeCode1 == TypeCode.string)
-				//            {
-				//                return false;
-				//            }
+
+			if (typeCode1 == TypeCode.String) {
+				if (typeCode2 == TypeCode.Char)
+					return true;
+				return false;
+			}
+
+			if (typeCode1 == TypeCode.DateTime || typeCode2 == TypeCode.DateTime)
+				return false;
+
+			if (typeCode1 == TypeCode.Char || typeCode2 == TypeCode.Char)
+				return false;
+
+			if (! FromType.IsValueType ) {
+				if (ToType.IsValueType)
+					return false;
+				if (!FromType.IsArray || !ToType.IsArray)
+				{
+					return ToType.IsAssignableFrom(FromType);
+				}
+				if (FromType.GetArrayRank() == ToType.GetArrayRank())
+				    return ToType.GetElementType().IsAssignableFrom(FromType.GetElementType());
+				else
+					return false;
+			}
+			if (! ToType.IsValueType) {
 				return ToType.IsAssignableFrom(FromType);
 			}
-			if (ToType.IsEnum) {
-				return false;
-			}
-			int index1 = getVType2FromTypeCode(typeCode2);
-			int index2 = getVType2FromTypeCode(typeCode1);
-			int cC = ConversionClassTable[index1,index2];
-			if (cC != 3 /*CC.Wide*/ && cC != 1 /*CC.Same*/) {//TODO replace hard coded values with enum, after enum is converted
-				return false;
-			}
-			else {
-				return true;
-			}
+			return false;
 		}
 
 		//checked
@@ -1364,18 +1356,68 @@ namespace Microsoft.VisualBasic.CompilerServices {
 			if (!Utils.IsNumericType(Type1) || !Utils.IsNumericType(Type2)) {
 				return false;
 			}
-			if (typeCode1 == TypeCode.Boolean || typeCode2 == TypeCode.Boolean) {
-				return false;
-			}
-			if (Type1.IsEnum) {
-				return false;
+
+			if (Type1 == Type2)
+				return true;
+			switch (typeCode1) {
+
+			case TypeCode.Empty :
+				return true;
+			case TypeCode.Boolean:
+					if (typeCode2 == TypeCode.Byte)
+						return true;
+					return false;
+			case TypeCode.Byte :
+					return false;
+			case TypeCode.Int16 :
+				switch (typeCode2) {
+				case TypeCode.Boolean:
+				case TypeCode.Byte:
+					return true;
+				default :
+					return false;
+				}
+			case TypeCode.Int32 :
+				switch (typeCode2) {
+				case TypeCode.Boolean:
+				case TypeCode.Byte:
+				case TypeCode.Int16:
+					return true;
+				default:
+					return false;
+				}
+			case TypeCode.Int64 :
+				switch (typeCode2) {
+				case TypeCode.Boolean:
+				case TypeCode.Byte:
+				case TypeCode.Int16:
+				case TypeCode.Int32:
+					return true;
+				default:
+					return false;
+				}
+			case TypeCode.Decimal :
+				switch (typeCode2) {
+				case TypeCode.Single:
+				case TypeCode.Double:
+				case TypeCode.Empty:
+					return false;
+				default:
+					return true;
+				}
+			case TypeCode.Single :
+				switch (typeCode2) {
+				case TypeCode.Double:
+				case TypeCode.Empty:
+					return false;
+				default :
+					return true;
+				}
+			case TypeCode.Double :
+				return true;
 			}
 
-			//int index1 = getVTypeFromTypeCode(typeCode1);
-			//int index2 = getVTypeFromTypeCode(typeCode2);
-			throw new NotImplementedException("MSVB.CS.IsWiderNumeric needs help");
-			//TODO:
-			//return )WiderType[index1,index2] == getVTypeFromTypeCode(typeCode1);
+			return false;
 		}
 
 		//checked
