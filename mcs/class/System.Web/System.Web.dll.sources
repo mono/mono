@@ -335,6 +335,7 @@ System.Web.UI.WebControls/DataSourceInternal.cs
 System.Web.UI.WebControls/DayNameFormat.cs
 System.Web.UI.WebControls/DayRenderEventArgs.cs
 System.Web.UI.WebControls/DayRenderEventHandler.cs
+System.Web.UI.WebControls/DetailsView.cs
 System.Web.UI.WebControls/DetailsViewCommandEventArgs.cs
 System.Web.UI.WebControls/DetailsViewCommandEventHandler.cs
 System.Web.UI.WebControls/DetailsViewDeletedEventArgs.cs
@@ -350,6 +351,8 @@ System.Web.UI.WebControls/DetailsViewModeEventArgs.cs
 System.Web.UI.WebControls/DetailsViewModeEventHandler.cs
 System.Web.UI.WebControls/DetailsViewPageEventArgs.cs
 System.Web.UI.WebControls/DetailsViewPageEventHandler.cs
+System.Web.UI.WebControls/DetailsViewRow.cs
+System.Web.UI.WebControls/DetailsViewRowCollection.cs
 System.Web.UI.WebControls/DetailsViewUpdatedEventArgs.cs
 System.Web.UI.WebControls/DetailsViewUpdatedEventHandler.cs
 System.Web.UI.WebControls/DetailsViewUpdateEventArgs.cs
