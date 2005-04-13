@@ -781,6 +781,7 @@ namespace System.Data
 					Const (false)
 					)));
 				m.Statements.Add (Let (PropRef (FieldRef (fieldName), "Nested"), Const (rel.Nested)));
+				m.Statements.Add (MethodInvoke (PropRef ("Relations"), "Add", FieldRef (fieldName)));
 			}
 
 			return m;

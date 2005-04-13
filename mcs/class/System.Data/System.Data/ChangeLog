@@ -1,3 +1,9 @@
+2005-04-13  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* CustomDataClassGenerator.cs : custom relation was not added to
+	  Relations property. The second entry of bug #69276 was fixed.
+	  Patch by Daniel Rodriguez.
+
 2005-04-07  Lluis Sanchez Gual <lluis@novell.com>
 
 	* DataRowCollection.cs: Fix the signature of the Add method
