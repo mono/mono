@@ -1,3 +1,7 @@
+2005-04-13 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* DirectoryInfoTest.cs: added test for bug #53173.
+
 2005-04-09  Miguel de Icaza  <miguel@novell.com>
 
 	* StreamWriterTest.cs: New test for bug #74513.

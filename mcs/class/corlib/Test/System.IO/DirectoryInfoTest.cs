@@ -561,6 +561,19 @@ namespace MonoTests.System.IO
         		if (Directory.Exists (path))
         			Directory.Delete (path, true);
         	}
-        			
+ 
+ 		[Test]
+		public void DirectoryNameWithSpace ()
+		{
+			if ((int) Environment.OSVersion.Platform != 128) {
+				DeleteDir ("this has a space at the end ");
+				string path = Path.Combine (TempFolder, "this has a space at the end ");
+				Directory.CreateDirectory (path);
+				DirectoryInfo i = new DirectoryInfo (path);
+				string dummy = null;
+				foreach (FileInfo f in i.GetFiles ()) // This used to throw
+					dummy = f.Name;
+			}
+		}
     	}
 }
