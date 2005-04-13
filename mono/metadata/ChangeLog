@@ -1,5 +1,10 @@
 2005-04-13 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* threadpool.c: some systems don't like a NULL when deleting the socket
+	from epoll.
+
+2005-04-13 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* threadpool.c: fix semaphore allocation.
 
 2005-04-12 Gonzalo Paniagua Javier <gonzalo@ximian.com>
