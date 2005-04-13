@@ -936,6 +936,11 @@ namespace System.Web.Compilation
 				if (colorConverter == null)
 					colorConverter = TypeDescriptor.GetConverter (typeof (Color));
 
+				if (str.Trim().Length == 0) {
+					CodeTypeReferenceExpression ft = new CodeTypeReferenceExpression (typeof (Color));
+					return new CodeFieldReferenceExpression (ft, "Empty");
+				}
+				
 				Color c;
 				try {
 					if (str.IndexOf (',') == -1) {
@@ -981,24 +986,19 @@ namespace System.Web.Compilation
 				}
 			}
 
-			TypeConverter converter = null;
-			
-			TypeConverterAttribute at = (TypeConverterAttribute) Attribute.GetCustomAttribute (member, typeof(TypeConverterAttribute), true);
-			if (at != null) {
-				Type t = Type.GetType (at.ConverterTypeName);
-				converter = (TypeConverter) Activator.CreateInstance (t);
-			} else {
-				converter = TypeDescriptor.GetConverter (type);
-			}
+			TypeConverter converter = TypeDescriptor.GetProperties (member.DeclaringType) [member.Name].Converter;
 			
 			if (converter != null && converter.CanConvertFrom (typeof (string))) {
 				object value = converter.ConvertFrom (str);
 
 				if (converter.CanConvertTo (typeof (InstanceDescriptor))) {
 					InstanceDescriptor idesc = (InstanceDescriptor) converter.ConvertTo (value, typeof(InstanceDescriptor));
-					return GenerateInstance (idesc);
+					return GenerateInstance (idesc, true);
 				}
 
+				CodeExpression exp = GenerateObjectInstance (value, false);
+				if (exp != null) return exp;
+				
 				CodeMethodReferenceExpression m = new CodeMethodReferenceExpression ();
 				m.TargetObject = new CodeTypeReferenceExpression (typeof (TypeDescriptor));
 				m.MethodName = "GetConverter";
@@ -1017,12 +1017,15 @@ namespace System.Web.Compilation
 			return new CodePrimitiveExpression (str);
 		}
 		
-		CodeExpression GenerateInstance (InstanceDescriptor idesc)
+		CodeExpression GenerateInstance (InstanceDescriptor idesc, bool throwOnError)
 		{
 			CodeExpression[] parameters = new CodeExpression [idesc.Arguments.Count];
 			int n = 0;
-			foreach (object ob in idesc.Arguments)
-				parameters [n++] = GenerateObjectInstance (ob);
+			foreach (object ob in idesc.Arguments) {
+				CodeExpression exp = GenerateObjectInstance (ob, throwOnError);
+				if (exp == null) return null;
+				parameters [n++] = exp;
+			}
 			
 			switch (idesc.MemberInfo.MemberType) {
 			case MemberTypes.Constructor:
@@ -1044,7 +1047,7 @@ namespace System.Web.Compilation
 			throw new ParseException (currentLocation, "Invalid instance type.");
 		}
 		
-		CodeExpression GenerateObjectInstance (object value)
+		CodeExpression GenerateObjectInstance (object value, bool throwOnError)
 		{
 			if (value == null)
 				return new CodePrimitiveExpression (null);
@@ -1056,21 +1059,27 @@ namespace System.Web.Compilation
 			if (t.IsArray) {
 				Array ar = (Array) value;
 				CodeExpression[] items = new CodeExpression [ar.Length];
-				for (int n=0; n<ar.Length; n++)
-					items [n] = GenerateObjectInstance (ar.GetValue (n));
+				for (int n=0; n<ar.Length; n++) {
+					CodeExpression exp = GenerateObjectInstance (ar.GetValue (n), throwOnError);
+					if (exp == null) return null; 
+					items [n] = exp;
+				}
 				return new CodeArrayCreateExpression (new CodeTypeReference (t), items);
 			}
 			
 			TypeConverter converter = TypeDescriptor.GetConverter (t);
 			if (converter != null && converter.CanConvertTo (typeof (InstanceDescriptor))) {
 				InstanceDescriptor idesc = (InstanceDescriptor) converter.ConvertTo (value, typeof(InstanceDescriptor));
-				return GenerateInstance (idesc);
+				return GenerateInstance (idesc, throwOnError);
 			}
 			
 			InstanceDescriptor desc = GetDefaultInstanceDescriptor (value);
-			if (desc != null) return GenerateInstance (desc);
+			if (desc != null) return GenerateInstance (desc, throwOnError);
 			
-			throw new ParseException (currentLocation, "Cannot generate an instance for the type: " + t);
+			if (throwOnError)
+				throw new ParseException (currentLocation, "Cannot generate an instance for the type: " + t);
+			else
+				return null;
 		}
 		
 		InstanceDescriptor GetDefaultInstanceDescriptor (object value)

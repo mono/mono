@@ -1,3 +1,9 @@
+2005-04-07  Lluis Sanchez Gual <lluis@novell.com>
+
+	* TemplateControlCompiler.cs: Avoid using the GetConverter() trick
+	for primitive types. Parse an empty color string as Color.Empty.
+	Get the converter for a property using its PropertyDescriptor.
+	
 2005-04-05  Lluis Sanchez Gual <lluis@novell.com>
 
 	* TemplateControlCompiler.cs: Don't autogenerate IDs for
