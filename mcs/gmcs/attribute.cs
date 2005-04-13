@@ -912,7 +912,7 @@ namespace Mono.CSharp {
 			UnmanagedType array_sub_type = o == null ? UnmanagedType.I4 : (UnmanagedType) o;
 			
 			switch (UnmanagedType) {
-			case UnmanagedType.CustomMarshaler:
+			case UnmanagedType.CustomMarshaler: {
 				MethodInfo define_custom = typeof (UnmanagedMarshal).GetMethod ("DefineCustom",
                                                                        BindingFlags.Static | BindingFlags.Public);
 				if (define_custom == null) {
@@ -926,10 +926,27 @@ namespace Mono.CSharp {
 				args [2] = GetFieldValue ("MarshalType");
 				args [3] = Guid.Empty;
 				return (UnmanagedMarshal) define_custom.Invoke (null, args);
+			}
+			case UnmanagedType.LPArray: {
+				object size_const = GetFieldValue ("SizeConst");
+				object size_param_index = GetFieldValue ("SizeParamIndex");
+
+				if ((size_const != null) || (size_param_index != null)) {
+					MethodInfo define_array = typeof (UnmanagedMarshal).GetMethod ("DefineLPArrayInternal", BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
+					if (define_array == null) {
+						Report.RuntimeMissingSupport (Location, "set marshal info");
+						return null;
+					}
 				
-			case UnmanagedType.LPArray:				
-				return UnmanagedMarshal.DefineLPArray (array_sub_type);
-			
+					object [] args = new object [3];
+					args [0] = array_sub_type;
+					args [1] = size_const;
+					args [2] = size_param_index;
+					return (UnmanagedMarshal) define_array.Invoke (null, args);
+				}
+				else
+					return UnmanagedMarshal.DefineLPArray (array_sub_type);
+			}
 			case UnmanagedType.SafeArray:
 				return UnmanagedMarshal.DefineSafeArray (array_sub_type);
 			

@@ -1,3 +1,8 @@
+2005-02-28  Zoltan Varga  <vargaz@freemail.hu>
+
+	* attribute.cs (GetMarshal): Marshal SizeConst and SizeParamIndex 
+	fields as well.
+
 2005-02-28  Marek Safar  <marek.safar@seznam.cz>
 
 	* attribute.cs: Small refactoring (improved robustness).
