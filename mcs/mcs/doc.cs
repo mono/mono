@@ -321,7 +321,7 @@ namespace Mono.CSharp {
 			if (e != null) {
 				if (!(e is TypeExpr))
 					return null;
-				return ((TypeExpr) e).ResolveType (ds.EmitContext);
+				return ((TypeExpr) e).Type;
 			}
 			int index = identifier.LastIndexOf ('.');
 			if (index < 0)

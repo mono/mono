@@ -1,3 +1,8 @@
+2005-04-13  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* doc.cs : In FindDocumentedType(), avoid TypeExpr.ResolveType() and 
+	  just use TypeExpr.Type. This fixes bug #74595 when merged to gmcs.
+
 2005-04-13  Raja R Harinath  <rharinath@novell.com>
 
 	Fix #74528.
