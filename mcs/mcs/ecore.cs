@@ -3260,6 +3260,9 @@ namespace Mono.CSharp {
 				return false;
 			}
 
+			if (!IsInstance || InstanceExpression == EmptyExpression.Null)
+				InstanceExpression = null;
+
 			if (InstanceExpression != null) {
 				InstanceExpression = InstanceExpression.DoResolve (ec);
 				if (InstanceExpression == null)
@@ -3593,6 +3596,9 @@ namespace Mono.CSharp {
 				return false;
 			}
 
+			if (!IsInstance || InstanceExpression == EmptyExpression.Null)
+				InstanceExpression = null;
+
 			if (InstanceExpression != null) {
 				InstanceExpression = InstanceExpression.DoResolve (ec);
 				if (InstanceExpression == null)
@@ -3623,6 +3629,9 @@ namespace Mono.CSharp {
 
 		public override Expression DoResolve (EmitContext ec)
 		{
+			if (!IsInstance)
+				InstanceExpression = null;
+
 			if (InstanceExpression != null) {
 				InstanceExpression = InstanceExpression.DoResolve (ec);
 				if (InstanceExpression == null)
