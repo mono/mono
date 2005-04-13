@@ -2923,8 +2923,8 @@ namespace Mono.CSharp {
 				return;
 			}
 
-			if (a.Type == TypeManager.struct_layout_attribute_type
-			    && (LayoutKind) a.GetPositionalValue (0) == LayoutKind.Explicit)
+			if (a.Type == TypeManager.struct_layout_attribute_type &&
+			    a.GetLayoutKindValue () == LayoutKind.Explicit)
 				hasExplicitLayout = true;
 
 			base.ApplyAttributeBuilder (a, cb);
@@ -3071,28 +3071,6 @@ namespace Mono.CSharp {
 			}
 
 			base.ApplyAttributeBuilder (a, cb);
-		}
-
-		/// <summary>
-		/// Resolves AttributeUsageAttribute for attribute class
-		/// </summary>
-		public AttributeUsageAttribute ResolveAttributeUsage (EmitContext ec)
-		{
-			if (OptAttributes == null)
-				return Attribute.DefaultUsageAttribute;
-
-			Attribute a = OptAttributes.Search (TypeManager.attribute_usage_type, ec);
-			if (a == null)
-				return Attribute.DefaultUsageAttribute;
-
-			// Because our namespace model is so weird.
-			// When GlobalAttribute is resolved and it has AttributeUsage attribute
-			// we need to switch from global namespace to local
-			DeclSpace old_ds = ec.DeclSpace;
-			ec.DeclSpace = this;
-			a.Resolve (ec);
-			ec.DeclSpace = old_ds;
-			return a.UsageAttribute;
 		}
 
 		public const TypeAttributes DefaultTypeAttributes =
@@ -3954,7 +3932,8 @@ namespace Mono.CSharp {
 				return;
 			}
 
-			if (a.Type == TypeManager.methodimpl_attr_type && a.IsInternalCall) {
+			if (a.Type == TypeManager.methodimpl_attr_type &&
+				(a.GetMethodImplOptions () & MethodImplOptions.InternalCall) != 0) {
 				MethodBuilder.SetImplementationFlags (MethodImplAttributes.InternalCall | MethodImplAttributes.Runtime);
 			}
 

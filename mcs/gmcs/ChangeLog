@@ -1,3 +1,27 @@
+2005-02-28  Marek Safar  <marek.safar@seznam.cz>
+
+	* attribute.cs: Small refactoring (improved robustness).
+	(ImplOptions, UnmanagedType, UsageAttribute): Removed members.
+	(ValidateGuid): Removed.
+	(Resolve): Removed referenced to above mentioned.
+	(GetAttributeUsage): Made private and changed to work without
+	class assistance.
+	(GetIndexerAttributeValue): Don't crash.
+	(GetConditionalAttributeValue): Ditto.
+	(GetClsCompliantAttributeValue): Ditto.
+	(ExtractSecurityPermissionSet): All attributes exceptions are
+	error 648.
+	(GetPropertyValue): New helper.
+	(GetMethodImplOptions): New method.
+	(DefinePInvokeMethod): Reuse common code. Implemented handling of
+	some missing properties.
+	
+	* class.cs (ClassOrStruct.ApplyAttributeBuilder): Updated.
+	(Method.ApplyAttributeBuilder): Updated.
+	
+	* decl.cs (DeclSpace.ApplyAttributeBuilder): Don't catch shared
+	exception.
+
 2005-02-28  Raja R Harinath  <rharinath@novell.com>
 
 	Fix #73052.
