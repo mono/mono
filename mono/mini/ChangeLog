@@ -1,5 +1,7 @@
 2005-04-13  Zoltan Varga  <vargaz@freemail.hu>
 
+	* mini-ops.h: Add new sparc opcodes.
+
 	* mini-sparc.h mini-sparc.c tramp-sparc.c inssel-sparc.brg: Allocate arguments
 	to registers using the same method as the amd64 port. Repartition registers
 	so the argument registers are used for local allocated, while l0..l6 is used
