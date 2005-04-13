@@ -1,3 +1,9 @@
+2005-04-13  Jordi Mas i Hernandez <jordi@ximian.com>
+
+	* Form.cs: Pospone menu assignation if the window has not been created yet
+	* XplatUIWin32.cs: Fixes Win32SetWindowPos, then does not change window 
+	size and position
+
 2005-04-12  Jackson Harper  <jackson@ximian.com>
 
 	* TreeView.cs: Set the TopNode properly when scrolling

@@ -468,8 +468,10 @@ namespace System.Windows.Forms {
 
 					menu.SetForm (this);
 					MenuAPI.SetMenuBarWindow (menu.Handle, this);
-					
-					XplatUI.SetMenu(window.Handle, menu.Handle);
+				
+					if (IsHandleCreated && menu != null) {	
+						XplatUI.SetMenu(window.Handle, menu.Handle);
+					}
 
 					// FIXME - Do we still need this?
 					this.SetBoundsCore(0, 0, 0, 0, BoundsSpecified.None);
@@ -1029,6 +1031,11 @@ namespace System.Windows.Forms {
 
 				this.is_visible = visible;
 			}
+			
+			if (menu != null) {
+				XplatUI.SetMenu(window.Handle, menu.Handle);
+			}
+			
 			OnLoad(EventArgs.Empty);
 
 			// Send initial location

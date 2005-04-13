@@ -1540,7 +1540,7 @@ Console.WriteLine("Hit Clear background");
 
 		internal override void SetMenu(IntPtr handle, IntPtr menu_handle) {
 			// Trigger WM_NCCALC
-			Win32SetWindowPos(handle, IntPtr.Zero, 0, 0, 0, 0, SetWindowPosFlags.SWP_FRAMECHANGED);
+			Win32SetWindowPos(handle, IntPtr.Zero, 0, 0, 0, 0, SetWindowPosFlags.SWP_FRAMECHANGED | SetWindowPosFlags.SWP_NOMOVE | SetWindowPosFlags.SWP_NOSIZE);
 		}
 
 
