@@ -45,7 +45,10 @@ namespace Mono.CSharp {
 				Report.Error (1625, loc, "Cannot yield in the body of a " +
 					      "finally clause");
 				return false;
+			} else {
+				Console.WriteLine ("Not in finally");
 			}
+			
 			if (ec.InUnsafe) {
 				Report.Error (1629, loc, "Unsafe code may not appear in iterators");
 				return false;

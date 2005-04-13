@@ -1,3 +1,7 @@
+2005-04-12  Miguel de Icaza  <miguel@novell.com>
+
+	* typemanager.cs (IsUnmanagedType): Arrays are allowed.
+
 2005-04-11  Marek Safar  <marek.safar@seznam.cz>
 
 	Fix# 74565
