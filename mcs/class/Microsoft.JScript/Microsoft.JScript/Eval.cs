@@ -4,6 +4,7 @@
 // Author: Cesar Octavio Lopez Nataren
 //
 // (C) 2003, Cesar Octavio Lopez Nataren, <cesar@ciencias.unam.mx>
+// (C) 2005, Novell Inc, (http://novell.com)
 //
 
 //
@@ -30,7 +31,7 @@
 using System;
 using Microsoft.JScript.Vsa;
 
-namespace Microsoft.JScript.Tmp {
+namespace Microsoft.JScript {
 
 	public class Eval : AST {
 

@@ -326,6 +326,7 @@ namespace Microsoft.JScript {
 			ILGenerator ig = ec.ig;
 			Equality eq = ast as Equality;
 
+			eq.Emit (ec);
 			switch (eq.op) {
 			case JSToken.NotEqual:
 				ig.Emit (OpCodes.Brtrue, lbl);
@@ -341,17 +342,17 @@ namespace Microsoft.JScript {
 			Type type = ast.GetType ();
 
 			if (type == typeof (Expression)) {  
-				Expression exp = ast as Expression;
-				exp.Emit (ec);
-				AST last_exp = (AST) exp.exprs [exp.exprs.Count - 1];
-
-				if (last_exp is Binary)
-					ft_binary_recursion (ec, last_exp, lbl);
-				else if (last_exp is Equality)
-					ft_emit_equality (ec, last_exp, lbl);
+				Expression exp = ast as Expression;				
+				AST last_exp = last_exp = (AST) exp.exprs [exp.exprs.Count - 1];
+				if (exp.exprs.Count >= 2)
+					exp.Emit (ec);
+				fall_true (ec, last_exp, lbl);
 			} else if (type == typeof (Binary))
 				ft_binary_recursion (ec, ast, lbl);
-			else
+			else if (type == typeof (Equality)) {
+				Console.WriteLine ("about to call ft_emit_equality");
+				ft_emit_equality (ec, ast, lbl);
+			} else
 				emit_default_case (ec, ast, OpCodes.Brfalse, lbl);
 		}
 
@@ -491,6 +492,33 @@ namespace Microsoft.JScript {
 		internal static object variable_defined_in_current_scope (string id)
 		{
 			return TypeManager.defined_in_current_scope (id);
+		}
+
+		internal static void load_local_vars (ILGenerator ig, bool inFunction)
+		{
+			int n = 0;
+			Type stack_frame = typeof (StackFrame);
+
+			CodeGenerator.load_engine (inFunction, ig);
+
+			ig.Emit (OpCodes.Call, typeof (VsaEngine).GetMethod ("ScriptObjectStackTop"));
+			ig.Emit (OpCodes.Castclass, stack_frame);
+			ig.Emit (OpCodes.Ldfld, stack_frame.GetField ("localVars"));
+
+			object [] locals = TypeManager.CurrentLocals;
+			n = locals != null ? locals.Length : 0;
+			object local = null;
+
+			for (int i = 0; i < n; i++) {
+				local = locals [i];
+				if (local is LocalBuilder) {
+					ig.Emit (OpCodes.Dup);
+					ig.Emit (OpCodes.Ldc_I4, i);
+					ig.Emit (OpCodes.Ldloc, (LocalBuilder) local);
+					ig.Emit (OpCodes.Stelem_Ref);				
+				}
+			}
+			ig.Emit (OpCodes.Pop);
 		}
 	}
 }

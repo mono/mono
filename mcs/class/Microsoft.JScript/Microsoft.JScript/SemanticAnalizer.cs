@@ -44,7 +44,7 @@ namespace Microsoft.JScript {
 
 		private static Hashtable obj_ctrs;
 		private static Hashtable prototypes;
-
+		internal static Hashtable methods_with_eval = new Hashtable ();
 		//
 		// Type to GlobalObject
 		//
@@ -187,6 +187,19 @@ namespace Microsoft.JScript {
 			if (jsObj == null)
 				throw new Exception ("jsObj can't be null");
 			return (Type) prototypes [jsObj.GetType ()];
+		}
+
+		internal static void AddMethodWithEval (string name)
+		{
+			object contained = methods_with_eval [name];
+			if (contained == null)
+				methods_with_eval.Add (name, true);
+		}
+
+		internal static bool MethodContainsEval (string name)
+		{
+			object val = methods_with_eval [name];
+			return val != null;
 		}
 	}
 }

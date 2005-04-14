@@ -111,7 +111,7 @@ namespace Microsoft.JScript {
 						  FieldAttributes.Public | FieldAttributes.Static);
 			else {
 				local_func = ig.DeclareLocal (typeof (Microsoft.JScript.ScriptFunction));
-				TypeManager.AddLocal (name, local_func);
+				TypeManager.AddLocalScriptFunction (name, local_func);
 			}
 			build_closure (ec, full_name);
 		}
@@ -122,6 +122,10 @@ namespace Microsoft.JScript {
 			ILGenerator old_ig = ec.ig;
 			ec.ig = this.ig;
 			func_obj.body.Emit (ec);
+
+			if (SemanticAnalyser.MethodContainsEval (func_obj.name))
+				CodeGenerator.load_local_vars (ec.ig, true);
+
 			this.ig.Emit (OpCodes.Ret);
 			ec.ig = old_ig;
 			TypeManager.EndScope ();
@@ -141,7 +145,15 @@ namespace Microsoft.JScript {
 			func_obj.parameters.Emit (ec);
 			build_local_fields (ig);
 
-			ig.Emit (OpCodes.Ldc_I4_0); // FIXME: this hard coded for now.
+			//
+			// If we have en eval method call, we have to 
+			// save the loca vars in the stack
+			//
+			if (SemanticAnalyser.MethodContainsEval (func_obj.name))
+				ig.Emit (OpCodes.Ldc_I4_1);
+			else
+				ig.Emit (OpCodes.Ldc_I4_0);
+
 			ig.Emit (OpCodes.Ldc_I4_0); // FIXME: this hard coded for now.
 			ig.Emit (OpCodes.Ldstr, "STRING_REPRESENTATION_OF_THE_FUNCTION"); // FIXME
 			ig.Emit (OpCodes.Ldnull); // FIXME: this hard coded for now.
@@ -158,7 +170,7 @@ namespace Microsoft.JScript {
 
 		internal void build_local_fields (ILGenerator ig)
 		{
-			AST e;
+			object e;
 			int n;
 
 			if (locals == null)

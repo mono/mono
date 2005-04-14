@@ -496,7 +496,7 @@ namespace Microsoft.JScript {
 
 		internal Call (AST parent, AST exp)
 		{
-			this.parent = parent; 
+			this.parent = parent;
 			this.member_exp = exp;
 			this.args = new Args ();
 		}
@@ -532,6 +532,16 @@ namespace Microsoft.JScript {
 						if (!built_in.IsFunction)
 							throw new Exception ("error JS5002 A: function expected.");
 						if (IsGlobalObjectMethod (built_in)) {
+							//
+							// If a method contains an eval invocation
+							// we must generate proper code for accessing 
+							// the local vars in the StackFrame.
+							//
+							if (((Identifier) member_exp).name.Value == "eval") {
+								Function cont_func = GetContainerFunction;
+								if (cont_func != null)
+									SemanticAnalyser.AddMethodWithEval (cont_func.func_obj.name);
+							}
 							args.params_info = built_in.Parameters;
 							n = built_in.NumOfArgs;
 						}
@@ -578,17 +588,39 @@ namespace Microsoft.JScript {
 					emit_print_stm (ec);
 					return;
 				} else if (IsGlobalObjectMethod (binding)) {
+					bool eval = IsEval (binding);
+					bool in_func = InFunction;
+					
+					if (eval && in_func)
+						CodeGenerator.load_local_vars (ec.ig, in_func);
+					
 					args.Emit (ec);
+
+					if (eval)
+						CodeGenerator.load_engine (in_func, ec.ig);
+
 					member_exp.Emit (ec);
+
+					if (eval && no_effect && in_func)
+						ec.ig.Emit (OpCodes.Pop);
+
+					if (eval && in_func)
+						set_local_vars (ec.ig);
 				} else if (IsConstructorProperty (binding)) {
  					member_exp.Emit (ec);
  					EmitBuiltInArgs (ec);
  					EmitInvoke (ec);					
 				}
 			} else if (bind_type == typeof (FunctionDeclaration) || bind_type == typeof (FunctionExpression)) {
-				MethodBuilder method = (MethodBuilder) TypeManager.Get ((binding as Function).func_obj.name);
-				emit_func_call (method, ec);
-				return;
+				Function function = binding as Function;
+				MethodBuilder method = (MethodBuilder) TypeManager.Get (function.func_obj.name);
+				
+				if (SemanticAnalyser.MethodContainsEval (function.func_obj.name))
+					emit_late_call (ec);
+				else {
+					emit_func_call (method, ec);
+					return;
+				}
 			} else if (binding is MemberInfo) {
 				MemberInfo minfo = (MemberInfo) binding;
 				MemberTypes member_type = minfo.MemberType;
@@ -876,6 +908,40 @@ namespace Microsoft.JScript {
 				return false;
 			}
 		}
+
+		bool IsEval (object binding)
+		{
+			if (binding == null || binding.GetType () != typeof (BuiltIn))
+				return false;
+			BuiltIn bind = (BuiltIn) binding;
+			return bind.Name == "eval";
+		}
+
+		private void set_local_vars (ILGenerator ig)
+		{
+			int n = 0;
+			Type stack_frame = typeof (StackFrame);
+
+			CodeGenerator.load_engine (InFunction, ig);
+
+			ig.Emit (OpCodes.Call, typeof (VsaEngine).GetMethod ("ScriptObjectStackTop"));
+			ig.Emit (OpCodes.Castclass, stack_frame);
+			ig.Emit (OpCodes.Ldfld, stack_frame.GetField ("localVars"));
+
+			object [] locals = TypeManager.CurrentLocals;
+			n = locals != null ? locals.Length : 0;
+			object local = null;
+
+			for (int i = 0; i < n; i++) {
+				local = locals [i];
+				if (local is LocalBuilder) {
+					ig.Emit (OpCodes.Dup);
+					ig.Emit (OpCodes.Ldc_I4, i);
+					ig.Emit (OpCodes.Ldelem_Ref);
+					ig.Emit (OpCodes.Stloc, (LocalBuilder) local);
+				}
+			}
+		}
 	}
 
 	interface IAccesible {
@@ -1044,7 +1110,7 @@ namespace Microsoft.JScript {
 				if (bind is MethodBuilder) {
 					TypeBuilder type = ec.type_builder;
 					if (binding.InFunction) {
-						LocalBuilder local_meth = (LocalBuilder) TypeManager.GetLocal (binding.func_obj.name);
+						LocalBuilder local_meth = (LocalBuilder) TypeManager.GetLocalScriptFunction (binding.func_obj.name);
 						ec.ig.Emit (OpCodes.Ldloc, local_meth);
 					} else {
 						FieldInfo method = type.GetField (binding.func_obj.name);
@@ -1662,9 +1728,9 @@ namespace Microsoft.JScript {
 				
 			/* function properties of the Global Object */
 			case "eval":
-				throw new NotImplementedException ();
-			case "parseInt":
-				
+				ig.Emit (OpCodes.Call, typeof (Eval).GetMethod ("JScriptEvaluate"));
+				break;
+			case "parseInt":				
 				ig.Emit (OpCodes.Call, go.GetMethod ("parseInt"));
 				ig.Emit (OpCodes.Box, typeof (Double));
 				break;

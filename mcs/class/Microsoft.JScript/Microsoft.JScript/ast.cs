@@ -106,11 +106,10 @@ namespace Microsoft.JScript {
 		internal FunctionObject func_obj;
 		internal JSFunctionAttributeEnum func_type;
 
-		internal AST [] locals;
+		internal object [] locals;
 		internal LocalBuilder local_func;
 		
 		protected bool not_void_return = false;
-		
 		protected ILGenerator ig;
 
 		internal bool CheckThis {

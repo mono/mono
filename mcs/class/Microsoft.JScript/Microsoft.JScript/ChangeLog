@@ -1,3 +1,40 @@
+2005-04-14  Cesar Lopez Nataren  <cnataren@novell.com>
+
+	* SemanticAnalizer.cs: Added a Hashtable that indicates which
+	methods need to generate proper code for handling the local vars
+	in the StackFrame. Added method AddMethodWithEval, MethodContainsEval.
+
+	* Eval.cs: Back to M.J.
+
+	* ast.cs: locals from abstract class Function is now an array of
+	objects not just AST's.
+
+	* CodeGenerator.cs: Clean up fall_true, better using recursion :)
+	Added static method load_local_vars. At method ft_emit_equality do
+	Emit the code of the ast. Added method load_local_vars.
+
+	* FunctionDeclaration.cs: Update call to TypeManager methods to
+	new API. Added a check for invocations to 'eval' inside functions
+	so StackFrame IL code gets generated. Build the function's closure
+	take the need for the StackFrame into account.
+	
+	* TypeManager.cs: renamed IdentificationTable locals to
+	local_script_functions, AddLocal to AddLocalScriptFunction,
+	GetLocal to GetLocalScriptFunction. Added method CurrentLocals.
+
+	* IdentificationTable.cs: Method CurrentLocals now returns
+	an array of object's not AST's.
+
+	* expression.cs: (class Call) Check if we have a call to 'eval',
+	if so we must keep up the StackFrame which contains the local
+	vars. We generate special code that handles the StackFrame with
+	the local vars in order to keep them in sync. When a function
+	contains an invocation to 'eval' even when such function is a
+	function declared in the code we do not perform a direct method
+	call to it when invoked instead a call through late binding gets
+	performed. Added methods IsEval, set_local_vars. Implement 'eval'
+	from JScript!
+
 2005-04-10  Cesar Lopez Nataren  <cnataren@novell.com>
 
 	* StackTrace.cs: Back to M.J namespace.

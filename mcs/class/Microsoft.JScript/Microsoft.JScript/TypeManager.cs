@@ -17,24 +17,24 @@ namespace Microsoft.JScript {
 	internal class TypeManager {
 
 		static IdentificationTable infos;
-		static IdentificationTable locals;
+		static IdentificationTable local_script_functions;
 
 		static TypeManager ()
 		{
 			infos = new IdentificationTable ();
-			locals = new IdentificationTable ();
+			local_script_functions = new IdentificationTable ();
 		}
 
 		internal static void BeginScope ()
 		{
 			infos.BeginScope ();
-			locals.BeginScope ();
+			local_script_functions.BeginScope ();
 		}
 
 		internal static void EndScope ()
 		{
 			infos.EndScope ();
-			locals.EndScope ();
+			local_script_functions.EndScope ();
 		}
 
 		internal static void Add (string name, object o)
@@ -42,9 +42,9 @@ namespace Microsoft.JScript {
 			infos.Enter (Symbol.CreateSymbol (name), o);
 		}
 
-		internal static void AddLocal (string name, object o)
+		internal static void AddLocalScriptFunction (string name, object o)
 		{
-			locals.Enter (Symbol.CreateSymbol (name), o);
+			local_script_functions.Enter (Symbol.CreateSymbol (name), o);
 		}
 
 		internal static object Get (string name)
@@ -52,9 +52,9 @@ namespace Microsoft.JScript {
 			return infos.Get (Symbol.CreateSymbol (name));
 		}
 
-		internal static object GetLocal (string name)
+		internal static object GetLocalScriptFunction (string name)
 		{
-			return locals.Get (Symbol.CreateSymbol (name));
+			return local_script_functions.Get (Symbol.CreateSymbol (name));
 		}
 
 		internal static void Set (string name, object o)
@@ -68,6 +68,10 @@ namespace Microsoft.JScript {
 			if (infos.InCurrentScope (Symbol.CreateSymbol (id)))
 				return Get (id);
 			return null;					
+		}
+
+		internal static object [] CurrentLocals {
+			get { return infos.CurrentLocals; }
 		}
 	}
 }

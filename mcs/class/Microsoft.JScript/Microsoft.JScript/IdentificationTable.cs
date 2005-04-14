@@ -237,11 +237,10 @@ namespace Microsoft.JScript {
 			// delete the latest scope mark
 			//
 			marks = marks.Tail;
-
 			current_locals.Pop ();
 		}
 
-		internal AST [] CurrentLocals {
+		internal object [] CurrentLocals {
 			get {
 				Stack stack = new Stack ();
 				Symbol _top = top;
@@ -253,7 +252,7 @@ namespace Microsoft.JScript {
 				}
 				if (stack.Count == 0)
 					return null;
-				AST [] locals = new AST [stack.Count];
+				object [] locals = new object [stack.Count];
 				stack.CopyTo (locals, 0);
 				return locals;
 			}
