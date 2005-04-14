@@ -1,3 +1,6 @@
+2005-04-14  Raja R Harinath  <rharinath@novell.com>
+
+	* wapi-private.h: Remove reference to 'daemon-private.h'.
 
 Wed Apr 13 13:12:33 EDT 2005 Paolo Molaro <lupus@ximian.com>
 
