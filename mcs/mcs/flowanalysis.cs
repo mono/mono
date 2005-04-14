@@ -1171,11 +1171,29 @@ namespace Mono.CSharp
 				return false;
 		}
 
-		public virtual bool InTryWithCatch ()
+		//
+		// Checks whether we're in a `catch' block.
+		//
+		public virtual bool InCatch ()
 		{
 			if (Parent != null)
-				return Parent.InTryWithCatch ();
-			return false;
+				return Parent.InCatch ();
+			else
+				return false;
+		}
+
+		//
+		// Checks whether we're in a `finally' block.
+		//
+		public virtual bool InFinally (bool is_return)
+		{
+			if (!is_return &&
+			    ((Type == BranchingType.Loop) || (Type == BranchingType.Switch)))
+				return false;
+			else if (Parent != null)
+				return Parent.InFinally (is_return);
+			else
+				return false;
 		}
 
 		public virtual bool InLoop ()
@@ -1365,6 +1383,7 @@ namespace Mono.CSharp
 		UsageVector finally_vector;
 		UsageVector finally_origins;
 		bool emit_finally;
+		bool in_try;
 
 		public FlowBranchingException (FlowBranching parent,
 					       ExceptionStatement stmt)
@@ -1380,12 +1399,15 @@ namespace Mono.CSharp
 			if (sibling.Type == SiblingType.Try) {
 				sibling.Next = catch_vectors;
 				catch_vectors = sibling;
+				in_try = true;
 			} else if (sibling.Type == SiblingType.Catch) {
 				sibling.Next = catch_vectors;
 				catch_vectors = sibling;
+				in_try = false;
 			} else if (sibling.Type == SiblingType.Finally) {
 				sibling.MergeFinallyOrigins (finally_origins);
 				finally_vector = sibling;
+				in_try = false;
 			} else
 				throw new InvalidOperationException ();
 
@@ -1401,18 +1423,14 @@ namespace Mono.CSharp
 			return finally_vector == null;
 		}
 
-		public override bool InTryWithCatch ()
+		public override bool InCatch ()
 		{
-			if (finally_vector == null) {
-				Try t = stmt as Try;
-				if (t != null && t.HasCatch)
-					return true;
-			}
+			return !in_try && (finally_vector == null);
+		}
 
-			if (Parent != null)
-				return Parent.InTryWithCatch ();
-
-			return false;
+		public override bool InFinally (bool is_return)
+		{
+			return finally_vector != null;
 		}
 
 		public override bool BreakCrossesTryCatchBoundary ()

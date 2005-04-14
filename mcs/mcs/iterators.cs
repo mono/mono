@@ -41,7 +41,7 @@ namespace Mono.CSharp {
 
 		public static bool CheckContext (EmitContext ec, Location loc)
 		{
-			if (ec.InFinally) {
+			if (ec.CurrentBranching.InFinally (true)){
 				Report.Error (1625, loc, "Cannot yield in the body of a " +
 					      "finally clause");
 				return false;
@@ -51,21 +51,19 @@ namespace Mono.CSharp {
 				Report.Error (1629, loc, "Unsafe code may not appear in iterators");
 				return false;
 			}
-			if (ec.InCatch){
+			if (ec.CurrentBranching.InCatch ()){
 				Report.Error (1631, loc, "Cannot yield in the body of a " +
 					      "catch clause");
 				return false;
 			}
 			if (ec.CurrentAnonymousMethod != null){
-				Report.Error (1621, loc, "The yield statement cannot be used inside anonymous method blocks");
+				Report.Error (1621, loc, "yield statement can not appear inside an anonymoud method");
 				return false;
 			}
 
-			if (ec.CurrentBranching.InTryWithCatch ()) {
-				Report.Error (1626, loc, "Cannot yield a value in the body of a " +
-					"try block with a catch clause");
-				return false;
-			}
+			//
+			// FIXME: Missing check for Yield inside try block that contains catch clauses
+			//
 			return true;
 		}
 		

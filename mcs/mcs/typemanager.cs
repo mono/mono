@@ -1523,8 +1523,10 @@ public class TypeManager {
 	public static bool IsUnmanagedType (Type t)
 	{
 		// builtins that are not unmanaged types
-		if (t == TypeManager.object_type || t == TypeManager.string_type)
+		if (t == TypeManager.object_type || t == TypeManager.string_type){
+			Console.WriteLine ("A fucking string");
 			return false;
+		}
 
 		if (IsBuiltinOrEnum (t))
 			return true;
@@ -1535,8 +1537,13 @@ public class TypeManager {
 		if (t.IsArray)
 			return IsUnmanagedType (t.GetElementType ());
 
-		if (!IsValueType (t))
+		if (IsDelegateType (t))
+			return true;
+
+		if (!IsValueType (t)){
+			Console.WriteLine ("No value type: " + t.FullName);
 			return false;
+		}
 
 		if (t is TypeBuilder){
 			TypeContainer tc = LookupTypeContainer (t);
@@ -1548,8 +1555,10 @@ public class TypeManager {
 					continue;
 				if (f.MemberType == null)
 					continue;
-				if (!IsUnmanagedType (f.MemberType))
+				if (!IsUnmanagedType (f.MemberType)){
+					Console.WriteLine ("RECU on F: " + f.MemberType.FullName + " On " + t.FullName);
 					return false;
+				}
 			}
 			return true;
 		}
@@ -1557,8 +1566,11 @@ public class TypeManager {
 		FieldInfo [] fields = t.GetFields (BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
 
 		foreach (FieldInfo f in fields)
-			if (!IsUnmanagedType (f.FieldType))
+			if (!IsUnmanagedType (f.FieldType)){
+				Console.WriteLine ("No value type Field: " + f.FieldType.FullName);
+
 				return false;
+			}
 
 		return true;
 	}

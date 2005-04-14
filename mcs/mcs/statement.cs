@@ -611,7 +611,7 @@ namespace Mono.CSharp {
 			if (ec.CurrentBranching.InTryOrCatch (true)) {
 				ec.CurrentBranching.AddFinallyVector (vector);
 				in_exc = true;
-			} else if (ec.InFinally) {
+			} else if (ec.CurrentBranching.InFinally (true)) {
 				Error (157, "Control can not leave the body of the finally block");
 				return false;
 			} else
@@ -871,13 +871,13 @@ namespace Mono.CSharp {
 				return true;
 			}
 
-			if (!ec.InCatch) {
-				Error (156, "A throw statement with no arguments is not allowed outside of a catch clause");
+			if (ec.CurrentBranching.InFinally (true)) {
+				Error (724, "A throw statement with no argument is only allowed in a catch clause nested inside of the innermost catch clause");
 				return false;
 			}
 
-			if (ec.InFinally) {
-				Error (724, "A throw statement with no argument is only allowed in a catch clause nested inside of the innermost catch clause");
+			if (!ec.CurrentBranching.InCatch ()) {
+				Error (156, "A throw statement with no argument is only allowed in a catch clause");
 				return false;
 			}
 			return true;
@@ -909,7 +909,7 @@ namespace Mono.CSharp {
 			if (!ec.CurrentBranching.InLoop () && !ec.CurrentBranching.InSwitch ()){
 				Error (139, "No enclosing loop or switch to continue to");
 				return false;
-			} else if (ec.InFinally) {
+			} else if (ec.CurrentBranching.InFinally (false)) {
 				Error (157, "Control can not leave the body of the finally block");
 				return false;
 			} else if (ec.CurrentBranching.InTryOrCatch (false))
@@ -954,7 +954,7 @@ namespace Mono.CSharp {
 			if (!ec.CurrentBranching.InLoop () && !ec.CurrentBranching.InSwitch ()){
 				Error (139, "No enclosing loop to continue to");
 				return false;
-			} else if (ec.InFinally) {
+			} else if (ec.CurrentBranching.InFinally (false)) {
 				Error (157, "Control can not leave the body of the finally block");
 				return false;
 			} else if (ec.CurrentBranching.InTryOrCatch (false))
@@ -3587,30 +3587,23 @@ namespace Mono.CSharp {
 
 		public override bool Resolve (EmitContext ec)
 		{
-			bool was_catch = ec.InCatch;
-			ec.InCatch = true;
-			try {
-				if (type_expr != null) {
-					TypeExpr te = type_expr.ResolveAsTypeTerminal (ec, false);
-					if (te == null)
-						return false;
+			if (type_expr != null) {
+				TypeExpr te = type_expr.ResolveAsTypeTerminal (ec, false);
+				if (te == null)
+					return false;
 
-					type = te.ResolveType (ec);
+				type = te.ResolveType (ec);
 
-					CheckObsolete (type);
+				CheckObsolete (type);
 
-					if (type != TypeManager.exception_type && !type.IsSubclassOf (TypeManager.exception_type)){
-						Error (155, "The type caught or thrown must be derived from System.Exception");
-						return false;
-					}
-				} else
-					type = null;
+				if (type != TypeManager.exception_type && !type.IsSubclassOf (TypeManager.exception_type)){
+					Error (155, "The type caught or thrown must be derived from System.Exception");
+					return false;
+				}
+			} else
+				type = null;
 
-				return Block.Resolve (ec);
-			}
-			finally {
-				ec.InCatch = was_catch;
-			}
+			return Block.Resolve (ec);
 		}
 	}
 
@@ -3705,11 +3698,9 @@ namespace Mono.CSharp {
 						Fini, FlowBranching.SiblingType.Finally);
 
 				Report.Debug (1, "STARTED SIBLING FOR FINALLY", ec.CurrentBranching, vector);
-				bool was_finally = ec.InFinally;
-				ec.InFinally = true;
+
 				if (!Fini.Resolve (ec))
 					ok = false;
-				ec.InFinally = was_finally;
 			}
 
 			ResolveFinally (branching);
@@ -3773,13 +3764,6 @@ namespace Mono.CSharp {
 		{
 			if (Fini != null){
 				Fini.Emit (ec);
-			}
-		}
-
-		public bool HasCatch
-		{
-			get {
-				return General != null || Specific.Count > 0;
 			}
 		}
 	}
