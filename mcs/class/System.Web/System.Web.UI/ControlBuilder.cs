@@ -152,6 +152,25 @@ namespace System.Web.UI {
 			}
 		}
 
+		internal Type BindingContainerType {
+			get {
+				if (parentBuilder == null)
+					return typeof (Control);
+					
+				if (parentBuilder is TemplateBuilder && ((TemplateBuilder)parentBuilder).ContainerType != null)
+					return ((TemplateBuilder)parentBuilder).ContainerType;
+
+				Type ptype = parentBuilder.ControlType;
+				if (ptype == null)
+					return parentBuilder.BindingContainerType;
+
+				if (!typeof (INamingContainer).IsAssignableFrom (ptype))
+					return parentBuilder.BindingContainerType;
+
+				return ptype;
+			}
+		}
+
 		protected TemplateParser Parser {
 			get { return parser; }
 		}

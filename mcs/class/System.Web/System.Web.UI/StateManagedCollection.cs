@@ -34,7 +34,11 @@ using System.Collections.Specialized;
 using System.Text;
 
 namespace System.Web.UI {
-	public abstract class StateManagedCollection : IList, IStateManager {
+	public abstract class StateManagedCollection : IList, IStateManager
+	{
+		ArrayList items = new ArrayList ();
+		bool saveEverything = false;
+		IStateManager[] originalItems;
 		
 		protected abstract object CreateKnownType (int index);
 		protected abstract void SetDirtyObject (object o);
@@ -78,74 +82,110 @@ namespace System.Web.UI {
 		#region IStateManager
 		void IStateManager.LoadViewState (object savedState)
 		{
-			if (savedState == null) return;
+			if (savedState == null) {
+				foreach (IStateManager item in items)
+					item.LoadViewState (null);
+				return;
+			}
+			
+			object[] its = (object[]) savedState;
+			
+			saveEverything = (bool)its [0];
+			
+			if (saveEverything)
+				items.Clear ();
 
-			int pos = -1;
-			foreach (Pair p in (ArrayList)savedState) {
-				pos ++;
+			for (int n=1; n<its.Length; n++) {
+				int oi;
+				object state;
+				object type;
 				
-				if (p == null)
-					continue;
-				IStateManager itm;
+				Triplet triplet = its [n] as Triplet;
+				if (triplet != null) {
+					oi = (int) triplet.First;
+					state = triplet.Second;
+					type = triplet.Third; 
+				} else {
+					Pair pair = (Pair) its [n];
+					oi = (int) pair.First;
+					state = pair.Second;
+					type = null;
+				}
 				
-				if (p.Second is Type)
-					itm = (IStateManager) Activator.CreateInstance ((Type) p.Second);
-				else
-					itm = (IStateManager) CreateKnownType ((int) p.Second);
+				IStateManager item;
+				if (oi != -1)
+					item = originalItems [oi];
+				else {
+					if (type is Type)
+						item = (IStateManager) Activator.CreateInstance ((Type) type);
+					else
+						item = (IStateManager) CreateKnownType ((int) type);
+				}
 				
-				if (isTrackingViewState)
-					itm.TrackViewState ();
-
-				itm.LoadViewState (p.First);
+				if (saveEverything) ((IList)this).Add (item);
 				
-				if (pos >= Count)
-					items.Add (itm);
-				else
-					items [pos] = itm;
-				
+				item.LoadViewState (state);
 			}
 		}
 		
 		object IStateManager.SaveViewState ()
 		{
-			ArrayList saved = new ArrayList ();
-			Type [] knownTypes = GetKnownTypes ();
-			bool allNull = true;
+			object[] state = null;
+			bool hasData = false;
+			Type[] knownTypes = GetKnownTypes ();
 			
-			foreach (IStateManager itm in items) {
-				object state = itm.SaveViewState ();
-				if (state == null && !saveEverything) {
-					saved.Add (null);
-					continue;
+			if (saveEverything) {
+				state = new object [items.Count + 1];
+				state [0] = true;
+				for (int n=0; n<items.Count; n++)
+				{
+					IStateManager item = (IStateManager) items [n];
+					int oi = Array.IndexOf (originalItems, item);
+					object ns = item.SaveViewState ();
+					if (ns != null) hasData = true;
+					
+					if (oi == -1) {
+						Type t = item.GetType ();
+						int idx = knownTypes == null ? -1 : Array.IndexOf (knownTypes, t);
+						if (idx != -1)
+							state [n + 1] = new Triplet (oi, ns, idx);
+						else
+							state [n + 1] = new Triplet (oi, ns, t);
+					}
+					else
+						state [n + 1] = new Pair (oi, ns);
 				}
-				
-				Pair p = new Pair ();
-				p.First = state;
-				
-				Type t = itm.GetType ();
-				int idx = -1;
-				if (knownTypes != null)
-					idx = Array.IndexOf (knownTypes, t);
-				
-				if (idx != -1)
-					p.Second = idx;
-				else
-					p.Second = t;
-				
-				saved.Add (p);
-				allNull = false;
+			} else {
+				ArrayList list = new ArrayList ();
+				for (int n=0; n<items.Count; n++) {
+					IStateManager item = (IStateManager) items [n];
+					object ns = item.SaveViewState ();
+					if (ns != null) {
+						hasData = true;
+						list.Add (new Pair (n, ns));
+					}
+				}
+				if (hasData) {
+					list.Insert (0, false);
+					state = list.ToArray ();
+				}
 			}
 			
-			if (allNull) return null;
-			else return saved;
+			if (hasData)
+				return state;
+			else
+				return null;
 		}
 		
 		void IStateManager.TrackViewState ()
 		{
 			isTrackingViewState = true;
-			
-			foreach (IStateManager i in items)
-				i.TrackViewState ();
+			originalItems = new IStateManager [items.Count];
+			for (int n=0; n<items.Count; n++) {
+				originalItems [n] = (IStateManager) items [n];
+				originalItems [n].TrackViewState ();
+			}
+				
 		}
 		
 		bool isTrackingViewState;
@@ -162,7 +202,8 @@ namespace System.Web.UI {
 			items.Clear ();
 			this.OnClearComplete ();
 			
-			SetSaveEverything ();
+			if (isTrackingViewState)
+				saveEverything = true;
 		}
 		
 		public int IndexOf (object o)
@@ -198,6 +239,7 @@ namespace System.Web.UI {
 			if (isTrackingViewState) {
 				((IStateManager) value).TrackViewState ();
 				SetDirtyObject (value);
+				saveEverything = true;
 			}
 			
 			OnInsert (-1, value);
@@ -213,13 +255,12 @@ namespace System.Web.UI {
 			if (isTrackingViewState) {
 				((IStateManager) value).TrackViewState ();
 				SetDirtyObject (value);
+				saveEverything = true;
 			}
 			
 			OnInsert (index, value);
 			items.Insert (index, value);
 			OnInsertComplete(index, value);
-			
-			SetSaveEverything ();
 		}
 		
 		void IList.Remove (object value)
@@ -237,7 +278,8 @@ namespace System.Web.UI {
 			items.RemoveAt (index);
 			OnRemoveComplete(index, o);
 			
-			SetSaveEverything ();
+			if (isTrackingViewState)
+				saveEverything = true;
 		}
 			
 		void IList.Clear ()
@@ -297,21 +339,13 @@ namespace System.Web.UI {
 				if (isTrackingViewState) {
 					((IStateManager) value).TrackViewState ();
 					SetDirtyObject (value);
+					saveEverything = true;
 				}
 				
 				items [index] = value;
 			}
 		}
 		#endregion
-
-		ArrayList items = new ArrayList ();
-				
-		bool saveEverything = false;
-		void SetSaveEverything ()
-		{
-			if (isTrackingViewState)
-				saveEverything = true;
-		}
 	}
 }
 #endif

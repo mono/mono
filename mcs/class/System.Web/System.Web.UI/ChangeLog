@@ -1,3 +1,13 @@
+2005-04-14  Lluis Sanchez Gual <lluis@novell.com>
+
+	* ControlBuilder.cs: Added BindingContainerType property,
+	which works like NamingContainerType but takes into account
+	template builders with a specific container type (specified
+	using the TemplateContainerAttribute.
+	* StateManagedCollection.cs: Reimplemented Save/Load view
+	state methods. The existing implementation was not correct
+	in all cases.
+
 2005-04-08  Lluis Sanchez Gual <lluis@novell.com>
 
 	* DataSourceView.cs: Added null check.
