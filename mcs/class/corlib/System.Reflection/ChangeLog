@@ -1,3 +1,7 @@
+2005-04-14  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Assembly.cs: Added missing null check in GetObjectData.
+
 2005-04-04  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* AssemblyName.cs: Added a demand for SerializationFormatter on
