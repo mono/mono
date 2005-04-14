@@ -47,8 +47,6 @@ namespace System.Web.UI.WebControls
 						    typeof (SessionParameter) };
 						    
 		private EventHandler _parametersChanged;
-		private KeyedList _values;
-
 
 		public int Add (Parameter param)
 		{
@@ -90,23 +88,23 @@ namespace System.Web.UI.WebControls
 			return _knownTypes;
 		}
 
-		[MonoTODO ("Take care of HTTPContext parameter")]
 		public IOrderedDictionary GetValues (HttpContext context, Control control)
 		{
-			if (_values == null)
+			OrderedDictionary values = new OrderedDictionary ();
+			foreach (Parameter param in this)
 			{
-				_values = new KeyedList ();
-				foreach (Parameter param in this)
-				{
-					string name = param.Name;
-					for (int i = 1; _values.Contains (name); i++)
-					{
-						name = param.Name + i.ToString ();
-					}
-					_values.Add (name, param.ParameterValue);
-				}
+				string name = param.Name;
+				for (int i = 1; values.Contains (name); i++)
+					name = param.Name + i.ToString ();
+				values.Add (name, param.GetValue (context, control));
 			}
-			return _values;
+			return values;
+		}
+		
+		public void UpdateValues (HttpContext context, Control control)
+		{
+			foreach (Parameter param in this)
+				param.GetValue (context, control);
 		}
 		
 		public void Insert (int idx, Parameter param)
@@ -136,8 +134,6 @@ namespace System.Web.UI.WebControls
 		{
 			if (_parametersChanged != null)
 				_parametersChanged(this, e);
-			
-			_values = null;
 		}
 
 		protected override void OnValidate (object o)

@@ -43,7 +43,7 @@ namespace System.Web.UI.WebControls {
 	public abstract class DataBoundControl : BaseDataBoundControl
 	{
 		DataSourceSelectArguments selectArguments;
-		IDataSource currentSource;
+		DataSourceView currentView;
 
 		protected DataBoundControl ()
 		{
@@ -73,6 +73,13 @@ namespace System.Web.UI.WebControls {
 		
 		protected DataSourceView GetData ()
 		{
+			if (currentView == null)
+				UpdateViewData ();
+			return currentView;
+		}
+		
+		protected DataSourceView InternalGetData ()
+		{
 			if (DataSource != null && IsBoundUsingDataSourceID)
 				throw new HttpException ("Control bound using both DataSourceID and DataSource properties.");
 			
@@ -86,7 +93,7 @@ namespace System.Web.UI.WebControls {
 		protected override void OnDataPropertyChanged ()
 		{
 			base.OnDataPropertyChanged ();
-			SubscribeSourceChangeEvent ();
+			UpdateViewData ();
 		}
 		
 		protected virtual void OnDataSourceViewChanged (object sender, EventArgs e)
@@ -97,20 +104,21 @@ namespace System.Web.UI.WebControls {
 		protected override void OnPagePreLoad (object sender, EventArgs e)
 		{
 			base.OnPagePreLoad (sender, e);
-			SubscribeSourceChangeEvent ();
+			UpdateViewData ();
 		}
 		
-		void SubscribeSourceChangeEvent ()
+		void UpdateViewData ()
 		{
-			IDataSource ds = GetDataSource ();
-			
-			if (currentSource != null && currentSource != ds) {
-				currentSource.DataSourceChanged -= new EventHandler (OnDataSourceViewChanged);
-				currentSource = ds;
-			}
-				
-			if (ds != null)
-				ds.DataSourceChanged += new EventHandler (OnDataSourceViewChanged);
+			DataSourceView view = InternalGetData ();
+			if (view == currentView) return;
+
+			if (currentView != null)
+				currentView.DataSourceViewChanged -= new EventHandler (OnDataSourceViewChanged);
+
+			currentView = view;
+
+			if (view != null)
+				view.DataSourceViewChanged += new EventHandler (OnDataSourceViewChanged);
 		}
 		
 		// should be `internal protected' (why, oh WHY did they do that !?!)

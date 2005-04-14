@@ -188,7 +188,8 @@ namespace System.Web.UI.WebControls {
 		{
 			if ((ReadOnly && !includeReadOnly) || cell.Controls.Count == 0) return;
 			
-			if ((rowState & DataControlRowState.Edit) != 0 && !ReadOnly) {
+			bool editable = (rowState & (DataControlRowState.Edit | DataControlRowState.Insert)) != 0;
+			if (editable && !ReadOnly) {
 				TextBox box = cell.Controls [0] as TextBox;
 				dictionary [DataImageUrlField] = box.Text;
 			} else if (includeReadOnly) {
@@ -208,7 +209,8 @@ namespace System.Web.UI.WebControls {
 		
 		public virtual void InitializeDataCell (DataControlFieldCell cell, DataControlRowState rowState)
 		{
-			if ((rowState & DataControlRowState.Edit) != 0 && !ReadOnly) {
+			bool editable = (rowState & (DataControlRowState.Edit | DataControlRowState.Insert)) != 0;
+			if (editable && !ReadOnly) {
 				TextBox box = new TextBox ();
 				cell.Controls.Add (box);
 			} else {

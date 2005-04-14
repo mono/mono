@@ -334,6 +334,12 @@ namespace System.Web.UI.WebControls {
 						AddSeparator (cell);
 						cell.Controls.Add (new DataControlButton (Control, CancelText, CancelImageUrl, "Cancel", index, false));
 					}
+				} else if ((rowState & DataControlRowState.Insert) != 0) {
+					cell.Controls.Add (new DataControlButton (Control, InsertText, InsertImageUrl, "Insert", index, false));
+					if (ShowCancelButton) {
+						AddSeparator (cell);
+						cell.Controls.Add (new DataControlButton (Control, CancelText, CancelImageUrl, "Cancel", index, false));
+					}
 				} else {
 					if (ShowEditButton) {
 						AddSeparator (cell);
@@ -349,7 +355,7 @@ namespace System.Web.UI.WebControls {
 					}
 					if (ShowInsertButton) {
 						AddSeparator (cell);
-						cell.Controls.Add (new DataControlButton (Control, InsertText, InsertImageUrl, "Insert", index, false));
+						cell.Controls.Add (new DataControlButton (Control, NewText, NewImageUrl, "New", index, false));
 					}
 				}
 			} else

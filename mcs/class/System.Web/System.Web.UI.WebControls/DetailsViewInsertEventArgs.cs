@@ -38,10 +38,17 @@ namespace System.Web.UI.WebControls
 	public class DetailsViewInsertEventArgs : CancelEventArgs
 	{
 		private object argument;
+		private IOrderedDictionary values;
 		
 		public DetailsViewInsertEventArgs (object argument)
 		{
 			this.argument = argument;
+		}
+		
+		internal DetailsViewInsertEventArgs (object argument, IOrderedDictionary values)
+		{
+			this.argument = argument;
+			this.values = values;
 		}
 		
 		public object CommandArgument {
@@ -49,7 +56,7 @@ namespace System.Web.UI.WebControls
 		}
 
 		public IOrderedDictionary Values {
-			get { throw new NotImplementedException(); }
+			get { return values; }
 		}
 	}
 }

@@ -308,6 +308,20 @@ namespace System.Web.UI.WebControls
 			return DefaultView.Insert (empty);
 		}
 		
+		protected override void OnInit (EventArgs e)
+		{
+			Page.LoadComplete += OnPageLoadComplete;
+		}
+		
+		void OnPageLoadComplete (object sender, EventArgs e)
+		{
+			DeleteParameters.UpdateValues (Context, this);
+			FilterParameters.UpdateValues (Context, this);
+			InsertParameters.UpdateValues (Context, this);
+			SelectParameters.UpdateValues (Context, this);
+			UpdateParameters.UpdateValues (Context, this);
+		}
+		
 		protected override void LoadViewState (object savedState)
 		{
 			if (savedState == null) {

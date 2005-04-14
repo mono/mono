@@ -94,7 +94,7 @@ namespace System.Web.UI.WebControls {
 		[MonoTODO ("Support other data types")]
 		public override void InitializeDataCell (DataControlFieldCell cell, DataControlRowState rowState)
 		{
-			bool editable = (rowState & DataControlRowState.Edit) != 0;
+			bool editable = (rowState & (DataControlRowState.Edit | DataControlRowState.Insert)) != 0;
 			
 			if (dataType == typeof(bool)) {
 				CheckBox box = new CheckBox ();

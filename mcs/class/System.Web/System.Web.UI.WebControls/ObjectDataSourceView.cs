@@ -699,16 +699,13 @@ namespace System.Web.UI.WebControls
 					dview.Sort = arguments.SortExpression;
 				}
 				if (FilterExpression.Length > 0) {
-					OrderedDictionary fparams = new OrderedDictionary ();
-					foreach (Parameter p in FilterParameters)
-						fparams.Add (p.Name, ConvertParameter (p.Type, p.GetValue (context, owner)));
-						
+					IOrderedDictionary fparams = FilterParameters.GetValues (context, owner);
 					ObjectDataSourceFilteringEventArgs fargs = new ObjectDataSourceFilteringEventArgs (fparams);
 					OnFiltering (fargs);
 					if (!fargs.Cancel) {
-						object[] formatValues = new object[fargs.ParameterValues.Count];
+						object[] formatValues = new object [fparams.Count];
 						for (int n=0; n<formatValues.Length; n++) {
-							formatValues [n] = fargs.ParameterValues [n];
+							formatValues [n] = fparams [n];
 							if (formatValues [n] == null) return dview;
 						}
 						dview.RowFilter = string.Format	(FilterExpression, formatValues);
@@ -936,25 +933,21 @@ namespace System.Web.UI.WebControls
 		
 		object ConvertParameter (Type targetType, object value)
 		{
-			if (value == null) {
-				if (targetType.IsPrimitive)
-					value = 0;
-				else if (targetType == typeof(object) && ConvertNullToDBNull)
-					return DBNull.Value;
-			}
-			return Convert.ChangeType (value, targetType);
+			return ConvertParameter (Type.GetTypeCode (targetType), value);
 		}
 		
 		object ConvertParameter (TypeCode targetType, object value)
 		{
-			Console.WriteLine ("ConvertParameter:" + value);
 			if (value == null) {
 				if (targetType != TypeCode.Object && targetType != TypeCode.String)
 					value = 0;
 				else if (targetType == TypeCode.Object && ConvertNullToDBNull)
 					return DBNull.Value;
 			}
-			return Convert.ChangeType (value, targetType);
+			if (targetType == TypeCode.Object)
+				return value;
+			else
+				return Convert.ChangeType (value, targetType);
 		}
 		
 		string FormatOldParameter (string name)
@@ -968,7 +961,6 @@ namespace System.Web.UI.WebControls
 		
 		void OnParametersChanged (object sender, EventArgs args)
 		{
-			Console.WriteLine ("OnParametersChanged");
 			OnDataSourceViewChanged (EventArgs.Empty);
 		}
 		

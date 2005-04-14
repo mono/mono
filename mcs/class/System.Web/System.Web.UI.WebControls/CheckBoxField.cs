@@ -94,7 +94,7 @@ namespace System.Web.UI.WebControls {
 		
 		public override void InitializeDataCell (DataControlFieldCell cell, DataControlRowState rowState)
 		{
-			bool editable = (rowState & DataControlRowState.Edit) != 0;
+			bool editable = (rowState & (DataControlRowState.Edit | DataControlRowState.Insert)) != 0;
 			CheckBox box = new CheckBox ();
 			box.Enabled = editable && !ReadOnly;
 			cell.Controls.Add (box);

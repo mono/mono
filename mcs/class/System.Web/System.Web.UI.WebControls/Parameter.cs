@@ -82,17 +82,12 @@ namespace System.Web.UI.WebControls {
 		
 		protected virtual void LoadViewState (object savedState)
 		{
-			if (savedState == null)
-				return;
-			
 			ViewState.LoadViewState (savedState);
 		}
 		
 		protected virtual object SaveViewState ()
 		{
-			if (viewState == null)
-				return null;
-			return viewState.SaveViewState ();
+			return ViewState.SaveViewState ();
 		}
 		
 		protected virtual void TrackViewState ()
@@ -126,10 +121,9 @@ namespace System.Web.UI.WebControls {
 			get { return this.IsTrackingViewState; }
 		}
 		
-		[MonoTODO]
 		public override string ToString ()
 		{
-			return base.ToString ();
+			return Name;
 		}
 		
 		[WebCategoryAttribute ("Parameter"), DefaultValueAttribute (""),
@@ -196,7 +190,7 @@ namespace System.Web.UI.WebControls {
 				if (o != null)
 					return (bool) o;
 				
-				return false;
+				return true;
 			}
 			set {
 				if (ConvertEmptyStringToNull != value) {
@@ -254,12 +248,30 @@ namespace System.Web.UI.WebControls {
 		
 		internal object GetValue (HttpContext context, Control control)
 		{
-			return Evaluate (context, control);
-		}
+			object oldValue = ViewState ["ParameterValue"];
+			
+			object newValue = ConvertValue (Evaluate (context, control));
+			if (newValue == null)
+				newValue = ConvertValue (DefaultValue);
 
+			if (!object.Equals (oldValue, newValue)) {
+				ViewState ["ParameterValue"] = newValue;
+				OnParameterChanged ();
+			}
+			return newValue;
+		}
+		
+		object ConvertValue (object val)
+		{
+			if (val == null) return null;
+			if (ConvertEmptyStringToNull && val.Equals (string.Empty))
+				return null;
+			return Convert.ChangeType (val, Type);
+		}
+		
 		protected internal virtual void SetDirty()
 		{
-			this.SaveViewState();
+			ViewState.SetDirty ();
 		}
 
 
@@ -268,22 +280,6 @@ namespace System.Web.UI.WebControls {
 		internal void SetOwnerCollection (ParameterCollection own)
 		{
 			_owner = own;
-		}
-
-		internal object ParameterValue {
-			get {
-				object param = ViewState["ParameterValue"];
-				//FIXME: need to do some null string checking magic with TreatEmptyStringAsNull here
-				if (param == null)
-				{
-					param = DefaultValue;
-					if (param == null)
-					{
-						return null;
-					}
-				}
-				return Convert.ChangeType (param, Type);
-			}
 		}
 	}
 }

@@ -40,6 +40,7 @@ namespace System.Web.UI.WebControls
 		private Exception e;
 		private bool exceptionHandled;
 		private bool keepInsertedMode;
+		private IOrderedDictionary values;
 		
 		public DetailsViewInsertedEventArgs (int affectedRows, Exception e)
 		{
@@ -47,6 +48,11 @@ namespace System.Web.UI.WebControls
 			this.e = e;
 			this.exceptionHandled = false;
 			this.keepInsertedMode = false;
+		}
+		
+		public DetailsViewInsertedEventArgs (int affectedRows, Exception e, IOrderedDictionary values): this (affectedRows, e)
+		{
+			this.values = values;
 		}
 		
 		public int AffectedRows {
@@ -68,7 +74,7 @@ namespace System.Web.UI.WebControls
 		}
 
 		public IOrderedDictionary Values {
-			get { throw new NotImplementedException(); }
+			get { return values; }
 		}
 	}
 }

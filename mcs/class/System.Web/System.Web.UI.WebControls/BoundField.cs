@@ -132,7 +132,8 @@ namespace System.Web.UI.WebControls {
 		public override void ExtractValuesFromCell (IOrderedDictionary dictionary,
 			DataControlFieldCell cell, DataControlRowState rowState, bool includeReadOnly)
 		{
-			if ((rowState & DataControlRowState.Edit) != 0 && !ReadOnly) {
+			bool editable = (rowState & (DataControlRowState.Edit | DataControlRowState.Insert)) != 0;
+			if (editable && !ReadOnly) {
 				if (cell.Controls.Count > 0) {
 					TextBox box = (TextBox) cell.Controls [0];
 					dictionary [DataField] = box.Text;
@@ -154,7 +155,8 @@ namespace System.Web.UI.WebControls {
 		
 		public virtual void InitializeDataCell (DataControlFieldCell cell, DataControlRowState rowState)
 		{
-			if ((rowState & DataControlRowState.Edit) != 0 && !ReadOnly) {
+			bool editable = (rowState & (DataControlRowState.Edit | DataControlRowState.Insert)) != 0;
+			if (editable && !ReadOnly) {
 				TextBox box = new TextBox ();
 				cell.Controls.Add (box);
 			}
