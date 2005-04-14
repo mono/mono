@@ -127,7 +127,7 @@ namespace System.Xml.Serialization
 				name = GetArrayName (sufix);
 			}
 			else 
-				name = type.Name;
+				name = XmlConvert.EncodeLocalName (type.Name);
 
 			typeData = new TypeData (type, name, false);
 			nameCache[type] = typeData;

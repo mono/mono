@@ -1,3 +1,10 @@
+2005-04-14  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* XmlReflectionImporter.cs:
+	* SoapReflectionImporter.cs:
+	* TypeTranslator.cs: Encode local names withXmlConvert.EncodeLocalName
+	where needed. Based on a patch by Konstantin Triger. 
+
 2005-04-12  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* XmlTypeMapping.cs: Added new XmlSerializableMapping class.
@@ -6,7 +13,7 @@
 	check for default namespace, since it may be included from a non
 	default namespace.
 	* XmlReflectionImporter.cs: Create a special map for IXmlSerializable
-	types. All this based on a patch by Andrew Skiba.
+	types. All this based on a patch by Konstantin Triger.
 	
 	* SerializationCodeGenerator.cs:
 	* XmlMapping.cs:

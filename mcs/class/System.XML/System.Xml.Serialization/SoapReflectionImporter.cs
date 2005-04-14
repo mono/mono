@@ -80,12 +80,13 @@ namespace System.Xml.Serialization {
 		}
 
 		public XmlMembersMapping ImportMembersMapping (string elementName, string ns, XmlReflectionMember[] members, bool hasWrapperElement, bool writeAccessors, bool validate)
-		{ 
+		{
+			elementName = XmlConvert.EncodeLocalName (elementName);
 			XmlMemberMapping[] mapping = new XmlMemberMapping[members.Length];
 			for (int n=0; n<members.Length; n++)
 			{
 				XmlTypeMapMember mapMem = CreateMapMember (members[n], ns);
-				mapping[n] = new XmlMemberMapping (members[n].MemberName, ns, mapMem, true);
+				mapping[n] = new XmlMemberMapping (XmlConvert.EncodeLocalName (members[n].MemberName), ns, mapMem, true);
 			}
 			XmlMembersMapping mps = new XmlMembersMapping (elementName, ns, hasWrapperElement, writeAccessors, mapping);
 			mps.RelatedMaps = relatedMaps;
@@ -155,7 +156,7 @@ namespace System.Xml.Serialization {
 					membersNamespace = atts.SoapType.Namespace;
 
 				if (atts.SoapType.TypeName != null && atts.SoapType.TypeName != string.Empty)
-					defaultXmlType = atts.SoapType.TypeName;
+					defaultXmlType = XmlConvert.EncodeLocalName (atts.SoapType.TypeName);
 
 				includeInSchema = atts.SoapType.IncludeInSchema;
 			}
@@ -348,7 +349,7 @@ namespace System.Xml.Serialization {
 				string xmlName = names[n];
 				object[] atts = mem[0].GetCustomAttributes (typeof(SoapEnumAttribute), false);
 				if (atts.Length > 0) xmlName = ((SoapEnumAttribute)atts[0]).Name;
-				members[n] = new EnumMap.EnumMapMember (xmlName, names[n]);
+				members[n] = new EnumMap.EnumMapMember (XmlConvert.EncodeLocalName (xmlName), names[n]);
 			}
 
 			bool isFlags = type.GetCustomAttributes (typeof(FlagsAttribute),false).Length > 0;
@@ -401,9 +402,9 @@ namespace System.Xml.Serialization {
 
 				XmlTypeMapMemberAttribute mapAttribute = new XmlTypeMapMemberAttribute ();
 				if (atts.SoapAttribute.AttributeName == null) 
-					mapAttribute.AttributeName = rmember.MemberName;
+					mapAttribute.AttributeName = XmlConvert.EncodeLocalName (rmember.MemberName);
 				else 
-					mapAttribute.AttributeName = atts.SoapAttribute.AttributeName;
+					mapAttribute.AttributeName = XmlConvert.EncodeLocalName (atts.SoapAttribute.AttributeName);
 
 				mapAttribute.Namespace = (atts.SoapAttribute.Namespace != null) ? atts.SoapAttribute.Namespace : "";
 				if (typeData.IsComplexType)
@@ -424,7 +425,7 @@ namespace System.Xml.Serialization {
 				XmlTypeMapElementInfoList infoList = new XmlTypeMapElementInfoList();
 				XmlTypeMapElementInfo elem = new XmlTypeMapElementInfo (mapMember, typeData);
 
-				elem.ElementName = (atts.SoapElement != null && atts.SoapElement.ElementName != null) ? atts.SoapElement.ElementName : rmember.MemberName;
+				elem.ElementName = XmlConvert.EncodeLocalName ((atts.SoapElement != null && atts.SoapElement.ElementName != null) ? atts.SoapElement.ElementName : rmember.MemberName);
 				elem.Namespace = string.Empty;
 				elem.IsNullable = (atts.SoapElement != null) ? atts.SoapElement.IsNullable : false;
 				if (typeData.IsComplexType)
