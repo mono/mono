@@ -349,10 +349,9 @@ namespace Microsoft.JScript {
 				fall_true (ec, last_exp, lbl);
 			} else if (type == typeof (Binary))
 				ft_binary_recursion (ec, ast, lbl);
-			else if (type == typeof (Equality)) {
-				Console.WriteLine ("about to call ft_emit_equality");
+			else if (type == typeof (Equality))
 				ft_emit_equality (ec, ast, lbl);
-			} else
+			else
 				emit_default_case (ec, ast, OpCodes.Brfalse, lbl);
 		}
 
