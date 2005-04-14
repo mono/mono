@@ -1,5 +1,10 @@
 2005-04-14  Jackson Harper  <jackson@ximian.com>
 
+	* TreeView.cs: Handle clicks when plus minus is disabled. Don't
+	check plus minus or checkbox clicks unless those features are enabled.
+
+2005-04-14  Jackson Harper  <jackson@ximian.com>
+
 	* TreeView.cs: Add methods for setting the top and bottom visible
 	nodes. TreeNode::EnsureVisible uses these methods.
 	* TreeNode.cs: Implement EnsureVisible

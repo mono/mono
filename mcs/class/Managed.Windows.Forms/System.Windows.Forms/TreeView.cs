@@ -1073,9 +1073,6 @@ namespace System.Windows.Forms {
 
 		private void MouseDownHandler (object sender, MouseEventArgs e)
 		{
-			if (!show_plus_minus)
-				return;
-
 			TreeNode node = GetNodeAt (e.Y);
 			if (node == null)
 				return;
@@ -1097,10 +1094,10 @@ namespace System.Windows.Forms {
 					invalid = Rectangle.Union (invalid, selected_node.Bounds);
 					Invalidate (invalid);
 				}
-			} else if (node.PlusMinusBounds.Contains (e.X, e.Y)) {
+			} else if (show_plus_minus && node.PlusMinusBounds.Contains (e.X, e.Y)) {
 				node.Toggle ();
 				return;
-			} else if (node.CheckBoxBounds.Contains (e.X, e.Y)) {
+			} else if (checkboxes && node.CheckBoxBounds.Contains (e.X, e.Y)) {
 				node.Checked = !node.Checked;
 				return;
 			}
