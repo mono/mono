@@ -380,6 +380,25 @@ namespace System.Windows.Forms {
 				TreeView.Refresh();
 		}
 
+		public void EnsureVisible ()
+		{
+			if (TreeView == null)
+				return;
+
+			TreeView.BeginUpdate ();
+
+			if (this.Parent != null)
+				ExpandParentRecursive (this.Parent);
+
+			if (bounds.Y < 0) {
+				TreeView.SetTop (this);
+			} else if (bounds.Y > TreeView.ClientRectangle.Height) {
+				TreeView.SetBottom (this);
+			}
+				
+			TreeView.EndUpdate ();
+		}
+
 		public int GetNodeCount (bool include_subtrees) {
 			if (!include_subtrees)
 				return Nodes.Count;
@@ -438,7 +457,6 @@ namespace System.Windows.Forms {
 		{
 			if (is_expanded)
 				return;
-
 			bool cancel = false;
 			if (TreeView != null) {
 				TreeViewCancelEventArgs e = new TreeViewCancelEventArgs (this, false, TreeViewAction.Expand);
@@ -498,6 +516,13 @@ namespace System.Windows.Forms {
 			foreach (TreeNode child in node.Nodes) {
 				ExpandRecursive (child);
 			}
+		}
+
+		private void ExpandParentRecursive (TreeNode node)
+		{
+			node.Expand (true);
+			if (node.Parent != null)
+				ExpandParentRecursive (node.Parent);
 		}
 
 		internal void CollapseAll ()

@@ -1,3 +1,9 @@
+2005-04-14  Jackson Harper  <jackson@ximian.com>
+
+	* TreeView.cs: Add methods for setting the top and bottom visible
+	nodes. TreeNode::EnsureVisible uses these methods.
+	* TreeNode.cs: Implement EnsureVisible
+
 2005-04-13  Jordi Mas i Hernandez <jordi@ximian.com>
 
 	* Form.cs: Pospone menu assignation if the window has not been created yet

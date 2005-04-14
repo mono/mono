@@ -620,6 +620,32 @@ namespace System.Windows.Forms {
 			return node != null && node.Bounds.Left <= x && node.Bounds.Right >= x;
 		}
 
+		internal void SetTop (TreeNode node)
+		{
+			OpenTreeNodeEnumerator walk = new OpenTreeNodeEnumerator (root_node);
+			int offset = 0;
+
+			while (walk.CurrentNode != node && walk.MoveNext ())
+				offset++;
+
+			vbar.Value = offset;
+		}
+
+		internal void SetBottom (TreeNode node)
+		{
+			int visible = ClientRectangle.Height / ItemHeight;
+
+			OpenTreeNodeEnumerator walk = new OpenTreeNodeEnumerator (node);
+			TreeNode top = null;
+
+			visible--;
+			while (visible-- > 0 && walk.MovePrevious ())
+				top = walk.CurrentNode;
+
+			if (top != null)
+				SetTop (top);
+		}
+
 		internal void UpdateBelow (TreeNode node)
 		{
 			// We need to update the current node so the plus/minus block gets update too
@@ -987,24 +1013,36 @@ namespace System.Windows.Forms {
 
 		private void VScrollBarValueChanged (object sender, EventArgs e)
 		{
+			SetVScrollPos (vbar.Value, null);
+		}
+
+		private void SetVScrollPos (int pos, TreeNode new_top)
+		{
+			if (skipped_nodes == pos)
+				return;
+
 			int old_skip = skipped_nodes;
-			skipped_nodes = vbar.Value;
+			skipped_nodes = pos;
 			int diff = old_skip - skipped_nodes;
 
-                        if (top_node == null)
-                                top_node = nodes [0];
+			// Determine the new top node if we have to
+			if (new_top == null) {
+				if (top_node == null)
+					top_node = nodes [0];
 
-			OpenTreeNodeEnumerator walk = new OpenTreeNodeEnumerator (TopNode);
-			if (diff < 0) {
-				for (int i = diff; i <= 0; i++)
-					walk.MoveNext ();
-				top_node = walk.CurrentNode;
-			} else {
-				for (int i = 0; i <= diff; i++)
-					walk.MovePrevious ();
-				top_node = walk.CurrentNode;
+				OpenTreeNodeEnumerator walk = new OpenTreeNodeEnumerator (TopNode);
+				if (diff < 0) {
+					for (int i = diff; i <= 0; i++)
+						walk.MoveNext ();
+					new_top = walk.CurrentNode;
+				} else {
+					for (int i = 0; i <= diff; i++)
+						walk.MovePrevious ();
+					new_top = walk.CurrentNode;
+				}
 			}
 
+			top_node = new_top;
 			int y_move = diff * ItemHeight;
 			XplatUI.ScrollWindow (Handle, ViewportRectangle, 0, y_move, false);
 		}
