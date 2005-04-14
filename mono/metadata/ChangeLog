@@ -1,3 +1,8 @@
+2005-04-14 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* threadpool.c: sometimes we get EBADF from epoll but the epollfd is
+	not closed, so don't cleanup when it happens.
+
 2005-04-13  Chris Toshok  <toshok@ximian.com>
 
 	* mono-debug-debugger.h: change prototype for
