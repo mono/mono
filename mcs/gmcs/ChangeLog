@@ -1,3 +1,18 @@
+2005-04-14  Martin Baulig  <martin@ximian.com>
+
+	* generic.cs (ConstructedType): Moved all the type lookup and
+	nested class logic into SimpleName.
+	(ConstructedType.ResolveConstructedType): Our underlying type is
+	already fully resolved; all the type lookup stuff is in
+	SimpleName.
+
+	* ecore.cs (SimpleName.ResolveAsTypeStep): Resolve nested
+	constructed types here instead of in ConstructedType.
+
+	* decl.cs (MemberName.GetTypeExpression): Always create a
+	SimpleName, not a ConstructedType.
+	(DeclSpace.ResolveNestedType): Removed; this is now in SimpleName.
+
 2005-03-02  Martin Baulig  <martin@ximian.com>
 
 	* class.cs (TypeContainer.DoDefineMembers): We also need a default

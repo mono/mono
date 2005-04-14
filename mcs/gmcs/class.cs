@@ -1237,7 +1237,7 @@ namespace Mono.CSharp {
 
 			TypeManager.AddUserType (Name, TypeBuilder, this);
 
-			TypeExpr current_type = null;
+			Expression current_type = null;
 
 			if (IsGeneric) {
 				string[] param_names = new string [TypeParameters.Length];
@@ -1261,7 +1261,7 @@ namespace Mono.CSharp {
 				for (int i = offset; i < gen_params.Length; i++)
 					CurrentTypeParameters [i - offset].DefineConstraints ();
 
-				current_type = new ConstructedType (Name, TypeParameters, Location);
+				current_type = new SimpleName (Name, TypeParameters, Location);
 
 				foreach (TypeParameter type_param in TypeParameters) {
 					if (!type_param.DefineType (ec)) {
@@ -4935,29 +4935,6 @@ namespace Mono.CSharp {
 			this.builder = builder;
 			this.GenericMethod = generic;
 			this.parent_method = parent_method;
-		}
-
-		static string RemoveArity (string name)
-		{
-			int start = 0;
-			StringBuilder sb = new StringBuilder ();
-			while (start < name.Length) {
-				int pos = name.IndexOf ('`', start);
-				if (pos < 0) {
-					sb.Append (name.Substring (start));
-					break;
-				}
-
-				sb.Append (name.Substring (start, pos-start));
-
-				pos++;
-				while ((pos < name.Length) && Char.IsNumber (name [pos]))
-					pos++;
-
-				start = pos;
-			}
-
-			return sb.ToString ();
 		}
 
 		public bool Define (TypeContainer container)

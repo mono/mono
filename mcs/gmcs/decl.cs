@@ -157,7 +157,7 @@ namespace Mono.CSharp {
 				return new MemberAccess (lexpr, Name, TypeArguments, loc);
 			} else {
 				if (TypeArguments != null)
-					return new ConstructedType (Name, TypeArguments, loc);
+					return new SimpleName (Basename, TypeArguments, loc);
 				else
 					return new SimpleName (Name, loc);
 			}
@@ -711,32 +711,6 @@ namespace Mono.CSharp {
 
 		EmitContext type_resolve_ec;
 
-		public FullNamedExpression ResolveNestedType (FullNamedExpression t, Location loc)
-		{
-			TypeContainer tc = TypeManager.LookupTypeContainer (t.Type);
-			if ((tc != null) && tc.IsGeneric) {
-				if (!IsGeneric) {
-					int tnum = TypeManager.GetNumberOfTypeArguments (t.Type);
-					Report.Error (305, loc,
-						      "Using the generic type `{0}' " +
-						      "requires {1} type arguments",
-						      TypeManager.GetFullName (t.Type), tnum);
-					return null;
-				}
-
-				TypeParameter[] args;
-				if (this is GenericMethod)
-					args = Parent.TypeParameters;
-				else
-					args = TypeParameters;
-
-				TypeExpr ctype = new ConstructedType (t.Type, args, loc);
-				return ctype.ResolveAsTypeTerminal (ec);
-			}
-
-			return t;
-		}
-
 		// <summary>
 		//    Resolves the expression `e' for a type, and will recursively define
 		//    types.  This should only be used for resolving base types.
@@ -1124,7 +1098,7 @@ namespace Mono.CSharp {
 						return null;
 
 					if ((t != null) && containing_ds.CheckAccessLevel (t.Type))
-						return ResolveNestedType (t, loc);
+						return t;
 
 					current_type = current_type.BaseType;
 				}
@@ -1235,7 +1209,6 @@ namespace Mono.CSharp {
 						}
 
 						e = new TypeExpression (t, Location.Null);
-						e = ResolveNestedType (e, Location.Null);
 						Cache [name] = e;
 						return e;
 					}
@@ -1251,7 +1224,6 @@ namespace Mono.CSharp {
 						Type t = TypeManager.LookupType (current_type.FullName + "." + name);
 						if (t != null){
 							e = new TypeExpression (t, Location.Null);
-							e = ResolveNestedType (e, Location.Null);
 							Cache [name] = e;
 							return e;
 						}

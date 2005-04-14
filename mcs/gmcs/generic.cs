@@ -1047,34 +1047,16 @@ namespace Mono.CSharp {
 	}
 	
 	public class ConstructedType : TypeExpr {
-		string name, full_name;
+		string full_name;
+		FullNamedExpression name;
 		TypeArguments args;
 		Type[] gen_params, atypes;
 		Type gt;
 		
-		public ConstructedType (string name, TypeArguments args, Location l)
-		{
-			loc = l;
-			this.name = MemberName.MakeName (name, args.Count);
-			this.args = args;
-
-			eclass = ExprClass.Type;
-			full_name = name + "<" + args.ToString () + ">";
-		}
-
-		public ConstructedType (string name, TypeParameter[] type_params, Location l)
-			: this (type_params, l)
-		{
-			loc = l;
-
-			this.name = name;
-			full_name = name + "<" + args.ToString () + ">";
-		}
-
 		public ConstructedType (FullNamedExpression fname, TypeArguments args, Location l)
 		{
 			loc = l;
-			this.name = fname.FullName;
+			this.name = fname;
 			this.args = args;
 
 			eclass = ExprClass.Type;
@@ -1105,7 +1087,7 @@ namespace Mono.CSharp {
 		{
 			gt = t.GetGenericTypeDefinition ();
 
-			this.name = gt.FullName;
+			this.name = new TypeExpression (gt, l);
 			full_name = gt.FullName + "<" + args.ToString () + ">";
 		}
 
@@ -1114,7 +1096,7 @@ namespace Mono.CSharp {
 		{
 			gt = t.GetGenericTypeDefinition ();
 
-			this.name = gt.FullName;
+			this.name = new TypeExpression (gt, l);
 			full_name = gt.FullName + "<" + args.ToString () + ">";
 		}
 
@@ -1308,37 +1290,11 @@ namespace Mono.CSharp {
 			if (gt != null)
 				return DoResolveType (ec);
 
-			//
-			// First, resolve the generic type.
-			//
-			DeclSpace ds;
-			Type nested = ec.DeclSpace.FindNestedType (loc, name, out ds);
-			if (nested != null) {
-				gt = nested.GetGenericTypeDefinition ();
-
-				TypeArguments new_args = new TypeArguments (loc);
-				if (ds.IsGeneric) {
-					foreach (TypeParameter param in ds.TypeParameters)
-						new_args.Add (new TypeParameterExpr (param, loc));
-				}
-				new_args.Add (args);
-
-				args = new_args;
-				return DoResolveType (ec);
-			}
-
-			Type t;
 			int num_args;
+			Type t = name.Type;
 
-			SimpleName sn = new SimpleName (name, loc);
-			TypeExpr resolved = sn.ResolveAsTypeTerminal (ec);
-			if (resolved == null)
-				return false;
-
-			t = resolved.Type;
 			if (t == null) {
-				Report.Error (246, loc, "Cannot find type `{0}'<...>",
-					      Basename);
+				Report.Error (246, loc, "Cannot find type `{0}'<...>", Name);
 				return false;
 			}
 
@@ -1384,7 +1340,7 @@ namespace Mono.CSharp {
 
 		public Expression GetSimpleName (EmitContext ec)
 		{
-			return new SimpleName (Basename, args, loc);
+			return this;
 		}
 
 		public override bool CheckAccessLevel (DeclSpace ds)
@@ -1428,16 +1384,6 @@ namespace Mono.CSharp {
 		public override int GetHashCode ()
 		{
 			return base.GetHashCode ();
-		}
-
-		public string Basename {
-			get {
-				int pos = name.LastIndexOf ('`');
-				if (pos >= 0)
-					return name.Substring (0, pos);
-				else
-					return name;
-			}
 		}
 
 		public override string Name {

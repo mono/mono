@@ -2039,6 +2039,44 @@ namespace Mono.CSharp {
 			loc = l;
 		}
 
+		public SimpleName (string name, TypeParameter[] type_params, Location l)
+		{
+			Name = name;
+			loc = l;
+
+			Arguments = new TypeArguments (l);
+			foreach (TypeParameter type_param in type_params)
+				Arguments.Add (new TypeParameterExpr (type_param, l));
+		}
+
+		public static string RemoveGenericArity (string name)
+		{
+			int start = 0;
+			StringBuilder sb = new StringBuilder ();
+			while (start < name.Length) {
+				int pos = name.IndexOf ('`', start);
+				if (pos < 0) {
+					sb.Append (name.Substring (start));
+					break;
+				}
+
+				sb.Append (name.Substring (start, pos-start));
+
+				pos++;
+				while ((pos < name.Length) && Char.IsNumber (name [pos]))
+					pos++;
+
+				start = pos;
+			}
+
+			return sb.ToString ();
+		}
+
+		public SimpleName GetMethodGroup ()
+		{
+			return new SimpleName (RemoveGenericArity (Name), Arguments, loc);
+		}
+
 		public static void Error_ObjectRefRequired (EmitContext ec, Location l, string name)
 		{
 			if (ec.IsFieldInitializer)
@@ -2087,6 +2125,60 @@ namespace Mono.CSharp {
 			return SimpleNameResolve (ec, null, true, intermediate);
 		}
 
+		private bool IsNestedChild (Type t, Type parent)
+		{
+			if (parent == null)
+				return false;
+
+			while (parent != null) {
+				if (parent.IsGenericInstance)
+					parent = parent.GetGenericTypeDefinition ();
+
+				if (TypeManager.IsNestedChildOf (t, parent))
+					return true;
+
+				parent = parent.BaseType;
+			}
+
+			return false;
+		}
+
+		FullNamedExpression ResolveNested (EmitContext ec, Type t)
+		{
+			if (!t.IsGenericTypeDefinition)
+				return null;
+
+			DeclSpace ds = ec.DeclSpace;
+			while (ds != null) {
+				if (IsNestedChild (t, ds.TypeBuilder))
+					break;
+
+				ds = ds.Parent;
+			}
+
+			if (ds == null)
+				return null;
+
+			Type[] gen_params = t.GetGenericArguments ();
+
+			int arg_count = Arguments != null ? Arguments.Count : 0;
+
+			for (; (ds != null) && ds.IsGeneric; ds = ds.Parent) {
+				if (arg_count + ds.CountTypeParameters == gen_params.Length) {
+					TypeArguments new_args = new TypeArguments (loc);
+					foreach (TypeParameter param in ds.TypeParameters)
+						new_args.Add (new TypeParameterExpr (param, loc));
+
+					if (Arguments != null)
+						new_args.Add (Arguments);
+
+					return new ConstructedType (t, new_args, loc);
+				}
+			}
+
+			return null;
+		}
+
 		public override FullNamedExpression ResolveAsTypeStep (EmitContext ec)
 		{
 			DeclSpace ds = ec.DeclSpace;
@@ -2102,6 +2194,18 @@ namespace Mono.CSharp {
 				: ds.LookupType (Name, loc, /*silent=*/ true, /*ignore_cs0104=*/ false);
 			if (Report.Errors != errors)
 				return null;
+
+			if ((dt == null) || (dt.Type == null))
+				return dt;
+
+			FullNamedExpression nested = ResolveNested (ec, dt.Type);
+			if (nested != null)
+				return nested.ResolveAsTypeStep (ec);
+
+			if (Arguments != null) {
+				ConstructedType ct = new ConstructedType (dt, Arguments, loc);
+				return ct.ResolveAsTypeStep (ec);
+			}
 
 			return dt;
 		}
