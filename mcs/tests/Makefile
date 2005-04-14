@@ -12,12 +12,16 @@ DISTFILES = README.tests harness.mk $(wildcard *.cs) $(wildcard *.il) $(wildcard
 
 with_mono_path = MONO_PATH="$(topdir)/class/lib/$(PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH"
 
-#ifeq (default, $(PROFILE))
+ifeq (default, $(PROFILE))
 # force this, we don't case if CSC is broken. This also
 # means we can use --options, yay.
 MCS = $(with_mono_path) $(INTERNAL_MCS)
-#endif
+endif
 ILASM = $(with_mono_path) $(INTERNAL_ILASM)
+
+ifeq (net_2_0, $(PROFILE))
+BOOTSTRAP_MCS = $(topdir)/class/lib/net_2_0_bootstrap/mcs.exe
+endif
 
 # We don't want debugging info :-)
 
@@ -179,10 +183,7 @@ mcs-casts.out: casts-mcs.exe
 test-casts: boot-casts.out mcs-casts.out
 	cmp $^
 
-# compilation is part of the testing too, so we don't actually
-# do anything in test-local.
-
-test-local:
+test-local: xmldocdiff.exe casts-boot.exe
 
 run-test-local: ilasm test-harness test-casts
 

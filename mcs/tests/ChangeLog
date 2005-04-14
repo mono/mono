@@ -1,3 +1,9 @@
+2005-04-14  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile (MCS): Override only in the 'default' profile.
+	(BOOTSTRAP_MCS): Override in the 'net_2_0' profile.
+	(test-local): Build harness programs.
+
 2005-04-13  Raja R Harinath  <rharinath@novell.com>
 
 	* test-363.cs: New test from #74528.
