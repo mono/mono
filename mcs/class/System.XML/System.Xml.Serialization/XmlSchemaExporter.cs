@@ -96,13 +96,13 @@ namespace System.Xml.Serialization {
 				
 				if (encodedFormat)
 				{
-					stype.Name = XmlConvert.EncodeLocalName(xmlMembersMapping.ElementName);
+					stype.Name = xmlMembersMapping.ElementName;
 					schema.Items.Add (stype);
 				}
 				else
 				{
 					XmlSchemaElement selem = new XmlSchemaElement ();
-					selem.Name = XmlConvert.EncodeLocalName(xmlMembersMapping.ElementName);
+					selem.Name = xmlMembersMapping.ElementName;
 					selem.SchemaType = stype;
 					schema.Items.Add (selem);
 				}

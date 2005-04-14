@@ -234,7 +234,7 @@ namespace System.Xml.Serialization {
 			if (root != null)
 			{
 				if (root.ElementName != null && root.ElementName != String.Empty)
-					elementName = XmlConvert.EncodeLocalName(root.ElementName);
+					elementName = root.ElementName;
 				if (root.Namespace != null && root.Namespace != String.Empty)
 					rootNamespace = root.Namespace;
 				nullable = root.IsNullable;
@@ -421,7 +421,7 @@ namespace System.Xml.Serialization {
 				else if (elem.TypeData.IsComplexType)
 					elem.MappedType = ImportTypeMapping (elemType, null, elem.Namespace);
 
-				if (att.ElementName != null) elem.ElementName = XmlConvert.EncodeLocalName(att.ElementName);
+				if (att.ElementName != null) elem.ElementName = att.ElementName;
 				else if (elem.MappedType != null) elem.ElementName = elem.MappedType.ElementName;
 				else elem.ElementName = TypeTranslator.GetTypeData(elemType).XmlType;
 
@@ -718,8 +718,6 @@ namespace System.Xml.Serialization {
 				else 
 					mapAttribute.AttributeName = atts.XmlAttribute.AttributeName;
 
-				mapAttribute.AttributeName = XmlConvert.EncodeLocalName(mapAttribute.AttributeName);
-
 				if (typeData.IsComplexType)
 					mapAttribute.MappedType = ImportTypeMapping (typeData.Type, null, mapAttribute.Namespace);
 				
@@ -769,7 +767,7 @@ namespace System.Xml.Serialization {
 					// Creates an ElementInfo that identifies the array instance. 
 					member.ElementInfo = new XmlTypeMapElementInfoList();
 					XmlTypeMapElementInfo elem = new XmlTypeMapElementInfo (member, typeData);
-					elem.ElementName = XmlConvert.EncodeLocalName((atts.XmlArray != null && atts.XmlArray.ElementName != null) ? atts.XmlArray.ElementName : rmember.MemberName);
+					elem.ElementName = (atts.XmlArray != null && atts.XmlArray.ElementName != null) ? atts.XmlArray.ElementName : rmember.MemberName;
 					elem.Namespace = (atts.XmlArray != null && atts.XmlArray.Namespace != null) ? atts.XmlArray.Namespace : defaultNamespace;
 					elem.MappedType = ImportListMapping (rmember.MemberType, null, elem.Namespace, atts, 0);
 					elem.IsNullable = (atts.XmlArray != null) ? atts.XmlArray.IsNullable : false;
@@ -784,7 +782,7 @@ namespace System.Xml.Serialization {
 				// An element
 
 				XmlTypeMapMemberElement member = new XmlTypeMapMemberElement ();
- 				member.ElementInfo = ImportElementInfo (declaringType, XmlConvert.EncodeLocalName(rmember.MemberName), defaultNamespace, rmember.MemberType, member, atts);
+				member.ElementInfo = ImportElementInfo (declaringType, rmember.MemberName, defaultNamespace, rmember.MemberType, member, atts);
 				mapMember = member;
 			}
 
@@ -849,7 +847,7 @@ namespace System.Xml.Serialization {
 				}
 
 				if (att.ElementName != null) 
-					elem.ElementName = XmlConvert.EncodeLocalName(att.ElementName);
+					elem.ElementName = att.ElementName;
 				else if (multiType) {
 					if (elem.MappedType != null) elem.ElementName = elem.MappedType.ElementName;
 					else elem.ElementName = TypeTranslator.GetTypeData(elemType).XmlType;
@@ -879,7 +877,7 @@ namespace System.Xml.Serialization {
 				XmlTypeMapElementInfo elem = new XmlTypeMapElementInfo (member, TypeTranslator.GetTypeData(typeof(XmlElement)));
 				if (att.Name != null && att.Name != string.Empty) 
 				{
-					elem.ElementName = XmlConvert.EncodeLocalName(att.Name);
+					elem.ElementName = att.Name;
 					elem.Namespace = (att.Namespace != null) ? att.Namespace : "";
 				}
 				else 

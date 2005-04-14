@@ -213,7 +213,7 @@ namespace System.Xml.Serialization
 			if (xmlQualifiedName == null || xmlQualifiedName == XmlQualifiedName.Empty)
 				return null;
 				
-			return GetQualifiedName (XmlConvert.EncodeLocalName(xmlQualifiedName.Name), xmlQualifiedName.Namespace);
+			return GetQualifiedName (xmlQualifiedName.Name, xmlQualifiedName.Namespace);
 		}
 
 		private string GetId (object o, bool addToReferencesList)

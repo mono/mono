@@ -153,7 +153,7 @@ namespace System.Xml.Serialization
 		{
 			if (membersMap.HasWrapperElement) {
 				TopLevelElement ();
-				WriteStartElement(XmlConvert.EncodeLocalName(membersMap.ElementName), membersMap.Namespace, (_format == SerializationFormat.Encoded));
+				WriteStartElement(membersMap.ElementName, membersMap.Namespace, (_format == SerializationFormat.Encoded));
 
 				if (Writer.LookupPrefix (XmlSchema.Namespace) == null)
 					WriteAttribute ("xmlns","xsd",XmlSchema.Namespace,XmlSchema.Namespace);
