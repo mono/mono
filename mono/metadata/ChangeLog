@@ -1,3 +1,10 @@
+2005-04-14  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* icall.c: don't return the codebase in the AssemblyName[] returned by
+	ves_icall_System_Reflection_Assembly_GetReferencedAssemblies.
+	* object-internals.h: Removed FIXME (fields were presents) and fixed
+	versioncompat declaration.
+
 2005-04-14 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* threadpool.c: sometimes we get EBADF from epoll but the epollfd is
