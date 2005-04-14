@@ -1,3 +1,8 @@
+2005-04-14  Lluis Sanchez Gual <lluis@novell.com>
+
+	* TemplateControlCompiler.cs: Use the new BindingContainerType
+	property to find the type of the binding container. 
+	
 2005-04-07  Lluis Sanchez Gual <lluis@novell.com>
 
 	* TemplateControlCompiler.cs: Avoid using the GetConverter() trick

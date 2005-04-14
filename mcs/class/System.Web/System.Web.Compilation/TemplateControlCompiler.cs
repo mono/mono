@@ -569,7 +569,7 @@ namespace System.Web.Compilation
 			if (tb != null && tb.ContainerType != null)
 				return tb.ContainerType;
 
-			Type type = builder.NamingContainerType;
+			Type type = builder.BindingContainerType;
 
 			PropertyInfo prop = type.GetProperty ("Items", noCaseFlags);
 			if (prop == null)
