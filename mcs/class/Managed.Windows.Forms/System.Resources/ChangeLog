@@ -1,3 +1,8 @@
+2005-04-14  Jackson Harper  <jackson@ximian.com>
+
+	* ResXResourceReader.cs: Use serialization on values that have a
+	mime type set but no type.
+
 2005-02-16  Peter Bartok  <pbartok@novell.com>
 
 	* ResXResourceReader.cs, ResXResourceWriter.cs: Removed sealed

@@ -33,6 +33,7 @@ using System.IO;
 using System.Xml;
 using System.ComponentModel;
 using System.Globalization;
+using System.Runtime.Serialization.Formatters.Binary;
 
 namespace System.Resources
 {
@@ -172,7 +173,13 @@ namespace System.Resources
 						} else if (tt != null) {
 							TypeConverter c = TypeDescriptor.GetConverter (tt);
 							v = c.ConvertFromString (val);
-						} else { 
+						} else if (mt != null) {
+							byte [] data = Convert.FromBase64String (val);
+							BinaryFormatter f = new BinaryFormatter ();
+							using (MemoryStream s = new MemoryStream (data)) {
+								v = f.Deserialize (s);
+							}
+						} else {
 							v = val;
 						}
 						hasht [n] = v;
