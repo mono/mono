@@ -203,11 +203,16 @@ DISTFILES += $(btest_sourcefile)
 endif
 
 dist-local: dist-default
+	subs=' ' ; \
 	for f in `cat $(sourcefile)` $(TEST_FILES) ; do \
 	  case $$f in \
 	  ../*) : ;; \
-	  *) dest=`dirname $(distdir)/$$f` ; $(MKINSTALLDIRS) $$dest && cp -p $$f $$dest || exit 1 ;; \
-	  esac ; done
+	  *) dest=`dirname $$f` ; \
+	     case $$subs in *" $$dest "*) : ;; *) subs=" $$dest$$subs" ; $(MKINSTALLDIRS) $(distdir)/$$dest ;; esac ; \
+	     cp -p $$f $(distdir)/$$dest || exit 1 ;; \
+	  esac ; done ; \
+	for d in . $$subs ; do \
+	  case $$d in .) : ;; *) test ! -f $$d/ChangeLog || cp -p $$d/ChangeLog $(distdir)/$$d ;; esac ; done
 
 ifndef LIBRARY_COMPILE
 LIBRARY_COMPILE = $(CSCOMPILE)

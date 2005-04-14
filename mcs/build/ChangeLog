@@ -1,3 +1,7 @@
+2005-04-14  Raja R Harinath  <rharinath@novell.com>
+
+	* library.make (dist-local): Include all ChangeLogs in the tarball.
+
 2005-04-08  Raja R Harinath  <rharinath@novell.com>
 
 	* profiles/basic.make (do-profile-check): Handle some possible
