@@ -7,7 +7,7 @@
 //	Sebastien Pouliot (sebastien@ximian.com)
 //
 // (c) 2003 Ximian, Inc. (http://www.ximian.com)
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -31,9 +31,11 @@
 
 using NUnit.Framework;
 using System;
+using System.Configuration.Assemblies;
 using System.Globalization;
 using System.IO;
 using System.Reflection;
+using System.Runtime.Serialization;
 using System.Security;
 
 namespace MonoTests.System.Reflection
@@ -189,6 +191,33 @@ namespace MonoTests.System.Reflection
 			Assert.IsTrue (corlib != null || corlib2 != null);
 		}
 
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void GetObjectData_Null ()
+		{
+			Assembly corlib = typeof (int).Assembly;
+			corlib.GetObjectData (null, new StreamingContext (StreamingContextStates.All));
+		}
+
+		[Test]
+		public void GetReferencedAssemblies ()
+		{
+			Assembly corlib_test = Assembly.GetExecutingAssembly ();
+			AssemblyName[] names = corlib_test.GetReferencedAssemblies ();
+			foreach (AssemblyName an in names) {
+				Assert.IsNull (an.CodeBase, "CodeBase");
+				Assert.IsNotNull (an.CultureInfo, "CultureInfo");
+				Assert.IsNull (an.EscapedCodeBase, "EscapedCodeBase");
+				Assert.AreEqual (AssemblyNameFlags.None, an.Flags, "Flags");
+				Assert.IsNotNull (an.FullName, "FullName");
+				Assert.AreEqual (AssemblyHashAlgorithm.SHA1, an.HashAlgorithm, "HashAlgorithm");
+				Assert.IsNull (an.KeyPair, "KeyPair");
+				Assert.IsNotNull (an.Name, "Name");
+				Assert.IsNotNull (an.Version, "Version");
+				Assert.AreEqual (AssemblyVersionCompatibility.SameMachine, 
+					an.VersionCompatibility, "VersionCompatibility");
+			}
+		}
 #if NET_2_0
 		[Test]
 		public void ReflectionOnlyLoad ()

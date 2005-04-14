@@ -1,3 +1,8 @@
+2005-04-14  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* AssemblyTest.cs: Added tests for GetObjectData (null) and 
+	GetReferencedAssemblies (no codebase returned) methods.
+
 2005-04-08  Raja R Harinath  <rharinath@novell.com>
 
 	* FieldInfoTest.cs (RefOnlyFieldClass): Rename from RefOnlyClass.
