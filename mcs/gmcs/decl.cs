@@ -527,7 +527,8 @@ namespace Mono.CSharp {
 
 		private Hashtable Cache = new Hashtable ();
 		
-		public string Basename;
+		public readonly string Basename;
+		public readonly string Basename_with_arity;
 		
 		protected Hashtable defined_names;
 
@@ -563,6 +564,7 @@ namespace Mono.CSharp {
 		{
 			NamespaceEntry = ns;
 			Basename = name.Name;
+			Basename_with_arity = name.Basename;
 			defined_names = new Hashtable ();
 			if (name.TypeArguments != null) {
 				is_generic = true;
@@ -817,20 +819,9 @@ namespace Mono.CSharp {
 
 		protected bool NestedAccessible (Type tb, Type check_type)
 		{
-			string check_type_name = check_type.FullName;
-			
-			// At this point, we already know check_type is a nested class.
-			int cio = check_type_name.LastIndexOf ('+');
-			
-			// Ensure that the string 'container' has a '+' in it to avoid false matches
-			string container = check_type_name.Substring (0, cio + 1);
-
-			// Ensure that type_name ends with a '+' so that it can match 'container', if necessary
-			string type_name = tb.FullName + "+";
-
-			// If the current class is nested inside the container of check_type,
-			// we can access check_type even if it is private or protected.
-			return type_name.StartsWith (container);
+			Type declaring = check_type.DeclaringType;
+			return TypeBuilder == declaring ||
+				TypeManager.IsNestedChildOf (TypeBuilder, declaring);
 		}
 
 		protected bool FamilyAccessible (Type tb, Type check_type)
@@ -942,89 +933,6 @@ namespace Mono.CSharp {
 
 			return ~ (~ mAccess | pAccess) == 0;
 		}
-		
-		static DoubleHash dh = new DoubleHash (1000);
-
-		Type DefineTypeAndParents (DeclSpace tc)
-		{
-			DeclSpace container = tc.Parent;
-
-			if (container.TypeBuilder == null && container.Name != "")
-				DefineTypeAndParents (container);
-
-			return tc.DefineType ();
-		}
-		
-		FullNamedExpression LookupInterfaceOrClass (string ns, string name, out bool error)
-		{
-			DeclSpace parent;
-			FullNamedExpression result;
-			Type t;
-			object r;
-			
-			error = false;
-
-			if (dh.Lookup (ns, name, out r))
-				return (FullNamedExpression) r;
-			else {
-				if (ns != ""){
-					if (Namespace.IsNamespace (ns)){
-						string fullname = (ns != "") ? ns + "." + name : name;
-						t = TypeManager.LookupType (fullname);
-					} else
-						t = null;
-				} else
-					t = TypeManager.LookupType (name);
-			}
-			
-			if (t != null) {
-				result = new TypeExpression (t, Location.Null);
-				dh.Insert (ns, name, result);
-				return result;
-			}
-
-			if (ns != "" && Namespace.IsNamespace (ns)) {
-				result = Namespace.LookupNamespace (ns, false).Lookup (this, name, Location.Null);
-				if (result != null) {
-					dh.Insert (ns, name, result);
-					return result;
-				}
-			}
-
-			if (ns == "" && Namespace.IsNamespace (name)) {
-				result = Namespace.LookupNamespace (name, false);
-				dh.Insert (ns, name, result);
-				return result;
-			}
-
-			//
-			// In case we are fed a composite name, normalize it.
-			//
-			int p = name.LastIndexOf ('.');
-			if (p != -1){
-				ns = MakeFQN (ns, name.Substring (0, p));
-				name = name.Substring (p+1);
-			}
-
-			if (ns.IndexOf ('+') != -1)
-				ns = ns.Replace ('+', '.');
-
-			parent = RootContext.Tree.LookupByNamespace (ns, name);
-			if (parent == null) {
-				dh.Insert (ns, name, null);
-				return null;
-			}
-
-			t = DefineTypeAndParents (parent);
-			if (t == null){
-				error = true;
-				return null;
-			}
-			
-			result = new TypeExpression (t, Location.Null);
-			dh.Insert (ns, name, result);
-			return result;
-		}
 
 		public static void Error_AmbiguousTypeReference (Location loc, string name, string t1, string t2)
 		{
@@ -1033,146 +941,12 @@ namespace Mono.CSharp {
 				      name, t1, t2);
 		}
 
-		public Type FindNestedType (Location loc, string name,
-					    out DeclSpace containing_ds)
+		//
+		// Return the nested type with name @name.  Ensures that the nested type
+		// is defined if necessary.  Do _not_ use this when you have a MemberCache handy.
+		//
+		public virtual Type FindNestedType (string name)
 		{
-			FullNamedExpression t;
-			bool error;
-
-			containing_ds = this;
-			while (containing_ds != null){
-				Type container_type = containing_ds.TypeBuilder;
-				Type current_type = container_type;
-
-				while (current_type != null && current_type != TypeManager.object_type) {
-					string pre = current_type.FullName;
-
-					t = LookupInterfaceOrClass (pre, name, out error);
-					if (error)
-						return null;
-
-					if ((t != null) && containing_ds.CheckAccessLevel (t.Type))
-						return t.Type;
-
-					current_type = current_type.BaseType;
-				}
-				containing_ds = containing_ds.Parent;
-			}
-
-			return null;
-		}
-
-		/// <summary>
-		///   GetType is used to resolve type names at the DeclSpace level.
-		///   Use this to lookup class/struct bases, interface bases or 
-		///   delegate type references
-		/// </summary>
-		///
-		/// <remarks>
-		///   Contrast this to LookupType which is used inside method bodies to 
-		///   lookup types that have already been defined.  GetType is used
-		///   during the tree resolution process and potentially define
-		///   recursively the type
-		/// </remarks>
-		public FullNamedExpression FindType (Location loc, string name)
-		{
-			FullNamedExpression t;
-			bool error;
-
-			//
-			// For the case the type we are looking for is nested within this one
-			// or is in any base class
-			//
-
-			DeclSpace containing_ds = this;
-
-			while (containing_ds != null){
-				Type container_type = containing_ds.TypeBuilder;
-				Type current_type = container_type;
-
-				while (current_type != null && current_type != TypeManager.object_type) {
-					string pre = current_type.FullName;
-
-					t = LookupInterfaceOrClass (pre, name, out error);
-					if (error)
-						return null;
-
-					if ((t != null) && containing_ds.CheckAccessLevel (t.Type))
-						return t;
-
-					current_type = current_type.BaseType;
-				}
-				containing_ds = containing_ds.Parent;
-			}
-
-			//
-			// Attempt to lookup the class on our namespace and all it's implicit parents
-			//
-			for (NamespaceEntry ns = NamespaceEntry; ns != null; ns = ns.ImplicitParent) {
-				t = LookupInterfaceOrClass (ns.FullName, name, out error);
-				if (error)
-					return null;
-
-				if (t != null)
-					return t;
-			}
-			
-			//
-			// Attempt to do a direct unqualified lookup
-			//
-			t = LookupInterfaceOrClass ("", name, out error);
-			if (error)
-				return null;
-			
-			if (t != null)
-				return t;
-			
-			//
-			// Attempt to lookup the class on any of the `using'
-			// namespaces
-			//
-
-			for (NamespaceEntry ns = NamespaceEntry; ns != null; ns = ns.Parent){
-
-				t = LookupInterfaceOrClass (ns.FullName, name, out error);
-				if (error)
-					return null;
-
-				if (t != null)
-					return t;
-
-				if (name.IndexOf ('.') > 0)
-					continue;
-
-				t = ns.LookupAlias (name);
-				if (t != null)
-					return t;
-
-				//
-				// Now check the using clause list
-				//
-				FullNamedExpression match = null;
-				foreach (Namespace using_ns in ns.GetUsingTable ()) {
-					match = LookupInterfaceOrClass (using_ns.Name, name, out error);
-					if (error)
-						return null;
-
-					if ((match != null) && (match is TypeExpr)) {
-						Type matched = ((TypeExpr) match).Type;
-						if (!CheckAccessLevel (matched))
-							continue;
-						if (t != null){
-							Error_AmbiguousTypeReference (loc, name, t.FullName, match.FullName);
-							return null;
-						}
-						t = match;
-					}
-				}
-				if (t != null)
-					return t;
-			}
-
-			//Report.Error (246, Location, "Can not find type `"+name+"'");
 			return null;
 		}
 
@@ -1196,17 +970,15 @@ namespace Mono.CSharp {
 				// For the case the type we are looking for is nested within this one
 				// or is in any base class
 				//
-				DeclSpace containing_ds = this;
-				while (containing_ds != null){
-					
+
+				Type t = null;
+				for (DeclSpace containing_ds = this; containing_ds != null; containing_ds = containing_ds.Parent) {
 					// if the member cache has been created, lets use it.
 					// the member cache is MUCH faster.
 					if (containing_ds.MemberCache != null) {
-						Type t = containing_ds.MemberCache.FindNestedType (name);
-						if (t == null) {
-							containing_ds = containing_ds.Parent;
+						t = containing_ds.MemberCache.FindNestedType (name);
+						if (t == null)
 							continue;
-						}
 
 						e = new TypeExpression (t, Location.Null);
 						Cache [name] = e;
@@ -1214,34 +986,34 @@ namespace Mono.CSharp {
 					}
 					
 					// no member cache. Do it the hard way -- reflection
-					Type current_type = containing_ds.TypeBuilder;
-					
-					while (current_type != null &&
-					       current_type != TypeManager.object_type) {
-						//
-						// nested class
-						//
-						Type t = TypeManager.LookupType (current_type.FullName + "." + name);
-						if (t != null){
+					for (Type current_type = containing_ds.TypeBuilder;
+					     current_type != null && current_type != TypeManager.object_type;
+					     current_type = current_type.BaseType) {
+						if (current_type is TypeBuilder) {
+							DeclSpace decl = containing_ds;
+							if (current_type != containing_ds.TypeBuilder)
+								decl = TypeManager.LookupDeclSpace (current_type);
+
+							t = decl.FindNestedType (name);
+						} else {
+							t = TypeManager.LookupTypeDirect (current_type.FullName + "+" + name);
+						}
+
+						if (t != null && containing_ds.CheckAccessLevel (t)) {
 							e = new TypeExpression (t, Location.Null);
 							Cache [name] = e;
 							return e;
 						}
-						
-						current_type = current_type.BaseType;
 					}
-					
-					containing_ds = containing_ds.Parent;
 				}
 				
 				e = NamespaceEntry.LookupNamespaceOrType (this, name, loc, ignore_cs0104);
-				if (!silent || e != null)
-					Cache [name] = e;
+				Cache [name] = e;
 			}
 
 			if (e == null && !silent)
 				Report.Error (246, loc, "Cannot find type `"+name+"'");
-			
+
 			return e;
 		}
 

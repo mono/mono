@@ -1,3 +1,27 @@
+2005-03-02  Raja R Harinath  <rharinath@novell.com>
+
+	Unify DeclSpace.LookupType and DeclSpace.FindType.
+	* decl.cs (DeclSpace.FindNestedType): New virtual function.  This
+	is in charge of defining nested types on demand.
+	(DeclSpace.LookupType): Use it when the current_type is a
+	TypeBuilder.  Use LookupTypeDirect for reflected types.
+	(DeclSpace.FindType): Remove.
+	(DeclSpace.LookupInterfaceOrClass): Likewise.
+	(DeclSpace.DefineTypeAndParents): Likewise.
+	* ecore.cs (SimpleName.ResolveAsTypeStep): Just call
+	DeclSpace.LookupType.
+	* doc.cs (FindDocumentedTypeNonArray): Use DeclSpace.LookupType.
+	* typemanager.cs (LookupType): Simplify.
+	(AddUserType): Remove type from negative_hits.
+	* namespace.cs (Namespace.Lookup): Use TypeManager.LookupTypeDirect.
+	* class.cs (TypeContainer.FindMembers): Move handling of nested
+	types ...
+	(TypeContainer.FindMembers_NestedTypes): ... here.
+	(TypeContainer.FindNestedType): Implement override.
+	(ClassPart.FindNestedType): Delegate to PartialContainer.
+	(ClassPart.PartFindNestedType): Looks up the nested types of the
+	part alone.
+
 2005-04-14  Martin Baulig  <martin@ximian.com>
 
 	* generic.cs (ConstructedType): Moved all the type lookup and
