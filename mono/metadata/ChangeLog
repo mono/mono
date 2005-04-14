@@ -1,3 +1,12 @@
+2005-04-13  Chris Toshok  <toshok@ximian.com>
+
+	* mono-debug-debugger.h: change prototype for
+	mono_debugger_lookup_type.
+
+	* mono-debug-debugger.c (mono_debugger_lookup_type): reinstate
+	this function, although it should probably be named
+	mono_debugger_init_type.
+
 2005-04-13 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* threadpool.c: fix non-AIO case.
