@@ -299,6 +299,8 @@ namespace System.Net
 				return (xx >= 0) ? xx : 0;
 			}
 
+			result.EndReadCalled = true;
+
 			if (!result.IsCompleted) {
 				int nbytes = cnc.EndRead (result);
 				bool finished = (nbytes == -1);
