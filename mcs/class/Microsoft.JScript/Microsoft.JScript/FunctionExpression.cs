@@ -190,7 +190,7 @@ namespace Microsoft.JScript {
 
 		internal void build_local_fields (ILGenerator ig)
 		{
-			AST e;
+			object e;
 			int n;
 
 			if (locals == null)
