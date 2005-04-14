@@ -128,7 +128,7 @@ namespace System.Xml.Serialization
 				
 				while (Reader.NodeType != System.Xml.XmlNodeType.EndElement) 
 				{
-					if (Reader.IsStartElement(typeMap.ElementName, typeMap.Namespace) 
+					if (Reader.IsStartElement(XmlConvert.EncodeLocalName(typeMap.ElementName), typeMap.Namespace) 
 					    || _format == SerializationFormat.Encoded)  
 					{
 						if (Reader.IsEmptyElement) { Reader.Skip(); Reader.MoveToContent(); continue; }

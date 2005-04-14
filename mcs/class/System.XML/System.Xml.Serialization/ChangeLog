@@ -1,3 +1,12 @@
+2005-04-14  Andrew Skiba  <andrews@mainsoft.com>
+
+	* XmlSerializationReaderInterpreter.cs:
+	* XmlSchemaExporter.cs:
+	* XmlReflectionImporter.cs:
+	* XmlSerializationWriterInterpreter.cs:
+	* XmlSerializationWriter.cs: Call XmlConvert.EncodeLocalName where
+	needed. Patch by Konstantin Triger. 
+	
 2005-04-12  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* XmlTypeMapping.cs: Added new XmlSerializableMapping class.
