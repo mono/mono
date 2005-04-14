@@ -51,6 +51,7 @@ namespace System.Net
 		int offset;
 		int size;
 		object locker = new object ();
+		public bool EndReadCalled;
 
 		public WebAsyncResult (AsyncCallback cb, object state)
 		{

@@ -294,6 +294,10 @@ namespace System.Net
 		public override int EndRead (IAsyncResult r)
 		{
 			WebAsyncResult result = (WebAsyncResult) r;
+			if (result.EndReadCalled) {
+				int xx = result.NBytes;
+				return (xx >= 0) ? xx : 0;
+			}
 
 			if (!result.IsCompleted) {
 				int nbytes = cnc.EndRead (result);
@@ -301,9 +305,9 @@ namespace System.Net
 				if (finished && result.NBytes > 0)
 					nbytes = 0;
 
+				totalRead += nbytes;
 				result.SetCompleted (false, nbytes + result.NBytes);
 				result.DoCallback ();
-				totalRead += nbytes;
 				if (finished || nbytes == 0)
 					contentLength = totalRead;
 			}

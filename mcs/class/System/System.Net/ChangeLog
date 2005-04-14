@@ -1,3 +1,9 @@
+2005-04-14 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* WebConnectionStream.cs:
+	* WebAsyncResult.cs: ensure we only call EndRead once per async. result.
+	Update total before invoking the callback when present.
+
 2005-04-11 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* WebConnection.cs:
