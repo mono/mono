@@ -1,5 +1,15 @@
-2005-04-15  Zoltan Varga  <vargaz@freemail.hu>
+2005-04-16  Zoltan Varga  <vargaz@freemail.hu>
 
+	* mini-codegen.c (alloc_int_reg): Fix bug in preferred register
+	allocation.
+
+	* mini-amd64.c (mono_arch_emit_this_vret_args): Fix warning.
+
+	* mini-amd64.h (MONO_ARCH_INST_IS_REGPAIR_REG2): Add macros needed
+	by the new allocator.
+
+2005-04-15  Zoltan Varga  <vargaz@freemail.hu>
+	
 	* linear-scan.c (mono_linear_scan): Only enable the temporary->regvar
 	optimization if using the new allocator.
 

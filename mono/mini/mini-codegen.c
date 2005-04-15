@@ -483,7 +483,7 @@ alloc_int_reg (MonoCompile *cfg, InstList *tmp, MonoInst *ins, guint32 dest_mask
 	int val;
 
 	if (info && info->preferred_mask) {
-		val = mono_regstate_alloc_int (cfg->rs, info->preferred_mask);
+		val = mono_regstate_alloc_int (cfg->rs, info->preferred_mask & dest_mask);
 		if (val >= 0) {
 			DEBUG (g_print ("\tallocated preferred reg R%d to %s\n", sym_reg, mono_arch_regname (val)));
 			return val;

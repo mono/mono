@@ -4660,7 +4660,6 @@ mono_arch_emit_this_vret_args (MonoCompile *cfg, MonoCallInst *inst, int this_re
 {
 	MonoCallInst *call = (MonoCallInst*)inst;
 	int out_reg = param_regs [0];
-	guint64 regpair;
 
 	if (vt_reg != -1) {
 		CallInfo * cinfo = get_call_info (inst->signature, FALSE);

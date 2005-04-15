@@ -87,7 +87,7 @@ struct sigcontext {
 #define MONO_ARCH_CALLEE_SAVED_REGS AMD64_CALLEE_SAVED_REGS
 
 /* Setting this to FALSE means using SSE2 instructions for fp arithmetic */
-#define MONO_ARCH_USE_FPSTACK FALSE
+#define MONO_ARCH_USE_FPSTACK TRUE
 #define MONO_ARCH_FPSTACK_SIZE 6
 
 #define MONO_ARCH_INST_FIXED_REG(desc) ((desc == 's') ? AMD64_RCX : ((desc == 'a') ? AMD64_RAX : ((desc == 'd') ? AMD64_RDX : -1)))
@@ -96,6 +96,7 @@ struct sigcontext {
 #define MONO_ARCH_INST_SREG2_MASK(ins) (((ins [MONO_INST_CLOB] == 'a') || (ins [MONO_INST_CLOB] == 'd')) ? (1 << AMD64_RDX) : 0)
 
 #define MONO_ARCH_INST_IS_REGPAIR(desc) FALSE
+#define MONO_ARCH_INST_IS_REGPAIR_REG2(desc,hreg1) (-1)
 
 #define MONO_ARCH_FRAME_ALIGNMENT 16
 
