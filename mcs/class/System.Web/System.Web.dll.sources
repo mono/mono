@@ -641,6 +641,7 @@ System.Web.UI/CodeBuilder.cs
 System.Web.UI/CodeRenderBuilder.cs
 System.Web.UI/CollectionBuilder.cs
 System.Web.UI/CompilationMode.cs
+System.Web.UI/CompiledBindableTemplateBuilder.cs
 System.Web.UI/CompiledTemplateBuilder.cs
 System.Web.UI/ConflictOptions.cs
 System.Web.UI/ConstructorNeedsTagAttribute.cs
