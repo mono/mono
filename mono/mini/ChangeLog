@@ -1,5 +1,10 @@
 2005-04-15  Zoltan Varga  <vargaz@freemail.hu>
 
+	* linear-scan.c (mono_linear_scan): Only enable the temporary->regvar
+	optimization if using the new allocator.
+
+	* cpu-pentium.md: Changes required by the new allocator.
+
 	* basic-long.cs: Fix test method name.
 
 	* mini-codegen.c: Add generalized support for register pairs and allocation
