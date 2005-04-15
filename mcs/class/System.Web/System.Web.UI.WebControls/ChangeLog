@@ -1,3 +1,8 @@
+2005-04-15  Lluis Sanchez Gual <lluis@novell.com>
+
+	* DetailsView.cs: Added some null checks.
+	* TemplateField.cs: Implemented support for two-way bindings.
+
 2005-04-14  Lluis Sanchez Gual <lluis@novell.com>
 
 	* DetailsView.cs: Implemented support for Insert operation. 

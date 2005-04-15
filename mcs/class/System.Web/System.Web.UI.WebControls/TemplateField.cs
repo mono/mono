@@ -29,6 +29,7 @@
 //
 
 #if NET_2_0
+using System.Collections;
 using System.Collections.Specialized;
 using System.Web.UI;
 using System.Security.Permissions;
@@ -130,7 +131,7 @@ namespace System.Web.UI.WebControls
 				}
 			} else {
 				if ((rowState & DataControlRowState.Insert) != 0) {
-					if (headerTemplate != null) {
+					if (insertItemTemplate != null) {
 						insertItemTemplate.InstantiateIn (cell);
 						return;
 					}
@@ -154,10 +155,23 @@ namespace System.Web.UI.WebControls
 			base.InitializeCell (cell, cellType, rowState, rowIndex);
 		}
 		
-		[MonoTODO]
 		public override void ExtractValuesFromCell (IOrderedDictionary dictionary,
 			DataControlFieldCell cell, DataControlRowState rowState, bool includeReadOnly)
 		{
+			IBindableTemplate bt;
+			
+			if ((rowState & DataControlRowState.Insert) != 0)
+				bt = insertItemTemplate as IBindableTemplate; 
+			else if ((rowState & DataControlRowState.Edit) != 0)
+				bt = editItemTemplate as IBindableTemplate;
+			else
+				return;
+			
+			if (bt != null) {
+				IOrderedDictionary values = bt.ExtractValues (cell);
+				foreach (DictionaryEntry e in values)
+					dictionary [e.Key] = e.Value; 
+			}
 		}
 		
 		public override void ValidateSupportsCallback ()

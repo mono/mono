@@ -1706,7 +1706,7 @@ namespace System.Web.UI.WebControls
 				
 				for (int n=0; n<row.Cells.Count; n++) {
 					DataControlFieldCell fcell = row.Cells[n] as DataControlFieldCell;
-					if (fcell != null) {
+					if (fcell != null && fcell.ContainingField != null) {
 						if (n == 0 && fcell.ContainingField.ShowHeader) {
 							if (fieldHeaderStyle != null)
 								fieldHeaderStyle.AddAttributesToRender (writer, fcell);
@@ -1715,7 +1715,7 @@ namespace System.Web.UI.WebControls
 						else
 							fcell.ContainingField.ItemStyle.AddAttributesToRender (writer, fcell);
 					}
-					fcell.Render (writer);
+					row.Cells[n].Render (writer);
 				}
 				row.RenderEndTag (writer);
 			}
