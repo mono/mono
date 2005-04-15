@@ -451,7 +451,7 @@ namespace Mono.CSharp {
 			ConstantCheckState = true;
 
 			if ((return_type is TypeBuilder) && return_type.IsGenericTypeDefinition)
-				throw new Exception ("FUCK");
+				throw new InternalErrorException ();
 			
 			IsStatic = (code_flags & Modifiers.STATIC) != 0;
 			MethodIsStatic = IsStatic;
