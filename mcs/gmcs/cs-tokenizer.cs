@@ -183,6 +183,7 @@ namespace Mono.CSharp
 		// Class variables
 		// 
 		static CharArrayHashtable[] keywords;
+		static Hashtable keywordStrings = new Hashtable ();
 		static NumberStyles styles;
 		static NumberFormatInfo csharp_format_info;
 		
@@ -243,6 +244,7 @@ namespace Mono.CSharp
 		}
 
 		static void AddKeyword (string kw, int token) {
+			keywordStrings.Add (kw, kw);
 			if (keywords [kw.Length] == null) {
 				keywords [kw.Length] = new CharArrayHashtable (kw.Length);
 			}
@@ -429,12 +431,17 @@ namespace Mono.CSharp
 		{
 			return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_' || (c >= '0' && c <= '9') || Char.IsLetter (c);
 		}
-		
+
+		public static bool IsKeyword (string s)
+		{
+			return keywordStrings [s] != null;
+		}
+
 		public static bool IsValidIdentifier (string s)
 		{
 			if (s == null || s.Length == 0)
 				return false;
-			
+
 			if (!is_identifier_start_character (s [0]))
 				return false;
 			

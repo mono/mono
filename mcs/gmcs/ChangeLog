@@ -1,3 +1,22 @@
+2004-03-11  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* doc.cs : just eliminate the latest change.
+
+2004-03-10  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* doc.cs : commented out the latest change. It breaks xml-030.cs
+
+2004-03-10  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* doc.cs : When TypeBuilder did not create Type yet, GetEvents() will
+	  fail. So invoke CreateType() in FindDocumentedType().
+
+2004-03-10  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* cs-tokenizer.cs : added IsKeyword().
+	* doc.cs : Detect keyword incorrectly used as identifier.
+	  Allow identifiers prefixed by @.
+
 2005-03-10  Marek Safar  <marek.safar@seznam.cz>
 
 	* attributes.cs (Attributes.Emit): Continue after CheckTargets.

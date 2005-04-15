@@ -500,6 +500,7 @@ namespace Mono.CSharp {
 				name = signature;
 				parameters = String.Empty;
 			}
+			Normalize (mc, ref name);
 
 			string identifier = name;
 
@@ -512,15 +513,16 @@ namespace Mono.CSharp {
 			// Check if identifier is valid.
 			// This check is not necessary to mark as error, but
 			// csc specially reports CS1584 for wrong identifiers.
-			foreach (string nameElem in identifier.Split ('.')) {
+			string [] nameElems = identifier.Split ('.');
+			for (int i = 0; i < nameElems.Length; i++) {
+				string nameElem = nameElems [i];
+				if (nameElem.EndsWith ("[]"))
+					nameElem = nameElem.Substring (
+						nameElem.Length - 2);
+				if (i > 0)
+					Normalize (mc, ref nameElem);
 				if (!Tokenizer.IsValidIdentifier (nameElem)
 					&& nameElem.IndexOf ("operator") < 0) {
-					if (nameElem.EndsWith ("[]") &&
-						Tokenizer.IsValidIdentifier (
-						nameElem.Substring (
-						0, nameElem.Length - 2)))
-						continue;
-
 					Report.Warning (1584, 1, mc.Location, "XML comment on '{0}' has syntactically incorrect attribute '{1}'", mc.GetSignatureForError (), cref);
 					xref.SetAttribute ("cref", "!:" + signature);
 					return;
@@ -534,6 +536,7 @@ namespace Mono.CSharp {
 				ArrayList plist = new ArrayList ();
 				for (int i = 0; i < paramList.Length; i++) {
 					string paramTypeName = paramList [i].Trim (wsChars);
+					Normalize (mc, ref paramTypeName);
 					Type paramType = FindDocumentedType (mc, paramTypeName, ds, cref);
 					if (paramType == null) {
 						Report.Warning (1580, 1, mc.Location, "Invalid type for parameter '{0}' in XML comment cref attribute '{1}'", i + 1, cref);
@@ -570,6 +573,7 @@ namespace Mono.CSharp {
 			if (period > 0) {
 				string typeName = name.Substring (0, period);
 				string memberName = name.Substring (period + 1);
+				Normalize (mc, ref memberName);
 				type = FindDocumentedType (mc, typeName, ds, cref);
 				int warnResult;
 				if (type != null) {
@@ -701,6 +705,38 @@ namespace Mono.CSharp {
 				MemberCore mc = e.GetDefinition (name);
 				GenerateDocComment (mc, e);
 			}
+		}
+
+		private static void Normalize (MemberCore mc, ref string name)
+		{
+			if (name.Length > 0 && name [0] == '@')
+				name = name.Substring (1);
+			else if (Tokenizer.IsKeyword (name) && !IsTypeName (name))
+				Report.Warning (1041, 1, mc.Location, String.Format ("Identifier expected, '{0}' is a keyword", name));
+		}
+
+		private static bool IsTypeName (string name)
+		{
+			switch (name) {
+			case "bool":
+			case "byte":
+			case "char":
+			case "decimal":
+			case "double":
+			case "float":
+			case "int":
+			case "long":
+			case "object":
+			case "sbyte":
+			case "short":
+			case "string":
+			case "uint":
+			case "ulong":
+			case "ushort":
+			case "void":
+				return true;
+			}
+			return false;
 		}
 	}
 
