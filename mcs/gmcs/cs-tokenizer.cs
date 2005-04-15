@@ -1495,7 +1495,10 @@ namespace Mono.CSharp
 
 			if (arg.StartsWith (w_restore)) {
 				int[] codes = ParseNumbers (arg.Substring (w_restore.Length));
+				Hashtable w_table = Report.warning_ignore_table;
 				foreach (int code in codes) {
+					if (w_table != null && w_table.Contains (code))
+						Report.Warning (1635, 1, Location, "Cannot restore warning 'CS{0:0000}' because it was disabled globally", code);
 					Report.RegisterWarningRegion (Location).WarningEnable (Location, code);
 				}
 				return;
@@ -1505,6 +1508,8 @@ namespace Mono.CSharp
 				Report.Warning (1634, 1, Location, "Expected disable or restore");
 				return;
 			}
+
+			Report.Warning (1633, 1, Location, "Unrecognized #pragma directive");
 		}
 
 		int[] ParseNumbers (string text)
