@@ -2130,6 +2130,8 @@ namespace Mono.CSharp
 							xml_comment_buffer.Append (Environment.NewLine);
 						}
 
+						Location start_location = Location;
+
 						while ((d = getChar ()) != -1){
 							if (d == '*' && peekChar () == '/'){
 								getChar ();
@@ -2153,6 +2155,9 @@ namespace Mono.CSharp
 								comments_seen = false;
 							}
 						}
+						if (!comments_seen)
+							Report.Error (1035, start_location, "End-of-file found, '*/' expected");
+
 						if (docAppend)
 							update_formatted_doc_comment (current_comment_start);
 						continue;

@@ -4975,10 +4975,17 @@ namespace Mono.CSharp {
 						}
 						return false;
 					}
+					if (implementing.IsSpecialName && !((member is PropertyBase || member is EventProperty))) {
+						Report.SymbolRelatedToPreviousError (implementing);
+						Report.Error (683, method.Location, "'{0}' explicit method implementation cannot implement '{1}' because it is an accessor",
+							member.GetSignatureForError (), TypeManager.CSharpSignature (implementing));
+						return false;
+					}
+					method_name = member.InterfaceType.FullName + "." + name;
 				} else {
 					if (implementing != null && method is AbstractPropertyEventMethod && !implementing.IsSpecialName) {
 						Report.SymbolRelatedToPreviousError (implementing);
-						Report.Error (688, method.Location, "Accessor '{0}' cannot implement interface member '{1}' for type '{2}'. Use an explicit interface implementation",
+						Report.Error (686, method.Location, "Accessor '{0}' cannot implement interface member '{1}' for type '{2}'. Use an explicit interface implementation",
 							method.GetSignatureForError (container), TypeManager.CSharpSignature (implementing), container.GetSignatureForError ());
 						return false;
 					}
@@ -5733,12 +5740,12 @@ namespace Mono.CSharp {
 
 	public abstract class FieldMember: FieldBase
 	{
-		
-
 		protected FieldMember (TypeContainer parent, Expression type, int mod,
 			int allowed_mod, MemberName name, object init, Attributes attrs, Location loc)
-			: base (parent, type, mod, allowed_mod, name, init, attrs, loc)
+			: base (parent, type, mod, allowed_mod | Modifiers.ABSTRACT, name, init, attrs, loc)
 		{
+			if ((mod & Modifiers.ABSTRACT) != 0)
+				Report.Error (681, loc, "The modifier 'abstract' is not valid on fields. Try using a property instead");
 		}
 
 		public override void ApplyAttributeBuilder(Attribute a, CustomAttributeBuilder cb)
