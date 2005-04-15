@@ -1392,8 +1392,6 @@ namespace Mono.CSharp {
 			}
 
 			if (current_type != null) {
-				Report.Debug (64, "DEFINE TYPE", this, Name, Location, current_type,
-					      current_type.GetType ());
 				current_type = current_type.ResolveAsTypeTerminal (ec);
 				if (current_type == null) {
 					error = true;
