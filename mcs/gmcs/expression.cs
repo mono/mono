@@ -3903,8 +3903,8 @@ namespace Mono.CSharp {
 			if (!ec.DoFlowAnalysis || !is_out || ec.CurrentBranching.IsAssigned (vi))
 				return true;
 
-			Report.Error (165, loc,
-				      "Use of unassigned parameter `" + name + "'");
+			Report.Error (269, loc,
+				      "Use of unassigned out parameter '{0}'", name);
 			return false;
 		}
 
@@ -5140,12 +5140,17 @@ namespace Mono.CSharp {
 			return method;
 		}
 
-                static void Error_WrongNumArguments (Location loc, String name, int arg_count)
-                {
-                        Report.Error (1501, loc,
-                                      "No overload for method `" + name + "' takes `" +
-                                      arg_count + "' arguments");
-                }
+		static void Error_WrongNumArguments (Location loc, String name, int arg_count)
+		{
+			if (name == "Finalize" && arg_count == 0) {
+				Report.Error (245, loc, "Destructors and object.Finalize cannot be called directly. Consider calling IDisposable.Dispose if available");
+			}
+			else {
+				Report.Error (1501, loc,
+					"No overload for method `" + name + "' takes `" +
+					arg_count + "' arguments");
+			}
+		}
 
                 static void Error_InvokeOnDelegate (Location loc)
                 {
@@ -5347,10 +5352,7 @@ namespace Mono.CSharp {
 			}
 
 			if (method.Name == "Finalize" && Arguments == null) {
-				if (mg.IsBase)
-					Report.Error (250, loc, "Do not directly call your base class Finalize method. It is called automatically from your destructor");
-				else
-					Report.Error (245, loc, "Destructors and object.Finalize cannot be called directly. Consider calling IDisposable.Dispose if available");
+				Report.Error (250, loc, "Do not directly call your base class Finalize method. It is called automatically from your destructor");
 				return null;
 			}
 
@@ -7049,7 +7051,7 @@ namespace Mono.CSharp {
 				variable_info.SetAssigned (ec);
 			
 			if (ec.TypeContainer is Class){
-				Error (1604, "Cannot assign to `this'");
+				Error (1604, "Cannot assign to 'this' because it is read-only");
 				return null;
 			}
 

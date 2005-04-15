@@ -1,3 +1,19 @@
+2005-03-15  Marek Safar  <marek.safar@seznam.cz>
+
+	* class.cs (TypeContainer.CircularDepException) New nested
+	(MethodCore.CheckBase): Report CS1715 for properties and indexers.
+
+	* cs-parser.jay: Reports CS1527 for any namespace element.
+
+	* delegate.cs (DelegateCreation.Error_NoMatchingMethodForDelegate):
+	Added CS0407.
+	
+	* expression.cs (ParameterReference.IsAssigned): Changed error to
+	CS0269.
+	(Error_WrongNumArguments): Moved CS0245 detection here. 
+	
+	* statement.cs (Return.Resolve): Add CS1622 report.
+
 2005-03-11  Marek Safar  <marek.safar@seznam.cz>
 
 	* class.cs (StaticClass.DefineContainerMembers): Added CS0720.

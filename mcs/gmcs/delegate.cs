@@ -739,30 +739,33 @@ namespace Mono.CSharp {
 		public static void Error_NoMatchingMethodForDelegate (EmitContext ec, MethodGroupExpr mg, Type type, Location loc)
 		{
 			string method_desc;
+			MethodBase found_method = mg.Methods [0];
 
-			MethodBase candidate = mg.Methods [0];
 			if (mg.Methods.Length > 1)
-				method_desc = candidate.Name;
+				method_desc = found_method.Name;
 			else
-				method_desc = Invocation.FullMethodDesc (candidate);
+				method_desc = Invocation.FullMethodDesc (found_method);
 
 			Expression invoke_method = Expression.MemberLookup (
 				ec, type, "Invoke", MemberTypes.Method,
 				Expression.AllBindingFlags, loc);
-			MethodBase method = ((MethodGroupExpr) invoke_method).Methods [0];
+			MethodInfo method = ((MethodGroupExpr) invoke_method).Methods [0] as MethodInfo;
+
 			ParameterData param = TypeManager.GetParameterData (method);
 			string delegate_desc = Delegate.FullDelegateDesc (type, method, param);
 
 			if (!mg.HasTypeArguments &&
-			    !TypeManager.InferTypeArguments (ec, param, ref candidate))
+			    !TypeManager.InferTypeArguments (ec, param, ref found_method))
 				Report.Error (411, loc, "The type arguments for " +
 					      "method `{0}' cannot be infered from " +
 					      "the usage. Try specifying the type " +
 					      "arguments explicitly.", method_desc);
-			else
-				Report.Error (123, loc, "Method '{0}' does not " +
-					      "match delegate '{1}'", method_desc,
-					      delegate_desc);
+			else if (method.ReturnType != ((MethodInfo) found_method).ReturnType) {
+				Report.Error (407, loc, "'{0}' has the wrong return type to match delegate '{1}'", method_desc, delegate_desc);
+			} else {
+				Report.Error (123, loc, "Method '" + method_desc + "' does not " +
+					"match delegate '" + delegate_desc + "'");
+			}
 		}
 		
 		public override void Emit (EmitContext ec)

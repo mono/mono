@@ -1391,6 +1391,8 @@ namespace Mono.CSharp {
 			}
 
 			if (current_type != null) {
+				Report.Debug (64, "DEFINE TYPE", this, Name, Location, current_type,
+					      current_type.GetType ());
 				current_type = current_type.ResolveAsTypeTerminal (ec);
 				if (current_type == null) {
 					error = true;
@@ -3264,8 +3266,14 @@ namespace Mono.CSharp {
 				if ((ModFlags & Modifiers.NEW) == 0) {
 					if (MemberType != TypeManager.TypeToCoreType (base_ret_type)) {
 						Report.SymbolRelatedToPreviousError (base_method);
-						Report.Error (508, Location, GetSignatureForError (Parent) + ": cannot " +
-							"change return type when overriding inherited member");
+						if (this is PropertyBase) {
+							Report.Error (1715, Location, "'{0}': type must be '{1}' to match overridden member '{2}'", 
+								GetSignatureForError (), TypeManager.CSharpName (base_ret_type), TypeManager.CSharpSignature (base_method));
+						}
+						else {
+							Report.Error (508, Location, GetSignatureForError (Parent) + ": cannot " +
+								"change return type when overriding inherited member");
+						}
 						return false;
 					}
 				} else {
