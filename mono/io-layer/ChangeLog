@@ -1,3 +1,7 @@
+2005-04-15  Dick Porter  <dick@ximian.com>
+
+	* collection.c: FreeBSD needs more than PTHREAD_STACK_MIN
+
 2005-04-14  Raja R Harinath  <rharinath@novell.com>
 
 	* wapi-private.h: Remove reference to 'daemon-private.h'.
