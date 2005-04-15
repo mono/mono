@@ -474,7 +474,7 @@ namespace Mono.CSharp {
 
 		public bool AddToMemberContainer (MemberCore symbol)
 		{
-			return AddToContainer (symbol, String.Concat (Name, '.', symbol.Name), symbol.Name);
+			return AddToContainer (symbol, String.Concat (Name, ".", symbol.Name), symbol.Name);
 		}
 
 		bool AddToTypeContainer (DeclSpace ds)

@@ -1,5 +1,10 @@
 2005-03-09  Raja R Harinath  <rharinath@novell.com>
 
+	* class.cs (TypeContainer.AddToMemberContainer): Use "." rather
+	than '.'.
+
+2005-03-09  Raja R Harinath  <rharinath@novell.com>
+
 	* decl.cs (DeclSpace.LookupType): Don't loop but recurse into
 	enclosing DeclSpace.  This ensures that a name-lookup populates
 	more caches and there are fewer 'TypeExpression's.  Carve out
