@@ -2979,6 +2979,9 @@ namespace Mono.CSharp {
 					continue;
 				}
 
+				if ((m.ModFlags & Modifiers.PROTECTED) != 0)
+					Report.Warning (628, 4, m.Location, "'{0}': new protected member declared in static class", m.GetSignatureForError (this));
+
 				if ((m.ModFlags & Modifiers.STATIC) != 0 || m is Enum || m is Delegate)
 					continue;
 

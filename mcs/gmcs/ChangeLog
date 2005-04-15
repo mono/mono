@@ -1,3 +1,7 @@
+2005-03-02  Marek Safar  <marek.safar@seznam.cz>
+
+	* report.cs (StaticClass.DefineContainerMembers): Add warning 628.
+
 2005-03-02  Raja R Harinath  <rharinath@novell.com>
 
 	Unify DeclSpace.LookupType and DeclSpace.FindType.
