@@ -420,10 +420,6 @@ namespace Mono.CSharp
 			Mono.CSharp.Location.Push (file);
 		}
 
-		public static void Cleanup () {
-			identifiers = null;
-		}
-
 		static bool is_identifier_start_character (char c)
 		{
 			return (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || c == '_' || Char.IsLetter (c);

@@ -68,8 +68,6 @@ namespace Mono.CSharp
 		// 
 		static bool load_default_config = true;
 
-		static Hashtable response_file_list;
-
 		//
 		// A list of resource files
 		//
@@ -451,18 +449,7 @@ namespace Mono.CSharp
 		//
 		static string GetSystemDir ()
 		{
-			Assembly [] assemblies = AppDomain.CurrentDomain.GetAssemblies ();
-
-			foreach (Assembly a in assemblies){
-				string codebase = a.Location;
-                                string fn = System.IO.Path.GetFileName (codebase);
-				if (fn == "corlib.dll" || fn == "mscorlib.dll"){
-					return codebase.Substring (0, codebase.LastIndexOf (System.IO.Path.DirectorySeparatorChar));
-				}
-			}
-
-			Report.Error (-15, "Can not compute my system path");
-			return "";
+			return Path.GetDirectoryName (typeof (object).Assembly.Location);
 		}
 
 		//
@@ -614,11 +601,11 @@ namespace Mono.CSharp
 				Report.Error (
 					1900,
 					"--wlevel requires a value from 0 to 4");
-				Environment.Exit (1);
+				return;
 			}
 			if (level < 0 || level > 4){
 				Report.Error (1900, "Warning level must be 0 to 4");
-				Environment.Exit (1);
+				return;
 			}
 			RootContext.WarningLevel = level;
 		}
@@ -773,7 +760,6 @@ namespace Mono.CSharp
 					break;
 				default:
 					TargetUsage ();
-					Environment.Exit (1);
 					break;
 				}
 				return true;
@@ -926,7 +912,6 @@ namespace Mono.CSharp
 
 				default:
 					TargetUsage ();
-					Environment.Exit (1);
 					break;
 				}
 				return true;
@@ -1184,7 +1169,6 @@ namespace Mono.CSharp
 						Report.SetIgnoreWarning (warn);
 					} catch {
 						Report.Error (1904, String.Format("'{0}' is not a valid warning number", wc));
-						Environment.Exit (1);
 					}
 				}
 				return true;
@@ -1269,8 +1253,7 @@ namespace Mono.CSharp
 						return true;
 				}
 				Report.Error (1617, "Invalid option '{0}' for /langversion; must be ISO-1 or Default", value);
-				Environment.Exit (1);
-				return false;
+				return true;
 
 			case "/codepage":
 				int cp = -1;
@@ -1294,7 +1277,6 @@ namespace Mono.CSharp
 					using_default_encoder = false;
 				} catch {
 					Report.Error (2016, String.Format("Code page '{0}' is invalid or not installed", cp));
-					Environment.Exit (1);
 				}
 				return true;
 			}
@@ -1362,6 +1344,8 @@ namespace Mono.CSharp
 			// This is not required because Assembly.Load knows about this
 			// path.
 			//
+
+			Hashtable response_file_list = null;
 
 			for (i = 0; i < args.Length; i++){
 				string arg = args [i];
@@ -1457,8 +1441,6 @@ namespace Mono.CSharp
 			if (parse_only)
 				return true;
 			
-			Tokenizer.Cleanup ();
-			
 			//
 			// Load Core Library for default compilation
 			//
@@ -1500,12 +1482,13 @@ namespace Mono.CSharp
 					output_file = first_source + RootContext.TargetExt;
 			}
 
-			CodeGen.Init (output_file, output_file, want_debugging_support);
+			if (!CodeGen.Init (output_file, output_file, want_debugging_support))
+				return false;
 
 			if (RootContext.Target == Target.Module) {
 				PropertyInfo module_only = typeof (AssemblyBuilder).GetProperty ("IsModuleOnly", BindingFlags.Instance|BindingFlags.Public|BindingFlags.NonPublic);
 				if (module_only == null) {
-					Report.Error (0, new Location (-1), "Cannot use /target:module on this runtime: try the Mono runtime instead.");
+					Report.RuntimeMissingSupport (Location.Null, "/target:module");
 					Environment.Exit (1);
 				}
 
@@ -1518,7 +1501,7 @@ namespace Mono.CSharp
 			if (modules.Count > 0) {
 				MethodInfo adder_method = typeof (AssemblyBuilder).GetMethod ("AddModule", BindingFlags.Instance|BindingFlags.NonPublic);
 				if (adder_method == null) {
-					Report.Error (0, new Location (-1), "Cannot use /addmodule on this runtime: Try the Mono runtime instead.");
+					Report.RuntimeMissingSupport (Location.Null, "/addmodule");
 					Environment.Exit (1);
 				}
 
@@ -1677,8 +1660,7 @@ namespace Mono.CSharp
 					null, CallingConventions.Any, argst, null);
 				
 				if (embed_res == null) {
-					Report.Warning (0, new Location (-1),
-							"Cannot embed resources on this runtime: try the Mono runtime instead.");
+					Report.RuntimeMissingSupport (Location.Null, "Resource embedding");
 				} else {
 					foreach (string spec in embedded_resources) {
 						int cp;
@@ -1766,16 +1748,25 @@ namespace Mono.CSharp
 	public class CompilerCallableEntryPoint : MarshalByRefObject {
 		static bool used = false;
 		
-		public bool InvokeCompiler (string [] args)
+		public static bool InvokeCompiler (string [] args)
 		{
 			if (used)
 				Reset ();
-			bool ok = Driver.MainDriver (args);
-			return ok && Report.Errors == 0;
+			else
+				used = true;
+
+			return Driver.MainDriver (args) && Report.Errors == 0;
 		}
 
-		public void Reset ()
+		static void Reset ()
 		{
+			Location.Reset ();
+			RootContext.Reset ();
+			Report.Reset ();
+			TypeManager.Reset ();
+			TypeHandle.Reset ();
+			Namespace.Reset ();
+			CodeGen.Reset ();
 		}
 	}
 }

@@ -270,6 +270,11 @@ public partial class TypeManager {
 	// </remarks>
 	public static Hashtable all_imported_types;
 
+	static Hashtable negative_hits;
+	static Hashtable fieldbuilders_to_fields;
+	static Hashtable fields;
+	static Hashtable references;
+
 	struct Signature {
 		public string name;
 		public Type [] args;
@@ -377,6 +382,15 @@ public partial class TypeManager {
 
 	static TypeManager ()
 	{
+		Reset ();
+
+		signature_filter = new MemberFilter (SignatureFilter);
+		InitExpressionTypes ();
+		InitGenerics ();
+	}
+
+	static public void Reset ()
+	{
 		assemblies = new Assembly [0];
 		modules = null;
 		user_types = new ArrayList ();
@@ -395,9 +409,10 @@ public partial class TypeManager {
 		NoTypes = new Type [0];
 		NoTypeExprs = new TypeExpr [0];
 
-		signature_filter = new MemberFilter (SignatureFilter);
-		InitGenerics ();
-		InitExpressionTypes ();
+		negative_hits = new Hashtable ();
+		fieldbuilders_to_fields = new Hashtable ();
+		fields = new Hashtable ();
+		references = new Hashtable ();
 	}
 
 	public static void HandleDuplicate (string name, Type t)
@@ -609,8 +624,6 @@ public partial class TypeManager {
 			return modules;
 		}
 	}
-
-	static Hashtable references = new Hashtable ();
 	
 	//
 	// Gets the reference to T version of the Type (T&)
@@ -689,8 +702,6 @@ public partial class TypeManager {
 		return null;
 	}
 
-	static Hashtable negative_hits = new Hashtable ();
-	
 	//
 	// This function is used when you want to avoid the lookups, and want to go
 	// directly to the source.  This will use the cache.
@@ -1024,10 +1035,8 @@ public partial class TypeManager {
 	{
 		Type t = LookupTypeDirect (name);
 
-		if (t == null){
+		if (t == null)
 			Report.Error (518, "The predefined type `" + name + "' is not defined or imported");
-			Environment.Exit (1);
-		}
 
 		return t;
 	}
@@ -1988,7 +1997,6 @@ public partial class TypeManager {
 	//  This is a workaround the fact that GetValue is not
 	//  supported for dynamic types
 	// </remarks>
-	static Hashtable fields = new Hashtable ();
 	static public bool RegisterFieldValue (FieldBuilder fb, object value)
 	{
 		if (fields.Contains (fb))
@@ -2004,7 +2012,6 @@ public partial class TypeManager {
 		return fields [fb];
 	}
 
-	static Hashtable fieldbuilders_to_fields = new Hashtable ();
 	static public bool RegisterFieldBase (FieldBuilder fb, FieldBase f)
 	{
 		if (fieldbuilders_to_fields.Contains (fb))
@@ -3088,6 +3095,11 @@ public sealed class TypeHandle : IMemberContainer {
 	readonly int id = ++next_id;
 	static int next_id = 0;
 
+	static TypeHandle ()
+	{
+		Reset ();
+	}
+
 	/// <summary>
 	///   Lookup a TypeHandle instance for the given type.  If the type doesn't have
 	///   a TypeHandle yet, a new instance of it is created.  This static method
@@ -3112,6 +3124,11 @@ public sealed class TypeHandle : IMemberContainer {
 	public static void CleanUp ()
 	{
 		type_hash = null;
+	}
+
+	public static void Reset ()
+	{
+		type_hash = new PtrHashtable ();
 	}
 
 	/// <summary>
@@ -3142,7 +3159,7 @@ public sealed class TypeHandle : IMemberContainer {
 		}
 	}
 
-	private static PtrHashtable type_hash = new PtrHashtable ();
+	private static PtrHashtable type_hash;
 
 	private static TypeHandle object_type = null;
 	private static TypeHandle array_type = null;

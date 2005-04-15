@@ -18,14 +18,29 @@ namespace Mono.CSharp {
 	///   compiler parse/intermediate tree during name resolution.
 	/// </summary>
 	public class Namespace : FullNamedExpression, IAlias {
-		static ArrayList all_namespaces = new ArrayList ();
-		static Hashtable namespaces_map = new Hashtable ();
+		static ArrayList all_namespaces;
+		static Hashtable namespaces_map;
 		
 		Namespace parent;
 		string fullname;
 		ArrayList entries;
 		Hashtable namespaces;
 		Hashtable defined_names;
+
+		public static Namespace Root;
+
+		static Namespace ()
+		{
+			Reset ();
+		}
+
+		public static void Reset ()
+		{
+			all_namespaces = new ArrayList ();
+			namespaces_map = new Hashtable ();
+
+			Root = new Namespace (null, "");
+		}
 
 		/// <summary>
 		///   Constructor Takes the current namespace and the
@@ -73,8 +88,6 @@ namespace Mono.CSharp {
 			return namespaces_map [name] != null;
 		}
 		
-		public static Namespace Root = new Namespace (null, "");
-
 		public Namespace GetNamespace (string name, bool create)
 		{
 			int pos = name.IndexOf ('.');

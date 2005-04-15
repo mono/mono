@@ -868,7 +868,7 @@ namespace Mono.CSharp {
 			if (e.Type == TypeManager.bool_type)
 				return e;
 
-			Expression converted = Convert.ImplicitConversion (ec, e, TypeManager.bool_type, new Location (-1));
+			Expression converted = Convert.ImplicitConversion (ec, e, TypeManager.bool_type, Location.Null);
 
 			if (converted != null)
 				return converted;
