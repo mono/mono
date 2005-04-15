@@ -298,7 +298,7 @@ class Tests {
 		}
 	}	
 
-	static int test_0_shl () {
+	static int test_0_shr () {
 		long a = 9;
 		int b = 1;
 		
