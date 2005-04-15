@@ -1192,6 +1192,7 @@ System.Text/Decoder.cs
 System.Text/Encoder.cs
 System.Text/Encoding.cs
 System.Text/Latin1Encoding.cs
+System.Text/NormalizationForm.cs
 System.Text/StringBuilder.cs
 System.Text/UnicodeEncoding.cs
 System.Text/UTF7Encoding.cs
