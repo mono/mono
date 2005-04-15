@@ -1,3 +1,11 @@
+2005-04-16  Zoltan Varga  <vargaz@freemail.hu>
+
+	* inssel-long.brg: Fix #74588.
+
+	* cpu-amd64.md: Fix #74591.
+
+	* iltests.il: Add new regression tests.
+
 2005-04-13  Zoltan Varga  <vargaz@freemail.hu>
 
 	* trace.c (mono_trace_enter_method): Print enums as an int, not as a
