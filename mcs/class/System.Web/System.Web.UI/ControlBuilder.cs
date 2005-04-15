@@ -152,7 +152,12 @@ namespace System.Web.UI {
 			}
 		}
 
-		internal Type BindingContainerType {
+#if NET_2_0
+		public
+#else
+		internal
+#endif
+		Type BindingContainerType {
 			get {
 				if (parentBuilder == null)
 					return typeof (Control);
@@ -168,6 +173,17 @@ namespace System.Web.UI {
 					return parentBuilder.BindingContainerType;
 
 				return ptype;
+			}
+		}
+
+		internal TemplateBuilder ParentTemplateBuilder {
+			get {
+				if (parentBuilder == null)
+					return null;
+				else if (parentBuilder is TemplateBuilder)
+					return (TemplateBuilder) parentBuilder;
+				else
+					return parentBuilder.ParentTemplateBuilder;
 			}
 		}
 

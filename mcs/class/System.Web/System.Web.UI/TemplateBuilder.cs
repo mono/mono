@@ -31,6 +31,9 @@
 using System;
 using System.Collections;
 using System.Reflection;
+#if NET_2_0
+using System.ComponentModel;
+#endif
 
 namespace System.Web.UI
 {
@@ -38,6 +41,9 @@ namespace System.Web.UI
 	{
 		string text;
 		TemplateContainerAttribute containerAttribute;
+#if NET_2_0
+		ArrayList bindings;
+#endif
 
 		public TemplateBuilder ()
 		{
@@ -59,6 +65,22 @@ namespace System.Web.UI
 		internal Type ContainerType {
 			get { return containerAttribute != null ? containerAttribute.ContainerType : null; }
 		}
+		
+#if NET_2_0
+		internal BindingDirection BindingDirection {
+			get { return containerAttribute != null ? containerAttribute.BindingDirection : BindingDirection.OneWay; }
+		}
+		
+		internal void RegisterBoundProperty (Type controlType, string controlProperty, string controlId, string fieldName)
+		{
+			if (bindings == null) bindings = new ArrayList ();
+			bindings.Add (new TemplateBinding (controlType, controlProperty, controlId, fieldName));
+		}
+		
+		internal ICollection Bindings {
+			get { return bindings; }
+		}
+#endif
 
 		public override void Init (TemplateParser parser,
 					  ControlBuilder parentBuilder,
@@ -86,5 +108,23 @@ namespace System.Web.UI
 			this.text = text;
 		}
 	}
+	
+#if NET_2_0
+	internal class TemplateBinding
+	{
+		public Type ControlType;
+		public string ControlProperty;
+		public string ControlId;
+		public string FieldName;
+		
+		public TemplateBinding (Type controlType, string controlProperty, string controlId, string fieldName)
+		{
+			ControlType = controlType;
+			ControlProperty = controlProperty;
+			ControlId = controlId;
+			FieldName = fieldName;
+		}
+	}
+#endif
 }
 

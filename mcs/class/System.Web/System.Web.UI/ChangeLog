@@ -1,3 +1,14 @@
+2005-04-15  Lluis Sanchez Gual <lluis@novell.com>
+
+	* ControlBuilder.cs: The BindingContainerType property happens
+	to exist in 2.0, so I made it public. Added ParentTemplateBuilder,
+	which is used to get the binding container that is managing
+	the current two-way binding context.
+	* TemplateBuilder.cs: Added some methods and an internal class
+	to support two-way bindings.
+	* CompiledBindableTemplateBuilder.cs: Implemented.
+	* IBindableTemplate.cs: This interface inherits from ITemplate.
+
 2005-04-14  Lluis Sanchez Gual <lluis@novell.com>
 
 	* ControlBuilder.cs: Added BindingContainerType property,

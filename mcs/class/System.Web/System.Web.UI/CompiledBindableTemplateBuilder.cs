@@ -1,11 +1,10 @@
 //
-// System.Web.UI.IBindableTemplate.cs
+// System.Web.UI.CompiledBindableTemplateBuilder.cs
 //
 // Authors:
-//      Sanjay Gupta (gsanjay@novell.com)
+//	Lluis Sanchez Gual (lluis@novell.com)
 //
-// (C) 2004 Novell, Inc (http://www.novell.com)
-//
+// (C) 2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -27,17 +26,34 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-
 #if NET_2_0
-using System;
+
 using System.Collections.Specialized;
 
 namespace System.Web.UI
 {
-	public interface IBindableTemplate: ITemplate
+	public sealed class CompiledBindableTemplateBuilder : IBindableTemplate
 	{
-		IOrderedDictionary ExtractValues (Control control);
+		private BuildTemplateMethod templateMethod;
+		private ExtractTemplateValuesMethod extractMethod;
+
+		public CompiledBindableTemplateBuilder (BuildTemplateMethod buildTemplateMethod, ExtractTemplateValuesMethod extractTemplateValuesMethod)
+		{
+			this.templateMethod = buildTemplateMethod;
+			this.extractMethod = extractTemplateValuesMethod;
+		}
+
+		public void InstantiateIn (Control container)
+		{
+			templateMethod (container);
+		}
+		
+		public IOrderedDictionary ExtractValues (Control container)
+		{
+			if (extractMethod == null) return null;
+			return extractMethod (container);
+		}
 	}
 }
-#endif
 
+#endif
