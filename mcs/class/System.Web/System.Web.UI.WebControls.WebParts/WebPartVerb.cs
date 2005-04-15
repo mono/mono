@@ -110,9 +110,10 @@ namespace System.Web.UI.WebControls.WebParts
 		}
 
 		[MonoTODO]
-		bool IStateManager.get_IsTrackingViewState ()
-		{
-			throw new NotImplementedException ();
+		bool IStateManager.IsTrackingViewState {
+			get {
+				throw new NotImplementedException ();
+			}
 		}
 
 		[WebSysDescriptionAttribute ("Denotes verb is checked or not."),
