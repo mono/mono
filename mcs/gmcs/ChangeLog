@@ -1,3 +1,7 @@
+2005-03-11  Marek Safar  <marek.safar@seznam.cz>
+
+	* class.cs (StaticClass.DefineContainerMembers): Added CS0720.
+
 2005-03-11  Zoltan Varga  <vargaz@freemail.hu>
 
 	* attribute.cs expression.cs: Get rid of some allocations.
