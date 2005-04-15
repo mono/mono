@@ -1,3 +1,17 @@
+2005-03-08  Marek Safar  <marek.safar@seznam.cz>
+
+	* cs-parser.jay: Removed CS0134.
+	
+	* driver.cs: Removed CS1901.
+	
+	* expression.cs (SizeOf.DoResolve): Don't report CS0233
+	for predefined types.
+
+2005-03-07  Duncan Mak  <duncan@novell.com>
+
+	* codegen.cs (Save):  Catch UnauthorizedAccessException as
+	well. Fixes bug #73454.
+
 2005-03-07  Marek Safar  <marek.safar@seznam.cz>
 
 	* cs-tokenizer.cs (xtoken): Add CS1035.

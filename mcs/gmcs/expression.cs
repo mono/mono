@@ -7283,13 +7283,6 @@ namespace Mono.CSharp {
 
 		public override Expression DoResolve (EmitContext ec)
 		{
-			if (!ec.InUnsafe) {
-				Report.Error (
-					233, loc, "Sizeof may only be used in an unsafe context " +
-					"(consider using System.Runtime.InteropServices.Marshal.SizeOf");
-				return null;
-			}
-				
 			TypeExpr texpr = QueriedType.ResolveAsTypeTerminal (ec);
 			if (texpr == null)
 				return null;
@@ -7300,6 +7293,17 @@ namespace Mono.CSharp {
 			}
 
 			type_queried = texpr.Type;
+
+			int size_of = GetTypeSize (type_queried);
+			if (size_of > 0) {
+				return new IntConstant (size_of);
+			}
+
+			if (!ec.InUnsafe) {
+				Report.Error (233, loc, "'{0}' does not have a predefined size, therefore sizeof can only be used in an unsafe context (consider using System.Runtime.InteropServices.Marshal.SizeOf)",
+					 TypeManager.CSharpName (type_queried));
+				return null;
+			}
 
 			CheckObsoleteAttribute (type_queried);
 

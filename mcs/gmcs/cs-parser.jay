@@ -372,11 +372,6 @@ namespace_declaration
 
 		if (name.TypeArguments != null)
 			syntax_error (lexer.Location, "namespace name expected");
-		else if ((current_namespace.Parent != null) && (name.Left != null)) {
-			Report.Error (134, lexer.Location,
-				      "Cannot use qualified namespace names in nested " +
-				      "namespace declarations");
-		}
 
 		current_namespace = new NamespaceEntry (
 			current_namespace, file, name.GetName (), lexer.Location);
