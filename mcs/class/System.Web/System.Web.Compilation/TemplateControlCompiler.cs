@@ -38,6 +38,10 @@ using System.Text;
 using System.Web;
 using System.Web.UI;
 using System.ComponentModel.Design.Serialization;
+#if NET_2_0
+using System.Collections.Specialized;
+using System.Text.RegularExpressions;
+#endif
 
 namespace System.Web.Compilation
 {
@@ -58,6 +62,10 @@ namespace System.Web.Compilation
 		static CodeVariableReferenceExpression ctrlVar = new CodeVariableReferenceExpression ("__ctrl");
 		static Type [] arrayString = new Type [] {typeof (string)};
 		static Type [] arrayStringCultureInfo = new Type [] {typeof (string), typeof (CultureInfo)};
+		
+#if NET_2_0
+		static Regex bindRegex = new Regex (@"Bind\s*\(""(.*?)""\)\s*%>", RegexOptions.Compiled);
+#endif
 
 		public TemplateControlCompiler (TemplateControlParser parser)
 			: base (parser)
@@ -293,6 +301,31 @@ namespace System.Web.Compilation
 			string str = value.Trim ();
 			return (str.StartsWith ("<%#") && str.EndsWith ("%>"));
 		}
+
+#if NET_2_0
+		void RegisterBindingInfo (ControlBuilder builder, string propName, ref string value)
+		{
+			string str = value.Trim ();
+			str = str.Substring (3).Trim ();	// eats "<%#"
+			if (str.StartsWith ("Bind")) {
+				Match match = bindRegex.Match (str);
+				if (match.Success) {
+					string bindingName = match.Groups [1].Value;
+					
+					TemplateBuilder templateBuilder = builder.ParentTemplateBuilder;
+					if (templateBuilder == null || templateBuilder.BindingDirection == BindingDirection.OneWay)
+						throw new HttpException ("Bind expression not allowed in this context.");
+						
+					string id = builder.attribs ["ID"] as string;
+					if (id == null)
+						throw new HttpException ("Control of type '" + builder.ControlType + "' using two-way binding on property '" + propName + "' must have an ID.");
+					
+					templateBuilder.RegisterBoundProperty (builder.ControlType, propName, id, bindingName);
+					value = "<%# Eval" + str.Substring (4);
+				}
+			}
+		}
+#endif
 		
 		bool ProcessPropertiesAndFields (ControlBuilder builder, MemberInfo member, string id, string attValue)
 		{
@@ -312,6 +345,9 @@ namespace System.Web.Compilation
 			}
 
 			if (0 == String.Compare (member.Name, id, true)){
+#if NET_2_0
+				if (isDataBound) RegisterBindingInfo (builder, member.Name, ref attValue);
+#endif
 				AddCodeForPropertyOrField (builder, type, member.Name, attValue, member, isDataBound);
 				return true;
 			}
@@ -342,6 +378,9 @@ namespace System.Web.Compilation
 				else
 					value = attValue;
 
+#if NET_2_0
+				if (isDataBound) RegisterBindingInfo (builder, member.Name + "." + subprop.Name, ref attValue);
+#endif
 				AddCodeForPropertyOrField (builder, subprop.PropertyType,
 						 member.Name + "." + subprop.Name,
 						 value, subprop, isDataBound);
@@ -524,6 +563,71 @@ namespace System.Web.Compilation
 		}
 
 #if NET_2_0
+		void AddBindableTemplateInvocation (CodeMemberMethod method, string name, string methodName, string extractMethodName)
+		{
+			CodePropertyReferenceExpression prop = new CodePropertyReferenceExpression (ctrlVar, name);
+
+			CodeObjectCreateExpression newBuild = new CodeObjectCreateExpression (typeof (BuildTemplateMethod));
+			newBuild.Parameters.Add (new CodeMethodReferenceExpression (thisRef, methodName));
+
+			CodeObjectCreateExpression newExtract = new CodeObjectCreateExpression (typeof (ExtractTemplateValuesMethod));
+			newExtract.Parameters.Add (new CodeMethodReferenceExpression (thisRef, extractMethodName));
+
+			CodeObjectCreateExpression newCompiled = new CodeObjectCreateExpression (typeof (CompiledBindableTemplateBuilder));
+			newCompiled.Parameters.Add (newBuild);
+			newCompiled.Parameters.Add (newExtract);
+			
+			CodeAssignStatement assign = new CodeAssignStatement (prop, newCompiled);
+			method.Statements.Add (assign);
+		}
+		
+		string CreateExtractValuesMethod (TemplateBuilder builder)
+		{
+			CodeMemberMethod method = new CodeMemberMethod ();
+			method.Name = "__ExtractValues_" + builder.ID;
+			method.Attributes = MemberAttributes.Private | MemberAttributes.Final;
+			method.ReturnType = new CodeTypeReference (typeof(IOrderedDictionary));
+			
+			CodeParameterDeclarationExpression arg = new CodeParameterDeclarationExpression ();
+			arg.Type = new CodeTypeReference (typeof (Control));
+			arg.Name = "__container";
+			method.Parameters.Add (arg);
+			mainClass.Members.Add (method);
+			
+			CodeObjectCreateExpression newTable = new CodeObjectCreateExpression ();
+			newTable.CreateType = new CodeTypeReference (typeof(OrderedDictionary));
+			method.Statements.Add (new CodeVariableDeclarationStatement (typeof(OrderedDictionary), "__table", newTable));
+			CodeVariableReferenceExpression tableExp = new CodeVariableReferenceExpression ("__table");
+			
+			if (builder.Bindings != null) {
+				foreach (TemplateBinding binding in builder.Bindings) {
+					CodeVariableDeclarationStatement dec = new CodeVariableDeclarationStatement (binding.ControlType, binding.ControlId);
+					method.Statements.Add (dec);
+					CodeVariableReferenceExpression cter = new CodeVariableReferenceExpression ("__container");
+					CodeMethodInvokeExpression invoke = new CodeMethodInvokeExpression (cter, "FindControl");
+					invoke.Parameters.Add (new CodePrimitiveExpression (binding.ControlId));
+					
+					CodeAssignStatement assign = new CodeAssignStatement ();
+					CodeVariableReferenceExpression control = new CodeVariableReferenceExpression (binding.ControlId); 
+					assign.Left = control;
+					assign.Right = new CodeCastExpression (binding.ControlType, invoke);
+					method.Statements.Add (assign);
+					
+					CodeConditionStatement sif = new CodeConditionStatement ();
+					sif.Condition = new CodeBinaryOperatorExpression (control, CodeBinaryOperatorType.IdentityInequality, new CodePrimitiveExpression (null));
+					
+					assign = new CodeAssignStatement ();
+					assign.Left = new CodeIndexerExpression (tableExp, new CodePrimitiveExpression (binding.FieldName));
+					assign.Right = new CodePropertyReferenceExpression (control, binding.ControlProperty);
+					sif.TrueStatements.Add (assign);
+					method.Statements.Add (sif);
+				}
+			}
+
+			method.Statements.Add (new CodeMethodReturnStatement (tableExp));
+			return method.Name;
+		}
+
 		void AddContentTemplateInvocation (ContentControlBuilder cbuilder, CodeMemberMethod method, string methodName)
 		{
 			CodePropertyReferenceExpression pag = new CodePropertyReferenceExpression (ctrlVar, "Page");
@@ -738,8 +842,15 @@ namespace System.Web.Compilation
 				FlushText (builder, sb);
 
 				if (templates != null) {
-					foreach (ControlBuilder b in templates) {
+					foreach (TemplateBuilder b in templates) {
 						CreateControlTree (b, true, false);
+#if NET_2_0
+						if (b.BindingDirection == BindingDirection.TwoWay) {
+							string extractMethod = CreateExtractValuesMethod (b);
+							AddBindableTemplateInvocation (builder.method, b.TagName, b.method.Name, extractMethod);
+						}
+						else
+#endif
 						AddTemplateInvocation (builder.method, b.TagName, b.method.Name);
 					}
 				}

@@ -1,3 +1,7 @@
+2005-04-15  Lluis Sanchez Gual <lluis@novell.com>
+
+	* TemplateControlCompiler.cs: 
+
 2005-04-14  Lluis Sanchez Gual <lluis@novell.com>
 
 	* TemplateControlCompiler.cs: Use the new BindingContainerType
