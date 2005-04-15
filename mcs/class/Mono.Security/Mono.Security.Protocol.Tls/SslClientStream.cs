@@ -76,6 +76,7 @@ namespace Mono.Security.Protocol.Tls
 		private object							negotiate;
 		private object							read;
 		private object							write;
+		private ReadDelegate						rd;
 
 		#endregion
 
@@ -482,7 +483,7 @@ namespace Mono.Security.Protocol.Tls
 					}
 
 					// return the record(s) to the caller
-					ReadDelegate rd = new ReadDelegate (this.inputBuffer.Read);
+					rd = new ReadDelegate (this.inputBuffer.Read);
 					asyncResult = rd.BeginInvoke (buffer, offset, count, callback, state);
 				}
 				catch (TlsException ex)
@@ -675,7 +676,7 @@ namespace Mono.Security.Protocol.Tls
 			}
 
 			recordEvent.Reset ();
-			return this.inputBuffer.EndRead (asyncResult);
+			return this.rd.EndInvoke (asyncResult);
 		}
 
 		public override void EndWrite(IAsyncResult asyncResult)

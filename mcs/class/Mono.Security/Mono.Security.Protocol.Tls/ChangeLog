@@ -1,5 +1,9 @@
 2005-04-14 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* SslClientStream.cs: gotta call EndInvoke, not EndRead.
+
+2005-04-14 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* SslClientStream.cs: MemoryStream does not implement proper Begin*
 	methods, so we need this to prevent infinite recursion if we have a
 	callback that calls BeginRead.
