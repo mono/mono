@@ -1,3 +1,8 @@
+2005-04-15 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* socket-io.h: replaced old unused field with new 'blocking'.
+	* threadpool.c: restore socket blocking state on windows(tm).
+
 2005-04-14  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* icall.c: don't return the codebase in the AssemblyName[] returned by
