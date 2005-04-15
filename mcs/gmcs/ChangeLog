@@ -1,3 +1,11 @@
+2005-03-09  Raja R Harinath  <rharinath@novell.com>
+
+	* decl.cs (DeclSpace.LookupType): Don't loop but recurse into
+	enclosing DeclSpace.  This ensures that a name-lookup populates
+	more caches and there are fewer 'TypeExpression's.  Carve out
+	nested type lookup into ...
+	(LookupNestedTypeInHierarchy): ... this.
+
 2005-04-15  Martin Baulig  <martin@ximian.com>
 
 	Merged r41590 from MCS and make it work in the generics land.
