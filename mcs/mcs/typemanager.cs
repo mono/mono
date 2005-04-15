@@ -1523,27 +1523,22 @@ public class TypeManager {
 	public static bool IsUnmanagedType (Type t)
 	{
 		// builtins that are not unmanaged types
-		if (t == TypeManager.object_type || t == TypeManager.string_type){
-			Console.WriteLine ("A fucking string");
+		if (t == TypeManager.object_type || t == TypeManager.string_type)
 			return false;
-		}
 
 		if (IsBuiltinOrEnum (t))
 			return true;
 
+		// Someone did the work of checking if the ElementType of t is unmanaged.  Let's not repeat it.
 		if (t.IsPointer)
 			return true;
 
+		// Arrays are disallowed, even if we mark them with [MarshalAs(UnmanagedType.ByValArray, ...)]
 		if (t.IsArray)
-			return IsUnmanagedType (t.GetElementType ());
-
-		if (IsDelegateType (t))
-			return true;
-
-		if (!IsValueType (t)){
-			Console.WriteLine ("No value type: " + t.FullName);
 			return false;
-		}
+
+		if (!IsValueType (t))
+			return false;
 
 		if (t is TypeBuilder){
 			TypeContainer tc = LookupTypeContainer (t);
@@ -1556,7 +1551,7 @@ public class TypeManager {
 				if (f.MemberType == null)
 					continue;
 				if (!IsUnmanagedType (f.MemberType)){
-					Console.WriteLine ("RECU on F: " + f.MemberType.FullName + " On " + t.FullName);
+					Report.SymbolRelatedToPreviousError (f.Location, CSharpName (t) + "." + f.Name);
 					return false;
 				}
 			}
@@ -1565,12 +1560,12 @@ public class TypeManager {
 		
 		FieldInfo [] fields = t.GetFields (BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
 
-		foreach (FieldInfo f in fields)
+		foreach (FieldInfo f in fields){
 			if (!IsUnmanagedType (f.FieldType)){
-				Console.WriteLine ("No value type Field: " + f.FieldType.FullName);
-
+				Report.SymbolRelatedToPreviousError (f);
 				return false;
 			}
+		}
 
 		return true;
 	}
@@ -2268,10 +2263,6 @@ public class TypeManager {
 	public static bool VerifyUnManaged (Type t, Location loc)
 	{
 		if (IsUnmanagedType (t))
-			return true;
-
-		// We need this explicit check here to make it work when compiling corlib.
-		if (!RootContext.StdLib && (t == TypeManager.decimal_type))
 			return true;
 
 		Report.Error (
