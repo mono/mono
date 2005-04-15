@@ -1293,7 +1293,8 @@ namespace Mono.CSharp {
 						}
 					}
 
-					current_type = new SimpleName (Name, TypeParameters, Location);
+					current_type = new ConstructedType (
+						TypeBuilder, TypeParameters, Location);
 				}
 			}
 
