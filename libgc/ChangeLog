@@ -1,3 +1,7 @@
+2005-04-15  Zoltan Varga  <vargaz@freemail.hu>
+
+	* configure.in: Applied another freebsd patch from Bill Middleton (flashdict@gmail.com).
+
 2005-04-11  Zoltan Varga  <vargaz@freemail.hu>
 
 	* include/private/gcconfig.h configure.in os_dep.c dyn_load.c: 

@@ -119,7 +119,7 @@ case "$THREADS" in
 		INCLUDES="$INCLUDES $PTHREAD_CFLAGS"
 	fi
 	if test "x$PTHREAD_LIBS" = "x"; then
-		THREADLIBS=-lpthread
+		THREADLIBS=-lthr
 	else
 		THREADLIBS="$PTHREAD_LIBS"
 	fi
@@ -130,7 +130,7 @@ case "$THREADS" in
 		INCLUDES="$INCLUDES $PTHREAD_CFLAGS"
 	fi
 	if test "x$PTHREAD_LIBS" = "x"; then
-		THREADLIBS=-lpthread
+		THREADLIBS=-lthr
 	else
 		THREADLIBS="$PTHREAD_LIBS"
 	fi
