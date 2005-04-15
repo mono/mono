@@ -45,7 +45,6 @@ cs0548.cs
 cs0560.cs
 cs0567.cs
 cs0610-4.cs
-cs0628-3.cs
 cs0642-3.cs # new in GMCS
 cs0642-4.cs
 cs0642-5.cs
@@ -54,9 +53,6 @@ cs0647-15.cs
 cs0654.cs
 cs0655.cs
 cs0655-2.cs
-cs0681.cs
-cs0683.cs
-cs0686.cs
 cs0712.cs # new in GMCS
 cs0720.cs
 cs1013.cs # new in GMCS
@@ -68,7 +64,6 @@ cs1525.cs
 cs1527-2.cs
 cs1527-3.cs
 cs1528.cs
-cs1534.cs
 cs1535.cs
 cs1540-2.cs # new in GMCS
 cs1540-4.cs # new in GMCS
@@ -84,9 +79,6 @@ cs1622.cs
 cs1625-2.cs
 cs1626-2.cs
 cs1626.cs
-cs1629-2.cs
-cs1629.cs
-cs1633.cs
 cs1636.cs
 cs1637.cs
 cs1638.cs
