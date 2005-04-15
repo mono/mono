@@ -728,7 +728,6 @@ namespace Mono.CSharp {
 				// However, if Parent == RootContext.Tree.Types, its NamespaceEntry will be null.
 				//
 				type_resolve_ec = new EmitContext (Parent, this, loc, null, null, ModFlags, false);
-				type_resolve_ec.ResolvingTypeTree = true;
 			}
 			type_resolve_ec.loc = loc;
 			if (this is GenericMethod)

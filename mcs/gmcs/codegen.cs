@@ -389,13 +389,6 @@ namespace Mono.CSharp {
 		public Location loc;
 
 		/// <summary>
-		///   Used to flag that it is ok to define types recursively, as the
-		///   expressions are being evaluated as part of the type lookup
-		///   during the type resolution process
-		/// </summary>
-		public bool ResolvingTypeTree;
-		
-		/// <summary>
 		///   Inside an enum definition, we do not resolve enumeration values
 		///   to their enumerations, but rather to the underlying type/value
 		///   This is so EnumVal + EnumValB can be evaluated.
