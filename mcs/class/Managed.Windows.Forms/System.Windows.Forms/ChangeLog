@@ -1,5 +1,12 @@
 2005-04-15  Jordi Mas i Hernandez <jordi@ximian.com>
 
+	* ListControl.cs: work towards complex data binding support on ListControl
+	* CurrencyManager.cs: work towards complex data binding support on ListControl
+	* ListBox.cs: work towards complex data binding support on ListControl
+
+
+2005-04-15  Jordi Mas i Hernandez <jordi@ximian.com>
+
 	* GridTableStylesCollection.cs: fixes name and constructor
 	* DataGridTableStyle.cs: fixes
 	* DataGridBoolColumn.cs: fixes names and constructors

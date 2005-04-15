@@ -465,6 +465,7 @@ namespace System.Windows.Forms
     				selected_index = value;
     				focused_item = value;
     				OnSelectedIndexChanged  (new EventArgs ());
+    				OnSelectedValueChanged (new EventArgs ());
 			}
 		}
 
@@ -1491,6 +1492,7 @@ namespace System.Windows.Forms
 						else {
     							SelectItem (index);
     							OnSelectedIndexChanged  (new EventArgs ());
+    							OnSelectedValueChanged (new EventArgs ());
     						}
     					}
     					break;
@@ -1512,6 +1514,7 @@ namespace System.Windows.Forms
 						}
     						
     						OnSelectedIndexChanged  (new EventArgs ());
+    						OnSelectedValueChanged (new EventArgs ());
     					}
     					break;
     				}    				

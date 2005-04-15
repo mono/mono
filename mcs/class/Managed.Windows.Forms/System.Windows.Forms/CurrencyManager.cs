@@ -50,6 +50,16 @@ namespace System.Windows.Forms {
 				throw new Exception ("Attempted to create currency manager " +
 					"from invalid type: " + data_source.GetType ());
 			}
+
+			if (data_source as ArrayList != null) {
+				finalType = ((ArrayList)data_source).GetType ();
+			} else {
+				if (data_source as Array != null) {
+					finalType = ((Array) data_source).GetType ();
+				} else {
+					finalType = null;
+				}
+			}
 		}		
 
 		public IList List {
@@ -86,10 +96,19 @@ namespace System.Windows.Forms {
 		public override PropertyDescriptorCollection GetItemProperties ()
 		{
 			ITypedList typed = list as ITypedList;
-
-			if (typed == null)
-				return null;
-			return typed.GetItemProperties (null);
+			
+			if (typed != null) {
+				return typed.GetItemProperties (null);
+			}
+				
+			if (list.Count > 0){ 
+				System.Attribute[] att = new System.Attribute [1];
+				att[0] = new BrowsableAttribute (true);				
+				return TypeDescriptor.GetProperties (list[0], att);
+			}
+			
+			return new PropertyDescriptorCollection (new PropertyDescriptor [1]);
+			
 		}
 
 		public override void RemoveAt (int index)
@@ -185,6 +204,11 @@ namespace System.Windows.Forms {
 		{
 			// Probably should be validating or something here
 			EndCurrentEdit ();
+		}
+		
+		internal object GetItem (int index)
+		{
+			return list [index];
 		}
 
 		public event ItemChangedEventHandler ItemChanged;

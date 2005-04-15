@@ -32,20 +32,25 @@ using System.Collections;
 using System.ComponentModel;
 using System.Reflection;
 
-namespace System.Windows.Forms 
+namespace System.Windows.Forms
 {
 	public abstract class ListControl : Control
 	{
 		private object data_source;
-		private string display_member = String.Empty;
+		private BindingMemberInfo value_member;
+		private string display_member;
 		private CurrencyManager data_manager;
-		
+
 		protected ListControl ()
 		{
+			data_source = null;
+			value_member = new BindingMemberInfo (string.Empty);
+			display_member = string.Empty;
+			data_manager = null;
 		}
 
-		#region Events		
-		public event EventHandler DataSourceChanged;		
+		#region Events
+		public event EventHandler DataSourceChanged;
 		public event EventHandler DisplayMemberChanged;
 		public event EventHandler SelectedValueChanged;
 		public event EventHandler ValueMemberChanged;
@@ -64,25 +69,33 @@ namespace System.Windows.Forms
 							"either an IList or an IListSource");
 				}
 
+				if (data_source == value)
+					return;
+
 				data_source = value;
-
-				CurrencyManager manager = (CurrencyManager) BindingContext [data_source, display_member];
-				data_manager = manager;
-
+				ConnectToDataSource ();
 				OnDataSourceChanged (EventArgs.Empty);
 			}
 		}
-		
+
 		[DefaultValue("")]
 		[Editor("System.Windows.Forms.Design.DataMemberFieldEditor, " + Consts.AssemblySystem_Design, typeof(System.Drawing.Design.UITypeEditor))]
 		[TypeConverter("System.Windows.Forms.Design.DataMemberFieldConverter, System.Design, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
 		public string DisplayMember {
-			get { return display_member; } 
-			set { display_member = value; }
+			get { return display_member; }
+			set {
+				if (display_member == value) {
+					return;
+				}
+
+				display_member = value;
+				ConnectToDataSource ();
+				OnDisplayMemberChanged (EventArgs.Empty);
+			}
 		}
-				
+
 		public abstract int SelectedIndex {
-			get; 
+			get;
 			set;
 		}
 
@@ -91,29 +104,61 @@ namespace System.Windows.Forms
 		[DefaultValue(null)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public object SelectedValue {
-			get {throw new NotImplementedException (); }			 
-			set {throw new NotImplementedException (); }
+			get {
+				if (data_manager == null) {
+					return null;
+				}
+				
+				
+				object item  = data_manager.GetItem (SelectedIndex);				
+				object fil =  FilterItemOnProperty (item, ValueMember);
+				return fil;
+			}
+
+			set {
+
+			}
 		}
 
 		[DefaultValue("")]
 		[Editor("System.Windows.Forms.Design.DataMemberFieldEditor, " + Consts.AssemblySystem_Design, typeof(System.Drawing.Design.UITypeEditor))]
 		public string ValueMember  {
-			get { return null; }
-			set { }
+			get { return value_member.BindingMember; }
+			set {
+				value_member = new BindingMemberInfo (value);
+				ConnectToDataSource ();
+			}
 		}
-		
+
 		#endregion Public Properties
 
 		#region Public Methods
 
 		protected object FilterItemOnProperty (object item)
 		{
-			throw new NotImplementedException ();
+			return FilterItemOnProperty (item, string.Empty);
 		}
 
 		protected object FilterItemOnProperty (object item, string field)
 		{
-			throw new NotImplementedException (); 
+			if (item == null)
+				return null;
+
+			if (field == null || field == string.Empty)
+				return item;
+
+			PropertyDescriptor prop = null;
+
+			if (data_manager != null) {
+				PropertyDescriptorCollection col = data_manager.GetItemProperties ();
+				prop = col.Find (field, true);				
+			}
+			
+			if (prop == null)
+				return item;
+			
+			return prop.GetValue (item);
+
 		}
 
 		public string GetItemText (object item)
@@ -141,8 +186,8 @@ namespace System.Windows.Forms
 			case Keys.Space:
 			case Keys.ShiftKey:
 				return true;
-			
-			default:					
+
+			default:
 				return false;
 			}
 		}
@@ -197,11 +242,28 @@ namespace System.Windows.Forms
 		internal void BindDataItems (IList items)
 		{
 			items.Clear ();
-			SetItemsCore (data_manager.List);
+
+			if (data_manager != null) {
+				SetItemsCore (data_manager.List);
+			}
 		}
-		
+
+		private void ConnectToDataSource ()
+		{
+			if (data_source == null || display_member == string.Empty) {
+				data_manager = null;
+				return;
+			}
+
+			if (BindingContext == null) {
+				return;
+			}
+			
+			data_manager = (CurrencyManager) BindingContext [data_source, display_member];
+		}
+
 		#endregion Public Methods
-	}	
+	}
 
 }
 
