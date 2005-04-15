@@ -1840,6 +1840,9 @@ operator_declaration
 	  }
 	  operator_body
 	  {
+		if ($3 == null)
+			break;
+
 		OperatorDeclaration decl = (OperatorDeclaration) $3;
 		
 		Parameter [] param_list = new Parameter [decl.arg2type != null ? 2 : 1];
@@ -1929,6 +1932,17 @@ operator_declarator
 					     typeR, (string) $9, lexer.Location);
         }
 	| conversion_operator_declarator
+	| type OPERATOR overloadable_operator
+	  OPEN_PARENS 
+		type IDENTIFIER COMMA
+	  	type IDENTIFIER COMMA
+		type IDENTIFIER
+	  CLOSE_PARENS
+	{
+		Report.Error (1534, lexer.Location, "Overloaded binary operator '{0}' takes two parameters", $3);
+		$$ = null;
+	}
+
 	;
 
 overloadable_operator
