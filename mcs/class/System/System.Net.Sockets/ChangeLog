@@ -1,3 +1,7 @@
+2005-04-15 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Socket.cs: added a 'blocking' field that is passed to the runtime.
+
 2005-04-09 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Socket.cs: invoke the callback after scheduling the next request for

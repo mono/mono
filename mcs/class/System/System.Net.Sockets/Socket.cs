@@ -77,7 +77,7 @@ namespace System.Net.Sockets
 
 			bool completed_sync;
 			bool completed;
-			AsyncCallback real_callback; /* unused */
+			bool blocking;
 			int error;
 			SocketOperation operation;
 			object ares;
@@ -85,6 +85,7 @@ namespace System.Net.Sockets
 			public SocketAsyncResult (Socket sock, object state, AsyncCallback callback, SocketOperation operation)
 			{
 				this.Sock = sock;
+				this.blocking = sock.blocking;
 				this.handle = sock.socket;
 				this.state = state;
 				this.callback = callback;
