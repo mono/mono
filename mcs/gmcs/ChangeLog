@@ -1,5 +1,22 @@
 2005-03-03  Raja R Harinath  <rharinath@novell.com>
 
+	Fix compile with MCS 1.0.0.0.
+	* cs-tokenizer.cs (PreProcessPragma): Simplify w_disable and
+	w_restore to not depend on string constant folding.
+
+2005-03-03  Raja R Harinath  <rharinath@novell.com>
+
+	* decl.cs (DeclSpace.LookupType): Remove 'silent' argument.  Move
+	CS0246 check to users who passed 'silent = false'.
+	* ecore.cs (TypeLookupExpression.DoResolveAsTypeStep): Add CS0246
+	check.
+	(SimpleName.SimpleNameResolve): Update.
+	* expression.cs (ComposedCast.DoResolveAsTypeStep): Add CS0246 check.
+	(MemberAccess.IdenticalNameAndTypeName): Update.
+	* doc.cs (FindDocumentedTypeNonArray): Update.
+
+2005-03-03  Raja R Harinath  <rharinath@novell.com>	
+
 	* codegen.cs (EmitContext): Remove ResolvingTypeTree.
 	* parameters.cs (ComputeAndDefineParameters): Remove.
 	* decl.cs (ResolveBaseTypeExpr): Don't set ResolvingTypeTree.

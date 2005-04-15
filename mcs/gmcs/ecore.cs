@@ -2186,7 +2186,7 @@ namespace Mono.CSharp {
 				return dt.ResolveAsTypeStep (ec);
 
 			int errors = Report.Errors;
-			dt = ec.DeclSpace.LookupType (Name, loc, /*silent=*/ true, /*ignore_cs0104=*/ false);
+			dt = ec.DeclSpace.LookupType (Name, loc, /*ignore_cs0104=*/ false);
 			if (Report.Errors != errors)
 				return null;
 
@@ -2542,12 +2542,17 @@ namespace Mono.CSharp {
 		protected override TypeExpr DoResolveAsTypeStep (EmitContext ec)
 		{
 			if (type == null) {
-				FullNamedExpression t = ec.DeclSpace.LookupType (
-					name, Location.Null, /*silent=*/ false, /*ignore_cs0104=*/ false);
-				if (t == null)
+				FullNamedExpression t = ec.DeclSpace.LookupType (name, Location.Null, /*ignore_cs0104=*/ false);
+				if (t == null) {
+					Report.Error (246, loc, "Cannot find type `" + name + "'");
 					return null;
-				if (!(t is TypeExpr))
+				}
+				if (!(t is TypeExpr)) {
+					Report.Error (118, Location, "'{0}' denotes a '{1}', where a type was expected",
+						      t.FullName, t.ExprClassName ());
+
 					return null;
+				}
 				type = ((TypeExpr) t).ResolveType (ec);
 			}
 
