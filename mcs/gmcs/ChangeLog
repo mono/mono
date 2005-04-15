@@ -1,3 +1,11 @@
+2005-03-07  Raja R Harinath  <rharinath@novell.com>
+
+	Fix #73394.
+	* ecore.cs (FieldExpr.EmitInstance): Catch cases of CS0120 that
+	slipped in because of variable names that are identical to a
+	builtin type's BCL equivalent ('string String;', 'int Int32;').
+	(PropertyExpr.EmitInstance): Likewise.
+
 2005-03-04  Marek Safar  <marek.safar@seznam.cz>
 
 	* cs-tokenizer.cs (PreProcessPragma): Add warning 1633, 1635.

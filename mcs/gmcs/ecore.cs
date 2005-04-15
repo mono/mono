@@ -3212,6 +3212,16 @@ namespace Mono.CSharp {
 
 		void EmitInstance (EmitContext ec)
 		{
+			//
+			// In case it escapes StaticMemberCheck due to IdenticalTypeAndName.
+			// This happens in cases like 'string String', 'int Int32', etc.
+			// where the "IdenticalTypeAndName" mechanism is fooled.
+			//
+			if (instance_expr == null) {
+				SimpleName.Error_ObjectRefRequired (ec, loc, FieldInfo.Name);
+				return;
+			}
+
 			if (instance_expr.Type.IsValueType) {
 				if (instance_expr is IMemoryLocation) {
 					((IMemoryLocation) instance_expr).AddressOf (ec, AddressOp.LoadStore);
@@ -3590,6 +3600,16 @@ namespace Mono.CSharp {
 		{
 			if (is_static)
 				return;
+
+			//
+			// In case it escapes StaticMemberCheck due to IdenticalTypeAndName.
+			// This happens in cases like 'string String', 'int Int32', etc.
+			// where the "IdenticalTypeAndName" mechanism is fooled.
+			//
+			if (instance_expr == null) {
+				SimpleName.Error_ObjectRefRequired (ec, loc, PropertyInfo.Name);
+				return;
+			}
 
 			if (instance_expr.Type.IsValueType) {
 				if (instance_expr is IMemoryLocation) {
