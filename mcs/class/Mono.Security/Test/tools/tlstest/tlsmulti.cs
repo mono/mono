@@ -67,7 +67,7 @@ public class MultiTest {
 	public static void Main (string[] args) 
 	{
 		if (args.Length == 0) {
-			Console.WriteLine ("usage: mono testmulti.exe url1 [url ...]");
+			Console.WriteLine ("usage: mono tlsmulti.exe url1 [url ...]");
 			return;
 		} else if (args.Length > 64) {
 			Console.WriteLine ("WaitHandle has a limit of 64 handles so you cannot process {0} URLs.", args.Length);

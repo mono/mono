@@ -1,3 +1,10 @@
+2005-04-15  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* README: informations about the different tools;
+	* tlssave.cs: New. Async HttpWebRequest and streams using HTTP or 
+	HTTPS GET. Saves the downloaded page to disk (1, 2, ... X).
+	* Makefile: Updated for tlssave.
+
 2005-04-09  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* tlsasync.cs: New. Async HttpWebRequest and streams using HTTP or 

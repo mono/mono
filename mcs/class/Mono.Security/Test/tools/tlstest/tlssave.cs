@@ -1,6 +1,6 @@
 //
-// tlsasync.cs: Multi-sessions TLS/SSL Test Program with async streams
-//	based on tlstest.cs and tlsmulti.cs
+// tlssave.cs: Multi-sessions TLS/SSL Test Program which saves the URL to disk
+//	based on tlstest.cs, tlsmulti.cs and tlsasync.cs
 //
 // Author:
 //	Sebastien Pouliot  <sebastien@ximian.com>
@@ -10,6 +10,7 @@
 
 using System;
 using System.Collections;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Net;
@@ -30,7 +31,7 @@ public class State {
 	private ManualResetEvent handle;
 	private Stream stream;
 	private byte[] buffer;
-	private MemoryStream memory;
+	private FileStream file;
 
 	public State (int id, HttpWebRequest req)
 	{
@@ -61,16 +62,18 @@ public class State {
 		}
 	}
 
-	public Stream Memory {
+	public Stream File {
 		get {
-			if (memory == null)
-				memory = new MemoryStream ();
-			return memory;
+			if (file == null)
+				file = new FileStream (id.ToString (), FileMode.Create);
+			return file;
 		}
 	}
 
 	public void Complete ()
 	{
+		if (file != null)
+			file.Close ();
 		handle.Set ();
 	}
 
@@ -84,21 +87,18 @@ public class State {
 	}
 }
 
-public class MultiTest {
-
-	static bool alone;
+public class SaveTest {
 
 	public static void Main (string[] args) 
 	{
 		if (args.Length == 0) {
-			Console.WriteLine ("usage: mono tlsaync.exe url1 [url ...]");
+			Console.WriteLine ("usage: mono tlssave.exe url1 [url ...]");
 			return;
 		} else if (args.Length > 64) {
 			Console.WriteLine ("WaitHandle has a limit of 64 handles so you cannot process {0} URLs.", args.Length);
 			return;
 		}
 
-		alone = (args.Length == 1);
 		ServicePointManager.CertificatePolicy = new TestCertificatePolicy ();
 
 		int id = 1;
@@ -125,15 +125,10 @@ public class MultiTest {
 		State state = ((State) result.AsyncState);
 		int length = state.Stream.EndRead (result);
 		if (length > 0) {
-			state.Memory.Write (state.Buffer, 0, length);
+			state.File.Write (state.Buffer, 0, length);
 			state.Stream.BeginRead (state.Buffer, 0, state.Buffer.Length, new AsyncCallback (StreamCallBack), state);
 		} else {
 			state.Stream.Close ();
-			if (alone) {
-				state.Memory.Position = 0;
-				StreamReader sr = new StreamReader (state.Memory, Encoding.UTF8);
-				Console.WriteLine (sr.ReadToEnd ());
-			}
 			Console.WriteLine ("END #{0}", state.Id);
 			state.Complete ();
 		}
