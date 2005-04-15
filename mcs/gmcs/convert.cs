@@ -1405,8 +1405,8 @@ namespace Mono.CSharp {
 			if (source.Name == target.Name){
 				Report.ExtraInformation (loc,
 					 String.Format (
-						"The type {0} has two conflicting definitons, one comes from {0} and the other from {1}",
-						source.Assembly.FullName, target.Assembly.FullName));
+						"The type {0} has two conflicting definitions, one comes from {1} and the other from {2}",
+						source.Name, source.Assembly.FullName, target.Assembly.FullName));
 							 
 			}
 			Report.Error (29, loc, "Cannot convert implicitly from {0} to `{1}'",
