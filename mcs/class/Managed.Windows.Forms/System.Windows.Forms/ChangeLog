@@ -1,3 +1,9 @@
+2005-04-15  Geoff Norton  <gnorton@customerdna.com>
+
+	* XplatUIOSX.cs:  Handle proper mouse tracking even if the current
+	graphics port changes.  We still want the coordinates in global screen
+	coordinates.
+
 2005-04-14  Jackson Harper  <jackson@ximian.com>
 
 	* TreeView.cs: Handle clicks when plus minus is disabled. Don't

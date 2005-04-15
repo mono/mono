@@ -490,19 +490,20 @@ namespace System.Windows.Forms {
 					while (mousestatus != MouseTrackingResult.kMouseTrackingMouseUp) {
 						CheckTimers (DateTime.Now);
 						if (mousestatus == MouseTrackingResult.kMouseTrackingMouseDragged) {
-							NativeWindow.WndProc (hwnd.Handle, Msg.WM_MOUSEMOVE, GetMousewParam (0), (IntPtr) ((ushort)point.y << 16 | (ushort)point.x));
+							QDPoint realpoint = point;
+							int x = point.x;
+							int y = point.y;
+							ScreenToClient (hwnd.Handle, ref x, ref y);
+							realpoint.x = (short)x;
+							realpoint.y = (short)y;
+							NativeWindow.WndProc (hwnd.Handle, Msg.WM_MOUSEMOVE, GetMousewParam (0), (IntPtr) ((ushort)realpoint.y << 16 | (ushort)realpoint.x));
 						}
 						// Process the rest of the event queue
 						while (MessageQueue.Count > 0) {
 							msg = (MSG)MessageQueue.Dequeue ();
 							NativeWindow.WndProc (msg.hwnd, msg.message, msg.wParam, msg.lParam);
 						}
-						TrackMouseLocationWithOptions (IntPtr.Zero, 0, 0.01, ref point, ref modifiers, ref mousestatus);
-						int x = point.x;
-						int y = point.y;
-						ScreenToClient (hwnd.Handle, ref x, ref y);
-						point.x = (short)x;
-						point.y = (short)y;
+						TrackMouseLocationWithOptions ((IntPtr)(-1), 0, 0.01, ref point, ref modifiers, ref mousestatus);
 					}
 					
 					msg.hwnd = hwnd.Handle;
@@ -527,6 +528,12 @@ namespace System.Windows.Forms {
 							wparam &= (int)MsgButtons.MK_RBUTTON;
 							break;
 					}
+					int x2 = point.x;
+					int y2 = point.y;
+					ScreenToClient (hwnd.Handle, ref x2, ref y2);
+					point.x = (short)x2;
+					point.y = (short)y2;
+
 					msg.wParam = (IntPtr)wparam;
 						
 					msg.lParam = (IntPtr) ((ushort)point.y << 16 | (ushort)point.x);
@@ -545,6 +552,7 @@ namespace System.Windows.Forms {
 					// get the point that was hit
 					QDPoint point = new QDPoint ();
 					CheckError (GetEventParameter (inEvent, 1835822947, 1363439732, IntPtr.Zero, (uint)Marshal.SizeOf (typeof (QDPoint)), IntPtr.Zero, ref point), "GetEventParameter() MouseLocation");
+					QDPoint trackpoint = point;
 					int x = point.x;
 					int y = point.y;
 					ScreenToClient (hwnd.Handle, ref x, ref y);
@@ -588,7 +596,7 @@ namespace System.Windows.Forms {
 					MousePosition.Y = (int)point.y;
 					NativeWindow.WndProc (msg.hwnd, msg.message, msg.wParam, msg.lParam);
 					
-					TrackControl (handle, point, IntPtr.Zero);
+					TrackControl (handle, trackpoint, IntPtr.Zero);
 					return 0;
 				}
 				case OSXConstants.kEventControlSetFocusPart: {
@@ -1201,7 +1209,7 @@ namespace System.Windows.Forms {
 					msg.hwnd = IntPtr.Zero;
 					msg.message = Msg.WM_ENTERIDLE;
 					return GetMessageResult;
-	            }
+				}
 				msg = (MSG) MessageQueue.Dequeue ();
 			}
 			return GetMessageResult;
