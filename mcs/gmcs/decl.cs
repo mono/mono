@@ -259,6 +259,9 @@ namespace Mono.CSharp {
 				   Location loc)
 			: base (attrs)
 		{
+			if (parent is PartialContainer && !(this is PartialContainer))
+				throw new InternalErrorException ("A PartialContainer cannot be the direct parent of a member");
+
 			Parent = parent;
 			MemberName = name;
 			Location = loc;
@@ -534,6 +537,7 @@ namespace Mono.CSharp {
 
 		readonly bool is_generic;
 		readonly int count_type_params;
+		readonly int count_current_type_params;
 
 		// The emit context for toplevel objects.
 		protected EmitContext ec;
@@ -568,7 +572,7 @@ namespace Mono.CSharp {
 			defined_names = new Hashtable ();
 			if (name.TypeArguments != null) {
 				is_generic = true;
-				count_type_params = name.TypeArguments.Count;
+				count_type_params = count_current_type_params = name.TypeArguments.Count;
 			}
 			if (parent != null)
 				count_type_params += parent.count_type_params;
@@ -712,6 +716,21 @@ namespace Mono.CSharp {
 		}
 
 		EmitContext type_resolve_ec;
+		protected EmitContext TypeResolveEmitContext {
+			get {
+				if (type_resolve_ec == null) {
+					// FIXME: I think this should really be one of:
+					//
+					// a. type_resolve_ec = Parent.EmitContext;
+					// b. type_resolve_ec = new EmitContext (Parent, Parent, loc, null, null, ModFlags, false);
+					//
+					// However, if Parent == RootContext.Tree.Types, its NamespaceEntry will be null.
+					//
+					type_resolve_ec = new EmitContext (Parent, this, Location.Null, null, null, ModFlags, false);
+				}
+				return type_resolve_ec;
+			}
+		}
 
 		// <summary>
 		//    Resolves the expression `e' for a type, and will recursively define
@@ -719,23 +738,14 @@ namespace Mono.CSharp {
 		// </summary>
 		public TypeExpr ResolveBaseTypeExpr (Expression e, bool silent, Location loc)
 		{
-			if (type_resolve_ec == null) {
-				// FIXME: I think this should really be one of:
-				//
-				// a. type_resolve_ec = Parent.EmitContext;
-				// b. type_resolve_ec = new EmitContext (Parent, Parent, loc, null, null, ModFlags, false);
-				//
-				// However, if Parent == RootContext.Tree.Types, its NamespaceEntry will be null.
-				//
-				type_resolve_ec = new EmitContext (Parent, this, loc, null, null, ModFlags, false);
-			}
-			type_resolve_ec.loc = loc;
+			TypeResolveEmitContext.loc = loc;
+			TypeResolveEmitContext.ContainerType = TypeBuilder;
 			if (this is GenericMethod)
-				type_resolve_ec.ContainerType = Parent.TypeBuilder;
+				TypeResolveEmitContext.ContainerType = Parent.TypeBuilder;
 			else
-				type_resolve_ec.ContainerType = TypeBuilder;
+				TypeResolveEmitContext.ContainerType = TypeBuilder;
 
-			return e.ResolveAsTypeTerminal (type_resolve_ec);
+			return e.ResolveAsTypeTerminal (TypeResolveEmitContext);
 		}
 		
 		public bool CheckAccessLevel (Type check_type) 
@@ -959,6 +969,9 @@ namespace Mono.CSharp {
 		//
 		public FullNamedExpression LookupType (string name, Location loc, bool ignore_cs0104)
 		{
+			if (this is PartialContainer)
+				throw new InternalErrorException ("Should not get here");
+
 			FullNamedExpression e;
 
 			if (Cache.Contains (name)) {
@@ -1206,6 +1219,12 @@ namespace Mono.CSharp {
 		public int CountTypeParameters {
 			get {
 				return count_type_params;
+			}
+		}
+
+		public int CountCurrentTypeParameters {
+			get {
+				return count_current_type_params;
 			}
 		}
 

@@ -462,6 +462,9 @@ namespace Mono.CSharp {
 				      Attributes attrs, Kind kind, Location l)
 			: base (ns, parent, name, attrs, l)
 		{
+			if (parent != null && parent != RootContext.Tree.Types && parent.NamespaceEntry != ns)
+				throw new InternalErrorException ("A nested type should be in the same NamespaceEntry as its enclosing class");
+
 			this.Kind = kind;
 
 			types = new ArrayList ();
@@ -834,7 +837,7 @@ namespace Mono.CSharp {
 		//
 		// Emits the instance field initializers
 		//
-		public bool EmitFieldInitializers (EmitContext ec)
+		public virtual bool EmitFieldInitializers (EmitContext ec)
 		{
 			ArrayList fields;
 			Expression instance_expr;
@@ -897,7 +900,12 @@ namespace Mono.CSharp {
 			else if ((ModFlags & Modifiers.ABSTRACT) != 0)
 				mods = Modifiers.PROTECTED;
 
-			c = new Constructor (this, Basename, mods, Parameters.EmptyReadOnlyParameters,
+			TypeContainer constructor_parent = this;
+			if (Parts != null)
+				constructor_parent = (TypeContainer) Parts [0];
+
+			c = new Constructor (constructor_parent, Basename, mods,
+					     Parameters.EmptyReadOnlyParameters,
 					     new ConstructorBaseInitializer (
 						     null, Parameters.EmptyReadOnlyParameters,
 						     Location),
@@ -914,8 +922,6 @@ namespace Mono.CSharp {
 		//   (interfaces or abstract methods)
 		/// </remarks>
 		public PendingImplementation Pending;
-
-		public abstract void Register ();
 
 		public abstract PendingImplementation GetPendingImplementations ();
 
@@ -1199,8 +1205,6 @@ namespace Mono.CSharp {
 			if (TypeBuilder != null)
 				return TypeBuilder;
 
-			ec = new EmitContext (this, Mono.CSharp.Location.Null, null, null, ModFlags);
-
 			TypeAttributes type_attributes = TypeAttr;
 
 			try {
@@ -1237,6 +1241,19 @@ namespace Mono.CSharp {
 
 			TypeManager.AddUserType (Name, TypeBuilder, this);
 
+			if (Parts != null) {
+				ec = null;
+				foreach (ClassPart part in Parts) {
+					part.TypeBuilder = TypeBuilder;
+					part.ptype = ptype;
+					part.ec = new EmitContext (part, Mono.CSharp.Location.Null, null, null, ModFlags);
+					part.ec.ContainerType = TypeBuilder;
+				}
+			} else {
+				ec = new EmitContext (this, Mono.CSharp.Location.Null, null, null, ModFlags);
+				ec.ContainerType = TypeBuilder;
+			}
+
 			Expression current_type = null;
 
 			if (IsGeneric) {
@@ -1251,29 +1268,38 @@ namespace Mono.CSharp {
 				for (int i = offset; i < gen_params.Length; i++)
 					CurrentTypeParameters [i - offset].Define (gen_params [i]);
 
-				foreach (TypeParameter type_param in CurrentTypeParameters) {
-					if (!type_param.Resolve (this)) {
-						error = true;
-						return null;
+				if (Parts != null) {
+					foreach (ClassPart part in Parts) {
+						if (!part.DefineTypeParameters ()) {
+							error = true;
+							return null;
+						}
 					}
-				}
-
-				for (int i = offset; i < gen_params.Length; i++)
-					CurrentTypeParameters [i - offset].DefineConstraints ();
-
-				current_type = new SimpleName (Name, TypeParameters, Location);
-
-				foreach (TypeParameter type_param in TypeParameters) {
-					if (!type_param.DefineType (ec)) {
-						error = true;
-						return null;
+				} else {
+					foreach (TypeParameter type_param in CurrentTypeParameters) {
+						if (!type_param.Resolve (this)) {
+							error = true;
+							return null;
+						}
 					}
-				}
 
-				if (!CheckConstraints (ec)) {
-					error = true;
-					return null;
+					for (int i = offset; i < gen_params.Length; i++)
+						CurrentTypeParameters [i - offset].DefineConstraints ();
+
+					foreach (TypeParameter type_param in TypeParameters) {
+						if (!type_param.DefineType (ec)) {
+							error = true;
+							return null;
+						}
+					}
+
+					current_type = new SimpleName (Name, TypeParameters, Location);
 				}
+			}
+
+			if (!CheckConstraints (ec)) {
+				error = true;
+				return null;
 			}
 
 			if ((Kind == Kind.Struct) && TypeManager.value_type == null)
@@ -1303,8 +1329,10 @@ namespace Mono.CSharp {
 			}
 
 			if (base_type != null) {
-				base_type = base_type.ResolveAsTypeTerminal (ec);
-				if (base_type == null) {
+				// FIXME: I think this should be ...ResolveType (Parent.EmitContext).
+				//        However, if Parent == RootContext.Tree.Types, its NamespaceEntry will be null.
+				ptype = base_type.ResolveType (TypeResolveEmitContext);
+				if (ptype == null) {
 					error = true;
 					return null;
 				}
@@ -1336,7 +1364,8 @@ namespace Mono.CSharp {
 			if (iface_exprs != null) {
 				// FIXME: I think this should be ...ExpandInterfaces (Parent.EmitContext, ...).
 				//        However, if Parent == RootContext.Tree.Types, its NamespaceEntry will be null.
-				ifaces = TypeManager.ExpandInterfaces (ec, iface_exprs);
+				TypeResolveEmitContext.ContainerType = TypeBuilder;
+				ifaces = TypeManager.ExpandInterfaces (TypeResolveEmitContext, iface_exprs);
 				if (ifaces == null) {
 					error = true;
 					return null;
@@ -1370,11 +1399,6 @@ namespace Mono.CSharp {
 
 				CurrentType = current_type.Type;
 			}
-
-			//
-			// Finish the setup for the EmitContext
-			//
-			ec.ContainerType = TypeBuilder;
 
 			if (!(this is Iterator))
 				RootContext.RegisterOrder (this); 
@@ -1416,14 +1440,6 @@ namespace Mono.CSharp {
 				foreach (Enum en in Enums)
 					if (en.DefineType () == null)
 						return false;
-			}
-
-			if (Parts != null) {
-				foreach (ClassPart part in Parts) {
-					part.TypeBuilder = TypeBuilder;
-					part.base_type = base_type;
-					part.ec = new EmitContext (part, Mono.CSharp.Location.Null, null, null, ModFlags);
-				}
 			}
 
 			return true;
@@ -1720,14 +1736,6 @@ namespace Mono.CSharp {
 						ds.DefineType ();
 						return ds.TypeBuilder;
 					}
-				}
-			}
-
-			if (Parts != null) {
-				foreach (ClassPart cp in Parts) {
-					Type t = cp.PartFindNestedType (name);
-					if (t != null)
-						return t;
 				}
 			}
 
@@ -2657,10 +2665,19 @@ namespace Mono.CSharp {
 				return pc;
 			}
 
-			pc = new PartialContainer (ns, parent, member_name, mod_flags, kind, loc);
+			if (parent is ClassPart)
+				parent = ((ClassPart) parent).PartialContainer;
+
+			pc = new PartialContainer (ns.NS, parent, member_name, mod_flags, kind, loc);
 			RootContext.Tree.RecordDecl (full_name, pc);
-			parent.AddType (pc);
-			pc.Register ();
+
+			if (kind == Kind.Interface)
+				parent.AddInterface (pc);
+			else if (kind == Kind.Class || kind == Kind.Struct)
+				parent.AddClassOrStruct (pc);
+			else
+				throw new InvalidOperationException ();
+
 			// This is needed to define our type parameters; we define the constraints later.
 			pc.SetParameterInfo (null);
 			return pc;
@@ -2674,19 +2691,19 @@ namespace Mono.CSharp {
 			if (pc == null) {
 				// An error occured; create a dummy container, but don't
 				// register it.
-				pc = new PartialContainer (ns, parent, name, mod, kind, loc);
+				pc = new PartialContainer (ns.NS, parent, name, mod, kind, loc);
 			}
 
-			ClassPart part = new ClassPart (ns, pc, mod, attrs, kind, loc);
+			ClassPart part = new ClassPart (ns, pc, parent, mod, attrs, kind, loc);
 			pc.AddPart (part);
 			return part;
 		}
 
-		protected PartialContainer (NamespaceEntry ns, TypeContainer parent,
+		protected PartialContainer (Namespace ns, TypeContainer parent,
 					    MemberName name, int mod, Kind kind, Location l)
-			: base (ns, parent, name, null, kind, l)
+			: base (null, parent, name, null, kind, l)
 		{
-			this.Namespace = ns.NS;
+			this.Namespace = ns;
 
 			switch (kind) {
 			case Kind.Class:
@@ -2718,99 +2735,9 @@ namespace Mono.CSharp {
 			this.OriginalModFlags = mod;
 		}
 
-		public override void Register ()
-		{
-			if (Kind == Kind.Interface)
-				Parent.AddInterface (this);
-			else if (Kind == Kind.Class || Kind == Kind.Struct)
-				Parent.AddClassOrStruct (this);
-			else
-				throw new InvalidOperationException ();
-		}
-
 		public override PendingImplementation GetPendingImplementations ()
 		{
 			return PendingImplementation.GetPendingImplementations (this);
-		}
-
-		ArrayList constraints_lists;
-
-		public void UpdateConstraints (ArrayList constraints_list)
-		{
-			//
-			// This is called for each ClassPart in a partial generic type declaration.
-			//
-			// If no constraints were specified for the part, just return.
-			// Otherwise, if we're called with constraints for the first time, they become
-			// the type's constraint.  If we're called with constraints again, we just
-			// store them somewhere so we can later check whether there are no conflicts.
-			//
-			if (constraints_list == null)
-				return;
-
-			if (constraints_lists != null) {
-				constraints_lists.Add (constraints_list);
-				return;
-			}
-
-			DoUpdateConstraints (null, constraints_list, false);
-
-			constraints_lists = new ArrayList ();
-		}
-
-		protected bool DoUpdateConstraints (EmitContext ec, ArrayList constraints_list, bool check)
-		{
-			for (int i = 0; i < TypeParameters.Length; i++) {
-				string name = TypeParameters [i].Name;
-
-				Constraints constraints = null;
-				if (constraints_list != null) {
-					foreach (Constraints constraint in constraints_list) {
-						if (constraint.TypeParameter == name) {
-							constraints = constraint;
-							break;
-						}
-					}
-				}
-
-				if (!TypeParameters [i].UpdateConstraints (ec, constraints, check)) {
-					Report.Error (265, Location, "Partial declarations of `{0}' have " +
-						      "inconsistent constraints for type parameter `{1}'.",
-						      MemberName.GetTypeName (), name);
-					return false;
-				}
-			}
-
-			return true;
-		}
-
-		protected override bool CheckConstraints (EmitContext ec)
-		{
-			if (constraints_lists == null)
-				return true;
-
-			//
-			// If constraints were specified in more than one part of a
-			// partial generic type definition, they must be identical.
-			//
-			// Note that we must resolve them and then compute the fully
-			// resolved types since different parts may have different
-			// `using' aliases.  See gen-129.cs for an example.
-
-			foreach (ArrayList constraints_list in constraints_lists) {
-				if (!DoUpdateConstraints (ec, constraints_list, true))
-					return false;
-			}
-
-			return true;
-		}
-
-		public ClassPart AddPart (NamespaceEntry ns, int mod, Attributes attrs,
-					  Location l)
-		{
-			ClassPart part = new ClassPart (ns, this, mod, attrs, Kind, l);
-			AddPart (part);
-			return part;
 		}
 
 		public override TypeAttributes TypeAttr {
@@ -2824,25 +2751,25 @@ namespace Mono.CSharp {
 		public readonly PartialContainer PartialContainer;
 		public readonly bool IsPartial;
 
-		public ClassPart (NamespaceEntry ns, PartialContainer parent,
+		Constraints[] constraints;
+
+		public ClassPart (NamespaceEntry ns, PartialContainer pc, TypeContainer parent,
 				  int mod, Attributes attrs, Kind kind, Location l)
-			: base (ns, parent.Parent, parent.MemberName, attrs, kind, l)
+			: base (ns, parent, pc.MemberName, attrs, kind, l)
 		{
-			this.PartialContainer = parent;
+			this.PartialContainer = pc;
 			this.IsPartial = true;
 
 			int accmods;
-			if (parent.Parent == null)
+			if (parent == null || parent == RootContext.Tree.Types)
 				accmods = Modifiers.INTERNAL;
 			else
 				accmods = Modifiers.PRIVATE;
 
-			this.ModFlags = Modifiers.Check (
-				parent.AllowedModifiers, mod, accmods, l);
-		}
+			this.ModFlags = Modifiers.Check (pc.AllowedModifiers, mod, accmods, l);
 
-		public override void Register ()
-		{
+			if (pc.IsGeneric)
+				constraints = new Constraints [pc.CountCurrentTypeParameters];
 		}
 
 		public override PendingImplementation GetPendingImplementations ()
@@ -2859,17 +2786,61 @@ namespace Mono.CSharp {
 
 		public override void SetParameterInfo (ArrayList constraints_list)
 		{
-			PartialContainer.UpdateConstraints (constraints_list);
+			if (constraints_list == null)
+				return;
+
+			TypeParameter[] current_params = PartialContainer.CurrentTypeParameters;
+			for (int i = 0; i < constraints.Length; i++) {
+				foreach (Constraints constraint in constraints_list) {
+					if (constraint.TypeParameter == current_params [i].Name) {
+						constraints [i] = constraint;
+						break;
+					}
+				}
+			}
+		}
+
+		public bool DefineTypeParameters ()
+		{
+			TypeParameter[] current_params = PartialContainer.CurrentTypeParameters;
+
+			for (int i = 0; i < current_params.Length; i++) {
+				Constraints new_constraints = constraints [i];
+				if (new_constraints == null)
+					continue;
+
+				if (!current_params [i].UpdateConstraints (ec, new_constraints)) {
+					Report.Error (265, Location, "Partial declarations of `{0}' have " +
+						      "inconsistent constraints for type parameter `{1}'.",
+						      MemberName.GetTypeName (), current_params [i].Name);
+					return false;
+				}
+			}
+
+			for (int i = 0; i < current_params.Length; i++) {
+				if (!current_params [i].Resolve (this))
+					return false;
+			}
+
+			for (int i = 0; i < current_params.Length; i++)
+				current_params [i].DefineConstraints ();
+
+			foreach (TypeParameter type_param in PartialContainer.TypeParameters) {
+				if (!type_param.DefineType (ec))
+					return false;
+			}
+
+			return true;
+		}
+
+		public override bool EmitFieldInitializers (EmitContext ec)
+		{
+			return PartialContainer.EmitFieldInitializers (ec);
 		}
 
 		public override Type FindNestedType (string name)
 		{
 			return PartialContainer.FindNestedType (name);
-		}
-
-		public Type PartFindNestedType (string name)
-		{
-			return base.FindNestedType (name);
 		}
 
 		public override MemberCache BaseCache {
@@ -2939,11 +2910,6 @@ namespace Mono.CSharp {
 					TypeBuilder.AddDeclarativeSecurity ((SecurityAction)de.Key, (PermissionSet)de.Value);
 				}
 			}
-		}
-
-		public override void Register ()
-		{
-			Parent.AddClassOrStruct (this);
 		}
 	}
 
@@ -3175,11 +3141,6 @@ namespace Mono.CSharp {
 				accmods = Modifiers.PRIVATE;
 
 			this.ModFlags = Modifiers.Check (AllowedModifiers, mod, accmods, l);
-		}
-
-		public override void Register ()
-		{
-			Parent.AddInterface (this);
 		}
 
 		public override PendingImplementation GetPendingImplementations ()
@@ -4731,7 +4692,7 @@ namespace Mono.CSharp {
 				}
 			}
 			if (Initializer != null) {
-				if (GetObsoleteAttribute (Parent) == null && Parent.GetObsoleteAttribute (Parent.Parent) == null)
+				if (GetObsoleteAttribute (Parent) == null && Parent.GetObsoleteAttribute (Parent) == null)
 					Initializer.CheckObsoleteAttribute (Parent, Location);
 				else
 					ec.TestObsoleteMethodUsage = false;
@@ -5649,9 +5610,14 @@ namespace Mono.CSharp {
 			else
 				e = new ArrayCreation (Type, "", (ArrayList)init, Location);
 
-			ec.IsFieldInitializer = true;
-			e = e.DoResolve (ec);
-			ec.IsFieldInitializer = false;
+			EmitContext parent_ec = Parent.EmitContext;
+
+			bool old_is_static = parent_ec.IsStatic;
+			parent_ec.IsStatic = ec.IsStatic;
+			parent_ec.IsFieldInitializer = true;
+			e = e.DoResolve (parent_ec);
+			parent_ec.IsFieldInitializer = false;
+			parent_ec.IsStatic = old_is_static;
 
 			init_expr = e;
 			init_expr_initialized = true;

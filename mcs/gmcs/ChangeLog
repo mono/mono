@@ -1,3 +1,62 @@
+2005-04-15  Martin Baulig  <martin@ximian.com>
+
+	Merged r41590 from MCS and make it work in the generics land.
+
+	* generic.cs (TypeParameter.UpdateConstraints): Removed the
+	`check' argument.
+
+	* class.cs (PartialContainer.UpdateConstraints): Removed.
+	(PartialContainer.CheckConstraints): Removed.
+	(PartialContainer.SetParameterInfo): Store the constraints here.
+	(PartialContainer.DefineTypeParameters): New public method;
+	resolve the type parameter's constraints here.  Note that the
+	PartialContainer doesn't have an EmitContext anymore, so we must
+	do this in the ClassPart.
+
+2005-03-09  Raja R Harinath  <rharinath@novell.com>
+
+	Clean up a few partial-class semantics.  
+	Fixes test-357.cs and cs1618-2.cs.
+	* cs-parser.jay (struct_declaration): Use 'current_class' as
+	parent of newly-created struct.  Remove call to Register ().
+	Use 'pop_current_class' to complete handing the current struct.
+	(interface_declaration): Likewise.
+	(class_declaration): Likewise.
+	(enum_declaration): Use 'current_class' as parent of newly created
+	enum.
+	(delegate_declaration): Likewise.
+	(pop_current_class): New function.  This is used to handle closing
+	up the 'current_class' and 'current_container', and pointing them
+	to the enclosing class/container.
+	(CSharpParser): Initialize 'current_class' too.
+	* decl.cs (MemberCore): Add check for invariant: a partial
+	container is not a parsed entity, and thus does not enclose any
+	parsed members.
+	(DeclSpace.TypeResolveEmitContext): Expose 'type_resolve_ec'.
+	(DeclSpace.BaseTypeExpr): Use it.
+	(DeclSpace.LookupType): Add check for invariant.
+	* class.cs (TypeContainer): Add check for invariant: a nested
+	class should have the same NamespaceEntry as its enclosing class.
+	(TypeContainer.EmitFieldInitializers): Make virtual.
+	(TypeContainer.DefineDefaultConstructor): Adhere to invariant in
+	MemberCore.
+	(TypeContainer.Register): Remove.
+	(TypeContainer.DefineType): Set the 'ec' of a PartialContainer to
+	null.  Use TypeResolveEmitContext for resolving base types and
+	interfaces.  Move initialization of Parts.TypeBuilder here from
+	...
+	(TypeContainer.DefineNestedTypes): ... here.
+	(PartialContainer): Take a Namespace not a NamespaceEntry.
+	(PartialContainer.Create): Don't use Register.  Call the
+	appropriate Add... function directly.
+	(ClassPart): Take both the PartialContainer and the enclosing
+	class as constructor arguments.
+	(ClassPart.EmitFieldInitializers): Override.
+	(ClassPart.PartFindNestedTypes): Remove.
+	(FieldBase.GetInitializerExpression): Resolve the initializer
+	expression in the emit context of the enclosing class.
+	* tree.cs (RootTypes): Remove Register ().
+	
 2005-03-08  Marek Safar  <marek.safar@seznam.cz>
 
 	* cs-parser.jay: Removed CS0134.
