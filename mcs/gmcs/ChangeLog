@@ -1,5 +1,16 @@
 2005-03-07  Raja R Harinath  <rharinath@novell.com>
 
+	* ecore.cs (SimpleName.DoResolve): Rename from
+	SimpleName.DoResolveAllowStatic.
+	(SimpleName.DoSimpleNameResolve): Remove 'allow_static' argument.
+	Pass 'intermediate' flag to MemberStaticCheck.
+	(SimpleName.MemberStaticCheck): Skip "static check" only in case
+	of "intermediate" lookups via MemberAccess.
+	(SimpleName.IdenticalNameAndTypeName): New.  Carved out of ...
+	* expression.cs (MemberAccess.IdenticalNameAndTypeName): ... this.
+
+2005-03-07  Raja R Harinath  <rharinath@novell.com>
+
 	Fix #73394.
 	* ecore.cs (FieldExpr.EmitInstance): Catch cases of CS0120 that
 	slipped in because of variable names that are identical to a

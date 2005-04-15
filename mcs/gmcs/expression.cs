@@ -7363,10 +7363,7 @@ namespace Mono.CSharp {
 		public static bool IdenticalNameAndTypeName (EmitContext ec, Expression left_original, Expression left, Location loc)
 		{
 			SimpleName sn = left_original as SimpleName;
-			if (sn == null || left == null || left.Type.Name != sn.Name)
-				return false;
-
-			return ec.DeclSpace.LookupType (sn.Name, loc, /*ignore_cs0104*/ true) != null;
+			return sn != null && sn.IdenticalNameAndTypeName (ec, left, loc);
 		}
 		
 		// TODO: possible optimalization

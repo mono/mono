@@ -365,7 +365,7 @@ namespace Mono.CSharp {
 			Expression e;
 			bool intermediate = (flags & ResolveFlags.Intermediate) == ResolveFlags.Intermediate;
 			if (this is SimpleName)
-				e = ((SimpleName) this).DoResolveAllowStatic (ec, intermediate);
+				e = ((SimpleName) this).DoResolve (ec, intermediate);
 
 			else 
 				e = DoResolve (ec);
@@ -2090,17 +2090,25 @@ namespace Mono.CSharp {
 					"An object reference is required " +
 					"for the non-static field `"+name+"'");
 		}
+
+		public bool IdenticalNameAndTypeName (EmitContext ec, Expression resolved_to, Location loc)
+		{
+			return resolved_to != null && resolved_to.Type != null && 
+				resolved_to.Type.Name == Name &&
+				(ec.DeclSpace.LookupType (Name, loc, /* ignore_cs0104 = */ true) != null);
+		}
 		
 		//
 		// Checks whether we are trying to access an instance
 		// property, method or field from a static body.
 		//
-		Expression MemberStaticCheck (EmitContext ec, Expression e)
+		Expression MemberStaticCheck (EmitContext ec, Expression e, bool intermediate)
 		{
 			if (e is IMemberExpr){
 				IMemberExpr member = (IMemberExpr) e;
 				
-				if (!member.IsStatic){
+				if (!member.IsStatic &&
+				    (!intermediate || !IdenticalNameAndTypeName (ec, e, loc))) {
 					Error_ObjectRefRequired (ec, loc, Name);
 					return null;
 				}
@@ -2108,21 +2116,21 @@ namespace Mono.CSharp {
 
 			return e;
 		}
-		
+
 		public override Expression DoResolve (EmitContext ec)
 		{
-			return SimpleNameResolve (ec, null, false, false);
+			return SimpleNameResolve (ec, null, false);
 		}
 
 		public override Expression DoResolveLValue (EmitContext ec, Expression right_side)
 		{
-			return SimpleNameResolve (ec, right_side, false, false);
+			return SimpleNameResolve (ec, right_side, false);
 		}
 		
 
-		public Expression DoResolveAllowStatic (EmitContext ec, bool intermediate)
+		public Expression DoResolve (EmitContext ec, bool intermediate)
 		{
-			return SimpleNameResolve (ec, null, true, intermediate);
+			return SimpleNameResolve (ec, null, intermediate);
 		}
 
 		private bool IsNestedChild (Type t, Type parent)
@@ -2205,10 +2213,9 @@ namespace Mono.CSharp {
 			return dt;
 		}
 
-		Expression SimpleNameResolve (EmitContext ec, Expression right_side,
-					      bool allow_static, bool intermediate)
+		Expression SimpleNameResolve (EmitContext ec, Expression right_side, bool intermediate)
 		{
-			Expression e = DoSimpleNameResolve (ec, right_side, allow_static, intermediate);
+			Expression e = DoSimpleNameResolve (ec, right_side, intermediate);
 			if (e == null)
 				return null;
 
@@ -2235,7 +2242,7 @@ namespace Mono.CSharp {
 		///   Local Variables and Parameters are handled at
 		///   parse time, so they never occur as SimpleNames.
 		///
-		///   The `allow_static' flag is used by MemberAccess only
+		///   The `intermediate' flag is used by MemberAccess only
 		///   and it is used to inform us that it is ok for us to 
 		///   avoid the static check, because MemberAccess might end
 		///   up resolving the Name as a Type name and the access as
@@ -2246,7 +2253,7 @@ namespace Mono.CSharp {
 		///   Type is both an instance variable and a Type;  Type.GetType
 		///   is the static method not an instance method of type.
 		/// </remarks>
-		Expression DoSimpleNameResolve (EmitContext ec, Expression right_side, bool allow_static, bool intermediate)
+		Expression DoSimpleNameResolve (EmitContext ec, Expression right_side, bool intermediate)
 		{
 			Expression e = null;
 
@@ -2349,7 +2356,7 @@ namespace Mono.CSharp {
 				    TypeManager.IsNestedFamilyAccessible (me.InstanceExpression.Type, me.DeclaringType) &&
 				    me.InstanceExpression.Type != me.DeclaringType &&
 				    !TypeManager.IsFamilyAccessible (me.InstanceExpression.Type, me.DeclaringType) &&
-				    (!intermediate || !MemberAccess.IdenticalNameAndTypeName (ec, this, e, loc))) {
+				    (!intermediate || !IdenticalNameAndTypeName (ec, e, loc))) {
 					Error (38, "Cannot access nonstatic member `" + me.Name + "' of " +
 					       "outer type `" + me.DeclaringType + "' via nested type `" +
 					       me.InstanceExpression.Type + "'");
@@ -2362,10 +2369,7 @@ namespace Mono.CSharp {
 			}
 
 			if (ec.IsStatic || ec.IsFieldInitializer){
-				if (allow_static)
-					return e;
-
-				return MemberStaticCheck (ec, e);
+				return MemberStaticCheck (ec, e, intermediate);
 			} else
 				return e;
 		}
