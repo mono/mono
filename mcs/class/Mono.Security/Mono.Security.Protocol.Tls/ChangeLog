@@ -1,3 +1,9 @@
+2005-04-14 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* SslClientStream.cs: MemoryStream does not implement proper Begin*
+	methods, so we need this to prevent infinite recursion if we have a
+	callback that calls BeginRead.
+
 2005-04-13  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* RecordProtocol.cs: Some API changes so a record can be decoded from

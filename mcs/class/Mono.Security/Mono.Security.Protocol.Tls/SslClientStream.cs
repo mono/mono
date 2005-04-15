@@ -51,6 +51,7 @@ namespace Mono.Security.Protocol.Tls
 		X509Certificate	certificate, 
 		string			targetHost);
 
+	delegate int ReadDelegate (byte [] buffer, int offset, int count);
 	#endregion
 
 	public class SslClientStream : Stream, IDisposable
@@ -481,8 +482,8 @@ namespace Mono.Security.Protocol.Tls
 					}
 
 					// return the record(s) to the caller
-					asyncResult = this.inputBuffer.BeginRead(
-						buffer, offset, count, callback, state);
+					ReadDelegate rd = new ReadDelegate (this.inputBuffer.Read);
+					asyncResult = rd.BeginInvoke (buffer, offset, count, callback, state);
 				}
 				catch (TlsException ex)
 				{
