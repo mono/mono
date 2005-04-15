@@ -5,7 +5,7 @@
 //	Cesar Lopez Nataren (cesar@ciencias.unam.mx)
 //
 // (C) 2003, 2004 Cesar Lopez Nataren
-// (C) 2005, Novell Inc.
+// (C) 2005, Novell Inc. (http://novell.com)
 //
 
 //
@@ -264,7 +264,7 @@ namespace Microsoft.JScript {
 
 			ig.Emit (OpCodes.Ldloc, local);
 			ig.Emit (OpCodes.Dup);
-			
+
 			left.Emit (ec);
 
 			CodeGenerator.load_engine (InFunction, ec.ig);
@@ -1043,7 +1043,7 @@ namespace Microsoft.JScript {
 					ig.Emit (OpCodes.Starg, (short) f.pos);
 				else
 					ig.Emit (OpCodes.Ldarg_S, f.pos);
-			} else if (binding is VariableDeclaration || binding is Try) {
+			} else if (binding is VariableDeclaration || binding is Try || binding is Catch) {
 				FieldInfo field_info = extract_field_info (binding);
 				LocalBuilder local_builder = extract_local_builder (binding);
 				
@@ -1064,6 +1064,9 @@ namespace Microsoft.JScript {
 				load_script_func (ec, (FunctionDeclaration) binding);
 			else if (binding == null) // it got referenced before was declared and initialized
 				Console.WriteLine ("id = {0}, Identifier.Emit, binding == null? {1}", name.Value, binding == null);
+			else
+				Console.WriteLine ("Identifier.Emit, binding.GetType = {0}", binding.GetType ());
+
 			if (!assign && no_effect)
 				ig.Emit (OpCodes.Pop);				
 		}
@@ -1130,6 +1133,8 @@ namespace Microsoft.JScript {
 				r = ((VariableDeclaration) a).field_info;
 			else if (a is Try)
 				r = ((Try) a).field_info;
+			else if (a is Catch)
+				r = ((Catch) a).field_info;
 			return r;
 		}
 		
@@ -1140,6 +1145,8 @@ namespace Microsoft.JScript {
 				r = ((VariableDeclaration) a).local_builder;
 			else if (a is Try)
 				r = ((Try) a).local_builder;
+			else if (a is Catch)
+				r = ((Catch) a).local_builder;
 			return r;
 		}
 	}

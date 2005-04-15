@@ -1,3 +1,9 @@
+2005-04-15  Cesar Lopez Nataren  <cnataren@novell.com>
+
+	* Statement.cs: make internal the builders.
+	* expression.cs: (Identifier.Emit) Take into account if its
+	binding is of type Catch.
+
 2005-04-14  Cesar Lopez Nataren  <cnataren@novell.com>
 
 	* SemanticAnalizer.cs: Added a Hashtable that indicates which

@@ -581,8 +581,8 @@ namespace Microsoft.JScript {
 		internal AST catch_cond;
 		internal AST stms;
 
-		FieldBuilder field_info;
-		LocalBuilder local_builder;
+		internal FieldBuilder field_info;
+		internal LocalBuilder local_builder;
 
 		internal Catch (string id, AST catch_cond, AST stms, AST parent, int line_number)
 		{
