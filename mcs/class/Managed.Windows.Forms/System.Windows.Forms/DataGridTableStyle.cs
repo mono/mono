@@ -142,7 +142,7 @@ namespace System.Windows.Forms
 			}
 
 			set {
-				if (!alternating_backcolor.Equals (value)) {
+				if (alternating_backcolor != value) {
 					alternating_backcolor = value;
 					OnAlternatingBackColorChanged (EventArgs.Empty);
 				}
@@ -155,7 +155,7 @@ namespace System.Windows.Forms
 			}
 
 			set {
-				if (!backcolor.Equals (value)) {
+				if (backcolor != value) {
 					backcolor = value;
 					OnBackColorChanged (EventArgs.Empty);
 				}
@@ -193,7 +193,7 @@ namespace System.Windows.Forms
 			}
 
 			set {
-				if (!forecolor.Equals (value)) {
+				if (forecolor != value) {
 					forecolor = value;
 					OnForeColorChanged (EventArgs.Empty);
 				}
@@ -210,7 +210,7 @@ namespace System.Windows.Forms
 			}
 
 			set {
-				if (!gridline_color.Equals (value)) {
+				if (gridline_color != value) {
 					gridline_color = value;
 					OnGridLineColorChanged (EventArgs.Empty);
 				}
@@ -236,7 +236,7 @@ namespace System.Windows.Forms
 			}
 
 			set {
-				if (!header_backcolor.Equals (value)) {
+				if (header_backcolor != value) {
 					header_backcolor = value;
 					OnHeaderBackColorChanged (EventArgs.Empty);
 				}
@@ -269,7 +269,7 @@ namespace System.Windows.Forms
 
 			set {
 
-				if (!header_forecolor.Equals (value)) {
+				if (header_forecolor != value) {
 					header_forecolor = value;
 					OnHeaderForeColorChanged (EventArgs.Empty);
 				}
@@ -282,7 +282,7 @@ namespace System.Windows.Forms
 			}
 
 			set {
-				if (!link_color.Equals (value)) {
+				if (link_color != value) {
 					link_color = value;
 					OnLinkColorChanged (EventArgs.Empty);
 				}
@@ -296,7 +296,7 @@ namespace System.Windows.Forms
 			}
 
 			set {
-				if (!link_hovercolor.Equals (value)) {
+				if (link_hovercolor != value) {
 					link_hovercolor = value;
 					OnLinkHoverColorChanged (EventArgs.Empty);
 				}
@@ -387,7 +387,7 @@ namespace System.Windows.Forms
 			}
 
 			set {
-				if (!selection_backcolor.Equals (value)) {
+				if (selection_backcolor != value) {
 					selection_backcolor = value;
 					OnSelectionBackColorChanged (EventArgs.Empty);
 				}
@@ -400,7 +400,7 @@ namespace System.Windows.Forms
 			}
 
 			set {
-				if (!selection_forecolor.Equals (value)) {
+				if (selection_forecolor != value) {
 					selection_forecolor = value;
 					OnSelectionForeColorChanged (EventArgs.Empty);
 				}
@@ -637,42 +637,42 @@ namespace System.Windows.Forms
 
 		protected virtual bool ShouldSerializeAlternatingBackColor ()
 		{
-			return (!alternating_backcolor.Equals (def_alternating_backcolor));
+			return (alternating_backcolor != def_alternating_backcolor);
 		}
 
 		protected bool ShouldSerializeBackColor ()
 		{
-			return (!backcolor.Equals (def_backcolor));
+			return (backcolor != def_backcolor);
 		}
 
 		protected bool ShouldSerializeForeColor ()
 		{
-			return (!forecolor.Equals (def_forecolor));
+			return (forecolor != def_forecolor);
 		}
 
 		protected virtual bool ShouldSerializeGridLineColor ()
 		{
-			return (!gridline_color.Equals (def_gridline_color));
+			return (gridline_color != def_gridline_color);
 		}
 
 		protected virtual bool ShouldSerializeHeaderBackColor ()
 		{
-			return (!header_backcolor.Equals (def_header_backcolor));
+			return (header_backcolor != def_header_backcolor);
 		}
 
 		protected virtual bool ShouldSerializeHeaderForeColor ()
 		{
-			return (!header_forecolor.Equals (def_header_forecolor));
+			return (header_forecolor != def_header_forecolor);
 		}
 
 		protected virtual bool ShouldSerializeLinkColor ()
 		{
-			return (!link_color.Equals (def_link_color));
+			return (link_color != def_link_color);
 		}
 
 		protected virtual bool ShouldSerializeLinkHoverColor ()
 		{
-			return (!link_hovercolor.Equals (def_link_hovercolor));
+			return (link_hovercolor != def_link_hovercolor);
 		}
 
 		protected bool ShouldSerializePreferredRowHeight ()
@@ -682,12 +682,12 @@ namespace System.Windows.Forms
 
 		protected bool ShouldSerializeSelectionBackColor ()
 		{
-			return (!selection_backcolor.Equals (def_selection_backcolor));
+			return (selection_backcolor != def_selection_backcolor);
 		}
 
 		protected virtual bool ShouldSerializeSelectionForeColor ()
 		{
-			return (!selection_forecolor.Equals (def_selection_forecolor));
+			return (selection_forecolor != def_selection_forecolor);
 		}
 		#endregion	// Protected Instance Methods
 

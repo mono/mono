@@ -23,7 +23,6 @@
 //	Jordi Mas i Hernandez <jordi@ximian.com>
 //
 //
-
 // NOT COMPLETE
 
 using System.ComponentModel;
@@ -33,63 +32,23 @@ using System.Diagnostics;
 
 namespace System.Windows.Forms
 {
-	public class DataGridTextBox : TextBox
+	public class GridTablesFactory
 	{
 
-		#region	Local Variables
-		private bool isedit;
-		private DataGrid grid;
-		#endregion	// Local Variables
-
 		#region Constructors
-		public DataGridTextBox ()
+		internal GridTablesFactory ()
 		{
-			isedit = true;
-			grid = null;
+
 		}
 		#endregion
 
+
 		#region Public Instance Properties
-		public bool IsInEditOrNavigateMode {
-			get {
-				return isedit;
-			}
-			set {
-				if (value != isedit) {
-					isedit = value;
-				}
-			}
+		[MonoTODO]
+		public static DataGridTableStyle[] CreateGridTables (DataGridTableStyle gridTable, object dataSource,   string dataMember, BindingContext bindingManager)
+		{
+			throw new NotImplementedException ();
 		}
-
 		#endregion	// Public Instance Properties
-
-		#region Public Instance Methods
-		protected override void OnKeyPress (KeyPressEventArgs e)
-		{
-			base.OnKeyPress (e);
-		}
-
-		protected override void OnMouseWheel (MouseEventArgs e)
-		{
-			base.OnMouseWheel (e);
-		}
-
-		protected internal override bool ProcessKeyMessage (ref Message m)
-		{
-			return base.ProcessKeyMessage (ref m);
-		}
-
-		public void SetDataGrid (DataGrid parentGrid)
-		{
-			grid = parentGrid;
-		}
-
-		protected override void WndProc (ref Message m)
-		{
-			base.WndProc (ref m);
-		}
-
-		#endregion	// Public Instance Methods
-
 	}
 }

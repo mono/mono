@@ -75,6 +75,7 @@ System.Windows.Forms/Cursor.cs
 System.Windows.Forms/Cursors.cs
 System.Windows.Forms/DataGrid.cs
 System.Windows.Forms/DataGridBoolColumn.cs
+System.Windows.Forms/DataGridCell.cs
 System.Windows.Forms/DataGridColumnStyle.cs
 System.Windows.Forms/DataGridLineStyle.cs
 System.Windows.Forms/DataGridParentRowsLabelStyle.cs
@@ -114,6 +115,7 @@ System.Windows.Forms/FrameStyle.cs
 System.Windows.Forms/GiveFeedbackEventArgs.cs
 System.Windows.Forms/GiveFeedbackEventHandler.cs
 System.Windows.Forms/GridColumnStylesCollection.cs
+System.Windows.Forms/GridTablesFactory.cs
 System.Windows.Forms/GridTableStylesCollection.cs
 System.Windows.Forms/GridEntry.cs
 System.Windows.Forms/GridItem.cs

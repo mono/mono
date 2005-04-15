@@ -24,8 +24,6 @@
 //
 //
 
-// NOT COMPLETE
-
 using System.ComponentModel;
 using System.Drawing;
 using System.Runtime.InteropServices;
@@ -33,60 +31,52 @@ using System.Diagnostics;
 
 namespace System.Windows.Forms
 {
-	public class DataGridTextBox : TextBox
+	public struct DataGridCell
 	{
-
 		#region	Local Variables
-		private bool isedit;
-		private DataGrid grid;
+		private int row;
+		private int column;
 		#endregion	// Local Variables
 
 		#region Constructors
-		public DataGridTextBox ()
+		public DataGridCell (int r,  int c)
 		{
-			isedit = true;
-			grid = null;
+			row = r;
+			column = c;
 		}
 		#endregion
 
 		#region Public Instance Properties
-		public bool IsInEditOrNavigateMode {
-			get {
-				return isedit;
-			}
-			set {
-				if (value != isedit) {
-					isedit = value;
-				}
-			}
+		public int ColumnNumber {
+			get { return column; }
+			set { column = value; }
 		}
 
+		public int RowNumber {
+			get { return row; }
+			set { row = value; }
+		}
 		#endregion	// Public Instance Properties
 
 		#region Public Instance Methods
-		protected override void OnKeyPress (KeyPressEventArgs e)
+		public override bool Equals (object o)
 		{
-			base.OnKeyPress (e);
+			if (!(o is DataGridCell))
+				return false;
+
+			DataGridCell obj = (DataGridCell) o;
+			return (obj.ColumnNumber == column && obj.RowNumber == row);
+
 		}
 
-		protected override void OnMouseWheel (MouseEventArgs e)
+		public override int GetHashCode ()
 		{
-			base.OnMouseWheel (e);
+			return row ^ column;
 		}
 
-		protected internal override bool ProcessKeyMessage (ref Message m)
+		public override string ToString ()
 		{
-			return base.ProcessKeyMessage (ref m);
-		}
-
-		public void SetDataGrid (DataGrid parentGrid)
-		{
-			grid = parentGrid;
-		}
-
-		protected override void WndProc (ref Message m)
-		{
-			base.WndProc (ref m);
+			return base.ToString () + "{RowNumber = " + row +", ColumnNumber = " + column + "}";
 		}
 
 		#endregion	// Public Instance Methods

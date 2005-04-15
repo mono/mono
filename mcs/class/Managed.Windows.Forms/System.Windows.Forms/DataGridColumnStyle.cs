@@ -20,7 +20,7 @@
 // Copyright (c) 2005 Novell, Inc. (http://www.novell.com)
 //
 // Author:
-//	Jordi Mas i Hernadez <jordi@ximian.com>
+//	Jordi Mas i Hernandez <jordi@ximian.com>
 //
 //
 

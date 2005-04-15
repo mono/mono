@@ -20,7 +20,7 @@
 // Copyright (c) 2005 Novell, Inc. (http://www.novell.com)
 //
 // Author:
-//	Jordi Mas i Hernadez <jordi@ximian.com>
+//	Jordi Mas i Hernandez <jordi@ximian.com>
 //
 
 using System;
@@ -37,7 +37,7 @@ namespace System.Windows.Forms
 		internal GridTableStylesCollection (DataGrid grid)
 		{
 			items = new ArrayList ();
-			owner = owner;
+			owner = grid;
 		}
 
 		#region Public Instance Properties

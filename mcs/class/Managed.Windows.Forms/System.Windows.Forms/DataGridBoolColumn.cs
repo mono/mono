@@ -20,7 +20,7 @@
 // Copyright (c) 2005 Novell, Inc. (http://www.novell.com)
 //
 // Author:
-//	Jordi Mas i Hernadez <jordi@ximian.com>
+//	Jordi Mas i Hernandez <jordi@ximian.com>
 //
 //
 
@@ -43,17 +43,17 @@ namespace System.Windows.Forms
 		#endregion	// Local Variables
 
 		#region Constructors
-		public DataGridBoolColumn ()
+		public DataGridBoolColumn () : base ()
 		{
 			CommonConstructor ();
 		}
 
-		public DataGridBoolColumn (PropertyDescriptor prop)
+		public DataGridBoolColumn (PropertyDescriptor prop) : base (prop)
 		{
 			CommonConstructor ();
 		}
 
-		public DataGridBoolColumn (PropertyDescriptor prop, bool isDefault)
+		public DataGridBoolColumn (PropertyDescriptor prop, bool isDefault)  : base (prop)
 		{
 			CommonConstructor ();
 		}
