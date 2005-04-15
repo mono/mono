@@ -1,3 +1,7 @@
+2005-04-15  Raja R Harinath  <rharinath@novell.com>
+
+	* cs0208-7.cs, cs0208-8.cs: New tests.  Verified on CSC.
+
 2005-04-08  Raja R Harinath  <rharinath@novell.com>
 
 	* cs0535-3.cs: New test from #58413.
