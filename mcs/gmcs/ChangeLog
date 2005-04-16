@@ -1,3 +1,7 @@
+2005-04-16  Zoltan Varga  <vargaz@freemail.hu>
+
+	* cs-parser.jay: Fix build.
+
 2005-03-15  Marek Safar  <marek.safar@seznam.cz>
 
 	* class.cs (TypeContainer.CircularDepException) New nested

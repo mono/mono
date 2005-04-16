@@ -5147,7 +5147,7 @@ public CSharpParser (SeekableStreamReader reader, SourceFile file, ArrayList def
 
 public void parse ()
 {
-	// try {
+	try {
 		if (yacc_verbose_flag > 1)
 			yyparse (lexer, new yydebug.yyDebugSimple ());
 		else
