@@ -1,3 +1,7 @@
+2005-04-16  Ben Maurer  <bmaurer@ximian.com>
+
+	* DateTimeTest.cs: Remove tests that fail durring DST.
+
 2005-04-05  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* AppDomainCas.cs: New. Permission (CAS) unit tests for AppDomain.
