@@ -401,8 +401,13 @@ namespace System.Net
 			if (result.GotException)
 				throw result.Exception;
 
-			cnc.EndWrite (result.InnerAsyncResult);
-			result.SetCompleted (false, 0);
+			try { 
+				cnc.EndWrite (result.InnerAsyncResult);
+				result.SetCompleted (false, 0);
+			} catch (Exception e) {
+				result.SetCompleted (false, e);
+			}
+
 			if (sendChunked) {
 				lock (locker) {
 					pendingWrites--;
