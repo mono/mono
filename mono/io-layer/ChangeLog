@@ -1,3 +1,13 @@
+2005-04-16 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* handles.c:
+	* processes.c:
+	* handles-private.h: we were calling g_renew to expand the handle array,
+	but that might move the memory and we might have pthread conditions or
+	mutexes in the original memory area that are being used. Now instead of
+	expanding an existing array, we just create new ones and keep a list of
+	them. Access to _wapi_private_handles had to be modified accordingly.
+
 2005-04-15  Dick Porter  <dick@ximian.com>
 
 	* collection.c: FreeBSD needs more than PTHREAD_STACK_MIN
