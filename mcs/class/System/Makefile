@@ -15,7 +15,7 @@ TEST_RESOURCES = \
 	Test/System/test-uri-relative-props.txt
 
 LIB_MCS_FLAGS = /r:$(corlib)
-TEST_MCS_FLAGS = -nowarn:1595 -nowarn:0618 -nowarn:219 -nowarn:67 \
+TEST_MCS_FLAGS = -nowarn:1595 -nowarn:0618 -nowarn:219 -nowarn:67 -nowarn:169 \
 	$(foreach f, $(TEST_RESOURCES), -resource:$(f),$(notdir $(f)))
 
 XML_DEP := System.Xml.dll
