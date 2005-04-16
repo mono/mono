@@ -38,8 +38,11 @@
 
 #ifdef SPARCV9
 #define MONO_ARCH_INST_IS_REGPAIR(desc) FALSE
+#define MONO_ARCH_INST_REGPAIR_REG2(desc,hreg1) (-1)
 #else
+/* FIXME: Define a separate register class for o0:o1 */
 #define MONO_ARCH_INST_IS_REGPAIR(desc) (desc == 'l')
+#define MONO_ARCH_INST_REGPAIR_REG2(desc,hreg1) (desc == 'l' ? (hreg1 + 1) : -1)
 #endif
 
 

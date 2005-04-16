@@ -1,5 +1,10 @@
 2005-04-16  Zoltan Varga  <vargaz@freemail.hu>
 
+	* mini-sparc.h (MONO_ARCH_INST_REGPAIR_REG2): Add macros needed by the new
+	allocator.
+
+	* mini-codegen.c (mono_local_regalloc): Fix warning.
+
 	* mini-codegen.c (alloc_int_reg): Fix bug in preferred register
 	allocation.
 

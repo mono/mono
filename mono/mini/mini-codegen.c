@@ -675,6 +675,8 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 			ins->sreg2 = -1;
 		}
 		if (spec [MONO_INST_DEST]) {
+			int dest_dreg;
+
 			if (spec [MONO_INST_DEST] == 'f')
 				reginfod = reginfof;
 			else
@@ -686,8 +688,9 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 			if (reginfod [ins->dreg].born_in == 0 || reginfod [ins->dreg].born_in > i)
 				reginfod [ins->dreg].born_in = i;
 
-			if (MONO_ARCH_INST_FIXED_REG (spec [MONO_INST_DEST]) != -1)
-				reginfod [ins->dreg].preferred_mask = (1 << MONO_ARCH_INST_FIXED_REG (spec [MONO_INST_DEST]));
+			dest_dreg = MONO_ARCH_INST_FIXED_REG (spec [MONO_INST_DEST]);
+			if (dest_dreg != -1)
+				reginfod [ins->dreg].preferred_mask = (1 << dest_dreg);
 
 			if (MONO_ARCH_INST_IS_REGPAIR (spec [MONO_INST_DEST])) {
 				/* The virtual register is allocated sequentially */
