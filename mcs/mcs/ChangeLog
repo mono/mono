@@ -1,5 +1,9 @@
 2005-04-16  Miguel de Icaza  <miguel@novell.com>
 
+	* expression.cs (Binary.ResolveOperator): Apply patch from John
+	Luke to fix bug 59864: operators &, | and ^ on enumerations
+	require that the same enum type on both sides.
+
 	* driver.cs: Add warnings to old flag usage, this is to assist
 	people who produce Makefiles and hope that the Makefiles will be
 	used on Windows.

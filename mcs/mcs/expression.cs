@@ -2580,6 +2580,10 @@ namespace Mono.CSharp {
 				if (oper == Operator.BitwiseAnd ||
 				    oper == Operator.BitwiseOr ||
 				    oper == Operator.ExclusiveOr){
+					if (left.Type != right.Type){
+						Error_OperatorCannotBeApplied ();
+						return null;
+					}
 					type = l;
 					return this;
 				}
