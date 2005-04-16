@@ -12,7 +12,8 @@ LIB_MCS_FLAGS = /r:$(corlib) /r:System.dll /r:System.Xml.dll \
 		@Npgsql.dll.resources
 
 TEST_MCS_FLAGS = /r:$(corlib) /r:System.dll /r:System.Xml.dll \
-		 /r:System.Web.dll /r:System.Data.dll
+		 /r:System.Web.dll /r:System.Data.dll \
+		-nowarn:0618 -nowarn:219 -nowarn:169
 
 LIB_MCS_FLAGS_RESOURCES = $(LIB_MCS_FLAGS) 
 
