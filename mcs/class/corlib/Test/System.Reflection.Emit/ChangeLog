@@ -1,3 +1,7 @@
+2005-04-16  Zoltan Varga  <vargaz@freemail.hu>
+
+	* MethodBuilderTest.cs: Add test for parameter attributes.
+
 2005-03-24  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* MethodRentalCas.cs: New. CAS unit tests for MethodRental.
