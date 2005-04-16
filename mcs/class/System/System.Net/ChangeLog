@@ -1,3 +1,10 @@
+2005-04-16 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* WebConnectionStream.cs: call SetComplete in EndWrite when we're not
+	buffering the request body. Fixes bug #74673.
+
+	* WebAsyncResult.cs: renamed field.
+
 2005-04-14 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* WebConnectionStream.cs:

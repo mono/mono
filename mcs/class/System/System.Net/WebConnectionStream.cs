@@ -294,12 +294,12 @@ namespace System.Net
 		public override int EndRead (IAsyncResult r)
 		{
 			WebAsyncResult result = (WebAsyncResult) r;
-			if (result.EndReadCalled) {
+			if (result.EndCalled) {
 				int xx = result.NBytes;
 				return (xx >= 0) ? xx : 0;
 			}
 
-			result.EndReadCalled = true;
+			result.EndCalled = true;
 
 			if (!result.IsCompleted) {
 				int nbytes = cnc.EndRead (result);
@@ -386,17 +386,23 @@ namespace System.Net
 			if (r == null)
 				throw new ArgumentNullException ("r");
 
-			if (allowBuffering && !sendChunked)
-				return;
-
 			WebAsyncResult result = r as WebAsyncResult;
 			if (result == null)
 				throw new ArgumentException ("Invalid IAsyncResult");
+
+			if (result.EndCalled)
+				return;
+
+			result.EndCalled = true;
+
+			if (allowBuffering && !sendChunked)
+				return;
 
 			if (result.GotException)
 				throw result.Exception;
 
 			cnc.EndWrite (result.InnerAsyncResult);
+			result.SetCompleted (false, 0);
 			if (sendChunked) {
 				lock (locker) {
 					pendingWrites--;
