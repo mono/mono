@@ -5154,7 +5154,6 @@ public void parse ()
 			yyparse (lexer);
 		Tokenizer tokenizer = lexer as Tokenizer;
 		tokenizer.cleanup ();
-#if FIXME
 	} catch (Exception e){
 		//
 		// Removed for production use, use parser verbose to get the output.
@@ -5164,7 +5163,6 @@ public void parse ()
 		if (yacc_verbose_flag > 0)
 			Console.WriteLine (e);
 	}
-#endif
 }
 
 void CheckToken (int error, int yyToken, string msg)
