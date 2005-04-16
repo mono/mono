@@ -8,6 +8,7 @@ LIB_MCS_FLAGS = /resource:System.Messaging/MessageQueue.resx \
 		/r:System.Configuration.Install.dll \
 		/r:System.Drawing.dll \
 		/r:System.Windows.Forms.dll
+TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) -nowarn:0618 -nowarn:219 -nowarn:169
 
 EXTRA_DISTFILES = System.Messaging/MessageQueue.resx
 
