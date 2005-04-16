@@ -86,6 +86,10 @@ numbers, as they look nicer on the debugging output.
 	ignored during overload resolution.  (marked override == in IL,
 	it has a 'virtual', but no 'newslot')
 
+-29     Use -option instead of --option: to move people to the new
+	command line handling.
+   
+
 ----------
 
 Errors that we have allocated that will have corresponding errors in
