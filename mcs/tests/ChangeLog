@@ -1,3 +1,7 @@
+2005-04-16  Raja R Harinath  <rharinath@novell.com>
+
+	* test-365.cs: New test from #73834.
+
 2005-04-14  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile (MCS): Override only in the 'default' profile.

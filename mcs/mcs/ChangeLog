@@ -1,3 +1,13 @@
+2005-04-16  Raja R Harinath  <rharinath@novell.com>
+
+	Fix #73834.
+	* ecore.cs (PropertyExpr.resolved): New.
+	(DoResolve): Use it to handle a case of double resolution here.
+	Handle a case of identical-name-and-type-name.
+	* expression.cs (ArrayCreation.CheckIndices): Avoid double
+	resolution by storing the results of expression resolution back
+	into the "probes" array.
+
 2005-04-15  Raja R Harinath  <rharinath@novell.com>
 
 	Fix cs0208-7.cs and cs0208-8.cs.
