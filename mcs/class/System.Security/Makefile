@@ -11,6 +11,6 @@ ifeq (net_2_0,$(PROFILE))
 LIB_MCS_FLAGS += /r:Mono.Security.dll
 endif
 
-TEST_MCS_FLAGS = /nowarn:1595 $(LIB_MCS_FLAGS)
+TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) -nowarn:0618 -nowarn:219 -nowarn:169 -nowarn:1595
 
 include ../../build/library.make
