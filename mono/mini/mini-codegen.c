@@ -946,12 +946,13 @@ mono_local_regalloc (MonoCompile *cfg, MonoBasicBlock *bb)
 			if (dest_dreg != -1) {
 				if (rs->iassign [ins->dreg] != dest_dreg)
 					free_up_ireg (cfg, tmp, ins, dest_dreg);
-			}
-			dreg2 = ins->dreg + 1;
-			dest_dreg2 = MONO_ARCH_INST_REGPAIR_REG2 (spec [MONO_INST_DEST], dest_dreg);
-			if (dest_dreg2 != -1) {
-				if (rs->iassign [dreg2] != dest_dreg2)
-					free_up_ireg (cfg, tmp, ins, dest_dreg2);
+
+				dreg2 = ins->dreg + 1;
+				dest_dreg2 = MONO_ARCH_INST_REGPAIR_REG2 (spec [MONO_INST_DEST], dest_dreg);
+				if (dest_dreg2 != -1) {
+					if (rs->iassign [dreg2] != dest_dreg2)
+						free_up_ireg (cfg, tmp, ins, dest_dreg2);
+				}
 			}
 		}
 

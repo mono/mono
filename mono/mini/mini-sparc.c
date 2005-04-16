@@ -1958,7 +1958,7 @@ static guint32*
 emit_move_return_value (MonoInst *ins, guint32 *code)
 {
 	/* Move return value to the target register */
-	/* FIXME: do this in the local reg allocator */
+	/* FIXME: do more things in the local reg allocator */
 	switch (ins->opcode) {
 	case OP_VOIDCALL:
 	case OP_VOIDCALL_REG:
@@ -1967,7 +1967,7 @@ emit_move_return_value (MonoInst *ins, guint32 *code)
 	case CEE_CALL:
 	case OP_CALL_REG:
 	case OP_CALL_MEMBASE:
-		sparc_mov_reg_reg (code, sparc_o0, ins->dreg);
+		g_assert (ins->dreg == sparc_o0);
 		break;
 	case OP_LCALL:
 	case OP_LCALL_REG:
@@ -1979,15 +1979,7 @@ emit_move_return_value (MonoInst *ins, guint32 *code)
 #ifdef SPARCV9
 		sparc_mov_reg_reg (code, sparc_o0, ins->dreg);
 #else
-		if (ins->dreg + 1 == sparc_o1) {
-			sparc_mov_reg_reg (code, sparc_o0, sparc_o7);
-			sparc_mov_reg_reg (code, sparc_o1, ins->dreg);
-			sparc_mov_reg_reg (code, sparc_o7, ins->dreg + 1);
-		}
-		else {
-			sparc_mov_reg_reg (code, sparc_o0, ins->dreg + 1);
-			sparc_mov_reg_reg (code, sparc_o1, ins->dreg);
-		}
+		g_assert (ins->dreg == sparc_o1);
 #endif
 		break;
 	case OP_FCALL:

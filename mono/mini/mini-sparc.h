@@ -33,16 +33,19 @@
 
 #define MONO_ARCH_USE_FPSTACK FALSE
 #define MONO_ARCH_FPSTACK_SIZE 0
-#define MONO_ARCH_INST_FIXED_REG(desc) (-1)
+#ifdef SPARCV9
+#define MONO_ARCH_INST_FIXED_REG(desc) ((desc == 'o') ? sparc_o0 : -1)
+#else
+#define MONO_ARCH_INST_FIXED_REG(desc) ((desc == 'o') ? sparc_o0 : ((desc == 'l') ? sparc_o1 : -1))
+#endif
 #define MONO_ARCH_INST_SREG2_MASK(ins) (0)
 
 #ifdef SPARCV9
 #define MONO_ARCH_INST_IS_REGPAIR(desc) FALSE
 #define MONO_ARCH_INST_REGPAIR_REG2(desc,hreg1) (-1)
 #else
-/* FIXME: Define a separate register class for o0:o1 */
-#define MONO_ARCH_INST_IS_REGPAIR(desc) (desc == 'l')
-#define MONO_ARCH_INST_REGPAIR_REG2(desc,hreg1) (desc == 'l' ? (hreg1 + 1) : -1)
+#define MONO_ARCH_INST_IS_REGPAIR(desc) ((desc == 'l') || (desc == 'L'))
+#define MONO_ARCH_INST_REGPAIR_REG2(desc,hreg1) (((desc == 'l') ? sparc_o0 : (desc == 'L' ? (hreg1 + 1) : -1)))
 #endif
 
 
