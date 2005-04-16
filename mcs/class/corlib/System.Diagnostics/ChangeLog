@@ -1,3 +1,8 @@
+2005-04-16  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* StackFrame.cs: Moved documentation comments (XML) to monodoc. 
+	Removed unused method ObjectsEqual.
+
 2005-03-14  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* StackFrame.cs: Fix CAS unit tests for NET_1_1.
