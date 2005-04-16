@@ -1,3 +1,10 @@
+2005-04-16  Zoltan Varga  <vargaz@freemail.hu>
+
+	* reflection.c reflection.h: Fix handling of parameter defaults in dynamic
+	methods. Also fixes handling of parameter attributes. Fixes #74609.
+
+	* mono-debug.c (mono_debug_close_image): Fix warning.
+
 2005-04-15 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* socket-io.h: replaced old unused field with new 'blocking'.
