@@ -1,3 +1,11 @@
+2005-04-16 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* metadata/socket-io.c: fixed semantics in Socket.Blocking icall.
+
+	* metadata/threadpool.c: removed hack to workaround the bug above.
+
+	Fixes bug #74618.
+
 2005-04-16  Zoltan Varga  <vargaz@freemail.hu>
 
 	* reflection.c reflection.h: Fix handling of parameter defaults in dynamic

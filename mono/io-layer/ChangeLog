@@ -1,5 +1,10 @@
 2005-04-16 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* io-layer/sockets.c: FIONBIO with a TRUE argument means we want
+	non-blocking IO, not the other way around.
+
+2005-04-16 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* handles.c:
 	* io.c:
 	* handles-private.h: GetFileType wasn't checking if we have memory
