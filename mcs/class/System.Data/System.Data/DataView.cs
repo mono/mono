@@ -377,7 +377,7 @@ namespace System.Data
 				throw new IndexOutOfRangeException ("There is no row at " +
 						"position: " + index + ".");
 			DataRowView row = this [index];
-			row.Row.Delete ();
+			DeleteRowView (row);
 		}
 
 #if NET_2_0

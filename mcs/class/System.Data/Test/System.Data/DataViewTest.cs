@@ -412,6 +412,29 @@ namespace MonoTests.System.Data
 			TestView.Delete (0);
 		}
 
+		[Test] // based on bug #74631
+		public void TestDeleteAndCount ()
+		{
+			DataSet dataset = new DataSet ("new");
+			DataTable dt = new DataTable ("table1");
+			dataset.Tables.Add (dt);
+			dt.Columns.Add ("col1");
+			dt.Columns.Add ("col2");
+			dt.Rows.Add (new object []{1,1});
+			dt.Rows.Add (new object []{1,2});
+			dt.Rows.Add (new object []{1,3});
+
+			DataView dataView = new DataView (dataset.Tables[0]);
+
+			AssertEquals ("before delete", 3, dataView.Count);
+			dataView.AllowDelete = true;
+
+			// Deleting the first row
+			dataView.Delete (0);
+
+			AssertEquals ("before delete", 2, dataView.Count);
+		}
+
 		[Test]
 		public void ListChangeOnSetItem ()
 		{

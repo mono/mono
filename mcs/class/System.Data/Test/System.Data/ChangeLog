@@ -1,3 +1,7 @@
+2005-04-17  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DataViewTest.cs : added more test for Delete() based on bug #74631.
+
 2005-02-25  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DataColumnTest.cs : added testcase for setting negative value on

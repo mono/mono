@@ -1,3 +1,8 @@
+2005-04-17  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DataView.cs : Delete() should not try to remove row twice.
+	  Fixed bug #74631.
+
 2005-04-13  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DataTable.cs : Use GetRowType() for the base of the returning array 
