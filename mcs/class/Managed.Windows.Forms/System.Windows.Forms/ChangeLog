@@ -1,3 +1,7 @@
+2005-04-17  Jackson Harper  <jackson@ximian.com>
+
+	* CursorConverter.cs: Initial implementation.
+
 2005-04-15  Jordi Mas i Hernandez <jordi@ximian.com>
 
 	* ListControl.cs: work towards complex data binding support on ListControl
