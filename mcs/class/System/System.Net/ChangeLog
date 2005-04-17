@@ -1,3 +1,8 @@
+2005-04-17 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* WebConnectionStream.cs: if the BeginRead/BeginWrite is completed
+	synchronously, no need to create the ManualResetEvent to wait on.
+
 2005-04-16 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* WebConnectionStream.cs: call SetComplete in EndWrite when we're not

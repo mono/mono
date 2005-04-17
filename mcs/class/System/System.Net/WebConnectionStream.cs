@@ -232,7 +232,7 @@ namespace System.Net
 
 			AsyncCallback cb = new AsyncCallback (ReadCallbackWrapper);
 			WebAsyncResult res = (WebAsyncResult) BeginRead (buffer, offset, size, cb, null);
-			if (!res.WaitUntilComplete (request.ReadWriteTimeout, false)) {
+			if (!res.IsCompleted && !res.WaitUntilComplete (request.ReadWriteTimeout, false)) {
 				cnc.Close (true);
 				throw new IOException ("Read timed out.");
 			}
@@ -424,7 +424,7 @@ namespace System.Net
 
 			AsyncCallback cb = new AsyncCallback (WriteCallbackWrapper);
 			WebAsyncResult res = (WebAsyncResult) BeginWrite (buffer, offset, size, cb, null);
-			if (!res.WaitUntilComplete (request.ReadWriteTimeout, false)) {
+			if (!res.IsCompleted && !res.WaitUntilComplete (request.ReadWriteTimeout, false)) {
 				cnc.Close (true);
 				throw new IOException ("Write timed out.");
 			}
