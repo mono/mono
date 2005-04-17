@@ -1,3 +1,7 @@
+2005-04-17  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* TextInfo.cs : Additional null check for Parent CultureInfo.
+
 2005-04-06  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* TextInfo.cs : To make new CultureInfo (127) as invariant, it should

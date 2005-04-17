@@ -222,7 +222,7 @@ namespace System.Globalization {
 			switch ((int) c) {
 			case '\u0049': // Latin uppercase I
 				CultureInfo tmp = ci;
-				while (tmp.Parent != tmp && tmp.Parent.LCID != 0x7F)
+				while (tmp.Parent != null && tmp.Parent != tmp && tmp.Parent.LCID != 0x7F)
 					tmp = tmp.Parent;
 				switch (tmp.LCID) {
 				case 44: // Azeri (az)
@@ -264,7 +264,7 @@ namespace System.Globalization {
 			switch (c) {
 			case '\u0069': // Latin lowercase i
 				CultureInfo tmp = ci;
-				while (tmp.Parent != tmp && tmp.Parent.LCID != 0x7F)
+				while (tmp.Parent != null && tmp.Parent != tmp && tmp.Parent.LCID != 0x7F)
 					tmp = tmp.Parent;
 				switch (tmp.LCID) {
 				case 44: // Azeri (az)
