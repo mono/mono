@@ -183,7 +183,7 @@ mono_debug_close_image (MonoDebugHandle *handle)
 		mono_debug_close_mono_symbol_file (handle->symfile);
 	/* decrease the refcount added with mono_image_addref () */
 	mono_image_close (handle->image);
-	g_free (handle->image_file);
+	g_free ((char*)handle->image_file);
 	g_free (handle->_priv);
 	g_free (handle);
 }

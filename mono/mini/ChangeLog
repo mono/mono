@@ -1,9 +1,29 @@
 2005-04-17  Zoltan Varga  <vargaz@freemail.hu>
 
+	* mini-x86.c (mono_emit_stack_alloc): Initialize the whole allocated area not
+	just the last bytes.
+
+2005-04-17  Zoltan Varga  <vargaz@freemail.hu>
+
+	* aot.c (mono_compile_assembly): Fix warning.
+
+	* mini-exceptions.c (ves_icall_get_frame_info): Fix bug introduced
+	by the _MSC_VER stuff.
+
+2005-04-17  Zoltan Varga  <vargaz@freemail.hu>
+
 	* mini-amd64.h (MONO_ARCH_INST_REGPAIR_REG2): Fix warning.
 
 2005-04-16  Zoltan Varga  <vargaz@freemail.hu>
 	
+	* inssel-long.brg: Fix #74588.
+
+	* cpu-amd64.md: Fix #74591.
+
+	* iltests.il: Add new regression tests.
+
+2005-04-16  Zoltan Varga  <vargaz@freemail.hu>
+
 	* mini-codegen.c (mono_local_regalloc): Fix handling of non-fixed register pairs.
 
 	* mini-sparc.h cpu-sparc.md mini-sparc.c: Handle the return values of calls using
