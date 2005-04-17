@@ -1,3 +1,10 @@
+2005-04-17  Zoltan Varga  <vargaz@freemail.hu>
+
+	* aot.c (mono_compile_assembly): Fix warning.
+
+	* mini-exceptions.c (ves_icall_get_frame_info): Fix bug introduced
+	by the _MSC_VER stuff.
+
 2005-04-16  Zoltan Varga  <vargaz@freemail.hu>
 
 	* inssel-long.brg: Fix #74588.
