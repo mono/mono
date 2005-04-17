@@ -1,5 +1,10 @@
 2005-04-17  Zoltan Varga  <vargaz@freemail.hu>
 
+	* mini-x86.c (mono_emit_stack_alloc): Initialize the whole allocated area not
+	just the last bytes.
+
+2005-04-17  Zoltan Varga  <vargaz@freemail.hu>
+
 	* aot.c (mono_compile_assembly): Fix warning.
 
 	* mini-exceptions.c (ves_icall_get_frame_info): Fix bug introduced
