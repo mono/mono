@@ -1,3 +1,6 @@
+//
+// This is a test for bug #57703
+//
 using System;
 using System.Reflection;
 
