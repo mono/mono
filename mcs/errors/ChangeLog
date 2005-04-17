@@ -1,3 +1,7 @@
+2005-04-17  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* cs-1574-6.cs, cs-0419.cs : added new tests (bug #71603 and #71605).
+
 2005-04-15  Raja R Harinath  <rharinath@novell.com>
 
 	* cs0208-7.cs, cs0208-8.cs: New tests.  Verified on CSC.

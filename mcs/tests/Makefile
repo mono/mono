@@ -32,7 +32,7 @@ USE_MCS_FLAGS :=
 # Martin Baulig will manually move them into TEST_SOURCES_common after merging the code into GMCS.
 # He may also move some to TEST_EXCLUDE_net_2_0 if some of the merges are inappropriate for GMCS.
 #
-NEW_TEST_SOURCES_common = xml-033 xml-034 xml-035 xml-036 test-329 2test-16 test-330 a-parameter5 test-331 test-332 \
+NEW_TEST_SOURCES_common = xml-033 xml-034 xml-035 xml-036 xml-037 xml-038 test-329 2test-16 test-330 a-parameter5 test-331 test-332 \
 			  test-333 test-311 test-335 test-336 test-337 test-287 test-338 test-339 test-341 test-334 test-342 \
 			  test-344 test-345 test-346 test-347 test-348 test-349 test-350 test-351 test-352 test-353 test-354 test-355 \
 			  test-356 test-357 test-358 test-359 test-360 test-361 test-363 test-364 test-365 test-366 \

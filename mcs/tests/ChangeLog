@@ -1,3 +1,8 @@
+2005-04-17  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* xml-037.cs, xml-037-ref.xml,
+	  xml-038.cs, xml-038-ref.xml : added new tests for bug #74633.
+
 2005-04-16  Raja R Harinath  <rharinath@novell.com>
 
 	* test-365.cs: New test from #73834.
