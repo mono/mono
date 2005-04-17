@@ -1,5 +1,9 @@
 2005-04-17  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* TextInfo.cs : extremely strict null check (which should not happen).
+
+2005-04-17  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* TextInfo.cs : Additional null check for Parent CultureInfo.
 
 2005-04-06  Atsushi Enomoto  <atsushi@ximian.com>

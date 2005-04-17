@@ -216,7 +216,7 @@ namespace System.Globalization {
 		// (enumerable enough).
 		public virtual char ToLower (char c)
 		{
-			if (ci.LCID == 0x7F)
+			if (ci == null || ci.LCID == 0x7F)
 				return Char.ToLowerInvariant (c);
 
 			switch ((int) c) {
@@ -258,7 +258,7 @@ namespace System.Globalization {
 
 		public virtual char ToUpper (char c)
 		{
-			if (ci.LCID == 0x7F)
+			if (ci == null || ci.LCID == 0x7F)
 				return Char.ToUpperInvariant (c);
 
 			switch (c) {
