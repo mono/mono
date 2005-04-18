@@ -1,3 +1,10 @@
+2005-03-26  Raja R Harinath  <harinath@acm.org>
+
+	Fix #73038.
+	* assign.cs (Assign.DoResolve): When the RHS of an assignment
+	fails to resolve, ensure that the LHS is still resolved as an
+	lvalue.
+
 2005-03-25  Raja R Harinath  <harinath@acm.org>
 
 	* enum.cs (Enum.DefineType): Set ec.InEnumContext and

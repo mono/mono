@@ -313,8 +313,11 @@ namespace Mono.CSharp {
 				source = embedded = ((Assign) source).GetEmbeddedAssign (loc);
 
 			real_source = source = source.Resolve (ec);
-			if (source == null)
+			if (source == null) {
+				// Ensure that we don't propagate the error as spurious "uninitialized variable" errors.
+				target = target.ResolveLValue (ec, EmptyExpression.Null);
 				return null;
+			}
 
 			//
 			// This is used in an embedded assignment.
