@@ -1,3 +1,9 @@
+2005-03-30  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* attribute.cs: Fix the union of several permissions when some of them
+	are unrestricted (so the result isn't an unrestricted permission set).
+	Fix #74036.
+
 2005-03-30  Raja R Harinath  <rharinath@novell.com>
 
 	* ecore.cs (MemberExpr): New class.  Convert from interface
