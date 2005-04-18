@@ -1083,6 +1083,14 @@ namespace Mono.CSharp {
 			CharSet charset = CharSet.Ansi;
 			bool preserve_sig = true;
 			string entry_point = name;
+			bool best_fit_mapping = false;
+			bool throw_on_unmappable = false;
+
+			bool best_fit_mapping_set = false;
+			bool throw_on_unmappable_set = false;
+
+			MethodInfo set_best_fit = null;
+			MethodInfo set_throw_on = null;
 
 			if (field_info_arr != null) {
 				int char_set_extra = 0;
@@ -1090,10 +1098,9 @@ namespace Mono.CSharp {
 				for (int i = 0; i < field_info_arr.Length; i++) {
 					switch (field_info_arr [i].Name) {
 						case "BestFitMapping":
-							Report.Error (-1, Location,
-								      "There is no way to set the ThrowOnUnmappableChar " +
-								      "property with Reflection");
-							return null;
+							best_fit_mapping = (bool) field_values_arr [i];
+							best_fit_mapping_set = true;
+							break;
 						case "CallingConvention":
 							cc = (CallingConvention) field_values_arr [i];
 							break;
@@ -1113,16 +1120,25 @@ namespace Mono.CSharp {
 							char_set_extra |= 0x40;
 							break;
 						case "ThrowOnUnmappableChar":
-							Report.Error (-1, Location,
-								      "There is no way to set the ThrowOnUnmappableChar " +
-								      "property with Reflection");
-							return null;
-							
+							throw_on_unmappable = (bool) field_values_arr [i];
+							throw_on_unmappable_set = true;
+							break;
 						default: 
 							throw new InternalErrorException (field_info_arr [i].ToString ());
 					}
 				}
 				charset |= (CharSet)char_set_extra;
+			}
+
+			if (throw_on_unmappable_set || best_fit_mapping_set) {
+				set_best_fit = typeof (MethodBuilder).GetMethod ("set_BestFitMapping", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+				set_throw_on = typeof (MethodBuilder).GetMethod ("set_ThrowOnUnmappableChar", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+
+				if ((set_best_fit == null) || (set_throw_on == null)) {
+					Report.Error (-1, Location,
+								  "The ThrowOnUnmappableChar and BestFitMapping attributes can only be emitted when running on the mono runtime.");
+					return null;
+				}
 			}
 
 			try {
@@ -1132,6 +1148,11 @@ namespace Mono.CSharp {
 
 				if (preserve_sig)
 					mb.SetImplementationFlags (MethodImplAttributes.PreserveSig);
+
+				if (throw_on_unmappable_set)
+					set_throw_on.Invoke (mb, 0, null, new object [] { throw_on_unmappable }, null);
+				if (best_fit_mapping_set)
+					set_best_fit.Invoke (mb, 0, null, new object [] { best_fit_mapping }, null);
 			
 				return mb;
 			}
