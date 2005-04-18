@@ -1,11 +1,21 @@
+2005-03-25  Raja R Harinath  <harinath@acm.org>
+
+	* enum.cs (Enum.DefineType): Set ec.InEnumContext and
+	ec.ContainerType.
+	(Enum.current_ec): Remove.
+	(Enum.LookupEnumValue): Remove EmitContext argument.
+	Just uses the one created during DefineType.
+	(Enum.FindMembers): Update.
+	* expression.cs (MemberAccess.DoResolve): Update.
+
 2005-03-22  Marek Safar  <marek.safar@seznam.cz>
 
 	* assign.cs (Assign.DoResolve): Check for CS1717 when
 	source and target are same (uses Equals).
-	
+
 	* expression.cs (LocalVariableReference, ParameterReference,
 	This): Implemented Equals, GetHashCode.
-	
+
 	* statement.cs (Block.GetParameterReference): Removed useless
 	local variable.
 
@@ -16,14 +26,14 @@
 	blocks before deciding whether the error is cs0136 or cs0128.
 
 	* cs-parser.jay: Pass MemberName to RootContext.Tree.RecordDecl.
-	(using_alias_directive,	using_namespace_directive): Pass
-	MemberName, not an expression to Namespace.UsingAlias and 
+	(using_alias_directive, using_namespace_directive): Pass
+	MemberName, not an expression to Namespace.UsingAlias and
 	Namespace.Using.
 	(MakeName): Use the MemberName of the namespace.
 	* namespace.cs (Namespace.MemberName): New.
 	(UsingEntry.UsingEntry): Take a MemberName, not an expression.
-	(AliasEntry.AliasEntry, Namespace.Using, Namespace.UsingAlias): 
-	Likewise.	
+	(AliasEntry.AliasEntry, Namespace.Using, Namespace.UsingAlias):
+	Likewise.
 	* decl.cs (MemberName.Name): Make readonly.
 	(MemberName.FromDotted): New "constructor".
 	(MemberName.Equals, MemberName.GetHashCode): Implement overrides.
@@ -67,7 +77,7 @@
 	fixed buffer attribute (CS1716).
 	(PropertyMethod.HasCustomAccessModifier): When property accessor
 	has custom modifier.
-	
+
 	* ecore (PropertyExpr.DoResolve): Add CS0271 for custom	accessor
 	modifiers.
 	(PropertyExpr.DoResolveLValue): Add CS0272.
@@ -78,7 +88,7 @@
 	or Conv.I depending on the source data type.
 
 	* cs-tokenizer.cs: Make the size for large decimal constants,
-	fixes #72957. 
+	fixes #72957.
 
 2005-03-17  Martin Baulig  <martin@ximian.com>
 
@@ -139,11 +149,11 @@
 
 	* delegate.cs (DelegateCreation.Error_NoMatchingMethodForDelegate):
 	Added CS0407.
-	
+
 	* expression.cs (ParameterReference.IsAssigned): Changed error to
 	CS0269.
-	(Error_WrongNumArguments): Moved CS0245 detection here. 
-	
+	(Error_WrongNumArguments): Moved CS0245 detection here.
+
 	* statement.cs (Return.Resolve): Add CS1622 report.
 
 2005-03-11  Marek Safar  <marek.safar@seznam.cz>

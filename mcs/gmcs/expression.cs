@@ -7675,7 +7675,7 @@ namespace Mono.CSharp {
 					Enum en = TypeManager.LookupEnum (expr_type);
 
 					if (en != null) {
-						object value = en.LookupEnumValue (ec, Identifier, loc);
+						object value = en.LookupEnumValue (Identifier, loc);
 						
 						if (value != null){
 							MemberCore mc = en.GetDefinition (Identifier);
