@@ -1,5 +1,10 @@
 2005-03-17  Martin Baulig  <martin@ximian.com>
 
+	* anonymous.cs (AnonymousMethod.method_modifiers): Change default
+	from `Modifiers.INTERNAL' to `Modifiers.PRIVATE'.  Fixes #73260.
+
+2005-03-17  Martin Baulig  <martin@ximian.com>
+
 	* anonymous.cs (AnonymousMethod.EmitMethod): Changed return type
 	to bool so we can return an error condition.
 	(AnonymousDelegate.Emit): Check whether AnonymousMethod.EmitMethod()
