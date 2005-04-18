@@ -263,8 +263,13 @@ namespace Mono.CSharp
 				error.Line=Int32.Parse(match.Result("${line}"));
 			if (String.Empty != match.Result("${column}"))
 				error.Column=Int32.Parse(match.Result("${column}"));
-			if (match.Result("${level}")=="warning")
-				error.IsWarning=true;
+
+			string level = match.Result ("${level}");
+			if (level == "warning")
+				error.IsWarning = true;
+			else if (level != "error")
+				return null; // error CS8028 will confuse the regex.
+
 			error.ErrorNumber=match.Result("${number}");
 			error.ErrorText=match.Result("${message}");
 			return error;

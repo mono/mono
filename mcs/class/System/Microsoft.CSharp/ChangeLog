@@ -1,3 +1,7 @@
+2005-04-18 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* CSharpCodeCompiler.cs: fix problem with the output CS8028.
+
 2005-02-03  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* CSharpCodeCompiler.cs : On windows, use gmcs under 2.0 profile too.
