@@ -9,3 +9,9 @@
 class Y <Y> {
 }
 
+class Test
+{
+	static void Main ()
+	{ }
+}
+
