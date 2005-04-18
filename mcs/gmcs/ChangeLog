@@ -1,5 +1,8 @@
 2005-03-17  Miguel de Icaza  <miguel@novell.com>
 
+	* convert.cs: When converting to a pointer, use the proper Conv.U
+	or Conv.I depending on the source data type.
+
 	* cs-tokenizer.cs: Make the size for large decimal constants,
 	fixes #72957. 
 

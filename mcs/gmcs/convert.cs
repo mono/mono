@@ -1973,13 +1973,15 @@ namespace Mono.CSharp {
 						return new EmptyCast (expr, target_type);
 					
 					if (expr_type == TypeManager.sbyte_type ||
-					    expr_type == TypeManager.byte_type ||
 					    expr_type == TypeManager.short_type ||
-					    expr_type == TypeManager.ushort_type ||
 					    expr_type == TypeManager.int32_type ||
+					    expr_type == TypeManager.int64_type)
+						return new OpcodeCast (expr, target_type, OpCodes.Conv_I);
+
+					if (expr_type == TypeManager.ushort_type ||
 					    expr_type == TypeManager.uint32_type ||
 					    expr_type == TypeManager.uint64_type ||
-					    expr_type == TypeManager.int64_type)
+					    expr_type == TypeManager.byte_type)
 						return new OpcodeCast (expr, target_type, OpCodes.Conv_U);
 				}
 				if (expr_type.IsPointer){
