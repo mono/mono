@@ -3760,6 +3760,20 @@ namespace Mono.CSharp {
 			return !is_expression || local_info.IsFixed;
 		}
 
+		public override int GetHashCode()
+		{
+			return Name.GetHashCode ();
+		}
+
+		public override bool Equals (object obj)
+		{
+			LocalVariableReference lvr = obj as LocalVariableReference;
+			if (lvr == null)
+				return false;
+
+			return Name == lvr.Name && Block == lvr.Block;
+		}
+
 		public override void Emit (EmitContext ec)
 		{
 			ILGenerator ig = ec.ig;
@@ -3956,6 +3970,20 @@ namespace Mono.CSharp {
 					ec.CaptureParameter (name, type, idx);
 				}
 			}
+		}
+
+		public override int GetHashCode()
+		{
+			return name.GetHashCode ();
+		}
+
+		public override bool Equals (object obj)
+		{
+			ParameterReference pr = obj as ParameterReference;
+			if (pr == null)
+				return false;
+
+			return name == pr.name && block == pr.block;
 		}
 
 		//
@@ -7087,6 +7115,20 @@ namespace Mono.CSharp {
 			ec.EmitThis ();
 			if (ec.TypeContainer is Struct)
 				ig.Emit (OpCodes.Ldobj, type);
+		}
+
+		public override int GetHashCode()
+		{
+			return block.GetHashCode ();
+		}
+
+		public override bool Equals (object obj)
+		{
+			This t = obj as This;
+			if (t == null)
+				return false;
+
+			return block == t.block;
 		}
 
 		public void AddressOf (EmitContext ec, AddressOp mode)

@@ -350,6 +350,10 @@ namespace Mono.CSharp {
 			if (target == null)
 				return null;
 
+			if (source.Equals (target)) {
+				Report.Warning (1717, 3, loc, "Assignment made to same variable; did you mean to assign something else?");
+			}
+
 			Type target_type = target.Type;
 			Type source_type = real_source.Type;
 

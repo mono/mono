@@ -3119,6 +3119,26 @@ namespace Mono.CSharp {
 
 			return true;
 		}
+
+		public override int GetHashCode()
+		{
+			return FieldInfo.GetHashCode ();
+		}
+
+		public override bool Equals (object obj)
+		{
+			FieldExpr fe = obj as FieldExpr;
+			if (fe == null)
+				return false;
+
+			if (FieldInfo != fe.FieldInfo)
+				return false;
+
+			if (InstanceExpression == null || fe.InstanceExpression == null)
+				return true;
+
+			return InstanceExpression.Equals (fe.InstanceExpression);
+		}
 		
 		public void Emit (EmitContext ec, bool leave_copy)
 		{
