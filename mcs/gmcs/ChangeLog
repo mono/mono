@@ -1,3 +1,8 @@
+2005-03-17  Miguel de Icaza  <miguel@novell.com>
+
+	* cs-tokenizer.cs: Make the size for large decimal constants,
+	fixes #72957. 
+
 2005-03-17  Martin Baulig  <martin@ximian.com>
 
 	* anonymous.cs (AnonymousMethod.method_modifiers): Change default

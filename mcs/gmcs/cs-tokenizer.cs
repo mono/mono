@@ -216,7 +216,7 @@ namespace Mono.CSharp
 
 		static CharArrayHashtable [] identifiers = new CharArrayHashtable [max_id_size + 1];
 
-		const int max_number_size = 128;
+		const int max_number_size = 512;
 		static char [] number_builder = new char [max_number_size];
 		static int number_pos;
 		
