@@ -49,6 +49,7 @@ namespace Mono.ILASM {
                 private Hashtable global_method_table;
                 private ArrayList data_list;
                 private FileRef file_ref;
+                private ArrayList manifestResources;
                 
                 private ArrayList defcont_list;
 
@@ -254,6 +255,13 @@ namespace Mono.ILASM {
                         data_list.Add (datadef);
                 }
 
+		public void AddManifestResource (ManifestResource mr)
+		{
+			if (manifestResources == null)
+				manifestResources = new ArrayList ();
+			manifestResources.Add (mr);
+		}
+
                 public PEAPI.DataConstant GetDataConst (string name)
                 {
                         foreach (DataDef def in data_list) {
@@ -355,6 +363,11 @@ namespace Mono.ILASM {
 
                                 extern_table.Resolve (this);
                                 type_manager.DefineAll ();
+
+				if (manifestResources != null) {
+					foreach (ManifestResource mr in manifestResources)
+						pefile.AddManifestResource (mr);
+				}
 
                                 foreach (FieldDef fielddef in global_field_table.Values) {
                                         fielddef.Define (this);

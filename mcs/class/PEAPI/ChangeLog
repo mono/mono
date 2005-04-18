@@ -1,3 +1,18 @@
+2005-04-18  Ankit Jain  <ankit@corewars.org>
+
+	* PEAPI.cs (ManifestResource.InitResource): New. Used by constructors
+	to initialize the resource. 
+	(ManifestResource.ctor): New. Constructor to accept resource as a 
+	byte array.
+	(ManifestResource.ctor): New. Constructor to accept an object of self. 
+	(ManifestResource.BuildTables): Update.
+	(MetaData.AddResource): New. Add the resource to the list, adjust 
+	resourcesSize.
+	(MetaData.WriteResource): New. Write resources to the FileImage.
+	(PEFile.AddExternalManagedResource): New. Add a new resource.
+	(PEFile.GetResource): New. Get resource by name.
+	(PEFile.GetResources): New. Get array of resources.
+
 2005-04-12  Ankit Jain  <ankit@corewars.org>
 
 	* PEAPI.cs (CustomAttribute.ctor): Dont throw 

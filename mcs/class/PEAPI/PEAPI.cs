@@ -3348,6 +3348,7 @@ namespace PEAPI
     uint entryPointOffset, entryPointPadding, imageSize, headerSize, headerPadding, entryPointToken = 0;
     uint relocOffset, relocRVA, relocSize, relocPadding, relocTide, hintNameTableOffset;
     uint metaDataOffset, runtimeEngineOffset, initDataSize = 0, importTablePadding;
+    uint resourcesSize, resourcesOffset;
     uint strongNameSigOffset;
     uint importTableOffset, importLookupTableOffset, totalImportTableSize;
     MetaData metaData;
@@ -3406,14 +3407,16 @@ namespace PEAPI
       // Console.WriteLine("Code starts at " + metaDataOffset);
       metaDataOffset += metaData.CodeSize();
       // resourcesStart =
+      resourcesOffset = metaDataOffset + metaData.Size ();
+      resourcesSize = metaData.GetResourcesSize ();
       if (reserveStrongNameSignatureSpace) {
-        strongNameSigOffset = metaDataOffset + metaData.Size();
+        strongNameSigOffset = resourcesOffset + resourcesSize;
         // fixUps = RVA for vtable
         importTableOffset = strongNameSigOffset + StrongNameSignatureSize;
       } else {
         strongNameSigOffset = 0;
         // fixUps = RVA for vtable
-        importTableOffset = metaDataOffset + metaData.Size();
+        importTableOffset = resourcesOffset + resourcesSize;
       }
       importTablePadding = NumToAlign(importTableOffset,16);
       importTableOffset += importTablePadding;
@@ -3557,6 +3560,7 @@ if (rsrc != null)
       largeUS = metaData.LargeUSIndex();
       largeBlob = metaData.LargeBlobIndex();
       metaData.WriteMetaData(this);
+      metaData.WriteResources (this);
       if (reserveStrongNameSignatureSpace) {
         WriteZeros(StrongNameSignatureSize);
       }
@@ -3575,7 +3579,12 @@ if (rsrc != null)
       Write(metaData.Size());
       Write(runtimeFlags);
       Write(entryPointToken);
-      WriteZeros(8);                     // Resources - used by Manifest Resources NYI
+      if (resourcesSize > 0) {
+        Write (text.RVA () + resourcesOffset);
+        Write (resourcesSize);
+      } else {
+	WriteZeros (8);
+      }
       // Strong Name Signature (RVA, size)
       if (reserveStrongNameSignatureSpace) {
         Write(text.RVA() + strongNameSigOffset); 
@@ -3773,11 +3782,13 @@ if (rsrc != null)
     private static readonly uint NoMetaData = 0x1;
     uint nameIx = 0, hashIx = 0;
     uint flags = 0;
+    protected string name;
 
     internal FileRef(string name, byte[] hashBytes, bool metaData,
                       bool entryPoint, MetaData md) {
       if (!metaData) flags = NoMetaData;
       if (entryPoint) md.SetEntryPoint(this);
+      this.name = name;
       nameIx = md.AddToStringsHeap(name);
       hashIx = md.AddToBlobHeap(hashBytes);
       tabIx = MDTable.File;
@@ -3794,6 +3805,10 @@ if (rsrc != null)
 
     internal sealed override uint Size(MetaData md) {
       return 4 + md.StringsIndexSize() + md.BlobIndexSize();
+    }
+
+    internal sealed override void BuildTables(MetaData md) {
+      md.AddToTable(MDTable.File,this);
     }
 
     internal sealed override void Write(FileImage output) {
@@ -4382,48 +4397,71 @@ if (rsrc != null)
 
   /**************************************************************************/  
         /// <summary>
-        /// Descriptor for resources used in this PE file NOT YET IMPLEMENTED
+        /// Descriptor for resources used in this PE file 
         /// </summary>
 
   public class ManifestResource : MetaDataElement
         {
-    private static readonly uint PublicResource = 0x1;
-    private static readonly uint PrivateResource = 0x2;
+    public static readonly uint PublicResource = 0x1;
+    public static readonly uint PrivateResource = 0x2;
 
     string mrName;
     MetaDataElement rRef;
-    int fileOffset;
+    uint fileOffset;
     uint nameIx = 0;
     uint flags = 0;
+    byte [] resourceBytes;
 
-    public ManifestResource(string name, bool isPub, FileRef fileRef) {
-      mrName = name;
-      if (isPub) flags = PublicResource;
-      else flags = PrivateResource;
-      rRef = fileRef;
-      tabIx = MDTable.ManifestResource;
-      throw(new NotYetImplementedException("Manifest Resources "));
+    public ManifestResource (string name, byte[] resBytes, uint flags) {
+      InitResource (name, flags);
+      this.resourceBytes = resBytes;
     }
 
-    public ManifestResource(string name, bool isPub, FileRef fileRef, 
-                                                            int fileIx) {
-      mrName = name;
-      if (isPub) flags = PublicResource;
-      else flags = PrivateResource;
+    public ManifestResource(string name, uint flags, FileRef fileRef) {
+      InitResource (name, flags);
+      rRef = fileRef;
+    }
+
+    public ManifestResource(string name, uint flags, FileRef fileRef, 
+                                                            uint fileIx) {
+      InitResource (name, flags);
       rRef = fileRef;
       fileOffset = fileIx;
     }
 
-    public ManifestResource(string name, bool isPub, AssemblyRef assemRef) {
-      mrName = name;
-      if (isPub) flags = PublicResource;
-      else flags = PrivateResource;
+    public ManifestResource(string name, uint flags, AssemblyRef assemRef) {
+      InitResource (name, flags);
       rRef = assemRef;
+    }
+
+    internal ManifestResource (ManifestResource mres) {
+      mrName = mres.mrName;
+      flags = mres.flags;
+      this.rRef = rRef;
+      this.fileOffset = fileOffset;
+      this.resourceBytes = resourceBytes;
+    }
+
+    private void InitResource (string name, uint flags) {
+      mrName = name;
+      this.flags = flags;
+      tabIx = MDTable.ManifestResource;
     }
 
     internal sealed override void BuildTables(MetaData md) {
       if (done) return;
+      md.AddToTable (MDTable.ManifestResource, this);
       nameIx = md.AddToStringsHeap(mrName);
+      if (resourceBytes != null) {
+        if (rRef != null)
+          throw new Exception("ERROR:  Manifest Resource has byte value and file reference");
+        fileOffset = md.AddResource(resourceBytes);
+      } else {
+        if (rRef == null)
+          throw new Exception("ERROR:  Manifest Resource has no implementation or value");
+	rRef.BuildTables (md);
+      }
+
       done = true;
     }
 
@@ -4440,6 +4478,11 @@ if (rsrc != null)
     }
 
     internal sealed override uint GetCodedIx(CIx code) { return 18; }
+    
+    public string Name {
+      get { return mrName; }
+      set { mrName = value; }
+    }
 
         }
   /**************************************************************************/  
@@ -4527,7 +4570,7 @@ if (rsrc != null)
     MetaDataStream[] streams = new MetaDataStream[5];
     uint numStreams = 5;
     uint tildeTide = 0, tildePadding = 0, tildeStart = 0;
-    uint numTables = 0;
+    uint numTables = 0, resourcesSize = 0;
     ArrayList[] metaDataTables = new ArrayList[numMetaDataTables];
     ArrayList byteCodes = new ArrayList();
     uint codeSize = 0, codeStart, byteCodePadding = 0, metaDataSize = 0;
@@ -4543,6 +4586,7 @@ if (rsrc != null)
     private TypeSpec[] systemTypeSpecs = new TypeSpec[PrimitiveType.NumSystemTypes];
     long mdStart;
                 private ArrayList cattr_list;
+    ArrayList resources;            
                 
     internal MetaData(FileImage file) {
       // tilde = new MetaDataStream(tildeName,false,0);
@@ -4713,6 +4757,14 @@ if (rsrc != null)
       entryPoint = ep;
     }
 
+    internal uint AddResource(byte[] resBytes) {
+      if (resources == null) resources = new ArrayList ();
+      resources.Add (resBytes);
+      uint offset = resourcesSize;
+      resourcesSize += (uint)resBytes.Length + 4;
+      return offset;
+    }
+
     internal void AddData(DataConstant cVal) {
       file.AddInitData(cVal);
     }
@@ -4739,6 +4791,11 @@ if (rsrc != null)
 
     internal uint CodeSize() {
       return codeSize + byteCodePadding;
+    }
+
+    internal uint GetResourcesSize() 
+    { 
+        return resourcesSize; 
     }
 
     internal uint StringsIndexSize() {
@@ -4903,6 +4960,7 @@ CalcHeapSizes ();
       BuildTable(metaDataTables[(int)MDTable.GenericParam]);
       BuildTable(metaDataTables[(int)MDTable.MethodSpec]);
       BuildTable(metaDataTables[(int)MDTable.GenericParamConstraint]);
+      BuildTable(metaDataTables[(int)MDTable.ManifestResource]);
 
       if (cattr_list != null) {
               foreach (CustomAttribute cattr in cattr_list)
@@ -4960,6 +5018,15 @@ CalcHeapSizes ();
       for (int i=0; i < byteCodePadding; i++) {
         output.Write((byte)0);
       }
+    }
+
+    internal void WriteResources (FileImage output) {
+      if (resources == null) return;
+      for (int i = 0; i < resources.Count; i ++) {
+        byte [] resBytes = (byte []) resources [i];
+        output.Write ((uint) resBytes.Length);
+        output.Write (resBytes);
+      } 
     }
 
     internal void WriteMetaData(FileImage output) {
@@ -6220,6 +6287,7 @@ CalcHeapSizes ();
     private ClassDef moduleClass;
     private ArrayList classRefList = new ArrayList();
     private ArrayList classDefList = new ArrayList();
+    private ArrayList resources = new ArrayList ();
     private Assembly thisAssembly;
     private int corFlags = 1;
     FileImage fileImage;
@@ -6476,12 +6544,48 @@ CalcHeapSizes ();
     /// <param name="mr"></param>
     public void AddManifestResource(ManifestResource mr) {
       metaData.AddToTable(MDTable.ManifestResource,mr);
+      resources.Add (mr);
       //mr.FixName(metaData);
     }
 
     public void AddCustomAttribute (Method meth, byte [] data, MetaDataElement element)
     {
             metaData.AddCustomAttribute (new CustomAttribute (element, meth, data));
+    }
+
+    /// <summary>
+    /// Add a managed resource from another assembly.
+    /// </summary>
+    /// <param name="resName">The name of the resource</param>
+    /// <param name="assem">The assembly where the resource is</param>
+    /// <param name="isPublic">Access for the resource</param>
+    public void AddExternalManagedResource (string resName, AssemblyRef assem, uint flags) {
+      resources.Add (new ManifestResource (resName, flags, assem));
+    }
+
+    /// <summary>
+    /// Add a managed resource from another assembly.
+    /// </summary>
+    /// <param name="mr"></param>
+    /// <param name="isPublic"></param>
+    public void AddExternalManagedResource (ManifestResource mr) {
+      resources.Add (new ManifestResource (mr));
+    }
+    /// <summary>
+    /// Find a resource
+    /// </summary>
+    /// <param name="name">The name of the resource</param>
+    /// <returns>The resource with the name "name" or null </returns>
+    public ManifestResource GetResource (string name) {
+      for (int i = 0; i < resources.Count; i ++) {
+        if (((ManifestResource) resources [i]).Name == name)
+          return (ManifestResource) resources [i];
+      }
+      return null;
+    }
+
+    public ManifestResource [] GetResources() {
+      return (ManifestResource []) resources.ToArray (typeof (ManifestResource));
     }
 
     /// <summary>

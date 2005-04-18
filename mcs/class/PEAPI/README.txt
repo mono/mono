@@ -29,3 +29,6 @@ foreseeable future, as several other projects here depend on it.  Users are
 encouraged to send feedback on missing features, bug reports etc. to assist 
 in this quest.
 
+Update (18th Apr 2005)
+
+Some portions of the code have been taken from PERWAPI (http://www.plas.fit.qut.edu.au/perwapi/Default.aspx), which extends PEAPI. It is developed by Diane Corney.

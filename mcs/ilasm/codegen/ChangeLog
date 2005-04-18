@@ -1,3 +1,9 @@
+2005-04-18  Ankit Jain  <ankit@corewars.org>
+
+	* CodeGen.cs (CodeGen.AddManifestResource): Add a
+	ManifestResource to manifestResources ArrayList.
+	(CodeGen.Write): Add all resources to the pefile.
+
 2005-04-12  Ankit Jain  <ankit@corewars.org>
 
 	* CustomAttr.cs (ICustomAttrTarget): New interface.

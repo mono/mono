@@ -2565,12 +2565,20 @@ exptype_decl		: D_FILE comp_name
 manifestres_all		: manifestres_head OPEN_BRACE manifestres_decls CLOSE_BRACE
 			;
 
-manifestres_head	: D_MRESOURCE manres_attr comp_name	
+manifestres_head	: D_MRESOURCE manres_attr comp_name
+			  {
+				FileStream s = new FileStream ((string) $3, FileMode.Open, FileAccess.Read);
+				byte [] buff = new byte [s.Length];
+				s.Read (buff, 0, (int) s.Length);
+				s.Close ();
+
+				codegen.AddManifestResource (new ManifestResource ((string) $3, buff, ($2 == null) ? 0 : (uint) $2));
+			  }
 			;
 
 manres_attr		: /* EMPTY */
-			| manres_attr K_PUBLIC
-			| manres_attr K_PRIVATE
+			| manres_attr K_PUBLIC { $$ = ManifestResource.PublicResource; }
+			| manres_attr K_PRIVATE { $$ = ManifestResource.PrivateResource; } 
 			;
 
 manifestres_decls	: /* EMPTY */
