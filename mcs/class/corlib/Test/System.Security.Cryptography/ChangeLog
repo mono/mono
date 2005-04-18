@@ -1,3 +1,8 @@
+2005-04-18  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* SymmetricAlgorithm2Test.cs: Added a test case where the FeedBackSize
+	is set to 0 before starting encryption.
+
 2005-03-30  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* CryptoStreamTest.cs: Added test case when when no padding is used.

@@ -5,7 +5,7 @@
 // Author:
 //	Sebastien Pouliot  <spouliot@ximian.com>
 //
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -142,6 +142,24 @@ namespace MonoTests.System.Security.Cryptography {
 		{
 			SymmetricAlgorithm algo = SymmetricAlgorithm.Create ();
 			algo.Padding = (PaddingMode) 255;
+		}
+
+		[Test]
+		public void FeedbackZero ()
+		{
+			// thanks to Yakk for the sample
+			DES des = new DESCryptoServiceProvider();
+			des.FeedbackSize = 0;
+			des.Padding = PaddingMode.None;
+			des.Mode = CipherMode.ECB;
+			des.Key = new byte [8] { 8, 7, 6, 5, 4, 3, 2, 1 };
+
+			ICryptoTransform enc = des.CreateEncryptor (); 
+			byte[] response = new byte [16];
+			byte[] challenge = new byte [16] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 };
+
+			enc.TransformBlock (challenge, 0, challenge.Length, response, 0);
+			AssertEquals ("7A-64-CD-1B-4F-EE-B5-92-54-90-53-E9-83-71-A6-0C", BitConverter.ToString (response));
 		}
 	}
 }
