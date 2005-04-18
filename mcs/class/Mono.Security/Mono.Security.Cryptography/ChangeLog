@@ -1,5 +1,7 @@
-2005-04-18  Sebastien Pouliot  <sebastien@ximian.com>
-
+2005-04-18  Sebastien Pouliot  <sebastien@ximian.com> 
+ 
+	* Null.cs: New "null" symmetric encryption for debugging. This class 
+	isn't (and shouldn't be) built by default.
 	* SymmetricTransform.cs: Fixed a division by zero if someone changes 
 	the feedback value to 0.
 	* SHA224Managed.cs: Fixed warning about unused private constant.
