@@ -613,6 +613,13 @@ namespace Mono.Unix {
 		POLLWRBAND  = 0x0200, // Priority data may be written
 	}
 
+	[Map][Flags]
+	public enum XattrFlags : int {
+		XATTR_AUTO = 0,
+		XATTR_CREATE = 1,
+		XATTR_REPLACE = 2,
+	}
+
 	#endregion
 
 	#region Structures
@@ -894,6 +901,16 @@ namespace Mono.Unix {
 	//
 	// BSD- and GNU-specific exports can also be placed here.
 	//
+	// Non-POSIX/XPG/etc. functions can also be placed here if:
+	//  (a) They'd be likely to be covered in a Steven's-like book
+	//  (b) The functions would be present in libc.so (or equivalent).
+	//
+	// If a function has its own library, that's a STRONG indicator that the
+	// function should get a different binding, probably in its own assembly, 
+	// so that package management can work sanely.  (That is, we'd like to avoid
+	// scenarios where FooLib.dll is installed, but it requires libFooLib.so to
+	// run, and libFooLib.so doesn't exist.  That would be confusing.)
+	//
 	// The only methods in here should be:
 	//  (1) low-level functions
 	//  (2) "Trivial" function overloads.  For example, if the parameters to a
@@ -924,6 +941,207 @@ namespace Mono.Unix {
 		// aio_return(3), aio_suspend(3), aio_write(3)
 		//
 		// Then update UnixStream.BeginRead to use the aio* functions.
+
+
+		#region <attr/xattr.h> Declarations
+		//
+		// <attr/xattr.h> -- COMPLETE
+		//
+
+		// setxattr(2)
+		//    int setxattr (const char *path, const char *name,
+		//        const void *value, size_t size, int flags);
+		[DllImport (MPH, SetLastError=true,
+				EntryPoint="Mono_Posix_Syscall_setxattr")]
+		public static extern int setxattr (string path, string name, byte[] value, ulong size, XattrFlags flags);
+
+		public static int setxattr (string path, string name, byte [] value, XattrFlags flags)
+		{
+			return setxattr (path, name, value, (ulong) value.Length, flags);
+		}
+
+		// lsetxattr(2)
+		// 	  int lsetxattr (const char *path, const char *name,
+		//                   const void *value, size_t size, int flags);
+		[DllImport (MPH, SetLastError=true,
+				EntryPoint="Mono_Posix_Syscall_lsetxattr")]
+		public static extern int lsetxattr (string path, string name, byte[] value, ulong size, XattrFlags flags);
+
+		public static int lsetxattr (string path, string name, byte [] value, XattrFlags flags)
+		{
+			return lsetxattr (path, name, value, (ulong) value.Length, flags);
+		}
+
+		// fsetxattr(2)
+		// 	  int fsetxattr (int fd, const char *name,
+		//                   const void *value, size_t size, int flags);
+		[DllImport (MPH, SetLastError=true,
+				EntryPoint="Mono_Posix_Syscall_fsetxattr")]
+		public static extern int fsetxattr (int fd, string name, byte[] value, ulong size, XattrFlags flags);
+
+		public static int fsetxattr (int fd, string name, byte [] value, XattrFlags flags)
+		{
+			return fsetxattr (fd, name, value, (ulong) value.Length, flags);
+		}
+
+		// getxattr(2)
+		// 	  ssize_t getxattr (const char *path, const char *name,
+		//                      void *value, size_t size);
+		[DllImport (MPH, SetLastError=true,
+				EntryPoint="Mono_Posix_Syscall_getxattr")]
+		public static extern long getxattr (string path, string name, byte[] value, ulong size);
+
+		public static long getxattr (string path, string name, byte [] value)
+		{
+			return getxattr (path, name, value, (ulong) value.Length);
+		}
+
+		public static long getxattr (string path, string name, out byte [] value)
+		{
+			value = null;
+			long size = getxattr (path, name, value, 0);
+			if (size <= 0)
+				return size;
+
+			value = new byte [size];
+			return getxattr (path, name, value, (ulong) size);
+		}
+
+		// lgetxattr(2)
+		// 	  ssize_t lgetxattr (const char *path, const char *name,
+		//                       void *value, size_t size);
+		[DllImport (MPH, SetLastError=true,
+				EntryPoint="Mono_Posix_Syscall_lgetxattr")]
+		public static extern long lgetxattr (string path, string name, byte[] value, ulong size);
+
+		public static long lgetxattr (string path, string name, byte [] value)
+		{
+			return lgetxattr (path, name, value, (ulong) value.Length);
+		}
+
+		public static long lgetxattr (string path, string name, out byte [] value)
+		{
+			value = null;
+			long size = lgetxattr (path, name, value, 0);
+			if (size <= 0)
+				return size;
+
+			value = new byte [size];
+			return lgetxattr (path, name, value, (ulong) size);
+		}
+
+		// fgetxattr(2)
+		// 	  ssize_t fgetxattr (int fd, const char *name, void *value, size_t size);
+		[DllImport (MPH, SetLastError=true,
+				EntryPoint="Mono_Posix_Syscall_fgetxattr")]
+		public static extern long fgetxattr (int fd, string name, byte[] value, ulong size);
+
+		public static long fgetxattr (int fd, string name, byte [] value)
+		{
+			return fgetxattr (fd, name, value, (ulong) value.Length);
+		}
+
+		public static long fgetxattr (int fd, string name, out byte [] value)
+		{
+			value = null;
+			long size = fgetxattr (fd, name, value, 0);
+			if (size <= 0)
+				return size;
+
+			value = new byte [size];
+			return fgetxattr (fd, name, value, (ulong) size);
+		}
+
+		// listxattr(2)
+		// 	  ssize_t listxattr (const char *path, char *list, size_t size);
+		[DllImport (MPH, SetLastError=true,
+				EntryPoint="Mono_Posix_Syscall_listxattr")]
+		public static extern long listxattr (string path, byte[] list, ulong size);
+
+		// Slight modification: returns 0 on success, negative on error
+		public static long listxattr (string path, Encoding encoding, out string [] values)
+		{
+			values = null;
+			long size = listxattr (path, null, 0);
+			if (size == 0)
+				values = new string [0];
+			if (size <= 0)
+				return (int) size;
+
+			byte[] list = new byte [size];
+			long ret = listxattr (path, list, (ulong) size);
+			if (ret < 0)
+				return (int) ret;
+
+			string [] output = encoding.GetString (list).Split((char) 0);
+			values = new string [output.Length - 1];
+			Array.Copy (output, 0, values, 0, output.Length - 1);
+			return 0;
+		}
+
+		// llistxattr(2)
+		// 	  ssize_t llistxattr (const char *path, char *list, size_t size);
+		[DllImport (MPH, SetLastError=true,
+				EntryPoint="Mono_Posix_Syscall_llistxattr")]
+		public static extern long llistxattr (string path, byte[] list, ulong size);
+
+		// Slight modification: returns 0 on success, negative on error
+		public static long llistxattr (string path, Encoding encoding, out string [] values)
+		{
+			values = null;
+			long size = llistxattr (path, null, 0);
+			if (size == 0)
+				values = new string [0];
+			if (size <= 0)
+				return (int) size;
+
+			byte[] list = new byte [size];
+			long ret = llistxattr (path, list, (ulong) size);
+			if (ret < 0)
+				return (int) ret;
+
+			string [] output = encoding.GetString (list).Split((char) 0);
+			values = new string [output.Length - 1];
+			Array.Copy (output, 0, values, 0, output.Length - 1);
+			return 0;
+		}
+
+		// flistxattr(2)
+		// 	  ssize_t flistxattr (int fd, char *list, size_t size);
+		[DllImport (MPH, SetLastError=true,
+				EntryPoint="Mono_Posix_Syscall_flistxattr")]
+		public static extern long flistxattr (int fd, byte[] list, ulong size);
+
+		// Slight modification: returns 0 on success, negative on error
+		public static long flistxattr (int fd, Encoding encoding, out string [] values)
+		{
+			values = null;
+			long size = flistxattr (fd, null, 0);
+			if (size == 0)
+				values = new string [0];
+			if (size <= 0)
+				return (int) size;
+
+			byte[] list = new byte [size];
+			long ret = flistxattr (fd, list, (ulong) size);
+			if (ret < 0)
+				return (int) ret;
+
+			string [] output = encoding.GetString (list).Split((char) 0);
+			values = new string [output.Length - 1];
+			Array.Copy (output, 0, values, 0, output.Length - 1);
+			return 0;
+		}
+
+		[DllImport (LIBC, SetLastError=true)]
+		public static extern int removexattr (string path, string name);
+
+		[DllImport (LIBC, SetLastError=true)]
+		public static extern int lremovexattr (string path, string name);
+
+		[DllImport (LIBC, SetLastError=true)]
+		public static extern int fremovexattr (int fd, string name);
+		#endregion
 
 		#region <dirent.h> Declarations
 		//

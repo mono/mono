@@ -66,8 +66,7 @@ namespace Mono.Unix {
 		{
 			try {
 				Translate = new ErrorTranslator (strerror_r);
-				string ignore = Translate (Error.ERANGE);
-				ignore = ignore;
+				Translate (Error.ERANGE);
 				HaveStrerror_r = true;
 			}
 			catch (EntryPointNotFoundException e) {

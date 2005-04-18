@@ -663,6 +663,38 @@ namespace Mono.Unix {
 			return rval;
 		}
 
+		[DllImport (LIB, EntryPoint="Mono_Posix_FromXattrFlags")]
+		private static extern int FromXattrFlags (XattrFlags value, out Int32 rval);
+
+		public static bool TryFromXattrFlags (XattrFlags value, out Int32 rval)
+		{
+			return FromXattrFlags (value, out rval) == 0;
+		}
+
+		public static Int32 FromXattrFlags (XattrFlags value)
+		{
+			Int32 rval;
+			if (FromXattrFlags (value, out rval) == -1)
+				ThrowArgumentException (value);
+			return rval;
+		}
+
+		[DllImport (LIB, EntryPoint="Mono_Posix_ToXattrFlags")]
+		private static extern int ToXattrFlags (Int32 value, out XattrFlags rval);
+
+		public static bool TryToXattrFlags (Int32 value, out XattrFlags rval)
+		{
+			return ToXattrFlags (value, out rval) == 0;
+		}
+
+		public static XattrFlags ToXattrFlags (Int32 value)
+		{
+			XattrFlags rval;
+			if (ToXattrFlags (value, out rval) == -1)
+				ThrowArgumentException (value);
+			return rval;
+		}
+
 		//
 		// Non-generated exports
 		//

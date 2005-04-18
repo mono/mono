@@ -1,3 +1,13 @@
+2005-04-18  Jonathan Pryor <jonpryor@vt.edu>
+
+	* Syscall.cs: Update comment specifying which functions belong in Syscall.
+	* UnixConvert.cs: Add XattrFlags conversion functions.
+	* UnixMarshal.cs: Remove warning about self-assignment.
+
+2005-04-16  Daniel Drake <dsd@gentoo.org>
+
+	* Syscall.cs: Add bindings for extended attribute manipulation
+
 2005-04-05  Miguel de Icaza  <miguel@novell.com>
 
 	* Syscall.cs: Set entry point for sys_syslog to be syslog.
