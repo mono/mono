@@ -8650,8 +8650,7 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			if (ec.CurrentBranching.InCatch () ||
-			    ec.CurrentBranching.InFinally (true)) {
+			if (ec.InCatch || ec.InFinally) {
 				Error (255,
 				       "stackalloc can not be used in a catch or finally block");
 				return null;
