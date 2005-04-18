@@ -1763,10 +1763,9 @@ namespace Mono.CSharp {
 						    !TypeManager.IsDelegateType (type)) {
 							Report.SymbolRelatedToPreviousError (base_method);
 							Report.Warning (-28, 
-								"{0} contains a method '{1}' that is marked " + 
-								" virtual, but doesn't appear to have a slot." + 
-								"  The method may be ignored during overload resolution", 
-								type, base_method);
+								"The method '{0}' is marked virtual, but doesn't appear to have a slot." + 
+								"  It may be ignored during overload resolution", 
+								TypeManager.CSharpSignature (base_method));
 						}
 						goto skip;
 					}
@@ -1783,10 +1782,9 @@ namespace Mono.CSharp {
 						if (new_base_method == base_method) {
 							Report.SymbolRelatedToPreviousError (base_method);
 							Report.Warning (-28, 
-								"{0} contains a method '{1}' that is marked " + 
-								" virtual, but doesn't appear to have a slot." + 
+								"The method '{0}' is marked virtual, but doesn't appear to have a slot." + 
 								"  The method may be ignored during overload resolution", 
-								type, base_method);
+								TypeManager.CSharpSignature (base_method));
 						}
 						base_method = new_base_method;
 					}
