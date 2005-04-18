@@ -98,8 +98,10 @@ namespace System.Net.Sockets
 				if (delayedException != null)
 					throw delayedException;
 
-				if (error != 0)
+				if (error != 0) {
+					Console.WriteLine ("Error: {0}", error);
 					throw new SocketException (error);
+				}
 			}
 
 			public void Complete ()
@@ -244,105 +246,74 @@ namespace System.Net.Sockets
 
 			public void Accept ()
 			{
-				lock (result) {
-					Socket acc_socket = null;
-					try {
-						acc_socket = result.Sock.Accept ();
-					} catch (Exception e) {
-						result.Complete (e);
-						return;
-					}
-
-					result.Complete (acc_socket);
+				Socket acc_socket = null;
+				try {
+					acc_socket = result.Sock.Accept ();
+				} catch (Exception e) {
+					result.Complete (e);
+					return;
 				}
+
+				result.Complete (acc_socket);
 			}
 
 			public void Connect ()
 			{
-				lock (result) {
-					try {
-						result.Sock.Connect (result.EndPoint);
-						result.Sock.connected = true;
-					} catch (Exception e) {
-						result.Complete (e);
-						return;
-					}
-
-					result.Complete ();
+				try {
+					result.Sock.Connect (result.EndPoint);
+					result.Sock.connected = true;
+				} catch (Exception e) {
+					result.Complete (e);
+					return;
 				}
+
+				result.Complete ();
 			}
 
 			public void Receive ()
 			{
-				lock (result) {
-					int total = 0;
-					try {
-						total = result.Sock.Receive_nochecks (result.Buffer,
-									     result.Offset,
-									     result.Size,
-									     result.SockFlags);
-					} catch (Exception e) {
-						result.Complete (e);
-						return;
-					}
-
-					result.Complete (total);
-				}
+				// Actual recv() done in the runtime
+				result.Complete ();
 			}
 
 			public void ReceiveFrom ()
 			{
-				lock (result) {
-					int total = 0;
-					try {
-						total = result.Sock.ReceiveFrom_nochecks (result.Buffer,
-										 result.Offset,
-										 result.Size,
-										 result.SockFlags,
-										 ref result.EndPoint);
-					} catch (Exception e) {
-						result.Complete (e);
-						return;
-					}
-
-					result.Complete (total);
+				int total = 0;
+				try {
+					total = result.Sock.ReceiveFrom_nochecks (result.Buffer,
+									 result.Offset,
+									 result.Size,
+									 result.SockFlags,
+									 ref result.EndPoint);
+				} catch (Exception e) {
+					result.Complete (e);
+					return;
 				}
+
+				result.Complete (total);
 			}
 
 			public void Send ()
 			{
-				lock (result) {
-					int total = 0;
-					try {
-						total = result.Sock.Send_nochecks (result.Buffer,
-									  result.Offset,
-									  result.Size,
-									  result.SockFlags);
-					} catch (Exception e) {
-						result.Complete (e);
-						return;
-					}
-
-					result.Complete (total);
-				}
+				// Actual send() done in the runtime
+				result.Complete ();
 			}
 
-			public void SendTo() {
-				lock (result) {
-					int total = 0;
-					try {
-						total = result.Sock.SendTo_nochecks (result.Buffer,
-									    result.Offset,
-									    result.Size,
-									    result.SockFlags,
-									    result.EndPoint);
-					} catch (Exception e) {
-						result.Complete (e);
-						return;
-					}
-
-					result.Complete (total);
+			public void SendTo ()
+			{
+				int total = 0;
+				try {
+					total = result.Sock.SendTo_nochecks (result.Buffer,
+								    result.Offset,
+								    result.Size,
+								    result.SockFlags,
+								    result.EndPoint);
+				} catch (Exception e) {
+					result.Complete (e);
+					return;
 				}
+
+				result.Complete (total);
 			}
 		}
 			

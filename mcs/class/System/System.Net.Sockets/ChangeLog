@@ -1,3 +1,8 @@
+2005-04-17 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Socket.cs: no need for locking in Worker. The actual read / write for
+	Receive / Send is performed in the runtime time.
+
 2005-04-15 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Socket.cs: added a 'blocking' field that is passed to the runtime.
