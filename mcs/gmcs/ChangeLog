@@ -1,3 +1,10 @@
+2005-03-21  Marek Safar  <marek.safar@seznam.cz>
+
+	* class.cs (FixedField.Define): Check for CS1664 and more sanity
+	checks.
+
+	* expression.cs (ElementAccess.DoResolveLValue): Check for CS1708.
+	
 2005-03-18  Marek Safar  <marek.safar@seznam.cz>
 
 	* modifiers.cs (Modifiers.PROPERTY_CUSTOM): New constant for
