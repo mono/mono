@@ -1,3 +1,7 @@
+2005-04-18 Manjula GHM <mmanjula@novell.com>
+	* mb-parser.jay:
+		Support Conditional Constant Directives
+
 2005-04-13 Manjula GHM <mmanjula@novell.com>
 	* expression.cs : To support  'Or' argument of AttributeTargets in AttributeUsage
 2005-04-12 Satya Sudha K <ksathyasudha@novell.com>

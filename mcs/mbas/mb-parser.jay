@@ -245,7 +245,11 @@ namespace Mono.MonoBASIC
 		// A stack for With expressions.
 		//
 		Stack with_stack;
-	
+		
+		//	
+		// Hash table for const preprocessing directive
+		//
+		public static Hashtable constPreDir = new Hashtable();
 		
 		static public bool InitialOptionExplicit = false;
 		static public bool InitialOptionStrict = false;
@@ -271,6 +275,7 @@ namespace Mono.MonoBASIC
 
 		TokenizerController tokenizerController;
 		IfElseStateMachine ifElseStateMachine;
+
 
 		
 		public class IfElseStateMachine {
@@ -4771,6 +4776,21 @@ floating_point_type
 	| DOUBLE	{ $$ = TypeManager.system_double_expr; }
 	;
 
+directive_exp 
+	: boolean_literal
+	| IDENTIFIER _mark_  //FIXME: Fix for constant expression
+	 {
+		if(constPreDir.Contains ((string) ($1))) {
+			$$ = (BoolLiteral)constPreDir [$1];
+
+		}
+		else {
+				Report.Error (30580, (Location)$2, "value of Const used is not set");
+		    }
+	 }
+	;	
+		
+
 pp_directive
 	: HASH IDENTIFIER OPEN_PARENS LITERAL_STRING COMMA LITERAL_INTEGER CLOSE_PARENS _mark_ EOL
 	  { 
@@ -4826,8 +4846,7 @@ pp_directive
 	  {
 	  	if(tokenizerController.IsAcceptingTokens)
 	  	{
-			//TODO;
-			//FIXME;
+			constPreDir.Add($3,$5);
 	  	}
 	  }
 	| HASH IF _mark_   
@@ -4841,8 +4860,10 @@ pp_directive
 			throw new MBASException(ifElseStateMachine.Error, (Location)$3, ifElseStateMachine.ErrString);
 		}
 	  }
-  	   boolean_literal opt_then  EOL 
+  	  directive_exp opt_then  EOL 
 	  {
+		//FIXME: Fix for constant expression
+
 	  	HandleConditionalDirective(IfElseStateMachine.Token.IF, (BoolLiteral)$5);
 	  }
 	| HASH opt_elseif _mark_ 
@@ -4855,8 +4876,10 @@ pp_directive
 			      throw new MBASException(ifElseStateMachine.Error, (Location)$3, ifElseStateMachine.ErrString);
 		      }
   	  }
-	   boolean_literal opt_then  EOL 
-	  { 
+	  directive_exp opt_then  EOL 
+	  {
+		  //FIXME: Fix for constant expression
+ 
 		  HandleConditionalDirective(IfElseStateMachine.Token.ELSEIF, (BoolLiteral)$5);
 	  }
 	| HASH ELSE _mark_ 
