@@ -2226,6 +2226,15 @@ namespace Mono.CSharp {
 						      "'{0}' has a different meaning in a child block", Name);
 					return null;
 				}
+
+				if (!(e is LocalVariableReference) && current_block.IsVariableNameUsedInBlock (Name)) {
+					// Catch some false positives, e.g., when a local variable resolves to a constant.
+					LocalInfo vi = current_block.GetLocalInfo (Name);
+					if (vi == null) {
+						Report.Error (136, Location, "'{0}' has a different meaning later in the block", Name);
+						return null;
+					}
+				}
 			}
 
 			if (e.Type != null && e.Type.IsPointer && !ec.InUnsafe) {
@@ -3340,7 +3349,7 @@ namespace Mono.CSharp {
 	///   This is not an LValue because we need to re-write the expression, we
 	///   can not take data from the stack and store it.  
 	/// </summary>
-	public class PropertyExpr : ExpressionStatement, IAssignMethod, IMemberExpr {
+	public class PropertyExpr : Expression, IAssignMethod, IMemberExpr {
 		public readonly PropertyInfo PropertyInfo;
 
 		//
@@ -3728,12 +3737,6 @@ namespace Mono.CSharp {
 			
 			if (temp != null)
 				temp.Emit (ec);
-		}
-
-		override public void EmitStatement (EmitContext ec)
-		{
-			Emit (ec);
-			ec.ig.Emit (OpCodes.Pop);
 		}
 	}
 

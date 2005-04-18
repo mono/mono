@@ -1170,6 +1170,8 @@ namespace Mono.CSharp {
 		public readonly Location  StartLocation;
 		public Location           EndLocation = Location.Null;
 
+		public readonly ToplevelBlock Toplevel;
+
 		[Flags]
 		public enum Flags {
 			Implicit  = 1,
@@ -1248,11 +1250,6 @@ namespace Mono.CSharp {
 		//
 		// Keeps track of constants
 		Hashtable constants;
-
-		//
-		// The parameters for the block, this is only needed on the toplevel block really
-		// TODO: move `parameters' into ToplevelBlock
-		Parameters parameters;
 		
 		//
 		// If this is a switch section, the enclosing switch block.
@@ -1271,42 +1268,33 @@ namespace Mono.CSharp {
 			: this (parent, flags, Location.Null, Location.Null)
 		{ }
 
-		public Block (Block parent, Flags flags, Parameters parameters)
-			: this (parent, flags, parameters, Location.Null, Location.Null)
-		{ }
-
 		public Block (Block parent, Location start, Location end)
 			: this (parent, (Flags) 0, start, end)
 		{ }
 
-		public Block (Block parent, Parameters parameters, Location start, Location end)
-			: this (parent, (Flags) 0, parameters, start, end)
-		{ }
-
 		public Block (Block parent, Flags flags, Location start, Location end)
-			: this (parent, flags, Parameters.EmptyReadOnlyParameters, start, end)
-		{ }
-
-		public Block (Block parent, Flags flags, Parameters parameters,
-			      Location start, Location end)
 		{
 			if (parent != null)
 				parent.AddChild (this);
 			
 			this.Parent = parent;
 			this.flags = flags;
-			this.parameters = parameters;
 			this.StartLocation = start;
 			this.EndLocation = end;
 			this.loc = start;
 			this_id = id++;
 			statements = new ArrayList ();
 
+			if ((flags & Flags.IsToplevel) != 0)
+				Toplevel = (ToplevelBlock) this;
+			else
+				Toplevel = parent.Toplevel;
+
 			if (parent != null && Implicit) {
-				if (parent.child_variable_names == null)
-					parent.child_variable_names = new Hashtable();
+				if (parent.known_variables == null)
+					parent.known_variables = new Hashtable ();
 				// share with parent
-				child_variable_names = parent.child_variable_names;
+				known_variables = parent.known_variables;
 			}
 				
 		}
@@ -1453,19 +1441,26 @@ namespace Mono.CSharp {
 			}
 		}
 
-		Hashtable child_variable_names;
+		Hashtable known_variables;
 
 		// <summary>
-		//   Marks a variable with name @name as being used in a child block.
+		//   Marks a variable with name @name as being used in this or a child block.
 		//   If a variable name has been used in a child block, it's illegal to
 		//   declare a variable with the same name in the current block.
 		// </summary>
-		public void AddChildVariableName (string name)
+		void AddKnownVariable (string name, LocalInfo info)
 		{
-			if (child_variable_names == null)
-				child_variable_names = new Hashtable ();
+			if (known_variables == null)
+				known_variables = new Hashtable ();
 
-			child_variable_names [name] = null;
+			known_variables [name] = info;
+		}
+
+		public LocalInfo GetKnownVariableInfo (string name)
+		{
+			if (known_variables == null || !known_variables.Contains (name))
+				return null;
+			return (LocalInfo) known_variables [name];
 		}
 
 		// <summary>
@@ -1473,10 +1468,20 @@ namespace Mono.CSharp {
 		// </summary>
 		public bool IsVariableNameUsedInChildBlock (string name)
 		{
-			if (child_variable_names == null)
-				return false;
+			LocalInfo vi = GetKnownVariableInfo (name);
+			// Cheeky little test that knows that 'known_variables' is shared between
+			// an implicit block and its enclosing real block.
+			return vi != null && known_variables != vi.Block.known_variables;
+		}
 
-			return child_variable_names.Contains (name);
+		// <summary>
+		//   Checks whether a variable name has already been used in this block, possibly by
+		//   an implicit block.
+		// </summary>
+		public bool IsVariableNameUsedInBlock (string name)
+		{
+			LocalInfo vi = GetKnownVariableInfo (name);
+			return vi != null && known_variables == vi.Block.known_variables;
 		}
 
 		// <summary>
@@ -1503,7 +1508,7 @@ namespace Mono.CSharp {
 			return this_variable;
 		}
 
-		public LocalInfo AddVariable (Expression type, string name, Parameters pars, Location l)
+		public LocalInfo AddVariable (Expression type, string name, Location l)
 		{
 			if (variables == null)
 				variables = new Hashtable ();
@@ -1538,27 +1543,23 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			if (pars != null) {
-				int idx;
-				Parameter p = pars.GetParameterByName (name, out idx);
-				if (p != null) {
-					Report.Error (136, l, "A local variable named `" + name + "' " +
-						      "cannot be declared in this scope since it would " +
-						      "give a different meaning to `" + name + "', which " +
-						      "is already used in a `parent or current' scope to " +
-						      "denote something else");
-					return null;
-				}
+			int idx;
+			Parameter p = Toplevel.Parameters.GetParameterByName (name, out idx);
+			if (p != null) {
+				Report.Error (136, l, "A local variable named `" + name + "' " +
+					      "cannot be declared in this scope since it would " +
+					      "give a different meaning to `" + name + "', which " +
+					      "is already used in a `parent or current' scope to " +
+					      "denote something else");
+				return null;
 			}
 
 			vi = new LocalInfo (type, name, this, l);
 
 			variables.Add (name, vi);
 
-			// Mark 'name' as "used by a child block" in every surrounding block
-			if (cur != null)
-				for (Block par = cur.Parent; par != null; par = par.Parent)
-					par.AddChildVariableName (name);
+			for (Block b = cur; b != null; b = b.Parent)
+				b.AddKnownVariable (name, vi);
 
 			if ((flags & Flags.VariablesInitialized) != 0)
 				throw new Exception ();
@@ -1567,9 +1568,9 @@ namespace Mono.CSharp {
 			return vi;
 		}
 
-		public bool AddConstant (Expression type, string name, Expression value, Parameters pars, Location l)
+		public bool AddConstant (Expression type, string name, Expression value, Location l)
 		{
-			if (AddVariable (type, name, pars, l) == null)
+			if (AddVariable (type, name, l) == null)
 				return false;
 			
 			if (constants == null)
@@ -1637,24 +1638,17 @@ namespace Mono.CSharp {
 		//
 		public ParameterReference GetParameterReference (string name, Location loc)
 		{
-				Block b = this;
+			Parameter par;
+			int idx;
 
-			do {
-				Parameters pars = b.parameters;
-				
-				if (pars != null){
-					Parameter par;
-					int idx;
-					
-					par = pars.GetParameterByName (name, out idx);
-					if (par != null){
-						return new ParameterReference (pars, this, idx, name, loc);
-					}
-				}
-					b = b.Parent;
-			} while (b != null);
-			return null;
+			for (Block b = this; b != null; b = b.Toplevel.Parent) {
+				Parameters pars = b.Toplevel.Parameters;
+				par = pars.GetParameterByName (name, out idx);
+				if (par != null)
+					return new ParameterReference (pars, this, idx, name, loc);
 			}
+			return null;
+		}
 
 		//
 		// Whether the parameter named `name' is local to this block, 
@@ -1662,41 +1656,22 @@ namespace Mono.CSharp {
 		//
 		public bool IsLocalParameter (string name)
 		{
-				Block b = this;
-			int toplevel_count = 0;
-
-			do {
-				if (this is ToplevelBlock)
-					toplevel_count++;
-
-				Parameters pars = b.parameters;
-				if (pars != null){
-					if (pars.GetParameterByName (name) != null)
-						return true;
-					return false;
-				}
-				if (toplevel_count > 0)
-					return false;
-					b = b.Parent;
-			} while (b != null);
-			return false;
-			}
+			return Toplevel.Parameters.GetParameterByName (name) != null;
+		}
 		
 		//
 		// Whether the `name' is a parameter reference
 		//
 		public bool IsParameterReference (string name)
 		{
-			Block b = this;
+			Parameter par;
+			int idx;
 
-			do {
-				Parameters pars = b.parameters;
-				
-				if (pars != null)
-					if (pars.GetParameterByName (name) != null)
-						return true;
-				b = b.Parent;
-			} while (b != null);
+			for (Block b = this; b != null; b = b.Toplevel.Parent) {
+				par = b.Toplevel.Parameters.GetParameterByName (name, out idx);
+				if (par != null)
+					return true;
+			}
 			return false;
 		}
 
@@ -2104,20 +2079,7 @@ namespace Mono.CSharp {
 			ec.CurrentBlock = prev_block;
 		}
 
-		public ToplevelBlock Toplevel {
-			get {
-				Block b = this;
-				while (b.Parent != null){
-					if ((b.flags & Flags.IsToplevel) != 0)
-						break;
-					b = b.Parent;
-				}
-
-				return (ToplevelBlock) b;
-			}
-	}
-
-	//
+		//
 		// Returns true if we ar ea child of `b'.
 		//
 		public bool IsChildOf (Block b)
@@ -2152,7 +2114,11 @@ namespace Mono.CSharp {
 		Hashtable capture_contexts;
 
 		static int did = 0;
-		
+
+		//
+		// The parameters for the block.
+		//
+		public readonly Parameters Parameters;
 			
 		public void RegisterCaptureContext (CaptureContext cc)
 		{
@@ -2182,22 +2148,28 @@ namespace Mono.CSharp {
 		// parents
 		//
 		public ToplevelBlock (ToplevelBlock container, Parameters parameters, Location start) :
-			base (null, Flags.IsToplevel, parameters, start, Location.Null)
+			this (container, (Flags) 0, parameters, start)
 		{
-			Container = container;
 		}
 		
 		public ToplevelBlock (Parameters parameters, Location start) :
-			base (null, Flags.IsToplevel, parameters, start, Location.Null)
+			this (null, (Flags) 0, parameters, start)
 		{
 		}
 
 		public ToplevelBlock (Flags flags, Parameters parameters, Location start) :
-			base (null, flags | Flags.IsToplevel, parameters, start, Location.Null)
+			this (null, flags, parameters, start)
 		{
 		}
 
-		public ToplevelBlock (Location loc) : base (null, Flags.IsToplevel, loc, loc)
+		public ToplevelBlock (ToplevelBlock container, Flags flags, Parameters parameters, Location start) :
+			base (null, flags | Flags.IsToplevel, start, Location.Null)
+		{
+			Parameters = parameters == null ? Parameters.EmptyReadOnlyParameters : parameters;
+			Container = container;
+		}
+
+		public ToplevelBlock (Location loc) : this (null, (Flags) 0, null, loc)
 		{
 		}
 
