@@ -139,11 +139,14 @@ namespace Mono.CSharp {
 
 		public override bool Resolve (EmitContext ec)
 		{
+			bool ok = true;
+
 			Report.Debug (1, "START IF BLOCK", loc);
 
 			expr = Expression.ResolveBoolean (ec, expr, loc);
 			if (expr == null){
-				return false;
+				ok = false;
+				goto skip;
 			}
 			
 			Assign ass = expr as Assign;
@@ -177,17 +180,17 @@ namespace Mono.CSharp {
 
 				return true;
 			}
-			
+		skip:
 			ec.StartFlowBranching (FlowBranching.BranchingType.Conditional, loc);
 			
-			bool ok = TrueStatement.Resolve (ec);
+			ok &= TrueStatement.Resolve (ec);
 
 			is_true_ret = ec.CurrentBranching.CurrentUsageVector.Reachability.IsUnreachable;
 
 			ec.CurrentBranching.CreateSibling ();
 
-			if ((FalseStatement != null) && !FalseStatement.Resolve (ec))
-				ok = false;
+			if (FalseStatement != null)
+				ok &= FalseStatement.Resolve (ec);
 					
 			ec.EndFlowBranching ();
 
