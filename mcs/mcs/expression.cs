@@ -2248,17 +2248,28 @@ namespace Mono.CSharp {
 			return null;
 		}
 
+		//
+		// This is used to check if a test 'x == null' can be optimized to a reference equals,
+		// i.e., not invoke op_Equality.
+		//
+		static bool EqualsNullIsReferenceEquals (Type t)
+		{
+			return t == TypeManager.object_type || t == TypeManager.string_type ||
+				t == TypeManager.delegate_type || t.IsSubclassOf (TypeManager.delegate_type);
+		}
+
 		Expression ResolveOperator (EmitContext ec)
 		{
 			Type l = left.Type;
 			Type r = right.Type;
 
-			//
-			// Special cases: string comapred to null
-			//
 			if (oper == Operator.Equality || oper == Operator.Inequality){
-				if ((!TypeManager.IsValueType (l) && r == TypeManager.null_type) ||
-				    (!TypeManager.IsValueType (r) && l == TypeManager.null_type)) {
+				//
+				// Optimize out call to op_Equality in a few cases.
+				//
+				if ((l == TypeManager.null_type && EqualsNullIsReferenceEquals (r)) ||
+				    (r == TypeManager.null_type && EqualsNullIsReferenceEquals (l))) {
+				  
 					Type = TypeManager.bool_type;
 					
 					return this;

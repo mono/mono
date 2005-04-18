@@ -1,3 +1,10 @@
+2005-04-18  Raja R Harinath  <rharinath@novell.com>
+
+	Fix #74481.
+	* expression.cs (Binary.EqualsNullIsReferenceEquals): New.
+	(Binary.DoResolveOperator): Use it to avoid blindly optimizing out
+	all null comparisons against reference types.
+
 2005-04-18  Marek Safar  <marek.safar@seznam.cz>
 
 	Fix# 74565

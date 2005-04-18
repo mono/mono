@@ -1,3 +1,7 @@
+2005-04-18  Raja R Harinath  <rharinath@novell.com>
+
+	* test-369.cs: New test based on #74481.
+
 2005-04-18  Marek Safar <marek.safar@seznam.cz>
 
 	* test-362.cs: Enabled.
