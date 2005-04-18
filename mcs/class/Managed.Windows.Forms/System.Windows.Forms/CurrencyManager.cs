@@ -24,6 +24,7 @@
 //
 
 using System;
+using System.Reflection;
 using System.Collections;
 using System.ComponentModel;
 
@@ -96,19 +97,31 @@ namespace System.Windows.Forms {
 		public override PropertyDescriptorCollection GetItemProperties ()
 		{
 			ITypedList typed = list as ITypedList;
-			
+
+			if (list is Array) {
+				Type element = list.GetType ().GetElementType ();
+				return TypeDescriptor.GetProperties (element);
+			}
+
 			if (typed != null) {
 				return typed.GetItemProperties (null);
 			}
-				
-			if (list.Count > 0){ 
-				System.Attribute[] att = new System.Attribute [1];
-				att[0] = new BrowsableAttribute (true);				
-				return TypeDescriptor.GetProperties (list[0], att);
+
+			PropertyInfo [] props = finalType.GetProperties ();
+			for (int i = 0; i < props.Length; i++) {
+				if (props [i].Name == "Item") {
+					Type t = props [i].PropertyType;
+					if (t == typeof (object))
+						continue;
+					return GetBrowsableProperties (t);
+				}
+			}
+
+			if (list.Count > 0) {
+				return GetBrowsableProperties (list [0].GetType ());
 			}
 			
-			return new PropertyDescriptorCollection (new PropertyDescriptor [1]);
-			
+			return new PropertyDescriptorCollection (null);
 		}
 
 		public override void RemoveAt (int index)
@@ -209,6 +222,13 @@ namespace System.Windows.Forms {
 		internal object GetItem (int index)
 		{
 			return list [index];
+		}
+
+		private PropertyDescriptorCollection GetBrowsableProperties (Type t)
+		{
+			Attribute [] att = new System.Attribute [1];
+			att [0] = new BrowsableAttribute (true);
+			return TypeDescriptor.GetProperties (t, att);
 		}
 
 		public event ItemChangedEventHandler ItemChanged;

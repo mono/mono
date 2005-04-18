@@ -1,3 +1,13 @@
+2005-04-18  Jackson Harper  <jackson@ximian.com>
+
+	* CurrencyManager.cs: There are four rules for GetItemProperties:
+	- If the type is an array use the element type of the array
+	- If the type is a typed list, use the type
+	- If the list contains an Item property that is not an object, use
+	that property
+	- use the first element of the list if there are any elements in
+	the list.
+	
 2005-04-17  Jackson Harper  <jackson@ximian.oom>
 
 	* TreeView.cs: Calculate plus minus and checkbox bounds when there is a
