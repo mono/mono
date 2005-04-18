@@ -546,9 +546,6 @@ namespace Mono.CSharp {
 				}
 				
 			} else {
-				if (!EmitContext.InEnumContext)
-					Report.Error (-1, loc, "foo");
-
 				in_transit.Add (name, true);
 				val = val.Resolve (EmitContext);
 				in_transit.Remove (name);
