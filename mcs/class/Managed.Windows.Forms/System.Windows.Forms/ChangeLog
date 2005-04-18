@@ -1,5 +1,10 @@
 2005-04-18  Jackson Harper  <jackson@ximian.com>
 
+	* TreeView.cs: buglet that caused node images to get drawn
+	regardless of whether or not they were in the clipping rectangle.
+
+2005-04-18  Jackson Harper  <jackson@ximian.com>
+
 	* CurrencyManager.cs: There are four rules for GetItemProperties:
 	- If the type is an array use the element type of the array
 	- If the type is a typed list, use the type

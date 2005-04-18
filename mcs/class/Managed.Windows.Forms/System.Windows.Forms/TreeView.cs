@@ -816,7 +816,7 @@ namespace System.Windows.Forms {
 		{
 			Rectangle r = new Rectangle (x, y + 2, ImageList.ImageSize.Width, 
 					ImageList.ImageSize.Height);
-			if (!RectsIntersect (r, x, y + 2, ImageList.ImageSize.Width, ImageList.ImageSize.Height))
+			if (!RectsIntersect (clip, x, y + 2, ImageList.ImageSize.Width, ImageList.ImageSize.Height))
 				return;
 
 			if (node.ImageIndex > -1 && ImageList != null && node.ImageIndex < ImageList.Images.Count) {
