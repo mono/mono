@@ -1,3 +1,9 @@
+2005-04-18  Marek Safar <marek.safar@seznam.cz>
+
+	* test-362.cs: Enabled.
+	
+	* test-368.cs: New test.
+
 2005-04-17  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* xml-037.cs, xml-037-ref.xml,
