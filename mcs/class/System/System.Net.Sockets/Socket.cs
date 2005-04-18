@@ -99,7 +99,6 @@ namespace System.Net.Sockets
 					throw delayedException;
 
 				if (error != 0) {
-					Console.WriteLine ("Error: {0}", error);
 					throw new SocketException (error);
 				}
 			}
