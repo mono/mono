@@ -1,3 +1,8 @@
+2005-04-18  Sureshkumar T  <tsureshkumar@novell.com>
+
+        * DataRow.cs: if there are no mapping fields, fill with default
+	  value.
+
 2005-04-17  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DataView.cs : Delete() should not try to remove row twice.

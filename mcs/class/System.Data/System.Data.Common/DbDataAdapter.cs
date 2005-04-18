@@ -354,12 +354,14 @@ namespace System.Data.Common {
 				} 
 				catch (Exception e) {
 					object[] readerArray = new object[dataReader.FieldCount];
-					object[] tableArray = new object[mapping.Length];
+					object[] tableArray = new object[dataReader.FieldCount];
 					// we get the values from the datareader
 					dataReader.GetValues (readerArray);
 					// copy from datareader columns to table columns according to given mapping
-					for (int i = 0; i < mapping.Length; i++) {
-						tableArray[i] = readerArray[mapping[i]];
+                                        int count = 0;
+					for (int i = 0; i < dataTable.Columns.Count; i++) {
+                                                if (mapping [i] >= 0)
+                                                        tableArray[count++] = readerArray[mapping[i]];
 					}
 					FillErrorEventArgs args = CreateFillErrorEvent (dataTable, tableArray, e);
 					OnFillError (args);
@@ -495,7 +497,10 @@ namespace System.Data.Common {
 		private int[] BuildSchema (IDataReader reader, DataTable table, SchemaType schemaType)
 		{
 			int readerIndex = 0;
-			int[] mapping = new int[reader.FieldCount]; // mapping the reader indexes to the datatable indexes
+			int[] mapping = new int[reader.FieldCount + table.Columns.Count]; // mapping the reader indexes to the datatable indexes
+                        for (int i =0 ; i < mapping.Length; i++) 
+                                mapping [i] = -1; // no mapping
+
 			ArrayList primaryKey = new ArrayList ();
 			ArrayList sourceColumns = new ArrayList ();
 

@@ -1,3 +1,11 @@
+2005-04-18  Sureshkumar T  <tsureshkumar@novell.com>
+
+	* DataAdapter.cs: Implemenetd OnFillError handler.
+
+	* DbDataAdapter.cs: BuildSchema (): the table to be filled might
+	contain few additional columns as well. so mapping length should
+	be columns' length + fields' length.
+
 2005-03-24  Sureshkumar T  <tsureshkumar@novell.com>
 
 	* DbDataAdapter.cs: Update: If  SourceColumn is null, do not set

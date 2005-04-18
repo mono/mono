@@ -408,9 +408,6 @@ namespace System.Data {
 
 		internal void SetValuesFromDataRecord(IDataRecord record, int[] mapping)
 		{
-			if ( mapping.Length > Table.Columns.Count)
-				throw new ArgumentException ();
-
 //			bool orginalEditing = editing;
 //			if (!orginalEditing) { 
 //				BeginEdit ();
@@ -421,8 +418,14 @@ namespace System.Data {
 			}
 
 			try {
-				for(int i=0; i < mapping.Length; i++) {
+				for(int i=0; i < Table.Columns.Count; i++) {
 					DataColumn column = Table.Columns[i];
+                                        if (mapping [i] < 0) { // no mapping
+                                                if (! column.AutoIncrement)
+                                                        column.DataContainer [_proposed] = column.DefaultValue;
+                                                continue;
+                                        }
+
 					column.DataContainer.SetItemFromDataRecord(_proposed, record,mapping[i]);
 					if ( column.AutoIncrement ) { 
 						column.UpdateAutoIncrementValue(column.DataContainer.GetInt64(_proposed));

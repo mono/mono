@@ -243,10 +243,11 @@ namespace System.Data.Common
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		protected virtual void OnFillError (FillErrorEventArgs value)
 		{
-			throw new NotImplementedException ();
+			if (FillError != null)
+				FillError (this, value);
+
 		}
 
 		[MonoTODO]
