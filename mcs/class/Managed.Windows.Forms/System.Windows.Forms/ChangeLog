@@ -1,10 +1,10 @@
 2005-04-17  Jackson Harper  <jackson@ximian.oom>
 
-	* TreeView.cs: Calculate plus minus bounds when there is a
+	* TreeView.cs: Calculate plus minus and checkbox bounds when there is a
 	click. This handles offsets for scrolling properly and reduces
 	memory. Also fixed GetNode to not offset now that TopNode works
 	properly.
-	* TreeNode.cs: No longer need to track the plus minus bounds.
+	* TreeNode.cs: No longer need to track the plus minus or checkbox bounds.
 	
 2005-04-17  Jackson Harper  <jackson@ximian.com>
 

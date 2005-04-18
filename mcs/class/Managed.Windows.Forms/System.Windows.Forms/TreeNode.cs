@@ -45,7 +45,6 @@ namespace System.Windows.Forms {
 		
 		private bool is_expanded = false;
 		private Rectangle bounds = Rectangle.Empty;
-		private Rectangle checkbox_bounds = Rectangle.Empty;
 		private bool check;
 		private bool is_editing;
 		internal OwnerDrawPropertyBag prop_bag;
@@ -429,10 +428,6 @@ namespace System.Windows.Forms {
 
 		#region Internal & Private Methods and Properties
 
-		internal Rectangle CheckBoxBounds {
-			get { return checkbox_bounds; }
-		}
-
 		bool BuildFullPath (StringBuilder path)
 		{
 			if (parent == null)
@@ -567,14 +562,6 @@ namespace System.Windows.Forms {
 			bounds.Y = y;
 			bounds.Width = width;
 			bounds.Height = height;
-		}
-
-		internal void UpdateCheckBoxBounds (int x, int y, int width, int height)
-		{
-			checkbox_bounds.X = x;
-			checkbox_bounds.Y = y;
-			checkbox_bounds.Width = width;
-			checkbox_bounds.Height = height;
 		}
 
 		internal void SetAddedData (TreeView tree_view, TreeNode parent, int index)

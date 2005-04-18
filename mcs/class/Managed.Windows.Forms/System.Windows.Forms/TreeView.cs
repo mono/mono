@@ -625,11 +625,22 @@ namespace System.Windows.Forms {
 
 			if (show_root_lines || node.Parent != null)
 				l -= indent;
-			if (checkboxes)
-				l -= 19;
 			if (ImageList != null)
 				l -= ImageList.ImageSize.Width + 3;
+			if (checkboxes)
+				l -= 19;
 			return (x > l && x < l + 8);
+		}
+
+		private bool IsCheckboxArea (TreeNode node, int x)
+		{
+			int l = node.Bounds.Left + 5;
+
+			if (show_root_lines || node.Parent != null)
+				l -= indent;
+			if (ImageList != null)
+				l -= ImageList.ImageSize.Width + 3;
+			return (x > l && x < l + 10);
 		}
 
 		internal void SetTop (TreeNode node)
@@ -754,8 +765,6 @@ namespace System.Windows.Forms {
 		private void DrawNodeCheckBox (TreeNode node, Rectangle clip, int x, int y)
 		{
 			int offset = (ItemHeight - 13);
-
-			node.UpdateCheckBoxBounds (x + 3, y + offset, 10, 10);
 
 			// new rectangle that factors in line width
 			if (!RectsIntersect (clip, x + 3, y + offset, 12, 12))
@@ -1108,7 +1117,7 @@ namespace System.Windows.Forms {
 			} else if (show_plus_minus && IsPlusMinusArea (node, e.X)) {
 				node.Toggle ();
 				return;
-			} else if (checkboxes && node.CheckBoxBounds.Contains (e.X, e.Y)) {
+			} else if (checkboxes && IsCheckboxArea (node, e.X)) {
 				node.Checked = !node.Checked;
 				return;
 			}
