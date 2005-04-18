@@ -3044,6 +3044,15 @@ namespace Mono.CSharp {
 				}
 			}
 
+			if (a.Type == TypeManager.conditional_attribute_type &&
+				!(ptype == TypeManager.attribute_type || ptype.IsSubclassOf (TypeManager.attribute_type))) {
+				Report.Error (1689, a.Location, "Attribute 'System.Diagnostics.ConditionalAttribute' is only valid on methods or attribute classes");
+				return;
+			}
+
+			if (AttributeTester.IsAttributeExcluded (a.Type))
+				return;
+
 			base.ApplyAttributeBuilder (a, cb);
 		}
 
@@ -3061,6 +3070,33 @@ namespace Mono.CSharp {
 			ModFlags = Modifiers.Check (AllowedModifiersProp, ModFlags, accmods, Location);
 
 			return base.DefineType ();
+		}
+
+		/// Search for at least one defined condition in ConditionalAttribute of attribute class
+		/// Valid only for attribute classes.
+		public bool IsExcluded ()
+		{
+			if ((caching_flags & Flags.Excluded_Undetected) == 0)
+				return (caching_flags & Flags.Excluded) != 0;
+
+			caching_flags &= ~Flags.Excluded_Undetected;
+
+			if (OptAttributes == null)
+				return false;
+
+			Attribute[] attrs = OptAttributes.SearchMulti (TypeManager.conditional_attribute_type, ec);
+
+			if (attrs == null)
+				return false;
+
+			foreach (Attribute a in attrs) {
+				string condition = a.GetConditionalAttributeValue (Parent.EmitContext);
+				if (RootContext.AllDefines.Contains (condition))
+					return false;
+			}
+
+			caching_flags |= Flags.Excluded;
+			return true;
 		}
 
 		//
@@ -3935,7 +3971,7 @@ namespace Mono.CSharp {
 				}
 
 				if (ReturnType != TypeManager.void_type) {
-					Report.Error (578, Location, "Conditional not valid on '{0}' because its return new ErrorData ( type is not void", GetSignatureForError ());
+					Report.Error (578, Location, "Conditional not valid on '{0}' because its return type is not void", GetSignatureForError ());
 					return;
 				}
 

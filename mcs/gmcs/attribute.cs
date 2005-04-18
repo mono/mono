@@ -997,6 +997,7 @@ namespace Mono.CSharp {
 			}
 			catch (Exception e) {
 				Error_AttributeEmitError (e.Message);
+				Console.WriteLine (e.ToString ());
 				return;
 			}
 
@@ -1349,6 +1350,7 @@ namespace Mono.CSharp {
 		static PtrHashtable analyzed_types_obsolete = new PtrHashtable ();
 		static PtrHashtable analyzed_member_obsolete = new PtrHashtable ();
 		static PtrHashtable analyzed_method_excluded = new PtrHashtable ();
+
 		static PtrHashtable fixed_buffer_cache = new PtrHashtable ();
 
 		static object TRUE = new object ();
@@ -1671,6 +1673,31 @@ namespace Mono.CSharp {
 			}
 			analyzed_method_excluded.Add (mb, TRUE);
 			return true;
+		}
+
+		/// <summary>
+		/// Analyzes class whether it has attribute which has ConditionalAttribute
+		/// and its condition is not defined.
+		/// </summary>
+		public static bool IsAttributeExcluded (Type type)
+		{
+			if (!type.IsClass)
+				return false;
+
+			Class class_decl = TypeManager.LookupDeclSpace (type) as Class;
+
+			// TODO: add caching
+			// TODO: merge all Type bases attribute caching to one cache to save memory
+			if (class_decl == null) {
+				object[] attributes = type.GetCustomAttributes (TypeManager.conditional_attribute_type, false);
+				foreach (ConditionalAttribute ca in attributes) {
+					if (RootContext.AllDefines.Contains (ca.ConditionString))
+						return false;
+				}
+				return attributes.Length > 0;
+			}
+
+			return class_decl.IsExcluded ();
 		}
 	}
 }

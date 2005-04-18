@@ -1,3 +1,15 @@
+2005-03-30  Marek Safar  <marek.safar@seznam.cz>
+
+	C# 2.0 Conditional attribute class implementation
+	
+	* attribute.cs (AttributeTester.IsAttributeExcluded): New method.
+	Analyzes class whether it has attribute which has ConditionalAttribute
+	and its condition is not defined.
+	
+	* class.cs (Class.ApplyAttributeBuilder): Add IsAttributeExcluded check.
+	(Class.IsExcluded): New method. Search for at least one defined
+	condition in ConditionalAttribute of attribute class.
+
 2005-03-30  Raja R Harinath  <rharinath@novell.com>
 
 	* ecore.cs (PropertyExpr): Derive from Expression, not
