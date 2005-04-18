@@ -28,6 +28,8 @@ namespace Mono.CSharp {
 		Hashtable defined_names;
 		Hashtable cached_types;
 
+		public readonly MemberName MemberName;
+
 		public static Namespace Root;
 
 		static Namespace ()
@@ -63,6 +65,13 @@ namespace Mono.CSharp {
 				fullname = name;
 			else
 				fullname = parent.Name + "." + name;
+
+			if (parent != null && parent.MemberName != MemberName.Null)
+				MemberName = new MemberName (parent.MemberName, name);
+			else if (name == "")
+				MemberName = MemberName.Null;
+			else
+				MemberName = new MemberName (name);
 
 			entries = new ArrayList ();
 			namespaces = new Hashtable ();
@@ -146,7 +155,7 @@ namespace Mono.CSharp {
 					tdecl.DefineType ();
 					t = tdecl.TypeBuilder;
 				} else {
-					string lookup = this == Namespace.Root ? name : FullName + "." + name;
+					string lookup = this == Namespace.Root ? name : fullname + "." + name;
 					t = TypeManager.LookupTypeReflection (lookup);
 				}
 				te = t == null ? null : new TypeExpression (t, Location.Null);
@@ -256,13 +265,15 @@ namespace Mono.CSharp {
 		// exist.
 		//
 		public class UsingEntry {
-			public Expression Name;
+			public MemberName Name;
+			public Expression Expr;
 			public readonly NamespaceEntry NamespaceEntry;
 			public readonly Location Location;
 			
-			public UsingEntry (NamespaceEntry entry, Expression name, Location loc)
+			public UsingEntry (NamespaceEntry entry, MemberName name, Location loc)
 			{
 				Name = name;
+				Expr = name.GetTypeExpression (loc);
 				NamespaceEntry = entry;
 				Location = loc;
 			}
@@ -276,7 +287,7 @@ namespace Mono.CSharp {
 
 				DeclSpace root = RootContext.Tree.Types;
 				root.NamespaceEntry = NamespaceEntry;
-				resolved = Name.ResolveAsTypeStep (root.EmitContext);
+				resolved = Expr.ResolveAsTypeStep (root.EmitContext);
 				root.NamespaceEntry = null;
 
 				return resolved as Namespace;
@@ -289,10 +300,10 @@ namespace Mono.CSharp {
 			public readonly NamespaceEntry NamespaceEntry;
 			public readonly Location Location;
 			
-			public AliasEntry (NamespaceEntry entry, string name, Expression alias, Location loc)
+			public AliasEntry (NamespaceEntry entry, string name, MemberName alias, Location loc)
 			{
 				Name = name;
-				Alias = alias;
+				Alias = alias.GetTypeExpression (loc);
 				NamespaceEntry = entry;
 				Location = loc;
 			}
@@ -327,7 +338,6 @@ namespace Mono.CSharp {
 			else
 				ns = Namespace.Root;
 			ns.AddNamespaceEntry (this);
-			this.FullName = ns.Name;
 		}
 
 
@@ -338,7 +348,6 @@ namespace Mono.CSharp {
 			this.IsImplicit = true;
 			this.ID = ++next_id;
 			this.ns = ns;
-			this.FullName = ns.Name;
 		}
 
 		//
@@ -361,7 +370,6 @@ namespace Mono.CSharp {
 		}
 
 		static int next_id = 0;
-		public readonly string FullName;
 		public readonly int ID;
 		public readonly bool IsImplicit;
 
@@ -398,22 +406,21 @@ namespace Mono.CSharp {
 		/// <summary>
 		///   Records a new namespace for resolving name references
 		/// </summary>
-		public void Using (Expression ns, Location loc)
+		public void Using (MemberName name, Location loc)
 		{
-			string name = ns.ToString ();
 			if (DeclarationFound){
 				Report.Error (1529, loc, "A using clause must precede all other namespace elements");
 				return;
 			}
 
-			if (name == FullName)
+			if (name.Equals (ns.MemberName))
 				return;
 			
 			if (using_clauses == null)
 				using_clauses = new ArrayList ();
 
 			foreach (UsingEntry old_entry in using_clauses) {
-				if (old_entry.Name.ToString () == name) {
+				if (name.Equals (old_entry.Name)) {
 					if (RootContext.WarningLevel >= 3)
 						Report.Warning (105, loc, "The using directive for '{0}' appeared previously in this namespace", name);
 						return;
@@ -421,11 +428,11 @@ namespace Mono.CSharp {
 				}
 
 
-			UsingEntry ue = new UsingEntry (Doppelganger, ns, loc);
+			UsingEntry ue = new UsingEntry (Doppelganger, name, loc);
 			using_clauses.Add (ue);
 		}
 
-		public void UsingAlias (string name, Expression alias, Location loc)
+		public void UsingAlias (string name, MemberName alias, Location loc)
 		{
 			if (DeclarationFound){
 				Report.Error (1529, loc, "A using clause must precede all other namespace elements");
@@ -676,7 +683,7 @@ namespace Mono.CSharp {
 			if (NS == Namespace.Root)
 				return "NamespaceEntry (<root>)";
 			else
-				return String.Format ("NamespaceEntry ({0},{1},{2})", FullName, IsImplicit, ID);
+				return String.Format ("NamespaceEntry ({0},{1},{2})", ns.Name, IsImplicit, ID);
 		}
 	}
 }

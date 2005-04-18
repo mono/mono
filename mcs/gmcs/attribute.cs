@@ -193,23 +193,20 @@ namespace Mono.CSharp {
 			Type t1, t2;
 			ResolvePossibleAttributeTypes (ec, out t1, out t2);
 
-			string NameAttribute = Name + "Attribute";
-
 			String err0616 = null;
 			if (t1 != null && ! t1.IsSubclassOf (TypeManager.attribute_type)) {
 				t1 = null;
-				err0616 = "'" + Name + "': is not an attribute class";
+				err0616 = "'{0}' is not an attribute class";
 			}
 			if (t2 != null && ! t2.IsSubclassOf (TypeManager.attribute_type)) {
 				t2 = null;
 				err0616 = (err0616 != null) 
-					? "Neither '" + Name + "' nor '" + NameAttribute +"' is an attribute class"
-					: "'" + Name + "Attribute': is not an attribute class";
+					? "Neither '{0}' nor '{0}Attribute' is an attribute class"
+					: "'{0}Attribute': is not an attribute class";
 			}
 
 			if (t1 != null && t2 != null) {
-				Report.Error(1614, Location, "'" + Name + "': is ambiguous; " 
-					     + " use either '@" + Name + "' or '" + NameAttribute + "'");
+				Report.Error (1614, Location, "'{0}' is ambiguous; use either '@{0}' or '{0}Attribute'", Name);
 				return null;
 			}
 			if (t1 != null)
@@ -217,13 +214,13 @@ namespace Mono.CSharp {
 			if (t2 != null)
 				return t2;
 			if (err0616 != null) {
-				Report.Error (616, Location, err0616);
+				Report.Error (616, Location, err0616, Name);
 				return null;
 			}
 
 			Report.Error (246, Location, 
-				      "Could not find attribute '" + Name 
-				      + "' (are you missing a using directive or an assembly reference ?)");
+				      "Could not find attribute '{0}' (are you missing a using directive or an assembly reference ?)",
+				      Name);
 
 			resolve_error = true;
 			return null;
@@ -1510,8 +1507,10 @@ namespace Mono.CSharp {
 				locase_table.Add (((string)de.Key).ToLower (System.Globalization.CultureInfo.InvariantCulture), t);
 			}
 
-			foreach (DictionaryEntry de in RootContext.Tree.Decls) {
-				DeclSpace decl = (DeclSpace)de.Value;
+			foreach (DictionaryEntry de in RootContext.Tree.AllDecls) {
+				if (!(de.Key is MemberName))
+					throw new InternalErrorException ("");
+				DeclSpace decl = (DeclSpace) de.Value;
 				if (!decl.IsClsCompliaceRequired (decl))
 					continue;
 

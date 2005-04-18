@@ -1,10 +1,48 @@
+2005-03-22  Raja R Harinath  <rharinath@novell.com>
+
+	* cs-parser.jay: Pass MemberName to RootContext.Tree.RecordDecl.
+	(using_alias_directive,	using_namespace_directive): Pass
+	MemberName, not an expression to Namespace.UsingAlias and 
+	Namespace.Using.
+	(MakeName): Use the MemberName of the namespace.
+	* namespace.cs (Namespace.MemberName): New.
+	(UsingEntry.UsingEntry): Take a MemberName, not an expression.
+	(AliasEntry.AliasEntry, Namespace.Using, Namespace.UsingAlias): 
+	Likewise.	
+	* decl.cs (MemberName.Name): Make readonly.
+	(MemberName.FromDotted): New "constructor".
+	(MemberName.Equals, MemberName.GetHashCode): Implement overrides.
+	(MemberCore.Name): Compute from MemberName on demand.
+	(MemberCore.SetMemberName): Provide a way to change the
+	MemberName.
+	(MemberCore.AddToContainer): Don't take a fullname parameter.
+	* class.cs (TypeContainer.AddToMemberContainer): Don't add the
+	fully qualified name of the container to the member name.
+	(TypeContainer.AddToTypeContainer): Use a fully qualified name
+	only if the type is a member of the root container.
+	(TypeContainer.AddMethod, TypeContainer.AddProperty): Use
+	MemberName.Left rather than searching for an embedded ".".
+	(PartialContainer.CreatePart): Update to changes in RootContext.
+	(MemberBase.ShortName): Turn into a property.  Use
+	MemberCore.SetMemberName.
+	(MemberBase.ExplicitInterfaceName): Remove.
+	(MemberBase.UpdateMemberName): Remove.
+	(AbstractPropertyEventMethod.UpdateName): Use SetMemberName.
+	(PropertyBase.SetMemberName): New override.
+	* tree.cs (Tree.RecordDecl): Take a MemberName and use it as hash key.
+	(Tree.GetDecl): New.
+	(Tree.AllDecls): Rename from Decls.
+	* attribute.cs, enum.cs, report.cs: Update to changes.
+	* driver.cs (MainDriver): Use MemberName.FromDotted on
+	RootContext.MainClass.
+
 2005-03-21  Marek Safar  <marek.safar@seznam.cz>
 
 	* class.cs (FixedField.Define): Check for CS1664 and more sanity
 	checks.
 
 	* expression.cs (ElementAccess.DoResolveLValue): Check for CS1708.
-	
+
 2005-03-18  Marek Safar  <marek.safar@seznam.cz>
 
 	* modifiers.cs (Modifiers.PROPERTY_CUSTOM): New constant for
@@ -72,7 +110,7 @@
 	* expression.cs (ComposedCast.DoResolveAsTypeStep): Use
 	TypeManager.GetConstructedType.
 	* tree.cs (decl_ns_hash, LookupByNamespace): Remove.
-	
+
 2005-04-16  Zoltan Varga  <vargaz@freemail.hu>
 
 	* cs-parser.jay: Fix build.

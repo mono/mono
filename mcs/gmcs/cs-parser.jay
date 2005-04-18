@@ -340,8 +340,7 @@ using_alias_directive
 	: USING IDENTIFIER ASSIGN 
 	  namespace_or_type_name SEMICOLON
 	  {
-		MemberName name = (MemberName) $4;
-		current_namespace.UsingAlias ((string) $2, name.GetTypeExpression (lexer.Location), lexer.Location);
+		current_namespace.UsingAlias ((string) $2, (MemberName) $4, lexer.Location);
 	  }
 	| USING error {
 		CheckIdentifierToken (yyToken);
@@ -351,8 +350,7 @@ using_alias_directive
 using_namespace_directive
 	: USING namespace_name SEMICOLON 
 	  {
-		MemberName ns_name = (MemberName) $2;
-		current_namespace.Using (ns_name.GetTypeExpression (lexer.Location), lexer.Location);
+		current_namespace.Using ((MemberName) $2, lexer.Location);
           }
 	;
 
@@ -777,7 +775,7 @@ struct_declaration
 
 			current_container.AddClassOrStruct (current_class);
 			current_container = current_class;
-			RootContext.Tree.RecordDecl (name.GetName (true), current_class);
+			RootContext.Tree.RecordDecl (name, current_class);
 		}
 
 		lexer.ConstraintsParsing = true;
@@ -1477,7 +1475,7 @@ interface_declaration
 
 			current_container.AddInterface (current_class);
 			current_container = current_class;
-			RootContext.Tree.RecordDecl (name.GetName (true), current_class);
+			RootContext.Tree.RecordDecl (name, current_class);
 		}
 
 		lexer.ConstraintsParsing = true;
@@ -2103,7 +2101,7 @@ destructor_declaration
 	  }
 	  IDENTIFIER OPEN_PARENS CLOSE_PARENS block
 	  {
-		if ((string) $5 != current_container.Basename){
+		if ((string) $5 != current_container.MemberName.Name){
 			Report.Error (574, lexer.Location, "Name of destructor must match name of class");
 		} else if (current_container.Kind != Kind.Class){
 			Report.Error (575, lexer.Location, "Destructors are only allowed in class types");
@@ -2392,9 +2390,9 @@ enum_declaration
 	  { 
 		Location enum_location = lexer.Location;
 
-		MemberName full_name = MakeName (new MemberName ((string) $4));
+		MemberName name = MakeName (new MemberName ((string) $4));
 		Enum e = new Enum (current_namespace, current_class, (Expression) $5, (int) $2,
-				   full_name, (Attributes) $1, enum_location);
+				   name, (Attributes) $1, enum_location);
 		
 		if (RootContext.Documentation != null)
 			e.DocComment = enumTypeComment;
@@ -2406,7 +2404,6 @@ enum_declaration
 					 ev.DocComment);
 		}
 
-		string name = full_name.GetName ();
 		current_container.AddEnum (e);
 		RootContext.Tree.RecordDecl (name, e);
 		$$ = e;
@@ -2508,7 +2505,7 @@ delegate_declaration
 		}
 
 		current_container.AddDelegate (del);
-		RootContext.Tree.RecordDecl (name.GetName (true), del);
+		RootContext.Tree.RecordDecl (name, del);
 
 		current_delegate = del;
 
@@ -3670,7 +3667,7 @@ class_declaration
 
 			current_container.AddClassOrStruct (current_class);
 			current_container = current_class;
-			RootContext.Tree.RecordDecl (name.GetName (true), current_class);
+			RootContext.Tree.RecordDecl (name, current_class);
 		}
 
 		lexer.ConstraintsParsing = true;
@@ -4947,11 +4944,11 @@ TypeContainer pop_current_class ()
 MemberName
 MakeName (MemberName class_name)
 {
-	string ns = current_namespace.FullName;
+	Namespace ns = current_namespace.NS;
 
 	if (current_container.Name == ""){
-		if (ns != "")
-			return new MemberName (new MemberName (ns), class_name);
+		if (ns.Name != "")
+			return new MemberName (ns.MemberName, class_name);
 		else
 			return class_name;
 	} else {

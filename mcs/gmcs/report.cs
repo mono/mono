@@ -311,8 +311,7 @@ namespace Mono.CSharp {
 					return;
 				}
 
-				string name = String.Concat (temp_ds.Name, ".", mi.Name);
-				MemberCore mc = temp_ds.GetDefinition (name);
+				MemberCore mc = temp_ds.GetDefinition (mi.Name);
 				SymbolRelatedToPreviousError (mc);
 			}
 		}
