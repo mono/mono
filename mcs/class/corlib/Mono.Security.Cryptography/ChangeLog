@@ -1,3 +1,8 @@
+2005-04-18  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* SymmetricTransform.cs: Fixed a division by zero if someone changes 
+	the feedback value to 0.
+
 2005-03-30  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* SymmetricTransform.cs: Fixed a padding bug affecting that can	occurs
