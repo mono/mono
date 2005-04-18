@@ -45,7 +45,6 @@ namespace System.Windows.Forms {
 		
 		private bool is_expanded = false;
 		private Rectangle bounds = Rectangle.Empty;
-		private Rectangle plus_minus_bounds = Rectangle.Empty;
 		private Rectangle checkbox_bounds = Rectangle.Empty;
 		private bool check;
 		private bool is_editing;
@@ -429,9 +428,6 @@ namespace System.Windows.Forms {
 		#endregion	// Public Instance Methods
 
 		#region Internal & Private Methods and Properties
-		internal Rectangle PlusMinusBounds {
-			get { return plus_minus_bounds; }
-		}
 
 		internal Rectangle CheckBoxBounds {
 			get { return checkbox_bounds; }
@@ -571,14 +567,6 @@ namespace System.Windows.Forms {
 			bounds.Y = y;
 			bounds.Width = width;
 			bounds.Height = height;
-		}
-
-		internal void UpdatePlusMinusBounds (int x, int y, int width, int height)
-		{
-			plus_minus_bounds.X = x;
-			plus_minus_bounds.Y = y;
-			plus_minus_bounds.Width = width;
-			plus_minus_bounds.Height = height;
 		}
 
 		internal void UpdateCheckBoxBounds (int x, int y, int width, int height)

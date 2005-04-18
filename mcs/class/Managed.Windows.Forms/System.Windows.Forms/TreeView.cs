@@ -606,8 +606,7 @@ namespace System.Windows.Forms {
 				top_node = nodes [0];
 
 			OpenTreeNodeEnumerator o = new OpenTreeNodeEnumerator (TopNode);
-			int move = y / ItemHeight + skipped_nodes;
-
+			int move = y / ItemHeight;
 			for (int i = -1; i < move; i++) {
 				if (!o.MoveNext ())
 					return null;
@@ -618,6 +617,19 @@ namespace System.Windows.Forms {
 
 		private bool IsTextArea (TreeNode node, int x) {
 			return node != null && node.Bounds.Left <= x && node.Bounds.Right >= x;
+		}
+
+		private bool IsPlusMinusArea (TreeNode node, int x)
+		{
+			int l = node.Bounds.Left + 5;
+
+			if (show_root_lines || node.Parent != null)
+				l -= indent;
+			if (checkboxes)
+				l -= 19;
+			if (ImageList != null)
+				l -= ImageList.ImageSize.Width + 3;
+			return (x > l && x < l + 8);
 		}
 
 		internal void SetTop (TreeNode node)
@@ -726,12 +738,10 @@ namespace System.Windows.Forms {
 
 		private void DrawNodePlusMinus (TreeNode node, Rectangle clip, int x, int y, int middle)
 		{
-			node.UpdatePlusMinusBounds (x, middle - 4, 8, 8);
-
-			if (!clip.IntersectsWith (node.PlusMinusBounds))
+			if (!RectsIntersect (clip, x, middle - 4, 8, 8))
 				return;
 
-			DeviceContext.DrawRectangle (SystemPens.ControlDark, node.PlusMinusBounds);
+			DeviceContext.DrawRectangle (SystemPens.ControlDark, x, middle - 4, 8, 8);
 
 			if (node.IsExpanded) {
 				DeviceContext.DrawLine (SystemPens.ControlDarkDark, x + 2, middle, x + 6, middle); 
@@ -1076,6 +1086,7 @@ namespace System.Windows.Forms {
 			TreeNode node = GetNodeAt (e.Y);
 			if (node == null)
 				return;
+
 			if (IsTextArea (node, e.X)) {
 				TreeNode old_selected = selected_node;
 				selected_node = node;
@@ -1094,7 +1105,7 @@ namespace System.Windows.Forms {
 					invalid = Rectangle.Union (invalid, selected_node.Bounds);
 					Invalidate (invalid);
 				}
-			} else if (show_plus_minus && node.PlusMinusBounds.Contains (e.X, e.Y)) {
+			} else if (show_plus_minus && IsPlusMinusArea (node, e.X)) {
 				node.Toggle ();
 				return;
 			} else if (checkboxes && node.CheckBoxBounds.Contains (e.X, e.Y)) {
