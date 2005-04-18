@@ -1,3 +1,8 @@
+2005-04-18 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* handles.c: fix handle returned in _wapi_handle_search_handle. Dick
+	pointed it out.
+
 2005-04-16 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* io-layer/sockets.c: FIONBIO with a TRUE argument means we want
