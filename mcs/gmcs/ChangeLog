@@ -1,3 +1,11 @@
+2005-03-31  Marek Safar  <marek.safar@seznam.cz>
+
+	Fix #74241
+	* class.cs (AbstractPropertyEventMethod.EmitMethod): Enable emit method
+	customization.
+	
+	* decl.cs (MemberCache.AddMethods): Fix infinite loop.
+
 2005-03-31  Raja R Harinath  <rharinath@novell.com>
 
 	Fix difference in behaviour with commandline invocation.

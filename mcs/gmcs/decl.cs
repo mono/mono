@@ -1787,6 +1787,7 @@ namespace Mono.CSharp {
 								" but doesn't appear to overrided any virtual or abstract method:" + 
 								" it may be ignored during overload resolution",
 								TypeManager.CSharpSignature (base_method));
+							break;
 						}
 						base_method = new_base_method;
 					}
