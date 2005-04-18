@@ -1,3 +1,8 @@
+2005-04-18  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* AuthenticodeFormatter.cs: Commented unused private constants to 
+	remove compiler warnings.
+
 2005-04-08  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* AuthenticodeDeformatter.cs: In synch with corlib version.

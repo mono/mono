@@ -149,19 +149,19 @@ namespace Mono.Security.Authenticode {
 		}
 
 		// pkcs 1
-		private const string rsaEncryption = "1.2.840.113549.1.1.1";
+//		private const string rsaEncryption = "1.2.840.113549.1.1.1";
 		// pkcs 7
-		private const string data = "1.2.840.113549.1.7.1";
+//		private const string data = "1.2.840.113549.1.7.1";
 		private const string signedData = "1.2.840.113549.1.7.2";
 		// pkcs 9
-		private const string contentType = "1.2.840.113549.1.9.3";
-		private const string messageDigest  = "1.2.840.113549.1.9.4";
+//		private const string contentType = "1.2.840.113549.1.9.3";
+//		private const string messageDigest  = "1.2.840.113549.1.9.4";
 		private const string countersignature = "1.2.840.113549.1.9.6";
 		// microsoft spc (software publisher certificate)
 		private const string spcStatementType = "1.3.6.1.4.1.311.2.1.11";
 		private const string spcSpOpusInfo = "1.3.6.1.4.1.311.2.1.12";
 		private const string spcPelmageData = "1.3.6.1.4.1.311.2.1.15";
-		private const string individualCodeSigning = "1.3.6.1.4.1.311.2.1.21";
+//		private const string individualCodeSigning = "1.3.6.1.4.1.311.2.1.21";
 		private const string commercialCodeSigning = "1.3.6.1.4.1.311.2.1.22";
 		private const string timestampCountersignature = "1.3.6.1.4.1.311.3.2.1";
 
