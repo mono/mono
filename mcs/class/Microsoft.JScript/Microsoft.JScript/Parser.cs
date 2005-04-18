@@ -749,11 +749,15 @@ namespace Microsoft.JScript {
 			AST pn = RelExpr (parent, in_for_init);
 			for (;;) {
 				int tt = ts.PeekToken ();
-				if (tt == Token.EQ || tt == Token.NE || tt == Token.SHEQ || tt == Token.SHNE) {
+				if (tt == Token.EQ || tt == Token.NE) {
 					ts.GetToken ();
 					pn = new Equality (parent, pn, RelExpr (parent, in_for_init), ToJSToken (tt));
 					continue;
-				}
+				} else if (tt == Token.SHEQ || tt == Token.SHNE) {
+					ts.GetToken ();
+					pn = new StrictEquality (parent, pn, RelExpr (parent, in_for_init), ToJSToken (tt));
+					continue;
+				}				
 				break;
 			}
 			return pn;

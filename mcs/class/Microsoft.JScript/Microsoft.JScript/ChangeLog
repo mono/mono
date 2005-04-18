@@ -1,3 +1,12 @@
+2005-04-18  Cesar Lopez Nataren  <cnataren@novell.com>
+
+	* Parser.cs: Build a StrictEquality object instead of a Equality
+	object, when we have === and !=== as operator.
+	* CodeGenerator.cs: (ft_emit_equality, fall_true) Take into account the
+	strict cases of equality. 
+	* StrictEquality.cs: Add parent, left and right params to default
+	ctr. Implement Resolve and Emit.
+
 2005-04-15  Cesar Lopez Nataren  <cnataren@novell.com>
 
 	* Statement.cs: make internal the builders.

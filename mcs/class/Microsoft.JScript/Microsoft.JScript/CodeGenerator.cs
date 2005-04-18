@@ -5,6 +5,7 @@
 //	Cesar Lopez Nataren (cesar@ciencias.unam.mx)
 //
 // (C) 2003, 2004 Cesar Lopez Nataren
+// (C) 2005, Novell, Inc. (http://novell.com)
 //
 
 //
@@ -324,14 +325,21 @@ namespace Microsoft.JScript {
 		static void ft_emit_equality (EmitContext ec, AST ast, Label lbl)
 		{
 			ILGenerator ig = ec.ig;
-			Equality eq = ast as Equality;
+			BinaryOp eq = null;
+
+			if (ast is Equality)
+				eq = (Equality) ast;
+			else if (ast is StrictEquality)
+				eq = (StrictEquality) ast;
 
 			eq.Emit (ec);
 			switch (eq.op) {
 			case JSToken.NotEqual:
+			case JSToken.StrictNotEqual:
 				ig.Emit (OpCodes.Brtrue, lbl);
 				break;
 			case JSToken.Equal:
+			case JSToken.StrictEqual:
 				ig.Emit (OpCodes.Brfalse, lbl);
 				break;
 			}
@@ -349,7 +357,7 @@ namespace Microsoft.JScript {
 				fall_true (ec, last_exp, lbl);
 			} else if (type == typeof (Binary))
 				ft_binary_recursion (ec, ast, lbl);
-			else if (type == typeof (Equality))
+			else if (type == typeof (Equality) || type == typeof (StrictEquality))
 				ft_emit_equality (ec, ast, lbl);
 			else
 				emit_default_case (ec, ast, OpCodes.Brfalse, lbl);

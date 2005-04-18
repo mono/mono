@@ -5,6 +5,7 @@
 //	Cesar Lopez Nataren (cesar@ciencias.unam.mx)
 //
 // (C) 2003, Cesar Lopez Nataren
+// (C) 2005, Novell Inc. (http://novell.com)
 //
 
 //
@@ -29,13 +30,14 @@
 //
 
 using System;
+using System.Reflection.Emit;
 
 namespace Microsoft.JScript {
 
 	public class StrictEquality : BinaryOp {
 
-		internal StrictEquality ()
-			: base (null, null, JSToken.StrictEqual)
+		internal StrictEquality (AST parent, AST left, AST right, JSToken op)
+			: base (left, right, op)
 		{
 		}
 
@@ -46,7 +48,12 @@ namespace Microsoft.JScript {
 
 		internal override bool Resolve (IdentificationTable context)
 		{
-			throw new NotImplementedException ();
+			bool r = true;
+			if (left != null)
+				r &= left.Resolve (context);
+			if (right != null)
+				r &= right.Resolve (context);
+			return r;
 		}
 		
 		internal override bool Resolve (IdentificationTable context, bool no_effect)
@@ -57,7 +64,11 @@ namespace Microsoft.JScript {
 
 		internal override void Emit (EmitContext ec)
 		{
-			throw new NotImplementedException ();
+			if (left != null)
+				left.Emit (ec);
+			if (right != null)
+				right.Emit (ec);
+			ec.ig.Emit (OpCodes.Call, typeof (StrictEquality).GetMethod ("JScriptStrictEquals"));
 		}
 	}
 }
