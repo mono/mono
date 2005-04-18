@@ -145,13 +145,6 @@ namespace Mono.CSharp {
 		//
 		static public bool Unsafe;
 		
-		static string MakeFQN (string nsn, string name)
-		{
-			if (nsn == "")
-				return name;
-			return String.Concat (nsn, ".", name);
-		}
-
 		// <remarks>
 		//   This function is used to resolve the hierarchy tree.
 		//   It processes interfaces, structs and classes in that order.

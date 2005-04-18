@@ -9000,63 +9000,13 @@ namespace Mono.CSharp {
 				return nullable.ResolveAsTypeTerminal (ec);
 			}
 
-			int pos = 0;
-			while ((pos < dim.Length) && (dim [pos] == '[')) {
-				pos++;
-
-				if (dim [pos] == ']') {
-					ltype = ltype.MakeArrayType ();
-					pos++;
-
-					if (pos < dim.Length)
-						continue;
-
-					type = ltype;
-					eclass = ExprClass.Type;
-					return this;
-				}
-
-				int rank = 0;
-				while (dim [pos] == ',') {
-					pos++; rank++;
-				}
-
-				if ((dim [pos] != ']') || (pos != dim.Length-1))
-					return null;
-						
-				type = ltype.MakeArrayType (rank + 1);
-				eclass = ExprClass.Type;
-				return this;
-			}
-
-			if (dim != "") {
-				//
-				// ltype.Fullname is already fully qualified, so we can skip
-				// a lot of probes, and go directly to TypeManager.LookupType
-				//
-				string fname = ltype.FullName != null ? ltype.FullName : ltype.Name;
-				string cname = fname + dim;
-				type = TypeManager.LookupTypeDirect (cname);
-				if (type == null){
-					//
-					// For arrays of enumerations we are having a problem
-					// with the direct lookup.  Need to investigate.
-					//
-					// For now, fall back to the full lookup in that case.
-					//
-					FullNamedExpression e = ec.DeclSpace.LookupType (
-						cname, loc, /*ignore_cs0104=*/ false);
-					if (e == null) {
-						Report.Error (246, loc, "Cannot find type `" + cname + "'");
-						return null;
-					}
-					if (e is TypeExpr)
-						type = ((TypeExpr) e).ResolveType (ec);
-					if (type == null)
-						return null;
-				}
-			} else {
+			if (dim != "")
+				type = TypeManager.GetConstructedType (ltype, dim);
+			else
 				type = ltype;
+
+			if (type == null) {
+				throw new InternalErrorException ("Couldn't create computed type " + ltype + dim);
 			}
 
 			if (!ec.InUnsafe && type.IsPointer){

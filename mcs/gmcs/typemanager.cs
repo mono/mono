@@ -80,7 +80,6 @@ public partial class TypeManager {
 	static public Type methodimpl_attr_type;
 	static public Type marshal_as_attr_type;
 	static public Type param_array_type;
-	static public Type guid_attr_type;
 	static public Type void_ptr_type;
 	static public Type indexer_name_type;
 	static public Type exception_type;
@@ -270,10 +269,8 @@ public partial class TypeManager {
 	// </remarks>
 	public static Hashtable all_imported_types;
 
-	static Hashtable negative_hits;
 	static Hashtable fieldbuilders_to_fields;
 	static Hashtable fields;
-	static Hashtable references;
 
 	struct Signature {
 		public string name;
@@ -297,15 +294,15 @@ public partial class TypeManager {
 		builder_to_method = null;
 		
 		fields = null;
-		references = null;
-		negative_hits = null;
 		builder_to_constant = null;
 		fieldbuilders_to_fields = null;
 		events = null;
 		priv_fields_events = null;
 		properties = null;
 
-		CleanUpGenerics ();		
+		type_hash = null;
+		
+		CleanUpGenerics ();
 		TypeHandle.CleanUp ();
 	}
 
@@ -409,10 +406,9 @@ public partial class TypeManager {
 		NoTypes = new Type [0];
 		NoTypeExprs = new TypeExpr [0];
 
-		negative_hits = new Hashtable ();
 		fieldbuilders_to_fields = new Hashtable ();
 		fields = new Hashtable ();
-		references = new Hashtable ();
+		type_hash = new DoubleHash ();
 	}
 
 	public static void HandleDuplicate (string name, Type t)
@@ -451,8 +447,6 @@ public partial class TypeManager {
 		} catch {
 			HandleDuplicate (name, t); 
 		}
-
-		negative_hits.Remove (t);
 
 		user_types.Add (t);
 	}
@@ -624,7 +618,19 @@ public partial class TypeManager {
 			return modules;
 		}
 	}
-	
+
+	//
+	// We use this hash for multiple kinds of constructed types:
+	//
+	//    (T, "&")	Given T, get T &
+	//    (T, "*")	Given T, get T *
+	//    (T, "[]")	Given T and a array dimension, get T []
+	//    (T, X)	Given a type T and a simple name X, get the type T+X
+	//
+	// Accessibility tests, if necessary, should be done by the user
+	//
+	static DoubleHash type_hash = new DoubleHash ();
+
 	//
 	// Gets the reference to T version of the Type (T&)
 	//
@@ -633,36 +639,83 @@ public partial class TypeManager {
 		return t.MakeByRefType ();
 	}
 
-	static Hashtable pointers = new Hashtable ();
-
 	//
 	// Gets the pointer to T version of the Type  (T*)
 	//
 	public static Type GetPointerType (Type t)
 	{
-		string tname = t.FullName + "*";
-		
-		Type ret = t.Assembly.GetType (tname);
-		
-		//
-		// If the type comes from the assembly we are building
-		// We need the Hashtable, because .NET 1.1 will return different instance types
-		// every time we call ModuleBuilder.GetType.
-		//
-		if (ret == null){
-			if (pointers [t] == null)
-				pointers [t] = CodeGen.Module.Builder.GetType (tname);
-			
-			ret = (Type) pointers [t];
+		return GetConstructedType (t, "*");
+	}
+
+	public static Type GetConstructedType (Type t, string dim)
+	{
+		object ret = null;
+		if (type_hash.Lookup (t, dim, out ret))
+			return (Type) ret;
+
+		ret = t.Module.GetType (t.ToString () + dim);
+		if (ret != null) {
+			type_hash.Insert (t, dim, ret);
+			return (Type) ret;
 		}
 
-		return ret;
+		if (dim == "&") {
+			ret = GetReferenceType (t);
+			type_hash.Insert (t, dim, ret);
+			return (Type) ret;
+		}
+
+		if (t.IsGenericParameter || t.IsGenericInstance) {
+		int pos = 0;
+		Type result = t;
+		while ((pos < dim.Length) && (dim [pos] == '[')) {
+			pos++;
+
+			if (dim [pos] == ']') {
+				result = result.MakeArrayType ();
+				pos++;
+
+				if (pos < dim.Length)
+					continue;
+
+				type_hash.Insert (t, dim, result);
+				return result;
+			}
+
+			int rank = 0;
+			while (dim [pos] == ',') {
+				pos++; rank++;
+			}
+
+			if ((dim [pos] != ']') || (pos != dim.Length-1))
+				break;
+
+			result = result.MakeArrayType (rank + 1);
+			type_hash.Insert (t, dim, result);
+			return result;
+		}
+		}
+
+		type_hash.Insert (t, dim, null);
+		return null;
+	}
+
+	public static Type GetNestedType (Type t, string name)
+	{
+		object ret = null;
+		Report.Debug (64, "GET NESTED TYPE", t, t.FullName, t.Name, name);
+		if (!type_hash.Lookup (t, name, out ret)) {
+			string lookup = t.FullName + "+" + name;
+			ret = t.Module.GetType (lookup);
+			type_hash.Insert (t, name, ret);
+		}
+		return (Type) ret;
 	}
 	
 	//
 	// Low-level lookup, cache-less
 	//
-	static Type LookupTypeReflection (string name)
+	public static Type LookupTypeReflection (string name)
 	{
 		Type t;
 
@@ -700,87 +753,6 @@ public partial class TypeManager {
 		}
                         
 		return null;
-	}
-
-	//
-	// This function is used when you want to avoid the lookups, and want to go
-	// directly to the source.  This will use the cache.
-	//
-	// Notice that bypassing the cache is bad, because on Microsoft.NET runtime
-	// GetType ("DynamicType[]") != GetType ("DynamicType[]"), and there is no
-	// way to test things other than doing a fullname compare
-	//
-	public static Type LookupTypeDirect (string name)
-	{
-		Type t = (Type) types [name];
-		if (t != null)
-			return t;
-
-		t = LookupTypeReflection (name);
-		if (t == null)
-			return null;
-
-		types [name] = t;
-		return t;
-	}
-
-	static readonly char [] dot_array = { '.' };
-
-	/// <summary>
-	///   Returns the Type associated with @name, takes care of the fact that
-	///   reflection expects nested types to be separated from the main type
-	///   with a "+" instead of a "."
-	/// </summary>
-	public static Type LookupType (string name)
-	{
-		Type t;
-
-		//
-		// First lookup in user defined and cached values
-		//
-
-		t = LookupTypeDirect (name);
-		if (t != null)
-			return t;
-
-		string [] elements = name.Split (dot_array);
-		int count = elements.Length;
-
-		if (count == 1)
-			return null;
-
-		string top_level_type = elements [0];
-		int n = 1;
-		for (;;) {
-			t = LookupTypeDirect (top_level_type);
-
-			if (count == n)
-				return t;
-
-			if (t != null)
-				break;
-
-			top_level_type = top_level_type + "." + elements [n++];
-		}
-			
-		//
-		// We know that System.Object does not have children, and since its the base of 
-		// all the objects, it always gets probed for inner classes. 
-		//
-		if (top_level_type == "System.Object")
-			return null;
-		
-		string nested_type = top_level_type + "+" + String.Join ("+", elements, n, count - n);
-		//Console.WriteLine ("Looking up: " + newt + " " + name);
-
-		t = LookupTypeDirect (nested_type);
-
-		// Cache the dotted version of the name too.
-		if (t == null)
-			negative_hits [name] = null;
-		else
-			types [name] = t;
-		return t;
 	}
 
 	/// <summary>
@@ -1033,11 +1005,16 @@ public partial class TypeManager {
 	/// </summary>
 	static Type CoreLookupType (string name)
 	{
-		Type t = LookupTypeDirect (name);
+		Type t = null;
+		if (types.Contains (name))
+			t = (Type) types [name];
+		else
+			t = LookupTypeReflection (name);
 
 		if (t == null)
 			Report.Error (518, "The predefined type `" + name + "' is not defined or imported");
 
+		types [name] = t;
 		return t;
 	}
 
@@ -1182,12 +1159,6 @@ public partial class TypeManager {
 		mbr_type             = CoreLookupType ("System.MarshalByRefObject");
 		decimal_constant_attribute_type = CoreLookupType ("System.Runtime.CompilerServices.DecimalConstantAttribute");
 
-		//
-		// Sigh. Remove this before the release.  Wonder what versions of Mono
-		// people are running.
-		//
-		guid_attr_type        = LookupType ("System.Runtime.InteropServices.GuidAttribute");
-
 		unverifiable_code_type= CoreLookupType ("System.Security.UnverifiableCodeAttribute");
 
 		void_ptr_type         = CoreLookupType ("System.Void*");
@@ -1325,7 +1296,7 @@ public partial class TypeManager {
 		Type [] string_string_string_string = { string_type, string_type, string_type, string_type };
 		string_concat_string_string_string_string = GetMethod (
 			string_type, "Concat", string_string_string_string);
-		Type[] params_string = { TypeManager.LookupTypeDirect ("System.String[]") };
+		Type[] params_string = { GetConstructedType (string_type, "[]") };
 		string_concat_string_dot_dot_dot = GetMethod (
 			string_type, "Concat", params_string);
 
@@ -1335,7 +1306,7 @@ public partial class TypeManager {
 		Type [] object_object_object = { object_type, object_type, object_type };
 		string_concat_object_object_object = GetMethod (
 			string_type, "Concat", object_object_object);
-		Type[] params_object = { TypeManager.LookupTypeDirect ("System.Object[]") };
+		Type[] params_object = { GetConstructedType (object_type, "[]") };
 		string_concat_object_dot_dot_dot = GetMethod (
 			string_type, "Concat", params_object);
 

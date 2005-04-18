@@ -708,13 +708,6 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public static string MakeFQN (string nsn, string name)
-		{
-			if (nsn == "")
-				return name;
-			return String.Concat (nsn, ".", name);
-		}
-
 		EmitContext type_resolve_ec;
 		protected EmitContext TypeResolveEmitContext {
 			get {
@@ -977,7 +970,7 @@ namespace Mono.CSharp {
 						decl = TypeManager.LookupDeclSpace (current_type);
 					t = decl.FindNestedType (name);
 				} else {
-					t = TypeManager.LookupTypeDirect (current_type.FullName + "+" + name);
+					t = TypeManager.GetNestedType (current_type, name);
 				}
 
 				if (t != null && CheckAccessLevel (t))

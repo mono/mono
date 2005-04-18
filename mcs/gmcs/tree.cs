@@ -45,8 +45,6 @@ namespace Mono.CSharp
 			decls = new Hashtable ();
 		}
 
-		DoubleHash decl_ns_name = new DoubleHash ();
-		
 		public void RecordDecl (string name, DeclSpace ds)
 		{
 			DeclSpace other = (DeclSpace) decls [name];
@@ -74,22 +72,7 @@ namespace Mono.CSharp
 
 			ds.RecordDecl ();
 
-			int p = name.LastIndexOf ('.');
-			if (p == -1)
-				decl_ns_name.Insert ("", name, ds);
-			else {
-				decl_ns_name.Insert (name.Substring (0, p), name.Substring (p+1), ds);
-			}
-
 			decls.Add (name, ds);
-		}
-
-		public DeclSpace LookupByNamespace (string ns, string name)
-		{
-			object res;
-			
-			decl_ns_name.Lookup (ns, name, out res);
-			return (DeclSpace) res;
 		}
 		
 		//
