@@ -862,7 +862,6 @@ namespace Mono.CSharp {
 				Location l = f.Location;
 				FieldExpr fe = new FieldExpr (f.FieldBuilder, l);
 				fe.InstanceExpression = instance_expr;
-				fe.IsFieldInitializer = true;
 
 				ExpressionStatement a = new Assign (fe, e, l);
 

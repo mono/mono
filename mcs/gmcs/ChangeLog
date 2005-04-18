@@ -1,3 +1,21 @@
+2005-03-30  Raja R Harinath  <rharinath@novell.com>
+
+	* ecore.cs (MemberExpr): New class.  Convert from interface
+	IMemberExpr.
+	(MemberExpr.ResolveMemberAccess): Refactor and move here from
+	MemberAccess.ResolveMemberAccess.  Tighten up pre-conditions and
+	error checks.
+	(MethodGroupExpr, FieldExpr, PropertyExpr, EventExpr): Update.
+	(MethodGroupExpr.IsExplicitImpl): Remove.
+	(Expression.GetFieldFromEvent): Remove.
+	(SimpleName.MemberStaticCheck): Remove.
+	(SimpleName.DoSimpleNameResolve): Update to changes.
+	* expression.cs (MemberAccess.ResolveMemberAccess): Refactor.
+	(MemberAccess.IdenticalNameAndTypeName): Remove.
+	(MemberAccess.error176): Move to MemberExpr.
+	(MemberAccess.DoResolve): Update to changes.
+	(BaseAccess.DoResolve): Likewise.
+
 2005-03-30  Marek Safar  <marek.safar@seznam.cz>
 
 	C# 2.0 Conditional attribute class implementation
