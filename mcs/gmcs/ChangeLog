@@ -1,3 +1,17 @@
+2005-03-18  Marek Safar  <marek.safar@seznam.cz>
+
+	* modifiers.cs (Modifiers.PROPERTY_CUSTOM): New constant for
+	property accessor modifiers.
+
+	* class.cs (FieldMember.ApplyAttributeBuilder): Don't allow apply
+	fixed buffer attribute (CS1716).
+	(PropertyMethod.HasCustomAccessModifier): When property accessor
+	has custom modifier.
+	
+	* ecore (PropertyExpr.DoResolve): Add CS0271 for custom	accessor
+	modifiers.
+	(PropertyExpr.DoResolveLValue): Add CS0272.
+
 2005-03-17  Miguel de Icaza  <miguel@novell.com>
 
 	* convert.cs: When converting to a pointer, use the proper Conv.U

@@ -5741,6 +5741,14 @@ namespace Mono.CSharp {
 					return;
 				}
 			}
+
+#if NET_2_0
+			if (a.Type == TypeManager.fixed_buffer_attr_type) {
+				Report.Error (1716, Location, "Do not use 'System.Runtime.CompilerServices.FixedBuffer' attribute. Use the 'fixed' field modifier instead");
+				return;
+			}
+#endif
+
 			base.ApplyAttributeBuilder (a, cb);
 		}
 
@@ -6458,12 +6466,20 @@ namespace Mono.CSharp {
 				} else {
 					CheckModifiers (container, ModFlags);
 					ModFlags |= (method.ModFlags & (~Modifiers.Accessibility));
+					ModFlags |= Modifiers.PROPERTY_CUSTOM;
 					flags = Modifiers.MethodAttr (ModFlags);
 					flags |= (method.flags & (~MethodAttributes.MemberAccessMask));
 				}
 
 				return null;
 
+			}
+
+			public bool HasCustomAccessModifier
+			{
+				get {
+					return (ModFlags & Modifiers.PROPERTY_CUSTOM) != 0;
+				}
 			}
 
 			public override Type[] ParameterTypes {

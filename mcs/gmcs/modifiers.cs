@@ -27,6 +27,8 @@ namespace Mono.CSharp {
 		public const int UNSAFE    = 0x2000;
 		public const int TOP       = 0x2000;
 
+		public const int PROPERTY_CUSTOM = 0x4000; // Custom property modifier
+
 		//
 		// We use this internally to flag that the method contains an iterator
 		//
