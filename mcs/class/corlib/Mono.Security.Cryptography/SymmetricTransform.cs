@@ -6,11 +6,7 @@
 //	Sebastien Pouliot <sebastien@ximian.com>
 //
 // Portions (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
-// (C) 2004 Novell (http://www.novell.com)
-//
-
-//
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -69,7 +65,8 @@ namespace Mono.Security.Cryptography {
 			Buffer.BlockCopy (rgbIV, 0, temp, 0, BlockSizeByte);
 			temp2 = new byte [BlockSizeByte];
 			FeedBackByte = (algo.FeedbackSize >> 3);
-			FeedBackIter = (int) BlockSizeByte / FeedBackByte;
+			if (FeedBackByte != 0)
+				FeedBackIter = (int) BlockSizeByte / FeedBackByte;
 			// transform buffers
 			workBuff = new byte [BlockSizeByte];
 			workout =  new byte [BlockSizeByte];
