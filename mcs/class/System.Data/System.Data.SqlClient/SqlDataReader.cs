@@ -963,13 +963,14 @@ namespace System.Data.SqlClient {
 			if ((command.CommandBehavior & CommandBehavior.SingleResult) != 0 && resultsRead > 0)
 				return false;
 
-			schemaTable.Rows.Clear ();
-
-			moreResults = command.Tds.NextResult ();
+                        moreResults = command.Tds.NextResult ();
 			if (!moreResults)
 				command.GetOutputParameters ();
-
-			GetSchemaTable ();
+                        else {
+                                //new schema
+                                schemaTable = ConstructSchemaTable ();
+                                GetSchemaTable ();
+                        }
 
 			rowsRead = 0;
 			resultsRead += 1;
