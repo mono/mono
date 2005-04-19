@@ -1,3 +1,13 @@
+2005-04-05  Abin Thomas	 <projectmonokochi@rediffmail.com>
+	    Anoob V.E  <projectmonokochi@rediffmail.com>
+	    Harilal P.R	 <projectmonokochi@rediffmail.com>
+	    Raja R Harinath  <rharinath@novell.com>
+
+	Fix #73820.
+	* delegate.cs (Define): Emit ParamArrayAttribute for 'params'
+	attribute.
+	* typemanager (GetConstructor): Make public.
+
 2005-04-05  John Luke  <john.luke@gmail.com>
 	    Raja R Harinath  <rharinath@novell.com>
 
