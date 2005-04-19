@@ -1,3 +1,9 @@
+2005-04-19  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* marshal.c: Use CALLVIRT instead of CALL when dispatching
+	a call to a remote domain, since the method may be an
+	interface method in the client domain. This fixes bug #74192.
+
 2005-04-17 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* threadpool.c: recv/send are now performed before going back to managed
