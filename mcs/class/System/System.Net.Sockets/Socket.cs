@@ -78,7 +78,7 @@ namespace System.Net.Sockets
 			bool completed_sync;
 			bool completed;
 			bool blocking;
-			int error;
+			internal int error;
 			SocketOperation operation;
 			object ares;
 
@@ -228,9 +228,8 @@ namespace System.Net.Sockets
 			}
 
 			public int Total {
-				get {
-					return total;
-				}
+				get { return total; }
+				set { total = value; }
 			}
 		}
 
@@ -292,9 +291,29 @@ namespace System.Net.Sockets
 				result.Complete (total);
 			}
 
+			int send_so_far;
+
+			void UpdateSendValues (int last_sent)
+			{
+				if (result.error == 0) {
+					send_so_far += last_sent;
+					result.Offset += last_sent;
+					result.Size -= last_sent;
+				}
+			}
+
 			public void Send ()
 			{
 				// Actual send() done in the runtime
+				if (result.error == 0) {
+					UpdateSendValues (result.Total);
+					if (result.Size > 0) {
+						SocketAsyncCall sac = new SocketAsyncCall (this.Send);
+						sac.BeginInvoke (null, result);
+						return; // Have to finish writing everything. See bug #74475.
+					}
+					result.Total = send_so_far;
+				}
 				result.Complete ();
 			}
 
@@ -307,12 +326,20 @@ namespace System.Net.Sockets
 								    result.Size,
 								    result.SockFlags,
 								    result.EndPoint);
+
+					UpdateSendValues (total);
+					if (result.Size > 0) {
+						SocketAsyncCall sac = new SocketAsyncCall (this.SendTo);
+						sac.BeginInvoke (null, result);
+						return; // Have to finish writing everything. See bug #74475.
+					}
+					result.Total = send_so_far;
 				} catch (Exception e) {
 					result.Complete (e);
 					return;
 				}
 
-				result.Complete (total);
+				result.Complete ();
 			}
 		}
 			

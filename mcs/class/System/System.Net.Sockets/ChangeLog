@@ -1,3 +1,8 @@
+2005-04-18 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Socket.cs: Begin/End Send/SendTo guarantee that all bytes are written
+	or an exception is thrown. Fixes bug #74475.
+
 2005-04-17 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Socket.cs: no need for locking in Worker. The actual read / write for
