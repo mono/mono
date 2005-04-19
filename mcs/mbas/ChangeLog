@@ -1,3 +1,7 @@
+2005-04-12 Satya Sudha K <ksathyasudha@novell.com>
+	* ecore.cs :
+		Fixed conversions from 'object' to double, float, decimal and long
+
 2005-04-18 Manjula GHM <mmanjula@novell.com>
 	* mb-parser.jay:
 		Support Conditional Constant Directives

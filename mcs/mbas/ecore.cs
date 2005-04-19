@@ -2145,6 +2145,50 @@ namespace Mono.MonoBASIC {
 					}
 					break;
 					
+				case TypeCode.Double:
+					switch (src_type) {						
+						case TypeCode.String:				
+							e = RTConversionExpression(ec, "DoubleType.FromString", expr, loc);
+							break;		
+						case TypeCode.Object:				
+							e = RTConversionExpression(ec, "DoubleType.FromObject", expr, loc);
+							break;											
+					}
+					break;	
+					
+				case TypeCode.Single:
+					switch (src_type) {						
+						case TypeCode.String:				
+							e = RTConversionExpression(ec, "SingleType.FromString", expr, loc);
+							break;		
+						case TypeCode.Object:				
+							e = RTConversionExpression(ec, "SingleType.FromObject", expr, loc);
+							break;											
+					}
+					break;	
+					
+				case TypeCode.Decimal:
+					switch (src_type) {						
+						case TypeCode.String:				
+							e = RTConversionExpression(ec, "DecimalType.FromString", expr, loc);
+							break;		
+						case TypeCode.Object:				
+							e = RTConversionExpression(ec, "DecimalType.FromObject", expr, loc);
+							break;											
+					}
+					break;	
+					
+				case TypeCode.Int64:
+				case TypeCode.UInt64:	
+					switch (src_type) {						
+						case TypeCode.String:				
+							e = RTConversionExpression(ec, "LongType.FromString", expr, loc);
+							break;		
+						case TypeCode.Object:				
+							e = RTConversionExpression(ec, "LongType.FromObject", expr, loc);
+							break;											
+					}
+					break;	
 				case TypeCode.Int32:
 				case TypeCode.UInt32:	
 					switch (src_type) {						
