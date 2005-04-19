@@ -1,4 +1,11 @@
-2005-04-07  Zoltan Varga  <vargaz@freemail.hu>
+2005-04-19  Jonathan Pryor  <jonpryor@vt.edu>
+
+	* map.c, map.h: Added XattrFlags values, functions.
+	* sys-xattr.c: Added; <sys/xattr.h> wrapper functions.  Thanks to Daniel
+	  Drake for writing these.
+	* Makefile.am: Add sys-xattr.c to the build.
+
+2005-04-07  Jonathan Pryor  <jonpryor@vt.edu>
 
 	* errno.c: Use the GNU version of strerror_r if _GNU_SOURCE is defined
 	  (otherwise assume existence of XPG variant).  This allows proper

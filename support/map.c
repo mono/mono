@@ -5975,3 +5975,49 @@ int Mono_Posix_ToPollEvents (short x, short *r)
 	return 0;
 }
 
+int Mono_Posix_FromXattrFlags (int x, int *r)
+{
+	*r = 0;
+	if (x == 0)
+		return 0;
+	if ((x & Mono_Posix_XattrFlags_XATTR_AUTO) == Mono_Posix_XattrFlags_XATTR_AUTO)
+#ifdef XATTR_AUTO
+		*r |= XATTR_AUTO;
+#else /* def XATTR_AUTO */
+		{errno = EINVAL; return -1;}
+#endif /* ndef XATTR_AUTO */
+	if ((x & Mono_Posix_XattrFlags_XATTR_CREATE) == Mono_Posix_XattrFlags_XATTR_CREATE)
+#ifdef XATTR_CREATE
+		*r |= XATTR_CREATE;
+#else /* def XATTR_CREATE */
+		{errno = EINVAL; return -1;}
+#endif /* ndef XATTR_CREATE */
+	if ((x & Mono_Posix_XattrFlags_XATTR_REPLACE) == Mono_Posix_XattrFlags_XATTR_REPLACE)
+#ifdef XATTR_REPLACE
+		*r |= XATTR_REPLACE;
+#else /* def XATTR_REPLACE */
+		{errno = EINVAL; return -1;}
+#endif /* ndef XATTR_REPLACE */
+	return 0;
+}
+
+int Mono_Posix_ToXattrFlags (int x, int *r)
+{
+	*r = 0;
+	if (x == 0)
+		return 0;
+#ifdef XATTR_AUTO
+	if ((x & XATTR_AUTO) == XATTR_AUTO)
+		*r |= Mono_Posix_XattrFlags_XATTR_AUTO;
+#endif /* ndef XATTR_AUTO */
+#ifdef XATTR_CREATE
+	if ((x & XATTR_CREATE) == XATTR_CREATE)
+		*r |= Mono_Posix_XattrFlags_XATTR_CREATE;
+#endif /* ndef XATTR_CREATE */
+#ifdef XATTR_REPLACE
+	if ((x & XATTR_REPLACE) == XATTR_REPLACE)
+		*r |= Mono_Posix_XattrFlags_XATTR_REPLACE;
+#endif /* ndef XATTR_REPLACE */
+	return 0;
+}
+
