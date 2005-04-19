@@ -89,6 +89,8 @@ numbers, as they look nicer on the debugging output.
 -29     Use -option instead of --option: to move people to the new
 	command line handling.
    
+-30     This version of the runtime does not support making pinned local variables.  
+        This code may cause errors on a runtime with a moving GC
 
 ----------
 
