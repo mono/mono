@@ -1302,11 +1302,113 @@ namespace Microsoft.VisualBasic.CompilerServices {
 			return typSrc.IsSubclassOf(typParent);
 		}
 
+		internal static Type GetTypeFromTypeCode (TypeCode tc) {
+			switch (tc) {
+			case TypeCode.Boolean:
+				return typeof (bool);
+			case TypeCode.Byte:
+				return typeof (byte);
+			case TypeCode.Char:
+				return typeof (char);
+			case TypeCode.DateTime:
+				return typeof (DateTime);
+			case TypeCode.DBNull:
+				return typeof (System.DBNull);
+			case TypeCode.Decimal:
+				return typeof (decimal);
+			case TypeCode.Double:
+				return typeof (double);
+			case TypeCode.Int16:
+				return typeof (short);
+			case TypeCode.Int32:
+				return typeof (int);
+			case TypeCode.Int64:
+				return typeof (long);
+			case TypeCode.Object:
+				return typeof (object);
+			case TypeCode.SByte:
+				return typeof (sbyte);
+			case TypeCode.Single:
+				return typeof (float);
+			case TypeCode.String:
+				return typeof (string);
+			}
+			return null;
+		}
+
+		internal static bool ImplicitConversionExists (Type FromType, Type ToType) {
+			if (FromType.IsEnum)
+				FromType = GetTypeFromTypeCode (Type.GetTypeCode (FromType));
+			if (ToType.IsEnum)
+				ToType = GetTypeFromTypeCode (Type.GetTypeCode (ToType));
+
+			if (Utils.IsNumericType (FromType) && Utils.IsNumericType (ToType)) 
+				return true;
+
+			if (IsWideningConversion (FromType, ToType)) {
+				return true;
+			}
+
+			if (IsNarrowingConversion (FromType, ToType))
+				return true;
+			return false;
+		}
+
+		internal static bool IsNarrowingConversion (Type FromType, Type ToType) { 
+
+			if (IsWiderNumeric (FromType, ToType)) // Narrowing Conversion
+				return true;
+
+			if (FromType == typeof (object)) // Object can be converted to any type
+				return true;
+			TypeCode src_type = Type.GetTypeCode (FromType);
+			TypeCode dest_type = Type.GetTypeCode (ToType);
+			switch (dest_type) {
+			case TypeCode.String:
+				switch (src_type) {
+				case TypeCode.Byte:
+				case TypeCode.SByte:
+				case TypeCode.Int16:
+				case TypeCode.Int32:
+				case TypeCode.Int64:
+				case TypeCode.Decimal:
+				case TypeCode.Single:
+				case TypeCode.Double:
+				case TypeCode.Char:
+				case TypeCode.Boolean:
+				case TypeCode.DateTime:
+				case TypeCode.Object:
+					return true;
+				}
+				break;
+			case TypeCode.Byte:
+			case TypeCode.SByte:
+			case TypeCode.Int16:
+			case TypeCode.Int32:
+			case TypeCode.Int64:
+			case TypeCode.Decimal:
+			case TypeCode.Single:
+			case TypeCode.Double:
+			case TypeCode.Char:
+			case TypeCode.Boolean:
+			case TypeCode.DateTime:
+				switch (src_type) {
+					case TypeCode.String:
+					case TypeCode.Object :
+						return true;
+				}
+				break;
+			}
+			if (src_type == TypeCode.String && ToType == typeof (char []))
+				return true;
+			return false;
+		}
+
 		internal static bool IsWideningConversion(Type FromType, Type ToType) {
 			TypeCode typeCode1 = Type.GetTypeCode(FromType);
 			TypeCode typeCode2 = Type.GetTypeCode(ToType);
 			
-			if (typeCode1 == typeCode2)
+			if (FromType == ToType)
 				return true;
 
 			if (IsWiderNumeric (ToType, FromType))

@@ -1,3 +1,9 @@
+2005-04-19  Satya Sudha K <ksathyasudha@novell.com>
+	* ObjectType.cs: 
+	* VBBinder.cs  : 
+			- Support for ParamArray args in late binding
+			- Some fixes to overload resolution part (in the previous checkin) 
+
 2005-04-13  Satya Sudha K <ksathyasudha@novell.com>
 	* StringType.cs: Removed a warning
 	* VBBinder.cs 

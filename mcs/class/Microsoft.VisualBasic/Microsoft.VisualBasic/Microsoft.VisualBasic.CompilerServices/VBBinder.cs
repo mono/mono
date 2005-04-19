@@ -3,6 +3,7 @@
 //
 // Author:
 //   Marco Ridoni    (marco.ridoni@virgilio.it)
+//   Satya Sudha K   (ksathyasudha@novell.com)
 //
 // (C) 2003 Marco Ridoni
 //
@@ -31,6 +32,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 using System;
+using System.Collections;
 using System.Reflection;
 using System.Globalization;
 using Microsoft.VisualBasic;
@@ -78,6 +80,7 @@ namespace Microsoft.VisualBasic.CompilerServices
 		private bool[] byRefFlags;
 		private Type objectType;
 		private string bindToName;
+		private bool usesParamArray;
 
 		public override MethodBase BindToMethod(
 			BindingFlags bindingAttr,
@@ -95,33 +98,63 @@ namespace Microsoft.VisualBasic.CompilerServices
 			args.CopyTo(arguments, 0);
 			binderState.args = arguments;
 			state = binderState;
+
 			MethodBase mbase = null;
-			if(match == null)
+			Type applicable_type = null;
+
+			if(match == null || match.Length == 0)
 				throw new ArgumentNullException();
+
+			/*
+				// Handle delegates
+				if (match [0].Name == "Invoke") {
+					// TODO
+				}
+			*/
+
+			ArrayList candidates = new ArrayList ();
+			for (int index = 0; index < match.Length; index ++) {
+				if (IsApplicable (match [index], args))
+					candidates.Add (match [index]);
+			}
+
+			MemberInfo[] tempMatchList = GetMostDerivedMembers (candidates);
+			MethodBase[] filteredMatchList = new MethodBase [tempMatchList.Length];
+			for (int index = 0; index < tempMatchList.Length; index ++)
+				filteredMatchList [index] = (MethodBase) tempMatchList [index];
+
 				
 			ConversionType bestMatch = ConversionType.None;
 			int numWideningConversions = 0, numNarrowingConversions = 0;
-			for(int x = 0; x < match.Length; x++)
+			ArrayList narrowingConv = new ArrayList ();
+			ArrayList wideningConv = new ArrayList ();
+			for(int x = 0; x < filteredMatchList.Length; x++)
 			{
-				ParameterInfo[] parameters = match[x].GetParameters();
+				ParameterInfo[] parameters = filteredMatchList [x].GetParameters();
 				ConversionType ctype = GetConversionType (parameters, args);
+				if (ctype == ConversionType.None)
+					continue;
+				if (ctype == ConversionType.Widening)
+					wideningConv.Add (filteredMatchList[x]);
+				if (ctype == ConversionType.Narrowing)
+					narrowingConv.Add (filteredMatchList[x]);
 				if (bestMatch == ConversionType.None || ctype < bestMatch) {
 					bestMatch = ctype;
 					if (ctype == ConversionType.Narrowing)
 						numNarrowingConversions ++;
 					if (ctype == ConversionType.Widening)
 						numWideningConversions ++;
-					mbase = match [x];
+					mbase = filteredMatchList [x];
 				} else if (bestMatch == ctype) {
 					if (bestMatch == ConversionType.Widening || bestMatch == ConversionType.Exact) {
 						// Got a widening conversion before also.
 						// Find the best among the two
-						int closestMatch = GetClosestMatch (mbase, match [x]);
+						int closestMatch = GetClosestMatch (mbase, filteredMatchList [x], args.Length);
 						if (closestMatch == -1) {
 							numWideningConversions ++;
 						}
 						else if (closestMatch == 1)
-							mbase = match [x];
+							mbase = filteredMatchList [x];
 					} else {
 						numNarrowingConversions ++;
 					}
@@ -137,26 +170,68 @@ namespace Microsoft.VisualBasic.CompilerServices
 				throw new AmbiguousMatchException ("No overloaded '" + this.objectType + "." + this.bindToName + "' can be called without a widening conversion");
 			}
 
-			if (mbase != null) {
-				int count = 0;
-				ParameterInfo[] parameters = mbase.GetParameters ();
-				for(int y = 0; y < args.Length; y++)
-				{
-					if((args [y] = ObjectType.CTypeHelper (args[y], parameters[y].ParameterType)) != null)
-						count++;
-					else
-						break;
-				}
-				if (count != args.Length)
-					return null;
+
+			if (mbase == null)
+				return null;
+
+			int count = 0;
+			ParameterInfo[] pars = mbase.GetParameters ();
+			if (pars.Length == 0)
+				return mbase;
+			int numFixedParams = pars.Length;
+			if (UsesParamArray (mbase))
+				numFixedParams --;
+
+			for(int y = 0; y < numFixedParams; y++)
+			{
+				if((args [y] = ObjectType.CTypeHelper (args[y], pars[y].ParameterType)) != null)
+					count++;
+				else
+					break;
 			}
 
-			ParameterInfo [] pars = mbase.GetParameters ();
-			int index = 0;
-			if (byRefFlags == null || pars.Length == 0 || !ByRefParamsExist (pars)) {
+
+			if (UsesParamArray (mbase)) {
+				int index = 0;
+				Type paramArrayType = pars [pars.GetUpperBound (0)].ParameterType;
+				Array paramArgs = Array.CreateInstance (paramArrayType.GetElementType (), args.Length - numFixedParams);
+				bool isArgArray = false;
+				if (numFixedParams + 1 == args.Length) {
+					if (args [numFixedParams].GetType().IsArray) {
+						isArgArray = true;
+						count ++;
+					}
+				}
+
+				if (!isArgArray) {
+					for (int y = numFixedParams; y < args.Length; y ++) {
+						Type dest_type = paramArrayType;
+						if (!args [y].GetType ().IsArray) {
+							dest_type = paramArrayType.GetElementType ();
+						}
+						if((args [y] = ObjectType.CTypeHelper (args[y], dest_type)) != null) {
+							paramArgs.SetValue (args [y], index);
+						} else
+							break;
+						count++;
+						index ++;
+					}
+
+					object[] newArgs = new object [pars.Length];
+					Array.Copy (args, newArgs, numFixedParams);
+					newArgs [newArgs.GetUpperBound (0)] = paramArgs;
+					args = newArgs;
+				}
+			}
+
+			if (count != arguments.Length)
+				return null;
+
+			if (byRefFlags == null || pars.Length == 0) {
 				return mbase;
 			}
-			for (index = 0; index < pars.Length; index ++) {
+
+			for (int index = 0; index < pars.Length; index ++) {
 				ParameterInfo p = pars [index];
 				if (p.ParameterType.IsByRef) {
 					if (byRefFlags [index] != false)
@@ -164,10 +239,11 @@ namespace Microsoft.VisualBasic.CompilerServices
 				} else
 					byRefFlags [index] = false;
 			}
+
 			return mbase;
 		}
 
-		private int GetClosestMatch (MethodBase bestMatch, MethodBase candidate) {
+		private int GetClosestMatch (MethodBase bestMatch, MethodBase candidate, int argCount) {
 			// flag to indicate which one has been better so far
 			// -1 : none is better than other
 			// 0 : bestMatch has been better so far
@@ -176,11 +252,35 @@ namespace Microsoft.VisualBasic.CompilerServices
 			ParameterInfo[] bestMatchParams = bestMatch.GetParameters ();
 			ParameterInfo[] candidateParams = candidate.GetParameters ();
 			int numParams = Math.Min (bestMatchParams.Length, candidateParams.Length);
-			for (int i = 0; i < numParams; i ++) {
-				if (bestMatchParams [i].ParameterType == candidateParams [i].ParameterType)
+			int paramArrayIndex1 = -1, paramArrayIndex2 = -1;
+			if (UsesParamArray (bestMatch)) {
+				paramArrayIndex1 = (bestMatchParams.Length > 0) ? (bestMatchParams.Length - 1) : -1;
+			}
+
+			if (UsesParamArray (candidate)) {
+				paramArrayIndex2 = (candidateParams.Length > 0) ? (candidateParams.Length - 1) : -1;
+			}
+
+			for (int i = 0; i < argCount; i ++) {
+				int index1 = i, index2 = i;
+				Type bestMatchParamsType = null;
+				Type candParamType = null;
+				if (i >= paramArrayIndex1 && paramArrayIndex1 != -1) {
+					index1 = paramArrayIndex1;
+					bestMatchParamsType = bestMatchParams [index1].ParameterType.GetElementType ();
+				} else 
+					bestMatchParamsType = bestMatchParams [index1].ParameterType;
+				if (i >= paramArrayIndex2 && paramArrayIndex2 != -1) {
+					index2 = paramArrayIndex2;
+					candParamType = candidateParams [index2].ParameterType.GetElementType ();
+				} else
+					candParamType = candidateParams [index2].ParameterType;
+
+
+				if (bestMatchParamsType == candParamType)
 					continue;
 
-				if (ObjectType.IsWideningConversion (bestMatchParams [i].ParameterType, candidateParams [i].ParameterType)) {
+				if (ObjectType.IsWideningConversion (bestMatchParamsType, candParamType)) {
 					// ith param of candidate is wider than that of bestMatch
 					if (isBetter == -2) {
 						isBetter = 0;
@@ -191,7 +291,7 @@ namespace Microsoft.VisualBasic.CompilerServices
 					}
 					isBetter = 0;
 					
-				} else if (ObjectType.IsWideningConversion (candidateParams [i].ParameterType, bestMatchParams [i].ParameterType)) {
+				} else if (ObjectType.IsWideningConversion (candParamType, bestMatchParamsType)) {
 					// ith param of bestMatch is wider than that of candidate
 					if (isBetter == -2) {
 						isBetter = 1;
@@ -203,13 +303,57 @@ namespace Microsoft.VisualBasic.CompilerServices
 					isBetter = 1;
 				}
 			}
+
+			if (isBetter == -2) {
+				// corresponding parameters of both methods have same types
+				// the method having max no of fixed parameters is better
+				if (paramArrayIndex1 == -1 && paramArrayIndex2 != -1)
+						return 0;
+				if (paramArrayIndex1 != -1 && paramArrayIndex2 == -1)
+						return 1;
+				return ((paramArrayIndex1 < paramArrayIndex2) ? 1 : 0);
+			}
+
 			return isBetter;
+		}
+
+		internal static bool UsesParamArray (MethodBase mb) {
+			ParameterInfo[] pars = mb.GetParameters ();
+			if (pars.Length == 0)
+				return false;
+			ParameterInfo lastParam = pars [pars.GetUpperBound (0)];
+			object[] attrs = lastParam.GetCustomAttributes (typeof (System.ParamArrayAttribute), false);
+			if (attrs == null || attrs.Length == 0)
+				return false;
+			return true;
 		}
 
 		private ConversionType GetConversionType (ParameterInfo[] parameters, object[] args) {
 			int numParams = parameters.Length;
 			int numArgs = args.Length;
-			int minParams = Math.Min (numParams, numArgs);
+			int paramArrayIndex = -1;
+			int minParams = parameters.Length;
+			if (numParams == 0) {
+				if (numArgs == 0)
+					return ConversionType.Exact;
+				else
+					return ConversionType.None;
+			}
+
+			ParameterInfo lastParam = parameters [parameters.GetUpperBound (0)];
+			object[] attrs = lastParam.GetCustomAttributes (typeof (System.ParamArrayAttribute), false);
+			bool usesParamArray = false;
+			if (attrs != null && attrs.Length > 0) {
+				usesParamArray = true;
+				paramArrayIndex = parameters.GetUpperBound (0) - 1;
+				minParams --;
+			}
+			if (numArgs < minParams)
+				return ConversionType.None;
+			if (! usesParamArray && numArgs != numParams) {
+				return ConversionType.None;
+			}
+
 			ConversionType ctype = ConversionType.None;
 			for (int index = 0; index < minParams; index ++) {
 				ConversionType currentCType = ConversionType.None;
@@ -227,6 +371,36 @@ namespace Microsoft.VisualBasic.CompilerServices
 				} else 
 					ctype = ConversionType.Narrowing;
 			}
+
+			if (usesParamArray) {
+				Type paramArrayType = lastParam.ParameterType;
+				if (paramArrayType.IsByRef)
+					paramArrayType = paramArrayType.GetElementType ();
+
+				for (int index = minParams; index < numArgs; index ++) {
+					ConversionType currentCType = ConversionType.None;
+					Type argType = args [index].GetType ();
+					if (argType.IsArray) {
+						if (argType.GetElementType () == paramArrayType.GetElementType ())
+							currentCType = ConversionType.Exact;
+						else if (ObjectType.IsWideningConversion (argType, paramArrayType))
+							currentCType = ConversionType.Widening;
+						else 
+							currentCType = ConversionType.Narrowing;
+					} else {
+						Type elementType = paramArrayType.GetElementType ();
+						if (argType == elementType)
+							currentCType = ConversionType.Exact;
+						else if (ObjectType.IsWideningConversion (argType, elementType))
+							currentCType = ConversionType.Widening;
+						else 
+							currentCType = ConversionType.Narrowing;
+					}
+					if (currentCType == ConversionType.Narrowing || ctype < currentCType)
+						ctype = currentCType;
+				}
+			}
+
 			return ctype;
 		}
 
@@ -352,24 +526,27 @@ namespace Microsoft.VisualBasic.CompilerServices
 			}
 
 			MemberInfo[] memberinfo = objReflect.GetMember (name, flags);
-			MethodBase[] methodbase = GetMostDerivedMembers (memberinfo);
-			if (methodbase == null || methodbase.Length == 0) {
+			if (memberinfo == null || memberinfo.Length == 0) {
 				throw new MissingMemberException ("No member '" + name + "' defined for type '" + objType + "'");
 			}
-
+			
 			object objState = null;
-			MethodBase mbase = BindToMethod (flags, methodbase, ref args, modifiers, culture, paramNames, out objState);
-			if (mbase == null) {
-				throw new MissingMemberException ("No member '" + name + "' defined for type '" + objType + "' which takes the given set of arguments");
+			object retVal = null;
+			if (memberinfo [0] is MethodBase) {
+				MethodBase[] methodbase = new MethodBase [memberinfo.Length];
+				for (int index = 0; index < memberinfo.Length; index ++)
+					methodbase [index] = (MethodBase) memberinfo [index];
+				MethodBase mbase = BindToMethod (flags, methodbase, ref args, modifiers, culture, paramNames, out objState);
+				if (mbase == null) {
+					throw new MissingMemberException ("No member '" + name + "' defined for type '" + objType + "' which takes the given set of arguments");
+				}
+				MethodInfo mi = (MethodInfo) mbase;
+				retVal =  mi.Invoke (target, args);
 			}
 
 			if (objState != null && ((BinderState)objState).byRefFlags != null) {
 				this.byRefFlags = ((BinderState)objState).byRefFlags; 
 			}
-
-			MethodInfo mi = (MethodInfo) mbase;
-			object retVal =  mi.Invoke (target, args);
-
 
 			return retVal;
 		}
@@ -381,15 +558,68 @@ namespace Microsoft.VisualBasic.CompilerServices
 			}
 			return false;
 		}
-		private static MethodBase [] GetMostDerivedMembers (MemberInfo[] memberinfo) {
+
+		private bool IsApplicable (MethodBase mb, object [] args) {
+			ParameterInfo [] parameters = mb.GetParameters ();
+			int numFixedParams = parameters.Length;
+			int argCount = 0;
+			if (args != null)
+				argCount = args.Length;
+
+			if (numFixedParams == 0)
+				return (argCount == 0);
+
+			ParameterInfo lastParam =  parameters [parameters.GetUpperBound (0)];
+			bool usesParamArray = UsesParamArray (mb);
+			if (usesParamArray)
+				numFixedParams --;
+			else if (numFixedParams != argCount)
+				return false;
+
+			if (argCount < numFixedParams)
+				return false;
+			if (argCount == 0 && numFixedParams == 0)
+				return true;
+ 
+			for (int index = 0; index < numFixedParams; index ++) {
+				Type argType = args [index].GetType ();
+				Type paramType = parameters [index].ParameterType;
+				if (paramType.IsByRef)
+					paramType = paramType.GetElementType ();
+				if (!ObjectType.ImplicitConversionExists (argType, paramType))
+					return false;
+			}
+
+			if (usesParamArray) {
+				Type paramArrayType = lastParam.ParameterType;
+
+				for (int index = numFixedParams; index < argCount; index ++) {
+					Type argType = args [index].GetType ();
+					if (!argType.IsArray) {
+						Type elementType = paramArrayType.GetElementType ();
+						if (!ObjectType.ImplicitConversionExists (argType, elementType))
+							return false;
+					} else {
+						Type elementType = paramArrayType.GetElementType ();
+						argType = argType.GetElementType ();
+						if (!elementType.IsAssignableFrom (argType))
+							return false;
+					}
+				}
+			}
+			return true;
+		}
+
+		private static MemberInfo [] GetMostDerivedMembers (ArrayList memberinfo) {
 			int i = 0;
 			int numElementsEliminated = 0;
-			for (i = 0; i < memberinfo.Length; i++) {
-				MemberInfo mi = memberinfo [i];
-				for (int j = i + 1; j < memberinfo.Length; j++) {
+			for (i = 0; i < memberinfo.Count; i++) {
+				MemberInfo mi = (MemberInfo) memberinfo [i];
+				for (int j = i + 1; j < memberinfo.Count; j++) {
 					bool eliminateBaseMembers = false;
+					MemberInfo thisMember = (MemberInfo) memberinfo [j];
 					Type t1 = mi.DeclaringType;
-					Type t2 = memberinfo [j].DeclaringType;
+					Type t2 = thisMember.DeclaringType;
 					if (mi.MemberType == MemberTypes.Field)
 						eliminateBaseMembers = true;
 					if (mi.MemberType == MemberTypes.Method) {
@@ -415,11 +645,11 @@ namespace Microsoft.VisualBasic.CompilerServices
 				}
 			}
 
-			MethodBase [] newMemberList = new MethodBase [memberinfo.Length - numElementsEliminated];
+			MemberInfo [] newMemberList = new MemberInfo [memberinfo.Count - numElementsEliminated];
 			int newIndex = 0;
-			for (int index = 0; index < memberinfo.Length; index ++) {
+			for (int index = 0; index < memberinfo.Count; index ++) {
 				if (memberinfo [index] != null) {
-					newMemberList [newIndex ++] = (MethodBase) memberinfo [index];
+					newMemberList [newIndex ++] = (MemberInfo) memberinfo [index];
 				}
 			}
 			return newMemberList;
