@@ -301,23 +301,23 @@ namespace Mono.CSharp {
 
 		public string GetSignatureForError ()
 		{
-			string typeName;
+			string type_name;
 			if (parameter_type != null)
-				typeName = TypeManager.CSharpName (parameter_type);
+				type_name = TypeManager.CSharpName (parameter_type);
 			else if (TypeName.Type != null)
-				typeName = TypeManager.CSharpName (TypeName.Type);
+				type_name = TypeManager.CSharpName (TypeName.Type);
 			else
-				typeName = TypeName.ToString ();
+				type_name = TypeName.ToString ();
 
 			switch (ModFlags & unchecked (~Modifier.ISBYREF)) {
 				case Modifier.OUT:
-					return "out " + typeName;
+					return "out " + type_name;
 				case Modifier.PARAMS:
-					return "params " + typeName;
+					return "params " + type_name;
 				case Modifier.REF:
-					return "ref " + typeName;
+					return "ref " + type_name;
 			}
-			return typeName;
+			return type_name;
 		}
 
 		public void DefineParameter (EmitContext ec, MethodBuilder mb, ConstructorBuilder cb, int index, Location loc)
