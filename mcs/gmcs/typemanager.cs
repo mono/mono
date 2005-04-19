@@ -1656,8 +1656,8 @@ public partial class TypeManager {
 		if (t.IsPointer)
 			return true;
 
-		if (!IsValueType (t))
-			return false;
+		if (t.IsArray)
+			return IsUnmanagedType (t.GetElementType ());
 
 		if (t is TypeBuilder){
 			TypeContainer tc = LookupTypeContainer (t);
