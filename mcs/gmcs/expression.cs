@@ -674,10 +674,6 @@ namespace Mono.CSharp {
 			eclass = ExprClass.Variable;
 			loc = l;
 		}
-
-		void LoadExprValue (EmitContext ec)
-		{
-		}
 		
 		public override void Emit (EmitContext ec)
 		{
@@ -810,14 +806,6 @@ namespace Mono.CSharp {
 				"++" : "--";
 		}
 		
-		void Error23 (Type t)
-		{
-			Error (
-				23, "Operator " + OperName (mode) + 
-				" cannot be applied to operand of type `" +
-				TypeManager.CSharpName (t) + "'");
-		}
-
 		/// <summary>
 		///   Returns whether an object of type `t' can be incremented
 		///   or decremented with add/sub (ie, basically whether we can
@@ -6432,53 +6420,6 @@ namespace Mono.CSharp {
 
 				return ret;
 			}
-		}
-
-		//
-		// Converts `source' to an int, uint, long or ulong.
-		//
-		Expression ExpressionToArrayArgument (EmitContext ec, Expression source)
-		{
-			Expression target;
-			
-			bool old_checked = ec.CheckState;
-			ec.CheckState = true;
-			
-			target = Convert.ImplicitConversion (ec, source, TypeManager.int32_type, loc);
-			if (target == null){
-				target = Convert.ImplicitConversion (ec, source, TypeManager.uint32_type, loc);
-				if (target == null){
-					target = Convert.ImplicitConversion (ec, source, TypeManager.int64_type, loc);
-					if (target == null){
-						target = Convert.ImplicitConversion (ec, source, TypeManager.uint64_type, loc);
-						if (target == null)
-							Convert.Error_CannotImplicitConversion (loc, source.Type, TypeManager.int32_type);
-					}
-				}
-			} 
-			ec.CheckState = old_checked;
-
-			//
-			// Only positive constants are allowed at compile time
-			//
-			if (target is Constant){
-				if (target is IntConstant){
-					if (((IntConstant) target).Value < 0){
-						Expression.Error_NegativeArrayIndex (loc);
-						return null;
-					}
-				}
-
-				if (target is LongConstant){
-					if (((LongConstant) target).Value < 0){
-						Expression.Error_NegativeArrayIndex (loc);
-						return null;
-					}
-				}
-				
-			}
-
-			return target;
 		}
 
 		//

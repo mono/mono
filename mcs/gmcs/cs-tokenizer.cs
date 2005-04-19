@@ -815,14 +815,7 @@ namespace Mono.CSharp
 		{
 			return (e >= '0' && e <= '9') || (e >= 'A' && e <= 'F') || (e >= 'a' && e <= 'f');
 		}
-		
-		void hex_digits (int c)
-		{
-			if (c != -1)
-				number_builder [number_pos++] = (char) c;
-			
-		}
-		
+				
 		int real_type_suffix (int c)
 		{
 			int t;

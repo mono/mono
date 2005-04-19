@@ -4416,7 +4416,7 @@ continue_statement
 goto_statement
 	: GOTO IDENTIFIER SEMICOLON 
 	  {
-		$$ = new Goto (current_block, (string) $2, lexer.Location);
+		$$ = new Goto ((string) $2, lexer.Location);
 	  }
 	| GOTO CASE constant_expression SEMICOLON
 	  {
@@ -5110,11 +5110,6 @@ void CheckBinaryOperator (Operator.OpType op)
 void syntax_error (Location l, string msg)
 {
 	Report.Error (1003, l, "Syntax error, " + msg);
-}
-
-void output (string s)
-{
-	Console.WriteLine (s);
 }
 
 void note (string s)

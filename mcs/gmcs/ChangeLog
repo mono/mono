@@ -1,3 +1,24 @@
+2005-04-04  Marek Safar  <marek.safar@seznam.cz>
+
+	* attribute.cs (Attribute.GetValue): Removed unused.
+	
+	* codegen.cs (CodeGen.TrimExt): Removed unused.
+	
+	* cs-parser.jay (output): Removed unused.
+	
+	* cs-tokenizer.cs (hex_digits): Removed unused.
+	
+	* enum.cs (MapToInternalType, GetEnumeratorName): Removed unused.
+	
+	* expression.cs (Indirection.LoadExprValue): Removed unused.
+	(ArrayCreation.ExpressionToArrayArgument): Removed unused.
+	
+	* iterators.cs (Iterator.param_types): Removed unused.
+	
+	* statement.cs (Goto.block): Removed unused.
+	(ToplevelBlock.did): Removed unused.
+	(Switch.ResolveConstantSwitch): Removed unused.
+
 2005-04-01  Ben Maurer  <bmaurer@ximian.com>
 
 	* rootcontext.cs: Allow mcs to bootstrap with the compilation

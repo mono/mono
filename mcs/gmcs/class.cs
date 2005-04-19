@@ -4078,7 +4078,7 @@ namespace Mono.CSharp {
 			//
 			if ((ModFlags & Modifiers.METHOD_YIELDS) != 0){
 				Iterator iterator = new Iterator (
-					Parent, Name, MemberType, ParameterTypes,
+					Parent, Name, MemberType,
 					ParameterInfo, ModFlags, block, Location);
 
 				if (!iterator.DefineIterator ())
@@ -6854,7 +6854,7 @@ namespace Mono.CSharp {
 				if ((ModFlags & Modifiers.METHOD_YIELDS) != 0){
 					Iterator iterator = new Iterator (
 						Parent, "get", MemberType,
-						TypeManager.NoTypes, Get.ParameterInfo,
+						Get.ParameterInfo,
 						ModFlags, Get.Block, Location);
 					
 					if (!iterator.DefineIterator ())
