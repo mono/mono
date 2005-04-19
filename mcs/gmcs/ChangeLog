@@ -1,3 +1,10 @@
+2005-04-13  Raja R Harinath  <rharinath@novell.com>
+
+	Fix #74528.
+	* ecore.cs (PropertyExpr.InstanceResolve): Handle a case of
+	IdenticalNameAndTypeName here.
+	(EventExpr.InstanceResolve): Likewise.
+
 2005-04-13  Marek Safar  <marek.safar@seznam.cz>
 
 	C# 2.0 DefaultCharSetAttribute implementation
