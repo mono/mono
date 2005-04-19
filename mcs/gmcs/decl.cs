@@ -1765,18 +1765,22 @@ namespace Mono.CSharp {
 					method_hash.Add (name, list);
 				}
 
-				if (member.IsVirtual &&
-				    (member.Attributes & MethodAttributes.NewSlot) == 0) {
-					MethodInfo base_method = ((MethodInfo) member).GetBaseDefinition ();
+				MethodInfo curr = (MethodInfo) member;
+				while (curr.IsVirtual && (curr.Attributes & MethodAttributes.NewSlot) == 0) {
+					MethodInfo base_method = curr.GetBaseDefinition ();
 
-					if (base_method == member) {
+					if (base_method == curr) {
 						//
 						// Both mcs and CSC 1.1 seem to emit a somewhat broken
 						// ...Invoke () function for delegates: it's missing a 'newslot'.
 						// CSC 2.0 emits a 'newslot' for a delegate's Invoke.
 						//
-						if (member.Name != "Invoke" ||
-						    !TypeManager.IsDelegateType (type)) {
+						// Also, CSC 1.1 appears to emit 'Finalize' without a newslot.
+						//
+						if ((member.Name != "Invoke" ||
+						     !TypeManager.IsDelegateType (type)) &&
+						    (member.Name != "Finalize" ||
+						     type != TypeManager.object_type)) {
 							Report.SymbolRelatedToPreviousError (base_method);
 							Report.Warning (-28, 
 								"The method '{0}' is marked 'override'," + 
@@ -1784,33 +1788,13 @@ namespace Mono.CSharp {
 								" it may be ignored during overload resolution",
 								TypeManager.CSharpSignature (base_method));
 						}
-						goto skip;
+
+						break;
 					}
-
-					for (;;) {
-						list.Add (new CacheEntry (null, base_method, MemberTypes.Method, bf));
-						if ((base_method.Attributes & MethodAttributes.NewSlot) != 0)
-							break;
-
-						//
-						// Shouldn't get here.  Mono appears to be buggy.
-						//
-						MethodInfo new_base_method = base_method.GetBaseDefinition ();
-						if (new_base_method == base_method) {
-							Report.SymbolRelatedToPreviousError (base_method);
-							Report.Warning (-28, 
-								"The method '{0}' is marked 'override'," +
-								" but doesn't appear to overrided any virtual or abstract method:" + 
-								" it may be ignored during overload resolution",
-								TypeManager.CSharpSignature (base_method));
-							break;
-						}
-						base_method = new_base_method;
-					}
-
-
+					
+					list.Add (new CacheEntry (null, base_method, MemberTypes.Method, bf));
+					curr = base_method;
 				}
-			skip:
 
 				// Unfortunately, the elements returned by Type.GetMethods() aren't
 				// sorted so we need to do this check for every member.

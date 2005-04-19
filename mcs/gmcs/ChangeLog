@@ -1,5 +1,8 @@
 2005-04-13  Raja R Harinath  <rharinath@novell.com>
 
+	* decl.cs (MemberCache.AddMethods): Don't warn if
+	System.Object.Finalize has buggy MethodAttributes.
+
 	* typemanager.cs (IsUnmanagedType): Restore !IsValueType check
 	removed below.
 
