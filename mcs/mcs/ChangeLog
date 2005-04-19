@@ -1,3 +1,12 @@
+2005-04-19  Marek Safar  <marek.safar@seznam.cz>
+
+	* attribute.cs: Removed debug output.
+
+	* decl.cs (MemberCache.AddMethods): Fixed Finalize ignoring.
+	
+	* driver.cs (Driver.parse): Synchronize parser ErrorOutput with
+	Report.Stderr.
+	
 2005-04-18  Raja R Harinath  <rharinath@novell.com>
 
 	Fix #74481.

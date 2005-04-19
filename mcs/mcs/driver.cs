@@ -188,6 +188,7 @@ namespace Mono.CSharp
 			SeekableStreamReader reader = new SeekableStreamReader (input, encoding, using_default_encoder);
 				
 			parser = new CSharpParser (reader, file, defines);
+			parser.ErrorOutput = Report.Stderr;
 			try {
 				parser.parse ();
 			} catch (Exception ex) {

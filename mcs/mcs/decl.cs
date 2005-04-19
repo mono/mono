@@ -1436,18 +1436,16 @@ namespace Mono.CSharp {
 						//
 						// Also, CSC 1.1 appears to emit 'Finalize' without a newslot.
 						//
-						if ((member.Name != "Invoke" ||
-						     !type.IsSubclassOf (TypeManager.multicast_delegate_type)) &&
-						    (member.Name != "Finalize" ||
-						     type != TypeManager.object_type)) {
-							Report.SymbolRelatedToPreviousError (base_method);
-							Report.Warning (-28, 
+						if ((member.Name == "Invoke" && type.IsSubclassOf (TypeManager.multicast_delegate_type)) ||
+						    (member.Name == "Finalize" && member.GetParameters().Length == 0))
+							break;
+
+						Report.SymbolRelatedToPreviousError (base_method);
+						Report.Warning (-28, 
 								"The method '{0}' is marked 'override'," + 
 								" but doesn't appear to override any virtual or abstract method:" + 
 								" it may be ignored during overload resolution",
 								TypeManager.CSharpSignature (base_method));
-						}
-
 						break;
 					}
 					
