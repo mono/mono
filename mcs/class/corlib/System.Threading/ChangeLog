@@ -1,3 +1,7 @@
+2005-04-19  Zoltan Varga  <vargaz@freemail.hu>
+
+	* Thread.cs: Add some unused fields.
+
 2005-04-07 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* ThreadPool.cs: BindHandle does nothing now.

@@ -85,6 +85,18 @@ namespace System.Threading
 		private int serialized_culture_info_len;
 		private IntPtr serialized_ui_culture_info;
 		private int serialized_ui_culture_info_len;
+		/* 
+		 * These fields are used to avoid having to increment corlib versions
+		 * when a new field is added to the unmanaged MonoThread structure.
+		 */
+		private IntPtr unused1;
+		private IntPtr unused2;
+		private IntPtr unused3;
+		private IntPtr unused4;
+		private IntPtr unused5;
+		private IntPtr unused6;
+		private IntPtr unused7;
+		private IntPtr unused8;
 		#endregion
 
 		[ThreadStatic] 
