@@ -1,3 +1,10 @@
+2005-04-08  Alp Toker  <alp@atoker.com>
+
+	* pending.cs: The fix to #58413 failed to compile methods implementing
+	interfaces with/without params modifiers and vice versa, even though
+	params modifiers aren't part of the signature. Make the modifier check
+	less strict as in csc.
+
 2005-04-07  Abin Thomas  <projectmonokochi@rediffmail.com>
 	    Anoob V E  <projectmonokochi@rediffmail.com>
 	    Harilal P R  <projectmonokochi@rediffmail.com>
