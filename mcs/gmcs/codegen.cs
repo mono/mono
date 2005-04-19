@@ -1385,7 +1385,6 @@ namespace Mono.CSharp {
 		/// </summary>
 		public void ResolveAttributes ()
 		{
-#if NET_2_0
 			Attribute a = ResolveAttribute (TypeManager.default_charset_type);
 			if (a != null) {
 				DefaultCharSet = a.GetCharSetValue ();
@@ -1404,7 +1403,6 @@ namespace Mono.CSharp {
 						break;
 				}
 			}
-#endif
 		}
 
 		public override string[] ValidAttributeTargets {

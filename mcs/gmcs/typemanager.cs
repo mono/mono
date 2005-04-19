@@ -1655,11 +1655,13 @@ public partial class TypeManager {
 		if (IsBuiltinOrEnum (t))
 			return true;
 
+		// Someone did the work of checking if the ElementType of t is unmanaged.  Let's not repeat it.
 		if (t.IsPointer)
 			return true;
 
+		// Arrays are disallowed, even if we mark them with [MarshalAs(UnmanagedType.ByValArray, ...)]
 		if (t.IsArray)
-			return IsUnmanagedType (t.GetElementType ());
+			return false;
 
 		if (!IsValueType (t))
 			return false;
@@ -1674,17 +1676,22 @@ public partial class TypeManager {
 					continue;
 				if (f.MemberType == null)
 					continue;
-				if (!IsUnmanagedType (f.MemberType))
+				if (!IsUnmanagedType (f.MemberType)){
+					Report.SymbolRelatedToPreviousError (f.Location, CSharpName (t) + "." + f.Name);
 					return false;
+				}
 			}
 			return true;
 		}
 		
 		FieldInfo [] fields = t.GetFields (BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
 
-		foreach (FieldInfo f in fields)
-			if (!IsUnmanagedType (f.FieldType))
+		foreach (FieldInfo f in fields){
+			if (!IsUnmanagedType (f.FieldType)){
+				Report.SymbolRelatedToPreviousError (f);
 				return false;
+			}
+		}
 
 		return true;
 	}
@@ -2455,10 +2462,6 @@ public partial class TypeManager {
 	public static bool VerifyUnManaged (Type t, Location loc)
 	{
 		if (IsUnmanagedType (t))
-			return true;
-
-		// We need this explicit check here to make it work when compiling corlib.
-		if (!RootContext.StdLib && (t == TypeManager.decimal_type))
 			return true;
 
 		Report.Error (

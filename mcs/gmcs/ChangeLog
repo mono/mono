@@ -1,3 +1,15 @@
+2005-04-15  Raja R Harinath  <rharinath@novell.com>
+
+	Fix cs0208-7.cs and cs0208-8.cs.
+	* typemanager.cs (IsUnmanagedType): Arrays are not allowed
+	(cf. ECMA standard, behaviour of CSC 1.1 and CSC 2.0).  Improve
+	error reporting to point out the reason a struct is not unmanaged.
+
+2005-04-13  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* doc.cs : In FindDocumentedType(), avoid TypeExpr.ResolveType() and 
+	  just use TypeExpr.Type. This fixes bug #74595 when merged to gmcs.
+
 2005-04-13  Raja R Harinath  <rharinath@novell.com>
 
 	Fix #74528.

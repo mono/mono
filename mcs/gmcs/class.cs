@@ -5796,12 +5796,10 @@ namespace Mono.CSharp {
 				}
 			}
 
-#if NET_2_0
 			if (a.Type == TypeManager.fixed_buffer_attr_type) {
 				Report.Error (1716, Location, "Do not use 'System.Runtime.CompilerServices.FixedBuffer' attribute. Use the 'fixed' field modifier instead");
 				return;
 			}
-#endif
 
 			base.ApplyAttributeBuilder (a, cb);
 		}
