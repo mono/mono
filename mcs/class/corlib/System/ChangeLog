@@ -1,3 +1,7 @@
+2005-04-19  Zoltan Varga  <vargaz@freemail.hu>
+
+	* Environment.cs: Bump corlib version.
+
 2005-04-08 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* WindowsConsoleDriver.cs: ignore key release events.
