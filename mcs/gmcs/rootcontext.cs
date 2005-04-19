@@ -399,6 +399,7 @@ namespace Mono.CSharp {
 				"System.Runtime.InteropServices.OutAttribute",
 				"System.Runtime.InteropServices.StructLayoutAttribute",
 				"System.Runtime.InteropServices.FieldOffsetAttribute",
+				"System.Runtime.InteropServices.DefaultCharSetAttribute",
 				"System.InvalidOperationException",
 				"System.NotSupportedException",
 				"System.MarshalByRefObject",
