@@ -1,3 +1,12 @@
+2005-04-19  Miguel de Icaza  <miguel@novell.com>
+
+	* anonymous.cs (CaptureContext.EmitParameterInstance): The
+	parameter code was not completed ever, so it was not as up-to-date
+	as local variables.  Must finish it.
+
+	The bug fix was to compare the Toplevel of the block, not the
+	current block.  Thanks for Ben for pointing this out. 
+
 2005-04-19  Raja R Harinath  <rharinath@novell.com>
 
 	* decl.cs (AddMethods): Use the declaring type of the problem
