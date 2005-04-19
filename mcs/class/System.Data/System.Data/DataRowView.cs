@@ -139,7 +139,7 @@ namespace System.Data
 		public object this[string column] {
 			get {
 				DataColumn dc = dataView.Table.Columns[column];
-				return dataRow[dc];
+				return dataRow[dc, GetActualRowVersion ()];
 			}
 			set {
 				DataColumn dc = dataView.Table.Columns[column];
@@ -152,13 +152,29 @@ namespace System.Data
 		public object this[int column] {
 			get {
 				DataColumn dc = dataView.Table.Columns[column];
-				return dataRow[dc];
+				return dataRow[dc, GetActualRowVersion ()];
 			}
 			set {
 				DataColumn dc = dataView.Table.Columns[column];
 				dataRow[dc] = value;
 
 			}
+		}
+
+		private DataRowVersion GetActualRowVersion ()
+		{
+			switch (dataView.RowStateFilter) {
+			case DataViewRowState.Added:
+				return DataRowVersion.Proposed;
+			case DataViewRowState.ModifiedOriginal:
+			case DataViewRowState.Deleted:
+			case DataViewRowState.Unchanged:
+			case DataViewRowState.OriginalRows:
+				return DataRowVersion.Original;
+			case DataViewRowState.ModifiedCurrent:
+				return DataRowVersion.Current;
+			}
+			return DataRowVersion.Default;
 		}
 
 		public DataRow Row {

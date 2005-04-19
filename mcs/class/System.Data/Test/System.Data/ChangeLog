@@ -1,3 +1,7 @@
+2005-04-19  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DataViewTest.cs : added more RowStateFilter test (bug #74650).
+
 2005-04-17  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DataViewTest.cs : added more test for Delete() based on bug #74631.

@@ -189,6 +189,42 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
+		public void RowStateFilter_2 ()
+		{
+			DataSet dataset = new DataSet ("new");
+			DataTable dt = new DataTable ("table1");
+			dataset.Tables.Add (dt);
+			dt.Columns.Add ("col1");
+			dt.Columns.Add ("col2");
+			dt.Rows.Add (new object [] {1,1});
+			dt.Rows.Add (new object [] {1,2});
+			dt.Rows.Add (new object [] {1,3});
+			dataset.AcceptChanges ();
+
+			DataView dataView = new DataView (dataset.Tables [0]);
+
+			// 'new'  table in this sample contains 6 records
+			dataView.AllowEdit = true;
+			dataView.AllowDelete = true;
+			string v;
+
+			// Editing the row
+			dataView [0] ["col1"] = -1;
+			dataView.RowStateFilter = DataViewRowState.ModifiedOriginal;
+			v = dataView [0] [0].ToString ();
+			AssertEquals ("ModifiedOriginal.Count", 1, dataView.Count);
+			AssertEquals ("ModifiedOriginal.Value", "1", v);
+
+			// Deleting the row
+			dataView.Delete (0);
+			dataView.RowStateFilter = DataViewRowState.Deleted;
+
+			v = dataView [0] [0].ToString ();
+			AssertEquals ("Deleted.Count", 1, dataView.Count);
+			AssertEquals ("Deleted.Value", "1", v);
+		}
+
+		[Test]
 		public void Sort ()
 		{
 			dataView.Sort = "itemName DESC";
