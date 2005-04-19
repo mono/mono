@@ -63,7 +63,7 @@ namespace Mono.CSharp {
 				builder = mb.DefineParameter (0, ParameterAttributes.None, "");			
 			}
 			catch (ArgumentOutOfRangeException) {
-				Report.Warning (-28, location, "The Microsoft .NET Runtime 1.x does not permit setting custom attributes on the return type");
+				Report.Warning (-24, location, "The Microsoft .NET Runtime 1.x does not permit setting custom attributes on the return type");
 			}
 		}
 

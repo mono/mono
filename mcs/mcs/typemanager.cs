@@ -2312,7 +2312,7 @@ public class TypeManager {
 				new Type [] { typeof (Type), typeof (bool)},
 				null);
 			if (declare_local_method == null){
-				Report.Warning (-24, new Location (-1),
+				Report.Warning (-30, new Location (-1),
 						"This version of the runtime does not support making pinned local variables.  " +
 						"This code may cause errors on a runtime with a moving GC");
 				return ig.DeclareLocal (t);

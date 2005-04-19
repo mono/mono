@@ -1788,7 +1788,6 @@ namespace Mono.CSharp {
 					return ne;
 			}
 
-		skip_explicit:
 			if (ec.InUnsafe){
 				if (target_type.IsPointer){
 					if (expr_type.IsPointer)
