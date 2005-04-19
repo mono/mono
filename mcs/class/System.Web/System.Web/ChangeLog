@@ -1,3 +1,9 @@
+2005-04-19 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpRequest.cs: GetAllHeaders was returning the value twice instead
+	of 'name: value'. When HTTP_ is requested on the output, don't include
+	unknown headers.
+
 2005-03-23 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpCookieCollection.cs: when adding more than one cookie with the

@@ -125,7 +125,7 @@ namespace System.Web {
 			return "HTTP_" + header.ToUpper().Replace("-", "_");
 		}
 
-		internal string GetAllHeaders(bool Raw) {
+		internal string GetAllHeaders(bool raw) {
 			StringBuilder oData;
 
 			if (null == _WorkerRequest) {
@@ -139,18 +139,26 @@ namespace System.Web {
 			int iCount = 0;
 
 			// Add all know headers
-			for (; iCount != 40; iCount++) {
+			for (; iCount != HttpWorkerRequest.RequestHeaderMaximum; iCount++) {
 				sHeaderValue = _WorkerRequest.GetKnownRequestHeader(iCount);
 				if (null != sHeaderValue && sHeaderValue.Length > 0) {
-					sHeaderName = _WorkerRequest.GetKnownRequestHeader(iCount);
+					sHeaderName = HttpWorkerRequest.GetKnownRequestHeaderName(iCount);
 					if (null != sHeaderName && sHeaderName.Length > 0) {
-						oData.Append(sHeaderName);
+						if (raw) {
+							oData.Append(sHeaderName);
+						} else {
+							oData.Append ("HTTP_");
+							oData.Append (sHeaderName.ToUpper ().Replace ('-', '_'));
+						}
 						oData.Append(": ");
 						oData.Append(sHeaderValue);
 						oData.Append("\r\n");
 					}
 				}
 			}
+
+			if (!raw)
+				return oData.ToString ();
 
 			// Get all other headers
 			string [][] arrUnknownHeaders = _WorkerRequest.GetUnknownRequestHeaders();
