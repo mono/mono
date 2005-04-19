@@ -5935,7 +5935,7 @@ namespace Mono.CSharp {
 			if (!base.Define ())
 				return false;
 
-			if (!MemberType.IsPrimitive) {
+			if (!TypeManager.IsPrimitiveType (MemberType)) {
 				Report.Error (1663, Location, "Fixed sized buffer type must be one of the following: bool, byte, short, int, long, char, sbyte, ushort, uint, ulong, float or double");
 				return false;
 			}
@@ -6536,7 +6536,7 @@ namespace Mono.CSharp {
 					flags = method.flags;
 				} else {
 					if ((method.ModFlags & Modifiers.ABSTRACT) != 0 && (ModFlags & Modifiers.PRIVATE) != 0) {
-						Report.Error (422, Location, "{0}': abstract properties cannot have private accessors", GetSignatureForError (container));
+						Report.Error (442, Location, "{0}': abstract properties cannot have private accessors", GetSignatureForError (container));
 					}
 
 					CheckModifiers (container, ModFlags);
