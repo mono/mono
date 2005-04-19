@@ -29,7 +29,11 @@ namespace System.Windows.Forms {
 		}
 
 		public int Count {
-			get { return xqueue.Count + lqueue.Count; }
+			get {
+				lock (lqueue) {
+					return xqueue.Count + lqueue.Count;
+				}
+			}
 		}
 
 		public void Enqueue (XEvent xevent)
