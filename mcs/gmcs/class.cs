@@ -3203,7 +3203,6 @@ namespace Mono.CSharp {
 	public abstract class MethodCore : MemberBase {
 		public readonly Parameters Parameters;
 		public readonly GenericMethod GenericMethod;
-		public readonly DeclSpace ds;
 		protected ToplevelBlock block;
 		
 		//
@@ -3226,17 +3225,12 @@ namespace Mono.CSharp {
 				   Expression type, int mod, int allowed_mod, bool is_iface,
 				   MemberName name, Attributes attrs, Parameters parameters,
 				   Location loc)
-			: base (parent, type, mod, allowed_mod, Modifiers.PRIVATE, name,
-				attrs, loc)
+			: base (parent, generic != null ? generic : (DeclSpace) parent,
+				type, mod, allowed_mod, Modifiers.PRIVATE, name, attrs, loc)
 		{
 			Parameters = parameters;
 			IsInterface = is_iface;
 			this.GenericMethod = generic;
-
-			if (generic != null)
-				ds = generic;
-			else
-				ds = parent;
 		}
 		
 		//
@@ -4055,11 +4049,11 @@ namespace Mono.CSharp {
 			if (GenericMethod != null) {
 				string mname = MemberName.GetMethodName ();
 				mb = Parent.TypeBuilder.DefineGenericMethod (mname, flags);
-				if (!GenericMethod.Define (mb, ReturnType))
+				if (!GenericMethod.Define (mb))
 					return false;
 			}
 
-			if (!DoDefine (ds))
+			if (!DoDefine ())
 				return false;
 
 			if (RootContext.StdLib && (ReturnType == TypeManager.arg_iterator_type || ReturnType == TypeManager.typed_reference_type)) {
@@ -5295,6 +5289,7 @@ namespace Mono.CSharp {
 		public Expression Type;
 
 		public MethodAttributes flags;
+		public readonly DeclSpace ds;
 
 		protected readonly int explicit_mod_flags;
 
@@ -5312,7 +5307,21 @@ namespace Mono.CSharp {
 		//
 		// The type of this property / indexer / event
 		//
-		public Type MemberType;
+		protected Type member_type;
+		public Type MemberType {
+			get {
+				if (member_type == null && Type != null) {
+					EmitContext ec = ds.EmitContext;
+					bool old_unsafe = ec.InUnsafe;
+					ec.InUnsafe = InUnsafe;
+					Type = Type.ResolveAsTypeTerminal (ec);
+					ec.InUnsafe = old_unsafe;
+
+					member_type = Type == null ? null : Type.Type;
+				}
+				return member_type;
+			}
+		}
 
 		//
 		// Whether this is an interface member.
@@ -5332,11 +5341,12 @@ namespace Mono.CSharp {
 		//
 		// The constructor is only exposed to our children
 		//
-		protected MemberBase (TypeContainer parent, Expression type, int mod,
+		protected MemberBase (TypeContainer parent, DeclSpace ds, Expression type, int mod,
 				      int allowed_mod, int def_mod, MemberName name,
 				      Attributes attrs, Location loc)
 			: base (parent, name, attrs, loc)
 		{
+			this.ds = ds;
 			explicit_mod_flags = mod;
 			Type = type;
 			ModFlags = Modifiers.Check (allowed_mod, mod, def_mod, loc);
@@ -5434,24 +5444,16 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		protected virtual bool DoDefine (DeclSpace decl)
+		protected virtual bool DoDefine ()
 		{
-			EmitContext ec = decl.EmitContext;
+			EmitContext ec = ds.EmitContext;
 			if (ec == null)
 				throw new InternalErrorException ("MemberBase.DoDefine called too early");
 
 			ec.InUnsafe = InUnsafe;
 
-			// Lookup Type, verify validity
-			bool old_unsafe = ec.InUnsafe;
-			ec.InUnsafe = InUnsafe;
-			TypeExpr texpr = Type.ResolveAsTypeTerminal (ec);
-			ec.InUnsafe = old_unsafe;
-
-			if (texpr == null)
+			if (MemberType == null)
 				return false;
-
-			MemberType = texpr.Type;
 
 			if ((Parent.ModFlags & Modifiers.SEALED) != 0){
 				if ((ModFlags & (Modifiers.VIRTUAL|Modifiers.ABSTRACT)) != 0){
@@ -5578,7 +5580,7 @@ namespace Mono.CSharp {
 		protected FieldBase (TypeContainer parent, Expression type, int mod,
 				     int allowed_mod, MemberName name, object init,
 				     Attributes attrs, Location loc)
-			: base (parent, type, mod, allowed_mod, Modifiers.PRIVATE,
+			: base (parent, parent, type, mod, allowed_mod, Modifiers.PRIVATE,
 				name, attrs, loc)
 		{
 			this.init = init;
@@ -5681,9 +5683,9 @@ namespace Mono.CSharp {
 			return true;
  		}
 
-		protected override bool DoDefine (DeclSpace ds)
+		protected override bool DoDefine ()
 		{
-			if (!base.DoDefine (ds))
+			if (!base.DoDefine ())
 				return false;
 
 			if (MemberType == TypeManager.void_type) {
@@ -5779,17 +5781,9 @@ namespace Mono.CSharp {
 			if (ec == null)
 				throw new InternalErrorException ("FieldMember.Define called too early");
 
-			bool old_unsafe = ec.InUnsafe;
-			ec.InUnsafe = InUnsafe;
-			TypeExpr texpr = Type.ResolveAsTypeTerminal (ec);
-			ec.InUnsafe = old_unsafe;
-			if (texpr == null)
+			if (MemberType == null)
 				return false;
 			
-			MemberType = texpr.Type;
-
-			ec.InUnsafe = old_unsafe;
-
 			if (MemberType == TypeManager.void_type) {
 				Report.Error (1547, Location, "Keyword 'void' cannot be used in this context");
 				return false;
@@ -6605,7 +6599,7 @@ namespace Mono.CSharp {
 
 		public override bool Define ()
 		{
-			if (!DoDefine (Parent))
+			if (!DoDefine ())
 				return false;
 
 			if (!IsTypePermitted ())
@@ -6614,9 +6608,9 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		protected override bool DoDefine (DeclSpace ds)
+		protected override bool DoDefine ()
 		{
-			if (!base.DoDefine (ds))
+			if (!base.DoDefine ())
 				return false;
 
 			//
@@ -7348,7 +7342,7 @@ namespace Mono.CSharp {
 			if (!DoDefineBase ())
 				return false;
 
-			if (!DoDefine (Parent))
+			if (!DoDefine ())
 				return false;
 
 			if (init != null && ((ModFlags & Modifiers.ABSTRACT) != 0)){
@@ -7836,7 +7830,7 @@ namespace Mono.CSharp {
 				return false;
 			}
 
-			if (!DoDefine (ds))
+			if (!DoDefine ())
 				return false;
 
 			if (MemberType == TypeManager.void_type) {

@@ -1,3 +1,24 @@
+2005-04-19  Martin Baulig  <martin@ximian.com>
+
+	Merged r42462 from MCS and made it work for GMCS.
+
+	* class.cs (MethodCore.ds): Moved this field to `MemberBase'.
+
+	* generic.cs (GenericMethod.Define): Removed `return_type' argument.
+
+2005-04-01  Raja R Harinath  <rharinath@novell.com>
+
+	Fix #74232 and cs0208-3.cs.
+	* expression.cs (ComposedCast.DoResolveAsTypeStep): Add CS0208 check.
+	* typemanager.cs (IsUnmanagedType): Don't allow 'object' as an
+	unmanaged type.  Don't use FieldBuilders when 't' is a
+	TypeBuilder.  Use ModFlags and MemberType fields.
+	* class.cs (MemberBase.member_type): Rename from MemberType.
+	(MemberBase.MemberType): New property.  Determines member_type on
+	demand.
+	(MemberBase.DoDefine): Don't initialize MemberType here.
+	(FieldMember.Define): Likewise.
+
 2005-04-01  Marek Safar  <marek.safar@seznam.cz>
 
 	Fix #74241

@@ -1415,7 +1415,7 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		public bool Define (MethodBuilder mb, Type return_type)
+		public bool Define (MethodBuilder mb)
 		{
 			if (!Define ())
 				return false;
@@ -1426,8 +1426,7 @@ namespace Mono.CSharp {
 			for (int i = 0; i < TypeParameters.Length; i++)
 				TypeParameters [i].Define (gen_params [i]);
 
-			ec = new EmitContext (
-				this, this, Location, null, return_type, ModFlags, false);
+			ec = new EmitContext (this, this, Location, null, null, ModFlags, false);
 
 			for (int i = 0; i < TypeParameters.Length; i++) {
 				if (!TypeParameters [i].ResolveType (ec))

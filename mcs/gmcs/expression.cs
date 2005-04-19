@@ -8785,6 +8785,11 @@ namespace Mono.CSharp {
 				return nullable.ResolveAsTypeTerminal (ec);
 			}
 
+			if (dim == "*" && !TypeManager.IsUnmanagedType (ltype)) {
+				Report.Error (208, loc, "Cannot declare a pointer to a managed type ('{0}')", ltype);
+				return null;
+			}
+
 			if (dim != "")
 				type = TypeManager.GetConstructedType (ltype, dim);
 			else
