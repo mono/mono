@@ -273,7 +273,11 @@ namespace Mono.CSharp {
 				// Register all the operators we care about.
 				foreach (Operator op in this){
 					int reg = 0;
-					
+
+					// Skip erroneous code.
+					if (op.OperatorMethod == null)
+						continue;
+
 					switch (op.OperatorType){
 					case Operator.OpType.Equality:
 						reg = 1;
