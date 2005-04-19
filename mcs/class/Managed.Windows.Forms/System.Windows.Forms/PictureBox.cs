@@ -194,6 +194,8 @@ namespace System.Windows.Forms {
 
 		protected override void OnPaint (PaintEventArgs pe)
 		{
+			base.OnPaint (pe);
+
 			if (this.Width <= 0 || this.Height <=  0 || this.Visible == false)
 				return;
 

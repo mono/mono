@@ -1,7 +1,8 @@
 2005-04-19  Jackson Harper  <jackson@ximian.com>
 
 	* XEventQueue.cs: Lock when getting the lockqueu size.
-
+	* PictureBox.cs: Call base OnPaint
+	
 2005-04-19  Peter Bartok  <pbartok@novell.com>
 
 	* XplatUIX11.cs: Fixed bug introduced with the HWND rewrite, Async
