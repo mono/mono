@@ -328,6 +328,7 @@ namespace Mono.CSharp {
 			Type parent = FindDocumentedType (mc, identifier.Substring (0, index), ds, cref);
 			if (parent == null)
 				return null;
+			// no need to detect warning 419 here
 			return FindDocumentedMember (mc, parent,
 				identifier.Substring (index + 1),
 				Type.EmptyTypes,
@@ -349,8 +350,11 @@ namespace Mono.CSharp {
 				BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance,
 				MethodSignature.method_signature_filter,
 				msig);
-			if (mis.Length > 0)
+			if (mis.Length > 0) {
+				if (mis.Length > 1)
+					warningType = 419;
 				return mis [0];
+			}
 
 			if (paramList.Length == 0) {
 				// search for fields/events etc.
@@ -359,7 +363,11 @@ namespace Mono.CSharp {
 					BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance,
 					Type.FilterName,
 					memberName);
-				return (mis.Length > 0) ? mis [0] : null;
+				if (mis.Length == 0)
+					return null;
+				if (mis.Length > 1)
+					warningType = 419;
+				return mis [0];
 			}
 
 			// search for operators (whose parameters exactly
@@ -581,7 +589,9 @@ namespace Mono.CSharp {
 				int warnResult;
 				if (type != null) {
 					MemberInfo mi = FindDocumentedMember (mc, type, memberName, parameterTypes, ds, out warnResult, cref);
-					if (warnResult > 0)
+					if (warnResult == 419)
+						Report419 (mc, memberName);
+					else if (warnResult > 0)
 						return;
 					if (mi != null) {
 						xref.SetAttribute ("cref", GetMemberDocHead (mi.MemberType) + type.FullName.Replace ("+", ".") + "." + memberName + parameters);
@@ -592,7 +602,9 @@ namespace Mono.CSharp {
 			else {
 				int warnResult;
 				MemberInfo mi = FindDocumentedMember (mc, ds.TypeBuilder, name, parameterTypes, ds, out warnResult, cref);
-				if (warnResult > 0)
+				if (warnResult == 419)
+					Report419 (mc, name);
+				else if (warnResult > 0)
 					return;
 				if (mi != null) {
 					xref.SetAttribute ("cref", GetMemberDocHead (mi.MemberType) + ds.TypeBuilder.FullName.Replace ("+", ".") + "." + name);
@@ -603,6 +615,11 @@ namespace Mono.CSharp {
 			Report.Warning (1574, 1, mc.Location, "XML comment on '{0}' has cref attribute '{1}' that could not be resolved in '{2}'.", mc.GetSignatureForError (), cref, ds.GetSignatureForError ());
 
 			xref.SetAttribute ("cref", "!:" + name);
+		}
+
+		static void Report419 (MemberCore mc, string memberName)
+		{
+			Report.Warning (419, 3, mc.Location, "Ambiguous member specification in cref attribute: '{0}'. Check overloaded members and supply exact parameters.", memberName);
 		}
 
 		//

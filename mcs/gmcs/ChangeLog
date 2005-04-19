@@ -1,5 +1,10 @@
 2005-04-13  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* doc.cs : detect ambiguous reference to overloaded members.
+	  Fixed bug #71603. MS 1.1 csc does not detect it.
+
+2005-04-13  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* doc.cs : delegates must not be referenced with parameters.
 	  Fixed bug #71605.
 
