@@ -1,3 +1,17 @@
+2005-04-19  Dick Porter  <dick@ximian.com>
+
+	* mutexes.c: 
+	* wait.c: 
+	* handles.c (_wapi_handle_count_signalled_handles)
+	* handles-private.h (_wapi_handle_shared_lock_handle): Use new
+	shared handle locks in critical sections.
+
+	* handles.c (_wapi_handle_new_for_existing_ns): Reuse old handles
+	if there is already one there.
+	
+	* handles.c (_wapi_handle_ref): It was possible for a process to
+	exit before getting around to updating shared handle timestamps,
+	so do it here too.
 
 Tue Apr 19 16:25:47 CEST 2005 Paolo Molaro <lupus@ximian.com>
 
