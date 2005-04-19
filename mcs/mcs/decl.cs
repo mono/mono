@@ -1436,8 +1436,8 @@ namespace Mono.CSharp {
 						//
 						// Also, CSC 1.1 appears to emit 'Finalize' without a newslot.
 						//
-						if ((member.Name == "Invoke" && type.IsSubclassOf (TypeManager.multicast_delegate_type)) ||
-						    (member.Name == "Finalize" && member.GetParameters().Length == 0))
+						if ((curr.Name == "Invoke" && curr.DeclaringType.IsSubclassOf (TypeManager.multicast_delegate_type)) ||
+						    (curr.Name == "Finalize" && curr.GetParameters().Length == 0 && curr.DeclaringType == TypeManager.object_type))
 							break;
 
 						Report.SymbolRelatedToPreviousError (base_method);

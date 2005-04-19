@@ -1,3 +1,8 @@
+2005-04-19  Raja R Harinath  <rharinath@novell.com>
+
+	* decl.cs (AddMethods): Use the declaring type of the problem
+	method to determine if we want to squash a warning.
+
 2005-04-19  Marek Safar  <marek.safar@seznam.cz>
 
 	* attribute.cs: Removed debug output.
