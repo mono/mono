@@ -1,3 +1,9 @@
+
+Tue Apr 19 16:25:47 CEST 2005 Paolo Molaro <lupus@ximian.com>
+
+	* threads.c: fix lookup of the thread id in the has table:
+	always use the id value, not the pointer to the id.
+
 2005-04-18 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* handles.c: fix handle returned in _wapi_handle_search_handle. Dick
