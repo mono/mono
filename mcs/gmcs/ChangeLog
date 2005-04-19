@@ -1,3 +1,9 @@
+2005-04-05  Raja R Harinath  <rharinath@novell.com>
+
+	Fix #74041.
+	* statement.cs (Block.Resolve): Initialize 'unreachable' to false,
+	not 'unreachable_seen'.
+
 2005-04-04  Marek Safar  <marek.safar@seznam.cz>
 
 	* attribute.cs (Attribute.GetValue): Removed unused.
