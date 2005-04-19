@@ -53,8 +53,10 @@ namespace System.Web.Compilation
 		{
 			atts_hash = new Hashtable (CaseInsensitiveHashCodeProvider.Default,
 						   CaseInsensitiveComparer.Default);
-			for (int i = 0; i < keys.Count; i++)
+			for (int i = 0; i < keys.Count; i++) {
+				CheckServerKey (keys [i]);
 				atts_hash.Add (keys [i], values [i]);
+			}
 			got_hashed = true;
 			keys = null;
 			values = null;
@@ -82,6 +84,7 @@ namespace System.Web.Compilation
 				value = HttpUtility.HtmlDecode (value.ToString ());
 
 			if (got_hashed) {
+				CheckServerKey (key);
 				if (atts_hash.ContainsKey (key))
 					throw new HttpException ("Tag contains duplicated '" + key +
 								 "' attributes.");
@@ -126,9 +129,10 @@ namespace System.Web.Compilation
 			}
 
 			set {
-				if (got_hashed)
+				if (got_hashed) {
+					CheckServerKey (key);
 					atts_hash [key] = value;
-				else {
+				} else {
 					int idx = CaseInsensitiveSearch ((string) key);
 					keys [idx] = value;
 				}
@@ -182,6 +186,12 @@ namespace System.Web.Compilation
 				result.Length--;
 				
 			return result.ToString ();
+		}
+		
+		void CheckServerKey (object key)
+		{
+			if (key == null || ((string)key).Length == 0)
+				throw new HttpException ("The server tag is not well formed.");
 		}
 	}
 }

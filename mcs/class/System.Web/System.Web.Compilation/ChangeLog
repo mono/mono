@@ -1,6 +1,15 @@
+2005-04-19  Lluis Sanchez Gual <lluis@novell.com>
+
+	* AspParser.cs: Fixed parsing of data binding tags in server
+	tag attributes. Allow <%...%> blocks not assigned to
+	attributes in client tags.
+	* TagAttributes.cs: Make sure that data binding blocks in server
+	tags are always assigned to attributes.
+
 2005-04-15  Lluis Sanchez Gual <lluis@novell.com>
 
-	* TemplateControlCompiler.cs: 
+	* TemplateControlCompiler.cs: Implemented support for two-way
+	binding.
 
 2005-04-14  Lluis Sanchez Gual <lluis@novell.com>
 

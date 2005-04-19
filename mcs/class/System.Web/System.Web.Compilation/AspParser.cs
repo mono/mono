@@ -309,20 +309,32 @@ namespace System.Web.Compilation
 
 			attributes = new TagAttributes ();
 			while ((token = tokenizer.get_token ()) != Token.EOF){
+				if (token == '<' && Eat ('%')) {
+					tokenizer.Verbatim = true;
+					attributes.Add ("", "<%" + 
+							GetVerbatim (tokenizer.get_token (), "%>") + "%>");
+					tokenizer.Verbatim = false;
+					tokenizer.InTag = true;
+					continue;
+				}
+					
 				if (token != Token.IDENTIFIER)
 					break;
+
 				id = tokenizer.Value;
 				if (Eat ('=')){
 					if (Eat (Token.ATTVALUE)){
 						attributes.Add (id, tokenizer.Value);
 					} else if (Eat ('<') && Eat ('%')) {
-						attributes.Add (id, "<%" +
-								GetVerbatim (tokenizer.get_token (), "%>"));
+						tokenizer.Verbatim = true;
+						attributes.Add (id, "<%" + 
+								GetVerbatim (tokenizer.get_token (), "%>") + "%>");
+						tokenizer.Verbatim = false;
+						tokenizer.InTag = true;
 					} else {
 						OnError ("expected ATTVALUE");
 						return null;
 					}
-					
 				} else {
 					attributes.Add (id, null);
 				}
