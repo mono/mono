@@ -1,3 +1,8 @@
+2005-04-19  Peter Bartok  <pbartok@novell.com>
+
+	* XplatUIX11.cs: Fixed bug introduced with the HWND rewrite, Async
+	  messages were no longer being processed (this broke BeginInvoke)
+
 2005-04-18  Jackson Harper  <jackson@ximian.com>
 
 	* TreeView.cs: buglet that caused node images to get drawn

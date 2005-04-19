@@ -236,8 +236,12 @@ namespace System.Windows.Forms {
 		#region Internal Methods
 		internal void SetDisplay(IntPtr display_handle) {
 			if (display_handle != IntPtr.Zero) {
+				Hwnd	hwnd;
+
 				if ((DisplayHandle != IntPtr.Zero) && (FosterParent != IntPtr.Zero)) {
+					hwnd = Hwnd.ObjectFromHandle(FosterParent);
 					XDestroyWindow(DisplayHandle, FosterParent);
+					hwnd.Dispose();
 				}
 
 				if (DisplayHandle != IntPtr.Zero) {
@@ -270,6 +274,9 @@ namespace System.Windows.Forms {
 					Console.WriteLine("XplatUIX11 Constructor failed to create FosterParent");
 				}
 
+				hwnd = new Hwnd();
+				hwnd.WholeWindow = FosterParent;
+				hwnd.ClientWindow = FosterParent;
 
 				// For sleeping on the X11 socket
 				listen = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.IP);
@@ -2689,7 +2696,7 @@ namespace System.Windows.Forms {
 
 			xevent.type = XEventName.ClientMessage;
 			xevent.ClientMessageEvent.display = DisplayHandle;
-			xevent.ClientMessageEvent.window = IntPtr.Zero;
+			xevent.ClientMessageEvent.window = FosterParent;
 			xevent.ClientMessageEvent.message_type = (IntPtr)AsyncAtom;
 			xevent.ClientMessageEvent.format = 32;
 			xevent.ClientMessageEvent.ptr1 = (IntPtr) GCHandle.Alloc (method);
@@ -3129,7 +3136,7 @@ namespace System.Windows.Forms {
 			Hwnd	hwnd;
 
 			hwnd = Hwnd.ObjectFromHandle(handle);
-
+#if true
 			if (!hwnd.visible || hwnd.expose_pending) {
 				return;
 			}
@@ -3141,6 +3148,23 @@ namespace System.Windows.Forms {
 
 			MessageQueue.Enqueue(xevent);
 			hwnd.expose_pending = true;
+#else
+			// This would force an immediate paint (SendMessage, instead of PostMessage)
+			if (!hwnd.visible) {
+				return;
+			}
+
+			if (!hwnd.expose_pending) {
+				xevent = new XEvent();
+				xevent.type = XEventName.Expose;
+				xevent.ExposeEvent.display = DisplayHandle;
+				xevent.ExposeEvent.window = hwnd.client_window;
+
+				MessageQueue.Enqueue(xevent);
+				hwnd.expose_pending = true;
+			}
+			NativeWindow.WndProc(hwnd.client_window, Msg.WM_PAINT, IntPtr.Zero, IntPtr.Zero);
+#endif
 		}
 		#endregion	// Public Static Methods
 
