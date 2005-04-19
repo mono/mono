@@ -1,3 +1,17 @@
+2005-04-10  Miguel de Icaza  <miguel@novell.com>
+
+	* driver.cs (CompilerCallableEntryPoint.InvokeCompiler): Always
+	reset after execution;   Take a TextWriter argument for the
+	output.
+
+	* report.cs: Use the error stream instead of hardcoding stderr. 
+
+2005-04-09  Miguel de Icaza  <miguel@novell.com>
+
+	* class.cs: Reduce code paths to test, too small of an
+	optimization to make it worth the extra testing.  Always perform
+	it. 
+
 2005-04-08  Raja R Harinath  <rharinath@novell.com>
 
 	Fix #74510.

@@ -1765,16 +1765,16 @@ namespace Mono.CSharp
 	public class CompilerCallableEntryPoint : MarshalByRefObject {
 		static bool used = false;
 		
-		public static bool InvokeCompiler (string [] args)
+		public static bool InvokeCompiler (string [] args, TextWriter error)
 		{
-			if (used)
-				Reset ();
-			else
-				used = true;
+			Report.Stderr = error;
+			bool ret = Driver.MainDriver (args) && Report.Errors == 0;
+			Report.Stderr = Console.Error;
 
-			return Driver.MainDriver (args) && Report.Errors == 0;
+			Reset ();
+			return ret;
 		}
-
+		
 		static void Reset ()
 		{
 			Driver.Reset ();
