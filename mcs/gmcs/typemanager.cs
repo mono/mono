@@ -1647,10 +1647,11 @@ public partial class TypeManager {
 	//
 	public static bool IsUnmanagedType (Type t)
 	{
-		if (IsBuiltinType (t) && t != TypeManager.object_type && t != TypeManager.string_type)
-			return true;
+		// builtins that are not unmanaged types
+		if (t == TypeManager.object_type || t == TypeManager.string_type)
+			return false;
 
-		if (IsEnumType (t))
+		if (IsBuiltinOrEnum (t))
 			return true;
 
 		if (t.IsPointer)
@@ -1674,14 +1675,12 @@ public partial class TypeManager {
 			return true;
 		}
 		
-		FieldInfo [] fields = t.GetFields ();
-		
-		foreach (FieldInfo f in fields){
-			if (f.IsStatic)
-				continue;
+		FieldInfo [] fields = t.GetFields (BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+
+		foreach (FieldInfo f in fields)
 			if (!IsUnmanagedType (f.FieldType))
 				return false;
-		}
+
 		return true;
 	}
 		
@@ -2450,18 +2449,11 @@ public partial class TypeManager {
 	/// </summary>
 	public static bool VerifyUnManaged (Type t, Location loc)
 	{
-		if (t.IsValueType || t.IsPointer){
-			//
-			// FIXME: this is more complex, we actually need to
-			// make sure that the type does not contain any
-			// classes itself
-			//
+		if (IsUnmanagedType (t))
 			return true;
-		}
 
+		// We need this explicit check here to make it work when compiling corlib.
 		if (!RootContext.StdLib && (t == TypeManager.decimal_type))
-			// We need this explicit check here to make it work when
-			// compiling corlib.
 			return true;
 
 		Report.Error (
