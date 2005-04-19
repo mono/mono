@@ -2988,6 +2988,7 @@ namespace Mono.CSharp {
 					if (!c.LookupConstantValue (out o))
 						return null;
 
+					c.SetMemberIsUsed ();
 					object real_value = ((Constant) c.Expr).GetValue ();
 
 					Expression exp = Constantify (real_value, t);
@@ -3225,7 +3226,7 @@ namespace Mono.CSharp {
 					if ((f.ModFlags & Modifiers.VOLATILE) != 0)
 						is_volatile = true;
 					
-					f.status |= Field.Status.USED;
+					f.SetMemberIsUsed ();
 				}
 			} 
 			
@@ -3343,7 +3344,7 @@ namespace Mono.CSharp {
 					if ((mode & AddressOp.Store) != 0)
 						f.status |= Field.Status.ASSIGNED;
 					if ((mode & AddressOp.Load) != 0)
-						f.status |= Field.Status.USED;
+						f.SetMemberIsUsed ();
 				}
 			} 
 
@@ -3510,11 +3511,19 @@ namespace Mono.CSharp {
 			FindAccessors (ec.ContainerType);
 
 			if (getter != null) {
+				IMethodData md = TypeManager.GetMethod (getter);
+				if (md != null)
+					md.SetMemberIsUsed ();
+
 				AccessorTable [getter] = PropertyInfo;
 				is_static = getter.IsStatic;
 			}
 
 			if (setter != null) {
+				IMethodData md = TypeManager.GetMethod (setter);
+				if (md != null)
+					md.SetMemberIsUsed ();
+
 				AccessorTable [setter] = PropertyInfo;
 				is_static = setter.IsStatic;
 			}

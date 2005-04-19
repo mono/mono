@@ -5127,6 +5127,11 @@ namespace Mono.CSharp {
                                                     method_params, null, may_fail, loc))
 				return null;
 
+			if (method != null) {
+				IMethodData data = TypeManager.GetMethod (method);
+				if (data != null)
+					data.SetMemberIsUsed ();
+			}
 			return method;
 		}
 
