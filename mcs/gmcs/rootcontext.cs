@@ -164,7 +164,7 @@ namespace Mono.CSharp {
 
 			ArrayList ifaces = root.Interfaces;
 			if (ifaces != null){
-				foreach (Interface i in ifaces) 
+				foreach (TypeContainer i in ifaces) 
 					i.DefineType ();
 			}
 

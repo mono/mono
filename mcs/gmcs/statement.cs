@@ -1459,32 +1459,39 @@ namespace Mono.CSharp {
 			known_variables [name] = info;
 		}
 
-		public LocalInfo GetKnownVariableInfo (string name)
+		LocalInfo GetKnownVariableInfo (string name)
 		{
-			if (known_variables == null || !known_variables.Contains (name))
+			if (known_variables == null)
 				return null;
 			return (LocalInfo) known_variables [name];
 		}
 
-		// <summary>
-		//   Checks whether a variable name has already been used in a child block.
-		// </summary>
-		public bool IsVariableNameUsedInChildBlock (string name)
+		public bool CheckInvariantMeaningInBlock (string name, Expression e, Location loc)
 		{
-			LocalInfo vi = GetKnownVariableInfo (name);
-			// Cheeky little test that knows that 'known_variables' is shared between
-			// an implicit block and its enclosing real block.
-			return vi != null && known_variables != vi.Block.known_variables;
-		}
+			LocalInfo kvi = GetKnownVariableInfo (name);
+			if (kvi == null || kvi.Block == this)
+				return true;
 
-		// <summary>
-		//   Checks whether a variable name has already been used in this block, possibly by
-		//   an implicit block.
-		// </summary>
-		public bool IsVariableNameUsedInBlock (string name)
-		{
-			LocalInfo vi = GetKnownVariableInfo (name);
-			return vi != null && known_variables == vi.Block.known_variables;
+			if (known_variables != kvi.Block.known_variables) {
+				Report.SymbolRelatedToPreviousError (kvi.Location, name);
+				Report.Error (135, loc, "'{0}' has a different meaning in a child block", name);
+				return false;
+			}
+
+			//
+			// this block and kvi.Block are the same textual block.
+			// However, different variables are extant.
+			//
+			// Check if the variable is in scope in both blocks.  We use
+			// an indirect check that depends on AddVariable doing its
+			// part in maintaining the invariant-meaning-in-block property.
+			//
+			if (e is LocalVariableReference || (e is Constant && GetLocalInfo (name) != null))
+				return true;
+
+			Report.SymbolRelatedToPreviousError (kvi.Location, name);
+			Report.Error (136, loc, "'{0}' has a different meaning later in the block", name);
+			return false;
 		}
 
 		// <summary>
@@ -1516,44 +1523,33 @@ namespace Mono.CSharp {
 			if (variables == null)
 				variables = new Hashtable ();
 
-			Block cur = this;
-			while (cur != null && cur.Implicit)
-				cur = cur.Parent;
-
 			LocalInfo vi = GetLocalInfo (name);
 			if (vi != null) {
-				Block var = vi.Block;
-				while (var != null && var.Implicit)
-					var = var.Parent;
-				if (var != cur)
-					Report.Error (136, l, "A local variable named `" + name + "' " +
-						      "cannot be declared in this scope since it would " +
-						      "give a different meaning to `" + name + "', which " +
-						      "is already used in a `parent or current' scope to " +
-						      "denote something else");
+				Report.SymbolRelatedToPreviousError (vi.Location, name);
+				if (known_variables == vi.Block.known_variables)
+					Report.Error (128, l,
+						"A local variable '{0}' is already declared in this scope", name);
 				else
-					Report.Error (128, l, "A local variable `" + name + "' is already " +
-						      "defined in this scope");
+					Report.Error (136, l,
+						"'{0}' hides the declaration of local variable '{0}' in a parent scope", name);
 				return null;
 			}
 
-			if (IsVariableNameUsedInChildBlock (name)) {
-				Report.Error (136, l, "A local variable named `" + name + "' " +
-					      "cannot be declared in this scope since it would " +
-					      "give a different meaning to `" + name + "', which " +
-					      "is already used in a `child' scope to denote something " +
-					      "else");
+			vi = GetKnownVariableInfo (name);
+			if (vi != null) {
+				Report.SymbolRelatedToPreviousError (vi.Location, name);
+				Report.Error (136, l,
+					"A child block already has a declaration of local variable '{0}':" +
+					" allowing this declaration would violate 'invariant meaning in a block'", 
+					name);
 				return null;
 			}
 
 			int idx;
 			Parameter p = Toplevel.Parameters.GetParameterByName (name, out idx);
 			if (p != null) {
-				Report.Error (136, l, "A local variable named `" + name + "' " +
-					      "cannot be declared in this scope since it would " +
-					      "give a different meaning to `" + name + "', which " +
-					      "is already used in a `parent or current' scope to " +
-					      "denote something else");
+				Report.SymbolRelatedToPreviousError (Toplevel.Parameters.Location, name);
+				Report.Error (136, l, "'{0}' hides a method parameter", name);
 				return null;
 			}
 
@@ -1561,7 +1557,7 @@ namespace Mono.CSharp {
 
 			variables.Add (name, vi);
 
-			for (Block b = cur; b != null; b = b.Parent)
+			for (Block b = this; b != null; b = b.Parent)
 				b.AddKnownVariable (name, vi);
 
 			if ((flags & Flags.VariablesInitialized) != 0)

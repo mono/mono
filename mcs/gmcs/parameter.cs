@@ -386,6 +386,10 @@ namespace Mono.CSharp {
 				return (FixedParameters == null) && (ArrayParameter == null);
 			}
 		}
+
+		public Location Location {
+			get { return loc; }
+		}
 		
 		public void ComputeSignature (EmitContext ec)
 		{
