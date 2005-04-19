@@ -116,6 +116,7 @@ namespace Mono.CSharp {
 			Target = Target.Exe;
 			Version = LanguageVersion.Default;
 			Documentation = null;
+			impl_details_class = null;
 		}
 
 		public static bool NeedsEntryPoint {

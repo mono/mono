@@ -1,3 +1,8 @@
+2005-04-01  Ben Maurer  <bmaurer@ximian.com>
+
+	* rootcontext.cs: Allow mcs to bootstrap with the compilation
+	resetting thingy.
+
 2005-04-19  Martin Baulig  <martin@ximian.com>
 
 	Merged r42462 from MCS and made it work for GMCS.
