@@ -207,6 +207,7 @@ namespace System.Windows.Forms
 					return;
 
 				base.Text = value;
+				CreateLinkPieces();
 				Refresh ();
 			}
 		}
