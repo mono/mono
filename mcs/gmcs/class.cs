@@ -6535,6 +6535,10 @@ namespace Mono.CSharp {
 					ModFlags = method.ModFlags;
 					flags = method.flags;
 				} else {
+					if ((method.ModFlags & Modifiers.ABSTRACT) != 0 && (ModFlags & Modifiers.PRIVATE) != 0) {
+						Report.Error (422, Location, "{0}': abstract properties cannot have private accessors", GetSignatureForError (container));
+					}
+
 					CheckModifiers (container, ModFlags);
 					ModFlags |= (method.ModFlags & (~Modifiers.Accessibility));
 					ModFlags |= Modifiers.PROPERTY_CUSTOM;
