@@ -1659,14 +1659,18 @@ public partial class TypeManager {
 		if (t.IsArray)
 			return IsUnmanagedType (t.GetElementType ());
 
+		if (!IsValueType (t))
+			return false;
+
 		if (t is TypeBuilder){
 			TypeContainer tc = LookupTypeContainer (t);
-			
 			if (tc.Fields == null)
 				return true;
 			foreach (Field f in tc.Fields){
 				// Avoid using f.FieldBuilder: f.Define () may not yet have been invoked.
 				if ((f.ModFlags & Modifiers.STATIC) != 0)
+					continue;
+				if (f.MemberType == null)
 					continue;
 				if (!IsUnmanagedType (f.MemberType))
 					return false;

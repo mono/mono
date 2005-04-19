@@ -45,8 +45,6 @@ namespace Mono.CSharp {
 				Report.Error (1625, loc, "Cannot yield in the body of a " +
 					      "finally clause");
 				return false;
-			} else {
-				Console.WriteLine ("Not in finally");
 			}
 			
 			if (ec.InUnsafe) {
