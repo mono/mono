@@ -1,3 +1,7 @@
+2005-04-20  Zoltan Varga  <vargaz@freemail.hu>
+
+	* threads.c marshal.h marshal.c exceptions.h exceptions.c appdomain.c: 
+	Fix some gcc 4.0 warnings.
 
 Wed Apr 20 16:09:06 CEST 2005 Paolo Molaro <lupus@ximian.com>
 
