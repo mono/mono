@@ -1,3 +1,12 @@
+2005-04-20  Marek Safar  <marek.safar@seznam.cz>
+
+	* codegen.cs (InRefOutArgumentResolving): New field.
+	
+	* ecore.cs (FieldExpr.DoResolve): Check for assigning to readonly
+	fields outside contructor.
+	
+	* expression.cs (Argument.Resolve): Set InRefOutArgumentResolving.
+	
 2005-04-19  Miguel de Icaza  <miguel@novell.com>
 
 	* anonymous.cs (CaptureContext.EmitParameterInstance): The

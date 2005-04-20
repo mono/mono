@@ -2791,6 +2791,25 @@ namespace Mono.CSharp {
 
 		override public Expression DoResolve (EmitContext ec)
 		{
+			if (ec.InRefOutArgumentResolving && FieldInfo.IsInitOnly && !ec.IsConstructor && FieldInfo.FieldType.IsValueType) {
+				if (FieldInfo.FieldType is TypeBuilder) {
+					if (FieldInfo.IsStatic)
+						Report.Error (1651, loc, "Members of readonly static field '{0}.{1}' cannot be passed ref or out (except in a constructor)",
+							TypeManager.CSharpName (DeclaringType), Name);
+					else
+						Report.Error (1649, loc, "Members of readonly field '{0}.{1}' cannot be passed ref or out (except in a constructor)",
+							TypeManager.CSharpName (DeclaringType), Name);
+				} else {
+					if (FieldInfo.IsStatic)
+						Report.Error (199, loc, "A static readonly field '{0}' cannot be passed ref or out (except in a static constructor)",
+							Name);
+					else
+						Report.Error (192, loc, "A readonly field '{0}' cannot be passed ref or out (except in a constructor)",
+							Name);
+				}
+				return null;
+			}
+
 			if (!FieldInfo.IsStatic){
 				if (InstanceExpression == null){
 					//

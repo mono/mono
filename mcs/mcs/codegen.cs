@@ -383,6 +383,8 @@ namespace Mono.CSharp {
 		/// </summary>
 		public bool InFixedInitializer;
 
+		public bool InRefOutArgumentResolving;
+
 		public bool InCatch;
 		public bool InFinally;
 
