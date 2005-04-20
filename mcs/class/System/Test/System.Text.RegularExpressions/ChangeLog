@@ -1,3 +1,7 @@
+2005-04-20 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* PerlTest.cs: split.
+
 2005-02-27 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* RegexBugs.cs: tests for bug #69193.
