@@ -2329,17 +2329,17 @@ namespace Mono.Unix {
 
 		// TODO: does Mono marshal arrays properly?
 		[DllImport (LIBC, SetLastError=true)]
-		public static extern int execve (string path, string[] argv, string[] envp);
+		private static extern int execve (string path, string[] argv, string[] envp);
 
 		[DllImport (LIBC, SetLastError=true)]
-		public static extern int fexecve (int fd, string[] argv, string[] envp);
+		private static extern int fexecve (int fd, string[] argv, string[] envp);
 
 		[DllImport (LIBC, SetLastError=true)]
-		public static extern int execv (string path, string[] argv);
+		private static extern int execv (string path, string[] argv);
 
 		// TODO: execle, execl, execlp
 		[DllImport (LIBC, SetLastError=true)]
-		public static extern int execvp (string path, string[] argv);
+		private static extern int execvp (string path, string[] argv);
 
 		[DllImport (LIBC, SetLastError=true)]
 		public static extern int nice (int inc);
@@ -2488,14 +2488,14 @@ namespace Mono.Unix {
 		[DllImport (LIBC, SetLastError=true)]
 		[Obsolete ("DO NOT directly call fork(2); it bypasses essential " + 
 				"shutdown code.\nUse System.Diagnostics.Process instead")]
-		public static extern int fork ();
+		private static extern int fork ();
 
 		// vfork(2)
 		//    pid_t vfork(void);
 		[DllImport (LIBC, SetLastError=true)]
 		[Obsolete ("DO NOT directly call vfork(2); it bypasses essential " + 
 				"shutdown code.\nUse System.Diagnostics.Process instead")]
-		public static extern int vfork ();
+		private static extern int vfork ();
 
 		[DllImport (LIBC, SetLastError=true, EntryPoint="ttyname")]
 		private static extern IntPtr sys_ttyname (int fd);

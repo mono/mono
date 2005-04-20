@@ -1,3 +1,31 @@
+2005-04-20  Jonathan Pryor <jonpryor@vt.edu>
+
+	* Syscall.cs: Make all fork(2) and exec(2) functions `private`.  It
+	  currently isn't safe to call these under *any* circumstances.  See also
+	  68141, and this pertinent quote from Butenhof's 
+	  "Programming with POSIX Threads", p197, s6.1:
+	  
+	      "When a threaded process calls fork to create a child process,
+	      Pthreads specifies that only the thread calling fork exists in the
+	      child. ... Pthreads does not 'terminate' the other threads in a forked
+	      process...They simply cease to exist.  ... This is not a problem if
+	      the child process is about to call exec to run a new program, but if
+	      you use fork to clone a threaded program, beware that you may lose
+	      access to memory, especially heap memory stored only as
+	      thread-specific data values."
+	  
+	  Since P/Invoke currently requires using thread local storage, once you
+	  fork(2) you won't be able to invoke exec(2) from managed code (since that
+	  would require a P/Invoke transition to call exec(2), which would require
+	  TLS, which doesn't exist in the new process).
+	 
+	  This can only be fixed by removing the TLS dependency on P/Invoke, which
+	  isn't a priority (and may not be possible).
+	 
+	  The workaround is to create a C function which does your fork(2)/exec(2)
+	  (and any other functions such as daemon(3)) on your behalf, and P/Invoke
+	  to call this C function.
+
 2005-04-18  Jonathan Pryor <jonpryor@vt.edu>
 
 	* Syscall.cs: Update comment specifying which functions belong in Syscall.
