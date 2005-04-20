@@ -39,9 +39,7 @@ namespace System.Web.SessionState {
 
 	internal class SessionSQLServerHandler : ISessionHandler
 	{
-		const int DefTimeout = 600;
-
-		private Type cncType = null;
+		private static Type cncType = null;
 		private IDbConnection cnc = null;
 		private SessionConfig config;
 

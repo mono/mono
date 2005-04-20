@@ -1,3 +1,8 @@
+2005-04-20 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* SessionSQLServerHandler.cs:
+	* SessionStateServerHandler.cs: removed warnigs.
+
 2005-03-02 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* SessionStateModule.cs:

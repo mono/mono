@@ -40,7 +40,6 @@ namespace System.Web.SessionState {
 	internal class SessionStateServerHandler : ISessionHandler
 	{
 		const string CookieName = "ASPSESSION";
-		const int DefTimeout = 600;
 
 		private RemoteStateServer state_server;
 		private SessionConfig config;
@@ -117,21 +116,6 @@ namespace System.Web.SessionState {
 					context.Request.Cookies [CookieName] != null)
 				return context.Request.Cookies [CookieName].Value;
 			return null;
-		}
-
-		private byte[] GetDictData (SessionDictionary dict)
-		{
-			MemoryStream stream = null;
-			try {
-				stream = new MemoryStream ();
-				dict.Serialize (new BinaryWriter (stream));
-				return stream.GetBuffer ();
-			} catch {
-				throw;
-			} finally {
-				if (stream != null)
-					stream.Close ();
-			}
 		}
 
 		private void GetConData (string cons, out string proto, out string server, out string port)
