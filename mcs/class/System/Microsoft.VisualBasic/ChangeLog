@@ -1,3 +1,6 @@
+2005-04-20 Rafael Teixeira <rafaelteixeirabr@hotmail.com>
+	* VBCodeGenerator.cs: Better logic for OptionStrict/Explicit generation
+
 2004-12-27  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
 	* VBCodeCompiler.cs: Added /quiet argument to avoid the "Alpha message"
 	
