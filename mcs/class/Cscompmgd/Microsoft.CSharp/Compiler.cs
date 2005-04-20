@@ -100,6 +100,7 @@ namespace Microsoft.CSharp {
 			mcs.StartInfo.CreateNoWindow = true;
 			mcs.StartInfo.UseShellExecute = false;
 			mcs.StartInfo.RedirectStandardOutput = true;
+			mcs.StartInfo.RedirectStandardError = true;
 
 			try {
 				mcs.Start ();

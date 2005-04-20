@@ -1,3 +1,8 @@
+2005-04-20 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Compiler.cs: redirect standard error. Patch by Toby Miller that fixes
+	bug #74067.
+
 2004-12-14  Jackson Harper  <jackson@ximian.com>
 
 	* Compiler.cs: mcs writes to stderr now. Also read stdout so we do
