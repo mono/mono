@@ -1,3 +1,7 @@
+2005-04-20 Rafael Teixeira <rafaelteixeirabr@hotmail.com>
+	* BaseCompiler.cs: do the bridge of Explicit/Strict attributes from
+	@Page/@Control directives to CodeDOM (VB.NET support)
+
 2005-04-19  Lluis Sanchez Gual <lluis@novell.com>
 
 	* AspParser.cs: Fixed parsing of data binding tags in server

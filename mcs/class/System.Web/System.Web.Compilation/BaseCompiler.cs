@@ -81,6 +81,10 @@ namespace System.Web.Compilation
 				}
 			}
 
+			// Late-bound generators specifics (as for MonoBASIC/VB.NET)
+			unit.UserData["RequireVariableDeclaration"] = parser.ExplicitOn;
+			unit.UserData["AllowLateBound"] = !parser.StrictOn;
+			
 			AddInterfaces ();
 			AddClassAttributes ();
 			CreateStaticFields ();
