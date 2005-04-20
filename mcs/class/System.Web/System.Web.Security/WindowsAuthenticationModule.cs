@@ -37,12 +37,10 @@ namespace System.Web.Security
 	{
 		public event WindowsAuthenticationEventHandler Authenticate;
 
-		public WindowsAuthenticationModule ()
-		{
-		}
-
 		public void Dispose ()
 		{
+			if (Authenticate != null)
+				Authenticate = null;
 		}
 
 		[MonoTODO]

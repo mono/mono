@@ -1,3 +1,9 @@
+2005-04-20 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* FormsAuthentication.cs:
+	* PassportAuthenticationModule.cs:
+	* WindowsAuthenticationModule.cs: removed warnings.
+
 2005-03-11 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* FormsAuthenticationModule.cs: fix for bug 73545, which caused

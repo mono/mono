@@ -38,6 +38,8 @@ namespace System.Web.Security
 
 		public void Dispose ()
 		{
+			if (Authenticate != null)
+				Authenticate = null;
 		}
 
 		[MonoTODO("Will we ever implement this? :-)")]

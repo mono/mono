@@ -46,7 +46,7 @@ namespace System.Web.Security
 		static string cookieName;
 		static string cookiePath;
 		static int timeout;
-		static FormsProtectionEnum protection;
+		//static FormsProtectionEnum protection;
 		static object locker = new object ();
 #if NET_1_1
 		static bool requireSSL;
@@ -265,7 +265,7 @@ namespace System.Web.Security
 					cookieName = authConfig.CookieName;
 					timeout = authConfig.Timeout;
 					cookiePath = authConfig.CookiePath;
-					protection = authConfig.Protection;
+					//protection = authConfig.Protection;
 #if NET_1_1
 					requireSSL = authConfig.RequireSSL;
 					slidingExpiration = authConfig.SlidingExpiration;
@@ -274,7 +274,7 @@ namespace System.Web.Security
 					cookieName = ".MONOAUTH";
 					timeout = 30;
 					cookiePath = "/";
-					protection = FormsProtectionEnum.All;
+					//protection = FormsProtectionEnum.All;
 #if NET_1_1
 					slidingExpiration = true;
 #endif
