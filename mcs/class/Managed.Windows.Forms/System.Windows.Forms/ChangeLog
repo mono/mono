@@ -1,3 +1,8 @@
+2005-04-20  Alexander Olk  <xenomorph2@onlinehome.de>
+	* FolderBrowserDialog.cs:
+	- Use a thread to fill the TreeView
+	- Adjusted some sizes
+
 2005-04-19  Peter Bartok  <pbartok@novell.com>
 
 	* LinkLabel.cs: (Re-)create the pieces when setting the Text
@@ -52,8 +57,8 @@
 	* GridTableStylesCollection.cs: fixes name and constructor
 	* DataGridTableStyle.cs: fixes
 	* DataGridBoolColumn.cs: fixes names and constructors
-	* DataGrid.cs: define methods and properties. Some init implementations	
-	* DataGridCell.cs: define methods and properties. Some init implementations	
+	* DataGrid.cs: define methods and properties. Some init implementations
+	* DataGridCell.cs: define methods and properties. Some init implementations
 	* GridTablesFactory.cs: Define methods and properties
 
 2005-04-15  Geoff Norton  <gnorton@customerdna.com>
@@ -76,7 +81,7 @@
 2005-04-13  Jordi Mas i Hernandez <jordi@ximian.com>
 
 	* Form.cs: Pospone menu assignation if the window has not been created yet
-	* XplatUIWin32.cs: Fixes Win32SetWindowPos, then does not change window 
+	* XplatUIWin32.cs: Fixes Win32SetWindowPos, then does not change window
 	size and position
 
 2005-04-12  Jackson Harper  <jackson@ximian.com>
