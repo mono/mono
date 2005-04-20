@@ -1,5 +1,7 @@
 2005-04-20  Zoltan Varga  <vargaz@freemail.hu>
 
+	* threads.c object.c icall.c: Fix some gcc 4.0 warnings.
+	
 	* threads.c marshal.h marshal.c exceptions.h exceptions.c appdomain.c: 
 	Fix some gcc 4.0 warnings.
 
