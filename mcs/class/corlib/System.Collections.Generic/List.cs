@@ -376,7 +376,7 @@ namespace System.Collections.Generic
 		{
 			T [] t = new T [size];
 			if (data != null)
-				data.CopyTo (t, 0);
+				Array.Copy (data, t, size);
 			
 			return t;
 		}

@@ -1,3 +1,7 @@
+2005-04-20  Zoltan Varga  <vargaz@freemail.hu>
+
+	* List.cs: Fix ToArray () method. Fixes #74675.
+
 2005-04-04  Raja R Harinath  <rharinath@novell.com>
 
 	* Dictionary.cs: Update to draft of Feb 27.  Add some argument checks.
