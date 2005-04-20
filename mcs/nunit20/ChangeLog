@@ -1,3 +1,8 @@
+
+Wed Apr 20 18:05:41 CEST 2005 Paolo Molaro <lupus@ximian.com>
+
+	* */AssemblyInfo.cs: fixed path to key file.
+
 2004-12-27  Ben Maurer  <bmaurer@ximian.com>
 
 	* Changelog: rename to ChangeLog
