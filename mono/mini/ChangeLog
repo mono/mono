@@ -1,3 +1,7 @@
+2005-04-20  Zoltan Varga  <vargaz@freemail.hu>
+
+	* aot.c: Applied patch from "The Software Team" <software@solmersa.com>. Make AOT compilation
+	work on windows.
 
 Mon Apr 18 16:20:32 CEST 2005 Paolo Molaro <lupus@ximian.com>
 
