@@ -706,7 +706,6 @@ public partial class TypeManager {
 	public static Type GetNestedType (Type t, string name)
 	{
 		object ret = null;
-		Report.Debug (64, "GET NESTED TYPE", t, t.FullName, t.Name, name);
 		if (!type_hash.Lookup (t, name, out ret)) {
 			string lookup = t.FullName + "+" + name;
 			ret = t.Module.GetType (lookup);
