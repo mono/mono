@@ -1,3 +1,7 @@
+2005-04-20 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* CacheDependency.cs: remove warnings.
+
 2005-04-01 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* CachedVaryBy.cs: fixed VaryByParam and wildcard (*). Patch by Ilya

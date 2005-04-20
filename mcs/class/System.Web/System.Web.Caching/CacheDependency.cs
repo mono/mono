@@ -54,7 +54,6 @@ namespace System.Web.Caching
 	{
 		static string [] noStrings = new string [0];
 		static CacheDependency noDependency = new CacheDependency ();
-		DateTime start;
 		bool changed;
 		bool disposed;
 		CacheEntry [] entries;
@@ -107,7 +106,6 @@ namespace System.Web.Caching
 		{
 			Cache cache = HttpRuntime.Cache;
 
-			this.start = start;
 			if (filenames == null)
 				filenames = noStrings;
 
