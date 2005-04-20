@@ -1,3 +1,9 @@
+2005-04-20  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
+	* TemplateParser.cs: Adding support for Strict/Explicit attributes 
+	for @Page/@Control directives as documented at 
+	http://msdn.microsoft.com/library/en-us/cpgenref/html/cpconControlDirective.asp.
+	First step don't choke on them. Fixing #74671
+
 2005-04-20 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* TemplateParser.cs: use Load instead of LoadWithPartialName. That was

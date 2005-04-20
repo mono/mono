@@ -58,6 +58,8 @@ namespace System.Web.UI
 		bool debug;
 		string compilerOptions;
 		string language;
+		bool strictOn = false;
+		bool explicitOn = false;
 		bool output_cache;
 		int oc_duration;
 		string oc_header, oc_custom, oc_param, oc_controls;
@@ -390,6 +392,8 @@ namespace System.Web.UI
 			debug = GetBool (atts, "Debug", true);
 			compilerOptions = GetString (atts, "CompilerOptions", "");
 			language = GetString (atts, "Language", CompilationConfig.DefaultLanguage);
+			strictOn = GetBool (atts, "Strict", CompilationConfig.Strict);
+			explicitOn = GetBool (atts, "Explicit", CompilationConfig.Explicit);
 			string src = GetString (atts, "Src", null);
 			if (src != null)
 				srcAssembly = GetAssemblyFromSource (src);
@@ -548,6 +552,14 @@ namespace System.Web.UI
 			get { return language; }
 		}
 
+		internal bool StrictOn {
+			get { return strictOn; }
+		}
+
+		internal bool ExplicitOn {
+			get { return explicitOn; }
+		}
+		
 		internal bool Debug {
 			get { return debug; }
 		}
