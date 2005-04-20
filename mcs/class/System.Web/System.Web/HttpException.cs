@@ -45,8 +45,6 @@ namespace System.Web
 	public class HttpException : ExternalException
 	{
 		int http_code = 500;
-		int hr;
-		string fileName;
 
 		public HttpException () : base ()
 		{
@@ -79,15 +77,13 @@ namespace System.Web
 		}
 #endif
 
-		public HttpException (int iHttpCode, string sMessage, int iHR) : base (sMessage)
+		public HttpException (int iHttpCode, string sMessage, int iHR) : base (sMessage, iHR)
 		{
 			http_code = iHttpCode;
-			hr = iHR;
 		}
 
-		public HttpException (string sMessage, int iHR) : base (sMessage)
+		public HttpException (string sMessage, int iHR) : base (sMessage, iHR)
 		{
-			hr = iHR;
 		}
 	
 		public HttpException (int iHttpCode,
@@ -98,13 +94,6 @@ namespace System.Web
 			http_code = iHttpCode;
 		}
 
-		internal HttpException (string message, string fileName)
-			: base (message)
-		{
-			this.fileName = fileName;
-			
-		}
-		
 		public string GetHtmlErrorMessage ()
 		{
 			if (!(this.InnerException is HtmlizedException))

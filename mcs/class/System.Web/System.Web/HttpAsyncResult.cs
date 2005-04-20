@@ -32,13 +32,11 @@ namespace System.Web
 {
 	internal class HttpAsyncResult : IAsyncResult
 	{
-		private object _result;
 		private object _asyncState;
 		private AsyncCallback _callback;
-		private Exception _error;
-
 		private bool _ready;
 		private bool _readySync;
+		private Exception _error;
 
 		internal HttpAsyncResult(AsyncCallback callback, object state) {
 			_callback = callback;
@@ -48,7 +46,6 @@ namespace System.Web
 		internal void Complete(bool sync, object result, Exception error) {
 			_ready = true;
 			_readySync = sync;
-			_result = result;
 			_error = error;
 			if (null != _callback) {
 				_callback(this);
@@ -57,19 +54,13 @@ namespace System.Web
 
 		internal Exception Error {
 			get {
-				return null;
+				return _error;
 			}
 		}
 
 		public object AsyncState {
 			get {
 				return _asyncState;
-			}
-		}
-
-		public object AsyncObject {
-			get {
-				return null;
 			}
 		}
 

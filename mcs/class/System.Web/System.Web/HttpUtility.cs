@@ -40,8 +40,6 @@ namespace System.Web {
 
 		#region Fields
 	
-		const string _hex = "0123456789ABCDEF";
-		const string _chars = "<>;:.?=&@*+%/\\";
 		static Hashtable entities;
 		static object lock_ = new object ();
 	

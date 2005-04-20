@@ -32,7 +32,7 @@ using System.Collections.Specialized;
 namespace System.Web {
    [MonoTODO()]
    public class HttpClientCertificate : NameValueCollection {
-      private HttpContext _Context;
+      //private HttpContext _Context;
       private byte [] _BinaryIssuer;
       private int _CertEncoding;
       private byte [] _Certificate;
@@ -52,7 +52,7 @@ namespace System.Web {
 
       [MonoTODO("Decode ceritificate from Server variables.. CGI standard?")]
       internal HttpClientCertificate(HttpContext Context) {
-         _Context = Context;
+         //_Context = Context; not used
          _Flags = 0;
       }
 

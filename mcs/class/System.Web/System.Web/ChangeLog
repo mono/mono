@@ -1,3 +1,18 @@
+2005-04-20 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpCachePolicy.cs:
+	* HttpAsyncResult.cs:
+	* HttpClientCertificate.cs:
+	* HttpException.cs:
+	* HttpRuntime.cs:
+	* HttpCacheVaryByHeaders.cs:
+	* HttpBrowserCapabilities.cs:
+	* HttpUtility.cs:
+	* HttpCacheVaryByParams.cs: no more warnings.
+
+	* QueueManager.cs: check for local connections with minLocalFreeThreads.
+	* TimeoutManager.cs: dispose the timer when the finalizer is called.
+
 2005-04-19 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* ServerVariablesCollection.cs: shuffled variables, added missing ones

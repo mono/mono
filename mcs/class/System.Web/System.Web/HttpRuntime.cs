@@ -64,7 +64,7 @@ namespace System.Web {
 		private WaitCallback unloadDomainCallback;
 
 		private bool _firstRequestStarted;
-		private bool _firstRequestExecuted;
+		//private bool _firstRequestExecuted;
 
 		private Exception _initError;
 		private TimeoutManager timeoutManager;
@@ -121,8 +121,10 @@ namespace System.Web {
 				throw _initError;
 		}
 
+		/* Not used
 		private void OnFirstRequestEnd() {
 		}
+		*/
 
 		private void OnHandlerReady(IAsyncResult ar) {
 			HttpContext context = (HttpContext) ar.AsyncState;

@@ -31,7 +31,6 @@ using System.Collections;
 namespace System.Web {
    public sealed class HttpCacheVaryByHeaders {
       private Hashtable _Items;
-      private bool _Dirty;
       private bool _Wildcard;
 
       // TODO: We need internal methods here to communicate with CachePolicy
@@ -40,7 +39,6 @@ namespace System.Web {
       }
 
       public void VaryByUnspecifiedParameters() {
-         _Dirty = true;
          _Wildcard = true;
          _Items = null;
       }
@@ -80,8 +78,6 @@ namespace System.Web {
             if (!(value)) {
                return;
             }
-
-            _Dirty = true;
 
             if (header == "*") {
                VaryByUnspecifiedParameters();

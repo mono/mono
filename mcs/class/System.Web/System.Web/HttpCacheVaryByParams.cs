@@ -34,7 +34,6 @@ namespace System.Web {
       private Hashtable _Items;
       private bool _IgnoreParams;
       private bool _Wildcard;
-      private bool _Dirty;
 
       // TODO: We need internal methods here to communicate with CachePolicy
 
@@ -51,7 +50,6 @@ namespace System.Web {
                return;
             }
 
-            _Dirty = true;
             _IgnoreParams = value;
          }
       }
@@ -102,8 +100,6 @@ namespace System.Web {
             if (!(value)) {
                return;
             }
-
-            _Dirty = true;
 
             if (header == "*") {
                _Wildcard = true;

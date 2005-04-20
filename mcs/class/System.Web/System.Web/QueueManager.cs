@@ -53,20 +53,20 @@ namespace System.Web
 			queue = new Queue (queueLimit);
 		}
 
-		// TODO: handle local connections, just check for 127.0.0.1
-		bool CanExecuteRequest ()
+		bool CanExecuteRequest (HttpWorkerRequest req)
 		{
 			if (disposing)
 				return false;
 				
 			int threads, cports;
 			ThreadPool.GetAvailableThreads (out threads, out cports);
-			return (threads > minFree); // || (local && threads > minLocalFree);
+			bool local = (req.GetLocalAddress () == "127.0.0.1");
+			return (threads > minFree) || (local && threads > minLocalFree);
 		}
 
 		public HttpWorkerRequest GetNextRequest (HttpWorkerRequest req)
 		{
-			if (!CanExecuteRequest ()) {
+			if (!CanExecuteRequest (req)) {
 				if (req != null) {
 					lock (queue) {
 						Queue (req);

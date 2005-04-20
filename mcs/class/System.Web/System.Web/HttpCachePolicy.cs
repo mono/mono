@@ -66,13 +66,13 @@ namespace System.Web {
 		DateTime expireDate;
 		bool haveLastModified;
 		DateTime lastModified;
-		bool lastModifiedFromFileDependencies;
-		bool noServerCaching;
-		bool noStore;
-		bool noTransforms;
+		//bool lastModifiedFromFileDependencies;
+		//bool noServerCaching;
+		//bool noStore;
+		//bool noTransforms;
 		HttpCacheRevalidation revalidation;
 		bool slidingSpiration;
-		bool validUntilExpires;
+		//bool validUntilExpires;
 		string varyByCustom;
 		bool haveMaxAge;
 		TimeSpan maxAge;
@@ -210,9 +210,10 @@ namespace System.Web {
 			lastModified = date;
 		}
 
+		[MonoTODO]
 		public void SetLastModifiedFromFileDependencies ()
 		{
-			lastModifiedFromFileDependencies = true;
+			//lastModifiedFromFileDependencies = true;
 		}
 
 		public void SetMaxAge (TimeSpan date)
@@ -227,19 +228,22 @@ namespace System.Web {
 			haveMaxAge = true;
 		}
 
+		[MonoTODO]
 		public void SetNoServerCaching ()
 		{
-			noServerCaching = true;
+			//noServerCaching = true;
 		}
 
+		[MonoTODO]
 		public void SetNoStore ()
 		{
-			noStore = true;
+			//noStore = true;
 		}
 
+		[MonoTODO]
 		public void SetNoTransforms ()
 		{
-			noTransforms = true;
+			//noTransforms = true;
 		}
 
 		public void SetProxyMaxAge (TimeSpan delta)
@@ -268,9 +272,10 @@ namespace System.Web {
 			slidingExpiration = slide;
 		}
 
+		[MonoTODO]
 		public void SetValidUntilExpires (bool validUntilExpires)
 		{
-			this.validUntilExpires = validUntilExpires;
+			//this.validUntilExpires = validUntilExpires;
 		}
 
 		public void SetVaryByCustom (string custom)
