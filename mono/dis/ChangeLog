@@ -1,5 +1,11 @@
 2005-04-20  Ankit Jain  <ankit@corewars.org>
 
+	Fix #74521.
+	* get.c (get_generic_param, get_method_core, get_methoddef): Dont use
+	dis_stringify_object_with_class directly, use dis_stringify_type instead.
+
+2005-04-20  Ankit Jain  <ankit@corewars.org>
+
 	Fix #74657.
 	* main.c (dis_field_list): Print default value if field has
 	HAS_DEFAULT flag set.
