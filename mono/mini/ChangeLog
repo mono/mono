@@ -1,5 +1,8 @@
 2005-04-20  Zoltan Varga  <vargaz@freemail.hu>
 
+	* mini.c debug-mini.c aot.c tramp-x86.c driver.c: Fix some gcc 4.0
+	warnings.
+	
 	* Makefile.am (MCS): Use -unsafe instead of --unsafe.
 
 	* aot.c: Applied patch from "The Software Team" <software@solmersa.com>. Make AOT compilation
