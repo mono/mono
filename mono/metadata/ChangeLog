@@ -1,3 +1,9 @@
+
+Wed Apr 20 16:09:06 CEST 2005 Paolo Molaro <lupus@ximian.com>
+
+	* file-io.c: fix alt dir separator char on unix systems
+	and cleanup (fixes bug #71214).
+
 2005-04-19  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* marshal.c: Use CALLVIRT instead of CALL when dispatching
