@@ -351,7 +351,7 @@ namespace Mono.CSharp {
 				MethodSignature.method_signature_filter,
 				msig);
 			if (mis.Length > 0) {
-				if (mis.Length > 1)
+				if (IsAmbiguous (mis))
 					warningType = 419;
 				return mis [0];
 			}
@@ -365,7 +365,7 @@ namespace Mono.CSharp {
 					memberName);
 				if (mis.Length == 0)
 					return null;
-				if (mis.Length > 1)
+				if (IsAmbiguous (mis))
 					warningType = 419;
 				return mis [0];
 			}
@@ -472,6 +472,21 @@ namespace Mono.CSharp {
 			}
 			return mis [0];
 		}
+
+		private static bool IsAmbiguous (MemberInfo [] members)
+		{
+			if (members.Length < 2)
+				return false;
+			if (members.Length > 2)
+				return true;
+			if (members [0] is EventInfo && members [1] is FieldInfo)
+				return false;
+			if (members [1] is EventInfo && members [0] is FieldInfo)
+				return false;
+			return true;
+		}
+
+		private static Type [] emptyParamList = new Type [0];
 
 		//
 		// Processes "see" or "seealso" elements.
