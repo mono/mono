@@ -560,9 +560,15 @@ namespace MonoTests.System.IO
 			Assert ("IsPathRooted #04", !Path.IsPathRooted (String.Empty));
 			Assert ("IsPathRooted #05", !Path.IsPathRooted (" "));
 			Assert ("IsPathRooted #06", Path.IsPathRooted ("/"));
-			Assert ("IsPathRooted #07", Path.IsPathRooted ("\\"));
+			if (Windows)
+				Assert ("IsPathRooted #07", Path.IsPathRooted ("\\"));
+			else
+				Assert ("IsPathRooted #07", !Path.IsPathRooted ("\\"));
 			Assert ("IsPathRooted #08", Path.IsPathRooted ("//"));
-			Assert ("IsPathRooted #09", Path.IsPathRooted ("\\\\"));
+			if (Windows)
+				Assert ("IsPathRooted #09", Path.IsPathRooted ("\\\\"));
+			else
+				Assert ("IsPathRooted #09", !Path.IsPathRooted ("\\\\"));
 			Assert ("IsPathRooted #10", !Path.IsPathRooted (":"));
 			if (Windows)
 				Assert ("IsPathRooted #11", Path.IsPathRooted ("z:"));
