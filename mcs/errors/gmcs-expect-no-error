@@ -9,33 +9,20 @@
 
 cs0029-3.cs
 cs0035.cs
-cs0121-3.cs
-cs0136-3.cs
-cs0136-4.cs
-cs0157-5.cs
-cs0161-2.cs # new in GMCS
-cs0186.cs
-cs0208-4.cs
-cs0208-5.cs
-cs0208-6.cs
-cs0208-7.cs
-cs0208-8.cs
-cs0229.cs
-cs0266-2.cs
-cs0535-3.cs
-cs0576.cs
-cs0611-2.cs
-cs0611.cs
-cs0642-2.cs
-cs0642.cs
-cs0652.cs
-cs1041.cs
-cs1540-3.cs # new in GMCS
-cs1540-5.cs # new in GMCS
-cs1618-2.cs
-cs2023.cs
 cs0117.cs
 cs0119.cs
+cs0121-3.cs
+cs0161-2.cs # new in GMCS
+cs0186.cs
+cs0229.cs
+cs0266-2.cs
+cs0576.cs
+cs0642-2.cs
+cs0642.cs
 cs0647.cs
-cs1708.cs
-cs0019-9.cs
+cs0652.cs
+cs1540-3.cs # new in GMCS
+cs1540-5.cs # new in GMCS
+cs1649.cs
+cs1651.cs
+cs2023.cs

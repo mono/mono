@@ -1,8 +1,3 @@
 # These cause ICEs or crashes, and aren't well handled
 # by the *-expect-* mechanism
 
-cs0053-2.cs
-cs0120-5.cs
-cs0120-6.cs
-cs0120-7.cs
-cs0131-3.cs
