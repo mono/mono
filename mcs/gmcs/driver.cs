@@ -206,6 +206,7 @@ namespace Mono.CSharp
 				"   --parse            Only parses the source file\n" +
 				"   --stacktrace       Shows stack trace at error location\n" +
 				"   --timestamp        Displays time stamps of various compiler events\n" +
+				"   --expect-error X   Expect that error X will be encountered\n" +
 				"   -2                 Enables experimental C# features\n" +
 				"   -v                 Verbose parsing (for debugging the parser)\n" + 
 				"   --mcs-debug X      Sets MCS debugging level to X\n");
@@ -219,26 +220,23 @@ namespace Mono.CSharp
 				"   --about            About the Mono C# compiler\n" +
 				"   -addmodule:MODULE  Adds the module to the generated assembly\n" + 
 				"   -checked[+|-]      Set default context to checked\n" +
-				"   -codepage:ID       Sets code page to the one in ID\n" +
-				"                      (number, `utf8' or `reset')\n" +
+				"   -codepage:ID       Sets code page to the one in ID (number, utf8, reset)\n" +
 				"   -clscheck[+|-]     Disables CLS Compliance verifications" + Environment.NewLine +
 				"   -define:S1[;S2]    Defines one or more symbols (short: /d:)\n" +
-				"   -debug[+|-]        Generate debugging information\n" + 
+				"   -debug[+|-], -g    Generate debugging information\n" + 
 				"   -delaysign[+|-]    Only insert the public key into the assembly (no signing)\n" +
 				"   -doc:FILE          XML Documentation file to generate\n" + 
-				"   -g                 Generate debugging information\n" +
 				"   -keycontainer:NAME The key pair container used to strongname the assembly\n" +
 				"   -keyfile:FILE      The strongname key file used to strongname the assembly\n" +
-				"   -langversion:TEXT  Specifies language version modes: ISO-1 or Default" + Environment.NewLine +
+				"   -langversion:TEXT  Specifies language version modes: ISO-1 or Default\n" + 
 				"   -lib:PATH1,PATH2   Adds the paths to the assembly link path\n" +
 				"   -main:class        Specified the class that contains the entry point\n" +
 				"   -noconfig[+|-]     Disables implicit references to assemblies\n" +
 				"   -nostdlib[+|-]     Does not load core libraries\n" +
 				"   -nowarn:W1[,W2]    Disables one or more warnings\n" + 
-				"   -optimize[+|-]     Enables code optimalizations" + Environment.NewLine +
+				"   -optimize[+|-]     Enables code optimalizations\n" + 
 				"   -out:FNAME         Specifies output file\n" +
 				"   -pkg:P1[,Pn]       References packages P1..Pn\n" + 
-				"   --expect-error X   Expect that error X will be encountered\n" +
 				"   -recurse:SPEC      Recursively compiles the files in SPEC ([dir]/file)\n" + 
 				"   -reference:ASS     References the specified assembly (-r:ASS)\n" +
 				"   -target:KIND       Specifies the target (KIND is one of: exe, winexe,\n" +
@@ -277,7 +275,7 @@ namespace Mono.CSharp
 
 		public static int counter1, counter2;
 		
-		public static int Main (string[] args)
+	public static int Main (string[] args)
 		{
 			RootContext.Version = LanguageVersion.Default;
 			bool ok = MainDriver (args);
@@ -661,6 +659,7 @@ namespace Mono.CSharp
 				return true;
 				
 			case "--main": case "-m":
+				Report.Warning (-29, "Compatibility: Use -main:CLASS instead of --main CLASS or -m CLASS");
 				if ((i + 1) >= args.Length){
 					Usage ();
 					Environment.Exit (1);
@@ -669,6 +668,7 @@ namespace Mono.CSharp
 				return true;
 				
 			case "--unsafe":
+				Report.Warning (-29, "Compatibility: Use -unsafe instead of --unsafe");
 				RootContext.Unsafe = true;
 				return true;
 				
@@ -679,6 +679,7 @@ namespace Mono.CSharp
 				return true;
 				
 			case "--define":
+				Report.Warning (-29, "Compatibility: Use -d:SYMBOL instead of --define SYMBOL");
 				if ((i + 1) >= args.Length){
 					Usage ();
 					Environment.Exit (1);
@@ -709,14 +710,16 @@ namespace Mono.CSharp
 				
 			case "-o": 
 			case "--output":
+				Report.Warning (-29, "Compatibility: Use -out:FILE instead of --outout FILE or -o FILE");
 				if ((i + 1) >= args.Length){
 					Usage ();
 					Environment.Exit (1);
 				}
 				SetOutputFile (args [++i]);
 				return true;
-				
+
 			case "--checked":
+				Report.Warning (-29, "Compatibility: Use -checked instead of --checked");
 				RootContext.Checked = true;
 				return true;
 				
@@ -726,6 +729,7 @@ namespace Mono.CSharp
 				
 			case "--linkresource":
 			case "--linkres":
+				Report.Warning (-29, "Compatibility: Use -linkres:VALUE instead of --linkres VALUE");
 				if ((i + 1) >= args.Length){
 					Usage ();
 					Report.Error (5, "Missing argument to --linkres"); 
@@ -739,6 +743,7 @@ namespace Mono.CSharp
 				
 			case "--resource":
 			case "--res":
+				Report.Warning (-29, "Compatibility: Use -res:VALUE instead of --res VALUE");
 				if ((i + 1) >= args.Length){
 					Usage ();
 					Report.Error (5, "Missing argument to --resource"); 
@@ -751,6 +756,7 @@ namespace Mono.CSharp
 				return true;
 				
 			case "--target":
+				Report.Warning (-29, "Compatibility: Use -target:KIND instead of --target KIND");
 				if ((i + 1) >= args.Length){
 					Environment.Exit (1);
 					return true;
@@ -782,6 +788,7 @@ namespace Mono.CSharp
 				return true;
 				
 			case "-r":
+				Report.Warning (-29, "Compatibility: Use -r:LIBRARY instead of -r library");
 				if ((i + 1) >= args.Length){
 					Usage ();
 					Environment.Exit (1);
@@ -791,6 +798,7 @@ namespace Mono.CSharp
 				return true;
 				
 			case "-L":
+				Report.Warning (-29, "Compatibility: Use -lib:ARG instead of --L arg");
 				if ((i + 1) >= args.Length){
 					Usage ();	
 					Environment.Exit (1);
@@ -799,6 +807,7 @@ namespace Mono.CSharp
 				return true;
 				
 			case "--nostdlib":
+				Report.Warning (-29, "Compatibility: Use -nostdlib instead of --nostdlib");
 				RootContext.StdLib = false;
 				return true;
 				
@@ -807,10 +816,12 @@ namespace Mono.CSharp
 				return true;
 				
 			case "--werror":
+				Report.Warning (-29, "Compatibility: Use -warnaserror: option instead of --werror");
 				Report.WarningsAreErrors = true;
 				return true;
 				
 			case "--nowarn":
+				Report.Warning (-29, "Compatibility: Use -nowarn instead of --nowarn");
 				if ((i + 1) >= args.Length){
 					Usage ();
 					Environment.Exit (1);
@@ -827,6 +838,7 @@ namespace Mono.CSharp
 				return true;
 				
 			case "--wlevel":
+				Report.Warning (-29, "Compatibility: Use -warn:LEVEL instead of --wlevel LEVEL");
 				if ((i + 1) >= args.Length){
 					Report.Error (
 						1900,
@@ -856,6 +868,7 @@ namespace Mono.CSharp
 				return true;
 				
 			case "--recurse":
+				Report.Warning (-29, "Compatibility: Use -recurse:PATTERN option instead --recurse PATTERN");
 				if ((i + 1) >= args.Length){
 					Report.Error (5, "--recurse requires an argument");
 					Environment.Exit (1);
@@ -873,10 +886,12 @@ namespace Mono.CSharp
 				return true;
 				
 			case "--debug": case "-g":
+				Report.Warning (-29, "Compatibility: Use -debug option instead of -g or --debug");
 				want_debugging_support = true;
 				return true;
 				
 			case "--noconfig":
+				Report.Warning (-29, "Compatibility: Use -noconfig option instead of --noconfig");
 				load_default_config = false;
 				return true;
 			}
@@ -885,8 +900,8 @@ namespace Mono.CSharp
 		}
 
 		//
-		// Currently it is very basic option parsing, but eventually, this will
-		// be the complete option parser
+		// This parses the -arg and /arg options to the compiler, even if the strings
+		// in the following text use "/arg" on the strings.
 		//
 		static bool CSCParseOption (string option, ref string [] args, ref int i)
 		{
@@ -971,6 +986,13 @@ namespace Mono.CSharp
 				}
 				return true;
 			}
+
+			case "/bugreport":
+				//
+				// We should collect data, runtime, etc and store in the file specified
+				//
+				Console.WriteLine ("To file bug reports, please visit: http://www.mono-project.com/Bugs");
+				return true;
 
 			case "/linkres":
 			case "/linkresource":

@@ -1,5 +1,9 @@
 2005-04-16  Miguel de Icaza  <miguel@novell.com>
 
+	* driver.cs: Add warnings to old flag usage, this is to assist
+	people who produce Makefiles and hope that the Makefiles will be
+	used on Windows.
+
 	* class.cs (TypeContainer.EmitType): Moved the definition of the
 	special $PRIVATE$ field from the resolve phase to the Emit phase.
 	During resolve we do not know if we are a struct with
