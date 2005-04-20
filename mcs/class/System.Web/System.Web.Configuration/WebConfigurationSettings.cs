@@ -229,18 +229,6 @@ namespace System.Web.Configuration
 				initCalled = true;
 			}
 		}
-
-		static string GetAppConfigPath ()
-		{
-			AppDomainSetup currentInfo = AppDomain.CurrentDomain.SetupInformation;
-
-			string configFile = currentInfo.ConfigurationFile;
-			if (configFile == null || configFile.Length == 0)
-				return null;
-
-			return configFile;
-
-		}
 	}
 
         class FileWatcherCache
@@ -333,7 +321,6 @@ namespace System.Web.Configuration
 		Hashtable locations;
 		string fileName;
 		string dirname;
-		string realdir;
 		static object removedMark = new object ();
 		static object groupMark = new object ();
                 static object emptyMark = new object ();
@@ -395,7 +382,6 @@ namespace System.Web.Configuration
 		public ConfigurationData (ConfigurationData parent, string filename, string realdir)
 		{
 			this.parent = (parent == this) ? null : parent;
-			this.realdir = realdir;
 			if (filename == null) {
 				this.fileName = Path.Combine (realdir, "*.config");
 			} else {

@@ -110,11 +110,6 @@ namespace System.Web.Configuration
 		}
 
 		// A few methods to save some typing
-		static string AttValue (string name, XmlNode node, bool optional)
-		{
-			return HandlersUtil.ExtractAttributeValue (name, node, optional);
-		}
-
 		static string AttValue (string name, XmlNode node)
 		{
 			return HandlersUtil.ExtractAttributeValue (name, node, true);

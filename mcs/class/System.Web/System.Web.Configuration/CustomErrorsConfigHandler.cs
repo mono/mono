@@ -168,11 +168,6 @@ namespace System.Web.Configuration
 			return HandlersUtil.ExtractAttributeValue (name, node, optional, allowEmpty);
 		}
 
-		static string AttValue (string name, XmlNode node, bool optional)
-		{
-			return HandlersUtil.ExtractAttributeValue (name, node, optional);
-		}
-
 		static string AttValue (string name, XmlNode node)
 		{
 			return HandlersUtil.ExtractAttributeValue (name, node, true);

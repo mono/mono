@@ -1,3 +1,13 @@
+2005-04-20 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* ModuleItem.cs:
+	* GlobalizationConfigurationHandler.cs:
+	* WebConfigurationSettings.cs:
+	* CustomErrorsConfigHandler.cs:
+	* PagesConfigurationHandler.cs:
+	* WebControlsSectionHandler.cs:
+	* AuthorizationConfigHandler.cs: removed warnings.
+
 2005-03-16 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* CompilerCollection.cs:

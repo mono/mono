@@ -30,11 +30,9 @@ using System;
 namespace System.Web.Configuration {
 	class ModuleItem {
 		private Type _type;
-		private string _typeName;
 		private string _name;
 
 		public ModuleItem(string name, string type) {
-			_typeName = type;
 			_name = name;
 
 			_type = Type.GetType (type, true);
@@ -43,7 +41,6 @@ namespace System.Web.Configuration {
 		}
 
 		public ModuleItem(string name, Type type) {
-			_typeName = type.ToString ();
 			_name = name;
 			_type = type;
 			if (!typeof(IHttpModule).IsAssignableFrom(_type))

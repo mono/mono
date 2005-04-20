@@ -153,11 +153,6 @@ namespace System.Web.Configuration
 			return HandlersUtil.ExtractAttributeValue (name, node, optional);
 		}
 
-		static string AttValue (string name, XmlNode node)
-		{
-			return HandlersUtil.ExtractAttributeValue (name, node, true);
-		}
-
 		static void ThrowException (string message, XmlNode node)
 		{
 			HandlersUtil.ThrowException (message, node);
