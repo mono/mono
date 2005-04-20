@@ -50,9 +50,6 @@ namespace System.Web.Compilation
 		static BindingFlags noCaseFlags = BindingFlags.Public | BindingFlags.NonPublic |
 						  BindingFlags.Instance | BindingFlags.IgnoreCase;
 
-		static Type styleType = typeof (System.Web.UI.WebControls.Style);
-		static Type fontinfoType = typeof (System.Web.UI.WebControls.FontInfo);
-
 		TemplateControlParser parser;
 		int dataBoundAtts;
 		ILocation currentLocation;
@@ -60,8 +57,6 @@ namespace System.Web.Compilation
 		static TypeConverter colorConverter;
 
 		static CodeVariableReferenceExpression ctrlVar = new CodeVariableReferenceExpression ("__ctrl");
-		static Type [] arrayString = new Type [] {typeof (string)};
-		static Type [] arrayStringCultureInfo = new Type [] {typeof (string), typeof (CultureInfo)};
 		
 #if NET_2_0
 		static Regex bindRegex = new Regex (@"Bind\s*\(""(.*?)""\)\s*%>", RegexOptions.Compiled);

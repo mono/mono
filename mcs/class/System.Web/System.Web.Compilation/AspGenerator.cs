@@ -181,7 +181,6 @@ namespace System.Web.Compilation
 		StringBuilder tagInnerText = new StringBuilder ();
 		static Hashtable emptyHash = new Hashtable ();
 		bool inForm;
-		TagStack formTags;
 
 		public AspGenerator (TemplateParser tparser)
 		{
@@ -290,7 +289,6 @@ namespace System.Web.Compilation
 					PrintTree ((ControlBuilder) o, indent++);
 			}
 		}
-#endif
 		
 		static void PrintLocation (ILocation loc)
 		{
@@ -302,6 +300,7 @@ namespace System.Web.Compilation
 			Console.WriteLine ("\tPlainText: " + loc.PlainText);
 			Console.WriteLine ();
 		}
+#endif
 
 		void ParseError (ILocation location, string message)
 		{
@@ -497,7 +496,6 @@ namespace System.Web.Compilation
 					throw new ParseException (location, "Only one <form> allowed.");
 
 				inForm = true;
-				formTags = new TagStack ();
 			}
 
 			if (builder.HasBody () && !(builder is ObjectTagBuilder)) {
