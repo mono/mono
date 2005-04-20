@@ -122,12 +122,6 @@ namespace System.Web
 					thread.Abort (new StepTimeout ());
 			}
 		}
-
-		~TimeoutManager ()
-		{
-			if (timer != null)
-				timer.Dispose ();
-		}
 	}
 }
 
