@@ -1789,8 +1789,6 @@ namespace Mono.CSharp
 	// This is the only public entry point
 	//
 	public class CompilerCallableEntryPoint : MarshalByRefObject {
-		static bool used = false;
-		
 		public static bool InvokeCompiler (string [] args, TextWriter error)
 		{
 			Report.Stderr = error;
