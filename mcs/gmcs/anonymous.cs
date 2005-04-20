@@ -1028,12 +1028,13 @@ namespace Mono.CSharp {
 			ILGenerator ig = ec.ig;
 
 			ScopeInfo si;
-			if (ec.CurrentBlock == toplevel_owner){
+			
+			if (ec.CurrentBlock.Toplevel == toplevel_owner){
 				si = GetScopeFromBlock (ec, toplevel_owner);
 				ig.Emit (OpCodes.Ldloc, si.ScopeInstance);
 				return;
 			}
-			
+
 			si = ec.CurrentAnonymousMethod.Scope;
 			ig.Emit (OpCodes.Ldarg_0);
 			if (si != null){
