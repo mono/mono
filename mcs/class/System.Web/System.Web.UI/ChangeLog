@@ -1,3 +1,9 @@
+2005-04-20 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* TemplateParser.cs: use Load instead of LoadWithPartialName. That was
+	there from the time when Load wasn't working properly. First part of the
+	fix to 74500.
+
 2005-04-15  Lluis Sanchez Gual <lluis@novell.com>
 
 	* ControlBuilder.cs: The BindingContainerType property happens

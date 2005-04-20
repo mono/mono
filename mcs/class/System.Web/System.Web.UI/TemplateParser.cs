@@ -370,7 +370,7 @@ namespace System.Web.UI
 			bool fullpath = false;
 			Assembly assembly = null;
 			try {
-				assembly = Assembly.LoadWithPartialName (name);
+				assembly = Assembly.Load (name);
 				string loc = assembly.Location;
 				fullpath = (Path.GetDirectoryName (loc) == PrivateBinPath);
 			} catch (Exception e) {
