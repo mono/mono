@@ -1,3 +1,8 @@
+2005-04-20 Ritvik Mayank <mritvik@novell.com>
+	* AttributeAssemblyFlag1.vb
+	* AttributeAssemblyCulture1.vb
+		Added the above test cases
+
 2005-04-05 Ritvik Mayank <mritvik@novell.com>
 	* AttributesMustInheritClassA1.vb
 	* AttributesClassC1.vb
