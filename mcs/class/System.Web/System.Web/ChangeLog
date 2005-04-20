@@ -1,5 +1,12 @@
 2005-04-19 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* ServerVariablesCollection.cs: shuffled variables, added missing ones
+	and call a method in HttpRequest to set the HTTP_ variables.
+
+	* HttpRequest.cs: new method to add HTTP_ variables to a collection.
+
+2005-04-19 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* HttpRequest.cs: GetAllHeaders was returning the value twice instead
 	of 'name: value'. When HTTP_ is requested on the output, don't include
 	unknown headers.

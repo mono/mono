@@ -39,7 +39,8 @@ namespace System.Web
 	{
 		private HttpRequest _request;
 		private bool _loaded = false;
-		public ServerVariablesCollection(HttpRequest request):base()
+
+		public ServerVariablesCollection(HttpRequest request)
 		{
 			_request = request;
 		}
@@ -52,7 +53,19 @@ namespace System.Web
 			Add("ALL_HTTP", _request.GetAllHeaders(false));
 			Add("ALL_RAW", _request.GetAllHeaders(true));
 			Add("APPL_MD_PATH", _request.WorkerRequest.GetServerVariable("APPL_MD_PATH"));
+			Add("APPL_PHYSICAL_PATH", _request.WorkerRequest.GetServerVariable("APPL_PHYSICAL_PATH"));
+
+			if (null != _request.Context.User && _request.Context.User.Identity.IsAuthenticated) {
+				Add ("AUTH_TYPE", _request.Context.User.Identity.AuthenticationType);
+				Add ("AUTH_USER", _request.Context.User.Identity.Name);
+			} else {
+				Add ("AUTH_TYPE", "");
+				Add ("AUTH_USER", "");
+			}
+
 			Add("AUTH_PASSWORD", _request.WorkerRequest.GetServerVariable("AUTH_PASSWORD"));
+			Add ("LOGON_USER", _request.WorkerRequest.GetServerVariable("LOGON_USER"));
+			Add ("REMOTE_USER", _request.WorkerRequest.GetServerVariable("REMOTE_USER"));
 			Add("CERT_COOKIE", _request.WorkerRequest.GetServerVariable("CERT_COOKIE"));
 			Add("CERT_FLAGS", _request.WorkerRequest.GetServerVariable("CERT_FLAGS"));
 			Add("CERT_ISSUER", _request.WorkerRequest.GetServerVariable("CERT_ISSUER"));
@@ -62,48 +75,40 @@ namespace System.Web
 			Add("CERT_SERVER_ISSUER", _request.WorkerRequest.GetServerVariable("CERT_SERVER_ISSUER"));
 			Add("CERT_SERVER_SUBJECT", _request.WorkerRequest.GetServerVariable("CERT_SERVER_SUBJECT"));
 			Add("CERT_SUBJECT", _request.WorkerRequest.GetServerVariable("CERT_SUBJECT"));
+
+			string sTmp = _request.WorkerRequest.GetKnownRequestHeader(HttpWorkerRequest.HeaderContentLength);
+			if (null != sTmp)
+				Add ("CONTENT_LENGTH", sTmp);
+			Add ("CONTENT_TYPE", _request.ContentType);
+
 			Add("GATEWAY_INTERFACE", _request.WorkerRequest.GetServerVariable("GATEWAY_INTERFACE"));
 			Add("HTTPS", _request.WorkerRequest.GetServerVariable("HTTPS"));
 			Add("HTTPS_KEYSIZE", _request.WorkerRequest.GetServerVariable("HTTPS_KEYSIZE"));
 			Add("HTTPS_SECRETKEYSIZE", _request.WorkerRequest.GetServerVariable("HTTPS_SECRETKEYSIZE"));
-			Add("CONTENT_TYPE", _request.ContentType);
 			Add("HTTPS_SERVER_ISSUER", _request.WorkerRequest.GetServerVariable("HTTPS_SERVER_ISSUER"));
 			Add("HTTPS_SERVER_SUBJECT", _request.WorkerRequest.GetServerVariable("HTTPS_SERVER_SUBJECT"));
 			Add("INSTANCE_ID", _request.WorkerRequest.GetServerVariable("INSTANCE_ID"));
 			Add("INSTANCE_META_PATH", _request.WorkerRequest.GetServerVariable("INSTANCE_META_PATH"));
 			Add("LOCAL_ADDR", _request.WorkerRequest.GetLocalAddress());
+			Add("PATH_INFO", _request.PathInfo);
+			Add("PATH_TRANSLATED", _request.PhysicalPath);
+			Add("QUERY_STRING", _request.QueryStringRaw);
 			Add("REMOTE_ADDR", _request.UserHostAddress);
 			Add("REMOTE_HOST", _request.UserHostName);
 			Add("REMOTE_PORT", _request.WorkerRequest.GetRemotePort ().ToString ());
 			Add("REQUEST_METHOD", _request.HttpMethod);
+			Add("SCRIPT_NAME", _request.FilePath);
 			Add("SERVER_NAME", _request.WorkerRequest.GetServerName());
 			Add("SERVER_PORT", _request.WorkerRequest.GetLocalPort().ToString());
-			Add("SERVER_PROTOCOL", _request.WorkerRequest.GetHttpVersion());
-			Add("SERVER_SOFTWARE", _request.WorkerRequest.GetServerVariable("SERVER_SOFTWARE"));
 			if (_request.WorkerRequest.IsSecure()) 
 				Add("SERVER_PORT_SECURE", "1");
-			else 
+			else
 				Add("SERVER_PORT_SECURE", "0");
+			Add("SERVER_PROTOCOL", _request.WorkerRequest.GetHttpVersion());
+			Add("SERVER_SOFTWARE", _request.WorkerRequest.GetServerVariable("SERVER_SOFTWARE"));
+			Add ("URL", _request.Url.AbsolutePath);
 
-			string sTmp = _request.WorkerRequest.GetKnownRequestHeader(HttpWorkerRequest.HeaderContentLength);
-			if (null != sTmp) 
-				Add("CONTENT_LENGTH", sTmp);
-			// TODO: Should be dynamic
-			if (null != _request.Context.User && _request.Context.User.Identity.IsAuthenticated) 
-			{
-				Add("AUTH_TYPE", _request.Context.User.Identity.AuthenticationType);
-				Add("AUTH_USER", _request.Context.User.Identity.Name);
-			} 
-			else 
-			{
-				Add("AUTH_TYPE", "");
-				Add("AUTH_USER", "");
-			}
-
-			Add("PATH_INFO", _request.PathInfo);
-			Add("PATH_TRANSLATED", _request.PhysicalPath);
-			Add("QUERY_STRING", _request.QueryStringRaw);
-			Add("SCRIPT_NAME", _request.FilePath);
+			_request.AddHeaderVariables (this);
 			MakeReadOnly();
 			_loaded = true;
 		}

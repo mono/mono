@@ -121,8 +121,33 @@ namespace System.Web {
 			_iTotalBytes = -1;
 		}
 
-		static private string MakeServerVariableFromHeader(string header) {
-			return "HTTP_" + header.ToUpper().Replace("-", "_");
+		internal void AddHeaderVariables (ServerVariablesCollection coll)
+		{
+			if (null == _WorkerRequest)
+				return;
+
+			string hname;
+			string hvalue;
+
+			// Add all known headers
+			for (int i = 0; i < HttpWorkerRequest.RequestHeaderMaximum; i++) {
+				hvalue = _WorkerRequest.GetKnownRequestHeader (i);
+				if (null != hvalue && hvalue.Length > 0) {
+					hname = HttpWorkerRequest.GetKnownRequestHeaderName (i);
+					if (null != hname && hname.Length > 0)
+						coll.Add ("HTTP_" + hname.ToUpper ().Replace ('-', '_'), hvalue);
+				}
+			}
+
+			// Get all other headers
+			string [][] unknown = _WorkerRequest.GetUnknownRequestHeaders ();
+			if (null != unknown) {
+				for (int i = 0; i < unknown.Length; i++) {
+					hname = unknown [i][0];
+					hvalue = unknown [i][1];
+					coll.Add ("HTTP_" + hname.ToUpper ().Replace ('-', '_'), hvalue);
+				}
+			}
 		}
 
 		internal string GetAllHeaders(bool raw) {
@@ -138,7 +163,7 @@ namespace System.Web {
 			string sHeaderName;
 			int iCount = 0;
 
-			// Add all know headers
+			// Add all known headers
 			for (; iCount != HttpWorkerRequest.RequestHeaderMaximum; iCount++) {
 				sHeaderValue = _WorkerRequest.GetKnownRequestHeader(iCount);
 				if (null != sHeaderValue && sHeaderValue.Length > 0) {
@@ -157,14 +182,17 @@ namespace System.Web {
 				}
 			}
 
-			if (!raw)
-				return oData.ToString ();
-
 			// Get all other headers
 			string [][] arrUnknownHeaders = _WorkerRequest.GetUnknownRequestHeaders();
 			if (null != arrUnknownHeaders) {
 				for (iCount = 0; iCount != arrUnknownHeaders.Length; iCount++) {
-					oData.Append(arrUnknownHeaders[iCount][0]);
+					string hname = arrUnknownHeaders[iCount][0];
+					if (raw) {
+						oData.Append (hname);
+					} else {
+						oData.Append ("HTTP_");
+						oData.Append (hname.ToUpper ().Replace ('-', '_'));
+					}
 					oData.Append(": ");
 					oData.Append(arrUnknownHeaders[iCount][1]);
 					oData.Append("\r\n");
