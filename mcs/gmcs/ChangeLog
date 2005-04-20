@@ -1,3 +1,14 @@
+2005-04-16  Miguel de Icaza  <miguel@novell.com>
+
+	* class.cs (TypeContainer.EmitType): Moved the definition of the
+	special $PRIVATE$ field from the resolve phase to the Emit phase.
+	During resolve we do not know if we are a struct with
+	HasExplicitLayout, we know this only after the attributes for the
+	type are emitted.
+
+	Set the FieldOffset to zero on the dummy field that we create for
+	the class.   Fixes 74590.
+
 2005-04-16  Raja R Harinath  <rharinath@novell.com>
 
 	Fix #73834.

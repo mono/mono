@@ -1351,18 +1351,6 @@ namespace Mono.CSharp {
 			if (ptype != null)
 				TypeBuilder.SetParent (ptype);
 
-			//
-			// Structs with no fields need to have at least one byte.
-			// The right thing would be to set the PackingSize in a DefineType
-			// but there are no functions that allow interfaces *and* the size to
-			// be specified.
-			//
-
-			if ((Kind == Kind.Struct) && !have_nonstatic_fields){
-				TypeBuilder.DefineField ("$PRIVATE$", TypeManager.byte_type,
-							 FieldAttributes.Private);
-			}
-
 			// add interfaces that were not added at type creation
 			if (iface_exprs != null) {
 				// FIXME: I think this should be ...ExpandInterfaces (Parent.EmitContext, ...).
@@ -2197,6 +2185,27 @@ namespace Mono.CSharp {
 			if (OptAttributes != null)
 				OptAttributes.Emit (ec, this);
 
+			//
+			// Structs with no fields need to have at least one byte.
+			// The right thing would be to set the PackingSize in a DefineType
+			// but there are no functions that allow interfaces *and* the size to
+			// be specified.
+			//
+
+			if ((Kind == Kind.Struct) && !have_nonstatic_fields){
+				FieldBuilder fb = TypeBuilder.DefineField ("$PRIVATE$", TypeManager.byte_type,
+									   FieldAttributes.Private);
+
+				if (HasExplicitLayout){
+					object [] ctor_args = new object [1];
+					ctor_args [0] = 0;
+				
+					CustomAttributeBuilder cba = new CustomAttributeBuilder (
+						TypeManager.field_offset_attribute_ctor, ctor_args);
+					fb.SetCustomAttribute (cba);
+				}
+			}
+
 			Emit ();
 
 			if (instance_constructors != null) {
@@ -2870,7 +2879,7 @@ namespace Mono.CSharp {
 	}
 
 	public abstract class ClassOrStruct : TypeContainer {
-		bool hasExplicitLayout = false;
+		bool has_explicit_layout = false;
 		ListDictionary declarative_security;
 
 		public ClassOrStruct (NamespaceEntry ns, TypeContainer parent,
@@ -2887,7 +2896,7 @@ namespace Mono.CSharp {
 
 		public override bool HasExplicitLayout {
 			get {
-				return hasExplicitLayout;
+				return has_explicit_layout;
 				}
 			}
 
@@ -2913,9 +2922,8 @@ namespace Mono.CSharp {
 				return;
 			}
 
-			if (a.Type == TypeManager.struct_layout_attribute_type &&
-			    a.GetLayoutKindValue () == LayoutKind.Explicit)
-				hasExplicitLayout = true;
+			if (a.Type == TypeManager.struct_layout_attribute_type && a.GetLayoutKindValue () == LayoutKind.Explicit)
+				has_explicit_layout = true;
 
 			base.ApplyAttributeBuilder (a, cb);
 		}

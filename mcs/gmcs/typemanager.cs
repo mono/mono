@@ -194,7 +194,8 @@ public partial class TypeManager {
 	static public ConstructorInfo default_member_ctor;
 	static public ConstructorInfo decimal_constant_attribute_ctor;
 	static internal ConstructorInfo struct_layout_attribute_ctor;
-
+	static public ConstructorInfo field_offset_attribute_ctor;
+	
 	///
 	/// A new in C# 2.0
 	/// 
@@ -1412,6 +1413,8 @@ public partial class TypeManager {
 		decimal_constant_attribute_ctor = GetConstructor (decimal_constant_attribute_type, new Type []
 			{ byte_type, byte_type, uint32_type, uint32_type, uint32_type } );
 
+		field_offset_attribute_ctor = GetConstructor (field_offset_attribute_type, new Type []
+			{ int32_type });
 
 		//
 		// .NET 2.0 types
