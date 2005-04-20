@@ -1,3 +1,7 @@
+2005-04-20  Jordi Mas i Hernandez <jordi@ximian.com>
+
+	* DataViewManager.cs: implements TypedList.GetListName used in SWF
+
 2005-04-19  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DataRowView.cs : indexer should access to DataRow with proper

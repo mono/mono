@@ -388,11 +388,16 @@ namespace System.Data
 				
 			throw new NotImplementedException ();
 		}
-	
-		[MonoTODO]
+			
 		string ITypedList.GetListName (PropertyDescriptor[] listAccessors)
-		{
-			throw new NotImplementedException ();
+		{			
+			if (dataSet != null) {							
+				if (listAccessors == null || listAccessors.Length == 0) {
+					return  dataSet.DataSetName;
+				}				
+			}			
+			
+			return string.Empty;
 		}
 	
 		protected virtual void OnListChanged (ListChangedEventArgs e) 
