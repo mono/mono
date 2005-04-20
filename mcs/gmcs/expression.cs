@@ -6304,9 +6304,11 @@ namespace Mono.CSharp {
 			}
 
 			int child_bounds = -1;
-			foreach (object o in probe) {
+			for (int i = 0; i < probe.Count; ++i) {
+				object o = probe [i];
 				if (o is ArrayList) {
-					int current_bounds = ((ArrayList) o).Count;
+					ArrayList sub_probe = o as ArrayList;
+					int current_bounds = sub_probe.Count;
 					
 					if (child_bounds == -1) 
 						child_bounds = current_bounds;
@@ -6320,7 +6322,7 @@ namespace Mono.CSharp {
 						return false;
 					}
 					
-					bool ret = CheckIndices (ec, (ArrayList) o, idx + 1, specified_dims);
+					bool ret = CheckIndices (ec, sub_probe, idx + 1, specified_dims);
 					if (!ret)
 						return false;
 				} else {
@@ -6331,6 +6333,7 @@ namespace Mono.CSharp {
 					
 					Expression tmp = (Expression) o;
 					tmp = tmp.Resolve (ec);
+					probe [i] = tmp;
 					if (tmp == null)
 						return false;
 

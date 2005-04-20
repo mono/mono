@@ -3403,6 +3403,8 @@ namespace Mono.CSharp {
 		public bool IsBase;
 		MethodInfo getter, setter;
 		bool is_static;
+
+		bool resolved;
 		
 		LocalTemporary temp;
 		bool prepared;
@@ -3555,6 +3557,11 @@ namespace Mono.CSharp {
 		
 		override public Expression DoResolve (EmitContext ec)
 		{
+			if (resolved) {
+				Report.Debug ("Double resolve of " + Name);
+				return this;
+			}
+
 			if (getter != null){
 				if (TypeManager.GetArgumentTypes (getter).Length != 0){
 					Report.Error (
@@ -3574,16 +3581,19 @@ namespace Mono.CSharp {
 				//
 				if (setter == null)
 					return null;
-				
-				Report.Error (154, loc, 
-					      "The property `" + PropertyInfo.Name +
-					      "' can not be used in " +
-					      "this context because it lacks a get accessor");
-				return null;
+
+				if (InstanceExpression != EmptyExpression.Null) {
+					Report.Error (154, loc, 
+						"The property `" + PropertyInfo.Name +
+						"' can not be used in " +
+						"this context because it lacks a get accessor");
+					return null;
+				}
 			} 
 
-			bool must_do_cs1540_check;
-			if (!IsAccessorAccessible (ec.ContainerType, getter, out must_do_cs1540_check)) {
+			bool must_do_cs1540_check = false;
+			if (getter != null &&
+			    !IsAccessorAccessible (ec.ContainerType, getter, out must_do_cs1540_check)) {
 				PropertyBase.PropertyMethod pm = TypeManager.GetMethod (getter) as PropertyBase.PropertyMethod;
 				if (pm != null && pm.HasCustomAccessModifier) {
 					Report.SymbolRelatedToPreviousError (pm);
@@ -3612,6 +3622,8 @@ namespace Mono.CSharp {
 				UnsafeError (loc);
 				return null;
 			}
+
+			resolved = true;
 
 			return this;
 		}
