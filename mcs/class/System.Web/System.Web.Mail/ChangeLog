@@ -1,3 +1,8 @@
+2005-04-20 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* SmtpClient.cs:
+	* SmtpStream.cs: removed warnings.
+
 2005-01-28  Lluis Sanchez Gual <lluis@novell.com>
 
 	* Base64AttachmentEncoder.cs: Fixed warning.

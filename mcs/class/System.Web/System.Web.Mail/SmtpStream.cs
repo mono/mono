@@ -195,10 +195,12 @@ namespace System.Web.Mail {
 	    #endif
 	}
 	
+    #if DEBUG
 	/// debug printing 
 	private void DebugPrint( string line ) {
 	    Console.WriteLine( "smtp: {0}" , line );
 	}
+    #endif
 
     }
 
