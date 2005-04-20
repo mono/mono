@@ -4778,14 +4778,20 @@ floating_point_type
 
 directive_exp 
 	: boolean_literal
-	| IDENTIFIER _mark_  //FIXME: Fix for constant expression
+	| constant_expression _mark_  //FIXME: Fix for binary expression
 	 {
-		if(constPreDir.Contains ((string) ($1))) {
-			$$ = (BoolLiteral)constPreDir [$1];
-
+		Expression exp = (Expression) $1;
+		if(exp is SimpleName) {
+			string key = ((SimpleName)exp).Name;	
+			if(constPreDir.Contains(key)) {
+				$$ = new BoolLiteral ((bool)constPreDir [key]);
+			}
 		}
 		else {
-				Report.Error (30580, (Location)$2, "value of Const used is not set");
+			object o = ((Constant) exp).GetValue ();
+			bool temp = Convert.ToBoolean(o);
+			$$ = new BoolLiteral ((bool)temp);
+			// Report.Error (30580, (Location)$2, "value of Const used is not set");
 		    }
 	 }
 	;	
@@ -4842,11 +4848,17 @@ pp_directive
 			}	
 	  	}
 	  }
-	| HASH CONST IDENTIFIER ASSIGN boolean_literal _mark_ EOL
+	| HASH CONST IDENTIFIER ASSIGN constant_expression _mark_ EOL
 	  {
-	  	if(tokenizerController.IsAcceptingTokens)
 	  	{
-			constPreDir.Add($3,$5);
+			Expression express = (Expression) $5;
+			if (express is Binary) {
+				// FIXME
+                		// TODO
+			}	
+			object o = ((Constant) express).GetValue ();
+			bool temp = Convert.ToBoolean(o);
+			constPreDir.Add($3,temp);
 	  	}
 	  }
 	| HASH IF _mark_   
