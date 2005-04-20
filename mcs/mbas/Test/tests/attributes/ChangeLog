@@ -1,3 +1,20 @@
+2005-04-20 Ritvik Mayank <mritvik@novell.com>
+	* AttributeAssemblyVersion.vb
+	* AttributeCLSCompliant.vb
+	* AttributeAssemblyVersionMinor.vb
+	* AttributeAssemblyVersionRevision.vb
+	* AttributeAssemblyVersionBuild.vb
+	* AttributeAssemblyCompany.vb
+	* AttributesAssemblyCulture.vb
+	* AttributeAssemblyCopyRight.vb
+	* AttributeAssemblyFlagA.vb
+	* AttributeAssemblyVersionMajor.vb
+	* AttributesAssemblyMultiple.vb
+	* AttributeAssemblyName.vb
+	* AttributeAssemblyTitle.vb
+	* AttributeAssemblyDescription.vba
+		Added the above tets cases.
+
 2005-04-05 Ritvik Mayank <mritvik@novell.com>
 	* AttributesClassNoparameterA.vb
 	* AttributesClassA.vb
