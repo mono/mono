@@ -1034,7 +1034,6 @@ namespace Mono.CSharp {
 			}
 			catch (Exception e) {
 				Error_AttributeEmitError (e.Message);
-				Console.WriteLine (e.ToString ());
 				return;
 			}
 
