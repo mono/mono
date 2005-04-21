@@ -36,12 +36,12 @@ namespace System.Web.UI
 	public class PartialCachingControl : BasePartialCachingControl
 	{
 
-		private Type controlType;
+		//private Type controlType;
 		private Control createdControl;
 
 		internal PartialCachingControl (Type createCachedControlType)
 		{
-			controlType = createCachedControlType;
+		//	controlType = createCachedControlType;
 		}
 
 		[MonoTODO ("Implement")]

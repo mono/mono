@@ -41,7 +41,6 @@ namespace System.Web.UI
 {
 	public sealed class StateBag : IStateManager, IDictionary, ICollection, IEnumerable
 	{
-		private bool ignoreCase;
 		private bool marked;
 		private HybridDictionary bag;
 		
@@ -57,7 +56,6 @@ namespace System.Web.UI
 
 		private void Initialize (bool ignoreCase)
 		{
-			this.ignoreCase = ignoreCase;
 			marked = false;
 			bag = new HybridDictionary (ignoreCase);
 		}
