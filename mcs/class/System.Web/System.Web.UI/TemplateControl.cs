@@ -282,7 +282,7 @@ namespace System.Web.UI {
 	
 	internal object CurrentDataItem {
 		get {
-			if (dataItemCtx == null)
+			if (dataItemCtx == null || dataItemCtx.Count == 0)
 				throw new InvalidOperationException ("No data item");
 			
 			return dataItemCtx.Peek ();

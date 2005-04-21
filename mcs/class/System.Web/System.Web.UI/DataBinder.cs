@@ -38,6 +38,9 @@ namespace System.Web.UI {
 
 	public sealed class DataBinder
 	{
+#if NET_2_0
+		[Obsolete]
+#endif
 		public DataBinder ()
 		{
 		}
@@ -192,6 +195,11 @@ namespace System.Web.UI {
 			foundDataItem = false;
 			if (container == null)			
 				return null;
+			
+			if (container is IDataItemContainer) {
+				foundDataItem = true;
+				return ((IDataItemContainer)container).DataItem;
+			}
 			
 			PropertyInfo pi = container.GetType ().GetProperty ("DataItem", BindingFlags.Public | BindingFlags.Instance);
 			if (pi == null)

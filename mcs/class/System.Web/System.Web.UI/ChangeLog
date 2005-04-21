@@ -1,3 +1,11 @@
+2005-04-21  Lluis Sanchez Gual <lluis@novell.com>
+
+	* IEditableTextControl.cs: Implemented.
+	* DataBinder.cs: Marked constructor as obsolete in 2.0.
+	In GetDataItem, check for the IDataItemContainer interface
+	in the container.
+	* TemplateControl.cs: Improved check for data item.
+
 2005-04-21 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* TemplateParser.cs: we still need LoadWithPartialName if Load fails.
