@@ -1,5 +1,10 @@
 2005-04-21  Dick Porter  <dick@ximian.com>
 
+	* handles.c (_wapi_handle_check_share): Make sure there is a "fd"
+	dir in /proc before blowing away handle info.  Fixes bug 74649.
+
+2005-04-21  Dick Porter  <dick@ximian.com>
+
 	* wait.c (WaitForMultipleObjectsEx): Implement special waits
 
 	* handles.c (_wapi_handle_wait_signal_poll_share): Don't return a
