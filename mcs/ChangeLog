@@ -1,3 +1,7 @@
+2005-04-21  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile (net_1_1_bootstrap_SUBDIRS): Add ilasm.
+
 2005-03-14  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile (_boot_): New.  Used to generalize the bootstrap to

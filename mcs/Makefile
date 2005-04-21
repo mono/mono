@@ -4,7 +4,7 @@ SUBDIRS := build jay mcs tools/resgen class mbas nunit20 ilasm tools tests error
 DIST_ONLY_SUBDIRS := gmcs
 
 basic_SUBDIRS := jay mcs class
-net_1_1_bootstrap_SUBDIRS := jay mcs class tools
+net_1_1_bootstrap_SUBDIRS := jay mcs class ilasm tools
 net_2_0_bootstrap_SUBDIRS := class
 net_2_0_SUBDIRS := jay gmcs class nunit20 tests errors tools
 
