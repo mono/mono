@@ -14,4 +14,7 @@ class X
 {
 	public void Test ()
 	{ }
+
+	public static void Main ()
+	{ }
 }
