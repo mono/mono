@@ -44,7 +44,6 @@ namespace System.Net
 		IAsyncResult innerAsyncResult;
 		bool callbackDone;
 		Exception exc;
-		HttpWebRequest request;
 		HttpWebResponse response;
 		Stream writeStream;
 		byte [] buffer;
@@ -61,7 +60,6 @@ namespace System.Net
 
 		public WebAsyncResult (HttpWebRequest request, AsyncCallback cb, object state)
 		{
-			this.request = request;
 			this.cb = cb;
 			this.state = state;
 		}
@@ -90,7 +88,6 @@ namespace System.Net
 		{
 			callbackDone = false;
 			exc = null;
-			request = null;
 			response = null;
 			writeStream = null;
 			exc = null;

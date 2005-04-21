@@ -126,8 +126,9 @@ namespace System.Diagnostics {
 		// The DiagnosticsConfigurationHandler assumes that the TraceImpl.Listeners
 		// collection exists (so it can initialize the DefaultTraceListener and
 		// add/remove existing listeners).
-		private static void InitOnce ()
+		private static object InitOnce ()
 		{
+			object d = null;
 #if !NO_LOCK_FREE
 			// The lock-free version
 			if (listeners == null) {
@@ -135,10 +136,7 @@ namespace System.Diagnostics {
 				Thread.MemoryBarrier ();
 				while (Interlocked.CompareExchange (ref listeners, c, null) == null) {
 					// Read in the .config file and get the ball rolling...
-					System.Collections.IDictionary d = DiagnosticsConfiguration.Settings;
-
-					// remove warning about unused temporary
-					d = d;
+					d = DiagnosticsConfiguration.Settings;
 				}
 				Thread.MemoryBarrier ();
 			}
@@ -147,15 +145,12 @@ namespace System.Diagnostics {
 			lock (lock_) {
 				if (listeners == null) {
 					listeners = new TraceListenerCollection ();
-
 					// Read in the .config file and get the ball rolling...
-					System.Collections.IDictionary d = DiagnosticsConfiguration.Settings;
-
-					// remove warning about unused temporary
-					d = d;
+					d = DiagnosticsConfiguration.Settings;
 				}
 			}
 #endif
+			return d;
 		}
 
 		// FIXME: According to MSDN, this method should display a dialog box

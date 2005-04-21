@@ -45,7 +45,7 @@ namespace System.Text.RegularExpressions {
 
 			this.group_count = program[1] + 1;
 			this.match_min = program[2];
-			this.match_max = program[3];
+			//this.match_max = program[3];
 
 			// setup
 
@@ -953,7 +953,7 @@ namespace System.Text.RegularExpressions {
 		private string text;			// input text
 		private int text_end;			// end of input text (last character + 1)
 		private int group_count;		// number of capturing groups
-		private int match_min, match_max;	// match width information
+		private int match_min;//, match_max;	// match width information
 		private QuickSearch qs;			// fast substring matcher
 
 		// match state

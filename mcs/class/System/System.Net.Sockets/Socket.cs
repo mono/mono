@@ -58,7 +58,7 @@ namespace System.Net.Sockets
 		{
 			/* Same structure in the runtime */
 			public Socket Sock;
-			IntPtr handle;
+			public IntPtr handle;
 			object state;
 			AsyncCallback callback;
 			WaitHandle waithandle;
@@ -77,10 +77,10 @@ namespace System.Net.Sockets
 
 			bool completed_sync;
 			bool completed;
-			bool blocking;
+			public bool blocking;
 			internal int error;
 			SocketOperation operation;
-			object ares;
+			public object ares;
 
 			public SocketAsyncResult (Socket sock, object state, AsyncCallback callback, SocketOperation operation)
 			{
@@ -1204,7 +1204,6 @@ namespace System.Net.Sockets
 		public void GetSocketOption(SocketOptionLevel level,
 					    SocketOptionName name,
 					    byte[] opt_value) {
-			int opt_value_len=opt_value.Length;
 			int error;
 			
 			GetSocketOption_arr_internal(socket, level, name,

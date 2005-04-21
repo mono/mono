@@ -58,7 +58,6 @@ namespace System.Net {
 		int version;
 		
 		static char [] reservedCharsName = new char [] {' ', '=', ';', ',', '\n', '\r', '\t'};
-		static char [] reservedCharsValue = new char [] {';', ','};
 		static char [] portSeparators = new char [] {'"', ','};
                 static string tspecials = "()<>@,;:\\\"/[]?={} \t";   // from RFC 2965, 2068
 

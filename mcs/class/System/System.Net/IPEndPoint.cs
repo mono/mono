@@ -116,10 +116,12 @@ namespace System.Net {
 					port	= (((int)sockaddr[2])<<8) + (int)sockaddr[3];
 
 					/// maybe flowid ?
+					/*
 					int unknown	= (int)sockaddr[4] +
 						(((int)sockaddr[5])<<8) +
 						(((int)sockaddr[6])<<16) +
 						(((int)sockaddr[7])<<24);
+					*/
 
 					int scopeId	= (int)sockaddr[24] +
 						(((int)sockaddr[25])<<8) +

@@ -39,7 +39,7 @@ using System.Threading;
 namespace System.IO {
 	struct FAMConnection {
 		public int FD;
-		IntPtr opaque;
+		public IntPtr opaque;
 	}
 
 	struct FAMRequest {
@@ -318,6 +318,11 @@ namespace System.IO {
 					}
 				} while (FAMPending (ref conn) > 0);
 			}
+		}
+
+		~FAMWatcher ()
+		{
+			FAMClose (ref conn);
 		}
 
 		[DllImport ("libfam.so.0")]

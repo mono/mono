@@ -1004,10 +1004,6 @@ namespace System.Text.RegularExpressions.Syntax {
 			return Parser.ParseNumber (pattern, ref ptr, b, min, max);
 		}
 
-		private int ParseDecimal () {
-			return Parser.ParseDecimal (pattern, ref ptr);
-		}
-
 		private static int ParseDigit (char c, int b, int n) {
 			switch (b) {
 			case 8:
@@ -1157,10 +1153,6 @@ namespace System.Text.RegularExpressions.Syntax {
 
 		private static bool IsIgnorePatternWhitespace (RegexOptions options) {
 			return (options & RegexOptions.IgnorePatternWhitespace) != 0;
-		}
-
-		private static bool IsRightToLeft (RegexOptions options) {
-			return (options & RegexOptions.RightToLeft) != 0;
 		}
 
 		private static bool IsECMAScript (RegexOptions options) {

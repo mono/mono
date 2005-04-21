@@ -1120,20 +1120,6 @@ namespace Microsoft.VisualBasic
 			return mySBuilder.ToString();
 		}
 
-		private void GenerateDeclaration (CodeTypeReference type, string name, CodeExpression initExpression)
-		{
-			TextWriter output = Output;
-
-			OutputTypeNamePair (type, name);
-
-			if (initExpression != null) {
-				output.Write (" = ");
-				GenerateExpression (initExpression);
-			}
-
-			output.WriteLine ();
-		}
-		
 		private void GenerateMemberReferenceExpression (CodeExpression targetObject, string memberName)
 		{
 			GenerateExpression (targetObject);

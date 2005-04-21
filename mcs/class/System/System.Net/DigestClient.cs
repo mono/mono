@@ -61,7 +61,6 @@ namespace System.Net
 		int length;
 		int pos;
 		static string [] keywords = { "realm", "opaque", "nonce", "algorithm", "qop" };
-		static char [] endSeparator = new char[] { '"', ',' };
 		string [] values = new string [keywords.Length];
 
 		public DigestHeaderParser (string header)
@@ -125,15 +124,6 @@ namespace System.Net
 		{
 			char c = ' ';
 			while (pos < length && (c == ' ' || c == '\t' || c == '\r' || c == '\n')) {
-				c = header [pos++];
-			}
-			pos--;
-		}
-		
-		void SkipNonWhitespace ()
-		{
-			char c = 'a';
-			while (pos < length && c != ' ' && c != '\t' && c != '\r' && c != '\n') {
 				c = header [pos++];
 			}
 			pos--;

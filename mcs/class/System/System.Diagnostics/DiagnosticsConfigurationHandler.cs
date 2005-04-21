@@ -168,8 +168,7 @@ namespace System.Diagnostics
 						case "add":
 							name = GetAttribute (attributes, "name", true, child);
 							value = GetAttribute (attributes, "value", true, child);
-							value = AsString (value);
-							ValidateIntegralValue (name, value);
+							value = AsString (value); ValidateIntegralValue (name, value);
 							newNodes [name] = value;
 							break;
 						case "remove":
@@ -192,14 +191,11 @@ namespace System.Diagnostics
 			d [node.Name] = newNodes;
 		}
 
-		private static void ValidateIntegralValue (string name, string value)
+		private static int ValidateIntegralValue (string name, string value)
 		{
 			try {
-				int n = int.Parse (value);
-				// remove warning about unused variable.
-				n = n;
-			}
-			catch {
+				return int.Parse (value);
+			} catch {
 				throw new ConfigurationException (string.Format (
 							"Error in '{0}': " + 
 							"The value of a switch must be integral", name));

@@ -256,18 +256,6 @@ namespace System
 
 			return builder.ToString ();
 		}
-
-		private string EncodeUtf8 (string str)
-		{
-			byte [] data = Encoding.UTF8.GetBytes (str);
-			int len = data.Length;
-			char [] res = new char [len];
-
-			for (int i=0; i<len; i++)
-				res [i] = (char) data [i];
-
-			return new string (res);
-		}
 	} 
 } 
 

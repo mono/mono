@@ -53,7 +53,6 @@ namespace System.Net
 		Socket socket;
 		object socketLock = new object ();
 		WebExceptionStatus status;
-		WebConnectionGroup group;
 		bool busy;
 		WaitOrTimerCallback initConn;
 		bool keepAlive;
@@ -79,7 +78,6 @@ namespace System.Net
 
 		public WebConnection (WebConnectionGroup group, ServicePoint sPoint)
 		{
-			this.group = group;
 			this.sPoint = sPoint;
 			buffer = new byte [4096];
 			readState = ReadState.None;

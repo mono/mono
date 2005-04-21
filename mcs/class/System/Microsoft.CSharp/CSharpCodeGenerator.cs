@@ -855,29 +855,6 @@ namespace Mono.CSharp
 			return "\"" + output + "\"";
 		}
 
-		private void GenerateDeclaration( CodeTypeReference type, string name, CodeExpression initExpression )
-		{
-			TextWriter output = Output;
-
-			OutputTypeNamePair( type, GetSafeName (name) );
-
-			if ( initExpression != null ) {
-				output.Write( " = " );
-				GenerateExpression( initExpression );
-			}
-
-			output.WriteLine( ';' );
-		}
-		
-		private void GenerateMemberReferenceExpression( CodeExpression targetObject, string memberName )
-		{
-			if (targetObject != null ) {
-				GenerateExpression( targetObject );
-				Output.Write( '.' );
-			}
-			Output.Write( GetSafeName (memberName) );
-		}
-			
 		protected override void GenerateParameterDeclarationExpression (CodeParameterDeclarationExpression e)
 		{
 			if (e.CustomAttributes != null && e.CustomAttributes.Count > 0)

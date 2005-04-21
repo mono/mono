@@ -39,20 +39,17 @@ namespace System.ComponentModel
 	internal class ReflectionPropertyDescriptor : PropertyDescriptor
 	{
 		PropertyInfo _member;
-		Type _type;
 		Type _componentType;
 		
 		public ReflectionPropertyDescriptor (Type componentType, PropertyDescriptor oldPropertyDescriptor, Attribute [] attributes)
 		: base (oldPropertyDescriptor, attributes)
 		{
-			_type = oldPropertyDescriptor.PropertyType;
 			_componentType = componentType;
 		}
 							 
 		public ReflectionPropertyDescriptor (Type componentType, string name, Type type, Attribute [] attributes)
 		: base (name, attributes)
 		{
-			_type = type;
 			_componentType = componentType;
 		}
 							 

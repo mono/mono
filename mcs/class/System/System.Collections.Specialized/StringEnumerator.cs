@@ -28,12 +28,10 @@
 
 namespace System.Collections.Specialized {
 	public class StringEnumerator {
-		private StringCollection coll;
 		private IEnumerator enumerable;
 		
 		// assembly-scoped constructor
 		internal StringEnumerator(StringCollection coll) {
-			this.coll = coll;
 			this.enumerable = ((IEnumerable)coll).GetEnumerator();
 		}
 		

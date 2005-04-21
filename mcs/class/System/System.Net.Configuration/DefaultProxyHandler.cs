@@ -57,7 +57,8 @@ namespace System.Net.Configuration
 				
 				string name = child.Name;
 				if (name == "proxy") {
-					string deflt = HandlersUtil.ExtractAttributeValue ("usesystemdefault", child, true);
+					// ignored
+					HandlersUtil.ExtractAttributeValue ("usesystemdefault", child, true);
 					string bypass = HandlersUtil.ExtractAttributeValue ("bypassonlocal", child, true);
 					string address = HandlersUtil.ExtractAttributeValue ("proxyaddress", child, true);
 					if (child.Attributes != null && child.Attributes.Count != 0) {
