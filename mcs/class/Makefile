@@ -16,7 +16,7 @@ bootstrap_dirs := \
 # We may have to add those if 'mcs' starts using them.
 basic_SUBDIRS := corlib System System.XML System
 
-net_1_1_bootstrap_SUBDIRS := $(bootstrap_dirs)
+net_1_1_bootstrap_SUBDIRS := $(bootstrap_dirs) PEAPI
 net_2_0_bootstrap_SUBDIRS := $(bootstrap_dirs)
 
 include ../build/rules.make

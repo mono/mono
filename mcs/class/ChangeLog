@@ -1,3 +1,7 @@
+2005-04-21  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile (net_1_1_bootstrap_SUBDIRS): Add PEAPI.
+
 2005-04-07  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile ($(basic_files:%=lib/basic/%)): Build the "basic"
