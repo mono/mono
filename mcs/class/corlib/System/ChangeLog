@@ -1,3 +1,9 @@
+2005-04-21 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* MulticastDelegate.cs: (GetInvocationList) when building the list that
+	is later traversed forward, mark 'this' as the end of the chain.
+	Fixes bug #74607.
+
 2005-04-19  Zoltan Varga  <vargaz@freemail.hu>
 
 	* Environment.cs: Bump corlib version.

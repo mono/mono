@@ -103,7 +103,8 @@ namespace System
 		public override Delegate[] GetInvocationList ()
 		{
 			MulticastDelegate d;
-			for (d = (MulticastDelegate) this.Clone (); d.prev != null; d = d.prev)
+			d = (MulticastDelegate) this.Clone ();
+			for (d.kpm_next = null; d.prev != null; d = d.prev)
 				d.prev.kpm_next = d;
 
 			if (d.kpm_next == null) {
