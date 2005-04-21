@@ -87,7 +87,7 @@ mcs-compileall: mono-wrapper wrapper-config
 	save_MONO_PATH=$$MONO_PATH; mcs_topdir=`cd $(mcs_topdir) && $(cur_dir_cmd)`; ret=:; \
 	for profile in $(build_profiles); do \
 	  MONO_PATH="$$mcs_topdir/class/lib/$$profile$(PLATFORM_PATH_SEPARATOR)$$save_MONO_PATH"; export MONO_PATH; \
-	  for i in $(mcs_topdir)/class/lib/$$profile/*.dll $(mcs_topdir)/class/lib/$$profile/*.exe; do \
+	  for i in $(mcs_topdir)/class/lib/$$profile/*.dll $(mcs_topdir)/class/lib/$$profile/*.exe $(mcs_topdir)/class/Microsoft.VisualBasic/fixup/$$profile/*.dll; do \
 	    if ./mono-wrapper --compile-all $$i; then \
 	      echo $$i verified OK; \
 	    else \
