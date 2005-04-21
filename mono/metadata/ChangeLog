@@ -1,3 +1,7 @@
+2005-04-21  Dick Porter  <dick@ximian.com>
+
+	* threads.c (mono_thread_create): Turn an assertion into an error.
+
 2005-04-20  Zoltan Varga  <vargaz@freemail.hu>
 
 	* threads.c object.c icall.c: Fix some gcc 4.0 warnings.
