@@ -1,5 +1,7 @@
 thisdir = class/Microsoft.VisualBasic/fixup
 
+DISTFILES = fixup.pl
+
 include ../../../build/rules.make
 
 with_mono_path = MONO_PATH="$(topdir)/class/lib/$(PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH"
@@ -98,3 +100,9 @@ uninstall-local: $(gacutil)
 endif
 endif
 # ----------------------------------------------
+
+clean-local:
+	rm -f $(the_lib)* $(the_il) Microsoft.VisualBasic.VBUtils.resources
+
+dist-local: dist-default
+	$(MKINSTALLDIRS) $(distdir)/default $(distdir)/net_2_0
