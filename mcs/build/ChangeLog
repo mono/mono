@@ -1,3 +1,7 @@
+2005-04-21  Raja R Harinath  <rharinath@novell.com>
+
+	* rules.make (INTERNAL_ILASM): Update.
+
 2005-04-14  Raja R Harinath  <rharinath@novell.com>
 
 	* library.make (dist-local): Include all ChangeLogs in the tarball.

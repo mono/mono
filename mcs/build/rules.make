@@ -29,7 +29,7 @@ MKINSTALLDIRS = $(SHELL) $(topdir)/mkinstalldirs
 INTERNAL_MCS = $(RUNTIME) $(topdir)/class/lib/$(PROFILE)/mcs.exe
 INTERNAL_MBAS = $(RUNTIME) $(topdir)/mbas/mbas.exe
 INTERNAL_GMCS = $(RUNTIME) $(topdir)/gmcs/gmcs.exe
-INTERNAL_ILASM = $(RUNTIME) $(topdir)/ilasm/ilasm.exe
+INTERNAL_ILASM = $(RUNTIME) $(topdir)/class/lib/$(PROFILE)/ilasm.exe
 INTERNAL_RESGEN = $(RUNTIME) $(topdir)/tools/resgen/resgen.exe
 corlib = mscorlib.dll
 
