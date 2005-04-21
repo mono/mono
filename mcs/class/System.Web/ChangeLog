@@ -1,3 +1,10 @@
+2005-04-21  Lluis Sanchez Gual <lluis@novell.com>
+
+	* System.Web.dll.sources: Added new files:
+		System.Web.UI.WebControls/FormView.cs
+		System.Web.UI.WebControls/FormViewRow.cs
+		System.Web.UI/IEditableTextControl.cs
+
 2005-04-15  Lluis Sanchez Gual <lluis@novell.com>
 
 	* System.Web.dll.sources: Added new files:

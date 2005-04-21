@@ -367,6 +367,7 @@ System.Web.UI.WebControls/FontSize.cs
 System.Web.UI.WebControls/FontUnit.cs
 System.Web.UI.WebControls/FontUnitConverter.cs
 System.Web.UI.WebControls/FormParameter.cs
+System.Web.UI.WebControls/FormView.cs
 System.Web.UI.WebControls/FormViewCommandEventArgs.cs
 System.Web.UI.WebControls/FormViewCommandEventHandler.cs
 System.Web.UI.WebControls/FormViewDeletedEventArgs.cs
@@ -382,6 +383,7 @@ System.Web.UI.WebControls/FormViewModeEventArgs.cs
 System.Web.UI.WebControls/FormViewModeEventHandler.cs
 System.Web.UI.WebControls/FormViewPageEventArgs.cs
 System.Web.UI.WebControls/FormViewPageEventHandler.cs
+System.Web.UI.WebControls/FormViewRow.cs
 System.Web.UI.WebControls/FormViewUpdatedEventArgs.cs
 System.Web.UI.WebControls/FormViewUpdatedEventHandler.cs
 System.Web.UI.WebControls/FormViewUpdateEventArgs.cs
@@ -686,6 +688,7 @@ System.Web.UI/IAttributeAccessor.cs
 System.Web.UI/IBindableTemplate.cs
 System.Web.UI/ICallbackEventHandler.cs
 System.Web.UI/ICheckBoxControl.cs
+System.Web.UI/IEditableTextControl.cs
 System.Web.UI/IStaticTextControl.cs
 System.Web.UI/ITextControl.cs
 System.Web.UI/IControlBuilderAccessor.cs
