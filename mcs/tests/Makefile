@@ -32,13 +32,7 @@ USE_MCS_FLAGS :=
 # Martin Baulig will manually move them into TEST_SOURCES_common after merging the code into GMCS.
 # He may also move some to TEST_EXCLUDE_net_2_0 if some of the merges are inappropriate for GMCS.
 #
-NEW_TEST_SOURCES_common = xml-033 xml-034 xml-035 xml-036 xml-037 xml-038 test-329 2test-16 test-330 a-parameter5 test-331 test-332 \
-			  test-333 test-311 test-335 test-336 test-337 test-287 test-338 test-339 test-341 test-334 test-342 \
-			  test-344 test-345 test-346 test-347 test-348 test-349 test-350 test-351 test-352 test-353 test-354 test-355 \
-			  test-356 test-357 test-358 test-359 test-360 test-361 test-362 test-363 test-364 test-365 test-366 test-367 \
-			  test-368 test-369 \
-	mtest-7-dll mtest-7-exe \
-	mtest-8-dll mtest-8-exe
+NEW_TEST_SOURCES_common = test-336 test-369
 
 #
 # Please do _not_ add any tests here - all new tests should go into NEW_TEST_SOURCES_common
@@ -75,17 +69,19 @@ TEST_SOURCES_common = \
 	test-251 test-252 test-253 test-254 test-255 test-256 test-257 test-258 test-259 test-260 \
 	test-261 test-262 test-263 test-264 test-265 test-266 test-267 test-268 test-269 test-270 \
 	test-271 test-272 test-273 test-274 test-275 test-276 test-277 test-278 test-279 test-280 \
-	test-281 test-282 test-283 test-284 test-285 test-286          test-288 test-289 test-290 \
+	test-281 test-282 test-283 test-284 test-285 test-286 test-287 test-288 test-289 test-290 \
 	test-291 test-292 test-293 test-294 test-295 test-296 test-297 test-298 test-299 test-300 \
 	test-301 test-302 test-303 test-304 test-305 test-306 test-307          test-309 test-310 \
-		 test-312 test-313 test-314 test-315 test-316 test-317 test-318          test-320 \
-	test-321          test-323 test-324 test-325 test-326 test-327 test-328 		  \
-											 test-340 \
-			  test-343 							 	  \
+	test-311 test-312 test-313 test-314 test-315 test-316 test-317 test-318          test-320 \
+	test-321          test-323 test-324 test-325 test-326 test-327 test-328 test-329 test-330 \
+	test-331 test-332 test-333 test-334 test-335 	      test-337 test-338 test-339 test-340 \
+	test-341 test-342 test-343 test-344 test-345 test-346 test-347 test-348 test-349 test-350 \
+	test-351 test-352 test-353 test-354 test-355 test-356 test-357 test-358 test-359 test-360 \
+	test-361 test-362 test-363 test-364 test-365 test-366 test-367 test-368 		  \
 	cls-test-0 cls-test-1 cls-test-2 cls-test-3 cls-test-5 cls-test-6 cls-test-7 cls-test-10  \
 	cls-test-11 cls-test-12 cls-test-14 cls-test-15 cls-test-16 \
 	2test-1  2test-2  2test-3  2test-4  2test-5  2test-6  2test-7  2test-8  2test-9  2test-10 \
-	2test-11 2test-12 2test-13 2test-14 2test-17 2test-18 \
+	2test-11 2test-12 2test-13 2test-14          2test-16 2test-17 2test-18 \
 	unsafe-1 unsafe-2 unsafe-3 unsafe-5 unsafe-6 unsafe-7 unsafe-8 unsafe-9 unsafe-10 \
 	mtest-1-dll mtest-1-exe \
 	mtest-2-dll mtest-2-exe \
@@ -93,6 +89,8 @@ TEST_SOURCES_common = \
 	mtest-4-dll mtest-4-exe \
 	mtest-5-dll mtest-5-exe \
 	mtest-6-dll mtest-6-exe \
+	mtest-7-dll mtest-7-exe \
+	mtest-8-dll mtest-8-exe \
 	test-319-dll test-319-exe \
 	covariance-1 covariance-2 covariance-3 \
 	conv-dll conv-exe \
@@ -101,7 +99,7 @@ TEST_SOURCES_common = \
 	pi pp pu-ip pu-pi \
 	a-call		a-capture5    a-instance	a-parameter2			\
 	a-capture10	a-capture6    a-nested-anon2	a-parameter4			\
-	a-capture1	a-capture7    a-nested-anon3				\
+	a-capture1	a-capture7    a-nested-anon3	a-parameter5			\
 	a-capture2	a-capture8    a-nested-anon4					\
 	a-capture3	a-capture9    a-nested-anon	a-simple2			\
 	a-capture4	a-event       a-nested		a-simple			\
@@ -252,7 +250,7 @@ TEST_SOURCES_XML = \
 	xml-001 xml-002 xml-003 xml-004 xml-005 xml-006 xml-007 xml-008 xml-009 xml-010 \
 	xml-011 xml-012 xml-013 xml-014 xml-015 xml-016 xml-017 xml-018 xml-019 xml-020 \
 	xml-021         xml-023 xml-024 xml-025 xml-026	        xml-029 xml-030 \
-	xml-031 xml-032
+	xml-031 xml-032 xml-033 xml-034 xml-035 xml-036 xml-037 xml-038
 
 # currently no formalization on 'cref' attribute was found, so there are some
 # differences between MS.NET and mono.
