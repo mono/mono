@@ -1,3 +1,7 @@
+2005-04-21  Raja R Harinath  <rharinath@novell.com>
+
+	* fixup.pl: Allow input from stdin.
+
 2005-04-21  Ankit Jain  <ankit@corewars.org>
 
 	* fixup.pl: Add fixup script to convert DefaultArgumentValueAttribute

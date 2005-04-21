@@ -27,20 +27,12 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
 
-if ($#ARGV != 0) {
-	print "Usage: fixup.pl filename.il\n";
-	exit;
-}
+while (<>) {
+	if (/\.custom instance void\s+(?:class\s+)?Microsoft\.VisualBasic\.CompilerServices\.__DefaultArgumentValueAttribute::\.ctor\s*\(([^)]*)\)\s*=\s*\(([^)]*)\)/) { 
 
-$file = $ARGV[0];
-open (ORIG, $file) or die "Can't open file $file.";
-
-while ($line = <ORIG>) {
-	if ( $line =~ /(\.custom instance void)(class| .*)(Microsoft\.VisualBasic\.CompilerServices\.__DefaultArgumentValueAttribute::\.ctor)(.*)/) { 
-
-		@type = split (/[()]/, $4);
-		@str = split (/ /, $type[3]);
-		if ($type[1] =~ /string/) {
+		my @str = split (/ /, $2);
+		if ($1 =~ /string/) {
+		        # FIXME: Assumes length < 0x80.
 			$size = hex $str [2];
 			
 			if ($size == 0) {
@@ -48,16 +40,17 @@ while ($line = <ORIG>) {
 			}elsif ($size == 255) {
 				print ("= nullref\n");
 			}else{	
-				print " = bytearray ( ";
+			        # FIXME: Should be a UTF-8 to UCS-2 translator.  However, we only use ASCII.
+				print "= bytearray ( ";
 				for ($i = 3; $i < @str - 2; $i ++) {
 					print $str [$i] . " 00 ";
 				}
 				print " )\n";
 			}
-		}elsif ($type [1] =~ /bool/) {
-			print "= bool (" . (($str [2] == 01) ? "true" : "false") . ")\n";
+		}elsif ($1 =~ /bool/) {
+			print "= bool (" . ($str [2] == '00' ? "false" : "true") . ")\n";
 		}else {
-			print "= " . $type [1] ." (0x";
+			print "= $1 (0x";
 			
 			for ($i = @str - 2 - 1; $i >= 2;$i --) {
 				print $str [$i] ;
@@ -66,8 +59,6 @@ while ($line = <ORIG>) {
 			print ")\n";
 		}
 	}else{
-		print $line;
+		print;
 	}
 }
-
-close (ORIG);
