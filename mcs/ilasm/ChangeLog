@@ -1,3 +1,7 @@
+2005-04-21  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile (PROGRAM): Make profile-specific.
+
 2004-12-08  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Driver.cs: Added support for /key option to strongname assemblies
