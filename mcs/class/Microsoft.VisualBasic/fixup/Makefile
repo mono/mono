@@ -50,7 +50,8 @@ $(the_lib): $(the_il) Microsoft.VisualBasic.VBUtils.resources
 	$(SN) $(SNFLAGS) $@ $(topdir)/class/mono.snk
 
 $(the_il): $(topdir)/class/lib/$(PROFILE)/Microsoft.VisualBasic.dll
-	$(with_mono_path) $(ILDISASM) $< | $(PERL) ./fixup.pl > $@
+	$(with_mono_path) $(ILDISASM) $< | $(PERL) ./fixup.pl > $@t
+	mv $@t $@
 
 Microsoft.VisualBasic.VBUtils.resources: ../Microsoft.VisualBasic/VBUtils.resources
 	cp $< $@
