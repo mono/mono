@@ -1,3 +1,67 @@
+2005-04-21  Dick Porter  <dick@ximian.com>
+
+	* collection.h (_WAPI_HANDLE_COLLECTION_EXPIRED_INTERVAL): Reduce
+	the time before a slot is considered too old and deleted.  This is
+	a workaround while I come up with a proper fix.
+
+2005-04-21  Dick Porter  <dick@ximian.com>
+
+	* mutexes.c: 
+	* processes.c: 
+	* threads.c: 
+	* handles.c (_wapi_handle_new): Turn assertions into errors.
+
+	* collection.c (_wapi_handle_collect): Use symbols not magic
+	numbers for timeout values
+
+2005-04-19  Dick Porter  <dick@ximian.com>
+
+	* mutexes.c: 
+	* wait.c: 
+	* handles.c (_wapi_handle_count_signalled_handles)
+	* handles-private.h (_wapi_handle_shared_lock_handle): Use new
+	shared handle locks in critical sections.
+
+	* handles.c (_wapi_handle_new_for_existing_ns): Reuse old handles
+	if there is already one there.
+	
+	* handles.c (_wapi_handle_ref): It was possible for a process to
+	exit before getting around to updating shared handle timestamps,
+	so do it here too.
+
+Tue Apr 19 16:25:47 CEST 2005 Paolo Molaro <lupus@ximian.com>
+
+	* threads.c: fix lookup of the thread id in the has table:
+	always use the id value, not the pointer to the id.
+
+2005-04-18 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* handles.c: fix handle returned in _wapi_handle_search_handle. Dick
+	pointed it out.
+
+2005-04-16 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* io-layer/sockets.c: FIONBIO with a TRUE argument means we want
+	non-blocking IO, not the other way around.
+
+2005-04-16 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* handles.c:
+	* io.c:
+	* handles-private.h: GetFileType wasn't checking if we have memory
+	allocated for the handle before dereferencing it. Fixes a FileStream
+	nunit test.
+
+2005-04-16 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* handles.c:
+	* processes.c:
+	* handles-private.h: we were calling g_renew to expand the handle array,
+	but that might move the memory and we might have pthread conditions or
+	mutexes in the original memory area that are being used. Now instead of
+	expanding an existing array, we just create new ones and keep a list of
+	them. Access to _wapi_private_handles had to be modified accordingly.
+
 2005-04-15  Dick Porter  <dick@ximian.com>
 
 	* collection.c: FreeBSD needs more than PTHREAD_STACK_MIN

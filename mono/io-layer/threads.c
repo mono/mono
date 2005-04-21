@@ -103,8 +103,12 @@ static gboolean thread_own (gpointer handle)
 		_wapi_timed_thread_join (thread_handle->thread, NULL, NULL);
 		thread_handle->joined = TRUE;
 
-		_wapi_replace_handle (handle, WAPI_HANDLE_THREAD,
-				      &shared_handle);
+		ok = _wapi_replace_handle (handle, WAPI_HANDLE_THREAD,
+					   &shared_handle);
+		if (ok == FALSE) {
+			SetLastError (ERROR_OUTOFMEMORY);
+			return (FALSE);
+		}
 	}
 
 	return(TRUE);
@@ -141,7 +145,11 @@ static void thread_exit(guint32 exitstatus, gpointer handle)
 	thread_handle->exitstatus = exitstatus;
 	thread_handle->state = THREAD_STATE_EXITED;
 
-	_wapi_replace_handle (handle, WAPI_HANDLE_THREAD, &shared_handle);
+	ok = _wapi_replace_handle (handle, WAPI_HANDLE_THREAD, &shared_handle);
+	if (ok == FALSE) {
+		SetLastError (ERROR_OUTOFMEMORY);
+		return;
+	}
 	
 	_wapi_shared_handle_set_signal_state (handle, TRUE);
 
@@ -160,7 +168,7 @@ static void thread_exit(guint32 exitstatus, gpointer handle)
 	thr_ret = mono_mutex_lock(&thread_hash_mutex);
 	g_assert (thr_ret == 0);
 	
-	g_hash_table_remove(thread_hash, &thread_handle->thread->id);
+	g_hash_table_remove (thread_hash, GUINT_TO_POINTER (thread_handle->thread->id));
 
 	thr_ret = mono_mutex_unlock(&thread_hash_mutex);
 	g_assert (thr_ret == 0);
@@ -172,7 +180,7 @@ static void thread_exit(guint32 exitstatus, gpointer handle)
 
 static void thread_hash_init(void)
 {
-	thread_hash = g_hash_table_new(g_int_hash, g_int_equal);
+	thread_hash = g_hash_table_new (NULL, NULL);
 }
 
 /**
@@ -284,14 +292,19 @@ gpointer CreateThread(WapiSecurityAttributes *security G_GNUC_UNUSED, guint32 st
 		goto thread_hash_cleanup;
 	}
 	shared_handle.u.thread.thread = thread_handle.thread;
-	_wapi_replace_handle (handle, WAPI_HANDLE_THREAD, &shared_handle);
+	ok = _wapi_replace_handle (handle, WAPI_HANDLE_THREAD, &shared_handle);
+	if (ok == FALSE) {
+		SetLastError (ERROR_OUTOFMEMORY);
+		_wapi_handle_unref (handle);
+		goto thread_hash_cleanup;
+	}
 	
 	/* Hold a reference while the thread is active, because we use
 	 * the handle to store thread exit information
 	 */
 	_wapi_handle_ref (handle);
 	
-	g_hash_table_insert (thread_hash, &thread_handle.thread->id, handle);
+	g_hash_table_insert (thread_hash, GUINT_TO_POINTER (thread_handle.thread->id), handle);
 	
 #ifdef DEBUG
 	g_message("%s: Started thread handle %p thread %p ID %ld", __func__,
@@ -331,7 +344,7 @@ gpointer OpenThread (guint32 access G_GNUC_UNUSED, gboolean inherit G_GNUC_UNUSE
 	thr_ret = mono_mutex_lock(&thread_hash_mutex);
 	g_assert (thr_ret == 0);
 	
-	ret=g_hash_table_lookup(thread_hash, &tid);
+	ret = g_hash_table_lookup (thread_hash, GUINT_TO_POINTER (tid));
 
 	thr_ret = mono_mutex_unlock(&thread_hash_mutex);
 	g_assert (thr_ret == 0);
@@ -477,14 +490,19 @@ static gpointer thread_attach(guint32 *tid)
 		goto thread_hash_cleanup;
 	}
 	shared_handle.u.thread.thread = thread_handle.thread;
-	_wapi_replace_handle (handle, WAPI_HANDLE_THREAD, &shared_handle);
+	ok = _wapi_replace_handle (handle, WAPI_HANDLE_THREAD, &shared_handle);
+	if (ok == FALSE) {
+		SetLastError (ERROR_OUTOFMEMORY);
+		_wapi_handle_unref (handle);
+		goto thread_hash_cleanup;
+	}
 
 	/* Hold a reference while the thread is active, because we use
 	 * the handle to store thread exit information
 	 */
 	_wapi_handle_ref (handle);
 	
-	g_hash_table_insert (thread_hash, &thread_handle.thread->id, handle);
+	g_hash_table_insert (thread_hash, GUINT_TO_POINTER (thread_handle.thread->id), handle);
 
 #ifdef DEBUG
 	g_message("%s: Attached thread handle %p thread %p ID %ld", __func__,
@@ -534,7 +552,7 @@ gpointer GetCurrentThread(void)
 	thr_ret = mono_mutex_lock(&thread_hash_mutex);
 	g_assert (thr_ret == 0);
 
-	ret=g_hash_table_lookup(thread_hash, &tid);
+	ret = g_hash_table_lookup (thread_hash, GUINT_TO_POINTER (tid));
 
 	thr_ret = mono_mutex_unlock(&thread_hash_mutex);
 	g_assert (thr_ret == 0);

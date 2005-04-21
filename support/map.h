@@ -634,6 +634,12 @@ int Mono_Posix_ToLockFlags (int x, int *r);
 int Mono_Posix_FromPollEvents (short x, short *r);
 int Mono_Posix_ToPollEvents (short x, short *r);
 
+#define Mono_Posix_XattrFlags_XATTR_AUTO 0x00000000
+#define Mono_Posix_XattrFlags_XATTR_CREATE 0x00000001
+#define Mono_Posix_XattrFlags_XATTR_REPLACE 0x00000002
+int Mono_Posix_FromXattrFlags (int x, int *r);
+int Mono_Posix_ToXattrFlags (int x, int *r);
+
 G_END_DECLS
 
 #endif /* ndef INC_Mono_Posix_map_H */

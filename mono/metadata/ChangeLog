@@ -1,7 +1,43 @@
+2005-04-21  Dick Porter  <dick@ximian.com>
+
+	* threads.c (mono_thread_create): Turn an assertion into an error.
+
+2005-04-20  Zoltan Varga  <vargaz@freemail.hu>
+
+	* threads.c object.c icall.c: Fix some gcc 4.0 warnings.
+	
+	* threads.c marshal.h marshal.c exceptions.h exceptions.c appdomain.c: 
+	Fix some gcc 4.0 warnings.
+
+Wed Apr 20 16:09:06 CEST 2005 Paolo Molaro <lupus@ximian.com>
+
+	* file-io.c: fix alt dir separator char on unix systems
+	and cleanup (fixes bug #71214).
+
+2005-04-19  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* marshal.c: Use CALLVIRT instead of CALL when dispatching
+	a call to a remote domain, since the method may be an
+	interface method in the client domain. This fixes bug #74192.
+
+2005-04-17 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* threadpool.c: recv/send are now performed before going back to managed
+	code to save one transition.
+
+2005-04-16 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* metadata/socket-io.c: fixed semantics in Socket.Blocking icall.
+
+	* metadata/threadpool.c: removed hack to workaround the bug above.
+
+	Fixes bug #74618.
+
 2005-04-16  Zoltan Varga  <vargaz@freemail.hu>
 
-	* reflection.c reflection.h: Fix handling of parameter defaults in dynamic
-	methods. Also fixes handling of parameter attributes. Fixes #74609.
+	* reflection.c reflection.h: Fix handling of parameter defaults in
+	dynamic methods. Also fixes handling of parameter attributes.
+	Fixes #74609.
 
 	* mono-debug.c (mono_debug_close_image): Fix warning.
 

@@ -1,3 +1,27 @@
+2005-04-21  Raja R Harinath  <rharinath@novell.com>
+
+	* runtime/Makefile.am: Update.  Pass 'monodis-wrapper' as ILDISASM
+	to sub-makes.
+	(mcs-compileall): Verify the fixed-up dll too.
+	* runtime/monodis-wrapper.in: New file.
+	* configure.in (runtime/monodis-wrapper): Create.
+	($mcsdir/build/config.make): Don't be over-eager in the definition
+	and evaluation of '$exec_prefix'.
+
+2005-04-20  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
+	* data/net_1_1/machine.config, data/net_2_0/machine.config: 
+	added ' explicit="true" strict="false" ' to system.web/compilation 
+	element as in MS. Part of fix for Bug #74671
+	
+2005-04-19  Jonathan Pryor  <jonpryor@vt.edu>
+
+	* configure.in: Add check for <sys/xattr.h>.
+	  Thanks to Daniel Drake <dsd@gentoo.org> for the patch.
+
+2005-04-18  Zoltan Varga  <vargaz@freemail.hu>
+
+	* configure.in: Applied another freebsd patch from Bill Middleton (flashdict@gmail.com).
+
 2005-04-16  Miguel de Icaza  <miguel@novell.com>
 
 	* configure.in (PTHREAD_POINTER_ID): Patch from Jonathan Pryor to
