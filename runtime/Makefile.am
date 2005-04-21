@@ -7,7 +7,7 @@ AUTOMAKE_OPTIONS = cygnus
 
 tmpinst = _tmpinst
 
-noinst_SCRIPTS = mono-wrapper
+noinst_SCRIPTS = mono-wrapper monodis-wrapper
 
 symlinks = etc/mono/1.0/machine.config etc/mono/2.0/machine.config
 
@@ -22,7 +22,7 @@ SUPPORT_FILES = $(symlinks) mono-wrapper wrapper-config
 # The write check is to foil 'make distcheck'
 all-local: $(SUPPORT_FILES)
 	if test -w $(mcs_topdir); then :; else chmod -R +w $(mcs_topdir); fi
-	d=`pwd`; cd $(mcs_topdir) && $(MAKE) RUNTIME=$$d/mono-wrapper PROFILES='$(build_profiles)' all-profiles
+	d=`pwd`; cd $(mcs_topdir) && $(MAKE) RUNTIME=$$d/mono-wrapper ILDISASM=$$d/monodis-wrapper PROFILES='$(build_profiles)' all-profiles
 
 if INSTALL_2_0
 build_profiles = default net_2_0
@@ -37,7 +37,7 @@ install: install-exec install-data
 install-exec: $(SUPPORT_FILES)
 	d=`pwd`; \
 	cd $(mcs_topdir) && $(MAKE) PROFILES='$(build_profiles)' \
-				    RUNTIME=$$d/mono-wrapper RUNTIME_HAS_CONSISTENT_GACDIR=yes install-profiles
+				    RUNTIME=$$d/mono-wrapper ILDISASM=$$d/monodis-wrapper RUNTIME_HAS_CONSISTENT_GACDIR=yes install-profiles
 
 # override automake
 install-data:
@@ -47,7 +47,7 @@ install-data:
 uninstall:
 	d=`pwd`; \
 	cd $(mcs_topdir) && $(MAKE) PROFILES='$(build_profiles)' \
-				    RUNTIME=$$d/mono-wrapper RUNTIME_HAS_CONSISTENT_GACDIR=yes uninstall-profiles
+				    RUNTIME=$$d/mono-wrapper ILDISASM=$$d/monodis-wrapper RUNTIME_HAS_CONSISTENT_GACDIR=yes uninstall-profiles
 
 clean-local:
 	d=`pwd`; cd $(mcs_topdir) && $(MAKE) PROFILES='$(build_profiles)' clean-profiles
@@ -67,11 +67,11 @@ test_select = ONLY_CENTUM_TESTS=yes
 endif
 
 mcs-do-test-profiles:
-	d=`pwd`; cd $(mcs_topdir) && $(MAKE) RUNTIME=$$d/mono-wrapper PROFILES='$(build_profiles)' test-profiles
+	d=`pwd`; cd $(mcs_topdir) && $(MAKE) RUNTIME=$$d/mono-wrapper ILDISASM=$$d/monodis-wrapper PROFILES='$(build_profiles)' test-profiles
 
 mcs-do-run-test-profiles: test-support-files
 	d=`pwd`; PATH=$$d/$(tmpinst)/bin:$$PATH ; export PATH ; \
-	( cd $(mcs_topdir) && $(MAKE) RUNTIME=$$d/mono-wrapper PROFILES='$(build_profiles)' run-test-profiles ) || ret=false ; \
+	( cd $(mcs_topdir) && $(MAKE) RUNTIME=$$d/mono-wrapper ILDISASM=$$d/monodis-wrapper PROFILES='$(build_profiles)' run-test-profiles ) || ret=false ; \
 	rm -fr $(tmpinst); $$ret
 
 if PLATFORM_WIN32
