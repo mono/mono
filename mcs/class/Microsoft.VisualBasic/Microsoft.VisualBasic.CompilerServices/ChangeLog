@@ -1,3 +1,8 @@
+2005-04-21  Raja R Harinath  <rharinath@novell.com>
+
+	* DefaultArgumentValueAttribute.cs: Remove any trace of executable
+	code or storage.
+
 2005-04-19  Satya Sudha K <ksathyasudha@novell.com>
 	* ObjectType.cs: 
 	* VBBinder.cs  : 

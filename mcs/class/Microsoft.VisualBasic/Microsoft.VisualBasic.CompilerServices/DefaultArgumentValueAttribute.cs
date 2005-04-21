@@ -51,74 +51,15 @@ namespace Microsoft.VisualBasic.CompilerServices
 	[AttributeUsage(AttributeTargets.Parameter)]
 	internal sealed class __DefaultArgumentValueAttribute : Attribute
 	{
-		private object DefaultArgumentValue;
-
-		public __DefaultArgumentValueAttribute (bool value)
-		{
-			DefaultArgumentValue = value;
-		}
-
-		public __DefaultArgumentValueAttribute (char value)
-		{
-			DefaultArgumentValue = value;
-		}
-
-		public __DefaultArgumentValueAttribute (byte value)
-		{
-			DefaultArgumentValue = value;
-		}
-
-		public __DefaultArgumentValueAttribute (short value)
-		{
-			DefaultArgumentValue = value;
-		}
-
-		public __DefaultArgumentValueAttribute (int value)
-		{
-			DefaultArgumentValue = value;
-		}
-
-		public __DefaultArgumentValueAttribute (long value)
-		{
-			DefaultArgumentValue = value;
-		}
-
-		public __DefaultArgumentValueAttribute (float value)
-		{
-			DefaultArgumentValue = value;
-		}
-
-		public __DefaultArgumentValueAttribute (double value)
-		{
-			DefaultArgumentValue = value;
-		}
-
-		public __DefaultArgumentValueAttribute (string value)
-		{
-			DefaultArgumentValue = value;
-		}
-
-		public __DefaultArgumentValueAttribute (object value)
-		{
-			DefaultArgumentValue = value;
-		}
-
-		public object Value {
-			get { return DefaultArgumentValue; }
-		}
-
-		public override bool Equals (object obj)
-		{
-			if (!(obj is __DefaultArgumentValueAttribute))
-				return false;
-			if (obj == this)
-				return true;
-			return ((__DefaultArgumentValueAttribute) obj).Value == DefaultArgumentValue;
-		}
-
-		public override int GetHashCode()
-		{
-			return DefaultArgumentValue.GetHashCode();
-		}
+		public __DefaultArgumentValueAttribute (bool value)   {}
+		public __DefaultArgumentValueAttribute (char value)   {}
+		public __DefaultArgumentValueAttribute (byte value)   {}
+		public __DefaultArgumentValueAttribute (short value)  {}
+		public __DefaultArgumentValueAttribute (int value)    {}
+		public __DefaultArgumentValueAttribute (long value)   {}
+		public __DefaultArgumentValueAttribute (float value)  {}
+		public __DefaultArgumentValueAttribute (double value) {}
+		public __DefaultArgumentValueAttribute (string value) {}
+		public __DefaultArgumentValueAttribute (object value) {}
 	}
 }
