@@ -324,141 +324,141 @@
                     BuildAction = "Content"
                 />
                 <File
-                    RelPath = "Microsoft.VisualBasic\Microsoft.VisualBasic.CompilerServices\BooleanType.cs"
+                    RelPath = "Microsoft.VisualBasic.CompilerServices\BooleanType.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Microsoft.VisualBasic\Microsoft.VisualBasic.CompilerServices\ByteType.cs"
+                    RelPath = "Microsoft.VisualBasic.CompilerServices\ByteType.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Microsoft.VisualBasic\Microsoft.VisualBasic.CompilerServices\ChangeLog"
+                    RelPath = "Microsoft.VisualBasic.CompilerServices\ChangeLog"
                     BuildAction = "None"
                 />
                 <File
-                    RelPath = "Microsoft.VisualBasic\Microsoft.VisualBasic.CompilerServices\CharArrayType.cs"
+                    RelPath = "Microsoft.VisualBasic.CompilerServices\CharArrayType.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Microsoft.VisualBasic\Microsoft.VisualBasic.CompilerServices\CharType.cs"
+                    RelPath = "Microsoft.VisualBasic.CompilerServices\CharType.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Microsoft.VisualBasic\Microsoft.VisualBasic.CompilerServices\DateType.cs"
+                    RelPath = "Microsoft.VisualBasic.CompilerServices\DateType.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Microsoft.VisualBasic\Microsoft.VisualBasic.CompilerServices\DecimalType.cs"
+                    RelPath = "Microsoft.VisualBasic.CompilerServices\DecimalType.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Microsoft.VisualBasic\Microsoft.VisualBasic.CompilerServices\DefaultArgumentValueAttribute.cs"
+                    RelPath = "Microsoft.VisualBasic.CompilerServices\DefaultArgumentValueAttribute.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Microsoft.VisualBasic\Microsoft.VisualBasic.CompilerServices\DoubleType.cs"
+                    RelPath = "Microsoft.VisualBasic.CompilerServices\DoubleType.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Microsoft.VisualBasic\Microsoft.VisualBasic.CompilerServices\ExceptionUtils.cs"
+                    RelPath = "Microsoft.VisualBasic.CompilerServices\ExceptionUtils.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Microsoft.VisualBasic\Microsoft.VisualBasic.CompilerServices\FlowControl.cs"
+                    RelPath = "Microsoft.VisualBasic.CompilerServices\FlowControl.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Microsoft.VisualBasic\Microsoft.VisualBasic.CompilerServices\IncompleteInitialization.cs"
+                    RelPath = "Microsoft.VisualBasic.CompilerServices\IncompleteInitialization.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Microsoft.VisualBasic\Microsoft.VisualBasic.CompilerServices\IntegerType.cs"
+                    RelPath = "Microsoft.VisualBasic.CompilerServices\IntegerType.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Microsoft.VisualBasic\Microsoft.VisualBasic.CompilerServices\LateBinding.cs"
+                    RelPath = "Microsoft.VisualBasic.CompilerServices\LateBinding.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Microsoft.VisualBasic\Microsoft.VisualBasic.CompilerServices\LongType.cs"
+                    RelPath = "Microsoft.VisualBasic.CompilerServices\LongType.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Microsoft.VisualBasic\Microsoft.VisualBasic.CompilerServices\ObjectType.cs"
+                    RelPath = "Microsoft.VisualBasic.CompilerServices\ObjectType.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Microsoft.VisualBasic\Microsoft.VisualBasic.CompilerServices\OptionCompareAttribute.cs"
+                    RelPath = "Microsoft.VisualBasic.CompilerServices\OptionCompareAttribute.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Microsoft.VisualBasic\Microsoft.VisualBasic.CompilerServices\OptionTextAttribute.cs"
+                    RelPath = "Microsoft.VisualBasic.CompilerServices\OptionTextAttribute.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Microsoft.VisualBasic\Microsoft.VisualBasic.CompilerServices\ProjectData.cs"
+                    RelPath = "Microsoft.VisualBasic.CompilerServices\ProjectData.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Microsoft.VisualBasic\Microsoft.VisualBasic.CompilerServices\ShortType.cs"
+                    RelPath = "Microsoft.VisualBasic.CompilerServices\ShortType.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Microsoft.VisualBasic\Microsoft.VisualBasic.CompilerServices\SingleType.cs"
+                    RelPath = "Microsoft.VisualBasic.CompilerServices\SingleType.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Microsoft.VisualBasic\Microsoft.VisualBasic.CompilerServices\StandardModuleAttribute.cs"
+                    RelPath = "Microsoft.VisualBasic.CompilerServices\StandardModuleAttribute.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Microsoft.VisualBasic\Microsoft.VisualBasic.CompilerServices\StaticLocalInitFlag.cs"
+                    RelPath = "Microsoft.VisualBasic.CompilerServices\StaticLocalInitFlag.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Microsoft.VisualBasic\Microsoft.VisualBasic.CompilerServices\StringType.cs"
+                    RelPath = "Microsoft.VisualBasic.CompilerServices\StringType.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Microsoft.VisualBasic\Microsoft.VisualBasic.CompilerServices\TODOAttribute.cs"
+                    RelPath = "Microsoft.VisualBasic.CompilerServices\TODOAttribute.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Microsoft.VisualBasic\Microsoft.VisualBasic.CompilerServices\Utils.cs"
+                    RelPath = "Microsoft.VisualBasic.CompilerServices\Utils.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Microsoft.VisualBasic\Microsoft.VisualBasic.CompilerServices\VBBinder.cs"
+                    RelPath = "Microsoft.VisualBasic.CompilerServices\VBBinder.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Microsoft.VisualBasic\Microsoft.VisualBasic.CompilerServices\VBErrors.cs"
+                    RelPath = "Microsoft.VisualBasic.CompilerServices\VBErrors.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

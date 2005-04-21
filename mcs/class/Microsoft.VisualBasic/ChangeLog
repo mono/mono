@@ -1,5 +1,10 @@
 2005-04-21  Raja R Harinath  <rharinath@novell.com>
 
+	* Makefile (NO_SIGN_ASSEMBLY, NO_INSTALL): Set.  The actual signing
+	and installation is handled by fixup/Makefile.
+	(test_against, test_dep): Point to the fixed up dll.
+	* fixup/Makefile: New makefile.  Handles calling 'fixup.pl' on the
+	build assembly, and installing it.
 	* fixup.pl: Allow input from stdin.
 
 2005-04-21  Ankit Jain  <ankit@corewars.org>
