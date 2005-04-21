@@ -1,3 +1,7 @@
+2005-04-21 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* UnixEndPoint.cs: fix from Mono.Posix.
+
 2005-04-20  Jonathan Pryor <jonpryor@vt.edu>
 
 	* Syscall.cs: Make all fork(2) and exec(2) functions `private`.  It

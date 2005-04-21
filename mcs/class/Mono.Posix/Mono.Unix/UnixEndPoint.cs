@@ -1,5 +1,5 @@
 //
-// Mono.Unix/UnixEndPoint: EndPoint derived class for AF_UNIX family sockets.
+// Mono.Unix.UnixEndPoint: EndPoint derived class for AF_UNIX family sockets.
 //
 // Authors:
 //	Gonzalo Paniagua Javier (gonzalo@ximian.com)
@@ -61,7 +61,18 @@ namespace Mono.Unix
 		{
 			int size = socketAddress.Size;
 			byte [] bytes = new byte [size];
-			for (int i = 0; i < size; i++) {
+			/*
+			 * Should also check this
+			 *
+			int addr = (int) AddressFamily.Unix;
+			if (socketAddress [0] != (addr & 0xFF))
+				throw new ArgumentException ("socketAddress is not a unix socket address.");
+
+			if (socketAddress [1] != ((addr & 0xFF00) >> 8))
+				throw new ArgumentException ("socketAddress is not a unix socket address.");
+			 */
+
+			for (int i = 2; i < size - 2; i++) {
 				bytes [i] = socketAddress [i];
 			}
 
