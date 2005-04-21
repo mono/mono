@@ -8,6 +8,7 @@
 ./Mono.Unix/StdioFileStream.cs
 ./Mono.Unix/Stdlib.cs
 ./Mono.Unix/Syscall.cs
+./Mono.Unix/UnixClient.cs
 ./Mono.Unix/UnixConvert.cs
 ./Mono.Unix/UnixDirectory.cs
 ./Mono.Unix/UnixDirectoryInfo.cs
@@ -20,6 +21,7 @@
 ./Mono.Unix/UnixGroup.cs
 ./Mono.Unix/UnixGroupInfo.cs
 ./Mono.Unix/UnixIOException.cs
+./Mono.Unix/UnixListener.cs
 ./Mono.Unix/UnixMarshal.cs
 ./Mono.Unix/UnixPath.cs
 ./Mono.Unix/UnixProcess.cs

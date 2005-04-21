@@ -1,5 +1,15 @@
 2005-04-21 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* UnixClient.cs:
+	* UnixListener.cs: TcpListener/TcpClient clones from Jow Shaw.
+
+2005-04-21 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Mono.Posix.dll.sources: added UnixListener and UnixClient from Joe
+	Shaw.
+
+2005-04-21 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* UnixEndPoint.cs: fix from Mono.Posix.
 
 2005-04-20  Jonathan Pryor <jonpryor@vt.edu>
