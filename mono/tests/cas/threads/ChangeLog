@@ -1,0 +1,15 @@
+2005-04-21  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ChangeLog: New. Track changes in the tests.
+	* Makefile: New. Build and execute tests.
+	* README: Informations about the tests.
+	* thread1.cs: New. Deny unmanaged code before creating the thread 
+	object.
+	* thread2.cs: New. Deny unmanaged code after creating the thread 
+	object but before calling Start.
+	* thread3.cs: New. Deny unmanaged code after creating the thread 
+	object and calling Start.
+	* timer1.cs: New. Use System.Threading.Timer (Thread.Start) to test 
+	stack propagation.
+	* timer2.cs: New. Use System.Timers.Timer (ThreadPool.
+	QueueUserWorkItem) to test stack propagation.
