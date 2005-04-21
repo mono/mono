@@ -1,6 +1,6 @@
 2005-04-20  John Luke  <john.luke@gmail.com>
 
-	* driver.cs: fix typo in error message, --outout to --out
+	* driver.cs: fix typo in error message, --outout to --output
 
 2005-04-20  Marek Safar  <marek.safar@seznam.cz>
 
