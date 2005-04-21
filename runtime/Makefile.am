@@ -139,7 +139,7 @@ $(tmpinst)/bin/pedump: $(srcdir)/Makefile.am
 	chmod +x $@
 
 # the 'cygnus' option also disables the default 'distdir:' target, which we _do_ want
-MYDISTFILES = Makefile.am Makefile.in mono-wrapper.in
+MYDISTFILES = Makefile.am Makefile.in mono-wrapper.in monodis-wrapper.in
 distdir: $(MYDISTFILES)
 	rm -fr $(distdir)
 	mkdir $(distdir)
