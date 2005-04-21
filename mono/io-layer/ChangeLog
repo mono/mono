@@ -1,5 +1,11 @@
 2005-04-21  Dick Porter  <dick@ximian.com>
 
+	* collection.h (_WAPI_HANDLE_COLLECTION_EXPIRED_INTERVAL): Reduce
+	the time before a slot is considered too old and deleted.  This is
+	a workaround while I come up with a proper fix.
+
+2005-04-21  Dick Porter  <dick@ximian.com>
+
 	* mutexes.c: 
 	* processes.c: 
 	* threads.c: 
