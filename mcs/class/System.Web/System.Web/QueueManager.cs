@@ -60,7 +60,7 @@ namespace System.Web
 				
 			int threads, cports;
 			ThreadPool.GetAvailableThreads (out threads, out cports);
-			bool local = (req.GetLocalAddress () == "127.0.0.1");
+			bool local = (req != null && req.GetLocalAddress () == "127.0.0.1");
 			return (threads > minFree) || (local && threads > minLocalFree);
 		}
 
