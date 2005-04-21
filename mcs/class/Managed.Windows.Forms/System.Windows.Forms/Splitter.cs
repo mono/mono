@@ -21,6 +21,7 @@
 //
 // Authors:
 //	Jackson Harper (jackson@ximian.com)
+//  Jonathan Chambers (jonathan.chambers@ansys.com)
 //
 
 
@@ -28,18 +29,22 @@ using System;
 using System.ComponentModel;
 using System.ComponentModel.Design;
 using System.Drawing;
+using System.Drawing.Drawing2D;
+using System.Windows.Forms;
 
 
-namespace System.Windows.Forms {
+namespace System.Windows.Forms 
+{
 	[DefaultEvent("SplitterMoved")]
 	[Designer("System.Windows.Forms.Design.SplitterDesigner, " + Consts.AssemblySystem_Design)]
 	[DefaultProperty("Dock")]
-	public class Splitter : Control, IMessageFilter {
+	public class Splitter : Control, IMessageFilter 
+	{
 		#region  Fields
 		private int min_extra;
 		private int min_size;
-		private int move_start_x;
-		private int move_start_y;
+		private int cursor_offset_x;
+		private int cursor_offset_y;
 
 		private int thickness;
 		private bool moving;
@@ -47,6 +52,7 @@ namespace System.Windows.Forms {
 
 		private SplitterEventHandler on_splitter_moved;
 		private SplitterEventHandler on_splitter_moving;
+		private SplitterForm drag_form;
 
 		private Control adjacent;
 		#endregion	// Fields
@@ -54,13 +60,15 @@ namespace System.Windows.Forms {
 		#region Public Constructors
 		public Splitter ()
 		{
-			SetStyle (ControlStyles.UserPaint, true);
 			SetStyle (ControlStyles.StandardClick, true);
 			SetStyle (ControlStyles.StandardDoubleClick, true);
-			SetStyle (ControlStyles.AllPaintingInWmPaint, true);
 			SetStyle (ControlStyles.Selectable, false);
 
 			Dock = DockStyle.Left;
+			drag_form = new SplitterForm();
+			drag_form.FormBorderStyle = FormBorderStyle.None;
+			drag_form.MinimumSize = new Size(1,1);
+			drag_form.ShowInTaskbar = false;
 
 			min_extra = 25;
 			min_size = 25;
@@ -71,23 +79,26 @@ namespace System.Windows.Forms {
 		#region Public Instance Properties
 		[DefaultValue(DockStyle.Left)]
 		[Localizable(true)]
-		public override DockStyle Dock {
+		public override DockStyle Dock 
+		{
 			get { return base.Dock; }
-			set {
+			set 
+			{
 				if (value == base.Dock)
 					return;
 
-				switch (value) {
-				case DockStyle.Bottom:
-				case DockStyle.Top:
-					horz = true;
-					break;
-				case DockStyle.Left:
-				case DockStyle.Right:
-					horz = false;
-					break;
-				default:
-					throw new ArgumentException ("A splitter control must be docked left, right, top, or bottom.");
+				switch (value) 
+				{
+					case DockStyle.Bottom:
+					case DockStyle.Top:
+						horz = true;
+						break;
+					case DockStyle.Left:
+					case DockStyle.Right:
+						horz = false;
+						break;
+					default:
+						throw new ArgumentException ("A splitter control must be docked left, right, top, or bottom.");
 				}
 				base.Dock = value;
 			}
@@ -95,9 +106,11 @@ namespace System.Windows.Forms {
 
 		[DefaultValue(25)]
 		[Localizable(true)]
-		public int MinExtra {
+		public int MinExtra 
+		{
 			get { return min_extra; }
-			set {
+			set 
+			{
 				if (value < 0)
 					value = 0;
 				min_extra = value;
@@ -106,11 +119,14 @@ namespace System.Windows.Forms {
 
 		[DefaultValue(25)]
 		[Localizable(true)]
-		public int MinSize {
-			get {
+		public int MinSize 
+		{
+			get 
+			{
 				return min_size;
 			}
-			set {
+			set 
+			{
 				if(value < 0)
 					value = 0;
 				min_size = value;
@@ -119,8 +135,10 @@ namespace System.Windows.Forms {
 
 		[Browsable(false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		public int SplitPosition {
-			get {
+		public int SplitPosition 
+		{
+			get 
+			{
 				Control adjacent = FindAdjacentControl ();
 				if (adjacent == null)
 					return -1;
@@ -129,12 +147,14 @@ namespace System.Windows.Forms {
 					return adjacent.Width;
 				return adjacent.Height;
 			}
-			set {
+			set 
+			{
 				adjacent = FindAdjacentControl ();
 				if (adjacent == null)
 					return;
 
-				if (horz) {
+				if (horz) 
+				{
 					if (adjacent.Height == value)
 						return;
 					OnSplitterMoved (new SplitterEventArgs (Left, Top, Left, value));
@@ -150,20 +170,26 @@ namespace System.Windows.Forms {
 		#endregion	// Public Instance Properties
 
 		#region Protected Instance Properties
-		protected override CreateParams CreateParams {
-			get {
+		protected override CreateParams CreateParams 
+		{
+			get 
+			{
 				return base.CreateParams;
 			}
 		}
 
-		protected override ImeMode DefaultImeMode {
-			get {
+		protected override ImeMode DefaultImeMode 
+		{
+			get 
+			{
 				return base.DefaultImeMode;
 			}
 		}
 
-		protected override Size DefaultSize {
-			get {
+		protected override Size DefaultSize 
+		{
+			get 
+			{
 				return new Size (3, 3);
 			}
 		}
@@ -172,7 +198,8 @@ namespace System.Windows.Forms {
 
 		#region Public Instance Methods
 		[MonoTODO]
-		public bool PreFilterMessage(ref Message m) {
+		public bool PreFilterMessage(ref Message m) 
+		{
 			return false;
 		}
 		#endregion	// Public Instance Methods
@@ -182,14 +209,19 @@ namespace System.Windows.Forms {
 		{
 			base.OnMouseDown (e);
 
-			if (!moving && e.Button == MouseButtons.Left) {
+			if (!moving && e.Button == MouseButtons.Left) 
+			{
 				adjacent = FindAdjacentControl ();
 
-				move_start_x = e.X;
-				move_start_y = e.Y;
+				cursor_offset_x = e.X;
+				cursor_offset_y = e.Y;
 
 				moving = true;
 				Capture = true;
+				drag_form.Height = this.Height;
+				drag_form.Width = this.Width;
+				drag_form.Location = PointToScreen(this.Location);
+				drag_form.Show();
 			}
 		}
 
@@ -197,51 +229,64 @@ namespace System.Windows.Forms {
 		{
 
 			base.OnMouseMove (e);
-			if (moving) {
-				int x_move = e.X - move_start_x;
-				int y_move = e.Y - move_start_y;
+			if (moving) 
+			{
 
-				move_start_x = e.X;
-				move_start_y = e.Y;
+				Point splitterLocation;
 
-				if (horz) {
-					Top = Top + y_move;
-				} else {
-					Left = Left + x_move;	     
-				}
+				if (horz) 
+					splitterLocation = new Point(this.Location.X,e.Y-cursor_offset_y);
+				else 
+					splitterLocation = new Point(e.X-cursor_offset_x,this.Location.Y);
+				
+				drag_form.Location = PointToScreen(splitterLocation);
 
-				OnSplitterMoving (new SplitterEventArgs (e.X, e.Y, Left, Top));
+				OnSplitterMoving (new SplitterEventArgs (e.X, e.Y, splitterLocation.X, splitterLocation.Y));
+
 			}
 		}
 
 		protected override void OnMouseUp (MouseEventArgs e)
 		{
-			base.OnMouseDown (e);
+			base.OnMouseUp (e);
 			moving = false;
 			Capture = false;
+			
+			drag_form.Hide();
+			
+
+			if (horz)
+				Move (e.X, e.Y-cursor_offset_y);
+			else 
+				Move (e.X-cursor_offset_x, e.Y);
+
+			OnSplitterMoved(new SplitterEventArgs (e.X, e.Y, Location.X, Location.Y));
 			adjacent = null;
 		}
 
-		protected virtual void OnSplitterMoved (SplitterEventArgs e) {
+		protected virtual void OnSplitterMoved (SplitterEventArgs e) 
+		{
 			if (on_splitter_moved != null)
 				on_splitter_moved (this, e);
-			Move (e.SplitX, e.SplitY);
 		}
 
-		protected virtual void OnSplitterMoving (SplitterEventArgs e) {
+		protected virtual void OnSplitterMoving (SplitterEventArgs e) 
+		{
 			if (on_splitter_moving != null)
 				on_splitter_moving (this, e);
-			Move (e.SplitX, e.SplitY);
 		}
 
 		protected override void SetBoundsCore (int x, int y, int width, int height, BoundsSpecified specified)
 		{
-			if (horz) {
+			if (horz) 
+			{
 				if (height <= 0)
 					thickness = 3;
 				else
 					thickness = height;
-			} else {
+			} 
+			else 
+			{
 				if (width <= 0)
 					thickness = 3;
 				else
@@ -254,41 +299,41 @@ namespace System.Windows.Forms {
 		#endregion	// Protected Instance Methods
 
 		#region Internal & Private Methods
-		private void Draw () {
-			using (Graphics pdc = Parent.CreateGraphics ()) {
-				pdc.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (Color.Red), ClientRectangle);
-			}
-		}
 
-		private void Move (int x, int y) {
+		private void Move (int x, int y) 
+		{
 			if (adjacent == null)
 				return;
 
-			if (horz) {
-				if (adjacent.Height == y)
+			Point parentPoint = Parent.PointToClient(PointToScreen(new Point(x,y)));
+
+			if (horz) 
+			{
+				if (adjacent.Height == parentPoint.Y)
 					return;
-				adjacent.Height = y;
+				adjacent.Height = parentPoint.Y;
 				return;
 			}
 
-			if (adjacent.Width == x)
+			if (adjacent.Width == parentPoint.X)
 				return;
 			
-			adjacent.Width = x;
-
-			Draw ();
+			adjacent.Width = parentPoint.X;
 		}
 
-		private Control FindAdjacentControl () {
+		private Control FindAdjacentControl () 
+		{
 			if (Parent == null)
 				return null;
 
-			foreach (Control sibling in Parent.Controls) {
+			foreach (Control sibling in Parent.Controls) 
+			{
 
 				if (!sibling.Visible)
 					continue;
 
-				switch (Dock) {
+				switch (Dock) 
+				{
 
 					case DockStyle.Left:
 						if (sibling.Right == Left)
@@ -320,91 +365,127 @@ namespace System.Windows.Forms {
 		#region Events
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-                public new event EventHandler BackgroundImageChanged {
-                        add { base.BackgroundImageChanged += value; }
-                        remove { base.BackgroundImageChanged -= value; }
-                }
+		public new event EventHandler BackgroundImageChanged 
+		{
+			add { base.BackgroundImageChanged += value; }
+			remove { base.BackgroundImageChanged -= value; }
+		}
 
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public new event EventHandler Enter {
-                        add { base.Enter += value; }
-                        remove { base.Enter -= value; }
-                }
+		public new event EventHandler Enter 
+		{
+			add { base.Enter += value; }
+			remove { base.Enter -= value; }
+		}
 
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public new event EventHandler FontChanged {
-                        add { base.FontChanged += value; }
-                        remove { base.FontChanged -= value; }
-                }
+		public new event EventHandler FontChanged 
+		{
+			add { base.FontChanged += value; }
+			remove { base.FontChanged -= value; }
+		}
 
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public new event EventHandler ForeColorChanged {
-                        add { base.ForeColorChanged += value; }
-                        remove { base.ForeColorChanged -= value; }
-                }
+		public new event EventHandler ForeColorChanged 
+		{
+			add { base.ForeColorChanged += value; }
+			remove { base.ForeColorChanged -= value; }
+		}
 
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public new event EventHandler ImeModeChanged {
-                        add { base.ImeModeChanged += value; }
-                        remove { base.ImeModeChanged -= value; }
-                }
+		public new event EventHandler ImeModeChanged 
+		{
+			add { base.ImeModeChanged += value; }
+			remove { base.ImeModeChanged -= value; }
+		}
 
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public new event KeyEventHandler KeyDown {
-                        add { base.KeyDown += value; }
-                        remove { base.KeyDown -= value; }
-                }
+		public new event KeyEventHandler KeyDown 
+		{
+			add { base.KeyDown += value; }
+			remove { base.KeyDown -= value; }
+		}
 
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public new event KeyPressEventHandler KeyPress {
-                        add { base.KeyPress += value; }
-                        remove { base.KeyPress -= value; }
-                }
+		public new event KeyPressEventHandler KeyPress 
+		{
+			add { base.KeyPress += value; }
+			remove { base.KeyPress -= value; }
+		}
 
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public new event KeyEventHandler KeyUp {
-                        add { base.KeyUp += value; }
-                        remove { base.KeyUp -= value; }
-                }
+		public new event KeyEventHandler KeyUp 
+		{
+			add { base.KeyUp += value; }
+			remove { base.KeyUp -= value; }
+		}
 
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public new event EventHandler Leave {
-                        add { base.Leave += value; }
-                        remove { base.Leave -= value; }
-                }
+		public new event EventHandler Leave 
+		{
+			add { base.Leave += value; }
+			remove { base.Leave -= value; }
+		}
 
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public new event EventHandler TabStopChanged {
-                        add { base.TabStopChanged += value; }
-                        remove { base.TabStopChanged -= value; }
-                }
+		public new event EventHandler TabStopChanged 
+		{
+			add { base.TabStopChanged += value; }
+			remove { base.TabStopChanged -= value; }
+		}
 
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public new event EventHandler TextChanged {
-                        add { base.TextChanged += value; }
-                        remove { base.TextChanged -= value; }
-                }
+		public new event EventHandler TextChanged 
+		{
+			add { base.TextChanged += value; }
+			remove { base.TextChanged -= value; }
+		}
 
-		public event SplitterEventHandler SplitterMoved {
-                        add { on_splitter_moved += value; }
-                        remove { on_splitter_moved -= value; }
-                }
+		public event SplitterEventHandler SplitterMoved 
+		{
+			add { on_splitter_moved += value; }
+			remove { on_splitter_moved -= value; }
+		}
 
-		public event SplitterEventHandler SplitterMoving {
-                        add { on_splitter_moving += value; }
-                        remove { on_splitter_moving -= value; }
-                }
+		public event SplitterEventHandler SplitterMoving 
+		{
+			add { on_splitter_moving += value; }
+			remove { on_splitter_moving -= value; }
+		}
 		#endregion
+
+		#region Private Class
+		public class SplitterForm : System.Windows.Forms.Form
+		{
+			public SplitterForm()
+			{
+			
+				SetStyle (ControlStyles.UserPaint, true);
+				SetStyle (ControlStyles.AllPaintingInWmPaint, true);
+
+				// TODO: This has to be here, or the form doesn't draw right
+				this.MinimumSize = new System.Drawing.Size(1, 1);
+				this.Text = "Form2";
+			}
+
+			protected override void OnPaint(PaintEventArgs e)
+			{
+				e.Graphics.FillRectangle(new HatchBrush(HatchStyle.SmallCheckerBoard, Color.White,Color.Black),ClientRectangle);
+				base.OnPaint (e);
+			}
+
+		}
+		#endregion Private Class
 	}
 }
 
