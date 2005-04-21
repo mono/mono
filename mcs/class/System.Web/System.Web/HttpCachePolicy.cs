@@ -71,7 +71,6 @@ namespace System.Web {
 		//bool noStore;
 		//bool noTransforms;
 		HttpCacheRevalidation revalidation;
-		bool slidingSpiration;
 		//bool validUntilExpires;
 		string varyByCustom;
 		bool haveMaxAge;
