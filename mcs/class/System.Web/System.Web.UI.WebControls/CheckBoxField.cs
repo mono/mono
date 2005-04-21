@@ -125,6 +125,19 @@ namespace System.Web.UI.WebControls {
 		{
 			return true;
 		}
+		
+		protected override DataControlField CreateField ()
+		{
+			return new CheckBoxField ();
+		}
+		
+		protected override void CopyProperties (DataControlField newField)
+		{
+			CheckBoxField field = (CheckBoxField) newField;
+			field.DataField = DataField;
+			field.ReadOnly = ReadOnly;
+			field.Text = Text;
+		}
 	}
 }
 #endif

@@ -96,6 +96,31 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 		
+		protected internal DataControlField CloneField ()
+		{
+			DataControlField field = CreateField ();
+			CopyProperties (field);
+			return field;
+		}
+		
+		protected abstract DataControlField CreateField ();
+		
+		protected virtual void CopyProperties (DataControlField newField)
+		{
+			newField.AccessibleHeaderText = AccessibleHeaderText;
+			newField.ControlStyle.CopyFrom (ControlStyle);
+			newField.FooterStyle.CopyFrom (FooterStyle);
+			newField.FooterText = FooterText;
+			newField.HeaderImageUrl = HeaderImageUrl;
+			newField.HeaderStyle.CopyFrom (HeaderStyle);
+			newField.HeaderText = HeaderText;
+			newField.InsertVisible = InsertVisible;
+			newField.ItemStyle.CopyFrom (ItemStyle);
+			newField.ShowHeader = ShowHeader;
+			newField.SortExpression = SortExpression;
+			newField.Visible = Visible;
+		}
+		
 		protected virtual void OnFieldChanged ()
 		{
 			if (FieldChanged != null)

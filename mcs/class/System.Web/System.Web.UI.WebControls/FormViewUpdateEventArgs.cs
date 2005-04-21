@@ -38,10 +38,21 @@ namespace System.Web.UI.WebControls
 	public class FormViewUpdateEventArgs : CancelEventArgs
 	{
 		private object argument;
+		private IOrderedDictionary keys;
+		private IOrderedDictionary oldValues;
+		private IOrderedDictionary newValues;
 		
 		public FormViewUpdateEventArgs (object argument)
 		{
 			this.argument = argument;
+		}
+		
+		internal FormViewUpdateEventArgs (object argument, IOrderedDictionary keys, IOrderedDictionary oldValues, IOrderedDictionary newValues)
+		: this (argument)
+		{
+			this.keys = keys;
+			this.oldValues = oldValues;
+			this.newValues = newValues;
 		}
 		
 		public object CommandArgument {
@@ -49,15 +60,15 @@ namespace System.Web.UI.WebControls
 		}
 
 		public IOrderedDictionary Keys {
-			get { throw new NotImplementedException(); }
+			get { return keys; }
 		}
 
 		public IOrderedDictionary NewValues {
-			get { throw new NotImplementedException(); }
+			get { return newValues; }
 		}
 
 		public IOrderedDictionary OldValues {
-			get { throw new NotImplementedException(); }
+			get { return oldValues; }
 		}
 	}
 }

@@ -96,6 +96,7 @@ namespace System.Web.UI.WebControls
 		{
 			RequiresDataBinding = false;
 			PerformSelect ();
+			base.DataBind ();
 			OnDataBound (EventArgs.Empty);
 		}
 		

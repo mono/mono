@@ -1000,14 +1000,14 @@ namespace System.Web.UI.WebControls
 			for (int n=0; n<items.Count; n++) {
 				MenuItem item = items [n];
 				if (n > 0) {
-					int itemSpacing = GetItemSpacing (item, dynamic);
-					if (itemSpacing != 0) {
+					Unit itemSpacing = GetItemSpacing (item, dynamic);
+					if (itemSpacing != Unit.Empty) {
 						if (vertical) {
-							writer.AddAttribute ("height", itemSpacing + "px");
+							writer.AddAttribute ("height", itemSpacing.ToString());
 							writer.RenderBeginTag (HtmlTextWriterTag.Tr);
 							writer.RenderEndTag ();
 						} else {
-							writer.AddAttribute ("width", itemSpacing + "px");
+							writer.AddAttribute ("width", itemSpacing.ToString());
 							writer.RenderBeginTag (HtmlTextWriterTag.Td);
 							writer.RenderEndTag ();
 						}
@@ -1201,24 +1201,24 @@ namespace System.Web.UI.WebControls
 			}
 		}
 			
-		int GetItemSpacing (MenuItem item, bool dynamic)
+		Unit GetItemSpacing (MenuItem item, bool dynamic)
 		{
-			int itemSpacing;
+			Unit itemSpacing;
 			
 			if (item.Selected) {
 				if (levelSelectedStyles != null && item.Depth < levelSelectedStyles.Count) {
 					itemSpacing = levelSelectedStyles [item.Depth].ItemSpacing;
-					if (itemSpacing != 0) return itemSpacing;
+					if (itemSpacing != Unit.Empty) return itemSpacing;
 				}
 				
 				if (dynamic) itemSpacing = DynamicSelectedStyle.ItemSpacing;
 				else itemSpacing = StaticSelectedStyle.ItemSpacing;
-				if (itemSpacing != 0) return itemSpacing;
+				if (itemSpacing != Unit.Empty) return itemSpacing;
 			}
 			
 			if (levelMenuItemStyles != null && item.Depth < levelMenuItemStyles.Count) {
 				itemSpacing = levelMenuItemStyles [item.Depth].ItemSpacing;
-				if (itemSpacing != 0) return itemSpacing;
+				if (itemSpacing != Unit.Empty) return itemSpacing;
 			}
 			
 			if (dynamic) return DynamicMenuItemStyle.ItemSpacing;

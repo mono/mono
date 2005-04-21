@@ -95,6 +95,16 @@ namespace System.Web.UI.WebControls {
 				OnFieldChanged ();
 			}
 		}
+		
+		protected override void CopyProperties (DataControlField newField)
+		{
+			base.CopyProperties (newField);
+			ButtonFieldBase field = (ButtonFieldBase) newField;
+			field.ButtonType = ButtonType;
+			field.CausesValidation = CausesValidation;
+			field.ShowHeader = ShowHeader;
+			field.ValidationGroup = ValidationGroup;
+		}
 	}
 }
 #endif

@@ -132,7 +132,7 @@ namespace System.Web.UI.WebControls
 							writer.AddAttribute (HtmlTextWriterAttribute.Href, "javascript:");
 						}
 						else
-							writer.AddAttribute (HtmlTextWriterAttribute.Href, postScript);
+							writer.AddAttribute (HtmlTextWriterAttribute.Href, "javascript:" + postScript);
 						writer.RenderBeginTag (HtmlTextWriterTag.A);
 						writer.Write (Text);
 						writer.RenderEndTag ();

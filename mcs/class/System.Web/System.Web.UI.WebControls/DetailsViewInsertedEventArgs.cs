@@ -50,7 +50,7 @@ namespace System.Web.UI.WebControls
 			this.keepInsertedMode = false;
 		}
 		
-		public DetailsViewInsertedEventArgs (int affectedRows, Exception e, IOrderedDictionary values): this (affectedRows, e)
+		internal DetailsViewInsertedEventArgs (int affectedRows, Exception e, IOrderedDictionary values): this (affectedRows, e)
 		{
 			this.values = values;
 		}

@@ -244,7 +244,7 @@ namespace System.Web.UI.WebControls
 			}
 		}
 		
-		protected StateBag ViewState {
+		StateBag ViewState {
 			get { return viewState; }
 		}
 		
@@ -720,7 +720,7 @@ namespace System.Web.UI.WebControls
 				return new object[] { result };
 		}
 		
-		protected virtual int QueryTotalRowCount (IOrderedDictionary mergedParameters, DataSourceSelectArguments arguments)
+		int QueryTotalRowCount (IOrderedDictionary mergedParameters, DataSourceSelectArguments arguments)
 		{
 			ObjectDataSourceSelectingEventArgs countArgs = new ObjectDataSourceSelectingEventArgs (mergedParameters, arguments, true);
 			OnSelecting (countArgs);

@@ -1,4 +1,4 @@
-﻿//
+//
 // System.Web.UI.WebControls.Localize.cs
 //
 // Authors:
@@ -34,7 +34,7 @@ using System;
 namespace System.Web.UI.WebControls {
     public class Localize : Literal
 #if NET_2_0
-		, IStaticTextControl
+		, ITextControl
 #endif
     {
         //No methods/properties/defined for this class. It inherits

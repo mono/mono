@@ -136,20 +136,6 @@ namespace System.Web.UI.WebControls
 			}
 		}
 		
-		[BindableAttribute (true)]
-		[LocalizableAttribute (true)]
-		[DefaultValueAttribute ("")]
-		public string SoftkeyLabel {
-			get {
-				string text = (string)ViewState["SoftkeyLabel"];
-				if (text!=null) return text;
-				return String.Empty;
-			}
-			set {
-				ViewState["SoftkeyLabel"] = value;
-			}
-		}
-		
 		[DefaultValueAttribute ("")]
 		[ThemeableAttribute (false)]
 		[WebCategoryAttribute ("Behavior")]

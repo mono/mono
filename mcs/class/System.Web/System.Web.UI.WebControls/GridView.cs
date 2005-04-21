@@ -45,7 +45,7 @@ namespace System.Web.UI.WebControls
 	[DefaultEventAttribute ("SelectedIndexChanged")]
 	[AspNetHostingPermissionAttribute (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	[AspNetHostingPermissionAttribute (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
-	public class GridView: CompositeDataBoundControl, IPostBackEventHandler, ICallbackEventHandler, ICallbackContainer, IPostBackContainer
+	public class GridView: CompositeDataBoundControl, ICallbackEventHandler, ICallbackContainer
 	{
 		Table table;
 		GridViewRowCollection rows;
@@ -1060,9 +1060,9 @@ namespace System.Web.UI.WebControls
 			}
 		}
 		
-		protected virtual ChildTable CreateChildTable ()
+		protected virtual Table CreateChildTable ()
 		{
-			ChildTable table = new ChildTable ();
+			Table table = new Table ();
 			table.Caption = Caption;
 			table.CaptionAlign = CaptionAlign;
 			table.CellPadding = CellPadding;
@@ -1152,7 +1152,7 @@ namespace System.Web.UI.WebControls
 				table.Rows.Add (row);
 				InitializeRow (row, fields);
 				if (dataBinding) {
-					row.DataBind ();
+//					row.DataBind ();
 					OnRowDataBound (new GridViewRowEventArgs (row));
 					if (EditIndex == row.RowIndex)
 						oldEditValues = new DataKey (GetRowValues (row, false, true));
@@ -1359,16 +1359,14 @@ namespace System.Web.UI.WebControls
 		protected override bool OnBubbleEvent (object source, EventArgs e)
 		{
 			GridViewCommandEventArgs args = e as GridViewCommandEventArgs;
-			if (args != null)
+			if (args != null) {
 				OnRowCommand (args);
+				ProcessEvent (args.CommandName, args.CommandArgument as string);
+			}
 			return base.OnBubbleEvent (source, e);
 		}
 		
-		void IPostBackEventHandler.RaisePostBackEvent (string eventArgument)
-		{
-			RaisePostBackEvent (eventArgument);
-		}
-		
+		// This is prolly obsolete
 		protected virtual void RaisePostBackEvent (string eventArgument)
 		{
 			int i = eventArgument.IndexOf ('$');
@@ -1402,6 +1400,24 @@ namespace System.Web.UI.WebControls
 							break;
 					}
 					ShowPage (newIndex);
+					break;
+					
+				case "First":
+					ShowPage (0);
+					break;
+
+				case "Last":
+					ShowPage (PageCount - 1);
+					break;
+					
+				case "Next":
+					if (PageIndex < PageCount - 1)
+						ShowPage (PageIndex + 1);
+					break;
+
+				case "Prev":
+					if (PageIndex > 0)
+						ShowPage (PageIndex - 1);
 					break;
 					
 				case "Select":
@@ -1683,6 +1699,11 @@ namespace System.Web.UI.WebControls
 		
 		string ICallbackEventHandler.RaiseCallbackEvent (string eventArgs)
 		{
+			return RaiseCallbackEvent (eventArgs);
+		}
+		
+		protected virtual string RaiseCallbackEvent (string eventArgs)
+		{
 			string[] clientData = eventArgs.Split ('|');
 			pageIndex = int.Parse (clientData[0]);
 			sortExpression = HttpUtility.UrlDecode (clientData[1]);
@@ -1702,15 +1723,15 @@ namespace System.Web.UI.WebControls
 		
 		string ICallbackContainer.GetCallbackScript (IButtonControl control, string argument)
 		{
+			return GetCallbackScript (control, argument);
+		}
+		
+		protected virtual string GetCallbackScript (IButtonControl control, string argument)
+		{
 			if (EnableSortingAndPagingCallbacks)
 				return "javascript:GridView_ClientEvent (\"" + ClientID + "\",\"" + control.CommandName + "$" + control.CommandArgument + "\"); return false;";
 			else
 				return null;
-		}
-		
-		PostBackOptions IPostBackContainer.GetPostBackOptions (IButtonControl control)
-		{
-			return new PostBackOptions (this, control.CommandName + "$" + control.CommandArgument, null, false, true, false, true, false, null);
 		}
 		
 		protected override void OnPreRender (EventArgs e)

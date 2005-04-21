@@ -178,7 +178,24 @@ namespace System.Web.UI.WebControls
 		{
 			throw new NotSupportedException ("Callback not supported on TemplateField. Turn disable callbacks on '" + Control.ID + "'.");
 		}
-
+		
+		protected override DataControlField CreateField ()
+		{
+			return new TemplateField ();
+		}
+		
+		protected override void CopyProperties (DataControlField newField)
+		{
+			base.CopyProperties (newField);
+			TemplateField field = (TemplateField) newField;
+			field.AlternatingItemTemplate = AlternatingItemTemplate;
+			field.ConvertEmptyStringToNull = ConvertEmptyStringToNull;
+			field.EditItemTemplate = EditItemTemplate;
+			field.FooterTemplate = FooterTemplate;
+			field.HeaderTemplate = HeaderTemplate;
+			field.InsertItemTemplate = InsertItemTemplate;
+			field.ItemTemplate = ItemTemplate;
+		}
 	}
 }
 #endif

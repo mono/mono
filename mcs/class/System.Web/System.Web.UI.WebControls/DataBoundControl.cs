@@ -78,7 +78,7 @@ namespace System.Web.UI.WebControls {
 			return currentView;
 		}
 		
-		protected DataSourceView InternalGetData ()
+		DataSourceView InternalGetData ()
 		{
 			if (DataSource != null && IsBoundUsingDataSourceID)
 				throw new HttpException ("Control bound using both DataSourceID and DataSource properties.");

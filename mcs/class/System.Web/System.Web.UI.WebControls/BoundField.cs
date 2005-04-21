@@ -149,7 +149,8 @@ namespace System.Web.UI.WebControls {
 			base.InitializeCell (cell, cellType, rowState, rowIndex);
 			if (cellType == DataControlCellType.DataCell) {
 				InitializeDataCell (cell, rowState);
-				cell.DataBinding += new EventHandler (OnDataBindField);
+				if ((rowState & DataControlRowState.Insert) == 0)
+					cell.DataBinding += new EventHandler (OnDataBindField);
 			}
 		}
 		
@@ -218,6 +219,23 @@ namespace System.Web.UI.WebControls {
 			}
 			else
 				cell.Text = FormatDataValue (GetValue (cell.BindingContainer), SupportsHtmlEncode && HtmlEncode);
+		}
+		
+		protected override DataControlField CreateField ()
+		{
+			return new BoundField ();
+		}
+		
+		protected override void CopyProperties (DataControlField newField)
+		{
+			base.CopyProperties (newField);
+			BoundField field = (BoundField) newField;
+			field.ConvertEmptyStringToNull = ConvertEmptyStringToNull;
+			field.DataField = DataField;
+			field.DataFormatString = DataFormatString;
+			field.NullDisplayText = NullDisplayText;
+			field.ReadOnly = ReadOnly;
+			field.HtmlEncode = HtmlEncode;
 		}
 	}
 }

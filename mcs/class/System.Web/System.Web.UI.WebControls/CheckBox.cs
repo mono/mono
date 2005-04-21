@@ -455,6 +455,8 @@ namespace System.Web.UI.WebControls
 		bool IPostBackDataHandler.LoadPostData (string postDataKey, NameValueCollection postCollection)
 #endif
 		{
+			if (!Enabled) return false;
+
 			string postedVal = postCollection [postDataKey];			
 			bool haveData = ((postedVal != null)&& (postedVal.Length > 0));
 			bool diff  = (haveData != Checked);

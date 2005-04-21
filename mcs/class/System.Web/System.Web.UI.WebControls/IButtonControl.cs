@@ -39,7 +39,6 @@ namespace System.Web.UI.WebControls
 		string CommandArgument { get; set; }
 		string CommandName { get; set; }
 		string PostBackUrl { get; set; }
-		string SoftkeyLabel { get; }
 		string Text { get; set; }
 		string ValidationGroup { get; set; }
 

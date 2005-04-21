@@ -40,13 +40,18 @@ namespace System.Web.UI.WebControls
 		private Exception e;
 		private bool exceptionHandled;
 		private bool keepInsertedMode;
+		private IOrderedDictionary values;
 		
 		public FormViewInsertedEventArgs (int affectedRows, Exception e)
 		{
 			this.rowsAffected = affectedRows;
 			this.e = e;
-			this.exceptionHandled = false;
-			this.keepInsertedMode = false;
+		}
+		
+		internal FormViewInsertedEventArgs (int affectedRows, Exception e, IOrderedDictionary values)
+		: this (affectedRows, e)
+		{
+			this.values = values;
 		}
 		
 		public int AffectedRows {
@@ -68,7 +73,7 @@ namespace System.Web.UI.WebControls
 		}
 
 		public IOrderedDictionary Values {
-			get { throw new NotImplementedException(); }
+			get { return values; }
 		}
 	}
 }

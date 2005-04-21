@@ -40,6 +40,9 @@ namespace System.Web.UI.WebControls
 		private Exception e;
 		private bool exceptionHandled;
 		private bool keepEditMode;
+		private IOrderedDictionary keys;
+		private IOrderedDictionary oldValues;
+		private IOrderedDictionary newValues;
 		
 		public FormViewUpdatedEventArgs (int affectedRows, Exception e)
 		{
@@ -47,6 +50,14 @@ namespace System.Web.UI.WebControls
 			this.e = e;
 			this.exceptionHandled = false;
 			this.keepEditMode = false;
+		}
+		
+		internal FormViewUpdatedEventArgs (int affectedRows, Exception e, IOrderedDictionary keys, IOrderedDictionary oldValues, IOrderedDictionary newValues)
+		: this (affectedRows, e)
+		{
+			this.keys = keys;
+			this.oldValues = oldValues;
+			this.newValues = newValues;
 		}
 		
 		public int AffectedRows {
@@ -68,15 +79,15 @@ namespace System.Web.UI.WebControls
 		}
 
 		public IOrderedDictionary Keys {
-			get { throw new NotImplementedException(); }
+			get { return keys; }
 		}
 
 		public IOrderedDictionary NewValues {
-			get { throw new NotImplementedException(); }
+			get { return newValues; }
 		}
 
 		public IOrderedDictionary OldValues {
-			get { throw new NotImplementedException(); }
+			get { return oldValues; }
 		}
 	}
 }

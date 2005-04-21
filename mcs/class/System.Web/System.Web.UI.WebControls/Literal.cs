@@ -48,7 +48,7 @@ namespace System.Web.UI.WebControls
 #endif
 	public class Literal : Control
 #if NET_2_0
-	, IStaticTextControl
+	, ITextControl
 #endif
 	{
 		public Literal () : base ()

@@ -370,6 +370,36 @@ namespace System.Web.UI.WebControls {
 				cell.Controls.Add (lit);
 			}
 		}
+		
+		protected override DataControlField CreateField ()
+		{
+			return new CommandField ();
+		}
+		
+		protected override void CopyProperties (DataControlField newField)
+		{
+			base.CopyProperties (newField);
+			CommandField field = (CommandField) newField;
+			field.CancelImageUrl = CancelImageUrl;
+			field.CancelText = CancelText;
+			field.DeleteImageUrl = DeleteImageUrl;
+			field.DeleteText = DeleteText;
+			field.EditImageUrl = EditImageUrl;
+			field.EditText = EditText;
+			field.InsertImageUrl = InsertImageUrl;
+			field.InsertText = InsertText;
+			field.NewImageUrl = NewImageUrl;
+			field.NewText = NewText;
+			field.SelectImageUrl = SelectImageUrl;
+			field.SelectText = SelectText;
+			field.ShowCancelButton = ShowCancelButton;
+			field.ShowDeleteButton = ShowDeleteButton;
+			field.ShowEditButton = ShowEditButton;
+			field.ShowSelectButton = ShowSelectButton;
+			field.ShowInsertButton = ShowInsertButton;
+			field.UpdateImageUrl = UpdateImageUrl;
+			field.UpdateText = UpdateText;
+		}
 	}
 }
 #endif

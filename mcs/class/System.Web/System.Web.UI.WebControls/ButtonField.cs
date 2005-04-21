@@ -143,7 +143,8 @@ namespace System.Web.UI.WebControls {
 				btn.CommandArgument = index;
 				
 				if (DataTextField != "") {
-					cell.DataBinding += new EventHandler (OnDataBindField);
+					if ((rowState & DataControlRowState.Insert) == 0)
+						cell.DataBinding += new EventHandler (OnDataBindField);
 				}
 				else {
 					btn.Text = Text;
@@ -174,6 +175,22 @@ namespace System.Web.UI.WebControls {
 					new InvalidOperationException ("Property '" + DataTextField + "' not found in object of type " + dic.DataItem.GetType());
 			}
 			return boundProperty.GetValue (dic.DataItem);
+		}
+		
+		protected override DataControlField CreateField ()
+		{
+			return new ButtonField ();
+		}
+		
+		protected override void CopyProperties (DataControlField newField)
+		{
+			base.CopyProperties (newField);
+			ButtonField field = (ButtonField) newField;
+			field.CommandName = CommandName;
+			field.DataTextField = DataTextField;
+			field.DataTextFormatString = DataTextFormatString;
+			field.ImageUrl = ImageUrl;
+			field.Text = Text;
 		}
 	}
 }

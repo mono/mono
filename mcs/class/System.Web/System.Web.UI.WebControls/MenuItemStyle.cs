@@ -44,11 +44,11 @@ namespace System.Web.UI.WebControls
 		
 		[DefaultValue (0)]
 		[NotifyParentProperty (true)]
-		public int HorizontalPadding {
+		public Unit HorizontalPadding {
 			get {
 				if(IsSet(HORZ_PADD))
-					return (int)(ViewState["HorizontalPadding"]);
-				return 0;
+					return (Unit)(ViewState["HorizontalPadding"]);
+				return Unit.Empty;
 			}
 			set {
 				ViewState["HorizontalPadding"] = value;
@@ -58,11 +58,11 @@ namespace System.Web.UI.WebControls
 
 		[DefaultValue (0)]
 		[NotifyParentProperty (true)]
-		public int VerticalPadding {
+		public Unit VerticalPadding {
 			get {
 				if(IsSet(VERT_PADD))
-					return (int)(ViewState["VerticalPadding"]);
-				return 0;
+					return (Unit)(ViewState["VerticalPadding"]);
+				return Unit.Empty;
 			}
 			set {
 				ViewState["VerticalPadding"] = value;
@@ -72,11 +72,11 @@ namespace System.Web.UI.WebControls
 
 		[DefaultValue (0)]
 		[NotifyParentProperty (true)]
-		public int ItemSpacing {
+		public Unit ItemSpacing {
 			get {
 				if(IsSet(SPACING))
-					return (int)(ViewState["ItemSpacing"]);
-				return 0;
+					return (Unit)(ViewState["ItemSpacing"]);
+				return Unit.Empty;
 			}
 			set {
 				ViewState["ItemSpacing"] = value;
@@ -148,12 +148,12 @@ namespace System.Web.UI.WebControls
 		{
 			base.FillStyleAttributes (attributes, urlResolver);
 			if (IsSet (HORZ_PADD)) {
-				attributes.Add (HtmlTextWriterStyle.PaddingLeft, HorizontalPadding.ToString () + "px");
-				attributes.Add (HtmlTextWriterStyle.PaddingRight, HorizontalPadding.ToString () + "px");
+				attributes.Add (HtmlTextWriterStyle.PaddingLeft, HorizontalPadding.ToString ());
+				attributes.Add (HtmlTextWriterStyle.PaddingRight, HorizontalPadding.ToString ());
 			}
 			if (IsSet (VERT_PADD)) {
-				attributes.Add (HtmlTextWriterStyle.PaddingTop, VerticalPadding.ToString () + "px");
-				attributes.Add (HtmlTextWriterStyle.PaddingBottom, VerticalPadding.ToString () + "px");
+				attributes.Add (HtmlTextWriterStyle.PaddingTop, VerticalPadding.ToString ());
+				attributes.Add (HtmlTextWriterStyle.PaddingBottom, VerticalPadding.ToString ());
 			}
 		}
 	}

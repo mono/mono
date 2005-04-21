@@ -146,9 +146,12 @@ namespace System.Web.UI.WebControls
 					{
 						return pageSize;
 					}
+					
 					if(IsLastPage)
 					{
-						return (DataSourceCount - FirstIndexInPage);
+						int n = DataSourceCount;
+						if (n == 0) return 0;
+						else return (n - FirstIndexInPage);
 					}
 					return pageSize;
 				}
@@ -239,7 +242,7 @@ namespace System.Web.UI.WebControls
 		{
 			get
 			{
-				return (!IsPagingEnabled || (CurrentPageIndex == (PageCount - 1)));
+				return (!IsPagingEnabled || (CurrentPageIndex == (PageCount - 1)) || PageCount <= 1);
 			}
 		}
 

@@ -40,10 +40,19 @@ namespace System.Web.UI.WebControls
 		private int rowIndex;
 		private Exception e;
 		private bool exceptionHandled;
+		private IOrderedDictionary keys;
+		private IOrderedDictionary values;
 		
 		public FormViewDeleteEventArgs (int index)
 		{
 			this.rowIndex = index;
+		}
+		
+		internal FormViewDeleteEventArgs (int index, IOrderedDictionary keys, IOrderedDictionary values) 
+		: this (index)
+		{
+			this.keys = keys;
+			this.values = values;
 		}
 		
 		public int RowIndex {
@@ -51,11 +60,11 @@ namespace System.Web.UI.WebControls
 		}
 
 		public IOrderedDictionary Keys {
-			get { throw new NotImplementedException(); }
+			get { return keys; }
 		}
 
 		public IOrderedDictionary Values {
-			get { throw new NotImplementedException(); }
+			get { return values; }
 		}
 	}
 }

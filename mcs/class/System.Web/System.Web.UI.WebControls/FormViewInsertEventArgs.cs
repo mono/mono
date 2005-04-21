@@ -38,9 +38,16 @@ namespace System.Web.UI.WebControls
 	public class FormViewInsertEventArgs : CancelEventArgs
 	{
 		private object argument;
+		private IOrderedDictionary values;
 		
 		public FormViewInsertEventArgs (object argument)
 		{
+			this.argument = argument;
+		}
+		
+		internal FormViewInsertEventArgs (object argument, IOrderedDictionary values)
+		{
+			this.values = values;
 			this.argument = argument;
 		}
 		
@@ -49,7 +56,7 @@ namespace System.Web.UI.WebControls
 		}
 
 		public IOrderedDictionary Values {
-			get { throw new NotImplementedException(); }
+			get { return values; }
 		}
 	}
 }

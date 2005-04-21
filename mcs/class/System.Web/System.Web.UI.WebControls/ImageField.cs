@@ -202,9 +202,11 @@ namespace System.Web.UI.WebControls {
 			DataControlCellType cellType, DataControlRowState rowState, int rowIndex)
 		{
 			base.InitializeCell (cell, cellType, rowState, rowIndex);
-			if (cellType == DataControlCellType.DataCell)
+			if (cellType == DataControlCellType.DataCell) {
 				InitializeDataCell (cell, rowState);
-			cell.DataBinding += new EventHandler (OnDataBindField);
+				if ((rowState & DataControlRowState.Insert) == 0)
+					cell.DataBinding += new EventHandler (OnDataBindField);
+			}
 		}
 		
 		public virtual void InitializeDataCell (DataControlFieldCell cell, DataControlRowState rowState)
@@ -236,7 +238,7 @@ namespace System.Web.UI.WebControls {
 				if (textProperty == null)
 					textProperty = GetProperty (controlContainer, DataAlternateTextField);
 					
-				object value = GetValue (controlContainer, DataAlternateTextField, textProperty);
+				object value = GetValue (controlContainer, DataAlternateTextField, ref textProperty);
 				
 				if (value == null || (value.ToString().Length == 0 && ConvertEmptyStringToNull))
 					return NullDisplayText;
@@ -250,7 +252,7 @@ namespace System.Web.UI.WebControls {
 		
 		}
 		
-		protected virtual object GetValue (Control controlContainer, string fieldName, PropertyDescriptor cachedDescriptor)
+		protected virtual object GetValue (Control controlContainer, string fieldName, ref PropertyDescriptor cachedDescriptor)
 		{
 			if (DesignMode)
 				return GetDesignTimeValue ();
@@ -289,18 +291,38 @@ namespace System.Web.UI.WebControls {
 			
 			Control c = cell.Controls [0];
 			if (c is TextBox) {
-				object val = GetValue (cell.BindingContainer, DataImageUrlField, imageProperty);
+				object val = GetValue (cell.BindingContainer, DataImageUrlField, ref imageProperty);
 				((TextBox)c).Text = val != null ? val.ToString() : "";
 			}
 			else if (c is Image) {
 				Image img = (Image)c;
-				img.ImageUrl = FormatImageUrlValue (GetValue (cell.BindingContainer, DataImageUrlField, imageProperty));
+				img.ImageUrl = FormatImageUrlValue (GetValue (cell.BindingContainer, DataImageUrlField, ref imageProperty));
 				img.AlternateText = GetFormattedAlternateText (cell.BindingContainer);
 			}
 		}
 		
 		public override void ValidateSupportsCallback ()
 		{
+		}
+		
+		protected override DataControlField CreateField ()
+		{
+			return new ImageField ();
+		}
+		
+		protected override void CopyProperties (DataControlField newField)
+		{
+			base.CopyProperties (newField);
+			ImageField field = (ImageField) newField;
+			field.AlternateText = AlternateText;
+			field.ConvertEmptyStringToNull = ConvertEmptyStringToNull;
+			field.DataAlternateTextField = DataAlternateTextField;
+			field.DataAlternateTextFormatString = DataAlternateTextFormatString;
+			field.DataImageUrlField = DataImageUrlField;
+			field.DataImageUrlFormatString = DataImageUrlFormatString;
+			field.NullDisplayText = NullDisplayText;
+			field.NullImageUrl = NullImageUrl;
+			field.ReadOnly = ReadOnly;
 		}
 	}
 }
