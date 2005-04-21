@@ -1,8 +1,16 @@
+2005-04-21 Satya Sudha K <ksathyasudha@novell.com>
+	* ecore.cs :
+		Fixed object to bool/float/double conversions
+		Fixed numeric <--> Enum conversions 
+	* statement.cs :
+	* expression.cs :
+	* mb-parser.jay :
+		(Initial) Support for 'LateGet'
 
 2005-04-18 Manjula GHM <mmanjula@novell.com>
 	* mb-parser.jay:
 		Support expressions for Directives
-2005-04-12 Satya Sudha K <ksathyasudha@novell.com>
+2005-04-19 Satya Sudha K <ksathyasudha@novell.com>
 	* ecore.cs :
 		Fixed conversions from 'object' to double, float, decimal and long
 

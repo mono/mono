@@ -276,7 +276,6 @@ namespace Mono.MonoBASIC
 		TokenizerController tokenizerController;
 		IfElseStateMachine ifElseStateMachine;
 
-
 		
 		public class IfElseStateMachine {
 			
@@ -4363,11 +4362,15 @@ argument_list
 argument
 	: expression
 	  {
-		$$ = new Argument ((Expression) $1, Argument.AType.Expression);
+		Expression expr = (Expression) $1;
+		expr = SetValueRequiredFlag (expr);
+		$$ = new Argument (expr, Argument.AType.Expression);
 	  }
 	| BYREF variable_reference
 	  {
-		$$ = new Argument ((Expression) $2, Argument.AType.Ref);
+		Expression expr = (Expression) $2;
+		expr = SetValueRequiredFlag (expr);
+		$$ = new Argument (expr, Argument.AType.Ref);
 	  }
 	| /* empty */
 	  {
@@ -4375,7 +4378,9 @@ argument
 	  }
 	| ADDRESSOF expression
 	  {
-		$$ = new Argument ((Expression) $2, Argument.AType.AddressOf);
+		Expression expr = (Expression) $2;
+		expr = SetValueRequiredFlag (expr);
+		$$ = new Argument (expr, Argument.AType.AddressOf);
 	  }
 	;
 
@@ -4634,64 +4639,72 @@ conditional_xor_expression
 assignment_expression
 	: prefixed_unary_expression ASSIGN _mark_ expression
 	  { 
-		$$ = new Assign ((Expression) $1, (Expression) $4, (Location)$3);
+		Expression expr = SetValueRequiredFlag ((Expression) $4);
+		$$ = new Assign ((Expression) $1, expr, (Location)$3);
 	  }
 	| prefixed_unary_expression OP_EXP ASSIGN _mark_ expression
 	  {
 		Location l = (Location)$4;
+		Expression expr = SetValueRequiredFlag ((Expression) $5);
 
 		$$ = new CompoundAssign (
-			Binary.Operator.Exponentiation, (Expression) $1, (Expression) $5, l);
+			Binary.Operator.Exponentiation, (Expression) $1, expr, l);
 	  }
 	| prefixed_unary_expression STAR ASSIGN _mark_ expression
 	  {
 		Location l = (Location)$4;
-
+		Expression expr = SetValueRequiredFlag ((Expression) $5);
 		$$ = new CompoundAssign (
-			Binary.Operator.Multiply, (Expression) $1, (Expression) $5, l);
+			Binary.Operator.Multiply, (Expression) $1, expr, l);
 	  }
 	| prefixed_unary_expression DIV ASSIGN _mark_ expression
 	  {
 		Location l = (Location)$4;
 
+		Expression expr = SetValueRequiredFlag ((Expression) $5);
 		$$ = new CompoundAssign (
-			Binary.Operator.Division, (Expression) $1, (Expression) $5, l);
+			Binary.Operator.Division, (Expression) $1, expr, l);
 	  }
 	| prefixed_unary_expression PLUS ASSIGN _mark_ expression
 	  {
 		Location l = (Location)$4;
+		Expression expr = SetValueRequiredFlag ((Expression) $5);
 
 		$$ = new CompoundAssign (
-			Binary.Operator.Addition, (Expression) $1, (Expression) $5, l);
+			Binary.Operator.Addition, (Expression) $1, expr, l);
 	  }
 	| prefixed_unary_expression MINUS ASSIGN _mark_ expression
 	  {
 		Location l = (Location)$4;
 
+		Expression expr = SetValueRequiredFlag ((Expression) $5);
 		$$ = new CompoundAssign (
-			Binary.Operator.Subtraction, (Expression) $1, (Expression) $5, l);
+			Binary.Operator.Subtraction, (Expression) $1, expr, l);
 	  }
 	| prefixed_unary_expression OP_SHIFT_LEFT ASSIGN _mark_ expression
 	  {
 		Location l = (Location)$4;
 
+		Expression expr = SetValueRequiredFlag ((Expression) $5);
 		$$ = new CompoundAssign (
-			Binary.Operator.LeftShift, (Expression) $1, (Expression) $5, l);
+			Binary.Operator.LeftShift, (Expression) $1, expr, l);
 	  }
 	| prefixed_unary_expression OP_SHIFT_RIGHT ASSIGN _mark_ expression
 	  {
 		Location l = (Location)$4;
 
+		Expression expr = SetValueRequiredFlag ((Expression) $5);
 		$$ = new CompoundAssign (
-			Binary.Operator.RightShift, (Expression) $1, (Expression) $5, l);
+			Binary.Operator.RightShift, (Expression) $1, expr, l);
 	  }
 	| prefixed_unary_expression OP_CONCAT ASSIGN _mark_ expression
 	  {
 		Location l = (Location)$4;
 
 		// FIXME should be strings only
+		Expression expr = SetValueRequiredFlag ((Expression) $5);
 		$$ = new CompoundAssign (
-			Binary.Operator.Addition, (Expression) $1, (Expression) $5, l);
+			Binary.Operator.Addition, (Expression) $1, expr, l);
 	  }
 	| prefixed_unary_expression ASSIGN ADDRESSOF _mark_ expression
 	  { 
@@ -4710,7 +4723,12 @@ constant_expression
 	;
 
 boolean_expression
-	: expression
+	: expression 
+	 {
+		Expression expr = (Expression) $1;
+		expr = SetValueRequiredFlag (expr);
+		$$ = expr;
+	 }
 	;
 
 type
@@ -4796,7 +4814,6 @@ directive_exp
 	 }
 	;	
 		
-
 pp_directive
 	: HASH IDENTIFIER OPEN_PARENS LITERAL_STRING COMMA LITERAL_INTEGER CLOSE_PARENS _mark_ EOL
 	  { 
@@ -5569,6 +5586,15 @@ void Error_ExpectingTypeName (Location l, Expression expr)
 	} else {
 		Report.Error (-1, l, "Invalid Type definition");
 	}
+}
+
+static Expression SetValueRequiredFlag (Expression expr) {
+	if (expr is Invocation) {
+		Invocation e = (Invocation) expr;
+		e.IsRetvalRequired = true;
+		expr = e;
+	}
+	return expr;
 }
 
 static bool AlwaysAccept (MemberInfo m, object filterCriteria) {

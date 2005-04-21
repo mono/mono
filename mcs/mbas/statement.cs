@@ -615,7 +615,8 @@ namespace Mono.MonoBASIC {
 				((ExpressionStatement) expr).EmitStatement (ec);
 			else {
 				expr.Emit (ec);
-				ig.Emit (OpCodes.Pop);
+				if (! (expr is StatementSequence))
+					ig.Emit (OpCodes.Pop);
 			}
 
 			return false;
@@ -3332,10 +3333,20 @@ namespace Mono.MonoBASIC {
 		Block stmtBlock;
 		ArrayList args;
 		Expression expr;
+		bool isRetValRequired;
+		bool isLeftHandSide;
 
 		public StatementSequence (Block parent, Location loc, Expression expr) 
 			: this (parent, loc, expr, null)
 		{ }
+
+		public StatementSequence (Block parent, Location loc, Expression expr, ArrayList a,
+					  bool isRetValRequired, bool isLeftHandSide) 
+			: this (parent, loc, expr, a)
+		{
+			this.isRetValRequired = isRetValRequired;
+			this.isLeftHandSide = isLeftHandSide;
+		}
 
 		public StatementSequence (Block parent, Location loc, Expression expr, ArrayList a) 
 		{
@@ -3344,7 +3355,9 @@ namespace Mono.MonoBASIC {
 			this.expr = expr;
 			stmtBlock.IsLateBindingRequired = true;
 			this.loc = loc;
+			this.isRetValRequired = this.isLeftHandSide = false;
 		}
+
 		public Block StmtBlock {
 			get {
 				return stmtBlock;
@@ -3422,8 +3435,18 @@ namespace Mono.MonoBASIC {
 				invocationArgs.Add (new Argument (NullLiteral.Null, Argument.AType.Expression));
 			}
 
-			Expression etmp = Parser.DecomposeQI ("Microsoft.VisualBasic.CompilerServices.LateBinding.LateCall", loc);
+			Expression etmp = null;
+			if (isLeftHandSide) {
+				// LateSet
+			} else if (isRetValRequired) {
+				// Late Get
+				etmp = Parser.DecomposeQI ("Microsoft.VisualBasic.CompilerServices.LateBinding.LateGet", loc);
+			}  else {
+				etmp = Parser.DecomposeQI ("Microsoft.VisualBasic.CompilerServices.LateBinding.LateCall", loc);
+			}
+
 			Invocation inv_stmt = new Invocation (etmp, invocationArgs, Location.Null);
+			inv_stmt.IsLateBinding = true;
 			stmtBlock.AddStatement (new StatementExpression ((ExpressionStatement) inv_stmt, loc));
 
 			for (int i = 0; i< argCount; i ++) {
@@ -3446,7 +3469,7 @@ namespace Mono.MonoBASIC {
 		public override void Emit (EmitContext ec)
 		{
 			stmtBlock.Emit (ec);
-			ec.ig.Emit (OpCodes.Ldloc_0);
+			//ec.ig.Emit (OpCodes.Ldloc_0);
 		}
 	}
 

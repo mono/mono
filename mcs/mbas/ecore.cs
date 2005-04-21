@@ -1757,7 +1757,7 @@ namespace Mono.MonoBASIC {
 			
 			if (e != null)
 				return e;
-				
+
 			e = NarrowingConversion (ec, expr, target_type, loc);
 			if (e != null)
 				return e;				
@@ -1805,6 +1805,15 @@ namespace Mono.MonoBASIC {
 		static public bool NarrowingConversionExists (EmitContext ec, Expression expr, Type target_type)
 		{
 			Type expr_type = expr.Type;
+			if (expr_type.IsSubclassOf (TypeManager.enum_type))
+				expr_type = TypeManager.EnumToUnderlying (expr_type);
+	
+			if (target_type.IsSubclassOf (TypeManager.enum_type))
+				target_type = TypeManager.EnumToUnderlying (target_type);
+
+
+			if (expr_type == target_type)
+				return true;
 
 			if (target_type == TypeManager.sbyte_type){
 				//
@@ -1919,6 +1928,15 @@ namespace Mono.MonoBASIC {
 								Type target_type, Location loc)
 		{
 			Type expr_type = expr.Type;
+
+			if (expr_type.IsSubclassOf (TypeManager.enum_type))
+				expr_type = TypeManager.EnumToUnderlying (expr_type);
+	
+			if (target_type.IsSubclassOf (TypeManager.enum_type))
+				target_type = TypeManager.EnumToUnderlying (target_type);
+
+			if (expr_type == target_type)
+				return expr;
 
 			if (target_type == TypeManager.sbyte_type){
 				//
@@ -2216,6 +2234,16 @@ namespace Mono.MonoBASIC {
 					// Ok, this *is* broken
 					e = RTConversionExpression(ec, "ByteType.FromObject", expr, loc);
 					break;	
+				case TypeCode.Boolean:	
+					switch (src_type) {						
+						case TypeCode.String:				
+							e = RTConversionExpression(ec, "BooleanType.FromString", expr, loc);
+							break;		
+						case TypeCode.Object:				
+							e = RTConversionExpression(ec, "BooleanType.FromObject", expr, loc);
+							break;											
+					}
+					break;
 				case TypeCode.DateTime:	
 					switch (src_type) {						
 						case TypeCode.String:				
@@ -2299,6 +2327,10 @@ namespace Mono.MonoBASIC {
 								  Type target_type, Location loc)
 		{
 			Type expr_type = expr.Type;
+
+			if (expr_type.IsSubclassOf (TypeManager.enum_type))
+				expr_type = TypeManager.EnumToUnderlying (expr_type);
+
 			Expression e;
 
 			if (expr is NullLiteral) {

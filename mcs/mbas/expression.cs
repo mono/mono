@@ -2615,6 +2615,13 @@ namespace Mono.MonoBASIC {
 			left = left.Resolve (ec);
 			right = right.Resolve (ec);
 
+			if (left is Invocation) {
+				((Invocation) left).IsRetvalRequired = true;
+			}
+			if (right is Invocation) {
+				((Invocation) right).IsRetvalRequired = true;
+			}
+
 			if (left == null || right == null)
 				return null;
 
@@ -3557,6 +3564,7 @@ namespace Mono.MonoBASIC {
 		public Expression expr;
 		MethodBase method = null;
 		bool is_base;
+		bool is_latebinding;
 		bool is_left_hand; // Needed for late bound calls
 		bool is_retval_required; // Needed for late bound calls
 		static Hashtable method_parameter_cache;
@@ -3578,6 +3586,7 @@ namespace Mono.MonoBASIC {
 		{
 			this.expr = expr;
 			this.is_retval_required = false;
+			this.is_left_hand = false;
 			Arguments = arguments;
 			loc = l;
 			CompareName = new MemberFilter (compare_name_filter);
@@ -3595,6 +3604,15 @@ namespace Mono.MonoBASIC {
 			}
 			set {
 				is_retval_required = value;
+			}
+		}
+
+		public bool IsLateBinding {
+			get {
+				return is_latebinding;
+			}
+			set {
+				is_latebinding = value;
 			}
 		}
 
@@ -3855,12 +3873,13 @@ namespace Mono.MonoBASIC {
 				(a_mod == Parameter.Modifier.NONE && p_mod == Parameter.Modifier.PARAMS)) {
 				if (a_mod == Parameter.Modifier.NONE) {
 					if (! WideningConversionExists (a.Expr, ptype) ) {
+
 						if (! NarrowingConversionExists (ec, a.Expr, ptype) )
 							return ConversionType.None;
 						else
 							return ConversionType.Narrowing;
 					} else
-							return ConversionType.Widening;
+						return ConversionType.Widening;
 				}
 				
 				if ((a_mod & Parameter.Modifier.ISBYREF) != 0) {
@@ -4422,8 +4441,11 @@ namespace Mono.MonoBASIC {
 				if (expr is MemberAccess) {
 					MemberAccess m = expr as MemberAccess;
 					if (m.Expr.Type == TypeManager.object_type) {
-						StatementSequence etmp = new StatementSequence (ec.CurrentBlock, loc, expr, Arguments);
+						StatementSequence etmp = new StatementSequence (ec.CurrentBlock, 
+										loc, expr, Arguments, 
+										is_retval_required, is_left_hand);
 						etmp.GenerateLateBindingStatements();
+						this.is_latebinding = true;
 						return etmp.Resolve (ec);
 					}
 				}
@@ -4886,8 +4908,9 @@ namespace Mono.MonoBASIC {
 			//
 			if (method is MethodInfo){
 				Type ret = ((MethodInfo)method).ReturnType;
-				if (TypeManager.TypeToCoreType (ret) != TypeManager.void_type)
+				if ((TypeManager.TypeToCoreType (ret) != TypeManager.void_type) && !this.is_latebinding) {
 					ec.ig.Emit (OpCodes.Pop);
+				}
 			}
 		}
 	}
