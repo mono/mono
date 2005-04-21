@@ -585,8 +585,6 @@ namespace System.IO
 			if (!async)
 				return base.BeginWrite (buffer, offset, count, cback, state);
 
-			byte [] bytes;
-			int buffered = 0;
 			FileStreamAsyncResult result = new FileStreamAsyncResult (cback, state);
 			result.BytesRead = -1;
 			result.Count = count;
@@ -595,13 +593,9 @@ namespace System.IO
 			if (buf_dirty) {
 				MemoryStream ms = new MemoryStream ();
 				FlushBufferToStream (ms);
-				buffered = (int) ms.Length;
 				ms.Write (buffer, offset, count);
-				bytes = ms.GetBuffer ();
 				offset = 0;
 				count = (int) ms.Length;
-			} else {
-				bytes = buffer;
 			}
 
 			WriteDelegate w = new WriteDelegate (WriteInternal);
