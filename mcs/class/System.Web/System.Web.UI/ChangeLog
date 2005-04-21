@@ -1,3 +1,9 @@
+2005-04-21 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* TemplateParser.cs: we still need LoadWithPartialName if Load fails.
+	* Page.cs: ensure _requiresPostBack is emptied if we didn't have a copy
+	for second postback.
+
 2005-04-20  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
 	* TemplateParser.cs: Adding support for Strict/Explicit attributes 
 	for @Page/@Control directives as documented at 

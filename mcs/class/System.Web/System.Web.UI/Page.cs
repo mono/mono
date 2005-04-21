@@ -803,8 +803,8 @@ public class Page : TemplateControl, IHttpHandler
 					list1.Add (id);
 				}
 			}
-			_requiresPostBack = list1;
 		}
+		_requiresPostBack = list1;
 	}
 
 	[EditorBrowsable (EditorBrowsableState.Never)]

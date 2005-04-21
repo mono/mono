@@ -375,8 +375,14 @@ namespace System.Web.UI
 				assembly = Assembly.Load (name);
 				string loc = assembly.Location;
 				fullpath = (Path.GetDirectoryName (loc) == PrivateBinPath);
-			} catch (Exception e) {
-				ThrowParseException ("Assembly " + name + " not found", e);
+			} catch (Exception) {
+				try {
+					assembly = Assembly.LoadWithPartialName (name);
+					string loc = assembly.Location;
+					fullpath = (Path.GetDirectoryName (loc) == PrivateBinPath);
+				} catch (Exception e) {
+					ThrowParseException ("Assembly " + name + " not found", e);
+				}
 			}
 
 			AddAssembly (assembly, fullpath);
