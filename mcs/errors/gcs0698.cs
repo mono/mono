@@ -5,3 +5,9 @@ using System;
 
 class Stack<T> : Attribute
 { }
+
+class X
+{
+	static void Main ()
+	{ }
+}
