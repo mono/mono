@@ -1,3 +1,8 @@
+2005-04-22  Lluis Sanchez Gual <lluis@novell.com>
+
+	* HtmlForm.cs: Use the new WriteSubmitStatements method from
+	Page.ClientScript.
+
 2005-03-11  Lluis Sanchez Gual <lluis@novell.com>
 
 	* HtmlInputButton.cs, HtmlAnchor.cs, HtmlButton.cs: Don't use

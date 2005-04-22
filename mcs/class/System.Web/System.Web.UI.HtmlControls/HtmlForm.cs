@@ -6,7 +6,6 @@
 using System;
 using System.Collections;
 using System.ComponentModel;
-using System.Text;
 using System.Web;
 using System.Web.UI;
 using System.Web.Util;
@@ -32,23 +31,16 @@ namespace System.Web.UI.HtmlControls{
 				Attributes.Remove ("enctype");
 			}
 
-			Hashtable onSubmit = Page.ClientScript.submitStatements;
- 			if (onSubmit != null && onSubmit.Count > 0){
-				StringBuilder sb = new StringBuilder ();
+			string submitStatements = Page.ClientScript.WriteSubmitStatements ();
+ 			if (submitStatements != null) {
 				string prev = Attributes ["onsubmit"];
- 				if (prev != null){
-					sb.Append (prev);
+ 				if (prev != null) {
+ 					submitStatements = prev + submitStatements;
  					Attributes.Remove ("onsubmit");
  				}
 
-				foreach (Hashtable hash in onSubmit.Values) {
-					foreach (string s in hash.Values) {
-						sb.Append (s);
-					}
-				}
-
  				writer.WriteAttribute ("language", "javascript");
- 				writer.WriteAttribute ("onsubmit", sb.ToString ());
+ 				writer.WriteAttribute ("onsubmit", submitStatements);
  			}
 
 			if (ID == null)
