@@ -1,3 +1,8 @@
+2005-04-22  Ankit Jain  <ankit@corewars.org>
+
+	* TypeSpecMethodRef.cs (TypeSpecMethodRef.Resolve): Set is_resolved
+	to true.
+	
 2005-04-18  Ankit Jain  <ankit@corewars.org>
 
 	* CodeGen.cs (CodeGen.AddManifestResource): Add a
