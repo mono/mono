@@ -1,3 +1,8 @@
+2005-04-22  Marek Safar  <marek.safar@seznam.cz>
+
+	* driver.cs (CompilerCallableEntryPoint.Invoke): Reset under any
+	circumstances.
+
 2005-04-20  John Luke  <john.luke@gmail.com>
 
 	* driver.cs: fix typo in error message, --outout to --output
