@@ -80,7 +80,6 @@ namespace Microsoft.VisualBasic.CompilerServices
 		private bool[] byRefFlags;
 		private Type objectType;
 		private string bindToName;
-		private bool usesParamArray;
 
 		public override MethodBase BindToMethod(
 			BindingFlags bindingAttr,
@@ -348,6 +347,8 @@ namespace Microsoft.VisualBasic.CompilerServices
 				paramArrayIndex = parameters.GetUpperBound (0) - 1;
 				minParams --;
 			}
+			if (minParams == 0 && numArgs == 0)
+				return ConversionType.Exact;
 			if (numArgs < minParams)
 				return ConversionType.None;
 			if (! usesParamArray && numArgs != numParams) {
@@ -549,14 +550,6 @@ namespace Microsoft.VisualBasic.CompilerServices
 			}
 
 			return retVal;
-		}
-
-		private bool ByRefParamsExist (ParameterInfo [] pars) {
-			foreach (ParameterInfo p in pars) {
-				if (p.ParameterType.IsByRef)
-					return true;
-			}
-			return false;
 		}
 
 		private bool IsApplicable (MethodBase mb, object [] args) {

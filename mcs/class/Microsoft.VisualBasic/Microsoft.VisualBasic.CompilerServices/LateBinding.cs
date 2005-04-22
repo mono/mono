@@ -5,6 +5,7 @@
 //   Chris J Breisch (cjbreisch@altavista.net) 
 //   Marco Ridoni    (marco.ridoni@virgilio.it)
 //   Dennis Hayes (dennish@raytek.com)
+//   Satya Sudha K (ksathyasudha@novell.com)
 //
 // (C) 2002 Chris J Breisch
 // (C) 2003 Marco Ridoni
@@ -48,44 +49,40 @@ namespace Microsoft.VisualBasic.CompilerServices {
 
 		[System.Diagnostics.DebuggerHiddenAttribute] 
 		[System.Diagnostics.DebuggerStepThroughAttribute] 
-		public static object LateGet(
-			object o,
-			Type objType,
-			string name,
-			object[] args,
-			string[] paramnames,
-			bool[] CopyBack) {
-
-			BindingFlags invokeAttr = 0;
+		public static object LateGet(object o,
+					     Type objType,
+					     string name,
+					     object[] args,
+					     string[] paramnames,
+					     bool[] CopyBack) {
 
 			if (objType == null) {
-				if (o == null)
+				if (o == null) {
 					throw new NullReferenceException();
+				}
 				objType = o.GetType();
 			}
-			Type[] typeArr = null;
-			if (args != null) {
-				typeArr = new Type[args.Length];
-				for (int i = 0; i < typeArr.Length; i++) {
-					typeArr[i] = args[i].GetType();
-				}
+
+			IReflect objReflect = (IReflect) objType;
+
+			BindingFlags flags = BindingFlags.FlattenHierarchy |
+					     BindingFlags.IgnoreCase |
+					     BindingFlags.Instance |
+					     BindingFlags.Public |
+					     BindingFlags.Static |
+					     BindingFlags.InvokeMethod;
+
+			if (name == null) {
+				name = "";
+			}
+			MemberInfo [] memberinfo = objReflect.GetMember (name, flags);
+
+			if (memberinfo == null || memberinfo.Length == 0) {
+				throw new MissingMemberException ("Public Member '" + name + "' not found on type '" + objType + "'");
 			}
 
-			MemberInfo[] memberInfo = objType.GetMember(name);
-
-			if (((memberInfo == null) || (memberInfo.Length == 0))) 
-				throw new NullReferenceException();
-
-			if (memberInfo[0] is MethodInfo) 
-				invokeAttr = BindingFlags.InvokeMethod;
-			else if (memberInfo[0] is PropertyInfo) 
-				invokeAttr = BindingFlags.GetProperty;
-			else if (memberInfo[0] is FieldInfo) 
-				invokeAttr = BindingFlags.GetField;
-			else 
-				throw new NullReferenceException();
-
-			return objType.InvokeMember(name, invokeAttr, null, o, args);
+			VBBinder binder = new VBBinder (CopyBack);
+			return binder.InvokeMember (name, flags, objType, objReflect, o, args, null, null, paramnames);
 		}
 
 		[System.Diagnostics.DebuggerStepThroughAttribute] 
