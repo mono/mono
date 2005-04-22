@@ -32,7 +32,7 @@ include ../../build/library.make
 $(the_lib): $(TXT_RES) #$(RESX_RES)
 
 $(TXT_RES): %.resources: %.txt
-	$(INTERNAL_RESGEN) `echo $< | $(PLATFORM_CHANGE_SEPARATOR_CMD)`
+	$(RESGEN) `echo $< | $(PLATFORM_CHANGE_SEPARATOR_CMD)`
 
 #$(RESX_RES): %.resources: %.resx
 #	$(RESGEN) `echo $< | $(PLATFORM_CHANGE_SEPARATOR_CMD)`
