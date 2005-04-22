@@ -1,3 +1,7 @@
+2005-04-22  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile.am (CSC): Use '-unsafe' instead of '--unsafe'.
+
 2005-04-09  Zoltan Varga  <vargaz@freemail.hu>
 
 	* Makefile.am (testtrace): New target to test --trace functionality.
