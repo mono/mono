@@ -34,9 +34,6 @@ namespace System.Web.UI.WebControls
 {
 	public class StringArrayConverter : TypeConverter
 	{
-		static StandardValuesCollection valuesCollection;
-		static string creatingValues = "creating value collection";
-
 		public override bool CanConvertFrom (ITypeDescriptorContext context, Type sourceType)
 		{
 			if(sourceType == typeof(string))

@@ -1,3 +1,8 @@
+2005-04-22 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* StringArrayConverter.cs:
+	* Calendar.cs: warnings.
+
 2005-04-21  Lluis Sanchez Gual <lluis@novell.com>
 
 	* FormViewDeleteEventArgs.cs:

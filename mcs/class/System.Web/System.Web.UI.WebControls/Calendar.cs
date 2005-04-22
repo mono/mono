@@ -83,7 +83,6 @@ namespace System.Web.UI.WebControls
 		private static int MASK_TODAY    = (0x01 << 2);
 		private static int MASK_SELECTED = (0x01 << 3);
 		private static int MASK_DAY      = (0x01 << 4);
-		private static int MASK_UNIQUE = MASK_WEEKEND | MASK_OMONTH | MASK_TODAY | MASK_SELECTED;
 
 		public Calendar(): base()
 		{
@@ -1396,20 +1395,6 @@ namespace System.Web.UI.WebControls
 				return dispVal.ToString ();
 			}
 			return text;
-		}
-
-		private string GetHtmlForCell (TableCell cell, bool showLinks)
-		{
-			StringWriter sw = new StringWriter ();
-			HtmlTextWriter htw = new HtmlTextWriter (sw);
-			cell.RenderBeginTag (htw);
-			if(showLinks) {
-				htw.Write (GetCalendarLinkText ("{0}", "{1}", "{1}", cell.ForeColor, showLinks));
-			} else {
-				htw.Write ("{0}");
-			}
-			cell.RenderEndTag (htw);
-			return sw.ToString();
 		}
 
 		internal void SelectRangeInternal (DateTime fromDate, DateTime toDate, DateTime visibleDate)
