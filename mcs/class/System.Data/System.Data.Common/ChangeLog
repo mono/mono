@@ -1,3 +1,14 @@
+2005-04-22  Sureshkumar T  <tsureshkumar@novell.com>
+
+	* DbDataAdapter.cs: Moved FillTable and BuildSchema as static
+	methods as they are not operating on the current instance. This
+	could be reused to fill any table from a data reader.
+
+	* RecordCache.cs: While disposing records, make sure that the
+	record is not already disposed. i.e. to make sure later the same
+	record is not reused. Implemented a static method to compare two
+	version of records in a container.
+
 2005-04-18  Sureshkumar T  <tsureshkumar@novell.com>
 
 	* DataAdapter.cs: Implemenetd OnFillError handler.

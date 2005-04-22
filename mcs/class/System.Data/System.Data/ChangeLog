@@ -1,3 +1,21 @@
+2005-04-22  Sureshkumar T  <tsureshkumar@novell.com>
+
+	* LoadOption.cs: Changed the enums. Keeping old values for
+	migration.
+
+	* DataTable.cs: Implemented methods Load and its overloads. Also
+	implemented LoadDataRow.
+
+	* DataRowCollection.cs: Added a variation of the Find method to
+	return a row even if it is of state Deleted. This is required for
+	DataTable.LoadDataRow method.
+
+	* DataRow.cs: Implemented internal helper method Load for loading
+	values from an object array and given an LoadOption (2.0 feature).
+
+	* DataRowAction.cs: Added few more enums for .net 2.0. Sorted
+	alphabetically.
+
 2005-04-20  Jordi Mas i Hernandez <jordi@ximian.com>
 
 	* DataViewManager.cs: implements TypedList.GetListName used in SWF

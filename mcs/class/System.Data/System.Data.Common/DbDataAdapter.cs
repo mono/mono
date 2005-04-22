@@ -4,6 +4,7 @@
 // Author:
 //   Rodrigo Moya (rodrigo@ximian.com)
 //   Tim Coleman (tim@timcoleman.com)
+//   Sureshkumar T <tsureshkumar@novell.com>
 //
 // (C) Ximian, Inc
 // Copyright (C) Tim Coleman, 2002-2003
@@ -331,47 +332,99 @@ namespace System.Data.Common {
 			return Fill (dataSet, srcTable, command.ExecuteReader (commandBehavior), startRecord, maxRecords);
 		}
 
-		private bool FillTable (DataTable dataTable, IDataReader dataReader, int startRecord, int maxRecords, ref int counter) 
+		private bool FillTable (DataTable dataTable, IDataReader dataReader, int startRecord, int maxRecords, ref int counter)
 		{
-			if (dataReader.FieldCount == 0) {
+			if (dataReader.FieldCount == 0)
 				return false;
-			}
 
-			int counterStart = counter;
-			
 			int[] mapping = BuildSchema (dataReader, dataTable, SchemaType.Mapped);
-
-				for (int i = 0; i < startRecord; i++) {
-					dataReader.Read ();
-				}
-
-			while (dataReader.Read () && (maxRecords == 0 || (counter - counterStart) < maxRecords)) {
-				try {
-					dataTable.BeginLoadData ();
-					dataTable.LoadDataRow (dataReader, mapping, AcceptChangesDuringFill);
-					dataTable.EndLoadData ();
-					counter++;
-				} 
-				catch (Exception e) {
-					object[] readerArray = new object[dataReader.FieldCount];
-					object[] tableArray = new object[dataReader.FieldCount];
-					// we get the values from the datareader
-					dataReader.GetValues (readerArray);
-					// copy from datareader columns to table columns according to given mapping
-                                        int count = 0;
-					for (int i = 0; i < dataTable.Columns.Count; i++) {
-                                                if (mapping [i] >= 0)
-                                                        tableArray[count++] = readerArray[mapping[i]];
-					}
-					FillErrorEventArgs args = CreateFillErrorEvent (dataTable, tableArray, e);
-					OnFillError (args);
-					if(!args.Continue) {
-						return false;
-					}
-				}
-			}
+                        try {
+                                FillTable (dataTable, dataReader, startRecord, maxRecords, mapping,
+                                           AcceptChangesDuringFill, ref counter);
+                        } catch (Exception e) {
+                                object[] readerArray = new object[dataReader.FieldCount];
+                                object[] tableArray = new object[dataReader.FieldCount];
+                                // we get the values from the datareader
+                                dataReader.GetValues (readerArray);
+                                // copy from datareader columns to table columns according to given mapping
+                                int count = 0;
+                                for (int i = 0; i < dataTable.Columns.Count; i++) {
+                                        if (mapping [i] >= 0)
+                                                tableArray[count++] = readerArray[mapping[i]];
+                                }
+                                FillErrorEventArgs args = CreateFillErrorEvent (dataTable, tableArray, e);
+                                OnFillError (args);
+                                if(!args.Continue) {
+                                        return false;
+                                }
+                        }
 			return true;
 		}
+
+                /// <summary>
+                ///     Fills the given datatable using values from reader. if a column 
+                ///     does not have a mapped reader column (-1 in mapping), that will 
+                ///     be filled with default value. 
+                /// </summary>
+		internal static void FillTable (DataTable dataTable, 
+                                               IDataReader dataReader, 
+                                               int startRecord, 
+                                               int maxRecords, 
+                                               int [] mapping,
+                                               bool acceptChanges,
+                                               ref int counter) 
+                {
+                        if (dataReader.FieldCount == 0)
+				return ;
+
+                        for (int i = 0; i < startRecord; i++)
+                                dataReader.Read ();
+
+                        int counterStart = counter;
+                        while (dataReader.Read () && (maxRecords == 0 || (counter - counterStart) < maxRecords)) {
+                                dataTable.BeginLoadData ();
+                                dataTable.LoadDataRow (dataReader, mapping, acceptChanges);
+                                dataTable.EndLoadData ();
+                                counter++;
+                        }
+                }
+#if NET_2_0
+                /// <summary>
+                ///     Fills the given datatable using values from reader. if a value 
+                ///     for a column is  null, that will be filled with default value. 
+                /// </summary>
+                /// <returns>No. of rows affected </returns>
+		internal static int FillFromReader (DataTable table,
+                                                    IDataReader reader,
+                                                    int start, 
+                                                    int length,
+                                                    int [] mapping,
+                                                    LoadOption loadOption
+                                                    )
+                {
+                        if (reader.FieldCount == 0)
+				return 0 ;
+
+                        for (int i = 0; i < start; i++)
+                                reader.Read ();
+
+                        int counter = 0;
+                        object [] values = new object [mapping.Length];
+                        while (reader.Read () &&
+                               (length == 0 || counter < length)) {
+                                
+                                for (int i = 0 ; i < mapping.Length; i++)
+                                        values [i] = mapping [i] < 0 ? null : reader [mapping [i]];
+                                        
+                                table.BeginLoadData ();
+                                table.LoadDataRow (values, loadOption);
+                                table.EndLoadData ();
+                                counter++;
+                        }
+                        return counter;
+                }
+
+#endif // NET_2_0
 
 		public override DataTable[] FillSchema (DataSet dataSet, SchemaType schemaType) 
 		{
@@ -496,6 +549,22 @@ namespace System.Data.Common {
 		[MonoTODO ("Test")]
 		private int[] BuildSchema (IDataReader reader, DataTable table, SchemaType schemaType)
 		{
+                        return BuildSchema (reader, table, schemaType, MissingSchemaAction,
+                                            MissingMappingAction, TableMappings);
+		}
+
+                /// <summary>
+                ///     Creates or Modifies the schema of the given DataTable based on the schema of
+                ///     the reader and the arguments passed.
+                /// </summary>
+                internal static int[] BuildSchema (IDataReader reader, 
+                                                   DataTable table, 
+                                                   SchemaType schemaType,
+                                                   MissingSchemaAction missingSchAction,
+                                                   MissingMappingAction missingMapAction,
+                                                   DataTableMappingCollection dtMapping
+                                                   )
+		{
 			int readerIndex = 0;
 			int[] mapping = new int[reader.FieldCount + table.Columns.Count]; // mapping the reader indexes to the datatable indexes
                         for (int i =0 ; i < mapping.Length; i++) 
@@ -521,33 +590,32 @@ namespace System.Data.Common {
 				// generate DataSetColumnName from DataTableMapping, if any
 				string dsColumnName = realSourceColumnName;
 				DataTableMapping tableMapping = null;
-				tableMapping = DataTableMappingCollection.GetTableMappingBySchemaAction (TableMappings, table.TableName, table.TableName, MissingMappingAction); 
+				tableMapping = DataTableMappingCollection.GetTableMappingBySchemaAction (dtMapping, table.TableName, table.TableName, missingMapAction); 
 				if (tableMapping != null) 
 				{
 					
 					table.TableName = tableMapping.DataSetTable;
 					// check to see if the column mapping exists
-					DataColumnMapping columnMapping = DataColumnMappingCollection.GetColumnMappingBySchemaAction(tableMapping.ColumnMappings, realSourceColumnName, MissingMappingAction);
+					DataColumnMapping columnMapping = DataColumnMappingCollection.GetColumnMappingBySchemaAction(tableMapping.ColumnMappings, realSourceColumnName, missingMapAction);
 					if (columnMapping != null)
 					{
 						DataColumn col =
 							columnMapping.GetDataColumnBySchemaAction(
 							table ,
 							(Type)schemaRow["DataType"],
-							MissingSchemaAction);
+							missingSchAction);
 
 						if (col != null)
 						{
 							// if the column is not in the table - add it.
 							if (table.Columns.IndexOf(col) == -1)
 							{
-								if (MissingSchemaAction == MissingSchemaAction.Add 
-                                                                    || MissingSchemaAction == MissingSchemaAction.AddWithKey)
+								if (missingSchAction == MissingSchemaAction.Add 
+                                                                    || missingSchAction == MissingSchemaAction.AddWithKey)
 									table.Columns.Add(col);
 							}
 
-
-                                                        if (MissingSchemaAction == MissingSchemaAction.AddWithKey) {
+                                                        if (missingSchAction == MissingSchemaAction.AddWithKey) {
                                                                 if (!schemaRow["IsKey"].Equals (DBNull.Value))
                                                                         if ((bool) (schemaRow ["IsKey"]))
                                                                                 primaryKey.Add (col);
@@ -566,7 +634,8 @@ namespace System.Data.Common {
 				table.PrimaryKey = (DataColumn[])(primaryKey.ToArray(typeof (DataColumn)));
 
 			return mapping;
-		}
+                        
+                }
 
 		[MonoTODO]
 		object ICloneable.Clone ()

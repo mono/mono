@@ -64,7 +64,7 @@ namespace System.Data.Common
 		internal int NewRecord()
 		{
 			if (_records.Count > 0) {
-				return (int)_records.Pop();
+                                return (int)_records.Pop();
 			}
 			else {
 				DataColumnCollection cols = _table.Columns;
@@ -86,7 +86,9 @@ namespace System.Data.Common
 			if ( index < 0 ) {
 				throw new ArgumentException();
 			}
-			_records.Push(index);
+                        if (! _records.Contains (index)) {
+                                _records.Push(index);
+                        }
 		}
 
 		internal int CopyRecord(DataTable fromTable,int fromRecordIndex,int toRecordIndex)
@@ -106,6 +108,19 @@ namespace System.Data.Common
 			return recordIndex;
 		}
 
+                /// <summary>
+                ///     Compares two records in the given data table. The numbers are the offset
+                ///     into the container tables.
+                /// </summary>
+                internal static bool CompareRecords (DataTable table, int x, int y)
+                {
+                        foreach (DataColumn dc in table.Columns) {
+                                if (dc.DataContainer.CompareValues (x, y) != 0)
+                                        return false;
+                        }
+                        return true;
+                }
+                
 		#endregion // Methods
 
 	}

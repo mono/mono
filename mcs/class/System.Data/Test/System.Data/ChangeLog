@@ -1,3 +1,9 @@
+2005-04-22  Sureshkumar T  <tsureshkumar@novell.com>
+
+	* DataTableLoadRowTest.cs: Added. A test case for testing
+	LoadDataRow method of DataTable. This tests for various
+	possiblities of row state and loadoption.
+
 2005-04-19  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DataViewTest.cs : added more RowStateFilter test (bug #74650).

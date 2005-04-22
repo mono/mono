@@ -7,6 +7,7 @@
 //   Tim Coleman <tim@timcoleman.com>
 //   Ville Palo <vi64pa@koti.soon.fi>
 //   Alan Tam Siu Lung <Tam@SiuLung.com>
+//   Sureshkumar T <tsureshkumar@novell.com>
 //
 // (C) Ximian, Inc 2002
 // (C) Daniel Morgan 2002, 2003
@@ -37,6 +38,7 @@
 //
 
 using System;
+using System.Data.Common;
 using System.Collections;
 using System.Globalization;
 using System.Xml;
@@ -233,6 +235,82 @@ namespace System.Data {
 			}
 		}
 
+                /// <summary>
+                /// Sets the index into the container records for the original version. Apart
+                /// from that, it makes sure it pools the record used earlier if they are not
+                /// used by other versions.
+                /// </summary>
+                internal int Original 
+                {
+                        get { return _original;}
+                        set {
+                                if (_original == value) 
+                                        return;
+                                
+                                if (_original >= 0 
+                                    && _current != _original
+                                    && _proposed != _original)
+                                        Table.RecordCache.DisposeRecord (_original);
+                                _original = value;
+                        }
+                }
+
+                /// <summary>
+                /// Sets the index into the container records for the proposed version. Apart
+                /// from that, it makes sure it pools the record used earlier if they are not
+                /// used by other versions.
+                internal int Proposed
+                {
+                        get { return _proposed;}
+                        set {
+                                if (_proposed == value)
+                                        return;
+                                if (_proposed >= 0
+                                    && _proposed != _current
+                                    && _proposed != _original)
+                                        Table.RecordCache.DisposeRecord (_proposed);
+                                _proposed = value;
+                        }
+                }
+
+                /// <summary>
+                /// Sets the index into the container records for the current version. Apart
+                /// from that, it makes sure it pools the record used earlier if they are not
+                /// used by other versions.
+                internal int Current 
+                {
+                        get { return _current;}
+                        set {
+                                if (_current == value)
+                                        return;
+                                if (_current >= 0
+                                    && _current != _original
+                                    && _current != _proposed)
+                                        Table.RecordCache.DisposeRecord (_current);
+                                _current = value;
+                        }
+                }
+
+                /// <summary>
+                /// Set a value for the column into the offset specified by the version.<br>
+                /// If the value is auto increment or null, necessary auto increment value
+                /// or the default value will be used.
+                /// </summary>
+                internal void SetValue (int column, object value, int version)
+                {
+                        DataColumn dc = Table.Columns[column];
+
+                        if (value == null && ! dc.AutoIncrement) // set default value / auto increment
+                                value = dc.DefaultValue;
+
+			Table.ChangingDataColumn (this, dc, value);	
+                        CheckValue (value, dc);
+                        if ( ! dc.AutoIncrement)
+                                dc [version] = value;
+                        else if (_proposed >= 0 && _proposed != version) // proposed holds the AI
+                                dc [version] = dc [_proposed];
+                }
+
 		/// <summary>
 		/// Gets the data stored in the column, specified by index and version of the data to
 		/// retrieve.
@@ -358,7 +436,7 @@ namespace System.Data {
 			}
 		}
 
-		#endregion
+		#endregion // Properties
 
 		#region Methods
 
@@ -527,10 +605,8 @@ namespace System.Data {
 				throw new RowNotInTableException("Cannot perform this operation on a row not in the table.");
 			}
 			// Accept from detached
-			if (_original >= 0) {
-				Table.RecordCache.DisposeRecord(_original);
-			}
-			_original = _current;
+			if (_original != _current)
+				Original = Current;
 		}
 
 		/// <summary>
@@ -1114,26 +1190,26 @@ namespace System.Data {
 		/// </summary>
 		public bool HasVersion (DataRowVersion version) 
 		{
-			switch (version) {
-				case DataRowVersion.Default:
-					if (rowState == DataRowState.Deleted && !_inExpressionEvaluation)
-						return false;
-					if (rowState == DataRowState.Detached)
-						return _proposed >= 0;
-					return true;
-				case DataRowVersion.Proposed:
-					if (rowState == DataRowState.Deleted && !_inExpressionEvaluation)
-						return false;
-					return _proposed >= 0;
-				case DataRowVersion.Current:
-					if ((rowState == DataRowState.Deleted && !_inExpressionEvaluation) || rowState == DataRowState.Detached)
-						return false;
-					return _current >= 0;
-				case DataRowVersion.Original:
-					if (rowState == DataRowState.Detached)
-						return false;
-					return _original >= 0;
-			}
+                        switch (version) {
+                        case DataRowVersion.Default:
+                                if (rowState == DataRowState.Deleted && !_inExpressionEvaluation)
+                                        return false;
+                                if (rowState == DataRowState.Detached)
+                                        return _proposed >= 0;
+                                return true;
+                        case DataRowVersion.Proposed:
+                                if (rowState == DataRowState.Deleted && !_inExpressionEvaluation)
+                                        return false;
+                                return _proposed >= 0;
+                        case DataRowVersion.Current:
+                                if ((rowState == DataRowState.Deleted && !_inExpressionEvaluation) || rowState == DataRowState.Detached)
+                                        return false;
+                                return _current >= 0;
+                        case DataRowVersion.Original:
+                                if (rowState == DataRowState.Detached)
+                                        return false;
+                                return _original >= 0;
+                        }
 			return false;
 		}
 
@@ -1448,6 +1524,71 @@ namespace System.Data {
                 }
 	
 		#endregion // Methods
+
+#if NET_2_0
+                /// <summary>
+                ///    This method loads a given value into the existing row affecting versions,
+                ///    state based on the LoadOption.  The matrix of changes for this method are as
+                ///    mentioned in the DataTable.Load (IDataReader, LoadOption) method.
+                /// </summary>
+                [MonoTODO ("Raise necessary Events")]
+                internal void Load (object [] values, LoadOption loadOption, bool is_new)
+                {
+                        DataRowAction action = DataRowAction.Change;
+
+                        int temp = Table.RecordCache.NewRecord ();
+                        for (int i = 0 ; i < Table.Columns.Count; i++)
+                                SetValue (i, values [i], temp);
+
+                        if (is_new) { // new row
+                                if (editing || RowState == DataRowState.Detached)
+                                        Proposed = temp;
+                                else
+                                        Current = temp;
+                                return;
+                        }
+
+                        if (loadOption == LoadOption.OverwriteChanges 
+                            || (loadOption == LoadOption.PreserveChanges
+                                && rowState == DataRowState.Unchanged)) {
+                                Original = temp;
+                                if (editing)
+                                        Proposed = temp;
+                                else
+                                        Current = temp;
+                                rowState = DataRowState.Unchanged;
+                                action = DataRowAction.ChangeCurrentAndOriginal;
+                                return;
+                        }
+
+                        if (loadOption == LoadOption.PreserveChanges) {
+                                if (rowState != DataRowState.Deleted) {
+                                        Original = temp;
+                                        rowState = DataRowState.Modified;
+                                        action   = DataRowAction.ChangeOriginal;
+                                }
+                                return;
+                        }
+                                
+                        bool not_used = true;
+                        // Upsert
+                        if (rowState != DataRowState.Deleted) {
+                                int index = editing ? _proposed : _current;
+                                if (! RecordCache.CompareRecords (Table, index, temp)) {
+                                        if (editing)
+                                                Proposed = temp;
+                                        else
+                                                Current = temp;
+                                        not_used = false;
+                                        if (rowState == DataRowState.Unchanged)
+                                                rowState = DataRowState.Modified;
+                                }
+                        }
+                                
+                        if (not_used)
+                                Table.RecordCache.DisposeRecord (temp);
+                }
+#endif // NET_2_0
 	}
 
 	

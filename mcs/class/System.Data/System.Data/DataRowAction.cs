@@ -3,6 +3,7 @@
 //
 // Author:
 //   Christopher Podurgiel (cpodurgiel@msn.com)
+//   Sureshkumar T <tsureshkumar@novell.com>
 //
 // (C) Chris Podurgiel
 //
@@ -40,12 +41,15 @@ namespace System.Data
 	[Serializable]
 	public enum DataRowAction
 	{
-		Nothing = 0,
-		Delete = 1,
-		Change = 2,
-		Rollback = 4,
-		Commit = 8,
-		Add = 16
+                Add                             = 16,
+                Change                          = 2,
+#if NET_2_0
+                ChangeCurrentAndOriginal        = 64,
+                ChangeOriginal                  = 32,
+#endif // NET_2_0
+                Commit                          = 8,
+                Delete                          = 1,
+                Nothing                         = 0,
+                Rollback                        = 4
 	}
-
 }

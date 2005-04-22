@@ -8,6 +8,7 @@
 //   Rodrigo Moya <rodrigo@ximian.com>
 //   Tim Coleman (tim@timcoleman.com)
 //   Ville Palo <vi64pa@koti.soon.fi>
+//   Sureshkumar T <tsureshkumar@novell.com>
 //
 // (C) Chris Podurgiel
 // (C) Ximian, Inc 2002
@@ -991,17 +992,40 @@ namespace System.Data {
 		}
 
 #if NET_2_0
-		[MonoTODO]
+                /// <summary>
+                ///     Loads the table with the values from the reader
+                /// </summary>
 		public void Load (IDataReader reader)
 		{
-			throw new NotImplementedException ();
+                        Load (reader, LoadOption.PreserveChanges);
 		}
 
-		[MonoTODO]
+                /// <summary>
+                ///     Loads the table with the values from the reader and the pattern
+                ///     of the changes to the existing rows or the new rows are based on
+                ///     the LoadOption passed.
+                /// </summary>
 		public void Load (IDataReader reader, LoadOption loadOption)
 		{
-			throw new NotImplementedException ();
+                        bool prevEnforceConstr = this.EnforceConstraints;
+                        try {
+                                this.EnforceConstraints = false;
+                                int [] mapping = DbDataAdapter.BuildSchema (reader, this, SchemaType.Mapped, 
+                                                                            MissingSchemaAction.AddWithKey,
+                                                                            MissingMappingAction.Passthrough, 
+                                                                            new DataTableMappingCollection ());
+                                DbDataAdapter.FillFromReader (this,
+                                                              reader,
+                                                              0, // start from
+                                                              0, // all records
+                                                              mapping,
+                                                              loadOption);
+                        } finally {
+                                this.EnforceConstraints = prevEnforceConstr;
+                        }
 		}
+
+                
 #endif
 
 		/// <summary>
@@ -1064,7 +1088,7 @@ namespace System.Data {
 					for (int i = 0; i < PrimaryKey.Length && hasPrimaryValues; i++) {
 						DataColumn primaryKeyColumn = PrimaryKey[i];
 						int ordinal = primaryKeyColumn.Ordinal;
-						if(ordinal < mapping.Length) {
+						if(mapping [ordinal] >= 0) {
 							primaryKeyColumn.DataContainer.SetItemFromDataRecord(tmpRecord,record,mapping[ordinal]);
 						}
 						else {
@@ -1074,7 +1098,7 @@ namespace System.Data {
 					
 					if (hasPrimaryValues) {
 						// find the row in the table.
-						row = Rows.Find(tmpRecord,PrimaryKey.Length);
+						row = Rows.Find(tmpRecord, PrimaryKey.Length);
 					}
 				}
 				finally {
@@ -1098,10 +1122,57 @@ namespace System.Data {
 		}
 
 #if NET_2_0
-		[MonoTODO]
-		public DataRow LoadDataRow (object[] values, LoadOption loadOption)
+                /// <summary>
+                ///     Loads the given values into an existing row if matches or creates
+                ///     the new row popluated with the values.
+                /// </summary>
+                /// <remarks>
+                ///     This method searches for the values using primary keys and it first
+                ///     searches using the original values of the rows and if not found, it
+                ///     searches using the current version of the row.
+                /// </remarks>
+		public DataRow LoadDataRow (object [] values, LoadOption loadOption)
 		{
-			throw new NotImplementedException ();
+                        DataRow row  = null;
+                        bool new_row = false;
+                        
+                        // Find Data DataRow
+                        if (this.PrimaryKey.Length > 0) {
+                                object [] keyValues = new object [this.PrimaryKey.Length];
+                                for (int i = 0; i < keyValues.Length; i++)
+                                        keyValues [i] = values [this.PrimaryKey [i].Ordinal];
+                                row = this.Rows.Find (keyValues, DataRowVersion.Original );
+                                if (row == null) 
+                                        row = this.Rows.Find (keyValues, DataRowVersion.Current);
+                        }
+                                
+                        // If not found, add new row
+                        if (row == null) {
+                                row = this.NewRow ();
+                                new_row = true;
+                        }
+
+                        bool deleted = row.RowState == DataRowState.Deleted;
+
+                        if (deleted && loadOption == LoadOption.OverwriteChanges)
+                                row.RejectChanges ();                        
+
+                        row.Load (values, loadOption, new_row);
+
+                        if (deleted && loadOption == LoadOption.Upsert) {
+                                row = this.NewRow ();
+                                row.Load (values, loadOption, new_row = true);
+                        }
+
+                        if (new_row) {
+                                this.Rows.Add (row);
+                                if (loadOption == LoadOption.OverwriteChanges ||
+                                    loadOption == LoadOption.PreserveChanges) {
+                                        row.AcceptChanges ();
+                                }
+                        }
+
+                        return row;
 		}
 
 		[MonoTODO]

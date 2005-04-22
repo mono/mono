@@ -3,6 +3,7 @@
 //
 // Author:
 //   Tim Coleman (tim@timcoleman.com)
+//   Sureshkumar T <tsureshkumar@novell.com>
 //
 // Copyright (C) Tim Coleman, 2003
 //
@@ -35,9 +36,15 @@
 namespace System.Data {
 	public enum LoadOption 
 	{
-		OverwriteRow,
-		PreserveCurrentValues,
-		UpdateCurrentValues
+                OverwriteChanges        = 2,
+                PreserveChanges         = 3,
+                Upsert                  = 1,
+                [Obsolete ("Use OverwriteChanges insted")]
+                OverwriteRow            = 2,
+                [Obsolete ("Use PreserveChanges insted")]
+		PreserveCurrentValues   = 3,
+                [Obsolete ("Use Upsert insted")]
+		UpdateCurrentValues     = 1
 	}
 }
 
