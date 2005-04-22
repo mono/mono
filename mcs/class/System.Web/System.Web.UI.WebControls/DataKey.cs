@@ -115,6 +115,15 @@ namespace System.Web.UI.WebControls
 			}
 		}
 		
+		protected virtual void TrackViewState ()
+		{
+			trackViewState = true;
+		}
+		
+		protected virtual bool IsTrackingViewState {
+			get { return trackViewState; }
+		}
+		
 		void IStateManager.LoadViewState (object savedState)
 		{
 			LoadViewState (savedState);
@@ -127,11 +136,11 @@ namespace System.Web.UI.WebControls
 		
 		void IStateManager.TrackViewState ()
 		{
-			trackViewState = true;
+			TrackViewState ();
 		}
 		
 		bool IStateManager.IsTrackingViewState {
-			get { return trackViewState; }
+			get { return IsTrackingViewState; }
 		}
 	}
 }

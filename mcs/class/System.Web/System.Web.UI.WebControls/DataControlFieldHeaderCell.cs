@@ -47,8 +47,25 @@ namespace System.Web.UI.WebControls
 		}
 		
 		public TableHeaderScope Scope {
-			get { return scope; }
-			set { scope = value; }
+			get {
+				object ob = ViewState ["Scope"];
+				if (ob != null) return (TableHeaderScope) ob;
+				else return TableHeaderScope.NotSet;
+			}
+			set {
+				ViewState ["Scope"] = value;
+			}
+		}
+		
+		public virtual string AbbreviatedText {
+			get {
+				object ob = ViewState ["AbbreviatedText"];
+				if (ob != null) return (string) ob;
+				else return string.Empty;
+			}
+			set {
+				ViewState ["AbbreviatedText"] = value;
+			}
 		}
 		
 		protected override void AddAttributesToRender (HtmlTextWriter writer)
@@ -62,6 +79,8 @@ namespace System.Web.UI.WebControls
 					writer.AddAttribute (HtmlTextWriterAttribute.Scope, "row");
 					break;
 			}
+			if (AbbreviatedText.Length > 0)
+				writer.AddAttribute (HtmlTextWriterAttribute.Abbr, AbbreviatedText);
 		}
 	}
 }

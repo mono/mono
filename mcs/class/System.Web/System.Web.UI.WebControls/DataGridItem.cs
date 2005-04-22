@@ -39,6 +39,9 @@ using System.Web.UI;
 namespace System.Web.UI.WebControls
 {
 	public class DataGridItem : TableRow, INamingContainer
+#if NET_2_0
+		, IDataItemContainer
+#endif
 	{
 		private int itemIndex;
 		private int dataSetIndex;
