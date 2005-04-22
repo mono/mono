@@ -73,6 +73,7 @@ namespace System.Web
 		string	_sTransferEncoding;
 		string	_sCharset;
 		string	_sStatusDescription;
+		bool forced_charset;
 
 		HttpCookieCollection _Cookies;
 		HttpCachePolicy _CachePolicy;
@@ -204,20 +205,21 @@ namespace System.Web
 								      _lContentLength.ToString ()));
 			}
 
+			// Apache2 only auto-adds 'charset=blah' for text/plain and text/html
 			if (_sContentType != null) {
-				if (_sContentType.IndexOf ("charset=") == -1) {
-					if (Charset.Length == 0) {
-						Charset = ContentEncoding.HeaderName;
-					}
+				string ctype = _sContentType;
+				if (forced_charset || _sContentType == "text/plain" || _sContentType == "text/html") {
+					if (_sContentType.IndexOf ("charset=") == -1) {
+						if (Charset.Length == 0)
+							Charset = ContentEncoding.HeaderName;
 
-					// Time to build our string
-					if (Charset.Length > 0) {
-						_sContentType += "; charset=" + Charset;
+						// Time to build our string
+						if (Charset.Length > 0)
+							ctype += "; charset=" + Charset;
 					}
 				}
 
-				oHeaders.Add (new HttpResponseHeader (HttpWorkerRequest.HeaderContentType,
-								      _sContentType));
+				oHeaders.Add (new HttpResponseHeader (HttpWorkerRequest.HeaderContentType, ctype));
 			}
 
 			if (_CachePolicy != null)
@@ -448,6 +450,10 @@ namespace System.Web
 				if (_bHeadersSent)
 					throw new HttpException ("Headers has been sent to the client");
 
+				if (value == null)
+					value = "";
+
+				forced_charset = true;
 				_sCharset = value;
 			}
 		}
@@ -728,6 +734,7 @@ namespace System.Web
 				throw new HttpException ("Headers has been sent to the client");
 
 			_sContentType = "text/html";
+			forced_charset = false;
 
 			_iStatusCode = 200;
 			_sCharset = null;

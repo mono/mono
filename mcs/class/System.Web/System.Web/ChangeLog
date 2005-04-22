@@ -1,3 +1,8 @@
+2005-04-21 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpResponse.cs: only add the charset when explicitly set or for
+	well-known content types.
+
 2005-04-20 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpCachePolicy.cs:
