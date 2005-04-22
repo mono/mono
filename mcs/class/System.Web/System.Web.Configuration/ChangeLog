@@ -1,3 +1,11 @@
+2005-04-22 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* CompilationConfigurationHandler.cs: ensure TempDirectory is not empty
+	before assigning it. Don't mangle the assembly names provided.
+
+	* CompilationConfiguration.cs: use DynamicBase as the temp directory
+	instead of Path.GetTempPath.
+
 2005-04-20 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* ModuleItem.cs:

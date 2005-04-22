@@ -40,7 +40,9 @@ namespace System.Web.Configuration
 		{
 			CompilationConfiguration config = new CompilationConfiguration (parent);
 
-			config.TempDirectory = AttValue ("tempDirectory", section, true);
+			string tmp = AttValue ("tempDirectory", section, true);
+			if (tmp != null && tmp != "")
+				config.TempDirectory = tmp;
 			config.DefaultLanguage = AttValue ("defaultLanguage", section);
 			if (config.DefaultLanguage == null)
 				config.DefaultLanguage = "c#";
@@ -122,7 +124,6 @@ namespace System.Web.Configuration
 						continue;
 					}
 
-					aname = ShortAsmName (aname);
 					if (!assemblies.Contains (aname))
 						assemblies.Add (aname);
 
@@ -134,7 +135,6 @@ namespace System.Web.Configuration
 						config.AssembliesInBin = false;
 						continue;
 					}
-					aname = ShortAsmName (aname);
 					assemblies.Remove (aname);
 					continue;
 				}
@@ -187,14 +187,6 @@ namespace System.Web.Configuration
 			return HandlersUtil.ExtractAttributeValue (name, node, true);
 		}
 
-		private static string ShortAsmName (string long_name)
-		{
-			int i = long_name.IndexOf (',');
-			if (i < 0)
-				return long_name + ".dll";
-			return long_name.Substring (0, i) + ".dll";
-		}
-		
 		static void ThrowException (string message, XmlNode node)
 		{
 			HandlersUtil.ThrowException (message, node);

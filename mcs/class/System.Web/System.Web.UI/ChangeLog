@@ -1,3 +1,12 @@
+2005-04-22 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* SimpleWebHandlerParser.cs:
+	* TemplateParser.cs: always get the location (full path) for assemblies,
+	even the ones from the GAC.
+
+	* BaseCompiler.cs: check that DynamicBase directory exists before
+	creating the TempFileCollection.
+
 2005-04-22  Lluis Sanchez Gual <lluis@novell.com>
 
 	* ClientScriptManager.cs: Use a linked list instead of a Hashtable

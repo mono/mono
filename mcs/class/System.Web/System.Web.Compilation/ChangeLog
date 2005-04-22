@@ -1,5 +1,10 @@
 2005-04-22 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* BaseCompiler.cs: check that DynamicBase directory exists before
+	creating the TempFileCollection.
+
+2005-04-22 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* AspGenerator.cs: use a stack for non-server tags even before getting
 	to a form. Fixes bug #70274.
 

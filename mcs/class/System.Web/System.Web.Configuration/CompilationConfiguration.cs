@@ -67,8 +67,8 @@ namespace System.Web.Configuration
 			if (assemblies == null)
 				assemblies = new ArrayList ();
 
-			if (temp_directory == null)
-				temp_directory = Path.GetTempPath ();
+			if (temp_directory == null || temp_directory == "")
+				temp_directory = AppDomain.CurrentDomain.SetupInformation.DynamicBase;
 		}
 
 		static public CompilationConfiguration GetInstance (HttpContext context)
@@ -187,6 +187,7 @@ namespace System.Web.Configuration
 				if (value != null && !Directory.Exists (value))
 					throw new ArgumentException ("Directory does not exist");
 
+				Console.WriteLine ("Dos: '{0}'\n{1}", value, Environment.StackTrace);
 				temp_directory = value;
 			}
 		}

@@ -256,22 +256,20 @@ namespace System.Web.UI
 				return (Assembly) o;
 			}
 
-			bool fullpath = true;
 			Assembly assembly = LoadAssemblyFromBin (name);
 			if (assembly != null) {
-				AddAssembly (assembly, fullpath);
+				AddAssembly (assembly, true);
 				return assembly;
 			}
 
 			try {
 				assembly = Assembly.LoadWithPartialName (name);
 				string loc = assembly.Location;
-				fullpath = (Path.GetDirectoryName (loc) == PrivateBinPath);
 			} catch (Exception e) {
 				throw new ParseException (location, "Assembly " + name + " not found", e);
 			}
 
-			AddAssembly (assembly, fullpath);
+			AddAssembly (assembly, true);
 			return assembly;
 		}
 

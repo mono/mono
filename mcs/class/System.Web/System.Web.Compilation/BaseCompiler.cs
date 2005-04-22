@@ -311,12 +311,12 @@ namespace System.Web.Compilation
 
 			compilerParameters.WarningLevel = config.GetWarningLevel (lang);
 			bool keepFiles = (Environment.GetEnvironmentVariable ("MONO_ASPNET_NODELETE") != null);
-			TempFileCollection tempcoll = new TempFileCollection (config.TempDirectory, keepFiles);
-			compilerParameters.TempFiles = tempcoll;
-			string dllfilename = Path.GetFileName (tempcoll.AddExtension ("dll", true));
 			if (!Directory.Exists (dynamicBase))
 				Directory.CreateDirectory (dynamicBase);
 
+			TempFileCollection tempcoll = new TempFileCollection (config.TempDirectory, keepFiles);
+			compilerParameters.TempFiles = tempcoll;
+			string dllfilename = Path.GetFileName (tempcoll.AddExtension ("dll", true));
 			compilerParameters.OutputAssembly = Path.Combine (dynamicBase, dllfilename);
 
 			CompilerResults results = CachingCompiler.Compile (this);

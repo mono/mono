@@ -86,7 +86,8 @@ namespace System.Web.UI
 			imports.Add ("System.Web.UI.HtmlControls");
 
 			assemblies = new ArrayList ();
-			assemblies.AddRange (CompilationConfig.Assemblies);
+			foreach (string a in CompilationConfig.Assemblies)
+				AddAssemblyByName (a);
 			if (CompilationConfig.AssembliesInBin)
 				AddAssembliesInBin ();
 
@@ -265,7 +266,7 @@ namespace System.Web.UI
 					continue;
 
 				if (Path.GetDirectoryName (ass.Location) != PrivateBinPath) {
-					AddAssembly (ass, false);
+					AddAssembly (ass, true);
 				} else {
 					seenBin = true;
 				}
@@ -369,23 +370,20 @@ namespace System.Web.UI
 				return (Assembly) o;
 			}
 
-			bool fullpath = false;
 			Assembly assembly = null;
 			try {
 				assembly = Assembly.Load (name);
 				string loc = assembly.Location;
-				fullpath = (Path.GetDirectoryName (loc) == PrivateBinPath);
 			} catch (Exception) {
 				try {
 					assembly = Assembly.LoadWithPartialName (name);
 					string loc = assembly.Location;
-					fullpath = (Path.GetDirectoryName (loc) == PrivateBinPath);
 				} catch (Exception e) {
 					ThrowParseException ("Assembly " + name + " not found", e);
 				}
 			}
 
-			AddAssembly (assembly, fullpath);
+			AddAssembly (assembly, true);
 			return assembly;
 		}
 
