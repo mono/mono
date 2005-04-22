@@ -286,10 +286,17 @@ namespace System.Web.Compilation
 					}
 					
 					tagtype = TagType.Tag;
-					if (Eat ('/') && Eat ('>'))
+					if (Eat ('/') && Eat ('>')) {
 						tagtype = TagType.SelfClosing;
-					else if (!Eat ('>'))
-						OnError ("expecting '>'. Got '" + tokenizer.Value + "'");
+					} else if (!Eat ('>')) {
+						if (attributes.IsRunAtServer ()) {
+							OnError ("The server is not well formed.");
+							break;
+						}
+						tokenizer.Verbatim = true;
+						attributes.Add ("", GetVerbatim (tokenizer.get_token (), ">") + ">");
+						tokenizer.Verbatim = false;
+					}
 				}
 
 				break;
