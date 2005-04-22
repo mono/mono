@@ -1,3 +1,12 @@
+2005-04-22  Martin Baulig  <martin@ximian.com>
+
+	* generic.cs
+	(Constraints.Resolve): Make things work wrt. the new type lookup system.
+	(ConstructedType.ResolveAsTypeTerminal): Don't override this.
+
+	* ecore.cs (Expression.ResolveAsTypeTerminal): If `te' is a
+	ConstructedType, check its constraints.
+
 2005-04-20  Marek Safar  <marek.safar@seznam.cz>
 
 	* codegen.cs (InRefOutArgumentResolving): New field.

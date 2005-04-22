@@ -199,14 +199,19 @@ namespace Mono.CSharp {
 					continue;
 				}
 
+				FullNamedExpression fn = ((Expression) obj).ResolveAsTypeStep (ec);
+				if (fn == null)
+					return false;
+
 				TypeExpr expr;
-				if (obj is ConstructedType) {
-					ConstructedType cexpr = (ConstructedType) obj;
+				ConstructedType cexpr = fn as ConstructedType;
+				if (cexpr != null) {
 					if (!cexpr.ResolveConstructedType (ec))
 						return false;
+
 					expr = cexpr;
 				} else
-					expr = ((Expression) obj).ResolveAsTypeTerminal (ec);
+					expr = fn.ResolveAsTypeTerminal (ec);
 
 				if (expr == null)
 					return false;
@@ -304,7 +309,11 @@ namespace Mono.CSharp {
 					return false;
 				}
 
-				list.Add (iface_constraint.Type);
+				TypeExpr te = iface_constraint.ResolveAsTypeTerminal (ec);
+				if (te == null)
+					return false;
+
+				list.Add (te.Type);
 			}
 
 			foreach (TypeParameterExpr expr in type_param_constraints) {
@@ -325,7 +334,11 @@ namespace Mono.CSharp {
 			list.CopyTo (iface_constraint_types, 0);
 
 			if (class_constraint != null) {
-				class_constraint_type = class_constraint.Type;
+				TypeExpr te = class_constraint.ResolveAsTypeTerminal (ec);
+				if (te == null)
+					return false;
+
+				class_constraint_type = te.Type;
 				if (class_constraint_type == null)
 					return false;
 
@@ -1264,17 +1277,6 @@ namespace Mono.CSharp {
 			}
 
 			return true;
-		}
-
-		public override TypeExpr ResolveAsTypeTerminal (EmitContext ec)
-		{
-			if (base.ResolveAsTypeTerminal (ec) == null)
-				return null;
-
-			if (!CheckConstraints (ec))
-				return null;
-
-			return this;
 		}
 
 		public bool ResolveConstructedType (EmitContext ec)

@@ -288,6 +288,10 @@ namespace Mono.CSharp {
 				return null;
 			}
 
+			ConstructedType ct = te as ConstructedType;
+			if ((ct != null) && !ct.CheckConstraints (ec))
+				return null;
+
 			return te;
 		}
 	       
