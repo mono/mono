@@ -290,7 +290,7 @@ namespace System.Web.Compilation
 						tagtype = TagType.SelfClosing;
 					} else if (!Eat ('>')) {
 						if (attributes.IsRunAtServer ()) {
-							OnError ("The server is not well formed.");
+							OnError ("The server tag is not well formed.");
 							break;
 						}
 						tokenizer.Verbatim = true;
