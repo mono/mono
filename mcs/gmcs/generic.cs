@@ -1410,8 +1410,10 @@ namespace Mono.CSharp {
 
 		public override bool Define ()
 		{
+			ec = new EmitContext (this, this, Location, null, null, ModFlags, false);
+
 			for (int i = 0; i < TypeParameters.Length; i++)
-				if (!TypeParameters [i].Resolve (Parent))
+				if (!TypeParameters [i].Resolve (this))
 					return false;
 
 			return true;
@@ -1419,16 +1421,14 @@ namespace Mono.CSharp {
 
 		public bool Define (MethodBuilder mb)
 		{
-			if (!Define ())
-				return false;
-
 			GenericTypeParameterBuilder[] gen_params;
 			string[] names = MemberName.TypeArguments.GetDeclarations ();
 			gen_params = mb.DefineGenericParameters (names);
 			for (int i = 0; i < TypeParameters.Length; i++)
 				TypeParameters [i].Define (gen_params [i]);
 
-			ec = new EmitContext (this, this, Location, null, null, ModFlags, false);
+			if (!Define ())
+				return false;
 
 			for (int i = 0; i < TypeParameters.Length; i++) {
 				if (!TypeParameters [i].ResolveType (ec))
