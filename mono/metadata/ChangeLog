@@ -1,3 +1,8 @@
+2005-04-22  Martin Baulig  <martin@ximian.com>
+
+	* class.c (mono_class_is_assignable_from): Disallow
+	type parameter -> interface.
+
 2005-04-21  Dick Porter  <dick@ximian.com>
 
 	* threads.c (mono_thread_create): Turn an assertion into an error.
