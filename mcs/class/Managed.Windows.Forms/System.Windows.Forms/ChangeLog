@@ -1,3 +1,13 @@
+2005-04-22  Jordi Mas i Hernandez <jordi@ximian.com>
+
+	* DataGridTextBoxColumn.cs: call base constructors, fixes
+	* GridColumnStylesCollection.cs: missing events, methods, and functionality
+	* GridTableStylesCollection.cs: fixes, check duplicate mapping names
+	* DataGridTableStyle.cs: implements create default column styles
+	* DataGridBoolColumn.cs: which types can handle
+	* DataGrid.cs: missing methods, fixes, new functionality
+	* DataGridColumnStyle.cs: fixes
+
 2005-04-20  Alexander Olk  <xenomorph2@onlinehome.de>
 	* FolderBrowserDialog.cs:
 	- Use a thread to fill the TreeView

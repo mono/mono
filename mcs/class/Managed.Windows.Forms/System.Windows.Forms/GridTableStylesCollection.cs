@@ -43,14 +43,8 @@ namespace System.Windows.Forms
 		#region Public Instance Properties
 		public DataGridTableStyle this[string columnName] {
 			get {
-				for (int i = 0; i < items.Count; i++) {
-					DataGridTableStyle column = (DataGridTableStyle) items[i];
-					if (column.MappingName == columnName) {
-						return column;
-					}
-				}
-
-				return null;
+				int idx = FromColumnNameToIndex (columnName);
+				return idx == -1 ? null : this [idx];
 			}
 		}
 
@@ -97,9 +91,8 @@ namespace System.Windows.Forms
 
 		#region Public Instance Methods
 		public virtual int Add (DataGridTableStyle column)
-		{
-			int cnt = items.Add (column);
-
+		{			
+			int cnt = AddInternal (column);
 			OnCollectionChanged (new CollectionChangeEventArgs (CollectionChangeAction.Add, column));
 			return cnt;
 		}
@@ -107,7 +100,7 @@ namespace System.Windows.Forms
 		public void AddRange (DataGridTableStyle[] columns)
 		{
 			foreach (DataGridTableStyle mi in columns)
-				items.Add (mi);
+				AddInternal (mi);
 
 			OnCollectionChanged (new CollectionChangeEventArgs (CollectionChangeAction.Refresh, null));
 		}
@@ -140,7 +133,7 @@ namespace System.Windows.Forms
 
 		int IList.Add (object value)
 		{
-			int cnt = items.Add (value);
+			int cnt = AddInternal ((DataGridTableStyle)value);
 
 			OnCollectionChanged (new CollectionChangeEventArgs (CollectionChangeAction.Add, null));
 			return cnt;
@@ -205,7 +198,34 @@ namespace System.Windows.Forms
 
 		#region Events
 		public event CollectionChangeEventHandler CollectionChanged;
-		#endregion Events
+		#endregion Events		
+		
+		
+		#region Private Instance Methods
+		private int AddInternal (DataGridTableStyle column)
+		{				
+			if (FromColumnNameToIndex (column.MappingName) != -1) {
+				throw new ArgumentException ("The TableStyles collection already has a TableStyle with this mapping name");
+			}
+			
+			column.DataGrid = owner;
+			int cnt = items.Add (column);
+			return cnt;			
+		}
+		
+		private int FromColumnNameToIndex (string columnName)
+		{		
+			for (int i = 0; i < items.Count; i++) {
+				DataGridTableStyle column = (DataGridTableStyle) items[i];
+				if (column.MappingName == columnName) {
+					return i;
+				}
+			}
+			
+			return -1;
+		}
+				
+		#endregion Private Instance Methods
 	}
 }
 

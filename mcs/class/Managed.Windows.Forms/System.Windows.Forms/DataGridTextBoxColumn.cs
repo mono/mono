@@ -46,24 +46,26 @@ namespace System.Windows.Forms
 			
 		}
 		
-		public DataGridTextBoxColumn (PropertyDescriptor prop)
+		public DataGridTextBoxColumn (PropertyDescriptor prop) : base (prop)
+		{
+			format = string.Empty;
+		}
+		
+		// TODO: What is isDefault for?
+		public DataGridTextBoxColumn (PropertyDescriptor prop,  bool isDefault) : base (prop)
 		{
 			
 		}
 		
-		public DataGridTextBoxColumn (PropertyDescriptor prop,  bool isDefault)
+		public DataGridTextBoxColumn (PropertyDescriptor prop,  string format) : base (prop)
 		{
-			
+			this.format = format;			
 		}
 		
-		public DataGridTextBoxColumn (PropertyDescriptor prop,  string format)
+		// TODO: What is isDefault for?
+		public DataGridTextBoxColumn (PropertyDescriptor prop,  string format, bool isDefault) : base (prop)
 		{
-			
-		}
-		
-		public DataGridTextBoxColumn (PropertyDescriptor prop,  string format, bool isDefault)
-		{
-			
+			this.format = format;
 		}
 		
 		#endregion
@@ -225,6 +227,16 @@ namespace System.Windows.Forms
 		}
 
 		#endregion	// Public Instance Methods
+		
+		
+		#region Private Instance Methods
+		
+		// We use DataGridTextBox to render everything that DataGridBoolColumn does not
+		internal static bool CanRenderType (Type type)
+		{			
+			return (type != typeof (Boolean));
+		}
+		#endregion Private Instance Methods	
 
 
 		#region Events

@@ -141,8 +141,7 @@ namespace System.Windows.Forms
 		private Color header_forecolor;
 		private Font header_font;
 		private Color link_color;
-		private Color link_hovercolor;
-		private CurrencyManager currency_manager;
+		private Color link_hovercolor;		
 		private Color parentrowsback_color;
 		private Color parentrowsfore_color;
 		private bool parentrows_visible;
@@ -161,12 +160,14 @@ namespace System.Windows.Forms
 		private DataGridCell current_cell;
 		private Color forecolor;
 		private Color backcolor;
+		private DataGridTableStyle default_style;
+		private DataGridTableStyle current_style;
 		#endregion // Local Variables
 
 		#region Public Constructors
 		public DataGrid ()
 		{
-			styles_collection = new GridTableStylesCollection (this);
+			
 			allow_navigation = true;
 			allow_sorting = true;
 			alternating_backcolor = def_alternating_backcolor;
@@ -188,8 +189,7 @@ namespace System.Windows.Forms
 			header_forecolor = def_header_forecolor;
 			header_font = def_header_font;
 			link_color = def_link_color;
-			link_hovercolor = def_link_hovercolor;
-			currency_manager = null;
+			link_hovercolor = def_link_hovercolor;			
 			parentrowsback_color = def_parentrowsback_color;
 			parentrowsfore_color = def_parentrowsfore_color;
 			parentrows_visible = true;
@@ -207,8 +207,15 @@ namespace System.Windows.Forms
 			forecolor = SystemColors.WindowText;
 			parentrowslabel_style = DataGridParentRowsLabelStyle.Both;
 			backcolor = SystemColors.Window;
-
-		}
+			
+			default_style = new DataGridTableStyle (true);
+			styles_collection = new GridTableStylesCollection (this);
+			styles_collection.CollectionChanged += new CollectionChangeEventHandler (OnTableStylesCollectionChanged);
+			
+			SetCurrentStyle (default_style);
+			
+		}		
+		
 		#endregion	// Public Constructor
 
 		#region Public Instance Properties
@@ -609,13 +616,15 @@ namespace System.Windows.Forms
 
 		protected internal CurrencyManager ListManager {
 			get {
-				return currency_manager;
+				if (BindingContext == null) {
+					return null;
+				}
+				
+				return (CurrencyManager) BindingContext [DataSource, DataMember];
 			}
 
 			set {
-				if (currency_manager != value) {
-					currency_manager = value;
-				}
+				throw new NotSupportedException ("Operation is not supported.");
 			}
 		}
 
@@ -853,8 +862,13 @@ namespace System.Windows.Forms
 
 		protected virtual DataGridColumnStyle CreateGridColumn (PropertyDescriptor prop)
 		{
+			return CreateGridColumn (prop, false);
+		}		
+
+		protected virtual DataGridColumnStyle CreateGridColumn (PropertyDescriptor prop, bool isDefault)
+		{
 			throw new NotImplementedException ();
-		}
+		}		
 
 		protected override void Dispose (bool disposing)
 		{
@@ -1088,6 +1102,13 @@ namespace System.Windows.Forms
 		{
 			base.OnPaintBackground (ebe);
 		}
+		
+		protected virtual void OnParentRowsLabelStyleChanged (EventArgs e)
+		{
+			if (ParentRowsLabelStyleChanged != null) {
+				ParentRowsLabelStyleChanged (this, e);
+			}
+		}
 
 		protected virtual void OnParentRowsVisibleChanged (EventArgs e)
 		{
@@ -1132,6 +1153,21 @@ namespace System.Windows.Forms
 		protected override bool ProcessDialogKey (Keys keyData)
 		{
 			return base.ProcessDialogKey (keyData);
+		}
+		
+		protected bool ProcessGridKey (KeyEventArgs ke)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		protected override bool ProcessKeyPreview (ref Message m)
+		{
+			return base.ProcessKeyPreview (ref m);
+		}
+		
+		protected bool ProcessTabKey (Keys keyData)
+		{
+			throw new NotImplementedException ();
 		}
 
 		public void ResetAlternatingBackColor ()
@@ -1324,7 +1360,36 @@ namespace System.Windows.Forms
 			// Bind data
 			
 		}
-
+				
+		private void OnTableStylesCollectionChanged (object sender, CollectionChangeEventArgs e)
+		{
+			Console.WriteLine ("Datagrid.TableStyles Collection Changed {0}, null {1}", e.Action,
+				e.Element == null);
+			/* 
+				TODO: What's up if there are columns in the incoming TableStyle
+			*/
+			
+			switch (e.Action)  {
+				case CollectionChangeAction.Add: {
+					((DataGridTableStyle) e.Element).CreateColumnsForTable ();
+					break;
+				}
+				case CollectionChangeAction.Remove:
+					break;
+				case CollectionChangeAction.Refresh:
+					break;
+					
+				default:
+					break;
+			}
+			
+		}
+		
+		private void SetCurrentStyle (DataGridTableStyle style)
+		{
+			default_style = style;
+		}
+		
 
 		#endregion Private Instance Methods
 

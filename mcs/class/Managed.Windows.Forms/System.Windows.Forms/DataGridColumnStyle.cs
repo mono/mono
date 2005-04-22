@@ -165,9 +165,9 @@ namespace System.Windows.Forms
 		public virtual DataGridTableStyle DataGridTableStyle {
 			get {
 				return table_style;
-			}
+			}			
 		}
-
+		
 		protected int FontHeight {
 			get {
 				if (fontheight != -1) {
@@ -281,6 +281,12 @@ namespace System.Windows.Forms
 		}
 
 		#endregion	// Public Instance Properties
+		
+		#region Private Instance Properties
+		internal DataGridTableStyle TableStyle {		
+			set { table_style = value; }			
+		}
+		#endregion Private Instance Properties
 
 		#region Public Instance Methods
 		protected internal abstract void Abort (int rowNum);
@@ -384,7 +390,6 @@ namespace System.Windows.Forms
 		{
 			HeaderText = string.Empty;
 		}
-
 
 		protected internal virtual void SetColumnValueAtRow (CurrencyManager source, int rowNum,  object value)
 		{

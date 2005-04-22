@@ -31,11 +31,15 @@
 using System.ComponentModel;
 using System.Drawing;
 using System.Runtime.InteropServices;
+using System.Data;
+using System.Xml;
 
 namespace System.Windows.Forms
 {
 	public class DataGridTableStyle : Component
 	{
+		public static DataGridTableStyle DefaultTableStyle = new DataGridTableStyle (true);
+		
 		#region	Local Variables
 		private static readonly Color		def_alternating_backcolor = SystemColors.Window;
 		private static readonly Color		def_backcolor = SystemColors.Window;
@@ -72,6 +76,7 @@ namespace System.Windows.Forms
 		private Color				backcolor;
 		private Color				forecolor;
 		private bool				is_default;
+		CurrencyManager				manager;
 		#endregion	// Local Variables
 
 		#region Constructors
@@ -92,6 +97,7 @@ namespace System.Windows.Forms
 		{
 			CommonConstructor ();
 			is_default = false;
+			manager = listManager;
 		}
 
 		private void CommonConstructor ()
@@ -418,15 +424,21 @@ namespace System.Windows.Forms
 		}
 
 		protected internal virtual DataGridColumnStyle CreateGridColumn (PropertyDescriptor prop)
-		{
-			throw new NotImplementedException ();
+		{	
+			return CreateGridColumn (prop,  false);
 		}
-
-		// TODO: How to specify the isDefault boolean
+		
 		protected internal virtual DataGridColumnStyle CreateGridColumn (PropertyDescriptor prop,  bool isDefault)
-		{
+		{			
+			if (DataGridBoolColumn.CanRenderType (prop.PropertyType)) {
+				return new DataGridBoolColumn (prop, isDefault);
+			}
+			
+			if (DataGridTextBoxColumn.CanRenderType (prop.PropertyType)) {
+				return new DataGridTextBoxColumn (prop, isDefault);
+			}
+			
 			throw new NotImplementedException ();
-
 		}
 
 		protected override void Dispose (bool disposing)
@@ -690,6 +702,46 @@ namespace System.Windows.Forms
 			return (selection_forecolor != def_selection_forecolor);
 		}
 		#endregion	// Protected Instance Methods
+		
+		#region Private Instance Properties
+		
+		// Create column styles for this TableStyle
+		internal void CreateColumnsForTable () 
+		{
+			CurrencyManager	mgr = null;			
+			
+			if (manager != null) {
+				mgr = manager;
+			} else {
+				if (datagrid != null) {
+					mgr = datagrid.ListManager;
+				}
+			}
+			
+			if (mgr == null) {
+				return;
+			}
+			
+			column_styles.Clear ();
+			PropertyDescriptorCollection propcol = mgr.GetItemProperties ();			
+			
+			for (int i = 0; i < propcol.Count; i++)
+			{
+				if (propcol[i].ComponentType.ToString () == "System.Data.DataRowView") {					
+					DataGridColumnStyle st = CreateGridColumn (propcol[i],  true);
+					st.MappingName = propcol[i].Name;
+					column_styles.Add (st);
+				}				
+				
+				// TODO: What to do with relations?
+				if (propcol[i].ComponentType.ToString () == "System.Data.DataTablePropertyDescriptor") {
+					Console.WriteLine ("CreateColumnsForTable::System.Data.DataTablePropertyDescriptor");
+				}				
+			}
+			
+		}
+		
+		#endregion Private Instance Properties
 
 		#region Events
 		public event EventHandler AllowSortingChanged;

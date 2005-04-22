@@ -33,37 +33,40 @@ namespace System.Windows.Forms
 	{
 		private ArrayList items;
 		private DataGridTableStyle owner;
+		private bool fire_event;
 
 		internal GridColumnStylesCollection (DataGridTableStyle tablestyle)
 		{
 			items = new ArrayList ();
 			owner = tablestyle;
+			fire_event = true;
 		}
 
 		#region Public Instance Properties
-		public DataGridColumnStyle this[string columnName] {
+		public DataGridColumnStyle this [string columnName] {
 			get {
-				for (int i = 0; i < items.Count; i++) {
-					DataGridColumnStyle column = (DataGridColumnStyle) items[i];
-					if (column.MappingName == columnName) {
-						return column;
-					}
-				}
-
-				return null;
+				int idx = FromColumnNameToIndex (columnName);
+				return idx == -1 ? null : this [idx];
 			}
 		}
 
-		public DataGridColumnStyle this[int index] {
+		public DataGridColumnStyle this [int index] {
 			get {
 				return (DataGridColumnStyle) items[index];
 			}
 		}
 
-		[MonoTODO]
-		public DataGridColumnStyle this[PropertyDescriptor propDesc] {
-			get {
-				throw new NotImplementedException ();
+		
+		public DataGridColumnStyle this [PropertyDescriptor propDesc] {
+			get {				
+				for (int i = 0; i < items.Count; i++) {
+					DataGridColumnStyle column = (DataGridColumnStyle) items[i];
+					if (column.PropertyDescriptor.Equals (propDesc)) {
+						return column;
+					}
+				}
+				
+				return null;
 			}
 		}
 
@@ -101,22 +104,34 @@ namespace System.Windows.Forms
 		}
 
 		#endregion Public Instance Properties
+		
+		#region Private Instance Properties
+		internal bool FireEvents {
+			get { return fire_event;}
+			set { fire_event = value;}
+		}
+		#endregion Private Instance Properties
 
 		#region Public Instance Methods
 		public virtual int Add (DataGridColumnStyle column)
 		{
-			return items.Add (column);
+			int cnt = AddInternal (column);
+			OnCollectionChanged (new CollectionChangeEventArgs (CollectionChangeAction.Add, column));
+			return cnt;
 		}
 
 		public void AddRange (DataGridColumnStyle[] columns)
 		{
 			foreach (DataGridColumnStyle mi in columns)
-				Add (mi);
+				AddInternal (mi);
+
+			OnCollectionChanged (new CollectionChangeEventArgs (CollectionChangeAction.Refresh, null));
 		}
 
 		public void Clear ()
 		{
 			items.Clear ();
+			OnCollectionChanged (new CollectionChangeEventArgs (CollectionChangeAction.Refresh , null));
 		}
 
 		public bool Contains (DataGridColumnStyle column)
@@ -124,10 +139,10 @@ namespace System.Windows.Forms
 			return items.Contains (column);
 		}
 
-		[MonoTODO]
+		
 		public bool Contains (PropertyDescriptor propDesc)
 		{
-			throw new NotImplementedException ();
+			return (this [propDesc] != null);
 		}
 
 		public bool Contains (string name)
@@ -147,12 +162,16 @@ namespace System.Windows.Forms
 
 		int IList.Add (object value)
 		{
-			return items.Add (value);
+			int cnt = AddInternal ((DataGridColumnStyle)value);
+
+			OnCollectionChanged (new CollectionChangeEventArgs (CollectionChangeAction.Add, null));
+			return cnt;
 		}
 
 		void IList.Clear ()
 		{
 			items.Clear ();
+			OnCollectionChanged (new CollectionChangeEventArgs (CollectionChangeAction.Refresh , null));
 		}
 
 		bool IList.Contains (object value)
@@ -177,18 +196,77 @@ namespace System.Windows.Forms
 
 		void IList.RemoveAt (int index)
 		{
+			object item = items[index];
+			
 			items.RemoveAt (index);
+			OnCollectionChanged (new CollectionChangeEventArgs (CollectionChangeAction.Remove, item));
 		}
-
-		[MonoTODO]
+		
+		public int IndexOf (DataGridColumnStyle element)
+		{
+			return items.IndexOf (element);
+		}
+		
+		protected void OnCollectionChanged (CollectionChangeEventArgs ccevent)
+		{						
+			if (fire_event == true && CollectionChanged != null) {
+				CollectionChanged (this, ccevent);
+			}
+		}
+		
+		public void Remove (DataGridColumnStyle column)
+		{
+			items.Remove (column);
+			OnCollectionChanged (new CollectionChangeEventArgs (CollectionChangeAction.Remove, column));
+		}
+		
+		public void RemoveAt (int index)
+		{
+			object item = items[index];
+			items.RemoveAt (index);
+			OnCollectionChanged (new CollectionChangeEventArgs (CollectionChangeAction.Remove, item));
+		}		
+		
 		public void ResetPropertyDescriptors ()
 		{
-			throw new NotImplementedException ();
+			for (int i = 0; i < items.Count; i++) {
+				DataGridColumnStyle column = (DataGridColumnStyle) items[i];
+				if (column.PropertyDescriptor != null) {
+					column.PropertyDescriptor = null;
+				}
+			}
 		}
 
 		#endregion Public Instance Methods
 
 		#region Events
-		#endregion Events
+		public event CollectionChangeEventHandler CollectionChanged;		
+		#endregion Events		
+		
+		#region Private Instance Methods
+		private int AddInternal (DataGridColumnStyle column)
+		{				
+			if (FromColumnNameToIndex (column.MappingName) != -1) {
+				throw new ArgumentException ("The ColumnStyles collection already has a column with this mapping name");
+			}
+			
+			column.TableStyle = owner;
+			int cnt = items.Add (column);
+			return cnt;			
+		}
+		
+		private int FromColumnNameToIndex (string columnName)
+		{		
+			for (int i = 0; i < items.Count; i++) {
+				DataGridColumnStyle column = (DataGridColumnStyle) items[i];
+				if (column.MappingName == columnName) {
+					return i;
+				}
+			}
+			
+			return -1;
+		}
+				
+		#endregion Private Instance Methods
 	}
 }

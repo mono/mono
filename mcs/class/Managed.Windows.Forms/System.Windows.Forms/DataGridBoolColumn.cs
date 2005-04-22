@@ -205,7 +205,13 @@ namespace System.Windows.Forms
 
 		}
 		#endregion	// Public Instance Methods
-
+		
+		#region Private Instance Methods
+		internal static bool CanRenderType (Type type)
+		{			
+			return (type == typeof (Boolean));
+		}
+		#endregion Private Instance Methods	
 
 		#region Events
 		public event EventHandler AllowNullChanged;
