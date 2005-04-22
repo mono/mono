@@ -34,6 +34,7 @@
 
 using System;
 using System.Collections;
+using System.Text;
 
 namespace System.Web.UI
 {
@@ -45,11 +46,11 @@ namespace System.Web.UI
 		class ClientScriptManager
 	{
 		Hashtable registeredArrayDeclares;
-		Hashtable clientScriptBlocks;
-		Hashtable startupScriptBlocks;
+		ScriptEntry clientScriptBlocks;
+		ScriptEntry startupScriptBlocks;
 		Hashtable hiddenFields;
-		internal Hashtable submitStatements;
-		Hashtable scriptIncludes;
+		ScriptEntry submitStatements;
+		ScriptEntry scriptIncludes;
 		Page page;
 	
 		internal ClientScriptManager (Page page)
@@ -179,15 +180,14 @@ namespace System.Web.UI
 			return IsScriptRegistered (scriptIncludes, type, key);
 		}
 		
-		bool IsScriptRegistered (Hashtable typeHash, Type type, string key)
+		bool IsScriptRegistered (ScriptEntry scriptList, Type type, string key)
 		{
-			if (typeHash == null)
-				return false;
-	
-			Hashtable scripts = (Hashtable) typeHash [type];
-			if (scripts == null) return false;
-			
-			return scripts.ContainsKey (key);
+			while (scriptList != null) {
+				if (scriptList.Type == type && scriptList.Key == key)
+					return true;
+				scriptList = scriptList.Next;
+			}
+			return false;
 		}
 		
 		public void RegisterArrayDeclaration (string arrayName, string arrayValue)
@@ -201,24 +201,25 @@ namespace System.Web.UI
 			((ArrayList) registeredArrayDeclares[arrayName]).Add(arrayValue);
 		}
 	
-		void RegisterScript (ref Hashtable typeHash, Type type, string key, string script, bool addScriptTags)
+		void RegisterScript (ref ScriptEntry scriptList, Type type, string key, string script, bool addScriptTags)
 		{
-			if (typeHash == null)
-				typeHash = new Hashtable ();
-	
-			Hashtable scripts = (Hashtable) typeHash [type];
-			if (scripts == null) {
-				scripts = new Hashtable ();
-				typeHash [type] = scripts;
+			ScriptEntry last = null;
+			ScriptEntry entry = scriptList;
+
+			while (entry != null) {
+				if (entry.Type == type && entry.Key == key)
+					return;
+				last = entry;
+				entry = entry.Next;
 			}
 			
-			if (scripts.ContainsKey (key))
-				return;
-
 			if (addScriptTags)
 				script = "<script language=javascript>\n<!--\n" + script + "\n// -->\n</script>";
-				
-			scripts.Add (key, script);
+
+			entry = new ScriptEntry (type, key, script);
+			
+			if (last != null) last.Next = entry;
+			else scriptList = entry;
 		}
 	
 		internal void RegisterClientScriptBlock (string key, string script)
@@ -280,14 +281,11 @@ namespace System.Web.UI
 			RegisterScript (ref scriptIncludes, type, key, url, false);
 		}
 		
-		void WriteScripts (HtmlTextWriter writer, Hashtable typeHash)
+		void WriteScripts (HtmlTextWriter writer, ScriptEntry scriptList)
 		{
-			if (typeHash == null)
-				return;
-	
-			foreach (Hashtable scripts in typeHash.Values) {
-				foreach (string value in scripts.Values)
-					writer.WriteLine (value);
+			while (scriptList != null) {
+				writer.WriteLine (scriptList.Script);
+				scriptList = scriptList.Next;
 			}
 		}
 		
@@ -306,12 +304,10 @@ namespace System.Web.UI
 		
 		internal void WriteClientScriptIncludes (HtmlTextWriter writer)
 		{
-			if (scriptIncludes == null)
-				return;
-	
-			foreach (Hashtable urls in scriptIncludes.Values) {
-				foreach (string url in urls.Values)
-					writer.WriteLine ("\n<script src=\"{0}\" type=\"text/javascript\"></script>", url);
+			ScriptEntry entry = scriptIncludes;
+			while (entry != null) {
+				writer.WriteLine ("\n<script src=\"{0}\" type=\"text/javascript\"></script>", entry.Script);
+				entry = entry.Next;
 			}
 		}
 		
@@ -353,6 +349,19 @@ namespace System.Web.UI
 			}
 		}
 		
+		internal string WriteSubmitStatements ()
+		{
+			if (submitStatements == null) return null;
+			
+			StringBuilder sb = new StringBuilder ();
+			ScriptEntry entry = submitStatements;
+			while (entry != null) {
+				sb.Append (entry.Script);
+				entry = entry.Next;
+			}
+			return sb.ToString ();
+		}
+		
 		internal static string GetScriptLiteral (object ob)
 		{
 			if (ob == null)
@@ -365,6 +374,21 @@ namespace System.Web.UI
 				return ob.ToString().ToLower();
 			} else {
 				return ob.ToString ();
+			}
+		}
+		
+		class ScriptEntry
+		{
+			public Type Type;
+			public string Key;
+			public string Script;
+			public ScriptEntry Next;
+			 
+			public ScriptEntry (Type type, string key, string script)
+			{
+				Key = key;
+				Type = type;
+				Script = script;
 			}
 		}
 	}

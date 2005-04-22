@@ -1,3 +1,10 @@
+2005-04-22  Lluis Sanchez Gual <lluis@novell.com>
+
+	* ClientScriptManager.cs: Use a linked list instead of a Hashtable
+	to store the scripts. In this way, scripts will be rendered in the
+	same order as they have been registered. It shouldn't be slower
+	since pages don't have many scripts.
+
 2005-04-21  Lluis Sanchez Gual <lluis@novell.com>
 
 	* IEditableTextControl.cs: Implemented.
