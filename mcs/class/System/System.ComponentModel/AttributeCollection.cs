@@ -56,7 +56,11 @@ namespace System.ComponentModel
 
 		public bool Contains (Attribute attr)
 		{
-			return attrList.Contains (attr);
+			Attribute at = this [attr.GetType ()];
+			if (at != null)
+				return attr.Equals (at);
+			else
+				return false;
 		}
 
 		public bool Contains (Attribute [] attributes)

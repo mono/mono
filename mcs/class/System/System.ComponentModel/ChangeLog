@@ -1,3 +1,9 @@
+2005-04-22  LLuis Sanchez Gual  <lluis@novell.com>
+
+	* AttributeCollection.cs: When checking if the list contains an
+	attribute, always return true if that attribute is the default
+	attribute for that kind of attributes.
+
 2005-04-13  LLuis Sanchez Gual  <lluis@novell.com>
 
 	* TypeDescriptor.cs: When creating a converter, use a constructor that
