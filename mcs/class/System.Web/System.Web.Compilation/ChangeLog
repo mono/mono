@@ -1,5 +1,10 @@
 2005-04-22 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* AspGenerator.cs: use a stack for non-server tags even before getting
+	to a form. Fixes bug #70274.
+
+2005-04-22 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* AspParser.cs: don't error out on ill formed tags if it's not a server
 	tag (ie, allow something like '<table align="left cellpadding="0">' to
 	work, as MS does. Fixes bug #67909.

@@ -181,6 +181,7 @@ namespace System.Web.Compilation
 		StringBuilder tagInnerText = new StringBuilder ();
 		static Hashtable emptyHash = new Hashtable ();
 		bool inForm;
+		bool useOtherTags;
 
 		public AspGenerator (TemplateParser tparser)
 		{
@@ -329,10 +330,12 @@ namespace System.Web.Compilation
 				tparser.AddDirective (tagid, attributes.GetDictionary (null));
 				break;
 			case TagType.Tag:
-				if (ProcessTag (tagid, attributes, tagtype))
+				if (ProcessTag (tagid, attributes, tagtype)) {
+					useOtherTags = true;
 					break;
+				}
 
-				if (inForm) {
+				if (useOtherTags) {
 					stack.Builder.EnsureOtherTags ();
 					stack.Builder.OtherTags.Add (tagid);
 				}
@@ -340,7 +343,7 @@ namespace System.Web.Compilation
 				TextParsed (location, location.PlainText);
 				break;
 			case TagType.Close:
-				bool notServer = (inForm && TryRemoveTag (tagid, stack.Builder.OtherTags));
+				bool notServer = (useOtherTags && TryRemoveTag (tagid, stack.Builder.OtherTags));
 				if (!notServer && CloseControl (tagid))
 					break;
 				
