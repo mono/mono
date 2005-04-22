@@ -88,7 +88,7 @@ namespace System.IO {
 		{
 			try {
 				base.Flush ();
-			} catch (IOException) {
+			} catch (Exception) {
 			}
 		}
 

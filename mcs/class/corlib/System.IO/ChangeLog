@@ -1,3 +1,8 @@
+2005-04-21 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* UnexceptionalStreamWriter.cs: don't throw anything on Flush. Closes
+	bug #74190.
+
 2005-04-13 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Path.cs: don't trim the path in CanonicalizePath on non-windows
