@@ -1,3 +1,8 @@
+2005-04-22  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini-exceptions.c (mono_find_jit_info): Fix native offset calculation
+	in wrapper methods. Also rename 'address' variable to 'offset'.
+
 2005-04-20  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini.c debug-mini.c aot.c tramp-x86.c driver.c: Fix some gcc 4.0
