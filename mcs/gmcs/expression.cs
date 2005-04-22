@@ -7424,7 +7424,7 @@ namespace Mono.CSharp {
 			}
 			if (member_lookup == null) {
 				MemberLookupFailed (
-					ec, expr_type, expr_type, Identifier, null, false, loc);
+					ec, expr_type, expr_type, Identifier, null, true, loc);
 				return null;
 			}
 
