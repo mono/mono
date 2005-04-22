@@ -422,6 +422,7 @@ System.Web.UI.WebControls/HotSpotMode.cs
 System.Web.UI.WebControls/HyperLink.cs
 System.Web.UI.WebControls/HyperLinkColumn.cs
 System.Web.UI.WebControls/HyperLinkControlBuilder.cs
+System.Web.UI.WebControls/HyperLinkField.cs
 System.Web.UI.WebControls/IButtonControl.cs
 System.Web.UI.WebControls/ICallbackContainer.cs
 System.Web.UI.WebControls/ICompositeControlDesignerAccessor.cs

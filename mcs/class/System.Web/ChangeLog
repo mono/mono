@@ -1,3 +1,8 @@
+2005-04-22  Lluis Sanchez Gual <lluis@novell.com>
+
+	* System.Web.dll.sources: Added new files:
+		System.Web.UI.WebControls/HyperLinkField.cs
+
 2005-04-21  Lluis Sanchez Gual <lluis@novell.com>
 
 	* System.Web.dll.sources: Added new files:
