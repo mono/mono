@@ -286,7 +286,8 @@ namespace Mono.ILASM {
                         inst_table["bne.un.s"] = new ILToken (Token.INSTR_BRTARGET, BranchOp.bne_un_s);
                         inst_table["bge.un.s"] = new ILToken (Token.INSTR_BRTARGET, BranchOp.bge_un_s);
                         inst_table["bgt.un.s"] = new ILToken (Token.INSTR_BRTARGET, BranchOp.bgt_un_s);
-                        inst_table["ble.un.s"] = new ILToken (Token.INSTR_BRTARGET, BranchOp.blt_un_s);
+                        inst_table["ble.un.s"] = new ILToken (Token.INSTR_BRTARGET, BranchOp.ble_un_s);
+                        inst_table["blt.un.s"] = new ILToken (Token.INSTR_BRTARGET, BranchOp.blt_un_s);
                         inst_table["leave.s"] = new ILToken (Token.INSTR_BRTARGET, BranchOp.leave_s);
 
                         //

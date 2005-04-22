@@ -1,3 +1,8 @@
+2005-04-22  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* InstrTable.cs :
+	  ble.un.s and blt.un.s were incorrectly added to the table.
+
 2005-04-22  Ankit Jain  <ankit@corewars.org>
 
 	* TypeSpecMethodRef.cs (TypeSpecMethodRef.Resolve): Set is_resolved
