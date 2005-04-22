@@ -1,3 +1,7 @@
+2005-04-22  Zoltan Varga  <vargaz@freemail.hu>
+
+	* loader.c (mono_stack_walk): Fix #74690.
+
 2005-04-22  Martin Baulig  <martin@ximian.com>
 
 	* mono-debug.h (MonoDebugMethodJitInfo): Added
