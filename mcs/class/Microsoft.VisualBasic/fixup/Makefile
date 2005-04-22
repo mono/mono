@@ -49,11 +49,10 @@ $(the_lib): $(the_il) Microsoft.VisualBasic.VBUtils.resources
 	$(ILASM) /out:$@ $<
 	$(SN) $(SNFLAGS) $@ $(topdir)/class/mono.snk
 
-$(the_il): $(topdir)/class/lib/$(PROFILE)/Microsoft.VisualBasic.dll
-#	disabled until this works on the mac
-#	$(with_mono_path) $(ILDISASM) $< | $(PERL) ./fixup.pl > $@t
-	$(with_mono_path) $(ILDISASM) $< > $@t
-	mv $@t $@
+$(the_il): $(topdir)/class/lib/$(PROFILE)/Microsoft.VisualBasic.dll fixup.pl
+	$(with_mono_path) $(ILDISASM) $< > t1 || { rm -f t1; exit 1; }
+	$(PERL) ./fixup.pl t1 > t2 && rm -f t1
+	mv t2 $@
 
 Microsoft.VisualBasic.VBUtils.resources: ../Microsoft.VisualBasic/VBUtils.resources
 	cp $< $@
@@ -64,11 +63,11 @@ test-local run-test-local run-test-ondotnet-local:
 # ----------------------------------------------
 # Minor hack.  Copied from build/library.make
 
-ifdef NO_INSTALL
-install-local uninstall-local:
-	@:
+install-local: $(the_lib)
 
-else
+uninstall-local:
+
+ifndef NO_INSTALL
 
 ifdef LIBRARY_INSTALL_DIR
 install-local:

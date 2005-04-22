@@ -1,3 +1,9 @@
+2005-04-22  Raja R Harinath  <rharinath@novell.com>
+
+	* fixup/Makefile (install-local): Depend on $(the_lib).
+	* fixup/fixup.pl: Be more resilient to varying order of .param
+	custom attributes.
+
 2005-04-21  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile (NO_SIGN_ASSEMBLY, NO_INSTALL): Set.  The actual signing

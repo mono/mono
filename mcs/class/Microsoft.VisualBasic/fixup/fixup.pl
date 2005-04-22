@@ -27,38 +27,54 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
 
+my $param = "";
+my $output = "";
+my $rest = "";
+
 while (<>) {
-	if (/\.custom instance void\s+(?:class\s+)?Microsoft\.VisualBasic\.CompilerServices\.__DefaultArgumentValueAttribute::\.ctor\s*\(([^)]*)\)\s*=\s*\(([^)]*)\)/) { 
+    if (!/^\s*\.param\s*\[/) {
+	print;
+	next;
+    }
 
-		my @str = split (/ /, $2);
-		if ($1 =~ /string/) {
-		        # FIXME: Assumes length < 0x80.
-			$size = hex $str [2];
-			
-			if ($size == 0) {
-				print ("= \"\"\n");
-			}elsif ($size == 255) {
-				print ("= nullref\n");
-			}else{	
-			        # FIXME: Should be a UTF-8 to UCS-2 translator.  However, we only use ASCII.
-				print "= bytearray ( ";
-				for ($i = 3; $i < @str - 2; $i ++) {
-					print $str [$i] . " 00 ";
-				}
-				print " )\n";
-			}
-		}elsif ($1 =~ /bool/) {
-			print "= bool (" . ($str [2] == '00' ? "false" : "true") . ")\n";
-		}else {
-			print "= $1 (0x";
-			
-			for ($i = @str - 2 - 1; $i >= 2;$i --) {
-				print $str [$i] ;
-			}
+    chomp;
+    $param = $_;
+    while (<>) {
+	chomp;
+	next if /^\s*$/;
 
-			print ")\n";
-		}
-	}else{
-		print;
+	if (/^\s*\.param\s*\[/) {
+	    print $param;
+            print " = $output" if $output;
+	    print "\n";
+	    print "$rest\n" if $rest;
+	    $output = ""; $rest = "";
+
+	    $param = $_;
+	    next;
 	}
+	last if !/.custom/;
+	
+	if (/\.custom instance void\s+(?:class\s+)?Microsoft\.VisualBasic\.CompilerServices\.__DefaultArgumentValueAttribute.*\.ctor\s*\(([^)]*)\)\s*=\s*\(\s*01\s+00\s+([^)]*)\s+00\s+00\s*\)/) {
+    	    my @str = split (/ /, $2);
+	    if ($1 =~ /string/) {
+		# FIXME: Assumes length < 0x80.
+		$size = hex (shift @str);
+		$output = $size == 0 ? '""' : $size == 255 ? 'nullref' : "bytearray ( " . join (" 00 ", @str) . ' 00)';
+	    } elsif ($1 =~ /bool/) {
+		$output = "bool (" . ($str [0] == '00' ? "false" : "true") . ")";
+	    } else {
+	        @str = reverse @str;
+	        $output = "$1 (0x" . join ("", @str) . ')';
+	    }
+	} else {
+	    $rest .= "$_\n";
+	}
+    }
+
+    print $param;
+    print " = $output" if $output;
+    print "\n";
+    print "$rest\n" if $rest;
+    $output = ""; $rest = "";
 }
