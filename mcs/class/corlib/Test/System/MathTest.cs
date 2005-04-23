@@ -712,6 +712,8 @@ public class MathTest : Assertion {
 
 		AssertEquals ("Should round down", Math.Round(a, 1), 3.4D);
 		AssertEquals ("Should round up", Math.Round(b, 1), 3.5D);
+
+		AssertEquals (Math.Round (-0.123456789, 1), -0.1);
 	}
 	
 	public void TestDecimalSign() {
