@@ -1,3 +1,7 @@
+2005-04-23  Zoltan Varga  <vargaz@freemail.hu>
+
+	* objects.cs: Add missing null casting test.
+
 2005-04-22  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini-exceptions.c (mono_find_jit_info): Fix native offset calculation
