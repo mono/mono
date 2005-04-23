@@ -1,3 +1,8 @@
+2005-04-23  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* System.Security.dll.sources: Added StorePermission and 
+	StorePermissionAttribute to System.Security.Permissions (2.0).
+
 2005-04-04  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* System.Security.dll.sources: added XmlSignatureStreamReader.cs.

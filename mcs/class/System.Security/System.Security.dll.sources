@@ -126,4 +126,6 @@ System.Security.Permissions/DataProtectionPermission.cs
 System.Security.Permissions/DataProtectionPermissionAttribute.cs
 System.Security.Permissions/DataProtectionPermissionFlags.cs
 System.Security.Permissions/PermissionHelper.cs
+System.Security.Permissions/StorePermission.cs
+System.Security.Permissions/StorePermissionAttribute.cs
 System.Security.Permissions/StorePermissionFlags.cs
