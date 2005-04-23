@@ -1,3 +1,7 @@
+2005-04-23  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* culture-info-table.h : reflected the latest locale-builder output.
+
 2005-04-23 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* threadpool.c: check for SuspendRequested too when deciding if

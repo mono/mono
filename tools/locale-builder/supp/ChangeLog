@@ -1,3 +1,8 @@
+2005-04-23  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ko_KR.xml : fixed time format.
+	  Fixed bug #74701. Patch by Hye-Shik Chang.
+
 2005-02-17  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* en.xml : fixed currency format.
