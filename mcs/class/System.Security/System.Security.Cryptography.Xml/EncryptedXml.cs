@@ -231,7 +231,7 @@ namespace System.Security.Cryptography.Xml {
 		}
 		
 		[MonoTODO]
-		public EncryptedData Encrypt (XmlElement inputElement, X509CertificateEx certificate)
+		public EncryptedData Encrypt (XmlElement inputElement, X509Certificate2 certificate)
 		{
 			throw new NotImplementedException ();
 		}

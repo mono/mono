@@ -1,3 +1,8 @@
+2005-04-23  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* EncryptedXml.cs, SignedXml.cs: Changed X509CertificateEx to 
+	X509Certificate2 to match beta2.
+
 2005-04-04  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlSignatureStreamReader.cs : new file. Handles Stream to rip CR off.
