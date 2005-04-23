@@ -1,3 +1,7 @@
+2005-04-23  Zoltan Varga  <vargaz@freemail.hu>
+
+	* docs/jit-regalloc: Add docs for the new register allocator.
+
 2005-04-21  Raja R Harinath  <rharinath@novell.com>
 
 	* runtime/Makefile.am: Update.  Pass 'monodis-wrapper' as ILDISASM
