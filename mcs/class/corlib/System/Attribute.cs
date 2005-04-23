@@ -7,10 +7,7 @@
 //   Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
 // (C) 2002, 2003 Ximian, Inc.  http://www.ximian.com
-//
-
-//
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -33,13 +30,19 @@
 //
 
 using System.Reflection;
+using System.Runtime.InteropServices;
 
 namespace System
 {
 	[AttributeUsage (AttributeTargets.All)]
 	[Serializable]
-	public abstract class Attribute
-	{
+#if NET_2_0
+	[ComVisible (true)]
+	[ClassInterfaceAttribute (ClassInterfaceType.None)]
+	public abstract class Attribute : _Attribute {
+#else
+	public abstract class Attribute {
+#endif
 		protected Attribute ()
 		{
 		}
@@ -332,5 +335,29 @@ namespace System
 
 			return ((Attribute) obj) == this;
 		}
+
+#if NET_2_0
+		[MonoTODO]
+		void _Attribute.GetIDsOfNames ([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId)
+		{
+		}
+
+		[MonoTODO]
+		void _Attribute.GetTypeInfo (uint iTInfo, uint lcid, IntPtr ppTInfo)
+		{
+		}
+
+		[MonoTODO]
+		void _Attribute.GetTypeInfoCount (out uint pcTInfo)
+		{
+			pcTInfo = 0;
+		}
+
+		[MonoTODO]
+		void _Attribute.Invoke (uint dispIdMember, [In] ref Guid riid, uint lcid, short wFlags, IntPtr pDispParams,
+			IntPtr pVarResult, IntPtr pExcepInfo, IntPtr puArgErr)
+		{
+		}
+#endif
 	}
 }
