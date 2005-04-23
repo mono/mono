@@ -1,5 +1,5 @@
 //
-// CryptographicAttribute.cs - System.Security.Cryptography.CryptographicAttribute
+// System.Security.Cryptography.CryptographicAttributeObject class
 //
 // Author:
 //	Sebastien Pouliot  <sebastien@ximian.com>
@@ -33,14 +33,14 @@ using System.Collections;
 
 namespace System.Security.Cryptography {
 
-	public sealed class CryptographicAttribute {
+	public sealed class CryptographicAttributeObject {
 
 		private Oid _oid;
 		private AsnEncodedDataCollection _list;
 
 		// constructors
 
-		public CryptographicAttribute (Oid oid) 
+		public CryptographicAttributeObject (Oid oid) 
 		{
 			if (oid == null)
 				throw new ArgumentNullException ("oid");
@@ -49,7 +49,7 @@ namespace System.Security.Cryptography {
 			_list = new AsnEncodedDataCollection ();
 		}
 
-		public CryptographicAttribute (Oid oid,	AsnEncodedDataCollection values)
+		public CryptographicAttributeObject (Oid oid,	AsnEncodedDataCollection values)
 		{
 			if (oid == null)
 				throw new ArgumentNullException ("oid");

@@ -1,11 +1,11 @@
 //
-// System.Security.Cryptography.CryptographicAttributeCollection
+// System.Security.Cryptography.CryptographicAttributeObjectCollection class
 //
 // Author:
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -29,21 +29,20 @@
 
 #if NET_2_0
 
-using System;
 using System.Collections;
 
 namespace System.Security.Cryptography {
 
-	public sealed class CryptographicAttributeCollection : ICollection, IEnumerable {
+	public sealed class CryptographicAttributeObjectCollection : ICollection, IEnumerable {
 
 		private ArrayList _list;
 
-		public CryptographicAttributeCollection () 
+		public CryptographicAttributeObjectCollection () 
 		{
 			_list = new ArrayList ();
 		}
 
-		public CryptographicAttributeCollection (CryptographicAttribute attribute)
+		public CryptographicAttributeObjectCollection (CryptographicAttributeObject attribute)
 			: this ()
 		{
 			_list.Add (attribute);
@@ -59,8 +58,8 @@ namespace System.Security.Cryptography {
 			get { return _list.IsSynchronized; }
 		}
 
-		public CryptographicAttribute this [int index] {
-			get { return (CryptographicAttribute) _list [index]; }
+		public CryptographicAttributeObject this [int index] {
+			get { return (CryptographicAttributeObject) _list [index]; }
 		}
 
 		public object SyncRoot {
@@ -77,7 +76,7 @@ namespace System.Security.Cryptography {
 			return _list.Add (asnEncodedData);
 		}
 
-		public int Add (CryptographicAttribute attribute)
+		public int Add (CryptographicAttributeObject attribute)
 		{
 			if (attribute == null)
 				throw new ArgumentNullException ("attribute");
@@ -85,7 +84,7 @@ namespace System.Security.Cryptography {
 			return _list.Add (attribute);
 		}
 
-		public void CopyTo (CryptographicAttribute[] array, int index)
+		public void CopyTo (CryptographicAttributeObject[] array, int index)
 		{
 			_list.CopyTo (array, index);
 		}
@@ -95,17 +94,17 @@ namespace System.Security.Cryptography {
 			_list.CopyTo (array, index);
 		}
 
-		public CryptographicAttributeEnumerator GetEnumerator () 
+		public CryptographicAttributeObjectEnumerator GetEnumerator () 
 		{
-			return new CryptographicAttributeEnumerator (_list);
+			return new CryptographicAttributeObjectEnumerator (_list);
 		}
 
 		IEnumerator IEnumerable.GetEnumerator () 
 		{
-			return new CryptographicAttributeEnumerator (_list);
+			return new CryptographicAttributeObjectEnumerator (_list);
 		}
 
-		public void Remove (CryptographicAttribute attribute) 
+		public void Remove (CryptographicAttributeObject attribute) 
 		{
 			_list.Remove (attribute);
 		}
