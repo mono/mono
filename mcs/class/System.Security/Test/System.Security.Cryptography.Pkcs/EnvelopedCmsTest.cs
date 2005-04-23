@@ -85,9 +85,9 @@ namespace MonoTests.System.Security.Cryptography.Pkcs {
 			AssertEquals ("Version", version, ep.Version);
 		}
 
-		private X509CertificateEx GetCertificate (bool includePrivateKey) 
+		private X509Certificate2 GetCertificate (bool includePrivateKey) 
 		{
-			return new X509CertificateEx (farscape_p12_pfx, "farscape");
+			return new X509Certificate2 (farscape_p12_pfx, "farscape");
 		}
 
 		[Test]
@@ -233,8 +233,8 @@ namespace MonoTests.System.Security.Cryptography.Pkcs {
 			EnvelopedCms ep = new EnvelopedCms ();
 			ep.Decode (encoded);
 
-			X509CertificateEx x509 = GetCertificate (true);
-			X509CertificateExCollection xc = new X509CertificateExCollection ();
+			X509Certificate2 x509 = GetCertificate (true);
+			X509Certificate2Collection xc = new X509Certificate2Collection ();
 			xc.Add (x509);
 			ep.Decrypt (xc);
 			// properties
@@ -273,7 +273,7 @@ namespace MonoTests.System.Security.Cryptography.Pkcs {
 		public void DecryptX509CertificateExCollectionNull () 
 		{
 			EnvelopedCms ep = new EnvelopedCms ();
-			X509CertificateExCollection xec = null; // do not confuse compiler
+			X509Certificate2Collection xec = null; // do not confuse compiler
 			ep.Decrypt (xec);
 		}
 
@@ -282,7 +282,7 @@ namespace MonoTests.System.Security.Cryptography.Pkcs {
 		public void DecryptRecipientInfoX509CertificateExCollectionNull () 
 		{
 			EnvelopedCms ep = new EnvelopedCms ();
-			X509CertificateExCollection xec = new X509CertificateExCollection ();
+			X509Certificate2Collection xec = new X509Certificate2Collection ();
 			ep.Decrypt (null, xec);
 		}
 
@@ -297,7 +297,7 @@ namespace MonoTests.System.Security.Cryptography.Pkcs {
 
 		private void RoundTrip (byte[] encoded) 
 		{
-			X509CertificateExCollection xc = new X509CertificateExCollection ();
+			X509Certificate2Collection xc = new X509Certificate2Collection ();
 			xc.Add (GetCertificate (true));
 			EnvelopedCms ep = new EnvelopedCms ();
 			ep.Decode (encoded);
@@ -311,7 +311,7 @@ namespace MonoTests.System.Security.Cryptography.Pkcs {
 			ContentInfo ci = new ContentInfo (asnNull);
 			EnvelopedCms ep = new EnvelopedCms (SubjectIdentifierType.IssuerAndSerialNumber, ci);
 
-			X509CertificateEx x509 = GetCertificate (false);
+			X509Certificate2 x509 = GetCertificate (false);
 			CmsRecipient p7r = new CmsRecipient (SubjectIdentifierType.IssuerAndSerialNumber, x509);
 			ep.Encrypt (p7r);
 			byte[] encoded = ep.Encode ();
@@ -329,7 +329,7 @@ namespace MonoTests.System.Security.Cryptography.Pkcs {
 			ContentInfo ci = new ContentInfo (asnNull);
 			EnvelopedCms ep = new EnvelopedCms (SubjectIdentifierType.IssuerAndSerialNumber, ci);
 
-			X509CertificateEx x509 = GetCertificate (false);
+			X509Certificate2 x509 = GetCertificate (false);
 			CmsRecipient p7r = new CmsRecipient (SubjectIdentifierType.SubjectKeyIdentifier, x509);
 			ep.Encrypt (p7r);
 			byte[] encoded = ep.Encode ();
@@ -347,7 +347,7 @@ namespace MonoTests.System.Security.Cryptography.Pkcs {
 			ContentInfo ci = new ContentInfo (asnNull);
 			EnvelopedCms ep = new EnvelopedCms (SubjectIdentifierType.IssuerAndSerialNumber, ci);
 
-			X509CertificateEx x509 = GetCertificate (false);
+			X509Certificate2 x509 = GetCertificate (false);
 			CmsRecipient p7r = new CmsRecipient (SubjectIdentifierType.Unknown, x509);
 			ep.Encrypt (p7r);
 			byte[] encoded = ep.Encode ();

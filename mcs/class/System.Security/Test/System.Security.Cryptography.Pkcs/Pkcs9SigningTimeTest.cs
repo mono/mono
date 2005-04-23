@@ -188,7 +188,7 @@ namespace MonoTests.System.Security.Cryptography.Pkcs {
 		}
 
 		[Test]
-		[Ignore ("MS returns bad results (original time) - Mono needs to override CopyFrom to fix")]
+//		[Ignore ("MS returns bad results (original time) - Mono needs to override CopyFrom to fix")]
 		// http://lab.msdn.microsoft.com/ProductFeedback/viewfeedback.aspx?feedbackid=66943396-ad73-497f-82ae-090b87ffcb4e
 		public void CopyFrom () 
 		{
@@ -210,7 +210,7 @@ namespace MonoTests.System.Security.Cryptography.Pkcs {
 		}
 
 		[Test]
-		[Ignore ("MS doesn't throw but returns bad results - Mono needs to override CopyFrom to fix")]
+//		[Ignore ("MS doesn't throw but returns bad results - Mono needs to override CopyFrom to fix")]
 		// http://lab.msdn.microsoft.com/ProductFeedback/viewfeedback.aspx?feedbackid=66943396-ad73-497f-82ae-090b87ffcb4e
 		[ExpectedException (typeof (CryptographicException))]
 		public void CopyFrom_Bad ()

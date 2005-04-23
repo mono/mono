@@ -39,7 +39,7 @@ using System.Security.Cryptography.Pkcs;
 namespace MonoTests.System.Security.Cryptography.Pkcs {
 
 	[TestFixture]
-	public class Pkcs9AttributeTest {
+	public class Pkcs9AttributeObjectTest {
 
 		static string defaultOid = "1.2.840.113549.1.7.1";
 		static string defaultName = "PKCS 7 Data";
@@ -47,7 +47,7 @@ namespace MonoTests.System.Security.Cryptography.Pkcs {
 		[Test]
 		public void ConstructorEmpty () 
 		{
-			Pkcs9Attribute a = new Pkcs9Attribute ();
+			Pkcs9AttributeObject a = new Pkcs9AttributeObject ();
 			Assert.IsNull (a.Oid, "Oid");
 			Assert.IsNull (a.RawData, "RawData");
 		}
@@ -56,14 +56,14 @@ namespace MonoTests.System.Security.Cryptography.Pkcs {
 		[ExpectedException (typeof (ArgumentNullException))]
 		public void ConstructorAsnEncodedDataNull () 
 		{
-			Pkcs9Attribute a = new Pkcs9Attribute (null);
+			Pkcs9AttributeObject a = new Pkcs9AttributeObject (null);
 		}
 
 		[Test]
 		public void ConstructorOidArray () 
 		{
 			Oid o = new Oid (defaultOid);
-			Pkcs9Attribute a = new Pkcs9Attribute (o, new byte [0]);
+			Pkcs9AttributeObject a = new Pkcs9AttributeObject (o, new byte[0]);
 			Assert.AreEqual (defaultName, a.Oid.FriendlyName, "Oid.FriendlyName");
 			Assert.AreEqual (defaultOid, a.Oid.Value, "Oid.Value");
 			Assert.AreEqual (0, a.RawData.Length, "RawData");
@@ -74,7 +74,7 @@ namespace MonoTests.System.Security.Cryptography.Pkcs {
 		public void ConstructorOidNullArray ()
 		{
 			Oid o = null;
-			Pkcs9Attribute a = new Pkcs9Attribute (o, new byte [0]);
+			Pkcs9AttributeObject a = new Pkcs9AttributeObject (o, new byte[0]);
 		}
 
 		[Test]
@@ -82,13 +82,13 @@ namespace MonoTests.System.Security.Cryptography.Pkcs {
 		public void ConstructorOidArrayNull ()
 		{
 			Oid o = new Oid (defaultOid);
-			Pkcs9Attribute a = new Pkcs9Attribute (o, null);
+			Pkcs9AttributeObject a = new Pkcs9AttributeObject (o, null);
 		}
 
 		[Test]
 		public void ConstructorStringArray ()
 		{
-			Pkcs9Attribute a = new Pkcs9Attribute (defaultOid, new byte [0]);
+			Pkcs9AttributeObject a = new Pkcs9AttributeObject (defaultOid, new byte[0]);
 			Assert.AreEqual (defaultName, a.Oid.FriendlyName, "Oid.FriendlyName");
 			Assert.AreEqual (defaultOid, a.Oid.Value, "Oid.Value");
 			Assert.AreEqual (0, a.RawData.Length, "RawData");
@@ -99,14 +99,14 @@ namespace MonoTests.System.Security.Cryptography.Pkcs {
 		public void ConstructorStringNullArray ()
 		{
 			string s = null;
-			Pkcs9Attribute a = new Pkcs9Attribute (s, new byte [0]);
+			Pkcs9AttributeObject a = new Pkcs9AttributeObject (s, new byte[0]);
 		}
 
 		[Test]
 		[ExpectedException (typeof (ArgumentNullException))]
 		public void ConstructorStringArrayNull ()
 		{
-			Pkcs9Attribute a = new Pkcs9Attribute (defaultOid, null);
+			Pkcs9AttributeObject a = new Pkcs9AttributeObject (defaultOid, null);
 		}
 	}
 }

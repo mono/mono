@@ -64,15 +64,15 @@ namespace MonoTests.System.Security.Cryptography.Pkcs {
 			0x0F, 0xCE, 0x10, 0x28, 0x3D, 0x2A, 0x45, 0x64, 0x60, 0xE3, 0xB7, 0xE1, 0x76, 0x90, 0xEC, 0x5B, 0xC6, 0xA1, 0xF0, 0xC4, 0xE8, 0x12, 0xD9, 0xC6, 0x22, 0x80, 0xB5, 0x30, 0xE5, 0x17, 0xAE, 0x05, 0x96, 0xBB, 0x4E, 0xBB, 0x33, 0xBB, 0xB0, 0x63, 0x29, 0x74, 0x11, 0x06, 0x23, 0x36, 0xB4, 0xA1, 0x25, 0xD5, 0x2A, 0xF3, 0x90, 0x38, 0x18, 0x02, 0x62, 0x30, 0x3B, 0x30, 0x1F, 0x30, 0x07, 0x06, 0x05, 0x2B, 0x0E, 0x03, 0x02, 0x1A, 0x04, 0x14, 0xDC, 0x3A, 0xAB, 0x36, 0xD7, 0x3E, 0xF4, 0x6C, 0x52, 0xC9, 0x89, 0x37, 0xFE, 0x71, 0x71, 0x83, 0xC6, 0x09, 0x88, 0xDD, 0x04, 0x14, 0xF5, 0x76, 0xC2, 0xCC, 0xB9, 0xE5, 
 			0xF5, 0x28, 0xA3, 0x2D, 0x55, 0xDC, 0xDE, 0x3B, 0xCF, 0x53, 0xEE, 0x4B, 0x8F, 0x6F, 0x02, 0x02, 0x07, 0xD0 };
 
-		private X509CertificateEx GetCertificate (bool includePrivateKey) 
+		private X509Certificate2 GetCertificate (bool includePrivateKey) 
 		{
-			return new X509CertificateEx (farscape_p12_pfx, "farscape");
+			return new X509Certificate2 (farscape_p12_pfx, "farscape");
 		}
 
 		[Test]
 		public void IssuerAndSerialNumber () 
 		{
-			X509CertificateEx x509 = GetCertificate (true);
+			X509Certificate2 x509 = GetCertificate (true);
 			CmsRecipient p7r = new CmsRecipient (SubjectIdentifierType.IssuerAndSerialNumber, x509);
 			AssertEquals ("RecipientIdentifierType", SubjectIdentifierType.IssuerAndSerialNumber, p7r.RecipientIdentifierType);
 			AssertEquals ("Certificate", x509.Thumbprint, p7r.Certificate.Thumbprint);
@@ -81,7 +81,7 @@ namespace MonoTests.System.Security.Cryptography.Pkcs {
 		[Test]
 		public void SubjectKeyIdentifier () 
 		{
-			X509CertificateEx x509 = GetCertificate (true);
+			X509Certificate2 x509 = GetCertificate (true);
 			CmsRecipient p7r = new CmsRecipient (SubjectIdentifierType.SubjectKeyIdentifier, x509);
 			AssertEquals ("RecipientIdentifierType", SubjectIdentifierType.SubjectKeyIdentifier, p7r.RecipientIdentifierType);
 			AssertEquals ("Certificate", x509.Thumbprint, p7r.Certificate.Thumbprint);
@@ -90,7 +90,7 @@ namespace MonoTests.System.Security.Cryptography.Pkcs {
 		[Test]
 		public void Unknown () 
 		{
-			X509CertificateEx x509 = GetCertificate (true);
+			X509Certificate2 x509 = GetCertificate (true);
 			CmsRecipient p7r = new CmsRecipient (SubjectIdentifierType.Unknown, x509);
 			AssertEquals ("RecipientIdentifierType", SubjectIdentifierType.IssuerAndSerialNumber, p7r.RecipientIdentifierType);
 			AssertEquals ("Certificate", x509.Thumbprint, p7r.Certificate.Thumbprint);

@@ -92,15 +92,15 @@ namespace MonoTests.System.Security.Cryptography.Pkcs {
 			AssertEquals ("Version", version, sp.Version);
 		}
 
-		private X509CertificateEx GetCertificate (bool includePrivateKey) 
+		private X509Certificate2 GetCertificate (bool includePrivateKey) 
 		{
-			return new X509CertificateEx (farscape_p12_pfx, "farscape");
+			return new X509Certificate2 (farscape_p12_pfx, "farscape");
 		}
 
-		private void AddChain (X509CertificateExCollection coll)
+		private void AddChain (X509Certificate2Collection coll)
 		{
-			coll.Add (new X509CertificateEx (intca_cer));
-			coll.Add (new X509CertificateEx (root_cer));
+			coll.Add (new X509Certificate2 (intca_cer));
+			coll.Add (new X509Certificate2 (root_cer));
 		}
 
 		[Test]
@@ -305,8 +305,8 @@ namespace MonoTests.System.Security.Cryptography.Pkcs {
 			SignedCms sp = new SignedCms (ci);
 
 			CmsSigner signer = new CmsSigner (SubjectIdentifierType.IssuerAndSerialNumber, GetCertificate (true));
-			signer.Certificates.Add (new X509CertificateEx (intca_cer));
-			signer.Certificates.Add (new X509CertificateEx (root_cer));
+			signer.Certificates.Add (new X509Certificate2 (intca_cer));
+			signer.Certificates.Add (new X509Certificate2 (root_cer));
 			sp.ComputeSignature (signer);
 
 			byte[] encoded = sp.Encode ();
@@ -326,8 +326,8 @@ namespace MonoTests.System.Security.Cryptography.Pkcs {
 			SignedCms sp = new SignedCms (ci);
 
 			CmsSigner signer = new CmsSigner (SubjectIdentifierType.SubjectKeyIdentifier, GetCertificate (true));
-			signer.Certificates.Add (new X509CertificateEx (intca_cer));
-			signer.Certificates.Add (new X509CertificateEx (root_cer));
+			signer.Certificates.Add (new X509Certificate2 (intca_cer));
+			signer.Certificates.Add (new X509Certificate2 (root_cer));
 			sp.ComputeSignature (signer);
 
 			byte[] encoded = sp.Encode ();
@@ -347,8 +347,8 @@ namespace MonoTests.System.Security.Cryptography.Pkcs {
 			SignedCms sp = new SignedCms (ci);
 
 			CmsSigner signer = new CmsSigner (SubjectIdentifierType.Unknown, GetCertificate (true));
-			signer.Certificates.Add (new X509CertificateEx (intca_cer));
-			signer.Certificates.Add (new X509CertificateEx (root_cer));
+			signer.Certificates.Add (new X509Certificate2 (intca_cer));
+			signer.Certificates.Add (new X509Certificate2 (root_cer));
 			sp.ComputeSignature (signer);
 
 			byte[] encoded = sp.Encode ();

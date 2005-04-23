@@ -106,16 +106,16 @@ namespace MonoTests.System.Security.Cryptography.Pkcs {
 		}
 
 		// TODO: return valid x509 certifiate with private key
-		private X509CertificateEx GetValidCertificateWithPrivateKey () 
+		private X509Certificate2 GetValidCertificateWithPrivateKey () 
 		{
-			X509CertificateEx x509 = new X509CertificateEx ();
+			X509Certificate2 x509 = new X509Certificate2 ();
 			return x509;
 		}
 
 		[Test]
 		public void ConstructorX509CertificateEx () 
 		{
-			X509CertificateEx x509 = GetValidCertificateWithPrivateKey ();
+			X509Certificate2 x509 = GetValidCertificateWithPrivateKey ();
 			CmsSigner ps = new CmsSigner (x509);
 			// default properties
 			AssertEquals ("SignedAttributes", 0, ps.SignedAttributes.Count);
@@ -130,7 +130,7 @@ namespace MonoTests.System.Security.Cryptography.Pkcs {
 		[Test]
 		public void ConstructorX509CertificateExEmpty () 
 		{
-			X509CertificateEx x509 = new X509CertificateEx (); // empty
+			X509Certificate2 x509 = new X509Certificate2 (); // empty
 			CmsSigner ps = new CmsSigner (x509);
 			// default properties
 			AssertEquals ("SignedAttributes", 0, ps.SignedAttributes.Count);
@@ -146,7 +146,7 @@ namespace MonoTests.System.Security.Cryptography.Pkcs {
 		//BUG [ExpectedException (typeof (ArgumentNullException))]
 		public void ConstructorX509CertificateExNull () 
 		{
-			X509CertificateEx x509 = null;
+			X509Certificate2 x509 = null;
 			CmsSigner ps = new CmsSigner (x509);
 			// default properties
 			AssertEquals ("SignedAttributes", 0, ps.SignedAttributes.Count);
@@ -161,7 +161,7 @@ namespace MonoTests.System.Security.Cryptography.Pkcs {
 		[Test]
 		public void ConstructorIssuerAndSerialNumberX509CertificateEx () 
 		{
-			X509CertificateEx x509 = GetValidCertificateWithPrivateKey ();
+			X509Certificate2 x509 = GetValidCertificateWithPrivateKey ();
 			CmsSigner ps = new CmsSigner (SubjectIdentifierType.IssuerAndSerialNumber, x509);
 			// default properties
 			AssertEquals ("SignedAttributes", 0, ps.SignedAttributes.Count);
@@ -176,7 +176,7 @@ namespace MonoTests.System.Security.Cryptography.Pkcs {
 		[Test]
 		public void ConstructorSubjectKeyIdentifierX509CertificateEx () 
 		{
-			X509CertificateEx x509 = GetValidCertificateWithPrivateKey ();
+			X509Certificate2 x509 = GetValidCertificateWithPrivateKey ();
 			CmsSigner ps = new CmsSigner (SubjectIdentifierType.SubjectKeyIdentifier, x509);
 			// default properties
 			AssertEquals ("SignedAttributes", 0, ps.SignedAttributes.Count);
@@ -191,7 +191,7 @@ namespace MonoTests.System.Security.Cryptography.Pkcs {
 		[Test]
 		public void ConstructorUnknownX509CertificateEx () 
 		{
-			X509CertificateEx x509 = GetValidCertificateWithPrivateKey ();
+			X509Certificate2 x509 = GetValidCertificateWithPrivateKey ();
 			CmsSigner ps = new CmsSigner (SubjectIdentifierType.Unknown, x509);
 			// default properties
 			AssertEquals ("SignedAttributes", 0, ps.SignedAttributes.Count);
