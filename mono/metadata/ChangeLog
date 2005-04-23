@@ -1,5 +1,10 @@
 2005-04-23 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* threadpool.c: check for SuspendRequested too when deciding if
+	mono_thread_interruption_checkpoint should be called.
+
+2005-04-23 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* appdomain.[ch]: added function to set the shutting_down flag to TRUE.
 	* threads.c: remove interruption_mutex and use Interlocked instead. When
 	suspending all the threads, wait for all the suspended events at once.
