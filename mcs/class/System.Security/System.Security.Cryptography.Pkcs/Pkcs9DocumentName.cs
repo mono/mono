@@ -35,7 +35,7 @@ using Mono.Security;
 
 namespace System.Security.Cryptography.Pkcs {
 
-	public sealed class Pkcs9DocumentName : Pkcs9Attribute	{
+	public sealed class Pkcs9DocumentName : Pkcs9AttributeObject	{
 
 		internal const string oid = "1.3.6.1.4.1.311.88.2.1";
 		internal const string friendlyName = null;

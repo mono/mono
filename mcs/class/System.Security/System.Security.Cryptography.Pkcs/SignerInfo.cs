@@ -1,11 +1,11 @@
 //
-// SignerInfo.cs - System.Security.Cryptography.Pkcs.SignerInfo
+// System.Security.Cryptography.Pkcs.SignerInfo class
 //
 // Author:
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
-// Copyright (C) 2004 Novell Inc. (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell Inc. (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -29,7 +29,6 @@
 
 #if NET_2_0
 
-using System;
 using System.Security.Cryptography.X509Certificates;
 
 namespace System.Security.Cryptography.Pkcs {
@@ -37,32 +36,32 @@ namespace System.Security.Cryptography.Pkcs {
 	public sealed class SignerInfo {
 
 		private SubjectIdentifier _signer;
-		private X509CertificateEx _certificate;
+		private X509Certificate2 _certificate;
 		private Oid _digest;
 		private SignerInfoCollection _counter;
-		private CryptographicAttributeCollection _signed;
-		private CryptographicAttributeCollection _unsigned;
+		private CryptographicAttributeObjectCollection _signed;
+		private CryptographicAttributeObjectCollection _unsigned;
 		private int _version;
 
 		// only accessible from SignedPkcs7.SignerInfos
-		internal SignerInfo (string hashOid, X509CertificateEx certificate, SubjectIdentifierType type, object o, int version)
+		internal SignerInfo (string hashOid, X509Certificate2 certificate, SubjectIdentifierType type, object o, int version)
 		{
 			_digest = new Oid (hashOid);
 			_certificate = certificate;
 			_counter = new SignerInfoCollection ();
-			_signed = new CryptographicAttributeCollection ();
-			_unsigned = new CryptographicAttributeCollection ();
+			_signed = new CryptographicAttributeObjectCollection ();
+			_unsigned = new CryptographicAttributeObjectCollection ();
 			_signer = new SubjectIdentifier (type, o);
 			_version = version;
 		}
 
 		// properties
 
-		public CryptographicAttributeCollection SignedAttributes {
+		public CryptographicAttributeObjectCollection SignedAttributes {
 			get { return _signed; }
 		} 
 
-		public X509CertificateEx Certificate {
+		public X509Certificate2 Certificate {
 			get { return _certificate; }
 		}
 
@@ -78,7 +77,7 @@ namespace System.Security.Cryptography.Pkcs {
 			get { return _signer; }
 		}
 
-		public CryptographicAttributeCollection UnsignedAttributes {
+		public CryptographicAttributeObjectCollection UnsignedAttributes {
 			get { return _unsigned; }
 		}
 
@@ -99,7 +98,7 @@ namespace System.Security.Cryptography.Pkcs {
 		}
 
 		[MonoTODO]
-		public void CheckSignature (X509CertificateExCollection extraStore, bool verifySignatureOnly)
+		public void CheckSignature (X509Certificate2Collection extraStore, bool verifySignatureOnly)
 		{
 		}
 

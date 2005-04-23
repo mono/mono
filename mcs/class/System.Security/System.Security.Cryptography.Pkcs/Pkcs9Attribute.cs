@@ -1,5 +1,5 @@
 //
-// Pkcs9Attribute.cs - System.Security.Cryptography.Pkcs.Pkcs9Attribute
+// System.Security.Cryptography.Pkcs.Pkcs9AttributeObject class
 //
 // Author:
 //	Sebastien Pouliot  <sebastien@ximian.com>
@@ -33,21 +33,21 @@ using System.Collections;
 
 namespace System.Security.Cryptography.Pkcs {
 
-	public class Pkcs9Attribute : AsnEncodedData {
+	public class Pkcs9AttributeObject : AsnEncodedData {
 
 		// constructors
 
-		public Pkcs9Attribute () 
+		public Pkcs9AttributeObject () 
 			: base ()
 		{
 		}
 
-		public Pkcs9Attribute (AsnEncodedData asnEncodedData)
+		public Pkcs9AttributeObject (AsnEncodedData asnEncodedData)
 			: base (asnEncodedData)
 		{
 		}
 
-		public Pkcs9Attribute (Oid oid, byte[] encodedData) 
+		public Pkcs9AttributeObject (Oid oid, byte[] encodedData) 
 		{
 			if (oid == null)
 				throw new ArgumentNullException ("oid");
@@ -55,7 +55,7 @@ namespace System.Security.Cryptography.Pkcs {
 			RawData = encodedData;
 		}
 
-		public Pkcs9Attribute (string oid, byte[] encodedData)
+		public Pkcs9AttributeObject (string oid, byte[] encodedData)
 			: base (oid, encodedData) 
 		{
 		}

@@ -1,11 +1,11 @@
 //
-// System.Security.Cryptography.Pkcs.CmsRecipient
+// System.Security.Cryptography.Pkcs.CmsRecipient class
 //
 // Author:
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -29,7 +29,6 @@
 
 #if NET_2_0
 
-using System;
 using System.Collections;
 using System.Security.Cryptography.X509Certificates;
 
@@ -38,11 +37,11 @@ namespace System.Security.Cryptography.Pkcs {
 	public sealed class CmsRecipient {
 
 		private SubjectIdentifierType _recipient;
-		private X509CertificateEx _certificate;
+		private X509Certificate2 _certificate;
 
 		// constructor
 
-		public CmsRecipient (X509CertificateEx certificate)
+		public CmsRecipient (X509Certificate2 certificate)
 		{
 			if (certificate == null)
 				throw new ArgumentNullException ("certificate");
@@ -50,7 +49,7 @@ namespace System.Security.Cryptography.Pkcs {
 			_certificate = certificate;
 		}
 
-		public CmsRecipient (SubjectIdentifierType recipientIdentifierType, X509CertificateEx certificate)
+		public CmsRecipient (SubjectIdentifierType recipientIdentifierType, X509Certificate2 certificate)
 		{
 			if (certificate == null)
 				throw new ArgumentNullException ("certificate");
@@ -64,7 +63,7 @@ namespace System.Security.Cryptography.Pkcs {
 
 		// properties
 
-		public X509CertificateEx Certificate {
+		public X509Certificate2 Certificate {
 			get { return _certificate; }
 		}
 

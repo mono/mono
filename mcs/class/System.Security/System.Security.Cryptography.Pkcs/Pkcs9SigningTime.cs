@@ -1,5 +1,5 @@
 //
-// Pkcs9SigningTime.cs - System.Security.Cryptography.Pkcs.Pkcs9SigningTime
+// System.Security.Cryptography.Pkcs.Pkcs9SigningTime class
 //
 // Author:
 //	Sebastien Pouliot  <sebastien@ximian.com>
@@ -36,7 +36,7 @@ using Mono.Security;
 
 namespace System.Security.Cryptography.Pkcs {
 
-	public sealed class Pkcs9SigningTime : Pkcs9Attribute {
+	public sealed class Pkcs9SigningTime : Pkcs9AttributeObject {
 
 		internal const string oid = "1.2.840.113549.1.9.5";
 		internal const string friendlyName = "Signing Time";

@@ -1,5 +1,5 @@
 //
-// Pkcs9MessageDigest.cs - System.Security.Cryptography.Pkcs.Pkcs9MessageDigest
+// System.Security.Cryptography.Pkcs.Pkcs9MessageDigest class
 //
 // Authors:
 //	Tim Coleman (tim@timcoleman.com)
@@ -33,7 +33,7 @@
 namespace System.Security.Cryptography.Pkcs {
 
 	[MonoTODO ("missing internals")]
-	public sealed class Pkcs9MessageDigest : Pkcs9Attribute {
+	public sealed class Pkcs9MessageDigest : Pkcs9AttributeObject {
 
 		internal const string oid = "1.2.840.113549.1.9.4";
 		internal const string friendlyName = "Message Digest";

@@ -1,11 +1,11 @@
 //
-// System.Security.Cryptography.Pkcs.SignedCms
+// System.Security.Cryptography.Pkcs.SignedCms class
 //
 // Author:
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -29,7 +29,6 @@
 
 #if NET_2_0
 
-using System;
 using System.Security.Cryptography.X509Certificates;
 using System.Security.Cryptography.Xml;
 using System.Text;
@@ -44,7 +43,7 @@ namespace System.Security.Cryptography.Pkcs {
 		private ContentInfo _content;
 		private bool _detached;
 		private SignerInfoCollection _info;
-		private X509CertificateExCollection _certs;
+		private X509Certificate2Collection _certs;
 		private SubjectIdentifierType _type;
 		private int _version;
 
@@ -52,7 +51,7 @@ namespace System.Security.Cryptography.Pkcs {
 
 		public SignedCms () 
 		{
-			_certs = new X509CertificateExCollection ();
+			_certs = new X509Certificate2Collection ();
 			_info = new SignerInfoCollection ();
 		}
 
@@ -93,7 +92,7 @@ namespace System.Security.Cryptography.Pkcs {
 
 		// properties
 
-		public X509CertificateExCollection Certificates { 
+		public X509Certificate2Collection Certificates { 
 			get { return _certs; }
 		}
 
@@ -128,7 +127,7 @@ namespace System.Security.Cryptography.Pkcs {
 			}
 		}
 
-		public void CheckSignature (X509CertificateExCollection extraStore, bool verifySignatureOnly) 
+		public void CheckSignature (X509Certificate2Collection extraStore, bool verifySignatureOnly) 
 		{
 			foreach (SignerInfo si in _info) {
 				si.CheckSignature (extraStore, verifySignatureOnly);
@@ -204,9 +203,9 @@ namespace System.Security.Cryptography.Pkcs {
 			SubjectIdentifierType type = SubjectIdentifierType.Unknown;
 			object o = null;
 
-			X509CertificateEx x509 = null;
+			X509Certificate2 x509 = null;
 			if (sd.SignerInfo.Certificate != null) {
-				x509 = new X509CertificateEx (sd.SignerInfo.Certificate.RawData);
+				x509 = new X509Certificate2 (sd.SignerInfo.Certificate.RawData);
 			}
 			else if ((sd.SignerInfo.IssuerName != null) && (sd.SignerInfo.SerialNumber != null)) {
 				byte[] serial = sd.SignerInfo.SerialNumber;
@@ -220,7 +219,7 @@ namespace System.Security.Cryptography.Pkcs {
 				foreach (Mono.Security.X509.X509Certificate x in sd.Certificates) {
 					if (x.IssuerName == sd.SignerInfo.IssuerName) {
 						if (ToString (x.SerialNumber) == xis.SerialNumber) {
-							x509 = new X509CertificateEx (x.RawData);
+							x509 = new X509Certificate2 (x.RawData);
 							break;
 						}
 					}
@@ -233,7 +232,7 @@ namespace System.Security.Cryptography.Pkcs {
 				// TODO: move to a FindCertificate (ski, collection)
 				foreach (Mono.Security.X509.X509Certificate x in sd.Certificates) {
 					if (ToString (GetKeyIdentifier (x)) == ski) {
-						x509 = new X509CertificateEx (x.RawData);
+						x509 = new X509Certificate2 (x.RawData);
 						break;
 					}
 				}
@@ -249,7 +248,7 @@ namespace System.Security.Cryptography.Pkcs {
 			_content = new ContentInfo (oid, content[0].Value);
 
 			foreach (Mono.Security.X509.X509Certificate x in sd.Certificates) {
-				_certs.Add (new X509CertificateEx (x.RawData));
+				_certs.Add (new X509Certificate2 (x.RawData));
 			}
 
 			_version = sd.Version;

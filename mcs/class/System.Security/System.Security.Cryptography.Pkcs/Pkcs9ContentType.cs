@@ -33,7 +33,7 @@
 namespace System.Security.Cryptography.Pkcs {
 
 	[MonoTODO ("missing internals")]
-	public sealed class Pkcs9ContentType : Pkcs9Attribute {
+	public sealed class Pkcs9ContentType : Pkcs9AttributeObject {
 
 		internal const string oid = "1.2.840.113549.1.9.3";
 		internal const string friendlyName = "Content Type";

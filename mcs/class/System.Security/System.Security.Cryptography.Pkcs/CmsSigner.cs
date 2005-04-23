@@ -1,11 +1,11 @@
 //
-// System.Security.Cryptography.Pkcs.CmsSigner
+// System.Security.Cryptography.Pkcs.CmsSigner class
 //
 // Author:
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -29,7 +29,6 @@
 
 #if NET_2_0
 
-using System;
 using System.Security.Cryptography.X509Certificates;
 
 namespace System.Security.Cryptography.Pkcs {
@@ -37,12 +36,12 @@ namespace System.Security.Cryptography.Pkcs {
 	public sealed class CmsSigner {
 
 		private SubjectIdentifierType _signer;
-		private X509CertificateEx _certificate;
-		private X509CertificateExCollection _coll;
+		private X509Certificate2 _certificate;
+		private X509Certificate2Collection _coll;
 		private Oid _digest;
 		private X509IncludeOption _options;
-		private CryptographicAttributeCollection _signed;
-		private CryptographicAttributeCollection _unsigned;
+		private CryptographicAttributeObjectCollection _signed;
+		private CryptographicAttributeObjectCollection _unsigned;
 
 		// constructors
 
@@ -51,9 +50,9 @@ namespace System.Security.Cryptography.Pkcs {
 			_signer = SubjectIdentifierType.IssuerAndSerialNumber;
 			_digest = new Oid ("1.3.14.3.2.26");
 			_options = X509IncludeOption.ExcludeRoot;
-			_signed = new CryptographicAttributeCollection ();
-			_unsigned = new CryptographicAttributeCollection ();
-			_coll = new X509CertificateExCollection ();
+			_signed = new CryptographicAttributeObjectCollection ();
+			_unsigned = new CryptographicAttributeObjectCollection ();
+			_coll = new X509Certificate2Collection ();
 		}
 
 		public CmsSigner (SubjectIdentifierType signerIdentifierType) : this ()
@@ -64,7 +63,7 @@ namespace System.Security.Cryptography.Pkcs {
 				_signer = signerIdentifierType;
 		}
 
-		public CmsSigner (SubjectIdentifierType signerIdentifierType, X509CertificateEx certificate) 
+		public CmsSigner (SubjectIdentifierType signerIdentifierType, X509Certificate2 certificate) 
 			: this (signerIdentifierType)
 		{
 // FIXME: compatibility with fx 1.2.3400.0
@@ -73,7 +72,7 @@ namespace System.Security.Cryptography.Pkcs {
 			_certificate = certificate;
 		}
 
-		public CmsSigner (X509CertificateEx certificate) : this ()
+		public CmsSigner (X509Certificate2 certificate) : this ()
 		{
 // FIXME: compatibility with fx 1.2.3400.0
 //			if (certificate == null)
@@ -88,16 +87,16 @@ namespace System.Security.Cryptography.Pkcs {
 
 		// properties
 
-		public CryptographicAttributeCollection SignedAttributes {
+		public CryptographicAttributeObjectCollection SignedAttributes {
 			get { return _signed; }
 		}
 
-		public X509CertificateEx Certificate {
+		public X509Certificate2 Certificate {
 			get { return _certificate; }
 			set { _certificate = value; }
 		}
 
-		public X509CertificateExCollection Certificates {
+		public X509Certificate2Collection Certificates {
 			get { return _coll; }
 		}
 
@@ -121,7 +120,7 @@ namespace System.Security.Cryptography.Pkcs {
 			}
 		}
 
-		public CryptographicAttributeCollection UnsignedAttributes {
+		public CryptographicAttributeObjectCollection UnsignedAttributes {
 			get { return _unsigned; }
 		}
 	}

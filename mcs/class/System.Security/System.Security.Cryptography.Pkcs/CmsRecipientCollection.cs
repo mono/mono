@@ -1,11 +1,11 @@
 //
-// System.Security.Cryptography.Pkcs.CmsRecipientCollection
+// System.Security.Cryptography.Pkcs.CmsRecipientCollection class
 //
 // Author:
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -29,7 +29,6 @@
 
 #if NET_2_0
 
-using System;
 using System.Collections;
 using System.Security.Cryptography.X509Certificates;
 
@@ -51,9 +50,9 @@ namespace System.Security.Cryptography.Pkcs {
 			_list.Add (recipient);
 		}
 
-		public CmsRecipientCollection (SubjectIdentifierType recipientIdentifierType, X509CertificateExCollection certificates) : base () 
+		public CmsRecipientCollection (SubjectIdentifierType recipientIdentifierType, X509Certificate2Collection certificates) : base () 
 		{
-			foreach (X509CertificateEx x509 in certificates) {
+			foreach (X509Certificate2 x509 in certificates) {
 				CmsRecipient p7r = new CmsRecipient (recipientIdentifierType, x509);
 				_list.Add (p7r);
 			}

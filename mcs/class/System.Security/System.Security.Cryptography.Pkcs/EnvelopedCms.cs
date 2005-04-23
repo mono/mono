@@ -1,11 +1,11 @@
 //
-// System.Security.Cryptography.Pkcs.EnvelopedCms
+// System.Security.Cryptography.Pkcs.EnvelopedCms class
 //
 // Author:
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -29,7 +29,6 @@
 
 #if NET_2_0
 
-using System;
 using System.Collections;
 using System.Security.Cryptography.X509Certificates;
 using System.Security.Cryptography.Xml;
@@ -47,9 +46,9 @@ namespace System.Security.Cryptography.Pkcs {
 
 		private ContentInfo _content;
 		private AlgorithmIdentifier _identifier;
-		private X509CertificateExCollection _certs;
+		private X509Certificate2Collection _certs;
 		private RecipientInfoCollection _recipients;
-		private CryptographicAttributeCollection _uattribs;
+		private CryptographicAttributeObjectCollection _uattribs;
 		private SubjectIdentifierType _idType;
 		private int _version;
 
@@ -57,9 +56,9 @@ namespace System.Security.Cryptography.Pkcs {
 
 		public EnvelopedCms () 
 		{
-			_certs = new X509CertificateExCollection ();
+			_certs = new X509Certificate2Collection ();
 			_recipients = new RecipientInfoCollection ();
-			_uattribs = new CryptographicAttributeCollection ();
+			_uattribs = new CryptographicAttributeObjectCollection ();
 		}
 
 		public EnvelopedCms (ContentInfo content) : this ()
@@ -70,7 +69,7 @@ namespace System.Security.Cryptography.Pkcs {
 			_content = content;
 		}
 
-		public EnvelopedCms (ContentInfo contentInfo,	AlgorithmIdentifier encryptionAlgorithm)
+		public EnvelopedCms (ContentInfo contentInfo, AlgorithmIdentifier encryptionAlgorithm)
 			: this (contentInfo) 
 		{
 			if (encryptionAlgorithm == null)
@@ -95,7 +94,7 @@ namespace System.Security.Cryptography.Pkcs {
 
 		// properties
 
-		public X509CertificateExCollection Certificates {
+		public X509Certificate2Collection Certificates {
 			get { return _certs; }
 		}
 
@@ -121,7 +120,7 @@ namespace System.Security.Cryptography.Pkcs {
 			get { return _recipients; }
 		}
 
-		public CryptographicAttributeCollection UnprotectedAttributes { 
+		public CryptographicAttributeObjectCollection UnprotectedAttributes { 
 			get { return _uattribs; }
 		}
 
@@ -194,7 +193,7 @@ namespace System.Security.Cryptography.Pkcs {
 		}
 
 		[MonoTODO]
-		public void Decrypt (RecipientInfo recipientInfo, X509CertificateExCollection extraStore)
+		public void Decrypt (RecipientInfo recipientInfo, X509Certificate2Collection extraStore)
 		{
 			if (recipientInfo == null)
 				throw new ArgumentNullException ("recipientInfo");
@@ -204,7 +203,7 @@ namespace System.Security.Cryptography.Pkcs {
 		}
 
 		[MonoTODO]
-		public void Decrypt (X509CertificateExCollection extraStore) 
+		public void Decrypt (X509Certificate2Collection extraStore) 
 		{
 			if (extraStore == null)
 				throw new ArgumentNullException ("extraStore");
