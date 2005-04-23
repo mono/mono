@@ -124,6 +124,20 @@ namespace MonoTests.System.Runtime.InteropServices
 			Assert (ptr != IntPtr.Zero);
 			Marshal.FreeHGlobal (ptr);
 		}
+
+		struct Foo {
+			int a;
+			static int b;
+			long c;
+			static char d;
+			int e;
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void OffsetOfStatic () {
+			Marshal.OffsetOf (typeof (Foo), "b");
+		}
 	}
 }
 

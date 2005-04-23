@@ -1,3 +1,7 @@
+2005-04-23  Zoltan Varga  <vargaz@freemail.hu>
+
+	* MarshalTest.cs: Add test for OffsetOf and static fields.
+
 2005-04-04  Zoltan Varga  <vargaz@freemail.hu>
 
 	* GCHandleTest.cs: Add test for calling Alloc with null.
