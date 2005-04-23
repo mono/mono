@@ -47,7 +47,7 @@ namespace MonoTests.System.Security.Cryptography {
 		public void ConstructorOid () 
 		{
 			Oid o = new Oid (defaultOid);
-			CryptographicAttribute ca = new CryptographicAttribute (o);
+			CryptographicAttributeObject ca = new CryptographicAttributeObject (o);
 			Assert.AreEqual (defaultName, ca.Oid.FriendlyName, "Oid.FriendlyName");
 			Assert.AreEqual (defaultOid, ca.Oid.Value, "Oid.Value");
 			Assert.AreEqual (0, ca.Values.Count, "Values");
@@ -57,7 +57,7 @@ namespace MonoTests.System.Security.Cryptography {
 		[ExpectedException (typeof (ArgumentNullException))]
 		public void ConstructorOidNull () 
 		{
-			CryptographicAttribute ca = new CryptographicAttribute (null);
+			CryptographicAttributeObject ca = new CryptographicAttributeObject (null);
 		}
 
 		[Test]
@@ -65,7 +65,7 @@ namespace MonoTests.System.Security.Cryptography {
 		{
 			Oid o = new Oid (defaultOid);
 			AsnEncodedDataCollection coll = new AsnEncodedDataCollection ();
-			CryptographicAttribute ca = new CryptographicAttribute (o, coll);
+			CryptographicAttributeObject ca = new CryptographicAttributeObject (o, coll);
 			Assert.AreEqual (defaultName, ca.Oid.FriendlyName, "Oid.FriendlyName");
 			Assert.AreEqual (defaultOid, ca.Oid.Value, "Oid.Value");
 			Assert.AreEqual (0, ca.Values.Count, "Values - 0");
@@ -78,7 +78,7 @@ namespace MonoTests.System.Security.Cryptography {
 		public void ConstructorOidNullCollection ()
 		{
 			AsnEncodedDataCollection coll = new AsnEncodedDataCollection ();
-			CryptographicAttribute ca = new CryptographicAttribute (null, coll);
+			CryptographicAttributeObject ca = new CryptographicAttributeObject (null, coll);
 		}
 
 		[Test]
@@ -86,7 +86,7 @@ namespace MonoTests.System.Security.Cryptography {
 		{
 			Oid o = new Oid (defaultOid);
 			AsnEncodedDataCollection coll = null;
-			CryptographicAttribute ca = new CryptographicAttribute (o, coll);
+			CryptographicAttributeObject ca = new CryptographicAttributeObject (o, coll);
 			Assert.AreEqual (defaultName, ca.Oid.FriendlyName, "Oid.FriendlyName");
 			Assert.AreEqual (defaultOid, ca.Oid.Value, "Oid.Value");
 			Assert.AreEqual (0, ca.Values.Count, "Values");

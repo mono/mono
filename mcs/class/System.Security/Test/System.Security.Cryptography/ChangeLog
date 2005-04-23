@@ -1,3 +1,7 @@
+2005-04-23  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* CryptographicAttributeTest.cs: Changed class names to match beta2.
+
 2005-01-20  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* AsnEncodedDataTest.cs: Added test case for SubjectAltName extension.
