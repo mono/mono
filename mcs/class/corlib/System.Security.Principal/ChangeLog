@@ -1,3 +1,14 @@
+2005-04-22  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* GenericIdentity.cs: Added [ComVisible(true)] for NET_2_0.
+	* GenericPrincipal.cs: Added [ComVisible(true)] for NET_2_0.
+	* IIdentity.cs: Added [ComVisible(true)] for NET_2_0.
+	* IPrincipal.cs: Added [ComVisible(true)] for NET_2_0.
+	* PrincipalPolicy.cs: Added [ComVisible(true)] for NET_2_0.
+	* TokenImpersonationLevel.cs: Added [ComVisible(true)] for NET_2_0.
+	* WindowsAccountType.cs: Added [ComVisible(true)] for NET_2_0.
+	* WindowsBuiltInRole.cs: Added [ComVisible(true)] for NET_2_0.
+
 2005-01-24  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* WindowsIdentity.cs: Added security permissions for ControlPrincipal

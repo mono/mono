@@ -6,10 +6,7 @@
 //
 // Copyright (C) Tim Coleman, 2004
 // (C) Ximian, Inc.  http://www.ximian.com
-//
-
-//
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -33,11 +30,13 @@
 
 #if NET_2_0
 
-namespace System.Security.Principal 
-{
+using System.Runtime.InteropServices;
+
+namespace System.Security.Principal {
+
 	[Serializable]
-	public enum TokenImpersonationLevel 
-	{
+	[ComVisible (true)]
+	public enum TokenImpersonationLevel {
 		Anonymous = 0x01,
 		Delegation = 0x04,
 		Identification = 0x02,
