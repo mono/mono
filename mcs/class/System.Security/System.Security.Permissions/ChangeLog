@@ -1,3 +1,9 @@
+2005-04-23  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* StorePermission.cs: New. CAS permission to access certificate stores.
+	* StorePermissionAttribute.cs: New. CAS permission attribute for
+	StorePermission.
+
 2005-01-05  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* DataProtectionPermission.cs: Removed IBuiltInPermission (it's not in
