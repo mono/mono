@@ -50,7 +50,9 @@ namespace System.Windows.Forms {
 		internal OwnerDrawPropertyBag prop_bag;
 
 		private object tag;
-		private IntPtr handle;
+
+		internal IntPtr handle;
+		
 		#endregion	// Fields
 
 		#region Internal Constructors		
@@ -348,10 +350,25 @@ namespace System.Windows.Forms {
 			}
 		}
 
+                public IntPtr Handle {
+			get {
+				// MS throws a NullReferenceException if the TreeView isn't set...
+				if (handle == IntPtr.Zero)
+					handle = TreeView.CreateNodeHandle ();
+				return handle;
+			}
+		}
+
 		#endregion	// Public Instance Properties
 
-		#region Public Static Methods
-		#endregion	// Public Static Methods
+		
+		public static TreeNode FromHandle (TreeView tree, IntPtr handle)
+		{
+			if (handle == IntPtr.Zero)
+				return null;
+			// No arg checking on MS it just throws a NullRef if treeview is null
+			return tree.NodeFromHandle (handle);
+		}
 
 		#region Public Instance Methods
 		public void BeginEdit () {

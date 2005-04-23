@@ -93,6 +93,9 @@ namespace System.Windows.Forms {
 
 		private Pen dash;
 		private int open_node_count = -1;
+
+		private long handle_count = 1;
+
 		#endregion	// Fields
 
 		#region Public Constructors	
@@ -584,6 +587,30 @@ namespace System.Windows.Forms {
 		internal int TotalNodeCount {
 			get { return total_node_count; }
 			set { total_node_count = value; }
+		}
+
+		internal IntPtr CreateNodeHandle ()
+		{
+			return (IntPtr) handle_count++;
+		}
+
+		internal TreeNode NodeFromHandle (IntPtr handle)
+		{
+			// This method is called rarely, so instead of maintaining a table
+			// we just walk the tree nodes to find the matching handle
+			return NodeFromHandleRecursive (root_node,  handle);
+		}
+
+		private TreeNode NodeFromHandleRecursive (TreeNode node, IntPtr handle)
+		{
+			if (node.handle == handle)
+				return node;
+			foreach (TreeNode child in node.Nodes) {
+				TreeNode match = NodeFromHandleRecursive (child, handle);
+				if (match != null)
+					return match;
+			}
+			return null;
 		}
 
 		// TODO: we shouldn't have to compute this on the fly

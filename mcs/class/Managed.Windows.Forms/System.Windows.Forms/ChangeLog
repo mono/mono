@@ -1,3 +1,8 @@
+2005-04-22  Jackson Harper  <jackson@ximian.com>
+
+	* TreeNode.cs: Implement Handle stuff.
+	* TreeView.cs: Utility methods so nodes can get/lookup by handle.
+
 2005-04-22  Jordi Mas i Hernandez <jordi@ximian.com>
 
 	* DataGridTextBoxColumn.cs: call base constructors, fixes
@@ -28,6 +33,7 @@
 	* XplatUIX11.cs: Fixed bug introduced with the HWND rewrite, Async
 	  messages were no longer being processed (this broke BeginInvoke)
 
+	  
 2005-04-18  Jackson Harper  <jackson@ximian.com>
 
 	* TreeView.cs: buglet that caused node images to get drawn
