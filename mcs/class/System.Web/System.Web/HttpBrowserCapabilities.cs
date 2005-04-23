@@ -60,7 +60,7 @@ namespace System.Web
 		const int HaveVersion = 21;
 		//const int HaveW3CDomVersion = 22;
 		const int HaveWin16 = 23;
-		//const int HaveWin32 = 24;
+		const int HaveWin32 = 24;
 
 		int flags;
 		bool activeXControls;
@@ -86,6 +86,7 @@ namespace System.Web
 		string version;
 		//Version w3CDomVersion;
 		bool win16;
+		bool win32;
 		Version [] clrVersions;
 		internal string useragent;
 
@@ -340,7 +341,12 @@ namespace System.Web
 
 		public bool Win32 {
 			get {
-				return !Win16;
+				if (!Get (HaveWin32)) {
+					Set (HaveWin32);
+					win32 = ReadBoolean ("win32", false);
+				}
+
+				return win32;
 			}
 		}
 
